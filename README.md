@@ -46,6 +46,9 @@ Here is an example of what I mean.
 *app-eselect/eselect-opencl - Switch between SDK libraries and driver OpenCL implementation.
 
 TODO:
+
 *net-analyzer/wireshark - integrate MTP (Media Transfer Protocol) packet filter into ebuild.  Currently patches are stored in seperate my /etc/portage/patches
+
 *media-video/libmtp - MTP/IP partial support.  Currently patches are stored in seperate my /etc/portage/patches
+
 *System-wide PGO (Profile Guided Optimization) for /etc/portage/bashrc.  I will release this soon after sufficient testing.  It is in testing phase.  It has @pgo-update set support.  It requires GCC or LLVM/Clang >=3.7 support since <3.7 breaks library profiling.
