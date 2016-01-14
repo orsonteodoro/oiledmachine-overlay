@@ -9,7 +9,7 @@ Here is an example of what I mean.
 
 *www-client/chromium - 32 bit only builds on a AMD64 machine.  You can still build the 64 bit version.
 
-*net-libs/webkit-gtk - 32 bit only builds on a AMD64 machine.  You can still build the 64 bit version.  FTLJIT enabled webkit.  FTLJIT is disabled on the main Gentoo overlay.  (FTLJIT needs testing)
+*net-libs/webkit-gtk - 32 bit only builds on a AMD64 machine.  You can still build the 64 bit version.  FTLJIT enabled webkit.  FTLJIT is disabled on the main Gentoo overlay.  (FTLJIT needs testing).  Support for GTK3 smooth scrolling.
 
 *www-client/surf - WebkitGTK browser with built in Ad-blocking support even in SSL.  Fixes to support for Facebook.
 
