@@ -1,0 +1,8 @@
+--- ./webkitgtk-2.8.3/Source/JavaScriptCore/create-llvm-ir-from-source-file.py.orig	2015-06-12 22:24:37.873256074 -0700
++++ ./webkitgtk-2.8.3/Source/JavaScriptCore/create-llvm-ir-from-source-file.py	2015-06-12 22:25:13.695588870 -0700
+@@ -12,4 +12,4 @@
+ except OSError:
+     pass
+ 
+-subprocess.call([CLANG_EXE, "-emit-llvm", "-O3", "-std=c++11", "-fno-exceptions", "-fno-strict-aliasing", "-fno-rtti", "-ffunction-sections", "-fdata-sections", "-fno-rtti", "-fno-omit-frame-pointer", "-fPIC", "-DWTF_PLATFORM_EFL=1", "-o", os.path.join(RUNTIME_INSTALL_DIR, os.path.splitext(JSC_SOURCE)[0] + ".bc"), "-c", JSC_SOURCE] + INCLUDE_DIRS.split())
++subprocess.call([CLANG_EXE, "-emit-llvm", "-O3", "-std=c++11", "-fno-exceptions", "-fno-strict-aliasing", "-fno-rtti", "-ffunction-sections", "-fdata-sections", "-fno-rtti", "-fno-omit-frame-pointer", "-fPIC", "-DWTF_PLATFORM_GTK=1", "-o", os.path.join(RUNTIME_INSTALL_DIR, os.path.splitext(JSC_SOURCE)[0] + ".bc"), "-c", JSC_SOURCE] + INCLUDE_DIRS.split())

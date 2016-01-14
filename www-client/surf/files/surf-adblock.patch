@@ -1,0 +1,104 @@
+diff -ur surf-0.6.orig/surf.c surf-0.6/surf.c
+--- surf-0.6.orig/surf.c	2014-06-23 19:41:05.925959585 -0700
++++ surf-0.6/surf.c	2014-06-23 19:57:16.356579377 -0700
+@@ -41,7 +41,7 @@
+ 	char *uri;
+ } SearchEngine;
+ 
+-enum { AtomFind, AtomGo, AtomUri, AtomLast };
++enum { AtomFind, AtomGo, AtomUri, AtomScriptFile, AtomLast };
+ 
+ typedef union Arg Arg;
+ union Arg {
+@@ -313,11 +313,13 @@
+ }
+ 
+ static void
+-runscript(WebKitWebFrame *frame) {
++runscript(const char * filename, WebKitWebFrame *frame) {
+ 	char *script;
+ 	GError *error;
+ 
+-	if(g_file_get_contents(scriptfile, &script, NULL, &error)) {
++	if (filename == NULL || filename[0] == '\0')
++		return;
++	if(g_file_get_contents(filename, &script, NULL, &error)) {
+ 		evalscript(webkit_web_frame_get_global_context(frame), script, scriptfile);
+ 	}
+ }
+@@ -616,10 +618,12 @@
+ 			               ^ SOUP_MESSAGE_CERTIFICATE_TRUSTED;
+ 		}
+ 		setatom(c, AtomUri, uri);
++		PAGE_LOAD_COMMITTED(c);
+ 		break;
+ 	case WEBKIT_LOAD_FINISHED:
+ 		c->progress = 100;
+ 		update(c);
++		PAGE_LOAD_FINISHED(c);
+ 		break;
+ 	default:
+ 		break;
+@@ -644,6 +648,7 @@
+ 		u = parseuri(uri);
+ 	}
+ 
++	updatewinid(c);
+ 	/* prevents endless loop */
+ 	if(c->uri && strcmp(u, c->uri) == 0) {
+ 		reload(c, &a);
+@@ -782,7 +787,7 @@
+ 	webkit_web_view_set_full_content_zoom(c->view, TRUE);
+ 
+ 	frame = webkit_web_view_get_main_frame(c->view);
+-	runscript(frame);
++	runscript(scriptfile, frame);
+ 	settings = webkit_web_view_get_settings(c->view);
+ 	if(!(ua = getenv("SURF_USERAGENT")))
+ 		ua = useragent;
+@@ -820,6 +825,7 @@
+ 
+ 	setatom(c, AtomFind, "");
+ 	setatom(c, AtomUri, "about:blank");
++	setatom(c, AtomScriptFile, "");
+ 	if(hidebackground)
+ 		webkit_web_view_set_transparent(c->view, TRUE);
+ 
+@@ -938,6 +944,7 @@
+ 	Client *c = (Client *)d;
+ 	XPropertyEvent *ev;
+ 	Arg arg;
++	WebKitWebFrame *frame;
+ 
+ 	if(((XEvent *)e)->type == PropertyNotify) {
+ 		ev = &((XEvent *)e)->xproperty;
+@@ -952,6 +959,12 @@
+ 				loaduri(c, &arg);
+ 				return GDK_FILTER_REMOVE;
+ 			}
++			else if(ev->atom == atoms[AtomScriptFile]) {
++				arg.v = getatom(c, AtomScriptFile);
++				frame = webkit_web_view_get_main_frame(c->view);
++				runscript(arg.v, frame, webkit_web_frame_get_global_context(frame));
++				return GDK_FILTER_REMOVE;
++			}
+ 		}
+ 	}
+ 	return GDK_FILTER_CONTINUE;
+@@ -1032,6 +1045,7 @@
+ 	atoms[AtomFind] = XInternAtom(dpy, "_SURF_FIND", False);
+ 	atoms[AtomGo] = XInternAtom(dpy, "_SURF_GO", False);
+ 	atoms[AtomUri] = XInternAtom(dpy, "_SURF_URI", False);
++	atoms[AtomScriptFile] = XInternAtom(dpy, "_SURF_SCRIPT", False);
+ 
+ 	/* dirs and files */
+ 	cookiefile = buildpath(cookiefile);
+@@ -1187,7 +1201,7 @@
+ static void
+ windowobjectcleared(GtkWidget *w, WebKitWebFrame *frame, JSContextRef js,
+ 		JSObjectRef win, Client *c) {
+-	runscript(frame);
++	runscript(scriptfile, frame);
+ }
+ 
+ static void

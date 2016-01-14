@@ -1,0 +1,24 @@
+echo "$1"
+if [[ "$1" =~ "ustream" ]]; then
+	echo "ustream"
+	/home/${USER}/ripustream "$1"
+elif [[ "$1" =~ "youtube" ]]; then
+	echo "youtube"
+	/home/${USER}/ripyoutube "$1"
+elif [[ "$1" =~ "twitch" ]]; then
+	echo "twitch"
+	/home/${USER}/riptwitch "$1"
+elif [[ "$1" =~ "facebook" ]]; then
+	echo "facebook"
+	/home/${USER}/ripfacebook "$1"
+elif [[ "$1" =~ "digg" ]]; then
+	echo "digg"
+	/home/${USER}/ripdigg "$1"
+elif [[ "$1" =~ "vimeo" ]]; then
+	echo "vimeo"
+	/home/${USER}/ripvimeo "$1"
+else
+	echo "failsafe youtube"
+	/home/${USER}/ripyoutube "$1"
+	#echo "cannot rip"
+fi

@@ -1,0 +1,13 @@
+Only in surf-0.6: surf
+diff -u surf-0.6.orig/surf.c surf-0.6/surf.c
+--- surf-0.6.orig/surf.c	2014-06-21 18:09:50.008363982 +0000
++++ surf-0.6/surf.c	2014-06-21 18:48:46.168326584 +0000
+@@ -1153,7 +1153,6 @@
+ 	if(c->linkhover) {
+ 		t = g_strdup_printf("%s| %s", togglestat, c->linkhover);
+ 	} else if(c->progress != 100) {
+-		drawindicator(c);
+ 		gtk_widget_show(c->indicator);
+ 		t = g_strdup_printf("[%i%%] %s| %s", c->progress, togglestat,
+ 				c->title);
+Only in surf-0.6: surf.o

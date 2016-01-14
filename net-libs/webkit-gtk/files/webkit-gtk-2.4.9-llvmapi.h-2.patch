@@ -1,0 +1,11 @@
+--- webkitgtk-2.4.9/Source/JavaScriptCore/ftl/FTLAbbreviations.h.orig	2015-11-05 13:16:01.589682944 -0800
++++ webkitgtk-2.4.9/Source/JavaScriptCore/ftl/FTLAbbreviations.h	2015-11-05 13:16:48.150426824 -0800
+@@ -33,7 +33,7 @@
+ #include "FTLAbbreviatedTypes.h"
+ #include "FTLSwitchCase.h"
+ #include "FTLValueFromBlock.h"
+-#include "LLVMAPI.h"
++#include <llvm-c/Core.h>
+ #include <cstring>
+ 
+ namespace JSC { namespace FTL {

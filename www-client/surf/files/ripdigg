@@ -1,0 +1,51 @@
+URL="$1"
+echo $URL
+rm -rf ~/.tmp
+mkdir ~/.tmp
+wget -O ~/.tmp/digg.html "$URL"
+
+VIMEOURL=$(cat ~/.tmp/digg.html | grep -o -e "player.vimeo.com[^\"]*")
+YOUTUBEURL=$(cat ~/.tmp/digg.html | grep -o -e "www.youtube.com[^\"]*")
+
+if [ -n "$VIMEOURL" ]; then
+	echo "vimeo $VIMEOURL"
+	wget -O ~/.tmp/digg1.html "http://$VIMEOURL"
+	PAT="[&\=?a-zA-Z0-9.,\/_\-]"
+
+	H264TARGET=$( cat ~/.tmp/vimeo1.html | grep -o -e "[\"]h264.*" | grep -o -e "http[s]*://$PAT*" | head -n 1); 
+	echo $H264TARGET
+	echo "h264target=$H264TARGET"
+
+	HDTARGET=$( cat ~/.tmp/vimeo1.html | grep -o -e "[\"]hd.*" | grep -o -e "http[s]*://$PAT*" | head -n 1); 
+	echo $HDTARGET
+	echo "hdtarget=$HDTARGET"
+
+	HLSTARGET=$( cat ~/.tmp/vimeo1.html | grep -o -e "[\"]hls.*" | grep -o -e "http[s]*://$PAT*" | head -n 1); 
+	echo $HLSTARGET
+	echo "hlstarget=$HLSTARGET"
+
+	SDTARGET=$( cat ~/.tmp/vimeo1.html | grep -o -e "[\"]sd.*" | grep -o -e "http[s]*://$PAT*" | head -n 1); 
+	echo $SDTARGET
+	echo "sdtarget=$SDTARGET"
+
+	if [[ "$HDTARGET" =~ "mp4" ]]; then
+		echo "TRYING HDTARGET1"
+		mplayer2 $HDTARGET
+	elif [[ "$SDTARGET" =~ "mp4" ]]; then
+		echo "TRYING SDTARGET1"
+		mplayer2 $SDTARGET
+	elif [[ "$HLSTARGET" =~ "m3u8" ]]; then
+		echo "TRYING HLSTARGET1"
+		mplayer2 -playlist $HLSTARGET
+	elif [[ "$H264TARGET" =~ "mp4" ]]; then
+		echo "TRYING H264TARGET1"
+		mplayer2 $H264TARGET
+	fi
+
+elif [ -n "$YOUTUBEURL" ]; then
+	echo "youtube $YOUTUBEURL"
+	/home/${USER}/ripyoutube "http://$YOUTUBEURL"
+fi
+
+
+

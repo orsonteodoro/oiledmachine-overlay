@@ -1,0 +1,4 @@
+sci-misc/setiathome-cpu opencl astropulse opencl cuda
+sci-misc/astropulse-cpu opencl classic opencl cuda
+sci-misc/setiathome-gpu astropulse
+sci-misc/astropulse-gpu classic

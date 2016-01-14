@@ -1,0 +1,62 @@
+--- cl_ext.h.1.1.orig	2015-11-29 23:45:36.844652692 -0800
++++ cl_ext.h.1.1	2015-11-29 23:52:10.251631131 -0800
+@@ -132,10 +132,46 @@
+ 
+ 
+ /*********************************
++* cl_amd_device_memory_flags *
++*********************************/
++#define cl_amd_device_memory_flags 1
++
++#define CL_MEM_USE_PERSISTENT_MEM_AMD       (1 << 6)        // Alloc from GPU's CPU visible heap
++
++/* cl_device_info */
++#define CL_DEVICE_MAX_ATOMIC_COUNTERS_EXT           0x4032
++
++/*********************************
+ * cl_amd_device_attribute_query *
+ *********************************/
+ #define CL_DEVICE_PROFILING_TIMER_OFFSET_AMD        0x4036
+-
++#define CL_DEVICE_TOPOLOGY_AMD                      0x4037
++#define CL_DEVICE_BOARD_NAME_AMD                    0x4038
++#define CL_DEVICE_GLOBAL_FREE_MEMORY_AMD            0x4039
++#define CL_DEVICE_SIMD_PER_COMPUTE_UNIT_AMD         0x4040
++#define CL_DEVICE_SIMD_WIDTH_AMD                    0x4041
++#define CL_DEVICE_SIMD_INSTRUCTION_WIDTH_AMD        0x4042
++#define CL_DEVICE_WAVEFRONT_WIDTH_AMD               0x4043
++#define CL_DEVICE_GLOBAL_MEM_CHANNELS_AMD           0x4044
++#define CL_DEVICE_GLOBAL_MEM_CHANNEL_BANKS_AMD      0x4045
++#define CL_DEVICE_GLOBAL_MEM_CHANNEL_BANK_WIDTH_AMD 0x4046
++#define CL_DEVICE_LOCAL_MEM_SIZE_PER_COMPUTE_UNIT_AMD   0x4047
++#define CL_DEVICE_LOCAL_MEM_BANKS_AMD               0x4048
++#define CL_DEVICE_THREAD_TRACE_SUPPORTED_AMD            0x4049
++
++typedef union
++{
++    struct { cl_uint type; cl_uint data[5]; } raw;
++    struct { cl_uint type; cl_char unused[17]; cl_char bus; cl_char device; cl_char function; } pcie;
++} cl_device_topology_amd;
++
++#define CL_DEVICE_TOPOLOGY_TYPE_PCIE_AMD            1
++
++
++/**************************
++* cl_amd_offline_devices *
++**************************/
++#define CL_CONTEXT_OFFLINE_DEVICES_AMD              0x403F
+ 
+ #ifdef CL_VERSION_1_1
+    /***********************************
+@@ -201,7 +236,10 @@
+     #define CL_PARTITION_BY_COUNTS_LIST_END_EXT         ((cl_device_partition_property_ext) 0)
+     #define CL_PARTITION_BY_NAMES_LIST_END_EXT          ((cl_device_partition_property_ext) 0 - 1)
+ 
+-
++    /* cl_ext_atomic_counters_32 and cl_ext_atomic_counters_64 extensions
++     * no extension #define since they have no functions
++     */
++    #define CL_DEVICE_MAX_ATOMIC_COUNTERS_EXT           0x4032
+ 
+ #endif /* CL_VERSION_1_1 */
+ 

@@ -1,0 +1,44 @@
+# ChangeLog for www-client/netsurf
+# Copyright 1999-2013 Gentoo Foundation; Distributed under the GPL v2
+# $Header: /var/cvsroot/gentoo-x86/www-client/netsurf/ChangeLog,v 1.11 2013/08/22 16:50:07 xmw Exp $
+
+*netsurf-3.0-r1 (22 Aug 2013)
+
+  22 Aug 2013; Michael Weber <xmw@gentoo.org> +netsurf-3.0-r1.ebuild:
+  Revbump to fix .desktop files for gtk/fbcon.
+
+  23 Jun 2013; Michael Weber <xmw@gentoo.org> +files/netsurf-3.0-CFLAGS.patch,
+  netsurf-3.0.ebuild:
+  Migrate to netsurf.eclass
+
+*netsurf-3.0 (19 Jun 2013)
+
+  19 Jun 2013; Michael Weber <xmw@gentoo.org>
+  +files/netsurf-3.0-framebuffer-pkgconfig.patch, +netsurf-3.0.ebuild,
+  metadata.xml:
+  Version bump (bug 470720), multilib build, preparations for netsurf eclass.
+
+  21 Apr 2013; Michael Weber <xmw@gentoo.org> metadata.xml, netsurf-2.9.ebuild:
+  Change local IUSE freetype to global truetype
+
+  28 Feb 2013; Michael Weber <xmw@gentoo.org> netsurf-2.9.ebuild:
+  Restore cross-compile functionality (thanks James Le Cuirot, bug 431884)
+
+  20 Aug 2012; Michael Weber <xmw@gentoo.org>
+  +files/netsurf-2.9-conditionally-include-image-headers.patch,
+  netsurf-2.9.ebuild:
+  Fix compilation w/o libnsbmp (bug 428660, thanks James Le Cuirot for the
+  patch)
+
+  01 Aug 2012; Michael Sterrett <mr_bones_@gentoo.org> metadata.xml:
+  fix metadata typo
+
+  18 Jul 2012; Michael Weber <xmw@gentoo.org> netsurf-2.9.ebuild:
+  Drop net-libs/libdom dependency
+
+*netsurf-2.9 (18 Jul 2012)
+
+  18 Jul 2012; Michael Weber <xmw@gentoo.org>
+  +files/netsurf-2.9-buildsystem.patch, +files/netsurf-2.9-includes.patch,
+  +metadata.xml, +netsurf-2.9.ebuild:
+  Initial import

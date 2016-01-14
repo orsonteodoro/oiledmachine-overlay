@@ -1,0 +1,36 @@
+set -v
+URL="$1"
+#COOKIESFILE="/home/${USER}/.tmp/cookies.txt"
+COOKIESFILE="/home/${USER}/.surf/cookies.txt"
+#COOKIESFILE="/home/${USER}/.elinks/cookies"
+TEMPDIR="/home/${USER}/.tmp"
+rm -rf $TEMPDIR
+mkdir -p $TEMPDIR
+
+
+#USERAGENT="Opera/9.80 (X11; Linux x86_64) Presto/2.12.388 Version/12.16"
+USERAGENT="Mozilla/5.0 (X11; U; Unix; en-US) AppleWebKit/537.15 (KHTML, like Gecko) Chrome/24.0.1295.0 Safari/537.15 Surf/0.6"
+echo $USERAGENT
+echo $URL
+
+if [[ "$URL" =~ "video_redirect" ]]; then
+	URL=$(echo $URL | sed -e "s|.*src=||g"  )
+	echo "URL="$URL
+fi
+
+wget --no-cache --load-cookies $COOKIESFILE --user-agent="$USERAGENT" -O $TEMPDIR/facebook.html $URL
+
+#if [[ "$(cat $TEMPDIR/facebook.html)" =~ "This content is currently unavailable" ]]; then
+#	echo "must login with browser"
+#	exit -1
+#fi
+
+MOVIEURL=$(cat $TEMPDIR/facebook.html | grep -o http.*mp4.*thumbnail_src | sed -e "s|\u0025|%|g" -e "s|[\]||g"  | head -n 1);
+MOVIEURL=$(printf ${MOVIEURL//%/\\x} | sed -e "s|\\\/|/|g" -e "s|\",\"thumbnail_src||g" -e "s|\",\"is_hds.*||g") 
+
+echo $MOVIEURL
+
+
+#wget --load-cookies $COOKIESFILE -O $TEMPDIR/facebook.mp4 $MOVIEURL 
+#mplayer $TEMPDIR/facebook.mp4
+wget --load-cookies $COOKIESFILE -O - $MOVIEURL | mplayer2 -cache 1024 -

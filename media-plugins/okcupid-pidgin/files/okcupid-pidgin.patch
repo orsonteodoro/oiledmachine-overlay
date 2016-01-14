@@ -1,0 +1,22 @@
+diff -urN Makefile.bak Makefile
+--- Makefile	2015-03-26 13:52:47.521508392 -0700
++++ Makefile	2015-03-26 15:49:38.812499121 -0700
+@@ -1,6 +1,6 @@
+ #Customisable stuff here
+-LINUX32_COMPILER = i686-pc-linux-gnu-gcc
+-LINUX64_COMPILER = x86_64-pc-linux-gnu-gcc
++LINUX32_COMPILER = x86_64-pc-linux-gnu-gcc -m32
++LINUX64_COMPILER = x86_64-pc-linux-gnu-gcc -m64
+ WIN32_COMPILER = /usr/bin/i586-mingw32-gcc
+ WIN32_WINDRES = i586-mingw32-windres
+ #LINUX_ARM_COMPILER = arm-pc-linux-gnu-gcc
+@@ -33,7 +33,8 @@
+ .PHONY:	all clean install sourcepackage
+ 
+ #all:	libokcupid.so libokcupid.dll libokcupid64.so libokcupidarm.so libokcupidppc.so installers sourcepackage
+-all:	libokcupid.so libokcupid.dll libokcupid64.so installers sourcepackage
++#all:	libokcupid.so libokcupid.dll libokcupid64.so installers sourcepackage
++all:	libokcupid.so libokcupid64.so
+ 
+ install:
+ 	cp libokcupid.so /usr/lib/purple-2/

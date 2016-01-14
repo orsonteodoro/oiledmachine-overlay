@@ -1,0 +1,14 @@
+Only in surf-0.6: surf
+diff -u surf-0.6.orig2/surf.c surf-0.6/surf.c
+--- surf-0.6.orig2/surf.c	2014-06-21 16:46:56.087443604 +0000
++++ surf-0.6/surf.c	2014-06-21 16:47:21.253443202 +0000
+@@ -1158,7 +1158,7 @@
+ 		t = g_strdup_printf("[%i%%] %s| %s", c->progress, togglestat,
+ 				c->title);
+ 	} else {
+-		gtk_widget_hide_all(c->indicator);
++		gtk_widget_hide(c->indicator);
+ 		t = g_strdup_printf("%s| %s", togglestat, c->title);
+ 	}
+ 
+Binary files surf-0.6.orig2/surf.o and surf-0.6/surf.o differ

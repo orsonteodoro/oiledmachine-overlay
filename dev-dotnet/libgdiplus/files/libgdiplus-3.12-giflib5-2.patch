@@ -1,0 +1,11 @@
+--- src/gifcodec.c.orig	2015-10-02 19:16:44.518214232 -0700
++++ src/gifcodec.c	2015-10-02 19:17:33.763215611 -0700
+@@ -1085,7 +1085,7 @@
+ 				pixbuf = pixbuf_org;
+ 			} else {
+ 				cmap_size = 256;
+-				cmap  = MakeMapObject (cmap_size, 0);
++				cmap  = GifMakeMapObject (cmap_size, 0);
+ 
+ 				red = GdipAlloc(pixbuf_size);
+ 				green = GdipAlloc(pixbuf_size);

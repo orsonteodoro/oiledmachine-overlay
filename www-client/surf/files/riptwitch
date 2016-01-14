@@ -1,0 +1,25 @@
+set -v
+TEMPDIR=/home/${USER}/.tmp
+rm -rf $TEMPDIR
+mkdir -p $TEMPDIR
+CHANNELNAME=$(echo $1 |sed -e "s|http:\/\/www.twitch.tv/||g" -e "s|/profile||g"); echo $CHANNELNAME
+wget http://api.twitch.tv/api/channels/$CHANNELNAME/access_token/ -O $TEMPDIR/twitch.json
+SIG=$(cat $TEMPDIR/twitch.json | grep -o "sig\":\"[0-9a-z]*" | sed "s|sig\":\"||g"); echo $SIG
+TOKEN=$(cat $TEMPDIR/twitch.json | grep -o "token\":\".*sig" | sed -e "s|\",\"sig||g" -e "s|token\":\"||g" -e "s|[\]||g" ); echo $TOKEN
+
+
+#wget -O /home/${USER}/.tmp/twitch.json "http://usher.twitch.tv/select/speeddemosarchivesda.json?nauthsig=48cd9c277f34b30c32bb5bf386eaa80b3677e0dd&nauth="{\"user_id\":null,\"channel\":\"speeddemosarchivesda\",\"expires\":1403481452,\"chansub\":{\"view_until\":1924905600,\"restricted_bitrates\":[]},\"private\":{\"allowed_to_view\":true},\"privileged\":false}"&allow_source=true"
+
+
+URL="http://usher.twitch.tv/select/$CHANNELNAME.json?nauthsig=$SIG&nauth=$TOKEN&allow_source=true"
+echo $URL
+
+
+wget --no-cache -O j.json "$URL"
+cat j.json
+
+
+
+
+
+mplayer2 -playlist j.json

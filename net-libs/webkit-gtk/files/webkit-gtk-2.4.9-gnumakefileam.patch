@@ -1,0 +1,20 @@
+--- webkitgtk-2.4.9/Source/JavaScriptCore/GNUmakefile.am.orig	2015-11-27 20:38:28.370977133 -0800
++++ webkitgtk-2.4.9/Source/JavaScriptCore/GNUmakefile.am	2015-11-27 20:42:35.574250495 -0800
+@@ -11,6 +11,7 @@
+ # simply rely on the usual symbol visibility flags.
+ libjavascriptcoregtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LDFLAGS = \
+ 	-version-info @LIBJAVASCRIPTCOREGTK_VERSION@ \
++	-Wl,--no-as-needed \
+ 	$(no_undefined)
+ 
+ nodist_EXTRA_libjavascriptcoregtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOURCES = \
+@@ -31,7 +32,8 @@
+ 	$(GLIB_LIBS) \
+ 	$(LLVM_LIBS) \
+ 	$(UNICODE_LIBS) \
+-	$(WINMM_LIBS)
++	$(WINMM_LIBS) \
++	-ldl
+ 
+ libjavascriptcoregtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CXXFLAGS = \
+ 	$(global_cxxflags) \

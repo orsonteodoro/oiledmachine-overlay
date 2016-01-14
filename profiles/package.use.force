@@ -1,0 +1,4 @@
+sci-misc/setiathome-gpu opencl classic fftw
+sci-misc/setiathome-cpu classic fftw
+sci-misc/astropulse-gpu opencl astropulse fftw
+sci-misc/astropulse-cpu astropulse fftw

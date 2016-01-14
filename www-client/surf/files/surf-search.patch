@@ -1,0 +1,54 @@
+diff -u surf-0.6.orig/surf.c surf-0.6/surf.c
+--- surf-0.6.orig/surf.c	2014-06-19 07:10:11.398717055 +0000
++++ surf-0.6/surf.c	2014-06-19 07:13:26.864713926 +0000
+@@ -32,6 +32,11 @@
+ #define COOKIEJAR_TYPE          (cookiejar_get_type ())
+ #define COOKIEJAR(obj)          (G_TYPE_CHECK_INSTANCE_CAST ((obj), COOKIEJAR_TYPE, CookieJar))
+ 
++typedef struct {
++	char *token;
++	char *uri;
++} SearchEngine;
++
+ enum { AtomFind, AtomGo, AtomUri, AtomLast };
+ 
+ typedef union Arg Arg;
+@@ -139,6 +144,7 @@
+ static void navigate(Client *c, const Arg *arg);
+ static Client *newclient(void);
+ static void newwindow(Client *c, const Arg *arg, gboolean noembed);
++static gchar *parseuri(const gchar *uri);
+ static void pasteuri(GtkClipboard *clipboard, const char *text, gpointer d);
+ static void populatepopup(WebKitWebView *web, GtkMenu *menu, Client *c);
+ static void popupactivate(GtkMenuItem *menu, Client *);
+@@ -627,8 +633,7 @@
+ 		u = g_strdup_printf("file://%s", rp);
+ 		free(rp);
+ 	} else {
+-		u = g_strrstr(uri, "://") ? g_strdup(uri)
+-			: g_strdup_printf("http://%s", uri);
++		u = parseuri(uri);
+ 	}
+ 
+ 	/* prevents endless loop */
+@@ -893,6 +898,20 @@
+ 	}
+ }
+ 
++gchar *
++parseuri(const gchar *uri) {
++  guint i;
++
++  for (i = 0; i < LENGTH(searchengines); i++) {
++    if (searchengines[i].token == NULL || searchengines[i].uri == NULL || *(uri + strlen(searchengines[i].token)) != ' ')
++      continue;
++    if (g_str_has_prefix(uri, searchengines[i].token))
++      return g_strdup_printf(searchengines[i].uri, uri + strlen(searchengines[i].token) + 1);
++  }
++
++  return g_strrstr(uri, "://") ? g_strdup(uri) : g_strdup_printf("http://%s", uri);
++}
++
+ static void
+ pasteuri(GtkClipboard *clipboard, const char *text, gpointer d) {
+ 	Arg arg = {.v = text };

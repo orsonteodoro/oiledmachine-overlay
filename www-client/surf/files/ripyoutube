@@ -1,0 +1,18 @@
+set -v
+echo "URL="$1
+
+if [[ "$1" =~ "youtube" ]]; then
+	URL=$(echo $1 | sed -e "s|&.*||g" ) 
+else
+	URL=$(wget -O - $1 | grep -o -e "youtube.com/embed/[^\"]*")
+fi
+
+echo "URL="$URL
+TEMPDIR="/home/${USER}/.tmp"
+rm -rf $TEMPDIR
+mkdir -p $TEMPDIR
+#wget --save-cookies $TEMPDIR/youtube-cookies.txt $URL
+#youtube-dl -f best -v --cookies $TEMPDIR/youtube-cookies.txt -o - "$URL" | mplayer2 -cookies -cookies-file $TEMPDIR/youtube-cookies.txt -
+#youtube-dl -f best -o - "$URL" | mplayer2 -cache 1024 -
+youtube-dl -f best -o - "$URL" | tee /home/${USER}/rip.mp4 | mplayer2 -cache 1024 -
+#-cache 4096 -

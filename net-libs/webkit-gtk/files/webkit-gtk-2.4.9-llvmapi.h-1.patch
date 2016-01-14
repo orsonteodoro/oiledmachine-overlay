@@ -1,0 +1,11 @@
+--- webkitgtk-2.4.9/Source/JavaScriptCore/ftl/FTLAbbreviatedTypes.h.orig	2015-11-05 11:04:10.755362123 -0800
++++ webkitgtk-2.4.9/Source/JavaScriptCore/ftl/FTLAbbreviatedTypes.h	2015-11-05 11:04:25.747925190 -0800
+@@ -30,7 +30,7 @@
+ 
+ #if ENABLE(FTL_JIT)
+ 
+-#include "LLVMAPI.h"
++#include <llvm-c/Core.h>
+ 
+ namespace JSC { namespace FTL {
+ 

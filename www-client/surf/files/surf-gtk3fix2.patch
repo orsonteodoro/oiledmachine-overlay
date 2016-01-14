@@ -1,0 +1,32 @@
+Only in surf-0.6: surf
+diff -u surf-0.6.orig/surf.c surf-0.6/surf.c
+--- surf-0.6.orig/surf.c	2014-06-21 17:51:58.307381138 +0000
++++ surf-0.6/surf.c	2014-06-21 18:03:26.844370115 +0000
+@@ -124,7 +124,7 @@
+ static void die(const char *errstr, ...);
+ static void drawindicator(Client *c);
+ static void eval(Client *c, const Arg *arg);
+-static gboolean exposeindicator(GtkWidget *w, GdkEventExpose *e, Client *c);
++static gboolean exposeindicator(GtkWidget *w, cairo_t *cr, Client *c);
+ static void find(Client *c, const Arg *arg);
+ static void fullscreen(Client *c, const Arg *arg);
+ static const char *getatom(Client *c, int a);
+@@ -456,7 +456,7 @@
+ }
+ 
+ static gboolean
+-exposeindicator(GtkWidget *w, GdkEventExpose *e, Client *c) {
++exposeindicator(GtkWidget *w, cairo_t *cr, Client *c) {
+ 	drawindicator(c);
+ 	return TRUE;
+ }
+@@ -755,7 +755,7 @@
+ 	/* Indicator */
+ 	c->indicator = gtk_drawing_area_new();
+ 	gtk_widget_set_size_request(c->indicator, 0, indicator_thickness);
+-	g_signal_connect (G_OBJECT (c->indicator), "expose_event",
++	g_signal_connect (G_OBJECT (c->indicator), "draw",
+ 			G_CALLBACK (exposeindicator), c);
+ 
+ 	/* Arranging */
+Only in surf-0.6: surf.o

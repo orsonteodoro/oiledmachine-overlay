@@ -1,0 +1,45 @@
+--- surf.c.orig	2015-05-18 22:15:58.070816921 -0700
++++ surf.c	2015-05-18 22:29:42.056887490 -0700
+@@ -245,7 +245,6 @@
+ 
+ static WebKitWebView *
+ createwindow(WebKitWebView *web_view, WebKitNavigationAction *navigation_action, Client *c) {
+-
+ 	Client *n = newclient();
+ 
+ 	const char *uri;
+@@ -281,28 +280,17 @@
+ 				if (webkit_navigation_action_get_navigation_type(na) ==  WEBKIT_NAVIGATION_TYPE_LINK_CLICKED) {
+ 					webkit_policy_decision_ignore((WebKitPolicyDecision*)p);
+ 					WebKitURIRequest *ur = webkit_navigation_action_get_request(na);
+-					Client *n = newclient();
+-					const char *uri = webkit_uri_request_get_uri(ur);
+-					webkit_web_view_load_uri(n->view, uri);
+-					return TRUE;
+-				}
+-			}
+-			break;
+-		case WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION: //dead code
+-			{
+-				WebKitNavigationPolicyDecision *p = (WebKitNavigationPolicyDecision*)WEBKIT_NAVIGATION_POLICY_DECISION(decision);
+-				WebKitNavigationAction *na = webkit_navigation_policy_decision_get_navigation_action(p);
+-				if (webkit_navigation_action_get_navigation_type(na) ==  WEBKIT_NAVIGATION_TYPE_LINK_CLICKED) {
+-					webkit_policy_decision_ignore((WebKitPolicyDecision*)p);
+-					WebKitURIRequest *ur = webkit_navigation_action_get_request(na);
+-					Client *n = newclient();
+ 					const char *uri = webkit_uri_request_get_uri(ur);
+-					webkit_web_view_load_uri(n->view, uri);
++					if (webkit_navigation_action_get_modifiers(na) & GDK_CONTROL_MASK) {
++						Client *n = newclient();
++						webkit_web_view_load_uri(n->view, uri);
++					} else {
++						webkit_web_view_load_uri(web_view, uri);
++					}
+ 					return TRUE;
+ 				}
+ 			}
+ 			break;
+-
+ 		default:
+ 			;
+ 			break;

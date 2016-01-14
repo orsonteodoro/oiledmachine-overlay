@@ -1,0 +1,32 @@
+--- webkitgtk-2.9.2/Source/cmake/FindLLVM.cmake.orig	2015-06-14 10:21:08.645382748 -0700
++++ webkitgtk-2.9.2/Source/cmake/FindLLVM.cmake	2015-06-14 10:24:01.473032222 -0700
+@@ -6,19 +6,26 @@
+ #  LLVM_VERSION
+ #  LLVM_INCLUDE_DIRS - include directories for the llvm headers.
+ #  LLVM_STATIC_LIBRARIES - list of paths for the static llvm libraries.
++#  LLVM_LDFLAGS - list of paths for the llvm libraries.
++#  LLVM_SYSTEM_LIBS - list of paths for the dynamic llvm libraries.
+ 
+ find_program(LLVM_CONFIG_EXE NAMES "llvm-config")
+ 
+ execute_process(COMMAND ${LLVM_CONFIG_EXE} --version OUTPUT_VARIABLE LLVM_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
+ execute_process(COMMAND ${LLVM_CONFIG_EXE} --includedir OUTPUT_VARIABLE LLVM_INCLUDE_DIRS OUTPUT_STRIP_TRAILING_WHITESPACE)
+ execute_process(COMMAND ${LLVM_CONFIG_EXE} --libfiles OUTPUT_VARIABLE LLVM_STATIC_LIBRARIES OUTPUT_STRIP_TRAILING_WHITESPACE)
++#execute_process(COMMAND ${LLVM_CONFIG_EXE} --ldflags OUTPUT_VARIABLE LLVM_LDFLAGS OUTPUT_STRIP_TRAILING_WHITESPACE)
++set(LLVM_LDFLAGS " ")
++execute_process(COMMAND ${LLVM_CONFIG_EXE} --system-libs OUTPUT_VARIABLE LLVM_SYSTEM_LIBS OUTPUT_STRIP_TRAILING_WHITESPACE)
++execute_process(COMMAND ${LLVM_CONFIG_EXE} --ldflags COMMAND sed -r -e "s|-L||g" OUTPUT_VARIABLE _LLVM_LIB_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
++execute_process(COMMAND ${LLVM_CONFIG_EXE} --libfiles COMMAND sed -r -e "s|${_LLVM_LIB_PATH}|${CMAKE_LIBRARY_PATH}|g" OUTPUT_VARIABLE LLVM_STATIC_LIBRARIES OUTPUT_STRIP_TRAILING_WHITESPACE)
+ 
+ # convert the list of paths into a cmake list
+ separate_arguments(LLVM_STATIC_LIBRARIES)
++string(REPLACE " " " " LLVM_STATIC_LIBRARIES "${LLVM_STATIC_LIBRARIES}")
+ 
+ include(FindPackageHandleStandardArgs)
+ find_package_handle_standard_args(LLVM
+-                                  REQUIRED_VARS LLVM_VERSION LLVM_INCLUDE_DIRS LLVM_STATIC_LIBRARIES
++                                  REQUIRED_VARS LLVM_VERSION LLVM_INCLUDE_DIRS LLVM_STATIC_LIBRARIES LLVM_LDFLAGS LLVM_SYSTEM_LIBS
+                                   VERSION_VAR LLVM_VERSION)
+ 
+-mark_as_advanced(LLVM_VERSION LLVM_INCLUDE_DIRS LLVM_STATIC_LIBRARIES)
++mark_as_advanced(LLVM_VERSION LLVM_INCLUDE_DIRS LLVM_STATIC_LIBRARIES LLVM_LDFLAGS LLVM_SYSTEM_LIBS)
