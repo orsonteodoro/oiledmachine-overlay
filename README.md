@@ -19,7 +19,7 @@ Here is an example of what I mean.
 
 *sci-misc/boinc-server-project-eligius - Eligius Mining Pool Boinc Server Project example.
 
-*sci-misc/setiathome-gpu - Seti@home version 7/8 client for CPU.  3D Boinc screensaver support on GPUs.  Support for recommended GPU settings.  Using ati_hd5xxx ati_hdx7xx for example targets ATI HD 57xx edition.
+*sci-misc/setiathome-gpu - Seti@home version 7/8 client for CPU.  Added 3D Boinc screensaver support on GPUs which is not part of the official sources.  Support for recommended GPU settings.  Using ati_hd5xxx ati_hdx7xx for example targets ATI HD 57xx edition.
 
 *sci-misc/setiathome-cpu - Seti@Home version 7/8 client for the CPUs.  Support for ebuild level GCC/LLVM PGO for all.
 
