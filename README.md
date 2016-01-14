@@ -19,11 +19,11 @@ Here is an example of what I mean.
 
 *sci-misc/boinc-server-project-eligius - Eligius Mining Pool Boinc Server Project example.
 
-*sci-misc/setiathome-gpu - Seti@home version 7/8 client for CPU.  3D Boinc screensaver support on GPUs.  Support for Ebuild level GCC/LLVM PGO.  Support for recommended settings.  Using ati_hd5xxx ati_hdx7xx for example targets ATI HD 57xx edition.
+*sci-misc/setiathome-gpu - Seti@home version 7/8 client for CPU.  3D Boinc screensaver support on GPUs.  Support for recommended GPU settings.  Using ati_hd5xxx ati_hdx7xx for example targets ATI HD 57xx edition.
 
-*sci-misc/setiathome-cpu - Seti@Home version 7/8 client for the CPUs.
+*sci-misc/setiathome-cpu - Seti@Home version 7/8 client for the CPUs.  Support for ebuild level GCC/LLVM PGO for all.
 
-*sci-misc/astropulse-cpu - Astropulse version 7/8 client for CPUs.
+*sci-misc/astropulse-cpu - Astropulse version 7/8 client for CPUs.  Support for ebuild level GCC/LLVM PGO for all.
 
 *sci-misc/astropulse-gpu - Astropulse version 7/8 client for GPUs.
 
@@ -33,9 +33,9 @@ Here is an example of what I mean.
 
 *sci-misc/setiathome-cfg - Updates anonymous platform configuration files for setiathome-{cpu,gpu},astropulse-{cpu,gpu}.  You must run this every time you upgrade setiathome-{cpu,gpu} and/or astropulse-{cpu,gpu}.
 
-*net-misc/boinc-bfgminer-gpu - BFGMiner with Boinc Support for GPUs.
+*net-misc/boinc-bfgminer-gpu - BFGMiner with Boinc support for GPUs.
 
-*net-misc/boinc-bfgminer-cpu - BFGMiner with Boinc Support for CPUs.  Ebuild level support for Profile Guided Optimizations (PGO).
+*net-misc/boinc-bfgminer-cpu - BFGMiner with Boinc support for CPUs.  Ebuild level support for Profile Guided Optimizations (PGO).
 
 *app-emulation/genymotion - Genymotion with third party hacks support.  Support for installers from genymotion.com and extra dependency checks.
 
