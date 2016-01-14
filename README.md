@@ -1,5 +1,4 @@
 # oiledmachine-overlay
-# oiledmachine-overlay
 This overlay contains various ebuilds for the Gentoo Linux Distribution.
 
 In this overlay, I provide 32 bit ebuilds for libraries and programs of some programs while the Gentoo overlay contains native ebuilds.  Reason why I choose to use the 32-bit versions over the 64-bit versions because of the 32 bit versions have a lower virtual memory and lower memory footprint overall.  I only offer the stable modified ebuilds to minimize memory leaks.
