@@ -21,9 +21,9 @@ Here is an example of what I mean.
 
 *sci-misc/setiathome-gpu - Seti@home version 7/8 client for CPU.  Added 3D Boinc screensaver support on GPUs which is not part of the official sources.  Support for recommended GPU settings.  Using ati_hd5xxx ati_hdx7xx for example targets ATI HD 57xx edition.
 
-*sci-misc/setiathome-cpu - Seti@Home version 7/8 client for the CPUs.  Support for ebuild level GCC/LLVM PGO for all.
+*sci-misc/setiathome-cpu - Seti@Home version 7/8 client for the CPUs.  Support for automated ebuild level GCC/LLVM PGO for all.
 
-*sci-misc/astropulse-cpu - Astropulse version 7/8 client for CPUs.  Support for ebuild level GCC/LLVM PGO for all.
+*sci-misc/astropulse-cpu - Astropulse version 7/8 client for CPUs.  Support for automated ebuild level GCC/LLVM PGO for all.
 
 *sci-misc/astropulse-gpu - Astropulse version 7/8 client for GPUs.
 
@@ -51,4 +51,4 @@ TODO:
 
 *media-video/libmtp - MTP/IP partial support.  Currently patches are stored in seperate my /etc/portage/patches
 
-*System-wide PGO (Profile Guided Optimization) for /etc/portage/bashrc.  I will release this soon after sufficient testing.  It is in testing phase.  It has @pgo-update set support.  It requires GCC or LLVM/Clang >=3.7 support since <3.7 breaks library profiling and has an annoying set environmental variable feature before profiling.  We use --profile-generate instead on LLVM/Clang.  Users need to be added to the wheel group to simulate the program.
+*System-wide PGO (Profile Guided Optimization) for /etc/portage/bashrc.  I will release this soon after sufficient testing.  It is in testing phase.  It has @pgo-update set support.  It requires GCC or LLVM/Clang >=3.7 support since <3.7 breaks library profiling and has an annoying set environmental variable feature before profiling.  We use --profile-generate instead on LLVM/Clang.  Users need to be added to the wheel group to simulate the program.  You should disable all PGO USE flags and allow the scripts use it properly.
