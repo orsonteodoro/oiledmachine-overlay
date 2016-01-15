@@ -45,6 +45,8 @@ Here is an example of what I mean.
 
 *app-eselect/eselect-opencl - Switch between SDK libraries and driver OpenCL implementation.
 
+*sys-process/psdoom-ng - Process killer based on Chocolate Doom 2.2.1 with man file and simple wrapper.
+
 TODO (NOT COMMITED):
 
 *net-analyzer/wireshark - integrate MTP (Media Transfer Protocol) packet filter into ebuild.  Currently patches are stored in seperate my /etc/portage/patches
