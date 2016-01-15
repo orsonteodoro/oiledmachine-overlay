@@ -1,0 +1,11 @@
+--- wireshark-1.99.9.orig/epan/dissectors/packet-usb-ptp.c	2015-10-05 18:35:58.976716976 -0700
++++ wireshark-1.99.9/epan/dissectors/packet-usb-ptp.c	2015-10-05 18:38:43.595705060 -0700
+@@ -290,7 +290,7 @@
+ 
+     /* Save to data structure (optional) */
+     if (save_to)
+-        save_to = ep_strdup(str);
++        save_to = g_strdup(str);
+ 
+     return offset;
+ }
