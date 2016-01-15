@@ -19,7 +19,7 @@ Here is an example of what I mean.
 
 *sci-misc/boinc-server-project-eligius - Eligius Mining Pool Boinc Server Project example.
 
-*sci-misc/setiathome-gpu - Seti@home version 7/8 client for CPU.  Added 3D Boinc screensaver support on GPUs which is not part of the official sources.  Support for recommended GPU settings.  Using ati_hd5xxx ati_hdx7xx for example targets ATI HD 57xx edition.
+*sci-misc/setiathome-gpu - Seti@home version 7/8 client for CPU.  Added 3D Boinc screensaver support on GPUs which is not part of the official sources.  Support for recommended GPU settings.  Using ati_hd5xxx ati_hdx7xx for example targets ATI HD 57xx edition.  For example, the binaries provided from upstream only utilize 1 thread per GPU by default.  These GPU ebuilds use the recommended 2-4 threads per GPU depending on the particular video card quality or GPU specified in the README.
 
 *sci-misc/setiathome-cpu - Seti@Home version 7/8 client for the CPUs.  Support for automated ebuild level GCC/LLVM PGO for all.
 
@@ -47,9 +47,9 @@ Here is an example of what I mean.
 
 *sys-process/psdoom-ng - Process killer based on Chocolate Doom 2.2.1 with man file and simple wrapper.
 
-TODO (NOT COMMITED):
+*net-analyzer/wireshark - integrate MTP (Media Transfer Protocol) packet filter into ebuild.  It also warns of MTPz authentication handshakes in the Expert info.  You may need to modify the interface number, vendor ID, device ID for your USB to match your particular device.
 
-*net-analyzer/wireshark - integrate MTP (Media Transfer Protocol) packet filter into ebuild.  Currently patches are stored in seperate my /etc/portage/patches
+TODO (NOT COMMITED):
 
 *media-video/libmtp - MTP/IP partial support.  Currently patches are stored in seperate my /etc/portage/patches.  No one has reverse engineered the save WIFI profile BLOB generation [possibly related to CryptUnprotectData() and WLANProfile XML format] to device given a plaintext WIFI password even in WINE.  It uses GSSDP to broadcast presence.  Transfer over WIFI in Linux/libmtp does work but you need to have my patch and need the GUID of the PC/Transfer App.
 
