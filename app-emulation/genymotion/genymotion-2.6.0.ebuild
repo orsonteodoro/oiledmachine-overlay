@@ -111,39 +111,39 @@ src_install() {
 	newicon "icons/icon.png" "genymotion.png" 
 	make_wrapper ${PN} ${dir}/genymotion 
 	make_desktop_entry ${PN} "Genymotion" ${PN} "System;Emulator"
-	mkdir -p "${D}/share/${PN}/extras"
-	cp "${FILESDIR}"/ua* "${D}/share/${PN}/extras"
+	mkdir -p "${D}/usr/share/${PN}/extras"
+	cp "${FILESDIR}"/ua* "${D}"/usr/share/"${PN}"/extras/
 }
 
 pkg_postinst() {
 	einfo "Futher instructions to install if any..."
 	if use gapps_4_2; then
 		if use arm-support_1_0; then
-			einfo "cp ${ROOT}/share/${PN}/extras/ua422-1.sh to your home"
+			einfo "cp ${ROOT}/usr/share/${PN}/extras/ua422-1.sh to your home"
 			einfo "cp ${DISTFILES}/Genymotion-ARM-Translation.zip to your home"
 			einfo "run ./ua422-1.sh"
 		fi
 		if use arm-support_1_1; then
-			einfo "cp ${ROOT}/share/${PN}/extras/ua422-1a.sh to your home"
+			einfo "cp ${ROOT}/usr/share/${PN}/extras/ua422-1a.sh to your home"
 			einfo "cp ${DISTFILES}/Genymotion-ARM-Translation_v1.1.zip to your home"
 			einfo "run ./ua422-1a.sh"
 		fi
-		einfo "cp ${ROOT}/share/${PN}/extras/ua422-2.sh to your home"
+		einfo "cp ${ROOT}/usr/share/${PN}/extras/ua422-2.sh to your home"
 		einfo "cp ${DISTFILES}/gapps-jb-20130813-signed.zip to your home"
 		einfo "run ./ua422-2.sh"
 	fi
 	if use gapps_4_3; then
 		if use arm-support_1_0; then
-			einfo "cp ${ROOT}/share/${PN}/extras/ua43-1.sh to your home"
+			einfo "cp ${ROOT}/usr/share/${PN}/extras/ua43-1.sh to your home"
 			einfo "cp ${DISTFILES}/Genymotion-ARM-Translation.zip to your home"
 			einfo "run ./ua43-1.sh"
 		fi
 		if use arm-support_1_1; then
-			einfo "cp ${ROOT}/share/${PN}/extras/ua43-1a.sh to your home"
+			einfo "cp ${ROOT}/usr/share/${PN}/extras/ua43-1a.sh to your home"
 			einfo "cp ${DISTFILES}/Genymotion-ARM-Translation_v1.1.zip to your home"
 			einfo "run ./ua43-1a.sh"
 		fi
-		einfo "cp ${ROOT}/share/${PN}/extras/ua43-2.sh to your home"
+		einfo "cp ${ROOT}/usr/share/${PN}/extras/ua43-2.sh to your home"
 		einfo "cp ${DISTFILES}/gapps-jb-20130813-signed.zip to your home"
 		einfo "run ./ua43-2.sh"
 	fi
