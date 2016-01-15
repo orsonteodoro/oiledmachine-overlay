@@ -43,7 +43,7 @@ Here is an example of what I mean.
 
 *x11-wm/dwm - Integrated Fibonacci layout
 
-*app-eselect/eselect-opencl - Switch between SDK libraries and driver OpenCL implementation.
+*app-eselect/eselect-opencl - Switch between SDK libraries and driver OpenCL implementation.  For example, you will need to add icd profiles in /etc/OpenCL/profiles that match the format /etc/OpenCL/profiles/${VENDOR}/${VENDOR}ocl{32,64}.icd.  The eselect module will map one of those OpenCL profiles to /etc/OpenCL/vendors/ocl{32,64}.icd so you can switch between the SDK or driver.  Your OpenCL app will recognize the OpenCL library version.
 
 *sys-process/psdoom-ng - Process killer based on Chocolate Doom 2.2.1 with man file and simple wrapper.
 
