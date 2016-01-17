@@ -9,7 +9,7 @@ DESCRIPTION="A simple web browser based on WebKit/GTK+."
 HOMEPAGE="http://surf.suckless.org/"
 SRC_URI="http://dl.suckless.org/${PN}/${P}.tar.gz"
 
-LICENSE="MIT"
+LICENSE="MIT CC-BY-NA-SA-3.0 SURF-community"
 SLOT="0"
 KEYWORDS="amd64 x86"
 
@@ -44,8 +44,8 @@ USE_REQUIRED="savedconfig gtk3 adblock"
 
 pkg_setup() {
 	if use savedconfig; then
-		if [[ ! -f "/etc/portage/savedconfig/${CATEGORY}/${PVR}" ]]; then
-			elog "Please copy ${FILESDIR}/${PVR} to /etc/portage/savedconfig/${CATEGORY}/ and edit accordingly."
+		if [[ ! -f "/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}" ]]; then
+			elog "Please copy ${FILESDIR}/${PN}-${PVR} to /etc/portage/savedconfig/${CATEGORY}/ and edit accordingly."
 			die ""
 		fi
 	fi
@@ -88,6 +88,9 @@ src_prepare() {
 	cat "${FILESDIR}"/configure.ac > configure.ac
 	cat "${FILESDIR}"/Makefile.am > Makefile.am
 	touch NEWS AUTHORS ChangeLog
+
+	epatch "${FILESDIR}"/surf-0.6-copyrights.patch
+
 	eautoreconf
 }
 
