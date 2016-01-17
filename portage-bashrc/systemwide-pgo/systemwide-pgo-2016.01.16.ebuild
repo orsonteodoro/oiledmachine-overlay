@@ -3,7 +3,7 @@ inherit eutils autotools
 
 DESCRIPTION="Portage Systemwide PGO"
 HOMEPAGE="https://github.com/orsonteodoro/oiledmachine-overlay"
-LICENSE="GPL-2"
+LICENSE="GPL-2 or MIT"
 SLOT="0"
 KEYWORDS="amd64"
 RDEPEND="
