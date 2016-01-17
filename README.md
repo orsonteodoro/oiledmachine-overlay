@@ -1,4 +1,5 @@
 # oiledmachine-overlay
+```bash
 This portage overlay contains various ebuilds for the Gentoo Linux Distribution.
 
 In this overlay, I provide 32 bit ebuilds for libraries and programs of some programs while the Gentoo overlay contains native ebuilds.  Reason why I choose to use the 32-bit versions over the 64-bit versions because of the 32 bit versions have a lower virtual memory and lower memory footprint overall.  I only offer the stable modified ebuilds to minimize memory leaks.
@@ -49,8 +50,11 @@ Here is an example of what I mean.
 
 *net-analyzer/wireshark - integrated MTP (Media Transfer Protocol) packet filter into ebuild.  It also warns of MTPz authentication handshake points in the Expert info.  You may need to modify in the source code level the interface number, vendor ID, device ID for your USB to match your particular device since I didn't write the GUI interface for that yet.
 
+*portage-bashrc/systemwide-pgo - Profile Guided Optimization management for portage.  Everyone keeps building a per package PGO ebuild, but this package provides more better integration and ease of the process by forcing Portage do the work.  It still needs more testing and is considered in development.  It has @pgo-update set support.  It requires GCC or LLVM/Clang >=3.7 support since <3.7 breaks library profiling and has an annoying set environmental variable feature before profiling.  We use --profile-generate instead on LLVM/Clang.  Users need to be added to the wheel group to simulate the program.  You should disable all PGO USE flags and allow the scripts use it properly.
+
 TODO (NOT COMMITED):
 
 *media-video/libmtp - MTP/IP partial support.  Currently patches are stored in seperate my /etc/portage/patches.  No one has reverse engineered the save WIFI profile BLOB generation [possibly related to CryptUnprotectData() and WLANProfile XML format] to device given a plaintext WIFI password even in WINE.  It uses GSSDP to broadcast presence.  Transferring files over WIFI in Linux/libmtp does work but you need to have my patch and need the GUID of the PC/Transfer App.
 
-*System-wide PGO (Profile Guided Optimization) for /etc/portage/bashrc.  I will release this soon after sufficient testing.  It is in testing phase.  It has @pgo-update set support.  It requires GCC or LLVM/Clang >=3.7 support since <3.7 breaks library profiling and has an annoying set environmental variable feature before profiling.  We use --profile-generate instead on LLVM/Clang.  Users need to be added to the wheel group to simulate the program.  You should disable all PGO USE flags and allow the scripts use it properly.
+
+```
