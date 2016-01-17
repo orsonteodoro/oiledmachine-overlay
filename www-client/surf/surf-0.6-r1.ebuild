@@ -90,6 +90,7 @@ src_prepare() {
 	touch NEWS AUTHORS ChangeLog
 
 	epatch "${FILESDIR}"/surf-0.6-copyrights.patch
+	epatch "${FILESDIR}"/surf-0.6-copyright-2.patch
 
 	eautoreconf
 }

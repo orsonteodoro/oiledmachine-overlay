@@ -1,0 +1,19 @@
+Common subdirectories: surf-0.6.orig/autom4te.cache and surf-0.6/autom4te.cache
+diff -u surf-0.6.orig/LICENSE surf-0.6/LICENSE
+--- surf-0.6.orig/LICENSE	2016-01-16 22:34:03.570244900 -0800
++++ surf-0.6/LICENSE	2016-01-16 22:41:15.545735966 -0800
+@@ -25,6 +25,13 @@
+ 
+ ---
+ 
++Name: rip*
++Contributors: Orson Teodoro <orsonteodoro@yahoo.com>
++Notes: Used for a multimedia compatibility layer for various web browsers.  It will play flash or streams in an external player.  It will play multimedia on links web browser or elinks web browser and even in surf.
++License: Dual licensed under MIT or GPL
++
++---
++
+ Name: mimehandler; originally called auto open downloads
+ From: http://surf.suckless.org/patches/autoopen
+ Contributors: Matthew Bauer <mjbauer95@gmail.com>, Orson Teodoro <orsonteodoro@yahoo.com>
+Common subdirectories: surf-0.6.orig/m4 and surf-0.6/m4
