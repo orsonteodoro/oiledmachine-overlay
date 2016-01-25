@@ -58,7 +58,7 @@ The gamepad-config is binary only and has no source code but never tested.  The 
 
 If you create a new solution, you should answer no to override the Tao.Sdl.dll.config and OpenTK.dll.config File Conflicts Dialog Box.  The one provided has absolute paths to the required libraries and Linux support.
 
-The ebuild uses dev-dotnet/managed-pvrtc without use flag.
+The ebuild uses dev-dotnet/managed-pvrtc without use flag.  Please read the dev-dotnet/managed-pvrtc below before distributing or using  it.
 
 *dev-dotnet/managed-pvrtc - You should stay away from this one but it may be required for compiling monogame which I didn't take the time to turn off.  Basically managed-pvrtc is a C# wrapper around the propretary PVRTexLib library blob from Imagination Technlogies.  You need to download the library there.  The binary library blob uses the PVRTC compression (https://en.wikipedia.org/wiki/PVRTC) which is patented.  The license in those libraries are restricted.  There is a bindist flag for this one.  Using the bindist will not install the propretary library and proprietary documentation just the wrapper.
 
