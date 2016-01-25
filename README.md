@@ -64,7 +64,7 @@ The ebuild uses dev-dotnet/managed-pvrtc without use flag.
 
 *dev-cpp/cppsharp - This one requires llvm from this overlay to install additional headers.  It was going to be used for NVTT.net but it turns out nvidia-texture-tools has the C# language binding.
 
-*media-gfx/nvidia-texture-tools - This one builds the C# language binding and nvtt required for monogame.
+*media-gfx/nvidia-texture-tools - This one builds the C# language binding and nvtt native library required for monogame.  You need to install this one from the repository for monogame to compile correctly.
 
 TODO (NOT COMMITED):
 
