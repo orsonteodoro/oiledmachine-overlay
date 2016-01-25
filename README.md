@@ -52,8 +52,24 @@ Here is an example of what I mean.
 
 *portage-bashrc/systemwide-pgo - Profile Guided Optimization management for portage.  Everyone keeps building a per package PGO ebuild with a use flag, but this package provides more better integration and ease of the process by forcing Portage do the work.  It still needs more testing and is considered in development.  It has @pgo-update set support.  It requires GCC or LLVM/Clang >=3.7 support since <3.7 breaks library profiling and has an annoying set environmental variable feature before profiling.  We use --profile-generate instead on LLVM/Clang.  Users need to be added to the wheel group to simulate the program.  You should disable all PGO USE flags and allow the scripts use it properly.  The package uses a whitelist and phase file to manage it.  Instructions are given at the end of the ebuild.
 
+*games-libs/monogame - This is for the 3.4 release of monogame.  This is probably the only portage overlay that has it.  It has addin compatibility for MonoDevelop 5.9.5.9.  This one requires that mono, monodevelop, nvidia-texture-tools from this overlay.  I disabled nunit on those and split it off into its own ebuild.  The latest llvm is required for cpp   You also need to set LIBGL_DRIVERS_PATH environmental variable in your MonoDevelop or wrapper script to /usr/lib/opengl/{ati,xorg-x11,intel,nvidia}/lib before running the app.  The nunit tests were not complete in the conversion, so I cannot guarantee the correctiness of the library but it does show a cauliflower blue screen after running it.  
+
+The gamepad-config is binary only and has no source code but never tested.  The package still needs testing.  I striped out lidgren and made an ebuild for it and use lidgren-network-gen3.  The OpenTK and Tao Framework were binary only and I used a compiled version from my ebuilds for the GamePad library.  SDL 1 is required for the GamepadConfig since Tao Framework uses SDL1.  The SDL2 is also required for the OpenTK library.
+
+If you create a new solution, you should answer no to override the Tao.Sdl.dll.config and OpenTK.dll.config File Conflicts Dialog Box.  The one provided has absolute paths to the required libraries and Linux support.
+
+The ebuild uses dev-dotnet/managed-pvrtc without use flag.  Please read the dev-dotnet/managed-pvrtc below before distributing or using  it.
+
+Again, I need people who have used this library to test this ebuild and the tools (mgcb, 2mgfx, pipeline), mp3compression, GamepadConfig.
+
+*dev-dotnet/managed-pvrtc - You should stay away from this one but it may be required for compiling monogame which I didn't take the time to turn off.  Basically managed-pvrtc is a C# wrapper around the propretary PVRTexLib library blob from Imagination Technlogies.  You need to download the library there.  The binary library blob uses the PVRTC compression (https://en.wikipedia.org/wiki/PVRTC) which is patented.  The license in those libraries are restricted.  There is a bindist flag for this one.  Using the bindist will not install the propretary library and proprietary documentation just the wrapper.  Delete the PVRTexLib from that this ebuild uses and use the one from Imagination Technlogies.
+
+*dev-cpp/cppsharp - This one requires llvm from this overlay to install additional headers.  It was going to be used for NVTT.net but it turns out nvidia-texture-tools has the C# language binding.  I don't currently use it for any ebuilds I use, but it is offered here.  It still needs testing.  It requires llvm package from this overlay.
+
+*media-gfx/nvidia-texture-tools - This one builds the C# language binding and nvtt native library required for monogame.  You need to install this one from the repository for monogame to compile correctly.
+
 TODO (NOT COMMITED):
 
 *media-video/libmtp - MTP/IP partial support.  Currently patches are stored in seperate my /etc/portage/patches.  No one has reverse engineered the save WIFI profile BLOB generation [possibly related to CryptUnprotectData() and WLANProfile XML format] to device given a plaintext WIFI password even in WINE.  It uses GSSDP to broadcast presence.  Transferring files over WIFI in Linux/libmtp does work but you need to have my patch and need the GUID of the PC/Transfer App.
 
-
+*media-video/epcam - Support for the EP800/SE402/SE401 driver.  It uses sources from https://github.com/orsonteodoro/gspca_ep800.  This driver differs from the main kernel driver in that it supports the newer reference firmware.  It still needs testing.  The ebuild is almost ready for upload.
