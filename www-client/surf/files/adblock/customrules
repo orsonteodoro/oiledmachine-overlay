@@ -18,10 +18,11 @@ okcupid.com
         div[id^="leaderboard_container"]
         div[id^="leaderboard_wrapper"]
         div[id*="leaderboard"]
-        div[class^="home-activity-ad"]
         div[id^="recently_visited"]
         div[class^="page-right-block"]
         div[class^="okad"]
+	div[id^="recently_visited"]
+	div[class^="home-activity-ad"]
 
 www.okcupid.com
 	img[src="http://akcdn.okccdn.com/media/img/template/image.png"]
