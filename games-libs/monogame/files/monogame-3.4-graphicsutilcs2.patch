@@ -1,0 +1,12 @@
+diff -ur MonoGame-3.4.orig/MonoGame.Framework.Content.Pipeline/Graphics/GraphicsUtil.cs MonoGame-3.4/MonoGame.Framework.Content.Pipeline/Graphics/GraphicsUtil.cs
+--- MonoGame-3.4.orig/MonoGame.Framework.Content.Pipeline/Graphics/GraphicsUtil.cs	2016-01-20 18:11:36.284637971 -0800
++++ MonoGame-3.4/MonoGame.Framework.Content.Pipeline/Graphics/GraphicsUtil.cs	2016-01-20 18:12:28.670635666 -0800
+@@ -362,7 +362,7 @@
+             }
+ 
+             var handler = new DxtDataHandler(content, outputFormat);
+-            outputOptions.SetOutputHandler(handler.BeginImage, handler.WriteData);
++            outputOptions.SetOutputHandler(handler.BeginImage, handler.WriteData, handler.EndImage);
+ 
+             var compressionOptions = new CompressionOptions();
+             compressionOptions.SetFormat(outputFormat);

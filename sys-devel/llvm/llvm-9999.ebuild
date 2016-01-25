@@ -5,10 +5,10 @@
 EAPI=5
 
 : ${CMAKE_MAKEFILE_GENERATOR:=ninja}
-PYTHON_COMPAT=( python2_7 pypy )
+PYTHON_COMPAT=( python2_7 )
 
 inherit check-reqs cmake-utils eutils flag-o-matic git-r3 multilib \
-	multilib-minimal python-r1 toolchain-funcs pax-utils
+	multilib-minimal python-single-r1 toolchain-funcs pax-utils
 
 DESCRIPTION="Low Level Virtual Machine"
 HOMEPAGE="http://llvm.org/"
@@ -25,19 +25,16 @@ IUSE="clang debug +doc gold libedit +libffi lldb multitarget ncurses ocaml
 COMMON_DEPEND="
 	sys-libs/zlib:0=
 	clang? (
-		python? ( ${PYTHON_DEPS} )
-		static-analyzer? (
-			dev-lang/perl:*
-			${PYTHON_DEPS}
-		)
+		static-analyzer? ( dev-lang/perl:* )
 		xml? ( dev-libs/libxml2:2=[${MULTILIB_USEDEP}] )
+		${PYTHON_DEPS}
 	)
 	gold? ( >=sys-devel/binutils-2.22:*[cxx] )
 	libedit? ( dev-libs/libedit:0=[${MULTILIB_USEDEP}] )
 	libffi? ( >=virtual/libffi-3.0.13-r1:0=[${MULTILIB_USEDEP}] )
 	ncurses? ( >=sys-libs/ncurses-5.9-r3:0=[${MULTILIB_USEDEP}] )
 	ocaml? (
-		dev-lang/ocaml:0=
+		>=dev-lang/ocaml-4.00.0:0=
 		dev-ml/findlib
 		dev-ml/ocaml-ctypes )"
 # configparser-3.2 breaks the build (3.3 or none at all are fine)
@@ -53,6 +50,7 @@ DEPEND="${COMMON_DEPEND}
 	kernel_Darwin? ( sys-libs/libcxx )
 	clang? ( xml? ( virtual/pkgconfig ) )
 	doc? ( dev-python/sphinx )
+	gold? ( sys-libs/binutils-libs )
 	libffi? ( virtual/pkgconfig )
 	lldb? ( dev-lang/swig )
 	!!<dev-python/configparser-3.3.0.2
@@ -67,8 +65,7 @@ PDEPEND="clang? ( =sys-devel/clang-${PV}-r100 )"
 # pypy gives me around 1700 unresolved tests due to open file limit
 # being exceeded. probably GC does not close them fast enough.
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
-	lldb? ( clang )
-	test? ( || ( $(python_gen_useflags 'python*') ) )"
+	lldb? ( clang xml )"
 
 pkg_pretend() {
 	# in megs
@@ -173,14 +170,16 @@ src_prepare() {
 	# Allow custom cmake build types (like 'Gentoo')
 	epatch "${FILESDIR}"/cmake/${PN}-3.8-allow_custom_cmake_build_types.patch
 
+	# Fix llvm-config for shared linking and sane flags
+	# https://bugs.gentoo.org/show_bug.cgi?id=565358
+	epatch "${FILESDIR}"/llvm-3.9-llvm-config.patch
+
+	# disable use of SDK on OSX, bug #568758
+	sed -i -e 's/xcrun/false/' utils/lit/lit/util.py || die
+
 	if use clang; then
 		# Automatically select active system GCC's libraries, bugs #406163 and #417913
 		epatch "${FILESDIR}"/clang-3.5-gentoo-runtime-gcc-detection-v3.patch
-
-		epatch "${FILESDIR}"/clang-3.6-gentoo-install.patch
-
-		sed -i -e "s^@EPREFIX@^${EPREFIX}^" \
-			tools/clang/tools/scan-build/scan-build || die
 
 		# Install clang runtime into /usr/lib/clang
 		# https://llvm.org/bugs/show_bug.cgi?id=23792
@@ -208,6 +207,9 @@ src_prepare() {
 	# User patches
 	epatch_user
 
+	#epatch "${FILESDIR}"/llvm-9999-fpic-driver-fix.patch
+	epatch "${FILESDIR}"/llvm-9999-export-fpic-clang-driver.patch
+
 	python_setup
 
 	# Native libdir is used to hold LLVMgold.so
@@ -219,7 +221,7 @@ multilib_src_configure() {
 	if use multitarget; then
 		targets=all
 	else
-		targets='host;CppBackend'
+		targets='host;BPF;CppBackend'
 		use video_cards_radeon && targets+=';AMDGPU'
 	fi
 
@@ -245,11 +247,6 @@ multilib_src_configure() {
 		-DLLVM_ENABLE_EH=ON
 		-DLLVM_ENABLE_RTTI=ON
 
-		-DLLVM_BUILD_SYSTEM="cmake"
-		#-DLLVM_BUILD_LLVM_DYLIB=ON
-		#-DLLVM_DYLIB_EXPORT_ALL=ON
-		#-DLLVM_LINK_LLVM_DYLIB=ON
-
 		-DWITH_POLLY=OFF # TODO
 
 		-DLLVM_HOST_TRIPLE="${CHOST}"
@@ -259,6 +256,15 @@ multilib_src_configure() {
 
 		-DHAVE_HISTEDIT_H=$(usex libedit)
 	)
+
+	if use clang; then
+		mycmakeargs+=(
+			-DCMAKE_DISABLE_FIND_PACKAGE_LibXml2=$(usex !xml)
+			# libgomp support fails to find headers without explicit -I
+			# furthermore, it provides only syntax checking
+			-DCLANG_DEFAULT_OPENMP_RUNTIME=libomp
+		)
+	fi
 
 	if use lldb; then
 		mycmakeargs+=(
@@ -383,7 +389,7 @@ src_install() {
 
 	if use clang; then
 		# note: magic applied in multilib_src_install()!
-		CLANG_VERSION=3.8
+		CLANG_VERSION=3.9
 
 		MULTILIB_CHOST_TOOLS+=(
 			/usr/bin/clang
@@ -451,63 +457,65 @@ multilib_src_install() {
 			done
 		fi
 	fi
+
+	#for dev-dotnet/cppsharp
+	cd "${S}"/tools/clang/lib/CodeGen
+	cp CodeGenModule.h "${D}"/usr/include/clang/CodeGen/
+	cp CGVTables.h "${D}"/usr/include/clang/CodeGen/
+	cp CodeGenTypes.h "${D}"/usr/include/clang/CodeGen/
+	cp CGCall.h "${D}"/usr/include/clang/CodeGen/
+	cp CGValue.h "${D}"/usr/include/clang/CodeGen/
+	cp EHScopeStack.h "${D}"/usr/include/clang/CodeGen/
+	cp ABIInfo.h "${D}"/usr/include/clang/CodeGen/
+	cp SanitizerMetadata.h "${D}"/usr/include/clang/CodeGen/
+	cp TargetInfo.h "${D}"/usr/include/clang/CodeGen/
+	cp CGCXXABI.h "${D}"/usr/include/clang/CodeGen/
+	cp CodeGenFunction.h "${D}"/usr/include/clang/CodeGen/
+	cp CGBuilder.h "${D}"/usr/include/clang/CodeGen/
+	cp CGDebugInfo.h "${D}"/usr/include/clang/CodeGen/
+	cp CGLoopInfo.h "${D}"/usr/include/clang/CodeGen/
+	cp CodeGenPGO.h "${D}"/usr/include/clang/CodeGen/
+	cp CodeGenTypeCache.h "${D}"/usr/include/clang/CodeGen/
+	cp Address.h "${D}"/usr/include/clang/CodeGen/
+
+	mkdir -p "${D}"/usr/include/clang/Driver/
+	cd "${S}"/tools/clang/lib/Driver
+	cp ToolChains.h "${D}"/usr/include/clang/Driver/
+	cp Tools.h "${D}"/usr/include/clang/Driver/
 }
 
 multilib_src_install_all() {
 	insinto /usr/share/vim/vimfiles
-	doins -r utils/vim/*/
+	doins -r utils/vim/*/.
 	# some users may find it useful
 	dodoc utils/vim/vimrc
 
 	if use clang; then
 		pushd tools/clang >/dev/null || die
 
-		if use static-analyzer ; then
-			pushd tools/scan-build >/dev/null || die
+		if use python ; then
+			pushd bindings/python/clang >/dev/null || die
 
-			dobin ccc-analyzer scan-build
-			dosym ccc-analyzer /usr/bin/c++-analyzer
-			doman scan-build.1
-
-			insinto /usr/share/llvm
-			doins scanview.css sorttable.js
+			python_moduleinto clang
+			python_domodule *.py
 
 			popd >/dev/null || die
 		fi
 
-		python_inst() {
-			if use static-analyzer ; then
-				pushd tools/scan-view >/dev/null || die
+		# AddressSanitizer symbolizer (currently separate)
+		dobin "${S}"/projects/compiler-rt/lib/asan/scripts/asan_symbolize.py
 
-				python_doscript scan-view
-
-				touch __init__.py || die
-				python_moduleinto clang
-				python_domodule *.py Resources
-
-				popd >/dev/null || die
-			fi
-
-			if use python ; then
-				pushd bindings/python/clang >/dev/null || die
-
-				python_moduleinto clang
-				python_domodule *.py
-
-				popd >/dev/null || die
-			fi
-
-			# AddressSanitizer symbolizer (currently separate)
-			python_doscript "${S}"/projects/compiler-rt/lib/asan/scripts/asan_symbolize.py
-		}
-		python_foreach_impl python_inst
 		popd >/dev/null || die
+
+		python_fix_shebang "${ED}"
+		if use static-analyzer; then
+			python_optimize "${ED}"usr/share/scan-view
+		fi
 	fi
 }
 
 pkg_postinst() {
-	if use clang; then
-		elog "To enable OpenMP support in clang, install sys-libs/libomp"
-		elog "and use the '-fopenmp=libomp' command line option"
+	if use clang && ! has_version 'sys-libs/libomp'; then
+		elog "To enable OpenMP support in clang, install sys-libs/libomp."
 	fi
 }

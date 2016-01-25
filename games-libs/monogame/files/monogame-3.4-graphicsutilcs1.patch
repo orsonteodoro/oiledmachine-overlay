@@ -1,0 +1,30 @@
+diff -ur MonoGame-3.4.orig/MonoGame.Framework.Content.Pipeline/Graphics/GraphicsUtil.cs MonoGame-3.4/MonoGame.Framework.Content.Pipeline/Graphics/GraphicsUtil.cs
+--- MonoGame-3.4.orig/MonoGame.Framework.Content.Pipeline/Graphics/GraphicsUtil.cs	2016-01-20 18:06:15.855418608 -0800
++++ MonoGame-3.4/MonoGame.Framework.Content.Pipeline/Graphics/GraphicsUtil.cs	2016-01-20 18:07:27.682157700 -0800
+@@ -23,7 +23,8 @@
+         private Format _format;
+ 
+         public OutputOptions.WriteDataDelegate WriteData { get; private set; }
+-        public OutputOptions.ImageDelegate BeginImage { get; private set; }
++        public OutputOptions.BeginImageDelegate BeginImage { get; private set; }
++        public OutputOptions.EndImageDelegate EndImage { get; private set; }
+ 
+         public DxtDataHandler(TextureContent content, Format format)
+         {
+@@ -35,9 +36,15 @@
+             _format = format;
+ 
+             WriteData = new OutputOptions.WriteDataDelegate(writeData);
+-            BeginImage = new OutputOptions.ImageDelegate(beginImage);
++            BeginImage = new OutputOptions.BeginImageDelegate(beginImage);
++            EndImage = new OutputOptions.EndImageDelegate(endImage);
+         }
+ 
++	public void endImage()
++	{
++		;
++	}
++
+         public void beginImage(int size, int width, int height, int depth, int face, int miplevel)
+         {
+             _levelHeight = height;

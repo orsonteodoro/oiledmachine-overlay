@@ -1,0 +1,10 @@
+These files can be used for commercial and non-commercial projects that makes use of MonoGame.
+
+---
+
+ebuild note: The following files are affected:
+
+GamepadBridge.dll
+GamepadConfigControls.dll
+Xbox 360 Gamepad.xml
+Xbox 360 Wireless Receiver.xml

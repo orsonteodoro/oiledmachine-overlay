@@ -108,35 +108,32 @@ src_install() {
 }
 
 pkg_postinst() {
-	einfo "Further instructions to install if any..."
+	einfo "Futher instructions to install if any..."
+	einfo "First turn on the emulator.  When it runs the home screen"
+	einfo "If ARM translator version 1.0 doesn't work then try version 1.1 but not both."
 	if use gapps_4_2; then
 		if use arm-support_1_0; then
-			einfo "cp ${ROOT}/usr/share/${PN}/extras/ua422-1.sh to your home"
-			einfo "cp ${DISTFILES}/Genymotion-ARM-Translation.zip to your home"
-			einfo "run ./ua422-1.sh"
+			einfo "cp Genymotion-ARM-Translation.zip to ${DISTFILES}"
+			einfo "run ${ROOT}/usr/share/${PN}/extras/ua422-1.sh"
 		fi
 		if use arm-support_1_1; then
-			einfo "cp ${ROOT}/usr/share/${PN}/extras/ua422-1a.sh to your home"
-			einfo "cp ${DISTFILES}/Genymotion-ARM-Translation_v1.1.zip to your home"
-			einfo "run ./ua422-1a.sh"
+			einfo "cp Genymotion-ARM-Translation_v1.1.zip to ${DISTFILES}"
+			einfo "run ${ROOT}/usr/share/${PN}/extras/ua422-1a.sh"
 		fi
-		einfo "cp ${ROOT}/usr/share/${PN}/extras/ua422-2.sh to your home"
-		einfo "cp ${DISTFILES}/gapps-jb-20130813-signed.zip to your home"
-		einfo "run ./ua422-2.sh"
+		einfo "cp gapps-jb-20130813-signed.zip to ${DISTFILES}"
+		einfo "run ${ROOT}/usr/share/${PN}/extras/ua422-2.sh"
 	fi
 	if use gapps_4_3; then
 		if use arm-support_1_0; then
-			einfo "cp ${ROOT}/usr/share/${PN}/extras/ua43-1.sh to your home"
-			einfo "cp ${DISTFILES}/Genymotion-ARM-Translation.zip to your home"
-			einfo "run ./ua43-1.sh"
+			einfo "cp Genymotion-ARM-Translation.zip to ${DISTFILES}"
+			einfo "run ${ROOT}/usr/share/${PN}/extras/ua43-1.sh"
 		fi
 		if use arm-support_1_1; then
-			einfo "cp ${ROOT}/usr/share/${PN}/extras/ua43-1a.sh to your home"
-			einfo "cp ${DISTFILES}/Genymotion-ARM-Translation_v1.1.zip to your home"
-			einfo "run ./ua43-1a.sh"
+			einfo "cp Genymotion-ARM-Translation_v1.1.zip to ${DISTFILES}"
+			einfo "run ${ROOT}/usr/share/${PN}/extras/ua43-1a.sh"
 		fi
-		einfo "cp ${ROOT}/usr/share/${PN}/extras/ua43-2.sh to your home"
-		einfo "cp ${DISTFILES}/gapps-jb-20130813-signed.zip to your home"
-		einfo "run ./ua43-2.sh"
+		einfo "cp gapps-jb-20130813-signed.zip to ${DISTFILES}"
+		einfo "run ${ROOT}/usr/share/${PN}/extras/ua43-2.sh"
 	fi
+
 }

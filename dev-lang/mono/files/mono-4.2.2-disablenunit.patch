@@ -1,0 +1,112 @@
+diff -ru mono-4.2.2.orig/data/Makefile.am mono-4.2.2/data/Makefile.am
+--- mono-4.2.2.orig/data/Makefile.am	2016-01-21 23:20:50.955442687 -0800
++++ mono-4.2.2/data/Makefile.am	2016-01-21 23:30:21.516148107 -0800
+@@ -7,7 +7,7 @@
+ 	config.in \
+ 	browscap.ini mono.supp mono.d README ChangeLog \
+ 	mono.pc.in mono-2.pc.in monosgen-2.pc.in mint.pc.in dotnet.pc.in dotnet35.pc.in wcf.pc.in monodoc.pc.in \
+-	mono-nunit.pc.in mono-cairo.pc.in mono-options.pc.in cecil.pc.in \
++	mono-cairo.pc.in mono-options.pc.in cecil.pc.in \
+ 	mono-lineeditor.pc.in system.web.extensions_1.0.pc.in system.web.extensions.design_1.0.pc.in\
+ 	dtrace-prelink.sh system.web.mvc.pc.in system.web.mvc2.pc.in system.web.mvc3.pc.in aspnetwebstack.pc.in \
+ 	reactive.pc.in xbuild12.pc \
+@@ -24,10 +24,10 @@
+ SGENPCFILE=
+ endif
+ 
+-pkgconfig_DATA= mono.pc mono-2.pc dotnet.pc dotnet35.pc wcf.pc mono-nunit.pc mono-cairo.pc mono-options.pc cecil.pc monodoc.pc mono-lineeditor.pc system.web.extensions_1.0.pc \
++pkgconfig_DATA= mono.pc mono-2.pc dotnet.pc dotnet35.pc wcf.pc mono-cairo.pc mono-options.pc cecil.pc monodoc.pc mono-lineeditor.pc system.web.extensions_1.0.pc \
+ 		system.web.extensions.design_1.0.pc system.web.mvc.pc system.web.mvc2.pc system.web.mvc3.pc aspnetwebstack.pc reactive.pc xbuild12.pc $(SGENPCFILE)
+ 
+-DISTCLEANFILES= mono-2.pc mono.pc mint.pc dotnet.pc dotnet35.pc wcf.pc mono-nunit.pc mono-cairo.pc mono-options.pc cecil.pc monodoc.pc mono-lineeditor.pc system.web.extensions_1.0.pc \
++DISTCLEANFILES= mono-2.pc mono.pc mint.pc dotnet.pc dotnet35.pc wcf.pc mono-cairo.pc mono-options.pc cecil.pc monodoc.pc mono-lineeditor.pc system.web.extensions_1.0.pc \
+ 		system.web.extensions.design_1.0.pc system.web.mvc.pc system.web.mvc2.pc system.web.mvc3.pc aspnetwebstack.pc reactive.pc $(SGENPCFILE) mono-sgen-gdb.py
+ 
+ mono_DATA =  config \
+diff -ru mono-4.2.2.orig/mcs/build/README.makefiles mono-4.2.2/mcs/build/README.makefiles
+--- mono-4.2.2.orig/mcs/build/README.makefiles	2016-01-21 23:20:51.115448776 -0800
++++ mono-4.2.2/mcs/build/README.makefiles	2016-01-21 23:29:17.245703913 -0800
+@@ -271,7 +271,7 @@
+ ========================================
+ PROGRAM = myprogram.exe
+ LOCAL_MCS_FLAGS = /r:System.Xml.dll
+-HAS_NUNIT_TEST = yes
++HAS_NUNIT_TEST = no
+ include ../build/executable.make
+ ========================================
+ 
+diff -ru mono-4.2.2.orig/mcs/Makefile mono-4.2.2/mcs/Makefile
+--- mono-4.2.2.orig/mcs/Makefile	2016-01-21 23:20:51.105448396 -0800
++++ mono-4.2.2/mcs/Makefile	2016-01-21 23:26:02.544298245 -0800
+@@ -1,6 +1,6 @@
+ thisdir := .
+ 
+-SUBDIRS := build jay mcs class nunit24 ilasm tools tests errors docs
++SUBDIRS := build jay mcs class ilasm tools tests errors docs
+ 
+ # Resgen is corlib specific tool
+ 
+@@ -14,7 +14,7 @@
+ mobile_SUBDIRS := build class
+ mobile_static_SUBDIRS := build class
+ binary_reference_assemblies_SUBDIRS := build class
+-net_4_5_SUBDIRS := build mcs class nunit24 ilasm tools tests errors docs
++net_4_5_SUBDIRS := build mcs class ilasm tools tests errors docs
+ xammac_net_4_5_SUBDIRS := build class
+ xbuild_12_SUBDIRS := build class tools/xbuild
+ xbuild_14_SUBDIRS := build class tools/xbuild
+diff -ru mono-4.2.2.orig/mcs/tools/sqlmetal/Makefile mono-4.2.2/mcs/tools/sqlmetal/Makefile
+--- mono-4.2.2.orig/mcs/tools/sqlmetal/Makefile	2016-01-21 23:21:47.351588863 -0800
++++ mono-4.2.2/mcs/tools/sqlmetal/Makefile	2016-01-21 23:28:54.588842229 -0800
+@@ -33,7 +33,7 @@
+ 
+ $(PROGRAM) : Makefile $(SQLMETAL_RESOURCES)
+ 
+-HAS_NUNIT_TEST = yes
++HAS_NUNIT_TEST = no
+ 
+ include ../../build/executable.make
+ 
+diff -ru mono-4.2.2.orig/scripts/Makefile.am mono-4.2.2/scripts/Makefile.am
+--- mono-4.2.2.orig/scripts/Makefile.am	2016-01-21 23:20:51.005444590 -0800
++++ mono-4.2.2/scripts/Makefile.am	2016-01-21 23:30:54.475401466 -0800
+@@ -29,7 +29,6 @@
+ 	$(scripts_defaults)	\
+ 	$(scripts_2_0)		\
+ 	$(scripts_service)	\
+-	$(scripts_nunit)	\
+ 	$(scripts_rpmhelpers)	\
+ 	$(MDOC_SUBCOMMANDS)	\
+ 	$(MDOC_COMPAT)		\
+@@ -134,11 +133,10 @@
+ 	wsdl$(SCRIPT_SUFFIX)
+ 
+ scripts_service = mono-service mono-service2
+-scripts_nunit = nunit-console$(SCRIPT_SUFFIX) nunit-console2$(SCRIPT_SUFFIX) nunit-console4$(SCRIPT_SUFFIX)
+ scripts_rpmhelpers = mono-find-provides mono-find-requires
+ scripts_mono_configuration_crypto = mono-configuration-crypto$(SCRIPT_SUFFIX)
+ 
+-CLEANFILES = $(scripts_mono_configuration_crypto) $(scripts_4_0_umask) $(scripts_2_0) $(scripts_defaults) $(scripts_4_0) mono-service mono-service2 nunit-console nunit-console2 nunit-console4 mono-find-provides mono-find-requires mod $(MDOC_SUBCOMMANDS)
++CLEANFILES = $(scripts_mono_configuration_crypto) $(scripts_4_0_umask) $(scripts_2_0) $(scripts_defaults) $(scripts_4_0) mono-service mono-service2 mono-find-provides mono-find-requires mod $(MDOC_SUBCOMMANDS)
+ DISTCLEANFILES = $(pkgconfig_DATA) $(scripts_rpmhelpers)
+ 
+ EXTRA_DIST =			\
+@@ -214,18 +212,6 @@
+ 	$(REWRITE2) -e 's,@''exe_name@,$@,g' $(srcdir)/mono-service.in > $@.tmp
+ 	mv -f $@.tmp $@
+ 
+-nunit-console$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
+-	$(REWRITE4_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
+-	mv -f $@.tmp $@
+-
+-nunit-console2$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
+-	$(REWRITE2_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
+-	mv -f $@.tmp $@
+-
+-nunit-console4$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
+-	$(REWRITE4_DEBUG) -e 's,@''exe_name@,nunit-console,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
+-	mv -f $@.tmp $@
+-
+ xbuild: xbuild.in Makefile
+ 	$(REWRITE_COMMON) $(srcdir)/xbuild.in > $@.tmp
+ 	mv -f $@.tmp $@

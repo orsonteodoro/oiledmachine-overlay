@@ -1,0 +1,96 @@
+Only in MonoGame-3.4: b
+Only in MonoGame-3.4/MonoGame.Framework/bin/Linux/AnyCPU: Debug
+Only in MonoGame-3.4/MonoGame.Framework/obj/Linux/AnyCPU: Debug
+Only in MonoGame-3.4/MonoGame.Framework.Content.Pipeline/bin/Linux/AnyCPU: Debug
+Only in MonoGame-3.4/MonoGame.Framework.Content.Pipeline/obj/Linux/AnyCPU: Debug
+Only in MonoGame-3.4/Test/bin/Linux/AnyCPU: Debug
+Only in MonoGame-3.4/Test/obj/Linux/AnyCPU: Debug
+diff -ur MonoGame-3.4.orig/Test/Runner/Interface/CommandLineInterface.cs MonoGame-3.4/Test/Runner/Interface/CommandLineInterface.cs
+--- MonoGame-3.4.orig/Test/Runner/Interface/CommandLineInterface.cs	2016-01-22 21:44:24.627928937 -0800
++++ MonoGame-3.4/Test/Runner/Interface/CommandLineInterface.cs	2016-01-23 01:43:05.861024981 -0800
+@@ -69,14 +69,18 @@
+ using System;using NUnit.Framework.Internal;using NUnit.Framework.Interfaces;
+ using System.IO;
+ using System.Reflection;
++using System.Xml;
+ using System.Xml.Xsl;
+ using NUnit.Engine;
+-
++using NUnit.Engine.Addins;
++using NUnit.Engine.Runners;
+ 
+ namespace MonoGame.Tests
+ {
+ 	class CommandLineInterface
+ 	{
++		
++
+ 		public static int RunMain (string [] args)
+ 		{
+ 			var runOptions = RunOptions.Parse (args);
+@@ -88,19 +92,32 @@
+ 
+ 			//CoreExtensions.Host.InitializeService ();
+ 
+-			var assembly = Assembly.GetExecutingAssembly ();
++			System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly ();
+ 
+-			var runner = new SimpleTestRunner ();
+-			TestPackage package = new TestPackage (assembly.GetName ().Name);
+-			package.Assemblies.Add (assembly.Location);
+-			if (!runner.Load (package)) {
+-				Console.WriteLine ("Could not find the tests.");
+-				return -1;
+-			}
++			var sc = new ServiceContext();
++
++			TestPackage package = new TestPackage(assembly.Location);
++
++			var atr = new AggregatingTestRunner(sc, package);
++			//LoadPackage();
+ 
+ 			var listener = new CommandLineTestEventListener(runOptions);
+-			var filter = new AggregateTestFilter (runOptions.Filters);
+-			var results = runner.Run (listener, filter, false, LoggingThreshold.Off);
++			var filter = new AggregateTestFilter(runOptions.Filters);
++			//var results = atr.LoadPackage();
++			
++			//--
++
++			//var runner = new SimpleTestRunner ();
++			//TestPackage package = new TestPackage (assembly.GetName ().Name);
++			//package.Assemblies.Add (assembly.Location);
++			//if (!runner.Load (package)) {
++			//	Console.WriteLine ("Could not find the tests.");
++			//	return -1;
++			//}
++
++			//var listener = new CommandLineTestEventListener(runOptions);
++			//var filter = new AggregateTestFilter (runOptions.Filters);
++			//var results = runner.Run (listener, filter, false, LoggingThreshold.Off);
+ 		    return results.IsFailure ? 1 : 0;
+ 		}
+ 
+@@ -117,8 +134,9 @@
+ 			{
+ 				base.RunFinished(result);
+ 
+-				var resultWriter = new NUnit2XmlResultWriter (_runOptions.XmlResultsPath);
+-				resultWriter.SaveTestResult (result);
++				XmlWriter xmlWriter = XmlWriter.Create(_runOptions.XmlResultsPath);
++				var resultWriter = new NUnit2XmlOutputWriter ();
++				resultWriter.WriteXmlOutput(result, xmlWriter);
+ 
+ 				if (_runOptions.PerformXslTransform) {
+ 					var transform = new XslTransform ();
+diff -ur MonoGame-3.4.orig/Test/Runner/Interface/RegexTestFilter.cs MonoGame-3.4/Test/Runner/Interface/RegexTestFilter.cs
+--- MonoGame-3.4.orig/Test/Runner/Interface/RegexTestFilter.cs	2016-01-22 21:44:24.627928937 -0800
++++ MonoGame-3.4/Test/Runner/Interface/RegexTestFilter.cs	2016-01-22 22:16:07.407060061 -0800
+@@ -2,7 +2,6 @@
+ using System.Text.RegularExpressions;
+ using NUnit.Framework.Internal;
+ 
+-
+ namespace MonoGame.Tests {
+ 	class RegexTestFilter : TestFilter {
+ 		private readonly Regex _regex;

@@ -1,0 +1,148 @@
+Only in MonoGame-3.4: b
+Only in MonoGame-3.4/MonoGame.Framework/bin/Linux/AnyCPU: Debug
+Only in MonoGame-3.4/MonoGame.Framework/obj/Linux/AnyCPU: Debug
+Only in MonoGame-3.4/MonoGame.Framework.Content.Pipeline/bin/Linux/AnyCPU: Debug
+Only in MonoGame-3.4/MonoGame.Framework.Content.Pipeline/obj/Linux/AnyCPU: Debug
+Only in MonoGame-3.4/Test/bin/Linux/AnyCPU: Debug
+Only in MonoGame-3.4/Test/obj/Linux/AnyCPU: Debug
+diff -ur MonoGame-3.4.orig/Test/Runner/Interface/AggregateTestFilter.cs MonoGame-3.4/Test/Runner/Interface/AggregateTestFilter.cs
+--- MonoGame-3.4.orig/Test/Runner/Interface/AggregateTestFilter.cs	2016-01-23 01:48:32.760662594 -0800
++++ MonoGame-3.4/Test/Runner/Interface/AggregateTestFilter.cs	2016-01-23 10:02:39.441942903 -0800
+@@ -1,15 +1,20 @@
+ using System;using NUnit.Framework.Interfaces;
+ using System.Collections.Generic;
+ using System.Linq;
+-using NUnit.Framework.Internal;
++//using NUnit.Framework.Internal;
++using NUnit.Engine;
+ 
+ 
+ namespace MonoGame.Tests {
+ 	class AggregateTestFilter : TestFilter {
+ 
++		AggregateTestFilter() : base("")
++		{
++		}
++
+ 		private readonly ITestFilter[] _filters;
+ 
+-		public AggregateTestFilter (IEnumerable<ITestFilter> filters)
++		public AggregateTestFilter (IEnumerable<ITestFilter> filters) : base("")
+ 		{
+ 			if (filters == null)
+ 				throw new ArgumentNullException("filters");
+@@ -23,7 +28,7 @@
+ 			get { return false; }
+ 		}
+ 
+-		override public bool Match (ITest test)
++		public bool Match (ITest test)
+ 		{
+ 			return false;
+ 		}
+@@ -41,7 +46,7 @@
+ 		}
+ 
+ 
+-		override public TNode AddToXml(TNode parentNode, bool recursive)
++		public TNode AddToXml(TNode parentNode, bool recursive)
+ 		{
+ 			return new TNode("");
+ 		}		
+diff -ur MonoGame-3.4.orig/Test/Runner/Interface/CommandLineInterface.cs MonoGame-3.4/Test/Runner/Interface/CommandLineInterface.cs
+--- MonoGame-3.4.orig/Test/Runner/Interface/CommandLineInterface.cs	2016-01-23 01:48:32.760662594 -0800
++++ MonoGame-3.4/Test/Runner/Interface/CommandLineInterface.cs	2016-01-23 09:47:37.552124927 -0800
+@@ -74,13 +74,13 @@
+ using NUnit.Engine;
+ using NUnit.Engine.Addins;
+ using NUnit.Engine.Runners;
++using NUnitLite;
++using NUnit.Engine.Services;
+ 
+ namespace MonoGame.Tests
+ {
+ 	class CommandLineInterface
+ 	{
+-		
+-
+ 		public static int RunMain (string [] args)
+ 		{
+ 			var runOptions = RunOptions.Parse (args);
+@@ -94,16 +94,23 @@
+ 
+ 			System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly ();
+ 
++			TestPackage package = new TestPackage(assembly.Location);
++
++			var ps = new ProjectService();
++			ps.ExpandProjectPackage(package);
++			ps.StartService();
++
+ 			var sc = new ServiceContext();
++			sc.Add((IService)ps);
+ 
+-			TestPackage package = new TestPackage(assembly.Location);
+ 
+ 			var atr = new AggregatingTestRunner(sc, package);
+-			//LoadPackage();
+ 
+ 			var listener = new CommandLineTestEventListener(runOptions);
+ 			var filter = new AggregateTestFilter(runOptions.Filters);
+-			//var results = atr.LoadPackage();
++			atr.Load();
++			var results = atr.Run(listener, (NUnit.Engine.TestFilter)filter);
++			return 0;//placeholder	
+ 			
+ 			//--
+ 
+@@ -118,7 +125,7 @@
+ 			//var listener = new CommandLineTestEventListener(runOptions);
+ 			//var filter = new AggregateTestFilter (runOptions.Filters);
+ 			//var results = runner.Run (listener, filter, false, LoggingThreshold.Off);
+-		    return results.IsFailure ? 1 : 0;
++		    //return results.IsFailure ? 1 : 0;
+ 		}
+ 
+ 		private class CommandLineTestEventListener : TestEventListenerBase {
+@@ -134,9 +141,9 @@
+ 			{
+ 				base.RunFinished(result);
+ 
+-				XmlWriter xmlWriter = XmlWriter.Create(_runOptions.XmlResultsPath);
++				var textWriter = new StreamWriter(_runOptions.XmlResultsPath);
+ 				var resultWriter = new NUnit2XmlOutputWriter ();
+-				resultWriter.WriteXmlOutput(result, xmlWriter);
++				resultWriter.WriteResultFile(result, textWriter, null, null);
+ 
+ 				if (_runOptions.PerformXslTransform) {
+ 					var transform = new XslTransform ();
+diff -ur MonoGame-3.4.orig/Test/Runner/Interface/TestEventListenerBase.cs MonoGame-3.4/Test/Runner/Interface/TestEventListenerBase.cs
+--- MonoGame-3.4.orig/Test/Runner/Interface/TestEventListenerBase.cs	2016-01-23 01:48:32.760662594 -0800
++++ MonoGame-3.4/Test/Runner/Interface/TestEventListenerBase.cs	2016-01-23 04:41:38.200796200 -0800
+@@ -1,9 +1,8 @@
+ using System;using NUnit.Framework.Internal;using NUnit.Engine;using NUnit.Framework.Interfaces;
+ using System.IO;
+ 
+-
+ namespace MonoGame.Tests {
+-	public class TestEventListenerBase : ITestListener {
++	public class TestEventListenerBase : ITestListener, ITestEventListener {
+ 		private readonly TextWriter _stdoutStandin;
+ 		protected TextWriter StdoutStandin { get { return _stdoutStandin; } }
+ 
+@@ -84,6 +83,15 @@
+ 		{
+ 			// Console.WriteLine("UnhandledException");
+ 		}
++
++	        /// <summary>
++	        /// Handle a progress report or other event.
++	        /// </summary>
++	        /// <param name="report">An XML progress report.</param>
++	        public void OnTestEvent(string report)
++		{
++			;
++		}
+ 	}
+ }
+ 

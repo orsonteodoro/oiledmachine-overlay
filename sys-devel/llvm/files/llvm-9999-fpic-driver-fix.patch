@@ -1,0 +1,24 @@
+diff -ur llvm-9999.orig/tools/clang/CMakeLists.txt llvm-9999/tools/clang/CMakeLists.txt
+--- llvm-9999.orig/tools/clang/CMakeLists.txt	2016-01-19 18:52:53.842212903 -0800
++++ llvm-9999/tools/clang/CMakeLists.txt	2016-01-19 18:54:17.885487118 -0800
+@@ -278,6 +278,8 @@
+   ${CMAKE_CURRENT_SOURCE_DIR}/include/clang/Basic/Version.inc.in
+   ${CMAKE_CURRENT_BINARY_DIR}/include/clang/Basic/Version.inc)
+ 
++set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
++
+ # Add appropriate flags for GCC
+ if (LLVM_COMPILER_IS_GCC_COMPATIBLE)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-common -Woverloaded-virtual")
+diff -ur llvm-9999.orig/tools/clang/Makefile llvm-9999/tools/clang/Makefile
+--- llvm-9999.orig/tools/clang/Makefile	2016-01-19 18:52:53.842212903 -0800
++++ llvm-9999/tools/clang/Makefile	2016-01-19 18:55:22.796014926 -0800
+@@ -51,6 +51,8 @@
+   DIRS := $(filter-out docs, $(DIRS))
+ endif
+ 
++CXX.Flags += -fPIC
++
+ # Set common Clang build flags.
+ CPP.Flags += -I$(PROJ_SRC_DIR)/$(CLANG_LEVEL)/include -I$(PROJ_OBJ_DIR)/$(CLANG_LEVEL)/include
+ ifdef CLANG_VENDOR

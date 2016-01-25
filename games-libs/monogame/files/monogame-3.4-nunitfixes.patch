@@ -1,0 +1,181 @@
+Only in MonoGame-3.4: b
+Only in MonoGame-3.4/MonoGame.Framework/bin/Linux/AnyCPU: Debug
+Only in MonoGame-3.4/MonoGame.Framework/obj/Linux/AnyCPU: Debug
+Only in MonoGame-3.4/MonoGame.Framework.Content.Pipeline/bin/Linux/AnyCPU: Debug
+Only in MonoGame-3.4/MonoGame.Framework.Content.Pipeline/obj/Linux/AnyCPU: Debug
+Only in MonoGame-3.4/Test/bin/Linux/AnyCPU: Debug
+diff -ur MonoGame-3.4.orig/Test/Framework/GameTest.cs MonoGame-3.4/Test/Framework/GameTest.cs
+--- MonoGame-3.4.orig/Test/Framework/GameTest.cs	2016-01-22 20:27:56.705964145 -0800
++++ MonoGame-3.4/Test/Framework/GameTest.cs	2016-01-22 20:38:57.261324880 -0800
+@@ -213,7 +213,7 @@
+ 				Assert.That (Game, Has.Property ("DrawCount").EqualTo (0));
+ 			}
+ 
+-			[Test, Ignore, RequiresSTA]
++			[Test, Ignore("BECAUSE"), RequiresSTA]
+ 			public void Fixed_time_step_skips_draw_when_update_is_slow ()
+ 			{
+ 				Game.MakeGraphical ();
+Only in MonoGame-3.4/Test/obj/Linux/AnyCPU: Debug
+diff -ur MonoGame-3.4.orig/Test/Runner/Interface/AggregateTestFilter.cs MonoGame-3.4/Test/Runner/Interface/AggregateTestFilter.cs
+--- MonoGame-3.4.orig/Test/Runner/Interface/AggregateTestFilter.cs	2016-01-22 20:27:56.718964644 -0800
++++ MonoGame-3.4/Test/Runner/Interface/AggregateTestFilter.cs	2016-01-22 20:33:16.578246496 -0800
+@@ -1,11 +1,11 @@
+ using System;using NUnit.Framework.Interfaces;
+ using System.Collections.Generic;
+ using System.Linq;
+-
++using NUnit.Framework.Internal;
+ 
+ 
+ namespace MonoGame.Tests {
+-	class AggregateTestFilter : ITestFilter {
++	class AggregateTestFilter : TestFilter {
+ 
+ 		private readonly ITestFilter[] _filters;
+ 
+@@ -23,7 +23,7 @@
+ 			get { return false; }
+ 		}
+ 
+-		public bool Match (ITest test)
++		override public bool Match (ITest test)
+ 		{
+ 			return false;
+ 		}
+@@ -40,6 +40,12 @@
+ 			return true;
+ 		}
+ 
++
++		override public TNode AddToXml(TNode parentNode, bool recursive)
++		{
++			return new TNode("");
++		}		
++
+ 		#endregion ITestFilter Implementation
+ 	}
+ }
+diff -ur MonoGame-3.4.orig/Test/Runner/Interface/CommandLineInterface.cs MonoGame-3.4/Test/Runner/Interface/CommandLineInterface.cs
+--- MonoGame-3.4.orig/Test/Runner/Interface/CommandLineInterface.cs	2016-01-22 20:27:56.718964644 -0800
++++ MonoGame-3.4/Test/Runner/Interface/CommandLineInterface.cs	2016-01-22 21:14:59.898201957 -0800
+@@ -70,7 +70,7 @@
+ using System.IO;
+ using System.Reflection;
+ using System.Xml.Xsl;
+-
++using NUnit.Engine;
+ 
+ 
+ namespace MonoGame.Tests
+@@ -86,7 +86,7 @@
+ 				return 0;
+ 			}
+ 
+-			CoreExtensions.Host.InitializeService ();
++			//CoreExtensions.Host.InitializeService ();
+ 
+ 			var assembly = Assembly.GetExecutingAssembly ();
+ 
+@@ -117,7 +117,7 @@
+ 			{
+ 				base.RunFinished(result);
+ 
+-				var resultWriter = new XmlResultWriter (_runOptions.XmlResultsPath);
++				var resultWriter = new NUnit2XmlResultWriter (_runOptions.XmlResultsPath);
+ 				resultWriter.SaveTestResult (result);
+ 
+ 				if (_runOptions.PerformXslTransform) {
+diff -ur MonoGame-3.4.orig/Test/Runner/Interface/RegexTestFilter.cs MonoGame-3.4/Test/Runner/Interface/RegexTestFilter.cs
+--- MonoGame-3.4.orig/Test/Runner/Interface/RegexTestFilter.cs	2016-01-22 20:27:56.718964644 -0800
++++ MonoGame-3.4/Test/Runner/Interface/RegexTestFilter.cs	2016-01-22 20:48:52.339162325 -0800
+@@ -1,10 +1,10 @@
+ using System;using NUnit.Framework.Interfaces;
+ using System.Text.RegularExpressions;
+-
++using NUnit.Framework.Internal;
+ 
+ 
+ namespace MonoGame.Tests {
+-	class RegexTestFilter : ITestFilter {
++	class RegexTestFilter : TestFilter {
+ 		private readonly Regex _regex;
+ 		private readonly TestFilterAction _action;
+ 
+@@ -35,14 +35,14 @@
+ 		#region ITestFilter Members
+ 		public bool Pass(ITest test)
+ 		{
+-			var match = _regex.Match (test.TestName.FullName);
++			var match = _regex.Match (test.FullName);
+ 
+ 			if (_action == TestFilterAction.Exclude)
+ 				return !match.Success;
+ 			return match.Success;
+ 		}
+ 
+-		public bool Match(ITest test)
++		override public bool Match(ITest test)
+ 		{
+ 			throw new NotImplementedException();
+ 		}
+@@ -51,6 +51,13 @@
+ 		{
+ 			get { return false; }
+ 		}
++
++		override public TNode AddToXml(TNode parentNode, bool recursive)
++		{
++			return new TNode("");
++		}		
++
++
+ 		#endregion
+ 	}
+ }
+diff -ur MonoGame-3.4.orig/Test/Runner/Interface/TestEventListenerBase.cs MonoGame-3.4/Test/Runner/Interface/TestEventListenerBase.cs
+--- MonoGame-3.4.orig/Test/Runner/Interface/TestEventListenerBase.cs	2016-01-22 20:27:56.718964644 -0800
++++ MonoGame-3.4/Test/Runner/Interface/TestEventListenerBase.cs	2016-01-22 20:59:01.322516446 -0800
+@@ -50,33 +50,23 @@
+ 
+ 		public void TestFinished (ITestResult result)
+ 		{
+-			char output;
+-			switch (result.ResultState) {
+-			case ResultState.Cancelled:
++			char output ='?';
++			if (result.ResultState == ResultState.Cancelled) {
+ 				output = 'C';
+-				break;
+-			case ResultState.Error:
++			} else if (result.ResultState == ResultState.Error) {
+ 				output = 'E';
+-				break;
+-			case ResultState.Failure:
++			} else if (result.ResultState == ResultState.Failure) {
+ 				output = 'F';
+-				break;
+-			case ResultState.Ignored:
++			} else if (result.ResultState == ResultState.Ignored) {
+ 				output = 'I';
+-				break;
+-			case ResultState.Inconclusive:
++			} else if (result.ResultState == ResultState.Inconclusive) {
+ 				output = '?';
+-				break;
+-			case ResultState.NotRunnable:
++			} else if (result.ResultState == ResultState.NotRunnable) {
+ 				output = 'N';
+-				break;
+-			case ResultState.Skipped:
++			} else if (result.ResultState == ResultState.Skipped) {
+ 				output = 'S';
+-				break;
+-			default:
+-			case ResultState.Success:
++			} else if (result.ResultState == ResultState.Success) {
+ 				output = '.';
+-				break;
+ 			}
+ 
+ 			_stdout.Write (output);
