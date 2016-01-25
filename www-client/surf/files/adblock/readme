@@ -1,0 +1,29 @@
+file info
+
+All scripts should run with python version 2
+
+adblock - first tier ad block lists
+adblock.py - new algorithm
+adblock.py.bak - old algorithm and backup of adblock.py
+adblockresource.py - old algorithm and backup of adblock.py
+adbserver.pid - mutex block cruft for server
+block1.dat - second tier domain buckets
+block2.dat - second tier general pattern lists
+block2.py - abandoned python based filtering before transforming it to faster c code
+blocklists.py - block1 and block2 generator.  blocklist.py will take the blocklist and generate those two files one for the faster domain pattern lookup and the other for slower pattern based lookup.
+block.py - abandoned python based filtering before transforming it to faster c code
+blocksrv.py - old abandoned script that held block list in memory without needing to regenerate every time. It was a database server that surfext.c sent queries to and intended to stay in memory for a long time to reduce overhead.
+convert.py - currently active conversion script to convert the remote block lists into adblock.py
+convert.py.bak - old conversion script and backup
+customrules - custom rules for blocking
+string_matching.py - contains string based matching alorithm like KMP and boyer-moore.
+string_matching.pyc - precompiled version of string_matching.pyp
+update.sh - adblock updater
+whitelist - domains to ignore filtering
+
+You can delete adblock.py.bak adblockresource.py convert.py.bak string_matching.pyc string_matching.py block.py block2.py.  They are archived for research.
+
+--
+
+surfext.c extension contains will process block1 and block2 for futher refined blocking.  It is currently disabled because the processing time takes too long, but it left there for someone to further improve it.  Currently WebKit2GTK is also lacking in lower level blocking via soup.
+WebKit2GTK won't allow you low level access unlike WebKitGTK+ original

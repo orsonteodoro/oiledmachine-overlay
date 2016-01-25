@@ -30,4 +30,4 @@ cp /tmp/adblock $blockfile
 rm block1.dat
 rm block2.dat
 
-./blocklists.py
+python2 ./blocklists.py

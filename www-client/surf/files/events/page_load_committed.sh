@@ -7,4 +7,4 @@ title="$3"
 #echo "page_load_committed:" "$(date +'%Y-%m-%d %H:%M:%S')" "$url" "$title" >> $HOME/historytest
 
 # Adblock script.
-/etc/surf/scripts/adblock/adblock.py $winid $url 2> /dev/null
+python2 /etc/surf/scripts/adblock/adblock.py $winid $url

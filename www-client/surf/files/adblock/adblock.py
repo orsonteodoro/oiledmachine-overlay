@@ -53,7 +53,7 @@ def adblock(url, winid):
 	capture = False
 	c=0
 	for l in lines2:
-	        if url.find(l.strip()) > -1:
+		if url.find(l.strip()) > -1:
 			sys.exit()
 	for l in lines:
 		c=c+1
