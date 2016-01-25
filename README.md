@@ -60,6 +60,8 @@ If you create a new solution, you should answer no to override the Tao.Sdl.dll.c
 
 The ebuild uses dev-dotnet/managed-pvrtc without use flag.  Please read the dev-dotnet/managed-pvrtc below before distributing or using  it.
 
+Again, I need people who have used this library to test this ebuild and the tools (mgcb, 2mgfx, pipeline), mp3compression, GamepadConfig.
+
 *dev-dotnet/managed-pvrtc - You should stay away from this one but it may be required for compiling monogame which I didn't take the time to turn off.  Basically managed-pvrtc is a C# wrapper around the propretary PVRTexLib library blob from Imagination Technlogies.  You need to download the library there.  The binary library blob uses the PVRTC compression (https://en.wikipedia.org/wiki/PVRTC) which is patented.  The license in those libraries are restricted.  There is a bindist flag for this one.  Using the bindist will not install the propretary library and proprietary documentation just the wrapper.  Delete the PVRTexLib from that this ebuild uses and use the one from Imagination Technlogies.
 
 *dev-cpp/cppsharp - This one requires llvm from this overlay to install additional headers.  It was going to be used for NVTT.net but it turns out nvidia-texture-tools has the C# language binding.  I don't currently use it for any ebuilds I use, but it is offered here.  It still needs testing.  It requires llvm package from this overlay.
