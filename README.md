@@ -70,10 +70,11 @@ Again, I need people who have used this library to test this ebuild and the tool
 
 *media-video/epcam - Support for the EP800/SE402/SE401 driver.  It uses sources from https://github.com/orsonteodoro/gspca_ep800.  This driver differs from the main kernel driver in that it supports the newer reference firmware.  It still needs testing for runtime breakage.
 
+*dev-lang/alice - This is the ebuild for educational object oriented programming language used for beginner programmers and students.  It is useful for learning the fundamentals of game programming.  People with dwm window manager or parentless window managers need to use wmname to properly render windows for this java program.  The ebuild that I offer is Alice 3.  http://www.alice.org/index.php for more details.
+
+
 TODO (NOT COMMITED):
 
 *media-video/libmtp - MTP/IP partial support.  Currently patches are stored in seperate my /etc/portage/patches.  No one has reverse engineered the save WIFI profile BLOB generation [possibly related to CryptUnprotectData() and WLANProfile XML format] to device given a plaintext WIFI password even in WINE.  It uses GSSDP to broadcast presence.  Transferring files over WIFI in Linux/libmtp does work but you need to have my patch and need the GUID of the PC/Transfer App.
-
-*game-engines/alice - Educational Game Development.  Investigate 3.0.
 
 *game-engines/godot - Open source alternative to the Unity Game Engine.  Planning alpha release ebuild.
