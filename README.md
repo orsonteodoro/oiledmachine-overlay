@@ -72,6 +72,7 @@ Again, I need people who have used this library to test this ebuild and the tool
 
 *dev-lang/alice - This is the ebuild for educational object oriented programming language used for beginner programmers and students.  It is useful for learning the fundamentals of game programming.  People with dwm window manager or parentless window managers need to use wmname to properly render windows for this java program.  The ebuild that I offer is Alice 3.  http://www.alice.org/index.php for more details.
 
+*dev-lang/qb64 - This is a freeware QBasic clone.  It has similar look and feel as QBasic.
 
 TODO (NOT COMMITED):
 
