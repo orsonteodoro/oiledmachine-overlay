@@ -12,7 +12,7 @@ SRC_URI="https://github.com/richard42/turboturtle/releases/download/March2009/Tu
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86"
-IUSE=""
+IUSE="examples"
 
 RDEPEND="media-libs/libsdl
 	 dev-lang/python:2.7
@@ -27,17 +27,26 @@ src_install() {
 	mkdir -p "${D}/usr/$(get_libdir)/turboturtle"
 	cp -r "${S}"/* "${D}/usr/$(get_libdir)/turboturtle"
 
+	if use examples; then
+		mkdir -p "${D}/usr/share/turboturtle"
+		mv "${D}/usr/$(get_libdir)/turboturtle/logocode" "${D}/usr/share/turboturtle"
+	else
+		rm -rf "${D}/usr/$(get_libdir)/turboturtle/logocode"
+	fi
+
 	chmod o+w "${D}/usr/$(get_libdir)/turboturtle"
 	mkdir -p "${D}/usr/bin"
 
 	echo '#!/bin/bash' > "${D}/usr/bin/turboturtle"
 	echo 'OLDDIR=`pwd`' >> "${D}/usr/bin/turboturtle"
+	echo "cp \$1 /usr/$(get_libdir)/turboturtle" >> "${D}/usr/bin/turboturtle"
 	echo "cd /usr/$(get_libdir)/turboturtle" >> "${D}/usr/bin/turboturtle"
 	echo './runlogo.sh $@' >> "${D}/usr/bin/turboturtle"
 	echo 'name=`basename "$1"`' >> "${D}/usr/bin/turboturtle"
 	echo 'destdir=`dirname "$1"`' >> "${D}/usr/bin/turboturtle"
 	echo 'basename=${name%%.*}' >> "${D}/usr/bin/turboturtle"
 	echo 'cp $basename ${OLDDIR}' >> "${D}/usr/bin/turboturtle"
+	echo "rm -f /usr/$(get_libdir)/turboturtle/\$basename{.o,.cpp,.logo,}" >> "${D}/usr/bin/turboturtle"
 	chmod +x "${D}/usr/bin/turboturtle"
 
 	sed -i 's|#!/usr/bin/env python|#!/usr/bin/env python2|g' "${D}/usr/$(get_libdir)/turboturtle/turboturtle.py"
