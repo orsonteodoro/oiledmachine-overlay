@@ -70,13 +70,13 @@ Again, I need people who have used this library to test this ebuild and the tool
 
 *media-video/epcam - Support for the EP800/SE402/SE401 driver.  It uses sources from https://github.com/orsonteodoro/gspca_ep800.  This driver differs from the main kernel driver in that it supports the newer reference firmware.  It still needs testing for runtime breakage.
 
-*dev-lang/alice - This is the ebuild for educational object oriented programming language used for beginner programmers and students.  It is useful for learning the fundamentals of game programming.  People with dwm window manager or parentless window managers need to use wmname to properly render windows for this java program.  The ebuild that I offer is Alice 3.  http://www.alice.org/index.php for more details.
+*dev-lang/alice - This is the ebuild for educational object oriented programming language used for beginner programmers and students.  It is useful for learning the fundamentals of game programming.  People with dwm window manager or parentless window managers need to use wmname to properly render windows for this java program.  The ebuild that I offer is Alice 3.  http://www.alice.org/index.php for more details.  Emerging alice:2 will install Alice 2 and emerging alice:3 will install Alice 3.   You can install both at the same time.  Both have wrapper scripts (alice2,alice3) that make it easier to run them from dmenu.
 
 *dev-lang/qb64 - This is a freeware QBasic clone.  It has similar look and feel as QBasic.
 
 *dev-lang/turboturtle - This is a TurboLogo ebuild.  It uses a wrapper /usr/bin/turboturtle to dump the code to current working directory.  Read more about turtle graphics at http://www.fascinationsoftware.com/FS/html/TurboTurtle.html .
 
-*game-engines/godot - Open source alternative to the Unity Game Engine.  Planning alpha release ebuild.
+*game-engines/godot - Open source alternative to the Unity Game Engine.  This one is the 2.0 beta.  It also installs the demos in /usr/share/godot.
 
 TODO (NOT COMMITED):
 
