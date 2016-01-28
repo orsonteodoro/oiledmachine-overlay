@@ -46,4 +46,7 @@ src_install() {
 	ln -s "${PROG_BN}" "godot"
 	mkdir -p "${D}/usr/share/godot"
 	cp -r "${S}/demos"  "${D}/usr/share/godot"
+
+	cp "${S}/godot_icon.png" "${D}/usr/share/godot"
+	make_desktop_entry "/usr/bin/godot" "Godot" "${ROOT}/usr/share/godot/godot_icon.png" "Development;IDE"
 }
