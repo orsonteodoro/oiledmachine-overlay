@@ -7,9 +7,10 @@ inherit eutils
 
 DESCRIPTION="Alice"
 HOMEPAGE="http://www.alice.org"
-SRC_URI="http://www.alice.org/downloads/installers/Alice3_unix_Offline_${PV//./_}.sh"
+MY_V="${PV:0:3}"
+SRC_URI="http://www.alice.org/downloads/${MY_V}/Alice${MY_V//./_}e.tar.gz"
 
-LICENSE="ALICE3"
+LICENSE="ALICE2"
 SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86"
 IUSE=""
@@ -22,13 +23,16 @@ FEATURES=""
 S="${WORKDIR}"
 
 src_unpack() {
-	cp "${DISTDIR}"/Alice3_unix_Offline_${PV//./_}.sh "${T}"
-	sed -e "s|\$app_java_home/bin/java\" -Dinstall4j.jvmDir=\"\$app_java_home\"|\$app_java_home/bin/java\" -Dinstall4j.jvmDir=\"${T}\" -Duser.home=\"${T}\" -Djava.util.prefs.systemRoot=\"${T}\" -Djava.util.prefs.userRoot=${T}/home/dummy |" \
-		"${DISTDIR}"/Alice3_unix_Offline_${PV//./_}.sh > ${T}/Alice3_unix_Offline_${PV//./_}.sh
-	chmod +x ${T}/Alice3_unix_Offline_${PV//./_}.sh
+	unpack "${FILESDIR}/${MY_V}/Alice${MY_V//./_}e.tar.gz"
+
+	#cp "${DISTDIR}"/Alice3_unix_Offline_${PV//./_}.sh "${T}"
+	#sed -e "s|\$app_java_home/bin/java\" -Dinstall4j.jvmDir=\"\$app_java_home\"|\$app_java_home/bin/java\" -Dinstall4j.jvmDir=\"${T}\" -Duser.home=\"${T}\" -Djava.util.prefs.systemRoot=\"${T}\" -Djava.util.prefs.userRoot=${T}/home/dummy |" \
+	#	"${DISTDIR}"/Alice3_unix_Offline_${PV//./_}.sh > ${T}/Alice3_unix_Offline_${PV//./_}.sh
+	#chmod +x ${T}/Alice3_unix_Offline_${PV//./_}.sh
 }
 
 src_install() {
+	die
 	addpredict /usr/lib64/icedtea7/jre/.systemPrefs/com
 	mkdir -p "${D}"/opt/alice
 	mkdir -p "${T}"/home/dummy/Desktop

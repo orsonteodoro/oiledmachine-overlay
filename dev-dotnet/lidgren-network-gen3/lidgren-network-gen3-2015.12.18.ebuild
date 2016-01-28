@@ -22,9 +22,6 @@ DEPEND="${RDEPEND}
 
 FEATURES="nofetch"
 
-# This build is not parallel build friendly
-MAKEOPTS="${MAKEOPTS} -j1"
-
 S="${WORKDIR}/${PN}-${PV}"
 
 src_unpack() {

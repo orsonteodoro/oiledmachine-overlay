@@ -1,0 +1,25 @@
+QB64 SOFTWARE LICENSE 
+ 
+QB64 is currently released as freeware meaning that this download may be copied/distributed free of charge. 
+All rights to the programs you create using QB64 (in both their executable and source form) belong to you. 
+You are under no obligation to release the source code to the programs you create. 
+You can sell the programs you create for profit. 
+You are under no obligation to acknowledge that the programs you create were written in QB64 or reference the QB64 website in any way. 
+ 
+The dynamically linked libraries (the DLL files you must include with your programs) are distributed under LGPL. Requirements for this can be found at the following URL: 
+ 
+http://www.libsdl.org/license-lgpl.php 
+ 
+QB64 and QB64 programs dynamically link to SDL (Simple DirectMedia Layer) libraries. SDL libraries are made available under the GNU Lesser General Public License (LGPL). Details of the SDL license requirements can be found at the above URL. 
+ 
+Libraries are used in their 'standard'/unmodified versions and source code for these libraries can be found at: 
+ 
+http://www.libsdl.org 
+ 
+The QB64 compiler generates C++ code which is compiled into executable form by the MINGW GCC compiler. QB64 uses a version of the MINGW & GCC compilers found at the following URL: 
+ 
+http://www.drangon.org/mingw/ 
+ 
+The official version of MINGW GCC compiler can be found at the following URL: 
+ 
+http://www.mingw.org/  

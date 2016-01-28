@@ -20,9 +20,6 @@ DEPEND="${RDEPEND}
 	virtual/pkgconfig
 "
 
-# This build is not parallel build friendly
-MAKEOPTS="${MAKEOPTS} -j1"
-
 S="${WORKDIR}/assimp-net-${PV}"
 
 src_compile() {
