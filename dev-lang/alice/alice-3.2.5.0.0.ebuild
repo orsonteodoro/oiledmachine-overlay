@@ -10,7 +10,7 @@ HOMEPAGE="http://www.alice.org"
 SRC_URI="http://www.alice.org/downloads/installers/Alice3_unix_Offline_${PV//./_}.sh"
 
 LICENSE="ALICE3"
-SLOT="0"
+SLOT="3"
 KEYWORDS="~amd64 ~ppc ~x86"
 IUSE=""
 
@@ -30,18 +30,23 @@ src_unpack() {
 
 src_install() {
 	addpredict /usr/lib64/icedtea7/jre/.systemPrefs/com
-	mkdir -p "${D}"/opt/alice
+	mkdir -p "${D}"/opt/alice3
 	mkdir -p "${T}"/home/dummy/Desktop
 	mkdir -p "${T}"/home/dummy/applications
 	mkdir -p "${T}"/share
 	mkdir -p "${T}"/etc
 	mkdir -p "${T}"/jre
-	"${T}"/Alice3_unix_Offline_${PV//./_}.sh -q -dir "${D}/opt/alice" \
+	"${T}"/Alice3_unix_Offline_${PV//./_}.sh -q -dir "${D}/opt/alice3" \
 		-Vsys.symlinkDir=${T}/share
-	rm "${D}/opt/alice/Alice 3.desktop"
-	make_desktop_entry "/bin/sh \"/opt/alice/Alice 3\"" "Alice 3" "/opt/alice/.install4j/Alice 3.png" "Education;ComputerScience"
-	sed -i -e 's|/var/tmp/portage/dev-lang/alice-3.2.5.0.0/image||g' -e "s|/var/tmp/portage/dev-lang/alice-3.2.5.0.0/temp/share|/opt/alice/share|g" "${D}"/opt/alice/.install4j/response.varfile
-	rm -rf "${D}"/opt/alice/share
+	rm "${D}/opt/alice3/Alice 3.desktop"
+	make_desktop_entry "/bin/sh \"/opt/alice3/Alice 3\"" "Alice 3" "/opt/alice3/.install4j/Alice 3.png" "Education;ComputerScience"
+	sed -i -e 's|/var/tmp/portage/dev-lang/alice-3.2.5.0.0/image||g' -e "s|/var/tmp/portage/dev-lang/alice-3.2.5.0.0/temp/share|/opt/alice3/share|g" "${D}"/opt/alice3/.install4j/response.varfile
+	rm -rf "${D}"/opt/alice3/share
+	mkdir -p "${D}/usr/bin"
+	echo '#!/bin/bash' > "${D}/usr/bin/alice3"
+	echo 'cd "/opt/alice3"' >> "${D}/usr/bin/alice3" 
+	echo './"Alice 3"' >> "${D}/usr/bin/alice3"
+	chmod +x "${D}/usr/bin/alice3"
 }
 
 pkg_postinst() {
