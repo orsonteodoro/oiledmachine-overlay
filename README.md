@@ -74,7 +74,7 @@ Again, I need people who have used this library to test this ebuild and the tool
 
 *dev-lang/qb64 - This is a freeware QBasic clone.  It has similar look and feel as QBasic.
 
-*dev-lang/turbologo - This is a TurboLogo ebuild.  It uses a wrapper /usr/bin/turboturtle to dump the code to current working directory.  Read more about turtle graphics at http://www.fascinationsoftware.com/FS/html/TurboTurtle.html .
+*dev-lang/turboturtle - This is a TurboLogo ebuild.  It uses a wrapper /usr/bin/turboturtle to dump the code to current working directory.  Read more about turtle graphics at http://www.fascinationsoftware.com/FS/html/TurboTurtle.html .
 
 TODO (NOT COMMITED):
 
