@@ -80,7 +80,7 @@ Again, I need people who have used this library to test this ebuild and the tool
 
 *game-engines/godot - Open source alternative to the Unity Game Engine.  This one is the 2.0 beta.  It also installs the demos in /usr/share/godot.  I recommend the platformer demo to test the sound and hardware accelerated opengl.
 
-*dev-embedded/modelsim - Ebuilds to help install it on Gentoo Linux.  You still need to download the installer manually and place it into /usr/bin/distfiles.  It will preform an unattended install with a desktop menu item and wrapper script /usr/bin/modelsim.  Use desktop-menu-fix to properly run it on xfce4 menu or other window managers.
+*dev-embedded/modelsim - Ebuilds to help install it on Gentoo Linux.  You still need to download the installer manually and place it into /usr/bin/distfiles.  It will preform an unattended install with a desktop menu item and wrapper script /usr/bin/modelsim.  Use desktop-menu-fix to properly run it on xfce4 menu or other window managers.  See  https://en.wikipedia.org/wiki/ModelSim for details about this software.
 
 TODO (NOT COMMITED):
 
