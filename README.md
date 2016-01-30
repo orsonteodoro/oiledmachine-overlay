@@ -74,6 +74,8 @@ Again, I need people who have used this library to test this ebuild and the tool
 
 *dev-lang/qb64 - This is a freeware QBasic clone.  It has similar look and feel as QBasic.
 
+*dev-lang/gambas - This is a BASIC dialect.  It is basically a Visual Basic clone.  Version 3.8.4 is in this overlay.  Use the ide use flag to build the IDE.  You can make games with it and has support for opengl.
+
 *dev-lang/turboturtle - This is a TurboLogo ebuild.  It uses a wrapper /usr/bin/turboturtle to dump the code to current working directory.  Read more about turtle graphics at http://www.fascinationsoftware.com/FS/html/TurboTurtle.html .
 
 *game-engines/godot - Open source alternative to the Unity Game Engine.  This one is the 2.0 beta.  It also installs the demos in /usr/share/godot.
