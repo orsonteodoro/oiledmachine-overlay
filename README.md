@@ -84,7 +84,7 @@ Again, I need people who have used this library to test this ebuild and the tool
 
 TODO (NOT COMMITED):
 
-*game-engines/enigma - A Game Development environment that is similar to GameMaker.  More information can be found in https://enigma-dev.org/docs/Wiki/ENIGMA .  Basically LateralGM is the IDE and ENIGMA is a toolchain.  ENIGMA will compile scripting portion of EDL which is the counterpart to GML with C++.  LateralGM is written in Java and ENIGMA is written in C++.  ENIGMA is a plugin that plugs into LateralGM.  EDL is mostly backwards compatibile with GMK scripting language.  It is GPL-3 licensed.
+*game-engines/enigma - A Game Development environment that is similar to GameMaker.  More information can be found in https://enigma-dev.org/docs/Wiki/ENIGMA .  Basically LateralGM is the Level Editor like GameMaker's and ENIGMA is a toolchain and collection of projects.  ENIGMA will compile scripting portion of EDL which is the counterpart to GML with C++.  LateralGM is written in Java and ENIGMA is written in C++.  ENIGMA is a plugin that plugs into LateralGM.  EDL is mostly backwards compatibile with GMK scripting language.  It is GPL-3 licensed.
 
 *dev-embedded/xilinx-ise-webpack - Ebuilds that help installing it on Gentoo systems.  It is fetch restricted so you need to register to download it.  Xilinx ISE is and IDE used to program FPGAs in VHDL for example.
 
