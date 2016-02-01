@@ -100,7 +100,7 @@ TODO (NOT COMMITED):
 
 Big binary only package will have storage space checks.  Alice2, Alice3, xilinx-ise-webpack, and modelsim will be updated.
 
-*dev-embedded/xilinx-ise-webpack - Ebuilds that help installing it on Gentoo systems.  It is fetch restricted so you need to register to download it.  Xilinx ISE is and IDE used to program FPGAs in VHDL for example.  This is almost done.
+*dev-embedded/xilinx-ise-webpack - Ebuilds that help installing it on Gentoo systems.  It is fetch restricted so you need to register to download it.  Xilinx ISE is an IDE used to program FPGAs in VHDL for example.  You also need around 24.128G of free space and several hours of install time because it has to transfer the file from dist files to the temp folder, unpacks the package into image, then checks the libraries for TEXTRELS and execstack checks for hundreds of libraries, then dumps it finally to system.  This is almost done.
 
 *dev-embedded/diligent-adept2-runtime - Ebuilds that help install it on Gentoo systems.
 
