@@ -82,9 +82,19 @@ Again, I need people who have used this library to test this ebuild and the tool
 
 *dev-embedded/modelsim - Ebuilds to help install it on Gentoo Linux.  You still need to download the installer manually and place it into /usr/bin/distfiles.  It will preform an unattended install with a desktop menu item and wrapper script /usr/bin/modelsim.  Use desktop-menu-fix to properly run it on xfce4 menu or other window managers.  See  https://en.wikipedia.org/wiki/ModelSim for details about this software.  It will help install ase and ae editions.
 
+*game-engines/enigma - A Game Development environment that is similar to GameMaker.  More information can be found in https://enigma-dev.org/docs/Wiki/ENIGMA .  Basically LateralGM is the Level Editor like GameMaker's and ENIGMA is a toolchain and collection of projects.  ENIGMA will compile scripting portion of EDL which is the counterpart to GML with C++.  LateralGM is written in Java and ENIGMA is written in C++.  ENIGMA is a plugin that plugs into LateralGM.  EDL is mostly backwards compatibile with GMK scripting language.  It is GPL-3 licensed.
+
+Currently compiling by command line is broken.  You must use LateralGM to build your ENIGMA game.  I am currently trying to fix this.
+
+*games-misc/lgmplugin - The ENIGMA plugin wrapper.  It is a middle man between LateralGM and the ENIGMA compiler.  The lgmplugin can be used by gui or cli but currently the cli is broken.  It is written in Java.  I am investigating why it is broken.
+
+*games-misc/lateralgm - LateralGM for the ENIGMA development environment.  It is written in Java.  This is basically the level editor
+
+*games-misc/libmaker - This is the Library editor for ENIGMA and GameMaker.  It is written in Java.  More information can be found at https://enigma-dev.org/docs/Wiki/Library_Maker.
+
 TODO (NOT COMMITED):
 
-*game-engines/enigma - A Game Development environment that is similar to GameMaker.  More information can be found in https://enigma-dev.org/docs/Wiki/ENIGMA .  Basically LateralGM is the Level Editor like GameMaker's and ENIGMA is a toolchain and collection of projects.  ENIGMA will compile scripting portion of EDL which is the counterpart to GML with C++.  LateralGM is written in Java and ENIGMA is written in C++.  ENIGMA is a plugin that plugs into LateralGM.  EDL is mostly backwards compatibile with GMK scripting language.  It is GPL-3 licensed.
+
 
 *dev-embedded/xilinx-ise-webpack - Ebuilds that help installing it on Gentoo systems.  It is fetch restricted so you need to register to download it.  Xilinx ISE is and IDE used to program FPGAs in VHDL for example.
 
