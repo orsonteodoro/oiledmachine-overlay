@@ -4,6 +4,10 @@ This portage overlay contains various ebuilds for the Gentoo Linux Distribution.
 
 In this overlay, I provide 32 bit ebuilds for libraries and programs of some programs while the Gentoo overlay contains native ebuilds.  Reason why I choose to use the 32-bit versions over the 64-bit versions because of the 32 bit versions have a lower virtual memory and lower memory footprint overall.  I try to offer the stable modified ebuilds to minimize memory leaks.
 
+IMPORTANT:  Many of these packages have special licenses and EULAs attached to them.  I recommend that you edit your /etc/make.conf so it looks like this ACCEPT_LICENSE="-*" and manually accept each of the licenses.  Licenses can be found in the licenses folder of the overlay.
+
+IMPORTANT:  Many of these packages especially non-free software also require you to manually obtain the installer or files to install and may require you to register on their website.  The required files are listed in the ebuild.
+
 Here is an example of what I mean.
 
 *www-client/firefox - 32 bit only builds on a AMD64 machine.  You can still build the 64 bit version.
@@ -94,9 +98,13 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 TODO (NOT COMMITED):
 
+Big binary only package will have storage space checks.  Alice2, Alice3, xilinx-ise-webpack, and modelsim will be updated.
 
+*dev-embedded/xilinx-ise-webpack - Ebuilds that help installing it on Gentoo systems.  It is fetch restricted so you need to register to download it.  Xilinx ISE is and IDE used to program FPGAs in VHDL for example.  This is almost done.
 
-*dev-embedded/xilinx-ise-webpack - Ebuilds that help installing it on Gentoo systems.  It is fetch restricted so you need to register to download it.  Xilinx ISE is and IDE used to program FPGAs in VHDL for example.
+*dev-embedded/diligent-adept2-runtime - Ebuilds that help install it on Gentoo systems.
+
+*diligent-plugin-xilinx - Ebuilds that help install it on Gentoo systems.  It requires dev-embedded/xilinx-ise-webpack and dev-embedded/diligent-adept2-runtime.  The ebuilds will automatically check for dependencies.
 
 *media-video/libmtp - MTP/IP partial support.  Currently patches are stored in seperate my /etc/portage/patches.  No one has reverse engineered the save WIFI profile BLOB generation [possibly related to CryptUnprotectData() and WLANProfile XML format] to device given a plaintext WIFI password even in WINE.  It uses GSSDP to broadcast presence.  Transferring files over WIFI in Linux/libmtp does work but you need to have my patch and need the GUID of the PC/Transfer App.
 
