@@ -86,11 +86,11 @@ Again, I need people who have used this library to test this ebuild and the tool
 
 Currently compiling by command line is broken.  You must use LateralGM to build your ENIGMA game.  I am currently trying to fix this.
 
-*games-misc/lgmplugin - The ENIGMA plugin wrapper.  It is a middle man between LateralGM and the ENIGMA compiler.  The lgmplugin can be used by gui or cli but currently the cli is broken.  It is written in Java.  I am investigating why it is broken.
+*games-misc/lgmplugin - The ENIGMA plugin wrapper.  It is a middle man between LateralGM and the ENIGMA compiler.  The lgmplugin can be used by GUI (through LateralGM) or CLI (command line) but currently the CLI is broken.  It was written in Java.  I am investigating why it is broken.
 
-*games-misc/lateralgm - LateralGM for the ENIGMA development environment.  It is written in Java.  This is basically the level editor
+*games-misc/lateralgm - LateralGM for the ENIGMA development environment.  It was written in Java.  This is basically the level editor
 
-*games-misc/libmaker - This is the Library editor for ENIGMA and GameMaker.  It is written in Java.  More information can be found at https://enigma-dev.org/docs/Wiki/Library_Maker.
+*games-misc/libmaker - This is the Library editor for ENIGMA and GameMaker.  It was written in Java.  More information can be found at https://enigma-dev.org/docs/Wiki/Library_Maker.
 
 TODO (NOT COMMITED):
 
