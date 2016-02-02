@@ -10,9 +10,11 @@ IMPORTANT:  Many of these packages especially non-free software also require you
 
 Here is an example of what I mean.
 
-*www-client/firefox - 32 bit only builds on a AMD64 machine.  You can still build the 64 bit version.
+*www-client/firefox - 32 bit only builds on an AMD64 machine.  You can still build the 64 bit version.
 
-*www-client/chromium - 32 bit only builds on a AMD64 machine.  You can still build the 64 bit version.
+*www-client/chromium - 32 bit only builds on an AMD64 machine.  You can still build the 64 bit version.  You need to upgrade www-plugins/chrome-binary-plugins with the same bitness in order for flash to work.
+
+*www-plugins/chrome-binary-plugins - 32 only builds on an AMD64 machine.
 
 *net-libs/webkit-gtk - 32 bit only builds on a AMD64 machine.  You can still build the 64 bit version.  FTLJIT enabled webkit.  FTLJIT is disabled on the main Gentoo overlay.  (FTLJIT needs testing).  If you have a JavaScript algorithm or use case that calls a function 100,000+ executions then you should use this ebuild.
 
