@@ -98,7 +98,7 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 *dev-embedded/xilinx-ise-webpack - Ebuilds that help installing it on Gentoo systems.  It is fetch restricted so you need to register to download it.  Xilinx ISE is an IDE used to program FPGAs in VHDL for example.  You also need around 24.128G of free space and several hours of install time because it has to transfer the file from /usr/portage/distfiles to the /var/tmp/portage/${CATEGORY}/${PF}/tmp folder to mark it executible, unpacks the package into /var/tmp/portage/${CATEGORY}/${PF}/image, then checks the libraries for TEXTRELS and execstack checks for hundreds of libraries, then dumps it finally to the system.  The build will also install wrapper scripts ise64 or ise32 for dmenu.  It will install a desktop menu item as well for xfce4 and other popular desktops.
 
-*dev-embedded/diligent-adept2-runtime - Ebuilds that help install it on Gentoo systems.  The original installer did not recognize the 4.x kernels and did not install udev rules in the recommended place in /lib/udev/rules.d.
+*dev-embedded/diligent-adept2-runtime - Ebuilds that help install it on Gentoo systems.  The original installer did not recognize the 4.x kernels and did not install udev rules in the recommended place in /lib/udev/rules.d.  The Gentoo Wiki doesn't have an explicit proper fix for 4.x kernels if you don't think.
 
 *dev-embedded/diligent-plugin-xilinx - Ebuilds that help install it on Gentoo systems.  It requires dev-embedded/xilinx-ise-webpack and dev-embedded/diligent-adept2-runtime.  The ebuilds will automatically check for dependencies.
 
