@@ -42,7 +42,7 @@ src_install() {
 	mv edu/cmu/cs/stage3/alice/authoringtool/images/aliceHead.gif "${D}/usr/share/alice2"
 	rm -rf edu
 
-	make_desktop_entry "/bin/sh -c \"cd /opt/alice2; ./run-alice\"" "Alice 2" "/usr/share/alice2/aliceHead.png" "Education;ComputerScience"
+	make_desktop_entry "/bin/sh -c \"cd /opt/alice2; ./run-alice\"" "Alice 2" "/usr/share/alice2/aliceHead.gif" "Education;ComputerScience"
 	mkdir -p "${D}/usr/bin"
 	echo '#!/bin/bash' > "${D}/usr/bin/alice2"
 	echo 'cd "/opt/alice2"' >> "${D}/usr/bin/alice2" 
