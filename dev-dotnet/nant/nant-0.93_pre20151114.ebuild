@@ -20,7 +20,7 @@ DEPEND="${RDEPEND}
 	virtual/pkgconfig
 "
 
-FEATURES="nofetch"
+RESTRICT="fetch"
 
 S="${WORKDIR}/${PN}-${PV}"
 

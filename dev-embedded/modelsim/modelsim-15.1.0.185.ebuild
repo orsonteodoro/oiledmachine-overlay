@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=5
-inherit eutils
+inherit eutils check-reqs
 
 DESCRIPTION="ModelSim"
 HOMEPAGE="http://dl.altera.com/?edition=lite"
@@ -11,7 +11,7 @@ SRC_URI="ModelSimSetup-15.1.0.185-linux.run"
 
 LICENSE="QUARTUS-PRIME-15.1"
 SLOT="0"
-KEYWORDS="~amd64 ~ppc ~x86"
+KEYWORDS="~amd64 ~x86"
 IUSE="altera-edition altera-starter-edition desktop-menu-fix"
 REQUIRED_USE="^^ ( altera-edition altera-starter-edition )"
 
@@ -23,17 +23,15 @@ RESTRICT="fetch"
 
 S="${WORKDIR}"
 
+CHECKREQS_DISK_BUILD="4960M"
+CHECKREQS_DISK_USR="3720M"
+
 VER="${PV:0:4}"
-F="ModelSimSetup-15.1.0.185-linux.run"
+F="ModelSimSetup-${PV}-linux.run"
 pkg_setup() {
 	if [[ ! -f "${DISTDIR}/${F}" ]]; then
 		die "Place ${F} in /usr/portage/distfiles"
 	fi
-	(sha1sum "${DISTDIR}/${F}")
-        echo $(sha1sum "${DISTDIR}/${F}") | grep "fd92e3366027679f120318eccf0f748c7267b853" &>/dev/null
-        if [[ "$?" != "0" ]]; then
-	        die "${F} is the wrong download or it is corrupt."
-        fi
 }
 
 src_unpack() {
@@ -61,14 +59,14 @@ src_install() {
 	echo "#!/bin/bash" > "${D}/usr/bin/modelsim"
 	if use desktop-menu-fix; then
 		echo "if [[ \"\${#XDG_CURRENT_DESKTOP}\" > \"0\"  ]]; then" >> "${D}/usr/bin/modelsim" >> "${D}/usr/bin/modelsim"
-	        echo "  xfce4-terminal -x /bin/sh -c \"cd /opt/altera/${VER}/${myedition}/linuxaloem/; ./vsim \$@\"" >> "${D}/usr/bin/modelsim"
+	        echo "  xfce4-terminal -x /bin/sh -c \"cd /opt/altera/${VER}/${myedition}/linuxaloem/; ./vsim \$*\"" >> "${D}/usr/bin/modelsim"
 		echo 'else' >> "${D}/usr/bin/modelsim"
 	        echo "  cd /opt/altera/${VER}/${myedition}/linuxaloem/" >> "${D}/usr/bin/modelsim"
-	        echo "  ./vsim \$@" >> "${D}/usr/bin/modelsim"
+	        echo "  ./vsim \$*" >> "${D}/usr/bin/modelsim"
 		echo "fi" >> "${D}/usr/bin/modelsim"
 	else
 	        echo "cd /opt/altera/${VER}/${myedition}/linuxaloem/" >> "${D}/usr/bin/modelsim"
-	        echo "./vsim \$@" >> "${D}/usr/bin/modelsim"
+	        echo "./vsim \$*" >> "${D}/usr/bin/modelsim"
 	fi
 	chmod +x "${D}/usr/bin/modelsim"
 

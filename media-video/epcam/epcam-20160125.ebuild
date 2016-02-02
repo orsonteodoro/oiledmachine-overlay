@@ -20,7 +20,7 @@ IUSE="snapshot-button"
 
 RDEPEND=""
 
-RESTRICT="nofetch"
+RESTRICT="fetch"
 
 S="${WORKDIR}/${PN}-${PV}/trunk"
 

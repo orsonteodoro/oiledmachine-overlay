@@ -11,7 +11,7 @@ SRC_URI="http://www.qb64.net/release/official/2015_03_12__02_08_19__v0000/linux/
 
 LICENSE="QB64"
 SLOT="0"
-KEYWORDS="~amd64 ~ppc ~x86"
+KEYWORDS="~amd64 ~x86"
 IUSE="samples android"
 
 RDEPEND="android? ( dev-util/android-studio )

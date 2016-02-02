@@ -41,7 +41,7 @@ SRC_URI=""
 
 S="${WORKDIR}/monogame-${PV}"
 
-RESTRICT="nofetch"
+RESTRICT="fetch"
 
 DOTNETTARGET="4.0"
 

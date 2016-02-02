@@ -14,7 +14,7 @@ KEYWORDS="~amd64 ~x86 ~ppc"
 SRC_URI=""
 IUSE="debug"
 
-RESTRICT="test nofetch"
+RESTRICT="test fetch"
 
 RDEPEND="
 	>=dev-lang/mono-3.0

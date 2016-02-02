@@ -9,7 +9,7 @@ DESCRIPTION="LateralGM Plugin"
 HOMEPAGE="https://github.com/enigma-dev/lgmplugin"
 SRC_URI=""
 
-RESTRICT="nofetch"
+RESTRICT="fetch"
 
 LICENSE="GPL-3"
 SLOT="0"

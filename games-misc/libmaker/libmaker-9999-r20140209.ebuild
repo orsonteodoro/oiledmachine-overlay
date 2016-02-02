@@ -9,7 +9,7 @@ DESCRIPTION="LateralGM LibMaker"
 HOMEPAGE="https://github.com/IsmAvatar/LibMaker"
 SRC_URI=""
 
-RESTRICT="nofetch"
+RESTRICT="fetch"
 
 LICENSE="GPL-3"
 SLOT="0"

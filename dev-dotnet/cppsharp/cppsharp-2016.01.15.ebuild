@@ -21,7 +21,7 @@ DEPEND="${RDEPEND}
 	>=sys-devel/llvm-9999
 "
 
-FEATURES="nofetch"
+RESTRICT="fetch"
 
 S="${WORKDIR}/${PN}-${PV}"
 

@@ -15,7 +15,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
 
-FEATURES="nofetch"
+RESTRICT="fetch"
 
 RDEPEND=">=dev-lang/mono-2.0
 		media-libs/openal

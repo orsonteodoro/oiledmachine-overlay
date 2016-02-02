@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=5
-inherit eutils
+inherit eutils check-reqs
 
 DESCRIPTION="Alice"
 HOMEPAGE="http://www.alice.org"
@@ -11,11 +11,14 @@ SRC_URI="http://www.alice.org/downloads/installers/Alice3_unix_Offline_${PV//./_
 
 LICENSE="ALICE3"
 SLOT="3"
-KEYWORDS="~amd64 ~ppc ~x86"
+KEYWORDS="~amd64 ~x86"
 IUSE=""
 
 RDEPEND="|| ( virtual/jre virtual/jdk  )"
 DEPEND="${RDEPEND}"
+
+CHECKREQS_DISK_BUILD="2061M"
+CHECKREQS_DISK_USR="1145M"
 
 FEATURES=""
 
