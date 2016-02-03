@@ -104,6 +104,8 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 *dev-embedded/diligent-plugin-xilinx - Ebuilds that help install it on Gentoo systems.  It requires dev-embedded/xilinx-ise-webpack and dev-embedded/diligent-adept2-runtime.  The ebuilds will automatically check for dependencies.
 
+*dev-embedded/avr-studio - Ebuild that helps install avr-studio using wine.  You need to run /usr/share/avr-studio/install.sh because it uses winetricks.  The sources of winetricks I don't really trust so you can only use the script on a limited user.  Only the 4.19 is offered since it can only do unattended install.  To get the pretty icon use the ico use flag.  I didn't really test it fully but the gcc plugin needs to be configured to use the gcc.  I am considering creating a new overlay just for wine apps recipies.
+
 TODO (NOT COMMITED):
 
 *media-video/libmtp - MTP/IP partial support.  Currently patches are stored in seperate my /etc/portage/patches.  No one has reverse engineered the save WIFI profile BLOB generation [possibly related to CryptUnprotectData() and WLANProfile XML format] to device given a plaintext WIFI password even in WINE.  It uses GSSDP to broadcast presence.  Transferring files over WIFI in Linux/libmtp does work but you need to have my patch and need the GUID of the PC/Transfer App.  It is currently on indefinite hold.
