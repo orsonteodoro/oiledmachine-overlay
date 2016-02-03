@@ -104,7 +104,7 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 *dev-embedded/diligent-plugin-xilinx - Ebuilds that help install it on Gentoo systems.  It requires dev-embedded/xilinx-ise-webpack and dev-embedded/diligent-adept2-runtime.  The ebuilds will automatically check for dependencies.
 
-*dev-embedded/avr-studio - Ebuild that helps install avr-studio using wine.  You need to run /usr/share/avr-studio/install.sh because it uses winetricks.  The sources of winetricks I don't really trust so you can only use the script on a limited user.  Only the 4.19 is offered since it can only do unattended install.  To get the pretty icon use the ico use flag.  I didn't really test it fully but the gcc plugin needs to be configured to use the gcc.  I am considering creating a new overlay just for wine apps recipies.
+*dev-embedded/avr-studio - Ebuild that helps install avr-studio using wine.  You need to run /usr/share/avr-studio/install.sh because it uses winetricks.  The sources of winetricks I don't really trust so you can only use the script on a limited user.  Only the 4.19 is offered since it can only do unattended install and it is rated gold on winedb.  To get the pretty icon use the ico use flag.  I didn't really test it fully but the gcc plugin needs to be configured to use the gcc.  I am considering creating a new overlay just for wine apps recipies.
 
 TODO (NOT COMMITED):
 
