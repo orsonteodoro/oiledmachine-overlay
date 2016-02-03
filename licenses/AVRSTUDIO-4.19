@@ -1,0 +1,44 @@
+
+"Welcome to AVR Studio from Atmel Corporation. 
+
+AVR Studio is a Development Tool for the entire AVR family of microcontrollers,
+including tinyAVR, megaAVR, picoPower, and XMEGA AVR devices. The AVR Studio is
+free of charge and may be freely copied and distributed in its original form.
+
+AVR Studio enables the user to fully control execution of programs on the AVR
+In-Circuit Emulator or on the included AVR Instruction Set Simulator. AVR
+Studio supports source level execution of Assembly and C/C++ programs assembled
+with the Atmel Corporation's included AVR Assembler or tools from 3rd party
+vendors.
+
+AVR Studio runs under Microsoft Windows 98, Windows NT, Microsoft Windows 2000,
+Windows XP and Windows Vista.
+
+AVR Studio is continously developing. In order to get latest upgrades of AVR
+Studio, please visit our web site
+
+    www.atmel.com
+
+and check out the AVR page.
+
+
+[Licenses]
+AVR Studio uses modified versions of the following LGPL licensed libraries:
+-libelf http://directory.fsf.org/project/libelf/
+-libdwarf http://reality.sgiweb.org/davea/dwarf.html
+-pthreadgc http://sourceware.org/pthreads-win32/
+-elfio
+http://linux.softpedia.com/get/Programming/Assembler-Tools/ELFIO-623.shtml
+
+You will find the LGPL licenses under [Your installation directory]/Atmel/Avr
+Tools/licenses/
+
+Our modified versions are available from 
+http://distribute.atmel.no/tools/opensource/
+
+
+
+Copyright © ATMEL Corporation. All rights reserved. 
+
+AVR, tinyAVR, megaAVR, picoPower, XMEGA, and AVR Studio are trademarks of ATMEL
+Corporation Windows is a trademark of Microsoft Corporation"
