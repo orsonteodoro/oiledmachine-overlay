@@ -1,0 +1,11 @@
+--- /var/tmp/portage/games-server/mangos-0.20/work/src/game/vmap/BIHWrap.h.orig	2015-10-21 02:22:18.750449086 -0700
++++ work/src/game/vmap/BIHWrap.h	2015-10-21 02:22:50.828678964 -0700
+@@ -83,7 +83,7 @@
+             void operator()(const Vector3& p, uint32 Idx)
+             {
+                 if (Idx >= objects_size) 
+-                    { return false; }
++                    { return; }
+ 
+                 if (const T* obj = objects[Idx])
+                     { cb(p, *obj); }

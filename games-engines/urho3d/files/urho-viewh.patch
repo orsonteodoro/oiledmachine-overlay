@@ -1,0 +1,11 @@
+diff -ur urho3d-9999.orig/Source/Urho3D/AngelScript/GraphicsAPI.cpp urho3d-9999/Source/Urho3D/AngelScript/GraphicsAPI.cpp
+--- urho3d-9999.orig/Source/Urho3D/AngelScript/GraphicsAPI.cpp	2016-02-28 09:14:06.574613201 -0800
++++ urho3d-9999/Source/Urho3D/AngelScript/GraphicsAPI.cpp	2016-02-28 09:15:18.757338960 -0800
+@@ -22,6 +22,7 @@
+ 
+ #include "../Precompiled.h"
+ 
++#include "../Graphics/View.h"
+ #include "../AngelScript/APITemplates.h"
+ #include "../Graphics/AnimatedModel.h"
+ #include "../Graphics/Animation.h"

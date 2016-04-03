@@ -1,0 +1,13 @@
+--- CMakeLists.txt.orig	2015-06-20 19:26:43.062421861 -0700
++++ CMakeLists.txt	2015-06-20 19:27:11.765520925 -0700
+@@ -299,6 +299,10 @@
+   ${GENREV_SRC}
+ )
+ 
++if(NOT ${CMAKE_VERSION} VERSION_LESS 3.0)
++    cmake_policy(SET CMP0026 OLD)
++endif()
++
+ get_target_property(GENERATE_EXE genrev LOCATION)
+ add_custom_target("revision.h" ALL
+   COMMAND ${GENERATE_EXE} ${CMAKE_SOURCE_DIR}

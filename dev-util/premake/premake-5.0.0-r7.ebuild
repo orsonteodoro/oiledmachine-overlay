@@ -46,9 +46,21 @@ src_prepare() {
 }
 
 src_compile() {
-	emake -C build/gmake.unix/
+	mydebug="debug=0"
+	if use debug; then
+		mydebug="debug=1"
+	else
+		mydebug="debug=0"
+	fi
+	emake -C build/gmake.unix/ ${mydebug} verbose=1
 }
 
 src_install() {
+	mydebug="release"
+	if use debug; then
+		mydebug="debug"
+	else
+		mydebug="release"
+	fi
 	dobin "bin/release/${PN}5"
 }

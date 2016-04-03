@@ -13,13 +13,19 @@ DEPEND="
 RDEPEND="${DEPEND}"
 EGIT_REPO_URI="https://github.com/memononen/recastnavigation.git"
 EGIT_BRANCH="master"
-IUSE=""
+IUSE="static"
 
 S="${WORKDIR}"
 src_unpack() {
 	git-2_src_unpack
 }
 src_compile() {
+	if use static; then
+		true
+	else
+		sed -i -e "s|StaticLib|SharedLib|g" RecastDemo/premake5.lua
+	fi
+
 	cd "${WORKDIR}/RecastDemo"
 	premake5 gmake
 	cd "${WORKDIR}/RecastDemo/Build/gmake"
@@ -29,7 +35,11 @@ src_compile() {
 src_install() {
 	insinto /usr/lib
 	cd "${WORKDIR}/RecastDemo/Build/gmake/lib/Debug"
-	doins libDetour.a  libDetourCrowd.a  libDetourTileCache.a  libRecast.a
+	if use static; then
+		doins libDetour.a  libDetourCrowd.a  libDetourTileCache.a  libRecast.a
+	else
+		doins libDetour.so  libDetourCrowd.so  libDetourTileCache.so  libRecast.so
+	fi
 
 	insinto /usr/include/Recast
 	cd "${WORKDIR}/Recast/Include"

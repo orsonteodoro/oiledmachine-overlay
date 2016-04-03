@@ -1,0 +1,23 @@
+diff -ur Urho3D-1.5.orig/Source/Urho3D/Audio/Audio.cpp Urho3D-1.5/Source/Urho3D/Audio/Audio.cpp
+--- Urho3D-1.5.orig/Source/Urho3D/Audio/Audio.cpp	2016-02-11 16:59:53.898401961 -0800
++++ Urho3D-1.5/Source/Urho3D/Audio/Audio.cpp	2016-02-11 17:02:45.988722377 -0800
+@@ -100,7 +100,18 @@
+     if (Abs((int)desired.samples / 2 - bufferSamples) < Abs((int)desired.samples - bufferSamples))
+         desired.samples /= 2;
+ 
+-    deviceID_ = SDL_OpenAudioDevice(0, SDL_FALSE, &desired, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
++    int count = SDL_GetNumAudioDevices(0);
++    for (int i = 0; i < count; i++) {
++        URHO3D_LOGINFOF("Audio device %d: %s\n", i, SDL_GetAudioDeviceName(i, 0));
++    }
++    const char *device = SDL_GetAudioDeviceName(URHO3D_SDL_AUDIO_DEVICE_INDEX_,0);
++    if (device == 0)
++    {
++        URHO3D_LOGERROR("Failed to get SDL audio device name");
++        return false;
++    }
++    URHO3D_LOGINFOF("Detected %s", device);
++    deviceID_ = SDL_OpenAudioDevice(device, SDL_FALSE, &desired, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
+     if (!deviceID_)
+     {
+         URHO3D_LOGERROR("Could not initialize audio output");

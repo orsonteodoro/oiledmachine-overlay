@@ -1,0 +1,10 @@
+--- ./src/game/Server/Opcodes.h.orig	2015-06-21 14:01:29.814360346 -0700
++++ ./src/game/Server/Opcodes.h	2015-06-21 14:06:11.699161081 -0700
+@@ -1439,6 +1439,7 @@
+     SMSG_REFORGE_RESULT                                   = 0x58A4, // 4.3.4 15595
+     CMSG_LOAD_SCREEN                                      = 0x2422, // 4.3.4 15595
+     SMSG_START_TIMER                                      = 0x59A5, // 4.3.4 15595
++    NUM_MSG_TYPES                                         = 0xFFFF
+ };
+ 
+ #define MAX_OPCODE_TABLE_SIZE 0xFFFF

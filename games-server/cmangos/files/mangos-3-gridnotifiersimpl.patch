@@ -1,0 +1,89 @@
+--- src/game/WorldHandlers/GridNotifiersImpl.h.orig	2015-06-22 03:24:51.915341808 -0700
++++ src/game/WorldHandlers/GridNotifiersImpl.h	2015-06-22 03:30:46.917996496 -0700
+@@ -316,6 +316,86 @@
+ }
+ 
+ template<class Check>
++void MaNGOS::WorldObjectLastSearcher<Check>::Visit(GameObjectMapType& m)
++{
++    for (GameObjectMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
++    {
++        if (!itr->getSource()->InSamePhase(i_phaseMask))
++            continue;
++        
++        if (i_check(itr->getSource()))
++        {
++            i_object = itr->getSource();
++            return;
++        }
++    }
++}
++
++template<class Check>
++void MaNGOS::WorldObjectLastSearcher<Check>::Visit(PlayerMapType& m)
++{
++    for (PlayerMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
++    {
++        if (!itr->getSource()->InSamePhase(i_phaseMask))
++            continue;
++        
++        if (i_check(itr->getSource()))
++        {
++            i_object = itr->getSource();
++            return;
++        }
++    }
++}
++
++template<class Check>
++void MaNGOS::WorldObjectLastSearcher<Check>::Visit(CreatureMapType& m)
++{
++    for (CreatureMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
++    {
++        if (!itr->getSource()->InSamePhase(i_phaseMask))
++            continue;
++        
++        if (i_check(itr->getSource()))
++        {
++            i_object = itr->getSource();
++            return;
++        }
++    }
++}
++
++template<class Check>
++void MaNGOS::WorldObjectLastSearcher<Check>::Visit(CorpseMapType& m)
++{
++    for (CorpseMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
++    {
++        if (!itr->getSource()->InSamePhase(i_phaseMask))
++            continue;
++        
++        if (i_check(itr->getSource()))
++        {
++            i_object = itr->getSource();
++            return;
++        }
++    }
++}
++
++template<class Check>
++void MaNGOS::WorldObjectLastSearcher<Check>::Visit(DynamicObjectMapType& m)
++{
++    for (DynamicObjectMapType::iterator itr=m.begin(); itr != m.end(); ++itr)
++    {
++        if (!itr->getSource()->InSamePhase(i_phaseMask))
++            continue;
++        
++        if (i_check(itr->getSource()))
++        {
++            i_object = itr->getSource();
++            return;
++        }
++    }
++}
++
++template<class Check>
+ void MaNGOS::WorldObjectListSearcher<Check>::Visit(PlayerMapType& m)
+ {
+     for (PlayerMapType::iterator itr = m.begin(); itr != m.end(); ++itr)

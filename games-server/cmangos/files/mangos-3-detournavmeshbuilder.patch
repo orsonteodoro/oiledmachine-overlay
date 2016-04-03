@@ -1,0 +1,17 @@
+--- dep/recastnavigation/Detour/Include/DetourNavMeshBuilder.h.orig	2015-06-21 20:36:36.437507989 -0700
++++ dep/recastnavigation/Detour/Include/DetourNavMeshBuilder.h	2015-06-21 20:37:06.724640118 -0700
+@@ -96,6 +96,7 @@
+ 	float walkableClimb;	///< The agent maximum traversable ledge. (Up/Down) [Unit: wu]
+ 	float cs;				///< The xz-plane cell size of the polygon mesh. [Limit: > 0] [Unit: wu]
+ 	float ch;				///< The y-axis cell height of the polygon mesh. [Limit: > 0] [Unit: wu]
++	int tileSize; // Tile size (width & height) (vx).
+ 
+ 	/// True if a bounding volume tree should be built for the tile.
+ 	/// @note The BVTree is not normally needed for layered navigation meshes.
+@@ -145,4 +146,4 @@
+ 
+ @see dtCreateNavMeshData
+ 
+-*/
+\ No newline at end of file
++*/

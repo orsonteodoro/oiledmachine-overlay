@@ -1,0 +1,57 @@
+--- src/tools/Movemap-Generator/CMakeLists.txt.orig	2015-06-20 22:53:50.463591514 -0700
++++ src/tools/Movemap-Generator/CMakeLists.txt	2015-06-20 22:56:59.643818550 -0700
+@@ -59,6 +59,52 @@
+     ./src/VMapExtensions.cpp
+ )
+ 
+-add_executable( MoveMapGen ${SOURCES} )
++add_executable( ${EXECUTABLE_NAME} ${SOURCES} ${EXECUTABLE_SRCS})
++
++if(NOT ACE_USE_EXTERNAL)
++  target_link_libraries(${EXECUTABLE_NAME} ace)
++else()
++  target_link_libraries(${EXECUTABLE_NAME} ACE)
++endif()
++
++target_link_libraries( ${EXECUTABLE_NAME} g3dlite vmap Detour Recast zlib )
++
++#Output the compiled exes to build/bin/$(Configuration)/tools directory on windows by default
++if(WIN32)
++  if ( MSVC )
++    set_target_properties(${EXECUTABLE_NAME} PROPERTIES
++      RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/bin/Release/tools
++      RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin/Debug/tools
++    )
++  elseif ( MINGW )
++    set_target_properties(${EXECUTABLE_NAME} PROPERTIES
++      RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_BINARY_DIR}/bin/tools
++      RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin/tools
++    )
++  endif()
++endif()
++
++set(EXECUTABLE_LINK_FLAGS "")
++
++if(UNIX)
++  if (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
++    set(EXECUTABLE_LINK_FLAGS "-Wl, --no-as-needed -pthread -lrt ${EXECUTABLE_LINK_FLAGS}")
++  elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
++    set(EXECUTABLE_LINK_FLAGS "-Wl,--no-as-needed -ldl -pthread -lrt ${EXECUTABLE_LINK_FLAGS}")
++  endif()
++endif()
++
++if(APPLE)
++  set(EXECUTABLE_LINK_FLAGS "-framework Carbon ${EXECUTABLE_LINK_FLAGS}")
++endif()
++
++set_target_properties(${EXECUTABLE_NAME} PROPERTIES LINK_FLAGS
++  "${EXECUTABLE_LINK_FLAGS}"
++)
++
++install(TARGETS ${EXECUTABLE_NAME} DESTINATION "${BIN_DIR}/${TOOLS_DIR}")
++if(WIN32 AND MSVC)
++  install(FILES "${CMAKE_CURRENT_BINARY_DIR}/\${BUILD_TYPE}/${EXECUTABLE_NAME}.pdb" DESTINATION "${BIN_DIR}/${TOOLS_DIR}" CONFIGURATIONS Debug)
++endif()
++
+ 
+-target_link_libraries( MoveMapGen g3dlite vmap Detour Recast zlib )

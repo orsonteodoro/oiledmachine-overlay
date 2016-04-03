@@ -1,0 +1,33 @@
+diff -ur nanodbc-2.11.3.orig/test/mysql_test.cpp nanodbc-2.11.3/test/mysql_test.cpp
+--- nanodbc-2.11.3.orig/test/mysql_test.cpp	2016-02-04 10:46:57.573880038 -0800
++++ nanodbc-2.11.3/test/mysql_test.cpp	2016-02-04 10:48:10.980680788 -0800
+@@ -2,6 +2,7 @@
+ #include <boost/test/test_case_template.hpp>
+ #include <cstdio>
+ #include <cstdlib>
++#include <boost/test/impl/test_tools.ipp>
+ 
+ namespace
+ {
+diff -ur nanodbc-2.11.3.orig/test/odbc_test.cpp nanodbc-2.11.3/test/odbc_test.cpp
+--- nanodbc-2.11.3.orig/test/odbc_test.cpp	2016-02-04 10:46:57.573880038 -0800
++++ nanodbc-2.11.3/test/odbc_test.cpp	2016-02-04 10:48:12.004719857 -0800
+@@ -2,6 +2,7 @@
+ #include <boost/test/test_case_template.hpp>
+ #include <cstdio>
+ #include <cstdlib>
++#include <boost/test/impl/test_tools.ipp>
+ 
+ namespace
+ {
+diff -ur nanodbc-2.11.3.orig/test/sqlite_test.cpp nanodbc-2.11.3/test/sqlite_test.cpp
+--- nanodbc-2.11.3.orig/test/sqlite_test.cpp	2016-02-04 10:46:57.573880038 -0800
++++ nanodbc-2.11.3/test/sqlite_test.cpp	2016-02-04 10:48:09.924640497 -0800
+@@ -1,6 +1,7 @@
+ #include "test/basic_test.h"
+ #include <boost/test/test_case_template.hpp>
+ #include <cstdio>
++#include <boost/test/impl/test_tools.ipp>
+ 
+ #if defined(_MSC_VER) && _MSC_VER <= 1800
+     // These versions of Visual C++ do not yet support noexcept.

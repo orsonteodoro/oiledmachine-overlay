@@ -1,0 +1,11 @@
+--- ./src/game/Object/ObjectMgr.h.orig	2015-06-21 18:48:54.544556962 -0700
++++ ./src/game/Object/ObjectMgr.h	2015-06-21 18:51:56.653522369 -0700
+@@ -1062,7 +1062,7 @@
+ 
+         void AddVendorItem(uint32 entry, uint32 item, uint32 maxcount, uint32 incrtime, uint32 ExtendedCost, uint8 type);
+         bool RemoveVendorItem(uint32 entry, uint32 item, uint8 type);
+-        bool IsVendorItemValid(bool isTemplate, char const* tableName, uint32 vendor_entry, uint32 maxcount, uint32 ptime, uint32 ExtendedCost, uint16 conditionId, uint32 item, uint8 type, Player* pl = NULL, std::set<uint32>* skip_vendors = NULL) const;
++        bool IsVendorItemValid(bool isTemplate, char const* tableName, uint32 vendor_entry, uint32 item_id, uint32 maxcount, uint32 incrtime, uint32 ExtendedCost, uint16 conditionId, uint8 type, Player* pl = NULL, std::set<uint32>* skip_vendors = NULL) const;
+ 
+         static void AddLocaleString(std::string const& s, LocaleConstant locale, StringVector& data);
+         static inline void GetLocaleString(const StringVector& data, int loc_idx, std::string& value)

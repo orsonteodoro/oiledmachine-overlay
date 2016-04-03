@@ -1,0 +1,131 @@
+diff -Naur tolua++-1.0.93.orig/src/bin/tolua.c tolua++-1.0.93/src/bin/tolua.c
+--- tolua++-1.0.93.orig/src/bin/tolua.c	2006-07-29 04:45:56.000000000 +0200
++++ tolua++-1.0.93/src/bin/tolua.c	2012-11-20 23:43:23.634567980 +0100
+@@ -67,7 +67,11 @@
+ static void add_extra (lua_State* L, char* value) {
+ 	int len;
+ 	lua_getglobal(L, "_extra_parameters");
++#if LUA_VERSION_NUM > 501
++	len = lua_rawlen(L, -1);
++#else
+ 	len = luaL_getn(L, -1);
++#endif
+ 	lua_pushstring(L, value);
+ 	lua_rawseti(L, -2, len+1);
+ 	lua_pop(L, 1);
+diff -Naur tolua++-1.0.93.orig/src/lib/tolua_event.c tolua++-1.0.93/src/lib/tolua_event.c
+--- tolua++-1.0.93.orig/src/lib/tolua_event.c	2006-10-14 08:18:11.000000000 +0200
++++ tolua++-1.0.93/src/lib/tolua_event.c	2012-11-21 00:01:54.242683785 +0100
+@@ -23,12 +23,20 @@
+ static void storeatubox (lua_State* L, int lo)
+ {
+ 	#ifdef LUA_VERSION_NUM
++#if LUA_VERSION_NUM > 501
++		lua_getuservalue(L, lo);
++#else
+ 		lua_getfenv(L, lo);
++#endif
+ 		if (lua_rawequal(L, -1, TOLUA_NOPEER)) {
+ 			lua_pop(L, 1);
+ 			lua_newtable(L);
+ 			lua_pushvalue(L, -1);
++#if LUA_VERSION_NUM > 501
++			lua_setuservalue(L, lo);	/* stack: k,v,table  */
++#else
+ 			lua_setfenv(L, lo);	/* stack: k,v,table  */
++#endif
+ 		};
+ 		lua_insert(L, -3);
+ 		lua_settable(L, -3); /* on lua 5.1, we trade the "tolua_peers" lookup for a settable call */
+@@ -141,7 +149,11 @@
+ 	{
+ 		/* Access alternative table */
+ 		#ifdef LUA_VERSION_NUM /* new macro on version 5.1 */
++#if LUA_VERSION_NUM > 501
++		lua_getuservalue(L, 1);
++#else
+ 		lua_getfenv(L,1);
++#endif
+ 		if (!lua_rawequal(L, -1, TOLUA_NOPEER)) {
+ 			lua_pushvalue(L, 2); /* key */
+ 			lua_gettable(L, -2); /* on lua 5.1, we trade the "tolua_peers" lookup for a gettable call */
+diff -Naur tolua++-1.0.93.orig/src/lib/tolua_map.c tolua++-1.0.93/src/lib/tolua_map.c
+--- tolua++-1.0.93.orig/src/lib/tolua_map.c	2009-02-14 04:06:32.000000000 +0100
++++ tolua++-1.0.93/src/lib/tolua_map.c	2012-11-20 23:56:52.109829367 +0100
+@@ -262,8 +262,12 @@
+ 
+ 		lua_pop(L, 1);
+ 		lua_pushvalue(L, TOLUA_NOPEER);
+-	};
++	}
++#if LUA_VERSION_NUM > 501
++	lua_setuservalue(L, -2);
++#else
+ 	lua_setfenv(L, -2);
++#endif
+ 
+ 	return 0;
+ };
+@@ -271,7 +275,11 @@
+ static int tolua_bnd_getpeer(lua_State* L) {
+ 
+ 	/* stack: userdata */
++#if LUA_VERSION_NUM > 501
++	lua_getuservalue(L, -1);
++#else
+ 	lua_getfenv(L, -1);
++#endif
+ 	if (lua_rawequal(L, -1, TOLUA_NOPEER)) {
+ 		lua_pop(L, 1);
+ 		lua_pushnil(L);
+@@ -411,7 +419,11 @@
+ 		lua_rawget(L,-2);
+ 	}
+ 	else
++#if LUA_VERSION_NUM > 501
++	 lua_pushglobaltable(L);
++#else
+ 	 lua_pushvalue(L,LUA_GLOBALSINDEX);
++#endif
+ }
+ 
+ /* End module
+@@ -445,7 +457,11 @@
+ 	else
+ 	{
+ 		/* global table */
++#if LUA_VERSION_NUM > 501
++		lua_pushglobaltable(L);
++#else
+ 		lua_pushvalue(L,LUA_GLOBALSINDEX);
++#endif
+ 	}
+ 	if (hasvar)
+ 	{
+@@ -473,7 +489,11 @@
+ 	else
+ 	{
+ 		/* global table */
++#if LUA_VERSION_NUM > 501
++		lua_pushglobaltable(L);
++#else
+ 		lua_pushvalue(L,LUA_GLOBALSINDEX);
++#endif
+ 	}
+ 	if (hasvar)
+ 	{
+diff -Naur tolua++-1.0.93.orig/src/lib/tolua_push.c tolua++-1.0.93/src/lib/tolua_push.c
+--- tolua++-1.0.93.orig/src/lib/tolua_push.c	2007-02-10 03:43:56.000000000 +0100
++++ tolua++-1.0.93/src/lib/tolua_push.c	2012-11-20 23:59:55.680882737 +0100
+@@ -79,7 +79,11 @@
+ 
+    #ifdef LUA_VERSION_NUM
+    lua_pushvalue(L, TOLUA_NOPEER);
++#if LUA_VERSION_NUM > 501
++   lua_setuservalue(L, -2);
++#else
+    lua_setfenv(L, -2);
++#endif
+    #endif
+   }
+   else

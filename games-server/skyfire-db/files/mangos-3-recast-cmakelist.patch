@@ -1,0 +1,8 @@
+--- dep/recastnavigation/Recast/CMakeLists.txt.orig	2015-06-21 22:19:11.857311710 -0700
++++ dep/recastnavigation/Recast/CMakeLists.txt	2015-06-21 22:20:12.271623528 -0700
+@@ -37,4 +37,4 @@
+ 
+ #-----------------------------------------------------------------------------
+ # Build the Recast library
+-add_library(recast STATIC ${Recast_LIB_SRCS})
++add_library(recast SHARED ${Recast_LIB_SRCS})

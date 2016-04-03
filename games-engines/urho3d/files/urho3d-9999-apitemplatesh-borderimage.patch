@@ -1,0 +1,19 @@
+diff -ur urho3d-9999.orig/Source/Urho3D/AngelScript/APITemplates.h urho3d-9999/Source/Urho3D/AngelScript/APITemplates.h
+--- urho3d-9999.orig/Source/Urho3D/AngelScript/APITemplates.h	2016-02-24 13:23:04.071318932 -0800
++++ urho3d-9999/Source/Urho3D/AngelScript/APITemplates.h	2016-02-24 13:24:44.085097678 -0800
+@@ -22,6 +22,7 @@
+ 
+ #pragma once
+ 
++#include "../UI/BorderImage.h"
+ #include "../Scene/ObjectAnimation.h"
+ #include "../AngelScript/Addons.h"
+ #include "../AngelScript/Script.h"
+@@ -39,7 +40,6 @@
+ #include "../Resource/Resource.h"
+ #include "../Scene/Animatable.h"
+ #include "../Scene/Node.h"
+-#include "../UI/BorderImage.h"
+ 
+ #include <angelscript.h>
+ #include <cstring>

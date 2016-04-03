@@ -1,0 +1,10 @@
+--- src/shared/Common.h.orig	2015-06-21 15:33:28.205710482 -0700
++++ src/shared/Common.h	2015-06-21 15:34:16.459525569 -0700
+@@ -251,6 +251,7 @@
+  */
+ LocaleConstant GetLocaleByName(const std::string& name);
+ 
++typedef std::vector<std::string> StringVector;
+ 
+ extern char const* localeNames[MAX_LOCALE]; /**< TODO */
+ 

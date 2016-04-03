@@ -1,0 +1,19 @@
+diff -ur urho3d-9999.orig/Source/Urho3D/Container/RefCounted.h urho3d-9999/Source/Urho3D/Container/RefCounted.h
+--- urho3d-9999.orig/Source/Urho3D/Container/RefCounted.h	2016-02-24 07:59:34.386599089 -0800
++++ urho3d-9999/Source/Urho3D/Container/RefCounted.h	2016-02-24 08:00:28.460677378 -0800
+@@ -76,11 +76,13 @@
+     /// Return pointer to the reference count structure.
+     RefCount* RefCountPtr() { return refCount_; }
+ 
++    /// Prevent assignment.
++//public:
++//    RefCounted& operator =(const RefCounted& rhs);
++
+ private:
+     /// Prevent copy construction.
+     RefCounted(const RefCounted& rhs);
+-    /// Prevent assignment.
+-    RefCounted& operator =(const RefCounted& rhs);
+ 
+     /// Pointer to the reference count structure.
+     RefCount* refCount_;

@@ -1,0 +1,73 @@
+--- src/shared/Database/DBCStore.h.orig	2015-06-22 02:36:14.568203556 -0700
++++ src/shared/Database/DBCStore.h	2015-06-22 02:43:45.728514702 -0700
+@@ -35,7 +35,24 @@
+         explicit DBCStorage(const char* f) : nCount(0), fieldCount(0), fmt(f), indexTable(NULL), m_dataTable(NULL) { }
+         ~DBCStorage() { Clear(); }
+ 
+-        T const* LookupEntry(uint32 id) const { return (id >= nCount) ? NULL : indexTable[id]; }
++	/**
++	* @brief
++	*
++	* @param id
++	* @return const T
++	*/
++	//T const* LookupEntry(uint32 id) const { return (id >= nCount) ? NULL : indexTable[id]; }
++	T const* LookupEntry(uint32 id) const
++	{
++            if (loaded)
++            {
++                typename std::map<uint32, T const*>::const_iterator it = data.find(id);
++                if (it != data.end())
++                    return it->second;
++            }
++            return (id >= nCount) ? NULL : indexTable[id];
++        }
++
+         uint32  GetNumRows() const { return nCount; }
+         char const* GetFormat() const { return fmt; }
+         uint32 GetFieldCount() const { return fieldCount; }
+@@ -62,6 +79,22 @@
+             return indexTable != NULL;
+         }
+ 
++        void SetEntry(uint32 id, T* t) // Cryptic they say..
++        {
++            if (!loaded)
++            {
++                for (uint32 i = 0; i < nCount; ++i)
++                {
++                    T const* node = LookupEntry(i);
++                    if (!node)
++                        continue;
++                    data[i] = node;
++                }
++                loaded = true;
++            }
++            data[id] = t;
++        }
++
+         bool LoadStringsFrom(char const* fn, LocaleConstant loc)
+         {
+             // DBC must be already loaded using Load
+@@ -81,6 +114,12 @@
+ 
+         void Clear()
+         {
++            if (loaded)
++            {
++                data.clear();
++                loaded = false;
++            }
++
+             if (!indexTable)
+                 return;
+ 
+@@ -106,6 +145,8 @@
+         char const* fmt;
+         T** indexTable;
+         T* m_dataTable;
++	std::map<uint32, T const*> data;
++	bool loaded;
+         StringPoolList m_stringPoolList;
+ };
+ 

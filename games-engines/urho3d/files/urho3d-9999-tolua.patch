@@ -1,0 +1,13 @@
+diff -ur urho3d-9999.orig/Source/Urho3D/CMakeLists.txt urho3d-9999/Source/Urho3D/CMakeLists.txt
+--- urho3d-9999.orig/Source/Urho3D/CMakeLists.txt	2016-02-12 20:40:41.558151583 -0800
++++ urho3d-9999/Source/Urho3D/CMakeLists.txt	2016-02-12 20:42:37.668432402 -0800
+@@ -147,9 +147,6 @@
+         if (IOS)
+             set (IOS_FIX CMAKE_COMMAND /usr/bin/env -i PATH=$ENV{PATH} ${CMAKE_COMMAND} BUILD_COMMAND bash -c "sed -i '' 's/EFFECTIVE_PLATFORM_NAME//g' CMakeScripts/install_postBuildPhase.make*")
+         endif ()
+-        ExternalProject_Add (tolua++
+-            SOURCE_DIR /usr/bin
+-            CMAKE_ARGS -DDEST_RUNTIME_DIR=${CMAKE_BINARY_DIR}/bin/tool -DBAKED_CMAKE_SOURCE_DIR=${CMAKE_SOURCE_DIR} ${IOS_FIX})
+     else ()
+         # Otherwise, build it internally as per normal
+         

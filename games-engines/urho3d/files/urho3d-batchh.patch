@@ -1,0 +1,11 @@
+diff -ur urho3d-9999.orig/Source/Urho3D/Graphics/Batch.h urho3d-9999/Source/Urho3D/Graphics/Batch.h
+--- urho3d-9999.orig/Source/Urho3D/Graphics/Batch.h	2016-02-28 08:32:09.045513234 -0800
++++ urho3d-9999/Source/Urho3D/Graphics/Batch.h	2016-02-28 08:40:21.702236786 -0800
+@@ -25,6 +25,7 @@
+ #include "../Container/Ptr.h"
+ #include "../Graphics/Drawable.h"
+ #include "../Graphics/Material.h"
++#include "../Graphics/View.h"
+ #include "../Math/MathDefs.h"
+ #include "../Math/Matrix3x4.h"
+ #include "../Math/Rect.h"

@@ -1,0 +1,83 @@
+diff -ur Urho3D-1.5.orig/Source/Urho3D/Input/Input.cpp Urho3D-1.5/Source/Urho3D/Input/Input.cpp
+--- Urho3D-1.5.orig/Source/Urho3D/Input/Input.cpp	2016-02-04 18:46:15.768433963 -0800
++++ Urho3D-1.5/Source/Urho3D/Input/Input.cpp	2016-02-04 19:01:46.200135425 -0800
+@@ -910,13 +910,21 @@
+ bool Input::SaveGestures(Serializer& dest)
+ {
+     RWOpsWrapper<Serializer> wrapper(dest);
++#ifdef ENABLE_DOLLAR
+     return SDL_SaveAllDollarTemplates(wrapper.GetRWOps()) != 0;
++#else
++    return
++#endif
+ }
+ 
+ bool Input::SaveGesture(Serializer& dest, unsigned gestureID)
+ {
+     RWOpsWrapper<Serializer> wrapper(dest);
++#ifdef ENABLE_DOLLAR
+     return SDL_SaveDollarTemplate(gestureID, wrapper.GetRWOps()) != 0;
++#else
++    return false;
++#endif
+ }
+ 
+ unsigned Input::LoadGestures(Deserializer& source)
+@@ -929,7 +937,11 @@
+     }
+ 
+     RWOpsWrapper<Deserializer> wrapper(source);
++#ifdef ENABLE_DOLLAR
+     return (unsigned)SDL_LoadDollarTemplates(-1, wrapper.GetRWOps());
++#else
++    return 0;
++#endif
+ }
+ 
+ 
+@@ -938,15 +950,21 @@
+ #ifdef __EMSCRIPTEN__
+     return false;
+ #else
++#ifdef ENABLE_DOLLAR
+     return SDL_RemoveDollarTemplate(gestureID) != 0;
++#else
++    return false;
++#endif
+ #endif
+ }
+ 
+ void Input::RemoveAllGestures()
+ {
+ #ifndef __EMSCRIPTEN__
++#ifdef ENABLE_DOLLAR
+     SDL_RemoveAllDollarTemplates();
+ #endif
++#endif
+ }
+ 
+ SDL_JoystickID Input::OpenJoystick(unsigned index)
+@@ -1492,7 +1510,11 @@
+ #ifdef __EMSCRIPTEN__
+         SetKey(ConvertSDLKeyCode(evt.key.keysym.sym, evt.key.keysym.scancode), evt.key.keysym.scancode, 0, true);
+ #else
++#if ENABLE_DOLLAR
+         SetKey(ConvertSDLKeyCode(evt.key.keysym.sym, evt.key.keysym.scancode), evt.key.keysym.scancode, evt.key.keysym.raw, true);
++#else
++        SetKey(ConvertSDLKeyCode(evt.key.keysym.sym, evt.key.keysym.scancode), evt.key.keysym.scancode, 0, true);
++#endif
+ #endif
+         break;
+ 
+@@ -1500,7 +1522,11 @@
+ #ifdef __EMSCRIPTEN__
+         SetKey(ConvertSDLKeyCode(evt.key.keysym.sym, evt.key.keysym.scancode), evt.key.keysym.scancode, 0, false);
+ #else
++#if ENABLE_DOLLAR
+         SetKey(ConvertSDLKeyCode(evt.key.keysym.sym, evt.key.keysym.scancode), evt.key.keysym.scancode, evt.key.keysym.raw, false);
++#else
++        SetKey(ConvertSDLKeyCode(evt.key.keysym.sym, evt.key.keysym.scancode), evt.key.keysym.scancode, 0, false);
++#endif
+ #endif
+         break;
+ 

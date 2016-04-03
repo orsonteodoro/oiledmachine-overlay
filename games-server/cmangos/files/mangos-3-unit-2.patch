@@ -1,0 +1,12 @@
+--- src/game/Object/Unit.h.orig	2015-06-22 02:26:40.545439213 -0700
++++ src/game/Object/Unit.h	2015-06-22 02:29:04.383894352 -0700
+@@ -1715,6 +1715,9 @@
+          */
+         int32 ModifyHealth(int32 val);
+ 
++        uint32 CountPctFromMaxHealth(int32 pct) const { return (GetMaxHealth() * static_cast<float>(pct) / 100.0f); }
++        uint32 CountPctFromCurHealth(int32 pct) const { return (GetHealth() * static_cast<float>(pct) / 100.0f); } 
++
+         // Eluna-related health functions
+         bool HealthAbovePctHealed(int32 pct, uint32 heal) const { return uint64(GetHealth()) + uint64(heal) > CountPctFromMaxHealth(pct); }
+         bool IsFullHealth() const { return GetHealth() == GetMaxHealth(); }

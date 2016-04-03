@@ -1,0 +1,22 @@
+diff -ur Urho3D-1.5.orig/Source/Urho3D/LuaScript/pkgs/UI/Text3D.pkg Urho3D-1.5/Source/Urho3D/LuaScript/pkgs/UI/Text3D.pkg
+--- Urho3D-1.5.orig/Source/Urho3D/LuaScript/pkgs/UI/Text3D.pkg	2016-02-10 00:35:38.060822294 -0800
++++ Urho3D-1.5/Source/Urho3D/LuaScript/pkgs/UI/Text3D.pkg	2016-02-10 00:37:03.528135329 -0800
+@@ -100,4 +100,18 @@
+ 
+ #define TOLUA_DISABLE_tolua_get_Text3D_color_ref
+ #define tolua_get_Text3D_color_ref NULL
++
++/* get function: color of class  Text3D */
++#define TOLUA_DISABLE_tolua_get_Text3D_color
++static int tolua_get_Text3D_color(lua_State* tolua_S)
++{
++  Text3D* self = (Text3D*)  tolua_tousertype(tolua_S,1,0);
++#ifndef TOLUA_RELEASE
++  if (!self) tolua_error(tolua_S,"invalid 'self' in accessing variable 'color'",NULL);
++#endif
++   tolua_pushusertype(tolua_S,(void*)&self->GetColor(self->GetCorner()),"Color");
++ return 1;
++}
++
++
+ $}

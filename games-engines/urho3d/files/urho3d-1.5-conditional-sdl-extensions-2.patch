@@ -1,0 +1,27 @@
+diff -ur Urho3D-1.5.orig/Source/Urho3D/Graphics/OpenGL/OGLGraphics.cpp Urho3D-1.5/Source/Urho3D/Graphics/OpenGL/OGLGraphics.cpp
+--- Urho3D-1.5.orig/Source/Urho3D/Graphics/OpenGL/OGLGraphics.cpp	2016-02-04 19:06:00.419895897 -0800
++++ Urho3D-1.5/Source/Urho3D/Graphics/OpenGL/OGLGraphics.cpp	2016-02-04 19:07:04.163343123 -0800
+@@ -469,7 +469,11 @@
+             {
+ #ifndef __EMSCRIPTEN__
+                 if (!impl_->window_)
++#ifdef ENABLE_DOLLAR
+                     impl_->window_ = SDL_CreateWindowFrom(externalWindow_, SDL_WINDOW_OPENGL);
++#else
++                    impl_->window_ = SDL_CreateWindowFrom(externalWindow_);
++#endif
+                 fullscreen = false;
+ #endif
+             }
+diff -ur Urho3D-1.5.orig/Source/Urho3D/Input/Input.cpp Urho3D-1.5/Source/Urho3D/Input/Input.cpp
+--- Urho3D-1.5.orig/Source/Urho3D/Input/Input.cpp	2016-02-04 19:06:00.421895973 -0800
++++ Urho3D-1.5/Source/Urho3D/Input/Input.cpp	2016-02-04 19:08:13.809016889 -0800
+@@ -913,7 +913,7 @@
+ #ifdef ENABLE_DOLLAR
+     return SDL_SaveAllDollarTemplates(wrapper.GetRWOps()) != 0;
+ #else
+-    return
++    return false;
+ #endif
+ }
+ 

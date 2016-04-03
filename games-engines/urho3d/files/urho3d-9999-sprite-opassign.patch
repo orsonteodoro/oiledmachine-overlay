@@ -1,0 +1,62 @@
+diff -ur urho3d-9999.orig/Source/Urho3D/AngelScript/UIAPI.cpp urho3d-9999/Source/Urho3D/AngelScript/UIAPI.cpp
+--- urho3d-9999.orig/Source/Urho3D/AngelScript/UIAPI.cpp	2016-02-13 10:46:43.993623577 -0800
++++ urho3d-9999/Source/Urho3D/AngelScript/UIAPI.cpp	2016-02-13 11:43:25.057553939 -0800
+@@ -147,6 +147,7 @@
+     engine->RegisterObjectMethod("Sprite", "const IntRect& get_imageRect() const", asMETHOD(Sprite, GetImageRect), asCALL_THISCALL);
+     engine->RegisterObjectMethod("Sprite", "void set_blendMode(BlendMode)", asMETHOD(Sprite, SetBlendMode), asCALL_THISCALL);
+     engine->RegisterObjectMethod("Sprite", "BlendMode get_blendMode() const", asMETHOD(Sprite, GetBlendMode), asCALL_THISCALL);
++    engine->RegisterObjectMethod("Sprite", "Sprite& opAssign(Sprite&) const",  asMETHODPR(Sprite, operator=, (Sprite&) const, Sprite&), asCALL_THISCALL);
+ }
+ 
+ static void RegisterCursor(asIScriptEngine* engine)
+diff -ur urho3d-9999.orig/Source/Urho3D/LuaScript/pkgs/UI/Sprite.pkg urho3d-9999/Source/Urho3D/LuaScript/pkgs/UI/Sprite.pkg
+--- urho3d-9999.orig/Source/Urho3D/LuaScript/pkgs/UI/Sprite.pkg	2016-02-13 10:46:44.010624226 -0800
++++ urho3d-9999/Source/Urho3D/LuaScript/pkgs/UI/Sprite.pkg	2016-02-13 11:50:26.634897025 -0800
+@@ -19,6 +19,7 @@
+     void SetImageRect(const IntRect& rect);
+     void SetFullImageRect();
+     void SetBlendMode(BlendMode mode);
++    Sprite& operator=(Sprite& rhs) const;
+     
+     const Vector2& GetPosition() const;
+     const IntVector2& GetHotSpot() const;
+@@ -51,4 +52,4 @@
+ {
+     return ToluaNewObjectGC<Sprite>(tolua_S);
+ }
+-$}
+\ No newline at end of file
++$}
+diff -ur urho3d-9999.orig/Source/Urho3D/UI/Sprite.cpp urho3d-9999/Source/Urho3D/UI/Sprite.cpp
+--- urho3d-9999.orig/Source/Urho3D/UI/Sprite.cpp	2016-02-13 10:46:44.018624531 -0800
++++ urho3d-9999/Source/Urho3D/UI/Sprite.cpp	2016-02-13 11:50:29.547009845 -0800
+@@ -280,4 +280,17 @@
+     return GetResourceRef(texture_, Texture2D::GetTypeStatic());
+ }
+ 
++Sprite& Sprite::operator=(Sprite& rhs) const
++{
++    floatPosition_ = rhs.floatPosition_;
++    hotSpot_ = rhs.hotSpot_;
++    scale_ = rhs.scale_;
++    rotation_ = rhs.rotation_;
++    texture_ = rhs.texture_;
++    imageRect_ = rhs.imageRect_;
++    blendMode_ = rhs.blendMode_;
++    transform_ = rhs.transform_;
++    return *this;
++}
++
+ }
+diff -ur urho3d-9999.orig/Source/Urho3D/UI/Sprite.h urho3d-9999/Source/Urho3D/UI/Sprite.h
+--- urho3d-9999.orig/Source/Urho3D/UI/Sprite.h	2016-02-13 10:46:44.019624570 -0800
++++ urho3d-9999/Source/Urho3D/UI/Sprite.h	2016-02-13 11:50:07.515156275 -0800
+@@ -103,6 +103,8 @@
+     /// Update and return rendering transform, also used to transform child sprites.
+     const Matrix3x4& GetTransform() const;
+ 
++    Sprite& operator=(Sprite& rhs) const;
++
+ protected:
+     /// Floating point position.
+     Vector2 floatPosition_;

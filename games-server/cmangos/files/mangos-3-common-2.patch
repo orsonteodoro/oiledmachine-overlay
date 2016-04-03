@@ -1,0 +1,10 @@
+--- ./src/shared/Common.h.orig	2015-06-21 15:42:21.252774322 -0700
++++ ./src/shared/Common.h	2015-06-21 15:43:05.299433465 -0700
+@@ -242,6 +242,7 @@
+ };
+ 
+ #define MAX_LOCALE 9
++#define DEFAULT_LOCALE LOCALE_enUS
+ 
+ /**
+  * @brief

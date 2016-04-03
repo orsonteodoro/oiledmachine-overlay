@@ -1,0 +1,12 @@
+--- dep/recastnavigation/Detour/Include/DetourNavMesh.h.orig	2015-06-21 20:29:01.740654145 -0700
++++ dep/recastnavigation/Detour/Include/DetourNavMesh.h	2015-06-21 20:29:39.228034102 -0700
+@@ -94,6 +94,9 @@
+ /// @ingroup detour
+ static const int DT_MAX_AREAS = 64;
+ 
++static const int STATIC_SALT_BITS = 12;
++static const int STATIC_TILE_BITS = 21;
++static const int STATIC_POLY_BITS = 31;
+ /// Tile flags used for various functions and fields.
+ /// For an example, see dtNavMesh::addTile().
+ enum dtTileFlags

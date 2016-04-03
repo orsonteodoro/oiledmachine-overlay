@@ -1,0 +1,17 @@
+--- src/shared/Util.h.orig	2015-06-22 01:53:08.338032969 -0700
++++ src/shared/Util.h	2015-06-22 01:59:06.251630883 -0700
+@@ -697,7 +697,13 @@
+  * @param ap
+  */
+ void vutf8printf(FILE* out, const char* str, va_list* ap);
+-
++/**
++ * @brief
++ *
++ * @param utf8String
++ * @return bool
++ */
++bool Utf8ToUpperOnlyLatin(std::string& utf8String);
+ /**
+  * @brief
+  *

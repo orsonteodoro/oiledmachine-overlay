@@ -40,7 +40,7 @@ RDEPEND="
 	www-servers/apache[apache2_modules_alias,apache2_modules_authn_file,apache2_modules_auth_basic,apache2_modules_authz_user,apache2_modules_mime,apache2_modules_cgi]
 	stripchart? ( sci-visualization/gnuplot[gd] )
 	mariadb-galera? ( dev-db/mariadb-galera[tools,server] )
-	mariadb? ( dev-db/mariadb[-minimal] )
+	mariadb? ( dev-db/mariadb )
 	mysql? ( dev-db/mysql[-minimal] )
 	mysql-cluster? ( dev-db/mysql-cluster[-minimal] )
 	ldap? ( net-nds/openldap )

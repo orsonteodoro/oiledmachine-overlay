@@ -1,0 +1,12 @@
+--- src/game/Object/Object.h.orig	2015-06-21 12:14:56.653342937 -0700
++++ src/game/Object/Object.h	2015-06-21 12:21:27.535075601 -0700
+@@ -221,6 +221,9 @@
+ 
+         ObjectGuid const& GetGuidValue(uint16 index) const { return *reinterpret_cast<ObjectGuid const*>(&GetUInt64Value(index)); }
+ 
++        Unit* ToUnit() { if (isType(TYPEMASK_UNIT)) return reinterpret_cast<Unit*>(this); else return NULL; }
++        Unit const* ToUnit() const { if (isType(TYPEMASK_UNIT)) return reinterpret_cast<Unit const*>(this); else return NULL; }
++
+         void SetInt32Value(uint16 index,        int32  value);
+         void SetUInt32Value(uint16 index,       uint32  value);
+         void SetUInt64Value(uint16 index, const uint64& value);

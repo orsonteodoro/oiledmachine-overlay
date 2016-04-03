@@ -1,0 +1,34 @@
+--- ./src/game/ChatCommands/Level2.cpp.orig	2015-06-21 16:23:01.534000474 -0700
++++ ./src/game/ChatCommands/Level2.cpp	2015-06-21 17:40:47.844271715 -0700
+@@ -1636,13 +1636,13 @@
+ 
+     uint32 vendor_entry = vendor ? vendor->GetEntry() : 0;
+ 
+-    if (!sObjectMgr.IsVendorItemValid(false, "npc_vendor", vendor_entry, currencyId, VENDOR_ITEM_TYPE_CURRENCY, maxcount, incrtime, extendedcost, 0, m_session->GetPlayer()))
++    if (!sObjectMgr.IsVendorItemValid(false, "npc_vendor", vendor_entry, currencyId, maxcount, incrtime, extendedcost, 0, (uint8)VENDOR_ITEM_TYPE_CURRENCY, m_session->GetPlayer()))
+     {
+         SetSentErrorMessage(true);
+         return false;
+     }
+ 
+-    sObjectMgr.AddVendorItem(vendor_entry, currencyId, VENDOR_ITEM_TYPE_CURRENCY, maxcount, 0, extendedcost);
++    sObjectMgr.AddVendorItem(vendor_entry, currencyId, maxcount, 0, extendedcost, VENDOR_ITEM_TYPE_CURRENCY);
+ 
+     std::string name = sCurrencyTypesStore.LookupEntry(currencyId)->name[0];
+ 
+@@ -1677,13 +1677,13 @@
+ 
+     uint32 vendor_entry = vendor ? vendor->GetEntry() : 0;
+ 
+-    if (!sObjectMgr.IsVendorItemValid(false, "npc_vendor", vendor_entry, itemId, VENDOR_ITEM_TYPE_ITEM, maxcount, incrtime, extendedcost, 0, m_session->GetPlayer()))
++    if (!sObjectMgr.IsVendorItemValid(false, "npc_vendor", vendor_entry, itemId, maxcount, incrtime, extendedcost, 0, (uint8)VENDOR_ITEM_TYPE_ITEM, m_session->GetPlayer()))
+     {
+         SetSentErrorMessage(true);
+         return false;
+     }
+ 
+-    sObjectMgr.AddVendorItem(vendor_entry, itemId, VENDOR_ITEM_TYPE_ITEM, maxcount, incrtime, extendedcost);
++    sObjectMgr.AddVendorItem(vendor_entry, itemId, maxcount, incrtime, extendedcost, VENDOR_ITEM_TYPE_ITEM);
+ 
+     std::string name = ObjectMgr::GetItemPrototype(itemId)->Name1;
+ 
