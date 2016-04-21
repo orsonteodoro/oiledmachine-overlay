@@ -1,5 +1,7 @@
 # oiledmachine-overlay
 
+I AM NO LONGER SUPPORTING THIS OVERLAY AT THIS TIME.  Hard drive failure has made it impossible to work on it. The urho3d ebuild is partially done.  I will not be completing it but it has been uploaded for someone to finish it.  Other private ebuilds have been uploaded.  I don't recommend you using them.  The knet ebuild may be bugged.
+
 This portage overlay contains various ebuilds for the Gentoo Linux Distribution.  It focuses on optimized ebuilds, some game development, software used in computer-science courses, C#, and other legacy software and hardware.
 
 In this overlay, I provide 32 bit ebuilds for libraries and programs of some programs while the Gentoo overlay contains native ebuilds.  Reason why I choose to use the 32-bit versions over the 64-bit versions because of the 32 bit versions have a lower virtual memory and lower memory footprint overall.  I try to offer the stable modified ebuilds to minimize memory leaks.
