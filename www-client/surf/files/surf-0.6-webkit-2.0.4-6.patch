@@ -1,0 +1,24 @@
+diff -ur surf-0.6.orig/surf.c surf-0.6/surf.c
+--- surf-0.6.orig/surf.c	2016-07-28 15:58:43.850841318 -0700
++++ surf-0.6/surf.c	2016-07-28 16:14:28.177872435 -0700
+@@ -212,9 +212,9 @@
+ 	if(g_str_has_suffix(uri, "/favicon.ico"))
+ 		webkit_uri_request_set_uri(request, "about:blank");
+ 
+-	g_signal_connect(G_OBJECT(resource),
+-			"received-data",
+-			G_CALLBACK(receiveddata), c);
++	//g_signal_connect(G_OBJECT(resource),
++	//		"received-data",
++	//		G_CALLBACK(receiveddata), c);
+ 
+ }
+ 
+@@ -812,6 +812,7 @@
+ 	setatom(c, AtomFind, "");
+ 	setatom(c, AtomUri, "about:blank");
+ 	setatom(c, AtomScriptFile, "");
++        gtk_widget_set_app_paintable(GTK_WIDGET(c->view), TRUE);
+ 	//if(hidebackground) {
+ 	//	static const GdkRGBA transparent = {.0, .0, .0, .0};
+ 	//	webkit_web_view_set_background_color(c->view, &transparent);

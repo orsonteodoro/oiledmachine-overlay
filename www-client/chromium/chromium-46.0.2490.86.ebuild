@@ -19,8 +19,8 @@ SRC_URI="https://commondatastorage.googleapis.com/chromium-browser-official/${P}
 LICENSE="BSD hotwording? ( no-source-code )"
 SLOT="0"
 KEYWORDS="amd64 ~arm x86"
-IUSE="cups gnome gnome-keyring hidpi hotwording kerberos neon pic +proprietary-codecs pulseaudio selinux +tcmalloc 32bit 64bit"
-REQUIRED_USE="^^ ( 32bit 64bit )"
+IUSE="cups gnome gnome-keyring hidpi hotwording kerberos neon pic +proprietary-codecs pulseaudio selinux +tcmalloc gnu32 gnu64"
+REQUIRED_USE="^^ ( gnu32 gnu64 )"
 RESTRICT="proprietary-codecs? ( bindist )"
 
 # Native Client binaries are compiled with different set of flags, bug #452066.
@@ -165,9 +165,9 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-	if use 32bit ; then
+	if use gnu32 ; then
 		CONF_LIBDIR_OVERRIDE="lib32"
-	elif use 64bit ; then
+	elif use gnu64 ; then
 		CONF_LIBDIR_OVERRIDE="lib64"
 	else
 		true
@@ -303,9 +303,9 @@ src_prepare() {
 }
 
 src_configure() {
-	if use 32bit ; then
+	if use gnu32 ; then
 		CONF_LIBDIR_OVERRIDE="lib32"
-	elif use 64bit ; then
+	elif use gnu64 ; then
 		CONF_LIBDIR_OVERRIDE="lib64"
 	else
 		true
@@ -427,14 +427,14 @@ src_configure() {
 		-Dgoogle_default_client_secret=vgKG0NNv7GoDpbtoFNLxCUXu"
 
 	local myarch="$(tc-arch)"
-	if use 32bit ; then
+	if use gnu32 ; then
 		myarch="x86"
 		#filter-flags -march=* -mtune=* -mcpu=*
 		#append-cflags "-march=i686"
 		append-cflags "-m32"
 		#append-cxxflags "-march=i686"
 		append-cxxflags "-m32"
-	elif use 64bit ; then
+	elif use gnu64 ; then
 		myarch="amd64"
 		#filter-flags -march=* -mtune=* -mcpu=*
 		#append-cflags "-march=x86-64"
@@ -563,9 +563,9 @@ eninja() {
 }
 
 src_compile() {
-	if use 32bit ; then
+	if use gnu32 ; then
 		CONF_LIBDIR_OVERRIDE="lib32"
-	elif use 64bit ; then
+	elif use gnu64 ; then
 		CONF_LIBDIR_OVERRIDE="lib64"
 	else
 		true
@@ -584,9 +584,9 @@ src_compile() {
 }
 
 src_install() {
-	if use 32bit ; then
+	if use gnu32 ; then
 		CONF_LIBDIR_OVERRIDE="lib32"
-	elif use 64bit ; then
+	elif use gnu64 ; then
 		CONF_LIBDIR_OVERRIDE="lib64"
 	else
 		true

@@ -228,12 +228,17 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	if [[ ${ABI} == "x86"  ]] ; then
+	if use abi_x86_32; then
 		CONF_LIBDIR_OVERRIDE="lib32"
 		append-cflags "-m32"
 		append-cxxflags "-m32"
 		append-ldflags "-m32"
-	elif [[ ${ABI} == "amd64"  ]] ; then
+	elif use abi_x86_x32; then
+		CONF_LIBDIR_OVERRIDE="lib"
+		append-cflags "-mx32"
+		append-cxxflags "-mx32"
+		append-ldflags "-mx32"
+	elif use abi_x86_64; then
 		CONF_LIBDIR_OVERRIDE="lib64"
 		append-cflags "-m64"
 		append-cxxflags "-m64"
@@ -241,6 +246,7 @@ multilib_src_configure() {
 	else
 		true
 	fi
+
 	# Respect CC, otherwise fails on prefix #395875
 	tc-export CC
 

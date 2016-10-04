@@ -1,0 +1,31 @@
+#!/sbin/openrc-run
+#
+# Startup script for the lastfmsubmit daemon
+#
+# description: lastfmsubmitd handles the Last.fm protocol for player plugins
+# processname: python<pyver>
+# pidfile: /var/run/lastfm/lastfmsubmitd.pid
+# config: /etc/lastfmsubmitd.conf
+
+export PYTHONPATH=/usr/lib64/lastfmsubmitd
+DAEMON=/usr/bin/lastfmsubmitd
+CONFIG=/etc/lastfmsubmitd.conf
+PIDFILE=/var/run/lastfm/lastfmsubmitd.pid
+
+depend() {
+        need net
+}
+
+start() {
+    ebegin "Starting lastfmsubmitd server"
+    start-stop-daemon -m -b --start --quiet --pidfile $PIDFILE \
+    --exec $DAEMON -- $CONFIG
+    eend $?
+}
+
+stop() {
+    ebegin "Stopping lastfmsubmitd"
+    start-stop-daemon -o --quiet --stop --pidfile $PIDFILE
+    eend $?
+}
+

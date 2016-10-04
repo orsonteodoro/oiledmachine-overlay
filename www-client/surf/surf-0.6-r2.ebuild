@@ -1,4 +1,4 @@
-#for testing webkit-gtk-2.0.4
+# for recent webkit-gtk
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/www-client/surf/surf-0.6-r1.ebuild,v 1.7 2013/11/01 13:50:07 ago Exp $
@@ -26,7 +26,7 @@ COMMON_DEPEND="
                 >=x11-libs/gtk+-2.14:2
         )
         gtk3? (
-                =net-libs/webkit-gtk-2.0.4
+                net-libs/webkit-gtk:4/37
                 x11-libs/gtk+:3
         )
 	sys-apps/dbus[X]
@@ -81,7 +81,7 @@ src_prepare() {
 		epatch "${FILESDIR}"/${PN}-webkit2gtk6.patch
 	fi
 
-	#epatch "${FILESDIR}"/${PN}-adblockext.patch #this disables the adblock extension
+	epatch "${FILESDIR}"/${PN}-adblockext.patch #this disables the adblock extension
 	if use adblock ; then
 		epatch "${FILESDIR}"/${PN}-0.6-adblock-debugtimer.patch
 	fi
@@ -98,20 +98,13 @@ src_prepare() {
 	epatch "${FILESDIR}"/surf-0.6-copyrights.patch
 	epatch "${FILESDIR}"/surf-0.6-copyright-2.patch
 
-	[[ "${CHOST}" =~ "muslx32" ]] && epatch "${FILESDIR}"/${PN}-0.6-webkit-2.0.4-1.patch
-	#[[ "${CHOST}" =~ "muslx32" ]] && epatch "${FILESDIR}"/${PN}-0.6-webkit-2.0.4-2.patch
-	#[[ "${CHOST}" =~ "muslx32" ]] && epatch "${FILESDIR}"/${PN}-0.6-webkit-2.0.4-3.patch
-	#[[ "${CHOST}" =~ "muslx32" ]] && epatch "${FILESDIR}"/${PN}-0.6-webkit-2.0.4-4.patch
-	#[[ "${CHOST}" =~ "muslx32" ]] && epatch "${FILESDIR}"/${PN}-0.6-webkit-2.0.4-5.patch
-	#[[ "${CHOST}" =~ "muslx32" ]] && epatch "${FILESDIR}"/${PN}-0.6-webkit-2.0.4-6.patch
-	#[[ "${CHOST}" =~ "muslx32" ]] && epatch "${FILESDIR}"/${PN}-0.6-webkit-2.0.4-7.patch
-	#epatch "${FILESDIR}"/surf-0.6-hide-bg.patch
+	#[[ "${CHOST}" =~ "muslx32" ]] && epatch "${FILESDIR}"/${PN}-0.6-webkit-2.0.4-1.patch #gtk2 also
 
-	epatch "${FILESDIR}"/surf-0.6-gtk2-1.patch
-	epatch "${FILESDIR}"/surf-0.6-gtk2-2.patch
-	epatch "${FILESDIR}"/surf-0.6-gtk2-3.patch
-	epatch "${FILESDIR}"/surf-0.6-gtk2-4.patch
-	epatch "${FILESDIR}"/surf-0.6-gtk2-5.patch
+	#epatch "${FILESDIR}"/surf-0.6-gtk2-1.patch
+	#epatch "${FILESDIR}"/surf-0.6-gtk2-2.patch
+	#epatch "${FILESDIR}"/surf-0.6-gtk2-3.patch
+	#epatch "${FILESDIR}"/surf-0.6-gtk2-4.patch
+	#epatch "${FILESDIR}"/surf-0.6-gtk2-5.patch
 
 	eautoreconf
 }

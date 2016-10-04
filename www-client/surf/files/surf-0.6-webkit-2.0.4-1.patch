@@ -1,0 +1,27 @@
+diff -ur surf-0.6.orig/Makefile.am surf-0.6/Makefile.am
+--- surf-0.6.orig/Makefile.am	2016-07-23 15:12:59.060846666 -0700
++++ surf-0.6/Makefile.am	2016-07-23 15:18:56.382823607 -0700
+@@ -10,10 +10,3 @@
+ surf_CPPFLAGS = -DVERSION=\"$(VERSION)\" -D_DEFAULT_SOURCE
+ surf_CFLAGS = -std=c99 -pedantic -Wall -I. -I/usr/include $(X11_CFLAGS) $(GTK_CFLAGS) $(GTHREAD_CFLAGS) $(WEBKIT2GTK_CFLAGS) -DSURF_WEB_EXTENSIONS_DIR=\""$(libdir)/surf/web-extension\"" 
+ surf_LDFLAGS = $(X11_LIBS) $(GTK_LIBS) $(GTHREAD_LIBS) $(WEBKIT2GTK_LIBS)
+-
+-surfext_LTLIBRARIES = libsurfext.la
+-surfextdir = $(libdir)/surf/web-extension
+-libsurfext_la_SOURCES = surfext.c
+-libsurfext_la_CFLAGS = $(WEBKIT2GTKEXT_CFLAGS) $(JSONGLIB_CFLAGS) $(LIBSOUP_CFLAGS)
+-libsurfext_la_LIBADD = $(WEBKIT2GTKEXT_LIBS) $(JSONGLIB_LIBS) $(LIBSOUP_LIBS)
+-libsurfext_la_LDFLAGS = -module -avoid-version -no-undefined
+diff -ur surf-0.6.orig/configure.ac surf-0.6/configure.ac
+--- surf-0.6.orig/configure.ac	2016-07-23 15:12:59.058846666 -0700
++++ surf-0.6/configure.ac	2016-07-23 15:18:18.819826031 -0700
+@@ -27,8 +27,7 @@
+ PKG_CHECK_MODULES([X11], [x11])
+ PKG_CHECK_MODULES([GTK3], [gtk+-3.0])
+ PKG_CHECK_MODULES([GTHREAD], [gthread-2.0])
+-PKG_CHECK_MODULES([WEBKIT2GTK], [webkit2gtk-4.0])
+-PKG_CHECK_MODULES([WEBKIT2GTKEXT], [webkit2gtk-web-extension-4.0])
++PKG_CHECK_MODULES([WEBKIT2GTK], [webkit2gtk-3.0])
+ PKG_CHECK_MODULES([JSONGLIB], [json-glib-1.0])
+ PKG_CHECK_MODULES([LIBSOUP], [libsoup-2.4])
+ 

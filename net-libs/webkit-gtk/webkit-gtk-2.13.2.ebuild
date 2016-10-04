@@ -15,7 +15,7 @@ HOMEPAGE="http://www.webkitgtk.org/"
 SRC_URI="http://www.webkitgtk.org/releases/${MY_P}.tar.xz"
 
 LICENSE="LGPL-2+ BSD"
-SLOT="4/37" # soname version of libwebkit2gtk-4.0
+SLOT="4" # soname version of libwebkit2gtk-4.0
 KEYWORDS="~alpha amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc x86 ~amd64-fbsd ~x86-fbsd ~x86-freebsd ~amd64-linux ~ia64-linux ~x86-linux ~x86-macos"
 
 IUSE="coverage doc +egl +geoloc gles2 +gstreamer +introspection +jit libsecret +opengl spell wayland +webgl X bmalloc threaded-compositor accelerated-overflow-scrolling accelerated-2d-canvas ftl-jit ftl-native-call-inlining"
@@ -53,7 +53,6 @@ RDEPEND="
 	>=x11-libs/gtk+-3.14:3[introspection?,${MULTILIB_USEDEP}]
 	x11-libs/libnotify[${MULTILIB_USEDEP}]
 	>=x11-libs/pango-1.30.0
-	dev-libs/hyphen
 
 	>=x11-libs/gtk+-2.24.10:2[${MULTILIB_USEDEP}]
 
@@ -147,10 +146,10 @@ src_prepare() {
 	# https://bugs.webkit.org/show_bug.cgi?id=148379
 	epatch "${FILESDIR}"/${PN}-2.8.5-webkit2gtkinjectedbundle-j1.patch
 
-	use ftl-jit && epatch "${FILESDIR}"/${PN}-2.9.2-llvm-1.patch
-	#use ftl-jit && epatch "${FILESDIR}"/${PN}-2.9.2-llvm-2.patch
-	use ftl-jit && epatch "${FILESDIR}"/${PN}-2.9.2-llvm-3.patch
-	use ftl-jit && epatch "${FILESDIR}"/${PN}-2.9.2-llvm-4.patch
+	use ftl-jit && epatch "${FILESDIR}"/${PN}-2.8.3-llvm-1.patch
+	use ftl-jit && epatch "${FILESDIR}"/${PN}-2.8.3-llvm-2.patch
+	use ftl-jit && epatch "${FILESDIR}"/${PN}-2.8.3-llvm-3.patch
+	use ftl-jit && epatch "${FILESDIR}"/${PN}-2.8.3-llvm-4.patch
 
 	use ftl-jit && epatch "${FILESDIR}"/cmake-ninja-fix.patch
 
@@ -160,12 +159,17 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	if [[ ${ABI} == "x86"  ]] ; then
+	if use abi_x86_32; then
 		CONF_LIBDIR_OVERRIDE="lib32"
 		append-cflags "-m32"
 		append-cxxflags "-m32"
 		append-ldflags "-m32"
-	elif [[ ${ABI} == "amd64"  ]] ; then
+	elif use abi_x86_x32; then
+		CONF_LIBDIR_OVERRIDE="lib"
+		append-cflags "-mx32"
+		append-cxxflags "-mx32"
+		append-ldflags "-mx32"
+	elif use abi_x86_64; then
 		CONF_LIBDIR_OVERRIDE="lib64"
 		append-cflags "-m64"
 		append-cxxflags "-m64"
@@ -173,6 +177,7 @@ multilib_src_configure() {
 	else
 		true
 	fi
+
 	# Respect CC, otherwise fails on prefix #395875
 	tc-export CC
 

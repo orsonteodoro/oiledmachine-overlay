@@ -1,0 +1,12 @@
+diff -ur MPlayer-1.2.1.orig/mplayer.c MPlayer-1.2.1/mplayer.c
+--- MPlayer-1.2.1.orig/mplayer.c	2016-10-02 14:17:57.464512897 -0700
++++ MPlayer-1.2.1/mplayer.c	2016-10-02 14:21:23.398523221 -0700
+@@ -3790,6 +3790,8 @@
+                  float as_pos=(mpctx->delay - mpctx->audio_out->get_delay() * playback_speed);
+                  float as_len=demuxer_get_time_length(mpctx->demuxer);
+ 
++                 printf("as_submitted:%d as_len:%d as_pos:%d as_pos/as_len:%f", as_submited, as_len, as_pos, as_pos/as_len);
++
+                  if(as_submited==0 && as_len>30 && (as_pos>240 || as_pos/as_len>0.5 ))
+                  {
+                     as_submited=1;

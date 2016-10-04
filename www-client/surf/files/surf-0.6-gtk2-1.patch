@@ -1,0 +1,13 @@
+diff -ur surf-0.6.orig/configure.ac surf-0.6/configure.ac
+--- surf-0.6.orig/configure.ac	2016-07-28 22:17:50.657590880 -0700
++++ surf-0.6/configure.ac	2016-07-28 22:19:10.738593519 -0700
+@@ -25,7 +25,8 @@
+ AC_CONFIG_MACRO_DIRS([m4])
+ 
+ PKG_CHECK_MODULES([X11], [x11])
+-PKG_CHECK_MODULES([GTK3], [gtk+-3.0])
++PKG_CHECK_MODULES([GTK2], [gtk+-2.0])
++PKG_CHECK_MODULES([GDK], [gdk-2.0])
+ PKG_CHECK_MODULES([GTHREAD], [gthread-2.0])
+ PKG_CHECK_MODULES([WEBKIT2GTK], [webkit2gtk-3.0])
+ PKG_CHECK_MODULES([JSONGLIB], [json-glib-1.0])

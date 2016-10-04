@@ -42,7 +42,7 @@ KEYWORDS="~alpha amd64 ~arm hppa ~ia64 ~ppc ppc64 x86 ~amd64-linux ~x86-linux"
 
 SLOT="0"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
-IUSE="bindist egl hardened +minimal neon pgo selinux +gmp-autoupdate test 32bit 64bit"
+IUSE="bindist egl hardened +minimal neon pgo selinux +gmp-autoupdate test gnu32 gnu64"
 RESTRICT="!bindist? ( bindist )"
 
 # More URIs appended below...
@@ -57,8 +57,8 @@ ASM_DEPEND=">=dev-lang/yasm-1.1"
 RDEPEND="
 	>=dev-libs/nss-3.19.2
 	>=dev-libs/nspr-4.10.8
-	32bit? ( dev-libs/libevent[abi_x86_32] )
-	selinux? ( sec-policy/selinux-mozilla )"
+	selinux? ( sec-policy/selinux-mozilla )
+	gnu32? ( dev-libs/libevent[abi_x86_32] )"
 
 DEPEND="${RDEPEND}
 	pgo? (
@@ -185,9 +185,9 @@ src_prepare() {
 }
 
 src_configure() {
-	if use 32bit ; then
+	if use gnu32 ; then
 		CONF_LIBDIR_OVERRIDE="lib32"
-	elif use 64bit ; then
+	elif use gnu64 ; then
 		CONF_LIBDIR_OVERRIDE="lib64"
 	else
 		true
@@ -217,7 +217,7 @@ src_configure() {
 	# Add full relro support for hardened
 	use hardened && append-ldflags "-Wl,-z,relro,-z,now"
 
-	if use 32bit ; then
+	if use gnu32 ; then
 		mozconfig_annotate '' --target=i686-pc-linux-gnu
 		mozconfig_annotate '' --host=i686-pc-linux-gnu
 	#	filter-flags -march=* -mtune=* -mcpu=*
@@ -228,7 +228,7 @@ src_configure() {
 		append-ldflags "-m32"
 	#	export ASFLAGS="-march=i686 -m32"
 		export ASFLAGS="-m32"
-	elif use 64bit ; then
+	elif use gnu64 ; then
 		mozconfig_annotate '' --target=x86_64-pc-linux-gnu
 		mozconfig_annotate '' --host=x86_64-pc-linux-gnu
 	#	filter-flags -march=* -mtune=* -mcpu=*
@@ -288,9 +288,9 @@ src_configure() {
 }
 
 src_compile() {
-	if use 32bit ; then
+	if use gnu32 ; then
 		CONF_LIBDIR_OVERRIDE="lib32"
-	elif use 64bit ; then
+	elif use gnu64 ; then
 		CONF_LIBDIR_OVERRIDE="lib64"
 	else
 		true

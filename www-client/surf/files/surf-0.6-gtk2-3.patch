@@ -1,0 +1,29 @@
+Only in surf-0.6: .libs
+Only in surf-0.6: surf-surf.o
+diff -ur surf-0.6.orig/surf.c surf-0.6/surf.c
+--- surf-0.6.orig/surf.c	2016-07-28 22:39:14.728633193 -0700
++++ surf-0.6/surf.c	2016-07-28 22:41:15.259637165 -0700
+@@ -249,10 +249,10 @@
+ cookiejar_changed(SoupCookieJar *self, SoupCookie *old_cookie,
+ 		SoupCookie *new_cookie) {
+ 	flock(COOKIEJAR(self)->lock, LOCK_EX);
+-	if(new_cookie && !new_cookie->expires && sessiontime) {
+-		soup_cookie_set_expires(new_cookie,
+-				soup_date_new_from_now(sessiontime));
+-	}
++	//if(new_cookie && !new_cookie->expires && sessiontime) {
++	//	soup_cookie_set_expires(new_cookie,
++	//			soup_date_new_from_now(sessiontime));
++	//}
+ 	SOUP_COOKIE_JAR_CLASS(cookiejar_parent_class)->changed(self,
+ 			old_cookie, new_cookie);
+ 	flock(COOKIEJAR(self)->lock, LOCK_UN);
+@@ -1038,7 +1038,7 @@
+ 					FALSE)));
+ 
+ 	/* ssl */
+-	g_object_set(G_OBJECT(s), "ssl-ca-file", cafile, NULL);
++	//g_object_set(G_OBJECT(s), "ssl-ca-file", cafile, NULL);
+ 	g_object_set(G_OBJECT(s), "ssl-strict", strictssl, NULL);
+ 
+ 	/* proxy */

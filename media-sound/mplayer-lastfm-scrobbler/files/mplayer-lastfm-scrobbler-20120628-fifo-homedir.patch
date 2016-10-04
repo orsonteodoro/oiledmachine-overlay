@@ -1,0 +1,38 @@
+diff -ur mplayer-lastfm-scrobbler-20120628.orig/Daemon/last_fm_scrobble_on_mplayer_played_50.c mplayer-lastfm-scrobbler-20120628/Daemon/last_fm_scrobble_on_mplayer_played_50.c
+--- mplayer-lastfm-scrobbler-20120628.orig/Daemon/last_fm_scrobble_on_mplayer_played_50.c	2016-09-29 00:29:39.085053247 -0700
++++ mplayer-lastfm-scrobbler-20120628/Daemon/last_fm_scrobble_on_mplayer_played_50.c	2016-09-29 00:35:13.515047893 -0700
+@@ -5,7 +5,7 @@
+ #include <string.h>
+ #include <stdbool.h>
+ 
+-#define FIFO_NAME   "/Users/bilalh/.mplayer/pipe"
++#define FIFO_NAME   "~/.mplayer/pipe"
+ #define FIFO_OUTPUT "~/.mplayer/output"
+ #define SCRIPT      "lastfm_from_mplayer_output.rb"
+ #define INFO        "audio_info_display.rb"
+@@ -54,4 +54,4 @@
+ 		sleep(5);
+ 	}
+ 	return 0;
+-}
+\ No newline at end of file
++}
+diff -ur mplayer-lastfm-scrobbler-20120628.orig/Daemon/last_fm_scrobble_on_mplayer_played_50_with_info.c mplayer-lastfm-scrobbler-20120628/Daemon/last_fm_scrobble_on_mplayer_played_50_with_info.c
+--- mplayer-lastfm-scrobbler-20120628.orig/Daemon/last_fm_scrobble_on_mplayer_played_50_with_info.c	2016-09-29 00:29:39.085053247 -0700
++++ mplayer-lastfm-scrobbler-20120628/Daemon/last_fm_scrobble_on_mplayer_played_50_with_info.c	2016-09-29 00:35:26.426047687 -0700
+@@ -5,7 +5,7 @@
+ #include <string.h>
+ #include <stdbool.h>
+ 
+-#define FIFO_NAME   "/Users/bilalh/.mplayer/pipe"
++#define FIFO_NAME   "~/.mplayer/pipe"
+ #define FIFO_OUTPUT "~/.mplayer/output"
+ #define SCRIPT      "lastfm_from_mplayer_output.rb"
+ #define INFO        "audio_info_display.rb"
+@@ -59,4 +59,4 @@
+ 		sleep(5);
+ 	}
+ 	return 0;
+-}
+\ No newline at end of file
++}

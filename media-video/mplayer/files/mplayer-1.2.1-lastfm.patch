@@ -1,0 +1,57 @@
+diff -urp MPlayer-1.2.1.orig/mplayer.c MPlayer-1.2.1/mplayer.c
+--- MPlayer-1.2.1.orig/mplayer.c	2015-06-10 14:17:35.000000000 -0700
++++ MPlayer-1.2.1/mplayer.c	2016-10-02 13:52:04.983435065 -0700
+@@ -3724,6 +3724,8 @@ goto_enable_cache:
+ 
+ //==================== START PLAYING =======================
+ 
++        int as_submited=0;
++
+         if (mpctx->loop_times > 1)
+             mpctx->loop_times--;
+         else if (mpctx->loop_times == 1)
+@@ -3782,6 +3784,34 @@ goto_enable_cache:
+                         mpctx->eof = PT_NEXT_ENTRY;
+ 
+             if (!mpctx->sh_video) {
++                 //----------audioscrobbler
++                 char as_tmp[512];
++                 char *as_title,*as_artist,*as_album;
++                 float as_pos=(mpctx->delay - mpctx->audio_out->get_delay() * playback_speed);
++                 float as_len=demuxer_get_time_length(mpctx->demuxer);
++
++                 if(as_submited==0 && as_len>30 && (as_pos>240 || as_pos/as_len>0.5 ))
++                 {
++                    as_submited=1;
++
++                    as_title=demux_info_get(mpctx->demuxer,"Title");
++                    as_album=demux_info_get(mpctx->demuxer,"Album");
++                    as_artist=demux_info_get(mpctx->demuxer,"Artist");
++
++                    if(!as_title)as_title=demux_info_get(mpctx->demuxer,"Name");
++
++                    if(!as_title)as_title="";
++                    if(!as_album)as_album="";
++                    if(!as_artist)as_artist="";
++
++                    if( strlen(as_title)!=0 && strlen(as_artist)!=0 )
++                    {
++                        sprintf(as_tmp,"lastfmsubmit --artist \"%s\" --title \"%s\" --album \"%s\" --length %.0f &",as_artist,as_title,as_album,as_len);
++                        system(as_tmp);
++                    }
++                }
++                //-------------------------
++
+                 // handle audio-only case:
+                 double a_pos = 0;
+                 // sh_audio can be NULL due to video stream switching
+@@ -3984,6 +4014,9 @@ goto_enable_cache:
+                             mp_msg(MSGT_CPLAYER, MSGL_ERR, MSGTR_EdlOutOfMemFile,
+                                    cmd->args[0].v.s);
+                     }
++                    else if (cmd->id == MP_CMD_SEEK) {
++                        as_submited=1;
++                    }
+                     mp_cmd_free(cmd);
+                     if (brk_cmd == 2)
+                         goto goto_enable_cache;
