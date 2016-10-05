@@ -1,6 +1,6 @@
 # oiledmachine-overlay
 
-I AM NO LONGER SUPPORTING THIS OVERLAY AT THIS TIME.  Hard drive failure has made it impossible to work on it. The urho3d ebuild is partially done.  I will not be completing it but it has been uploaded for someone to finish it.  Other private ebuilds have been uploaded.  I don't recommend you using them.  The knet ebuild may be bugged.
+The urho3d ebuild is partially done.  I will not be completing it but it has been uploaded for someone to finish it.  Other private ebuilds have been uploaded.  I don't recommend you using them.  The knet ebuild may be bugged.
 
 This portage overlay contains various ebuilds for the Gentoo Linux Distribution.  It focuses on optimized ebuilds, some game development, software used in computer-science courses, C#, and other legacy software and hardware.
 
@@ -12,9 +12,9 @@ IMPORTANT:  Many of these packages especially non-free software also require you
 
 Here is an example of what I mean.
 
-*www-client/firefox - 32 bit only builds on an AMD64 machine.  You can still build the 64 bit version.
+*www-client/firefox - 32 bit only builds on an AMD64 machine.  You can still build the 64 bit version.  Do not use unless you manually update date it to stable version 45.x since security bug by renaming it.
 
-*www-client/chromium - 32 bit only builds on an AMD64 machine.  You can still build the 64 bit version.  You need to upgrade www-plugins/chrome-binary-plugins with the same bitness in order for flash to work.
+*www-client/chromium - 32 bit only builds on an AMD64 machine.  You can still build the 64 bit version.  You need to upgrade www-plugins/chrome-binary-plugins with the same bitness in order for flash to work.  Do not use unless you manually update ebuild to latest stable version by renaming it.
 
 *www-plugins/chrome-binary-plugins - 32 only builds on an AMD64 machine.
 
@@ -45,6 +45,30 @@ Here is an example of what I mean.
 *net-misc/boinc-bfgminer-gpu - BFGMiner with Boinc support for GPUs.  It requires the Boinc Wrapper sample app.  See sci-misc/boinc-server-project-eligius ebuild on in how to use it.  The reason why I have Boinc support so we can have the Boinc client manage project switching or CPU/GPU resources based on user activity (e.g. mouse move).  It still may be buggy.
 
 *net-misc/boinc-bfgminer-cpu - BFGMiner with Boinc support for CPUs.  It requires the Boinc Wrapper sample app.  Ebuild level support for Profile Guided Optimizations (PGO).  It still may be buggy.
+
+*net-misc/rainbowstream - A Twitter command line client
+
+*net-misc/googler - A Google command line client
+
+*dev-python/twitter - A Twitter command line client and library with fixed search and patch ansi output.
+
+*dev-util/depot_tools - Development tools for Google projects.  It's useful for checking out v8.
+
+*media-sound/lastfm - Last.fm API for Python.  Dunno why this is here.
+
+*media-sound/lastfmsubmitd - Patched with Last.fm API v2.0.
+
+*media-sound/mplayer-lastfm-scrobbler - A scrobbler for mplayer
+
+*dev-python/arrow - Time creation and manipulation for python
+
+*dev-python/pocket - Pocket API for python
+
+*dev-python/py-libmpdclient2 - MPD client library for python.
+
+*dev-python/pyfiglet - Python library for ASCII art used by rainbowstream used to draw ASCII art in command line
+
+*media-video/mplayer - mplayer with untested Last.fm support.  It requires mplayer-lastfm-scrobbler.
 
 *app-emulation/genymotion - Genymotion with third party hacks support.  Support for installers from genymotion.com and extra dependency checks.
 
