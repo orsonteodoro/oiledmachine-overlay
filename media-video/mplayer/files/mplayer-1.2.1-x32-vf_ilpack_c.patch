@@ -1,0 +1,50 @@
+--- MPlayer-1.2.1.orig/libmpcodecs/vf_ilpack.c	2016-01-08 04:39:01.000000000 -0800
++++ MPlayer-1.2.1/libmpcodecs/vf_ilpack.c	2016-10-19 17:02:14.955149708 -0700
+@@ -115,7 +115,11 @@ static void pack_li_0_MMX(unsigned char
+     unsigned char *u, unsigned char *v, int w, int us, int vs)
+ {
+     __asm__ volatile (""
++#if ARCH_X86_64 && defined(__ILP32__)
++        "push %%"REG_rBP" \n\t"
++#else
+         "push %%"REG_BP" \n\t"
++#endif
+ #if ARCH_X86_64
+         "mov %6, %%"REG_BP" \n\t"
+ #else
+@@ -206,7 +210,11 @@ static void pack_li_0_MMX(unsigned char
+         "decl %%ecx \n\t"
+         "jnz 2b \n\t"
+         "emms \n\t"
++#if ARCH_X86_64 && defined(__ILP32__)
++        "pop %%"REG_rBP" \n\t"
++#else
+         "pop %%"REG_BP" \n\t"
++#endif
+         :
+         : "S" (y), "D" (dst), "a" (u), "b" (v), "c" (w/16),
+ #if ARCH_X86_64
+@@ -223,7 +231,11 @@ static void pack_li_1_MMX(unsigned char
+     unsigned char *u, unsigned char *v, int w, int us, int vs)
+ {
+     __asm__ volatile (""
++#if ARCH_X86_64 && defined(__ILP32__)
++        "push %%"REG_rBP" \n\t"
++#else
+         "push %%"REG_BP" \n\t"
++#endif
+ #if ARCH_X86_64
+         "mov %6, %%"REG_BP" \n\t"
+ #else
+@@ -318,7 +330,11 @@ static void pack_li_1_MMX(unsigned char
+         "decl %%ecx \n\t"
+         "jnz 3b \n\t"
+         "emms \n\t"
++#if ARCH_X86_64 && defined(__ILP32__)
++        "pop %%"REG_rBP" \n\t"
++#else
+         "pop %%"REG_BP" \n\t"
++#endif
+         :
+         : "S" (y), "D" (dst), "a" (u), "b" (v), "c" (w/16),
+ #if ARCH_X86_64

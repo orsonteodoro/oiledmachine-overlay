@@ -271,6 +271,10 @@ src_prepare() {
 		epatch "${FILESDIR}/${PN}-1.2.1-lastfm.patch"
 		epatch "${FILESDIR}/${PN}-1.2.1-lastfm-2.patch"
 	fi
+
+	epatch "${FILESDIR}"/${PN}-1.2.1-x32-fix-align.patch
+	epatch "${FILESDIR}"/${PN}-1.2.1-x32-mpx86asm_h.patch
+	epatch "${FILESDIR}"/${PN}-1.2.1-x32-vf_ilpack_c.patch
 }
 
 src_configure() {

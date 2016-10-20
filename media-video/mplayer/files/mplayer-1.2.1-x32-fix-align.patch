@@ -1,0 +1,11 @@
+--- MPlayer-1.2.1.orig/configure	2016-10-19 15:40:20.150537458 -0700
++++ MPlayer-1.2.1/configure	2016-10-19 16:08:36.449272200 -0700
+@@ -1848,7 +1849,7 @@ if x86 ; then
+   cc_check && host_arch=x86_64 || host_arch=i386
+   # Treat x32 as generic architecture without any optimizations.
+   if test "$host_arch" = 'i386' && cpp_condition_check '' 'defined(__x86_64__)'; then
+-      host_arch=generic
++      host_arch=x86_64
+   fi
+ fi
+ if ppc ; then
