@@ -8,7 +8,7 @@ inherit eutils git-r3
 
 DESCRIPTION="Chromium uses a package of scripts, the depot_tools, to manage interaction with the Chromium source code repository and the Chromium development process."
 HOMEPAGE="http://dev.chromium.org/developers/how-tos/install-depot-tools"
-EGIT_REPO_URI="https://chromium.googlesource.com/chromium/tools/depot_tools.git"
+EGIT_REPO_URI="https://chromium.googlesource.com/chromium/tools/depot_tools"
 LICENSE="GPL2"
 SLOT="0"
 KEYWORDS="~amd64"
