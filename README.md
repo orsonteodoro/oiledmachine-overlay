@@ -122,6 +122,20 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 *games-misc/libmaker - This is the Library editor for ENIGMA and GameMaker.  It was written in Java.  More information can be found at https://enigma-dev.org/docs/Wiki/Library_Maker.
 
+*games-engines/urho3d - Another game engine.  Emscripten/android support is incomplete.  Raspberry PI is untested.  It is a split ebuild meaning that it many of the internal dependencies are now ebuilds like the Gentoo way.  Most of the demos work as expected.  There may be quirks.  If you see any that bother you, then use the internal dependency instead.  Enable box2d for 2d-physics.  Enable bullet for 3d-physics.  Enable recast for 3D pathfinding.
+
+*dev-lua/tolua++ - Lua-C++ bindings generator more improved than tolua.  I recommend the urho3d use flag to enable some bugfixes.  This one is used by urho3d.
+
+*dev-lua/tolua - Lua-C++ bindings generator.  Not used by urho3d.
+
+*media-sound/w3crapcli-lastfm - Shell scripts to allow for lastfm support for mpv.  This one was modified a bit for Last.fm 2.0 API.  You need your own an developer API key from last fm to use it.  It has last played support as well.  The one on w3crapcli Github repository uses an external bloated dependency.
+
+*media-sound/spotify - I modified the Spotify ebuild for openssl and curl for the Spotify use flag.  Spotify will not work with openssl and curl from the Gentoo portage tree.  You need the openssl and curl ebuilds in this repository.
+
+*dev-libs/openssl-1.0.2j - This one has versioned symbols.  You need to enable the spotify use flag to enabled versioned symbols hack.  It spoofs as 1.0.0 but it still works.
+
+*net-misc/curl-7.51.0 - This one has versioned symbols. You need to enable the spotify use flag to enabled versioned symbols hack.
+
 *dev-embedded/xilinx-ise-webpack - Ebuilds that help installing it on Gentoo systems.  It is fetch restricted so you need to register to download it.  Xilinx ISE is an IDE used to program FPGAs in VHDL for example.  You also need around 24.128G of free space and several hours of install time because it has to transfer the file from /usr/portage/distfiles to the /var/tmp/portage/${CATEGORY}/${PF}/tmp folder to mark it executible, unpacks the package into /var/tmp/portage/${CATEGORY}/${PF}/image, then checks the libraries for TEXTRELS and execstack checks for hundreds of objects, then dumps it finally to the system.  emerge throws a lot of QA security warnings for this package.  The build will also install wrapper scripts ise64 or ise32 for dmenu.  It will install a desktop menu item as well for xfce4 and other popular desktops.
 
 *dev-embedded/diligent-adept2-runtime - Ebuilds that help install it on Gentoo systems.  The original installer did not recognize the 4.x kernels and did not install udev rules in the recommended place in /lib/udev/rules.d.  The Gentoo Wiki doesn't have an explicit proper fix for 4.x kernels if you don't think.
