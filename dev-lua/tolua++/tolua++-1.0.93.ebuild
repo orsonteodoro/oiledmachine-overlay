@@ -15,7 +15,7 @@ SRC_URI=""
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="alpha amd64 ppc ppc64 sparc x86"
-IUSE="static"
+IUSE="static urho3d debug"
 
 RESTRICT="fetch"
 
@@ -35,7 +35,9 @@ src_unpack() {
 }
 
 src_prepare() {
-	#epatch "${FILESDIR}"/tolua++-1.0.93-lua-5_2.patch
+	if use urho3d ; then
+		epatch "${FILESDIR}"/tolua++-1.0.93-urho3d-1.patch || die "failed to add urho3d extension 1"
+	fi
 	if use static; then
 		true
 	else
@@ -45,8 +47,11 @@ src_prepare() {
 }
 
 src_configure() {
-        local mycmakeargs=(
-        )
+        local mycmakeargs=( )
+
+	if ! use debug ; then
+		mycmakeargs+=( -DTOLUA_RELEASE=1 )
+	fi
 
 	cmake-utils_src_configure
 }

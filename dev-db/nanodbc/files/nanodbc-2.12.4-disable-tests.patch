@@ -1,0 +1,27 @@
+diff -urp nanodbc-2.12.4.orig/CMakeLists.txt nanodbc-2.12.4/CMakeLists.txt
+--- nanodbc-2.12.4.orig/CMakeLists.txt	2016-11-23 19:41:07.939437830 -0800
++++ nanodbc-2.12.4/CMakeLists.txt	2016-11-23 19:41:42.072732946 -0800
+@@ -223,13 +223,13 @@ endif()
+ ########################################
+ ## unit tests
+ ########################################
+-if(NANODBC_TEST)
+-	enable_testing()
+-	add_subdirectory(test)
+-	add_custom_target(check
+-		COMMAND ${CMAKE_CTEST_COMMAND} --force-new-ctest-process --output-on-failure
+-		DEPENDS tests)
+-	message(STATUS "Target test: Turned on")
+-else()
+-	message(STATUS "Target test: Turned off")
+-endif()
++#if(NANODBC_TEST)
++#	enable_testing()
++#	add_subdirectory(test)
++#	add_custom_target(check
++#		COMMAND ${CMAKE_CTEST_COMMAND} --force-new-ctest-process --output-on-failure
++#		DEPENDS tests)
++#	message(STATUS "Target test: Turned on")
++#else()
++#	message(STATUS "Target test: Turned off")
++#endif()

@@ -3,8 +3,8 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/www-client/surf/surf-0.6-r1.ebuild,v 1.7 2013/11/01 13:50:07 ago Exp $
 
-EAPI=5
-inherit autotools eutils flag-o-matic savedconfig toolchain-funcs
+EAPI=6
+inherit autotools eutils flag-o-matic multilib savedconfig toolchain-funcs
 
 DESCRIPTION="A simple web browser based on WebKit/GTK+."
 HOMEPAGE="http://surf.suckless.org/"

@@ -1,0 +1,12 @@
+diff -urp curl-7.51.0.orig/lib/libcurl.vers.in curl-7.51.0/lib/libcurl.vers.in
+--- curl-7.51.0.orig/lib/libcurl.vers.in	2016-10-10 05:12:28.000000000 -0700
++++ curl-7.51.0/lib/libcurl.vers.in	2016-11-18 12:05:20.361900676 -0800
+@@ -6,7 +6,7 @@ HIDDEN
+     _save*;
+ };
+ 
+-CURL_@CURL_LT_SHLIB_VERSIONED_FLAVOUR@4
++CURL_@CURL_LT_SHLIB_VERSIONED_FLAVOUR@3
+ {
+   global: curl_*;
+   local: *;

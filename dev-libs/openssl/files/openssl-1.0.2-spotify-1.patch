@@ -1,0 +1,16 @@
+diff -urN engines/openssl.ld engines/openssl.ld
+--- engines/openssl.ld	1969-12-31 16:00:00.000000000 -0800
++++ engines/openssl.ld	2016-11-18 10:56:36.026888962 -0800
+@@ -0,0 +1,4 @@
++OPENSSL_1.0.0 {
++	 global:
++		 *;
++};
+diff -urN openssl.ld openssl.ld
+--- openssl.ld	1969-12-31 16:00:00.000000000 -0800
++++ openssl.ld	2016-11-18 10:57:00.234822099 -0800
+@@ -0,0 +1,4 @@
++OPENSSL_1.0.0 {
++	 global:
++		 *;
++};

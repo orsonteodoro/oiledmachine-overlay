@@ -1,0 +1,28 @@
+index 561c8f4..e7e9a5b 100644 (file)
+--- a/mkspecs/features/default_post.prf
++++ b/mkspecs/features/default_post.prf
+@@ -95,13 +95,17 @@ breakpad {
+     !isEmpty(QMAKE_STRIP):QMAKE_POST_LINK = $$QMAKE_POST_LINK$$escape_expand(\\n\\t)$$quote($$QMAKE_STRIP $$DEBUGFILENAME)
+ }
+ 
+-# Disable special compiler flags for host builds (needs to be changed for 5.7
+-# to fall back to c++11 because since 5.7 c++11 is required everywhere,
+-# including host builds).
+-if(!host_build|!cross_compile):if(c++11|c++14|c++1z) {
+-    c++1z:       cxxstd = CXX1Z
+-    else: c++14: cxxstd = CXX14
+-    else:        cxxstd = CXX11
++c++11|c++14|c++1z {
++    # Disable special compiler flags for host builds
++    !host_build|!cross_compile {
++        c++1z:       cxxstd = CXX1Z
++        else: c++14: cxxstd = CXX14
++        else:        cxxstd = CXX11
++    } else {
++        # Fall back to c++11, because since 5.7 c++11 is required everywhere,
++        # including host builds
++        cxxstd = CXX11
++    }
+ 
+     # Check if we should disable the GNU extensions or not
+     !strict_c++:!isEmpty(QMAKE_CXXFLAGS_GNU$$cxxstd): cxxstd = GNU$$cxxstd

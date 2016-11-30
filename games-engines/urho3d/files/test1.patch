@@ -1,0 +1,40 @@
+diff -urp Urho3D-1.6.orig/Source/ThirdParty/SDL/include/SDL_video.h Urho3D-1.6/Source/ThirdParty/SDL/include/SDL_video.h
+--- Urho3D-1.6.orig/Source/ThirdParty/SDL/include/SDL_video.h	2016-08-08 04:44:35.000000000 -0700
++++ Urho3D-1.6/Source/ThirdParty/SDL/include/SDL_video.h	2016-11-26 10:24:05.352596822 -0800
+@@ -870,6 +870,7 @@ typedef enum
+  *
+  *  \sa SDL_SetWindowHitTest
+  */
++#warning lol
+ typedef SDL_HitTestResult (SDLCALL *SDL_HitTest)(SDL_Window *win,
+                                                  const SDL_Point *area,
+                                                  void *data);
+
+diff -urp Urho3D-1.6.orig/Source/ThirdParty/SDL/src/video/emscripten/SDL_emscriptenopengles.h Urho3D-1.6/Source/ThirdParty/SDL/src/video/emscripten/SDL_emscriptenopengles.h
+--- Urho3D-1.6.orig/Source/ThirdParty/SDL/src/video/emscripten/SDL_emscriptenopengles.h	2016-08-08 04:44:35.000000000 -0700
++++ Urho3D-1.6/Source/ThirdParty/SDL/src/video/emscripten/SDL_emscriptenopengles.h	2016-11-26 10:31:42.592360922 -0800
+@@ -25,7 +25,7 @@
+ 
+ #if SDL_VIDEO_DRIVER_EMSCRIPTEN && SDL_VIDEO_OPENGL_EGL
+ 
+-#include "../SDL_sysvideo.h"
+-#include "../SDL_egl_c.h"
++//#include "../SDL_sysvideo.h"
++//#include "../SDL_egl_c.h"
+ 
+ /* OpenGLES functions */
+
+diff -urp Urho3D-1.6.orig/Source/ThirdParty/SDL/src/video/emscripten/SDL_emscriptenopengles.c Urho3D-1.6/Source/ThirdParty/SDL/src/video/emscripten/SDL_emscriptenopengles.c
+--- Urho3D-1.6.orig/Source/ThirdParty/SDL/src/video/emscripten/SDL_emscriptenopengles.c	2016-08-08 04:44:35.000000000 -0700
++++ Urho3D-1.6/Source/ThirdParty/SDL/src/video/emscripten/SDL_emscriptenopengles.c	2016-11-26 10:50:34.016057884 -0800
+@@ -28,6 +28,9 @@
+ #include "SDL_emscriptenvideo.h"
+ #include "SDL_emscriptenopengles.h"
+ 
++#include "../SDL_sysvideo.h"
++#include "../SDL_egl_c.h"
++
+ #define LOAD_FUNC(NAME) _this->egl_data->NAME = NAME;
+ 
+ /* EGL implementation of SDL OpenGL support */
+
