@@ -16,35 +16,39 @@ X86_CPU_FEATURES_RAW=( 3dnow mmx sse )
 X86_CPU_FEATURES=( ${X86_CPU_FEATURES_RAW[@]/#/cpu_flags_x86_} )
 IUSE="${X86_CPU_FEATURES[@]%:*} abi_mips_n64 system-angelscript system-assimp system-box2d system-bullet system-recast system-freetype system-glew system-libcpuid system-lua system-lua-jit system-lz4 system-mojoshader system-nanodbc system-pugixml system-rapidjson system-sdl system-sqlite system-tolua++ system-civetweb system-knet boost sound alsa pulseaudio debug automated-testing javascript static static-libs +pch -docs pulseaudio -angelscript +lua -lua-jit -network -odbc sqlite +recast +box2d +bullet +opengl +samples -extras +tools -clang-tools -debug-raw-script-loader +filewatcher -c++11 -bindings logging profiling threads debug native raspberry-pi android multitarget"
 REQUIRED_USE="
+	native
 	odbc? ( !sqlite )
 	sqlite? ( !odbc )
         clang-tools? ( c++11 !pch !static )
-        javascript? ( angelscript? ( c++11 )  )
         abi_mips_n64? ( angelscript? ( c++11 ) )
-	cpu_flags_x86_mmx? ( !cpu_flags_x86_sse !javascript )
-	cpu_flags_x86_3dnow? ( !cpu_flags_x86_3dnow !cpu_flags_x86_mmx !javascript )
-	sound? ( threads alsa )
-	alsa? ( sound threads )
+	cpu_flags_x86_mmx? ( !cpu_flags_x86_sse )
+	cpu_flags_x86_3dnow? ( !cpu_flags_x86_3dnow !cpu_flags_x86_mmx )
 	opengl
 	static? ( static-libs )
 	static-libs? ( static )
-	javascript? ( static multitarget !angelscript !network !bindings !system-angelscript !system-assimp !system-box2d !system-bullet !system-recast !system-freetype !system-glew !system-libcpuid !system-lua !system-lua-jit !system-lz4 !system-mojoshader !system-nanodbc !system-pugixml !system-rapidjson !system-sdl !system-sqlite !system-tolua++ !system-civetweb !system-knet )
-	javascript? ( || ( !cpu_flags_x86_3dnow !cpu_flags_x86_mmx !cpu_flags_x86_sse  ) )
-	^^ ( native javascript raspberry-pi android )
-	^^ ( native multitarget )
 	!raspberry-pi
 	!android
 	lua-jit? ( lua )
 	raspberry-pi? ( multitarget? ( !system-angelscript !system-assimp !system-box2d !system-bullet !system-recast !system-freetype !system-glew !system-libcpuid !system-lua !system-lua-jit !system-lz4 !system-mojoshader !system-nanodbc !system-pugixml !system-rapidjson !system-sdl !system-sqlite !system-tolua++ !system-civetweb !system-knet ) )
 	android? ( !system-angelscript !system-assimp !system-box2d !system-bullet !system-recast !system-freetype !system-glew !system-libcpuid !system-lua !system-lua-jit !system-lz4 !system-mojoshader !system-nanodbc !system-pugixml !system-rapidjson !system-sdl !system-sqlite !system-tolua++ !system-civetweb !system-knet )
+	alsa? ( sound threads )
+	sound? ( threads alsa )
 "
+#	^^ ( native multitarget )
+#	^^ ( native javascript raspberry-pi android )
+#	javascript? ( !angelscript !bindings )
+#javascript? ( threads? ( !network !sqlite )  )
 #the following are untested so masked
 #javascript/emscripten/html5
 #raspberry-pi
 #android
+#	javascript? ( !angelscript !lua !lua-jit )
+
+#multitarget !angelscript !network !bindings 
 
 LUA_VER="5.2"
-RDEPEND="javascript? ( sys-devel/llvm )
+RDEPEND="javascript? ( games-engines/urho3d-web )
+         javascript? ( sys-devel/llvm )
          clang-tools? ( sys-devel/llvm )
          bindings? ( sys-devel/llvm )
 	 native? ( x11-libs/libX11
@@ -89,7 +93,7 @@ RDEPEND="javascript? ( sys-devel/llvm )
 	                 media-libs/libsdl2[X]
 	                 media-libs/libsdl2[X,opengl?]
 	 )
-   	 javascript? ( dev-util/emscripten
+   	 javascript? ( >=dev-util/emscripten-1.36.10
 		       >=sys-devel/llvm-3.9.0
 	 )
 	 android? ( dev-util/android-ndk )
@@ -106,7 +110,7 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/Urho3D-${PV}"
 
 pkg_setup() {
-	if use javascript || use android ; then
+	if use android ; then
 		ewarn "This feature has not been completely implemented on the ebuild level."
 	fi
 	if use raspberry-pi ; then
@@ -386,13 +390,6 @@ src_prepare() {
 		#URHO3D_TESTING was defined as false by default
 		sed -i -e 's|#ifdef URHO3D_TESTING|#if URHO3D_TESTING|' Source/Urho3D/Core/ProcessUtils.cpp || die p90 #418
 		sed -i -e 's|#ifdef URHO3D_TESTING|#if URHO3D_TESTING|g' Source/Urho3D/Engine/Engine.cpp || die p91 #419
-	elif use javascript ; then
-		epatch "${FILESDIR}"/test1.patch
-		epatch "${FILESDIR}"/urho3d-1.6-emscripten-includes-path.patch
-		epatch "${FILESDIR}"/urho3d-1.6-emscripten-includes-sdl-path.patch
-		#epatch "${FILESDIR}"/urho3d-1.6-emscriptensys_video_h-sdl-fix.patch
-		epatch "${FILESDIR}"/urho3d-1.6-sdl_video.patch
-		sed -i -e 's|-pthread|-pthread -DNANODBC_USE_BOOST_CONVERT|g' CMake/Modules/Urho3D-CMake-common.cmake || die v1
 	fi
 
 	cmake-utils_src_prepare
@@ -505,8 +502,8 @@ src_configure() {
                 $(cmake-utils_use profiling URHO3D_PROFILING)
                 $(cmake-utils_use automated-testing URHO3D_TESTING)
                 $(cmake-utils_use threads URHO3D_THREADING)
-                $(cmake-utils_use multitarget CMAKE_CROSSCOMPILING)
         )
+#                $(cmake-utils_use multitarget CMAKE_CROSSCOMPILING)
 
 	if use system-nanodbc && use odbc ; then
 		mycmakeargs+=( -DURHO3D_NANODBC_EXTERNAL=1 )
@@ -555,10 +552,6 @@ src_configure() {
 		else
 			mycmakeargs+=( -DURHO3D_LIB_TYPE=SHARED )
 		fi
-	elif use javascript ; then
-		myemscriptpath=$(find  /usr/share/emscripten-*/ -type d | head -n 1)
-		mycmakeargs+=( $(cmake-utils_use javascript EMSCRIPTEN) )
-		mycmakeargs+=( -DEMSCRIPTEN_ROOT_PATH="${myemscriptpath}" )
 	elif use raspberry-pi ; then
 		mycmakeargs+=( $(cmake-utils_use raspberry-pi RPI) )
 	elif use android ; then
