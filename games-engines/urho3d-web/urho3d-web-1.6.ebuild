@@ -28,6 +28,7 @@ REQUIRED_USE="
 	lua-jit? ( lua )
 	alsa? ( sound threads )
 	sound? ( threads alsa )
+	!threads
 "
 #javascript? ( threads? ( !network !sqlite )  )
 #the following are untested so masked
