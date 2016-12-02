@@ -146,7 +146,13 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 *dev-embedded/avr-studio - Ebuild that helps install avr-studio using wine.  You need to run /usr/share/avr-studio/install.sh because it uses winetricks.  The sources of winetricks I don't really trust so you can only use the script on a limited user.  Only the 4.19 is offered since it can only do unattended install and it is rated gold on winedb.  To get the pretty icon use the ico use flag.  I didn't really test it fully but the gcc plugin needs to be configured to use the gcc.  I am considering creating a new overlay just for wine apps recipies.
 
+*www-client/phantomjs - Updated to 2.1.1.  It should fix the rendering on some sites like Facebook.
+
+*www-client/casperjs - updated to 1.1.3.  It looks like it works with PhantomJS 2.1.1.
+
 TODO (NOT COMMITED):
+
+*net-misc/facy - Command line Facebook client.  Update with missing facebook API calls.  Use CasperJS and PhantomJS to fill in the missing API calls.
 
 *media-video/libmtp - MTP/IP partial support.  Currently patches are stored in seperate my /etc/portage/patches.  No one has reverse engineered the save WIFI profile BLOB generation [possibly related to CryptUnprotectData() and WLANProfile XML format] to device given a plaintext WIFI password even in WINE.  It uses GSSDP to broadcast presence.  Transferring files over WIFI in Linux/libmtp does work but you need to have my patch and need the GUID of the PC/Transfer App.  It is currently on indefinite hold.
 
