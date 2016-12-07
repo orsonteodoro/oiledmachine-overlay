@@ -1,9 +1,8 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/x11-wm/dwm/dwm-6.0.ebuild,v 1.12 2013/02/06 15:19:31 jer Exp $
+# $Id$
 
-EAPI="4"
-
+EAPI=5
 inherit eutils savedconfig toolchain-funcs
 
 DESCRIPTION="a dynamic window manager for X11"
@@ -15,12 +14,15 @@ SLOT="0"
 KEYWORDS="amd64 ppc ppc64 x86 ~x86-fbsd"
 IUSE="xinerama fib"
 
-DEPEND="x11-libs/libX11
-	xinerama? (
-		x11-proto/xineramaproto
-		x11-libs/libXinerama
-		)"
-RDEPEND="${DEPEND}"
+RDEPEND="
+	x11-libs/libX11
+	media-libs/freetype
+	xinerama? ( x11-libs/libXinerama )
+"
+DEPEND="
+	${RDEPEND}
+	xinerama? ( x11-proto/xineramaproto )
+"
 
 src_prepare() {
 	sed -i \
@@ -31,6 +33,7 @@ src_prepare() {
 		-e "s@/usr/X11R6/include@${EPREFIX}/usr/include/X11@" \
 		-e "s@/usr/X11R6/lib@${EPREFIX}/usr/lib@" \
 		-e "s@-I/usr/include@@" -e "s@-L/usr/lib@@" \
+		-e "s/\/freetype2/\ -I\/usr\/include\/freetype2/" \
 		config.mk || die
 	sed -i \
 		-e '/@echo CC/d' \
@@ -44,6 +47,7 @@ src_prepare() {
 		epatch "$FILESDIR/dwm-fib.patch"
 		epatch "$FILESDIR/dwm-fib1.patch"
 	fi
+	epatch "${FILESDIR}"/dwm-6.1-no-emoji-title-crash.patch
 }
 
 src_compile() {
