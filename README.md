@@ -158,6 +158,10 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 *x11-wm/dwm - fixes the emoji titlebar crash.
 
+*media-gfx/caesiumclt - is an command line image compressor for png and jpeg files.
+
+*media/mozjpeg - dependency for caesiumctl
+
 TODO (NOT COMMITED):
 
 *net-misc/facy - Command line Facebook client.  Update with missing facebook API calls.  Use CasperJS and PhantomJS to fill in the missing API calls.
