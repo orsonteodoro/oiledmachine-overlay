@@ -150,7 +150,7 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 *www-client/casperjs - updated to 1.1.3.  It looks like it works with PhantomJS 2.1.1.
 
-*media-fonts/noto-color-emoji - This one you can use to compile noto color emoji.  The benefit is that you can get updated emojis.  You may need to do a `eselect fontconfig enable 01-notosans.conf` and `eselect fontconfig disable 70-no-bitmaps.conf` .  All the required dependencies have been sorted and will require x11-libs/cairo from this repo.  This one is better because this one supports all apps.  It is unlike Emoji One font which only has colored emojis for firefox and rest of the apps black and white.  It's kind of disappointing that this has not been added in the official repository.
+*media-fonts/noto-color-emoji - This one you can use to compile noto color emoji.  The benefit is that you can get updated emojis.  You may need to do a `eselect fontconfig enable 01-notosans.conf` and `eselect fontconfig disable 70-no-bitmaps.conf` .  All the required dependencies have been sorted and will require x11-libs/cairo from this repo.  This one is better because this one supports all apps.  It is unlike Emoji One font which only has colored emojis for firefox and rest of the apps black and white.  It's kind of disappointing that this has not been added in the official repository.  It crashes phantomjs/casperjs for some reason due to a qtwebkit bug.
 
 *media-fonts/noto-color-emoji-bin - This one has been precompiled and from the google website.  You may need to do a `eselect fontconfig enable 01-notosans.conf` and `eselect fontconfig disable 70-no-bitmaps.conf` .
 
