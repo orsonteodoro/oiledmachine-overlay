@@ -1,0 +1,11 @@
+--- phantomjs-2.1.1.orig/src/qt/qtwebkit/Source/WebKit2/WebProcess/WebCoreSupport/WebChromeClient.h	2016-12-09 00:17:50.741561082 -0800
++++ phantomjs-2.1.1/src/qt/qtwebkit/Source/WebKit2/WebProcess/WebCoreSupport/WebChromeClient.h	2016-12-09 09:10:50.474043552 -0800
+@@ -90,7 +90,7 @@ private:
+     
+     virtual void setResizable(bool) OVERRIDE;
+     
+-    virtual void addMessageToConsole(WebCore::MessageSource, WebCore::MessageLevel, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceID) OVERRIDE;
++    virtual void addMessageToConsole(WebCore::MessageSource, WebCore::MessageLevel, const String& message, unsigned lineNumber, unsigned columnNumber, const String& sourceID);
+     
+     virtual bool canRunBeforeUnloadConfirmPanel() OVERRIDE;
+     virtual bool runBeforeUnloadConfirmPanel(const String& message, WebCore::Frame*) OVERRIDE;

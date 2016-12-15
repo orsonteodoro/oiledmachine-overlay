@@ -1,0 +1,43 @@
+diff -urp phantomjs-2.1.1.orig/src/qt/qtwebkit/Source/WebCore/html/HTMLVideoElement.cpp phantomjs-2.1.1/src/qt/qtwebkit/Source/WebCore/html/HTMLVideoElement.cpp
+--- phantomjs-2.1.1.orig/src/qt/qtwebkit/Source/WebCore/html/HTMLVideoElement.cpp	2016-12-10 01:31:18.298601341 -0800
++++ phantomjs-2.1.1/src/qt/qtwebkit/Source/WebCore/html/HTMLVideoElement.cpp	2016-12-10 01:57:56.340260209 -0800
+@@ -67,7 +67,8 @@ bool HTMLVideoElement::rendererIsNeeded(
+     return HTMLElement::rendererIsNeeded(context); 
+ }
+ 
+-#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
++#if USE(PHANTOMJS_VIDEO_SRC)
++#elif !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+ RenderObject* HTMLVideoElement::createRenderer(RenderArena* arena, RenderStyle*)
+ {
+     return new (arena) RenderVideo(this);
+@@ -78,7 +79,8 @@ void HTMLVideoElement::attach(const Atta
+ {
+     HTMLMediaElement::attach(context);
+ 
+-#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
++#if USE(PHANTOMJS_VIDEO_SRC)
++#elif !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+     updateDisplayState();
+     if (shouldDisplayPosterImage()) {
+         if (!m_imageLoader)
+@@ -113,7 +115,8 @@ void HTMLVideoElement::parseAttribute(co
+         // Force a poster recalc by setting m_displayMode to Unknown directly before calling updateDisplayState.
+         HTMLMediaElement::setDisplayMode(Unknown);
+         updateDisplayState();
+-#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
++#if USE(PHANTOMJS_VIDEO_SRC)
++#elif !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+         if (shouldDisplayPosterImage()) {
+             if (!m_imageLoader)
+                 m_imageLoader = adoptPtr(new HTMLImageLoader(this));
+@@ -220,7 +223,8 @@ void HTMLVideoElement::setDisplayMode(Di
+             player()->setPoster(poster);
+     }
+ 
+-#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
++#if USE(PHANTOMJS_VIDEO_SRC)
++#elif !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+     if (renderer() && displayMode() != oldMode)
+         renderer()->updateFromElement();
+ #endif

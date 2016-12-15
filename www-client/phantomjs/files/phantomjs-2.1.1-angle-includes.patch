@@ -1,0 +1,14 @@
+--- ./phantomjs-2.1.1.orig/src/qt/qtwebkit/Source/WebCore/WebCore.pri	2016-12-09 20:10:21.626230692 -0800
++++ ./phantomjs-2.1.1/src/qt/qtwebkit/Source/WebCore/WebCore.pri	2016-12-09 21:33:13.165238080 -0800
+@@ -109,6 +109,10 @@ INCLUDEPATH += \
+ 
+ INCLUDEPATH += $$WEBCORE_GENERATED_SOURCES_DIR
+ 
++INCLUDEPATH += \
++    $$SOURCE_DIR/../ThirdParty/ANGLE/include/GLSLANG \
++    $$SOURCE_DIR/../ThirdParty/ANGLE/include/KHR
++
+ enable?(XSLT) {
+     use?(LIBXML2) {
+         mac {
+

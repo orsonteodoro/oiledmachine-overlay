@@ -1,0 +1,86 @@
+diff -urp phantomjs-2.1.1.orig/src/qt/qtwebkit/Source/WebCore/html/HTMLMediaElement.cpp phantomjs-2.1.1/src/qt/qtwebkit/Source/WebCore/html/HTMLMediaElement.cpp
+--- phantomjs-2.1.1.orig/src/qt/qtwebkit/Source/WebCore/html/HTMLMediaElement.cpp	2016-12-09 23:06:14.156481329 -0800
++++ phantomjs-2.1.1/src/qt/qtwebkit/Source/WebCore/html/HTMLMediaElement.cpp	2016-12-10 01:23:35.647427230 -0800
+@@ -549,7 +549,9 @@ void HTMLMediaElement::finishParsingChil
+ 
+ bool HTMLMediaElement::rendererIsNeeded(const NodeRenderingContext& context)
+ {
+-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
++#if USE(PHANTOMJS_VIDEO_SRC)
++    return false;
++#elif ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+     UNUSED_PARAM(context);
+     Frame* frame = document()->frame();
+     if (!frame)
+@@ -563,7 +565,9 @@ bool HTMLMediaElement::rendererIsNeeded(
+ 
+ RenderObject* HTMLMediaElement::createRenderer(RenderArena* arena, RenderStyle*)
+ {
+-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
++#if USE(PHANTOMJS_VIDEO_SRC)
++    return nullptr;
++#elif ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+     // Setup the renderer if we already have a proxy widget.
+     RenderEmbeddedObject* mediaRenderer = new (arena) RenderEmbeddedObject(this);
+     if (m_proxyWidget) {
+@@ -817,7 +821,8 @@ void HTMLMediaElement::prepareForLoad()
+     setSourceState(MediaSource::closedKeyword());
+ #endif
+ 
+-#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
++#if USE(PHANTOMJS_VIDEO_SRC)
++#elif !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+     createMediaPlayer();
+ #else
+     if (m_player)
+@@ -1001,7 +1006,8 @@ void HTMLMediaElement::loadNextSourceChi
+         return;
+     }
+ 
+-#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
++#if USE(PHANTOMJS_VIDEO_SRC)
++#elif !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+     // Recreate the media player for the new url
+     createMediaPlayer();
+ #endif
+@@ -4153,7 +4159,8 @@ void HTMLMediaElement::clearMediaPlayer(
+     removeAllInbandTracks();
+ #endif
+ 
+-#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
++#if USE(PHANTOMJS_VIDEO_SRC)
++#elif !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+ 
+ #if ENABLE(MEDIA_SOURCE)
+     setSourceState(MediaSource::closedKeyword());
+@@ -4263,7 +4270,8 @@ void HTMLMediaElement::mediaVolumeDidCha
+ 
+ void HTMLMediaElement::defaultEventHandler(Event* event)
+ {
+-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
++#if USE(PHANTOMJS_VIDEO_SRC)
++#elif ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+     RenderObject* r = renderer();
+     if (!r || !r->isWidget())
+         return;
+@@ -4278,7 +4286,9 @@ void HTMLMediaElement::defaultEventHandl
+ 
+ bool HTMLMediaElement::willRespondToMouseClickEvents()
+ {
+-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
++#if USE(PHANTOMJS_VIDEO_SRC)
++    return true;
++#elif ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+     return true;
+ #else
+     return HTMLElement::willRespondToMouseClickEvents();
+@@ -4684,7 +4694,8 @@ bool HTMLMediaElement::createMediaContro
+ 
+ void HTMLMediaElement::configureMediaControls()
+ {
+-#if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
++#if USE(PHANTOMJS_VIDEO_SRC)
++#elif !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
+     if (!controls() || !inDocument()) {
+         if (hasMediaControls())
+             mediaControls()->hide();

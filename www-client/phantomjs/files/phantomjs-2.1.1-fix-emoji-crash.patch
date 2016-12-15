@@ -1,0 +1,55 @@
+From: https://codereview.qt-project.org/#/c/147429
+
+Parent:     ba7f76de (winrt: Add support for offscreen surfaces)
+Author:     Eskil Abrahamsen Blomfeldt <eskil.abrahamsen-blomfeldt@theqtcompany.com>
+AuthorDate: 2016-01-26 14:45:46 +0100
+Commit:     Eskil Abrahamsen Blomfeldt <eskil.abrahamsen-blomfeldt@theqtcompany.com>
+CommitDate: 2016-01-26 14:14:34 +0000
+
+Fix artihmetic exception when using non-scalable fonts
+
+For non-scalable fonts, the units_per_EM in FreeType is
+documented to be undefined and will default to 0, which means
+that any division by it will cause an exception.
+
+The emSquareSize() function already checks if the font is scalable
+and returns y_ppem if not, so lets use it instead in all locations
+where we're not already sure the font is scalable.
+
+[ChangeLog][Text][Freetype] Fixed a divide-by-zero exception
+when accessing bitmap fonts.
+
+Change-Id: I8839d4c83047fb3f6bb4d69af0258e94a258a4d9
+Task-number: QTBUG-45963
+Reviewed-by: Konstantin Ritt <ritt.ks@gmail.com>
+---
+diff -urp phantomjs-2.1.1.orig/src/qt/qtbase/src/gui/text/qfontengine_ft.cpp phantomjs-2.1.1/src/qt/qtbase/src/gui/text/qfontengine_ft.cpp
+--- phantomjs-2.1.1.orig/src/qt/qtbase/src/gui/text/qfontengine_ft.cpp	2016-12-15 14:00:12.950306471 -0800
++++ phantomjs-2.1.1/src/qt/qtbase/src/gui/text/qfontengine_ft.cpp	2016-12-15 14:04:06.678706012 -0800
+@@ -1213,7 +1213,7 @@ QFixed QFontEngineFT::xHeight() const
+     TT_OS2 *os2 = (TT_OS2 *)FT_Get_Sfnt_Table(freetype->face, ft_sfnt_os2);
+     if (os2 && os2->sxHeight) {
+         lockFace();
+-        QFixed answer = QFixed(os2->sxHeight*freetype->face->size->metrics.y_ppem)/freetype->face->units_per_EM;
++        QFixed answer = QFixed(os2->sxHeight*freetype->face->size->metrics.y_ppem)/emSquareSize();
+         unlockFace();
+         return answer;
+     }
+@@ -1225,7 +1225,7 @@ QFixed QFontEngineFT::averageCharWidth()
+     TT_OS2 *os2 = (TT_OS2 *)FT_Get_Sfnt_Table(freetype->face, ft_sfnt_os2);
+     if (os2 && os2->xAvgCharWidth) {
+         lockFace();
+-        QFixed answer = QFixed(os2->xAvgCharWidth*freetype->face->size->metrics.x_ppem)/freetype->face->units_per_EM;
++        QFixed answer = QFixed(os2->xAvgCharWidth*freetype->face->size->metrics.x_ppem)/emSquareSize();
+         unlockFace();
+         return answer;
+     }
+@@ -1301,7 +1301,7 @@ void QFontEngineFT::doKerning(QGlyphLayo
+         kerning_pairs_loaded = true;
+         lockFace();
+         if (freetype->face->size->metrics.x_ppem != 0) {
+-            QFixed scalingFactor(freetype->face->units_per_EM/freetype->face->size->metrics.x_ppem);
++            QFixed scalingFactor = emSquareSize() / QFixed(freetype->face->size->metrics.x_ppem);
+             unlockFace();
+             const_cast<QFontEngineFT *>(this)->loadKerningPairs(scalingFactor);
+         } else {
