@@ -16,6 +16,7 @@ S="${WORKDIR}"
 LICENSE="OFL-1.1"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
+IUSE="reassign-ugly-text-emojis"
 
 RDEPEND=">=media-libs/fontconfig-2.11.91
          >=x11-libs/cairo-1.14.6[colored-emojis]
@@ -26,7 +27,7 @@ DEPEND="dev-python/fonttools
         ${RDEPEND}"
 
 FONT_SUFFIX="ttf"
-FONT_CONF="${FILESDIR}/01-notosans.conf"
+FONT_CONF=( "${FILESDIR}/01-notosans.conf" "${FILESDIR}/61-notosans.conf" )
 
 rebuild_fontfiles() {
         einfo "Refreshing fonts.scale and fonts.dir..."
@@ -47,8 +48,12 @@ src_install() {
 
 pkg_postinst() {
 	eselect fontconfig enable 01-notosans.conf
+	if use reassign-ugly-text-emojis ; then
+		eselect fontconfig enable 61-notosans.conf
+		ewarn "You may need to manually add exceptions to 61-notosans.conf based on fonts installed and what was in the serif and sans-serif section of 60-latin.conf and run \`fc-cache -fv\`.."
+	fi
 	eselect fontconfig disable 70-no-bitmaps.conf
         rebuild_fontfiles
-	ewarn "You may need to \`eselect fontconfig enable 01-notosans.conf\` manually"
-	ewarn "You may need to \`eselect fontconfig disable 70-no-bitmaps.conf\` manually"
+	ewarn "You may need to \`eselect fontconfig enable 01-notosans.conf\` manually and run \`fc-cache -fv\`."
+	ewarn "You may need to \`eselect fontconfig disable 70-no-bitmaps.conf\` manually and run \`fc-cache -fv\`."
 }

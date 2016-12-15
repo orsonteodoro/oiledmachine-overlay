@@ -19,9 +19,8 @@ S="${WORKDIR}"
 LICENSE="OFL-1.1"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="zopflipng optipng"
-REQUIRED_USE="^^ ( zopflipng optipng )
-              !optipng"
+IUSE="zopflipng optipng reassign-ugly-text-emojis" #break utr#51
+REQUIRED_USE="^^ ( zopflipng optipng )"
 
 RDEPEND=">=media-libs/fontconfig-2.11.91
          >=x11-libs/cairo-1.14.6[colored-emojis]
@@ -36,7 +35,7 @@ DEPEND="${RDEPEND}
 	dev-python/six"
 
 FONT_SUFFIX="ttf"
-FONT_CONF="${FILESDIR}/01-notosans.conf"
+FONT_CONF=( "${FILESDIR}/01-notosans.conf" "${FILESDIR}/61-notosans.conf" )
 
 S="${WORKDIR}/noto-emoji-${NOTO_EMOJI_COMMIT}"
 
@@ -52,7 +51,23 @@ src_prepare() {
 	#	einfo "Patching $f"
 	#	sed -i -e "s|unichr|chr|g" "$f" || die "patch failed 2 $f"
 	#done
-	true
+	if use zopflipng ; then
+		sed -i -e 's|emoji: \$(EMOJI_FILES)|MISSING_OPTIPNG = fail\nundefine MISSING_ZOPFLI\nemoji: \$(EMOJI_FILES)|g' Makefile
+	else
+		sed -i -e 's|emoji: \$(EMOJI_FILES)|MISSING_ZOPFLI = fail\nundefine MISSING_OPTIPNG\nemoji: \$(EMOJI_FILES)|g' Makefile
+	fi
+
+	#noto-tools patch
+	#sed -i -e 's|-vs 2640 2642 2695|-vs 2640 2642 2695|g' Makefile
+	if use reassign-ugly-text-emojis ; then
+		cd "${WORKDIR}/nototools-${NOTO_TOOLS_COMMIT}"
+		#epatch "${FILESDIR}"/nototools-gentoo-exclude-text-presentation.patch
+		#epatch "${FILESDIR}"/nototools-gentoo-exclude-text-presentation-2.patch
+		#epatch "${FILESDIR}"/nototools-gentoo-exclude-text-presentation-3.patch
+		#epatch "${FILESDIR}"/nototools-gentoo-exclude-text-presentation-4.patch
+		##epatch "${FILESDIR}"/nototools-gentoo-exclude-text-presentation-5.patch
+		#epatch "${FILESDIR}"/nototools-gentoo-exclude-text-presentation-6.patch
+	fi
 }
 
 src_compile() {
@@ -82,8 +97,12 @@ rebuild_fontfiles() {
 
 pkg_postinst() {
 	eselect fontconfig enable 01-notosans.conf
+	if use reassign-ugly-text-emojis ; then
+		eselect fontconfig enable 61-notosans.conf
+		ewarn "You may need to manually add exceptions to 61-notosans.conf based on fonts installed and what was in the serif and sans-serif section of 60-latin.conf and run \`fc-cache -fv\`."
+	fi
 	eselect fontconfig disable 70-no-bitmaps.conf
-	ewarn "You may need to \`eselect fontconfig enable 01-notosans.conf\` manually"
-	ewarn "You may need to \`eselect fontconfig disable 70-no-bitmaps.conf\` manually"
+	ewarn "You may need to \`eselect fontconfig enable 01-notosans.conf\` manually and run \`fc-cache -fv\`."
+	ewarn "You may need to \`eselect fontconfig disable 70-no-bitmaps.conf\` manually and run \`fc-cache -fv\`."
         rebuild_fontfiles
 }
