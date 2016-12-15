@@ -27,7 +27,7 @@ DEPEND="dev-python/fonttools
         ${RDEPEND}"
 
 FONT_SUFFIX="ttf"
-FONT_CONF=( "${FILESDIR}/01-notosans.conf" "${FILESDIR}/61-notosans.conf" )
+FONT_CONF=( "${FILESDIR}/01-notosans.conf" "${FILESDIR}/44-notosans.conf" "${FILESDIR}/61-notosans.conf" )
 
 rebuild_fontfiles() {
         einfo "Refreshing fonts.scale and fonts.dir..."
@@ -51,6 +51,8 @@ pkg_postinst() {
 	if use reassign-ugly-text-emojis ; then
 		eselect fontconfig enable 61-notosans.conf
 		ewarn "You may need to manually add exceptions to 61-notosans.conf based on fonts installed and what was in the serif and sans-serif section of 60-latin.conf and run \`fc-cache -fv\`.."
+		eselect fontconfig enable 44-notosans.conf
+		ewarn "You may need to manually add exceptions to 44-notosans.conf based on fonts installed and what was in the serif and sans-serif section of 60-latin.conf and run \`fc-cache -fv\`.."
 	fi
 	eselect fontconfig disable 70-no-bitmaps.conf
         rebuild_fontfiles

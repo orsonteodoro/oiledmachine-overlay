@@ -35,7 +35,7 @@ DEPEND="${RDEPEND}
 	dev-python/six"
 
 FONT_SUFFIX="ttf"
-FONT_CONF=( "${FILESDIR}/01-notosans.conf" "${FILESDIR}/61-notosans.conf" )
+FONT_CONF=( "${FILESDIR}/01-notosans.conf" "${FILESDIR}/44-notosans.conf"  "${FILESDIR}/61-notosans.conf" )
 
 S="${WORKDIR}/noto-emoji-${NOTO_EMOJI_COMMIT}"
 
@@ -55,18 +55,6 @@ src_prepare() {
 		sed -i -e 's|emoji: \$(EMOJI_FILES)|MISSING_OPTIPNG = fail\nundefine MISSING_ZOPFLI\nemoji: \$(EMOJI_FILES)|g' Makefile
 	else
 		sed -i -e 's|emoji: \$(EMOJI_FILES)|MISSING_ZOPFLI = fail\nundefine MISSING_OPTIPNG\nemoji: \$(EMOJI_FILES)|g' Makefile
-	fi
-
-	#noto-tools patch
-	#sed -i -e 's|-vs 2640 2642 2695|-vs 2640 2642 2695|g' Makefile
-	if use reassign-ugly-text-emojis ; then
-		cd "${WORKDIR}/nototools-${NOTO_TOOLS_COMMIT}"
-		#epatch "${FILESDIR}"/nototools-gentoo-exclude-text-presentation.patch
-		#epatch "${FILESDIR}"/nototools-gentoo-exclude-text-presentation-2.patch
-		#epatch "${FILESDIR}"/nototools-gentoo-exclude-text-presentation-3.patch
-		#epatch "${FILESDIR}"/nototools-gentoo-exclude-text-presentation-4.patch
-		##epatch "${FILESDIR}"/nototools-gentoo-exclude-text-presentation-5.patch
-		#epatch "${FILESDIR}"/nototools-gentoo-exclude-text-presentation-6.patch
 	fi
 }
 
@@ -100,6 +88,8 @@ pkg_postinst() {
 	if use reassign-ugly-text-emojis ; then
 		eselect fontconfig enable 61-notosans.conf
 		ewarn "You may need to manually add exceptions to 61-notosans.conf based on fonts installed and what was in the serif and sans-serif section of 60-latin.conf and run \`fc-cache -fv\`."
+		eselect fontconfig enable 44-notosans.conf
+		ewarn "You may need to manually add exceptions to 44-notosans.conf based on fonts installed and what was in the serif and sans-serif section of 60-latin.conf and run \`fc-cache -fv\`."
 	fi
 	eselect fontconfig disable 70-no-bitmaps.conf
 	ewarn "You may need to \`eselect fontconfig enable 01-notosans.conf\` manually and run \`fc-cache -fv\`."
