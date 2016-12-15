@@ -19,7 +19,7 @@ S="${WORKDIR}"
 LICENSE="OFL-1.1"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="zopflipng optipng reassign-ugly-text-emojis" #break utr#51
+IUSE="zopflipng optipng reassign-ugly-text-emojis black-smiling-emoji" #break utr#51
 REQUIRED_USE="^^ ( zopflipng optipng )"
 
 RDEPEND=">=media-libs/fontconfig-2.11.91
@@ -41,6 +41,8 @@ S="${WORKDIR}/noto-emoji-${NOTO_EMOJI_COMMIT}"
 
 src_unpack() {
 	unpack ${A}
+	cp "${FILESDIR}/emoji_u263b.svg" "${S}/svg/"
+	cp "${FILESDIR}/emoji_u263b.png" "${S}/png/128/"
 }
 
 src_prepare() {
