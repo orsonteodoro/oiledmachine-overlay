@@ -162,7 +162,7 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 *media/mozjpeg - dependency for caesiumctl
 
-*net-misc/facy - Command line Facebook client.  Update with missing facebook API calls.  Used CasperJS and PhantomJS to fill in the missing API calls.  This ebuild add enhancemences such as command line video support, youtube support, and use of color emojis.
+*www-misc/facy - Command line Facebook client.  Update with missing facebook API calls.  Used CasperJS and PhantomJS to fill in the missing API calls.  This ebuild add enhancemences such as command line video support, YouTube support, and use of color emojis, better handling of shared Spotify playlists.
 
 TODO (NOT COMMITED):
 
