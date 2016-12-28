@@ -167,6 +167,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-widevine-r1.patch"
 	"${FILESDIR}/chromium-54-ffmpeg2compat.patch"
 	"${FILESDIR}/${PN}-gn-bootstrap-ld.patch"
+	"${FILESDIR}/${PN}-font-weight-correction.patch"
 )
 
 pkg_pretend() {
