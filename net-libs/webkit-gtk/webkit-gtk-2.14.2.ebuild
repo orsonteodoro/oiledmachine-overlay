@@ -19,7 +19,7 @@ SLOT="4/37" # soname version of libwebkit2gtk-4.0
 KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~x86-freebsd ~amd64-linux ~ia64-linux ~x86-linux ~x86-macos"
 
 IUSE="aqua coverage doc +egl +geolocation gles2 gnome-keyring +gstreamer +introspection +jit libnotify nsplugin +opengl spell wayland +webgl X"
-IUSE+=" bmalloc threaded-compositor accelerated-overflow-scrolling ftl-jit"
+IUSE+=" bmalloc threaded-compositor accelerated-overflow-scrolling ftl-jit accelerated-2d-canvas"
 
 # webgl needs gstreamer, bug #560612
 REQUIRED_USE="
@@ -32,6 +32,7 @@ REQUIRED_USE="
 	webgl? ( gstreamer )
 	wayland? ( egl )
 	|| ( aqua wayland X )
+        accelerated-2d-canvas? ( webgl !gles2 )
 "
 
 # Tests fail to link for inexplicable reasons
@@ -253,7 +254,7 @@ multilib_src_configure() {
 		$(cmake-utils_use_find_package opengl OpenGL)
 		-DENABLE_X11_TARGET=$(usex X)
 		-DENABLE_OPENGL=${opengl_enabled}
-		-DENABLE_ACCELERATED_2D_CANVAS=${canvas_enabled}
+		-DENABLE_ACCELERATED_2D_CANVAS=$(usex accelerated-2d-canvas)
 		-DCMAKE_BUILD_TYPE=Release
 		-DPORT=GTK
 		${ruby_interpreter}
