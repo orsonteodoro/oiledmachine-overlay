@@ -10,13 +10,15 @@ IMPORTANT:  Many of these packages especially non-free software also require you
 
 Here is an example of what I mean.
 
-*www-client/firefox - 32 bit only builds on an AMD64 machine.  You can still build the 64 bit version.  Do not use unless you manually update date it to stable version 45.x since security bug by renaming it.
+IMPORTANT:  For firefox, chromium, surf, you need to copy the contents of profiles/package.use.force to your /etc/portage/profile/package.use.force to ensure that you can mutually exclusively choose between either 64 or 32 bit compiled builds for multilib environments.  The 32 bit builds are perceived to be better under heavy memory loads compared to the native 64 bit compiles of these packages.  If you run a 64 bit multilib environment, choose the 32 bit build instead.
 
-*www-client/chromium - 32 bit only builds on an AMD64 machine.  You can still build the 64 bit version.  You need to upgrade www-plugins/chrome-binary-plugins with the same bitness in order for flash to work.  Do not use unless you manually update ebuild to latest stable version by renaming it.
+*www-client/firefox - 32 bit only builds on an multilib machine.  See important above for details to properly set flags.
 
-*www-plugins/chrome-binary-plugins - 32 only builds on an AMD64 machine.
+*www-client/chromium - 32 bit only builds on an multilib machine.  See important above for details to properly set flags.
 
-*net-libs/webkit-gtk - 32 bit only builds on a AMD64 machine.  You can still build the 64 bit version.  FTLJIT enabled webkit.  FTLJIT is disabled on the main Gentoo overlay.  (FTLJIT needs testing).  If you have a JavaScript algorithm or use case that calls a function 100,000+ executions then you should use this ebuild.
+*www-plugins/chrome-binary-plugins - 32 only builds on an multilib machine.  See important above for details to properly set flags.
+
+*net-libs/webkit-gtk - 32 bit only builds on a multilib machine.  See important above for details to properly set flags.
 
 *www-client/surf - WebkitGTK browser with built in Ad-blocking support even in SSL.  Fixes to support for Facebook.  Support for GTK3 smooth scrolling.  Support for external apps for desktop environment MIME to program association, external Flash video for some sites [helper scripts may require updating], and link highlighting.  This one has new window fixes.  It also doesn't create a new instances of itself.  It uses WebKit2 to handle that.  When it creates windows, it uses only one surf instance and new windows act like tabs.  The one by czarkoff and kaihendry and the original surf both create new windows and new WebKitWebProcesses per each new window.  So, my version has a lower memory footprint.  Read the licenses/SURF-community before emerging it.  To upload the surf adblocker you need to go to /etc/surf/scripts/adblock and run the update.sh script.
 
