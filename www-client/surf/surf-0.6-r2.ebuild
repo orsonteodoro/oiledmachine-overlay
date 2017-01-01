@@ -1,10 +1,9 @@
-# for recent webkit-gtk
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/www-client/surf/surf-0.6-r1.ebuild,v 1.7 2013/11/01 13:50:07 ago Exp $
 
 EAPI=6
-inherit autotools eutils flag-o-matic multilib savedconfig toolchain-funcs
+inherit autotools eutils flag-o-matic multilib multilib-minimal multilib-build  savedconfig toolchain-funcs
 
 DESCRIPTION="A simple web browser based on WebKit/GTK+."
 HOMEPAGE="http://surf.suckless.org/"
@@ -14,9 +13,12 @@ LICENSE="MIT CC-BY-NA-SA-3.0 SURF-community"
 SLOT="0"
 KEYWORDS="gnu32 gnu64 muslx32"
 
-IUSE="gtk3 adblock gnu32 gnu64 muslx32"
+_ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
+IUSE="gtk3 adblock searchengines rip mimehandler linkhints"
+IUSE+=" ${_ABIS}"
+REQUIRED_USE="^^ ( ${_ABIS} ) adblock? ( gtk3 ) rip? ( mimehandler savedconfig ) linkhints searchengines? ( savedconfig )"
+KEYWORDS="~amd64 ~x86"
 
-#                >=net-libs/webkit-gtk-1.1.15:2
 COMMON_DEPEND="
 	dev-libs/glib
 	net-libs/libsoup
@@ -44,149 +46,59 @@ RDEPEND="
         x11-terms/st
 	dev-libs/json-glib
 "
-USE_REQUIRED="savedconfig gtk3 adblock"
 
 pkg_setup() {
 	if use savedconfig; then
 		if [[ ! -f "/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}" ]]; then
-			elog "Please copy ${FILESDIR}/${PN}-${PVR} to /etc/portage/savedconfig/${CATEGORY}/ and edit accordingly."
+			elog "Please copy ${FILESDIR}/${PN}-${PV} to /etc/portage/savedconfig/${CATEGORY}/${PN}-${PV} and edit accordingly."
 			die ""
 		fi
 	fi
 }
 
 src_prepare() {
-	epatch "${FILESDIR}"/${P}-gentoo.patch
-	epatch "${FILESDIR}"/${PN}-search.patch
+	eapply "${FILESDIR}"/${P}-gentoo.patch
 	if use gtk3 ; then
-		epatch "${FILESDIR}"/${PN}-gtk3.patch
-		epatch "${FILESDIR}"/${PN}-gtk3fix1.patch
-		epatch "${FILESDIR}"/${PN}-gtk3fix2.patch
-		epatch "${FILESDIR}"/${PN}-gtk3fix3.patch
-		epatch "${FILESDIR}"/${PN}-gtk3fix4.patch
+		eapply "${FILESDIR}"/${PN}-0.6-gtk3.patch
+		cat "${FILESDIR}"/configure.ac > "${WORKDIR}/${P}"/configure.ac
+		cat "${FILESDIR}"/Makefile.am > "${WORKDIR}/${P}"/Makefile.am
 	fi
 	#if use ssl_proxy ; then
-	#	epatch "${FILESDIR}"/${PN}-sslproxy.patch
+	#	eapply "${FILESDIR}"/${PN}-sslproxy.patch
 	#fi
 	if use adblock ; then
-		epatch "${FILESDIR}"/${PN}-adblock.patch
-		epatch "${FILESDIR}"/${PN}-adblock1.patch
-	fi
-	if use gtk3 ; then
-		epatch "${FILESDIR}"/${PN}-webkit2gtk1.patch
-		epatch "${FILESDIR}"/${PN}-webkit2gtk2.patch
-		epatch "${FILESDIR}"/${PN}-webkit2gtk3.patch
-		epatch "${FILESDIR}"/${PN}-webkit2gtk4.patch
-		epatch "${FILESDIR}"/${PN}-webkit2gtk5.patch
-		epatch "${FILESDIR}"/${PN}-webkit2gtk6.patch
+		eapply "${FILESDIR}"/${PN}-0.6-adblock.patch
 	fi
 
-	epatch "${FILESDIR}"/${PN}-adblockext.patch #this disables the adblock extension
-	if use adblock ; then
-		epatch "${FILESDIR}"/${PN}-0.6-adblock-debugtimer.patch
+	if use searchengines ; then
+		eapply "${FILESDIR}"/${PN}-0.6-search.patch
 	fi
 
-	epatch_user
+	eapply "${FILESDIR}"/surf-0.6-copyrights.patch
+
+	eapply_user
 	restore_config config.h
 	tc-export CC PKG_CONFIG
 
-	cd "${WORKDIR}/${P}"
-	cat "${FILESDIR}"/configure.ac > configure.ac
-	cat "${FILESDIR}"/Makefile.am > Makefile.am
 	touch NEWS AUTHORS ChangeLog
 
-	epatch "${FILESDIR}"/surf-0.6-copyrights.patch
-	epatch "${FILESDIR}"/surf-0.6-copyright-2.patch
-
-	#[[ "${CHOST}" =~ "muslx32" ]] && epatch "${FILESDIR}"/${PN}-0.6-webkit-2.0.4-1.patch #gtk2 also
-
-	#epatch "${FILESDIR}"/surf-0.6-gtk2-1.patch
-	#epatch "${FILESDIR}"/surf-0.6-gtk2-2.patch
-	#epatch "${FILESDIR}"/surf-0.6-gtk2-3.patch
-	#epatch "${FILESDIR}"/surf-0.6-gtk2-4.patch
-	#epatch "${FILESDIR}"/surf-0.6-gtk2-5.patch
-
 	eautoreconf
+
+	multilib_copy_sources
 }
 
-src_configure() {
+multilib_src_configure() {
 	local myconf
-	  if use gnu32 ; then
-		CONF_LIBDIR_OVERRIDE="lib32"
-		append-cflags "-m32"
-		append-cxxflags "-m32"
-		append-ldflags "-m32"
-		case ${CHOST} in
-			*-gnu)
-				myconf+=( --target=i686-pc-linux-gnu )
-				myconf+=( --host=i686-pc-linux-gnu )
-				myconf+=( --libdir=/usr/lib32 )
-				append-ldflags -L/usr/lib32
-				;;
-			*)
-				;;
-		esac
-	elif use gnu64 ; then
-		CONF_LIBDIR_OVERRIDE="lib64"
-		append-cflags "-m64"
-		append-cxxflags "-m64"
-		append-ldflags "-m64"
-		case ${CHOST} in
-			*-gnu)
-				myconf+=( --target=x86_64-pc-linux-gnu )
-				myconf+=( --host=x86_64-pc-linux-gnu )
-				myconf+=( --libdir=/usr/lib64 )
-				append-ldflags -L/usr/lib64
-				;;
-			*)
-				;;
-		esac
-	elif use muslx32 ; then
-		CONF_LIBDIR_OVERRIDE="lib"
-		append-cflags "-mx32"
-		append-cxxflags "-mx32"
-		append-ldflags "-mx32"
-		case ${CHOST} in
-			*-muslx32)
-				myconf+=( --target=x86_64-pc-linux-muslx32 )
-				myconf+=( --host=x86_64-pc-linux-muslx32 )
-				myconf+=( --libdir=/usr/lib )
-				append-ldflags -L/usr/lib
-				;;
-			*)
-				;;
-		esac
-	else
-		append-ldflags -L/usr/$(get_libdir)
-	fi
 
 	ECONF_SOURCE=${S} \
 	econf "${myconf[@]}"
 }
 
-src_compile() {
-	if use gnu32 ; then
-		CONF_LIBDIR_OVERRIDE="lib32"
-	elif use gnu64 ; then
-		CONF_LIBDIR_OVERRIDE="lib64"
-	elif use muslx32 ; then
-		CONF_LIBDIR_OVERRIDE="lib"
-	else
-		true
-	fi
+multilib_src_compile() {
 	emake
 }
 
-src_install() {
-	if use gnu32 ; then
-		CONF_LIBDIR_OVERRIDE="lib32"
-	elif use gnu64 ; then
-		CONF_LIBDIR_OVERRIDE="lib64"
-	elif use muslx32 ; then
-		CONF_LIBDIR_OVERRIDE="lib"
-	else
-		true
-	fi
+multilib_src_install() {
 	default
 	save_config config.h
 
@@ -197,10 +109,15 @@ src_install() {
 	fi
 
 	mkdir -p "${D}/usr/share/surf"
-	cp "${FILESDIR}"/rip* "${D}/usr/share/surf"
-	cp "${FILESDIR}"/mimehandler "${D}/usr/share/surf"
-	cp "${FILESDIR}"/script.js "${D}/usr/share/surf"
-	cp "${FILESDIR}"/style.css "${D}/usr/share/surf"
+	if use rip ; then
+		cp "${FILESDIR}"/rip* "${D}/usr/share/surf"
+	fi
+	if use mimehandler ; then
+		cp "${FILESDIR}"/mimehandler "${D}/usr/share/surf"
+	fi
+	if use linkhints ; then
+		cp "${FILESDIR}"/script.js "${D}/usr/share/surf"
+	fi
 }
 
 pkg_postinst() {
@@ -211,5 +128,5 @@ pkg_postinst() {
 	elog "If you want external media support cp /usr/share/${PN}/rip* to your home directory."
 	elog "If you want mime support cp /usr/share/${PN}/mimehandler to your home directory."
 	elog "If you want link hinting support cp /usr/share/${PN}/\{script.js,style.css\} to your home/.surf directory."
-	elog "You must update the adblock filters manually at /etc/surf/adblock/update.sh."
+	elog "You must update the adblock filters manually at /etc/surf/adblock/update.sh.  Make sure the current working directory is /etc/surf/adblock/ before running it."
 }

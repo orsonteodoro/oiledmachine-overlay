@@ -1,0 +1,1291 @@
+diff -urpN -x '*.rej' -x '*.orig' surf-0.6.mod0/config.def.h surf-0.6/config.def.h
+--- surf-0.6.mod0/config.def.h	2013-02-10 10:40:14.000000000 -0800
++++ surf-0.6/config.def.h	2016-12-30 13:24:51.999045130 -0800
+@@ -52,44 +52,44 @@ static Bool hidebackground  = FALSE;
+  */
+ static Key keys[] = {
+     /* modifier	            keyval      function    arg             Focus */
+-    { MODKEY|GDK_SHIFT_MASK,GDK_r,      reload,     { .b = TRUE } },
+-    { MODKEY,               GDK_r,      reload,     { .b = FALSE } },
+-    { MODKEY|GDK_SHIFT_MASK,GDK_p,      print,      { 0 } },
+-
+-    { MODKEY,               GDK_p,      clipboard,  { .b = TRUE } },
+-    { MODKEY,               GDK_y,      clipboard,  { .b = FALSE } },
+-
+-    { MODKEY|GDK_SHIFT_MASK,GDK_j,      zoom,       { .i = -1 } },
+-    { MODKEY|GDK_SHIFT_MASK,GDK_k,      zoom,       { .i = +1 } },
+-    { MODKEY|GDK_SHIFT_MASK,GDK_q,      zoom,       { .i = 0  } },
+-    { MODKEY,               GDK_minus,  zoom,       { .i = -1 } },
+-    { MODKEY,               GDK_plus,   zoom,       { .i = +1 } },
+-
+-    { MODKEY,               GDK_l,      navigate,   { .i = +1 } },
+-    { MODKEY,               GDK_h,      navigate,   { .i = -1 } },
+-
+-    { MODKEY,               GDK_j,           scroll_v,   { .i = +1 } },
+-    { MODKEY,               GDK_k,           scroll_v,   { .i = -1 } },
+-    { MODKEY,               GDK_b,           scroll_v,   { .i = -10000 } },
+-    { MODKEY,               GDK_space,       scroll_v,   { .i = +10000 } },
+-    { MODKEY,               GDK_i,           scroll_h,   { .i = +1 } },
+-    { MODKEY,               GDK_u,           scroll_h,   { .i = -1 } },
+-
+-    { 0,                    GDK_F11,    fullscreen, { 0 } },
+-    { 0,                    GDK_Escape, stop,       { 0 } },
+-    { MODKEY,               GDK_o,      source,     { 0 } },
+-    { MODKEY|GDK_SHIFT_MASK,GDK_o,      inspector,  { 0 } },
+-
+-    { MODKEY,               GDK_g,      spawn,      SETPROP("_SURF_URI", "_SURF_GO") },
+-    { MODKEY,               GDK_f,      spawn,      SETPROP("_SURF_FIND", "_SURF_FIND") },
+-    { MODKEY,               GDK_slash,  spawn,      SETPROP("_SURF_FIND", "_SURF_FIND") },
+-
+-    { MODKEY,               GDK_n,      find,       { .b = TRUE } },
+-    { MODKEY|GDK_SHIFT_MASK,GDK_n,      find,       { .b = FALSE } },
+-
+-    { MODKEY|GDK_SHIFT_MASK,GDK_c,      toggle,     { .v = "enable-caret-browsing" } },
+-    { MODKEY|GDK_SHIFT_MASK,GDK_i,      toggle,     { .v = "auto-load-images" } },
+-    { MODKEY|GDK_SHIFT_MASK,GDK_s,      toggle,     { .v = "enable-scripts" } },
+-    { MODKEY|GDK_SHIFT_MASK,GDK_v,      toggle,     { .v = "enable-plugins" } },
++    { MODKEY|GDK_SHIFT_MASK,GDK_KEY_r,      reload,     { .b = TRUE } },
++    { MODKEY,               GDK_KEY_r,      reload,     { .b = FALSE } },
++    { MODKEY|GDK_SHIFT_MASK,GDK_KEY_p,      print,      { 0 } },
++
++    { MODKEY,               GDK_KEY_p,      clipboard,  { .b = TRUE } },
++    { MODKEY,               GDK_KEY_y,      clipboard,  { .b = FALSE } },
++
++    { MODKEY|GDK_SHIFT_MASK,GDK_KEY_j,      zoom,       { .i = -1 } },
++    { MODKEY|GDK_SHIFT_MASK,GDK_KEY_k,      zoom,       { .i = +1 } },
++    { MODKEY|GDK_SHIFT_MASK,GDK_KEY_q,      zoom,       { .i = 0  } },
++    { MODKEY,               GDK_KEY_minus,  zoom,       { .i = -1 } },
++    { MODKEY,               GDK_KEY_plus,   zoom,       { .i = +1 } },
++
++    { MODKEY,               GDK_KEY_l,      navigate,   { .i = +1 } },
++    { MODKEY,               GDK_KEY_h,      navigate,   { .i = -1 } },
++
++    { MODKEY,               GDK_KEY_j,           scroll_v,   { .i = +1 } },
++    { MODKEY,               GDK_KEY_k,           scroll_v,   { .i = -1 } },
++    { MODKEY,               GDK_KEY_b,           scroll_v,   { .i = -10000 } },
++    { MODKEY,               GDK_KEY_space,       scroll_v,   { .i = +10000 } },
++    { MODKEY,               GDK_KEY_i,           scroll_h,   { .i = +1 } },
++    { MODKEY,               GDK_KEY_u,           scroll_h,   { .i = -1 } },
++
++    { 0,                    GDK_KEY_F11,    fullscreen, { 0 } },
++    { 0,                    GDK_KEY_Escape, stop,       { 0 } },
++    { MODKEY,               GDK_KEY_o,      source,     { 0 } },
++    { MODKEY|GDK_SHIFT_MASK,GDK_KEY_o,      inspector,  { 0 } },
++
++    { MODKEY,               GDK_KEY_g,      spawn,      SETPROP("_SURF_URI", "_SURF_GO") },
++    { MODKEY,               GDK_KEY_f,      spawn,      SETPROP("_SURF_FIND", "_SURF_FIND") },
++    { MODKEY,               GDK_KEY_slash,  spawn,      SETPROP("_SURF_FIND", "_SURF_FIND") },
++
++    { MODKEY,               GDK_KEY_n,      find,       { .b = TRUE } },
++    { MODKEY|GDK_SHIFT_MASK,GDK_KEY_n,      find,       { .b = FALSE } },
++
++    { MODKEY|GDK_SHIFT_MASK,GDK_KEY_c,      toggle,     { .v = "enable-caret-browsing" } },
++    { MODKEY|GDK_SHIFT_MASK,GDK_KEY_i,      toggle,     { .v = "auto-load-images" } },
++    { MODKEY|GDK_SHIFT_MASK,GDK_KEY_s,      toggle,     { .v = "enable-scripts" } },
++    { MODKEY|GDK_SHIFT_MASK,GDK_KEY_v,      toggle,     { .v = "enable-plugins" } },
+ };
+ 
+diff -urpN -x '*.rej' -x '*.orig' surf-0.6.mod0/config.mk surf-0.6/config.mk
+--- surf-0.6.mod0/config.mk	2016-12-30 13:20:26.419012162 -0800
++++ surf-0.6/config.mk	2016-12-30 13:24:51.999045130 -0800
+@@ -10,8 +10,8 @@ MANPREFIX = $(PREFIX)/share/man
+ X11INC = $(shell $(PKG_CONFIG) --cflags x11)
+ X11LIB = $(shell $(PKG_CONFIG) --libs x11)
+ 
+-GTKINC = $(shell $(PKG_CONFIG) --cflags gtk+-2.0 gthread-2.0 webkit-1.0)
+-GTKLIB = $(shell $(PKG_CONFIG) --libs gtk+-2.0 gthread-2.0 webkit-1.0)
++GTKINC = $(shell $(PKG_CONFIG) --cflags gtk+-3.0 gthread-2.0 webkit2gtk-4.0)
++GTKLIB = $(shell $(PKG_CONFIG) --libs gtk+-3.0 gthread-2.0 webkit2gtk-4.0)
+ 
+ # includes and libs
+ INCS = -I. -I/usr/include $(X11INC) $(GTKINC)
+diff -urpN -x '*.rej' -x '*.orig' surf-0.6.mod0/surf.c surf-0.6/surf.c
+--- surf-0.6.mod0/surf.c	2013-02-10 10:40:14.000000000 -0800
++++ surf-0.6/surf.c	2016-12-30 13:29:53.033418716 -0800
+@@ -7,7 +7,7 @@
+ #include <X11/Xatom.h>
+ #include <gtk/gtk.h>
+ #include <gdk/gdkx.h>
+-#include <gdk/gdk.h>
++#include <gdk/gdk.h>
+ #include <gdk/gdkkeysyms.h>
+ #include <string.h>
+ #include <sys/types.h>
+@@ -16,7 +16,7 @@
+ #include <limits.h>
+ #include <stdlib.h>
+ #include <stdio.h>
+-#include <webkit/webkit.h>
++#include <webkit2/webkit2.h>
+ #include <glib/gstdio.h>
+ #include <JavaScriptCore/JavaScript.h>
+ #include <sys/file.h>
+@@ -27,10 +27,12 @@
+ 
+ char *argv0;
+ 
++#if GTK_MAJOR_VERSION == 3
++#include <gtk/gtkx.h>
++#endif
++
+ #define LENGTH(x)               (sizeof x / sizeof x[0])
+ #define CLEANMASK(mask)		(mask & (MODKEY|GDK_SHIFT_MASK))
+-#define COOKIEJAR_TYPE          (cookiejar_get_type ())
+-#define COOKIEJAR(obj)          (G_TYPE_CHECK_INSTANCE_CAST ((obj), COOKIEJAR_TYPE, CookieJar))
+ 
+ enum { AtomFind, AtomGo, AtomUri, AtomLast };
+ 
+@@ -65,117 +67,98 @@ typedef struct {
+ 	const Arg arg;
+ } Key;
+ 
+-typedef struct {
+-	SoupCookieJarText parent_instance;
+-	int lock;
+-} CookieJar;
+-
+-typedef struct {
+-	SoupCookieJarTextClass parent_class;
+-} CookieJarClass;
+-
+-G_DEFINE_TYPE(CookieJar, cookiejar, SOUP_TYPE_COOKIE_JAR_TEXT)
+-
+ static Display *dpy;
+ static Atom atoms[AtomLast];
++static WebKitWebView *root_view;
+ static Client *clients = NULL;
+-static GdkNativeWindow embed = 0;
+ static gboolean showxid = FALSE;
+ static char winid[64];
+ static gboolean usingproxy = 0;
+ static char togglestat[5];
+ 
+-static void beforerequest(WebKitWebView *w, WebKitWebFrame *f,
+-		WebKitWebResource *r, WebKitNetworkRequest *req,
+-		WebKitNetworkResponse *resp, gpointer d);
++static void beforerequest(WebKitWebView     *web_view,
++               WebKitWebResource *resource,
++               WebKitURIRequest  *request,
++               Client *c);
+ static char *buildpath(const char *path);
+-static gboolean buttonrelease(WebKitWebView *web, GdkEventButton *e,
+-		GList *gl);
++static void buttonrelease(WebKitWebView *web_view, WebKitHitTestResult *hit_test_result,
++               guint modifiers, Client *c);
+ static void cleanup(void);
+ static void clipboard(Client *c, const Arg *arg);
+ 
+-static void cookiejar_changed(SoupCookieJar *self, SoupCookie *old_cookie,
+-		SoupCookie *new_cookie);
+-static void cookiejar_finalize(GObject *self);
+-static SoupCookieJar *cookiejar_new(const char *filename, gboolean read_only);
+-static void cookiejar_set_property(GObject *self, guint prop_id,
+-		const GValue *value, GParamSpec *pspec);
+-
+ static char *copystr(char **str, const char *src);
+-static WebKitWebView *createwindow(WebKitWebView *v, WebKitWebFrame *f,
+-		Client *c);
+-static gboolean decidedownload(WebKitWebView *v, WebKitWebFrame *f,
+-		WebKitNetworkRequest *r, gchar *m,  WebKitWebPolicyDecision *p,
++static WebKitWebView *createwindow(WebKitWebView *web_view, WebKitNavigationAction *navigation_action,
+ 		Client *c);
+-static gboolean decidewindow(WebKitWebView *v, WebKitWebFrame *f,
+-		WebKitNetworkRequest *r, WebKitWebNavigationAction *n,
+-		WebKitWebPolicyDecision *p, Client *c);
++static gboolean decidedownloadwindow(WebKitWebView *web_view,
++               WebKitPolicyDecision    *decision,
++               WebKitPolicyDecisionType decision_type,
++	       Client *c);
+ static void destroyclient(Client *c);
+ static void destroywin(GtkWidget* w, Client *c);
+ static void die(const char *errstr, ...);
+ static void drawindicator(Client *c);
+-static void eval(Client *c, const Arg *arg);
+-static gboolean exposeindicator(GtkWidget *w, GdkEventExpose *e, Client *c);
++static gboolean exposeindicator(GtkWidget *w, cairo_t *cr, Client *c);
+ static void find(Client *c, const Arg *arg);
+ static void fullscreen(Client *c, const Arg *arg);
+ static const char *getatom(Client *c, int a);
+ static void gettogglestat(Client *c);
+ static char *geturi(Client *c);
+-static gboolean initdownload(WebKitWebView *v, WebKitDownload *o, Client *c);
++static void initializewebextensions (WebKitWebContext *context, gpointer user_data);
++static gboolean initdownload(WebKitURIRequest *req, Client *c);
+ 
+ static void inspector(Client *c, const Arg *arg);
+-static WebKitWebView *inspector_new(WebKitWebInspector *i, WebKitWebView *v,
+-		Client *c);
+ static gboolean inspector_show(WebKitWebInspector *i, Client *c);
+-static gboolean inspector_close(WebKitWebInspector *i, Client *c);
+-static void inspector_finished(WebKitWebInspector *i, Client *c);
++static void inspector_close(WebKitWebInspector *i, Client *c);
+ 
+ static gboolean keypress(GtkWidget *w, GdkEventKey *ev, Client *c);
+-static void linkhover(WebKitWebView *v, const char* t, const char* l,
+-		Client *c);
+-static void loadstatuschange(WebKitWebView *view, GParamSpec *pspec,
++static void linkhover(
++                WebKitWebView       *web_view,
++                WebKitHitTestResult *hit_test_result,
++                guint                modifiers,
+ 		Client *c);
++static void loadstatuschange(WebKitWebView  *web_view,
++		             WebKitLoadEvent load_event,
++			     Client *c);
+ static void loaduri(Client *c, const Arg *arg);
+ static void navigate(Client *c, const Arg *arg);
+ static Client *newclient(void);
+-static void newwindow(Client *c, const Arg *arg, gboolean noembed);
+ static void pasteuri(GtkClipboard *clipboard, const char *text, gpointer d);
+-static void populatepopup(WebKitWebView *web, GtkMenu *menu, Client *c);
+-static void popupactivate(GtkMenuItem *menu, Client *);
++static gboolean permissionrequest (WebKitWebView           *web_view,
++               WebKitPermissionRequest *request,
++               Client *c);
++static gboolean populatepopup(WebKitWebView *web_view, WebKitContextMenu *context_menu, GdkEvent *event, WebKitHitTestResult *hit_test_result, Client *c);
++static void popupactivate(GtkAction *action, Client *);
+ static void print(Client *c, const Arg *arg);
+ static GdkFilterReturn processx(GdkXEvent *xevent, GdkEvent *event,
+ 		gpointer d);
+ static void progresschange(WebKitWebView *view, GParamSpec *pspec, Client *c);
+-static void reload(Client *c, const Arg *arg);
++static void reload(Client *c, const Arg *arg);
++static void resize(GtkWidget *w, GtkAllocation *a, Client *c);
+ static void scroll_h(Client *c, const Arg *arg);
+ static void scroll_v(Client *c, const Arg *arg);
+ static void scroll(GtkAdjustment *a, const Arg *arg);
+ static void setatom(Client *c, int a, const char *v);
+ static void setup(void);
+ static void sigchld(int unused);
+-static void source(Client *c, const Arg *arg);
+ static void spawn(Client *c, const Arg *arg);
+ static void stop(Client *c, const Arg *arg);
+-static void titlechange(WebKitWebView *v, WebKitWebFrame *frame,
+-		const char *title, Client *c);
++static void titlechange(WebKitWebView *v, GParamSpec *pspec, Client *c);
+ static void toggle(Client *c, const Arg *arg);
+ static void update(Client *c);
+ static void updatewinid(Client *c);
+ static void usage(void);
+-static void windowobjectcleared(GtkWidget *w, WebKitWebFrame *frame,
+-		JSContextRef js, JSObjectRef win, Client *c);
+ static void zoom(Client *c, const Arg *arg);
+ 
+ /* configuration, allows nested code to access above variables */
+ #include "config.h"
+-
+ static void
+-beforerequest(WebKitWebView *w, WebKitWebFrame *f, WebKitWebResource *r,
+-		WebKitNetworkRequest *req, WebKitNetworkResponse *resp,
+-		gpointer d) {
+-	const gchar *uri = webkit_network_request_get_uri(req);
++beforerequest(WebKitWebView     *web_view,
++               WebKitWebResource *resource,
++               WebKitURIRequest  *request,
++	       Client *c) {
++	const gchar *uri = webkit_uri_request_get_uri(request);
+ 	if(g_str_has_suffix(uri, "/favicon.ico"))
+-		webkit_network_request_set_uri(req, "about:blank");
++		webkit_uri_request_set_uri(request, "about:blank");
+ }
+ 
+ static char *
+@@ -212,22 +194,23 @@ buildpath(const char *path) {
+ 	return apath;
+ }
+ 
+-static gboolean
+-buttonrelease(WebKitWebView *web, GdkEventButton *e, GList *gl) {
+-	WebKitHitTestResultContext context;
+-	WebKitHitTestResult *result = webkit_web_view_get_hit_test_result(web,
+-			e);
+-	Arg arg;
++void
++get_data (GObject *source_object,
++                        GAsyncResult *res,
++                        gpointer user_data)
++{
++	;
++}
+ 
+-	g_object_get(result, "context", &context, NULL);
+-	if(context & WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK) {
+-		if(e->button == 2) {
+-			g_object_get(result, "link-uri", &arg.v, NULL);
+-			newwindow(NULL, &arg, e->state & GDK_CONTROL_MASK);
+-			return true;
++static void
++buttonrelease(WebKitWebView *web_view, WebKitHitTestResult *hit_test_result, guint modifiers, Client *c) {
++	if(webkit_hit_test_result_context_is_link(hit_test_result)) {
++		if(modifiers == GDK_BUTTON2_MASK) {
++			Client *n = newclient();
++			const char *uri =  webkit_hit_test_result_get_link_uri(hit_test_result);
++			webkit_web_view_load_uri(n->view, uri);
+ 		}
+ 	}
+-	return false;
+ }
+ 
+ static void
+@@ -240,78 +223,6 @@ cleanup(void) {
+ }
+ 
+ static void
+-cookiejar_changed(SoupCookieJar *self, SoupCookie *old_cookie,
+-		SoupCookie *new_cookie) {
+-	flock(COOKIEJAR(self)->lock, LOCK_EX);
+-	if(new_cookie && !new_cookie->expires && sessiontime) {
+-		soup_cookie_set_expires(new_cookie,
+-				soup_date_new_from_now(sessiontime));
+-	}
+-	SOUP_COOKIE_JAR_CLASS(cookiejar_parent_class)->changed(self,
+-			old_cookie, new_cookie);
+-	flock(COOKIEJAR(self)->lock, LOCK_UN);
+-}
+-
+-static void
+-cookiejar_class_init(CookieJarClass *klass) {
+-	SOUP_COOKIE_JAR_CLASS(klass)->changed = cookiejar_changed;
+-	G_OBJECT_CLASS(klass)->get_property =
+-		G_OBJECT_CLASS(cookiejar_parent_class)->get_property;
+-	G_OBJECT_CLASS(klass)->set_property = cookiejar_set_property;
+-	G_OBJECT_CLASS(klass)->finalize = cookiejar_finalize;
+-	g_object_class_override_property(G_OBJECT_CLASS(klass), 1, "filename");
+-}
+-
+-static void
+-cookiejar_finalize(GObject *self) {
+-	close(COOKIEJAR(self)->lock);
+-	G_OBJECT_CLASS(cookiejar_parent_class)->finalize(self);
+-}
+-
+-static void
+-cookiejar_init(CookieJar *self) {
+-	self->lock = open(cookiefile, 0);
+-}
+-
+-static SoupCookieJar *
+-cookiejar_new(const char *filename, gboolean read_only) {
+-	return g_object_new(COOKIEJAR_TYPE,
+-	                    SOUP_COOKIE_JAR_TEXT_FILENAME, filename,
+-	                    SOUP_COOKIE_JAR_READ_ONLY, read_only, NULL);
+-}
+-
+-static void
+-cookiejar_set_property(GObject *self, guint prop_id, const GValue *value,
+-		GParamSpec *pspec) {
+-	flock(COOKIEJAR(self)->lock, LOCK_SH);
+-	G_OBJECT_CLASS(cookiejar_parent_class)->set_property(self, prop_id,
+-			value, pspec);
+-	flock(COOKIEJAR(self)->lock, LOCK_UN);
+-}
+-
+-static void
+-evalscript(JSContextRef js, char *script, char* scriptname) {
+-	JSStringRef jsscript, jsscriptname;
+-	JSValueRef exception = NULL;
+-
+-	jsscript = JSStringCreateWithUTF8CString(script);
+-	jsscriptname = JSStringCreateWithUTF8CString(scriptname);
+-	JSEvaluateScript(js, jsscript, JSContextGetGlobalObject(js), jsscriptname, 0, &exception);
+-	JSStringRelease(jsscript);
+-	JSStringRelease(jsscriptname);
+-}
+-
+-static void
+-runscript(WebKitWebFrame *frame) {
+-	char *script;
+-	GError *error;
+-
+-	if(g_file_get_contents(scriptfile, &script, NULL, &error)) {
+-		evalscript(webkit_web_frame_get_global_context(frame), script, scriptfile);
+-	}
+-}
+-
+-static void
+ clipboard(Client *c, const Arg *arg) {
+ 	gboolean paste = *(gboolean *)arg;
+ 
+@@ -334,33 +245,56 @@ copystr(char **str, const char *src) {
+ }
+ 
+ static WebKitWebView *
+-createwindow(WebKitWebView  *v, WebKitWebFrame *f, Client *c) {
++createwindow(WebKitWebView *web_view, WebKitNavigationAction *navigation_action, Client *c) {
+ 	Client *n = newclient();
+-	return n->view;
+-}
+ 
+-static gboolean
+-decidedownload(WebKitWebView *v, WebKitWebFrame *f, WebKitNetworkRequest *r,
+-		gchar *m,  WebKitWebPolicyDecision *p, Client *c) {
+-	if(!webkit_web_view_can_show_mime_type(v, m)) {
+-		webkit_web_policy_decision_download(p);
+-		return TRUE;
+-	}
+-	return FALSE;
+-}
++	const char *uri;
++	WebKitURIRequest *ur = webkit_navigation_action_get_request(navigation_action);
++	uri = webkit_uri_request_get_uri(ur);
++	webkit_web_view_load_uri(n->view, uri);
+ 
+-static gboolean
+-decidewindow(WebKitWebView *view, WebKitWebFrame *f, WebKitNetworkRequest *r,
+-		WebKitWebNavigationAction *n, WebKitWebPolicyDecision *p,
+-		Client *c) {
+-	Arg arg;
++	return n->view;
++}
+ 
+-	if(webkit_web_navigation_action_get_reason(n) ==
+-			WEBKIT_WEB_NAVIGATION_REASON_LINK_CLICKED) {
+-		webkit_web_policy_decision_ignore(p);
+-		arg.v = (void *)webkit_network_request_get_uri(r);
+-		newwindow(NULL, &arg, 0);
+-		return TRUE;
++static gboolean 
++decidedownloadwindow(WebKitWebView *web_view,
++               WebKitPolicyDecision    *decision,
++               WebKitPolicyDecisionType decision_type,
++	       Client *c) {
++
++	switch(decision_type) {
++		case WEBKIT_POLICY_DECISION_TYPE_RESPONSE:
++			{
++				WebKitResponsePolicyDecision *p = WEBKIT_RESPONSE_POLICY_DECISION(decision);
++				if (!webkit_response_policy_decision_is_mime_type_supported(p))
++				{
++					webkit_policy_decision_ignore((WebKitPolicyDecision*)p);
++					initdownload(webkit_response_policy_decision_get_request(p), c);
++					return TRUE;
++				}
++			}
++			break;
++		case WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION:
++			{
++				WebKitNavigationPolicyDecision *p = WEBKIT_NAVIGATION_POLICY_DECISION(decision);
++				WebKitNavigationAction *na = webkit_navigation_policy_decision_get_navigation_action(p);
++				if (webkit_navigation_action_get_navigation_type(na) ==  WEBKIT_NAVIGATION_TYPE_LINK_CLICKED) {
++					webkit_policy_decision_ignore((WebKitPolicyDecision*)p);
++					WebKitURIRequest *ur = webkit_navigation_action_get_request(na);
++					const char *uri = webkit_uri_request_get_uri(ur);
++					if (webkit_navigation_action_get_modifiers(na) & GDK_CONTROL_MASK) {
++						Client *n = newclient();
++						webkit_web_view_load_uri(n->view, uri);
++					} else {
++						webkit_web_view_load_uri(web_view, uri);
++					}
++					return TRUE;
++				}
++			}
++			break;
++		default:
++			;
++			break;
+ 	}
+ 	return FALSE;
+ }
+@@ -376,6 +310,13 @@ destroyclient(Client *c) {
+ 	gtk_widget_destroy(c->vbox);
+ 	gtk_widget_destroy(c->win);
+ 
++	if (c->view == root_view) {
++		if (c->next == NULL)
++			root_view = NULL;
++		else
++			root_view = c->next->view;
++	}
++
+ 	for(p = clients; p && p->next != c; p = p->next);
+ 	if(p) {
+ 		p->next = c->next;
+@@ -404,17 +345,21 @@ die(const char *errstr, ...) {
+ 
+ static void
+ drawindicator(Client *c) {
++	double max;
+ 	gint width;
+ 	const char *uri;
++	cairo_t *cr;
+ 	char *colorname;
+ 	GtkWidget *w;
+-	GdkGC *gc;
+-	GdkColor fg;
++	GdkRGBA fg;
++	GtkAllocation alloc;
+ 
++	max = 0xffff;
+ 	uri = geturi(c);
+ 	w = c->indicator;
+-	width = c->progress * w->allocation.width / 100;
+-	gc = gdk_gc_new(w->window);
++	gtk_widget_get_allocation(w, &alloc);
++	width = c->progress * alloc.width / 101;
++	cr = gdk_cairo_create(gtk_widget_get_window(w));
+ 	if(strstr(uri, "https://") == uri) {
+ 		if(usingproxy) {
+ 			colorname = c->sslfailed? progress_proxy_untrust :
+@@ -431,18 +376,17 @@ drawindicator(Client *c) {
+ 		}
+ 	}
+ 
+-	gdk_color_parse(colorname, &fg);
+-	gdk_gc_set_rgb_fg_color(gc, &fg);
+-	gdk_draw_rectangle(w->window,
+-			w->style->bg_gc[GTK_WIDGET_STATE(w)],
+-			TRUE, 0, 0, w->allocation.width, w->allocation.height);
+-	gdk_draw_rectangle(w->window, gc, TRUE, 0, 0, width,
+-			w->allocation.height);
+-	g_object_unref(gc);
++	gdk_rgba_parse(&fg, colorname);
++	cairo_rectangle(cr, 0, 0, alloc.width, alloc.height);
++	cairo_fill(cr);
++	cairo_set_source_rgb(cr, fg.red/max, fg.green/max, fg.blue/max);
++	cairo_rectangle(cr, 0, 0, width, alloc.height);
++	cairo_fill(cr);
++	cairo_destroy(cr);
+ }
+ 
+ static gboolean
+-exposeindicator(GtkWidget *w, GdkEventExpose *e, Client *c) {
++exposeindicator(GtkWidget *w, cairo_t *cr, Client *c) {
+ 	drawindicator(c);
+ 	return TRUE;
+ }
+@@ -450,10 +394,12 @@ exposeindicator(GtkWidget *w, GdkEventEx
+ static void
+ find(Client *c, const Arg *arg) {
+ 	const char *s;
++	WebKitFindController *fc;
+ 
++	fc = webkit_web_view_get_find_controller(c->view);
+ 	s = getatom(c, AtomFind);
+ 	gboolean forward = *(gboolean *)arg;
+-	webkit_web_view_search_text(c->view, s, FALSE, forward, TRUE);
++	webkit_find_controller_search(fc, s, WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE | WEBKIT_FIND_OPTIONS_WRAP_AROUND | (forward ? 0 : WEBKIT_FIND_OPTIONS_BACKWARDS), 1000);
+ }
+ 
+ static void
+@@ -474,7 +420,7 @@ getatom(Client *c, int a) {
+ 	unsigned long ldummy;
+ 	unsigned char *p = NULL;
+ 
+-	XGetWindowProperty(dpy, GDK_WINDOW_XID(GTK_WIDGET(c->win)->window),
++	XGetWindowProperty(dpy, GDK_WINDOW_XID(gtk_widget_get_window(GTK_WIDGET(c->win))),
+ 			atoms[a], 0L, BUFSIZ, False, XA_STRING,
+ 			&adummy, &idummy, &ldummy, &ldummy, &p);
+ 	if(p)
+@@ -495,13 +441,21 @@ geturi(Client *c) {
+ }
+ 
+ static gboolean
+-initdownload(WebKitWebView *view, WebKitDownload *o, Client *c) {
++initdownload(WebKitURIRequest *req, Client *c) {
+ 	Arg arg;
+ 
+ 	updatewinid(c);
+-	arg = (Arg)DOWNLOAD((char *)webkit_download_get_uri(o), geturi(c));
++	arg = (Arg)DOWNLOAD((char *)webkit_uri_request_get_uri(req), geturi(c));
+ 	spawn(c, &arg);
+-	return FALSE;
++	return TRUE;
++}
++
++
++static
++void initializewebextensions (WebKitWebContext *context,
++               gpointer          user_data) {
++	webkit_web_context_set_web_extensions_directory(context, SURF_WEB_EXTENSIONS_DIR);
++        webkit_web_context_set_web_extensions_initialization_user_data(context, g_variant_new_string(scriptfile));
+ }
+ 
+ static void
+@@ -513,44 +467,16 @@ inspector(Client *c, const Arg *arg) {
+ 	}
+ }
+ 
+-static WebKitWebView *
+-inspector_new(WebKitWebInspector *i, WebKitWebView *v, Client *c) {
+-	return WEBKIT_WEB_VIEW(webkit_web_view_new());
+-}
+ 
+ static gboolean
+ inspector_show(WebKitWebInspector *i, Client *c) {
+-	WebKitWebView *w;
+-
+-	if(c->isinspecting)
+-		return false;
+-
+-	w = webkit_web_inspector_get_web_view(i);
+-	gtk_paned_pack2(GTK_PANED(c->pane), GTK_WIDGET(w), TRUE, TRUE);
+-	gtk_widget_show(GTK_WIDGET(w));
+ 	c->isinspecting = true;
+-
+-	return true;
+-}
+-
+-static gboolean
+-inspector_close(WebKitWebInspector *i, Client *c) {
+-	GtkWidget *w;
+-
+-	if(!c->isinspecting)
+-		return false;
+-
+-	w = GTK_WIDGET(webkit_web_inspector_get_web_view(i));
+-	gtk_widget_hide(w);
+-	gtk_widget_destroy(w);
+-	c->isinspecting = false;
+-
+-	return true;
++	return FALSE;
+ }
+ 
+ static void
+-inspector_finished(WebKitWebInspector *i, Client *c) {
+-	g_free(c->inspector);
++inspector_close(WebKitWebInspector *inspector, Client *c) {
++	c->isinspecting = false;
+ }
+ 
+ static gboolean
+@@ -572,7 +498,8 @@ keypress(GtkWidget* w, GdkEventKey *ev,
+ }
+ 
+ static void
+-linkhover(WebKitWebView *v, const char* t, const char* l, Client *c) {
++linkhover(WebKitWebView *web_view, WebKitHitTestResult *hit_test_result, guint modifiers, Client *c) {
++	const gchar* l = webkit_hit_test_result_get_link_uri(hit_test_result);
+ 	if(l) {
+ 		c->linkhover = copystr(&c->linkhover, l);
+ 	} else if(c->linkhover) {
+@@ -583,23 +510,19 @@ linkhover(WebKitWebView *v, const char*
+ }
+ 
+ static void
+-loadstatuschange(WebKitWebView *view, GParamSpec *pspec, Client *c) {
+-	WebKitWebFrame *frame;
+-	WebKitWebDataSource *src;
+-	WebKitNetworkRequest *request;
+-	SoupMessage *msg;
++loadstatuschange(
++	       WebKitWebView  *web_view,
++               WebKitLoadEvent load_event,
++	       Client *c) {
++	GTlsCertificate *certificate;
++	GTlsCertificateFlags errors;
+ 	char *uri;
+ 
+-	switch(webkit_web_view_get_load_status (c->view)) {
++	switch(load_event) {
+ 	case WEBKIT_LOAD_COMMITTED:
+ 		uri = geturi(c);
+ 		if(strstr(uri, "https://") == uri) {
+-			frame = webkit_web_view_get_main_frame(c->view);
+-			src = webkit_web_frame_get_data_source(frame);
+-			request = webkit_web_data_source_get_request(src);
+-			msg = webkit_network_request_get_message(request);
+-			c->sslfailed = soup_message_get_flags(msg)
+-			               ^ SOUP_MESSAGE_CERTIFICATE_TRUSTED;
++			c->sslfailed = ! webkit_web_view_get_tls_info(web_view, &certificate, &errors);
+ 		}
+ 		setatom(c, AtomUri, uri);
+ 		break;
+@@ -638,48 +561,47 @@ loaduri(Client *c, const Arg *arg) {
+ 		webkit_web_view_load_uri(c->view, u);
+ 		c->progress = 0;
+ 		c->title = copystr(&c->title, u);
+-		g_free(u);
+ 		update(c);
++		g_free(u);
+ 	}
+ }
+ 
+ static void
+ navigate(Client *c, const Arg *arg) {
+ 	int steps = *(int *)arg;
+-	webkit_web_view_go_back_or_forward(c->view, steps);
++	if (steps > 0)
++		webkit_web_view_go_forward(c->view);
++	else
++		webkit_web_view_go_back(c->view);
+ }
+ 
+ static Client *
+ newclient(void) {
+ 	Client *c;
+-	WebKitWebSettings *settings;
+-	WebKitWebFrame *frame;
++	WebKitSettings *settings;
+ 	GdkGeometry hints = { 1, 1 };
+-	char *uri, *ua;
++	WebKitUserContentManager *usercontent;
++	char *ua;
+ 
+ 	if(!(c = calloc(1, sizeof(Client))))
+ 		die("Cannot malloc!\n");
+ 
+ 	/* Window */
+-	if(embed) {
+-		c->win = gtk_plug_new(embed);
+-	} else {
+-		c->win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
++	c->win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+ 
+-		/* TA:  20091214:  Despite what the GNOME docs say, the ICCCM
+-		 * is always correct, so we should still call this function.
+-		 * But when doing so, we *must* differentiate between a
+-		 * WM_CLASS and a resource on the window.  By convention, the
+-		 * window class (WM_CLASS) is capped, while the resource is in
+-		 * lowercase.   Both these values come as a pair.
+-		 */
+-		gtk_window_set_wmclass(GTK_WINDOW(c->win), "surf", "Surf");
+-
+-		/* TA:  20091214:  And set the role here as well -- so that
+-		 * sessions can pick this up.
+-		 */
+-		gtk_window_set_role(GTK_WINDOW(c->win), "Surf");
+-	}
++	/* TA:  20091214:  Despite what the GNOME docs say, the ICCCM
++	 * is always correct, so we should still call this function.
++	 * But when doing so, we *must* differentiate between a
++	 * WM_CLASS and a resource on the window.  By convention, the
++	 * window class (WM_CLASS) is capped, while the resource is in
++	 * lowercase.   Both these values come as a pair.
++	 */
++	gtk_window_set_wmclass(GTK_WINDOW(c->win), "surf", "Surf");
++
++	/* TA:  20091214:  And set the role here as well -- so that
++	 * sessions can pick this up.
++	 */
++	gtk_window_set_role(GTK_WINDOW(c->win), "Surf");
+ 	gtk_window_set_default_size(GTK_WINDOW(c->win), 800, 600);
+ 	g_signal_connect(G_OBJECT(c->win),
+ 			"destroy",
+@@ -689,10 +611,9 @@ newclient(void) {
+ 			G_CALLBACK(keypress), c);
+ 
+ 	/* Pane */
+-	c->pane = gtk_vpaned_new();
+-
++	c->pane = gtk_paned_new(GTK_ORIENTATION_VERTICAL);
+ 	/* VBox */
+-	c->vbox = gtk_vbox_new(FALSE, 0);
++	c->vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+ 	gtk_paned_pack1(GTK_PANED(c->pane), c->vbox, TRUE, TRUE);
+ 
+ 	/* Scrolled Window */
+@@ -701,48 +622,47 @@ newclient(void) {
+ 			GTK_POLICY_NEVER, GTK_POLICY_NEVER);
+ 
+ 	/* Webview */
+-	c->view = WEBKIT_WEB_VIEW(webkit_web_view_new());
++	usercontent = webkit_user_content_manager_new();
++	if (clients == NULL) {
++		c->view = WEBKIT_WEB_VIEW(webkit_web_view_new_with_user_content_manager(usercontent));
++	} else {
++		c->view = WEBKIT_WEB_VIEW(webkit_web_view_new_with_related_view(root_view));
++	}
+ 	g_signal_connect(G_OBJECT(c->view),
+-			"title-changed",
++			"notify::title",
+ 			G_CALLBACK(titlechange), c);
+ 	g_signal_connect(G_OBJECT(c->view),
+-			"hovering-over-link",
++			"mouse-target-changed",
+ 			G_CALLBACK(linkhover), c);
+ 	g_signal_connect(G_OBJECT(c->view),
+-			"create-web-view",
++			"create",
+ 			G_CALLBACK(createwindow), c);
+ 	g_signal_connect(G_OBJECT(c->view),
+-			"new-window-policy-decision-requested",
+-			G_CALLBACK(decidewindow), c);
+-	g_signal_connect(G_OBJECT(c->view),
+-			"mime-type-policy-decision-requested",
+-			G_CALLBACK(decidedownload), c);
+-	g_signal_connect(G_OBJECT(c->view),
+-			"window-object-cleared",
+-			G_CALLBACK(windowobjectcleared), c);
++			"decide-policy",
++			G_CALLBACK(decidedownloadwindow), c);
+ 	g_signal_connect(G_OBJECT(c->view),
+-			"notify::load-status",
++			"load-changed",
+ 			G_CALLBACK(loadstatuschange), c);
+ 	g_signal_connect(G_OBJECT(c->view),
+ 			"notify::progress",
+ 			G_CALLBACK(progresschange), c);
+ 	g_signal_connect(G_OBJECT(c->view),
+-			"download-requested",
+-			G_CALLBACK(initdownload), c);
+-	g_signal_connect(G_OBJECT(c->view),
+-			"button-release-event",
++			"mouse-target-changed",
+ 			G_CALLBACK(buttonrelease), c);
+ 	g_signal_connect(G_OBJECT(c->view),
+-			"populate-popup",
++			"context-menu",
+ 			G_CALLBACK(populatepopup), c);
+ 	g_signal_connect(G_OBJECT(c->view),
+-			"resource-request-starting",
++			"resource-load-started",
+ 			G_CALLBACK(beforerequest), c);
++	g_signal_connect(G_OBJECT(c->view),
++			"permission-request",
++			G_CALLBACK(permissionrequest), c);
+ 
+ 	/* Indicator */
+ 	c->indicator = gtk_drawing_area_new();
+ 	gtk_widget_set_size_request(c->indicator, 0, indicator_thickness);
+-	g_signal_connect (G_OBJECT (c->indicator), "expose_event",
++	g_signal_connect (G_OBJECT (c->indicator), "draw",
+ 			G_CALLBACK (exposeindicator), c);
+ 
+ 	/* Arranging */
+@@ -764,58 +684,88 @@ newclient(void) {
+ 	gtk_widget_show(c->win);
+ 	gtk_window_set_geometry_hints(GTK_WINDOW(c->win), NULL, &hints,
+ 			GDK_HINT_MIN_SIZE);
+-	gdk_window_set_events(GTK_WIDGET(c->win)->window, GDK_ALL_EVENTS_MASK);
+-	gdk_window_add_filter(GTK_WIDGET(c->win)->window, processx, c);
+-	webkit_web_view_set_full_content_zoom(c->view, TRUE);
++	gdk_window_set_events(gtk_widget_get_window(GTK_WIDGET(c->win)), GDK_ALL_EVENTS_MASK);
++	gdk_window_add_filter(gtk_widget_get_window(GTK_WIDGET(c->win)), processx, c);
++	//webkit_web_view_set_full_content_zoom(c->view, TRUE);
++
++	if (clients == NULL)
++	{
++		WebKitWebContext *context;
++		context = webkit_web_view_get_context(c->view);
++		WebKitCookieManager *cookiemanager = webkit_web_context_get_cookie_manager(context);
++		webkit_cookie_manager_set_persistent_storage(cookiemanager, cookiefile, WEBKIT_COOKIE_PERSISTENT_STORAGE_TEXT);
++		webkit_cookie_manager_set_accept_policy(cookiemanager, WEBKIT_COOKIE_POLICY_ACCEPT_ALWAYS);
++
++		settings = webkit_web_view_get_settings(c->view);
++		if(!(ua = getenv("SURF_USERAGENT")))
++			ua = useragent;
++		g_object_set(G_OBJECT(settings), "user-agent", ua, NULL);
++		g_object_set(G_OBJECT(settings), "auto-load-images", loadimages,
++				NULL);
++		g_object_set(G_OBJECT(settings), "enable-plugins", enableplugins,
++				NULL);
++		g_object_set(G_OBJECT(settings), "enable-javascript", enablescripts,
++				NULL);
++		g_object_set(G_OBJECT(settings), "enable-webgl", TRUE,
++				NULL);
++		g_object_set(G_OBJECT(settings), "enable-spatial-navigation",
++				enablespatialbrowsing, NULL);
++		g_object_set(G_OBJECT(settings), "enable-developer-extras",
++				enableinspector, NULL);
++		g_object_set(G_OBJECT(settings), "enable-smooth-scrolling",
++				TRUE, NULL);
++	        g_object_set(G_OBJECT(settings), "enable-accelerated-2d-canvas",
++	                        TRUE, NULL);
++	        g_object_set(G_OBJECT(settings), "enable-mediasource",
++	                        TRUE, NULL);
++	        g_object_set(G_OBJECT(settings), "enable-media-stream",
++	                        TRUE, NULL);
++
++		webkit_web_context_set_tls_errors_policy(context, strictssl ? WEBKIT_TLS_ERRORS_POLICY_FAIL : WEBKIT_TLS_ERRORS_POLICY_IGNORE);
++
++		char* source;
++		WebKitUserScript *script;
++		if(g_file_get_contents(scriptfile, &source, NULL, NULL)) {
++			script = webkit_user_script_new(source, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, WEBKIT_USER_SCRIPT_INJECT_AT_DOCUMENT_END, NULL, NULL);
++			webkit_user_content_manager_add_script(usercontent, script);
++			g_free(source);
++			webkit_user_script_unref(script);
++		}
+ 
+-	frame = webkit_web_view_get_main_frame(c->view);
+-	runscript(frame);
+-	settings = webkit_web_view_get_settings(c->view);
+-	if(!(ua = getenv("SURF_USERAGENT")))
+-		ua = useragent;
+-	g_object_set(G_OBJECT(settings), "user-agent", ua, NULL);
+-	uri = g_strconcat("file://", stylefile, NULL);
+-	g_object_set(G_OBJECT(settings), "user-stylesheet-uri", uri, NULL);
+-	g_object_set(G_OBJECT(settings), "auto-load-images", loadimages,
+-			NULL);
+-	g_object_set(G_OBJECT(settings), "enable-plugins", enableplugins,
+-			NULL);
+-	g_object_set(G_OBJECT(settings), "enable-scripts", enablescripts,
+-			NULL);
+-	g_object_set(G_OBJECT(settings), "enable-spatial-navigation",
+-			enablespatialbrowsing, NULL);
+-	g_object_set(G_OBJECT(settings), "enable-developer-extras",
+-			enableinspector, NULL);
++		WebKitUserStyleSheet *style;
++		if(g_file_get_contents(stylefile, &source, NULL, NULL)) {
++			style = webkit_user_style_sheet_new(source, WEBKIT_USER_CONTENT_INJECT_ALL_FRAMES, WEBKIT_USER_STYLE_LEVEL_USER, NULL, NULL);
++			webkit_user_content_manager_add_style_sheet(usercontent, style);
++			g_free(source);
++			webkit_user_style_sheet_unref(style);
++		}
++	}
+ 
+ 	if(enableinspector) {
+ 		c->inspector = WEBKIT_WEB_INSPECTOR(
+ 				webkit_web_view_get_inspector(c->view));
+-		g_signal_connect(G_OBJECT(c->inspector), "inspect-web-view",
+-				G_CALLBACK(inspector_new), c);
+-		g_signal_connect(G_OBJECT(c->inspector), "show-window",
++		g_signal_connect(G_OBJECT(c->inspector), "attach",
+ 				G_CALLBACK(inspector_show), c);
+-		g_signal_connect(G_OBJECT(c->inspector), "close-window",
++		g_signal_connect(G_OBJECT(c->inspector), "closed",
+ 				G_CALLBACK(inspector_close), c);
+-		g_signal_connect(G_OBJECT(c->inspector), "finished",
+-				G_CALLBACK(inspector_finished), c);
+ 		c->isinspecting = false;
+ 	}
+ 
+-	g_free(uri);
+-
+ 	setatom(c, AtomFind, "");
+ 	setatom(c, AtomUri, "about:blank");
+-	if(hidebackground)
+-		webkit_web_view_set_transparent(c->view, TRUE);
++	if(hidebackground) {
++		static const GdkRGBA transparent = {.0, .0, .0, .0};
++		webkit_web_view_set_background_color(c->view, &transparent);
++	}
+ 
++	root_view = c->view;
+ 	c->title = NULL;
+ 	c->next = clients;
+ 	clients = c;
+ 
+ 	if(showxid) {
+ 		gdk_display_sync(gtk_widget_get_display(c->win));
+-		printf("%u\n",
+-			(guint)GDK_WINDOW_XID(GTK_WIDGET(c->win)->window));
++		printf("%u\n", (guint)GDK_WINDOW_XID(gtk_widget_get_window(GTK_WIDGET(c->win))));
+ 		fflush(NULL);
+                 if (fclose(stdout) != 0) {
+ 			die("Error closing stdout");
+@@ -825,48 +775,38 @@ newclient(void) {
+ 	return c;
+ }
+ 
+-static void
+-newwindow(Client *c, const Arg *arg, gboolean noembed) {
+-	guint i = 0;
+-	const char *cmd[10], *uri;
+-	const Arg a = { .v = (void *)cmd };
+-	char tmp[64];
+-
+-	cmd[i++] = argv0;
+-	if(embed && !noembed) {
+-		cmd[i++] = "-e";
+-		snprintf(tmp, LENGTH(tmp), "%u\n", (int)embed);
+-		cmd[i++] = tmp;
+-	}
+-	if(!enablescripts)
+-		cmd[i++] = "-s";
+-	if(!enableplugins)
+-		cmd[i++] = "-p";
+-	if(!loadimages)
+-		cmd[i++] = "-i";
+-	if(showxid)
+-		cmd[i++] = "-x";
+-	cmd[i++] = "--";
+-	uri = arg->v ? (char *)arg->v : c->linkhover;
+-	if(uri)
+-		cmd[i++] = uri;
+-	cmd[i++] = NULL;
+-	spawn(NULL, &a);
++static gboolean permissionrequest (WebKitWebView           *web_view,
++               WebKitPermissionRequest *request,
++               Client *c)
++{
++	if (WEBKIT_IS_GEOLOCATION_PERMISSION_REQUEST(request)) {
++		if(enablegeolocation) {
++			webkit_permission_request_allow(request);
++		} else {
++			webkit_permission_request_deny(request);
++		}
++		return TRUE;
++	}
++	return FALSE;
+ }
+ 
+-static void
+-populatepopup(WebKitWebView *web, GtkMenu *menu, Client *c) {
+-	GList *items = gtk_container_get_children(GTK_CONTAINER(menu));
++static gboolean
++populatepopup(WebKitWebView *web_view, WebKitContextMenu *context_menu, GdkEvent *event, WebKitHitTestResult *hit_test_result, Client *c) {
++
++	GList *items = webkit_context_menu_get_items(context_menu);
+ 
+ 	for(GList *l = items; l; l = l->next) {
+-		g_signal_connect(l->data, "activate", G_CALLBACK(popupactivate), c);
++		if (!webkit_context_menu_item_is_separator(l->data)) {
++			GtkAction *action = webkit_context_menu_item_get_action(l->data);
++			g_signal_connect(action, "activate", G_CALLBACK(popupactivate), c);
++		}
+ 	}
+ 
+-	g_list_free(items);
++	return FALSE;
+ }
+ 
+ static void
+-popupactivate(GtkMenuItem *menu, Client *c) {
++popupactivate(GtkAction *action, Client *c) {
+ 	/*
+ 	 * context-menu-action-2000	open link
+ 	 * context-menu-action-1	open link in window
+@@ -878,18 +818,14 @@ popupactivate(GtkMenuItem *menu, Client
+ 	 * context-menu-action-12	stop
+ 	 */
+ 
+-	GtkAction *a = NULL;
+ 	const char *name;
+ 	GtkClipboard *prisel;
+ 
+-	a = gtk_activatable_get_related_action(GTK_ACTIVATABLE(menu));
+-	if(a == NULL)
+-		return;
+-
+-	name = gtk_action_get_name(a);
++	name = gtk_action_get_name(action);
+ 	if(!g_strcmp0(name, "context-menu-action-3")) {
+ 		prisel = gtk_clipboard_get(GDK_SELECTION_PRIMARY);
+-		gtk_clipboard_set_text(prisel, c->linkhover, -1);
++		if (c->linkhover)
++			gtk_clipboard_set_text(prisel, c->linkhover, -1);
+ 	}
+ }
+ 
+@@ -902,7 +838,7 @@ pasteuri(GtkClipboard *clipboard, const
+ 
+ static void
+ print(Client *c, const Arg *arg) {
+-	webkit_web_frame_print(webkit_web_view_get_main_frame(c->view));
++	webkit_print_operation_print(webkit_print_operation_new(c->view));
+ }
+ 
+ static GdkFilterReturn
+@@ -931,7 +867,7 @@ processx(GdkXEvent *e, GdkEvent *event,
+ 
+ static void
+ progresschange(WebKitWebView *view, GParamSpec *pspec, Client *c) {
+-	c->progress = webkit_web_view_get_progress(c->view) * 100;
++	c->progress = webkit_web_view_get_estimated_load_progress(c->view) * 100;
+ 	update(c);
+ }
+ 
+@@ -982,23 +918,20 @@ scroll(GtkAdjustment *a, const Arg *arg)
+ static void
+ setatom(Client *c, int a, const char *v) {
+ 	XSync(dpy, False);
+-	XChangeProperty(dpy, GDK_WINDOW_XID(GTK_WIDGET(c->win)->window),
+-			atoms[a], XA_STRING, 8, PropModeReplace,
+-			(unsigned char *)v, strlen(v) + 1);
++	XChangeProperty(dpy, GDK_WINDOW_XID(gtk_widget_get_window(GTK_WIDGET(c->win))), atoms[a],
++ 			XA_STRING, 8, PropModeReplace, (unsigned char *)v,
++ 			strlen(v) + 1);
+ }
+ 
+ static void
+ setup(void) {
+ 	char *proxy;
+-	char *new_proxy;
+-	SoupURI *puri;
+-	SoupSession *s;
+ 
+ 	/* clean up any zombies immediately */
+ 	sigchld(0);
+ 	gtk_init(NULL, NULL);
+ 
+-	dpy = GDK_DISPLAY();
++	dpy = GDK_SCREEN_XDISPLAY(gdk_screen_get_default());
+ 
+ 	/* atoms */
+ 	atoms[AtomFind] = XInternAtom(dpy, "_SURF_FIND", False);
+@@ -1010,28 +943,17 @@ setup(void) {
+ 	scriptfile = buildpath(scriptfile);
+ 	stylefile = buildpath(stylefile);
+ 
+-	/* request handler */
+-	s = webkit_get_default_session();
+-
+-	/* cookie jar */
+-	soup_session_add_feature(s,
+-			SOUP_SESSION_FEATURE(cookiejar_new(cookiefile,
+-					FALSE)));
+-
+-	/* ssl */
+-	g_object_set(G_OBJECT(s), "ssl-ca-file", cafile, NULL);
+-	g_object_set(G_OBJECT(s), "ssl-strict", strictssl, NULL);
+-
+ 	/* proxy */
+ 	if((proxy = getenv("http_proxy")) && strcmp(proxy, "")) {
+-		new_proxy = g_strrstr(proxy, "http://") ? g_strdup(proxy) :
+-			g_strdup_printf("http://%s", proxy);
+-		puri = soup_uri_new(new_proxy);
+-		g_object_set(G_OBJECT(s), "proxy-uri", puri, NULL);
+-		soup_uri_free(puri);
+-		g_free(new_proxy);
+ 		usingproxy = 1;
+ 	}
++
++	WebKitWebContext *defcontext = webkit_web_context_get_default();
++	webkit_web_context_set_process_model(defcontext, WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
++	webkit_web_context_set_cache_model(defcontext, WEBKIT_CACHE_MODEL_WEB_BROWSER);
++	g_signal_connect(G_OBJECT(defcontext),
++			"initialize-web-extensions",
++			G_CALLBACK(initializewebextensions), NULL);
+ }
+ 
+ static void
+@@ -1042,16 +964,6 @@ sigchld(int unused) {
+ }
+ 
+ static void
+-source(Client *c, const Arg *arg) {
+-	Arg a = { .b = FALSE };
+-	gboolean s;
+-
+-	s = webkit_web_view_get_view_source_mode(c->view);
+-	webkit_web_view_set_view_source_mode(c->view, !s);
+-	reload(c, &a);
+-}
+-
+-static void
+ spawn(Client *c, const Arg *arg) {
+ 	if(fork() == 0) {
+ 		if(dpy)
+@@ -1059,17 +971,10 @@ spawn(Client *c, const Arg *arg) {
+ 		setsid();
+ 		execvp(((char **)arg->v)[0], (char **)arg->v);
+ 		fprintf(stderr, "surf: execvp %s", ((char **)arg->v)[0]);
+-		perror(" failed");
+ 		exit(0);
+ 	}
+ }
+ 
+-static void
+-eval(Client *c, const Arg *arg) {
+-	WebKitWebFrame *frame = webkit_web_view_get_main_frame(c->view);
+-	evalscript(webkit_web_frame_get_global_context(frame),
+-			((char **)arg->v)[0], "");
+-}
+ 
+ static void
+ stop(Client *c, const Arg *arg) {
+@@ -1077,14 +982,15 @@ stop(Client *c, const Arg *arg) {
+ }
+ 
+ static void
+-titlechange(WebKitWebView *v, WebKitWebFrame *f, const char *t, Client *c) {
++titlechange(WebKitWebView *v, GParamSpec *pspec, Client *c) {
++	const gchar *t = webkit_web_view_get_title (v);
+ 	c->title = copystr(&c->title, t);
+ 	update(c);
+ }
+ 
+ static void
+ toggle(Client *c, const Arg *arg) {
+-	WebKitWebSettings *settings;
++	WebKitSettings *settings;
+ 	char *name = (char *)arg->v;
+ 	gboolean value;
+ 	Arg a = { .b = FALSE };
+@@ -1099,7 +1005,7 @@ toggle(Client *c, const Arg *arg) {
+ static void
+ gettogglestat(Client *c){
+ 	gboolean value;
+-	WebKitWebSettings *settings = webkit_web_view_get_settings(c->view);
++	WebKitSettings *settings = webkit_web_view_get_settings(c->view);
+ 
+ 	g_object_get(G_OBJECT(settings), "enable-caret-browsing",
+ 			&value, NULL);
+@@ -1108,7 +1014,7 @@ gettogglestat(Client *c){
+ 	g_object_get(G_OBJECT(settings), "auto-load-images", &value, NULL);
+ 	togglestat[1] = value? 'I': 'i';
+ 
+-	g_object_get(G_OBJECT(settings), "enable-scripts", &value, NULL);
++	g_object_get(G_OBJECT(settings), "enable-javascript", &value, NULL);
+ 	togglestat[2] = value? 'S': 's';
+ 
+ 	g_object_get(G_OBJECT(settings), "enable-plugins", &value, NULL);
+@@ -1127,12 +1033,11 @@ update(Client *c) {
+ 	if(c->linkhover) {
+ 		t = g_strdup_printf("%s| %s", togglestat, c->linkhover);
+ 	} else if(c->progress != 100) {
+-		drawindicator(c);
+ 		gtk_widget_show(c->indicator);
+ 		t = g_strdup_printf("[%i%%] %s| %s", c->progress, togglestat,
+ 				c->title);
+ 	} else {
+-		gtk_widget_hide_all(c->indicator);
++		gtk_widget_hide(c->indicator);
+ 		t = g_strdup_printf("%s| %s", togglestat, c->title);
+ 	}
+ 
+@@ -1143,30 +1048,30 @@ update(Client *c) {
+ static void
+ updatewinid(Client *c) {
+ 	snprintf(winid, LENGTH(winid), "%u",
+-			(int)GDK_WINDOW_XID(GTK_WIDGET(c->win)->window));
++			(int)GDK_WINDOW_XID(gtk_widget_get_window(GTK_WIDGET(c->win))));
+ }
+ 
+ static void
+ usage(void) {
+-	die("usage: %s [-inpsvx] [-c cookiefile] [-e xid] [-r scriptfile]"
++	die("usage: %s [-inpsvx] [-c cookiefile] [-r scriptfile]"
+ 		" [-t stylefile] [-u useragent] [uri]\n", basename(argv0));
+ }
+ 
+ static void
+-windowobjectcleared(GtkWidget *w, WebKitWebFrame *frame, JSContextRef js,
+-		JSObjectRef win, Client *c) {
+-	runscript(frame);
+-}
+-
+-static void
+ zoom(Client *c, const Arg *arg) {
++	gdouble zoom_level;
+ 	c->zoomed = TRUE;
+ 	if(arg->i < 0) {
+ 		/* zoom out */
+-		webkit_web_view_zoom_out(c->view);
++		zoom_level = webkit_web_view_get_zoom_level(c->view);
++		zoom_level -= 0.1;
++		if (zoom_level >= 0)
++			webkit_web_view_set_zoom_level(c->view, zoom_level);
+ 	} else if(arg->i > 0) {
+ 		/* zoom in */
+-		webkit_web_view_zoom_in(c->view);
++		zoom_level = webkit_web_view_get_zoom_level(c->view);
++		zoom_level += 0.1;
++		webkit_web_view_set_zoom_level(c->view, zoom_level);
+ 	} else {
+ 		/* reset */
+ 		c->zoomed = FALSE;
+@@ -1185,9 +1090,6 @@ main(int argc, char *argv[]) {
+ 	case 'c':
+ 		cookiefile = EARGF(usage());
+ 		break;
+-	case 'e':
+-		embed = strtol(EARGF(usage()), NULL, 0);
+-		break;
+ 	case 'i':
+ 		loadimages = 0;
+ 		break;
+@@ -1223,8 +1125,10 @@ main(int argc, char *argv[]) {
+ 
+ 	setup();
+ 	newclient();
+-	if(arg.v)
++	if(arg.v) {
++		updatewinid(clients);
+ 		loaduri(clients, &arg);
++	}
+ 
+ 	gtk_main();
+ 	cleanup();

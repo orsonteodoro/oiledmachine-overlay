@@ -9,7 +9,7 @@ CHROMIUM_LANGS="am ar bg bn ca cs da de el en-GB es es-419 et fa fi fil fr gu he
 	hi hr hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr
 	sv sw ta te th tr uk vi zh-CN zh-TW"
 
-inherit check-reqs chromium-2 eutils gnome2-utils flag-o-matic multilib multiprocessing pax-utils portability python-any-r1 readme.gentoo-r1 toolchain-funcs versionator virtualx xdg-utils
+inherit check-reqs chromium-2 eutils gnome2-utils flag-o-matic multilib multilib-minimal multilib-build multiprocessing pax-utils portability python-any-r1 readme.gentoo-r1 toolchain-funcs versionator virtualx xdg-utils
 
 DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="http://chromium.org/"
@@ -18,9 +18,11 @@ SRC_URI="https://commondatastorage.googleapis.com/chromium-browser-official/${P}
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="amd64 ~arm ~arm64 x86"
-IUSE="cups +gn gnome gnome-keyring gtk3 +hangouts kerberos neon pic +proprietary-codecs pulseaudio selinux +suid +system-ffmpeg +tcmalloc widevine gnu32 gnu64"
+_ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
+IUSE="cups +gn gnome gnome-keyring gtk3 +hangouts kerberos neon pic +proprietary-codecs pulseaudio selinux +suid +system-ffmpeg +tcmalloc widevine"
+IUSE+=" ${_ABIS}"
 RESTRICT="!system-ffmpeg? ( proprietary-codecs? ( bindist ) )"
-REQUIRED_USE="^^ ( gnu32 gnu64 )"
+REQUIRED_USE="^^ ( ${_ABIS} )"
 
 # Native Client binaries are compiled with different set of flags, bug #452066.
 QA_FLAGS_IGNORED=".*\.nexe"
@@ -190,40 +192,7 @@ pkg_pretend() {
 	check-reqs_pkg_pretend
 }
 
-_libdir_override() {
-        if use gnu32 ; then
-                CONF_LIBDIR_OVERRIDE="lib32"
-        elif use gnu64 ; then
-                CONF_LIBDIR_OVERRIDE="lib64"
-        else
-                true
-        fi
-}
-
-_myarch_override() {
-	if use gnu32 ; then
-		myarch="x86"
-		#filter-flags -march=* -mtune=* -mcpu=*
-		#append-cflags "-march=i686"
-		append-cflags "-m32"
-		#append-cxxflags "-march=i686"
-		append-cxxflags "-m32"
-		myconf_gn+=" target_os=\"linux\" target_cpu=\"x32\" v8_current_cpu=\"x86\" current_os=\"linux\" host_os=\"linux\" current_cpu=\"x86\" host_cpu=\"x86\" "
-	elif use gnu64 ; then
-		myarch="amd64"
-		#filter-flags -march=* -mtune=* -mcpu=*
-		#append-cflags "-march=x86-64"
-		append-cflags "-m64"
-		#append-cxxflags "-march=x86-64"
-		append-cxxflags "-m64"
-		myconf_gn+=" target_os=\"linux\" target_cpu=\"x64\" v8_current_cpu=\"x64\" current_os=\"linux\" host_os=\"linux\" current_cpu=\"x64\" host_cpu=\"x64\" "
-	else
-		true
-	fi
-}
-
 pkg_setup() {
-        _libdir_override
 	# Make sure the build system will use the right python, bug #344367.
 	python-any-r1_pkg_setup
 
@@ -232,9 +201,6 @@ pkg_setup() {
 
 src_prepare() {
 	default
-        if use gnu32 ; then
-		eapply "${FILESDIR}/${PN}-55.0.2883.75-m32-1.patch"
-	fi
 
 	local keeplibs=(
 		base/third_party/dmg_fp
@@ -355,10 +321,11 @@ src_prepare() {
 
 	# Remove most bundled libraries. Some are still needed.
 	build/linux/unbundle/remove_bundled_libraries.py "${keeplibs[@]}" --do-remove || die
+
+	multilib_copy_sources
 }
 
-src_configure() {
-	_libdir_override
+multilib_src_configure() {
 	local myconf_gyp=""
 	local myconf_gn=""
 
@@ -510,7 +477,6 @@ src_configure() {
 	myconf_gn+=" google_default_client_secret=\"${google_default_client_secret}\""
 
 	local myarch="$(tc-arch)"
-        _myarch_override
 
 	if [[ $myarch = amd64 ]] ; then
 		target_arch=x64
@@ -548,6 +514,36 @@ src_configure() {
 		die "Failed to determine target arch, got '$myarch'."
 	fi
 
+	local target_cpu=""
+	if use abi_x86_32 ; then
+		target_cpu=x86
+	elif use abi_x86_64 ; then
+		target_cpu=x64
+	elif use abi_x86_x32 ; then
+		die "Unsupported architecture"
+	elif use abi_mips_n32 ; then
+		die "Unsupported architecture"
+	elif use abi_mips_n64 ; then
+		target_cpu=mips64
+	elif use abi_mips_o32 ; then
+		target_cpu=mips
+	elif use abi_ppc_32 ; then
+		target_cpu=ppc
+	elif use abi_ppc_64 ; then
+		target_cpu=ppc64
+	elif use abi_s390_32  ; then
+		target_cpu=s390
+	elif use abi_s390_64 ; then
+		target_cpu=s390x
+	elif [[ $myarch = arm64 ]] ; then
+		target_cpu=arm64
+	elif [[ $myarch = arm ]] ; then
+		target_cpu=arm
+	else
+		die "Failed to determine target cpu"
+	fi
+
+	myconf_gn+=" target_cpu=\"${target_cpu}\" v8_current_cpu=\"${target_cpu}\" current_cpu=\"${target_cpu}\" host_cpu=\"${target_cpu}\" "
 	myconf_gyp+=" -Dtarget_arch=${target_arch}"
 
 	# Make sure that -Werror doesn't get added to CFLAGS by the build system.
@@ -646,8 +642,7 @@ eninja() {
 	"$@"
 }
 
-src_compile() {
-        _libdir_override
+multilib_src_compile() {
 	local ninja_targets="chrome chromedriver"
 	if use suid; then
 		ninja_targets+=" chrome_sandbox"
@@ -664,8 +659,7 @@ src_compile() {
 	pax-mark m out/Release/chrome
 }
 
-src_install() {
-        _libdir_override
+multilib_src_install() {
 	local CHROMIUM_HOME="/usr/$(get_libdir)/chromium-browser${CHROMIUM_SUFFIX}"
 	exeinto "${CHROMIUM_HOME}"
 	doexe out/Release/chrome || die

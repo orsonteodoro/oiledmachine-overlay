@@ -32,9 +32,8 @@ MOZ_HTTP_URI="https://archive.mozilla.org/pub/${PN}/releases"
 #MOZCONFIG_OPTIONAL_GTK3=1
 MOZCONFIG_OPTIONAL_WIFI=1
 MOZCONFIG_OPTIONAL_JIT="enabled"
-UNINSTALL_IGNORE="/usr/lib32/firefox/bin"
 
-inherit check-reqs flag-o-matic toolchain-funcs eutils gnome2-utils mozconfig-v6.45 multilib pax-utils fdo-mime autotools virtualx mozlinguas-v2
+inherit check-reqs flag-o-matic toolchain-funcs eutils gnome2-utils mozconfig-v6.45 multilib multilib-minimal multilib-build pax-utils fdo-mime autotools virtualx mozlinguas-v2
 
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="http://www.mozilla.com/firefox"
@@ -43,9 +42,12 @@ KEYWORDS="~alpha amd64 ~arm ~arm64 ~ia64 ~ppc ~ppc64 x86 ~amd64-linux ~x86-linux
 
 SLOT="0"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
-IUSE="bindist hardened +hwaccel pgo selinux +gmp-autoupdate test gnu32 gnu64"
+_ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
+IUSE="bindist hardened +hwaccel pgo selinux +gmp-autoupdate test"
+IUSE+=" ${_ABIS}"
 RESTRICT="!bindist? ( bindist )"
-REQUIRED_USE="^^ ( gnu32 gnu64 )"
+
+REQUIRED_USE="^^ ( ${_ABIS} )"
 
 # More URIs appended below...
 SRC_URI="${SRC_URI}
@@ -60,7 +62,7 @@ RDEPEND="
 	>=dev-libs/nss-3.21.1
 	>=dev-libs/nspr-4.12
 	selinux? ( sec-policy/selinux-mozilla )
-        gnu32? ( dev-libs/libevent[abi_x86_32] )"
+        dev-libs/libevent[${MULTILIB_USEDEP}]"
 
 DEPEND="${RDEPEND}
 	pgo? (
@@ -84,46 +86,9 @@ fi
 
 QA_PRESTRIPPED="usr/lib*/${PN}/firefox"
 
-BUILD_OBJ_DIR="${S}/ff"
-
-_override_libdir1() {
-	if use gnu32 ; then
-		CONF_LIBDIR_OVERRIDE="lib32"
-	elif use gnu64 ; then
-		CONF_LIBDIR_OVERRIDE="lib64"
-	else
-		true
-	fi
-}
-
-_override_libdir2() {
-	if use gnu32 ; then
-		mozconfig_annotate '' --target=i686-pc-linux-gnu
-		mozconfig_annotate '' --host=i686-pc-linux-gnu
-	#	filter-flags -march=* -mtune=* -mcpu=*
-	#	append-cflags "-march=i686"
-		append-cflags "-m32"
-	#	append-cxxflags "-march=i686"
-		append-cxxflags "-m32"
-		append-ldflags "-m32"
-	#	export ASFLAGS="-march=i686 -m32"
-		export ASFLAGS="-m32"
-	elif use gnu64 ; then
-		mozconfig_annotate '' --target=x86_64-pc-linux-gnu
-		mozconfig_annotate '' --host=x86_64-pc-linux-gnu
-	#	filter-flags -march=* -mtune=* -mcpu=*
-	#	append-cflags "-march=x86-64"
-		append-cflags "-m64"
-	#	append-cxxflags "-march=x86-64"
-		append-cxxflags "-m64"
-		append-ldflags "-m64"
-	#	export ASFLAGS="-march=x86-64 -m64"
-		export ASFLAGS="-m64"
-	fi
-}
+#BUILD_OBJ_DIR="${S}/ff"
 
 pkg_setup() {
-	_override_libdir1
 	MOZILLA_FIVE_HOME="/usr/$(get_libdir)/${PN}"
 	moz_pkgsetup
 
@@ -215,11 +180,23 @@ src_prepare() {
 	# Need to update jemalloc's configure
 	cd "${S}"/memory/jemalloc/src || die
 	WANT_AUTOCONF= eautoconf
+
+	multilib_copy_sources
 }
 
-src_configure() {
-	_override_libdir1
+_fix_path() {
+	if [[ ${PV} =~ alpha ]]; then
+		S="${WORKDIR}/mozilla-aurora-${CHANGESET}-${MULTILIB_ABI_FLAG}.${ABI}"
+	else
+		S="${WORKDIR}/firefox-${MOZ_PV}-${MULTILIB_ABI_FLAG}.${ABI}"
+	fi
+	BUILD_OBJ_DIR="${S}/ff"
 	MOZILLA_FIVE_HOME="/usr/$(get_libdir)/${PN}"
+	cd "${S}"
+}
+
+multilib_src_configure() {
+	_fix_path
 	MEXTENSIONS="default"
 	# Google API keys (see http://www.chromium.org/developers/how-tos/api-keys)
 	# Note: These are for Gentoo Linux use ONLY. For your own distribution, please
@@ -240,8 +217,6 @@ src_configure() {
 
 	# Add full relro support for hardened
 	use hardened && append-ldflags "-Wl,-z,relro,-z,now"
-
-	_override_libdir2
 
 	# Setup api key for location services
 	echo -n "${_google_api_key}" > "${S}"/google-api-key
@@ -272,8 +247,13 @@ src_configure() {
 }
 
 src_compile() {
-	_override_libdir1
+	multilib_parallel_foreach_abi multilib_src_compile
+}
+
+multilib_src_compile() {
+	_fix_path
 	if use pgo; then
+		echo "c1"
 		addpredict /root
 		addpredict /etc/gconf
 		# Reset and cleanup environment variables used by GNOME/XDG
@@ -298,6 +278,7 @@ src_compile() {
 		MOZ_MAKE_FLAGS="${MAKEOPTS}" SHELL="${SHELL:-${EPREFIX%/}/bin/bash}" \
 		virtx emake -f client.mk profiledbuild || die "virtx emake failed"
 	else
+		echo "c2"
 		CC="$(tc-getCC)" CXX="$(tc-getCXX)" LD="$(tc-getLD)" \
 		MOZ_MAKE_FLAGS="${MAKEOPTS}" SHELL="${SHELL:-${EPREFIX%/}/bin/bash}" \
 		emake -f client.mk realbuild
@@ -306,8 +287,11 @@ src_compile() {
 }
 
 src_install() {
-	_override_libdir1
-	MOZILLA_FIVE_HOME="/usr/$(get_libdir)/${PN}"
+	multilib_parallel_foreach_abi multilib_src_install
+}
+
+multilib_src_install() {
+	_fix_path
 	cd "${BUILD_OBJ_DIR}" || die
 
 	# Pax mark xpcshell for hardened support, only used for startupcache creation.
