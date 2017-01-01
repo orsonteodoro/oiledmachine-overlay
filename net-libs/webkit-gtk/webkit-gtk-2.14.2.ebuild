@@ -19,7 +19,7 @@ SLOT="4/37" # soname version of libwebkit2gtk-4.0
 KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~x86-freebsd ~amd64-linux ~ia64-linux ~x86-linux ~x86-macos"
 
 IUSE="aqua coverage doc +egl +geolocation gles2 gnome-keyring +gstreamer +introspection +jit libnotify nsplugin +opengl spell wayland +webgl X"
-IUSE+=" bmalloc threaded-compositor accelerated-overflow-scrolling accelerated-2d-canvas ftl-jit"
+IUSE+=" bmalloc threaded-compositor accelerated-overflow-scrolling ftl-jit"
 
 # webgl needs gstreamer, bug #560612
 REQUIRED_USE="
@@ -88,6 +88,7 @@ RDEPEND="
 		x11-libs/libXcomposite
 		x11-libs/libXrender
 		x11-libs/libXt )
+        ftl-jit? ( >=sys-devel/llvm-3.5.0 )
 "
 
 # paxctl needed for bug #407085
@@ -154,13 +155,6 @@ src_prepare() {
 
 	# https://bugs.webkit.org/show_bug.cgi?id=148379
 	eapply "${FILESDIR}"/${PN}-2.8.5-webkit2gtkinjectedbundle-j1.patch
-
-	#use ftl-jit && epatch "${FILESDIR}"/${PN}-2.8.3-llvm-1.patch
-	#use ftl-jit && epatch "${FILESDIR}"/${PN}-2.8.3-llvm-2.patch
-	#use ftl-jit && epatch "${FILESDIR}"/${PN}-2.8.3-llvm-3.patch
-	#use ftl-jit && epatch "${FILESDIR}"/${PN}-2.8.3-llvm-4.patch
-
-	#use ftl-jit && epatch "${FILESDIR}"/cmake-ninja-fix.patch
 
 	gnome2_src_prepare
 }
@@ -263,10 +257,10 @@ multilib_src_configure() {
 		-DCMAKE_BUILD_TYPE=Release
 		-DPORT=GTK
 		${ruby_interpreter}
-		-DTHREADED_COMPOSITOR=$(usex threaded-compositor)
-		-DACCELERATED_OVERFLOW_SCROLLING=$(usex accelerated-overflow-scrolling)
-		-DACCELERATED_2D_CANVAS=$(usex accelerated-2d-canvas)
-		-DFTL_JIT=$(usex ftl-jit)
+		-DENABLE_THREADED_COMPOSITOR=$(usex threaded-compositor)
+		-DENABLE_ACCELERATED_OVERFLOW_SCROLLING=$(usex accelerated-overflow-scrolling)
+		-DENABLE_FTL_JIT=$(usex ftl-jit)
+		-DUSE_SYSTEM_MALLOC=$(usex bmalloc)
 	)
 
 	# Allow it to use GOLD when possible as it has all the magic to
@@ -278,27 +272,9 @@ multilib_src_configure() {
 #		mycmakeargs+=( -DUSE_LD_GOLD=OFF )
 #	fi
 
-	if ! use bmalloc; then
-		mycmakeargs+=( -DUSE_SYSTEM_MALLOC=ON )
-	else
-		mycmakeargs+=( -DUSE_SYSTEM_MALLOC=OFF )
-	fi
-
-	#if [[ ${ABI} == "x86" ]]; then
-	#	ewarn "setting x86 libdirs"
-	#	mycmakeargs+=( -DCMAKE_INSTALL_LIBEXECDIR=lib32/misc )
-	#	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR=lib32/webkit-gtk )
-	#	mycmakeargs+=( -DCMAKE_LIBRARY_PATH=/usr/lib32 )
-	#elif [[ ${ABI} == "amd64" ]] ; then
-	#	ewarn "setting amd64 libdirs"
-	#	mycmakeargs+=( -DCMAKE_INSTALL_LIBEXECDIR=lib64/misc )
-	#	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR=lib64/webkit-gtk )
-	#	mycmakeargs+=( -DCMAKE_LIBRARY_PATH=/usr/lib64 )
-	#else
-		mycmakeargs+=( -DCMAKE_INSTALL_LIBEXECDIR=$(get_libdir)/misc )
-		mycmakeargs+=( -DCMAKE_INSTALL_BINDIR=$(get_libdir)/webkit-gtk )
-		mycmakeargs+=( -DCMAKE_LIBRARY_PATH=/usr/$(get_libdir) )
-	#fi
+	mycmakeargs+=( -DCMAKE_INSTALL_LIBEXECDIR=$(get_libdir)/misc )
+	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR=$(get_libdir)/webkit-gtk )
+	mycmakeargs+=( -DCMAKE_LIBRARY_PATH=/usr/$(get_libdir) )
 
 	cmake-utils_src_configure
 }
