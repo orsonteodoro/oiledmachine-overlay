@@ -176,7 +176,7 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 *dev-dotnet/koala is a for facy.  I is used to interact with the Facebook Graph API in ruby.
 
-*media-gfx/libcaca contains an experimental special 256 color patch from Ben Wiley Sittler.  I don't know if the patch actually works from emperical tests.  Maybe it is just me or I forward patched it wrong.  I use the experimental 256 color for facy to render Facebook photos, animated gifs, and Facebook videos.
+*media-gfx/libcaca contains an experimental special 256 color patch from Ben Wiley Sittler.  I don't know if the patch actually works from emperical tests.  Maybe it is just me or I forward patched it wrong.  I use the experimental 256 color for facy to render Facebook photos, animated gifs, and Facebook videos to try to better render skin color.  I still think Termpic colors rendering is better.
 
 TODO (NOT COMMITED):
 
