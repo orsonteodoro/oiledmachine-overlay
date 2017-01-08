@@ -174,7 +174,7 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 *sys-devel/llvm exposes some codegen code for cppsharp with the use codegen flag.
 
-*dev-net/protobuild - uses Protobuild.exe to generate the solution/project(s) then these are fed into mono to generate again Protobuild.exe.   We do not know if the compiled protobuild.exe is safe to use.  This is required to generate monogame project files.  Monogame comes with binary protobuild.exe, but we are gentoo.  We compile everything from the source code.
+*dev-net/protobuild - uses Protobuild.exe to generate the solution/project(s) then these are fed into mono to generate again Protobuild.exe.   We do not know if the first encountered Protobuild.exe is safe to use.  This is required to generate monogame project files.  Monogame comes with binary protobuild.exe, but we are gentoo.  We compile everything from the source code.
 
 *dev-dotnet/koala is a for facy.  It is used to interact with the Facebook Graph API in Ruby.
 
