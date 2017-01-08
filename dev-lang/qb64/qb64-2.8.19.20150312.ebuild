@@ -1,8 +1,8 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils
 
 DESCRIPTION="QB64"
@@ -23,9 +23,11 @@ RDEPEND="android? ( dev-util/android-studio )
 	 "
 DEPEND="${RDEPEND}"
 
-FEATURES=""
-
 S="${WORKDIR}/qb64"
+
+src_prepare() {
+	eapply_user
+}
 
 src_compile() {
 	sed -i "s|./qb64 &||g" "${S}"/setup_lnx.sh

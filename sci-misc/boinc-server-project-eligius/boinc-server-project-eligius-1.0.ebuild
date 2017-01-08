@@ -1,4 +1,4 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -74,19 +74,10 @@ pkg_setup() {
 	einfo "Copy and edit ${FILESDIR}/${PN}-1.0 to /etc/portage/savedconfig/sci-misc/${PN}-${PV} and try again."
 	die ""
   fi
-  true
 }
 
 src_prepare() {
-  true
-}
-
-src_configure() {
-  true
-}
-
-src_compile() {
-  true
+  epatch_user
 }
 
 src_install() {
@@ -100,17 +91,9 @@ src_install() {
   true
 }
 
-pkg_preinst() {
-  true
-}
-
 pkg_postinst() {
   source "${ROOT}/etc/portage/savedconfig/${CATEGORY}/${P}"
   auto_server_config
-}
-
-pkg_config() {
-  true
 }
 
 function auto_server_config {

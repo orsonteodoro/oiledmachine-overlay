@@ -1,6 +1,8 @@
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
-EAPI="2"
+# $Id$
+
+EAPI="6"
 
 inherit git-r3 eutils
 
@@ -21,7 +23,9 @@ DEPEND="${RDEPEND}
 		>dev-libs/glib-2.0"
 
 src_prepare() {
-	epatch "${FILESDIR}/skype4pidgin.patch"
+	eapply "${FILESDIR}/skype4pidgin.patch"
+
+	eapply_user
 }
 
 src_compile() {

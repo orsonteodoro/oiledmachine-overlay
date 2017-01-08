@@ -1,8 +1,8 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI="5"
+EAPI="6"
 
 inherit autotools eutils flag-o-matic subversion toolchain-funcs versionator git-r3
 
@@ -55,16 +55,18 @@ src_unpack() {
 	BOINC_MAJOR=`echo $BOINC_VER | cut -d. -f1`
 	BOINC_MINOR=`echo $BOINC_VER | cut -d. -f2`
 	URL="https://github.com/BOINC/boinc/archive/client_release/$BOINC_MAJOR.$BOINC_MINOR/$BOINC_VER.zip"
-
-	cd "${WORKDIR}/${MY_P}"
-	epatch "${FILESDIR}"/setiathome-7.09-optimizationsm4-02.patch
-	epatch "${FILESDIR}"/setiathome-7.09-configureac.patch
-	epatch "${FILESDIR}"/setiathome-7.09-apgfxmainh.patch
-	epatch "${FILESDIR}"/setiathome-7.09-apgfxbaseh.patch
-	epatch "${FILESDIR}"/setiathome-8.00-nopackagever.patch
 }
 
 src_prepare() {
+	cd "${WORKDIR}/${MY_P}"
+	eapply "${FILESDIR}"/setiathome-7.09-optimizationsm4-02.patch
+	eapply "${FILESDIR}"/setiathome-7.09-configureac.patch
+	eapply "${FILESDIR}"/setiathome-7.09-apgfxmainh.patch
+	eapply "${FILESDIR}"/setiathome-7.09-apgfxbaseh.patch
+	eapply "${FILESDIR}"/setiathome-8.00-nopackagever.patch
+
+	eapply_user
+
 	cd "${WORKDIR}/${MY_P}/AKv8"
 	AT_M4DIR="m4" eautoreconf
 	chmod +x configure

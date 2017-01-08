@@ -1,8 +1,8 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils
 
 DESCRIPTION="LuaXML"
@@ -34,10 +34,8 @@ src_prepare() {
 		sed -i -e "s|-llua -ldl|-llua5.2 -ldl|g" Makefile
 		sed -i -e 's|INCDIR =|INCDIR = -I /usr/include/lua5.2|' Makefile
 	fi
-}
 
-src_configure() {
-	true
+	eapply_user
 }
 
 src_compile() {

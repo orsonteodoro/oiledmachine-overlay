@@ -1,4 +1,4 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
@@ -14,6 +14,10 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
 RDEPEND="app-admin/sudo"
+
+src_prepare() {
+	eapply_user
+}
 
 src_install() {
     mkdir -p "${D}/usr/lib/depot_tools"

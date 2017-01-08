@@ -1,0 +1,31 @@
+diff -urpN -x '*.orig' -x '*.rej' MonoGame-3.5.1.orig/IDE/MonoDevelop/MonoDevelop.MonoGame/AddinInfo.cs MonoGame-3.5.1/IDE/MonoDevelop/MonoDevelop.MonoGame/AddinInfo.cs
+--- MonoGame-3.5.1.orig/IDE/MonoDevelop/MonoDevelop.MonoGame/AddinInfo.cs	1969-12-31 16:00:00.000000000 -0800
++++ MonoGame-3.5.1/IDE/MonoDevelop/MonoDevelop.MonoGame/AddinInfo.cs	2017-01-07 17:04:54.825015127 -0800
+@@ -0,0 +1,16 @@
++using System;
++using Mono.Addins;
++using Mono.Addins.Description;
++
++[assembly:Addin ("MonoGame",
++        Namespace = "MonoDevelop",
++        Version = MonoDevelop.BuildInfo.Version,
++        Category = "IDE extensions")]
++
++[assembly:AddinName ("MonoGame")]
++[assembly:AddinDescription ("MonoGame")]
++
++[assembly:AddinDependency ("Core", MonoDevelop.BuildInfo.Version)]
++[assembly:AddinDependency ("Ide", MonoDevelop.BuildInfo.Version)]
++[assembly:AddinDependency ("DesignerSupport", MonoDevelop.BuildInfo.Version)]
++
+diff -urpN -x '*.orig' -x '*.rej' MonoGame-3.5.1.orig/IDE/MonoDevelop/MonoDevelop.MonoGame/MonoDevelop.MonoGame.csproj MonoGame-3.5.1/IDE/MonoDevelop/MonoDevelop.MonoGame/MonoDevelop.MonoGame.csproj
+--- MonoGame-3.5.1.orig/IDE/MonoDevelop/MonoDevelop.MonoGame/MonoDevelop.MonoGame.csproj	2016-03-29 23:30:30.000000000 -0700
++++ MonoGame-3.5.1/IDE/MonoDevelop/MonoDevelop.MonoGame/MonoDevelop.MonoGame.csproj	2017-01-07 17:05:14.006760187 -0800
+@@ -78,6 +78,7 @@
+     <Compile Include="MonoGameConditions.cs" />
+     <Compile Include="ContentItemTemplate.cs" />
+     <Compile Include="MonoGameMSBuildImports.cs" />
++    <Compile Include="AddinInfo.cs" />
+   </ItemGroup>
+   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+   <ItemGroup>

@@ -1,13 +1,12 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=2
+EAPI=6
 
-SUPPORT_PYTHON_ABIS="1"
-PYTHON_DEPEND="2:2.5:2.7"
+PYTHON_COMPAT=( python2_7 )
 
-inherit distutils eutils
+inherit distutils-r1 eutils
 
 DESCRIPTION="lastfm is a Python interface to Last.fm web services (API 2.0)."
 HOMEPAGE="http://code.google.com/p/python-lastfm/"
@@ -21,8 +20,11 @@ IUSE=""
 
 DEPEND=">=dev-lang/python-2.5
 	dev-python/setuptools
+        dev-python/stdeb
 	!media-sound/lastfmsubmitd"
 
 RDEPEND="${DEPEND}"
 
-
+src_prepare() {
+	eapply_user
+}

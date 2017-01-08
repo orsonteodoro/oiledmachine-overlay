@@ -1,10 +1,10 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
-inherit dotnet eutils
+inherit dotnet eutils gac
 
 DESCRIPTION="Nuget - .NET Package Manager"
 HOMEPAGE="http://nuget.codeplex.com"
@@ -15,7 +15,9 @@ LICENSE="Apache-2.0"
 SLOT="0"
 
 KEYWORDS="~x86 ~amd64"
-IUSE=""
+USE_DOTNET="net45"
+IUSE="${USE_DOTNET} +gac"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
 
 # Mask 3.2.0 because of mcs compiler bug : http://stackoverflow.com/a/17926731/238232
 # it fixed in 3.2.3
@@ -40,6 +42,8 @@ src_prepare() {
 	epatch "${FILESDIR}/add-keyfile-option-to-csproj.patch"
 	sed -i -E -e "s#(\[assembly: InternalsVisibleTo(.*)\])#/* \1 */#g" "src/Core/Properties/AssemblyInfo.cs" || die
 	epatch "${FILESDIR}/strongnames-for-ebuild-2.8.1.patch"
+
+	eapply_user
 }
 
 src_configure() {
@@ -47,7 +51,6 @@ src_configure() {
 }
 
 src_compile() {
-#	xbuild Build/Build.proj /p:Configuration=Release /p:TreatWarningsAsErrors=false /tv:4.0 /p:TargetFrameworkVersion="v${FRAMEWORK}" /p:Configuration="Mono Release" /t:GoMono || die
 	MAKEOPTS="-j1"
 	source ./build.sh || die
 }

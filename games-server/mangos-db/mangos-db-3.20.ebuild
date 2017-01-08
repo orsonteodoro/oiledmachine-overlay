@@ -1,3 +1,7 @@
+# Copyright 1999-2017 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Id$
+
 EAPI=5
 inherit eutils git-r3
 
@@ -18,6 +22,7 @@ RDEPEND="
 "
 IUSE=""
 S="${WORKDIR}"
+
 src_unpack() {
 	EGIT_CHECKOUT_DIR="${WORKDIR}"
 	EGIT_REPO_URI="https://github.com/mangosthree/database.git"
@@ -26,6 +31,11 @@ src_unpack() {
 	git-r3_fetch
 	git-r3_checkout
 }
+
+src_prepare() {
+	epatch_user
+}
+
 src_install() {
 	mkdir -p "${D}/usr/share/mangos/3"
 	cp -R "${WORKDIR}"/* "${D}/usr/share/mangos/3"
@@ -34,6 +44,7 @@ src_install() {
 	fperms 0755 "/usr/share/mangos/3/newinstall.sh"
 	fperms 0755 "/usr/share/mangos/3/applymicroupdate-3-0.sh"
 }
+
 pkg_config() {
 	einfo "Enter the mangos db prefix:"
 	read PREFIX
@@ -46,6 +57,7 @@ pkg_config() {
 	${ROOT}/usr/share/mangos/3/applymicroupdate-3-0.sh $PREFIX $USERNAME $REPLY
 	unset REPLY
 }
+
 pkg_postinst() {
 	einfo ""
 	einfo "Use /usr/share/mangos/3/newinstall.sh to install a new mangos db with game content or"

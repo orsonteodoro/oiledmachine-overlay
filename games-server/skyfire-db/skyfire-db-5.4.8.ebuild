@@ -1,3 +1,7 @@
+# Copyright 1999-2017 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Id$
+
 EAPI=5
 inherit eutils git-r3
 
@@ -29,7 +33,7 @@ check_tarballs_available() {
 	for dl in "${@}"; do
 		[[ ! -f "${DISTDIR}/${dl}" ]] && unavailable+=" ${dl}"
 	done
- 
+
 	if [[ -n "${unavailable}" ]]; then
 		if [[ -z ${_check_tarballs_available_once} ]]; then
 			einfo
@@ -48,16 +52,20 @@ check_tarballs_available() {
 		einfo
 	fi
 }
- 
+
 pkg_nofetch() {
 	local distfiles=( $(eval "echo \${$(echo AT_${ARCH/-/_})}") )
 	check_tarballs_available "${SFDB_URI}" "${distfiles[@]}"
 }
 
-
 src_unpack() {
 	unpack "${A}"
 }
+
+src_prepare() {
+	epatch_user
+}
+
 src_install() {
 	mkdir -p "${D}/usr/share/skyfire/5"
 	cp -R "${WORKDIR}"/* "${D}/usr/share/skyfire/5"

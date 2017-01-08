@@ -1,8 +1,8 @@
-# Copyright 1999-2010 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=3
+EAPI=6
 
 inherit eutils
 
@@ -16,15 +16,22 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="opencl cuda cpu"
-REQUIRED="^^( opencl cuda cpu )"
+REQUIRED_USE="^^ ( opencl cuda cpu )"
 
 DEPEND="app-arch/unrar"
 RDEPEND="${DEPEND}
 "
+PROPERTIES="interactive"
+S="${WORKDIR}"
+
+src_prepare() {
+	eapply_user
+}
 
 src_unpack() {
 	einfo "The author said that there is no password.  Press enter to continue."
-	unpack "${A}"
+	echo "${DISTDIR}/${A}"
+	unrar x -p "${DISTDIR}/${A}"
 }
 
 src_install() {

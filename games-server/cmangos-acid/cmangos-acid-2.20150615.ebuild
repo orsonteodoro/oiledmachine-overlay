@@ -1,3 +1,7 @@
+# Copyright 1999-2017 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Id$
+
 EAPI=5
 inherit eutils git-r3
 
@@ -18,6 +22,7 @@ RDEPEND="
 "
 IUSE=""
 S="${WORKDIR}"
+
 src_unpack() {
 	EGIT_CHECKOUT_DIR="${WORKDIR}"
 	EGIT_REPO_URI="https://github.com/ACID-Scripts/WOTLK.git"
@@ -26,10 +31,16 @@ src_unpack() {
 	git-r3_fetch
 	git-r3_checkout
 }
+
+src_prepare() {
+	eapply_user
+}
+
 src_install() {
 	mkdir -p "${D}/usr/share/cmangos/2/sql/acid"
 	cp -R "${WORKDIR}"/* "${D}/usr/share/cmangos/2/sql/acid"
 }
+
 pkg_config() {
 	einfo "Enter the mangos db prefix:"
 	read PREFIX
@@ -43,6 +54,7 @@ pkg_config() {
 	einfo "ACID committed changes."
 	unset REPLY
 }
+
 pkg_postinst() {
 	einfo ""
 	einfo "Use emerge --config =${P} to update acid."

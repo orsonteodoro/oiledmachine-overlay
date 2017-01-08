@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -123,8 +123,10 @@ src_prepare() {
 
 	sed -i '/LD_LIBRARY_PATH=/d' configure.ac || die #382241
 
-	eapply_user
 	eprefixify curl-config.in
+
+	eapply_user
+
 	eautoreconf
 }
 

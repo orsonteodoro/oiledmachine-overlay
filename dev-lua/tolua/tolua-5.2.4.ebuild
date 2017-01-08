@@ -1,8 +1,8 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI="5"
+EAPI="6"
 
 inherit eutils toolchain-funcs
 
@@ -39,6 +39,8 @@ src_prepare() {
 #		sed -i -e 's|CPPFLAGS=  -g $(WARN) $(INC)|CPPFLAGS= -g $(WARN) $(INC) -fPIC|' config
 		sed -i -e 's|CPPFLAGS=  -g $(WARN) $(INC)|CPPFLAGS= -g $(INC) -fPIC|' config
 	fi
+
+	eapply_user
 }
 
 src_compile() {

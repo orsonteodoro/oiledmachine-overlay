@@ -1,0 +1,13 @@
+diff -urp -x '*.orig' -x '*.rej' DotNetZip.Semverd-1.9.3.orig/src/SolutionInfo.cs DotNetZip.Semverd-1.9.3/src/SolutionInfo.cs
+--- DotNetZip.Semverd-1.9.3.orig/src/SolutionInfo.cs	2014-06-15 11:15:50.000000000 -0700
++++ DotNetZip.Semverd-1.9.3/src/SolutionInfo.cs	2017-01-02 05:59:03.830897974 -0800
+@@ -2,6 +2,6 @@
+ using System.Reflection;
+ using System.Runtime.CompilerServices;
+ using System.Runtime.InteropServices;
+-[assembly: AssemblyVersion("1.9.2")]
+-[assembly: AssemblyFileVersion("1.9.2")]
+-[assembly: AssemblyInformationalVersion("1.9.2.0da451")]
++[assembly: AssemblyVersion("1.9.3")]
++[assembly: AssemblyFileVersion("1.9.3")]
++[assembly: AssemblyInformationalVersion("1.9.3.0")]

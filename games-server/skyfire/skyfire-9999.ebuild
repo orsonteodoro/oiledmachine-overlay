@@ -1,11 +1,15 @@
-EAPI=5
+# Copyright 1999-2017 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Id$
+
+EAPI=6
 inherit eutils git-r3 cmake-utils
 
 DESCRIPTION="SkyFire for the Mists of Pandaria (MOP) Client"
 HOMEPAGE="http://www.projectskyfire.org/"
 LICENSE="GPL-2"
 SLOT="5"
-KEYWORDS="amd64"
+KEYWORDS="~amd64"
 RDEPEND="
 	>=dev-libs/ace-5.8.3
 	>=dev-libs/boost-1.49
@@ -19,6 +23,7 @@ RDEPEND="
 IUSE="+servers tools pch scripts"
 
 S="${WORKDIR}"
+
 src_unpack() {
 	EGIT_CHECKOUT_DIR="${WORKDIR}"
 	EGIT_REPO_URI="https://github.com/ProjectSkyfire/SkyFire.548.git"
@@ -26,6 +31,11 @@ src_unpack() {
 	git-r3_fetch
 	git-r3_checkout
 }
+
+src_prepare() {
+	eapply_user
+}
+
 src_configure(){
 	local mycmakeargs=(
                 -DCONF_DIR=/etc/skyfire/5
@@ -56,12 +66,15 @@ src_configure(){
 
 	cmake-utils_src_configure
 }
+
 src_compile() {
 	cmake-utils_src_compile
 }
+
 src_test() {
 	cmake-utils_src_test
 }
+
 src_install() {
 	cmake-utils_src_install
 }

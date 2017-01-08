@@ -1,8 +1,8 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI="5"
+EAPI="6"
 
 inherit eutils flag-o-matic toolchain-funcs multilib multilib-minimal
 
@@ -45,21 +45,21 @@ src_prepare() {
 	rm -f Makefile
 
 	if ! use vanilla ; then
-		epatch "${FILESDIR}"/${PN}-1.0.0a-ldflags.patch #327421
-		epatch "${FILESDIR}"/${PN}-1.0.2i-parallel-build.patch
-		epatch "${FILESDIR}"/${PN}-1.0.2a-parallel-obj-headers.patch
-		epatch "${FILESDIR}"/${PN}-1.0.2a-parallel-install-dirs.patch
-		epatch "${FILESDIR}"/${PN}-1.0.2a-parallel-symlinking.patch #545028
-		epatch "${FILESDIR}"/${PN}-1.0.2-ipv6.patch
-		epatch "${FILESDIR}"/${PN}-1.0.2a-x32-asm.patch #542618
-		epatch "${FILESDIR}"/${PN}-1.0.1p-default-source.patch #554338
+	#	eapply "${FILESDIR}"/${PN}-1.0.0a-ldflags.patch #327421
+		eapply "${FILESDIR}"/${PN}-1.0.2i-parallel-build.patch
+		eapply "${FILESDIR}"/${PN}-1.0.2a-parallel-obj-headers.patch
+		eapply "${FILESDIR}"/${PN}-1.0.2a-parallel-install-dirs.patch
+		eapply "${FILESDIR}"/${PN}-1.0.2a-parallel-symlinking.patch #545028
+		eapply "${FILESDIR}"/${PN}-1.0.2-ipv6.patch
+		eapply "${FILESDIR}"/${PN}-1.0.2a-x32-asm.patch #542618
+		eapply "${FILESDIR}"/${PN}-1.0.1p-default-source.patch #554338
 
-		epatch_user #332661
+		eapply_user #332661
 	fi
 
 	if use spotify ; then
 		epatch "${FILESDIR}"/${PN}-1.0.2-spotify-1.patch
-		epatch "${FILESDIR}"/${PN}-1.0.2-spotify-2.patch
+		eapply "${FILESDIR}"/${PN}-1.0.2-spotify-2.patch
 	fi
 
 	# disable fips in the build
@@ -99,6 +99,8 @@ src_prepare() {
 	# The config script does stupid stuff to prompt the user.  Kill it.
 	sed -i '/stty -icanon min 0 time 50; read waste/d' config || die
 	./config --test-sanity || die "I AM NOT SANE"
+
+	eapply_user
 
 	multilib_copy_sources
 }

@@ -1,8 +1,8 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
 inherit eutils flag-o-matic autotools multilib-minimal
 
@@ -72,16 +72,14 @@ MULTILIB_WRAPPED_HEADERS=(
 )
 
 src_prepare() {
-	epatch "${FILESDIR}"/${PN}-1.12.18-disable-test-suite.patch
-	epatch "${FILESDIR}"/${PN}-respect-fontconfig.patch
-	use colored-emojis &&  epatch "${FILESDIR}"/${PN}-1.14.6-colored-emojis.patch
+	eapply "${FILESDIR}"/${PN}-1.12.18-disable-test-suite.patch
+	eapply "${FILESDIR}"/${PN}-respect-fontconfig.patch
+	use colored-emojis &&  eapply "${FILESDIR}"/${PN}-1.14.6-colored-emojis.patch
 
 	# tests and perf tools require X, bug #483574
 	if ! use X; then
 		sed -e '/^SUBDIRS/ s#boilerplate test perf# #' -i Makefile.am || die
 	fi
-
-	epatch_user
 
 	# Slightly messed build system YAY
 	if [[ ${PV} == *9999* ]]; then
@@ -89,6 +87,8 @@ src_prepare() {
 		touch src/Makefile.am.features
 		touch ChangeLog
 	fi
+
+	eapply_user
 
 	eautoreconf
 }

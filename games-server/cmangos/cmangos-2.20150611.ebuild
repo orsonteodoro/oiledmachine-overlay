@@ -1,4 +1,8 @@
-EAPI=5
+# Copyright 1999-2017 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Id$
+
+EAPI=6
 inherit eutils git-r3 cmake-utils
 
 DESCRIPTION="CMaNGOS Two for The Wrath of the Lich King (WOTLK) 3.3.5a Client"
@@ -22,6 +26,7 @@ RDEPEND="
 IUSE="pch sd2 eluna"
 
 S="${WORKDIR}"
+
 src_unpack() {
 	EGIT_CHECKOUT_DIR="${WORKDIR}"
 	EGIT_REPO_URI="https://github.com/cmangos/mangos-wotlk.git"
@@ -29,26 +34,31 @@ src_unpack() {
 	EGIT_COMMIT="662622c20ba1a0c8b210f4eb1fb0af90316cc05c"
 	git-r3_fetch
 	git-r3_checkout
-	epatch "${FILESDIR}/mangos-4-cmake-location.patch"
+	eapply "${FILESDIR}/mangos-4-cmake-location.patch"
 
-if use sd2; then
-	EGIT_CHECKOUT_DIR="${WORKDIR}/src/bindings/sd2"
-	EGIT_REPO_URI="https://github.com/scriptdev2/scriptdev2.git"
-	EGIT_BRANCH="master"
-	EGIT_COMMIT="7624584660798961de5eb726f9e18495f5e75a08"
-	git-r3_fetch
-	git-r3_checkout
-fi
-if use eluna; then
-	EGIT_CHECKOUT_DIR="${WORKDIR}/src/bindings/eluna"
-	EGIT_REPO_URI="https://github.com/ElunaLuaEngine/ElunaMangosTbc.git"
-	EGIT_BRANCH="master"
-	EGIT_COMMIT="0b938342bef57e6eb225f5c8f6a0e72135671399"
-	git-r3_fetch
-	git-r3_checkout
-fi
+	if use sd2; then
+		EGIT_CHECKOUT_DIR="${WORKDIR}/src/bindings/sd2"
+		EGIT_REPO_URI="https://github.com/scriptdev2/scriptdev2.git"
+		EGIT_BRANCH="master"
+		EGIT_COMMIT="7624584660798961de5eb726f9e18495f5e75a08"
+		git-r3_fetch
+		git-r3_checkout
+	fi
+	if use eluna; then
+		EGIT_CHECKOUT_DIR="${WORKDIR}/src/bindings/eluna"
+		EGIT_REPO_URI="https://github.com/ElunaLuaEngine/ElunaMangosTbc.git"
+		EGIT_BRANCH="master"
+		EGIT_COMMIT="0b938342bef57e6eb225f5c8f6a0e72135671399"
+		git-r3_fetch
+		git-r3_checkout
+	fi
 }
-src_configure(){
+
+src_prepare() {
+	eapply_user
+}
+
+src_configure() {
 	local mycmakeargs=(
 		-DCONF_DIR=/etc/cmangos/2
 		-DCMAKE_INSTALL_PREFIX=/usr/games/bin/cmangos/2

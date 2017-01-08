@@ -1,8 +1,8 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils check-reqs
 
 DESCRIPTION="ModelSim"
@@ -40,6 +40,8 @@ src_unpack() {
 
 src_prepare() {
 	chmod +x "${T}/${F}"
+
+	eapply_user
 }
 
 src_install() {

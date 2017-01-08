@@ -1,8 +1,8 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
 # some random parts need python 2...
 PYTHON_COMPAT=( python2_7 pypy )
@@ -85,7 +85,7 @@ QA_PREBUILT="
 	usr/lib*/pypy3/libpypy-c.so"
 
 src_prepare() {
-	epatch "${FILESDIR}/4.0.0-gentoo-path.patch" \
+	eapply "${FILESDIR}/4.0.0-gentoo-path.patch" \
 		"${FILESDIR}/1.9-distutils.unixccompiler.UnixCCompiler.runtime_library_dir_option.patch"
 
 	sed -e "s^@EPREFIX@^${EPREFIX}^" \
@@ -94,11 +94,11 @@ src_prepare() {
 
 	# apply CPython stdlib patches
 	pushd lib-python/3 > /dev/null || die
-	epatch "${FILESDIR}"/5.2.0-distutils-c++.patch \
-		"${WORKDIR}"/patches/24_all_sqlite-3.8.4.patch
+	#eapply "${FILESDIR}"/5.2.0-distutils-c++.patch
+	eapply	"${WORKDIR}"/patches/24_all_sqlite-3.8.4.patch
 	popd > /dev/null || die
 
-	epatch_user
+	eapply_user
 }
 
 src_compile() {

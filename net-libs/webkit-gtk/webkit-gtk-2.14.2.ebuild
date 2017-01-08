@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -156,6 +156,8 @@ src_prepare() {
 
 	# https://bugs.webkit.org/show_bug.cgi?id=148379
 	eapply "${FILESDIR}"/${PN}-2.8.5-webkit2gtkinjectedbundle-j1.patch
+
+	eapply_user
 
 	gnome2_src_prepare
 }

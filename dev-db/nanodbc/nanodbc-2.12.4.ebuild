@@ -1,13 +1,13 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils cmake-utils flag-o-matic toolchain-funcs
 
 DESCRIPTION="nanodbc"
 HOMEPAGE="https://lexicalunit.github.io/nanodbc/"
-SRC_URI="https://github.com/lexicalunit/${PN}/archive/v${PV}.tar.gz"
+SRC_URI="https://github.com/lexicalunit/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="${PV}"
@@ -44,8 +44,11 @@ src_prepare() {
 		sed -i -e 's|Boost_USE_STATIC_LIBS ON)|Boost_USE_STATIC_LIBS OFF)|' test/CMakeLists.txt || die p3
 	fi
 	#sed -i -e 's|check_cxx_compiler_flag("-stdlib=libc++" CXX_SUPPORTS_STDLIB)|set(CXX_SUPPORTS_STDLIB ON)|' CMakeLists.txt || die p4
-	epatch "${FILESDIR}"/nanodbc-2.11.3-boost-test.patch || die p6
-	epatch "${FILESDIR}"/nanodbc-2.12.4-disable-tests.patch || die p7
+	eapply "${FILESDIR}"/nanodbc-2.11.3-boost-test.patch || die p6
+	eapply "${FILESDIR}"/nanodbc-2.12.4-disable-tests.patch || die p7
+
+	eapply_user
+
 	cmake-utils_src_prepare
 }
 
@@ -67,13 +70,13 @@ src_configure() {
 		append-ldflags -L/usr/$(get_libdir) -lc++
 	fi
         local mycmakeargs=(
-                $(cmake-utils_use unicode NANODBC_USE_UNICODE)
-                $(cmake-utils_use boost_convert NANODBC_USE_BOOST_CONVERT)
-                $(cmake-utils_use static NANODBC_STATIC)
-                $(cmake-utils_use examples NANODBC_EXAMPLES)
-                $(cmake-utils_use libcxx NANODBC_ENABLE_LIBCXX)
-                $(cmake-utils_use handle_nodata_bug NANODBC_HANDLE_NODATA_BUG)
-                $(cmake-utils_use debug TEST)
+                -DNANODBC_USE_UNICODE=$(usex unicode)
+                -DNANODBC_USE_BOOST_CONVERT=$(usex boost_convert)
+                -DNANODBC_STATIC=$(usex static)
+                -DNANODBC_EXAMPLES=$(usex examples)
+                -DNANODBC_ENABLE_LIBCXX=$(usex libcxx)
+                -DNANODBC_HANDLE_NODATA_BUG=$(usex handle_nodata_bug)
+                -DTEST=$(usex debug)
 		-DUNIX=1
 		-NANODBC_INSTALL=ON
 		-DBOOST_LIBRARYDIR="/usr/$(get_libdir)"

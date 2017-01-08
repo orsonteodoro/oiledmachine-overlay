@@ -1,0 +1,16 @@
+diff -urp nvorbis-9999.20160922.orig/UnitTests/UnitTests.csproj nvorbis-9999.20160922/UnitTests/UnitTests.csproj
+--- nvorbis-9999.20160922.orig/UnitTests/UnitTests.csproj	2017-01-03 17:10:10.778291231 -0800
++++ nvorbis-9999.20160922/UnitTests/UnitTests.csproj	2017-01-03 17:13:21.755603126 -0800
+@@ -33,9 +33,9 @@
+     <WarningLevel>4</WarningLevel>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="nunit.framework">
+-      <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
+-    </Reference>
++    <Reference Include="nunit.framework">
++      <HintPath>/usr/share/nunit-2/nunit.framework.dll</HintPath>
++    </Reference>
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+     <Reference Include="System.Xml.Linq" />

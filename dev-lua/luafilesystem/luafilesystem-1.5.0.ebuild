@@ -1,8 +1,8 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI="5"
+EAPI="6"
 inherit multilib toolchain-funcs
 
 DESCRIPTION="File System Library for the Lua Programming Language"
@@ -38,6 +38,8 @@ src_prepare() {
 	if use lua5_2; then
 		sed -i -e "s|luaL_reg fslib|luaL_Reg fslib|g" src/lfs.c || die
 	fi
+
+	eapply_user
 }
 
 src_install() {

@@ -1,8 +1,8 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/sys-fs/mtpfs/mtpfs-1.1-r1.ebuild,v 1.1 2015/05/30 22:33:27 slyfox Exp $
 
-EAPI=5
+EAPI=6
 
 inherit eutils git-r3 autotools
 
@@ -32,11 +32,11 @@ EGIT_BRANCH="master"
 EGIT_COMMIT="fd2a493ccd0f2c137a504bed5cff881e37451ca7"
 
 src_prepare() {
-	true
 	#sed -e "/#include <string.h>/ a\
 		#include <stdlib.h>" -i mtpfs.h id3read.c || die #implicit
 
-	#epatch "${FILESDIR}"/${P}-fix-mutex-crash.patch
+	#eapply "${FILESDIR}"/${P}-fix-mutex-crash.patch
+	eapply_user
 	eautoreconf
 }
 

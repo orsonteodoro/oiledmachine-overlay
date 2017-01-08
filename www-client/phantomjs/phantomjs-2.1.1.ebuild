@@ -1,8 +1,8 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
 USE_RUBY="ruby20 ruby21 ruby22"
 
@@ -14,12 +14,6 @@ HOMEPAGE="http://phantomjs.org/"
 QT_WEBKIT_GIT_COMMIT="e7b74331d695bfa8b77e39cdc50fc2d84a49a22a"
 QT_BASE_GIT_COMMIT="b5cc0083a5766e773885e8dd624c51a967c17de0"
 THIRD_PARTY_GIT_COMMIT="19051aa97cecdcd3ef8c8862e36a3cb4cd3471fc"
-
-#SRC_URI="https://github.com/ariya/${PN}/archive/${PV}.tar.gz
-#         https://github.com/Vitallium/qtwebkit/archive/${QT_WEBKIT_GIT_COMMIT}.zip -> qtwebkit-${QT_WEBKIT_GIT_COMMIT}.zip
-#	 https://github.com/Vitallium/qtbase/archive/${QT_BASE_GIT_COMMIT}.zip -> qtbase-${QT_BASE_GIT_COMMIT}.zip
-#	 https://github.com/Vitallium/phantomjs-3rdparty-win/archive/${THIRD_PARTY_GIT_COMMIT}.zip -> phantomjs-3rdparty-win-${THIRD_PARTY_GIT_COMMIT}.zip
-#"
 
 LICENSE="BSD"
 SLOT="0"
@@ -88,15 +82,15 @@ src_unpack() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/${PN}-2.1.1-python3-udis86-itab.patch"
-	epatch "${FILESDIR}/${PN}-2.1.1-addMessageToConsole-override.patch"
-	epatch "${FILESDIR}/${PN}-2.1.1-angle-includes.patch"
-	#epatch "${FILESDIR}/${PN}-2.1.1-fix-video-src-1.patch"
-	#epatch "${FILESDIR}/${PN}-2.1.1-fix-video-src-2.patch"
-	#epatch "${FILESDIR}/${PN}-2.1.1-video-src.patch"
-	epatch "${FILESDIR}/${PN}-2.1.1-fix-emoji-crash.patch"
+	eapply "${FILESDIR}/${PN}-2.1.1-python3-udis86-itab.patch"
+	eapply "${FILESDIR}/${PN}-2.1.1-addMessageToConsole-override.patch"
+	eapply "${FILESDIR}/${PN}-2.1.1-angle-includes.patch"
+	#eapply "${FILESDIR}/${PN}-2.1.1-fix-video-src-1.patch"
+	#eapply "${FILESDIR}/${PN}-2.1.1-fix-video-src-2.patch"
+	#eapply "${FILESDIR}/${PN}-2.1.1-video-src.patch"
+	eapply "${FILESDIR}/${PN}-2.1.1-fix-emoji-crash.patch"
 	if use gstreamer010 ; then
-		epatch "${FILESDIR}/${PN}-2.1.1-enabled-gstreamer-010.patch" || die p1
+		eapply "${FILESDIR}/${PN}-2.1.1-enabled-gstreamer-010.patch" || die p1
 	fi
 
 	if use debug ; then
@@ -201,6 +195,8 @@ src_prepare() {
 		sed -i -r -e 's|-release|-debug|g' ./tools/preconfig.sh
 		sed -i -r -e 's|-static|-static -debug|g' ./src/qt/preconfig.sh
 	fi
+
+	eapply_user
 }
 
 src_compile() {

@@ -1,8 +1,8 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils check-reqs
 
 DESCRIPTION="Xilinx ISE WebPack"
@@ -48,6 +48,8 @@ src_prepare() {
 	sed -i -e "s|destination_dir=[/]opt[/]Xilinx|destination_dir=${D}/opt/Xilinx|" mybatchscript
 
 	sed -i -e ':a' -e 'N' -e '$!ba' -e 's|# package=ISE WebPACK::0\n# application=setupEnv.sh::0\n# application=Install Linux System Generator Info XML::0\n# application=Ensure Linux System Generator Symlinks::0\n# application=Install Cable Drivers::0|package=ISE WebPACK::0\napplication=setupEnv.sh::0\napplication=Install Linux System Generator Info XML::0\napplication=Ensure Linux System Generator Symlinks::0\napplication=Install Cable Drivers::0|' mybatchscript
+
+	eapply_user
 }
 
 src_install() {

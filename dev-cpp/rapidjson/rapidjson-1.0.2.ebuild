@@ -1,13 +1,13 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils cmake-utils flag-o-matic toolchain-funcs
 
 DESCRIPTION="rapidjson"
 HOMEPAGE="http://rapidjson.org/"
-SRC_URI="https://github.com/miloyip/${PN}/archive/v${PV}.tar.gz"
+SRC_URI="https://github.com/miloyip/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MIT BSD JSON"
 SLOT="${PV}"
@@ -23,14 +23,15 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/rapidjson-${PV}"
 
 src_prepare() {
+	eapply_user
 	cmake-utils_src_prepare
 }
 
 src_configure() {
         local mycmakeargs=(
-                $(cmake-utils_use doc RAPIDJSON_BUILD_DOC)
-                $(cmake-utils_use examples RAPIDJSON_BUILD_EXAMPLES)
-                $(cmake-utils_use debug RAPIDJSON_BUILD_TESTS)
+                -DRAPIDJSON_BUILD_DOC=$(usex doc)
+                -DRAPIDJSON_BUILD_EXAMPLES=$(usex examples)
+                -DRAPIDJSON_BUILD_TESTS=$(usex debug)
 		-DRAPIDJSON_BUILD_THIRDPARTY_GTEST=OFF
 		-DRAPIDJSON_HAS_CXX11_RVALUE_REFS=ON
         )

@@ -1,8 +1,8 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
 PYTHON_COMPAT=( python3_3 python3_4 )
 
@@ -34,6 +34,11 @@ DEPEND="${COMMON_DEPEND}
 	virtual/pkgconfig"
 	RDEPEND="${COMMON_DEPEND}
 	dev-python/pyxdg"
+
+src_prepare() {
+	eapply_user
+	multilib_copy_sources
+}
 
 multilib_src_configure() {
 	local myeconfargs=(

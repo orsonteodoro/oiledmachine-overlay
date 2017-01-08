@@ -1,0 +1,57 @@
+diff -urp -x '*.rej' -x '*.orig' MonoGame-3.5.1.mod2/MonoGame.Framework.Content.Pipeline/Graphics/Font/SharpFontImporter.cs MonoGame-3.5.1/MonoGame.Framework.Content.Pipeline/Graphics/Font/SharpFontImporter.cs
+--- MonoGame-3.5.1.mod2/MonoGame.Framework.Content.Pipeline/Graphics/Font/SharpFontImporter.cs	2016-03-29 23:30:30.000000000 -0700
++++ MonoGame-3.5.1/MonoGame.Framework.Content.Pipeline/Graphics/Font/SharpFontImporter.cs	2017-01-05 05:35:45.000572592 -0800
+@@ -44,10 +44,10 @@ namespace Microsoft.Xna.Framework.Conten
+ 					Glyphs = glyphList;
+ 
+ 					// Store the font height.
+-					LineSpacing = face.Size.Metrics.Height >> 6;
++					LineSpacing = (int)face.Size.Metrics.Height >> 6;
+ 
+ 					// The height used to calculate the Y offset for each character.
+-					YOffsetMin = -face.Size.Metrics.Ascender >> 6;
++					YOffsetMin = -(int)face.Size.Metrics.Ascender >> 6;
+ 			}
+             finally
+             {
+@@ -131,8 +131,8 @@ namespace Microsoft.Xna.Framework.Conten
+ 
+             if (glyphBitmap == null) 
+ 			{
+-				var gHA = face.Glyph.Metrics.HorizontalAdvance >> 6;
+-				var gVA = face.Size.Metrics.Height >> 6;
++				var gHA = (int)face.Glyph.Metrics.HorizontalAdvance >> 6;
++				var gVA = (int)face.Size.Metrics.Height >> 6;
+ 
+ 				gHA = gHA > 0 ? gHA : gVA;
+ 				gVA = gVA > 0 ? gVA : gHA;
+@@ -142,16 +142,16 @@ namespace Microsoft.Xna.Framework.Conten
+ 
+ 			// not sure about this at all
+ 			var abc = new ABCFloat ();
+-			abc.A = face.Glyph.Metrics.HorizontalBearingX >> 6;
+-			abc.B = face.Glyph.Metrics.Width >> 6;
+-			abc.C = (face.Glyph.Metrics.HorizontalAdvance >> 6) - (abc.A + abc.B);
++			abc.A = (int)face.Glyph.Metrics.HorizontalBearingX >> 6;
++			abc.B = (int)face.Glyph.Metrics.Width >> 6;
++			abc.C = ((int)face.Glyph.Metrics.HorizontalAdvance >> 6) - (abc.A + abc.B);
+ 
+ 			// Construct the output Glyph object.
+ 			return new Glyph(character, glyphBitmap)
+ 			{
+-				XOffset = -(face.Glyph.Advance.X >> 6),
+-				XAdvance = face.Glyph.Metrics.HorizontalAdvance >> 6,
+-                YOffset = -(face.Glyph.Metrics.HorizontalBearingY >> 6),
++				XOffset = -((int)face.Glyph.Advance.X >> 6),
++				XAdvance = (int)face.Glyph.Metrics.HorizontalAdvance >> 6,
++                YOffset = -((int)face.Glyph.Metrics.HorizontalBearingY >> 6),
+ 				CharacterWidths = abc
+ 			};
+ 		}
+@@ -181,4 +181,4 @@ namespace Microsoft.Xna.Framework.Conten
+             }
+         }
+     }
+-}
+\ No newline at end of file
++}

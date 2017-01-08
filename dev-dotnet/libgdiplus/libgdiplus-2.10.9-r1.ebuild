@@ -1,10 +1,10 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI="5"
+EAPI="6"
 
-inherit base eutils mono flag-o-matic
+inherit eutils mono flag-o-matic
 
 DESCRIPTION="Library for using System.Drawing with mono"
 HOMEPAGE="http://www.mono-project.com"
@@ -38,8 +38,9 @@ PATCHES=("${FILESDIR}/${P}-gold.patch"
 	"${FILESDIR}/${PN}-2.10.9-freetype251.patch")
 
 src_prepare() {
-	base_src_prepare
 	sed -i -e 's:ungif:gif:g' configure || die
+
+	eapply_user
 }
 
 src_configure() {

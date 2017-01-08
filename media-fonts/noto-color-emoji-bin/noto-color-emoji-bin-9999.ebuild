@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -7,7 +7,7 @@ inherit font
 
 DESCRIPTION="NotoColorEmoji is colored emojis"
 HOMEPAGE="https://www.google.com/get/noto/#emoji-qaae-color"
-SRC_URI="https://noto-website.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip"
+SRC_URI="https://noto-website.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip -> ${P}.zip"
 # renamed from upstream's unversioned NotoColorEmoji-unhinted.zip
 # version number based on the timestamp of most recently updated file in the zip
 
@@ -38,6 +38,10 @@ rebuild_fontfiles() {
                 einfo "Updating font cache..."
                 HOME="/root" /usr/bin/fc-cache -f ${FONT_TARGETS}
         fi
+}
+
+src_prepare() {
+	epatch_user
 }
 
 src_install() {

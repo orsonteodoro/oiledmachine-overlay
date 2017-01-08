@@ -1,3 +1,7 @@
+# Copyright 1999-2017 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Id$
+
 EAPI=5
 inherit eutils git-2 cmake-utils
 
@@ -18,6 +22,7 @@ RDEPEND="
 "
 IUSE="tools pch sd2 eluna"
 S="${WORKDIR}"
+
 src_unpack() {
 	EGIT_SOURCEDIR="${WORKDIR}"
 	EGIT_REPO_URI="https://github.com/mangosthree/server.git"
@@ -66,7 +71,12 @@ src_unpack() {
 	epatch "${FILESDIR}/mangos-3-gridnotifiersimpl.patch"
 	epatch "${FILESDIR}/mangos-3-gridnotifiers.patch"
 }
-src_configure(){
+
+src_prepare() {
+	epatch_user
+}
+
+src_configure() {
 	local mycmakeargs=(
 		-DCONF_DIR=/etc/mangos/3
 		-DCMAKE_INSTALL_PREFIX=/usr/games/bin/mangos/3
@@ -98,12 +108,15 @@ src_configure(){
 
 	cmake-utils_src_configure
 }
+
 src_compile() {
 	cmake-utils_src_compile
 }
+
 src_test() {
 	cmake-utils_src_test
 }
+
 src_install() {
 	cmake-utils_src_install
 }

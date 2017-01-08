@@ -1,8 +1,8 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
 inherit eutils
 
@@ -111,12 +111,14 @@ pkg_setup() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}"/bfgminer-3.10.5-boinc.patch
-	epatch "${FILESDIR}"/boinc-bfgminer-3.10.10-2.patch
-	epatch "${FILESDIR}"/boinc-bfgminer-3.10.10-3.patch
-	epatch "${FILESDIR}"/boinc-bfgminer-3.10.10-4.patch
-	epatch "${FILESDIR}"/boinc-bfgminer-3.10.10-5.patch
-	epatch "${FILESDIR}"/boinc-bfgminer-3.10.10-disableinitforwrapper.patch
+	eapply "${FILESDIR}"/bfgminer-3.10.5-boinc.patch
+	eapply "${FILESDIR}"/boinc-bfgminer-3.10.10-2.patch
+	eapply "${FILESDIR}"/boinc-bfgminer-3.10.10-3.patch
+	eapply "${FILESDIR}"/boinc-bfgminer-3.10.10-4.patch
+	eapply "${FILESDIR}"/boinc-bfgminer-3.10.10-5.patch
+	eapply "${FILESDIR}"/boinc-bfgminer-3.10.10-disableinitforwrapper.patch
+
+	eapply_user
 }
 
 src_configure() {

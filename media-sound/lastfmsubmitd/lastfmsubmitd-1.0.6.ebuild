@@ -1,8 +1,8 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI="2"
+EAPI="5"
 
 SUPPORT_PYTHON_ABIS="1"
 PYTHON_DEPEND="2:2.5:2.7"
@@ -24,7 +24,6 @@ DEPEND="!media-sound/lastfm
 RDEPEND="${DEPEND}"
 
 pkg_setup() {
-
 	enewgroup lastfm
 	enewuser lastfm -1 -1 -1 lastfm
 }
@@ -33,6 +32,8 @@ src_prepare() {
 	sed -i -e "s|lib\/lastfmsubmitd|$(get_libdir)\/lastfmsubmitd|" \
 		"${S}/"setup.py || die "sed failed"
 	epatch "${FILESDIR}"/lastfmsubmitd-1.0.6-use-2.0-api.patch
+
+	epatch_user
 }
 
 src_install() {

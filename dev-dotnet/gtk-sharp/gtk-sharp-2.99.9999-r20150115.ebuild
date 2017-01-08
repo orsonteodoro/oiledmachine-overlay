@@ -1,10 +1,10 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
-inherit dotnet autotools base git-r3
+inherit dotnet autotools git-r3 gnome2
 
 SLOT="3"
 DESCRIPTION="gtk bindings for mono"
@@ -46,7 +46,10 @@ src_unpack() {
 }
 
 src_prepare() {
-	base_src_prepare
+	gnome2_src_prepare
+
+	eapply_user
+
 	eautoreconf
 	libtoolize
 }

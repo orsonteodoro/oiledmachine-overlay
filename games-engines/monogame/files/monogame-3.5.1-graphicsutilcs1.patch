@@ -1,0 +1,30 @@
+diff -urp -x '*.rej' -x '*.orig' MonoGame-3.5.1.mod/MonoGame.Framework.Content.Pipeline/Graphics/DxtBitmapContent.cs MonoGame-3.5.1/MonoGame.Framework.Content.Pipeline/Graphics/DxtBitmapContent.cs
+--- MonoGame-3.5.1.mod/MonoGame.Framework.Content.Pipeline/Graphics/DxtBitmapContent.cs	2017-01-05 05:27:10.965984297 -0800
++++ MonoGame-3.5.1/MonoGame.Framework.Content.Pipeline/Graphics/DxtBitmapContent.cs	2017-01-05 05:31:07.421997124 -0800
+@@ -18,16 +18,24 @@ namespace Microsoft.Xna.Framework.Conten
+         int _offset;
+ 
+         public OutputOptions.WriteDataDelegate WriteData { get; private set; }
+-        public OutputOptions.ImageDelegate BeginImage { get; private set; }
++        public OutputOptions.BeginImageDelegate BeginImage { get; private set; }
++        public OutputOptions.EndImageDelegate EndImage { get; private set; }
++
+ 
+         public DxtDataHandler(BitmapContent content)
+         {
+             _content = content;
+ 
+             WriteData = new OutputOptions.WriteDataDelegate(WriteDataInternal);
+-            BeginImage = new OutputOptions.ImageDelegate(BeginImageInternal);
++            BeginImage = new OutputOptions.BeginImageDelegate(BeginImageInternal);
++            EndImage = new OutputOptions.EndImageDelegate(endImage);
+         }
+ 
++	public void endImage()
++	{
++		;
++	}
++
+         void BeginImageInternal(int size, int width, int height, int depth, int face, int miplevel)
+         {
+             _buffer = new byte[size];

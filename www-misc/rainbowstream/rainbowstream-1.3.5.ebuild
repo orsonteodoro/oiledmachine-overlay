@@ -1,8 +1,8 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=5
+EAPI=6
 
 PYTHON_COMPAT=( python{2_7,3_3,3_4} )
 
@@ -10,7 +10,7 @@ inherit distutils-r1 eutils
 
 DESCRIPTION="Command line twitter"
 HOMEPAGE="http://www.rainbowstream.org/"
-SRC_URI="https://github.com/DTVD/${PN}/archive/v${PV}.tar.gz"
+SRC_URI="https://github.com/DTVD/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="MIT"
 
 SLOT="0"
@@ -30,8 +30,9 @@ RDEPEND="${DEPEND}"
 S="${WORKDIR}/${P}"
 
 python_prepare_all() {
-	epatch "${FILESDIR}"/${PN}-1.3.5-no-user-env.patch
-	epatch "${FILESDIR}"/${PN}-1.3.5-requests-relax-version.patch
+	eapply "${FILESDIR}"/${PN}-1.3.5-no-user-env.patch
+	eapply "${FILESDIR}"/${PN}-1.3.5-requests-relax-version.patch
+	eapply_user
         distutils-r1_python_prepare_all
 }
 

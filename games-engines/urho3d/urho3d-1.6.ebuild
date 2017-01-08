@@ -1,20 +1,20 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils cmake-utils multilib
 
 DESCRIPTION="Urho3D game engine"
 HOMEPAGE="http://urho3d.github.io/"
-SRC_URI="https://github.com/urho3d/Urho3D/archive/${PV}.tar.gz"
+SRC_URI="https://github.com/urho3d/Urho3D/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="1.6"
 KEYWORDS="~amd64 ~ppc ~x86 ~arm"
 X86_CPU_FEATURES_RAW=( 3dnow mmx sse )
 X86_CPU_FEATURES=( ${X86_CPU_FEATURES_RAW[@]/#/cpu_flags_x86_} )
-IUSE="${X86_CPU_FEATURES[@]%:*} abi_mips_n64 system-angelscript system-assimp system-box2d system-bullet system-recast system-freetype system-glew system-libcpuid system-lua system-lua-jit system-lz4 system-mojoshader system-nanodbc system-pugixml system-rapidjson system-sdl system-sqlite system-tolua++ system-civetweb system-knet boost sound alsa pulseaudio debug automated-testing javascript static static-libs +pch -docs pulseaudio -angelscript +lua -lua-jit -network -odbc sqlite +recast +box2d +bullet +opengl +samples -extras +tools -clang-tools -debug-raw-script-loader +filewatcher -c++11 -bindings logging profiling threads debug native raspberry-pi android multitarget"
+IUSE="${X86_CPU_FEATURES[@]%:*} abi_mips_n64 system-angelscript system-assimp system-box2d system-bullet system-recastnavigation system-freetype system-glew system-libcpuid system-lua system-lua-jit system-lz4 system-mojoshader system-nanodbc system-pugixml system-rapidjson system-sdl system-sqlite system-tolua++ system-civetweb system-knet boost sound alsa pulseaudio debug automated-testing javascript static static-libs +pch -docs pulseaudio -angelscript +lua -lua-jit -network -odbc sqlite +recastnavigation +box2d +bullet +opengl +samples -extras +tools -clang-tools -debug-raw-script-loader +filewatcher -c++11 -bindings logging profiling threads debug native raspberry-pi android multitarget"
 REQUIRED_USE="
 	native
 	odbc? ( !sqlite )
@@ -29,8 +29,8 @@ REQUIRED_USE="
 	!raspberry-pi
 	!android
 	lua-jit? ( lua )
-	raspberry-pi? ( multitarget? ( !system-angelscript !system-assimp !system-box2d !system-bullet !system-recast !system-freetype !system-glew !system-libcpuid !system-lua !system-lua-jit !system-lz4 !system-mojoshader !system-nanodbc !system-pugixml !system-rapidjson !system-sdl !system-sqlite !system-tolua++ !system-civetweb !system-knet ) )
-	android? ( !system-angelscript !system-assimp !system-box2d !system-bullet !system-recast !system-freetype !system-glew !system-libcpuid !system-lua !system-lua-jit !system-lz4 !system-mojoshader !system-nanodbc !system-pugixml !system-rapidjson !system-sdl !system-sqlite !system-tolua++ !system-civetweb !system-knet )
+	raspberry-pi? ( multitarget? ( !system-angelscript !system-assimp !system-box2d !system-bullet !system-recastnavigation !system-freetype !system-glew !system-libcpuid !system-lua !system-lua-jit !system-lz4 !system-mojoshader !system-nanodbc !system-pugixml !system-rapidjson !system-sdl !system-sqlite !system-tolua++ !system-civetweb !system-knet ) )
+	android? ( !system-angelscript !system-assimp !system-box2d !system-bullet !system-recastnavigation !system-freetype !system-glew !system-libcpuid !system-lua !system-lua-jit !system-lz4 !system-mojoshader !system-nanodbc !system-pugixml !system-rapidjson !system-sdl !system-sqlite !system-tolua++ !system-civetweb !system-knet )
 	alsa? ( sound threads )
 	sound? ( threads alsa )
 "
@@ -70,7 +70,7 @@ RDEPEND="javascript? ( games-engines/urho3d-web )
                                              dev-db/unixODBC ) )
                    !odbc? ( sqlite? ( !dev-db/unixODBC ) )
 		   sqlite? ( system-sqlite? ( dev-db/sqlite[static-libs=] ) )
-		   recast? ( system-recast? ( games-misc/recast[static=] ) )
+		   recastnavigation? ( system-recastnavigation? ( games-misc/recastnavigation[static=] ) )
 		   box2d? ( system-box2d? ( sci-physics/box2d[static=] ) )
 		   bullet? ( system-bullet? ( sci-physics/bullet ) )
 		   opengl? ( system-glew? ( media-libs/glew[static-libs=] )
@@ -102,7 +102,7 @@ RDEPEND="javascript? ( games-engines/urho3d-web )
 #mustache is clang tools dependency from https://github.com/kainjow/Mustache
 #todo jo, stanhull, stb #these may have been slightly modified
 #spine didn't exist
-#games-misc/recast has Recast, DetourCrowd, DetourTileCache, Detour
+#games-misc/recastnavigation has Recast, DetourCrowd, DetourTileCache, Detour
 DEPEND="${RDEPEND}
 	dev-util/cmake"
 #REQUIRED_USE="network? ( boost )"
@@ -176,7 +176,7 @@ src_prepare() {
 			sed -i -e 's|list (APPEND INCLUDE_DIRS ${CMAKE_BINARY_DIR}/${DEST_INCLUDE_DIR}/ThirdParty/Bullet)|list (APPEND INCLUDE_DIRS /usr/include/bullet)|' Source/Urho3D/CMakeLists.txt || die p50
 			sed -i -e 's|set (ENGINE_INCLUDE_DIRS "${ENGINE_INCLUDE_DIRS} ${DASH}I\"\${includedir}/${PATH_SUFFIX}/ThirdParty/Bullet\"")|set (ENGINE_INCLUDE_DIRS /usr/include/bullet")|' ./Source/Urho3D/CMakeLists.txt || die p49
 		fi
-		if use system-recast ; then
+		if use system-recastnavigation ; then
 			rm -rf "${S}/Source/ThirdParty"/Detour
 			rm -rf "${S}/Source/ThirdParty"/DetourCrowd
 			rm -rf "${S}/Source/ThirdParty"/DetourTileCache
@@ -190,7 +190,7 @@ src_prepare() {
 
 			sed -i -e 's|\|\| crowd_->getMaxAgentRadius() != maxAgentRadius_||' Source/Urho3D/Navigation/CrowdManager.cpp || die p56
 			sed -i -e 's|crowd_->init(maxAgents_, maxAgentRadius_, navigationMesh_->navMesh_, CrowdAgentUpdateCallback)|crowd_->init(maxAgents_, maxAgentRadius_, navigationMesh_->navMesh_)|' Source/Urho3D/Navigation/CrowdManager.cpp || die p57
-			epatch "${FILESDIR}"/urho-1.5-crowdmanager.patch || die p58z
+			eapply "${FILESDIR}"/urho-1.5-crowdmanager.patch || die p58z
 
 			for FILE in $(grep -l -r -e "while (tileCache_->isObstacleQueueFull())" .)
 			do
@@ -259,9 +259,9 @@ src_prepare() {
 		fi
 		if use system-rapidjson ; then
 			rm -rf "${S}/Source/ThirdParty"/rapidjson
-			epatch "${FILESDIR}"/urho3d-1.5-rapidjson-1.patch || die p36
-			epatch "${FILESDIR}"/urho3d-rapidjson-2.patch || die p37
-			epatch "${FILESDIR}"/urho3d-1.5-rapidjson3.patch || die p40
+			eapply "${FILESDIR}"/urho3d-1.5-rapidjson-1.patch || die p36
+			eapply "${FILESDIR}"/urho3d-rapidjson-2.patch || die p37
+			eapply "${FILESDIR}"/urho3d-1.5-rapidjson3.patch || die p40
 			sed -i -e 's|rapidjson ||' Source/CMakeLists.txt || die p1
 		fi
 		if use system-sdl ; then
@@ -271,8 +271,8 @@ src_prepare() {
 				sed -i -e 's|#include <SDL|#include <SDL2|' "${FILE}" || die p20
 			done
 
-			epatch "${FILESDIR}"/urho3d-9999-r20161119-conditional-sdl-extensions.patch || die p38   #omit
-			epatch "${FILESDIR}"/urho3d-9999-r20161119-conditional-sdl-extensions-2.patch || die p39 #omit
+			eapply "${FILESDIR}"/urho3d-9999-r20161119-conditional-sdl-extensions.patch || die p38   #omit
+			eapply "${FILESDIR}"/urho3d-9999-r20161119-conditional-sdl-extensions-2.patch || die p39 #omit
 
 			sed -i -e 's|SDL_AUDIO_ALLOW_ANY_CHANGE);|SDL_AUDIO_ALLOW_ANY_CHANGE);URHO3D_LOGWARNING(SDL_GetError());|' Source/Urho3D/Audio/Audio.cpp || die p92
 			sed -i -e 's|SDL ||' Source/CMakeLists.txt || die p1
@@ -342,7 +342,7 @@ src_prepare() {
 
 			sed -i -e 's|set (INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})|set (INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})\nlist (APPEND INCLUDE_DIRS /usr/include/kNet)\n|'  Source/Samples/CMakeLists.txt || die p87 #409
 
-			epatch "${FILESDIR}"/urho3d-9999-networkh-messageconnection.patch || die p101z #433
+			eapply "${FILESDIR}"/urho3d-9999-networkh-messageconnection.patch || die p101z #433
 		fi
 
 		#tolua++ uses lua5.2 and external lua requires 5.2
@@ -371,7 +371,7 @@ src_prepare() {
 			sed -i -e 's|#include <lua.h>|#include <lua5.2/lstate.h>\n#include <lua.h>|' Source/Urho3D/LuaScript/LuaFile.cpp || die p81 #396
 			sed -i -e 's|#include <lua.h>|#include <lua5.2/lstate.h>\n#include <lua.h>|' Source/Urho3D/LuaScript/LuaScript.cpp || die p82 #397
 
-			epatch "${FILESDIR}"/urho3d-1.6-tolua-disable-add-external.patch || die p83z
+			eapply "${FILESDIR}"/urho3d-1.6-tolua-disable-add-external.patch || die p83z
 		fi
 
 		sed -i -e 's|set (URHO3D_INCLUDE_DIRS ${URHO3D_HOME}/include ${URHO3D_HOME}/include/${PATH_SUFFIX}/ThirdParty)|set (URHO3D_INCLUDE_DIRS ${URHO3D_HOME}/include ${URHO3D_HOME}/include/${PATH_SUFFIX}/ThirdParty /usr/include)|' CMakeLists.txt || die 100 #124
@@ -391,6 +391,8 @@ src_prepare() {
 		sed -i -e 's|#ifdef URHO3D_TESTING|#if URHO3D_TESTING|' Source/Urho3D/Core/ProcessUtils.cpp || die p90 #418
 		sed -i -e 's|#ifdef URHO3D_TESTING|#if URHO3D_TESTING|g' Source/Urho3D/Engine/Engine.cpp || die p91 #419
 	fi
+
+	eapply_user
 
 	cmake-utils_src_prepare
 }
@@ -432,7 +434,7 @@ src_configure() {
 			mylibs+=" -langelscript_s"
 		fi
 
-		if use system-recast && use recast ; then
+		if use system-recastnavigation && use recastnavigation ; then
 			mylibs+=" -lDetour -lDetourCrowd -lDetourTileCache -lRecast"
 		fi
 		#the documentation mentions that odbc has priority
@@ -479,31 +481,31 @@ src_configure() {
 
         local mycmakeargs=(
 		${mydebug}
-                $(cmake-utils_use lua URHO3D_LUA)
-                $(cmake-utils_use lua-jit URHO3D_LUAJIT)
-                $(cmake-utils_use network URHO3D_NETWORK)
-                $(cmake-utils_use odbc URHO3D_DATABASE_ODBC)
-                $(cmake-utils_use bullet URHO3D_PHYSICS)
-                $(cmake-utils_use box2d URHO3D_URHO2D)
-                $(cmake-utils_use angelscript URHO3D_ANGELSCRIPT)
-                $(cmake-utils_use recast URHO3D_NAVIGATION)
-                $(cmake-utils_use debug URHO3D_SAFE_LUA)
-                $(cmake-utils_use debug-raw-script-loader URHO3D_LUA_RAW_SCRIPT_LOADER)
-                $(cmake-utils_use samples URHO3D_SAMPLES)
-                $(cmake-utils_use tools URHO3D_TOOLS)
-                $(cmake-utils_use extras URHO3D_EXTRAS)
-                $(cmake-utils_use docs URHO3D_DOCS)
-                $(cmake-utils_use sqlite URHO3D_DATABASE_SQLITE)
-                $(cmake-utils_use pch URHO3D_PCH)
-                $(cmake-utils_use filewatcher URHO3D_FILEWATCHER)
-                $(cmake-utils_use c++11 URHO3D_C++11)
-                $(cmake-utils_use bindings URHO3D_BINDINGS)
-                $(cmake-utils_use logging URHO3D_LOGGING)
-                $(cmake-utils_use profiling URHO3D_PROFILING)
-                $(cmake-utils_use automated-testing URHO3D_TESTING)
-                $(cmake-utils_use threads URHO3D_THREADING)
+                -DURHO3D_LUA=$(usex lua)
+                -DURHO3D_LUAJIT=$(usex lua-jit)
+                -DURHO3D_NETWORK=$(usex network)
+                -DURHO3D_DATABASE_ODBC=$(usex odbc)
+                -DURHO3D_PHYSICS=$(usex bullet)
+                -DURHO3D_URHO2D=$(usex box2d)
+                -DURHO3D_ANGELSCRIPT=$(usex angelscript)
+                -DURHO3D_NAVIGATION=$(usex recastnavigation)
+                -DURHO3D_SAFE_LUA=$(usex debug)
+                -DURHO3D_LUA_RAW_SCRIPT_LOADER=$(usex debug-raw-script-loader)
+                -DURHO3D_SAMPLES=$(usex samples)
+                -DURHO3D_TOOLS=$(usex tools)
+                -DURHO3D_EXTRAS=$(usex extras)
+                -DURHO3D_DOCS=$(usex docs)
+                -DURHO3D_DATABASE_SQLITE=$(usex sqlite)
+                -DURHO3D_PCH=$(usex pch)
+                -DURHO3D_FILEWATCHER=$(usex filewatcher)
+                -DURHO3D_C++11=$(usex c++11)
+                -DURHO3D_BINDINGS=$(usex bindings)
+                -DURHO3D_LOGGING=$(usex logging)
+                -DURHO3D_PROFILING=$(usex profiling)
+                -DURHO3D_TESTING=$(usex automated-testing)
+                -DURHO3D_THREADING=$(usex threads)
         )
-#                $(cmake-utils_use multitarget CMAKE_CROSSCOMPILING)
+#                -DCMAKE_CROSSCOMPILING=$(usex multitarget)
 
 	if use system-nanodbc && use odbc ; then
 		mycmakeargs+=( -DURHO3D_NANODBC_EXTERNAL=1 )
@@ -537,7 +539,7 @@ src_configure() {
 		   ( use system-lua && use lua ) || \
 		   ( use system-tolua++ && use lua ) || \
                    ( use system-angelscript && use angelscript ) || \
-                   ( use system-recast && use recast ) || \
+                   ( use system-recastnavigation && use recastnavigation ) || \
 		   ( use system-nanodbc && use odbc ) || \
 		   ( use system-sqlite && use sqlite ) || \
 		   ( use system-civetweb && use network ) || \
@@ -553,9 +555,9 @@ src_configure() {
 			mycmakeargs+=( -DURHO3D_LIB_TYPE=SHARED )
 		fi
 	elif use raspberry-pi ; then
-		mycmakeargs+=( $(cmake-utils_use raspberry-pi RPI) )
+		mycmakeargs+=( -DRPI=$(usex raspberry-pi) )
 	elif use android ; then
-		mycmakeargs+=( $(cmake-utils_use android ANDROID) )
+		mycmakeargs+=( -DANDROID=$(usex android) )
 	fi
 
 	cmake-utils_src_configure

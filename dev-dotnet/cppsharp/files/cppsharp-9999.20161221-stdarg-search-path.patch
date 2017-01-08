@@ -1,0 +1,12 @@
+diff -urp cppsharp-9999.20161221.orig/src/Generator.Tests/GeneratorTest.cs cppsharp-9999.20161221/src/Generator.Tests/GeneratorTest.cs
+--- cppsharp-9999.20161221.orig/src/Generator.Tests/GeneratorTest.cs	2017-01-05 22:48:30.167660180 -0800
++++ cppsharp-9999.20161221/src/Generator.Tests/GeneratorTest.cs	2017-01-05 22:57:30.015169713 -0800
+@@ -52,6 +52,8 @@ namespace CppSharp.Utils
+             var files = Directory.EnumerateFiles(path, "*.h");
+             foreach (var file in files)
+                 options.Headers.Add(Path.GetFileName(file));
++
++            parserOptions.AddSystemIncludeDirs("/usr/lib/clang/3.9.1/include");
+         }
+ 
+         public virtual void Preprocess(Driver driver, ASTContext ctx)

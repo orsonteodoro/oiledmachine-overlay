@@ -1,0 +1,37 @@
+diff -urp nvorbis-9999.20160922.orig/OpenTKSupport/OpenTKSupport.csproj nvorbis-9999.20160922/OpenTKSupport/OpenTKSupport.csproj
+--- nvorbis-9999.20160922.orig/OpenTKSupport/OpenTKSupport.csproj	2017-01-03 16:45:41.491074652 -0800
++++ nvorbis-9999.20160922/OpenTKSupport/OpenTKSupport.csproj	2017-01-03 16:53:01.418832759 -0800
+@@ -54,10 +54,8 @@
+     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+-      <HintPath>..\packages\opentk_unoffical.1.1.788.3121\lib\OpenTK.dll</HintPath>
+-    </Reference>
+     <Reference Include="System" />
++    <Reference Include="OpenTK" />
+   </ItemGroup>
+   <ItemGroup>
+     <Compile Include="Logging.cs" />
+@@ -77,12 +75,12 @@
+     <Content Include="readme.txt" />
+   </ItemGroup>
+   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+-       Other similar extension points exist, see Microsoft.Common.targets.
+-  <Target Name="BeforeBuild">
+-  </Target>
+-  <Target Name="AfterBuild">
+-  </Target>
++  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" />
++  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
++       Other similar extension points exist, see Microsoft.Common.targets.
++  <Target Name="BeforeBuild">
++  </Target>
++  <Target Name="AfterBuild">
++  </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>

@@ -1,3 +1,7 @@
+# Copyright 1999-2017 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Id$
+
 EAPI=5
 inherit eutils git-r3 cmake-utils
 
@@ -18,6 +22,7 @@ RDEPEND="
 IUSE="+servers tools pch scripts"
 
 S="${WORKDIR}"
+
 src_unpack() {
 	EGIT_CHECKOUT_DIR="${WORKDIR}"
 	EGIT_REPO_URI="https://github.com/TrinityCore/TrinityCore.git"
@@ -26,6 +31,7 @@ src_unpack() {
 	git-r3_fetch
 	git-r3_checkout
 }
+
 src_configure(){
 	local mycmakeargs=(
 		-DCONF_DIR=/etc/trinitycore/6
@@ -50,12 +56,19 @@ src_configure(){
 
 	cmake-utils_src_configure
 }
+
+src_prepare() {
+	epatch_user
+}
+
 src_compile() {
 	cmake-utils_src_compile
 }
+
 src_test() {
 	cmake-utils_src_test
 }
+
 src_install() {
 	cmake-utils_src_install
 }

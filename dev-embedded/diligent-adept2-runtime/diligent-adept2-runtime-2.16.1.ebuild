@@ -1,8 +1,8 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils
 
 DESCRIPTION="Digilent Adept 2 Runtime"
@@ -27,6 +27,10 @@ S="${WORKDIR}"
 pkg_setup() {
 	#the ftdi installer is dumb.  it is using a cached list.
 	${ROOT}/sbin/ldconfig
+}
+
+src_prepare() {
+	eapply_user
 }
 
 src_install() {

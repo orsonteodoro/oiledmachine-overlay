@@ -1,8 +1,8 @@
-# Copyright 1999-2010 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI="4"
+EAPI="6"
 
 inherit autotools eutils toolchain-funcs
 
@@ -18,6 +18,10 @@ RDEPEND="media-gfx/gimp"
 DEPEND="${RDEPEND}"
 
 S="${WORKDIR}/${PN}_${PV}"
+
+src_prepare() {
+	eapply_user
+}
 
 src_compile() {
 	emake

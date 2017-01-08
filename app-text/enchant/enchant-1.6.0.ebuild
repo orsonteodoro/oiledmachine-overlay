@@ -1,14 +1,14 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=4
+EAPI=6
 
 inherit eutils autotools multilib multilib-minimal
 
 DESCRIPTION="Spellchecker wrapping library"
 HOMEPAGE="http://www.abisource.com/enchant/"
-SRC_URI="http://www.abisource.com/downloads/${PN}/${PV}/${P}.tar.gz"
+SRC_URI="http://www.abisource.com/downloads/${PN}/${PV}/${P}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="LGPL-2.1"
 SLOT="0"
@@ -35,6 +35,8 @@ src_prepare() {
 		-e 's:noinst_PROGRAMS:check_PROGRAMS:' \
 		tests/Makefile.am || die
 	AT_M4DIR=ac-helpers eautoreconf
+
+	eapply_user
 }
 
 multilib_src_configure() {

@@ -1,4 +1,4 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
@@ -34,7 +34,10 @@ pkg_setup() {
         einfo "Copy and edit ${FILESDIR}/${PN}.conf to /etc/portage/savedconfig/media-sound/${PN}-${PV} and try again."
         die ""
   fi
-  true
+}
+
+src_prepare() {
+	eapply_user
 }
 
 src_install() {

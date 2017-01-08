@@ -1,5 +1,5 @@
-# Copyright open-overlay 2015 by Alex
-EAPI=5
+# Copyright open-overlay 2015-2017 by Alex
+EAPI=6
 inherit eutils 
 
 DESCRIPTION="Genymotion Emulator"

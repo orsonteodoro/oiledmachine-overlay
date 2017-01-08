@@ -29,3 +29,4 @@ diff -urN MonoGame-3.4.orig/IDE/MonoDevelop/MonoDevelop.MonoGame/MonoDevelop.Mon
    </ItemGroup>
    <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
    <ItemGroup>
+

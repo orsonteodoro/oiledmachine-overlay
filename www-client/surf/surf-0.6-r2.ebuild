@@ -1,4 +1,4 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/www-client/surf/surf-0.6-r1.ebuild,v 1.7 2013/11/01 13:50:07 ago Exp $
 
@@ -76,11 +76,12 @@ src_prepare() {
 
 	eapply "${FILESDIR}"/surf-0.6-copyrights.patch
 
-	eapply_user
 	restore_config config.h
 	tc-export CC PKG_CONFIG
 
 	touch NEWS AUTHORS ChangeLog
+
+	eapply_user
 
 	eautoreconf
 

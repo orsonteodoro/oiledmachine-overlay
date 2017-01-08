@@ -1,13 +1,13 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils
 
 DESCRIPTION="Box2D"
 HOMEPAGE="http://box2d.org/"
-SRC_URI="https://github.com/erincatto/Box2D/archive/v${PV}.tar.gz"
+SRC_URI="https://github.com/erincatto/Box2D/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="ZLIB"
 SLOT="${PV:0:3}"
@@ -36,6 +36,8 @@ src_prepare() {
 	sed -i -e "s|\$(ALL_CPPFLAGS) \$(ARCH)|\$(ALL_CPPFLAGS)|" -e "s|\$(RESOURCES) \$(ARCH)|\$(RESOURCES)|" Build/gmake/HelloWorld.make || die
 	sed -i -e "s|\$(ALL_CPPFLAGS) \$(ARCH)|\$(ALL_CPPFLAGS)|" -e "s|\$(RESOURCES) \$(ARCH)|\$(RESOURCES)|" Build/gmake/Testbed.make || die
 	sed -i -e "s|\$(ALL_CPPFLAGS) \$(ARCH)|\$(ALL_CPPFLAGS)|" Build/gmake/GLUI.make || die
+
+	eapply_user
 }
 
 src_configure() {

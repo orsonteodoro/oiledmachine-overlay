@@ -1,4 +1,4 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -14,6 +14,7 @@ LICENSE="MIT"
 SLOT="5.2"
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~arm-linux ~x86-linux"
 IUSE="+deprecated emacs readline static"
+IUSE+=" civetweb"
 
 RDEPEND="readline? ( sys-libs/readline )
 	app-eselect/eselect-lua
@@ -112,12 +113,14 @@ src_install() {
 	insinto "/usr/$(get_libdir)/pkgconfig"
 	newins "${WORKDIR}/lua.pc" "lua${SLOT}.pc"
 
-	cp src/lstate.h "${D}/usr/include/lua5.2"
-	cp src/lobject.h "${D}/usr/include/lua5.2"
-	cp src/llimits.h "${D}/usr/include/lua5.2"
-	cp src/ltm.h "${D}/usr/include/lua5.2"
-	cp src/lzio.h "${D}/usr/include/lua5.2"
-	cp src/lmem.h "${D}/usr/include/lua5.2"
+	if use civetweb ; then
+		cp src/lstate.h "${D}/usr/include/lua${SLOT}"
+		cp src/lobject.h "${D}/usr/include/lua${SLOT}"
+		cp src/llimits.h "${D}/usr/include/lua${SLOT}"
+		cp src/ltm.h "${D}/usr/include/lua${SLOT}"
+		cp src/lzio.h "${D}/usr/include/lua${SLOT}"
+		cp src/lmem.h "${D}/usr/include/lua${SLOT}"
+	fi
 }
 
 # Makefile contains a dummy target that doesn't do tests

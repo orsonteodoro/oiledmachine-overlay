@@ -1,8 +1,8 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils
 
 DESCRIPTION="LuaSQLite3"
@@ -20,6 +20,10 @@ DEPEND="${RDEPEND}"
 
 S="${WORKDIR}/lsqlite3_fsl09w"
 REQUIRED_USE="^^ ( lua5_1 lua5_2 )"
+
+src_prepare() {
+	eapply_user
+}
 
 src_configure() {
 	true

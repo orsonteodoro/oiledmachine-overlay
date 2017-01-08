@@ -1,18 +1,18 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils cmake-utils multilib
 
 DESCRIPTION="Urho3D game engine emscripten build"
 HOMEPAGE="http://urho3d.github.io/"
-SRC_URI="https://github.com/urho3d/Urho3D/archive/${PV}.tar.gz"
+SRC_URI="https://github.com/urho3d/Urho3D/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="1.6"
 KEYWORDS="~amd64 ~ppc ~x86 ~arm"
-IUSE="abi_mips_n64 boost sound alsa pulseaudio debug automated-testing javascript static static-libs +pch -docs pulseaudio -angelscript +lua -lua-jit -network -odbc sqlite +recast +box2d +bullet +opengl +samples -extras +tools -clang-tools -debug-raw-script-loader +filewatcher -c++11 -bindings logging profiling threads debug"
+IUSE="abi_mips_n64 boost sound alsa pulseaudio debug automated-testing javascript static static-libs +pch -docs pulseaudio -angelscript +lua -lua-jit -network -odbc sqlite +recastnavigation +box2d +bullet +opengl +samples -extras +tools -clang-tools -debug-raw-script-loader +filewatcher -c++11 -bindings logging profiling threads debug"
 REQUIRED_USE="
 	javascript
 	odbc? ( !sqlite )
@@ -51,7 +51,7 @@ RDEPEND="javascript? ( sys-devel/llvm )
 #mustache is clang tools dependency from https://github.com/kainjow/Mustache
 #todo jo, stanhull, stb #these may have been slightly modified
 #spine didn't exist
-#games-misc/recast has Recast, DetourCrowd, DetourTileCache, Detour
+#games-misc/recastnavigation has Recast, DetourCrowd, DetourTileCache, Detour
 DEPEND="${RDEPEND}
 	dev-util/cmake"
 #REQUIRED_USE="network? ( boost )"
@@ -59,7 +59,7 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/Urho3D-${PV}"
 
 src_prepare() {
-	epatch "${FILESDIR}"/Urho3D-1.6-web-renaming.patch
+	eapply "${FILESDIR}"/Urho3D-1.6-web-renaming.patch
 	sed -i -e 's|-pthread|-pthread -DNANODBC_USE_BOOST_CONVERT|g' CMake/Modules/Urho3D-CMake-common.cmake || die j5
 	sed -i -e 's|_strrev||g' ./Source/ThirdParty/SDL/CMakeLists.txt || die j6
 	sed -i -e 's|_ltoa||g' ./Source/ThirdParty/SDL/CMakeLists.txt || die j6
@@ -71,6 +71,8 @@ src_prepare() {
 	sed -i -e 's|_strupr||g' ./Source/ThirdParty/SDL/CMakeLists.txt || die j6
 	sed -i -e 's|itoa||g' ./Source/ThirdParty/SDL/CMakeLists.txt || die j6
 
+	eapply_user
+
 	cmake-utils_src_prepare
 }
 
@@ -79,33 +81,33 @@ src_configure() {
 
         local mycmakeargs=(
 		${mydebug}
-                $(cmake-utils_use lua URHO3D_LUA)
-                $(cmake-utils_use lua-jit URHO3D_LUAJIT)
-                $(cmake-utils_use network URHO3D_NETWORK)
-                $(cmake-utils_use odbc URHO3D_DATABASE_ODBC)
-                $(cmake-utils_use bullet URHO3D_PHYSICS)
-                $(cmake-utils_use box2d URHO3D_URHO2D)
-                $(cmake-utils_use angelscript URHO3D_ANGELSCRIPT)
-                $(cmake-utils_use recast URHO3D_NAVIGATION)
-                $(cmake-utils_use debug URHO3D_SAFE_LUA)
-                $(cmake-utils_use debug-raw-script-loader URHO3D_LUA_RAW_SCRIPT_LOADER)
-                $(cmake-utils_use samples URHO3D_SAMPLES)
-                $(cmake-utils_use tools URHO3D_TOOLS)
-                $(cmake-utils_use extras URHO3D_EXTRAS)
-                $(cmake-utils_use docs URHO3D_DOCS)
-                $(cmake-utils_use sqlite URHO3D_DATABASE_SQLITE)
-                $(cmake-utils_use pch URHO3D_PCH)
-                $(cmake-utils_use filewatcher URHO3D_FILEWATCHER)
-                $(cmake-utils_use c++11 URHO3D_C++11)
-                $(cmake-utils_use bindings URHO3D_BINDINGS)
-                $(cmake-utils_use logging URHO3D_LOGGING)
-                $(cmake-utils_use profiling URHO3D_PROFILING)
-                $(cmake-utils_use automated-testing URHO3D_TESTING)
-                $(cmake-utils_use threads URHO3D_THREADING)
+                -DURHO3D_LUA=$(usex lua)
+                -DURHO3D_LUAJIT=$(usex lua-jit)
+                -DURHO3D_NETWORK=$(usex network)
+                -DURHO3D_DATABASE_ODBC=$(usex odbc)
+                -DURHO3D_PHYSICS=$(usex bullet)
+                -DURHO3D_URHO2D=$(usex box2d)
+                -DURHO3D_ANGELSCRIPT=$(usex angelscript)
+                -DURHO3D_NAVIGATION=$(usex recastnavigation)
+                -DURHO3D_SAFE_LUA=$(usex debug)
+                -DURHO3D_LUA_RAW_SCRIPT_LOADER=$(usex debug-raw-script-loader)
+                -DURHO3D_SAMPLES=$(usex samples)
+                -DURHO3D_TOOLS=$(usex tools)
+                -DURHO3D_EXTRAS=$(usex extras)
+                -DURHO3D_DOCS=$(usex docs)
+                -DURHO3D_DATABASE_SQLITE=$(usex sqlite)
+                -DURHO3D_PCH=$(usex pch)
+                -DURHO3D_FILEWATCHER=$(usex filewatcher)
+                -DURHO3D_C++11=$(usex c++11)
+                -DURHO3D_BINDINGS=$(usex bindings)
+                -DURHO3D_LOGGING=$(usex logging)
+                -DURHO3D_PROFILING=$(usex profiling)
+                -DURHO3D_TESTING=$(usex automated-testing)
+                -DURHO3D_THREADING=$(usex threads)
         )
 
 	myemscriptpath=$(find  /usr/share/emscripten-* -type d | head -n 1)
-	mycmakeargs+=( $(cmake-utils_use javascript EMSCRIPTEN) )
+	mycmakeargs+=( -DEMSCRIPTEN=$(usex javascript) )
 	mycmakeargs+=( -DEMSCRIPTEN_ROOT_PATH="${myemscriptpath}" )
 	mycmakeargs+=( -DWEB=1 )
 

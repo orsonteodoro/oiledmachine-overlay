@@ -1,8 +1,8 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI="5"
+EAPI="6"
 PYTHON_COMPAT=( python{2_7,3_3,3_4,3_5} pypy )
 
 inherit distutils-r1 git-r3
@@ -20,7 +20,11 @@ IUSE=""
 DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
 RDEPEND=""
 
-src_prepare() {
-	epatch "${FILESDIR}"/${PN}-9999-search.patch
-	epatch "${FILESDIR}"/${PN}-9999-ansi-fix.patch
+python_prepare_all() {
+    eapply "${FILESDIR}"/${PN}-9999-search.patch
+    eapply "${FILESDIR}"/${PN}-9999-ansi-fix.patch
+
+    eapply_user
+
+    distutils-r1_python_prepare_all
 }

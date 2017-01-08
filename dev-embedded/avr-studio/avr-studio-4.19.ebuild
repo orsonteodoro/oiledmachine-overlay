@@ -1,8 +1,8 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils
 
 DESCRIPTION="AVR Studio"
@@ -27,6 +27,10 @@ pkg_setup() {
 	einfo "This is not a Linux package but a Windows package."
 	einfo "It will be a user install instead of a system-wide install."
 	einfo "A wine solution is provided instead."
+}
+
+src_prepare() {
+	eapply_user
 }
 
 src_install() {

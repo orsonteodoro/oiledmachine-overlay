@@ -1,4 +1,8 @@
-EAPI=5
+# Copyright 1999-2017 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Id$
+
+EAPI=6
 inherit eutils git-r3 cmake-utils
 
 DESCRIPTION="CMaNGOS One for The Burning Crusade (TBC) 2.4.3 Client"
@@ -22,6 +26,7 @@ RDEPEND="
 IUSE="pch sd2 eluna"
 
 S="${WORKDIR}"
+
 src_unpack() {
 	EGIT_CHECKOUT_DIR="${WORKDIR}"
 	EGIT_REPO_URI="https://github.com/cmangos/mangos-tbc.git"
@@ -29,26 +34,31 @@ src_unpack() {
 	EGIT_COMMIT="aabe1d0763caa34a61fdc2118324e1abb8e0eb6d"
 	git-r3_fetch
 	git-r3_checkout
-	epatch "${FILESDIR}/mangos-4-cmake-location.patch"
+	eapply "${FILESDIR}/mangos-4-cmake-location.patch"
 
-if use sd2; then
-	EGIT_CHECKOUT_DIR="${WORKDIR}/src/bindings/sd2"
-	EGIT_REPO_URI="https://github.com/scriptdev2/scriptdev2-tbc.git"
-	EGIT_BRANCH="master"
-	EGIT_COMMIT="28fb90cde649df98313f37c9c561508f34263067"
-	git-r3_fetch
-	git-r3_checkout
-fi
-if use eluna; then
-	EGIT_CHECKOUT_DIR="${WORKDIR}/src/bindings/eluna"
-	EGIT_REPO_URI="https://github.com/ElunaLuaEngine/ElunaMangosClassic.git"
-	EGIT_BRANCH="master"
-	EGIT_COMMIT="38a921e92be5861ace72dbc2a77bedf6bb66f04c"
-	git-r3_fetch
-	git-r3_checkout
-fi
+	if use sd2; then
+		EGIT_CHECKOUT_DIR="${WORKDIR}/src/bindings/sd2"
+		EGIT_REPO_URI="https://github.com/scriptdev2/scriptdev2-tbc.git"
+		EGIT_BRANCH="master"
+		EGIT_COMMIT="28fb90cde649df98313f37c9c561508f34263067"
+		git-r3_fetch
+		git-r3_checkout
+	fi
+	if use eluna; then
+		EGIT_CHECKOUT_DIR="${WORKDIR}/src/bindings/eluna"
+		EGIT_REPO_URI="https://github.com/ElunaLuaEngine/ElunaMangosClassic.git"
+		EGIT_BRANCH="master"
+		EGIT_COMMIT="38a921e92be5861ace72dbc2a77bedf6bb66f04c"
+		git-r3_fetch
+		git-r3_checkout
+	fi
 }
-src_configure(){
+
+src_prepare() {
+	eapply_user
+}
+
+src_configure() {
 	local mycmakeargs=(
 		-DCONF_DIR=/etc/cmangos/1
 		-DCMAKE_INSTALL_PREFIX=/usr/games/bin/cmangos/1
@@ -72,12 +82,15 @@ src_configure(){
 
 	cmake-utils_src_configure
 }
+
 src_compile() {
 	cmake-utils_src_compile
 }
+
 src_test() {
 	cmake-utils_src_test
 }
+
 src_install() {
 	cmake-utils_src_install
 	fperms 0755 "/usr/games/bin/cmangos/1/bin/run-mangosd"
@@ -86,6 +99,7 @@ src_install() {
 	cp -R "${WORKDIR}"/sql/* "${D}/usr/share/cmangos/1/sql"
 	cp -R "${WORKDIR}"/src/bindings/sd2/sql/* "${D}/usr/share/cmangos/1/sql/sd2"
 }
+
 pkg_postinst() {
 	echo ""
 	echo "Use cmangos-db-1 to install the databases."

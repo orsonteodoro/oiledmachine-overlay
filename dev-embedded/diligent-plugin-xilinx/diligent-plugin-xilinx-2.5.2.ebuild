@@ -1,8 +1,8 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils
 
 DESCRIPTION="Digilent Plugin for Xilinx Tools"
@@ -22,6 +22,10 @@ IUSE="abi_x86_64 abi_x86_32"
 REQUIRED_USE=""
 
 S="${WORKDIR}"
+
+src_prepare() {
+	eapply_user
+}
 
 src_install() {
 	cd "${ROOT}/opt/Xilinx"

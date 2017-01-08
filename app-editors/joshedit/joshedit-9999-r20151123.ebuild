@@ -1,8 +1,8 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils git-r3
 
 DESCRIPTION="JoshEdit"
@@ -31,7 +31,8 @@ src_unpack() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}"/joshedit-9999-exception-handler.patch
+	eapply "${FILESDIR}"/joshedit-9999-exception-handler.patch
+	eapply_user
 }
 
 src_compile() {

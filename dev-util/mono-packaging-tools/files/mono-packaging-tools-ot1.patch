@@ -1,0 +1,12 @@
+diff -urp mono-packaging-tools-18cd15a7b009b2260eb999e6e16cabad553586ad.orig/mpt-sln/Program.cs mono-packaging-tools-18cd15a7b009b2260eb999e6e16cabad553586ad/mpt-sln/Program.cs
+--- mono-packaging-tools-18cd15a7b009b2260eb999e6e16cabad553586ad.orig/mpt-sln/Program.cs	2016-12-19 21:14:07.000000000 -0800
++++ mono-packaging-tools-18cd15a7b009b2260eb999e6e16cabad553586ad/mpt-sln/Program.cs	2017-01-03 01:04:27.270951837 -0800
+@@ -25,7 +25,7 @@ namespace mptsln
+ 				{ "references", b => references = b },
+ 			};
+ 			p.Parse(args);
+-			if (String.IsNullOrWhiteSpace (sln_file) == false)
++			if (String.IsNullOrWhiteSpace (sln_file) == true)
+ 			{
+ 				Console.WriteLine("--sln-file=some.sln is not given");
+ 				return (int)ExitCode.NoSolutionFileSpecified;

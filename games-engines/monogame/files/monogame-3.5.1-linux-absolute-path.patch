@@ -1,0 +1,13 @@
+diff -urp MonoGame-3.5.1.orig/MonoGame.Framework.Content.Pipeline/Builder/PathHelper.cs MonoGame-3.5.1/MonoGame.Framework.Content.Pipeline/Builder/PathHelper.cs
+--- MonoGame-3.5.1.orig/MonoGame.Framework.Content.Pipeline/Builder/PathHelper.cs	2017-01-06 17:33:07.369313047 -0800
++++ MonoGame-3.5.1/MonoGame.Framework.Content.Pipeline/Builder/PathHelper.cs	2017-01-06 17:52:51.114714253 -0800
+@@ -68,7 +68,8 @@ namespace MonoGame.Framework.Content.Pip
+                 case TargetPlatform.DesktopGL:
+                 case TargetPlatform.WindowsPhone8:
+                 case TargetPlatform.WindowsStoreApp:
+-                    return NormalizeWindows(path);
++                    //return NormalizeWindows(path);
++                    return Normalize(path);
+ 
+                 default:
+                     return Normalize(path);

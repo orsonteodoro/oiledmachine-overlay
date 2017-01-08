@@ -1,4 +1,4 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
@@ -10,7 +10,7 @@ inherit eutils ruby-fakegem
 
 DESCRIPTION="Facy command line Facebook"
 HOMEPAGE="https://github.com/huydx/facy"
-SRC_URI="https://github.com/huydx/${PN}/archive/v${PV}.tar.gz"
+SRC_URI="https://github.com/huydx/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="MIT"
 
 SLOT="0"
@@ -46,6 +46,7 @@ S="${WORKDIR}/all/${P}"
 
 all_ruby_prepare() {
 	epatch "${FILESDIR}"/facy-1.2.8-graphapi-fix-with-caca-video.patch
+	epatch_user
 }
 
 each_ruby_install() {

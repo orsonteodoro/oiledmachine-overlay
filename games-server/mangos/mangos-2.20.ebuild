@@ -1,3 +1,7 @@
+# Copyright 1999-2017 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Id$
+
 EAPI=5
 inherit eutils git-2 cmake-utils
 
@@ -19,6 +23,7 @@ RDEPEND="
 IUSE="tools pch sd2 eluna"
 
 S="${WORKDIR}"
+
 src_unpack() {
 	EGIT_SOURCEDIR="${WORKDIR}"
 	EGIT_REPO_URI="https://github.com/mangostwo/server.git"
@@ -47,6 +52,11 @@ src_unpack() {
 	epatch "${FILESDIR}/mangos-0-vmap-assembler.patch"
 	epatch "${FILESDIR}/mangos-2-movemap-generator.patch"
 }
+
+src_prepare() {
+	epatch_user
+}
+
 src_configure(){
 	local mycmakeargs=(
 		-DCONF_DIR=/etc/mangos/2
@@ -79,12 +89,15 @@ src_configure(){
 
 	cmake-utils_src_configure
 }
+
 src_compile() {
 	cmake-utils_src_compile
 }
+
 src_test() {
 	cmake-utils_src_test
 }
+
 src_install() {
 	cmake-utils_src_install
 }

@@ -1,8 +1,8 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils multilib multilib-minimal autotools flag-o-matic versionator
 
 MY_P=${PN}-${PV/_beta/b}
@@ -55,8 +55,11 @@ multilib_src_prepare() {
 	# Upstream package creates some executables which names are too generic
 	# to be placed in /usr/bin - this patch prefixes them with 'hunspell-'.
 	# It modifies a Makefile.am file, hence eautoreconf.
-	epatch "${FILESDIR}"/${PN}-1.3-renameexes.patch \
+	eapply "${FILESDIR}"/${PN}-1.3-renameexes.patch \
 		"${FILESDIR}"/${PN}-1.3.3-multibyte-chars.patch
+
+	eapply_user
+
 	eautoreconf
 }
 

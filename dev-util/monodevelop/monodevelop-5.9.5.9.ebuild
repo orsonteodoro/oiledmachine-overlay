@@ -1,9 +1,9 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
-inherit fdo-mime gnome2-utils dotnet versionator eutils git-r3 base
+EAPI=6
+inherit fdo-mime gnome2-utils dotnet versionator eutils git-r3
 
 DESCRIPTION="Integrated Development Environment for .NET"
 HOMEPAGE="http://www.monodevelop.com/"
@@ -19,11 +19,12 @@ SRC_URI="https://launchpadlibrarian.net/68057829/NUnit-2.5.10.11092.zip
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+subversion +git +gnome qtcurve nunit"
+IUSE="+subversion +git +gnome qtcurve"
 
 #TODO: doc use flag and mono-docbrowser
 RDEPEND=">=dev-lang/mono-3.2.8
-	>=dev-dotnet/nuget-2.8.3
+	>=dev-dotnet/nuget-2.8.3[gac]
+	!>=dev-dotnet/nuget-2.8.7
 	gnome? ( >=dev-dotnet/gnome-sharp-2.24.2-r1 )
 	>=dev-dotnet/gtk-sharp-2.12.21:2
 	>=www-servers/xsp-2
@@ -37,6 +38,7 @@ RDEPEND=">=dev-lang/mono-3.2.8
 	!<dev-util/monodevelop-debugger-mdb-$(get_version_component_range 1-2)
 	!<dev-util/monodevelop-vala-$(get_version_component_range 1-2)"
 DEPEND="${RDEPEND}
+        dev-util/nunit:2
 	dev-util/intltool
 	virtual/pkgconfig
 	sys-devel/gettext
@@ -85,16 +87,16 @@ src_prepare() {
 
 	#fix ASP.Net
 	cd "${T}/${P}/main"
-	epatch "${FILESDIR}/5.7-downgrade_to_mvc3.patch"
+	eapply "${FILESDIR}/5.7-downgrade_to_mvc3.patch"
 
 	# fix for https://github.com/gentoo/dotnet/issues/42
 	epatch "${FILESDIR}/aspnet-template-references-fix.patch"
-	use gnome || epatch "${FILESDIR}/5.9.5-kill-gnome.patch"
-	use qtcurve && epatch "${FILESDIR}/kill-qtcurve-warning.patch"
+	use gnome || eapply "${FILESDIR}/5.9.5-kill-gnome.patch"
+	use qtcurve && eapply "${FILESDIR}/kill-qtcurve-warning.patch"
 
 	#prepare dist package
 	cd "${T}/${P}"
-	epatch "${FILESDIR}/5.9.5-skip_merged_tar.patch"
+	eapply "${FILESDIR}/5.9.5-skip_merged_tar.patch"
 	./configure --profile=default || die
 	make dist || die
 
@@ -105,6 +107,8 @@ src_prepare() {
 	mkdir -p "${S}"/external/cecil/Test/libs/nunit-2.5.10/ || die
 	cp -fR "${T}"/NUnit-2.5.10.11092/bin/net-2.0/framework/* "${S}"/external/cecil/Test/libs/nunit-2.5.10/ || die
 	mv -f "${T}/packages" "${S}"
+
+	eapply_user
 }
 
 src_configure() {
@@ -118,18 +122,18 @@ src_configure() {
 		$(use_enable git)
 	# https://github.com/mrward/xdt/issues/4
 	# Main.sln file is created on the fly during econf
-	epatch -p2 "${FILESDIR}/mrward-xdt-issue-4.patch"
+	eapply -p2 "${FILESDIR}/mrward-xdt-issue-4.patch"
 	# fix of https://github.com/gentoo/dotnet/issues/38
 	sed -i -E -e 's#(EXE_PATH=")(.*)(/lib/monodevelop/bin/MonoDevelop.exe")#\1'${EPREFIX}'/usr\3#g' "${S}/monodevelop" || die
 }
 
 src_install() {
-	base_src_install
-	if use nunit; then
-		true
-	else
-		rm -rf "${D}"/usr/lib/monodevelop/AddIns/NUnit
-	fi
+	default
+	#if use nunit; then
+	#	true
+	#else
+	#	rm -rf "${D}"/usr/lib/monodevelop/AddIns/NUnit
+	#fi
 }
 
 pkg_preinst() {

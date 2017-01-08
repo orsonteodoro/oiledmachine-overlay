@@ -1,4 +1,8 @@
-EAPI=5
+# Copyright 1999-2017 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Id$
+
+EAPI=6
 inherit eutils autotools
 
 DESCRIPTION="Portage Systemwide PGO"
@@ -14,6 +18,11 @@ RDEPEND="
 IUSE="llvm"
 
 S="${WORKDIR}"
+
+src_prepare() {
+	eapply_user
+}
+
 src_install() {
 	mkdir -p "${D}"/etc/portage
 	cp "${FILESDIR}/bashrc.pgo" "${D}"/etc/portage/

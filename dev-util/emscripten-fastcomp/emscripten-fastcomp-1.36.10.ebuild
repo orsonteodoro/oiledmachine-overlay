@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -21,8 +21,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 MY_DEPEND="${PYTHON_DEPS}
 	>=net-libs/nodejs-0.12.6"
 DEPEND="${MY_DEPEND}
-	>=dev-util/cmake-3.4.3
-        >=sys-devel/llvm-3.9.0"
+	>=dev-util/cmake-3.4.3"
 RDEPEND="${MY_DEPEND}
 	>=virtual/jre-1.5"
 
@@ -32,6 +31,7 @@ src_prepare() {
 		die "Could not change to directory '${S}/../${PN}-clang-${PV}'"
 	eapply "${FILESDIR}/${PV}/Version.cpp.patch"
 	cd "${S}" || die "Could not change to directory '${S}'"
+
 	eapply_user
 }
 

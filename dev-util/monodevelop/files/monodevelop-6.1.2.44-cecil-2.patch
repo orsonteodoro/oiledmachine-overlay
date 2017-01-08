@@ -1,0 +1,11 @@
+diff -urp monodevelop-6.1.2.44.orig/main/contrib/ICSharpCode.Decompiler/packages.config monodevelop-6.1.2.44/main/contrib/ICSharpCode.Decompiler/packages.config
+--- monodevelop-6.1.2.44.orig/main/contrib/ICSharpCode.Decompiler/packages.config	2017-01-03 05:39:34.647400763 -0800
++++ monodevelop-6.1.2.44/main/contrib/ICSharpCode.Decompiler/packages.config	2017-01-03 05:42:26.779984056 -0800
+@@ -1,5 +1,4 @@
+ ﻿<?xml version="1.0" encoding="utf-8"?>
+ <packages>
+   <package id="ICSharpCode.NRefactory" version="5.5.1" targetFramework="net40-Client" />
+-  <package id="Mono.Cecil" version="0.9.6.20160209" targetFramework="net40-Client" />
+-</packages>
+\ No newline at end of file
++</packages>

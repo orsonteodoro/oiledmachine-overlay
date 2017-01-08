@@ -1,8 +1,8 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils savedconfig toolchain-funcs
 
 DESCRIPTION="a dynamic window manager for X11"
@@ -41,13 +41,14 @@ src_prepare() {
 		Makefile || die
 
 	restore_config config.h
-	epatch_user
 
 	if use fib; then
-		epatch "$FILESDIR/dwm-fib.patch"
-		epatch "$FILESDIR/dwm-fib1.patch"
+		eapply "$FILESDIR/dwm-fib.patch"
+		eapply "$FILESDIR/dwm-fib1.patch"
 	fi
-	epatch "${FILESDIR}"/dwm-6.1-no-emoji-title-crash.patch
+	eapply "${FILESDIR}"/dwm-6.1-no-emoji-title-crash.patch
+
+	eapply_user
 }
 
 src_compile() {

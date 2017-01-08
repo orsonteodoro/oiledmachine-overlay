@@ -1,8 +1,8 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/sys-fs/jmtpfs/jmtpfs-0.5.ebuild,v 1.1 2015/03/07 11:26:34 jer Exp $
 
-EAPI=5
+EAPI=6
 
 inherit autotools eutils
 
@@ -26,6 +26,7 @@ DEPEND="
 DOCS=(AUTHORS NEWS README)
 
 src_prepare() {
-	#epatch "${FILESDIR}/${PN}-0.5-zune.patch"
+	#eapply "${FILESDIR}/${PN}-0.5-zune.patch"
+	eapply_user
 	eautoreconf
 }

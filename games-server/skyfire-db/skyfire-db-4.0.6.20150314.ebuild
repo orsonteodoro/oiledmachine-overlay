@@ -1,3 +1,7 @@
+# Copyright 1999-2017 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Id$
+
 EAPI=5
 inherit eutils git-r3
 
@@ -19,7 +23,7 @@ RDEPEND="
 IUSE=""
 
 S="${WORKDIR}"
- 
+
 src_unpack() {
 	EGIT_CHECKOUT_DIR="${WORKDIR}"
 	EGIT_REPO_URI="https://github.com/SkyFireArchives/SkyFireDB.git"
@@ -28,6 +32,11 @@ src_unpack() {
 	git-r3_fetch
 	git-r3_checkout
 }
+
+src_prepare() {
+	epatch_user
+}
+
 src_install() {
 	mkdir -p "${D}/usr/share/skyfire/4"
 	cp -R "${WORKDIR}"/* "${D}/usr/share/skyfire/4"

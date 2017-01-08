@@ -1,0 +1,71 @@
+diff -x '*.orig' -x '*.rej' -urpN mono-4.6.2.orig/mcs/class/PEAPI/Metadata.cs mono-4.6.2/mcs/class/PEAPI/Metadata.cs
+--- mono-4.6.2.orig/mcs/class/PEAPI/Metadata.cs	2017-01-03 02:19:34.000000000 -0800
++++ mono-4.6.2/mcs/class/PEAPI/Metadata.cs	2017-01-03 23:05:36.544342578 -0800
+@@ -95,6 +95,11 @@ namespace PEAPI {
+ 		Synchronised = 0x0020, Synchronized = 0x0020, NoInLining = 0x0008, Optil = 0x0002}
+ 
+ 	/// <summary>
++	/// Storage location for initial field data
++	/// </summary>
++	public enum DataSegment { Data, TLS, CIL }
++
++	/// <summary>
+ 	/// Modes for a parameter
+ 	/// </summary>
+ 	public enum ParamAttr { Default, In, Out, Opt = 16, HasDefault = 0x1000, HasFieldMarshal = 0x2000 }
+diff -x '*.orig' -x '*.rej' -urpN mono-4.6.2.orig/mcs/ilasm/codegen/DataDef.cs mono-4.6.2/mcs/ilasm/codegen/DataDef.cs
+--- mono-4.6.2.orig/mcs/ilasm/codegen/DataDef.cs	2017-01-03 02:19:37.000000000 -0800
++++ mono-4.6.2/mcs/ilasm/codegen/DataDef.cs	2017-01-03 23:05:36.544342578 -0800
+@@ -15,14 +15,14 @@ namespace Mono.ILASM {
+         public class DataDef {
+ 
+                 private string name;
+-                private bool is_tls;
++                private PEAPI.DataSegment segment;
+ 
+                 private PEAPI.Constant constant;
+ 
+-                public DataDef (string name, bool is_tls)
++                public DataDef (string name, PEAPI.DataSegment segment)
+                 {
+                         this.name = name;
+-                        this.is_tls = is_tls;
++                        this.segment = segment;
+                 }
+ 
+                 public PEAPI.Constant PeapiConstant {
+diff -x '*.orig' -x '*.rej' -urpN mono-4.6.2.orig/mcs/ilasm/parser/ILParser.jay mono-4.6.2/mcs/ilasm/parser/ILParser.jay
+--- mono-4.6.2.orig/mcs/ilasm/parser/ILParser.jay	2017-01-03 02:19:37.000000000 -0800
++++ mono-4.6.2/mcs/ilasm/parser/ILParser.jay	2017-01-03 23:09:58.398371197 -0800
+@@ -1716,18 +1716,19 @@ data_decl		: data_head data_body
+                           }
+ 			;
+ 
+-data_head		: D_DATA tls id ASSIGN
++data_head		: D_DATA data_attr id ASSIGN
+                           {
+-                                $$ = new DataDef ((string) $3, (bool) $2);    
++                                $$ = new DataDef ((string) $3, (DataSegment) $2);    
+                           } 
+-			| D_DATA tls
++			| D_DATA data_attr
+                           {
+-                                $$ = new DataDef (String.Empty, (bool) $2);
++                                $$ = new DataDef (String.Empty, (DataSegment) $2);
+                           }
+ 			;
+ 
+-tls			: /* EMPTY */   { $$ = false; }
+-			| K_TLS         { $$ = true; }
++data_attr		: /* EMPTY */                   { $$ = DataSegment.Data; }
++			| K_TLS                         { $$ = DataSegment.TLS; }
++			| K_CIL                         { $$ = DataSegment.CIL; }
+ 			;
+ 
+ data_body		: OPEN_BRACE dataitem_list CLOSE_BRACE
+diff -x '*.orig' -x '*.rej' -urpN mono-4.6.2.orig/mcs/ilasm/tests/test-35.il mono-4.6.2/mcs/ilasm/tests/test-35.il
+--- mono-4.6.2.orig/mcs/ilasm/tests/test-35.il	1969-12-31 16:00:00.000000000 -0800
++++ mono-4.6.2/mcs/ilasm/tests/test-35.il	2017-01-03 23:05:36.547342693 -0800
+@@ -0,0 +1,2 @@
++.assembly extern mscorlib { }
++.data cil test = bytearray ( 01 02 03 )

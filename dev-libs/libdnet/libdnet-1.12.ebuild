@@ -1,8 +1,8 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
 AT_M4DIR="config"
 PYTHON_COMPAT=( python2_7 )
@@ -39,6 +39,9 @@ src_prepare() {
 	sed -i -e 's|-L@libdir@ ||g' dnet-config.in || die
 	use ipv6 && epatch "${WORKDIR}/${P}.ipv6-1.patch"
 	sed -i -e '/^SUBDIRS/s|python||g' Makefile.am || die
+
+	eapply_user
+
 	eautoreconf
 	if use python; then
 		cd python

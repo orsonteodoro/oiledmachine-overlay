@@ -1,4 +1,8 @@
-EAPI=5
+# Copyright 1999-2017 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Id$
+
+EAPI=6
 
 DESCRIPTION="Setiathome configuration files"
 SLOT="8"
@@ -16,6 +20,10 @@ src_unpack() {
 	use sah-gpu && cp /var/lib/boinc/projects/setiathome.berkeley.edu/app_info.xml_sah_gpu.ocl "${T}"
 	use ap-cpu && cp /var/lib/boinc/projects/setiathome.berkeley.edu/app_info.xml_ap_cpu "${T}"
 	use ap-gpu && cp /var/lib/boinc/projects/setiathome.berkeley.edu/app_info.xml_ap_gpu.ocl "${T}"
+}
+
+src_prepare() {
+	eapply_user
 }
 
 src_install() {

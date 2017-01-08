@@ -1,18 +1,20 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
-inherit mono-env eutils mono
+EAPI=6
+inherit mono-env eutils mono gac
 
 DESCRIPTION="SharpFont"
 HOMEPAGE="https://github.com/Robmaister/SharpFont"
-SRC_URI="https://github.com/Robmaister/SharpFont/archive/v${PV}.tar.gz"
+SRC_URI="https://github.com/Robmaister/SharpFont/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="~amd64 ~ppc ~x86"
-IUSE="debug"
+KEYWORDS="~amd64 ~x86"
+USE_DOTNET="net45"
+IUSE="${USE_DOTNET} debug +gac"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
 
 RDEPEND=">=dev-lang/mono-4"
 DEPEND="${RDEPEND}
@@ -22,13 +24,19 @@ DEPEND="${RDEPEND}
 
 S="${WORKDIR}/SharpFont-${PV}"
 
+src_prepare() {
+	genkey
+
+	eapply_user
+}
+
 src_compile() {
 	mydebug="Release"
 	if use debug; then
 		mydebug="Debug"
 	fi
 	cd "${S}/Source/SharpFont"
-	xbuild SharpFont.csproj /p:Configuration=${mydebug}
+	xbuild SharpFont.csproj /p:Configuration=${mydebug} /p:SignAssembly=true /p:AssemblyOriginatorKeyFile="${S}/${PN}-keypair.snk" || die
 }
 
 src_install() {
@@ -39,15 +47,14 @@ src_install() {
 
         ebegin "Installing dlls into the GAC"
 
-	cd "${S}"
-	sn -k "${PN}-keypair.snk"
-	mkdir -p "${D}/usr/share/${PN}/"
-	cp "${PN}-keypair.snk" "${D}/usr/share/${PN}/"
+	savekey
 
-	cd "${S}/Source/SharpFont"
-	#strong_sign "${S}/${PN}-keypair.snk" "${S}/Source/SharpFont/obj/${mydebug}/SharpFont.dll"
-        gacutil -i "${S}/Source/SharpFont/obj/${mydebug}/SharpFont.dll" -root "${D}/usr/$(get_libdir)" \
-                -gacdir "/usr/$(get_libdir)" -package "${PN}" || die "failed"
+	for x in ${USE_DOTNET} ; do
+                FW_UPPER=${x:3:1}
+                FW_LOWER=${x:4:1}
+                egacinstall "${S}/Source/SharpFont/obj/${mydebug}/SharpFont.dll"
+        done
+
 	eend
 
 	cd "${S}"
@@ -56,10 +63,13 @@ src_install() {
         mono_multilib_comply
 }
 
-function strong_sign() {
-	pushd "$(dirname ${2})"
-	ikdasm "${2}" > "${2}.il" || die "monodis failed"
-	mv "${2}" "${2}.orig"
-	ilasm /dll /key:"${1}" /output:"${2}" "${2}.il" || die "ilasm failed"
-	popd
+function genkey() {
+        einfo "Generating Key Pair"
+        cd "${S}"
+        sn -k "${PN}-keypair.snk"
+}
+
+function savekey() {
+	mkdir -p "${D}/usr/share/${PN}/"
+	cp "${PN}-keypair.snk" "${D}/usr/share/${PN}/"
 }

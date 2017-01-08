@@ -1,8 +1,8 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils autotools toolchain-funcs gnome2-utils fdo-mime
 
 DESCRIPTION="Gambas"
@@ -166,6 +166,8 @@ src_prepare() {
 	! use openal && sed -i -r -e ':a' -e 'N' -e '$!ba' -e 's| @openal_dir@ [\]\n||g' Makefile.am
 
 	sed -i -e ':a' -e 'N' -e '$!ba' -e 's|dist_gblib_DATA = $(COMPONENT).component\ngblib_DATA = $(COMPONENT).component|gblib_DATA = $(COMPONENT).component|g' component.am
+
+	eapply_user
 
 	eautoreconf || die
 }

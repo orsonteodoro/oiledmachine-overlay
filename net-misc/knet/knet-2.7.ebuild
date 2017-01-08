@@ -1,13 +1,13 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils cmake-utils
 
 DESCRIPTION="kNet"
 HOMEPAGE="https://github.com/juj/kNet"
-SRC_URI="https://github.com/juj/kNet/archive/2.7.tar.gz"
+SRC_URI="https://github.com/juj/kNet/archive/2.7.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="${PV}"
@@ -80,7 +80,9 @@ src_prepare() {
 
 	A="if (listen->TransportLayer() == SocketOverTCP)" B="if (listen && listen->TransportLayer() == SocketOverTCP)" perl -p -i -e 's|\Q$ENV{'A'}\E|$ENV{'B'}|g' src/NetworkServer.cpp || die p16
 
-	#epatch "${FILESDIR}"/knet-9999-debug-listensockets.patch
+	#eapply "${FILESDIR}"/knet-9999-debug-listensockets.patch
+
+	eapply_user
 
 	cmake-utils_src_prepare
 }
@@ -88,13 +90,13 @@ src_prepare() {
 src_configure() {
 	myboost=""
 	if use boost; then
-		myboost="$(cmake-utils_use boost   USE_BOOST)"
+		myboost="-DUSE_BOOST=$(usex boost)"
 	fi
         local mycmakeargs=(
-                $(cmake-utils_use samples BUILD_SAMPLES)
+                -DBUILD_SAMPLES=$(usex samples)
                 ${myboost}
-                $(cmake-utils_use tinyxml USE_TINYXML)
-                $(cmake-utils_use qt4     USE_QT)
+                -DUSE_TINYXML=$(usex tinyxml)
+                -DUSE_QT=$(usex qt4)
 		-DBoost_INCLUDE_DIRS="/usr/include"
 		-DBoost_LIBRARY_DIRS="/usr/$(get_libdir)"
 		-DBoost_ADDITIONAL_VERSIONS="1.56.0"

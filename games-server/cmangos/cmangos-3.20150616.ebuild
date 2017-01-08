@@ -1,4 +1,8 @@
-EAPI=5
+# Copyright 1999-2017 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Id$
+
+EAPI=6
 inherit eutils git-r3 cmake-utils
 
 DESCRIPTION="CMaNGOS Three for Cataclysm (CATA) 4.3.4 Client"
@@ -21,6 +25,7 @@ RDEPEND="
 "
 IUSE="pch sd2"
 S="${WORKDIR}"
+
 src_unpack() {
 	EGIT_CHECKOUT_DIR="${WORKDIR}"
 	EGIT_REPO_URI="https://github.com/cmangos/mangos-cata.git"
@@ -28,17 +33,22 @@ src_unpack() {
 	EGIT_COMMIT="25f81faa9bfc21aab8f0dc38c4c5c3d983b4e015"
 	git-r3_fetch
 	git-r3_checkout
-	epatch "${FILESDIR}/mangos-4-cmake-location.patch"
+	eapply "${FILESDIR}/mangos-4-cmake-location.patch"
 
-if use sd2; then
-	EGIT_CHECKOUT_DIR="${WORKDIR}/src/bindings/sd2"
-	EGIT_REPO_URI="https://github.com/scriptdev2/scriptdev2-cata.git"
-	EGIT_BRANCH="master"
-	EGIT_COMMIT="03f1ceefac0420e5ee2fb6e316c7d6d196c3e66f"
-	git-r3_fetch
-	git-r3_checkout
-fi
+	if use sd2; then
+		EGIT_CHECKOUT_DIR="${WORKDIR}/src/bindings/sd2"
+		EGIT_REPO_URI="https://github.com/scriptdev2/scriptdev2-cata.git"
+		EGIT_BRANCH="master"
+		EGIT_COMMIT="03f1ceefac0420e5ee2fb6e316c7d6d196c3e66f"
+		git-r3_fetch
+		git-r3_checkout
+	fi
 }
+
+src_prepare() {
+	eapply_user
+}
+
 src_configure(){
 	local mycmakeargs=(
 		-DCONF_DIR=/etc/cmangos/3
@@ -57,12 +67,15 @@ src_configure(){
 
 	cmake-utils_src_configure
 }
+
 src_compile() {
 	cmake-utils_src_compile
 }
+
 src_test() {
 	cmake-utils_src_test
 }
+
 src_install() {
 	cmake-utils_src_install
 	fperms 0755 "/usr/games/bin/cmangos/3/bin/run-mangosd"
@@ -71,6 +84,7 @@ src_install() {
 	cp -R "${WORKDIR}"/sql/* "${D}/usr/share/cmangos/3/sql"
 	cp -R "${WORKDIR}"/src/bindings/sd2/sql/* "${D}/usr/share/cmangos/3/sql/sd2"
 }
+
 pkg_postinst() {
 	echo ""
 	echo "Use cmangos-db-3 to install the databases."

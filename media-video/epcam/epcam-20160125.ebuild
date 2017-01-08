@@ -1,11 +1,11 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
 # XXX: the tarball here is just the kernel modules split out of the binary
 #      package that comes from virtualbox-bin
 
-EAPI=5
+EAPI=6
 
 inherit eutils linux-mod user git-r3
 
@@ -50,6 +50,10 @@ src_unpack() {
         EGIT_COMMIT="547f10b27909177e884339ef8c5c4a66220070b7"
         git-r3_fetch
         git-r3_checkout
+}
+
+src_prepare() {
+	eapply_user
 }
 
 src_compile() {

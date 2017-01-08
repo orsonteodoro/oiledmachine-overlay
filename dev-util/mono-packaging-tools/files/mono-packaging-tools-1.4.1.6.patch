@@ -1,0 +1,23 @@
+diff -urp mono-packaging-tools-18cd15a7b009b2260eb999e6e16cabad553586ad.orig/mpt-core.tests/mpt-core.tests.csproj mono-packaging-tools-18cd15a7b009b2260eb999e6e16cabad553586ad/mpt-core.tests/mpt-core.tests.csproj
+--- mono-packaging-tools-18cd15a7b009b2260eb999e6e16cabad553586ad.orig/mpt-core.tests/mpt-core.tests.csproj	2016-12-19 21:14:07.000000000 -0800
++++ mono-packaging-tools-18cd15a7b009b2260eb999e6e16cabad553586ad/mpt-core.tests/mpt-core.tests.csproj	2017-01-02 20:02:16.089384915 -0800
+@@ -30,9 +30,9 @@
+   </PropertyGroup>
+   <ItemGroup>
+     <Reference Include="System" />
+-    <Reference Include="nunit.framework">
+-      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+-    </Reference>
++    <Reference Include="nunit.framework">
++      <HintPath>/usr/share/nunit-2/nunit.framework.dll</HintPath>
++    </Reference>
+   </ItemGroup>
+   <ItemGroup>
+     <Compile Include="AssemblyNameInGAC_Test.cs" />
+@@ -47,4 +45,4 @@
+     </ProjectReference>
+   </ItemGroup>
+   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+-</Project>
+\ No newline at end of file
++</Project>

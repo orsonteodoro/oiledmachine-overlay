@@ -1,4 +1,4 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -94,28 +94,30 @@ src_prepare() {
 	# prevent bad changes in compile flags, bug 286701
 	sed -i -e "s:BOINC_SET_COMPILE_FLAGS::" configure.ac || die "sed failed"
 
-	epatch "${FILESDIR}"/boinc-server-7.4.42-static-boinczip.patch
-	epatch "${FILESDIR}"/boinc-7.4.42-proc_.patch
-	epatch "${FILESDIR}"/boinc-server-7.4.42-nodeprecated-warnings.patch
-	epatch "${FILESDIR}"/boinc-server-7.4.42-disable-badges-fix.patch
-	epatch "${FILESDIR}"/boinc-server-7.4.42-gnuplot-loc.patch
-	epatch "${FILESDIR}"/boinc-server-7.4.42-mysqllib.patch
+	eapply "${FILESDIR}"/boinc-server-7.4.42-static-boinczip.patch
+	eapply "${FILESDIR}"/boinc-7.4.42-proc_.patch
+	eapply "${FILESDIR}"/boinc-server-7.4.42-nodeprecated-warnings.patch
+	eapply "${FILESDIR}"/boinc-server-7.4.42-disable-badges-fix.patch
+	eapply "${FILESDIR}"/boinc-server-7.4.42-gnuplot-loc.patch
+	eapply "${FILESDIR}"/boinc-server-7.4.42-mysqllib.patch
 	if use fastcgi; then
-		epatch "${FILESDIR}"/boinc-server-7.4.42-fcgi-printf.patch
-		epatch "${FILESDIR}"/boinc-server-7.4.42-fcgi-mysql.patch
+		eapply "${FILESDIR}"/boinc-server-7.4.42-fcgi-printf.patch
+		eapply "${FILESDIR}"/boinc-server-7.4.42-fcgi-mysql.patch
 	fi
 
 	if use debug; then
 		A="DUMP_CORE_ON_SEGV 0" B="DUMP_CORE_ON_SEGV 1" perl -p -i -e 's|\Q$ENV{'A'}\E|$ENV{'B'}|g' ${S}/sched/sched_main.cpp
-		epatch "${FILESDIR}"/boinc-server-7.4.42-debug_sched.patch
+		eapply "${FILESDIR}"/boinc-server-7.4.42-debug_sched.patch
 		elog "You need to 'touch debug_sched' in your boinc server project root for scheduling debuging logging."
 		elog "See https://boinc.berkeley.edu/trac/wiki/ServerDebug for details."
 	fi
-	epatch "${FILESDIR}"/boinc-server-7.4.42-sched_send-coproc_null_check.patch
-        epatch "${FILESDIR}"/boinc-server-7.4.42-sched-send-null-check.patch
-	epatch "${FILESDIR}"/boinc-server-7.4.42-php-fixes.patch
-	#epatch "${FILESDIR}"/boinc-server-7.4.42-size-classes-fixes.patch
-	use wrapper && epatch "${FILESDIR}"/boinc-server-7.4.42-build-wrapper.patch
+	eapply "${FILESDIR}"/boinc-server-7.4.42-sched_send-coproc_null_check.patch
+        eapply "${FILESDIR}"/boinc-server-7.4.42-sched-send-null-check.patch
+	eapply "${FILESDIR}"/boinc-server-7.4.42-php-fixes.patch
+	#eapply "${FILESDIR}"/boinc-server-7.4.42-size-classes-fixes.patch
+	use wrapper && eapply "${FILESDIR}"/boinc-server-7.4.42-build-wrapper.patch
+
+	eapply_user
 
 	autotools-utils_src_prepare
 }

@@ -1,0 +1,555 @@
+diff -urpN -x '*.orig' -x '*.rej' libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/Lib/CustomBuildTasks/GenerateNativeDllNameTask.cs libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/Lib/CustomBuildTasks/GenerateNativeDllNameTask.cs
+--- libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/Lib/CustomBuildTasks/GenerateNativeDllNameTask.cs	2016-03-04 08:26:33.000000000 -0800
++++ libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/Lib/CustomBuildTasks/GenerateNativeDllNameTask.cs	2017-01-03 14:30:06.415019113 -0800
+@@ -14,25 +14,27 @@ namespace CustomBuildTasks
+         public override bool Execute()
+         {
+             var fileName = InputHashFile.GetMetadata("FullPath");
+-            string libgit2FileName;
++            string hash;
+ 
+             using (var sr = new StreamReader(fileName))
+             {
+-                libgit2FileName = sr.ReadLine();
++                hash = sr.ReadLine();
+             }
+ 
++            var shortHash = hash.Substring(0, 7);
++
+             var nativeDllName = @"namespace LibGit2Sharp.Core
+ {{
+     internal static class NativeDllName
+     {{
+-        public const string Name = ""{0}"";
++        public const string Name = ""git2-{0}"";
+     }}
+ }}
+ ";
+ 
+             using (var sw = new StreamWriter(OutputFile))
+             {
+-                sw.Write(nativeDllName, libgit2FileName);
++                sw.Write(nativeDllName, shortHash);
+             }
+ 
+             return true;
+diff -urpN -x '*.orig' -x '*.rej' libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/AuthenticationException.cs libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/AuthenticationException.cs
+--- libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/AuthenticationException.cs	1969-12-31 16:00:00.000000000 -0800
++++ libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/AuthenticationException.cs	2017-01-03 14:30:06.416019150 -0800
+@@ -0,0 +1,55 @@
++﻿using System;
++using System.Runtime.Serialization;
++using LibGit2Sharp.Core;
++
++namespace LibGit2Sharp
++{
++    /// <summary>
++    /// The exception that is thrown when an operation which requires an
++    /// authentication fails.
++    /// </summary>
++    [Serializable]
++    public class AuthenticationException : LibGit2SharpException
++    {
++        /// <summary>
++        /// Initializes a new instance of the <see cref="LibGit2Sharp.AuthenticationException"/> class.
++        /// </summary>
++        public AuthenticationException()
++        {
++        }
++
++        /// <summary>
++        /// Initializes a new instance of the <see cref="LibGit2Sharp.AuthenticationException"/> class with a specified error message.
++        /// </summary>
++        /// <param name="message">A message that describes the error.</param>
++        public AuthenticationException(string message)
++            : base(message)
++        {
++        }
++
++        /// <summary>
++        /// Initializes a new instance of the <see cref="LibGit2Sharp.AuthenticationException"/> class with a specified error message and a reference to the inner exception that is the cause of this exception.
++        /// </summary>
++        /// <param name="message">The error message that explains the reason for the exception.</param>
++        /// <param name="innerException">The exception that is the cause of the current exception. If the <paramref name="innerException"/> parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
++        public AuthenticationException(string message, Exception innerException)
++            : base(message, innerException)
++        {
++        }
++
++        /// <summary>
++        /// Initializes a new instance of the <see cref="LibGit2Sharp.AuthenticationException"/> class with a serialized data.
++        /// </summary>
++        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
++        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
++        protected AuthenticationException(SerializationInfo info, StreamingContext context)
++            : base(info, context)
++        {
++        }
++
++        internal AuthenticationException(string message, GitErrorCode code, GitErrorCategory category)
++            : base(message, code, category)
++        {
++        }
++    }
++}
+diff -urpN -x '*.orig' -x '*.rej' libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/BlameHunkCollection.cs libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/BlameHunkCollection.cs
+--- libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/BlameHunkCollection.cs	2016-03-04 08:26:33.000000000 -0800
++++ libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/BlameHunkCollection.cs	2017-01-03 14:30:40.972322400 -0800
+@@ -27,11 +27,21 @@ namespace LibGit2Sharp
+             var rawopts = new GitBlameOptions
+             {
+                 version = 1,
++                FindOptions = new GitDiffFindOptions {
++                    Version = 1,
++                },
+                 flags = options.Strategy.ToGitBlameOptionFlags(),
+                 MinLine = new UIntPtr((uint)options.MinLine),
+                 MaxLine = new UIntPtr((uint)options.MaxLine),
+             };
+ 
++            if (options.FindNoRenames)
++                rawopts.FindOptions.Flags = GitDiffFindFlags.GIT_DIFF_FIND_NO_RENAMES;
++            else if (options.FindExactRenames)
++                rawopts.FindOptions.Flags = GitDiffFindFlags.GIT_DIFF_FIND_EXACT_MATCH_ONLY;
++            else
++                rawopts.FindOptions.Flags = GitDiffFindFlags.GIT_DIFF_FIND_RENAMES;
++
+             if (options.StartingAt != null)
+             {
+                 rawopts.NewestCommit = repo.Committish(options.StartingAt).Oid;
+diff -urpN -x '*.orig' -x '*.rej' libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/BlameOptions.cs libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/BlameOptions.cs
+--- libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/BlameOptions.cs	2016-03-04 08:26:33.000000000 -0800
++++ libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/BlameOptions.cs	2017-01-03 14:30:06.417019188 -0800
+@@ -6,7 +6,7 @@
+     public enum BlameStrategy
+     {
+         /// <summary>
+-        /// Track renames of the file, but no block movement.
++        /// Track renames of the file using diff rename detection, but no block movement.
+         /// </summary>
+         Default,
+ 
+@@ -58,5 +58,15 @@
+         /// If this is set to 0, blame ends with the last line in the file.
+         /// </summary>
+         public int MaxLine { get; set; }
++
++        /// <summary>
++        /// Disables rename heuristics, only matching renames on unmodified files.
++        /// </summary>
++        public bool FindExactRenames { get; set; }
++
++        /// <summary>
++        /// Fully disable rename checking.
++        /// </summary>
++        public bool FindNoRenames { get; set; }
+     }
+ }
+diff -urpN -x '*.orig' -x '*.rej' libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/Core/Ensure.cs libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/Core/Ensure.cs
+--- libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/Core/Ensure.cs	2016-03-04 08:26:33.000000000 -0800
++++ libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/Core/Ensure.cs	2017-01-03 14:30:06.418019226 -0800
+@@ -127,7 +127,8 @@ namespace LibGit2Sharp.Core
+                     { GitErrorCode.Conflict, (m, r, c) => new CheckoutConflictException(m, r, c) },
+                     { GitErrorCode.LockedFile, (m, r, c) => new LockedFileException(m, r, c) },
+                     { GitErrorCode.NotFound, (m, r, c) => new NotFoundException(m, r, c) },
+-                    { GitErrorCode.Peel, (m, r, c) => new PeelException(m, r, c)  },
++                    { GitErrorCode.Peel, (m, r, c) => new PeelException(m, r, c) },
++                    { GitErrorCode.Auth, (m, r, c) => new AuthenticationException(m, r, c) },
+                 };
+ 
+         private static void HandleError(int result)
+diff -urpN -x '*.orig' -x '*.rej' libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/Core/GitBlame.cs libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/Core/GitBlame.cs
+--- libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/Core/GitBlame.cs	2016-03-04 08:26:33.000000000 -0800
++++ libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/Core/GitBlame.cs	2017-01-03 14:30:06.418019226 -0800
+@@ -44,6 +44,7 @@ namespace LibGit2Sharp.Core
+     internal class GitBlameOptions
+     {
+         public uint version = 1;
++        public GitDiffFindOptions FindOptions;
+         public GitBlameOptionFlags flags;
+         public UInt16 MinMatchCharacters;
+         public GitOid NewestCommit;
+diff -urpN -x '*.orig' -x '*.rej' libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/Core/GitDiff.cs libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/Core/GitDiff.cs
+--- libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/Core/GitDiff.cs	2016-03-04 08:26:33.000000000 -0800
++++ libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/Core/GitDiff.cs	2017-01-03 14:30:06.419019264 -0800
+@@ -340,6 +340,9 @@ namespace LibGit2Sharp.Core
+         // turn on all finding features
+         GIT_DIFF_FIND_ALL = (0x0ff),
+ 
++        // does no work trying to find renames
++        GIT_DIFF_FIND_NO_RENAMES = (1 << 8),
++
+         // measure similarity ignoring leading whitespace (default)
+         GIT_DIFF_FIND_IGNORE_LEADING_WHITESPACE = 0,
+         // measure similarity ignoring all whitespace
+@@ -357,9 +360,9 @@ namespace LibGit2Sharp.Core
+     }
+ 
+     [StructLayout(LayoutKind.Sequential)]
+-    internal class GitDiffFindOptions
++    internal struct GitDiffFindOptions
+     {
+-        public uint Version = 1;
++        public uint Version;
+         public GitDiffFindFlags Flags;
+         public UInt16 RenameThreshold;
+         public UInt16 RenameFromRewriteThreshold;
+diff -urpN -x '*.orig' -x '*.rej' libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/Core/NativeMethods.cs libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/Core/NativeMethods.cs
+--- libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/Core/NativeMethods.cs	2016-03-04 08:26:33.000000000 -0800
++++ libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/Core/NativeMethods.cs	2017-01-03 14:30:06.420019301 -0800
+@@ -463,6 +463,24 @@ namespace LibGit2Sharp.Core
+         internal static extern void git_cred_free(IntPtr cred);
+ 
+         [DllImport(libgit2)]
++        internal static extern int git_cred_ssh_key_new(
++            out IntPtr cred,
++            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalCookie = UniqueId.UniqueIdentifier, MarshalTypeRef = typeof(StrictUtf8Marshaler))] string username,
++            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalCookie = UniqueId.UniqueIdentifier, MarshalTypeRef = typeof(StrictUtf8Marshaler))] string publickey,
++            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalCookie = UniqueId.UniqueIdentifier, MarshalTypeRef = typeof(StrictUtf8Marshaler))] string privatekey,
++            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalCookie = UniqueId.UniqueIdentifier, MarshalTypeRef = typeof(StrictUtf8Marshaler))] string passphrase);
++
++        [DllImport(libgit2)]
++        internal static extern int git_cred_ssh_key_from_agent(
++            out IntPtr cred,
++            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalCookie = UniqueId.UniqueIdentifier, MarshalTypeRef = typeof(StrictUtf8Marshaler))] string username);
++
++        [DllImport(libgit2)]
++        internal static extern int git_cred_username_new(
++            out IntPtr cred,
++            [MarshalAs(UnmanagedType.CustomMarshaler, MarshalCookie = UniqueId.UniqueIdentifier, MarshalTypeRef = typeof(StrictUtf8Marshaler))] string username);
++
++        [DllImport(libgit2)]
+         internal static extern int git_describe_commit(
+             out DescribeResultSafeHandle describe,
+             GitObjectSafeHandle committish,
+@@ -561,7 +579,12 @@ namespace LibGit2Sharp.Core
+         [DllImport(libgit2)]
+         internal static extern int git_diff_find_similar(
+             DiffSafeHandle diff,
+-            GitDiffFindOptions options);
++            IntPtr options);
++
++        [DllImport(libgit2)]
++        internal static extern int git_diff_find_similar(
++            DiffSafeHandle diff,
++            ref GitDiffFindOptions options);
+ 
+         [DllImport(libgit2)]
+         internal static extern UIntPtr git_diff_num_deltas(DiffSafeHandle diff);
+diff -urpN -x '*.orig' -x '*.rej' libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/Core/Proxy.cs libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/Core/Proxy.cs
+--- libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/Core/Proxy.cs	2016-03-04 08:26:33.000000000 -0800
++++ libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/Core/Proxy.cs	2017-01-03 14:30:06.421019339 -0800
+@@ -807,12 +807,18 @@ namespace LibGit2Sharp.Core
+             }
+         }
+ 
+-        public static void git_diff_find_similar(DiffSafeHandle diff, GitDiffFindOptions options)
++        public static void git_diff_find_similar(DiffSafeHandle diff, IntPtr options)
+         {
+             int res = NativeMethods.git_diff_find_similar(diff, options);
+             Ensure.ZeroResult(res);
+         }
+ 
++        public static void git_diff_find_similar(DiffSafeHandle diff, GitDiffFindOptions options)
++        {
++            int res = NativeMethods.git_diff_find_similar(diff, ref options);
++            Ensure.ZeroResult(res);
++        }
++
+         public static int git_diff_num_deltas(DiffSafeHandle diff)
+         {
+             return (int)NativeMethods.git_diff_num_deltas(diff);
+diff -urpN -x '*.orig' -x '*.rej' libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/Diff.cs libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/Diff.cs
+--- libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/Diff.cs	2016-03-04 08:26:33.000000000 -0800
++++ libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/Diff.cs	2017-01-03 14:30:06.421019339 -0800
+@@ -547,7 +547,7 @@ namespace LibGit2Sharp
+             var similarityOptions = (compareOptions == null) ? null : compareOptions.Similarity;
+             if (similarityOptions == null || similarityOptions.RenameDetectionMode == RenameDetectionMode.Default)
+             {
+-                Proxy.git_diff_find_similar(diffList, null);
++                Proxy.git_diff_find_similar(diffList, IntPtr.Zero);
+                 return;
+             }
+ 
+@@ -558,6 +558,7 @@ namespace LibGit2Sharp
+ 
+             var opts = new GitDiffFindOptions
+             {
++                Version = 1,
+                 RenameThreshold = (ushort)similarityOptions.RenameThreshold,
+                 RenameFromRewriteThreshold = (ushort)similarityOptions.RenameFromRewriteThreshold,
+                 CopyThreshold = (ushort)similarityOptions.CopyThreshold,
+diff -urpN -x '*.orig' -x '*.rej' libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/DiffModifiers.cs libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/DiffModifiers.cs
+--- libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/DiffModifiers.cs	2016-03-04 08:26:33.000000000 -0800
++++ libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/DiffModifiers.cs	2017-01-03 14:30:06.422019377 -0800
+@@ -36,5 +36,16 @@ namespace LibGit2Sharp
+         /// diffing against the working directory.
+         /// </summary>
+         IncludeIgnored = (1 << 4),
++
++        /// <summary>
++        /// Specifies that no rename heuristics will be used when checking for
++        /// renames, renames being matched only on unmodified renamed files.
++        /// </summary>
++        FindExactRenames = (1 << 5),
++
++        /// <summary>
++        /// Specifies that no renames will be searched for when running blame.
++        /// </summary>
++        FindNoRenames = (1 << 6),
+     }
+ }
+diff -urpN -x '*.orig' -x '*.rej' libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/LibGit2Sharp.csproj libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/LibGit2Sharp.csproj
+--- libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/LibGit2Sharp.csproj	2016-03-04 08:26:33.000000000 -0800
++++ libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/LibGit2Sharp.csproj	2017-01-03 14:32:21.119099394 -0800
+@@ -1,6 +1,8 @@
+ ﻿<?xml version="1.0" encoding="utf-8"?>
+ <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <!--
+   <Import Project="..\packages\LibGit2Sharp.NativeBinaries.1.0.129\build\LibGit2Sharp.NativeBinaries.props" Condition="Exists('..\packages\LibGit2Sharp.NativeBinaries.1.0.129\build\LibGit2Sharp.NativeBinaries.props')" />
++  -->
+   <PropertyGroup>
+     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+@@ -53,6 +55,7 @@
+     <Compile Include="AfterRebaseStepInfo.cs" />
+     <Compile Include="AmbiguousSpecificationException.cs" />
+     <Compile Include="ArchiverBase.cs" />
++    <Compile Include="AuthenticationException.cs" />
+     <Compile Include="BareRepositoryException.cs" />
+     <Compile Include="BeforeRebaseStepInfo.cs" />
+     <Compile Include="BlameHunkCollection.cs" />
+@@ -175,6 +178,8 @@
+     <Compile Include="RevertResult.cs" />
+     <Compile Include="RevertOptions.cs" />
+     <Compile Include="SecureUsernamePasswordCredentials.cs" />
++    <Compile Include="SshAgentCredentials.cs" />
++    <Compile Include="SshUserKeyCredentials.cs" />
+     <Compile Include="StageOptions.cs" />
+     <Compile Include="StatusOptions.cs" />
+     <Compile Include="SimilarityOptions.cs" />
+@@ -371,6 +376,7 @@
+     <Compile Include="TreeEntryDefinition.cs" />
+     <Compile Include="UserCanceledException.cs" />
+     <Compile Include="UsernamePasswordCredentials.cs" />
++    <Compile Include="UsernameQueryCredentials.cs" />
+     <Compile Include="Version.cs" />
+     <Compile Include="VoidReference.cs" />
+     <Compile Include="Core\RawContentStream.cs" />
+@@ -398,10 +404,12 @@
+   <ItemGroup>
+     <EmbeddedResource Include="libgit2sharp_hash.txt" />
+   </ItemGroup>
++  <!--
+   <ItemGroup>
+     <None Include="libgit2sharp.snk" />
+     <None Include="packages.config" />
+   </ItemGroup>
++  -->
+   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+   <Import Project="UniqueIdentifier.targets" />
+   <Import Project="NativeDllName.targets" />
+@@ -410,12 +418,14 @@
+     <PreBuildEvent>
+     </PreBuildEvent>
+   </PropertyGroup>
++  <!--
+   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+     <PropertyGroup>
+       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+     </PropertyGroup>
+     <Error Condition="!Exists('..\packages\LibGit2Sharp.NativeBinaries.1.0.129\build\LibGit2Sharp.NativeBinaries.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\LibGit2Sharp.NativeBinaries.1.0.129\build\LibGit2Sharp.NativeBinaries.props'))" />
+   </Target>
++  -->
+   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+        Other similar extension points exist, see Microsoft.Common.targets.
+   <Target Name="BeforeBuild">
+@@ -423,4 +433,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urpN -x '*.orig' -x '*.rej' libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/RemoteCallbacks.cs libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/RemoteCallbacks.cs
+--- libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/RemoteCallbacks.cs	2016-03-04 08:26:33.000000000 -0800
++++ libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/RemoteCallbacks.cs	2017-01-03 14:30:06.423019414 -0800
+@@ -284,6 +284,14 @@ namespace LibGit2Sharp
+             {
+                 types |= SupportedCredentialTypes.Default;
+             }
++            if (credTypes.HasFlag(GitCredentialType.SshKey))
++            {
++                types |= SupportedCredentialTypes.Ssh;
++            }
++            if (credTypes.HasFlag(GitCredentialType.Username))
++            {
++                types |= SupportedCredentialTypes.UsernameQuery;
++            }
+ 
+             var cred = CredentialsProvider(url, username, types);
+ 
+diff -urpN -x '*.orig' -x '*.rej' libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/SshAgentCredentials.cs libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/SshAgentCredentials.cs
+--- libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/SshAgentCredentials.cs	1969-12-31 16:00:00.000000000 -0800
++++ libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/SshAgentCredentials.cs	2017-01-03 14:30:06.423019414 -0800
+@@ -0,0 +1,36 @@
++﻿﻿using System;
++using LibGit2Sharp.Core;
++
++namespace LibGit2Sharp
++{
++    /// <summary>
++    /// Class that holds SSH agent credentials for remote repository access.
++    /// </summary>
++    public sealed class SshAgentCredentials : Credentials
++    {
++        /// <summary>
++        /// Callback to acquire a credential object.
++        /// </summary>
++        /// <param name="cred">The newly created credential object.</param>
++        /// <returns>0 for success, &lt; 0 to indicate an error, &gt; 0 to indicate no credential was acquired.</returns>
++        protected internal override int GitCredentialHandler(out IntPtr cred)
++        {
++            if (!GlobalSettings.Version.Features.HasFlag(BuiltInFeatures.Ssh))
++            {
++                throw new InvalidOperationException("LibGit2 was not built with SSH support.");
++            }
++
++            if (Username == null)
++            {
++                throw new InvalidOperationException("SshAgentCredentials contains a null Username.");
++            }
++
++            return NativeMethods.git_cred_ssh_key_from_agent(out cred, Username);
++        }
++
++        /// <summary>
++        /// Username for SSH authentication.
++        /// </summary>
++        public string Username { get; set; }
++    }
++}
+diff -urpN -x '*.orig' -x '*.rej' libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/SshUserKeyCredentials.cs libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/SshUserKeyCredentials.cs
+--- libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/SshUserKeyCredentials.cs	1969-12-31 16:00:00.000000000 -0800
++++ libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/SshUserKeyCredentials.cs	2017-01-03 14:30:06.423019414 -0800
+@@ -0,0 +1,66 @@
++﻿﻿using System;
++using LibGit2Sharp.Core;
++
++namespace LibGit2Sharp
++{
++    /// <summary>
++    /// Class that holds SSH username with key credentials for remote repository access.
++    /// </summary>
++    public sealed class SshUserKeyCredentials : Credentials
++    {
++        /// <summary>
++        /// Callback to acquire a credential object.
++        /// </summary>
++        /// <param name="cred">The newly created credential object.</param>
++        /// <returns>0 for success, &lt; 0 to indicate an error, &gt; 0 to indicate no credential was acquired.</returns>
++        protected internal override int GitCredentialHandler(out IntPtr cred)
++        {
++            if (!GlobalSettings.Version.Features.HasFlag(BuiltInFeatures.Ssh))
++            {
++                throw new InvalidOperationException("LibGit2 was not built with SSH support.");
++            }
++
++            if (Username == null)
++            {
++                throw new InvalidOperationException("SshUserKeyCredentials contains a null Username.");
++            }
++
++            if (Passphrase == null)
++            {
++                throw new InvalidOperationException("SshUserKeyCredentials contains a null Passphrase.");
++            }
++
++            if (PublicKey == null)
++            {
++                throw new InvalidOperationException("SshUserKeyCredentials contains a null PublicKey.");
++            }
++
++            if (PrivateKey == null)
++            {
++                throw new InvalidOperationException("SshUserKeyCredentials contains a null PrivateKey.");
++            }
++
++            return NativeMethods.git_cred_ssh_key_new(out cred, Username, PublicKey, PrivateKey, Passphrase);
++        }
++
++        /// <summary>
++        /// Username for SSH authentication.
++        /// </summary>
++        public string Username { get; set; }
++
++        /// <summary>
++        /// Public key file location for SSH authentication.
++        /// </summary>
++        public string PublicKey { get; set; }
++
++        /// <summary>
++        /// Private key file location for SSH authentication.
++        /// </summary>
++        public string PrivateKey { get; set; }
++
++        /// <summary>
++        /// Passphrase for SSH authentication.
++        /// </summary>
++        public string Passphrase { get; set; }
++    }
++}
+diff -urpN -x '*.orig' -x '*.rej' libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/SupportedCredentialTypes.cs libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/SupportedCredentialTypes.cs
+--- libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/SupportedCredentialTypes.cs	2016-03-04 08:26:33.000000000 -0800
++++ libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/SupportedCredentialTypes.cs	2017-01-03 14:30:06.423019414 -0800
+@@ -18,5 +18,15 @@ namespace LibGit2Sharp
+         /// Ask Windows to provide its default credentials for the current user (e.g. NTLM)
+         /// </summary>
+         Default = (1 << 1),
++
++        /// <summary>
++        /// SSH with username and public/private keys. (SshUserKeyCredentials, SshAgentCredentials).
++        /// </summary>
++        Ssh = (1 << 2),
++
++        /// <summary>
++        /// Queries the server with the given username, then later returns the supported credential types.
++        /// </summary>
++        UsernameQuery = (1 << 3),
+     }
+ }
+diff -urpN -x '*.orig' -x '*.rej' libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/UsernameQueryCredentials.cs libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/UsernameQueryCredentials.cs
+--- libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e.orig/LibGit2Sharp/UsernameQueryCredentials.cs	1969-12-31 16:00:00.000000000 -0800
++++ libgit2sharp-8daef23223e1374141bf496e4b310ded9ae4639e/LibGit2Sharp/UsernameQueryCredentials.cs	2017-01-03 14:30:06.424019452 -0800
+@@ -0,0 +1,31 @@
++﻿using System;
++using LibGit2Sharp.Core;
++
++namespace LibGit2Sharp
++{
++    /// <summary>
++    /// Class that holds username query credentials for remote repository access.
++    /// </summary>
++    public sealed class UsernameQueryCredentials : Credentials
++    {
++        /// <summary>
++        /// Callback to acquire a credential object.
++        /// </summary>
++        /// <param name="cred">The newly created credential object.</param>
++        /// <returns>0 for success, &lt; 0 to indicate an error, &gt; 0 to indicate no credential was acquired.</returns>
++        protected internal override int GitCredentialHandler(out IntPtr cred)
++        {
++            if (Username == null)
++            {
++                throw new InvalidOperationException("UsernameQueryCredentials contains a null Username.");
++            }
++
++            return NativeMethods.git_cred_username_new(out cred, Username);
++        }
++
++        /// <summary>
++        /// Username for querying the server for supported authentication.
++        /// </summary>
++        public string Username { get; set; }
++    }
++}

@@ -1,8 +1,8 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils
 
 DESCRIPTION="TurboTurtle"
@@ -19,9 +19,11 @@ RDEPEND="media-libs/libsdl
 	 "
 DEPEND="${RDEPEND}"
 
-FEATURES=""
-
 S="${WORKDIR}/TurboTurtle-${PV}-source"
+
+src_prepare() {
+	eapply_user
+}
 
 src_install() {
 	mkdir -p "${D}/usr/$(get_libdir)/turboturtle"

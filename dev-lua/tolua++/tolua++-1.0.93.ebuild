@@ -1,8 +1,8 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI="2"
+EAPI="6"
 
 inherit eutils toolchain-funcs git-r3 cmake-utils
 
@@ -36,13 +36,16 @@ src_unpack() {
 
 src_prepare() {
 	if use urho3d ; then
-		epatch "${FILESDIR}"/tolua++-1.0.93-urho3d-1.patch || die "failed to add urho3d extension 1"
+		eapply "${FILESDIR}"/tolua++-1.0.93-urho3d-1.patch || die "failed to add urho3d extension 1"
 	fi
 	if use static; then
 		true
 	else
 		sed -i -e "s|add_library(libtolua++|add_library(libtolua++ SHARED|" src/lib/CMakeLists.txt
 	fi
+
+	eapply_user
+
 	cmake-utils_src_prepare
 }
 

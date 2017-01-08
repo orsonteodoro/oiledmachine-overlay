@@ -1,22 +1,22 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils
 
-DESCRIPTION="CivetWeb"
+DESCRIPTION="CivetWeb is an embedded C++ web server"
 HOMEPAGE="https://github.com/civetweb"
-SRC_URI="https://github.com/civetweb/civetweb/archive/v${PV}.tar.gz"
+SRC_URI="https://github.com/civetweb/civetweb/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MIT"
-SLOT="${PV:0:3}"
+SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86"
 IUSE="ipv6 debug websocket cpp ssl cgi abi_x86_64 static"
 
 LUA_VER="5.2"
 RDEPEND="dev-db/sqlite:3
-	 dev-lang/lua:${LUA_VER}[static=]
+	 dev-lang/lua:${LUA_VER}[static=,civetweb]
 	 dev-lua/luafilesystem[lua5_2]
 	 dev-lua/luaxml[lua5_2]
 	 dev-lua/luasqlite3[lua5_2]
@@ -27,6 +27,7 @@ S="${WORKDIR}/civetweb-${PV}"
 
 src_prepare() {
 	sed -i -e "s|include resources/Makefile.in-lua|CFLAGS += -I/usr/include/lua${LUA_VER} \nLIBS += -llua${LUA_VER} /usr/$(get_libdir)/lua/${LUA_VER}/lfs.so /usr/$(get_libdir)/lua/${LUA_VER}/LuaXML_lib.so -lsqlite3 /usr/$(get_libdir)/lua/${LUA_VER}/lsqlite3.so \nCFLAGS += -DLUA_COMPAT_ALL -DUSE_LUA -DLUA_USE_POSIX -DLUA_USE_DLOPEN -DTHREADSAFE=1 -DSQLITE_ENABLE_FTS3 -DSQLITE_ENABLE_FTS3_PARENTHESIS -DUSE_LUA_SQLITE3 -DUSE_LUA_FILE_SYSTEM -DUSE_LUA_LUAXML\n|" Makefile
+	eapply_user
 }
 
 src_configure() {

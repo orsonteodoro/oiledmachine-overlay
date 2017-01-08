@@ -1,8 +1,8 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=5
+EAPI=6
 
 inherit eutils git-r3
 
@@ -27,8 +27,10 @@ DEPEND="media-sound/lastfmsubmitd
 RDEPEND="${DEPEND}"
 
 src_prepare() {
-	epatch "${FILESDIR}/${PN}-20120628-fifo-homedir.patch"
+	eapply "${FILESDIR}/${PN}-20120628-fifo-homedir.patch"
         #wget https://raw.githubusercontent.com/Bilalh/Bash-Scripts/master/mplayer.sh
+
+	eapply_user
 }
 
 src_compile() {

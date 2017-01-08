@@ -1,8 +1,8 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI="5"
+EAPI="6"
 
 inherit autotools eutils flag-o-matic subversion toolchain-funcs versionator git-r3
 
@@ -69,77 +69,77 @@ src_unpack() {
 	URL="https://github.com/BOINC/boinc/archive/client_release/$BOINC_MAJOR.$BOINC_MINOR/$BOINC_VER.zip"
 
 	cd "${WORKDIR}/${MY_P}/AKv8"
-	epatch "${FILESDIR}"/setiathome-7.08-makefileam-01.patch
-	epatch "${FILESDIR}"/setiathome-7.08-makefileam-02.patch
+	eapply "${FILESDIR}"/setiathome-7.08-makefileam-01.patch
+	eapply "${FILESDIR}"/setiathome-7.08-makefileam-02.patch
 
 	cd "${WORKDIR}/${MY_P}"
-	epatch "${FILESDIR}"/setiathome-7.08-makefileam-sah-gfx.patch
-	epatch "${FILESDIR}"/setiathome-7.08-sahgfxbase.patch
-	epatch "${FILESDIR}"/setiathome-7.08-configureac-sah-gfx.patch
+	eapply "${FILESDIR}"/setiathome-7.08-makefileam-sah-gfx.patch
+	eapply "${FILESDIR}"/setiathome-7.08-sahgfxbase.patch
+	eapply "${FILESDIR}"/setiathome-7.08-configureac-sah-gfx.patch
 
 	cd "${WORKDIR}/${MY_P}/AKv8/client"
 	ESVN_REVISION="1962" #7.07 trunk
-	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_gfx_main.h"
-	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_gfx_main.cpp"
-	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_version.cpp"
-	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_version.h"
-	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/graphics_main.cpp"
+	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_gfx_main.h" || die
+	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_gfx_main.cpp" || die
+	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_version.cpp" || die
+	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_version.h" || die
+	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/graphics_main.cpp" || die
 
 	cd "${WORKDIR}/${MY_P}"
-	epatch "${FILESDIR}"/setiathome-7.08-gdatah-gfx.patch
-	epatch "${FILESDIR}"/setiathome-7.08-maincpp-gfx.patch
-	epatch "${FILESDIR}"/setiathome-7.08-sahgfxmainh-gfx.patch
-	epatch "${FILESDIR}"/setiathome-7.08-setih-gfx.patch
-	epatch "${FILESDIR}"/setiathome-7.08-workercpp-gfx.patch
-	epatch "${FILESDIR}"/setiathome-7.08-maincpp-init.patch
-	epatch "${FILESDIR}"/setiathome-7.08-main.cpp-graphics2.patch
-	epatch "${FILESDIR}"/setiathome-7.08-setih-graphics_lib_handle.patch
-	epatch "${FILESDIR}"/setiathome-7.08-analyzefuncscpp-sah_gfx_main.h.patch
-	epatch "${FILESDIR}"/setiathome-7.08-workercpp-graphicsold.patch
-	epatch "${FILESDIR}"/setiathome-7.08-maincpp-graphics2.patch
-	epatch "${FILESDIR}"/setiathome-7.08-makefileam-amcflags.patch
-	epatch "${FILESDIR}"/setiathome-7.08-sahgfxh-get_sah_graphics.patch
-	epatch "${FILESDIR}"/setiathome-7.08-workercpp-old.patch
-	epatch "${FILESDIR}"/setiathome-7.08-sahgfxcpp-glut.patch
-	epatch "${FILESDIR}"/setiathome-7.08-sahgfx.cpp-rarray.patch
-	epatch "${FILESDIR}"/setiathome-7.08-graphics2-1.patch
-	epatch "${FILESDIR}"/setiathome-7.08-graphics2-2.patch
-	epatch "${FILESDIR}"/setiathome-7.08-graphics2-3.patch
-	epatch "${FILESDIR}"/setiathome-7.08-graphics2-4.patch
-	epatch "${FILESDIR}"/setiathome-7.08-graphics2-5.patch
-	epatch "${FILESDIR}"/setiathome-7.08-graphics2-6.patch
-	epatch "${FILESDIR}"/setiathome-7.08-graphics2-7.patch
-	epatch "${FILESDIR}"/setiathome-7.08-graphics2-8.patch
-	epatch "${FILESDIR}"/setiathome-7.08-graphics2-9.patch
-	epatch "${FILESDIR}"/setiathome-7.08-graphics2-10.patch
-	epatch "${FILESDIR}"/setiathome-7.08-graphics2-11.patch
-	epatch "${FILESDIR}"/setiathome-7.08-graphics2-12.patch
-	epatch "${FILESDIR}"/setiathome-7.08-graphics2-13.patch
-	epatch "${FILESDIR}"/setiathome-7.08-graphics2-14.patch
-	epatch "${FILESDIR}"/setiathome-7.08-graphics2-15.patch
-	epatch "${FILESDIR}"/setiathome-7.08-seti.h-noguiso.patch
-	epatch "${FILESDIR}"/setiathome-analyzepot.cpp-gdatasahgraphics.patch
-	epatch "${FILESDIR}"/setiathome-analyzereport.cpp-gdatasahgraphics.patch
-	epatch "${FILESDIR}"/setiathome-gaussfit.cpp-gdatasahgraphics.patch
-	epatch "${FILESDIR}"/setiathome-seti.cpp-gdatasahgraphics.patch
-	epatch "${FILESDIR}"/setiathome-spike.cpp-gdatasahgraphics.patch
-	epatch "${FILESDIR}"/setiathome-worker.cpp-gdatasahgraphics.patch
-	epatch "${FILESDIR}"/setiathome-7.08-sahgfxcpp-buf1buf2.patch
-	epatch "${FILESDIR}"/setiathome-7.08-makefileam-sahgfxbase.patch
-	epatch "${FILESDIR}"/setiathome-7.08-sah_gfx_base.h-reducedarrayrender.patch
-	epatch "${FILESDIR}"/setiathome-7.08-sah_gfx.cpp-cnvt_fftlen_hz.patch
-	epatch "${FILESDIR}"/setiathome-7.08-sah-ap-graphics-sah.patch ##split
-	epatch "${FILESDIR}"/setiathome-7.08-sah-ap-shmem-fixes.patch
-	epatch "${FILESDIR}"/setiathome-7.09-sah-ap-makefileincl.patch
-	epatch "${FILESDIR}"/setiathome-7.08-ap-sah-glew-sah.patch ##split
-	epatch "${FILESDIR}"/setiathome-7.08-sah_gfx_base.cpp-setupgivenprefs.patch
-	epatch "${FILESDIR}"/setiathome-7.08-noopengl-sah.patch ##split
-	epatch "${FILESDIR}"/setiathome-gpu-7.08-sahgfxbasecpp-havegl.patch
-	epatch "${FILESDIR}"/setiathome-7.08-gpu-analyzefuncscpp-removegbp.patch
-	epatch "${FILESDIR}"/setiathome-7.08-sah-sah_graphics-swi.patch
-	epatch "${FILESDIR}"/setiathome-7.08-gpu-wufix.patch
-	epatch "${FILESDIR}"/setiathome-7.08-gpu-opengl-on-opencl.patch
-	epatch "${FILESDIR}"/setiathome-gpu-8.00-clang-fix.patch
+	eapply "${FILESDIR}"/setiathome-7.08-gdatah-gfx.patch
+	eapply "${FILESDIR}"/setiathome-7.08-maincpp-gfx.patch
+	eapply "${FILESDIR}"/setiathome-7.08-sahgfxmainh-gfx.patch
+	eapply "${FILESDIR}"/setiathome-7.08-setih-gfx.patch
+	eapply "${FILESDIR}"/setiathome-7.08-workercpp-gfx.patch
+	eapply "${FILESDIR}"/setiathome-7.08-maincpp-init.patch
+	eapply "${FILESDIR}"/setiathome-7.08-main.cpp-graphics2.patch
+	eapply "${FILESDIR}"/setiathome-7.08-setih-graphics_lib_handle.patch
+	eapply "${FILESDIR}"/setiathome-7.08-analyzefuncscpp-sah_gfx_main.h.patch
+	eapply "${FILESDIR}"/setiathome-7.08-workercpp-graphicsold.patch
+	eapply "${FILESDIR}"/setiathome-7.08-maincpp-graphics2.patch
+	eapply "${FILESDIR}"/setiathome-7.08-makefileam-amcflags.patch
+	eapply "${FILESDIR}"/setiathome-7.08-sahgfxh-get_sah_graphics.patch
+	eapply "${FILESDIR}"/setiathome-7.08-workercpp-old.patch
+	eapply "${FILESDIR}"/setiathome-7.08-sahgfxcpp-glut.patch
+	eapply "${FILESDIR}"/setiathome-7.08-sahgfx.cpp-rarray.patch
+	eapply "${FILESDIR}"/setiathome-7.08-graphics2-1.patch
+	eapply "${FILESDIR}"/setiathome-7.08-graphics2-2.patch
+	eapply "${FILESDIR}"/setiathome-7.08-graphics2-3.patch
+	eapply "${FILESDIR}"/setiathome-7.08-graphics2-4.patch
+	eapply "${FILESDIR}"/setiathome-7.08-graphics2-5.patch
+	eapply "${FILESDIR}"/setiathome-7.08-graphics2-6.patch
+	eapply "${FILESDIR}"/setiathome-7.08-graphics2-7.patch
+	eapply "${FILESDIR}"/setiathome-7.08-graphics2-8.patch
+	eapply "${FILESDIR}"/setiathome-7.08-graphics2-9.patch
+	eapply "${FILESDIR}"/setiathome-7.08-graphics2-10.patch
+	eapply "${FILESDIR}"/setiathome-7.08-graphics2-11.patch
+	eapply "${FILESDIR}"/setiathome-7.08-graphics2-12.patch
+	eapply "${FILESDIR}"/setiathome-7.08-graphics2-13.patch
+	eapply "${FILESDIR}"/setiathome-7.08-graphics2-14.patch
+	eapply "${FILESDIR}"/setiathome-7.08-graphics2-15.patch
+	eapply "${FILESDIR}"/setiathome-7.08-seti.h-noguiso.patch
+	eapply "${FILESDIR}"/setiathome-analyzepot.cpp-gdatasahgraphics.patch
+	eapply "${FILESDIR}"/setiathome-analyzereport.cpp-gdatasahgraphics.patch
+	eapply "${FILESDIR}"/setiathome-gaussfit.cpp-gdatasahgraphics.patch
+	eapply "${FILESDIR}"/setiathome-seti.cpp-gdatasahgraphics.patch
+	eapply "${FILESDIR}"/setiathome-spike.cpp-gdatasahgraphics.patch
+	eapply "${FILESDIR}"/setiathome-worker.cpp-gdatasahgraphics.patch
+	eapply "${FILESDIR}"/setiathome-7.08-sahgfxcpp-buf1buf2.patch
+	eapply "${FILESDIR}"/setiathome-7.08-makefileam-sahgfxbase.patch
+	eapply "${FILESDIR}"/setiathome-7.08-sah_gfx_base.h-reducedarrayrender.patch
+	eapply "${FILESDIR}"/setiathome-7.08-sah_gfx.cpp-cnvt_fftlen_hz.patch
+	eapply "${FILESDIR}"/setiathome-7.08-sah-ap-graphics-sah.patch ##split
+	eapply "${FILESDIR}"/setiathome-7.08-sah-ap-shmem-fixes.patch
+	eapply "${FILESDIR}"/setiathome-7.09-sah-ap-makefileincl.patch
+	eapply "${FILESDIR}"/setiathome-7.08-ap-sah-glew-sah.patch ##split
+	eapply "${FILESDIR}"/setiathome-7.08-sah_gfx_base.cpp-setupgivenprefs.patch
+	eapply "${FILESDIR}"/setiathome-7.08-noopengl-sah.patch ##split
+	eapply "${FILESDIR}"/setiathome-gpu-7.08-sahgfxbasecpp-havegl.patch
+	eapply "${FILESDIR}"/setiathome-7.08-gpu-analyzefuncscpp-removegbp.patch
+	eapply "${FILESDIR}"/setiathome-7.08-sah-sah_graphics-swi.patch
+	eapply "${FILESDIR}"/setiathome-7.08-gpu-wufix.patch
+	eapply "${FILESDIR}"/setiathome-7.08-gpu-opengl-on-opencl.patch
+	eapply "${FILESDIR}"/setiathome-gpu-8.00-clang-fix.patch
 
 	#cd "${WORKDIR}/${MY_P}/AKv8/client"
 	#touch gl.h glu.h glut.h
@@ -151,11 +151,13 @@ src_unpack() {
 	#cp -r "${ESVN_STORE_DIR}/${PN}/glut" "${WORKDIR}/${MY_P}/AKv8"
 
         cd "${WORKDIR}/${MY_P}/AP/client"
-        wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/astropulse/client/in.dat"
-        wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/astropulse/client/pulse.out.ref"
+        wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/astropulse/client/in.dat" || die
+        wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/astropulse/client/pulse.out.ref" || die
 }
 
 src_prepare() {
+	eapply_user
+
 	cd "${WORKDIR}/${MY_P}/AKv8"
 	AT_M4DIR="m4" eautoreconf
 	chmod +x configure

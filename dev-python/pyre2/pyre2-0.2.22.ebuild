@@ -1,14 +1,12 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=4
+EAPI=6
 
-PYTHON_DEPEND="*"
-SUPPORT_PYTHON_ABIS="1"
-RESTRICT_PYTHON_ABIS="3.*"
+PYTHON_COMPAT=( python2_7 )
 
-inherit distutils
+inherit distutils-r1 flag-o-matic
 
 DESCRIPTION="Python extension that wraps Google's RE2 library."
 HOMEPAGE="https://github.com/axiak/pyre2 http://pypi.python.org/pypi/re2/"
@@ -25,11 +23,14 @@ RDEPEND="dev-libs/re2"
 
 S=${WORKDIR}/re2-${PV}
 
-distutils_src_compile_pre_hook() {
-	#Force regeneration of cpp with cython
-	rm src/re2.cpp || die
+python_prepare_all() {
+	append-cxxflags -std=c++11
+
+	eapply_user
+
+	distutils-r1_python_prepare_all
 }
 
 src_compile() {
-	distutils_src_compile --cython
+	distutils-r1_src_compile --cython
 }

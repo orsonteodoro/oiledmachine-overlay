@@ -1,0 +1,40 @@
+diff -urp FreeImage.orig/Wrapper/FreeImage.NET/cs/Library/Library.csproj FreeImage/Wrapper/FreeImage.NET/cs/Library/Library.csproj
+--- FreeImage.orig/Wrapper/FreeImage.NET/cs/Library/Library.csproj	2011-07-20 20:35:34.000000000 -0700
++++ FreeImage/Wrapper/FreeImage.NET/cs/Library/Library.csproj	2017-01-04 00:08:59.207099306 -0800
+@@ -17,7 +17,7 @@
+     <OldToolsVersion>2.0</OldToolsVersion>
+     <UpgradeBackupLocation>
+     </UpgradeBackupLocation>
+-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
++    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+     <PublishUrl>publish\</PublishUrl>
+     <Install>true</Install>
+     <InstallFrom>Disk</InstallFrom>
+@@ -118,7 +118,7 @@
+   <ItemGroup>
+     <Reference Include="System" />
+     <Reference Include="System.Core">
+-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
++      <RequiredTargetFramework>4.5</RequiredTargetFramework>
+     </Reference>
+     <Reference Include="System.Data" />
+     <Reference Include="System.Drawing" />
+@@ -215,6 +215,11 @@
+       <ProductName>.NET Framework 3.5</ProductName>
+       <Install>false</Install>
+     </BootstrapperPackage>
++    <BootstrapperPackage Include="Microsoft.Net.Framework.4.5">
++      <Visible>False</Visible>
++      <ProductName>.NET Framework 4.5</ProductName>
++      <Install>false</Install>
++    </BootstrapperPackage>
+   </ItemGroup>
+   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+@@ -228,4 +233,4 @@
+     <PostBuildEvent>
+     </PostBuildEvent>
+   </PropertyGroup>
+-</Project>
+\ No newline at end of file
++</Project>

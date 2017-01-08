@@ -1,8 +1,8 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
 DESCRIPTION="Improved JPEG encoder based on libjpeg-turbo"
 HOMEPAGE="https://github.com/mozilla/mozjpeg"
@@ -17,6 +17,10 @@ RDEPEND="sys-libs/zlib"
 DEPEND="${RDEPEND}"
 
 S=${WORKDIR}/${PN}
+
+src_prepare() {
+	eapply_user
+}
 
 src_install() {
 	# wrapper to use renamed libjpeg.so (allows coexistence with libjpeg-turbo)

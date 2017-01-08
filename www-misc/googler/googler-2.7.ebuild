@@ -1,8 +1,8 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=5
+EAPI=6
 
 PYTHON_COMPAT=( python{3_3,3_4} )
 
@@ -10,7 +10,7 @@ inherit eutils
 
 DESCRIPTION="Command line Google"
 HOMEPAGE="https://github.com/jarun/googler"
-SRC_URI="https://github.com/jarun/${PN}/archive/v${PV}.tar.gz"
+SRC_URI="https://github.com/jarun/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="GPL-3"
 
 SLOT="0"
@@ -22,10 +22,10 @@ DEPEND=""
 RDEPEND="${DEPEND}"
 S="${WORKDIR}/${P}"
 
-src_compile() {
-	emake
+src_prepare() {
+	eapply_user
 }
 
-pkg_postinst() {
-	true
+src_compile() {
+	emake
 }

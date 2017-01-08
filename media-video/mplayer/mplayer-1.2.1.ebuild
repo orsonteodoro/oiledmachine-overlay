@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -275,6 +275,8 @@ src_prepare() {
 	epatch "${FILESDIR}"/${PN}-1.2.1-x32-fix-align.patch
 	epatch "${FILESDIR}"/${PN}-1.2.1-x32-mpx86asm_h.patch
 	epatch "${FILESDIR}"/${PN}-1.2.1-x32-vf_ilpack_c.patch
+
+	epatch_user
 }
 
 src_configure() {

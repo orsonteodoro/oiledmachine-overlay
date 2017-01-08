@@ -1,8 +1,8 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI="5"
+EAPI="6"
 
 inherit autotools eutils flag-o-matic subversion toolchain-funcs versionator git-r3
 
@@ -69,31 +69,31 @@ src_unpack() {
 	URL="https://github.com/BOINC/boinc/archive/client_release/$BOINC_MAJOR.$BOINC_MINOR/$BOINC_VER.zip"
 
 	cd "${WORKDIR}/${MY_P}"
-	epatch "${FILESDIR}"/astropulse-7.00-apclientmaincpp.patch #1
-	epatch "${FILESDIR}"/setiathome-7.08-makefileam-ap-gfx.patch #10
-	epatch "${FILESDIR}"/setiathome-7.08-configureac-ap-gfx.patch #9
+	eapply "${FILESDIR}"/astropulse-7.00-apclientmaincpp.patch #1
+	eapply "${FILESDIR}"/setiathome-7.08-makefileam-ap-gfx.patch #10
+	eapply "${FILESDIR}"/setiathome-7.08-configureac-ap-gfx.patch #9
 
 	cd "${WORKDIR}/${MY_P}/AKv8/client"
         ESVN_REVISION="1962" #7.07 trunk
         #ESVN_REVISION="3180" #8.00 trunk
-	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_gfx_main.h"
-	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_gfx_main.cpp"
-	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_version.cpp"
-	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_version.h"
-	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/graphics_main.cpp"
+	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_gfx_main.h" || die
+	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_gfx_main.cpp" || die
+	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_version.cpp" || die
+	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_version.h" || die
+	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/graphics_main.cpp" || die
 
 	cd "${WORKDIR}/${MY_P}"
-	epatch "${FILESDIR}"/setiathome-7.08-makefileam-apshmem.patch #11
-	epatch "${FILESDIR}"/setiathome-7.08-apclientmaincpp-apshmem.patch #7
-	epatch "${FILESDIR}"/setiathome-7.08-setih-graphics_lib_handle.patch #test
- 	epatch "${FILESDIR}"/setiathome-7.08-makefileam-ap-apshmem.patch #10
- 	epatch "${FILESDIR}"/setiathome-7.08-apclientmaincpp-ap-doublemax.patch #5
- 	epatch "${FILESDIR}"/setiathome-7.08-apgfxbaseh-ap-reducedarraygen.patch #8
-	epatch "${FILESDIR}"/setiathome-7.08-sah-ap-graphics-ap.patch #13 ap
-	epatch "${FILESDIR}"/setiathome-7.08-ap-configureac-enablegraphics.patch #2
-	epatch "${FILESDIR}"/setiathome-7.08-ap-sah-graphics-fixes1.patch #4
-	epatch "${FILESDIR}"/setiathome-7.08-ap-sah-glew-ap.patch #3 ap
-	epatch "${FILESDIR}"/setiathome-7.08-noopengl-ap.patch #12 ap
+	eapply "${FILESDIR}"/setiathome-7.08-makefileam-apshmem.patch #11
+	eapply "${FILESDIR}"/setiathome-7.08-apclientmaincpp-apshmem.patch #7
+	eapply "${FILESDIR}"/setiathome-7.08-setih-graphics_lib_handle.patch #test
+ 	eapply "${FILESDIR}"/setiathome-7.08-makefileam-ap-apshmem.patch #10
+ 	eapply "${FILESDIR}"/setiathome-7.08-apclientmaincpp-ap-doublemax.patch #5
+ 	eapply "${FILESDIR}"/setiathome-7.08-apgfxbaseh-ap-reducedarraygen.patch #8
+	eapply "${FILESDIR}"/setiathome-7.08-sah-ap-graphics-ap.patch #13 ap
+	eapply "${FILESDIR}"/setiathome-7.08-ap-configureac-enablegraphics.patch #2
+	eapply "${FILESDIR}"/setiathome-7.08-ap-sah-graphics-fixes1.patch #4
+	eapply "${FILESDIR}"/setiathome-7.08-ap-sah-glew-ap.patch #3 ap
+	eapply "${FILESDIR}"/setiathome-7.08-noopengl-ap.patch #12 ap
 
 	#cd "${WORKDIR}/${MY_P}/AKv8/client"
 	#touch gl.h glu.h glut.h
@@ -105,11 +105,13 @@ src_unpack() {
 	#cp -r "${ESVN_STORE_DIR}/${PN}/glut" "${WORKDIR}/${MY_P}/AKv8"
 
 	cd "${WORKDIR}/${MY_P}/AP/client"
-	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/astropulse/client/in.dat"
-	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/astropulse/client/pulse.out.ref"
+	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/astropulse/client/in.dat" || die
+	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/astropulse/client/pulse.out.ref" || die
 }
 
 src_prepare() {
+	eapply_user
+
 	cd "${WORKDIR}/${MY_P}/AP/client"
 	AT_M4DIR="m4" eautoreconf
 	chmod +x configure

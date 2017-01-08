@@ -1,0 +1,12 @@
+diff -urp nvorbis-9999.20160922.orig/.nuget/NuGet.targets nvorbis-9999.20160922/.nuget/NuGet.targets
+--- nvorbis-9999.20160922.orig/.nuget/NuGet.targets	2017-01-03 16:54:54.058123743 -0800
++++ nvorbis-9999.20160922/.nuget/NuGet.targets	2017-01-03 17:01:01.800208212 -0800
+@@ -38,7 +38,7 @@
+     
+     <PropertyGroup>
+         <!-- NuGet command -->
+-        <NuGetExePath Condition=" '$(NuGetExePath)' == '' ">$(NuGetToolsPath)\nuget.exe</NuGetExePath>
++        <NuGetExePath Condition=" '$(NuGetExePath)' == '' ">/usr/lib/mono/NuGet/4.5/NuGet.exe</NuGetExePath>
+         <PackageSources Condition=" $(PackageSources) == '' ">@(PackageSource)</PackageSources>
+         
+         <NuGetCommand Condition=" '$(OS)' == 'Windows_NT'">"$(NuGetExePath)"</NuGetCommand>

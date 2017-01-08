@@ -1,0 +1,16 @@
+diff -urp monodevelop-monodevelop-6.1.3.19.orig/main/configure.in monodevelop-monodevelop-6.1.3.19/main/configure.in
+--- monodevelop-monodevelop-6.1.3.19.orig/main/configure.in	2017-01-02 21:34:12.069105363 -0800
++++ monodevelop-monodevelop-6.1.3.19/main/configure.in	2017-01-02 21:36:05.646465457 -0800
+@@ -28,9 +28,9 @@ if test "x$MCS" = "x" ; then
+   AC_MSG_ERROR([Can't find "mcs" in your PATH])
+ fi
+ 
+-if test "x$FSHARPC" = "x" ; then
+-  AC_MSG_ERROR([Can't find "fsharpc" in your PATH])
+-fi
++#if test "x$FSHARPC" = "x" ; then
++#  AC_MSG_ERROR([Can't find "fsharpc" in your PATH])
++#fi
+ 
+ dnl Find pkg-config
+ AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
