@@ -74,8 +74,6 @@ IMPORTANT:  For firefox, chromium, surf, you need to copy the contents of profil
 
 *net-misc/bitlbee - Fixed support for Skype through libpurple.  I haven't uploaded this upstream.
 
-*x11-wm/dwm - Integrated Fibonacci layout
-
 *app-eselect/eselect-opencl - Switch between SDK libraries and driver OpenCL implementation.  For example, you will need to add icd profiles in /etc/OpenCL/profiles that match the format /etc/OpenCL/profiles/${VENDOR}/${VENDOR}ocl{32,64}.icd.  The eselect module will map one of those OpenCL profiles to /etc/OpenCL/vendors/ocl{32,64}.icd so you can switch between the SDK or driver.  Your OpenCL app will recognize the OpenCL library version.
 
 *sys-process/psdoom-ng - Process killer based on Chocolate Doom 2.2.1 with man file and simple wrapper.
@@ -164,7 +162,7 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 *x11-libs/cairo - This one has colored emojis enabled.
 
-*x11-wm/dwm - fixes the emoji titlebar crash.
+*x11-wm/dwm - fixes the emoji titlebar crash and has integrated Fibonacci layout patch applied
 
 *media-gfx/caesiumclt - is an command line image compressor for png and jpeg files.
 
