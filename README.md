@@ -180,6 +180,12 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 *media-gfx/libcaca contains an experimental special 256 color patch from Ben Wiley Sittler.  I don't know if the patch actually works from emperical tests.  Maybe it is just me or I forward patched it wrong.  I use the experimental 256 color for facy to render Facebook photos, animated gifs, and Facebook videos to try to better render skin color.  I still think Termpic colors rendering is better.
 
+*games-engines/fna - is an XNA4 ebuild which just produces an C# assembly.  This project sadly doesn't have a Monodevelop addin.  This ebuild is provided for others to fix and expand.
+
+*dev-dotnet/{mojoshader-cs, openal-cs, sdl2-cs, theoraplay-cs, vorbisfile-cs} are dependencies for fna which need testing.  Looks like it hasn't been extensively tested on Linux.
+
+*media-libs/theoraplay nees testing.
+
 The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overlay ebuilds.  They many of the ebuilds in that folder in this overlay are dependencies for the latest stable Monodevelop and for Monogame.
 
 TODO (NOT COMMITED):
