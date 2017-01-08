@@ -7,10 +7,11 @@ inherit eutils cmake-utils
 
 DESCRIPTION="MojoShader"
 HOMEPAGE="https://icculus.org/mojoshader/"
-SRC_URI="https://hg.icculus.org/icculus/${PN}/archive/5e0ebc5366f3.tar.bz2"
+COMMIT="5e0ebc5366f3"
+SRC_URI="https://hg.icculus.org/icculus/${PN}/archive/${COMMIT}.tar.bz2 -> ${P}.tar.bz2"
 
 LICENSE="ZLIB"
-SLOT="${PV}"
+SLOT="9999"
 KEYWORDS="~amd64 ~ppc ~x86"
 IUSE="debug static +profile_bytecode +profile_d3d +profile_glsl120 +profile_glsl +profile_arb1 +profile_arb1_nv -effect_support -flip_viewport -depth_clipping -xna_vertextexture"
 REQUIRED_USE=""
@@ -21,7 +22,7 @@ DEPEND="${RDEPEND}
 	>=dev-util/cmake-2.6
 "
 
-S="${WORKDIR}/${PN}-5e0ebc5366f3"
+S="${WORKDIR}/${PN}-${COMMIT}"
 
 src_prepare() {
 	eapply_user
@@ -39,16 +40,16 @@ src_configure() {
 	PREFIX="${D}"
 
         local mycmakeargs=(
-                $(cmake-utils_use profile_d3d PROFILE_D3D)
-                $(cmake-utils_use profile_bytecode PROFILE_BYTECODE)
-                $(cmake-utils_use profile_glsl120 PROFILE_GLSL120)
-                $(cmake-utils_use profile_glsl PROFILE_GLSL)
-                $(cmake-utils_use profile_arb1 PROFILE_ARB1)
-                $(cmake-utils_use profile_arb1_nv PROFILE_ARB1_NV)
-                $(cmake-utils_use effect_support EFFECT_SUPPORT)
-                $(cmake-utils_use flip_viewport FLIP_VIEWPORT)
-                $(cmake-utils_use depth_clipping DEPTH_CLIPPING)
-                $(cmake-utils_use xna_vertextexture XNA4_VERTEXTEXTURE)
+                -DPROFILE_D3D=$(usex profile_d3d)
+                -DPROFILE_BYTECODE=$(usex profile_bytecode)
+                -DPROFILE_GLSL120=$(usex profile_glsl120)
+                -DPROFILE_GLSL=$(usex profile_glsl)
+                -DPROFILE_ARB1=$(usex profile_arb1)
+                -DPROFILE_ARB1_NV=$(usex profile_arb1_nv)
+                -DEFFECT_SUPPORT=$(usex effect_support)
+                -DFLIP_VIEWPORT=$(usex flip_viewport)
+                -DDEPTH_CLIPPING=$(usex depth_clipping)
+                -DXNA4_VERTEXTEXTURE=$(usex xna_vertextexture)
         )
 	if use static; then
 		mycmakeargs+=( -DBUILD_SHARED=OFF )
@@ -65,8 +66,7 @@ src_compile() {
 
 src_install() {
 	#cmake-utils_src_install
-	true
-	cd "${WORKDIR}/mojoshader-20160101_build"
+	cd "${WORKDIR}/${PN}-${PV}_build"
 	mkdir -p "${D}/usr/$(get_libdir)/mojoshader"
 	cp libmojoshader.so "${D}/usr/$(get_libdir)"
 	cp $(find . -maxdepth 1 -type f -executable | grep -v "\.so") "${D}/usr/$(get_libdir)/mojoshader"

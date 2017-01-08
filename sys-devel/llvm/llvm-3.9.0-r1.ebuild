@@ -203,7 +203,7 @@ src_prepare() {
 
 	if use clang; then
 		# Automatically select active system GCC's libraries, bugs #406163 and #417913
-		eapply "${FILESDIR}"/3.9.1/clang/gcc-config.patch
+		eapply "${FILESDIR}"/3.9.0/clang/gentoo-runtime-gcc-detection-v3.patch
 
 		eapply "${FILESDIR}"/3.9.1/clang/darwin_prefix-include-paths.patch
 		eprefixify tools/clang/lib/Frontend/InitHeaderSearch.cpp
@@ -425,11 +425,6 @@ multilib_src_compile() {
 		pax-mark m "${BUILD_DIR}"/unittests/ExecutionEngine/Orc/OrcJITTests
 		pax-mark m "${BUILD_DIR}"/unittests/ExecutionEngine/MCJIT/MCJITTests
 		pax-mark m "${BUILD_DIR}"/unittests/Support/SupportTests
-	fi
-
-	# provide a symlink for tests
-	if [[ $(get_libdir) != lib ]]; then
-		ln -s "../$(get_libdir)/clang" lib/clang || die
 	fi
 }
 
