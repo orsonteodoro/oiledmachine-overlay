@@ -98,7 +98,7 @@ Again, I need people who have used this library to test this ebuild and the tool
 
 Also, this is a Linux only ebuild which means it will only build games for Linux.  You cannot use it to port to other platforms (Android, Apple TV, iOS) because Xamarin Studio is not in Linux which required to port to mobile.
 
-*dev-dotnet/atitextureconverter - You don't need the actual proprietary library to compile monogame.  You need to manually install the proprietary library if you have the hardware.  Instructions provided in the library to obtain and place it.
+*dev-dotnet/atitextureconverter - You don't need the actual proprietary library to compile monogame.  The wrapper alone will do fine in order to use monogame.  You need to manually install the proprietary library if you have the hardware.  Instructions provided in the library to obtain and place it.
 
 *dev-dotnet/pvrtexlibnet - You should stay away from this one but it may be required for compiling monogame which I didn't take the time to turn off.  Basically pvrtexlibnet is another C# wrapper around the propretary PVRTexLib library blob from Imagination Technlogies.  You need to download the library there.  The binary library blob uses the PVRTC compression (https://en.wikipedia.org/wiki/PVRTC) which is patented.  The license in those libraries are restricted.  There is a bindist flag for this one.  Using the bindist will not install the propretary library and proprietary documentation just the wrapper.  Delete the PVRTexLib from that this ebuild uses and use the one from Imagination Technlogies.
 
@@ -178,9 +178,11 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 *dev-net/protobuild uses Protobuild.exe to generate protobuild files.   We do not know if the compiled protobuild.exe is safe to use.  This is required to generate monogame project files.  Monogame comes with binary protobuild.exe, but we are gentoo.  We compile everything from the source code.
 
-*dev-dotnet/koala is a for facy.  I is used to interact with the Facebook Graph API in ruby.
+*dev-dotnet/koala is a for facy.  It is used to interact with the Facebook Graph API in Ruby.
 
 *media-gfx/libcaca contains an experimental special 256 color patch from Ben Wiley Sittler.  I don't know if the patch actually works from emperical tests.  Maybe it is just me or I forward patched it wrong.  I use the experimental 256 color for facy to render Facebook photos, animated gifs, and Facebook videos to try to better render skin color.  I still think Termpic colors rendering is better.
+
+The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overlay ebuilds.  They many of the ebuilds in that folder in this overlay are dependencies for the latest stable Monodevelop and for Monogame.
 
 TODO (NOT COMMITED):
 
