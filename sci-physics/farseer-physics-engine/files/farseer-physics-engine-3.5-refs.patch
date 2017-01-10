@@ -1,0 +1,21 @@
+diff -urp "farseer-physics-engine-3.5.orig/Farseer Physics MonoGame.csproj" "farseer-physics-engine-3.5/Farseer Physics MonoGame.csproj"
+--- "farseer-physics-engine-3.5.orig/Farseer Physics MonoGame.csproj"	2013-08-26 20:53:00.000000000 -0700
++++ "farseer-physics-engine-3.5/Farseer Physics MonoGame.csproj"	2017-01-10 03:19:46.889762313 -0800
+@@ -162,9 +162,7 @@
+     <Compile Include="Settings.cs" />
+   </ItemGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework">
+-      <HintPath>$(MSBuildExtensionsPath)\..\MonoGame\v3.0\Assemblies\WindowsGL\MonoGame.Framework.dll</HintPath>
+-    </Reference>
++    <Reference Include="MonoGame.Framework" />
+     <Reference Include="System" />
+     <Reference Include="System.Xml" />
+   </ItemGroup>
+@@ -177,4 +175,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
