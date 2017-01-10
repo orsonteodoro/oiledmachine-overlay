@@ -188,6 +188,10 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overlay ebuilds.  They many of the ebuilds in that folder in this overlay are dependencies for the latest stable Monodevelop and for Monogame.
 
+*games-misc/sharpnav - is a AI pathfinding library in C# useful for games.
+
+*games-misc/tiledsharp - is a map loader in C# for tiled map editor.
+
 TODO (NOT COMMITED):
 
 *media-video/libmtp - MTP/IP partial support.  Currently patches are stored in seperate my /etc/portage/patches.  No one has reverse engineered the save WIFI profile BLOB generation [possibly related to CryptUnprotectData() and WLANProfile XML format] to device given a plaintext WIFI password even in WINE.  It uses GSSDP to broadcast presence.  Transferring files over WIFI in Linux/libmtp does work but you need to have my patch and need the GUID of the PC/Transfer App.  It is currently on indefinite hold.
