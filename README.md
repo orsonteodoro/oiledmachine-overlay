@@ -192,6 +192,8 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 *sci-physics/farseer-physics-engine - is a physics engine based on box2d and is a C# library.  This one also has support for monogame.
 
+*dev-dotnet/aforgedotnet - This is the AForge.NET library containing computer vision and aritificial intelligence algorithms.  Kinect (via libfreenect) support untested.  References to ffmpeg untested.  Needs to be tested.  The author said that the video isn't feature complete on mono Linux.
+
 The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overlay ebuilds.  They many of the ebuilds in that folder in this overlay are dependencies for the latest stable Monodevelop and for Monogame.
 
 
