@@ -1,0 +1,14 @@
+diff -urp SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431.orig/Source/SharpNav/MathHelper.cs SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431/Source/SharpNav/MathHelper.cs
+--- SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431.orig/Source/SharpNav/MathHelper.cs	2017-01-08 16:27:28.806095172 -0800
++++ SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431/Source/SharpNav/MathHelper.cs	2017-01-08 16:28:00.186292907 -0800
+@@ -20,6 +20,10 @@ namespace SharpNav
+ 	/// </summary>
+ 	public static class MathHelper
+ 	{
++                public static float Pi = (float)System.Math.PI;
++                public static float PiOver4 = (float)System.Math.PI/4.0f;
++                public static float PiOver2 = (float)System.Math.PI/2.0f;
++
+ 		/// <summary>
+ 		/// Clamps an integer value to be within a specified range.
+ 		/// </summary>

@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=6
-inherit mono-env eutils git-r3 mono gac
+inherit dotnet eutils git-r3 mono gac
 
 DESCRIPTION="NVorbis is a C# vorbis decoder"
 HOMEPAGE=""
@@ -13,7 +13,7 @@ LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 USE_DOTNET="net45"
-IUSE="${USE_DOTNET} debug opentk +gac"
+IUSE="${USE_DOTNET} debug opentk +gac developer"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
 
 RDEPEND=">=dev-lang/mono-4"
@@ -24,6 +24,7 @@ DEPEND="${RDEPEND}
 RESTRICT="fetch"
 
 S="${WORKDIR}/${PN}-${PV}"
+SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_unpack() {
         #EGIT_CHECKOUT_DIR="${WORKDIR}"
@@ -43,7 +44,7 @@ src_prepare() {
 	eapply "${FILESDIR}/nvorbis-9999.20160922-testapp.patch"
 	eapply "${FILESDIR}/nvorbis-9999.20160922-disable-testapp.patch"
 
-	genkey
+	egenkey
 
 	eapply_user
 }
@@ -55,13 +56,8 @@ src_compile() {
 	fi
 	cd "${S}"
 
-	sed -i -e "s|<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>|<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>|g" ./NVorbis/NVorbis.csproj
-	sed -i -e "s|<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>|<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>|g" ./TestHarness/TestHarness.csproj
-	sed -i -e "s|<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>|<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>|g" ./TestApp/TestApp.csproj
-	sed -i -e "s|net40-Client|net45-Client|g" ./TestApp/packages.config
-
         einfo "Building solution"
-        xbuild /p:Configuration=${mydebug} /p:SignAssembly=true /p:AssemblyOriginatorKeyFile="${S}/${PN}-keypair.snk" NVorbis.sln || die
+        exbuild_strong /p:Configuration=${mydebug} NVorbis.sln || die
 }
 
 src_install() {
@@ -70,12 +66,19 @@ src_install() {
 		mydebug="Debug"
 	fi
 
+	esavekey
+
         ebegin "Installing dlls into the GAC"
 
 	for x in ${USE_DOTNET} ; do
                 FW_UPPER=${x:3:1}
                 FW_LOWER=${x:4:1}
                 egacinstall "${S}/bin/NVorbis.dll"
+               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		if use developer ; then
+			doins "${S}/bin/NVorbis.dll"
+			doins bin/{NVorbis.dll.mdb,NVorbis.XML}
+		fi
         done
 
 	if use opentk ; then
@@ -83,19 +86,15 @@ src_install() {
 	                FW_UPPER=${x:3:1}
         	        FW_LOWER=${x:4:1}
 	                egacinstall "${S}/OpenTKSupport/bin/${mydebug}/NVorbis.OpenTKSupport.dll"
+	               	insinto "/usr/$(get_libdir)/mono/${PN}"
+			if use developer ; then
+				doins OpenTKSupport/bin/${mydebug}/NVorbis.OpenTKSupport.dll.mdb
+				doins bin/NVorbis.OpenTKSupport.XML
+			fi
 	        done
 	fi
 
 	eend
-}
 
-function genkey() {
-        einfo "Generating Key Pair"
-        cd "${S}"
-        sn -k "${PN}-keypair.snk"
-}
-
-function savekey() {
-	mkdir -p "${D}/usr/share/${PN}/"
-	cp "${PN}-keypair.snk" "${D}/usr/share/${PN}/"
+	dotnet_multilib_comply
 }

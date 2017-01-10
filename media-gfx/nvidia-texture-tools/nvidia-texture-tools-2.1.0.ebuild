@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=6
-inherit cmake-utils eutils multilib toolchain-funcs gac
+inherit dotnet cmake-utils eutils multilib toolchain-funcs gac
 
 DESCRIPTION="A set of cuda-enabled texture tools and compressors"
 HOMEPAGE="http://developer.nvidia.com/object/texture_tools.html"
@@ -37,6 +37,9 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/${PN}-${PV}"
 
 pkg_setup() {
+	if use gac ; then
+		dotnet_pkg_setup
+	fi
 	if use cuda; then
 		if [[ $(( $(gcc-major-version) * 10 + $(gcc-minor-version) )) -gt 44 ]] ; then
 			eerror "gcc 4.5 and up are not supported for useflag cuda!"
@@ -62,10 +65,13 @@ src_prepare() {
 		cp -a "${S}/project/vc9" "${S}/project/monogame"
 		wget -O "${S}/project/monogame/Nvidia.TextureTools/TextureTools.cs"  "https://github.com/castano/nvidia-texture-tools/raw/a382ea5b21796b62a25fc1eb99871735a25db64f/project/vc9/Nvidia.TextureTools/TextureTools.cs" || die
 	fi
-	#sed -i -e "s|private delegate void WriteDataDelegate|public delegate bool WriteDataDelegate|g" "${S}"/project/vc8/Nvidia.TextureTools/TextureTools.cs
-	#sed -i -e "s|private delegate void ImageDelegate|public delegate void ImageDelegate|g" "${S}"/project/vc8/Nvidia.TextureTools/TextureTools.cs
 
-	genkey
+	for dll in $NVTT_DLLS
+	do
+		if use $dll ; then
+			egenkey "${PN}-${dll}.snk"
+		fi
+	done
 
 	eapply_user
 }
@@ -85,24 +91,15 @@ src_configure() {
 }
 
 src_compile() {
-        mydebug="Net45-Release"
-        if use debug; then
-                mydebug="Net45-Debug"
-        fi
-
 	cmake-utils_src_compile
 
 	if use gac; then
-	        mydebug="Release"
-	        if use debug; then
-	                mydebug="Debug"
-	        fi
-
 		for dll in $NVTT_DLLS
 		do
 			if use $dll ; then
 				cd "${S}"/project/$dll/Nvidia.TextureTools/
-			        xbuild Nvidia.TextureTools.csproj /p:Configuration=${mydebug} /p:SignAssembly=true /p:AssemblyOriginatorKeyFile="${S}/${PN}-keypair.snk" || die "xbuild failed"
+				SNK_FILENAME="${S}/${PN}-${dll}.snk" \
+			        exbuild_strong Nvidia.TextureTools.csproj || die "exbuild_strong failed"
 			fi
 		done
 	fi
@@ -120,36 +117,24 @@ src_install() {
 	if use gac; then
 	        ebegin "Installing dlls into the GAC"
 
-		savekey
-
 		for x in ${USE_DOTNET} ; do
-        	        FW_UPPER=${x:3:1}
-	                FW_LOWER=${x:4:1}
-	                egacinstall "${S}/project/vc12/Nvidia.TextureTools/bin/${mydebug}/Nvidia.TextureTools.dll"
+       		        FW_UPPER=${x:3:1}
+        	        FW_LOWER=${x:4:1}
+			for dll in $NVTT_DLLS
+			do
+				if use $dll ; then
+			                egacinstall "${S}/project/$dll/Nvidia.TextureTools/bin/${mydebug}/Nvidia.TextureTools.dll" "${PN}/$dll"
+			               	insinto "/usr/$(get_libdir)/mono/${PN}/$dll"
+					if use developer ; then
+						doins "${S}/project/$dll/Nvidia.TextureTools/bin/${mydebug}/Nvidia.TextureTools.dll.mdb"
+						esavekey "${S}/${PN}-${dll}.snk"
+					fi
+				fi
+			done
 	        done
 
 		eend
 	fi
 
-	for dll in $NVTT_DLLS
-	do
-		if use $dll ; then
-			#we have multiple versions of the same library. developers may invertently choose the older one (anything but vc12)
-			#we store each implementation in different folders so they preserve the same class and assembly name
-			mkdir -p "${D}/usr/lib/mono/${PN}/$dll"
-			cp "${S}/project/$dll/Nvidia.TextureTools/bin/${mydebug}/Nvidia.TextureTools.dll" \
-			   "${D}/usr/lib/mono/${PN}/$dll/Nvidia.TextureTools.dll"
-		fi
-	done
-}
-
-function genkey() {
-	einfo "Generating Key Pair"
-	cd "${S}"
-	sn -k "${PN}-keypair.snk"
-}
-
-function savekey() {
-	mkdir -p "${D}/usr/share/${PN}/"
-	cp "${PN}-keypair.snk" "${D}/usr/share/${PN}/"
+	dotnet_multilib_comply
 }

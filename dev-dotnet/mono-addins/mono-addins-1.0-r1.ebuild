@@ -13,7 +13,9 @@ SRC_URI="https://github.com/mono/${PN}/archive/${P}.tar.gz -> ${P}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64 ppc ~x86"
-IUSE="+gtk"
+USE_DOTNET="net45"
+IUSE="${USE_DOTNET} +gtk"
+REQUIRED_USE="|| ( ${USE_DOTNET} )"
 
 RDEPEND=">=dev-lang/mono-3
 	gtk? ( >=dev-dotnet/gtk-sharp-2.12.21:2 )"
@@ -51,5 +53,18 @@ src_compile() {
 
 src_install() {
 	default
+
+	if use developer ; then
+		insinto "/usr/$(get_libdir)/mono/${PN}"
+		doins Mono.Addins.CecilReflector/Mono.Cecil/mono.snk
+		doins mono-addins.snk
+		doins bin/Mono.Addins.Setup.dll.mdb
+		doins bin/Mono.Addins.CecilReflector.dll.mdb
+		doins bin/Mono.Addins.Gui.dll.mdb
+		doins bin/mautil.exe.mdb
+		doins bin/Mono.Addins.MSBuild.dll.mdb
+		doins bin/Mono.Addins.dll.mdb
+	fi
+
 	dotnet_multilib_comply
 }

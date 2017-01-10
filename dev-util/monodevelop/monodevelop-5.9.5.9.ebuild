@@ -19,7 +19,9 @@ SRC_URI="https://launchpadlibrarian.net/68057829/NUnit-2.5.10.11092.zip
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="+subversion +git +gnome qtcurve"
+USE_DOTNET="net40"
+IUSE="${USE_DOTNET} +subversion +git +gnome qtcurve"
+REQUIRED_USE="^^ ( ${USE_DOTNET} )"
 
 #TODO: doc use flag and mono-docbrowser
 RDEPEND=">=dev-lang/mono-3.2.8
@@ -100,6 +102,9 @@ src_prepare() {
 	./configure --profile=default || die
 	make dist || die
 
+	sed -i -e "s|XBUILD_ARGS=|XBUILD_ARGS=/p:TargetFrameworkVersion=v${EBF} |g" "${T}/${P}/main/xbuild.include" || die
+	sed -i -e "s|XBUILD_ARGS=|XBUILD_ARGS=/p:TargetFrameworkVersion=v${EBF} |g" "${T}/${P}/main/external/mono-addins/xbuild.include" || die
+
 	#move it
 	mv -f "${T}/${P}/tarballs/"monodevelop-*/* "${S}" || die
 
@@ -129,11 +134,8 @@ src_configure() {
 
 src_install() {
 	default
-	#if use nunit; then
-	#	true
-	#else
-	#	rm -rf "${D}"/usr/lib/monodevelop/AddIns/NUnit
-	#fi
+
+	dotnet_multilib_comply
 }
 
 pkg_preinst() {
@@ -151,3 +153,7 @@ pkg_postrm() {
 	fdo-mime_mime_database_update
 	fdo-mime_desktop_database_update
 }
+
+
+
+

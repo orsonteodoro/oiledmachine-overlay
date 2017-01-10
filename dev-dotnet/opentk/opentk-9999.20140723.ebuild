@@ -4,7 +4,7 @@
 
 EAPI="6"
 
-inherit eutils multilib mono versionator
+inherit dotnet eutils multilib versionator mono
 
 MY_PV="${PV:5:4}-${PV:9:2}-${PV:11:2}"
 MY_P="${PN}-${MY_PV}"
@@ -17,7 +17,7 @@ LICENSE="OpenTK"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 USE_DOTNET="net45"
-IUSE="${USE_DOTNET}"
+IUSE="${USE_DOTNET} gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} )"
 
 RDEPEND=">=dev-lang/mono-2.0
@@ -38,19 +38,19 @@ src_prepare() {
 	#required by monogame 3.5.1
 	eapply "${FILESDIR}/${PN}-20140723-opentk-expose-joystick-guid.patch" || die "failed to patch joystick guid"
 
-	genkey
+	egenkey
 
 	eapply_user
 }
 
 src_compile() {
-	xbuild OpenTK.sln /p:Configuration=Release /t:OpenTK /p:SignAssembly=true /p:AssemblyOriginatorKeyFile="${S}/${PN}-keypair.snk" || die "build failed"
+	exbuild_strong OpenTK.sln /t:OpenTK || die "build failed"
 }
 
 src_install() {
 	ebegin "Installing dlls into the GAC"
 
-	savekey
+	esavekey
 
 	for x in ${USE_DOTNET} ; do
                 FW_UPPER=${x:3:1}
@@ -64,16 +64,14 @@ src_install() {
 
 	dodoc Documentation/*.txt
 
-	mono_multilib_comply
-}
+	if use developer ; then
+               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		doins OpenTK.snk
+		doins Binaries/OpenTK/Release/{OpenTK.dll.mdb,OpenTK.GLControl.xml,OpenTK.pdb,OpenTK.xml}
+	fi
 
-function genkey() {
-        einfo "Generating Key Pair"
-        cd "${S}"
-        sn -k "${PN}-keypair.snk"
-}
+       	insinto "/usr/$(get_libdir)/mono/${PN}"
+	doins Binaries/OpenTK/Release/{OpenTK.Compatibility.dll.config,OpenTK.dll.config,OpenTK.pdb}
 
-function savekey() {
-	mkdir -p "${D}/usr/share/${PN}/"
-	cp "${PN}-keypair.snk" "${D}/usr/share/${PN}/"
+	dotnet_multilib_comply
 }

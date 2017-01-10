@@ -17,9 +17,9 @@ HOMEPAGE="http://www.monodevelop.com/"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-USE_DOTNET="net45"
+USE_DOTNET="net45 net40"
 IUSE="${USE_DOTNET} +subversion +git doc +gnome qtcurve fsharp"
-REQUIRED_USE="|| ( ${USE_DOTNET} )"
+REQUIRED_USE="^^ ( ${USE_DOTNET} ) fsharp? ( !net45 )"
 
 COMMON_DEPEND="
 	>=dev-lang/mono-3.2.8
@@ -29,7 +29,7 @@ COMMON_DEPEND="
 	>=dev-dotnet/icsharpcode-nrefactory-5.5.1
 	>=dev-util/nunit-3.0.1:3
 	fsharp? ( >=dev-lang/fsharp-4.0.1.15 )
-        dev-dotnet/gdk-sharp
+        dev-dotnet/gdk-sharp:3
         dev-dotnet/cecil[gac]
 	dev-dotnet/referenceassemblies-pcl
 	net-libs/libssh2
@@ -64,6 +64,16 @@ S="${WORKDIR}/${PN}-${PV}"
 EGIT_COMMIT="0ccfcd52b95305ebd5b7eca0d88c1017035910ae"
 EGIT_REPO_URI="git://github.com/mono/monodevelop.git"
 EGIT_SUBMODULES=( '*' ) # todo: replace certain submodules with system packages
+
+src_prepare() {
+	if use net45 ; then
+		USE_DOTNET="net45" \
+		dotnet_pkg_setup
+	elif use net40 ; then
+		USE_DOTNET="net40" \
+		dotnet_pkg_setup
+	fi
+}
 
 src_unpack() {
 	#cd "${T}"
@@ -120,6 +130,9 @@ src_prepare() {
 
 	eapply "${FILESDIR}/fsharp-shared-tooltips-tooltip.patch"
 
+	sed -i -e "s|XBUILD_ARGS=|XBUILD_ARGS=/p:TargetFrameworkVersion=v${EBF} |g" ./main/xbuild.include || die
+	sed -i -e "s|XBUILD_ARGS=|XBUILD_ARGS=/p:TargetFrameworkVersion=v${EBF} |g" ./main/external/mono-addins/xbuild.include || die
+
 	eapply_user
 }
 
@@ -160,10 +173,13 @@ src_configure() {
 }
 
 src_compile() {
-	#xbuild "${S}/main/external/libgit2sharp/Lib/CustomBuildTasks/CustomBuildTasks.csproj"
-	#cp "${S}/main/external/libgit2sharp/Lib/CustomBuildTasks/bin/Debug/CustomBuildTasks.dll" "${S}/main/external/libgit2sharp/Lib/CustomBuildTasks/"
-
 	default
+}
+
+src_install() {
+	default
+
+	dotnet_multilib_comply
 }
 
 pkg_preinst() {

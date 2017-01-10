@@ -59,7 +59,15 @@ src_install() {
 	elog "Installing NuGet.Core.dll into GAC"
 	egacinstall "src/Core/obj/Mono Release/NuGet.Core.dll"
 	elog "Installing NuGet console application"
-	insinto /usr/lib/mono/NuGet/"${FRAMEWORK}"/
+	insinto /usr/$(get_libdir)/mono/NuGet/"${FRAMEWORK}"/
 	doins src/CommandLine/obj/Mono\ Release/NuGet.exe
 	make_wrapper nuget "mono /usr/lib/mono/NuGet/${FRAMEWORK}/NuGet.exe"
+
+	if use developer ; then
+               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		doins src/Core/bin/Release/NuGet.Core.dll.mdb
+		doins src/Core/rsa-4096.snk
+	fi
+
+	dotnet_multilib_comply
 }

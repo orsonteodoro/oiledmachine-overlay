@@ -1,0 +1,77 @@
+diff -urp SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431.orig/Source/SharpNav.Examples/SharpNav.Examples.csproj SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431/Source/SharpNav.Examples/SharpNav.Examples.csproj
+--- SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431.orig/Source/SharpNav.Examples/SharpNav.Examples.csproj	2016-10-23 08:11:30.000000000 -0700
++++ SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431/Source/SharpNav.Examples/SharpNav.Examples.csproj	2017-01-08 15:18:24.892739509 -0800
+@@ -63,16 +63,9 @@
+     <StartupObject>SharpNav.Examples.Program</StartupObject>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="Gwen">
+-      <HintPath>..\..\Dependencies\Gwen.dll</HintPath>
+-    </Reference>
+-    <Reference Include="Gwen.Renderer.OpenTK">
+-      <HintPath>..\..\Dependencies\Gwen.Renderer.OpenTK.dll</HintPath>
+-    </Reference>
+-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+-      <HintPath>..\packages\OpenTK.1.1.2349.61993\lib\NET40\OpenTK.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
++    <Reference Include="Gwen" />
++    <Reference Include="Gwen.Renderer.OpenTK" />
++    <Reference Include="OpenTK" />
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+     <Reference Include="Microsoft.CSharp" />
+@@ -127,4 +120,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urp SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431.orig/Source/SharpNav.Tests/SharpNav.Tests.csproj SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431/Source/SharpNav.Tests/SharpNav.Tests.csproj
+--- SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431.orig/Source/SharpNav.Tests/SharpNav.Tests.csproj	2016-10-23 08:11:30.000000000 -0700
++++ SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431/Source/SharpNav.Tests/SharpNav.Tests.csproj	2017-01-08 15:18:22.444649351 -0800
+@@ -80,12 +80,8 @@
+   <ItemGroup>
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+-    <Reference Include="Newtonsoft.Json">
+-      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+-    </Reference>
+-    <Reference Include="nunit.framework">
+-      <HintPath>..\packages\NUnit.3.2.1\lib\net45\nunit.framework.dll</HintPath>
+-    </Reference>
++    <Reference Include="Newtonsoft.Json" />
++    <Reference Include="nunit.framework" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(Configuration)' == 'SharpDX'">
+     <Reference Include="SharpDX">
+@@ -101,18 +97,9 @@
+ 	</Reference>
+   </ItemGroup>
+   <ItemGroup Condition="'$(Configuration)' == 'MonoGame'">
+-	<Reference Include="MonoGame.Framework, Version=3.5.1.1679, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.5.1.1679\lib\net40\MonoGame.Framework.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="NVorbis, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.5.1.1679\lib\net40\NVorbis.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-	<Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+-      <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.5.1.1679\lib\net40\OpenTK.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
++      <Reference Include="MonoGame.Framework" />
++      <Reference Include="NVorbis" />
++      <Reference Include="OpenTK" />
+   </ItemGroup>
+   <ItemGroup>
+     <Compile Include="Collections\Generic\BufferedQueueTests.cs" />
+@@ -156,4 +143,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>

@@ -37,7 +37,7 @@ src_prepare() {
 }
 
 src_compile() {
-	exbuild "Source/MSBuild.Community.Tasks/MSBuild.Community.Tasks.csproj"
+	exbuild_strong "Source/MSBuild.Community.Tasks/MSBuild.Community.Tasks.csproj"
 }
 
 src_install() {
@@ -48,7 +48,15 @@ src_install() {
 	fi
 	egacinstall "Source/MSBuild.Community.Tasks/obj/${DIR}/MSBuild.Community.Tasks.dll"
 	einstall_pc_file "${PN}" "${PV}" "MSBuild.Community.Tasks.dll"
-	insinto "/usr/lib/mono/4.5"
+	insinto "/usr/$(get_libdir)/mono/${EBF}"
 	doins "Source/MSBuild.Community.Tasks/MSBuild.Community.Tasks.Targets"
+
+	if use developer ; then
+               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		doins Source/MSBuild.Community.Tasks/MSBuild.Community.Tasks.snk
+		doins Source/MSBuild.Community.Tasks/obj/Release/MSBuild.Community.Tasks.dll.mdb
+	fi
+
+	dotnet_multilib_comply
 }
 

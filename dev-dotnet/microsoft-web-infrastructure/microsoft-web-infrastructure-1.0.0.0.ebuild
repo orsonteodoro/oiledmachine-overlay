@@ -64,5 +64,12 @@ src_install()
 	# installation to GAC will cause file collision with mono package
 	#egacinstall "${S}/mcs/class/${NAME}/bin/${DIR}/${NAME}.dll"
 	enupkg "${WORKDIR}/${NAME}.1.0.0.0.nupkg"
+
+	if use developer ; then
+               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		doins mcs/class/Microsoft.Web.Infrastructure/bin/Release/Microsoft.Web.Infrastructure.dll.mdb
+	fi
+
+	multilib_copy_sources
 }
 

@@ -36,10 +36,6 @@ DEPEND="${CDEPEND}
 "
 RDEPEND="${CDEPEND}"
 
-prefix=${PREFIX}/usr
-exec_prefix=${prefix}
-libdir=${exec_prefix}/lib/mono/${EBUILD_FRAMEWORK}
-
 NUSPEC_FILE="nuget.package/LibGit2Sharp.nuspec"
 
 src_unpack() {
@@ -87,7 +83,14 @@ src_compile() {
 	enuspec "${NUSPEC_FILE}"
 }
 
+genlibdir() {
+	prefix=${PREFIX}/usr
+	exec_prefix=${prefix}
+	libdir=${exec_prefix}/$(get_libdir)/mono/${EBUILD_FRAMEWORK}
+}
+
 src_install() {
+	genlibdir
 	insinto "${libdir}"
 	if use debug; then
 		DIR="Debug"
@@ -97,9 +100,20 @@ src_install() {
 	doins "LibGit2Sharp/bin/${DIR}/LibGit2Sharp.dll"
 
 	enupkg "${WORKDIR}/LibGit2Sharp.0.22.nupkg"
+
+	if use developer ; then
+		insinto "/usr/$(get_libdir)/mono/${PN}"
+		doins LibGit2Sharp/libgit2sharp.snk
+		doins LibGit2Sharp/bin/${DIR}/LibGit2Sharp.dll.mdb
+		doins LibGit2Sharp/bin/${DIR}/LibGit2Sharp.xml
+	fi
+
+	dotnet_multilib_comply
 }
 
 pkg_postinst() {
+	genlibdir
+
 	if use gac; then
 		einfo "adding to GAC"
 		gacutil -i "${libdir}/LibGit2Sharp.dll" || die
@@ -110,6 +124,8 @@ pkg_postinst() {
 }
 
 pkg_postrm() {
+	genlibdir
+
 	if use gac; then
 		einfo "removing from GAC"
 		gacutil -u LibGit2Sharp

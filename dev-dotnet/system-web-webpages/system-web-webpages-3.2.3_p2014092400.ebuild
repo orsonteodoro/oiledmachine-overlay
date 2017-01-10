@@ -107,5 +107,14 @@ src_install() {
 	egacinstall "${DLL_PATH}/${DIR}/System.Web.Helpers.dll"
 
 	enupkg "${WORKDIR}/${NUSPEC_ID}.${NUSPEC_VERSION}.nupkg"
+
+	if use developer ; then
+               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		doins "${DLL_PATH}/${DIR}/${DLL_NAME}.dll.mdb"
+		doins "${DLL_PATH}/${DIR}/System.Web.WebPages.Deployment.dll.mdb"
+		doins "${DLL_PATH}/${DIR}/System.Web.Helpers.dll.mdb"
+	fi
+
+	dotnet_multilib_comply
 }
 

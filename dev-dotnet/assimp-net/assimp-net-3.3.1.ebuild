@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=6
-inherit mono-env eutils gac
+inherit dotnet eutils gac
 
 DESCRIPTION="AssimpNet is a C# language binding to the Assimp library"
 HOMEPAGE="https://github.com/assimp/assimp-net"
@@ -23,9 +23,10 @@ DEPEND="${RDEPEND}
 "
 
 S="${WORKDIR}/assimp-net-${PV}"
+SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_prepare() {
-	genkey
+	egenkey
 
 	eapply_user
 }
@@ -45,7 +46,7 @@ src_compile() {
 	 perl -p -i -e 's|\Q$ENV{'A'}\E|$ENV{'B'}|g' AssimpNet/AssimpNet.csproj
 
 	cd "${S}/AssimpNet"
-	xbuild AssimpNet.csproj /p:Configuration=${mydebug} /p:SignAssembly=true /p:AssemblyOriginatorKeyFile="${S}/${PN}-keypair.snk" || die
+	exbuild_strong AssimpNet.csproj /p:Configuration=${mydebug}  || die
 }
 
 src_install() {
@@ -56,9 +57,13 @@ src_install() {
 
         ebegin "Installing dlls into the GAC"
 
-	savekey
+	if use developer ; then
+		esavekey
+		insinto "/usr/$(get_libdir)/mono/${PN}"
+		doins "AssimpNet/AssimpKey.snk"
+	fi
 
-	mkdir -p "${D}/usr/lib/mono/AssimpNet.Interop.Generator/${PV}"
+	mkdir -p "${D}/usr/$(get_libdir)/mono/AssimpNet.Interop.Generator/${PV}"
 	cp "${S}/AssimpNet.Interop.Generator/obj/${mydebug}"/* "${D}/usr/lib/mono/AssimpNet.Interop.Generator/${PV}"/
 
 	for x in ${USE_DOTNET} ; do
@@ -73,15 +78,7 @@ src_install() {
 	dodoc AssimpLicense.txt
 	cd "${S}"
 	dodoc -r Docs/*
+
+	dotnet_multilib_comply
 }
 
-function genkey() {
-	einfo "Generating Key Pair"
-	cd "${S}"
-	sn -k "${PN}-keypair.snk"
-}
-
-function savekey() {
-	mkdir -p "${D}/usr/share/${PN}/"
-	cp "${PN}-keypair.snk" "${D}/usr/share/${PN}/"
-}

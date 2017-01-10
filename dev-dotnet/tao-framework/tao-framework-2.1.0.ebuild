@@ -4,7 +4,7 @@
 
 EAPI="6"
 
-inherit eutils multilib mono versionator subversion autotools gac
+inherit dotnet eutils multilib mono versionator subversion autotools gac
 
 DESCRIPTION="Tao Framework"
 HOMEPAGE="http://sourceforge.net/projects/taoframework/"
@@ -25,6 +25,7 @@ RDEPEND=">=dev-lang/mono-2.0
 		media-libs/libsdl
 	"
 DEPEND="${RDEPEND}
+                dev-util/nant
 		dev-dotnet/nunit:2
 		app-arch/p7zip"
 
@@ -44,6 +45,8 @@ src_prepare() {
 	sed -i -e "s|PACKAGES = nunit||g" tests/Sdl/Makefile.am
 	sed -i -e "s|SYSTEM_LIBS =|SYSTEM_LIBS = /usr/share/nunit-2/nunit.framework.dll |g" tests/Sdl/Makefile.am
 
+	eapply "${FILESDIR}/taoframework-2.1.0-use-mono-4.5.ebuild"
+
 	eapply_user
 
 	eautoreconf || die
@@ -59,22 +62,42 @@ src_compile() {
 
 src_install() {
 	emake DESTDIR="${D}" install
-}
 
-src_install_old() {
-	ebegin "Installing dlls into the GAC"
+	if use developer ; then
+               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		doins src/Tao.FreeType/Tao.FreeType{.snk,.xml}
+		doins src/Tao.Platform.Windows/Tao.Platform.Windows{.snk,.xml}
+		doins src/Tao.Lua/Tao.Lua{.snk,.xml}
+		doins src/Tao.OpenGl/Tao.OpenGl{.snk,.dll.config}
+		doins src/Tao.Ode/Tao.Ode{.snk,.xml}
+		doins src/Tao.Glfw/Tao.Glfw{.snk,.xml}
+		doins src/Tao.DevIl/Tao.DevIl{.snk,.xml}
+		doins src/Tao.FreeGlut/Tao.FreeGlut{.snk,.xml}
+		doins src/Tao.PhysFs/Tao.PhysFs{.snk,.xml}
+		doins src/Tao.Sdl/Tao.Sdl{.snk,.xml}
+                doins src/Tao.GlBindGen/Tao.GlBindGen.snk
+		doins src/Tao.FFmpeg/Tao.FFmpeg{.snk,.xml}
+		doins src/Tao.OpenAl/Tao.OpenAl{.snk,.xml}
+		doins src/Tao.Cg/Tao.Cg{.snk,.xml}
+		doins src/Tao.Platform.X11/Tao.Platform.X11{.snk,.xml}
+	fi
 
-	for x in ${USE_DOTNET} ; do
-                FW_UPPER=${x:3:1}
-                FW_LOWER=${x:4:1}
-                egacinstall "${S}/Binaries/OpenTK/Release/OpenTK.dll"
-                egacinstall "${S}/Binaries/OpenTK/Release/OpenTK.Compatibility.dll"
-                egacinstall "${S}/Binaries/OpenTK/Release/OpenTK.GLControl.dll"
-        done
+       	insinto "/usr/$(get_libdir)/mono/${PN}"
+	doins src/Tao.FreeType/Tao.FreeType.dll.config
+	doins src/Tao.Platform.Windows/Tao.Platform.Windows.dll.config
+	doins src/Tao.Lua/Tao.Lua.dll.config
+	doins src/Tao.OpenGl/Tao.OpenGl.dll.config
+	doins src/Tao.Ode/Tao.Ode.dll.config
+	doins src/Tao.Glfw/Tao.Glfw.dll.config
+	doins src/Tao.DevIl/Tao.DevIl.dll.config
+	doins src/Tao.FreeGlut/Tao.FreeGlut.dll.config
+	doins src/Tao.PhysFs/Tao.PhysFs.dll.config
+	doins src/Tao.Sdl/Tao.Sdl.dll.config
+	doins src/Tao.FFmpeg/Tao.FFmpeg.dll.config
+	doins src/Tao.OpenAl/Tao.OpenAl.dll.config
+	doins src/Tao.Cg/Tao.Cg.dll.config
+	doins src/Tao.Platform.X11/Tao.Platform.X11.dll.config
 
-	eend
 
-	dodoc Documentation/*.txt
-
-	mono_multilib_comply
+	dotnet_multilib_comply
 }

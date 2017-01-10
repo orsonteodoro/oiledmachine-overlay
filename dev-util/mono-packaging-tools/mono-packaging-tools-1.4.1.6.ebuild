@@ -112,6 +112,8 @@ src_install() {
 	if use doc; then
 		dodoc README.md
 	fi
+
+	dotnet_multilib_comply
 }
 
 pkg_prerm() {

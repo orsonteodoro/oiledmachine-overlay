@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=6
-inherit mono-env gac nupkg
+inherit dotnet gac nupkg
 
 REPO_NAME="aspnetwebstack"
 HOMEPAGE="https://github.com/ASP-NET-MVC/aspnetwebstack"
@@ -97,7 +97,13 @@ src_install() {
 	fi
 
 	egacinstall "${DLL_PATH}/${DIR}/${DLL_NAME}.dll"
+	if use developer ; then
+               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		doins "${DLL_PATH}/${DIR}/${DLL_NAME}.dll.mdb"
+	fi
 
 	enupkg "${WORKDIR}/${NUSPEC_ID}.${NUSPEC_VERSION}.nupkg"
+
+	dotnet_multilib_comply
 }
 

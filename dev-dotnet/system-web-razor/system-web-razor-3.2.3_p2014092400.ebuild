@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=6
-inherit mono-env gac nupkg
+inherit dotnet gac nupkg
 
 REPO_NAME="aspnetwebstack"
 HOMEPAGE="https://github.com/ASP-NET-MVC/aspnetwebstack"
@@ -44,6 +44,7 @@ NUSPEC_ID=Microsoft.AspNet.Razor
 COMMIT_DATE_INDEX="$(get_version_component_count ${PV} )"
 COMMIT_DATE="$(get_version_component_range $COMMIT_DATE_INDEX ${PV} )"
 NUSPEC_VERSION=$(get_version_component_range 1-3)"${COMMIT_DATE//p/.}"
+SNK_FILENAME="${FILESDIR}/../../../eclass/mono.snk"
 
 src_prepare() {
 	cp "${FILESDIR}/${NUSPEC_ID}.nuspec" "${S}" || die
@@ -80,11 +81,10 @@ src_compile() {
 		DIR="Release"
 	fi
 
-	exbuild "${METAFILETOBUILD}"
-	sn -R "${DLL_PATH}/${DIR}/${DLL_NAME}.dll" "${FILESDIR}"/../../..//eclass/mono.snk || die
-
-	exbuild "${S}/src/System.Web.WebPages.Razor/System.Web.WebPages.Razor.csproj"
-	sn -R "${DLL_PATH}/${DIR}/System.Web.WebPages.Razor.dll" "${FILESDIR}"/../../../eclass/mono.snk || die
+	exbuild_strong "${METAFILETOBUILD}"
+	sn -R "${DLL_PATH}/${DIR}/${DLL_NAME}.dll" "${SNK_FILENAME}" || die
+	exbuild_strong "${S}/src/System.Web.WebPages.Razor/System.Web.WebPages.Razor.csproj"
+	sn -R "${DLL_PATH}/${DIR}/System.Web.WebPages.Razor.dll" "${SNK_FILENAME}" || die
 
 	einfo nuspec: "${S}/${NUSPEC_ID}.nuspec"
 	einfo nupkg: "${WORKDIR}/${NUSPEC_ID}.${NUSPEC_VERSION}.nupkg"
@@ -99,9 +99,18 @@ src_install() {
 		DIR="Release"
 	fi
 
+	echo "${SNK_FILENAME}"
 	egacinstall "${DLL_PATH}/${DIR}/${DLL_NAME}.dll"
 	egacinstall "${DLL_PATH}/${DIR}/System.Web.WebPages.Razor.dll"
 
 	enupkg "${WORKDIR}/${NUSPEC_ID}.${NUSPEC_VERSION}.nupkg"
+
+	if use developer ; then
+               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		doins "${DLL_PATH}/${DIR}/${DLL_NAME}.dll.mdb"
+		doins "${DLL_PATH}/${DIR}/System.Web.WebPages.Razor.dll.mdb"
+	fi
+
+	dotnet_multilib_comply
 }
 

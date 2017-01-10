@@ -1,0 +1,47 @@
+diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/GwenNet.sln gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/GwenNet.sln
+--- gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/GwenNet.sln	2014-03-16 17:50:52.000000000 -0700
++++ gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/GwenNet.sln	2017-01-08 15:02:53.068497415 -0800
+@@ -4,16 +4,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F
+ EndProject
+ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gwen.Renderer.SFML", "Gwen.Renderer.SFML\Gwen.Renderer.SFML.csproj", "{D97B4F91-9FC8-46E0-A511-68D006662051}"
+ EndProject
+-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gwen.Sample.SFML", "Gwen.Sample.SFML\Gwen.Sample.SFML.csproj", "{3528E188-400A-4902-8050-FBAEAFC1F266}"
+-EndProject
+ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gwen.Renderer.Tao", "Gwen.Renderer.Tao\Gwen.Renderer.Tao.csproj", "{92B77333-E5EA-47A5-A78D-C335ED4386D3}"
+ EndProject
+-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gwen.Sample.Tao", "Gwen.Sample.Tao\Gwen.Sample.Tao.csproj", "{13045B09-2544-4084-868A-393F5F9196AF}"
+-EndProject
+ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gwen.UnitTest", "Gwen.UnitTest\Gwen.UnitTest.csproj", "{1E28C643-0671-4EDF-ADEE-B75D33BAE5AF}"
+ EndProject
+-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gwen.Sample.OpenTK", "Gwen.Sample.OpenTK\Gwen.Sample.OpenTK.csproj", "{B316F57F-6D02-4487-95AE-EA88B9C995CE}"
+-EndProject
+ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gwen.Renderer.OpenTK", "Gwen.Renderer.OpenTK\Gwen.Renderer.OpenTK.csproj", "{41650C82-D630-4E5C-845A-F1513C8FDC99}"
+ EndProject
+ Global
+@@ -30,26 +24,14 @@ Global
+ 		{D97B4F91-9FC8-46E0-A511-68D006662051}.Debug|Any CPU.Build.0 = Debug|Any CPU
+ 		{D97B4F91-9FC8-46E0-A511-68D006662051}.Release|Any CPU.ActiveCfg = Release|Any CPU
+ 		{D97B4F91-9FC8-46E0-A511-68D006662051}.Release|Any CPU.Build.0 = Release|Any CPU
+-		{3528E188-400A-4902-8050-FBAEAFC1F266}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+-		{3528E188-400A-4902-8050-FBAEAFC1F266}.Debug|Any CPU.Build.0 = Debug|Any CPU
+-		{3528E188-400A-4902-8050-FBAEAFC1F266}.Release|Any CPU.ActiveCfg = Release|Any CPU
+-		{3528E188-400A-4902-8050-FBAEAFC1F266}.Release|Any CPU.Build.0 = Release|Any CPU
+ 		{92B77333-E5EA-47A5-A78D-C335ED4386D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+ 		{92B77333-E5EA-47A5-A78D-C335ED4386D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+ 		{92B77333-E5EA-47A5-A78D-C335ED4386D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+ 		{92B77333-E5EA-47A5-A78D-C335ED4386D3}.Release|Any CPU.Build.0 = Release|Any CPU
+-		{13045B09-2544-4084-868A-393F5F9196AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+-		{13045B09-2544-4084-868A-393F5F9196AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+-		{13045B09-2544-4084-868A-393F5F9196AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+-		{13045B09-2544-4084-868A-393F5F9196AF}.Release|Any CPU.Build.0 = Release|Any CPU
+ 		{1E28C643-0671-4EDF-ADEE-B75D33BAE5AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+ 		{1E28C643-0671-4EDF-ADEE-B75D33BAE5AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+ 		{1E28C643-0671-4EDF-ADEE-B75D33BAE5AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+ 		{1E28C643-0671-4EDF-ADEE-B75D33BAE5AF}.Release|Any CPU.Build.0 = Release|Any CPU
+-		{B316F57F-6D02-4487-95AE-EA88B9C995CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+-		{B316F57F-6D02-4487-95AE-EA88B9C995CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+-		{B316F57F-6D02-4487-95AE-EA88B9C995CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+-		{B316F57F-6D02-4487-95AE-EA88B9C995CE}.Release|Any CPU.Build.0 = Release|Any CPU
+ 		{41650C82-D630-4E5C-845A-F1513C8FDC99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+ 		{41650C82-D630-4E5C-845A-F1513C8FDC99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+ 		{41650C82-D630-4E5C-845A-F1513C8FDC99}.Release|Any CPU.ActiveCfg = Release|Any CPU

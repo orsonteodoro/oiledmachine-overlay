@@ -1,0 +1,32 @@
+diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.SFML/Input/SFML.cs gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.SFML/Input/SFML.cs
+--- gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.SFML/Input/SFML.cs	2014-03-16 17:50:52.000000000 -0700
++++ gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.SFML/Input/SFML.cs	2017-01-08 14:01:43.322384946 -0800
+@@ -2,6 +2,7 @@
+ using Gwen.Control;
+ using SFML.Graphics;
+ using SFML.Window;
++using SFML.System;
+ 
+ namespace Gwen.Input
+ {
+@@ -85,7 +86,7 @@ namespace Gwen.Input
+         {
+             switch (sfKey)
+             {
+-                case Keyboard.Key.Back: return Key.Backspace;
++                case Keyboard.Key.BackSpace: return Key.Backspace;
+                 case Keyboard.Key.Return: return Key.Return;
+                 case Keyboard.Key.Escape: return Key.Escape;
+                 case Keyboard.Key.Tab: return Key.Tab;
+diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.SFML/Renderer/SFML.cs gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.SFML/Renderer/SFML.cs
+--- gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.SFML/Renderer/SFML.cs	2017-01-08 13:55:30.839395635 -0800
++++ gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.SFML/Renderer/SFML.cs	2017-01-08 14:02:49.352865956 -0800
+@@ -196,7 +196,7 @@ namespace Gwen.Renderer
+                     text += '\0';
+             }
+ 
+-            Point extents = new Point(0, sfFont.GetLineSpacing((uint)font.RealSize));
++            Point extents = new Point(0, (int)sfFont.GetLineSpacing((uint)font.RealSize));
+             char prev = '\0';
+ 
+             for (int i = 0; i < text.Length; i++)

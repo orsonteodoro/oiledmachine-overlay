@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=6
-inherit mono-env eutils mono gac
+inherit dotnet eutils mono gac
 
 DESCRIPTION="SharpFont"
 HOMEPAGE="https://github.com/Robmaister/SharpFont"
@@ -25,7 +25,7 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/SharpFont-${PV}"
 
 src_prepare() {
-	genkey
+	egenkey
 
 	eapply_user
 }
@@ -47,12 +47,18 @@ src_install() {
 
         ebegin "Installing dlls into the GAC"
 
-	savekey
+	if use developer ; then
+		esavekey
+               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		doins Source/SharpFont/SharpFont.snk
+	fi
 
 	for x in ${USE_DOTNET} ; do
                 FW_UPPER=${x:3:1}
                 FW_LOWER=${x:4:1}
-                egacinstall "${S}/Source/SharpFont/obj/${mydebug}/SharpFont.dll"
+                egacinstall "${S}/Binaries/SharpFont/${mydebug}/SharpFont.dll"
+               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		use developer && doins "${S}/Binaries/SharpFont/${mydebug}/SharpFont.dll.mdb"
         done
 
 	eend
@@ -60,16 +66,5 @@ src_install() {
 	cd "${S}"
 	dodoc README.md "LICENSE"
 
-        mono_multilib_comply
-}
-
-function genkey() {
-        einfo "Generating Key Pair"
-        cd "${S}"
-        sn -k "${PN}-keypair.snk"
-}
-
-function savekey() {
-	mkdir -p "${D}/usr/share/${PN}/"
-	cp "${PN}-keypair.snk" "${D}/usr/share/${PN}/"
+	dotnet_multilib_comply
 }

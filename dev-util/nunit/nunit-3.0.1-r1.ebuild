@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=6
-inherit mono-env gac nupkg
+inherit dotnet gac nupkg
 
 NAME="nunit"
 HOMEPAGE="https://github.com/nunit/${NAME}"
@@ -115,8 +115,11 @@ src_install() {
 		doins bin/${DIR}/*.mdb
 	fi
 
+	#sharpnav deps
+        doins bin/Release/net-4.5/nunit.framework.dll
+
 	#monogame deps
-	doins src/NUnitFramework/nunitlite.runner/obj/Release/net-4.5/nunitlite.dll
+        doins bin/Release/net-4.5/nunitlite.dll
 
 #	into /usr
 #	dobin ${FILESDIR}/nunit-console
@@ -144,5 +147,21 @@ src_install() {
 	enupkg "${WORKDIR}/NUnit.Runners.${NUGET_PACKAGE_VERSION}.nupkg"
 	enupkg "${WORKDIR}/NUnit.Console.${NUGET_PACKAGE_VERSION}.nupkg"
 	enupkg "${WORKDIR}/NUnit.Engine.${NUGET_PACKAGE_VERSION}.nupkg"
-}
 
+	if use developer ; then
+		insinto "${SLOTTEDDIR}"
+		doins bin/Release/nunit3-console.exe.mdb
+		doins bin/Release/nunit-agent.exe.mdb
+		doins bin/Release/nunit.engine.api.dll.mdb
+		doins bin/Release/net-4.5/nunitlite.dll.mdb
+		doins bin/Release/net-4.5/nunit.framework.dll.mdb
+		doins bin/Release/net-4.5/mock-nunit-assembly.exe.mdb
+		#doins bin/Release/addins/vs-project-loader.dll.mdb
+		#doins bin/Release/addins/nunit-v2-result-writer.dll.mdb
+		#doins bin/Release/addins/nunit-project-loader.dll.mdb
+		doins bin/Release/nunit.engine.dll.mdb
+		doins src/nunit.snk
+	fi
+
+	dotnet_multilib_comply
+}

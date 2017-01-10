@@ -39,6 +39,7 @@ SRC_URI="${REPOSITORY}/archive/${EGIT_BRANCH}/${EGIT_COMMIT}.zip -> ${PF}.zip
 	https://github.com/mono/mono/raw/master/mcs/class/mono.snk"
 #S="${WORKDIR}/${NAME}-${EGIT_COMMIT}"
 S="${WORKDIR}/${NAME}-${EGIT_BRANCH}"
+SNK_FILENAME="${S}/mono.snk"
 
 METAFILETOBUILD="./Mono.Cecil.sln"
 
@@ -70,8 +71,6 @@ src_compile() {
 		SARGS=/p:DebugSymbols=False
 	fi
 	PARAMETERS+=" ${SARGS}"
-	PARAMETERS+=" /p:SignAssembly=true"
-	PARAMETERS+=" /p:AssemblyOriginatorKeyFile=${S}/mono.snk"
 	PARAMETERS+=" /v:detailed"
 
 	for x in ${USE_DOTNET} ; do
@@ -84,7 +83,7 @@ src_compile() {
 			CARGS=/p:Configuration=net_${FW_UPPER}_${FW_LOWER}_Release
 		fi
 		PARAMETERS_2+=" ${CARGS}"
-		exbuild_raw ${PARAMETERS} ${PARAMETERS_2} "${METAFILETOBUILD}"
+		exbuild_strong ${PARAMETERS} ${PARAMETERS_2} "${METAFILETOBUILD}"
 	done
 
 	# run nuget_pack
@@ -107,6 +106,8 @@ src_install() {
 	done
 
 	install_pc_file
+
+	dotnet_multilib_comply
 }
 
 PC_FILE_NAME=${PN}

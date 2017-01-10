@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=6
-inherit mono-env eutils mono gac git-r3
+inherit dotnet eutils mono gac git-r3
 
 DESCRIPTION="A C# Wrapper for the TextureConverter native library to allow developers to convert images to ATI supported compressed textures"
 HOMEPAGE="https://github.com/infinitespace-studios/ATI.TextureConverter"
@@ -23,6 +23,7 @@ DEPEND="${RDEPEND}
 "
 
 S="${WORKDIR}/${PN}-${PV}"
+SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_unpack() {
         #EGIT_CHECKOUT_DIR="${WORKDIR}"
@@ -34,7 +35,7 @@ src_unpack() {
 }
 
 src_prepare() {
-	genkey
+	egenkey
 
 	eapply_user
 }
@@ -55,7 +56,7 @@ src_compile() {
 
 	einfo "Building..."
 	cd "${S}"
-	xbuild ATI.TextureConverter.sln /p:Configuration=${mydebug} /p:SignAssembly=true /p:AssemblyOriginatorKeyFile="${S}/${PN}-keypair.snk"
+	exbuild_strong ATI.TextureConverter.sln
 }
 
 src_install() {
@@ -72,9 +73,13 @@ src_install() {
                 FW_UPPER=${x:3:1}
                 FW_LOWER=${x:4:1}
                 egacinstall "${S}/ATI.TextureConverter/bin/${mydebug}/ATI.TextureConverter.dll"
+		insinto "/usr/$(get_libdir)/mono/${PN}"
+		doins "${S}/ATI.TextureConverter/bin/${mydebug}/ATI.TextureConverter.dll.config"
         done
 
 	eend
+
+	dotnet_multilib_comply
 }
 
 pkg_postinst() {
@@ -82,15 +87,4 @@ pkg_postinst() {
 	einfo "You must install the adreno-sdk-linux.tar.gz manually with libTextureConverter.so placed in the library folder /usr/lib{32,64}."
 	einfo "Go to https://developer.qualcomm.com/software/adreno-gpu-sdk to get the proprietary libary."
 	einfo "For more details goto https://github.com/infinitespace-studios/ATI.TextureConverter"
-}
-
-function genkey() {
-        einfo "Generating Key Pair"
-        cd "${S}"
-        sn -k "${PN}-keypair.snk"
-}
-
-function savekey() {
-	mkdir -p "${D}/usr/share/${PN}/"
-	cp "${PN}-keypair.snk" "${D}/usr/share/${PN}/"
 }

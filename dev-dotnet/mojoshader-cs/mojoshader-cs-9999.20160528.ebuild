@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=6
-inherit mono-env eutils mono gac
+inherit dotnet eutils mono gac
 
 DESCRIPTION="MojoShader-CS is a C# wrapper for MojoShader"
 HOMEPAGE=""
@@ -15,7 +15,7 @@ LICENSE="zlib"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 USE_DOTNET="net45"
-IUSE="${USE_DOTNET} debug opentk +gac"
+IUSE="${USE_DOTNET} debug +gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
 
 RDEPEND=">=dev-lang/mono-4
@@ -25,10 +25,11 @@ DEPEND="${RDEPEND}
 "
 
 S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
+SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_prepare() {
 	sed -i -e "s|MojoShader.dll|libmojoshader.so|g" MojoShader.cs
-	genkey
+	egenkey
 
 	eapply_user
 }
@@ -41,7 +42,7 @@ src_compile() {
 	cd "${S}"
 
         einfo "Building solution"
-        xbuild /p:Configuration=${mydebug} /p:SignAssembly=true /p:AssemblyOriginatorKeyFile="${S}/${PN}-keypair.snk" ${PROJECT_NAME}.sln || die
+        exbuild_strong /p:Configuration=${mydebug} ${PROJECT_NAME}.sln || die
 }
 
 src_install() {
@@ -50,24 +51,19 @@ src_install() {
 		mydebug="Debug"
 	fi
 
+	esavekey
+
         ebegin "Installing dlls into the GAC"
 
 	for x in ${USE_DOTNET} ; do
                 FW_UPPER=${x:3:1}
                 FW_LOWER=${x:4:1}
                 egacinstall "${S}/bin/${mydebug}/${PROJECT_NAME}.dll"
+               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		doins "${S}/bin/${mydebug}/${PROJECT_NAME}.dll.mdb"
         done
 
 	eend
-}
 
-function genkey() {
-        einfo "Generating Key Pair"
-        cd "${S}"
-        sn -k "${PN}-keypair.snk"
-}
-
-function savekey() {
-	mkdir -p "${D}/usr/share/${PN}/"
-	cp "${PN}-keypair.snk" "${D}/usr/share/${PN}/"
+	dotnet_multilib_comply
 }

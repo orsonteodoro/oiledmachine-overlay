@@ -1,0 +1,13 @@
+diff -urp SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431.orig/Source/SharpNav.Tests/SharpNav.Tests.csproj SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431/Source/SharpNav.Tests/SharpNav.Tests.csproj
+--- SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431.orig/Source/SharpNav.Tests/SharpNav.Tests.csproj	2017-01-08 16:42:21.852455956 -0800
++++ SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431/Source/SharpNav.Tests/SharpNav.Tests.csproj	2017-01-08 16:47:55.687351065 -0800
+@@ -81,6 +81,8 @@
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+     <Reference Include="Newtonsoft.Json" />
+-    <Reference Include="nunit.framework" />
++    <Reference Include="nunit.framework" >
++        <HintPath>/usr/share/nunit-3/nunit.framework.dll</HintPath>
++    </Reference>
+   </ItemGroup>
+   <ItemGroup Condition="'$(Configuration)' == 'SharpDX'">

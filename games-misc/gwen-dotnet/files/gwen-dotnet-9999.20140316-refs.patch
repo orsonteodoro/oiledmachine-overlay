@@ -1,0 +1,155 @@
+diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.OpenTK/Gwen.Renderer.OpenTK.csproj gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.OpenTK/Gwen.Renderer.OpenTK.csproj
+--- gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.OpenTK/Gwen.Renderer.OpenTK.csproj	2017-01-08 13:20:23.374511844 -0800
++++ gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.OpenTK/Gwen.Renderer.OpenTK.csproj	2017-01-08 13:42:04.077033992 -0800
+@@ -48,9 +48,7 @@
+     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+-      <HintPath>..\lib\OpenTK\OpenTK.dll</HintPath>
+-    </Reference>
++    <Reference Include="OpenTK" />
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+     <Reference Include="System.Drawing" />
+@@ -99,4 +97,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.SFML/Gwen.Renderer.SFML.csproj gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.SFML/Gwen.Renderer.SFML.csproj
+--- gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.SFML/Gwen.Renderer.SFML.csproj	2017-01-08 13:20:23.389512418 -0800
++++ gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.SFML/Gwen.Renderer.SFML.csproj	2017-01-08 13:44:44.970087713 -0800
+@@ -46,18 +46,13 @@
+     <CodeAnalysisRuleDirectories>;C:\vs10\Team Tools\Static Analysis Tools\FxCop\\Rules;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="sfmlnet-graphics-2, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+-      <HintPath>..\lib\SFML\sfmlnet-graphics-2.dll</HintPath>
+-    </Reference>
+-    <Reference Include="sfmlnet-window-2, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+-      <HintPath>..\lib\SFML\sfmlnet-window-2.dll</HintPath>
+-    </Reference>
++    <Reference Include="sfmlnet-system-2" />
++    <Reference Include="sfmlnet-graphics-2" />
++    <Reference Include="sfmlnet-window-2" />
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+     <Reference Include="System.Drawing" />
+-    <Reference Include="Tao.OpenGl, Version=2.1.0.12, Culture=neutral, PublicKeyToken=1ca010269a4501ef, processorArchitecture=MSIL">
+-      <HintPath>..\lib\Tao\Tao.OpenGl.dll</HintPath>
+-    </Reference>
++    <Reference Include="Tao.OpenGl" />
+   </ItemGroup>
+   <ItemGroup>
+     <Compile Include="Properties\AssemblyInfo.cs" />
+@@ -81,4 +75,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.Tao/Gwen.Renderer.Tao.csproj gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.Tao/Gwen.Renderer.Tao.csproj
+--- gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.Tao/Gwen.Renderer.Tao.csproj	2017-01-08 13:20:23.366511538 -0800
++++ gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.Tao/Gwen.Renderer.Tao.csproj	2017-01-08 13:41:19.022339070 -0800
+@@ -51,9 +51,7 @@
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+     <Reference Include="System.Drawing" />
+-    <Reference Include="Tao.OpenGl, Version=2.1.0.12, Culture=neutral, PublicKeyToken=1ca010269a4501ef, processorArchitecture=MSIL">
+-      <HintPath>..\lib\Tao\Tao.OpenGl.dll</HintPath>
+-    </Reference>
++    <Reference Include="Tao.OpenGl" />
+   </ItemGroup>
+   <ItemGroup>
+     <Compile Include="Renderer\Tao.cs" />
+@@ -80,4 +78,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Sample.OpenTK/Gwen.Sample.OpenTK.csproj gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Sample.OpenTK/Gwen.Sample.OpenTK.csproj
+--- gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Sample.OpenTK/Gwen.Sample.OpenTK.csproj	2017-01-08 13:20:23.370511691 -0800
++++ gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Sample.OpenTK/Gwen.Sample.OpenTK.csproj	2017-01-08 13:41:44.957314707 -0800
+@@ -48,9 +48,7 @@
+     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+-      <HintPath>..\lib\OpenTK\OpenTK.dll</HintPath>
+-    </Reference>
++    <Reference Include="OpenTK" />
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+     <Reference Include="System.Drawing" />
+@@ -108,4 +106,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Sample.SFML/Gwen.Sample.SFML.csproj gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Sample.SFML/Gwen.Sample.SFML.csproj
+--- gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Sample.SFML/Gwen.Sample.SFML.csproj	2017-01-08 13:20:23.385512265 -0800
++++ gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Sample.SFML/Gwen.Sample.SFML.csproj	2017-01-08 13:44:04.699572353 -0800
+@@ -55,19 +55,14 @@
+     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="sfmlnet-graphics-2, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+-      <HintPath>..\lib\SFML\sfmlnet-graphics-2.dll</HintPath>
+-    </Reference>
+-    <Reference Include="sfmlnet-window-2, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+-      <HintPath>..\lib\SFML\sfmlnet-window-2.dll</HintPath>
+-    </Reference>
++    <Reference Include="sfmlnet-system-2" />
++    <Reference Include="sfmlnet-graphics-2" />
++    <Reference Include="sfmlnet-window-2" />
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+     <Reference Include="System.Drawing" />
+     <Reference Include="System.Windows.Forms" />
+-    <Reference Include="Tao.OpenGl, Version=2.1.0.12, Culture=neutral, PublicKeyToken=1ca010269a4501ef, processorArchitecture=MSIL">
+-      <HintPath>..\lib\Tao\Tao.OpenGl.dll</HintPath>
+-    </Reference>
++    <Reference Include="Tao.OpenGl" />
+   </ItemGroup>
+   <ItemGroup>
+     <Compile Include="Sample.cs" />
+@@ -98,4 +92,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Sample.Tao/Gwen.Sample.Tao.csproj gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Sample.Tao/Gwen.Sample.Tao.csproj
+--- gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Sample.Tao/Gwen.Sample.Tao.csproj	2017-01-08 13:20:23.380512074 -0800
++++ gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Sample.Tao/Gwen.Sample.Tao.csproj	2017-01-08 13:43:25.228087158 -0800
+@@ -53,12 +53,8 @@
+     <Reference Include="System.Core" />
+     <Reference Include="System.Drawing" />
+     <Reference Include="System.Windows.Forms" />
+-    <Reference Include="Tao.OpenGl, Version=2.1.0.12, Culture=neutral, PublicKeyToken=1ca010269a4501ef, processorArchitecture=MSIL">
+-      <HintPath>..\lib\Tao\Tao.OpenGl.dll</HintPath>
+-    </Reference>
+-    <Reference Include="Tao.Platform.Windows, Version=1.0.0.5, Culture=neutral, PublicKeyToken=701104b2da67a104, processorArchitecture=MSIL">
+-      <HintPath>..\lib\Tao\Tao.Platform.Windows.dll</HintPath>
+-    </Reference>
++    <Reference Include="Tao.OpenGl" />
++    <Reference Include="Tao.Platform.X11" />
+   </ItemGroup>
+   <ItemGroup>
+     <Compile Include="GlForm.cs">
+@@ -119,4 +115,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>

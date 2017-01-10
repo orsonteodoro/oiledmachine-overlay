@@ -83,7 +83,7 @@ src_install() {
 		DIR="Release"
 	fi
 
-	# insinto "/usr/$(get_libdir)"	
+	# insinto "/usr/$(get_libdir)"
 	insinto "/usr/share/slntools/"
 
 	# || die is not necessary after doins,
@@ -117,6 +117,8 @@ src_install() {
 		fi
 		doins "${WORKDIR}/SLNTools.1.1.3.nupkg"
 	fi
+
+	dotnet_multilib_comply
 }
 
 # Usage:

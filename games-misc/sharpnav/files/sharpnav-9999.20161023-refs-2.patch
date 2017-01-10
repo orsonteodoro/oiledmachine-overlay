@@ -1,0 +1,58 @@
+diff -urp SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431.orig/Source/SharpNav/SharpNav.csproj SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431/Source/SharpNav/SharpNav.csproj
+--- SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431.orig/Source/SharpNav/SharpNav.csproj	2016-10-23 08:11:30.000000000 -0700
++++ SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431/Source/SharpNav/SharpNav.csproj	2017-01-08 16:09:22.204549260 -0800
+@@ -75,18 +75,12 @@
+   <ItemGroup>
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+-    <Reference Include="Newtonsoft.Json">
+-      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+-    </Reference>
+-    <Reference Include="YamlDotNet">
+-      <HintPath>..\packages\YamlDotNet.Signed.3.8.0\lib\net35\YamlDotNet.dll</HintPath>
+-    </Reference>
++    <Reference Include="Newtonsoft.Json" />
++    <Reference Include="YamlDotNet" />
+   </ItemGroup>
+   <!-- Configuration specific items -->
+   <ItemGroup Condition="'$(Configuration)' == 'OpenTK'">
+-    <Reference Include="OpenTK">
+-      <HintPath>..\packages\OpenTK.1.1.2225.0\lib\net20\OpenTK.dll</HintPath>
+-    </Reference>
++    <Reference Include="OpenTK" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(Configuration)' == 'SharpDX'">
+     <Reference Include="SharpDX">
+@@ -97,10 +91,7 @@
+     </Reference>
+   </ItemGroup>
+   <ItemGroup Condition="'$(Configuration)' == 'MonoGame'">
+-    <Reference Include="MonoGame.Framework, Version=3.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\packages\MonoGame.Framework.Portable.3.2.99.1-Beta\lib\portable-net45+win+wpa81+Xamarin.iOS10+MonoAndroid10+MonoTouch10\MonoGame.Framework.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
++    <Reference Include="MonoGame.Framework" />
+   </ItemGroup>
+   <!-- C# items -->
+   <ItemGroup>
+@@ -204,4 +195,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urp SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431.orig/Source/SharpNav.Tests/SharpNav.Tests.csproj SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431/Source/SharpNav.Tests/SharpNav.Tests.csproj
+--- SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431.orig/Source/SharpNav.Tests/SharpNav.Tests.csproj	2017-01-08 16:03:32.951162146 -0800
++++ SharpNav-fd2b70e25a8d30a94e1a64629e42a1de8809c431/Source/SharpNav.Tests/SharpNav.Tests.csproj	2017-01-08 16:08:18.028090672 -0800
+@@ -92,9 +92,7 @@
+     </Reference>
+   </ItemGroup>
+   <ItemGroup Condition="'$(Configuration)' == 'OpenTK'">
+-	<Reference Include="OpenTK">
+-		<HintPath>..\packages\OpenTK.1.1.2225.0\lib\net20\OpenTK.dll</HintPath>
+-	</Reference>
++	<Reference Include="OpenTK" />
+   </ItemGroup>
+   <ItemGroup Condition="'$(Configuration)' == 'MonoGame'">
+       <Reference Include="MonoGame.Framework" />

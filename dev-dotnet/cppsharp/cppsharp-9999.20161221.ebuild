@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=6
-inherit mono-env eutils git-r3 mono gac toolchain-funcs flag-o-matic
+inherit dotnet eutils git-r3 mono gac toolchain-funcs flag-o-matic
 
 DESCRIPTION="CppSharp"
 HOMEPAGE="https://github.com/mono/CppSharp"
@@ -13,7 +13,7 @@ LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 USE_DOTNET="net45"
-IUSE="${USE_DOTNET} debug abi_x86_64 abi_x86_32 +gac"
+IUSE="${USE_DOTNET} debug abi_x86_64 abi_x86_32 +gac developer"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) abi_x86_64? ( !abi_x86_32 ) gac"
 
 RDEPEND=">=dev-lang/mono-4"
@@ -29,6 +29,7 @@ RESTRICT="fetch"
 S="${WORKDIR}/${PN}-${PV}"
 
 pkg_setup() {
+	dotnet_pkg_setup
 	if [[ ! -f "/usr/include/clang/Driver/ToolChain.h" ]]; then
 		die "You can only use the llvm package from the oiledmachine overlay"
 	fi
@@ -52,6 +53,9 @@ src_prepare() {
 	eapply "${FILESDIR}/cppsharp-9999.20160115-llvm-9999-smallstring.patch"
 	#eapply "${FILESDIR}/cppsharp-9999.20160115-llvm-9999-toolchain.patch"
 
+	eapply "${FILESDIR}"/cppsharp-9999.20161221-stdarg-search-path.patch
+	sed -i -e "s|/usr/lib/clang/3.9.1/include|/usr/lib/clang/$(clang-fullversion)/include|g" src/Generator.Tests/GeneratorTest.cs || die p14
+
 	cd "${S}"/build
 	#echo "c1316b6adfbb17b961a3bee357e728ca0d4d1c96" > LLVM-commit
 	sed -i -e 's|path.join(LLVMRootDirDebug, "include"),|path.join("/usr/lib/clang/3.9.0/include/"),path.join("/usr/include/llvm"),path.join("/usr/include/clang"),path.join(LLVMRootDirDebug, "include"),|g' LLVM.lua || die p1
@@ -73,10 +77,24 @@ src_prepare() {
 
 	sed -i -e "s|-I/usr/lib/clang/3.9.0/include|-I/usr/lib/clang/$(clang-fullversion)/include|g" ./build/gmake/projects/CppSharp.CppParser.make || die p13
 
-	eapply "${FILESDIR}"/cppsharp-9999.20161221-stdarg-search-path.patch
-	sed -i -e "s|/usr/lib/clang/3.9.1/include|/usr/lib/clang/$(clang-fullversion)/include|g"
+	#inject strong name and force net version
+	FILES=$(grep -l -r -e "FLAGS = /unsafe" ./)
+	for f in $FILES
+	do
+		einfo "Patching $f..."
+		sed -i -r -e "s|FLAGS = /unsafe|FLAGS = -sdk:${EBF} -keyfile:\"${S}/${PN}-keypair.snk\" /unsafe|g" "$f" || die
+	done
 
-	genkey
+	#inject strong name and force net version
+	FILES=$(grep -l -r -e "/nologo" ./)
+	for f in $FILES
+	do
+		einfo "Patching $f..."
+		sed -i -r -e "s|/nologo|-sdk:${EBF} -keyfile:\"${S}/${PN}-keypair.snk\" /nologo|g" "$f" || die
+	done
+
+
+	egenkey
 
 	eapply_user
 }
@@ -114,62 +132,34 @@ src_install() {
 
         ebegin "Installing dlls into the GAC"
 
-	savekey
+	esavekey
 
 	cp "${S}"/src/Generator/Passes/verbs.txt "${S}/build/gmake/lib/${mydebug}_${myabi}/"
 
 	cd "${S}/build/gmake/lib/${mydebug}_${myabi}/"
 	for FILE in $(ls *.dll)
 	do
-		strong_sign "${S}/${PN}-keypair.snk" "${S}/build/gmake/lib/${mydebug}_${myabi}/${FILE}"
-
 		for x in ${USE_DOTNET} ; do
         	        FW_UPPER=${x:3:1}
 	                FW_LOWER=${x:4:1}
 	                egacinstall "${S}/build/gmake/lib/${mydebug}_${myabi}/${FILE}"
+	               	insinto "/usr/$(get_libdir)/mono/${PN}"
+        	        use developer && doins "${S}/build/gmake/lib/${mydebug}_${myabi}/${FILE}.mdb"
 	        done
 	done
 
 	eend
 
 	cd "${S}/build/gmake/lib/${mydebug}_${myabi}/"
-	mkdir -p "${D}/usr/lib/mono/CppSharp/"
+	mkdir -p "${D}/usr/$(get_libdir)/mono/CppSharp/"
 	for FILE in $(ls *.exe)
 	do
-		cp "${FILE}" "${D}/usr/lib/mono/CppSharp/"
-		cp "${FILE}.mdb" "${D}/usr/lib/mono/CppSharp/"
+		cp "${FILE}" "${D}/usr/$(get_libdir)/mono/CppSharp/"
+		use developer && cp "${FILE}.mdb" "${D}/usr/$(get_libdir)/mono/CppSharp/"
 	done
 
 	cd "${S}"
 	dodoc docs/* LICENSE README.md
-}
 
-function genkey() {
-        einfo "Generating Key Pair"
-        cd "${S}"
-        sn -k "${PN}-keypair.snk"
-}
-
-function savekey() {
-	mkdir -p "${D}/usr/share/${PN}/"
-	cp "${PN}-keypair.snk" "${D}/usr/share/${PN}/"
-}
-
-function strong_sign() {
-	pushd "$(dirname ${2})"
-	ikdasm "${2}" > "${2}.il" || die "monodis failed"
-	mv "${2}" "${2}.orig"
-	grep -r -e "permissionset" "${2}.il" #permissionset not supported
-	if [[ "$?" == "0" ]]; then
-		sed -i -r -e ':a' -e 'N' -e '$!ba' -e 's|.permissionset.*\n.*\}\}||g' "${2}.il"
-	fi
-	grep -e "\[opt\] bool public" "${2}.il" #broken mangling
-	if [[ "$?" == "0" ]]; then
-		sed -i -r -e ':a' -e 'N' -e '$!ba' -e "s|\[opt\] bool public|[opt] bool \'public\'|g" "${2}.il"
-	fi
-
-	ilasm /dll /key:"${1}" /output:"${2}" "${2}.il" || die "ilasm failed"
-	#rm "${2}.orig"
-	#rm "${2}.il"
-	popd
+	dotnet_multilib_comply
 }

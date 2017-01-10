@@ -4,7 +4,7 @@
 
 EAPI="6"
 
-inherit eutils mono flag-o-matic
+inherit dotnet eutils mono flag-o-matic
 
 DESCRIPTION="Library for using System.Drawing with mono"
 HOMEPAGE="http://www.mono-project.com"
@@ -57,7 +57,6 @@ src_compile() {
 
 src_install () {
 	emake -j1 DESTDIR="${D}" "$@" install #nowarn
-	mono_multilib_comply
 	local commondoc=( AUTHORS ChangeLog README TODO )
 	for docfile in "${commondoc[@]}"
 	do
@@ -68,4 +67,6 @@ src_install () {
 		dodoc "${DOCS[@]}"
 	fi
 	prune_libtool_files
+
+	mono_multilib_comply
 }

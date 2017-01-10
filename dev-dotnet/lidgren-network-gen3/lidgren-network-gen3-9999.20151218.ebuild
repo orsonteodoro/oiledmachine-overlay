@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=6
-inherit mono-env eutils git-r3 mono gac
+inherit dotnet eutils git-r3 mono gac
 
 DESCRIPTION="lidgren-network-gen3"
 HOMEPAGE="https://github.com/lidgren/lidgren-network-gen3"
@@ -25,6 +25,7 @@ DEPEND="${RDEPEND}
 RESTRICT="fetch"
 
 S="${WORKDIR}/${PN}-${PV}"
+SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_unpack() {
         #EGIT_CHECKOUT_DIR="${WORKDIR}"
@@ -36,17 +37,13 @@ src_unpack() {
 }
 
 src_prepare() {
-	genkey
+	egenkey
 
 	eapply_user
 }
 
 src_compile() {
-	mydebug="Release"
-	if use debug; then
-		mydebug="Debug"
-	fi
-	xbuild /p:SignAssembly=true /p:AssemblyOriginatorKeyFile="${S}/${PN}-keypair.snk" /p:Configuration=${mydebug} Lidgren.Network.sln
+	exbuild_strong Lidgren.Network.sln
 }
 
 src_install() {
@@ -57,12 +54,14 @@ src_install() {
 
         ebegin "Installing dlls into the GAC"
 
-	savekey
+	esavekey
 
 	for x in ${USE_DOTNET} ; do
                 FW_UPPER=${x:3:1}
                 FW_LOWER=${x:4:1}
                 egacinstall "${S}/Lidgren.Network/bin/${mydebug}/Lidgren.Network.dll"
+               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		use developer && doins Lidgren.Network/bin/${mydebug}/Lidgren.Network.dll.mdb
         done
 
 	monodocer -assembly:"${S}/Lidgren.Network/bin/${mydebug}/Lidgren.Network.dll" -path:en -pretty
@@ -75,15 +74,4 @@ src_install() {
 	dodoc README.md "LICENSE"
 
         mono_multilib_comply
-}
-
-function genkey() {
-        einfo "Generating Key Pair"
-        cd "${S}"
-        sn -k "${PN}-keypair.snk"
-}
-
-function savekey() {
-	mkdir -p "${D}/usr/share/${PN}/"
-	cp "${PN}-keypair.snk" "${D}/usr/share/${PN}/"
 }

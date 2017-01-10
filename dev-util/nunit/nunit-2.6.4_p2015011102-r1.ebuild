@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=6
-inherit mono-env gac nupkg
+inherit dotnet gac nupkg
 
 NAME="nunitv2"
 HOMEPAGE="https://github.com/nunit/${NAME}"
@@ -101,5 +101,33 @@ src_install() {
 
 	enupkg "${WORKDIR}/NUnit.$(get_version_component_range 1-3).nupkg"
 	enupkg "${WORKDIR}/NUnit.Runners.$(get_version_component_range 1-3).nupkg"
-}
 
+	if use developer ; then
+		insinto "${SLOTTEDDIR}"
+		doins bin/Release/nunit.framework.dll.mdb
+		doins bin/Release/nunit-agent.exe.mdb
+		doins bin/Release/pnunit-launcher.exe.mdb
+		doins bin/Release/pnunit-agent.exe.mdb
+		doins bin/Release/pnunit.framework.dll.mdb
+		doins bin/Release/nunit.core.interfaces.dll.mdb
+		doins bin/Release/nunit.core.dll.mdb
+		doins bin/Release/framework/nunit.framework.dll.mdb
+		#doins bin/Release/framework/nunit.mocks.dll.mdb
+		doins bin/Release/lib/nunit-console-runner.dll.mdb
+		#doins bin/Release/lib/nunit-gui-runner.dll.mdb
+		#doins bin/Release/lib/nunit.uikit.dll.mdb
+		#doins bin/Release/lib/nunit.uiexception.dll.mdb
+		doins bin/Release/lib/nunit.core.interfaces.dll.mdb
+		doins bin/Release/lib/nunit.core.dll.mdb
+		doins bin/Release/lib/nunit.util.dll.mdb
+		doins bin/Release/nunit.util.dll.mdb
+		doins bin/Release/nunit-console.exe.mdb
+		doins bin/Release/pnunit.tests.dll.mdb
+		doins bin/Release/nunit.exe.mdb
+		doins bin/Release/nunit-editor.exe.mdb
+		doins src/nunit.snk
+		doins addins/RowTest/nunitextension.snk
+	fi
+
+	dotnet_multilib_comply
+}

@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=6
-inherit mono-env eutils mono gac multilib-minimal multilib-build
+inherit dotnet eutils mono gac multilib-minimal multilib-build
 
 DESCRIPTION="Simple C# wrapper around PVRTexLib from Imagination Technologies"
 HOMEPAGE="https://github.com/flyingdevelopmentstudio/PVRTexLibNET"
@@ -25,11 +25,12 @@ DEPEND="${RDEPEND}
 "
 
 S="${WORKDIR}/PVRTexLibNET-${COMMIT}"
+SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_prepare() {
 	cd "${S}/PVRTexLibWrapper"
 
-	genkey
+	egenkey
 
 	eapply_user
 
@@ -71,7 +72,7 @@ multilib_src_compile() {
 
 	einfo "Building PVRTexLibNET..."
 	cd "${S}/PVRTexLibNET"
-	xbuild PVRTexLibNET.csproj /p:Configuration=${mydebug} /p:Platform=${myabi} /p:SignAssembly=true /p:AssemblyOriginatorKeyFile="${S}/${PN}-keypair.snk"
+	exbuild_strong PVRTexLibNET.csproj /p:Configuration=${mydebug} /p:Platform=${myabi}
 }
 
 multilib_src_install() {
@@ -95,12 +96,14 @@ multilib_src_install() {
 
         ebegin "Installing dlls into the GAC"
 
-	savekey
+	esavekey
 
 	for x in ${USE_DOTNET} ; do
                 FW_UPPER=${x:3:1}
                 FW_LOWER=${x:4:1}
                 egacinstall "${S}/PVRTexLibNET/bin/${myabi}/${mydebug}/PVRTexLibNET.dll"
+               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		use developer && doins "${S}/PVRTexLibNET/bin/${myabi}/${mydebug}/PVRTexLibNET.dll.mdb"
         done
 
 	eend
@@ -111,15 +114,6 @@ multilib_src_install() {
 		cp -a bin/Linux/Release/${myabi}/libPVRTexLibWrapper.so "${D}/usr/$(get_libdir)/" || die
 		cp -a PVRTexTool/Library/Linux_x86_${myabi2}/Dynamic/libPVRTexLib.so "${D}/usr/$(get_libdir)/" || die
 	fi
-}
 
-function genkey() {
-        einfo "Generating Key Pair"
-        cd "${S}"
-        sn -k "${PN}-keypair.snk"
-}
-
-function savekey() {
-	mkdir -p "${D}/usr/share/${PN}/"
-	cp "${PN}-keypair.snk" "${D}/usr/share/${PN}/"
+	dotnet_multilib_comply
 }

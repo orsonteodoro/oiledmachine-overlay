@@ -12,7 +12,9 @@ LICENSE="GPL-2"
 HOMEPAGE="http://www.mono-project.com/GtkSharp"
 KEYWORDS="~amd64 ~x86 ~ppc"
 SRC_URI="https://download.gnome.org/sources/${PN}/${PV:0:4}/${PN}-${PV}.tar.xz"
-IUSE="debug"
+USE_DOTNET="net45"
+IUSE="${USE_DOTNET} debug"
+REQUIRED_USE="|| ( ${USE_DOTNET} )"
 
 RESTRICT="test"
 
@@ -46,6 +48,7 @@ src_prepare() {
 }
 
 src_configure() {
+	CSFLAGS="${CSFLAGS} -sdk:${EBF}" \
 	econf	--disable-static \
 		--disable-dependency-tracking \
 		--disable-maintainer-mode \
@@ -53,11 +56,21 @@ src_configure() {
 }
 
 src_compile() {
+	CSFLAGS="${CSFLAGS} -sdk:${EBF}" \
 	emake
 }
 
 src_install() {
 	default
-	dotnet_multilib_comply
 	sed -i "s/\\r//g" "${D}"/usr/bin/* || die "sed failed"
+
+	if use developer ; then
+		insinto "/usr/$(get_libdir)/mono/${PN}"
+		doins "${S}/cairo/mono.snk"
+		doins "gtk-sharp.snk"
+	fi
+
+	mv "${D}/usr/lib" "${D}/usr/$(get_libdir)"
+
+	dotnet_multilib_comply
 }

@@ -5,7 +5,7 @@
 EAPI=6
 
 USE_DOTNET="net45"
-inherit mono-env gac nupkg
+inherit dotnet gac nupkg
 
 IUSE="${USE_DOTNET} developer nupkg debug"
 REQUIRED_USE="|| ( ${USE_DOTNET} )"
@@ -115,5 +115,7 @@ src_install() {
 	egacinstall "Eto.Parse/bin/${DIR}/net40/Eto.Parse.dll"
 
 	enupkg "${WORKDIR}/${NAME}.${NUSPEC_VERSION}.nupkg"
+
+	dotnet_multilib_comply
 }
 

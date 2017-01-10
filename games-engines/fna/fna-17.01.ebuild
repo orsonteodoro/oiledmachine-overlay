@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=6
-inherit eutils mono multilib-build gac
+inherit dotnet eutils mono multilib-build gac
 
 DESCRIPTION="FNA is open source XNA4"
 HOMEPAGE="http://fna-xna.github.io/"
@@ -26,6 +26,7 @@ REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
 SRC_URI="https://github.com/FNA-XNA/FNA/archive/17.01.tar.gz -> ${P}.tar.gz"
 
 S="${WORKDIR}/FNA-${PV}"
+SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_unpack() {
 	unpack "${A}"
@@ -37,18 +38,7 @@ src_prepare() {
 
 	eapply_user
 
-	genkey
-}
-
-src_configure(){
-	true
-}
-
-src_compile() {
-	local mydebug="Release"
-	if use debug; then
-		mydebug="Debug"
-	fi
+	egenkey
 
 	#inject public key into assembly
 	public_key=$(sn -tp "${PN}-keypair.snk" | tail -n 7 | head -n 5 | tr -d '\n')
@@ -57,7 +47,10 @@ src_compile() {
 	sed -i -r -e "s|\[assembly\: InternalsVisibleTo\(\"MonoGame.Framework.Content.Pipeline\"\)\]|\[assembly: InternalsVisibleTo(\"MonoGame.Framework.Content.Pipeline, PublicKey=${public_key}\")\]|" src/Properties/AssemblyInfo.cs
 	sed -i -r -e "s|\[assembly\: InternalsVisibleTo\(\"MonoGame.Framework.Net\"\)\]|\[assembly: InternalsVisibleTo(\"MonoGame.Framework.Net, PublicKey=${public_key}\")\]|" src/Properties/AssemblyInfo.cs
 
-	xbuild /p:Configuration=${mydebug} /t:Build /p:Configuration=Release FNA.sln /p:SignAssembly=true /p:AssemblyOriginatorKeyFile="${S}/${PN}-keypair.snk" || die
+}
+
+src_compile() {
+	exbuild_strong /t:Build FNA.sln || die
 }
 
 src_install() {
@@ -69,26 +62,22 @@ src_install() {
         ebegin "Installing dlls into the GAC"
 	cd "${S}"
 
-	savekey
+	esavekey
 
 	for x in ${USE_DOTNET} ; do
                 FW_UPPER=${x:3:1}
                 FW_LOWER=${x:4:1}
                 egacinstall "${S}/bin/${mydebug}/FNA.dll"
         done
-
-
 	eend
-}
 
-function genkey() {
-	einfo "Generating Key Pair"
-	cd "${S}"
-	sn -k "${PN}-keypair.snk"
-}
+	if use developer ; then
+		insinto "/usr/$(get_libdir)/mono/${PN}"
+		doins bin/${mydebug}/FNA.dll.mdb
+	fi
 
-function savekey() {
-	mkdir -p "${D}/usr/share/${PN}/"
-	cp "${PN}-keypair.snk" "${D}/usr/share/${PN}/"
-}
+	insinto "/usr/$(get_libdir)/mono/${PN}"
+	doins bin/${mydebug}/FNA.dll.config
 
+	dotnet_multilib_comply
+}

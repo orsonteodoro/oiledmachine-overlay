@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=6
-inherit mono-env eutils mono gac
+inherit dotnet eutils mono gac
 
 DESCRIPTION="NDesk.Options"
 HOMEPAGE="http://www.ndesk.org/Options"
@@ -26,7 +26,7 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/ndesk-options-${PV}"
 
 src_prepare() {
-	genkey
+	egenkey
 
 	eapply_user
 }
@@ -36,14 +36,14 @@ src_configure() {
 }
 
 src_compile() {
-	CSFLAGS="${CSFLAGS} -keyfile:\"${S}/${PN}-keypair.snk\"" \
+	CSFLAGS="${CSFLAGS} -sdk:${EBF} -keyfile:\"${S}/${PN}-keypair.snk\"" \
 	emake || die "emake failed"
 }
 
 src_install() {
         ebegin "Installing dlls into the GAC"
 
-	savekey
+	esavekey
 	for x in ${USE_DOTNET} ; do
                 FW_UPPER=${x:3:1}
                 FW_LOWER=${x:4:1}
@@ -56,17 +56,10 @@ src_install() {
 	dodoc AUTHORS ChangeLog README COPYING
 	dodoc -r doc
 
+	if use developer ; then
+               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		doins lib/ndesk-options/NDesk.Options.dll.mdb
+	fi
+
         mono_multilib_comply
 }
-
-function genkey() {
-        einfo "Generating Key Pair"
-        cd "${S}"
-        sn -k "${PN}-keypair.snk"
-}
-
-function savekey() {
-	mkdir -p "${D}/usr/share/${PN}/"
-	cp "${PN}-keypair.snk" "${D}/usr/share/${PN}/"
-}
-

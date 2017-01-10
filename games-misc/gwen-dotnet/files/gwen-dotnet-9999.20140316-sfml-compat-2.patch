@@ -1,0 +1,12 @@
+diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.SFML/Renderer/SFML.cs gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.SFML/Renderer/SFML.cs
+--- gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.SFML/Renderer/SFML.cs	2017-01-08 14:05:56.772909753 -0800
++++ gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.SFML/Renderer/SFML.cs	2017-01-08 14:06:27.317057929 -0800
+@@ -206,7 +206,7 @@ namespace Gwen.Renderer
+                 prev = cur;
+                 if (cur == '\n' || cur == '\v')
+                     continue;
+-                extents.X += sfFont.GetGlyph(cur, (uint) font.RealSize, false).Advance;
++                extents.X += (int)sfFont.GetGlyph(cur, (uint) font.RealSize, false).Advance;
+             }
+ 
+             return extents;

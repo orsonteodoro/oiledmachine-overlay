@@ -67,7 +67,8 @@ src_unpack() {
 	cd "${S}/ThirdParty/Dependencies/"
 	wget -r -nH --cut-dirs=4 "https://github.com/MonoGame/MonoGame.Dependencies/raw/master/FreeImage.NET/FreeImageNET.dll.config" || die
 	wget -r -nH --cut-dirs=4 "https://github.com/MonoGame/MonoGame.Dependencies/raw/master/PVRTexLibNET/PVRTexLibNET.dll.config" || die
-	wget -r -nH --cut-dirs=4 "https://github.com/MonoGame/MonoGame.Dependencies/raw/master/ATI.TextureConverter/ATI.TextureConverter.dll.config" || die
+	mkdir -p ATI.TextureConverter
+	cp /usr/lib64/mono/atitextureconverter/ATI.TextureConverter.dll.config ATI.TextureConverter/
 }
 
 src_prepare() {
@@ -442,6 +443,14 @@ src_prepare() {
 	xml ed -L -s "//Project" -t attr -n "xmlns" -v "http://schemas.microsoft.com/developer/msbuild/2003" ./IDE/MonoDevelop/MonoDevelop.MonoGame/MonoDevelop.MonoGame.csproj
 
 	genkey
+
+	#inject public key into assembly
+	public_key=$(sn -tp "${PN}-keypair.snk" | tail -n 7 | head -n 5 | tr -d '\n')
+	echo "pk is: ${public_key}"
+	cd "${S}"
+	sed -i -r -e "s|\[assembly\: InternalsVisibleTo\(\"MonoGame.Framework.Content.Pipeline\"\)\]|\[assembly: InternalsVisibleTo(\"MonoGame.Framework.Content.Pipeline, PublicKey=${public_key}\")\]|" ./MonoGame.Framework/Properties/AssemblyInfo.cs
+	sed -i -r -e "s|\[assembly\: InternalsVisibleTo\(\"MonoGame.Framework.Net\"\)\]|\[assembly: InternalsVisibleTo(\"MonoGame.Framework.Net, PublicKey=${public_key}\")\]|" ./MonoGame.Framework/Properties/AssemblyInfo.cs
+	sed -i -r -e "s|\[assembly\: InternalsVisibleTo\(\"MonoGameTests\"\)\]|\[assembly: InternalsVisibleTo(\"MonoGameTests, PublicKey=${public_key}\")\]|" ./MonoGame.Framework/Properties/AssemblyInfo.cs
 }
 
 src_configure(){
@@ -457,14 +466,6 @@ src_compile() {
 	einfo "Building monogame and tools"
 	#nant -t:mono-4.5 build_linux || die
 	xbuild /p:Configuration=${mydebug} /t:Clean /p:Configuration=Release MonoGame.Framework.Linux.sln || die
-
-	#inject public key into assembly
-	public_key=$(sn -tp "${PN}-keypair.snk" | tail -n 7 | head -n 5 | tr -d '\n')
-	echo "pk is: ${public_key}"
-	cd "${S}"
-	sed -i -r -e "s|\[assembly\: InternalsVisibleTo\(\"MonoGame.Framework.Content.Pipeline\"\)\]|\[assembly: InternalsVisibleTo(\"MonoGame.Framework.Content.Pipeline, PublicKey=${public_key}\")\]|" ./MonoGame.Framework/Properties/AssemblyInfo.cs
-	sed -i -r -e "s|\[assembly\: InternalsVisibleTo\(\"MonoGame.Framework.Net\"\)\]|\[assembly: InternalsVisibleTo(\"MonoGame.Framework.Net, PublicKey=${public_key}\")\]|" ./MonoGame.Framework/Properties/AssemblyInfo.cs
-	sed -i -r -e "s|\[assembly\: InternalsVisibleTo\(\"MonoGameTests\"\)\]|\[assembly: InternalsVisibleTo(\"MonoGameTests, PublicKey=${public_key}\")\]|" ./MonoGame.Framework/Properties/AssemblyInfo.cs
 
 	xbuild /p:Configuration=${mydebug} /t:Build /p:Configuration=Release MonoGame.Framework.Linux.sln /p:SignAssembly=true /p:AssemblyOriginatorKeyFile="${S}/${PN}-keypair.snk" || die
 

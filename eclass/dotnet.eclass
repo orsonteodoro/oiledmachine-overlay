@@ -187,5 +187,30 @@ dotnet_multilib_comply() {
 	fi
 }
 
+# @FUNCTION: egenkey
+# @DESCRIPTION:  This generates a keypair for use for strong signing.  Use in src_prepare.  Parameter 1 is optional and can create different named key.
+function egenkey() {
+	einfo "Generating Key Pair"
+	cd "${S}"
+	if [[ -z "${1}" ]]; then
+		sn -k "${PN}-keypair.snk"
+	else
+		sn -k "${1}"
+	fi
+}
+
+# @FUNCTION: esavekey
+# @DESCRIPTION:  This saves the keypair for the developer to verify.  Use in src_install. Parameter 1 is optional and specifies the extact keypair to store in the keystore.
+function esavekey() {
+	if use developer ; then
+		mkdir -p "${D}/usr/$(get_libdir)/mono/${PN}"
+		if [[ -z "${1}" ]]; then
+			cp "${PN}-keypair.snk" "${D}/usr/$(get_libdir)/mono/${PN}"
+		else
+			cp "${1}" "${D}/usr/$(get_libdir)/mono/${PN}"
+		fi
+	fi
+}
+
 EXPORT_FUNCTIONS pkg_setup
 
