@@ -186,11 +186,14 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 *media-libs/theoraplay nees testing.
 
-The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overlay ebuilds.  They many of the ebuilds in that folder in this overlay are dependencies for the latest stable Monodevelop and for Monogame.
-
 *games-misc/sharpnav - is a AI pathfinding library in C# useful for games.
 
 *games-misc/tiledsharp - is a map loader in C# for tiled map editor.
+
+*sci-physics/farseer-physics-engine - is a physics engine based on box2d and is a C# library.  This one also has support for monogame.
+
+The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overlay ebuilds.  They many of the ebuilds in that folder in this overlay are dependencies for the latest stable Monodevelop and for Monogame.
+
 
 TODO (NOT COMMITED):
 
