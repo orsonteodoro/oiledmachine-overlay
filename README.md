@@ -196,6 +196,8 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 *games-misc/beatdetectorforgames - This is a rough draft of FMOD based beat detector which may be useful for rhythm games.  It has support for both C++ and C#.  The C# is a wrapper around the FMOD library.  The author said there wasn't Linux support but it could happen because there is a FMOD library in the main Gentoo overlay.
 
+*dev-dotnet/tesseract - This is a C# binding to the tesseract OCR (Optical Character Recognition) software which will allow your program to read material produced by typewriters and from books.
+
 The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overlay ebuilds.  They many of the ebuilds in that folder in this overlay are dependencies for the latest stable Monodevelop and for Monogame.
 
 
