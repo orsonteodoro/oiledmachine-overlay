@@ -1,0 +1,17 @@
+diff -urp BeatDetectorForGames-e3143cbde1261a9bfa566633377d282ac46a7750.orig/BeatDetector/BeatDetectorC++Version/Detector/BeatDetector.cpp BeatDetectorForGames-e3143cbde1261a9bfa566633377d282ac46a7750/BeatDetector/BeatDetectorC++Version/Detector/BeatDetector.cpp
+--- BeatDetectorForGames-e3143cbde1261a9bfa566633377d282ac46a7750.orig/BeatDetector/BeatDetectorC++Version/Detector/BeatDetector.cpp	2015-04-14 07:55:20.000000000 -0700
++++ BeatDetectorForGames-e3143cbde1261a9bfa566633377d282ac46a7750/BeatDetector/BeatDetectorC++Version/Detector/BeatDetector.cpp	2017-01-10 16:44:43.352275336 -0800
+@@ -17,7 +17,7 @@
+ */
+ 
+ #include "BeatDetector.h"
+-#include "LoadoutManager.h"
++#include <string.h>
+ 
+ BeatDetector* BeatDetector::instance = 0;
+ 
+Only in BeatDetectorForGames-e3143cbde1261a9bfa566633377d282ac46a7750/BeatDetector/BeatDetectorC++Version/Detector/build/bin/DebugSharedLib: libBeatDetectorForGames.so
+Only in BeatDetectorForGames-e3143cbde1261a9bfa566633377d282ac46a7750/BeatDetector/BeatDetectorC++Version/Detector/build/obj/DebugSharedLib: BeatDetector.d
+Only in BeatDetectorForGames-e3143cbde1261a9bfa566633377d282ac46a7750/BeatDetector/BeatDetectorC++Version/Detector/build/obj/DebugSharedLib: BeatDetector.o
+Only in BeatDetectorForGames-e3143cbde1261a9bfa566633377d282ac46a7750/BeatDetector/BeatDetectorC++Version/Detector/build/obj/DebugSharedLib: TimeStamp.d
+Only in BeatDetectorForGames-e3143cbde1261a9bfa566633377d282ac46a7750/BeatDetector/BeatDetectorC++Version/Detector/build/obj/DebugSharedLib: TimeStamp.o
