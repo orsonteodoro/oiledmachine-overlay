@@ -23,6 +23,7 @@ REQUIRED_USE="|| ( ${USE_DOTNET} )"
 
 RDEPEND=">=dev-lang/mono-4.0.2.5
 	dev-util/nant[nupkg]
+	dev-dotnet/log4net
 "
 DEPEND="${RDEPEND}
 "
@@ -128,6 +129,9 @@ src_install() {
 		doins src/nunit.snk
 		doins addins/RowTest/nunitextension.snk
 	fi
+
+	#has its own package
+	rm "${D}/usr/share/${SLOTTEDDIR}/log4net.dll"
 
 	dotnet_multilib_comply
 }

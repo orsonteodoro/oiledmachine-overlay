@@ -19,7 +19,7 @@ DESCRIPTION="create, extract, or update zip files with C# (=DotNetZip+SemVer)"
 LICENSE="MS-PL" # https://github.com/haf/DotNetZip.Semverd/blob/master/LICENSE
 
 IUSE="net45 +gac +nupkg developer debug doc"
-REQUIRED_USE="|| ( ${USE_DOTNET} )"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) nupkg"
 
 COMMON_DEPEND=">=dev-lang/mono-4.0.2.5
 "

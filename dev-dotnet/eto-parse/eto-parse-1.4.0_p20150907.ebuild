@@ -8,7 +8,7 @@ USE_DOTNET="net45"
 inherit dotnet gac nupkg
 
 IUSE="${USE_DOTNET} developer nupkg debug"
-REQUIRED_USE="|| ( ${USE_DOTNET} )"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) nupkg"
 
 NAME="Eto.Parse"
 HOMEPAGE="https://github.com/picoe/${NAME}"

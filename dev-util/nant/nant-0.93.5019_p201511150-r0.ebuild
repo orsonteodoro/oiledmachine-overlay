@@ -28,7 +28,8 @@ REQUIRED_USE="|| ( ${USE_DOTNET} )"
 
 RDEPEND=">=dev-lang/mono-4.4.0.40
 	!dev-dotnet/nant
-	nupkg? ( dev-dotnet/nuget )"
+	nupkg? ( dev-dotnet/nuget )
+	dev-dotnet/log4net"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig
 "
@@ -67,6 +68,9 @@ src_install() {
 	make_wrapper nant "mono /usr/share/nant/NAnt.exe"
 
 	enupkg "${WORKDIR}/NAnt.0.93.5019.nupkg"
+
+	#has its own package
+	rm "${D}/usr/share/nant/log4net.dll"
 
 	dodoc README.txt
 }

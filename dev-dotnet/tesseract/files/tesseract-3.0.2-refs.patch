@@ -1,0 +1,86 @@
+Only in tesseract-3.0.2/src/Tesseract/bin: Debug
+Only in tesseract-3.0.2/src/Tesseract/obj: Debug45
+Only in tesseract-3.0.2/src/Tesseract.Tests/bin: Data
+Only in tesseract-3.0.2/src/Tesseract.Tests/bin: install.ps1
+Only in tesseract-3.0.2/src/Tesseract.Tests/bin: nunit.framework.dll
+Only in tesseract-3.0.2/src/Tesseract.Tests/bin: phototest.tif
+Only in tesseract-3.0.2/src/Tesseract.Tests/bin: Results
+Only in tesseract-3.0.2/src/Tesseract.Tests/bin: tessdata
+Only in tesseract-3.0.2/src/Tesseract.Tests/bin: Tesseract.dll
+Only in tesseract-3.0.2/src/Tesseract.Tests/bin: Tesseract.dll.mdb
+Only in tesseract-3.0.2/src/Tesseract.Tests/bin: Tesseract.Tests.dll
+Only in tesseract-3.0.2/src/Tesseract.Tests/bin: Tesseract.Tests.dll.config
+Only in tesseract-3.0.2/src/Tesseract.Tests/bin: Tesseract.Tests.dll.mdb
+Only in tesseract-3.0.2/src/Tesseract.Tests/bin: Tesseract.xml
+Only in tesseract-3.0.2/src/Tesseract.Tests/bin: x64
+Only in tesseract-3.0.2/src/Tesseract.Tests/bin: x86
+Only in tesseract-3.0.2/src/Tesseract.Tests/obj: .NETFramework,Version=v4.5.1.AssemblyAttribute.cs
+Only in tesseract-3.0.2/src/Tesseract.Tests/obj: Tesseract.Tests.csproj.FilesWrittenAbsolute.txt
+Only in tesseract-3.0.2/src/Tesseract.Tests/obj: Tesseract.Tests.dll
+Only in tesseract-3.0.2/src/Tesseract.Tests/obj: Tesseract.Tests.dll.mdb
+diff -urp tesseract-3.0.2.orig/src/Tesseract.Tests/Tesseract.Tests.csproj tesseract-3.0.2/src/Tesseract.Tests/Tesseract.Tests.csproj
+--- tesseract-3.0.2.orig/src/Tesseract.Tests/Tesseract.Tests.csproj	2016-02-12 13:46:47.000000000 -0800
++++ tesseract-3.0.2/src/Tesseract.Tests/Tesseract.Tests.csproj	2017-01-11 02:36:15.478264459 -0800
+@@ -45,19 +45,19 @@
+   <Import Project="..\Common.net45.targets" />
+   <ItemGroup>
+     <Reference Include="nunit.core">
+-      <HintPath>..\packages\NUnitTestAdapter.1.2\lib\nunit.core.dll</HintPath>
++      <HintPath>/usr/share/nunit-2/nunit.core.dll</HintPath>
+       <Private>False</Private>
+     </Reference>
+     <Reference Include="nunit.core.interfaces">
+-      <HintPath>..\packages\NUnitTestAdapter.1.2\lib\nunit.core.interfaces.dll</HintPath>
++      <HintPath>/usr/share/nunit-2/nunit.core.interfaces.dll</HintPath>
+       <Private>False</Private>
+     </Reference>
+-    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
++    <Reference Include="nunit.framework">
+       <SpecificVersion>False</SpecificVersion>
+-      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
++      <HintPath>/usr/share/nunit-2/nunit.framework.dll</HintPath>
+     </Reference>
+     <Reference Include="nunit.util">
+-      <HintPath>..\packages\NUnitTestAdapter.1.2\lib\nunit.util.dll</HintPath>
++      <HintPath>/usr/share/nunit-2/nunit.util.dll</HintPath>
+       <Private>False</Private>
+     </Reference>
+     <Reference Include="NUnit.VisualStudio.TestAdapter">
+@@ -65,15 +65,11 @@
+       <Private>False</Private>
+     </Reference>
+     <Reference Include="System" />
+-    <Reference Include="System.Core" Condition=" '$(SupportNet35)' == 'True' ">
+-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+-    </Reference>
++    <Reference Include="System.Core" />
+     <Reference Include="System.Drawing" />
+-    <Reference Include="System.Runtime.Serialization" Condition=" '$(SupportNet35)' == 'True' " />
++    <Reference Include="System.Runtime.Serialization" />
+     <Reference Include="System.Xml" />
+-    <Reference Include="System.Xml.Linq" Condition=" '$(SupportNet35)' == 'True' ">
+-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+-    </Reference>
++    <Reference Include="System.Xml.Linq" />
+   </ItemGroup>
+   <ItemGroup>
+     <Compile Include="..\AssemblyVersionInfo.cs">
+@@ -182,9 +178,11 @@
+     </None>
+   </ItemGroup>
+   <ItemGroup>
++    <!--
+     <None Include="tessdata\configs\bazzar">
+       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+     </None>
++    -->
+     <None Include="Data\Ocr\uzn-test.png">
+       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+     </None>
+@@ -249,4 +247,4 @@
+   </ItemGroup>
+   <ItemGroup />
+   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+-</Project>
+\ No newline at end of file
++</Project>

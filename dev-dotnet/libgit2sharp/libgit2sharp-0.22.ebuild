@@ -10,7 +10,7 @@ USE_DOTNET="net45"
 EBUILD_FRAMEWORK="4.5"
 IUSE="${USE_DOTNET} +gac +nupkg"
 IUSE+=" monodevelop"
-REQUIRED_USE="|| ( ${USE_DOTNET} )"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) nupkg"
 
 inherit nupkg
 

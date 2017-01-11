@@ -18,7 +18,7 @@ inherit nupkg
 if [[ -n ${NUGET_NO_DEPEND} ]]; then
 	IUSE+=" +nuget"
 	
-	DEPEND+=" nuget? ( dev-dotnet/nuget )"
+	DEPEND+=" nuget? ( dev-dotnet/nuget app-arch/unzip )"
 	RDEPEND+=" nuget? ( dev-dotnet/nuget )"
 fi
 
@@ -48,6 +48,16 @@ enuget_download_rogue_binary() {
 	einfo "$(pwd)"
 	einfo nuget install "$1" -Version "$2" -SolutionDirectory "${S}" -ConfigFile "${CONFIG_PATH}/${CONFIG_NAME}" -OutputDirectory "${S}/packages" -Verbosity detailed
 	      nuget install "$1" -Version "$2" -SolutionDirectory "${T}" -ConfigFile "${CONFIG_PATH}/${CONFIG_NAME}" -OutputDirectory "${S}/packages" -Verbosity detailed || die
+}
+
+# @FUNCTION: enuget_download_rogue_binary2
+# @DESCRIPTION: downloads a binary package from 3rd untrusted party repository
+# accepts Id of package as parameter but doesn't install it
+enuget_download_rogue_binary2() {
+        mkdir -p "${S}"
+        wget --continue https://www.nuget.org/api/v2/package/$1/$2 --output-document="${S}/$1.$2.nupkg" || die
+        cd "${S}"
+        unzip "${S}/$1.$2.nupkg"
 }
 
 if [[ $PV == *_alpha* ]] ; then

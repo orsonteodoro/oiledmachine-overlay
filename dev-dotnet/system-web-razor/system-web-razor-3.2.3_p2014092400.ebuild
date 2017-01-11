@@ -24,7 +24,7 @@ KEYWORDS="~amd64 ~x86"
 USE_DOTNET="net45"
 
 IUSE="+${USE_DOTNET} developer debug"
-REQUIRED_USE="|| ( ${USE_DOTNET} )"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) nupkg"
 
 COMMON_DEPEND=">=dev-lang/mono-4.0.2.5
 	dev-dotnet/microsoft-web-infrastructure

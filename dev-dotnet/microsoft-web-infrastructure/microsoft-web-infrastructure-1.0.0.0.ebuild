@@ -7,7 +7,7 @@ EAPI=6
 USE_DOTNET="net45"
 inherit gac nupkg
 IUSE+=" +net45 debug"
-REQUIRED_USE="|| ( ${USE_DOTNET} )"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) nupkg"
 
 DESCRIPTION="assembly that lets you dynamically register HTTP modules at run time"
 HOMEPAGE="https://www.asp.net/"

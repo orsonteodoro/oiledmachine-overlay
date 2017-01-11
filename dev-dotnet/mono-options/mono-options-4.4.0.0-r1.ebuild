@@ -7,8 +7,8 @@ KEYWORDS="~amd64 ~x86"
 RESTRICT="mirror"
 
 USE_DOTNET="net45"
-IUSE="+${USE_DOTNET}"
-REQUIRED_USE="|| ( ${USE_DOTNET} )"
+IUSE="+${USE_DOTNET} nupkg"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) nupkg"
 
 inherit gac nupkg
 

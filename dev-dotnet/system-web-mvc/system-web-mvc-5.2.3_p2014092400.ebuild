@@ -23,8 +23,8 @@ KEYWORDS="~amd64 ~x86"
 #USE_DOTNET="net45 net40 net20"
 USE_DOTNET="net45"
 
-IUSE="+${USE_DOTNET} developer debug"
-REQUIRED_USE="|| ( ${USE_DOTNET} )"
+IUSE="+${USE_DOTNET} developer debug nupkg"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) nupkg"
 
 COMMON_DEPEND=">=dev-lang/mono-4.0.2.5
 	dev-dotnet/system-web-webpages

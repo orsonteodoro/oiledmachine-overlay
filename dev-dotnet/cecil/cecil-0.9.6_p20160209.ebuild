@@ -15,7 +15,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 USE_DOTNET="net35 net40 net45"
 IUSE="net35 net40 net45 +gac +nupkg +pkg-config debug developer"
-REQUIRED_USE="|| ( ${USE_DOTNET} )"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) nupkg"
 
 COMMON_DEPEND=">=dev-lang/mono-4.0.2.5
 "

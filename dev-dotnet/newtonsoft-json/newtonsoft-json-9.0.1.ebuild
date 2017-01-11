@@ -12,7 +12,7 @@ EAPI=6
 # pkg-config = register in pkg-config database
 USE_DOTNET="net45"
 IUSE="${USE_DOTNET} debug developer test +nupkg +gac +pkg-config"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac nupkg"
 
 inherit dotnet nupkg gac
 

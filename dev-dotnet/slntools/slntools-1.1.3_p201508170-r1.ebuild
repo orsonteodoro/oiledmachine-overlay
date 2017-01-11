@@ -7,7 +7,7 @@ KEYWORDS="~amd64 ~x86"
 USE_DOTNET="net45"
 # cli = do install command line interface
 IUSE="${USE_DOTNET} developer gac nupkg debug cli"
-REQUIRED_USE="|| ( ${USE_DOTNET} )"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) nupkg"
 inherit dotnet gac
 
 NAME="slntools"
