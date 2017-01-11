@@ -194,6 +194,8 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 *dev-dotnet/aforgedotnet - This is the AForge.NET library containing computer vision and aritificial intelligence algorithms.  Kinect (via libfreenect) support untested.  References to ffmpeg untested.  Needs to be tested.  The author said that the video isn't feature complete on mono Linux.
 
+*games-misc/beatdetectorforgames - This is a rough draft of FMOD based beat detector which may be useful for rhythym games.  It has support for both C++ and C#.
+
 The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overlay ebuilds.  They many of the ebuilds in that folder in this overlay are dependencies for the latest stable Monodevelop and for Monogame.
 
 
