@@ -60,10 +60,16 @@ src_prepare() {
 	# fix clang build
 	#epatch "${FILESDIR}"/${PN}-2.0.8-clang.patch
 
+	sed -i -r -e "s|\"nvtt\"|\"libnvtt.dll\"|g"  ./project/vc8/Nvidia.TextureTools/TextureTools.cs
+	sed -i -r -e "s|\"nvtt\"|\"libnvtt.dll\"|g"  ./project/vc9/Nvidia.TextureTools/TextureTools.cs
+	sed -i -r -e "s|\"nvtt\"|\"libnvtt.dll\"|g"  ./project/vc10/Nvidia.TextureTools/TextureTools.cs
+	sed -i -r -e "s|\"nvtt\"|\"libnvtt.dll\"|g"  ./project/vc12/Nvidia.TextureTools/TextureTools.cs
+
 	#monogame refers to this copy
 	if use monogame ; then
 		cp -a "${S}/project/vc9" "${S}/project/monogame"
 		wget -O "${S}/project/monogame/Nvidia.TextureTools/TextureTools.cs"  "https://github.com/castano/nvidia-texture-tools/raw/a382ea5b21796b62a25fc1eb99871735a25db64f/project/vc9/Nvidia.TextureTools/TextureTools.cs" || die
+		sed -i -r -e "s|\"nvtt\"|\"libnvtt.dll\"|g"  ./project/monogame/Nvidia.TextureTools/TextureTools.cs
 	fi
 
 	for dll in $NVTT_DLLS

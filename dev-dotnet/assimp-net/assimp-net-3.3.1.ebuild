@@ -32,6 +32,9 @@ src_prepare() {
 }
 
 src_compile() {
+	sed -i -e "s|\"Assimp32.so\"|\"libassimp.so\"|g" ./AssimpNet/Unmanaged/AssimpLibrary.cs
+	sed -i -e "s|\"Assimp64.so\"|\"libassimp.so\"|g" ./AssimpNet/Unmanaged/AssimpLibrary.cs
+
 	mydebug="Net45-Release"
 	if use debug; then
 		mydebug="Net45-Debug"
@@ -78,12 +81,6 @@ src_install() {
 	dodoc AssimpLicense.txt
 	cd "${S}"
 	dodoc -r Docs/*
-
-        FILES=$(find "${D}" -name "*.dll")
-        for f in $FILES
-        do
-                cp -a "${FILESDIR}/AssimpNet.dll.config" "$(dirname $f)"
-        done
 
 	dotnet_multilib_comply
 }

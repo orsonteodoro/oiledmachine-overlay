@@ -29,13 +29,20 @@ S="${WORKDIR}/${PROJECT_NAME}-${PV}"
 SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_prepare() {
+	cd "${WORKDIR}"
 	FILES=$(grep -l -r -e "DllImport")
 	for f in $FILES
 	do
-		sed -i -e "s|csfml-graphics-2|csfml-graphics-2.dll|g" "$f"
-		sed -i -e "s|sfmlnet-audio-2|sfmlnet-audio-2.dll|g" "$f"
-		sed -i -e "s|sfmlnet-system-2|sfmlnet-system-2.dll|g" "$f"
-		sed -i -e "s|sfmlnet-window-2|sfmlnet-window-2.dll|g" "$f"
+		einfo "Editing $f..."
+		sed -i -e "s|csfml-graphics-2|libsfml-graphics.dll|g" "$f" || die
+		sed -i -e "s|csfml-audio-2|libsfml-audio.dll|g" "$f" || die
+		sed -i -e "s|csfml-system-2|libsfml-system.dll|g" "$f" || die
+		sed -i -e "s|csfml-window-2|libsfml-window.dll|g" "$f" || die
+
+		sed -i -e "s|sfmlnet-graphics-2|libsfml-graphics.dll|g" "$f" || die
+		sed -i -e "s|sfmlnet-audio-2|libsfml-audio.dll|g" "$f" || die
+		sed -i -e "s|sfmlnet-system-2|libsfml-system.dll|g" "$f" || die
+		sed -i -e "s|sfmlnet-window-2|libsfml-window.dll|g" "$f" || die
 	done
 
 	egenkey

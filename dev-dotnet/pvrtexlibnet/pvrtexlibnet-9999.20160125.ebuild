@@ -28,6 +28,7 @@ S="${WORKDIR}/PVRTexLibNET-${COMMIT}"
 SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_prepare() {
+	sed -i -r -e "s|\"PVRTexLibWrapper.dll\"|\"libPVRTexLibWrapper.dll\"|g" ./PVRTexLibNET/PVRTexLibNET.cs
 	cd "${S}/PVRTexLibWrapper"
 
 	egenkey
