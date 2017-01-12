@@ -361,19 +361,14 @@ src_prepare() {
 }
 
 src_compile() {
-	local mydebug="Release"
-	if use debug; then
-		mydebug="Debug"
-	fi
-
 	einfo "Building monogame and tools"
 	#nant -t:mono-4.5 build_linux || die
-	exbuild_strong /p:Configuration=${mydebug} /t:Clean MonoGame.Framework.Linux.sln || die
+	exbuild_strong /t:Clean MonoGame.Framework.Linux.sln || die
 
-	exbuild_strong /p:Configuration=${mydebug} /t:Build MonoGame.Framework.Linux.sln || die
+	exbuild_strong /t:Build MonoGame.Framework.Linux.sln || die
 
 	einfo "Building addin"
-	exbuild /p:Configuration=${mydebug} IDE/MonoDevelop/MonoDevelop.MonoGame.Addin.sln || die
+	exbuild IDE/MonoDevelop/MonoDevelop.MonoGame.Addin.sln || die
 }
 
 src_install() {
