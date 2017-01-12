@@ -47,6 +47,7 @@ REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
 SRC_URI="https://github.com/mono/MonoGame/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 S="${WORKDIR}/MonoGame-${PV}"
+SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 pkg_setup() {
 	dotnet_pkg_setup
@@ -359,10 +360,6 @@ src_prepare() {
 	sed -i -r -e "s|\[assembly\: InternalsVisibleTo\(\"MonoGameTests\"\)\]|\[assembly: InternalsVisibleTo(\"MonoGameTests, PublicKey=${public_key}\")\]|" ./MonoGame.Framework/Properties/AssemblyInfo.cs
 }
 
-src_configure(){
-	true
-}
-
 src_compile() {
 	local mydebug="Release"
 	if use debug; then
@@ -371,12 +368,12 @@ src_compile() {
 
 	einfo "Building monogame and tools"
 	#nant -t:mono-4.5 build_linux || die
-	xbuild /p:Configuration=${mydebug} /t:Clean /p:Configuration=Release MonoGame.Framework.Linux.sln || die
+	exbuild_strong /p:Configuration=${mydebug} /t:Clean MonoGame.Framework.Linux.sln || die
 
-	xbuild /p:Configuration=${mydebug} /t:Build /p:Configuration=Release MonoGame.Framework.Linux.sln /p:SignAssembly=true /p:AssemblyOriginatorKeyFile="${S}/${PN}-keypair.snk" || die
+	exbuild_strong /p:Configuration=${mydebug} /t:Build MonoGame.Framework.Linux.sln || die
 
 	einfo "Building addin"
-	xbuild /p:Configuration=${mydebug} IDE/MonoDevelop/MonoDevelop.MonoGame.Addin.sln || die
+	exbuild /p:Configuration=${mydebug} IDE/MonoDevelop/MonoDevelop.MonoGame.Addin.sln || die
 }
 
 src_install() {
@@ -408,7 +405,7 @@ src_install() {
 
         dodoc -r Documentation/*
 
-	MSBUILDTOOLSPATH="/usr/lib/mono/4.5/"
+	MSBUILDTOOLSPATH="/usr/lib/mono/${EBF}/"
 	MSBUILDEXTENSIONSPATH="/usr/lib/mono/xbuild/"
 
 	#addins
@@ -433,8 +430,6 @@ src_install() {
 		cp "${S}"/Tools/Pipeline/bin/Linux/AnyCPU/${mydebug}/MonoGame.Framework.Content.Pipeline.dll "${D}/${MSBUILDEXTENSIONSPATH}/MonoGame/v3.0/Tools/"
 		cp -r "${S}"/Tools/Pipeline/Templates "${D}/${MSBUILDEXTENSIONSPATH}/MonoGame/v3.0/Tools/"
 	fi
-
-	rm "${D}"/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/MonoDevelop.MonoGame.addin.xml
 
 	echo "//Dear Gentoo MonoGame developer:" > "${D}"/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs.t
 	echo "//You need to set LIBGL_DRIVERS_PATH in Solution > Projects > Options > Run > General in MonoDevelop to" >> "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs.t"
