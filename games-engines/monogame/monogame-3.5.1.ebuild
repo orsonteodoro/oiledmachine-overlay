@@ -16,9 +16,11 @@ RDEPEND="
 	media-libs/openal
 	>=dev-lang/mono-4.0.0
 	dev-dotnet/gtk-sharp:3
-	!>=dev-util/monodevelop-6.0.0.0
-	<=dev-util/monodevelop-5.9.5.9
-	>=dev-dotnet/mono-addins-1.0
+	addin? (
+		!>=dev-util/monodevelop-6.0.0.0
+		<=dev-util/monodevelop-5.9.5.9
+		>=dev-dotnet/mono-addins-1.0
+	)
 	dev-dotnet/opentk
 	>=dev-util/nant-0.93_pre20151114
 	>=dev-dotnet/lidgren-network-gen3-2015.12.18
@@ -42,7 +44,7 @@ DEPEND="
         dev-dotnet/protobuild
 "
 USE_DOTNET="net45"
-IUSE="${USE_DOTNET} debug bindist mgcb pipeline abi_x86_64 abi_x86_32 +gac"
+IUSE="${USE_DOTNET} debug bindist mgcb pipeline abi_x86_64 abi_x86_32 +gac doc addin"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
 SRC_URI="https://github.com/mono/MonoGame/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
@@ -349,7 +351,7 @@ src_prepare() {
 	#sed -r -e "s|workingdir="/Applications/Xamarin Studio.app/Contents/Resources/lib/monodevelop/bin/"|workingdir="/usr/lib/monodevelop/bin/"|g" ./IDE/MonoDevelop/MonoDevelop.MonoGame/MonoDevelop.MonoGame.csproj
 	xml ed -L -s "//Project" -t attr -n "xmlns" -v "http://schemas.microsoft.com/developer/msbuild/2003" ./IDE/MonoDevelop/MonoDevelop.MonoGame/MonoDevelop.MonoGame.csproj
 
-	genkey
+	egenkey
 
 	#inject public key into assembly
 	public_key=$(sn -tp "${PN}-keypair.snk" | tail -n 7 | head -n 5 | tr -d '\n')
@@ -367,8 +369,10 @@ src_compile() {
 
 	exbuild_strong /t:Build MonoGame.Framework.Linux.sln || die
 
-	einfo "Building addin"
-	exbuild IDE/MonoDevelop/MonoDevelop.MonoGame.Addin.sln || die
+	if use addin ; then
+		einfo "Building addin"
+		exbuild IDE/MonoDevelop/MonoDevelop.MonoGame.Addin.sln || die
+	fi
 }
 
 src_install() {
@@ -377,12 +381,11 @@ src_install() {
 		mydebug="Debug"
 	fi
 
-        ebegin "Installing dlls into the GAC"
 	cd "${S}"
 
-	savekey
+	esavekey
 
-	cp "${S}/IDE/MonoDevelop/MonoDevelop.MonoGame/MonoDevelop.MonoGame.addin.xml" "${S}/IDE/MonoDevelop/bin/${mydebug}/MonoDevelop.MonoGame.MonoDevelop.MonoGame.addin.xml"
+        ebegin "Installing dlls into the GAC"
 
 	#primary dlls
 
@@ -398,24 +401,28 @@ src_install() {
 
 	eend
 
-        dodoc -r Documentation/*
+        use doc && dodoc -r Documentation/*
 
 	MSBUILDTOOLSPATH="/usr/lib/mono/${EBF}/"
 	MSBUILDEXTENSIONSPATH="/usr/lib/mono/xbuild/"
 
-	#addins
-	mkdir -p "${D}"/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/
-	cp -r "${S}/IDE/MonoDevelop/bin/${mydebug}"/*  "${D}"/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/
+	if use addin ; then
+		cp "${S}/IDE/MonoDevelop/MonoDevelop.MonoGame/MonoDevelop.MonoGame.addin.xml" "${S}/IDE/MonoDevelop/bin/${mydebug}/MonoDevelop.MonoGame.MonoDevelop.MonoGame.addin.xml"
 
-	#missing addin stuff
-	cp -r "${S}"/IDE/MonoDevelop/MonoDevelop.MonoGame/icons "${D}"/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/
+		#addins
+		mkdir -p "${D}"/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/
+		cp -r "${S}/IDE/MonoDevelop/bin/${mydebug}"/*  "${D}"/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/
+
+		#missing addin stuff
+		cp -r "${S}"/IDE/MonoDevelop/MonoDevelop.MonoGame/icons "${D}"/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/
+	fi
 
 	#monogame content builder
 	if use mgcb; then
 		mkdir -p "${D}/${MSBUILDEXTENSIONSPATH}/MonoGame/v3.0/Tools/"
 		cp "${S}/Tools/MGCB/bin/Linux/AnyCPU/${mydebug}/MGCB.exe" "${D}/${MSBUILDEXTENSIONSPATH}/MonoGame/v3.0/Tools/"
 		cp "${S}/Tools/MGCB/bin/Linux/AnyCPU/${mydebug}"/*.dll "${D}/${MSBUILDEXTENSIONSPATH}/MonoGame/v3.0/Tools/"
-		cp "${S}/IDE/MonoDevelop/bin/Release/templates/Common/Content.mgcb" "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Content.mgcb"
+		use addin && cp "${S}/IDE/MonoDevelop/bin/Release/templates/Common/Content.mgcb" "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Content.mgcb"
 	fi
 
 	#gui frontend for content processing
@@ -426,15 +433,17 @@ src_install() {
 		cp -r "${S}"/Tools/Pipeline/Templates "${D}/${MSBUILDEXTENSIONSPATH}/MonoGame/v3.0/Tools/"
 	fi
 
-	echo "//Dear Gentoo MonoGame developer:" > "${D}"/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs.t
-	echo "//You need to set LIBGL_DRIVERS_PATH in Solution > Projects > Options > Run > General in MonoDevelop to" >> "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs.t"
-	echo "//  /usr/lib/opengl/ati/lib" >> "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs.t"
-	echo "//  /usr/lib/opengl/xorg-x11/lib" >> "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs.t"
-	echo "//  /usr/lib/opengl/intel/lib" >> "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs.t"
-	echo "//  /usr/lib/opengl/nvidia/lib" >> "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs.t"
-	echo "//  or in your wrapper script before running your MonoGame app." >> "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs.t"
-	cat "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs" >> "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs.t"
-	mv "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs.t" "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs"
+	if use addin ; then
+		echo "//Dear Gentoo MonoGame developer:" > "${D}"/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs.t
+		echo "//You need to set LIBGL_DRIVERS_PATH in Solution > Projects > Options > Run > General in MonoDevelop to" >> "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs.t"
+		echo "//  /usr/lib/opengl/ati/lib" >> "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs.t"
+		echo "//  /usr/lib/opengl/xorg-x11/lib" >> "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs.t"
+		echo "//  /usr/lib/opengl/intel/lib" >> "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs.t"
+		echo "//  /usr/lib/opengl/nvidia/lib" >> "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs.t"
+		echo "//  or in your wrapper script before running your MonoGame app." >> "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs.t"
+		cat "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs" >> "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs.t"
+		mv "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs.t" "${D}/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame/templates/Common/Game1.cs"
+	fi
 
 	mkdir -p "${D}/usr/lib/mono/4.5/"
 	cp "${S}/MonoGame.Framework.Content.Pipeline/MonoGame.Content.Builder.targets" "${D}/usr/lib/mono/4.5/"
@@ -445,23 +454,13 @@ src_install() {
 }
 
 pkg_postinst() {
-	#update addins
-	mautil -reg "${ROOT}"/usr/$(get_libdir)/mono/gac -p "${ROOT}"/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame reg-build -v
-	elog "You need to set your project's LIBGL_DRIVERS_PATH to your video card driver /usr/lib/opengl/{ati,xorg-x11,intel,nvidia}/lib in"
-	elog "Solution > Projects > Options > Run > General in MonoDevelop or in or your wrapper script before running your MonoGame app."
-	einfo
-	einfo "Say no to File Conflict when creating a new MonoGame Solution for both Tao.Sdl.dll.config and OpenTK.dll.config files."
-	einfo
+	if use addin ; then
+		#update addins
+		mautil -reg "${ROOT}"/usr/$(get_libdir)/mono/gac -p "${ROOT}"/usr/$(get_libdir)/monodevelop/AddIns/MonoDevelop.MonoGame reg-build -v
+		elog "You need to set your project's LIBGL_DRIVERS_PATH to your video card driver /usr/lib/opengl/{ati,xorg-x11,intel,nvidia}/lib in"
+		elog "Solution > Projects > Options > Run > General in MonoDevelop or in or your wrapper script before running your MonoGame app."
+		einfo
+		einfo "Say no to File Conflict when creating a new MonoGame Solution for both Tao.Sdl.dll.config and OpenTK.dll.config files."
+		einfo
+	fi
 }
-
-function genkey() {
-	einfo "Generating Key Pair"
-	cd "${S}"
-	sn -k "${PN}-keypair.snk"
-}
-
-function savekey() {
-	mkdir -p "${D}/usr/share/${PN}/"
-	cp "${PN}-keypair.snk" "${D}/usr/share/${PN}/"
-}
-
