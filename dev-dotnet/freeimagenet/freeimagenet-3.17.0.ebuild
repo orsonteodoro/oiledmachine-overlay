@@ -32,6 +32,9 @@ src_prepare() {
 }
 
 src_compile() {
+	sed -i -r -e "s|\"FreeImage\"|\"libfreeimage.dll\"|g" ./Wrapper/FreeImage.NET/cs/UnitTest/FreeImage.cs
+	sed -i -r -e "s|\"FreeImage\"|\"libfreeimage.dll\"|g" ./Wrapper/FreeImage.NET/cs/Library/FreeImageStaticImports.cs
+
 	mydebug="release"
 	if use debug; then
 		mydebug="debug"
