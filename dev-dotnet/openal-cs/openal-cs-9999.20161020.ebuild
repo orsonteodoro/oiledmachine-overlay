@@ -28,8 +28,6 @@ S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
 SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_prepare() {
-	sed -i -e "s|soft_oal.dll|libopenal.so|g" src/{AL10.cs,AL11.cs,ALC10.cs,ALC11.cs,ALEXT.cs,EFX.cs}
-
 	egenkey
 
 	eapply_user
@@ -68,6 +66,9 @@ src_install() {
 	fi
 
 	eend
+
+	insinto "/usr/$(get_libdir)/mono/${PN}"
+	doins "bin/${mydebug}/OpenAL-CS.dll.config"
 
 	dotnet_multilib_comply
 }

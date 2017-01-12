@@ -79,6 +79,12 @@ src_install() {
 	cd "${S}"
 	dodoc -r Docs/*
 
+        FILES=$(find "${D}" -name "*.dll")
+        for f in $FILES
+        do
+                cp -a "${FILESDIR}/AssimpNet.dll.config" "$(dirname $f)"
+        done
+
 	dotnet_multilib_comply
 }
 

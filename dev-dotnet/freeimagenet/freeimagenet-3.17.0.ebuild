@@ -13,8 +13,8 @@ LICENSE="FREEIMAGEPL-1.0 GPL-2 GPL-3"
 SLOT="0/$(get_version_component_range 1-2)"
 KEYWORDS="~amd64 ~x86"
 USE_DOTNET="net45"
-IUSE="${USE_DOTNET} debug csharp +gac"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
+IUSE="${USE_DOTNET} debug +gac"
+REQUIRED_USE="|| ( ${USE_DOTNET} )"
 
 RDEPEND=">=dev-lang/mono-4
          media-libs/freeimage:0/$(get_version_component_range 1-2)"
@@ -40,7 +40,7 @@ src_compile() {
 
 	#emake || die "failed to compile library"
 
-	if use csharp ; then
+	if use gac ; then
 	        einfo "Building FreeImage.Net"
 
 		cd "${S}/Wrapper/FreeImage.NET/cs/Library"
@@ -56,7 +56,7 @@ src_install() {
 		mydebug="Debug"
 	fi
 
-	if use csharp ; then
+	if use gac ; then
 	        ebegin "Installing dlls into the GAC"
 
 		esavekey
@@ -75,6 +75,12 @@ src_install() {
 	fi
 
 	eend
+
+        FILES=$(find "${D}" -name "*.dll")
+        for f in $FILES
+        do
+                cp -a "${FILESDIR}/FreeImageNET.dll.config" "$(dirname $f)"
+        done
 
 	dotnet_multilib_comply
 }

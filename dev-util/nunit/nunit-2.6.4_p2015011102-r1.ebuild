@@ -55,9 +55,16 @@ src_prepare() {
 }
 
 src_compile() {
+	if use debug; then
+		DIR="Debug"
+	else
+		DIR="Release"
+	fi
+
 	exbuild "${METAFILETOBUILD}"
-	enuspec "${S}/nuget/nunit.nuspec"
-	enuspec "${S}/nuget/nunit.runners.nuspec"
+
+	NUSPEC_PROPERTIES="" enuspec "${S}/nuget/nunit.nuspec"
+	NUSPEC_PROPERTIES="" enuspec "${S}/nuget/nunit.runners.nuspec"
 }
 
 src_install() {
@@ -100,38 +107,38 @@ src_install() {
 		doins license.txt
 	fi
 
-	enupkg "${WORKDIR}/NUnit.$(get_version_component_range 1-3).nupkg"
-	enupkg "${WORKDIR}/NUnit.Runners.$(get_version_component_range 1-3).nupkg"
-
 	if use developer ; then
 		insinto "${SLOTTEDDIR}"
-		doins bin/Release/nunit.framework.dll.mdb
-		doins bin/Release/nunit-agent.exe.mdb
-		doins bin/Release/pnunit-launcher.exe.mdb
-		doins bin/Release/pnunit-agent.exe.mdb
-		doins bin/Release/pnunit.framework.dll.mdb
-		doins bin/Release/nunit.core.interfaces.dll.mdb
-		doins bin/Release/nunit.core.dll.mdb
-		doins bin/Release/framework/nunit.framework.dll.mdb
-		#doins bin/Release/framework/nunit.mocks.dll.mdb
-		doins bin/Release/lib/nunit-console-runner.dll.mdb
-		#doins bin/Release/lib/nunit-gui-runner.dll.mdb
-		#doins bin/Release/lib/nunit.uikit.dll.mdb
-		#doins bin/Release/lib/nunit.uiexception.dll.mdb
-		doins bin/Release/lib/nunit.core.interfaces.dll.mdb
-		doins bin/Release/lib/nunit.core.dll.mdb
-		doins bin/Release/lib/nunit.util.dll.mdb
-		doins bin/Release/nunit.util.dll.mdb
-		doins bin/Release/nunit-console.exe.mdb
-		doins bin/Release/pnunit.tests.dll.mdb
-		doins bin/Release/nunit.exe.mdb
-		doins bin/Release/nunit-editor.exe.mdb
+		doins bin/${DIR}/nunit.framework.dll.mdb
+		doins bin/${DIR}/nunit-agent.exe.mdb
+		doins bin/${DIR}/pnunit-launcher.exe.mdb
+		doins bin/${DIR}/pnunit-agent.exe.mdb
+		doins bin/${DIR}/pnunit.framework.dll.mdb
+		doins bin/${DIR}/nunit.core.interfaces.dll.mdb
+		doins bin/${DIR}/nunit.core.dll.mdb
+		doins bin/${DIR}/framework/nunit.framework.dll.mdb
+		#doins bin/${DIR}/framework/nunit.mocks.dll.mdb
+		doins bin/${DIR}/lib/nunit-console-runner.dll.mdb
+		#doins bin/${DIR}/lib/nunit-gui-runner.dll.mdb
+		#doins bin/${DIR}/lib/nunit.uikit.dll.mdb
+		#doins bin/${DIR}/lib/nunit.uiexception.dll.mdb
+		doins bin/${DIR}/lib/nunit.core.interfaces.dll.mdb
+		doins bin/${DIR}/lib/nunit.core.dll.mdb
+		doins bin/${DIR}/lib/nunit.util.dll.mdb
+		doins bin/${DIR}/nunit.util.dll.mdb
+		doins bin/${DIR}/nunit-console.exe.mdb
+		doins bin/${DIR}/pnunit.tests.dll.mdb
+		doins bin/${DIR}/nunit.exe.mdb
+		doins bin/${DIR}/nunit-editor.exe.mdb
 		doins src/nunit.snk
 		doins addins/RowTest/nunitextension.snk
 	fi
 
 	#has its own package
 	rm "${D}/usr/share/${SLOTTEDDIR}/log4net.dll"
+
+	enupkg "${WORKDIR}/NUnit.$(get_version_component_range 1-3).nupkg"
+	enupkg "${WORKDIR}/NUnit.Runners.$(get_version_component_range 1-3).nupkg"
 
 	dotnet_multilib_comply
 }

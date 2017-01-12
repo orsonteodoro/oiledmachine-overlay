@@ -29,6 +29,15 @@ S="${WORKDIR}/${PROJECT_NAME}-${PV}"
 SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_prepare() {
+	FILES=$(grep -l -r -e "DllImport")
+	for f in $FILES
+	do
+		sed -i -e "s|csfml-graphics-2|csfml-graphics-2.dll|g" "$f"
+		sed -i -e "s|sfmlnet-audio-2|sfmlnet-audio-2.dll|g" "$f"
+		sed -i -e "s|sfmlnet-system-2|sfmlnet-system-2.dll|g" "$f"
+		sed -i -e "s|sfmlnet-window-2|sfmlnet-window-2.dll|g" "$f"
+	done
+
 	egenkey
 
 	eapply_user
@@ -92,6 +101,30 @@ multilib_src_install() {
         done
 
 	eend
+
+        FILES=$(find "${D}" -name "sfmlnet-audio-2.dll")
+        for f in $FILES
+        do
+                cp -a "${FILESDIR}/sfmlnet-audio-2.dll.config" "$(dirname $f)"
+        done
+
+        FILES=$(find "${D}" -name "sfmlnet-graphics-2.dll")
+        for f in $FILES
+        do
+                cp -a "${FILESDIR}/sfmlnet-graphics-2.dll.config" "$(dirname $f)"
+        done
+
+        FILES=$(find "${D}" -name "sfmlnet-system-2.dll")
+        for f in $FILES
+        do
+                cp -a "${FILESDIR}/sfmlnet-system-2.dll.config" "$(dirname $f)"
+        done
+
+        FILES=$(find "${D}" -name "sfmlnet-window-2.dll")
+        for f in $FILES
+        do
+                cp -a "${FILESDIR}/sfmlnet-window-2.dll.config" "$(dirname $f)"
+        done
 
 	dotnet_multilib_comply
 }

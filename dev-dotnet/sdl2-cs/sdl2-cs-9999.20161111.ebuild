@@ -30,11 +30,6 @@ S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
 SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_prepare() {
-	sed -i -e "s|SDL2.dll|libSDL2.so|g" ./src/src/SDL2.cs
-	sed -i -e "s|SDL2_image.dll|libSDL2_image.so|g" ./src/src/SDL2_image.cs
-	sed -i -e "s|SDL2_mixer.dll|libSDL2_mixer.so|g" ./src/src/SDL2_mixer.cs
-	sed -i -e "s|SDL2_ttf.dll|libSDL2_ttf.so|g" ./src/src/SDL2_ttf.cs
-
 	egenkey
 
 	eapply_user
@@ -70,6 +65,9 @@ src_install() {
         done
 
 	eend
+
+      	insinto "/usr/$(get_libdir)/mono/${PN}"
+	doins bin/${mydebug}/SDL2-CS.dll.config
 
 	dotnet_multilib_comply
 }

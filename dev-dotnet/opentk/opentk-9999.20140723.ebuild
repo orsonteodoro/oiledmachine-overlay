@@ -48,6 +48,11 @@ src_compile() {
 }
 
 src_install() {
+	mydebug="Release"
+	if use debug ; then
+		mydebug="Debug"
+	fi
+
 	ebegin "Installing dlls into the GAC"
 
 	esavekey
@@ -70,8 +75,24 @@ src_install() {
 		doins Binaries/OpenTK/Release/{OpenTK.dll.mdb,OpenTK.GLControl.xml,OpenTK.pdb,OpenTK.xml}
 	fi
 
-       	insinto "/usr/$(get_libdir)/mono/${PN}"
-	doins Binaries/OpenTK/Release/{OpenTK.Compatibility.dll.config,OpenTK.dll.config,OpenTK.pdb}
+        FILES=$(find "${D}" -name "OpenTK.Compatibility.dll")
+        for f in $FILES
+        do
+                cp -a "Binaries/OpenTK/${mydebug}/OpenTK.Compatibility.dll.config" "$(dirname $f)"
+        done
+
+        FILES=$(find "${D}" -name "OpenTK.dll")
+        for f in $FILES
+        do
+                cp -a "Binaries/OpenTK/${mydebug}/OpenTK.dll.config" "$(dirname $f)"
+        done
+
+        FILES=$(find "${D}" -name "OpenTK.GLControl.dll")
+        for f in $FILES
+        do
+                cp -a "Binaries/OpenTK/${mydebug}/OpenTK.GLControl.dll.config" "$(dirname $f)"
+        done
+
 
 	dotnet_multilib_comply
 }

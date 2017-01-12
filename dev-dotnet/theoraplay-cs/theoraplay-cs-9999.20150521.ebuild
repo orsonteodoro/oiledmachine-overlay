@@ -28,8 +28,6 @@ S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
 SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_prepare() {
-	sed -i -e "s|libtheoraplay.dll|libtheoraplay.so|g" TheoraPlay.cs
-
 	egenkey
 
 	eapply_user

@@ -63,6 +63,9 @@ src_install() {
 
 	eend
 
+       	insinto "/usr/$(get_libdir)/mono/${PN}"
+	doins Binaries/SharpFont/${mydebug}/SharpFont.dll.config
+
 	cd "${S}"
 	dodoc README.md "LICENSE"
 

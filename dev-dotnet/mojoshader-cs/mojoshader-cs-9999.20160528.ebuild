@@ -28,7 +28,6 @@ S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
 SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_prepare() {
-	sed -i -e "s|MojoShader.dll|libmojoshader.so|g" MojoShader.cs
 	egenkey
 
 	eapply_user
@@ -64,6 +63,12 @@ src_install() {
         done
 
 	eend
+
+        FILES=$(find "${D}" -name "*.dll")
+        for f in $FILES
+        do
+                cp -a "${FILESDIR}/MojoShader-CS.dll.config" "$(dirname $f)"
+        done
 
 	dotnet_multilib_comply
 }

@@ -3,8 +3,8 @@ solution "BeatDetectorForGames"
 
 project "BeatDetectorForGames"
       language "C++"
-      includedirs { "../FMOD/", "../FMOD/inc/"  }
-      files { "**.cpp", "../FMOD/inc/**.hpp" }
+      includedirs { "../FMOD/", "/opt/fmodex/api/inc/"  }
+      files { "**.cpp", "/opt/fmodex/api/inc/**.hpp" }
       location "build"
       buildoptions { "-std=c++11" }
 

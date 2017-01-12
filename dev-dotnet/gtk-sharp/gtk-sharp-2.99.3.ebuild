@@ -39,7 +39,22 @@ DEPEND="${RDEPEND}
 	sys-devel/automake:1.11"
 
 src_prepare() {
-	gnome2_src_prepare
+	default
+	#gnome2_src_prepare
+
+	#step 1: manually mark lib to lib64 to hint which parts to edit
+	eapply "${FILESDIR}/gtk-sharp-2.99.9999-multilib-hint.patch"
+
+	#step 2: edit those parts
+	FILES=$(grep -l -r -e "lib64")
+	for f in $FILES
+	do
+		sed -i -r -e "s|lib64|$(get_libdir)|g" "$f"
+	done
+
+	#fix the gac
+	sed -i -r -e "s|GACDIR_GENTOO_HINT||g" configure.ac
+	sed -i -r -e "s|GAC_GENTOO_OTHER_ARGS|-root \"${ED}\"/usr/$(get_libdir)|g" configure.ac
 
 	eapply_user
 
@@ -61,7 +76,9 @@ src_compile() {
 }
 
 src_install() {
+	#emake DESTDIR="${D}"
 	default
+
 	sed -i "s/\\r//g" "${D}"/usr/bin/* || die "sed failed"
 
 	if use developer ; then
@@ -69,8 +86,6 @@ src_install() {
 		doins "${S}/cairo/mono.snk"
 		doins "gtk-sharp.snk"
 	fi
-
-	mv "${D}/usr/lib" "${D}/usr/$(get_libdir)"
 
 	dotnet_multilib_comply
 }

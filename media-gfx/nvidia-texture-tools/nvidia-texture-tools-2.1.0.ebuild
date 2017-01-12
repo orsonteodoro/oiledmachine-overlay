@@ -136,5 +136,11 @@ src_install() {
 		eend
 	fi
 
+        FILES=$(find "${D}" -name "*.dll")
+        for f in $FILES
+        do
+                cp -a "${FILESDIR}/Nvidia.TextureTools.dll.config" "$(dirname $f)"
+        done
+
 	dotnet_multilib_comply
 }

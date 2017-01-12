@@ -115,5 +115,11 @@ multilib_src_install() {
 		cp -a PVRTexTool/Library/Linux_x86_${myabi2}/Dynamic/libPVRTexLib.so "${D}/usr/$(get_libdir)/" || die
 	fi
 
+	FILES=$(find "${D}" -name "*.dll")
+	for f in $FILES
+	do
+		cp -a "${FILESDIR}/PVRTexLibNET.dll.config" "$(dirname $f)"
+	done
+
 	dotnet_multilib_comply
 }

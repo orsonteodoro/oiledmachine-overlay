@@ -69,7 +69,7 @@ src_prepare() {
 	if use debug; then
 		DIR="Debug"
 	else
-		DIR=""
+		DIR="Release"
 	fi
 
 	sed -i "s=\\\$version\\\$=${NUGET_PACKAGE_VERSION}=g" "${S}/nuget/"*.nuspec || die
@@ -85,19 +85,17 @@ src_prepare() {
 }
 
 src_compile() {
-#	if use debug; then
-#		DIR="Debug"
-#	else
-#		DIR="Release"
-#	fi
+	if use debug; then
+		DIR="Debug"
+	else
+		DIR="Release"
+	fi
 	exbuild "${METAFILETOBUILD}"
-	enuspec "${S}/nuget/nunit.nuspec"
-	enuspec "${S}/nuget/nunit.runners.nuspec"
-	enuspec "${S}/nuget/nunit.console.nuspec"
-	enuspec "${S}/nuget/nunit.engine.nuspec"
 
-	#build monogame dependencies
-#	xbuild /p:Configuration="${DIR}" src/NUnitFramework/nunitlite.runner/nunitlite.runner-4.5.csproj || die
+	NUSPEC_PROPERTIES="" enuspec "${S}/nuget/nunit.nuspec"
+	NUSPEC_PROPERTIES="" enuspec "${S}/nuget/nunit.runners.nuspec"
+	NUSPEC_PROPERTIES="" enuspec "${S}/nuget/nunit.console.nuspec"
+	NUSPEC_PROPERTIES="" enuspec "${S}/nuget/nunit.engine.nuspec"
 }
 
 src_install() {
@@ -120,6 +118,7 @@ src_install() {
 
 	#monogame deps
         doins bin/Release/net-4.5/nunitlite.dll
+	doins bin/Release/addins/nunit-v2-result-writer.dll || die
 
 #	into /usr
 #	dobin ${FILESDIR}/nunit-console
@@ -143,25 +142,26 @@ src_install() {
 		doins LICENSE.txt NOTICES.txt CHANGES.txt
 	fi
 
+	if use developer ; then
+		insinto "${SLOTTEDDIR}"
+		doins bin/${DIR}/nunit3-console.exe.mdb
+		doins bin/${DIR}/nunit-agent.exe.mdb
+		doins bin/${DIR}/nunit.engine.api.dll.mdb
+		doins bin/${DIR}/net-4.5/nunitlite.dll.mdb
+		doins bin/${DIR}/net-4.5/nunit.framework.dll.mdb
+		doins bin/${DIR}/net-4.5/mock-nunit-assembly.exe.mdb
+		#doins bin/${DIR}/addins/vs-project-loader.dll.mdb
+		doins bin/${DIR}/addins/nunit-v2-result-writer.dll.mdb
+		#doins bin/${DIR}/addins/nunit-project-loader.dll.mdb
+		doins bin/${DIR}/nunit.engine.dll.mdb
+		doins src/nunit.snk
+	fi
+
 	enupkg "${WORKDIR}/NUnit.${NUGET_PACKAGE_VERSION}.nupkg"
 	enupkg "${WORKDIR}/NUnit.Runners.${NUGET_PACKAGE_VERSION}.nupkg"
 	enupkg "${WORKDIR}/NUnit.Console.${NUGET_PACKAGE_VERSION}.nupkg"
 	enupkg "${WORKDIR}/NUnit.Engine.${NUGET_PACKAGE_VERSION}.nupkg"
 
-	if use developer ; then
-		insinto "${SLOTTEDDIR}"
-		doins bin/Release/nunit3-console.exe.mdb
-		doins bin/Release/nunit-agent.exe.mdb
-		doins bin/Release/nunit.engine.api.dll.mdb
-		doins bin/Release/net-4.5/nunitlite.dll.mdb
-		doins bin/Release/net-4.5/nunit.framework.dll.mdb
-		doins bin/Release/net-4.5/mock-nunit-assembly.exe.mdb
-		#doins bin/Release/addins/vs-project-loader.dll.mdb
-		#doins bin/Release/addins/nunit-v2-result-writer.dll.mdb
-		#doins bin/Release/addins/nunit-project-loader.dll.mdb
-		doins bin/Release/nunit.engine.dll.mdb
-		doins src/nunit.snk
-	fi
 
 	dotnet_multilib_comply
 }

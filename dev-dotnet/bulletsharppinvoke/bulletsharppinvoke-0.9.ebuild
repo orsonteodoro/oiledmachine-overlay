@@ -30,6 +30,8 @@ S="${WORKDIR}/${PROJECT_NAME}-${PV}"
 SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_prepare() {
+	eapply "${FILESDIR}/bulletsharppinvoke-0.9-clangsharp-ref.patch"
+
 	egenkey
 
 	eapply_user

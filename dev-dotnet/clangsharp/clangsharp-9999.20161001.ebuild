@@ -28,6 +28,8 @@ S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
 SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_prepare() {
+	sed -i -e "s|libclang|libclang.dll|g" ./ClangSharpPInvokeGenerator/Generated.cs
+
 	egenkey
 
 	eapply_user
@@ -62,6 +64,12 @@ src_install() {
 
        	insinto "/usr/$(get_libdir)/mono/${PN}"
 	doins ClangSharpPInvokeGenerator/bin/Release/ClangSharpPInvokeGenerator.exe
+
+        FILES=$(find "${D}" -name "ClangSharp.dll")
+        for f in $FILES
+        do
+                cp -a "${FILESDIR}/ClangSharp.dll.config" "$(dirname $f)"
+        done
 
 	dotnet_multilib_comply
 }

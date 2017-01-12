@@ -41,6 +41,14 @@ src_prepare() {
 	sed -i -r -e "s|@S@|${S}|g" buildcs.lua
 	premake5 --file=buildcs.lua gmake
 
+	#use the system fmod
+	rm -rf "${S}"/BeatDetector/BeatDetectorC++Version/Detector/{inc,*.dll,lib}
+
+	sed -i -r -e "s|\"fmodex64\"|\"fmodex.dll\"|g" BeatDetector/BeatDetectorC#Version/fmod.cs
+	sed -i -r -e "s|\"fmodex\"|\"fmodex.dll\"|g" BeatDetector/BeatDetectorC#Version/fmod.cs
+	sed -i -r -e "s|\"fmodex64\"|\"fmodex.dll\"|g" BeatDetectorC++Version/FMOD/csharp/fmod.cs
+	sed -i -r -e "s|\"fmodex\"|\"fmodex.dll\"|g" BeatDetectorC++Version/FMOD/csharp/fmod.cs
+
 	egenkey
 
 	eapply_user
@@ -99,6 +107,12 @@ src_install() {
 		insinto /usr/$(get_libdir)
 		doins BeatDetector/BeatDetectorC++Version/Detector/build/bin/${mydebug}${mystatic}Lib/libBeatDetectorForGames.so
 	fi
+
+        FILES=$(find "${D}" -name "BeatDetectorForGames.dll")
+        for f in $FILES
+        do
+                cp -a "${FILESDIR}/BeatDetectorForGames.dll.config" "$(dirname $f)"
+        done
 
 	dotnet_multilib_comply
 }

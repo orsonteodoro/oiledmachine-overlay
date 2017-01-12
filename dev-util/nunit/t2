@@ -1,7 +1,0 @@
-FILES="$(equery f nunit:3)"
-for f in $FILES
-do
-	echo "testing: $f"
-	strings $f | grep "TestDelegate"
-	strings $f | grep "ResolvableConstraintExpression"
-done

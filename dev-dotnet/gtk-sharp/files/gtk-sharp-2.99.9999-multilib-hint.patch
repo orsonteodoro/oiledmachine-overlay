@@ -1,0 +1,167 @@
+diff -urp gtk-sharp-2.99.9999.orig/configure.ac gtk-sharp-2.99.9999/configure.ac
+--- gtk-sharp-2.99.9999.orig/configure.ac	2017-01-11 14:44:53.314675325 -0800
++++ gtk-sharp-2.99.9999/configure.ac	2017-01-11 14:51:26.083593053 -0800
+@@ -118,7 +118,7 @@ if test "x$AL" = "xno" ; then
+ fi
+ 
+ if test "x$has_mono" = "xtrue"; then
+-GACUTIL_FLAGS='/package $(PACKAGE_VERSION) /gacdir $(DESTDIR)$(prefix)/lib'
++GACUTIL_FLAGS='/package $(PACKAGE_VERSION) GAC_GENTOO_OTHER_ARGS /gacdir GACDIR_GENTOO_HINT'
+ GENERATED_SOURCES_FILES=generated/*/*.cs
+ GENERATED_SOURCES_OPTION=$GENERATED_SOURCES_FILES
+ ASSEMBLYINFO=/AssemblyInfo.cs
+@@ -301,7 +301,7 @@ echo "            corresponding developm
+ echo "            autogen.sh to include them in the build."
+ echo ""
+ echo "   * Documentation build enabled: $enable_monodoc "
+-if test "x$enable_monodoc" = "xyes" -a "x$doc_sources_dir" != "x$prefix/lib/monodoc/sources"; then
++if test "x$enable_monodoc" = "xyes" -a "x$doc_sources_dir" != "x$prefix/lib64/monodoc/sources"; then
+   echo "      WARNING: The install prefix is different than the monodoc prefix."
+   echo "               Monodoc will not be able to load the documentation."
+ fi
+diff -urp gtk-sharp-2.99.9999.orig/doc/Makefile.am gtk-sharp-2.99.9999/doc/Makefile.am
+--- gtk-sharp-2.99.9999.orig/doc/Makefile.am	2017-01-11 14:44:53.315675363 -0800
++++ gtk-sharp-2.99.9999/doc/Makefile.am	2017-01-11 14:46:00.875241554 -0800
+@@ -1,16 +1,16 @@
+ ASSEMBLIES = 					\
+-	lib/glib-sharp.dll			\
+-	lib/gio-sharp.dll			\
+-	lib/pango-sharp.dll			\
+-	lib/atk-sharp.dll			\
+-	lib/gdk-sharp.dll			\
+-	lib/gtk-sharp.dll			\
+-	lib/gtk-dotnet.dll
++	lib64/glib-sharp.dll			\
++	lib64/gio-sharp.dll			\
++	lib64/pango-sharp.dll			\
++	lib64/atk-sharp.dll			\
++	lib64/gdk-sharp.dll			\
++	lib64/gtk-sharp.dll			\
++	lib64/gtk-dotnet.dll
+ 
+ UPDATER = $(MDOC) update --out=en -pretty --fno-assembly-versions --since="Gtk# 3.0" $(ASSEMBLIES)
+ 
+ if ENABLE_MONODOC
+-SOURCESDIR=$(prefix)/lib/monodoc/sources
++SOURCESDIR=$(prefix)/lib64/monodoc/sources
+ TARGETS=gtk-sharp-3-docs.zip gtk-sharp-3-docs.tree gtk-sharp-3-docs.source
+ else
+ SOURCESDIR=$(datadir)
+@@ -28,9 +28,9 @@ gtk-sharp-3-docs.zip: $(srcdir)/en/*/*.x
+ 	$(MDOC) assemble -o gtk-sharp-3-docs $(srcdir)/en
+ 
+ get-assemblies:
+-	mkdir -p lib
+-	cp $(top_builddir)/*/*.dll lib
+-	cp $(top_builddir)/*/*.dll.config lib
++	mkdir -p lib64
++	cp $(top_builddir)/*/*.dll lib64
++	cp $(top_builddir)/*/*.dll.config lib64
+ 
+ update: get-assemblies
+ 	$(MDOC) update --out=en --fno-assembly-versions --since="Gtk# 3.0" $(ASSEMBLIES)
+@@ -38,7 +38,7 @@ update: get-assemblies
+ update-delete: get-assemblies
+ 	$(MDOC) update --out=en --fno-assembly-versions --delete --since="Gtk# 3.0" $(ASSEMBLIES)
+ 
+-CLEANFILES = gtk-sharp-3-docs.zip gtk-sharp-3-docs.tree lib
++CLEANFILES = gtk-sharp-3-docs.zip gtk-sharp-3-docs.tree lib64
+ 
+ EXTRA_DIST =			\
+ 	gtk-sharp-3-docs.source
+diff -urp gtk-sharp-2.99.9999.orig/gdk/gdk-sharp-3.0.pc.in gtk-sharp-2.99.9999/gdk/gdk-sharp-3.0.pc.in
+--- gtk-sharp-2.99.9999.orig/gdk/gdk-sharp-3.0.pc.in	2017-01-11 14:44:53.651688126 -0800
++++ gtk-sharp-2.99.9999/gdk/gdk-sharp-3.0.pc.in	2017-01-11 14:46:00.875241554 -0800
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=${exec_prefix}/lib64
+ gapidir=${prefix}/share/gapi-3.0
+ 
+ 
+diff -urp gtk-sharp-2.99.9999.orig/generator/gapi3-codegen.in gtk-sharp-2.99.9999/generator/gapi3-codegen.in
+--- gtk-sharp-2.99.9999.orig/generator/gapi3-codegen.in	2017-01-11 14:44:53.661688506 -0800
++++ gtk-sharp-2.99.9999/generator/gapi3-codegen.in	2017-01-11 14:46:00.875241554 -0800
+@@ -1,2 +1,2 @@
+ #!/bin/sh
+-@RUNTIME@ @prefix@/lib/gapi-3.0/gapi_codegen.exe "$@"
++@RUNTIME@ @prefix@/lib64/gapi-3.0/gapi_codegen.exe "$@"
+diff -urp gtk-sharp-2.99.9999.orig/generator/gapi3-fixup.in gtk-sharp-2.99.9999/generator/gapi3-fixup.in
+--- gtk-sharp-2.99.9999.orig/generator/gapi3-fixup.in	2017-01-11 14:44:53.661688506 -0800
++++ gtk-sharp-2.99.9999/generator/gapi3-fixup.in	2017-01-11 14:46:00.876241592 -0800
+@@ -1,2 +1,2 @@
+ #!/bin/sh
+-@RUNTIME@ @prefix@/lib/gapi-3.0/gapi-fixup.exe "$@"
++@RUNTIME@ @prefix@/lib64/gapi-3.0/gapi-fixup.exe "$@"
+diff -urp gtk-sharp-2.99.9999.orig/generator/Makefile.am gtk-sharp-2.99.9999/generator/Makefile.am
+--- gtk-sharp-2.99.9999.orig/generator/Makefile.am	2017-01-11 14:44:53.656688316 -0800
++++ gtk-sharp-2.99.9999/generator/Makefile.am	2017-01-11 14:46:00.876241592 -0800
+@@ -1,4 +1,4 @@
+-assemblydir = $(prefix)/lib/gapi-3.0
++assemblydir = $(prefix)/lib64/gapi-3.0
+ assembly_DATA = gapi-fixup.exe gapi_codegen.exe
+ bin_SCRIPTS = gapi3-fixup gapi3-codegen
+ CLEANFILES = gapi-fixup.exe gapi_codegen.exe
+diff -urp gtk-sharp-2.99.9999.orig/gio/gio-sharp-3.0.pc.in gtk-sharp-2.99.9999/gio/gio-sharp-3.0.pc.in
+--- gtk-sharp-2.99.9999.orig/gio/gio-sharp-3.0.pc.in	2017-01-11 14:44:53.666688696 -0800
++++ gtk-sharp-2.99.9999/gio/gio-sharp-3.0.pc.in	2017-01-11 14:46:00.876241592 -0800
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=${exec_prefix}/lib64
+ assemblies_dir=${libdir}/mono/@PACKAGE_VERSION@
+ gapidir=${prefix}/share/gapi-3.0
+ 
+diff -urp gtk-sharp-2.99.9999.orig/glib/glib-sharp-3.0.pc.in gtk-sharp-2.99.9999/glib/glib-sharp-3.0.pc.in
+--- gtk-sharp-2.99.9999.orig/glib/glib-sharp-3.0.pc.in	2017-01-11 14:44:53.674689000 -0800
++++ gtk-sharp-2.99.9999/glib/glib-sharp-3.0.pc.in	2017-01-11 14:46:00.876241592 -0800
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=${exec_prefix}/lib64
+ gapidir=${prefix}/share/gapi-3.0
+ 
+ 
+diff -urp gtk-sharp-2.99.9999.orig/gtk/gtk-sharp-3.0.pc.in gtk-sharp-2.99.9999/gtk/gtk-sharp-3.0.pc.in
+--- gtk-sharp-2.99.9999.orig/gtk/gtk-sharp-3.0.pc.in	2017-01-11 14:44:53.695689798 -0800
++++ gtk-sharp-2.99.9999/gtk/gtk-sharp-3.0.pc.in	2017-01-11 14:46:00.877241630 -0800
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=${exec_prefix}/lib64
+ gapidir=${prefix}/share/gapi-3.0
+ 
+ 
+diff -urp gtk-sharp-2.99.9999.orig/gtkdotnet/gtk-dotnet-3.0.pc.in gtk-sharp-2.99.9999/gtkdotnet/gtk-dotnet-3.0.pc.in
+--- gtk-sharp-2.99.9999.orig/gtkdotnet/gtk-dotnet-3.0.pc.in	2017-01-11 14:44:53.696689836 -0800
++++ gtk-sharp-2.99.9999/gtkdotnet/gtk-dotnet-3.0.pc.in	2017-01-11 14:46:00.877241630 -0800
+@@ -1,6 +1,6 @@
+ prefix=${pcfiledir}/../..
+ exec_prefix=${prefix}
+-libdir=${exec_prefix}/lib
++libdir=${exec_prefix}/lib64
+ 
+ 
+ Name: Gtk.DotNet
+diff -urp gtk-sharp-2.99.9999.orig/parser/gapi3-parser.in gtk-sharp-2.99.9999/parser/gapi3-parser.in
+--- gtk-sharp-2.99.9999.orig/parser/gapi3-parser.in	2017-01-11 14:44:53.705690178 -0800
++++ gtk-sharp-2.99.9999/parser/gapi3-parser.in	2017-01-11 14:46:00.877241630 -0800
+@@ -1,3 +1,3 @@
+ #!/bin/sh
+-export PATH=@prefix@/lib/gapi-3.0:$PATH
+-@RUNTIME@ @prefix@/lib/gapi-3.0/gapi-parser.exe "$@"
++export PATH=@prefix@/lib64/gapi-3.0:$PATH
++@RUNTIME@ @prefix@/lib64/gapi-3.0/gapi-parser.exe "$@"
+diff -urp gtk-sharp-2.99.9999.orig/parser/Makefile.am gtk-sharp-2.99.9999/parser/Makefile.am
+--- gtk-sharp-2.99.9999.orig/parser/Makefile.am	2017-01-11 14:44:53.704690140 -0800
++++ gtk-sharp-2.99.9999/parser/Makefile.am	2017-01-11 14:46:00.877241630 -0800
+@@ -1,4 +1,4 @@
+-assemblydir = $(prefix)/lib/gapi-3.0
++assemblydir = $(prefix)/lib64/gapi-3.0
+ pkgconfigdir = $(libdir)/pkgconfig
+ assembly_DATA = gapi-parser.exe
+ pkgconfig_DATA = gapi-3.0.pc
