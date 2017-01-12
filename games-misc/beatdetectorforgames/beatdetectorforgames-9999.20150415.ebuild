@@ -44,10 +44,10 @@ src_prepare() {
 	#use the system fmod
 	rm -rf "${S}"/BeatDetector/BeatDetectorC++Version/Detector/{inc,*.dll,lib}
 
-	sed -i -r -e "s|\"fmodex64\"|\"fmodex.dll\"|g" BeatDetector/BeatDetectorC#Version/fmod.cs
-	sed -i -r -e "s|\"fmodex\"|\"fmodex.dll\"|g" BeatDetector/BeatDetectorC#Version/fmod.cs
-	sed -i -r -e "s|\"fmodex64\"|\"fmodex.dll\"|g" BeatDetectorC++Version/FMOD/csharp/fmod.cs
-	sed -i -r -e "s|\"fmodex\"|\"fmodex.dll\"|g" BeatDetectorC++Version/FMOD/csharp/fmod.cs
+	sed -i -r -e 's|"fmodex64"|"fmodex.dll"|g' "${S}/BeatDetector/BeatDetectorC#Version/fmod.cs" || die p1
+	sed -i -r -e 's|"fmodex"|"fmodex.dll"|g' "${S}/BeatDetector/BeatDetectorC#Version/fmod.cs" || die p2
+	sed -i -r -e 's|"fmodex64"|"fmodex.dll"|g' "${S}/BeatDetector/BeatDetectorC++Version/FMOD/csharp/fmod.cs" || die p3
+	sed -i -r -e 's|"fmodex"|"fmodex.dll"|g' "${S}/BeatDetector/BeatDetectorC++Version/FMOD/csharp/fmod.cs" || die p4
 
 	egenkey
 
