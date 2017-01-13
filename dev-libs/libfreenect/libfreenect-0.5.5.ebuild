@@ -16,7 +16,7 @@ LICENSE="Apache-2.0 GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="bindist +c_sync +cpp doc examples fakenect opencv openni2 python"
-SRC_URI="https://github.com/OpenKinect/libfreenect/archive/v${PV}.tar.gz"
+SRC_URI="https://github.com/OpenKinect/libfreenect/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 PYTHON_DEPEND="!bindist? 2"
 
