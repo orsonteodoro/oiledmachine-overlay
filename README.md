@@ -198,6 +198,10 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 *dev-dotnet/tesseract - This is a C# binding to the tesseract OCR (Optical Character Recognition) software which will allow your program to read material produced by typewriters and from books.
 
+*sci-physics/libbulletc - Is a dependency for bulletsharppinvoke.  It combines all modules, which were originally seperate dlls, into one shared object/dll.
+
+*dev-dotnet/bulletsharppinvoke - Is a C# wrapper for libbulletc used for realistic physics in games.
+
 The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overlay ebuilds.  They many of the ebuilds in that folder in this overlay are dependencies for the latest stable Monodevelop and for Monogame.
 
 
