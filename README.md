@@ -202,7 +202,7 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 *dev-dotnet/bulletsharppinvoke - Is a C# wrapper for libbulletc used for realistic physics in games.
 
-*games-misc/monogame-extended -  Contains several common modules found in game engines like particle system and map loader.  Currently a vanilla build of MonoGame stable doesn't support shaders on Linux.
+*games-misc/monogame-extended -  Contains several common modules found in game engines like particle engine, based on mercury particle engine, and tiled map loader.  Currently a vanilla build of MonoGame stable doesn't support shaders on Linux so some features will not work for this assembly.
 
 The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overlay ebuilds.  They many of the ebuilds in that folder in this overlay are dependencies for the latest stable Monodevelop and for Monogame.
 
