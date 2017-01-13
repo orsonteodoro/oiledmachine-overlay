@@ -58,7 +58,7 @@ diff -urpN -x '*.rej' -x '*.orig' FreeImage.orig/Makefile.fip FreeImage/Makefile
 +LIBRARIES-yes = $(shell $(PKG_CONFIG) --libs zlib)
 +LIBRARIES-$(USE_EXR)    += $(shell $(PKG_CONFIG) --libs OpenEXR)
 +LIBRARIES-$(USE_JPEG)   += -ljpeg
-+LIBRARIES-$(USE_JPEG2K) += $(shell $(PKG_CONFIG) --libs libopenjpeg)
++LIBRARIES-$(USE_JPEG2K) += $(shell $(PKG_CONFIG) --libs libopenjp2)
 +LIBRARIES-$(USE_MNG)    += -lmng
 +LIBRARIES-$(USE_PNG)    += $(shell $(PKG_CONFIG) --libs libpng)
 +LIBRARIES-$(USE_TIFF)   += $(shell $(PKG_CONFIG) --libs libtiff-4 IlmBase)
@@ -112,7 +112,7 @@ diff -urpN -x '*.rej' -x '*.orig' FreeImage.orig/Makefile.gnu FreeImage/Makefile
 +LIBRARIES-yes = $(shell $(PKG_CONFIG) --libs zlib)
 +LIBRARIES-$(USE_EXR)    += $(shell $(PKG_CONFIG) --libs OpenEXR)
 +LIBRARIES-$(USE_JPEG)   += -ljpeg
-+LIBRARIES-$(USE_JPEG2K) += $(shell $(PKG_CONFIG) --libs libopenjpeg)
++LIBRARIES-$(USE_JPEG2K) += $(shell $(PKG_CONFIG) --libs libopenjp2)
 +LIBRARIES-$(USE_MNG)    += -lmng
 +LIBRARIES-$(USE_PNG)    += $(shell $(PKG_CONFIG) --libs libpng)
 +LIBRARIES-$(USE_TIFF)   += $(shell $(PKG_CONFIG) --libs libtiff-4 IlmBase)
@@ -290,7 +290,7 @@ diff -urpN -x '*.rej' -x '*.orig' FreeImage.orig/Makefile.srcs FreeImage/Makefil
 +INCLUDE-yes += $(shell $(PKG_CONFIG) --cflags-only-I zlib)
 +INCLUDE-$(USE_EXR)    += -DUSE_EXR    $(shell $(PKG_CONFIG) --cflags-only-I OpenEXR)
 +INCLUDE-$(USE_JPEG)   += -DUSE_JPEG
-+INCLUDE-$(USE_JPEG2K) += -DUSE_JPEG2K $(shell $(PKG_CONFIG) --cflags-only-I libopenjpeg)
++INCLUDE-$(USE_JPEG2K) += -DUSE_JPEG2K $(shell $(PKG_CONFIG) --cflags-only-I libopenjp2)
 +INCLUDE-$(USE_MNG)    += -DUSE_MNG
 +INCLUDE-$(USE_PNG)    += -DUSE_PNG    $(shell $(PKG_CONFIG) --cflags-only-I libpng)
 +INCLUDE-$(USE_TIFF)   += -DUSE_TIFF   $(shell $(PKG_CONFIG) --cflags-only-I libtiff-4 IlmBase)

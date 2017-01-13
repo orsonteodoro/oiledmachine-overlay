@@ -24,7 +24,7 @@ IUSE="jpeg jpeg2k mng openexr png raw static-libs tiff"
 # uses code from it to handle 16bit<->float conversions.
 RDEPEND="sys-libs/zlib
 	jpeg? ( virtual/jpeg:0 )
-	jpeg2k? ( media-libs/openjpeg:0 )
+	jpeg2k? ( media-libs/openjpeg:2 )
 	mng? ( media-libs/libmng )
 	openexr? ( media-libs/openexr )
 	png? ( media-libs/libpng:0 )
