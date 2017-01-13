@@ -29,6 +29,9 @@ S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
 SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_prepare() {
+	sed -i -e "s|\"freenect\"|\"libfreenect.dll\"|g" ./Sources/Video.Kinect/KinectNative.cs || die
+	sed -i -e "s|\"m3api.dll\"|\"libm3api.dll\"|g" ./Sources/Video.Ximea/Internal/XimeaAPI.cs || die
+
 	egenkey
 
 	eapply_user
@@ -79,6 +82,22 @@ src_install() {
 
 	eend
 
+	if use kinect ; then
+	        FILES=$(find "${D}" -name "AForge.Video.Kinect.dll")
+	        for f in $FILES
+	        do
+	                cp -a "${FILESDIR}/AForge.Video.Kinect.dll.config" "$(dirname $f)"
+	        done
+	fi
+
+	if use ximea ; then
+	        FILES=$(find "${D}" -name "AForge.Video.Ximea.dll")
+	        for f in $FILES
+	        do
+	                cp -a "${FILESDIR}/AForge.Video.Ximea.dll.config" "$(dirname $f)"
+	        done
+	fi
+
 	if use developer ; then
                	insinto "/usr/$(get_libdir)/mono/${PN}"
 
@@ -125,5 +144,11 @@ src_install() {
 		doins Tools/IPPrototyper/AForge.IPPrototyper.snk
 	fi
 
+
 	dotnet_multilib_comply
+}
+
+pkg_postinst() {
+	use ximea && einfo "This package does not pull the XIMEA xiAPI package.  You must manually create it yourself or install the library yourself."
+	einfo "This package doesn't support: AForge.Controls.dll, AForge.Robotics.Surveyor.dll, AForge.Video.VFW.dll, AForge.Robotics.Lego.dll, AForge.Video.DirectShow.dll."
 }
