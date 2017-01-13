@@ -1,0 +1,41 @@
+diff -urp CppNet-643098b5397d06336addec4b097066bcc2f489a8.orig/Preprocessor.cs CppNet-643098b5397d06336addec4b097066bcc2f489a8/Preprocessor.cs
+--- CppNet-643098b5397d06336addec4b097066bcc2f489a8.orig/Preprocessor.cs	2015-03-29 13:39:55.000000000 -0700
++++ CppNet-643098b5397d06336addec4b097066bcc2f489a8/Preprocessor.cs	2017-01-12 22:14:34.375204741 -0800
+@@ -619,7 +619,7 @@ public class Preprocessor : IDisposable
+ 	/* processes and expands a macro. */
+ 	private bool macro(Macro m, Token orig) {
+ 		Token			tok;
+-		List<Argument>	args;
++		List<Argument>	args = new List<Argument>();
+ 
+ 		// System.out.println("pp: expanding " + m);
+ 
+@@ -1294,8 +1294,8 @@ public class Preprocessor : IDisposable
+     private bool has_include(bool next)
+     {
+         LexerSource lexer = (LexerSource)source;
+-        string name;
+-        bool quoted;
++        string name = "";
++        bool quoted = false;
+ 
+         Token tok;
+         tok = token_nonwhite();
+@@ -1349,8 +1349,8 @@ public class Preprocessor : IDisposable
+ 			lexer.setInclude(true);
+ 			Token	tok = token_nonwhite();
+ 
+-			String	name;
+-			bool	quoted;
++			String	name = "";
++			bool	quoted = false;
+ 
+             if(tok.getType() == Token.STRING) {
+ 				/* XXX Use the original text, not the value.
+@@ -2252,4 +2252,4 @@ public class Preprocessor : IDisposable
+ 
+ }
+ 
+-}
+\ No newline at end of file
++}

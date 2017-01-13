@@ -1,0 +1,638 @@
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.BitmapFonts: bin
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.BitmapFonts/Content: bin
+diff -urp MonoGame.Extended-0.5.orig/Source/Demos/Demo.BitmapFonts/Content/Content.mgcb MonoGame.Extended-0.5/Source/Demos/Demo.BitmapFonts/Content/Content.mgcb
+--- MonoGame.Extended-0.5.orig/Source/Demos/Demo.BitmapFonts/Content/Content.mgcb	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/Demos/Demo.BitmapFonts/Content/Content.mgcb	2017-01-12 19:50:15.428289558 -0800
+@@ -3,7 +3,7 @@
+ 
+ /outputDir:bin/$(Platform)
+ /intermediateDir:obj/$(Platform)
+-/platform:Windows
++/platform:Linux
+ /config:
+ /profile:Reach
+ /compress:False
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.BitmapFonts/Content: obj
+diff -urp MonoGame.Extended-0.5.orig/Source/Demos/Demo.BitmapFonts/Demo.BitmapFonts.csproj MonoGame.Extended-0.5/Source/Demos/Demo.BitmapFonts/Demo.BitmapFonts.csproj
+--- MonoGame.Extended-0.5.orig/Source/Demos/Demo.BitmapFonts/Demo.BitmapFonts.csproj	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/Demos/Demo.BitmapFonts/Demo.BitmapFonts.csproj	2017-01-12 19:14:28.006135962 -0800
+@@ -40,18 +40,9 @@
+     <Compile Include="Properties\AssemblyInfo.cs" />
+   </ItemGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework, Version=3.5.0.1678, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\MonoGame.Framework.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="NVorbis, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\NVorbis.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\OpenTK.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="NVorbis" />
++    <Reference Include="OpenTK" />
+     <Reference Include="System" />
+     <Reference Include="System.Xml" />
+   </ItemGroup>
+@@ -92,4 +83,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.BitmapFonts: obj
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.Camera: bin
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.Camera/Content: bin
+diff -urp MonoGame.Extended-0.5.orig/Source/Demos/Demo.Camera/Content/Content.mgcb MonoGame.Extended-0.5/Source/Demos/Demo.Camera/Content/Content.mgcb
+--- MonoGame.Extended-0.5.orig/Source/Demos/Demo.Camera/Content/Content.mgcb	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/Demos/Demo.Camera/Content/Content.mgcb	2017-01-12 19:50:16.643335639 -0800
+@@ -3,7 +3,7 @@
+ 
+ /outputDir:bin/$(Platform)
+ /intermediateDir:obj/$(Platform)
+-/platform:Windows
++/platform:Linux
+ /config:
+ /profile:Reach
+ /compress:False
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.Camera/Content: obj
+diff -urp MonoGame.Extended-0.5.orig/Source/Demos/Demo.Camera/Demo.Camera.csproj MonoGame.Extended-0.5/Source/Demos/Demo.Camera/Demo.Camera.csproj
+--- MonoGame.Extended-0.5.orig/Source/Demos/Demo.Camera/Demo.Camera.csproj	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/Demos/Demo.Camera/Demo.Camera.csproj	2017-01-12 12:01:08.318993399 -0800
+@@ -41,18 +41,9 @@
+     <Compile Include="Properties\AssemblyInfo.cs" />
+   </ItemGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework, Version=3.5.0.1678, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\MonoGame.Framework.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="NVorbis, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\NVorbis.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\OpenTK.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="NVorbis" />
++    <Reference Include="OpenTK" />
+     <Reference Include="System" />
+     <Reference Include="System.Xml" />
+   </ItemGroup>
+@@ -96,4 +87,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.Camera: obj
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.InputListeners: bin
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.InputListeners/Content: bin
+diff -urp MonoGame.Extended-0.5.orig/Source/Demos/Demo.InputListeners/Content/Content.mgcb MonoGame.Extended-0.5/Source/Demos/Demo.InputListeners/Content/Content.mgcb
+--- MonoGame.Extended-0.5.orig/Source/Demos/Demo.InputListeners/Content/Content.mgcb	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/Demos/Demo.InputListeners/Content/Content.mgcb	2017-01-12 19:50:17.892383008 -0800
+@@ -3,7 +3,7 @@
+ 
+ /outputDir:bin/$(Platform)
+ /intermediateDir:obj/$(Platform)
+-/platform:Windows
++/platform:Linux
+ /config:
+ /profile:Reach
+ /compress:False
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.InputListeners/Content: obj
+diff -urp MonoGame.Extended-0.5.orig/Source/Demos/Demo.InputListeners/Demo.InputListeners.csproj MonoGame.Extended-0.5/Source/Demos/Demo.InputListeners/Demo.InputListeners.csproj
+--- MonoGame.Extended-0.5.orig/Source/Demos/Demo.InputListeners/Demo.InputListeners.csproj	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/Demos/Demo.InputListeners/Demo.InputListeners.csproj	2017-01-12 12:01:56.013806881 -0800
+@@ -41,18 +41,9 @@
+     <Compile Include="Properties\AssemblyInfo.cs" />
+   </ItemGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework, Version=3.5.0.1678, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\MonoGame.Framework.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="NVorbis, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\NVorbis.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\OpenTK.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="NVorbis" />
++    <Reference Include="OpenTK" />
+     <Reference Include="System" />
+     <Reference Include="System.Xml" />
+   </ItemGroup>
+@@ -90,4 +81,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.InputListeners: obj
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.Particles: bin
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.Particles/Content: bin
+diff -urp MonoGame.Extended-0.5.orig/Source/Demos/Demo.Particles/Content/Content.mgcb MonoGame.Extended-0.5/Source/Demos/Demo.Particles/Content/Content.mgcb
+--- MonoGame.Extended-0.5.orig/Source/Demos/Demo.Particles/Content/Content.mgcb	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/Demos/Demo.Particles/Content/Content.mgcb	2017-01-12 12:21:27.411713237 -0800
+@@ -10,7 +10,7 @@
+ 
+ #-------------------------------- References --------------------------------#
+ 
+-/reference:../../../MonoGame.Extended.Content.Pipeline/bin/MonoGame.Extended.Content.Pipeline.dll
++/reference:../../../Source/MonoGame.Extended.Content.Pipeline/bin/MonoGame.Extended.Content.Pipeline.dll
+ 
+ #---------------------------------- Content ---------------------------------#
+ 
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.Particles/Content: obj
+diff -urp MonoGame.Extended-0.5.orig/Source/Demos/Demo.Particles/Demo.Particles.csproj MonoGame.Extended-0.5/Source/Demos/Demo.Particles/Demo.Particles.csproj
+--- MonoGame.Extended-0.5.orig/Source/Demos/Demo.Particles/Demo.Particles.csproj	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/Demos/Demo.Particles/Demo.Particles.csproj	2017-01-12 11:57:58.547778168 -0800
+@@ -41,18 +41,9 @@
+     <Compile Include="Properties\AssemblyInfo.cs" />
+   </ItemGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework, Version=3.5.0.1678, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\MonoGame.Framework.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="NVorbis, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\NVorbis.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\OpenTK.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="NVorbis" />
++    <Reference Include="OpenTK" />
+     <Reference Include="System" />
+     <Reference Include="System.Xml" />
+   </ItemGroup>
+@@ -87,4 +78,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.Particles: obj
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.SceneGraphs: bin
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.SceneGraphs/Content: bin
+diff -urp MonoGame.Extended-0.5.orig/Source/Demos/Demo.SceneGraphs/Content/Content.mgcb MonoGame.Extended-0.5/Source/Demos/Demo.SceneGraphs/Content/Content.mgcb
+--- MonoGame.Extended-0.5.orig/Source/Demos/Demo.SceneGraphs/Content/Content.mgcb	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/Demos/Demo.SceneGraphs/Content/Content.mgcb	2017-01-12 19:50:53.089717767 -0800
+@@ -3,7 +3,7 @@
+ 
+ /outputDir:bin/$(Platform)
+ /intermediateDir:obj/$(Platform)
+-/platform:Windows
++/platform:Linux
+ /config:
+ /profile:Reach
+ /compress:False
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.SceneGraphs/Content: obj
+diff -urp MonoGame.Extended-0.5.orig/Source/Demos/Demo.SceneGraphs/Demo.SceneGraphs.csproj MonoGame.Extended-0.5/Source/Demos/Demo.SceneGraphs/Demo.SceneGraphs.csproj
+--- MonoGame.Extended-0.5.orig/Source/Demos/Demo.SceneGraphs/Demo.SceneGraphs.csproj	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/Demos/Demo.SceneGraphs/Demo.SceneGraphs.csproj	2017-01-12 12:02:31.006137404 -0800
+@@ -41,18 +41,9 @@
+     <Compile Include="Properties\AssemblyInfo.cs" />
+   </ItemGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework, Version=3.5.0.1678, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\MonoGame.Framework.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="NVorbis, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\NVorbis.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\OpenTK.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="NVorbis" />
++    <Reference Include="OpenTK" />
+     <Reference Include="System" />
+     <Reference Include="System.Xml" />
+   </ItemGroup>
+@@ -91,4 +82,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.SceneGraphs: obj
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.SpaceGame/Content: bin
+diff -urp MonoGame.Extended-0.5.orig/Source/Demos/Demo.SpaceGame/Content/Content.mgcb MonoGame.Extended-0.5/Source/Demos/Demo.SpaceGame/Content/Content.mgcb
+--- MonoGame.Extended-0.5.orig/Source/Demos/Demo.SpaceGame/Content/Content.mgcb	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/Demos/Demo.SpaceGame/Content/Content.mgcb	2017-01-12 19:50:13.748225842 -0800
+@@ -3,7 +3,7 @@
+ 
+ /outputDir:bin/$(Platform)
+ /intermediateDir:obj/$(Platform)
+-/platform:Windows
++/platform:Linux
+ /config:
+ /profile:Reach
+ /compress:False
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.SpaceGame/Content: obj
+diff -urp MonoGame.Extended-0.5.orig/Source/Demos/Demo.SpaceGame/Demo.SpaceGame.csproj MonoGame.Extended-0.5/Source/Demos/Demo.SpaceGame/Demo.SpaceGame.csproj
+--- MonoGame.Extended-0.5.orig/Source/Demos/Demo.SpaceGame/Demo.SpaceGame.csproj	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/Demos/Demo.SpaceGame/Demo.SpaceGame.csproj	2017-01-12 12:03:04.445408893 -0800
+@@ -49,18 +49,9 @@
+     <Compile Include="Properties\AssemblyInfo.cs" />
+   </ItemGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework, Version=3.5.0.1678, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\MonoGame.Framework.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="NVorbis, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\NVorbis.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\OpenTK.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="NVorbis" />
++    <Reference Include="OpenTK" />
+     <Reference Include="System" />
+     <Reference Include="System.Xml" />
+   </ItemGroup>
+@@ -121,4 +112,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.Sprites: bin
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.Sprites/Content: bin
+diff -urp MonoGame.Extended-0.5.orig/Source/Demos/Demo.Sprites/Content/Content.mgcb MonoGame.Extended-0.5/Source/Demos/Demo.Sprites/Content/Content.mgcb
+--- MonoGame.Extended-0.5.orig/Source/Demos/Demo.Sprites/Content/Content.mgcb	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/Demos/Demo.Sprites/Content/Content.mgcb	2017-01-12 12:21:47.346472515 -0800
+@@ -10,7 +10,7 @@
+ 
+ #-------------------------------- References --------------------------------#
+ 
+-/reference:../../../MonoGame.Extended.Content.Pipeline/bin/MonoGame.Extended.Content.Pipeline.dll
++/reference:../../../Source/MonoGame.Extended.Content.Pipeline/bin/MonoGame.Extended.Content.Pipeline.dll
+ 
+ #---------------------------------- Content ---------------------------------#
+ 
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.Sprites/Content: obj
+diff -urp MonoGame.Extended-0.5.orig/Source/Demos/Demo.Sprites/Demo.Sprites.csproj MonoGame.Extended-0.5/Source/Demos/Demo.Sprites/Demo.Sprites.csproj
+--- MonoGame.Extended-0.5.orig/Source/Demos/Demo.Sprites/Demo.Sprites.csproj	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/Demos/Demo.Sprites/Demo.Sprites.csproj	2017-01-12 12:00:03.519529613 -0800
+@@ -41,18 +41,9 @@
+     <Compile Include="Properties\AssemblyInfo.cs" />
+   </ItemGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework, Version=3.5.0.1678, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\MonoGame.Framework.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="NVorbis, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\NVorbis.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\OpenTK.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="NVorbis" />
++    <Reference Include="OpenTK" />
+     <Reference Include="System" />
+     <Reference Include="System.Xml" />
+   </ItemGroup>
+@@ -91,4 +82,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.Sprites: obj
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.SpriteSheetAnimations/Content: bin
+diff -urp MonoGame.Extended-0.5.orig/Source/Demos/Demo.SpriteSheetAnimations/Content/Content.mgcb MonoGame.Extended-0.5/Source/Demos/Demo.SpriteSheetAnimations/Content/Content.mgcb
+--- MonoGame.Extended-0.5.orig/Source/Demos/Demo.SpriteSheetAnimations/Content/Content.mgcb	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/Demos/Demo.SpriteSheetAnimations/Content/Content.mgcb	2017-01-12 19:51:58.838210648 -0800
+@@ -3,7 +3,7 @@
+ 
+ /outputDir:bin/$(Platform)
+ /intermediateDir:obj/$(Platform)
+-/platform:Windows
++/platform:Linux
+ /config:
+ /profile:Reach
+ /compress:False
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.SpriteSheetAnimations/Content: obj
+diff -urp MonoGame.Extended-0.5.orig/Source/Demos/Demo.SpriteSheetAnimations/Demo.SpriteSheetAnimatons.csproj MonoGame.Extended-0.5/Source/Demos/Demo.SpriteSheetAnimations/Demo.SpriteSheetAnimatons.csproj
+--- MonoGame.Extended-0.5.orig/Source/Demos/Demo.SpriteSheetAnimations/Demo.SpriteSheetAnimatons.csproj	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/Demos/Demo.SpriteSheetAnimations/Demo.SpriteSheetAnimatons.csproj	2017-01-12 12:03:42.587859235 -0800
+@@ -42,18 +42,9 @@
+     <Compile Include="Zombie.cs" />
+   </ItemGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework, Version=3.5.0.1678, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\MonoGame.Framework.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="NVorbis, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\NVorbis.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\OpenTK.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="NVorbis" />
++    <Reference Include="OpenTK" />
+     <Reference Include="System" />
+     <Reference Include="System.Xml" />
+   </ItemGroup>
+@@ -115,4 +106,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.TiledMaps/Content: bin
+diff -urp MonoGame.Extended-0.5.orig/Source/Demos/Demo.TiledMaps/Content/Content.mgcb MonoGame.Extended-0.5/Source/Demos/Demo.TiledMaps/Content/Content.mgcb
+--- MonoGame.Extended-0.5.orig/Source/Demos/Demo.TiledMaps/Content/Content.mgcb	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/Demos/Demo.TiledMaps/Content/Content.mgcb	2017-01-12 19:53:15.526117582 -0800
+@@ -3,7 +3,7 @@
+ 
+ /outputDir:bin/$(Platform)
+ /intermediateDir:obj/$(Platform)
+-/platform:Windows
++/platform:Linux
+ /config:
+ /profile:Reach
+ /compress:False
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.TiledMaps/Content: obj
+diff -urp MonoGame.Extended-0.5.orig/Source/Demos/Demo.TiledMaps/Demo.TiledMaps.csproj MonoGame.Extended-0.5/Source/Demos/Demo.TiledMaps/Demo.TiledMaps.csproj
+--- MonoGame.Extended-0.5.orig/Source/Demos/Demo.TiledMaps/Demo.TiledMaps.csproj	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/Demos/Demo.TiledMaps/Demo.TiledMaps.csproj	2017-01-12 11:59:31.984330615 -0800
+@@ -41,18 +41,9 @@
+     <Compile Include="Properties\AssemblyInfo.cs" />
+   </ItemGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework, Version=3.5.0.1678, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\MonoGame.Framework.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="NVorbis, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\NVorbis.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\OpenTK.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="NVorbis" />
++    <Reference Include="OpenTK" />
+     <Reference Include="System" />
+     <Reference Include="System.Xml" />
+   </ItemGroup>
+@@ -95,4 +86,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.ViewportAdapters: bin
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.ViewportAdapters/Content: bin
+diff -urp MonoGame.Extended-0.5.orig/Source/Demos/Demo.ViewportAdapters/Content/Content.mgcb MonoGame.Extended-0.5/Source/Demos/Demo.ViewportAdapters/Content/Content.mgcb
+--- MonoGame.Extended-0.5.orig/Source/Demos/Demo.ViewportAdapters/Content/Content.mgcb	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/Demos/Demo.ViewportAdapters/Content/Content.mgcb	2017-01-12 19:53:00.534549371 -0800
+@@ -3,7 +3,7 @@
+ 
+ /outputDir:bin/$(Platform)
+ /intermediateDir:obj/$(Platform)
+-/platform:Windows
++/platform:Linux
+ /config:
+ /profile:Reach
+ /compress:False
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.ViewportAdapters/Content: obj
+diff -urp MonoGame.Extended-0.5.orig/Source/Demos/Demo.ViewportAdapters/Demo.ViewportAdapters.csproj MonoGame.Extended-0.5/Source/Demos/Demo.ViewportAdapters/Demo.ViewportAdapters.csproj
+--- MonoGame.Extended-0.5.orig/Source/Demos/Demo.ViewportAdapters/Demo.ViewportAdapters.csproj	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/Demos/Demo.ViewportAdapters/Demo.ViewportAdapters.csproj	2017-01-12 11:58:59.537096959 -0800
+@@ -41,18 +41,9 @@
+     <Compile Include="Properties\AssemblyInfo.cs" />
+   </ItemGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework, Version=3.5.0.1678, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\MonoGame.Framework.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="NVorbis, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\NVorbis.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\MonoGame.Framework.DesktopGL.3.5.0.1678\lib\net40\OpenTK.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="NVorbis" />
++    <Reference Include="OpenTK" />
+     <Reference Include="System" />
+     <Reference Include="System.Xml" />
+   </ItemGroup>
+@@ -89,4 +80,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+Only in MonoGame.Extended-0.5/Source/Demos/Demo.ViewportAdapters: obj
+Only in MonoGame.Extended-0.5/Source/MonoGame.Extended/bin: Debug
+diff -urp MonoGame.Extended-0.5.orig/Source/MonoGame.Extended/MonoGame.Extended.csproj MonoGame.Extended-0.5/Source/MonoGame.Extended/MonoGame.Extended.csproj
+--- MonoGame.Extended-0.5.orig/Source/MonoGame.Extended/MonoGame.Extended.csproj	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/MonoGame.Extended/MonoGame.Extended.csproj	2017-01-12 05:02:18.450102701 -0800
+@@ -13,7 +13,6 @@
+     <DefaultLanguage>en-US</DefaultLanguage>
+     <FileAlignment>512</FileAlignment>
+     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+-    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
+     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+   </PropertyGroup>
+   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+@@ -173,18 +172,15 @@
+     <Compile Include="Sprites\SpriteAnimator.cs" />
+   </ItemGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework">
+-      <HintPath>..\..\Dependencies\MonoGame.Framework.dll</HintPath>
+-    </Reference>
+-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+-      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
++    <Reference Include="System" />
++    <Reference Include="System.Runtime.Serialization" />
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="Newtonsoft.Json" />
+   </ItemGroup>
+   <ItemGroup>
+     <None Include="packages.config" />
+   </ItemGroup>
+-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
++  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+        Other similar extension points exist, see Microsoft.Common.targets.
+   <Target Name="BeforeBuild">
+@@ -192,4 +188,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+Only in MonoGame.Extended-0.5/Source/MonoGame.Extended/obj: Debug
+Only in MonoGame.Extended-0.5/Source/MonoGame.Extended.Content.Pipeline: bin
+diff -urp MonoGame.Extended-0.5.orig/Source/MonoGame.Extended.Content.Pipeline/MonoGame.Extended.Content.Pipeline.csproj MonoGame.Extended-0.5/Source/MonoGame.Extended.Content.Pipeline/MonoGame.Extended.Content.Pipeline.csproj
+--- MonoGame.Extended-0.5.orig/Source/MonoGame.Extended.Content.Pipeline/MonoGame.Extended.Content.Pipeline.csproj	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/MonoGame.Extended.Content.Pipeline/MonoGame.Extended.Content.Pipeline.csproj	2017-01-12 05:03:18.078366193 -0800
+@@ -31,16 +31,9 @@
+     <WarningLevel>4</WarningLevel>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework">
+-      <HintPath>$(MSBuildExtensionsPath)\MonoGame\v3.0\Tools\MonoGame.Framework.dll</HintPath>
+-    </Reference>
+-    <Reference Include="MonoGame.Framework.Content.Pipeline">
+-      <HintPath>$(MSBuildExtensionsPath)\MonoGame\v3.0\Tools\MonoGame.Framework.Content.Pipeline.dll</HintPath>
+-    </Reference>
+-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+-      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="MonoGame.Framework.Content.Pipeline" />
++    <Reference Include="Newtonsoft.Json" />
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+     <Reference Include="System.Xml.Linq" />
+@@ -125,4 +118,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+Only in MonoGame.Extended-0.5/Source/MonoGame.Extended.Content.Pipeline: obj
+Only in MonoGame.Extended-0.5/Source/MonoGame.Extended.Content.Pipeline.Tests: bin
+diff -urp MonoGame.Extended-0.5.orig/Source/MonoGame.Extended.Content.Pipeline.Tests/MonoGame.Extended.Content.Pipeline.Tests.csproj MonoGame.Extended-0.5/Source/MonoGame.Extended.Content.Pipeline.Tests/MonoGame.Extended.Content.Pipeline.Tests.csproj
+--- MonoGame.Extended-0.5.orig/Source/MonoGame.Extended.Content.Pipeline.Tests/MonoGame.Extended.Content.Pipeline.Tests.csproj	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/MonoGame.Extended.Content.Pipeline.Tests/MonoGame.Extended.Content.Pipeline.Tests.csproj	2017-01-12 11:54:20.705496406 -0800
+@@ -30,20 +30,11 @@
+     <WarningLevel>4</WarningLevel>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework">
+-      <HintPath>$(MSBuildExtensionsPath)\MonoGame\v3.0\Tools\MonoGame.Framework.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="MonoGame.Framework.Content.Pipeline">
+-      <HintPath>$(MSBuildExtensionsPath)\MonoGame\v3.0\Tools\MonoGame.Framework.Content.Pipeline.dll</HintPath>
+-    </Reference>
+-    <Reference Include="NSubstitute, Version=1.9.2.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
+-      <HintPath>..\packages\NSubstitute.1.9.2.0\lib\net45\NSubstitute.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+-      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+-      <Private>True</Private>
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="MonoGame.Framework.Content.Pipeline" />
++    <Reference Include="NSubstitute" />
++    <Reference Include="nunit.framework">
++      <HintPath>/usr/share/nunit-2/nunit.framework.dll</HintPath>
+     </Reference>
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+@@ -116,4 +107,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+Only in MonoGame.Extended-0.5/Source/MonoGame.Extended.Content.Pipeline.Tests: obj
+Only in MonoGame.Extended-0.5/Source/MonoGame.Extended.Tests: bin
+diff -urp MonoGame.Extended-0.5.orig/Source/MonoGame.Extended.Tests/MockGameWindow.cs MonoGame.Extended-0.5/Source/MonoGame.Extended.Tests/MockGameWindow.cs
+--- MonoGame.Extended-0.5.orig/Source/MonoGame.Extended.Tests/MockGameWindow.cs	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/MonoGame.Extended.Tests/MockGameWindow.cs	2017-01-12 05:12:30.806352838 -0800
+@@ -32,5 +32,6 @@ namespace MonoGame.Extended.Tests
+         public override DisplayOrientation CurrentOrientation { get; }
+         public override IntPtr Handle { get; }
+         public override string ScreenDeviceName { get; }
++        public override System.Drawing.Icon Icon { get; set; }
+     }
+-}
+\ No newline at end of file
++}
+diff -urp MonoGame.Extended-0.5.orig/Source/MonoGame.Extended.Tests/MonoGame.Extended.Tests.csproj MonoGame.Extended-0.5/Source/MonoGame.Extended.Tests/MonoGame.Extended.Tests.csproj
+--- MonoGame.Extended-0.5.orig/Source/MonoGame.Extended.Tests/MonoGame.Extended.Tests.csproj	2016-04-08 04:28:44.000000000 -0700
++++ MonoGame.Extended-0.5/Source/MonoGame.Extended.Tests/MonoGame.Extended.Tests.csproj	2017-01-12 05:13:13.557976443 -0800
+@@ -32,20 +32,14 @@
+     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework">
+-      <HintPath>$(MSBuildExtensionsPath)\MonoGame\v3.0\Tools\MonoGame.Framework.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="NSubstitute, Version=1.9.2.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
+-      <HintPath>..\packages\NSubstitute.1.9.2.0\lib\net45\NSubstitute.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+-      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+-      <Private>True</Private>
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="NSubstitute" />
++    <Reference Include="nunit.framework">
++      <HintPath>/usr/share/nunit-2/nunit.framework.dll</HintPath>
+     </Reference>
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
++    <Reference Include="System.Drawing" />
+     <Reference Include="System.Xml.Linq" />
+     <Reference Include="System.Data.DataSetExtensions" />
+     <Reference Include="Microsoft.CSharp" />
+@@ -85,4 +79,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+Only in MonoGame.Extended-0.5/Source/MonoGame.Extended.Tests: obj
