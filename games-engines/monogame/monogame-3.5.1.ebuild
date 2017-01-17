@@ -279,6 +279,8 @@ src_prepare() {
 
 	eapply "${FILESDIR}/monogame-3.5.1-no-kickstart-and-external-deps.patch"
 
+	#eapply "${FILESDIR}/monogame-3.5.1-activate-linux-shaders.patch"
+
 	cd "${S}"
 
 	xml ed -L -u "//Platform[@Type='Linux']/Binary[@Path='ThirdParty\Dependencies\assimp\AssimpNet.dll']/@Path"  -v "/usr/$(get_libdir)/mono/assimp-net/AssimpNet.dll"  ./Build/Projects/Framework.Content.Pipeline.References.definition
@@ -321,6 +323,9 @@ src_prepare() {
 	xml ed -L -u "/Project/Files/None[@Include='..\ThirdParty\GamepadConfig\Tao.Sdl.dll.config']/@Include" -v "/usr/$(get_libdir)/mono/gac/Tao.Sdl/*/Tao.Sdl.dll.config"  Build/Projects/MonoGame.Framework.definition
 
 	sed -i -r -e "s|OpenTK.dll.config|/usr/$(get_libdir)/mono/gac/OpenTK/*/OpenTK.dll.config|g" ./ProjectTemplates/VisualStudio2010/DesktopGL/MonoGameDesktopGLApplication.csproj
+
+	sed -i -r -e "s|\"libmojoshader_64.dll\"|\"libmojoshader.dll\"|g" Tools/2MGFX/MojoShader.cs
+	sed -i -r -e "s|\"libmojoshader_32.dll\"|\"libmojoshader.dll\"|g" Tools/2MGFX/MojoShader.cs
 
 	eapply_user
 

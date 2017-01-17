@@ -1,0 +1,12 @@
+diff -urp ycmd-c9a47452dafaf81b65db93f77d0fe23c7f539aa1.orig/ycmd/server_utils.py ycmd-c9a47452dafaf81b65db93f77d0fe23c7f539aa1/ycmd/server_utils.py
+--- ycmd-c9a47452dafaf81b65db93f77d0fe23c7f539aa1.orig/ycmd/server_utils.py	2017-01-08 10:06:43.000000000 -0800
++++ ycmd-c9a47452dafaf81b65db93f77d0fe23c7f539aa1/ycmd/server_utils.py	2017-01-15 16:05:18.916984742 -0800
+@@ -123,7 +123,7 @@ def CompatibleWithCurrentCore():
+ def SetUpPythonPath():
+   sys.path.insert( 0, os.path.join( DIR_OF_CURRENT_SCRIPT, '..' ) )
+ 
+-  AddNearestThirdPartyFoldersToSysPath( __file__ )
++  #AddNearestThirdPartyFoldersToSysPath( __file__ )
+ 
+ 
+ def AncestorFolders( path ):

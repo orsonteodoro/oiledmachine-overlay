@@ -1,0 +1,12 @@
+diff -urp ycmd-0af509bcda444853836ba740b6b4fbcdea3f8f6c.orig/build.sh ycmd-0af509bcda444853836ba740b6b4fbcdea3f8f6c/build.sh
+--- ycmd-0af509bcda444853836ba740b6b4fbcdea3f8f6c.orig/build.sh	2014-12-14 19:29:30.000000000 -0800
++++ ycmd-0af509bcda444853836ba740b6b4fbcdea3f8f6c/build.sh	2017-01-17 01:03:23.161425772 -0800
+@@ -153,7 +153,7 @@ if [[ $cmake_args == *-DUSE_SYSTEM_LIBCL
+   usage
+ fi
+ 
+-check_third_party_libs
++#check_third_party_libs
+ 
+ if ! command_exists cmake; then
+   echo "CMake is required to build YouCompleteMe."

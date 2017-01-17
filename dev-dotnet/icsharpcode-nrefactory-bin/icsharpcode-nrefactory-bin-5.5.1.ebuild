@@ -27,9 +27,10 @@ KEYWORDS="~amd64 ~x86"
 LICENSE="MIT"
 SLOT="0"
 
-CDEPEND=">=dev-dotnet/cecil-0.9.5.4"
+CDEPEND=">=dev-dotnet/cecil-0.9.5.4
+         !dev-dotnet/icsharpcode-nrefactory"
 DEPEND="${CDEPEND}"
-#RDEPEND="${CDEPEND}"
+RDEPEND="${CDEPEND}"
 
 src_unpack() {
 	enuget_download_rogue_binary2 "${PACKAGE_NAME}" "${PACKAGE_VERSION}"

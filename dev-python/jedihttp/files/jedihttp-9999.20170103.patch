@@ -1,0 +1,28 @@
+diff -urp JediHTTP-c376aadd89c7687ecf2c7a68f4cbecab3bbcd57b.orig/jedihttp/handlers.py JediHTTP-c376aadd89c7687ecf2c7a68f4cbecab3bbcd57b/jedihttp/handlers.py
+--- JediHTTP-c376aadd89c7687ecf2c7a68f4cbecab3bbcd57b.orig/jedihttp/handlers.py	2017-01-06 09:55:17.000000000 -0800
++++ JediHTTP-c376aadd89c7687ecf2c7a68f4cbecab3bbcd57b/jedihttp/handlers.py	2017-01-15 12:39:10.151820103 -0800
+@@ -12,8 +12,8 @@
+ #    limitations under the License.
+ 
+ 
+-from jedihttp import utils
+-utils.AddVendorFolderToSysPath()
++#from jedihttp import utils
++#utils.AddVendorFolderToSysPath()
+ 
+ import contextlib
+ import jedi
+diff -urp JediHTTP-c376aadd89c7687ecf2c7a68f4cbecab3bbcd57b.orig/jedihttp.py JediHTTP-c376aadd89c7687ecf2c7a68f4cbecab3bbcd57b/jedihttp.py
+--- JediHTTP-c376aadd89c7687ecf2c7a68f4cbecab3bbcd57b.orig/jedihttp.py	2017-01-06 09:55:17.000000000 -0800
++++ JediHTTP-c376aadd89c7687ecf2c7a68f4cbecab3bbcd57b/jedihttp.py	2017-01-15 12:39:31.847666598 -0800
+@@ -11,8 +11,8 @@
+ # See the License for the specific language governing permissions and
+ #    limitations under the License.
+ 
+-from jedihttp import utils
+-utils.AddVendorFolderToSysPath()
++#from jedihttp import utils
++#utils.AddVendorFolderToSysPath()
+ 
+ import logging
+ import json

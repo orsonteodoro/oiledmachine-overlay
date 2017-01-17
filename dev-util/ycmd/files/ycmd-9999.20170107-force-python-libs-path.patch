@@ -1,0 +1,12 @@
+diff -urp ycmd-c9a47452dafaf81b65db93f77d0fe23c7f539aa1.orig/build.py ycmd-c9a47452dafaf81b65db93f77d0fe23c7f539aa1/build.py
+--- ycmd-c9a47452dafaf81b65db93f77d0fe23c7f539aa1.orig/build.py	2017-01-15 20:58:03.245838657 -0800
++++ ycmd-c9a47452dafaf81b65db93f77d0fe23c7f539aa1/build.py	2017-01-15 21:12:13.087460527 -0800
+@@ -314,6 +314,8 @@ def GetCmakeArgs( parsed_args ):
+   use_python2 = 'ON' if PY_MAJOR == 2 else 'OFF'
+   cmake_args.append( '-DUSE_PYTHON2=' + use_python2 )
+ 
++  cmake_args.append( '-DPYTHON_LIBRARIES=GENTOO_PYTHON_LIBRARY_PATH' )
++
+   extra_cmake_args = os.environ.get( 'EXTRA_CMAKE_ARGS', '' )
+   # We use shlex split to properly parse quoted CMake arguments.
+   cmake_args.extend( shlex.split( extra_cmake_args ) )

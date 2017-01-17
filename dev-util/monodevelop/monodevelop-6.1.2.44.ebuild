@@ -26,7 +26,7 @@ COMMON_DEPEND="
 	>=dev-dotnet/gtk-sharp-2.12.21:2
 	>=dev-dotnet/nuget-2.8.7
 	>=dev-dotnet/system-web-mvc-5.2.3
-	>=dev-dotnet/icsharpcode-nrefactory-bin-5.5.1
+	|| ( >=dev-dotnet/icsharpcode-nrefactory-bin-5.5.1 dev-dotnet/icsharpcode-nrefactory )
 	>=dev-util/nunit-3.0.1:3
 	fsharp? ( >=dev-lang/fsharp-4.0.1.15 )
         dev-dotnet/gdk-sharp:3

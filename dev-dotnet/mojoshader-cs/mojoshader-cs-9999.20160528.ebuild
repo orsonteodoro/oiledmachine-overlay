@@ -34,6 +34,8 @@ src_prepare() {
 }
 
 src_compile() {
+	sed -i -e "s|\"MojoShader.dll\"|\"libmojoshader.dll\"|g" MojoShader.cs
+
 	mydebug="release"
 	if use debug; then
 		mydebug="debug"

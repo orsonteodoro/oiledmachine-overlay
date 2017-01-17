@@ -26,6 +26,8 @@ S="${WORKDIR}/FreeImage"
 SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_prepare() {
+	eapply "${FILESDIR}/freeimage-3.17.0-wrapper-marshal-fixes.patch"
+
 	egenkey
 
 	eapply_user

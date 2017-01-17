@@ -1,0 +1,16 @@
+using System;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+[assembly: CLSCompliantAttribute(false )]
+[assembly: ComVisibleAttribute(false)]
+[assembly: AssemblyTitleAttribute("Rhino Mocks Tests @VERSION@")]
+[assembly: AssemblyDescriptionAttribute("Mocking Framework for .NET")]
+[assembly: AssemblyCompanyAttribute("Hibernating Rhinos")]
+[assembly: AssemblyProductAttribute("Rhino Mocks @VERSION@")]
+[assembly: AssemblyCopyrightAttribute("Hibernating Rhinos & Ayende Rahien 2004 - 2009")]
+[assembly: AssemblyVersionAttribute("@VERSION@")]
+[assembly: AssemblyInformationalVersionAttribute("@VERSION@ / @COMMIT@")]
+[assembly: AssemblyFileVersionAttribute("@VERSION@")]
+[assembly: AssemblyDelaySignAttribute(false)]

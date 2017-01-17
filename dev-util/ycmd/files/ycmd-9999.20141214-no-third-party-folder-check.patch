@@ -1,0 +1,9 @@
+diff -urp ycmd-0af509bcda444853836ba740b6b4fbcdea3f8f6c.orig/ycmd/server_utils.py ycmd-0af509bcda444853836ba740b6b4fbcdea3f8f6c/ycmd/server_utils.py
+--- ycmd-0af509bcda444853836ba740b6b4fbcdea3f8f6c.orig/ycmd/server_utils.py	2014-12-14 19:29:30.000000000 -0800
++++ ycmd-0af509bcda444853836ba740b6b4fbcdea3f8f6c/ycmd/server_utils.py	2017-01-17 01:17:34.541161914 -0800
+@@ -26,4 +26,4 @@ def SetUpPythonPath():
+                           '..' ) )
+ 
+   from ycmd import utils
+-  utils.AddNearestThirdPartyFoldersToSysPath( __file__ )
++  #utils.AddNearestThirdPartyFoldersToSysPath( __file__ )

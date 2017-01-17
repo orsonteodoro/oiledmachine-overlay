@@ -1,0 +1,29 @@
+diff -urp gycm-1963a9f6b51a3aff7c44780dcb13d056a8659b21.orig/config.cpp gycm-1963a9f6b51a3aff7c44780dcb13d056a8659b21/config.cpp
+--- gycm-1963a9f6b51a3aff7c44780dcb13d056a8659b21.orig/config.cpp	2017-01-15 20:28:38.134198621 -0800
++++ gycm-1963a9f6b51a3aff7c44780dcb13d056a8659b21/config.cpp	2017-01-15 20:36:07.201443174 -0800
+@@ -17,6 +17,7 @@ Json::Value defaultConfig(){
+ 	v["seed_identifiers_with_syntax"] = false;
+ 	v["collect_identifiers_from_comments_and_strings"] = false;
+ 	v["collect_identifiers_from_tags_files"] = false;
++	v["max_num_identifier_candidates"] = 10;
+ 	v["extra_conf_globlist"] = Json::Value(Json::arrayValue);
+ 	v["global_ycm_extra_conf"] = "";
+ 	v["confirm_extra_conf"] = true;
+@@ -47,8 +48,14 @@ Json::Value defaultConfig(){
+ 	v["auto_stop_csharp_server"] = true;
+ 	v["use_ultisnips_completer"] = true;
+ 	v["csharp_server_port"] = 2000;
++	v["hmac_secret"] = "";
+-	v["server_keep_logfiles"] = false;
++	v["server_keep_logfiles"] = true;
++	v["gocode_binary_path"] = "/usr/bin/gocode";
++	v["godef_binary_path"] = "/usr/bin/godef";
++	v["rust_src_path"] = "/usr/share/rust/src";
++	v["racerd_binary_path"] = "/usr/bin/racerd";
++	v["python_binary_path"] = "/usr/bin/python";
+ 	v["ycmd_path"] = "";
+ 
+ 	return v;
+-}
+\ No newline at end of file
++}
