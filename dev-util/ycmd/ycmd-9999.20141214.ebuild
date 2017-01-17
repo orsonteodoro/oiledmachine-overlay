@@ -136,10 +136,11 @@ python_install_all() {
 	cp "${WORKDIR}/${EPYTHON}/ycm_core.so" "${D}/$(python_get_sitedir)"
 	#cp "CORE_VERSION" "${D}/$(python_get_sitedir)/ycmd"
 
-	rm -rf "${D}/$(python_get_sitedir)/ycmd/tests"
 	cp -a "cpp/ycm/.ycm_extra_conf.py" "${D}/$(python_get_sitedir)/ycmd"
 
 	python_domodule ycmd
+
+	rm -rf "${D}/$(python_get_sitedir)/ycmd/tests"
 }
 
 src_test() {
@@ -155,24 +156,16 @@ python_test_all() {
 
 pkg_postinst() {
 	einfo "Examples of the .json files can be found at targeting particular python version:"
-	if [[ "${EPYTHON}" == "python2.7" ]] ; then
+	if use python_targets_python2_7 ; then
 		einfo "/usr/$(get_libdir)/python2.7/site-packages/ycmd/default_settings.json"
-	elif [[ "${EPYTHON}" == "python3.4" ]] ; then
-		einfo "/usr/$(get_libdir)/python3.4/site-packages/ycmd/default_settings.json"
-	elif [[ "${EPYTHON}" == "python3.5" ]] ; then
-		einfo "/usr/$(get_libdir)/python3.5/site-packages/ycmd/default_settings.json"
 	fi
 
 	if use c || use c++ || use objc || use objc++ ; then
 		einfo "You need to edit the global_ycm_extra_conf property in your .json file per project to the full path of the .ycm_extra_conf.py."
 
 		einfo "Examples of the .ycm_extra_conf.py which should be defined per project can be found at:"
-		if [[ "${EPYTHON}" == "python2.7" ]] ; then
+		if use python_targets_python2_7 ; then
 			einfo "/usr/$(get_libdir)/python2.7/site-packages/ycmd/.ycm_extra_conf.py"
-		elif [[ "${EPYTHON}" == "python3.4" ]] ; then
-			einfo "/usr/$(get_libdir)/python3.4/site-packages/ycmd/.ycm_extra_conf.py"
-		elif [[ "${EPYTHON}" == "python3.5" ]] ; then
-			einfo "/usr/$(get_libdir)/python3.5/site-packages/ycmd/.ycm_extra_conf.py"
 		fi
 
 		einfo "Consider emerging ycm-generator to properly generate a .ycm_extra_conf.py which is mandatory for c/c++/objc/objc++."
