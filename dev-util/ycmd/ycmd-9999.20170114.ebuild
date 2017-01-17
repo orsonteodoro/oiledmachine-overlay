@@ -96,7 +96,7 @@ python_prepare_all() {
 	sed -i -e "s|GENTOO_PYTHON_LIBRARY_PATH|/usr/$(get_libdir)/lib${EPYTHON}.so|g" build.py
 
 	#this needs to be changed per project
-	sed -i -e "s|global_ycm_extra_conf\": \"\"|global_ycm_extra_conf\": \"$(python_get_sitedir)/ycmd/.ycm_extra_conf.py\"|g" ycmd/default_settings.json
+	#sed -i -e "s|global_ycm_extra_conf\": \"\"|global_ycm_extra_conf\": \"$(python_get_sitedir)/ycmd/.ycm_extra_conf.py\"|g" ycmd/default_settings.json
 }
 
 src_compile() {
