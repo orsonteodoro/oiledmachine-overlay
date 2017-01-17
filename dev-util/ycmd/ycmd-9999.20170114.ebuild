@@ -41,6 +41,7 @@ RDEPEND="
 	=dev-python/waitress-0.8.10-r2[${PYTHON_USEDEP}]
         javascript? ( >=dev-nodejs/tern-0.17.0
                       dev-nodejs/npm )
+        typescript? ( >=dev-lang/typescript-1.5 )
 	system-clang? (
 	        c? ( sys-devel/clang )
 	        c++? ( sys-devel/clang )
