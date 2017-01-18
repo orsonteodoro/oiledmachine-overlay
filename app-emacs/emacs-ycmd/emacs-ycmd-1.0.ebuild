@@ -20,9 +20,11 @@ S="${WORKDIR}/${PN}-${PV}"
 
 DEPEND="${PYTHON_DEPS}
         dev-util/ycmd[${PYTHON_USEDEP}]
-	company-mode? ( app-emacs/company-mode )
+	company-mode? ( app-emacs/company-mode
+                        app-emacs/f )
 	flycheck? ( app-emacs/flycheck )
 	eldoc? ( app-emacs/eldoc )
+        app-emacs/let-alist
 	app-emacs/s
 	app-emacs/dash
 	app-emacs/deferred

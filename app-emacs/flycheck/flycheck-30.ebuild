@@ -18,7 +18,8 @@ S="${WORKDIR}/${PN}-${PV}"
 
 DEPEND="virtual/emacs
         app-emacs/let-alist
-        app-emacs/dash"
+        app-emacs/dash
+        >=dev-python/flake8-3.0.4-r2"
 RDEPEND="${DEPEND}"
 SITEFILE="50flycheck-gentoo.el"
 
