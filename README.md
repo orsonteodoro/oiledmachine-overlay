@@ -208,6 +208,9 @@ Currently compiling by command line is broken.  You must use LateralGM to build 
 
 The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overlay ebuilds.  They many of the ebuilds in that folder in this overlay are dependencies for the latest stable Monodevelop and for Monogame.
 
+*dev-util/ycmd - This is a YouCompleteMe server.  Just add your ycmd client to your text editor then you have code completion support.  The 2014 ebuild is for older clients.  The 2017 ebuilds require clients use the new HMAC header calculation.  It supports C#, C++, Objective C, Objective C++, rust, go, javascript, typescript, python.
+
+*dev-util/gycm - The geany ycmd client.
 
 TODO (NOT COMMITED):
 
