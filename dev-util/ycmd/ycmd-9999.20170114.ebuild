@@ -29,7 +29,7 @@ RDEPEND="
 	python? ( dev-python/jedihttp[${PYTHON_USEDEP}] )
 	csharp? ( dev-dotnet/omnisharp-server )
 	dev-python/argparse[${PYTHON_USEDEP}]
-	dev-python/bottle[${PYTHON_USEDEP}]
+	=dev-python/bottle-0.12.7[${PYTHON_USEDEP}]
 	dev-python/frozendict[${PYTHON_USEDEP}]
 	go? ( dev-go/gocode
 		  dev-go/godef )
