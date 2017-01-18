@@ -56,6 +56,12 @@ src_prepare() {
 
 	sed -i -e "s|../llvm/tools/clang/include|/usr/lib/clang/$(clang-fullversion)/include|g" .ycm_extra_conf.py
 
+	cp -a "${FILESDIR}/ycmd.json" "${WORKDIR}"
+	sed -i -e "s|VdI8w36i6ACZBxmkTz3cSQ==|$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64)|g" "${WORKDIR}/ycmd.json" || die
+	sed -i -e "s|/usr/lib64/python3.4/site-packages|/usr/$(get_libdir)/${EPYTHON}/site-packages|g" "${WORKDIR}/ycmd.json" || die
+	sed -i -e "s|/usr/lib64/python3.4/site-packages|/usr/$(get_libdir)/${EPYTHON}/site-packages|g" "${WORKDIR}/ycmd.json" || die
+	sed -i -e "s|/usr/bin/python3.4|/usr/bin/${EPYTHON}|g" "${WORKDIR}/ycmd.json" || die
+
 	eapply_user
 }
 
@@ -81,8 +87,14 @@ src_install() {
 pkg_postinst() {
 	einfo "You need two files .ycm_extra_conf.py and ycmd.json."
 	einfo "A .ycm_extra_conf.py template is copied to your /usr/share/${PN} and should be modified per project."
-	einfo "A copy of ycmd.json can be found as /usr/share/gycm/ycmd.json or /usr/$(get_libdir)/${EPYTHON}/site-packages/ycmd/default_settings.json and should be copied to /home/<user>/.config/geany/plugins/gycm/ycmd.json."
+	einfo "A copy of ycmd.json can be found as /usr/share/gycm/ycmd.json and should be copied to /home/<user>/.config/geany/plugins/gycm/ycmd.json."
 	einfo "C/C++/Objective C/Objective C++ users need to define /home/<user>/.config/geany/plugins/gycm/ycmd.json which the global_ycm_extra_conf property should be the full path pointing to your project's .ycm_extra_conf.py."
+	einfo ""
 	einfo "Consider emerging ycm-generator to generate a .ycm_extra_conf.py for your project."
 	einfo "This generated .ycm_extra_conf.py may need to be sligtly modified."
+	einfo ""
+	einfo "You must generate a 16 byte HMAC wrapped in base64 for the hmac_secret property of your .json file:"
+	einfo "Do: openssl rand -base64 16"
+	einfo "or"
+	einfo "Do: < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64"
 }
