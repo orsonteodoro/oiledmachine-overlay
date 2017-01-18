@@ -80,7 +80,7 @@ src_install() {
 
 	mkdir -p "${D}/usr/share/${PN}"
 	cp -a .ycm_extra_conf.py "${D}/usr/share/${PN}"
-	cp -a "${FILESDIR}/ycmd.json" "${D}/usr/share/${PN}"
+	cp -a "${WORKDIR}/ycmd.json" "${D}/usr/share/${PN}"
 }
 
 pkg_postinst() {
