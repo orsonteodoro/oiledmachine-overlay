@@ -62,10 +62,6 @@ DEPEND="
 
 S="${WORKDIR}/${PN}-${COMMIT}"
 
-pkg_setup() {
-	ewarn "This ebuild seems to not be functioning but left for others to fix.  Use the =ycmd-9999.20141214 ebuild instead.  Emerging anyways."
-}
-
 src_prepare() {
 	eapply "${FILESDIR}/${PN}-9999.20170107-skip-thirdparty-check.patch"
 	eapply "${FILESDIR}/${PN}-9999.20170107-exe-paths.patch"
