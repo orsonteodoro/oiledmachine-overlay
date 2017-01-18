@@ -63,7 +63,7 @@ DEPEND="
 S="${WORKDIR}/${PN}-${COMMIT}"
 
 pkg_setup() {
-	earn "This ebuild seems to not be functioning but left for others to fix.  Use the =ycmd-9999.20141214 ebuild instead.  Emerging anyways."
+	ewarn "This ebuild seems to not be functioning but left for others to fix.  Use the =ycmd-9999.20141214 ebuild instead.  Emerging anyways."
 }
 
 src_prepare() {

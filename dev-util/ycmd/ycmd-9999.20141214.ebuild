@@ -81,11 +81,11 @@ python_prepare_all() {
 	#sed -i -e "s|0.20.0|$(ls /usr/$(get_libdir)/node/tern/ | tail -n 1)|g" ycmd/completers/javascript/tern_completer.py
 
 	if [[ "${EPYTHON}" == "python2.7" ]] ; then
-		use system-boost && sed -i -e "s|GENTOO_PYTHON_LIBRARY|/usr/$(get_libdir)/libpython3.4m.so|" build.sh
-		use system-boost && sed -i -e "s|GENTOO_PYTHON_INCLUDE_DIR|/usr/include/python3.4m|" build.sh
+		sed -i -e "s|GENTOO_PYTHON_LIBRARY|/usr/$(get_libdir)/libpython3.4m.so|" build.sh
+		sed -i -e "s|GENTOO_PYTHON_INCLUDE_DIR|/usr/include/python3.4m|" build.sh
 	elif [[ "${EPYTHON}" == "python3.4" ]] ; then
-		use system-boost && sed -i -e "s|GENTOO_PYTHON_LIBRARY|/usr/$(get_libdir)/libpython2.7.so|" build.sh
-		use system-boost && sed -i -e "s|GENTOO_PYTHON_INCLUDE_DIR|/usr/include/python2.7|" build.sh
+		sed -i -e "s|GENTOO_PYTHON_LIBRARY|/usr/$(get_libdir)/libpython2.7.so|" build.sh
+		sed -i -e "s|GENTOO_PYTHON_INCLUDE_DIR|/usr/include/python2.7|" build.sh
 	else
 		die "not currently supported.  notify the package maintainer or hand edit it."
 	fi
