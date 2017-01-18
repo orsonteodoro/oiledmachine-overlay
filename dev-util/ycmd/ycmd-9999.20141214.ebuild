@@ -177,7 +177,7 @@ pkg_postinst() {
 	fi
 
 	einfo ""
-        einfo "You must generate a 16 byte HMAC wrapped in base64 for the hmac_secret property of your .json file:"
+        einfo "You must generate a 16 byte HMAC secret wrapped in base64 for the hmac_secret property of your .json file:"
         einfo "Do: openssl rand -base64 16"
         einfo "or"
         einfo "Do: < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64"

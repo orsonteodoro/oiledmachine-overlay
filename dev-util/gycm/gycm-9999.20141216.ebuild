@@ -61,6 +61,8 @@ src_prepare() {
 	sed -i -e "s|/usr/lib64/python3.4/site-packages|/usr/$(get_libdir)/${EPYTHON}/site-packages|g" "${WORKDIR}/ycmd.json" || die
 	sed -i -e "s|/usr/bin/python3.4|/usr/bin/${EPYTHON}|g" "${WORKDIR}/ycmd.json" || die
 
+	eapply "${FILESDIR}/gycm-9999.20141216-new-hmac-header-calculation.patch"
+
 	eapply_user
 }
 
@@ -92,7 +94,7 @@ pkg_postinst() {
 	einfo "Consider emerging ycm-generator to generate a .ycm_extra_conf.py for your project."
 	einfo "This generated .ycm_extra_conf.py may need to be sligtly modified."
 	einfo ""
-	einfo "You must generate a 16 byte HMAC wrapped in base64 for the hmac_secret property of your .json file:"
+	einfo "You must generate a 16 byte HMAC secret wrapped in base64 for the hmac_secret property of your .json file:"
 	einfo "Do: openssl rand -base64 16"
 	einfo "or"
 	einfo "Do: < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64"

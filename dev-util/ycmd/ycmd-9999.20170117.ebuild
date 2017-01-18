@@ -4,13 +4,13 @@
 
 EAPI=6
 
-PYTHON_COMPAT=( python{3_4,3_5} )
+PYTHON_COMPAT=( python{2_7,3_4,3_5} )
 
-inherit eutils python-r1
+inherit eutils python-r1 cmake-utils flag-o-matic
 
 DESCRIPTION="A code-completion & code-comprehension server"
 HOMEPAGE=""
-COMMIT="2cfa4f584b35a311b03eeb75c8d167d88e1189df"
+COMMIT="f1e6afab72bad0a64d5b16f64d0c58bd0d9ddc07"
 SRC_URI="https://github.com/Valloric/ycmd/archive/${COMMIT}.zip -> ${P}.zip"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
@@ -22,7 +22,7 @@ REQUIRED_USE="system-clang? ( || ( c c++ objc objc++ ) )"
 COMMON_DEPEND="
 	${PYTHON_DEPS}
 	system-clang? ( >=sys-devel/clang-3.8 )
-	system-boost? ( >=dev-libs/boost-1.57[python,threads,${PYTHON_USEDEP}] )
+	system-boost? ( >=dev-libs/boost-1.63.0[python,threads,${PYTHON_USEDEP}] )
 "
 RDEPEND="
 	${COMMON_DEPEND}
@@ -100,6 +100,61 @@ python_prepare_all() {
 	sed -i -e "s|/usr/bin/python3.4|/usr/bin/${EPYTHON}|g" ycmd/default_settings.json
 }
 
+src_configure() {
+	python_foreach_impl python_configure_all
+}
+
+python_configure_all()
+{
+	strip-flags -O0 -O1 -O3 -O4
+	append-cxxflags -O2
+	append-cflags -O2
+
+        #We need to do this ourselves instead of rely on the build script.  The build script has racing error when it tries to do it through emerge.
+        local mycmakeargs=(
+                -DUSE_SYSTEM_LIBCLANG=$(usex system-clang)
+                -DUSE_SYSTEM_BOOST=$(usex system-boost)
+                -DUSE_CLANG_COMPLETER=$(usex system-boost)
+        )
+        if [[ "${EPYTHON}" == "python2.7" ]] ; then
+                mycmakeargs+=(
+                        -DPYTHON_LIBRARY=/usr/$(get_libdir)/libpython2.7.so
+                        -DPYTHON_INCLUDE_DIR=/usr/include/python2.7
+                        -DUSE_PYTHON2=ON
+                )
+        elif [[ "${EPYTHON}" == "python3.4" ]] ; then
+                if [ -f /usr/$(get_libdir)/libpython3.4m.so ]; then
+                        mycmakeargs+=( -DPYTHON_LIBRARY=/usr/$(get_libdir)/libpython3.4m.so )
+                        mycmakeargs+=( -DPYTHON_INCLUDE_DIR=/usr/include/python3.4m )
+                else
+                    	mycmakeargs+=( -DPYTHON_LIBRARY=/usr/$(get_libdir)/libpython3.4.so )
+                        mycmakeargs+=( -DPYTHON_INCLUDE_DIR=/usr/include/python3.4 )
+                fi
+                mycmakeargs+=( -DUSE_PYTHON2=OFF )
+        elif [[ "${EPYTHON}" == "python3.5" ]] ; then
+                if [ -f /usr/$(get_libdir)/libpython3.5m.so ]; then
+                        mycmakeargs+=( -DPYTHON_LIBRARY=/usr/$(get_libdir)/libpython3.5m.so )
+                        mycmakeargs+=( -DPYTHON_INCLUDE_DIR=/usr/include/python3.5m )
+                else
+                    	mycmakeargs+=( -DPYTHON_LIBRARY=/usr/$(get_libdir)/libpython3.5.so )
+                        mycmakeargs+=( -DPYTHON_INCLUDE_DIR=/usr/include/python3.5 )
+                fi
+                mycmakeargs+=( -DUSE_PYTHON2=OFF )
+        fi
+
+	if use c || use c++ || use objc || use objc++ ; then
+                mycmakeargs+=( -DUSE_CLANG_COMPLETER=ON )
+        fi
+	if use debug ; then
+                mycmakeargs+=(
+                        -DCMAKE_BUILD_TYPE=Debug
+                        -DUSE_DEV_FLAGS=ON
+                )
+        fi
+	CMAKE_USE_DIR="${WORKDIR}/${PN}-${COMMIT}-${EPYTHON//./_}/cpp" \
+        cmake-utils_src_configure
+}
+
 src_compile() {
 	#bypass setup.py check
 	python_foreach_impl python_compile_all
@@ -115,7 +170,8 @@ python_compile_all() {
 	fi
 	use debug && myargs+=" --enable-debug"
 
-	./build.py ${myargs}
+	cmake-utils_src_compile
+	#./build.py ${myargs}
 	mkdir "${WORKDIR}/${EPYTHON}"
 	cp -a "ycm_core.so" "${WORKDIR}/${EPYTHON}"
 }
@@ -152,7 +208,9 @@ python_test_all() {
 
 pkg_postinst() {
 	einfo "Examples of the .json files can be found at targeting particular python version:"
-	if use python_targets_python3_4 ; then
+	if use python_targets_python2_7 ; then
+		einfo "/usr/$(get_libdir)/python2.7/site-packages/ycmd/default_settings.json"
+	elif use python_targets_python3_4 ; then
 		einfo "/usr/$(get_libdir)/python3.4/site-packages/ycmd/default_settings.json"
 	elif use python_targets_python3_5 ; then
 		einfo "/usr/$(get_libdir)/python3.5/site-packages/ycmd/default_settings.json"
@@ -164,7 +222,9 @@ pkg_postinst() {
 
 		einfo ""
 		einfo "Examples of the .ycm_extra_conf.py which should be defined per project can be found at:"
-		if use python_targets_python3_4 ; then
+		if use python_targets_python2_7 ; then
+			einfo "/usr/$(get_libdir)/python2.7/site-packages/ycmd/.ycm_extra_conf.py"
+		elif use python_targets_python3_4 ; then
 			einfo "/usr/$(get_libdir)/python3.4/site-packages/ycmd/.ycm_extra_conf.py"
 		elif use python_targets_python3_5 ; then
 			einfo "/usr/$(get_libdir)/python3.5/site-packages/ycmd/.ycm_extra_conf.py"
@@ -176,7 +236,7 @@ pkg_postinst() {
 	fi
 
 	einfo ""
-        einfo "You must generate a 16 byte HMAC wrapped in base64 for the hmac_secret property of your .json file:"
+        einfo "You must generate a 16 byte HMAC secret wrapped in base64 for the hmac_secret property of your .json file:"
         einfo "Do: openssl rand -base64 16"
         einfo "or"
         einfo "Do: < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64"
