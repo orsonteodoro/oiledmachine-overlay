@@ -141,6 +141,7 @@ python_install_all() {
 	python_domodule ycmd
 
 	rm -rf "${D}/$(python_get_sitedir)/ycmd/tests"
+	rm -rf "${D}/$(python_get_sitedir)/ycmd/completers/general/tests"
 }
 
 src_test() {
