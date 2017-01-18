@@ -135,10 +135,10 @@ python_install_all() {
 
 	cp -a "cpp/ycm/.ycm_extra_conf.py" "${D}/$(python_get_sitedir)/ycmd"
 
-	python_domodule ycmd
+	rm -rf "ycmd/tests"
+	rm -rf "ycmd/completers/general/tests"
 
-	rm -rf "${D}/$(python_get_sitedir)/ycmd/tests"
-	rm -rf "${D}/$(python_get_sitedir)/ycmd/completers/general/tests"
+	python_domodule ycmd
 }
 
 src_test() {
