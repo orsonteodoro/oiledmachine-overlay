@@ -23,9 +23,8 @@ DEPEND="${PYTHON_DEPS}
         net-libs/neon
         dev-libs/jsoncpp
         dev-libs/openssl
-	python_single_target_python2_7? ( =dev-util/ycmd-9999.20141214[${PYTHON_USEDEP}] )
-	!python_single_target_python2_7? ( >=dev-util/ycmd--9999.20170107[${PYTHON_USEDEP}] )
         net-libs/libssh
+	>=dev-util/ycmd-9999.20170107[${PYTHON_USEDEP}]
 	dev-util/geany"
 RDEPEND="${DEPEND}"
 
