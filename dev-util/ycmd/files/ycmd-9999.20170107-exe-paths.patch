@@ -25,11 +25,11 @@ diff -urp ycmd-c9a47452dafaf81b65db93f77d0fe23c7f539aa1.orig/ycmd/completers/go/
  GO_BINARIES = dict( {
 -  'gocode': os.path.join( DIR_OF_THIRD_PARTY,
 -                          'gocode',
-+  'gocode': os.path.join( 'usr', 'bin', 'gocode',
++  'gocode': os.path.join( 'usr', 'bin',
                            ExecutableName( 'gocode' ) ),
 -  'godef': os.path.join( DIR_OF_THIRD_PARTY,
 -                         'godef',
-+  'godef': os.path.join( 'usr', 'bin', 'godef'
++  'godef': os.path.join( 'usr', 'bin',
                           ExecutableName( 'godef' ) )
  } )
  
