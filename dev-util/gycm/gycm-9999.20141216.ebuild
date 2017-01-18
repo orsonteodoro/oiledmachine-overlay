@@ -49,10 +49,9 @@ src_prepare() {
 	if use debug ; then
 		eapply "${FILESDIR}/${PN}-9999-20141216-enable-debug-spew.patch"
 		eapply "${FILESDIR}/${PN}-9999.20141216-enable-debug-spew-2.patch"
+		eapply "${FILESDIR}/${PN}-9999.20141216-null-exception-check.patch"
+		eapply "${FILESDIR}/${PN}-9999-20141216-debug-keep-log-files.patch"
 	fi
-
-	eapply "${FILESDIR}/${PN}-9999.20141216-null-exception-check.patch"
-	eapply "${FILESDIR}/${PN}-9999-20141216-debug-keep-log-files.patch"
 
 	sed -i -e "s|../llvm/tools/clang/include|/usr/lib/clang/$(clang-fullversion)/include|g" .ycm_extra_conf.py
 
