@@ -76,25 +76,28 @@ src_prepare() {
 python_prepare_all() {
 	cd "${WORKDIR}/${PN}-${COMMIT}-${EPYTHON//./_}"
 
+	echo "python is ${EPYTHON}"
+
 	sed -i -e "s|lib64|$(get_libdir)|g" ycmd/completers/cs/cs_completer.py
 	#sed -i -e "s|lib64|$(get_libdir)|g" ycmd/completers/javascript/tern_completer.py
 	#sed -i -e "s|0.20.0|$(ls /usr/$(get_libdir)/node/tern/ | tail -n 1)|g" ycmd/completers/javascript/tern_completer.py
 
 	if [[ "${EPYTHON}" == "python2.7" ]] ; then
-		sed -i -e "s|GENTOO_PYTHON_LIBRARY|/usr/$(get_libdir)/libpython3.4m.so|" build.sh
-		sed -i -e "s|GENTOO_PYTHON_INCLUDE_DIR|/usr/include/python3.4m|" build.sh
+		echo "editing 2.7"
+		sed -i -e "s|GENTOO_PYTHON_LIBRARY|/usr/$(get_libdir)/libpython2.7.so|" build.sh || die
+		sed -i -e "s|GENTOO_PYTHON_INCLUDE_DIR|/usr/include/python2.7|" build.sh || die
 	elif [[ "${EPYTHON}" == "python3.4" ]] ; then
-		sed -i -e "s|GENTOO_PYTHON_LIBRARY|/usr/$(get_libdir)/libpython2.7.so|" build.sh
-		sed -i -e "s|GENTOO_PYTHON_INCLUDE_DIR|/usr/include/python2.7|" build.sh
+		echo "editing 3.4"
+		sed -i -e "s|GENTOO_PYTHON_LIBRARY|/usr/$(get_libdir)/libpython3.4m.so|" build.sh || die
+		sed -i -e "s|GENTOO_PYTHON_INCLUDE_DIR|/usr/include/python3.4m|" build.sh || die
 	else
 		die "not currently supported.  notify the package maintainer or hand edit it."
 	fi
 
 	cp "${FILESDIR}/default_settings.json" ycmd/default_settings.json
-	sed -i -r -e "s|||g" ycmd/default_settings.json
 
-	sed -i -e "s|HFJ1aRMhtCX/DMYWYkUl9g==|$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64)|g" ycmd/default_settings.json
-	sed -i -e "s|/usr/bin/python3.4|/usr/bin/${EPYTHON}|g" ycmd/default_settings.json
+	sed -i -e "s|HFJ1aRMhtCX/DMYWYkUl9g==|$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64)|g" ycmd/default_settings.json || die
+	sed -i -e "s|/usr/bin/python3.4|/usr/bin/${EPYTHON}|g" ycmd/default_settings.json || die
 }
 
 src_compile() {
