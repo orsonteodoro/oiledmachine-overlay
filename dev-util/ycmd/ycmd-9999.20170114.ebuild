@@ -63,7 +63,7 @@ DEPEND="
 S="${WORKDIR}/${PN}-${COMMIT}"
 
 pkg_setup() {
-	true
+	earn "This ebuild seems to not be functioning but left for others to fix.  Use the =ycmd-9999.20141214 ebuild instead.  Emerging anyways."
 }
 
 src_prepare() {
@@ -96,8 +96,8 @@ python_prepare_all() {
 
 	sed -i -e "s|GENTOO_PYTHON_LIBRARY_PATH|/usr/$(get_libdir)/lib${EPYTHON}.so|g" build.py
 
-	#this needs to be changed per project
-	#sed -i -e "s|global_ycm_extra_conf\": \"\"|global_ycm_extra_conf\": \"$(python_get_sitedir)/ycmd/.ycm_extra_conf.py\"|g" ycmd/default_settings.json
+	sed -i -e "s|HFJ1aRMhtCX/DMYWYkUl9g==|$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64)|g" ycmd/default_settings.json
+	sed -i -e "s|/usr/bin/python3.4|/usr/bin/${EPYTHON}|g" ycmd/default_settings.json
 }
 
 src_compile() {
@@ -159,8 +159,10 @@ pkg_postinst() {
 	fi
 
 	if use c || use c++ || use objc || use objc++ ; then
+		einfo ""
 		einfo "You need to edit the global_ycm_extra_conf property in your .json file per project to the full path of the .ycm_extra_conf.py."
 
+		einfo ""
 		einfo "Examples of the .ycm_extra_conf.py which should be defined per project can be found at:"
 		if use python_targets_python3_4 ; then
 			einfo "/usr/$(get_libdir)/python3.4/site-packages/ycmd/.ycm_extra_conf.py"
@@ -168,7 +170,14 @@ pkg_postinst() {
 			einfo "/usr/$(get_libdir)/python3.5/site-packages/ycmd/.ycm_extra_conf.py"
 		fi
 
+		einfo ""
 		einfo "Consider emerging ycm-generator to properly generate a .ycm_extra_conf.py which is mandatory for c/c++/objc/objc++."
 		einfo "After generating it, it may need to be slightly modified."
 	fi
+
+	einfo ""
+        einfo "You must generate a 16 byte HMAC wrapped in base64 for the hmac_secret property of your .json file:"
+        einfo "Do: openssl rand -base64 16"
+        einfo "or"
+        einfo "Do: < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64"
 }

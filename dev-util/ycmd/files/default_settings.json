@@ -12,7 +12,7 @@
   "collect_identifiers_from_tags_files": 0,
   "max_num_identifier_candidates": 10,
   "extra_conf_globlist": [],
-  "global_ycm_extra_conf": "",
+  "global_ycm_extra_conf": "/tmp/.ycm_extra_conf.py",
   "confirm_extra_conf": 1,
   "complete_in_comments": 0,
   "complete_in_strings": 1,
@@ -37,11 +37,11 @@
   "auto_stop_csharp_server": 1,
   "use_ultisnips_completer": 1,
   "csharp_server_port": 0,
-  "hmac_secret": "",
+  "hmac_secret": "HFJ1aRMhtCX/DMYWYkUl9g==",
   "server_keep_logfiles": 0,
   "gocode_binary_path": "/usr/bin/gocode",
   "godef_binary_path": "/usr/bin/godef",
   "rust_src_path": "/usr/share/rust/src",
   "racerd_binary_path": "/usr/bin/racerd",
-  "python_binary_path": "/usr/bin/python"
+  "python_binary_path": "/usr/bin/python3.4"
 }
