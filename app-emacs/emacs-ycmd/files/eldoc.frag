@@ -1,2 +1,2 @@
-(require 'flycheck-ycmd)
-(flycheck-ycmd-setup)
+(require 'ycmd-eldoc)
+(add-hook 'ycmd-mode-hook 'ycmd-eldoc-setup)

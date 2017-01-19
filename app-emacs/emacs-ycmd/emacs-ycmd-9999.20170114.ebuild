@@ -10,13 +10,14 @@ inherit eutils python-single-r1 elisp elisp-common
 
 DESCRIPTION="A Geany plugin to support the ycmd code completion server"
 HOMEPAGE=""
-SRC_URI="https://github.com/abingham/emacs-ycmd/archive/${PV}.tar.gz -> ${P}.tar.gz"
+COMMIT="386f6101fec6975000ad724f117816c01ab55f16"
+SRC_URI="https://github.com/abingham/emacs-ycmd/archive/${COMMIT}.zip -> ${P}.zip"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
 LICENSE="BSD-3"
-IUSE="debug builtin company-mode flycheck eldoc next-error python"
+IUSE="debug builtin company-mode flycheck eldoc next-error"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
-S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/${PN}-${COMMIT}"
 
 DEPEND="${PYTHON_DEPS}
         dev-util/ycmd[${PYTHON_USEDEP}]

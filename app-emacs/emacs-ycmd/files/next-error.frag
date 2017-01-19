@@ -1,2 +1,2 @@
-(require 'flycheck-ycmd)
-(flycheck-ycmd-setup)
+(add-to-list 'load-path "@SITELISP@/contrib")
+(require 'ycmd-next-error)
