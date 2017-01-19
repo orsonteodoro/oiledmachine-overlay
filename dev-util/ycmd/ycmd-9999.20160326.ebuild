@@ -35,7 +35,7 @@ RDEPEND="
 	go? ( dev-go/gocode
 		  dev-go/godef )
 	dev-python/future[${PYTHON_USEDEP}]
-	rust? ( dev-rust/libracerd
+	rust? ( dev-rust/racerd
                 dev-lang/rust-source-code )
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/sh[${PYTHON_USEDEP}]
