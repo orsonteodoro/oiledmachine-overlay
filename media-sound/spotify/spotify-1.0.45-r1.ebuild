@@ -53,8 +53,6 @@ src_prepare() {
 			usr/share/spotify/spotify.desktop || die "sed failed"
 	fi
 	default
-
-	eapply_user
 }
 
 src_install() {
