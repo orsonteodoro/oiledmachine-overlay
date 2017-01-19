@@ -237,5 +237,5 @@ if [[ "$EBUILD_PHASE_FUNC" == "pkg_postinst" ]]; then
 	einfo "Use emerge @pgo-update to emerge these packages."
 	einfo ""
 
-	sleep 10
+	#sleep 10
 fi
