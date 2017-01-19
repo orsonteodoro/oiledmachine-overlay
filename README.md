@@ -212,6 +212,8 @@ The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overla
 
 *dev-util/gycm - The geany ycmd client.
 
+*dev-util/emacs-ycmd - A ycmd client for emacs.
+
 *dev-util/ycm-generator - You need this if you want c/c++/objc/objc++ support with your ycmd client.  It is mandatory for those languages.
 
 TODO (NOT COMMITED):
