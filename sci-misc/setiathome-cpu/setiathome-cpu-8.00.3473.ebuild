@@ -6,7 +6,9 @@ EAPI="6"
 
 inherit autotools eutils flag-o-matic subversion toolchain-funcs versionator git-r3
 
-MY_P="setiathome-cpu-${PV}"
+SETIATHOME_VERSION="$(get_version_component_range 1-2 ${PV})"
+SETIATHOME_SVN_REVISION="$(get_version_component_range 3 ${PV})"
+MY_P="setiathome-cpu-${SETIATHOME_VERSION}"
 DESCRIPTION="Seti@Home"
 HOMEPAGE="http://setiathome.ssl.berkeley.edu/"
 SRC_URI=""
@@ -14,7 +16,7 @@ SRC_URI=""
 RESTRICT="fetch"
 
 LICENSE="GPL-2"
-SLOT="8"
+SLOT="$(get_major_version)"
 KEYWORDS="~alpha amd64 ~arm ~ia64 ~mips ~ppc ~ppc64 ~sparc x86 ~amd64-fbsd ~x86-fbsd ~x86-freebsd ~amd64-linux ~ia64-linux ~x86-linux ~x86-macos"
 
 IUSE="32bit 64bit opengl custom-cflags avx2 avx avx-btver2 avx-bdver3 avx-bdver2 avx-bdver1 sse42 sse41 ssse3 sse3 sse2 sse mmx 3dnow core2 xeon ppc ppc64 x32 x64 pgo"
@@ -26,44 +28,43 @@ RDEPEND="
 	sci-misc/setiathome-art:7
 "
 
-BOINC_VER=`boinc --version | awk '{print $1}'`
+BOINC_VER=`boinc --version | cut -d' ' -f1`
 BOINC_MAJOR=`echo $BOINC_VER | cut -d. -f1`
 BOINC_MINOR=`echo $BOINC_VER | cut -d. -f2`
 DEPEND="${RDEPEND}
 	=sys-devel/autoconf-2.67
 	sci-misc/boinc:=
-	=sci-misc/setiathome-boincdir-${BOINC_VER}
+	sci-misc/setiathome-boincdir:${BOINC_VER}
 "
 
 S="${WORKDIR}/${MY_P}"
 
+pkg_setup() {
+	if [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]]; then
+		ewarn "The configure script may fail with clang.  Switch to gcc if it fails."
+	fi
+}
+
 src_unpack() {
 	ESVN_REPO_URI="https://setisvn.ssl.berkeley.edu/svn/seti_boinc"
-	ESVN_REVISION="3306"
+	ESVN_REVISION="${SETIATHOME_SVN_REVISION}"
 	ESVN_OPTIONS="--trust-server-cert"
 	subversion_src_unpack
 	cp -r "${ESVN_STORE_DIR}/${PN}/seti_boinc" "${WORKDIR}/${MY_P}/AKv8"
 	mkdir "${WORKDIR}/${MY_P}/AKv8/client/.deps"
-
-	ESVN_REPO_URI="https://setisvn.ssl.berkeley.edu/svn/astropulse"
-	ESVN_REVISION="3306"
-	ESVN_OPTIONS="--trust-server-cert"
-	subversion_src_unpack
-	cp -r "${ESVN_STORE_DIR}/${PN}/astropulse" "${WORKDIR}/${MY_P}/AP"
-
-	BOINC_VER=`boinc --version | awk '{print $1}'`
-	BOINC_MAJOR=`echo $BOINC_VER | cut -d. -f1`
-	BOINC_MINOR=`echo $BOINC_VER | cut -d. -f2`
-	URL="https://github.com/BOINC/boinc/archive/client_release/$BOINC_MAJOR.$BOINC_MINOR/$BOINC_VER.zip"
 }
 
 src_prepare() {
 	cd "${WORKDIR}/${MY_P}"
-	eapply "${FILESDIR}"/setiathome-7.09-optimizationsm4-02.patch
 	eapply "${FILESDIR}"/setiathome-7.09-configureac.patch
-	eapply "${FILESDIR}"/setiathome-7.09-apgfxmainh.patch
-	eapply "${FILESDIR}"/setiathome-7.09-apgfxbaseh.patch
 	eapply "${FILESDIR}"/setiathome-8.00-nopackagever.patch
+	eapply "${FILESDIR}"/setiathome-cpu-8.00.3473-concat-custom-string-fix.patch
+
+	if $(version_is_at_least "7.3.19" $BOINC_VER ) ; then
+		true
+	else
+		eapply "${FILESDIR}/setiathome-cpu-8.00.3473-boinc-compat.patch"
+	fi
 
 	eapply_user
 
@@ -100,8 +101,8 @@ function run_config {
 		#mysahmakeargs+=( --with-boinc-platform=i686-pc-linux-gnu )
 		sahfftwlibs=( -L/usr/lib32 )
 		apfftwlibs=( -L/usr/lib32 )
-		asmlibs=( -L/usr/lib32 )
-		asmlibs+=( -laelf32p )
+		#asmlibs=( -L/usr/lib32 )
+		#asmlibs+=( -laelf32p )
 	elif use 64bit ; then
 		mysahmakeargs+=( --enable-bitness=64 )
 		#mysahmakeargs+=( --host=x86_64-pc-linux-gnu )
@@ -110,8 +111,8 @@ function run_config {
 		#mysahmakeargs+=( --with-boinc-platform=x86_64-pc-linux-gnu )
 		sahfftwlibs=( -L/usr/lib64 )
 		apfftwlibs=( -L/usr/lib64 )
-		asmlibs=( -L/usr/lib64 )
-		asmlibs+=( -laelf64 )
+		#asmlibs=( -L/usr/lib64 )
+		#asmlibs+=( -laelf64 )
 	fi
 
 	mycommonmakeargs+=( --disable-server )
@@ -142,7 +143,7 @@ function run_config {
 		mysahmakedefargs+=( -DUSE_PPC_OPTIMIZATIONS )
 	elif use x32 || use x64 ; then
 		mysahmakedefargs+=( -DUSE_I386_OPTIMIZATIONS ) #uses sse3 sse2
-		mycommonmakeargs+=( --enable-asmlib )
+		#mycommonmakeargs+=( --enable-asmlib )
 	fi
 
 	if use xeon ; then
@@ -217,8 +218,12 @@ function run_config {
 
 	mycommonmakeargs+=( --enable-fast-math )
 
+	if [ ! -d "/usr/share/boinc/$BOINC_VER" ] ; then
+		die "Cannot find matching version between setiathome-boincdir to emerged boinc."
+	fi
+
 	cd "${WORKDIR}/${MY_P}/AKv8"
-	CFLAGS="${CFLAGS} ${PGO_CFLAGS}" LDFLAGS="${LDFLAGS} ${PGO_LDFLAGS}"  LIBS="${sahfftwlibs[@]} ${asmlibs[@]} -ldl ${PGO_LIBS}" CXXFLAGS="${CXXFLAGS} ${PGO_CXXFLAGS}" CPPFLAGS="${CPPFLAGS} ${mycommonmakedefargs[@]} ${mysahmakedefargs[@]} ${PGO_CPPFLAGS}" BOINCDIR="/usr/share/boinc" econf \
+	CFLAGS="${CFLAGS} ${PGO_CFLAGS}" LDFLAGS="${LDFLAGS} ${PGO_LDFLAGS}"  LIBS="${sahfftwlibs[@]} ${asmlibs[@]} -ldl ${PGO_LIBS}" CXXFLAGS="${CXXFLAGS} ${PGO_CXXFLAGS}" CPPFLAGS="${CPPFLAGS} ${mycommonmakedefargs[@]} ${mysahmakedefargs[@]} ${PGO_CPPFLAGS}" BOINCDIR="/usr/share/boinc/$BOINC_VER" econf \
 	${mycommonmakeargs[@]} \
 	${mysahmakeargs[@]} || die
 	cp "sah_config.h" "config.h"

@@ -1,8 +1,8 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI="5"
+EAPI="6"
 
 inherit autotools eutils flag-o-matic multilib multilib-minimal
 
@@ -23,7 +23,7 @@ RDEPEND="
 "
 
 DEPEND="${RDEPEND}
-	dev-util/objconv
+	=dev-util/objconv-9999
 	dev-lang/yasm
 	app-arch/zip
 "
@@ -43,7 +43,10 @@ src_prepare() {
 	mkdir lib
 	mkdir obj
 	mv lib* lib
-	epatch "${FILESDIR}/${PN}-2.35.patch"
+	eapply "${FILESDIR}/${PN}-9999.patch"
+
+	eapply_user
+
 	multilib_copy_sources
 }
 
