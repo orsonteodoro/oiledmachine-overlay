@@ -28,6 +28,8 @@ IMPORTANT:  For firefox, chromium, surf, you need to copy the contents of profil
 
 *sci-misc/boinc-server-project-eligius - Eligius Mining Pool Boinc Server Project example.
 
+*virtual/setiathome - package to handle emerging setiathome and astropulse ebuilds.  You should just add this to the world file and let emerge pull the proper packages.  Do not emerge individual setiathome/astropulse and dependencies.
+
 *sci-misc/setiathome-gpu - Seti@home version 7/8 client for CPU.  Added 3D Boinc screensaver support on GPUs which is not part of the official sources.  Support for recommended GPU settings.  Using ati_hd5xxx ati_hdx7xx for example targets ATI HD 57xx edition.  For example, the binaries provided from upstream only utilize 1 thread per GPU by default.  These GPU ebuilds use the recommended 2-4 threads per GPU depending on the particular video card quality or GPU specified in the README.
 
 *sci-misc/setiathome-cpu - Seti@Home version 7/8 client for the CPUs.  Support for automated ebuild level GCC/LLVM PGO for all.
