@@ -26,7 +26,7 @@ RDEPEND=">=dev-lang/mono-2.0
 	"
 DEPEND="${RDEPEND}
                 dev-util/nant
-		dev-dotnet/nunit:2
+		dev-util/nunit:2
 		app-arch/p7zip"
 
 S="${WORKDIR}/taoframework-${PV}"

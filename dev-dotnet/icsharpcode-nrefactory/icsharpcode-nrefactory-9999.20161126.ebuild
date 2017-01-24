@@ -20,7 +20,7 @@ REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
 
 RDEPEND=">=dev-lang/mono-4
          media-libs/openal
-         dev-dotnet/nunit:2
+         dev-util/nunit:2
          dev-dotnet/cecil
 	 !dev-dotnet/icsharpcode-nrefactory-bin"
 DEPEND="${RDEPEND}
