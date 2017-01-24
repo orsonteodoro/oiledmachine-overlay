@@ -17,7 +17,7 @@ SRC_URI=""
 RESTRICT="fetch"
 
 LICENSE="GPL-2"
-SLOT="$(get_major_version)/${ASTROPULSE_SVN_REVISION}"
+SLOT="$(get_major_version)"
 KEYWORDS="~alpha amd64 ~arm ~ia64 ~mips ~ppc ~ppc64 ~sparc x86 ~amd64-fbsd ~x86-fbsd ~x86-freebsd ~amd64-linux ~ia64-linux ~x86-linux ~x86-macos"
 
 #cuda only supported on windows
