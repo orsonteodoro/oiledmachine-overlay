@@ -176,6 +176,10 @@ pkg_postinst() {
 		einfo "After generating it, it may need to be slightly modified."
 	fi
 
+	if use csharp ; then
+		einfo "You need a .sln or project.json file for C# support"
+	fi
+
 	einfo ""
         einfo "You must generate a 16 byte HMAC secret wrapped in base64 for the hmac_secret property of your .json file:"
         einfo "Do: openssl rand -base64 16"
