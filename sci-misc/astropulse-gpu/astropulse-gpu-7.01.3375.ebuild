@@ -4,7 +4,7 @@
 
 EAPI="6"
 
-inherit autotools eutils flag-o-matic subversion toolchain-funcs versionator git-r3 multilib multilib-minimal multilib-build
+inherit autotools eutils flag-o-matic subversion toolchain-funcs versionator git-r3
 
 ASTROPULSE_VERSION="$(get_version_component_range 1-2 ${PV})"
 ASTROPULSE_SVN_REVISION="$(get_version_component_range 3 ${PV})"
@@ -22,9 +22,6 @@ KEYWORDS="~alpha amd64 ~arm ~ia64 ~mips ~ppc ~ppc64 ~sparc x86 ~amd64-fbsd ~x86-
 
 #cuda only supported on windows
 IUSE="test 32bit 64bit opengl opencl -cuda -cuda_2_2 -cuda_2_3 -cuda_3_2 -cuda_4_2 -cuda_5_0 custom-cflags avx2 avx avx-btver2 avx-bdver3 avx-bdver2 avx-bdver1 sse42 sse41 ssse3 sse3 sse2 sse mmx 3dnow video_cards_nvidia video_cards_fglrx video_cards_intel ati_hd4xxx core2 xeon ppc ppc64 x32 x64 intel_hd intel_hd2xxx intel_hd3xxx intel_hd_gt1 intel_hd4xxx intel_hd5xxx intel_iris5xxx ati_hd5xxx ati_hd6xxx ati_hd7xxx ati_hdx3xx ati_hdx4xx ati_hdx5xx ati_hdx6xx ati_hdx7xx ati_hdx8xx ati_hdx9xx ati_rx_200 ati_rx_300 ati_rx_400 ati_rx_x2x ati_rx_x3x ati_rx_x4x ati_rx_x5x ati_rx_x6x ati_rx_x7x ati_rx_x8x ati_rx_x9x nv_1xx nv_2xx nv_3xx nv_4xx nv_5xx nv_6xx nv_7xx nv_8xx nv_9xx nv_x00 nv_x10 nv_x20 nv_x30 nv_x40 nv_x00_fast nv_x10_fast nv_x20_fast nv_x30_fast nv_x40_fast nv_x50 nv_x60 nv_x70 nv_x50_fast nv_x60_fast nv_x70_fast nv_x70 nv_x80 nv_x70_fast nv_x80_fast nv_780ti nv_titan nv_780ti_fast nv_titan_fast nv_8xxx nv_9xxx nv_8xxx_fast nv_9xxx_fast armv6-neon-nopie armv6-neon armv6-vfp-nopie armv6-vfp armv7-neon armv7-neon-nopie armv7-vfpv3 armv7-vfpv3d16 armv7-vfpv3d16-nopie armv7-vfpv4 armv7-vfpv4-nopie arm pgo ati_apu"
-_ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
-IUSE+=" ${_ABIS}"
-REQUIRED_USE="^^ ( ${_ABIS} )"
 
 #	dev-libs/asmlib
 RDEPEND="
@@ -134,11 +131,9 @@ src_prepare() {
 	cd "${WORKDIR}/${MY_P}/AP/client"
 	AT_M4DIR="m4" eautoreconf
 	chmod +x configure
-
-	multilib_copy_sources
 }
 
-multilib_src_configure() {
+src_configure() {
         append-flags -Wa,--noexecstack
 	#conf run in src_compile
 }
@@ -523,7 +518,7 @@ function gpu_setup {
 	SAH_GPU_NUM_INSTANCES="${SETIATHOME_GPU_INSTANCES}"
 }
 
-multilib_src_compile() {
+src_compile() {
 	gpu_setup
 
 	INSTRUMENT_CFLAGS=""
@@ -575,7 +570,7 @@ multilib_src_compile() {
         fi
 }
 
-multilib_src_install() {
+src_install() {
 	mkdir -p "${D}/var/lib/boinc/projects/setiathome.berkeley.edu"
 	BOINC_VER=`boinc --version | awk '{print $1}'`
 
