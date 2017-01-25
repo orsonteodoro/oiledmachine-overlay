@@ -3,11 +3,12 @@
 # $Id$
 
 EAPI=6
-inherit dotnet eutils git-r3 mono gac toolchain-funcs flag-o-matic
+inherit dotnet eutils mono gac toolchain-funcs flag-o-matic
 
 DESCRIPTION="CppSharp"
 HOMEPAGE="https://github.com/mono/CppSharp"
-SRC_URI=""
+PROJECT_NAME="CppSharp"
+SRC_URI="https://github.com/mono/${PROJECT_NAME}/archive/0.7.14.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"
@@ -25,24 +26,13 @@ DEPEND="${RDEPEND}
 	>=sys-devel/clang-3.9.0
 "
 
-RESTRICT="fetch"
-
-S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/${PROJECT_NAME}-${PV}"
 
 pkg_setup() {
 	dotnet_pkg_setup
 	if [[ ! -f "/usr/include/clang/Driver/ToolChain.h" ]]; then
 		die "You can only use the llvm package from the oiledmachine overlay"
 	fi
-}
-
-src_unpack() {
-        #EGIT_CHECKOUT_DIR="${WORKDIR}"
-        EGIT_REPO_URI="https://github.com/mono/CppSharp.git"
-        EGIT_BRANCH="master"
-        EGIT_COMMIT="66c3acc2f6a0257cfba1bf3ba95a3ee5e174b876"
-        git-r3_fetch
-        git-r3_checkout
 }
 
 src_prepare() {
@@ -78,6 +68,8 @@ src_prepare() {
 
 	sed -i -e "s|-I/usr/lib/clang/3.9.0/include|-I/usr/lib/clang/$(clang-fullversion)/include|g" ./build/gmake/projects/CppSharp.CppParser.make || die p13
 
+	egenkey
+
 	#inject strong name and force net version
 	FILES=$(grep -l -r -e "FLAGS = /unsafe" ./)
 	for f in $FILES
@@ -94,8 +86,22 @@ src_prepare() {
 		sed -i -r -e "s|/nologo|-sdk:${EBF} -keyfile:\"${S}/${PN}-keypair.snk\" /nologo|g" "$f" || die
 	done
 
+       	#inject public key into assembly
+        public_key=$(sn -tp "${S}/${PN}-keypair.snk" | tail -n 7 | head -n 5 | tr -d '\n')
+        echo "pk is: ${public_key}"
+	FILES=$(grep -l -r -e "InternalsVisibleTo" ./)
+	for f in $FILES
+	do
+		einfo "Attempting to inject public key into $f..."
+		sed -i -r -e "s|\[assembly\:InternalsVisibleTo\(\"CppSharp.Parser\"\)\]|\[assembly:InternalsVisibleTo(\"CppSharp.Parser, PublicKey=${public_key}\")\]|" "$f"
+		sed -i -r -e "s|\[assembly\:InternalsVisibleTo\(\"CppSharp.Parser.CSharp\"\)\]|\[assembly:InternalsVisibleTo(\"CppSharp.Parser.CSharp, PublicKey=${public_key}\")\]|" "$f"
+	done
 
-	egenkey
+	#this needs testing
+	#also the key needs to be fixed but we generate new keys per emerge because users can inject their own patches
+	sed -i -r -e "s|\[assembly\:InternalsVisibleTo\(\\\\\"CppSharp.Parser\\\\\"\)\]|\[assembly:InternalsVisibleTo(\\\\\"CppSharp.Parser, PublicKey=${public_key}\\\\\")\]|" ./src/CppParser/ParserGen/ParserGen.cs || die
+	sed -i -r -e "s|\[assembly\:InternalsVisibleTo\(\\\\\"\{library\}\\\\\"\)\]|\[assembly:InternalsVisibleTo(\\\\\"\{library\}, PublicKey=${public_key}\\\\\")\]|" ./src/Generator/Generators/CSharp/CSharpSources.cs || die
+	sed -i -r -e "s|\[assembly\:InternalsVisibleTo\(\\\\\"NamespacesDerived.CSharp\\\\\"\)\]|\[assembly:InternalsVisibleTo(\\\\\"NamespacesDerived.CSharp, PublicKey=${public_key}\\\\\")\]|" ./tests/NamespacesDerived/NamespacesDerived.cs || die
 
 	eapply_user
 }

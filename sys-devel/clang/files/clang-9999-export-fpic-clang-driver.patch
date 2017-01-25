@@ -1,0 +1,30 @@
+diff -urp clang-9999.orig/CMakeLists.txt clang-9999/CMakeLists.txt
+--- clang-9999.orig/CMakeLists.txt	2017-01-24 01:26:49.322751747 -0800
++++ clang-9999/CMakeLists.txt	2017-01-24 01:29:51.791856877 -0800
+@@ -324,6 +324,8 @@ configure_file(
+   ${CMAKE_CURRENT_SOURCE_DIR}/include/clang/Basic/Version.inc.in
+   ${CMAKE_CURRENT_BINARY_DIR}/include/clang/Basic/Version.inc)
+ 
++set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
++
+ # Add appropriate flags for GCC
+ if (LLVM_COMPILER_IS_GCC_COMPATIBLE)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-common -Woverloaded-virtual")
+Only in clang-9999: CMakeLists.txt.orig
+diff -urp clang-9999.orig/lib/Driver/ToolChains.h clang-9999/lib/Driver/ToolChains.h
+--- clang-9999.orig/lib/Driver/ToolChains.h	2017-01-24 01:26:43.114509853 -0800
++++ clang-9999/lib/Driver/ToolChains.h	2017-01-24 01:30:08.783518076 -0800
+@@ -861,10 +861,10 @@ protected:
+   Tool *buildLinker() const override;
+ };
+ 
+-class LLVM_LIBRARY_VISIBILITY Linux : public Generic_ELF {
++class Linux : public Generic_ELF {
+ public:
+   Linux(const Driver &D, const llvm::Triple &Triple,
+-        const llvm::opt::ArgList &Args);
++        const llvm::opt::ArgList &Args) __attribute__ ((visibility ("default") ));
+ 
+   bool HasNativeLLVMSupport() const override;
+ 
+Only in clang-9999/lib/Driver: ToolChains.h.orig

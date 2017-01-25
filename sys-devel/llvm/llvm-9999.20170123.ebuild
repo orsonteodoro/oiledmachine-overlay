@@ -17,6 +17,7 @@ HOMEPAGE="http://llvm.org/"
 SRC_URI=""
 EGIT_REPO_URI="http://llvm.org/git/llvm.git
 	https://github.com/llvm-mirror/llvm.git"
+EGIT_COMMIT="aeb6f08dc22af684eec3c868e042e6674644a859"
 
 # Keep in sync with CMakeLists.txt
 ALL_LLVM_TARGETS=( AArch64 AMDGPU ARM BPF Hexagon Lanai Mips MSP430
@@ -37,7 +38,6 @@ SLOT="0/$(get_major_version)"
 KEYWORDS=""
 IUSE="debug +doc gold libedit +libffi multitarget ncurses test
 	elibc_musl kernel_Darwin ${ALL_LLVM_TARGETS[*]}"
-IUSE+=" codegen"
 
 RDEPEND="
 	sys-libs/zlib:0=
@@ -116,17 +116,13 @@ src_prepare() {
 
 	# Fix llvm-config for shared linking and sane flags
 	# https://bugs.gentoo.org/show_bug.cgi?id=565358
-	eapply "${FILESDIR}"/9999/0007-llvm-config-Clean-up-exported-values-update-for-shar.patch
+	eapply "${FILESDIR}"/llvm-9999.20170123-0007-llvm-config-Clean-up-exported-values-update-for-shar.patch
 
 	# support building llvm against musl-libc
 	use elibc_musl && eapply "${FILESDIR}"/9999/musl-fixes.patch
 
 	# disable use of SDK on OSX, bug #568758
 	sed -i -e 's/xcrun/false/' utils/lit/lit/util.py || die
-
-	if use codegen; then
-		eapply "${FILESDIR}/${PN}-3.9.1-export-fpic-clang-driver.patch"
-	fi
 
 	# User patches
 	eapply_user
@@ -254,33 +250,6 @@ multilib_src_install() {
 			dosym "../../../../$(get_libdir)/LLVMgold.so" \
 				"/usr/${CHOST}/binutils-bin/lib/bfd-plugins/LLVMgold.so"
 		fi
-	fi
-
-	if use codegen; then
-		#for dev-dotnet/cppsharp
-		cd "${S}"/tools/clang/lib/CodeGen
-		cp CodeGenModule.h "${D}"/usr/include/clang/CodeGen/ || die
-		cp CGVTables.h "${D}"/usr/include/clang/CodeGen/ || die
-		cp CodeGenTypes.h "${D}"/usr/include/clang/CodeGen/
-		cp CGCall.h "${D}"/usr/include/clang/CodeGen/
-		cp CGValue.h "${D}"/usr/include/clang/CodeGen/
-		cp EHScopeStack.h "${D}"/usr/include/clang/CodeGen/
-		cp ABIInfo.h "${D}"/usr/include/clang/CodeGen/
-		cp SanitizerMetadata.h "${D}"/usr/include/clang/CodeGen/
-		cp TargetInfo.h "${D}"/usr/include/clang/CodeGen/
-		cp CGCXXABI.h "${D}"/usr/include/clang/CodeGen/
-		cp CodeGenFunction.h "${D}"/usr/include/clang/CodeGen/
-		cp CGBuilder.h "${D}"/usr/include/clang/CodeGen/
-		cp CGDebugInfo.h "${D}"/usr/include/clang/CodeGen/
-		cp CGLoopInfo.h "${D}"/usr/include/clang/CodeGen/
-		cp CodeGenPGO.h "${D}"/usr/include/clang/CodeGen/
-		cp CodeGenTypeCache.h "${D}"/usr/include/clang/CodeGen/
-		cp Address.h "${D}"/usr/include/clang/CodeGen/
-
-		mkdir -p "${D}/usr/include/clang/Driver"
-		cd "${S}"/tools/clang/lib/Driver
-		cp Tools.h "${D}"/usr/include/clang/Driver/ || die
-		cp ToolChains.h "${D}"/usr/include/clang/Driver/ || die
 	fi
 }
 
