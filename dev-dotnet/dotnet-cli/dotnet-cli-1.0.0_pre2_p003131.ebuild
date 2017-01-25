@@ -35,7 +35,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 
 RDEPEND="
-	>=sys-devel/llvm-3.7.1-r3[lldb]
+        || ( dev-util/lldb  >=sys-devel/llvm-3.7.1-r3[lldb] )
 	>=sys-libs/libunwind-1.1-r1
 	>=dev-libs/icu-57.1
 	>=dev-util/lttng-ust-2.8.1
