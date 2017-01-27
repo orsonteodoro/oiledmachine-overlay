@@ -1,0 +1,11 @@
+--- coreclr-1.1.0.orig/src/vm/exceptionhandling.cpp	2016-11-01 13:05:29.000000000 -0700
++++ coreclr-1.1.0/src/vm/exceptionhandling.cpp	2017-01-25 01:43:18.803551740 -0800
+@@ -4730,7 +4730,7 @@ VOID DECLSPEC_NORETURN DispatchManagedEx
+         }
+     }
+ 
+-    throw ex;
++    throw std::move(ex);
+ }
+ 
+ #ifdef _AMD64_
