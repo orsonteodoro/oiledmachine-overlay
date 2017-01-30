@@ -205,11 +205,39 @@ function esavekey() {
 	if use developer ; then
 		mkdir -p "${D}/usr/$(get_libdir)/mono/${PN}"
 		if [[ -z "${1}" ]]; then
-			cp "${PN}-keypair.snk" "${D}/usr/$(get_libdir)/mono/${PN}"
+			if [[ -z "${2}" ]] ; then
+				cp "${PN}-keypair.snk" "${D}/usr/$(get_libdir)/mono/${PN}"
+			else
+				cp "${PN}-keypair.snk" "${D}/usr/$(get_libdir)/mono/${PN}/${2}"
+			fi
 		else
-			cp "${1}" "${D}/usr/$(get_libdir)/mono/${PN}"
+			if [[ -z "${2}" ]] ; then
+				cp "${1}" "${D}/usr/$(get_libdir)/mono/${PN}"
+			else
+				cp "${1}" "${D}/usr/$(get_libdir)/mono/${PN}/${2}"
+			fi
 		fi
 	fi
+}
+
+# @FUNCTION: strong_sign()
+# @DESCRIPTION:  This is another way to strong sign if it complains about unable to add delayed signed assembly to gac $1 is key $2 is the assembly.  Verify that the library hasn't been been in the gac or a mono assembly before using.
+function estrong_sign_delayed() {
+	pushd "$(dirname ${2})"
+	ikdasm "${2}" > "${2}.il" || die "monodis failed"
+	mv "${2}" "${2}.orig"
+	grep -r -e "permissionset" "${2}.il" #permissionset not supported
+	if [[ "$?" == "0" ]]; then
+		sed -i -r -e ':a' -e 'N' -e '$!ba' -e 's|.permissionset.*\n.*\}\}||g' "${2}.il"
+	fi
+	grep -e "\[opt\] bool public" "${2}.il" #broken mangling
+	if [[ "$?" == "0" ]]; then
+		sed -i -r -e ':a' -e 'N' -e '$!ba' -e "s|\[opt\] bool public|[opt] bool \'public\'|g" "${2}.il"
+	fi
+	ilasm /dll /key:"${1}" /output:"${2}" "${2}.il" || die "ilasm failed"
+	#rm "${2}.orig"
+	#rm "${2}.il"
+	popd
 }
 
 EXPORT_FUNCTIONS pkg_setup

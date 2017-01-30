@@ -1,0 +1,11 @@
+--- CsQuery-5a22e28a39c139cbb8170a0eeeee59e73f9e02f9.orig/source/CsQuery/Dom/INodeListT.cs	2015-12-15 05:06:00.000000000 -0800
++++ CsQuery-5a22e28a39c139cbb8170a0eeeee59e73f9e02f9/source/CsQuery/Dom/INodeListT.cs	2017-01-30 02:16:07.702972755 -0800
+@@ -16,7 +16,7 @@ namespace CsQuery
+     /// Generic type parameter.
+     /// </typeparam>
+ 
+-    public interface INodeList<T> : IReadOnlyList<T>, IReadOnlyCollection<T>, IEnumerable<T> where T : IDomObject
++    public interface INodeList<T> : CsQuery.Implementation.IReadOnlyList<T>, CsQuery.Implementation.IReadOnlyCollection<T>, IEnumerable<T> where T : IDomObject
+     {
+         /// <summary>
+         /// The number of nodes in this INodeList

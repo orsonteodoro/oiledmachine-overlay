@@ -1,0 +1,43 @@
+diff -urp Nancy-1.4.3.orig/src/Nancy.Validation.FluentValidation/Nancy.Validation.FluentValidation.csproj Nancy-1.4.3/src/Nancy.Validation.FluentValidation/Nancy.Validation.FluentValidation.csproj
+--- Nancy-1.4.3.orig/src/Nancy.Validation.FluentValidation/Nancy.Validation.FluentValidation.csproj	2015-12-21 04:00:06.000000000 -0800
++++ Nancy-1.4.3/src/Nancy.Validation.FluentValidation/Nancy.Validation.FluentValidation.csproj	2017-01-30 01:20:02.299641704 -0800
+@@ -84,10 +84,7 @@
+     <DocumentationFile>bin\MonoRelease\Nancy.Validation.FluentValidation.XML</DocumentationFile>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="FluentValidation, Version=3.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+-      <SpecificVersion>False</SpecificVersion>
+-      <HintPath>..\packages\FluentValidation.3.4.0.0\lib\Net40\FluentValidation.dll</HintPath>
+-    </Reference>
++    <Reference Include="FluentValidation" />
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+     <Reference Include="System.Xml.Linq" />
+@@ -162,4 +159,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urp Nancy-1.4.3.orig/src/Nancy.ViewEngines.Markdown/Nancy.ViewEngines.Markdown.csproj Nancy-1.4.3/src/Nancy.ViewEngines.Markdown/Nancy.ViewEngines.Markdown.csproj
+--- Nancy-1.4.3.orig/src/Nancy.ViewEngines.Markdown/Nancy.ViewEngines.Markdown.csproj	2015-12-21 04:00:06.000000000 -0800
++++ Nancy-1.4.3/src/Nancy.ViewEngines.Markdown/Nancy.ViewEngines.Markdown.csproj	2017-01-30 01:19:55.579379103 -0800
+@@ -54,9 +54,7 @@
+     <DocumentationFile>bin\MonoRelease\Nancy.ViewEngines.Markdown.XML</DocumentationFile>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="MarkdownSharp">
+-      <HintPath>..\packages\MarkdownSharp.1.13.0.0\lib\35\MarkdownSharp.dll</HintPath>
+-    </Reference>
++    <Reference Include="MarkdownSharp" />
+     <Reference Include="Microsoft.CSharp" />
+     <Reference Include="System" />
+   </ItemGroup>
+@@ -78,4 +76,4 @@
+   <ItemGroup>
+     <None Include="packages.config" />
+   </ItemGroup>
+-</Project>
+\ No newline at end of file
++</Project>
