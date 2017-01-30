@@ -66,6 +66,13 @@ src_prepare() {
 
 	#eapply "${FILESDIR}/${PN}-9999.20170107-bottle-0.12.11.patch"
 
+	if use csharp ; then
+		cp -a "${FILESDIR}/omnisharp.sh.net45" "${WORKDIR}/omnisharp.sh"
+		sed -i -e "s|GENTOO_OMNISHARP_SERVER_PATH|/usr/$(get_libdir)/mono/omnisharp-server|g"  "${WORKDIR}/omnisharp.sh"
+	fi
+
+	eapply "${FILESDIR}/${PN}-9999.20141214-no-prepend-mono.patch"
+
 	eapply_user
 
 	python_copy_sources
@@ -92,6 +99,10 @@ python_prepare_all() {
 		sed -i -e "s|GENTOO_PYTHON_INCLUDE_DIR|/usr/include/python3.4m|" build.sh || die
 	else
 		die "not currently supported.  notify the package maintainer or hand edit it."
+	fi
+
+	if use csharp ; then
+		sed -i -e "s|GENTOO_OMNISHARP|/usr/$(get_libdir)/${EPYTHON}/site-packages/ycmd/completers/cs/omnisharp.sh|g" ycmd/completers/cs/cs_completer.py || die
 	fi
 
 	cp "${FILESDIR}/default_settings.json" ycmd/default_settings.json
@@ -137,11 +148,18 @@ python_install_all() {
 	#cp "CORE_VERSION" "${D}/$(python_get_sitedir)/ycmd"
 
 	cp -a "cpp/ycm/.ycm_extra_conf.py" "${D}/$(python_get_sitedir)/ycmd"
+	if use csharp ; then
+		cp -a "${WORKDIR}/omnisharp.sh" "ycmd/completers/cs/"
+	fi
 
 	rm -rf "ycmd/tests"
 	rm -rf "ycmd/completers/general/tests"
 
 	python_domodule ycmd
+
+	if use csharp ; then
+		chmod 755 "${D}/$(python_get_sitedir)/ycmd/completers/cs/omnisharp.sh"
+	fi
 }
 
 src_test() {
@@ -177,7 +195,7 @@ pkg_postinst() {
 	fi
 
 	if use csharp ; then
-		einfo "You need a .sln or project.json file for C# support"
+		einfo "You need a .sln file for C# support"
 	fi
 
 	einfo ""

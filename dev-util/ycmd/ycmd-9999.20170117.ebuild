@@ -16,8 +16,8 @@ KEYWORDS="~amd64 ~x86"
 SLOT="0"
 LICENSE="GPL-3"
 
-IUSE="system-boost system-clang csharp go javascript rust c++ c objc objc++ python typescript debug tests"
-REQUIRED_USE="system-clang? ( || ( c c++ objc objc++ ) )"
+IUSE="system-boost system-clang csharp omnisharp-server omnisharp-roslyn go javascript rust c++ c objc objc++ python typescript debug tests net46 net45 netcore10"
+REQUIRED_USE="system-clang? ( || ( c c++ objc objc++ ) ) csharp? ( ^^ ( omnisharp-server omnisharp-roslyn ) ) omnisharp-roslyn? (  ^^ ( net46 netcore10 ) ) omnisharp-server? ( net45 ) ^^ ( net45 net46 netcore10 )"
 
 COMMON_DEPEND="
 	${PYTHON_DEPS}
@@ -27,7 +27,9 @@ COMMON_DEPEND="
 RDEPEND="
 	${COMMON_DEPEND}
 	python? ( dev-python/jedihttp[${PYTHON_USEDEP}] )
-	csharp? ( dev-dotnet/omnisharp-server )
+	csharp? ( omnisharp-server? ( dev-dotnet/omnisharp-server )
+		  omnisharp-roslyn? ( dev-dotnet/omnisharp-roslyn[net46] )
+                )
 	dev-python/argparse[${PYTHON_USEDEP}]
 	=dev-python/bottle-0.12.7[${PYTHON_USEDEP}]
 	dev-python/frozendict[${PYTHON_USEDEP}]
@@ -71,6 +73,31 @@ src_prepare() {
 
 	#eapply "${FILESDIR}/${PN}-9999.20170107-bottle-0.12.11.patch"
 
+	if use omnisharp-roslyn; then
+		epatch "${FILESDIR}/${PN}-9999.20170117-omnisharp-roslyn-support.patch"
+	fi
+
+	if use csharp ; then
+		if use net45 ; then
+			cp -a "${FILESDIR}/omnisharp.sh.net45" "${WORKDIR}/omnisharp.sh"
+			sed -i -e "s|GENTOO_OMNISHARP_SERVER_PATH|/usr/$(get_libdir)/mono/omnisharp-server|g"  "${WORKDIR}/omnisharp.sh"
+		elif use net46 ; then
+			cp -a "${FILESDIR}/omnisharp.sh.net46" "${WORKDIR}/omnisharp.sh"
+
+			FRAMEWORK_FOLDER="net46"
+			sed -i -e "s|GENTOO_OMNISHARP_ROSLYN_NET46_PATH|/usr/$(get_libdir)/mono/omnisharp-roslyn/${FRAMEWORK_FOLDER}|g"  "${WORKDIR}/omnisharp.sh"
+		elif use netcore10 ; then
+			cp -a "${FILESDIR}/omnisharp.sh.netcore10" "${WORKDIR}/omnisharp.sh"
+
+			NETCORE_VERSION="1.0.1"
+			FRAMEWORK_FOLDER="netcoreapp1.0"
+			sed -i -e "s|GENTOO_DOTNET_CLI_NETCORE_PATH|/opt/dotnet_cli/shared/Microsoft.NETCore.App/${NETCORE_VERSION}|g"  "${WORKDIR}/omnisharp.sh"
+			sed -i -e "s|GENTOO_OMNISHARP_ROSLYN_NETCORE10_PATH|/usr/$(get_libdir)/mono/omnisharp-roslyn/${FRAMEWORK_FOLDER}|g"  "${WORKDIR}/omnisharp.sh"
+		fi
+	fi
+
+	eapply "${FILESDIR}/${PN}-9999.20170117-no-prepend-mono.patch"
+
 	eapply_user
 
 	python_copy_sources
@@ -86,6 +113,10 @@ python_prepare_all() {
 	sed -i -e "s|0.20.0|$(ls /usr/$(get_libdir)/node/tern/ | tail -n 1)|g" ycmd/completers/javascript/tern_completer.py
 	if [[ "${EPYTHON}" != "python2.7" ]] ; then
 		use system-boost && sed -i -e "s|python3|python|g" cpp/ycm/CMakeLists.txt
+	fi
+
+	if use csharp ; then
+		sed -i -e "s|GENTOO_OMNISHARP|/usr/$(get_libdir)/${EPYTHON}/site-packages/ycmd/completers/cs/omnisharp.sh|g" ycmd/completers/cs/cs_completer.py || die
 	fi
 
 	cp "${FILESDIR}/default_settings.json" ycmd/default_settings.json
@@ -184,11 +215,18 @@ python_install_all() {
 	cp "CORE_VERSION" "${D}/$(python_get_sitedir)/ycmd"
 
 	cp -a "cpp/ycm/.ycm_extra_conf.py" "${D}/$(python_get_sitedir)/ycmd"
+	if use csharp ; then
+		cp -a "${WORKDIR}/omnisharp.sh" "ycmd/completers/cs/"
+	fi
 
 	rm -rf "ycmd/tests"
 	rm -rf "ycmd/completers/general/tests"
 
 	python_domodule ycmd
+
+	if use csharp ; then
+		chmod 755 "${D}/$(python_get_sitedir)/ycmd/completers/cs/omnisharp.sh"
+	fi
 }
 
 src_test() {
@@ -232,7 +270,7 @@ pkg_postinst() {
 	fi
 
 	if use csharp ; then
-		einfo "You need a .sln or project.json file for C# support"
+		einfo "You need a .sln file for C# support"
 	fi
 
 	einfo ""

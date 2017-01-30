@@ -6,20 +6,30 @@
 
 EAPI="6"
 
-inherit versionator flag-o-matic
+inherit dotnet versionator flag-o-matic
 
 CORE_V=1.0.1
 CORECLR_V=1.0.4
 COREFX_V=1.0.0
 
 BASE_PV=${PV%_p*}
-P_BUILD=$(get_version_component_range 6)
+P_BUILD=$(get_version_component_range 7)
 DIST="debian"
 DIST2="${DIST}-x64"
 SDK_VERSION="$(get_version_component_range 1-3)"
-SDK_PREVIEW_VERSION=$(echo $(if [[ "$(get_version_component_range 5)" == "0" ]]; then echo "$(get_version_component_range 4)"; else echo "$(get_version_component_range 4-5)"; fi))
-SDK_PREVIEW_VERSION="${SDK_PREVIEW_VERSION//_/.}"
-SDK_PR="preview" #preview or release
+SDK_PR_VERSION=$(echo $(if [[ "$(get_version_component_range 6)" == "0" ]]; then echo "$(get_version_component_range 5)"; else echo "$(get_version_component_range 5-6)"; fi))
+SDK_PR_VERSION="${SDK_PR_VERSION//_/.}"
+SDK_PR=$(echo $(if [[ "$(get_version_component_range 4)" == "0" ]]; then \
+                      echo "alpha"; \
+              elif [[ "$(get_version_component_range 4)" == "1" ]]; then \
+                      echo "beta"; \
+              elif [[ "$(get_version_component_range 4)" == "2" ]]; then \
+                      echo "preview"; \
+              elif [[ "$(get_version_component_range 4)" == "3" ]]; then \
+                      echo "rc"; \
+              elif [[ "$(get_version_component_range 4)" == "4" ]]; then \
+                      echo ""; \
+              fi))
 
 CORECLR=coreclr-${CORECLR_V}
 COREFX=corefx-${COREFX_V}
@@ -31,7 +41,7 @@ LICENSE="MIT"
 IUSE=""
 SRC_URI="https://github.com/dotnet/coreclr/archive/v${CORECLR_V}.tar.gz -> ${CORECLR}.tar.gz
 	https://github.com/dotnet/corefx/archive/v${COREFX_V}.tar.gz -> ${COREFX}.tar.gz
-        https://dotnetcli.blob.core.windows.net/dotnet/preview/Binaries/${SDK_VERSION}-${SDK_PR}${SDK_PREVIEW_VERSION//./-}-${P_BUILD}/dotnet-dev-${DIST2}.${SDK_VERSION}-${SDK_PR}${SDK_PREVIEW_VERSION//./-}-${P_BUILD}.tar.gz"
+        https://dotnetcli.blob.core.windows.net/dotnet/${SDK_PR}/Binaries/${SDK_VERSION}-${SDK_PR}${SDK_PR_VERSION//./-}-${P_BUILD}/dotnet-dev-${DIST2}.${SDK_VERSION}-${SDK_PR}${SDK_PR_VERSION//./-}-${P_BUILD}.tar.gz"
 
 SLOT="0"
 KEYWORDS="~amd64"
@@ -81,7 +91,7 @@ src_unpack() {
 	unpack "${CORECLR}.tar.gz" "${COREFX}.tar.gz"
 	mkdir "${CLI_S}" || die
 	cd "${CLI_S}" || die
-	unpack "dotnet-dev-${DIST2}.${SDK_VERSION}-${SDK_PR}${SDK_PREVIEW_VERSION//./-}-${P_BUILD}.tar.gz"
+	unpack "dotnet-dev-${DIST2}.${SDK_VERSION}-${SDK_PR}${SDK_PR_VERSION//./-}-${P_BUILD}.tar.gz"
 }
 
 src_prepare() {
@@ -139,5 +149,9 @@ src_install() {
 
 	dosym "../../opt/dotnet_cli/dotnet" "/usr/bin/dotnet"
 
+	#fix for omnisharp-roslyn and https://github.com/aspnet/KestrelHttpServer/issues/963
+	dosym "../../opt/dotnet_cli/shared/Microsoft.NETCore.App/${CORE_V}/System.Native.so" "/usr/$(get_libdir)/libSystem.Native.so"
+
+	dotnet_multilib_comply
 }
 

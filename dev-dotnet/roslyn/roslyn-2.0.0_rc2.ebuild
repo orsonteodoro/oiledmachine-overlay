@@ -27,7 +27,7 @@ SRC_URI="https://github.com/dotnet/roslyn/archive/version-${PV//_/-}.tar.gz -> $
          https://dotnetcli.blob.core.windows.net/dotnet/preview/Binaries/${DOTNET_VERSION}/dotnet-dev-${DOTNET_PLATFORM}.${DOTNET_VERSION}.tar.gz"
 
 LICENSE="Apache-2.0"
-SLOT="0"
+SLOT="2"
 KEYWORDS="~amd64"
 USE_DOTNET="net45"
 IUSE="${USE_DOTNET} debug +gac bootstrap"
@@ -50,11 +50,6 @@ pkg_setup() {
 		die "You need to add FEATURES=\"-usersandbox\" to your per-package package.env for the dotnet command to work properly.  See https://wiki.gentoo.org/wiki//etc/portage/package.env ."
 	else
 		true
-	fi
-	if [[ "${FEATURES}" =~ "userpriv" ]] ; then
-		true
-	else
-		die "You need to add FEATURES=\"userpriv\" to your per-package package.env for the dotnet command to work properly.  See https://wiki.gentoo.org/wiki//etc/portage/package.env ."
 	fi
 
 	dotnet_pkg_setup
@@ -85,7 +80,7 @@ src_prepare() {
 		mydebug="Debug"
 	fi
 
-	egenkey
+	#egenkey
 	##3.x may be required for roslyn
 	#wget https://github.com/NuGet/Home/releases/download/3.3/NuGet.exe
 
@@ -163,12 +158,12 @@ src_install() {
 		mydebug="Debug"
 	fi
 
-	esavekey
-
-       	insinto "/usr/$(get_libdir)/mono/${PN}"
+       	insinto "/usr/$(get_libdir)/mono/${PN}/2"
 
 	doins $(find Binaries/${mydebug} -name "*.dll")
 	doins $(find Binaries/${mydebug} -name "*.exe")
+
+	#cp "${PN}-keypair.snk" "${D}/usr/$(get_libdir)/mono/${PN}/${SLOT}"
 
 	dotnet_multilib_comply
 }

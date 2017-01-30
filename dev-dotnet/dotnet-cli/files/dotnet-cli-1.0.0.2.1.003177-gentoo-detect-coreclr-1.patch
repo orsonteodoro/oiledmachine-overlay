@@ -1,0 +1,15 @@
+diff -urp coreclr-1.1.0.orig/init-tools.sh coreclr-1.1.0/init-tools.sh
+--- coreclr-1.1.0.orig/init-tools.sh	2016-11-01 13:05:29.000000000 -0700
++++ coreclr-1.1.0/init-tools.sh	2017-01-27 10:01:48.362308301 -0800
+@@ -48,7 +48,10 @@ case $OSName in
+     Linux)
+         OS=Linux
+ 
+-        if [ ! -e /etc/os-release ]; then
++	if [ "$(cat /etc/*-release | grep -cim1 Gentoo)" -eq 1 ]; then
++            echo "Cannot determine Linux distribution, asuming Ubuntu 14.04."
++            __DOTNET_PKG=dotnet-dev-ubuntu.14.04-x64
++        elif [ ! -e /etc/os-release ]; then
+             echo "Cannot determine Linux distribution, asuming Ubuntu 14.04."
+             __DOTNET_PKG=dotnet-dev-ubuntu.14.04-x64
+         else

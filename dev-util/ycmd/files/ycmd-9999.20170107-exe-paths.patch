@@ -1,15 +1,14 @@
 diff -urp ycmd-c9a47452dafaf81b65db93f77d0fe23c7f539aa1.orig/ycmd/completers/cs/cs_completer.py ycmd-c9a47452dafaf81b65db93f77d0fe23c7f539aa1/ycmd/completers/cs/cs_completer.py
 --- ycmd-c9a47452dafaf81b65db93f77d0fe23c7f539aa1.orig/ycmd/completers/cs/cs_completer.py	2017-01-08 10:06:43.000000000 -0800
 +++ ycmd-c9a47452dafaf81b65db93f77d0fe23c7f539aa1/ycmd/completers/cs/cs_completer.py	2017-01-14 18:41:54.376488818 -0800
-@@ -45,9 +45,8 @@ SERVER_NOT_FOUND_MSG = ( 'OmniSharp serv
+@@ -45,9 +45,6 @@ SERVER_NOT_FOUND_MSG = ( 'OmniSharp serv
  INVALID_FILE_MESSAGE = 'File is invalid.'
  NO_DIAGNOSTIC_MESSAGE = 'No diagnostic for current line!'
- PATH_TO_OMNISHARP_BINARY = os.path.abspath(
+-PATH_TO_OMNISHARP_BINARY = os.path.abspath(
 -  os.path.join( os.path.dirname( __file__ ), '..', '..', '..',
 -                'third_party', 'OmniSharpServer', 'OmniSharp',
 -                'bin', 'Release', 'OmniSharp.exe' ) )
-+  os.path.join( 'usr', 'lib64', 'mono', 'omnisharp-server',
-+                'OmniSharp.exe' ) )
++PATH_TO_OMNISHARP_BINARY = os.path.abspath( 'GENTOO_OMNISHARP' )
  LOGFILE_FORMAT = 'omnisharp_{port}_{sln}_{std}_'
  
  

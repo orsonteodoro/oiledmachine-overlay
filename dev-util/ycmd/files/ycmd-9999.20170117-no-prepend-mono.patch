@@ -1,0 +1,13 @@
+diff -urp ycmd-f1e6afab72bad0a64d5b16f64d0c58bd0d9ddc07.orig/ycmd/completers/cs/cs_completer.py ycmd-f1e6afab72bad0a64d5b16f64d0c58bd0d9ddc07/ycmd/completers/cs/cs_completer.py
+--- ycmd-f1e6afab72bad0a64d5b16f64d0c58bd0d9ddc07.orig/ycmd/completers/cs/cs_completer.py	2017-01-17 20:11:11.000000000 -0800
++++ ycmd-f1e6afab72bad0a64d5b16f64d0c58bd0d9ddc07/ycmd/completers/cs/cs_completer.py	2017-01-29 17:38:56.482563258 -0800
+@@ -368,9 +368,6 @@ class CsharpSolutionCompleter( object ):
+                   '-s',
+                   u'{0}'.format( path_to_solutionfile ) ]
+ 
+-      if not utils.OnWindows() and not utils.OnCygwin():
+-        command.insert( 0, 'mono' )
+-
+       if utils.OnCygwin():
+         command.extend( [ '--client-path-mode', 'Cygwin' ] )
+ 

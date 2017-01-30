@@ -1,0 +1,12 @@
+--- corefx-1.1.0.orig/init-tools.sh	2017-01-27 10:05:30.636925010 -0800
++++ corefx-1.1.0/init-tools.sh	2017-01-27 10:56:58.741102961 -0800
+@@ -119,6 +119,9 @@ if [ ! -e $__INIT_TOOLS_DONE_MARKER ]; t
+         if [ ! -e "$__BUILD_TOOLS_PATH/init-tools.sh" ]; then echo "ERROR: Could not restore build tools correctly. See '$__init_tools_log' for more details."1>&2; fi
+     fi
+ 
++    #fix on gentoo
++    sed -i -e "s|! -e /etc/os-release|true|g" packages/Microsoft.DotNet.BuildTools/$__BUILD_TOOLS_PACKAGE_VERSION/lib/init-tools.sh
++
+     echo "Initializing BuildTools..."
+     echo "Running: $__BUILD_TOOLS_PATH/init-tools.sh $__scriptpath $__DOTNET_CMD $__TOOLRUNTIME_DIR" >> $__init_tools_log
+     $__BUILD_TOOLS_PATH/init-tools.sh $__scriptpath $__DOTNET_CMD $__TOOLRUNTIME_DIR >> $__init_tools_log

@@ -22,8 +22,7 @@ S="${WORKDIR}/${PN}-${COMMIT}"
 DEPEND="${PYTHON_DEPS}
         dev-util/ycmd[${PYTHON_USEDEP}]
 	company-mode? ( >=app-emacs/company-mode-0.9.0
-                        app-emacs/f
-                        app-emacs/company-mode[ropematics] )
+                        app-emacs/f )
 	flycheck? ( app-emacs/flycheck )
 	eldoc? ( app-emacs/eldoc )
         app-emacs/let-alist

@@ -52,7 +52,6 @@ src_install() {
 	esavekey
 
        	insinto "/usr/$(get_libdir)/mono/${PN}"
-	doins ./OmniSharp/bin/${mydebug}/OmniSharp.exe
 	doins ./OmniSharp/bin/${mydebug}/Microsoft.Build.Evaluation.dll
 	doins ./OmniSharp/bin/${mydebug}/Nancy.Swagger.dll
 	doins ./OmniSharp/bin/${mydebug}/monodoc.dll
@@ -62,6 +61,9 @@ src_install() {
 	doins ./OmniSharp/bin/${mydebug}/Nancy.dll
 	doins ./OmniSharp/bin/${mydebug}/System.IO.Abstractions.dll
 	doins ./OmniSharp/bin/${mydebug}/config.json
+
+       	exeinto "/usr/$(get_libdir)/mono/${PN}"
+	doexe ./OmniSharp/bin/${mydebug}/OmniSharp.exe
 
 	dotnet_multilib_comply
 }

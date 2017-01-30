@@ -7,7 +7,7 @@ diff -urp ycmd-0af509bcda444853836ba740b6b4fbcdea3f8f6c.orig/ycmd/completers/cs/
  PATH_TO_OMNISHARP_BINARY = os.path.join(
 -  os.path.abspath( os.path.dirname( __file__ ) ),
 -  '../../../third_party/OmniSharpServer/OmniSharp/bin/Debug/OmniSharp.exe' )
-+  os.path.abspath( '/usr/lib64/mono/omnisharp-server/OmniSharp.exe' )
++  os.path.abspath( 'GENTOO_OMNISHARP' )
  
  
  #TODO: Handle this better than dummy classes

@@ -1,0 +1,15 @@
+diff -urp corefx-1.1.0.orig/init-tools.sh corefx-1.1.0/init-tools.sh
+--- corefx-1.1.0.orig/init-tools.sh	2016-11-07 13:31:17.000000000 -0800
++++ corefx-1.1.0/init-tools.sh	2017-01-27 09:51:10.948598289 -0800
+@@ -18,7 +18,10 @@ __INIT_TOOLS_DONE_MARKER=$__PROJECT_JSON
+ # Extended version of platform detection logic from dotnet/cli/scripts/obtain/dotnet-install.sh 16692fc
+ get_current_linux_name() {
+     # Detect Distro
+-    if [ "$(cat /etc/*-release | grep -cim1 ubuntu)" -eq 1 ]; then
++    if [ "$(cat /etc/*-release | grep -cim1 Gentoo)" -eq 1 ]; then
++        echo "GENTOO_DIST"
++        return 0
++    elif [ "$(cat /etc/*-release | grep -cim1 ubuntu)" -eq 1 ]; then
+         if [ "$(cat /etc/*-release | grep -cim1 16.04)" -eq 1 ]; then
+             echo "ubuntu.16.04"
+             return 0

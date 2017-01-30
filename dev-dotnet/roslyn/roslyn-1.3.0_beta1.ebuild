@@ -18,16 +18,16 @@ SDK_VERSION="1.0.0"
 SDK_PR="preview"
 P_BUILD="002911"
 CORE_VERSION="1.0.1"
-TOOLSET_VERSION="8"
+TOOLSET_VERSION="6"
 
 DOTNET_PLATFORM="ubuntu-x64"
 DOTNET_VERSION="${SDK_VERSION}-${SDK_PR}${SDK_PREVIEW_VERSION}-${P_BUILD}"
-SRC_URI="https://github.com/dotnet/roslyn/archive/version-${PV//_/-}.tar.gz -> ${P}.tar.gz
-         https://dotnetci.blob.core.windows.net/roslyn/roslyn.linux.${TOOLSET_VERSION}.zip
-         https://dotnetcli.blob.core.windows.net/dotnet/preview/Binaries/${DOTNET_VERSION}/dotnet-dev-${DOTNET_PLATFORM}.${DOTNET_VERSION}.tar.gz"
+SRC_URI="https://github.com/dotnet/roslyn/archive/version-1.3.0-beta1-20160429-01.tar.gz -> ${P}.tar.gz
+         https://dotnetci.blob.core.windows.net/roslyn/roslyn.linux.${TOOLSET_VERSION}.tar.bz2
+"
 
 LICENSE="Apache-2.0"
-SLOT="2"
+SLOT="1"
 KEYWORDS="~amd64"
 USE_DOTNET="net45"
 IUSE="${USE_DOTNET} debug +gac bootstrap"
@@ -42,7 +42,7 @@ DEPEND="${RDEPEND}
         dev-dotnet/nuget
 "
 
-S="${WORKDIR}/${PROJECT_NAME}-version-${PV//_/-}"
+S="${WORKDIR}/${PROJECT_NAME}-version-${PV//_/-}-20160429-01"
 SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 pkg_setup() {
@@ -59,9 +59,10 @@ src_unpack() {
 	unpack ${P}.tar.gz
 
 	cd "${S}" || die
-	mkdir -p Binaries/toolset/roslyn.linux.${TOOLSET_VERSION}
-	cd "${S}/Binaries/toolset/roslyn.linux.${TOOLSET_VERSION}"
-	unzip "${DISTDIR}"/roslyn.linux.${TOOLSET_VERSION}.zip
+	mkdir -p Binaries/toolset/
+	cd "${S}/Binaries/toolset/"
+	tar -xvf "${DISTDIR}"/roslyn.linux.${TOOLSET_VERSION}.tar.bz2
+	cd "roslyn.linux.${TOOLSET_VERSION}"
 	chmod +x RoslynRestore
 	chmod +x corerun
 	chmod +x csc
@@ -69,7 +70,6 @@ src_unpack() {
 
 	mkdir -p "${S}/Binaries/toolset/roslyn.linux.${TOOLSET_VERSION}/dotnet-cli"
 	cd "${S}/Binaries/toolset/roslyn.linux.${TOOLSET_VERSION}/dotnet-cli"
-	tar -xvf "${DISTDIR}"/dotnet-dev-${DOTNET_PLATFORM}.${DOTNET_VERSION}.tar.gz
 
 #	cp -a /usr/lib/mono/xbuild-frameworks/.* "${S}/Binaries/toolset/roslyn.linux.${TOOLSET_VERSION}/reference-assemblies/Framework"
 }
@@ -138,8 +138,8 @@ src_compile() {
 			/p:CscToolPath="${S}/Binaries/Bootstrap" /p:CscToolExe=csc /p:VbcToolPath="${S}/Binaries/Bootstrap" /p:VbcToolExe=vbc \
 			&& \
 	        mkdir -p "${S}/Binaries/Bootstrap" && \
-	        cp -f Binaries/${mydebug}/Exes/CscCore/* "${S}/Binaries/Bootstrap" && \
-	        cp -f Binaries/${mydebug}/Exes/VbcCore/* "${S}/Binaries/Bootstrap" && \
+	        cp -f Binaries/${mydebug}/csccore/* "${S}/Binaries/Bootstrap" && \
+	        cp -f Binaries/${mydebug}/vbccore/* "${S}/Binaries/Bootstrap" && \
         	build/scripts/crossgen.sh "${S}/Binaries/Bootstrap" && \
 	        rm -rf Binaries/${mydebug}
 	fi
@@ -158,7 +158,7 @@ src_install() {
 		mydebug="Debug"
 	fi
 
-       	insinto "/usr/$(get_libdir)/mono/${PN}/2"
+       	insinto "/usr/$(get_libdir)/mono/${PN}/1"
 
 	doins $(find Binaries/${mydebug} -name "*.dll")
 	doins $(find Binaries/${mydebug} -name "*.exe")
