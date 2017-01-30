@@ -36,6 +36,9 @@ src_prepare() {
 	cat "${FILESDIR}"/AssemblyInfo.cs.Rhino.Mocks.Tests.Model | sed -r -e "s|@VERSION@|${VERSION}|g"  -e "s|@COMMIT@|${COMMIT}|g" > Rhino.Mocks.Tests.Model/Properties/AssemblyInfo.cs || die
 	sed -i -r -e "s|<TreatWarningsAsErrors>true</TreatWarningsAsErrors>|<TreatWarningsAsErrors>false</TreatWarningsAsErrors>|g" Rhino.Mocks/Rhino.Mocks.csproj
 
+	eapply "${FILESDIR}"/rhino-mocks-9999.20161109-refs.patch
+	eapply "${FILESDIR}"/rhino-mocks-9999.20161109-no-tests.patch
+
 	egenkey
 
 	eapply_user
@@ -55,7 +58,7 @@ src_compile() {
 src_install() {
 	mydebug="Release"
 	if use debug; then
-		mydebug="Debug"
+		mydebug="debug"
 	fi
 
 	esavekey
@@ -65,18 +68,19 @@ src_install() {
 	for x in ${USE_DOTNET} ; do
                 FW_UPPER=${x:3:1}
                 FW_LOWER=${x:4:1}
-                egacinstall "${S}/bin/${mydebug}/${PROJECT_NAME}.dll"
+		egacinstall "${S}/Rhino.Mocks/bin/${mydebug}/Rhino.Mocks.dll"
         done
 
 	eend
 
 	if use developer ; then
                	insinto "/usr/$(get_libdir)/mono/${PN}"
-		doins bin/Release/TheoraPlay-CS.dll.mdb
+		doins "${S}/Rhino.Mocks/bin/${mydebug}/Rhino.Mocks.dll.mdb"
 	fi
 
        	insinto "/usr/$(get_libdir)/mono/${PN}"
-	doins bin/Release/TheoraPlay-CS.dll.config
+	doins "${S}/Rhino.Mocks/bin/${mydebug}/Castle.Core.dll"
+	doins "${S}/Rhino.Mocks/bin/${mydebug}/Castle.DynamicProxy2.dll"
 
 	dotnet_multilib_comply
 }
