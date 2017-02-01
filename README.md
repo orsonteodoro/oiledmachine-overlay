@@ -220,6 +220,20 @@ The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overla
 
 *dev-util/ycm-generator - You need this if you want c/c++/objc/objc++ support with your ycmd client.  It is mandatory for those languages.
 
+*app-editors/nano-ycmd - A modified GNU nano that uses ycmd.  Still experimental.
+
+*dev-dotnet/omnisharp-server - Older omnisharp that ycmd still depends on.  This allows for IntelliSense for open source editors.
+
+*dev-dotnet/omnisharp-roslyn - The newer omnisharp.  Ycmd can use this but with a special patch.
+
+*app-emacs/omnisharp-emacs - This one depends on omnisharp-server.  It allows emacs to use csharp with IntelliSense.
+
+*app-emacs/company-mode - Code completion for emacs.
+
+*app-emacs/flycheck - Syntax checker for emacs.
+
+*app-emacs/omnisharp-emacs-roslyn - This one doesn't work.  It is still in the repo for testing and for developers to fix.  It is basically omnisharp-emacs but using the roslyn branch.
+
 TODO (NOT COMMITED):
 
 *media-video/libmtp - MTP/IP partial support.  Currently patches are stored in seperate my /etc/portage/patches.  No one has reverse engineered the save WIFI profile BLOB generation [possibly related to CryptUnprotectData() and WLANProfile XML format] to device given a plaintext WIFI password even in WINE.  It uses GSSDP to broadcast presence.  Transferring files over WIFI in Linux/libmtp does work but you need to have my patch and need the GUID of the PC/Transfer App.  It is currently on indefinite hold.
