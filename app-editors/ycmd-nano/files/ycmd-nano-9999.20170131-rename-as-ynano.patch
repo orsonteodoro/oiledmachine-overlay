@@ -1,0 +1,40 @@
+diff -urp ycmd-nano-51c704c7a24908b4c5ee204addd5a45397f00f46.orig/src/Makefile.am ycmd-nano-51c704c7a24908b4c5ee204addd5a45397f00f46/src/Makefile.am
+--- ycmd-nano-51c704c7a24908b4c5ee204addd5a45397f00f46.orig/src/Makefile.am	2017-01-31 19:52:18.000000000 -0800
++++ ycmd-nano-51c704c7a24908b4c5ee204addd5a45397f00f46/src/Makefile.am	2017-01-31 20:12:10.056162712 -0800
+@@ -50,8 +50,8 @@ revision.h: update_revision
+ 
+ .PHONY: update_revision
+ 
+-bin_PROGRAMS = 	nano
+-nano_SOURCES =	browser.c \
++bin_PROGRAMS = 	ynano
++ynano_SOURCES =	browser.c \
+ 		chars.c \
+ 		color.c \
+ 		cut.c \
+@@ -71,19 +71,19 @@ nano_SOURCES =	browser.c \
+ 		ycmd.c \
+ 		winio.c
+ 
+-nano_LDADD = @GLIB_LIBS@ @LIBINTL@ @NEON_LIBS@
++ynano_LDADD = @GLIB_LIBS@ @LIBINTL@ @NEON_LIBS@
+ if HAVE_NETTLE
+-nano_LDADD += @NETTLE_LIBS@
++ynano_LDADD += @NETTLE_LIBS@
+ endif
+ if HAVE_OPENSSL
+-nano_LDADD += @OPENSSL_LIBS@ @GLIB_LIBS@
++ynano_LDADD += @OPENSSL_LIBS@ @GLIB_LIBS@
+ endif
+ if HAVE_YCMD
+-nano_LDADD += @GLIB_LIBS@
++ynano_LDADD += @GLIB_LIBS@
+ endif
+ 
+ 
+ install-exec-hook:
+-	cd $(DESTDIR)$(bindir) && rm -f rnano && $(LN_S) nano rnano
++	cd $(DESTDIR)$(bindir) && rm -f rnano && $(LN_S) ynano rnano
+ uninstall-hook:
+ 	cd $(DESTDIR)$(bindir) && rm -f rnano
+Only in ycmd-nano-51c704c7a24908b4c5ee204addd5a45397f00f46/src: Makefile.am~
