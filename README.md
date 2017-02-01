@@ -220,7 +220,7 @@ The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overla
 
 *dev-util/ycm-generator - You need this if you want c/c++/objc/objc++ support with your ycmd client.  It is mandatory for those languages.
 
-*app-editors/emacs-ycmd - A modified GNU nano that uses ycmd.  Still experimental.
+*app-editors/nano-ycmd - A modified GNU nano that uses ycmd.  Still experimental.
 
 *dev-dotnet/omnisharp-server - Older omnisharp that ycmd still depends on.  This allows for IntelliSense for open source editors.
 
