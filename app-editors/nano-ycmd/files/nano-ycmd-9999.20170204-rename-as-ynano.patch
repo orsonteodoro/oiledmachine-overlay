@@ -1,7 +1,7 @@
-diff -urp ycmd-nano-51c704c7a24908b4c5ee204addd5a45397f00f46.orig/src/Makefile.am ycmd-nano-51c704c7a24908b4c5ee204addd5a45397f00f46/src/Makefile.am
---- ycmd-nano-51c704c7a24908b4c5ee204addd5a45397f00f46.orig/src/Makefile.am	2017-01-31 19:52:18.000000000 -0800
-+++ ycmd-nano-51c704c7a24908b4c5ee204addd5a45397f00f46/src/Makefile.am	2017-01-31 20:12:10.056162712 -0800
-@@ -50,8 +50,8 @@ revision.h: update_revision
+diff -urp nano-ycmd-c44e2e2a0d97a0c5d0e93dcab3a769ba1a4d294c.orig/src/Makefile.am nano-ycmd-c44e2e2a0d97a0c5d0e93dcab3a769ba1a4d294c/src/Makefile.am
+--- nano-ycmd-c44e2e2a0d97a0c5d0e93dcab3a769ba1a4d294c.orig/src/Makefile.am	2017-02-04 23:02:01.000000000 -0800
++++ nano-ycmd-c44e2e2a0d97a0c5d0e93dcab3a769ba1a4d294c/src/Makefile.am	2017-02-04 23:11:18.824436398 -0800
+@@ -59,8 +59,8 @@ revision.h: update_revision
  
  .PHONY: update_revision
  
@@ -12,7 +12,7 @@ diff -urp ycmd-nano-51c704c7a24908b4c5ee204addd5a45397f00f46.orig/src/Makefile.a
  		chars.c \
  		color.c \
  		cut.c \
-@@ -71,19 +71,19 @@ nano_SOURCES =	browser.c \
+@@ -80,22 +80,22 @@ nano_SOURCES =	browser.c \
  		ycmd.c \
  		winio.c
  
@@ -23,8 +23,12 @@ diff -urp ycmd-nano-51c704c7a24908b4c5ee204addd5a45397f00f46.orig/src/Makefile.a
 +ynano_LDADD += @NETTLE_LIBS@
  endif
  if HAVE_OPENSSL
--nano_LDADD += @OPENSSL_LIBS@ @GLIB_LIBS@
-+ynano_LDADD += @OPENSSL_LIBS@ @GLIB_LIBS@
+-nano_LDADD += @OPENSSL_LIBS@
++ynano_LDADD += @OPENSSL_LIBS@
+ endif
+ if HAVE_LIBGCRYPT
+-nano_LDADD += @GLIB_LIBS@
++ynano_LDADD += @GLIB_LIBS@
  endif
  if HAVE_YCMD
 -nano_LDADD += @GLIB_LIBS@
@@ -37,4 +41,3 @@ diff -urp ycmd-nano-51c704c7a24908b4c5ee204addd5a45397f00f46.orig/src/Makefile.a
 +	cd $(DESTDIR)$(bindir) && rm -f rnano && $(LN_S) ynano rnano
  uninstall-hook:
  	cd $(DESTDIR)$(bindir) && rm -f rnano
-Only in ycmd-nano-51c704c7a24908b4c5ee204addd5a45397f00f46/src: Makefile.am~

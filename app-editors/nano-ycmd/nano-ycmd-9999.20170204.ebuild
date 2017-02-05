@@ -6,7 +6,7 @@ EAPI="6"
 PYTHON_COMPAT=( python{2_7,3_4,3_5} )
 
 inherit eutils flag-o-matic python-single-r1
-COMMIT="b19e6018f416d24a4c530bf8f02ab76cf0331afe"
+COMMIT="c44e2e2a0d97a0c5d0e93dcab3a769ba1a4d294c"
 SRC_URI="https://github.com/orsonteodoro/nano-ycmd/archive/${COMMIT}.zip -> ${P}.zip"
 KEYWORDS="~amd64 ~x86"
 
@@ -15,8 +15,8 @@ HOMEPAGE="https://www.nano-editor.org/ https://wiki.gentoo.org/wiki/Nano/Basics_
 
 LICENSE="GPL-3 LGPL-2+"
 SLOT="0"
-IUSE="debug justify +magic minimal ncurses nls slang +spell static unicode nettle openssl"
-REQUIRED_USE="^^ ( nettle openssl ) ${PYTHON_REQUIRED_USE}"
+IUSE="debug justify +magic minimal ncurses nls slang +spell static unicode nettle openssl libgcrypt"
+REQUIRED_USE="^^ ( nettle openssl libgcrypt ) ${PYTHON_REQUIRED_USE}"
 
 LIB_DEPEND=">=sys-libs/ncurses-5.9-r1:0=[unicode?]
 	sys-libs/ncurses:0=[static-libs(+)]
@@ -29,6 +29,7 @@ RDEPEND="${PYTHON_DEPS}
          openssl? ( dev-libs/openssl
                     dev-libs/glib )
          nettle? ( dev-libs/nettle )
+         libgcrypt? ( dev-libs/libgcrypt )
          net-libs/neon
          dev-util/ycmd
 	 >=app-shells/bash-4
@@ -40,7 +41,7 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/${PN}-${COMMIT}"
 
 src_prepare() {
-	eapply "${FILESDIR}/${PN}-9999.20170131-rename-as-ynano.patch"
+	eapply "${FILESDIR}/${PN}-9999.20170204-rename-as-ynano.patch"
 
 	#eautoreconf
 	./autogen.sh
@@ -72,6 +73,7 @@ src_configure() {
                 --enable-ycmd \
                 $(use_with openssl) \
                 $(use_with nettle) \
+                $(use_with libgcrypt) \
 		"${myconf[@]}"
 }
 
