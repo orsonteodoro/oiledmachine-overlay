@@ -17,7 +17,7 @@ LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
-RDEPEND="dev-python/jedi[${PYTHON_USEDEP}]
+RDEPEND=">=dev-python/jedi-0.10.0[${PYTHON_USEDEP}]
          dev-python/bottle[${PYTHON_USEDEP}]
          dev-python/argparse[${PYTHON_USEDEP}]
          dev-python/waitress[${PYTHON_USEDEP}]"
