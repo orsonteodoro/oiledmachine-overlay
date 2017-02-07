@@ -1,0 +1,13 @@
+diff -urp ycmd-ec7a154f8fe50c071ecd0ac6841de8a50ce92f5d.orig/ycmd/completers/python/jedi_completer.py ycmd-ec7a154f8fe50c071ecd0ac6841de8a50ce92f5d/ycmd/completers/python/jedi_completer.py
+--- ycmd-ec7a154f8fe50c071ecd0ac6841de8a50ce92f5d.orig/ycmd/completers/python/jedi_completer.py	2017-02-06 21:57:10.050316314 -0800
++++ ycmd-ec7a154f8fe50c071ecd0ac6841de8a50ce92f5d/ycmd/completers/python/jedi_completer.py	2017-02-06 21:58:15.066756185 -0800
+@@ -166,8 +166,7 @@ class JediCompleter( Completer ):
+         json.dump( { 'hmac_secret': ToUnicode(
+                         b64encode( self._hmac_secret ) ) },
+                    hmac_file )
+-        command = [ self._python_binary_path,
+-                    PATH_TO_JEDIHTTP,
++        command = [ PATH_TO_JEDIHTTP,
+                     '--port', str( self._jedihttp_port ),
+                     '--log', self._GetLoggingLevel(),
+                     '--hmac-file-secret', hmac_file.name ]

@@ -195,7 +195,11 @@ pkg_postinst() {
 	fi
 
 	if use csharp ; then
-		einfo "You need a .sln file for C# support"
+		einfo "You need a .sln file in your project for C# support"
+	fi
+
+	if use javascript ; then
+		einfo "You need a .tern-project in your project for javascript support."
 	fi
 
 	einfo ""
