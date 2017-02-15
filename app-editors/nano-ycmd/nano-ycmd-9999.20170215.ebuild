@@ -6,7 +6,7 @@ EAPI="6"
 PYTHON_COMPAT=( python{2_7,3_4,3_5} )
 
 inherit eutils flag-o-matic python-single-r1
-COMMIT="cbdfcadbb05af84fe0e65520d5ed68a3ac8f3052"
+COMMIT="34484505268f91bd890c2bc6fade4fc6dfe9db5c"
 SRC_URI="https://github.com/orsonteodoro/nano-ycmd/archive/${COMMIT}.zip -> ${P}.zip"
 KEYWORDS="~amd64 ~x86"
 
