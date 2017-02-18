@@ -84,7 +84,7 @@ src_unpack() {
 src_prepare() {
 	eapply "${FILESDIR}/${PN}-2.1.1-python3-udis86-itab.patch"
 	eapply "${FILESDIR}/${PN}-2.1.1-addMessageToConsole-override.patch"
-	eapply "${FILESDIR}/${PN}-2.1.1-angle-includes.patch"
+	##eapply "${FILESDIR}/${PN}-2.1.1-angle-includes.patch" #temp disabled
 	#eapply "${FILESDIR}/${PN}-2.1.1-fix-video-src-1.patch"
 	#eapply "${FILESDIR}/${PN}-2.1.1-fix-video-src-2.patch"
 	#eapply "${FILESDIR}/${PN}-2.1.1-video-src.patch"

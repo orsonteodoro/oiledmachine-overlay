@@ -4,27 +4,27 @@
 
 EAPI=6
 
-inherit eutils user systemd
+inherit eutils user systemd toolchain-funcs
 
 if [[ ${PV} == "9999" ]]; then
 	EGIT_REPO_URI="https://github.com/bitlbee/bitlbee.git"
 	inherit git-r3
 else
-	SRC_URI="http://get.bitlbee.org/src/${P}.tar.gz"
-	KEYWORDS="amd64 ~ppc ~ppc64 ~x86 ~x86-fbsd"
+	SRC_URI="https://get.bitlbee.org/src/${P}.tar.gz"
+	KEYWORDS="amd64 ppc ~ppc64 x86 ~x86-fbsd"
 fi
 
 DESCRIPTION="irc to IM gateway that support multiple IM protocols"
-HOMEPAGE="http://www.bitlbee.org/"
+HOMEPAGE="https://www.bitlbee.org/"
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE_PROTOCOLS="msn oscar purple twitter +xmpp yahoo"
-IUSE="debug +gnutls ipv6 libevent libressl nss otr +plugins selinux test xinetd
+IUSE_PROTOCOLS="msn oscar purple twitter +xmpp"
+IUSE="debug +gnutls ipv6 libevent libressl nss otr +plugins selinux test xinetd libpurple-skype
 	${IUSE_PROTOCOLS}"
 
 REQUIRED_USE="
-	|| ( purple xmpp msn oscar yahoo )
+	|| ( purple xmpp msn oscar )
 	xmpp? ( !nss )
 "
 
@@ -57,8 +57,16 @@ pkg_setup() {
 }
 
 src_prepare() {
-	[[ ${PV} != "9999" ]] && eapply "${FILESDIR}"/${P}-systemd-user.patch
-        eapply "${FILEDIR}"/bitlbee-3.4.1.patch
+	if [[ ${PV} != "9999" ]]; then
+		eapply \
+			"${FILESDIR}"/${PN}-3.5-systemd-user.patch
+		#breaks libpurple-skype
+		#eapply \
+		#	"${FILESDIR}"/${PN}-3.5-verbose-build.patch
+	fi
+	if use libpurple-skype ; then
+	        epatch "${FILESDIR}"/${PN}-3.5.1-libpurple-skype.patch
+	fi
 
 	eapply_user
 }
@@ -114,11 +122,16 @@ src_configure() {
 		--systemdsystemunitdir=$(systemd_get_systemunitdir) \
 		--doc=1 \
 		--strip=0 \
+		--verbose=1 \
 		"${myconf[@]}" || die
 
 	sed -i \
 		-e "/^EFLAGS/s:=:&${LDFLAGS} :" \
 		Makefile.settings || die
+}
+
+src_compile() {
+	emake CC="$(tc-getCC)" LD="$(tc-getLD)"
 }
 
 src_install() {
