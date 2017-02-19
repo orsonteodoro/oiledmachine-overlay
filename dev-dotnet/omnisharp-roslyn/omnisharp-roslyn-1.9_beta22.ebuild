@@ -26,8 +26,7 @@ RDEPEND=">=dev-lang/mono-4
          sys-libs/libunwind
          dev-libs/openssl
          net-misc/curl
-         dev-libs/icu
-	 ~dev-dotnet/roslyn-1.3.0"
+         dev-libs/icu"
 DEPEND="${RDEPEND}
 	>=dev-lang/mono-4
 "
