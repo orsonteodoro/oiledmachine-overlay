@@ -90,9 +90,6 @@ src_prepare() {
 multilib_src_configure() {
 	local myconf
 
-	filter-flags -O0 -O1 -Os -O3 -O4 -Ofast
-	append-cflags -O2
-
 	ECONF_SOURCE=${S} \
 	PKG_CONFIG_PATH="/usr/$(get_libdir)/pkgconfig" \
 	econf "${myconf[@]}"
