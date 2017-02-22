@@ -2,6 +2,7 @@
 import sys
 import os
 import time
+import tempfile
 from sys import argv
 from urlparse import urlparse
 
@@ -82,7 +83,7 @@ def adblock(url, winid):
 
 	js = "(function() { var toblock = '"+ rulestr+"'; var toexclude = '"+ erulestr +"'; var style1 = document.createElement('style'); style1.innerHTML = toblock+' { display: none !important ; }'; document.head.appendChild(style1); var style2 = document.createElement('style'); style2.innerHTML = toexclude+' { display: default !important ; color: red; }'; document.head.appendChild(style2); })();\n"
 
-	filename = os.tempnam("/tmp", "surf_")
+        fd, filename = tempfile.mkstemp(prefix="surf_",dir="/tmp",text=True)
 	fh = open(filename, "w")
 	fh.write(js)
 	fh.close()

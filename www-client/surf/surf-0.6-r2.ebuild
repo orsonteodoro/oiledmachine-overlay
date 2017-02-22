@@ -11,7 +11,6 @@ SRC_URI="http://dl.suckless.org/${PN}/${P}.tar.gz"
 
 LICENSE="MIT CC-BY-NA-SA-3.0 SURF-community"
 SLOT="0"
-KEYWORDS="gnu32 gnu64 muslx32"
 
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE="gtk3 adblock searchengines rip mimehandler linkhints"
@@ -91,7 +90,11 @@ src_prepare() {
 multilib_src_configure() {
 	local myconf
 
+	filter-flags -O0 -O1 -Os -O3 -O4 -Ofast
+	append-cflags -O2
+
 	ECONF_SOURCE=${S} \
+	PKG_CONFIG_PATH="/usr/$(get_libdir)/pkgconfig" \
 	econf "${myconf[@]}"
 }
 
