@@ -31,6 +31,11 @@ pkg_setup() {
                         die Emerge again with FEATURES="nostrip" or remove the debug use flag
                 fi
         fi
+
+	grep -r -e "<Ptr, Ptr (\*)(reference)>" /usr/include/boost/intrusive/pointer_traits.hpp
+	if [[ "$?" == "0" ]]; then
+		die "Your boost is broken.  You need to patch it.  See dev-libs/boost in oiledmachine-overlay."
+	fi
 }
 
 src_unpack() {
