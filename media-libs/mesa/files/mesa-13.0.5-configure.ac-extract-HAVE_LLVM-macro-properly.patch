@@ -1,0 +1,24 @@
+diff --git a/media-libs/mesa/files/12.1-configure.ac-extract-HAVE_LLVM-macro-properly.patch b/media-libs/mesa/files/12.1-configure.ac-extract-HAVE_LLVM-macro-properly.patch
+new file mode 100644
+index 0000000..a9ca837
+--- /dev/null
++++ b/media-libs/mesa/files/12.1-configure.ac-extract-HAVE_LLVM-macro-properly.patch
+@@ -0,0 +1,18 @@
++Update the HAVE_LLVM macro properly, without this change its derived as 0x3XX.x
++which causes "hexadecimal floating constant requires an exponent" error.
++
++fix by Shirish S <shirish.s@amd.com>
++
++https://bugs.freedesktop.org/show_bug.cgi?id=91586#c28
++
++--- a/configure.ac
+++++ b/configure.ac
++@@ -2170,7 +2170,7 @@ if test "x$enable_gallium_llvm" = xyes; then
++         if test -n "${LLVM_VERSION_MAJOR}"; then
++             LLVM_VERSION_INT="${LLVM_VERSION_MAJOR}0${LLVM_VERSION_MINOR}"
++         else
++-            LLVM_VERSION_INT=`echo $LLVM_VERSION | sed -e 's/\([[0-9]]\)\.\([[0-9]]\)/\10\2/g'`
+++            LLVM_VERSION_INT=`echo $LLVM_VERSION | sed -e 's/\([[0-9]]\)\.\([[0-9]]\).\([[0-9]]\)/\10\2/g'`
++         fi
++
++         LLVM_REQUIRED_VERSION_MAJOR="3"

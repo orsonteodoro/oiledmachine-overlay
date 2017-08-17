@@ -1,0 +1,21 @@
+diff -urp work.orig/src/shared/Utilities/Util.h work/src/shared/Utilities/Util.h
+--- work.orig/src/shared/Utilities/Util.h	2017-02-24 22:52:23.528122007 -0800
++++ work/src/shared/Utilities/Util.h	2017-02-24 23:16:11.048058163 -0800
+@@ -568,7 +568,7 @@ inline bool isEastAsianString(const std:
+  */
+ inline void strToUpper(std::string& str)
+ {
+-    std::transform(str.begin(), str.end(), str.begin(), toupper);
++    std::transform(str.begin(), str.end(), str.begin(), static_cast<int(*)(int)>(std::toupper));
+ }
+ 
+ /**
+@@ -578,7 +578,7 @@ inline void strToUpper(std::string& str)
+  */
+ inline void strToLower(std::string& str)
+ {
+-    std::transform(str.begin(), str.end(), str.begin(), tolower);
++    std::transform(str.begin(), str.end(), str.begin(), static_cast<int(*)(int)>(std::tolower));
+ }
+ 
+ /**

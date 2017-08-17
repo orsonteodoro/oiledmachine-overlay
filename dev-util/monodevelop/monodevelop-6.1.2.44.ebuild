@@ -29,12 +29,13 @@ COMMON_DEPEND="
 	|| ( >=dev-dotnet/icsharpcode-nrefactory-bin-5.5.1 dev-dotnet/icsharpcode-nrefactory )
 	>=dev-util/nunit-3.0.1:3
 	fsharp? ( >=dev-lang/fsharp-4.0.1.15 )
-        dev-dotnet/gdk-sharp:3
         dev-dotnet/cecil[gac]
-	dev-dotnet/referenceassemblies-pcl
 	net-libs/libssh2
 	gnome? ( >=dev-dotnet/gnome-sharp-2.24.2-r1 )
-	>=dev-dotnet/libgit2sharp-0.22[gac,monodevelop]"
+	>=dev-dotnet/libgit2sharp-0.22[gac,monodevelop]
+	dev-dotnet/referenceassemblies-pcl
+"
+#        dev-dotnet/gdk-sharp:3
 RDEPEND="${COMMON_DEPEND}
 	dev-util/ctags
 	sys-apps/dbus[X]
@@ -65,6 +66,34 @@ EGIT_COMMIT="0ccfcd52b95305ebd5b7eca0d88c1017035910ae"
 EGIT_REPO_URI="git://github.com/mono/monodevelop.git"
 EGIT_SUBMODULES=( '*' ) # todo: replace certain submodules with system packages
 
+_git_checkout_submodule() {
+	cd "${S}/$1"
+	git checkout $2
+}
+
+monodevelop_git_checkout_submodule() {
+	#for determinism.  we force using specific working commits instead of head
+	#snapshot of commits collected as of 20170804
+	_git_checkout_submodule "main/external/RefactoringEssentials" "cbd2d9e1da8a1c39e98397270990a39b86a7709e"
+	_git_checkout_submodule "main/external/cecil" "cd2ff63081bd9f65cb293689fa9697cf25ae8c95"
+	_git_checkout_submodule "main/external/debugger-libs" "4a74b2cc980df13e5c4076266e66d305ada41cb3"
+	_git_checkout_submodule "main/external/guiunit" "2670780396856f043ab5cea9ab856641f56de5ae"
+	_git_checkout_submodule "main/external/ikvm" "94d4a298ad560f8674d746dea2d51e26e0a97f2a"
+	_git_checkout_submodule "main/external/libgit-binary" "d8b2acad2fdb0f6cc8823f8dc969576f1962f6a2"
+	_git_checkout_submodule "main/external/libgit2" "e8b8948f5a07cd813ccad7b97490b7f040d364c4"
+	_git_checkout_submodule "main/external/libgit2sharp" "06bbc96251eea534ed66a32e8f2e2edaaa903077"
+	_git_checkout_submodule "main/external/macdoc" "eacb7e0d61dec7b3b95a585aaab98fe910b46f6d"
+	_git_checkout_submodule "main/external/mdtestharness" "424f53e08c48dee8accaa68820b1cd7147cf1ba4"
+	_git_checkout_submodule "main/external/mono-addins" "76cab2dcea207465b2d5d41d88f3f9929da4614d"
+	_git_checkout_submodule "main/external/mono-tools" "d858f5f27fa8b10d734ccce7ffba631b995093e5"
+	_git_checkout_submodule "main/external/monomac" "1d878426361aea31f9e31b509783703fbd797c8c"
+	_git_checkout_submodule "main/external/nrefactory" "a2b55de351be2119b6f0c3a17c36b5b9adbd7c59"
+	_git_checkout_submodule "main/external/nuget-binary" "0811ba888a80aaff66a93a4c98567ce904ab2663"
+	_git_checkout_submodule "main/external/roslyn" "16e117c2400d0ab930e7d89512f9894a169a0e6e"
+	_git_checkout_submodule "main/external/sharpsvn-binary" "6e60e6156aec55789404f04215d2b67ce6047c6a"
+	_git_checkout_submodule "main/external/xwt" "9ee2853a1f3d3afeb9bd35044ba44433036cddb0"
+}
+
 src_prepare() {
 	if use net45 ; then
 		USE_DOTNET="net45" \
@@ -85,6 +114,8 @@ src_unpack() {
 	git-r3_fetch
 	git-r3_checkout
 	nuget restore "${S}"
+
+	monodevelop_git_checkout_submodule
 
 	# LibGit2Sharp is now portage dependency
 	rm -rf "${S}/main/external/libgit2" || die
@@ -130,8 +161,7 @@ src_prepare() {
 
 	eapply "${FILESDIR}/fsharp-shared-tooltips-tooltip.patch"
 
-	sed -i -e "s|XBUILD_ARGS=|XBUILD_ARGS=/p:TargetFrameworkVersion=v${EBF} |g" ./main/xbuild.include || die
-	sed -i -e "s|XBUILD_ARGS=|XBUILD_ARGS=/p:TargetFrameworkVersion=v${EBF} |g" ./main/external/mono-addins/xbuild.include || die
+	#eapply "${FILESDIR}/monodevelop-6.1.2.44-refs-1.patch"
 
 	eapply_user
 }

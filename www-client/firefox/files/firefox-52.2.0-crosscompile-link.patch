@@ -1,0 +1,19 @@
+diff -urp firefox-52.2.0esr.orig/build/moz.configure/windows.configure firefox-52.2.0esr/build/moz.configure/windows.configure
+--- firefox-52.2.0esr.orig/build/moz.configure/windows.configure	2017-04-10 19:13:08.000000000 -0700
++++ firefox-52.2.0esr/build/moz.configure/windows.configure	2017-08-04 19:20:55.568205490 -0700
+@@ -409,12 +409,11 @@ set_config('MSMANIFEST_TOOL', depends(va
+ 
+ # Ultimately, this will move to toolchain.configure and be turned into a
+ # cross-platform check.
+-option(env='LD', nargs=1, help='Path to the linker')
++option(env='LD', nargs=1, help='Path to the linker')
+ 
+-link = check_prog('LINK', depends_win()(lambda: ('link.exe',)), input='LD',
+-                  paths=vc_compiler_path)
++link = check_prog('LINK', progs=(), input='LD')
+ 
+-add_old_configure_assignment('LD', depends_win(link)(lambda x: x))
++add_old_configure_assignment('LD', depends_win(link)(lambda x: x))
+ 
+ 
+ # Normally, we'd just have CC, etc. set to absolute paths, but the build system

@@ -4,7 +4,7 @@
 
 EAPI=6
 
-inherit eutils
+inherit eutils flag-o-matic
 
 DESCRIPTION="Modular Bitcoin ASIC/FPGA/GPU/CPU miner in C"
 HOMEPAGE="https://bitcointalk.org/?topic=168174"
@@ -37,11 +37,12 @@ REQUIRED_USE='
 	proxy_stratum? ( proxy )
 	x6500? ( libusb )
 	ztex? ( libusb )
+	boinc
 '
 
 DEPEND='
 	!net-misc/bfgminer
-	boinc? ( sci-misc/boinc sci-misc/bfgminer-boinc-server-project )
+	boinc? ( sci-misc/boinc sci-misc/boinc-server )
 	net-misc/curl
 	ncurses? (
 		sys-libs/ncurses:=[unicode?]
@@ -98,6 +99,7 @@ DEPEND="${DEPEND}
 			>=dev-lang/yasm-1.0.1
 		)
 	)
+	sys-devel/automake:1.14
 "
 
 S="${WORKDIR}/bfgminer-${PV}"
@@ -129,7 +131,12 @@ src_configure() {
 function run_config {
 	local CFLAGS="${CFLAGS}"
 	local with_curses
-	use hardened && CFLAGS="${CFLAGS} -nopie"
+
+	if use hardened ; then
+		append-cflags -nopie
+		append-cxxflags -nopie
+		append-ldflags -nopie
+	fi
 
 	if use ncurses; then
 		if use unicode; then
@@ -140,6 +147,8 @@ function run_config {
 	else
 		with_curses='--without-curses'
 	fi
+
+	append-cppflags -D_GLIBCXX_USE_CXX11_ABI=0
 
 	LIBS="${LIBS} ${PGO_LIBS}" \
 	LDFLAGS="${LDFLAGS} ${PGO_LDFLAGS}" \

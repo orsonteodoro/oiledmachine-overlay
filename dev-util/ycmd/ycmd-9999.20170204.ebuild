@@ -31,7 +31,7 @@ RDEPEND="
 		  omnisharp-roslyn? ( dev-dotnet/omnisharp-roslyn[net46] )
                 )
 	dev-python/argparse[${PYTHON_USEDEP}]
-	=dev-python/bottle-0.12.7[${PYTHON_USEDEP}]
+	>=dev-python/bottle-0.12.7[${PYTHON_USEDEP}]
 	dev-python/frozendict[${PYTHON_USEDEP}]
 	go? ( dev-go/gocode
 		  dev-go/godef )
@@ -42,7 +42,7 @@ RDEPEND="
 	dev-python/sh[${PYTHON_USEDEP}]
 	=dev-python/waitress-0.8.10-r2[${PYTHON_USEDEP}]
         javascript? ( >=dev-nodejs/tern-0.17.0
-                      dev-nodejs/npm )
+                      net-libs/nodejs[npm] )
         typescript? ( >=dev-lang/typescript-1.5 )
 	system-clang? (
 	        c? ( sys-devel/clang )

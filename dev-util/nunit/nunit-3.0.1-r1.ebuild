@@ -76,7 +76,7 @@ src_prepare() {
 	#sed -i "s=\\\${package.version}=${NUGET_PACKAGE_VERSION}=g" "${S}/nuget/"*.nuspec || die
 	#sed -i '/test/d' "${S}/nuget/"*.nuspec || die
 	#sed -i '/x86/d' "${S}/nuget/"*.nuspec || die
-	#sed -i '/log4net/d' "${S}/nuget/"*.nuspec || die
+	#sed -i '/ÜÜlog4net/d' "${S}/nuget/"*.nuspec || die
 	sed -i 's#\\#/#g' "${S}/nuget/"*.nuspec || die
 	#sed -i "s#\\${project.base.dir}##g" "${S}/nuget/"*.nuspec || die
 	sed -i "s#bin/#bin/${DIR}/#g" "${S}/nuget/"*.nuspec || die

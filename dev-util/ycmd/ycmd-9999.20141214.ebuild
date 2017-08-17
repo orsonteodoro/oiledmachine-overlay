@@ -31,7 +31,7 @@ RDEPEND="
 	python? ( dev-python/jedihttp[${PYTHON_USEDEP}] )
 	csharp? ( dev-dotnet/omnisharp-server )
 	dev-python/argparse[${PYTHON_USEDEP}]
-	=dev-python/bottle-0.12.7[${PYTHON_USEDEP}]
+	>=dev-python/bottle-0.12.7[${PYTHON_USEDEP}]
 	dev-python/frozendict[${PYTHON_USEDEP}]
 	dev-python/future[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
@@ -198,9 +198,9 @@ pkg_postinst() {
 		einfo "You need a .sln file in your project for C# support"
 	fi
 
-	if use javascript ; then
-		einfo "You need a .tern-project in your project for javascript support."
-	fi
+	#if use javascript ; then
+	#	einfo "You need a .tern-project in your project for javascript support."
+	#fi
 
 	einfo ""
         einfo "You must generate a 16 byte HMAC secret wrapped in base64 for the hmac_secret property of your .json file:"

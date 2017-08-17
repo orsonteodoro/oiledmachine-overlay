@@ -10,7 +10,8 @@ USE_DOTNET="net45"
 
 inherit gac dotnet
 
-SRC_URI="https://github.com/haf/DotNetZip.Semverd/archive/v1.9.3.tar.gz -> ${PV}.tar.gz"
+SRC_URI="https://github.com/haf/DotNetZip.Semverd/archive/v1.9.3.tar.gz -> ${PV}.tar.gz
+	https://github.com/mono/mono/raw/master/mcs/class/mono.snk"
 RESTRICT="mirror"
 S="${WORKDIR}/DotNetZip.Semverd-${PV}"
 
@@ -27,9 +28,12 @@ RDEPEND="${COMMON_DEPEND}
 "
 DEPEND="${COMMON_DEPEND}
 "
+SNK_FILENAME="${S}/mono.snk"
 
 src_prepare() {
 	eapply "${FILESDIR}/version-${PV}.patch"
+
+	cp "${DISTDIR}/mono.snk" "${S}"
 
 	eapply_user
 }

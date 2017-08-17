@@ -1,0 +1,11 @@
+diff -urp work.orig/src/game/WorldHandlers/World.cpp work/src/game/WorldHandlers/World.cpp
+--- work.orig/src/game/WorldHandlers/World.cpp	2017-02-24 20:15:07.249859240 -0800
++++ work/src/game/WorldHandlers/World.cpp	2017-02-24 20:49:46.126834440 -0800
+@@ -72,6 +72,7 @@
+ #include "DisableMgr.h"
+ #include "Language.h"
+ #include "revision.h"
++#include "ProgressBar.h"
+ 
+ #ifdef ENABLE_ELUNA
+ #include "LuaEngine.h"

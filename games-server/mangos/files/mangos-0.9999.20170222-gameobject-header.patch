@@ -1,0 +1,11 @@
+diff -urp work.orig/src/game/WorldHandlers/LootHandler.cpp work/src/game/WorldHandlers/LootHandler.cpp
+--- work.orig/src/game/WorldHandlers/LootHandler.cpp	2017-02-24 19:46:36.884499396 -0800
++++ work/src/game/WorldHandlers/LootHandler.cpp	2017-02-24 20:13:51.632980426 -0800
+@@ -33,6 +33,7 @@
+ #include "Object.h"
+ #include "Group.h"
+ #include "World.h"
++#include "GameObject.h"
+ 
+ #ifdef ENABLE_ELUNA
+ #include "LuaEngine.h"

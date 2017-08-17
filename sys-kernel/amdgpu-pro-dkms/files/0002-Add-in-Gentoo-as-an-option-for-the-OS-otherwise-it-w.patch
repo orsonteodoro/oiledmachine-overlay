@@ -1,0 +1,32 @@
+From aa30a2d4fea201b37020de7bbda295aa69235cd6 Mon Sep 17 00:00:00 2001
+From: "Luke A. Guest" <laguest@archeia.com>
+Date: Tue, 24 May 2016 15:12:37 +0100
+Subject: [PATCH 2/4] Add in Gentoo as an option for the OS, otherwise it won't
+ build. for some reason it's not selecting Gentoo, but going for the other
+ last option, so set a version there too.
+
+---
+ amd/backport/Makefile | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/amd/backport/Makefile b/amd/backport/Makefile
+index 160e3ed..f53f8e6 100644
+--- a/amd/backport/Makefile
++++ b/amd/backport/Makefile
+@@ -17,8 +17,13 @@ else ifeq ("ubuntu",$(OS_NAME))
+ ccflags-y += -DOS_NAME_UBUNTU
+ else ifeq ("steamos",$(OS_NAME))
+ ccflags-y += -DOS_NAME_STEAMOS
++else ifeq ("gentoo",$(OS_NAME))
++ccflags-y += -DOS_NAME_GENTOO
++# We don't have a version inside /etc/os-release.
++OS_VERSION = "0.0"
+ else
+ ccflags-y += -DOS_NAME_UNKNOWN
++OS_VERSION = "0.0"
+ endif
+ 
+ ccflags-y += \
+-- 
+2.7.3
+

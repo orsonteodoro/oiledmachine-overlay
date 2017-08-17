@@ -75,12 +75,12 @@ src_prepare() {
 
 	# Removed 'has_version '>=dev-texlive/texlive-latex-2013' &&' that prefixed this
 	# patch before wrt #517474
-	eapply "${FILESDIR}"/${P}-latex_hacks.patch
+	epatch "${FILESDIR}"/${P}-latex_hacks.patch
 
 	# fix out of source tests
-	eapply "${FILESDIR}"/${P}-fix-tests.patch
+	epatch "${FILESDIR}"/${P}-fix-tests.patch
 
-	eapply_user
+	epatch_user
 
 	eautoreconf
 

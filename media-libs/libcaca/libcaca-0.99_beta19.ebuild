@@ -87,10 +87,10 @@ src_prepare() {
 
 	# Removed 'has_version '>=dev-texlive/texlive-latex-2013' &&' that prefixed this
 	# patch before wrt #517474
-	eapply "${FILESDIR}"/${PN}-0.99_beta18-latex_hacks.patch
+	epatch "${FILESDIR}"/${PN}-0.99_beta18-latex_hacks.patch
 
 	# fix out of source tests
-	eapply "${FILESDIR}"/${PN}-0.99_beta18-fix-tests.patch
+	epatch "${FILESDIR}"/${PN}-0.99_beta18-fix-tests.patch
 
 	if use ruby ; then
 		RUBY=$(ruby_implementation_command ${USE_RUBY})
@@ -98,10 +98,10 @@ src_prepare() {
 	fi
 
         if use 256-colors-ncurses ; then
-		eapply "${FILESDIR}/libcaca-0.99.beta19-256-colors-ncurses.patch"
+		epatch "${FILESDIR}/libcaca-0.99.beta19-256-colors-ncurses.patch"
 	fi
 
-	eapply_user
+	epatch_user
 
 	eautoreconf
 

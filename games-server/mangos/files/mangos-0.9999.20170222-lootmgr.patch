@@ -1,0 +1,11 @@
+diff -urp work.orig/src/game/WorldHandlers/InstanceData.h work/src/game/WorldHandlers/InstanceData.h
+--- work.orig/src/game/WorldHandlers/InstanceData.h	2017-02-24 19:37:49.147598810 -0800
++++ work/src/game/WorldHandlers/InstanceData.h	2017-02-24 19:45:24.829779395 -0800
+@@ -27,6 +27,7 @@
+ 
+ #include "Common.h"
+ #include "ObjectGuid.h"
++#include "LootMgr.h"
+ 
+ class Map;
+ class Unit;

@@ -29,7 +29,8 @@ REQUIRED_USE="|| ( ${USE_DOTNET} )"
 RDEPEND=">=dev-lang/mono-4.4.0.40
 	!dev-dotnet/nant
 	nupkg? ( dev-dotnet/nuget )
-	dev-dotnet/log4net"
+        "
+#	dev-dotnet/log4net
 DEPEND="${RDEPEND}
 	virtual/pkgconfig
 "

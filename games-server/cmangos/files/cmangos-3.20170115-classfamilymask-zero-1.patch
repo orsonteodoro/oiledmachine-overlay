@@ -1,0 +1,14 @@
+diff -urp work.orig/src/game/SpellMgr.cpp work/src/game/SpellMgr.cpp
+--- work.orig/src/game/SpellMgr.cpp	2017-02-25 16:24:26.941723856 -0800
++++ work/src/game/SpellMgr.cpp	2017-02-25 18:21:22.597929585 -0800
+@@ -2125,8 +2125,8 @@ bool SpellMgr::IsNoStackSpellDueToSpell(
+             if (classOptions2 && classOptions2->SpellFamilyName == SPELLFAMILY_DRUID )
+             {
+                 //Omen of Clarity and Blood Frenzy
+-                if ((classOptions1 && (classOptions1->SpellFamilyFlags == uint64(0x0) && spellInfo_1->SpellIconID == 108) && (classOptions2->SpellFamilyFlags & uint64(0x20000000000000))) ||
+-                    ((classOptions2->SpellFamilyFlags == uint64(0x0) && spellInfo_2->SpellIconID == 108) && (classOptions1->SpellFamilyFlags & uint64(0x20000000000000))))
++                if ((classOptions1 && (classOptions1->SpellFamilyFlags.Flags == uint64(0x0) && spellInfo_1->SpellIconID == 108) && (classOptions2->SpellFamilyFlags & uint64(0x20000000000000))) ||
++                    ((classOptions2->SpellFamilyFlags.Flags == uint64(0x0) && spellInfo_2->SpellIconID == 108) && (classOptions1->SpellFamilyFlags & uint64(0x20000000000000))))
+                     return false;
+ 
+                 //  Tree of Life (Shapeshift) and 34123 Tree of Life (Passive)

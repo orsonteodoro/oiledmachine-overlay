@@ -14,7 +14,9 @@ NAME="slntools"
 HOMEPAGE="https://github.com/ArsenShnurkov/${NAME}"
 
 EGIT_COMMIT="705869e96a2f0e401be03f8e8478df3e1f2b9373"
-SRC_URI="${HOMEPAGE}/archive/${EGIT_COMMIT}.zip -> ${PF}.zip"
+SRC_URI="${HOMEPAGE}/archive/${EGIT_COMMIT}.zip -> ${PF}.zip
+	https://github.com/mono/mono/raw/master/mcs/class/mono.snk"
+
 RESTRICT="mirror"
 S="${WORKDIR}/${NAME}-${EGIT_COMMIT}"
 
@@ -30,6 +32,7 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/${NAME}-${EGIT_COMMIT}"
 SLN_FILE=SLNTools.sln
 METAFILETOBUILD="${S}/Main/${SLN_FILE}"
+SNK_FILENAME="${S}/mono.snk"
 
 src_prepare() {
 	eapply "${FILESDIR}/remove-wix-project-from-sln-file.patch"
@@ -44,6 +47,8 @@ src_prepare() {
 
 	# no need to restore if all dependencies are from GAC
 	# nuget restore "${METAFILETOBUILD}" || die
+
+	cp "${DISTDIR}/mono.snk" "${S}"
 
 	default
 }

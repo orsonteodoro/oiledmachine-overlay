@@ -65,7 +65,7 @@ diff -urN -x result.txt -x stderr.txt -x configure -x config.status -x config.lo
 +
 +void bw_boinc_show_message(int status, const char *msg, int is_notice)
 +{
-+	boinc_finish_message(status, msg, is_notice);
++	;//boinc_finish_message(status, msg, is_notice);
 +}
 +
 +FILE* bw_boinc_fopen(char *path, char *mode)

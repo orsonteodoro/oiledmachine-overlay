@@ -19,7 +19,7 @@ SLOT="4/37" # soname version of libwebkit2gtk-4.0
 KEYWORDS="~alpha amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux ~x86-macos"
 
 IUSE="aqua coverage doc +egl +geolocation gles2 gnome-keyring +gstreamer +introspection +jit libnotify nsplugin +opengl spell wayland +webgl X"
-IUSE+=" bmalloc threaded-compositor accelerated-overflow-scrolling ftl-jit accelerated-2d-canvas"
+IUSE+=" bmalloc threaded-compositor accelerated-overflow-scrolling ftl-jit accelerated-2d-canvas hardened"
 
 # webgl needs gstreamer, bug #560612
 REQUIRED_USE="
@@ -33,6 +33,7 @@ REQUIRED_USE="
 	wayland? ( egl )
 	|| ( aqua wayland X )
         accelerated-2d-canvas? ( webgl !gles2 )
+	hardened? ( !jit )
 "
 
 # Tests fail to link for inexplicable reasons

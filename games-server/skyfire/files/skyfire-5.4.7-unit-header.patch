@@ -1,0 +1,11 @@
+diff -urp SkyFire.548-5.4.7.orig/src/server/game/Movement/Spline/MovementPacketBuilder.h SkyFire.548-5.4.7/src/server/game/Movement/Spline/MovementPacketBuilder.h
+--- SkyFire.548-5.4.7.orig/src/server/game/Movement/Spline/MovementPacketBuilder.h	2014-05-15 18:49:10.000000000 -0700
++++ SkyFire.548-5.4.7/src/server/game/Movement/Spline/MovementPacketBuilder.h	2017-02-23 18:41:24.075609797 -0800
+@@ -22,6 +22,7 @@
+ 
+ #include "Define.h" // for uint32
+ #include "G3D/Vector3.h"
++#include "Unit.h"
+ using G3D::Vector3;
+ 
+ class ByteBuffer;

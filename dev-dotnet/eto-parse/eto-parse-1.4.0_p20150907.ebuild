@@ -14,7 +14,8 @@ NAME="Eto.Parse"
 HOMEPAGE="https://github.com/picoe/${NAME}"
 
 EGIT_COMMIT="7d7884fb4f481e28dd24bc273fbd6615d0ba539a" # 2015-09-07
-SRC_URI="${HOMEPAGE}/archive/${EGIT_COMMIT}.zip -> ${PF}.zip"
+SRC_URI="${HOMEPAGE}/archive/${EGIT_COMMIT}.zip -> ${PF}.zip
+	https://github.com/mono/mono/raw/master/mcs/class/mono.snk"
 RESTRICT="mirror"
 S="${WORKDIR}/${NAME}-${EGIT_COMMIT}"
 
@@ -59,6 +60,7 @@ NUSPEC_FILE=Eto.Parse/Eto.Parse.nuspec
 COMMIT_DATESTAMP_INDEX=$(get_version_component_count ${PV} )
 COMMIT_DATESTAMP=$(get_version_component_range $COMMIT_DATESTAMP_INDEX ${PV} )
 NUSPEC_VERSION=$(get_version_component_range 1-3)"${COMMIT_DATESTAMP//p/.}${PR//r/}"
+SNK_FILENAME="${S}/mono.snk"
 
 src_prepare() {
 	rm -rf "${S}/.nuget"
@@ -90,6 +92,8 @@ src_prepare() {
 #
 #		enuget_restore "${METAFILETOBUILD}"
 #	fi ;
+
+	cp "${DISTDIR}/mono.snk" "${S}"
 
 	default
 }

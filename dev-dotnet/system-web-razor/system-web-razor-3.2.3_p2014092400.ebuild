@@ -10,7 +10,8 @@ HOMEPAGE="https://github.com/ASP-NET-MVC/aspnetwebstack"
 
 EGIT_BRANCH="master"
 EGIT_COMMIT="4e40cdef9c8a8226685f95ef03b746bc8322aa92"
-SRC_URI="${HOMEPAGE}/archive/${EGIT_BRANCH}/${EGIT_COMMIT}.tar.gz -> ${PF}.tar.gz"
+SRC_URI="${HOMEPAGE}/archive/${EGIT_BRANCH}/${EGIT_COMMIT}.tar.gz -> ${PF}.tar.gz
+	https://github.com/mono/mono/raw/master/mcs/class/mono.snk"
 RESTRICT="mirror"
 #S="${WORKDIR}/${REPO_NAME}-${EGIT_COMMIT}"
 S="${WORKDIR}/${REPO_NAME}-${EGIT_BRANCH}"
@@ -44,13 +45,15 @@ NUSPEC_ID=Microsoft.AspNet.Razor
 COMMIT_DATE_INDEX="$(get_version_component_count ${PV} )"
 COMMIT_DATE="$(get_version_component_range $COMMIT_DATE_INDEX ${PV} )"
 NUSPEC_VERSION=$(get_version_component_range 1-3)"${COMMIT_DATE//p/.}"
-SNK_FILENAME="${FILESDIR}/../../../eclass/mono.snk"
+SNK_FILENAME="${S}/mono.snk"
 
 src_prepare() {
 	cp "${FILESDIR}/${NUSPEC_ID}.nuspec" "${S}" || die
 	chmod -R +rw "${S}" || die
 	patch_nuspec_file "${S}/${NUSPEC_ID}.nuspec"
 	eapply "${FILESDIR}/disable-warning-as-error.patch"
+
+	cp "${DISTDIR}/mono.snk" "${S}"
 
 	eapply_user
 }

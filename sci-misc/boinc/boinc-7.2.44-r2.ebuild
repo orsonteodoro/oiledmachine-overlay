@@ -99,6 +99,7 @@ src_prepare() {
 }
 
 src_configure() {
+	append-cppflags -D_GLIBCXX_USE_CXX11_ABI=0
 	econf --disable-server \
 		--enable-client \
 		--enable-dynamic-client-linkage \

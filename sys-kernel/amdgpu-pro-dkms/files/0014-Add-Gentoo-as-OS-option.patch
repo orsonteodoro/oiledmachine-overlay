@@ -1,0 +1,24 @@
+--- ./amd/dkms/Makefile	2017-02-06 22:03:26.650824724 +0100
++++ ./amd/dkms/Makefile	2017-02-06 21:55:48.400832301 +0100
+@@ -16,6 +16,9 @@
+ 
+ ifeq ("rhel",$(OS_NAME))
+ subdir-ccflags-y += -DOS_NAME_RHEL
++else ifeq ("gentoo",$(OS_NAME))
++subdir-ccflags-y += -DOS_NAME_GENTOO
++OS_VERSION = "0.0"
+ else ifeq ("ubuntu",$(OS_NAME))
+ subdir-ccflags-y += -DOS_NAME_UBUNTU
+ else ifeq ("steamos",$(OS_NAME))
+--- ./Makefile	2017-02-06 22:03:26.557824725 +0100
++++ ./Makefile	2017-02-06 21:55:29.320832616 +0100
+@@ -16,6 +16,9 @@
+ 
+ ifeq ("rhel",$(OS_NAME))
+ subdir-ccflags-y += -DOS_NAME_RHEL
++else ifeq ("gentoo",$(OS_NAME))
++subdir-ccflags-y += -DOS_NAME_GENTOO
++OS_VERSION = "0.0"
+ else ifeq ("ubuntu",$(OS_NAME))
+ subdir-ccflags-y += -DOS_NAME_UBUNTU
+ else ifeq ("steamos",$(OS_NAME))

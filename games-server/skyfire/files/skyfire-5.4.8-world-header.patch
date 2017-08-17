@@ -1,0 +1,11 @@
+diff -urp work.orig/src/server/game/BlackMarket/BlackMarketMgr.h work/src/server/game/BlackMarket/BlackMarketMgr.h
+--- work.orig/src/server/game/BlackMarket/BlackMarketMgr.h	2017-02-22 22:49:39.748268904 -0800
++++ work/src/server/game/BlackMarket/BlackMarketMgr.h	2017-02-22 22:54:42.740824321 -0800
+@@ -26,6 +26,7 @@
+ #include "Common.h"
+ #include "DatabaseEnv.h"
+ #include "DBCStructure.h"
++#include "World.h"
+ 
+ class Item;
+ class Player;

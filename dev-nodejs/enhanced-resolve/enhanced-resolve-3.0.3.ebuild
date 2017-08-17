@@ -4,7 +4,7 @@
 
 EAPI=6
 
-NODE_MODULE_DEPEND="object-assign:4.0.1 graceful-fs:4.1.2 memory-fs:0.4.0 tapable:0.2.5"
+NODE_MODULE_DEPEND="graceful-fs:4.1.2 memory-fs:0.4.0 tapable:0.2.5"
 
 inherit node-module
 

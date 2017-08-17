@@ -1,0 +1,12 @@
+diff -urp work.orig/src/game/Server/Opcodes.h work/src/game/Server/Opcodes.h
+--- work.orig/src/game/Server/Opcodes.h	2017-02-23 20:12:24.824853384 -0800
++++ work/src/game/Server/Opcodes.h	2017-02-23 20:34:09.410878958 -0800
+@@ -37,6 +37,8 @@
+ //       table opcodeTable in source when Opcode.h included but WorldSession.h not included
+ #include "WorldSession.h"
+ 
++#include "Policies/Singleton.h"
++
+ /**
+  * This is a list of Opcodes that are known for the client/server communication, it is used
+  * to tell the server to do something or the client to do something. Every opcode is handled

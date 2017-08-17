@@ -3,7 +3,8 @@
 # $Id$
 
 EAPI=5
-inherit eutils font python
+
+inherit eutils font
 
 DESCRIPTION="NotoColorEmoji is colored emojis"
 HOMEPAGE="https://www.google.com/get/noto/#emoji-qaae-color"

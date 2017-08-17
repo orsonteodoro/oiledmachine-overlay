@@ -1,0 +1,21 @@
+diff -urp work.orig/src/game/UnitAuraProcHandler.cpp work/src/game/UnitAuraProcHandler.cpp
+--- work.orig/src/game/UnitAuraProcHandler.cpp	2017-02-25 18:23:15.442263892 -0800
++++ work/src/game/UnitAuraProcHandler.cpp	2017-02-25 18:34:27.642090038 -0800
+@@ -1322,7 +1322,7 @@ SpellAuraProcResult Unit::HandleDummyAur
+                 return SPELL_AURA_PROC_OK;
+             }
+             // Seed of Corruption (Mobs cast) - no die req
+-            if (dummyClassOptions && dummyClassOptions->SpellFamilyFlags == uint64(0x0) && dummySpell->SpellIconID == 1932)
++            if (dummyClassOptions && dummyClassOptions->SpellFamilyFlags.Flags == uint64(0x0) && dummySpell->SpellIconID == 1932)
+             {
+                 Modifier* mod = triggeredByAura->GetModifier();
+                 // if damage is more than need deal finish spell
+@@ -3142,7 +3142,7 @@ SpellAuraProcResult Unit::HandleProcTrig
+         case SPELLFAMILY_WARRIOR:
+         {
+             // Deep Wounds (replace triggered spells to directly apply DoT), dot spell have familyflags
+-            if (auraClassOptions && auraClassOptions->SpellFamilyFlags == uint64(0x0) && auraSpellInfo->SpellIconID == 243)
++            if (auraClassOptions && auraClassOptions->SpellFamilyFlags.Flags == uint64(0x0) && auraSpellInfo->SpellIconID == 243)
+             {
+                 float weaponDamage;
+                 // DW should benefit of attack power, damage percent mods etc.

@@ -133,6 +133,7 @@ exbuild_strong() {
 		if [[ -z ${SNK_FILENAME} ]]; then
 			# elog ${BASH_SOURCE}
 			#SNK_FILENAME=/var/lib/layman/dotnet/eclass/mono.snk
+			echo "${PORTDIR}"
 			SNK_FILENAME="${FILESDIR}/../../../eclass/mono.snk"
 			# sn - Digitally sign/verify/compare strongnames on CLR assemblies. 
 			# man sn = http://linux.die.net/man/1/sn

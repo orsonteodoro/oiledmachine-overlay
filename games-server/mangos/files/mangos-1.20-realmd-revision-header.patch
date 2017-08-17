@@ -1,0 +1,13 @@
+diff -urp work.orig/src/realmd/Main.cpp work/src/realmd/Main.cpp
+--- work.orig/src/realmd/Main.cpp	2017-02-24 14:51:40.139334193 -0800
++++ work/src/realmd/Main.cpp	2017-02-24 17:41:00.776430556 -0800
+@@ -34,8 +34,7 @@
+ #include "Log.h"
+ #include "AuthSocket.h"
+ #include "SystemConfig.h"
+-#include "revision_nr.h"
+-#include "revision_sql.h"
++#include "revision.h"
+ #include "Util.h"
+ #include <openssl/opensslv.h>
+ #include <openssl/crypto.h>

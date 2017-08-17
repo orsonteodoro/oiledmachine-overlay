@@ -16,6 +16,7 @@ IUSE="xinerama fib"
 
 RDEPEND="
 	x11-libs/libX11
+        x11-libs/libXft
 	media-libs/freetype
 	xinerama? ( x11-libs/libXinerama )
 "

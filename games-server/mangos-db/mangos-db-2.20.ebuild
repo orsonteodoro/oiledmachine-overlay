@@ -7,28 +7,32 @@ inherit eutils git-r3
 
 DESCRIPTION="MaNGOS Two database for The Wrath of the Lich King (WOTLK) 3.3.5a Client"
 HOMEPAGE="https://www.getmangos.eu/"
-LICENSE="GPL-2"
+LICENSE="CC-BY-NC-SA-3.0"
 SLOT="2"
-KEYWORDS="amd64"
+KEYWORDS="~amd64 ~x86"
 RDEPEND="
 	>=dev-libs/boost-1.49
-	>=dev-db/mysql-5.1.0
+	>=virtual/mysql-5.1.0
 	>=dev-util/cmake-2.8.9
 	>=dev-libs/openssl-1.0
 	>=sys-devel/gcc-4.7.2
 	>=sys-libs/zlib-1.2.7
 	>=net-libs/zeromq-2.2.6
 	app-arch/bzip2
+	acid? ( games-server/acid )
 "
-IUSE=""
+IUSE="acid"
 
 S="${WORKDIR}"
 
 src_unpack() {
 	EGIT_CHECKOUT_DIR="${WORKDIR}"
 	EGIT_REPO_URI="https://github.com/mangostwo/database.git"
-	EGIT_BRANCH="Rel20_Newbuild"
-	EGIT_COMMIT="71c21edb987931a4fa936235c9660b1bced8de39"
+	#EGIT_BRANCH="Rel20_Newbuild"
+	#EGIT_COMMIT="71c21edb987931a4fa936235c9660b1bced8de39"
+	#try to match the deleted tag/commit
+	EGIT_BRANCH="master"
+	EGIT_COMMIT="c31d88a722a9e7c0261bd016e8a3d56b176c198e"
 	git-r3_fetch
 	git-r3_checkout
 }
@@ -38,32 +42,30 @@ src_prepare() {
 }
 
 src_install() {
-	mkdir -p "${D}/usr/share/mangos/2"
-	cp -R "${WORKDIR}"/* "${D}/usr/share/mangos/2"
-	cp "${FILESDIR}/newinstall.sh" "${D}/usr/share/mangos/2"
-	cp "${FILESDIR}/applymicroupdate-2-0.sh" "${D}/usr/share/mangos/0"
-	fperms 0755 "/usr/share/mangos/2/newinstall.sh"
-	fperms 0755 "/usr/share/mangos/2/applymicroupdate-2-0.sh"
+	mkdir -p "${D}/usr/share/mangos/${SLOT}"
+	cp -R "${WORKDIR}"/* "${D}/usr/share/mangos/${SLOT}"
+	cp "${FILESDIR}/install-mangos-db.sh" "${D}/usr/share/mangos/${SLOT}"
+	fperms 0755 "/usr/share/mangos/${SLOT}/install-mangos-db.sh"
 }
 
 pkg_config() {
+	einfo "Enter type of database operation (new, safe_update, unsafe_update):"
+	read TYPE
+	einfo "Enter server type (mangos, cmangos):"
+	read ENGINE
 	einfo "Enter the mangos db prefix:"
 	read PREFIX
 	einfo "Enter the mysql admin username:"
 	read USERNAME
 	einfo "Enter the mysql admin password:"
 	read -s
-	${ROOT}/usr/share/mangos/2/newinstall.sh $PREFIX $USERNAME $REPLY
+	${ROOT}/usr/share/mangos/${SLOT}/install-mangos-db.sh $PREFIX $USERNAME $REPLY "$ENGINE" "${SLOT}" "$TYPE"
 	einfo "Your mysql databases are ${PREFIX}_characters, ${PREFIX}_realmd, and ${PREFIX}_mangos."
-	${ROOT}/usr/share/mangos/2/applymicroupdate-2-0.sh $PREFIX $USERNAME $REPLY
 	unset REPLY
 }
 
 pkg_postinst() {
 	einfo ""
-	einfo "Use /usr/share/mangos/2/newinstall.sh to install a new mangos db with game content or"
-	einfo "use emerge --config =${P}."
-	einfo ""
-	einfo "Database updates are provided by applymicroupdate-2-0.sh script."
+	einfo "Use emerge --config =${P} for new install or update."
 	einfo ""
 }

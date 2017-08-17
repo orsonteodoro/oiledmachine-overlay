@@ -1,0 +1,12 @@
+diff -urp work.orig/src/game/Object/CreatureAI.h work/src/game/Object/CreatureAI.h
+--- work.orig/src/game/Object/CreatureAI.h	2017-02-23 20:35:31.791029070 -0800
++++ work/src/game/Object/CreatureAI.h	2017-02-23 20:44:01.784621290 -0800
+@@ -28,6 +28,8 @@
+ #include "Platform/Define.h"
+ #include "Dynamic/FactoryHolder.h"
+ #include "ObjectGuid.h"
++#include "SharedDefines.h"
++#include "Creature.h"
+ 
+ class WorldObject;
+ class GameObject;

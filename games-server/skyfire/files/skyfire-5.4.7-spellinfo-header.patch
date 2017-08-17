@@ -1,0 +1,11 @@
+diff -urp SkyFire.548-5.4.7.orig/src/server/game/DataStores/DBCStores.cpp SkyFire.548-5.4.7/src/server/game/DataStores/DBCStores.cpp
+--- SkyFire.548-5.4.7.orig/src/server/game/DataStores/DBCStores.cpp	2014-05-15 18:49:10.000000000 -0700
++++ SkyFire.548-5.4.7/src/server/game/DataStores/DBCStores.cpp	2017-02-23 18:26:46.458074870 -0800
+@@ -26,6 +26,7 @@
+ #include "ItemPrototype.h"
+ #include "Timer.h"
+ #include "ObjectDefines.h"
++#include "SpellInfo.h"
+ 
+ #include <map>
+ 

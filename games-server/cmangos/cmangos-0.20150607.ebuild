@@ -7,25 +7,33 @@ inherit eutils git-r3 cmake-utils
 
 DESCRIPTION="CMaNGOS Zero for the Classic (Vanilla) 1.12.1/2/3 Client"
 HOMEPAGE="https://www.getmangos.eu/"
-LICENSE="GPL-2"
+LICENSE="GPL-2+"
 SLOT="0"
-KEYWORDS="amd64"
+KEYWORDS="~amd64 ~x86"
 RDEPEND="
 	dev-libs/ace
 	dev-cpp/tbb
 	>=dev-libs/boost-1.49
 	>=virtual/mysql-5.1.0
-	>=dev-util/cmake-2.8.9
 	>=dev-libs/openssl-1.0
-	>=sys-devel/gcc-4.7.2
 	>=sys-libs/zlib-1.2.7
-	>=net-libs/zeromq-2.2.6
-	app-arch/bzip2
-	virtual/cmangos-db:0
+	database? ( virtual/cmangos-db:${SLOT} )
 "
-IUSE="pch sd2 eluna"
+DEPEND="${RDEPEND}
+	dev-vcs/git
+	>=sys-devel/gcc-4.7.2
+	>=dev-util/cmake-2.8.9
+       "
+
+IUSE="pch sd2 eluna database"
 
 S="${WORKDIR}"
+
+pkg_setup() {
+	if [ -x /usr/bin/gcc-5* ] ; then
+		ewarn "If you upgrade gcc from 4 to 5, make sure you re-emerge boost"
+	fi
+}
 
 src_unpack() {
 	EGIT_CHECKOUT_DIR="${WORKDIR}"
@@ -34,7 +42,6 @@ src_unpack() {
 	EGIT_COMMIT="b43302c3f43569187d90d12477aaad4d000516d7"
 	git-r3_fetch
 	git-r3_checkout
-	eapply "${FILESDIR}/mangos-4-cmake-location.patch"
 
 	if use sd2; then
 		EGIT_CHECKOUT_DIR="${WORKDIR}/src/bindings/sd2"
@@ -55,6 +62,8 @@ src_unpack() {
 }
 
 src_prepare() {
+	epatch "${FILESDIR}/mangos-4-cmake-location.patch"
+
 	eapply_user
 }
 

@@ -33,7 +33,8 @@ HOMEPAGE="http://arsenshnurkov.github.io/mono-packaging-tools"
 REPOSITORY_URL="https://github.com/ArsenShnurkov/${NAME}"
 
 EGIT_COMMIT="18cd15a7b009b2260eb999e6e16cabad553586ad"
-SRC_URI="${REPOSITORY_URL}/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${PV}.tar.gz"
+SRC_URI="${REPOSITORY_URL}/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${PV}.tar.gz
+	https://github.com/mono/mono/raw/master/mcs/class/mono.snk"
 RESTRICT="mirror"
 S="${WORKDIR}/${NAME}-${EGIT_COMMIT}"
 
@@ -67,6 +68,7 @@ NUSPEC_FILENAME="${PN}.nuspec"
 #ICON_FILENAME="${PN}.png"
 #ICON_FINALNAME="${NUSPEC_ID}.${NUSPEC_VERSION}.png"
 #ICON_PATH="$(get_nuget_trusted_icons_location)/${ICON_FINALNAME}"
+SNK_FILENAME="${S}/mono.snk"
 
 src_prepare() {
 	#change version in .nuspec
@@ -79,6 +81,8 @@ src_prepare() {
 
 	eapply "${FILESDIR}/mono-packaging-tools-1.4.1.6.patch"
 	eapply "${FILESDIR}/mono-packaging-tools-ot1.patch"
+
+	cp "${DISTDIR}/mono.snk" "${S}"
 
 	default
 }

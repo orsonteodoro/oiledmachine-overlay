@@ -1,0 +1,11 @@
+diff -urp work.orig/src/game/Warden/Warden.cpp work/src/game/Warden/Warden.cpp
+--- work.orig/src/game/Warden/Warden.cpp	2017-02-24 19:17:59.789769282 -0800
++++ work/src/game/Warden/Warden.cpp	2017-02-24 19:27:57.776361639 -0800
+@@ -34,6 +34,7 @@
+ #include "Util.h"
+ #include "Warden.h"
+ #include "AccountMgr.h"
++#include "Player.h"
+ 
+ Warden::Warden() : _session(NULL), _inputCrypto(16), _outputCrypto(16), _checkTimer(10000/*10 sec*/), _clientResponseTimer(0),
+                    _dataSent(false), _previousTimestamp(0), _module(NULL), _initialized(false)

@@ -16,7 +16,7 @@ KEYWORDS="~alpha amd64 ~arm ~ia64 ~mips ~ppc ~ppc64 ~sparc x86 ~amd64-fbsd ~x86-
 S="${WORKDIR}"
 
 src_prepare() {
-	epatch_user
+	eapply_user
 }
 
 src_install() {

@@ -18,7 +18,7 @@ SLOT="2" # no usable subslot
 KEYWORDS="~alpha amd64 ~arm ~ia64 ~mips ~ppc ~ppc64 ~sparc x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux ~x86-macos"
 
 IUSE="aqua coverage debug +egl +geoloc gles2 gnome-keyring +gstreamer +introspection +jit +opengl spell +webgl +X"
-IUSE+=" bmalloc threaded-compositor accelerated-overflow-scrolling ftl-jit accelerated-2d-canvas"
+IUSE+=" bmalloc threaded-compositor accelerated-overflow-scrolling ftl-jit accelerated-2d-canvas hardened"
 # bugs 372493, 416331
 REQUIRED_USE="
 	geoloc? ( introspection )
@@ -28,6 +28,7 @@ REQUIRED_USE="
 	!webgl? ( ?? ( gles2 opengl ) )
 	|| ( aqua X )
         accelerated-2d-canvas? ( webgl !gles2 )
+	hardened? ( !jit )
 "
 
 # use sqlite, svg by default

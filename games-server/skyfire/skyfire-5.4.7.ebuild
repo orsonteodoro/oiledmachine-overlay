@@ -7,29 +7,39 @@ inherit eutils git-r3 cmake-utils
 
 DESCRIPTION="SkyFire for the Mists of Pandaria (MOP) Client"
 HOMEPAGE="http://www.projectskyfire.org/"
-LICENSE="GPL-2"
+LICENSE="GPL-3+"
 SLOT="5"
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~x86"
 RDEPEND="
 	>=dev-libs/ace-5.8.3
-	>=dev-libs/boost-1.49
-	>=dev-db/mysql-5.1.0
-	>=dev-util/cmake-2.8.9
-	>=dev-libs/openssl-0.9.8o
-	>=sys-devel/gcc-4.7.2
+	>=virtual/mysql-5.1.0
+	>=dev-libs/openssl-1.0.0
 	>=sys-libs/zlib-1.2.7
-	>=net-libs/zeromq-2.2.6
+	sys-libs/readline
+	app-arch/bzip2
 "
-SRC_URI="https://github.com/ProjectSkyfire/SkyFire.548/archive/${PV}.tar.gz -> ${P}.tar.gz"
+DEPEND="${RDEPEND}
+	dev-vcs/git
+	>=sys-devel/gcc-4.7.2
+	>=dev-util/cmake-2.8.9
+	"
 IUSE="+servers tools pch scripts"
 
 S="${WORKDIR}/SkyFire.548-${PV}"
+
+SRC_URI="https://github.com/ProjectSkyfire/SkyFire.548/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 src_unpack() {
 	unpack "${A}"
 }
 
 src_prepare() {
+	epatch "${FILESDIR}/${PN}-5.4.7-object-header-1.patch"
+	epatch "${FILESDIR}/${PN}-5.4.7-object-header-2.patch"
+	epatch "${FILESDIR}/${PN}-5.4.7-max-spell-reagents.patch"
+	epatch "${FILESDIR}/${PN}-5.4.7-spellinfo-header.patch"
+	epatch "${FILESDIR}/${PN}-5.4.7-unit-header.patch"
+	rm cmake/macros/FindOpenSSL.cmake
 	eapply_user
 }
 

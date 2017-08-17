@@ -1,0 +1,11 @@
+diff -urp work.orig/src/game/Object/PlayerLogger.h work/src/game/Object/PlayerLogger.h
+--- work.orig/src/game/Object/PlayerLogger.h	2017-02-24 18:33:28.429165620 -0800
++++ work/src/game/Object/PlayerLogger.h	2017-02-24 18:39:40.687421584 -0800
+@@ -26,6 +26,7 @@
+ #define MANGOS_H_PLAYERLOGGER
+ 
+ #include "Log.h"
++#include "ObjectGuid.h"
+ 
+ enum PlayerLogEntity
+ {

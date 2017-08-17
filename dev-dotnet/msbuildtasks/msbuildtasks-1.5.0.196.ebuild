@@ -10,7 +10,8 @@ USE_DOTNET="net45"
 
 inherit gac dotnet
 
-SRC_URI="https://github.com/loresoft/msbuildtasks/archive/1.5.0.196.tar.gz -> ${PV}.tar.gz"
+SRC_URI="https://github.com/loresoft/msbuildtasks/archive/1.5.0.196.tar.gz -> ${PV}.tar.gz
+	https://github.com/mono/mono/raw/master/mcs/class/mono.snk"
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${PV}"
 
@@ -28,10 +29,13 @@ RDEPEND="${COMMON_DEPEND}
 "
 DEPEND="${COMMON_DEPEND}
 "
+SNK_FILENAME="${S}/mono.snk"
 
 src_prepare() {
 	eapply "${FILESDIR}/references-2016052301.patch"
 	eapply "${FILESDIR}/location.patch"
+
+	cp "${DISTDIR}/mono.snk" "${S}"
 
 	eapply_user
 }

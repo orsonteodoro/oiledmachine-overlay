@@ -23,8 +23,8 @@ REQUIRED_USE="|| ( ${USE_DOTNET} )"
 
 RDEPEND=">=dev-lang/mono-4.0.2.5
 	dev-util/nant[nupkg]
-	dev-dotnet/log4net
 "
+#	dev-dotnet/log4net
 DEPEND="${RDEPEND}
 "
 

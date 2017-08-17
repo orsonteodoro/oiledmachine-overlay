@@ -1,0 +1,12 @@
+diff -urp webkitgtk-2.16.5.orig/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp webkitgtk-2.16.5/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp
+--- webkitgtk-2.16.5.orig/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp	2017-06-20 03:39:21.000000000 -0700
++++ webkitgtk-2.16.5/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamerBase.cpp	2017-07-12 00:07:09.764038209 -0700
+@@ -801,7 +801,7 @@ void MediaPlayerPrivateGStreamerBase::re
+ 
+ void MediaPlayerPrivateGStreamerBase::cancelRepaint()
+ {
+-#if USE(TEXTURE_MAPPER_GL) || USE(COORDINATED_GRAPHICS_THREADED)
++#if USE(GSTREAMER_GL) || USE(COORDINATED_GRAPHICS_THREADED)
+     m_drawTimer.stop();
+     LockHolder locker(m_drawMutex);
+     m_drawCondition.notifyOne();

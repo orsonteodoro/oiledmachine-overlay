@@ -23,7 +23,8 @@ DEPEND="media-video/mpv[lua]
         dev-perl/XML-XPath
         dev-perl/MD5
         dev-perl/URI
-        dev-perl/LWP-Protocol-https"
+        dev-perl/LWP-Protocol-https
+        dev-perl/LWP-UserAgent-Determined"
 RDEPEND="${DEPEND}"
 
 S="${WORKDIR}"

@@ -28,9 +28,10 @@ RDEPEND="
 	sci-misc/setiathome-art:7
 "
 
-BOINC_VER=`boinc --version | cut -d' ' -f1`
-BOINC_MAJOR=`echo $BOINC_VER | cut -d. -f1`
-BOINC_MINOR=`echo $BOINC_VER | cut -d. -f2`
+#BOINC_VER=`boinc --version | cut -d' ' -f1`
+BOINC_VER="7.2.44"
+#BOINC_MAJOR=`echo $BOINC_VER | cut -d. -f1`
+#BOINC_MINOR=`echo $BOINC_VER | cut -d. -f2`
 DEPEND="${RDEPEND}
 	=sys-devel/autoconf-2.67
 	sci-misc/boinc:=
@@ -221,6 +222,8 @@ function run_config {
 	if [ ! -d "/usr/share/boinc/$BOINC_VER" ] ; then
 		die "Cannot find matching version between setiathome-boincdir to emerged boinc."
 	fi
+
+	append-cppflags -D_GLIBCXX_USE_CXX11_ABI=0
 
 	cd "${WORKDIR}/${MY_P}/AKv8"
 	CFLAGS="${CFLAGS} ${PGO_CFLAGS}" LDFLAGS="${LDFLAGS} ${PGO_LDFLAGS}"  LIBS="${sahfftwlibs[@]} ${asmlibs[@]} -ldl ${PGO_LIBS}" CXXFLAGS="${CXXFLAGS} ${PGO_CXXFLAGS}" CPPFLAGS="${CPPFLAGS} ${mycommonmakedefargs[@]} ${mysahmakedefargs[@]} ${PGO_CPPFLAGS}" BOINCDIR="/usr/share/boinc/$BOINC_VER" econf \

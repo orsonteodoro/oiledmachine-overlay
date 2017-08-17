@@ -37,6 +37,7 @@ DEPEND="${CDEPEND}
 RDEPEND="${CDEPEND}"
 
 NUSPEC_FILE="nuget.package/LibGit2Sharp.nuspec"
+SNK_FILENAME="${S}/mono.snk"
 
 src_unpack() {
 	default
@@ -68,6 +69,8 @@ src_prepare() {
 		DIR="Release"
 	fi
 	sed -i "s=\\\$configuration\\\$=${DIR}=g" "${NUSPEC_FILE}" || die
+
+	cp "${DISTDIR}/mono.snk" "${S}"
 
 	default
 }

@@ -7,26 +7,33 @@ inherit eutils git-2 cmake-utils
 
 DESCRIPTION="MaNGOS Three for Cataclysm (CATA) 4.3.4 Client"
 HOMEPAGE="https://www.getmangos.eu/"
-LICENSE="GPL-2"
+LICENSE="GPL-2+"
 SLOT="3"
-KEYWORDS="amd64"
+KEYWORDS="~amd64 ~x86"
 RDEPEND="
 	>=dev-libs/boost-1.49
 	>=virtual/mysql-5.1.0
-	>=dev-util/cmake-2.8.9
 	>=dev-libs/openssl-1.0
-	>=sys-devel/gcc-4.7.2
 	>=sys-libs/zlib-1.2.7
-	>=net-libs/zeromq-2.2.6
 	app-arch/bzip2
+	system-ace? ( dev-libs/ace )
+	database? ( virtual/mangos-db:${SLOT} )
 "
-IUSE="tools pch sd2 eluna"
+DEPEND="${RDEPEND}
+	dev-vcs/git
+	>=sys-devel/gcc-4.7.2
+	>=dev-util/cmake-2.8.9
+       "
+
+IUSE="tools pch sd2 eluna soap system-ace database"
+REQUIRED_USE="!eluna !system-ace"
 S="${WORKDIR}"
 
 src_unpack() {
 	EGIT_SOURCEDIR="${WORKDIR}"
 	EGIT_REPO_URI="https://github.com/mangosthree/server.git"
-	EGIT_BRANCH="Rel20_Newbuild"
+	#EGIT_BRANCH="Rel20_Newbuild"
+	EGIT_BRANCH="master"
 	EGIT_COMMIT="f0a64685e0a53804ff5efbc9af0e7c40f2aeb093"
 	git-2_src_unpack
 
@@ -36,7 +43,9 @@ src_unpack() {
 	EGIT_COMMIT="5f6417663e395987585466ab62f4fbce7d0a7ba3" #3.20
 	#EGIT_COMMIT="9fe397aaf5d89e754467df8a4821e2057d66d9a8" #2.20
 	git-2_src_unpack
+}
 
+src_prepare() {
 	epatch "${FILESDIR}/mangos-0-vmap-assembler.patch"
 	epatch "${FILESDIR}/mangos-3-object-1.patch"
 	epatch "${FILESDIR}/mangos-3-object-2.patch"
@@ -70,9 +79,7 @@ src_unpack() {
 	epatch "${FILESDIR}/mangos-3-dbcstore.patch"
 	epatch "${FILESDIR}/mangos-3-gridnotifiersimpl.patch"
 	epatch "${FILESDIR}/mangos-3-gridnotifiers.patch"
-}
 
-src_prepare() {
 	epatch_user
 }
 
@@ -81,6 +88,11 @@ src_configure() {
 		-DCONF_DIR=/etc/mangos/3
 		-DCMAKE_INSTALL_PREFIX=/usr/games/bin/mangos/3
 	)
+	if use system-ace ; then
+		mycmakeargs+=( -DACE_USE_EXTERNAL=1 )
+	else
+		mycmakeargs+=( -DACE_USE_EXTERNAL=0 )
+	fi
 	#if use eluna; then
 	#	mycmakeargs+=( -DSCRIPT_LIB_ELUNA=1 )
 	#else
@@ -104,6 +116,11 @@ src_configure() {
 		mycmakeargs+=( -DUSE_COREPCH=0 )
 		mycmakeargs+=( -DUSE_SCRIPTPCH=0 )
 		mycmakeargs+=( -DPCH=0 )
+	fi
+	if use soap; then
+		mycmakeargs+=( -DSOAP=1 )
+	else
+		mycmakeargs+=( -DSOAP=0 )
 	fi
 
 	cmake-utils_src_configure

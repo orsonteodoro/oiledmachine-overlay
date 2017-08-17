@@ -1,0 +1,11 @@
+diff -urp work.orig/src/modules/Bots/ahbot/AhBot.cpp work/src/modules/Bots/ahbot/AhBot.cpp
+--- work.orig/src/modules/Bots/ahbot/AhBot.cpp	2017-02-24 22:16:33.849873424 -0800
++++ work/src/modules/Bots/ahbot/AhBot.cpp	2017-02-24 22:23:14.348658691 -0800
+@@ -15,6 +15,7 @@
+ #include "AccountMgr.h"
+ #include "playerbot/playerbot.h"
+ #include "Player.h"
++#include "ace/Task_T.h"
+ 
+ using namespace ahbot;
+ 

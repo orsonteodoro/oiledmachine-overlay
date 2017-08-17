@@ -9,7 +9,7 @@ PYTHON_COMPAT=( python2_7 )
 
 AUTOTOOLS_AUTORECONF=true
 
-inherit autotools-utils eutils flag-o-matic systemd user versionator wxwidgets python-single-r1
+inherit autotools-utils eutils flag-o-matic systemd user versionator wxwidgets python-single-r1 versionator
 
 MY_PV=$(get_version_component_range 1-2)
 
@@ -18,9 +18,9 @@ HOMEPAGE="http://boinc.ssl.berkeley.edu/"
 SRC_URI="https://github.com/BOINC/boinc/archive/client_release/${MY_PV}/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="LGPL-2.1"
-SLOT="0"
+SLOT="$(get_version_component_range 1-2)"
 KEYWORDS="~amd64 ~ia64 ~ppc ~ppc64 ~sparc ~x86"
-IUSE="stripchart fastcgi mysql mysql-cluster mariadb mariadb-galera ldap debug examples mod_fcgid mod_fastcgi extras wrapper"
+IUSE="stripchart fastcgi mysql mysql-cluster mariadb mariadb-galera ldap debug examples mod_fcgid mod_fastcgi extras wrapper php7"
 
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 RDEPEND="
@@ -35,7 +35,8 @@ RDEPEND="
 	sys-apps/util-linux
 	sys-libs/zlib
         media-libs/gd[jpeg,png]
-        dev-lang/php[cli,xml,gd,simplexml]
+        <dev-lang/php-7.0[cli,xml,gd,simplexml]
+	!>=dev-lang/php-7.0
 	virtual/mysql
 	www-servers/apache[apache2_modules_alias,apache2_modules_authn_file,apache2_modules_auth_basic,apache2_modules_authz_user,apache2_modules_mime,apache2_modules_cgi]
 	stripchart? ( sci-visualization/gnuplot[gd] )
@@ -94,30 +95,30 @@ src_prepare() {
 	# prevent bad changes in compile flags, bug 286701
 	sed -i -e "s:BOINC_SET_COMPILE_FLAGS::" configure.ac || die "sed failed"
 
-	eapply "${FILESDIR}"/boinc-server-7.4.42-static-boinczip.patch
-	eapply "${FILESDIR}"/boinc-7.4.42-proc_.patch
-	eapply "${FILESDIR}"/boinc-server-7.4.42-nodeprecated-warnings.patch
-	eapply "${FILESDIR}"/boinc-server-7.4.42-disable-badges-fix.patch
-	eapply "${FILESDIR}"/boinc-server-7.4.42-gnuplot-loc.patch
-	eapply "${FILESDIR}"/boinc-server-7.4.42-mysqllib.patch
+	epatch "${FILESDIR}"/boinc-server-7.4.42-static-boinczip.patch
+	epatch "${FILESDIR}"/boinc-7.4.42-proc_.patch
+	epatch "${FILESDIR}"/boinc-server-7.4.42-nodeprecated-warnings.patch
+	epatch "${FILESDIR}"/boinc-server-7.4.42-disable-badges-fix.patch
+	epatch "${FILESDIR}"/boinc-server-7.4.42-gnuplot-loc.patch
+	epatch "${FILESDIR}"/boinc-server-7.4.42-mysqllib.patch
 	if use fastcgi; then
-		eapply "${FILESDIR}"/boinc-server-7.4.42-fcgi-printf.patch
-		eapply "${FILESDIR}"/boinc-server-7.4.42-fcgi-mysql.patch
+		epatch "${FILESDIR}"/boinc-server-7.4.42-fcgi-printf.patch
+		epatch "${FILESDIR}"/boinc-server-7.4.42-fcgi-mysql.patch
 	fi
 
 	if use debug; then
 		A="DUMP_CORE_ON_SEGV 0" B="DUMP_CORE_ON_SEGV 1" perl -p -i -e 's|\Q$ENV{'A'}\E|$ENV{'B'}|g' ${S}/sched/sched_main.cpp
-		eapply "${FILESDIR}"/boinc-server-7.4.42-debug_sched.patch
+		epatch "${FILESDIR}"/boinc-server-7.4.42-debug_sched.patch
 		elog "You need to 'touch debug_sched' in your boinc server project root for scheduling debuging logging."
 		elog "See https://boinc.berkeley.edu/trac/wiki/ServerDebug for details."
 	fi
-	eapply "${FILESDIR}"/boinc-server-7.4.42-sched_send-coproc_null_check.patch
-        eapply "${FILESDIR}"/boinc-server-7.4.42-sched-send-null-check.patch
-	eapply "${FILESDIR}"/boinc-server-7.4.42-php-fixes.patch
-	#eapply "${FILESDIR}"/boinc-server-7.4.42-size-classes-fixes.patch
-	use wrapper && eapply "${FILESDIR}"/boinc-server-7.4.42-build-wrapper.patch
+	epatch "${FILESDIR}"/boinc-server-7.4.42-sched_send-coproc_null_check.patch
+        epatch "${FILESDIR}"/boinc-server-7.4.42-sched-send-null-check.patch
+	epatch "${FILESDIR}"/boinc-server-7.4.42-php-fixes.patch
+	#epatch "${FILESDIR}"/boinc-server-7.4.42-size-classes-fixes.patch
+	use wrapper && epatch "${FILESDIR}"/boinc-server-7.4.42-build-wrapper.patch
 
-	eapply_user
+	epatch_user
 
 	autotools-utils_src_prepare
 }
@@ -137,6 +138,8 @@ src_configure() {
 		--enable-libraries
 		--enable-fcgi
 	)
+
+	append-cppflags -D_GLIBCXX_USE_CXX11_ABI=0
 
 	if use debug; then
 		filter-flags -O1 -O2 -O3 -O4 -Os -Ofast

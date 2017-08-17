@@ -80,6 +80,14 @@ src_prepare() {
   epatch_user
 }
 
+src_configure() {
+  true
+}
+
+src_compile() {
+  true
+}
+
 src_install() {
   source "${ROOT}/etc/portage/savedconfig/${CATEGORY}/${P}"
   mkdir -p "${D}/usr/share/${PN}/"

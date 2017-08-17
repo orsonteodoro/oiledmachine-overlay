@@ -1,0 +1,11 @@
+diff -urp work.orig/src/game/WorldHandlers/DisableMgr.cpp work/src/game/WorldHandlers/DisableMgr.cpp
+--- work.orig/src/game/WorldHandlers/DisableMgr.cpp	2017-02-24 19:29:19.516430976 -0800
++++ work/src/game/WorldHandlers/DisableMgr.cpp	2017-02-24 19:36:15.591076170 -0800
+@@ -24,6 +24,7 @@
+ #include "Player.h"
+ #include "World.h"
+ #include "BattleGroundMgr.h"
++#include "ProgressBar.h"
+ 
+ namespace DisableMgr
+ {

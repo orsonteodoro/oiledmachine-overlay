@@ -2,25 +2,31 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils git-r3 cmake-utils
 
 DESCRIPTION="MaNGOS Four for the Mists of Pandaria (MOP) 5.4.8 Client"
 HOMEPAGE="https://www.getmangos.eu/"
-LICENSE="GPL-2"
+LICENSE="GPL-2+"
 SLOT="4"
-KEYWORDS="amd64"
+KEYWORDS="~amd64 ~x86"
 RDEPEND="
 	>=dev-libs/boost-1.49
 	>=virtual/mysql-5.1.0
-	>=dev-util/cmake-2.8.9
 	>=dev-libs/openssl-1.0
-	>=sys-devel/gcc-4.7.2
 	>=sys-libs/zlib-1.2.7
-	>=net-libs/zeromq-2.2.6
 	app-arch/bzip2
+	system-ace? ( dev-libs/ace )
+	database? ( virtual/mangos-db:${SLOT} )
 "
-IUSE="tools pch sd2 eluna"
+DEPEND="${RDEPEND}
+	dev-vcs/git
+	>=sys-devel/gcc-4.7.2
+	>=dev-util/cmake-2.8.9
+       "
+
+IUSE="tools pch sd2 eluna system-ace database"
+REQUIRED_USE="!sd2 !eluna !tools !system-ace"
 
 S="${WORKDIR}"
 
@@ -31,13 +37,13 @@ src_unpack() {
 	EGIT_COMMIT="fcc15e13fa48cd41a3c8dfbd8a04991c14c7368d"
 	git-r3_fetch
 	git-r3_checkout
-
-	epatch "${FILESDIR}/mangos-4-vmap-assembler.patch"
-	epatch "${FILESDIR}/mangos-4-cmake-location.patch"
 }
 
 src_prepare() {
-	epatch_user
+	epatch "${FILESDIR}/mangos-4-vmap-assembler.patch"
+	epatch "${FILESDIR}/mangos-4-cmake-location.patch"
+
+	eapply_user
 }
 
 src_configure(){
@@ -46,6 +52,11 @@ src_configure(){
 		-DCMAKE_INSTALL_PREFIX=/usr/games/bin/mangos/4
 		-DACE_USE_EXTERNAL=1
 	)
+	#if use system-ace ; then
+	#	mycmakeargs+=( -DACE_USE_EXTERNAL=1 )
+	#else
+	#	mycmakeargs+=( -DACE_USE_EXTERNAL=0 )
+	#fi
 	if use eluna; then
 		mycmakeargs+=( -DSCRIPT_LIB_ELUNA=1 )
 	else
