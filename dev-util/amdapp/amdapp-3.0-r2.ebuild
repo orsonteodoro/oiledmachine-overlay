@@ -71,4 +71,21 @@ src_compile() {
 src_install() {
 	dodir /opt/AMDAPP
 	cp -R "${S}/"* "${ED}/opt/AMDAPP" || die "Install failed!"
+
+	#for eselect opencl switcher with eselect-opencl from oiledmachine-overlay
+	if [[ "${ABI}" == "amd64" ]] ; then
+		mkdir -p "${ED}/usr/$(get_libdir)/OpenCL/vendors/amd/"
+		mkdir -p "${ED}/etc/OpenCL/vendors/"
+		mkdir -p "${ED}/etc/OpenCL/profiles/amd/"
+		cp -a "${ED}"/opt/AMDAPP/lib/x86_64/sdk/libOpenCL.so.1 "${ED}/usr/$(get_libdir)/OpenCL/vendors/amd/"
+		echo "/usr/lib64/OpenCL/vendors/amd/libamdocl64.so" > "${ED}/etc/OpenCL/profiles/amd/amdocl64.icd"
+		#dosym "/etc/OpenCL/profiles/amd/amdocl64.icd" "/etc/OpenCL/vendors/ocl64.icd"
+	elif [[ "${ABI}" == "x86" ]] ; then
+		mkdir -p "${ED}/usr/$(get_libdir)/OpenCL/vendors/amd/"
+		mkdir -p "${ED}/etc/OpenCL/vendors/"
+		mkdir -p "${ED}/etc/OpenCL/profiles/amd/"
+		cp -a "${ED}"/opt/AMDAPP/lib/x86/sdk/libOpenCL.so.1 "${ED}/usr/$(get_libdir)/OpenCL/vendors/amd/"
+		echo "/usr/lib32/OpenCL/vendors/amd/libamdocl32.so" > "${ED}/etc/OpenCL/profiles/amd/amdocl32.icd"
+		#dosym "/etc/OpenCL/profiles/amd/amdocl32.icd" "/etc/OpenCL/vendors/ocl32.icd"
+	fi
 }

@@ -46,7 +46,7 @@ RESTRICT="test"
 RDEPEND="
 	dev-db/sqlite:3=
 	>=dev-libs/glib-2.36:2
-	dev-libs/hyphen
+	dev-libs/hyphen[${MULTILIB_USEDEP}]
 	>=dev-libs/icu-3.8.1-r1:=
 	>=dev-libs/libxml2-2.8:2
 	>=dev-libs/libxslt-1.1.7
@@ -54,9 +54,9 @@ RDEPEND="
 	>=media-libs/freetype-2.4.2:2
 	>=media-libs/harfbuzz-0.9.18:=[icu(+)]
 	>=media-libs/libpng-1.4:0=
-	media-libs/libwebp:=
+	media-libs/libwebp:=[${MULTILIB_USEDEP}]
 	>=net-libs/gnutls-3
-	>=net-libs/libsoup-2.42:2.4[introspection?]
+	>=net-libs/libsoup-2.42:2.4[introspection?,${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-1.10.2:=
 	>=x11-libs/gtk+-3.14:3[introspection?,${MULTILIB_USEDEP}]
         x11-libs/libnotify[${MULTILIB_USEDEP}]
@@ -69,9 +69,10 @@ RDEPEND="
 	gles2? ( media-libs/mesa[gles2] )
 	gnome-keyring? ( app-crypt/libsecret )
 	gstreamer? (
-		>=media-libs/gstreamer-1.2:1.0
-		>=media-libs/gst-plugins-base-1.2:1.0
-		>=media-libs/gst-plugins-bad-1.8:1.0[opengl?] )
+		>=media-libs/gstreamer-1.2:1.0[${MULTILIB_USEDEP}]
+		>=media-libs/gst-plugins-base-1.2:1.0[${MULTILIB_USEDEP}]
+		>=media-libs/gst-plugins-bad-1.8:1.0[opengl?,${MULTILIB_USEDEP}]
+		>=media-plugins/gst-plugins-meta-1.10.3:1.0[${MULTILIB_USEDEP}] )
 	introspection? ( >=dev-libs/gobject-introspection-1.32.0:= )
 	libnotify? ( x11-libs/libnotify )
 	nsplugin? ( >=x11-libs/gtk+-2.24.10:2[${MULTILIB_USEDEP}] )
@@ -91,6 +92,7 @@ RDEPEND="
 		x11-libs/libXrender
 		x11-libs/libXt )
         ftl-jit? ( >=sys-devel/llvm-3.5.0 )
+	dev-libs/gmp[-pgo]
 "
 
 # paxctl needed for bug #407085

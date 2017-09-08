@@ -40,7 +40,7 @@ COMMON_DEPEND="
 	dev-libs/libxslt:=
 	dev-libs/nspr:=
 	>=dev-libs/nss-3.14.3:=
-	>=dev-libs/re2-0.2016.05.01:=
+	>=dev-libs/re2-0.2016.05.01:=[${MULTILIB_USEDEP}]
 	gconf? ( >=gnome-base/gconf-2.24.0:= )
 	gnome-keyring? ( >=gnome-base/libgnome-keyring-3.12:= )
 	>=media-libs/alsa-lib-1.0.19:=
@@ -51,11 +51,12 @@ COMMON_DEPEND="
 	media-libs/libpng:=
 	system-libvpx? ( media-libs/libvpx:=[postproc,svc] )
 	pulseaudio? ( media-sound/pulseaudio:= )
-	system-ffmpeg? ( >=media-video/ffmpeg-3:= )
+	system-ffmpeg? ( >=media-video/ffmpeg-3:=[${MULTILIB_USEDEP}] media-libs/opus:=[${MULTILIB_USEDEP}] )
 	sys-apps/dbus:=
-	sys-apps/pciutils:=
+	sys-apps/pciutils:=[${MULTILIB_USEDEP}]
 	virtual/udev
-	x11-libs/cairo:=
+	virtual/libudev[${MULTILIB_USEDEP}]
+	x11-libs/cairo:=[${MULTILIB_USEDEP}]
 	x11-libs/gdk-pixbuf:2
 	x11-libs/libX11:=
 	x11-libs/libXcomposite:=
@@ -69,8 +70,8 @@ COMMON_DEPEND="
 	x11-libs/libXScrnSaver:=
 	x11-libs/libXtst:=
 	x11-libs/pango:=
-	app-arch/snappy:=
-	media-libs/flac:=
+	app-arch/snappy:=[${MULTILIB_USEDEP}]
+	media-libs/flac:=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.4.0:=
 	sys-libs/zlib:=[minizip]
 	kerberos? ( virtual/krb5 )

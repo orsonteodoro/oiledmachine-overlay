@@ -58,7 +58,9 @@ RDEPEND="
 	>=dev-libs/nss-3.28.3
 	>=dev-libs/nspr-4.13.1
 	selinux? ( sec-policy/selinux-mozilla )
-        dev-libs/libevent[${MULTILIB_USEDEP}]"
+        dev-libs/libevent[${MULTILIB_USEDEP}]
+        app-text/hunspell[${MULTILIB_USEDEP}]
+	system-libvpx? ( media-libs/libvpx[${MULTILIB_USEDEP}] )"
 
 DEPEND="${RDEPEND}
 	pgo? ( >=sys-devel/gcc-4.5 )

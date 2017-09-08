@@ -43,7 +43,7 @@ RDEPEND="
 	x11-misc/dmenu
         net-misc/curl
         x11-terms/st
-	dev-libs/json-glib
+	dev-libs/json-glib[${MULTILIB_USEDEP}]
 "
 
 pkg_setup() {
