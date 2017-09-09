@@ -32,7 +32,8 @@ RDEPEND="|| ( >=app-emulation/virtualbox-5.0.28 >=app-emulation/virtualbox-bin-5
 	system-qtquickcontrols? ( dev-qt/qtquickcontrols:5[widgets] )
 
 	dev-qt/qtopengl:5
-	dev-qt/qtwebsockets:5
+	dev-qt/qtwebsockets:5[ssl]
+	dev-qt/qtnetwork:5[ssl]
 	dev-qt/qtsvg:5
 	dev-qt/qtconcurrent:5
 	dev-qt/qtgraphicaleffects:5
