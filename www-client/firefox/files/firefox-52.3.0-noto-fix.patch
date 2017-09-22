@@ -1,0 +1,157 @@
+
+# HG changeset patch
+# User Lee Salzman <lsalzman@mozilla.com>
+# Date 1494013570 14400
+# Node ID e2ea8549878055ce859f38a4169bb7508620117b
+# Parent  b104650aeda3ed80e1f31ff91117bbf10b9e5aa3
+Bug 1360862 - Allow bitmap fonts to force scaling and bypass tolerance check in gfxFcPlatformFontList. r=jfkthame, a=gchang
+
+MozReview-Commit-ID: Ly5ori9HKqc
+
+diff --git a/gfx/thebes/gfxFcPlatformFontList.cpp b/gfx/thebes/gfxFcPlatformFontList.cpp
+--- a/gfx/thebes/gfxFcPlatformFontList.cpp
++++ b/gfx/thebes/gfxFcPlatformFontList.cpp
+@@ -817,16 +817,25 @@ ChooseFontSize(gfxFontconfigFontEntry* a
+                               FC_PIXEL_SIZE, v, &size) == FcResultMatch) {
+         ++v;
+         double dist = fabs(size - requestedSize);
+         if (bestDist < 0.0 || dist < bestDist) {
+             bestDist = dist;
+             bestSize = size;
+         }
+     }
++    // If the font has bitmaps but wants to be scaled, then let it scale.
++    if (bestSize >= 0.0) {
++        FcBool scalable;
++        if (FcPatternGetBool(aEntry->GetPattern(),
++                             FC_SCALABLE, 0, &scalable) == FcResultMatch &&
++            scalable) {
++            return requestedSize;
++        }
++    }
+     return bestSize;
+ }
+ 
+ gfxFont*
+ gfxFontconfigFontEntry::CreateFontInstance(const gfxFontStyle *aFontStyle,
+                                            bool aNeedsBold)
+ {
+     nsAutoRef<FcPattern> pattern(FcPatternCreate());
+@@ -956,45 +965,53 @@ gfxFontconfigFontFamily::AddFontPattern(
+ {
+     NS_ASSERTION(!mHasStyles,
+                  "font patterns must not be added to already enumerated families");
+ 
+     FcBool scalable;
+     if (FcPatternGetBool(aFontPattern, FC_SCALABLE, 0, &scalable) != FcResultMatch ||
+         !scalable) {
+         mHasNonScalableFaces = true;
++
++        FcBool scalable;
++        if (FcPatternGetBool(aFontPattern, FC_SCALABLE, 0, &scalable) == FcResultMatch &&
++            scalable) {
++            mForceScalable = true;
++        }
+     }
+ 
+     nsCountedRef<FcPattern> pattern(aFontPattern);
+     mFontPatterns.AppendElement(pattern);
+ }
+ 
+ static const double kRejectDistance = 10000.0;
+ 
+ // Calculate a distance score representing the size disparity between the
+ // requested style's size and the font entry's size.
+ static double
+-SizeDistance(gfxFontconfigFontEntry* aEntry, const gfxFontStyle& aStyle)
++SizeDistance(gfxFontconfigFontEntry* aEntry,
++             const gfxFontStyle& aStyle,
++             bool aForceScalable)
+ {
+     double requestedSize = SizeForStyle(aEntry, aStyle);
+     double bestDist = -1.0;
+     double size;
+     int v = 0;
+     while (FcPatternGetDouble(aEntry->GetPattern(),
+                               FC_PIXEL_SIZE, v, &size) == FcResultMatch) {
+         ++v;
+         double dist = fabs(size - requestedSize);
+         if (bestDist < 0.0 || dist < bestDist) {
+             bestDist = dist;
+         }
+     }
+     if (bestDist < 0.0) {
+         // No size means scalable
+         return -1.0;
+-    } else if (5.0 * bestDist < requestedSize) {
++    } else if (aForceScalable || 5.0 * bestDist < requestedSize) {
+         // fontconfig prefers a matching family or lang to pixelsize of bitmap
+         // fonts. CSS suggests a tolerance of 20% on pixelsize.
+         return bestDist;
+     } else {
+         // Reject any non-scalable fonts that are not within tolerance.
+         return kRejectDistance;
+     }
+ }
+@@ -1018,17 +1035,17 @@ gfxFontconfigFontFamily::FindAllFontsFor
+     // available size is rejected for being outside tolernace, then the
+     // entire group will be skipped.
+     size_t skipped = 0;
+     gfxFontconfigFontEntry* bestEntry = nullptr;
+     double bestDist = -1.0;
+     for (size_t i = 0; i < aFontEntryList.Length(); i++) {
+         gfxFontconfigFontEntry* entry =
+             static_cast<gfxFontconfigFontEntry*>(aFontEntryList[i]);
+-        double dist = SizeDistance(entry, aFontStyle);
++        double dist = SizeDistance(entry, aFontStyle, mForceScalable);
+         // If the entry is scalable or has a style that does not match
+         // the group of unscalable fonts, then start a new group.
+         if (dist < 0.0 ||
+             !bestEntry ||
+             bestEntry->Stretch() != entry->Stretch() ||
+             bestEntry->Weight() != entry->Weight() ||
+             bestEntry->mStyle != entry->mStyle) {
+             // If the best entry in this group is still outside the tolerance,
+diff --git a/gfx/thebes/gfxFcPlatformFontList.h b/gfx/thebes/gfxFcPlatformFontList.h
+--- a/gfx/thebes/gfxFcPlatformFontList.h
++++ b/gfx/thebes/gfxFcPlatformFontList.h
+@@ -170,17 +170,18 @@ protected:
+     const uint8_t* mFontData;
+ };
+ 
+ class gfxFontconfigFontFamily : public gfxFontFamily {
+ public:
+     explicit gfxFontconfigFontFamily(const nsAString& aName) :
+         gfxFontFamily(aName),
+         mContainsAppFonts(false),
+-        mHasNonScalableFaces(false)
++        mHasNonScalableFaces(false),
++        mForceScalable(false)
+     { }
+ 
+     void FindStyleVariations(FontInfoData *aFontInfoData = nullptr) override;
+ 
+     // Families are constructed initially with just references to patterns.
+     // When necessary, these are enumerated within FindStyleVariations.
+     void AddFontPattern(FcPattern* aFontPattern);
+ 
+@@ -196,16 +197,17 @@ public:
+ 
+ protected:
+     virtual ~gfxFontconfigFontFamily() { }
+ 
+     nsTArray<nsCountedRef<FcPattern> > mFontPatterns;
+ 
+     bool      mContainsAppFonts;
+     bool      mHasNonScalableFaces;
++    bool      mForceScalable;
+ };
+ 
+ class gfxFontconfigFont : public gfxFontconfigFontBase {
+ public:
+     gfxFontconfigFont(cairo_scaled_font_t *aScaledFont,
+                       FcPattern *aPattern,
+                       gfxFloat aAdjustedSize,
+                       gfxFontEntry *aFontEntry,
+
+

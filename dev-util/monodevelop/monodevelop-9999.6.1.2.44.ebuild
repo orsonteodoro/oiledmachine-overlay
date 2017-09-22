@@ -62,7 +62,8 @@ DEPEND="${COMMON_DEPEND}
 MAKEOPTS="${MAKEOPTS} -j1" #nowarn
 S="${WORKDIR}/${PN}-${PV}"
 
-EGIT_COMMIT="0ccfcd52b95305ebd5b7eca0d88c1017035910ae" #6.1.2.44 (It may break for clean install.  Use 9999.6.1.2.44 to fetch then cancel it after fetching the sources. Then, use this ebuild again.)
+#EGIT_COMMIT="0ccfcd52b95305ebd5b7eca0d88c1017035910ae" #6.1.2.44
+EGIT_COMMIT="monodevelop-6.1.2.44" #6.1.2.44 (It doesn't break, but it is head for this tag.)
 EGIT_REPO_URI="https://github.com/mono/monodevelop.git"
 EGIT_SUBMODULES=( '*' ) # todo: replace certain submodules with system packages
 

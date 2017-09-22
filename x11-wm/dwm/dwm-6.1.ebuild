@@ -27,7 +27,7 @@ DEPEND="
 
 src_prepare() {
 	sed -i \
-		-e "s/CFLAGS = -std=c99 -pedantic -Wall -Os/CFLAGS += -std=c99 -pedantic -Wall/" \
+		-e "s/CFLAGS = -std=c99 -pedantic -Wall -Os/CFLAGS += -std=c99 -pedantic -Wall /" \
 		-e "/^LDFLAGS/{s|=|+=|g;s|-s ||g}" \
 		-e "s/#XINERAMALIBS =/XINERAMALIBS ?=/" \
 		-e "s/#XINERAMAFLAGS =/XINERAMAFLAGS ?=/" \
@@ -40,6 +40,10 @@ src_prepare() {
 		-e '/@echo CC/d' \
 		-e 's|@${CC}|$(CC)|g' \
 		Makefile || die
+
+	sed -i \
+		-e "s/-Os/${CFLAGS}/" \
+		config.mk || die
 
 	restore_config config.h
 

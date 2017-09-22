@@ -62,4 +62,5 @@ pkg_postinst() {
         rebuild_fontfiles
 	ewarn "You may need to \`eselect fontconfig enable 01-notosans.conf\` manually and run \`fc-cache -fv\`."
 	ewarn "You may need to \`eselect fontconfig disable 70-no-bitmaps.conf\` manually and run \`fc-cache -fv\`."
+	ewarn "To see emojis in your x11-term you need to switch to a utf8 locale."
 }

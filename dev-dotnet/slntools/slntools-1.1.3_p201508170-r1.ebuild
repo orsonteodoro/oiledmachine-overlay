@@ -27,7 +27,8 @@ LICENSE="MIT" # https://github.com/jamietre/HtmlParserSharp/blob/master/LICENSE.
 
 RDEPEND=">=dev-lang/mono-4.0.2.5"
 DEPEND="${RDEPEND}
-	sys-apps/sed"
+	sys-apps/sed
+	nupkg? ( dev-dotnet/nuget )"
 
 S="${WORKDIR}/${NAME}-${EGIT_COMMIT}"
 SLN_FILE=SLNTools.sln

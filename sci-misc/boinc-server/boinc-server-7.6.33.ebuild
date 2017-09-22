@@ -50,6 +50,7 @@ RDEPEND="
               || ( mod_fcgid?   ( www-apache/mod_fcgid )
                    mod_fastcgi? ( www-apache/mod_fastcgi ) )
         )
+	sci-misc/boinc
 "
 DEPEND="${RDEPEND}
 	sys-devel/gettext

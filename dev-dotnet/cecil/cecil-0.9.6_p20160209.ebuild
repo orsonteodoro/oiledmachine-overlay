@@ -28,7 +28,8 @@ DEPEND="${COMMON_DEPEND}
 "
 
 NAME="cecil"
-REPOSITORY="https://github.com/jbevain/${NAME}"
+MAINTAINER="jbevain"
+REPOSITORY="https://github.com/${MAINTAINER}/${NAME}"
 LICENSE_URL="${REPOSITORY}/blob/master/LICENSE"
 ICONMETA="https://github.com/lontivero/Open.NAT/tree/gh-pages/images/logos"
 ICON_URL="file://${FILESDIR}/nuget_icon_64x64.png"
@@ -52,10 +53,15 @@ NUSPEC_VERSION="${PV//_p/.}"
 src_prepare() {
 	enuget_restore "${METAFILETOBUILD}"
 
-	eapply "${FILESDIR}/nuspec.patch"
+	eapply "${FILESDIR}/cecil-0.9.6_p20160209-nuspec.patch"
 
-	eapply "${FILESDIR}/cecil-0.9.6_p20160209-net45-1.patch"
-	eapply "${FILESDIR}/cecil-0.9.6_p20160209-net45-2.patch"
+	eapply "${FILESDIR}/cecil-0.9.6_p20160209-net45.patch"
+	eapply "${FILESDIR}"/cecil-0.9.6_p20160209-public-Consts.patch
+	eapply "${FILESDIR}"/cecil-0.9.6_p20160209-disable-tests-1.patch
+	eapply "${FILESDIR}"/cecil-0.9.6_p20160209-disable-tests-2.patch
+	eapply "${FILESDIR}"/cecil-0.9.6_p20160209-internal-to-public.patch
+
+	cp -a "${DISTDIR}/mono.snk" "${S}" || die "can't find key"
 
 	eapply_user
 }

@@ -25,7 +25,7 @@ RDEPEND="media-libs/libjpeg-turbo
 
 DEPEND="${RDEPEND}"
 
-S="${WORKDIR}/CaesiumCLT-${CAESIUMCTL_COMMIT}"
+S="${WORKDIR}/caesium-clt-${CAESIUMCTL_COMMIT}"
 
 src_unpack() {
 	unpack ${A}

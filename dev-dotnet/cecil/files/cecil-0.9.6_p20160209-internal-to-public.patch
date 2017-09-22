@@ -1,0 +1,644 @@
+Binary files cecil-master.orig/bin/net_3_5_Release/Mono.Cecil.dll and cecil-master/bin/net_3_5_Release/Mono.Cecil.dll differ
+Binary files cecil-master.orig/bin/net_3_5_Release/Mono.Cecil.dll.mdb and cecil-master/bin/net_3_5_Release/Mono.Cecil.dll.mdb differ
+Only in cecil-master/bin/net_3_5_Release: Mono.Cecil.Mdb.dll
+Only in cecil-master/bin/net_3_5_Release: Mono.Cecil.Mdb.dll.mdb
+Only in cecil-master/bin/net_3_5_Release: Mono.Cecil.Pdb.dll
+Only in cecil-master/bin/net_3_5_Release: Mono.Cecil.Pdb.dll.mdb
+Only in cecil-master/bin/net_3_5_Release: Mono.Cecil.Rocks.dll
+Only in cecil-master/bin/net_3_5_Release: Mono.Cecil.Rocks.dll.mdb
+diff -urp cecil-master.orig/Mono/Disposable.cs cecil-master/Mono/Disposable.cs
+--- cecil-master.orig/Mono/Disposable.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono/Disposable.cs	2017-09-17 21:20:27.972801273 -0700
+@@ -12,7 +12,7 @@ using System;
+ 
+ namespace Mono {
+ 
+-	static class Disposable {
++	public static class Disposable {
+ 
+ 		public static Disposable<T> Owned<T> (T value) where T : class, IDisposable
+ 		{
+@@ -25,9 +25,9 @@ namespace Mono {
+ 		}
+ 	}
+ 
+-	struct Disposable<T> : IDisposable where T : class, IDisposable {
++	public struct Disposable<T> : IDisposable where T : class, IDisposable {
+ 
+-		internal readonly T value;
++		public readonly T value;
+ 		readonly bool owned;
+ 
+ 		public Disposable (T value, bool owned)
+diff -urp cecil-master.orig/Mono/Empty.cs cecil-master/Mono/Empty.cs
+--- cecil-master.orig/Mono/Empty.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono/Empty.cs	2017-09-17 21:27:34.877815341 -0700
+@@ -13,7 +13,7 @@ using Mono.Collections.Generic;
+ 
+ namespace Mono {
+ 
+-	static class Empty<T> {
++	public static class Empty<T> {
+ 
+ 		public static readonly T [] Array = new T [0];
+ 	}
+diff -urp cecil-master.orig/Mono.Cecil/AssemblyReader.cs cecil-master/Mono.Cecil/AssemblyReader.cs
+--- cecil-master.orig/Mono.Cecil/AssemblyReader.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil/AssemblyReader.cs	2017-09-17 21:31:59.103824048 -0700
+@@ -433,13 +433,13 @@ namespace Mono.Cecil {
+ 		}
+ 	}
+ 
+-	sealed class MetadataReader : ByteBuffer {
++	public sealed class MetadataReader : ByteBuffer {
+ 
+ 		readonly internal Image image;
+ 		readonly internal ModuleDefinition module;
+ 		readonly internal MetadataSystem metadata;
+ 
+-		internal CodeReader code;
++		public CodeReader code;
+ 		internal IGenericContext context;
+ 
+ 		readonly MetadataReader metadata_reader;
+diff -urp cecil-master.orig/Mono.Cecil/AssemblyWriter.cs cecil-master/Mono.Cecil/AssemblyWriter.cs
+--- cecil-master.orig/Mono.Cecil/AssemblyWriter.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil/AssemblyWriter.cs	2017-09-17 21:00:05.239760981 -0700
+@@ -150,7 +150,7 @@ namespace Mono.Cecil {
+ 		}
+ 	}
+ 
+-	abstract class MetadataTable {
++	public abstract class MetadataTable {
+ 
+ 		public abstract int Length { get; }
+ 
+@@ -792,7 +792,7 @@ namespace Mono.Cecil {
+ 		}
+ 	}
+ 
+-	sealed class MetadataBuilder {
++	public sealed class MetadataBuilder {
+ 
+ 		readonly internal ModuleDefinition module;
+ 		readonly internal ISymbolWriterProvider symbol_writer_provider;
+diff -urp cecil-master.orig/Mono.Cecil/MemberReference.cs cecil-master/Mono.Cecil/MemberReference.cs
+--- cecil-master.orig/Mono.Cecil/MemberReference.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil/MemberReference.cs	2017-09-17 21:35:08.436830287 -0700
+@@ -53,7 +53,7 @@ namespace Mono.Cecil {
+ 			set { projection = value; }
+ 		}
+ 
+-		internal bool HasImage {
++		public bool HasImage {
+ 			get {
+ 				var module = Module;
+ 				if (module == null)
+diff -urp cecil-master.orig/Mono.Cecil/ModuleDefinition.cs cecil-master/Mono.Cecil/ModuleDefinition.cs
+--- cecil-master.orig/Mono.Cecil/ModuleDefinition.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil/ModuleDefinition.cs	2017-09-17 21:26:48.031813797 -0700
+@@ -245,7 +245,7 @@ namespace Mono.Cecil {
+ 		internal ReadingMode ReadingMode;
+ 		internal ISymbolReaderProvider SymbolReaderProvider;
+ 
+-		internal ISymbolReader symbol_reader;
++		public ISymbolReader symbol_reader;
+ 		internal Disposable<IAssemblyResolver> assembly_resolver;
+ 		internal IMetadataResolver metadata_resolver;
+ 		internal TypeSystem type_system;
+@@ -261,7 +261,7 @@ namespace Mono.Cecil {
+ 		ModuleAttributes attributes;
+ 		ModuleCharacteristics characteristics;
+ 		Guid mvid;
+-		internal uint timestamp;
++		public uint timestamp;
+ 
+ 		internal AssemblyDefinition assembly;
+ 		MethodDefinition entry_point;
+@@ -941,7 +941,7 @@ namespace Mono.Cecil {
+ 			get { return module_lock; }
+ 		}
+ 
+-		internal TRet Read<TItem, TRet> (TItem item, Func<TItem, MetadataReader, TRet> read)
++		public TRet Read<TItem, TRet> (TItem item, Func<TItem, MetadataReader, TRet> read)
+ 		{
+ 			lock (module_lock) {
+ 				var position = reader.position;
+diff -urp cecil-master.orig/Mono.Cecil/TypeDefinitionCollection.cs cecil-master/Mono.Cecil/TypeDefinitionCollection.cs
+--- cecil-master.orig/Mono.Cecil/TypeDefinitionCollection.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil/TypeDefinitionCollection.cs	2017-09-17 21:05:59.486772655 -0700
+@@ -19,7 +19,7 @@ namespace Mono.Cecil {
+ 
+ 	using Slot = Row<string, string>;
+ 
+-	sealed class TypeDefinitionCollection : Collection<TypeDefinition> {
++	public sealed class TypeDefinitionCollection : Collection<TypeDefinition> {
+ 
+ 		readonly ModuleDefinition container;
+ 		readonly Dictionary<Slot, TypeDefinition> name_cache;
+diff -urp cecil-master.orig/Mono.Cecil/TypeDefinition.cs cecil-master/Mono.Cecil/TypeDefinition.cs
+--- cecil-master.orig/Mono.Cecil/TypeDefinition.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil/TypeDefinition.cs	2017-09-17 21:06:32.610773746 -0700
+@@ -535,7 +535,7 @@ namespace Mono.Cecil {
+ 		}
+ 	}
+ 
+-	class InterfaceImplementationCollection : Collection<InterfaceImplementation>
++	public class InterfaceImplementationCollection : Collection<InterfaceImplementation>
+ 	{
+ 		readonly TypeDefinition type;
+ 
+diff -urp cecil-master.orig/Mono.Cecil/TypeParser.cs cecil-master/Mono.Cecil/TypeParser.cs
+--- cecil-master.orig/Mono.Cecil/TypeParser.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil/TypeParser.cs	2017-09-17 21:17:34.606795561 -0700
+@@ -15,7 +15,7 @@ using Mono.Cecil.Metadata;
+ 
+ namespace Mono.Cecil {
+ 
+-	class TypeParser {
++	public class TypeParser {
+ 
+ 		class Type {
+ 			public const int Ptr = -1;
+diff -urp cecil-master.orig/Mono.Cecil/TypeSystem.cs cecil-master/Mono.Cecil/TypeSystem.cs
+--- cecil-master.orig/Mono.Cecil/TypeSystem.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil/TypeSystem.cs	2017-09-17 21:30:06.804820347 -0700
+@@ -23,7 +23,7 @@ namespace Mono.Cecil {
+ 			{
+ 			}
+ 
+-			internal override TypeReference LookupType (string @namespace, string name)
++			public override TypeReference LookupType (string @namespace, string name)
+ 			{
+ 				var type = LookupTypeDefinition (@namespace, name) ?? LookupTypeForwarded (@namespace, name);
+ 				if (type != null)
+@@ -85,7 +85,7 @@ namespace Mono.Cecil {
+ 			{
+ 			}
+ 
+-			internal override TypeReference LookupType (string @namespace, string name)
++			public override TypeReference LookupType (string @namespace, string name)
+ 			{
+ 				return CreateTypeReference (@namespace, name);
+ 			}
+@@ -164,7 +164,7 @@ namespace Mono.Cecil {
+ 			return new CommonTypeSystem (module);
+ 		}
+ 
+-		internal abstract TypeReference LookupType (string @namespace, string name);
++		public abstract TypeReference LookupType (string @namespace, string name);
+ 
+ 		TypeReference LookupSystemType (ref TypeReference reference, string name, ElementType element_type)
+ 		{
+diff -urp cecil-master.orig/Mono.Cecil.Cil/CodeReader.cs cecil-master/Mono.Cecil.Cil/CodeReader.cs
+--- cecil-master.orig/Mono.Cecil.Cil/CodeReader.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.Cil/CodeReader.cs	2017-09-17 21:32:48.635825680 -0700
+@@ -17,9 +17,9 @@ using RVA = System.UInt32;
+ 
+ namespace Mono.Cecil.Cil {
+ 
+-	sealed class CodeReader : BinaryStreamReader {
++	public sealed class CodeReader : BinaryStreamReader {
+ 
+-		readonly internal MetadataReader reader;
++		readonly public MetadataReader reader;
+ 
+ 		int start;
+ 
+diff -urp cecil-master.orig/Mono.Cecil.Cil/CodeWriter.cs cecil-master/Mono.Cecil.Cil/CodeWriter.cs
+--- cecil-master.orig/Mono.Cecil.Cil/CodeWriter.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.Cil/CodeWriter.cs	2017-09-17 21:22:59.628806271 -0700
+@@ -22,7 +22,7 @@ using RVA = System.UInt32;
+ 
+ namespace Mono.Cecil.Cil {
+ 
+-	sealed class CodeWriter : ByteBuffer {
++	public sealed class CodeWriter : ByteBuffer {
+ 
+ 		readonly RVA code_base;
+ 		internal readonly MetadataBuilder metadata;
+diff -urp cecil-master.orig/Mono.Cecil.Cil/MethodBody.cs cecil-master/Mono.Cecil.Cil/MethodBody.cs
+--- cecil-master.orig/Mono.Cecil.Cil/MethodBody.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.Cil/MethodBody.cs	2017-09-17 21:07:03.152774753 -0700
+@@ -117,7 +117,7 @@ namespace Mono.Cecil.Cil {
+ 		}
+ 	}
+ 
+-	sealed class VariableDefinitionCollection : Collection<VariableDefinition> {
++	public sealed class VariableDefinitionCollection : Collection<VariableDefinition> {
+ 
+ 		internal VariableDefinitionCollection ()
+ 		{
+diff -urp cecil-master.orig/Mono.Cecil.Cil/OpCodes.cs cecil-master/Mono.Cecil.Cil/OpCodes.cs
+--- cecil-master.orig/Mono.Cecil.Cil/OpCodes.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.Cil/OpCodes.cs	2017-09-17 21:28:17.130816733 -0700
+@@ -12,8 +12,8 @@ namespace Mono.Cecil.Cil {
+ 
+ 	public static class OpCodes {
+ 
+-		internal static readonly OpCode [] OneByteOpCode = new OpCode [0xe0 + 1];
+-		internal static readonly OpCode [] TwoBytesOpCode = new OpCode [0x1e + 1];
++		public static readonly OpCode [] OneByteOpCode = new OpCode [0xe0 + 1];
++		public static readonly OpCode [] TwoBytesOpCode = new OpCode [0x1e + 1];
+ 
+ 		public static readonly OpCode Nop = new OpCode (
+ 			0xff << 0 | 0x00 << 8 | (byte) Code.Nop << 16 | (byte) FlowControl.Next << 24,
+diff -urp cecil-master.orig/Mono.Cecil.Cil/PortablePdb.cs cecil-master/Mono.Cecil.Cil/PortablePdb.cs
+--- cecil-master.orig/Mono.Cecil.Cil/PortablePdb.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.Cil/PortablePdb.cs	2017-09-17 21:20:02.646800439 -0700
+@@ -254,7 +254,7 @@ namespace Mono.Cecil.Cil {
+ 		}
+ 	}
+ 
+-	interface IMetadataSymbolWriter : ISymbolWriter {
++	public interface IMetadataSymbolWriter : ISymbolWriter {
+ 		void SetMetadata (MetadataBuilder metadata);
+ 		void WriteModule ();
+ 	}
+@@ -498,7 +498,7 @@ namespace Mono.Cecil.Cil {
+ 
+ #endif
+ 
+-	static class PdbGuidMapping {
++	public static class PdbGuidMapping {
+ 
+ 		static readonly Dictionary<Guid, DocumentLanguage> guid_language = new Dictionary<Guid, DocumentLanguage> ();
+ 		static readonly Dictionary<DocumentLanguage, Guid> language_guid = new Dictionary<DocumentLanguage, Guid> ();
+diff -urp cecil-master.orig/Mono.Cecil.Cil/SequencePoint.cs cecil-master/Mono.Cecil.Cil/SequencePoint.cs
+--- cecil-master.orig/Mono.Cecil.Cil/SequencePoint.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.Cil/SequencePoint.cs	2017-09-17 21:21:21.777803046 -0700
+@@ -55,7 +55,7 @@ namespace Mono.Cecil.Cil {
+ 			set { document = value; }
+ 		}
+ 
+-		internal SequencePoint (int offset, Document document)
++		public SequencePoint (int offset, Document document)
+ 		{
+ 			if (document == null)
+ 				throw new ArgumentNullException ("document");
+diff -urp cecil-master.orig/Mono.Cecil.Cil/Symbols.cs cecil-master/Mono.Cecil.Cil/Symbols.cs
+--- cecil-master.orig/Mono.Cecil.Cil/Symbols.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.Cil/Symbols.cs	2017-09-17 21:25:36.307811434 -0700
+@@ -92,10 +92,10 @@ namespace Mono.Cecil.Cil {
+ 
+ 		internal InstructionOffset start;
+ 		internal InstructionOffset end;
+-		internal ImportDebugInformation import;
+-		internal Collection<ScopeDebugInformation> scopes;
+-		internal Collection<VariableDebugInformation> variables;
+-		internal Collection<ConstantDebugInformation> constants;
++		public ImportDebugInformation import;
++		public Collection<ScopeDebugInformation> scopes;
++		public Collection<VariableDebugInformation> variables;
++		public Collection<ConstantDebugInformation> constants;
+ 
+ 		public InstructionOffset Start {
+ 			get { return start; }
+@@ -136,7 +136,7 @@ namespace Mono.Cecil.Cil {
+ 			get { return constants ?? (constants = new Collection<ConstantDebugInformation> ()); }
+ 		}
+ 
+-		internal ScopeDebugInformation ()
++		public ScopeDebugInformation ()
+ 		{
+ 			this.token = new MetadataToken (TokenType.LocalScope);
+ 		}
+@@ -291,7 +291,7 @@ namespace Mono.Cecil.Cil {
+ 			set { attributes = attributes.SetAttributes ((ushort) VariableAttributes.DebuggerHidden, value); }
+ 		}
+ 
+-		internal VariableDebugInformation (int index, string name)
++		public VariableDebugInformation (int index, string name)
+ 		{
+ 			if (name == null)
+ 				throw new ArgumentNullException ("name");
+@@ -362,10 +362,10 @@ namespace Mono.Cecil.Cil {
+ 
+ 		internal ImportTargetKind kind;
+ 
+-		internal string @namespace;
+-		internal TypeReference type;
++		public string @namespace;
++		public TypeReference type;
+ 		internal AssemblyNameReference reference;
+-		internal string alias;
++		public string alias;
+ 
+ 		public string Namespace {
+ 			get { return @namespace; }
+@@ -505,7 +505,7 @@ namespace Mono.Cecil.Cil {
+ 
+ 		public static Guid KindIdentifier = new Guid ("{54FD2AC5-E925-401A-9C2A-F94F171072F8}");
+ 
+-		internal AsyncMethodBodyDebugInformation (int catchHandler)
++		public AsyncMethodBodyDebugInformation (int catchHandler)
+ 			: base (KindIdentifier)
+ 		{
+ 			this.catch_handler = new InstructionOffset (catchHandler);
+@@ -545,7 +545,7 @@ namespace Mono.Cecil.Cil {
+ 
+ 		public static Guid KindIdentifier = new Guid ("{6DA9A61E-F8C7-4874-BE62-68BC5630DF71}");
+ 
+-		internal StateMachineScopeDebugInformation (int start, int end)
++		public StateMachineScopeDebugInformation (int start, int end)
+ 			: base (KindIdentifier)
+ 		{
+ 			this.start = new InstructionOffset (start);
+@@ -613,12 +613,12 @@ namespace Mono.Cecil.Cil {
+ 
+ 	public sealed class MethodDebugInformation : DebugInformation {
+ 
+-		internal MethodDefinition method;
+-		internal Collection<SequencePoint> sequence_points;
+-		internal ScopeDebugInformation scope;
++		public MethodDefinition method;
++		public Collection<SequencePoint> sequence_points;
++		public ScopeDebugInformation scope;
+ 		internal MethodDefinition kickoff_method;
+-		internal int code_size;
+-		internal MetadataToken local_var_token;
++		public int code_size;
++		public MetadataToken local_var_token;
+ 
+ 		public MethodDefinition Method {
+ 			get { return method; }
+@@ -642,7 +642,7 @@ namespace Mono.Cecil.Cil {
+ 			set { kickoff_method = value; }
+ 		}
+ 
+-		internal MethodDebugInformation (MethodDefinition method)
++		public MethodDebugInformation (MethodDefinition method)
+ 		{
+ 			if (method == null)
+ 				throw new ArgumentNullException ("method");
+@@ -934,7 +934,7 @@ namespace Mono.Cecil.Cil {
+ 
+ namespace Mono.Cecil {
+ 
+-	static partial class Mixin {
++	public static partial class Mixin {
+ 
+ 		public static ImageDebugHeaderEntry GetCodeViewEntry (this ImageDebugHeader header)
+ 		{
+diff -urp cecil-master.orig/Mono.Cecil.Metadata/BlobHeap.cs cecil-master/Mono.Cecil.Metadata/BlobHeap.cs
+--- cecil-master.orig/Mono.Cecil.Metadata/BlobHeap.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.Metadata/BlobHeap.cs	2017-09-17 21:09:35.975779788 -0700
+@@ -12,7 +12,7 @@ using System;
+ 
+ namespace Mono.Cecil.Metadata {
+ 
+-	sealed class BlobHeap : Heap {
++	public sealed class BlobHeap : Heap {
+ 
+ 		public BlobHeap (byte [] data)
+ 			: base (data)
+diff -urp cecil-master.orig/Mono.Cecil.Metadata/Buffers.cs cecil-master/Mono.Cecil.Metadata/Buffers.cs
+--- cecil-master.orig/Mono.Cecil.Metadata/Buffers.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.Metadata/Buffers.cs	2017-09-17 20:58:18.252757456 -0700
+@@ -20,7 +20,7 @@ using RVA = System.UInt32;
+ 
+ namespace Mono.Cecil.Metadata {
+ 
+-	sealed class TableHeapBuffer : HeapBuffer {
++	public sealed class TableHeapBuffer : HeapBuffer {
+ 
+ 		readonly ModuleDefinition module;
+ 		readonly MetadataBuilder metadata;
+@@ -33,7 +33,7 @@ namespace Mono.Cecil.Metadata {
+ 		bool large_guid;
+ 
+ 		readonly int [] coded_index_sizes = new int [Mixin.CodedIndexCount];
+-		readonly Func<Table, int> counter;
++		public readonly Func<Table, int> counter;
+ 
+ 		internal uint [] string_offsets;
+ 
+@@ -271,7 +271,7 @@ namespace Mono.Cecil.Metadata {
+ 		}
+ 	}
+ 
+-	abstract class HeapBuffer : ByteBuffer {
++	public abstract class HeapBuffer : ByteBuffer {
+ 
+ 		public bool IsLarge {
+ 			get { return base.length > 65535; }
+diff -urp cecil-master.orig/Mono.Cecil.Metadata/CodedIndex.cs cecil-master/Mono.Cecil.Metadata/CodedIndex.cs
+--- cecil-master.orig/Mono.Cecil.Metadata/CodedIndex.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.Metadata/CodedIndex.cs	2017-09-17 20:55:36.101752113 -0700
+@@ -10,7 +10,7 @@
+ 
+ namespace Mono.Cecil.Metadata {
+ 
+-	enum CodedIndex {
++	public enum CodedIndex {
+ 		TypeDefOrRef,
+ 		HasConstant,
+ 		HasCustomAttribute,
+diff -urp cecil-master.orig/Mono.Cecil.Metadata/ElementType.cs cecil-master/Mono.Cecil.Metadata/ElementType.cs
+--- cecil-master.orig/Mono.Cecil.Metadata/ElementType.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.Metadata/ElementType.cs	2017-09-17 20:55:06.887751150 -0700
+@@ -10,7 +10,7 @@
+ 
+ namespace Mono.Cecil.Metadata {
+ 
+-	enum ElementType : byte {
++	public enum ElementType : byte {
+ 		None = 0x00,
+ 		Void = 0x01,
+ 		Boolean = 0x02,
+diff -urp cecil-master.orig/Mono.Cecil.Metadata/GuidHeap.cs cecil-master/Mono.Cecil.Metadata/GuidHeap.cs
+--- cecil-master.orig/Mono.Cecil.Metadata/GuidHeap.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.Metadata/GuidHeap.cs	2017-09-17 21:09:40.759779946 -0700
+@@ -12,7 +12,7 @@ using System;
+ 
+ namespace Mono.Cecil.Metadata {
+ 
+-	sealed class GuidHeap : Heap {
++	public sealed class GuidHeap : Heap {
+ 
+ 		public GuidHeap (byte [] data)
+ 			: base (data)
+diff -urp cecil-master.orig/Mono.Cecil.Metadata/Heap.cs cecil-master/Mono.Cecil.Metadata/Heap.cs
+--- cecil-master.orig/Mono.Cecil.Metadata/Heap.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.Metadata/Heap.cs	2017-09-17 21:09:27.160779498 -0700
+@@ -10,7 +10,7 @@
+ 
+ namespace Mono.Cecil.Metadata {
+ 
+-	abstract class Heap {
++	public abstract class Heap {
+ 
+ 		public int IndexSize;
+ 
+diff -urp cecil-master.orig/Mono.Cecil.Metadata/PdbHeap.cs cecil-master/Mono.Cecil.Metadata/PdbHeap.cs
+--- cecil-master.orig/Mono.Cecil.Metadata/PdbHeap.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.Metadata/PdbHeap.cs	2017-09-17 21:09:20.296779272 -0700
+@@ -14,7 +14,7 @@ using RID = System.UInt32;
+ 
+ namespace Mono.Cecil.Metadata {
+ 
+-	sealed class PdbHeap : Heap {
++	public sealed class PdbHeap : Heap {
+ 
+ 		public byte [] Id;
+ 		public RID EntryPoint;
+diff -urp cecil-master.orig/Mono.Cecil.Metadata/Row.cs cecil-master/Mono.Cecil.Metadata/Row.cs
+--- cecil-master.orig/Mono.Cecil.Metadata/Row.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.Metadata/Row.cs	2017-09-17 21:07:28.942775602 -0700
+@@ -12,7 +12,7 @@ using System.Collections.Generic;
+ 
+ namespace Mono.Cecil.Metadata {
+ 
+-	struct Row<T1, T2> {
++	public struct Row<T1, T2> {
+ 		internal T1 Col1;
+ 		internal T2 Col2;
+ 
+diff -urp cecil-master.orig/Mono.Cecil.Metadata/StringHeap.cs cecil-master/Mono.Cecil.Metadata/StringHeap.cs
+--- cecil-master.orig/Mono.Cecil.Metadata/StringHeap.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.Metadata/StringHeap.cs	2017-09-17 21:09:43.271780029 -0700
+@@ -14,7 +14,7 @@ using System.Text;
+ 
+ namespace Mono.Cecil.Metadata {
+ 
+-	class StringHeap : Heap {
++	public class StringHeap : Heap {
+ 
+ 		readonly Dictionary<uint, string> strings = new Dictionary<uint, string> ();
+ 
+diff -urp cecil-master.orig/Mono.Cecil.Metadata/TableHeap.cs cecil-master/Mono.Cecil.Metadata/TableHeap.cs
+--- cecil-master.orig/Mono.Cecil.Metadata/TableHeap.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.Metadata/TableHeap.cs	2017-09-17 21:11:48.368784151 -0700
+@@ -13,7 +13,7 @@ using Mono.Cecil.PE;
+ 
+ namespace Mono.Cecil.Metadata {
+ 
+-	enum Table : byte {
++	public enum Table : byte {
+ 		Module = 0x00,
+ 		TypeRef = 0x01,
+ 		TypeDef = 0x02,
+@@ -70,7 +70,7 @@ namespace Mono.Cecil.Metadata {
+ 		CustomDebugInformation = 0x37,
+ 	}
+ 
+-	struct TableInformation {
++	public struct TableInformation {
+ 		public uint Offset;
+ 		public uint Length;
+ 		public uint RowSize;
+@@ -80,7 +80,7 @@ namespace Mono.Cecil.Metadata {
+ 		}
+ 	}
+ 
+-	sealed class TableHeap : Heap {
++	public sealed class TableHeap : Heap {
+ 
+ 		public long Valid;
+ 		public long Sorted;
+diff -urp cecil-master.orig/Mono.Cecil.Metadata/UserStringHeap.cs cecil-master/Mono.Cecil.Metadata/UserStringHeap.cs
+--- cecil-master.orig/Mono.Cecil.Metadata/UserStringHeap.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.Metadata/UserStringHeap.cs	2017-09-17 21:09:31.192779631 -0700
+@@ -10,7 +10,7 @@
+ 
+ namespace Mono.Cecil.Metadata {
+ 
+-	sealed class UserStringHeap : StringHeap {
++	public sealed class UserStringHeap : StringHeap {
+ 
+ 		public UserStringHeap (byte [] data)
+ 			: base (data)
+diff -urp cecil-master.orig/Mono.Cecil.PE/BinaryStreamReader.cs cecil-master/Mono.Cecil.PE/BinaryStreamReader.cs
+--- cecil-master.orig/Mono.Cecil.PE/BinaryStreamReader.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.PE/BinaryStreamReader.cs	2017-09-17 21:13:30.555787518 -0700
+@@ -13,7 +13,7 @@ using System.IO;
+ 
+ namespace Mono.Cecil.PE {
+ 
+-	class BinaryStreamReader : BinaryReader {
++	public class BinaryStreamReader : BinaryReader {
+ 
+ 		public int Position {
+ 			get { return (int) BaseStream.Position; }
+diff -urp cecil-master.orig/Mono.Cecil.PE/BinaryStreamWriter.cs cecil-master/Mono.Cecil.PE/BinaryStreamWriter.cs
+--- cecil-master.orig/Mono.Cecil.PE/BinaryStreamWriter.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.PE/BinaryStreamWriter.cs	2017-09-17 21:14:40.135789811 -0700
+@@ -15,7 +15,7 @@ using System.IO;
+ 
+ namespace Mono.Cecil.PE {
+ 
+-	class BinaryStreamWriter : BinaryWriter {
++	public class BinaryStreamWriter : BinaryWriter {
+ 
+ 		public int Position {
+ 			get { return (int) BaseStream.Position; }
+diff -urp cecil-master.orig/Mono.Cecil.PE/ByteBuffer.cs cecil-master/Mono.Cecil.PE/ByteBuffer.cs
+--- cecil-master.orig/Mono.Cecil.PE/ByteBuffer.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.PE/ByteBuffer.cs	2017-09-17 20:58:45.883758366 -0700
+@@ -12,7 +12,7 @@ using System;
+ 
+ namespace Mono.Cecil.PE {
+ 
+-	class ByteBuffer {
++	public class ByteBuffer {
+ 
+ 		internal byte [] buffer;
+ 		internal int length;
+diff -urp cecil-master.orig/Mono.Cecil.PE/DataDirectory.cs cecil-master/Mono.Cecil.PE/DataDirectory.cs
+--- cecil-master.orig/Mono.Cecil.PE/DataDirectory.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.PE/DataDirectory.cs	2017-09-17 21:08:45.018778109 -0700
+@@ -14,7 +14,7 @@ using RVA = System.UInt32;
+ 
+ namespace Mono.Cecil.PE {
+ 
+-	struct DataDirectory {
++	public struct DataDirectory {
+ 
+ 		public readonly RVA VirtualAddress;
+ 		public readonly uint Size;
+diff -urp cecil-master.orig/Mono.Cecil.PE/Image.cs cecil-master/Mono.Cecil.PE/Image.cs
+--- cecil-master.orig/Mono.Cecil.PE/Image.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.PE/Image.cs	2017-09-17 21:12:18.847785155 -0700
+@@ -19,7 +19,7 @@ using RVA = System.UInt32;
+ 
+ namespace Mono.Cecil.PE {
+ 
+-	sealed class Image : IDisposable {
++	public sealed class Image : IDisposable {
+ 
+ 		public Disposable<Stream> Stream;
+ 		public string FileName;
+@@ -52,7 +52,7 @@ namespace Mono.Cecil.PE {
+ 
+ 		readonly int [] coded_index_sizes = new int [14];
+ 
+-		readonly Func<Table, int> counter;
++		public readonly Func<Table, int> counter;
+ 
+ 		public Image ()
+ 		{
+diff -urp cecil-master.orig/Mono.Cecil.PE/Section.cs cecil-master/Mono.Cecil.PE/Section.cs
+--- cecil-master.orig/Mono.Cecil.PE/Section.cs	2017-09-08 10:58:17.000000000 -0700
++++ cecil-master/Mono.Cecil.PE/Section.cs	2017-09-17 21:10:17.861781169 -0700
+@@ -14,7 +14,7 @@ using RVA = System.UInt32;
+ 
+ namespace Mono.Cecil.PE {
+ 
+-	sealed class Section {
++	public sealed class Section {
+ 		public string Name;
+ 		public RVA VirtualAddress;
+ 		public uint VirtualSize;
+Binary files cecil-master.orig/obj/net_3_5_Release/Mono.Cecil.dll and cecil-master/obj/net_3_5_Release/Mono.Cecil.dll differ
+Binary files cecil-master.orig/obj/net_3_5_Release/Mono.Cecil.dll.mdb and cecil-master/obj/net_3_5_Release/Mono.Cecil.dll.mdb differ
+Only in cecil-master/rocks/obj/net_3_5_Release: Mono.Cecil.Rocks.csproj.FilesWrittenAbsolute.txt
+Only in cecil-master/rocks/obj/net_3_5_Release: Mono.Cecil.Rocks.dll
+Only in cecil-master/rocks/obj/net_3_5_Release: Mono.Cecil.Rocks.dll.mdb
+Only in cecil-master/symbols/mdb/obj/net_3_5_Release: Mono.Cecil.Mdb.csproj.FilesWrittenAbsolute.txt
+Only in cecil-master/symbols/mdb/obj/net_3_5_Release: Mono.Cecil.Mdb.dll
+Only in cecil-master/symbols/mdb/obj/net_3_5_Release: Mono.Cecil.Mdb.dll.mdb
+Only in cecil-master/symbols/pdb/obj/net_3_5_Release: Mono.Cecil.Pdb.csproj.FilesWrittenAbsolute.txt
+Only in cecil-master/symbols/pdb/obj/net_3_5_Release: Mono.Cecil.Pdb.dll
+Only in cecil-master/symbols/pdb/obj/net_3_5_Release: Mono.Cecil.Pdb.dll.mdb
+Only in cecil-master/symbols/pdb/Test: bin
+Only in cecil-master/symbols/pdb/Test: obj

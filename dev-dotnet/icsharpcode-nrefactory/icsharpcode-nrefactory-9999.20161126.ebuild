@@ -25,6 +25,7 @@ RDEPEND=">=dev-lang/mono-4
 	 !dev-dotnet/icsharpcode-nrefactory-bin"
 DEPEND="${RDEPEND}
 	>=dev-lang/mono-4
+	dev-dotnet/gtk-sharp:3
 "
 
 S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"

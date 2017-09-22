@@ -35,6 +35,7 @@ REQUIRED_USE="
         accelerated-2d-canvas? ( webgl !gles2 )
 	hardened? ( !jit )
 "
+REQUIRED_USE+=" jit" #breaks google.com without it
 
 # Tests fail to link for inexplicable reasons
 # https://bugs.webkit.org/show_bug.cgi?id=148210

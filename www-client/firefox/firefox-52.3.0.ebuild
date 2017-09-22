@@ -43,6 +43,7 @@ LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 IUSE="bindist +gmp-autoupdate hardened hwaccel jack pgo rust selinux test"
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE+=" ${_ABIS}"
+IUSE+=" noto-fix"
 REQUIRED_USE="^^ ( ${_ABIS} )"
 RESTRICT="!bindist? ( bindist )"
 
@@ -196,6 +197,10 @@ src_prepare() {
 
 	if [[ "${CFLAGS}" =~ "fast-math" || "${CXXFLAGS}" =~ "fast-math" ]] ; then
 		epatch "${FILESDIR}/firefox-52.2.0-opus-fast-math.patch"
+	fi
+
+	if use noto-fix ; then
+		epatch "${FILESDIR}"/firefox-52.3.0-noto-fix.patch
 	fi
 
 	multilib_copy_sources
