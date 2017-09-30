@@ -2,6 +2,10 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
+#stable driver
+#does not work for >=4.11,4.4.89
+#works with 4.1.43
+
 EAPI=5
 
 MULTILIB_COMPAT=( abi_x86_{32,64} )
@@ -27,7 +31,8 @@ KEYWORDS="-* ~amd64 ~x86"
 RESTRICT="bindist test fetch"
 
 RDEPEND="
-	<=x11-base/xorg-server-1.17.49[-minimal]
+	<x11-base/xorg-server-1.18[-minimal]
+	!<x11-base/xorg-server-1.17
 	>=app-eselect/eselect-opengl-1.0.7
 	app-eselect/eselect-opencl
 	sys-power/acpid
@@ -194,6 +199,11 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+	#version check
+	if kernel_is -ge 4 4 ; then
+		die "Running kernel version is not supported.  4.1.43 is known to work."
+	fi
+
 	if use modules; then
 		MODULE_PATH="${S}/${FOLDER_PREFIX}/lib/modules/fglrx/build_mod/2.6.x"
 		MODULE_NAMES="fglrx(video:${MODULE_PATH})"
@@ -325,11 +335,11 @@ src_prepare() {
 	epatch "${FILESDIR}/15.9-fpu.patch"
 	epatch "${FILESDIR}/15.9-kcl_str.patch"
 	epatch "${FILESDIR}/15.9-sep_printf.patch"
-	epatch "${FILESDIR}/15.9-mtrr.patch"
+	#epatch "${FILESDIR}/15.9-mtrr.patch"
 
 	#if kernel_is ge 4 11 0; then
 		cd "${WORKDIR}"
-		epatch "${FILESDIR}/fglrx_15.9_kernel_4.11.diff"
+		epatch "${FILESDIR}/fglrx_15.9_kernel_4.12.diff"
 	#fi
 
 	epatch_user
@@ -552,7 +562,8 @@ src_install-libs() {
 	doexe "${MY_ARCH_DIR}"/usr/${pkglibdir}/libati*.so*
 
 	# OpenCL vendor files
-	insinto /etc/OpenCL/vendors/
+	#insinto /etc/OpenCL/vendors/
+	insinto /etc/OpenCL/profiles/amd
 	cat > "${T}"/amdocl${oclsuffix}.icd <<-EOF
 		/usr/$(get_libdir)/OpenCL/vendors/amd/libamdocl${oclsuffix}.so
 	EOF

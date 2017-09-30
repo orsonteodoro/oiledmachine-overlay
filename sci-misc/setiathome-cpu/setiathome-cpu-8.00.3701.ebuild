@@ -7,7 +7,7 @@ EAPI="6"
 inherit autotools eutils flag-o-matic subversion toolchain-funcs versionator git-r3
 
 SETIATHOME_VERSION="$(get_version_component_range 1-2 ${PV})"
-SETIATHOME_SVN_REVISION="$(get_version_component_range 3 ${PV})"
+SETIATHOME_SVN_REVISION="$(get_version_component_range 3 ${PV})" #track https://setisvn.ssl.berkeley.edu/trac/browser/seti_boinc
 MY_P="setiathome-cpu-${SETIATHOME_VERSION}"
 DESCRIPTION="Seti@Home"
 HOMEPAGE="http://setiathome.ssl.berkeley.edu/"
@@ -29,13 +29,13 @@ RDEPEND="
 "
 
 #BOINC_VER=`boinc --version | cut -d' ' -f1`
-BOINC_VER="7.2.44"
+BOINC_VER="7.2.47"
 #BOINC_MAJOR=`echo $BOINC_VER | cut -d. -f1`
 #BOINC_MINOR=`echo $BOINC_VER | cut -d. -f2`
 DEPEND="${RDEPEND}
 	=sys-devel/autoconf-2.67
 	sci-misc/boinc:=
-	sci-misc/setiathome-boincdir:${BOINC_VER}
+	sci-misc/setiathome-boincdir:0/${BOINC_VER}
 "
 
 S="${WORKDIR}/${MY_P}"
@@ -58,8 +58,11 @@ src_unpack() {
 src_prepare() {
 	cd "${WORKDIR}/${MY_P}"
 	eapply "${FILESDIR}"/setiathome-7.09-configureac.patch
-	eapply "${FILESDIR}"/setiathome-8.00-nopackagever.patch
+	eapply "${FILESDIR}"/setiathome-8.00.3701-nopackagever.patch
 	eapply "${FILESDIR}"/setiathome-cpu-8.00.3473-concat-custom-string-fix.patch
+
+	PACKAGE_VERSION=$(grep -r -e "PACKAGE_VERSION" ./sah_config.h | cut -d' ' -f3 | sed -e "s|\"||g")
+	sed -i -e "s|__PACKAGE_VERSION__|$PACKAGE_VERSION|g" AKv8/client/analyzeFuncs.cpp || die
 
 	if $(version_is_at_least "7.3.19" $BOINC_VER ) ; then
 		true

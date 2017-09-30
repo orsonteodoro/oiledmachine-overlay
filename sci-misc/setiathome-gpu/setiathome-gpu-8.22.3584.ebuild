@@ -6,11 +6,11 @@ EAPI="6"
 
 inherit autotools eutils flag-o-matic subversion toolchain-funcs versionator git-r3
 
-ASTROPULSE_VERSION="$(get_version_component_range 1-2 ${PV})"
-ASTROPULSE_SVN_REVISION="$(get_version_component_range 3 ${PV})" #match https://setisvn.ssl.berkeley.edu/trac/browser/branches/sah_v7_opt/AP_BLANKIT/client
-SETIATHOME_SVN_REVISION="3701" #match setiathome-gpu
-MY_P="astropulse-gpu-${ASTROPULSE_VERSION}"
-DESCRIPTION="Astropulse"
+SETIATHOME_VERSION="$(get_version_component_range 1-2 ${PV})"
+SETIATHOME_SVN_REVISION="$(get_version_component_range 3 ${PV})" #track https://setisvn.ssl.berkeley.edu/trac/browser/branches/sah_v7_opt/AKv8/client
+SETIATHOME_GL_GRAPHICS_REVISION="1962" #7.07 trunk
+MY_P="setiathome-gpu-${SETIATHOME_VERSION}"
+DESCRIPTION="Seti@Home"
 HOMEPAGE="http://setiathome.ssl.berkeley.edu/"
 SRC_URI=""
 
@@ -22,6 +22,7 @@ KEYWORDS="~alpha amd64 ~arm ~ia64 ~mips ~ppc ~ppc64 ~sparc x86 ~amd64-fbsd ~x86-
 
 #cuda only supported on windows
 IUSE="video_cards_r600 test 32bit 64bit opengl opencl -cuda -cuda_2_2 -cuda_2_3 -cuda_3_2 -cuda_4_2 -cuda_5_0 custom-cflags avx2 avx avx-btver2 avx-bdver3 avx-bdver2 avx-bdver1 sse42 sse41 ssse3 sse3 sse2 sse mmx 3dnow video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel ati_hd4xxx core2 xeon ppc ppc64 x32 x64 intel_hd intel_hd2xxx intel_hd3xxx intel_hd_gt1 intel_hd4xxx intel_hd5xxx intel_iris5xxx ati_hd5xxx ati_hd6xxx ati_hd7xxx ati_hdx3xx ati_hdx4xx ati_hdx5xx ati_hdx6xx ati_hdx7xx ati_hdx8xx ati_hdx9xx ati_rx_200 ati_rx_300 ati_rx_400 ati_rx_x2x ati_rx_x3x ati_rx_x4x ati_rx_x5x ati_rx_x6x ati_rx_x7x ati_rx_x8x ati_rx_x9x nv_1xx nv_2xx nv_3xx nv_4xx nv_5xx nv_6xx nv_7xx nv_8xx nv_9xx nv_x00 nv_x10 nv_x20 nv_x30 nv_x40 nv_x00_fast nv_x10_fast nv_x20_fast nv_x30_fast nv_x40_fast nv_x50 nv_x60 nv_x70 nv_x50_fast nv_x60_fast nv_x70_fast nv_x70 nv_x80 nv_x70_fast nv_x80_fast nv_780ti nv_titan nv_780ti_fast nv_titan_fast nv_8xxx nv_9xxx nv_8xxx_fast nv_9xxx_fast armv6-neon-nopie armv6-neon armv6-vfp-nopie armv6-vfp armv7-neon armv7-neon-nopie armv7-vfpv3 armv7-vfpv3d16 armv7-vfpv3d16-nopie armv7-vfpv4 armv7-vfpv4-nopie arm pgo ati_apu"
+REQUIRED_USE=""
 
 #	dev-libs/asmlib
 RDEPEND="
@@ -31,7 +32,7 @@ RDEPEND="
 	video_cards_amdgpu? ( || ( dev-util/amdapp ) )
 	video_cards_intel? ( dev-libs/intel-beignet )
 	video_cards_r600? ( media-libs/mesa[opencl] )
-	sci-misc/astropulse-art:7
+	sci-misc/setiathome-art:7
 "
 REQUIRED_USE="video_cards_fglrx? ( video_cards_amdgpu ) !video_cards_r600"
 
@@ -44,6 +45,7 @@ DEPEND="${RDEPEND}
 	opencl? ( dev-util/amdapp )
 	sci-misc/boinc:=
 	sci-misc/setiathome-boincdir:0/${BOINC_VER}
+	app-text/xmlstarlet
 "
 
 S="${WORKDIR}/${MY_P}"
@@ -59,31 +61,23 @@ pkg_setup() {
 	elif use video_cards_r600 ; then
 		die "Mesa Clover (open source OpenCL implementation) is not supported.  Use the proprietary driver."
 	fi
-
-	if [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]]; then
-		ewarn "The configure script may fail with clang.  Switch to gcc if it fails."
-	fi
 }
 
 pkg_pretend() {
-	DEVICES_DRM_RENDER_NODES=""
-	if use video_cards_amdgpu ;  then
-		DEVICES_DRM_RENDER_NODES=$(ls /dev/dri/renderD*)
-	fi
-        for DEVICE in $(ls /dev/*/card*) ${DEVICES_DRM_RENDER_NODES}
-        do
-                cat /etc/sandbox.conf | grep -e "${DEVICE}"
-                if [ $? == 1 ] ; then
-                        die "SANDBOX_WRITE=\"${DEVICE}\" needs to be added to /etc/sandbox.conf"
-                fi
-        done
+	for DEVICE in $(ls /dev/*/card*)
+	do
+	        cat /etc/sandbox.conf | grep -e "${DEVICE}"
+	        if [ $? == 1 ] ; then
+	                die "SANDBOX_WRITE=\"${DEVICE}\" needs to be added to /etc/sandbox.conf"
+	        fi
+	done
 }
 
 src_unpack() {
 	ESVN_REPO_URI="https://setisvn.ssl.berkeley.edu/svn/branches/sah_v7_opt"
-        ESVN_REVISION="${ASTROPULSE_SVN_REVISION}"
+	ESVN_REVISION="${SETIATHOME_SVN_REVISION}"
 	ESVN_OPTIONS="--trust-server-cert"
-        subversion_src_unpack
+	subversion_src_unpack
 	cp -r "${ESVN_STORE_DIR}/${PN}/sah_v7_opt" "${WORKDIR}/${MY_P}"
 	mkdir "${WORKDIR}/${MY_P}/AKv8/client/.deps"
 
@@ -95,13 +89,17 @@ src_unpack() {
 	BOINC_MINOR=`echo $BOINC_VER | cut -d. -f2`
 	URL="https://github.com/BOINC/boinc/archive/client_release/$BOINC_MAJOR.$BOINC_MINOR/$BOINC_VER.zip"
 
+	cd "${WORKDIR}/${MY_P}/AKv8"
+	epatch "${FILESDIR}"/setiathome-7.08-makefileam-01.patch
+	epatch "${FILESDIR}"/setiathome-7.08-makefileam-02.patch
+
 	cd "${WORKDIR}/${MY_P}"
-	epatch "${FILESDIR}"/astropulse-7.00-apclientmaincpp.patch #1
-	epatch "${FILESDIR}"/setiathome-7.08-makefileam-ap-gfx.patch #10
-	epatch "${FILESDIR}"/setiathome-7.08-configureac-ap-gfx.patch #9
+	epatch "${FILESDIR}"/setiathome-7.08-makefileam-sah-gfx.patch
+	epatch "${FILESDIR}"/setiathome-7.08-sahgfxbase.patch
+	epatch "${FILESDIR}"/setiathome-8.22.3602-configureac-sah-gfx.patch
 
 	cd "${WORKDIR}/${MY_P}/AKv8/client"
-        ESVN_REVISION="${SETIATHOME_SVN_REVISION}"
+	ESVN_REVISION="${SETIATHOME_GL_GRAPHICS_REVISION}"
 	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_gfx_main.h" || die
 	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_gfx_main.cpp" || die
 	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_version.cpp" || die
@@ -109,17 +107,67 @@ src_unpack() {
 	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/graphics_main.cpp" || die
 
 	cd "${WORKDIR}/${MY_P}"
-	epatch "${FILESDIR}"/setiathome-7.08-makefileam-apshmem.patch #11
-	epatch "${FILESDIR}"/setiathome-7.08-apclientmaincpp-apshmem.patch #7
-	epatch "${FILESDIR}"/setiathome-7.08-setih-graphics_lib_handle.patch #test
-        epatch "${FILESDIR}"/setiathome-7.08-makefileam-ap-apshmem.patch #10
-        epatch "${FILESDIR}"/setiathome-7.08-apclientmaincpp-ap-doublemax.patch #5
-        epatch "${FILESDIR}"/setiathome-7.08-apgfxbaseh-ap-reducedarraygen.patch #8
-	epatch "${FILESDIR}"/setiathome-7.08-sah-ap-graphics-ap.patch #13 ap
-	epatch "${FILESDIR}"/setiathome-7.08-ap-configureac-enablegraphics.patch #2
-	epatch "${FILESDIR}"/setiathome-7.08-ap-sah-graphics-fixes1.patch #4
-	epatch "${FILESDIR}"/setiathome-7.08-ap-sah-glew-ap.patch #3 ap
-	epatch "${FILESDIR}"/setiathome-7.08-noopengl-ap.patch #12 ap
+	epatch "${FILESDIR}"/setiathome-7.08-gdatah-gfx.patch
+	epatch "${FILESDIR}"/setiathome-7.08-maincpp-gfx.patch
+	epatch "${FILESDIR}"/setiathome-7.08-sahgfxmainh-gfx.patch
+	epatch "${FILESDIR}"/setiathome-7.08-setih-gfx.patch
+	epatch "${FILESDIR}"/setiathome-7.08-workercpp-gfx.patch
+	epatch "${FILESDIR}"/setiathome-7.08-maincpp-init.patch
+	epatch "${FILESDIR}"/setiathome-7.08-main.cpp-graphics2.patch
+	epatch "${FILESDIR}"/setiathome-7.08-setih-graphics_lib_handle.patch
+	epatch "${FILESDIR}"/setiathome-7.08-analyzefuncscpp-sah_gfx_main.h.patch
+	epatch "${FILESDIR}"/setiathome-7.08-workercpp-graphicsold.patch
+	epatch "${FILESDIR}"/setiathome-7.08-maincpp-graphics2.patch
+	epatch "${FILESDIR}"/setiathome-7.08-makefileam-amcflags.patch
+	epatch "${FILESDIR}"/setiathome-7.08-sahgfxh-get_sah_graphics.patch
+	epatch "${FILESDIR}"/setiathome-7.08-workercpp-old.patch
+	epatch "${FILESDIR}"/setiathome-7.08-sahgfxcpp-glut.patch
+	epatch "${FILESDIR}"/setiathome-7.08-sahgfx.cpp-rarray.patch
+	epatch "${FILESDIR}"/setiathome-7.08-graphics2-1.patch
+	epatch "${FILESDIR}"/setiathome-7.08-graphics2-2.patch
+	epatch "${FILESDIR}"/setiathome-7.08-graphics2-3.patch
+	epatch "${FILESDIR}"/setiathome-7.08-graphics2-4.patch
+	epatch "${FILESDIR}"/setiathome-7.08-graphics2-5.patch
+	epatch "${FILESDIR}"/setiathome-7.08-graphics2-6.patch
+	epatch "${FILESDIR}"/setiathome-7.08-graphics2-7.patch
+	epatch "${FILESDIR}"/setiathome-7.08-graphics2-8.patch
+	epatch "${FILESDIR}"/setiathome-7.08-graphics2-9.patch
+	epatch "${FILESDIR}"/setiathome-7.08-graphics2-10.patch
+	epatch "${FILESDIR}"/setiathome-7.08-graphics2-11.patch
+	epatch "${FILESDIR}"/setiathome-7.08-graphics2-12.patch
+	epatch "${FILESDIR}"/setiathome-7.08-graphics2-13.patch
+	epatch "${FILESDIR}"/setiathome-7.08-graphics2-14.patch
+	epatch "${FILESDIR}"/setiathome-7.08-graphics2-15.patch
+	epatch "${FILESDIR}"/setiathome-7.08-seti.h-noguiso.patch
+	epatch "${FILESDIR}"/setiathome-analyzepot.cpp-gdatasahgraphics.patch
+	epatch "${FILESDIR}"/setiathome-analyzereport.cpp-gdatasahgraphics.patch
+	epatch "${FILESDIR}"/setiathome-gaussfit.cpp-gdatasahgraphics.patch
+	epatch "${FILESDIR}"/setiathome-seti.cpp-gdatasahgraphics.patch
+	epatch "${FILESDIR}"/setiathome-spike.cpp-gdatasahgraphics.patch
+	epatch "${FILESDIR}"/setiathome-worker.cpp-gdatasahgraphics.patch
+	epatch "${FILESDIR}"/setiathome-7.08-sahgfxcpp-buf1buf2.patch
+	epatch "${FILESDIR}"/setiathome-7.08-makefileam-sahgfxbase.patch
+	epatch "${FILESDIR}"/setiathome-7.08-sah_gfx_base.h-reducedarrayrender.patch
+	epatch "${FILESDIR}"/setiathome-7.08-sah_gfx.cpp-cnvt_fftlen_hz.patch
+	epatch "${FILESDIR}"/setiathome-7.08-sah-ap-graphics-sah.patch ##split
+	epatch "${FILESDIR}"/setiathome-7.08-sah-ap-shmem-fixes.patch
+	epatch "${FILESDIR}"/setiathome-7.09-sah-ap-makefileincl.patch
+	epatch "${FILESDIR}"/setiathome-7.08-ap-sah-glew-sah.patch ##split
+	epatch "${FILESDIR}"/setiathome-7.08-sah_gfx_base.cpp-setupgivenprefs.patch
+	epatch "${FILESDIR}"/setiathome-7.08-noopengl-sah.patch ##split
+	epatch "${FILESDIR}"/setiathome-gpu-7.08-sahgfxbasecpp-havegl.patch
+	epatch "${FILESDIR}"/setiathome-7.08-gpu-analyzefuncscpp-removegbp.patch
+	#epatch "${FILESDIR}"/setiathome-7.08-sah-sah_graphics-swi.patch
+	epatch "${FILESDIR}"/setiathome-7.08-gpu-wufix.patch
+	epatch "${FILESDIR}"/setiathome-gpu-8.0-gpu-opengl-on-opencl-1.patch
+	epatch "${FILESDIR}"/setiathome-gpu-8.22.3602-gpu-opengl-on-opencl-2.patch #8.22.3602 needs testing for this patch
+	epatch "${FILESDIR}"/setiathome-gpu-8.22.3602-gpu-opengl-on-opencl-3.patch
+	epatch "${FILESDIR}"/setiathome-gpu-8.0-gpu-opengl-on-opencl-4.patch
+	epatch "${FILESDIR}"/setiathome-gpu-8.0-gpu-opengl-on-opencl-5.patch
+	epatch "${FILESDIR}"/setiathome-gpu-8.0-gpu-opengl-on-opencl-6.patch
+	epatch "${FILESDIR}"/setiathome-gpu-8.0-gpu-opengl-on-opencl-7.patch
+	epatch "${FILESDIR}"/setiathome-gpu-8.0-gpu-opengl-on-opencl-8.patch
+	epatch "${FILESDIR}"/setiathome-gpu-8.00-clang-fix.patch
 
 	#cd "${WORKDIR}/${MY_P}/AKv8/client"
 	#touch gl.h glu.h glut.h
@@ -130,42 +178,28 @@ src_unpack() {
         #subversion_src_unpack
 	#cp -r "${ESVN_STORE_DIR}/${PN}/glut" "${WORKDIR}/${MY_P}/AKv8"
 
-	if use test || use pgo ; then
-		cd "${WORKDIR}/${MY_P}/AP/client"
-		wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/astropulse/client/in.dat" || die
-		wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/astropulse/client/pulse.out.ref" || die
-	fi
-
 	if $(version_is_at_least "7.3.19" $BOINC_VER ) ; then
 		true
 	else
 		cd "${S}"
-		epatch "${FILESDIR}"/astropulse-gpu-7.01.3375-boinc-compat.patch
+		epatch "${FILESDIR}"/setiathome-gpu-8.22.3602-boinc-compat-1.patch
+		epatch "${FILESDIR}"/setiathome-gpu-8.22.3602-boinc-compat-2.patch
 	fi
+
+	epatch "${FILESDIR}"/setiathome-gpu-8.22.3602-uncomment-pulsepotnum.patch
 }
 
 src_prepare() {
 	eapply_user
 
-	cd "${WORKDIR}/${MY_P}/AP/client"
+	cd "${WORKDIR}/${MY_P}/AKv8"
 	AT_M4DIR="m4" eautoreconf
 	chmod +x configure
-
-	if use test || use pgo ; then
-		if use video_cards_intel ; then
-			VIDEO_CARD="intel_gpu"
-		elif use video_cards_amdgpu || use video_cards_fglrx ; then
-			VIDEO_CARD="ATI"
-		elif use video_cards_nvidia ; then
-			VIDEO_CARD="NVIDIA"
-		else
-			die "only intel, amdgpu, fglrx, nvidia supported"
-		fi
-	fi
 }
 
 src_configure() {
         append-flags -Wa,--noexecstack
+	append-flags -fexceptions
 	#conf run in src_compile
 }
 
@@ -181,8 +215,6 @@ function run_config {
 	local -a sahfftwlibs
 	local -a apfftwlibs
 	local -a asmlibs
-
-	append-flags -Wa,--noexecstack
 
 	if use 32bit ; then
 		mysahmakeargs+=( --enable-bitness=32 )
@@ -206,7 +238,7 @@ function run_config {
 		#asmlibs+=( -laelf64 )
 	fi
 
-	#mycommonmakeargs+=( --disable-server )
+	mycommonmakeargs+=( --disable-server )
 	mycommonmakeargs+=( --enable-client )
 	mycommonmakeargs+=( --disable-static-client )
 	#mycommonmakeargs+=( --disable-intrinsics ) #enabling breaks compile
@@ -225,44 +257,63 @@ function run_config {
 		mycommonmakeargs+=( --disable-graphics )
 	fi
 
-	myapmakedefargs+=( -DAP_CLIENT )
-	myapmakedefargs+=( -DBLANKIT ) #use version 7
-	myapmakedefargs+=( -DSMALL_CHIRP_TABLE )
-	myapmakedefargs+=( -DUSE_CONVERSION_OPT )
-	myapmakedefargs+=( -DUSE_INCREASED_PRECISION )
+	mysahmakedefargs+=( -DSETI7 )
 
-	if use opencl ; then
-		myapmakedefargs+=( -DUSE_OPENCL )
-		myapmakedefargs+=( -DOPENCL_WRITE )
-		if use video_cards_fglrx ; then
-                        if use ati_hd4xxx ; then #ati lower hd4xxx cards
-                                myapmakedefargs+=( -DLHD4K )
-			elif use ati_apu ; then
-                                myapmakedefargs+=( -DUSE_OPENCL_HD5xxx )
-                        elif use ati_hd5xxx || use ati_hd6xxx || use ati_hd7xxx || use ati_rx_200 || use ati_rx_300 || use ati_rx_400 ; then
-	                        myapmakedefargs+=( -DUSE_OPENCL_HD5xxx )
-                        fi
-		elif use video_cards_nvidia ; then
-			myapmakedefargs+=( -DUSE_OPENCL_NV )
-		elif use video_cards_intel ; then
-			myapmakedefargs+=( -DUSE_OPENCL_INTEL )
-		fi
-		myapmakedefargs+=( -DCOMBINED_DECHIRP_KERNEL )
-		myapmakedefargs+=( -DOCL_ZERO_COPY )
-		myapmakedefargs+=( -DTWIN_FFA )
-	elif use cuda ; then
-		myapmakedefargs+=( -DUSE_GPU )
-	#elif use brook ; then
-	#	myapmakedefargs+=( -DUSE_BROOK )
-	#	myapmakedefargs+=( -DUSE_BROOK_NO_DOUBLE )
-	#	myapmakedefargs+=( -DTWINDECHIRP )
-	else #cpu only
-		myapmakedefargs+=( -DUSE_LRINT )
-		myapmakedefargs+=( -DTWINDECHIRP )
+	if use ppc ; then
+		mysahmakedefargs+=( -DUSE_PPC_G4 ) #32 bit
+		mysahmakedefargs+=( -DUSE_PPC_OPTIMIZATIONS )
+	elif use ppc64 ; then
+		mysahmakedefargs+=( -DUSE_PPC_G5 ) #64 bit
+		mysahmakedefargs+=( -DUSE_PPC_OPTIMIZATIONS )
+	elif use x32 || use x64 ; then
+		mysahmakedefargs+=( -DUSE_I386_OPTIMIZATIONS ) #uses sse3 sse2
+		#mycommonmakeargs+=( --enable-asmlib )
 	fi
 
-	apfftwlibs+=( -lfftw3f )
-	myapmakedefargs+=( -DUSE_FFTW )
+	if use xeon ; then
+		mysahmakedefargs+=( -DUSE_I386_XEON )
+	fi
+	if use opencl ; then
+		mysahmakedefargs+=( -DUSE_OPENCL )
+		if use video_cards_fglrx ; then
+			if use ati_hd4xxx ; then #ati lower hd4xxx cards
+				mysahmakedefargs+=( -DLHD4K )
+			elif use ati_apu ; then
+                                mysahmakedefargs+=( -DUSE_OPENCL_HD5xxx )
+                                mysahmakedefargs+=( -DOCL_ZERO_COPY_APU )
+				mysahmakedefargs+=( -DOCL_ZERO_COPY ) #testing / it doesn't work because of missing header defines.
+				mysahmakedefargs+=( -DUSE_JSPF )
+			elif use ati_hd5xxx || use ati_hd6xxx || use ati_hd7xxx || use ati_rx_200 || use ati_rx_300 || use ati_rx_400 ; then
+				mysahmakedefargs+=( -DUSE_OPENCL_HD5xxx )
+				#mysahmakedefargs+=( -DSIGNALS_ON_GPU )
+				mysahmakedefargs+=( -DOCL_ZERO_COPY ) #testing / it doesn't work because of missing header defines.
+				mysahmakedefargs+=( -DUSE_JSPF )
+			fi
+		elif use video_cards_nvidia ; then
+			mysahmakedefargs+=( -DUSE_OPENCL_NV )
+			#mysahmakedefargs+=( -DSIGNALS_ON_GPU )
+			mysahmakedefargs+=( -DOCL_ZERO_COPY ) #testing / it doesn't work because of missing header defines.
+			mysahmakedefargs+=( -DUSE_JSPF )
+		elif use video_cards_intel ; then
+			mysahmakedefargs+=( -DUSE_OPENCL_INTEL )
+			#mysahmakedefargs+=( -DSIGNALS_ON_GPU )
+			mysahmakedefargs+=( -DOCL_ZERO_COPY ) #testing / it doesn't work because of missing header defines.
+			mysahmakedefargs+=( -DUSE_JSPF )
+		fi
+		if use sse3 ; then
+			mysahmakedefargs+=( -DHALF_STRIDE )
+		fi
+		mysahmakedefargs+=( -DOCL_CHIRP3 )
+		mysahmakedefargs+=( -DASYNC_SPIKE )
+	elif use cuda ; then
+		mysahmakedefargs+=( -DUSE_CUDA )
+	else #cpu only
+		mysahmakedefargs+=( -DFFTOUT )
+		mysahmakedefargs+=( -DUSE_JSPF )
+	fi
+
+	sahfftwlibs+=( -lfftw3f )
+	mysahmakedefargs+=( -DUSE_FFTW )
 
 	if use custom-cflags ; then
 		mycommonmakeargs+=( --disable-comoptions )
@@ -326,6 +377,8 @@ function run_config {
 
 	mycommonmakeargs+=( --enable-fast-math )
 
+	#append-cxxflags -std=c++11
+
 	append-cppflags -D_GLIBCXX_USE_CXX11_ABI=0
 
 	if use video_cards_amdgpu ; then
@@ -334,10 +387,11 @@ function run_config {
 		append-cppflags -I/usr/$(get_libdir)/OpenCL/vendors/mesa/include/
 	fi
 
-	cd "${WORKDIR}/${MY_P}/AP/client"
-	CFLAGS="${CFLAGS} ${PGL_CFLAGS}" LDFLAGS="${LDFLAGS} ${PGO_LDFLAGS}" LIBS="${apfftwlibs[@]} ${asmlibs[@]} -ldl ${PGO_LIBS}" CXXFLAGS="${CXXFLAGS} ${PGO_CXXFLAGS}" CPPFLAGS="${CPPFLAGS} ${mycommonmakedefargs[@]} ${myapmakedefargs[@]} ${PGO_CPPFLAGS}" BOINCDIR="/usr/share/boinc/$BOINC_VER" BOINC_DIR="/usr/share/boinc/$BOINC_VER" SETI_BOINC_DIR="${WORKDIR}/${MY_P}/AKv8" econf \
+	cd "${WORKDIR}/${MY_P}/AKv8"
+	CFLAGS="${CFLAGS} ${PGO_CFLAGS}" LDFLAGS="${LDFLAGS} ${PGO_LDFLAGS}"  LIBS="${sahfftwlibs[@]} ${asmlibs[@]} -ldl ${PGO_LIBS}" CXXFLAGS="${CXXFLAGS} ${PGO_CXXFLAGS}" CPPFLAGS="${CPPFLAGS} ${mycommonmakedefargs[@]} ${mysahmakedefargs[@]} ${PGO_CPPFLAGS}" BOINCDIR="/usr/share/boinc/$BOINC_VER" econf \
 	${mycommonmakeargs[@]} \
-	${myapmakeargs[@]} || die
+	${mysahmakeargs[@]} || die
+	cp "sah_config.h" "config.h"
 }
 
 SAH_GPU_TYPE=""
@@ -347,6 +401,9 @@ SAH_PLAN_CLASS=""
 AP_GPU_TYPE=""
 AP_GPU_NUM_INSTANCES=""
 AP_PLAN_CLASS=""
+
+SAH_GPU_CMDLN=""
+AP_GPU_CMDLN=""
 
 NUM_GPU_INSTANCES=""
 NUM_CPU_INSTANCES=""
@@ -442,7 +499,7 @@ function gpu_setup {
 	fi
 
 	if use x32 || use x64 ; then
-		if use ati_hd5xxx || use ati_hd6xxx || use ati_hd7xxx || use ati_rx_200 || use ati_rx_300 || use ati_rx_400 || use ati_apu ; then
+		if use ati_hd5xxx || use ati_hd6xxx || use ati_hd7xxx || use ati_rx_200 || use ati_rx_300 || use ati_rx_400 || use ati_apu; then
 			if use opencl ; then
 				AP_PLAN_CLASS="opencl_ati_100"
 				SAH_PLAN_CLASS="opencl_ati5_cat132"
@@ -586,27 +643,29 @@ src_compile() {
 		die "Check your compiler CC and CXX must be clang/clang++ or gcc/g++."
 	fi
 
-	einfo "Making astropulse client..."
-	cd "${WORKDIR}/${MY_P}/AP/client"
-        if use pgo ; then
+	einfo "Making classic client..."
+	if use pgo ; then
+		cd "${WORKDIR}/${MY_P}/AKv8"
 		PGO_CFLAGS="${INSTRUMENT_CFLAGS}" PGO_CXXFLAGS="${INSTRUMENT_CFLAGS}" PGO_CPPFLAGS="${INSTRUMENT_CFLAGS}" PGO_LDFLAGS="${INSTRUMENT_LDFLAGS}" PGO_LIBS="${INSTRUMENT_LIBS}" run_config
-                emake || die
-		AP_SVN_REV=`grep -r -e "SVN_REV_NUM" ./configure.ac | grep AC_SUBST | tail -n 1 | grep -o -e "[0-9]*"`
-		cp AstroPulse_Kernels.cl "AstroPulse_Kernels_r${AP_SVN_REV}.cl"
+		emake || die
+		cd "${WORKDIR}/${MY_P}/AKv8/client"
+                cp test_workunits/reference_work_unit.sah work_unit.sah
                 einfo "Please wait while we are simulating work for the PGO optimization.  This may take hours."
-		LLVM_PROFILE_FILE="${T}/code-%p.profraw" ./ap_client -standalone ${AP_GPU_CMDLN}
-                ls pulse.out || die "simulating failed"
-                #diff -u pulse.out pulse.out.ref
+                LLVM_PROFILE_FILE="${T}/code-%p.profraw" ./seti_boinc -standalone ${SAH_GPU_CMDLN}
+		ls result.sah || die "simulating failed"
+                #diff -u test_workunits/reference_result_unit.sah result.sah
 		if [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]]; then
 			llvm-profdata merge -output="${T}"/code.profdata "${T}"/code-*.profraw
 		fi
+		cd "${WORKDIR}/${MY_P}/AKv8"
 		make clean
 		PGO_CFLAGS="${PROFILE_DATA_CFLAGS}" PGO_CXXFLAGS="${PROFILE_DATA_CFLAGS}" PGO_CPPFLAGS="${PROFILE_DATA_CFLAGS}" PGO_LDFLAGS="${PROFILE_DATA_LDFLAGS}" PGO_LIBS="${PROFILE_DATA_LIBS}" run_config
-                emake || die
+		emake || die
 	else
+		cd "${WORKDIR}/${MY_P}/AKv8"
 		PGO_CFLAGS="" PGO_CXXFLAGS="" PGO_CPPFLAGS="" PGO_LDFLAGS="" PGO_LIBS="" run_config
-                emake || die
-        fi
+		emake || die
+	fi
 }
 
 src_install() {
@@ -615,37 +674,35 @@ src_install() {
 
 	gpu_setup
 
-	cd "${WORKDIR}/${MY_P}/AP/client"
-	AP_VER_NODOT=`cat configure.ac | grep AC_INIT | awk '{print $2}' | sed -r -e "s|,||g" -e "s|\.||g" -e "s|\)||g"`
-	AP_VER_MAJOR=`cat configure.ac | grep AC_INIT | awk '{print $2}' | sed -r -e "s|,||g" | cut -d. -f1`
-	AP_SVN_REV=`grep -r -e "SVN_REV_NUM" ./configure.ac | grep AC_SUBST | tail -n 1 | grep -o -e "[0-9]*"`
-	AP_EXE=`ls ap_* | sed -r -e "s| |\n|g" | grep "clGPU"`
-	cp ${AP_EXE} "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu/${AP_EXE}_gpu.ocl
+	cd "${WORKDIR}/${MY_P}/AKv8"
+	SAH_VER_NODOT=`cat configure.ac | grep AC_INIT | awk '{print $2}' | sed -r -e "s|,||g" -e "s|\.||g"`
+	SAH_VER_MAJOR=`cat configure.ac | grep AC_INIT | awk '{print $2}' | sed -r -e "s|,||g" | cut -d. -f1`
+	SAH_SVN_REV=`grep -r -e "SVN_REV_NUM" ./configure.ac | grep AC_SUBST | tail -n 1 | grep -o -e "[0-9]*"`
+	cd "${WORKDIR}/${MY_P}/AKv8/client"
+	SAH_EXE=`ls MB* | sed -r -e "s| |\n|g" | grep "clGPU"`
+	cp ${SAH_EXE} "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu/${SAH_EXE}_gpu.ocl
 
-	cd "${WORKDIR}/${MY_P}/AP/client"
-	#cp ap.jpg "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu
-	#cp x.tga "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu
-	#cp x.tif "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu
-	cp AstroPulse_Kernels.cl "${D}/var/lib/boinc/projects/setiathome.berkeley.edu/AstroPulse_Kernels_r${AP_SVN_REV}.cl"
+	cd "${WORKDIR}/${MY_P}/AKv8/client"
+	#cp better_banner.jpg "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu
+	cp MultiBeam_Kernels.cl "${D}/var/lib/boinc/projects/setiathome.berkeley.edu/MultiBeam_Kernels_r${SAH_SVN_REV}.cl"
 
-	AP_VER_TAG="_v${AP_VER_MAJOR}"
-	cat "${FILESDIR}/app_info.xml_ap_gpu_ocl" | sed -r -e "s|CFG_BOINC_VER|${BOINC_VER}|g" -e "s|CFG_AP_EXE|${AP_EXE}_gpu.ocl|g" -e "s|CFG_AP_VER_NODOT|${AP_VER_NODOT}|g" -e "s|CFG_AP_CMDLN|${AP_GPU_CMDLN}|g" -e "s|CFG_AP_VER_TAG|${AP_VER_TAG}|g" -e "s|CFG_AP_SVN_REV|${AP_SVN_REV}|g" -e "s|CFG_AP_GPU_TYPE|${AP_GPU_TYPE}|g" -e "s|CFG_AP_PLAN_CLASS|${AP_PLAN_CLASS}|g" -e "s|CFG_AP_GPU_NUM_INSTANCES|${AP_GPU_NUM_INSTANCES}|g" -e "s|CFG_NUM_GPU_INSTANCES|${NUM_GPU_INSTANCES}|g" > ${T}/app_info.xml_ap_gpu_ocl
+	SAH_PLAN_CLASS="" #none on v8
+	SAH_VER_TAG="_v${SAH_VER_MAJOR}"
+	cat "${FILESDIR}/app_info.xml_sah_gpu_ocl" | sed -r -e "s|CFG_BOINC_VER|${BOINC_VER}|g" -e "s|CFG_SAH_EXE|${SAH_EXE}_gpu.ocl|g" -e "s|CFG_SAH_VER_NODOT|${SAH_VER_NODOT}|g" -e "s|CFG_SAH_CMDLN|${SAH_GPU_CMDLN}|g" -e "s|CFG_SAH_VER_TAG|${SAH_VER_TAG}|g" -e "s|CFG_SAH_SVN_REV|${SAH_SVN_REV}|g" -e "s|CFG_SAH_GPU_TYPE|${SAH_GPU_TYPE}|g" -e "s|CFG_SAH_PLAN_CLASS|${SAH_PLAN_CLASS}|g"  -e "s|CFG_SAH_GPU_NUM_INSTANCES|${SAH_GPU_NUM_INSTANCES}|g" -e "s|CFG_NUM_GPU_INSTANCES|${NUM_GPU_INSTANCES}|g" > ${T}/app_info.xml_sah_gpu_ocl
 
-	AP_GFX_EXE_SEC_A=""
-	AP_GFX_EXE_SEC_B=""
-	AP_GFX_EXE_A=""
-	AP_GFX_EXE_B=""
+	SAH_GFX_EXE_SEC_A=""
+	SAH_GFX_EXE_SEC_B=""
+	SAH_GFX_EXE_A=""
+	SAH_GFX_EXE_B=""
 	if use opengl ; then
-		AP_GFX_MD5=`md5sum ap_graphics | awk '{print $1}'`
-		AP_GFX_EXE_A="ap_graphics_gpu.ocl"
-		AP_GFX_EXE_B="ap_graphics_gpu.ocl"
-		AP_GFX_EXE_SEC_A=`cat ${FILESDIR}/app_info.xml_ap_gfx_1 | sed -r -e "s|CFG_AP_GFX_EXE_A|${AP_GFX_EXE_A}|g" -e "s|CFG_AP_GFX_MD5|${AP_GFX_MD5}|g"`
-		AP_GFX_EXE_SEC_B=`cat ${FILESDIR}/app_info.xml_ap_gfx_2 | sed -r -e "s|CFG_AP_GFX_EXE_B|${AP_GFX_EXE_B}|g"`
-		cp ap_graphics ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/ap_graphics_gpu.ocl
+		SAH_GFX_MD5=`md5sum seti_graphics | awk '{print $1}'`
+		SAH_GFX_EXE_A="seti_graphics_gpu.ocl"
+		SAH_GFX_EXE_B="seti_graphics_gpu.ocl"
+		SAH_GFX_EXE_SEC_A=`cat ${FILESDIR}/app_info.xml_sah_gfx_1 | sed -r -e "s|CFG_SAH_GFX_EXE_A|${SAH_GFX_EXE_A}|g" -e "s|CFG_SAH_GFX_MD5|${SAH_GFX_MD5}|g"`
+		SAH_GFX_EXE_SEC_B=`cat ${FILESDIR}/app_info.xml_sah_gfx_2 | sed -r -e "s|CFG_SAH_GFX_EXE_B|${SAH_GFX_EXE_B}|g"`
+		cp seti_graphics ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/seti_graphics_gpu.ocl
 	fi
-	cat ${T}/app_info.xml_ap_gpu_ocl | awk -v Z1="${AP_GFX_EXE_SEC_A}" -v Z2="${AP_GFX_EXE_SEC_B}" '{ sub(/CFG_AP_GFX_EXE_SEC_A/, Z1); sub(/CFG_AP_GFX_EXE_SEC_B/, Z2); print; }' >> ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/app_info.xml_ap_gpu.ocl
-
-	#cp ${FILESDIR}/cc_config.xml "${D}"/var/lib/boinc
+	cat ${T}/app_info.xml_sah_gpu_ocl | awk -v Z1="${SAH_GFX_EXE_SEC_A}" -v Z2="${SAH_GFX_EXE_SEC_B}" '{ sub(/CFG_SAH_GFX_EXE_SEC_A/, Z1); sub(/CFG_SAH_GFX_EXE_SEC_B/, Z2); print; }' >> ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/app_info.xml_sah_gpu.ocl
 }
 
 #plan_class

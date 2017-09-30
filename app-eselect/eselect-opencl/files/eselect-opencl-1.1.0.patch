@@ -33,13 +33,13 @@ diff -urp eselect-opencl-1.1.0.orig/opencl.eselect eselect-opencl-1.1.0/opencl.e
 +				found_opencl=yes
 +				#echo "DEBUG: ${PREFIX}/${libdir}/OpenCL/vendors/${cl_implem}/libOpenCL.so"
 +			fi
-+			if [[ "${cl_implem}" =~ "amdapp" ]] ; then
-+				if [[ "${libdir}" =~ "lib64" ]] ; then
++			if [[ "${cl_implem}" == "amdapp" ]] ; then
++				if [[ "${libdir}" == "lib64" ]] ; then
 +					if [[ -e "/opt/AMDAPP/lib/x86_64/sdk/libOpenCL.so" ]] ; then
 +						found_opencl=yes
 +						#echo "DEBUG: /opt/AMDAPP/lib/x86_64/sdk/libOpenCL.so"
 +					fi
-+				elif [[ "${libdir}" =~ "lib32" ]] ; then
++				elif [[ "${libdir}" == "lib32" ]] ; then
 +					if [[ -e "/opt/AMDAPP/lib/x86/libOpenCL.so" ]] ; then
 +						found_opencl=yes
 +						#echo "DEBUG: /opt/AMDAPP/lib/x86/libOpenCL.so"
@@ -66,8 +66,8 @@ diff -urp eselect-opencl-1.1.0.orig/opencl.eselect eselect-opencl-1.1.0/opencl.e
 -		if [[ "x${REMOVE_ONLY}" == "xfalse" ]]; then
 -			# we need this relative to ROOT
 -			ldpath="${ldpath:+${ldpath}:}${PREFIX#${ROOT}}/${libdir}/OpenCL/vendors/${cl_local}"
-+		if [[ "${cl_implem}" =~ "amdapp" ]] ; then
-+			if [[ "${libdir}" =~ "lib32" ]] ; then
++		if [[ "${cl_implem}" == "amdapp" ]] ; then
++			if [[ "${libdir}" == "lib32" ]] ; then
 +				setup_lib_symlinks \
 +					"/opt/AMDAPP/lib/x86/" \
 +					"${DST_PREFIX}/${libdir}"
@@ -85,7 +85,7 @@ diff -urp eselect-opencl-1.1.0.orig/opencl.eselect eselect-opencl-1.1.0/opencl.e
 +					# we need this relative to ROOT
 +					ldpath="${ldpath:+${ldpath}:}/opt/AMDAPP/lib/x86"
 +				fi
-+			elif [[ "${libdir}" =~ "lib64" ]] ; then
++			elif [[ "${libdir}" == "lib64" ]] ; then
 +				setup_lib_symlinks \
 +					"/opt/AMDAPP/lib/x86_64/sdk/" \
 +					"${DST_PREFIX}/${libdir}"

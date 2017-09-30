@@ -147,9 +147,9 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-1.12-unloadsubmodule.patch
 	# needed for new eselect-opengl, bug #541232
 	"${FILESDIR}"/${PN}-1.17-support-multiple-Files-sections.patch
-	#oiledmachine-overlay added
-	"${FILESDIR}/xorg-server-1.15-gcc5-sdksyms.patch"
 )
+#	#oiledmachine-overlay added
+#	"${FILESDIR}/xorg-server-1.15-gcc5-sdksyms.patch"
 
 pkg_pretend() {
 	# older gcc is not supported

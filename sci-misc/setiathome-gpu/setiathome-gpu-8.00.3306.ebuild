@@ -2,12 +2,14 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
+#working... left for testing correctness of toolchain
+
 EAPI="6"
 
 inherit autotools eutils flag-o-matic subversion toolchain-funcs versionator git-r3
 
 SETIATHOME_VERSION="$(get_version_component_range 1-2 ${PV})"
-SETIATHOME_SVN_REVISION="$(get_version_component_range 3 ${PV})"
+SETIATHOME_SVN_REVISION="$(get_version_component_range 3 ${PV})" #track https://setisvn.ssl.berkeley.edu/trac/browser/branches/sah_v7_opt/AKv8/client
 SETIATHOME_GL_GRAPHICS_REVISION="1962" #7.07 trunk
 MY_P="setiathome-gpu-${SETIATHOME_VERSION}"
 DESCRIPTION="Seti@Home"
@@ -21,7 +23,7 @@ SLOT="$(get_major_version)"
 KEYWORDS="~alpha amd64 ~arm ~ia64 ~mips ~ppc ~ppc64 ~sparc x86 ~amd64-fbsd ~x86-fbsd ~x86-freebsd ~amd64-linux ~ia64-linux ~x86-linux ~x86-macos"
 
 #cuda only supported on windows
-IUSE="test 32bit 64bit opengl opencl -cuda -cuda_2_2 -cuda_2_3 -cuda_3_2 -cuda_4_2 -cuda_5_0 custom-cflags avx2 avx avx-btver2 avx-bdver3 avx-bdver2 avx-bdver1 sse42 sse41 ssse3 sse3 sse2 sse mmx 3dnow video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel ati_hd4xxx core2 xeon ppc ppc64 x32 x64 intel_hd intel_hd2xxx intel_hd3xxx intel_hd_gt1 intel_hd4xxx intel_hd5xxx intel_iris5xxx ati_hd5xxx ati_hd6xxx ati_hd7xxx ati_hdx3xx ati_hdx4xx ati_hdx5xx ati_hdx6xx ati_hdx7xx ati_hdx8xx ati_hdx9xx ati_rx_200 ati_rx_300 ati_rx_400 ati_rx_x2x ati_rx_x3x ati_rx_x4x ati_rx_x5x ati_rx_x6x ati_rx_x7x ati_rx_x8x ati_rx_x9x nv_1xx nv_2xx nv_3xx nv_4xx nv_5xx nv_6xx nv_7xx nv_8xx nv_9xx nv_x00 nv_x10 nv_x20 nv_x30 nv_x40 nv_x00_fast nv_x10_fast nv_x20_fast nv_x30_fast nv_x40_fast nv_x50 nv_x60 nv_x70 nv_x50_fast nv_x60_fast nv_x70_fast nv_x70 nv_x80 nv_x70_fast nv_x80_fast nv_780ti nv_titan nv_780ti_fast nv_titan_fast nv_8xxx nv_9xxx nv_8xxx_fast nv_9xxx_fast armv6-neon-nopie armv6-neon armv6-vfp-nopie armv6-vfp armv7-neon armv7-neon-nopie armv7-vfpv3 armv7-vfpv3d16 armv7-vfpv3d16-nopie armv7-vfpv4 armv7-vfpv4-nopie arm pgo ati_apu"
+IUSE="video_cards_r600 test 32bit 64bit opengl opencl -cuda -cuda_2_2 -cuda_2_3 -cuda_3_2 -cuda_4_2 -cuda_5_0 custom-cflags avx2 avx avx-btver2 avx-bdver3 avx-bdver2 avx-bdver1 sse42 sse41 ssse3 sse3 sse2 sse mmx 3dnow video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel ati_hd4xxx core2 xeon ppc ppc64 x32 x64 intel_hd intel_hd2xxx intel_hd3xxx intel_hd_gt1 intel_hd4xxx intel_hd5xxx intel_iris5xxx ati_hd5xxx ati_hd6xxx ati_hd7xxx ati_hdx3xx ati_hdx4xx ati_hdx5xx ati_hdx6xx ati_hdx7xx ati_hdx8xx ati_hdx9xx ati_rx_200 ati_rx_300 ati_rx_400 ati_rx_x2x ati_rx_x3x ati_rx_x4x ati_rx_x5x ati_rx_x6x ati_rx_x7x ati_rx_x8x ati_rx_x9x nv_1xx nv_2xx nv_3xx nv_4xx nv_5xx nv_6xx nv_7xx nv_8xx nv_9xx nv_x00 nv_x10 nv_x20 nv_x30 nv_x40 nv_x00_fast nv_x10_fast nv_x20_fast nv_x30_fast nv_x40_fast nv_x50 nv_x60 nv_x70 nv_x50_fast nv_x60_fast nv_x70_fast nv_x70 nv_x80 nv_x70_fast nv_x80_fast nv_780ti nv_titan nv_780ti_fast nv_titan_fast nv_8xxx nv_9xxx nv_8xxx_fast nv_9xxx_fast armv6-neon-nopie armv6-neon armv6-vfp-nopie armv6-vfp armv7-neon armv7-neon-nopie armv7-vfpv3 armv7-vfpv3d16 armv7-vfpv3d16-nopie armv7-vfpv4 armv7-vfpv4-nopie arm pgo ati_apu"
 REQUIRED_USE=""
 
 #	dev-libs/asmlib
@@ -31,22 +33,37 @@ RDEPEND="
 	video_cards_fglrx? ( || ( x11-drivers/ati-drivers ) )
 	video_cards_amdgpu? ( || ( dev-util/amdapp ) )
 	video_cards_intel? ( dev-libs/intel-beignet )
+	video_cards_r600? ( media-libs/mesa[opencl] )
 	sci-misc/setiathome-art:7
 "
-REQUIRED_USE="video_cards_fglrx? ( video_cards_amdgpu )"
+REQUIRED_USE="video_cards_fglrx? ( video_cards_amdgpu ) !video_cards_r600"
 
 #BOINC_VER=`boinc --version | cut -d' ' -f1`
-BOINC_VER="7.2.44"
+BOINC_VER="7.2.47"
 #BOINC_MAJOR=`echo $BOINC_VER | cut -d. -f1`
 #BOINC_MINOR=`echo $BOINC_VER | cut -d. -f2`
 DEPEND="${RDEPEND}
 	=sys-devel/autoconf-2.67
-	opencl? ( dev-util/amdapp )
 	sci-misc/boinc:=
-	=sci-misc/setiathome-boincdir-${BOINC_VER}
+	opencl? ( dev-util/amdapp )
+	sci-misc/setiathome-boincdir:0/${BOINC_VER}
+	app-text/xmlstarlet
 "
 
 S="${WORKDIR}/${MY_P}"
+
+pkg_setup() {
+	if use video_cards_fglrx ; then
+		/opt/bin/clinfo | grep "CL_DEVICE_TYPE_GPU"
+		if [[ "$?" != "0" ]] ; then
+			eerror "Your video card driver has broken OpenCL support for GPUs.  You may need to downgrade your video card driver."
+			eerror "For ATI 5xxx video cards.  Only the 15.9 fglrx is supported.  15.12 beta fglrx driver is broken for GPU OpenCL support."
+			die
+		fi
+	elif use video_cards_r600 ; then
+		die "Mesa Clover (open source OpenCL implementation) is not supported.  Use the proprietary driver."
+	fi
+}
 
 pkg_pretend() {
 	for DEVICE in $(ls /dev/*/card*)
@@ -81,7 +98,7 @@ src_unpack() {
 	cd "${WORKDIR}/${MY_P}"
 	epatch "${FILESDIR}"/setiathome-7.08-makefileam-sah-gfx.patch
 	epatch "${FILESDIR}"/setiathome-7.08-sahgfxbase.patch
-	epatch "${FILESDIR}"/setiathome-8.22.3602-configureac-sah-gfx.patch
+	epatch "${FILESDIR}"/setiathome-7.08-configureac-sah-gfx.patch
 
 	cd "${WORKDIR}/${MY_P}/AKv8/client"
 	ESVN_REVISION="${SETIATHOME_GL_GRAPHICS_REVISION}"
@@ -145,8 +162,8 @@ src_unpack() {
 	#epatch "${FILESDIR}"/setiathome-7.08-sah-sah_graphics-swi.patch
 	epatch "${FILESDIR}"/setiathome-7.08-gpu-wufix.patch
 	epatch "${FILESDIR}"/setiathome-gpu-8.0-gpu-opengl-on-opencl-1.patch
-	epatch "${FILESDIR}"/setiathome-gpu-8.22.3602-gpu-opengl-on-opencl-2.patch #8.22.3602 needs testing for this patch
-	epatch "${FILESDIR}"/setiathome-gpu-8.22.3602-gpu-opengl-on-opencl-3.patch
+	epatch "${FILESDIR}"/setiathome-gpu-8.0-gpu-opengl-on-opencl-2.patch
+	epatch "${FILESDIR}"/setiathome-gpu-8.0-gpu-opengl-on-opencl-3-alt.patch
 	epatch "${FILESDIR}"/setiathome-gpu-8.0-gpu-opengl-on-opencl-4.patch
 	epatch "${FILESDIR}"/setiathome-gpu-8.0-gpu-opengl-on-opencl-5.patch
 	epatch "${FILESDIR}"/setiathome-gpu-8.0-gpu-opengl-on-opencl-6.patch
@@ -163,21 +180,15 @@ src_unpack() {
         #subversion_src_unpack
 	#cp -r "${ESVN_STORE_DIR}/${PN}/glut" "${WORKDIR}/${MY_P}/AKv8"
 
-	if use test || use pgo ; then
-	        cd "${WORKDIR}/${MY_P}/AP/client"
-	        wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/astropulse/client/in.dat" || die
-	        wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/astropulse/client/pulse.out.ref" || die
-	fi
-
 	if $(version_is_at_least "7.3.19" $BOINC_VER ) ; then
 		true
 	else
 		cd "${S}"
-		epatch "${FILESDIR}"/setiathome-gpu-8.22.3602-boinc-compat-1.patch
+		epatch "${FILESDIR}"/setiathome-gpu-8.00.3602-alt-boinc-compat-1.patch
 		epatch "${FILESDIR}"/setiathome-gpu-8.22.3602-boinc-compat-2.patch
 	fi
 
-	epatch "${FILESDIR}"/setiathome-gpu-8.22.3602-uncomment-pulsepotnum.patch
+	#epatch "${FILESDIR}"/setiathome-gpu-8.22.3602-uncomment-pulsepotnum.patch
 }
 
 src_prepare() {
@@ -374,6 +385,8 @@ function run_config {
 
 	if use video_cards_amdgpu ; then
 		append-cppflags -I/opt/AMDAPP/include/
+	elif use video_cards_r600 ; then
+		append-cppflags -I/usr/$(get_libdir)/OpenCL/vendors/mesa/include/
 	fi
 
 	cd "${WORKDIR}/${MY_P}/AKv8"

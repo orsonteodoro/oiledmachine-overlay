@@ -17,7 +17,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~spa
 IUSE_SERVERS="dmx kdrive xephyr xnest xorg xvfb"
 IUSE="${IUSE_SERVERS} glamor ipv6 minimal nptl selinux +suid systemd tslib +udev unwind wayland"
 
-CDEPEND=">=app-eselect/eselect-opengl-1.3.0
+CDEPEND="<app-eselect/eselect-opengl-1.3.0
 	dev-libs/openssl
 	media-libs/freetype
 	>=x11-apps/iceauth-1.0.2
@@ -143,13 +143,13 @@ REQUIRED_USE="!minimal? (
 
 PATCHES=(
 	"${UPSTREAMED_PATCHES[@]}"
-	"${FILESDIR}"/${PN}-1.17-ia64-fix_inx_outx.patch
 	"${FILESDIR}"/${PN}-1.12-unloadsubmodule.patch
 	# needed for new eselect-opengl, bug #541232
 	"${FILESDIR}"/${PN}-1.17-support-multiple-Files-sections.patch
 	#oiledmachine-overlay added
 	"${FILESDIR}/xorg-server-1.15-gcc5-sdksyms.patch"
 )
+#	"${FILESDIR}"/${PN}-1.17-ia64-fix_inx_outx.patch
 
 pkg_pretend() {
 	# older gcc is not supported

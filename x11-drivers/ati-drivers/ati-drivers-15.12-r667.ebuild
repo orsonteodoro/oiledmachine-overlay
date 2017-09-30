@@ -2,6 +2,10 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
+#beta driver
+#works with 4.11 but no opencl
+#confirm working but opencl gpu support is missing http://ati.cchtml.com/show_bug.cgi?id=1247  https://community.amd.com/thread/202217
+
 EAPI=5
 
 MULTILIB_COMPAT=( abi_x86_{32,64} )
@@ -29,7 +33,8 @@ KEYWORDS="-* amd64 x86"
 RESTRICT="bindist test"
 
 RDEPEND="
-	<=x11-base/xorg-server-1.17.49[-minimal]
+	<x11-base/xorg-server-1.18[-minimal]
+	!<x11-base/xorg-server-1.17
 	>=app-eselect/eselect-opengl-1.0.7
 	app-eselect/eselect-opencl
 	sys-power/acpid
@@ -327,9 +332,9 @@ src_prepare() {
 	epatch "${FILESDIR}/15.11-remove-gpl-symbols.patch"
 	epatch "${FILESDIR}/15.9-kcl_str.patch"
 	epatch "${FILESDIR}/15.9-sep_printf.patch"
-	epatch "${FILESDIR}/15.9-mtrr.patch" #applied in fglrx_kernel_4.11.diff
+	#epatch "${FILESDIR}/15.9-mtrr.patch" #applied in fglrx_kernel_4.11.diff
 
-	epatch "${FILESDIR}/15.12-xstate-fp.patch"
+	#epatch "${FILESDIR}/15.12-xstate-fp.patch"
 
 	#if kernel_is ge 4 6 0; then
 	#	epatch "${FILESDIR}/kernel-4.6-get_user_pages.patch"
@@ -340,10 +345,10 @@ src_prepare() {
 	#	epatch "${FILESDIR}/kernel-4.10-virtual_address-acpi_get_table_with_size.patch"
 	#fi
 
-	if kernel_is ge 4 11 0; then
+	#if kernel_is ge 4 11 0; then
 		cd "${WORKDIR}"
-		epatch "${FILESDIR}/fglrx_15.12_kernel_4.11.diff"
-	fi
+		epatch "${FILESDIR}/fglrx_15.12_kernel_4.12.diff"
+	#fi
 
 	epatch_user
 
@@ -565,7 +570,8 @@ src_install-libs() {
 	doexe "${MY_ARCH_DIR}"/usr/${pkglibdir}/libati*.so*
 
 	# OpenCL vendor files
-	insinto /etc/OpenCL/vendors/
+	#insinto /etc/OpenCL/vendors/
+	insinto /etc/OpenCL/profiles/amd
 	cat > "${T}"/amdocl${oclsuffix}.icd <<-EOF
 		/usr/$(get_libdir)/OpenCL/vendors/amd/libamdocl${oclsuffix}.so
 	EOF
@@ -625,6 +631,8 @@ pkg_postinst() {
 	use modules && linux-mod_pkg_postinst
 	"${ROOT}"/usr/bin/eselect opengl set --use-old ati
 	"${ROOT}"/usr/bin/eselect opencl set --use-old amd
+
+	ewarn "OpenCL is broken in this release. http://ati.cchtml.com/show_bug.cgi?id=1247"
 
 	if has_version "x11-drivers/xf86-video-intel[sna]"; then
 		ewarn "It is reported that xf86-video-intel built with USE=\"sna\""

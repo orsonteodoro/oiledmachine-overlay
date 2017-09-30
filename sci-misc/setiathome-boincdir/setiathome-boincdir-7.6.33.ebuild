@@ -14,7 +14,7 @@ HOMEPAGE="http://boinc.berkeley.edu/"
 SRC_URI="https://github.com/BOINC/boinc/archive/client_release/$BOINC_MAJOR.$BOINC_MINOR/$BOINC_VER.zip -> boinc-$BOINC_VER.zip"
 
 LICENSE="GPL-2"
-SLOT="${PV}"
+SLOT="0/${PV}"
 KEYWORDS="~alpha amd64 ~arm ~ia64 ~mips ~ppc ~ppc64 ~sparc x86 ~amd64-fbsd ~x86-fbsd ~x86-freebsd ~amd64-linux ~ia64-linux ~x86-linux ~x86-macos"
 
 IUSE=""

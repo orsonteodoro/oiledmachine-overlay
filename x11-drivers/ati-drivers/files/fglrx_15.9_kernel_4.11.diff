@@ -1,3 +1,5 @@
+from https://github.com/imageguy/fglrx-for-Fedora
+----
 diff -urp work.orig/common/lib/modules/fglrx/build_mod/firegl_public.c work/common/lib/modules/fglrx/build_mod/firegl_public.c
 --- work.orig/common/lib/modules/fglrx/build_mod/firegl_public.c	2017-08-06 09:53:21.138090178 -0700
 +++ work/common/lib/modules/fglrx/build_mod/firegl_public.c	2017-08-06 09:58:47.392407726 -0700

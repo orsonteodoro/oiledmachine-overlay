@@ -7,8 +7,8 @@ EAPI="6"
 inherit autotools eutils flag-o-matic subversion toolchain-funcs versionator git-r3
 
 ASTROPULSE_VERSION="$(get_version_component_range 1-2 ${PV})"
-ASTROPULSE_SVN_REVISION="$(get_version_component_range 3 ${PV})"
-SETIATHOME_SVN_REVISION="3473" #should be the same as the ebuild
+ASTROPULSE_SVN_REVISION="$(get_version_component_range 3 ${PV})" #track https://setisvn.ssl.berkeley.edu/trac/browser/astropulse/client
+SETIATHOME_SVN_REVISION="3701" #should be the same as the setiathome ebuild
 
 MY_P="astropulse-cpu-${ASTROPULSE_VERSION}"
 DESCRIPTION="Astropulse"
@@ -31,13 +31,13 @@ RDEPEND="
 "
 
 #BOINC_VER=`boinc --version | cut -d' ' -f1`
-BOINC_VER="7.2.44"
+BOINC_VER="7.2.47"
 #BOINC_MAJOR=`echo $BOINC_VER | cut -d. -f1`
 #BOINC_MINOR=`echo $BOINC_VER | cut -d. -f2`
 DEPEND="${RDEPEND}
 	=sys-devel/autoconf-2.67
 	sci-misc/boinc:=
-	sci-misc/setiathome-boincdir:${BOINC_VER}
+	sci-misc/setiathome-boincdir:0/${BOINC_VER}
 "
 
 S="${WORKDIR}/${MY_P}"

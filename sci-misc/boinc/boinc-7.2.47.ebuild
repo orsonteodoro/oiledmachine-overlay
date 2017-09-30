@@ -1,6 +1,5 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
@@ -19,10 +18,10 @@ RESTRICT="mirror"
 LICENSE="LGPL-2.1"
 SLOT="0"
 KEYWORDS="~amd64 ~ia64 ~ppc ~ppc64 ~sparc ~x86"
-IUSE="X cuda curl_ssl_libressl +curl_ssl_openssl static-libs"
+IUSE="X cuda curl_ssl_gnutls curl_ssl_libressl +curl_ssl_openssl static-libs"
 IUSE+=" fix-idle"
 
-REQUIRED_USE="^^ ( curl_ssl_libressl curl_ssl_openssl ) "
+REQUIRED_USE="^^ ( curl_ssl_gnutls curl_ssl_libressl curl_ssl_openssl ) "
 
 # libcurl must not be using an ssl backend boinc does not support.
 # If the libcurl ssl backend changes, boinc should be recompiled.
@@ -30,7 +29,7 @@ RDEPEND="
 	!sci-misc/boinc-bin
 	!app-admin/quickswitch
 	>=app-misc/ca-certificates-20080809
-	net-misc/curl[-curl_ssl_gnutls(-),curl_ssl_libressl(-)=,-curl_ssl_nss(-),curl_ssl_openssl(-)=,-curl_ssl_axtls(-),-curl_ssl_cyassl(-),-curl_ssl_polarssl(-)]
+	net-misc/curl[curl_ssl_gnutls(-)=,curl_ssl_libressl(-)=,-curl_ssl_nss(-),curl_ssl_openssl(-)=,-curl_ssl_axtls(-),-curl_ssl_cyassl(-)]
 	sys-apps/util-linux
 	sys-libs/zlib
 	cuda? (
@@ -51,11 +50,7 @@ DEPEND="${RDEPEND}
 	sys-devel/gettext
 	app-text/docbook-xml-dtd:4.4
 	app-text/docbook2X
-	X? (
-		|| ( media-gfx/imagemagick[png,tiff]
-			media-gfx/graphicsmagick[imagemagick,png,tiff]
-		)
-	)
+	X? ( virtual/imagemagick-tools[png,tiff] )
 "
 
 S="${WORKDIR}/${PN}-client_release-${MY_PV}-${PV}"
@@ -136,7 +131,8 @@ src_install() {
 	# cleanup cruft
 	rm -rf "${ED%/}"/etc || die "rm failed"
 
-	newinitd "${FILESDIR}"/${PN}.init ${PN}
+	sed -e "s/@libdir@/$(get_libdir)/" "${FILESDIR}"/${PN}.init.in > ${PN}.init || die
+	newinitd ${PN}.init ${PN}
 	newconfd "${FILESDIR}"/${PN}.conf ${PN}
 	systemd_dounit "${FILESDIR}"/${PN}.service
 }
@@ -180,4 +176,12 @@ pkg_postinst() {
 		elog "Run as root:"
 		elog "gpasswd -a boinc video"
 	fi
+	# Add information about BOINC supporting OpenCL
+	elog "BOINC supports OpenCL. To use it you have to eselect"
+	if use cuda; then
+		elog "nvidia as the OpenCL implementation, as you are using CUDA."
+	else
+		elog "the correct OpenCL implementation for your graphic card."
+	fi
+	elog
 }
