@@ -18,4 +18,5 @@ S="${WORKDIR}"
 src_install() {
 	mkdir -p "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu
 	cp ${FILESDIR}/better_banner.jpg "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu
+	chown boinc:boinc "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu/better_banner.jpg
 }

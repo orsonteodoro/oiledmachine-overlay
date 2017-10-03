@@ -1,0 +1,24 @@
+diff -urp ckolivas-ckpool-5e93cf821949.orig/html/address.php ckolivas-ckpool-5e93cf821949/html/address.php
+--- ckolivas-ckpool-5e93cf821949.orig/html/address.php	2017-08-16 21:53:58.000000000 -0700
++++ ckolivas-ckpool-5e93cf821949/html/address.php	2017-10-02 10:05:18.162242790 -0700
+@@ -1,3 +1,3 @@
+ <?php
+-include_once('../pool/address.php');
++include_once('pool/address.php');
+ ?>
+diff -urp ckolivas-ckpool-5e93cf821949.orig/html/index.php ckolivas-ckpool-5e93cf821949/html/index.php
+--- ckolivas-ckpool-5e93cf821949.orig/html/index.php	2017-08-16 21:53:58.000000000 -0700
++++ ckolivas-ckpool-5e93cf821949/html/index.php	2017-10-02 10:05:19.106279589 -0700
+@@ -1,3 +1,3 @@
+ <?php
+-include_once('../pool/prime.php');
++include_once('pool/prime.php');
+ ?>
+diff -urp ckolivas-ckpool-5e93cf821949.orig/html/worker.php ckolivas-ckpool-5e93cf821949/html/worker.php
+--- ckolivas-ckpool-5e93cf821949.orig/html/worker.php	2017-08-16 21:53:58.000000000 -0700
++++ ckolivas-ckpool-5e93cf821949/html/worker.php	2017-10-02 10:05:20.322326990 -0700
+@@ -1,3 +1,3 @@
+ <?php
+-include_once('../pool/worker.php');
++include_once('pool/worker.php');
+ ?>

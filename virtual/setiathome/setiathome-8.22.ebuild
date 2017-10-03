@@ -12,5 +12,5 @@ RDEPEND="sah-cpu? ( sci-misc/setiathome-cpu:8 )
          sah-gpu? ( sci-misc/setiathome-gpu:8 )
          ap-gpu? ( sci-misc/astropulse-gpu:7 )
          ap-gpu? ( sci-misc/astropulse-gpu:7 )
-	 sci-misc/setiathome-cfg
+	 sci-misc/setiathome-updater
         "

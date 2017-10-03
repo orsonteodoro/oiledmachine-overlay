@@ -28,6 +28,7 @@ REQUIRED_USE=""
 RDEPEND="
 	sci-libs/fftw[static-libs]
 	sci-misc/astropulse-art:7
+	sci-misc/setiathome-updater:8
 "
 
 #BOINC_VER=`boinc --version | cut -d' ' -f1`
@@ -344,6 +345,10 @@ src_install() {
 		cp ap_graphics ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/ap_graphics_cpu
 	fi
 	cat ${T}/app_info.xml_ap_cpu_sse | awk -v Z1="${AP_GFX_EXE_SEC_A}" -v Z2="${AP_GFX_EXE_SEC_B}" '{ sub(/CFG_AP_GFX_EXE_SEC_A/, Z1); sub(/CFG_AP_GFX_EXE_SEC_B/, Z2); print; }' >> ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/app_info.xml_ap_cpu
+}
+
+pkg_postinst() {
+	/usr/bin/setiathome-updater
 }
 
 #plan_class

@@ -21,7 +21,7 @@ SLOT="$(get_major_version)"
 KEYWORDS="~alpha amd64 ~arm ~ia64 ~mips ~ppc ~ppc64 ~sparc x86 ~amd64-fbsd ~x86-fbsd ~x86-freebsd ~amd64-linux ~ia64-linux ~x86-linux ~x86-macos"
 
 #cuda only supported on windows
-IUSE="video_cards_r600 test 32bit 64bit opengl opencl -cuda -cuda_2_2 -cuda_2_3 -cuda_3_2 -cuda_4_2 -cuda_5_0 custom-cflags avx2 avx avx-btver2 avx-bdver3 avx-bdver2 avx-bdver1 sse42 sse41 ssse3 sse3 sse2 sse mmx 3dnow video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel ati_hd4xxx core2 xeon ppc ppc64 x32 x64 intel_hd intel_hd2xxx intel_hd3xxx intel_hd_gt1 intel_hd4xxx intel_hd5xxx intel_iris5xxx ati_hd5xxx ati_hd6xxx ati_hd7xxx ati_hdx3xx ati_hdx4xx ati_hdx5xx ati_hdx6xx ati_hdx7xx ati_hdx8xx ati_hdx9xx ati_rx_200 ati_rx_300 ati_rx_400 ati_rx_x2x ati_rx_x3x ati_rx_x4x ati_rx_x5x ati_rx_x6x ati_rx_x7x ati_rx_x8x ati_rx_x9x nv_1xx nv_2xx nv_3xx nv_4xx nv_5xx nv_6xx nv_7xx nv_8xx nv_9xx nv_x00 nv_x10 nv_x20 nv_x30 nv_x40 nv_x00_fast nv_x10_fast nv_x20_fast nv_x30_fast nv_x40_fast nv_x50 nv_x60 nv_x70 nv_x50_fast nv_x60_fast nv_x70_fast nv_x70 nv_x80 nv_x70_fast nv_x80_fast nv_780ti nv_titan nv_780ti_fast nv_titan_fast nv_8xxx nv_9xxx nv_8xxx_fast nv_9xxx_fast armv6-neon-nopie armv6-neon armv6-vfp-nopie armv6-vfp armv7-neon armv7-neon-nopie armv7-vfpv3 armv7-vfpv3d16 armv7-vfpv3d16-nopie armv7-vfpv4 armv7-vfpv4-nopie arm pgo ati_apu"
+IUSE="video_cards_radeonsi video_cards_r600 test 32bit 64bit opengl opencl -cuda -cuda_2_2 -cuda_2_3 -cuda_3_2 -cuda_4_2 -cuda_5_0 custom-cflags avx2 avx avx-btver2 avx-bdver3 avx-bdver2 avx-bdver1 sse42 sse41 ssse3 sse3 sse2 sse mmx 3dnow video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel ati_hd4xxx core2 xeon ppc ppc64 x32 x64 intel_hd intel_hd2xxx intel_hd3xxx intel_hd_gt1 intel_hd4xxx intel_hd5xxx intel_iris5xxx ati_hd5xxx ati_hd6xxx ati_hd7xxx ati_hdx3xx ati_hdx4xx ati_hdx5xx ati_hdx6xx ati_hdx7xx ati_hdx8xx ati_hdx9xx ati_rx_200 ati_rx_300 ati_rx_400 ati_rx_x2x ati_rx_x3x ati_rx_x4x ati_rx_x5x ati_rx_x6x ati_rx_x7x ati_rx_x8x ati_rx_x9x nv_1xx nv_2xx nv_3xx nv_4xx nv_5xx nv_6xx nv_7xx nv_8xx nv_9xx nv_x00 nv_x10 nv_x20 nv_x30 nv_x40 nv_x00_fast nv_x10_fast nv_x20_fast nv_x30_fast nv_x40_fast nv_x50 nv_x60 nv_x70 nv_x50_fast nv_x60_fast nv_x70_fast nv_x70 nv_x80 nv_x70_fast nv_x80_fast nv_780ti nv_titan nv_780ti_fast nv_titan_fast nv_8xxx nv_9xxx nv_8xxx_fast nv_9xxx_fast armv6-neon-nopie armv6-neon armv6-vfp-nopie armv6-vfp armv7-neon armv7-neon-nopie armv7-vfpv3 armv7-vfpv3d16 armv7-vfpv3d16-nopie armv7-vfpv4 armv7-vfpv4-nopie arm pgo ati_apu"
 REQUIRED_USE=""
 
 #	dev-libs/asmlib
@@ -30,11 +30,16 @@ RDEPEND="
 	video_cards_nvidia? ( || ( x11-drivers/nvidia-drivers dev-util/nvidia-cuda-toolkit ) )
 	video_cards_fglrx? ( || ( x11-drivers/ati-drivers ) )
 	video_cards_amdgpu? ( || ( dev-util/amdapp ) )
-	video_cards_intel? ( dev-libs/intel-beignet )
+	video_cards_intel? ( dev-libs/beignet )
 	video_cards_r600? ( media-libs/mesa[opencl] )
+	video_cards_radeonsi? ( media-libs/mesa[opencl] )
 	sci-misc/setiathome-art:7
+	sci-misc/setiathome-updater:8
 "
-REQUIRED_USE="video_cards_fglrx? ( video_cards_amdgpu ) !video_cards_r600"
+REQUIRED_USE="video_cards_fglrx? ( video_cards_amdgpu ) !video_cards_r600
+	      !video_cards_r600
+              ^^ ( video_cards_nvidia video_cards_fglrx video_cards_intel video_cards_r600 video_cards_radeonsi )
+             "
 
 #BOINC_VER=`boinc --version | cut -d' ' -f1`
 BOINC_VER="7.2.47"
@@ -59,7 +64,11 @@ pkg_setup() {
 			die
 		fi
 	elif use video_cards_r600 ; then
+		#see https://www.x.org/wiki/RadeonFeature/#Decoder_ring_for_engineering_vs_marketing_names
 		die "Mesa Clover (open source OpenCL implementation) is not supported.  Use the proprietary driver."
+	elif use video_cards_radeonsi ; then
+		#see https://www.x.org/wiki/RadeonFeature/#Decoder_ring_for_engineering_vs_marketing_names
+		ewarn "Mesa Clover (open source OpenCL implementation) is not supported but may work.  Use the proprietary driver if it fails."
 	fi
 }
 
@@ -703,6 +712,10 @@ src_install() {
 		cp seti_graphics ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/seti_graphics_gpu.ocl
 	fi
 	cat ${T}/app_info.xml_sah_gpu_ocl | awk -v Z1="${SAH_GFX_EXE_SEC_A}" -v Z2="${SAH_GFX_EXE_SEC_B}" '{ sub(/CFG_SAH_GFX_EXE_SEC_A/, Z1); sub(/CFG_SAH_GFX_EXE_SEC_B/, Z2); print; }' >> ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/app_info.xml_sah_gpu.ocl
+}
+
+pkg_postinst() {
+	/usr/bin/setiathome-updater
 }
 
 #plan_class

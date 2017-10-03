@@ -1,10 +1,9 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=6
+EAPI=5
 
-inherit eutils flag-o-matic
+inherit eutils
 
 DESCRIPTION="Modular Bitcoin ASIC/FPGA/GPU/CPU miner in C"
 HOMEPAGE="https://bitcointalk.org/?topic=168174"
@@ -12,7 +11,7 @@ SRC_URI="http://luke.dashjr.org/programs/bitcoin/files/bfgminer/${PV}/bfgminer-$
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
+KEYWORDS="amd64 ~arm ~mips ~ppc ~ppc64 x86"
 
 # TODO: knc (needs i2c-tools header)
 IUSE="+adl antminer avalon bifury bitforce bfsb bigpic bitfury cpumining drillbit examples hardened hashbuster hashbuster2 hashfast icarus klondike +libusb littlefury lm_sensors metabank modminer nanofury ncurses +opencl proxy proxy_getwork proxy_stratum screen scrypt twinfury +udev unicode x6500 ztex"
@@ -30,7 +29,7 @@ REQUIRED_USE='
 	lm_sensors? ( opencl )
 	metabank? ( bitfury )
 	nanofury? ( bitfury )
-	scrypt? ( || ( cpumining opencl proxy ) )
+	scrypt? ( || ( cpumining opencl ) )
 	twinfury? ( bitfury )
 	unicode? ( ncurses )
 	proxy? ( || ( proxy_getwork proxy_stratum ) )
@@ -49,7 +48,7 @@ DEPEND='
 		sys-libs/ncurses:=[unicode?]
 	)
 	>=dev-libs/jansson-2
-	net-libs/libblkmaker:=
+	net-libs/libblkmaker
 	udev? (
 		virtual/udev
 	)
@@ -100,7 +99,7 @@ DEPEND="${DEPEND}
 			>=dev-lang/yasm-1.0.1
 		)
 	)
-	sys-devel/automake:1.14
+	sys-devel/automake:1.13
 "
 
 S="${WORKDIR}/bfgminer-${PV}"

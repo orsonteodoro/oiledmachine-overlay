@@ -36,6 +36,7 @@ DEPEND="${RDEPEND}
 	=sys-devel/autoconf-2.67
 	sci-misc/boinc:=
 	sci-misc/setiathome-boincdir:0/${BOINC_VER}
+	sci-misc/setiathome-updater:8
 "
 
 S="${WORKDIR}/${MY_P}"
@@ -329,6 +330,10 @@ src_install() {
 	fi
 	cat ${T}/app_info.xml_sah_cpu_sse | awk -v Z1="${SAH_GFX_EXE_SEC_A}" -v Z2="${SAH_GFX_EXE_SEC_B}" '{ sub(/CFG_SAH_GFX_EXE_SEC_A/, Z1); sub(/CFG_SAH_GFX_EXE_SEC_B/, Z2); print; }' >> ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/app_info.xml_sah_cpu
 	#cat ${FILESDIR}/app_info.xml_end >> ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/app_info.xml
+}
+
+pkg_postinst() {
+	/usr/bin/setiathome-updater
 }
 
 #plan_class

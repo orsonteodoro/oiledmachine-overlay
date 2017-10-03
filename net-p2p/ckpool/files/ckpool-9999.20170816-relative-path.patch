@@ -1,0 +1,49 @@
+diff -urp ckolivas-ckpool-5e93cf821949.orig/pool/page.php ckolivas-ckpool-5e93cf821949/pool/page.php
+--- ckolivas-ckpool-5e93cf821949.orig/pool/page.php	2017-08-16 21:53:58.000000000 -0700
++++ ckolivas-ckpool-5e93cf821949/pool/page.php	2017-10-02 10:18:25.605975716 -0700
+@@ -112,7 +112,7 @@ function makeURL($page)
+ 	$page = '';
+  else if ($page != '')
+ 	$page = '?k='.$page;
+- return "/index.php$page";
++ return ((dirname($_SERVER['REQUEST_URI']) == "/") ? $_SERVER['REQUEST_URI'] : dirname($_SERVER['REQUEST_URI'])) . "/index.php$page";
+ }
+ #
+ function makeLink($page, $rest = '')
+@@ -127,7 +127,7 @@ function makeLink($page, $rest = '')
+ #
+ function makeForm($page)
+ {
+- $form = '<form action=index.php method=POST>';
++ $form = '<form action=' . ((dirname($_SERVER['REQUEST_URI']) == "/") ? $_SERVER['REQUEST_URI'] : dirname($_SERVER['REQUEST_URI'])) . '/index.php method=POST>';
+  if (strlen($page) > 0)
+ 	$form .= "<input type=hidden name=k value=$page>";
+  return $form;
+@@ -441,7 +441,7 @@ function pgtop($alert_marker, $info, $do
+ 		{
+ 			$top .= '<table cellpadding=0 cellspacing=0 border=0><tr><td>';
+ 			$top .= '<a href="https://' . $_SERVER['SERVER_NAME'];
+-			$top .= '/index.php?Register=1">Login<br>Register</a>';
++			$top .= ((dirname($_SERVER['REQUEST_URI']) == "/") ? $_SERVER['REQUEST_URI'] : dirname($_SERVER['REQUEST_URI'])) . '/index.php?Register=1">Login<br>Register</a>';
+ 			$top .= '</td></tr></table>';
+ 		}
+ 		else
+diff -urp ckolivas-ckpool-5e93cf821949.orig/pool/page_userset.php ckolivas-ckpool-5e93cf821949/pool/page_userset.php
+--- ckolivas-ckpool-5e93cf821949.orig/pool/page_userset.php	2017-08-16 21:53:58.000000000 -0700
++++ ckolivas-ckpool-5e93cf821949/pool/page_userset.php	2017-10-02 10:18:29.134113790 -0700
+@@ -41,13 +41,13 @@ function uset($data, $user, $api, $err)
+ 	$pg .= '<tr class=dc><td>&nbsp;</td></tr>';
+ 	$pg .= '<tr class=dc><td>You can access the API via:';
+ 	$pg .= '</td></tr><tr class=dc><td>';
+-	$pg .= "<span class=hil>/index.php?k=api&username=";
++	$pg .= "<span class=hil>" . ((dirname($_SERVER['REQUEST_URI']) == "/") ? $_SERVER['REQUEST_URI'] : dirname($_SERVER['REQUEST_URI'])) . "/index.php?k=api&username=";
+ 	$pg .= htmlspecialchars(urlencode($user));
+ 	$pg .= "&api=$api&json=y</span><br>";
+ 	$pg .= '</td></tr>';
+ 	$pg .= '<tr class=dc><td>You can get your workers via:';
+ 	$pg .= '</td></tr><tr class=dc><td>';
+-	$pg .= "<span class=hil>/index.php?k=api&username=";
++	$pg .= "<span class=hil>" . ((dirname($_SERVER['REQUEST_URI']) == "/") ? $_SERVER['REQUEST_URI'] : dirname($_SERVER['REQUEST_URI'])) . "/index.php?k=api&username=";
+ 	$pg .= htmlspecialchars(urlencode($user));
+ 	$pg .= "&api=$api&json=y&work=y</span><br>";
+ 	$pg .= '</td></tr>';

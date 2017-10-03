@@ -4,7 +4,8 @@
 
 EAPI=6
 
-inherit eutils flag-o-matic
+inherit eutils \
+	flag-o-matic
 
 DESCRIPTION="Modular Bitcoin ASIC/FPGA/GPU/CPU miner in C"
 HOMEPAGE="https://bitcointalk.org/?topic=168174"
@@ -15,7 +16,8 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
 
 # TODO: knc (needs i2c-tools header)
-IUSE="+adl antminer avalon bifury bitforce bfsb bigpic bitfury cpumining drillbit examples hardened hashbuster hashbuster2 hashfast icarus klondike +libusb littlefury lm_sensors metabank modminer nanofury ncurses +opencl proxy proxy_getwork proxy_stratum screen scrypt twinfury +udev unicode x6500 ztex pgo boinc"
+IUSE="+adl antminer avalon bifury bitforce bfsb bigpic bitfury cpumining drillbit examples hardened hashbuster hashbuster2 hashfast icarus klondike +libusb littlefury lm_sensors metabank modminer nanofury ncurses +opencl proxy proxy_getwork proxy_stratum screen scrypt twinfury +udev unicode x6500 ztex"
+IUSE+=" pgo boinc video_cards_radeonsi video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel video_cards_r600"
 REQUIRED_USE='
 	|| ( antminer avalon bfsb bifury bigpic bitforce bitfury cpumining drillbit hashbuster hashbuster2 hashfast icarus klondike littlefury metabank modminer nanofury opencl proxy twinfury x6500 ztex )
 	adl? ( opencl )
@@ -38,6 +40,8 @@ REQUIRED_USE='
 	x6500? ( libusb )
 	ztex? ( libusb )
 	boinc
+	^^ ( video_cards_nvidia video_cards_fglrx video_cards_intel video_cards_r600 video_cards_radeonsi )
+	!video_cards_r600
 '
 
 DEPEND='
@@ -86,7 +90,14 @@ RDEPEND="${DEPEND}
 			dev-util/nvidia-cuda-sdk[opencl]
 		)
 	)
+	video_cards_nvidia? ( || ( x11-drivers/nvidia-drivers dev-util/nvidia-cuda-toolkit ) )
+	video_cards_fglrx? ( || ( x11-drivers/ati-drivers ) )
+	video_cards_amdgpu? ( || ( dev-util/amdapp ) )
+	video_cards_intel? ( dev-libs/beignet )
+	video_cards_r600? ( media-libs/mesa[opencl] )
+	video_cards_radeonsi? ( media-libs/mesa[opencl] )
 "
+
 DEPEND="${DEPEND}
 	virtual/pkgconfig
 	>=dev-libs/uthash-1.9.7
@@ -100,11 +111,27 @@ DEPEND="${DEPEND}
 		)
 	)
 	sys-devel/automake:1.14
+	opencl? ( dev-util/amdapp )
 "
 
 S="${WORKDIR}/bfgminer-${PV}"
 
 pkg_setup() {
+	if use video_cards_fglrx ; then
+		/opt/bin/clinfo | grep "CL_DEVICE_TYPE_GPU"
+		if [[ "$?" != "0" ]] ; then
+			eerror "Your video card driver has broken OpenCL support for GPUs.  You may need to downgrade your video card driver."
+			eerror "For ATI 5xxx video cards.  Only the 15.9 fglrx is supported.  15.12 beta fglrx driver is broken for GPU OpenCL support."
+			die
+		fi
+	elif use video_cards_r600 ; then
+		#see https://www.x.org/wiki/RadeonFeature/#Decoder_ring_for_engineering_vs_marketing_names
+		ewarn "Mesa Clover (open source OpenCL implementation) has not been tested.  You man need to use the proprietary driver."
+	elif use video_cards_radeonsi ; then
+		#see https://www.x.org/wiki/RadeonFeature/#Decoder_ring_for_engineering_vs_marketing_names
+		ewarn "Mesa Clover (open source OpenCL implementation) is not supported but may work.  Use the proprietary driver if it fails."
+	fi
+
 	if use pgo; then
 		if [[ -z "${BOINC_BFGMINER_GPU_ARGS}" ]]; then
 			die "Configure your BOINC_BFGMINER_GPU_ARGS to use for PGO optimization.  You must set the number of shares (--shares) or you will get an infinite loop."
@@ -113,14 +140,14 @@ pkg_setup() {
 }
 
 src_prepare() {
-	eapply "${FILESDIR}"/bfgminer-3.10.5-boinc.patch
-	eapply "${FILESDIR}"/boinc-bfgminer-3.10.10-2.patch
-	eapply "${FILESDIR}"/boinc-bfgminer-3.10.10-3.patch
-	eapply "${FILESDIR}"/boinc-bfgminer-3.10.10-4.patch
-	eapply "${FILESDIR}"/boinc-bfgminer-3.10.10-5.patch
-	eapply "${FILESDIR}"/boinc-bfgminer-3.10.10-disableinitforwrapper.patch
+	epatch "${FILESDIR}"/bfgminer-3.10.5-boinc.patch
+	epatch "${FILESDIR}"/boinc-bfgminer-3.10.10-2.patch
+	epatch "${FILESDIR}"/boinc-bfgminer-3.10.10-3.patch
+	epatch "${FILESDIR}"/boinc-bfgminer-3.10.10-4.patch
+	epatch "${FILESDIR}"/boinc-bfgminer-3.10.10-5.patch
+	epatch "${FILESDIR}"/boinc-bfgminer-3.10.10-disableinitforwrapper.patch
 
-	eapply_user
+	epatch_user
 }
 
 src_configure() {
@@ -222,7 +249,7 @@ src_compile() {
 		PGO_CFLAGS="${INSTRUMENT_CFLAGS}" PGO_CXXFLAGS="${INSTRUMENT_CFLAGS}" PGO_CPPFLAGS="${INSTRUMENT_CFLAGS}" PGO_LDFLAGS="${INSTRUMENT_LDFLAGS}" PGO_LIBS="${INSTRUMENT_LIBS}" run_config
                 emake || die
                 einfo "Please wait while we are simulating work for the PGO optimization.  This may take hours."
-       	        LOG=$(LLVM_PROFILE_FILE="${T}/code-%p.profraw" ./bfgminer -S opencl:auto ${BOINC_BFGMINER_GPU_ARGS})
+                LOG=$(LLVM_PROFILE_FILE="${T}/code-%p.profraw" ./bfgminer -S opencl:auto ${BOINC_BFGMINER_GPU_ARGS})
 		echo "${LOG}" | grep "Mined 2 accepted shares of 1 requested"
                 if [[ "$?" != "0" ]] ; then
                         die "simulating failed"

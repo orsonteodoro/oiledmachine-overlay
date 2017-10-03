@@ -24,4 +24,5 @@ src_install() {
 	cp ${FILESDIR}/ap.jpg "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu
 	cp ${FILESDIR}/x.tga "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu
 	cp ${FILESDIR}/x.tif "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu
+	chown boinc:boinc "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu/{ap.jpg,x.tga,x.tif}
 }

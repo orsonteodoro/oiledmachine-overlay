@@ -1,0 +1,6 @@
+CKDB_OPTS=""
+CKDB_CONFIG="/etc/ckpool/ckpool.conf" #same as the CKPOOL_CONFIG variable in /etc/conf.d/ckpool
+CKDB_DBNAME="ckdb" #for postgres server
+CKDB_DBUSER="" #for postgres server
+CKDB_DBPASS="" #for postgres server
+CKDB_PIDFILE="/var/run/ckdb.pid"

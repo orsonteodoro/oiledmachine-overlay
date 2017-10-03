@@ -1,0 +1,33 @@
+#!/sbin/openrc-run
+# Copyright 1999-2017 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+
+env_check() {
+	# Make sure the configuration is sane
+	: ${ELOIPOOL_CONFIG:="/etc/ckpool/ckpool.conf"}
+	return 0
+}
+
+checkconfig() {
+	if [ ! -f ${CONFIG} ] ; then
+		eerror "Config file \"${CONFIG}\" does not exist. Create it prior launching the daemon."
+		return 1
+	fi
+}
+
+depend() {
+	after net
+}
+
+start() {
+	checkconfig || return 1
+	ebegin "Starting eloipool"
+	start-stop-daemon --start --quiet --make-pidfile --pidfile ${ELOIPOOL_PIDFILE} --background --exec /usr/bin/eloipool.py -- ${ELOIPOOL_OPTS}
+	eend $?
+}
+
+stop() {
+	ebegin "Stopping eloipool"
+	start-stop-daemon --stop --quiet --pidfile ${ELOIPOOL_PIDFILE} --exec /usr/bin/eloipool.py
+	eend $?
+}

@@ -1,0 +1,14 @@
+diff -urp ckolivas-ckpool-ee10a5b339ae.orig/pool/page_index.php ckolivas-ckpool-ee10a5b339ae/pool/page_index.php
+--- ckolivas-ckpool-ee10a5b339ae.orig/pool/page_index.php	2016-08-23 05:42:08.000000000 -0700
++++ ckolivas-ckpool-ee10a5b339ae/pool/page_index.php	2017-10-02 14:26:35.511935941 -0700
+@@ -1,6 +1,9 @@
+ <?php
+ #
+-@include_once('myindex.php');
++function doindex($data, $user)
++{
++ return 'Welcome';
++}
+ #
+ function show_index($info, $page, $menu, $name, $user)
+ {

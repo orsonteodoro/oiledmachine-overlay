@@ -1,0 +1,12 @@
+diff -urp ckolivas-ckpool-5e93cf821949.orig/pool/prime.php ckolivas-ckpool-5e93cf821949/pool/prime.php
+--- ckolivas-ckpool-5e93cf821949.orig/pool/prime.php	2017-08-16 21:53:58.000000000 -0700
++++ ckolivas-ckpool-5e93cf821949/pool/prime.php	2017-10-02 13:11:47.414303613 -0700
+@@ -19,7 +19,7 @@ function process($p, $user, $menu)
+ 	if (isset($menu['Workers']))
+ 		$menu['Workers']['Percents'] = 'percent';
+  }
+- if ($user == 'Kano' || $user == 'ckolivas')
++ if ($user == 'Kano' || $user == 'ckolivas' || $user == 'admin')
+  {
+ 	$menu['Admin']['ckp'] = 'ckp';
+ 	$menu['Admin']['PPLNS2'] = 'pplns2';
