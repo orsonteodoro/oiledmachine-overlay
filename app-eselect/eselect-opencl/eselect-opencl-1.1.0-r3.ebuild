@@ -33,7 +33,7 @@ DEPEND="app-arch/xz-utils"
 RDEPEND=">=app-admin/eselect-1.2.4"
 
 src_prepare() {
-	epatch "${FILESDIR}/${PN}-1.1.0.patch"
+	epatch "${FILESDIR}/${PN}-1.1.0-ver3.patch"
 	#cd "${WORKDIR}/opencl-headers-opencl-headers-1.2/OpenCL-1.0"
 	#epatch "${FILESDIR}/AMD_extensions.patch"
 	#cd "${WORKDIR}/opencl-headers-opencl-headers-1.2/OpenCL-1.1"

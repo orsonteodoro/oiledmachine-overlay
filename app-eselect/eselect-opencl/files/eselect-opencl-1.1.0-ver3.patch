@@ -1,0 +1,231 @@
+diff -urp eselect-opencl-1.1.0.orig/opencl.eselect eselect-opencl-1.1.0/opencl.eselect
+--- eselect-opencl-1.1.0.orig/opencl.eselect	2012-02-17 06:03:59.000000000 -0800
++++ eselect-opencl-1.1.0/opencl.eselect	2017-10-04 18:08:15.610326606 -0700
+@@ -133,6 +133,21 @@ setup_includes_symlinks() {
+ 	popd &> /dev/null
+ }
+ 
++setup_icd_symlinks() {
++	local target=$1
++	local arches=(32 64)
++	local vendors=(mesa amd amdapp amdgpu-pro ati)
++	
++	for arch in "${arches[@]}"; do
++		for vendor in "${vendors[@]}"; do
++			if [[ "${target}" == "${vendor}" ]]; then
++				rm "/etc/OpenCL/vendors/ocl${arch}.icd"
++				ln -s "/etc/OpenCL/profiles/${vendor}/${vendor}ocl${arch}.icd" "/etc/OpenCL/vendors/ocl${arch}.icd"
++			fi
++		done
++	done
++}
++
+ set_new_implementation() {
+ 	local cl_implem=$1
+ 	local avail_implems=$(get_implementations)
+@@ -153,8 +168,49 @@ set_new_implementation() {
+ 		for libdir in $(list_libdirs); do
+ 			[[ ${ROOT} != / ]] && libdir=${libdir#${EROOT}}
+ 			[[ -d ${PREFIX}/${libdir}/OpenCL && ! -h ${PREFIX}/${libdir} ]] || continue
+-			[[ -f "${PREFIX}/${libdir}/OpenCL/vendors/${cl_implem}/libOpenCL.so" ]] && found_opencl=yes
+-			#echo "DEBUG: ${PREFIX}/${libdir}/OpenCL/vendors/${cl_implem}/libOpenCL.so"
++			if [[ -f "${PREFIX}/${libdir}/OpenCL/vendors/${cl_implem}/libOpenCL.so" ]] ; then
++				found_opencl=yes
++				#echo "DEBUG: ${PREFIX}/${libdir}/OpenCL/vendors/${cl_implem}/libOpenCL.so"
++			fi
++			if [[ "${cl_implem}" == "amdapp" ]] ; then
++				if [[ "${libdir}" == "lib64" ]] ; then
++					if [[ -e "/opt/AMDAPP/lib/x86_64/sdk/libOpenCL.so" ]] ; then
++						found_opencl=yes
++						#echo "DEBUG: /opt/AMDAPP/lib/x86_64/sdk/libOpenCL.so"
++					fi
++				elif [[ "${libdir}" == "lib32" ]] ; then
++					if [[ -e "/opt/AMDAPP/lib/x86/libOpenCL.so" ]] ; then
++						found_opencl=yes
++						#echo "DEBUG: /opt/AMDAPP/lib/x86/libOpenCL.so"
++					fi
++				fi
++			fi
++			if [[ "${cl_implem}" == "amdgpu-pro" ]] ; then
++				if [[ "${libdir}" == "lib64" ]] ; then
++					if [[ -e "/opt/amdgpu-pro/lib64/libOpenCL.so" ]] ; then
++						found_opencl=yes
++						#echo "DEBUG: /opt/amdgpu-pro/lib64/libOpenCL.so"
++					fi
++				elif [[ "${libdir}" == "lib32" ]] ; then
++					if [[ -e "/opt/amdgpu-pro/lib32/libOpenCL.so" ]] ; then
++						found_opencl=yes
++						#echo "DEBUG: /opt/amdgpu-pro/lib32/libOpenCL.so"
++					fi
++				fi
++			fi
++			if [[ "${cl_implem}" == "ati" ]] ; then
++				if [[ "${libdir}" == "lib64" ]] ; then
++					if [[ -e "/opt/ati/lib64/libOpenCL.so" ]] ; then
++						found_opencl=yes
++						#echo "DEBUG: /opt/ati/lib64/libOpenCL.so"
++					fi
++				elif [[ "${libdir}" == "lib32" ]] ; then
++					if [[ -e "/opt/ati/lib32/libOpenCL.so" ]] ; then
++						found_opencl=yes
++						#echo "DEBUG: /opt/ati/lib32/libOpenCL.so"
++					fi
++				fi
++			fi
+ 		done
+ 
+ 		if [[ -z ${found_opencl} ]]; then
+@@ -198,20 +254,140 @@ set_new_implementation() {
+ 			fi
+ 		fi
+ 
+-		setup_lib_symlinks \
+-			"${PREFIX}/${libdir}/OpenCL/vendors/${cl_local}/" \
+-			"${DST_PREFIX}/${libdir}"
+-
+-		setup_includes_symlinks \
+-			"${DST_PREFIX}/include/CL" \
+-			"${PREFIX}/${libdir}/OpenCL/vendors/${cl_implem}/include/CL/" \
+-			"${PREFIX}/${libdir}/OpenCL/global/include/CL/"
+-
+-		# Setup the $LDPATH
+-		if [[ "x${REMOVE_ONLY}" == "xfalse" ]]; then
+-			# we need this relative to ROOT
+-			ldpath="${ldpath:+${ldpath}:}${PREFIX#${ROOT}}/${libdir}/OpenCL/vendors/${cl_local}"
++		if [[ "${cl_implem}" == "amdapp" ]] ; then
++			if [[ "${libdir}" == "lib32" ]] ; then
++				setup_lib_symlinks \
++					"/opt/AMDAPP/lib/x86/" \
++					"${DST_PREFIX}/${libdir}"
++
++				setup_includes_symlinks \
++					"${DST_PREFIX}/include/CL" \
++					"/opt/AMDAPP/lib/x86/include/CL/" \
++					"${PREFIX}/${libdir}/OpenCL/global/include/CL/"
++
++				setup_icd_symlinks \
++					${cl_implem}
++
++				# Setup the $LDPATH
++				if [[ "x${REMOVE_ONLY}" == "xfalse" ]]; then
++					# we need this relative to ROOT
++					ldpath="${ldpath:+${ldpath}:}/opt/AMDAPP/lib/x86"
++				fi
++			elif [[ "${libdir}" == "lib64" ]] ; then
++				setup_lib_symlinks \
++					"/opt/AMDAPP/lib/x86_64/sdk/" \
++					"${DST_PREFIX}/${libdir}"
++
++				setup_includes_symlinks \
++					"${DST_PREFIX}/include/CL" \
++					"/opt/AMDAPP/lib/x86_64/sdk/include/CL/" \
++					"${PREFIX}/${libdir}/OpenCL/global/include/CL/"
++
++				setup_icd_symlinks \
++					${cl_implem}
++
++				# Setup the $LDPATH
++				if [[ "x${REMOVE_ONLY}" == "xfalse" ]]; then
++					# we need this relative to ROOT
++					ldpath="${ldpath:+${ldpath}:}/opt/AMDAPP/lib/x86_64/sdk"
++				fi
++			fi
++		elif [[ "${cl_implem}" == "amdgpu-pro" ]] ; then
++			if [[ "${libdir}" == "lib32" ]] ; then
++				setup_lib_symlinks \
++					"/opt/amdgpu-pro/lib32/" \
++					"${DST_PREFIX}/${libdir}"
++
++				setup_includes_symlinks \
++					"${DST_PREFIX}/include/CL" \
++					"/opt/amdgpu-pro/lib32/include/CL/" \
++					"${PREFIX}/${libdir}/OpenCL/global/include/CL/"
++
++				setup_icd_symlinks \
++					${cl_implem}
++
++				# Setup the $LDPATH
++				if [[ "x${REMOVE_ONLY}" == "xfalse" ]]; then
++					# we need this relative to ROOT
++					ldpath="${ldpath:+${ldpath}:}/opt/amdgpu-pro/lib32"
++				fi
++			elif [[ "${libdir}" == "lib64" ]] ; then
++				setup_lib_symlinks \
++					"/opt/amdgpu-pro/lib64/" \
++					"${DST_PREFIX}/${libdir}"
++
++				setup_includes_symlinks \
++					"${DST_PREFIX}/include/CL" \
++					"/opt/amdgpu-pro/lib64/include/CL/" \
++					"${PREFIX}/${libdir}/OpenCL/global/include/CL/"
++
++				setup_icd_symlinks \
++					${cl_implem}
++
++				# Setup the $LDPATH
++				if [[ "x${REMOVE_ONLY}" == "xfalse" ]]; then
++					# we need this relative to ROOT
++					ldpath="${ldpath:+${ldpath}:}/opt/amdgpu-pro/lib64"
++				fi
++			fi
++		elif [[ "${cl_implem}" == "ati" ]] ; then
++			if [[ "${libdir}" == "lib32" ]] ; then
++				setup_lib_symlinks \
++					"/opt/ati/lib32/" \
++					"${DST_PREFIX}/${libdir}"
++
++				setup_includes_symlinks \
++					"${DST_PREFIX}/include/CL" \
++					"/opt/ati/lib32/include/CL/" \
++					"${PREFIX}/${libdir}/OpenCL/global/include/CL/"
++
++				setup_icd_symlinks \
++					${cl_implem}
++
++				# Setup the $LDPATH
++				if [[ "x${REMOVE_ONLY}" == "xfalse" ]]; then
++					# we need this relative to ROOT
++					ldpath="${ldpath:+${ldpath}:}/opt/ati/lib32"
++				fi
++			elif [[ "${libdir}" == "lib64" ]] ; then
++				setup_lib_symlinks \
++					"/opt/ati/lib64/" \
++					"${DST_PREFIX}/${libdir}"
++
++				setup_includes_symlinks \
++					"${DST_PREFIX}/include/CL" \
++					"/opt/ati/lib64/include/CL/" \
++					"${PREFIX}/${libdir}/OpenCL/global/include/CL/"
++
++				setup_icd_symlinks \
++					${cl_implem}
++
++				# Setup the $LDPATH
++				if [[ "x${REMOVE_ONLY}" == "xfalse" ]]; then
++					# we need this relative to ROOT
++					ldpath="${ldpath:+${ldpath}:}/opt/ati/lib64"
++				fi
++			fi
++		else
++			setup_lib_symlinks \
++				"${PREFIX}/${libdir}/OpenCL/vendors/${cl_local}/" \
++				"${DST_PREFIX}/${libdir}"
++
++			setup_includes_symlinks \
++				"${DST_PREFIX}/include/CL" \
++				"${PREFIX}/${libdir}/OpenCL/vendors/${cl_implem}/include/CL/" \
++				"${PREFIX}/${libdir}/OpenCL/global/include/CL/"
++
++			setup_icd_symlinks \
++				${cl_implem}
++
++			# Setup the $LDPATH
++			if [[ "x${REMOVE_ONLY}" == "xfalse" ]]; then
++				# we need this relative to ROOT
++				ldpath="${ldpath:+${ldpath}:}${PREFIX#${ROOT}}/${libdir}/OpenCL/vendors/${cl_local}"
++			fi
+ 		fi
++
+ 	done
+ 
+ 	store_config ${ENV_FILE} LDPATH "${ldpath}"

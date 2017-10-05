@@ -118,8 +118,9 @@ pkg_setup() {
 	if use video_cards_fglrx ; then
 		/opt/bin/clinfo | grep "CL_DEVICE_TYPE_GPU"
 		if [[ "$?" != "0" ]] ; then
-			eerror "Your video card driver has broken OpenCL support for GPUs.  You may need to downgrade your video card driver."
-			eerror "For ATI 5xxx video cards.  Only the 15.9 fglrx is supported.  15.12 beta fglrx driver is broken for GPU OpenCL support."
+			eerror "Your video card driver has broken OpenCL support for GPUs."
+			eerror "15.12 beta fglrx driver is broken for GPU OpenCL support."
+			eerror "You can use >=15.11 but you need the ati-opencl package from the oiledmachine overlay."
 			die
 		fi
 	elif use video_cards_r600 ; then

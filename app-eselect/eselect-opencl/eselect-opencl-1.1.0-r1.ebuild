@@ -38,7 +38,7 @@ DEPEND="app-arch/xz-utils"
 RDEPEND=">=app-admin/eselect-1.2.4"
 
 src_prepare() {
-	epatch "${FILESDIR}/${PN}-1.1.0.patch"
+	epatch "${FILESDIR}/${PN}-1.1.0-ver3.patch"
 	cd "${WORKDIR}"
 	epatch "${FILESDIR}/${PN}-1.1.0-clexth.patch"
 }
