@@ -1,11 +1,10 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=5
 PYTHON_COMPAT=( python2_7 )
 RUBY_OPTIONAL=yes
-USE_RUBY="ruby21"
+#USE_RUBY=ruby20
 
 inherit autotools ruby-ng eutils flag-o-matic mono-env multilib java-pkg-opt-2 python-single-r1 multilib-minimal
 
@@ -16,16 +15,17 @@ SRC_URI="http://libcaca.zoy.org/files/${PN}/${MY_P}.tar.gz"
 
 LICENSE="GPL-2 ISC LGPL-2.1 WTFPL-2"
 SLOT="0"
-KEYWORDS="alpha ~amd64 arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd"
-IUSE="cxx doc imlib java mono ncurses opengl python ruby slang static-libs test truetype X 256-colors-ncurses"
+KEYWORDS="alpha amd64 arm ~arm64 hppa ia64 ~mips ppc ppc64 ~sh sparc x86 ~amd64-fbsd ~x86-fbsd"
+IUSE="cxx doc imlib java mono ncurses opengl python ruby slang static-libs test truetype X"
+IUSE+=" 256-colors-ncurses"
 REQUIRED_USE="
-	ruby? ( ruby_targets_${USE_RUBY} )
 	python? ( ${PYTHON_REQUIRED_USE} )
 "
+#	ruby? ( ruby_targets_${USE_RUBY} )
 
 COMMON_DEPEND="imlib? ( >=media-libs/imlib2-1.4.6-r2[${MULTILIB_USEDEP}] )
 	mono? ( dev-lang/mono )
-	ncurses? ( >=sys-libs/ncurses-5.9-r3[${MULTILIB_USEDEP}] )
+	ncurses? ( >=sys-libs/ncurses-5.9-r3:0=[${MULTILIB_USEDEP}] )
 	opengl? (
 		>=virtual/glu-9.0-r1[${MULTILIB_USEDEP}]
 		>=virtual/opengl-7.0-r1[${MULTILIB_USEDEP}]
@@ -33,9 +33,9 @@ COMMON_DEPEND="imlib? ( >=media-libs/imlib2-1.4.6-r2[${MULTILIB_USEDEP}] )
 		truetype? ( >=media-libs/ftgl-2.1.3_rc5 )
 	)
 	python? ( ${PYTHON_DEPS} )
-	ruby? (  $(ruby_implementations_depend) )
 	slang? ( >=sys-libs/slang-2.2.4-r1[${MULTILIB_USEDEP}] )
 	X? ( >=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}] >=x11-libs/libXt-1.1.4[${MULTILIB_USEDEP}] )"
+#	ruby? (  $(ruby_implementations_depend) )
 RDEPEND="${COMMON_DEPEND}
 	java? ( >=virtual/jre-1.5 )"
 DEPEND="${COMMON_DEPEND}
@@ -92,16 +92,9 @@ src_prepare() {
 	# fix out of source tests
 	epatch "${FILESDIR}"/${PN}-0.99_beta18-fix-tests.patch
 
-	if use ruby ; then
-		RUBY=$(ruby_implementation_command ${USE_RUBY})
-		sed -i -r -e "s|ruby -r|${RUBY} -r|g" configure.ac || die "failed setting ruby"
+	if use 256-colors-ncurses ; then
+		epatch "${FILESDIR}"/${PN}-0.99.beta19-256-colors-ncurses.patch
 	fi
-
-        if use 256-colors-ncurses ; then
-		epatch "${FILESDIR}/libcaca-0.99.beta19-256-colors-ncurses.patch"
-	fi
-
-	epatch_user
 
 	eautoreconf
 
@@ -109,7 +102,10 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-        append-cppflags -DUSE_NCURSES_256_COLORS=1
+	if use 256-colors-ncurses ; then
+		append-cppflags -DUSE_NCURSES_256_COLORS=1
+	fi
+
 	if multilib_is_native_abi; then
 		if use java; then
 			export JAVACFLAGS="$(java-pkg_javac-args)"
@@ -119,6 +115,10 @@ multilib_src_configure() {
 		use mono && export CSC="$(type -P gmcs)" #329651
 		export VARTEXFONTS="${T}/fonts" #44128
 		use ruby && use ruby_targets_${USE_RUBY} && export RUBY=$(ruby_implementation_command ${USE_RUBY})
+
+		if use ruby ; then
+			sed -i -r -e "s|ruby -r|${RUBY} -r|g" configure.ac || die "failed setting ruby"
+		fi
 	fi
 
 	ECONF_SOURCE="${S}" \
@@ -141,7 +141,17 @@ multilib_src_configure() {
 multilib_src_compile() {
 	local _java_makeopts
 	use java && _java_makeopts="-j1" #480864
-	emake V=1 ${_java_makeopts}
+
+	FAILED=0
+	make V=1 ${_java_makeopts} || FAILED=1
+
+	if [[ "${FAILED}" == "1" ]] ; then
+		#fix multlib compile
+		sed -i -r -e "s|dependency_libs|#dependency_libs|g" caca/libcaca.la || die
+		sed -i -r -e "s|dependency_libs|#dependency_libs|g" caca/.libs/libcaca.la || die
+
+		emake V=1 ${_java_makeopts}
+	fi
 }
 
 multilib_src_test() {

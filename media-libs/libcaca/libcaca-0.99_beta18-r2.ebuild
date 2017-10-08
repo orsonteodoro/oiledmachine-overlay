@@ -15,6 +15,7 @@ LICENSE="GPL-2 ISC LGPL-2.1 WTFPL-2"
 SLOT="0"
 KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 ~sh sparc x86 ~amd64-fbsd ~x86-fbsd"
 IUSE="cxx doc imlib java mono ncurses opengl python ruby slang static-libs test truetype X"
+IUSE+=" 256-colors-ncurses"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 COMMON_DEPEND="imlib? ( >=media-libs/imlib2-1.4.6-r2[${MULTILIB_USEDEP}] )
@@ -80,6 +81,10 @@ src_prepare() {
 	# fix out of source tests
 	epatch "${FILESDIR}"/${P}-fix-tests.patch
 
+	if use 256-colors-ncurses ; then
+		epatch "${FILESDIR}"/${PN}-0.99.beta19-256-colors-ncurses.patch
+	fi
+
 	epatch_user
 
 	eautoreconf
@@ -88,6 +93,10 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	if use 256-colors-ncurses ; then
+		append-cppflags -DUSE_NCURSES_256_COLORS=1
+	fi
+
 	if multilib_is_native_abi; then
 		if use java; then
 			export JAVACFLAGS="$(java-pkg_javac-args)"

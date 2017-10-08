@@ -1,0 +1,12 @@
+--- v86d-0.1.10-orig/v86.h
++++ v86d-0.1.10/v86.h
+@@ -19,6 +19,8 @@
+ 
+ struct completion;
+ 
++typedef struct { int counter; } atomic_t;
++
+ #include <video/uvesafb.h>
+ 
+ //#define ulog(args...)	do {} while (0)
+
