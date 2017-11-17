@@ -1,66 +1,66 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=5
-inherit autotools eutils fcaps flag-o-matic multilib qmake-utils qt4-r2 user
+EAPI=6
+inherit autotools eutils fcaps flag-o-matic gnome2-utils multilib qmake-utils user xdg-utils
 
 DESCRIPTION="A network protocol analyzer formerly known as ethereal"
-HOMEPAGE="http://www.wireshark.org/"
-SRC_URI="${HOMEPAGE}download/src/all-versions/${P/_/}.tar.bz2"
+HOMEPAGE="https://www.wireshark.org/"
+SRC_URI="${HOMEPAGE}download/src/all-versions/${P/_/}.tar.xz"
 
 LICENSE="GPL-2"
 SLOT="0/${PV}"
-KEYWORDS="alpha amd64 ~arm hppa ia64 ~ppc ppc64 sparc ~x86 ~x86-fbsd"
+KEYWORDS="amd64 ~arm ~arm64 hppa ~ppc ~ppc64 x86 ~x86-fbsd"
 IUSE="
-	adns androiddump +caps crypt doc doc-pdf geoip +gtk3 ipv6 kerberos lua
-	+netlink +pcap portaudio +qt4 qt5 selinux sbc smi tfshark
-	cpu_flags_x86_sse4_2 ssl zlib
+	adns androiddump +capinfos +caps +captype ciscodump cpu_flags_x86_sse4_2
+	+dftest doc doc-pdf +dumpcap +editcap geoip gtk kerberos libssh libxml2 lua
+	+mergecap +netlink nghttp2 +pcap portaudio +qt5 +randpkt +randpktdump
+	+reordercap sbc selinux +sharkd smi snappy spandsp sshdump ssl +text2pcap
+	tfshark +tshark +udpdump zlib
 "
 IUSE+=" mtp"
 REQUIRED_USE="
-	ssl? ( crypt )
-	?? ( qt4 qt5 )
+	ciscodump? ( libssh )
+	sshdump? ( libssh )
+	pcap? ( dumpcap )
 "
 
 S=${WORKDIR}/${P/_/}
 
-GTK_COMMON_DEPEND="
-	x11-libs/gdk-pixbuf
-	x11-libs/pango
-	x11-misc/xdg-utils
-"
 CDEPEND="
 	>=dev-libs/glib-2.14:2
+	dev-libs/libgcrypt:0
 	netlink? ( dev-libs/libnl:3 )
 	adns? ( >=net-dns/c-ares-1.5 )
-	crypt? ( dev-libs/libgcrypt:0 )
 	caps? ( sys-libs/libcap )
 	geoip? ( dev-libs/geoip )
-	gtk3? (
-		${GTK_COMMON_DEPEND}
+	gtk? (
+		x11-libs/gdk-pixbuf
 		x11-libs/gtk+:3
+		x11-libs/pango
+		x11-misc/xdg-utils
 	)
 	kerberos? ( virtual/krb5 )
+	libssh? ( >=net-libs/libssh-0.6 )
+	libxml2? ( dev-libs/libxml2 )
 	lua? ( >=dev-lang/lua-5.1:* )
+	nghttp2? ( net-libs/nghttp2 )
 	pcap? ( net-libs/libpcap )
 	portaudio? ( media-libs/portaudio )
-	qt4? (
-		dev-qt/qtcore:4
-		dev-qt/qtgui:4[accessibility]
-		x11-misc/xdg-utils
-		)
 	qt5? (
 		dev-qt/qtcore:5
 		dev-qt/qtgui:5
 		dev-qt/qtmultimedia:5
 		dev-qt/qtprintsupport:5
 		dev-qt/qtwidgets:5
+		media-libs/speex
 		x11-misc/xdg-utils
 	)
 	sbc? ( media-libs/sbc )
 	smi? ( net-libs/libsmi )
-	ssl? ( net-libs/gnutls )
+	snappy? ( app-arch/snappy )
+	spandsp? ( media-libs/spandsp )
+	ssl? ( net-libs/gnutls:= )
 	zlib? ( sys-libs/zlib !=sys-libs/zlib-1.2.4 )
 "
 # We need perl for `pod2html`.  The rest of the perl stuff is to block older
@@ -78,41 +78,41 @@ DEPEND="
 		doc-pdf? ( dev-java/fop )
 		www-client/lynx
 	)
+	qt5? (
+		dev-qt/linguist-tools:5
+	)
 	sys-devel/bison
 	sys-devel/flex
 	virtual/pkgconfig
 "
 RDEPEND="
 	${CDEPEND}
-	gtk3? ( virtual/freedesktop-icon-theme )
-	qt4? ( virtual/freedesktop-icon-theme )
+	gtk? ( virtual/freedesktop-icon-theme )
 	qt5? ( virtual/freedesktop-icon-theme )
 	selinux? ( sec-policy/selinux-wireshark )
 "
+PATCHES=(
+	"${FILESDIR}"/${PN}-1.99.8-qtchooser.patch
+	"${FILESDIR}"/${PN}-2.1.0-sse4_2-r1.patch
+	"${FILESDIR}"/${PN}-2.4-androiddump.patch
+	"${FILESDIR}"/${PN}-99999999-androiddump.patch
+)
 
 pkg_setup() {
 	enewgroup wireshark
 }
 
 src_prepare() {
-	epatch \
-		"${FILESDIR}"/${PN}-1.6.13-ldflags.patch \
-		"${FILESDIR}"/${PN}-1.11.0-oldlibs.patch \
-		"${FILESDIR}"/${PN}-99999999-pkgconfig.patch \
-		"${FILESDIR}"/${PN}-1.99.8-qtchooser.patch \
-		"${FILESDIR}"/${PN}-2.0.0-androiddump-pcap.patch \
-		"${FILESDIR}"/${PN}-2.1.0-sse4_2.patch
+	default
 
 	if use mtp ; then
-		epatch "${FILESDIR}"/wireshark-1.12.6-mtp.patch
+		epatch "${FILESDIR}"/wireshark-2.4.2-mtp-0.patch
 		epatch "${FILESDIR}"/wireshark-1.99.9-mtp-1.patch
 		epatch "${FILESDIR}"/wireshark-1.99.9-mtp-2.patch
 		epatch "${FILESDIR}"/wireshark-1.99.9-mtp-3.patch
 		epatch "${FILESDIR}"/wireshark-1.99.9-mtp-4.patch
 		epatch "${FILESDIR}"/wireshark-2.0.0rc1.patch
 	fi
-
-	epatch_user
 
 	eautoreconf
 }
@@ -134,18 +134,14 @@ src_configure() {
 	fi
 
 	# Enable wireshark binary with any supported GUI toolkit (bug #473188)
-	if use gtk3 || use qt4 || use qt5; then
+	if use gtk || use qt5; then
 		myconf+=( "--enable-wireshark" )
 	else
 		myconf+=( "--disable-wireshark" )
 	fi
 
-	if ! use qt4 && ! use qt5; then
+	if ! use qt5; then
 		myconf+=( "--with-qt=no" )
-	fi
-
-	if use qt4; then
-		export QT_MIN_VERSION=4.6.0
 	fi
 
 	if use qt5; then
@@ -161,68 +157,85 @@ src_configure() {
 	# --disable-profile-build bugs #215806, #292991, #479602
 	econf \
 		$(use androiddump && use pcap && echo --enable-androiddump-use-libpcap=yes) \
+		$(use dumpcap && use_with pcap dumpcap-group wireshark) \
 		$(use_enable androiddump) \
-		$(use_enable ipv6) \
+		$(use_enable capinfos) \
+		$(use_enable captype) \
+		$(use_enable ciscodump) \
+		$(use_enable dftest) \
+		$(use_enable dumpcap) \
+		$(use_enable editcap) \
+		$(use_enable mergecap) \
+		$(use_enable randpkt) \
+		$(use_enable randpktdump) \
+		$(use_enable reordercap) \
+		$(use_enable sharkd) \
+		$(use_enable sshdump) \
+		$(use_enable text2pcap) \
 		$(use_enable tfshark) \
+		$(use_enable tshark) \
+		$(use_enable udpdump) \
 		$(use_with adns c-ares) \
 		$(use_with caps libcap) \
-		$(use_with crypt gcrypt) \
 		$(use_with geoip) \
-		$(use_with gtk3) \
+		$(use_with gtk gtk 3) \
 		$(use_with kerberos krb5) \
+		$(use_with libssh ssh) \
+		$(use_with libxml2) \
 		$(use_with lua) \
-		$(use_with pcap dumpcap-group wireshark) \
+		$(use_with nghttp2) \
 		$(use_with pcap) \
 		$(use_with portaudio) \
-		$(usex qt4 --with-qt=4 '') \
+		$(use_with sbc) \
+		$(use_with smi libsmi) \
+		$(use_with snappy) \
+		$(use_with spandsp) \
+		$(use_with ssl gnutls) \
+		$(use_with zlib) \
+		$(usex cpu_flags_x86_sse4_2 --enable-sse4_2 '') \
+		$(usex netlink --with-libnl=3 --without-libnl) \
 		$(usex qt5 --with-qt=5 '') \
-		$(usex qt4 MOC=$(qt4_get_bindir)/moc '') \
-		$(usex qt4 RCC=$(qt4_get_bindir)/rcc '') \
-		$(usex qt4 UIC=$(qt4_get_bindir)/uic '') \
+		$(usex qt5 LRELEASE=$(qt5_get_bindir)/lrelease '') \
 		$(usex qt5 MOC=$(qt5_get_bindir)/moc '') \
 		$(usex qt5 RCC=$(qt5_get_bindir)/rcc '') \
 		$(usex qt5 UIC=$(qt5_get_bindir)/uic '') \
-		$(use_with sbc) \
-		$(use_with smi libsmi) \
-		$(use_with ssl gnutls) \
-		$(use_with zlib) \
-		$(usex netlink --with-libnl=3 --without-libnl) \
-		$(usex cpu_flags_x86_sse4_2 --enable-sse4_2 '') \
 		--disable-profile-build \
-		--disable-usr-local \
 		--disable-warnings-as-errors \
 		--sysconfdir="${EPREFIX}"/etc/wireshark \
-		--without-adns \
 		${myconf[@]}
 }
 
 src_compile() {
 	default
+
 	if use doc; then
-		use doc-pdf && addpredict "/root/.java"
 		emake -j1 -C docbook
+		if use doc-pdf; then
+			addpredict "/root/.java"
+			emake -C docbook all-pdf
+		fi
 	fi
 }
 
 src_install() {
 	default
 
-	if use doc; then
-		dohtml -r docbook/{release-notes.html,ws{d,u}g_html{,_chunked}}
-		if use doc-pdf; then
-			insinto /usr/share/doc/${PF}/pdf/
-			doins docbook/{developer,user}-guide-{a4,us}.pdf docbook/release-notes.pdf
-		fi
-	fi
-
 	# FAQ is not required as is installed from help/faq.txt
 	dodoc AUTHORS ChangeLog NEWS README{,.bsd,.linux,.macos,.vmware} \
 		doc/{randpkt.txt,README*}
 
+	if use doc; then
+		docinto /usr/share/doc/${PF}/html
+		dodoc -r docbook/{release-notes.html,ws{d,u}g_html{,_chunked}}
+		if use doc-pdf; then
+			docinto /usr/share/doc/${PF}/pdf/
+			dodoc docbook/{developer,user}-guide-{a4,us}.pdf docbook/release-notes.pdf
+		fi
+	fi
+
 	# install headers
 	local wsheader
 	for wsheader in \
-		color.h \
 		config.h \
 		epan/*.h \
 		epan/crypt/*.h \
@@ -232,6 +245,7 @@ src_install() {
 		epan/wmem/*.h \
 		register.h \
 		wiretap/*.h \
+		ws_diag_control.h \
 		ws_symbol_export.h \
 		wsutil/*.h
 	do
@@ -243,7 +257,7 @@ src_install() {
 	insinto /usr/include/wiretap
 	doins wiretap/wtap.h
 
-	if use gtk3 || use qt4 || use qt5; then
+	if use gtk || use qt5; then
 		local c d
 		for c in hi lo; do
 			for d in 16 32 48; do
@@ -257,23 +271,14 @@ src_install() {
 		done
 	fi
 
-	if use gtk3; then
-		domenu wireshark.desktop
-	fi
-
-	if use qt4 || use qt5; then
-		sed \
-			-e '/Exec=/s|wireshark|&-qt|g' \
-			-e 's|^Name.*=Wireshark|& (Qt)|g' \
-			wireshark.desktop > wireshark-qt.desktop \
-			|| die
-		domenu wireshark-qt.desktop
-	fi
-
 	prune_libtool_files
 }
 
 pkg_postinst() {
+	gnome2_icon_cache_update
+	xdg_desktop_database_update
+	xdg_mimeinfo_database_update
+
 	# Add group for users allowed to sniff.
 	enewgroup wireshark
 
@@ -286,4 +291,10 @@ pkg_postinst() {
 	ewarn "NOTE: To capture traffic with wireshark as normal user you have to"
 	ewarn "add yourself to the wireshark group. This security measure ensures"
 	ewarn "that only trusted users are allowed to sniff your traffic."
+}
+
+pkg_postrm() {
+	gnome2_icon_cache_update
+	xdg_desktop_database_update
+	xdg_mimeinfo_database_update
 }

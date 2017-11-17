@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+<maintainer type="person">
+    <description>Primary maintainer</description>
+    <email>tokiclover@gmail.com</email>
+</maintainer>
+<maintainer type="project">
+	<description>Primary maintainer</description>
+	<email>bar-overlay@noreply.github.com</email>
+	<name>Gentoo Bar Overlay</name>
+</maintainer>
+<longdescription lang="en">
+</longdescription>
+<use>
+</use>
+<!--
+<upstream>
+	<maintainer status="active">
+		<email></email>
+	</maintainer>
+	<changelog></changelog>
+	<doc lang="en"></doc>
+	<bugs-to></bugs-to>
+	<remote-id type="sourceforge"></remote-id>
+</upstream>
+-->
+</pkgmetadata>

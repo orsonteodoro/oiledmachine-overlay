@@ -121,7 +121,7 @@ src_prepare() {
 	epatch "${FILESDIR}"/boinc-bfgminer-3.10.10-5.patch
 	epatch "${FILESDIR}"/boinc-bfgminer-3.10.10-disableinitforwrapper.patch
 
-	epatch_user
+	eapply_user
 }
 
 src_configure() {
