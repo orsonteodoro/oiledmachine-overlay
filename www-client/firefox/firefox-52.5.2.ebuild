@@ -82,6 +82,7 @@ if [[ -z $GMP_PLUGIN_LIST ]]; then
 fi
 
 pkg_setup() {
+	MOZILLA_FIVE_HOME="/usr/$(get_libdir)/${PN}"
 	moz_pkgsetup
 
 	# Avoid PGO profiling problems due to enviroment leakage
