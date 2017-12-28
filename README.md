@@ -36,9 +36,9 @@ The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overla
 | net-misc/boinc-bfgminer-cpu | This is a modified BFGMiner with BOINC support for CPUs.  It requires the Boinc Wrapper sample app.  Ebuild level support for Profile Guided Optimizations (PGO).  It still may be buggy. |
 | net-misc/rainbowstream | This is a Twitter command line client. |
 | net-misc/googler | This is a Google command line client. |
-| dev-python/twitter | A Twitter command line client and library with fixed search and patch ansi output. |
-| dev-util/depot_tools | This package contains development tools for Google projects.  It's useful for checking out v8. |
-| media-sound/lastfm | This is for Last.fm API for Python.  Dunno why this is here. |
+| dev-python/twitter | This is a Twitter command line client and library with fixed search and patch ANSI output. |
+| dev-util/depot_tools | This package contains development tools for Google projects.  It's useful for checking out v8, the JavaScript engine behind Chromium. |
+| media-sound/lastfm | This is for Last.fm API for Python.  I don't know why this is here. |
 | media-sound/lastfmsubmitd | This was patched with Last.fm API v2.0. |
 | media-sound/mplayer-lastfm-scrobbler | This is a scrobbler for mplayer. |
 | dev-python/arrow | This library is for time creation and manipulation for python. |
