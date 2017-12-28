@@ -71,7 +71,7 @@ The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overla
 | games-engines/urho3d | urho3d is another game engine.  Android support is incomplete.  Raspberry PI is untested.  It is a split ebuild meaning that it many of the internal dependencies are now ebuilds like the Gentoo way.  Most of the demos work as expected.  There may be quirks.  If you see any that bother you, then use the internal dependency instead.  Enable box2d for 2d-physics.  Enable bullet for 3d-physics.  Enable recast for 3D pathfinding. |
 | games-engines/urho3d-web | This is the emscripten compiled ebuild.  It still requires urho3d for the include headers. |
 | dev-lua/tolua++ | tolua++ is a Lua-C++ bindings generator more improved than tolua.  I recommend the urho3d use flag to enable some bugfixes.  This one is used by urho3d. |
-| dev-lua/tolua | Lua-C++ bindings generator.  Not used by urho3d. |
+| dev-lua/tolua | tolua is another Lua-C++ bindings generator.  It is not used by urho3d. |
 | media-sound/w3crapcli-lastfm | These are shell scripts to allow for lastfm support for mpv.  This one was modified a bit for Last.fm 2.0 API.  You need your own an developer API key from last fm to use it.  It has last played support as well.  The one on w3crapcli Github repository uses an external bloated dependency. |
 | media-sound/spotify | I modified the Spotify ebuild for openssl and curl for the Spotify use flag.  Spotify will not work with openssl and curl from the Gentoo portage tree.  You need the openssl and curl ebuilds in this repository. |
 | dev-libs/openssl | This package has versioned symbols required for Spotify to work.  You need to enable the spotify use flag to enable versioned symbols hack.  It spoofs as 1.0.0 but it still works. |
