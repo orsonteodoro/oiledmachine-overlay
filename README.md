@@ -10,7 +10,7 @@ IMPORTANT:  Many of these packages especially non-free software also require you
 
 Here is an example of what I mean.
 
-IMPORTANT:  For firefox, chromium, surf, you need to copy the contents of profiles/package.use.force from the overlay to your /etc/portage/profile/package.use.force to ensure that you can mutually exclusively choose between either 64- or 32-bit compiled builds for multilib environments.  The package.use.force from the overlay will not work as expected because of a quirk or a bug in emerge.  The 32-bit builds are perceived to be better under heavy memory loads compared to the native 64-bit compiles of these packages.  If you run a 64-bit multilib environment, choose the 32-bit build instead.
+IMPORTANT:  For Firefox, Chromium, surf, you need to copy the contents of profiles/package.use.force from the overlay to your /etc/portage/profile/package.use.force to ensure that you can mutually exclusively choose between either 64- or 32-bit compiled builds for multilib environments.  The package.use.force from the overlay will not work as expected because of a quirk or a bug in emerge.  The 32-bit builds are perceived to be better under heavy memory loads compared to the native 64-bit compiles of these packages.  If you run a 64-bit multilib environment, choose the 32-bit build instead.
 
 The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overlay ebuilds.  They many of the ebuilds in that folder in this overlay are dependencies for the latest stable MonoDevelop and for MonoGame.
 
