@@ -14,7 +14,7 @@ IMPORTANT:  For Firefox, Chromium, surf, you need to copy the contents of profil
 
 The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overlay ebuilds.  They many of the ebuilds in that folder in this overlay are dependencies for the latest stable MonoDevelop and for MonoGame.
 
-The name of the repo comes from "well-oiled machine."  A (Gentoo) computer should not feel like molasses under high memory pressure.  It should run smoothly.
+The name of the repo comes from "well-oiled machine."  A (Gentoo) computer should not feel like molasses under high memory pressure or heavy IO utilization.  It should run smoothly.
 
 | package | decription |
 | --- | --- |
