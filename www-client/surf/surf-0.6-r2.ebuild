@@ -49,7 +49,7 @@ RDEPEND="
 pkg_setup() {
 	if use savedconfig; then
 		if [[ ! -f "/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}" ]]; then
-			elog "Please copy ${FILESDIR}/${PN}-${PV} to /etc/portage/savedconfig/${CATEGORY}/${PN}-${PV} and edit accordingly."
+			elog "Please copy ${FILESDIR}/${PN}-${PV} to /etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR} and edit accordingly."
 			die ""
 		fi
 	fi

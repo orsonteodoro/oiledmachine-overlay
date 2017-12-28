@@ -41,6 +41,7 @@ REQUIRED_USE='
 	boinc
 	^^ ( video_cards_nvidia video_cards_fglrx video_cards_intel video_cards_r600 video_cards_radeonsi )
 	!video_cards_r600
+	video_cards_fglrx? ( video_cards_amdgpu )
 '
 
 DEPEND='

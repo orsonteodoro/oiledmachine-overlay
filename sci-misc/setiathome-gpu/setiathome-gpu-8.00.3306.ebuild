@@ -48,9 +48,9 @@ BOINC_VER="7.2.47"
 #BOINC_MAJOR=`echo $BOINC_VER | cut -d. -f1`
 #BOINC_MINOR=`echo $BOINC_VER | cut -d. -f2`
 DEPEND="${RDEPEND}
-	=sys-devel/autoconf-2.67
+	>=sys-devel/autoconf-2.67
 	sci-misc/boinc:=
-	opencl? ( dev-util/amdapp )
+	opencl? ( video_cards_amdgpu? ( dev-util/amdapp ) )
 	sci-misc/setiathome-boincdir:0/${BOINC_VER}
 	app-text/xmlstarlet
 "

@@ -1,0 +1,11 @@
+--- firefox-57.0.orig/build/moz.configure/windows.configure	2017-11-02 09:16:32.000000000 -0700
++++ firefox-57.0/build/moz.configure/windows.configure	2017-12-05 18:41:32.144800186 -0800
+@@ -417,7 +417,7 @@ def valid_mt(path):
+ set_config('MSMANIFEST_TOOL', depends(valid_mt)(lambda x: bool(x)))
+ 
+ 
+-link = check_prog('LINK', ('link.exe',), paths=vc_compiler_path)
++link = check_prog('LINK', ('link.exe',))
+ 
+ add_old_configure_assignment('LINK', link)
+ 
