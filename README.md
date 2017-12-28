@@ -99,7 +99,7 @@ The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overla
 | media-libs/theoraplay | This needs testing. |
 | games-misc/sharpnav | This library is a AI pathfinding library in C# useful for games. |
 | games-misc/tiledsharp | This library is a map loader in C# for tiled map editor. |
-| sci-physics/farseer-physics-engine | This is a physics engine based on box2d and is a C# library.  This one also has support for MonoGame. |
+| sci-physics/farseer-physics-engine | This is a physics engine based on Box2D and is a C# library.  This one also has support for MonoGame. |
 | dev-dotnet/aforgedotnet | This is the AForge.NET library containing computer vision and aritificial intelligence algorithms.  Kinect (via libfreenect) support untested.  References to ffmpeg untested.  Needs to be tested.  The author said that the video isn't feature complete on mono Linux. |
 | games-misc/beatdetectorforgames | This is a FMOD based beat detector which may be useful for rhythm games.  It has support for both C++ and C#.  The C# is a wrapper around the FMOD library.  The author said there wasn't Linux support but it could happen because there is a FMOD library in the main Gentoo overlay.  It still needs testing. |
 | dev-dotnet/tesseract | This is a C# binding to the tesseract OCR (Optical Character Recognition) software which will allow your program to read material produced by typewriters and from books. |
