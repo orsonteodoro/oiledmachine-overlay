@@ -87,7 +87,7 @@ The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overla
 | x11-libs/cairo | This one has colored emojis enabled. |
 | x11-wm/dwm | This ebuild fixes the emoji titlebar crash and has integrated Fibonacci layout patch applied. |
 | media-gfx/caesiumclt | This is an command line image compressor for png and jpeg files. |
-| media/mozjpeg | This is a dependency for caesiumctl. |
+| media/mozjpeg | This is a dependency for CaesiumCLT. |
 | www-misc/facy | This is a command line Facebook client.  Update with missing facebook API calls.  Used CasperJS and PhantomJS to fill in the missing API calls.  This ebuild add enhancemences such as command line video support, YouTube support, and use of color emojis, better handling of shared Spotify playlists. |
 | dev-dotnet/mono-packaging-tools | This ebuild from this overlay has the working mpt-sln.  Upstream is bugged [but now is fixed].  It is used to delete the fsharp projects from the MonoDevelop ebuild. |
 | sys-devel/llvm | This exposes some codegen code for CppSharp with the use codegen flag. |
