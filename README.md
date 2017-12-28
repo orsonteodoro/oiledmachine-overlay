@@ -86,7 +86,7 @@ The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overla
 | media-fonts/noto-color-emoji-bin | This one has been precompiled and from the Google website.  You may need to do a `eselect fontconfig enable 01-notosans.conf` and `eselect fontconfig disable 70-no-bitmaps.conf` followed by a `fc-cache -fv`.  If you want u263a white smiling emoji to be colored emoji presented in Firefox and Chromium, you need to `eselect fontconfig enable 61-notosans.conf` followed by a `fc-cache -fv` to update.  Do the same for 44-notosans.conf for command line fix. |
 | x11-libs/cairo | This one has colored emojis enabled. |
 | x11-wm/dwm | This ebuild fixes the emoji titlebar crash and has integrated Fibonacci layout patch applied. |
-| media-gfx/caesiumclt | This is an command line image compressor for png and jpeg files. |
+| media-gfx/caesiumclt | This is a command line image compressor for png and jpeg files. |
 | media/mozjpeg | This is a dependency for CaesiumCLT. |
 | www-misc/facy | This is a command line Facebook client.  Update with missing facebook API calls.  Used CasperJS and PhantomJS to fill in the missing API calls.  This ebuild add enhancemences such as command line video support, YouTube support, and use of color emojis, better handling of shared Spotify playlists. |
 | dev-dotnet/mono-packaging-tools | This ebuild from this overlay has the working mpt-sln.  Upstream is bugged [but now is fixed].  It is used to delete the fsharp projects from the MonoDevelop ebuild. |
