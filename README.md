@@ -16,7 +16,7 @@ The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overla
 
 | package | decription |
 | --- | --- |
-| www-client/firefox | This ebuild helps build 32-bit only Firefox on an multilib machine.  See important above for details to properly set flags.  Firefox ebuild in this overlay will be dropped for 57.x and above since I can't get multilib rust/cargo.  It also contains the recent large emoji fix. |
+| www-client/firefox | This ebuild helps build 32-bit only Firefox on an multilib machine.  See important above for details to properly set flags.  Firefox ebuild in this overlay will be dropped for 57.x and above since I can't get multilib Rust/Cargo.  It also contains the recent large emoji fix. |
 | www-client/chromium | This ebuild helps build 32-bit only Firefox on an multilib machine.  See important above for details to properly set flags |
 | www-plugins/chrome-binary-plugins | This ebuild helps build 32-bit only builds on an multilib machine.  See important above for details to properly set flags.  This ebuild is abandoned. |
 | net-libs/webkit-gtk | This ebuild helps build 32-bit only builds on a multilib machine.  See important above for details to properly set flags. |
