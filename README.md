@@ -33,7 +33,7 @@ The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overla
 | sci-misc/astropulse-art | This package contains Astropulse art assets to prevent merging conflicts. |
 | sci-misc/setiathome-cfg | This package updates anonymous platform configuration files for setiathome-{cpu,gpu},astropulse-{cpu,gpu}.  You must run this every time you upgrade setiathome-{cpu,gpu} and/or astropulse-{cpu,gpu}. |
 | net-misc/boinc-bfgminer-gpu | This is a modified BFGMiner with BOINC support for GPUs.  It requires the BOINC wrapper sample app.  See sci-misc/boinc-server-project-eligius ebuild on in how to use it.  The reason why I have BOINC support so we can have the BOINC client manage project switching or CPU/GPU resources based on user activity (e.g. mouse move).  It still may be buggy. |
-| net-misc/boinc-bfgminer-cpu | This is a modified BFGMiner with BOINC support for CPUs.  It requires the BOINC wrapper sample app.  Ebuild level support for Profile Guided Optimizations (PGO).  It still may be buggy. |
+| net-misc/boinc-bfgminer-cpu | This is a modified BFGMiner with BOINC support for CPUs.  It requires the BOINC wrapper sample app.  It contains ebuild level support for Profile Guided Optimizations (PGO).  It still may be buggy. |
 | net-misc/rainbowstream | This is a Twitter command line client. |
 | net-misc/googler | This is a Google command line client. |
 | dev-python/twitter | This is a Twitter command line client and library with fixed search and patch ANSI output. |
