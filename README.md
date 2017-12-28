@@ -2,7 +2,7 @@
 
 This portage overlay contains various ebuilds for the Gentoo Linux Distribution.  It focuses on optimized ebuilds, some game development, software used in computer-science courses, C#, and other legacy software and hardware.
 
-In this overlay, I provide 32 bit ebuilds for libraries and programs of some programs while the Gentoo overlay contains native ebuilds.  Reason why I choose to use the 32-bit versions over the 64-bit versions because of the 32 bit versions have a lower virtual memory and lower memory footprint overall.  I try to offer the stable modified ebuilds to minimize memory leaks.
+In this overlay, I provide 32-bit ebuilds for libraries and programs of some programs while the Gentoo overlay contains native ebuilds.  Reason why I choose to use the 32-bit versions over the 64-bit versions because of the 32-bit versions have a lower virtual memory and lower memory footprint overall.  I try to offer the stable modified ebuilds to minimize memory leaks.
 
 IMPORTANT:  Many of these packages have special licenses and EULAs attached to them.  I recommend that you edit your /etc/portage/make.conf so it looks like this ACCEPT_LICENSE="-*" and manually accept each of the licenses.  Licenses can be found in the licenses folder of this overlay and the free copyleft licenses can be found on the official gentoo overlay in their license folder too.
 
@@ -10,7 +10,7 @@ IMPORTANT:  Many of these packages especially non-free software also require you
 
 Here is an example of what I mean.
 
-IMPORTANT:  For firefox, chromium, surf, you need to copy the contents of profiles/package.use.force from the overlay to your /etc/portage/profile/package.use.force to ensure that you can mutually exclusively choose between either 64 or 32 bit compiled builds for multilib environments.  The package.use.force from the overlay will not work as expected because of a quirk or a bug in emerge.  The 32 bit builds are perceived to be better under heavy memory loads compared to the native 64 bit compiles of these packages.  If you run a 64 bit multilib environment, choose the 32 bit build instead.
+IMPORTANT:  For firefox, chromium, surf, you need to copy the contents of profiles/package.use.force from the overlay to your /etc/portage/profile/package.use.force to ensure that you can mutually exclusively choose between either 64- or 32-bit compiled builds for multilib environments.  The package.use.force from the overlay will not work as expected because of a quirk or a bug in emerge.  The 32-bit builds are perceived to be better under heavy memory loads compared to the native 64-bit compiles of these packages.  If you run a 64-bit multilib environment, choose the 32-bit build instead.
 
 The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overlay ebuilds.  They many of the ebuilds in that folder in this overlay are dependencies for the latest stable MonoDevelop and for MonoGame.
 
@@ -109,14 +109,14 @@ The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overla
 | dev-dotnet/freenect | This is a C# wrapper for the libfreenect for the XBox Kinect camera. |
 | dev-util/ycmd | This is a YouCompleteMe server.  Just add your ycmd client to your text editor then you have code completion support.  The 2014 ebuild is for older clients.  The 2017 ebuilds require clients use the new HMAC header calculation.  It supports C#, C, C++, Objective C, Objective C++, rust, go, javascript, typescript, python.  If you use the javascript or typescript use flag then you need to add the jm-overlay to pull in the dev-nodejs packages. |
 | dev-util/gycm | Gycm is the geany plugin and ycmd client. |
-| dev-util/emacs-ycmd | This is a ycmd client for emacs. |
+| dev-util/emacs-ycmd | This is a ycmd client for Emacs. |
 | dev-util/ycm-generator | You need this if you want c/c++/objc/objc++ support with your ycmd client.  It is mandatory for those languages. |
 | app-editors/nano-ycmd | This is a modified GNU nano that uses ycmd.  It is still experimental. |
 | dev-dotnet/omnisharp-server | This is an older OmniSharp that ycmd still depends on.  This allows for IntelliSense for open source editors. |
-| dev-dotnet/omnisharp-roslyn | This is the newer OmniSharp.  Ycmd can use this but with a special patch. |
-| app-emacs/omnisharp-emacs | This one depends on omnisharp-server.  It allows emacs to use csharp with IntelliSense. |
-| app-emacs/company-mode | This is for code completion for emacs. |
-| app-emacs/flycheck | This is a syntax checker for emacs. |
+| dev-dotnet/omnisharp-roslyn | This is the newer OmniSharp.  ycmd can use this but with a special patch. |
+| app-emacs/omnisharp-emacs | This one depends on omnisharp-server.  It allows Emacs to use csharp with IntelliSense. |
+| app-emacs/company-mode | This is for code completion for Emacs. |
+| app-emacs/flycheck | This is a syntax checker for Emacs. |
 | app-emacs/omnisharp-emacs-roslyn | This one doesn't work.  It is still in the repo for testing and for developers to fix.  It is basically omnisharp-emacs but using the roslyn branch. |
 
 TODO (NOT COMMITED):
