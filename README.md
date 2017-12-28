@@ -112,8 +112,8 @@ The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overla
 | dev-util/emacs-ycmd | This is a ycmd client for emacs. |
 | dev-util/ycm-generator | You need this if you want c/c++/objc/objc++ support with your ycmd client.  It is mandatory for those languages. |
 | app-editors/nano-ycmd | This is a modified GNU nano that uses ycmd.  It is still experimental. |
-| dev-dotnet/omnisharp-server | This is an older omnisharp that ycmd still depends on.  This allows for IntelliSense for open source editors. |
-| dev-dotnet/omnisharp-roslyn | This is the newer omnisharp.  Ycmd can use this but with a special patch. |
+| dev-dotnet/omnisharp-server | This is an older OmniSharp that ycmd still depends on.  This allows for IntelliSense for open source editors. |
+| dev-dotnet/omnisharp-roslyn | This is the newer OmniSharp.  Ycmd can use this but with a special patch. |
 | app-emacs/omnisharp-emacs | This one depends on omnisharp-server.  It allows emacs to use csharp with IntelliSense. |
 | app-emacs/company-mode | This is for code completion for emacs. |
 | app-emacs/flycheck | This is a syntax checker for emacs. |
