@@ -95,7 +95,7 @@ The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overla
 | dev-dotnet/koala | This package is a for facy.  It is used to interact with the Facebook Graph API in Ruby. |
 | media-gfx/libcaca | This library contains an experimental special 256 color patch from Ben Wiley Sittler.  I don't know if the patch actually works from emperical tests.  Maybe it is just me or I forward patched it wrong.  I use the experimental 256 color for facy to render Facebook photos, animated gifs, and Facebook videos to try to better render skin color.  I still think Termpic colors rendering is better. |
 | games-engines/fna | This is an XNA4 ebuild which just produces an C# assembly.  This project sadly doesn't have a Monodevelop addin.  This ebuild is provided for others to fix and expand. |
-| dev-dotnet/{mojoshader-cs, openal-cs, sdl2-cs, theoraplay-cs, vorbisfile-cs} | are dependencies for fna which need testing.  Looks like it hasn't been extensively tested on Linux. |
+| dev-dotnet/{mojoshader-cs, openal-cs, sdl2-cs, theoraplay-cs, vorbisfile-cs} | These are dependencies for fna which need testing.  Looks like it hasn't been extensively tested on Linux. |
 | media-libs/theoraplay | This needs testing. |
 | games-misc/sharpnav | This library is a AI pathfinding library in C# useful for games. |
 | games-misc/tiledsharp | This library is a map loader in C# for tiled map editor. |
