@@ -16,7 +16,7 @@ The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overla
 
 | package | decription |
 | --- | --- |
-| www-client/firefox | 32 bit only builds on an multilib machine.  See important above for details to properly set flags. |
+| www-client/firefox | 32 bit only builds on an multilib machine.  See important above for details to properly set flags.  Firefox ebuild in this overlay will be dropped for 57.x and above since I can't get multilib rust/cargo. |
 | www-client/chromium | 32 bit only builds on an multilib machine.  See important above for details to properly set flags |
 | www-plugins/chrome-binary-plugins | 32 only builds on an multilib machine.  See important above for details to properly set flags. |
 | net-libs/webkit-gtk | 32 bit only builds on a multilib machine.  See important above for details to properly set flags. |
