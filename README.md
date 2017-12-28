@@ -69,7 +69,7 @@ The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overla
 | games-misc/lateralgm | LateralGM for the ENIGMA development environment.  It was written in Java.  This is basically the level editor |
 | games-misc/libmaker | This is the Library editor for ENIGMA and GameMaker.  It was written in Java.  More information can be found at https://enigma-dev.org/docs/Wiki/Library_Maker. |
 | games-engines/urho3d | Urho3D is another game engine.  Android support is incomplete.  Raspberry PI is untested.  It is a split ebuild meaning that it many of the internal dependencies are now ebuilds like the Gentoo way.  Most of the demos work as expected.  There may be quirks.  If you see any that bother you, then use the internal dependency instead.  Enable box2d for 2d-physics.  Enable bullet for 3d-physics.  Enable recast for 3D pathfinding. |
-| games-engines/urho3d-web | This is the emscripten compiled ebuild.  It still requires Urho3D for the include headers. |
+| games-engines/urho3d-web | This is the Emscripten compiled ebuild.  It still requires Urho3D for the include headers. |
 | dev-lua/tolua++ | tolua++ is a Lua-C++ bindings generator more improved than tolua.  I recommend the urho3d use flag to enable some bugfixes.  This one is used by Urho3D. |
 | dev-lua/tolua | tolua is another Lua-C++ bindings generator.  It is not used by Urho3D. |
 | media-sound/w3crapcli-lastfm | These are shell scripts to allow for lastfm support for mpv.  This one was modified a bit for Last.fm 2.0 API.  You need your own an developer API key from last fm to use it.  It has last played support as well.  The one on w3crapcli Github repository uses an external bloated dependency. |
