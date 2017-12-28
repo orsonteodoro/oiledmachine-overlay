@@ -14,6 +14,8 @@ IMPORTANT:  For Firefox, Chromium, surf, you need to copy the contents of profil
 
 The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overlay ebuilds.  They many of the ebuilds in that folder in this overlay are dependencies for the latest stable MonoDevelop and for MonoGame.
 
+The name of the repo comes from "well-oiled machine."  A (Gentoo) computer should not feel like molasses under high memory pressure.  It should run smoothly.
+
 | package | decription |
 | --- | --- |
 | www-client/firefox | This ebuild helps build 32-bit only Firefox on a multilib machine.  See important above for details to properly set flags.  Firefox ebuild in this overlay will be dropped for 57.x and above since I can't get multilib Rust/Cargo.  It also contains the recent large emoji fix. |
