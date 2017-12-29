@@ -121,7 +121,7 @@ The name of the repo comes from "well-oiled machine."  A (Gentoo) computer shoul
 | app-emacs/flycheck | This is a syntax checker for Emacs. |
 | app-emacs/omnisharp-emacs-roslyn | This one doesn't work.  It is still in the repo for testing and for developers to fix.  It is basically omnisharp-emacs but using the roslyn branch. |
 | dev-util/monodevelop | This contains frozen versions and commits for the dependencies that the package eventually checks and pulls in. |
-| x11-drivers/ati-drivers | This contains a working OpenCL with proper dependencies for old =xorg-server-1.17 and kernel version =4.1.43 or <= 4.4.  It will present security holes both in the kernel and X.Org Server so use at your own risk.  The ebuild does extra checks to see if you have the proper versions for dependencies.  You need the XServer in this overlay since these older XServer versions do not exist in Portage.  This older package is for older ATI video cards with OpenCL. |
+| x11-drivers/ati-drivers | This contains a working OpenCL with proper dependencies for old =xorg-server-1.17 and kernel version =4.1.43 or <= 4.4.  It will present security holes both in the kernel and X.Org Server so use at your own risk.  The ebuild does extra checks to see if you have the proper versions for dependencies.  You need the XServer in this overlay since these older XServer versions do not exist in Portage.  This older package is for older ATI video cards with OpenCL.  You must add >=x11-base/xorg-server-1.18 >x11-drivers/xf86-input-evdev-2.10.3 =dev-libs/libevdev-9999 to package.mask. |
 
 TODO (NOT COMMITED):
 
