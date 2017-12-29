@@ -200,7 +200,8 @@ src_prepare() {
 	fi
 
 	if use noto-fix ; then
-		epatch "${FILESDIR}"/firefox-52.3.0-noto-fix.patch
+		epatch "${FILESDIR}"/firefox-52.3.0-noto-fix.patch #big emoji fix
+		epatch "${FILESDIR}"/firefox-52.5.2-noto-fix.patch #line height fix
 	fi
 
 	multilib_copy_sources
