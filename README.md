@@ -120,6 +120,7 @@ The name of the repo comes from "well-oiled machine."  A (Gentoo) computer shoul
 | app-emacs/company-mode | This is for code completion for Emacs. |
 | app-emacs/flycheck | This is a syntax checker for Emacs. |
 | app-emacs/omnisharp-emacs-roslyn | This one doesn't work.  It is still in the repo for testing and for developers to fix.  It is basically omnisharp-emacs but using the roslyn branch. |
+| dev-util/monodevelop | This contains frozen versions and commits for the dependencies that the package eventually checks and pulls in. |
 
 TODO (NOT COMMITED):
 
