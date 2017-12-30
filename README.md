@@ -110,7 +110,7 @@ The name of the repo comes from "well-oiled machine."  A (Gentoo) computer shoul
 | games-misc/monogame-extended |  This contains several common modules found in game engines like a particle engine, based on Mercury Particle Engine, and a tiled map loader for maps created by the Tiled Map Editor.  Currently a vanilla build of MonoGame stable doesn't support shaders on Linux so some features will not work for this assembly. |
 | dev-dotnet/freenect | This is a C# wrapper for the libfreenect for the XBox Kinect camera. |
 | dev-util/ycmd | This is a YouCompleteMe server.  Just add your ycmd client to your text editor then you have code completion support.  The 2014 ebuild is for older clients.  The 2017 ebuilds require clients use the new HMAC header calculation.  It supports C#, C, C++, Objective C, Objective C++, rust, go, javascript, typescript, python.  If you use the `javascript` or `typescript` USE flag, then you need to add the jm-overlay to pull in the dev-nodejs packages. |
-| dev-util/gycm | Gycm is a Geany plugin and ycmd client. |
+| dev-util/gycm | Gycm is a Geany plugin and ycmd client to improve IntelliSense support on top of the stock completer. |
 | dev-util/emacs-ycmd | This is a ycmd client for Emacs. |
 | dev-util/ycm-generator | You need this if you want c/c++/objc/objc++ support with your ycmd client.  It is mandatory for those languages. |
 | app-editors/nano-ycmd | This is a modified GNU nano that uses ycmd.  It is still experimental. |
