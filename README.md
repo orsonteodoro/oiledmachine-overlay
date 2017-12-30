@@ -100,7 +100,7 @@ The name of the repo comes from "well-oiled machine."  A (Gentoo) computer shoul
 | dev-dotnet/{mojoshader-cs, openal-cs, sdl2-cs, theoraplay-cs, vorbisfile-cs} | These are dependencies for FNA which need testing.  Looks like it hasn't been extensively tested on Linux. |
 | media-libs/theoraplay | This needs testing. |
 | games-misc/sharpnav | This library is a AI pathfinding library in C# useful for games. |
-| games-misc/tiledsharp | This library is a map loader in C# for tiled map editor. |
+| games-misc/tiledsharp | This library is a map loader in C# for the Tiled Map Editor. |
 | sci-physics/farseer-physics-engine | This is a physics engine based on Box2D and is a C# library.  This one also has support for MonoGame. |
 | dev-dotnet/aforgedotnet | This is the AForge.NET library containing computer vision and aritificial intelligence algorithms.  Kinect (via libfreenect) support untested.  References to FFmpeg were untested.  The package needs testing.  The author said that the video isn't feature complete on Mono for Linux. |
 | games-misc/beatdetectorforgames | This is a FMOD based beat detector which may be useful for rhythm games.  It has support for both C++ and C#.  The C# is a wrapper around the FMOD library.  The author said there wasn't Linux support but it could happen because there is a FMOD library in the main Gentoo overlay.  It still needs testing. |
