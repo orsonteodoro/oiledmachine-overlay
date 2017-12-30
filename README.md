@@ -18,7 +18,7 @@ The name of the repo comes from "well-oiled machine."  A (Gentoo) computer shoul
 
 | package | decription |
 | --- | --- |
-| www-client/firefox | This ebuild helps build 32-bit only Firefox on a multilib machine.  See important above for details to properly set flags.  I'm still working on the 32-bit Firefox 57.x ebuild, but it may require 32 bit Rust and/or Cargo which I did figured out to cross compile as 32-bit.  It also contains the recent large emoji fix and emoji selection bug fix. |
+| www-client/firefox | This ebuild helps build 32-bit only Firefox on a multilib machine.  See important above for details to properly set flags.  It also contains the recent large emoji fix and emoji selection bug fix for 52.x.  It requires rust and cargo from this repo to build the 32-bit rustlib and for 32-bit Firefox to link to them. |
 | www-client/chromium | This ebuild helps build 32-bit only Firefox on a multilib machine.  See important above for details to properly set flags |
 | www-plugins/chrome-binary-plugins | This ebuild helps build 32-bit only builds on a multilib machine.  See important above for details to properly set flags.  This ebuild is abandoned. |
 | net-libs/webkit-gtk | This ebuild helps build 32-bit only builds on a multilib machine.  See important above for details to properly set flags. |
