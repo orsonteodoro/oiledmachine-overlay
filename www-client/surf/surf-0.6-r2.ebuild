@@ -15,7 +15,7 @@ SLOT="0"
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE="gtk3 adblock searchengines rip mimehandler linkhints simplebookmarking"
 IUSE+=" ${_ABIS}"
-REQUIRED_USE="^^ ( ${_ABIS} ) adblock? ( gtk3 ) rip? ( mimehandler savedconfig ) linkhints searchengines? ( savedconfig )"
+REQUIRED_USE="^^ ( ${_ABIS} ) adblock? ( gtk3 ) rip? ( mimehandler savedconfig ) searchengines? ( savedconfig ) simplebookmarking? ( savedconfig )"
 KEYWORDS="~amd64 ~x86"
 
 COMMON_DEPEND="

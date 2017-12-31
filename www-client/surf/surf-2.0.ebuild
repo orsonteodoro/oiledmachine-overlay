@@ -18,7 +18,7 @@ KEYWORDS="amd64 x86"
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE="adblock searchengines linkhints simplebookmarking"
 IUSE+=" ${_ABIS}"
-REQUIRED_USE="^^ ( ${_ABIS} ) linkhints searchengines? ( savedconfig )"
+REQUIRED_USE="^^ ( ${_ABIS} ) searchengines? ( savedconfig ) simplebookmarking? ( savedconfig )"
 
 COMMON_DEPEND="
 	dev-libs/glib:2
