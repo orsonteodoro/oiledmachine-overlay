@@ -9,11 +9,11 @@ DESCRIPTION="A simple web browser based on WebKit/GTK+."
 HOMEPAGE="http://surf.suckless.org/"
 SRC_URI="http://dl.suckless.org/${PN}/${P}.tar.gz"
 
-LICENSE="MIT CC-BY-NA-SA-3.0 SURF-community"
+LICENSE="MIT adblock? ( CC-BY-NA-SA-3.0 MIT ) linkhints? ( SURF-community ) searchengines? ( SURF-community ) rip? ( MIT || GPL-2+ ) mimehandler? ( SURF-community ) simplebookmarking? ( SURF-community )"
 SLOT="0"
 
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
-IUSE="gtk3 adblock searchengines rip mimehandler linkhints"
+IUSE="gtk3 adblock searchengines rip mimehandler linkhints simplebookmarking"
 IUSE+=" ${_ABIS}"
 REQUIRED_USE="^^ ( ${_ABIS} ) adblock? ( gtk3 ) rip? ( mimehandler savedconfig ) linkhints searchengines? ( savedconfig )"
 KEYWORDS="~amd64 ~x86"
@@ -59,8 +59,8 @@ src_prepare() {
 	eapply "${FILESDIR}"/${P}-gentoo.patch
 	if use gtk3 ; then
 		eapply "${FILESDIR}"/${PN}-0.6-gtk3.patch
-		cat "${FILESDIR}"/configure.ac > "${WORKDIR}/${P}"/configure.ac
-		cat "${FILESDIR}"/Makefile.am > "${WORKDIR}/${P}"/Makefile.am
+		cat "${FILESDIR}"/configure.ac.0.6 > "${WORKDIR}/${P}"/configure.ac
+		cat "${FILESDIR}"/Makefile.am.0.6 > "${WORKDIR}/${P}"/Makefile.am
 	fi
 	#if use ssl_proxy ; then
 	#	eapply "${FILESDIR}"/${PN}-sslproxy.patch
@@ -73,7 +73,9 @@ src_prepare() {
 		eapply "${FILESDIR}"/${PN}-0.6-search.patch
 	fi
 
-	eapply "${FILESDIR}"/surf-0.6-copyrights.patch
+	if use gtk3 || use linkhints || use adblock || use searchengines || use rip || use mimehandler ; then
+		eapply "${FILESDIR}"/${PN}-0.6-copyrights.patch
+	fi
 
 	restore_config config.h
 	tc-export CC PKG_CONFIG
@@ -89,6 +91,11 @@ src_prepare() {
 
 multilib_src_configure() {
 	local myconf
+
+	if use simplebookmarking ; then
+		grep -r -e "BM_ADD" config.h || \
+			die "Please copy ${FILESDIR}/${PN}-${PV} to /etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR} and edit accordingly, or manually apply the patch from https://surf.suckless.org/files/simple_bookmarking_redux ."
+	fi
 
 	ECONF_SOURCE=${S} \
 	PKG_CONFIG_PATH="/usr/$(get_libdir)/pkgconfig" \
@@ -126,8 +133,16 @@ pkg_postinst() {
 		ewarn "Please correct the permissions of your \$HOME/.surf/ directory"
 		ewarn "and its contents to no longer be world readable (see bug #404983)"
 	fi
-	elog "If you want external media support cp /usr/share/${PN}/rip* to your home directory."
-	elog "If you want mime support cp /usr/share/${PN}/mimehandler to your home directory."
-	elog "If you want link hinting support cp /usr/share/${PN}/\{script.js,style.css\} to your home/.surf directory."
-	elog "You must update the adblock filters manually at /etc/surf/adblock/update.sh.  Make sure the current working directory is /etc/surf/adblock/ before running it."
+	if use rip ; then
+		elog "If you want external media support cp /usr/share/${PN}/rip* to your home directory."
+	fi
+	if use mimehandler ; then
+		elog "If you want mime support cp /usr/share/${PN}/mimehandler to your home directory."
+	fi
+	if use linkhints ; then
+		elog "If you want link hinting support cp /usr/share/${PN}/{script.js,style.css} to your home/.surf directory."
+	fi
+	if use adblock ; then
+		elog "You must update the adblock filters manually at /etc/surf/adblock/update.sh.  Make sure the current working directory is /etc/surf/adblock/ before running it."
+	fi
 }

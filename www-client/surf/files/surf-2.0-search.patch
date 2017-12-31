@@ -1,0 +1,54 @@
+diff -urp surf-2.0.orig/surf.c surf-2.0/surf.c
+--- surf-2.0.orig/surf.c	2017-12-30 16:22:26.504087166 -0800
++++ surf-2.0/surf.c	2017-12-30 16:26:49.397082958 -0800
+@@ -44,6 +44,11 @@
+ #define CSETV(p, s)             [p] = (Parameter){ { .v = s }, 1 }
+ #define CSETF(p, s)             [p] = (Parameter){ { .f = s }, 1 }
+ 
++typedef struct {
++	char *token;
++	char *uri;
++} SearchEngine;
++
+ enum { AtomFind, AtomGo, AtomUri, AtomScriptFile, AtomLast };
+ 
+ enum {
+@@ -203,6 +208,8 @@ static void download(Client *c, WebKitUR
+ static void closeview(WebKitWebView *v, Client *c);
+ static void destroywin(GtkWidget* w, Client *c);
+ 
++static gchar *parseuri(const gchar *uri);
++
+ /* Hotkeys */
+ static void pasteuri(GtkClipboard *clipboard, const char *text, gpointer d);
+ static void reload(Client *c, const Arg *a);
+@@ -478,7 +485,7 @@ loaduri(Client *c, const Arg *a)
+ 		url = g_strdup_printf("file://%s", path);
+ 		free(path);
+ 	} else {
+-		url = g_strdup_printf("http://%s", uri);
++		url = parseuri(uri);
+ 	}
+ 
+ 	setatom(c, AtomUri, url);
+@@ -1475,6 +1482,20 @@ destroywin(GtkWidget* w, Client *c)
+ 		gtk_main_quit();
+ }
+ 
++gchar *
++parseuri(const gchar *uri) {
++  guint i;
++
++  for (i = 0; i < LENGTH(searchengines); i++) {
++    if (searchengines[i].token == NULL || searchengines[i].uri == NULL || *(uri + strlen(searchengines[i].token)) != ' ')
++      continue;
++    if (g_str_has_prefix(uri, searchengines[i].token))
++      return g_strdup_printf(searchengines[i].uri, uri + strlen(searchengines[i].token) + 1);
++  }
++
++  return g_strdup_printf("http://%s", uri);
++}
++
+ void
+ pasteuri(GtkClipboard *clipboard, const char *text, gpointer d)
+ {
