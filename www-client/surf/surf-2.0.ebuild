@@ -11,7 +11,7 @@ SRC_URI="
 	https://dl.suckless.org/${PN}/${P}.tar.gz
 "
 
-LICENSE="MIT adblock? ( CC-BY-NA-SA-3.0 ) linkhints? ( SURF-community ) searchengines? ( searchengines ) simplebookmarking? ( SURF-community )"
+LICENSE="MIT adblock? ( CC-BY-NA-SA-3.0 ) linkhints? ( SURF-community ) searchengines? ( SURF-community ) simplebookmarking? ( SURF-community )"
 SLOT="0"
 KEYWORDS="amd64 x86"
 
