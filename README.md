@@ -74,7 +74,7 @@ The name of the repo comes from "well-oiled machine."  A (Gentoo) computer shoul
 | games-engines/urho3d-web | This is the Emscripten compiled ebuild.  It still requires Urho3D for the include headers. |
 | dev-lua/tolua++ | tolua++ is a Lua-C++ bindings generator more improved than tolua.  I recommend the `urho3d` USE flag to enable some bugfixes.  This one is used by Urho3D. |
 | dev-lua/tolua | tolua is another Lua-C++ bindings generator.  It is not used by Urho3D. |
-| media-sound/w3crapcli-lastfm | These are shell scripts to allow for lastfm support for mpv.  This one was modified a bit for Last.fm 2.0 API.  You need your own an developer API key from last fm to use it.  It has last played support as well.  The one on w3crapcli Github repository uses an external bloated dependency. |
+| media-sound/w3crapcli-lastfm | These are shell scripts to allow for Last.fm support for mpv.  This one was modified a bit for Last.fm 2.0 API.  You need your own an developer API key from last fm to use it.  It has last played support as well.  The one on w3crapcli Github repository uses an external bloated dependency. |
 | media-sound/spotify | I modified the Spotify ebuild for OpenSSL and cURL for the `spotify` USE flag.  Spotify will not work with OpenSSL and cURL from the Gentoo portage tree.  You need the openssl and curl ebuilds from this repository. |
 | dev-libs/openssl | This package has versioned symbols required for Spotify to work.  You need to enable the `spotify` USE flag to enable versioned symbols hack.  It spoofs as 1.0.0 but it still works. |
 | net-misc/curl | This package has versioned symbols required for Spotify to work. You need to enable the `spotify` USE flag to enable versioned symbols hack. |
