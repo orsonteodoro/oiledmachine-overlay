@@ -95,7 +95,7 @@ multilib_src_configure() {
 
 	if use simplebookmarking ; then
 		grep -r -e "BM_ADD" config.h || \
-			die "Please copy ${FILESDIR}/${PN}-${PV} to /etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR} and edit accordingly, or manually apply the patch from https://surf.suckless.org/files/simple_bookmarking_redux ."
+			die "Please copy \$\{FILESDIR\}/${PN}-${PV} to /etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR} and edit accordingly, or manually apply the patch from https://surf.suckless.org/files/simple_bookmarking_redux ."
 	fi
 
 	ECONF_SOURCE=${S} \

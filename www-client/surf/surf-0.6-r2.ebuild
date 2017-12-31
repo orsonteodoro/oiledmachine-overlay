@@ -9,7 +9,7 @@ DESCRIPTION="A simple web browser based on WebKit/GTK+."
 HOMEPAGE="http://surf.suckless.org/"
 SRC_URI="http://dl.suckless.org/${PN}/${P}.tar.gz"
 
-LICENSE="MIT adblock? ( CC-BY-NA-SA-3.0 MIT ) linkhints? ( SURF-community ) searchengines? ( SURF-community ) rip? ( MIT || GPL-2+ ) mimehandler? ( SURF-community ) simplebookmarking? ( SURF-community )"
+LICENSE="MIT adblock? ( CC-BY-NA-SA-3.0 MIT ) linkhints? ( SURF-community ) searchengines? ( SURF-community ) rip? ( || ( MIT GPL-2+ ) ) mimehandler? ( SURF-community ) simplebookmarking? ( SURF-community )"
 SLOT="0"
 
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
@@ -49,7 +49,7 @@ RDEPEND="
 pkg_setup() {
 	if use savedconfig; then
 		if [[ ! -f "/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}" ]]; then
-			elog "Please copy ${FILESDIR}/${PN}-${PV} to /etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR} and edit accordingly."
+			elog "Please copy \$\{FILESDIR\}/${PN}-${PV} to /etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR} and edit accordingly."
 			die ""
 		fi
 	fi
