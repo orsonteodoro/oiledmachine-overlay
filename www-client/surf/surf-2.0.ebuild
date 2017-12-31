@@ -73,7 +73,7 @@ src_prepare() {
 		eapply "${FILESDIR}"/${PN}-2.0-search.patch
 	fi
 
-	if use adblock || use searchengines ; then
+	if use adblock || use searchengines || use simplebookmarking ; then
 		eapply "${FILESDIR}"/${PN}-2.0-copyrights.patch
 	fi
 

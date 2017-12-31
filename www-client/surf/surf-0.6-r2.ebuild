@@ -73,7 +73,7 @@ src_prepare() {
 		eapply "${FILESDIR}"/${PN}-0.6-search.patch
 	fi
 
-	if use gtk3 || use linkhints || use adblock || use searchengines || use rip || use mimehandler ; then
+	if use gtk3 || use linkhints || use adblock || use searchengines || use rip || use mimehandler || use simplebookmarking ; then
 		eapply "${FILESDIR}"/${PN}-0.6-copyrights.patch
 	fi
 
