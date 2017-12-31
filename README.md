@@ -123,7 +123,7 @@ The name of the repo comes from "well-oiled machine."  A (Gentoo) computer shoul
 | dev-util/monodevelop | This contains frozen versions and commit hashes for the dependencies that the package eventually checks and pulls in instead of following head for dependencies. |
 | x11-drivers/ati-drivers | This contains a working OpenCL with proper dependencies for old =xorg-server-1.17 and kernel version =4.1.43 or <= 4.4.  It will present security holes both in the kernel and X.Org Server so use at your own risk.  The ebuild does extra checks to see if you have the proper versions for dependencies.  You need the XServer in this overlay since these older XServer versions do not exist in Portage.  This older package is for older ATI video cards with OpenCL.  You must add >=x11-base/xorg-server-1.18 >x11-drivers/xf86-input-evdev-2.10.3 =dev-libs/libevdev-9999 to package.mask. |
 | sci-geosciences/googleearthpro | This is a working ebuild of Google Earth Pro.  The Gentoo overlay had abandoned the old Google Earth ebuild. |
-| sys-power/cpupower-gui | This is a package for a graphical user interface (GUI) for changing the CPU frequency limits and the governor. |
+| sys-power/cpupower-gui | This is a package for a graphical user interface (GUI) for changing the CPU frequency limits and the governor.  It needs elevated privileges to use it like with sudo. |
 
 
 TODO (NOT COMMITED):
