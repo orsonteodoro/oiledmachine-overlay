@@ -53,6 +53,7 @@ S="${WORKDIR}/MonoGame-${PV}"
 SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 pkg_setup() {
+	ewarn "WARNING! not ready yet.  Addin is broken."
 	dotnet_pkg_setup
 }
 
@@ -351,15 +352,47 @@ src_prepare() {
 	#remove extras
 	xml ed -L -d "/Addin/Runtime/Import[contains(@file,'x86/SDL2.dll')]" MonoDevelop.MonoGame.addin.xml
 	xml ed -L -d "/Addin/Runtime/Import[contains(@file,'x64/SDL2.dll')]" MonoDevelop.MonoGame.addin.xml
-	xml ed -L -d "/Addin/Runtime/Import[contains(@file,'x86/libSDL2-2.0.so.0')]" MonoDevelop.MonoGame.addin.xml
 	xml ed -L -d "/Addin/Runtime/Import[contains(@file,'x86/soft_oal.dll')]" MonoDevelop.MonoGame.addin.xml
 	xml ed -L -d "/Addin/Runtime/Import[contains(@file,'x64/soft_oal.dll')]" MonoDevelop.MonoGame.addin.xml
-	xml ed -L -d "/Addin/Runtime/Import[contains(@file,'x86/libopenal.so.1')]" MonoDevelop.MonoGame.addin.xml
 	#change to absolute path
-	xml ed -L -u "/Addin/Runtime/Import[contains(@file,'x64/libSDL2-2.0.so.0')]/@file" -v "/usr/$(get_libdir)/libSDL2-2.0.so.0" MonoDevelop.MonoGame.addin.xml
-	xml ed -L -u "/Addin/Runtime/Import[contains(@file,'x64/libopenal.so.1')]/@file" -v "/usr/$(get_libdir)/libopenal.so.1" MonoDevelop.MonoGame.addin.xml
+	if use abi_x86_64 ; then
+		xml ed -L -u "/Addin/Runtime/Import[contains(@file,'x64/libSDL2-2.0.so.0')]/@file" -v "/usr/lib64/libSDL2-2.0.so.0" MonoDevelop.MonoGame.addin.xml
+		xml ed -L -u "/Addin/Runtime/Import[contains(@file,'x64/libopenal.so.1')]/@file" -v "/usr/lib64/libopenal.so.1" MonoDevelop.MonoGame.addin.xml
+	else
+		xml ed -L -d "/Addin/Runtime/Import[contains(@file,'x64/libSDL2-2.0.so.0')]/@file" MonoDevelop.MonoGame.addin.xml
+		xml ed -L -d "/Addin/Runtime/Import[contains(@file,'x64/libopenal.so.1')]/@file" MonoDevelop.MonoGame.addin.xml
+	fi
+	if use abi_x86_32 ; then
+		xml ed -L -u "/Addin/Runtime/Import[contains(@file,'x86/libSDL2-2.0.so.0')]/@file" -v "/usr/lib32/libSDL2-2.0.so.0" MonoDevelop.MonoGame.addin.xml
+		xml ed -L -u "/Addin/Runtime/Import[contains(@file,'x86/libopenal.so.1')]/@file" -v "/usr/lib32/libopenal.so.1" MonoDevelop.MonoGame.addin.xml
+	else
+		xml ed -L -d "/Addin/Runtime/Import[contains(@file,'x86/libSDL2-2.0.so.0')]/@file" MonoDevelop.MonoGame.addin.xml
+		xml ed -L -d "/Addin/Runtime/Import[contains(@file,'x86/libopenal.so.1')]/@file" MonoDevelop.MonoGame.addin.xml
+	fi
 	popd
 
+	if use abi_x86_64 ; then
+		xml ed -L -u "/Template/Combine/Project/Files/Directory[contains(@name,'x64')]/ContentFile/RawFile[contains(@name,'libopenal.so.1')]/@src" -v "/usr/lib64/libopenal.so.1" IDE/MonoDevelop/MonoDevelop.MonoGame/templates/MonoGameProject.xpt.xml
+		xml ed -L -u "/Template/Combine/Project/Files/Directory[contains(@name,'x64')]/ContentFile/RawFile[contains(@name,'libSDL2-2.0.so.0')]/@src" -v "/usr/lib64/libSDL2-2.0.so.0" IDE/MonoDevelop/MonoDevelop.MonoGame/templates/MonoGameProject.xpt.xml
+		xml ed -L -d "/Template/Combine/Project/Files/Directory[contains(@name,'x64')]/ContentFile/RawFile[contains(@name,'soft_oal.dll')]" IDE/MonoDevelop/MonoDevelop.MonoGame/templates/MonoGameProject.xpt.xml
+		xml ed -L -d "/Template/Combine/Project/Files/Directory[contains(@name,'x64')]/ContentFile/RawFile[contains(@name,'SDL2.dll')]" IDE/MonoDevelop/MonoDevelop.MonoGame/templates/MonoGameProject.xpt.xml
+	else
+		xml ed -L -d "/Template/Combine/Project/Files/Directory[contains(@name,'x64')]" IDE/MonoDevelop/MonoDevelop.MonoGame/templates/MonoGameProject.xpt.xml
+	fi
+
+	if use abi_x86_32 ; then
+		xml ed -L -u "/Template/Combine/Project/Files/Directory[contains(@name,'x86')]/ContentFile/RawFile[contains(@name,'libopenal.so.1')]" IDE/MonoDevelop/MonoDevelop.MonoGame/templates/MonoGameProject.xpt.xml
+		xml ed -L -u "/Template/Combine/Project/Files/Directory[contains(@name,'x86')]/ContentFile/RawFile[contains(@name,'libSDL2-2.0.so.0')]" IDE/MonoDevelop/MonoDevelop.MonoGame/templates/MonoGameProject.xpt.xml
+		xml ed -L -d "/Template/Combine/Project/Files/Directory[contains(@name,'x86')]/ContentFile/RawFile[contains(@name,'soft_oal.dll')]" IDE/MonoDevelop/MonoDevelop.MonoGame/templates/MonoGameProject.xpt.xml
+		xml ed -L -d "/Template/Combine/Project/Files/Directory[contains(@name,'x86')]/ContentFile/RawFile[contains(@name,'SDL2.dll')]" IDE/MonoDevelop/MonoDevelop.MonoGame/templates/MonoGameProject.xpt.xml
+	else
+		xml ed -L -d "/Template/Combine/Project/Files/Directory[contains(@name,'x86')]" IDE/MonoDevelop/MonoDevelop.MonoGame/templates/MonoGameProject.xpt.xml
+	fi
+
+	xml ed -L -d "/Template/Combine/Project/Files/ContentFile/RawFile[contains(@name,'libopenal.1.dylib')]" IDE/MonoDevelop/MonoDevelop.MonoGame/templates/MonoGameProject.xpt.xml
+	xml ed -L -d "/Template/Combine/Project/Files/ContentFile/RawFile[contains(@name,'libSDL2-2.0.0.dylib')]" IDE/MonoDevelop/MonoDevelop.MonoGame/templates/MonoGameProject.xpt.xml
+
+	sed -i -r -e 's|<ContentFile/>||g' IDE/MonoDevelop/MonoDevelop.MonoGame/templates/MonoGameProject.xpt.xml
 
 	eapply_user
 
