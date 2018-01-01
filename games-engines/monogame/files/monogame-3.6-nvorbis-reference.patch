@@ -1,0 +1,11 @@
+diff -urp MonoGame-3.6.orig/Build/Projects/MonoGame.Framework.definition MonoGame-3.6/Build/Projects/MonoGame.Framework.definition
+--- MonoGame-3.6.orig/Build/Projects/MonoGame.Framework.definition	2017-12-31 14:39:05.802803334 -0800
++++ MonoGame-3.6/Build/Projects/MonoGame.Framework.definition	2017-12-31 14:45:18.155797374 -0800
+@@ -23,6 +23,7 @@
+   <References>
+     <!-- See FrameworkReferences.definition for the platform specific references -->
+     <Reference Include="FrameworkReferences"/>
++    <Reference Include="NVorbis"/>
+   </References>
+   <Properties>
+     <LangVersion>Default</LangVersion>

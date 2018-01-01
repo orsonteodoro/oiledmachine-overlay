@@ -1,0 +1,13 @@
+diff -urp MonoGame-3.6.orig/Build/Module.xml MonoGame-3.6/Build/Module.xml
+--- MonoGame-3.6.orig/Build/Module.xml	2017-03-01 07:03:21.000000000 -0800
++++ MonoGame-3.6/Build/Module.xml	2017-12-31 13:57:03.800843706 -0800
+@@ -8,9 +8,4 @@
+   <SupportedPlatforms>Android,Angle,Linux,Windows8,Windows,WindowsGL,WindowsPhone81,WindowsUniversal,iOS,MacOS,Web,tvOS,PSVita,XBoxOne</SupportedPlatforms>
+   <DisableSynchronisation>true</DisableSynchronisation>
+   <GenerateNuGetRepositories>false</GenerateNuGetRepositories>
+-  <Packages>
+-    <Package Uri="https-git://github.com/OutOfOrder/MonoKickstart.git" Folder="ThirdParty/Kickstart" GitRef="master" />
+-    <Package Uri="https-git://github.com/MonoGame/MonoGame.Dependencies.git" Folder="ThirdParty/Dependencies" GitRef="master" />
+-    <Package Uri="https-git://github.com/ioctlLR/NVorbis.git" Folder="ThirdParty/NVorbis" GitRef="master" />
+-  </Packages>
+ </Module>

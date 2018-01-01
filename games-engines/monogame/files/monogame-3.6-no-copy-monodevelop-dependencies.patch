@@ -1,0 +1,50 @@
+diff -urp MonoGame-3.6.orig/IDE/MonoDevelop/MonoDevelop.MonoGame/MonoDevelop.MonoGame.csproj MonoGame-3.6/IDE/MonoDevelop/MonoDevelop.MonoGame/MonoDevelop.MonoGame.csproj
+--- MonoGame-3.6.orig/IDE/MonoDevelop/MonoDevelop.MonoGame/MonoDevelop.MonoGame.csproj	2017-12-31 20:44:34.625891183 -0800
++++ MonoGame-3.6/IDE/MonoDevelop/MonoDevelop.MonoGame/MonoDevelop.MonoGame.csproj	2017-12-31 20:51:04.113884948 -0800
+@@ -196,46 +196,6 @@
+       <Link>templates\Common\MonoGame.Framework.dll.config</Link>
+       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+     </Content>
+-    <Content Include="..\..\..\ThirdParty\Dependencies\openal-soft\MacOS\Universal\libopenal.1.dylib">
+-      <Link>templates\libs\libopenal.1.dylib</Link>
+-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+-    </Content>
+-    <Content Include="..\..\..\ThirdParty\Dependencies\openal-soft\Linux\x64\libopenal.so.1">
+-      <Link>templates\libs\x64\libopenal.so.1</Link>
+-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+-    </Content>
+-    <Content Include="..\..\..\ThirdParty\Dependencies\openal-soft\Windows\x64\soft_oal.dll">
+-      <Link>templates\libs\x64\soft_oal.dll</Link>
+-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+-    </Content>
+-    <Content Include="..\..\..\ThirdParty\Dependencies\openal-soft\Windows\x86\soft_oal.dll">
+-      <Link>templates\libs\x86\soft_oal.dll</Link>
+-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+-    </Content>
+-    <Content Include="..\..\..\ThirdParty\Dependencies\openal-soft\Linux\x86\libopenal.so.1">
+-      <Link>templates\libs\x86\libopenal.so.1</Link>
+-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+-    </Content>
+-    <Content Include="..\..\..\ThirdParty\Dependencies\SDL\Linux\x64\libSDL2-2.0.so.0">
+-      <Link>templates\libs\x64\libSDL2-2.0.so.0</Link>
+-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+-    </Content>
+-    <Content Include="..\..\..\ThirdParty\Dependencies\SDL\Windows\x64\SDL2.dll">
+-      <Link>templates\libs\x64\SDL2.dll</Link>
+-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+-    </Content>
+-    <Content Include="..\..\..\ThirdParty\Dependencies\SDL\Windows\x86\SDL2.dll">
+-      <Link>templates\libs\x86\SDL2.dll</Link>
+-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+-    </Content>
+-    <Content Include="..\..\..\ThirdParty\Dependencies\SDL\Linux\x86\libSDL2-2.0.so.0">
+-      <Link>templates\libs\x86\libSDL2-2.0.so.0</Link>
+-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+-    </Content>
+-    <Content Include="..\..\..\ThirdParty\Dependencies\SDL\MacOS\Universal\libSDL2-2.0.0.dylib">
+-      <Link>templates\libs\libSDL2-2.0.0.dylib</Link>
+-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+-    </Content>
+   </ItemGroup>
+   <ItemGroup>
+     <EmbeddedResource Include="MonoDevelop.MonoGame.addin.xml"/>

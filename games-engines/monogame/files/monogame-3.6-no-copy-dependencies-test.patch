@@ -1,0 +1,20 @@
+diff -urp MonoGame-3.6.orig/Build/Projects/MonoGame.Tests.definition MonoGame-3.6/Build/Projects/MonoGame.Tests.definition
+--- MonoGame-3.6.orig/Build/Projects/MonoGame.Tests.definition	2017-03-01 07:03:21.000000000 -0800
++++ MonoGame-3.6/Build/Projects/MonoGame.Tests.definition	2017-12-31 15:03:29.336779906 -0800
+@@ -44,16 +44,6 @@
+       <Link>soft_oal.dll</Link>
+       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+     </None>
+-    <None Include="..\ThirdParty\Dependencies\SDL\Linux\x64\libSDL2-2.0.so.0">
+-      <Platforms>Linux</Platforms>
+-      <Link>x64\libSDL2-2.0.so.0</Link>
+-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+-    </None>
+-    <None Include="..\ThirdParty\Dependencies\openal-soft\Linux\x64\libopenal.so.1">
+-      <Platforms>Linux</Platforms>
+-      <Link>x64\libopenal.so.1</Link>
+-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+-    </None>
+ 
+     <None Include="MonoGame.Tests.dll.config">
+       <Platforms>Linux</Platforms>

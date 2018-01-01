@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=6
-inherit dotnet eutils mono gac
+inherit autotools dotnet eutils mono gac
 
 DESCRIPTION="NDesk.Options"
 HOMEPAGE="http://www.ndesk.org/Options"
@@ -28,7 +28,11 @@ S="${WORKDIR}/ndesk-options-${PV}"
 src_prepare() {
 	egenkey
 
+	sed -i -r -e "s|gmcs|mcs|g" configure.ac
+
 	eapply_user
+
+	eautoreconf
 }
 
 src_configure() {

@@ -1,0 +1,12 @@
+diff -urp MonoGame-3.6.orig/Tools/Pipeline/Controls/ProjectControl.xwt.cs MonoGame-3.6/Tools/Pipeline/Controls/ProjectControl.xwt.cs
+--- MonoGame-3.6.orig/Tools/Pipeline/Controls/ProjectControl.xwt.cs	2017-03-01 07:03:21.000000000 -0800
++++ MonoGame-3.6/Tools/Pipeline/Controls/ProjectControl.xwt.cs	2017-12-31 20:43:10.699892526 -0800
+@@ -90,7 +90,7 @@ namespace MonoGame.Tools.Pipeline
+                     e.AllowedAction = DragDropAction.None;
+         }
+ 
+-        private void TreeView_DragDrop(object sender, DragEventArgs e)
++        private void TreeView_DragDrop(object sender, Xwt.DragEventArgs e)
+         {
+             var initialDirectory = PipelineController.Instance.ProjectLocation;
+             var folders = new List<string>();

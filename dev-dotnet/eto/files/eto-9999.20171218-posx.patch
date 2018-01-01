@@ -1,0 +1,21 @@
+diff -urp Eto-d7a6d4bbdb5ac1263d3036d9177cadcfb2f0e63e.orig/Source/Eto/Forms/ThemedControls/ThemedDocumentControlHandler.cs Eto-d7a6d4bbdb5ac1263d3036d9177cadcfb2f0e63e/Source/Eto/Forms/ThemedControls/ThemedDocumentControlHandler.cs
+--- Eto-d7a6d4bbdb5ac1263d3036d9177cadcfb2f0e63e.orig/Source/Eto/Forms/ThemedControls/ThemedDocumentControlHandler.cs	2017-12-18 16:45:49.000000000 -0800
++++ Eto-d7a6d4bbdb5ac1263d3036d9177cadcfb2f0e63e/Source/Eto/Forms/ThemedControls/ThemedDocumentControlHandler.cs	2017-12-31 19:57:24.369936490 -0800
+@@ -393,7 +393,7 @@ namespace Eto.Forms.ThemedControls
+ 
+ 			g.Clear(SystemColors.Control);
+ 
+-			var posx = nextPrevWidth + startx;
++			//var posx = nextPrevWidth + startx;
+ 
+ 			for (int i = 0; i < pages.Count; i++)
+ 			{
+@@ -406,7 +406,7 @@ namespace Eto.Forms.ThemedControls
+ 				DrawTab(g, GetPageHandler(selectedIndex), selectedIndex);
+ 			}
+ 
+-			posx = 0;
++			//posx = 0;
+ 
+ 			DrawTab(g, tabPrev, -1);
+ 			DrawTab(g, tabNext, -1);

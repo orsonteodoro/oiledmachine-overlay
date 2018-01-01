@@ -17,8 +17,7 @@ RDEPEND="
 	>=dev-lang/mono-4.0.0
 	dev-dotnet/gtk-sharp:3
 	addin? (
-		!>=dev-util/monodevelop-6.0.0.0
-		<=dev-util/monodevelop-5.9.5.9
+		>=dev-util/monodevelop-6.1.2.0
 		>=dev-dotnet/mono-addins-1.0
 	)
 	dev-dotnet/opentk
@@ -37,6 +36,8 @@ RDEPEND="
 	media-libs/freealut
 	dev-dotnet/freeimagenet
 	>=dev-dotnet/nvorbis-9999
+	>=dev-dotnet/eto-9999.20171218[gtk-sharp3]
+	dev-dotnet/xwt
 "
 DEPEND="
 	${RDEPEND}
@@ -159,8 +160,8 @@ src_prepare() {
 	A="{08E68315-4124-4199-BBD9-E57282458A31}.Release|Any CPU.Build.0 = Release|Any CPU" B="" perl -p -i -e 's|\Q$ENV{'A'}\E|$ENV{'B'}|g' "${S}"/IDE/MonoDevelop/MonoDevelop.MonoGame.Addin.sln
 
 	cd "${S}"
-	eapply "${FILESDIR}"/${PN}-3.5.1-graphicsutilcs1.patch
-	eapply "${FILESDIR}"/${PN}-3.5.1-graphicsutilcs2.patch
+	eapply "${FILESDIR}"/${PN}-3.6-graphicsutilcs1.patch
+	eapply "${FILESDIR}"/${PN}-3.6-graphicsutilcs2.patch
 	eapply "${FILESDIR}"/${PN}-3.5.1-sharpfontimportercs.patch
 	#eapply "${FILESDIR}"/${PN}-3.5.1-linux-absolute-path.patch #testing
 
@@ -264,6 +265,10 @@ src_prepare() {
 	xml ed -L -u "/ExternalProject/Platform[@Type='Linux']/Binary[@Name='pango-sharp']/@Path" -v "$(ls /usr/$(get_libdir)/mono/gac/pango-sharp/3*/pango-sharp.dll | tail -n 1)" "${S}"/Build/Projects/PipelineReferences.definition
 	xml ed -L -d "/ExternalProject/Platform[@Type='Linux']/Binary[@Name='glade-sharp']" "${S}"/Build/Projects/PipelineReferences.definition
 	xml ed -L -u "/ExternalProject/Platform[@Type='Linux']/Binary[@Name='Mono.Posix']/@Path" -v "$(ls /usr/$(get_libdir)/mono/gac/Mono.Posix/*/Mono.Posix.dll | tail -n 1)" "${S}"/Build/Projects/PipelineReferences.definition #from mono package
+	xml ed -L -u "/ExternalProject/Platform[@Type='Linux']/Binary[@Name='Eto.Forms']/@Path" -v "$(ls /usr/$(get_libdir)/mono/gac/Eto/*/Eto.dll | tail -n 1)" "${S}"/Build/Projects/PipelineReferences.definition
+	xml ed -L -u "/ExternalProject/Platform[@Type='Linux']/Binary[@Name='Eto.Gtk3']/@Path" -v "$(ls /usr/$(get_libdir)/mono/gac/Eto.Gtk3/*/Eto.Gtk3.dll | tail -n 1)" "${S}"/Build/Projects/PipelineReferences.definition
+	xml ed -L -u "/ExternalProject/Platform[@Type='Linux']/Binary[@Name='Xwt']/@Path" -v "$(ls /usr/$(get_libdir)/mono/gac/Xwt/*/Xwt.dll | tail -n 1)" "${S}"/Build/Projects/PipelineReferences.definition
+	xml ed -L -u "/ExternalProject/Platform[@Type='Linux']/Binary[@Name='Xwt.Gtk3']/@Path" -v "$(ls /usr/$(get_libdir)/mono/gac/Xwt.Gtk3/*/Xwt.Gtk3.dll | tail -n 1)" "${S}"/Build/Projects/PipelineReferences.definition
 
 	xml ed -s "/ExternalProject/Platform[@Type='Linux']" -t elem -n "Binary"  "${S}/Build/Projects/PipelineReferences.definition" \
 	  | xml ed -a "/ExternalProject/Platform[@Type='Linux']/Binary[last()]" -t attr -n  "Name" -v "gio-sharp" \
@@ -277,7 +282,7 @@ src_prepare() {
 
 	mkdir -p "ThirdParty/Dependencies/Gtk3"
 
-	eapply "${FILESDIR}/${PN}-3.5.1-no-kickstart-and-external-deps.patch"
+	eapply "${FILESDIR}/${PN}-3.6-no-kickstart-and-external-deps.patch"
 
 	#eapply "${FILESDIR}/${PN}-3.5.1-activate-linux-shaders.patch"
 
@@ -326,6 +331,35 @@ src_prepare() {
 
 	sed -i -r -e "s|\"libmojoshader_64.dll\"|\"libmojoshader.dll\"|g" Tools/2MGFX/MojoShader.cs
 	sed -i -r -e "s|\"libmojoshader_32.dll\"|\"libmojoshader.dll\"|g" Tools/2MGFX/MojoShader.cs
+
+	eapply "${FILESDIR}/${PN}-3.6-no-compiling-nvorbis.patch"
+	eapply "${FILESDIR}/${PN}-3.6-nvorbis-reference.patch"
+	eapply "${FILESDIR}/${PN}-3.6-no-copy-dependencies.patch"
+
+	cp -a "${FILESDIR}/MonoGame.Framework.dll.config" ThirdParty/Dependencies/ || die
+
+	eapply "${FILESDIR}/${PN}-3.6-no-copy-dependencies-test.patch"
+	eapply "${FILESDIR}/${PN}-3.6-awt-DragEventArgs.patch"
+	eapply "${FILESDIR}/${PN}-3.6-no-copy-monodevelop-dependencies.patch"
+
+	#todo ./IDE/MonoDevelop/MonoDevelop.MonoGame/MonoDevelop.MonoGame.addin.xml
+
+	pushd "${S}"/IDE/MonoDevelop/MonoDevelop.MonoGame
+	#remove mac files
+	xml ed -L -d "/Addin/Runtime/Import[contains(@file,'libopenal.1.dylib')]" MonoDevelop.MonoGame.addin.xml
+	xml ed -L -d "/Addin/Runtime/Import[contains(@file,'libSDL2-2.0.0.dylib')]" MonoDevelop.MonoGame.addin.xml
+	#remove extras
+	xml ed -L -d "/Addin/Runtime/Import[contains(@file,'x86/SDL2.dll')]" MonoDevelop.MonoGame.addin.xml
+	xml ed -L -d "/Addin/Runtime/Import[contains(@file,'x64/SDL2.dll')]" MonoDevelop.MonoGame.addin.xml
+	xml ed -L -d "/Addin/Runtime/Import[contains(@file,'x86/libSDL2-2.0.so.0')]" MonoDevelop.MonoGame.addin.xml
+	xml ed -L -d "/Addin/Runtime/Import[contains(@file,'x86/soft_oal.dll')]" MonoDevelop.MonoGame.addin.xml
+	xml ed -L -d "/Addin/Runtime/Import[contains(@file,'x64/soft_oal.dll')]" MonoDevelop.MonoGame.addin.xml
+	xml ed -L -d "/Addin/Runtime/Import[contains(@file,'x86/libopenal.so.1')]" MonoDevelop.MonoGame.addin.xml
+	#change to absolute path
+	xml ed -L -u "/Addin/Runtime/Import[contains(@file,'x64/libSDL2-2.0.so.0')]/@file" -v "/usr/$(get_libdir)/libSDL2-2.0.so.0" MonoDevelop.MonoGame.addin.xml
+	xml ed -L -u "/Addin/Runtime/Import[contains(@file,'x64/libopenal.so.1')]/@file" -v "/usr/$(get_libdir)/libopenal.so.1" MonoDevelop.MonoGame.addin.xml
+	popd
+
 
 	eapply_user
 

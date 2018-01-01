@@ -1,0 +1,14 @@
+diff -urp xwt-cd710a42a895b05337047079b0ba16d081dd87ed.orig/Xwt.Gtk/Xwt.GtkBackend/AccessibleBackend.cs xwt-cd710a42a895b05337047079b0ba16d081dd87ed/Xwt.Gtk/Xwt.GtkBackend/AccessibleBackend.cs
+--- xwt-cd710a42a895b05337047079b0ba16d081dd87ed.orig/Xwt.Gtk/Xwt.GtkBackend/AccessibleBackend.cs	2017-12-31 18:23:31.446950912 -0800
++++ xwt-cd710a42a895b05337047079b0ba16d081dd87ed/Xwt.Gtk/Xwt.GtkBackend/AccessibleBackend.cs	2017-12-31 18:26:18.242948242 -0800
+@@ -43,8 +43,10 @@ namespace Xwt.GtkBackend
+ {
+ 	public class AccessibleBackend : IAccessibleBackend
+ 	{
++		#pragma warning disable 0414 //value assigned but not used
+ 		protected Gtk.Widget widget;
+ 		IAccessibleEventSink eventSink;
+ 		ApplicationContext context;
++		#pragma warning restore 0414
+ 
+ 		public AccessibleBackend ()

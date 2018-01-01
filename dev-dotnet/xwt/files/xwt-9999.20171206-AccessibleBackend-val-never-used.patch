@@ -1,0 +1,12 @@
+diff -urp xwt-cd710a42a895b05337047079b0ba16d081dd87ed.orig/Xwt.Gtk/Xwt.GtkBackend/AccessibleBackend.cs xwt-cd710a42a895b05337047079b0ba16d081dd87ed/Xwt.Gtk/Xwt.GtkBackend/AccessibleBackend.cs
+--- xwt-cd710a42a895b05337047079b0ba16d081dd87ed.orig/Xwt.Gtk/Xwt.GtkBackend/AccessibleBackend.cs	2017-12-06 02:01:35.000000000 -0800
++++ xwt-cd710a42a895b05337047079b0ba16d081dd87ed/Xwt.Gtk/Xwt.GtkBackend/AccessibleBackend.cs	2017-12-31 18:16:43.297957445 -0800
+@@ -135,7 +135,7 @@ namespace Xwt.GtkBackend
+ 			}
+ 			set {
+ 				if (widget.Accessible is AtkValue) {
+-					GLib.Value val = GLib.Value.Empty;
++					//GLib.Value val = GLib.Value.Empty;
+ 					(widget.Accessible as AtkValue)?.SetCurrentValue (new GLib.Value (value));
+ 				} else if (widget.Accessible is AtkEditableText) {
+ 					var atkText = (widget.Accessible as AtkEditableText);

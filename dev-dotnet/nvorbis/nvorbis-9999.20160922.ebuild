@@ -16,7 +16,8 @@ USE_DOTNET="net45"
 IUSE="${USE_DOTNET} debug opentk +gac developer"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
 
-RDEPEND=">=dev-lang/mono-4"
+RDEPEND=">=dev-lang/mono-4
+	 dev-dotnet/opentk"
 DEPEND="${RDEPEND}
 	>=dev-lang/mono-4
 "

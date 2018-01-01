@@ -73,7 +73,7 @@ multilib_src_compile() {
 
 	einfo "Building PVRTexLibNET..."
 	cd "${S}/PVRTexLibNET"
-	exbuild_strong PVRTexLibNET.csproj /p:Configuration=${mydebug} /p:Platform=${myabi}
+	exbuild PVRTexLibNET.csproj /p:Configuration=${mydebug} /p:Platform=${myabi} #exbuild_strong looks broken
 }
 
 multilib_src_install() {
@@ -102,8 +102,10 @@ multilib_src_install() {
 	for x in ${USE_DOTNET} ; do
                 FW_UPPER=${x:3:1}
                 FW_LOWER=${x:4:1}
-                egacinstall "${S}/PVRTexLibNET/bin/${myabi}/${mydebug}/PVRTexLibNET.dll"
-               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		estrong_sign_delayed "${SNK_FILENAME}" "${S}/PVRTexLibNET/bin/${myabi}/${mydebug}/PVRTexLibNET.dll"
+                egacinstall "${S}/PVRTexLibNET/bin/${myabi}/${mydebug}/PVRTexLibNET.dll" #broken
+                insinto "/usr/$(get_libdir)/mono/${PN}"
+                #doins "${S}/PVRTexLibNET/bin/${myabi}/${mydebug}/PVRTexLibNET.dll" #temporary fix
 		use developer && doins "${S}/PVRTexLibNET/bin/${myabi}/${mydebug}/PVRTexLibNET.dll.mdb"
         done
 
@@ -116,11 +118,12 @@ multilib_src_install() {
 		cp -a PVRTexTool/Library/Linux_x86_${myabi2}/Dynamic/libPVRTexLib.so "${D}/usr/$(get_libdir)/" || die
 	fi
 
+	dotnet_multilib_comply
+
 	FILES=$(find "${D}" -name "*.dll")
 	for f in $FILES
 	do
-		cp -a "${FILESDIR}/PVRTexLibNET.dll.config" "$(dirname $f)"
+		cp -a "${FILESDIR}/PVRTexLibNET.dll.config" "$(dirname $f)" || die
 	done
-
-	dotnet_multilib_comply
+	cp -a "${FILESDIR}/PVRTexLibNET.dll.config" "${D}"/usr/$(get_libdir)/mono/gac/PVRTexLibNET/*
 }

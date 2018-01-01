@@ -45,7 +45,9 @@ src_prepare() {
 	sed -i -e "s|PACKAGES = nunit||g" tests/Sdl/Makefile.am
 	sed -i -e "s|SYSTEM_LIBS =|SYSTEM_LIBS = /usr/share/nunit-2/nunit.framework.dll |g" tests/Sdl/Makefile.am
 
-	eapply "${FILESDIR}/taoframework-2.1.0-use-mono-4.5.ebuild"
+	sed -i -e "s|gmcs|mcs|g" configure.ac
+
+	eapply "${FILESDIR}/taoframework-2.1.0-use-mono-4.5.patch"
 
 	eapply_user
 

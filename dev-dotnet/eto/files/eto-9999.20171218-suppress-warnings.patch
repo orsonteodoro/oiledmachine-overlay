@@ -1,0 +1,15 @@
+diff -urp Eto-d7a6d4bbdb5ac1263d3036d9177cadcfb2f0e63e.orig/Source/Eto/Forms/TrayIndicator.cs Eto-d7a6d4bbdb5ac1263d3036d9177cadcfb2f0e63e/Source/Eto/Forms/TrayIndicator.cs
+--- Eto-d7a6d4bbdb5ac1263d3036d9177cadcfb2f0e63e.orig/Source/Eto/Forms/TrayIndicator.cs	2017-12-18 16:45:49.000000000 -0800
++++ Eto-d7a6d4bbdb5ac1263d3036d9177cadcfb2f0e63e/Source/Eto/Forms/TrayIndicator.cs	2017-12-31 20:02:46.239931337 -0800
+@@ -9,8 +9,10 @@ namespace Eto.Forms
+     [Handler(typeof(TrayIndicator.IHandler))]
+     public class TrayIndicator : Widget
+     {
+-        private Icon icon;
++        #pragma warning disable 0414 //value assigned but not used
++	private Icon icon;
+         private Menu menu;
++	#pragma warning restore 0414
+ 
+         new IHandler Handler { get { return (IHandler)base.Handler; } }
+ 

@@ -11,7 +11,8 @@ MY_P="${PN}-${MY_PV}"
 
 DESCRIPTION="OpenTK - A .NET interface to OpenCL/OpenAL/OpenGL"
 HOMEPAGE="http://opentk.org"
-SRC_URI="mirror://sourceforge/${PN}/${MY_P}.zip"
+SRC_URI="mirror://sourceforge/${PN}/${MY_P}.zip
+	https://github.com/mono/mono/raw/master/mcs/class/mono.snk"
 
 LICENSE="OpenTK"
 SLOT="0"
@@ -27,6 +28,7 @@ DEPEND="${RDEPEND}
 		app-arch/p7zip"
 
 S="${WORKDIR}/${MY_P}"
+SNK_FILENAME="${S}/mono.snk"
 
 src_unpack() {
 	mkdir -p "${S}"; cd "${S}"
@@ -35,6 +37,8 @@ src_unpack() {
 }
 
 src_prepare() {
+	cp "${DISTDIR}/mono.snk" "${S}"
+
 	#required by monogame 3.5.1
 	eapply "${FILESDIR}/${PN}-20140723-opentk-expose-joystick-guid.patch" || die "failed to patch joystick guid"
 

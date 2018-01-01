@@ -25,6 +25,11 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/assimp-net-${PV}"
 SNK_FILENAME="${S}/${PN}-keypair.snk"
 
+src_unpack() {
+	default
+	cp -a "${FILESDIR}/AssimpNet.dll.config" "${S}"
+}
+
 src_prepare() {
 	egenkey
 
@@ -32,8 +37,8 @@ src_prepare() {
 }
 
 src_compile() {
-	sed -i -e "s|\"Assimp32.so\"|\"libassimp.so\"|g" ./AssimpNet/Unmanaged/AssimpLibrary.cs
-	sed -i -e "s|\"Assimp64.so\"|\"libassimp.so\"|g" ./AssimpNet/Unmanaged/AssimpLibrary.cs
+	sed -i -e "s|\"Assimp32.so\"|\"libassimp.so\"|g" ./AssimpNet/Unmanaged/AssimpLibrary.cs || die
+	sed -i -e "s|\"Assimp64.so\"|\"libassimp.so\"|g" ./AssimpNet/Unmanaged/AssimpLibrary.cs || die
 
 	mydebug="Net45-Release"
 	if use debug; then
@@ -83,5 +88,7 @@ src_install() {
 	dodoc -r Docs/*
 
 	dotnet_multilib_comply
+
+	cp -a "${S}/AssimpNet.dll.config" "${D}"/usr/$(get_libdir)/mono/gac/AssimpNet/* || die
 }
 

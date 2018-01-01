@@ -1,0 +1,34 @@
+diff -urp MonoGame-3.6.orig/MonoGame.Framework.Content.Pipeline/Graphics/DxtBitmapContent.cs MonoGame-3.6/MonoGame.Framework.Content.Pipeline/Graphics/DxtBitmapContent.cs
+--- MonoGame-3.6.orig/MonoGame.Framework.Content.Pipeline/Graphics/DxtBitmapContent.cs	2017-03-01 07:03:21.000000000 -0800
++++ MonoGame-3.6/MonoGame.Framework.Content.Pipeline/Graphics/DxtBitmapContent.cs	2017-12-31 13:50:48.269849718 -0800
+@@ -21,14 +21,16 @@ namespace Microsoft.Xna.Framework.Conten
+         GCHandle delegateHandleWriteData;
+ 
+         public OutputOptions.WriteDataDelegate WriteData { get; private set; }
+-        public OutputOptions.ImageDelegate BeginImage { get; private set; }
++        public OutputOptions.BeginImageDelegate BeginImage { get; private set; }
++        public OutputOptions.EndImageDelegate EndImage { get; private set; }
+ 
+         public DxtDataHandler(BitmapContent content, OutputOptions outputOptions)
+         {
+             _content = content;
+ 
+             WriteData = new OutputOptions.WriteDataDelegate(WriteDataInternal);
+-            BeginImage = new OutputOptions.ImageDelegate(BeginImageInternal);
++            BeginImage = new OutputOptions.BeginImageDelegate(BeginImageInternal);
++            EndImage = new OutputOptions.EndImageDelegate(endImage);
+ 
+             // Keep the delegate from being re-located or collected by the garbage collector.
+             delegateHandleBeginImage = GCHandle.Alloc(BeginImage);
+@@ -37,6 +39,11 @@ namespace Microsoft.Xna.Framework.Conten
+             outputOptions.SetOutputHandler(BeginImage, WriteData);
+         }
+ 
++	public void endImage()
++	{
++		;
++	}
++
+         ~DxtDataHandler()
+         {
+            Dispose(false);

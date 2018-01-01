@@ -1,0 +1,12 @@
+diff -urp Eto-d7a6d4bbdb5ac1263d3036d9177cadcfb2f0e63e.orig/Source/Eto/Forms/ThemedControls/ThemedDocumentControlHandler.cs Eto-d7a6d4bbdb5ac1263d3036d9177cadcfb2f0e63e/Source/Eto/Forms/ThemedControls/ThemedDocumentControlHandler.cs
+--- Eto-d7a6d4bbdb5ac1263d3036d9177cadcfb2f0e63e.orig/Source/Eto/Forms/ThemedControls/ThemedDocumentControlHandler.cs	2017-12-31 19:58:30.172935436 -0800
++++ Eto-d7a6d4bbdb5ac1263d3036d9177cadcfb2f0e63e/Source/Eto/Forms/ThemedControls/ThemedDocumentControlHandler.cs	2017-12-31 19:59:46.345934217 -0800
+@@ -416,7 +416,7 @@ namespace Eto.Forms.ThemedControls
+ 		{
+ 			var textSize = string.IsNullOrEmpty(tab.Text) ? Size.Empty : Size.Ceiling(Font.MeasureString(tab.Text));
+ 			var size = textSize;
+-			var prevnextsel = mousePos.X > nextPrevWidth || i == -1;
++			//var prevnextsel = mousePos.X > nextPrevWidth || i == -1;
+ 			var textoffset = 0;
+ 			if (tab.Image != null)
+ 			{

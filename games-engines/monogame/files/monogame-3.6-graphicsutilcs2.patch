@@ -1,0 +1,12 @@
+diff -urp MonoGame-3.6.orig/MonoGame.Framework.Content.Pipeline/Graphics/DxtBitmapContent.cs MonoGame-3.6/MonoGame.Framework.Content.Pipeline/Graphics/DxtBitmapContent.cs
+--- MonoGame-3.6.orig/MonoGame.Framework.Content.Pipeline/Graphics/DxtBitmapContent.cs	2017-12-31 13:52:34.253848021 -0800
++++ MonoGame-3.6/MonoGame.Framework.Content.Pipeline/Graphics/DxtBitmapContent.cs	2017-12-31 13:54:09.473846497 -0800
+@@ -36,7 +36,7 @@ namespace Microsoft.Xna.Framework.Conten
+             delegateHandleBeginImage = GCHandle.Alloc(BeginImage);
+             delegateHandleWriteData = GCHandle.Alloc(WriteData);
+ 
+-            outputOptions.SetOutputHandler(BeginImage, WriteData);
++            outputOptions.SetOutputHandler(BeginImage, WriteData, EndImage);
+         }
+ 
+ 	public void endImage()
