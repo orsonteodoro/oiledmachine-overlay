@@ -90,7 +90,7 @@ The name of the repo comes from "well-oiled machine."  A (Gentoo) computer shoul
 | x11-wm/dwm | This ebuild fixes the emoji titlebar crash and has integrated Fibonacci layout patch applied. |
 | media-gfx/caesiumclt | This is a command line image compressor for png and jpeg files. |
 | media/mozjpeg | This is a dependency for CaesiumCLT. |
-| www-misc/facy | This is a command line Facebook client.  Update with missing facebook API calls.  Used CasperJS and PhantomJS to fill in the missing API calls.  This ebuild add enhancemences such as command line video support, YouTube support, and use of color emojis, better handling of shared Spotify playlists. |
+| www-misc/facy | This is a command line Facebook client.  Update with missing Facebook API calls.  Used CasperJS and PhantomJS to fill in the missing API calls.  This ebuild add enhancemences such as command line video support, YouTube support, and use of color emojis, better handling of shared Spotify playlists. |
 | dev-dotnet/mono-packaging-tools | This ebuild from this overlay has the working mpt-sln.  Upstream is bugged [but now is fixed].  It is used to delete the fsharp projects from the MonoDevelop ebuild. |
 | sys-devel/llvm | This exposes some codegen code for CppSharp with the `codegen` USE flag. |
 | dev-net/protobuild | This uses Protobuild.exe to generate the solution/project(s) then these are fed into Mono to generate again Protobuild.exe.   We do not know if the first encountered Protobuild.exe is safe to use.  This is required to generate MonoGame project files.  MonoGame comes with binary protobuild.exe, but we are gentoo.  We compile everything from the source code. |
