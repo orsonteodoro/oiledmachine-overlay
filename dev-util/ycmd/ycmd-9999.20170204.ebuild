@@ -17,7 +17,7 @@ SLOT="0"
 LICENSE="GPL-3"
 
 IUSE="system-boost system-clang csharp omnisharp-server omnisharp-roslyn go javascript rust c++ c objc objc++ python typescript debug tests net46 net45 netcore10"
-REQUIRED_USE="system-clang? ( || ( c c++ objc objc++ ) ) csharp? ( ^^ ( omnisharp-server omnisharp-roslyn ) ) omnisharp-roslyn? (  ^^ ( net46 netcore10 ) ) omnisharp-server? ( net45 ) ^^ ( net45 net46 netcore10 )"
+REQUIRED_USE="system-clang system-clang? ( || ( c c++ objc objc++ ) ) csharp? ( ^^ ( omnisharp-server omnisharp-roslyn ) ) omnisharp-roslyn? (  ^^ ( net46 netcore10 ) ) omnisharp-server? ( net45 ) ^^ ( net45 net46 netcore10 )"
 
 COMMON_DEPEND="
 	${PYTHON_DEPS}
@@ -126,6 +126,10 @@ python_prepare_all() {
 
 	sed -i -e "s|HFJ1aRMhtCX/DMYWYkUl9g==|$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64)|g" ycmd/default_settings.json
 	sed -i -e "s|/usr/bin/python3.4|/usr/bin/${EPYTHON}|g" ycmd/default_settings.json
+
+	if use system-clang ; then
+		sed -i -e "s|EXTERNAL_LIBCLANG_PATH \${TEMP}|EXTERNAL_LIBCLANG_PATH \"$(ls /usr/$(get_libdir)/libclang.so* | head -1)\"|g" cpp/ycm/CMakeLists.txt
+	fi
 }
 
 src_configure() {
