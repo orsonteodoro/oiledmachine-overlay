@@ -124,7 +124,7 @@ The name of the repo comes from "well-oiled machine."  A (Gentoo) computer shoul
 | x11-drivers/ati-drivers | This contains a working OpenCL with proper dependencies for old =xorg-server-1.17 and kernel version =4.1.43 or <= 4.4.  It will present security holes both in the kernel and X.Org Server so use at your own risk.  The ebuild does extra checks to see if you have the proper versions for dependencies.  You need the XServer in this overlay since these older XServer versions do not exist in Portage.  This older package is for older ATI video cards with OpenCL.  You must add >=x11-base/xorg-server-1.18 >x11-drivers/xf86-input-evdev-2.10.3 =dev-libs/libevdev-9999 to package.mask. |
 | sci-geosciences/googleearthpro | This is a working ebuild of Google Earth Pro.  The Gentoo overlay had abandoned the old Google Earth ebuild. |
 | sys-power/cpupower-gui | This is a package for a graphical user interface (GUI) for changing the CPU frequency limits and the governor.  It needs elevated privileges to use it like with sudo. |
-| media-libs/libjpeg-turbo | This package contains `jpeg7`, `jpeg8`, `jpeg6b` USE flags.  Freeimage modified with libjpeg-turbo support requires atleast `jpeg7` USE flag.  You will need to update your libraries with `revedep-rebuild --library libjpeg.so` or programs like Evice will break.
+| media-libs/libjpeg-turbo | This package contains `jpeg7`, `jpeg8`, `jpeg6b` USE flags.  Freeimage modified with libjpeg-turbo support requires at least `jpeg7` (or higher) USE flag.  You will need to update your libraries with `revedep-rebuild --library libjpeg.so` or programs like Evice will break.
 
 
 TODO (NOT COMMITED):
