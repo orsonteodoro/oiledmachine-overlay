@@ -1,8 +1,0 @@
---- ./src/tools/Movemap-Generator/CMakeLists.txt.orig	2015-06-21 22:45:45.525458713 -0700
-+++ ./src/tools/Movemap-Generator/CMakeLists.txt	2015-06-21 22:56:17.245750951 -0700
-@@ -61,4 +61,4 @@
- 
- add_executable( MoveMapGen ${SOURCES} )
- 
--target_link_libraries( MoveMapGen g3dlite vmap Detour Recast zlib )
-+target_link_libraries( MoveMapGen g3dlite vmap detour recast zlib )
