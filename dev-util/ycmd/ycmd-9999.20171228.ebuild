@@ -26,7 +26,7 @@ COMMON_DEPEND="
 "
 RDEPEND="
 	${COMMON_DEPEND}
-	python? ( dev-python/jedihttp[${PYTHON_USEDEP}] )
+	python? ( >=dev-python/jedihttp-9999.20170922[${PYTHON_USEDEP}] )
 	csharp? ( omnisharp-server? ( dev-dotnet/omnisharp-server )
 		  omnisharp-roslyn? ( dev-dotnet/omnisharp-roslyn[net46] )
                 )
