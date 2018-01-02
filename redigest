@@ -1,5 +1,0 @@
-FILES=$(find $1 -name "*ebuild")
-for f in $FILES
-do
-	ebuild $f digest
-done
