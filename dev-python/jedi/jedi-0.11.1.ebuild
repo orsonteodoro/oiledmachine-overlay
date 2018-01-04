@@ -15,19 +15,16 @@ SRC_URI="https://github.com/davidhalter/jedi/archive/v${PV}.tar.gz -> ${P}.tar.g
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="amd64 x86"
-IUSE="doc test"
-
-RESTRICT="test"
-DISTUTILS_OPTIONAL="test"
+IUSE="doc"
 
 DEPEND="
+	>=dev-python/parso-0.1.1
 	dev-python/setuptools[${PYTHON_USEDEP}]
-	doc? ( dev-python/sphinx )
-	test? ( dev-python/pytest[${PYTHON_USEDEP}] )"
+	doc? ( dev-python/sphinx )"
 
-python_test() {
-	PYTHONPATH="${PYTHONPATH%:}${PYTHONPATH+:}${S}/test" py.test -v -v test \
-		|| die "Tests failed under ${EPYTHON}"
+python_prepare_all() {
+	rm -rf test #the tests only support python 3.5 and above
+	distutils-r1_python_prepare_all
 }
 
 python_compile_all() {
