@@ -10,7 +10,9 @@ HOMEPAGE="https://github.com/ArsenShnurkov/${NAME}"
 
 EGIT_BRANCH="MONO_4_0"
 EGIT_COMMIT="c3eb07ff89523154dc2385c7db0ba9437bff3362"
-SRC_URI="${HOMEPAGE}/archive/${EGIT_BRANCH}/${EGIT_COMMIT}.zip -> ${PF}.zip"
+SRC_URI="${HOMEPAGE}/archive/${EGIT_BRANCH}/${EGIT_COMMIT}.zip -> ${PF}.zip
+	 https://github.com/mono/mono/raw/master/mcs/class/mono.snk"
+
 S="${WORKDIR}/${NAME}-${EGIT_COMMIT}"
 
 SLOT="0"
@@ -38,6 +40,8 @@ METAFILETOBUILD="${S}/${FILE_TO_BUILD}"
 
 NUGET_VERSION=${PV//_pre/.0}
 
+SNK_FILENAME="${S}/mono.snk"
+
 src_prepare() {
 	chmod -R +rw "${S}" || die
 
@@ -49,6 +53,8 @@ src_prepare() {
 	eapply "${FILESDIR}/NLog.mono4.sln.patch"
 	eapply "${FILESDIR}/NoStdLib-NoConfig.patch"
 	eapply "${FILESDIR}/NLog.nuspec.patch"
+
+	cp "${DISTDIR}/mono.snk" "${S}"
 
 	eapply_user
 }

@@ -1,5 +1,5 @@
---- work.orig/nuget-Release-2.8.7-MonoDevelop/src/Core/Core.csproj
-+++ work/nuget-Release-2.8.7-MonoDevelop/src/Core/Core.csproj
+--- a/src/Core/Core.csproj
++++ b/src/Core/Core.csproj
 @@ -8,1 +8,3 @@
      <AssemblyName>NuGet.Core</AssemblyName>
 +    <SignAssembly>true</SignAssembly>
