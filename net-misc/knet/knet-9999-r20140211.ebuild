@@ -14,7 +14,7 @@ SLOT="${PV}"
 KEYWORDS="~amd64 ~ppc ~x86"
 IUSE="samples boost tinyxml qt4 debug static static-libs"
 
-RDEPEND="boost? ( dev-libs/boost[threads,static-libs=] )
+RDEPEND="boost? ( dev-libs/boost[threads,static-libs=,knet] )
 	 tinyxml? ( dev-libs/tinyxml )
 	 qt4? ( dev-qt/qtcore:4 dev-qt/qtgui:4 dev-qt/designer:4 )
         "

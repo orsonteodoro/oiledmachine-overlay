@@ -19,6 +19,7 @@ SLOT="0/${PV}" # ${PV} instead ${MAJOR_V} due to bug 486122
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~x86 ~ppc-aix ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~sparc64-solaris ~x86-solaris ~x86-winnt"
 
 IUSE="context debug doc icu +nls mpi python static-libs +threads tools"
+IUSE+=" knet"
 
 RDEPEND="icu? ( >=dev-libs/icu-3.6:=[${MULTILIB_USEDEP}] )
 	!icu? ( virtual/libiconv[${MULTILIB_USEDEP}] )
@@ -47,7 +48,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.55.0-context-x32.patch"
 	"${FILESDIR}/${PN}-1.56.0-build-auto_index-tool.patch"
 	"${FILESDIR}/${PN}-1.63.0-fix-python.patch"
-	"${FILESDIR}/${PN}-1.63.0-pointer_to.patch" #fix for knet
 )
 
 python_bindings_needed() {
@@ -115,6 +115,10 @@ pkg_setup() {
 
 src_prepare() {
 	default
+
+	if use knet ; then
+		epatch "${FILESDIR}/${PN}-1.63.0-pointer_to.patch" #fix for knet
+	fi
 
 	# Do not try to build missing 'wave' tool, bug #522682
 	# Upstream bugreport - https://svn.boost.org/trac/boost/ticket/10507
