@@ -1,0 +1,30 @@
+diff -urp MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Content.Pipeline.Animations/MonoGame.Extended.Content.Pipeline.Animations.csproj MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Content.Pipeline.Animations/MonoGame.Extended.Content.Pipeline.Animations.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Content.Pipeline.Animations/MonoGame.Extended.Content.Pipeline.Animations.csproj	2017-03-15 03:59:42.000000000 -0700
++++ MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Content.Pipeline.Animations/MonoGame.Extended.Content.Pipeline.Animations.csproj	2018-01-06 14:41:14.615882156 -0800
+@@ -31,16 +31,9 @@
+     <WarningLevel>4</WarningLevel>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.6.0.1625\lib\net40\MonoGame.Framework.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="MonoGame.Framework.Content.Pipeline">
+-      <HintPath>C:\Program Files (x86)\MSBuild\MonoGame\v3.0\Tools\MonoGame.Framework.Content.Pipeline.dll</HintPath>
+-    </Reference>
+-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+-    </Reference>
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="MonoGame.Framework.Content.Pipeline" />
++    <Reference Include="Newtonsoft.Json" />
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+     <Reference Include="System.Xml.Linq" />
+@@ -70,4 +63,4 @@
+     </ProjectReference>
+   </ItemGroup>
+   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+-</Project>
+\ No newline at end of file
++</Project>

@@ -1,0 +1,15 @@
+diff -urp MonoGame.Extended-0.6.359.orig/Source/Tests/MonoGame.Extended.Tests/MockGameWindow.cs MonoGame.Extended-0.6.359/Source/Tests/MonoGame.Extended.Tests/MockGameWindow.cs
+--- MonoGame.Extended-0.6.359.orig/Source/Tests/MonoGame.Extended.Tests/MockGameWindow.cs	2017-03-15 03:59:42.000000000 -0700
++++ MonoGame.Extended-0.6.359/Source/Tests/MonoGame.Extended.Tests/MockGameWindow.cs	2018-01-06 13:50:40.649782180 -0800
+@@ -35,7 +35,8 @@ namespace MonoGame.Extended.Tests
+         }
+ 
+ #if __MonoCS__
+-        public override Icon Icon { get; set; }
++        public System.Drawing.Icon Icon { get; set; }
+ #endif
++        public override Point Position { get; set; }
+     }
+-}
+\ No newline at end of file
++}

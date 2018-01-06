@@ -1,0 +1,90 @@
+diff -urp MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Animations/MonoGame.Extended.Animations.csproj MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Animations/MonoGame.Extended.Animations.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Animations/MonoGame.Extended.Animations.csproj	2017-03-15 03:59:42.000000000 -0700
++++ MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Animations/MonoGame.Extended.Animations.csproj	2018-01-06 13:12:17.121706273 -0800
+@@ -12,7 +12,6 @@
+     <DefaultLanguage>en-US</DefaultLanguage>
+     <FileAlignment>512</FileAlignment>
+     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+-    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
+     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+   </PropertyGroup>
+   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+@@ -58,4 +57,4 @@
+     <None Include="packages.config" />
+   </ItemGroup>
+   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urp MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Graphics/MonoGame.Extended.Graphics.csproj MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Graphics/MonoGame.Extended.Graphics.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Graphics/MonoGame.Extended.Graphics.csproj	2017-03-15 03:59:42.000000000 -0700
++++ MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Graphics/MonoGame.Extended.Graphics.csproj	2018-01-06 13:10:31.287702785 -0800
+@@ -13,7 +13,6 @@
+     <DefaultLanguage>en-US</DefaultLanguage>
+     <FileAlignment>512</FileAlignment>
+     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+-    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
+     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+   </PropertyGroup>
+   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+@@ -83,4 +82,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urp MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Input/MonoGame.Extended.Input.csproj MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Input/MonoGame.Extended.Input.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Input/MonoGame.Extended.Input.csproj	2017-03-15 03:59:42.000000000 -0700
++++ MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Input/MonoGame.Extended.Input.csproj	2018-01-06 13:12:01.794705768 -0800
+@@ -12,7 +12,6 @@
+     <DefaultLanguage>en-US</DefaultLanguage>
+     <FileAlignment>512</FileAlignment>
+     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+-    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
+     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+   </PropertyGroup>
+   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+@@ -69,4 +68,4 @@
+     <None Include="packages.config" />
+   </ItemGroup>
+   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urp MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Particles/MonoGame.Extended.Particles.csproj MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Particles/MonoGame.Extended.Particles.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Particles/MonoGame.Extended.Particles.csproj	2017-03-15 03:59:42.000000000 -0700
++++ MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Particles/MonoGame.Extended.Particles.csproj	2018-01-06 13:11:21.012704424 -0800
+@@ -12,7 +12,6 @@
+     <DefaultLanguage>en-US</DefaultLanguage>
+     <FileAlignment>512</FileAlignment>
+     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+-    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
+     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+   </PropertyGroup>
+   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+@@ -92,4 +91,4 @@
+     <None Include="packages.config" />
+   </ItemGroup>
+   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urp MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.SceneGraphs/MonoGame.Extended.SceneGraphs.csproj MonoGame.Extended-0.6.359/Source/MonoGame.Extended.SceneGraphs/MonoGame.Extended.SceneGraphs.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.SceneGraphs/MonoGame.Extended.SceneGraphs.csproj	2017-03-15 03:59:42.000000000 -0700
++++ MonoGame.Extended-0.6.359/Source/MonoGame.Extended.SceneGraphs/MonoGame.Extended.SceneGraphs.csproj	2018-01-06 13:11:44.531705199 -0800
+@@ -12,7 +12,6 @@
+     <DefaultLanguage>en-US</DefaultLanguage>
+     <FileAlignment>512</FileAlignment>
+     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+-    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
+     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+   </PropertyGroup>
+   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+@@ -56,4 +55,4 @@
+     </ProjectReference>
+   </ItemGroup>
+   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+-</Project>
+\ No newline at end of file
++</Project>

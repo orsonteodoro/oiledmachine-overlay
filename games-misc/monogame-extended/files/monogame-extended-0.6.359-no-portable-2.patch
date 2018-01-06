@@ -1,0 +1,52 @@
+diff -urp MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Animations/MonoGame.Extended.Animations.csproj MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Animations/MonoGame.Extended.Animations.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Animations/MonoGame.Extended.Animations.csproj	2018-01-06 13:13:58.894709627 -0800
++++ MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Animations/MonoGame.Extended.Animations.csproj	2018-01-06 13:18:47.612719141 -0800
+@@ -56,5 +56,5 @@
+   <ItemGroup>
+     <None Include="packages.config" />
+   </ItemGroup>
+-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
++  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+ </Project>
+diff -urp MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Graphics/MonoGame.Extended.Graphics.csproj MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Graphics/MonoGame.Extended.Graphics.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Graphics/MonoGame.Extended.Graphics.csproj	2018-01-06 13:13:58.895709627 -0800
++++ MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Graphics/MonoGame.Extended.Graphics.csproj	2018-01-06 13:16:10.629713968 -0800
+@@ -74,7 +74,7 @@
+       <HintPath>..\packages\MonoGame.Framework.Portable.3.6.0.1625\lib\portable-net45+win8+wpa81\MonoGame.Framework.dll</HintPath>
+     </Reference>
+   </ItemGroup>
+-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
++  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+        Other similar extension points exist, see Microsoft.Common.targets.
+   <Target Name="BeforeBuild">
+diff -urp MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Input/MonoGame.Extended.Input.csproj MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Input/MonoGame.Extended.Input.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Input/MonoGame.Extended.Input.csproj	2018-01-06 13:13:58.896709627 -0800
++++ MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Input/MonoGame.Extended.Input.csproj	2018-01-06 13:18:06.702717792 -0800
+@@ -67,5 +67,5 @@
+   <ItemGroup>
+     <None Include="packages.config" />
+   </ItemGroup>
+-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
++  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+ </Project>
+diff -urp MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Particles/MonoGame.Extended.Particles.csproj MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Particles/MonoGame.Extended.Particles.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Particles/MonoGame.Extended.Particles.csproj	2018-01-06 13:13:58.897709627 -0800
++++ MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Particles/MonoGame.Extended.Particles.csproj	2018-01-06 13:16:52.162715336 -0800
+@@ -90,5 +90,5 @@
+   <ItemGroup>
+     <None Include="packages.config" />
+   </ItemGroup>
+-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
++  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+ </Project>
+diff -urp MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.SceneGraphs/MonoGame.Extended.SceneGraphs.csproj MonoGame.Extended-0.6.359/Source/MonoGame.Extended.SceneGraphs/MonoGame.Extended.SceneGraphs.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.SceneGraphs/MonoGame.Extended.SceneGraphs.csproj	2018-01-06 13:13:58.898709627 -0800
++++ MonoGame.Extended-0.6.359/Source/MonoGame.Extended.SceneGraphs/MonoGame.Extended.SceneGraphs.csproj	2018-01-06 13:17:26.275716460 -0800
+@@ -54,5 +54,5 @@
+       <Name>MonoGame.Extended</Name>
+     </ProjectReference>
+   </ItemGroup>
+-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
++  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+ </Project>

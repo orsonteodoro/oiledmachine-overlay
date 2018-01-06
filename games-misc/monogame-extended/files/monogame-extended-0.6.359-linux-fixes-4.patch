@@ -1,0 +1,62 @@
+diff -urp MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Entities/MonoGame.Extended.Entities.csproj MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Entities/MonoGame.Extended.Entities.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Entities/MonoGame.Extended.Entities.csproj	2018-01-06 13:35:38.793752461 -0800
++++ MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Entities/MonoGame.Extended.Entities.csproj	2018-01-06 13:37:09.185755440 -0800
+@@ -57,9 +57,7 @@
+     <Compile Include="Systems\SpriteBatchSystem.cs" />
+   </ItemGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\packages\MonoGame.Framework.Portable.3.6.0.1625\lib\portable-net45+win8+wpa81\MonoGame.Framework.dll</HintPath>
+-    </Reference>
++    <Reference Include="MonoGame.Framework" />
+   </ItemGroup>
+   <ItemGroup>
+     <None Include="packages.config" />
+diff -urp MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Gui/MonoGame.Extended.Gui.csproj MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Gui/MonoGame.Extended.Gui.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Gui/MonoGame.Extended.Gui.csproj	2018-01-06 13:35:38.794752461 -0800
++++ MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Gui/MonoGame.Extended.Gui.csproj	2018-01-06 13:38:34.956758266 -0800
+@@ -63,13 +63,9 @@
+     <Compile Include="Serialization\GuiTextureRegionService.cs" />
+   </ItemGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\packages\MonoGame.Framework.Portable.3.6.0.1625\lib\portable-net45+win8+wpa81\MonoGame.Framework.dll</HintPath>
+-    </Reference>
+-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
++    <Reference Include="System" />
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="Newtonsoft.Json" />
+   </ItemGroup>
+   <ItemGroup>
+     <ProjectReference Include="..\MonoGame.Extended.Input\MonoGame.Extended.Input.csproj">
+diff -urp MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Tiled/MonoGame.Extended.Tiled.csproj MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Tiled/MonoGame.Extended.Tiled.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Tiled/MonoGame.Extended.Tiled.csproj	2018-01-06 13:35:38.796752461 -0800
++++ MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Tiled/MonoGame.Extended.Tiled.csproj	2018-01-06 13:38:04.334757257 -0800
+@@ -84,9 +84,7 @@
+     <None Include="packages.config" />
+   </ItemGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\packages\MonoGame.Framework.Portable.3.6.0.1625\lib\portable-net45+win8+wpa81\MonoGame.Framework.dll</HintPath>
+-    </Reference>
++    <Reference Include="MonoGame.Framework" />
+   </ItemGroup>
+   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+diff -urp MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Tweening/MonoGame.Extended.Tweening.csproj MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Tweening/MonoGame.Extended.Tweening.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Tweening/MonoGame.Extended.Tweening.csproj	2018-01-06 13:35:38.797752462 -0800
++++ MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Tweening/MonoGame.Extended.Tweening.csproj	2018-01-06 13:36:46.770754701 -0800
+@@ -54,9 +54,7 @@
+     <Compile Include="TweeningComponent.cs" />
+   </ItemGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\packages\MonoGame.Framework.Portable.3.6.0.1625\lib\portable-net45+win8+wpa81\MonoGame.Framework.dll</HintPath>
+-    </Reference>
++    <Reference Include="MonoGame.Framework" />
+   </ItemGroup>
+   <ItemGroup>
+     <None Include="packages.config" />

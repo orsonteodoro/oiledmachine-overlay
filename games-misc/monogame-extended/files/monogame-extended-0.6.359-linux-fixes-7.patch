@@ -1,0 +1,36 @@
+diff -urp MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Content.Pipeline.Tiled/MonoGame.Extended.Content.Pipeline.Tiled.csproj MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Content.Pipeline.Tiled/MonoGame.Extended.Content.Pipeline.Tiled.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Content.Pipeline.Tiled/MonoGame.Extended.Content.Pipeline.Tiled.csproj	2017-03-15 03:59:42.000000000 -0700
++++ MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Content.Pipeline.Tiled/MonoGame.Extended.Content.Pipeline.Tiled.csproj	2018-01-06 14:33:36.537867061 -0800
+@@ -34,21 +34,10 @@
+     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework, Version=3.5.1.1679, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.5.1.1679\lib\net40\MonoGame.Framework.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="MonoGame.Framework.Content.Pipeline">
+-      <HintPath>C:\Program Files (x86)\MSBuild\MonoGame\v3.0\Tools\MonoGame.Framework.Content.Pipeline.dll</HintPath>
+-    </Reference>
+-    <Reference Include="NVorbis, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.5.1.1679\lib\net40\NVorbis.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+-      <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.5.1.1679\lib\net40\OpenTK.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="MonoGame.Framework.Content.Pipeline" />
++    <Reference Include="NVorbis" />
++    <Reference Include="OpenTK" />
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+     <Reference Include="System.Drawing" />
+@@ -127,4 +116,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>

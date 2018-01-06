@@ -1,0 +1,220 @@
+diff -urp MonoGame.Extended-0.6.359.orig/Source/Demos/Demo.BitmapFonts/Content/Content.mgcb MonoGame.Extended-0.6.359/Source/Demos/Demo.BitmapFonts/Content/Content.mgcb
+--- MonoGame.Extended-0.6.359.orig/Source/Demos/Demo.BitmapFonts/Content/Content.mgcb	2017-03-15 03:59:42.000000000 -0700
++++ MonoGame.Extended-0.6.359/Source/Demos/Demo.BitmapFonts/Content/Content.mgcb	2018-01-06 12:42:13.172646828 -0800
+@@ -3,7 +3,7 @@
+ 
+ /outputDir:bin/$(Platform)
+ /intermediateDir:obj/$(Platform)
+-/platform:Windows
++/platform:Linux
+ /config:
+ /profile:Reach
+ /compress:False
+diff -urp MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended/MonoGame.Extended.csproj MonoGame.Extended-0.6.359/Source/MonoGame.Extended/MonoGame.Extended.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended/MonoGame.Extended.csproj	2017-03-15 03:59:42.000000000 -0700
++++ MonoGame.Extended-0.6.359/Source/MonoGame.Extended/MonoGame.Extended.csproj	2018-01-06 12:44:27.724651262 -0800
+@@ -13,7 +13,6 @@
+     <DefaultLanguage>en-US</DefaultLanguage>
+     <FileAlignment>512</FileAlignment>
+     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+-    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
+     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+   </PropertyGroup>
+   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+@@ -120,15 +119,12 @@
+     <Compile Include="FramesPerSecondCounterComponent.cs" />
+   </ItemGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework, Version=3.6.0.1625, Culture=neutral, processorArchitecture=MSIL">
+-      <HintPath>..\packages\MonoGame.Framework.Portable.3.6.0.1625\lib\portable-net45+win8+wpa81\MonoGame.Framework.dll</HintPath>
+-    </Reference>
+     <Reference Include="mscorlib" />
+-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+     <Reference Include="System.Core" />
++    <Reference Include="System" />
++    <Reference Include="System.Runtime.Serialization" />
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="Newtonsoft.Json" />
+   </ItemGroup>
+   <ItemGroup>
+     <None Include="packages.config" />
+@@ -136,7 +132,7 @@
+   <ItemGroup>
+     <Folder Include="Animations\" />
+   </ItemGroup>
+-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
++  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+        Other similar extension points exist, see Microsoft.Common.targets.
+   <Target Name="BeforeBuild">
+@@ -144,4 +140,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urp MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Content.Pipeline/MonoGame.Extended.Content.Pipeline.csproj MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Content.Pipeline/MonoGame.Extended.Content.Pipeline.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/MonoGame.Extended.Content.Pipeline/MonoGame.Extended.Content.Pipeline.csproj	2017-03-15 03:59:42.000000000 -0700
++++ MonoGame.Extended-0.6.359/Source/MonoGame.Extended.Content.Pipeline/MonoGame.Extended.Content.Pipeline.csproj	2018-01-06 12:45:22.074653053 -0800
+@@ -33,17 +33,9 @@
+     <WarningLevel>4</WarningLevel>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework">
+-      <SpecificVersion>False</SpecificVersion>
+-      <HintPath>C:\Program Files (x86)\MonoGame\v3.0\Assemblies\DesktopGL\MonoGame.Framework.dll</HintPath>
+-    </Reference>
+-    <Reference Include="MonoGame.Framework.Content.Pipeline">
+-      <HintPath>C:\Program Files (x86)\MSBuild\MonoGame\v3.0\Tools\MonoGame.Framework.Content.Pipeline.dll</HintPath>
+-    </Reference>
+-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="MonoGame.Framework.Content.Pipeline" />
++    <Reference Include="Newtonsoft.Json" />
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+     <Reference Include="System.Drawing" />
+@@ -92,4 +84,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urp MonoGame.Extended-0.6.359.orig/Source/Tests/MonoGame.Extended.Content.Pipeline.Tests/MonoGame.Extended.Content.Pipeline.Tests.csproj MonoGame.Extended-0.6.359/Source/Tests/MonoGame.Extended.Content.Pipeline.Tests/MonoGame.Extended.Content.Pipeline.Tests.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/Tests/MonoGame.Extended.Content.Pipeline.Tests/MonoGame.Extended.Content.Pipeline.Tests.csproj	2017-03-15 03:59:42.000000000 -0700
++++ MonoGame.Extended-0.6.359/Source/Tests/MonoGame.Extended.Content.Pipeline.Tests/MonoGame.Extended.Content.Pipeline.Tests.csproj	2018-01-06 12:50:07.257662451 -0800
+@@ -30,20 +30,11 @@
+     <WarningLevel>4</WarningLevel>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework">
+-      <HintPath>$(MSBuildExtensionsPath)\MonoGame\v3.0\Tools\MonoGame.Framework.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="MonoGame.Framework.Content.Pipeline">
+-      <HintPath>C:\Program Files (x86)\MSBuild\MonoGame\v3.0\Tools\MonoGame.Framework.Content.Pipeline.dll</HintPath>
+-    </Reference>
+-    <Reference Include="NSubstitute, Version=1.10.0.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\NSubstitute.1.10.0.0\lib\net45\NSubstitute.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+-      <Private>True</Private>
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="MonoGame.Framework.Content.Pipeline" />
++    <Reference Include="NSubstitute" />
++    <Reference Include="nunit.framework">
++      <HintPath>/usr/share/nunit-2/nunit.framework.dll</HintPath>
+     </Reference>
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+@@ -100,4 +91,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urp MonoGame.Extended-0.6.359.orig/Source/Tests/MonoGame.Extended.Gui.Tests/MonoGame.Extended.Gui.Tests.csproj MonoGame.Extended-0.6.359/Source/Tests/MonoGame.Extended.Gui.Tests/MonoGame.Extended.Gui.Tests.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/Tests/MonoGame.Extended.Gui.Tests/MonoGame.Extended.Gui.Tests.csproj	2017-03-15 03:59:42.000000000 -0700
++++ MonoGame.Extended-0.6.359/Source/Tests/MonoGame.Extended.Gui.Tests/MonoGame.Extended.Gui.Tests.csproj	2018-01-06 12:55:21.107672793 -0800
+@@ -30,13 +30,9 @@
+     <WarningLevel>4</WarningLevel>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="NSubstitute, Version=1.10.0.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\NSubstitute.1.10.0.0\lib\net45\NSubstitute.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+-      <Private>True</Private>
++    <Reference Include="NSubstitute" />
++    <Reference Include="nunit.framework">
++      <HintPath>/usr/share/nunit-2/nunit.framework.dll</HintPath>
+     </Reference>
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+@@ -74,4 +70,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urp MonoGame.Extended-0.6.359.orig/Source/Tests/MonoGame.Extended.Tests/MonoGame.Extended.Tests.csproj MonoGame.Extended-0.6.359/Source/Tests/MonoGame.Extended.Tests/MonoGame.Extended.Tests.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/Tests/MonoGame.Extended.Tests/MonoGame.Extended.Tests.csproj	2017-03-15 03:59:42.000000000 -0700
++++ MonoGame.Extended-0.6.359/Source/Tests/MonoGame.Extended.Tests/MonoGame.Extended.Tests.csproj	2018-01-06 12:55:19.800672750 -0800
+@@ -32,20 +32,11 @@
+     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework, Version=3.6.0.1352, Culture=neutral, processorArchitecture=MSIL">
+-      <SpecificVersion>False</SpecificVersion>
+-      <HintPath>..\..\..\Dependencies\MonoGame.Framework.dll</HintPath>
+-    </Reference>
+-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+-    </Reference>
+-    <Reference Include="NSubstitute, Version=1.10.0.0, Culture=neutral, PublicKeyToken=92dd2e9066daa5ca, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\NSubstitute.1.10.0.0\lib\net45\NSubstitute.dll</HintPath>
+-      <Private>True</Private>
+-    </Reference>
+-    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+-      <Private>True</Private>
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="NSubstitute" />
++    <Reference Include="Newtonsoft.Json" />
++    <Reference Include="nunit.framework">
++      <HintPath>/usr/share/nunit-2/nunit.framework.dll</HintPath>
+     </Reference>
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+@@ -126,4 +117,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
+diff -urp MonoGame.Extended-0.6.359.orig/Source/Tests/MonoGame.Extended.Tiled.Tests/MonoGame.Extended.Tiled.Tests.csproj MonoGame.Extended-0.6.359/Source/Tests/MonoGame.Extended.Tiled.Tests/MonoGame.Extended.Tiled.Tests.csproj
+--- MonoGame.Extended-0.6.359.orig/Source/Tests/MonoGame.Extended.Tiled.Tests/MonoGame.Extended.Tiled.Tests.csproj	2017-03-15 03:59:42.000000000 -0700
++++ MonoGame.Extended-0.6.359/Source/Tests/MonoGame.Extended.Tiled.Tests/MonoGame.Extended.Tiled.Tests.csproj	2018-01-06 12:55:22.632672843 -0800
+@@ -31,16 +31,10 @@
+     <WarningLevel>4</WarningLevel>
+   </PropertyGroup>
+   <ItemGroup>
+-    <Reference Include="MonoGame.Framework, Version=3.5.1.1679, Culture=neutral, processorArchitecture=MSIL">
+-      <SpecificVersion>False</SpecificVersion>
+-      <HintPath>C:\Program Files (x86)\MSBuild\MonoGame\v3.0\Tools\MonoGame.Framework.dll</HintPath>
+-    </Reference>
+-    <Reference Include="MonoGame.Framework.Content.Pipeline">
+-      <HintPath>C:\Program Files (x86)\MSBuild\MonoGame\v3.0\Tools\MonoGame.Framework.Content.Pipeline.dll</HintPath>
+-    </Reference>
+-    <Reference Include="nunit.framework, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+-      <HintPath>..\..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+-      <Private>True</Private>
++    <Reference Include="MonoGame.Framework" />
++    <Reference Include="MonoGame.Framework.Content.Pipeline" />
++    <Reference Include="nunit.framework">
++      <HintPath>/usr/share/nunit-2/nunit.framework.dll</HintPath>
+     </Reference>
+     <Reference Include="System" />
+     <Reference Include="System.Core" />
+@@ -77,4 +71,4 @@
+   <Target Name="AfterBuild">
+   </Target>
+   -->
+-</Project>
+\ No newline at end of file
++</Project>
