@@ -38,7 +38,7 @@ src_install() {
 	mkdir -p "${D}/opt/crark"
 	cp -R "${WORKDIR}"/* "${D}/opt/crark"
 	mkdir -p "${D}/usr/bin"
-	cp "${FILESDIR}/crark" "${D}/usr/bin" #wrapper script
-	cp "${FILESDIR}/crark-hp" "${D}/usr/bin" #wrapper script
+	cp "${FILESDIR}/3.4/crark" "${D}/usr/bin" #wrapper script
+	cp "${FILESDIR}/3.4/crark-hp" "${D}/usr/bin" #wrapper script
 }
 

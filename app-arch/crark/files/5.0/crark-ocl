@@ -1,0 +1,12 @@
+#!/bin/bash
+export PATH=$PATH:/opt/crark
+DIR=`pwd`
+if [[ $DIR != "/opt/crark" ]]; then
+	echo "Copying rarcrypt dlls...  (Remove it if crark fails.)"
+	cp /opt/crark/{rarcrypt30-cl.dll,rarcrypt50-cl.dll} ./
+fi
+/opt/crark/crark-ocl $*
+if [[ $DIR != "/opt/crark" ]]; then
+	echo "Removing rarcrypt dlls..."
+	rm {rarcrypt30-cl.dll,rarcrypt50-cl.dll}
+fi

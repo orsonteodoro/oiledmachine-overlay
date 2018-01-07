@@ -13,8 +13,8 @@ SRC_URI="http://www.crark.net/download/crark51-linux.rar"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE=""
-REQUIRED_USE=""
+IUSE="opencl cuda cpu"
+REQUIRED_USE="^^ ( opencl cuda cpu )"
 
 DEPEND="app-arch/unrar"
 RDEPEND="${DEPEND}
@@ -36,7 +36,22 @@ src_install() {
 	mkdir -p "${D}/opt/crark"
 	cp -R "${WORKDIR}"/* "${D}/opt/crark"
 	mkdir -p "${D}/usr/bin"
-	cp "${FILESDIR}/crark" "${D}/usr/bin" #wrapper script
-	cp "${FILESDIR}/crark-hp" "${D}/usr/bin" #wrapper script
+	if use cpu ; then
+		cp "${FILESDIR}/5.0/crark" "${D}/usr/bin" #wrapper script
+	else
+		rm "${D}/opt/crark/crark"
+	fi
+	if use opencl ; then
+		cp "${FILESDIR}/5.0/crark-ocl" "${D}/usr/bin" #wrapper script
+	else
+		rm "${D}/opt/crark/crark-ocl"
+		rm "${D}"/opt/crark/{rarcrypt30-cl.dll,rarcrypt50-cl.dll}
+	fi
+	if use cuda ; then
+		cp "${FILESDIR}/5.0/crark-cuda" "${D}/usr/bin" #wrapper script
+	else
+		rm "${D}/opt/crark/crark-cuda"
+		rm "${D}"/opt/crark/{rarcrypt30-2.dll,rarcrypt30-5.dll,rarcrypt50-2.dll,rarcrypt50-5.dll,rarcrypt30-3.dll,rarcrypt50-3.dll}
+	fi
 }
 
