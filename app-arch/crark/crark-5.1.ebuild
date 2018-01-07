@@ -8,15 +8,13 @@ inherit eutils
 
 DESCRIPTION="Fastest freeware utility to crack RAR password"
 HOMEPAGE="http://www.crark.net/"
-SRC_URI="opencl? ( http://www.crark.net/download/crark34-linux-opencl.rar )
-         cpu? ( http://www.crark.net/download/crark34-linux.rar )
-         cuda? ( http://www.crark.net/download/crark34-linux-cuda.rar )"
+SRC_URI="http://www.crark.net/download/crark51-linux.rar"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~x86"
-IUSE="opencl cuda cpu"
-REQUIRED_USE="^^ ( opencl cuda cpu )"
+KEYWORDS="~amd64"
+IUSE=""
+REQUIRED_USE=""
 
 DEPEND="app-arch/unrar"
 RDEPEND="${DEPEND}
