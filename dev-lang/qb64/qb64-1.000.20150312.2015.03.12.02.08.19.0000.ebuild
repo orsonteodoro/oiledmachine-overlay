@@ -3,11 +3,18 @@
 # $Id$
 
 EAPI=6
-inherit eutils
+inherit eutils versionator
 
 DESCRIPTION="QB64"
 HOMEPAGE="http://www.qb64.net/"
-SRC_URI="http://www.qb64.net/release/official/2015_03_12__02_08_19__v0000/linux/qb64v1000-lnx.tar.gz"
+#1.000.20150312.2015.03.12.02.08.19.0000
+PV_A="$(get_version_component_range 1-2 ${PV})" #1.000
+PV_B="$(get_version_component_range 3 ${PV})" #20150312
+PV_C="$(get_version_component_range 4-6 ${PV})" #2015.03.12
+PV_D="$(get_version_component_range 7-9 ${PV})" #02.08.19
+PV_E="$(get_version_component_range 10 ${PV})" #0000
+
+SRC_URI="http://www.qb64.net/release/official/${PV_C//./_}__${PV_D//./_}__v${PV_E}/linux/qb64v${PV_A//./}-lnx.tar.gz"
 
 LICENSE="QB64"
 SLOT="0"
@@ -30,16 +37,17 @@ src_prepare() {
 }
 
 src_compile() {
-	sed -i "s|./qb64 &||g" "${S}"/setup_lnx.sh
-	sed -i 's|cat > ~/.local/share/applications/qb64.desktop <<EOF|_T= <<EOF|g' "${S}"/setup_lnx.sh
+	sed -i "s|./qb64 &||g" "${S}"/setup_lnx.sh || die
+	sed -i 's|cat > ~/.local/share/applications/qb64.desktop <<EOF|_T= <<EOF|g' "${S}"/setup_lnx.sh || die
 	./setup_lnx.sh
 }
 
 src_install() {
 	mkdir -p "${D}/usr/bin"
 	mkdir -p "${D}/usr/$(get_libdir)/qb64"
-	cp qb64 "${D}/usr/$(get_libdir)/qb64"/
+	cp qb64 "${D}/usr/$(get_libdir)/qb64"/ || die
 	cp -r internal "${D}/usr/$(get_libdir)/qb64"/
+	cp -r source "${D}/usr/$(get_libdir)/qb64"/
 	mkdir -p "${D}/usr/share/qbasic"
 
 	if use samples; then
