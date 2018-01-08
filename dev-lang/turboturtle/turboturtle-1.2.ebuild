@@ -14,7 +14,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86"
 IUSE="examples"
 
-RDEPEND="media-libs/libsdl
+RDEPEND="media-libs/libsdl[opengl]
 	 dev-lang/python:2.7
 	 "
 DEPEND="${RDEPEND}"
