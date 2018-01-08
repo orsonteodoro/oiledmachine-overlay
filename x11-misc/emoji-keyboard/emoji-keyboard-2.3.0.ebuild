@@ -41,7 +41,9 @@ pkg_setup() {
 }
 
 python_prepare_all() {
-	epatch "${FILESDIR}/emoji-keyboard-2.3.0-no-wayland.patch"
+	if ! use wayland ; then
+		epatch "${FILESDIR}/emoji-keyboard-2.3.0-no-wayland.patch"
+	fi
 
 	distutils-r1_python_prepare_all
 
