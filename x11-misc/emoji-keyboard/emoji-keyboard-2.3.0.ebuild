@@ -5,7 +5,7 @@ EAPI=6
 
 PYTHON_COMPAT=( python3_5 )
 
-inherit eutils distutils-r1 linux-info
+inherit eutils distutils-r1 linux-info user
 
 
 DESCRIPTION="Virtual keyboard-like emoji picker for Linux. "
