@@ -1,0 +1,25 @@
+diff -urp shazam-on-linux-055bc3299036998408f4e2de43246aabaf829e6a.orig/shazam.sh shazam-on-linux-055bc3299036998408f4e2de43246aabaf829e6a/shazam.sh
+--- shazam-on-linux-055bc3299036998408f4e2de43246aabaf829e6a.orig/shazam.sh	2018-01-07 12:58:28.936675489 -0800
++++ shazam-on-linux-055bc3299036998408f4e2de43246aabaf829e6a/shazam.sh	2018-01-07 13:05:25.606689219 -0800
+@@ -1,6 +1,14 @@
+ #!/bin/sh
+ RECORD_FILE="alsa_record.wav"
+ RECORD_FOLDER="/tmp/shazam_on_linux"
++CONFIG=""
++if [ -f "$1" ] ; then
++	CONFIG="$1"
++elif [ -f "/home/${USER}/.config/shazam-on-linux/shazam_on_linux.conf" ] ; then
++	CONFIG="/home/${USER}/.config/shazam-on-linux/shazam_on_linux.conf"
++elif [ -f "/etc/shazam_on_linux.conf" ] ; then
++	CONFIG="/etc/shazam_on_linux.conf"
++fi
+ 
+ if [ ! -e $RECORD_FOLDER ]
+ then
+@@ -18,5 +26,5 @@ timeout 5 arecord -c 2 -f S32_LE -r 4800
+ 
+ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ # identidy recorded file
+-python2 ${DIR}/identify_sound.py -s ${RECORD_FOLDER}/${RECORD_FILE} -c $1
++python2 ${DIR}/identify_sound.py -s ${RECORD_FOLDER}/${RECORD_FILE} -c ${CONFIG}
+ 
