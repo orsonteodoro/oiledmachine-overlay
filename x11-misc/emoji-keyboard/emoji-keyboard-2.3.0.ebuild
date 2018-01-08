@@ -54,8 +54,18 @@ python_compile() {
 	distutils-r1_python_compile
 }
 
+pkg_preinst() {
+	if use wayland ; then
+		enewgroup uinput
+		echo 'KERNEL=="uinput", GROUP="uinput", MODE="0660"' > "${D}"/etc/udev/rules.d/uinput.rules
+	fi
+}
+
 pkg_postinst() {
 	if ! use X ; then
 		ewarn "You are not installing X support and is highly recommended.  Settings > On selecting emoji > Type will not work without X USE flag."
+	fi
+	if use wayland ; then
+		ewarn "You need to add yourself to the uinput group for Type mode pasting on Wayland to work."
 	fi
 }
