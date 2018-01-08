@@ -30,9 +30,9 @@ RDEPEND="dev-python/python-evdev[${PYTHON_USEDEP}]
          dev-libs/gobject-introspection[${PYTHON_USEDEP}]
 	 x11-libs/gtk+:3[introspection]
 	 dev-libs/libappindicator[introspection]
-	 wayland? ( sys-apps/systemd )
 	 X? ( >=dev-python/python-xlib-0.19[${PYTHON_USEDEP}] )"
-DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
+DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]
+	wayland? ( sys-apps/systemd )"
 
 pkg_setup() {
 	linux-info_pkg_setup
