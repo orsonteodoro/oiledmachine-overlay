@@ -5,7 +5,7 @@ EAPI=6
 
 PYTHON_COMPAT=( python2_7 )
 
-inherit eutils python-single-r1 linux-info linux-mod
+inherit eutils python-single-r1 linux-info
 
 DESCRIPTION="Capture sound from your soundcard and identify it."
 HOMEPAGE="https://github.com/Lahorde/shazam-on-linux"
@@ -26,7 +26,7 @@ RDEPEND="${DEPEND}"
 S="${WORKDIR}/${PN}-${COMMIT}"
 
 pkg_setup() {
-	linux-mod_pkg_setup
+	linux-info_pkg_setup
 	if ! linux_config_exists ; then
 		eerror "You are missing a .config file in your kernel source."
 		die
