@@ -10,7 +10,15 @@ inherit eutils distutils-r1 linux-info user
 
 DESCRIPTION="Virtual keyboard-like emoji picker for Linux. "
 HOMEPAGE="https://github.com/OzymandiasTheGreat/emoji-keyboard"
-SRC_URI="https://github.com/OzymandiasTheGreat/emoji-keyboard/archive/${PV}.tar.gz -> ${P}.tar.gz"
+
+EMOJITWO_COMMIT="b851e2070faf5c707d2e74988d425d4956c17187"
+NOTOEMOJI_COMMIT="09d8fd121a6d35081fdc31a540735c4a2f924356"
+TWEMOJI_COMMIT="2f786b03d0bc0944eb3b66850a805dcadd5f853d"
+
+SRC_URI="https://github.com/EmojiTwo/emojitwo/archive/${EMOJITWO_COMMIT}.zip -> emoji-keyboard-deps-emojitwo-9999.20171213.zip
+         https://github.com/googlei18n/noto-emoji/archive/${NOTOEMOJI_COMMIT}.zip -> emoji-keyboard-deps-noto-emoji-9999.20171216.zip
+	 https://github.com/twitter/twemoji/archive/${TWEMOJI_COMMIT}.zip -> emoji-keyboard-deps-twemoji-9999.20171208.zip
+	 https://github.com/OzymandiasTheGreat/emoji-keyboard/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-3+"
 SLOT="0"
@@ -40,10 +48,20 @@ pkg_setup() {
 	python_setup
 }
 
+src_unpack() {
+	unpack ${A}
+	mv "${WORKDIR}/emojitwo-${EMOJITWO_COMMIT}"/* "${S}"/emojitwo/ || die
+	mv "${WORKDIR}/noto-emoji-${NOTOEMOJI_COMMIT}"/* "${S}"/noto-emoji/ || die
+	mv "${WORKDIR}/twemoji-${TWEMOJI_COMMIT}"/* "${S}"/twemoji/ || die
+}
+
 python_prepare_all() {
 	if ! use wayland ; then
 		epatch "${FILESDIR}/emoji-keyboard-2.3.0-no-wayland.patch"
 	fi
+
+	einfo "Updating emojis please wait..."
+	./update-resources.py
 
 	distutils-r1_python_prepare_all
 
