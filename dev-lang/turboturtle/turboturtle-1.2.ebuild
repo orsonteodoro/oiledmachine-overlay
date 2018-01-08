@@ -5,7 +5,7 @@
 EAPI=6
 inherit eutils
 
-DESCRIPTION="TurboTurtle"
+DESCRIPTION="TurboTurtle is a Logo compiler designed for high-performance Turtle Graphics using OpenGL"
 HOMEPAGE="http://www.fascinationsoftware.com/FS/html/TurboTurtle.html"
 SRC_URI="https://github.com/richard42/turboturtle/releases/download/March2009/TurboTurtle-${PV}-source.tar.gz"
 
