@@ -89,7 +89,7 @@ pkg_preinst() {
 
 pkg_postinst() {
 	if ! use X ; then
-		ewarn "You are not installing X support and is highly recommended.  Settings > On selecting emoji > Type will not work without X USE flag."
+		ewarn "You are not installing X support and is highly recommended.  Settings > On selecting emoji > Type will not work without X USE flag if you are using X11 instead of Wayland."
 	fi
 	if use wayland ; then
 		ewarn "You need to add yourself to the uinput group for Type mode pasting on Wayland to work."
