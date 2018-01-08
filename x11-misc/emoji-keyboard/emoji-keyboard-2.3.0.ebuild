@@ -57,6 +57,7 @@ python_compile() {
 pkg_preinst() {
 	if use wayland ; then
 		enewgroup uinput
+		mkdir -p "${D}"/etc/udev/rules.d/
 		echo 'KERNEL=="uinput", GROUP="uinput", MODE="0660"' > "${D}"/etc/udev/rules.d/uinput.rules
 	fi
 }
