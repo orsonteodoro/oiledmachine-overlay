@@ -89,7 +89,7 @@ pcm.output {
     slave {
 	#This should point to the hardware playback.
 	#Here is some sample output of aplay -l: card 0: SB [HDA ATI SB], device 0: VT1708B 8-Ch Analog [VT1708B 8-Ch Analog]
-        #Rhis should point to: card X: SB [HDA ATI SB], device Y: VT1708B 8-Ch Analog [VT1708B 8-Ch Analog]
+        #This should point to: card X: SB [HDA ATI SB], device Y: VT1708B 8-Ch Analog [VT1708B 8-Ch Analog]
         #Replace X and Y in pcm "hw:X,Y" below:
 	pcm "hw:0,0"
         #period_time 0
