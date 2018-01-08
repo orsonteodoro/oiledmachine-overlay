@@ -86,7 +86,7 @@ pkg_postinst() {
 	fi
 
 	if use extras ; then
-		einfo "Examples of .asoundrc and shazam-chromium can be found in /usr/share/${PN}"
+		einfo "Examples of .asoundrc can be found in /usr/share/${PN}"
 	else
 		einfo "It is recommended you check out the sample asoundrc-example by enabling the extra USE flag or you will have difficulty using this product."
 	fi
