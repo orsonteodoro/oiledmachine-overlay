@@ -45,6 +45,13 @@ pkg_setup() {
 		eerror "You need CONFIG_INPUT_EVDEV=y or CONFIG_INPUT_EVDEV=m for this to work."
 		die
 	fi
+
+	if use wayland ; then
+		if ! linux_chkconfig_present INPUT_UINPUT ; then
+			eerror "You need CONFIG_INPUT_UINPUT=y or CONFIG_INPUT_UINPUT=m for this to work."
+			die
+		fi
+	fi
 	python_setup
 }
 
