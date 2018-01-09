@@ -39,6 +39,6 @@ src_install() {
 }
 
 pkg_postinst() {
-	einfo "Add \`source /usr/share/zsh/site-contrib/emoji-cli.zsh\` to your personal /home/<USER>/.zshrc or system-wide /etc/zsh/zprofile."
+	einfo "Add \`source /usr/share/zsh/site-contrib/emoji-cli.zsh\` to your personal /home/<USER>/.zshrc."
 	einfo "The default binding ^s has been changed to ^a to get it to at least work.  You can manually change it by setting EMOJI_CLI_KEYBIND."
 }
