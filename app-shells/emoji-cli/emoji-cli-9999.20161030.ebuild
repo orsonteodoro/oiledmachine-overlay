@@ -25,7 +25,7 @@ DEPEND="${RDEPEND}"
 S="${WORKDIR}/${PN}-${COMMIT}"
 
 src_prepare() {
-	sed -i 's|\^s|^a|g' emoji-cli.zsh
+	sed -i 's|\^s|^\||g' emoji-cli.zsh
 	eapply_user
 }
 
@@ -40,5 +40,5 @@ src_install() {
 
 pkg_postinst() {
 	einfo "Add \`source /usr/share/zsh/site-contrib/emoji-cli.zsh\` to your personal /home/<USER>/.zshrc."
-	einfo "The default binding ^s has been changed to ^a to get it to atleast work.  You can manually change it by setting EMOJI_CLI_KEYBIND."
+	einfo "The default binding ^s has been changed to ^| to get it to atleast work.  You can manually change it by setting EMOJI_CLI_KEYBIND."
 }
