@@ -128,7 +128,7 @@ The name of the repo comes from "well-oiled machine."  A (Gentoo) computer shoul
 | www-misc/socli | This is a Stack Overflow command line client. |
 | x11-misc/emoji-keyboard | This is an emoji keyboard for Linux. |
 | app-shells/emoji-cli | This is an emoji autocompletion plugin for Zsh.  You might want to combine it with emojify. |
-| app-shells/emojify | This is a BASH shell to convert emoji aliases described in english words into unicode equivalent to display the emoji. |
+| app-shells/emojify | This is a BASH shell script to convert emoji aliases described in English words into Unicode equivalent to display the emoji. |
 
 
 TODO (NOT COMMITED):
