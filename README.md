@@ -127,7 +127,7 @@ The name of the repo comes from "well-oiled machine."  A (Gentoo) computer shoul
 | media-libs/libjpeg-turbo | This package contains `jpeg7`, `jpeg8`, `jpeg6b` USE flags to target various API compatibility.  This compatibility is not feature complete or will not be included.  FreeImage modified with libjpeg-turbo support requires at least `jpeg7` (or higher) USE flag.  You will need to update your libraries with `revedep-rebuild --library libjpeg.so` or programs like Evince will break if dependencies are not updated.
 | www-misc/socli | This is a Stack Overflow command line client. |
 | x11-misc/emoji-keyboard | This is an emoji keyboard for Linux. |
-| app-shells/emoji-cli | This is an emoji autocompletion plugin for zsh.  You might want to combine it with emojify. |
+| app-shells/emoji-cli | This is an emoji autocompletion plugin for Zsh.  You might want to combine it with emojify. |
 | app-shells/emojify | This is a BASH shell to convert emoji aliases described in english words into unicode equivalent to display the emoji. |
 
 
