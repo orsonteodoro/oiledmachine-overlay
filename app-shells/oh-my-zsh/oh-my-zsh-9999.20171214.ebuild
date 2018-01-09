@@ -49,4 +49,5 @@ src_install() {
 
 pkg_postinst() {
 	einfo "You must add \`source '${ZSH_DEST}/${ZSH_TEMPLATE}'\` to your ~/.zshrc."
+	einfo "Some themes require media-fonts/powerline-fonts to display arrows properly."
 }
