@@ -13,9 +13,10 @@ SRC_URI="https://github.com/robbyrussell/oh-my-zsh/archive/${COMMIT}.zip -> ${P}
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
-IUSE="branding"
+IUSE="branding powerline"
 
-RDEPEND="app-shells/zsh"
+RDEPEND="app-shells/zsh
+         powerline? ( media-fonts/powerline-symbols )"
 DEPEND="${RDEPEND}"
 S="${WORKDIR}/${PN}-${COMMIT}"
 
@@ -49,5 +50,7 @@ src_install() {
 
 pkg_postinst() {
 	einfo "You must add \`source '${ZSH_DEST}/${ZSH_TEMPLATE}'\` to your ~/.zshrc."
-	einfo "Some themes require media-fonts/powerline-fonts to display arrows properly."
+	if ! use powerline ; then
+		einfo "Some themes like agnoster require media-fonts/powerline-symbols to display arrows properly."
+	fi
 }
