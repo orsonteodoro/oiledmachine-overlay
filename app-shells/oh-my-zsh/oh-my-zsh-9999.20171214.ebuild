@@ -23,7 +23,7 @@ RDEPEND="app-shells/zsh
          powerline? ( media-fonts/powerline-symbols )"
 DEPEND="${RDEPEND}"
 S="${WORKDIR}/${PN}-${COMMIT}"
-REQUIRED_USE="branding? ( themes_gentoo )"
+REQUIRED_USE="branding? ( themes_gentoo ) themes_agnoster? ( powerline ) themes_emotty? ( powerline ) themes_amuse? ( powerline )"
 
 ZSH_DEST="/usr/share/zsh/site-contrib/${PN}"
 ZSH_EDEST="${EPREFIX}${ZSH_DEST}"
@@ -88,7 +88,4 @@ src_install() {
 
 pkg_postinst() {
 	einfo "You must add \`source '${ZSH_DEST}/${ZSH_TEMPLATE}'\` to your ~/.zshrc."
-	if ! use powerline ; then
-		einfo "Some themes like agnoster require media-fonts/powerline-symbols to display arrows properly."
-	fi
 }
