@@ -1,7 +1,7 @@
 diff -urp FNA-17.01.orig/FNA.csproj FNA-17.01/FNA.csproj
 --- FNA-17.01.orig/FNA.csproj	2017-01-08 03:15:04.212861548 -0800
 +++ FNA-17.01/FNA.csproj	2017-01-08 03:19:33.835893137 -0800
-@@ -76,6 +76,11 @@
+@@ -76,6 +76,12 @@
    </PropertyGroup>
    <ItemGroup>
      <Reference Include="System" />
@@ -10,6 +10,7 @@ diff -urp FNA-17.01.orig/FNA.csproj FNA-17.01/FNA.csproj
 +    <Reference Include="TheoraPlay-CS" />
 +    <Reference Include="MojoShader-CS" />
 +    <Reference Include="OpenAL-CS" />
++    <Reference Include="Theorafile-CS" />
    </ItemGroup>
    <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
    <ItemGroup>
