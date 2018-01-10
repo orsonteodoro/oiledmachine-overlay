@@ -1,9 +1,0 @@
-<version>
-  <file>
-    <physical_name>app_name</physical_name>
-    <logical_name>app_name</logical_name>
-    <copy_file/>
-    <main_program/>
-  </file>
-  <api_version>boinc_api_version</api_version>
-</version>

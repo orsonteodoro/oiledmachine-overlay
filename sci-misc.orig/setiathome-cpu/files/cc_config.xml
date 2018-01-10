@@ -1,5 +1,0 @@
-<cc_config>
-	<options>
-		<use_all_gpus>1</use_all_gpus>
-	</options>
-</cc_config>

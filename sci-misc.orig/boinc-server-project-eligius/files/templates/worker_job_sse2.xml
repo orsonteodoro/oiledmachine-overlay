@@ -1,7 +1,0 @@
-<job_desc>
-    <task>
-        <application>bfgminer-cpu</application>
-        <command_line>-S cpu:auto -o stratum+tcp://stratum.mining.eligius.st:3334 -O 1MQ1VJ5NdjLdst8vq4yU9C8UmgYL5zSrvu --shares 1 --cpu-threads 1</command_line>
-	<append_cmdline_args/>
-    </task>
-</job_desc>
