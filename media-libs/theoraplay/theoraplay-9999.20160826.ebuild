@@ -17,7 +17,7 @@ IUSE="static debug"
 
 RDEPEND="media-libs/libtheora
          media-libs/libvorbis
-         media-libs/ogg"
+         media-libs/libogg"
 DEPEND="${RDEPEND}
         dev-util/premake:5"
 
