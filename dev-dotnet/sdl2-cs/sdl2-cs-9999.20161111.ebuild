@@ -1,6 +1,5 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 inherit dotnet eutils mono gac
@@ -19,7 +18,7 @@ IUSE="${USE_DOTNET} debug +gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
 
 RDEPEND=">=dev-lang/mono-4
-         media-libs/libsdl2
+         >=media-libs/libsdl2-2.0.5
          media-libs/sdl2-ttf
          media-libs/sdl2-mixer"
 DEPEND="${RDEPEND}

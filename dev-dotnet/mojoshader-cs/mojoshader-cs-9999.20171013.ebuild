@@ -4,10 +4,10 @@
 EAPI=6
 inherit dotnet eutils mono gac
 
-DESCRIPTION="OpenAl# is a C# wrapper for OpenAL"
+DESCRIPTION="MojoShader-CS is a C# wrapper for MojoShader"
 HOMEPAGE=""
-PROJECT_NAME="OpenAL-CS"
-COMMIT="16b00102f4dbd0b3a0f2ce31f7fa6f5d1eb0d1ed"
+PROJECT_NAME="MojoShader-CS"
+COMMIT="64fb9dccc6819f2e6c1ad23ce7da2a2c9434f786"
 SRC_URI="https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${COMMIT}.zip -> ${P}.zip"
 
 LICENSE="zlib"
@@ -18,7 +18,7 @@ IUSE="${USE_DOTNET} debug +gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
 
 RDEPEND=">=dev-lang/mono-4
-         media-libs/openal"
+         media-gfx/mojoshader"
 DEPEND="${RDEPEND}
 	>=dev-lang/mono-4
 "
@@ -33,6 +33,8 @@ src_prepare() {
 }
 
 src_compile() {
+	sed -i -e "s|\"MojoShader.dll\"|\"libmojoshader.dll\"|g" MojoShader.cs
+
 	mydebug="release"
 	if use debug; then
 		mydebug="debug"
@@ -57,17 +59,17 @@ src_install() {
                 FW_UPPER=${x:3:1}
                 FW_LOWER=${x:4:1}
                 egacinstall "${S}/bin/${mydebug}/${PROJECT_NAME}.dll"
+               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		doins "${S}/bin/${mydebug}/${PROJECT_NAME}.dll.mdb"
         done
-
-	if use developer ; then
-		insinto "/usr/$(get_libdir)/mono/${PN}"
-		doins bin/Release/OpenAL-CS.dll.mdb
-	fi
 
 	eend
 
-	insinto "/usr/$(get_libdir)/mono/${PN}"
-	doins "bin/${mydebug}/OpenAL-CS.dll.config"
+        FILES=$(find "${D}" -name "*.dll")
+        for f in $FILES
+        do
+                cp -a "${FILESDIR}/MojoShader-CS.dll.config" "$(dirname $f)"
+        done
 
 	dotnet_multilib_comply
 }

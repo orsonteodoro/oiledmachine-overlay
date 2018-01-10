@@ -1,13 +1,14 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
+# $Id$
 
 EAPI=6
 inherit dotnet eutils mono gac
 
-DESCRIPTION="OpenAl# is a C# wrapper for OpenAL"
+DESCRIPTION="Vorbisfile# is a C# wrapper for Vorbisfile"
 HOMEPAGE=""
-PROJECT_NAME="OpenAL-CS"
-COMMIT="16b00102f4dbd0b3a0f2ce31f7fa6f5d1eb0d1ed"
+PROJECT_NAME="Vorbisfile-CS"
+COMMIT="24e9ece0239da6b03890d47f6118df85d52cf179"
 SRC_URI="https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${COMMIT}.zip -> ${P}.zip"
 
 LICENSE="zlib"
@@ -18,7 +19,7 @@ IUSE="${USE_DOTNET} debug +gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
 
 RDEPEND=">=dev-lang/mono-4
-         media-libs/openal"
+         media-libs/libvorbis"
 DEPEND="${RDEPEND}
 	>=dev-lang/mono-4
 "
@@ -60,14 +61,11 @@ src_install() {
         done
 
 	if use developer ; then
-		insinto "/usr/$(get_libdir)/mono/${PN}"
-		doins bin/Release/OpenAL-CS.dll.mdb
+               	insinto "/usr/$(get_libdir)/mono/${PN}"
 	fi
 
+       	insinto "/usr/$(get_libdir)/mono/${PN}"
+	doins bin/${mydebug}/Vorbisfile-CS.dll.config
+
 	eend
-
-	insinto "/usr/$(get_libdir)/mono/${PN}"
-	doins "bin/${mydebug}/OpenAL-CS.dll.config"
-
-	dotnet_multilib_comply
 }

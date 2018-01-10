@@ -4,10 +4,10 @@
 EAPI=6
 inherit dotnet eutils mono gac
 
-DESCRIPTION="OpenAl# is a C# wrapper for OpenAL"
+DESCRIPTION="SDL2-CS is a C# wrapper for SDL2"
 HOMEPAGE=""
-PROJECT_NAME="OpenAL-CS"
-COMMIT="16b00102f4dbd0b3a0f2ce31f7fa6f5d1eb0d1ed"
+PROJECT_NAME="SDL2-CS"
+COMMIT="ed4838b75dadbdfcef4c23edb0c607c38d7237a2"
 SRC_URI="https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${COMMIT}.zip -> ${P}.zip"
 
 LICENSE="zlib"
@@ -18,7 +18,9 @@ IUSE="${USE_DOTNET} debug +gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
 
 RDEPEND=">=dev-lang/mono-4
-         media-libs/openal"
+         >=media-libs/libsdl2-2.0.7
+         media-libs/sdl2-ttf
+         media-libs/sdl2-mixer"
 DEPEND="${RDEPEND}
 	>=dev-lang/mono-4
 "
@@ -57,17 +59,15 @@ src_install() {
                 FW_UPPER=${x:3:1}
                 FW_LOWER=${x:4:1}
                 egacinstall "${S}/bin/${mydebug}/${PROJECT_NAME}.dll"
+               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		use developer && doins bin/${mydebug}/SDL2-CS.dll.mdb
         done
-
-	if use developer ; then
-		insinto "/usr/$(get_libdir)/mono/${PN}"
-		doins bin/Release/OpenAL-CS.dll.mdb
-	fi
 
 	eend
 
-	insinto "/usr/$(get_libdir)/mono/${PN}"
-	doins "bin/${mydebug}/OpenAL-CS.dll.config"
+      	insinto "/usr/$(get_libdir)/mono/${PN}"
+	doins bin/${mydebug}/SDL2-CS.dll.config
 
 	dotnet_multilib_comply
 }
+

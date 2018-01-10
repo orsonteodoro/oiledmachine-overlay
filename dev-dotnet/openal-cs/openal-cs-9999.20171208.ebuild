@@ -7,7 +7,7 @@ inherit dotnet eutils mono gac
 DESCRIPTION="OpenAl# is a C# wrapper for OpenAL"
 HOMEPAGE=""
 PROJECT_NAME="OpenAL-CS"
-COMMIT="16b00102f4dbd0b3a0f2ce31f7fa6f5d1eb0d1ed"
+COMMIT="381275db51451260d08cdd3fa0152f46aa1727c4"
 SRC_URI="https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${COMMIT}.zip -> ${P}.zip"
 
 LICENSE="zlib"
