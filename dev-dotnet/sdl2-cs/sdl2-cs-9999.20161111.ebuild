@@ -11,7 +11,7 @@ COMMIT="4ec65bc5a00049f7211b506ed85033f1c72c60af"
 SRC_URI="https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${COMMIT}.zip -> ${P}.zip"
 
 LICENSE="zlib"
-SLOT="2.0.4"
+SLOT="0"
 KEYWORDS="~amd64 ~x86"
 USE_DOTNET="net45"
 IUSE="${USE_DOTNET} debug +gac"

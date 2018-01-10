@@ -13,7 +13,7 @@ KEYWORDS="~amd64 ~x86"
 RDEPEND="
         dev-dotnet/mojoshader-cs
         dev-dotnet/openal-cs
-        dev-dotnet/sdl2-cs:2.0.7
+        >=dev-dotnet/sdl2-cs-9999.20171216
         dev-dotnet/theoraplay-cs
         >=dev-dotnet/vorbisfile-cs-9999.20170415
 	media-libs/theorafile
