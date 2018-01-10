@@ -36,7 +36,7 @@ src_prepare() {
 src_compile() {
 	MAKEOPTS="-j1" \
 	emake classes jar || die
-	jar cf swinglayout-lgm.jar $(find javax -name "*.class") || die
+	jar cf swinglayout-lgm.jar META-INF/MANIFEST.MF $(find javax -name "*.class") || die
 }
 
 src_install() {
