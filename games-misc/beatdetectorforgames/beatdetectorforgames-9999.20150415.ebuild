@@ -6,7 +6,7 @@ EAPI=6
 inherit dotnet eutils mono gac
 
 DESCRIPTION="BeatDetectorForGames is a A C++ and C# Beat Detector to be used in Video Games."
-HOMEPAGE=""
+HOMEPAGE="https://github.com/Terracorrupt/BeatDetectorForGames"
 PROJECT_NAME="BeatDetectorForGames"
 COMMIT="e3143cbde1261a9bfa566633377d282ac46a7750"
 SRC_URI="https://github.com/Terracorrupt/BeatDetectorForGames/archive/${COMMIT}.zip -> ${P}.zip"
