@@ -2,13 +2,13 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-inherit eutils git-r3
+inherit eutils
 
 DESCRIPTION="LateralGM Plugin"
 HOMEPAGE="https://github.com/enigma-dev/lgmplugin"
-SRC_URI=""
+SRC_URI="https://github.com/enigma-dev/lgmplugin/archive/v${PV}.tar.gz"
 
-RESTRICT="fetch"
+RESTRICT=""
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -21,15 +21,6 @@ RDEPEND="virtual/jre
 	 games-engines/lateralgm
 	 dev-java/icedtea"
 DEPEND="${RDEPEND}"
-
-src_unpack() {
-        #EGIT_CHECKOUT_DIR="${WORKDIR}"
-        EGIT_REPO_URI="https://github.com/enigma-dev/lgmplugin.git"
-        EGIT_BRANCH="master"
-        EGIT_COMMIT="9bfe9c0788c9ea13bcd304c41739932be231ba0b"
-        git-r3_fetch
-        git-r3_checkout
-}
 
 S="${WORKDIR}/${PN}-${PV}"
 

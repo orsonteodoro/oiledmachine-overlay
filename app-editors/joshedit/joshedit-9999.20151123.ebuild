@@ -1,13 +1,14 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
-inherit eutils git-r3
+inherit eutils
 
-DESCRIPTION="JoshEdit"
+DESCRIPTION="A lightweight code editor for use in Java applications."
 HOMEPAGE="https://github.com/JoshDreamland/JoshEdit"
-SRC_URI=""
+COMMIT="ef98d4e879b4b1649345b20c3459106485cea087"
+PROJECT_NAME="JoshEdit"
+SRC_URI="https://github.com/JoshDreamland/${PROJECT_NAME}/archive/${COMMIT}.zip -> ${P}.zip"
 
 LICENSE="GPL-3"
 SLOT="0"
@@ -17,18 +18,7 @@ IUSE=""
 RDEPEND="virtual/jdk"
 DEPEND="${RDEPEND}"
 
-RESTRICT="fetch"
-
-S="${WORKDIR}/joshedit-9999"
-
-src_unpack() {
-        #EGIT_CHECKOUT_DIR="${WORKDIR}"
-        EGIT_REPO_URI="https://github.com/JoshDreamland/JoshEdit.git"
-        EGIT_BRANCH="master"
-        EGIT_COMMIT="ef98d4e879b4b1649345b20c3459106485cea087"
-        git-r3_fetch
-        git-r3_checkout
-}
+S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
 
 src_prepare() {
 	eapply "${FILESDIR}"/joshedit-9999-exception-handler.patch
