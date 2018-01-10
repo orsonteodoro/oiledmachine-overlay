@@ -15,7 +15,8 @@ RDEPEND="
         dev-dotnet/openal-cs
         dev-dotnet/sdl2-cs:2.0.4
         dev-dotnet/theoraplay-cs
-        =dev-dotnet/vorbisfile-cs-9999.20151108
+        >=dev-dotnet/vorbisfile-cs-9999.20151108
+        <dev-dotnet/vorbisfile-cs-9999.20170415
 "
 DEPEND="
 	${RDEPEND}
