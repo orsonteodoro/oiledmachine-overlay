@@ -1,9 +1,9 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
 EAPI=6
-inherit eutils git-r3
+inherit eutils
 
 DESCRIPTION="Recast & Detour is a navigation-mesh toolset for games"
 HOMEPAGE="https://github.com/memononen/recastnavigation"
@@ -14,33 +14,38 @@ DEPEND="
 	dev-util/premake:4
 "
 RDEPEND="${DEPEND}"
-EGIT_REPO_URI="https://github.com/memononen/recastnavigation.git"
-EGIT_BRANCH="master"
-IUSE="static"
+IUSE="static debug"
+COMMIT="5d4186046c8b6aec6a0784f07fb1fe5c771e6b98"
+SRC_URI="https://github.com/recastnavigation/recastnavigation/archive/${COMMIT}.zip -> ${P}.zip"
 
-S="${WORKDIR}"
-
-src_unpack() {
-	git-2_src_unpack
-}
+S="${WORKDIR}/${PN}-${COMMIT}"
 
 src_compile() {
+	BUILD_TYPE="release"
+	if use debug ; then
+		BUILD_TYPE="debug"
+	fi
+
 	if use static; then
 		true
 	else
 		sed -i -e "s|StaticLib|SharedLib|g" RecastDemo/premake5.lua
 	fi
 
-	cd "${WORKDIR}/RecastDemo"
+	cd "${S}/RecastDemo"
 	premake5 gmake
-	cd "${WORKDIR}/RecastDemo/Build/gmake"
-	ls
-	make || die "make failed"
+	cd "${S}/RecastDemo/Build/gmake"
+	make config=${BUILD_TYPE} || die "make failed"
 }
 
 src_install() {
-	insinto /usr/lib
-	cd "${WORKDIR}/RecastDemo/Build/gmake/lib/Debug"
+	BUILD_TYPE="Release"
+	if use debug ; then
+		BUILD_TYPE="Debug"
+	fi
+
+	insinto /usr/$(get_libdir)
+	cd "${S}/RecastDemo/Build/gmake/lib/${BUILD_TYPE}"
 	if use static; then
 		doins libDetour.a  libDetourCrowd.a  libDetourTileCache.a  libRecast.a
 	else
@@ -48,18 +53,18 @@ src_install() {
 	fi
 
 	insinto /usr/include/Recast
-	cd "${WORKDIR}/Recast/Include"
+	cd "${S}/Recast/Include"
 	doins Recast.h  RecastAlloc.h  RecastAssert.h
 
 	insinto /usr/include/Detour
-	cd "${WORKDIR}/Detour/Include"
+	cd "${S}/Detour/Include"
 	doins DetourAlloc.h  DetourAssert.h  DetourCommon.h  DetourMath.h  DetourNavMesh.h  DetourNavMeshBuilder.h  DetourNavMeshQuery.h  DetourNode.h  DetourStatus.h
 
 	insinto /usr/include/DetourTileCache
-	cd "${WORKDIR}/DetourTileCache/Include"
+	cd "${S}/DetourTileCache/Include"
 	doins DetourTileCache.h  DetourTileCacheBuilder.h
 
 	insinto /usr/include/DetourCrowd
-	cd "${WORKDIR}/DetourCrowd/Include"
+	cd "${S}/DetourCrowd/Include"
 	doins DetourCrowd.h  DetourLocalBoundary.h  DetourObstacleAvoidance.h  DetourPathCorridor.h  DetourPathQueue.h  DetourProximityGrid.h
 }
