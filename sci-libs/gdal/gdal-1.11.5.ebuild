@@ -121,6 +121,12 @@ src_prepare() {
 		-e "s:library_dirs = :library_dirs = /usr/$(get_libdir):g" \
 		swig/python/setup.cfg || die "sed python setup.cfg failed"
 
+        if (( $(gcc-major-version) <= 5 )) ; then
+		use pdf && append-cxxflags -std=c++11
+	else
+		use pdf && append-cxxflags -std=c++14
+	fi
+
 	tc-export AR RANLIB
 
 	eautoreconf

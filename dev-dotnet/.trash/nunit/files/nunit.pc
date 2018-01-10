@@ -1,4 +1,0 @@
-Name: NUnit
-Description: NUnit
-Version: @VERSION@
-Libs: @LIBS@

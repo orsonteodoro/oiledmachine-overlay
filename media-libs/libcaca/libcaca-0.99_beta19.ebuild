@@ -106,7 +106,11 @@ multilib_src_configure() {
 		append-cppflags -DUSE_NCURSES_256_COLORS=1
 	fi
 
-	append-cxxflags -std=c++11
+	if (( $(gcc-major-version) <= 5 )) ; then
+		append-cxxflags -std=c++11
+	else
+		append-cxxflags -std=c++14
+	fi
 
 	if multilib_is_native_abi; then
 		if use java; then

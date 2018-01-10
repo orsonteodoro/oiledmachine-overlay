@@ -26,24 +26,20 @@ DEPEND="
 "
 
 src_prepare() {
-	sed -i \
-		-e "s/CFLAGS = -std=c99 -pedantic -Wall -Os/CFLAGS += -std=c99 -pedantic -Wall /" \
-		-e "/^LDFLAGS/{s|=|+=|g;s|-s ||g}" \
-		-e "s/#XINERAMALIBS =/XINERAMALIBS ?=/" \
-		-e "s/#XINERAMAFLAGS =/XINERAMAFLAGS ?=/" \
-		-e "s@/usr/X11R6/include@${EPREFIX}/usr/include/X11@" \
-		-e "s@/usr/X11R6/lib@${EPREFIX}/usr/lib@" \
-		-e "s@-I/usr/include@@" -e "s@-L/usr/lib@@" \
-		-e "s/\/freetype2/\ -I\/usr\/include\/freetype2/" \
-		config.mk || die
-	sed -i \
-		-e '/@echo CC/d' \
-		-e 's|@${CC}|$(CC)|g' \
-		Makefile || die
+	MY_CFLAGS="-std=c99"
 
-	sed -i \
-		-e "s/-Os/${CFLAGS}/" \
-		config.mk || die
+	sed -i -e "s/-std=c99 -pedantic -Wall /${MY_CFLAGS} -pedantic -Wall /g" config.mk || die
+	sed -i -e "s/-O[0s] //g" config.mk || die
+	sed -i -e "/^LDFLAGS/{s|=|+=|g;s|-s ||g}" config.mk || die
+	sed -i -e "s/#XINERAMALIBS =/XINERAMALIBS ?=/" config.mk || die
+	sed -i -e "s/#XINERAMAFLAGS =/XINERAMAFLAGS ?=/" config.mk || die
+	sed -i -e "s@/usr/X11R6/include@${EPREFIX}/usr/include/X11@" config.mk || die
+	sed -i -e "s@/usr/X11R6/lib@${EPREFIX}/usr/lib@" config.mk || die
+	sed -i -e "s@-I/usr/include@@" -e "s@-L/usr/lib@@" config.mk || die
+	sed -i -e "s/\/freetype2/\ -I\/usr\/include\/freetype2/" config.mk || die
+	sed -i -e '/@echo CC/d' Makefile || die
+	sed -i -e 's|@${CC}|$(CC)|g' Makefile || die
+	sed -i -e "s/-Os/${CFLAGS}/" config.mk || die
 
 	restore_config config.h
 

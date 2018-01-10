@@ -8,8 +8,8 @@ PYTHON_COMPAT=( python2_7 )
 inherit distutils-r1 flag-o-matic toolchain-funcs
 
 DESCRIPTION="Python extension that wraps Google's RE2 library."
-HOMEPAGE="https://github.com/axiak/pyre2 http://pypi.python.org/pypi/re2/"
-SRC_URI="mirror://pypi/r/re2/re2-${PV}.tar.gz -> ${P}.tar.gz"
+HOMEPAGE="https://github.com/facebook/pyre2"
+SRC_URI="https://github.com/facebook/pyre2/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="BSD"
 SLOT="0"
@@ -20,7 +20,7 @@ DEPEND="dev-libs/re2
 	dev-python/cython"
 RDEPEND="dev-libs/re2"
 
-S=${WORKDIR}/re2-${PV}
+S=${WORKDIR}/${PN}-${PV}
 
 python_prepare_all() {
         if (( $(gcc-major-version) >= 6 )) ; then

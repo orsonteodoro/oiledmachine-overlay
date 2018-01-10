@@ -3,7 +3,7 @@
 # $Id$
 
 EAPI=6
-inherit dotnet eutils mono gac
+inherit dotnet eutils mono gac toolchain-funcs
 
 DESCRIPTION="BeatDetectorForGames is a A C++ and C# Beat Detector to be used in Video Games."
 HOMEPAGE="https://github.com/Terracorrupt/BeatDetectorForGames"
@@ -33,6 +33,10 @@ src_prepare() {
 
 	cp "${FILESDIR}/buildcpp.lua" "${S}/BeatDetector/BeatDetectorC++Version/Detector"
 	cp "${FILESDIR}/buildcs.lua" "${S}/BeatDetector/BeatDetectorC#Version"
+
+        if (( $(gcc-major-version) >= 6 )) ; then
+		sed -i -e 's|std=c++11|std=c++14|g' BeatDetector/BeatDetectorC++Version/Detector/buildcpp.lua || die
+	fi
 
 	cd "${S}/BeatDetector/BeatDetectorC++Version/Detector"
 	premake5 --file=buildcpp.lua gmake

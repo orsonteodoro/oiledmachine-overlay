@@ -18,7 +18,7 @@ case "${PV}" in
 		S="${WORKDIR}/${P/_/-}"
 		;;
 esac
-inherit autotools-multilib ${VCS_ECLASS} flag-o-matic
+inherit autotools-multilib ${VCS_ECLASS} flag-o-matic toolchain-funcs
 
 DESCRIPTION="Graphical User Interface for PDF Toolkit (PDFtk)"
 HOMEPAGE="http://pdfchain.sourceforge.net/"
@@ -40,8 +40,11 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	append-cflags -std=c++11
-	append-cxxflags -std=c++11
+	if (( $(gcc-major-version) <= 5 )) ; then
+		append-cxxflags -std=c++11
+	else
+		append-cxxflags -std=c++14
+	fi
 
 	econf
 }

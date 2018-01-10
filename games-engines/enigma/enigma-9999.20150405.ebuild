@@ -1,22 +1,22 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=5
-inherit eutils git-r3
+inherit eutils toolchain-funcs
 
-DESCRIPTION="ENIGMA"
+DESCRIPTION="ENIGMA, the Extensible Non-Interpreted Game Maker Augmentation, is an open source cross-platform game development environment derived from that of the popular software Game Maker."
 HOMEPAGE="http://enigma-dev.org"
-SRC_URI=""
+COMMIT="7049b411e3f4c2f9a52c652b86a4a83a8120db05"
+SRC_URI="https://github.com/enigma-dev/enigma-dev/archive/${COMMIT}.zip -> ${P}.zip"
 
-RESTRICT="fetch"
+RESTRICT=""
 
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86"
 IUSE="extras"
 
-RDEPEND="games-misc/lateralgm
+RDEPEND="games-engines/lateralgm
 	 sys-libs/zlib
 	 media-libs/glu
 	 media-libs/glew
@@ -28,16 +28,7 @@ RDEPEND="games-misc/lateralgm
 "
 DEPEND="${RDEPEND}"
 
-S="${WORKDIR}/enigma-9999"
-
-src_unpack() {
-        #EGIT_CHECKOUT_DIR="${WORKDIR}"
-        EGIT_REPO_URI="https://github.com/enigma-dev/enigma-dev.git"
-        EGIT_BRANCH="master"
-        EGIT_COMMIT="7049b411e3f4c2f9a52c652b86a4a83a8120db05"
-        git-r3_fetch
-        git-r3_checkout
-}
+S="${WORKDIR}/enigma-${COMMIT}"
 
 src_prepare() {
 	sed -i -e "s|C:/ProgramData/ENIGMA/|/usr/lib/enigma|" CommandLine/programs/emake/main.cpp
@@ -57,15 +48,22 @@ src_install() {
 
 	mkdir -p "${D}/usr/bin"
 
+	MY_CXXFLAGS=""
+        if (( $(gcc-major-version) <= 5 )) ; then
+		MY_CXXFLAGS="-std=c++11"
+        else
+		MY_CXXFLAGS="-std=c++14"
+        fi
+
 	echo "#!/bin/bash" > "${D}/usr/bin/enigma"
 	echo "cd /usr/$(get_libdir)/enigma" >> "${D}/usr/bin/enigma"
-	echo "OUTPUTNAME=game WORKDIR=\"\$HOME/.enigma\" CXXFLAGS=\"-std=c++11 -I\$HOME/.enigma\" CFLAGS=\"-I\$HOME/.enigma\" \\" >> "${D}/usr/bin/enigma"
+	echo "OUTPUTNAME=game WORKDIR=\"\$HOME/.enigma\" CXXFLAGS=\"${MY_CXXFLAGS} -I\$HOME/.enigma\" CFLAGS=\"-I\$HOME/.enigma\" \\" >> "${D}/usr/bin/enigma"
 	echo "java -Djna.nosys=true -jar /usr/$(get_libdir)/enigma/lateralgm.jar \$*" >> "${D}/usr/bin/enigma"
 	chmod +x "${D}/usr/bin/enigma"
 
 	echo "#!/bin/bash" > "${D}/usr/bin/enigma-cli"
 	echo "cd /usr/$(get_libdir)/enigma" >> "${D}/usr/bin/enigma-cli"
-	echo "OUTPUTNAME=game WORKDIR=\"\$HOME/.enigma\" CXXFLAGS=\"-std=c++11 -I\$HOME/.enigma\" CFLAGS=\"-I\$HOME/.enigma\" \\" >> "${D}/usr/bin/enigma-cli"
+	echo "OUTPUTNAME=game WORKDIR=\"\$HOME/.enigma\" CXXFLAGS=\"${MY_CXXFLAGS} -I\$HOME/.enigma\" CFLAGS=\"-I\$HOME/.enigma\" \\" >> "${D}/usr/bin/enigma-cli"
 	echo "java -Djna.nosys=true -jar /usr/$(get_libdir)/enigma/plugins/enigma.jar \$*" >> "${D}/usr/bin/enigma-cli"
 	chmod +x "${D}/usr/bin/enigma-cli"
 
