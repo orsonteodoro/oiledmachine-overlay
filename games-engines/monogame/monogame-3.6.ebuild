@@ -32,7 +32,7 @@ RDEPEND="
 	>=dev-util/nunit-3.0.1:3
 	dev-util/nunit:2
 	dev-dotnet/tao-framework
-	media-libs/libsdl2[${MULTILIB_USEDEP}]
+	>=media-libs/libsdl2-2.0.5[${MULTILIB_USEDEP}]
 	media-libs/freealut
 	dev-dotnet/freeimagenet
 	>=dev-dotnet/nvorbis-9999
@@ -53,9 +53,6 @@ S="${WORKDIR}/MonoGame-${PV}"
 SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 pkg_setup() {
-	ewarn "WARNING! ebuild is not ready yet and is still in development.  SDL2 support is still broken."
-	ewarn "See https://github.com/MonoGame/MonoGame/issues/5782"
-	sleep 15
 	dotnet_pkg_setup
 }
 
@@ -395,8 +392,6 @@ src_prepare() {
 	xml ed -L -d "/Template/Combine/Project/Files/ContentFile/RawFile[contains(@name,'libSDL2-2.0.0.dylib')]" IDE/MonoDevelop/MonoDevelop.MonoGame/templates/MonoGameProject.xpt.xml
 
 	sed -i -r -e 's|<ContentFile/>||g' IDE/MonoDevelop/MonoDevelop.MonoGame/templates/MonoGameProject.xpt.xml
-
-	epatch "${FILESDIR}/${PN}-3.6-sdl2-openal-copy-to-output.patch"
 
 	if use abi_x86_64 ; then
 		xml ed -L -d "/Project/Files/None[contains(@Include,'lib32/libSDL2-2.0.so.0')]" Build/Projects/MonoGame.Framework.definition
