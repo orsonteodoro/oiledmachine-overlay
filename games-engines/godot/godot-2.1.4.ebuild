@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-inherit eutils
+inherit eutils check-reqs
 
 DESCRIPTION="Godot Engine - Multi-platform 2D and 3D game engine"
 HOMEPAGE="http://godotengine.org"
@@ -27,6 +27,9 @@ RDEPEND="dev-lang/python:2.7
 DEPEND="${RDEPEND}"
 
 S="${WORKDIR}/godot-${PV}-stable"
+
+CHECKREQS_DISK_BUILD="900M"
+CHECKREQS_DISK_USR="140M"
 
 src_prepare() {
 	eapply_user
