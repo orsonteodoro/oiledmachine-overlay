@@ -130,6 +130,7 @@ The name of the repo comes from "well-oiled machine."  A (Gentoo) computer shoul
 | app-shells/emoji-cli | This is an emoji autocompletion plugin for Zsh.  You might want to combine it with emojify. |
 | app-shells/emojify | This is a BASH shell script to convert emoji aliases described in English words into Unicode equivalent to display the emoji. |
 | app-shells/oh-my-zsh | Oh My Zsh are extra themes and plugins to enhance Zsh.  This ebuild allows to pick specific themes and plugins and to get rid of the ones you don't need. |
+| www-misc/ddgr | This is a command line DuckDuckGo similiar to googler. |
 
 
 TODO (NOT COMMITED):
