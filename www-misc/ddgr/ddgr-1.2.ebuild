@@ -10,7 +10,7 @@ inherit python-single-r1 eutils python-utils-r1
 DESCRIPTION="DuckDuckGo from the terminal"
 HOMEPAGE="https://github.com/jarun/ddgr"
 SRC_URI="https://github.com/jarun/ddgr/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-LICENSE="GPL-3"
+LICENSE="GPL-3+"
 
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
