@@ -1,11 +1,12 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
 NODEJS_MIN_VERSION="0.4.0"
 NODE_MODULE_EXTRA_FILES="fs.js legacy-streams.js polyfills.js"
+
+NODE_MODULE_DEPEND="mkdirp:0.5.0 rimraf:2.2.8 tap:1.2.0"
 
 inherit node-module
 

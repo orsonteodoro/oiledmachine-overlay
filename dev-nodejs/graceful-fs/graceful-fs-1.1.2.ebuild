@@ -1,6 +1,5 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
@@ -11,7 +10,7 @@ inherit node-module
 
 DESCRIPTION="A drop-in replacement for fs, making various improvements"
 
-LICENSE="ISC"
+LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 
 DOCS=( README.md )

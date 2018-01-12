@@ -1,11 +1,10 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
 NODEJS_MIN_VERSION="0.4.0"
-NODE_MODULE_EXTRA_FILES="dist src"
+NODE_MODULE_EXTRA_FILES="dist src bin"
 
 inherit node-module
 
