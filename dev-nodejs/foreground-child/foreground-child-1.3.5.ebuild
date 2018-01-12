@@ -5,7 +5,6 @@ EAPI=6
 
 NODE_MODULE_HAS_TEST="1"
 NODE_MODULE_DEPEND="cross-spawn-async:2.1.1 signal-exit:2.0.0 which:1.2.1"
-NODE_MODULE_EXTRA_FILES="appveyor.yml"
 
 inherit node-module
 

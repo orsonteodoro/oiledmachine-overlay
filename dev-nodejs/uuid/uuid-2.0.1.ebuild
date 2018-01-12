@@ -3,7 +3,7 @@
 
 EAPI=6
 
-NODE_MODULE_EXTRA_FILES="rng-browser.js rng.js benchmark misc"
+NODE_MODULE_EXTRA_FILES="rng-browser.js rng.js misc"
 
 inherit node-module
 

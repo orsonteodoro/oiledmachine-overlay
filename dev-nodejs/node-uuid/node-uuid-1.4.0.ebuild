@@ -3,7 +3,7 @@
 
 EAPI=6
 
-NODE_MODULE_EXTRA_FILES="uuid.js benchmark"
+NODE_MODULE_EXTRA_FILES="uuid.js"
 NODE_MODULE_HAS_TEST="1"
 
 inherit node-module

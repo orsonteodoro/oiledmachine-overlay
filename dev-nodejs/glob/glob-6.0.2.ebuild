@@ -3,7 +3,7 @@
 
 EAPI=6
 
-NODE_MODULE_EXTRA_FILES="common.js sync.js benchclean.sh benchmark.sh make-benchmark-fixture.sh oh-my-glob.gif prof.sh appveyor.yml"
+NODE_MODULE_EXTRA_FILES="common.js sync.js oh-my-glob.gif"
 NODE_MODULE_DEPEND="inflight:1.0.4 inherits:2.0.0 minimatch:2.0.1 once:1.3.0 path-is-absolute:1.0.0"
 
 inherit node-module
