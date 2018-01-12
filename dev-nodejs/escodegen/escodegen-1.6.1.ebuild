@@ -3,8 +3,8 @@
 
 EAPI=6
 
-NODEJS_MIN_VERSION="0.4.0"
-NODE_MODULE_DEPEND="esprima-moz semver:4.1.0 bluebird:2.3.11 chai:1.10.0 gulp-mocha:2.0.0 gulp-eslint:0.2.0 gulp:3.8.10 bower-registry-client:0.2.1 commonjs-everywhere:0.9.7"
+NODEJS_MIN_VERSION="0.10.0"
+NODE_MODULE_DEPEND="estraverse:1.9.1 esutils:1.1.6 esprima:1.2.2 optionator:0.5.0"
 NODE_MODULE_EXTRA_FILES="bin"
 
 inherit node-module

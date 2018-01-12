@@ -3,7 +3,7 @@
 
 EAPI=6
 
-NODE_MODULE_DEPEND="esprima:2.1.0 escodegen:1.6.0 handlebars:3.0.0 mkdirp:0.5.0 nopt:3.0.6 fileset:0.1.0 which:1.0.0 async:0.9.0 supports-color:1.3.1 abbrev:1.0.0 wordwrap:0.0.3 resolve:1.1.7 js-yaml:3.0.1 once:1.4.0"
+NODE_MODULE_DEPEND="esprima:2.1.0 escodegen:1.6.1 handlebars:3.0.0 mkdirp:0.5.0 nopt:3.0.6 fileset:0.1.0 which:1.0.0 async:0.9.0 supports-color:1.3.1 abbrev:1.0.0 wordwrap:0.0.3 resolve:1.1.7 js-yaml:3.0.1 once:1.4.0"
 
 #        "esprima": "2.1.x",
 #        "escodegen": "1.6.x",
