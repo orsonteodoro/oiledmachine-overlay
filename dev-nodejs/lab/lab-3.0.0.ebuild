@@ -4,7 +4,7 @@
 EAPI=6
 
 NODEJS_MIN_VERSION="0.10.22"
-NODE_MODULE_DEPEND="optimist:0.6.0 esprima:1.0.0 chai:1.9.1 handlebars:1.2.0 async:0.2.0 diff:1.0.0"
+NODE_MODULE_DEPEND="optimist:0.6.1 esprima:1.0.0 chai:1.9.1 handlebars:1.2.0 async:0.2.10 diff:1.0.0"
 
 #    "optimist": "0.6.x",
 #    "esprima": "1.0.x",
