@@ -72,3 +72,4 @@ src_install() {
 
 	dotnet_multilib_comply
 }
+

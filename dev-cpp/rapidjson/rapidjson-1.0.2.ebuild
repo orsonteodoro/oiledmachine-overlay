@@ -1,11 +1,10 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 inherit eutils cmake-utils flag-o-matic toolchain-funcs
 
-DESCRIPTION="rapidjson"
+DESCRIPTION="A fast JSON parser/generator for C++ with both SAX/DOM style API"
 HOMEPAGE="http://rapidjson.org/"
 SRC_URI="https://github.com/miloyip/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 

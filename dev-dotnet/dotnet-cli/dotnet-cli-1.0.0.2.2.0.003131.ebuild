@@ -105,12 +105,18 @@ src_prepare() {
 	done
 
 	#for clang because it treats warnings as errors
+
+	MY_CXXFLAGS="-std=c++11"
+        if (( $(gcc-major-version) >= 6 )) ; then
+		MY_CXXFLAGS="-std=c++14"
+	fi
+
 	EXTRA_CFLAGS="-Wno-all -Wno-deprecated-declarations -Wno-null-dereference -Wno-invalid-noreturn -Wno-reserved-user-defined-literal "
 	sed -i -e "s|CMAKE_C_FLAGS_INIT                \"-Wall -std=c11\"|CMAKE_C_FLAGS_INIT                \" ${EXTRA_CFLAGS} -std=c11\"|g" "${CORECLR_S}"/src/pal/tools/clang-compiler-override.txt || die
-	sed -i -e "s|CMAKE_CXX_FLAGS_INIT                \"-Wall -Wno-null-conversion -std=c++11\"|CMAKE_CXX_FLAGS_INIT                \" ${EXTRA_CFLAGS} -Wno-null-conversion -std=c++11\"|g" "${CORECLR_S}"/src/pal/tools/clang-compiler-override.txt || die
+	sed -i -e "s|CMAKE_CXX_FLAGS_INIT                \"-Wall -Wno-null-conversion -std=c++11\"|CMAKE_CXX_FLAGS_INIT                \" ${EXTRA_CFLAGS} -Wno-null-conversion ${MY_CXXFLAGS}\"|g" "${CORECLR_S}"/src/pal/tools/clang-compiler-override.txt || die
 
 	sed -i -e "s|CMAKE_C_FLAGS \"-std=c11\"|CMAKE_C_FLAGS \"${EXTRA_CFLAGS} -std=c11\"|g" "${COREFX_S}"/src/Native/CMakeLists.txt || die
-	sed -i -e "s|CMAKE_CXX_FLAGS \"-std=c++11\"|CMAKE_CXX_FLAGS \"${EXTRA_CFLAGS} -std=c++11\"|g" "${COREFX_S}"/src/Native/CMakeLists.txt || die
+	sed -i -e "s|CMAKE_CXX_FLAGS \"-std=c++11\"|CMAKE_CXX_FLAGS \"${EXTRA_CFLAGS} ${MY_CXXFLAGS}\"|g" "${COREFX_S}"/src/Native/CMakeLists.txt || die
 	sed -i -e "s|add_compile_options(-Weverything)||g" "${COREFX_S}"/src/Native/CMakeLists.txt || die
 	sed -i -e "s|add_compile_options(-Werror)||g" "${COREFX_S}"/src/Native/CMakeLists.txt || die
 
