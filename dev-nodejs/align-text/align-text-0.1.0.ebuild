@@ -4,18 +4,14 @@
 EAPI=6
 
 NODEJS_MIN_VERSION="0.4.0"
+NODE_MODULE_DEPEND="kind-of:1.1.0 longest:1.0.0 repeat-string:1.5.0"
+NODE_MODULE_EXTRA_FILES=""
 
 inherit node-module
 
-DESCRIPTION="Wrap your words in node.js"
+DESCRIPTION="Align the text in a string."
 
 LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
-IUSE="examples"
 
-DOCS=( README.markdown )
-
-src_install() {
-	node-module_src_install
-	use examples && dodoc -r example
-}
+DOCS=( README.md )
