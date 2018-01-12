@@ -4,7 +4,7 @@
 EAPI=6
 
 NODEJS_MIN_VERSION="0.4.0"
-NODE_MODULE_EXTRA_FILES="fs.js legacy-streams.js polyfills.js"
+NODE_MODULE_EXTRA_FILES="fs.js polyfills.js"
 
 inherit node-module
 
