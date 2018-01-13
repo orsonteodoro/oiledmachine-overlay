@@ -14,3 +14,9 @@ LICENSE="BSD-2"
 KEYWORDS="~amd64 ~x86"
 
 DOCS=( README.md ChangeLog )
+
+src_install() {
+        node-module_src_install
+	install_node_module_binary "bin/esparse.js" "/usr/local/bin/esparse-${SLOT}"
+	install_node_module_binary "bin/esvalidate.js" "/usr/local/bin/esvalidate-${SLOT}"
+}
