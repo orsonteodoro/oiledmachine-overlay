@@ -14,6 +14,6 @@ DESCRIPTION="Wrapper around miniglob / minimatch combo to allow multiple pattern
 SRC_URI="https://github.com/mklabs/node-fileset/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
-S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/node-${PN}-${PV}"
 
 DOCS=( README.md CHANGELOG.md )
