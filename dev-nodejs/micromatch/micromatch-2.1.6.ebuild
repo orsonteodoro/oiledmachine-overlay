@@ -10,7 +10,7 @@ NODE_MODULE_TEST_DEPEND="benchmarked:0.1.3 browserify:9.0.3 chalk:1.0.0 minimatc
 inherit node-module
 
 RDEPEND="${RDEPEND}
-	dev-nodejs/object-omit:2.0.1"
+	dev-nodejs/object-omit:0.2.1"
 
 DESCRIPTION="Glob matching for javascript/node.js"
 
