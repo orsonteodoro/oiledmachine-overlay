@@ -5,9 +5,7 @@ EAPI=6
 
 NODEJS_MIN_VERSION="0.4.7"
 NODE_MODULE_EXTRA_FILES="dist runtime.js"
-NODE_MODULE_DEPEND="async:1.4.0
-	source-map:0.4.4
-	optimist:0.6.1"
+NODE_MODULE_DEPEND="async:1.4.0	source-map:0.4.4 optimist:0.6.1"
 
 inherit node-module
 
@@ -21,5 +19,6 @@ DOCS=( README.markdown CONTRIBUTING.md FAQ.md release-notes.md )
 
 src_install() {
 	node-module_src_install
+	install_node_module_binary "bin/${PN}" "/usr/local/bin/${PN}-${SLOT}"
 	use doc && dodoc docs/*
 }
