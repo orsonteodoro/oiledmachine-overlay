@@ -21,5 +21,6 @@ DOCS=( CONTRIBUTING.md README.md issue_template.md electron.d.ts )
 src_install()
 {
 	node-module_src_install
+	install_node_module_binary "cli.js" "/usr/local/bin/${PN}-${SLOT}"
 	install_node_module_depend "@types-node:7.0.18"
 }
