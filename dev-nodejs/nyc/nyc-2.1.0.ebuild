@@ -14,8 +14,3 @@ LICENSE="ISC"
 KEYWORDS="~amd64 ~x86"
 
 DOCS=( README.md CHANGELOG.md )
-
-src_prepare() {
-	eapply_user
-	rm -r node_modules || die
-}
