@@ -17,6 +17,12 @@ IUSE="examples"
 
 DOCS=( AUTHORS README.md )
 
+src_prepare() {
+	node-module_src_prepare
+	#delete packages and use the system ones
+	rm -rf node_modules
+}
+
 src_install() {
 	node-module_src_install
 	use examples && dodoc -r example coverage-example
