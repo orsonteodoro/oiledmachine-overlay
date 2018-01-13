@@ -24,6 +24,6 @@ DOCS=( README.md CHANGELOG.md )
 src_install() {
 	node-module_src_install
 	install_node_module_depend "codecov.io:0.1.6"
-	install_node_module_binary "bin/run.js" "/usr/local/bin/tap-${SLOT}"
+	install_node_module_binary "bin/run.js" "/usr/local/bin/${PN}-${SLOT}"
 	use examples && dodoc -r example coverage-example
 }
