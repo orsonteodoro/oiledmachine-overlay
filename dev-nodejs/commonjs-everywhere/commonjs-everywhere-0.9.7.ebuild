@@ -36,3 +36,8 @@ LICENSE="BSD"
 KEYWORDS="~amd64 ~x86"
 
 DOCS=( CHANGELOG README.md )
+
+src_install() {
+        node-module_src_install
+	install_node_module_binary "bin/cjsify" "/usr/local/bin/cjsify-${SLOT}"
+}
