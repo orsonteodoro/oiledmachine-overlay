@@ -19,7 +19,7 @@ IUSE="examples"
 DOCS=( AUTHORS README.md )
 
 src_prepare() {
-	node-module_src_prepare
+	default
 	#delete packages and use the system ones
 	rm -rf node_modules
 }
