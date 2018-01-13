@@ -4,8 +4,6 @@
 EAPI=6
 
 NODEJS_MIN_VERSION="4.0.0"
-NODE_MODULE_EXTRA_FILES="index.js"
-
 NODE_MODULE_DEPEND="dot-prop:4.1.0 env-paths:1.0.0 make-dir:1.0.0 pkg-up:2.0.0 write-file-atomic:2.3.0"
 
 inherit node-module
