@@ -15,5 +15,8 @@ SRC_URI="https://github.com/mklabs/node-fileset/archive/v${PV}.tar.gz -> ${P}.ta
 LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 S="${WORKDIR}/node-${PN}-${PV}"
+RDEPEND="${RDEPEND}
+	 =dev-nodejs/minimatch-0.3.0"
+DEPEND="${RDEPEND}"
 
 DOCS=( README.md CHANGELOG.md )
