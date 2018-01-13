@@ -11,3 +11,7 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 
 DOCS=( Readme.md History.md )
+
+src_compile() {
+	true
+}
