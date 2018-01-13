@@ -14,3 +14,8 @@ LICENSE="ISC"
 KEYWORDS="~amd64 ~x86"
 
 DOCS=( README.md )
+
+src_install() {
+        node-module_src_install
+	install_node_module_binary "bin.js" "/usr/local/bin/${PN}-${SLOT}"
+}
