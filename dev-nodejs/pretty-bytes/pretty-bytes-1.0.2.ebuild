@@ -18,5 +18,5 @@ DOCS=( readme.md )
 
 src_install() {
         node-module_src_install
-	install_node_module_binary "cli.js" "/usr/bin/pretty-bytes"
+	install_node_module_binary "cli.js" "/usr/local/bin/pretty-bytes-${SLOT}"
 }
