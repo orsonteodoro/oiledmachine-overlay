@@ -15,3 +15,9 @@ LICENSE="BSD-2 BSD"
 KEYWORDS="~amd64 ~x86"
 
 DOCS=( README.md )
+
+src_install() {
+        node-module_src_install
+	install_node_module_binary "bin/esgenerate.js" "/usr/local/bin/esgenerate-${SLOT}"
+	install_node_module_binary "bin/${PN}.js" "/usr/local/bin/${PN}-${SLOT}"
+}
