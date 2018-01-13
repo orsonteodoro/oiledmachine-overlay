@@ -15,3 +15,7 @@ LICENSE="BSD-2"
 KEYWORDS="~amd64 ~x86"
 
 DOCS=( README.md )
+
+src_compile() {
+	true
+}
