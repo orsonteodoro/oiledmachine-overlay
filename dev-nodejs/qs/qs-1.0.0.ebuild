@@ -21,3 +21,7 @@ DEPEND="${DEPEND}
 node_module_run_test() {
 	tap test || die "Tests failed"
 }
+
+src_compile() {
+	true
+}
