@@ -18,3 +18,9 @@ RESTRICT="test" # Broken
 DOCS=( README.md )
 
 src_compile() { :; }
+
+src_install() {
+        node-module_src_install
+	install_node_module_binary "bin/${PN}.js" "/usr/local/bin/${PN}-${SLOT}"
+}
+
