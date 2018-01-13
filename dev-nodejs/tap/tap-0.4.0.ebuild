@@ -21,7 +21,7 @@ DOCS=( AUTHORS README.md )
 src_prepare() {
 	default
 	#delete packages and use the system ones
-	rm -rf node_modules
+	rm -rf node_modules/*
 }
 
 src_install() {
