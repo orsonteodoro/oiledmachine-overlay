@@ -16,3 +16,8 @@ KEYWORDS="~amd64 ~x86"
 
 DOCS=( readme.md )
 
+src_install() {
+        node-module_src_install
+	install_node_module_binary "cli.js" "/usr/local/bin/${PN}-${SLOT}"
+}
+
