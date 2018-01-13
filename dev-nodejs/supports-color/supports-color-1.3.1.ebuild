@@ -4,7 +4,7 @@
 EAPI=6
 
 NODEJS_MIN_VERSION="0.8.0"
-NODE_MODULE_EXTRA_FILES="browser.js cli.js"
+NODE_MODULE_EXTRA_FILES="cli.js"
 
 inherit node-module
 
