@@ -5,7 +5,6 @@ EAPI=6
 
 NODEJS_MIN_VERSION="0.10.0"
 NODE_MODULE_DEPEND="is-obj:1.0.0"
-NODE_MODULE_EXTRA_FILES="dist src bin"
 
 inherit node-module
 
