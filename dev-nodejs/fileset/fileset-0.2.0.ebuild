@@ -16,7 +16,8 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 S="${WORKDIR}/node-${PN}-${PV}"
 RDEPEND="${RDEPEND}
-	 =dev-nodejs/minimatch-0.3.0"
+	 =dev-nodejs/minimatch-0.3.0
+	 =dev-nodejs/glob-5.0.6"
 DEPEND="${RDEPEND}"
 
 DOCS=( README.md CHANGELOG.md )
