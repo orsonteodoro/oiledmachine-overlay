@@ -3,7 +3,7 @@
 
 EAPI=6
 
-NODE_MODULE_NAME="codecov.io"
+NODE_MODULE_NAME="${PN//-/.}"
 NODE_MODULE_DEPEND="request:2.42.0 urlgrey:0.4.0"
 NODE_MODULE_EXTRA_FILES="bin"
 
@@ -16,7 +16,6 @@ KEYWORDS="~amd64 ~x86"
 
 DOCS=( README.md )
 
-src_install() {
-	node-module_src_install
-	install_node_module_depend "${PN//_/.}:${PV}"
+src_compile() {
+	true
 }

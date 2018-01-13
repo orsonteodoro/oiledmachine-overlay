@@ -23,5 +23,6 @@ DOCS=( README.md CHANGELOG.md )
 
 src_install() {
 	node-module_src_install
+	install_node_module_depend "codecov.io:0.1.6"
 	use examples && dodoc -r example coverage-example
 }

@@ -22,5 +22,6 @@ DOCS=( readme.markdown )
 
 src_install() {
 	node-module_src_install
+	install_node_module_depend "minimist:0.0.8"
 	use examples && dodoc -r examples
 }

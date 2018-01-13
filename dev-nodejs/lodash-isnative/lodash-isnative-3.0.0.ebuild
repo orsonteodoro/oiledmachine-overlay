@@ -13,8 +13,3 @@ LICENSE=""
 KEYWORDS="~amd64 ~x86"
 
 DOCS=( README.md )
-
-src_install() {
-	node-module_src_install
-	install_node_module_depend "${PN//-/.}:${PV}"
-}

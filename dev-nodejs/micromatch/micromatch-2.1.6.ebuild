@@ -19,5 +19,5 @@ KEYWORDS="~amd64 ~x86"
 
 src_install() {
 	node-module_src_install
-	install_node_module_depend "object.omit:2.0.0"
+	install_node_module_depend "object.omit:0.2.1"
 }
