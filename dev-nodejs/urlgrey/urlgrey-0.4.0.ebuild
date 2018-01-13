@@ -5,7 +5,7 @@ EAPI=6
 
 NODEJS_MIN_VERSION="0.8.6"
 NODE_MODULE_DEPEND="tape:2.3.0"
-NODE_MODULE_EXTRA_FILES="browser coverage tapetest.js urlgrey.png util.js"
+NODE_MODULE_EXTRA_FILES="browser urlgrey.png"
 
 inherit node-module
 
