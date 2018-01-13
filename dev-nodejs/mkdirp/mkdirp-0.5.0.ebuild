@@ -14,7 +14,8 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 IUSE="examples"
 
-DEPEND="=dev-nodejs/minimist-0.0.8" #must state explicity because it doesn't work as expected
+RDEPEND="=dev-nodejs/minimist-0.0.8" #must state explicity because it doesn't work as expected
+DEPEND="${DEPEND}"
 
 DOCS=( readme.markdown )
 
