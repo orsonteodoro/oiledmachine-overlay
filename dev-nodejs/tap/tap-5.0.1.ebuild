@@ -16,7 +16,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="examples"
 
 RDEPEND="${RDEPEND}
-	 =dev-nodejs/codecov-io:0.1.6"
+	 =dev-nodejs/codecov-io-0.1.6"
 DEPEND="${RDEPEND}"
 
 DOCS=( README.md CHANGELOG.md )
