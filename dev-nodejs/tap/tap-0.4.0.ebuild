@@ -4,7 +4,8 @@
 EAPI=6
 
 #glob:3.2.14 doesn't exist
-NODE_MODULE_DEPEND="inherits yamlish slide runforcover:0.0.2 nopt:2.0.0 mkdirp:0.3.0 difflet:0.2.0 deep-equal:0.0.0 buffer-equal:0.0.0 glob:3.2.11"
+NODE_MODULE_DEPEND="inherits:2.0.3 yamlish:0.0.7 slide:1.1.6 runforcover:0.0.2 nopt:2.0.0 mkdirp:0.3.0 difflet:0.2.0 deep-equal:0.0.0 buffer-equal:0.0.0 glob:3.2.11"
+#inherits yamlish slide -- accept any version
 NODE_MODULE_EXTRA_FILES="bin node_modules"
 
 inherit node-module
