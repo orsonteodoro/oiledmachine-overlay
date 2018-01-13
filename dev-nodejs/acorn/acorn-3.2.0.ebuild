@@ -14,3 +14,8 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 
 DOCS=( README.md AUTHORS CHANGELOG.md )
+
+src_install() {
+        node-module_src_install
+        install_node_module_binary "bin/acorn" "/usr/bin/local/${PN}-${SLOT}"
+}
