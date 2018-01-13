@@ -20,5 +20,6 @@ DOCS=( readme.markdown )
 
 src_install() {
 	node-module_src_install
+	install_node_module_binary "bin/cmd.js" "/usr/local/bin/${PN}-${SLOT}"
 	use examples && dodoc -r example
 }
