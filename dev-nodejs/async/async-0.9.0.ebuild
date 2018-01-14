@@ -5,8 +5,6 @@ EAPI=6
 
 inherit node-module
 
-NODE_MODULE_EXTRA_FILES="component.json"
-
 DESCRIPTION="Higher-order functions and common patterns for asynchronous code"
 
 LICENSE="MIT"
