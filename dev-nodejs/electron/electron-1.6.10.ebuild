@@ -15,6 +15,7 @@ KEYWORDS="~amd64 ~x86"
 
 RDEPEND="${RDEPEND}
          dev-nodejs/types-node:7.0.18"
+S="${WORKDIR}/electron-userland-electron-prebuilt-b3b83ac"
 
 DOCS=( CONTRIBUTING.md README.md issue_template.md electron.d.ts )
 
