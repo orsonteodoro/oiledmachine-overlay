@@ -14,7 +14,7 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 IUSE="examples"
 
-DOCS=( readme.markdown )
+DOCS=( README.markdown )
 
 src_install() {
 	node-module_src_install
