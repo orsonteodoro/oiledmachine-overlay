@@ -16,7 +16,7 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 IUSE="examples"
 RDEPEND="${RDEPEND}
-	 =dev-nodejs/jsdoc-seventyfivelb-3.6.0"
+	 dev-nodejs/jsdoc-seventyfivelb:3.6.0"
 DEPEND="${RDEPEND}"
 
 DOCS=( README.md )
