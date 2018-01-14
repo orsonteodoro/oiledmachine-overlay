@@ -3,7 +3,7 @@
 
 EAPI=6
 
-NODE_MODULE_DEPEND="array-tools:1.1.0 handlebars:2.0.0_alpha_p4 handlebars-ansi:0.0.2 nature:0.5.0 object-tools:1.0.0 string-tools:0.1.4 typical:1.0.0"
+NODE_MODULE_DEPEND="array-tools:1.1.0 handlebars:2.0.0_alpha_p4 handlebars-ansi:0.1.0 nature:0.5.0 object-tools:1.0.0 string-tools:0.1.4 typical:1.0.0"
 NODE_MODULE_EXTRA_FILES="template"
 
 inherit node-module
