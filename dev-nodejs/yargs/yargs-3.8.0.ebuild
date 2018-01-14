@@ -10,8 +10,6 @@ NODE_MODULE_TEST_DEPEND="chai:2.2.0 coveralls:2.11.2 hashish:0.0.4 mocha:2.2.1 m
 
 inherit node-module
 
-RDEPEND="${RDEPEND}"
-
 DESCRIPTION="Yargs the modern, pirate-themed, successor to optimist"
 
 LICENSE="MIT"
