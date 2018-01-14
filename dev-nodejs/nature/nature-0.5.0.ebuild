@@ -11,6 +11,7 @@ DESCRIPTION="Classify the things in your world and how they interact."
 
 LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
+IUSE="examples"
 
 DOCS=( README.md )
 
