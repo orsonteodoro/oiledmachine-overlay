@@ -9,7 +9,7 @@ inherit node-module
 
 DESCRIPTION="Useful functions for working with arrays"
 
-LICENSE="MIT"
+LICENSE="" #it doesn't say
 KEYWORDS="~amd64 ~x86"
 
 DOCS=( jsdoc2md/README.hbs README.md )
