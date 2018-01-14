@@ -14,7 +14,7 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 
 RDEPEND="${RDEPEND}
-	 =dev-nodejs/lodash-debounce-3.0.1"
+	 dev-nodejs/lodash-debounce:3.0.1"
 DEPEND="${DEPEND}"
 
 DOCS=( readme.md )
