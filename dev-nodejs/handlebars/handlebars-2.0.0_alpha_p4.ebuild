@@ -4,7 +4,7 @@
 EAPI=6
 
 NODEJS_MIN_VERSION="0.4.7"
-NODE_MODULE_EXTRA_FILES="dist runtime.js bin"
+NODE_MODULE_EXTRA_FILES="runtime.js bin"
 NODE_MODULE_DEPEND="optimist:0.3.0"
 
 inherit node-module
