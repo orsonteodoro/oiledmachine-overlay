@@ -3,7 +3,7 @@
 
 EAPI=6
 
-NODE_MODULE_EXTRA_FILES="${PN}.min.js"
+NODE_MODULE_EXTRA_FILES="${PN}.min.js bin"
 
 inherit node-module
 
