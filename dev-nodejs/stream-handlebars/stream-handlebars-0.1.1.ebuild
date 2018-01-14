@@ -5,6 +5,7 @@ EAPI=6
 
 NODEJS_MIN_VERSION="0.10.0"
 NODE_MODULE_DEPEND="handlebars:3.0.0"
+NODE_MODULE_EXTRA_FILES="bin"
 
 inherit node-module
 
