@@ -16,7 +16,7 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 IUSE="examples"
 
-DOCS=( AUTHORS README.md )
+DOCS=( README.md )
 
 src_prepare() {
 	default
