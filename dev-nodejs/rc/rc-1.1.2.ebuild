@@ -3,7 +3,7 @@
 
 EAPI=6
 
-NODE_MODULE_DEPEND="minimist:1.1.2 deep-extend:0.2.5 strip-json-comments:0.1.0. ini:1.3.0"
+NODE_MODULE_DEPEND="minimist:1.1.2 deep-extend:0.2.5 strip-json-comments:0.1.0 ini:1.3.0"
 NODE_MODULE_EXTRA_FILES="browser.js"
 
 inherit node-module
