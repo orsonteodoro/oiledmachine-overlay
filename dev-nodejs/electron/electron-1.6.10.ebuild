@@ -14,7 +14,7 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 
 RDEPEND="${RDEPEND}
-         =dev-nodejs/types-node-7.0.18"
+         dev-nodejs/types-node:7.0.18"
 
 DOCS=( CONTRIBUTING.md README.md issue_template.md electron.d.ts )
 
