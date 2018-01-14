@@ -15,7 +15,7 @@ LICENSE="ISC"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
 
-DOCS=( AUTHORS README.md )
+DOCS=( README.md )
 
 src_install() {
 	node-module_src_install
