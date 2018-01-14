@@ -19,9 +19,30 @@ S="${WORKDIR}/electron-userland-electron-prebuilt-b3b83ac"
 
 DOCS=( CONTRIBUTING.md README.md issue_template.md electron.d.ts )
 
+ELECTRON_SLOT="1.6"
+
+src_prepare()
+{
+	default
+	sed -i -e "s|module.exports = path.join(__dirname, fs.readFileSync(pathFile, 'utf-8'))|module.exports = fs.readFileSync(pathFile, 'utf-8')|" index.js || die
+}
+
 src_install()
 {
 	node-module_src_install
 	install_node_module_binary "cli.js" "/usr/local/bin/${PN}-${SLOT}"
 	install_node_module_depend "@types/node:7.0.18"
+
+	einfo "Setting path.txt"
+	echo "/usr/$(get_libdir)/electron-${ELECTRON_SLOT}/electron" > "${D}"/usr/$(get_libdir)/node/electron/${SLOT}/path.txt
+}
+
+pkg_postinst() {
+	einfo "You must re-emerge this package after you install or update dev-util/electron or call \`emerge -1 =${CATEGORY}/${P} --config\`"
+}
+
+pkg_config()
+{
+	einfo "Updating path.txt"
+	echo "/usr/$(get_libdir)/electron-${ELECTRON_SLOT}/electron" > "${D}"/usr/$(get_libdir)/node/electron/${SLOT}/path.txt
 }
