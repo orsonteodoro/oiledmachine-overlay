@@ -3,7 +3,7 @@
 
 EAPI=6
 
-NODE_MODULE_DEPEND="array-tools:1.0.6 object-tools:1.0.0"
+NODE_MODULE_DEPEND="array-tools:1.0.6 object-tools:1.0.2"
 #array-tools:1.0.1 is broken use 1.0.6
 #object-tools:1.0.0 is broken use 1.0.2
 
