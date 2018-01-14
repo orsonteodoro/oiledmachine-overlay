@@ -11,7 +11,7 @@ inherit node-module
 
 DESCRIPTION="Provides the power necessary to let you build semantic templates effectively"
 
-MY_V="2.0.0-alpha.4"
+MY_PV="2.0.0-alpha.4"
 SRC_URI="https://github.com/wycats/handlebars.js/archive/v2.0.0-alpha.4.tar.gz -> ${P}.tar.gz"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
