@@ -3,7 +3,7 @@
 
 EAPI=6
 
-NODE_MODULE_DEPEND="object-tools:1.1.0 typical:1.0.0"
+NODE_MODULE_DEPEND="object-tools:1.0.0 typical:1.0.0"
 
 inherit node-module
 
@@ -13,4 +13,9 @@ LICENSE="" #it doesn't say
 KEYWORDS="~amd64 ~x86"
 
 DOCS=( jsdoc2md/README.hbs README.md )
+
+src_install() {
+        node-module_src_install
+	install_node_module_binary "cli.js" "/usr/local/bin/${PN}-${SLOT}"
+}
 
