@@ -3,7 +3,8 @@
 
 EAPI=6
 
-NODE_MODULE_DEPEND="array-tools:1.0.0 typical:1.0.0"
+NODE_MODULE_DEPEND="array-tools:1.0.6 typical:1.0.0"
+#array-tools:1.0.0 refers to deleted object-ting use 1.0.6 instead
 
 inherit node-module
 

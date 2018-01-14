@@ -3,7 +3,7 @@
 
 EAPI=6
 
-NODE_MODULE_DEPEND="object-ting:1.0.0 typical:1.0.0"
+NODE_MODULE_DEPEND="object-tools:1.0.0 typical:1.0.0"
 
 inherit node-module
 
