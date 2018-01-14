@@ -18,7 +18,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="doc"
 S="${WORKDIR}/${PN}.js-${MY_PV}"
 
-DOCS=( README.markdown CONTRIBUTING.md release-notes.md )
+DOCS=( README.markdown release-notes.md )
 
 src_install() {
 	node-module_src_install
