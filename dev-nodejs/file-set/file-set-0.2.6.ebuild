@@ -3,7 +3,8 @@
 
 EAPI=6
 
-NODE_MODULE_DEPEND="array-tools:1.0.4 glob:4.3.2"
+NODE_MODULE_DEPEND="array-tools:1.0.6 glob:4.3.2"
+#array-tools:1.0.4 refers to delete project use 1.0.6 instead
 
 inherit node-module
 
