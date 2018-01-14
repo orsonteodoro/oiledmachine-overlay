@@ -4,7 +4,6 @@
 EAPI=6
 
 NODEJS_MIN_VERSION="0.8"
-NODE_MODULE_EXTRA_FILES="component.json"
 
 inherit node-module
 
