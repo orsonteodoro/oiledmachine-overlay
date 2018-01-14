@@ -3,20 +3,15 @@
 
 EAPI=6
 
-NODE_MODULE_DEPEND="object-tools:1.0.2 typical:1.0.0"
-#object-tools:1.0.0 is broken use 1.0.2 instead
+NODE_MODULE_DEPEND="object-ting:0.1.0 typical:0.1.0"
 
 inherit node-module
 
 DESCRIPTION="Useful functions for working with arrays"
 
+SRC_URI="https://github.com/75lb/array-tools/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="" #it doesn't say
 KEYWORDS="~amd64 ~x86"
+S="${WORKDIR}/${PN}-${PV}"
 
 DOCS=( jsdoc2md/README.hbs README.md )
-
-src_install() {
-        node-module_src_install
-	install_node_module_binary "cli.js" "/usr/local/bin/${PN}-${SLOT}"
-}
-
