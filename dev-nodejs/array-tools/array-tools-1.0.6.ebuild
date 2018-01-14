@@ -3,7 +3,8 @@
 
 EAPI=6
 
-NODE_MODULE_DEPEND="object-tools:1.0.0 typical:1.0.0"
+NODE_MODULE_DEPEND="object-tools:1.0.2 typical:1.0.0"
+#object-tools:1.0.0 refers to deleted object use 1.0.2 instead
 
 inherit node-module
 
