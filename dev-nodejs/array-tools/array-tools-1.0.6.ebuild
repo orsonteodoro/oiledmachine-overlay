@@ -19,3 +19,9 @@ S="${WORKDIR}/${PN}-${PV}"
 PDEPEND="dev-nodejs/object-tools:1.0.2"
 
 DOCS=( jsdoc2md/README.hbs README.md )
+
+src_install() {
+        node-module_src_install
+	dosym "${EROOT}usr/$(get_libdir)/node/object-tools/1.0.2" "/usr/$(get_libdir)/node/${NODE_MODULE_NAME}/${SLOT}/node_modules/object-tools"
+}
+
