@@ -13,6 +13,10 @@ IUSE="examples"
 
 DOCS=( Readme.md History.md )
 
+src_compile() {
+	true
+}
+
 src_install() {
         node-module_src_install
         use examples && dodoc -r example.js
