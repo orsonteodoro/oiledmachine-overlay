@@ -14,7 +14,7 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 
 RDEPEND="${RDEPEND}
-         =dev-nodejs/lodash-isnative-3.0.0"
+         dev-nodejs/lodash-isnative:3.0.0"
 DEPEND="${RDEPEND}"
 
 DOCS=( README.md )
