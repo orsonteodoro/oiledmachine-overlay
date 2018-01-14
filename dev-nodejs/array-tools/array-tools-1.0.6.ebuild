@@ -3,7 +3,7 @@
 
 EAPI=6
 
-NODE_MODULE_DEPEND="object-tools:1.0.2 typical:1.0.0"
+NODE_MODULE_DEPEND="typical:1.0.0"
 #object-tools:1.0.0 refers to deleted object use 1.0.2 instead
 
 inherit node-module
@@ -14,5 +14,8 @@ SRC_URI="https://github.com/75lb/array-tools/archive/v${PV}.tar.gz -> ${P}.tar.g
 LICENSE="" #it doesn't say
 KEYWORDS="~amd64 ~x86"
 S="${WORKDIR}/${PN}-${PV}"
+
+#fix circular dependency
+PDEPEND="dev-nodejs/object-tools:1.0.2"
 
 DOCS=( jsdoc2md/README.hbs README.md )

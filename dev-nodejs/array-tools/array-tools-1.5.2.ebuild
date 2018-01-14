@@ -4,6 +4,7 @@
 EAPI=6
 
 NODE_MODULE_DEPEND="object-tools:1.1.0 typical:1.0.0"
+NODE_MODULE_EXTRA_FILES="bin"
 
 inherit node-module
 

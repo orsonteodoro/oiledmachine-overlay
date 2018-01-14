@@ -5,6 +5,7 @@ EAPI=6
 
 NODE_MODULE_DEPEND="object-tools:1.0.2 typical:1.0.0"
 #object-tools:1.0.0 is broken use 1.0.2 instead
+NODE_MODULE_EXTRA_FILES="bin"
 
 inherit node-module
 
