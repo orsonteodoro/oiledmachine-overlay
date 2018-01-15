@@ -4,7 +4,7 @@
 EAPI=6
 
 NODE_MODULE_DEPEND="electron-download:3.0.1 extract-zip:1.0.3"
-NODE_MODULE_EXTRA_FILES="cli.js"
+NODE_MODULE_EXTRA_FILES="cli.js electron.d.ts"
 
 inherit node-module
 
@@ -17,7 +17,7 @@ RDEPEND="${RDEPEND}
          dev-nodejs/types-node:7.0.18"
 S="${WORKDIR}/electron-userland-electron-prebuilt-b3b83ac"
 
-DOCS=( CONTRIBUTING.md README.md issue_template.md electron.d.ts )
+DOCS=( CONTRIBUTING.md README.md issue_template.md )
 
 ELECTRON_SLOT="1.6"
 
