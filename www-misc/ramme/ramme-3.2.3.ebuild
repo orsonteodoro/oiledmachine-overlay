@@ -64,11 +64,6 @@ dosym_root() {
 	dosym "${EROOT}usr/$(get_libdir)/node/${name}/${version}" "/usr/$(get_libdir)/node/${PN}/${SLOT}/node_modules/${name}"
 }
 
-src_compile() {
-	find . -name "*.sassc"
-	die
-}
-
 src_install() {
 	mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	cp -a * "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
