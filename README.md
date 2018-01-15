@@ -132,13 +132,13 @@ The name of the repo comes from "well-oiled machine."  A (Gentoo) computer shoul
 | app-shells/oh-my-zsh | Oh My Zsh are extra themes and plugins to enhance Zsh.  This ebuild allows to pick specific themes and plugins and to get rid of the ones you don't need. |
 | www-misc/ddgr | This is a command line DuckDuckGo similiar to googler. |
 | www-misc/rtv | This is a command line Reddit client which has been updated. |
+| www-misc/ramme | An unofficial Instagram client that works on Linux using Node.js and Electron. |
 
 
 TODO (NOT COMMITED):
 
 | package | description |
 | --- | --- |
-| www-misc/ramme | An unofficial Instagram client that works on Linux using Node.js and Electron.  Updates to dev-nodejs may prevent emerging. |
 | media-video/libmtp | This contains incomplete MTP/IP (MTP as in Media Transport Protocol over IP as in Internet Protocol) support.  Currently patches are stored in seperate my /etc/portage/patches.  No one has reverse engineered the save WIFI profile BLOB generation [possibly related to CryptUnprotectData() and WLANProfile XML format] to device given a plaintext WIFI password even in WINE.  It uses GSSDP to broadcast presence.  Transferring files over WIFI in Linux/libmtp does work but you need to have my patch and need the GUID of the PC/Transfer App.  It is currently on indefinite hold. |
 
 
