@@ -12,6 +12,7 @@ DESCRIPTION="A JavaScript code analyzer for deep, cross-editor language support"
 
 LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
+IUSE="doc"
 
 DOCS=( CONTRIBUTING.md AUTHORS )
 
