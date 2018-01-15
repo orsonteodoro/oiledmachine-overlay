@@ -16,7 +16,8 @@ IUSE=""
 
 S="${WORKDIR}/${PN}-${PV}"
 
-COMMON_DEPEND=">=dev-util/electron-1.6.10"
+COMMON_DEPEND=">=dev-util/electron-1.6.10
+               dev-nodejs/electron:1.6.10"
 
 APP_DEPEND="  ${COMMON_DEPEND}
 	      dev-nodejs/electron-config:1.0.0
