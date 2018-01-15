@@ -16,7 +16,9 @@ IUSE=""
 
 S="${WORKDIR}/${PN}-${PV}"
 
-APP_DEPEND=">=dev-util/electron-1.6.10
+COMMON_DEPEND=">=dev-util/electron-1.6.10"
+
+APP_DEPEND="  ${COMMON_DEPEND}
 	      dev-nodejs/electron-config:1.0.0
 	      dev-nodejs/electron-debug:1.1.0
 	      dev-nodejs/electron-is-dev:0.1.2
@@ -25,12 +27,11 @@ APP_DEPEND=">=dev-util/electron-1.6.10
 	      dev-nodejs/insight:0.8.4
 	      dev-nodejs/ms:2.0.0
 	      dev-nodejs/os:0.1.1"
-ROOT_DEPEND=" dev-nodejs/electron:1.6.10
+ROOT_DEPEND=" ${COMMON_DEPEND}
 	      dev-nodejs/babel-preset-babili:0.1.2
 	      dev-nodejs/babel-preset-es2015:6.24.1
 	      dev-nodejs/babili:0.1.2
 	      dev-nodejs/del:2.2.2
-	      dev-nodejs/electron:1.6.10
 	      dev-nodejs/electron-builder:18.0.1
 	      dev-nodejs/gulp:4.0.0
 	      dev-nodejs/gulp-autoprefixer:4.0.0
