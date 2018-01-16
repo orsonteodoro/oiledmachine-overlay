@@ -3,7 +3,7 @@
 
 EAPI=6
 
-inherit eutils
+inherit eutils desktop
 
 DESCRIPTION="Unofficial Instagram Desktop App"
 HOMEPAGE="https://github.com/terkelg/ramme"
@@ -101,4 +101,7 @@ src_install() {
 	echo "#!/bin/bash" > "${D}/usr/bin/ramme"
 	echo "/usr/$(get_libdir)/electron-${ELECTRON_SLOT}/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/app/src/main" >> "${D}/usr/bin/ramme"
 	chmod +x "${D}"/usr/bin/ramme
+
+	newicon "media/icon.png" "ramme.png"
+	make_desktop_entry ${PN} "ramme" ${PN} "Network"
 }
