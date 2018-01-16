@@ -103,5 +103,5 @@ src_install() {
 	chmod +x "${D}"/usr/bin/ramme
 
 	newicon "media/icon.png" "ramme.png"
-	make_desktop_entry ${PN} "ramme" ${PN} "Network"
+	make_desktop_entry ${PN} "Ramme" ${PN} "Network"
 }
