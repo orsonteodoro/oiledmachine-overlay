@@ -141,6 +141,7 @@ TODO (NOT COMMITED):
 | --- | --- |
 | net-im/igdm-cli | This is a command line direct messaging app for Instagram. See https://github.com/mathdroid/igdm-cli . |
 | net-im/igdm | This is a GUI app for direct messaging on Instagram.  See https://github.com/ifedapoolarewaju/igdm . |
+| net-im/groupme | This is an unofficial GUI app for GroupMe. See https://github.com/dcrousso/GroupMe .
 | media-video/libmtp | This contains incomplete MTP/IP (MTP as in Media Transport Protocol over IP as in Internet Protocol) support.  Currently patches are stored in seperate my /etc/portage/patches.  No one has reverse engineered the save WIFI profile BLOB generation [possibly related to CryptUnprotectData() and WLANProfile XML format] to device given a plaintext WIFI password even in WINE.  It uses GSSDP to broadcast presence.  Transferring files over WIFI in Linux/libmtp does work but you need to have my patch and need the GUID of the PC/Transfer App.  It is currently on indefinite hold. |
 
 
