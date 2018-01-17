@@ -1,0 +1,12 @@
+diff --unified enchant-1.6.1.orig/configure enchant-1.6.1/configure
+--- enchant-1.6.1.orig/configure	2017-12-17 16:56:55.527440216 -0600
++++ enchant-1.6.1/configure	2017-12-17 16:56:28.533441941 -0600
+@@ -11038,7 +11038,7 @@
+ LIBTOOL_DEPS=$ltmain
+ 
+ # Always use our own libtool.
+-LIBTOOL='$(SHELL) $(top_builddir)/libtool'
++LIBTOOL='$(SHELL) $(top_builddir)/libtool --tag=CC'
+ 
+ 
+ 

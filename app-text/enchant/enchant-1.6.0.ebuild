@@ -37,6 +37,8 @@ src_prepare() {
 	AT_M4DIR=ac-helpers eautoreconf
 
 	eapply_user
+
+	multilib_copy_sources
 }
 
 multilib_src_configure() {

@@ -3,7 +3,7 @@
 
 EAPI=6
 inherit versionator \
-	multilib multilib-minimal
+	eutils autotools multilib multilib-minimal
 
 MY_PV="$(replace_all_version_separators '-')"
 DESCRIPTION="Spellchecker wrapping library"
@@ -40,7 +40,12 @@ PATCHES=(
 
 src_prepare() {
 	default
+	eautoreconf
+
 	sed -e "/SUBDIRS/ s/unittests//" -i "${S}"/Makefile.{am,in} || die
+	epatch "${FILESDIR}/enchant-1.6.1-tag.patch"
+
+	multilib_copy_sources
 }
 
 multilib_src_configure() {
