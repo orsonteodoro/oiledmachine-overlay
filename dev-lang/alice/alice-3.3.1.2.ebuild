@@ -3,12 +3,14 @@
 # $Id$
 
 EAPI=5
-inherit eutils check-reqs
+inherit eutils
+#check-reqs
 
 DESCRIPTION="Alice"
 HOMEPAGE="http://www.alice.org"
-PKG="Alice3_unix_Offline_${PV//./_}.sh"
-SRC_URI="http://www.alice.org/downloads/installers/${PKG}"
+#SRC_URI="http://www.alice.org/downloads/installers/${PKG}"
+PKG="Alice3_unix_${PV//./_}.sh"
+SRC_URI="https://www.alice.org/wp-content/uploads/2017/08/${PKG}"
 
 LICENSE="ALICE3"
 SLOT="3"
@@ -18,12 +20,13 @@ IUSE=""
 RDEPEND="|| ( virtual/jre virtual/jdk  )"
 DEPEND="${RDEPEND}"
 
-CHECKREQS_DISK_BUILD="2061M"
-CHECKREQS_DISK_USR="1145M"
+#CHECKREQS_DISK_BUILD="2061M"
+#CHECKREQS_DISK_USR="1145M"
 
 FEATURES=""
 
 S="${WORKDIR}"
+
 
 src_unpack() {
 	cp "${DISTDIR}"/${PKG} "${T}"
@@ -31,8 +34,8 @@ src_unpack() {
 
 src_prepare() {
 	sed -e "s|\$app_java_home/bin/java\" -Dinstall4j.jvmDir=\"\$app_java_home\"|\$app_java_home/bin/java\" -Dinstall4j.jvmDir=\"${T}\" -Duser.home=\"${T}\" -Djava.util.prefs.systemRoot=\"${T}\" -Djava.util.prefs.userRoot=${T}/home/dummy |" \
-		"${DISTDIR}"/${PKG} > ${T}/${PKG}
-	chmod +x ${T}/${PKG}
+		"${DISTDIR}"/${PKG} > ${T}/${PKG} || die
+	chmod +x ${T}/${PKG} || die
 }
 
 src_install() {
