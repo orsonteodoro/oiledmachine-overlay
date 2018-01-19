@@ -71,7 +71,7 @@ DEPEND="${RDEPEND}
         >=sys-devel/libtool-2.4
 	>=sys-devel/autoconf-2.68
 	>=sys-devel/automake-1.11.1"
-REQUIRED_USE="mixer? ( || ( sdl sdl2 ) ) qt4? ( X ) qt5? ( X ) gtk2? ( X cairo ) gtk3? ( X cairo ) xslt? ( xml ) ide ( X network curl qt4 webkit )"
+REQUIRED_USE="mixer? ( || ( sdl sdl2 ) ) qt4? ( X ) qt5? ( X ) gtk2? ( X cairo ) gtk3? ( X cairo ) xslt? ( xml ) ide ( X network curl ^^ ( qt4 qt5 ) webkit )"
 
 FEATURES=""
 
@@ -166,6 +166,10 @@ src_prepare() {
 	! use openal && sed -i -r -e ':a' -e 'N' -e '$!ba' -e 's| @openal_dir@ [\]\n||g' Makefile.am
 
 	sed -i -e ':a' -e 'N' -e '$!ba' -e 's|dist_gblib_DATA = $(COMPONENT).component\ngblib_DATA = $(COMPONENT).component|gblib_DATA = $(COMPONENT).component|g' component.am
+
+	if use qt5 ; then
+		epatch "${FILESDIR}/prefer-qt5.patch"
+	fi
 
 	eapply_user
 
