@@ -196,7 +196,7 @@ multilib_src_install() {
 		if [ "${ABI}" == "${DEFAULT_ABI}" ] ; then
 			dodir /usr/share/rust
 			insinto /usr/share/rust
-			doins src
+			doins -r src/*
 		fi
 	fi
 }
