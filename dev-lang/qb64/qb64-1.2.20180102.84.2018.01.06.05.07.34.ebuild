@@ -1,6 +1,5 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 inherit eutils versionator
@@ -32,8 +31,8 @@ DEPEND="${RDEPEND}"
 S="${WORKDIR}/qb64"
 
 src_prepare() {
-	eapply_user
 	find . -name '*.sh' -exec sed -i "s/\r//g" {} \;
+	eapply_user
 }
 
 src_compile() {
@@ -43,38 +42,42 @@ src_compile() {
 }
 
 src_install() {
-	mkdir -p "${D}/usr/bin"
-	mkdir -p "${D}/usr/$(get_libdir)/qb64"
-	cp qb64 "${D}/usr/$(get_libdir)/qb64"/ || die
-	cp -r internal "${D}/usr/$(get_libdir)/qb64"/
-	cp -r source "${D}/usr/$(get_libdir)/qb64"/
-	mkdir -p "${D}/usr/share/qbasic"
+	dodir /usr/bin
+	dodir /usr/$(get_libdir)/qb64
+	insinto /usr/$(get_libdir)/qb64
+	doins qb64
+	doins -r internal
+	doins -r source
+	dodir /usr/share/qbasic
+	insinto /usr/share/qbasic
 
 	if use samples; then
-		cp -r "${S}/programs/samples" "${D}/usr/share/qbasic"/
+		doins -r "${S}/programs/samples"
 	fi
 	if use android; then
-		cp -r "${S}/programs/android" "${D}/usr/share/qbasic"/
+		doins -r "${S}/programs/android"
 	fi
 
-	echo '#!/bin/bash' > "${D}/usr/bin/qb64"
-	echo "cd /usr/$(get_libdir)/qb64" >> "${D}/usr/bin/qb64"
-	echo "./qb64" >> "${D}/usr/bin/qb64"
-	chmod +x "${D}/usr/bin/qb64"
+	echo '#!/bin/bash' > "${D}/usr/bin/qb64" || die
+	echo "cd /usr/$(get_libdir)/qb64" >> "${D}/usr/bin/qb64" || die
+	echo "./qb64" >> "${D}/usr/bin/qb64" || die
+	fperms +x /usr/bin/qb64
 
 	#we need to get IDE to work properly
-	chmod o+w "${D}/usr/$(get_libdir)/qb64/internal/c/parts/core/gl_header_for_parsing/temp/gl_helper_code.h"
-	chmod o+w "${D}/usr/$(get_libdir)/qb64/internal/temp"/*.bin
-	chmod o+w "${D}/usr/$(get_libdir)/qb64/internal/temp"/*.txt
-	chmod o+w "${D}/usr/$(get_libdir)/qb64/internal/temp"
+	fperms o+w /usr/$(get_libdir)/qb64/internal/c/parts/core/gl_header_for_parsing/temp/gl_helper_code.h
+	fperms o+w $(ls "${D}"/usr/$(get_libdir)/qb64/internal/temp/*.bin | sed -e "s|${D}||")
+	fperms o+w $(ls "${D}"/usr/$(get_libdir)/qb64/internal/temp/*.txt | sed -e "s|${D}||")
+	fperms o+w /usr/$(get_libdir)/qb64/internal/temp
 
 	#get it to compile correctly
-	chmod o+w "${D}/usr/$(get_libdir)/qb64/internal/c/libqb/os/lnx"
+	fperms o+w /usr/$(get_libdir)/qb64/internal/c/libqb/os/lnx
 
 	#allow run basic program
-	chmod o+w "${D}/usr/$(get_libdir)/qb64"
+	fperms o+w /usr/$(get_libdir)/qb64
 
-	cp "${S}"/internal/source/qb64icon32.png "${D}"/usr/share/qbasic
+	dodir /usr/share/qbasic
+	insinto /usr/share/qbasic
+	doins internal/source/qb64icon32.png
 	make_desktop_entry "/usr/bin/qb64" "QB64 Programming IDE" "/usr/share/qbasic/qb64icon32.png" "Development;IDE"
 }
 
