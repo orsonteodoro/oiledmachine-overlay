@@ -191,6 +191,13 @@ multilib_src_install() {
 	dodir /etc/env.d/rust
 	insinto /etc/env.d/rust
 	doins "${T}/provider-${P}"
+
+	if use ycmd ; then
+		if [ "${ABI}" == "${DEFAULT_ABI}" ] ; then
+			dodir /usr/share/rust
+			doins src
+		fi
+	fi
 }
 
 pkg_postinst() {

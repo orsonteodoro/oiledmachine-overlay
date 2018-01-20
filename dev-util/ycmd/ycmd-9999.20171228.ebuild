@@ -37,7 +37,7 @@ RDEPEND="
 		  dev-go/godef )
 	dev-python/future[${PYTHON_USEDEP}]
 	rust? ( dev-rust/racerd
-                dev-lang/rust-source-code )
+                dev-lang/rust[ycmd] )
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/sh[${PYTHON_USEDEP}]
 	=dev-python/waitress-0.8.10-r2[${PYTHON_USEDEP}]
