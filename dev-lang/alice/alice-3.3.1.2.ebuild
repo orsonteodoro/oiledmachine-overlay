@@ -1,10 +1,8 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=5
-inherit eutils
-#check-reqs
+EAPI=6
+inherit eutils check-reqs
 
 DESCRIPTION="Alice"
 HOMEPAGE="http://www.alice.org"
@@ -21,7 +19,7 @@ RDEPEND="|| ( virtual/jre virtual/jdk  )"
 DEPEND="${RDEPEND}"
 
 #CHECKREQS_DISK_BUILD="2061M"
-#CHECKREQS_DISK_USR="1145M"
+CHECKREQS_DISK_USR="1455M"
 
 FEATURES=""
 
@@ -29,19 +27,21 @@ S="${WORKDIR}"
 
 
 src_unpack() {
-	cp "${DISTDIR}"/${PKG} "${T}"
+	cp "${DISTDIR}"/${PKG} "${T}" || die
 }
 
 src_prepare() {
 	sed -e "s|\$app_java_home/bin/java\" -Dinstall4j.jvmDir=\"\$app_java_home\"|\$app_java_home/bin/java\" -Dinstall4j.jvmDir=\"${T}\" -Duser.home=\"${T}\" -Djava.util.prefs.systemRoot=\"${T}\" -Djava.util.prefs.userRoot=${T}/home/dummy |" \
 		"${DISTDIR}"/${PKG} > ${T}/${PKG} || die
 	chmod +x ${T}/${PKG} || die
+	eapply_user
 }
 
 src_install() {
 	addpredict $(ls -d /opt/oracle-jdk-bin-*/jre)/.systemPrefs/com
 	addpredict /usr/lib64/icedtea7/jre/.systemPrefs/com
-	mkdir -p "${D}"/opt/alice3
+	dodir /opt/alice3
+	insinto /opt/alice3
 	mkdir -p "${T}"/home/dummy/Desktop
 	mkdir -p "${T}"/home/dummy/applications
 	mkdir -p "${T}"/share
@@ -51,13 +51,14 @@ src_install() {
 		-Vsys.symlinkDir=${T}/share
 	rm "${D}/opt/alice3/Alice 3.desktop"
 	make_desktop_entry "/bin/sh \"/opt/alice3/Alice 3\"" "Alice 3" "/opt/alice3/.install4j/Alice 3.png" "Education;ComputerScience"
-	sed -i -e 's|/var/tmp/portage/dev-lang/alice-3.2.5.0.0/image||g' -e "s|/var/tmp/portage/dev-lang/alice-3.2.5.0.0/temp/share|/opt/alice3/share|g" "${D}"/opt/alice3/.install4j/response.varfile
+	sed -i -e 's|/var/tmp/portage/dev-lang/alice-3.2.5.0.0/image||g' -e "s|/var/tmp/portage/dev-lang/alice-3.2.5.0.0/temp/share|/opt/alice3/share|g" "${D}"/opt/alice3/.install4j/response.varfile || die
 	rm -rf "${D}"/opt/alice3/share
-	mkdir -p "${D}/usr/bin"
+	dodir /usr/bin
+	insinto /usr/bin
 	echo '#!/bin/bash' > "${D}/usr/bin/alice3"
-	echo 'cd "/opt/alice3"' >> "${D}/usr/bin/alice3" 
+	echo 'cd "/opt/alice3"' >> "${D}/usr/bin/alice3"
 	echo './"Alice 3"' >> "${D}/usr/bin/alice3"
-	chmod +x "${D}/usr/bin/alice3"
+	fperms +x /usr/bin/alice3
 }
 
 pkg_postinst() {

@@ -1,8 +1,7 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=5
+EAPI=6
 inherit eutils check-reqs
 
 DESCRIPTION="Alice"
@@ -30,24 +29,27 @@ src_unpack() {
 }
 
 src_install() {
-	mkdir -p "${D}/opt/alice2"
-	cp -r "${S}"/Required/* "${D}/opt/alice2"
-	chmod o+x "${D}/opt/alice2/run-alice"
-	mkdir -p "${D}/opt/alice2/jython-2.1/cachedir/packages"
+	dodir /opt/alice2
+	insinto /opt/alice2
+	doins -r "${S}"/Required/*
+	fperms o+x /opt/alice2/run-alice
+	dodir /opt/alice2/jython-2.1/cachedir/packages
 	chmod o+w "${D}/opt/alice2/jython-2.1/cachedir/packages"
 
 	cd "${S}/Required/lib"
 	jar xvf alice.jar "edu/cmu/cs/stage3/alice/authoringtool/images/aliceHead.gif"
-	mkdir -p "${D}/usr/share/alice2"
-	mv edu/cmu/cs/stage3/alice/authoringtool/images/aliceHead.gif "${D}/usr/share/alice2"
+	dodir /usr/share/alice2
+	insinto /opt/alice2
+	doins edu/cmu/cs/stage3/alice/authoringtool/images/aliceHead.gif
 	rm -rf edu
 
 	make_desktop_entry "/bin/sh -c \"cd /opt/alice2; ./run-alice\"" "Alice 2" "/usr/share/alice2/aliceHead.gif" "Education;ComputerScience"
-	mkdir -p "${D}/usr/bin"
+	dodir /usr/bin
+	insinto /usr/bin
 	echo '#!/bin/bash' > "${D}/usr/bin/alice2"
-	echo 'cd "/opt/alice2"' >> "${D}/usr/bin/alice2" 
+	echo 'cd "/opt/alice2"' >> "${D}/usr/bin/alice2"
 	echo './run-alice' >> "${D}/usr/bin/alice2"
-	chmod +x "${D}/usr/bin/alice2"
+	fperms +x /usr/bin/alice2
 }
 
 pkg_postinst() {
