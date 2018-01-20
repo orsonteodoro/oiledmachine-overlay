@@ -195,6 +195,7 @@ multilib_src_install() {
 	if use ycmd ; then
 		if [ "${ABI}" == "${DEFAULT_ABI}" ] ; then
 			dodir /usr/share/rust
+			insinto /usr/share/rust
 			doins src
 		fi
 	fi
