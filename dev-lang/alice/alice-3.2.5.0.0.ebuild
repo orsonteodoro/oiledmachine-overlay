@@ -52,11 +52,11 @@ src_install() {
 	sed -i -e 's|/var/tmp/portage/dev-lang/alice-3.2.5.0.0/image||g' -e "s|/var/tmp/portage/dev-lang/alice-3.2.5.0.0/temp/share|/opt/alice3/share|g" "${D}"/opt/alice3/.install4j/response.varfile || die
 	rm -rf "${D}"/opt/alice3/share
 	dodir /usr/bin
-	insinto /usr/bin
-	echo '#!/bin/bash' > "${D}/usr/bin/alice3"
-	echo 'cd "/opt/alice3"' >> "${D}/usr/bin/alice3"
-	echo './"Alice 3"' >> "${D}/usr/bin/alice3"
-	fperms +x /usr/bin/alice3
+	exeinto /usr/bin
+	echo '#!/bin/bash' > alice3 || die
+	echo 'cd "/opt/alice3"' >> alice3 || die
+	echo './"Alice 3"' >> alice3 || die
+	doexe alice3
 }
 
 pkg_postinst() {

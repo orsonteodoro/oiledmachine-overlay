@@ -34,7 +34,7 @@ src_install() {
 	doins -r "${S}"/Required/*
 	fperms o+x /opt/alice2/run-alice
 	dodir /opt/alice2/jython-2.1/cachedir/packages
-	chmod o+w "${D}/opt/alice2/jython-2.1/cachedir/packages"
+	fperms o+w opt/alice2/jython-2.1/cachedir/packages
 
 	cd "${S}/Required/lib"
 	jar xvf alice.jar "edu/cmu/cs/stage3/alice/authoringtool/images/aliceHead.gif"
@@ -45,11 +45,11 @@ src_install() {
 
 	make_desktop_entry "/bin/sh -c \"cd /opt/alice2; ./run-alice\"" "Alice 2" "/usr/share/alice2/aliceHead.gif" "Education;ComputerScience"
 	dodir /usr/bin
-	insinto /usr/bin
-	echo '#!/bin/bash' > "${D}/usr/bin/alice2"
-	echo 'cd "/opt/alice2"' >> "${D}/usr/bin/alice2"
-	echo './run-alice' >> "${D}/usr/bin/alice2"
-	fperms +x /usr/bin/alice2
+	exeinto /usr/bin
+	echo '#!/bin/bash' > alice2 || die
+	echo 'cd "/opt/alice2"' >> alice2 || die
+	echo './run-alice' >> alice2 || die
+	doexe alice2
 }
 
 pkg_postinst() {
