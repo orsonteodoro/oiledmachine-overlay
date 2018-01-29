@@ -70,8 +70,8 @@ pkg_setup() {
 
 src_unpack() {
 	EGIT_REPO_URI="https://github.com/ariya/phantomjs.git"
-	EGIT_BRANCH="2.1"
-	EGIT_COMMIT="d9cda3dcd26b0e463533c5cc96e39c0f39fc32c1"
+	EGIT_BRANCH="master"
+	EGIT_COMMIT="8b26f54f7609a3b88164294f6332358246c39a16"
 	git-r3_fetch
 	git-r3_checkout
 
