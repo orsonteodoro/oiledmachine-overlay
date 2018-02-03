@@ -57,7 +57,7 @@ DEPEND="${RDEPEND}
 src_unpack() {
 	EGIT_REPO_URI="https://github.com/ariya/phantomjs.git"
 	EGIT_BRANCH="master"
-	EGIT_COMMIT="2.1.1"
+	EGIT_COMMIT="${PV}"
 	git-r3_fetch
 	git-r3_checkout
 }
