@@ -1,0 +1,15 @@
+--- a/src/qt/qtwebkit/Source/JavaScriptCore/disassembler/udis86/ud_opcode.py.orig	2018-02-03 13:05:06.650178135 +0000
++++ b/src/qt/qtwebkit/Source/JavaScriptCore/disassembler/udis86/ud_opcode.py	2018-02-03 16:29:49.858270181 +0000
+@@ -115,9 +115,9 @@ class UdOpcodeTables:
+             '/mod'   : lambda v: '00' if v == '!11' else '01',
+             # Mode extensions:
+             # (16, 32, 64) => (00, 01, 02)
+-            '/o'     : lambda v: "%02x" % (int(v) / 32),
+-            '/a'     : lambda v: "%02x" % (int(v) / 32),
+-            '/m'     : lambda v: "%02x" % (int(v) / 32),
++            '/o'     : lambda v: "%02x" % int(int(v) / 32),
++            '/a'     : lambda v: "%02x" % int(int(v) / 32),
++            '/m'     : lambda v: "%02x" % int(int(v) / 32),
+             '/sse'   : lambda v: UdOpcodeTables.OpcExtIndex['sse'][v]
+         }
+ 
