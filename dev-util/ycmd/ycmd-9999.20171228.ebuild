@@ -21,7 +21,7 @@ REQUIRED_USE="system-clang system-clang? ( || ( c c++ objc objc++ ) ) csharp? ( 
 
 COMMON_DEPEND="
 	${PYTHON_DEPS}
-	system-clang? ( >=sys-devel/clang-3.8 )
+	system-clang? ( >=sys-devel/clang-5 )
 	system-boost? ( >=dev-libs/boost-1.63.0[python,threads,${PYTHON_USEDEP}] )
 "
 RDEPEND="
@@ -128,7 +128,7 @@ python_prepare_all() {
 	sed -i -e "s|/usr/bin/python3.4|/usr/bin/${EPYTHON}|g" ycmd/default_settings.json
 
 	if use system-clang ; then
-		sed -i -e "s|EXTERNAL_LIBCLANG_PATH \${TEMP}|EXTERNAL_LIBCLANG_PATH \"$(ls /usr/$(get_libdir)/libclang.so* | head -1)\"|g" cpp/ycm/CMakeLists.txt
+		sed -i -e "s|EXTERNAL_LIBCLANG_PATH \${TEMP}|EXTERNAL_LIBCLANG_PATH \"$(ls /usr/lib/llvm/5/$(get_libdir)/libclang.so* | head -1)\"|g" cpp/ycm/CMakeLists.txt
 	fi
 }
 
