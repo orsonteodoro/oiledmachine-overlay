@@ -9,7 +9,7 @@ inherit eutils python-r1 cmake-utils flag-o-matic
 
 DESCRIPTION="A code-completion & code-comprehension server"
 HOMEPAGE=""
-COMMIT="ec7a154f8fe50c071ecd0ac6841de8a50ce92f5d"
+COMMIT="1a83224202c4381d6d791c245a893ce25db7a974"
 SRC_URI="https://github.com/Valloric/ycmd/archive/${COMMIT}.zip -> ${P}.zip"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
@@ -21,16 +21,16 @@ REQUIRED_USE="system-clang system-clang? ( || ( c c++ objc objc++ ) ) csharp? ( 
 COMMON_DEPEND="
 	${PYTHON_DEPS}
 	system-clang? ( >=sys-devel/clang-5.0 )
-	system-boost? ( >=dev-libs/boost-1.63.0[python,threads,${PYTHON_USEDEP}] )
+	system-boost? ( >=dev-libs/boost-1.65.0[python,threads,${PYTHON_USEDEP}] )
 "
 RDEPEND="
 	${COMMON_DEPEND}
-	python? ( dev-python/jedihttp[${PYTHON_USEDEP}] )
+	python? ( >=dev-python/jedihttp-9999.20171217[${PYTHON_USEDEP}] )
 	csharp? ( omnisharp-server? ( dev-dotnet/omnisharp-server )
 		  omnisharp-roslyn? ( dev-dotnet/omnisharp-roslyn[net46] )
                 )
 	dev-python/argparse[${PYTHON_USEDEP}]
-	>=dev-python/bottle-0.12.7[${PYTHON_USEDEP}]
+	>=dev-python/bottle-0.12.13[${PYTHON_USEDEP}]
 	dev-python/frozendict[${PYTHON_USEDEP}]
 	go? ( dev-go/gocode
 		  dev-go/godef )
@@ -64,8 +64,8 @@ DEPEND="
 S="${WORKDIR}/${PN}-${COMMIT}"
 
 src_prepare() {
-	eapply "${FILESDIR}/${PN}-9999.20170107-skip-thirdparty-check.patch"
-	eapply "${FILESDIR}/${PN}-9999.20170107-exe-paths.patch"
+	eapply "${FILESDIR}/${PN}-9999.20180204-skip-thirdparty-check.patch"
+	eapply "${FILESDIR}/${PN}-9999.20171228-exe-paths.patch"
 	eapply "${FILESDIR}/${PN}-9999.20170107-no-third-party-folder-check.patch"
 	eapply "${FILESDIR}/${PN}-9999.20170107-force-python-libs-path.patch"
 	eapply "${FILESDIR}/${PN}-9999.20170107-core-version-path.patch"
@@ -96,7 +96,7 @@ src_prepare() {
 	fi
 
 	eapply "${FILESDIR}/${PN}-9999.20170117-no-prepend-mono.patch"
-	eapply "${FILESDIR}/${PN}-9999.20170204-jedi-path-fix.patch"
+	eapply "${FILESDIR}/${PN}-9999.20171228-jedi-path-fix.patch"
 
 	eapply_user
 

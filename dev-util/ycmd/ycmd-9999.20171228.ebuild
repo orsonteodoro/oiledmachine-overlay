@@ -1,6 +1,5 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
@@ -21,12 +20,12 @@ REQUIRED_USE="system-clang system-clang? ( || ( c c++ objc objc++ ) ) csharp? ( 
 
 COMMON_DEPEND="
 	${PYTHON_DEPS}
-	system-clang? ( >=sys-devel/clang-5 )
+	system-clang? ( >=sys-devel/clang-5.0 )
 	system-boost? ( >=dev-libs/boost-1.63.0[python,threads,${PYTHON_USEDEP}] )
 "
 RDEPEND="
 	${COMMON_DEPEND}
-	python? ( >=dev-python/jedihttp-9999.20170922[${PYTHON_USEDEP}] )
+	python? ( >=dev-python/jedihttp-9999.20171217[${PYTHON_USEDEP}] )
 	csharp? ( omnisharp-server? ( dev-dotnet/omnisharp-server )
 		  omnisharp-roslyn? ( dev-dotnet/omnisharp-roslyn[net46] )
                 )
@@ -232,6 +231,9 @@ python_install_all() {
 	if use csharp ; then
 		chmod 755 "${D}/$(python_get_sitedir)/ycmd/completers/cs/omnisharp.sh"
 	fi
+
+	cp -a clang_includes cpp "${D}/$(python_get_sitedir)/"
+	cp -a libclang.so.5* "${D}/$(python_get_sitedir)/"
 }
 
 src_test() {
@@ -281,10 +283,4 @@ pkg_postinst() {
 	if use javascript ; then
 		einfo "You need a .tern-project in your project for javascript support."
 	fi
-
-	einfo ""
-        einfo "You must generate a 16 byte HMAC secret wrapped in base64 for the hmac_secret property of your .json file:"
-        einfo "Do: openssl rand -base64 16"
-        einfo "or"
-        einfo "Do: < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64"
 }

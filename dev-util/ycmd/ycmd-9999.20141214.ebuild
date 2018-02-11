@@ -1,6 +1,5 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
@@ -23,7 +22,7 @@ REQUIRED_USE="system-clang? ( || ( c c++ objc objc++ ) )"
 
 COMMON_DEPEND="
 	${PYTHON_DEPS}
-	system-clang? ( >=sys-devel/clang-3.8 )
+	system-clang? ( >=sys-devel/clang-5.0 )
 	system-boost? ( >=dev-libs/boost-1.57[python,threads,${PYTHON_USEDEP}] )
 "
 RDEPEND="
@@ -126,7 +125,7 @@ python_compile_all() {
 	fi
 
 	if use system-clang ; then
-		export EXTRA_CMAKE_ARGS="-DEXTERNAL_LIBCLANG_PATH=/usr/$(get_libdir)/libclang.so"
+		export EXTRA_CMAKE_ARGS="-DEXTERNAL_LIBCLANG_PATH=$(ls /usr/lib/llvm/5/$(get_libdir)/libclang.so* | head -1)"
 	fi
 	if use system-boost ; then
 		export EXTRA_CMAKE_ARGS+=" -DUSE_SYSTEM_BOOST=1"
@@ -201,10 +200,4 @@ pkg_postinst() {
 	#if use javascript ; then
 	#	einfo "You need a .tern-project in your project for javascript support."
 	#fi
-
-	einfo ""
-        einfo "You must generate a 16 byte HMAC secret wrapped in base64 for the hmac_secret property of your .json file:"
-        einfo "Do: openssl rand -base64 16"
-        einfo "or"
-        einfo "Do: < /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64"
 }
