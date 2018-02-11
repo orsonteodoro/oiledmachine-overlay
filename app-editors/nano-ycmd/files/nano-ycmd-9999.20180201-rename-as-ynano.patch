@@ -1,0 +1,51 @@
+diff -urp nano-ycmd-57743fca4123e66f016695df56f27a96ecf43e2e.orig/src/Makefile.am nano-ycmd-57743fca4123e66f016695df56f27a96ecf43e2e/src/Makefile.am
+--- nano-ycmd-57743fca4123e66f016695df56f27a96ecf43e2e.orig/src/Makefile.am	2018-02-01 16:37:30.000000000 +0000
++++ nano-ycmd-57743fca4123e66f016695df56f27a96ecf43e2e/src/Makefile.am	2018-02-03 20:13:27.408019512 +0000
+@@ -70,8 +70,8 @@ revision.h: FORCE
+ 			echo "#define $(SOMETHING)" > $@
+ FORCE:
+ 
+-bin_PROGRAMS = 	nano
+-nano_SOURCES =	browser.c \
++bin_PROGRAMS = 	ynano
++ynano_SOURCES =	browser.c \
+ 		chars.c \
+ 		color.c \
+ 		cut.c \
+@@ -91,26 +91,26 @@ nano_SOURCES =	browser.c \
+ 		ycmd.c \
+ 		winio.c
+ 
+-nano_LDADD = @LIBINTL@ $(top_builddir)/lib/libgnu.a \
++ynano_LDADD = @LIBINTL@ $(top_builddir)/lib/libgnu.a \
+ 		$(LIB_CLOCK_GETTIME) $(LIBTHREAD)
+ 
+-nano_LDADD += @NEON_LIBS@
++ynano_LDADD += @NEON_LIBS@
+ 
+ if HAVE_NETTLE
+-nano_LDADD += @NETTLE_LIBS@
++ynano_LDADD += @NETTLE_LIBS@
+ endif
+ if HAVE_OPENSSL
+-nano_LDADD += @OPENSSL_LIBS@
++ynano_LDADD += @OPENSSL_LIBS@
+ endif
+ if HAVE_LIBGCRYPT
+-nano_LDADD += @GLIB_LIBS@
+-nano_LDFLAGS = $(LIBGCRYPT_LIBS)
++ynano_LDADD += @GLIB_LIBS@
++ynano_LDFLAGS = $(LIBGCRYPT_LIBS)
+ endif
+ if HAVE_YCMD
+-nano_LDADD += @GLIB_LIBS@
++ynano_LDADD += @GLIB_LIBS@
+ endif
+ 
+ install-exec-hook:
+-	cd $(DESTDIR)$(bindir) && rm -f rnano && $(LN_S) nano rnano
++	cd $(DESTDIR)$(bindir) && rm -f rnano && $(LN_S) ynano rnano
+ uninstall-hook:
+ 	cd $(DESTDIR)$(bindir) && rm -f rnano
+Only in nano-ycmd-57743fca4123e66f016695df56f27a96ecf43e2e/src: Makefile.am.orig
+Only in nano-ycmd-57743fca4123e66f016695df56f27a96ecf43e2e/src: Makefile.am.rej

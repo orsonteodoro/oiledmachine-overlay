@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="6"
@@ -6,7 +6,7 @@ EAPI="6"
 PYTHON_COMPAT=( python{2_7,3_4,3_5} )
 
 inherit eutils flag-o-matic python-r1
-COMMIT="011aff80e9b53785c4bac0da6763e37042d7d7eb"
+COMMIT="14e4255c52c9f64cabaa2af28354e9752d27ae65"
 SRC_URI="https://github.com/orsonteodoro/nano-ycmd/archive/${COMMIT}.zip -> ${P}.zip"
 KEYWORDS="~amd64 ~x86"
 
@@ -31,7 +31,7 @@ RDEPEND="${PYTHON_DEPS}
          nettle? ( dev-libs/nettle )
          libgcrypt? ( dev-libs/libgcrypt )
          net-libs/neon
-         dev-util/ycmd[${PYTHON_USEDEP}]
+         >=dev-util/ycmd-9999.20171228[${PYTHON_USEDEP}]
 	 >=app-shells/bash-4
 	 dev-util/bear
          dev-libs/nxjson
@@ -45,7 +45,7 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/${PN}-${COMMIT}"
 
 src_prepare() {
-	eapply "${FILESDIR}/${PN}-9999.20170205-rename-as-ynano.patch"
+	eapply "${FILESDIR}/${PN}-9999.20180201-rename-as-ynano.patch"
 
 	#eautoreconf
 	./autogen.sh
@@ -73,8 +73,11 @@ src_configure() {
 		ycmd_python_impl="python2.7"
 	fi
 
+	einfo "ycmd_python_impl=$ycmd_python_impl"
+	einfo "ycmd_python=$ycmd_python"
+
 	NINJA_PATH="/usr/bin/ninja" \
-        YCMG_PATH="/usr/bin/config_gen.py" PYTHON_PATH="${ycmd_python}" RACERD_PATH="/usr/bin/racerd" RUST_SRC_PATH="/usr/share/rust/src" GODEF_PATH="/usr/bin/godef" GOCODE_PATH="/usr/bin/gocode" YCMD_PATH="/usr/$(get_libdir)/${ycmd_python_impl}/site-packages/ycmd" \
+        YCMG_PATH="/usr/bin/config_gen.py" YCMD_PYTHON_PATH="$ycmd_python" YCMG_PYTHON_PATH="/usr/bin/python2" RACERD_PATH="/usr/bin/racerd" RUST_SRC_PATH="/usr/share/rust/src" GODEF_PATH="/usr/bin/godef" GOCODE_PATH="/usr/bin/gocode" YCMD_PATH="/usr/$(get_libdir)/${ycmd_python_impl}/site-packages/ycmd" \
 	econf \
 		--bindir="${EPREFIX}"/bin \
 		--htmldir=/trash \
