@@ -27,7 +27,7 @@ src_compile() {
 
 src_install() {
 	DEST="${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
-	mkdir -p "${DEST"
+	mkdir -p "${DEST}"
 	cp -a  bin defs emacs lib node_modules package.json plugin "${DEST}"
 	use doc && dodoc -r doc/* index.html ${DOCS}
 }
