@@ -70,6 +70,7 @@ _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 
 IUSE+=" ${_ABIS}"
 REQUIRED_USE="libcxx? ( clang )"
 REQUIRED_USE+=" ^^ ( ${_ABIS} )"
+IUSE+=" ycmd"
 
 RDEPEND="libcxx? ( sys-libs/libcxx )"
 
