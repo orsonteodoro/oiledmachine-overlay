@@ -28,6 +28,12 @@ ELECTRON_SLOT="1.6"
 src_compile() {
 	cd "${S}/app"
 	npm install
+	npm install electron
+
+	# patch electron node_module
+	cd "${S}/app/node_modules/electron"
+	sed -i -e "s|module.exports = path.join(__dirname, fs.readFileSync(pathFile, 'utf-8'))|module.exports = fs.readFileSync(pathFile, 'utf-8')|" index.js || die
+	echo "/usr/$(get_libdir)/electron-${ELECTRON_SLOT}/electron" > path.txt
 
 	cd "${S}"
 
