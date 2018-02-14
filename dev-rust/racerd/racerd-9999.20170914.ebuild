@@ -27,7 +27,6 @@ src_unpack() {
 
 src_compile() {
 	cargo install
-	die
 }
 
 src_prepare() {
