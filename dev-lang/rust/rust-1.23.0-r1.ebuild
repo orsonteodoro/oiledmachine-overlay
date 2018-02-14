@@ -37,8 +37,8 @@ DESCRIPTION="Systems programming language from Mozilla"
 HOMEPAGE="http://www.rust-lang.org/"
 
 SRC_URI="https://static.rust-lang.org/dist/${SRC} -> rustc-${PV}-src.tar.gz
-	amd64? ( https://static.rust-lang.org/dist/${RUST_STAGE0_amd64}.tar.gz )
-	x86? ( https://static.rust-lang.org/dist/${RUST_STAGE0_x86}.tar.gz )
+	abi_x86_64? ( https://static.rust-lang.org/dist/${RUST_STAGE0_amd64}.tar.gz )
+	abi_x86_32? ( https://static.rust-lang.org/dist/${RUST_STAGE0_x86}.tar.gz )
 "
 
 LICENSE="|| ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA"
