@@ -21,6 +21,12 @@ DEPEND="${RDEPEND}
 
 S="${WORKDIR}/${PN}-${COMMIT}"
 
+pkg_setup() {
+	eerror "This ebuild is undergoing development.  It doesn't work yet."
+	eerror "Removing dependency on the cargo.eclass."
+	die
+}
+
 src_unpack() {
 	unpack ${A}
 }
