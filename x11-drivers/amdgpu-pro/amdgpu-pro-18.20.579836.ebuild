@@ -5,7 +5,7 @@ EAPI=6
 
 MULTILIB_COMPAT=( abi_x86_{32,64} )
 #inherit eutils linux-info multilib-build unpacker
-inherit multilib-build unpacker
+inherit multilib-build unpacker linux-info
 
 DESCRIPTION="New generation AMD closed-source drivers for Southern Islands (HD7730 Series) and newer chipsets"
 HOMEPAGE="http://support.amd.com/en-us/kb-articles/Pages/AMDGPU-PRO-Driver-for-Linux-Release-Notes.aspx"
@@ -23,7 +23,7 @@ RESTRICT="fetch strip"
 
 # The binary blobs include binaries for other open sourced packages, we don't want to include those parts, if they are
 # selected, they should come from portage.
-IUSE="+gles2 +opencl +opengl +vdpau +vulkan hsa rocm rocr freesync pal orca"
+IUSE="+gles2 +opencl +opengl +vdpau +vulkan hsa rocm rocr freesync pal orca vega"
 
 LICENSE="AMD GPL-2 QPL-1.0"
 KEYWORDS="~amd64"
@@ -94,6 +94,12 @@ pkg_setup() {
 	ewarn "This driver does not work on RX 480.  It may segfault on X startup."
 	sleep 5
 
+	CONFIG_CHECK="~DRM_AMDGPU"
+
+	ERROR_KERNEL_DRM_AMDGPU="DRM_AMDGPU which is required for FreeSync or AMDGPU-PRO driver to work"
+
+	linux-info_pkg_setup
+
 	if use pal ; then
 		einfo "OpenCL PAL (Portable Abstraction Layer) being used.  It is only supported by GCN 5.x (Vega).  It is still in development."
 	fi
@@ -107,8 +113,29 @@ pkg_setup() {
 	fi
 
 	if use freesync ; then
+		if kernel_is -ge 4 15 0 && kernel_is -lt 4 16 0 ; then
+			CONFIG_CHECK="~DRM_AMD_DC"
+			if ! use vega ; then
+				CONFIG_CHECK+=" ~DRM_AMD_DC_PRE_VEGA"
+			fi
+
+			ERROR_KERNEL_DRM_AMD_DC="DRM_AMD_DC which is required for FreeSync to work"
+			ERROR_KERNEL_DRM_AMD_DC_PRE_VEGA="DRM_AMD_DC_PRE_VEGA which is required for pre Vega cards."
+
+			check_extra_config
+		elif kernel_is -ge 4 17 0; then
+			CONFIG_CHECK="~DRM_AMD_DC"
+
+			ERROR_KERNEL_DRM_AMD_DC="DRM_AMD_DC which is required for FreeSync to work"
+
+			check_extra_config
+		else
+			eerror "Kernel version not supported for FreeSync."
+			die
+		fi
+
 		einfo "Checking kernel is properly patched with freesync_capable."
-		grep -r -e "\"freesync_capable\"" ${EROOT}/usr/src/linux/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+		grep -r -e "\"freesync_capable\"" ${EROOT}/usr/src/linux/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c >/dev/null
 		if [[ "$?" != "0" ]] ; then
 			einfo "You need to fetch the branch amd-staging-4.15 for stable.  Diff it against 4.15 vanilla and stick it in your /etc/portage/patches folder."
 			einfo "git clone -b amd-staging-4.15 git://people.freedesktop.org/~agd5f/linux"
