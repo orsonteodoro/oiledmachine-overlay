@@ -117,7 +117,7 @@ pkg_setup() {
 			fi
 
 			ERROR_KERNEL_DRM_AMD_DC="DRM_AMD_DC which is required for FreeSync to work"
-			ERROR_KERNEL_DRM_AMD_DC_PRE_VEGA="DRM_AMD_DC_PRE_VEGA which is required for pre Vega cards."
+			ERROR_KERNEL_DRM_AMD_DC_PRE_VEGA="DRM_AMD_DC_PRE_VEGA which is required for pre Vega cards for FreeSync to work"
 
 			check_extra_config
 		elif kernel_is -ge 4 17 0; then
