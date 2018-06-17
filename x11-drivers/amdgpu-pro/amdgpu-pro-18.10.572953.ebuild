@@ -104,14 +104,19 @@ pkg_setup() {
 	fi
 
 	if use freesync ; then
+		einfo "Checking kernel is properly patched with freesync_capable."
 		grep -r -e "\"freesync_capable\"" ${EROOT}/usr/src/linux/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
 		if [[ "$?" != "0" ]] ; then
-			einfo "You need to fetch the branch amd-staging-4.15.  Diff it against 4.15 vanilla and stick it in your /etc/portage/patches folder."
+			einfo "You need to fetch the branch amd-staging-4.15 for stable.  Diff it against 4.15 vanilla and stick it in your /etc/portage/patches folder."
 			einfo "git clone -b amd-staging-4.15 git://people.freedesktop.org/~agd5f/linux"
 			einfo 'git diff d8a5b80568a9cb66810e75b182018e9edb68e8ff..origin/amd-staging-4.15 > ~/drm-staging-4.15.patch'
 			einfo 'd8a5b80568a9cb66810e75b182018e9edb68e8ff refers to tag v4.15 of torvalds/linux'
 			einfo
-			einfo "v4.15 only supported since drm-next head is being reworked."
+			einfo "v4.17 is in current development and supports 4.17_rc5 but may need manual patching in 4.15.2."
+			einfo "git clone -b amd-staging-drm-next git://people.freedesktop.org/~agd5f/linux"
+			einfo "git diff 67b8d5c7081221efa252e111cd52532ec6d4266f..amd-staging-drm-next > ~/amd-staging-drm-next-4.17_rc5.patch"
+			einfo '67b8d5c7081221efa252e111cd52532ec6d4266f refers to tag v4.17-rc5 of torvalds/linux'
+			einfo
 			die
 		fi
 	fi
@@ -606,5 +611,11 @@ pkg_postinst() {
 
 	if use opencl ; then
 		"${ROOT}"/usr/bin/eselect opencl set --use-old amdgpu
+	fi
+
+	if use freesync ; then
+		einfo "Refer to https://support.amd.com/en-us/kb-articles/pages/how-to-enable-amd-freesync-in-linux.aspx"
+		einfo "to enable FreeSync per each DisplayPort and to view the software supported by FreeSync."
+		einfo "You must have VSync on to use FreeSync.  Modify /etc/amd/amdrc to turn on VSync."
 	fi
 }
