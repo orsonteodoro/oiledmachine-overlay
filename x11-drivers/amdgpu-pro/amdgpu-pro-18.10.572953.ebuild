@@ -151,7 +151,7 @@ pkg_setup() {
 	if use hsa ; then
 		eerror "hsa not supported"
 	fi
-	if use hsa ; then
+	if use rocr ; then
 		eerror "rocr not supported"
 	fi
 }
