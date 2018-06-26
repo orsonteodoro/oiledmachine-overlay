@@ -1,6 +1,5 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=5
 
@@ -22,7 +21,7 @@ S="${WORKDIR}"
 LICENSE="OFL-1.1"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="zopflipng optipng reassign-ugly-text-emojis black-smiling-emoji" #break utr#51
+IUSE="zopflipng optipng black-smiling-emoji" #break utr#51
 REQUIRED_USE="^^ ( zopflipng optipng ) ^^ ( $(python_gen_useflags 'python2*') )"
 
 RDEPEND=">=media-libs/fontconfig-2.11.91
@@ -35,7 +34,7 @@ DEPEND="${RDEPEND}
         ${PYTHON_DEPS}
 	dev-python/six
         media-gfx/imagemagick
-        dev-python/fonttools
+        dev-python/fonttools[${PYTHON_USEDEP}]
         optipng? ( media-gfx/optipng )
 	zopflipng? ( app-arch/zopfli )
 "
@@ -99,16 +98,22 @@ rebuild_fontfiles() {
 }
 
 pkg_postinst() {
-	eselect fontconfig enable 01-notosans.conf
-	if use reassign-ugly-text-emojis ; then
-		eselect fontconfig enable 61-notosans.conf
-		ewarn "You may need to manually add exceptions to 61-notosans.conf based on fonts installed and what was in the serif and sans-serif section of 60-latin.conf and run \`fc-cache -fv\`."
-		eselect fontconfig enable 44-notosans.conf
-		ewarn "You may need to manually add exceptions to 44-notosans.conf based on fonts installed and what was in the serif and sans-serif section of 60-latin.conf and run \`fc-cache -fv\`."
-	fi
+	eselect fontconfig disable 01-notosans.conf #breaks X so disable
+	eselect fontconfig enable 61-notosans.conf
+	eselect fontconfig enable 44-notosans.conf
 	eselect fontconfig disable 70-no-bitmaps.conf
-	ewarn "You may need to \`eselect fontconfig enable 01-notosans.conf\` manually and run \`fc-cache -fv\`."
-	ewarn "You may need to \`eselect fontconfig disable 70-no-bitmaps.conf\` manually and run \`fc-cache -fv\`."
         rebuild_fontfiles
+	fc-cache -fv
 	ewarn "To see emojis in your x11-term you need to switch to a utf8 locale."
+	ewarn "Try manually running \`fc-cache -fv\` on the non-root user account and logging off all accounts to get X to work."
+	ewarn "If you see enlarged emojis in Firefox 52.x, it requires the noto-fix use flag and the Firefox 52.x in the oiledmachine-overlay or Firefox 58.x or newer in the gentoo overlay."
+}
+
+pkg_postrm() {
+	eselect fontconfig disable 01-notosans.conf
+	eselect fontconfig disable 61-notosans.conf
+	eselect fontconfig disable 44-notosans.conf
+	eselect fontconfig enable 70-no-bitmaps.conf
+        rebuild_fontfiles
+	fc-cache -fv
 }

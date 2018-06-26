@@ -9,7 +9,7 @@ inherit eutils font python-single-r1
 
 DESCRIPTION="NotoColorEmoji is colored emojis"
 HOMEPAGE="https://www.google.com/get/noto/#emoji-qaae-color"
-NOTO_EMOJI_COMMIT="411334c8e630acf858569602cbf5c19deba00878"
+NOTO_EMOJI_COMMIT="352632eb1935fd2b732f6f3ca0a24e9754c3eccf"
 NOTO_TOOLS_COMMIT="99f317e3fd168bddb84abe1818765b7a2268e4a5"
 SRC_URI="https://github.com/googlei18n/noto-emoji/archive/${NOTO_EMOJI_COMMIT}.zip -> noto-emoji-${NOTO_EMOJI_COMMIT}.zip
          https://github.com/googlei18n/nototools/archive/${NOTO_TOOLS_COMMIT}.zip -> noto-tools-${NOTO_TOOLS_COMMIT}.zip"
