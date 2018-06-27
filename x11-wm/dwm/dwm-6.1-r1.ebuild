@@ -12,7 +12,7 @@ LICENSE="MIT"
 SLOT="0"
 KEYWORDS="amd64 ~arm ~ppc ~ppc64 ~x86 ~x86-fbsd"
 IUSE="xinerama"
-IUSE+=" fib"
+IUSE+=" fibonacci rotatestack"
 
 RDEPEND="
 	media-libs/fontconfig
@@ -26,9 +26,12 @@ DEPEND="
 "
 
 src_prepare() {
-	if use fib; then
-		eapply "$FILESDIR/dwm-fib.patch"
-		eapply "$FILESDIR/dwm-fib1.patch"
+	if use fibonacci ; then
+		eapply "${FILESDIR}/dwm-fibonacci-5.8.2.diff"
+		eapply "${FILESDIR}/dwm-fibonacci-hotkeys.patch"
+	fi
+	if use rotatestack ; then
+		eapply "${FILESDIR}/dwm-rotatestack-20161021-ab9571b.diff"
 	fi
 	eapply "${FILESDIR}"/dwm-6.1-no-emoji-title-crash.patch
 

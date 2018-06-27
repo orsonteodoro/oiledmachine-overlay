@@ -1,23 +1,23 @@
-diff -u dwm-6.0.orig/config.def.h dwm-6.0/config.def.h
---- dwm-6.0.orig/config.def.h	2014-06-24 03:23:04.202163032 -0700
-+++ dwm-6.0/config.def.h	2014-06-24 03:26:11.894187660 -0700
-@@ -32,6 +32,8 @@
- 	{ "[]=",      tile },    /* first entry is default */
- 	{ "><>",      NULL },    /* no layout function means floating behavior */
- 	{ "[M]",      monocle },
+From: https://dwm.suckless.org/patches/fibonacci/dwm-fibonacci-5.8.2.diff
+diff --git a/config.def.h b/config.def.h
+index cca37df..91b91aa 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -29,1 +29,2 @@
++#include "fibonacci.c"
+ static const Layout layouts[] = {
+@@ -34,3 +35,5 @@
 + 	{ "[@]",      spiral },
 + 	{ "[\\]",      dwindle },
  };
  
  /* key definitions */
-Only in dwm-6.0: config.h
-diff -u dwm-6.0.orig/dwm.c dwm-6.0/dwm.c
---- dwm-6.0.orig/dwm.c	2014-06-24 03:23:04.202163032 -0700
-+++ dwm-6.0/dwm.c	2014-06-24 03:27:42.740587765 -0700
-@@ -284,6 +284,74 @@
- static Monitor *mons = NULL, *selmon = NULL;
- static Window root;
- 
+diff --git a/fibonacci.c b/fibonacci.c
+new file mode 100644
+index 0000000..fce0a57
+--- /dev/null
++++ b/fibonacci.c
+@@ -0,0 +1,66 @@
 +void
 +fibonacci(Monitor *mon, int s) {
 +	unsigned int i, n, nx, ny, nw, nh;
@@ -84,8 +84,4 @@ diff -u dwm-6.0.orig/dwm.c dwm-6.0/dwm.c
 +spiral(Monitor *mon) {
 +	fibonacci(mon, 0);
 +}
-+
-+
- /* configuration, allows nested code to access above variables */
- #include "config.h"
- 
+
