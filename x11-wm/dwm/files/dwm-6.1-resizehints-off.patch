@@ -1,0 +1,14 @@
+# From: https://dwm.suckless.org/faq/
+# Purpose: It removes the gaps between windows.
+diff -urp dwm-6.1.orig/config.def.h dwm-6.1/config.def.h
+--- dwm-6.1.orig/config.def.h	2015-11-08 14:39:37.000000000 -0800
++++ dwm-6.1/config.def.h	2018-06-26 18:48:06.288960187 -0700
+@@ -32,7 +32,7 @@ static const Rule rules[] = {
+ /* layout(s) */
+ static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
+ static const int nmaster     = 1;    /* number of clients in master area */
+-static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
++static const int resizehints = 0;    /* 1 means respect size hints in tiled resizals */
+ 
+ static const Layout layouts[] = {
+ 	/* symbol     arrange function */

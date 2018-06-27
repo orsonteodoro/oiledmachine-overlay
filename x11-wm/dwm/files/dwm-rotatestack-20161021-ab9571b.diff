@@ -1,4 +1,6 @@
 From: https://dwm.suckless.org/patches/rotatestack/dwm-rotatestack-20161021-ab9571b.diff
+      https://dwm.suckless.org/patches/rotatestack/
+Credit: ssd@mailless.org
 diff --git a/config.def.h b/config.def.h
 index fd77a07..09737d7 100644
 --- a/config.def.h

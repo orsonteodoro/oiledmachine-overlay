@@ -1,4 +1,6 @@
 From: https://dwm.suckless.org/patches/fibonacci/dwm-fibonacci-5.8.2.diff
+      https://dwm.suckless.org/patches/fibonacci/
+Credit: Niki Yoshiuchi - aplusbi@gmail.com
 diff --git a/config.def.h b/config.def.h
 index cca37df..91b91aa 100644
 --- a/config.def.h

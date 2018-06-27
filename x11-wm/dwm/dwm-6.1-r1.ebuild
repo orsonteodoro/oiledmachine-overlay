@@ -12,7 +12,7 @@ LICENSE="MIT"
 SLOT="0"
 KEYWORDS="amd64 ~arm ~ppc ~ppc64 ~x86 ~x86-fbsd"
 IUSE="xinerama"
-IUSE+=" fibonacci rotatestack"
+IUSE+=" fibonacci rotatestack resizehintsoff"
 
 RDEPEND="
 	media-libs/fontconfig
@@ -32,6 +32,9 @@ src_prepare() {
 	fi
 	if use rotatestack ; then
 		eapply "${FILESDIR}/dwm-rotatestack-20161021-ab9571b.diff"
+	fi
+	if use resizehintsoff ; then
+		eapply "${FILESDIR}/dwm-6.1-resizehints-off.patch"
 	fi
 	eapply "${FILESDIR}"/dwm-6.1-no-emoji-title-crash.patch
 

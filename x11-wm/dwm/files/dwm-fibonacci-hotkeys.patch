@@ -1,3 +1,4 @@
+From: Orson Teodoro
 diff -u dwm-6.0.orig/config.def.h dwm-6.0/config.def.h
 --- dwm-6.0.orig/config.def.h	2014-06-24 03:34:21.806484399 -0700
 +++ dwm-6.0/config.def.h	2014-06-24 03:37:01.995440167 -0700
