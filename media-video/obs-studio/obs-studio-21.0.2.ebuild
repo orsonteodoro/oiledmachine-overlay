@@ -54,11 +54,10 @@ COMMON_DEPEND="
 	v4l? ( media-libs/libv4l )
 	vaapi? ( media-video/ffmpeg[vaapi,x264]
 	         >=media-libs/mesa-17.3.0[vaapi]
-                 || ( video_cards_intel? ( media-libs/mesa[video_cards_intel] )
-		      video_cards_radeonsi? ( media-libs/mesa[video_cards_radeonsi] )
-                 )
-                 || ( video_cards_intel? ( x11-base/xorg-drivers[video_cards_intel] )
-		      video_cards_radeonsi? ( x11-base/xorg-drivers[video_cards_radeonsi] )
+                 || ( video_cards_intel? ( media-libs/mesa[video_cards_inte]
+					   x11-base/xorg-drivers[video_cards_intel] )
+		      video_cards_radeonsi? ( media-libs/mesa[video_cards_radeonsi]
+					      x11-base/xorg-drivers[video_cards_radeonsi] )
                  )
 	)
 "
