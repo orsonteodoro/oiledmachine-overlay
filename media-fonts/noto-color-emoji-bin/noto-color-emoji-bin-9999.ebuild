@@ -21,7 +21,8 @@ IUSE="colorize-xfce4-terminal-white-smiley colorize-chrome-white-smiley"
 RDEPEND=">=media-libs/fontconfig-2.11.91
          >=x11-libs/cairo-1.14.6[colored-emojis]
 	media-libs/freetype[png]
-        !media-fonts/noto-color-emoji"
+        !media-fonts/noto-color-emoji
+	colorize-chrome-white-smiley? ( media-fonts/ttf-bitstream-vera )"
 
 DEPEND="dev-python/fonttools
         ${RDEPEND}"
