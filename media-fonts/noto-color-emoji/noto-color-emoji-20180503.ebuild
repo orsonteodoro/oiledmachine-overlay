@@ -28,7 +28,7 @@ RDEPEND=">=media-libs/fontconfig-2.11.91
          >=x11-libs/cairo-1.14.6[colored-emojis]
 	 media-libs/freetype[png]
          !media-fonts/noto-color-emoji-bin
-"
+	colorize-chrome-white-smiley? ( media-fonts/ttf-bitstream-vera )"
 
 DEPEND="${RDEPEND}
         ${PYTHON_DEPS}
@@ -36,8 +36,7 @@ DEPEND="${RDEPEND}
         media-gfx/imagemagick
         >=dev-python/fonttools-3.15.1[${PYTHON_USEDEP}]
         optipng? ( media-gfx/optipng )
-	zopflipng? ( app-arch/zopfli )
-"
+	zopflipng? ( app-arch/zopfli )"
 
 FONT_SUFFIX="ttf"
 FONT_CONF=( "${FILESDIR}/08-noto-scalable.conf" "${FILESDIR}/09-noto-colorize-chrome-white-smiley.conf" "${FILESDIR}/09-noto-colorize-xfce4-terminal-white-smiley.conf" "${FILESDIR}/61-noto-colorize.conf" )
