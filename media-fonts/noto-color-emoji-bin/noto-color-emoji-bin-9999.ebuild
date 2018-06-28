@@ -16,7 +16,7 @@ S="${WORKDIR}"
 LICENSE="OFL-1.1"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="reassign-ugly-text-emojis"
+IUSE="colorize-xfce4-terminal-white-smiley colorize-chrome-white-smiley"
 
 RDEPEND=">=media-libs/fontconfig-2.11.91
          >=x11-libs/cairo-1.14.6[colored-emojis]
@@ -27,7 +27,7 @@ DEPEND="dev-python/fonttools
         ${RDEPEND}"
 
 FONT_SUFFIX="ttf"
-FONT_CONF=( "${FILESDIR}/01-notosans.conf" "${FILESDIR}/44-notosans.conf" "${FILESDIR}/61-notosans.conf" )
+FONT_CONF=( "${FILESDIR}/01-noto-scalable.conf" "${FILESDIR}/02-noto-colorize-chrome-white-smiley.conf" "${FILESDIR}/02-noto-colorize-xfce4-terminal-white-smiley.conf" "${FILESDIR}/61-noto-colorize.conf" )
 
 rebuild_fontfiles() {
         einfo "Refreshing fonts.scale and fonts.dir..."
@@ -51,9 +51,18 @@ src_install() {
 }
 
 pkg_postinst() {
-	eselect fontconfig disable 01-notosans.conf #may break X so disable
-	eselect fontconfig enable 61-notosans.conf
-	eselect fontconfig enable 44-notosans.conf
+	eselect fontconfig enable 01-noto-scalable.conf
+	if use colorize-chrome-white-smiley ; then
+		eselect fontconfig enable 02-noto-colorize-chrome-white-smiley.conf
+	else
+		eselect fontconfig disable 02-noto-colorize-chrome-white-smiley.conf
+	fi
+	if use colorize-xfce4-terminal-smiley ; then
+		eselect fontconfig enable 02-noto-colorize-xfce4-terminal-white-smiley.conf
+	else
+		eselect fontconfig disable 02-noto-colorize-xfce4-terminal-white-smiley.conf
+	fi
+	eselect fontconfig enable 61-noto-colorize.conf
 	eselect fontconfig disable 70-no-bitmaps.conf
         rebuild_fontfiles
 	fc-cache -fv
@@ -63,9 +72,10 @@ pkg_postinst() {
 }
 
 pkg_postrm() {
-	eselect fontconfig disable 01-notosans.conf
-	eselect fontconfig disable 61-notosans.conf
-	eselect fontconfig disable 44-notosans.conf
+	eselect fontconfig disable 01-noto-scalable.conf
+	eselect fontconfig disable 02-noto-colorize-chrome-white-smiley.conf
+	eselect fontconfig disable 02-noto-colorize-xfce4-terminal-white-smiley.conf
+	eselect fontconfig disable 61-noto-colorize.conf
 	eselect fontconfig enable 70-no-bitmaps.conf
         rebuild_fontfiles
 	fc-cache -fv
