@@ -28,7 +28,7 @@ DEPEND="dev-python/fonttools
         ${RDEPEND}"
 
 FONT_SUFFIX="ttf"
-FONT_CONF=( "${FILESDIR}/08-noto-scalable.conf" "${FILESDIR}/09-noto-colorize-chrome-white-smiley.conf" "${FILESDIR}/09-noto-colorize-xfce4-terminal-white-smiley.conf" "${FILESDIR}/61-noto-colorize.conf" )
+FONT_CONF=( "${FILESDIR}/25-noto-scalable.conf" "${FILESDIR}/43-noto-colorize-chrome-white-smiley.conf" "${FILESDIR}/43-noto-colorize-xfce4-terminal-white-smiley.conf" "${FILESDIR}/61-noto-colorize.conf" )
 
 rebuild_fontfiles() {
         einfo "Refreshing fonts.scale and fonts.dir..."
@@ -47,21 +47,19 @@ src_prepare() {
 
 src_install() {
 	font_src_install
-	mkdir -p "${D}/etc/fonts/conf.avail/"
-	cp "${FILESDIR}/01-notosans.conf" "${D}"/etc/fonts/conf.avail/ || die "failed to copy fontconfig config"
 }
 
 pkg_postinst() {
-	eselect fontconfig enable 08-noto-scalable.conf
+	eselect fontconfig enable 25-noto-scalable.conf
 	if use colorize-chrome-white-smiley ; then
-		eselect fontconfig enable 09-noto-colorize-chrome-white-smiley.conf
+		eselect fontconfig enable 43-noto-colorize-chrome-white-smiley.conf
 	else
-		eselect fontconfig disable 09-noto-colorize-chrome-white-smiley.conf
+		eselect fontconfig disable 43-noto-colorize-chrome-white-smiley.conf
 	fi
 	if use colorize-xfce4-terminal-smiley ; then
-		eselect fontconfig enable 09-noto-colorize-xfce4-terminal-white-smiley.conf
+		eselect fontconfig enable 43-noto-colorize-xfce4-terminal-white-smiley.conf
 	else
-		eselect fontconfig disable 09-noto-colorize-xfce4-terminal-white-smiley.conf
+		eselect fontconfig disable 43-noto-colorize-xfce4-terminal-white-smiley.conf
 	fi
 	eselect fontconfig enable 61-noto-colorize.conf
 	eselect fontconfig disable 70-no-bitmaps.conf
@@ -73,9 +71,9 @@ pkg_postinst() {
 }
 
 pkg_postrm() {
-	eselect fontconfig disable 08-noto-scalable.conf
-	eselect fontconfig disable 09-noto-colorize-chrome-white-smiley.conf
-	eselect fontconfig disable 09-noto-colorize-xfce4-terminal-white-smiley.conf
+	eselect fontconfig disable 25-noto-scalable.conf
+	eselect fontconfig disable 43-noto-colorize-chrome-white-smiley.conf
+	eselect fontconfig disable 43-noto-colorize-xfce4-terminal-white-smiley.conf
 	eselect fontconfig disable 61-noto-colorize.conf
 	eselect fontconfig enable 70-no-bitmaps.conf
         rebuild_fontfiles
