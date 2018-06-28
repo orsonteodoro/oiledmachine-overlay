@@ -58,6 +58,7 @@ pkg_postinst() {
 	fi
 	if use colorize-xfce4-terminal-smiley ; then
 		eselect fontconfig enable 43-noto-colorize-xfce4-terminal-white-smiley.conf
+		ewarn "The colorize-xfce4-terminal-white-smiley USE flag is intended for fonts like media-fonts/terminus-font.  Disable this USE flag and use media-fonts/inconsolata instead."
 	else
 		eselect fontconfig disable 43-noto-colorize-xfce4-terminal-white-smiley.conf
 	fi
