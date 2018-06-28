@@ -40,7 +40,7 @@ DEPEND="${RDEPEND}
 "
 
 FONT_SUFFIX="ttf"
-FONT_CONF=( "${FILESDIR}/01-noto-scalable.conf" "${FILESDIR}/02-noto-colorize-chrome-white-smiley.conf" "${FILESDIR}/02-noto-colorize-xfce4-terminal-white-smiley.conf" "${FILESDIR}/61-noto-colorize.conf" )
+FONT_CONF=( "${FILESDIR}/08-noto-scalable.conf" "${FILESDIR}/09-noto-colorize-chrome-white-smiley.conf" "${FILESDIR}/09-noto-colorize-xfce4-terminal-white-smiley.conf" "${FILESDIR}/61-noto-colorize.conf" )
 
 S="${WORKDIR}/noto-emoji-${NOTO_EMOJI_COMMIT}"
 
@@ -112,16 +112,16 @@ rebuild_fontfiles() {
 }
 
 pkg_postinst() {
-	eselect fontconfig enable 01-noto-scalable.conf
+	eselect fontconfig enable 08-noto-scalable.conf
 	if use colorize-chrome-white-smiley ; then
-		eselect fontconfig enable 02-noto-colorize-chrome-white-smiley.conf
+		eselect fontconfig enable 09-noto-colorize-chrome-white-smiley.conf
 	else
-		eselect fontconfig disable 02-noto-colorize-chrome-white-smiley.conf
+		eselect fontconfig disable 09-noto-colorize-chrome-white-smiley.conf
 	fi
 	if use colorize-xfce4-terminal-white-smiley ; then
-		eselect fontconfig enable 02-noto-colorize-xfce4-terminal-white-smiley.conf
+		eselect fontconfig enable 09-noto-colorize-xfce4-terminal-white-smiley.conf
 	else
-		eselect fontconfig disable 02-noto-colorize-xfce4-terminal-white-smiley.conf
+		eselect fontconfig disable 09-noto-colorize-xfce4-terminal-white-smiley.conf
 	fi
 	eselect fontconfig enable 61-noto-colorize.conf
 	eselect fontconfig disable 70-no-bitmaps.conf
@@ -133,9 +133,9 @@ pkg_postinst() {
 }
 
 pkg_postrm() {
-	eselect fontconfig disable 01-noto-scalable.conf
-	eselect fontconfig disable 02-noto-colorize-chrome-white-smiley.conf
-	eselect fontconfig disable 02-noto-colorize-xfce4-terminal-white-smiley.conf
+	eselect fontconfig disable 08-noto-scalable.conf
+	eselect fontconfig disable 09-noto-colorize-chrome-white-smiley.conf
+	eselect fontconfig disable 09-noto-colorize-xfce4-terminal-white-smiley.conf
 	eselect fontconfig disable 61-noto-colorize.conf
 	eselect fontconfig enable 70-no-bitmaps.conf
         rebuild_fontfiles
