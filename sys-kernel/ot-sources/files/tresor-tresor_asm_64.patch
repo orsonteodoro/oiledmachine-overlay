@@ -1,0 +1,122 @@
+--- a/arch/x86/crypto/tresor_asm.S.orig	2018-03-18 12:15:15.338180876 -0700
++++ b/arch/x86/crypto/tresor_asm.S	2018-03-18 12:23:24.513510974 -0700
+@@ -42,7 +42,7 @@
+ .set	rk9a,	%mm6		/* round key 9a */
+ .set	rk9b,	%mm7		/* round key 9b */
+ 
+-/* 32-bit debug registers */
++/* 64-bit debug registers */
+ .set	db0,	%db0		/* round key 0a */
+ .set	db1,	%db1		/* round key 0b */
+ .set	db2,	%db2		/* round key 1a */
+@@ -58,6 +58,16 @@
+ .set	esp,	%esp
+ .set	ebp,	%ebp
+ 
++/* 64-bit GPR registers */
++.set	rax,	%rax
++.set	rbx,	%rbx
++.set	rcx,	%rcx
++.set	rdx,	%rdx
++.set	rsi,	%rsi
++.set	rdi,	%rdi
++.set	rsp,	%rsp
++.set	rbp,	%rbp
++
+ 
+ /***************************************************************************
+  *  				DATA SEGMENT
+@@ -149,18 +159,24 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+ /* function prologue */ 
+ .macro prolog
+ 	/* enter */
+-	push		ebp
+-	movl		esp,ebp
+-	pusha
++	pushq		rbp
++	movq		rsp,rbp
++	pushq		rsp
++	pushq		rax
++	pushq		rcx
++	pushq		rdx
++	pushq		rbx
++	pushq		rbp
++	pushq		rsi /* in */
++	pushq		rdi /* out */
+ 	/* get input */
+-	movl		12(ebp),eax
+-	movdqu		0(eax),rstate
++	movdqu		0(rsi),rstate
+ .endm
+ 
+ /* function epilogue */
+ .macro epilog
+ 	/* write output */
+-	movl		8(ebp),eax
++	movq		-64(rbp),rax
+ 	movdqu		rstate,0(eax)
+ 	/* reset XMM registers */
+ 	pxor		%xmm0,%xmm0
+@@ -181,8 +197,15 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+ 	pxor		%mm6,%mm6
+ 	pxor		%mm7,%mm7
+ 	/* leave */
+-	popa
+-	pop		ebp
++	popq		rdi
++	popq		rsi
++	popq		rbp
++	popq		rbx
++	popq		rdx
++	popq		rcx
++	popq		rax
++	popq		rsp
++	popq		rbp
+ 	ret
+ .endm
+ 
+@@ -204,17 +227,17 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+ 
+ /* copy four 32-bit debug registers into one 128-bit sse register */
+ .macro	dbg_to_sse dbg0 dbg1 dbg2 dbg3 sse
+-	movl		\dbg0,eax
++	movq		\dbg0,rax
+ 	movd		eax,\sse
+-	movl		\dbg1,eax
++	movq		\dbg1,rax
+ 	movd		eax,rhelp
+ 	pslldq		$4,rhelp
+ 	pxor		rhelp,\sse
+-	movl		\dbg2,eax
++	movq		\dbg2,rax
+ 	movd		eax,rhelp
+ 	pslldq		$8,rhelp
+ 	pxor		rhelp,\sse
+-	movl		\dbg3,eax
++	movq		\dbg3,rax
+ 	movd		eax,rhelp
+ 	pslldq		$12,rhelp
+ 	pxor		rhelp,\sse
+@@ -480,14 +503,13 @@ tresor_decblk_128:
+ 
+ /* void tresor_set_key(const u8 *in_key) */
+ tresor_set_key:
+-	movl		4(esp),edx
+-	movl		0(edx),eax
+-	movl		eax,db0
+-	movl		4(edx),eax
+-	movl		eax,db1
+-	movl		8(edx),eax
+-	movl		eax,db2
+-	movl		12(edx),eax
+-	movl		eax,db3
++	movl		0(rdi),eax
++	movq		rax,db0
++	movl		4(rdi),eax
++	movq		rax,db1
++	movl		8(rdi),eax
++	movq		rax,db2
++	movl		12(rdi),eax
++	movq		rax,db3
+ 	xorl		eax, eax
+ 	ret

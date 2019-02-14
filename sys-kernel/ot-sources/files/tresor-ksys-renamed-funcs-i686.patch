@@ -1,0 +1,57 @@
+--- a/arch/x86/crypto/tresor_key.c.orig	2019-02-04 17:42:35.402610152 -0800
++++ b/arch/x86/crypto/tresor_key.c	2019-02-04 17:50:19.805571111 -0800
+@@ -167,7 +167,7 @@ static int printf_(const char *fmt, ...)
+ 	line[col-1] = 0;
+ 	va_end(args);
+ 
+-	return sys_write(term_fd, line, strlen(line));
++	return ksys_write(term_fd, line, strlen(line));
+ }
+ 
+ /* Erase line before printing (workaround for weird consoles) */
+@@ -187,7 +187,7 @@ static int printf(const char *fmt, ...)
+ static unsigned char getchar(void)
+ {
+ 	unsigned char c;
+-	sys_read(term_fd, &c, 1);
++	ksys_read(term_fd, &c, 1);
+ 	return c;
+ }
+ 
+@@ -236,15 +236,15 @@ int tresor_readkey(const char *terminal,
+ 	ofs = get_fs();
+ 	set_fs(get_ds());
+ 	/* try to open terminal */
+-	term_fd = sys_open((const char __user *) terminal, O_RDWR, 0);
++	term_fd = ksys_open((const char __user *) terminal, O_RDWR, 0);
+ 	if (term_fd < 0) {
+ 		set_fs(ofs);
+ 		return term_fd;
+ 	}
+ 	/* read single characters; no echo */
+-	sys_ioctl(term_fd, TCGETS, (long)&termios);
++	ksys_ioctl(term_fd, TCGETS, (long)&termios);
+ 	termios.c_lflag &= ~(ICANON | ECHO);
+-	sys_ioctl(term_fd, TCSETSF, (long)&termios);
++	ksys_ioctl(term_fd, TCSETSF, (long)&termios);
+ 	/* initialize console */
+ 	cursor_enable();
+ 	cls();
+@@ -387,7 +387,7 @@ readkey:
+ 		printf("\n\n");
+ 
+ 	termios.c_lflag |= (ICANON | ECHO);
+-	sys_ioctl(term_fd, TCSETSF, (long)&termios);
++	ksys_ioctl(term_fd, TCSETSF, (long)&termios);
+ 
+ 	if (resume)
+ 		cursor_disable();
+@@ -395,7 +395,7 @@ readkey:
+ 		cursor_reset();
+ 
+ 	/* clean up */
+-	sys_close(term_fd);
++	ksys_close(term_fd);
+ 	set_fs(ofs);
+ 	return 0;
+ }

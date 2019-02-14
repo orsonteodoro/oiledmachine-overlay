@@ -1,0 +1,63 @@
+--- a/arch/x86/crypto/tresor_key.c.orig	2018-03-18 12:15:15.341514336 -0700
++++ b/arch/x86/crypto/tresor_key.c	2018-03-18 12:23:47.261044244 -0700
+@@ -34,8 +34,8 @@
+ #include <linux/tty.h>
+ #include <stdarg.h>
+ 
+-int term_fd;
+-unsigned char key_hash[32];
++static int term_fd;
++static unsigned char key_hash[32];
+ 
+ /* SHA256 Macros */
+ #define	rot(x, n)	(((x) >> n) | ((x) << (32 - n)))
+@@ -236,7 +236,7 @@ int tresor_readkey(const char *terminal,
+ 	ofs = get_fs();
+ 	set_fs(get_ds());
+ 	/* try to open terminal */
+-	term_fd = sys_open(terminal, O_RDWR, 0);
++	term_fd = sys_open((const char __user *) terminal, O_RDWR, 0);
+ 	if (term_fd < 0) {
+ 		set_fs(ofs);
+ 		return term_fd;
+@@ -362,6 +362,8 @@ readkey:
+ 
+ 	/* read some key strokes */
+ 	printf("\n\n");
++	printf(" To overwrite the input buffers, press and hold any key.\n");
++	printf(" F10 is one of the fastest, it generates 5 bytes at once.\n\n");
+ 
+ 	for (i = 0; i < TRESOR_RANDOM_CHARS; i++) {
+ 		progress = (i * 40) / TRESOR_RANDOM_CHARS;
+@@ -399,6 +401,9 @@ readkey:
+ }
+ #endif
+ 
++/*
++ * sysfs support
++ */
+ #ifdef CONFIG_CRYPTO_TRESOR_SYSFS
+ #ifndef CONFIG_CRYPTO_MANAGER_DISABLE_TESTS
+ /*
+@@ -477,8 +482,9 @@ static ssize_t password_store(struct kob
+ 	memset(password, 0, 54);
+ 	memset(key, 0, 32);
+ 
+-	/* Reset the input buffer (ugly hack) */
++	/* Reset the input buffer (ugly hack, ignoring const) */
+ 	memset((char *)buf, 0, count);
++	wbinvd();
+ 
+ 	return count;
+ }
+@@ -502,8 +508,9 @@ static ssize_t key_store(struct kobject
+ 	sha256(key, 16, key_hash);
+ 	memset(key, 0, 16);
+ 
+-	/* Reset the input buffer (ugly hack) */
++	/* Reset the input buffer (ugly hack, ignoring const) */
+ 	memset((char *)buf, 0, count);
++	wbinvd();
+ 
+ 	return count;
+ }

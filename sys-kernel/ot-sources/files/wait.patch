@@ -1,0 +1,11 @@
+--- a/kernel/sched/wait.c.orig	2018-03-16 18:09:39.985641887 -0700
++++ b/kernel/sched/wait.c	2018-03-16 18:49:14.997725904 -0700
+@@ -415,7 +415,7 @@ long wait_woken(struct wait_queue_entry
+ 	 * woken_wake_function() such that if we observe WQ_FLAG_WOKEN we must
+ 	 * also observe all state before the wakeup.
+ 	 */
+-	if (!(wq_entry->flags & WQ_FLAG_WOKEN) && !is_kthread_should_stop())
++	if (!(wq_entry->flags & WQ_FLAG_WOKEN) /*&& !is_kthread_should_stop()*/)
+ 		timeout = schedule_timeout(timeout);
+ 	__set_current_state(TASK_RUNNING);
+ 

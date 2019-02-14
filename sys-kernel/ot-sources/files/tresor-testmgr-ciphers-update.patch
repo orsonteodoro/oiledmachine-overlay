@@ -1,0 +1,40 @@
+--- a/crypto/testmgr.c.orig	2019-02-10 17:46:19.421987612 -0800
++++ b/crypto/testmgr.c	2019-02-10 19:30:58.328619180 -0800
+@@ -2677,17 +2677,8 @@ static const struct alg_test_desc alg_te
+ 		.alg = "cbc(tresor)",
+ 		.test = alg_test_skcipher,
+ 		.suite = {
+-			.cipher = {
+-				.enc = {
+-					.vecs = aes_cbc_enc_tv_template,
+-					.count = AES_CBC_ENC_TEST_VECTORS
+-				},
+-				.dec = {
+-					.vecs = aes_cbc_dec_tv_template,
+-					.count = AES_CBC_DEC_TEST_VECTORS
+-				}
+-			}
+-		}
++			.cipher = __VECS(aes_cbc_tv_template)
++		},
+ 	}, {
+ #endif
+ 		.alg = "cbc(twofish)",
+@@ -3082,16 +3073,7 @@ static const struct alg_test_desc alg_te
+ 		.alg = "ecb(tresor)",
+ 		.test = alg_test_skcipher,
+ 		.suite = {
+-			.cipher = {
+-				.enc = {
+-					.vecs = aes_enc_tv_template,
+-					.count = AES_ENC_TEST_VECTORS
+-				},
+-				.dec = {
+-					.vecs = aes_dec_tv_template,
+-					.count = AES_DEC_TEST_VECTORS
+-				}
+-			}
++			.cipher = __VECS(aes_tv_template)
+ 		}
+ 	}, {
+ #endif

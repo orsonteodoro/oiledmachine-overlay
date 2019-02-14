@@ -1,0 +1,53 @@
+--- a/arch/x86/crypto/tresor_asm.S.orig	2019-02-06 16:36:01.733836714 -0800
++++ b/arch/x86/crypto/tresor_asm.S	2019-02-09 08:24:20.353528589 -0800
+@@ -177,7 +177,7 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+ .macro epilog
+ 	/* write output */
+ 	movq		-64(rbp),rax
+-	movdqu		rstate,0(eax)
++	movdqu		rstate,0(rax)
+ 	/* reset XMM registers */
+ 	pxor		%xmm0,%xmm0
+ 	pxor		%xmm1,%xmm1
+@@ -264,9 +264,9 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+ 	movd		rhelp,eax
+ 	andl		$0x000000ff,eax
+ 	.if \init
+-		movzx	ft_tab+1(,eax,4),edx
++		movzx	ft_tab+1(,rax,4),edx
+ 	.else
+-		xorb	ft_tab+1(,eax,4),%dl
++		xorb	ft_tab+1(,rax,4),%dl
+ 	.endif
+ .endm
+ 
+@@ -286,7 +286,7 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+ 	ks_box		14,\rk,0
+ 	shl		$8,edx
+ 	ks_box		13,\rk,0
+-	xorl		rc_tab(,ecx,4),edx
++	xorl		rc_tab(,rcx,4),edx
+ 	movd		edx,rhelp
+ 	pxor		rhelp,\rk
+ 	/*
+@@ -312,7 +312,7 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+ 	psrldq		$\r,rhelp
+ 	movd		rhelp,eax
+ 	andl		$0x000000ff,eax
+-	movl		gfbd9e(,eax,4),eax
++	movl		gfbd9e(,rax,4),eax
+ 	rol		$\l,eax
+ 	.if \init
+ 		movl	eax,\reg
+@@ -361,9 +361,9 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+ 	movd		rhelp,eax
+ 	andl		$0x000000ff,eax
+ 	.if \init
+-		movl	\tab+\off(,eax,4),\reg
++		movl	\tab+\off(,rax,4),\reg
+ 	.else
+-		xorl	\tab+\off(,eax,4),\reg
++		xorl	\tab+\off(,rax,4),\reg
+ 	.endif
+ .endm
+ 
