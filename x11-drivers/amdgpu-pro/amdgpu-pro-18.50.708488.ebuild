@@ -8,17 +8,19 @@ MULTILIB_COMPAT=( abi_x86_{32,64} )
 inherit multilib-build unpacker linux-info
 
 DESCRIPTION="New generation AMD closed-source drivers for Southern Islands (HD7730 Series) and newer chipsets"
-HOMEPAGE="https://www.amd.com/en/support/kb/release-notes/rn-rad-pro-lin-18-10"
+HOMEPAGE="https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-18-50-unified"
 PKG_VER=${PV:0:5}
 PKG_REV=${PV:6:6}
 PKG_ARCH="ubuntu"
 PKG_ARCH_VER="18.04"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
-PKG_VER_LIBDRM="2.4.89"
-PKG_VER_MESA="17.3.3"
+PKG_VER_STRING_DIR=${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}
+PKG_VER_LIBDRM="2.4.95"
+PKG_VER_MESA="18.2.0"
 PKG_VER_HSA="1.1.6"
-PKG_VER_ROCT="1.0.7"
-SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/amdgpu-pro-${PKG_VER_STRING}.tar.xz"
+PKG_VER_ROCT="1.0.9"
+PKG_VER_XORG_VIDEO_AMDGPU_DRV="18.1.99" # about the same as the mesa version
+SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 
 RESTRICT="fetch strip"
 
@@ -47,8 +49,8 @@ RDEPEND="
 		  media-libs/vulkan-loader )
 	opencl? ( >=sys-devel/gcc-5.2.0 )
 	vdpau? ( >=media-libs/mesa-${PKG_VER_MESA}[-vdpau] )
-	>=sys-devel/lld-5.0.0
-	>=sys-devel/llvm-5.0.0
+	>=sys-devel/lld-7.0.0
+	>=sys-devel/llvm-7.0.0
 	>=x11-base/xorg-drivers-1.19
 	<x11-base/xorg-drivers-1.20
 	>=x11-base/xorg-server-1.19[glamor]
@@ -62,12 +64,17 @@ RDEPEND="
 	freesync? ( || (   sys-kernel/ot-sources[amd]
 			 >=sys-kernel/git-sources-5.0_rc1 ) )
 "
+#hsakmt requires libnuma.so.1
+#kmstest requires libkms
+#amdgpu_dri.so requires wayland?
+#vdpau requires llvm7
+
 DEPEND="
 	>=sys-kernel/linux-firmware-20161205
 "
 
 S="${WORKDIR}"
-REQUIRED_USE="!hsa !rocr || ( pal orca rocm )" #incomplete
+REQUIRED_USE="!rocm !hsa !rocr || ( pal orca rocm )" #incomplete
 
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
@@ -143,121 +150,121 @@ pkg_setup() {
 src_unpack() {
 	default
 
-	unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgl1-amdgpu-pro-appprofiles_${PKG_VER_STRING}_all.deb"
-	unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libdrm-amdgpu-utils_${PKG_VER_LIBDRM}-${PKG_REV}_amd64.deb"
+	unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgl1-amdgpu-pro-appprofiles_${PKG_VER_STRING}_all.deb"
+	unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libdrm-amdgpu-utils_${PKG_VER_LIBDRM}-${PKG_REV}_amd64.deb"
 	
 	if use opencl ; then
 		# Install clinfo
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/clinfo-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/clinfo-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
 		
 		# Install OpenCL components
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libopencl1-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libopencl1-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
 		if use pal ; then
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/opencl-amdgpu-pro-icd_${PKG_VER_STRING}_amd64.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/opencl-amdgpu-pro-icd_${PKG_VER_STRING}_amd64.deb"
 		fi
 		
 		if use hsa ; then
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/hsa-ext-amdgpu-finalize_${PKG_VER_HSA}-${PKG_REV}_amd64.deb"
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/hsa-ext-amdgpu-image_${PKG_VER_HSA}-${PKG_REV}_amd64.deb"
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/hsa-runtime-tools-amdgpu_${PKG_VER_HSA}-${PKG_REV}_amd64.deb"
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/hsa-runtime-tools-amdgpu-dev_${PKG_VER_HSA}-${PKG_REV}_amd64.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/hsa-ext-amdgpu-finalize_${PKG_VER_HSA}-${PKG_REV}_amd64.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/hsa-ext-amdgpu-image_${PKG_VER_HSA}-${PKG_REV}_amd64.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/hsa-runtime-tools-amdgpu_${PKG_VER_HSA}-${PKG_REV}_amd64.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/hsa-runtime-tools-amdgpu-dev_${PKG_VER_HSA}-${PKG_REV}_amd64.deb"
 		fi
 		
 		if use rocm ; then
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/rocm-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
-			#unpack_deb "amdgpu-pro-${PKG_VER_STRING}/rocm-amdgpu-pro-icd_${PKG_VER_STRING}_amd64.deb" fixme
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/rocm-amdgpu-pro-opencl_${PKG_VER_STRING}_amd64.deb"
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/rocm-amdgpu-pro-opencl-dev_${PKG_VER_STRING}_amd64.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/rocm-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
+			#unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/rocm-amdgpu-pro-icd_${PKG_VER_STRING}_amd64.deb" fixme
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/rocm-amdgpu-pro-opencl_${PKG_VER_STRING}_amd64.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/rocm-amdgpu-pro-opencl-dev_${PKG_VER_STRING}_amd64.deb"
 		fi
 		
 		if use rocr ; then
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/rocr-amdgpu_1.1.6-${PKG_REV}_amd64.deb"
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/rocr-amdgpu-dev_1.1.6-${PKG_REV}_amd64.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/rocr-amdgpu_1.1.6-${PKG_REV}_amd64.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/rocr-amdgpu-dev_1.1.6-${PKG_REV}_amd64.deb"
 		fi
 		
 		if use orca ; then
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/opencl-orca-amdgpu-pro-icd_${PKG_VER_STRING}_amd64.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/opencl-orca-amdgpu-pro-icd_${PKG_VER_STRING}_amd64.deb"
 			if use abi_x86_32 ; then
-				unpack_deb "amdgpu-pro-${PKG_VER_STRING}/opencl-orca-amdgpu-pro-icd_${PKG_VER_STRING}_i386.deb"
+				unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/opencl-orca-amdgpu-pro-icd_${PKG_VER_STRING}_i386.deb"
 			fi
 		fi
 		
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/roct-amdgpu-pro_${PKG_VER_ROCT}-${PKG_REV}_amd64.deb"
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/roct-amdgpu-pro-dev_${PKG_VER_ROCT}-${PKG_REV}_amd64.deb"
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/roct-amdgpu-pro_${PKG_VER_ROCT}-${PKG_REV}_amd64.deb"
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/roct-amdgpu-pro-dev_${PKG_VER_ROCT}-${PKG_REV}_amd64.deb"
 		
 		if use abi_x86_32 ; then
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libopencl1-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
-			#unpack_deb "amdgpu-pro-${PKG_VER_STRING}/opencl-amdgpu-pro-icd_${PKG_VER_STRING}_i386.deb" fixme
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libopencl1-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
+			#unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/opencl-amdgpu-pro-icd_${PKG_VER_STRING}_i386.deb" fixme
 		fi
 	fi
 	
 	if use vulkan ; then
 		# Install Vulkan driver
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/vulkan-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/vulkan-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
 		
 		if use abi_x86_32 ; then
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/vulkan-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/vulkan-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
 		fi
 	fi
 	
 	if use opengl ; then
 		# Install OpenGL
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libdrm-amdgpu-amdgpu1_${PKG_VER_LIBDRM}-${PKG_REV}_amd64.deb"
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libdrm-amdgpu-radeon1_${PKG_VER_LIBDRM}-${PKG_REV}_amd64.deb"
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgl1-amdgpu-pro-glx_${PKG_VER_STRING}_amd64.deb"
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgl1-amdgpu-pro-ext_${PKG_VER_STRING}_amd64.deb"
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgl1-amdgpu-pro-dri_${PKG_VER_STRING}_amd64.deb"
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libdrm-amdgpu-amdgpu1_${PKG_VER_LIBDRM}-${PKG_REV}_amd64.deb"
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libdrm-amdgpu-radeon1_${PKG_VER_LIBDRM}-${PKG_REV}_amd64.deb"
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgl1-amdgpu-pro-glx_${PKG_VER_STRING}_amd64.deb"
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgl1-amdgpu-pro-ext_${PKG_VER_STRING}_amd64.deb"
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgl1-amdgpu-pro-dri_${PKG_VER_STRING}_amd64.deb"
 		
 		# Install GBM
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgbm1-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgbm1-amdgpu-pro-base_${PKG_VER_STRING}_all.deb"
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgbm1-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgbm1-amdgpu-pro-base_${PKG_VER_STRING}_all.deb"
 		
 		if use abi_x86_32 ; then
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libdrm-amdgpu-amdgpu1_${PKG_VER_LIBDRM}-${PKG_REV}_i386.deb"
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libdrm-amdgpu-radeon1_${PKG_VER_LIBDRM}-${PKG_REV}_i386.deb"
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgl1-amdgpu-pro-glx_${PKG_VER_STRING}_i386.deb"
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgl1-amdgpu-pro-dri_${PKG_VER_STRING}_i386.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libdrm-amdgpu-amdgpu1_${PKG_VER_LIBDRM}-${PKG_REV}_i386.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libdrm-amdgpu-radeon1_${PKG_VER_LIBDRM}-${PKG_REV}_i386.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgl1-amdgpu-pro-glx_${PKG_VER_STRING}_i386.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgl1-amdgpu-pro-dri_${PKG_VER_STRING}_i386.deb"
 			
 			# Install GBM
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgbm1-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgbm1-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
 		fi
 	fi
 	
 	if use gles2 ; then
 		# Install GLES2
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgles2-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgles2-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
 		
 		if use abi_x86_32 ; then
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgles2-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgles2-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
 		fi
 	fi
 	
 	# Install EGL libs
-	unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libegl1-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
+	unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libegl1-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
 	
 	if use abi_x86_32 ; then
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libegl1-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libegl1-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
 	fi
 	
 	if use vdpau ; then
 		# Install VDPAU
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/mesa-amdgpu-vdpau-drivers_${PKG_VER_MESA}-${PKG_REV}_amd64.deb"
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/mesa-amdgpu-vdpau-drivers_${PKG_VER_MESA}-${PKG_REV}_amd64.deb"
 		
 		if use abi_x86_32 ; then
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/mesa-amdgpu-vdpau-drivers_${PKG_VER_MESA}-${PKG_REV}_i386.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/mesa-amdgpu-vdpau-drivers_${PKG_VER_MESA}-${PKG_REV}_i386.deb"
 		fi
 	fi
 	
 	# Install xorg drivers
-	unpack_deb "amdgpu-pro-${PKG_VER_STRING}/xserver-xorg-amdgpu-video-amdgpu_1.4.0-${PKG_REV}_amd64.deb"
+	unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/xserver-xorg-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}_amd64.deb"
 	
 	# Install gstreamer OpenMAX plugin
-	unpack_deb "amdgpu-pro-${PKG_VER_STRING}/gst-omx-amdgpu_1.0.0.1-${PKG_REV}_amd64.deb"
+	unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/gst-omx-amdgpu_1.0.0.1-${PKG_REV}_amd64.deb"
 	if use abi_x86_32 ; then
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/gst-omx-amdgpu_1.0.0.1-${PKG_REV}_i386.deb"
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/gst-omx-amdgpu_1.0.0.1-${PKG_REV}_i386.deb"
 	fi
 
-	unpack_deb "amdgpu-pro-${PKG_VER_STRING}/ids-amdgpu_1.0.0-${PKG_REV}_all.deb"
+	unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libdrm-amdgpu-common_1.0.0-${PKG_REV}_all.deb"
 }
 
 src_prepare() {
@@ -270,13 +277,13 @@ EOF
 /usr/lib32/gbm
 EOF
 
-# AccelMethod must be glamor or it will freeze rx480 in 18.10
+# AccelMethod=glamor breaks on rx480 since 18.20
 	cat << EOF > "${T}/10-device.conf" || die
 Section "Device"
 	Identifier  "My graphics card"
 	Driver      "amdgpu"
 	BusID       "PCI:1:0:0"
-	Option      "AccelMethod" "glamor"
+	Option      "AccelMethod" "none"
 	Option      "DRI" "3"
 	Option		"TearFree" "on"
 EndSection
@@ -419,10 +426,10 @@ src_install() {
 		fi
 		
 		insinto /usr/include/libhsakmt
-		doins opt/amdgpu-pro/include/libhsakmt/hsakmt*
+		doins opt/amdgpu-pro/include/hsakmt*
 		
 		insinto /usr/include/libhsakmt/linux
-		doins opt/amdgpu-pro/include/libhsakmt/linux/kfd_ioctl.h
+		doins opt/amdgpu-pro/include/linux/kfd_ioctl.h
 		
 		if use abi_x86_32 ; then
 			# Install 32 bit OpenCL ICD
