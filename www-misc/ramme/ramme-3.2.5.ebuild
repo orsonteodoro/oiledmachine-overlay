@@ -17,7 +17,7 @@ IUSE="-analytics-tracking"
 S="${WORKDIR}/${PN}-${PV}"
 
 RDEPEND="${RDEPEND}
-	 >=dev-util/electron-1.6.10"
+	 >=dev-util/electron-2.0.3"
 
 DEPEND="${RDEPEND}
 	dev-lang/sassc
