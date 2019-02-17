@@ -1,20 +1,22 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
 inherit eutils desktop
 
+COMMIT="ee922919f432f0d22b56b47a9d5d10a875184811"
+
 DESCRIPTION="Unofficial Instagram Desktop App"
 HOMEPAGE="https://github.com/terkelg/ramme"
-SRC_URI="https://github.com/terkelg/ramme/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/terkelg/ramme/archive/${COMMIT}.zip -> ${P}.zip"
 
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE=""
+IUSE="-analytics-tracking"
 
-S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/${PN}-${COMMIT}"
 
 RDEPEND="${RDEPEND}
 	 >=dev-util/electron-1.6.10"
@@ -23,11 +25,24 @@ DEPEND="${RDEPEND}
 	dev-lang/sassc
         net-libs/nodejs[npm]"
 
-ELECTRON_SLOT="1.6"
+pkg_setup() {
+	export ELECTRON_SLOT=$(electron -v | sed -e "s|v||" | cut -f1-2 -d '.')
+}
+
+src_prepare() {
+	default
+
+	if ! use analytics-tracking ; then
+		epatch "${FILESDIR}"/ramme-3.2.5-disable-analytics.patch
+		rm "${S}"/app/src/main/analytics.js
+	fi
+}
 
 src_compile() {
 	cd "${S}/app"
 	npm install
+	einfo "Running \`npm audit fix\`"
+	npm audit fix
 	npm install electron
 
 	# patch electron node_module
@@ -44,6 +59,9 @@ src_compile() {
 src_install() {
 	mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	cp -a * "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+	pushd "${D}"/usr/$(get_libdir)/node/ramme/${SLOT}/app/
+	ln -s src dist
+	popd
 
 	#create wrapper
 	mkdir -p "${D}/usr/bin"
