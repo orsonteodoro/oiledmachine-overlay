@@ -1,7 +1,7 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 inherit savedconfig toolchain-funcs
 
 DESCRIPTION="a dynamic window manager for X11"
@@ -10,7 +10,7 @@ SRC_URI="https://dl.suckless.org/${PN}/${P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="amd64 ~arm ~ppc ~ppc64 ~x86 ~x86-fbsd"
+KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~x86-fbsd"
 IUSE="xinerama"
 IUSE+=" fibonacci rotatestack resizehintsoff"
 
@@ -41,19 +41,9 @@ src_prepare() {
 	default
 
 	sed -i \
-		-e "s/CFLAGS = -std=c99 -pedantic -Wall -Os/CFLAGS += -std=c99 -pedantic -Wall/" \
-		-e "/^LDFLAGS/{s|=|+=|g;s|-s ||g}" \
-		-e "s/#XINERAMALIBS =/XINERAMALIBS ?=/" \
-		-e "s/#XINERAMAFLAGS =/XINERAMAFLAGS ?=/" \
-		-e "s@/usr/X11R6/include@${EPREFIX}/usr/include/X11@" \
-		-e "s@/usr/X11R6/lib@${EPREFIX}/usr/lib@" \
-		-e "s@-I/usr/include@@" -e "s@-L/usr/lib@@" \
-		-e "s/\/freetype2/\ -I\/usr\/include\/freetype2/" \
+		-e "s/ -Os / /" \
+		-e "/^\(LDFLAGS\|CFLAGS\|CPPFLAGS\)/{s| = | += |g;s|-s ||g}" \
 		config.mk || die
-	sed -i \
-		-e '/@echo CC/d' \
-		-e 's|@${CC}|$(CC)|g' \
-		Makefile || die
 
 	restore_config config.h
 }
