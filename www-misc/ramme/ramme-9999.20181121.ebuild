@@ -33,7 +33,7 @@ src_prepare() {
 	default
 
 	if ! use analytics-tracking ; then
-		epatch "${FILESDIR}"/ramme-3.2.5-disable-analytics.patch
+		epatch "${FILESDIR}"/${PN}-3.2.5-disable-analytics.patch
 		rm "${S}"/app/src/main/analytics.js
 	fi
 }
@@ -45,11 +45,6 @@ src_compile() {
 	npm audit fix
 	npm install electron
 
-	# patch electron node_module
-	cd "${S}/app/node_modules/electron"
-	sed -i -e "s|module.exports = path.join(__dirname, fs.readFileSync(pathFile, 'utf-8'))|module.exports = fs.readFileSync(pathFile, 'utf-8')|" index.js || die
-	echo "/usr/$(get_libdir)/electron-${ELECTRON_SLOT}/electron" > path.txt
-
 	cd "${S}"
 
 	sassc ./app/src/renderer/styles/app.scss > ./app/src/renderer/styles/app.css
@@ -59,16 +54,16 @@ src_compile() {
 src_install() {
 	mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	cp -a * "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
-	pushd "${D}"/usr/$(get_libdir)/node/ramme/${SLOT}/app/
+	pushd "${D}"/usr/$(get_libdir)/node/${PN}/${SLOT}/app/
 	ln -s src dist
 	popd
 
 	#create wrapper
 	mkdir -p "${D}/usr/bin"
-	echo "#!/bin/bash" > "${D}/usr/bin/ramme"
-	echo "/usr/$(get_libdir)/electron-${ELECTRON_SLOT}/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/app/src/main" >> "${D}/usr/bin/ramme"
-	chmod +x "${D}"/usr/bin/ramme
+	echo "#!/bin/bash" > "${D}/usr/bin/${PN}"
+	echo "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/app/src/main" >> "${D}/usr/bin/${PN}"
+	chmod +x "${D}"/usr/bin/${PN}
 
-	newicon "media/icon.png" "ramme.png"
-	make_desktop_entry ${PN} "Ramme" ${PN} "Network"
+	newicon "media/icon.png" "${PN}.png"
+	make_desktop_entry ${PN} "${PN^}" ${PN} "Network"
 }
