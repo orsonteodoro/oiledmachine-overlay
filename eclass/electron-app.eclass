@@ -72,7 +72,8 @@ electron-desktop-app-install() {
 	local rel_src_path="$1"
 	local rel_main_app_path="$2"
 	local rel_icon_path="$3"
-	local category="$5"
+	local pkg_name="$5"
+	local category="$6"
 
 	mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	cp -a ${rel_src_path} "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
@@ -84,7 +85,7 @@ electron-desktop-app-install() {
 	chmod +x "${D}"/usr/bin/${PN}
 
 	newicon "${rel_icon_path}" "${PN}.png"
-	make_desktop_entry ${PN} "${PN^}" ${PN} "${category}"
+	make_desktop_entry ${PN} "${pkg_name}" ${PN} "${category}"
 }
 
 # @FUNCTION: electron-app_pkg_postrm
