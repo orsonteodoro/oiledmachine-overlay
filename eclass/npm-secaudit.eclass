@@ -11,7 +11,7 @@
 # @BLURB: Eclass for Electron packages
 # @DESCRIPTION:
 # The npm-secaudit eclass defines phase functions and utility for npm packages.
-# It depends on the sys-app/npm-secaudit package to maintain a
+# It depends on the app-portage/npm-secaudit package to maintain a
 # secure environment.
 #
 # It was intended to replace the insecure npm.eclass implementations and

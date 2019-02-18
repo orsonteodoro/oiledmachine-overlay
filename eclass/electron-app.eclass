@@ -11,7 +11,7 @@
 # @BLURB: Eclass for Electron packages
 # @DESCRIPTION:
 # The electron-app eclass defines phase functions and utility functions for
-# Electron app packages. It depends on the sys-app/npm-secaudit package to
+# Electron app packages. It depends on the app-portage/npm-secaudit package to
 # maintain a secure environment.
 
 case "${EAPI:-0}" in
