@@ -25,7 +25,7 @@ case "${EAPI:-0}" in
                 ;;
 esac
 
-DEPEND+=" sys-apps/npm-secaudit"
+DEPEND+=" app-portage/npm-secaudit"
 
 inherit desktop
 
