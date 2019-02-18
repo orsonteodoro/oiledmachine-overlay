@@ -52,5 +52,5 @@ src_install() {
 }
 
 pkg_postinst() {
-	electron-app-register
+	electron-app-register "app"
 }
