@@ -18,5 +18,5 @@ S="${WORKDIR}"
 
 src_install() {
 	mkdir -p "${D}"/etc/portage/postsync.d/
-	cp "${FILESDIR}/npm-secaudit" "${D}"/etc/portage/postsync.d/
+	cp "${FILESDIR}/${PN}-v${PV}" "${D}"/etc/portage/postsync.d/${PN} || die
 }
