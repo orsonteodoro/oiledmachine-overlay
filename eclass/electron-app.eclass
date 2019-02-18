@@ -74,6 +74,9 @@ electron-app-register() {
 	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
 
 	echo -e "${CATEGORY}/${PN}:${SLOT}\t${check_path}" >> "${NPM_PACKAGE_DB}"
+
+	# remove blank lines
+	sed -i '/^$/d' "${NPM_PACKAGE_DB}"
 }
 
 # @FUNCTION: electron-desktop-app-install
