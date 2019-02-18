@@ -26,21 +26,25 @@ case "${EAPI:-0}" in
 esac
 
 DEPEND+=" app-portage/npm-secaudit"
+IUSE+=" debug"
 
 inherit desktop
 
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
-
-EXPORT_FUNCTIONS pkg_postrm
 
 # @FUNCTION: electron-app-build
 # @DESCRIPTION:
 # Builds an electron app with security checks
 electron-app-build() {
 	local path="$1"
+	local install_args="--production"
+
+	if use debug ; then
+		install_args=""
+	fi
 
 	pushd "${1}"
-	npm install || die
+	npm install ${install_args} || die
 	if [[ ! -e package-lock.js ]] ; then
 		einfo "Running \`npm i --package-lock\`"
 		npm i --package-lock # prereq for command below
@@ -48,6 +52,9 @@ electron-app-build() {
 	einfo "Running \`npm audit fix --force\`"
 	npm audit fix --force || die
 	einfo "Auditing security done"
+	if ! use debug ; then
+		npm prune --production
+	fi
 	popd
 }
 
