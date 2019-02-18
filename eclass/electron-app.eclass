@@ -48,7 +48,6 @@ electron-app-build() {
 	einfo "Running \`npm audit fix --force\`"
 	npm audit fix --force || die
 	einfo "Auditing security done"
-	npm install electron || die
 	popd
 }
 
