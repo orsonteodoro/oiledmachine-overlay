@@ -72,8 +72,8 @@ electron-desktop-app-install() {
 	local rel_src_path="$1"
 	local rel_main_app_path="$2"
 	local rel_icon_path="$3"
-	local pkg_name="$5"
-	local category="$6"
+	local pkg_name="$4"
+	local category="$5"
 
 	mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	cp -a ${rel_src_path} "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
