@@ -26,10 +26,13 @@ src_compile() {
 }
 
 src_install() {
-	npm-secaudit-register
 	npm-secaudit-install "*"
 
 	insinto /usr/bin
 	dosym /usr/$(get_libdir)/node/${PN}/${SLOT}/bin/tsc /usr/bin/tsc
 	dosym /usr/$(get_libdir)/node/${PN}/${SLOT}/bin/tsserver /usr/bin/tsserver
+}
+
+pkg_postinst() {
+	npm-secaudit-register
 }
