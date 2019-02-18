@@ -55,7 +55,7 @@ electron-app-build() {
 # @FUNCTION: electron-app-register
 # @DESCRIPTION:
 # Adds the package to the electron database
-# This function MUST be called in src_install.
+# This function MUST be called in pkg_postinst.
 electron-app-register() {
 	local rel_path=${1:-""}
 	local check_path="/usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_path}"
@@ -64,6 +64,7 @@ electron-app-register() {
 	addwrite "${NPM_PACKAGE_DB}"
 
 	# remove existing entry
+	touch "${NPM_PACKAGE_DB}"
 	sed -i -e "s|${CATEGORY}/${P}.*||g" "${NPM_PACKAGE_DB}"
 
 	echo -e "${CATEGORY}/${P}\t${check_path}\t$(date +%s)" >> "${NPM_PACKAGE_DB}"

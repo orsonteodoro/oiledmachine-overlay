@@ -56,7 +56,7 @@ npm-secaudit-build() {
 # @FUNCTION: npm-secaudit-register
 # @DESCRIPTION:
 # Adds the package to the electron database
-# This function MUST be called in src_install.
+# This function MUST be called in post_inst.
 npm-secaudit-register() {
 	local rel_path=${1:-""}
 	local check_path="/usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_path}"
@@ -65,6 +65,7 @@ npm-secaudit-register() {
 	addwrite "${NPM_PACKAGE_DB}"
 
 	# remove existing entry
+	touch "${NPM_PACKAGE_DB}"
 	sed -i -e "s|${CATEGORY}/${P}.*||g" "${NPM_PACKAGE_DB}"
 
 	echo -e "${CATEGORY}/${P}\t${check_path}\t$(date +%s)" >> "${NPM_PACKAGE_DB}"
