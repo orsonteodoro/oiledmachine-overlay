@@ -42,10 +42,6 @@ function check() {
 	while read -r line ; do
 		local p=$(echo "${line}" | cut -f1)
 		local path=$(echo "${line}" | cut -f2)
-		local last_check_time=$(echo "${line}" | cut -f3)
-
-		# todo?
-		# "$(( $last_check_time + $CHECK_PERIOD ))" < "$(date +%s)"
 
 		pushd "${path}" >/dev/null
 		npm audit > /dev/null
