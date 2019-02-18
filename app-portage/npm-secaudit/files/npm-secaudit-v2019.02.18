@@ -92,8 +92,9 @@ function check() {
 function summary() {
 	local n_insecure=$(grep -E '[^[:space:]]' -cv ${INSECURE_SET_FP})
 	if [[ $n_insecure > 0 ]]; then
+		D=$(cd "$(dirname "$0")" ; pwd -P)
 		einfo "npm-secaudit found ${n_insecure} insecure apps.  Please update immediately with \`emerge @${INSECURE_SET_FN}\`."
-		einfo "For full report, run with -v ."
+		einfo "For full report, run with \`${D}/$(basename $BASH_SOURCE) -v\`."
 	else
 		einfo "No insecure npm/electron apps found."
 	fi
