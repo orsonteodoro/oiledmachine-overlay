@@ -9,10 +9,38 @@
 # If it finds a package with a security vulerability, it will suggest to the user
 # to re-emerge the package.
 
-_INFO="
+H_INFO="
 Copyright 2019 Orson Teodoro
 License: Dual licensed under MIT or GPL2
 "
+H_HELP="
+$(basename $BASH_SOURCE) <args>
+
+Generates a package set for you to update affected packages.
+
+args:
+	-h, --help		prints all the supported commands
+	-ver, --version		version info
+	-v, --verbose		prints the full vulnerability report
+"
+
+G_VERBOSE=""
+
+for arg in $@ ; do
+	case "$arg" in
+		--version|-version|-ver)
+			echo "${H_INFO}"
+			exit
+			;;
+		--help|-help|-h)
+			echo "${H_HELP}"
+			exit
+			;;
+		--verbose|-verbose|-v)
+			G_VERBOSE="1"
+			;;
+	esac
+done
 
 function einfo() {
 	echo ">>> $1"
@@ -37,6 +65,7 @@ function init() {
 }
 
 function check() {
+	echo "Checking npm packages and Electron apps for vulnerabilities please wait..."
 	echo "" > "${INSECURE_SET_FP}"
 
 	while read -r line ; do
@@ -44,7 +73,12 @@ function check() {
 		local path=$(echo "${line}" | cut -f2)
 
 		pushd "${path}" >/dev/null
-		npm audit > /dev/null
+		if [[ "${G_VERBOSE}" == "1" ]]; then
+			echo -e "\n>>> Checking ${p}"
+			npm audit
+		else
+			npm audit >/dev/null
+		fi
 		if [[ "$?" == "0" ]] ; then
 			dinfo "Package ${p} is good."
 		else
@@ -56,9 +90,10 @@ function check() {
 }
 
 function summary() {
-	local n_insecure=$(wc -l ${INSECURE_SET_FP} | cut -f1 -d' ')
-	if [[ $n_insecure > 1 ]]; then
-		einfo "npm-secaudit found $((${n_insecure}-1)) insecure apps.  Please update immediately with \`emerge @${INSECURE_SET_FN}\`."
+	local n_insecure=$(grep -E '[^[:space:]]' -cv ${INSECURE_SET_FP})
+	if [[ $n_insecure > 0 ]]; then
+		einfo "npm-secaudit found ${n_insecure} insecure apps.  Please update immediately with \`emerge @${INSECURE_SET_FN}\`."
+		einfo "For full report, run with -v ."
 	else
 		einfo "No insecure npm/electron apps found."
 	fi
