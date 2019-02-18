@@ -62,7 +62,7 @@ electron-app-register() {
 	# format:
 	# ${CATEGORY}/${P}	path_to_package		date_of_last_check
 	addwrite "${NPM_PACKAGE_DB}"
-	echo -e "${CATEGORY}/${P}\t$${check_path}\t$(date +%s)" >> "${NPM_PACKAGE_DB}"
+	echo -e "${CATEGORY}/${P}\t${check_path}\t$(date +%s)" >> "${NPM_PACKAGE_DB}"
 }
 
 # @FUNCTION: electron-desktop-app-install
