@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# This package just checks but doesn't do updating.  Portage is responsible for that
+# to allow for the package manager to erase update cruft created by npm.
+#
+# This script is a /etc/portage/postsync.d/ hook handler
+#
+# It is designed to check every registered npm package and it's bundled dependencies.
+# If it finds a package with a security vulerability, it will suggest to the user
+# to re-emerge the package.
+
+_INFO="
+Copyright 2019 Orson Teodoro
+License: Dual licensed under MIT or GPL2
+"
+
+function einfo() {
+	echo ">>> $1"
+}
+
+function dinfo() {
+	#echo ">>> $1"
+	true
+}
+
+# location of registered npm packages
+NPM_APPS="/var/lib/portage/npm-packages"
+INSECURE_SET_DIR="/etc/portage/sets/"
+INSECURE_SET_FN="npm-security-update"
+INSECURE_SET_FP="${INSECURE_SET_DIR}/${INSECURE_SET_FN}"
+
+CHECK_PERIOD="$((60*60*24*1))" #seconds
+
+function init() {
+	mkdir -p "${INSECURE_SET_DIR}"
+	touch "${INSECURE_SET_FP}"
+}
+
+function check() {
+	echo "" > "${INSECURE_SET_FP}"
+
+	while read -r line ; do
+		local p=$(echo "${line}" | cut -f1)
+		local path=$(echo "${line}" | cut -f2)
+		local last_check_time=$(echo "${line}" | cut -f3)
+
+		# todo?
+		# "$(( $last_check_time + $CHECK_PERIOD ))" < "$(date +%s)"
+
+		pushd "${path}" >/dev/null
+		npm audit > /dev/null
+		if [[ "$?" == "0" ]] ; then
+			dinfo "Package ${p} is good."
+		else
+			dinfo "Package ${p} needs to be updated and has been placed in the @${INSECURE_SET_FN} slot."
+			echo "${p}" >> "${INSECURE_SET_FP}"
+		fi
+		popd >/dev/null
+	done < "${NPM_APPS}"
+}
+
+function summary() {
+	local n_insecure=$(wc -l ${INSECURE_SET_FP} | cut -f1 -d' ')
+	if [[ $n_insecure > 1 ]]; then
+		einfo "npm-secaudit found $((${n_insecure}-1)) insecure apps.  Please update immediately with \`emerge @${INSECURE_SET_FN}\`."
+	else
+		einfo "No insecure npm/electron apps found."
+	fi
+}
+
+function main() {
+	init
+	check
+	summary
+}
+
+main
