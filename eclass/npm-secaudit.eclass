@@ -61,14 +61,14 @@ npm-secaudit-register() {
 	local rel_path=${1:-""}
 	local check_path="/usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_path}"
 	# format:
-	# ${CATEGORY}/${P}	path_to_package		date_of_last_check
+	# ${CATEGORY}/${P}	path_to_package
 	addwrite "${NPM_PACKAGE_DB}"
 
 	# remove existing entry
 	touch "${NPM_PACKAGE_DB}"
-	sed -i -e "s|${CATEGORY}/${P}.*||g" "${NPM_PACKAGE_DB}"
+	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}.*||g" "${NPM_PACKAGE_DB}"
 
-	echo -e "${CATEGORY}/${P}\t${check_path}\t$(date +%s)" >> "${NPM_PACKAGE_DB}"
+	echo -e "${CATEGORY}/${PN}:${SLOT}\t${check_path}" >> "${NPM_PACKAGE_DB}"
 }
 
 # @FUNCTION: npm-secaudit-install
@@ -85,5 +85,5 @@ npm-secaudit-install() {
 # @DESCRIPTION:
 # Post-removal hook for Electron apps. Removes information required for security checks.
 npm-secaudit_pkg_postrm() {
-	sed -i -e "s|${CATEGORY}/${P}.*||g" "${NPM_PACKAGE_DB}"
+	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}.*||g" "${NPM_PACKAGE_DB}"
 }
