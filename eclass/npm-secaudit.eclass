@@ -43,8 +43,8 @@ npm-secaudit-build() {
 	pushd "${1}"
 	npm install || die
 	if [[ ! -e package-lock.js ]] ; then
-		einfo "Running \`npm i --package-lock-only\`"
-		npm i --package-lock-only # prereq for command below
+		einfo "Running \`npm i --package-lock\`"
+		npm i --package-lock # prereq for command below
 	fi
 	einfo "Running \`npm audit fix --force\`"
 	npm audit fix --force || die
