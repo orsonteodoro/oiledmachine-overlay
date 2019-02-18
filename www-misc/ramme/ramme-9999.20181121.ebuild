@@ -20,7 +20,7 @@ SRC_URI="https://github.com/terkelg/ramme/archive/${COMMIT}.zip -> ${P}.zip"
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64"
 IUSE="-analytics-tracking"
 
 S="${WORKDIR}/${PN}-${COMMIT}"
