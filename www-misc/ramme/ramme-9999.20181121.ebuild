@@ -3,7 +3,14 @@
 
 EAPI=6
 
-inherit eutils desktop
+RDEPEND="${RDEPEND}
+	 >=dev-util/electron-2.0.3"
+
+DEPEND="${RDEPEND}
+	dev-lang/sassc
+        net-libs/nodejs[npm]"
+
+inherit eutils desktop electron-app
 
 COMMIT="ee922919f432f0d22b56b47a9d5d10a875184811"
 
@@ -18,17 +25,6 @@ IUSE="-analytics-tracking"
 
 S="${WORKDIR}/${PN}-${COMMIT}"
 
-RDEPEND="${RDEPEND}
-	 >=dev-util/electron-2.0.3"
-
-DEPEND="${RDEPEND}
-	dev-lang/sassc
-        net-libs/nodejs[npm]"
-
-pkg_setup() {
-	export ELECTRON_SLOT=$(electron -v | sed -e "s|v||" | cut -f1-2 -d '.')
-}
-
 src_prepare() {
 	default
 
@@ -39,11 +35,7 @@ src_prepare() {
 }
 
 src_compile() {
-	cd "${S}/app"
-	npm install
-	einfo "Running \`npm audit fix\`"
-	npm audit fix
-	npm install electron
+	electron-app-build "${S}/app"
 
 	cd "${S}"
 
@@ -52,18 +44,10 @@ src_compile() {
 }
 
 src_install() {
-	mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
-	cp -a * "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+	electron-app-register
+	electron-desktop-app-install "*" "app/src/main" "media/icon.png" "Network"
+
 	pushd "${D}"/usr/$(get_libdir)/node/${PN}/${SLOT}/app/
 	ln -s src dist
 	popd
-
-	#create wrapper
-	mkdir -p "${D}/usr/bin"
-	echo "#!/bin/bash" > "${D}/usr/bin/${PN}"
-	echo "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/app/src/main" >> "${D}/usr/bin/${PN}"
-	chmod +x "${D}"/usr/bin/${PN}
-
-	newicon "media/icon.png" "${PN}.png"
-	make_desktop_entry ${PN} "${PN^}" ${PN} "Network"
 }
