@@ -42,10 +42,13 @@ src_compile() {
 }
 
 src_install() {
-	electron-app-register
 	electron-desktop-app-install "*" "app/src/main" "media/icon.png" "${PN^}" "Network"
 
 	pushd "${D}"/usr/$(get_libdir)/node/${PN}/${SLOT}/app/
 	ln -s src dist
 	popd
+}
+
+pkg_postinst() {
+	electron-app-register
 }
