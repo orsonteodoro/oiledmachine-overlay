@@ -65,7 +65,7 @@ electron-app-register() {
 
 	# remove existing entry
 	touch "${NPM_PACKAGE_DB}"
-	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}.*||g" "${NPM_PACKAGE_DB}"
+	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
 
 	echo -e "${CATEGORY}/${PN}:${SLOT}\t${check_path}" >> "${NPM_PACKAGE_DB}"
 }
@@ -97,5 +97,5 @@ electron-desktop-app-install() {
 # @DESCRIPTION:
 # Post-removal hook for Electron apps. Removes information required for security checks.
 electron-app_pkg_postrm() {
-	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}.*||g" "${NPM_PACKAGE_DB}"
+	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
 }

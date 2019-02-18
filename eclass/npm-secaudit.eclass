@@ -66,7 +66,7 @@ npm-secaudit-register() {
 
 	# remove existing entry
 	touch "${NPM_PACKAGE_DB}"
-	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}.*||g" "${NPM_PACKAGE_DB}"
+	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
 
 	echo -e "${CATEGORY}/${PN}:${SLOT}\t${check_path}" >> "${NPM_PACKAGE_DB}"
 }
@@ -85,5 +85,5 @@ npm-secaudit-install() {
 # @DESCRIPTION:
 # Post-removal hook for Electron apps. Removes information required for security checks.
 npm-secaudit_pkg_postrm() {
-	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}.*||g" "${NPM_PACKAGE_DB}"
+	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
 }
