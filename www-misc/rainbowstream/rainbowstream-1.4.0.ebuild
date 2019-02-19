@@ -1,6 +1,5 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
 
 EAPI=6
 
@@ -8,9 +7,11 @@ PYTHON_COMPAT=( python{2_7,3_3,3_4} )
 
 inherit distutils-r1 eutils
 
-DESCRIPTION="Command line twitter"
+COMMIT="1bb3cd901f6814d63abf2bd35718634dc808aeaa"
+
+DESCRIPTION="A smart and nice Twitter client on terminal written in Python."
 HOMEPAGE="http://www.rainbowstream.org/"
-SRC_URI="https://github.com/DTVD/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/orakaro/rainbowstream/archive/${COMMIT}.zip -> ${P}.zip"
 LICENSE="MIT"
 
 SLOT="0"
@@ -20,17 +21,17 @@ IUSE="jpeg"
 
 DEPEND="dev-python/requests
         dev-python/python-dateutil
-        =dev-python/twitter-9999
+        dev-python/twitter
         dev-python/PySocks
         dev-python/pillow[jpeg?]
         dev-python/arrow
         dev-python/pocket
         dev-python/pyfiglet"
 RDEPEND="${DEPEND}"
-S="${WORKDIR}/${P}"
+S="${WORKDIR}/${PN}-${COMMIT}"
 
 python_prepare_all() {
-	eapply "${FILESDIR}"/${PN}-1.3.5-no-user-env.patch
+	eapply "${FILESDIR}"/${PN}-1.3.7-no-user-env.patch
 	eapply "${FILESDIR}"/${PN}-1.3.5-requests-relax-version.patch
 	eapply_user
         distutils-r1_python_prepare_all
@@ -62,6 +63,6 @@ python_install_all() {
 
 pkg_postinst() {
 	einfo "You need to create a consumer.py in /etc/rainbowstream"
-	einfo "Details about this is in ${D}/usr/share/${P}/consumer.py and https://github.com/DTVD/rainbowstream"
-	einfo "You need to copy ${D}/usr/share/${P}/homedir/.rainbow_config.json to your homedir."
+	einfo "Details about this is in /usr/share/${P}/consumer.py and https://github.com/DTVD/rainbowstream"
+	einfo "You need to copy /usr/share/${P}/homedir/.rainbow_config.json to your homedir."
 }
