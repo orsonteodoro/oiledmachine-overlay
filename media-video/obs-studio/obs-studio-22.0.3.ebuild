@@ -1,18 +1,19 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
-CMAKE_MIN_VERSION=3.9.6
+PYTHON_COMPAT=( python{3_4,3_5,3_6,3_7} )
 
-inherit cmake-utils gnome2-utils
+inherit cmake-utils gnome2-utils python-single-r1
 
 if [[ ${PV} == *9999 ]]; then
 	inherit git-r3
-	EGIT_REPO_URI="https://github.com/jp9000/obs-studio.git"
+	EGIT_REPO_URI="https://github.com/obsproject/obs-studio.git"
 	EGIT_SUBMODULES=()
 else
-	SRC_URI="https://github.com/jp9000/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
+	SRC_URI="https://github.com/obsproject/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz
+		 https://github.com/obsproject/obs-studio/commit/a64ae11bce8ed9a7c8f1deba3338f77595dba903.diff"
 	KEYWORDS="~amd64 ~x86"
 fi
 
@@ -21,8 +22,9 @@ HOMEPAGE="https://obsproject.com"
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="+alsa fdk imagemagick jack nvenc pulseaudio truetype v4l"
+IUSE="+alsa fdk imagemagick jack luajit nvenc pulseaudio python speex truetype v4l"
 IUSE+=" vaapi video_cards_intel video_cards_radeonsi"
+REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 COMMON_DEPEND="
 	>=dev-libs/jansson-2.5
@@ -37,7 +39,6 @@ COMMON_DEPEND="
 	dev-qt/qtwidgets:5
 	dev-qt/qtx11extras:5
 	media-video/ffmpeg:=[x264]
-	nvenc? ( media-video/ffmpeg:=[nvenc] )
 	net-misc/curl
 	x11-libs/libXcomposite
 	x11-libs/libXinerama
@@ -46,7 +47,16 @@ COMMON_DEPEND="
 	fdk? ( media-libs/fdk-aac:= )
 	imagemagick? ( media-gfx/imagemagick:= )
 	jack? ( virtual/jack )
+	luajit? ( dev-lang/luajit:2 )
+	nvenc? (
+		|| (
+			<media-video/ffmpeg-4[nvenc]
+			>=media-video/ffmpeg-4[video_cards_nvidia]
+		)
+	)
 	pulseaudio? ( media-sound/pulseaudio )
+	python? ( ${PYTHON_DEPS} )
+	speex? ( media-libs/speexdsp )
 	truetype? (
 		media-libs/fontconfig
 		media-libs/freetype
@@ -54,26 +64,36 @@ COMMON_DEPEND="
 	v4l? ( media-libs/libv4l )
 	vaapi? ( media-video/ffmpeg[vaapi,x264]
 	         >=media-libs/mesa-17.3.0[vaapi]
-                 || ( video_cards_intel? ( media-libs/mesa[video_cards_inte]
+                 || ( video_cards_intel? ( media-libs/mesa[video_cards_intel]
 					   x11-base/xorg-drivers[video_cards_intel] )
 		      video_cards_radeonsi? ( media-libs/mesa[video_cards_radeonsi]
 					      x11-base/xorg-drivers[video_cards_radeonsi] )
                  )
 	)
 "
-DEPEND="${COMMON_DEPEND}"
+DEPEND="${COMMON_DEPEND}
+	luajit? ( dev-lang/swig )
+	python? ( dev-lang/swig )
+"
 RDEPEND="${COMMON_DEPEND}"
 
+PATCHES=(
+	"${FILESDIR}/${PN}-21.1.2-use-less-automagic.patch"
+	"${FILESDIR}/${PN}-22.0.3-fdk-build-fix.patch" # bug 672430
+)
+
 CMAKE_REMOVE_MODULES_LIST=( FindFreetype )
+
+pkg_setup() {
+	use python && python-single-r1_pkg_setup
+}
 
 src_prepare() {
 	default
 
 	if use vaapi ; then
-		epatch "${FILESDIR}"/ffmpeg-vaapi.patch
+		epatch "${DISTDIR}"/a64ae11bce8ed9a7c8f1deba3338f77595dba903.diff
 	fi
-
-	epatch_user
 }
 
 src_configure() {
@@ -84,12 +104,24 @@ src_configure() {
 		-DDISABLE_JACK=$(usex !jack)
 		-DDISABLE_LIBFDK=$(usex !fdk)
 		-DDISABLE_PULSEAUDIO=$(usex !pulseaudio)
+		-DDISABLE_SPEEXDSP=$(usex !speex)
 		-DDISABLE_V4L2=$(usex !v4l)
 		-DLIBOBS_PREFER_IMAGEMAGICK=$(usex imagemagick)
 		-DOBS_MULTIARCH_SUFFIX=${libdir#lib}
 		-DOBS_VERSION_OVERRIDE=${PV}
 		-DUNIX_STRUCTURE=1
 	)
+
+	if use luajit || use python; then
+		mycmakeargs+=(
+			-DDISABLE_LUA=$(usex !luajit)
+			-DDISABLE_PYTHON=$(usex !python)
+			-DENABLE_SCRIPTING=yes
+		)
+	else
+		mycmakeargs+=( -DENABLE_SCRIPTING=no )
+	fi
+
 	cmake-utils_src_configure
 }
 
@@ -111,14 +143,6 @@ pkg_postinst() {
 		elog "and sleeping.  Where it is not installed,"
 		elog "'xdg-screensaver reset' is used instead"
 		elog "(if 'x11-misc/xdg-utils' is installed)."
-		elog
-	fi
-
-	if ! has_version "media-libs/speexdsp"; then
-		elog
-		elog "For the speexdsp-based noise suppression filter"
-		elog "to be available, the 'media-libs/speexdsp' package needs"
-		elog "to be installed."
 		elog
 	fi
 
