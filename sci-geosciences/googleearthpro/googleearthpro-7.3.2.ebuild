@@ -220,6 +220,8 @@ pkg_postinst() {
 	elog "For Intel Q33 (amd64):"
 	elog "	eselect mesa set 32bit i965 2"
 	elog "You may need to restart X afterwards."
+	elog ""
+	elog "If it fails to load, you may need to \`killall googleearth-bin\`"
 
 	fdo-mime_desktop_database_update
 	fdo-mime_mime_database_update
