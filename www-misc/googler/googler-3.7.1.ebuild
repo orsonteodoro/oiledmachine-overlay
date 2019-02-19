@@ -22,10 +22,10 @@ DEPEND=""
 RDEPEND="${DEPEND}"
 S="${WORKDIR}/${P}"
 
-src_prepare() {
-	eapply_user
-}
+export PREFIX="/usr"
+export DOCDIR="/usr/share/${P}"
 
-src_compile() {
-	emake
+src_install() {
+	default
+	rm -rf "${D}/usr/share/doc/googler"
 }
