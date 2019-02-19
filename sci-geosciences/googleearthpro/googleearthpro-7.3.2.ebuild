@@ -144,6 +144,36 @@ src_unpack() {
 }
 
 src_prepare() {
+	# We have no ld-lsb.so.3 symlink.
+	# Thanks to Nathan Phillip Brink <ohnobinki@ohnopublishing.net> for suggesting patchelf.
+	einfo "Running patchelf"
+	#patchelf --set-interpreter /lib/ld-linux$(usex amd64 "-x86-64" "").so.2 ${MY_PN}-bin || die "patchelf failed" #segfaults
+
+	# Set RPATH for preserve-libs handling (bug #265372).
+	local x
+	for x in * ; do
+		# Use \x7fELF header to separate ELF executables and libraries
+		[[ -f ${x} && $(od -t x1 -N 4 "${x}") == *"7f 45 4c 46"* ]] || continue
+		chmod u+w "${x}"
+		if [[ "${x}" =~ "libQt5Core.so.5" ]] ; then
+			continue
+		fi
+		patchelf --set-rpath '$ORIGIN' "${x}" ||
+			die "patchelf failed on ${x}"
+	done
+	# prepare file permissions so that >patchelf-0.8 can work on the files
+	chmod u+w plugins/*.so plugins/imageformats/*.so
+	for x in plugins/*.so ; do
+		[[ -f ${x} ]] || continue
+		patchelf --set-rpath '$ORIGIN/..' "${x}" ||
+			die "patchelf failed on ${x}"
+	done
+	for x in plugins/imageformats/*.so ; do
+		[[ -f ${x} ]] || continue
+		patchelf --set-rpath '$ORIGIN/../..' "${x}" ||
+			die "patchelf failed on ${x}"
+	done
+
 	epatch "${FILESDIR}"/${PN}-${PV%%.*}-desktopfile.patch
 }
 
