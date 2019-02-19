@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
@@ -8,7 +8,7 @@ PYTHON_COMPAT=( python{3_3,3_4} )
 
 inherit eutils
 
-DESCRIPTION="Command line Google"
+DESCRIPTION="Google from the terminal"
 HOMEPAGE="https://github.com/jarun/googler"
 SRC_URI="https://github.com/jarun/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="GPL-3"
