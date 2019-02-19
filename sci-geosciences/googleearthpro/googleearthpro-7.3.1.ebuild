@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=5
@@ -7,28 +7,25 @@ inherit pax-utils eutils unpacker fdo-mime gnome2-utils
 
 DESCRIPTION="A 3D interface to the planet"
 HOMEPAGE="https://earth.google.com/"
-# no upstream versioning, version determined from help/about
-# incorrect digest means upstream bumped and thus needs version bump
-SRC_URI="x86? ( https://dl.google.com/linux/earth/deb/pool/main/g/google-earth-pro-stable/google-earth-pro-stable_${PV}-r0_i386.deb
-			-> GoogleEarthProLinux-${PV}_i386.deb )
-	amd64? ( https://dl.google.com/linux/earth/deb/pool/main/g/google-earth-pro-stable/google-earth-pro-stable_${PV}-r0_amd64.deb
+# See https://support.google.com/earth/answer/168344?hl=en for list of direct links
+SRC_URI="amd64? ( https://dl.google.com/dl/linux/direct/google-earth-pro-stable_${PV}_amd64.deb
 			-> GoogleEarthProLinux-${PV}_amd64.deb )"
 LICENSE="googleearth GPL-2"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64"
 RESTRICT="mirror splitdebug"
 IUSE="+bundled-libs"
 MY_PN="${PN//pro/}"
-#REQUIRED_USE="bundled-libs"
+REQUIRED_USE="bundled-libs" # does not work yet
 
 QA_PREBUILT="*"
 
 # TODO: find a way to unbundle libQt
 # ./googleearth-bin: symbol lookup error: ./libbase.so: undefined symbol: _Z34QBasicAtomicInt_fetchAndAddOrderedPVii
 
-#You can run /opt/googleearthpro/libQt5Core.so.5 and get the version number.  Only minor versions are compatible in Qt.
+# You can run /opt/googleearthpro/libQt5Core.so.5 and get the version number.  Only minor versions are compatible in Qt.
 
-#qt5.5 was distributed
+# Qt 5.5 was distributed
 QT_VERSION="5.5.1" #version distributed with Google Earth Pro
 #QT_VERSION="5.5.2" #version on Gentoo Portage closest to Google Earth Pro.  This doesn't work.
 
@@ -37,6 +34,9 @@ RDEPEND="
 	dev-libs/nspr
 	media-libs/fontconfig
 	media-libs/freetype
+	media-libs/gstreamer:1.0=
+	media-libs/gst-plugins-base:1.0=
+	net-libs/libproxy
 	net-misc/curl
 	sys-devel/gcc[cxx]
 	sys-libs/zlib
@@ -97,10 +97,9 @@ pkg_nofetch() {
 src_unpack() {
 	# default src_unpack fails with deb2targz installed, also this unpacks the data.tar.lzma as well
 	unpack_deb GoogleEarthProLinux-${PV}_$(usex amd64 "amd64" "i386").deb
-	cp "${FILESDIR}/baifaao.cpp" "${S}"
 
 	if ! use bundled-libs ; then
-		einfo "removing bundled libs"
+		einfo "Removing bundled libs"
 		cd opt/google/earth/pro || die
 		# sci-libs/gdal
 		rm -v libgdal.so.1 || die
@@ -145,42 +144,7 @@ src_unpack() {
 }
 
 src_prepare() {
-
-	# we have no ld-lsb.so.3 symlink
-	# thanks to Nathan Phillip Brink <ohnobinki@ohnopublishing.net> for suggesting patchelf
-	einfo "running patchelf"
-	patchelf --set-interpreter /lib/ld-linux$(usex amd64 "-x86-64" "").so.2 ${MY_PN}-bin || die "patchelf failed"
-
-	# Set RPATH for preserve-libs handling (bug #265372).
-	local x
-	for x in * ; do
-		# Use \x7fELF header to separate ELF executables and libraries
-		[[ -f ${x} && $(od -t x1 -N 4 "${x}") == *"7f 45 4c 46"* ]] || continue
-		fperms u+w "${x}"
-		patchelf --set-rpath '$ORIGIN' "${x}" ||
-			die "patchelf failed on ${x}"
-	done
-	# prepare file permissions so that >patchelf-0.8 can work on the files
-	fperms u+w plugins/*.so plugins/imageformats/*.so
-	for x in plugins/*.so ; do
-		[[ -f ${x} ]] || continue
-		patchelf --set-rpath '$ORIGIN/..' "${x}" ||
-			die "patchelf failed on ${x}"
-	done
-	for x in plugins/imageformats/*.so ; do
-		[[ -f ${x} ]] || continue
-		patchelf --set-rpath '$ORIGIN/../..' "${x}" ||
-			die "patchelf failed on ${x}"
-	done
-
 	epatch "${FILESDIR}"/${PN}-${PV%%.*}-desktopfile.patch
-}
-
-src_compile() {
-	default
-
-	#for Panoramio and other fixes
-	gcc -I /usr/include/qt5/ ${CXXFLAGS} -std=c++11 -fPIC --shared baifaao.cpp -o baifaao.so
 }
 
 src_install() {
@@ -192,19 +156,17 @@ src_install() {
 	domenu google-earth-pro.desktop
 
 	for size in 16 22 24 32 48 64 128 256 ; do
-		newicon -s ${size} product_logo_${size}.png google-earth.png
+		newicon -s ${size} product_logo_${size}.png google-earth-pro.png
 	done
 
 	rm -rf xdg-mime xdg-settings google-earth-pro google-earth-pro.desktop product_logo_*
-	rm baifaao.cpp
 
 	insinto /opt/${PN}
 	doins -r *
-	doins baifaao.so
 
 	fperms +x /opt/${PN}/${MY_PN}{,-bin}
 	cd "${ED}" || die
-	find . -type f -name "*.so.*" -exec fperms +x '{}' +
+	find . -type f -name "*.so.*" -exec chmod +x '{}' +
 
 	pax-mark -m "${ED%/}"/opt/${PN}/${MY_PN}-bin
 }
@@ -214,20 +176,20 @@ pkg_preinst() {
 }
 
 pkg_postinst() {
-	elog "When you get a crash starting Google Earth, try adding a file ~./.config/Google/GoogleEarthPlus.conf"
+	elog "When you get a crash starting Google Earth, try changing the file ~/.config/Google/GoogleEarthPlus.conf"
 	elog "with the following options:"
-	elog "lastTip = 4"
-	elog "enableTips = false"
+	elog "lastTip=4"
+	elog "enableTips=false"
 	elog ""
 	elog "In addition, the use of free video drivers may cause problems associated with using the Mesa"
-	elog "library. In this case, Google Earth 6x likely only works with the Gallium3D variant."
+	elog "library. In this case, Google Earth 7x likely only works with the Gallium3D variant."
 	elog "To select the 32bit graphic library use the command:"
 	elog "	eselect mesa list"
 	elog "For example, for Radeon R300 (x86):"
 	elog "	eselect mesa set r300 2"
 	elog "For Intel Q33 (amd64):"
 	elog "	eselect mesa set 32bit i965 2"
-	elog "You may need to restart X afterwards"
+	elog "You may need to restart X afterwards."
 
 	fdo-mime_desktop_database_update
 	fdo-mime_mime_database_update
