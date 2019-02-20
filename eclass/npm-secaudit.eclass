@@ -36,6 +36,7 @@ DEPEND+=" app-portage/npm-secaudit"
 IUSE+=" debug"
 
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
+NPM_AUDIT_REG_PATH=""
 
 # @FUNCTION: npm_pkg_setup
 # @DESCRIPTION:
@@ -145,6 +146,16 @@ npm-secaudit-install() {
 
 	mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	cp -a ${rel_src_path} "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+}
+
+# @FUNCTION: npm-secaudit_post_install
+# @DESCRIPTION:
+# Automatically registers an npm package.
+# Set NPM_AUDIT_REG_PATH global to relative path to
+# scan for vulnerabilities containing node_modules.
+# scan for vulnerabilities.
+npm-secaudit_post_install() {
+	npm-secaudit-register "${NPM_AUDIT_REG_PATH}"
 }
 
 # @FUNCTION: npm-secaudit_pkg_postrm

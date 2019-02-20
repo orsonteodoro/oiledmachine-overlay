@@ -27,12 +27,13 @@ esac
 
 inherit desktop eutils
 
-EXPORT_FUNCTIONS pkg_setup src_unpack src_prepare src_compile pkg_postrm
+EXPORT_FUNCTIONS pkg_setup src_unpack src_prepare src_compile pkg_postinst pkg_postrm
 
 DEPEND+=" app-portage/npm-secaudit"
 IUSE+=" debug"
 
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
+ELECTRON_APP_REG_PATH=""
 
 ELECTRON_APP_MODE="npm" # can be npm, yarn (not implemented yet)
 
@@ -189,6 +190,15 @@ electron-desktop-app-install() {
 
 	newicon "${rel_icon_path}" "${PN}.png"
 	make_desktop_entry ${PN} "${pkg_name}" ${PN} "${category}"
+}
+
+# @FUNCTION: electron-app_post_install
+# @DESCRIPTION:
+# Automatically registers an electron app package.
+# Set ELECTRON_APP_REG_PATH global to relative path to
+# scan for vulnerabilities containing node_modules.
+electron-app_post_install() {
+	npm-secaudit-register "${ELECTRON_APP_REG_PATH}"
 }
 
 # @FUNCTION: electron-app_pkg_postrm
