@@ -115,7 +115,7 @@ electron-app_src_unpack() {
 # @FUNCTION: electron-app_src_prepare
 # @DESCRIPTION:
 # Fetches dependencies
-npm-secaudit_src_prepare() {
+electron_src_prepare() {
         debug-print-function ${FUNCNAME} "${@}"
 
 	default_src_prepare
