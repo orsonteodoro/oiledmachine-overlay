@@ -28,10 +28,36 @@ case "${EAPI:-0}" in
                 ;;
 esac
 
+inherit eutils
+
+EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postrm
+
 DEPEND+=" app-portage/npm-secaudit"
 IUSE+=" debug"
 
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
+
+# @FUNCTION: npm_pkg_setup
+# @DESCRIPTION:
+# Initializes globals
+npm_pkg_setup() {
+        debug-print-function ${FUNCNAME} "${@}"
+
+	export NPM_STORE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
+	export npm_config_cache="${NPM_STORE_DIR}"
+}
+
+# @FUNCTION: npm_unpack
+# @DESCRIPTION:
+# Initializes cache folder
+npm_src_unpack() {
+        debug-print-function ${FUNCNAME} "${@}"
+
+	addwrite "${NPM_STORE_DIR}"
+	mkdir -p "${NPM_STORE_DIR}"
+
+	default_src_unpack
+}
 
 # @FUNCTION: npm-secaudit-build
 # @DESCRIPTION:
@@ -94,5 +120,7 @@ npm-secaudit-install() {
 # @DESCRIPTION:
 # Post-removal hook for Electron apps. Removes information required for security checks.
 npm-secaudit_pkg_postrm() {
+        debug-print-function ${FUNCNAME} "${@}"
+
 	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
 }
