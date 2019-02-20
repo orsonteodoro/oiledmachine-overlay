@@ -30,7 +30,7 @@ esac
 
 inherit eutils
 
-EXPORT_FUNCTIONS pkg_setup src_unpack src_compile pkg_postrm
+EXPORT_FUNCTIONS pkg_setup src_unpack src_prepare src_compile pkg_postrm
 
 DEPEND+=" app-portage/npm-secaudit"
 IUSE+=" debug"
@@ -85,6 +85,17 @@ npm_src_unpack() {
 	mkdir -p "${NPM_STORE_DIR}"
 
 	default_src_unpack
+}
+
+# @FUNCTION: npm-secaudit_src_prepare
+# @DESCRIPTION:
+# Fetches dependencies
+npm-secaudit_src_prepare() {
+        debug-print-function ${FUNCNAME} "${@}"
+
+	default_src_prepare
+
+	npm-secaudit-fetch-deps
 }
 
 # @FUNCTION: npm-secaudit-build

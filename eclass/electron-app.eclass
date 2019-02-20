@@ -27,7 +27,7 @@ esac
 
 inherit desktop eutils
 
-EXPORT_FUNCTIONS pkg_setup src_unpack src_compile pkg_postrm
+EXPORT_FUNCTIONS pkg_setup src_unpack src_prepare src_compile pkg_postrm
 
 DEPEND+=" app-portage/npm-secaudit"
 IUSE+=" debug"
@@ -109,6 +109,17 @@ electron-app_src_unpack() {
 	mkdir -p "${ELECTRON_STORE_DIR}"
 
 	default_src_unpack
+}
+
+# @FUNCTION: electron-app_src_prepare
+# @DESCRIPTION:
+# Fetches dependencies
+npm-secaudit_src_prepare() {
+        debug-print-function ${FUNCNAME} "${@}"
+
+	default_src_prepare
+
+	electron-app-fetch-deps
 }
 
 # @FUNCTION: electron-app-build-npm
