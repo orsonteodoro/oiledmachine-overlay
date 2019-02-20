@@ -126,7 +126,7 @@ electron-app_src_compile() {
 
 	case "$ELECTRON_APP_MODE" in
 		npm)
-			electron-app-build
+			electron-app-build-npm
 			;;
 		*)
 			die "Unsupported package system"
