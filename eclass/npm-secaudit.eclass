@@ -78,7 +78,7 @@ npm-secaudit-fetch-deps() {
 # Initializes cache folder and gets the archive
 # without dependencies.  You MUST call
 # npm-secaudit-fetch-deps manually.
-npm_src_unpack() {
+npm-secaudit_src_unpack() {
         debug-print-function ${FUNCNAME} "${@}"
 
 	addwrite "${NPM_STORE_DIR}"
