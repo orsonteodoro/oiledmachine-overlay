@@ -192,12 +192,12 @@ electron-desktop-app-install() {
 	make_desktop_entry ${PN} "${pkg_name}" ${PN} "${category}"
 }
 
-# @FUNCTION: electron-app_post_install
+# @FUNCTION: electron-app_pkg_postinst
 # @DESCRIPTION:
 # Automatically registers an electron app package.
 # Set ELECTRON_APP_REG_PATH global to relative path to
 # scan for vulnerabilities containing node_modules.
-electron-app_post_install() {
+electron-app_pkg_postinst() {
 	npm-secaudit-register "${ELECTRON_APP_REG_PATH}"
 }
 
