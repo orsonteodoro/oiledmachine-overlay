@@ -184,5 +184,12 @@ electron-desktop-app-install() {
 electron-app_pkg_postrm() {
         debug-print-function ${FUNCNAME} "${@}"
 
-	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
+	case "$ELECTRON_APP_MODE" in
+		npm)
+			sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
+			;;
+		*)
+			die "Unsupported package system"
+			;;
+	esac
 }
