@@ -40,7 +40,7 @@ NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
 # @FUNCTION: npm_pkg_setup
 # @DESCRIPTION:
 # Initializes globals
-npm_pkg_setup() {
+npm-secaudit_pkg_setup() {
         debug-print-function ${FUNCNAME} "${@}"
 
 	export NPM_STORE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
