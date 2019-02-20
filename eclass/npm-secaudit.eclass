@@ -30,7 +30,7 @@ esac
 
 inherit eutils
 
-EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postrm
+EXPORT_FUNCTIONS pkg_setup src_unpack src_compile pkg_postrm
 
 DEPEND+=" app-portage/npm-secaudit"
 IUSE+=" debug"
@@ -47,30 +47,18 @@ npm_pkg_setup() {
 	export npm_config_cache="${NPM_STORE_DIR}"
 }
 
-# @FUNCTION: npm_unpack
-# @DESCRIPTION:
-# Initializes cache folder
-npm_src_unpack() {
-        debug-print-function ${FUNCNAME} "${@}"
-
-	addwrite "${NPM_STORE_DIR}"
-	mkdir -p "${NPM_STORE_DIR}"
-
-	default_src_unpack
-}
-
-# @FUNCTION: npm-secaudit-build
+# @FUNCTION: npm-secaudit-fetch-deps
 # @DESCRIPTION:
 # Builds an electron app with security checks
-npm-secaudit-build() {
-	local path="$1"
+# MUST be called after default unpack AND patching.
+npm-secaudit-fetch-deps() {
 	local install_args="--production"
 
 	if use debug ; then
 		install_args=""
 	fi
 
-	pushd "${1}"
+	pushd "${S}"
 	npm install ${install_args} || die
 	if [[ ! -e package-lock.js ]] ; then
 		einfo "Running \`npm i --package-lock\`"
@@ -83,6 +71,27 @@ npm-secaudit-build() {
 		npm prune --production
 	fi
 	popd
+}
+
+# @FUNCTION: npm_unpack
+# @DESCRIPTION:
+# Initializes cache folder and gets the archive
+# without dependencies.  You MUST call
+# npm-secaudit-fetch-deps manually.
+npm_src_unpack() {
+        debug-print-function ${FUNCNAME} "${@}"
+
+	addwrite "${NPM_STORE_DIR}"
+	mkdir -p "${NPM_STORE_DIR}"
+
+	default_src_unpack
+}
+
+# @FUNCTION: npm-secaudit_src_compile
+# @DESCRIPTION:
+# Builds an electron app
+npm-secaudit_src_compile() {
+	npm run build || die
 }
 
 # @FUNCTION: npm-secaudit-register
@@ -111,6 +120,8 @@ npm-secaudit-register() {
 # Installs a desktop app.
 npm-secaudit-install() {
 	local rel_src_path="$1"
+
+	shopt -s dotglob # copy hidden files
 
 	mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	cp -a ${rel_src_path} "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"

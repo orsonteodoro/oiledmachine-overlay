@@ -27,7 +27,7 @@ esac
 
 inherit desktop eutils
 
-EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postrm
+EXPORT_FUNCTIONS pkg_setup src_unpack src_compile pkg_postrm
 
 DEPEND+=" app-portage/npm-secaudit"
 IUSE+=" debug"
@@ -45,30 +45,18 @@ electron-app_pkg_setup() {
 	export npm_config_cache="${ELECTRON_STORE_DIR}"
 }
 
-# @FUNCTION: electron-app_src_unpack
+# @FUNCTION: electron-app-fetch-deps
 # @DESCRIPTION:
-# Initializes cache folder
-electron-app_src_unpack() {
-        debug-print-function ${FUNCNAME} "${@}"
-
-	addwrite "${ELECTRON_STORE_DIR}"
-	mkdir -p "${ELECTRON_STORE_DIR}"
-
-	default_src_unpack
-}
-
-# @FUNCTION: electron-app-build
-# @DESCRIPTION:
-# Builds an electron app with security checks
-electron-app-build() {
-	local path="$1"
+# Fetches electron app with security checks
+# MUST be called after default unpack AND patching.
+electron-app-fetch-deps() {
 	local install_args="--production"
 
 	if use debug ; then
 		install_args=""
 	fi
 
-	pushd "${1}"
+	pushd "${S}"
 	npm install ${install_args} || die
 	if [[ ! -e package-lock.js ]] ; then
 		einfo "Running \`npm i --package-lock\`"
@@ -81,6 +69,27 @@ electron-app-build() {
 		npm prune --production
 	fi
 	popd
+}
+
+# @FUNCTION: electron-app_src_unpack
+# @DESCRIPTION:
+# Initializes cache folder and gets the archive
+# without dependencies.  You MUST call
+# npm-secaudit-fetch-deps manually.
+electron-app_src_unpack() {
+        debug-print-function ${FUNCNAME} "${@}"
+
+	addwrite "${ELECTRON_STORE_DIR}"
+	mkdir -p "${ELECTRON_STORE_DIR}"
+
+	default_src_unpack
+}
+
+# @FUNCTION: electron-app_src_compile
+# @DESCRIPTION:
+# Builds an electron app
+electron-app_src_compile() {
+	npm run build || die
 }
 
 # @FUNCTION: electron-app-register
@@ -113,6 +122,8 @@ electron-desktop-app-install() {
 	local rel_icon_path="$3"
 	local pkg_name="$4"
 	local category="$5"
+
+	shopt -s dotglob # copy hidden files
 
 	mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	cp -a ${rel_src_path} "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
