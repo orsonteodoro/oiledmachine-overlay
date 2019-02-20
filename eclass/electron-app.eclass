@@ -34,22 +34,32 @@ IUSE+=" debug"
 
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
 
+ELECTRON_APP_MODE="npm" # can be npm, yarn (not implemented yet)
+
 # @FUNCTION: electron-app_pkg_setup
 # @DESCRIPTION:
 # Initializes globals
 electron-app_pkg_setup() {
         debug-print-function ${FUNCNAME} "${@}"
 
-	export ELECTRON_VER=$(electron --version | sed -e "s|v||g")
-	export ELECTRON_STORE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
-	export npm_config_cache="${ELECTRON_STORE_DIR}"
+	case "$ELECTRON_APP_MODE" in
+		npm)
+			export ELECTRON_VER=$(electron --version | sed -e "s|v||g")
+			export ELECTRON_STORE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
+			export npm_config_cache="${ELECTRON_STORE_DIR}"
+			;;
+		*)
+			die "Unsupported package system"
+			;;
+	esac
 }
 
-# @FUNCTION: electron-app-fetch-deps
+# @FUNCTION: electron-app-fetch-deps-npm
 # @DESCRIPTION:
-# Fetches electron app with security checks
+# Fetches an Electron npm app with security checks
 # MUST be called after default unpack AND patching.
-electron-app-fetch-deps() {
+electron-app-fetch-deps-npm()
+{
 	local install_args="--production"
 
 	if use debug ; then
@@ -71,6 +81,22 @@ electron-app-fetch-deps() {
 	popd
 }
 
+# @FUNCTION: electron-app-fetch-deps
+# @DESCRIPTION:
+# Fetches an electron app with security checks
+# MUST be called after default unpack AND patching.
+electron-app-fetch-deps() {
+	# todo handle yarn
+	case "$ELECTRON_APP_MODE" in
+		npm)
+			electron-app-fetch-deps-npm
+			;;
+		*)
+			die "Unsupported package system"
+			;;
+	esac
+}
+
 # @FUNCTION: electron-app_src_unpack
 # @DESCRIPTION:
 # Initializes cache folder and gets the archive
@@ -85,11 +111,25 @@ electron-app_src_unpack() {
 	default_src_unpack
 }
 
+# @FUNCTION: electron-app-build-npm
+# @DESCRIPTION:
+# Builds an electron app with npm
+electron-app-build-npm() {
+	npm run build || die
+}
+
 # @FUNCTION: electron-app_src_compile
 # @DESCRIPTION:
 # Builds an electron app
 electron-app_src_compile() {
-	npm run build || die
+	case "$ELECTRON_APP_MODE" in
+		npm)
+			electron-app-build
+			;;
+		*)
+			die "Unsupported package system"
+			;;
+	esac
 }
 
 # @FUNCTION: electron-app-register

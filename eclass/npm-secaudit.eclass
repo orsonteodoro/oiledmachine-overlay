@@ -87,11 +87,18 @@ npm_src_unpack() {
 	default_src_unpack
 }
 
+# @FUNCTION: npm-secaudit-build
+# @DESCRIPTION:
+# Builds an electron app
+npm-secaudit-build() {
+	npm run build || die
+}
+
 # @FUNCTION: npm-secaudit_src_compile
 # @DESCRIPTION:
 # Builds an electron app
 npm-secaudit_src_compile() {
-	npm run build || die
+	npm-secaudit-build
 }
 
 # @FUNCTION: npm-secaudit-register
