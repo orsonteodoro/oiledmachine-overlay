@@ -122,6 +122,8 @@ electron-app-build-npm() {
 # @DESCRIPTION:
 # Builds an electron app
 electron-app_src_compile() {
+        debug-print-function ${FUNCNAME} "${@}"
+
 	case "$ELECTRON_APP_MODE" in
 		npm)
 			electron-app-build

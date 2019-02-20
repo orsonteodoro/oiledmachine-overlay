@@ -98,6 +98,8 @@ npm-secaudit-build() {
 # @DESCRIPTION:
 # Builds an electron app
 npm-secaudit_src_compile() {
+        debug-print-function ${FUNCNAME} "${@}"
+
 	npm-secaudit-build
 }
 
