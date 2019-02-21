@@ -10,19 +10,28 @@ DEPEND="${RDEPEND}
 
 inherit eutils npm-secaudit
 
+MY_PN="TypeScript"
+
 DESCRIPTION="TypeScript is a superset of JavaScript that compiles to clean JavaScript output"
 HOMEPAGE="https://www.typescriptlang.org/"
-SRC_URI="https://registry.npmjs.org/${PN}/-/${PN}-${PV}.tgz -> ${PN}-${PV}.tar.gz"
+SRC_URI="https://github.com/Microsoft/TypeScript/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz"
 
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86 ~arm ~arm64 ~ppc ~ppc64"
 IUSE=""
+REQUIRED_USE="debug" # required to build
 
-S="${WORKDIR}/package"
+S="${WORKDIR}/${MY_PN}-${PV}"
 
 src_compile() {
-	npm-secaudit-build "${S}"
+	# We need 3.X for gulp-help.
+	npm uninstall gulp
+	npm install gulp@"<4.0.0"
+	npm run build || die
+	npm uninstall gulp
+
+	npm prune --production
 }
 
 src_install() {
@@ -31,8 +40,4 @@ src_install() {
 	insinto /usr/bin
 	dosym /usr/$(get_libdir)/node/${PN}/${SLOT}/bin/tsc /usr/bin/tsc
 	dosym /usr/$(get_libdir)/node/${PN}/${SLOT}/bin/tsserver /usr/bin/tsserver
-}
-
-pkg_postinst() {
-	npm-secaudit-register
 }
