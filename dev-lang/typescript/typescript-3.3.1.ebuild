@@ -27,7 +27,7 @@ S="${WORKDIR}/${MY_PN}-${PV}"
 src_compile() {
 	# We need 3.X for gulp-help.
 	npm uninstall gulp
-	npm install gulp@"<4.0.0"
+	npm install gulp@"<4.0.0" || die
 	npm run build || die
 	npm uninstall gulp
 
