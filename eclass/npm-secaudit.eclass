@@ -62,9 +62,6 @@ npm-secaudit-fetch-deps() {
 	einfo "Running \`npm audit fix --force\`"
 	npm audit fix --force || die
 	einfo "Auditing security done"
-	if ! use debug ; then
-		npm prune --production
-	fi
 	popd
 }
 
@@ -132,14 +129,26 @@ npm-secaudit-register() {
 
 # @FUNCTION: npm-secaudit-install
 # @DESCRIPTION:
-# Installs a desktop app.
+# Installs a desktop app.  If overwritten,
+# you must prune yourself
 npm-secaudit-install() {
 	local rel_src_path="$1"
 
 	shopt -s dotglob # copy hidden files
 
-	mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
-	cp -a ${rel_src_path} "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+	case "$ELECTRON_APP_MODE" in
+		npm)
+			if ! use debug ; then
+				npm prune --production
+			fi
+
+			mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+			cp -a ${rel_src_path} "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+			;;
+		*)
+			die "Unsupported package system"
+			;;
+	esac
 }
 
 # @FUNCTION: npm-secaudit_post_install

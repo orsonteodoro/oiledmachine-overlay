@@ -27,7 +27,7 @@ esac
 
 inherit desktop eutils
 
-EXPORT_FUNCTIONS pkg_setup src_unpack src_prepare src_compile pkg_postinst pkg_postrm
+EXPORT_FUNCTIONS pkg_setup src_unpack src_prepare src_compile src_install pkg_postinst pkg_postrm
 
 DEPEND+=" app-portage/npm-secaudit"
 IUSE+=" debug"
@@ -70,9 +70,6 @@ electron-app-fetch-deps-npm()
 	einfo "Running \`npm audit fix --force\`"
 	npm audit fix --force || die
 	einfo "Auditing security done"
-	if ! use debug ; then
-		npm prune --production
-	fi
 	popd
 }
 
@@ -173,14 +170,25 @@ electron-desktop-app-install() {
 
 	shopt -s dotglob # copy hidden files
 
-	mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
-	cp -a ${rel_src_path} "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+	case "$ELECTRON_APP_MODE" in
+		npm)
+			if ! use debug ; then
+				npm prune --production
+			fi
 
-	#create wrapper
-	mkdir -p "${D}/usr/bin"
-	echo "#!/bin/bash" > "${D}/usr/bin/${PN}"
-	echo "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_main_app_path}" >> "${D}/usr/bin/${PN}"
-	chmod +x "${D}"/usr/bin/${PN}
+			mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+			cp -a ${rel_src_path} "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+
+			#create wrapper
+			mkdir -p "${D}/usr/bin"
+			echo "#!/bin/bash" > "${D}/usr/bin/${PN}"
+			echo "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_main_app_path}" >> "${D}/usr/bin/${PN}"
+			chmod +x "${D}"/usr/bin/${PN}
+			;;
+		*)
+			die "Unsupported package system"
+			;;
+	esac
 
 	newicon "${rel_icon_path}" "${PN}.png"
 	make_desktop_entry ${PN} "${pkg_name}" ${PN} "${category}"
