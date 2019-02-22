@@ -32,17 +32,7 @@ src_prepare() {
 }
 
 src_compile() {
-	npm install browserify || die
-	npm install uglifyjs || die
-
 	electron-app_src_compile
-
-	npm remove browserify || die
-	npm remove uglifyjs || die
-
-	npm prune --production
-
-	cd "${S}"
 }
 
 src_install() {
