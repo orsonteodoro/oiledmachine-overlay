@@ -172,7 +172,11 @@ electron-desktop-app-install() {
 
 	case "$ELECTRON_APP_MODE" in
 		npm)
+			einfo "Running \`npm audit fix --force\`"
+			npm audit fix --force || die
+
 			if ! use debug ; then
+				einfo "Running \`npm prune --production\`"
 				npm prune --production
 			fi
 

@@ -136,7 +136,11 @@ npm-secaudit-install() {
 
 	shopt -s dotglob # copy hidden files
 
+	einfo "Running \`npm audit fix --force\`"
+	npm audit fix --force || die
+
 	if ! use debug ; then
+		einfo "Running \`npm prune --production\`"
 		npm prune --production
 	fi
 
