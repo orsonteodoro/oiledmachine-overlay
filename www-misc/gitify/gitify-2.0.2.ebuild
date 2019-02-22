@@ -8,7 +8,6 @@ RDEPEND="${RDEPEND}
 
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]"
-#	dev-lang/sassc
 
 inherit eutils desktop electron-app
 
@@ -44,22 +43,9 @@ src_compile() {
 	npm prune --production
 
 	cd "${S}"
-
-	#mkdir -p ./dist/css
-	#sassc ./dist/scss/app.scss > ./dist/css/app.css
-
-	#npm install babel-preset-es2015 babel-preset-react --save-dev
 }
 
 src_install() {
 	cp -a "${FILESDIR}"/app-icon.png images/
 	electron-desktop-app-install "*" "" "images/app-icon.png" "${PN^}" "Network"
-
-	#pushd "${D}"/usr/$(get_libdir)/node/${PN}/${SLOT}/
-	#ln -s src dist
-	#popd
-}
-
-pkg_postinst() {
-	electron-app-register
 }
