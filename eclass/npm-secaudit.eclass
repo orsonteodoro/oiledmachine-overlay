@@ -136,19 +136,12 @@ npm-secaudit-install() {
 
 	shopt -s dotglob # copy hidden files
 
-	case "$ELECTRON_APP_MODE" in
-		npm)
-			if ! use debug ; then
-				npm prune --production
-			fi
+	if ! use debug ; then
+		npm prune --production
+	fi
 
-			mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
-			cp -a ${rel_src_path} "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
-			;;
-		*)
-			die "Unsupported package system"
-			;;
-	esac
+	mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+	cp -a ${rel_src_path} "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
 }
 
 # @FUNCTION: npm-secaudit_post_install
