@@ -27,10 +27,8 @@ src_compile() {
 	# We need 3.X for gulp-help.  The audit fix updates it to 4.X and breaks it.
 	npm uninstall gulp
 	npm install gulp@"<4.0.0" || die
-	npm run build || die
+	npm-secaudit_src_compile
 	npm uninstall gulp
-
-	npm prune --production
 }
 
 src_install() {
