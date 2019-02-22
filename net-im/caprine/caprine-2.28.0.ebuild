@@ -23,18 +23,11 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
 
-pkg_setup() {
-	ewarn "This is a dev ebuild.  Electron 4.x is not released for Gentoo yet."
-}
-
 src_compile() {
-	electron-app-build "${S}"
+	# It does not have a build function.
+	true
 }
 
 src_install() {
 	electron-desktop-app-install "*" "" "static/Icon.png" "${PN^}" "Network"
-}
-
-pkg_postinst() {
-	electron-app-register
 }

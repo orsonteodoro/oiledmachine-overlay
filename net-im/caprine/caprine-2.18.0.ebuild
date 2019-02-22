@@ -23,13 +23,10 @@ KEYWORDS="~amd64"
 IUSE=""
 
 src_compile() {
-	electron-app-build "${S}"
+	# It does not have a build function.
+	true
 }
 
 src_install() {
 	electron-desktop-app-install "*" "" "static/Icon.png" "${PN^}" "Network"
-}
-
-pkg_postinst() {
-	electron-app-register
 }
