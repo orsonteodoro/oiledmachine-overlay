@@ -27,7 +27,7 @@ esac
 
 inherit desktop eutils
 
-EXPORT_FUNCTIONS pkg_setup src_unpack src_prepare src_compile src_install pkg_postinst pkg_postrm
+EXPORT_FUNCTIONS pkg_setup src_unpack src_prepare src_compile pkg_postinst pkg_postrm
 
 DEPEND+=" app-portage/npm-secaudit"
 IUSE+=" debug"
