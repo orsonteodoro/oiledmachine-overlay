@@ -49,7 +49,7 @@ npm-secaudit_pkg_setup() {
 
 	# Reset lock to prevent access denied
 	if [ -d "${NPM_STORE_DIR}" ] ; then
-		chown portage:portage -R "${NPM_STORE_DIR}"
+		chown portage:portage -R "${NPM_STORE_DIR}/_locks"
 	fi
 }
 
