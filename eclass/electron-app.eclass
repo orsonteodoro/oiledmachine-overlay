@@ -70,7 +70,7 @@ electron-app-fetch-deps-npm()
 	npm install || die
 	if [[ ! -e package-lock.js ]] ; then
 		einfo "Running \`npm i --package-lock\`"
-		npm i --package-lock # prereq for command below
+		npm i --package-lock || die # prereq for command below
 	fi
 	einfo "Running \`npm audit fix --force\`"
 	npm audit fix --force || die
@@ -177,6 +177,9 @@ electron-desktop-app-install() {
 
 	case "$ELECTRON_APP_MODE" in
 		npm)
+			einfo "Running \`npm i --package-lock\`"
+			npm i --package-lock || die # prereq for command below for bugged lockfiles
+
 			einfo "Running \`npm audit fix --force\`"
 			npm audit fix --force || die
 

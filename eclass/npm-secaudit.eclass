@@ -62,7 +62,7 @@ npm-secaudit-fetch-deps() {
 	npm install || die
 	if [[ ! -e package-lock.js ]] ; then
 		einfo "Running \`npm i --package-lock\`"
-		npm i --package-lock # prereq for command below
+		npm i --package-lock || die # prereq for command below
 	fi
 	einfo "Running \`npm audit fix --force\`"
 	npm audit fix --force || die
@@ -140,6 +140,9 @@ npm-secaudit-install() {
 	local rel_src_path="$1"
 
 	shopt -s dotglob # copy hidden files
+
+	einfo "Running \`npm i --package-lock\`"
+	npm i --package-lock || die  # prereq for command below for bugged lockfiles
 
 	einfo "Running \`npm audit fix --force\`"
 	npm audit fix --force || die
