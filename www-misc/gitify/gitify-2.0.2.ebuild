@@ -31,10 +31,6 @@ src_prepare() {
 	electron-app-fetch-deps
 }
 
-src_compile() {
-	electron-app_src_compile
-}
-
 src_install() {
 	cp -a "${FILESDIR}"/app-icon.png images/
 	electron-desktop-app-install "*" "" "images/app-icon.png" "${PN^}" "Network"
