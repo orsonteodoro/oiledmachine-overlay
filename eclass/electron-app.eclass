@@ -61,14 +61,8 @@ electron-app_pkg_setup() {
 # MUST be called after default unpack AND patching.
 electron-app-fetch-deps-npm()
 {
-	local install_args="--production"
-
-	if use debug ; then
-		install_args=""
-	fi
-
 	pushd "${S}"
-	npm install ${install_args} || die
+	npm install || die
 	if [[ ! -e package-lock.js ]] ; then
 		einfo "Running \`npm i --package-lock\`"
 		npm i --package-lock # prereq for command below

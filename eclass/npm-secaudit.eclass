@@ -53,14 +53,8 @@ npm-secaudit_pkg_setup() {
 # Builds an electron app with security checks
 # MUST be called after default unpack AND patching.
 npm-secaudit-fetch-deps() {
-	local install_args="--production"
-
-	if use debug ; then
-		install_args=""
-	fi
-
 	pushd "${S}"
-	npm install ${install_args} || die
+	npm install || die
 	if [[ ! -e package-lock.js ]] ; then
 		einfo "Running \`npm i --package-lock\`"
 		npm i --package-lock # prereq for command below
