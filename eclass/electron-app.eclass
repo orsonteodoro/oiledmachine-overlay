@@ -48,6 +48,11 @@ electron-app_pkg_setup() {
 			export ELECTRON_VER=$(electron --version | sed -e "s|v||g")
 			export ELECTRON_STORE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
 			export npm_config_cache="${ELECTRON_STORE_DIR}"
+
+			# Reset lock to prevent access denied
+			if [ -d "${ELECTRON_STORE_DIR}" ] ; then
+				chown portage:portage -R "${ELECTRON_STORE_DIR}"
+			fi
 			;;
 		*)
 			die "Unsupported package system"
@@ -204,7 +209,7 @@ electron-desktop-app-install() {
 # Set ELECTRON_APP_REG_PATH global to relative path to
 # scan for vulnerabilities containing node_modules.
 electron-app_pkg_postinst() {
-	npm-secaudit-register "${ELECTRON_APP_REG_PATH}"
+	electron-app-register "${ELECTRON_APP_REG_PATH}"
 }
 
 # @FUNCTION: electron-app_pkg_postrm

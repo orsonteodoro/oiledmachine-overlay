@@ -46,6 +46,11 @@ npm-secaudit_pkg_setup() {
 
 	export NPM_STORE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
 	export npm_config_cache="${NPM_STORE_DIR}"
+
+	# Reset lock to prevent access denied
+	if [ -d "${NPM_STORE_DIR}" ] ; then
+		chown portage:portage -R "${NPM_STORE_DIR}"
+	fi
 }
 
 # @FUNCTION: npm-secaudit-fetch-deps
