@@ -44,12 +44,14 @@ NPM_SECAUDIT_NO_PRUNE=""
 # Restores ownership change caused by yarn
 _npm-secaudit_fix_locks() {
 	local d="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
-	if [ -d "${d}/_locks" ] ; then
-		local u=$(ls -l "${d}" | grep locks | column -t | cut -f 5 -d ' ')
-		local g=$(ls -l "${d}" | grep locks | column -t | cut -f 7 -d ' ')
+	local f="_locks"
+	local dt="${d}/${f}"
+	if [ -d "${dt}" ] ; then
+		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
+		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
 		if [[ "$u" == "root" && "$g" == "root" ]] ; then
-			einfo "Restoring portage ownership on ${ELECTRON_STORE_DIR}/_locks"
-			chown portage:portage -R "${d}/_locks"
+			einfo "Restoring portage ownership on ${dt}"
+			chown portage:portage -R "${dt}"
 		fi
 	fi
 }
@@ -59,12 +61,14 @@ _npm-secaudit_fix_locks() {
 # Restores ownership change caused by yarn
 _npm-secaudit_yarn_access() {
 	local d="${HOME}"
-	if [ -d "${d}/_locks" ] ; then
-		local u=$(ls -l "${d}" | grep .config | cut -f 3 -d ' ')
-		local g=$(ls -l "${d}" | grep .config | cut -f 4 -d ' ')
+	local f=".config"
+	local dt="${d}/${f}"
+	if [ -d "${dt}" ] ; then
+		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
+		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
 		if [[ "$u" == "root" && "$g" == "root" ]] ; then
-			einfo "Restoring portage ownership on ${HOME}/.config"
-			chown portage:portage -R "${HOME}/.config"
+			einfo "Restoring portage ownership on ${dt}"
+			chown portage:portage -R "${dt}"
 		fi
 	fi
 }
