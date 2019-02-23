@@ -36,7 +36,38 @@ DEPEND+=" app-portage/npm-secaudit"
 IUSE+=" debug"
 
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
-NPM_AUDIT_REG_PATH=""
+NPM_SECAUDIT_REG_PATH=""
+NPM_SECAUDIT_NO_PRUNE=""
+
+# @FUNCTION: _npm-secaudit_fix_locks
+# @DESCRIPTION:
+# Restores ownership change caused by yarn
+_npm-secaudit_fix_locks() {
+	local d="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
+	if [ -d "${d}/_locks" ] ; then
+		local u=$(ls -l "${d}" | grep locks | column -t | cut -f 5 -d ' ')
+		local g=$(ls -l "${d}" | grep locks | column -t | cut -f 7 -d ' ')
+		if [[ "$u" == "root" && "$g" == "root" ]] ; then
+			einfo "Restoring portage ownership on ${ELECTRON_STORE_DIR}/_locks"
+			chown portage:portage -R "${d}/_locks"
+		fi
+	fi
+}
+
+# @FUNCTION: _npm-secaudit_yarn_access
+# @DESCRIPTION:
+# Restores ownership change caused by yarn
+_npm-secaudit_yarn_access() {
+	local d="${HOME}"
+	if [ -d "${d}/_locks" ] ; then
+		local u=$(ls -l "${d}" | grep .config | cut -f 3 -d ' ')
+		local g=$(ls -l "${d}" | grep .config | cut -f 4 -d ' ')
+		if [[ "$u" == "root" && "$g" == "root" ]] ; then
+			einfo "Restoring portage ownership on ${HOME}/.config"
+			chown portage:portage -R "${HOME}/.config"
+		fi
+	fi
+}
 
 # @FUNCTION: npm_pkg_setup
 # @DESCRIPTION:
@@ -47,10 +78,7 @@ npm-secaudit_pkg_setup() {
 	export NPM_STORE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
 	export npm_config_cache="${NPM_STORE_DIR}"
 
-	# Reset lock to prevent access denied
-	if [ -d "${NPM_STORE_DIR}" ] ; then
-		chown portage:portage -R "${NPM_STORE_DIR}/_locks"
-	fi
+	_npm-secaudit_fix_locks
 }
 
 # @FUNCTION: npm-secaudit-fetch-deps
@@ -59,6 +87,10 @@ npm-secaudit_pkg_setup() {
 # MUST be called after default unpack AND patching.
 npm-secaudit-fetch-deps() {
 	pushd "${S}"
+
+	_npm-secaudit_fix_locks
+	_npm-secaudit_yarn_access
+
 	npm install || die
 	if [[ ! -e package-lock.js ]] ; then
 		einfo "Running \`npm i --package-lock\`"
@@ -148,8 +180,12 @@ npm-secaudit-install() {
 	npm audit fix --force || die
 
 	if ! use debug ; then
-		einfo "Running \`npm prune --production\`"
-		npm prune --production
+		if [[ "${NPM_SECAUDIT_NO_PRUNE}" == "0" ||
+			"${NPM_SECAUDIT_NO_PRUNE}" == "false" ||
+			"${NPM_SECAUDIT_NO_PRUNE}" == "FALSE" ]] ; then
+			einfo "Running \`npm prune --production\`"
+			npm prune --production
+		fi
 	fi
 
 	mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
@@ -159,11 +195,11 @@ npm-secaudit-install() {
 # @FUNCTION: npm-secaudit_post_install
 # @DESCRIPTION:
 # Automatically registers an npm package.
-# Set NPM_AUDIT_REG_PATH global to relative path to
+# Set NPM_SECAUDIT_REG_PATH global to relative path to
 # scan for vulnerabilities containing node_modules.
 # scan for vulnerabilities.
 npm-secaudit_post_install() {
-	npm-secaudit-register "${NPM_AUDIT_REG_PATH}"
+	npm-secaudit-register "${NPM_SECAUDIT_REG_PATH}"
 }
 
 # @FUNCTION: npm-secaudit_pkg_postrm

@@ -36,6 +36,37 @@ NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
 ELECTRON_APP_REG_PATH=""
 
 ELECTRON_APP_MODE="npm" # can be npm, yarn (not implemented yet)
+ELECTRON_APP_NO_PRUNE=""
+
+# @FUNCTION: _electron-app_fix_locks
+# @DESCRIPTION:
+# Restores ownership change caused by yarn
+_electron-app_fix_locks() {
+	local d="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
+	if [ -d "${d}/_locks" ] ; then
+		local u=$(ls -l "${d}" | grep _locks | column -t | cut -f 5 -d ' ')
+		local g=$(ls -l "${d}" | grep _locks | column -t | cut -f 7 -d ' ')
+		if [[ "$u" == "root" && "$g" == "root" ]] ; then
+			einfo "Restoring portage ownership on ${ELECTRON_STORE_DIR}/_locks"
+			chown portage:portage -R "${d}/_locks"
+		fi
+	fi
+}
+
+# @FUNCTION: _electron-app_fix_locks
+# @DESCRIPTION:
+# Restores ownership change caused by yarn
+_electron-app_fix_yarn_access() {
+	local d="${HOME}"
+	if [ -d "${d}/_locks" ] ; then
+		local u=$(ls -l "${d}" | grep .config | cut -f 3 -d ' ')
+		local g=$(ls -l "${d}" | grep .config | cut -f 4 -d ' ')
+		if [[ "$u" == "root" && "$g" == "root" ]] ; then
+			einfo "Restoring portage ownership on ${HOME}/.config"
+			chown portage:portage -R "${HOME}/.config"
+		fi
+	fi
+}
 
 # @FUNCTION: electron-app_pkg_setup
 # @DESCRIPTION:
@@ -49,10 +80,7 @@ electron-app_pkg_setup() {
 			export ELECTRON_STORE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
 			export npm_config_cache="${ELECTRON_STORE_DIR}"
 
-			# Reset lock to prevent access denied
-			if [ -d "${ELECTRON_STORE_DIR}" ] ; then
-				chown portage:portage -R "${ELECTRON_STORE_DIR}/_locks"
-			fi
+			_electron-app_fix_locks
 			;;
 		*)
 			die "Unsupported package system"
@@ -83,6 +111,9 @@ electron-app-fetch-deps-npm()
 # Fetches an electron app with security checks
 # MUST be called after default unpack AND patching.
 electron-app-fetch-deps() {
+	_electron-app_fix_locks
+	_electron-app_fix_yarn_access
+
 	# todo handle yarn
 	case "$ELECTRON_APP_MODE" in
 		npm)
@@ -184,8 +215,12 @@ electron-desktop-app-install() {
 			npm audit fix --force || die
 
 			if ! use debug ; then
-				einfo "Running \`npm prune --production\`"
-				npm prune --production
+				if [[ "${ELECTRON_APP_NO_PRUNE}" == "0" ||
+					"${ELECTRON_APP_NO_PRUNE}" == "false" ||
+					"${ELECTRON_APP_NO_PRUNE}" == "FALSE" ]] ; then
+					einfo "Running \`npm prune --production\`"
+					npm prune --production
+				fi
 			fi
 
 			mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
