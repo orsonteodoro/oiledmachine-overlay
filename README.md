@@ -139,3 +139,4 @@ The name of the repo comes from "well-oiled machine."  A (Gentoo) computer shoul
 | app-portage/npm-secaudit | A simple postsync script to check npm and Electron apps for security updates.
 | www-misc/gitify | This is a Electron based GitHub notifier.
 | net-im/igdm-cli | This is a command line Instagram direct messenger based on Node.js.
+| net-im/igdm | This is a Instagram direct messenger based on Electron.
