@@ -80,9 +80,15 @@ electron-app_pkg_setup() {
 
 	case "$ELECTRON_APP_MODE" in
 		npm)
-			export ELECTRON_VER=$(electron --version | sed -e "s|v||g")
+			# Lame bug.  We cannot run `electron --version` because it requires X.
+			# It is okay to emerge package outside of X without problems.
+			export ELECTRON_VER=$(strings /usr/bin/electron | grep "%s Electron/" | sed -e "s|[%s A-Za-z/]||g")
 			export ELECTRON_STORE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
 			export npm_config_cache="${ELECTRON_STORE_DIR}"
+			einfo "Electron version: ${ELECTRON_VER} (It should not be blank or restart X.)"
+			if [[ -z "${ELECTRON_VER}" ]] ; then
+				echo "Some ebuilds may break.  Restart and run in X."
+			fi
 
 			_electron-app_fix_locks
 			;;
