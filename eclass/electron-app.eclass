@@ -85,7 +85,7 @@ electron-app_pkg_setup() {
 			export ELECTRON_VER=$(strings /usr/bin/electron | grep "%s Electron/" | sed -e "s|[%s A-Za-z/]||g")
 			export ELECTRON_STORE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
 			export npm_config_cache="${ELECTRON_STORE_DIR}"
-			einfo "Electron version: ${ELECTRON_VER} (It should not be blank or restart X.)"
+			einfo "Electron version: ${ELECTRON_VER}"
 			if [[ -z "${ELECTRON_VER}" ]] ; then
 				echo "Some ebuilds may break.  Restart and run in X."
 			fi
