@@ -76,12 +76,12 @@ _electron-app-flakey-check() {
 	local l=$(find "${S}" -name "package.json")
 	grep -r -e "electron-builder" $l >/dev/null
 	if [[ "$?" == "0" ]] ; then
-		einfo "This ebuild may fail when building with electron-builder.  Re-emerge if it fails."
+		ewarn "This ebuild may fail when building with electron-builder.  Re-emerge if it fails."
 	fi
 
 	grep -r -e "\"electron\":" $l >/dev/null
 	if [[ "$?" == "0" ]] ; then
-		einfo "This ebuild may fail when downloading Electron as a dependency.  Re-emerge if it fails."
+		ewarn "This ebuild may fail when downloading Electron as a dependency.  Re-emerge if it fails."
 	fi
 }
 
