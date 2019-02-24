@@ -141,3 +141,4 @@ The name of the repo comes from "well-oiled machine."  A (Gentoo) computer shoul
 | net-im/igdm-cli | This is a command line Instagram direct messenger based on Node.js.
 | net-im/igdm | This is a Instagram direct messenger based on Electron.
 | app-editors/noty | This is an Electron based sticky pad note-taker with autosave.
+| www-misc/nativefier | This is a website wrapper in Electron.
