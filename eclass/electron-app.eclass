@@ -72,6 +72,19 @@ _electron-app_fix_yarn_access() {
 	fi
 }
 
+_electron-app-flakey-check() {
+	local l=$(find "${S}" -name "package.json")
+	grep -r -e "electron-builder" $l >/dev/null
+	if [[ "$?" == "0" ]] ; then
+		einfo "This ebuild may fail when building with electron-builder.  Re-emerge if it fails."
+	fi
+
+	grep -r -e "\"electron\":" $l >/dev/null
+	if [[ "$?" == "0" ]] ; then
+		einfo "This ebuild may fail when downloading Electron as a dependency.  Re-emerge if it fails."
+	fi
+}
+
 # @FUNCTION: electron-app_pkg_setup
 # @DESCRIPTION:
 # Initializes globals
@@ -104,6 +117,8 @@ electron-app_pkg_setup() {
 # MUST be called after default unpack AND patching.
 electron-app-fetch-deps-npm()
 {
+	_electron-app-flakey-check
+
 	pushd "${S}"
 	npm install || die
 	if [[ ! -e package-lock.js ]] ; then
@@ -240,6 +255,54 @@ electron-desktop-app-install() {
 			mkdir -p "${D}/usr/bin"
 			echo "#!/bin/bash" > "${D}/usr/bin/${PN}"
 			echo "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_main_app_path}" >> "${D}/usr/bin/${PN}"
+			chmod +x "${D}"/usr/bin/${PN}
+			;;
+		*)
+			die "Unsupported package system"
+			;;
+	esac
+
+	newicon "${rel_icon_path}" "${PN}.png"
+	make_desktop_entry ${PN} "${pkg_name}" ${PN} "${category}"
+}
+
+# @FUNCTION: electron-desktop-app-install-custom-cmd
+# @DESCRIPTION:
+# Installs a desktop app with different command
+electron-desktop-app-install-custom-cmd() {
+	local rel_src_path="$1"
+	local rel_icon_path="$2"
+	local pkg_name="$3"
+	local category="$4"
+	local rel_main_app_path="$5"
+	local args="${@:6}"
+
+	shopt -s dotglob # copy hidden files
+
+	case "$ELECTRON_APP_MODE" in
+		npm)
+			einfo "Running \`npm i --package-lock\`"
+			npm i --package-lock || die # prereq for command below for bugged lockfiles
+
+			einfo "Running \`npm audit fix --force\`"
+			npm audit fix --force || die
+
+			if ! use debug ; then
+				if [[ "${ELECTRON_APP_NO_PRUNE}" == "0" ||
+					"${ELECTRON_APP_NO_PRUNE}" == "false" ||
+					"${ELECTRON_APP_NO_PRUNE}" == "FALSE" ]] ; then
+					einfo "Running \`npm prune --production\`"
+					npm prune --production
+				fi
+			fi
+
+			mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+			cp -a ${rel_src_path} "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+
+			#create wrapper
+			mkdir -p "${D}/usr/bin"
+			echo "#!/bin/bash" > "${D}/usr/bin/${PN}"
+			echo "/usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_main_app_path} ${args}" >> "${D}/usr/bin/${PN}"
 			chmod +x "${D}"/usr/bin/${PN}
 			;;
 		*)
