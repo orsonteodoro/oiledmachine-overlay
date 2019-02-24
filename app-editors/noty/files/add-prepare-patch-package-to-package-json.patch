@@ -1,0 +1,11 @@
+--- a/package.json.orig	2019-02-23 03:19:41.050579604 -0800
++++ b/package.json	2019-02-23 10:25:44.465095783 -0800
+@@ -16,6 +16,7 @@
+     "dev": "electron-webpack dev",
+     "prod": "npm run compile && CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder --mac dir && open releases/mac/*.app",
+-    "publish": "electron-builder --publish onTag"
++    "publish": "electron-builder --publish onTag",
++    "prepare": "patch-package"
+   },
+   "electronWebpack": {
+     "staticSourceDirectory": "src/renderer/static",
