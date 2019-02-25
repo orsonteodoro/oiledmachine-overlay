@@ -14,7 +14,7 @@ PV_TRIPLE=$(get_version_component_range 1-3 ${PV})
 PV_REV=$(get_version_component_range 4- ${PV})
 MY_PV="${PV_TRIPLE}-${PV_REV}"
 
-DESCRIPTION="Instagram Direct Messages in your terminal "
+DESCRIPTION="Instagram Direct Messages in your terminal"
 HOMEPAGE="https://github.com/mathdroid/igdm-cli"
 SRC_URI="https://github.com/mathdroid/${PN}/archive/v${PV_TRIPLE}-${PV_REV}.tar.gz -> ${P}.tar.gz"
 
@@ -31,6 +31,6 @@ src_install() {
 	#create wrapper
 	mkdir -p "${D}/usr/bin"
 	echo "#!/bin/bash" > "${D}/usr/bin/${PN}"
-	echo "/usr/bin/node /usr/$(get_libdir)/node/${PN}/${SLOT}/bin \$*" >> "${D}/usr/bin/${PN}"
+	echo "/usr/bin/node /usr/$(get_libdir)/node/${PN}/${SLOT}/bin \$@" >> "${D}/usr/bin/${PN}"
 	chmod +x "${D}"/usr/bin/${PN}
 }
