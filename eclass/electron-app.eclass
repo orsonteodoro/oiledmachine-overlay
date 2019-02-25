@@ -264,7 +264,7 @@ electron-desktop-app-install() {
 				fi
 			fi
 
-			local old_dotglob = $(shopt dotglob | cut -f 2)
+			local old_dotglob=$(shopt dotglob | cut -f 2)
 			shopt -s dotglob # copy hidden files
 
 			mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
