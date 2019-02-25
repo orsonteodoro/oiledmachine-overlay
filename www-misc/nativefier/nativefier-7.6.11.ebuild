@@ -19,7 +19,6 @@ LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
-RESTRICT="userpriv" # workaround for /usr/portage/distfiles/npm/_cacache access
 
 S="${WORKDIR}/${PN}-${PV}"
 
