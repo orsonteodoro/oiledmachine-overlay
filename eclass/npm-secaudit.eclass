@@ -73,6 +73,23 @@ _npm-secaudit_yarn_access() {
 	fi
 }
 
+# @FUNCTION: _npm-secaudit_fix_cacache_access
+# @DESCRIPTION:
+# Restores ownership change on cacache
+_npm-secaudit_fix_cacache_access() {
+	local d="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
+	local f="_cacache"
+	local dt="${d}/${f}"
+	if [ -d "${dt}" ] ; then
+		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
+		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
+		if [[ "$u" == "root" && "$g" == "root" ]] ; then
+			einfo "Restoring portage ownership on ${dt}"
+			chown portage:portage -R "${dt}"
+		fi
+	fi
+}
+
 # @FUNCTION: npm_pkg_setup
 # @DESCRIPTION:
 # Initializes globals
@@ -83,6 +100,7 @@ npm-secaudit_pkg_setup() {
 	export npm_config_cache="${NPM_STORE_DIR}"
 
 	_npm-secaudit_fix_locks
+	_npm-secaudit_fix_cacache_access
 }
 
 # @FUNCTION: npm-secaudit-fetch-deps

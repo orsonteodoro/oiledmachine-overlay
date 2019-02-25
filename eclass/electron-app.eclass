@@ -72,6 +72,23 @@ _electron-app_fix_yarn_access() {
 	fi
 }
 
+# @FUNCTION: _electron-app_fix_cacache_access
+# @DESCRIPTION:
+# Restores ownership change on cacache
+_electron-app_fix_cacache_access() {
+	local d="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
+	local f="_cacache"
+	local dt="${d}/${f}"
+	if [ -d "${dt}" ] ; then
+		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
+		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
+		if [[ "$u" == "root" && "$g" == "root" ]] ; then
+			einfo "Restoring portage ownership on ${dt}"
+			chown portage:portage -R "${dt}"
+		fi
+	fi
+}
+
 _electron-app-flakey-check() {
 	local l=$(find "${S}" -name "package.json")
 	grep -r -e "electron-builder" $l >/dev/null
@@ -104,6 +121,7 @@ electron-app_pkg_setup() {
 			fi
 
 			_electron-app_fix_locks
+			_electron-app_fix_cacache_access
 			;;
 		*)
 			die "Unsupported package system"
