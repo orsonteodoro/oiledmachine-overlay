@@ -143,3 +143,4 @@ The name of the repo comes from "well-oiled machine."  A (Gentoo) computer shoul
 | app-editors/noty | This is an Electron based sticky pad note-taker with autosave.
 | www-misc/nativefier | This is a website wrapper in Electron.
 | dev-util/snippetstore | This is a program to save reusable code templates in Electron.
+| app-editors/preserver | This is a sticky notes app created in Electron.
