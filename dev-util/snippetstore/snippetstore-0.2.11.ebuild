@@ -23,7 +23,6 @@ KEYWORDS="~amd64"
 IUSE=""
 
 S="${WORKDIR}/${MY_PN}-${PV}"
-RESTRICT="userpriv" # workaround _cacache error
 
 src_compile() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
