@@ -9,7 +9,6 @@ RDEPEND="${RDEPEND}
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]"
 
-ELECTRON_APP_NO_PRUNE="1"
 inherit eutils desktop electron-app
 
 MY_PN="SnippetStore"
