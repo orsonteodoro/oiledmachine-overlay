@@ -82,10 +82,8 @@ _electron-app_fix_cacache_access() {
 	if [ -d "${dt}" ] ; then
 		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
 		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
-		if [[ "$u" == "root" && "$g" == "root" ]] ; then
-			einfo "Restoring portage ownership on ${dt}"
-			chown portage:portage -R "${dt}"
-		fi
+		einfo "Restoring portage ownership on ${dt}"
+		chown portage:portage -R "${dt}"
 	fi
 }
 
