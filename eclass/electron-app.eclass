@@ -229,8 +229,6 @@ electron-desktop-app-install() {
 	local pkg_name="$4"
 	local category="$5"
 
-	shopt -s dotglob # copy hidden files
-
 	case "$ELECTRON_APP_MODE" in
 		npm)
 			einfo "Running \`npm i --package-lock\`"
@@ -248,8 +246,17 @@ electron-desktop-app-install() {
 				fi
 			fi
 
+			local old_dotglob = $(shopt dotglob | cut -f 2)
+			shopt -s dotglob # copy hidden files
+
 			mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
 			cp -a ${rel_src_path} "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+
+			if [[ "${old_dotglob}" == "on" ]] ; then
+				shopt -s dotglob
+			else
+				shopt -u dotglob
+			fi
 
 			#create wrapper
 			mkdir -p "${D}/usr/bin"
@@ -277,8 +284,6 @@ electron-desktop-app-install-custom-cmd() {
 	local rel_main_app_path="$5"
 	local args="${@:6}"
 
-	shopt -s dotglob # copy hidden files
-
 	case "$ELECTRON_APP_MODE" in
 		npm)
 			einfo "Running \`npm i --package-lock\`"
@@ -296,8 +301,17 @@ electron-desktop-app-install-custom-cmd() {
 				fi
 			fi
 
+			local old_dotglob = $(shopt dotglob | cut -f 2)
+			shopt -s dotglob # copy hidden files
+
 			mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
 			cp -a ${rel_src_path} "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+
+			if [[ "${old_dotglob}" == "on" ]] ; then
+				shopt -s dotglob
+			else
+				shopt -u dotglob
+			fi
 
 			#create wrapper
 			mkdir -p "${D}/usr/bin"
