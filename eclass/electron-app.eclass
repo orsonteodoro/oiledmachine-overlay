@@ -89,6 +89,26 @@ _electron-app_fix_cacache_access() {
 	fi
 }
 
+# @FUNCTION: _electron-app_fix_index-v5_access
+# @DESCRIPTION:
+# Restores ownership change on cacache
+_electron-app_fix_index-v5_access() {
+	local d="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
+	local f="index-v5"
+	local dt="${d}/${f}"
+	if [ -d "${dt}" ] ; then
+		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
+		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
+		if [[ "$u" == "root" && "$g" == "root" ]] ; then
+			einfo "Restoring portage ownership on ${dt}"
+			chown portage:portage -R "${dt}"
+		fi
+	fi
+}
+
+# @FUNCTION: _electron-app-flakey-check
+# @DESCRIPTION:
+# Warns user that download or building can fail randomly
 _electron-app-flakey-check() {
 	local l=$(find "${S}" -name "package.json")
 	grep -r -e "electron-builder" $l >/dev/null
@@ -122,6 +142,7 @@ electron-app_pkg_setup() {
 
 			_electron-app_fix_locks
 			_electron-app_fix_cacache_access
+			_electron-app_fix_index-v5_access
 			;;
 		*)
 			die "Unsupported package system"
@@ -216,91 +237,15 @@ electron-app_src_compile() {
 	esac
 }
 
-# @FUNCTION: electron-app-register
-# @DESCRIPTION:
-# Adds the package to the electron database
-# This function MUST be called in pkg_postinst.
-electron-app-register() {
-	local rel_path=${1:-""}
-	local check_path="/usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_path}"
-	# format:
-	# ${CATEGORY}/${P}	path_to_package
-	addwrite "${NPM_PACKAGE_DB}"
-
-	# remove existing entry
-	touch "${NPM_PACKAGE_DB}"
-	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
-
-	echo -e "${CATEGORY}/${PN}:${SLOT}\t${check_path}" >> "${NPM_PACKAGE_DB}"
-
-	# remove blank lines
-	sed -i '/^$/d' "${NPM_PACKAGE_DB}"
-}
-
 # @FUNCTION: electron-desktop-app-install
 # @DESCRIPTION:
-# Installs a desktop app.
+# Installs a desktop app with wrapper and desktop menu entry.
 electron-desktop-app-install() {
-	local rel_src_path="$1"
-	local rel_main_app_path="$2"
-	local rel_icon_path="$3"
-	local pkg_name="$4"
-	local category="$5"
-
-	case "$ELECTRON_APP_MODE" in
-		npm)
-			einfo "Running \`npm i --package-lock\`"
-			npm i --package-lock || die # prereq for command below for bugged lockfiles
-
-			einfo "Running \`npm audit fix --force\`"
-			npm audit fix --force || die
-
-			if ! use debug ; then
-				if [[ "${ELECTRON_APP_NO_PRUNE}" == "0" ||
-					"${ELECTRON_APP_NO_PRUNE}" == "false" ||
-					"${ELECTRON_APP_NO_PRUNE}" == "FALSE" ]] ; then
-					einfo "Running \`npm prune --production\`"
-					npm prune --production
-				fi
-			fi
-
-			local old_dotglob = $(shopt dotglob | cut -f 2)
-			shopt -s dotglob # copy hidden files
-
-			mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
-			cp -a ${rel_src_path} "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
-
-			if [[ "${old_dotglob}" == "on" ]] ; then
-				shopt -s dotglob
-			else
-				shopt -u dotglob
-			fi
-
-			#create wrapper
-			mkdir -p "${D}/usr/bin"
-			echo "#!/bin/bash" > "${D}/usr/bin/${PN}"
-			echo "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_main_app_path}" >> "${D}/usr/bin/${PN}"
-			chmod +x "${D}"/usr/bin/${PN}
-			;;
-		*)
-			die "Unsupported package system"
-			;;
-	esac
-
-	newicon "${rel_icon_path}" "${PN}.png"
-	make_desktop_entry ${PN} "${pkg_name}" ${PN} "${category}"
-}
-
-# @FUNCTION: electron-desktop-app-install-custom-cmd
-# @DESCRIPTION:
-# Installs a desktop app with different command
-electron-desktop-app-install-custom-cmd() {
 	local rel_src_path="$1"
 	local rel_icon_path="$2"
 	local pkg_name="$3"
 	local category="$4"
-	local rel_main_app_path="$5"
-	local args="${@:6}"
+	local cmd="$5"
 
 	case "$ELECTRON_APP_MODE" in
 		npm)
@@ -330,17 +275,17 @@ electron-desktop-app-install-custom-cmd() {
 			else
 				shopt -u dotglob
 			fi
-
-			#create wrapper
-			mkdir -p "${D}/usr/bin"
-			echo "#!/bin/bash" > "${D}/usr/bin/${PN}"
-			echo "/usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_main_app_path} ${args}" >> "${D}/usr/bin/${PN}"
-			chmod +x "${D}"/usr/bin/${PN}
 			;;
 		*)
 			die "Unsupported package system"
 			;;
 	esac
+
+	# Create wrapper
+	mkdir -p "${D}/usr/bin"
+	echo "#!/bin/bash" > "${D}/usr/bin/${PN}"
+	echo "${cmd}" >> "${D}/usr/bin/${PN}"
+	chmod +x "${D}"/usr/bin/${PN}
 
 	newicon "${rel_icon_path}" "${PN}.png"
 	make_desktop_entry ${PN} "${pkg_name}" ${PN} "${category}"
