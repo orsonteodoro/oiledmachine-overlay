@@ -28,5 +28,5 @@ src_compile() {
 }
 
 src_install() {
-	electron-desktop-app-install "*" "" "docs/img/icon.png" "${MY_PN}" "Network"
+	electron-desktop-app-install "*" "docs/img/icon.png" "${MY_PN}" "Network" "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/"
 }
