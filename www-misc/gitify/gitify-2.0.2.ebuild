@@ -23,15 +23,14 @@ IUSE=""
 S="${WORKDIR}/${PN}-${PV}"
 
 src_prepare() {
-	default
 	sed -i -e "s|\"electron\": \"=1.6.10\",|\"electron\": \"^1.6.10\",|g" package.json || die
 	sed -i -e "s|\"sass-lint\": \"=1.10.2 -v\",|\"sass-lint\": \"=1.10.2\",|g" package.json || die
 	sed -i -e 's|path: process.execPath.match|//path: process.execPath.match|' main.js || die
 
-	electron-app-fetch-deps
+	electron-app_src_prepare
 }
 
 src_install() {
 	cp -a "${FILESDIR}"/app-icon.png images/
-	electron-desktop-app-install "*" "" "images/app-icon.png" "${PN^}" "Network"
+	electron-desktop-app-install "*" "images/app-icon.png" "${PN^}" "Development" "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/"
 }
