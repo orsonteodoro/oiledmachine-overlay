@@ -20,7 +20,6 @@ LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
-RESTRICT="userpriv" # workaround
 
 S="${WORKDIR}/${PN}-${PV}"
 
@@ -48,5 +47,5 @@ src_compile() {
 }
 
 src_install() {
-	electron-desktop-app-install-custom-cmd "*" "resources/icon/icon.png" "${PN^}" "Utility" "releases/linux-unpacked/noty"
+	electron-desktop-app-install "*" "resources/icon/icon.png" "${PN^}" "Utility" "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/releases/linux-unpacked/noty"
 }
