@@ -23,11 +23,8 @@ KEYWORDS="~amd64"
 IUSE="-analytics-tracking"
 
 S="${WORKDIR}/${PN}-${COMMIT}"
-RESTRICT="userpriv" # workaround _lock error
 
 src_prepare() {
-	default
-
 	if ! use analytics-tracking ; then
 		epatch "${FILESDIR}"/${PN}-3.2.5-disable-analytics.patch
 		rm "${S}"/app/src/main/analytics.js
@@ -37,7 +34,7 @@ src_prepare() {
 	sed -i -e "s|\"electron\": \"\^[0-9.]*\",||g" package.json || die
 
 	npm install yarn || die
-	electron-app-fetch-deps
+	electron-app_src_prepare
 }
 
 src_compile() {
@@ -48,5 +45,5 @@ src_compile() {
 }
 
 src_install() {
-	electron-desktop-app-install "*" "app" "media/icon.png" "${PN^}" "Network"
+	electron-desktop-app-install "*" "media/icon.png" "${PN^}" "Network" "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/app"
 }
