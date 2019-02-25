@@ -291,6 +291,27 @@ electron-desktop-app-install() {
 	make_desktop_entry ${PN} "${pkg_name}" ${PN} "${category}"
 }
 
+# @FUNCTION: electron-app-register
+# @DESCRIPTION:
+# Adds the package to the electron database
+# This function MUST be called in pkg_postinst.
+electron-app-register() {
+	local rel_path=${1:-""}
+	local check_path="/usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_path}"
+	# format:
+	# ${CATEGORY}/${P}	path_to_package
+	addwrite "${NPM_PACKAGE_DB}"
+
+	# remove existing entry
+	touch "${NPM_PACKAGE_DB}"
+	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
+
+	echo -e "${CATEGORY}/${PN}:${SLOT}\t${check_path}" >> "${NPM_PACKAGE_DB}"
+
+	# remove blank lines
+	sed -i '/^$/d' "${NPM_PACKAGE_DB}"
+}
+
 # @FUNCTION: electron-app_pkg_postinst
 # @DESCRIPTION:
 # Automatically registers an electron app package.
