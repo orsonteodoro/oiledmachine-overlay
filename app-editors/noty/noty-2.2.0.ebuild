@@ -47,5 +47,5 @@ src_compile() {
 }
 
 src_install() {
-	electron-desktop-app-install "*" "resources/icon/icon.png" "${PN^}" "Utility" "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/releases/linux-unpacked/noty"
+	electron-desktop-app-install "*" "resources/icon/icon.png" "${PN^}" "Utility" "/usr/$(get_libdir)/node/${PN}/${SLOT}/releases/linux-unpacked/noty"
 }
