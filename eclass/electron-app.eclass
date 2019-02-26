@@ -37,6 +37,7 @@ ELECTRON_APP_REG_PATH=""
 
 ELECTRON_APP_MODE="npm" # can be npm, yarn (not implemented yet)
 ELECTRON_APP_NO_PRUNE=""
+NPM_MAXSOCKETS=${NPM_MAXSOCKETS:="5"} # Set this in your make.conf to control number of HTTP requests.  50 is npm default but it is too high.
 
 # @FUNCTION: _electron-app_fix_locks
 # @DESCRIPTION:
@@ -157,13 +158,13 @@ electron-app-fetch-deps-npm()
 	_electron-app-flakey-check
 
 	pushd "${S}"
-	npm install || die
+	npm install --maxsockets=${NPM_MAXSOCKETS} || die
 	if [[ ! -e package-lock.js ]] ; then
 		einfo "Running \`npm i --package-lock\`"
 		npm i --package-lock || die # prereq for command below
 	fi
 	einfo "Running \`npm audit fix --force\`"
-	npm audit fix --force || die
+	npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die
 	einfo "Auditing security done"
 	popd
 }
@@ -216,7 +217,8 @@ electron-app_src_prepare() {
 # @DESCRIPTION:
 # Builds an electron app with npm
 electron-app-build-npm() {
-	npm run build || die
+	# electron-builder can still pull packages at the build step.
+	npm run build --maxsockets=${NPM_MAXSOCKETS} || die
 }
 
 # @FUNCTION: electron-app_src_compile
@@ -251,7 +253,7 @@ electron-desktop-app-install() {
 			npm i --package-lock || die # prereq for command below for bugged lockfiles
 
 			einfo "Running \`npm audit fix --force\`"
-			npm audit fix --force || die
+			npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die
 
 			if ! use debug ; then
 				if [[ "${ELECTRON_APP_NO_PRUNE}" == "0" ||

@@ -38,6 +38,7 @@ IUSE+=" debug"
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
 NPM_SECAUDIT_REG_PATH=""
 NPM_SECAUDIT_NO_PRUNE=""
+NPM_MAXSOCKETS=${NPM_MAXSOCKETS:="5"} # Set this in your make.conf to control number of HTTP requests.  50 is npm default but it is too high.
 
 # @FUNCTION: _npm-secaudit_fix_locks
 # @DESCRIPTION:
@@ -111,13 +112,13 @@ npm-secaudit-fetch-deps() {
 	_npm-secaudit_fix_locks
 	_npm-secaudit_yarn_access
 
-	npm install || die
+	npm install --maxsockets=${NPM_MAXSOCKETS} || die
 	if [[ ! -e package-lock.js ]] ; then
 		einfo "Running \`npm i --package-lock\`"
 		npm i --package-lock || die # prereq for command below
 	fi
 	einfo "Running \`npm audit fix --force\`"
-	npm audit fix --force || die
+	npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die
 	einfo "Auditing security done"
 	popd
 }
@@ -151,7 +152,8 @@ npm-secaudit_src_prepare() {
 # @DESCRIPTION:
 # Builds an electron app
 npm-secaudit-build() {
-	npm run build || die
+	# electron-builder can still pull packages at the build step.
+	npm run build --maxsockets=${NPM_MAXSOCKETS} || die
 }
 
 # @FUNCTION: npm-secaudit_src_compile
@@ -195,7 +197,7 @@ npm-secaudit-install() {
 	npm i --package-lock || die  # prereq for command below for bugged lockfiles
 
 	einfo "Running \`npm audit fix --force\`"
-	npm audit fix --force || die
+	npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die
 
 	if ! use debug ; then
 		if [[ "${NPM_SECAUDIT_NO_PRUNE}" == "0" ||
