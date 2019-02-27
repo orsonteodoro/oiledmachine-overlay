@@ -30,7 +30,7 @@ esac
 
 inherit eutils
 
-EXPORT_FUNCTIONS pkg_setup src_unpack src_prepare src_compile pkg_postrm
+EXPORT_FUNCTIONS pkg_setup src_unpack src_prepare src_compile pkg_postrm pkg_postinst
 
 DEPEND+=" app-portage/npm-secaudit"
 IUSE+=" debug"
@@ -208,7 +208,7 @@ npm-secaudit-install() {
 		fi
 	fi
 
-	local old_dotglob = $(shopt dotglob | cut -f 2)
+	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
 
 	mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
@@ -221,13 +221,14 @@ npm-secaudit-install() {
 	fi
 }
 
-# @FUNCTION: npm-secaudit_post_install
+# @FUNCTION: npm-secaudit_pkg_postinst
 # @DESCRIPTION:
 # Automatically registers an npm package.
 # Set NPM_SECAUDIT_REG_PATH global to relative path to
 # scan for vulnerabilities containing node_modules.
 # scan for vulnerabilities.
-npm-secaudit_post_install() {
+npm-secaudit_pkg_postinst() {
+        debug-print-function ${FUNCNAME} "${@}"
 	npm-secaudit-register "${NPM_SECAUDIT_REG_PATH}"
 }
 
