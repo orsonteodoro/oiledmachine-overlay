@@ -56,7 +56,24 @@ _electron-app_fix_locks() {
 	fi
 }
 
-# @FUNCTION: _electron-app_fix_locks
+# @FUNCTION: _electron-app_fix_logs
+# @DESCRIPTION:
+# Restores ownership change to logs
+_electron-app_fix_logs() {
+	local d="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
+	local f="_logs"
+	local dt="${d}/${f}"
+	if [ -d "${dt}" ] ; then
+		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
+		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
+		if [[ "$u" == "root" && "$g" == "root" ]] ; then
+			einfo "Restoring portage ownership on ${dt}"
+			chown portage:portage -R "${dt}"
+		fi
+	fi
+}
+
+# @FUNCTION: _electron-app_fix_yarn_access
 # @DESCRIPTION:
 # Restores ownership change caused by yarn
 _electron-app_fix_yarn_access() {
@@ -139,7 +156,13 @@ electron-app_pkg_setup() {
 				echo "Some ebuilds may break.  Restart and run in X."
 			fi
 
+			# Some npm package.json use yarn.
+			addwrite ${ELECTRON_STORE_DIR}
+			mkdir -p ${ELECTRON_STORE_DIR}/yarn
+			export YARN_CACHE_FOLDER=${YARN_CACHE_FOLDER:=${ELECTRON_STORE_DIR}/yarn}
+
 			_electron-app_fix_locks
+			_electron-app_fix_logs
 			_electron-app_fix_cacache_access
 			_electron-app_fix_index-v5_access
 			;;
@@ -318,6 +341,7 @@ electron-app-register() {
 # Set ELECTRON_APP_REG_PATH global to relative path to
 # scan for vulnerabilities containing node_modules.
 electron-app_pkg_postinst() {
+        debug-print-function ${FUNCNAME} "${@}"
 	electron-app-register "${ELECTRON_APP_REG_PATH}"
 }
 

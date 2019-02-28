@@ -57,6 +57,23 @@ _npm-secaudit_fix_locks() {
 	fi
 }
 
+# @FUNCTION: _npm-secaudit_fix_logs
+# @DESCRIPTION:
+# Restores ownership change to logs
+_npm-secaudit_fix_logs() {
+	local d="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
+	local f="_logs"
+	local dt="${d}/${f}"
+	if [ -d "${dt}" ] ; then
+		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
+		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
+		if [[ "$u" == "root" && "$g" == "root" ]] ; then
+			einfo "Restoring portage ownership on ${dt}"
+			chown portage:portage -R "${dt}"
+		fi
+	fi
+}
+
 # @FUNCTION: _npm-secaudit_yarn_access
 # @DESCRIPTION:
 # Restores ownership change caused by yarn
@@ -99,6 +116,7 @@ npm-secaudit_pkg_setup() {
 	export npm_config_cache="${NPM_STORE_DIR}"
 
 	_npm-secaudit_fix_locks
+	_npm-secaudit_fix_logs
 	_npm-secaudit_fix_cacache_access
 }
 
