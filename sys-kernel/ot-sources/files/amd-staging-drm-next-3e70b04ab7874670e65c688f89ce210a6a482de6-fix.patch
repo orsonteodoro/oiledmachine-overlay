@@ -1,0 +1,149 @@
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c.orig	2019-02-28 23:04:10.077803806 -0800
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c	2019-03-01 00:47:54.705016493 -0800
+@@ -226,23 +226,21 @@ static void amdgpu_mn_invalidate_node(st
+ }
+ 
+ /**
+- * amdgpu_mn_invalidate_range_start_gfx - callback to notify about mm change
++ * amdgpu_mn_sync_pagetables_gfx - callback to notify about mm change
+  *
+- * @mn: our notifier
+- * @mm: the mm this callback is about
+- * @start: start of updated range
+- * @end: end of updated range
++ * @mirror: the hmm_mirror (mm) is about to update
++ * @update: the update start, end address
+  *
+  * Block for operations on BOs to finish and mark pages as accessed and
+  * potentially dirty.
+  */
+-static int amdgpu_mn_invalidate_range_start_gfx(struct mmu_notifier *mn,
+-						 struct mm_struct *mm,
+-						 unsigned long start,
+-						 unsigned long end,
+-						 bool blockable)
++static int amdgpu_mn_sync_pagetables_gfx(struct hmm_mirror *mirror,
++			const struct hmm_update *update)
+ {
+-	struct amdgpu_mn *amn = container_of(mn, struct amdgpu_mn, mn);
++	struct amdgpu_mn *amn = container_of(mirror, struct amdgpu_mn, mirror);
++	unsigned long start = update->start;
++	unsigned long end = update->end;
++	bool blockable = update->blockable;
+ 	struct interval_tree_node *it;
+ 
+ 	/* notification is exclusive, but interval is inclusive */
+@@ -269,28 +267,28 @@ static int amdgpu_mn_invalidate_range_st
+ 		amdgpu_mn_invalidate_node(node, start, end);
+ 	}
+ 
++	amdgpu_mn_read_unlock(amn);
++
+ 	return 0;
+ }
+ 
+ /**
+- * amdgpu_mn_invalidate_range_start_hsa - callback to notify about mm change
++ * amdgpu_mn_sync_pagetables_hsa - callback to notify about mm change
+  *
+- * @mn: our notifier
+- * @mm: the mm this callback is about
+- * @start: start of updated range
+- * @end: end of updated range
++ * @mirror: the hmm_mirror (mm) is about to update
++ * @update: the update start, end address
+  *
+  * We temporarily evict all BOs between start and end. This
+  * necessitates evicting all user-mode queues of the process. The BOs
+  * are restorted in amdgpu_mn_invalidate_range_end_hsa.
+  */
+-static int amdgpu_mn_invalidate_range_start_hsa(struct mmu_notifier *mn,
+-						 struct mm_struct *mm,
+-						 unsigned long start,
+-						 unsigned long end,
+-						 bool blockable)
++static int amdgpu_mn_sync_pagetables_hsa(struct hmm_mirror *mirror,
++			const struct hmm_update *update)
+ {
+-	struct amdgpu_mn *amn = container_of(mn, struct amdgpu_mn, mn);
++	struct amdgpu_mn *amn = container_of(mirror, struct amdgpu_mn, mirror);
++	unsigned long start = update->start;
++	unsigned long end = update->end;
++	bool blockable = update->blockable;
+ 	struct interval_tree_node *it;
+ 
+ 	/* notification is exclusive, but interval is inclusive */
+@@ -317,59 +315,39 @@ static int amdgpu_mn_invalidate_range_st
+ 
+ 			if (amdgpu_ttm_tt_affect_userptr(bo->tbo.ttm,
+ 							 start, end))
+-				amdgpu_amdkfd_evict_userptr(mem, mm);
++				amdgpu_amdkfd_evict_userptr(mem, amn->mm);
+ 		}
+ 	}
+ 
++	amdgpu_mn_read_unlock(amn);
++
+ 	return 0;
+ }
+ 
+-/**
+- * amdgpu_mn_invalidate_range_end - callback to notify about mm change
+- *
+- * @mn: our notifier
+- * @mm: the mm this callback is about
+- * @start: start of updated range
+- * @end: end of updated range
+- *
+- * Release the lock again to allow new command submissions.
++/* Low bits of any reasonable mm pointer will be unused due to struct
++ * alignment. Use these bits to make a unique key from the mm pointer
++ * and notifier type.
+  */
+-static void amdgpu_mn_invalidate_range_end(struct mmu_notifier *mn,
+-					   struct mm_struct *mm,
+-					   unsigned long start,
+-					   unsigned long end)
+-{
+-	struct amdgpu_mn *amn = container_of(mn, struct amdgpu_mn, mn);
+-
+-	amdgpu_mn_read_unlock(amn);
+-}
++#define AMDGPU_MN_KEY(mm, type) ((unsigned long)(mm) + (type))
+ 
+-static const struct mmu_notifier_ops amdgpu_mn_ops[] = {
++static struct hmm_mirror_ops amdgpu_hmm_mirror_ops[] = {
+ 	[AMDGPU_MN_TYPE_GFX] = {
+-		.release = amdgpu_mn_release,
+-		.invalidate_range_start = amdgpu_mn_invalidate_range_start_gfx,
+-		.invalidate_range_end = amdgpu_mn_invalidate_range_end,
++		.sync_cpu_device_pagetables = amdgpu_mn_sync_pagetables_gfx,
++		.release = amdgpu_hmm_mirror_release
+ 	},
+ 	[AMDGPU_MN_TYPE_HSA] = {
+-		.release = amdgpu_mn_release,
+-		.invalidate_range_start = amdgpu_mn_invalidate_range_start_hsa,
+-		.invalidate_range_end = amdgpu_mn_invalidate_range_end,
++		.sync_cpu_device_pagetables = amdgpu_mn_sync_pagetables_hsa,
++		.release = amdgpu_hmm_mirror_release
+ 	},
+ };
+ 
+-/* Low bits of any reasonable mm pointer will be unused due to struct
+- * alignment. Use these bits to make a unique key from the mm pointer
+- * and notifier type.
+- */
+-#define AMDGPU_MN_KEY(mm, type) ((unsigned long)(mm) + (type))
+-
+ /**
+- * amdgpu_mn_get - create notifier context
++ * amdgpu_mn_get - create HMM mirror context
+  *
+  * @adev: amdgpu device pointer
+  * @type: type of MMU notifier context
+  *
+- * Creates a notifier context for current->mm.
++ * Creates a HMM mirror context for current->mm.
+  */
+ struct amdgpu_mn *amdgpu_mn_get(struct amdgpu_device *adev,
+ 				enum amdgpu_mn_type type)
