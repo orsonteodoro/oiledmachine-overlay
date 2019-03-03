@@ -9,13 +9,10 @@ HOMEPAGE="http://saerasoft.com/caesium/clt"
 CAESIUMCTL_COMMIT="6de55b23c9330b048f7cc5c3036e801bd69eac9c"
 SRC_URI="https://github.com/Lymphatus/CaesiumCLT/archive/${CAESIUMCTL_COMMIT}.zip -> caesiumctl-${CAESIUMCTL_COMMIT}.zip"
 
-S="${WORKDIR}"
-
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
-REQUIRED_USE=""
 
 RDEPEND="media-libs/libcaesium
 	 media-libs/libjpeg-turbo"
