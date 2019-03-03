@@ -29,3 +29,16 @@ src_prepare() {
 	cmake-utils_src_prepare
 	multilib_copy_sources
 }
+
+multilib_src_configure() {
+	cmake-utils_src_configure
+}
+
+multilib_src_compile() {
+	cmake-utils_src_compile
+}
+
+multilib_src_install() {
+	cmake-utils_src_install
+}
+
