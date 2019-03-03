@@ -26,6 +26,9 @@ src_prepare() {
 	sed -i -e "s|/usr/include/zopflipng|/usr/include|" CMakeLists.txt
 	sed -i -e "s|/opt/mozjpeg/lib64|/usr/lib64|" CMakeLists.txt
 	sed -i -e "s|/opt/mozjpeg/lib|/usr/lib|" CMakeLists.txt
+	sed -i -e "s|jpeg jpeg|mozjpeg mozjpeg|" caesium/CMakeLists.txt
+	sed -i -e "s|/opt/mozjpeg/lib|/usr/lib|" caesium/CMakeLists.txt
+	sed -i -e "s|caesium jpeg|caesium mozjpeg|" caesium/CMakeLists.txt
 	cmake-utils_src_prepare
 	multilib_copy_sources
 }
