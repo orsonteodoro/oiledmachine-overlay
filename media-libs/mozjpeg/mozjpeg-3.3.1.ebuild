@@ -1,14 +1,15 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
+inherit eutils autotools multilib-minimal multilib-build
+
 DESCRIPTION="Improved JPEG encoder based on libjpeg-turbo"
 HOMEPAGE="https://github.com/mozilla/mozjpeg"
-SRC_URI="https://github.com/mozilla/${PN}/releases/download/v${PV}/${P}-release-source.tar.gz"
+SRC_URI="https://github.com/mozilla/mozjpeg/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
-LICENSE="BSD IJG"
+LICENSE="BSD IJG ZLIB"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
@@ -16,13 +17,15 @@ IUSE=""
 RDEPEND="sys-libs/zlib"
 DEPEND="${RDEPEND}"
 
-S=${WORKDIR}/${PN}
+S="${WORKDIR}/${PN}-${PV}"
 
 src_prepare() {
 	eapply_user
+	eautoreconf || die
+	multilib_copy_sources
 }
 
-src_install() {
+multilib_src_install() {
 	# wrapper to use renamed libjpeg.so (allows coexistence with libjpeg-turbo)
 	echo -e '#!/bin/sh\nLD_PRELOAD=libmozjpeg.so .$(basename $0) "$@"' > wrapper
 	newbin wrapper mozcjpeg
