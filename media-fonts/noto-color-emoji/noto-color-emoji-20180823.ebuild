@@ -27,7 +27,8 @@ REQUIRED_USE="^^ ( zopflipng optipng ) ^^ ( $(python_gen_useflags 'python2*') )"
 RDEPEND=">=media-libs/fontconfig-2.11.91
          >=x11-libs/cairo-1.16
 	 media-libs/freetype[png]
-         !media-fonts/noto-color-emoji-bin"
+         !media-fonts/noto-color-emoji-bin
+	 !media-fonts/noto-emoji"
 
 DEPEND="${RDEPEND}
         ${PYTHON_DEPS}
