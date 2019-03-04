@@ -58,7 +58,6 @@ pkg_postinst() {
 	fc-cache -fv
 	ewarn "To see emojis in your x11-term you need to switch to a utf8 locale."
 	ewarn "Try manually running \`fc-cache -fv\` on the non-root user account and logging off all accounts to get X to work."
-	ewarn "If you see enlarged emojis in Firefox 52.x, it requires the noto-fix use flag and the Firefox 52.x in the oiledmachine-overlay or Firefox 58.x or newer in the gentoo overlay."
 }
 
 pkg_postrm() {
