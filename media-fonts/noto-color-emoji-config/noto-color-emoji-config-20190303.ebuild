@@ -13,7 +13,7 @@ S="${WORKDIR}/${PN}-${PV}"
 LICENSE="CC-PD"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="-colorize-firefox-editboxes -colorize-chrome-editboxes"
+IUSE="-colorize-firefox-editboxes -colorize-chrome-editboxes colorize-white-smiley"
 REQUIRED_USE=""
 
 RDEPEND=">=media-libs/fontconfig-2.11.91
@@ -22,14 +22,16 @@ RDEPEND=">=media-libs/fontconfig-2.11.91
 	 || ( media-fonts/noto-emoji
 	      media-fonts/noto-color-emoji
 	      media-fonts/noto-color-emoji-bin )
+	colorize-white-smiley? ( media-fonts/ttf-bitstream-vera )
 	"
+# colorize-white-smiley maybe works on firefox?
 
 DEPEND="${RDEPEND}"
 RESTRICT="nofetch"
 
 MY_PV="${PV}"
 
-FONT_CONF=( "${S}/61-noto.conf" "${S}/41-noto-colorize-chrome-editboxes.conf" "${S}/41-noto-colorize-firefox-editboxes.conf" )
+FONT_CONF=( "${S}/61-noto.conf" )
 
 src_unpack() {
 	mkdir -p "${S}"
@@ -37,21 +39,12 @@ src_unpack() {
 
 	if use colorize-chrome-editboxes ; then
 		cp "${FILESDIR}/41-noto-colorize-chrome-editboxes-${MY_PV}.conf" "${S}/41-noto-colorize-chrome-editboxes.conf" || die
+		FONT_CONF+=( "${S}/41-noto-colorize-chrome-editboxes.conf" )
 	fi
 	if use colorize-firefox-editboxes ; then
 		cp "${FILESDIR}/41-noto-colorize-firefox-editboxes-${MY_PV}.conf" "${S}/41-noto-colorize-firefox-editboxes.conf" || die
+		FONT_CONF+=( "${S}/41-noto-colorize-firefox-editboxes.conf" )
 	fi
-}
-
-rebuild_fontfiles() {
-        einfo "Refreshing fonts.scale and fonts.dir..."
-        cd ${FONT_ROOT}
-        mkfontdir -- ${FONT_TARGETS}
-        if [ "${ROOT}" = "/" ] &&  [ -x /usr/bin/fc-cache ]
-        then
-                einfo "Updating font cache..."
-                HOME="/root" /usr/bin/fc-cache -f ${FONT_TARGETS}
-        fi
 }
 
 pkg_postinst() {
@@ -62,7 +55,6 @@ pkg_postinst() {
 	if use colorize-firefox-editboxes ; then
 		eselect fontconfig enable 41-noto-colorize-firefox-editboxes.conf
 	fi
-        rebuild_fontfiles
 	fc-cache -fv
 	ewarn "To see emojis in your x11-term you need to switch to a utf8 locale."
 	ewarn "Try manually running \`fc-cache -fv\` on the non-root user account and logging off all accounts to get X to work."
@@ -70,6 +62,7 @@ pkg_postinst() {
 }
 
 pkg_postrm() {
+	einfo "Errors immediately below are okay."
 	eselect fontconfig disable 61-noto.conf
 	eselect fontconfig disable 41-noto-colorize-chrome-editboxes.conf
 	eselect fontconfig disable 41-noto-colorize-firefox-editboxes.conf
