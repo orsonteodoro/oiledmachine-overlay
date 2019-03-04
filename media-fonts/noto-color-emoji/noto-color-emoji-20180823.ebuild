@@ -105,8 +105,6 @@ pkg_postinst() {
         rebuild_fontfiles
 	fc-cache -fv
 	einfo "To see emojis in your x11-term you need to switch to a utf8 locale."
-	einfo "Try manually running \`fc-cache -fv\` on the non-root user account and logging off all accounts to get X to work."
-	einfo "If you see enlarged emojis in Firefox 52.x, it requires the noto-fix use flag and the Firefox 52.x in the oiledmachine-overlay or Firefox 58.x or newer in the gentoo overlay."
 	einfo "\`emerge media-fonts/noto-color-emoji-config\` to fix emojis on firefox, google-chrome, etc systemwide."
 }
 
