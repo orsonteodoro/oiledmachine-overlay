@@ -43,7 +43,7 @@ src_compile() {
 	electron-webpack app --env.minify=false || die
 
 	# This is required for compleness and for the program to run properly.
-	electron-builder -l tar.xz || die
+	electron-builder -l dir || die
 }
 
 src_install() {
