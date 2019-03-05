@@ -37,8 +37,8 @@ YARN_PACKAGE_DB="/var/lib/portage/yarn-packages"
 ELECTRON_APP_REG_PATH=""
 
 ELECTRON_APP_MODE=${ELECTRON_APP_MODE:="npm"} # can be npm, yarn (needs testing)
-ELECTRON_APP_NO_PRUNE=""
-ELECTRON_APP_NO_INSTALL_AUDIT=""
+ELECTRON_APP_PRUNE=${ELECTRON_APP_PRUNE:="1"}
+ELECTRON_APP_INSTALL_AUDIT=${ELECTRON_APP_INSTALL_AUDIT:="1"}
 ELECTRON_APP_MAXSOCKETS=${ELECTRON_APP_MAXSOCKETS:="5"} # Set this in your make.conf to control number of HTTP requests.  50 is npm default but it is too high.
 
 # @FUNCTION: _electron-app_fix_locks
@@ -321,18 +321,17 @@ electron-desktop-app-install() {
 			einfo "Running \`npm i --package-lock\`"
 			npm i --package-lock || die # prereq for command below for bugged lockfiles
 
-			if [[ -z "${ELECTRON_APP_NO_INSTALL_AUDIT}" ||
-				"${ELECTRON_APP_NO_INSTALL_AUDIT}" == "0" ||
-				"${ELECTRON_APP_NO_INSTALL_AUDIT}" == "false" ||
-				"${ELECTRON_APP_NO_INSTALL_AUDIT}" == "FALSE" ]] ; then
+			if [[ "${ELECTRON_APP_INSTALL_AUDIT}" == "1" ||
+				"${ELECTRON_APP_INSTALL_AUDIT}" == "true" ||
+				"${ELECTRON_APP_INSTALL_AUDIT}" == "TRUE" ]] ; then
 				einfo "Running \`npm audit fix --force\`"
 				npm audit fix --force --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
 			fi
 
 			if ! use debug ; then
-				if [[ "${ELECTRON_APP_NO_PRUNE}" != "0" &&
-					"${ELECTRON_APP_NO_PRUNE}" != "false" &&
-					"${ELECTRON_APP_NO_PRUNE}" != "FALSE" ]] ; then
+				if [[ "${ELECTRON_APP_PRUNE}" == "1" ||
+					"${ELECTRON_APP_PRUNE}" == "true" ||
+					"${ELECTRON_APP_PRUNE}" == "TRUE" ]] ; then
 					einfo "Running \`npm prune --production\`"
 					npm prune --production
 				fi
