@@ -36,7 +36,7 @@ pkg_setup() {
 
 src_prepare() {
 	cp "${FILESDIR}"/account.js "${S}"/configs || die
-	sed -i -e "s|<your_client_id>|$LEPTON_CLIENT_ID|" -e "s|<your_client_secret>|$LEPTON_CLIENT_SECRET|" "${S}"/configs/account.js || die
+	sed -i -e "s|<your_client_id>|\"$LEPTON_CLIENT_ID\"|" -e "s|<your_client_secret>|\"$LEPTON_CLIENT_SECRET\"|" "${S}"/configs/account.js || die
 	electron-app_src_prepare
 }
 
