@@ -146,3 +146,4 @@ The name of the repo comes from "well-oiled machine."  A (Gentoo) computer shoul
 | app-editors/preserver | This is a sticky notes app created with Electron.
 | dev-util/pullp | This is an Electron based pull request monitoring program.
 | dev-util/geeks-diary | (WIP) This is an Electron based diary / notetaker for programmers.
+| dev-util/lepton | (WIP - on hold till upstream fixes login bug) This is a programmer reusable code snipplet manager based on Electron and able to sync with Gist.
