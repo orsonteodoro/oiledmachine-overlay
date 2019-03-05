@@ -355,6 +355,15 @@ electron-desktop-app-install() {
 			fi
 			;;
 		yarn)
+			if ! use debug ; then
+				if [[ "${ELECTRON_APP_PRUNE}" == "1" ||
+					"${ELECTRON_APP_PRUNE}" == "true" ||
+					"${ELECTRON_APP_PRUNE}" == "TRUE" ]] ; then
+					einfo "Running \`yarn install --production --ignore-scripts --prefer-offline\`"
+					yarn install --production --ignore-scripts --prefer-offline
+				fi
+			fi
+
 			cp "${S}"/.yarnrc{,.orig}
 			echo "global-folder \"/usr/$(get_libdir)/node/${PN}/${SLOT}/.yarn\"" >> "${S}/.yarnrc" || die
 			echo "prefix \"/usr/$(get_libdir)/node/${PN}/${SLOT}/.yarn\"" >> "${S}/.yarnrc" || die
