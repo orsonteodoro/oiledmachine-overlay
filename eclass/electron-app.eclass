@@ -45,7 +45,7 @@ ELECTRON_APP_MAXSOCKETS=${ELECTRON_APP_MAXSOCKETS:="5"} # Set this in your make.
 # @DESCRIPTION:
 # Restores ownership change caused by yarn
 _electron-app_fix_locks() {
-	local d="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
+	local d="${NPM_STORE_DIR}"
 	local f="_locks"
 	local dt="${d}/${f}"
 	if [ -d "${dt}" ] ; then
@@ -62,7 +62,7 @@ _electron-app_fix_locks() {
 # @DESCRIPTION:
 # Restores ownership change to logs
 _electron-app_fix_logs() {
-	local d="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
+	local d="${NPM_STORE_DIR}"
 	local f="_logs"
 	local dt="${d}/${f}"
 	if [ -d "${dt}" ] ; then
@@ -96,7 +96,7 @@ _electron-app_fix_yarn_access() {
 # @DESCRIPTION:
 # Restores ownership change on cacache
 _electron-app_fix_cacache_access() {
-	local d="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
+	local d="${NPM_STORE_DIR}"
 	local f="_cacache"
 	local dt="${d}/${f}"
 	if [ -d "${dt}" ] ; then
@@ -111,7 +111,7 @@ _electron-app_fix_cacache_access() {
 # @DESCRIPTION:
 # Restores ownership change on cacache
 _electron-app_fix_index-v5_access() {
-	local d="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
+	local d="${NPM_STORE_DIR}"
 	local f="index-v5"
 	local dt="${d}/${f}"
 	if [ -d "${dt}" ] ; then
@@ -147,21 +147,26 @@ electron-app_pkg_setup() {
         debug-print-function ${FUNCNAME} "${@}"
 
 	export ELECTRON_VER=$(strings /usr/bin/electron | grep "%s Electron/" | sed -e "s|[%s A-Za-z/]||g")
-	export ELECTRON_STORE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
+	export NPM_STORE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
+	export YARN_STORE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/yarn"
+
 	case "$ELECTRON_APP_MODE" in
 		npm)
 			# Lame bug.  We cannot run `electron --version` because it requires X.
 			# It is okay to emerge package outside of X without problems.
-			export npm_config_cache="${ELECTRON_STORE_DIR}"
+			export npm_config_cache="${NPM_STORE_DIR}"
 			einfo "Electron version: ${ELECTRON_VER}"
 			if [[ -z "${ELECTRON_VER}" ]] ; then
 				echo "Some ebuilds may break.  Restart and run in X."
 			fi
 
+			addwrite "${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+			mkdir -p "${NPM_STORE_DIR}/offline"
+
 			# Some npm package.json use yarn.
-			addwrite ${ELECTRON_STORE_DIR}
-			mkdir -p ${ELECTRON_STORE_DIR}/yarn
-			export YARN_CACHE_FOLDER=${YARN_CACHE_FOLDER:=${ELECTRON_STORE_DIR}/yarn}
+			addwrite ${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+			mkdir -p ${YARN_STORE_DIR}/offline
+			export YARN_CACHE_FOLDER=${YARN_CACHE_FOLDER:=${YARN_STORE_DIR}}
 
 			_electron-app_fix_locks
 			_electron-app_fix_logs
@@ -170,9 +175,9 @@ electron-app_pkg_setup() {
 			;;
 		yarn)
 			# Some npm package.json use yarn.
-			addwrite ${ELECTRON_STORE_DIR}
-			mkdir -p ${ELECTRON_STORE_DIR}/yarn
-			export YARN_CACHE_FOLDER=${YARN_CACHE_FOLDER:=${ELECTRON_STORE_DIR}/yarn}
+			addwrite ${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+			mkdir -p ${YARN_STORE_DIR}/offline
+			export YARN_CACHE_FOLDER=${YARN_CACHE_FOLDER:=${YARN_STORE_DIR}}
 			;;
 		*)
 			die "Unsupported package system"
@@ -212,12 +217,14 @@ electron-app-fetch-deps-yarn()
 
 		# set global dir
 		cp "${S}"/.yarnrc{,.orig}
-		echo "global-folder \"${S}/.yarn\"" >> "${S}/.yarnrc" || die
 		echo "prefix \"${S}/.yarn\"" >> "${S}/.yarnrc" || die
+		echo "global-folder \"${S}/.yarn\"" >> "${S}/.yarnrc" || die
+		echo "offline-cache-mirror \"${YARN_STORE_DIR}/offline\"" >> "${S}/.yarnrc" || die
 
 		mkdir -p "${S}/.yarn"
 		einfo "yarn prefix: $(yarn config get prefix)"
 		einfo "yarn global-folder: $(yarn config get global-folder)"
+		einfo "yarn offline-cache-mirror: $(yarn config get offline-cache-mirror)"
 
 		yarn install --network-concurrency ${ELECTRON_APP_MAXSOCKETS} --verbose || die
 		# todo yarn audit auto patch
@@ -254,9 +261,6 @@ electron-app-fetch-deps() {
 # npm-secaudit-fetch-deps manually.
 electron-app_src_unpack() {
         debug-print-function ${FUNCNAME} "${@}"
-
-	addwrite "${ELECTRON_STORE_DIR}"
-	mkdir -p "${ELECTRON_STORE_DIR}"
 
 	default_src_unpack
 }

@@ -45,7 +45,7 @@ NPM_MAXSOCKETS=${NPM_MAXSOCKETS:="5"} # Set this in your make.conf to control nu
 # @DESCRIPTION:
 # Restores ownership change caused by yarn
 _npm-secaudit_fix_locks() {
-	local d="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
+	local d="${NPM_STORE_DIR}"
 	local f="_locks"
 	local dt="${d}/${f}"
 	if [ -d "${dt}" ] ; then
@@ -62,7 +62,7 @@ _npm-secaudit_fix_locks() {
 # @DESCRIPTION:
 # Restores ownership change to logs
 _npm-secaudit_fix_logs() {
-	local d="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
+	local d="${NPM_STORE_DIR}"
 	local f="_logs"
 	local dt="${d}/${f}"
 	if [ -d "${dt}" ] ; then
@@ -96,7 +96,7 @@ _npm-secaudit_yarn_access() {
 # @DESCRIPTION:
 # Restores ownership change on cacache
 _npm-secaudit_fix_cacache_access() {
-	local d="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
+	local d="${NPM_STORE_DIR}"
 	local f="_cacache"
 	local dt="${d}/${f}"
 	if [ -d "${dt}" ] ; then
@@ -115,6 +115,7 @@ npm-secaudit_pkg_setup() {
 
 	export NPM_STORE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
 	export npm_config_cache="${NPM_STORE_DIR}"
+	mkdir -p "${NPM_STORE_DIR}/offline"
 
 	_npm-secaudit_fix_locks
 	_npm-secaudit_fix_logs
@@ -149,9 +150,6 @@ npm-secaudit-fetch-deps() {
 # npm-secaudit-fetch-deps manually.
 npm-secaudit_src_unpack() {
         debug-print-function ${FUNCNAME} "${@}"
-
-	addwrite "${NPM_STORE_DIR}"
-	mkdir -p "${NPM_STORE_DIR}"
 
 	default_src_unpack
 }
