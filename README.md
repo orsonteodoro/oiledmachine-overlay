@@ -144,5 +144,5 @@ The name of the repo comes from "well-oiled machine."  A (Gentoo) computer shoul
 | www-misc/nativefier | This is a website wrapper in Electron.
 | dev-util/snippetstore | This is a program to save reusable code templates in Electron.
 | app-editors/preserver | This is a sticky notes app created with Electron.
-| dev-util/pullp | (WIP) This is an Electron based pull request monitoring program.
+| dev-util/pullp | This is an Electron based pull request monitoring program.
 | dev-util/geeks-diary | (WIP) This is an Electron based diary / notetaker for programmers.
