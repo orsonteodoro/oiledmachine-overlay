@@ -38,6 +38,7 @@ IUSE+=" debug"
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
 NPM_SECAUDIT_REG_PATH=""
 NPM_SECAUDIT_NO_PRUNE=""
+NPM_SECAUDIT_NO_INSTALL_AUDIT=""
 NPM_MAXSOCKETS=${NPM_MAXSOCKETS:="5"} # Set this in your make.conf to control number of HTTP requests.  50 is npm default but it is too high.
 
 # @FUNCTION: _npm-secaudit_fix_locks
@@ -214,13 +215,18 @@ npm-secaudit-install() {
 	einfo "Running \`npm i --package-lock\`"
 	npm i --package-lock || die  # prereq for command below for bugged lockfiles
 
-	einfo "Running \`npm audit fix --force\`"
-	npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die
+	if [[ -z "${NPM_SECAUDIT_NO_INSTALL_AUDIT}" ||
+		"${NPM_SECAUDIT_NO_INSTALL_AUDIT}" == "0" ||
+		"${NPM_SECAUDIT_NO_INSTALL_AUDIT}" == "false" ||
+		"${NPM_SECAUDIT_NO_INSTALL_AUDIT}" == "FALSE" ]] ; then
+		einfo "Running \`npm audit fix --force\`"
+		npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die
+	fi
 
 	if ! use debug ; then
-		if [[ "${NPM_SECAUDIT_NO_PRUNE}" == "0" ||
-			"${NPM_SECAUDIT_NO_PRUNE}" == "false" ||
-			"${NPM_SECAUDIT_NO_PRUNE}" == "FALSE" ]] ; then
+		if [[ "${NPM_SECAUDIT_NO_PRUNE}" != "0" &&
+			"${NPM_SECAUDIT_NO_PRUNE}" != "false" &&
+			"${NPM_SECAUDIT_NO_PRUNE}" != "FALSE" ]] ; then
 			einfo "Running \`npm prune --production\`"
 			npm prune --production
 		fi

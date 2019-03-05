@@ -331,9 +331,9 @@ electron-desktop-app-install() {
 			fi
 
 			if ! use debug ; then
-				if [[ "${ELECTRON_APP_NO_PRUNE}" == "0" ||
-					"${ELECTRON_APP_NO_PRUNE}" == "false" ||
-					"${ELECTRON_APP_NO_PRUNE}" == "FALSE" ]] ; then
+				if [[ "${ELECTRON_APP_NO_PRUNE}" != "0" &&
+					"${ELECTRON_APP_NO_PRUNE}" != "false" &&
+					"${ELECTRON_APP_NO_PRUNE}" != "FALSE" ]] ; then
 					einfo "Running \`npm prune --production\`"
 					npm prune --production
 				fi
