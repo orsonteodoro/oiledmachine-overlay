@@ -1,0 +1,15 @@
+patch-package
+--- a/node_modules/@angular-devkit/build-angular/src/angular-cli-files/models/webpack-configs/browser.js
++++ b/node_modules/@angular-devkit/build-angular/src/angular-cli-files/models/webpack-configs/browser.js
+@@ -102,7 +102,10 @@ function getBrowserConfig(wco) {
+             },
+         },
+         plugins: extraPlugins,
+-        node: false,
++        node: {
++		fs: 'empty',
++		crypto: 'empty'
++	}
+     };
+ }
+ exports.getBrowserConfig = getBrowserConfig;
