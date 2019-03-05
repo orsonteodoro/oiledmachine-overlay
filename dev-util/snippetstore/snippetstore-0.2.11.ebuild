@@ -31,7 +31,7 @@ src_compile() {
 
 	# This is required for compleness and for the program to run properly.
 	# We deviate since we are not building for other distros.
-	electron-builder -l tar.xz || die
+	electron-builder -l dir || die
 }
 
 src_install() {
