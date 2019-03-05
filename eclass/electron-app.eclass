@@ -36,7 +36,7 @@ NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
 YARN_PACKAGE_DB="/var/lib/portage/yarn-packages"
 ELECTRON_APP_REG_PATH=""
 
-ELECTRON_APP_MODE=${ELECTRON_APP_MODE:="npm"} # can be npm, yarn (needs testing)
+ELECTRON_APP_MODE=${ELECTRON_APP_MODE:="npm"} # can be npm, yarn
 ELECTRON_APP_PRUNE=${ELECTRON_APP_PRUNE:="1"}
 ELECTRON_APP_INSTALL_AUDIT=${ELECTRON_APP_INSTALL_AUDIT:="1"}
 ELECTRON_APP_MAXSOCKETS=${ELECTRON_APP_MAXSOCKETS:="5"} # Set this in your make.conf to control number of HTTP requests.  50 is npm default but it is too high.
@@ -174,6 +174,8 @@ electron-app_pkg_setup() {
 			_electron-app_fix_index-v5_access
 			;;
 		yarn)
+			ewarn "Using yarn mode which has no audit fix yet."
+
 			# Some npm package.json use yarn.
 			addwrite ${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 			mkdir -p ${YARN_STORE_DIR}/offline
@@ -212,8 +214,7 @@ electron-app-fetch-deps-npm()
 electron-app-fetch-deps-yarn()
 {
 	pushd "${S}"
-		addpredict /usr/local/share/.yarnrc
-		addread /usr/local/share/.yarnrc
+		export FAKEROOTKEY="15574641" # don't check /usr/local/share/.yarnrc .  same number used in their testing.
 
 		# set global dir
 		cp "${S}"/.yarnrc{,.orig}
