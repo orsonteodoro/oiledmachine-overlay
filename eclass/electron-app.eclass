@@ -33,11 +33,14 @@ DEPEND+=" app-portage/npm-secaudit"
 IUSE+=" debug"
 
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
+YARN_PACKAGE_DB="/var/lib/portage/yarn-packages"
 ELECTRON_APP_REG_PATH=""
 
-ELECTRON_APP_MODE="npm" # can be npm, yarn (not implemented yet)
+ELECTRON_APP_MODE=${ELECTRON_APP_MODE:="npm"} # can be npm, yarn (needs testing)
 ELECTRON_APP_NO_PRUNE=""
-NPM_MAXSOCKETS=${NPM_MAXSOCKETS:="5"} # Set this in your make.conf to control number of HTTP requests.  50 is npm default but it is too high.
+ELECTRON_APP_NO_INSTALL_AUDIT=""
+ELECTRON_APP_MAXSOCKETS=${ELECTRON_APP_MAXSOCKETS:="5"} # Set this in your make.conf to control number of HTTP requests.  50 is npm default but it is too high.
+YARN_DISABLE_SELF_UPDATE_CHECK="true"
 
 # @FUNCTION: _electron-app_fix_locks
 # @DESCRIPTION:
@@ -144,12 +147,12 @@ _electron-app-flakey-check() {
 electron-app_pkg_setup() {
         debug-print-function ${FUNCNAME} "${@}"
 
+	export ELECTRON_VER=$(strings /usr/bin/electron | grep "%s Electron/" | sed -e "s|[%s A-Za-z/]||g")
+	export ELECTRON_STORE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
 	case "$ELECTRON_APP_MODE" in
 		npm)
 			# Lame bug.  We cannot run `electron --version` because it requires X.
 			# It is okay to emerge package outside of X without problems.
-			export ELECTRON_VER=$(strings /usr/bin/electron | grep "%s Electron/" | sed -e "s|[%s A-Za-z/]||g")
-			export ELECTRON_STORE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
 			export npm_config_cache="${ELECTRON_STORE_DIR}"
 			einfo "Electron version: ${ELECTRON_VER}"
 			if [[ -z "${ELECTRON_VER}" ]] ; then
@@ -166,6 +169,12 @@ electron-app_pkg_setup() {
 			_electron-app_fix_cacache_access
 			_electron-app_fix_index-v5_access
 			;;
+		yarn)
+			# Some npm package.json use yarn.
+			addwrite ${ELECTRON_STORE_DIR}
+			mkdir -p ${ELECTRON_STORE_DIR}/yarn
+			export YARN_CACHE_FOLDER=${YARN_CACHE_FOLDER:=${ELECTRON_STORE_DIR}/yarn}
+			;;
 		*)
 			die "Unsupported package system"
 			;;
@@ -181,14 +190,39 @@ electron-app-fetch-deps-npm()
 	_electron-app-flakey-check
 
 	pushd "${S}"
-	npm install --maxsockets=${NPM_MAXSOCKETS} || die
+	npm install --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
 	if [[ ! -e package-lock.js ]] ; then
 		einfo "Running \`npm i --package-lock\`"
 		npm i --package-lock || die # prereq for command below
 	fi
 	einfo "Running \`npm audit fix --force\`"
-	npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die
+	npm audit fix --force --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
 	einfo "Auditing security done"
+	popd
+}
+
+# @FUNCTION: electron-app-fetch-deps-yarn
+# @DESCRIPTION:
+# Fetches an Electron yarn app with security checks
+# MUST be called after default unpack AND patching.
+electron-app-fetch-deps-yarn()
+{
+	pushd "${S}"
+		addpredict /usr/local/share/.yarnrc
+		addread /usr/local/share/.yarnrc
+
+		# set global dir
+		cp "${S}"/.yarnrc{,.orig}
+		echo "global-folder \"${S}/.yarn\"" >> "${S}/.yarnrc" || die
+		echo "prefix \"${S}/.yarn\"" >> "${S}/.yarnrc" || die
+
+		mkdir -p "${S}/.yarn"
+		einfo "yarn prefix: $(yarn config get prefix)"
+		einfo "yarn global-folder: $(yarn config get global-folder)"
+
+		yarn install --network-concurrency ${ELECTRON_APP_MAXSOCKETS} --verbose || die
+		# todo yarn audit auto patch
+		# an analog to yarn audix fix doesn't exit yet
 	popd
 }
 
@@ -197,13 +231,16 @@ electron-app-fetch-deps-npm()
 # Fetches an electron app with security checks
 # MUST be called after default unpack AND patching.
 electron-app-fetch-deps() {
-	_electron-app_fix_locks
 	_electron-app_fix_yarn_access
 
 	# todo handle yarn
 	case "$ELECTRON_APP_MODE" in
 		npm)
+			_electron-app_fix_locks
 			electron-app-fetch-deps-npm
+			;;
+		yarn)
+			electron-app-fetch-deps-yarn
 			;;
 		*)
 			die "Unsupported package system"
@@ -241,7 +278,14 @@ electron-app_src_prepare() {
 # Builds an electron app with npm
 electron-app-build-npm() {
 	# electron-builder can still pull packages at the build step.
-	npm run build --maxsockets=${NPM_MAXSOCKETS} || die
+	npm run build --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
+}
+
+# @FUNCTION: electron-app-build-yarn
+# @DESCRIPTION:
+# Builds an electron app with yarn
+electron-app-build-yarn() {
+	yarn run build || die
 }
 
 # @FUNCTION: electron-app_src_compile
@@ -253,6 +297,9 @@ electron-app_src_compile() {
 	case "$ELECTRON_APP_MODE" in
 		npm)
 			electron-app-build-npm
+			;;
+		yarn)
+			electron-app-build-yarn
 			;;
 		*)
 			die "Unsupported package system"
@@ -275,8 +322,13 @@ electron-desktop-app-install() {
 			einfo "Running \`npm i --package-lock\`"
 			npm i --package-lock || die # prereq for command below for bugged lockfiles
 
-			einfo "Running \`npm audit fix --force\`"
-			npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die
+			if [[ -z "${ELECTRON_APP_NO_INSTALL_AUDIT}" ||
+				"${ELECTRON_APP_NO_INSTALL_AUDIT}" == "0" ||
+				"${ELECTRON_APP_NO_INSTALL_AUDIT}" == "false" ||
+				"${ELECTRON_APP_NO_INSTALL_AUDIT}" == "FALSE" ]] ; then
+				einfo "Running \`npm audit fix --force\`"
+				npm audit fix --force --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
+			fi
 
 			if ! use debug ; then
 				if [[ "${ELECTRON_APP_NO_PRUNE}" == "0" ||
@@ -286,6 +338,25 @@ electron-desktop-app-install() {
 					npm prune --production
 				fi
 			fi
+
+			local old_dotglob=$(shopt dotglob | cut -f 2)
+			shopt -s dotglob # copy hidden files
+
+			mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+			cp -a ${rel_src_path} "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+
+			if [[ "${old_dotglob}" == "on" ]] ; then
+				shopt -s dotglob
+			else
+				shopt -u dotglob
+			fi
+			;;
+		yarn)
+			cp "${S}"/.yarnrc{,.orig}
+			echo "global-folder \"/usr/$(get_libdir)/node/${PN}/${SLOT}/.yarn\"" >> "${S}/.yarnrc" || die
+			echo "prefix \"/usr/$(get_libdir)/node/${PN}/${SLOT}/.yarn\"" >> "${S}/.yarnrc" || die
+
+			# todo final audit
 
 			local old_dotglob=$(shopt dotglob | cut -f 2)
 			shopt -s dotglob # copy hidden files
@@ -314,25 +385,44 @@ electron-desktop-app-install() {
 	make_desktop_entry ${PN} "${pkg_name}" ${PN} "${category}"
 }
 
-# @FUNCTION: electron-app-register
+# @FUNCTION: electron-app-register-x
 # @DESCRIPTION:
 # Adds the package to the electron database
 # This function MUST be called in pkg_postinst.
-electron-app-register() {
-	local rel_path=${1:-""}
+electron-app-register-x() {
+	local pkg_db="${1}"
+	local rel_path=${2:-""}
 	local check_path="/usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_path}"
 	# format:
 	# ${CATEGORY}/${P}	path_to_package
-	addwrite "${NPM_PACKAGE_DB}"
+	addwrite "${pkg_db}"
 
 	# remove existing entry
-	touch "${NPM_PACKAGE_DB}"
-	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
+	touch "${pkg_db}"
+	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${pkg_db}"
 
-	echo -e "${CATEGORY}/${PN}:${SLOT}\t${check_path}" >> "${NPM_PACKAGE_DB}"
+	echo -e "${CATEGORY}/${PN}:${SLOT}\t${check_path}" >> "${pkg_db}"
 
 	# remove blank lines
-	sed -i '/^$/d' "${NPM_PACKAGE_DB}"
+	sed -i '/^$/d' "${pkg_db}"
+}
+
+# @FUNCTION: electron-app-register-npm
+# @DESCRIPTION:
+# Adds the package to the electron database
+# This function MUST be called in pkg_postinst.
+electron-app-register-npm() {
+	local rel_path=${1:-""}
+	electron-app-register-x "${NPM_PACKAGE_DB}" "${rel_path}"
+}
+
+# @FUNCTION: electron-app-register-yarn
+# @DESCRIPTION:
+# Adds the package to the electron database
+# This function MUST be called in pkg_postinst.
+electron-app-register-yarn() {
+	local rel_path=${1:-""}
+	electron-app-register-x "${YARN_PACKAGE_DB}" "${rel_path}"
 }
 
 # @FUNCTION: electron-app_pkg_postinst
@@ -342,7 +432,17 @@ electron-app-register() {
 # scan for vulnerabilities containing node_modules.
 electron-app_pkg_postinst() {
         debug-print-function ${FUNCNAME} "${@}"
-	electron-app-register "${ELECTRON_APP_REG_PATH}"
+	case "$ELECTRON_APP_MODE" in
+		npm)
+			electron-app-register-npm "${ELECTRON_APP_REG_PATH}"
+			;;
+		yarn)
+			electron-app-register-yarn "${ELECTRON_APP_REG_PATH}"
+			;;
+		*)
+			die "Unsupported package system"
+			;;
+	esac
 }
 
 # @FUNCTION: electron-app_pkg_postrm
@@ -354,6 +454,9 @@ electron-app_pkg_postrm() {
 	case "$ELECTRON_APP_MODE" in
 		npm)
 			sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
+			;;
+		yarn)
+			sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${YARN_PACKAGE_DB}"
 			;;
 		*)
 			die "Unsupported package system"
