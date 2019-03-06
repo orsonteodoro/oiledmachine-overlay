@@ -137,17 +137,13 @@ npm-secaudit-fetch-deps() {
 		einfo "Running \`npm i --package-lock\`"
 		npm i --package-lock || die # prereq for command below
 	fi
-	einfo "Running \`npm audit fix --force\`"
-	npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die
-	einfo "Auditing security done"
+	_npm-secaudit-audit-fix
 	popd
 }
 
 # @FUNCTION: npm_unpack
 # @DESCRIPTION:
-# Initializes cache folder and gets the archive
-# without dependencies.  You MUST call
-# npm-secaudit-fetch-deps manually.
+# Unpack sources
 npm-secaudit_src_unpack() {
         debug-print-function ${FUNCNAME} "${@}"
 
@@ -203,6 +199,16 @@ npm-secaudit-register() {
 	sed -i '/^$/d' "${NPM_PACKAGE_DB}"
 }
 
+_npm-secaudit-audit-fix() {
+	if [[ "${NPM_SECAUDIT_INSTALL_AUDIT}" == "1" ||
+		"${NPM_SECAUDIT_INSTALL_AUDIT}" == "true" ||
+		"${NPM_SECAUDIT_INSTALL_AUDIT}" == "TRUE" ]] ; then
+		einfo "Running \`npm audit fix --force\`"
+		npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die
+		einfo "Auditing security done"
+	fi
+}
+
 # @FUNCTION: npm-secaudit-install
 # @DESCRIPTION:
 # Installs a desktop app.  If overwritten,
@@ -212,13 +218,7 @@ npm-secaudit-install() {
 
 	einfo "Running \`npm i --package-lock\`"
 	npm i --package-lock || die  # prereq for command below for bugged lockfiles
-
-	if [[ "${NPM_SECAUDIT_INSTALL_AUDIT}" == "1" ||
-		"${NPM_SECAUDIT_INSTALL_AUDIT}" == "true" ||
-		"${NPM_SECAUDIT_INSTALL_AUDIT}" == "TRUE" ]] ; then
-		einfo "Running \`npm audit fix --force\`"
-		npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die
-	fi
+	_npm-secaudit-audit-fix
 
 	if ! use debug ; then
 		if [[ "${NPM_SECAUDIT_PRUNE}" == "1" &&

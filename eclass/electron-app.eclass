@@ -140,6 +140,16 @@ _electron-app-flakey-check() {
 	fi
 }
 
+_electron-app-audit-fix-npm() {
+	if [[ "${ELECTRON_APP_INSTALL_AUDIT}" == "1" ||
+		"${ELECTRON_APP_INSTALL_AUDIT}" == "true" ||
+		"${ELECTRON_APP_INSTALL_AUDIT}" == "TRUE" ]] ; then
+		einfo "Running \`npm audit fix --force\`"
+		npm audit fix --force --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
+		einfo "Auditing security done"
+	fi
+}
+
 # @FUNCTION: electron-app_pkg_setup
 # @DESCRIPTION:
 # Initializes globals
@@ -201,9 +211,7 @@ electron-app-fetch-deps-npm()
 		einfo "Running \`npm i --package-lock\`"
 		npm i --package-lock || die # prereq for command below
 	fi
-	einfo "Running \`npm audit fix --force\`"
-	npm audit fix --force --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
-	einfo "Auditing security done"
+	_electron-app-audit-fix-npm
 	popd
 }
 
@@ -257,9 +265,7 @@ electron-app-fetch-deps() {
 
 # @FUNCTION: electron-app_src_unpack
 # @DESCRIPTION:
-# Initializes cache folder and gets the archive
-# without dependencies.  You MUST call
-# npm-secaudit-fetch-deps manually.
+# Unpacks sources
 electron-app_src_unpack() {
         debug-print-function ${FUNCNAME} "${@}"
 
@@ -326,12 +332,7 @@ electron-desktop-app-install() {
 			einfo "Running \`npm i --package-lock\`"
 			npm i --package-lock || die # prereq for command below for bugged lockfiles
 
-			if [[ "${ELECTRON_APP_INSTALL_AUDIT}" == "1" ||
-				"${ELECTRON_APP_INSTALL_AUDIT}" == "true" ||
-				"${ELECTRON_APP_INSTALL_AUDIT}" == "TRUE" ]] ; then
-				einfo "Running \`npm audit fix --force\`"
-				npm audit fix --force --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
-			fi
+			_electron-app-audit-fix-npm
 
 			if ! use debug ; then
 				if [[ "${ELECTRON_APP_PRUNE}" == "1" ||
