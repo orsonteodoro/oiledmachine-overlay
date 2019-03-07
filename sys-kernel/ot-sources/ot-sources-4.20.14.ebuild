@@ -461,11 +461,11 @@ src_unpack() {
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-72deff05bd4662b9aca75812b44a9bea646da1b0-dedupe.patch"
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/1004_linux-4.20.5-fix.patch"
 		if use amd-testing ; then
-			# 1007_linux-4.20.8-fix not required?
+			_dpatch "${PATCH_OPS}" "${FILESDIR}/1007_linux-4.20.8-fix-mispatch-amd-testing.patch"
 			_dpatch "${PATCH_OPS}" "${FILESDIR}/1010_linux-4.20.11-fix.patch"
 			_dpatch "${PATCH_OPS}" "${FILESDIR}/1012_linux-4.20.13-fix.patch"
 		else
-			_dpatch "${PATCH_OPS}" "${FILESDIR}/1007_linux-4.20.8-fix-for-linux-4.20.14.patch"
+			_dpatch "${PATCH_OPS}" "${FILESDIR}/1007_linux-4.20.8-fix-mispatch-non-amd-testing.patch"
 		fi
 	fi
 
