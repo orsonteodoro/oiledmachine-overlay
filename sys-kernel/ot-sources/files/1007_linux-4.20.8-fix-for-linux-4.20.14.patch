@@ -1,5 +1,5 @@
---- a/drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c.orig	2019-03-06 21:43:15.493209631 -0800
-+++ b/drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c	2019-03-06 23:37:45.059517202 -0800
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2019-03-06 21:43:15.493209631 -0800
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-03-06 23:37:45.059517202 -0800
 @@ -5315,13 +5315,6 @@ static void amdgpu_dm_atomic_commit_tail
  		dc_release_state(dc_state_temp);
  }
