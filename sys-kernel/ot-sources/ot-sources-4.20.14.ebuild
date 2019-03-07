@@ -460,7 +460,7 @@ src_unpack() {
 		# fix patching errors caused by "patch -N" with apply_genpatch_*
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-72deff05bd4662b9aca75812b44a9bea646da1b0-dedupe.patch"
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/1004_linux-4.20.5-fix.patch"
-		#_dpatch "${PATCH_OPS}" "${FILESDIR}/1007_linux-4.20.8-fix.patch"
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/1007_linux-4.20.8-fix-for-linux-4.20.14.patch"
 		if use amd-testing ; then
 			_dpatch "${PATCH_OPS}" "${FILESDIR}/1012_linux-4.20.13-fix.patch"
 		fi
