@@ -1,0 +1,10 @@
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c.orig	2019-03-07 01:43:12.792785850 -0800
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c	2019-03-07 01:48:59.776613705 -0800
+@@ -3271,7 +3271,6 @@ error:
+  * a hung GPU.
+  */
+ bool amdgpu_device_should_recover_gpu(struct amdgpu_device *adev)
+-	amdgpu_virt_init_data_exchange(adev);
+ {
+ 	if (!amdgpu_device_ip_check_soft_reset(adev)) {
+ 		DRM_INFO("Timeout, but no hardware hang detected.\n");

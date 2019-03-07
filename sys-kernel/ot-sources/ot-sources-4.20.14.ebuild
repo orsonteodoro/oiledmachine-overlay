@@ -462,6 +462,7 @@ src_unpack() {
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/1004_linux-4.20.5-fix.patch"
 		if use amd-testing ; then
 			# 1007_linux-4.20.8-fix not required?
+			_dpatch "${PATCH_OPS}" "${FILESDIR}/1010_linux-4.20.11-fix.patch"
 			_dpatch "${PATCH_OPS}" "${FILESDIR}/1012_linux-4.20.13-fix.patch"
 		else
 			_dpatch "${PATCH_OPS}" "${FILESDIR}/1007_linux-4.20.8-fix-for-linux-4.20.14.patch"
