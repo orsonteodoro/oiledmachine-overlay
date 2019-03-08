@@ -109,7 +109,7 @@ function summary() {
 	local fsz=$(wc -c ${INSECURE_SET_FP} | cut -f1 -d' ')
 	dinfo "n_insecure=$n_insecure"
 	dinfo "fsz=$fsz"
-	if (( $n_insecure > 0 && $fsz <= 1 )); then
+	if (( $n_insecure > 0 && $fsz > 1 )); then
 		D=$(cd "$(dirname "$0")" ; pwd -P)
 		einfo "npm-secaudit found ${n_insecure} insecure apps.  Please update immediately with \`emerge @${INSECURE_SET_FN}\`."
 		einfo "For full report, run with \`${D}/$(basename $BASH_SOURCE) -v\`."
