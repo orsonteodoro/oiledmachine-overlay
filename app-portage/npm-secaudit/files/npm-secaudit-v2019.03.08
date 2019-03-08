@@ -7,7 +7,9 @@
 #
 # It is designed to check every registered npm package and it's bundled dependencies.
 # If it finds a package with a security vulerability, it will suggest to the user
-# to re-emerge the package.
+# to re-emerge the package.  A package that uses electron-app.eclass or
+# npm-secaudit.eclass in the oiledmachine-overlay will run `npm audit fix --force`
+# to replace the vulnerable internal dependency.
 
 H_INFO="
 Copyright 2019 Orson Teodoro
