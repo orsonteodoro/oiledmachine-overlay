@@ -94,7 +94,7 @@ function check() {
 		if [[ "$?" == "0" ]] ; then
 			dinfo "Package ${p} is good."
 		else
-			dinfo "Package ${p} needs to be updated and has been placed in the @${INSECURE_SET_FN} slot."
+			dinfo "Package ${p} needs to be updated and has been placed in the @${INSECURE_SET_FN} set."
 			echo "${p}" >> "${INSECURE_SET_FP}"
 		fi
 		popd >/dev/null
