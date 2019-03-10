@@ -213,7 +213,7 @@ _npm-secaudit-audit-fix() {
 # @DESCRIPTION:
 # Installs a desktop app.  If overwritten,
 # you must prune yourself.
-# A user can define electron-app_fix_prune to reinstall dependencies
+# A user can define npm-secaudit_fix_prune to reinstall dependencies
 # caused by breakage by pruning or auditing.
 npm-secaudit-install() {
 	local rel_src_path="$1"
