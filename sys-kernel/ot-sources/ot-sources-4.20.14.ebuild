@@ -157,6 +157,11 @@ pkg_setup() {
 		ewarn "The zen-tune patch or muqss might cause lock up or slow io under heavy load like npm.  These use flags are not recommended."
 	fi
 
+	if use bfq ; then
+		ewarn "The bfq patch applied may cause a kernel panic if it doesn't turn on the feature"
+		ewarn "\"SCSI: use blk-mq I/O path by default\" (CONFIG_SCSI_MQ_DEFAULT) or uses another IO scheduler other than BFQ."
+	fi
+
 	#use deblob && python-any-r1_pkg_setup
         kernel-2_pkg_setup
 }
