@@ -45,7 +45,7 @@ KERNEL_COMMIT="8fe28cb58bcb235034b64cbbb7550a8a43fd88be" # Linus' tag for 4.20.0
 AMD_TAG="amd-staging-drm-next"
 AMD_COMMIT_LAST_STABLE="fa16d1eb6a78b265480bd4c2b8739c1ea261cdd8" # amd-18.50 branch latest commit equivalent
 
-IUSE="+zentune +o3 +muqss pds +bfq +amd amd-testing cfs +graysky2 +ukms tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs"
+IUSE="-zentune +o3 +muqss pds +bfq +amd amd-testing cfs +graysky2 +ukms tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs"
 REQUIRED_USE="^^ ( muqss pds cfs ) tresor_sysfs? ( || ( tresor_i686 tresor_x86_64 tresor_aesni ) ) tresor? ( ^^ ( tresor_i686 tresor_x86_64 tresor_aesni ) ) tresor_i686? ( tresor ) tresor_x86_64? ( tresor ) tresor_aesni? ( tresor ) amd-testing? ( amd )"
 
 #K_WANT_GENPATCHES="base extras experimental"
@@ -153,6 +153,10 @@ UNIPATCH_STRICTORDER="yes"
 PATCH_OPS="-p1 -F 100"
 
 pkg_setup() {
+	if use zen-tune ; then
+		ewarn "The zen-tune patch might cause lock up or slow io under heavy load like npm.  It is not recommended."
+	fi
+
 	#use deblob && python-any-r1_pkg_setup
         kernel-2_pkg_setup
 }
