@@ -153,8 +153,8 @@ UNIPATCH_STRICTORDER="yes"
 PATCH_OPS="-p1 -F 100"
 
 pkg_setup() {
-	if use zen-tune ; then
-		ewarn "The zen-tune patch might cause lock up or slow io under heavy load like npm.  It is not recommended."
+	if use zen-tune || use muqss ; then
+		ewarn "The zen-tune patch or muqss might cause lock up or slow io under heavy load like npm.  These use flags are not recommended."
 	fi
 
 	#use deblob && python-any-r1_pkg_setup
