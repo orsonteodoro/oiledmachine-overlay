@@ -144,6 +144,9 @@ _electron-app-audit-fix-npm() {
 	if [[ "${ELECTRON_APP_INSTALL_AUDIT}" == "1" ||
 		"${ELECTRON_APP_INSTALL_AUDIT}" == "true" ||
 		"${ELECTRON_APP_INSTALL_AUDIT}" == "TRUE" ]] ; then
+		einfo "Running \`npm i --package-lock\`"
+		npm i --package-lock || die # prereq for command below
+
 		einfo "Running \`npm audit fix --force\`"
 		npm audit fix --force --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
 		einfo "Auditing security done"
@@ -207,10 +210,6 @@ electron-app-fetch-deps-npm()
 
 	pushd "${S}"
 	npm install --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
-	if [[ ! -e package-lock.js ]] ; then
-		einfo "Running \`npm i --package-lock\`"
-		npm i --package-lock || die # prereq for command below
-	fi
 	_electron-app-audit-fix-npm
 	popd
 }
@@ -300,7 +299,7 @@ electron-app-build-yarn() {
 
 # @FUNCTION: electron-app_src_compile
 # @DESCRIPTION:
-# Builds an electron app
+# Builds an electron app.
 electron-app_src_compile() {
         debug-print-function ${FUNCNAME} "${@}"
 
@@ -320,6 +319,8 @@ electron-app_src_compile() {
 # @FUNCTION: electron-desktop-app-install
 # @DESCRIPTION:
 # Installs a desktop app with wrapper and desktop menu entry.
+# A user can define electron-app_fix_prune to reinstall dependencies
+# caused by breakage by pruning or auditing.
 electron-desktop-app-install() {
 	local rel_src_path="$1"
 	local rel_icon_path="$2"
@@ -329,9 +330,6 @@ electron-desktop-app-install() {
 
 	case "$ELECTRON_APP_MODE" in
 		npm)
-			einfo "Running \`npm i --package-lock\`"
-			npm i --package-lock || die # prereq for command below for bugged lockfiles
-
 			_electron-app-audit-fix-npm
 
 			if ! use debug ; then
@@ -341,6 +339,10 @@ electron-desktop-app-install() {
 					einfo "Running \`npm prune --production\`"
 					npm prune --production
 				fi
+			fi
+
+			if declare -f electron-app_fix_prune > /dev/null ; then
+				electron-app_fix_prune
 			fi
 
 			local old_dotglob=$(shopt dotglob | cut -f 2)

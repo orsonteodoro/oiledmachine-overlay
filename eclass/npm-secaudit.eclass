@@ -133,10 +133,6 @@ npm-secaudit-fetch-deps() {
 	_npm-secaudit_yarn_access
 
 	npm install --maxsockets=${NPM_MAXSOCKETS} || die
-	if [[ ! -e package-lock.js ]] ; then
-		einfo "Running \`npm i --package-lock\`"
-		npm i --package-lock || die # prereq for command below
-	fi
 	_npm-secaudit-audit-fix
 	popd
 }
@@ -203,6 +199,10 @@ _npm-secaudit-audit-fix() {
 	if [[ "${NPM_SECAUDIT_INSTALL_AUDIT}" == "1" ||
 		"${NPM_SECAUDIT_INSTALL_AUDIT}" == "true" ||
 		"${NPM_SECAUDIT_INSTALL_AUDIT}" == "TRUE" ]] ; then
+
+		einfo "Running \`npm i --package-lock\`"
+		npm i --package-lock
+
 		einfo "Running \`npm audit fix --force\`"
 		npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die
 		einfo "Auditing security done"
@@ -212,12 +212,12 @@ _npm-secaudit-audit-fix() {
 # @FUNCTION: npm-secaudit-install
 # @DESCRIPTION:
 # Installs a desktop app.  If overwritten,
-# you must prune yourself
+# you must prune yourself.
+# A user can define electron-app_fix_prune to reinstall dependencies
+# caused by breakage by pruning or auditing.
 npm-secaudit-install() {
 	local rel_src_path="$1"
 
-	einfo "Running \`npm i --package-lock\`"
-	npm i --package-lock || die  # prereq for command below for bugged lockfiles
 	_npm-secaudit-audit-fix
 
 	if ! use debug ; then
@@ -227,6 +227,10 @@ npm-secaudit-install() {
 			einfo "Running \`npm prune --production\`"
 			npm prune --production
 		fi
+	fi
+
+	if declare -f npm-secaudit_fix_prune > /dev/null ; then
+		npm-secaudit_fix_prune
 	fi
 
 	local old_dotglob=$(shopt dotglob | cut -f 2)
