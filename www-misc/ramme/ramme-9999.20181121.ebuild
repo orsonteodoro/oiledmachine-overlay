@@ -31,10 +31,30 @@ src_prepare() {
 	fi
 
 	# fix stall bug in sandbox
-	sed -i -e "s|\"electron\": \"\^[0-9.]*\",||g" package.json || die
+	#sed -i -e "s|\"electron\": \"\^[0-9.]*\",||g" package.json || die
 
 	npm install yarn || die
+	pushd node_modules/micromatch/ || die
+	npm install braces@"^2.3.2" --save || die
+	popd
 	electron-app_src_prepare
+	pushd node_modules/guetzli/node_modules/caw || die
+	patch -p1 -i "${FILESDIR}/caw-1.2.0-replace-tunnel-agent-with-node-tunnel.patch" || die
+	cd ../..
+	npm install || die
+	popd
+	pushd node_modules/zopflipng-bin/node_modules/caw || die
+	patch -p1 -i "${FILESDIR}/caw-1.2.0-replace-tunnel-agent-with-node-tunnel.patch" || die
+	cd ../..
+	npm install || die
+	popd
+	npm install sshpk@"^1.14.1" --save || die
+	npm audit || die
+
+	pushd app || die
+	npm audit fix
+	npm audit || die
+	popd
 }
 
 src_compile() {
@@ -46,4 +66,6 @@ src_compile() {
 
 src_install() {
 	electron-desktop-app-install "*" "media/icon.png" "${PN^}" "Network" "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/app"
+	einfo "This program has login issues but still works as of Mar 12 2019."
+	einfo "You may need to close it several times to get it to show the feed."
 }
