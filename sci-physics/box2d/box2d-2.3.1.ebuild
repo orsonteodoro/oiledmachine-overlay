@@ -1,6 +1,5 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 inherit eutils
@@ -10,11 +9,12 @@ HOMEPAGE="http://box2d.org/"
 SRC_URI="https://github.com/erincatto/Box2D/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="ZLIB"
-SLOT="${PV:0:3}"
+SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86"
 IUSE="debug doc static"
 
-RDEPEND="=dev-util/premake-4.4-r5
+RDEPEND=">=dev-util/premake-4.4
+	 <dev-util/premake-5.0
 	 media-libs/glew
 	 media-libs/glfw"
 DEPEND="${RDEPEND}
