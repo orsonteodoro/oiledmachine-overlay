@@ -1,0 +1,11 @@
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c.orig	2019-03-14 03:08:12.536261235 -0700
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c	2019-03-14 03:26:04.779790065 -0700
+@@ -2002,8 +2002,6 @@ enum dc_status dc_validate_global_state(
+ 		struct dc_state *new_ctx)
+ {
+ 	enum dc_status result = DC_ERROR_UNEXPECTED;
+-	calculate_phy_pix_clks(stream);
+-
+ 	int i, j;
+ 
+ 	if (!new_ctx)

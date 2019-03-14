@@ -1,0 +1,10 @@
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c.orig	2019-03-14 02:09:03.610218785 -0700
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c	2019-03-14 02:11:28.690794932 -0700
+@@ -3271,7 +3271,6 @@ error:
+  * @adev: amdgpu device pointer
+  *
+  * Check amdgpu_gpu_recovery and SRIOV status to see if we should try to recover
+-	amdgpu_virt_init_data_exchange(adev);
+  * a hung GPU.
+  */
+ bool amdgpu_device_should_recover_gpu(struct amdgpu_device *adev)

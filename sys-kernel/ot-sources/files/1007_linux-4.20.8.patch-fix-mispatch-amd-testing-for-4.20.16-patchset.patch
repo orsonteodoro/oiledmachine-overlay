@@ -1,0 +1,16 @@
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2019-03-14 01:26:52.691634548 -0700
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-03-14 01:57:05.023684868 -0700
+@@ -5315,13 +5315,6 @@ static void amdgpu_dm_atomic_commit_tail
+ 		for (j = 0; j < status->plane_count; j++)
+ 			dummy_updates[j].surface = status->plane_states[0];
+ 
+-	if (!updates || !surface) {
+-		DRM_ERROR("Plane or surface update failed to allocate");
+-		/* Set type to FULL to avoid crashing in DC*/
+-		update_type = UPDATE_TYPE_FULL;
+-		goto ret;
+-	}
+-
+ 		mutex_lock(&dm->dc_lock);
+ 		dc_commit_updates_for_stream(dm->dc,
+ 						     dummy_updates,
