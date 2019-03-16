@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -6,13 +6,17 @@ inherit eutils versionator
 
 DESCRIPTION="QB64"
 HOMEPAGE="http://www.qb64.net/"
-#1.2.20180102.84.2018.01.06.05.07.34
-PV_A="$(get_version_component_range 1-2 ${PV})" #1.2
-PV_B="$(get_version_component_range 3 ${PV})" #20180102
-PV_C="$(get_version_component_range 4 ${PV})" #84
-PV_D="$(get_version_component_range 5-7 ${PV})" #2018.01.06
-PV_E="$(get_version_component_range 8-10 ${PV})" #05.07.34
-SRC_URI="http://www.qb64.net/release/dirty/${PV_D//./_}__${PV_E//./_}-${PV_A}-${PV_B}.${PV_C}/linux/qb64-${PV_A}-${PV_B}.${PV_C}-lnx.tar.gz"
+# 1.2.20181101.14.32.33.2398884
+PV_A="$(get_version_component_range 1-2 ${PV})" # 1.2
+PV_B="$(get_version_component_range 3 ${PV})" # 20181101
+PV_B_Y="${PV_B:0:4}" # 2018
+PV_B_M="${PV_B:4:2}" # 11
+PV_B_D="${PV_B:6:2}" # 01
+PV_C="$(get_version_component_range 4 ${PV})" # 14
+PV_D="$(get_version_component_range 5 ${PV})" # 32
+PV_E="$(get_version_component_range 6 ${PV})" # 33
+PV_F="$(get_version_component_range 7 ${PV})" # 2398884
+SRC_URI="https://www.qb64.org/autobuilds/master/qb64_${PV_B_Y}-${PV_B_M}-${PV_B_D}-${PV_C}-${PV_D}-${PV_E}_${PV_F}-master_lnx.tar.gz"
 
 LICENSE="QB64"
 SLOT="0"
@@ -62,12 +66,14 @@ src_install() {
 	echo "cd /usr/$(get_libdir)/qb64" >> "${D}/usr/bin/qb64" || die
 	echo "./qb64" >> "${D}/usr/bin/qb64" || die
 	fperms +x /usr/bin/qb64
+	fperms +x /usr/$(get_libdir)/qb64/qb64
 
 	#we need to get IDE to work properly
 	fperms o+w /usr/$(get_libdir)/qb64/internal/c/parts/core/gl_header_for_parsing/temp/gl_helper_code.h
 	fperms o+w $(ls "${D}"/usr/$(get_libdir)/qb64/internal/temp/*.bin | sed -e "s|${D}||")
 	fperms o+w $(ls "${D}"/usr/$(get_libdir)/qb64/internal/temp/*.txt | sed -e "s|${D}||")
 	fperms o+w /usr/$(get_libdir)/qb64/internal/temp
+	fperms o+w /usr/$(get_libdir)/qb64/internal/config.txt
 
 	#get it to compile correctly
 	fperms o+w /usr/$(get_libdir)/qb64/internal/c/libqb/os/lnx
