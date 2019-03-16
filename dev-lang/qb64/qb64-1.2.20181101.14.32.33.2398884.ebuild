@@ -70,10 +70,13 @@ src_install() {
 
 	#we need to get IDE to work properly
 	fperms o+w /usr/$(get_libdir)/qb64/internal/c/parts/core/gl_header_for_parsing/temp/gl_helper_code.h
-	fperms o+w $(ls "${D}"/usr/$(get_libdir)/qb64/internal/temp/*.bin | sed -e "s|${D}||")
-	fperms o+w $(ls "${D}"/usr/$(get_libdir)/qb64/internal/temp/*.txt | sed -e "s|${D}||")
+	fperms o+w $(find "${D}"/usr/$(get_libdir)/qb64/internal/temp/ -name "*.bin" | sed -e "s|${D}||")
+	fperms o+w $(find "${D}"/usr/$(get_libdir)/qb64/internal/temp/ -name "*.txt" | sed -e "s|${D}||")
+	fperms o+w $(find "${D}"/usr/$(get_libdir)/qb64/internal/temp/ -name "*.rc" | sed -e "s|${D}||")
 	fperms o+w /usr/$(get_libdir)/qb64/internal/temp
 	fperms o+w /usr/$(get_libdir)/qb64/internal/config.txt
+	fperms o+w /usr/$(get_libdir)/qb64/internal/
+	fperms o+w $(find "${D}"/usr/$(get_libdir)/qb64/source/virtual_keyboard -name "*.bas" | sed -e "s|${D}||")
 
 	#get it to compile correctly
 	fperms o+w /usr/$(get_libdir)/qb64/internal/c/libqb/os/lnx
