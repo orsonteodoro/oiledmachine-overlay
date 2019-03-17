@@ -7,9 +7,7 @@ inherit versionator
 
 DESCRIPTION="Seti@Home artwork"
 HOMEPAGE="http://setiathome.ssl.berkeley.edu/"
-SRC_URI=""
-
-RESTRICT="fetch"
+SRC_URI="http://setiathome.berkeley.edu/images/better_banner.jpg"
 
 LICENSE="GPL-2"
 SLOT="$(get_version_component_range 1 ${PV})"
@@ -18,6 +16,6 @@ S="${WORKDIR}"
 
 src_install() {
 	mkdir -p "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu || die
-	cp ${FILESDIR}/better_banner.jpg "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu || die
+	cp ${DISTDIR}/better_banner.jpg "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu || die
 	chown boinc:boinc "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu/better_banner.jpg || die
 }
