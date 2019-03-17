@@ -27,10 +27,10 @@ RESTRICT="fetch strip"
 
 # The binary blobs include binaries for other open sourced packages, we don't want to include those parts, if they are
 # selected, they should come from portage.
-IUSE="+gles2 +opencl +opengl openmax +vdpau +vulkan hsa rocm rocr freesync pal orca vega +egl"
+IUSE="+egl +gles2 freesync hsa +opencl +opengl openmax orca pal +vaapi +vdpau vega +vulkan"
 
 LICENSE="AMD GPL-2 QPL-1.0"
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~x86"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error will be produced:
@@ -38,6 +38,7 @@ SLOT="1"
 #
 # For more info on VIDEODRV see https://www.x.org/wiki/XorgModuleABIVersions/
 RDEPEND="
+	hsa? ( sys-process/numactl )
 	>=app-eselect/eselect-opengl-1.0.7
 	app-eselect/eselect-opencl
 	dev-libs/openssl[${MULTILIB_USEDEP}]
@@ -70,7 +71,7 @@ DEPEND="
 "
 
 S="${WORKDIR}"
-REQUIRED_USE="!rocr || ( pal orca rocm )" #incomplete
+REQUIRED_USE="|| ( pal orca )" #incomplete
 #!hsa
 
 pkg_nofetch() {
@@ -100,10 +101,6 @@ pkg_setup() {
 
 	if use orca ; then
 		einfo "OpenCL orca is being used. You are enabling the older legacy OpenCL driver implementation used by older fglrx."
-	fi
-
-	if use rocm ; then
-		einfo "OpenCL ROCm is being used."
 	fi
 
 	if use freesync ; then
@@ -140,125 +137,138 @@ pkg_setup() {
 		# remove if it works and been tested on hsa hardware
 		eerror "hsa not supported and not tested"
 	fi
-
-	if use rocr ; then
-		eerror "rocr not supported"
-	fi
 }
 
 src_unpack() {
 	default
 
 	unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgl1-amdgpu-pro-appprofiles_${PKG_VER_STRING}_all.deb"
-	unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libdrm-amdgpu-utils_${PKG_VER_LIBDRM}-${PKG_REV}_amd64.deb"
 
-	if use opencl ; then
-		# Install clinfo
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/clinfo-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
+	if use abi_x86_64 ; then
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libdrm-amdgpu-utils_${PKG_VER_LIBDRM}-${PKG_REV}_amd64.deb"
 
-		# Install OpenCL components
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libopencl1-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
-		if use pal ; then
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/opencl-amdgpu-pro-icd_${PKG_VER_STRING}_amd64.deb"
+		if use opencl ; then
+			# Install clinfo
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/clinfo-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
+
+			# Install OpenCL components
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libopencl1-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
+			if use pal ; then
+				unpack_deb "amdgpu-pro-${PKG_VER_STRING}/opencl-amdgpu-pro-icd_${PKG_VER_STRING}_amd64.deb"
+			fi
+
+			if use orca ; then
+				unpack_deb "amdgpu-pro-${PKG_VER_STRING}/opencl-orca-amdgpu-pro-icd_${PKG_VER_STRING}_amd64.deb"
+			fi
+
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/roct-amdgpu-pro_${PKG_VER_ROCT}-${PKG_REV}_amd64.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/roct-amdgpu-pro-dev_${PKG_VER_ROCT}-${PKG_REV}_amd64.deb"
 		fi
 
-		if use rocm ; then
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/rocm-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
-			#unpack_deb "amdgpu-pro-${PKG_VER_STRING}/rocm-amdgpu-pro-icd_${PKG_VER_STRING}_amd64.deb" fixme
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/rocm-amdgpu-pro-opencl_${PKG_VER_STRING}_amd64.deb"
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/rocm-amdgpu-pro-opencl-dev_${PKG_VER_STRING}_amd64.deb"
+		if use opengl ; then
+			# Install OpenGL
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libdrm-amdgpu-amdgpu1_${PKG_VER_LIBDRM}-${PKG_REV}_amd64.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libdrm-amdgpu-radeon1_${PKG_VER_LIBDRM}-${PKG_REV}_amd64.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgl1-amdgpu-pro-glx_${PKG_VER_STRING}_amd64.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgl1-amdgpu-pro-ext_${PKG_VER_STRING}_amd64.deb"
+			mv opt/amdgpu-pro/lib/xorg/modules/extensions/libglx.so opt/amdgpu-pro/lib/xorg/modules/extensions/libglx64.so || die
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgl1-amdgpu-pro-dri_${PKG_VER_STRING}_amd64.deb"
+
+			# Install GBM
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgbm1-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
 		fi
 
-		if use rocr ; then
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/rocr-amdgpu_1.1.6-${PKG_REV}_amd64.deb"
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/rocr-amdgpu-dev_1.1.6-${PKG_REV}_amd64.deb"
+		if use gles2 ; then
+			# Install GLES2
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgles2-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
 		fi
 
-		if use orca ; then
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/opencl-orca-amdgpu-pro-icd_${PKG_VER_STRING}_amd64.deb"
-			if use abi_x86_32 ; then
+		if use egl ; then
+			# Install EGL libs
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libegl1-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
+		fi
+
+		if use vulkan ; then
+			# Install Vulkan driver
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/vulkan-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
+		fi
+
+		if use openmax ; then
+			# Install gstreamer OpenMAX plugin
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/gst-omx-amdgpu_${PKG_VER_GST_OMX}-${PKG_REV}_amd64.deb"
+		fi
+
+		if use vdpau ; then
+			# Install VDPAU
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/mesa-amdgpu-vdpau-drivers_${PKG_VER_MESA}-${PKG_REV}_amd64.deb"
+		fi
+
+		# no vaapi
+
+		# Install xorg drivers
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/xserver-xorg-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}_amd64.deb"
+		mv opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv64.so || die
+	fi
+
+	if use abi_x86_32 ; then
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libdrm-amdgpu-utils_${PKG_VER_LIBDRM}-${PKG_REV}_i386.deb"
+
+		if use opencl ; then
+			if use orca ; then
 				unpack_deb "amdgpu-pro-${PKG_VER_STRING}/opencl-orca-amdgpu-pro-icd_${PKG_VER_STRING}_i386.deb"
 			fi
-		fi
 
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/roct-amdgpu-pro_${PKG_VER_ROCT}-${PKG_REV}_amd64.deb"
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/roct-amdgpu-pro-dev_${PKG_VER_ROCT}-${PKG_REV}_amd64.deb"
-
-		if use abi_x86_32 ; then
 			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libopencl1-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
 			#unpack_deb "amdgpu-pro-${PKG_VER_STRING}/opencl-amdgpu-pro-icd_${PKG_VER_STRING}_i386.deb" fixme
 		fi
-	fi
 
-	if use vulkan ; then
-		# Install Vulkan driver
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/vulkan-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
-
-		if use abi_x86_32 ; then
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/vulkan-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
-		fi
-	fi
-
-	if use opengl ; then
-		# Install OpenGL
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libdrm-amdgpu-amdgpu1_${PKG_VER_LIBDRM}-${PKG_REV}_amd64.deb"
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libdrm-amdgpu-radeon1_${PKG_VER_LIBDRM}-${PKG_REV}_amd64.deb"
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgl1-amdgpu-pro-glx_${PKG_VER_STRING}_amd64.deb"
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgl1-amdgpu-pro-ext_${PKG_VER_STRING}_amd64.deb"
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgl1-amdgpu-pro-dri_${PKG_VER_STRING}_amd64.deb"
-
-		# Install GBM
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgbm1-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgbm1-amdgpu-pro-base_${PKG_VER_STRING}_all.deb"
-
-		if use abi_x86_32 ; then
+		if use opengl ; then
 			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libdrm-amdgpu-amdgpu1_${PKG_VER_LIBDRM}-${PKG_REV}_i386.deb"
 			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libdrm-amdgpu-radeon1_${PKG_VER_LIBDRM}-${PKG_REV}_i386.deb"
 			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgl1-amdgpu-pro-glx_${PKG_VER_STRING}_i386.deb"
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgl1-amdgpu-pro-ext_${PKG_VER_STRING}_i386.deb"
+			mv opt/amdgpu-pro/lib/xorg/modules/extensions/libglx.so opt/amdgpu-pro/lib/xorg/modules/extensions/libglx32.so || die
 			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgl1-amdgpu-pro-dri_${PKG_VER_STRING}_i386.deb"
 
 			# Install GBM
 			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgbm1-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
 		fi
-	fi
 
-	if use gles2 ; then
-		# Install GLES2
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgles2-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
-
-		if use abi_x86_32 ; then
+		if use gles2 ; then
+			# Install GLES2
 			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgles2-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
 		fi
-	fi
 
-	if use egl ; then
-		# Install EGL libs
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libegl1-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
-
-		if use abi_x86_32 ; then
+		if use egl ; then
+			# Install EGL libs
 			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libegl1-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
 		fi
-	fi
 
-	if use openmax ; then
-		# Install gstreamer OpenMAX plugin
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/gst-omx-amdgpu_${PKG_VER_GST_OMX}-${PKG_REV}_amd64.deb"
-		if use abi_x86_32 ; then
+		if use vulkan ; then
+			# Install Vulkan driver
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/vulkan-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
+		fi
+
+		if use openmax ; then
+			# Install gstreamer OpenMAX plugin
 			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/gst-omx-amdgpu_${PKG_VER_GST_OMX}-${PKG_REV}_i386.deb"
 		fi
-	fi
 
-	if use vdpau ; then
-		# Install VDPAU
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/mesa-amdgpu-vdpau-drivers_${PKG_VER_MESA}-${PKG_REV}_amd64.deb"
-
-		if use abi_x86_32 ; then
+		if use vdpau ; then
+			# Install VDPAU
 			unpack_deb "amdgpu-pro-${PKG_VER_STRING}/mesa-amdgpu-vdpau-drivers_${PKG_VER_MESA}-${PKG_REV}_i386.deb"
 		fi
+
+		# no vaapi
+
+		# Install xorg drivers
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/xserver-xorg-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}_i386.deb"
+		mv opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv32.so || die
 	fi
 
-	# Install xorg drivers
-	unpack_deb "amdgpu-pro-${PKG_VER_STRING}/xserver-xorg-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}_amd64.deb"
+	if use opengl ; then
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING}/libgbm1-amdgpu-pro-base_${PKG_VER_STRING}_all.deb"
+	fi
 
 	unpack_deb "amdgpu-pro-${PKG_VER_STRING}/ids-amdgpu_${PKG_VER_ID}-${PKG_REV}_all.deb"
 }
@@ -333,9 +343,9 @@ EOF
 src_install() {
 	insinto /lib/udev/rules.d/
 	doins "${T}/91-drm_pro-modeset.rules"
-	insinto /etc/ld.so.conf.d
+	insinto /etc/ld.so.conf.d/
 	doins "${T}/01-amdgpu.conf"
-	insinto /etc/X11/xorg.conf.d
+	insinto /etc/X11/xorg.conf.d/
 	doins "${T}/10-screen.conf"
 	doins "${T}/10-monitor.conf"
 	doins "${T}/10-device.conf"
@@ -355,158 +365,165 @@ src_install() {
 	cd ../../..
 
 	if use opencl ; then
-		# Install clinfo
-		into /usr/
-		cd opt/amdgpu-pro/bin/
-		dobin clinfo
-		cd ../../..
+		if use abi_x86_64 ; then
+			# Install clinfo
+			insinto /usr/bin
+			dobin opt/amdgpu-pro/bin/clinfo
+		fi
 
 		# Install OpenCL components
-		insinto /etc/OpenCL/vendors
-		if use pal ; then
-			doins etc/OpenCL/vendors/amdocl64.icd
-		fi
-
-		if use rocr ; then
-			doins etc/OpenCL/vendors/amdocl-rocr64.icd
-		fi
-
-		if use orca ; then
-			doins etc/OpenCL/vendors/amdocl-orca64.icd
-			if use abi_x86_32 ; then
-				doins etc/OpenCL/vendors/amdocl-orca32.icd
+		if use abi_x86_64 ; then
+			insinto /etc/OpenCL/vendors/
+			if use pal ; then
+				doins etc/OpenCL/vendors/amdocl64.icd
 			fi
-		fi
 
-		exeinto /usr/lib64/OpenCL/vendors/amdgpu
-		doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libamdocl*
-		doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libOpenCL.so.1
-		dosym libOpenCL.so.1 /usr/lib64/OpenCL/vendors/amdgpu/libOpenCL.so
-
-		if use rocr ; then
-			doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libamdocl-rocr64.so
-		fi
-
-		#doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libcltrace.so #fixme
-
-		if use abi_x86_32 ; then
-			# Install 32 bit OpenCL ICD
-			insinto /etc/OpenCL/vendors
-			#doins etc/OpenCL/vendors/amdocl32.icd #fixme
-			exeinto /usr/lib32/OpenCL/vendors/amdgpu
-			#doexe opt/amdgpu-pro/lib/i386-linux-gnu/libamdocl* #fixme
 			if use orca ; then
-				doexe opt/amdgpu-pro/lib/i386-linux-gnu/libamdocl*
+				doins etc/OpenCL/vendors/amdocl-orca64.icd
+
+				exeinto /usr/lib64/OpenCL/vendors/amdgpu/
+				doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libamdocl12cl64.so
+				doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libamdocl-orca64.so
 			fi
 
-			# Install 32 bit OpenCL library
+			exeinto /usr/lib64/OpenCL/vendors/amdgpu/
+			doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libOpenCL.so.1
+			dosym libOpenCL.so.1 /usr/lib64/OpenCL/vendors/amdgpu/libOpenCL.so
+		fi
+		if use abi_x86_32 ; then
+			insinto /etc/OpenCL/vendors/
+			if use pal ; then
+				#doins etc/OpenCL/vendors/amdocl32.icd #fixme
+				true
+			fi
+
+			if use orca ; then
+				doins etc/OpenCL/vendors/amdocl-orca32.icd
+
+				exeinto /usr/lib32/OpenCL/vendors/amdgpu/
+				doexe opt/amdgpu-pro/lib/i386-linux-gnu/libamdocl12cl32.so
+				doexe opt/amdgpu-pro/lib/i386-linux-gnu/libamdocl-orca32.so
+			fi
+
+			exeinto /usr/lib32/OpenCL/vendors/amdgpu/
 			doexe opt/amdgpu-pro/lib/i386-linux-gnu/libOpenCL.so.1
 			dosym libOpenCL.so.1 /usr/lib32/OpenCL/vendors/amdgpu/libOpenCL.so
 		fi
 	fi
 
 	if use hsa ; then
-		exeinto /usr/lib64/opengl/amdgpu/lib/
-		doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libhsakmt.so.1.0.0
-		dosym libhsakmt.so.1.0.0 /usr/lib64/opengl/amdgpu/lib/libhsakmt.so.1.0
-		dosym libhsakmt.so.1.0.0 /usr/lib64/opengl/amdgpu/lib/libhsakmt.so.1
-		dosym libhsakmt.so.1.0.0 /usr/lib64/opengl/amdgpu/lib/libhsakmt.so
+		if use abi_x86_64 ; then
+			exeinto /usr/lib64/opengl/amdgpu/lib/
+			doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libhsakmt.so.1.0.0
+			dosym libhsakmt.so.1.0.0 /usr/lib64/opengl/amdgpu/lib/libhsakmt.so.1.0
+			dosym libhsakmt.so.1.0.0 /usr/lib64/opengl/amdgpu/lib/libhsakmt.so.1
+			dosym libhsakmt.so.1.0.0 /usr/lib64/opengl/amdgpu/lib/libhsakmt.so
 
-		insinto /usr/include/libhsakmt
-		doins opt/amdgpu-pro/include/libhsakmt/hsakmt*
+			insinto /usr/include/libhsakmt/
+			doins opt/amdgpu-pro/include/libhsakmt/hsakmt*
 
-		insinto /usr/include/libhsakmt/linux
-		doins opt/amdgpu-pro/include/libhsakmt/linux/kfd_ioctl.h
+			insinto /usr/include/libhsakmt/linux/
+			doins opt/amdgpu-pro/include/libhsakmt/linux/kfd_ioctl.h
+		fi
+		# no x86 abi
 	fi
 
 	if use vulkan ; then
 		# Install Vulkan driver
-		insinto /etc/vulkan/icd.d
-		doins "${T}/amd_icd64.json"
-		exeinto /usr/lib64/vulkan/vendors/amdgpu
-		doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/amdvlk64.so
-
+		insinto /etc/vulkan/icd.d/
+		if use abi_x86_64 ; then
+			doins "${T}/amd_icd64.json"
+			exeinto /usr/lib64/vulkan/vendors/amdgpu/
+			doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/amdvlk64.so
+		fi
 		if use abi_x86_32 ; then
-			# Install Vulkan driver
-			insinto /etc/vulkan/icd.d
 			doins "${T}/amd_icd32.json"
-			exeinto /usr/lib32/vulkan/vendors/amdgpu
+			exeinto /usr/lib32/vulkan/vendors/amdgpu/
 			doexe opt/amdgpu-pro/lib/i386-linux-gnu/amdvlk32.so
 		fi
 	fi
 
 	if use opengl ; then
-		# Install OpenGL
-		exeinto /usr/lib64/opengl/amdgpu/lib
-		doexe opt/amdgpu/lib/x86_64-linux-gnu/libdrm_amdgpu.so.1.0.0
-		dosym libdrm_amdgpu.so.1.0.0 /usr/lib64/opengl/amdgpu/lib/libdrm_amdgpu.so.1
-		dosym libdrm_amdgpu.so.1.0.0 /usr/lib64/opengl/amdgpu/lib/libdrm_amdgpu.so
-		doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libGL.so.1.2
-		dosym libGL.so.1.2 /usr/lib64/opengl/amdgpu/lib/libGL.so.1
-		dosym libGL.so.1.2 /usr/lib64/opengl/amdgpu/lib/libGL.so
-		exeinto /usr/lib64/opengl/radeon/lib
-		doexe opt/amdgpu/lib/x86_64-linux-gnu/libdrm_radeon.so.1.0.1
-		dosym libdrm_radeon.so.1.0.1 /usr/lib64/opengl/radeon/lib/libdrm_radeon.so.1
-		dosym libdrm_radeon.so.1.0.1 /usr/lib64/opengl/radeon/lib/libdrm_radeon.so
-		insinto /etc/amd/
-		doins etc/amd/amdrc
-		exeinto /usr/lib64/opengl/amdgpu/extensions
-		doexe opt/amdgpu-pro/lib/xorg/modules/extensions/libglx.so
-		exeinto /usr/lib64/opengl/amdgpu/dri
-		doexe usr/lib/x86_64-linux-gnu/dri/amdgpu_dri.so
-		dosym ../opengl/amdgpu/dri/amdgpu_dri.so /usr/lib64/dri/amdgpu_dri.so
-		dosym ../../opengl/amdgpu/dri/amdgpu_dri.so /usr/lib64/x86_64-linux-gnu/dri/amdgpu_dri.so
+		if use abi_x86_64 ; then
+			# Install OpenGL
+			exeinto /usr/lib64/opengl/amdgpu/lib/
+			doexe opt/amdgpu/lib/x86_64-linux-gnu/libdrm_amdgpu.so.1.0.0
+			dosym libdrm_amdgpu.so.1.0.0 /usr/lib64/opengl/amdgpu/lib/libdrm_amdgpu.so.1
+			dosym libdrm_amdgpu.so.1.0.0 /usr/lib64/opengl/amdgpu/lib/libdrm_amdgpu.so
+			doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libGL.so.1.2
+			dosym libGL.so.1.2 /usr/lib64/opengl/amdgpu/lib/libGL.so.1
+			dosym libGL.so.1.2 /usr/lib64/opengl/amdgpu/lib/libGL.so
+			exeinto /usr/lib64/opengl/radeon/lib/
+			doexe opt/amdgpu/lib/x86_64-linux-gnu/libdrm_radeon.so.1.0.1
+			dosym libdrm_radeon.so.1.0.1 /usr/lib64/opengl/radeon/lib/libdrm_radeon.so.1
+			dosym libdrm_radeon.so.1.0.1 /usr/lib64/opengl/radeon/lib/libdrm_radeon.so
+			exeinto /usr/lib64/opengl/amdgpu/extensions/
+			mv opt/amdgpu-pro/lib/xorg/modules/extensions/libglx64.so opt/amdgpu-pro/lib/xorg/modules/extensions/libglx.so
+			doexe opt/amdgpu-pro/lib/xorg/modules/extensions/libglx.so
+			exeinto /usr/lib64/opengl/amdgpu/dri/
+			doexe usr/lib/x86_64-linux-gnu/dri/amdgpu_dri.so
+			dosym ../opengl/amdgpu/dri/amdgpu_dri.so /usr/lib64/dri/amdgpu_dri.so
+			dosym ../../opengl/amdgpu/dri/amdgpu_dri.so /usr/lib64/x86_64-linux-gnu/dri/amdgpu_dri.so
 
-		# Install GBM
-		exeinto /usr/lib64/opengl/amdgpu/lib
-		doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libgbm.so.1.0.0
-		dosym libgbm.so.1.0.0 /usr/lib64/opengl/amdgpu/lib/libgbm.so.1
-		dosym libgbm.so.1.0.0 /usr/lib64/opengl/amdgpu/lib/libgbm.so
-		exeinto /usr/lib64/opengl/amdgpu/gbm
-		doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/gbm/gbm_amdgpu.so
-		dosym gbm_amdgpu.so /usr/lib64/opengl/amdgpu/gbm/libdummy.so
-		dosym opengl/amdgpu/gbm /usr/lib64/gbm
-		insinto /etc/gbm/
-		doins etc/gbm/gbm.conf
+			# Install GBM
+			exeinto /usr/lib64/opengl/amdgpu/lib/
+			doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libgbm.so.1.0.0
+			dosym libgbm.so.1.0.0 /usr/lib64/opengl/amdgpu/lib/libgbm.so.1
+			dosym libgbm.so.1.0.0 /usr/lib64/opengl/amdgpu/lib/libgbm.so
+			exeinto /usr/lib64/opengl/amdgpu/gbm/
+			doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/gbm/gbm_amdgpu.so
+			dosym gbm_amdgpu.so /usr/lib64/opengl/amdgpu/gbm/libdummy.so
+			dosym opengl/amdgpu/gbm /usr/lib64/gbm
+		fi
 
 		if use abi_x86_32 ; then
 			# Install 32 bit OpenGL
-			exeinto /usr/lib32/opengl/amdgpu/lib
+			exeinto /usr/lib32/opengl/amdgpu/lib/
 			doexe opt/amdgpu/lib/i386-linux-gnu/libdrm_amdgpu.so.1.0.0
 			dosym libdrm_amdgpu.so.1.0.0 /usr/lib32/opengl/amdgpu/lib/libdrm_amdgpu.so.1
 			dosym libdrm_amdgpu.so.1.0.0 /usr/lib32/opengl/amdgpu/lib/libdrm_amdgpu.so
 			doexe opt/amdgpu-pro/lib/i386-linux-gnu/libGL.so.1.2
 			dosym libGL.so.1.2 /usr/lib32/opengl/amdgpu/lib/libGL.so.1
 			dosym libGL.so.1.2 /usr/lib32/opengl/amdgpu/lib/libGL.so
-			exeinto /usr/lib32/opengl/radeon/lib
+			exeinto /usr/lib32/opengl/amdgpu/extensions/
+			mv opt/amdgpu-pro/lib/xorg/modules/extensions/libglx32.so opt/amdgpu-pro/lib/xorg/modules/extensions/libglx.so
+			doexe opt/amdgpu-pro/lib/xorg/modules/extensions/libglx.so
+			exeinto /usr/lib32/opengl/radeon/lib/
 			doexe opt/amdgpu/lib/i386-linux-gnu/libdrm_radeon.so.1.0.1
 			dosym libdrm_radeon.so.1.0.1 /usr/lib32/opengl/radeon/lib/libdrm_radeon.so.1
 			dosym libdrm_radeon.so.1.0.1 /usr/lib32/opengl/radeon/lib/libdrm_radeon.so
-			exeinto /usr/lib32/opengl/amdgpu/dri
+			exeinto /usr/lib32/opengl/amdgpu/dri/
 			doexe usr/lib/i386-linux-gnu/dri/amdgpu_dri.so
 			dosym ../opengl/amdgpu/dri/amdgpu_dri.so /usr/lib32/dri/amdgpu_dri.so
 			dosym ../../opengl/amdgpu/dri/amdgpu_dri.so /usr/lib64/i386-linux-gnu/dri/amdgpu_dri.so
 
 			# Install GBM
-			exeinto /usr/lib32/opengl/amdgpu/lib
+			exeinto /usr/lib32/opengl/amdgpu/lib/
 			doexe opt/amdgpu-pro/lib/i386-linux-gnu/libgbm.so.1.0.0
 			dosym libgbm.so.1.0.0 /usr/lib32/opengl/amdgpu/lib/libgbm.so.1
 			dosym libgbm.so.1.0.0 /usr/lib32/opengl/amdgpu/lib/libgbm.so
-			exeinto /usr/lib32/opengl/amdgpu/gbm
+			exeinto /usr/lib32/opengl/amdgpu/gbm/
 			doexe opt/amdgpu-pro/lib/i386-linux-gnu/gbm/gbm_amdgpu.so
 			dosym gbm_amdgpu.so /usr/lib32/opengl/amdgpu/gbm/libdummy.so
 			dosym opengl/amdgpu/gbm /usr/lib32/gbm
 		fi
+
+		insinto /etc/amd/
+		doins etc/amd/amdrc
+
+		insinto /etc/gbm/
+		doins etc/gbm/gbm.conf
 	fi
 
 	if use gles2 ; then
 		# Install GLES2
-		exeinto /usr/lib64/opengl/amdgpu/lib
-		doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libGLESv2.so.2
-		dosym libGLESv2.so.2 /usr/lib64/opengl/amdgpu/lib/libGLESv2.so
-
+		if use abi_x86_64 ; then
+			exeinto /usr/lib64/opengl/amdgpu/lib/
+			doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libGLESv2.so.2
+			dosym libGLESv2.so.2 /usr/lib64/opengl/amdgpu/lib/libGLESv2.so
+		fi
 		if use abi_x86_32 ; then
-			exeinto /usr/lib32/opengl/amdgpu/lib
+			exeinto /usr/lib32/opengl/amdgpu/lib/
 			doexe opt/amdgpu-pro/lib/i386-linux-gnu/libGLESv2.so.2
 			dosym libGLESv2.so.2 /usr/lib32/opengl/amdgpu/lib/libGLESv2.so
 		fi
@@ -514,12 +531,13 @@ src_install() {
 
 	if use egl ; then
 		# Install EGL libs
-		exeinto /usr/lib64/opengl/amdgpu/lib
-		doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libEGL.so.1
-		dosym libEGL.so.1 /usr/lib64/opengl/amdgpu/lib/libEGL.so
-
+		if use abi_x86_64 ; then
+			exeinto /usr/lib64/opengl/amdgpu/lib/
+			doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libEGL.so.1
+			dosym libEGL.so.1 /usr/lib64/opengl/amdgpu/lib/libEGL.so
+		fi
 		if use abi_x86_32 ; then
-			exeinto /usr/lib32/opengl/amdgpu/lib
+			exeinto /usr/lib32/opengl/amdgpu/lib/
 			doexe opt/amdgpu-pro/lib/i386-linux-gnu/libEGL.so.1
 			dosym libEGL.so.1 /usr/lib32/opengl/amdgpu/lib/libEGL.so
 		fi
@@ -527,23 +545,24 @@ src_install() {
 
 	if use vdpau ; then
 		# Install VDPAU
-		exeinto /usr/lib64/opengl/amdgpu/vdpau/
-		doexe opt/amdgpu/lib/x86_64-linux-gnu/vdpau/libvdpau_r300.so.1.0.0
-		doexe opt/amdgpu/lib/x86_64-linux-gnu/vdpau/libvdpau_r600.so.1.0.0
-		doexe opt/amdgpu/lib/x86_64-linux-gnu/vdpau/libvdpau_radeonsi.so.1.0.0
-		dosym ../opengl/amdgpu/vdpau/libvdpau_r300.so.1.0.0 /usr/lib64/vdpau/libvdpau_r300.so.1.0.0
-		dosym ../opengl/amdgpu/vdpau/libvdpau_r600.so.1.0.0 /usr/lib64/vdpau/libvdpau_r600.so.1.0.0
-		dosym ../opengl/amdgpu/vdpau/libvdpau_radeonsi.so.1.0.0 /usr/lib64/vdpau/libvdpau_radeonsi.so.1.0.0
-		dosym libvdpau_r300.so.1.0.0 /usr/lib64/vdpau/libvdpau_r300.so.1.0
-		dosym libvdpau_r300.so.1.0.0 /usr/lib64/vdpau/libvdpau_r300.so.1
-		dosym libvdpau_r300.so.1.0.0 /usr/lib64/vdpau/libvdpau_r300.so
-		dosym libvdpau_r600.so.1.0.0 /usr/lib64/vdpau/libvdpau_r600.so.1.0
-		dosym libvdpau_r600.so.1.0.0 /usr/lib64/vdpau/libvdpau_r600.so.1.
-		dosym libvdpau_r600.so.1.0.0 /usr/lib64/vdpau/libvdpau_r600.so
-		dosym libvdpau_radeonsi.so.1.0.0 /usr/lib64/vdpau/libvdpau_radeonsi.so.1.0
-		dosym libvdpau_radeonsi.so.1.0.0 /usr/lib64/vdpau/libvdpau_radeonsi.so.1
-		dosym libvdpau_radeonsi.so.1.0.0 /usr/lib64/vdpau/libvdpau_radeonsi.so
-
+		if use abi_x86_64 ; then
+			exeinto /usr/lib64/opengl/amdgpu/vdpau/
+			doexe opt/amdgpu/lib/x86_64-linux-gnu/vdpau/libvdpau_r300.so.1.0.0
+			doexe opt/amdgpu/lib/x86_64-linux-gnu/vdpau/libvdpau_r600.so.1.0.0
+			doexe opt/amdgpu/lib/x86_64-linux-gnu/vdpau/libvdpau_radeonsi.so.1.0.0
+			dosym ../opengl/amdgpu/vdpau/libvdpau_r300.so.1.0.0 /usr/lib64/vdpau/libvdpau_r300.so.1.0.0
+			dosym ../opengl/amdgpu/vdpau/libvdpau_r600.so.1.0.0 /usr/lib64/vdpau/libvdpau_r600.so.1.0.0
+			dosym ../opengl/amdgpu/vdpau/libvdpau_radeonsi.so.1.0.0 /usr/lib64/vdpau/libvdpau_radeonsi.so.1.0.0
+			dosym libvdpau_r300.so.1.0.0 /usr/lib64/vdpau/libvdpau_r300.so.1.0
+			dosym libvdpau_r300.so.1.0.0 /usr/lib64/vdpau/libvdpau_r300.so.1
+			dosym libvdpau_r300.so.1.0.0 /usr/lib64/vdpau/libvdpau_r300.so
+			dosym libvdpau_r600.so.1.0.0 /usr/lib64/vdpau/libvdpau_r600.so.1.0
+			dosym libvdpau_r600.so.1.0.0 /usr/lib64/vdpau/libvdpau_r600.so.1
+			dosym libvdpau_r600.so.1.0.0 /usr/lib64/vdpau/libvdpau_r600.so
+			dosym libvdpau_radeonsi.so.1.0.0 /usr/lib64/vdpau/libvdpau_radeonsi.so.1.0
+			dosym libvdpau_radeonsi.so.1.0.0 /usr/lib64/vdpau/libvdpau_radeonsi.so.1
+			dosym libvdpau_radeonsi.so.1.0.0 /usr/lib64/vdpau/libvdpau_radeonsi.so
+		fi
 		if use abi_x86_32 ; then
 			exeinto /usr/lib32/opengl/amdgpu/vdpau/
 			doexe opt/amdgpu/lib/i386-linux-gnu/vdpau/libvdpau_r300.so.1.0.0
@@ -556,20 +575,21 @@ src_install() {
 			dosym libvdpau_r300.so.1.0.0 /usr/lib32/vdpau/libvdpau_r300.so.1
 			dosym libvdpau_r300.so.1.0.0 /usr/lib32/vdpau/libvdpau_r300.so
 			dosym libvdpau_r600.so.1.0.0 /usr/lib32/vdpau/libvdpau_r600.so.1.0
-			dosym libvdpau_r600.so.1.0.0 /usr/lib32/vdpau/libvdpau_r600.so.1.
+			dosym libvdpau_r600.so.1.0.0 /usr/lib32/vdpau/libvdpau_r600.so.1
 			dosym libvdpau_r600.so.1.0.0 /usr/lib32/vdpau/libvdpau_r600.so
 			dosym libvdpau_radeonsi.so.1.0.0 /usr/lib32/vdpau/libvdpau_radeonsi.so.1.0
 			dosym libvdpau_radeonsi.so.1.0.0 /usr/lib32/vdpau/libvdpau_radeonsi.so.1
 			dosym libvdpau_radeonsi.so.1.0.0 /usr/lib32/vdpau/libvdpau_radeonsi.so
-
 		fi
 	fi
 
-	# missing or can't find it
+	# They could be missing files; I can't find it; or it wasn't unpacked..  These files show up in 18.50.
 	#if use vaapi ; then
-	#	exeinto /usr/lib64/opengl/amdgpu/dri/
-	#	doexe opt/amdgpu/lib/x86_64-linux-gnu/dri/radeonsi_drv_video.so
-	#	doexe opt/amdgpu/lib/x86_64-linux-gnu/dri/r600_drv_video.so
+	#	if use abi_x86_64 ; then
+	#		exeinto /usr/lib64/opengl/amdgpu/dri/
+	#		doexe opt/amdgpu/lib/x86_64-linux-gnu/dri/radeonsi_drv_video.so
+	#		doexe opt/amdgpu/lib/x86_64-linux-gnu/dri/r600_drv_video.so
+	#	fi
 	#	if use abi_x86_32 ; then
 	#		exeinto /usr/lib32/opengl/amdgpu/dri/
 	#		doexe opt/amdgpu/lib/i386-linux-gnu/dri/radeonsi_drv_video.so
@@ -578,15 +598,30 @@ src_install() {
 	#fi
 
 	# Install xorg drivers
-	exeinto /usr/lib64/opengl/amdgpu/modules/drivers
-	doexe opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so
+	if use abi_x86_64 ; then
+		exeinto /usr/lib64/opengl/amdgpu/modules/drivers/
+		mv opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv64.so opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so || die
+		doexe opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so
+	fi
+	if use abi_x86_32 ; then
+		if use abi_x86_64 ; then
+			true
+		else
+			# currently bugged when both are installed on amd64
+			exeinto /usr/lib32/opengl/amdgpu/modules/drivers/
+			mv opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv32.so opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so || die
+			doexe opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so
+		fi
+	fi
 
 	if use openmax ; then
 		# Install gstreamer OpenMAX plugin
 		insinto /etc/xdg/
 		doins etc/xdg/gstomx.conf
-		exeinto /usr/lib64/gstreamer-1.0/
-		doexe opt/amdgpu/lib/x86_64-linux-gnu/gstreamer-1.0/libgstomx.so
+		if use abi_x86_64 ; then
+			exeinto /usr/lib64/gstreamer-1.0/
+			doexe opt/amdgpu/lib/x86_64-linux-gnu/gstreamer-1.0/libgstomx.so
+		fi
 		if use abi_x86_32 ; then
 			exeinto /usr/lib32/gstreamer-1.0/
 			doexe opt/amdgpu/lib/i386-linux-gnu/gstreamer-1.0/libgstomx.so
