@@ -4,7 +4,6 @@
 EAPI=6
 
 MULTILIB_COMPAT=( abi_x86_{32,64} )
-#inherit eutils linux-info multilib-build unpacker
 inherit multilib-build unpacker linux-info
 
 DESCRIPTION="New generation AMD closed-source drivers for Southern Islands (HD7730 Series) and newer chipsets"
@@ -25,9 +24,8 @@ SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/amdgpu-pro-${PKG_VER_STR
 
 RESTRICT="fetch strip"
 
-# The binary blobs include binaries for other open sourced packages, we don't want to include those parts, if they are
-# selected, they should come from portage.
-IUSE="+egl +gles2 freesync hsa +opencl +opengl openmax orca pal +vaapi +vdpau vega +vulkan"
+IUSE="+egl +gles2 freesync hsa +opencl +opengl openmax orca pal +vdpau vega +vulkan"
+#+vaapi
 
 LICENSE="AMD GPL-2 QPL-1.0"
 KEYWORDS="~amd64 ~x86"
