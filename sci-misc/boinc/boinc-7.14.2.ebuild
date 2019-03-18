@@ -5,7 +5,7 @@ EAPI=6
 
 WX_GTK_VER=3.0-gtk3
 
-inherit autotools gnome2-utils linux-info systemd user wxwidgets
+inherit autotools gnome2-utils linux-info systemd user wxwidgets versionator
 
 DESCRIPTION="The Berkeley Open Infrastructure for Network Computing"
 HOMEPAGE="https://boinc.ssl.berkeley.edu/"
@@ -23,6 +23,7 @@ fi
 
 LICENSE="LGPL-2.1"
 SLOT="0"
+SLOT_BOINCDIR="$(get_version_component_range 1-2 ${PV})"
 IUSE="X cuda curl_ssl_gnutls curl_ssl_libressl +curl_ssl_openssl"
 IUSE+=" fix-idle"
 
@@ -139,6 +140,11 @@ src_install() {
 	sed -e "s/@libdir@/$(get_libdir)/" "${FILESDIR}"/${PN}.init.in > ${PN}.init || die
 	newinitd ${PN}.init ${PN}
 	newconfd "${FILESDIR}"/${PN}.conf ${PN}
+
+	# for setiathome-cpu
+	mkdir -p "${D}"/usr/share/boinc/${SLOT_BOINCDIR}
+	cp config.h "${D}"/usr/share/boinc/${SLOT_BOINCDIR}
+	/var/tmp/portage/sci-misc/boinc-7.14.2/work/boinc-client_release-7.14-7.14.2/config.h
 }
 
 pkg_preinst() {
