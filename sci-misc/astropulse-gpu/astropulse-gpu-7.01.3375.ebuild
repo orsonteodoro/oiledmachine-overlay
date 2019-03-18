@@ -7,7 +7,7 @@ EAPI="6"
 inherit autotools eutils flag-o-matic subversion toolchain-funcs versionator git-r3
 
 ASTROPULSE_VERSION="$(get_version_component_range 1-2 ${PV})"
-ASTROPULSE_SVN_REVISION="$(get_version_component_range 3 ${PV})" #match https://setisvn.ssl.berkeley.edu/trac/browser/branches/sah_v7_opt/AP_BLANKIT/client
+ASTROPULSE_SVN_REVISION="$(get_version_component_range 3 ${PV})" #The version matches https://setisvn.ssl.berkeley.edu/trac/browser/branches/sah_v7_opt/AP_BLANKIT/client folder's revision.
 SETIATHOME_SVN_REVISION="3701" #match setiathome-gpu
 MY_P="astropulse-gpu-${ASTROPULSE_VERSION}"
 DESCRIPTION="Astropulse"
@@ -20,15 +20,24 @@ LICENSE="GPL-2"
 SLOT="$(get_major_version)"
 KEYWORDS="~alpha amd64 ~arm ~ia64 ~mips ~ppc ~ppc64 ~sparc x86 ~amd64-fbsd ~x86-fbsd ~x86-freebsd ~amd64-linux ~ia64-linux ~x86-linux ~x86-macos"
 
+X86_CPU_FEATURES_RAW=( avx2 avx avx-btver2 avx-bdver3 avx-bdver2 avx-bdver1 sse42 sse41 ssse3 sse3 sse2 sse mmx 3dnow )
+X86_CPU_FEATURES=( ${X86_CPU_FEATURES_RAW[@]/#/cpu_flags_x86_} )
 #cuda only supported on windows
-IUSE="video_cards_radeonsi video_cards_r600 test 32bit 64bit opengl opencl -cuda -cuda_2_2 -cuda_2_3 -cuda_3_2 -cuda_4_2 -cuda_5_0 custom-cflags avx2 avx avx-btver2 avx-bdver3 avx-bdver2 avx-bdver1 sse42 sse41 ssse3 sse3 sse2 sse mmx 3dnow video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel ati_hd4xxx core2 xeon ppc ppc64 x32 x64 intel_hd intel_hd2xxx intel_hd3xxx intel_hd_gt1 intel_hd4xxx intel_hd5xxx intel_iris5xxx ati_hd5xxx ati_hd6xxx ati_hd7xxx ati_hdx3xx ati_hdx4xx ati_hdx5xx ati_hdx6xx ati_hdx7xx ati_hdx8xx ati_hdx9xx ati_rx_200 ati_rx_300 ati_rx_400 ati_rx_x2x ati_rx_x3x ati_rx_x4x ati_rx_x5x ati_rx_x6x ati_rx_x7x ati_rx_x8x ati_rx_x9x nv_1xx nv_2xx nv_3xx nv_4xx nv_5xx nv_6xx nv_7xx nv_8xx nv_9xx nv_x00 nv_x10 nv_x20 nv_x30 nv_x40 nv_x00_fast nv_x10_fast nv_x20_fast nv_x30_fast nv_x40_fast nv_x50 nv_x60 nv_x70 nv_x50_fast nv_x60_fast nv_x70_fast nv_x70 nv_x80 nv_x70_fast nv_x80_fast nv_780ti nv_titan nv_780ti_fast nv_titan_fast nv_8xxx nv_9xxx nv_8xxx_fast nv_9xxx_fast armv6-neon-nopie armv6-neon armv6-vfp-nopie armv6-vfp armv7-neon armv7-neon-nopie armv7-vfpv3 armv7-vfpv3d16 armv7-vfpv3d16-nopie armv7-vfpv4 armv7-vfpv4-nopie arm pgo ati_apu"
+IUSE_GPUS_AMD=$( echo video_cards_{amdgpu,fglrx,radeonsi,r600} ati_hd{4,5,6,7}xxx ati_hdx{3,4,5,6,7,8,9}xx ati_rx_{2,3,4}00 ati_rx_x{2,3,4,5,6,7,8,9}x ati_apu )
+IUSE_GPUS_NVIDIA=$( echo video_cards_nvidia nv_{1,2,3,4,5,6,7,8,9}xx nv_x{0,1,2,3,4,5,6,7,8}0{,_fast} nv_780ti nv_titan nv_780ti_fast nv_titan_fast nv_{8,9}xxx nv_{8,9}xxx_fast )
+IUSE_GPUS_INTEL=$( echo video_cards_intel intel_hd intel_hd{2,3,4,5}xxx intel_hd_gt1 intel_iris5xxx )
+IUSE_GPUS="${IUSE_GPUS_AMD} ${IUSE_GPUS_NVIDIA} ${IUSE_GPUS_INTEL}"
+IUSE_APIS=$( echo opengl opencl -cuda{,_2_2,_2_3,_3_2,_4_2,_5_0} )
+IUSE_ARM=$( echo armv6{-neon-nopie,-neon,-vfp-nopie,-vfp} armv7{-neon,-neon-nopie,-vfpv3,-vfpv3d16,-vfpv3d16-nopie,-vfpv4,-vfpv4-nopie} )
+IUSE="${X86_CPU_FEATURES[@]%:*} ${IUSE_GPUS} ${IUSE_APIS} ${IUSE_ARM} test custom-cflags core2 xeon pgo"
+REQUIRED_USE=""
 
 #	dev-libs/asmlib
 RDEPEND="
 	sci-libs/fftw[static-libs]
 	video_cards_nvidia? ( || ( x11-drivers/nvidia-drivers dev-util/nvidia-cuda-toolkit ) )
 	video_cards_fglrx? ( || ( x11-drivers/ati-drivers ) )
-	video_cards_amdgpu? ( || ( dev-util/amdapp ) )
+	video_cards_amdgpu? ( || ( dev-util/amdapp x11-drivers/amdgpu-pro ) )
 	video_cards_intel? ( dev-libs/beignet )
 	video_cards_r600? ( media-libs/mesa[opencl] )
 	video_cards_radeonsi? ( media-libs/mesa[opencl] )
@@ -37,23 +46,30 @@ RDEPEND="
 "
 REQUIRED_USE="video_cards_fglrx? ( video_cards_amdgpu )
 	      !video_cards_r600
-              ^^ ( video_cards_nvidia video_cards_fglrx video_cards_intel video_cards_r600 video_cards_radeonsi )
+              ^^ ( video_cards_nvidia video_cards_fglrx video_cards_intel video_cards_r600 video_cards_radeonsi video_cards_amdgpu )
              "
 
-#BOINC_VER=`boinc --version | cut -d' ' -f1`
-BOINC_VER="7.2.47"
-#BOINC_MAJOR=`echo $BOINC_VER | cut -d. -f1`
-#BOINC_MINOR=`echo $BOINC_VER | cut -d. -f2`
+SLOT_BOINC="7.14"
 DEPEND="${RDEPEND}
 	>=sys-devel/autoconf-2.67
 	opencl? ( video_cards_amdgpu? ( dev-util/amdapp ) )
 	sci-misc/boinc:=
-	sci-misc/setiathome-boincdir:0/${BOINC_VER}
+	sci-misc/setiathome-boincdir:${SLOT_BOINC}
 "
 
 S="${WORKDIR}/${MY_P}"
 
 pkg_setup() {
+	if use video_cards_amdgpu ; then
+		if [[ -d /opt/AMDAPP/include/ ]] ; then
+			true
+		elif [[ -f /usr/lib64/OpenCL/vendors/amdgpu/include/CL/cl.h ]] ; then
+			true
+		else
+			die "You need the amdgpu-pro ebuild from oiledmachine-overlay or the amdapp ebuild."
+		fi
+	fi
+
 	if use video_cards_fglrx ; then
 		/opt/bin/clinfo | grep "CL_DEVICE_TYPE_GPU"
 		if [[ "$?" != "0" ]] ; then
@@ -70,23 +86,25 @@ pkg_setup() {
 		ewarn "Mesa Clover (open source OpenCL implementation) is not supported but may work.  Use the proprietary driver if it fails."
 	fi
 
-	if [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]]; then
+	if $(tc-is-clang) ; then
 		ewarn "The configure script may fail with clang.  Switch to gcc if it fails."
 	fi
 }
 
 pkg_pretend() {
-	DEVICES_DRM_RENDER_NODES=""
-	if use video_cards_amdgpu ;  then
-		DEVICES_DRM_RENDER_NODES=$(ls /dev/dri/renderD*)
+	if use test || use pgo ; then
+		DEVICES_DRM_RENDER_NODES=""
+		if use video_cards_amdgpu ;  then
+			DEVICES_DRM_RENDER_NODES=$(ls /dev/dri/renderD*)
+		fi
+	        for DEVICE in $(ls /dev/*/card*) ${DEVICES_DRM_RENDER_NODES}
+	        do
+	                cat /etc/sandbox.conf | grep -e "${DEVICE}"
+	                if [ $? == 1 ] ; then
+	                        die "SANDBOX_WRITE=\"${DEVICE}\" needs to be added to /etc/sandbox.conf"
+	                fi
+	        done
 	fi
-        for DEVICE in $(ls /dev/*/card*) ${DEVICES_DRM_RENDER_NODES}
-        do
-                cat /etc/sandbox.conf | grep -e "${DEVICE}"
-                if [ $? == 1 ] ; then
-                        die "SANDBOX_WRITE=\"${DEVICE}\" needs to be added to /etc/sandbox.conf"
-                fi
-        done
 }
 
 src_unpack() {
@@ -100,7 +118,7 @@ src_unpack() {
 	mv "${WORKDIR}/${MY_P}/AP" "${WORKDIR}/${MY_P}/AP6"
 	mv "${WORKDIR}/${MY_P}/AP_BLANKIT" "${WORKDIR}/${MY_P}/AP"
 
-	BOINC_VER=`boinc --version | awk '{print $1}'`
+	export BOINC_VER=`boinc --version | awk '{print $1}'`
 	BOINC_MAJOR=`echo $BOINC_VER | cut -d. -f1`
 	BOINC_MINOR=`echo $BOINC_VER | cut -d. -f2`
 	URL="https://github.com/BOINC/boinc/archive/client_release/$BOINC_MAJOR.$BOINC_MINOR/$BOINC_VER.zip"
@@ -152,6 +170,9 @@ src_unpack() {
 		cd "${S}"
 		epatch "${FILESDIR}"/astropulse-gpu-7.01.3375-boinc-compat.patch
 	fi
+
+	sed -i -e "s|#define _GLIBCXX_USE_CXX11_ABI 0|//#define _GLIBCXX_USE_CXX11_ABI 0|g" src/GPU_lock.cpp || die
+	sed -i -e "s|#define _GLIBCXX_USE_CXX11_ABI 0|//#define _GLIBCXX_USE_CXX11_ABI 0|g" sah_v7_opt/src/GPU_lock.cpp || die
 }
 
 src_prepare() {
@@ -194,17 +215,7 @@ function run_config {
 
 	append-flags -Wa,--noexecstack
 
-	if use 32bit ; then
-		mysahmakeargs+=( --enable-bitness=32 )
-		#mysahmakeargs+=( --host=i686-pc-linux-gnu )
-		#mysahmakeargs+=( --target=i686-pc-linux-gnu )
-		#mysahmakeargs+=( --build=i686-pc-linux-gnu )
-		#mysahmakeargs+=( --with-boinc-platform=i686-pc-linux-gnu )
-		sahfftwlibs=( -L/usr/lib32 )
-		apfftwlibs=( -L/usr/lib32 )
-		#asmlibs=( -L/usr/lib32 )
-		#asmlibs+=( -laelf32p )
-	elif use 64bit ; then
+	if [[ ${ARCH} =~ (amd64|ia64|arm64|ppc64|alpha) || ${host} =~ (sparc64) ]]; then
 		mysahmakeargs+=( --enable-bitness=64 )
 		#mysahmakeargs+=( --host=x86_64-pc-linux-gnu )
 		#mysahmakeargs+=( --target=x86_64-pc-linux-gnu )
@@ -214,6 +225,20 @@ function run_config {
 		apfftwlibs=( -L/usr/lib64 )
 		#asmlibs=( -L/usr/lib64 )
 		#asmlibs+=( -laelf64 )
+	elif [[ ${ARCH} =~ (x86|i386|arm|ppc|m68k|s390|hppa) || ${host} =~ (sparc) ]] ; then
+		mysahmakeargs+=( --enable-bitness=32 )
+		#mysahmakeargs+=( --host=i686-pc-linux-gnu )
+		#mysahmakeargs+=( --target=i686-pc-linux-gnu )
+		#mysahmakeargs+=( --build=i686-pc-linux-gnu )
+		#mysahmakeargs+=( --with-boinc-platform=i686-pc-linux-gnu )
+		sahfftwlibs=( -L/usr/lib32 )
+		apfftwlibs=( -L/usr/lib32 )
+		#asmlibs=( -L/usr/lib32 )
+		#asmlibs+=( -laelf32p )
+	else
+		ewarn "Your ARCH is not supported.  Continuing anyway..."
+		sahfftwlibs=( -L/usr/lib )
+		apfftwlibs=( -L/usr/lib )
 	fi
 
 	#mycommonmakeargs+=( --disable-server )
@@ -279,7 +304,14 @@ function run_config {
 	else
 		strip-flags
 		filter-flags -O3 -O2 -O1 -Os -Ofast -O4
-		mycommonmakeargs+=( --enable-comoptions )
+		if $(tc-is-gcc) ; then
+			if [ ! -d /usr/include/isl ] ; then
+				mycommonmakeargs+=( --disable-comoptions )
+			else
+				# You need gcc[graphite] to use this.
+				mycommonmakeargs+=( --enable-comoptions )
+			fi
+		fi
 	fi
 
 	#Enabling this will disable more optimized JSPF (Joe Segur's SSE Pulse Finding Alignment)
@@ -287,46 +319,46 @@ function run_config {
 	#	mycommonmakedefargs+=( -DUSE_I386_CORE2 )
 	#fi
 
-	if use avx2 ; then
+	if use cpu_flags_x86_avx2 ; then
 		mycommonmakeargs+=( --enable-avx2 )
 		mycommonmakedefargs+=( -DUSE_AVX2 )
-	elif use avx-btver2 ; then
+	elif use cpu_flags_x86_avx-btver2 ; then
 		mycommonmakeargs+=( --enable-btver2 )
 		mycommonmakedefargs+=( -DUSE_AVX )
-	elif use avx-bdver3 ; then
+	elif use cpu_flags_x86_avx-bdver3 ; then
 		mycommonmakeargs+=( --enable-bdver3 )
 		mycommonmakedefargs+=( -DUSE_AVX )
-	elif use avx-bdver2 ; then
+	elif use cpu_flags_x86_avx-bdver2 ; then
 		mycommonmakeargs+=( --enable-bdver2 )
 		mycommonmakedefargs+=( -DUSE_AVX )
-	elif use avx-bdver1 ; then
+	elif use cpu_flags_x86_avx-bdver1 ; then
 		mycommonmakeargs+=( --enable-bdver1 )
 		mycommonmakedefargs+=( -DUSE_AVX )
-	elif use avx ; then
+	elif use cpu_flags_x86_avx ; then
 		mycommonmakeargs+=( --enable-avx )
 		mycommonmakedefargs+=( -DUSE_AVX )
-	elif use sse42 ; then
+	elif use cpu_flags_x86_sse42 ; then
 		mycommonmakeargs+=( --enable-sse42 )
 		mycommonmakedefargs+=( -DUSE_SSE42 )
-	elif use sse41 ; then
+	elif use cpu_flags_x86_sse41 ; then
 		mycommonmakeargs+=( --enable-sse41 )
 		mycommonmakedefargs+=( -DUSE_SSE41 )
-	elif use ssse3 ; then
+	elif use cpu_flags_x86_ssse3 ; then
 		mycommonmakeargs+=( --enable-ssse3 )
 		mycommonmakedefargs+=( -DUSE_SSSE3 )
-	elif use sse3 ; then
+	elif use cpu_flags_x86_sse3 ; then
 		mycommonmakeargs+=( --enable-sse3 )
 		mycommonmakedefargs+=( -DUSE_SSE3 )
-	elif use sse2 ; then
+	elif use cpu_flags_x86_sse2 ; then
 		mycommonmakeargs+=( --enable-sse2 )
 		mycommonmakedefargs+=( -DUSE_SSE2 )
-	elif use sse ; then
+	elif use cpu_flags_x86_sse ; then
 		mycommonmakeargs+=( --enable-sse )
 		mycommonmakedefargs+=( -DUSE_SSE )
-	elif use mmx ; then
+	elif use cpu_flags_x86_mmx ; then
 		mycommonmakeargs+=( --enable-mmx )
 		mycommonmakedefargs+=( -DUSE_MMX )
-	elif use 3dnow ; then
+	elif use cpu_flags_x86_3dnow ; then
 		mycommonmakeargs+=( --enable-3dnow )
 		mycommonmakedefargs+=( -DUSE_3DNOW )
 	elif use altivec ; then
@@ -336,16 +368,19 @@ function run_config {
 
 	mycommonmakeargs+=( --enable-fast-math )
 
-	append-cppflags -D_GLIBCXX_USE_CXX11_ABI=0
-
 	if use video_cards_amdgpu ; then
-		append-cppflags -I/opt/AMDAPP/include/
-	elif use video_cards_r600 ; then
+		if [[ -f /usr/lib64/OpenCL/vendors/amdgpu/include/CL/cl.h ]] ; then
+			append-cppflags -I/usr/lib64/OpenCL/vendors/amdgpu/include/
+		else
+			append-cppflags -I/opt/AMDAPP/include/
+		fi
+	elif use video_cards_r600 || use video_cards_intel ; then
 		append-cppflags -I/usr/$(get_libdir)/OpenCL/vendors/mesa/include/
+	# todo: nvidia?
 	fi
 
 	cd "${WORKDIR}/${MY_P}/AP/client"
-	CFLAGS="${CFLAGS} ${PGL_CFLAGS}" LDFLAGS="${LDFLAGS} ${PGO_LDFLAGS}" LIBS="${apfftwlibs[@]} ${asmlibs[@]} -ldl ${PGO_LIBS}" CXXFLAGS="${CXXFLAGS} ${PGO_CXXFLAGS}" CPPFLAGS="${CPPFLAGS} ${mycommonmakedefargs[@]} ${myapmakedefargs[@]} ${PGO_CPPFLAGS}" BOINCDIR="/usr/share/boinc/$BOINC_VER" BOINC_DIR="/usr/share/boinc/$BOINC_VER" SETI_BOINC_DIR="${WORKDIR}/${MY_P}/AKv8" econf \
+	CFLAGS="${CFLAGS} ${PGL_CFLAGS}" LDFLAGS="${LDFLAGS} ${PGO_LDFLAGS}" LIBS="${apfftwlibs[@]} ${asmlibs[@]} -ldl ${PGO_LIBS}" CXXFLAGS="${CXXFLAGS} ${PGO_CXXFLAGS}" CPPFLAGS="${CPPFLAGS} ${mycommonmakedefargs[@]} ${myapmakedefargs[@]} ${PGO_CPPFLAGS}" BOINCDIR="/usr/share/boinc/$SLOT_BOINC" BOINC_DIR="/usr/share/boinc/$SLOT_BOINC" SETI_BOINC_DIR="${WORKDIR}/${MY_P}/AKv8" econf \
 	${mycommonmakeargs[@]} \
 	${myapmakeargs[@]} || die
 }
@@ -451,7 +486,7 @@ function gpu_setup {
 
 	fi
 
-	if use x32 || use x64 ; then
+	if [[ ${ARCH} =~ (amd64|x86) ]]; then
 		if use ati_hd5xxx || use ati_hd6xxx || use ati_hd7xxx || use ati_rx_200 || use ati_rx_300 || use ati_rx_400 || use ati_apu ; then
 			if use opencl ; then
 				AP_PLAN_CLASS="opencl_ati_100"
@@ -492,7 +527,7 @@ function gpu_setup {
 			AP_PLAN_CLASS="opencl_intel_gpu_102"
 			SAH_PLAN_CLASS="opencl_intel_gpu_sah"
 		fi
-	elif use ppc64 && use opencl ; then
+	elif [[ ${ARCH} =~ (ppc64) && $(use opencl) ]]; then
 		if use ati_hd5xxx || use ati_hd7xxx ; then
 			AP_PLAN_CLASS="opencl_ati_mac"
 			SAH_PLAN_CLASS="opencl_ati5_mac"
@@ -515,10 +550,10 @@ function gpu_setup {
 				SAH_PLAN_CLASS="opencl_ati5zc_mac"
 			fi
 		fi
-	elif use ppc32 ; then
+	elif [[ ${ARCH} =~ (ppc) ]] ; then
 		AP_PLAN_CLASS=""
 		SAH_PLAN_CLASS=""
-	elif use arm ; then
+	elif [[ ${ARCH} =~ (arm64|arm) ]] ; then
 		#todo
 		#nopie means android 5 and above
 		#vfp is old floating point
@@ -576,7 +611,7 @@ src_compile() {
 	PROFILE_DATA_CFLAGS=""
 	PROFILE_DATA_LDFLAGS=""
 	PROFILE_DATA_LIBS=""
-	if [[ "${CC}" == "gcc" || "${CXX}" == "g++" ]]; then
+	if $(tc-is-gcc) ; then
 		INSTRUMENT_CFLAGS="-fprofile-generate"
 		INSTRUMENT_LDFLAGS="-fprofile-generate"
 		INSTRUMENT_LIBS=""
@@ -584,7 +619,7 @@ src_compile() {
 		PROFILE_DATA_CFLAGS="-fprofile-use -fprofile-correction"
 		PROFILE_DATA_LDFLAGS="-fprofile-use -fprofile-correction"
 		PROFILE_DATA_LIBS=""
-	elif [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]]; then
+	elif $(tc-is-clang) ; then
 		INSTRUMENT_CFLAGS="-fprofile-instr-generate"
 		INSTRUMENT_LDFLAGS="-fprofile-instr-generate"
 		INSTRUMENT_LIBS=""
@@ -621,7 +656,6 @@ src_compile() {
 
 src_install() {
 	mkdir -p "${D}/var/lib/boinc/projects/setiathome.berkeley.edu"
-	BOINC_VER=`boinc --version | awk '{print $1}'`
 
 	gpu_setup
 
