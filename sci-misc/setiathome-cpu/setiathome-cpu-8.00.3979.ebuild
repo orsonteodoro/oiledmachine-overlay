@@ -20,7 +20,7 @@ KEYWORDS="~alpha amd64 ~arm ~ia64 ~mips ~ppc ~ppc64 ~sparc x86 ~amd64-fbsd ~x86-
 
 X86_CPU_FEATURES_RAW=( avx sse3 sse2 sse mmx 3dnow )
 X86_CPU_FEATURES=( ${X86_CPU_FEATURES_RAW[@]/#/cpu_flags_x86_} )
-IUSE="${X86_CPU_FEATURES[@]%:*} opengl custom-cflags altivec core2 neon pgo"
+IUSE="${X86_CPU_FEATURES[@]%:*} opengl custom-cflags altivec neon pgo"
 REQUIRED_USE=""
 
 #	dev-libs/asmlib
@@ -151,9 +151,6 @@ function run_config {
 
 	mysahmakedefargs+=( -DSETI7 )
 
-	mysahmakedefargs+=( -DFFTOUT )
-	mysahmakedefargs+=( -DUSE_JSPF )
-
 	sahfftwlibs+=( -lfftw3f )
 	mysahmakedefargs+=( -DUSE_FFTW )
 
@@ -165,11 +162,6 @@ function run_config {
 		filter-flags -O3 -O2 -O1 -Os -Ofast -O4
 	#	mycommonmakeargs+=( --enable-comoptions )
 	fi
-
-	#Enabling this will disable more optimized JSPF (Joe Segur's SSE Pulse Finding Alignment)
-	#if use core2 ; then
-	#	mycommonmakedefargs+=( -DUSE_I386_CORE2 )
-	#fi
 
 	if use cpu_flags_x86_avx ; then
 		mycommonmakeargs+=( --enable-avx )
