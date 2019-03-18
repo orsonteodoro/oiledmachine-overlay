@@ -1,14 +1,13 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI="6"
 
 inherit autotools eutils flag-o-matic subversion toolchain-funcs versionator git-r3
 
 ASTROPULSE_VERSION="$(get_version_component_range 1-2 ${PV})"
-ASTROPULSE_SVN_REVISION="$(get_version_component_range 3 ${PV})" #track https://setisvn.ssl.berkeley.edu/trac/browser/astropulse/client
-SETIATHOME_SVN_REVISION="3701" #should be the same as the setiathome ebuild
+ASTROPULSE_SVN_REVISION="$(get_version_component_range 3 ${PV})" # The versioning is based on the https://setisvn.ssl.berkeley.edu/trac/browser/astropulse/client folder's revision.
+SETIATHOME_SVN_REVISION="3979" # This should be the same as the setiathome ebuild.
 
 MY_P="astropulse-cpu-${ASTROPULSE_VERSION}"
 DESCRIPTION="Astropulse"
@@ -21,7 +20,9 @@ LICENSE="GPL-2"
 SLOT="$(get_major_version)"
 KEYWORDS="~alpha amd64 ~arm ~ia64 ~mips ~ppc ~ppc64 ~sparc x86 ~amd64-fbsd ~x86-fbsd ~x86-freebsd ~amd64-linux ~ia64-linux ~x86-linux ~x86-macos"
 
-IUSE="32bit 64bit opengl custom-cflags avx2 avx avx-btver2 avx-bdver3 avx-bdver2 avx-bdver1 sse42 sse41 ssse3 sse3 sse2 sse mmx 3dnow core2 ppc ppc64 x32 x64 pgo"
+X86_CPU_FEATURES_RAW=( avx sse3 sse2 sse mmx 3dnow )
+X86_CPU_FEATURES=( ${X86_CPU_FEATURES_RAW[@]/#/cpu_flags_x86_} )
+IUSE="${X86_CPU_FEATURES[@]%:*} opengl custom-cflags altivec neon pgo"
 REQUIRED_USE=""
 
 #	dev-libs/asmlib
@@ -31,19 +32,22 @@ RDEPEND="
 	sci-misc/setiathome-updater:8
 "
 
-#BOINC_VER=`boinc --version | cut -d' ' -f1`
-BOINC_VER="7.2.47"
-#BOINC_MAJOR=`echo $BOINC_VER | cut -d. -f1`
-#BOINC_MINOR=`echo $BOINC_VER | cut -d. -f2`
+BOINC_VER="7.14.2"
+SLOT_BOINC="$(get_version_component_range 1-2 ${BOINC_VER})"
 DEPEND="${RDEPEND}
 	>=sys-devel/autoconf-2.67
 	sci-misc/boinc:=
-	sci-misc/setiathome-boincdir:0/${BOINC_VER}
+	sci-misc/setiathome-boincdir:${SLOT_BOINC}
 "
 
 S="${WORKDIR}/${MY_P}"
 
 pkg_setup() {
+	if [ ! -f /usr/share/boinc/${SLOT_BOINC}/config.h ] ; then
+		eerror "You need the boinc from the oiledmachine-overlay"
+		die
+	fi
+
 	if [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]]; then
 		ewarn "The configure script may fail with clang.  Switch to gcc if it fails."
 	fi
@@ -73,6 +77,8 @@ src_prepare() {
 	eapply "${FILESDIR}"/setiathome-7.09-configureac.patch
 	epatch "${FILESDIR}"/setiathome-7.09-apgfxmainh.patch
 	epatch "${FILESDIR}"/setiathome-7.09-apgfxbaseh.patch
+
+	export BOINC_VER=`boinc --version | awk '{print $1}'`
 
 	if $(version_is_at_least "7.3.19" $BOINC_VER ) ; then
 		true
@@ -107,17 +113,7 @@ function run_config {
 
         append-flags -Wa,--noexecstack
 
-	if use 32bit ; then
-		mysahmakeargs+=( --enable-bitness=32 )
-		#mysahmakeargs+=( --host=i686-pc-linux-gnu )
-		#mysahmakeargs+=( --target=i686-pc-linux-gnu )
-		#mysahmakeargs+=( --build=i686-pc-linux-gnu )
-		#mysahmakeargs+=( --with-boinc-platform=i686-pc-linux-gnu )
-		sahfftwlibs=( -L/usr/lib32 )
-		apfftwlibs=( -L/usr/lib32 )
-		#asmlibs=( -L/usr/lib32 )
-		#asmlibs+=( -laelf32p )
-	elif use 64bit ; then
+	if [[ ${ARCH} =~ (amd64|ia64|arm64|ppc64|alpha) || ${host} =~ (sparc64) ]]; then
 		mysahmakeargs+=( --enable-bitness=64 )
 		#mysahmakeargs+=( --host=x86_64-pc-linux-gnu )
 		#mysahmakeargs+=( --target=x86_64-pc-linux-gnu )
@@ -127,6 +123,16 @@ function run_config {
 		apfftwlibs=( -L/usr/lib64 )
 		#asmlibs=( -L/usr/lib64 )
 		#asmlibs+=( -laelf64 )
+	elif [[ ${ARCH} =~ (x86|i386|arm|ppc|m68k|s390|hppa) || ${host} =~ (sparc) ]] ; then
+		mysahmakeargs+=( --enable-bitness=32 )
+		#mysahmakeargs+=( --host=i686-pc-linux-gnu )
+		#mysahmakeargs+=( --target=i686-pc-linux-gnu )
+		#mysahmakeargs+=( --build=i686-pc-linux-gnu )
+		#mysahmakeargs+=( --with-boinc-platform=i686-pc-linux-gnu )
+		sahfftwlibs=( -L/usr/lib32 )
+		apfftwlibs=( -L/usr/lib32 )
+		#asmlibs=( -L/usr/lib32 )
+		#asmlibs+=( -laelf32p )
 	fi
 
 	mycommonmakeargs+=( --disable-server )
@@ -148,13 +154,6 @@ function run_config {
 	fi
 
 	myapmakedefargs+=( -DAP_CLIENT )
-	myapmakedefargs+=( -DBLANKIT ) #use version 7
-	myapmakedefargs+=( -DSMALL_CHIRP_TABLE )
-	myapmakedefargs+=( -DUSE_CONVERSION_OPT )
-	myapmakedefargs+=( -DUSE_INCREASED_PRECISION )
-
-	myapmakedefargs+=( -DUSE_LRINT )
-	myapmakedefargs+=( -DTWINDECHIRP )
 
 	apfftwlibs+=( -lfftw3f )
 	myapmakedefargs+=( -DUSE_FFTW )
@@ -168,51 +167,22 @@ function run_config {
 	#	mycommonmakeargs+=( --enable-comoptions )
 	fi
 
-	#Enabling this will disable more optimized JSPF (Joe Segur's SSE Pulse Finding Alignment)
-	#if use core2 ; then
-	#	mycommonmakedefargs+=( -DUSE_I386_CORE2 )
-	#fi
-
-	if use avx2 ; then
-		mycommonmakeargs+=( --enable-avx2 )
-		mycommonmakedefargs+=( -DUSE_AVX2 )
-	elif use avx-btver2 ; then
-		mycommonmakeargs+=( --enable-btver2 )
-		mycommonmakedefargs+=( -DUSE_AVX )
-	elif use avx-bdver3 ; then
-		mycommonmakeargs+=( --enable-bdver3 )
-		mycommonmakedefargs+=( -DUSE_AVX )
-	elif use avx-bdver2 ; then
-		mycommonmakeargs+=( --enable-bdver2 )
-		mycommonmakedefargs+=( -DUSE_AVX )
-	elif use avx-bdver1 ; then
-		mycommonmakeargs+=( --enable-bdver1 )
-		mycommonmakedefargs+=( -DUSE_AVX )
-	elif use avx ; then
+	if use cpu_flags_x86_avx ; then
 		mycommonmakeargs+=( --enable-avx )
 		mycommonmakedefargs+=( -DUSE_AVX )
-	elif use sse42 ; then
-		mycommonmakeargs+=( --enable-sse42 )
-		mycommonmakedefargs+=( -DUSE_SSE42 )
-	elif use sse41 ; then
-		mycommonmakeargs+=( --enable-sse41 )
-		mycommonmakedefargs+=( -DUSE_SSE41 )
-	elif use ssse3 ; then
-		mycommonmakeargs+=( --enable-ssse3 )
-		mycommonmakedefargs+=( -DUSE_SSSE3 )
-	elif use sse3 ; then
+	elif use cpu_flags_x86_sse3 ; then
 		mycommonmakeargs+=( --enable-sse3 )
 		mycommonmakedefargs+=( -DUSE_SSE3 )
-	elif use sse2 ; then
+	elif use cpu_flags_x86_sse2 ; then
 		mycommonmakeargs+=( --enable-sse2 )
 		mycommonmakedefargs+=( -DUSE_SSE2 )
-	elif use sse ; then
+	elif use cpu_flags_x86_sse ; then
 		mycommonmakeargs+=( --enable-sse )
 		mycommonmakedefargs+=( -DUSE_SSE )
-	elif use mmx ; then
+	elif use cpu_flags_x86_mmx ; then
 		mycommonmakeargs+=( --enable-mmx )
 		mycommonmakedefargs+=( -DUSE_MMX )
-	elif use 3dnow ; then
+	elif use cpu_flags_x86_3dnow ; then
 		mycommonmakeargs+=( --enable-3dnow )
 		mycommonmakedefargs+=( -DUSE_3DNOW )
 	elif use altivec ; then
@@ -220,16 +190,18 @@ function run_config {
 		mycommonmakedefargs+=( -DUSE_ALTIVEC )
 	fi
 
+	if use neon ; then
+		mycommonmakeargs+=( --enable-neon )
+	fi
+
 	mycommonmakeargs+=( --enable-fast-math )
 
-	if [ ! -d "/usr/share/boinc/$BOINC_VER" ] ; then
+	if [ ! -d "/usr/share/boinc/$SLOT_BOINC" ] ; then
 		die "Cannot find matching version between setiathome-boincdir to emerged boinc."
 	fi
 
-	append-cppflags -D_GLIBCXX_USE_CXX11_ABI=0
-
 	cd "${WORKDIR}/${MY_P}/AP/client"
-	CFLAGS="${CFLAGS} ${PGL_CFLAGS}" LDFLAGS="${LDFLAGS} ${PGO_LDFLAGS}" LIBS="${apfftwlibs[@]} ${asmlibs[@]} -ldl ${PGO_LIBS}" CXXFLAGS="${CXXFLAGS} ${PGO_CXXFLAGS}" CPPFLAGS="${CPPFLAGS} ${mycommonmakedefargs[@]} ${myapmakedefargs[@]} ${PGO_CPPFLAGS}" BOINCDIR="/usr/share/boinc/$BOINC_VER" BOINC_DIR="/usr/share/boinc/$BOINC_VER" SETI_BOINC_DIR="${WORKDIR}/${MY_P}/AKv8" econf \
+	CFLAGS="${CFLAGS} ${PGL_CFLAGS}" LDFLAGS="${LDFLAGS} ${PGO_LDFLAGS}" LIBS="${apfftwlibs[@]} ${asmlibs[@]} -ldl ${PGO_LIBS}" CXXFLAGS="${CXXFLAGS} ${PGO_CXXFLAGS}" CPPFLAGS="${CPPFLAGS} ${mycommonmakedefargs[@]} ${myapmakedefargs[@]} ${PGO_CPPFLAGS}" BOINCDIR="/usr/share/boinc/$SLOT_BOINC" BOINC_DIR="/usr/share/boinc/$SLOT_BOINC" SETI_BOINC_DIR="${WORKDIR}/${MY_P}/AKv8" econf \
 	${mycommonmakeargs[@]} \
 	${myapmakeargs[@]} || die
 	cp ap_config.h config.h
@@ -242,7 +214,7 @@ src_compile() {
 	PROFILE_DATA_CFLAGS=""
 	PROFILE_DATA_LDFLAGS=""
 	PROFILE_DATA_LIBS=""
-	if [[ "${CC}" == "gcc" || "${CXX}" == "g++" ]]; then
+	if $(tc-is-gcc) ; then
 		INSTRUMENT_CFLAGS="-fprofile-generate"
 		INSTRUMENT_LDFLAGS="-fprofile-generate"
 		INSTRUMENT_LIBS=""
@@ -250,7 +222,7 @@ src_compile() {
 		PROFILE_DATA_CFLAGS="-fprofile-use -fprofile-correction"
 		PROFILE_DATA_LDFLAGS="-fprofile-use -fprofile-correction"
 		PROFILE_DATA_LIBS=""
-	elif [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]]; then
+	elif $(tc-is-clang) ; then
 		INSTRUMENT_CFLAGS="-fprofile-instr-generate"
 		INSTRUMENT_LDFLAGS="-fprofile-instr-generate"
 		INSTRUMENT_LIBS=""
@@ -279,13 +251,12 @@ src_compile() {
                 emake || die
         else
 		PGO_CFLAGS="${PROFILE_DATA_CFLAGS}" PGO_CXXFLAGS="" PGO_CPPFLAGS="" PGO_LDFLAGS="" PGO_LIBS="" run_config
-        	emake || die
+                emake || die
 	fi
 }
 
 src_install() {
 	mkdir -p "${D}/var/lib/boinc/projects/setiathome.berkeley.edu"
-	BOINC_VER=`boinc --version | awk '{print $1}'`
 	AP_CPU_TYPE="CPU"
 	AP_PLAN_CLASS="sse3"
 	SAH_CPU_TYPE="CPU"
@@ -298,35 +269,36 @@ src_install() {
 	cp ${AP_EXE} "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu/${AP_EXE}_cpu
 
 	cd "${WORKDIR}/${MY_P}/AP/client"
-	#cp ap.jpg "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu
-	#cp x.tga "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu
-	#cp x.tif "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu
 
+	# Plan classes listed in
+	# https://setiathome.berkeley.edu/apps.php
 	AP_VER_TAG="_v${AP_VER_MAJOR}"
-	if use x32 ; then
-		if use sse2 ; then
+	if [[ ${ARCH} =~ (x86) ]] ; then
+		if use cpu_flags_x86_sse2 ; then
 			AP_PLAN_CLASS="sse2"
-		elif use sse ; then
+		elif use cpu_flags_x86_sse ; then
 			AP_PLAN_CLASS="sse"
 		else
 			AP_PLAN_CLASS=""
 		fi
-	elif use x64 ; then
-		if use sse2 ; then
+	elif [[ ${ARCH} =~ (amd64|ia64) ]] ; then
+		if use cpu_flags_x86_sse2 ; then
 			AP_PLAN_CLASS="sse2"
 		else
 			AP_PLAN_CLASS=""
 		fi
-	elif use ppc64; then
-		if use sse3 ; then
+	elif [[ ${ARCH} =~ (ppc64) ]]; then
+		if use cpu_flags_x86_sse3 ; then
 			AP_PLAN_CLASS="sse3"
+		else
+			ewarn "You may need sse3 to participate"
+			AP_PLAN_CLASS=""
 		fi
-	elif use ppc32 ; then
-		if use sse3 ; then
-			AP_PLAN_CLASS="sse3"
-		fi
-	elif use arm ; then
-		false #not supported
+	elif [[ ${ARCH} =~ (ppc) ]]; then
+		AP_PLAN_CLASS=""
+	elif [[ ${ARCH} =~ (arm64|arm) ]]; then
+		ewarn "Client may not be supported"
+		AP_PLAN_CLASS=""
 	fi
 
 	AP_CMDLN=""
