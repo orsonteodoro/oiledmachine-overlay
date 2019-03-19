@@ -31,7 +31,6 @@ IUSE_ARM="armv7"
 IUSE="${X86_CPU_FEATURES[@]%:*} ${IUSE_GPUS} ${IUSE_APIS} ${IUSE_ARM} test custom-cflags akpf +jspf neon xeon pgo signals-on-gpu twinchirp"
 REQUIRED_USE=""
 
-#	dev-libs/asmlib
 RDEPEND="
 	sci-libs/fftw[static-libs]
 	video_cards_nvidia? ( || ( x11-drivers/nvidia-drivers dev-util/nvidia-cuda-toolkit ) )
@@ -136,13 +135,13 @@ src_unpack() {
 		# This is basically a reversion of the graphics removal code.
 		# Removal was done to increase GPU performance and results.
 
-		cd "${WORKDIR}/${MY_P}"
+		cd "${WORKDIR}/${MY_P}" || die
 		epatch "${FILESDIR}"/setiathome-7.08-makefileam-sah-gfx.patch
 		epatch "${FILESDIR}"/setiathome-7.08-sahgfxbase.patch
 		epatch "${FILESDIR}"/setiathome-8.22.3602-configureac-sah-gfx.patch
 
 
-		cd "${WORKDIR}/${MY_P}/AKv8/client"
+		cd "${WORKDIR}/${MY_P}/AKv8/client" || die
 		ESVN_REVISION="${SETIATHOME_GL_GRAPHICS_REVISION}"
 		wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_gfx_main.h" || die
 		wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_gfx_main.cpp" || die
@@ -239,7 +238,7 @@ src_prepare() {
 
 	cd "${WORKDIR}/${MY_P}/AKv8"
 	AT_M4DIR="m4" eautoreconf
-	chmod +x configure
+	chmod +x configure || die
 }
 
 src_configure() {
@@ -255,36 +254,17 @@ function run_config {
 	local -a mysahmakeargs
 	local -a mysahmakedefargs
 
-	local -a myapmakeargs
-	local -a myapmakedefargs
 	local -a sahfftwlibs
-	local -a apfftwlibs
-	local -a asmlibs
 
 	if [[ ${ARCH} =~ (amd64|ia64|arm64|ppc64|alpha) || ${host} =~ (sparc64) ]]; then
 		mysahmakeargs+=( --enable-bitness=64 )
-		#mysahmakeargs+=( --host=x86_64-pc-linux-gnu )
-		#mysahmakeargs+=( --target=x86_64-pc-linux-gnu )
-		#mysahmakeargs+=( --build=x86_64-pc-linux-gnu )
-		#mysahmakeargs+=( --with-boinc-platform=x86_64-pc-linux-gnu )
 		sahfftwlibs=( -L/usr/lib64 )
-		apfftwlibs=( -L/usr/lib64 )
-		#asmlibs=( -L/usr/lib64 )
-		#asmlibs+=( -laelf64 )
 	elif [[ ${ARCH} =~ (x86|i386|arm|ppc|m68k|s390|hppa) || ${host} =~ (sparc) ]] ; then
 		mysahmakeargs+=( --enable-bitness=32 )
-		#mysahmakeargs+=( --host=i686-pc-linux-gnu )
-		#mysahmakeargs+=( --target=i686-pc-linux-gnu )
-		#mysahmakeargs+=( --build=i686-pc-linux-gnu )
-		#mysahmakeargs+=( --with-boinc-platform=i686-pc-linux-gnu )
 		sahfftwlibs=( -L/usr/lib32 )
-		apfftwlibs=( -L/usr/lib32 )
-		#asmlibs=( -L/usr/lib32 )
-		#asmlibs+=( -laelf32p )
 	else
 		ewarn "Your ARCH is not supported.  Continuing anyway..."
 		sahfftwlibs=( -L/usr/lib )
-		apfftwlibs=( -L/usr/lib )
 	fi
 
 	mycommonmakeargs+=( --disable-server )
@@ -293,7 +273,6 @@ function run_config {
 	#mycommonmakeargs+=( --disable-intrinsics ) #enabling breaks compile
 
 	mycommonmakedefargs+=( -D_GNU_SOURCE )
-	#mycommonmakedefargs+=( -DUSE_ASMLIB )
 
 	if use opengl ; then
 		mycommonmakedefargs+=( -DBOINC_APP_GRAPHICS )
@@ -314,7 +293,6 @@ function run_config {
 		mysahmakedefargs+=( -DUSE_PPC_OPTIMIZATIONS )
 	elif [[ ${ARCH} =~ (amd64|x86) ]] ; then
 		mysahmakedefargs+=( -DUSE_I386_OPTIMIZATIONS ) #uses sse3 sse2
-		#mycommonmakeargs+=( --enable-asmlib )
 	fi
 
 	if use xeon ; then
@@ -472,10 +450,10 @@ function run_config {
 	fi
 
 	cd "${WORKDIR}/${MY_P}/AKv8"
-	CFLAGS="${CFLAGS} ${PGO_CFLAGS}" LDFLAGS="${LDFLAGS} ${PGO_LDFLAGS}"  LIBS="${sahfftwlibs[@]} ${asmlibs[@]} -ldl ${PGO_LIBS}" CXXFLAGS="${CXXFLAGS} ${PGO_CXXFLAGS}" CPPFLAGS="${CPPFLAGS} ${mycommonmakedefargs[@]} ${mysahmakedefargs[@]} ${PGO_CPPFLAGS}" BOINCDIR="/usr/share/boinc/$SLOT_BOINC" econf \
+	CFLAGS="${CFLAGS} ${PGO_CFLAGS}" LDFLAGS="${LDFLAGS} ${PGO_LDFLAGS}"  LIBS="${sahfftwlibs[@]} -ldl ${PGO_LIBS}" CXXFLAGS="${CXXFLAGS} ${PGO_CXXFLAGS}" CPPFLAGS="${CPPFLAGS} ${mycommonmakedefargs[@]} ${mysahmakedefargs[@]} ${PGO_CPPFLAGS}" BOINCDIR="/usr/share/boinc/$SLOT_BOINC" econf \
 	${mycommonmakeargs[@]} \
 	${mysahmakeargs[@]} || die
-	cp "sah_config.h" "config.h"
+	cp "sah_config.h" "config.h" || die
 }
 
 SAH_PLAN_CLASS=""
