@@ -44,7 +44,7 @@ pkg_setup() {
 		die
 	fi
 
-	if [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]]; then
+	if $(tc-is-clang) ; then
 		ewarn "The configure script may fail with clang.  Switch to gcc if it fails."
 	fi
 
@@ -177,7 +177,7 @@ function run_config {
 	CFLAGS="${CFLAGS} ${PGO_CFLAGS}" LDFLAGS="${LDFLAGS} ${PGO_LDFLAGS}"  LIBS="${sahfftwlibs[@]} -ldl ${PGO_LIBS}" CXXFLAGS="${CXXFLAGS} ${PGO_CXXFLAGS}" CPPFLAGS="${CPPFLAGS} ${mycommonmakedefargs[@]} ${mysahmakedefargs[@]} ${PGO_CPPFLAGS}" BOINCDIR="/usr/share/boinc/$SLOT_BOINC" econf \
 	${mycommonmakeargs[@]} \
 	${mysahmakeargs[@]} || die
-	cp "sah_config.h" "config.h"
+	cp "sah_config.h" "config.h" || die
 }
 
 src_compile() {
@@ -209,7 +209,7 @@ src_compile() {
 
 	einfo "Making classic client..."
 	if use pgo ; then
-		cd "${WORKDIR}/${MY_P}/AKv8"
+		cd "${WORKDIR}/${MY_P}/AKv8" || die
 		PGO_CFLAGS="${INSTRUMENT_CFLAGS}" PGO_CXXFLAGS="${INSTRUMENT_CFLAGS}" PGO_CPPFLAGS="${INSTRUMENT_CFLAGS}" PGO_LDFLAGS="${INSTRUMENT_LDFLAGS}" PGO_LIBS="${INSTRUMENT_LIBS}" run_config
 		cd "${WORKDIR}/${MY_P}/AKv8/client"
                 emake || die
@@ -218,19 +218,19 @@ src_compile() {
 		LLVM_PROFILE_FILE="${T}/code-%p.profraw" ./seti_boinc -standalone
 		ls result.sah || die "simulating failed"
 		#diff -u test_workunits/reference_result_unit.sah result.sah
-		cd "${WORKDIR}/${MY_P}/AKv8"
-                if [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]]; then
+		cd "${WORKDIR}/${MY_P}/AKv8" || die
+		if $(tc-is-clang) ; then
                         llvm-profdata merge -output="${T}"/code.profdata "${T}"/code-*.profraw
                 fi
-		cd "${WORKDIR}/${MY_P}/AKv8"
+		cd "${WORKDIR}/${MY_P}/AKv8" || die
 		make clean
 		PGO_CFLAGS="${PROFILE_DATA_CFLAGS}" PGO_CXXFLAGS="${PROFILE_DATA_CFLAGS}" PGO_CPPFLAGS="${PROFILE_DATA_CFLAGS}" PGO_LDFLAGS="${PROFILE_DATA_LDFLAGS}" PGO_LIBS="${PROFILE_DATA_LIBS}" run_config
-		cd "${WORKDIR}/${MY_P}/AKv8/client"
+		cd "${WORKDIR}/${MY_P}/AKv8/client" || die
                 emake || die
 	else
-		cd "${WORKDIR}/${MY_P}/AKv8"
+		cd "${WORKDIR}/${MY_P}/AKv8" || die
 		PGO_CFLAGS="" PGO_CXXFLAGS="" PGO_CPPFLAGS="" PGO_LDFLAGS="" PGO_LIBS="" run_config
-		cd "${WORKDIR}/${MY_P}/AKv8/client"
+		cd "${WORKDIR}/${MY_P}/AKv8/client" || die
                 emake || die
         fi
 }
@@ -246,7 +246,7 @@ src_install() {
 	elif use cpu_flags_x86_sse ; then
 		SAH_PLAN_CLASS="sse"
 	else
-		ewarn "Using fallback plan class."
+		ewarn "Using the fallback plan class."
 		SAH_PLAN_CLASS=""
 	fi
 
