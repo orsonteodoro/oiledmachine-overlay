@@ -23,7 +23,6 @@ X86_CPU_FEATURES=( ${X86_CPU_FEATURES_RAW[@]/#/cpu_flags_x86_} )
 IUSE="${X86_CPU_FEATURES[@]%:*} opengl custom-cflags altivec neon pgo"
 REQUIRED_USE=""
 
-#	dev-libs/asmlib
 RDEPEND="
 	sci-libs/fftw[static-libs]
 	sci-misc/setiathome-art:7
@@ -48,6 +47,8 @@ pkg_setup() {
 	if [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]]; then
 		ewarn "The configure script may fail with clang.  Switch to gcc if it fails."
 	fi
+
+	export BOINC_VER=`boinc --version | awk '{print $1}'`
 }
 
 src_unpack() {
@@ -55,8 +56,8 @@ src_unpack() {
 	ESVN_REVISION="${SETIATHOME_SVN_REVISION}"
 	ESVN_OPTIONS="--trust-server-cert"
 	subversion_src_unpack
-	cp -r "${ESVN_STORE_DIR}/${PN}/seti_boinc" "${WORKDIR}/${MY_P}/AKv8"
-	mkdir "${WORKDIR}/${MY_P}/AKv8/client/.deps"
+	cp -r "${ESVN_STORE_DIR}/${PN}/seti_boinc" "${WORKDIR}/${MY_P}/AKv8" || die
+	mkdir "${WORKDIR}/${MY_P}/AKv8/client/.deps" || die
 }
 
 src_prepare() {
@@ -67,8 +68,6 @@ src_prepare() {
 
 	PACKAGE_VERSION=$(grep -r -e "PACKAGE_VERSION" ./sah_config.h | cut -d' ' -f3 | sed -e "s|\"||g")
 	sed -i -e "s|__PACKAGE_VERSION__|$PACKAGE_VERSION|g" AKv8/client/analyzeFuncs.cpp || die
-
-	export BOINC_VER=`boinc --version | awk '{print $1}'`
 
 	if $(version_is_at_least "7.3.19" $BOINC_VER ) ; then
 		true
@@ -82,7 +81,7 @@ src_prepare() {
 
 	cd "${WORKDIR}/${MY_P}/AKv8"
 	AT_M4DIR="m4" eautoreconf
-	chmod +x configure
+	chmod +x configure || die
 }
 
 src_configure() {
@@ -97,38 +96,19 @@ function run_config {
 	local -a mysahmakeargs
 	local -a mysahmakedefargs
 
-	local -a myapmakeargs
-	local -a myapmakedefargs
 	local -a sahfftwlibs
-	local -a apfftwlibs
-	local -a asmlibs
 
         append-flags -Wa,--noexecstack
 
 	if [[ ${ARCH} =~ (amd64|ia64|arm64|ppc64|alpha) || ${host} =~ (sparc64) ]]; then
 		mysahmakeargs+=( --enable-bitness=64 )
-		#mysahmakeargs+=( --host=x86_64-pc-linux-gnu )
-		#mysahmakeargs+=( --target=x86_64-pc-linux-gnu )
-		#mysahmakeargs+=( --build=x86_64-pc-linux-gnu )
-		#mysahmakeargs+=( --with-boinc-platform=x86_64-pc-linux-gnu )
 		sahfftwlibs=( -L/usr/lib64 )
-		apfftwlibs=( -L/usr/lib64 )
-		#asmlibs=( -L/usr/lib64 )
-		#asmlibs+=( -laelf64 )
 	elif [[ ${ARCH} =~ (x86|i386|arm|ppc|m68k|s390|hppa) || ${host} =~ (sparc) ]] ; then
 		mysahmakeargs+=( --enable-bitness=32 )
-		#mysahmakeargs+=( --host=i686-pc-linux-gnu )
-		#mysahmakeargs+=( --target=i686-pc-linux-gnu )
-		#mysahmakeargs+=( --build=i686-pc-linux-gnu )
-		#mysahmakeargs+=( --with-boinc-platform=i686-pc-linux-gnu )
 		sahfftwlibs=( -L/usr/lib32 )
-		apfftwlibs=( -L/usr/lib32 )
-		#asmlibs=( -L/usr/lib32 )
-		#asmlibs+=( -laelf32p )
 	else
 		warn "ARCH is not supported.  Continuing anyway..."
 		sahfftwlibs=( -L/usr/lib )
-		apfftwlibs=( -L/usr/lib )
 	fi
 
 	mycommonmakeargs+=( --disable-server )
@@ -137,7 +117,6 @@ function run_config {
 	#mycommonmakeargs+=( --disable-intrinsics ) #enabling breaks compile
 
 	mycommonmakedefargs+=( -D_GNU_SOURCE )
-	#mycommonmakedefargs+=( -DUSE_ASMLIB )
 
 	if use opengl ; then
 		mycommonmakedefargs+=( -DBOINC_APP_GRAPHICS )
@@ -155,12 +134,10 @@ function run_config {
 	mysahmakedefargs+=( -DUSE_FFTW )
 
 	if use custom-cflags ; then
-	#	mycommonmakeargs+=( --disable-comoptions )
 		true
 	else
 		strip-flags
 		filter-flags -O3 -O2 -O1 -Os -Ofast -O4
-	#	mycommonmakeargs+=( --enable-comoptions )
 	fi
 
 	if use cpu_flags_x86_avx ; then
@@ -197,7 +174,7 @@ function run_config {
 	fi
 
 	cd "${WORKDIR}/${MY_P}/AKv8"
-	CFLAGS="${CFLAGS} ${PGO_CFLAGS}" LDFLAGS="${LDFLAGS} ${PGO_LDFLAGS}"  LIBS="${sahfftwlibs[@]} ${asmlibs[@]} -ldl ${PGO_LIBS}" CXXFLAGS="${CXXFLAGS} ${PGO_CXXFLAGS}" CPPFLAGS="${CPPFLAGS} ${mycommonmakedefargs[@]} ${mysahmakedefargs[@]} ${PGO_CPPFLAGS}" BOINCDIR="/usr/share/boinc/$SLOT_BOINC" econf \
+	CFLAGS="${CFLAGS} ${PGO_CFLAGS}" LDFLAGS="${LDFLAGS} ${PGO_LDFLAGS}"  LIBS="${sahfftwlibs[@]} -ldl ${PGO_LIBS}" CXXFLAGS="${CXXFLAGS} ${PGO_CXXFLAGS}" CPPFLAGS="${CPPFLAGS} ${mycommonmakedefargs[@]} ${mysahmakedefargs[@]} ${PGO_CPPFLAGS}" BOINCDIR="/usr/share/boinc/$SLOT_BOINC" econf \
 	${mycommonmakeargs[@]} \
 	${mysahmakeargs[@]} || die
 	cp "sah_config.h" "config.h"
@@ -259,28 +236,25 @@ src_compile() {
 }
 
 src_install() {
-	mkdir -p "${D}/var/lib/boinc/projects/setiathome.berkeley.edu"
+	mkdir -p "${D}/var/lib/boinc/projects/setiathome.berkeley.edu" || die
 	#cat ${FILESDIR}/app_info.xml_start >> ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/app_info.xml
-	AP_CPU_TYPE="CPU"
-	AP_PLAN_CLASS="sse3"
 	SAH_CPU_TYPE="CPU"
 	SAH_PLAN_CLASS="sse3"
 
-	cd "${WORKDIR}/${MY_P}/AKv8"
+	cd "${WORKDIR}/${MY_P}/AKv8" || die
 	SAH_VER_NODOT=`cat configure.ac | grep AC_INIT | awk '{print $2}' | sed -r -e "s|,||g" -e "s|\.||g"`
 	SAH_VER_MAJOR=`cat configure.ac | grep AC_INIT | awk '{print $2}' | sed -r -e "s|,||g" | cut -d. -f1`
 	cd "${WORKDIR}/${MY_P}/AKv8/client"
 	SAH_EXE=`ls setiathome-* | sed -r -e "s| |\n|g" | grep -v "debug"`
-	cp ${SAH_EXE} "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu/${SAH_EXE}_cpu
+	cp ${SAH_EXE} "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu/${SAH_EXE}_cpu || die
 
 	cd "${WORKDIR}/${MY_P}/AKv8/client"
-	#cp better_banner.jpg "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu
 
 	SAH_VER_TAG="_v${SAH_VER_MAJOR}"
 	SAH_PLAN_CLASS="" #nothing in v8
 
 	SAH_CMDLN=""
-	cat "${FILESDIR}/app_info.xml_sah_cpu_sse" | sed -r -e "s|CFG_BOINC_VER|${BOINC_VER}|g" -e "s|CFG_SAH_EXE|${SAH_EXE}_cpu|g" -e "s|CFG_SAH_VER_NODOT|${SAH_VER_NODOT}|g" -e "s|CFG_SAH_VER_TAG|${SAH_VER_TAG}|g" -e "s|CFG_SAH_PLAN_CLASS|${SAH_PLAN_CLASS}|g" -e "s|CFG_SAH_CMDLN|${SAH_CMDLN}|g" > ${T}/app_info.xml_sah_cpu_sse
+	cat "${FILESDIR}/app_info.xml_sah_cpu_sse" | sed -r -e "s|CFG_BOINC_VER|${BOINC_VER}|g" -e "s|CFG_SAH_EXE|${SAH_EXE}_cpu|g" -e "s|CFG_SAH_VER_NODOT|${SAH_VER_NODOT}|g" -e "s|CFG_SAH_VER_TAG|${SAH_VER_TAG}|g" -e "s|CFG_SAH_PLAN_CLASS|${SAH_PLAN_CLASS}|g" -e "s|CFG_SAH_CMDLN|${SAH_CMDLN}|g" > ${T}/app_info.xml_sah_cpu_sse || die
 
 	SAH_GFX_EXE_SEC_A=""
 	SAH_GFX_EXE_SEC_B=""
@@ -292,10 +266,9 @@ src_install() {
 		SAH_GFX_EXE_B="seti_graphics_cpu"
 		SAH_GFX_EXE_SEC_A=`cat ${FILESDIR}/app_info.xml_sah_gfx_1 | sed -r -e "s|CFG_SAH_GFX_EXE_A|${SAH_GFX_EXE_A}|g" -e "s|CFG_SAH_GFX_MD5|${SAH_GFX_MD5}|g"`
 		SAH_GFX_EXE_SEC_B=`cat ${FILESDIR}/app_info.xml_sah_gfx_2 | sed -r -e "s|CFG_SAH_GFX_EXE_B|${SAH_GFX_EXE_B}|g"`
-		cp seti_graphics ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/seti_graphics_cpu
+		cp seti_graphics ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/seti_graphics_cpu || die
 	fi
-	cat ${T}/app_info.xml_sah_cpu_sse | awk -v Z1="${SAH_GFX_EXE_SEC_A}" -v Z2="${SAH_GFX_EXE_SEC_B}" '{ sub(/CFG_SAH_GFX_EXE_SEC_A/, Z1); sub(/CFG_SAH_GFX_EXE_SEC_B/, Z2); print; }' >> ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/app_info.xml_sah_cpu
-	#cat ${FILESDIR}/app_info.xml_end >> ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/app_info.xml
+	cat ${T}/app_info.xml_sah_cpu_sse | awk -v Z1="${SAH_GFX_EXE_SEC_A}" -v Z2="${SAH_GFX_EXE_SEC_B}" '{ sub(/CFG_SAH_GFX_EXE_SEC_A/, Z1); sub(/CFG_SAH_GFX_EXE_SEC_B/, Z2); print; }' >> ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/app_info.xml_sah_cpu || die
 }
 
 pkg_postinst() {
