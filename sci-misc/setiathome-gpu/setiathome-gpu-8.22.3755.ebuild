@@ -469,7 +469,6 @@ function run_config {
 SAH_PLAN_CLASS=""
 NUM_GPU_INSTANCES=""
 NUM_CPU_INSTANCES=""
-SAH_GPU_CMDLN=""
 SAH_GPU_NUM_INSTANCES=""
 
 function gpu_setup {
