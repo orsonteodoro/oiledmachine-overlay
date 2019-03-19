@@ -28,7 +28,7 @@ IUSE_GPUS_INTEL=$( echo video_cards_intel intel_hd intel_hd{2,3,4,5}xxx intel_hd
 IUSE_GPUS="${IUSE_GPUS_AMD} ${IUSE_GPUS_NVIDIA} ${IUSE_GPUS_INTEL}"
 IUSE_APIS=$( echo opengl opencl -cuda{,_6_0} )
 IUSE_ARM="armv7"
-IUSE="${X86_CPU_FEATURES[@]%:*} ${IUSE_GPUS} ${IUSE_APIS} ${IUSE_ARM} test custom-cflags akpf +jspf neon xeon pgo signals-on-gpu twinchirp"
+IUSE="${X86_CPU_FEATURES[@]%:*} ${IUSE_GPUS} ${IUSE_APIS} ${IUSE_ARM} test custom-cflags akpf +jspf neon pgo signals-on-gpu twinchirp"
 REQUIRED_USE=""
 
 RDEPEND="
@@ -295,17 +295,27 @@ function run_config {
 		mysahmakedefargs+=( -DUSE_I386_OPTIMIZATIONS ) #uses sse3 sse2
 	fi
 
-	if use xeon ; then
+	if [[ ${ARCH} =~ (amd64) ]]; then
 		mysahmakedefargs+=( -DUSE_I386_XEON )
+	elif [[ ${ARCH} =~ (amd64|x86) ]] ; then
+		if use cpu_flags_x86_sse || use cpu_flags_x86_sse2 || use cpu_flags_x86_sse3 ; then
+			mysahmakedefargs+=( -DUSE_I386_XEON )
+		fi
 	fi
 
 	if [[ ${ARCH} =~ (amd64|ia64|arm64|ppc64|alpha) || ${host} =~ (sparc64) ]]; then
 		if use opencl || use cuda ; then
 			mysahmakedefargs+=( -DSETI7 )
 			mysahmakedefargs+=( -DSETI8 )
+		elif use cpu_flags_x86_sse || use cpu_flags_x86_sse2 || use cpu_flags_x86_sse3 ; then
+			mysahmakedefargs+=( -DSETI7 )
+			mysahmakedefargs+=( -DSETI8 )
 		fi
 	elif [[ ${ARCH} =~ (x86|i386|arm|ppc|m68k|s390|hppa) || ${host} =~ (sparc) ]] ; then
-		if use cpu_flags_x86_sse3 || ( use opencl && use ati_hd4xxx ) ; then
+		if use cpu_flags_x86_sse || use cpu_flags_x86_sse2 || use cpu_flags_x86_sse3 ; then
+			mysahmakedefargs+=( -DSETI7 )
+			mysahmakedefargs+=( -DSETI8 )
+		elif use opencl && use ati_hd4xxx ; then
 			# low end hd4k
 			mysahmakedefargs+=( -DSETI7 )
 		fi
@@ -648,7 +658,7 @@ src_compile() {
                 LLVM_PROFILE_FILE="${T}/code-%p.profraw" ./seti_boinc -standalone ${SAH_GPU_CMDLN}
 		ls result.sah || die "simulating failed"
                 #diff -u test_workunits/reference_result_unit.sah result.sah
-		if [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]]; then
+		if $(tc-is-clang) ; then
 			llvm-profdata merge -output="${T}"/code.profdata "${T}"/code-*.profraw
 		fi
 		cd "${WORKDIR}/${MY_P}/AKv8"
@@ -676,7 +686,6 @@ src_install() {
 	cp ${SAH_EXE} "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu/${SAH_EXE}_gpu.ocl || die
 
 	cd "${WORKDIR}/${MY_P}/AKv8/client" || die
-	#cp better_banner.jpg "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu || die
 	cp MultiBeam_Kernels.cl "${D}/var/lib/boinc/projects/setiathome.berkeley.edu/MultiBeam_Kernels_r${SAH_SVN_REV}.cl" || die
 
 	# testing commenting out 20190318
