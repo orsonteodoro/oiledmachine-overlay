@@ -1,6 +1,5 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI="6"
 
@@ -27,9 +26,8 @@ IUSE_GPUS_AMD=$( echo video_cards_{amdgpu,fglrx,radeonsi,r600} ati_hd{4,5,6,7}xx
 IUSE_GPUS_NVIDIA=$( echo video_cards_nvidia nv_{1,2,3,4,5,6,7,8,9}xx nv_x{0,1,2,3,4,5,6,7,8}0{,_fast} nv_780ti nv_titan nv_780ti_fast nv_titan_fast nv_{8,9}xxx nv_{8,9}xxx_fast )
 IUSE_GPUS_INTEL=$( echo video_cards_intel intel_hd intel_hd{2,3,4,5}xxx intel_hd_gt1 intel_iris5xxx )
 IUSE_GPUS="${IUSE_GPUS_AMD} ${IUSE_GPUS_NVIDIA} ${IUSE_GPUS_INTEL}"
-IUSE_APIS=$( echo opengl opencl -cuda{,_2_2,_2_3,_3_2,_4_2,_5_0} )
-IUSE_ARM=$( echo armv6{-neon-nopie,-neon,-vfp-nopie,-vfp} armv7{-neon,-neon-nopie,-vfpv3,-vfpv3d16,-vfpv3d16-nopie,-vfpv4,-vfpv4-nopie} )
-IUSE="${X86_CPU_FEATURES[@]%:*} ${IUSE_GPUS} ${IUSE_APIS} ${IUSE_ARM} test custom-cflags core2 xeon pgo"
+IUSE_APIS=$( echo opengl opencl -cuda )
+IUSE="${X86_CPU_FEATURES[@]%:*} ${IUSE_GPUS} ${IUSE_APIS} test custom-cflags core2 xeon pgo"
 REQUIRED_USE=""
 
 #	dev-libs/asmlib
@@ -56,6 +54,19 @@ DEPEND="${RDEPEND}
 	sci-misc/boinc:=
 	sci-misc/setiathome-boincdir:${SLOT_BOINC}
 "
+
+# You can define these in your per package env flags.
+AP_GPU_INSTANCES=${AP_GPU_INSTANCES:=1}
+AP_CPU_INSTANCES=${AP_CPU_INSTANCES:=1}
+AP_GPU_TYPE=${AP_GPU_TYPE:=""} # This can be ATI, NVIDIA, intel_gpu .
+AP_GPU_CMDLN=${AP_GPU_CMDLN:=""} # See documents below:
+# https://setisvn.ssl.berkeley.edu/trac/export/4014/branches/sah_v7_opt/AP_BLANKIT/client/ReadMe_AstroPulse_Brook.txt
+# https://setisvn.ssl.berkeley.edu/trac/export/4014/branches/sah_v7_opt/AP_BLANKIT/client/ReadMe_AstroPulse_CPU.txt
+# https://setisvn.ssl.berkeley.edu/trac/export/4014/branches/sah_v7_opt/AP_BLANKIT/client/ReadMe_AstroPulse_CPU_AMD.txt
+# https://setisvn.ssl.berkeley.edu/trac/export/4014/branches/sah_v7_opt/AP_BLANKIT/client/ReadMe_AstroPulse_OpenCL_ATi.txt
+# https://setisvn.ssl.berkeley.edu/trac/export/4014/branches/sah_v7_opt/AP_BLANKIT/client/ReadMe_AstroPulse_OpenCL_Intel.txt
+# https://setisvn.ssl.berkeley.edu/trac/export/4014/branches/sah_v7_opt/AP_BLANKIT/client/ReadMe_AstroPulse_OpenCL_NV.txt
+# https://setisvn.ssl.berkeley.edu/trac/export/4014/branches/sah_v7_opt/AP_BLANKIT/client/ReadMe_AstroPulse_OpenCL_NV_CC1.txt
 
 S="${WORKDIR}/${MY_P}"
 
@@ -89,6 +100,8 @@ pkg_setup() {
 	if $(tc-is-clang) ; then
 		ewarn "The configure script may fail with clang.  Switch to gcc if it fails."
 	fi
+
+	export BOINC_VER=`boinc --version | awk '{print $1}'`
 }
 
 pkg_pretend() {
@@ -118,45 +131,40 @@ src_unpack() {
 	mv "${WORKDIR}/${MY_P}/AP" "${WORKDIR}/${MY_P}/AP6"
 	mv "${WORKDIR}/${MY_P}/AP_BLANKIT" "${WORKDIR}/${MY_P}/AP"
 
-	export BOINC_VER=`boinc --version | awk '{print $1}'`
-	BOINC_MAJOR=`echo $BOINC_VER | cut -d. -f1`
-	BOINC_MINOR=`echo $BOINC_VER | cut -d. -f2`
-	URL="https://github.com/BOINC/boinc/archive/client_release/$BOINC_MAJOR.$BOINC_MINOR/$BOINC_VER.zip"
-
 	cd "${WORKDIR}/${MY_P}"
 	epatch "${FILESDIR}"/astropulse-7.00-apclientmaincpp.patch #1
-	epatch "${FILESDIR}"/setiathome-7.08-makefileam-ap-gfx.patch #10
-	epatch "${FILESDIR}"/setiathome-7.08-configureac-ap-gfx.patch #9
 
-	cd "${WORKDIR}/${MY_P}/AKv8/client"
-        ESVN_REVISION="${SETIATHOME_SVN_REVISION}"
-	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_gfx_main.h" || die
-	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_gfx_main.cpp" || die
-	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_version.cpp" || die
-	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_version.h" || die
-	wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/graphics_main.cpp" || die
+	if use opengl ; then
+		# As explained in the setiathome-gpu ebuild.  This is just a reversion of the removal of the feature.
+		# The feature was removed to increase returned results and performance to eliminate a potential bottleneck.
 
-	cd "${WORKDIR}/${MY_P}"
-	epatch "${FILESDIR}"/setiathome-7.08-makefileam-apshmem.patch #11
-	epatch "${FILESDIR}"/setiathome-7.08-apclientmaincpp-apshmem.patch #7
-	epatch "${FILESDIR}"/setiathome-7.08-setih-graphics_lib_handle.patch #test
-        epatch "${FILESDIR}"/setiathome-7.08-makefileam-ap-apshmem.patch #10
-        epatch "${FILESDIR}"/setiathome-7.08-apclientmaincpp-ap-doublemax.patch #5
-        epatch "${FILESDIR}"/setiathome-7.08-apgfxbaseh-ap-reducedarraygen.patch #8
-	epatch "${FILESDIR}"/setiathome-7.08-sah-ap-graphics-ap.patch #13 ap
-	epatch "${FILESDIR}"/setiathome-7.08-ap-configureac-enablegraphics.patch #2
-	epatch "${FILESDIR}"/setiathome-7.08-ap-sah-graphics-fixes1.patch #4
-	epatch "${FILESDIR}"/setiathome-7.08-ap-sah-glew-ap.patch #3 ap
-	epatch "${FILESDIR}"/setiathome-7.08-noopengl-ap.patch #12 ap
+		epatch "${FILESDIR}"/setiathome-7.08-makefileam-ap-gfx.patch #10
+		epatch "${FILESDIR}"/setiathome-7.08-configureac-ap-gfx.patch #9
 
-	#cd "${WORKDIR}/${MY_P}/AKv8/client"
-	#touch gl.h glu.h glut.h
+		cd "${WORKDIR}/${MY_P}/AKv8/client"
+	        ESVN_REVISION="${SETIATHOME_SVN_REVISION}"
+		wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_gfx_main.h" || die
+		wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_gfx_main.cpp" || die
+		wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_version.cpp" || die
+		wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_version.h" || die
+		wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/graphics_main.cpp" || die
 
-	#ESVN_REPO_URI="https://setisvn.ssl.berkeley.edu/svn/seti_boinc/glut"
-        #ESVN_REVISION="1962" #7.07 trunk
-	#ESVN_OPTIONS="--trust-server-cert"
-        #subversion_src_unpack
-	#cp -r "${ESVN_STORE_DIR}/${PN}/glut" "${WORKDIR}/${MY_P}/AKv8"
+		cd "${WORKDIR}/${MY_P}"
+		epatch "${FILESDIR}"/setiathome-7.08-makefileam-apshmem.patch #11
+		epatch "${FILESDIR}"/setiathome-7.08-apclientmaincpp-apshmem.patch #7
+		epatch "${FILESDIR}"/setiathome-7.08-setih-graphics_lib_handle.patch #test
+	        epatch "${FILESDIR}"/setiathome-7.08-makefileam-ap-apshmem.patch #10
+	        epatch "${FILESDIR}"/setiathome-7.08-apclientmaincpp-ap-doublemax.patch #5
+	        epatch "${FILESDIR}"/setiathome-7.08-apgfxbaseh-ap-reducedarraygen.patch #8
+		epatch "${FILESDIR}"/setiathome-7.08-sah-ap-graphics-ap.patch #13 ap
+		epatch "${FILESDIR}"/setiathome-7.08-ap-configureac-enablegraphics.patch #2
+		epatch "${FILESDIR}"/setiathome-7.08-ap-sah-graphics-fixes1.patch #4
+		epatch "${FILESDIR}"/setiathome-7.08-ap-sah-glew-ap.patch #3 ap
+		epatch "${FILESDIR}"/setiathome-7.08-noopengl-ap.patch #12 ap
+	fi
+
+	sed -i -e "s|#define _GLIBCXX_USE_CXX11_ABI 0|//#define _GLIBCXX_USE_CXX11_ABI 0|g" src/GPU_lock.cpp || die
+	sed -i -e "s|#define _GLIBCXX_USE_CXX11_ABI 0|//#define _GLIBCXX_USE_CXX11_ABI 0|g" sah_v7_opt/src/GPU_lock.cpp || die
 
 	if use test || use pgo ; then
 		cd "${WORKDIR}/${MY_P}/AP/client"
@@ -170,9 +178,6 @@ src_unpack() {
 		cd "${S}"
 		epatch "${FILESDIR}"/astropulse-gpu-7.01.3375-boinc-compat.patch
 	fi
-
-	sed -i -e "s|#define _GLIBCXX_USE_CXX11_ABI 0|//#define _GLIBCXX_USE_CXX11_ABI 0|g" src/GPU_lock.cpp || die
-	sed -i -e "s|#define _GLIBCXX_USE_CXX11_ABI 0|//#define _GLIBCXX_USE_CXX11_ABI 0|g" sah_v7_opt/src/GPU_lock.cpp || die
 }
 
 src_prepare() {
@@ -314,10 +319,9 @@ function run_config {
 		fi
 	fi
 
-	#Enabling this will disable more optimized JSPF (Joe Segur's SSE Pulse Finding Alignment)
-	#if use core2 ; then
-	#	mycommonmakedefargs+=( -DUSE_I386_CORE2 )
-	#fi
+	if use core2 ; then
+		mycommonmakedefargs+=( -DUSE_I386_CORE2 )
+	fi
 
 	if use cpu_flags_x86_avx2 ; then
 		mycommonmakeargs+=( --enable-avx2 )
@@ -385,117 +389,87 @@ function run_config {
 	${myapmakeargs[@]} || die
 }
 
-SAH_GPU_TYPE=""
-SAH_GPU_NUM_INSTANCES=""
-SAH_PLAN_CLASS=""
-
-AP_GPU_TYPE=""
 AP_GPU_NUM_INSTANCES=""
 AP_PLAN_CLASS=""
 
 NUM_GPU_INSTANCES=""
 NUM_CPU_INSTANCES=""
-AP_GPU_CMDLN=""
-SAH_GPU_CMDLN=""
 AP_GPU_NUM_INSTANCES=""
-SAH_GPU_NUM_INSTANCES=""
 
 function gpu_setup {
+	if [[ -n "${AP_GPU_CMDLN}" && -n "${AP_GPU_TYPE}" ]] ; then
+		true
 	#intel low end
-	if use intel_hd || use intel_hd2xxx ; then
-		SAH_GPU_TYPE="intel_gpu"
+	elif use intel_hd || use intel_hd2xxx ; then
 		AP_GPU_TYPE="intel_gpu"
-		SAH_GPU_CMDLN="-spike_fft_thresh 2048 -tune 1 2 1 16"
 		AP_GPU_CMDLN="-unroll 4 -ffa_block 2048 -ffa_block_fetch 1024"
 	#intel mid range
 	elif use intel_hd3xxx || use intel_hd_gt1 ; then
-		SAH_GPU_TYPE="intel_gpu"
 		AP_GPU_TYPE="intel_gpu"
-		SAH_GPU_CMDLN="-spike_fft_thresh 2048 -tune 1 64 1 4"
 		AP_GPU_CMDLN="-unroll 10 -ffa_block 6144 -ffa_block_fetch 1536"
 	#intel high end
 	elif use intel_hd4xxx || use intel_hd5xxx || use intel_iris5xxx ; then
-		SAH_GPU_TYPE="intel_gpu"
 		AP_GPU_TYPE="intel_gpu"
-		SAH_GPU_CMDLN="-spike_fft_thresh 4096 -tune 1 64 1 4 -oclfft_tune_gr 256 -oclfft_tune_lr 16 -oclfft_tune_wg 512"
 		AP_GPU_CMDLN="-unroll 12 -ffa_block 8192 -ffa_block_fetch 4096"
 
 	#ati low end
 	elif use ati_hdx3xx || use ati_hdx4xx || use ati_hdx5xx || use ati_rx_x2x || use ati_rx_x3x || use ati_apu ; then
-		SAH_GPU_TYPE="ATI"
 		AP_GPU_TYPE="ATI"
-		SAH_GPU_CMDLN="-spike_fft_thresh 2048 -tune 1 2 1 16"
 		AP_GPU_CMDLN="-unroll 4 -ffa_block 2048 -ffa_block_fetch 1024"
 	#ati mid range
 	elif use ati_hdx6xx || use ati_hdx7xx || use ati_rx_x4x || use ati_rx_x5x || use ati_rx_x6x ; then
-		SAH_GPU_TYPE="ATI"
 		AP_GPU_TYPE="ATI"
-		SAH_GPU_CMDLN="-spike_fft_thresh 2048 -tune 1 64 1 4"
 		AP_GPU_CMDLN="-unroll 12 -oclFFT_plan 256 16 256 -ffa_block 12288 -ffa_block_fetch 6144 -tune 1 64 4 1 -tune 2 64 4 1"
 	#ati high end
 	elif use ati_hdx8xx || use ati_hdx9xx || use ati_rx_x7x || use ati_rx_x8x || use ati_rx_x9x ; then
-		SAH_GPU_TYPE="ATI"
 		AP_GPU_TYPE="ATI"
-		SAH_GPU_CMDLN="-spike_fft_thresh 4096 -tune 1 64 1 4 -oclfft_tune_gr 256 -oclfft_tune_lr 16 -oclfft_tune_wg 256 -oclfft_tune_ls 512 -oclfft_tune_bn 64 -oclfft_tune_cw 64"
 		AP_GPU_CMDLN="-unroll 18 -oclFFT_plan 256 16 256 -ffa_block 16384 -ffa_block_fetch 8192 -tune 1 64 4 1 -tune 2 64 4 1"
 
 	#nv low end
 	elif use nv_x00 || use nv_x10 || use nv_x20 || use nv_x30 || use nv_x40 || use nv_8xxx || use nv_9xxx ; then
-		SAH_GPU_TYPE="NVIDIA"
 		AP_GPU_TYPE="NVIDIA"
-		SAH_GPU_CMDLN="-sbs 128 -spike_fft_thresh 2048 -tune 1 2 1 16"
 		AP_GPU_CMDLN="-unroll 4 -ffa_block 2048 -ffa_block_fetch 1024"
 	elif use nv_x00_fast || use nv_x10_fast || use nv_x20_fast || use nv_x30_fast || use nv_x40_fast || use nv_8xxx_fast || use nv_9xxx_fast ; then
-		SAH_GPU_TYPE="NVIDIA"
 		AP_GPU_TYPE="NVIDIA"
-		SAH_GPU_CMDLN="-sbs 128 -spike_fft_thresh 2048 -tune 1 2 1 16"
 		AP_GPU_CMDLN="-use_sleep -unroll 4 -oclFFT_plan 256 16 1024"
 	#nv mid range
 	elif use nv_x50 || use nv_x60 || use nv_x70 ; then
-		SAH_GPU_TYPE="NVIDIA"
 		AP_GPU_TYPE="NVIDIA"
-		SAH_GPU_CMDLN="-sbs 192 -spike_fft_thresh 2048 -tune 1 64 1 4"
 		AP_GPU_CMDLN="-unroll 10 -ffa_block 6144 -ffa_block_fetch 1536"
 	elif use nv_x50_fast || use nv_x60_fast || use nv_x70_fast ; then
-		SAH_GPU_TYPE="NVIDIA"
 		AP_GPU_TYPE="NVIDIA"
-		SAH_GPU_CMDLN="-sbs 192 -spike_fft_thresh 2048 -tune 1 64 1 4"
 		AP_GPU_CMDLN="-use_sleep -unroll 10 -oclFFT_plan 256 16 512 -ffa_block 12288 -ffa_block_fetch 6144"
 	#nv high end
 	elif use nv_x70 || use nv_x80 ; then
-		SAH_GPU_TYPE="NVIDIA"
 		AP_GPU_TYPE="NVIDIA"
-		SAH_GPU_CMDLN="-sbs 256 -spike_fft_thresh 4096 -tune 1 64 1 4 -oclfft_tune_gr 256 -oclfft_tune_lr 16 -oclfft_tune_wg 256 -oclfft_tune_ls 512 -oclfft_tune_bn 64 -oclfft_tune_cw 64"
 		AP_GPU_CMDLN="-unroll 12 -ffa_block 12288 -ffa_block_fetch 6144"
 	elif use nv_x70_fast || use nv_x80_fast ; then
-		SAH_GPU_TYPE="NVIDIA"
 		AP_GPU_TYPE="NVIDIA"
-		SAH_GPU_CMDLN="-sbs 256 -spike_fft_thresh 4096 -tune 1 64 1 4 -oclfft_tune_gr 256 -oclfft_tune_lr 16 -oclfft_tune_wg 256 -oclfft_tune_ls 512 -oclfft_tune_bn 64 -oclfft_tune_cw 64"
 		AP_GPU_CMDLN="-use_sleep -unroll 18 -oclFFT_plan 256 16 256 -ffa_block 16384 -ffa_block_fetch 8192 -tune 1 64 8 1 -tune 2 64 8 1"
 	#nv enthusiast
 	elif use nv_780ti || use nv_titan ; then
-		SAH_GPU_TYPE="NVIDIA"
 		AP_GPU_TYPE="NVIDIA"
-		SAH_GPU_CMDLN="-sbs 256 -spike_fft_thresh 4096 -tune 1 64 1 4 -oclfft_tune_gr 256 -oclfft_tune_lr 16 -oclfft_tune_wg 256 -oclfft_tune_ls 512 -oclfft_tune_bn 64 -oclfft_tune_cw 64"
 		AP_GPU_CMDLN="-unroll 16 -ffa_block 16384 -ffa_block_fetch 8192"
 	elif use nv_780ti_fast || use nv_titan_fast ; then
-		SAH_GPU_TYPE="NVIDIA"
 		AP_GPU_TYPE="NVIDIA"
-		SAH_GPU_CMDLN="-sbs 256 -spike_fft_thresh 4096 -tune 1 64 1 4 -oclfft_tune_gr 256 -oclfft_tune_lr 16 -oclfft_tune_wg 256 -oclfft_tune_ls 512 -oclfft_tune_bn 64 -oclfft_tune_cw 64"
 		AP_GPU_CMDLN="-use_sleep -unroll 18 -oclFFT_plan 256 16 256 -ffa_block 16384 -ffa_block_fetch 8192 -tune 1 64 8 1 -tune 2 64 8 1"
 
 	fi
 
+	# It may fail to fetch if it is not configured correct.
 	if [[ ${ARCH} =~ (amd64|x86) ]]; then
-		if use ati_hd5xxx || use ati_hd6xxx || use ati_hd7xxx || use ati_rx_200 || use ati_rx_300 || use ati_rx_400 || use ati_apu ; then
+		if use ati_hd4xxx || use ati_hd5xxx || use ati_hd6xxx || use ati_hd7xxx || use ati_rx_200 || use ati_rx_300 || use ati_rx_400 || use ati_apu ; then
 			if use opencl ; then
 				AP_PLAN_CLASS="opencl_ati_100"
-				SAH_PLAN_CLASS="opencl_ati5_cat132"
-			fi
-		elif use ati_hd4xxx ; then
-			if use opencl ; then
-				AP_PLAN_CLASS="opencl_ati_100"
-				SAH_PLAN_CLASS="opencl_ati_cat132"
+			elif use cpu_flags_x86_sse2 ; then
+				ewarn "Using only GPU and SSE2.  You need opencl for GPU acceleration."
+				AP_PLAN_CLASS="sse2"
+			elif use cpu_flags_x86_sse ; then
+				ewarn "Using only GPU and SSE.  You need opencl for GPU acceleration."
+				AP_PLAN_CLASS="sse"
+			else
+				ewarn "Using fallback plan class.  You need opencl for GPU acceleration."
+				AP_PLAN_CLASS=""
 			fi
 		elif use nv_1xx || use nv_2xx || use nv_3xx || use nv_x00 || use nv_x10 || use nv_x20 || use nv_x30 || use nv_x40 || use nv_x00_fast || use nv_x10_fast || use nv_x20_fast || use nv_x30_fast || use nv_x40_fast || use nv_x50 || use nv_x60 || use nv_x70 || use nv_x50_fast || use nv_x60_fast || use nv_x70_fast || use nv_x70 || use nv_x80 || use nv_x70_fast || use nv_x80_fast || use nv_780ti || use nv_titan || use nv_780ti_fast || use nv_titan_fast ; then
 			if use opencl ; then
@@ -504,102 +478,51 @@ function gpu_setup {
 				else
 					AP_PLAN_CLASS="opencl_nvidia_100"
 				fi
-				SAH_PLAN_CLASS="opencl_nvidia_sah"
-			elif use cuda || use cuda_2_2 || use cuda_2_3 || use cuda_3_2 || use cuda_4_2 || use cuda_5_0 ; then
+			elif use cuda ; then
 				if use nv_1xx || use nv_2xx || use nv_3xx ; then
 					AP_PLAN_CLASS="cuda_opencl_cc1"
 				else
 					AP_PLAN_CLASS="cuda_opencl_100"
 				fi
-				if use cuda_2_2 ; then
-					SAH_PLAN_CLASS="cuda22"
-				elif use cuda_2_3 ; then
-					SAH_PLAN_CLASS="cuda32"
-				elif use cuda_3_2 ; then
-					SAH_PLAN_CLASS="cuda32"
-				elif use cuda_4_2 ; then
-					SAH_PLAN_CLASS="cuda42"
-				elif use cuda_5_0 ; then
-					SAH_PLAN_CLASS="cuda50"
-				fi
+			elif use cpu_flags_x86_sse2 ; then
+				ewarn "Using only GPU and SSE2.  You need opencl or cuda for GPU acceleration."
+				AP_PLAN_CLASS="sse2"
+			elif use cpu_flags_x86_sse ; then
+				ewarn "Using only GPU and SSE.  You need opencl or cuda for GPU acceleration."
+				AP_PLAN_CLASS="sse"
+			else
+				ewarn "Using fallback plan class.  You need opencl or cuda for GPU acceleration."
+				AP_PLAN_CLASS=""
 			fi
 		elif use intel_hd || use intel_hd2xxx || use intel_hd3xxx || use intel_hd_gt1 || use intel_hd4xxx || use intel_hd5xxx || use intel_iris5xxx ; then
-			AP_PLAN_CLASS="opencl_intel_gpu_102"
-			SAH_PLAN_CLASS="opencl_intel_gpu_sah"
+			AP_PLAN_CLASS=""
+			ewarn "Intel GPUs may not be supported."
+			# none listed in https://setiathome.berkeley.edu/apps.php for linux
+		elif use cpu_flags_x86_sse2 ; then
+			AP_PLAN_CLASS="sse2"
+			ewarn "No specific GPU chosen.  Consider re-emerging with proper GPU.  Using FPU and SSE only"
+		else
+			AP_PLAN_CLASS=""
+			ewarn "Using fallback plan class."
 		fi
 	elif [[ ${ARCH} =~ (ppc64) && $(use opencl) ]]; then
-		if use ati_hd5xxx || use ati_hd7xxx ; then
-			AP_PLAN_CLASS="opencl_ati_mac"
-			SAH_PLAN_CLASS="opencl_ati5_mac"
-		elif use ati_hd4xxx ; then
-			AP_PLAN_CLASS="opencl_ati_mac"
-			SAH_PLAN_CLASS="opencl_ati_mac"
-		elif use intel_hd4xxx || use intel_hd5xxx || use intel_iris5xxx ; then
-			AP_PLAN_CLASS="opencl_intel_gpu_mac"
-			SAH_PLAN_CLASS="opencl_intel_gpu_sah"
-		elif use nv_1xx || use nv_3xx || use nv_6xx || use nv_7xx ; then
-			AP_PLAN_CLASS="opencl_nvidia_mac"
-			SAH_PLAN_CLASS="opencl_nvidia_mac"
-			if use cuda ; then
-				SAH_PLAN_CLASS="opencl_ati5zc_mac"
-			fi
-		elif use nv_8xxx || use nv_9xxx ; then
-			AP_PLAN_CLASS="opencl_nvidia_mac"
-			SAH_PLAN_CLASS="opencl_nvidia_mac"
-			if use cuda ; then
-				SAH_PLAN_CLASS="opencl_ati5zc_mac"
-			fi
-		fi
+		AP_PLAN_CLASS=""
+		ewarn "PPC64 may not be supported."
+		# none listed in https://setiathome.berkeley.edu/apps.php
 	elif [[ ${ARCH} =~ (ppc) ]] ; then
 		AP_PLAN_CLASS=""
-		SAH_PLAN_CLASS=""
+		ewarn "PPC may not be supported."
+		# none listed in https://setiathome.berkeley.edu/apps.php
 	elif [[ ${ARCH} =~ (arm64|arm) ]] ; then
-		#todo
-		#nopie means android 5 and above
-		#vfp is old floating point
-		#neon is simd
-		if use armv6-neon-nopie ; then
-			SAH_PLAN_CLASS="armv6-neon-nopie"
-			AP_PLAN_CLASS=""
-		elif use armv6-neon ; then
-			SAH_PLAN_CLASS="armv6-neon"
-			AP_PLAN_CLASS=""
-		elif use armv6-vfp-nopie ; then
-			SAH_PLAN_CLASS="armv6-vfp-nopie"
-			AP_PLAN_CLASS=""
-		elif use armv6-vfp ; then
-			SAH_PLAN_CLASS="armv6-vfp"
-			AP_PLAN_CLASS=""
-		elif use armv7-neon ; then
-			SAH_PLAN_CLASS="armv7-neon"
-			AP_PLAN_CLASS=""
-		elif use armv7-neon-nopie ; then
-			SAH_PLAN_CLASS="armv7-neon-nopie"
-			AP_PLAN_CLASS=""
-		elif use armv7-vfpv3 ; then
-			SAH_PLAN_CLASS="armv7-vfpv3"
-			AP_PLAN_CLASS=""
-		elif use armv7-vfpv3d16 ; then
-			SAH_PLAN_CLASS="armv7-vfpv3d16"
-			AP_PLAN_CLASS=""
-		elif use armv7-vfpv3d16-nopie ; then
-			SAH_PLAN_CLASS="armv7-vfpv3d16-nopie"
-			AP_PLAN_CLASS=""
-		elif use armv7-vfpv4 ; then
-			SAH_PLAN_CLASS="armv7-vfpv4"
-			AP_PLAN_CLASS=""
-		elif use armv7-vfpv4-nopie ; then
-			SAH_PLAN_CLASS="armv7-vfpv4-nopie"
-			AP_PLAN_CLASS=""
-		fi
+		AP_PLAN_CLASS=""
+		ewarn "ARM/ARM6 may not be supported."
+		# As for the reason above.
 	fi
 
-	NUM_GPU_INSTANCES=`bc <<< "scale=6; 1/${SETIATHOME_GPU_INSTANCES}"`
-	NUM_CPU_INSTANCES=`bc <<< "scale=6; 1/${SETIATHOME_CPU_INSTANCES}"`
-	AP_GPU_CMDLN="${AP_GPU_CMDLN} -instances_per_device ${SETIATHOME_GPU_INSTANCES} -total_GPU_instances_num ${SETIATHOME_GPU_INSTANCES}"
-	SAH_GPU_CMDLN="${SAH_GPU_CMDLN} -instances_per_device ${SETIATHOME_GPU_INSTANCES} -total_GPU_instances_num ${SETIATHOME_GPU_INSTANCES}"
-	AP_GPU_NUM_INSTANCES="${SETIATHOME_GPU_INSTANCES}"
-	SAH_GPU_NUM_INSTANCES="${SETIATHOME_GPU_INSTANCES}"
+	NUM_GPU_INSTANCES=`bc <<< "scale=6; 1/${AP_GPU_INSTANCES}"`
+	NUM_CPU_INSTANCES=`bc <<< "scale=6; 1/${AP_CPU_INSTANCES}"`
+	AP_GPU_CMDLN="${AP_GPU_CMDLN} -instances_per_device ${AP_GPU_INSTANCES} -total_GPU_instances_num ${AP_GPU_INSTANCES}"
+	AP_GPU_NUM_INSTANCES="${AP_GPU_INSTANCES}"
 }
 
 src_compile() {
@@ -655,7 +578,7 @@ src_compile() {
 }
 
 src_install() {
-	mkdir -p "${D}/var/lib/boinc/projects/setiathome.berkeley.edu"
+	mkdir -p "${D}/var/lib/boinc/projects/setiathome.berkeley.edu" || die
 
 	gpu_setup
 
@@ -664,16 +587,13 @@ src_install() {
 	AP_VER_MAJOR=`cat configure.ac | grep AC_INIT | awk '{print $2}' | sed -r -e "s|,||g" | cut -d. -f1`
 	AP_SVN_REV=`grep -r -e "SVN_REV_NUM" ./configure.ac | grep AC_SUBST | tail -n 1 | grep -o -e "[0-9]*"`
 	AP_EXE=`ls ap_* | sed -r -e "s| |\n|g" | grep "clGPU"`
-	cp ${AP_EXE} "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu/${AP_EXE}_gpu.ocl
+	cp ${AP_EXE} "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu/${AP_EXE}_gpu.ocl || die
 
-	cd "${WORKDIR}/${MY_P}/AP/client"
-	#cp ap.jpg "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu
-	#cp x.tga "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu
-	#cp x.tif "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu
-	cp AstroPulse_Kernels.cl "${D}/var/lib/boinc/projects/setiathome.berkeley.edu/AstroPulse_Kernels_r${AP_SVN_REV}.cl"
+	cd "${WORKDIR}/${MY_P}/AP/client" || die
+	cp AstroPulse_Kernels.cl "${D}/var/lib/boinc/projects/setiathome.berkeley.edu/AstroPulse_Kernels_r${AP_SVN_REV}.cl" || die
 
 	AP_VER_TAG="_v${AP_VER_MAJOR}"
-	cat "${FILESDIR}/app_info.xml_ap_gpu_ocl" | sed -r -e "s|CFG_BOINC_VER|${BOINC_VER}|g" -e "s|CFG_AP_EXE|${AP_EXE}_gpu.ocl|g" -e "s|CFG_AP_VER_NODOT|${AP_VER_NODOT}|g" -e "s|CFG_AP_CMDLN|${AP_GPU_CMDLN}|g" -e "s|CFG_AP_VER_TAG|${AP_VER_TAG}|g" -e "s|CFG_AP_SVN_REV|${AP_SVN_REV}|g" -e "s|CFG_AP_GPU_TYPE|${AP_GPU_TYPE}|g" -e "s|CFG_AP_PLAN_CLASS|${AP_PLAN_CLASS}|g" -e "s|CFG_AP_GPU_NUM_INSTANCES|${AP_GPU_NUM_INSTANCES}|g" -e "s|CFG_NUM_GPU_INSTANCES|${NUM_GPU_INSTANCES}|g" > ${T}/app_info.xml_ap_gpu_ocl
+	cat "${FILESDIR}/app_info.xml_ap_gpu_ocl" | sed -r -e "s|CFG_BOINC_VER|${BOINC_VER}|g" -e "s|CFG_AP_EXE|${AP_EXE}_gpu.ocl|g" -e "s|CFG_AP_VER_NODOT|${AP_VER_NODOT}|g" -e "s|CFG_AP_CMDLN|${AP_GPU_CMDLN}|g" -e "s|CFG_AP_VER_TAG|${AP_VER_TAG}|g" -e "s|CFG_AP_SVN_REV|${AP_SVN_REV}|g" -e "s|CFG_AP_GPU_TYPE|${AP_GPU_TYPE}|g" -e "s|CFG_AP_PLAN_CLASS|${AP_PLAN_CLASS}|g" -e "s|CFG_AP_GPU_NUM_INSTANCES|${AP_GPU_NUM_INSTANCES}|g" -e "s|CFG_NUM_GPU_INSTANCES|${NUM_GPU_INSTANCES}|g" > ${T}/app_info.xml_ap_gpu_ocl || die
 
 	AP_GFX_EXE_SEC_A=""
 	AP_GFX_EXE_SEC_B=""
@@ -685,27 +605,23 @@ src_install() {
 		AP_GFX_EXE_B="ap_graphics_gpu.ocl"
 		AP_GFX_EXE_SEC_A=`cat ${FILESDIR}/app_info.xml_ap_gfx_1 | sed -r -e "s|CFG_AP_GFX_EXE_A|${AP_GFX_EXE_A}|g" -e "s|CFG_AP_GFX_MD5|${AP_GFX_MD5}|g"`
 		AP_GFX_EXE_SEC_B=`cat ${FILESDIR}/app_info.xml_ap_gfx_2 | sed -r -e "s|CFG_AP_GFX_EXE_B|${AP_GFX_EXE_B}|g"`
-		cp ap_graphics ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/ap_graphics_gpu.ocl
+		cp ap_graphics ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/ap_graphics_gpu.ocl || die
 	fi
-	cat ${T}/app_info.xml_ap_gpu_ocl | awk -v Z1="${AP_GFX_EXE_SEC_A}" -v Z2="${AP_GFX_EXE_SEC_B}" '{ sub(/CFG_AP_GFX_EXE_SEC_A/, Z1); sub(/CFG_AP_GFX_EXE_SEC_B/, Z2); print; }' >> ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/app_info.xml_ap_gpu.ocl
-
-	#cp ${FILESDIR}/cc_config.xml "${D}"/var/lib/boinc
+	cat ${T}/app_info.xml_ap_gpu_ocl | awk -v Z1="${AP_GFX_EXE_SEC_A}" -v Z2="${AP_GFX_EXE_SEC_B}" '{ sub(/CFG_AP_GFX_EXE_SEC_A/, Z1); sub(/CFG_AP_GFX_EXE_SEC_B/, Z2); print; }' >> ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/app_info.xml_ap_gpu.ocl || die
 }
 
 pkg_postinst() {
 	/usr/bin/setiathome-updater
 }
 
-#plan_class
-#https://boinc.berkeley.edu/trac/wiki/AppPlan
+# CPU_TYPE
+# https://boinc.berkeley.edu/trac/wiki/AppCoprocessor
 
-#CPU_TYPE
-#https://boinc.berkeley.edu/trac/wiki/AppCoprocessor
-
-#plan_class
-#https://setiathome.berkeley.edu/apps.php
-#http://setiathome.berkeley.edu/get_project_config.php
-#http://setiathome.berkeley.edu/forum_thread.php?id=78026&postid=1717477#1717477
-#meaning behind zc
-#http://jgopt.org/download.html
-#http://setiathome.ssl.berkeley.edu/forum_thread.php?id=71728&postid=1373045#1373045
+# plan_class
+# https://boinc.berkeley.edu/trac/wiki/AppPlan
+# https://setiathome.berkeley.edu/apps.php
+# http://setiathome.berkeley.edu/get_project_config.php
+# http://setiathome.berkeley.edu/forum_thread.php?id=78026&postid=1717477#1717477
+# meaning behind zc
+# http://jgopt.org/download.html
+# http://setiathome.ssl.berkeley.edu/forum_thread.php?id=71728&postid=1373045#1373045
