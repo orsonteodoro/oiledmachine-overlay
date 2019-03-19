@@ -59,9 +59,19 @@ DEPEND="${RDEPEND}
 	app-text/xmlstarlet
 "
 
-# You can define this in your per package env.
+# You can define these in your per package env.
 SETIATHOME_GPU_INSTANCES=${SETIATHOME_GPU_INSTANCES:=1}
 SETIATHOME_CPU_INSTANCES=${SETIATHOME_CPU_INSTANCES:=1}
+SAH_GPU_TYPE=${SAH_GPU_TYPE:=""} # It can be intel_gpu, ATI, NVIDIA.  This needs to be filled out if you defined SAH_GPU_CMDLN.
+SAH_GPU_CMDLN=${SAH_GPU_CMDLN:=""} # See documentation below:
+#https://setisvn.ssl.berkeley.edu/trac/browser/branches/sah_v7_opt/AKv8/client/ReadMe_MultiBeam_OpenCL.txt
+#https://setisvn.ssl.berkeley.edu/trac/browser/branches/sah_v7_opt/AP_BLANKIT/client/ReadMe_AstroPulse_Brook.txt
+#https://setisvn.ssl.berkeley.edu/trac/browser/branches/sah_v7_opt/AP_BLANKIT/client/ReadMe_AstroPulse_CPU.txt
+#https://setisvn.ssl.berkeley.edu/trac/browser/branches/sah_v7_opt/AP_BLANKIT/client/ReadMe_AstroPulse_CPU_AMD.txt
+#https://setisvn.ssl.berkeley.edu/trac/browser/branches/sah_v7_opt/AP_BLANKIT/client/ReadMe_AstroPulse_OpenCL_ATi.txt
+#https://setisvn.ssl.berkeley.edu/trac/browser/branches/sah_v7_opt/AP_BLANKIT/client/ReadMe_AstroPulse_OpenCL_Intel.txt
+#https://setisvn.ssl.berkeley.edu/trac/browser/branches/sah_v7_opt/AP_BLANKIT/client/ReadMe_AstroPulse_OpenCL_NV.txt
+#https://setisvn.ssl.berkeley.edu/trac/browser/branches/sah_v7_opt/AP_BLANKIT/client/ReadMe_AstroPulse_OpenCL_NV_CC1.txt
 
 S="${WORKDIR}/${MY_P}"
 
@@ -468,12 +478,7 @@ function run_config {
 	cp "sah_config.h" "config.h"
 }
 
-SAH_GPU_TYPE=""
-SAH_GPU_NUM_INSTANCES=""
 SAH_PLAN_CLASS=""
-
-SAH_GPU_CMDLN=""
-
 NUM_GPU_INSTANCES=""
 NUM_CPU_INSTANCES=""
 SAH_GPU_CMDLN=""
@@ -482,8 +487,10 @@ SAH_GPU_NUM_INSTANCES=""
 function gpu_setup {
 	# TODO: update SAH_GPU_CMDLN to current generation
 
+	if [[ -n "${SAH_GPU_CMDLN}" && -n "${SAH_GPU_TYPE}" ]] ; then
+		true
 	#intel low end
-	if use intel_hd || use intel_hd2xxx ; then
+	elif use intel_hd || use intel_hd2xxx ; then
 		SAH_GPU_TYPE="intel_gpu"
 		SAH_GPU_CMDLN="-spike_fft_thresh 2048 -tune 1 2 1 16"
 	#intel mid range
