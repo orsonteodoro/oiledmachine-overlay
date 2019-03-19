@@ -329,7 +329,7 @@ function run_config {
 			elif use ati_apu ; then
                                 mysahmakedefargs+=( -DUSE_OPENCL_HD5xxx )
                                 mysahmakedefargs+=( -DOCL_ZERO_COPY_APU )
-				mysahmakedefargs+=( -DOCL_ZERO_COPY ) #testing / it doesn't work because of missing header defines.
+				mysahmakedefargs+=( -DOCL_ZERO_COPY )
 			elif use ati_hd5xxx || use ati_hd6xxx || use ati_hd7xxx || use ati_rx_200 || use ati_rx_300 || use ati_rx_400 ; then
 				mysahmakedefargs+=( -DUSE_OPENCL_HD5xxx )
 				if use signals-on-gpu ; then
@@ -339,7 +339,7 @@ function run_config {
 				if use twinchirp ; then
 					mysahmakedefargs+=( -DGPU_TWINCHIRP )
 				fi
-				mysahmakedefargs+=( -DOCL_ZERO_COPY ) #testing / it doesn't work because of missing header defines.
+				mysahmakedefargs+=( -DOCL_ZERO_COPY )
 			fi
 		elif use video_cards_nvidia ; then
 			mysahmakedefargs+=( -DUSE_OPENCL_NV )
@@ -350,13 +350,10 @@ function run_config {
 			if use twinchirp ; then
 				mysahmakedefargs+=( -DGPU_TWINCHIRP )
 			fi
-			mysahmakedefargs+=( -DOCL_ZERO_COPY ) #testing / it doesn't work because of missing header defines.
+			mysahmakedefargs+=( -DOCL_ZERO_COPY )
 		elif use video_cards_intel ; then
 			mysahmakedefargs+=( -DUSE_OPENCL_INTEL )
-			mysahmakedefargs+=( -DOCL_ZERO_COPY ) #testing / it doesn't work because of missing header defines.
-		fi
-		if use cpu_flags_x86_sse3 ; then
-			mysahmakedefargs+=( -DHALF_STRIDE )
+			mysahmakedefargs+=( -DOCL_ZERO_COPY )
 		fi
 		mysahmakedefargs+=( -DOCL_CHIRP3 )
 		mysahmakedefargs+=( -DASYNC_SPIKE )
