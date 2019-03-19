@@ -27,7 +27,7 @@ IUSE_GPUS_NVIDIA=$( echo video_cards_nvidia nv_{1,2,3,4,5,6,7,8,9}xx nv_x{0,1,2,
 IUSE_GPUS_INTEL=$( echo video_cards_intel intel_hd intel_hd{2,3,4,5}xxx intel_hd_gt1 intel_iris5xxx )
 IUSE_GPUS="${IUSE_GPUS_AMD} ${IUSE_GPUS_NVIDIA} ${IUSE_GPUS_INTEL}"
 IUSE_APIS=$( echo opengl opencl -cuda )
-IUSE="${X86_CPU_FEATURES[@]%:*} ${IUSE_GPUS} ${IUSE_APIS} test custom-cflags core2 xeon pgo"
+IUSE="${X86_CPU_FEATURES[@]%:*} ${IUSE_GPUS} ${IUSE_APIS} test custom-cflags core2 pgo"
 REQUIRED_USE=""
 
 RDEPEND="
@@ -529,7 +529,7 @@ src_compile() {
 	fi
 
 	einfo "Making astropulse client..."
-	cd "${WORKDIR}/${MY_P}/AP/client"
+	cd "${WORKDIR}/${MY_P}/AP/client" || die
         if use pgo ; then
 		PGO_CFLAGS="${INSTRUMENT_CFLAGS}" PGO_CXXFLAGS="${INSTRUMENT_CFLAGS}" PGO_CPPFLAGS="${INSTRUMENT_CFLAGS}" PGO_LDFLAGS="${INSTRUMENT_LDFLAGS}" PGO_LIBS="${INSTRUMENT_LIBS}" run_config
                 emake || die
@@ -539,7 +539,7 @@ src_compile() {
 		LLVM_PROFILE_FILE="${T}/code-%p.profraw" ./ap_client -standalone ${AP_GPU_CMDLN}
                 ls pulse.out || die "simulating failed"
                 #diff -u pulse.out pulse.out.ref
-		if [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]]; then
+		if $(tc-is-clang) ; then
 			llvm-profdata merge -output="${T}"/code.profdata "${T}"/code-*.profraw
 		fi
 		make clean
