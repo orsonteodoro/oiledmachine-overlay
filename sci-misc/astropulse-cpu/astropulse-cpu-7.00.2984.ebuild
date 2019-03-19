@@ -25,15 +25,13 @@ X86_CPU_FEATURES=( ${X86_CPU_FEATURES_RAW[@]/#/cpu_flags_x86_} )
 IUSE="${X86_CPU_FEATURES[@]%:*} opengl custom-cflags altivec neon pgo"
 REQUIRED_USE=""
 
-#	dev-libs/asmlib
 RDEPEND="
 	sci-libs/fftw[static-libs]
 	sci-misc/astropulse-art:7
 	sci-misc/setiathome-updater:8
 "
 
-BOINC_VER="7.14.2"
-SLOT_BOINC="$(get_version_component_range 1-2 ${BOINC_VER})"
+SLOT_BOINC="7.14"
 DEPEND="${RDEPEND}
 	>=sys-devel/autoconf-2.67
 	sci-misc/boinc:=
@@ -51,6 +49,8 @@ pkg_setup() {
 	if [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]]; then
 		ewarn "The configure script may fail with clang.  Switch to gcc if it fails."
 	fi
+
+	export BOINC_VER=`boinc --version | awk '{print $1}'`
 }
 
 src_unpack() {
@@ -78,8 +78,6 @@ src_prepare() {
 	epatch "${FILESDIR}"/setiathome-7.09-apgfxmainh.patch
 	epatch "${FILESDIR}"/setiathome-7.09-apgfxbaseh.patch
 
-	export BOINC_VER=`boinc --version | awk '{print $1}'`
-
 	if $(version_is_at_least "7.3.19" $BOINC_VER ) ; then
 		true
 	else
@@ -102,37 +100,17 @@ function run_config {
 	local -a mycommonmakeargs
 	local -a mycommonmakedefargs
 
-	local -a mysahmakeargs
-	local -a mysahmakedefargs
-
 	local -a myapmakeargs
 	local -a myapmakedefargs
-	local -a sahfftwlibs
 	local -a apfftwlibs
 	local -a asmlibs
 
         append-flags -Wa,--noexecstack
 
 	if [[ ${ARCH} =~ (amd64|ia64|arm64|ppc64|alpha) || ${host} =~ (sparc64) ]]; then
-		mysahmakeargs+=( --enable-bitness=64 )
-		#mysahmakeargs+=( --host=x86_64-pc-linux-gnu )
-		#mysahmakeargs+=( --target=x86_64-pc-linux-gnu )
-		#mysahmakeargs+=( --build=x86_64-pc-linux-gnu )
-		#mysahmakeargs+=( --with-boinc-platform=x86_64-pc-linux-gnu )
-		sahfftwlibs=( -L/usr/lib64 )
 		apfftwlibs=( -L/usr/lib64 )
-		#asmlibs=( -L/usr/lib64 )
-		#asmlibs+=( -laelf64 )
 	elif [[ ${ARCH} =~ (x86|i386|arm|ppc|m68k|s390|hppa) || ${host} =~ (sparc) ]] ; then
-		mysahmakeargs+=( --enable-bitness=32 )
-		#mysahmakeargs+=( --host=i686-pc-linux-gnu )
-		#mysahmakeargs+=( --target=i686-pc-linux-gnu )
-		#mysahmakeargs+=( --build=i686-pc-linux-gnu )
-		#mysahmakeargs+=( --with-boinc-platform=i686-pc-linux-gnu )
-		sahfftwlibs=( -L/usr/lib32 )
 		apfftwlibs=( -L/usr/lib32 )
-		#asmlibs=( -L/usr/lib32 )
-		#asmlibs+=( -laelf32p )
 	fi
 
 	mycommonmakeargs+=( --disable-server )
@@ -141,7 +119,6 @@ function run_config {
 	#mycommonmakeargs+=( --disable-intrinsics ) #enabling breaks compile
 
 	mycommonmakedefargs+=( -D_GNU_SOURCE )
-	#mycommonmakedefargs+=( -DUSE_ASMLIB )
 
 	if use opengl ; then
 		mycommonmakedefargs+=( -DBOINC_APP_GRAPHICS )
@@ -159,12 +136,10 @@ function run_config {
 	myapmakedefargs+=( -DUSE_FFTW )
 
 	if use custom-cflags ; then
-	#	mycommonmakeargs+=( --disable-comoptions )
 		true
 	else
 		strip-flags
 		filter-flags -O3 -O2 -O1 -Os -Ofast -O4
-	#	mycommonmakeargs+=( --enable-comoptions )
 	fi
 
 	if use cpu_flags_x86_avx ; then
@@ -256,19 +231,17 @@ src_compile() {
 }
 
 src_install() {
-	mkdir -p "${D}/var/lib/boinc/projects/setiathome.berkeley.edu"
+	mkdir -p "${D}/var/lib/boinc/projects/setiathome.berkeley.edu" || die
 	AP_CPU_TYPE="CPU"
 	AP_PLAN_CLASS="sse3"
-	SAH_CPU_TYPE="CPU"
-	SAH_PLAN_CLASS="sse3"
 
 	cd "${WORKDIR}/${MY_P}/AP/client"
 	AP_VER_NODOT=`cat configure.ac | grep AC_INIT | awk '{print $2}' | sed -r -e "s|,||g" -e "s|\.||g" -e "s|\)||g"`
 	AP_VER_MAJOR=`cat configure.ac | grep AC_INIT | awk '{print $2}' | sed -r -e "s|,||g" | cut -d. -f1`
 	AP_EXE=`ls astropulse-* | sed -r -e "s| |\n|g" | grep -v "debug"`
-	cp ${AP_EXE} "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu/${AP_EXE}_cpu
+	cp ${AP_EXE} "${D}"/var/lib/boinc/projects/setiathome.berkeley.edu/${AP_EXE}_cpu || die
 
-	cd "${WORKDIR}/${MY_P}/AP/client"
+	cd "${WORKDIR}/${MY_P}/AP/client" || die
 
 	# Plan classes listed in
 	# https://setiathome.berkeley.edu/apps.php
@@ -279,30 +252,29 @@ src_install() {
 		elif use cpu_flags_x86_sse ; then
 			AP_PLAN_CLASS="sse"
 		else
+			ewarn "Using fallback plan class."
 			AP_PLAN_CLASS=""
 		fi
 	elif [[ ${ARCH} =~ (amd64|ia64) ]] ; then
 		if use cpu_flags_x86_sse2 ; then
 			AP_PLAN_CLASS="sse2"
 		else
+			ewarn "Using fallback plan class."
 			AP_PLAN_CLASS=""
 		fi
 	elif [[ ${ARCH} =~ (ppc64) ]]; then
-		if use cpu_flags_x86_sse3 ; then
-			AP_PLAN_CLASS="sse3"
-		else
-			ewarn "You may need sse3 to participate"
-			AP_PLAN_CLASS=""
-		fi
+		ewarn "linux/ppc64 may not be supported.  Using fallback."
+		AP_PLAN_CLASS=""
 	elif [[ ${ARCH} =~ (ppc) ]]; then
+		ewarn "linux/ppc may not be supported.  Using fallback."
 		AP_PLAN_CLASS=""
 	elif [[ ${ARCH} =~ (arm64|arm) ]]; then
-		ewarn "Client may not be supported"
+		ewarn "ARM/ARM64 may not be supported.  Using fallback."
 		AP_PLAN_CLASS=""
 	fi
 
 	AP_CMDLN=""
-	cat "${FILESDIR}/app_info.xml_ap_cpu_sse" | sed -r -e "s|CFG_BOINC_VER|${BOINC_VER}|g" -e "s|CFG_AP_EXE|${AP_EXE}_cpu|g" -e "s|CFG_AP_VER_NODOT|${AP_VER_NODOT}|g" -e "s|CFG_AP_VER_TAG|${AP_VER_TAG}|g" -e "s|CFG_AP_PLAN_CLASS|${AP_PLAN_CLASS}|g" -e "s|CFG_AP_CMDLN|${AP_CMDLN}|g" > ${T}/app_info.xml_ap_cpu_sse
+	cat "${FILESDIR}/app_info.xml_ap_cpu_sse" | sed -r -e "s|CFG_BOINC_VER|${BOINC_VER}|g" -e "s|CFG_AP_EXE|${AP_EXE}_cpu|g" -e "s|CFG_AP_VER_NODOT|${AP_VER_NODOT}|g" -e "s|CFG_AP_VER_TAG|${AP_VER_TAG}|g" -e "s|CFG_AP_PLAN_CLASS|${AP_PLAN_CLASS}|g" -e "s|CFG_AP_CMDLN|${AP_CMDLN}|g" > ${T}/app_info.xml_ap_cpu_sse || die
 
 	AP_GFX_EXE_SEC_A=""
 	AP_GFX_EXE_SEC_B=""
@@ -314,9 +286,9 @@ src_install() {
 		AP_GFX_EXE_B="ap_graphics_cpu"
 		AP_GFX_EXE_SEC_A=`cat ${FILESDIR}/app_info.xml_ap_gfx_1 | sed -r -e "s|CFG_AP_GFX_EXE_A|${AP_GFX_EXE_A}|g" -e "s|CFG_AP_GFX_MD5|${AP_GFX_MD5}|g"`
 		AP_GFX_EXE_SEC_B=`cat ${FILESDIR}/app_info.xml_ap_gfx_2 | sed -r -e "s|CFG_AP_GFX_EXE_B|${AP_GFX_EXE_B}|g"`
-		cp ap_graphics ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/ap_graphics_cpu
+		cp ap_graphics ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/ap_graphics_cpu || die
 	fi
-	cat ${T}/app_info.xml_ap_cpu_sse | awk -v Z1="${AP_GFX_EXE_SEC_A}" -v Z2="${AP_GFX_EXE_SEC_B}" '{ sub(/CFG_AP_GFX_EXE_SEC_A/, Z1); sub(/CFG_AP_GFX_EXE_SEC_B/, Z2); print; }' >> ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/app_info.xml_ap_cpu
+	cat ${T}/app_info.xml_ap_cpu_sse | awk -v Z1="${AP_GFX_EXE_SEC_A}" -v Z2="${AP_GFX_EXE_SEC_B}" '{ sub(/CFG_AP_GFX_EXE_SEC_A/, Z1); sub(/CFG_AP_GFX_EXE_SEC_B/, Z2); print; }' >> ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/app_info.xml_ap_cpu || die
 }
 
 pkg_postinst() {
