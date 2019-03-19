@@ -297,7 +297,7 @@ function run_config {
 
 	if [[ ${ARCH} =~ (amd64) ]]; then
 		mysahmakedefargs+=( -DUSE_I386_XEON )
-	elif [[ ${ARCH} =~ (amd64|x86) ]] ; then
+	elif [[ ${ARCH} =~ (x86) ]] ; then
 		if use cpu_flags_x86_sse || use cpu_flags_x86_sse2 || use cpu_flags_x86_sse3 ; then
 			mysahmakedefargs+=( -DUSE_I386_XEON )
 		fi
