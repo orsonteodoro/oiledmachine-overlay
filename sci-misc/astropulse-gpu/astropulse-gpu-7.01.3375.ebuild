@@ -30,7 +30,6 @@ IUSE_APIS=$( echo opengl opencl -cuda )
 IUSE="${X86_CPU_FEATURES[@]%:*} ${IUSE_GPUS} ${IUSE_APIS} test custom-cflags core2 xeon pgo"
 REQUIRED_USE=""
 
-#	dev-libs/asmlib
 RDEPEND="
 	sci-libs/fftw[static-libs]
 	video_cards_nvidia? ( || ( x11-drivers/nvidia-drivers dev-util/nvidia-cuda-toolkit ) )
@@ -58,7 +57,7 @@ DEPEND="${RDEPEND}
 # You can define these in your per package env flags.
 AP_GPU_INSTANCES=${AP_GPU_INSTANCES:=1}
 AP_CPU_INSTANCES=${AP_CPU_INSTANCES:=1}
-AP_GPU_TYPE=${AP_GPU_TYPE:=""} # This can be ATI, NVIDIA, intel_gpu .
+AP_GPU_TYPE=${AP_GPU_TYPE:=""} # This can be ATI, NVIDIA, intel_gpu.  This needs to be provided if you defined AP_GPU_CMDLN.
 AP_GPU_CMDLN=${AP_GPU_CMDLN:=""} # See documents below:
 # https://setisvn.ssl.berkeley.edu/trac/export/4014/branches/sah_v7_opt/AP_BLANKIT/client/ReadMe_AstroPulse_Brook.txt
 # https://setisvn.ssl.berkeley.edu/trac/export/4014/branches/sah_v7_opt/AP_BLANKIT/client/ReadMe_AstroPulse_CPU.txt
@@ -125,13 +124,13 @@ src_unpack() {
         ESVN_REVISION="${ASTROPULSE_SVN_REVISION}"
 	ESVN_OPTIONS="--trust-server-cert"
         subversion_src_unpack
-	cp -r "${ESVN_STORE_DIR}/${PN}/sah_v7_opt" "${WORKDIR}/${MY_P}"
-	mkdir "${WORKDIR}/${MY_P}/AKv8/client/.deps"
+	cp -r "${ESVN_STORE_DIR}/${PN}/sah_v7_opt" "${WORKDIR}/${MY_P}" || die
+	mkdir "${WORKDIR}/${MY_P}/AKv8/client/.deps" || die
 
-	mv "${WORKDIR}/${MY_P}/AP" "${WORKDIR}/${MY_P}/AP6"
-	mv "${WORKDIR}/${MY_P}/AP_BLANKIT" "${WORKDIR}/${MY_P}/AP"
+	mv "${WORKDIR}/${MY_P}/AP" "${WORKDIR}/${MY_P}/AP6" || die
+	mv "${WORKDIR}/${MY_P}/AP_BLANKIT" "${WORKDIR}/${MY_P}/AP" || die
 
-	cd "${WORKDIR}/${MY_P}"
+	cd "${WORKDIR}/${MY_P}" || die
 	epatch "${FILESDIR}"/astropulse-7.00-apclientmaincpp.patch #1
 
 	if use opengl ; then
@@ -141,7 +140,7 @@ src_unpack() {
 		epatch "${FILESDIR}"/setiathome-7.08-makefileam-ap-gfx.patch #10
 		epatch "${FILESDIR}"/setiathome-7.08-configureac-ap-gfx.patch #9
 
-		cd "${WORKDIR}/${MY_P}/AKv8/client"
+		cd "${WORKDIR}/${MY_P}/AKv8/client" || die
 	        ESVN_REVISION="${SETIATHOME_SVN_REVISION}"
 		wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_gfx_main.h" || die
 		wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_gfx_main.cpp" || die
@@ -149,7 +148,7 @@ src_unpack() {
 		wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/sah_version.h" || die
 		wget --no-check-certificate "https://setisvn.ssl.berkeley.edu/trac/export/${ESVN_REVISION}/seti_boinc/client/graphics_main.cpp" || die
 
-		cd "${WORKDIR}/${MY_P}"
+		cd "${WORKDIR}/${MY_P}" || die
 		epatch "${FILESDIR}"/setiathome-7.08-makefileam-apshmem.patch #11
 		epatch "${FILESDIR}"/setiathome-7.08-apclientmaincpp-apshmem.patch #7
 		epatch "${FILESDIR}"/setiathome-7.08-setih-graphics_lib_handle.patch #test
@@ -185,7 +184,7 @@ src_prepare() {
 
 	cd "${WORKDIR}/${MY_P}/AP/client"
 	AT_M4DIR="m4" eautoreconf
-	chmod +x configure
+	chmod +x configure || die
 
 	if use test || use pgo ; then
 		if use video_cards_intel ; then
@@ -209,40 +208,18 @@ function run_config {
 	local -a mycommonmakeargs
 	local -a mycommonmakedefargs
 
-	local -a mysahmakeargs
-	local -a mysahmakedefargs
-
 	local -a myapmakeargs
 	local -a myapmakedefargs
-	local -a sahfftwlibs
 	local -a apfftwlibs
-	local -a asmlibs
 
 	append-flags -Wa,--noexecstack
 
 	if [[ ${ARCH} =~ (amd64|ia64|arm64|ppc64|alpha) || ${host} =~ (sparc64) ]]; then
-		mysahmakeargs+=( --enable-bitness=64 )
-		#mysahmakeargs+=( --host=x86_64-pc-linux-gnu )
-		#mysahmakeargs+=( --target=x86_64-pc-linux-gnu )
-		#mysahmakeargs+=( --build=x86_64-pc-linux-gnu )
-		#mysahmakeargs+=( --with-boinc-platform=x86_64-pc-linux-gnu )
-		sahfftwlibs=( -L/usr/lib64 )
 		apfftwlibs=( -L/usr/lib64 )
-		#asmlibs=( -L/usr/lib64 )
-		#asmlibs+=( -laelf64 )
 	elif [[ ${ARCH} =~ (x86|i386|arm|ppc|m68k|s390|hppa) || ${host} =~ (sparc) ]] ; then
-		mysahmakeargs+=( --enable-bitness=32 )
-		#mysahmakeargs+=( --host=i686-pc-linux-gnu )
-		#mysahmakeargs+=( --target=i686-pc-linux-gnu )
-		#mysahmakeargs+=( --build=i686-pc-linux-gnu )
-		#mysahmakeargs+=( --with-boinc-platform=i686-pc-linux-gnu )
-		sahfftwlibs=( -L/usr/lib32 )
 		apfftwlibs=( -L/usr/lib32 )
-		#asmlibs=( -L/usr/lib32 )
-		#asmlibs+=( -laelf32p )
 	else
 		ewarn "Your ARCH is not supported.  Continuing anyway..."
-		sahfftwlibs=( -L/usr/lib )
 		apfftwlibs=( -L/usr/lib )
 	fi
 
@@ -252,7 +229,6 @@ function run_config {
 	#mycommonmakeargs+=( --disable-intrinsics ) #enabling breaks compile
 
 	mycommonmakedefargs+=( -D_GNU_SOURCE )
-	#mycommonmakedefargs+=( -DUSE_ASMLIB )
 
 	if use opengl ; then
 		mycommonmakedefargs+=( -DBOINC_APP_GRAPHICS )
@@ -389,9 +365,7 @@ function run_config {
 	${myapmakeargs[@]} || die
 }
 
-AP_GPU_NUM_INSTANCES=""
 AP_PLAN_CLASS=""
-
 NUM_GPU_INSTANCES=""
 NUM_CPU_INSTANCES=""
 AP_GPU_NUM_INSTANCES=""
@@ -582,7 +556,7 @@ src_install() {
 
 	gpu_setup
 
-	cd "${WORKDIR}/${MY_P}/AP/client"
+	cd "${WORKDIR}/${MY_P}/AP/client" || die
 	AP_VER_NODOT=`cat configure.ac | grep AC_INIT | awk '{print $2}' | sed -r -e "s|,||g" -e "s|\.||g" -e "s|\)||g"`
 	AP_VER_MAJOR=`cat configure.ac | grep AC_INIT | awk '{print $2}' | sed -r -e "s|,||g" | cut -d. -f1`
 	AP_SVN_REV=`grep -r -e "SVN_REV_NUM" ./configure.ac | grep AC_SUBST | tail -n 1 | grep -o -e "[0-9]*"`
