@@ -46,7 +46,7 @@ pkg_setup() {
 		die
 	fi
 
-	if [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]]; then
+	if $(tc-is-clang) ; then
 		ewarn "The configure script may fail with clang.  Switch to gcc if it fails."
 	fi
 
