@@ -239,7 +239,16 @@ src_install() {
 	mkdir -p "${D}/var/lib/boinc/projects/setiathome.berkeley.edu" || die
 	#cat ${FILESDIR}/app_info.xml_start >> ${D}/var/lib/boinc/projects/setiathome.berkeley.edu/app_info.xml
 	SAH_CPU_TYPE="CPU"
-	SAH_PLAN_CLASS="sse3"
+	SAH_PLAN_CLASS=""
+
+	if use cpu_flags_x86_sse2 ; then
+		SAH_PLAN_CLASS="sse2"
+	elif use cpu_flags_x86_sse ; then
+		SAH_PLAN_CLASS="sse"
+	else
+		ewarn "Using fallback plan class."
+		SAH_PLAN_CLASS=""
+	fi
 
 	cd "${WORKDIR}/${MY_P}/AKv8" || die
 	SAH_VER_NODOT=`cat configure.ac | grep AC_INIT | awk '{print $2}' | sed -r -e "s|,||g" -e "s|\.||g"`
@@ -251,7 +260,9 @@ src_install() {
 	cd "${WORKDIR}/${MY_P}/AKv8/client"
 
 	SAH_VER_TAG="_v${SAH_VER_MAJOR}"
-	SAH_PLAN_CLASS="" #nothing in v8
+
+	# Testing this again 20190310
+	#SAH_PLAN_CLASS="" #nothing in v8
 
 	SAH_CMDLN=""
 	cat "${FILESDIR}/app_info.xml_sah_cpu_sse" | sed -r -e "s|CFG_BOINC_VER|${BOINC_VER}|g" -e "s|CFG_SAH_EXE|${SAH_EXE}_cpu|g" -e "s|CFG_SAH_VER_NODOT|${SAH_VER_NODOT}|g" -e "s|CFG_SAH_VER_TAG|${SAH_VER_TAG}|g" -e "s|CFG_SAH_PLAN_CLASS|${SAH_PLAN_CLASS}|g" -e "s|CFG_SAH_CMDLN|${SAH_CMDLN}|g" > ${T}/app_info.xml_sah_cpu_sse || die
