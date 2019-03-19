@@ -121,13 +121,13 @@ src_unpack() {
 	ESVN_REVISION="${SETIATHOME_SVN_REVISION}"
 	ESVN_OPTIONS="--trust-server-cert"
 	subversion_src_unpack
-	cp -r "${ESVN_STORE_DIR}/${PN}/sah_v7_opt" "${WORKDIR}/${MY_P}"
-	mkdir "${WORKDIR}/${MY_P}/AKv8/client/.deps"
+	cp -r "${ESVN_STORE_DIR}/${PN}/sah_v7_opt" "${WORKDIR}/${MY_P}" || die
+	mkdir "${WORKDIR}/${MY_P}/AKv8/client/.deps" || die
 
-	mv "${WORKDIR}/${MY_P}/AP" "${WORKDIR}/${MY_P}/AP6"
-	mv "${WORKDIR}/${MY_P}/AP_BLANKIT" "${WORKDIR}/${MY_P}/AP"
+	mv "${WORKDIR}/${MY_P}/AP" "${WORKDIR}/${MY_P}/AP6" || die
+	mv "${WORKDIR}/${MY_P}/AP_BLANKIT" "${WORKDIR}/${MY_P}/AP" || die
 
-	cd "${WORKDIR}/${MY_P}/AKv8"
+	cd "${WORKDIR}/${MY_P}/AKv8" || die
 	epatch "${FILESDIR}"/setiathome-7.08-makefileam-01.patch
 	epatch "${FILESDIR}"/setiathome-7.08-makefileam-02.patch
 
@@ -212,13 +212,13 @@ src_unpack() {
 		epatch "${FILESDIR}"/setiathome-gpu-8.0-gpu-opengl-on-opencl-8.patch
 	fi
 
-	cd "${WORKDIR}/${MY_P}"
+	cd "${WORKDIR}/${MY_P}" || die
 	epatch "${FILESDIR}"/setiathome-gpu-8.00-clang-fix.patch
 
 	if $(version_is_at_least "7.3.19" $BOINC_VER ) ; then
 		true
 	else
-		cd "${S}"
+		cd "${S}" || die
 		epatch "${FILESDIR}"/setiathome-gpu-8.22.3602-boinc-compat-1.patch
 		epatch "${FILESDIR}"/setiathome-gpu-8.22.3602-boinc-compat-2.patch
 	fi
@@ -562,7 +562,7 @@ function gpu_setup {
 				fi
 			else
 				SAH_PLAN_CLASS=""
-				ewarn "Using fallback plan class."
+				ewarn "Using the fallback plan class."
 			fi
 		elif use ati_hd4xxx ; then
 			if use opencl ; then
@@ -575,7 +575,7 @@ function gpu_setup {
 				fi
 			else
 				SAH_PLAN_CLASS=""
-				ewarn "Using fallback plan class."
+				ewarn "Using the fallback plan class."
 			fi
 		elif use nv_1xx || use nv_2xx || use nv_3xx || use nv_x00 || use nv_x10 || use nv_x20 || use nv_x30 || use nv_x40 || use nv_x00_fast || use nv_x10_fast || use nv_x20_fast || use nv_x30_fast || use nv_x40_fast || use nv_x50 || use nv_x60 || use nv_x70 || use nv_x50_fast || use nv_x60_fast || use nv_x70_fast || use nv_x70 || use nv_x80 || use nv_x70_fast || use nv_x80_fast || use nv_780ti || use nv_titan || use nv_780ti_fast || use nv_titan_fast ; then
 			if use opencl ; then
@@ -591,7 +591,7 @@ function gpu_setup {
 					SAH_PLAN_CLASS="cuda60"
 				else
 					SAH_PLAN_CLASS=""
-					ewarn "Using fallback plan class."
+					ewarn "Using the fallback plan class."
 				fi
 			fi
 		elif use intel_hd || use intel_hd2xxx || use intel_hd3xxx || use intel_hd_gt1 || use intel_hd4xxx || use intel_hd5xxx || use intel_iris5xxx ; then
@@ -610,6 +610,9 @@ function gpu_setup {
 		# not listed in https://setiathome.berkeley.edu/apps.php
 	elif [[ ${ARCH} =~ (arm64|arm) ]] ; then
 		SAH_PLAN_CLASS=""
+	else
+		SAH_PLAN_CLASS=""
+		ewarn "This configuation is not supported.  Using the fallback plan class."
 	fi
 
 	NUM_GPU_INSTANCES=`bc <<< "scale=6; 1/${SETIATHOME_GPU_INSTANCES}"`
@@ -649,10 +652,10 @@ src_compile() {
 
 	einfo "Making classic client..."
 	if use pgo ; then
-		cd "${WORKDIR}/${MY_P}/AKv8"
+		cd "${WORKDIR}/${MY_P}/AKv8" || die
 		PGO_CFLAGS="${INSTRUMENT_CFLAGS}" PGO_CXXFLAGS="${INSTRUMENT_CFLAGS}" PGO_CPPFLAGS="${INSTRUMENT_CFLAGS}" PGO_LDFLAGS="${INSTRUMENT_LDFLAGS}" PGO_LIBS="${INSTRUMENT_LIBS}" run_config
 		emake || die
-		cd "${WORKDIR}/${MY_P}/AKv8/client"
+		cd "${WORKDIR}/${MY_P}/AKv8/client" || die
                 cp test_workunits/reference_work_unit.sah work_unit.sah
                 einfo "Please wait while we are simulating work for the PGO optimization.  This may take hours."
                 LLVM_PROFILE_FILE="${T}/code-%p.profraw" ./seti_boinc -standalone ${SAH_GPU_CMDLN}
@@ -661,12 +664,12 @@ src_compile() {
 		if $(tc-is-clang) ; then
 			llvm-profdata merge -output="${T}"/code.profdata "${T}"/code-*.profraw
 		fi
-		cd "${WORKDIR}/${MY_P}/AKv8"
+		cd "${WORKDIR}/${MY_P}/AKv8" || die
 		make clean
 		PGO_CFLAGS="${PROFILE_DATA_CFLAGS}" PGO_CXXFLAGS="${PROFILE_DATA_CFLAGS}" PGO_CPPFLAGS="${PROFILE_DATA_CFLAGS}" PGO_LDFLAGS="${PROFILE_DATA_LDFLAGS}" PGO_LIBS="${PROFILE_DATA_LIBS}" run_config
 		emake || die
 	else
-		cd "${WORKDIR}/${MY_P}/AKv8"
+		cd "${WORKDIR}/${MY_P}/AKv8" || die
 		PGO_CFLAGS="" PGO_CXXFLAGS="" PGO_CPPFLAGS="" PGO_LDFLAGS="" PGO_LIBS="" run_config
 		emake || die
 	fi
