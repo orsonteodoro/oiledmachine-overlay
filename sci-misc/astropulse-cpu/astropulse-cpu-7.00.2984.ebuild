@@ -179,7 +179,7 @@ function run_config {
 	CFLAGS="${CFLAGS} ${PGL_CFLAGS}" LDFLAGS="${LDFLAGS} ${PGO_LDFLAGS}" LIBS="${apfftwlibs[@]} ${asmlibs[@]} -ldl ${PGO_LIBS}" CXXFLAGS="${CXXFLAGS} ${PGO_CXXFLAGS}" CPPFLAGS="${CPPFLAGS} ${mycommonmakedefargs[@]} ${myapmakedefargs[@]} ${PGO_CPPFLAGS}" BOINCDIR="/usr/share/boinc/$SLOT_BOINC" BOINC_DIR="/usr/share/boinc/$SLOT_BOINC" SETI_BOINC_DIR="${WORKDIR}/${MY_P}/AKv8" econf \
 	${mycommonmakeargs[@]} \
 	${myapmakeargs[@]} || die
-	cp ap_config.h config.h
+	cp ap_config.h config.h || die
 }
 
 src_compile() {
@@ -210,7 +210,7 @@ src_compile() {
 	fi
 
 	einfo "Making astropulse client..."
-	cd "${WORKDIR}/${MY_P}/AP/client"
+	cd "${WORKDIR}/${MY_P}/AP/client" || die
         if use pgo ; then
 		PGO_CFLAGS="${INSTRUMENT_CFLAGS}" PGO_CXXFLAGS="${INSTRUMENT_CFLAGS}" PGO_CPPFLAGS="${INSTRUMENT_CFLAGS}" PGO_LDFLAGS="${INSTRUMENT_LDFLAGS}" PGO_LIBS="${INSTRUMENT_LIBS}" run_config
                 emake || die
@@ -218,7 +218,7 @@ src_compile() {
 		LLVM_PROFILE_FILE="${T}/code-%p.profraw" ./ap_client -standalone
                 ls pulse.out || die "simulating failed"
                 #diff -u pulse.out pulse.out.ref
-		if [[ "${CC}" == "clang" || "${CXX}" == "clang++" ]]; then
+		if $(tc-is-clang) ; then
 			llvm-profdata merge -output="${T}"/code.profdata "${T}"/code-*.profraw
 		fi
 		make clean
@@ -235,7 +235,7 @@ src_install() {
 	AP_CPU_TYPE="CPU"
 	AP_PLAN_CLASS="sse3"
 
-	cd "${WORKDIR}/${MY_P}/AP/client"
+	cd "${WORKDIR}/${MY_P}/AP/client" || die
 	AP_VER_NODOT=`cat configure.ac | grep AC_INIT | awk '{print $2}' | sed -r -e "s|,||g" -e "s|\.||g" -e "s|\)||g"`
 	AP_VER_MAJOR=`cat configure.ac | grep AC_INIT | awk '{print $2}' | sed -r -e "s|,||g" | cut -d. -f1`
 	AP_EXE=`ls astropulse-* | sed -r -e "s| |\n|g" | grep -v "debug"`
@@ -252,24 +252,27 @@ src_install() {
 		elif use cpu_flags_x86_sse ; then
 			AP_PLAN_CLASS="sse"
 		else
-			ewarn "Using fallback plan class."
+			ewarn "Using the fallback plan class."
 			AP_PLAN_CLASS=""
 		fi
 	elif [[ ${ARCH} =~ (amd64|ia64) ]] ; then
 		if use cpu_flags_x86_sse2 ; then
 			AP_PLAN_CLASS="sse2"
 		else
-			ewarn "Using fallback plan class."
+			ewarn "Using the fallback plan class."
 			AP_PLAN_CLASS=""
 		fi
 	elif [[ ${ARCH} =~ (ppc64) ]]; then
-		ewarn "linux/ppc64 may not be supported.  Using fallback."
+		ewarn "linux/ppc64 may not be supported.  Using the fallback plan class."
 		AP_PLAN_CLASS=""
 	elif [[ ${ARCH} =~ (ppc) ]]; then
-		ewarn "linux/ppc may not be supported.  Using fallback."
+		ewarn "linux/ppc may not be supported.  Using the fallback plan class."
 		AP_PLAN_CLASS=""
 	elif [[ ${ARCH} =~ (arm64|arm) ]]; then
-		ewarn "ARM/ARM64 may not be supported.  Using fallback."
+		ewarn "ARM/ARM64 may not be supported.  Using the fallback plan class."
+		AP_PLAN_CLASS=""
+	else
+		ewarn "This configuration may not be supported.  Using the fallback plan class."
 		AP_PLAN_CLASS=""
 	fi
 
