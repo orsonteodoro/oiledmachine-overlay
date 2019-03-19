@@ -442,7 +442,7 @@ function gpu_setup {
 				ewarn "Using only GPU and SSE.  You need opencl for GPU acceleration."
 				AP_PLAN_CLASS="sse"
 			else
-				ewarn "Using fallback plan class.  You need opencl for GPU acceleration."
+				ewarn "Using the fallback plan class.  You need opencl for GPU acceleration."
 				AP_PLAN_CLASS=""
 			fi
 		elif use nv_1xx || use nv_2xx || use nv_3xx || use nv_x00 || use nv_x10 || use nv_x20 || use nv_x30 || use nv_x40 || use nv_x00_fast || use nv_x10_fast || use nv_x20_fast || use nv_x30_fast || use nv_x40_fast || use nv_x50 || use nv_x60 || use nv_x70 || use nv_x50_fast || use nv_x60_fast || use nv_x70_fast || use nv_x70 || use nv_x80 || use nv_x70_fast || use nv_x80_fast || use nv_780ti || use nv_titan || use nv_780ti_fast || use nv_titan_fast ; then
@@ -465,7 +465,7 @@ function gpu_setup {
 				ewarn "Using only GPU and SSE.  You need opencl or cuda for GPU acceleration."
 				AP_PLAN_CLASS="sse"
 			else
-				ewarn "Using fallback plan class.  You need opencl or cuda for GPU acceleration."
+				ewarn "Using the fallback plan class.  You need opencl or cuda for GPU acceleration."
 				AP_PLAN_CLASS=""
 			fi
 		elif use intel_hd || use intel_hd2xxx || use intel_hd3xxx || use intel_hd_gt1 || use intel_hd4xxx || use intel_hd5xxx || use intel_iris5xxx ; then
@@ -477,7 +477,7 @@ function gpu_setup {
 			ewarn "No specific GPU chosen.  Consider re-emerging with proper GPU.  Using FPU and SSE only"
 		else
 			AP_PLAN_CLASS=""
-			ewarn "Using fallback plan class."
+			ewarn "Using the fallback plan class."
 		fi
 	elif [[ ${ARCH} =~ (ppc64) && $(use opencl) ]]; then
 		AP_PLAN_CLASS=""
@@ -491,6 +491,9 @@ function gpu_setup {
 		AP_PLAN_CLASS=""
 		ewarn "ARM/ARM6 may not be supported."
 		# As for the reason above.
+	else
+		AP_PLAN_CLASS=""
+		ewarn "This configuration may not be supported.  Using fallback plan class."
 	fi
 
 	NUM_GPU_INSTANCES=`bc <<< "scale=6; 1/${AP_GPU_INSTANCES}"`
