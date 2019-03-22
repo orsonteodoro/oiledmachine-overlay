@@ -76,6 +76,9 @@ CHECK_PERIOD="$((60*60*24*1))" #seconds
 function init() {
 	mkdir -p "${INSECURE_SET_DIR}"
 	touch "${INSECURE_SET_FP}"
+
+	# remove blank lines
+	sed -i '/^$/d' "${NPM_APPS}"
 }
 
 function check() {
