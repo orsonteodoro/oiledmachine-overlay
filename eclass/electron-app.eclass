@@ -469,11 +469,11 @@ electron-app_pkg_postrm() {
 	case "$ELECTRON_APP_MODE" in
 		npm)
 			sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
-			sed  '/^$/d' "${NPM_PACKAGE_DB}"
+			sed -i '/^$/d' "${NPM_PACKAGE_DB}"
 			;;
 		yarn)
 			sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${YARN_PACKAGE_DB}"
-			sed  '/^$/d' "${YARN_PACKAGE_DB}"
+			sed -i '/^$/d' "${YARN_PACKAGE_DB}"
 			;;
 		*)
 			die "Unsupported package system"
