@@ -264,4 +264,5 @@ npm-secaudit_pkg_postrm() {
         debug-print-function ${FUNCNAME} "${@}"
 
 	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
+	sed  '/^$/d' "${NPM_PACKAGE_DB}"
 }
