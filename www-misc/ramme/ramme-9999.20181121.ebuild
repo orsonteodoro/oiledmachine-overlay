@@ -24,7 +24,7 @@ IUSE="-analytics-tracking"
 
 S="${WORKDIR}/${PN}-${COMMIT}"
 
-src_prepare() {
+src_unpack() {
 	if ! use analytics-tracking ; then
 		epatch "${FILESDIR}"/${PN}-3.2.5-disable-analytics.patch
 		rm "${S}"/app/src/main/analytics.js
