@@ -23,7 +23,9 @@ IUSE=""
 
 S="${WORKDIR}/${PN}-${PV}"
 
-src_prepare() {
+src_unpack() {
+	default_src_unpack
+
 	sed -i -e "s|\"electron\": \"3.0.0\",|\"electron\": \"^${ELECTRON_VER}\",|" package.json || die # workaround
 
 	mkdir -p patches || die
@@ -34,8 +36,8 @@ src_prepare() {
 	einfo "Installing patch-package"
 	npm install patch-package || die
 
-	einfo "Running electron-app_src_prepare"
-	electron-app_src_prepare
+	einfo "Running electron-app-fetch-deps"
+	electron-app-fetch-deps
 }
 
 src_compile() {
