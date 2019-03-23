@@ -130,7 +130,9 @@ _save_packages() {
 	popd
 }
 
-src_prepare() {
+src_unpack() {
+	default_src_unpack
+
 	patch -p1 -i "${FILESDIR}"/geeks-diary-1.0.0_beta2-vcs-item_ts-rest-parameter-trailing-comma-fix.patch || die
 
 	sed -i -e "s|\"typescript\": \"2.7.2\",|\"typescript\": \"${TS_VER}\",|g" package.json || die
@@ -182,7 +184,7 @@ src_prepare() {
 
 	_save_packages
 
-	electron-app_src_prepare
+	electron-app-fetch-deps
 
 	patch -F 100 -p1 -i "${FILESDIR}/geeks-diary-angular-devkit-browser-config-fix-0.6.8.patch" || die
 }
