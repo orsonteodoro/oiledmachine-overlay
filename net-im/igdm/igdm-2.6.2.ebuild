@@ -25,10 +25,10 @@ MY_PN="IG:dm"
 
 REQUEST_PROMISE_VER="^4.2.4"
 
-src_prepare() {
+src_unpack() {
 	sed -i -e "s|\"request-promise\": \"^1.0.2\",|\"request-promise\": \"${REQUEST_PROMISE_VER}\",|" instagram-private-api/package.json
 
-	electron-app_src_prepare
+	electron-app_src_unpack
 
 	# fix vulnerabilities
 	pushd node_modules/tough-cookie-filestore
