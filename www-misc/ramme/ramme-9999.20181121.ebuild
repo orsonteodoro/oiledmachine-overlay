@@ -25,6 +25,8 @@ IUSE="-analytics-tracking"
 S="${WORKDIR}/${PN}-${COMMIT}"
 
 src_unpack() {
+	default_src_unpack
+
 	if ! use analytics-tracking ; then
 		epatch "${FILESDIR}"/${PN}-3.2.5-disable-analytics.patch
 		rm "${S}"/app/src/main/analytics.js
@@ -37,7 +39,9 @@ src_unpack() {
 	pushd node_modules/micromatch/ || die
 	npm install braces@"^2.3.2" --save || die
 	popd
-	electron-app_src_prepare
+
+	electron-app-fetch-deps
+
 	pushd node_modules/guetzli/node_modules/caw || die
 	patch -p1 -i "${FILESDIR}/caw-1.2.0-replace-tunnel-agent-with-node-tunnel.patch" || die
 	cd ../..
