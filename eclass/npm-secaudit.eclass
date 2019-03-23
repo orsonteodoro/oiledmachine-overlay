@@ -144,6 +144,8 @@ npm-secaudit_src_unpack() {
         debug-print-function ${FUNCNAME} "${@}"
 
 	default_src_unpack
+
+	npm-secaudit-fetch-deps
 }
 
 # @FUNCTION: npm-secaudit_src_prepare
@@ -153,8 +155,6 @@ npm-secaudit_src_prepare() {
         debug-print-function ${FUNCNAME} "${@}"
 
 	default_src_prepare
-
-	npm-secaudit-fetch-deps
 }
 
 # @FUNCTION: npm-secaudit-build
