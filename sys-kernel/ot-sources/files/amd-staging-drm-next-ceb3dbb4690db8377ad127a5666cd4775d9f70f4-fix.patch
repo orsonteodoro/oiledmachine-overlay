@@ -1,0 +1,14 @@
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c.orig	2019-03-22 22:53:33.375449823 -0700
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c	2019-03-22 22:56:07.990458180 -0700
+@@ -2628,10 +2628,10 @@ void core_link_enable_stream(
+ 			allocate_mst_payload(pipe_ctx);
+ 
+ 		core_dc->hwss.unblank_stream(pipe_ctx,
+-			&pipe_ctx->stream->sink->link->cur_link_settings);
++			&pipe_ctx->stream->link->cur_link_settings);
+ 
+ 		if (dc_is_dp_signal(pipe_ctx->stream->signal))
+ 			enable_stream_features(pipe_ctx);
+ 	}
+ 
+ }

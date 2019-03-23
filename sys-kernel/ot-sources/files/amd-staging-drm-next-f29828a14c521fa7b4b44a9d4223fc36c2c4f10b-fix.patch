@@ -1,0 +1,17 @@
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2019-03-23 02:38:10.375906225 -0700
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-03-23 02:39:53.618868650 -0700
+@@ -4886,9 +4886,11 @@ static void amdgpu_dm_commit_planes(stru
+ 			bundle->flip_addrs[planes_count].address.grph.addr.low_part = lower_32_bits(afb->address);
+ 			bundle->flip_addrs[planes_count].address.grph.addr.high_part = upper_32_bits(afb->address);
+ 
+-			dcc_address = get_dcc_address(afb->address, tiling_flags);
+-			bundle->flip_addrs[planes_count].address.grph.meta_addr.low_part = lower_32_bits(dcc_address);
+-			bundle->flip_addrs[planes_count].address.grph.meta_addr.high_part = upper_32_bits(dcc_address);
++			fill_plane_tiling_attributes(dm->adev, afb, dc_plane,
++				&bundle->plane_infos[planes_count].tiling_info,
++				&bundle->plane_infos[planes_count].dcc,
++				&bundle->flip_addrs[planes_count].address,
++				tiling_flags);
+ 
+ 			bundle->flip_addrs[planes_count].flip_immediate =
+ 					(crtc->state->pageflip_flags & DRM_MODE_PAGE_FLIP_ASYNC) != 0;

@@ -1,0 +1,12 @@
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2019-03-23 02:47:20.431172264 -0700
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-03-23 02:47:56.731578791 -0700
+@@ -4924,9 +4924,6 @@ static void amdgpu_dm_commit_planes(stru
+ 
+ 			amdgpu_bo_unreserve(abo);
+ 
+-			bundle->flip_addrs[planes_count].address.grph.addr.low_part = lower_32_bits(afb->address);
+-			bundle->flip_addrs[planes_count].address.grph.addr.high_part = upper_32_bits(afb->address);
+-
+ 			fill_plane_tiling_attributes(dm->adev, afb, dc_plane,
+ 				&bundle->plane_infos[planes_count].tiling_info,
+ 				&bundle->plane_infos[planes_count].dcc,
