@@ -23,6 +23,8 @@ IUSE=""
 S="${WORKDIR}/${PN}-${PV}"
 
 src_unpack() {
+	default_src_unpack
+
 	npm install electron-context-menu
 	npm install electron-squirrel-startup
 	npm install electron-window-state
