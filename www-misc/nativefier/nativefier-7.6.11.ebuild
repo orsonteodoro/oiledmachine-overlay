@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -35,9 +35,12 @@ src_unpack() {
 	# fix breakage caused by npm audix fix --force
 	npm uninstall gulp
 	npm install gulp@"<4.0.0"
+
+	npm-secaudit_src_compile_default
+	npm-secaudit_src_install
 }
 
-src_install() {
+npm-secaudit_src_install() {
 	npm-secaudit-install "*"
 
 	# create wrapper
