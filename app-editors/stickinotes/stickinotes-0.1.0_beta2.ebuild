@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -26,11 +26,11 @@ IUSE=""
 
 S="${WORKDIR}/${MY_PN}-${MY_PV}-${MY_PR}"
 
-src_compile() {
+electron-app_src_compile() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	electron-builder -l dir || die
 }
 
-src_install() {
+electron-app_src_install() {
 	electron-desktop-app-install "*" "src/assets/logo.png" "${PN}" "Utility" ""
 }
