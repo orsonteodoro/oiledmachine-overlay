@@ -7,7 +7,7 @@ inherit eutils
 
 DESCRIPTION="A delightful community-driven framework for managing your zsh configuration that includes optional plugins and themes."
 HOMEPAGE="http://ohmyz.sh/"
-COMMIT="52afbf77f63844abd719e565a15af2c34075de7f"
+COMMIT="6d143d42ea2e16610855e5b1e912b2962d44d9ab"
 SRC_URI="https://github.com/robbyrussell/oh-my-zsh/archive/${COMMIT}.zip -> ${P}.zip"
 
 LICENSE="MIT"
