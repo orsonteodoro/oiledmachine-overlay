@@ -145,22 +145,27 @@ npm-secaudit_src_unpack() {
 
 	default_src_unpack
 
+	cd "${S}"
+
 	npm-secaudit-fetch-deps
 
 	# all the phase hooks get run in unpack because of download restrictions
 
+	cd "${S}"
 	if declare -f npm-secaudit_src_prepare > /dev/null ; then
 		npm-secaudit_src_prepare
 	else
 		npm-secaudit_src_prepare_all
 	fi
 
+	cd "${S}"
 	if declare -f npm-secaudit_src_compile > /dev/null ; then
 		npm-secaudit_src_compile
 	else
 		npm-secaudit_src_compile_all
 	fi
 
+	cd "${S}"
 	if declare -f npm-secaudit_src_install > /dev/null ; then
 		npm-secaudit_src_install
 	else

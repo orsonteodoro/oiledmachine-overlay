@@ -270,22 +270,27 @@ electron-app_src_unpack() {
 
 	default_src_unpack
 
+	cd "${S}"
+
 	electron-app-fetch-deps
 
 	# all the phase hooks get run in unpack because of download restrictions
 
+	cd "${S}"
 	if declare -f electron-app_src_prepare > /dev/null ; then
 		electron-app_src_prepare
 	else
 		electron-app_src_prepare_all
 	fi
 
+	cd "${S}"
 	if declare -f electron-app_src_compile > /dev/null ; then
 		electron-app_src_compile
 	else
 		electron-app_src_compile_all
 	fi
 
+	cd "${S}"
 	if declare -f electron-app_src_install > /dev/null ; then
 		electron-app_src_install
 	else
