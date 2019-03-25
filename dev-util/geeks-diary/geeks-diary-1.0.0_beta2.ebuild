@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -187,17 +187,20 @@ src_unpack() {
 	electron-app-fetch-deps
 
 	patch -F 100 -p1 -i "${FILESDIR}/geeks-diary-angular-devkit-browser-config-fix-0.6.8.patch" || die
+
+	electron-app_src_compile
+	electron-app_src_install
 }
 
-src_compile() {
+electron-app_src_compile() {
 	export PATH="${S}/node_modules/.bin:$PATH"
 
 	# test here again. it seems bugged
 	grep -r -e "electron-renderer" "${S}/node_modules/@angular-devkit/build-angular/src/angular-cli-files/models/webpack-configs/browser.js" || die "failed to patch"
 
-	electron-app_src_compile
+	electron-app_src_compile_default
 }
 
-src_install() {
+electron-app_src_install() {
 	electron-desktop-app-install "*" "src/assets/logos/512x512.png" "${MY_PN}" "Development" "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/dist/main.js"
 }
