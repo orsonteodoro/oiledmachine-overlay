@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Copyright 2019 Orson Teodoro
 # Distributed under the terms of the GNU General Public License v2
 
@@ -155,34 +155,40 @@ npm-secaudit_src_unpack() {
 	if declare -f npm-secaudit_src_prepare > /dev/null ; then
 		npm-secaudit_src_prepare
 	else
-		npm-secaudit_src_prepare_all
+		npm-secaudit_src_prepare_default
 	fi
 
 	cd "${S}"
 	if declare -f npm-secaudit_src_compile > /dev/null ; then
 		npm-secaudit_src_compile
 	else
-		npm-secaudit_src_compile_all
+		npm-secaudit_src_compile_default
 	fi
 
 	cd "${S}"
 	if declare -f npm-secaudit_src_install > /dev/null ; then
 		npm-secaudit_src_install
 	else
-		npm-secaudit_src_install_all
+		npm-secaudit_src_install_default
 	fi
 }
 
-# @FUNCTION: npm-secaudit_src_prepare
+# @FUNCTION: npm-secaudit_src_prepare_default
 # @DESCRIPTION:
-# Fetches dependencies
-npm-secaudit_src_prepare_all() {
+# Fetches dependencies.  Currently a stub.  TODO patching.
+npm-secaudit_src_prepare_default() {
         debug-print-function ${FUNCNAME} "${@}"
 
 	#default_src_prepare
 }
 
-# todo npm-secaudit_src_install_all
+# @FUNCTION: npm-secaudit_src_prepare_default
+# @DESCRIPTION:
+# Installs the program.  Currently a stub.
+npm-secaudit_src_install_default() {
+        debug-print-function ${FUNCNAME} "${@}"
+# todo npm-secaudit_src_install_default
+}
 
 # @FUNCTION: npm-secaudit-build
 # @DESCRIPTION:
@@ -192,10 +198,10 @@ npm-secaudit-build() {
 	npm run build --maxsockets=${NPM_MAXSOCKETS} || die
 }
 
-# @FUNCTION: npm-secaudit_src_compile
+# @FUNCTION: npm-secaudit_src_compile_default
 # @DESCRIPTION:
 # Builds an electron app
-npm-secaudit_src_compile_all() {
+npm-secaudit_src_compile_default() {
         debug-print-function ${FUNCNAME} "${@}"
 
 	npm-secaudit-build

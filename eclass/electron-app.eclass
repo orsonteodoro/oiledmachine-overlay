@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Copyright 2019 Orson Teodoro
 # Distributed under the terms of the GNU General Public License v2
 
@@ -280,34 +280,40 @@ electron-app_src_unpack() {
 	if declare -f electron-app_src_prepare > /dev/null ; then
 		electron-app_src_prepare
 	else
-		electron-app_src_prepare_all
+		electron-app_src_prepare_default
 	fi
 
 	cd "${S}"
 	if declare -f electron-app_src_compile > /dev/null ; then
 		electron-app_src_compile
 	else
-		electron-app_src_compile_all
+		electron-app_src_compile_default
 	fi
 
 	cd "${S}"
 	if declare -f electron-app_src_install > /dev/null ; then
 		electron-app_src_install
 	else
-		electron-app_src_install_all
+		electron-app_src_install_default
 	fi
 }
 
-# @FUNCTION: electron-app_src_prepare
+# @FUNCTION: electron-app_src_prepare_default
 # @DESCRIPTION:
-# Fetches dependencies
-electron-app_src_prepare_all() {
+# Fetches dependencies.  Currently a stub.  TODO patching.
+electron-app_src_prepare_default() {
         debug-print-function ${FUNCNAME} "${@}"
 
 	#default_src_prepare
 }
 
-# todo electron-app_src_install_all
+# @FUNCTION: electron-app_install_default
+# @DESCRIPTION:
+# Installs the app.  Currently a stub.
+electron-app_src_install_all() {
+        debug-print-function ${FUNCNAME} "${@}"
+# todo electron-app_src_install_default
+}
 
 # @FUNCTION: electron-app-build-npm
 # @DESCRIPTION:
@@ -324,10 +330,10 @@ electron-app-build-yarn() {
 	yarn run build || die
 }
 
-# @FUNCTION: electron-app_src_compile
+# @FUNCTION: electron-app_src_compile_default
 # @DESCRIPTION:
 # Builds an electron app.
-electron-app_src_compile_all() {
+electron-app_src_compile_default() {
         debug-print-function ${FUNCNAME} "${@}"
 
 	case "$ELECTRON_APP_MODE" in
