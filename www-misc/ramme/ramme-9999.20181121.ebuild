@@ -65,7 +65,7 @@ src_unpack() {
 }
 
 electron-app_src_compile() {
-	electron-app_src_compile
+	electron-app_src_compile_default
 	npm uninstall yarn || die
 	cd "${S}/app"
 	npm install electron-config || die
