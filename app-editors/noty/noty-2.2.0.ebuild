@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -38,9 +38,12 @@ src_unpack() {
 
 	einfo "Running electron-app-fetch-deps"
 	electron-app-fetch-deps
+
+	electron-app_src_compile
+	electron-app_src_install
 }
 
-src_compile() {
+electron-app_src_compile() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	electron-webpack app --env.minify=false || die
 
@@ -48,6 +51,6 @@ src_compile() {
 	electron-builder -l dir || die
 }
 
-src_install() {
+electron-app_src_install() {
 	electron-desktop-app-install "*" "resources/icon/icon.png" "${PN^}" "Utility" "/usr/$(get_libdir)/node/${PN}/${SLOT}/releases/linux-unpacked/noty"
 }
