@@ -23,17 +23,7 @@ IUSE=""
 
 S="${WORKDIR}/${MY_PN}-${PV}"
 
-src_unpack() {
-	default_src_unpack
-
-	cd "${S}"
-	electron-app-fetch-deps
-
-	# cannot fetch in compile that so run compiles up here
-	_src_compile
-}
-
-_src_compile() {
+electron-app_src_compile() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	npm run build || die
 
@@ -44,10 +34,6 @@ _src_compile() {
 	electron-builder -l dir || die
 }
 
-src_compile() {
-	true
-}
-
-src_install() {
+electron-app_src_install() {
 	electron-desktop-app-install "*" "resources/icon/icon512.png" "${MY_PN}" "Development" "/usr/$(get_libdir)/node/${PN}/${SLOT}/dist/linux-unpacked/snippetstore"
 }
