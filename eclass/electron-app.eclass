@@ -27,7 +27,7 @@ esac
 
 inherit desktop eutils
 
-EXPORT_FUNCTIONS pkg_setup src_unpack src_prepare src_compile pkg_postinst pkg_postrm
+EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postinst pkg_postrm
 
 DEPEND+=" app-portage/npm-secaudit"
 IUSE+=" debug"
@@ -271,16 +271,38 @@ electron-app_src_unpack() {
 	default_src_unpack
 
 	electron-app-fetch-deps
+
+	# all the phase hooks get run in unpack because of download restrictions
+
+	if declare -f electron-app_src_prepare > /dev/null ; then
+		electron-app_src_prepare
+	else
+		electron-app_src_prepare_all
+	fi
+
+	if declare -f electron-app_src_compile > /dev/null ; then
+		electron-app_src_compile
+	else
+		electron-app_src_compile_all
+	fi
+
+	if declare -f electron-app_src_install > /dev/null ; then
+		electron-app_src_install
+	else
+		electron-app_src_install_all
+	fi
 }
 
 # @FUNCTION: electron-app_src_prepare
 # @DESCRIPTION:
 # Fetches dependencies
-electron-app_src_prepare() {
+electron-app_src_prepare_all() {
         debug-print-function ${FUNCNAME} "${@}"
 
-	default_src_prepare
+	#default_src_prepare
 }
+
+# todo electron-app_src_install_all
 
 # @FUNCTION: electron-app-build-npm
 # @DESCRIPTION:
@@ -300,7 +322,7 @@ electron-app-build-yarn() {
 # @FUNCTION: electron-app_src_compile
 # @DESCRIPTION:
 # Builds an electron app.
-electron-app_src_compile() {
+electron-app_src_compile_all() {
         debug-print-function ${FUNCNAME} "${@}"
 
 	case "$ELECTRON_APP_MODE" in

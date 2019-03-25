@@ -30,7 +30,7 @@ esac
 
 inherit eutils
 
-EXPORT_FUNCTIONS pkg_setup src_unpack src_prepare src_compile pkg_postrm pkg_postinst
+EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postrm pkg_postinst
 
 DEPEND+=" app-portage/npm-secaudit"
 IUSE+=" debug"
@@ -146,16 +146,38 @@ npm-secaudit_src_unpack() {
 	default_src_unpack
 
 	npm-secaudit-fetch-deps
+
+	# all the phase hooks get run in unpack because of download restrictions
+
+	if declare -f npm-secaudit_src_prepare > /dev/null ; then
+		npm-secaudit_src_prepare
+	else
+		npm-secaudit_src_prepare_all
+	fi
+
+	if declare -f npm-secaudit_src_compile > /dev/null ; then
+		npm-secaudit_src_compile
+	else
+		npm-secaudit_src_compile_all
+	fi
+
+	if declare -f npm-secaudit_src_install > /dev/null ; then
+		npm-secaudit_src_install
+	else
+		npm-secaudit_src_install_all
+	fi
 }
 
 # @FUNCTION: npm-secaudit_src_prepare
 # @DESCRIPTION:
 # Fetches dependencies
-npm-secaudit_src_prepare() {
+npm-secaudit_src_prepare_all() {
         debug-print-function ${FUNCNAME} "${@}"
 
-	default_src_prepare
+	#default_src_prepare
 }
+
+# todo npm-secaudit_src_install_all
 
 # @FUNCTION: npm-secaudit-build
 # @DESCRIPTION:
@@ -168,7 +190,7 @@ npm-secaudit-build() {
 # @FUNCTION: npm-secaudit_src_compile
 # @DESCRIPTION:
 # Builds an electron app
-npm-secaudit_src_compile() {
+npm-secaudit_src_compile_all() {
         debug-print-function ${FUNCNAME} "${@}"
 
 	npm-secaudit-build
