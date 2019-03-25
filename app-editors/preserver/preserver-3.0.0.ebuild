@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -22,6 +22,6 @@ IUSE=""
 
 S="${WORKDIR}/${PN}-${PV}"
 
-src_install() {
+electron-app_src_install() {
 	electron-desktop-app-install "*" "public/images/preserver_icon.png" "${PN^}" "Utility" "cd /usr/$(get_libdir)/node/${PN}/${SLOT}/ && /usr/bin/node start-electron.js"
 }
