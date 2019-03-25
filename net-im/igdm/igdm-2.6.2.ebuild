@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -44,13 +44,16 @@ src_unpack() {
 	popd
 	npm install --lock-file
 	npm install --lock-file # it must be done twice for some reason
+
+	electron-app_src_compile
+	electron-app_src_install
 }
 
-src_compile() {
+electron-app_src_compile() {
 	PATH="${S}/node_modules/.bin:${PATH}" \
 	gulp build
 }
 
-src_install() {
+electron-app_src_install() {
 	electron-desktop-app-install "*" "docs/img/icon.png" "${MY_PN}" "Network" "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/"
 }
