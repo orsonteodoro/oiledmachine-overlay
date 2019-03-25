@@ -29,7 +29,7 @@ src_unpack() {
 	cd "${S}"
 	electron-app-fetch-deps
 
-	# cannot fetch below that so run compiles up here
+	# cannot fetch in compile that so run compiles up here
 	_src_compile
 }
 
@@ -42,6 +42,10 @@ _src_compile() {
 	# This is required for compleness and for the program to run properly.
 	# We deviate since we are not building for other distros.
 	electron-builder -l dir || die
+}
+
+src_compile() {
+	true
 }
 
 src_install() {
