@@ -25,7 +25,10 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	opengl? ( client )
 	|| ( client server )
 	client? ( enc_x264? ( dec_avcodec2 ) enc_x265? ( dec_avcodec2 ) )"
+#	jpeg? ( pillow )
+#	webp? ( pillow )"
 
+#	dev-python/python-uinput
 COMMON_DEPEND="${PYTHON_DEPS}
 	dev-python/pygobject:2[${PYTHON_USEDEP}]
 	dev-python/pygtk:2[${PYTHON_USEDEP}]
@@ -65,6 +68,7 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	vpx? ( media-libs/libvpx virtual/ffmpeg )
 	webp? ( media-libs/libwebp )"
 
+#	pillow? ( dev-python/pillow[${PYTHON_USEDEP},jpeg?,webp?] )
 RDEPEND="${COMMON_DEPEND}
 	dev-python/netifaces[${PYTHON_USEDEP}]
 	dev-python/rencode[${PYTHON_USEDEP}]
@@ -76,6 +80,7 @@ RDEPEND="${COMMON_DEPEND}
 	lzo? ( >=dev-python/python-lzo-0.7.0[${PYTHON_USEDEP}] )
 	opengl? (
 		client? ( dev-python/pyopengl_accelerate[${PYTHON_USEDEP}] )
+		x11-base/xorg-drivers[video_cards_dummy]
 	)
 	pillow? ( dev-python/pillow[${PYTHON_USEDEP}] )
 	server? ( x11-base/xorg-server[-minimal,xvfb]
@@ -89,7 +94,8 @@ DEPEND="${COMMON_DEPEND}
 	>=dev-python/cython-0.16[${PYTHON_USEDEP}]"
 
 PATCHES=( "${FILESDIR}"/${PN}-2.5.0_rc5-ignore-gentoo-no-compile.patch
-	"${FILESDIR}"/${PN}-2.0-suid-warning.patch )
+	"${FILESDIR}"/${PN}-2.0-suid-warning.patch
+	"${FILESDIR}"/${PN}-2.5.0_rc5-openrc-init-fix.patch)
 
 pkg_postinst() {
 	enewgroup ${PN}
@@ -102,6 +108,10 @@ python_prepare_all() {
 	hprefixify -w '/os.path/' setup.py
 	hprefixify tmpfiles.d/xpra.conf xpra/server/{server,socket}_util.py \
 		xpra/platform{/xposix,}/paths.py xpra/scripts/server.py
+
+	if use opengl ; then
+		echo 'xvfb=Xorg -noreset -nolisten tcp +extension GLX +extension RANDR +extension RENDER -config xorg.dummy.conf' >> "${S}"/etc/xpra/xpra.conf.in || die
+	fi
 
 	distutils-r1_python_prepare_all
 }
@@ -149,4 +159,27 @@ python_configure_all() {
 	append-cflags -fno-strict-aliasing
 
 	export XPRA_SOCKET_DIRS="${EPREFIX}/run/xpra"
+}
+
+python_install_all() {
+	distutils-r1_python_install_all
+	fperms 0750 /etc/init.d/xpra
+	mkdir -p "${D}"/usr/X11/ || die
+	cp "${D}"/etc/xpra/xorg.conf "${D}"/usr/X11/xorg.dummy.conf || die
+}
+
+pkg_postinst() {
+	einfo "You need to add yourself to the xpra, tty, dialout groups."
+	if use opengl ; then
+		einfo "If you are using the amdgpu-pro driver, make sure you are"
+		einfo "using the xorg-x11 driver and update your"
+		einfo "/etc/X11/xorg.conf.d/20opengl.conf so that it has"
+		einfo "/usr/$(get_libdir)/xorg/modules/drivers at the top as follows:"
+		einfo ""
+		einfo "Section \"Files\""
+		einfo "        ModulePath \"/usr/$(get_libdir)/xorg/modules/drivers\""
+		einfo "        ModulePath \"/usr/$(get_libdir)/xorg/modules\""
+		einfo "EndSection"
+		einfo ""
+	fi
 }
