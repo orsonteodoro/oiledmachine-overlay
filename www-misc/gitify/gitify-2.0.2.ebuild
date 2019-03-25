@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -30,9 +30,12 @@ src_unpack() {
 	sed -i -e 's|path: process.execPath.match|//path: process.execPath.match|' main.js || die
 
 	electron-app-fetch-deps
+
+	electron-app_src_compile_default
+	electron-app_src_install
 }
 
-src_install() {
+electron-app_src_install() {
 	cp -a "${FILESDIR}"/app-icon.png images/
 	electron-desktop-app-install "*" "images/app-icon.png" "${PN^}" "Development" "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/"
 }
