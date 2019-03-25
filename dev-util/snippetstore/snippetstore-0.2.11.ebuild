@@ -23,7 +23,17 @@ IUSE=""
 
 S="${WORKDIR}/${MY_PN}-${PV}"
 
-src_compile() {
+src_unpack() {
+	default_src_unpack
+
+	cd "${S}"
+	electron-app-fetch-deps
+
+	# cannot fetch below that so run compiles up here
+	_src_compile
+}
+
+_src_compile() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	npm run build || die
 
