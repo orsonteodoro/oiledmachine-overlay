@@ -11,18 +11,16 @@ DEPEND="${RDEPEND}
 
 inherit eutils desktop electron-app
 
-COMMIT="600e799f3be71c2ea57215b8d6cb7a514f4c357c"
-
 DESCRIPTION="A Github pull request monitoring tool for Mac and Linux"
 HOMEPAGE="https://github.com/rkclark/pullp"
-SRC_URI="https://github.com/rkclark/pullp/archive/${COMMIT}.zip -> ${P}.zip"
+SRC_URI="https://github.com/rkclark/pullp/archive/v2.1.0.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
 
-S="${WORKDIR}/${PN}-${COMMIT}"
+S="${WORKDIR}/${PN}-${PV}"
 
 electron-app_src_compile() {
 	export PATH="${S}/node_modules/.bin:$PATH"
