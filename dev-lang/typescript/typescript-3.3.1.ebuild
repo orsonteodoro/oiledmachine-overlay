@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -24,7 +24,7 @@ IUSE=""
 
 S="${WORKDIR}/${MY_PN}-${PV}"
 
-src_compile() {
+npm-secaudit_src_compile() {
 	# We need 3.X for gulp-help.  The audit fix updates it to 4.X and breaks it.
 	npm uninstall gulp
 	npm install gulp@"<4.0.0" || die
@@ -32,7 +32,7 @@ src_compile() {
 	npm uninstall gulp
 }
 
-src_install() {
+npm-secaudit_src_install() {
 	npm-secaudit-install "*"
 }
 
