@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -23,11 +23,11 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
 
-src_compile() {
+electron-app_src_compile() {
 	# It does not have a build function.
 	true
 }
 
-src_install() {
+electron-app_src_install() {
 	electron-desktop-app-install "*" "static/Icon.png" "${PN^}" "Network" "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/"
 }
