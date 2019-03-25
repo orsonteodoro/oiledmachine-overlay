@@ -25,7 +25,7 @@
 +
  start() {
 +  for user in $(cat /etc/group | grep xpra | cut -f4 -d':' | tr ',' ' ') ; do
-+    uid=$(cat /etc/passwd | grep $u | cut -f 3 -d':')
++    uid=$(cat /etc/passwd | grep $user | cut -f 3 -d':')
 +    create_tmpfs $user /run/user/$uid/xpra/
 +  done
 +  create_tmpfs root /run/xpra/
