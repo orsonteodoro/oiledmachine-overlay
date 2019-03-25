@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -59,16 +59,19 @@ src_unpack() {
 	npm audit fix
 	npm audit || die
 	popd
+
+	electron-app_src_compile
+	electron-app_src_install
 }
 
-src_compile() {
+electron-app_src_compile() {
 	electron-app_src_compile
 	npm uninstall yarn || die
 	cd "${S}/app"
 	npm install electron-config || die
 }
 
-src_install() {
+electron-app_src_install() {
 	electron-desktop-app-install "*" "media/icon.png" "${PN^}" "Network" "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/app"
 	einfo "This program has login issues but still works as of Mar 12 2019."
 	einfo "You may need to close it several times to get it to show the feed."
