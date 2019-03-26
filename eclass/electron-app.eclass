@@ -291,10 +291,10 @@ electron-app_src_unpack() {
 	fi
 
 	cd "${S}"
-	if declare -f electron-app_src_install > /dev/null ; then
-		electron-app_src_install
+	if declare -f electron-app_src_preinst > /dev/null ; then
+		electron-app_src_preinst
 	else
-		electron-app_src_install_default
+		electron-app_src_preinst_default
 	fi
 }
 
@@ -349,12 +349,11 @@ electron-app_src_compile_default() {
 	esac
 }
 
-# @FUNCTION: electron-desktop-app-install
+# @FUNCTION: electron-app_src_preinst_default
 # @DESCRIPTION:
-# Installs a desktop app with wrapper and desktop menu entry.
 # A user can define electron-app_fix_prune to reinstall dependencies
 # caused by breakage by pruning or auditing.
-electron-desktop-app-install() {
+electron-app_src_preinst_default() {
 	local rel_src_path="$1"
 	local rel_icon_path="$2"
 	local pkg_name="$3"
@@ -378,17 +377,6 @@ electron-desktop-app-install() {
 				electron-app_fix_prune
 			fi
 
-			local old_dotglob=$(shopt dotglob | cut -f 2)
-			shopt -s dotglob # copy hidden files
-
-			mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
-			cp -a ${rel_src_path} "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
-
-			if [[ "${old_dotglob}" == "on" ]] ; then
-				shopt -s dotglob
-			else
-				shopt -u dotglob
-			fi
 			;;
 		yarn)
 			if ! use debug ; then
@@ -404,8 +392,40 @@ electron-desktop-app-install() {
 			echo "global-folder \"/usr/$(get_libdir)/node/${PN}/${SLOT}/.yarn\"" >> "${S}/.yarnrc" || die
 			echo "prefix \"/usr/$(get_libdir)/node/${PN}/${SLOT}/.yarn\"" >> "${S}/.yarnrc" || die
 
-			# todo final audit
+			# todo final audit fix
 
+			;;
+		*)
+			die "Unsupported package system"
+			;;
+	esac
+}
+
+# @FUNCTION: electron-app_desktop_install
+# @DESCRIPTION:
+# Installs a desktop app with wrapper and desktop menu entry.
+electron-app_desktop_install() {
+	local rel_src_path="$1"
+	local rel_icon_path="$2"
+	local pkg_name="$3"
+	local category="$4"
+	local cmd="$5"
+
+	case "$ELECTRON_APP_MODE" in
+		npm)
+			local old_dotglob=$(shopt dotglob | cut -f 2)
+			shopt -s dotglob # copy hidden files
+
+			mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+			cp -a ${rel_src_path} "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+
+			if [[ "${old_dotglob}" == "on" ]] ; then
+				shopt -s dotglob
+			else
+				shopt -u dotglob
+			fi
+			;;
+		yarn)
 			local old_dotglob=$(shopt dotglob | cut -f 2)
 			shopt -s dotglob # copy hidden files
 

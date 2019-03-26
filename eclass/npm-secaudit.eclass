@@ -166,10 +166,10 @@ npm-secaudit_src_unpack() {
 	fi
 
 	cd "${S}"
-	if declare -f npm-secaudit_src_install > /dev/null ; then
-		npm-secaudit_src_install
+	if declare -f npm-secaudit_src_preinst > /dev/null ; then
+		npm-secaudit_src_preinst
 	else
-		npm-secaudit_src_install_default
+		npm-secaudit_src_preinst_default
 	fi
 }
 
@@ -242,13 +242,12 @@ _npm-secaudit-audit-fix() {
 	fi
 }
 
-# @FUNCTION: npm-secaudit-install
+# @FUNCTION: npm-secaudit_src_preinst_default
 # @DESCRIPTION:
-# Installs a desktop app.  If overwritten,
-# you must prune yourself.
+# Preforms audits and fixes
 # A user can define npm-secaudit_fix_prune to reinstall dependencies
 # caused by breakage by pruning or auditing.
-npm-secaudit-install() {
+npm-secaudit_src_preinst_default() {
 	local rel_src_path="$1"
 
 	_npm-secaudit-audit-fix
@@ -265,6 +264,13 @@ npm-secaudit-install() {
 	if declare -f npm-secaudit_fix_prune > /dev/null ; then
 		npm-secaudit_fix_prune
 	fi
+}
+
+# @FUNCTION: npm-secaudit_install
+# @DESCRIPTION:
+# Installs an app to image area before going live.
+npm-secaudit_install() {
+	local rel_src_path="$1"
 
 	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
