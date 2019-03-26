@@ -40,7 +40,7 @@ src_unpack() {
 	electron-app-fetch-deps
 
 	electron-app_src_compile
-	electron-app_src_install
+	electron-app_src_preinstall_default
 }
 
 electron-app_src_compile() {
@@ -51,6 +51,6 @@ electron-app_src_compile() {
 	electron-builder -l dir || die
 }
 
-electron-app_src_install() {
-	electron-desktop-app-install "*" "resources/icon/icon.png" "${PN^}" "Utility" "/usr/$(get_libdir)/node/${PN}/${SLOT}/releases/linux-unpacked/noty"
+src_install() {
+	electron-app_desktop_install "*" "resources/icon/icon.png" "${PN^}" "Utility" "/usr/$(get_libdir)/node/${PN}/${SLOT}/releases/linux-unpacked/noty"
 }
