@@ -46,7 +46,7 @@ src_unpack() {
 	npm install --lock-file # it must be done twice for some reason
 
 	electron-app_src_compile
-	electron-app_src_install
+	electron-app_src_preinstall_default
 }
 
 electron-app_src_compile() {
@@ -54,6 +54,6 @@ electron-app_src_compile() {
 	gulp build
 }
 
-electron-app_src_install() {
-	electron-desktop-app-install "*" "docs/img/icon.png" "${MY_PN}" "Network" "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/"
+src_install() {
+	electron-app_desktop_install "*" "docs/img/icon.png" "${MY_PN}" "Network" "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/"
 }
