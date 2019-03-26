@@ -46,7 +46,7 @@ src_unpack() {
 	npm install --lock-file # it must be done twice for some reason
 
 	electron-app_src_compile
-	electron-app_src_preinstall_default
+	electron-app_src_preinst_default
 }
 
 electron-app_src_compile() {
