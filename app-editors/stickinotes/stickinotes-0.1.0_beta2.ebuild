@@ -31,6 +31,6 @@ electron-app_src_compile() {
 	electron-builder -l dir || die
 }
 
-electron-app_src_install() {
-	electron-desktop-app-install "*" "src/assets/logo.png" "${PN}" "Utility" ""
+src_install() {
+	electron-app_desktop_install "*" "src/assets/logo.png" "${PN}" "Utility" ""
 }
