@@ -7,8 +7,7 @@ RDEPEND="${RDEPEND}
 	 dev-util/electron"
 
 DEPEND="${RDEPEND}
-        net-libs/nodejs[npm]
-	sys-apps/yarn"
+        net-libs/nodejs[npm]"
 
 inherit eutils desktop npm-secaudit
 
