@@ -42,13 +42,13 @@ src_unpack() {
 
 	einfo "Running electron-app_fetch_deps"
 	electron-app_fetch_deps
-
 	electron-app_src_compile
-
 	electron-app_src_preinst_default
 }
 
 electron-app_src_compile() {
+	cd "${S}"
+
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	electron-webpack app --env.minify=false || die
 
