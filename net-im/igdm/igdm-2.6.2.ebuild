@@ -28,11 +28,7 @@ REQUEST_PROMISE_VER="^4.2.4"
 src_unpack() {
 	default_src_unpack
 
-	cd "${S}"
-
 	electron-app_src_prepare_default
-
-	cd "${S}"
 
 	electron-app_fetch_deps
 
@@ -53,13 +49,13 @@ src_unpack() {
 	npm install --lock-file
 	npm install --lock-file # it must be done twice for some reason
 
-	cd "${S}"
 	electron-app_src_compile
-	cd "${S}"
 	electron-app_src_preinst_default
 }
 
 electron-app_src_compile() {
+	cd "${S}"
+
 	PATH="${S}/node_modules/.bin:${PATH}" \
 	gulp build
 }
