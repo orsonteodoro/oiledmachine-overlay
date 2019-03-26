@@ -223,7 +223,6 @@ function apply_genpatch_base() {
 	unpack "${DISTDIR}/${GENPATCHES_BASE_FN}"
 
 	# genpatches places kernel incremental patches starting at 1000
-	d1="${T}"
 	for a in ${KERNEL_PATCH_FNS_NOEXT[@]} ; do
 		local f="${T}/${a}"
 		cd "${T}"
