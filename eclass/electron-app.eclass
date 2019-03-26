@@ -245,7 +245,11 @@ electron-app_fetch_deps_yarn()
 # Fetches an electron app with security checks
 # MUST be called after default unpack AND patching.
 electron-app_fetch_deps() {
+	cd "${S}"
+
 	_electron-app_fix_yarn_access
+
+	cd "${S}"
 
 	# todo handle yarn
 	case "$ELECTRON_APP_MODE" in
@@ -267,6 +271,8 @@ electron-app_fetch_deps() {
 # Unpacks sources
 electron-app_src_unpack() {
         debug-print-function ${FUNCNAME} "${@}"
+
+	cd "${WORKDIR}"
 
 	default_src_unpack
 
@@ -304,6 +310,8 @@ electron-app_src_unpack() {
 electron-app_src_prepare_default() {
         debug-print-function ${FUNCNAME} "${@}"
 
+	cd "${S}"
+
 	#default_src_prepare
 }
 
@@ -312,6 +320,9 @@ electron-app_src_prepare_default() {
 # Installs the app.  Currently a stub.
 electron-app_src_install_default() {
         debug-print-function ${FUNCNAME} "${@}"
+
+	cd "${S}"
+
 	die "currently uninplemented.  must override"
 # todo electron-app_src_install_default
 }
@@ -337,6 +348,8 @@ electron-app-build-yarn() {
 electron-app_src_compile_default() {
         debug-print-function ${FUNCNAME} "${@}"
 
+	cd "${S}"
+
 	case "$ELECTRON_APP_MODE" in
 		npm)
 			electron-app-build-npm
@@ -360,6 +373,8 @@ electron-app_src_preinst_default() {
 	local pkg_name="$3"
 	local category="$4"
 	local cmd="$5"
+
+	cd "${S}"
 
 	case "$ELECTRON_APP_MODE" in
 		npm)

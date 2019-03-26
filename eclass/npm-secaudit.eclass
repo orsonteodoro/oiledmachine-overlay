@@ -143,11 +143,15 @@ npm-secaudit_fetch_deps() {
 npm-secaudit_src_unpack() {
         debug-print-function ${FUNCNAME} "${@}"
 
+	cd "${WORKDIR}"
+
 	default_src_unpack
 
 	cd "${S}"
 
 	npm-secaudit_fetch_deps
+
+	cd "${S}"
 
 	# all the phase hooks get run in unpack because of download restrictions
 
@@ -179,6 +183,8 @@ npm-secaudit_src_unpack() {
 npm-secaudit_src_prepare_default() {
         debug-print-function ${FUNCNAME} "${@}"
 
+	cd "${S}"
+
 	#default_src_prepare
 }
 
@@ -187,6 +193,9 @@ npm-secaudit_src_prepare_default() {
 # Installs the program.  Currently a stub.
 npm-secaudit_src_install_default() {
         debug-print-function ${FUNCNAME} "${@}"
+
+	cd "${S}"
+
 	die "currently uninplemented.  must override"
 # todo npm-secaudit_src_install_default
 }
@@ -204,6 +213,8 @@ npm-secaudit-build() {
 # Builds an electron app
 npm-secaudit_src_compile_default() {
         debug-print-function ${FUNCNAME} "${@}"
+
+	cd "${S}"
 
 	npm-secaudit-build
 }
@@ -251,7 +262,11 @@ _npm-secaudit-audit-fix() {
 npm-secaudit_src_preinst_default() {
 	local rel_src_path="$1"
 
+	cd "${S}"
+
 	_npm-secaudit-audit-fix
+
+	cd "${S}"
 
 	if ! use debug ; then
 		if [[ "${NPM_SECAUDIT_PRUNE}" == "1" &&
