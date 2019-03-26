@@ -27,6 +27,8 @@ S="${WORKDIR}/${PN}-${COMMIT}"
 src_unpack() {
 	default_src_unpack
 
+	electron-app_src_prepare_default
+
 	if ! use analytics-tracking ; then
 		epatch "${FILESDIR}"/${PN}-3.2.5-disable-analytics.patch
 		rm "${S}"/app/src/main/analytics.js
@@ -40,7 +42,7 @@ src_unpack() {
 	npm install braces@"^2.3.2" --save || die
 	popd
 
-	electron-app-fetch-deps
+	electron-app_fetch_deps
 
 	pushd node_modules/guetzli/node_modules/caw || die
 	patch -p1 -i "${FILESDIR}/caw-1.2.0-replace-tunnel-agent-with-node-tunnel.patch" || die
@@ -61,7 +63,7 @@ src_unpack() {
 	popd
 
 	electron-app_src_compile
-	electron-app_src_install
+	electron-app_src_preinst_default
 }
 
 electron-app_src_compile() {
@@ -71,8 +73,8 @@ electron-app_src_compile() {
 	npm install electron-config || die
 }
 
-electron-app_src_install() {
-	electron-desktop-app-install "*" "media/icon.png" "${PN^}" "Network" "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/app"
+src_install() {
+	electron-app_desktop_install "*" "media/icon.png" "${PN^}" "Network" "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/app"
 	einfo "This program has login issues but still works as of Mar 12 2019."
 	einfo "You may need to close it several times to get it to show the feed."
 }
