@@ -28,9 +28,11 @@ REQUEST_PROMISE_VER="^4.2.4"
 src_unpack() {
 	default_src_unpack
 
+	electron-app_src_prepare_default
+
 	sed -i -e "s|\"request-promise\": \"^1.0.2\",|\"request-promise\": \"${REQUEST_PROMISE_VER}\",|" instagram-private-api/package.json
 
-	electron-app-fetch-deps
+	electron-app_fetch_deps
 
 	# fix vulnerabilities
 	pushd node_modules/tough-cookie-filestore
