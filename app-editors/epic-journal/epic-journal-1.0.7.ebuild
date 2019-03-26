@@ -30,6 +30,6 @@ electron-app_src_compile() {
 	electron-builder -l dir || die
 }
 
-electron-app_src_install() {
-	electron-desktop-app-install "*" "build/icons/256x256.png" "${MY_PN}" "Office" "cd /usr/$(get_libdir)/node/${PN}/${SLOT}/ && /usr/bin/electron ./dist/electron/main.js"
+src_install() {
+	electron-app_desktop_install "*" "build/icons/256x256.png" "${MY_PN}" "Office" "cd /usr/$(get_libdir)/node/${PN}/${SLOT}/ && /usr/bin/electron ./dist/electron/main.js"
 }
