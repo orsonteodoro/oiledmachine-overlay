@@ -30,7 +30,7 @@ src_unpack() {
 	npm install electron-window-state
 	npm install wurl
 
-	electron-app-fetch-deps
+	npm-secaudit_fetch_deps
 
 	# fix breakage caused by npm audix fix --force
 	npm uninstall gulp
