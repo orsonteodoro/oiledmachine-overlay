@@ -29,6 +29,7 @@ HOMEPAGE="https://github.com/dolohow/uksm
 	  http://www1.informatik.uni-erlangen.de/tresor
           "
 
+EXTRAVERSION="-ot"
 PATCH_UKMS_VER="4.20" # no 5.0 yet
 PATCH_ZENTUNE_VER="5.0"
 PATCH_O3_CO_COMMIT="a56a17374772a48a60057447dc4f1b4ec62697fb"
@@ -144,11 +145,14 @@ gen_kernel_seq()
 
 KERNEL_PATCH_TO_FROM=($(gen_kernel_seq $(get_version_component_range 3 ${PV})))
 KERNEL_INC_BASEURL="https://cdn.kernel.org/pub/linux/kernel/v5.x/incr/"
+KERNEL_PATCH_0_TO_1_URL="https://cdn.kernel.org/pub/linux/kernel/v5.x/patch-5.0.1.xz"
 
 KERNEL_PATCH_FNS_EXT=(${KERNEL_PATCH_TO_FROM[@]/%/.xz})
 KERNEL_PATCH_FNS_EXT=(${KERNEL_PATCH_FNS_EXT[@]/#/patch-5.0.})
 KERNEL_PATCH_FNS_NOEXT=(${KERNEL_PATCH_TO_FROM[@]/#/patch-5.0.})
-KERNEL_PATCH_URLS=(${KERNEL_PATCH_FNS_EXT[@]/#/${KERNEL_INC_BASEURL}})
+KERNEL_PATCH_URLS=(${KERNEL_PATCH_0_TO_1_URL} ${KERNEL_PATCH_FNS_EXT[@]/#/${KERNEL_INC_BASEURL}})
+KERNEL_PATCH_FNS_EXT=(patch-5.0.1.xz ${KERNEL_PATCH_FNS_EXT[@]/#/patch-5.0.})
+KERNEL_PATCH_FNS_NOEXT=(patch-5.0.1 ${KERNEL_PATCH_TO_FROM[@]/#/patch-5.0.})
 
 SRC_URI="${KERNEL_URI}
 	 ${GENPATCHES_URI}
@@ -222,6 +226,8 @@ function apply_genpatch_base() {
 	cd "$d"
 	unpack "${DISTDIR}/${GENPATCHES_BASE_FN}"
 
+	sed -r -i -e "s|EXTRAVERSION = ${EXTRAVERSION}|EXTRAVERSION =|" "${S}"/Makefile || die
+
 	# genpatches places kernel incremental patches starting at 1000
 	for a in ${KERNEL_PATCH_FNS_NOEXT[@]} ; do
 		local f="${T}/${a}"
@@ -237,6 +243,8 @@ function apply_genpatch_base() {
 			die
 		fi
 	done
+
+	sed -r -i -e "s|EXTRAVERSION =|EXTRAVERSION = ${EXTRAVERSION}|" "${S}"/Makefile || die
 
 	cd "${S}"
 
