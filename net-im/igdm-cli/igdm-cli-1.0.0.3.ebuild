@@ -26,7 +26,7 @@ IUSE=""
 S="${WORKDIR}/${PN}-${MY_PV}"
 
 npm-secaudit_src_install() {
-	npm-secaudit-install "*"
+	npm-secaudit_install "*"
 
 	#create wrapper
 	mkdir -p "${D}/usr/bin"
