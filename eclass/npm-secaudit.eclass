@@ -122,11 +122,11 @@ npm-secaudit_pkg_setup() {
 	_npm-secaudit_fix_cacache_access
 }
 
-# @FUNCTION: npm-secaudit-fetch-deps
+# @FUNCTION: npm-secaudit_fetch_deps
 # @DESCRIPTION:
 # Builds an electron app with security checks
 # MUST be called after default unpack AND patching.
-npm-secaudit-fetch-deps() {
+npm-secaudit_fetch_deps() {
 	pushd "${S}"
 
 	_npm-secaudit_fix_locks
@@ -147,7 +147,7 @@ npm-secaudit_src_unpack() {
 
 	cd "${S}"
 
-	npm-secaudit-fetch-deps
+	npm-secaudit_fetch_deps
 
 	# all the phase hooks get run in unpack because of download restrictions
 

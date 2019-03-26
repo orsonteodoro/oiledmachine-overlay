@@ -200,11 +200,11 @@ electron-app_pkg_setup() {
 	esac
 }
 
-# @FUNCTION: electron-app-fetch-deps-npm
+# @FUNCTION: electron-app_fetch_deps_npm
 # @DESCRIPTION:
 # Fetches an Electron npm app with security checks
 # MUST be called after default unpack AND patching.
-electron-app-fetch-deps-npm()
+electron-app_fetch_deps_npm()
 {
 	_electron-app-flakey-check
 
@@ -214,11 +214,11 @@ electron-app-fetch-deps-npm()
 	popd
 }
 
-# @FUNCTION: electron-app-fetch-deps-yarn
+# @FUNCTION: electron-app_fetch_deps_yarn
 # @DESCRIPTION:
 # Fetches an Electron yarn app with security checks
 # MUST be called after default unpack AND patching.
-electron-app-fetch-deps-yarn()
+electron-app_fetch_deps_yarn()
 {
 	pushd "${S}"
 		export FAKEROOTKEY="15574641" # don't check /usr/local/share/.yarnrc .  same number used in their testing.
@@ -240,21 +240,21 @@ electron-app-fetch-deps-yarn()
 	popd
 }
 
-# @FUNCTION: electron-app-fetch-deps
+# @FUNCTION: electron-app_fetch_deps
 # @DESCRIPTION:
 # Fetches an electron app with security checks
 # MUST be called after default unpack AND patching.
-electron-app-fetch-deps() {
+electron-app_fetch_deps() {
 	_electron-app_fix_yarn_access
 
 	# todo handle yarn
 	case "$ELECTRON_APP_MODE" in
 		npm)
 			_electron-app_fix_locks
-			electron-app-fetch-deps-npm
+			electron-app_fetch_deps_npm
 			;;
 		yarn)
-			electron-app-fetch-deps-yarn
+			electron-app_fetch_deps_yarn
 			;;
 		*)
 			die "Unsupported package system"
@@ -272,7 +272,7 @@ electron-app_src_unpack() {
 
 	cd "${S}"
 
-	electron-app-fetch-deps
+	electron-app_fetch_deps
 
 	# all the phase hooks get run in unpack because of download restrictions
 
