@@ -23,6 +23,8 @@ IUSE=""
 S="${WORKDIR}/${PN}-${PV}"
 
 electron-app_src_compile() {
+	cd "${S}"
+
 	export PATH="${S}/node_modules/.bin:$PATH"
 	npm run react-build || die
 	electron-builder -l dir || die
