@@ -4,7 +4,8 @@
 EAPI=6
 
 RDEPEND="${RDEPEND}
-	 >=dev-util/electron-2.0.3"
+	 >=dev-util/electron-2.0.3
+	 sys-apps/yarn"
 
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]"
