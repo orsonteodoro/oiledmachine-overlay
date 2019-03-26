@@ -29,6 +29,8 @@ src_unpack() {
 
 	electron-app_src_prepare_default
 
+	cd "${S}"
+
 	if ! use analytics-tracking ; then
 		epatch "${FILESDIR}"/${PN}-3.2.5-disable-analytics.patch
 		rm "${S}"/app/src/main/analytics.js
@@ -43,6 +45,8 @@ src_unpack() {
 	popd
 
 	electron-app_fetch_deps
+
+	cd "${S}"
 
 	pushd node_modules/guetzli/node_modules/caw || die
 	patch -p1 -i "${FILESDIR}/caw-1.2.0-replace-tunnel-agent-with-node-tunnel.patch" || die
@@ -67,7 +71,12 @@ src_unpack() {
 }
 
 electron-app_src_compile() {
+	cd "${S}"
+
 	electron-app_src_compile_default
+
+	cd "${S}"
+
 	npm uninstall yarn || die
 	cd "${S}/app"
 	npm install electron-config || die
