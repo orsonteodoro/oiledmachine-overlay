@@ -28,11 +28,17 @@ REQUEST_PROMISE_VER="^4.2.4"
 src_unpack() {
 	default_src_unpack
 
+	cd "${S}"
+
 	electron-app_src_prepare_default
 
-	sed -i -e "s|\"request-promise\": \"^1.0.2\",|\"request-promise\": \"${REQUEST_PROMISE_VER}\",|" instagram-private-api/package.json
+	cd "${S}"
 
 	electron-app_fetch_deps
+
+	cd "${S}"
+
+	sed -i -e "s|\"request-promise\": \"^1.0.2\",|\"request-promise\": \"${REQUEST_PROMISE_VER}\",|" "${S}"/node_modules/instagram-private-api/package.json || die
 
 	# fix vulnerabilities
 	pushd node_modules/tough-cookie-filestore
@@ -47,7 +53,9 @@ src_unpack() {
 	npm install --lock-file
 	npm install --lock-file # it must be done twice for some reason
 
+	cd "${S}"
 	electron-app_src_compile
+	cd "${S}"
 	electron-app_src_preinst_default
 }
 
