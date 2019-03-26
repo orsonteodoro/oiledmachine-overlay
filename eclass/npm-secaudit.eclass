@@ -182,11 +182,12 @@ npm-secaudit_src_prepare_default() {
 	#default_src_prepare
 }
 
-# @FUNCTION: npm-secaudit_src_prepare_default
+# @FUNCTION: npm-secaudit_src_install_default
 # @DESCRIPTION:
 # Installs the program.  Currently a stub.
 npm-secaudit_src_install_default() {
         debug-print-function ${FUNCNAME} "${@}"
+	die "currently uninplemented.  must override"
 # todo npm-secaudit_src_install_default
 }
 

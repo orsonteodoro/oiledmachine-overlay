@@ -310,8 +310,9 @@ electron-app_src_prepare_default() {
 # @FUNCTION: electron-app_install_default
 # @DESCRIPTION:
 # Installs the app.  Currently a stub.
-electron-app_src_install_all() {
+electron-app_src_install_default() {
         debug-print-function ${FUNCNAME} "${@}"
+	die "currently uninplemented.  must override"
 # todo electron-app_src_install_default
 }
 
