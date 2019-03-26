@@ -28,6 +28,8 @@ src_unpack() {
 
 	electron-app_src_prepare_default
 
+	cd "${S}"
+
 	sed -i -e "s|\"electron\": \"3.0.0\",|\"electron\": \"^${ELECTRON_VER}\",|" package.json || die # workaround
 
 	mkdir -p patches || die
@@ -42,6 +44,7 @@ src_unpack() {
 	electron-app_fetch_deps
 
 	electron-app_src_compile
+
 	electron-app_src_preinst_default
 }
 
