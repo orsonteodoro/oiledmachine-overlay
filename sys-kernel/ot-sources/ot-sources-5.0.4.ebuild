@@ -135,7 +135,7 @@ TRESOR_SRC_URL="${TRESOR_README_DL_URL} -> ${TRESOR_README_FN}"
 gen_kernel_seq()
 {
 	# 1-2 2-3 3-4
-	local s="";
+	local s=""
 	for ((to=2 ; to <= $1 ; to+=1)) ; do
 		s=" $s $((${to}-1))-${to}"
 	done
@@ -248,9 +248,6 @@ function apply_genpatch_base() {
 	_tpatch "${PATCH_OPS} -N" "$d/2500_usb-storage-Disable-UAS-on-JMicron-SATA-enclosure.patch"
 	_tpatch "${PATCH_OPS} -N" "$d/2600_enable-key-swapping-for-apple-mac.patch"
 	_tpatch "${PATCH_OPS} -N" "$d/2900_netfilter-patch-nf_tables-fix-set-double-free-in-abort-path.patch"
-
-	_tpatch "${PATCH_OPS} -N" "$d/2900_netfilter-patch-nf_tables-fix-set-double-free-in-abort-path.patch"
-
 }
 
 function apply_genpatch_experimental() {
