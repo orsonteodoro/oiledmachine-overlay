@@ -28,6 +28,6 @@ electron-app_src_compile() {
 	electron-builder -l dir || die
 }
 
-electron-app_src_install() {
-	electron-desktop-app-install "*" "public/icons/512x512.png" "${PN}" "Development" "/usr/$(get_libdir)/node/${PN}/${SLOT}/dist/linux-unpacked/pullp"
+src_install() {
+	electron-app_desktop_install "*" "public/icons/512x512.png" "${PN}" "Development" "/usr/$(get_libdir)/node/${PN}/${SLOT}/dist/linux-unpacked/pullp"
 }
