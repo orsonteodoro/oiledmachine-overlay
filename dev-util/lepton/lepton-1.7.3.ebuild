@@ -39,6 +39,8 @@ src_unpack() {
 
 	electron-app_src_prepare_default
 
+	cd "${S}"
+
 	cp "${FILESDIR}"/account.js "${S}"/configs || die
 	sed -i -e "s|<your_client_id>|$LEPTON_CLIENT_ID|" -e "s|<your_client_secret>|$LEPTON_CLIENT_SECRET|" "${S}"/configs/account.js || die
 
