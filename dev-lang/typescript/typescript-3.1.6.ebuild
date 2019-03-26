@@ -32,8 +32,8 @@ npm-secaudit_src_compile() {
 	npm uninstall gulp
 }
 
-npm-secaudit_src_install() {
-	npm-secaudit-install "*"
+src_install() {
+	npm-secaudit_install "*"
 }
 
 pkg_postinst() {
