@@ -133,6 +133,8 @@ _save_packages() {
 src_unpack() {
 	default_src_unpack
 
+	electron-app_src_prepare_default
+
 	patch -p1 -i "${FILESDIR}"/geeks-diary-1.0.0_beta2-vcs-item_ts-rest-parameter-trailing-comma-fix.patch || die
 
 	sed -i -e "s|\"typescript\": \"2.7.2\",|\"typescript\": \"${TS_VER}\",|g" package.json || die
@@ -184,12 +186,12 @@ src_unpack() {
 
 	_save_packages
 
-	electron-app-fetch-deps
+	electron-app_fetch_deps
 
 	patch -F 100 -p1 -i "${FILESDIR}/geeks-diary-angular-devkit-browser-config-fix-0.6.8.patch" || die
 
 	electron-app_src_compile
-	electron-app_src_install
+	electron-app_src_preinst_default
 }
 
 electron-app_src_compile() {
@@ -201,6 +203,6 @@ electron-app_src_compile() {
 	electron-app_src_compile_default
 }
 
-electron-app_src_install() {
-	electron-desktop-app-install "*" "src/assets/logos/512x512.png" "${MY_PN}" "Development" "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/dist/main.js"
+src_install() {
+	electron-app_desktop_install "*" "src/assets/logos/512x512.png" "${MY_PN}" "Development" "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/dist/main.js"
 }
