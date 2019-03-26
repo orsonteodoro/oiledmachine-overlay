@@ -25,6 +25,7 @@ HOMEPAGE="https://github.com/dolohow/uksm
           https://dev.gentoo.org/~mpagano/genpatches/
           http://algo.ing.unimo.it/people/paolo/disk_sched/
 	  http://cchalpha.blogspot.com/search/label/PDS
+	  https://cchalpha.blogspot.com/search/label/BMQ
 	  http://www1.informatik.uni-erlangen.de/tresor
           "
 
