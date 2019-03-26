@@ -25,7 +25,7 @@ IUSE=""
 
 electron-app_src_compile() {
 	# It does not have a build function.
-	true
+	cd "${S}"
 }
 
 src_install() {
