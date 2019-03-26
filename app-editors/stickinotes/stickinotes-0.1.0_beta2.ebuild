@@ -27,6 +27,8 @@ IUSE=""
 S="${WORKDIR}/${MY_PN}-${MY_PV}-${MY_PR}"
 
 electron-app_src_compile() {
+	cd "${S}"
+
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	electron-builder -l dir || die
 }
