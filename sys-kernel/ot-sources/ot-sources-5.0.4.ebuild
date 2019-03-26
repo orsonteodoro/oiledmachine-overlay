@@ -272,7 +272,7 @@ function apply_genpatch_extras() {
 
 	cd "${S}"
 
-	#_tpatch "${PATCH_OPS} -N" "$d/4567_distro-Gentoo-Kconfig.patch"
+	_tpatch "${PATCH_OPS} -N" "$d/4567_distro-Gentoo-Kconfig.patch"
 }
 
 function apply_o3() {
