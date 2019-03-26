@@ -19,6 +19,7 @@ IUSE="+client +clipboard csc cups dbus dec_avcodec2 enc_ffmpeg enc_x264 enc_x265
 
 S="${WORKDIR}/xpra-${MY_PV}"
 
+#	opengl? ( client jpeg webp )
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	clipboard? ( || ( server client ) )
 	cups? ( dbus )
@@ -66,9 +67,10 @@ COMMON_DEPEND="${PYTHON_DEPS}
 		media-libs/gst-plugins-base:1.0
 		dev-python/gst-python:1.0 )
 	vpx? ( media-libs/libvpx virtual/ffmpeg )
-	webp? ( media-libs/libwebp )"
+	webp? ( media-libs/libwebp[opengl?] )"
 
 #	pillow? ( dev-python/pillow[${PYTHON_USEDEP},jpeg?,webp?] )
+#		media-video/ffmpeg[opengl]
 RDEPEND="${COMMON_DEPEND}
 	dev-python/netifaces[${PYTHON_USEDEP}]
 	dev-python/rencode[${PYTHON_USEDEP}]

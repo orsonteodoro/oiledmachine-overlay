@@ -19,7 +19,7 @@
 +  local user="$1"
 +  local path="$2"
 +  mkdir -p $path
-+  chmod 755 $path
++  chmod 770 $path
 +  chown -R $user:xpra $path
 +}
 +
