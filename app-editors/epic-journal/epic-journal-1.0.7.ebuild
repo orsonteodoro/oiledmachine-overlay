@@ -25,6 +25,8 @@ IUSE=""
 S="${WORKDIR}/${PN}-v.${PV}"
 
 electron-app_src_compile() {
+	cd "${S}"
+
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	node .electron-vue/build.js || die
 	electron-builder -l dir || die
