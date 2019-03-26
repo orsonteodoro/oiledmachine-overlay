@@ -34,6 +34,6 @@ electron-app_src_compile() {
 	electron-builder -l dir || die
 }
 
-electron-app_src_install() {
-	electron-desktop-app-install "*" "resources/icon/icon512.png" "${MY_PN}" "Development" "/usr/$(get_libdir)/node/${PN}/${SLOT}/dist/linux-unpacked/snippetstore"
+src_install() {
+	electron-app_desktop_install "*" "resources/icon/icon512.png" "${MY_PN}" "Development" "/usr/$(get_libdir)/node/${PN}/${SLOT}/dist/linux-unpacked/snippetstore"
 }
