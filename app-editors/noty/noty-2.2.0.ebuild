@@ -26,6 +26,8 @@ S="${WORKDIR}/${PN}-${PV}"
 src_unpack() {
 	default_src_unpack
 
+	electron-app_src_prepare_default
+
 	sed -i -e "s|\"electron\": \"3.0.0\",|\"electron\": \"^${ELECTRON_VER}\",|" package.json || die # workaround
 
 	mkdir -p patches || die
@@ -36,11 +38,11 @@ src_unpack() {
 	einfo "Installing patch-package"
 	npm install patch-package || die
 
-	einfo "Running electron-app-fetch-deps"
-	electron-app-fetch-deps
+	einfo "Running electron-app_fetch_deps"
+	electron-app_fetch_deps
 
 	electron-app_src_compile
-	electron-app_src_preinstall_default
+	electron-app_src_preinst_default
 }
 
 electron-app_src_compile() {
