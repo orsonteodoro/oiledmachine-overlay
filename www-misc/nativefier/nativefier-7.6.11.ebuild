@@ -7,7 +7,8 @@ RDEPEND="${RDEPEND}
 	 dev-util/electron"
 
 DEPEND="${RDEPEND}
-        net-libs/nodejs[npm]"
+        net-libs/nodejs[npm]
+	sys-apps/yarn"
 
 inherit eutils desktop npm-secaudit
 
@@ -25,12 +26,18 @@ S="${WORKDIR}/${PN}-${PV}"
 src_unpack() {
 	default_src_unpack
 
+	npm-secaudit_src_prepare_default
+
+	cd "${S}"
+
 	npm install electron-context-menu
 	npm install electron-squirrel-startup
 	npm install electron-window-state
 	npm install wurl
 
 	npm-secaudit_fetch_deps
+
+	cd "${S}"
 
 	# fix breakage caused by npm audix fix --force
 	npm uninstall gulp
