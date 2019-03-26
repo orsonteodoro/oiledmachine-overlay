@@ -29,6 +29,6 @@ electron-app_src_compile() {
 	electron-builder -l dir || die
 }
 
-electron-app_src_install() {
-	electron-desktop-app-install "*" "static/Icon.png" "${PN^}" "Network" "PATH=\"/usr/$(get_libdir)/node/${PN}/${SLOT}/node_modules/.bin:\$PATH\" electron /usr/$(get_libdir)/node/${PN}/${SLOT}/"
+src_install() {
+	electron-app_desktop_install "*" "static/Icon.png" "${PN^}" "Network" "PATH=\"/usr/$(get_libdir)/node/${PN}/${SLOT}/node_modules/.bin:\$PATH\" electron /usr/$(get_libdir)/node/${PN}/${SLOT}/"
 }

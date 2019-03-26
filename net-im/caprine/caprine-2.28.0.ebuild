@@ -28,6 +28,6 @@ electron-app_src_compile() {
 	true
 }
 
-electron-app_src_install() {
-	electron-desktop-app-install "*" "static/Icon.png" "${PN^}" "Network" "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/"
+src_install() {
+	electron-app_desktop_install "*" "static/Icon.png" "${PN^}" "Network" "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/"
 }
