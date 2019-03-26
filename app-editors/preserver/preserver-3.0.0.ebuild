@@ -22,6 +22,6 @@ IUSE=""
 
 S="${WORKDIR}/${PN}-${PV}"
 
-electron-app_src_install() {
-	electron-desktop-app-install "*" "public/images/preserver_icon.png" "${PN^}" "Utility" "cd /usr/$(get_libdir)/node/${PN}/${SLOT}/ && /usr/bin/node start-electron.js"
+src_install() {
+	electron-app_desktop_install "*" "public/images/preserver_icon.png" "${PN^}" "Utility" "cd /usr/$(get_libdir)/node/${PN}/${SLOT}/ && /usr/bin/node start-electron.js"
 }
