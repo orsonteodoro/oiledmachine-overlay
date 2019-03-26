@@ -27,6 +27,8 @@ src_unpack() {
 
 	electron-app_src_prepare_default
 
+	cd "${S}"
+
 	sed -i -e "s|\"electron\": \"=1.6.10\",|\"electron\": \"^1.6.10\",|g" package.json || die
 	sed -i -e "s|\"sass-lint\": \"=1.10.2 -v\",|\"sass-lint\": \"=1.10.2\",|g" package.json || die
 	sed -i -e 's|path: process.execPath.match|//path: process.execPath.match|' main.js || die
