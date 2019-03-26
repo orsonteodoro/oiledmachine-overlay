@@ -135,6 +135,8 @@ src_unpack() {
 
 	electron-app_src_prepare_default
 
+	cd "${S}"
+
 	patch -p1 -i "${FILESDIR}"/geeks-diary-1.0.0_beta2-vcs-item_ts-rest-parameter-trailing-comma-fix.patch || die
 
 	sed -i -e "s|\"typescript\": \"2.7.2\",|\"typescript\": \"${TS_VER}\",|g" package.json || die
@@ -195,6 +197,8 @@ src_unpack() {
 }
 
 electron-app_src_compile() {
+	cd "${S}"
+
 	export PATH="${S}/node_modules/.bin:$PATH"
 
 	# test here again. it seems bugged
