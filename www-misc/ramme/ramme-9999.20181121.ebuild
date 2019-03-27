@@ -40,15 +40,16 @@ src_unpack() {
 	# fix stall bug in sandbox
 	#sed -i -e "s|\"electron\": \"\^[0-9.]*\",||g" package.json || die
 
-	npm install yarn || die
+	npm install yarn --save-dev || die
 	pushd node_modules/micromatch/ || die
-	npm install braces@"^2.3.2" --save || die
+	npm install braces@"^2.3.2" --save-prod || die
 	popd
 
 	electron-app_fetch_deps
 
 	cd "${S}"
 
+	# fix vulnerabilities
 	pushd node_modules/guetzli/node_modules/caw || die
 	patch -p1 -i "${FILESDIR}/caw-1.2.0-replace-tunnel-agent-with-node-tunnel.patch" || die
 	cd ../..
@@ -59,7 +60,8 @@ src_unpack() {
 	cd ../..
 	npm install || die
 	popd
-	npm install sshpk@"^1.14.1" --save || die
+	# sshpk is for deep dependency of gulp-sass
+	npm install sshpk@"^1.14.1" --save-dev || die
 	npm audit || die
 
 	pushd app || die
