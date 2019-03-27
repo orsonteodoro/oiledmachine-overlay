@@ -31,6 +31,7 @@ src_unpack() {
 	cd "${S}"
 
 	sed -i -e "s|\"electron\": \"3.0.0\",|\"electron\": \"^${ELECTRON_VER}\",|" package.json || die # workaround
+	npm install electron@"^${ELECTRON_VER}" --verbose --maxsockets=${ELECTRON_APP_MAXSOCKETS} # try to fix io starvation problem (testing)
 
 	mkdir -p patches || die
 	echo "patches/*.patch eol=lf" >> .gitattributes || die
@@ -42,7 +43,20 @@ src_unpack() {
 
 	einfo "Running electron-app_fetch_deps"
 	electron-app_fetch_deps
+
+	# fix brekage
+	# breaks with @types/lodash@4.14.123
+	# works with 4.14.116
+	npm uninstall @types/lodash
+	npm install @types/lodash@"<4.14.120" || die
+
 	electron-app_src_compile
+
+	cd "${S}"
+
+	# remove from dev list to prevent bad audit
+	npm uninstall -D electron-webpack || die
+
 	electron-app_src_preinst_default
 }
 
