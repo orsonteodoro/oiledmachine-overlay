@@ -117,6 +117,8 @@ npm-secaudit_pkg_setup() {
 	export npm_config_cache="${NPM_STORE_DIR}"
 	mkdir -p "${NPM_STORE_DIR}/offline"
 
+	addwrite "${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+
 	_npm-secaudit_fix_locks
 	_npm-secaudit_fix_logs
 	_npm-secaudit_fix_cacache_access
