@@ -22,6 +22,37 @@ IUSE=""
 
 S="${WORKDIR}/${PN}-${PV}"
 
+src_unpack() {
+	default_src_unpack
+
+	electron-app_src_prepare_default
+
+	cd "${S}"
+
+	electron-app_fetch_deps
+
+	cd "${S}"
+
+	npm uninstall css-loader
+	npm install css-loader@"^0.28.1" --save-dev || die
+
+	npm uninstall webpack-dev-server
+	npm install webpack-dev-server@"^2.4.5" --save-dev || die
+
+	npm uninstall electron-builder
+	npm install electron-builder@"<20.20.0" --save-dev || die
+
+	npm uninstall electron-updater
+	npm install electron-updater@"^2.21.8" || die
+
+	electron-app_src_compile
+
+	npm uninstall webpack-dev-server -D
+	npm uninstall css-loader -D
+
+	electron-app_src_preinst_default
+}
+
 electron-app_src_compile() {
 	cd "${S}"
 
