@@ -8,9 +8,7 @@ RDEPEND="${RDEPEND}
 
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]
-	>=sys-apps/yarn-1.13.0
-	net-misc/curl[curl_ssl_gnutls]"
-
+	>=sys-apps/yarn-1.13.0"
 
 inherit eutils desktop electron-app
 
@@ -88,45 +86,39 @@ pkg_setup() {
 	if [ ! -L /usr/lib/libcurl-gnutls.so.4 ] ; then
 		# Required by nodegit in src_prepare
 		# See https://github.com/adaptlearning/adapt-cli/issues/84
-		eerror "You must \`ln -s /usr/lib/libcurl.so.4 /usr/lib/libcurl-gnutls.so.4\`"
+		eerror "You must \`ln -s /usr/lib/libcurl.so.4 /usr/lib/libcurl-gnutls.so.4\` .  It works even though curl was not compiled with gnutls."
 		die
 	fi
 }
 
 _save_packages() {
-	npm uninstall @ngtools/webpack
-	npm install @ngtools/webpack@"${NGTOOLS_WEBPACK_VER}" --save || die
-
 	# Re-installs because the audit fix breaks it.
 	# TypeScript >=3.1.1 and <3.3.0 only
 	npm uninstall typescript || die
-	npm install typescript@"${TS_VER}" --save || die
+	npm install typescript@"${TS_VER}" --save-dev || die
 
 	npm uninstall @angular/compiler-cli || die
-	npm install @angular/compiler-cli@"${ANGULAR_CLI_VER}" --save || die
+	npm install @angular/compiler-cli@"${ANGULAR_CLI_VER}" --save-dev || die
 
 	npm uninstall @angular/cli || die
-	npm install @angular/cli@"${ANGULAR_CLI_VER}" --save || die
+	npm install @angular/cli@"${ANGULAR_CLI_VER}" --save-dev || die
 
 	npm uninstall @angular-devkit/build-angular || die
-	npm install @angular-devkit/build-angular@"${BUILD_ANGULAR_VER}" --save || die
+	npm install @angular-devkit/build-angular@"${BUILD_ANGULAR_VER}" --save-dev || die
 
 	pushd node_modules/@angular-devkit/build-angular
 	npm uninstall @ngtools/webpack
-	npm install @ngtools/webpack@"${NGTOOLS_WEBPACK_VER}" --save || die
+	npm install @ngtools/webpack@"${NGTOOLS_WEBPACK_VER}" --save-prod || die
 	popd
-	npm uninstall @ngtools/webpack
-	npm install @ngtools/webpack@"${NGTOOLS_WEBPACK_VER}" --save || die
-	npm dedupe
 
 	# nodegit should be in the production section
 	npm uninstall nodegit
-	npm install nodegit@"${NODEGIT_VER}" --save || die
+	npm install nodegit@"${NODEGIT_VER}" --save-prod || die
 
 	# fix vulnerability
 	pushd node_modules/remarkable
 	npm uninstall argparse
-	npm install argparse@"^1.0.10" --save || die
+	npm install argparse@"^1.0.10" --save-prod || die
 	popd
 }
 
@@ -182,9 +174,9 @@ src_unpack() {
 
 	# ---
 
-	npm install os --save || die
-	npm install stream --save || die
-	npm install path --save || die
+	npm install os --save-dev || die
+	npm install stream --save-dev || die
+	npm install path --save-dev || die
 
 	_save_packages
 
