@@ -34,17 +34,15 @@ src_unpack() {
 
 	cd "${S}"
 
-	sed -i -e "s|\"request-promise\": \"^1.0.2\",|\"request-promise\": \"${REQUEST_PROMISE_VER}\",|" "${S}"/node_modules/instagram-private-api/package.json || die
-
 	# fix vulnerabilities
 	pushd node_modules/tough-cookie-filestore
 	npm uninstall tough-cookie
-	npm install tough-cookie@"^2.3.3" --save || die
+	npm install tough-cookie@"^2.3.3" --save-prod || die
 	npm install --lock-file
 	popd
 	pushd node_modules/instagram-private-api
 	npm uninstall request-promise
-	npm install request-promise@"${REQUEST_PROMISE_VER}" --save || die
+	npm install request-promise@"${REQUEST_PROMISE_VER}" --save-prod || die
 	popd
 	npm install --lock-file
 	npm install --lock-file # it must be done twice for some reason
