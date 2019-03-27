@@ -43,7 +43,7 @@ src_unpack() {
 	npm install electron-builder@"<20.20.0" --save-dev || die
 
 	npm uninstall electron-updater
-	npm install electron-updater@"^2.21.8" || die
+	npm install electron-updater@"^2.21.8" --save-prod || die
 
 	electron-app_src_compile
 
