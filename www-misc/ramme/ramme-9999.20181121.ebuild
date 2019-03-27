@@ -45,6 +45,10 @@ src_unpack() {
 	npm install braces@"^2.3.2" --save-prod || die
 	popd
 
+	S="${WORKDIR}/${PN}-${COMMIT}/app" \
+	electron-app_fetch_deps
+
+	S="${WORKDIR}/${PN}-${COMMIT}/" \
 	electron-app_fetch_deps
 
 	cd "${S}"
@@ -81,8 +85,6 @@ electron-app_src_compile() {
 	cd "${S}"
 
 	npm uninstall yarn || die
-	cd "${S}/app"
-	npm install electron-config || die
 }
 
 src_install() {
