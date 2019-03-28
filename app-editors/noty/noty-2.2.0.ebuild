@@ -30,16 +30,7 @@ src_unpack() {
 
 	cd "${S}"
 
-	sed -i -e "s|\"electron\": \"3.0.0\",|\"electron\": \"^${ELECTRON_VER}\",|" package.json || die # workaround
-	npm install electron@"^${ELECTRON_VER}" --verbose --maxsockets=${ELECTRON_APP_MAXSOCKETS} # try to fix io starvation problem (testing)
-
-	mkdir -p patches || die
-	echo "patches/*.patch eol=lf" >> .gitattributes || die
-	patch -p1 -i "${FILESDIR}/add-prepare-patch-package-to-package-json.patch" || die
-	cp -a "${FILESDIR}"/idb-connector-remove-gxcoff.patch patches || die
-
-	einfo "Installing patch-package"
-	npm install patch-package || die
+	npm install electron@"^${ELECTRON_VER}" --save-dev --verbose --maxsockets=${ELECTRON_APP_MAXSOCKETS} # try to fix io starvation problem (testing)
 
 	einfo "Running electron-app_fetch_deps"
 	electron-app_fetch_deps
@@ -48,7 +39,7 @@ src_unpack() {
 	# breaks with @types/lodash@4.14.123
 	# works with 4.14.116
 	npm uninstall @types/lodash
-	npm install @types/lodash@"<4.14.120" || die
+	npm install @types/lodash@"<4.14.120" --save-dev || die
 
 	electron-app_src_compile
 
