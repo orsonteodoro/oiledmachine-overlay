@@ -24,12 +24,20 @@ IUSE=""
 
 S="${WORKDIR}/${MY_PN}-${PV}"
 
-npm-secaudit_src_compile() {
+src_unpack() {
+	default_src_unpack
+
+	npm-secaudit_src_prepare_default
+	npm-secaudit_fetch_deps
+
+	cd "${S}"
+
 	# We need 3.X for gulp-help.  The audit fix updates it to 4.X and breaks it.
 	npm uninstall gulp
-	npm install gulp@"<4.0.0" || die
-	npm-secaudit_src_compile
-	npm uninstall gulp
+	npm install gulp@"<4.0.0" --save-dev || die
+
+	npm-secaudit_src_compile_default
+	npm-secaudit_src_preinst_default
 }
 
 src_install() {
