@@ -42,6 +42,10 @@ src_unpack() {
 	npm install gulp@"<4.0.0" --save-dev || die
 
 	npm-secaudit_src_compile_default
+
+	# for stopping version lock warning from audit.  production packages installed only.
+	npm uninstall gulp -D
+
 	npm-secaudit_src_preinst_default
 }
 
