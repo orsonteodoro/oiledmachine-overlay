@@ -36,6 +36,12 @@ src_unpack() {
 	npm uninstall gulp
 	npm install gulp@"<4.0.0" --save-dev || die
 
+	# fix vulnerbility
+	pushd node_modules/mocha
+	npm uninstall js-yaml
+	npm install js-yaml@"^3.13.0" --save-prod || die
+	popd
+
 	npm-secaudit_src_compile_default
 
 	npm uninstall gulp -D
