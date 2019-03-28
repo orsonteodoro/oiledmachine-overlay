@@ -37,6 +37,9 @@ src_unpack() {
 	npm install gulp@"<4.0.0" --save-dev || die
 
 	npm-secaudit_src_compile_default
+
+	npm uninstall gulp -D
+
 	npm-secaudit_src_preinst_default
 }
 

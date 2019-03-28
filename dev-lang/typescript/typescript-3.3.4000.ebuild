@@ -32,9 +32,9 @@ src_unpack() {
 
 	cd "${S}"
 
-	# We need 3.X for gulp-help.  The audit fix updates it to 4.X and breaks it.
+	# We need 4.X for gulp-help.  The audit fix updates it to 4.X and breaks it.
 	npm uninstall gulp
-	npm install gulp@"<4.0.0" --save-dev || die
+	npm install gulp@"<5.0.0" --save-dev || die
 
 	npm-secaudit_src_compile_default
 
