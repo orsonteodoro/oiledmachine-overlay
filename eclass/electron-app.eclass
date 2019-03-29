@@ -102,9 +102,14 @@ _electron-app_fix_cacache_access() {
 	if [ -d "${dt}" ] ; then
 		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
 		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
-		einfo "Restoring portage ownership on ${dt}"
-		chown portage:portage -R "${dt}"
+		# too slow to reset
+		einfo "Removing ${dt}"
+		rm -rf "${dt}"
 	fi
+	einfo "Restoring portage ownership on ${dt}"
+	addwrite "${d}"
+	mkdir -p "${dt}"
+	chown portage:portage -R "${dt}"
 }
 
 # @FUNCTION: _electron-app_fix_index-v5_access
