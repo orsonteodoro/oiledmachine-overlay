@@ -85,7 +85,7 @@ UKSM_SRC_URL="${UKSM_BASE}${UKSM_FN}"
 
 ZENTUNE_URL_BASE="https://github.com/torvalds/linux/compare/v${PATCH_ZENTUNE_VER}...zen-kernel:${PATCH_ZENTUNE_VER}/"
 ZENTUNE_REPO="zen-tune"
-ZENTUNE_FN="${ZENTUNE_REPO}-${PATCH_ZENTUNE_VER}-${PV}.diff"
+ZENTUNE_FN="${ZENTUNE_REPO}-${PATCH_ZENTUNE_VER}.diff"
 ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_REPO}.diff"
 ZENTUNE_SRC_URL="${ZENTUNE_DL_URL} -> ${ZENTUNE_FN}"
 
@@ -119,7 +119,7 @@ GENPATCHES_BASE_SRC_URL="${GENPATCHES_URL_BASE}${GENPATCHES_BASE_FN}"
 GENPATCHES_EXPERIMENTAL_SRC_URL="${GENPATCHES_URL_BASE}${GENPATCHES_EXPERIMENTAL_FN}"
 GENPATCHES_EXTRAS_SRC_URL="${GENPATCHES_URL_BASE}${GENPATCHES_EXTRAS_FN}"
 
-BFQ_FN="bfq-${PATCH_BFQ_VER}-${PV}.diff"
+BFQ_FN="bfq-${PATCH_BFQ_VER}.diff"
 BFQ_REPO="bfq-backports"
 BFQ_DL_URL="https://github.com/torvalds/linux/compare/v${PATCH_BFQ_VER}...zen-kernel:${PATCH_BFQ_VER}/${BFQ_REPO}.diff"
 BFQ_SRC_URL="${BFQ_DL_URL} -> ${BFQ_FN}"
@@ -159,7 +159,6 @@ SRC_URI="${KERNEL_URI}
 	 ${GENPATCHES_URI}
 	 ${ARCH_URI}
 	 ${UKSM_SRC_URL}
-	 ${ZENTUNE_SRC_URL}
 	 ${O3_CO_SRC_URL}
 	 ${O3_RO_SRC_URL}
 	 ${GRAYSKY_SRC_4_9_URL}
@@ -167,8 +166,6 @@ SRC_URI="${KERNEL_URI}
 	 ${CK_SRC_URL}
 	 ${PDS_SRC_URL}
 	 ${BMQ_SRC_URL}
-	 ${BFQ_SRC_URL}
-	 ${ZENTUNE_SRC_URL}
 	 ${GENPATCHES_BASE_SRC_URL}
 	 ${GENPATCHES_EXPERIMENTAL_SRC_URL}
 	 ${GENPATCHES_EXTRAS_SRC_URL}
@@ -221,6 +218,14 @@ function remove_amd_fixes() {
 function apply_uksm() {
 	_tpatch "${PATCH_OPS} -N" "${DISTDIR}/${UKSM_FN}"
 	_dpatch "${PATCH_OPS}" "${FILESDIR}/uksm-4.19-invalidate-range-linux-5.0.6.patch"
+}
+
+function apply_bfq() {
+	_dpatch "${PATCH_OPS} -N" "${T}/${BFQ_FN}"
+}
+
+function apply_zentune() {
+	_dpatch "${PATCH_OPS} -N" "${T}/${ZENTUNE_FN}"
 }
 
 function apply_genpatch_base() {
@@ -344,6 +349,16 @@ function apply_tresor() {
 	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
 }
 
+function fetch_bfq() {
+	einfo "Fetching bfq patch from live source..."
+	wget -O "${T}/${BFQ_FN}" "${BFQ_DL_URL}" || die
+}
+
+function fetch_zentune() {
+	einfo "Fetching zentune patch from live source..."
+	wget -O "${T}/${ZENTUNE_FN}" "${ZENTUNE_DL_URL}" || die
+}
+
 function fetch_amd() {
 	einfo "Fetching patch please wait.  It may take hours."
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
@@ -384,9 +399,9 @@ function fetch_amd() {
 }
 
 src_unpack() {
-	if use zentune ; then
-		UNIPATCH_LIST+=" ${DISTDIR}/${ZENTUNE_FN}"
-	fi
+	#if use zentune ; then
+	#	UNIPATCH_LIST+=" ${DISTDIR}/${ZENTUNE_FN}"
+	#fi
 	#if use uksm ; then
 	#	UNIPATCH_LIST+=" ${DISTDIR}/${UKSM_FN}"
 	#fi
@@ -402,16 +417,26 @@ src_unpack() {
 			UNIPATCH_LIST+=" ${DISTDIR}/${GRAYSKY_DL_4_9_FN}"
 		fi
 	fi
-	if use bfq ; then
-		UNIPATCH_LIST+=" ${DISTDIR}/${BFQ_FN}"
-	fi
+	#if use bfq ; then
+	#	UNIPATCH_LIST+=" ${DISTDIR}/${BFQ_FN}"
+	#fi
 
 	kernel-2_src_unpack
 
 	cd "${S}"
 
+	if use zentune ; then
+		fetch_zentune
+		apply_zentune
+	fi
+
 	if use uksm ; then
-		apply_uksm
+		fetch_uksm
+	fi
+
+	if use bfq ; then
+		fetch_bfq
+		apply_bfq
 	fi
 
 	if use muqss ; then
