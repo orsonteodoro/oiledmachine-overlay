@@ -84,8 +84,9 @@ UKSM_FN="uksm-${PATCH_UKSM_VER}.patch"
 UKSM_SRC_URL="${UKSM_BASE}${UKSM_FN}"
 
 ZENTUNE_URL_BASE="https://github.com/torvalds/linux/compare/v${PATCH_ZENTUNE_VER}...zen-kernel:${PATCH_ZENTUNE_VER}/"
-ZENTUNE_FN="zen-tune.diff"
-ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_FN}"
+ZENTUNE_REPO="zen-tune"
+ZENTUNE_FN="${ZENTUNE_REPO}-${PATCH_ZENTUNE_VER}-${PV}.diff"
+ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_REPO}.diff"
 ZENTUNE_SRC_URL="${ZENTUNE_DL_URL} -> ${ZENTUNE_FN}"
 
 O3_SRC_URL="https://github.com/torvalds/linux/commit/"
