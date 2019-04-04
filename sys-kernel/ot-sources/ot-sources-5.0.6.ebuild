@@ -366,9 +366,9 @@ function fetch_amd() {
 	d="${distdir}/ot-sources-src/linux-${AMD_TAG}"
 	b="${distdir}/ot-sources-src"
 	addwrite "${b}"
-	mkdir -p "${b}"
 	cd "${b}"
 	if [[ ! -d "${d}" ]] ; then
+		mkdir -p "${d}"
 		einfo "Cloning AMD project"
 		git clone -b ${AMD_TAG} ${AMDREPO_URL} "${d}"
 	else
