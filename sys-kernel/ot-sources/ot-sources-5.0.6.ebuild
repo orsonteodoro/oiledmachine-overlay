@@ -53,7 +53,7 @@ AMD_TAG="amd-staging-drm-next"
 AMD_COMMIT_LAST_STABLE="fa16d1eb6a78b265480bd4c2b8739c1ea261cdd8" # amd-18.50 branch latest commit equivalent
 
 IUSE="-zentune +o3 muqss +pds +bfq bmq +amd amd-staging-drm-next cfs +graysky2 uksm tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs"
-REQUIRED_USE="!uksm ^^ ( muqss pds cfs bmq ) tresor_sysfs? ( || ( tresor_i686 tresor_x86_64 tresor_aesni ) ) tresor? ( ^^ ( tresor_i686 tresor_x86_64 tresor_aesni ) ) tresor_i686? ( tresor ) tresor_x86_64? ( tresor ) tresor_aesni? ( tresor ) amd-staging-drm-next? ( amd )"
+REQUIRED_USE="^^ ( muqss pds cfs bmq ) tresor_sysfs? ( || ( tresor_i686 tresor_x86_64 tresor_aesni ) ) tresor? ( ^^ ( tresor_i686 tresor_x86_64 tresor_aesni ) ) tresor_i686? ( tresor ) tresor_x86_64? ( tresor ) tresor_aesni? ( tresor ) amd-staging-drm-next? ( amd )"
 
 #K_WANT_GENPATCHES="base extras experimental"
 K_SECURITY_UNSUPPORTED="1"
@@ -215,6 +215,10 @@ function _tpatch() {
 
 function remove_amd_fixes() {
 	local d="$1"
+}
+
+function apply_uksm() {
+	_tpatch "${PATCH_OPS} -N" "${DISTDIR}/${UKSM_FN}"
 }
 
 function apply_genpatch_base() {
@@ -381,9 +385,9 @@ src_unpack() {
 	if use zentune ; then
 		UNIPATCH_LIST+=" ${DISTDIR}/${ZENTUNE_FN}"
 	fi
-	if use uksm ; then
-		UNIPATCH_LIST+=" ${DISTDIR}/${UKSM_FN}"
-	fi
+	#if use uksm ; then
+	#	UNIPATCH_LIST+=" ${DISTDIR}/${UKSM_FN}"
+	#fi
 	if use muqss ; then
 		UNIPATCH_LIST+=" ${DISTDIR}/${CK_FN}"
 	fi
@@ -403,6 +407,10 @@ src_unpack() {
 	kernel-2_src_unpack
 
 	cd "${S}"
+
+	if use uksm ; then
+		apply_uksm
+	fi
 
 	if use muqss ; then
 		#_dpatch "${PATCH_OPS}" "${FILESDIR}/MuQSS-4.18-missing-se-member.patch"
