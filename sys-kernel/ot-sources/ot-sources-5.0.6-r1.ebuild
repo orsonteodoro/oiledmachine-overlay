@@ -431,7 +431,7 @@ src_unpack() {
 	fi
 
 	if use uksm ; then
-		fetch_uksm
+		apply_uksm
 	fi
 
 	if use bfq ; then
