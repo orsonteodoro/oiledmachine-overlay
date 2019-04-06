@@ -189,8 +189,7 @@ pkg_setup() {
 	fi
 
 	if use bfq ; then
-		ewarn "The bfq patch applied may cause a kernel panic if it doesn't turn on the feature"
-		ewarn "\"SCSI: use blk-mq I/O path by default\" (CONFIG_SCSI_MQ_DEFAULT) or uses another IO scheduler other than BFQ."
+		ewarn "The bfq patch applied may cause a kernel panic if uses another IO scheduler other than BFQ."
 	fi
 
 	#use deblob && python-any-r1_pkg_setup
