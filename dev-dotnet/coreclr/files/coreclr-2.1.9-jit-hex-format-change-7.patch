@@ -1,0 +1,11 @@
+--- a/coreclr-2.1.9/src/vm/amd64/virtualcallstubamd64.S.orig	2019-04-01 22:12:23.834255509 -0700
++++ b/coreclr-2.1.9/src/vm/amd64/virtualcallstubamd64.S	2019-04-01 22:50:01.748741206 -0700
+@@ -71,7 +71,7 @@ Success_RWCLAS:
+         PREPARE_EXTERNAL_VAR CHAIN_SUCCESS_COUNTER, rdx
+         sub    qword ptr [rdx],1 // decrement success counter 
+         jl     Promote_RWCLAS
+-        mov    rax, [rax+10h]    // get the ImplTarget
++        mov    rax, [rax+0x10]    // get the ImplTarget
+         pop    rdx
+         jmp    rax
+         

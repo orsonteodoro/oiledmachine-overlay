@@ -1,0 +1,33 @@
+--- a/coreclr-2.1.9/src/vm/amd64/jithelpers_fast.S.orig	2019-04-01 19:52:07.187780574 -0700
++++ b/coreclr-2.1.9/src/vm/amd64/jithelpers_fast.S	2019-04-01 20:44:07.332971128 -0700
+@@ -334,8 +334,8 @@ LEAF_ENTRY JIT_ByRefWriteBarrier, _TEXT
+ 
+         // move current rdi value into rcx and then increment the pointers
+         mov     rcx, rdi
+-        add     rsi, 8h
+-        add     rdi, 8h
++        add     rsi, 0x08
++        add     rdi, 0x08
+ 
+         // Check if we need to update the card table
+         // Calc pCardByte
+@@ -383,8 +383,8 @@ LEAF_ENTRY JIT_ByRefWriteBarrier, _TEXT
+ #endif
+     Exit_ByRefWriteBarrier:
+         // Increment the pointers before leaving
+-        add     rdi, 8h
+-        add     rsi, 8h
++        add     rdi, 0x08
++        add     rsi, 0x08
+         ret
+ LEAF_END JIT_ByRefWriteBarrier, _TEXT
+ 
+@@ -402,7 +402,7 @@ LEAF_ENTRY JIT_Stelem_Ref, _TEXT
+         or      esi, esi
+ 
+         // check that index is in bounds
+-        cmp     esi, dword ptr [rdi + OFFSETOF__PtrArray__m_NumComponents] // 8h -> array size offset
++        cmp     esi, dword ptr [rdi + OFFSETOF__PtrArray__m_NumComponents] // 0x08 -> array size offset
+         jae     LOCAL_LABEL(ThrowIndexOutOfRangeException)
+ 
+         // r10 = Array MT

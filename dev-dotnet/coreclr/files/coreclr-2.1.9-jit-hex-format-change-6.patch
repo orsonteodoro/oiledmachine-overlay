@@ -1,0 +1,42 @@
+--- a/coreclr-2.1.9/src/debug/ee/amd64/dbghelpers.S.orig	2019-02-13 13:18:25.000000000 -0800
++++ b/coreclr-2.1.9/src/debug/ee/amd64/dbghelpers.S	2019-04-01 21:08:07.640740413 -0700
+@@ -55,7 +55,7 @@ NESTED_ENTRY ExceptionHijack, _TEXT, Unh
+         alloc_stack 0x20
+         END_PROLOGUE
+ 
+-        // We used to do an "alloc_stack 0h" because the stack has been allocated for us
++        // We used to do an "alloc_stack 0x00" because the stack has been allocated for us
+         // by the OOP hijacking routine.  Our arguments have also been pushed onto the 
+         // stack for us.  However, the Orcas compilers don't like a 0-sized frame, so 
+         // we need to allocate something here and then just copy the stack arguments to 
+@@ -65,14 +65,14 @@ NESTED_ENTRY ExceptionHijack, _TEXT, Unh
+         // its arguments on the stack. In x64, it gets its arguments in
+         // registers (set up for us by DacDbiInterfaceImpl::Hijack),
+         // and this stack space may be reused.
+-        mov     rax, [rsp + 20h]
++        mov     rax, [rsp + 0x20]
+         mov     [rsp], rax
+-        mov     rax, [rsp + 28h]
+-        mov     [rsp + 8h], rax
+-        mov     rax, [rsp + 30h]
+-        mov     [rsp + 10h], rax
+-        mov     rax, [rsp + 38h]
+-        mov     [rsp + 18h], rax
++        mov     rax, [rsp + 0x28]
++        mov     [rsp + 0x08], rax
++        mov     rax, [rsp + 0x30]
++        mov     [rsp + 0x10], rax
++        mov     rax, [rsp + 0x38]
++        mov     [rsp + 0x18], rax
+         
+         // DD Hijack primitive already set the stack. So just make the call now.
+         call    C_FUNC(ExceptionHijackWorker)
+@@ -93,7 +93,7 @@ NESTED_ENTRY ExceptionHijack, _TEXT, Unh
+         //
+         // epilogue
+         //
+-        add     rsp, 20h
++        add     rsp, 0x20
+         TAILJMP_RAX
+ 
+ // Put a label here to tell the debugger where the end of this function is.
