@@ -1,0 +1,11 @@
+--- a/src/Servers/Kestrel/perf/Kestrel.Performance/Microsoft.AspNetCore.Server.Kestrel.Performance.csproj.orig	2019-04-07 16:36:31.833844955 -0700
++++ b/src/Servers/Kestrel/perf/Kestrel.Performance/Microsoft.AspNetCore.Server.Kestrel.Performance.csproj	2019-04-07 16:37:38.730427901 -0700
+@@ -8,7 +8,7 @@
+     <IsPackable>false</IsPackable>
+   </PropertyGroup>
+ 
+-  <ItemGroup>
++  <ItemGroup Condition="'$(CompileOnly)' == 'false'">
+     <Compile Include="$(KestrelSharedSourceRoot)test\TestApplicationErrorLogger.cs" />
+     <Compile Include="$(KestrelSharedSourceRoot)test\TestHttp1Connection.cs" />
+     <Compile Include="$(KestrelSharedSourceRoot)test\TestKestrelTrace.cs" />
