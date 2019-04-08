@@ -1,0 +1,9 @@
+# i'm stil working on them 20190407
+dev-dotnet/core
+dev-dotnet/coreclr
+dev-dotnet/corefx
+dev-dotnet/aspnetcore
+dev-dotnet/core-setup
+dev-dotnet/dotnetcore-sdk
+dev-dotnet/cli-tools
+
