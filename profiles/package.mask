@@ -7,3 +7,8 @@ dev-dotnet/core-setup
 dev-dotnet/dotnetcore-sdk
 dev-dotnet/cli-tools
 
+# old package to be remove soon by dev-dotnet/cli-tools and dev-dotnet/dotnetcore-sdk (non binary version)
+dev-dotnet/dotnet-cli
+
+# monodevelop will be upgraded soon to monodevelop-7.6.9.22 but i need to fix dev-dotnet/dotnetcore-sdk 2.x
+dev-util/monodevelop
