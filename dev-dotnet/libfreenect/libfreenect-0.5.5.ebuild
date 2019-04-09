@@ -1,15 +1,12 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
 
 EAPI="6"
 
-
 inherit dotnet multilib gac
 
-
-DESCRIPTION="libfreenect C# bindings"
-HOMEPAGE="https://github.com/OpenKinect/${PN}"
+DESCRIPTION="Drivers and libraries for the Xbox Kinect device on Windows, Linux, and OS X"
+HOMEPAGE="https://github.com/OpenKinect/libfreenect"
 
 LICENSE="|| ( Apache-2.0 GPL-2 )"
 SLOT="0"
@@ -59,7 +56,7 @@ src_install() {
                 FW_UPPER=${x:3:1}
                 FW_LOWER=${x:4:1}
                 egacinstall "${S}/wrappers/csharp/bin/freenectdotnet.dll"
-               	insinto "/usr/$(get_libdir)/mono/${PN}"
+                insinto "/usr/$(get_libdir)/mono/${PN}"
 		use developer && doins "${S}/wrappers/csharp/bin/freenectdotnet.dll.mdb"
         done
 
