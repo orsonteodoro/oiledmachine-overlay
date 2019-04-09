@@ -34,7 +34,6 @@ dev-dotnet/aforgedotnet
 dev-dotnet/aspnetcore
 dev-dotnet/assimp-net
 dev-dotnet/atitextureconverter
-dev-dotnet/BulletSharpPInvoke
 dev-dotnet/castle-core
 dev-dotnet/cecil
 dev-dotnet/clangsharp
@@ -123,19 +122,15 @@ games-engines/urho3d-web
 sys-fs/jmtpfs
 sys-fs/mtpfs
 sys-process/psdoom-ng
-x11-base/xorg-drivers-1.19-r1
-x11-base/xorg-server-1.15.2-r4
-x11-base/xorg-server-1.16.4
-x11-base/xorg-server-1.17.1-r1
-x11-base/xorg-server-1.17.4
-#x11-base/xorg-server-1.19.6
-#x11-drivers/amdgpu-pro-18.10.572953
-#x11-drivers/amdgpu-pro-18.50.708488
-#x11-drivers/amdgpu-pro-16.40.348864
-x11-drivers/ati-drivers-15.11
-x11-drivers/ati-drivers-15.12-r667
-x11-drivers/ati-drivers-15.9-r1
-x11-drivers/xf86-input-evdev-2.10.3
+=x11-base/xorg-drivers-1.19-r1
+=x11-base/xorg-server-1.15.2-r4
+=x11-base/xorg-server-1.16.4
+=x11-base/xorg-server-1.17.1-r1
+=x11-base/xorg-server-1.17.4
+=x11-drivers/ati-drivers-15.11
+=x11-drivers/ati-drivers-15.12-r667
+=x11-drivers/ati-drivers-15.9-r1
+=x11-drivers/xf86-input-evdev-2.10.3
 x11-libs/amd-adl-sdk
 www-client/casperjs
 www-client/chromium
@@ -237,12 +232,10 @@ media-gfx/mojoshader
 media-gfx/nvidia-texture-tools
 media-libs/freeimage
 media-libs/libcaca
-media-libs/libcaesium
 media-libs/libjpeg-turbo
 media-libs/libomxil-bellagio
 media-libs/theorafile
 media-libs/theoraplay
-media-libs/vips
 media-plugins/bitlbee-facebook
 media-plugins/gimp-dds
 media-plugins/gimp-webp
@@ -275,11 +268,11 @@ sys-libs/libcpuid
 virtual/rust
 virtual/setiathome
 www-servers/civetweb
-x11-base/xorg-drivers
 x11-drivers/xf86-input-evdev
 x11-misc/emoji-keyboard
 
 # mask not tested
+dev-dotnet/BulletSharpPInvoke
 #sci-misc/astropulse-art
 sci-misc/astropulse-cpu
 sci-misc/astropulse-gpu
@@ -296,6 +289,7 @@ net-misc/boinc-bfgminer-gpu
 www-misc/ddgr
 www-misc/rtv
 www-misc/rainbowstream
+media-libs/vips
 
 # updated and semi tested
 # i did not test the x264/x265 acceleration
@@ -326,6 +320,7 @@ net-im/caprine
 #media-fonts/noto-color-emoji-bin
 #media-fonts/noto-color-emoji-config
 #media-gfx/caesiumclt
+#media-libs/libcaesium
 #media-libs/mesa
 #media-libs/mozjpeg
 #media-sound/puddletag
@@ -344,3 +339,8 @@ net-im/caprine
 #x11-drivers/ati-drivers
 #x11-wm/dwm
 #x11-wm/xpra
+#x11-base/xorg-drivers
+#x11-base/xorg-server-1.19.6
+#x11-drivers/amdgpu-pro-18.10.572953
+#x11-drivers/amdgpu-pro-18.50.708488
+#x11-drivers/amdgpu-pro-16.40.348864
