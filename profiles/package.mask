@@ -31,17 +31,11 @@ app-emacs/seq
 app-emacs/shut-up
 app-emulation/genymotion
 dev-dotnet/aforgedotnet
-dev-dotnet/aspnetcore
 dev-dotnet/assimp-net
 dev-dotnet/atitextureconverter
 dev-dotnet/castle-core
 dev-dotnet/cecil
 dev-dotnet/clangsharp
-dev-dotnet/cli-tools
-dev-dotnet/core
-dev-dotnet/coreclr
-dev-dotnet/corefx
-dev-dotnet/core-setup
 dev-dotnet/cppnet
 dev-dotnet/cppsharp
 dev-dotnet/csquery
@@ -268,7 +262,6 @@ sys-libs/libcpuid
 virtual/rust
 virtual/setiathome
 www-servers/civetweb
-x11-drivers/xf86-input-evdev
 x11-misc/emoji-keyboard
 
 # mask not tested
@@ -344,3 +337,4 @@ net-im/caprine
 #x11-drivers/amdgpu-pro-18.10.572953
 #x11-drivers/amdgpu-pro-18.50.708488
 #x11-drivers/amdgpu-pro-16.40.348864
+#x11-drivers/xf86-input-evdev
