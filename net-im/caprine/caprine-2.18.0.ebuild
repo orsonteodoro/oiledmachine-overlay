@@ -11,8 +11,6 @@ DEPEND="${RDEPEND}
 
 inherit eutils desktop electron-app
 
-COMMIT="ee922919f432f0d22b56b47a9d5d10a875184811"
-
 DESCRIPTION="Elegant Facebook Messenger desktop app"
 HOMEPAGE="https://github.com/sindresorhus/caprine"
 SRC_URI="https://github.com/sindresorhus/caprine/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz"
