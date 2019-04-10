@@ -294,6 +294,9 @@ www-misc/socli
 # masked due to being updated too fast, or dependencies requirements are faster than stable
 net-im/caprine
 
+# mask old drivers, potential security risks
+=x11-drivers/amdgpu-pro-16.40.348864
+
 # updated and tested
 #app-editors/epic-journal
 #app-editors/noty
@@ -333,8 +336,7 @@ net-im/caprine
 #x11-wm/dwm
 #x11-wm/xpra
 #x11-base/xorg-drivers
-#x11-base/xorg-server-1.19.6
-#x11-drivers/amdgpu-pro-18.10.572953
-#x11-drivers/amdgpu-pro-18.50.708488
-#x11-drivers/amdgpu-pro-16.40.348864
+#=x11-base/xorg-server-1.19.6
+#=x11-drivers/amdgpu-pro-18.10.572953
+#=x11-drivers/amdgpu-pro-18.50.708488
 #x11-drivers/xf86-input-evdev
