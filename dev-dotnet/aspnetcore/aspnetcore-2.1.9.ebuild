@@ -134,11 +134,21 @@ _src_prepare() {
 	patch -p1 -i "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-1.patch" || die
 	patch -p1 -i "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-2.patch" || die
 	patch -p1 -i "${FILESDIR}/aspnetcore-2.1.9-skip-tests-1.patch" || die
-	patch -p1 -i "${FILESDIR}/aspnetcore-2.1.9-skip-tests-2.patch" || die
-	patch -p1 -i "${FILESDIR}/aspnetcore-2.1.9-skip-tests-3.patch" || die
-	#patch -p1 -i "${FILESDIR}/aspnetcore-2.1.9-skip-tests-4.patch" || die
 	rm src/Razor/CodeAnalysis.Razor/src/TextChangeExtensions.cs || die # Missing TextChange
-	rm -rf $(find . -iname "test" -o -iname "tests" -o -iname "testassets" -o -iname "*.Tests" -type d)
+
+	mv src/SignalR "${T}" || die
+	mv src/Servers/Kestrel/shared/test "${T}"/test.1 || die
+	mv src/DataProtection/shared/test "${T}"/test.2 || die
+	mv src/Identity "${T}" || die
+	mv modules/EntityFrameworkCore "${T}" || die
+	mv src/Templating/test "${T}"/test.3 || die
+	rm -rf $(find . -iname "test" -o -iname "tests" -o -iname "testassets" -o -iname "*.Tests" -o -iname "sample" -o -iname "samples" -type d)
+	mv "${T}"/SignalR src || die
+	mv "${T}"/test.1 src/Servers/Kestrel/shared/test || die
+	mv "${T}"/test.2 src/DataProtection/shared/test || die
+	mv "${T}"/Identity src || die
+	mv "${T}"/EntityFrameworkCore modules || die
+	mv "${T}"/test.3 src/Templating/test || die
 }
 
 _src_compile() {
@@ -147,7 +157,7 @@ _src_compile() {
 	local myarch=""
 
 	# for smoother multitasking (default 50) and to prevent IO starvation
-	export npm_config_maxsockets=5
+	export npm_config_maxsockets=1
 
 	if use debug ; then
 		mydebug="debug"
@@ -187,13 +197,17 @@ _src_compile() {
 	fi
 }
 
+# See https://docs.microsoft.com/en-us/dotnet/core/build/distribution-packaging
 src_install() {
 	local dest="/opt/dotnet_cli"
 	local ddest="${D}/${dest}"
-	local ddest_core="${ddest}/shared/Microsoft.NETCore.App"
-	local ddest_sdk="${D}/opt/dotnet_core/sdk/${PV}/"
+	local ddest_aspnetcoreall="${ddest}/shared/Microsoft.AspNetCore.All/${PV}/"
+	local ddest_aspnetcoreapp="${ddest}/shared/Microsoft.AspNetCore.App/${PV}/"
 
-	dodir "${ddest_sdk}"
+	dodir "${ddest_aspnetcoreall}"
+	cp -a "${ASPNETCORE_S}/build/tasks/bin/publish"/* "${ddest_aspnetcoreall}"
 
-	cp -a "${ASPNETCORE_S}/bin"/* "${ddest_sdk}/" || die
+	# todo
+	dodir "${ddest_aspnetcoreapp}"
+	cp -a "${ASPNETCORE_S}/bin"/* "${ddest_aspnetcoreapp}/" || die
 }
