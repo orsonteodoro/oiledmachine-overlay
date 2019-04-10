@@ -39,7 +39,7 @@ NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
 NPM_SECAUDIT_REG_PATH=""
 NPM_SECAUDIT_PRUNE=${NPM_SECAUDIT_PRUNE:="1"}
 NPM_SECAUDIT_INSTALL_AUDIT=${NPM_SECAUDIT_INSTALL_AUDIT:="1"}
-NPM_MAXSOCKETS=${NPM_MAXSOCKETS:="5"} # Set this in your make.conf to control number of HTTP requests.  50 is npm default but it is too high.
+NPM_MAXSOCKETS=${NPM_MAXSOCKETS:="1"} # Set this in your make.conf to control number of HTTP requests.  50 is npm default but it is too high.
 
 # @FUNCTION: _npm-secaudit_fix_locks
 # @DESCRIPTION:

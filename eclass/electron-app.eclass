@@ -39,7 +39,7 @@ ELECTRON_APP_REG_PATH=""
 ELECTRON_APP_MODE=${ELECTRON_APP_MODE:="npm"} # can be npm, yarn
 ELECTRON_APP_PRUNE=${ELECTRON_APP_PRUNE:="1"}
 ELECTRON_APP_INSTALL_AUDIT=${ELECTRON_APP_INSTALL_AUDIT:="1"}
-ELECTRON_APP_MAXSOCKETS=${ELECTRON_APP_MAXSOCKETS:="5"} # Set this in your make.conf to control number of HTTP requests.  50 is npm default but it is too high.
+ELECTRON_APP_MAXSOCKETS=${ELECTRON_APP_MAXSOCKETS:="1"} # Set this in your make.conf to control number of HTTP requests.  50 is npm default but it is too high.
 
 # @FUNCTION: _electron-app_fix_locks
 # @DESCRIPTION:
