@@ -142,8 +142,7 @@ _src_compile() {
 src_install() {
 	local dest="/opt/dotnet_cli"
 	local ddest="${D}/${dest}"
-	local ddest_core="${ddest}/shared/Microsoft.NETCore.App"
-	local ddest_sdk="${D}/opt/dotnet_core/sdk/${PV}/"
+	local ddest_core="${ddest}/shared/Microsoft.NETCore.App/${PV}"
 	local mydebug="release"
 	local myarch=""
 
@@ -161,7 +160,14 @@ src_install() {
 		myarch="arm"
 	fi
 
-	dodir "${dest}"
+	dodir "${ddest_core}"
 
-	cp -a "${CORECLR_S}/bin/Product/Linux.${myarch}.${mydebug^}"/* "${ddest_core}/${PV}/" || die
+	local old_dotglob=$(shopt dotglob | cut -f 2)
+	shopt -s dotglob # copy hidden files
+	cp -a "${CORECLR_S}/bin/Product/Linux.${myarch}.${mydebug^}"/* "${ddest_core}"/ || die
+	if [[ "${old_dotglob}" == "on" ]] ; then
+		shopt -s dotglob
+	else
+		shopt -u dotglob
+	fi
 }
