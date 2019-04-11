@@ -142,6 +142,7 @@ _src_compile() {
 src_install() {
 	local dest="/opt/dotnet_cli"
 	local ddest="${D}/${dest}"
+	local dest_core="${dest}/shared/Microsoft.NETCore.App/${PV}"
 	local ddest_core="${ddest}/shared/Microsoft.NETCore.App/${PV}"
 	local mydebug="release"
 	local myarch=""
@@ -160,7 +161,7 @@ src_install() {
 		myarch="arm"
 	fi
 
-	dodir "${ddest_core}"
+	dodir "${dest_core}"
 
 	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
