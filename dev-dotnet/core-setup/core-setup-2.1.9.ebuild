@@ -108,26 +108,41 @@ _src_compile() {
 
 	# force 1 since it slows down the pc
 	local numproc="1"
-	buildargs_coresetup+=" --numproc ${numproc}"
+	export ProcessorCount="${numproc}"
 
 	if ! use tests ; then
 		buildargs_coresetup+=" -SkipTests=true"
 	else
-		buildargs_coresetup+=" -SkipTests=false"
+		buildargs_coresetup+=" -SkipTests=true"
 	fi
 
 	einfo "Building Core-Setup"
 	cd "${CORESETUP_S}"
-	./build.sh --arch ${myarch} --configuration ${mydebug^} ${buildargs_coresetup} || die
+	./build.sh -Platform=${myarch} -ConfigurationGroup=${mydebug^} ${buildargs_coresetup} || die
 }
 
 src_install() {
 	local dest="/opt/dotnet_cli"
 	local ddest="${D}/${dest}"
-	local ddest_core="${ddest}/shared/Microsoft.NETCore.App"
-	local ddest_sdk="${D}/opt/dotnet_core/sdk/${PV}/"
+	local dest_core="${dest}/shared/Microsoft.NETCore.App/${PV}"
+	local ddest_core="${ddest}/shared/Microsoft.NETCore.App/${PV}"
+	local mydebug="release"
+	local myarch=""
 
-	dodir "${dest}"
-	# TODO
-	cp -a "${CORESETUP_S}/"/* "${ddest_core}/${PV}/" || die
+	if use debug ; then
+		mydebug="debug"
+	fi
+
+	if [[ ${ARCH} =~ (amd64) ]]; then
+		myarch="x64"
+	elif [[ ${ARCH} =~ (x86) ]] ; then
+		myarch="x32"
+	elif [[ ${ARCH} =~ (arm64) ]] ; then
+		myarch="arm64"
+	elif [[ ${ARCH} =~ (arm) ]] ; then
+		myarch="arm"
+	fi
+
+	dodir "${dest_core}"
+	cp -a "${CORESETUP_S}/Bin/linux-${myarch}.${mydebug^}"/* "${ddest_core}"/ || die
 }
