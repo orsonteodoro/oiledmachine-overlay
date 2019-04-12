@@ -104,7 +104,6 @@ dev-embedded/diligent-adept2-runtime
 dev-embedded/diligent-plugin-xilinx
 dev-embedded/modelsim
 dev-embedded/xilinx-ise-webpack
-dev-util/amdapp
 games-engines/enigma
 games-engines/fna
 games-engines/godot
@@ -124,7 +123,6 @@ sys-process/psdoom-ng
 =x11-drivers/ati-drivers-15.12-r667
 =x11-drivers/ati-drivers-15.9-r1
 =x11-drivers/xf86-input-evdev-2.10.3
-x11-libs/amd-adl-sdk
 www-client/casperjs
 www-client/chromium
 www-client/firefox
@@ -235,7 +233,6 @@ media-plugins/gimp-webp
 media-sound/lastfm
 media-sound/lastfmsubmitd
 media-sound/mplayer-lastfm-scrobbler
-media-sound/shazam-on-linux
 media-sound/w3crapcli-lastfm
 media-video/epcam
 media-video/mplayer
@@ -262,6 +259,9 @@ virtual/rust
 virtual/setiathome
 www-servers/civetweb
 x11-misc/emoji-keyboard
+
+# mask no updates since 2019
+media-sound/shazam-on-linux
 
 # mask not tested
 dev-dotnet/nuget
@@ -295,6 +295,8 @@ net-im/caprine
 
 # mask old drivers, potential security risks
 =x11-drivers/amdgpu-pro-16.40.348864
+dev-util/amdapp
+x11-libs/amd-adl-sdk
 
 # updated and tested
 #app-editors/epic-journal
