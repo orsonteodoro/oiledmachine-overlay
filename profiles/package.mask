@@ -119,9 +119,6 @@ sys-process/psdoom-ng
 =x11-base/xorg-server-1.16.4
 =x11-base/xorg-server-1.17.1-r1
 =x11-base/xorg-server-1.17.4
-=x11-drivers/ati-drivers-15.11
-=x11-drivers/ati-drivers-15.12-r667
-=x11-drivers/ati-drivers-15.9-r1
 =x11-drivers/xf86-input-evdev-2.10.3
 www-client/casperjs
 www-client/chromium
@@ -297,6 +294,9 @@ net-im/caprine
 =x11-drivers/amdgpu-pro-16.40.348864
 dev-util/amdapp
 x11-libs/amd-adl-sdk
+=x11-drivers/ati-drivers-15.11
+=x11-drivers/ati-drivers-15.12-r667
+=x11-drivers/ati-drivers-15.9-r1
 
 # updated and tested
 #app-editors/epic-journal
