@@ -76,7 +76,6 @@ dev-dotnet/ndesk-options
 dev-dotnet/newtonsoft-json
 dev-dotnet/NLog
 dev-dotnet/nsubstitute
-dev-dotnet/nuget
 dev-dotnet/nvorbis
 dev-dotnet/omnisharp-roslyn
 dev-dotnet/omnisharp-server
@@ -265,6 +264,7 @@ www-servers/civetweb
 x11-misc/emoji-keyboard
 
 # mask not tested
+dev-dotnet/nuget
 dev-dotnet/BulletSharpPInvoke
 #sci-misc/astropulse-art
 sci-misc/astropulse-cpu
@@ -279,7 +279,6 @@ sci-misc/setiathome-gpu
 #sci-misc/setiathome-updater
 net-misc/boinc-bfgminer-cpu
 net-misc/boinc-bfgminer-gpu
-www-misc/ddgr
 www-misc/rtv
 www-misc/rainbowstream
 media-libs/vips
@@ -326,6 +325,7 @@ net-im/caprine
 #sys-kernel/genkernel
 #sys-kernel/ot-sources
 #sys-power/cpupower-gui
+#www-misc/ddgr
 #www-misc/gitify
 #www-misc/googler
 #www-misc/nativefier
