@@ -36,7 +36,8 @@ DEPEND="${RDEPEND}
         media-gfx/imagemagick
         >=dev-python/fonttools-3.15.1[${PYTHON_USEDEP}]
         optipng? ( media-gfx/optipng )
-	zopflipng? ( app-arch/zopfli )"
+	zopflipng? ( app-arch/zopfli )
+	media-gfx/pngquant"
 
 FONT_SUFFIX="ttf"
 FONT_CONF=( )
