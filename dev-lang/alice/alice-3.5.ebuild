@@ -6,7 +6,6 @@ inherit eutils check-reqs
 
 DESCRIPTION="Alice"
 HOMEPAGE="http://www.alice.org"
-#SRC_URI="http://www.alice.org/downloads/installers/${PKG}"
 PKG="Alice3_unix_${PV//./_}.sh"
 SRC_URI="http://www.alice.org/wp-content/uploads/2019/04/${PKG}"
 
