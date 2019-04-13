@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -7,20 +7,22 @@ inherit eutils check-reqs
 DESCRIPTION="Alice"
 HOMEPAGE="http://www.alice.org"
 MY_V="${PV:0:3}"
-SRC_URI="http://www.alice.org/downloads/${MY_V}/Alice${MY_V//./_}e.tar.gz"
+LANGS="en es"
+SRC_URI="linguas_en? ( minimal? ( http://www.alice.org/wp-content/uploads/2017/05/Alice${MY_V//./_}c.tar )
+		       !minimal? ( http://www.alice.org/wp-content/uploads/2017/05/Alice${MY_V//./_}e.tar  ) )
+	 linguas_es? ( http://www.alice.org/wp-content/uploads/2017/05/Alice${MY_V//./_}s.tar.gz )"
 
 LICENSE="ALICE2"
 SLOT="2"
 KEYWORDS="~amd64 ~x86"
-IUSE=""
+IUSE="minimal linguas_en linguas_es"
 
 RDEPEND="|| ( virtual/jre virtual/jdk  )"
 DEPEND="${RDEPEND}"
+REQUIRED_USE="^^ ( linguas_en linguas_es )"
 
-CHECKREQS_DISK_BUILD="914M"
-CHECKREQS_DISK_USR="475M"
-
-FEATURES=""
+#CHECKREQS_DISK_BUILD="914M"
+#CHECKREQS_DISK_USR="475M"
 
 S="${WORKDIR}/Alice 2.4"
 
