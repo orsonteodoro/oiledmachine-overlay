@@ -143,7 +143,6 @@ dev-db/nanodbc
 dev-go/gocode
 dev-go/godef
 dev-java/icedtea
-dev-lang/alice
 dev-lang/gambas
 dev-lang/lua
 dev-lang/mono
@@ -259,6 +258,7 @@ x11-misc/emoji-keyboard
 
 # mask no updates since 2019
 media-sound/shazam-on-linux
+=dev-lang/alice-2.4.3-r1
 
 # mask not tested
 dev-dotnet/nuget
@@ -309,6 +309,7 @@ x11-libs/amd-adl-sdk
 #app-shells/emojify
 #app-shells/oh-my-zsh
 #dev-lang/typescript
+#dev-lang/alice-3.5
 #dev-util/geeks-diary
 #dev-util/lepton
 #dev-util/pullp
