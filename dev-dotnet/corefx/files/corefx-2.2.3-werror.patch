@@ -1,0 +1,16 @@
+--- a/corefx-2.2.3/src/Native/Unix/CMakeLists.txt.orig	2019-02-13 17:56:17.000000000 -0800
++++ b/corefx-2.2.3/src/Native/Unix/CMakeLists.txt	2019-04-16 13:17:56.489676229 -0700
+@@ -21,11 +21,12 @@ add_compile_options(-Wno-typedef-redefin
+ add_compile_options(-Wno-unused-local-typedef)
+ add_compile_options(-Wno-c99-extensions)
+ add_compile_options(-Wno-c11-extensions)
++add_compile_options(-Wno-atomic-implicit-seq-cst)
+ add_compile_options(-fPIC)
+ add_compile_options(-I${CMAKE_CURRENT_SOURCE_DIR}/Common)
+ add_compile_options(-I${CMAKE_CURRENT_BINARY_DIR}/Common)
+ add_compile_options(-g)
+-add_compile_options(-Werror)
++#add_compile_options(-Werror)
+ if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 3.5)
+     add_compile_options(-Wno-unreachable-code)
+ endif ()

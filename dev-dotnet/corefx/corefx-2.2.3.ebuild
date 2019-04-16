@@ -45,7 +45,7 @@ DEPEND="${RDEPEND}
 	!dev-dotnet/dotnetcore-aspnet-bin"
 
 _PATCHES=(
-	"${FILESDIR}/corefx-2.1.9-werror.patch"
+	"${FILESDIR}/corefx-2.2.3-werror.patch"
 )
 
 S=${WORKDIR}
