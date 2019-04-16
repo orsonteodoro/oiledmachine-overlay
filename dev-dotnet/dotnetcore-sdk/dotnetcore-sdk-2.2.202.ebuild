@@ -3,7 +3,7 @@
 
 EAPI="6"
 
-CORE_V=2.1.9
+CORE_V=2.2.3
 
 # This package is like a virtual package
 # The https://github.com/dotnet/cli is the ".NET Core SDK" package on the GitHub release page not the https://github.com/dotnet/sdk .
