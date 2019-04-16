@@ -11,7 +11,7 @@ FILE_V="${MY_V//./_}"
 PKG="Alice3_unix_${FILE_V}.sh"
 
 SRC_URI="http://www.alice.org/wp-content/uploads/2019/04/${PKG}
-	 netbeans? ( http://www.alice.org/wp-content/uploads/2017/05/Alice3NetBeans8Plugin_${FILE_V}.nbm )"
+	 netbeans_modules_alice3? ( http://www.alice.org/wp-content/uploads/2017/05/Alice3NetBeans8Plugin_${FILE_V}.nbm )"
 
 LICENSE="ALICE3"
 SLOT="3"
@@ -83,8 +83,8 @@ src_install() {
 	doexe ${cmd}
 
 	if use netbeans_modules_alice3; then
-		insinto /usr/share/netbeans-${cluster}-${SLOT}
-		doins -r Alice3NetBeans8Plugin_${FILE_V}.nbm
+		insinto /usr/share/alice3
+		doins -r "${DISTDIR}"/Alice3NetBeans8Plugin_${FILE_V}.nbm
 	fi
 }
 
@@ -93,4 +93,9 @@ pkg_postinst() {
 	elog "  emerge wmname"
 	elog "  wmname LG3D"
 	elog "Run 'wmname LG3D' before you run 'Alice 3'"
+	if use netbeans_modules_alice3; then
+		elog "The NetBeans alice plugin as be installed in /usr/share/alice3."
+		elog "See http://alice3.pbworks.com/w/page/57586346/Download%20and%20Install%20Plugin"
+		elog "for details to install it."
+	fi
 }
