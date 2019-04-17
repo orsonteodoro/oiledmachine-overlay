@@ -83,7 +83,8 @@ _fetch_cli() {
 	cp -a "${d}" "${CLI_S}"
 	mv "${S}/dotnetcli-${DOTNET_CLI_COMMIT}/" "${S}/dotnet-cli-${PV}" || die
 	export CLI_S="${S}/dotnet-cli-${PV}"
-	export VERSION_SUFFIX="-preview-$(git rev-list --count v${PV})"
+	local rev=$(printf "%06d" $(git rev-list --count v${PV}))
+	export VERSION_SUFFIX="-preview-${rev}"
 }
 
 src_unpack() {
