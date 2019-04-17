@@ -6,7 +6,7 @@
 
 EAPI="6"
 
-VERSION_SUFFIX='-preview-009443'
+VERSION_SUFFIX=''
 
 DESCRIPTION="This repo contains the .NET Core command-line (CLI) tools, used for building .NET Core apps and libraries through your development flow (compiling, NuGet package management, running, testing, ...)."
 HOMEPAGE="https://github.com/dotnet/cli"
@@ -83,6 +83,7 @@ _fetch_cli() {
 	cp -a "${d}" "${CLI_S}"
 	mv "${S}/dotnetcli-${DOTNET_CLI_COMMIT}/" "${S}/dotnet-cli-${PV}" || die
 	export CLI_S="${S}/dotnet-cli-${PV}"
+	export VERSION="-preview-$(git rev-list --count v${PV})"
 }
 
 src_unpack() {
@@ -96,8 +97,8 @@ src_unpack() {
 
 _src_prepare() {
 #	default_src_prepare
-	cd "${WORKDIR}"
-	eapply ${_PATCHES[@]}
+	cd "${CLI_S}"
+	eapply -p2 ${_PATCHES[@]}
 
 	# allow verbose output
 	local F=$(grep -l -r -e "__init_tools_log" $(find ${WORKDIR} -name "*.sh"))
@@ -159,7 +160,6 @@ _src_compile() {
 src_install() {
 	local dest="/opt/dotnet_cli"
 	local ddest="${D}/${dest}"
-	local ddest_core="${ddest}/shared/Microsoft.NETCore.App"
 	local ddest_sdk="${D}/opt/dotnet_core/sdk/${PV}/"
 	local myarch=""
 
