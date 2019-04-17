@@ -122,7 +122,7 @@ _src_compile() {
 }
 
 src_install() {
-	local dest="/opt/dotnet_cli"
+	local dest="/opt/dotnet"
 	local ddest="${D}/${dest}"
 	local dest_core="${dest}/shared/Microsoft.NETCore.App/${PV}"
 	local ddest_core="${ddest}/shared/Microsoft.NETCore.App/${PV}"
