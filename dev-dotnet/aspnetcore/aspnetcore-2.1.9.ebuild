@@ -199,7 +199,7 @@ _src_compile() {
 
 # See https://docs.microsoft.com/en-us/dotnet/core/build/distribution-packaging
 src_install() {
-	local dest="/opt/dotnet_cli"
+	local dest="/opt/dotnet"
 	local ddest="${D}/${dest}"
 	local ddest_aspnetcoreall="${ddest}/shared/Microsoft.AspNetCore.All/${PV}/"
 	local ddest_aspnetcoreapp="${ddest}/shared/Microsoft.AspNetCore.App/${PV}/"
