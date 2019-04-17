@@ -7,6 +7,7 @@
 EAPI="6"
 
 VERSION_SUFFIX=''
+DropSuffix="true" # true=official release, false=dev
 
 DESCRIPTION="This repo contains the .NET Core command-line (CLI) tools, used for building .NET Core apps and libraries through your development flow (compiling, NuGet package management, running, testing, ...)."
 HOMEPAGE="https://github.com/dotnet/cli"
@@ -85,7 +86,9 @@ _fetch_cli() {
 	export CLI_S="${S}/dotnet-cli-${PV}"
 	cd "${CLI_S}"
 	local rev=$(printf "%06d" $(git rev-list --count v${DOTNET_CLI_COMMIT}))
-	export VERSION_SUFFIX="-preview-${rev}"
+	if [[ "${DropSuffix}" != "true" ]] ; then
+		export VERSION_SUFFIX="-preview-${rev}"
+	fi
 }
 
 src_unpack() {
@@ -144,9 +147,7 @@ _src_compile() {
 	# cannot be xterm-256color
 	export TERM=linux # pretend to be outside of X
 
-	# force 1 since it slows down the pc
-	local numproc="1"
-	#buildargs_corecli+=" "
+	buildargs_corecli+=" /property:DropSuffix=${DropSuffix}"
 
 	if ! use tests ; then
 		buildargs_corecli+=" /t:Compile"
@@ -160,9 +161,10 @@ _src_compile() {
 }
 
 src_install() {
-	local dest="/opt/dotnet_cli"
+	local dest="/opt/dotnet"
 	local ddest="${D}/${dest}"
-	local ddest_sdk="${D}/opt/dotnet_core/sdk/${PV}/"
+	local dest_sdk="${dest}/sdk/${PV}/"
+	local ddest_sdk="${ddest}/sdk/${PV}/"
 	local myarch=""
 
 	if [[ ${ARCH} =~ (amd64) ]]; then
@@ -175,8 +177,8 @@ src_install() {
 		myarch="arm"
 	fi
 
-	dodir "${ddest_sdk}"
+	dodir "${dest_sdk}"
 	cp -a "${CLI_S}/bin/2/linux-${myarch}/dotnet/sdk/${PV}${VERSION_SUFFIX}"/* "${ddest_sdk}/" || die
 
-	dosym "../../opt/dotnet_cli/dotnet" "/usr/bin/dotnet"
+	dosym "${dest}/dotnet" "/usr/bin/dotnet"
 }
