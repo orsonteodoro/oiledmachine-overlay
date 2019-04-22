@@ -23,6 +23,11 @@ IUSE=""
 
 S="${WORKDIR}/${PN}-${PV}"
 
+TAR_V="^4.4.2"
+LODASH_V="<4.14.120"
+JS_YAML_V="^3.13.1"
+MOCHA_V="6.1.4"
+
 src_unpack() {
 	default_src_unpack
 
@@ -35,11 +40,38 @@ src_unpack() {
 	einfo "Running electron-app_fetch_deps"
 	electron-app_fetch_deps
 
+	cd "${S}"
+
+	sed -i -e "s|\"tar\": \"^2.0.0\",|\"tar\": \"${TAR_V}\",|g" node_modules/node-gyp/package.json || die
+
+	# fix vulnerabilities
+	rm -rf node_modules/tar
+	npm install tar@"${TAR_V}" --save-prod || die
+
+	sed -i -e "s|\"js-yaml\": \"^3.12.1\",|\"js-yaml\": \"${JS_YAML_V}\",|g" node_modules/app-builder-lib/package.json || die
+	sed -i -e "s|\"js-yaml\": \"^3.12.1\",|\"js-yaml\": \"${JS_YAML_V}\",|g" node_modules/dmg-builder/package.json || die
+	sed -i -e "s|\"js-yaml\": \"^3.13.0\",|\"js-yaml\": \"${JS_YAML_V}\",|g" node_modules/electron-builder-squirrel-windows/node_modules/builder-util/package.json || die
+	sed -i -e "s|\"js-yaml\": \"^3.12.0\",|\"js-yaml\": \"${JS_YAML_V}\",|g" node_modules/electron-updater/package.json || die
+	sed -i -e "s|\"js-yaml\": \"^3.12.1\",|\"js-yaml\": \"${JS_YAML_V}\",|g" node_modules/builder-util/package.json || die
+	sed -i -e "s|\"js-yaml\": \"^3.12.1\",|\"js-yaml\": \"${JS_YAML_V}\",|g" node_modules/read-config-file/package.json || die
+	pushd node_modules/postcss-svgo/node_modules/svgo
+	npm uninstall js-yaml
+	npm install js-yaml@"${JS_YAML_V}" --save-prod || die
+        rm package-lock.json
+        npm i --package-lock-only
+	npm install --save-dev mocha@"${MOCHA_V}"
+	npm audit fix --force || die
+	npm audit || die
+	popd
+        npm i --package-lock-only
+	npm audit fix || die
+	npm audit || die
+
 	# fix brekage
 	# breaks with @types/lodash@4.14.123
 	# works with 4.14.116
 	npm uninstall @types/lodash
-	npm install @types/lodash@"<4.14.120" --save-dev || die
+	npm install @types/lodash@"${LODASH_V}" --save-dev || die
 
 	electron-app_src_compile
 
