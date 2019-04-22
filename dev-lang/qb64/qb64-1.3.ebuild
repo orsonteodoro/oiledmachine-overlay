@@ -2,21 +2,11 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-inherit eutils versionator
+inherit eutils
 
-DESCRIPTION="QB64"
+DESCRIPTION="QB64 is a modern extended BASIC+OpenGL language that retains QB4.5/QBasic compatibility and compiles native binaries for Windows (XP and up), Linux and macOS."
 HOMEPAGE="http://www.qb64.net/"
-# 1.2.20181101.14.32.33.2398884
-PV_A="$(get_version_component_range 1-2 ${PV})" # 1.2
-PV_B="$(get_version_component_range 3 ${PV})" # 20181101
-PV_B_Y="${PV_B:0:4}" # 2018
-PV_B_M="${PV_B:4:2}" # 11
-PV_B_D="${PV_B:6:2}" # 01
-PV_C="$(get_version_component_range 4 ${PV})" # 14
-PV_D="$(get_version_component_range 5 ${PV})" # 32
-PV_E="$(get_version_component_range 6 ${PV})" # 33
-PV_F="$(get_version_component_range 7 ${PV})" # 2398884
-SRC_URI="https://www.qb64.org/autobuilds/master/qb64_${PV_B_Y}-${PV_B_M}-${PV_B_D}-${PV_C}-${PV_D}-${PV_E}_${PV_F}-master_lnx.tar.gz"
+SRC_URI="https://github.com/Galleondragon/qb64/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="QB64"
 SLOT="0"
@@ -32,7 +22,7 @@ RDEPEND="android? ( dev-util/android-studio )
 	 "
 DEPEND="${RDEPEND}"
 
-S="${WORKDIR}/qb64"
+S="${WORKDIR}/qb64-${PV}"
 
 src_prepare() {
 	find . -name '*.sh' -exec sed -i "s/\r//g" {} \;
@@ -74,7 +64,7 @@ src_install() {
 	fperms o+w $(find "${D}"/usr/$(get_libdir)/qb64/internal/temp/ -name "*.txt" | sed -e "s|${D}||")
 	fperms o+w $(find "${D}"/usr/$(get_libdir)/qb64/internal/temp/ -name "*.rc" | sed -e "s|${D}||")
 	fperms o+w /usr/$(get_libdir)/qb64/internal/temp
-	fperms o+w /usr/$(get_libdir)/qb64/internal/config.txt
+	#fperms o+w /usr/$(get_libdir)/qb64/internal/config.txt
 	fperms o+w /usr/$(get_libdir)/qb64/internal/
 	fperms o+w $(find "${D}"/usr/$(get_libdir)/qb64/source/virtual_keyboard -name "*.bas" | sed -e "s|${D}||")
 
