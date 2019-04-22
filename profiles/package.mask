@@ -146,7 +146,6 @@ dev-java/icedtea
 dev-lang/gambas
 dev-lang/lua
 dev-lang/mono
-dev-lang/qb64
 dev-lang/rust
 dev-lang/turboturtle
 dev-libs/asmlib
@@ -254,11 +253,11 @@ sys-libs/libcpuid
 virtual/rust
 virtual/setiathome
 www-servers/civetweb
-x11-misc/emoji-keyboard
 
 # mask no updates since 2019
 media-sound/shazam-on-linux
 =dev-lang/alice-2.4.3-r1
+x11-misc/emoji-keyboard
 
 # mask not tested
 dev-dotnet/nuget
@@ -310,6 +309,7 @@ x11-libs/amd-adl-sdk
 #app-shells/oh-my-zsh
 #dev-lang/typescript
 #dev-lang/alice-3.5
+#dev-lang/qb64
 #dev-util/geeks-diary
 #dev-util/lepton
 #dev-util/pullp
