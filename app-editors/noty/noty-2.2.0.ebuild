@@ -38,7 +38,9 @@ src_unpack() {
 	npm install electron@"^${ELECTRON_VER}" --save-dev --verbose --maxsockets=${ELECTRON_APP_MAXSOCKETS} # try to fix io starvation problem (testing)
 
 	einfo "Running electron-app_fetch_deps"
+	export ELECTRON_APP_INSTALL_AUDIT="0"
 	electron-app_fetch_deps
+	export ELECTRON_APP_INSTALL_AUDIT="1"
 
 	cd "${S}"
 
@@ -57,21 +59,16 @@ src_unpack() {
 	pushd node_modules/postcss-svgo/node_modules/svgo
 	npm uninstall js-yaml
 	npm install js-yaml@"${JS_YAML_V}" --save-prod || die
-        rm package-lock.json
-        npm i --package-lock-only
 	npm install --save-dev mocha@"${MOCHA_V}"
-	npm audit fix --force || die
-	npm audit || die
 	popd
-        npm i --package-lock-only
-	npm audit fix || die
-	npm audit || die
 
 	# fix brekage
 	# breaks with @types/lodash@4.14.123
 	# works with 4.14.116
 	npm uninstall @types/lodash
 	npm install @types/lodash@"${LODASH_V}" --save-dev || die
+
+	_electron-app_audit_fix_npm
 
 	electron-app_src_compile
 
