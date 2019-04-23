@@ -140,7 +140,7 @@ npm-secaudit_fetch_deps() {
 	_npm-secaudit_yarn_access
 
 	npm install --maxsockets=${NPM_MAXSOCKETS} || die
-	_npm-secaudit-audit-fix
+	_npm-secaudit_audit_fix
 	popd
 }
 
@@ -247,16 +247,34 @@ npm-secaudit-register() {
 	sed -i '/^$/d' "${NPM_PACKAGE_DB}"
 }
 
-_npm-secaudit-audit-fix() {
+_npm-secuaudit_fix_recursive_lock_check() {
+		einfo "Performing recursive package-lock.json audit"
+		L=$(find . -name "package-lock.json")
+		for l in $L; do
+			pushd $(dirname $l)
+			einfo "Running \`npm i --package-lock-only\`"
+			npm i --package-lock-only || die
+			einfo "Running \`npm audit fix --force\`"
+			npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die
+			npm audit || die
+			popd
+		done
+}
+
+_npm-secaudit_audit_fix() {
 	if [[ "${NPM_SECAUDIT_INSTALL_AUDIT}" == "1" ||
 		"${NPM_SECAUDIT_INSTALL_AUDIT}" == "true" ||
 		"${NPM_SECAUDIT_INSTALL_AUDIT}" == "TRUE" ]] ; then
-
 		einfo "Running \`npm i --package-lock\`"
 		npm i --package-lock
 
 		einfo "Running \`npm audit fix --force\`"
 		npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die
+		einfo "Running \`npm audit\`"
+		npm audit || die
+
+		_npm-secuaudit_fix_recursive_lock_check
+
 		einfo "Auditing security done"
 	fi
 }
@@ -271,7 +289,7 @@ npm-secaudit_src_preinst_default() {
 
 	cd "${S}"
 
-	_npm-secaudit-audit-fix
+	_npm-secaudit_audit_fix
 
 	cd "${S}"
 

@@ -145,7 +145,21 @@ _electron-app-flakey-check() {
 	fi
 }
 
-_electron-app-audit-fix-npm() {
+_electron-app_audit_fix_npm_recursive_lock_check() {
+	einfo "Performing recursive package-lock.json audit"
+	L=$(find . -name "package-lock.json")
+	for l in $L; do
+		pushd $(dirname $l)
+		einfo "Running \`npm i --package-lock-only\`"
+		npm i --package-lock-only || die
+		einfo "Running \`npm audit fix --force\`"
+		npm audit fix --force --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
+		npm audit || die
+		popd
+	done
+}
+
+_electron-app_audit_fix_npm() {
 	if [[ "${ELECTRON_APP_INSTALL_AUDIT}" == "1" ||
 		"${ELECTRON_APP_INSTALL_AUDIT}" == "true" ||
 		"${ELECTRON_APP_INSTALL_AUDIT}" == "TRUE" ]] ; then
@@ -154,6 +168,11 @@ _electron-app-audit-fix-npm() {
 
 		einfo "Running \`npm audit fix --force\`"
 		npm audit fix --force --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
+		einfo "Running \`npm audit\`"
+		npm audit || die
+
+		_electron-app_audit_fix_npm_recursive_lock_check
+
 		einfo "Auditing security done"
 	fi
 }
@@ -215,7 +234,7 @@ electron-app_fetch_deps_npm()
 
 	pushd "${S}"
 	npm install --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
-	_electron-app-audit-fix-npm
+	_electron-app_audit_fix_npm
 	popd
 }
 
@@ -383,7 +402,7 @@ electron-app_src_preinst_default() {
 
 	case "$ELECTRON_APP_MODE" in
 		npm)
-			_electron-app-audit-fix-npm
+			_electron-app_audit_fix_npm
 
 			if ! use debug ; then
 				if [[ "${ELECTRON_APP_PRUNE}" == "1" ||
