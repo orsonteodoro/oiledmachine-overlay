@@ -1,0 +1,35 @@
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2019-04-23 15:21:24.718815424 -0700
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-04-23 15:36:30.945420369 -0700
+@@ -5304,11 +5304,16 @@ static void amdgpu_dm_commit_planes(stru
+ 
+ 			abo = gem_to_amdgpu_bo(fb->obj[0]);
+ 
+-			/* Wait for all fences on this FB */
++			/*
++			 * Wait for all fences on this FB. Do limited wait to avoid
++			 * deadlock during GPU reset when this fence will not signal
++			 * but we hold reservation lock for the BO.
++			 */
+ 			r = reservation_object_wait_timeout_rcu(abo->tbo.resv, true,
+-							false,
+-							MAX_SCHEDULE_TIMEOUT);
+-			WARN_ON(r < 0);
++								false,
++							msecs_to_jiffies(5000));
++			if (unlikely(r <= 0))
++				DRM_ERROR("Waiting for fences timed out or interrupted!");
+ 
+ 			/*
+ 			 * TODO This might fail and hence better not used, wait
+@@ -5317,10 +5322,8 @@ static void amdgpu_dm_commit_planes(stru
+ 			 * blocking commit to as per framework helpers
+ 			 */
+ 			r = amdgpu_bo_reserve(abo, true);
+-			if (unlikely(r != 0)) {
++			if (unlikely(r != 0))
+ 				DRM_ERROR("failed to reserve buffer before flip\n");
+-	 			WARN_ON(1);
+-			}
+ 
+ 			amdgpu_bo_get_tiling_flags(abo, &tiling_flags);
+ 
