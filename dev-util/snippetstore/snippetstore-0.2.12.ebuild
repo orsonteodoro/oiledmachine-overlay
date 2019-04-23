@@ -23,6 +23,37 @@ IUSE=""
 
 S="${WORKDIR}/${MY_PN}-${PV}"
 
+TAR_V="^4.4.2"
+
+src_unpack() {
+	default_src_unpack
+
+	electron-app_src_prepare_default
+
+	cd "${S}"
+
+	einfo "Running electron-app_fetch_deps"
+	electron-app_fetch_deps
+
+	cd "${S}"
+
+	# fix vulnerabilities
+	pushd node_modules/node-gyp
+	npm uninstall tar
+	npm uninstall tar@"${TAR_V}"
+	popd
+
+        npm i --package-lock-only
+	npm audit fix || die
+	npm audit || die
+
+	electron-app_src_compile
+
+	cd "${S}"
+
+	electron-app_src_preinst_default
+}
+
 electron-app_src_compile() {
 	cd "${S}"
 
