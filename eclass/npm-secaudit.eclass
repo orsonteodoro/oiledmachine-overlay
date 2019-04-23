@@ -248,17 +248,17 @@ npm-secaudit-register() {
 }
 
 _npm-secuaudit_fix_recursive_lock_check() {
-		einfo "Performing recursive package-lock.json audit"
-		L=$(find . -name "package-lock.json")
-		for l in $L; do
-			pushd $(dirname $l)
-			einfo "Running \`npm i --package-lock-only\`"
-			npm i --package-lock-only || die
-			einfo "Running \`npm audit fix --force\`"
-			npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die
-			npm audit || die
-			popd
-		done
+	einfo "Performing recursive package-lock.json audit"
+	L=$(find . -name "package-lock.json")
+	for l in $L; do
+		pushd $(dirname $l)
+		einfo "Running \`npm i --package-lock-only\`"
+		npm i --package-lock-only || die
+		einfo "Running \`npm audit fix --force\`"
+		npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die
+		npm audit || die
+		popd
+	done
 }
 
 _npm-secaudit_audit_fix() {
