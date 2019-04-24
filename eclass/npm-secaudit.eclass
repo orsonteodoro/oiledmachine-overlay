@@ -103,6 +103,7 @@ _npm-secaudit_fix_cacache_access() {
 		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
 		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
 		# too slow to reset
+		# todo mutex lock?  possible to run two emerges and then one instance deletes and the other uses it
 		einfo "Removing ${dt}"
 		rm -rf "${dt}"
 	fi
@@ -247,34 +248,23 @@ npm-secaudit-register() {
 	sed -i '/^$/d' "${NPM_PACKAGE_DB}"
 }
 
-_npm-secuaudit_fix_recursive_lock_check() {
-	einfo "Performing recursive package-lock.json audit"
-	L=$(find . -name "package-lock.json")
-	for l in $L; do
-		pushd $(dirname $l)
-		einfo "Running \`npm i --package-lock-only\`"
-		npm i --package-lock-only || die
-		einfo "Running \`npm audit fix --force\`"
-		npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die
-		npm audit || die
-		popd
-	done
-}
-
 _npm-secaudit_audit_fix() {
 	if [[ "${NPM_SECAUDIT_INSTALL_AUDIT}" == "1" ||
 		"${NPM_SECAUDIT_INSTALL_AUDIT}" == "true" ||
 		"${NPM_SECAUDIT_INSTALL_AUDIT}" == "TRUE" ]] ; then
-		einfo "Running \`npm i --package-lock\`"
-		npm i --package-lock
 
-		einfo "Running \`npm audit fix --force\`"
-		npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die
-		einfo "Running \`npm audit\`"
-		npm audit || die
-
-		_npm-secuaudit_fix_recursive_lock_check
-
+		einfo "Performing recursive package-lock.json audit"
+		L=$(find . -name "package-lock.json")
+		for l in $L; do
+			pushd $(dirname $l)
+			[ -e package-lock.json ] && rm package-lock.json
+			einfo "Running \`npm i --package-lock-only\`"
+			npm i --package-lock-only || die
+			einfo "Running \`npm audit fix --force\`"
+			npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die
+			npm audit || die
+			popd
+		done
 		einfo "Auditing security done"
 	fi
 }

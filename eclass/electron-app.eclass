@@ -103,6 +103,7 @@ _electron-app_fix_cacache_access() {
 		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
 		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
 		# too slow to reset
+		# todo mutex lock?  possible to run two emerges and then one instance deletes and the other uses it
 		einfo "Removing ${dt}"
 		rm -rf "${dt}"
 	fi
@@ -145,34 +146,23 @@ _electron-app-flakey-check() {
 	fi
 }
 
-_electron-app_audit_fix_npm_recursive_lock_check() {
-	einfo "Performing recursive package-lock.json audit"
-	L=$(find . -name "package-lock.json")
-	for l in $L; do
-		pushd $(dirname $l)
-		einfo "Running \`npm i --package-lock-only\`"
-		npm i --package-lock-only || die
-		einfo "Running \`npm audit fix --force\`"
-		npm audit fix --force --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
-		npm audit || die
-		popd
-	done
-}
-
 _electron-app_audit_fix_npm() {
 	if [[ "${ELECTRON_APP_INSTALL_AUDIT}" == "1" ||
 		"${ELECTRON_APP_INSTALL_AUDIT}" == "true" ||
 		"${ELECTRON_APP_INSTALL_AUDIT}" == "TRUE" ]] ; then
-		einfo "Running \`npm i --package-lock\`"
-		npm i --package-lock || die # prereq for command below
 
-		einfo "Running \`npm audit fix --force\`"
-		npm audit fix --force --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
-		einfo "Running \`npm audit\`"
-		npm audit || die
-
-		_electron-app_audit_fix_npm_recursive_lock_check
-
+		einfo "Performing recursive package-lock.json audit"
+		L=$(find . -name "package-lock.json")
+		for l in $L; do
+			pushd $(dirname $l)
+			[ -e package-lock.json ] && rm package-lock.json
+			einfo "Running \`npm i --package-lock-only\`"
+			npm i --package-lock-only || die
+			einfo "Running \`npm audit fix --force\`"
+			npm audit fix --force --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
+			npm audit || die
+			popd
+		done
 		einfo "Auditing security done"
 	fi
 }
