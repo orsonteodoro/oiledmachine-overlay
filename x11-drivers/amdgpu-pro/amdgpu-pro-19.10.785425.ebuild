@@ -7,7 +7,7 @@ MULTILIB_COMPAT=( abi_x86_{32,64} )
 inherit multilib-build unpacker linux-info
 
 DESCRIPTION="New generation AMD closed-source drivers for Southern Islands (HD7730 Series) and newer chipsets"
-HOMEPAGE="https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-18-50-unified"
+HOMEPAGE="https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-10-unified"
 PKG_VER=${PV:0:5}
 PKG_VER_MAJ=${PV:0:2}
 PKG_REV=${PV:6:6}
@@ -15,16 +15,17 @@ PKG_ARCH="ubuntu"
 PKG_ARCH_VER="18.04"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
 PKG_VER_STRING_DIR=${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}
-PKG_VER_LIBDRM="2.4.95"
-PKG_VER_MESA="18.2.0"
+PKG_VER_LIBDRM="2.4.97"
+PKG_VER_MESA="18.3.0"
 PKG_VER_HSA="1.1.6"
 PKG_VER_ROCT="1.0.9"
 PKG_VER_XORG_VIDEO_AMDGPU_DRV="18.1.99" # about the same as the mesa version
-PKG_VER_AMF="1.4.11"
+PKG_VER_AMF="1.4.12"
 PKG_VER_ID="1.0.0"
 PKG_VER_GST_OMX="1.0.0.1"
-PKG_VER_LLVM="7.0"
+PKG_VER_LLVM="7.1"
 PKG_VER_LLVM_MAJ="7"
+PKG_VER_LLVM_TRIPLE="7.1.0"
 PKG_VER_LIBWAYLAND="1.15.0"
 PKG_VER_WAYLAND_PROTO="1.16"
 PKG_VER_GLAMOR="1.19.0"
@@ -804,30 +805,37 @@ src_install() {
 	if use abi_x86_64 ; then
 		exeinto /usr/lib64/opengl/amdgpu/lib/llvm-${PKG_VER_LLVM}/lib/
 		doexe opt/amdgpu/lib/x86_64-linux-gnu/llvm-${PKG_VER_LLVM}/lib/BugpointPasses.so
-		doexe opt/amdgpu/lib/x86_64-linux-gnu/llvm-${PKG_VER_LLVM}/lib/libLLVM-${PKG_VER_LLVM_MAJ}.so
-		doexe opt/amdgpu/lib/x86_64-linux-gnu/llvm-${PKG_VER_LLVM}/lib/libLTO.so.${PKG_VER_LLVM_MAJ}
+		doexe opt/amdgpu/lib/x86_64-linux-gnu/llvm-${PKG_VER_LLVM}/lib/libLLVM-${PKG_VER_LLVM}.so
+		doexe opt/amdgpu/lib/x86_64-linux-gnu/llvm-${PKG_VER_LLVM}/lib/libLTO.so.${PKG_VER_LLVM_TRIPLE}
 		doexe opt/amdgpu/lib/x86_64-linux-gnu/llvm-${PKG_VER_LLVM}/lib/LLVMHello.so
 		doexe opt/amdgpu/lib/x86_64-linux-gnu/llvm-${PKG_VER_LLVM}/lib/TestPlugin.so
+		exeinto /usr/lib64/opengl/amdgpu/lib/
 		local d="${EPREFIX}/usr/lib64/opengl/amdgpu/lib"
 		local s="/usr/lib64/opengl/amdgpu/lib/llvm-${PKG_VER_LLVM}/lib"
+		dosym "${s}"/libLTO.so.${PKG_VER_LLVM_TRIPLE} "${d}"/libLTO.so.${PKG_VER_LLVM_TRIPLE}
+		dosym "${s}"/libLTO.so.${PKG_VER_LLVM_TRIPLE} "${s}"/libLTO.so.${PKG_VER_LLVM}
 		dosym "${s}"/BugpointPasses.so "${d}"/BugpointPasses.so
-		dosym "${s}"/libLLVM-${PKG_VER_LLVM_MAJ}.so "${d}"/libLLVM-${PKG_VER_LLVM_MAJ}.so
-		dosym "${s}"/libLTO.so.${PKG_VER_LLVM_MAJ} "${d}"/libLTO.so.${PKG_VER_LLVM_MAJ}
+		dosym "${s}"/libLTO.so.${PKG_VER_LLVM_TRIPLE} "${d}"/libLTO.so.${PKG_VER_LLVM_TRIPLE}
+		dosym "${s}"/libLTO.so.${PKG_VER_LLVM} "${d}"/libLTO.so.${PKG_VER_LLVM}
+		dosym "${s}"/libLLVM-${PKG_VER_LLVM}.so "${d}"/libLLVM-${PKG_VER_LLVM}.so
 		dosym "${s}"/LLVMHello.so "${d}"/LLVMHello.so
 		dosym "${s}"/TestPlugin.so "${d}"/TestPlugin.so
 	fi
 	if use abi_x86_32 ; then
 		exeinto /usr/lib32/opengl/amdgpu/lib/llvm-${PKG_VER_LLVM}/lib/
 		doexe opt/amdgpu/lib/i386-linux-gnu/llvm-${PKG_VER_LLVM}/lib/BugpointPasses.so
-		doexe opt/amdgpu/lib/i386-linux-gnu/llvm-${PKG_VER_LLVM}/lib/libLLVM-${PKG_VER_LLVM_MAJ}.so
-		doexe opt/amdgpu/lib/i386-linux-gnu/llvm-${PKG_VER_LLVM}/lib/libLTO.so.${PKG_VER_LLVM_MAJ}
+		doexe opt/amdgpu/lib/i386-linux-gnu/llvm-${PKG_VER_LLVM}/lib/libLLVM-${PKG_VER_LLVM}.so
+		doexe opt/amdgpu/lib/i386-linux-gnu/llvm-${PKG_VER_LLVM}/lib/libLTO.so.${PKG_VER_LLVM_TRIPLE}
 		doexe opt/amdgpu/lib/i386-linux-gnu/llvm-${PKG_VER_LLVM}/lib/LLVMHello.so
 		doexe opt/amdgpu/lib/i386-linux-gnu/llvm-${PKG_VER_LLVM}/lib/TestPlugin.so
 		local d="${EPREFIX}/usr/lib32/opengl/amdgpu/lib"
 		local s="/usr/lib32/opengl/amdgpu/lib/llvm-${PKG_VER_LLVM}/lib"
+		dosym "${s}"/libLTO.so.${PKG_VER_LLVM_TRIPLE} "${d}"/libLTO.so.${PKG_VER_LLVM_TRIPLE}
+		dosym "${s}"/libLTO.so.${PKG_VER_LLVM_TRIPLE} "${s}"/libLTO.so.${PKG_VER_LLVM}
 		dosym "${s}"/BugpointPasses.so "${d}"/BugpointPasses.so
-		dosym "${s}"/libLLVM-${PKG_VER_LLVM_MAJ}.so "${d}"/libLLVM-${PKG_VER_LLVM_MAJ}.so
-		dosym "${s}"/libLTO.so.${PKG_VER_LLVM_MAJ} "${d}"/libLTO.so.${PKG_VER_LLVM_MAJ}
+		dosym "${s}"/libLTO.so.${PKG_VER_LLVM_TRIPLE} "${d}"/libLTO.so.${PKG_VER_LLVM_TRIPLE}
+		dosym "${s}"/libLTO.so.${PKG_VER_LLVM} "${d}"/libLTO.so.${PKG_VER_LLVM}
+		dosym "${s}"/libLLVM-${PKG_VER_LLVM}.so "${d}"/libLLVM-${PKG_VER_LLVM}.so
 		dosym "${s}"/LLVMHello.so "${d}"/LLVMHello.so
 		dosym "${s}"/TestPlugin.so "${d}"/TestPlugin.so
 	fi
