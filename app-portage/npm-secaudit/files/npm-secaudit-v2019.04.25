@@ -21,10 +21,10 @@ $(basename $BASH_SOURCE) <args>
 Generates a package set for you to update affected packages.
 
 args:
-	-h, --help		prints all the supported commands
-	-ver, --version		version info
-	-v, --verbose		prints the full vulnerability report
-	-d, --debug		prints debug messages
+	-h, --help			prints all the supported commands
+	-ver, --version			version info
+	-v, --verbose			prints the full vulnerability report
+	-d, --debug			prints debug messages
 "
 
 G_VERBOSE=""
@@ -81,6 +81,28 @@ function init() {
 	sed -i '/^$/d' "${NPM_APPS}"
 }
 
+function raudit() {
+	local result=0
+	local p="$1"
+	local path="$2"
+	echo -e "\n>>> Checking ${p}"
+	dinfo "Performing recursive package-lock.json audit"
+	L=$(find . -name "package-lock.json")
+	for l in $L; do
+		pushd $(dirname $l) >/dev/null
+		dinfo "Path: ${path}/${l}"
+		if [[ "${G_VERBOSE}" == "1" ]]; then
+			npm audit || result=1
+		else
+			npm audit >/dev/null || result=1
+		fi
+		popd >/dev/null
+	done
+	dinfo "Auditing security done"
+	echo ""
+	return ${result}
+}
+
 function check() {
 	echo "Checking npm packages and Electron apps for vulnerabilities please wait..."
 	echo "" > "${INSECURE_SET_FP}"
@@ -90,12 +112,7 @@ function check() {
 		local path=$(echo "${line}" | cut -f2)
 
 		pushd "${path}" >/dev/null
-		if [[ "${G_VERBOSE}" == "1" ]]; then
-			echo -e "\n>>> Checking ${p}"
-			npm audit
-		else
-			npm audit >/dev/null
-		fi
+		raudit "${p}" "${path}"
 		if [[ "$?" == "0" ]] ; then
 			dinfo "Package ${p} is good."
 		else
