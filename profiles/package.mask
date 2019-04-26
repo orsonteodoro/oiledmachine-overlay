@@ -301,7 +301,7 @@ x11-libs/amd-adl-sdk
 #app-editors/epic-journal
 #app-editors/noty
 #app-editors/preserver
-#app-editors/stickinotes
+#app-editors/stickynotes
 #app-eselect/eselect-typescript
 #app-portage/npm-secaudit
 #app-shells/emoji-cli
