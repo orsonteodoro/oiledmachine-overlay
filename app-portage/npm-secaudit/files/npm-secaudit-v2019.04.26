@@ -21,6 +21,11 @@ $(basename $BASH_SOURCE) <args>
 Generates a package set for you to update affected packages.
 
 args:
+	-sc, --critical			scan for critical vulnerabilities only
+	-sh, --high			scan for high and above vulnerabilities
+	-sm, --moderate			scan for moderate and above vulnerabilities
+	-sl, --low			scan for low and above vulnerabilities
+	-l, --long			perform a long scan
 	-h, --help			prints all the supported commands
 	-ver, --version			version info
 	-v, --verbose			prints the full vulnerability report
@@ -29,9 +34,26 @@ args:
 
 G_VERBOSE=""
 G_DEBUG=""
+G_SCAN_MODE="low"
+G_LONG_SCAN=""
 
 for arg in $@ ; do
 	case "$arg" in
+		-sc|--critical)
+			G_SCAN_MODE="critical"
+			;;
+		-sh|--high)
+			G_SCAN_MODE="high"
+			;;
+		-sm|--moderate)
+			G_SCAN_MODE="moderate"
+			;;
+		-sl|--low)
+			G_SCAN_MODE="low"
+			;;
+		-l|--long)
+			G_LONG_SCAN="1"
+			;;
 		--version|-version|-ver)
 			echo "${H_INFO}"
 			exit
@@ -82,19 +104,60 @@ function init() {
 }
 
 function raudit() {
-	local result=0
+	local result="0"
 	local p="$1"
 	local path="$2"
 	echo -e "\n>>> Checking ${p}"
 	dinfo "Performing recursive package-lock.json audit"
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
+		if [[ "${LONG_SCAN}" != "1" && "${result}" == "1" ]] ; then
+			dinfo "Skipping long scan"
+			break
+		elif [[ "${LONG_SCAN}" == "1" ]] ; then
+			dinfo "Continuing long scan"
+		fi
 		pushd $(dirname $l) >/dev/null
 		dinfo "Path: ${path}/${l}"
+		[ -e /tmp/npm-secaudit-result ] && rm /tmp/npm-secaudit-result
 		if [[ "${G_VERBOSE}" == "1" ]]; then
-			npm audit || result=1
+			npm audit &> /tmp/npm-secaudit-result
+			cat /tmp/npm-secaudit-result
 		else
-			npm audit >/dev/null || result=1
+			npm audit &> /tmp/npm-secaudit-result
+		fi
+		local t
+		cat /tmp/npm-secaudit-result | grep "ELOCKVERIFY" >/dev/null
+		if [[ "$?" == "0" ]] ; then
+			dinfo "Ignoring results of packages referencing pruned dev packages.  You can re-emerge to verify if has a vulnerability."
+		else
+			cat /tmp/npm-secaudit-result | grep "require manual review" >/dev/null
+			local result_found1="$?"
+			cat /tmp/npm-secaudit-result | grep "npm audit fix" >/dev/null
+			local result_found2="$?"
+			cat /tmp/npm-secaudit-result | grep " Critical " >/dev/null
+			local result_critical="$?"
+			cat /tmp/npm-secaudit-result | grep " High " >/dev/null
+			local result_high="$?"
+			cat /tmp/npm-secaudit-result | grep " Moderate " >/dev/null
+			local result_moderate="$?"
+			cat /tmp/npm-secaudit-result | grep " Low " >/dev/null
+			local result_low="$?"
+			if [[ "${result_found1}" == "0" || "${result_found2}" == "0" ]] ; then
+				if [[ "${result_critical}" == "0" && "${G_SCAN_MODE}" == "critical" ]] ; then
+					dinfo "Critical vulnerability found"
+					result="1"
+				elif [[ "${result_high}" == "0" && "${G_SCAN_MODE}" == "high" ]] ; then
+					dinfo "High vulnerability found"
+					result="1"
+				elif [[ "${result_moderate}" == "0" && "${G_SCAN_MODE}" == "moderate" ]] ; then
+					dinfo "Moderate vulnerability found"
+					result="1"
+				elif [[ "${result_low}" == "0" && "${G_SCAN_MODE}" == "low" ]] ; then
+					dinfo "Low vulnerability found"
+					result="1"
+				fi
+			fi
 		fi
 		popd >/dev/null
 	done
