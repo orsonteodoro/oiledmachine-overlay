@@ -65,6 +65,8 @@ _fix_vulnerabilities() {
 src_unpack() {
 	default_src_unpack
 
+	ewarn "The audit may fail unexpectedly.  Re-emerge if it has a connection problem."
+
 	electron-app_src_prepare_default
 
 	electron-app_fetch_deps
