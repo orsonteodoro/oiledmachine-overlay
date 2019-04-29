@@ -27,12 +27,12 @@ REQUEST_PROMISE_VER="^4.2.4"
 DEBUG_V="^2.6.9"
 
 _fix_vulnerabilities() {
-	pushd node_modules/tough-cookie-filestore
+	pushd node_modules/tough-cookie-filestore || die
 	npm uninstall tough-cookie
 	npm install tough-cookie@"^2.3.3" --save-prod || die
 	npm install --lock-file
 	popd
-	pushd node_modules/instagram-private-api
+	pushd node_modules/instagram-private-api || die
 	npm uninstall request-promise
 	npm install request-promise@"${REQUEST_PROMISE_VER}" --save-prod || die
 	popd
