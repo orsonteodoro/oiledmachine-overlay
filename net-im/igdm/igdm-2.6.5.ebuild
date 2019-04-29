@@ -26,10 +26,7 @@ MY_PN="IG:dm"
 REQUEST_PROMISE_VER="^4.2.4"
 DEBUG_V="^2.6.9"
 
-ELECTRON_APP_INSTALL_AUDIT=0
-
 _fix_vulnerabilities() {
-	[ ! -e node_modules/instagram-private-api/node_modules/image-diff/node_modules/gm/package.json ] && die "missing"
 	pushd node_modules/tough-cookie-filestore
 	npm uninstall tough-cookie
 	npm install tough-cookie@"^2.3.3" --save-prod || die
@@ -42,7 +39,23 @@ _fix_vulnerabilities() {
 	npm install --lock-file
 	npm install --lock-file # it must be done twice for some reason
 
-	sed -i -e "s|\"debug\": \"~2.2.0\"|\"debug\": \"^${DEBUG_V}\"|g" node_modules/instagram-private-api/node_modules/image-diff/node_modules/gm/package.json || die
+	einfo "Performing recursive package-lock.json audit fix"
+	L=$(find . -name "package-lock.json")
+	for l in $L; do
+		pushd $(dirname $l)
+		[ -e package-lock.json ] && rm package-lock.json
+		einfo "Running \`npm i --package-lock-only\`"
+		npm i --package-lock-only || die
+		einfo "Running \`npm audit fix --force\`"
+		npm audit fix --force --maxsockets=${ELECTRON_APP_MAXSOCKETS}
+		#npm audit || die
+		popd
+	done
+	einfo "Auditing fix done"
+
+	[ ! -e node_modules/instagram-private-api/node_modules/image-diff/node_modules/gm/package.json ] && die "missing"
+
+	sed -i -e "s|\"debug\": \"~2.2.0\"|\"debug\": \"${DEBUG_V}\"|g" node_modules/instagram-private-api/node_modules/image-diff/node_modules/gm/package.json || die
 	pushd ./node_modules/instagram-private-api/node_modules/image-diff/node_modules/gm
 	npm uninstall debug
 	npm install debug@"${DEBUG_V}" --save-prod || die
@@ -58,9 +71,9 @@ src_unpack() {
 
 	cd "${S}"
 
-	#_fix_vulnerabilities
+	_fix_vulnerabilities
 
-	#_electron-app_audit_fix_npm
+	_electron-app_audit_fix_npm
 
 	electron-app_src_compile
 	electron-app_src_preinst_default
