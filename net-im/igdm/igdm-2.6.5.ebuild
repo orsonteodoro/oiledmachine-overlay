@@ -56,7 +56,7 @@ _fix_vulnerabilities() {
 	[ ! -e node_modules/instagram-private-api/node_modules/image-diff/node_modules/gm/package.json ] && die "missing"
 
 	sed -i -e "s|\"debug\": \"~2.2.0\"|\"debug\": \"${DEBUG_V}\"|g" node_modules/instagram-private-api/node_modules/image-diff/node_modules/gm/package.json || die
-	pushd ./node_modules/instagram-private-api/node_modules/image-diff/node_modules/gm
+	pushd ./node_modules/instagram-private-api/node_modules/image-diff/node_modules/gm || die
 	npm uninstall debug
 	npm install debug@"${DEBUG_V}" --save-prod || die
 	popd
