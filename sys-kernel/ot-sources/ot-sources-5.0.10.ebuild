@@ -191,10 +191,6 @@ pkg_setup() {
 		ewarn "The zen-tune patch or muqss might cause lock up or slow io under heavy load like npm.  These use flags are not recommended."
 	fi
 
-	if use bfq ; then
-		ewarn "The bfq patch applied may cause a kernel panic if uses another IO scheduler other than BFQ."
-	fi
-
 	#use deblob && python-any-r1_pkg_setup
         kernel-2_pkg_setup
 }
@@ -666,5 +662,9 @@ pkg_postinst() {
 	kernel-2_pkg_postinst
 	if use tresor_sysfs ; then
 		einfo "/usr/bin/tresor_sysfs is provided to set your TRESOR key"
+	fi
+
+	if use muqss ; then
+		ewarn "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL will cause a kernel panic on boot."
 	fi
 }
