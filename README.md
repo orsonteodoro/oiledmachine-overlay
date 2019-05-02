@@ -11,7 +11,7 @@ The name of the repo comes from "well-oiled machine."  A (Gentoo) computer shoul
 cd /usr/local
 git clone https://github.com/orsonteodoro/oiledmachine-overlay.git
 
-Edit /etc/portage/repos.conf/layman.conf
+Edit /etc/portage/repos.conf/layman.conf and add the following:
 [oiledmachine-overlay]
 location = /usr/local/oiledmachine-overlay
 layman-type = git
