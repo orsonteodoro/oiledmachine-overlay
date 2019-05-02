@@ -32,17 +32,17 @@ Many of these packages especially non-free software also require you to manually
 
 The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overlay ebuilds.  They many of the ebuilds in that folder in this overlay are dependencies for the latest stable MonoDevelop and for MonoGame.
 
-# Broken / Still in development
+## Broken / Still in development
 
-## NPM / Electron apps
+### NPM / Electron apps
 
 Currently many of the npm ebuilds are undergoing development.  There are currently a lot of vulnerabilties that need to be triaged due to eclass update that exposed many of them.  I am considering deleting npm packages due to the large amount of time consumed and plenty of vulnerabilities.
 
-## .NET stack
+### .NET stack
 
 The dotnet packages are mostly outdated and being updated.  Many will maybe deleted due to the lack of programs that use them.  The top priority right now (in 2019 quarters 1-3) is to fix the dotcore-sdk non binary packages first then monodevelop.
 
-# Packages
+## Packages
 
 | package | decription |
 | --- | --- |
