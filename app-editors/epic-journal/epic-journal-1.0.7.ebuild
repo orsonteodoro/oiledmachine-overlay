@@ -4,7 +4,8 @@
 EAPI=6
 
 RDEPEND="${RDEPEND}
-	 >=dev-util/electron-1.7.5"
+	 >=dev-util/electron-1.7.5
+	 dev-db/sqlcipher"
 
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]"
@@ -24,14 +25,129 @@ IUSE=""
 
 S="${WORKDIR}/${PN}-v.${PV}"
 
+TAR_V="^4.4.2"
+HOEK_V="<5.0.0"
+CLEAN_CSS_V="^4.1.11"
+SQLITE3_V="^3.1.13"
+JS_YAML_V="^3.13.1"
+
+_fix_vulnerabilities() {
+	npm i --package-lock-only
+	npm install
+
+	einfo "Performing recursive package-lock.json install"
+	L=$(find . -name "package-lock.json")
+	for l in $L; do
+		pushd $(dirname $l) || die
+		npm install
+		popd
+	done
+	einfo "Recursive install done"
+
+	einfo "Performing recursive package-lock.json audit fix"
+	L=$(find . -name "package-lock.json")
+	for l in $L; do
+		pushd $(dirname $l) || die
+		[ -e package-lock.json ] && rm package-lock.json
+		einfo "Running \`npm i --package-lock-only\`"
+		npm i --package-lock-only || die
+		einfo "Running \`npm audit fix --force\`"
+		npm audit fix --force --maxsockets=${ELECTRON_APP_MAXSOCKETS}
+		popd
+	done
+	einfo "Audit fix done"
+
+	pushd node_modules/unix-sqlcipher/node_modules/sqlite3
+		npm install
+	popd
+
+	sed -i -e "s|\"tar\": \"^4\"|\"tar\": \"${TAR_V}\"|g" node_modules/unix-sqlcipher/node_modules/sqlite3/node_modules/node-pre-gyp/package.json || die
+
+	rm -rf node_modules/tar || die
+	rm -rf node_modules/sqlite3/node_modules/tar || die
+
+	npm install tar@"${TAR_V}" || die
+
+	rm -rf node_modules/hoek || die
+	npm install hoek@"${HOEK_V}" || die
+
+	einfo "curdir: $(pwd)"
+	npm i --package-lock-only
+
+	einfo "Running \`npm audit fix --force\` on top level."
+	npm audit fix --force
+
+	einfo "Performing recursive package-lock.json audit fix GA"
+	L=$(find . -name "package-lock.json")
+	for l in $L; do
+		pushd $(dirname $l) || die
+		npm audit fix --force
+		popd
+	done
+	einfo "Audit fix done GA"
+
+	sed -i -e "s|\"clean-css\": \"3.4.x\"|\"clean-css\": \"${CLEAN_CSS_V}\"|g" node_modules/html-minifier/package.json || die
+	rm -rf node_modules/clean-css || die
+	npm install clean-css@"${CLEAN_CSS_V}" --no-save || die
+
+	sed -i -e "s|\"clean-css\": \"3.4.x\"|\"clean-css\": \"${CLEAN_CSS_V}\"|g" node_modules/vue-html-loader/node_modules/html-minifier/package.json || die
+	rm -rf node_modules/vue-html-loader/node_modules/clean-css || die
+	pushd node_modules/vue-html-loader || die
+	npm install clean-css@"${CLEAN_CSS_V}" --no-save || die
+	popd
+
+	# fix top level: npm ERR! code ENOAUDIT
+	rm package-lock.json || die
+	npm i --package-lock-only || die
+}
+
+src_unpack() {
+	default_src_unpack
+
+	ewarn "This ebuild may fail randomly.  Re-emerge it again."
+
+	electron-app_src_prepare_default
+
+	cd "${S}"
+
+	sed -i -e "s|\"win-sqlcipher\": \"^0.0.4\",|\"unix-sqlcipher\": \"^0.0.4\",|g" package.json || die
+	sed -i -e "s|win-sqlcipher|unix-sqlcipher|g" src/main/datastore.js || die
+
+	mkdir -p node_modules/unix-sqlcipher/node_modules || die
+	pushd node_modules/unix-sqlcipher || die
+		npm install sqlite3@"${SQLITE3_V}" || die
+		mkdir -p node_modules/sqlite3/node_modules || die
+		pushd node_modules/sqlite3 || die
+			npm install
+		popd
+	popd
+
+	ELECTRON_APP_INSTALL_AUDIT=0
+	electron-app_fetch_deps
+	ELECTRON_APP_INSTALL_AUDIT=1
+
+	_fix_vulnerabilities
+
+	_electron-app_audit_fix_npm
+
+	sed -i -e "s|cssLoaderOptions += (cssLoaderOptions ? '\&' : '?') + 'minimize'||g" node_modules/vue-loader/lib/loader.js || die
+
+	electron-app_src_compile
+
+	cd "${S}"
+
+	electron-app_src_preinst_default
+}
+
 electron-app_src_compile() {
 	cd "${S}"
 
 	export PATH="${S}/node_modules/.bin:${PATH}"
+	node .electron-vue/dev-runner.js || die
 	node .electron-vue/build.js || die
 	electron-builder -l dir || die
 }
 
 src_install() {
-	electron-app_desktop_install "*" "build/icons/256x256.png" "${MY_PN}" "Office" "cd /usr/$(get_libdir)/node/${PN}/${SLOT}/ && /usr/bin/electron ./dist/electron/main.js"
+	electron-app_desktop_install "*" "build/icons/256x256.png" "${MY_PN}" "Office" "/usr/$(get_libdir)/node/${PN}/${SLOT}/build/linux-unpacked/epic-journal"
 }
