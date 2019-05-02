@@ -45,7 +45,7 @@ src_prepare() {
 		sed -i -e 's!ZSH_THEME="robbyrussell"![[ -z "${ZSH_THEME}" ]] \&\& ZSH_THEME="robbyrussell"!g' "${S}/${ZSH_TEMPLATE}" || die
 	fi
 
-	REQ_THEMES=$(echo "$IUSE_EFFECTIVE" | grep -o -P "themes_[^ ]+")
+	REQ_THEMES=$(echo "$USE" | grep -o -P "themes_[^ ]+")
 	mv themes themes.trash
 	mkdir themes
 	for theme in ${REQ_THEMES} ; do
@@ -61,7 +61,7 @@ src_prepare() {
 		fi
 	done
 
-	REQ_PLUGINS=$(echo "$IUSE_EFFECTIVE" | grep -o -P "plugins_[^ ]+")
+	REQ_PLUGINS=$(echo "$USE" | grep -o -P "plugins_[^ ]+")
 	mv plugins plugins.trash
 	mkdir plugins
 	for plugin in ${REQ_PLUGINS} ; do
