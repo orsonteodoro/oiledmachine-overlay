@@ -146,6 +146,17 @@ _electron-app-flakey-check() {
 	fi
 }
 
+# @FUNCTION: _electron-app_dedupe_npm
+# @DESCRIPTION:
+# Replaces duplicate packages into a single package.
+_electron-app_dedupe_npm() {
+	einfo "Deduping packages"
+	npm dedupe || die
+}
+
+# @FUNCTION: _electron-app_audit_fix_npm
+# @DESCRIPTION:
+# Removes vulnerable packages and does a final check.  It will audit every folder containing a package-lock.json
 _electron-app_audit_fix_npm() {
 	if [[ "${ELECTRON_APP_INSTALL_AUDIT}" == "1" ||
 		"${ELECTRON_APP_INSTALL_AUDIT}" == "true" ||
@@ -393,6 +404,10 @@ electron-app_src_preinst_default() {
 	case "$ELECTRON_APP_MODE" in
 		npm)
 			_electron-app_audit_fix_npm
+
+			cd "${S}"
+
+			_electron-app_dedupe_npm
 
 			if ! use debug ; then
 				if [[ "${ELECTRON_APP_PRUNE}" == "1" ||

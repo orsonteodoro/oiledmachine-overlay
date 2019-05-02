@@ -248,6 +248,17 @@ npm-secaudit-register() {
 	sed -i '/^$/d' "${NPM_PACKAGE_DB}"
 }
 
+# @FUNCTION: _npm-secaudit_dedupe_npm
+# @DESCRIPTION:
+# Replaces duplicate packages into a single package.
+_npm-secaudit_dedupe_npm() {
+	einfo "Deduping packages"
+	npm dedupe || die
+}
+
+# @FUNCTION: _npm-secaudit_audit_fix
+# @DESCRIPTION:
+# Removes vulnerable packages and does a final check.  It will audit every folder containing a package-lock.json
 _npm-secaudit_audit_fix() {
 	if [[ "${NPM_SECAUDIT_INSTALL_AUDIT}" == "1" ||
 		"${NPM_SECAUDIT_INSTALL_AUDIT}" == "true" ||
@@ -280,6 +291,10 @@ npm-secaudit_src_preinst_default() {
 	cd "${S}"
 
 	_npm-secaudit_audit_fix
+
+	cd "${S}"
+
+	_npm-secaudit_dedupe_npm
 
 	cd "${S}"
 
