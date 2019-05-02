@@ -7,7 +7,7 @@ This portage overlay contains various ebuilds for the Gentoo Linux distribution.
 The name of the repo comes from "well-oiled machine."  A (Gentoo) computer should not feel like molasses under high memory pressure or heavy IO utilization.  It should run smoothly.
 
 ## Adding the repo
-
+<pre>
 cd /usr/local
 git clone https://github.com/orsonteodoro/oiledmachine-overlay.git
 
@@ -16,10 +16,13 @@ Edit /etc/portage/repos.conf/layman.conf
 location = /usr/local/oiledmachine-overlay
 layman-type = git
 auto-sync = No
+</pre>
 
 ## Keep in sync by
+<pre>
 cd /usr/local/oiledmachine-overlay
 git pull
+</pre>
 
 ## Important stuff
 
