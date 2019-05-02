@@ -1,20 +1,45 @@
 # oiledmachine-overlay
 
-This portage overlay contains various ebuilds for the Gentoo Linux distribution.  It focuses on optimized ebuilds, some game development, software used in computer science courses, C#, and other legacy software and hardware.
+## About
 
-In this overlay, I provide 32-bit ebuilds for libraries and programs of some programs while the Gentoo overlay contains native ebuilds.  Reason why I choose to use the 32-bit versions over the 64-bit versions because of the 32-bit versions have a lower virtual memory and lower memory footprint overall.  I try to offer the stable modified ebuilds to minimize memory leaks.
+This portage overlay contains various ebuilds for the Gentoo Linux distribution.  It focuses on optimized ebuilds, some game development, software used in computer science courses, C#, Electron apps, and other legacy software and hardware.
 
-IMPORTANT:  Many of these packages have special licenses and EULAs attached to them.  I recommend that you edit your /etc/portage/make.conf so it looks like this ACCEPT_LICENSE="-*" and manually accept each of the licenses.  Licenses can be found in the licenses folder of this overlay and the free copyleft licenses can be found on the official gentoo overlay in their license folder too.
+The name of the repo comes from "well-oiled machine."  A (Gentoo) computer should not feel like molasses under high memory pressure or heavy IO utilization.  It should run smoothly.
 
-IMPORTANT:  Many of these packages especially non-free software also require you to manually obtain the installer or files to install and may require you to register on their website.  The required files are listed in the ebuild.
+## Adding the repo
 
-Here is an example of what I mean.
+cd /usr/local
+git clone https://github.com/orsonteodoro/oiledmachine-overlay.git
 
-IMPORTANT:  For Firefox, Chromium, surf, you need to copy the contents of profiles/package.use.force from the overlay to your /etc/portage/profile/package.use.force to ensure that you can mutually exclusively choose between either 64- or 32-bit compiled builds for multilib environments.  The package.use.force from the overlay will not work as expected because of a quirk or a bug in emerge.  The 32-bit builds are perceived to be better under heavy memory loads compared to the native 64-bit compiles of these packages.  If you run a 64-bit multilib environment, choose the 32-bit build instead.
+Edit /etc/portage/repos.conf/layman.conf
+[oiledmachine-overlay]
+location = /usr/local/oiledmachine-overlay
+layman-type = git
+auto-sync = No
+
+## Keep in sync by
+cd /usr/local/oiledmachine-overlay
+git pull
+
+## Important stuff
+
+Many of these packages have special licenses and EULAs attached to them.  I recommend that you edit your /etc/portage/make.conf so it looks like this ACCEPT_LICENSE="-*" and manually accept each of the licenses.  Licenses can be found in the licenses folder of this overlay and the free copyleft licenses can be found on the official gentoo overlay in their license folder too.
+
+Many of these packages especially non-free software also require you to manually obtain the installer or files to install and may require you to register on their website.  The required files are listed in the ebuild.
 
 The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overlay ebuilds.  They many of the ebuilds in that folder in this overlay are dependencies for the latest stable MonoDevelop and for MonoGame.
 
-The name of the repo comes from "well-oiled machine."  A (Gentoo) computer should not feel like molasses under high memory pressure or heavy IO utilization.  It should run smoothly.
+# Broken / Still in development
+
+## NPM / Electron apps
+
+Currently many of the npm ebuilds are undergoing development.  There are currently a lot of vulnerabilties that need to be triaged due to eclass update that exposed many of them.  I am considering deleting npm packages due to the large amount of time consumed and plenty of vulnerabilities.
+
+## .NET stack
+
+The dotnet packages are mostly outdated and being updated.  Many will maybe deleted due to the lack of programs that use them.  The top priority right now (in 2019 quarters 1-3) is to fix the dotcore-sdk non binary packages first then monodevelop.
+
+# Packages
 
 | package | decription |
 | --- | --- |
@@ -147,3 +172,6 @@ The name of the repo comes from "well-oiled machine."  A (Gentoo) computer shoul
 | dev-util/pullp | This is an Electron based pull request monitoring program.
 | dev-util/geeks-diary | This is an Electron based diary / notetaker for programmers.
 | dev-util/lepton | This is a programmer reusable code snipplet manager based on Electron and able to sync with Gist.
+| app-editors/epic-journal | This is an Electron based encrypted journal.
+
+
