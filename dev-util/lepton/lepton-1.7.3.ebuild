@@ -23,6 +23,8 @@ IUSE=""
 
 S="${WORKDIR}/${PN^}-${PV}"
 
+TAR_V="^4.4.2"
+
 pkg_setup() {
 	if [[ -z "$LEPTON_CLIENT_ID" || -z "$LEPTON_CLIENT_ID" ]] ; then
 		eerror "You must define LEPTON_CLIENT_ID and LEPTON_CLIENT_SECRET in your package.env.  See:"
@@ -44,9 +46,26 @@ src_unpack() {
 	cp "${FILESDIR}"/account.js "${S}"/configs || die
 	sed -i -e "s|<your_client_id>|$LEPTON_CLIENT_ID|" -e "s|<your_client_secret>|$LEPTON_CLIENT_SECRET|" "${S}"/configs/account.js || die
 
+	ELECTRON_APP_INSTALL_AUDIT=0
 	electron-app_fetch_deps
+	ELECTRON_APP_INSTALL_AUDIT=1
+
+	rm package-lock.json || die
+	npm i --package-lock-only
+	npm audit fix --force || die
+
+	sed -i -e "s|\"tar\": \"^2.0.0\",|\"tar\": \"${TAR_V}\",|g" node_modules/node-gyp/package.json || die
+	rm -rf node_modules/tar || die
+	npm install tar@"${TAR_V}" || die
+
+	_electron-app_audit_fix_npm
+
+	cd "${S}"
 
 	electron-app_src_compile_default
+
+	cd "${S}"
+
 	electron-app_src_preinst_default
 }
 
