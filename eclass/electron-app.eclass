@@ -170,8 +170,8 @@ _electron-app_audit_fix_npm() {
 			einfo "Running \`npm i --package-lock-only\`"
 			npm i --package-lock-only || die
 			einfo "Running \`npm audit fix --force\`"
-			npm audit fix --force --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
-			npm audit || die
+			npm audit fix --force --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die "location: $l"
+			npm audit || die "location: $l"
 			popd
 		done
 		einfo "Auditing security done"
@@ -388,6 +388,19 @@ electron-app_src_compile_default() {
 	esac
 }
 
+
+# @FUNCTION: electron-app_prune_audit
+# @DESCRIPTION:
+# This will preform an audit on after pruning.  Also it will fix some ERR messages.
+electron-app_prune_audit() {
+	L=$(find . -name "package-lock.json")
+	for l in $L; do
+		rm package-lock.json
+		npm i --package-lock-only
+		npm audit || die
+	done
+}
+
 # @FUNCTION: electron-app_src_preinst_default
 # @DESCRIPTION:
 # A user can define electron-app_fix_prune to reinstall dependencies
@@ -421,6 +434,8 @@ electron-app_src_preinst_default() {
 			if declare -f electron-app_fix_prune > /dev/null ; then
 				electron-app_fix_prune
 			fi
+
+			electron-app_prune_audit
 
 			;;
 		yarn)

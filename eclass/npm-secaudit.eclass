@@ -272,12 +272,24 @@ _npm-secaudit_audit_fix() {
 			einfo "Running \`npm i --package-lock-only\`"
 			npm i --package-lock-only || die
 			einfo "Running \`npm audit fix --force\`"
-			npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die
-			npm audit || die
+			npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die "location: $l"
+			npm audit || die "location $l"
 			popd
 		done
 		einfo "Auditing security done"
 	fi
+}
+
+# @FUNCTION: npm-secaudit_prune_audit
+# @DESCRIPTION:
+# This will preform an audit on after pruning.  Also it will fix some ERR messages.
+npm-secaudit_prune_audit() {
+	L=$(find . -name "package-lock.json")
+	for l in $L; do
+		rm package-lock.json
+		npm i --package-lock-only
+		npm audit || die
+	done
 }
 
 # @FUNCTION: npm-secaudit_src_preinst_default
@@ -310,6 +322,8 @@ npm-secaudit_src_preinst_default() {
 	if declare -f npm-secaudit_fix_prune > /dev/null ; then
 		npm-secaudit_fix_prune
 	fi
+
+	npm-secaudit_prune_audit
 }
 
 # @FUNCTION: npm-secaudit_install
