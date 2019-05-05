@@ -30,30 +30,35 @@ HOMEPAGE="https://github.com/dolohow/uksm
           "
 
 EXTRAVERSION="-ot"
-PATCH_UKSM_VER="4.20" # no 5.0 yet
+PATCH_UKSM_VER="5.0"
+PATCH_UKSM_MVER="5"
 PATCH_ZENTUNE_VER="5.0"
 PATCH_O3_CO_COMMIT="a56a17374772a48a60057447dc4f1b4ec62697fb"
 PATCH_O3_RO_COMMIT="93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9"
 PATCH_CK_MAJOR="5.0"
 PATCH_CK_MAJOR_MINOR="5.0"
 PATCH_CK_REVISION="1"
-K_GENPATCHES_VER="8"
+K_GENPATCHES_VER="11"
 PATCH_GP_MAJOR_MINOR_REVISION="5.0-${K_GENPATCHES_VER}"
 PATCH_GRAYSKY_COMMIT="87168bfa27b782e1c9435ba28ebe3987ddea8d30"
 PATCH_PDS_MAJOR_MINOR="5.0"
 PATCH_PDS_VER="099o"
 PATCH_BFQ_VER="5.0"
 PATCH_TRESOR_VER="3.18.5"
-PATCH_BMQ_VER="092"
+PATCH_BMQ_VER="093"
 PATCH_BMQ_MAJOR_MINOR="5.0"
 
 KERNEL_COMMIT="bfeffd155283772bbe78c6a05dec7c0128ee500c" # Linus' tag for 5.0-rc1
 
 AMD_TAG="amd-staging-drm-next"
-AMD_COMMIT_LAST_STABLE="fa16d1eb6a78b265480bd4c2b8739c1ea261cdd8" # amd-18.50 branch latest commit equivalent
+AMD_COMMIT_LAST_STABLE="f7fa4d8745fce7db056ee9fa040c6e31b50f2389" # amd-19.10 branch latest commit equivalent
+# 2019-04-17 drm/amdgpu: amdgpu_device_recover_vram got NULL of shadow->parent
 
-IUSE="-zentune +o3 muqss +pds +bfq bmq +amd amd-staging-drm-next cfs +graysky2 uksm tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs"
-REQUIRED_USE="^^ ( muqss pds cfs bmq ) tresor_sysfs? ( || ( tresor_i686 tresor_x86_64 tresor_aesni ) ) tresor? ( ^^ ( tresor_i686 tresor_x86_64 tresor_aesni ) ) tresor_i686? ( tresor ) tresor_x86_64? ( tresor ) tresor_aesni? ( tresor ) amd-staging-drm-next? ( amd )"
+AMD_COMMIT_SNAPSHOT="f9315121b1f8984fdefbef91aa2702e26afedd78" # latest commit i tested
+# 2019-05-02 drm/amd/amdgpu: Add MEM_LOAD to amdgpu_pm_info debugfs file
+
+IUSE="-zentune +o3 muqss pds bfq +bmq +amd amd-staging-drm-next-latest amd-staging-drm-next-snapshot cfs +graysky2 uksm tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs"
+REQUIRED_USE="^^ ( muqss pds cfs bmq ) tresor_sysfs? ( || ( tresor_i686 tresor_x86_64 tresor_aesni ) ) tresor? ( ^^ ( tresor_i686 tresor_x86_64 tresor_aesni ) ) tresor_i686? ( tresor ) tresor_x86_64? ( tresor ) tresor_aesni? ( tresor ) amd-staging-drm-next-latest? ( amd ) amd-staging-drm-next-snapshot? ( amd ) amd-staging-drm-next-snapshot? ( !amd-staging-drm-next-latest ) amd-staging-drm-next-latest? ( !amd-staging-drm-next-snapshot )"
 
 #K_WANT_GENPATCHES="base extras experimental"
 K_SECURITY_UNSUPPORTED="1"
@@ -66,7 +71,8 @@ detect_arch
 
 #DEPEND="deblob? ( ${PYTHON_DEPS} )"
 DEPEND="amd? ( dev-vcs/git )
-	dev-util/patchutils"
+	dev-util/patchutils
+	"
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
@@ -79,7 +85,7 @@ BMQ_SRC_URL="${BMQ_BASE_URL}${BMQ_FN}"
 AMDREPO_URL="git://people.freedesktop.org/~agd5f/linux"
 AMD_PATCH_FN="${AMD_TAG}.patch"
 
-UKSM_BASE="https://raw.githubusercontent.com/dolohow/uksm/master/v4.x/"
+UKSM_BASE="https://raw.githubusercontent.com/dolohow/uksm/master/v${PATCH_UKSM_MVER}.x/"
 UKSM_FN="uksm-${PATCH_UKSM_VER}.patch"
 UKSM_SRC_URL="${UKSM_BASE}${UKSM_FN}"
 
@@ -188,10 +194,6 @@ pkg_setup() {
 		ewarn "The zen-tune patch or muqss might cause lock up or slow io under heavy load like npm.  These use flags are not recommended."
 	fi
 
-	if use bfq ; then
-		ewarn "The bfq patch applied may cause a kernel panic if uses another IO scheduler other than BFQ."
-	fi
-
 	#use deblob && python-any-r1_pkg_setup
         kernel-2_pkg_setup
 }
@@ -216,7 +218,7 @@ function remove_amd_fixes() {
 
 function apply_uksm() {
 	_tpatch "${PATCH_OPS} -N" "${DISTDIR}/${UKSM_FN}"
-	_dpatch "${PATCH_OPS}" "${FILESDIR}/uksm-4.19-invalidate-range-linux-5.0.6.patch"
+	#_dpatch "${PATCH_OPS}" "${FILESDIR}/uksm-4.19-invalidate-range-linux-5.0.6.patch"
 }
 
 function apply_bfq() {
@@ -379,7 +381,9 @@ function fetch_amd() {
 	#git diff ${KERNEL_COMMIT}..origin/${AMD_TAG} > "${T}/${AMD_PATCH_FN}"
 
 	local target
-	if use amd-staging-drm-next ; then
+	if use amd-staging-drm-next-snapshot ; then
+		target="${AMD_COMMIT_SNAPSHOT}"
+	elif use amd-staging-drm-next-latest ; then
 		target="${AMD_TAG}"
 	else
 		target="${AMD_COMMIT_LAST_STABLE}"
@@ -458,6 +462,11 @@ src_unpack() {
 			echo $(patch --dry-run -p1 -F 100 -i "${T}/amd-patches/${l}") | grep "FAILED at"
 			if [[ "$?" == "1" ]] ; then
 				case "${l}" in
+					*e5620a6b4b1c908723548d7f0a0bdc15e1a7ce03*)
+						# fix miss-patched and missing part
+						_tpatch "${PATCH_OPS} -N" "${T}/amd-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-e5620a6b4b1c908723548d7f0a0bdc15e1a7ce03-fix.patch"
+						;;
 					*86bbd89d5da66fe760049ad3f04adc407ec0c4d6*)
 						# fix failed patching
 						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-86bbd89d5da66fe760049ad3f04adc407ec0c4d6-fix.patch"
@@ -479,8 +488,8 @@ src_unpack() {
 						_tpatch "${PATCH_OPS} -N" "${T}/amd-patches/${l}"
 						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-24f7dd7ea98dc54fa45a0dd10c7a472e00ca01d4-fix.patch"
 						;;
-					*45cf8c23f3564e3f39ae09b70b9dff24acae4a56*|\
-					*4fb2c933c9656435e8300fd6011daa3d4b0128fd*|\
+#					*45cf8c23f3564e3f39ae09b70b9dff24acae4a56*|\
+#					*4fb2c933c9656435e8300fd6011daa3d4b0128fd*|\
 					*df1dd4f4a7271eb2744d8593c0da5d7a58dbe3a9*)
 						# already applied or not needed
 						;;
@@ -576,6 +585,26 @@ src_unpack() {
 						_tpatch "${PATCH_OPS} -N" "${T}/amd-patches/${l}"
 						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-c6fcd3a65b9873e250aba0f5ab40838633145b10-fix.patch"
 						;;
+					*686496f25d4b1b2ccf2f388a3d4afd5c08414f94*)
+						_tpatch "${PATCH_OPS} -N" "${T}/amd-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-686496f25d4b1b2ccf2f388a3d4afd5c08414f94-fix.patch"
+						;;
+					*7e00e5d884c1dbff63600a10979f2f0dd598fdfc*)
+						_tpatch "${PATCH_OPS} -N" "${T}/amd-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-7e00e5d884c1dbff63600a10979f2f0dd598fdfc-fix.patch"
+						;;
+					*0e68dad5fc27f09e7b5039b4e35481ce4689ce2f*)
+						_tpatch "${PATCH_OPS} -N" "${T}/amd-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-0e68dad5fc27f09e7b5039b4e35481ce4689ce2f-fix.patch"
+						;;
+					*e6bdce50d4b4e014202ff006630a3f52751e3e17*)
+						_tpatch "${PATCH_OPS} -N" "${T}/amd-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-e6bdce50d4b4e014202ff006630a3f52751e3e17-fix.patch"
+						;;
+					*3cdc2f9ca0cd9d3d0143bfce07d7ceacf0a86a58*)
+						_tpatch "${PATCH_OPS} -N" "${T}/amd-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-3cdc2f9ca0cd9d3d0143bfce07d7ceacf0a86a58-fix.patch"
+						;;
 					*)
 						eerror "Patch failure ${l}.  Did not find the intervention patch."
 						die
@@ -644,5 +673,10 @@ pkg_postinst() {
 	kernel-2_pkg_postinst
 	if use tresor_sysfs ; then
 		einfo "/usr/bin/tresor_sysfs is provided to set your TRESOR key"
+	fi
+
+	if use muqss ; then
+		ewarn "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL will cause a kernel panic on boot."
+		ewarn "The MuQSS scheduler may have random system hard pauses for few seconds to around a minute when resource usage is high."
 	fi
 }

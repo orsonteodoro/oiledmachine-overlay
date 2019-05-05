@@ -1,6 +1,6 @@
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2019-04-03 17:22:37.894014751 -0700
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-04-03 17:24:07.971405639 -0700
-@@ -4884,11 +4884,10 @@ static void amdgpu_dm_commit_planes(stru
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2019-05-04 21:29:55.461030619 -0700
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-05-04 21:32:02.445976514 -0700
+@@ -4884,12 +4884,10 @@ static void amdgpu_dm_commit_planes(stru
  			to_dm_crtc_state(drm_atomic_get_old_crtc_state(state, pcrtc));
  	int planes_count = 0, vpos, hpos;
  	unsigned long flags;
@@ -9,29 +9,9 @@
  	struct amdgpu_bo *abo;
  	uint64_t tiling_flags;
 -	uint32_t target, target_vblank;
+-
 +	uint32_t target_vblank, last_flip_vblank;
 +	bool vrr_active = amdgpu_dm_vrr_active(acrtc_state);
- 
  	bool pflip_present = false;
  
-@@ -4954,7 +4953,7 @@ static void amdgpu_dm_commit_planes(stru
- 			 * using GLX_OML_sync_control extension.
- 			 */
- 			if (!vrr_active)
--				last_flip_vblank = drm_crtc_vblank_count(crtc);
-+				last_flip_vblank = amdgpu_get_vblank_counter_kms(dm->ddev, acrtc_attach->crtc_id);
- 
- 			/*
- 			 * TODO This might fail and hence better not used, wait
-@@ -5051,10 +5050,7 @@ static void amdgpu_dm_commit_planes(stru
- 	}
- 
- 	if (pflip_present) {
--		target = (uint32_t)drm_crtc_vblank_count(pcrtc) + wait_for_vblank;
--		/* Prepare wait for target vblank early - before the fence-waits */
--		target_vblank = target - (uint32_t)drm_crtc_vblank_count(pcrtc) +
--				amdgpu_get_vblank_counter_kms(pcrtc->dev, acrtc_attach->crtc_id);
-+		target_vblank = last_flip_vblank + wait_for_vblank;
- 
- 		/*
- 		 * Wait until we're out of the vertical blank period before the one
+ 	struct {
