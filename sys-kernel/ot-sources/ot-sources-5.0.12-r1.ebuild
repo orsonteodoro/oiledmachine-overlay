@@ -471,12 +471,6 @@ src_unpack() {
 						# fix failed patching
 						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-86bbd89d5da66fe760049ad3f04adc407ec0c4d6-fix.patch"
 						;;
-#					*333f340fac75dc203a53194dec078016b43e40fe*|\
-#					*b9d0c7f1631709a0a98df01e63847fd5824c97b4*|\
-#					*ec462192691e57e231a5a36799a7849f2af2485f*|\
-#					*f0371ac7148c901a305ba5cdc4b6f85dbb3e2076*)
-#						# 5.0 kernel only
-#						;;
 					*)
 						_tpatch "${PATCH_OPS} -N" "${T}/amd-patches/${l}"
 						# already has been applied or partially patched already or success
@@ -488,17 +482,9 @@ src_unpack() {
 						_tpatch "${PATCH_OPS} -N" "${T}/amd-patches/${l}"
 						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-24f7dd7ea98dc54fa45a0dd10c7a472e00ca01d4-fix.patch"
 						;;
-#					*45cf8c23f3564e3f39ae09b70b9dff24acae4a56*|\
-#					*4fb2c933c9656435e8300fd6011daa3d4b0128fd*|\
 					*df1dd4f4a7271eb2744d8593c0da5d7a58dbe3a9*)
 						# already applied or not needed
 						;;
-#					*333f340fac75dc203a53194dec078016b43e40fe*|\
-#					*b9d0c7f1631709a0a98df01e63847fd5824c97b4*|\
-#					*ec462192691e57e231a5a36799a7849f2af2485f*|\
-#					*f0371ac7148c901a305ba5cdc4b6f85dbb3e2076*)
-#						# 5.0 kernel only
-#						;;
 					*131280a162e7fc2a539bb939efd28dd0b964c62c*)
 						# needs custom patch
 						_tpatch "${PATCH_OPS} -N" "${T}/amd-patches/${l}"
@@ -541,14 +527,6 @@ src_unpack() {
 						_tpatch "${PATCH_OPS} -N" "${T}/amd-patches/${l}"
 						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-3e70b04ab7874670e65c688f89ce210a6a482de6-fix.patch"
 						;;
-#					*3605d1c0a0d8becfbaef64e5e166b50b21f1520e*)
-#						_tpatch "${PATCH_OPS} -N" "${T}/amd-patches/${l}"
-#						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-3605d1c0a0d8becfbaef64e5e166b50b21f1520e-fix.patch"
-#						;;
-#					*31ad0be4ebf7327591fbca1b96e209f591a19849*)
-#						_tpatch "${PATCH_OPS} -N" "${T}/amd-patches/${l}"
-#						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-31ad0be4ebf7327591fbca1b96e209f591a19849-fix.patch"
-#						;;
 					*ceb3dbb4690db8377ad127a5666cd4775d9f70f4*)
 						_tpatch "${PATCH_OPS} -N" "${T}/amd-patches/${l}"
 						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-ceb3dbb4690db8377ad127a5666cd4775d9f70f4-fix.patch"
@@ -622,18 +600,6 @@ src_unpack() {
 	if use amd ; then
 		# fix patching errors caused by "patch -N" with apply_genpatch_*
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-b721056b34c6c045cd5eb0c003a6a2c2d6d077aa-fix.patch"
-
-		#_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-72deff05bd4662b9aca75812b44a9bea646da1b0-dedupe.patch"
-		#_dpatch "${PATCH_OPS}" "${FILESDIR}/1004_linux-4.20.5-fix.patch"
-		#if use amd-staging-drm-next ; then
-		#	_dpatch "${PATCH_OPS}" "${FILESDIR}/1007_linux-4.20.8.patch-fix-mispatch-amd-testing-for-4.20.16-patchset.patch"
-		#	_dpatch "${PATCH_OPS}" "${FILESDIR}/1007_linux-4.20.8-fix-mispatch-amd-testing-for-4.20.16-patchset-2.patch"
-		#	_dpatch "${PATCH_OPS}" "${FILESDIR}/1010_linux-4.20.11-fix-for-patchset-4.20.16.patch"
-		#	_dpatch "${PATCH_OPS}" "${FILESDIR}/1012_linux-4.20.13-fix-for-4.20.16-patchset.patch"
-		#else
-		#	_dpatch "${PATCH_OPS}" "${FILESDIR}/1007_linux-4.20.8-fix-mispatch-non-amd-testing.patch"
-		#fi
-		true
 	fi
 
 	if use o3 ; then
@@ -665,14 +631,15 @@ src_install() {
 
 	if use tresor_sysfs ; then
 		cd "${T}"
-		dobin tresor_sysfs
+		mv tresor_sysfs tresor_sysfs_${PV}
+		dobin tresor_sysfs_${PV}
 	fi
 }
 
 pkg_postinst() {
 	kernel-2_pkg_postinst
 	if use tresor_sysfs ; then
-		einfo "/usr/bin/tresor_sysfs is provided to set your TRESOR key"
+		einfo "/usr/bin/tresor_sysfs_${PV} is provided to set your TRESOR key"
 	fi
 
 	if use muqss ; then
