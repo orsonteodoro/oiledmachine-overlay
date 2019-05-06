@@ -141,7 +141,6 @@ npm-secaudit_fetch_deps() {
 	_npm-secaudit_yarn_access
 
 	npm install --maxsockets=${NPM_MAXSOCKETS} || die
-	_npm-secaudit_audit_fix
 	popd
 }
 
@@ -155,13 +154,12 @@ npm-secaudit_src_unpack() {
 
 	default_src_unpack
 
-	cd "${S}"
-
-	npm-secaudit_fetch_deps
-
-	cd "${S}"
-
 	# all the phase hooks get run in unpack because of download restrictions
+
+	cd "${S}"
+	if declare -f npm-secaudit_src_preprepare > /dev/null ; then
+		npm-secaudit_src_preprepare
+	fi
 
 	cd "${S}"
 	if declare -f npm-secaudit_src_prepare > /dev/null ; then
@@ -171,10 +169,27 @@ npm-secaudit_src_unpack() {
 	fi
 
 	cd "${S}"
+	if declare -f npm-secaudit_src_postprepare > /dev/null ; then
+		npm-secaudit_src_postprepare
+	fi
+
+	# reference the merged package
+	cd "${S}"
+	npm-secaudit_dedupe_npm
+
+	# audit before possibly bundling a vulnerable package
+	npm-secaudit_audit
+
+	cd "${S}"
 	if declare -f npm-secaudit_src_compile > /dev/null ; then
 		npm-secaudit_src_compile
 	else
 		npm-secaudit_src_compile_default
+	fi
+
+	cd "${S}"
+	if declare -f npm-secaudit_src_postcompile > /dev/null ; then
+		npm-secaudit_src_postcompile
 	fi
 
 	cd "${S}"
@@ -187,12 +202,15 @@ npm-secaudit_src_unpack() {
 
 # @FUNCTION: npm-secaudit_src_prepare_default
 # @DESCRIPTION:
-# Fetches dependencies.  Currently a stub.  TODO patching.
+# Fetches dependencies and audit fixes them.  Currently a stub.  TODO per package patching support.
 npm-secaudit_src_prepare_default() {
         debug-print-function ${FUNCNAME} "${@}"
 
 	cd "${S}"
-
+	npm-secaudit_fetch_deps
+	cd "${S}"
+	npm-secaudit_audit_fix
+	cd "${S}"
 	#default_src_prepare
 }
 
@@ -248,10 +266,10 @@ npm-secaudit-register() {
 	sed -i '/^$/d' "${NPM_PACKAGE_DB}"
 }
 
-# @FUNCTION: _npm-secaudit_dedupe_npm
+# @FUNCTION: npm-secaudit_dedupe_npm
 # @DESCRIPTION:
 # Replaces duplicate packages into a single package.
-_npm-secaudit_dedupe_npm() {
+npm-secaudit_dedupe_npm() {
 	einfo "Deduping packages"
 	npm dedupe || die
 }
@@ -259,7 +277,7 @@ _npm-secaudit_dedupe_npm() {
 # @FUNCTION: _npm-secaudit_audit_fix
 # @DESCRIPTION:
 # Removes vulnerable packages and does a final check.  It will audit every folder containing a package-lock.json
-_npm-secaudit_audit_fix() {
+npm-secaudit_audit_fix() {
 	if [[ "${NPM_SECAUDIT_INSTALL_AUDIT}" == "1" ||
 		"${NPM_SECAUDIT_INSTALL_AUDIT}" == "true" ||
 		"${NPM_SECAUDIT_INSTALL_AUDIT}" == "TRUE" ]] ; then
@@ -273,22 +291,23 @@ _npm-secaudit_audit_fix() {
 			npm i --package-lock-only || die
 			einfo "Running \`npm audit fix --force\`"
 			npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die "location: $l"
-			npm audit || die "location $l"
 			popd
 		done
 		einfo "Auditing security done"
 	fi
 }
 
-# @FUNCTION: npm-secaudit_prune_audit
+# @FUNCTION: npm-secaudit_audit
 # @DESCRIPTION:
-# This will preform an audit on after pruning.  Also it will fix some ERR messages.
-npm-secaudit_prune_audit() {
+# This will preform an recursive audit.  Also it will fix some ERR messages.
+npm-secaudit_audit() {
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
+		pushd $(dirname $l)
 		rm package-lock.json
 		npm i --package-lock-only
 		npm audit || die
+		popd
 	done
 }
 
@@ -302,11 +321,7 @@ npm-secaudit_src_preinst_default() {
 
 	cd "${S}"
 
-	_npm-secaudit_audit_fix
-
-	cd "${S}"
-
-	_npm-secaudit_dedupe_npm
+	npm-secaudit_dedupe_npm
 
 	cd "${S}"
 
@@ -323,7 +338,7 @@ npm-secaudit_src_preinst_default() {
 		npm-secaudit_fix_prune
 	fi
 
-	npm-secaudit_prune_audit
+	npm-secaudit_audit
 }
 
 # @FUNCTION: npm-secaudit_install

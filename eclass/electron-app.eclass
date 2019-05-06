@@ -146,18 +146,18 @@ _electron-app-flakey-check() {
 	fi
 }
 
-# @FUNCTION: _electron-app_dedupe_npm
+# @FUNCTION: electron-app_dedupe_npm
 # @DESCRIPTION:
 # Replaces duplicate packages into a single package.
-_electron-app_dedupe_npm() {
+electron-app_dedupe_npm() {
 	einfo "Deduping packages"
 	npm dedupe || die
 }
 
-# @FUNCTION: _electron-app_audit_fix_npm
+# @FUNCTION: electron-app_audit_fix_npm
 # @DESCRIPTION:
 # Removes vulnerable packages and does a final check.  It will audit every folder containing a package-lock.json
-_electron-app_audit_fix_npm() {
+electron-app_audit_fix_npm() {
 	if [[ "${ELECTRON_APP_INSTALL_AUDIT}" == "1" ||
 		"${ELECTRON_APP_INSTALL_AUDIT}" == "true" ||
 		"${ELECTRON_APP_INSTALL_AUDIT}" == "TRUE" ]] ; then
@@ -171,7 +171,6 @@ _electron-app_audit_fix_npm() {
 			npm i --package-lock-only || die
 			einfo "Running \`npm audit fix --force\`"
 			npm audit fix --force --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die "location: $l"
-			npm audit || die "location: $l"
 			popd
 		done
 		einfo "Auditing security done"
@@ -235,7 +234,6 @@ electron-app_fetch_deps_npm()
 
 	pushd "${S}"
 	npm install --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
-	_electron-app_audit_fix_npm
 	popd
 }
 
@@ -303,9 +301,12 @@ electron-app_src_unpack() {
 
 	cd "${S}"
 
-	electron-app_fetch_deps
-
 	# all the phase hooks get run in unpack because of download restrictions
+
+	cd "${S}"
+	if declare -f electron-app_src_preprepare > /dev/null ; then
+		electron-app_src_preprepare
+	fi
 
 	cd "${S}"
 	if declare -f electron-app_src_prepare > /dev/null ; then
@@ -315,10 +316,27 @@ electron-app_src_unpack() {
 	fi
 
 	cd "${S}"
+	if declare -f electron-app_src_postprepare > /dev/null ; then
+		electron-app_src_postprepare
+	fi
+
+	# reference the merged package
+	cd "${S}"
+	electron-app_dedupe_npm
+
+	# audit before possibly bundling a vulnerable package
+	electron-app_audit
+
+	cd "${S}"
 	if declare -f electron-app_src_compile > /dev/null ; then
 		electron-app_src_compile
 	else
 		electron-app_src_compile_default
+	fi
+
+	cd "${S}"
+	if declare -f electron-app_src_postcompile > /dev/null ; then
+		electron-app_src_postcompile
 	fi
 
 	cd "${S}"
@@ -331,12 +349,25 @@ electron-app_src_unpack() {
 
 # @FUNCTION: electron-app_src_prepare_default
 # @DESCRIPTION:
-# Fetches dependencies.  Currently a stub.  TODO patching.
+# Fetches dependencies and audit fixes them.  Currently a stub.  TODO per package patching support.
 electron-app_src_prepare_default() {
         debug-print-function ${FUNCNAME} "${@}"
 
 	cd "${S}"
-
+	electron-app_fetch_deps
+	cd "${S}"
+	case "$ELECTRON_APP_MODE" in
+		npm)
+			electron-app_audit_fix_npm
+			;;
+		yarn)
+			# use npm audit anyway?
+			ewarn "No audit fix implemented in yarn.  Package may be likely vulnerable."
+			;;
+		*)
+			;;
+	esac
+	cd "${S}"
 	#default_src_prepare
 }
 
@@ -389,15 +420,17 @@ electron-app_src_compile_default() {
 }
 
 
-# @FUNCTION: electron-app_prune_audit
+# @FUNCTION: electron-app_audit
 # @DESCRIPTION:
-# This will preform an audit on after pruning.  Also it will fix some ERR messages.
-electron-app_prune_audit() {
+# This will preform an recursive audit.  Also it will fix some ERR messages.
+electron-app_audit() {
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
+		pushd $(dirname $l)
 		rm package-lock.json
 		npm i --package-lock-only
 		npm audit || die
+		popd
 	done
 }
 
@@ -416,11 +449,7 @@ electron-app_src_preinst_default() {
 
 	case "$ELECTRON_APP_MODE" in
 		npm)
-			_electron-app_audit_fix_npm
-
-			cd "${S}"
-
-			_electron-app_dedupe_npm
+			electron-app_dedupe_npm
 
 			if ! use debug ; then
 				if [[ "${ELECTRON_APP_PRUNE}" == "1" ||
@@ -435,7 +464,7 @@ electron-app_src_preinst_default() {
 				electron-app_fix_prune
 			fi
 
-			electron-app_prune_audit
+			electron-app_audit
 
 			;;
 		yarn)
