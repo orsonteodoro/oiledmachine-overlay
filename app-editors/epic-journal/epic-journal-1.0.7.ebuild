@@ -99,16 +99,12 @@ _fix_vulnerabilities() {
 	# fix top level: npm ERR! code ENOAUDIT
 	rm package-lock.json || die
 	npm i --package-lock-only || die
+
+	electron-app_audit_fix_npm
 }
 
-src_unpack() {
-	default_src_unpack
-
+electron-app_src_preprepare() {
 	ewarn "This ebuild may fail randomly.  Re-emerge it again."
-
-	electron-app_src_prepare_default
-
-	cd "${S}"
 
 	sed -i -e "s|\"win-sqlcipher\": \"^0.0.4\",|\"unix-sqlcipher\": \"^0.0.4\",|g" package.json || die
 	sed -i -e "s|win-sqlcipher|unix-sqlcipher|g" src/main/datastore.js || die
@@ -121,22 +117,16 @@ src_unpack() {
 			npm install
 		popd
 	popd
+}
 
-	ELECTRON_APP_INSTALL_AUDIT=0
-	electron-app_fetch_deps
-	ELECTRON_APP_INSTALL_AUDIT=1
-
+electron-app_src_postprepare() {
 	_fix_vulnerabilities
-
-	_electron-app_audit_fix_npm
-
 	sed -i -e "s|cssLoaderOptions += (cssLoaderOptions ? '\&' : '?') + 'minimize'||g" node_modules/vue-loader/lib/loader.js || die
+}
 
-	electron-app_src_compile
-
-	cd "${S}"
-
-	electron-app_src_preinst_default
+electron-app_src_prepare() {
+	electron-app_fetch_deps
+	# defer audit fix
 }
 
 electron-app_src_compile() {
