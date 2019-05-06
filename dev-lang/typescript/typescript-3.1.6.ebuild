@@ -31,22 +31,27 @@ BRACES_VER="^2.3.1"
 JS_YAML_VER="^3.13.0"
 
 _fix_vulnerbilities() {
-	# We need 3.X for gulp-help.  The audit fix updates it to 4.X and breaks it.
-	npm uninstall gulp
-	npm install gulp@"<4.0.0" --save-dev || die
+	npm i --package-lock || die
+
+	einfo "Performing recursive package-lock.json install"
+	L=$(find . -name "package-lock.json")
+	for l in $L; do
+		pushd $(dirname $l) || die
+		npm install
+		popd
+	done
+	einfo "Recursive install done"
 
 	# fix vulnerbilities top level
-	rm package-lock.js
-	npm i --package-lock || die
 	npm audit fix --force || die
 
 	# fix vulnerbility mocha
-	pushd node_modules/mocha
+	pushd node_modules/mocha || die
 	npm i --package-lock || die
 	npm audit fix --force || die
 	npm uninstall js-yaml
 	npm install js-yaml@"^3.13.0" --save-prod || die
-	rm package-lock.json
+	rm package-lock.json || die
 	popd
 
 	sed -i -e "s|\"underscore.string\": \"~3.3.4\"|\"underscore.string\": \"${UNDERSCORE_STRING_VER}\"|g" node_modules/mocha/node_modules/upath/package.json || die
@@ -54,21 +59,21 @@ _fix_vulnerbilities() {
 	sed -i -e "s|\"underscore.string\": \"~3.3.4\"|\"underscore.string\": \"${UNDERSCORE_STRING_VER}\"|g" node_modules/upath/package.json || die
 	sed -i -e "s|\"underscore.string\": \"~2.4.0\"|\"underscore.string\": \"${UNDERSCORE_STRING_VER}\"|g" node_modules/mocha/node_modules/remarkable/node_modules/argparse/package.json || die
 	sed -i -e "s|\"underscore.string\": \"2.4.0\"|\"underscore.string\": \"${UNDERSCORE_STRING_VER}\"|g" node_modules/mocha/node_modules/remarkable/package.json || die
-	rm -rf node_modules/mocha/node_modules/underscore.string
-	pushd node_modules/mocha
+	rm -rf node_modules/mocha/node_modules/underscore.string || die
+	pushd node_modules/mocha || die
 	npm install "underscore.string"@"${UNDERSCORE_STRING_VER}" --save-dev || die
 	popd
 
 
 	sed -i -e "s|\"braces\": \"^1.8.2\"|\"braces\": \"${BRACES_VER}\"|g" node_modules/mocha/node_modules/browser-sync/node_modules/micromatch/package.json || die
 	sed -i -e "s|\"braces\": \"^2.0.3\"|\"braces\": \"${BRACES_VER}\"|g" node_modules/arr-map/package.json || die
-	rm -rf node_modules/braces
-	rm -rf node_modules/mocha/node_modules/browser-sync/node_modules/braces
-	rm -rf node_modules/mocha/node_modules/braces
-	pushd node_modules/mocha/node_modules/browser-sync
+	rm -rf node_modules/braces || die
+	rm -rf node_modules/mocha/node_modules/browser-sync/node_modules/braces || die
+	rm -rf node_modules/mocha/node_modules/braces || die
+	pushd node_modules/mocha/node_modules/browser-sync || die
 	npm install "braces"@"${BRACES_VER}" || die
 	popd
-	pushd node_modules/mocha
+	pushd node_modules/mocha || die
 	npm install "braces"@"${BRACES_VER}" || die
 	popd
 	npm install "braces"@"${BRACES_VER}" || die
@@ -84,17 +89,17 @@ _fix_vulnerbilities() {
 	sed -i -e "s|\"debug\": \"^2.3.3\"|\"debug\": \"${DEBUG_VER}\"|g" node_modules/expand-brackets/package.json || die
 	sed -i -e "s|\"debug\": \"^2.2.0\"|\"debug\": \"${DEBUG_VER}\"|g" node_modules/snapdragon/package.json || die
 	sed -i -e "s|\"debug\": \"^2.1.2\"|\"debug\": \"${DEBUG_VER}\"|g" node_modules/fsevents/node_modules/needle/package.json || die
-	rm -rf node_modules/mocha/node_modules/gm-papandreou/node_modules/debug
-	rm -rf node_modules/fsevents/node_modules/debug
-	rm -rf node_modules/mocha/node_modules/debug
-	rm -rf node_modules/debug
-	pushd node_modules/mocha
+	rm -rf node_modules/mocha/node_modules/gm-papandreou/node_modules/debug || die
+	rm -rf node_modules/fsevents/node_modules/debug || die
+	rm -rf node_modules/mocha/node_modules/debug || die
+	rm -rf node_modules/debug || die
+	pushd node_modules/mocha || die
 	npm install "debug"@"${DEBUG_VER}" --save-prod || die
 	popd
-	pushd node_modules/fsevents
+	pushd node_modules/fsevents || die
 	npm install "debug"@"${DEBUG_VER}" || die
 	popd
-	pushd node_modules/mocha/node_modules/gm-papandreou
+	pushd node_modules/mocha/node_modules/gm-papandreou || die
 	npm install "debug"@"${DEBUG_VER}" --save-prod || die
 	popd
 	npm install "debug"@"${DEBUG_VER}" || die
@@ -110,46 +115,27 @@ _fix_vulnerbilities() {
 	sed -i -e "s|\"js-yaml\": \"~3.12.1\"|\"js-yaml\": \"${JS_YAML_VER}\"|g" node_modules/mocha/node_modules/markdownlint/package.json || die
 	sed -i -e "s|\"js-yaml\": \"^3.10.0\"|\"js-yaml\": \"${JS_YAML_VER}\"|g" node_modules/mocha/node_modules/section-matter/package.json || die
 	sed -i -e "s|\"js-yaml\": \"^3.12.0\"|\"js-yaml\": \"${JS_YAML_VER}\"|g" node_modules/mocha/node_modules/eslint/package.json || die
-	rm -rf node_modules/js-yaml
-	rm -rf node_modules/mocha/node_modules/js-yaml
-	pushd node_modules/mocha
+	rm -rf node_modules/js-yaml || die
+	rm -rf node_modules/mocha/node_modules/js-yaml || die
+	pushd node_modules/mocha || die
 	npm install "js-yaml"@"${JS_YAML_VER}" --save-prod || die
 	popd
 	npm install "js-yaml"@"${JS_YAML_VER}" || die
 
-	pushd node_modules/mocha/
-	rm package-lock.json
-	npm i --package-lock-only
-	popd
-	rm package-lock.json
-	npm i --package-lock
+	rm -rf node_modules/fsevents || die
+	rm -rf node_modules/mocha/node_modules/fsevents || die
+
+	# We need 3.X for gulp-help.  The audit fix updates it to 4.X and breaks it.
+	npm uninstall gulp
+	npm install gulp@"<4.0.0" --save-dev || die
 }
 
-src_unpack() {
-	default_src_unpack
-
-	npm-secaudit_src_prepare_default
-	npm-secaudit_fetch_deps
-
-	cd "${S}"
-
+npm-secaudit_src_postprepare() {
 	_fix_vulnerbilities
+}
 
-	npm-secaudit_src_compile_default
-
+npm-secaudit_src_postcompile() {
 	npm uninstall gulp -D
-
-	npm-secaudit_src_preinst_default
-
-	pushd node_modules/mocha
-	rm package-lock.json
-	npm i --package-lock-only || die
-	popd
-
-	rm package-lock.json
-	npm i --package-lock || die
-	npm audit fix --force || die
-	npm audit || die
 }
 
 src_install() {

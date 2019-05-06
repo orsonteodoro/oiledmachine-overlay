@@ -27,7 +27,7 @@ S="${WORKDIR}/${MY_PN}-${PV}"
 
 UNDERSCORE_STRING_VER="3.3.5"
 DEBUG_VER="<3.0.0"
-BRACES_VER="^2.3.1"
+BRACES_VER="^2.3.2"
 JS_YAML_VER="^3.13.0"
 
 _fix_vulnerbilities() {
@@ -55,7 +55,7 @@ _fix_vulnerbilities() {
 	popd
 
 	sed -i -e "s|\"underscore.string\": \"~3.3.4\"|\"underscore.string\": \"${UNDERSCORE_STRING_VER}\"|g" node_modules/mocha/node_modules/upath/package.json || die
-	sed -i -e "s|\"underscore.string\": \"^3.3.4\"|\"underscore.string\": \"${UNDERSCORE_STRING_VER}\"|g" node_modules/mocha/node_modules/wd/package.json || die
+	#sed -i -e "s|\"underscore.string\": \"^3.3.4\"|\"underscore.string\": \"${UNDERSCORE_STRING_VER}\"|g" node_modules/mocha/node_modules/wd/package.json || die
 	sed -i -e "s|\"underscore.string\": \"~3.3.4\"|\"underscore.string\": \"${UNDERSCORE_STRING_VER}\"|g" node_modules/upath/package.json || die
 	sed -i -e "s|\"underscore.string\": \"~2.4.0\"|\"underscore.string\": \"${UNDERSCORE_STRING_VER}\"|g" node_modules/mocha/node_modules/remarkable/node_modules/argparse/package.json || die
 	sed -i -e "s|\"underscore.string\": \"2.4.0\"|\"underscore.string\": \"${UNDERSCORE_STRING_VER}\"|g" node_modules/mocha/node_modules/remarkable/package.json || die
@@ -64,19 +64,25 @@ _fix_vulnerbilities() {
 	npm install "underscore.string"@"${UNDERSCORE_STRING_VER}" --save-dev || die
 	popd
 
+	sed -i -e "s|\"braces\": \"^2.3.1\"|\"braces\": \"${BRACES_VER}\"|g" node_modules/micromatch/package.json || die
 
-	sed -i -e "s|\"braces\": \"^1.8.2\"|\"braces\": \"${BRACES_VER}\"|g" node_modules/mocha/node_modules/browser-sync/node_modules/micromatch/package.json || die
+	#sed -i -e "s|\"braces\": \"^2.3.1\"|\"braces\": \"${BRACES_VER}\"|g" node_modules/mocha/node_modules/lint-staged/node_modules/micromatch/package.json || die
+	sed -i -e "s|\"braces\": \"^2.3.1\"|\"braces\": \"${BRACES_VER}\"|g" node_modules/mocha/node_modules/micromatch/package.json || die
+	#sed -i -e "s|\"braces\": \"^2.3.1\"|\"braces\": \"${BRACES_VER}\"|g" node_modules/mocha/node_modules/readdirp/node_modules/micromatch/package.json || die
+	#sed -i -e "s|\"braces\": \"^2.3.1\"|\"braces\": \"${BRACES_VER}\"|g" node_modules/mocha/node_modules/anymatch/node_modules/micromatch/package.json || die
+	#sed -i -e "s|\"braces\": \"^2.3.1\"|\"braces\": \"${BRACES_VER}\"|g" node_modules/mocha/node_modules/fast-glob/node_modules/micromatch/package.json || die
 	sed -i -e "s|\"braces\": \"^2.0.3\"|\"braces\": \"${BRACES_VER}\"|g" node_modules/arr-map/package.json || die
-	rm -rf node_modules/braces || die
-	rm -rf node_modules/mocha/node_modules/browser-sync/node_modules/braces || die
-	rm -rf node_modules/mocha/node_modules/braces || die
-	pushd node_modules/mocha/node_modules/browser-sync || die
-	npm install "braces"@"${BRACES_VER}" || die
-	popd
-	pushd node_modules/mocha || die
-	npm install "braces"@"${BRACES_VER}" || die
-	popd
-	npm install "braces"@"${BRACES_VER}" || die
+	#rm -rf node_modules/braces || die
+	#rm -rf node_modules/mocha/node_modules/browser-sync/node_modules/braces || die
+	#rm -rf node_modules/mocha/node_modules/braces || die
+	#rm -rf node_modules/mocha/node_modules/micromatch/node_modules/braces || die
+	#pushd node_modules/mocha/node_modules/micromatch || die
+	#npm install "braces"@"${BRACES_VER}" --save-prod || die
+	#popd
+	#pushd node_modules/mocha || die
+	#npm install "braces"@"${BRACES_VER}" || die
+	#popd
+	#npm install "braces"@"${BRACES_VER}" || die
 
 	sed -i -e "s|\"debug\": \"~2.2.0\"|\"debug\": \"${DEBUG_VER}\"|g" node_modules/mocha/node_modules/gm-papandreou/package.json || die
 	sed -i -e "s|\"debug\": \"^2.2.0\"|\"debug\": \"${DEBUG_VER}\"|g" node_modules/mocha/node_modules/snapdragon/package.json || die
