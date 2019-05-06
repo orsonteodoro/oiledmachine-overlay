@@ -27,11 +27,11 @@ REQUEST_PROMISE_VER="^4.2.4"
 DEBUG_V="^2.6.9"
 
 _fix_vulnerabilities() {
-	pushd node_modules/tough-cookie-filestore || die
-	npm uninstall tough-cookie
-	npm install tough-cookie@"^2.3.3" --save-prod || die
-	npm install --lock-file
-	popd
+	#pushd node_modules/tough-cookie-filestore || die
+	#npm uninstall tough-cookie
+	#npm install tough-cookie@"^2.3.3" --save-prod || die
+	#npm install --lock-file
+	#popd
 	pushd node_modules/instagram-private-api || die
 	npm uninstall request-promise
 	npm install request-promise@"${REQUEST_PROMISE_VER}" --save-prod || die
@@ -62,23 +62,9 @@ _fix_vulnerabilities() {
 	popd
 }
 
-src_unpack() {
-	default_src_unpack
-
+electron-app_src_postprepare() {
 	ewarn "The audit may fail unexpectedly.  Re-emerge if it has a connection problem."
-
-	electron-app_src_prepare_default
-
-	electron-app_fetch_deps
-
-	cd "${S}"
-
 	_fix_vulnerabilities
-
-	_electron-app_audit_fix_npm
-
-	electron-app_src_compile
-	electron-app_src_preinst_default
 }
 
 electron-app_src_compile() {
