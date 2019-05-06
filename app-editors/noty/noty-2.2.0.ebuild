@@ -28,20 +28,11 @@ LODASH_V="<4.14.120"
 JS_YAML_V="^3.13.1"
 MOCHA_V="6.1.4"
 
-src_unpack() {
-	default_src_unpack
-
-	electron-app_src_prepare_default
-
-	cd "${S}"
-
+electron-app_src_preprepare() {
 	npm install electron@"^${ELECTRON_VER}" --save-dev --verbose --maxsockets=${ELECTRON_APP_MAXSOCKETS} # try to fix io starvation problem (testing)
+}
 
-	einfo "Running electron-app_fetch_deps"
-	export ELECTRON_APP_INSTALL_AUDIT="0"
-	electron-app_fetch_deps
-	export ELECTRON_APP_INSTALL_AUDIT="1"
-
+_fix_vulnerabilities() {
 	cd "${S}"
 
 	sed -i -e "s|\"tar\": \"^2.0.0\",|\"tar\": \"${TAR_V}\",|g" node_modules/node-gyp/package.json || die
@@ -68,16 +59,22 @@ src_unpack() {
 	npm uninstall @types/lodash
 	npm install @types/lodash@"${LODASH_V}" --save-dev || die
 
-	_electron-app_audit_fix_npm
+	electron-app_audit_fix_npm
+}
 
-	electron-app_src_compile
+electron-app_src_postprepare()
+{
+	_fix_vulnerabilities
+}
 
-	cd "${S}"
-
+electron-app_src_postcompile() {
 	# remove from dev list to prevent bad audit
 	npm uninstall -D electron-webpack || die
+}
 
-	electron-app_src_preinst_default
+electron-app_src_prepare() {
+	electron-app_fetch_deps
+	# defer audit
 }
 
 electron-app_src_compile() {
