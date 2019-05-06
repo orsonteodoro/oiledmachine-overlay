@@ -77,8 +77,6 @@ NGTOOLS_VER="^7.2.0"
 NODEGIT_VER="<0.24.0"
 #}
 
-
-
 S="${WORKDIR}/${PN}-${PV}"
 
 pkg_setup() {
@@ -89,6 +87,13 @@ pkg_setup() {
 		eerror "You must \`ln -s /usr/lib/libcurl.so.4 /usr/lib/libcurl-gnutls.so.4\` .  It works even though curl was not compiled with gnutls."
 		die
 	fi
+}
+
+_fix_vulnerabilities() {
+	pushd node_modules/remarkable
+	npm uninstall argparse
+	npm install argparse@"^1.0.10" --save-prod || die
+	popd
 }
 
 _save_packages() {
@@ -114,21 +119,10 @@ _save_packages() {
 	# nodegit should be in the production section
 	npm uninstall nodegit
 	npm install nodegit@"${NODEGIT_VER}" --save-prod || die
-
-	# fix vulnerability
-	pushd node_modules/remarkable
-	npm uninstall argparse
-	npm install argparse@"^1.0.10" --save-prod || die
-	popd
 }
 
-src_unpack() {
-	default_src_unpack
-
-	electron-app_src_prepare_default
-
-	cd "${S}"
-
+electron-app_src_preprepare() {
+	# Most of these are upgrade breakage I think.
 	patch -p1 -i "${FILESDIR}"/geeks-diary-1.0.0_beta2-vcs-item_ts-rest-parameter-trailing-comma-fix.patch || die
 
 	sed -i -e "s|\"typescript\": \"2.7.2\",|\"typescript\": \"${TS_VER}\",|g" package.json || die
@@ -179,13 +173,11 @@ src_unpack() {
 	npm install path --save-dev || die
 
 	_save_packages
+	_fix_vulnerabilities
+}
 
-	electron-app_fetch_deps
-
+electron-app_src_postprepare() {
 	patch -F 100 -p1 -i "${FILESDIR}/geeks-diary-angular-devkit-browser-config-fix-0.6.8.patch" || die
-
-	electron-app_src_compile
-	electron-app_src_preinst_default
 }
 
 electron-app_src_compile() {
