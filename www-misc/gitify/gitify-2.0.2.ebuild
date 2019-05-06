@@ -22,21 +22,10 @@ IUSE=""
 
 S="${WORKDIR}/${PN}-${PV}"
 
-src_unpack() {
-	default_src_unpack
-
-	electron-app_src_prepare_default
-
-	cd "${S}"
-
+electron-app_src_preprepare() {
 	sed -i -e "s|\"electron\": \"=1.6.10\",|\"electron\": \"^1.6.10\",|g" package.json || die
 	sed -i -e "s|\"sass-lint\": \"=1.10.2 -v\",|\"sass-lint\": \"=1.10.2\",|g" package.json || die
 	sed -i -e 's|path: process.execPath.match|//path: process.execPath.match|' main.js || die
-
-	electron-app_fetch_deps
-
-	electron-app_src_compile_default
-	electron-app_src_preinst_default
 }
 
 src_install() {
