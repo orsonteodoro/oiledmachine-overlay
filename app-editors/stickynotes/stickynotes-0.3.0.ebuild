@@ -26,23 +26,8 @@ S="${WORKDIR}/${MY_PN}-${PV}"
 
 ELECTRON_V="<5.0.0"
 
-src_unpack() {
-	default_src_unpack
-
-	electron-app_src_prepare_default
-
-	cd "${S}"
-
+electron-app_src_preprepare() {
 	sed -i -e "s|\"electron\": \"latest\",|\"electron\": \"${ELECTRON_V}\",|g" package.json || die
-
-	einfo "Running electron-app_fetch_deps"
-	electron-app_fetch_deps
-
-	electron-app_src_compile
-
-	cd "${S}"
-
-	electron-app_src_preinst_default
 }
 
 electron-app_src_compile() {
