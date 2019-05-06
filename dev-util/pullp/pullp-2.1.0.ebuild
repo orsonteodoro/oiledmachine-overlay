@@ -22,17 +22,8 @@ IUSE=""
 
 S="${WORKDIR}/${PN}-${PV}"
 
-src_unpack() {
-	default_src_unpack
-
-	electron-app_src_prepare_default
-
-	cd "${S}"
-
-	electron-app_fetch_deps
-
-	cd "${S}"
-
+electron-app_src_postprepare() {
+	# likely update breakage
 	npm uninstall css-loader
 	npm install css-loader@"^0.28.1" --save-dev || die
 
@@ -44,13 +35,11 @@ src_unpack() {
 
 	npm uninstall electron-updater
 	npm install electron-updater@"^2.21.8" --save-prod || die
+}
 
-	electron-app_src_compile
-
+electron-app_src_postcompile() {
 	npm uninstall webpack-dev-server -D
 	npm uninstall css-loader -D
-
-	electron-app_src_preinst_default
 }
 
 electron-app_src_compile() {
