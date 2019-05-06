@@ -24,6 +24,7 @@ IUSE=""
 S="${WORKDIR}/${PN^}-${PV}"
 
 TAR_V="^4.4.2"
+NODE_SASS_V="^4.12.0"
 
 pkg_setup() {
 	if [[ -z "$LEPTON_CLIENT_ID" || -z "$LEPTON_CLIENT_ID" ]] ; then
@@ -36,37 +37,32 @@ pkg_setup() {
 	electron-app_pkg_setup
 }
 
-src_unpack() {
-	default_src_unpack
-
-	electron-app_src_prepare_default
-
-	cd "${S}"
-
+electron-app_src_preprepare() {
 	cp "${FILESDIR}"/account.js "${S}"/configs || die
 	sed -i -e "s|<your_client_id>|$LEPTON_CLIENT_ID|" -e "s|<your_client_secret>|$LEPTON_CLIENT_SECRET|" "${S}"/configs/account.js || die
+}
 
-	ELECTRON_APP_INSTALL_AUDIT=0
+electron-app_src_prepare() {
 	electron-app_fetch_deps
-	ELECTRON_APP_INSTALL_AUDIT=1
+	# defer audit fix
+}
 
-	rm package-lock.json || die
-	npm i --package-lock-only
-	npm audit fix --force || die
+_fix_vulnerabilities() {
+	npm uninstall node-sass || die
+	npm install node-sass@"${NODE_SASS_V}" || die
+	pushd node_modules/node-sass || die
+		npm install
+	popd
 
 	sed -i -e "s|\"tar\": \"^2.0.0\",|\"tar\": \"${TAR_V}\",|g" node_modules/node-gyp/package.json || die
 	rm -rf node_modules/tar || die
 	npm install tar@"${TAR_V}" || die
 
-	_electron-app_audit_fix_npm
+	electron-app_audit_fix_npm
+}
 
-	cd "${S}"
-
-	electron-app_src_compile_default
-
-	cd "${S}"
-
-	electron-app_src_preinst_default
+electron-app_src_postprepare() {
+	_fix_vulnerabilities
 }
 
 src_install() {
