@@ -4,7 +4,7 @@
 EAPI=6
 
 # PyCObject_Check and PyCObject_AsVoidPtr vanished with python 3.3
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python2_7 python3_5 python3_6 python3_7 )
 inherit xdg distutils-r1 eutils flag-o-matic user tmpfiles prefix versionator
 
 DESCRIPTION="X Persistent Remote Apps (xpra) and Partitioning WM (parti) based on wimpiggy"
