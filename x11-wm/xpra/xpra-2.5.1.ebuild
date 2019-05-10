@@ -15,7 +15,8 @@ SRC_URI="http://xpra.org/src/${PN}-${MY_PV}.tar.xz"
 LICENSE="GPL-2 BSD"
 SLOT="0"
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
-IUSE="+client +clipboard csc cups dbus dec_avcodec2 enc_ffmpeg enc_x264 enc_x265 jpeg libav +lz4 lzo opengl +notifications pillow pulseaudio server sound test vpx webcam webp"
+IUSE="+client +clipboard csc cups dbus dec_avcodec2 enc_ffmpeg enc_x264 enc_x265 gtk2 gtk3 jpeg libav +lz4 lzo opengl +notifications pillow pulseaudio server sound test vpx webcam webp"
+REQUIRED_USE="gtk3? ( !gtk2 ) gtk2? ( !gtk3 )"
 
 S="${WORKDIR}/xpra-${MY_PV}"
 
@@ -31,9 +32,11 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 
 #	dev-python/python-uinput
 COMMON_DEPEND="${PYTHON_DEPS}
-	dev-python/pygobject:2[${PYTHON_USEDEP}]
 	dev-python/pygtk:2[${PYTHON_USEDEP}]
-	x11-libs/gtk+:2
+	gtk2? (	x11-libs/gtk+:2
+		dev-python/pygobject:2[${PYTHON_USEDEP}] )
+	gtk3? (	x11-libs/gtk+:3
+		dev-python/pygobject:3[${PYTHON_USEDEP}] )
 	x11-libs/libX11
 	x11-libs/libXcomposite
 	x11-libs/libXdamage
@@ -136,8 +139,6 @@ python_configure_all() {
 		$(use_with enc_ffmpeg)
 		$(use_with enc_x264)
 		$(use_with enc_x265)
-		--with-gtk2
-		--without-gtk3
 		--without-html5
 		$(use_with jpeg jpeg_encoder)
 		$(use_with jpeg jpeg_decoder)
@@ -155,6 +156,13 @@ python_configure_all() {
 		$(use_with webp)
 		--with-x11
 	)
+
+	if use gtk3 ; then
+		mydistutilsargs+=( --without-gtk2 --with-gtk3 )
+	fi
+	if use gtk2 ; then
+		mydistutilsargs+=( --with-gtk2 --without-gtk3 )
+	fi
 
 	# see https://www.xpra.org/trac/ticket/1080
 	# and http://trac.cython.org/ticket/395
