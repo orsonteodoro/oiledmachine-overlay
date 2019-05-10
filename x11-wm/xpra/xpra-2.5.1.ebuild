@@ -9,7 +9,7 @@ inherit xdg distutils-r1 eutils flag-o-matic user tmpfiles prefix versionator
 
 DESCRIPTION="X Persistent Remote Apps (xpra) and Partitioning WM (parti) based on wimpiggy"
 HOMEPAGE="http://xpra.org/ http://xpra.org/src/"
-MY_PV="$(get_version_component_range 1-2)rc${PVR#*_rc}"
+MY_PV="$(get_version_component_range 1-3)"
 SRC_URI="http://xpra.org/src/${PN}-${MY_PV}.tar.xz"
 
 LICENSE="GPL-2 BSD"
