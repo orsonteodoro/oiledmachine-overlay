@@ -16,7 +16,8 @@ LICENSE="GPL-2 BSD"
 SLOT="0"
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
 IUSE="+client +clipboard csc cups dbus dec_avcodec2 enc_ffmpeg enc_x264 enc_x265 gtk2 gtk3 jpeg libav +lz4 lzo opengl +notifications pillow pulseaudio server sound test vpx webcam webp"
-REQUIRED_USE="gtk3? ( !gtk2 ) gtk2? ( !gtk3 )"
+REQUIRED_USE="gtk3? ( !gtk2 ) gtk2? ( !gtk3 ) ^^ ( python_targets_python2_7 python_targets_python3_5 python_targets_python3_6 python_targets_python3_7 ) ^^ ( gtk2 gtk3 )"
+REQUIRED_USE+=" python_targets_python2_7? ( !gtk3 gtk2 ) python_targets_python3_5 ( gtk3 !gtk2 ) python_targets_python3_6 ( gtk3 !gtk2 ) python_targets_python3_7 ( gtk3 !gtk2 )"
 
 S="${WORKDIR}/xpra-${MY_PV}"
 
@@ -32,7 +33,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 
 #	dev-python/python-uinput
 COMMON_DEPEND="${PYTHON_DEPS}
-	dev-python/pygtk:2[${PYTHON_USEDEP}]
+	dev-python/pygtk:2[python_targets_python2_7]
 	gtk2? (	x11-libs/gtk+:2
 		dev-python/pygobject:2[${PYTHON_USEDEP}] )
 	gtk3? (	x11-libs/gtk+:3
@@ -159,9 +160,10 @@ python_configure_all() {
 
 	if use gtk3 ; then
 		mydistutilsargs+=( --without-gtk2 --with-gtk3 )
-	fi
-	if use gtk2 ; then
+	elif use gtk2 ; then
 		mydistutilsargs+=( --with-gtk2 --without-gtk3 )
+	else
+		mydistutilsargs+=( --without-gtk2 --without-gtk3 )
 	fi
 
 	# see https://www.xpra.org/trac/ticket/1080
