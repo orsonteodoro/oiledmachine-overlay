@@ -38,8 +38,9 @@ IUSE+=" debug"
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
 NPM_SECAUDIT_REG_PATH=""
 NPM_SECAUDIT_PRUNE=${NPM_SECAUDIT_PRUNE:="1"}
-NPM_SECAUDIT_INSTALL_AUDIT=${NPM_SECAUDIT_INSTALL_AUDIT:="1"}
+NPM_SECAUDIT_AUDIT_FIX=${NPM_SECAUDIT_AUDIT_FIX:="1"}
 NPM_MAXSOCKETS=${NPM_MAXSOCKETS:="1"} # Set this in your make.conf to control number of HTTP requests.  50 is npm default but it is too high.
+_NPM_CACHE_LOCK=/run/lock/npm_cache
 
 # @FUNCTION: _npm-secaudit_fix_locks
 # @DESCRIPTION:
@@ -169,16 +170,15 @@ npm-secaudit_src_unpack() {
 	fi
 
 	cd "${S}"
+	npm-secaudit_audit_fix
+
+	cd "${S}"
 	if declare -f npm-secaudit_src_postprepare > /dev/null ; then
 		npm-secaudit_src_postprepare
 	fi
 
-	# reference the merged package
-	cd "${S}"
-	npm-secaudit_dedupe_npm
-
 	# audit before possibly bundling a vulnerable package
-	npm-secaudit_audit
+	npm-secaudit_audit_dev
 
 	cd "${S}"
 	if declare -f npm-secaudit_src_compile > /dev/null ; then
@@ -208,8 +208,6 @@ npm-secaudit_src_prepare_default() {
 
 	cd "${S}"
 	npm-secaudit_fetch_deps
-	cd "${S}"
-	npm-secaudit_audit_fix
 	cd "${S}"
 	#default_src_prepare
 }
@@ -276,13 +274,12 @@ npm-secaudit_dedupe_npm() {
 
 # @FUNCTION: _npm-secaudit_audit_fix
 # @DESCRIPTION:
-# Removes vulnerable packages and does a final check.  It will audit every folder containing a package-lock.json
+# Removes vulnerable packages.  It will audit every folder containing a package-lock.json
 npm-secaudit_audit_fix() {
-	if [[ "${NPM_SECAUDIT_INSTALL_AUDIT}" == "1" ||
-		"${NPM_SECAUDIT_INSTALL_AUDIT}" == "true" ||
-		"${NPM_SECAUDIT_INSTALL_AUDIT}" == "TRUE" ]] ; then
+	if [[ "${NPM_SECAUDIT_AUDIT_FIX}" == "1" ||
+		"${NPM_SECAUDIT_AUDIT_FIX,,}" == "true" ]] ; then
 
-		einfo "Performing recursive package-lock.json audit"
+		einfo "Performing recursive package-lock.json audit fix"
 		L=$(find . -name "package-lock.json")
 		for l in $L; do
 			pushd $(dirname $l)
@@ -293,21 +290,42 @@ npm-secaudit_audit_fix() {
 			npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die "location: $l"
 			popd
 		done
-		einfo "Auditing security done"
+		einfo "Audit fix done"
 	fi
 }
 
-# @FUNCTION: npm-secaudit_audit
+# @FUNCTION: npm-secaudit_audit_dev
 # @DESCRIPTION:
-# This will preform an recursive audit.  Also it will fix some ERR messages.
-npm-secaudit_audit() {
+# This will preform an recursive audit in place without adding packages.
+npm-secaudit_audit_dev() {
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
 		pushd $(dirname $l)
-		rm package-lock.json
-		npm i --package-lock-only
 		npm audit || die
 		popd
+	done
+}
+
+# @FUNCTION: npm-secaudit_audit_prod
+# @DESCRIPTION:
+# This will preform an recursive audit for production in place without adding packages ignoring pruned packages.
+npm-secaudit_audit_prod() {
+	L=$(find . -name "package-lock.json")
+	for l in $L; do
+		pushd $(dirname $l) >/dev/null
+		[ -e "${T}"/npm-secaudit-result ] && rm "${T}"/npm-secaudit-result
+		npm audit &> "${T}"/npm-secaudit-result
+		cat "${T}"/npm-secaudit-result | grep "ELOCKVERIFY" >/dev/null
+		if [[ "$?" == "0" ]] ; then
+			dinfo "Ignoring results of packages referencing pruned dev packages.  You can re-emerge to verify if has a vulnerability."
+			cat "${T}"/npm-secaudit-result | grep "require manual review" >/dev/null
+			local result_found1="$?"
+			cat "${T}"/npm-secaudit-result | grep "npm audit fix" >/dev/null
+			local result_found2="$?"
+			if [[ "${result_found1}" == "0" || "${result_found2}" == "0" ]] ; then
+				die "package is still vulnerable at $(pwd)$l"
+			fi
+		fi
 	done
 }
 
@@ -321,24 +339,25 @@ npm-secaudit_src_preinst_default() {
 
 	cd "${S}"
 
-	npm-secaudit_dedupe_npm
+	# disabled dedupe and pruning for less problematic audits.  audit doesn't work well if you prune dev packages.
+
+	#npm-secaudit_dedupe_npm
 
 	cd "${S}"
 
-	if ! use debug ; then
-		if [[ "${NPM_SECAUDIT_PRUNE}" == "1" &&
-			"${NPM_SECAUDIT_PRUNE}" == "true" &&
-			"${NPM_SECAUDIT_PRUNE}" == "TRUE" ]] ; then
-			einfo "Running \`npm prune --production\`"
-			npm prune --production
-		fi
-	fi
+	#if ! use debug ; then
+	#	if [[ "${NPM_SECAUDIT_PRUNE}" == "1" &&
+	#		"${NPM_SECAUDIT_PRUNE,,}" == "true" ]] ; then
+	#		einfo "Running \`npm prune --production\`"
+	#		npm prune --production
+	#	fi
+	#fi
 
-	if declare -f npm-secaudit_fix_prune > /dev/null ; then
-		npm-secaudit_fix_prune
-	fi
+	#if declare -f npm-secaudit_fix_prune > /dev/null ; then
+	#	npm-secaudit_fix_prune
+	#fi
 
-	npm-secaudit_audit
+	npm-secaudit_audit_prod
 }
 
 # @FUNCTION: npm-secaudit_install

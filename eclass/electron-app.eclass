@@ -38,8 +38,9 @@ ELECTRON_APP_REG_PATH=""
 
 ELECTRON_APP_MODE=${ELECTRON_APP_MODE:="npm"} # can be npm, yarn
 ELECTRON_APP_PRUNE=${ELECTRON_APP_PRUNE:="1"}
-ELECTRON_APP_INSTALL_AUDIT=${ELECTRON_APP_INSTALL_AUDIT:="1"}
+ELECTRON_APP_AUDIT_FIX=${ELECTRON_APP_AUDIT_FIX:="1"}
 ELECTRON_APP_MAXSOCKETS=${ELECTRON_APP_MAXSOCKETS:="1"} # Set this in your make.conf to control number of HTTP requests.  50 is npm default but it is too high.
+_NPM_CACHE_LOCK=/run/lock/npm_cache
 
 # @FUNCTION: _electron-app_fix_locks
 # @DESCRIPTION:
@@ -156,13 +157,12 @@ electron-app_dedupe_npm() {
 
 # @FUNCTION: electron-app_audit_fix_npm
 # @DESCRIPTION:
-# Removes vulnerable packages and does a final check.  It will audit every folder containing a package-lock.json
+# Removes vulnerable packages.  It will audit every folder containing a package-lock.json
 electron-app_audit_fix_npm() {
-	if [[ "${ELECTRON_APP_INSTALL_AUDIT}" == "1" ||
-		"${ELECTRON_APP_INSTALL_AUDIT}" == "true" ||
-		"${ELECTRON_APP_INSTALL_AUDIT}" == "TRUE" ]] ; then
+	if [[ "${ELECTRON_APP_AUDIT_FIX}" == "1" ||
+		"${ELECTRON_APP_AUDIT_FIX,,}" == "true" ]] ; then
 
-		einfo "Performing recursive package-lock.json audit"
+		einfo "Performing recursive package-lock.json audit fix"
 		L=$(find . -name "package-lock.json")
 		for l in $L; do
 			pushd $(dirname $l)
@@ -173,8 +173,26 @@ electron-app_audit_fix_npm() {
 			npm audit fix --force --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die "location: $l"
 			popd
 		done
-		einfo "Auditing security done"
+		einfo "Audit fix done"
 	fi
+}
+
+# @FUNCTION: electron-app_audit_fix
+# @DESCRIPTION:
+# Removes vulnerable packages based on the packaging system.
+electron-app_audit_fix() {
+	case "$ELECTRON_APP_MODE" in
+		npm)
+			electron-app_audit_fix_npm
+			;;
+		yarn)
+			# use npm audit anyway?
+			ewarn "No audit fix implemented in yarn.  Package may be likely vulnerable."
+			;;
+		*)
+			;;
+	esac
+
 }
 
 # @FUNCTION: electron-app_pkg_setup
@@ -228,8 +246,7 @@ electron-app_pkg_setup() {
 # @DESCRIPTION:
 # Fetches an Electron npm app with security checks
 # MUST be called after default unpack AND patching.
-electron-app_fetch_deps_npm()
-{
+electron-app_fetch_deps_npm() {
 	_electron-app-flakey-check
 
 	pushd "${S}"
@@ -241,8 +258,7 @@ electron-app_fetch_deps_npm()
 # @DESCRIPTION:
 # Fetches an Electron yarn app with security checks
 # MUST be called after default unpack AND patching.
-electron-app_fetch_deps_yarn()
-{
+electron-app_fetch_deps_yarn() {
 	pushd "${S}"
 		export FAKEROOTKEY="15574641" # don't check /usr/local/share/.yarnrc .  same number used in their testing.
 
@@ -299,8 +315,6 @@ electron-app_src_unpack() {
 
 	default_src_unpack
 
-	cd "${S}"
-
 	# all the phase hooks get run in unpack because of download restrictions
 
 	cd "${S}"
@@ -316,16 +330,15 @@ electron-app_src_unpack() {
 	fi
 
 	cd "${S}"
+	electron-app_audit_fix
+
+	cd "${S}"
 	if declare -f electron-app_src_postprepare > /dev/null ; then
 		electron-app_src_postprepare
 	fi
 
-	# reference the merged package
-	cd "${S}"
-	electron-app_dedupe_npm
-
 	# audit before possibly bundling a vulnerable package
-	electron-app_audit
+	electron-app_audit_dev
 
 	cd "${S}"
 	if declare -f electron-app_src_compile > /dev/null ; then
@@ -355,18 +368,6 @@ electron-app_src_prepare_default() {
 
 	cd "${S}"
 	electron-app_fetch_deps
-	cd "${S}"
-	case "$ELECTRON_APP_MODE" in
-		npm)
-			electron-app_audit_fix_npm
-			;;
-		yarn)
-			# use npm audit anyway?
-			ewarn "No audit fix implemented in yarn.  Package may be likely vulnerable."
-			;;
-		*)
-			;;
-	esac
 	cd "${S}"
 	#default_src_prepare
 }
@@ -419,18 +420,39 @@ electron-app_src_compile_default() {
 	esac
 }
 
-
-# @FUNCTION: electron-app_audit
+# @FUNCTION: electron-app_audit_dev
 # @DESCRIPTION:
-# This will preform an recursive audit.  Also it will fix some ERR messages.
-electron-app_audit() {
+# This will preform an recursive audit in place without adding packages.
+electron-app_audit_dev() {
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
 		pushd $(dirname $l)
-		rm package-lock.json
-		npm i --package-lock-only
 		npm audit || die
 		popd
+	done
+}
+
+
+# @FUNCTION: electron-app_audit_prod
+# @DESCRIPTION:
+# This will preform an recursive audit for production in place without adding packages ignoring pruned packages.
+electron-app_audit_prod() {
+	L=$(find . -name "package-lock.json")
+	for l in $L; do
+		pushd $(dirname $l) >/dev/null
+		[ -e "${T}"/npm-secaudit-result ] && rm "${T}"/npm-secaudit-result
+		npm audit &> "${T}"/npm-secaudit-result
+		cat "${T}"/npm-secaudit-result | grep "ELOCKVERIFY" >/dev/null
+		if [[ "$?" == "0" ]] ; then
+			dinfo "Ignoring results of packages referencing pruned dev packages.  You can re-emerge to verify if has a vulnerability."
+			cat "${T}"/npm-secaudit-result | grep "require manual review" >/dev/null
+			local result_found1="$?"
+			cat "${T}"/npm-secaudit-result | grep "npm audit fix" >/dev/null
+			local result_found2="$?"
+			if [[ "${result_found1}" == "0" || "${result_found2}" == "0" ]] ; then
+				die "package is still vulnerable at $(pwd)$l"
+			fi
+		fi
 	done
 }
 
@@ -449,29 +471,29 @@ electron-app_src_preinst_default() {
 
 	case "$ELECTRON_APP_MODE" in
 		npm)
-			electron-app_dedupe_npm
+			# disabled dedupe and pruning for less problematic audits.  audit doesn't work well if you prune dev packages.
 
-			if ! use debug ; then
-				if [[ "${ELECTRON_APP_PRUNE}" == "1" ||
-					"${ELECTRON_APP_PRUNE}" == "true" ||
-					"${ELECTRON_APP_PRUNE}" == "TRUE" ]] ; then
-					einfo "Running \`npm prune --production\`"
-					npm prune --production
-				fi
-			fi
+			#electron-app_dedupe_npm
 
-			if declare -f electron-app_fix_prune > /dev/null ; then
-				electron-app_fix_prune
-			fi
+			#if ! use debug ; then
+			#	if [[ "${ELECTRON_APP_PRUNE}" == "1" ||
+			#		"${ELECTRON_APP_PRUNE,,}" == "true" ]] ; then
+			#		einfo "Running \`npm prune --production\`"
+			#		npm prune --production
+			#	fi
+			#fi
 
-			electron-app_audit
+			#if declare -f electron-app_fix_prune > /dev/null ; then
+			#	electron-app_fix_prune
+			#fi
+
+			electron-app_audit_prod
 
 			;;
 		yarn)
 			if ! use debug ; then
 				if [[ "${ELECTRON_APP_PRUNE}" == "1" ||
-					"${ELECTRON_APP_PRUNE}" == "true" ||
-					"${ELECTRON_APP_PRUNE}" == "TRUE" ]] ; then
+					"${ELECTRON_APP_PRUNE,,}" == "true" ]] ; then
 					einfo "Running \`yarn install --production --ignore-scripts --prefer-offline\`"
 					yarn install --production --ignore-scripts --prefer-offline
 				fi
