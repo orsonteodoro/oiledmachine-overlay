@@ -1,0 +1,11 @@
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2019-05-07 16:15:54.573419297 -0700
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-05-07 16:18:33.729547300 -0700
+@@ -4849,7 +4849,7 @@ static void amdgpu_dm_commit_planes(stru
+ 			spin_unlock_irqrestore(&pcrtc->dev->event_lock, flags);
+ 		}
+ 
+-		target = (uint32_t)last_flip_vblank + *wait_for_vblank;
++		target = (uint32_t)last_flip_vblank + wait_for_vblank;
+ 
+ 		/* Prepare wait for target vblank early - before the fence-waits */
+ 		target_vblank = target - (uint32_t)drm_crtc_vblank_count(pcrtc) +

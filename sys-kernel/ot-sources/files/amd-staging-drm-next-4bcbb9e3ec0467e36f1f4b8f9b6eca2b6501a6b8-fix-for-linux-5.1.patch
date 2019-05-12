@@ -1,0 +1,42 @@
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2019-05-07 16:41:27.822221375 -0700
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-05-07 16:43:27.586810770 -0700
+@@ -4668,7 +4668,7 @@ static void amdgpu_dm_commit_planes(stru
+ 	struct dm_crtc_state *acrtc_state = to_dm_crtc_state(new_pcrtc_state);
+ 	struct dm_crtc_state *dm_old_crtc_state =
+ 			to_dm_crtc_state(drm_atomic_get_old_crtc_state(state, pcrtc));
+-	int flip_count = 0, planes_count = 0, vpos, hpos;
++	int planes_count = 0, vpos, hpos;
+ 	unsigned long flags;
+ 	struct amdgpu_bo *abo;
+ 	uint64_t tiling_flags, dcc_address;
+@@ -4676,24 +4676,20 @@ static void amdgpu_dm_commit_planes(stru
+ 	uint64_t last_flip_vblank;
+ 	bool vrr_active = acrtc_state->freesync_config.state == VRR_STATE_ACTIVE_VARIABLE;
+ 
+-	struct {
+-		struct dc_surface_update surface_updates[MAX_SURFACES];
+-		struct dc_flip_addrs flip_addrs[MAX_SURFACES];
+-		struct dc_stream_update stream_update;
+-	} *flip;
++	bool pflip_present = false;
+ 
+ 	struct {
+ 		struct dc_surface_update surface_updates[MAX_SURFACES];
+ 		struct dc_plane_info plane_infos[MAX_SURFACES];
+ 		struct dc_scaling_info scaling_infos[MAX_SURFACES];
++		struct dc_flip_addrs flip_addrs[MAX_SURFACES];
+ 		struct dc_stream_update stream_update;
+-	} *full;
++	} *bundle;
+ 
+-	flip = kzalloc(sizeof(*flip), GFP_KERNEL);
+-	full = kzalloc(sizeof(*full), GFP_KERNEL);
++	bundle = kzalloc(sizeof(*bundle), GFP_KERNEL);
+ 
+-	if (!flip || !full) {
+-		dm_error("Failed to allocate update bundles\n");
++	if (!bundle) {
++		dm_error("Failed to allocate update bundle\n");
+ 		goto cleanup;
+ 	}
+ 

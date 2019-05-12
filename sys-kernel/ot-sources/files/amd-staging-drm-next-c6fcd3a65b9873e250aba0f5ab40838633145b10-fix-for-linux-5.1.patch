@@ -1,0 +1,15 @@
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2019-05-07 18:59:58.609366208 -0700
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-05-07 19:02:03.914143416 -0700
+@@ -4798,10 +4798,8 @@ static void amdgpu_dm_commit_planes(stru
+ 	unsigned long flags;
+ 	struct amdgpu_bo *abo;
+ 	uint64_t tiling_flags;
+-	uint32_t target, target_vblank;
+-	uint64_t last_flip_vblank;
+-	bool vrr_active = acrtc_state->freesync_config.state == VRR_STATE_ACTIVE_VARIABLE;
+-
++	uint32_t target_vblank, last_flip_vblank;
++	bool vrr_active = amdgpu_dm_vrr_active(acrtc_state);
+ 	bool pflip_present = false;
+ 
+ 	struct {

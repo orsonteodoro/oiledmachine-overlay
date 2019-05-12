@@ -1,0 +1,59 @@
+--- a/crypto/testmgr.c.orig	2019-05-06 20:51:37.134028705 -0700
++++ b/crypto/testmgr.c	2019-05-08 20:20:22.566111692 -0700
+@@ -1537,6 +1537,7 @@ static int test_skcipher_vec_cfg(const c
+ 				 struct cipher_test_sglists *tsgls)
+ {
+ 	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
++	const char *algo = crypto_tfm_alg_driver_name(&tfm->base);
+ 	const unsigned int alignmask = crypto_skcipher_alignmask(tfm);
+ 	const unsigned int ivsize = crypto_skcipher_ivsize(tfm);
+ 	const u32 req_flags = CRYPTO_TFM_REQ_MAY_BACKLOG | cfg->req_flags;
+@@ -1555,6 +1556,10 @@ static int test_skcipher_vec_cfg(const c
+ 	else
+ 		crypto_skcipher_clear_flags(tfm,
+ 					    CRYPTO_TFM_REQ_FORBID_WEAK_KEYS);
++#ifdef CONFIG_CRYPTO_TRESOR
++	if (strstr(algo, "tresor"))
++		tresor_setkey(vec->key);
++#endif
+ 	err = crypto_skcipher_setkey(tfm, vec->key, vec->klen);
+ 	if (err) {
+ 		if (vec->fail) /* expectedly failed to set key? */
+@@ -1565,13 +1570,6 @@ static int test_skcipher_vec_cfg(const c
+ 	}
+ 	if (vec->fail) {
+ 		pr_err("alg: skcipher: %s setkey unexpectedly succeeded on test vector %u\n",
+-#ifdef CONFIG_CRYPTO_TRESOR
+-	if (tresor_tests_locked) {
+-		ret = 0;
+-		goto out;
+-	}
+-#endif
+-
+ 		       driver, vec_num);
+ 		return -EINVAL;
+ 	}
+@@ -1594,11 +1592,6 @@ static int test_skcipher_vec_cfg(const c
+ 		}
+ 		iv = NULL;
+ 	}
+-#ifdef CONFIG_CRYPTO_TRESOR
+-			if (strstr(algo, "tresor"))
+-				tresor_setkey(template[i].key);
+-#endif
+-
+ 
+ 	/* Build the src/dst scatterlists */
+ 	input.iov_base = enc ? (void *)vec->ptext : (void *)vec->ctext;
+@@ -1663,11 +1656,6 @@ static int test_skcipher_vec_cfg(const c
+ 		pr_err("alg: skcipher: %s %s corrupted dst sgl on test vector %u, cfg=\"%s\"\n",
+ 		       driver, op, vec_num, cfg->name);
+ 		return -EINVAL;
+-#ifdef CONFIG_CRYPTO_TRESOR
+-			if (strstr(algo, "tresor"))
+-				tresor_setkey(template[i].key);
+-#endif
+-
+ 	}
+ 
+ 	/* Check for the correct output (ciphertext or plaintext) */
