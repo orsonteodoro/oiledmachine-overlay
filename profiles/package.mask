@@ -297,9 +297,6 @@ x11-libs/amd-adl-sdk
 =x11-drivers/ati-drivers-15.12-r667
 =x11-drivers/ati-drivers-15.9-r1
 
-# mask testing
-=sys-kernel/ot-sources-5.1
-
 # updated and tested
 #app-editors/epic-journal
 #app-editors/noty
