@@ -3,13 +3,15 @@
 
 EAPI=6
 
-PYTHON_COMPAT=( python{2_7,3_6} )
+PYTHON_COMPAT=( python{2_7,3_6,3_7} )
 
 inherit distutils-r1 eutils
 
+COMMIT="c6c33708ccd8aba999476326600a70438d7ec9ac"
+
 DESCRIPTION="Stack overflow command line client. Search and browse stack overflow without leaving the terminal"
 HOMEPAGE="https://github.com/gautamkrishnar/socli"
-SRC_URI="https://github.com/gautamkrishnar/socli/archive/${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/gautamkrishnar/socli/archive/${COMMIT}.zip -> ${P}.zip"
 LICENSE="BSD"
 
 SLOT="0"
@@ -23,7 +25,7 @@ DEPEND="dev-python/py-stackexchange[${PYTHON_USEDEP}]
         dev-python/urwid[${PYTHON_USEDEP}]
         dev-python/beautifulsoup:4[${PYTHON_USEDEP}]"
 RDEPEND="${DEPEND}"
-S="${WORKDIR}/${P}"
+S="${WORKDIR}/${PN}-${COMMIT}"
 
 python_install_all() {
 	distutils-r1_python_install_all
