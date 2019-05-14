@@ -9,9 +9,11 @@ inherit eutils
 
 MY_PV="3.8"
 
+COMMIT="d3600278e52ddba8d6d6032fa40cf662fef52e0c"
+
 DESCRIPTION="Google from the terminal"
 HOMEPAGE="https://github.com/jarun/googler"
-SRC_URI="https://github.com/jarun/${PN}/archive/v${MY_PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/jarun/${PN}/archive/${COMMIT}.zip -> ${P}.zip"
 LICENSE="GPL-3"
 
 SLOT="0"
@@ -21,7 +23,7 @@ IUSE=""
 
 DEPEND=""
 RDEPEND="${DEPEND}"
-S="${WORKDIR}/${PN}-${MY_PV}"
+S="${WORKDIR}/${PN}-${COMMIT}"
 
 export PREFIX="/usr"
 export DOCDIR="/usr/share/${P}"
