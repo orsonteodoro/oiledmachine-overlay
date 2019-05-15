@@ -1,0 +1,11 @@
+--- a/drivers/gpu/drm/amd/display/dc/dce80/dce80_timing_generator.c.orig	2019-03-03 15:21:29.000000000 -0800
++++ b/drivers/gpu/drm/amd/display/dc/dce80/dce80_timing_generator.c	2019-05-12 01:13:54.512250859 -0700
+@@ -94,7 +94,7 @@ static void program_pix_dur(struct timin
+ 	if (pix_clk_khz == 0)
+ 		return;
+ 
+-	pix_dur = 1000000000 / pix_clk_khz;
++	pix_dur = div_u64(10000000000ull, pix_clk_khz);
+ 
+ 	set_reg_field_value(
+ 		value,

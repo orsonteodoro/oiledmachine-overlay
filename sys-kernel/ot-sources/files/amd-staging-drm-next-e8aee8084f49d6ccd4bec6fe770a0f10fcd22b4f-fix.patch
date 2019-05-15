@@ -1,0 +1,25 @@
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2019-05-13 13:07:10.839925760 -0700
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-05-13 13:13:38.364985674 -0700
+@@ -6126,15 +6126,13 @@ static void amdgpu_dm_commit_planes(stru
+ #endif
+ 	}
+ 
+-#if DRM_VERSION_CODE < DRM_VERSION(4, 12, 0)
+-	for_each_plane_in_state(state, plane, old_plane_state, i) {
+-		new_plane_state = plane->state;
+-#else
+-	for_each_oldnew_plane_in_state(state, plane, old_plane_state, new_plane_state, i) {
+-#endif
+-		if (plane->type == DRM_PLANE_TYPE_CURSOR)
+-			handle_cursor_update(plane, old_plane_state);
+-	}
++	/*
++	 * Update cursor state *after* programming all the planes.
++	 * This avoids redundant programming in the case where we're going
++	 * to be disabling a single plane - those pipes are being disabled.
++	 */
++	if (acrtc_state->active_planes)
++		amdgpu_dm_commit_cursors(state);
+ 
+ cleanup:
+ 	kfree(bundle);

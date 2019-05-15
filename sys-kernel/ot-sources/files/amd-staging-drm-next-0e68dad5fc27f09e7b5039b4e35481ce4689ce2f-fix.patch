@@ -1,43 +1,42 @@
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2019-04-23 14:57:38.168025247 -0700
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-04-23 15:03:24.435495005 -0700
-@@ -5302,29 +5302,25 @@ static void amdgpu_dm_commit_planes(stru
- 			if (!vrr_active)
- 				last_flip_vblank = amdgpu_get_vblank_counter_kms(dm->ddev, acrtc_attach->crtc_id);
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2019-05-13 10:14:19.776195585 -0700
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-05-13 10:24:04.498929844 -0700
+@@ -5890,27 +5890,30 @@ static void amdgpu_dm_commit_planes(stru
+ 			continue;
+ 		}
  
-+			abo = gem_to_amdgpu_bo(fb->obj[0]);
++#if DRM_VERSION_CODE >= DRM_VERSION(4, 14, 0)
++		abo = gem_to_amdgpu_bo(fb->obj[0]);
++#else
++		abo = gem_to_amdgpu_bo(kcl_drm_fb_get_gem_obj(fb, 0));
++#endif
 +
-+			/* Wait for all fences on this FB */
-+			r = reservation_object_wait_timeout_rcu(abo->tbo.resv, true,
++		/* Wait for all fences on this FB */
++		r = reservation_object_wait_timeout_rcu(abo->tbo.resv, true,
 +							false,
 +							MAX_SCHEDULE_TIMEOUT);
-+			WARN_ON(r < 0);
++		WARN_ON(r < 0);
 +
- 			/*
- 			 * TODO This might fail and hence better not used, wait
- 			 * explicitly on fences instead
- 			 * and in general should be called for
- 			 * blocking commit to as per framework helpers
- 			 */
--			abo = gem_to_amdgpu_bo(fb->obj[0]);
- 			r = amdgpu_bo_reserve(abo, true);
--			if (unlikely(r != 0))
-+			if (unlikely(r != 0)) {
- 				DRM_ERROR("failed to reserve buffer before flip\n");
--
--			/*
--			 * Wait for all fences on this FB. Do limited wait to avoid
--			 * deadlock during GPU reset when this fence will not signal
--			 * but we hold reservation lock for the BO.
--			 */
--			r = reservation_object_wait_timeout_rcu(abo->tbo.resv,
--								true, false,
--								msecs_to_jiffies(5000));
--			if (unlikely(r == 0))
--				DRM_ERROR("Waiting for fences timed out.");
--
--
-+	 			WARN_ON(1);
-+			}
+ 		/*
+ 		 * TODO This might fail and hence better not used, wait
+ 		 * explicitly on fences instead
+ 		 * and in general should be called for
+ 		 * blocking commit to as per framework helpers
+ 		 */
+-#if DRM_VERSION_CODE >= DRM_VERSION(4, 14, 0)
+-		abo = gem_to_amdgpu_bo(fb->obj[0]);
+-#else
+-		abo = gem_to_amdgpu_bo(kcl_drm_fb_get_gem_obj(fb, 0));
+-#endif
+ 		r = amdgpu_bo_reserve(abo, true);
+ 		if (unlikely(r != 0)) {
+ 			DRM_ERROR("failed to reserve buffer before flip\n");
+ 			WARN_ON(1);
+ 		}
  
- 			amdgpu_bo_get_tiling_flags(abo, &tiling_flags);
+-		/* Wait for all fences on this FB */
+-		WARN_ON(reservation_object_wait_timeout_rcu(abo->tbo.resv, true, false,
+-									    MAX_SCHEDULE_TIMEOUT) < 0);
+-
+ 		amdgpu_bo_get_tiling_flags(abo, &tiling_flags);
  
+ 		amdgpu_bo_unreserve(abo);

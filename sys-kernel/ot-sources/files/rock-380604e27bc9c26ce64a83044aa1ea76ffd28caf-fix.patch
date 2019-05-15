@@ -1,0 +1,44 @@
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c.orig	2019-05-12 01:26:10.750839406 -0700
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c	2019-05-12 01:27:24.583711727 -0700
+@@ -2142,7 +2142,7 @@ enum dc_status dc_link_validate_mode_tim
+ 		struct dc_link *link,
+ 		const struct dc_crtc_timing *timing)
+ {
+-	uint32_t max_pix_clk = stream->sink->dongle_max_pix_clk;
++	uint32_t max_pix_clk = stream->sink->dongle_max_pix_clk * 10;
+ 	struct dpcd_caps *dpcd_caps = &link->dpcd_caps;
+ 
+ 	/* A hack to avoid failing any modes for EDID override feature on
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_stream.c.orig	2019-05-12 01:26:10.750839406 -0700
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_stream.c	2019-05-12 01:31:17.732784153 -0700
+@@ -47,7 +47,7 @@ void update_stream_signal(struct dc_stre
+ 
+ 	if (dc_is_dvi_signal(stream->signal)) {
+ 		if (stream->ctx->dc->caps.dual_link_dvi &&
+-		    stream->timing.pix_clk_khz > TMDS_MAX_PIXEL_CLOCK &&
++		    (stream->timing.pix_clk_100hz / 10) > TMDS_MAX_PIXEL_CLOCK &&
+ 		    stream->sink->sink_signal != SIGNAL_TYPE_DVI_SINGLE_LINK)
+ 			stream->signal = SIGNAL_TYPE_DVI_DUAL_LINK;
+ 		else
+--- a/drivers/gpu/drm/amd/display/dc/dce110/dce110_resource.c.orig	2019-05-12 01:26:10.760839796 -0700
++++ b/drivers/gpu/drm/amd/display/dc/dce110/dce110_resource.c	2019-05-12 01:34:36.730530213 -0700
+@@ -779,7 +779,7 @@ static void get_pixel_clock_parameters(
+ 	 * the pixel clock normalization for hdmi up to here instead of doing it
+ 	 * in pll_adjust_pix_clk
+ 	 */
+-	pixel_clk_params->requested_pix_clk = stream->timing.pix_clk_khz;
++	pixel_clk_params->requested_pix_clk_100hz = stream->timing.pix_clk_100hz;
+ 	pixel_clk_params->encoder_object_id = stream->sink->link->link_enc->id;
+ 	pixel_clk_params->signal_type = pipe_ctx->stream->signal;
+ 	pixel_clk_params->controller_id = pipe_ctx->stream_res.tg->inst + 1;
+--- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c.orig	2019-05-12 01:26:10.760839796 -0700
++++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_resource.c	2019-05-12 01:35:11.321876925 -0700
+@@ -974,7 +974,7 @@ static void get_pixel_clock_parameters(
+ 	struct pixel_clk_params *pixel_clk_params)
+ {
+ 	const struct dc_stream_state *stream = pipe_ctx->stream;
+-	pixel_clk_params->requested_pix_clk = stream->timing.pix_clk_khz;
++	pixel_clk_params->requested_pix_clk_100hz = stream->timing.pix_clk_100hz;
+ 	pixel_clk_params->encoder_object_id = stream->sink->link->link_enc->id;
+ 	pixel_clk_params->signal_type = pipe_ctx->stream->signal;
+ 	pixel_clk_params->controller_id = pipe_ctx->stream_res.tg->inst + 1;

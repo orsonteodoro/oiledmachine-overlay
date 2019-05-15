@@ -82,6 +82,7 @@ AMD_COMMIT_LAST_STABLE="f7fa4d8745fce7db056ee9fa040c6e31b50f2389" # amd-19.10 br
 AMD_COMMIT_SNAPSHOT="ca925147df370b66e3db7ae0cb3f90ffd5e16429" # latest commit i tested
 # 2019-05-07 drm/radeon: prefer lower reference dividers
 
+
 # the 19.10 is behind ROCK-Kernel-Driver in AMDGPU_VERSION defined in drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
 ROCK_DIR="ROCK-Kernel-Driver"
 # we are only interested in commits marked hybrid, some amdkfd
@@ -194,14 +195,14 @@ gen_kernel_seq()
 #KERNEL_PATCH_TO_FROM=($(gen_kernel_seq $(get_version_component_range 3 ${PV})))
 KERNEL_PATCH_TO_FROM=()
 KERNEL_INC_BASEURL="https://cdn.kernel.org/pub/linux/kernel/v5.x/incr/"
-KERNEL_PATCH_0_TO_1_URL="https://cdn.kernel.org/pub/linux/kernel/v5.x/patch-5.0.1.xz"
+KERNEL_PATCH_0_TO_1_URL="https://cdn.kernel.org/pub/linux/kernel/v5.x/patch-5.1.1.xz"
 
 KERNEL_PATCH_FNS_EXT=(${KERNEL_PATCH_TO_FROM[@]/%/.xz})
 KERNEL_PATCH_FNS_EXT=(${KERNEL_PATCH_FNS_EXT[@]/#/patch-5.0.})
 KERNEL_PATCH_FNS_NOEXT=(${KERNEL_PATCH_TO_FROM[@]/#/patch-5.0.})
 KERNEL_PATCH_URLS=(${KERNEL_PATCH_0_TO_1_URL} ${KERNEL_PATCH_FNS_EXT[@]/#/${KERNEL_INC_BASEURL}})
-KERNEL_PATCH_FNS_EXT=(patch-5.0.1.xz ${KERNEL_PATCH_FNS_EXT[@]/#/patch-5.0.})
-KERNEL_PATCH_FNS_NOEXT=(patch-5.0.1 ${KERNEL_PATCH_TO_FROM[@]/#/patch-5.0.})
+KERNEL_PATCH_FNS_EXT=(patch-5.1.1.xz ${KERNEL_PATCH_FNS_EXT[@]/#/patch-5.0.})
+KERNEL_PATCH_FNS_NOEXT=(patch-5.1.1 ${KERNEL_PATCH_TO_FROM[@]/#/patch-5.0.})
 
 #	 ${CK_SRC_URL}
 #	 ${PDS_SRC_URL}
@@ -223,8 +224,8 @@ SRC_URI="
 	 ${TRESOR_README_DL_URL}
 	 ${TRESOR_SRC_URL}
 	 ${UKSM_SRC_URL}
+	 ${KERNEL_PATCH_URLS[@]}
 	 "
-#	 ${KERNEL_PATCH_URLS[@]}
 
 UNIPATCH_LIST=""
 
@@ -285,7 +286,6 @@ function apply_genpatch_base() {
 	sed -r -i -e "s|EXTRAVERSION = ${EXTRAVERSION}|EXTRAVERSION =|" "${S}"/Makefile || die
 
 	# genpatches places kernel incremental patches starting at 1000
-	if false ; then # wait for 5.1.1
 	for a in ${KERNEL_PATCH_FNS_NOEXT[@]} ; do
 		local f="${T}/${a}"
 		cd "${T}"
@@ -300,7 +300,6 @@ function apply_genpatch_base() {
 			die
 		fi
 	done
-	fi
 
 	sed -r -i -e "s|EXTRAVERSION =|EXTRAVERSION = ${EXTRAVERSION}|" "${S}"/Makefile || die
 
@@ -590,7 +589,7 @@ src_unpack() {
 			if [[ "$?" == "1" ]] ; then
 				case "${l}" in
 					*)
-						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_tpatch "${PATCH_OPS} --forward" "${T}/rock-patches/${l}"
 						# already has been applied or partially patched already or success
 						;;
 				esac
