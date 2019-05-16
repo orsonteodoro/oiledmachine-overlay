@@ -299,23 +299,23 @@ pkg_setup() {
 	date_amd_staging_drm_next=$(date -r /var/cache/ot-sources/amd-staging-drm-next.commits.indexed +%s)
 	date_rock=$(date -r /var/cache/ot-sources/rock.commits.indexed +%s)
 
-	if (( $(date +%s) > ${date_amd_staging_drm_next}+86400 )) || [[ "${NEW_AMD_STAGING_DRM_NEXT_INDEX}" == "1" ]] ; then
+	if (( $(date +%s) > ${date_amd_staging_drm_next}+604800 )) || [[ "${NEW_AMD_STAGING_DRM_NEXT_INDEX}" == "1" ]] ; then
 		cat /dev/null > /var/cache/ot-sources/amd-staging-drm-next.commits.indexed || die
 		export CACHED_AMD_STAGING_DRM_NEXT_INDEX="0"
 		einfo "Clearing stale amd-staging-drm-next.commits.indexed"
 	else
 		export CACHED_AMD_STAGING_DRM_NEXT_INDEX="1"
 		einfo "Using cached amd-staging-drm-next.commits.indexed"
-		einfo "Remove /var/cache/ot-sources/amd-staging-drm-next.commits.indexed if you changed your use flags.  Data cached for 1 day."
+		einfo "Remove /var/cache/ot-sources/amd-staging-drm-next.commits.indexed if you changed your use flags.  Data cached for 1 week."
 	fi
-	if (( $(date +%s) > ${date_rock}+86400 )) || [[ "${NEW_ROCK_INDEX}" == "1" ]] ; then
+	if (( $(date +%s) > ${date_rock}+604800 )) || [[ "${NEW_ROCK_INDEX}" == "1" ]] ; then
 		cat /dev/null > /var/cache/ot-sources/rock.commits.indexed || die
 		export CACHED_ROCK_INDEX="0"
 		einfo "Clearing stale rock.commits.indexed"
 	else
 		export CACHED_ROCK_INDEX="1"
 		einfo "Using cached rock.commits.indexed"
-		einfo "Remove /var/cache/ot-sources/rock.commits.indexed if you changed your use flags.  Data cached for 1 day."
+		einfo "Remove /var/cache/ot-sources/rock.commits.indexed if you changed your use flags.  Data cached for 1 week."
 	fi
 }
 
