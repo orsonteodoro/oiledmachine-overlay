@@ -297,7 +297,7 @@ x11-libs/amd-adl-sdk
 =x11-drivers/ati-drivers-15.12-r667
 =x11-drivers/ati-drivers-15.9-r1
 
-# mask vulnerable kernels
+# mask vulnerable kernels MDS, ZombieLoad
 <sys-kernel/ot-sources-5.0.16
 =sys-kernel/ot-sources-5.1.1
 =sys-kernel/ot-sources-5.1
