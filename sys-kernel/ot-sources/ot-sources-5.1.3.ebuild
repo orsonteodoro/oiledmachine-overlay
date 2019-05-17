@@ -49,7 +49,7 @@ PATCH_BMQ_VER="094"
 PATCH_BMQ_MAJOR_MINOR="5.1"
 DISABLE_DEBUG_V="1.1"
 
-IUSE="bfq +bmq bmq-quick-fix cfs disable_debug +graysky2 muqss +o3 pds uksm tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs -zentune"
+IUSE="bfq bmq bmq-quick-fix +cfs disable_debug +graysky2 muqss +o3 pds uksm tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs -zentune"
 REQUIRED_USE="^^ ( muqss pds cfs bmq )
 	     tresor_sysfs? ( || ( tresor_i686 tresor_x86_64 tresor_aesni ) )
 	     tresor? ( ^^ ( tresor_i686 tresor_x86_64 tresor_aesni ) )

@@ -108,7 +108,7 @@ AMD_STAGING_LATEST_INTERSECTS_5_X="02205685e319bf6507feb95b1ee2ce3fb51fa60d" # c
 AMD_STAGING_SNAPSHOT_INTERSECTS_5_X="02205685e319bf6507feb95b1ee2ce3fb51fa60d" # corresponds to 'B
 AMD_STAGING_MILESTONE_INTERSECTS_5_X="02205685e319bf6507feb95b1ee2ce3fb51fa60d" # corresponds to 'B
 
-IUSE="bfq +bmq bmq-quick-fix amd-staging-drm-next-latest amd-staging-drm-next-snapshot amd-staging-drm-next-milestone cfs disable_debug +graysky2 muqss +o3 pds rock-latest rock-snapshot rock-milestone uksm tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs -zentune"
+IUSE="bfq bmq bmq-quick-fix amd-staging-drm-next-latest amd-staging-drm-next-snapshot amd-staging-drm-next-milestone +cfs disable_debug +graysky2 muqss +o3 pds rock-latest rock-snapshot rock-milestone uksm tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs -zentune"
 REQUIRED_USE="^^ ( muqss pds cfs bmq )
 	     tresor_sysfs? ( || ( tresor_i686 tresor_x86_64 tresor_aesni ) )
 	     tresor? ( ^^ ( tresor_i686 tresor_x86_64 tresor_aesni ) )
