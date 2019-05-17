@@ -76,7 +76,9 @@ RDEPEND="
 	x11-libs/libXrender[${MULTILIB_USEDEP}]
 	x11-base/xorg-proto
 	freesync? ( || (   sys-kernel/ot-sources
-			 >=sys-kernel/git-sources-5.0_rc1 ) )
+			 >=sys-kernel/git-sources-5.0_rc1
+			 >=sys-kernel/gentoo-sources-5.0
+			 >=sys-kernel/vanilla-sources-5.0 ) )
 "
 #hsakmt requires libnuma.so.1
 #kmstest requires libkms
