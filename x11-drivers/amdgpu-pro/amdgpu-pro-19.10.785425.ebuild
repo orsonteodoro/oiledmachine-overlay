@@ -75,7 +75,7 @@ RDEPEND="
 	x11-libs/libXrandr[${MULTILIB_USEDEP}]
 	x11-libs/libXrender[${MULTILIB_USEDEP}]
 	x11-base/xorg-proto
-	freesync? ( || (   sys-kernel/ot-sources[amd]
+	freesync? ( || (   sys-kernel/ot-sources
 			 >=sys-kernel/git-sources-5.0_rc1 ) )
 "
 #hsakmt requires libnuma.so.1
