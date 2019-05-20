@@ -458,4 +458,9 @@ pkg_postinst() {
 		ewarn "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL will cause a kernel panic on boot."
 		ewarn "The MuQSS scheduler may have random system hard pauses for few seconds to around a minute when resource usage is high."
 	fi
+
+	if use bmq ; then
+		ewarn "Using bmq with lots of resources may leave zombie processes, or high CPU processes/threads with little processing."
+		ewarn "This might result in a denial of service that may require rebooting."
+	fi
 }

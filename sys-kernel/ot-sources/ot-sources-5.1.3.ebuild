@@ -468,8 +468,8 @@ pkg_postinst() {
 	if use tresor_sysfs ; then
 		# prevent merge conflicts
 		cd "${T}"
-		chmod 700 "${EROOT}"/usr/bin/tresor_sysfs || die
 		mv tresor_sysfs "${EROOT}/usr/bin" || die
+		chmod 700 "${EROOT}"/usr/bin/tresor_sysfs || die
 		# same hash for 5.1 and 5.0.13 for tresor_sysfs
 		einfo "/usr/bin/tresor_sysfs is provided to set your TRESOR key"
 	fi
@@ -477,5 +477,10 @@ pkg_postinst() {
 	if use muqss ; then
 		ewarn "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL will cause a kernel panic on boot."
 		ewarn "The MuQSS scheduler may have random system hard pauses for few seconds to around a minute when resource usage is high."
+	fi
+
+	if use bmq ; then
+		ewarn "Using bmq with lots of resources may leave zombie processes, or high CPU processes/threads with little processing."
+		ewarn "This might result in a denial of service that may require rebooting."
 	fi
 }

@@ -2,11 +2,11 @@
 # Distributed under the terms of the GNU General Public License v2
 
 # UKSM:                         https://github.com/dolohow/uksm
-# zen-tune:                     https://github.com/torvalds/linux/compare/v5.0...zen-kernel:5.0/zen-tune
+# zen-tune:                     https://github.com/torvalds/linux/compare/v5.1...zen-kernel:5.1/zen-tune
 # O3 (Optimize Harder):         https://github.com/torvalds/linux/commit/a56a17374772a48a60057447dc4f1b4ec62697fb
 #                               https://github.com/torvalds/linux/commit/93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9
 # GraySky2 GCC Patches:         https://github.com/graysky2/kernel_gcc_patch
-# MUQSS CPU Scheduler:          http://ck.kolivas.org/patches/5.0/5.0/5.0-ck1/
+# MUQSS CPU Scheduler:          http://ck.kolivas.org/patches/5.0/5.1/5.1-ck1/
 # PDS CPU Scheduler:            http://cchalpha.blogspot.com/search/label/PDS
 # BMQ CPU Scheduler:		https://cchalpha.blogspot.com/search/label/BMQ
 # genpatches:                   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
@@ -28,31 +28,37 @@ HOMEPAGE="https://github.com/dolohow/uksm
 	  http://www1.informatik.uni-erlangen.de/tresor
           "
 
+K_MAJOR_MINOR="5.1"
 EXTRAVERSION="-ot"
 PATCH_UKSM_VER="5.0"
 PATCH_UKSM_MVER="5"
-PATCH_ZENTUNE_VER="5.0"
+PATCH_ZENTUNE_VER="5.1"
 PATCH_O3_CO_COMMIT="a56a17374772a48a60057447dc4f1b4ec62697fb"
 PATCH_O3_RO_COMMIT="93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9"
 PATCH_CK_MAJOR="5.0"
-PATCH_CK_MAJOR_MINOR="5.0"
+PATCH_CK_MAJOR_MINOR="5.1"
 PATCH_CK_REVISION="1"
-K_GENPATCHES_VER="15"
-PATCH_GP_MAJOR_MINOR_REVISION="5.0-${K_GENPATCHES_VER}"
+K_GENPATCHES_VER="4"
+PATCH_GP_MAJOR_MINOR_REVISION="5.1-${K_GENPATCHES_VER}"
 PATCH_GRAYSKY_COMMIT="87168bfa27b782e1c9435ba28ebe3987ddea8d30"
 PATCH_PDS_MAJOR_MINOR="5.0"
 PATCH_PDS_VER="099o"
 PATCH_BFQ_VER="5.0"
 PATCH_TRESOR_VER="3.18.5"
-PATCH_BMQ_VER="093"
-PATCH_BMQ_MAJOR_MINOR="5.0"
+PATCH_BMQ_VER="094"
+PATCH_BMQ_MAJOR_MINOR="5.1"
 DISABLE_DEBUG_V="1.1"
 
-IUSE="bfq bmq +cfs disable_debug +graysky2 muqss +o3 pds uksm tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs -zentune"
-REQUIRED_USE="^^ ( muqss pds cfs bmq ) tresor_sysfs? ( || ( tresor_i686 tresor_x86_64 tresor_aesni ) ) tresor? ( ^^ ( tresor_i686 tresor_x86_64 tresor_aesni ) ) tresor_i686? ( tresor ) tresor_x86_64? ( tresor ) tresor_aesni? ( tresor )"
-REQUIRED_USE+=" !muqss !pds !bfq"
+IUSE="bfq bmq bmq-quick-fix +cfs disable_debug +graysky2 muqss +o3 pds uksm tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs -zentune"
+REQUIRED_USE="^^ ( muqss pds cfs bmq )
+	     tresor_sysfs? ( || ( tresor_i686 tresor_x86_64 tresor_aesni ) )
+	     tresor? ( ^^ ( tresor_i686 tresor_x86_64 tresor_aesni ) )
+	     tresor_i686? ( tresor )
+	     tresor_x86_64? ( tresor )
+	     tresor_aesni? ( tresor )"
 
-REQUIRED_USE+="" # disabled for now
+# no released patch for 5.1 yet
+REQUIRED_USE+=" !pds !bfq"
 
 #K_WANT_GENPATCHES="base extras experimental"
 K_SECURITY_UNSUPPORTED="1"
@@ -64,9 +70,7 @@ detect_version
 detect_arch
 
 #DEPEND="deblob? ( ${PYTHON_DEPS} )"
-DEPEND="
-	dev-util/patchutils
-	"
+DEPEND="dev-util/patchutils"
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
@@ -74,7 +78,9 @@ DESCRIPTION="Orson Teodoro's patchset containing UKSM, zen-tune, GraySky's GCC P
 
 BMQ_FN="v${PATCH_BMQ_MAJOR_MINOR}_bmq${PATCH_BMQ_VER}.patch"
 BMQ_BASE_URL="https://gitlab.com/alfredchen/bmq/raw/master/${PATCH_BMQ_MAJOR_MINOR}/"
-BMQ_SRC_URL="${BMQ_BASE_URL}${BMQ_FN}"
+BMQ_SRC_URL="${BMQ_BASE_URL}${BMQ_FN}
+	     https://gitlab.com/alfredchen/linux-bmq/commit/c98f44724fac5c2b42d831f0ad986008420d13c2.diff
+            "
 
 UKSM_BASE="https://raw.githubusercontent.com/dolohow/uksm/master/v${PATCH_UKSM_MVER}.x/"
 UKSM_FN="uksm-${PATCH_UKSM_VER}.patch"
@@ -101,7 +107,7 @@ GRAYSKY_SRC_4_9_URL="${GRAYSKY_URL_BASE}${GRAYSKY_DL_4_9_FN}"
 GRAYSKY_SRC_8_1_URL="${GRAYSKY_URL_BASE}${GRAYSKY_DL_8_1_FN}"
 
 CK_URL_BASE="http://ck.kolivas.org/patches/${PATCH_CK_MAJOR}/${PATCH_CK_MAJOR_MINOR}/${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}/"
-CK_FN="${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}-broken-out.tar.xz"
+CK_FN="${PATCH_CK_MAJOR_MINOR}-broken-out.tar.xz"
 CK_SRC_URL="${CK_URL_BASE}${CK_FN}"
 
 PDS_URL_BASE="https://gitlab.com/alfredchen/PDS-mq/raw/master/${PATCH_PDS_MAJOR_MINOR}/"
@@ -143,36 +149,37 @@ gen_kernel_seq()
 
 KERNEL_PATCH_TO_FROM=($(gen_kernel_seq $(get_version_component_range 3 ${PV})))
 KERNEL_INC_BASEURL="https://cdn.kernel.org/pub/linux/kernel/v5.x/incr/"
-KERNEL_PATCH_0_TO_1_URL="https://cdn.kernel.org/pub/linux/kernel/v5.x/patch-5.0.1.xz"
+KERNEL_PATCH_0_TO_1_URL="https://cdn.kernel.org/pub/linux/kernel/v5.x/patch-5.1.1.xz"
 
 KERNEL_PATCH_FNS_EXT=(${KERNEL_PATCH_TO_FROM[@]/%/.xz})
-KERNEL_PATCH_FNS_EXT=(${KERNEL_PATCH_FNS_EXT[@]/#/patch-5.0.})
-KERNEL_PATCH_FNS_NOEXT=(${KERNEL_PATCH_TO_FROM[@]/#/patch-5.0.})
+KERNEL_PATCH_FNS_EXT=(${KERNEL_PATCH_FNS_EXT[@]/#/patch-${K_MAJOR_MINOR}.})
+KERNEL_PATCH_FNS_NOEXT=(${KERNEL_PATCH_TO_FROM[@]/#/patch-${K_MAJOR_MINOR}.})
 KERNEL_PATCH_URLS=(${KERNEL_PATCH_0_TO_1_URL} ${KERNEL_PATCH_FNS_EXT[@]/#/${KERNEL_INC_BASEURL}})
-KERNEL_PATCH_FNS_EXT=(patch-5.0.1.xz ${KERNEL_PATCH_FNS_EXT[@]/#/patch-5.0.})
-KERNEL_PATCH_FNS_NOEXT=(patch-5.0.1 ${KERNEL_PATCH_TO_FROM[@]/#/patch-5.0.})
+KERNEL_PATCH_FNS_EXT=(patch-5.1.1.xz ${KERNEL_PATCH_FNS_EXT[@]/#/patch-${K_MAJOR_MINOR}.})
+KERNEL_PATCH_FNS_NOEXT=(patch-5.1.1 ${KERNEL_PATCH_TO_FROM[@]/#/patch-${K_MAJOR_MINOR}.})
 
-SRC_URI="${KERNEL_URI}
+#	 ${PDS_SRC_URL}
+SRC_URI="
+	 ${CK_SRC_URL}
+	 ${KERNEL_URI}
 	 ${GENPATCHES_URI}
 	 ${ARCH_URI}
-	 ${UKSM_SRC_URL}
 	 ${O3_CO_SRC_URL}
 	 ${O3_RO_SRC_URL}
 	 ${GRAYSKY_SRC_4_9_URL}
 	 ${GRAYSKY_SRC_8_1_URL}
-	 ${CK_SRC_URL}
-	 ${PDS_SRC_URL}
 	 ${BMQ_SRC_URL}
 	 ${GENPATCHES_BASE_SRC_URL}
-	 ${GENPATCHES_EXPERIMENTAL_SRC_URL}
 	 ${GENPATCHES_EXTRAS_SRC_URL}
 	 ${TRESOR_AESNI_DL_URL}
 	 ${TRESOR_I686_DL_URL}
 	 ${TRESOR_SYSFS_DL_URL}
 	 ${TRESOR_README_DL_URL}
 	 ${TRESOR_SRC_URL}
+	 ${UKSM_SRC_URL}
 	 ${KERNEL_PATCH_URLS[@]}
 	 "
+#	 ${GENPATCHES_EXPERIMENTAL_SRC_URL}
 
 UNIPATCH_LIST=""
 
@@ -205,7 +212,8 @@ function _tpatch() {
 
 function apply_uksm() {
 	_tpatch "${PATCH_OPS} -N" "${DISTDIR}/${UKSM_FN}"
-	#_dpatch "${PATCH_OPS}" "${FILESDIR}/uksm-4.19-invalidate-range-linux-5.0.6.patch"
+	# the header patches fine with patch -N
+	_dpatch "${PATCH_OPS}" "${FILESDIR}/uksm-5.1-fixes.patch" # for reuse_ksm_page
 }
 
 function apply_bfq() {
@@ -290,7 +298,9 @@ function apply_o3() {
 	einfo "Applying O3"
 	ewarn "Some patches have hunk(s) failed but still good or may be fixed ASAP."
 	einfo "Applying ${O3_CO_FN}"
-	_dpatch "${PATCH_OPS}" "${T}/${O3_CO_FN}"
+	_tpatch "${PATCH_OPS}" "${T}/${O3_CO_FN}"
+	einfo "Applying fix for ${O3_CO_FN}"
+	_dpatch "${PATCH_OPS}" "${FILESDIR}/O3-config-option-a56a17374772a48a60057447dc4f1b4ec62697fb-fix-for-5.1.patch"
 	einfo "Applying ${O3_RO_FN}"
 	touch drivers/gpu/drm/amd/display/dc/basics/logger.c # trick patch for unattended patching
 	_tpatch "-p1 -N" "${DISTDIR}/${O3_RO_FN}"
@@ -306,6 +316,12 @@ function apply_bmq() {
 	cd "${S}"
 	einfo "Applying bmq"
 	_dpatch "${PATCH_OPS}" "${DISTDIR}/${BMQ_FN}"
+	if use bmq-quick-fix ; then
+		# Upstream tends to add quick fixes immediately after releases, so this use flag exists.
+		# See https://gitlab.com/alfredchen/bmq/issues/5 .
+		# This issue wasn't an issue for me so it is optional.
+		_dpatch "${PATCH_OPS}" "${DISTDIR}/c98f44724fac5c2b42d831f0ad986008420d13c2.diff"
+	fi
 }
 
 function apply_tresor() {
@@ -334,7 +350,7 @@ function apply_tresor() {
 	#fi
 
 	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
-        _dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-testmgr-linux-5.0.13.patch"
+	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-testmgr-linux-5.1.patch"
 }
 
 function fetch_bfq() {
@@ -431,6 +447,10 @@ src_install() {
 	find "${S}" -name "*.orig" -print0 -o -name "*.rej" -print0 | xargs -0 rm
 
 	kernel-2_src_install
+	if use disable_debug ; then
+		cp "${FILESDIR}/_disable_debug_v${DISABLE_DEBUG_V}" "${T}/_disable_debug" || die
+		cp "${FILESDIR}/disable_debug_v${DISABLE_DEBUG_V}" "${T}/disable_debug" || die
+	fi
 }
 
 pkg_postinst() {
@@ -455,7 +475,7 @@ pkg_postinst() {
 	fi
 
 	if use muqss ; then
-		ewarn "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL will cause a kernel panic on boot."
+		ewarn "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL may cause the system to lock up."
 		ewarn "The MuQSS scheduler may have random system hard pauses for few seconds to around a minute when resource usage is high."
 	fi
 
