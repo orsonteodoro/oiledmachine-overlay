@@ -475,7 +475,9 @@ pkg_postinst() {
 	fi
 
 	if use muqss ; then
-		ewarn "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL may cause the system to lock up."
+		ewarn "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL and"
+		ewarn "Idle dynticks system (tickless idle) CONFIG_NO_HZ_IDLE may cause the system to lock up."
+		ewarn "You must choose Periodic timer ticks (constant rate, no dynticks) CONFIG_HZ_PERIODIC for it not to lock up."
 		ewarn "The MuQSS scheduler may have random system hard pauses for few seconds to around a minute when resource usage is high."
 	fi
 
