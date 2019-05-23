@@ -305,6 +305,7 @@ x11-libs/amd-adl-sdk
 # ebuild still in development
 =sys-kernel/ot-sources-5.1.2-r1
 =sys-kernel/ot-sources-5.0.18
+=sys-kernel/ot-sources-5.1.4
 
 # updated and tested
 #app-editors/epic-journal
