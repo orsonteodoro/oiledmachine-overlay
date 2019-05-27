@@ -1450,4 +1450,8 @@ pkg_postinst() {
 		ewarn "Using bmq with lots of resources may leave zombie processes, or high CPU processes/threads with little processing."
 		ewarn "This might result in a denial of service that may require rebooting."
 	fi
+
+	if use is_rock ; then
+		einfo "You must enable HSA kernel driver for AMD GPU devices (CONFIG_HSA_AMD=y) to use ROCM and add your users to the video group."
+	fi
 }

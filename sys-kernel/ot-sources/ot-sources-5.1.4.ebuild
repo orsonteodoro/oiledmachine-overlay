@@ -974,6 +974,7 @@ src_unpack() {
 						# parts of patch already applied and patched missing part
 						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
 						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-1254b5fe6aaabb58300a5929b6bb290bf1c49f63-fix.patch"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-1254b5fe6aaabb58300a5929b6bb290bf1c49f63-fix-for-linux-5.1.4.patch"
 						;;
 					*8098a2f9c3ba6fba0055aa88d3830bbec585268b*)
 						# parts already patched
@@ -1309,5 +1310,9 @@ pkg_postinst() {
 	if use bmq ; then
 		ewarn "Using bmq with lots of resources may leave zombie processes, or high CPU processes/threads with little processing."
 		ewarn "This might result in a denial of service that may require rebooting."
+	fi
+
+	if use is_rock ; then
+		einfo "You must enable HSA kernel driver for AMD GPU devices (CONFIG_HSA_AMD=y) to use ROCM and add your users to the video group."
 	fi
 }
