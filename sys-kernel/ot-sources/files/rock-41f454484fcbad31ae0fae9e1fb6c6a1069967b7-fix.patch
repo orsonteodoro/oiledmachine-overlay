@@ -1,0 +1,11 @@
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2019-05-26 11:02:30.531074057 -0700
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-05-26 11:03:35.833638561 -0700
+@@ -6479,6 +6479,8 @@ dm_determine_update_type_for_commit(stru
+ 	 */
+ 	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state, new_crtc_state, i) {
+ #endif
++		struct dc_stream_update stream_update = { 0 };
++
+ 		new_dm_crtc_state = to_dm_crtc_state(new_crtc_state);
+ 		old_dm_crtc_state = to_dm_crtc_state(old_crtc_state);
+ 		num_plane = 0;

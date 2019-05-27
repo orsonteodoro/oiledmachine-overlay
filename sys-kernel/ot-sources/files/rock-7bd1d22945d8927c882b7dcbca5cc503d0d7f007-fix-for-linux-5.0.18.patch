@@ -1,0 +1,45 @@
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2019-05-24 17:14:47.537986314 -0700
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-05-24 17:16:07.611102246 -0700
+@@ -5294,12 +5294,6 @@ static void amdgpu_dm_commit_planes(stru
+ 		dc_plane = dm_new_plane_state->dc_state;
+ 
+ 		if (pflip_needed) {
+-			/*
+-			 * Assume even ONE crtc with immediate flip means
+-			 * entire can't wait for VBLANK
+-			 * TODO Check if it's correct
+-			 */
+-
+ 			/* Use old throttling in non-vrr fixed refresh rate mode
+ 			 * to keep flip scheduling based on target vblank counts
+ 			 * working in a backwards compatible way, e.g., clients
+@@ -5308,9 +5302,6 @@ static void amdgpu_dm_commit_planes(stru
+ 			if (!vrr_active)
+ 				last_flip_vblank = drm_crtc_vblank_count(crtc);
+ 
+-			if (new_pcrtc_state->pageflip_flags & DRM_MODE_PAGE_FLIP_ASYNC)
+-				*wait_for_vblank = false;
+-
+ 			/*
+ 			 * TODO This might fail and hence better not used, wait
+ 			 * explicitly on fences instead
+@@ -5822,6 +5813,10 @@ static void amdgpu_dm_atomic_commit_tail
+ #endif
+ 	}
+ 
++	for_each_new_crtc_in_state(state, crtc, new_crtc_state, j)
++		if (new_crtc_state->pageflip_flags & DRM_MODE_PAGE_FLIP_ASYNC)
++			wait_for_vblank = false;
++
+ 	/* update planes when needed per crtc*/
+ #if DRM_VERSION_CODE < DRM_VERSION(4, 12, 0)
+ 	for_each_crtc_in_state(state, crtc, old_crtc_state, i) {
+@@ -5833,7 +5828,7 @@ static void amdgpu_dm_atomic_commit_tail
+ 
+ 		if (dm_new_crtc_state->stream)
+ 			amdgpu_dm_commit_planes(state, dc_state, dev,
+-						dm, crtc, &wait_for_vblank);
++						dm, crtc, wait_for_vblank);
+ 	}
+ 
+ #if DRM_VERSION_CODE >= DRM_VERSION(4, 8, 0)

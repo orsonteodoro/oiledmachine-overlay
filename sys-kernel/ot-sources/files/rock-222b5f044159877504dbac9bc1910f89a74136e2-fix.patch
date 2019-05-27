@@ -1,0 +1,41 @@
+--- a/drivers/gpu/drm/scheduler/sched_main.c.orig	2019-05-23 14:53:44.603275508 -0700
++++ b/drivers/gpu/drm/scheduler/sched_main.c	2019-05-23 14:55:17.246851185 -0700
+@@ -428,33 +428,22 @@ EXPORT_SYMBOL(drm_sched_stop);
+  * @sched: scheduler instance
+  *
+  */
+-void drm_sched_job_recovery(struct drm_gpu_scheduler *sched)
++void drm_sched_start(struct drm_gpu_scheduler *sched, bool full_recovery)
+ {
+ 	struct drm_sched_job *s_job, *tmp;
+-	bool found_guilty = false;
+ 	unsigned long flags;
+ 	int r;
+ 
++	if (!full_recovery)
++		goto unpark;
++
+ 	spin_lock_irqsave(&sched->job_list_lock, flags);
+ 	list_for_each_entry_safe(s_job, tmp, &sched->ring_mirror_list, node) {
+ 		struct drm_sched_fence *s_fence = s_job->s_fence;
+-		struct dma_fence *fence;
+-		uint64_t guilty_context;
+-
+-		if (!found_guilty && atomic_read(&s_job->karma) > sched->hang_limit) {
+-			found_guilty = true;
+-			guilty_context = s_job->s_fence->scheduled.context;
+-		}
+-
+-		if (found_guilty && s_job->s_fence->scheduled.context == guilty_context)
+-			kcl_dma_fence_set_error(&s_fence->finished, -ECANCELED);
+ 
+-		spin_unlock_irqrestore(&sched->job_list_lock, flags);
+-		fence = sched->ops->run_job(s_job);
+-		atomic_inc(&sched->hw_rq_count);
++		struct dma_fence *fence = s_job->s_fence->parent;
+ 
+ 		if (fence) {
+-			s_fence->parent = dma_fence_get(fence);
+ 			r = dma_fence_add_callback(fence, &s_fence->cb,
+ 						   drm_sched_process_job);
+ 			if (r == -ENOENT)

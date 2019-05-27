@@ -1,0 +1,65 @@
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig1	2019-05-26 21:08:45.480506848 -0700
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-05-26 21:11:23.596535082 -0700
+@@ -972,7 +972,11 @@ static int dm_resume(void *handle)
+ 	}
+ 
+ 	/* Force mode set in atomic commit */
++#if DRM_VERSION_CODE < DRM_VERSION(4, 12, 0)
++	for_each_crtc_in_state(dm->cached_state, crtc, new_crtc_state, i)
++#else
+ 	for_each_new_crtc_in_state(dm->cached_state, crtc, new_crtc_state, i)
++#endif
+ 		new_crtc_state->active_changed = true;
+ 
+ 	/*
+@@ -980,7 +984,11 @@ static int dm_resume(void *handle)
+ 	 * them here, since they were duplicated as part of the suspend
+ 	 * procedure.
+ 	 */
++#if DRM_VERSION_CODE < DRM_VERSION(4, 12, 0)
++	for_each_crtc_in_state(adev->dm.cached_state, crtc, new_crtc_state, i) {
++#else
+ 	for_each_new_crtc_in_state(dm->cached_state, crtc, new_crtc_state, i) {
++#endif
+ 		dm_new_crtc_state = to_dm_crtc_state(new_crtc_state);
+ 		if (dm_new_crtc_state->stream) {
+ 			WARN_ON(kref_read(&dm_new_crtc_state->stream->refcount) > 1);
+@@ -4917,7 +4925,12 @@ static void amdgpu_dm_commit_planes(stru
+ 	}
+ 
+ 	/* update planes when needed */
++#if DRM_VERSION_CODE < DRM_VERSION(4, 12, 0)
++	for_each_plane_in_state(state, plane, old_plane_state, i) {
++		new_plane_state = plane->state;
++#else
+ 	for_each_oldnew_plane_in_state(state, plane, old_plane_state, new_plane_state, i) {
++#endif
+ 		struct drm_crtc *crtc = new_plane_state->crtc;
+ 		struct drm_crtc_state *new_crtc_state;
+ 		struct drm_framebuffer *fb = new_plane_state->fb;
+@@ -5199,7 +5212,12 @@ static int amdgpu_dm_atomic_commit(struc
+ 	 * it will update crtc->dm_crtc_state->stream pointer which is used in
+ 	 * the ISRs.
+ 	 */
++#if DRM_VERSION_CODE < DRM_VERSION(4, 12, 0)
++	for_each_crtc_in_state(state, crtc, new_crtc_state, i) {
++		old_crtc_state = crtc->state;
++#else
+ 	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state, new_crtc_state, i) {
++#endif
+ 		struct dm_crtc_state *dm_old_crtc_state = to_dm_crtc_state(old_crtc_state);
+ 		struct dm_crtc_state *dm_new_crtc_state = to_dm_crtc_state(new_crtc_state);
+ 		struct amdgpu_crtc *acrtc = to_amdgpu_crtc(crtc);
+@@ -5756,7 +5774,11 @@ static int dm_update_crtc_state(struct a
+ 		goto fail;
+ 	}
+ 
+-	aconnector = amdgpu_dm_find_first_crtc_matching_connector(state, crtc);
++	aconnector = amdgpu_dm_find_first_crtc_matching_connector(state, crtc
++#if DRM_VERSION_CODE < DRM_VERSION(4, 12, 0)
++								  , true
++#endif
++								  );
+ 
+ 	/* TODO This hack should go away */
+ 	if (aconnector && enable) {

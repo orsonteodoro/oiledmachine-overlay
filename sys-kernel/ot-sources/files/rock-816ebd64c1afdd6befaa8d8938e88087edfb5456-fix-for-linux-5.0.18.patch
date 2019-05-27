@@ -1,25 +1,36 @@
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2019-05-25 23:48:06.532347118 -0700
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-05-25 23:52:32.576198422 -0700
-@@ -5363,78 +5363,6 @@ static void amdgpu_dm_commit_planes(stru
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2019-05-25 22:08:45.427295988 -0700
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-05-25 22:13:25.248346540 -0700
+@@ -5278,8 +5278,6 @@ static void amdgpu_dm_commit_planes(stru
  
  		dc_plane = dm_new_plane_state->dc_state;
  
 -		plane_needs_flip = old_plane_state->fb && new_plane_state->fb;
 -
+ 		/* For variable refresh rate mode only:
+ 		 * Get vblank of last completed flip to avoid > 1 vrr flips per
+ 		 * video frame by use of throttling, but allow flip programming
+@@ -5291,80 +5289,6 @@ static void amdgpu_dm_commit_planes(stru
+ 
+ 		spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
+ 
 -		pflip_present = pflip_present || plane_needs_flip;
 -
 -		if (plane_needs_flip) {
+-			/* Use old throttling in non-vrr fixed refresh rate mode
+-			 * to keep flip scheduling based on target vblank counts
+-			 * working in a backwards compatible way, e.g., clients
+-			 * using GLX_OML_sync_control extension.
+-			 */
+-			if (!vrr_active)
+-				last_flip_vblank = drm_crtc_vblank_count(crtc);
+-
 -			/*
 -			 * TODO This might fail and hence better not used, wait
 -			 * explicitly on fences instead
 -			 * and in general should be called for
 -			 * blocking commit to as per framework helpers
 -			 */
--#if DRM_VERSION_CODE >= DRM_VERSION(4, 14, 0)
 -			abo = gem_to_amdgpu_bo(fb->obj[0]);
--#else
--			abo = gem_to_amdgpu_bo(kcl_drm_fb_get_gem_obj(fb, 0));
--#endif
 -			r = amdgpu_bo_reserve(abo, true);
 -			if (unlikely(r != 0))
 -				DRM_ERROR("failed to reserve buffer before flip\n");
@@ -79,7 +90,7 @@
  		bundle->surface_updates[planes_count].surface = dc_plane;
  		if (new_pcrtc_state->color_mgmt_changed) {
  			bundle->surface_updates[planes_count].gamma = dc_plane->gamma_correction;
-@@ -5461,6 +5389,70 @@ static void amdgpu_dm_commit_planes(stru
+@@ -5391,6 +5315,78 @@ static void amdgpu_dm_commit_planes(stru
  		bundle->plane_infos[planes_count].dcc = dc_plane->dcc;
  		bundle->surface_updates[planes_count].plane_info = &bundle->plane_infos[planes_count];
  
@@ -91,6 +102,14 @@
 +			planes_count += 1;
 +			continue;
 +		}
++
++		/* Use old throttling in non-vrr fixed refresh rate mode
++		 * to keep flip scheduling based on target vblank counts
++		 * working in a backwards compatible way, e.g., clients
++		 * using GLX_OML_sync_control extension.
++		 */
++		if (!vrr_active)
++			last_flip_vblank = drm_crtc_vblank_count(crtc);
 +
 +		/*
 +		 * TODO This might fail and hence better not used, wait

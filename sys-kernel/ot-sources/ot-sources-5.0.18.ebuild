@@ -22,12 +22,13 @@ KEYWORDS="~amd64 ~x86"
 HOMEPAGE="https://github.com/dolohow/uksm
           https://liquorix.net/
           https://github.com/graysky2/kernel_gcc_dpatch
-          http://users.on.net/~ckolivas/kernel/
+	  http://ck-hack.blogspot.com/
           https://dev.gentoo.org/~mpagano/genpatches/
           http://algo.ing.unimo.it/people/paolo/disk_sched/
 	  http://cchalpha.blogspot.com/search/label/PDS
 	  https://cchalpha.blogspot.com/search/label/BMQ
 	  http://www1.informatik.uni-erlangen.de/tresor
+	  https://rocm.github.io/
           "
 
 K_MAJOR_MINOR="5.0"
@@ -60,20 +61,18 @@ AMD_STAGING_DRM_NEXT_DIR="amd-staging-drm-next"
 AMD_STAGING_DRM_NEXT_LAST="f7fa4d8745fce7db056ee9fa040c6e31b50f2389" # amd-19.10 branch latest commit equivalent
 # 2019-04-17 drm/amdgpu: amdgpu_device_recover_vram got NULL of shadow->parent
 
-AMD_STAGING_DRM_NEXT_SNAPSHOT="f6993eeb617583ab19d3483805e21b65507bf488" # latest commit I tested
-# 2019-05-20 gpu: fix typos in code comments
+AMD_STAGING_DRM_NEXT_SNAPSHOT="d97852aeef73a6bf35d01ef8fab0d93cd16a2797" # latest commit I tested
+# 2019-05-24 drm/amdgpu: sort probed modes before adding common modes
 AMD_STAGING_DRM_NEXT_STABLE="f7fa4d8745fce7db056ee9fa040c6e31b50f2389" # corresponds to 19.10 picked commit from latest amd-staging-drm-next
 # 2019-04-17 drm/amdgpu: amdgpu_device_recover_vram got NULL of shadow->parent
 
-AMD_STAGING_DRM_NEXT_MILESTONE="20a9e4ceb383dfe7cd73c16631d5966c0006f464" # corresponds to the commit before the current milestone:: drm/amd/display: 3.2.29
-# 2019-05-06 drm/amd/display: Disable cursor when offscreen in negative direction
+AMD_STAGING_DRM_NEXT_MILESTONE="6b0ff269208b1f4b25646aad538d086053a522d8" # corresponds to the commit before the current milestone:: drm/amd/display: 3.2.31
+# 2019-05-15 drm/amd/display: Disable ABM before destroy ABM struct
 
 # the 19.10 is behind ROCK-Kernel-Driver in AMDGPU_VERSION defined in drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
 ROCK_DIR="ROCK-Kernel-Driver"
-#ROCK_BASE="11dd3bb45bce45103a79c9f044cfa74d33f898c9" # 2019-01-25 drm/amd/display: 3.2.17
-## KMS_DRIVER is 3.29.0 for DC_VER 3.2.17
-ROCK_BASE="98c0172f3afd877554fde2db46f0541b1ab9e781" # 2019-01-25  drm/amd/display: Clear stream->mode_changed after commit
-# before .program_vline_interrupt = optc1_program_vline_interrupt,
+# The base is chosen based on before the last incomplete tag merge between DC_VER 3.2.08 and 3.2.09
+ROCK_BASE="0fe4e2d5cd931ad2ff99d61cfdd5c6dc0c3ec60b" #  Merge tag 'drm-next-2019-01-05' of git://anongit.freedesktop.org/drm/drm
 ROCK_SNAPSHOT="b639e86df2f3456976ccbc089778245a705ff9ef" # corresponds to master snapshot at 2019-04-24 Revert "drm/amdgpu: re-enable retry faults"
 ROCK_MILESTONE="b639e86df2f3456976ccbc089778245a705ff9ef" # corresponds to snapshot of roc-2.4.0
 ROCK_LATEST="master"
@@ -83,10 +82,11 @@ ROCK_LATEST="master"
 # The intersection is not in perfect sync or easy to determine.  We will get the bulk of the amd-staging-drm-next and worry about the corner case which is the intersection.
 # The deviation from the intersection could be months.
 
-# base addresses relative to ROCK-Kernel-Driver
-# 'A 2019-04-01 drm/amdgpu: Add preferred_domain check when determine XGMI state ; or beyond DC_VER = 3.2.24; this is almost easy to sync.  most are accepted except about half of 3.2.25.
+# Scan starting from ROCK-Kernel-Driver's "drm/amd/display: 3.2.24" in drivers/gpu/drm/ till you find the last sequential commits.  Get the commit hash from amd-staging-drm-next.
+# 'A 2019-04-01 drm/amdgpu: Add preferred_domain check when determine XGMI state
 
-# 'B 2019-02-20 drm/amd/display: PPLIB Hookup ; start at DC_VER = 3.2.18 inclusive; this is difficult to sync because of the deviations.  It says 3.2.17, but it looks like most of 3.2.17 have been accepted, so start at 3.2.18.
+# Scan starting from linus' tag of v5.0 for "drm/amd/display: 3.2.08" in drivers/gpu/drm/ till you find the last sequential commits before 3.2.09.  Get the commit hash from amd-staging-drm-next.
+# 'B 2019-01-07 drm/amd/powerplay: drop the unnecessary uclk hard min setting
 
 AMD_STAGING_LATEST_INTERSECTS_ROCK_LATEST="2941c091ffe6ad7a891c7961d6548d9404b040c2" # corresponds to 'A
 AMD_STAGING_SNAPSHOT_INTERSECTS_ROCK_LATEST="2941c091ffe6ad7a891c7961d6548d9404b040c2" # corresponds to 'A
@@ -100,9 +100,9 @@ AMD_STAGING_LATEST_INTERSECTS_ROCK_MILESTONE="2941c091ffe6ad7a891c7961d6548d9404
 AMD_STAGING_SNAPSHOT_INTERSECTS_ROCK_MILESTONE="2941c091ffe6ad7a891c7961d6548d9404b040c2" # corresponds to 'A
 AMD_STAGING_MILESTONE_INTERSECTS_ROCK_MILESTONE="2941c091ffe6ad7a891c7961d6548d9404b040c2" # corresponds to 'A
 
-AMD_STAGING_LATEST_INTERSECTS_5_X="02205685e319bf6507feb95b1ee2ce3fb51fa60d" # corresponds to 'B
-AMD_STAGING_SNAPSHOT_INTERSECTS_5_X="02205685e319bf6507feb95b1ee2ce3fb51fa60d" # corresponds to 'B
-AMD_STAGING_MILESTONE_INTERSECTS_5_X="02205685e319bf6507feb95b1ee2ce3fb51fa60d" # corresponds to 'B
+AMD_STAGING_LATEST_INTERSECTS_5_X="d1a3e239a6016f2bb42a91696056e223982e8538" # corresponds to 'B
+AMD_STAGING_SNAPSHOT_INTERSECTS_5_X="d1a3e239a6016f2bb42a91696056e223982e8538" # corresponds to 'B
+AMD_STAGING_MILESTONE_INTERSECTS_5_X="d1a3e239a6016f2bb42a91696056e223982e8538" # corresponds to 'B
 
 IUSE="bfq bmq amd-staging-drm-next-latest amd-staging-drm-next-snapshot amd-staging-drm-next-milestone +cfs disable_debug +graysky2 muqss +o3 pds rock-latest rock-snapshot rock-milestone uksm tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs -zentune"
 REQUIRED_USE="^^ ( muqss pds cfs bmq )
@@ -244,6 +244,8 @@ SRC_URI="
 	 ${TRESOR_SRC_URL}
 	 ${UKSM_SRC_URL}
 	 ${KERNEL_PATCH_URLS[@]}
+	 https://github.com/torvalds/linux/commit/47dd8048a1bf5b2fb96e5abe99b4f1dcd208ea4d.patch
+	 https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/commit/2d3d25b616a09c16c2506f23289532a31638620f.patch
 	 "
 #	 ${GENPATCHES_EXPERIMENTAL_SRC_URL}
 
@@ -326,7 +328,7 @@ function remove_amd_fixes() {
 
 function apply_uksm() {
 	_tpatch "${PATCH_OPS} -N" "${DISTDIR}/${UKSM_FN}"
-	_dpatch "${PATCH_OPS}" "${FILESDIR}/uksm-4.19-invalidate-range-linux-5.0.6.patch"
+	#_dpatch "${PATCH_OPS}" "${FILESDIR}/uksm-4.19-invalidate-range-linux-5.0.6.patch"
 }
 
 function apply_bfq() {
@@ -563,7 +565,7 @@ function fetch_amd_staging_drm_next_commits() {
 	einfo "Saving only the amd-staging-drm-next commits for commit-by-commit evaluation."
 	L=$(git log ${base}..${target} --oneline --pretty=format:"%H %s %ce" | grep -e "@amd.com" | grep -v -e "uapi:" -e "drm/v3d" | cut -c 1-40 | tac)
 	for l in $L ; do
-	        echo "Getting patch for $l"
+	        einfo "$n $l"
 	        git format-patch --stdout -1 $l > "${T}"/amd-staging-drm-next-patches/$(printf "%05d" $n)-$l.patch
 	        n=$((n+1))
 	done
@@ -610,38 +612,43 @@ function prepend_rock_commit() {
 	# a followed by b
 	local commit_a="${1}"
 	local commit_b="${2}"
+	local commit_a_postfix="${3}"
+	local commit_b_postfix_before="${4}"
+	local commit_b_postfix_after="${5}"
 	einfo "Prepending ${commit_a} before ${commit_b}"
 	d="${T}/rock-patches"
 	local idx
 	local f
-	f=$(basename $(ls "${d}"/*${commit_b}*))
+	f=$(basename $(ls "${d}"/*${commit_b_postfix_before}*${commit_b}*))
 	idx=$(echo ${f} | cut -c 1-5)
-	mv "${d}"/${f} "${d}"/${idx}b-${commit_b}.patch || die
-	_get_rock_commit $(echo ${idx} | sed 's/^0*//') ${commit_a} "a"
+	mv "${d}"/${f} "${d}"/${idx}${commit_b_postfix_after}-${commit_b}.patch > /dev/null
+	_get_rock_commit $(echo ${idx} | sed 's/^0*//') ${commit_a} "${commit_a_postfix}"
+	sha1sum "${d}"/${idx}${commit_a_postfix}-${commit_a}.patch | cut -c 1-40 >> "${T}"/hashes
 }
 
 function move_rock_commit() {
 	# a followed by b
 	local commit="${1}"
-	local postfix="${2}"
-	einfo "Prepending ${commit_a} before ${commit_b}"
+	local postfix_before="${2}"
+	local postfix_after="${3}"
 	d="${T}/rock-patches"
 	local idx
 	local f
-	f=$(basename $(ls "${d}"/*${commit}*))
+	f=$(basename $(ls "${d}"/*${postfix_before}*${commit}*))
 	idx=$(echo ${f} | cut -c 1-5)
-	mv "${d}"/${f} "${d}"/${idx}${postfix}-${commit}.patch || die
+	einfo "idx=${idx} f=${f}"
+	mv "${d}"/${f} "${d}"/${idx}${postfix_after}-${commit}.patch || die
+	einfo "Moved to ${idx}${postfix_after}-${commit}.patch"
 }
 
 function get_rock_patch_index() {
 	local commit="${1}"
-	einfo "Prepending ${commit_a} before ${commit_b}"
 	d="${T}/rock-patches"
 	local idx
 	local f
 	f=$(basename $(ls "${d}"/*${commit}*))
-	idx=$(echo ${f} | cut -c 1-5)
-	return idx
+	idx=$(echo ${f} | cut -c 1-5 | sed 's/^0*//')
+	echo ${idx}
 }
 
 function fetch_rock_commits() {
@@ -663,13 +670,39 @@ function fetch_rock_commits() {
 
 	n="${NEXT_ROCK_COMMIT}"
 
-	prepend_rock_commit "bf96e47b4474f992095d9fae9ccfc46633bf4343" "f331d74dad4358369a6dfb182ff0a5607a8e7b04"
+	prepend_rock_commit "bf96e47b4474f992095d9fae9ccfc46633bf4343" "9c75d5a887d1d5f5815019c105e2ea25a2c9c823" "a" "" "b"
 	# bf96e drm/amdgpu: Bring back support for non-upstream FreeSync
-	# f331d drm/amdgpu: [hybrid] add direct gma(dgma) support
+	# 9c75d  drm/amdkcl: [4.12] Kcl for drm old/new state iterator and get_old/new/_crtc_state before sw commit
+
+	prepend_rock_commit "222b5f044159877504dbac9bc1910f89a74136e2" "6999fd9f149e16ffcad6941e317def9ec32bd64c" "a" "" "b"
+	# 222b5 drm/sched: Refactor ring mirror list handling.
+	# 6999f drm/amdkcl: fix kthread functions
+
+	prepend_rock_commit "5d50fcbda7b0acd301bb1fc3d828df0aa29237b8" "cd7272e600e4ccfef87f64b0d5532cb9cbf1ff7a" "a" "" "b"
+	# 5d50f drm/ttm: stop always moving BOs on the LRU on page fault
+	# cd727 drm/amdkcl: [4.10] use dma_fence for 4.10 kernel (actually before 6999fd9f149e16ffcad6941e317def9ec32bd64c)
+
+	prepend_rock_commit "22d6575b8db59097655797c740bf840a616a6816" "db2c1587e1178bfc1cc161f76b54cf40f4167168" "a" "" "c"
+	# 22d65 drm/amd/amdgpu: add missing mutex lock to amdgpu_get_xgmi_hive() (v3)
+	# db2c1 drm/amdgpu: Add sysfs entries for xgmi hive v2.
+
+	prepend_rock_commit "8e07e2676a42e7d3e5fe8eebac6262ec975664a1" "1254b5fe6aaabb58300a5929b6bb290bf1c49f63" "a" "" "c"
+	# drm/amdgpu: Simplify kgd2kfd interface
+	# drm/amdkfd: Copy in KFD-related files
+
+	prepend_rock_commit "2d3d25b616a09c16c2506f23289532a31638620f" "1254b5fe6aaabb58300a5929b6bb290bf1c49f63" "b" "c" "c"
+	# drm/amdgpu: Relocate kgd2kfd function declaration
+	# drm/amdkfd: Copy in KFD-related files
+
+	local idx
+	idx=$(get_rock_patch_index "db2c1587e1178bfc1cc161f76b54cf40f4167168")
+	idx=$(printf "%05d" ${idx})
+	cp -a "${DISTDIR}/47dd8048a1bf5b2fb96e5abe99b4f1dcd208ea4d.patch" "${T}/rock-patches/${idx}b-47dd8048a1bf5b2fb96e5abe99b4f1dcd208ea4d.patch" || die
+	sha1sum "${T}/rock-patches/${idx}b-47dd8048a1bf5b2fb96e5abe99b4f1dcd208ea4d.patch" | cut -c 1-40 >> "${T}"/hashes
 
 	local p
 	for l in $L ; do
-	        echo "Getting patch for $l"
+	        einfo "$n $l"
 		p="${T}"/rock-patches/$(printf "%05d" $n)-$l.patch
 	        git format-patch --stdout -1 $l > "${T}"/rock-patches/$(printf "%05d" $n)-$l.patch
 		h=$(sha1sum ${p} | cut -c 1-40)
@@ -679,10 +712,14 @@ function fetch_rock_commits() {
 		if [[ "$?" == "1" ]] ; then
 		        n=$((n+1))
 		else
-			einfo "Found dupe $(basename ${p})"
+			einfo "Found dupe $(basename ${p} | cut -c 7-46)"
 			rm "${p}" || die
 		fi
 	done
+
+	prepend_rock_commit "da1043cf22d3b9e652992e9d9a9372b90658ceb2" "89c4f84b602544e580684fff9a7f869e9b1e4ae5" "a" "" "b"
+	# da104 drm/amd/display: Fix runtime errors for diagnostic tests
+	# 89c4f drm/amd/display: Restructure DCN10 hubbub
 }
 
 function get_missing_rock_commits_list() {
@@ -745,7 +782,7 @@ function get_missing_rock_commits() {
 
 	cat "${T}"/rock.found | sort | uniq > "${T}"/rock.found.sorted
 
-	echo /dev/null > "${T}"/hashes
+	cat /dev/null > "${T}"/hashes
 	C=$(cat "${T}"/rock.found.sorted | cut -c 8-47)
 	einfo "Generating commits"
 	index=1
@@ -858,8 +895,28 @@ src_unpack() {
 			echo $(patch --dry-run -p1 -F 100 -i "${T}/rock-patches/${l}") | grep "FAILED at"
 			if [[ "$?" == "1" ]] ; then
 				case "${l}" in
+					*b721056b34c6c045cd5eb0c003a6a2c2d6d077aa*)
+						# already applied
+						;;
 					*816ebd64c1afdd6befaa8d8938e88087edfb5456*)
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-816ebd64c1afdd6befaa8d8938e88087edfb5456-fix.patch"
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-816ebd64c1afdd6befaa8d8938e88087edfb5456-fix-for-linux-5.0.18.patch"
+						;;
+					*4a80640eb2e10e3c270e1dbcb3a202341cc33652*)
+						# 4a806 not required, rhel only, skip
+						;;
+					*41f454484fcbad31ae0fae9e1fb6c6a1069967b7*)
+						# fix mispatch
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-41f454484fcbad31ae0fae9e1fb6c6a1069967b7-fix.patch"
+						;;
+					*83ac1f011ea10ddc00bf1eff6c6210021f5b2c00*)
+						# some parts already applied
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						;;
+					*57c63e909449dc320f1048f283f5a4efbfb191b0*)
+						# fix mispatch
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-57c63e909449dc320f1048f283f5a4efbfb191b0-fix.patch"
 						;;
 					*)
 						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
@@ -869,7 +926,6 @@ src_unpack() {
 			else
 				case "${l}" in
 					*a1be09e2817415a3895b7f28fd7fe589ef9feed4*|\
-					*7d747bad71d72d0201603e796c7056c09d25d89f*|\
 					*e45d1970b20cb5d8dc9d0a6a9106fc79e0e77e5e*|\
 					*86f6dd1570da50f251e3be75bf0b6b4d6569a8f4*|\
 					*e2263ebec8e63ee717bcba0814d95d58cd01f24f*|\
@@ -893,21 +949,45 @@ src_unpack() {
 					*1c033d9f9bcb7019fb8d2c57e57c4c0c09188c4b*|\
 					*ab829777dc809eec1226913249f759b818237849*|\
 					*1e6f9843e8151706a0da2925145f575920678f9c*|\
-					*36394f28027839bfea67772715802dffa9288d38*)
+					*36394f28027839bfea67772715802dffa9288d38*|\
+					*a703e062643f7fc299e8a13da025a1d6d3e660b1*|\
+					*cd6164fb5fbb1818680d37e3e3c26e2d5d64445c*|\
+					*de18be5682b1756069ce54ae0bfb495a2f89f18d*|\
+					*8ea9e9f694e7ee8c9a400094109e575068c2e1d9*|\
+					*7b832f58b3153921b1fcbdf548ef0b12450850e8*|\
+					*c8d0470a68449edcf8fe7c49e2950acac5651f12*|\
+					*e52c2eacc7bb1dcd0e685614913f8523b952b4c9*|\
+					*c4b3e58f172cf1e34afec0617864eb3188b12418*|\
+					*11675cd9ee1e007ab91c102e2dc8082618636f93*|\
+					*1684422f36e10975ece482b6037a85e454ff0e85*|\
+					*68c5d26478b0bcdbacd523f6a5b515597ea0207c*|\
+					*3c15e8c42c44a9a08ce1efcf92bfa4478e9b1465*|\
+					*0c49db5e660f80b92e9c759819bf09a24c708289*|\
+					*4e8c39967328206efbbceea8f91e83a21b774938*|\
+					*e26c0dc3b91326bbb41419503289e80c0be17801*|\
+					*f5febe1907059eff8d7f0f7e4be8e8f03b394255*|\
+					*0a5ea79dcc64ce8635060463ddca4e765b264aff*|\
+					*d3f832fdabbde6844cc062f887cc252d41328022*|\
+					*57b894eb6b0fc2c4efff6772bd3f12d44857158a*|\
+					*fcedacba9bf2f67bf37e2faa0135db103114ad0b*|\
+					*99df4b59205aa6ce9a4487737c9a5d1cdbd520a3*|\
+					*df1dd4f4a7271eb2744d8593c0da5d7a58dbe3a9*|\
+					*a93587b31e3418dcc93a209da22a6f4018a73101*|\
+					*2acede2cb05160297627e5e87f5af15a346496d1*|\
+					*0bf64b0a9f7850809c4da2fafce36d1504cc28d9*)
 						# a1be0 already applied
-						# 7d747 it disappears in latest
 						# e45d1 it disappears in latest
-						# 86f6d not required, version check, skip
-						# e2263 not required, version check, skip
-						# df11f not required, version check, skip
-						# 6039d not required, version check, skip
-						# afd27 not required, version check, skip (temporary ignore, may need to revisit since I don't see the pattern.)
-						# 13af4 not required, version check, skip
-						# 6d024 not required, version check, skip
+						# 86f6d not required, version compat, skip
+						# e2263 not required, version compat, skip
+						# df11f not required, version compat, skip
+						# 6039d not required, version compat, skip
+						# afd27 not required, version compat, skip (temporary ignore, may need to revisit since I don't see the pattern.)
+						# 13af4 not required, version compat, skip
+						# 6d024 not required, version compat, skip
 						# bc6f1 already applied
-						# b9e3f not required, version check, skip
-						# fde91 may not be required, version check, likely skip but missing parts
-						# 467b9 not required, version check, skip
+						# b9e3f not required, version compat, skip
+						# fde91 may not be required, version compat, likely skip but missing parts
+						# 467b9 not required, version compat, skip
 						# 70023 it disappears in latest
 						# d37ce already applied
 						# 72681 some parts not applied in final or missing parts don't exist
@@ -919,35 +999,62 @@ src_unpack() {
 						# 1c033 gets reverted
 						# ab829 already applied reversion
 						# 1e6f9 already applied but in a different way
-						# 36394 not required, version check, skip
+						# 36394 not required, version compat, skip
+						# a703e not required, version compat, skip
+						# cd616 not required, version compat, skip
+						# de18b not required, rhel only, skip
+						# 8ea9e not required, rhel only, skip
+						# 7b832 not required, version compat, skip
+						# c8d04 not required, rhel only, skip
+						# e52c2 not required, version compat, skip
+						# c4b3e not required, version compat, skip
+						# 11675 not required, version compat, skip
+						# 16844 not required, version compat, skip
+						# 68c5d not required, version compat, skip
+						# 3c15e not required, version compat, skip
+						# 0c49d not required, version compat, skip
+						# 4e8c3 skip for now, DKMS, missing parts
+						# e26c0 not required, version compat & DKMS, skip
+						# f5feb not required, rhel only, skip
+						# 0a5ea not required, version compat, skip
+						# d3f83 not required, version compat, skip
+						# 57b89 already applied reversion to d3f83
+						# fceda not required, version compat, skip
+						# 99df4 not required, version compat, skip
+						# df1dd already applied
+						# a9358 already applied
+						# 2aced already applied
+						# 0bf64 already applied
+						;;
+					*7d747bad71d72d0201603e796c7056c09d25d89f*)
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-7d747bad71d72d0201603e796c7056c09d25d89f-fix.patch"
 						;;
 					*7bd1d22945d8927c882b7dcbca5cc503d0d7f007*)
-						# adapted from amd-staging-drm-next
 						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-7bd1d22945d8927c882b7dcbca5cc503d0d7f007-fix-for-linux-5.1.patch"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-7bd1d22945d8927c882b7dcbca5cc503d0d7f007-fix-for-linux-5.0.18.patch"
 						;;
 					*4bcbb9e3ec0467e36f1f4b8f9b6eca2b6501a6b8*)
-						# adapted from amd-staging-drm-next
 						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-4bcbb9e3ec0467e36f1f4b8f9b6eca2b6501a6b8-fix-for-linux-5.1.patch"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-4bcbb9e3ec0467e36f1f4b8f9b6eca2b6501a6b8-fix-for-linux-5.0.18.patch"
 						;;
 					*d6e22eaa160e455ca53157c6f79ab2cd5b0b9800*)
 						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
 						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-d6e22eaa160e455ca53157c6f79ab2cd5b0b9800-fix.patch"
 						;;
 					*1254b5fe6aaabb58300a5929b6bb290bf1c49f63*)
-						# parts of patch already applied and patched missing part
+						# parts of patch already applied
 						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-1254b5fe6aaabb58300a5929b6bb290bf1c49f63-fix.patch"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-1254b5fe6aaabb58300a5929b6bb290bf1c49f63-fix-for-linux-5.0.18.patch"
 						;;
-					*9c75d5a887d1d5f5815019c105e2ea25a2c9c823*|\
 					*8098a2f9c3ba6fba0055aa88d3830bbec585268b*)
 						# parts already patched
 						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
 						;;
 					*bdca2f6e470b8e6c1cab75f80e9b01f06b0376da*)
+						# crtc->pcrtc ; missing intermediate patch? previous section not the same
 						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-bdca2f6e470b8e6c1cab75f80e9b01f06b0376da-fix.patch"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-bdca2f6e470b8e6c1cab75f80e9b01f06b0376da-fix-for-linux-5.0.18.patch"
 						;;
 					*686bea628e37dd279a3b34a890f66fa42d46f40a*)
 						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
@@ -956,6 +1063,73 @@ src_unpack() {
 					*6abe8339ca1f77c3d86146e8ce91e4f56a852a65*)
 						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
 						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-6abe8339ca1f77c3d86146e8ce91e4f56a852a65-fix.patch"
+						;;
+					*222b5f044159877504dbac9bc1910f89a74136e2*)
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-222b5f044159877504dbac9bc1910f89a74136e2-fix.patch"
+						;;
+					*21e7a42fe26d0dcee15b988b1d523363324d07c5*)
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-21e7a42fe26d0dcee15b988b1d523363324d07c5-fix.patch"
+						;;
+					*f331d74dad4358369a6dfb182ff0a5607a8e7b04*)
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-f331d74dad4358369a6dfb182ff0a5607a8e7b04-fix-for-linux-5.0.18.patch"
+						;;
+					*aa38fd49b9c1bfe7de4ca9746853a1c3f54682d0*)
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-aa38fd49b9c1bfe7de4ca9746853a1c3f54682d0-fix.patch"
+						;;
+					*3741540e04137256df82105bcd720a5e27423c34*)
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-3741540e04137256df82105bcd720a5e27423c34-fix.patch"
+						;;
+					*ceb3dbb4690db8377ad127a5666cd4775d9f70f4*)
+						# partially patched.  some backlight code eventually removed in later commits
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-ceb3dbb4690db8377ad127a5666cd4775d9f70f4-fix.patch"
+						;;
+					*4b9674e509ea4365b68c5e309c402ef6544d567a*)
+						# mispatch spotted with preprocessor kernel checks
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-4b9674e509ea4365b68c5e309c402ef6544d567a-fix.patch"
+						;;
+					*29c8f23425e07092f25db3b57c1d8dcefc532290*)
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-29c8f23425e07092f25db3b57c1d8dcefc532290-fix.patch"
+						;;
+					*02d6a6fcdf68c4de1f28e64b012c54c855294b2a*)
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-02d6a6fcdf68c4de1f28e64b012c54c855294b2a-fix.patch"
+						;;
+					*8a48b44cd00f10e83f573b9028d11bd90a36de26*)
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-8a48b44cd00f10e83f573b9028d11bd90a36de26-fix.patch"
+						;;
+					*bc7f670ee04cd619f8c4627c37d77b3618bc5edd*)
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-bc7f670ee04cd619f8c4627c37d77b3618bc5edd-fix.patch"
+						;;
+					*b2a107f21df352ab82eff0af07dbc1a29bb0cdfa*)
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-b2a107f21df352ab82eff0af07dbc1a29bb0cdfa-fix.patch"
+						;;
+					*269ed46b68700f4063566c56bb407e0a4b64d6a9*)
+						# redid patch to avoid miscompile
+						# skipped patching compat checks
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-269ed46b68700f4063566c56bb407e0a4b64d6a9-fix.patch"
+						;;
+					*9c75d5a887d1d5f5815019c105e2ea25a2c9c823*)
+						# skipped compatibility parts; fix missing preprocessor
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-9c75d5a887d1d5f5815019c105e2ea25a2c9c823-fix.patch"
+						;;
+					*9e869063b0021f29919c560745361999c71c086a*)
+						# redid patch to avoid miscompile
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-9e869063b0021f29919c560745361999c71c086a-fix.patch"
+						;;
+					*f58033202b7b16dc8a1f1f412e645b4dc2de9edb*)
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-f58033202b7b16dc8a1f1f412e645b4dc2de9edb-fix.patch"
 						;;
 					*)
 						eerror "Patch failure ${l}.  Did not find the intervention patch."

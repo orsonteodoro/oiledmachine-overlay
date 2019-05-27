@@ -1,0 +1,27 @@
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2019-05-26 10:24:25.016537543 -0700
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-05-26 10:35:50.345965146 -0700
+@@ -5936,6 +5936,9 @@ static void amdgpu_dm_atomic_commit_tail
+ 	spin_unlock_irqrestore(&adev->ddev->event_lock, flags);
+ #endif
+ 
++	/* Signal HW programming completion */
++	drm_atomic_helper_commit_hw_done(state);
++
+ 	if (wait_for_vblank)
+ #if DRM_VERSION_CODE < DRM_VERSION(4, 14, 0)
+ 		drm_atomic_helper_wait_for_vblanks(dev, state);
+@@ -5943,14 +5946,6 @@ static void amdgpu_dm_atomic_commit_tail
+ 		drm_atomic_helper_wait_for_flip_done(dev, state);
+ #endif
+ 
+-	/*
+-	 * FIXME:
+-	 * Delay hw_done() until flip_done() is signaled. This is to block
+-	 * another commit from freeing the CRTC state while we're still
+-	 * waiting on flip_done.
+-	 */
+-	drm_atomic_helper_commit_hw_done(state);
+-
+ 	drm_atomic_helper_cleanup_planes(dev, state);
+ 
+ 	/*

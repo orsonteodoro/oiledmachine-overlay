@@ -1,0 +1,120 @@
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2019-05-24 17:33:24.831451707 -0700
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-05-24 17:38:27.033203920 -0700
+@@ -5227,7 +5227,7 @@ static void amdgpu_dm_commit_planes(stru
+ 	struct dm_crtc_state *acrtc_state = to_dm_crtc_state(new_pcrtc_state);
+ 	struct dm_crtc_state *dm_old_crtc_state =
+ 			to_dm_crtc_state(kcl_drm_atomic_get_old_crtc_state_after_commit(state, pcrtc));
+-	int flip_count = 0, planes_count = 0, vpos, hpos;
++	int planes_count = 0, vpos, hpos;
+ 	unsigned long flags;
+ 	u64 last_flip_vblank;
+ 	bool vrr_active = acrtc_state->freesync_config.state == VRR_STATE_ACTIVE_VARIABLE;
+@@ -5235,24 +5235,20 @@ static void amdgpu_dm_commit_planes(stru
+ 	uint64_t tiling_flags, dcc_address;
+ 	uint32_t target, target_vblank;
+ 
+-	struct {
+-		struct dc_surface_update surface_updates[MAX_SURFACES];
+-		struct dc_flip_addrs flip_addrs[MAX_SURFACES];
+-		struct dc_stream_update stream_update;
+-	} *flip;
++	bool pflip_present = false;
+ 
+ 	struct {
+ 		struct dc_surface_update surface_updates[MAX_SURFACES];
+ 		struct dc_plane_info plane_infos[MAX_SURFACES];
+ 		struct dc_scaling_info scaling_infos[MAX_SURFACES];
++		struct dc_flip_addrs flip_addrs[MAX_SURFACES];
+ 		struct dc_stream_update stream_update;
+-	} *full;
++	} *bundle;
+ 
+-	flip = kzalloc(sizeof(*flip), GFP_KERNEL);
+-	full = kzalloc(sizeof(*full), GFP_KERNEL);
++	bundle = kzalloc(sizeof(*bundle), GFP_KERNEL);
+ 
+-	if (!flip || !full) {
+-		dm_error("Failed to allocate update bundles\n");
++	if (!bundle) {
++		dm_error("Failed to allocate update bundle\n");
+ 		goto cleanup;
+ 	}
+ 
+@@ -5277,7 +5273,9 @@ static void amdgpu_dm_commit_planes(stru
+ 		if (!new_crtc_state->active)
+ 			continue;
+ 
+-		pflip_needed = old_plane_state->fb &&
++		dc_plane = dm_new_plane_state->dc_state;
++
++		framebuffer_changed = old_plane_state->fb &&
+ 			old_plane_state->fb != new_plane_state->fb;
+ 
+ 		/* For variable refresh rate mode only:
+@@ -5291,9 +5289,9 @@ static void amdgpu_dm_commit_planes(stru
+ 
+ 		spin_unlock_irqrestore(&crtc->dev->event_lock, flags);
+ 
+-		dc_plane = dm_new_plane_state->dc_state;
++		pflip_present = pflip_present || framebuffer_changed;
+ 
+-		if (pflip_needed) {
++		if (framebuffer_changed) {
+ 			/* Use old throttling in non-vrr fixed refresh rate mode
+ 			 * to keep flip scheduling based on target vblank counts
+ 			 * working in a backwards compatible way, e.g., clients
+@@ -5430,22 +5428,13 @@ static void amdgpu_dm_commit_planes(stru
+ 		if (acrtc_state->stream) {
+ 
+ 			if (acrtc_state->freesync_timing_changed)
+-				flip->stream_update.adjust =
++				bundle->stream_update.adjust =
+ 					&acrtc_state->stream->adjust;
+ 
+ 			if (acrtc_state->freesync_vrr_info_changed)
+-				flip->stream_update.vrr_infopacket =
++				bundle->stream_update.vrr_infopacket =
+ 					&acrtc_state->stream->vrr_infopacket;
+ 		}
+-
+-		mutex_lock(&dm->dc_lock);
+-		dc_commit_updates_for_stream(dm->dc,
+-						     flip->surface_updates,
+-						     flip_count,
+-						     acrtc_state->stream,
+-						     &flip->stream_update,
+-						     dc_state);
+-		mutex_unlock(&dm->dc_lock);
+ 	}
+ 
+ #if DRM_VERSION_CODE < DRM_VERSION(4, 12, 0)
+@@ -5457,23 +5446,23 @@ static void amdgpu_dm_commit_planes(stru
+ 
+ 	if (planes_count) {
+ 		if (new_pcrtc_state->mode_changed) {
+-			full->stream_update.src = acrtc_state->stream->src;
+-			full->stream_update.dst = acrtc_state->stream->dst;
++			bundle->stream_update.src = acrtc_state->stream->src;
++			bundle->stream_update.dst = acrtc_state->stream->dst;
+ 		}
+ 
+ 		if (new_pcrtc_state->color_mgmt_changed)
+-			full->stream_update.out_transfer_func = acrtc_state->stream->out_transfer_func;
++			bundle->stream_update.out_transfer_func = acrtc_state->stream->out_transfer_func;
+ 
+ 		acrtc_state->stream->abm_level = acrtc_state->abm_level;
+ 		if (acrtc_state->abm_level != dm_old_crtc_state->abm_level)
+-			full->stream_update.abm_level = &acrtc_state->abm_level;
++			bundle->stream_update.abm_level = &acrtc_state->abm_level;
+ 
+ 		mutex_lock(&dm->dc_lock);
+ 		dc_commit_updates_for_stream(dm->dc,
+-						     full->surface_updates,
++						     bundle->surface_updates,
+ 						     planes_count,
+ 						     acrtc_state->stream,
+-						     &full->stream_update,
++						     &bundle->stream_update,
+ 						     dc_state);
+ 		mutex_unlock(&dm->dc_lock);
+ 	}

@@ -1,0 +1,45 @@
+--- a/drivers/gpu/drm/scheduler/sched_main.c.orig	2019-05-23 23:54:17.127648994 -0700
++++ b/drivers/gpu/drm/scheduler/sched_main.c	2019-05-23 23:56:01.581772733 -0700
+@@ -420,32 +420,34 @@ EXPORT_SYMBOL(drm_sched_stop);
+ void drm_sched_start(struct drm_gpu_scheduler *sched, bool full_recovery)
+ {
+ 	struct drm_sched_job *s_job, *tmp;
+-	unsigned long flags;
+ 	int r;
+ 
+ 	if (!full_recovery)
+ 		goto unpark;
+ 
+-	spin_lock_irqsave(&sched->job_list_lock, flags);
++	/*
++	 * Locking the list is not required here as the sched thread is parked
++	 * so no new jobs are being pushed in to HW and in drm_sched_stop we
++	 * flushed all the jobs who were still in mirror list but who already
++	 * signaled and removed them self from the list. Also concurrent
++	 * GPU recovers can't run in parallel.
++	 */
+ 	list_for_each_entry_safe(s_job, tmp, &sched->ring_mirror_list, node) {
+-		struct drm_sched_fence *s_fence = s_job->s_fence;
+-
+ 		struct dma_fence *fence = s_job->s_fence->parent;
+ 
+ 		if (fence) {
+-			r = dma_fence_add_callback(fence, &s_fence->cb,
++			r = dma_fence_add_callback(fence, &s_job->cb,
+ 						   drm_sched_process_job);
+ 			if (r == -ENOENT)
+-				drm_sched_process_job(fence, &s_fence->cb);
++				drm_sched_process_job(fence, &s_job->cb);
+ 			else if (r)
+ 				DRM_ERROR("fence add callback failed (%d)\n",
+ 					  r);
+ 		} else
+-			drm_sched_process_job(NULL, &s_fence->cb);
++			drm_sched_process_job(NULL, &s_job->cb);
+ 	}
+ 
+ 	drm_sched_start_timeout(sched);
+-	spin_unlock_irqrestore(&sched->job_list_lock, flags);
+ 
+ unpark:
+ 	kcl_kthread_unpark(sched->thread);

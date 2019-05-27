@@ -1,0 +1,38 @@
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2019-05-26 09:26:44.839864377 -0700
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-05-26 09:30:12.779725662 -0700
+@@ -5508,7 +5508,7 @@ static void amdgpu_dm_atomic_commit_tail
+ 		new_crtc_state->event = NULL;
+ 	}
+ 	spin_unlock_irqrestore(&adev->ddev->event_lock, flags);
+-
++#endif
+ 
+ 	if (wait_for_vblank)
+ 		drm_atomic_helper_wait_for_flip_done(dev, state);
+@@ -5743,7 +5743,7 @@ static int dm_update_crtcs_state(struct
+ 		dm_new_crtc_state = to_dm_crtc_state(new_crtc_state);
+ 		acrtc = to_amdgpu_crtc(crtc);
+ 
+-		new_plane_state = drm_atomic_get_new_plane_state(state, new_crtc_state->crtc->primary);
++		new_plane_state = kcl_drm_atomic_get_new_plane_state_before_commit(state, new_crtc_state->crtc->primary);
+ 
+ 		if (new_crtc_state->enable && new_plane_state && !new_plane_state->fb) {
+ 			ret = -EINVAL;
+@@ -5971,7 +5971,7 @@ static int dm_update_planes_state(struct
+ 			if (!old_plane_crtc)
+ 				continue;
+ 
+-			old_crtc_state = drm_atomic_get_old_crtc_state(
++			old_crtc_state = kcl_drm_atomic_get_old_crtc_state_before_commit(
+ 					state, old_plane_crtc);
+ 			dm_old_crtc_state = to_dm_crtc_state(old_crtc_state);
+ 
+@@ -6010,7 +6010,7 @@ static int dm_update_planes_state(struct
+ 			if (!new_plane_crtc)
+ 				continue;
+ 
+-			new_crtc_state = drm_atomic_get_new_crtc_state(state, new_plane_crtc);
++			new_crtc_state = kcl_drm_atomic_get_new_crtc_state_before_commit(state, new_plane_crtc);
+ 			dm_new_crtc_state = to_dm_crtc_state(new_crtc_state);
+ 
+ 			if (!dm_new_crtc_state->stream)

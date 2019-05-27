@@ -1,0 +1,68 @@
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c.orig	2019-05-25 14:20:09.570595682 -0700
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c	2019-05-25 14:22:41.986570314 -0700
+@@ -2117,6 +2117,65 @@ static void dm_bandwidth_update(struct a
+ 	/* TODO: implement later */
+ }
+ 
++static void dm_set_backlight_level(struct amdgpu_encoder *amdgpu_encoder,
++				     u8 level)
++{
++	/* TODO: translate amdgpu_encoder to display_index and call DAL */
++}
++
++static u8 dm_get_backlight_level(struct amdgpu_encoder *amdgpu_encoder)
++{
++	/* TODO: translate amdgpu_encoder to display_index and call DAL */
++	return 0;
++}
++
++#if DRM_VERSION_CODE < DRM_VERSION(4, 8, 0)
++/**
++ * dm_page_flip - called by amdgpu_flip_work_func(), which is triggered
++ *                via DRM IOTCL, by user mode.
++ *
++ * @adev: amdgpu_device pointer
++ * @crtc_id: crtc to cleanup pageflip on
++ * @crtc_base: new address of the crtc (GPU MC address)
++ *
++ * Does the actual pageflip (surface address update).
++ */
++static void dm_page_flip(struct amdgpu_device *adev,
++			 int crtc_id, u64 crtc_base, bool async)
++{
++	struct amdgpu_crtc *acrtc = adev->mode_info.crtcs[crtc_id];
++	struct dm_crtc_state *acrtc_state = to_dm_crtc_state(acrtc->base.state);
++	struct dc_stream_state *stream = acrtc_state->stream;
++	struct dc_flip_addrs addr = { {0} };
++
++	/*
++	 * Received a page flip call after the display has been reset.
++	 * Just return in this case. Everything should be clean-up on reset.
++	 */
++	if (!stream) {
++		WARN_ON(1);
++		return;
++	}
++
++	addr.address.grph.addr.low_part = lower_32_bits(crtc_base);
++	addr.address.grph.addr.high_part = upper_32_bits(crtc_base);
++	addr.flip_immediate = async;
++
++	if (acrtc->base.state->event)
++		prepare_flip_isr(acrtc);
++
++	dc_flip_plane_addrs(
++			adev->dm.dc,
++			dc_stream_get_status(stream)->plane_states,
++			&addr, 1);
++
++	DRM_DEBUG_DRIVER("%s Flipping to hi: 0x%x, low: 0x%x \n",
++			 __func__,
++			 addr.address.grph.addr.high_part,
++			 addr.address.grph.addr.low_part);
++}
++#endif
++
+ static const struct amdgpu_display_funcs dm_display_funcs = {
+ 	.bandwidth_update = dm_bandwidth_update, /* called unconditionally */
+ 	.vblank_get_counter = dm_vblank_get_counter,/* called unconditionally */

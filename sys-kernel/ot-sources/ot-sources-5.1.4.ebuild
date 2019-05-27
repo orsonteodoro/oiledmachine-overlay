@@ -22,12 +22,13 @@ KEYWORDS="~amd64 ~x86"
 HOMEPAGE="https://github.com/dolohow/uksm
           https://liquorix.net/
           https://github.com/graysky2/kernel_gcc_dpatch
-          http://users.on.net/~ckolivas/kernel/
+	  http://ck-hack.blogspot.com/
           https://dev.gentoo.org/~mpagano/genpatches/
           http://algo.ing.unimo.it/people/paolo/disk_sched/
 	  http://cchalpha.blogspot.com/search/label/PDS
 	  https://cchalpha.blogspot.com/search/label/BMQ
 	  http://www1.informatik.uni-erlangen.de/tresor
+	  https://rocm.github.io/
           "
 
 K_MAJOR_MINOR="5.1"
@@ -60,18 +61,18 @@ AMD_STAGING_DRM_NEXT_DIR="amd-staging-drm-next"
 AMD_STAGING_DRM_NEXT_LAST="f7fa4d8745fce7db056ee9fa040c6e31b50f2389" # amd-19.10 branch latest commit equivalent
 # 2019-04-17 drm/amdgpu: amdgpu_device_recover_vram got NULL of shadow->parent
 
-AMD_STAGING_DRM_NEXT_SNAPSHOT="f6993eeb617583ab19d3483805e21b65507bf488" # latest commit I tested
-# 2019-05-20 gpu: fix typos in code comments
+AMD_STAGING_DRM_NEXT_SNAPSHOT="d97852aeef73a6bf35d01ef8fab0d93cd16a2797" # latest commit I tested
+# 2019-05-24 drm/amdgpu: sort probed modes before adding common modes
 AMD_STAGING_DRM_NEXT_STABLE="f7fa4d8745fce7db056ee9fa040c6e31b50f2389" # corresponds to 19.10 picked commit from latest amd-staging-drm-next
 # 2019-04-17 drm/amdgpu: amdgpu_device_recover_vram got NULL of shadow->parent
 
-AMD_STAGING_DRM_NEXT_MILESTONE="20a9e4ceb383dfe7cd73c16631d5966c0006f464" # corresponds to the commit before the current milestone:: drm/amd/display: 3.2.29
-# 2019-05-06 drm/amd/display: Disable cursor when offscreen in negative direction
+AMD_STAGING_DRM_NEXT_MILESTONE="6b0ff269208b1f4b25646aad538d086053a522d8" # corresponds to the commit before the current milestone:: drm/amd/display: 3.2.31
+# 2019-05-15 drm/amd/display: Disable ABM before destroy ABM struct
 
 # the 19.10 is behind ROCK-Kernel-Driver in AMDGPU_VERSION defined in drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
 ROCK_DIR="ROCK-Kernel-Driver"
 #ROCK_BASE="11dd3bb45bce45103a79c9f044cfa74d33f898c9" # 2019-01-25 drm/amd/display: 3.2.17
-## KMS_DRIVER is 3.29.0 for DC_VER 3.2.17
+## KMS_DRIVER is 3.29.0 for DC_VER 3.2.17, pulling commits that 3.2.17 depend on
 ROCK_BASE="98c0172f3afd877554fde2db46f0541b1ab9e781" # 2019-01-25  drm/amd/display: Clear stream->mode_changed after commit
 # before .program_vline_interrupt = optc1_program_vline_interrupt,
 ROCK_SNAPSHOT="b639e86df2f3456976ccbc089778245a705ff9ef" # corresponds to master snapshot at 2019-04-24 Revert "drm/amdgpu: re-enable retry faults"
@@ -83,10 +84,11 @@ ROCK_LATEST="master"
 # The intersection is not in perfect sync or easy to determine.  We will get the bulk of the amd-staging-drm-next and worry about the corner case which is the intersection.
 # The deviation from the intersection could be months.
 
-# base addresses relative to ROCK-Kernel-Driver
-# 'A 2019-04-01 drm/amdgpu: Add preferred_domain check when determine XGMI state ; or beyond DC_VER = 3.2.24; this is almost easy to sync.  most are accepted except about half of 3.2.25.
+# Scan starting from ROCK-Kernel-Driver's "drm/amd/display: 3.2.24" in drivers/gpu/drm/ till you find the last sequential commits.  Get the commit hash from amd-staging-drm-next.
+# 'A 2019-04-01 drm/amdgpu: Add preferred_domain check when determine XGMI state
 
-# 'B 2019-02-20 drm/amd/display: PPLIB Hookup ; start at DC_VER = 3.2.18 inclusive; this is difficult to sync because of the deviations.  It says 3.2.17, but it looks like most of 3.2.17 have been accepted, so start at 3.2.18.
+# Scan starting from linus' tag of v5.1 for "drm/amd/display: 3.2.17" in drivers/gpu/drm/ till you find the last sequential commits before 3.2.18.  Get the commit hash from amd-staging-drm-next.
+# 'B 2019-02-20 drm/amd/display: PPLIB Hookup
 
 AMD_STAGING_LATEST_INTERSECTS_ROCK_LATEST="2941c091ffe6ad7a891c7961d6548d9404b040c2" # corresponds to 'A
 AMD_STAGING_SNAPSHOT_INTERSECTS_ROCK_LATEST="2941c091ffe6ad7a891c7961d6548d9404b040c2" # corresponds to 'A
@@ -577,7 +579,7 @@ function fetch_amd_staging_drm_next_commits() {
 	einfo "Saving only the amd-staging-drm-next commits for commit-by-commit evaluation."
 	L=$(git log ${base}..${target} --oneline --pretty=format:"%H %s %ce" | grep -e "@amd.com" | grep -v -e "uapi:" -e "drm/v3d" | cut -c 1-40 | tac)
 	for l in $L ; do
-	        echo "Getting patch for $l"
+	        einfo "$n $l"
 	        git format-patch --stdout -1 $l > "${T}"/amd-staging-drm-next-patches/$(printf "%05d" $n)-$l.patch
 	        n=$((n+1))
 	done
@@ -624,38 +626,43 @@ function prepend_rock_commit() {
 	# a followed by b
 	local commit_a="${1}"
 	local commit_b="${2}"
+	local commit_a_postfix="${3}"
+	local commit_b_postfix_before="${4}"
+	local commit_b_postfix_after="${5}"
 	einfo "Prepending ${commit_a} before ${commit_b}"
 	d="${T}/rock-patches"
 	local idx
 	local f
-	f=$(basename $(ls "${d}"/*${commit_b}*))
+	f=$(basename $(ls "${d}"/*${commit_b_postfix_before}*${commit_b}*))
 	idx=$(echo ${f} | cut -c 1-5)
-	mv "${d}"/${f} "${d}"/${idx}b-${commit_b}.patch || die
-	_get_rock_commit $(echo ${idx} | sed 's/^0*//') ${commit_a} "a"
+	mv "${d}"/${f} "${d}"/${idx}${commit_b_postfix_after}-${commit_b}.patch > /dev/null
+	_get_rock_commit $(echo ${idx} | sed 's/^0*//') ${commit_a} "${commit_a_postfix}"
+	sha1sum "${d}"/${idx}${commit_a_postfix}-${commit_a}.patch | cut -c 1-40 >> "${T}"/hashes
 }
 
 function move_rock_commit() {
 	# a followed by b
 	local commit="${1}"
-	local postfix="${2}"
-	einfo "Prepending ${commit_a} before ${commit_b}"
+	local postfix_before="${2}"
+	local postfix_after="${3}"
 	d="${T}/rock-patches"
 	local idx
 	local f
-	f=$(basename $(ls "${d}"/*${commit}*))
+	f=$(basename $(ls "${d}"/*${postfix_before}*${commit}*))
 	idx=$(echo ${f} | cut -c 1-5)
-	mv "${d}"/${f} "${d}"/${idx}${postfix}-${commit}.patch || die
+	einfo "idx=${idx} f=${f}"
+	mv "${d}"/${f} "${d}"/${idx}${postfix_after}-${commit}.patch || die
+	einfo "Moved to ${idx}${postfix_after}-${commit}.patch"
 }
 
 function get_rock_patch_index() {
 	local commit="${1}"
-	einfo "Prepending ${commit_a} before ${commit_b}"
 	d="${T}/rock-patches"
 	local idx
 	local f
 	f=$(basename $(ls "${d}"/*${commit}*))
-	idx=$(echo ${f} | cut -c 1-5)
-	return idx
+	idx=$(echo ${f} | cut -c 1-5 | sed 's/^0*//')
+	echo ${idx}
 }
 
 function fetch_rock_commits() {
@@ -677,13 +684,17 @@ function fetch_rock_commits() {
 
 	n="${NEXT_ROCK_COMMIT}"
 
-	prepend_rock_commit "bf96e47b4474f992095d9fae9ccfc46633bf4343" "f331d74dad4358369a6dfb182ff0a5607a8e7b04"
+	prepend_rock_commit "bf96e47b4474f992095d9fae9ccfc46633bf4343" "9c75d5a887d1d5f5815019c105e2ea25a2c9c823" "a" "" "b"
 	# bf96e drm/amdgpu: Bring back support for non-upstream FreeSync
-	# f331d drm/amdgpu: [hybrid] add direct gma(dgma) support
+	# 9c75d  drm/amdkcl: [4.12] Kcl for drm old/new state iterator and get_old/new/_crtc_state before sw commit
+
+	#prepend_rock_commit "bf96e47b4474f992095d9fae9ccfc46633bf4343" "f331d74dad4358369a6dfb182ff0a5607a8e7b04" "a" "" "b"
+	## bf96e drm/amdgpu: Bring back support for non-upstream FreeSync
+	## f331d drm/amdgpu: [hybrid] add direct gma(dgma) support
 
 	local p
 	for l in $L ; do
-	        echo "Getting patch for $l"
+	        einfo "$n $l"
 		p="${T}"/rock-patches/$(printf "%05d" $n)-$l.patch
 	        git format-patch --stdout -1 $l > "${T}"/rock-patches/$(printf "%05d" $n)-$l.patch
 		h=$(sha1sum ${p} | cut -c 1-40)
@@ -693,7 +704,7 @@ function fetch_rock_commits() {
 		if [[ "$?" == "1" ]] ; then
 		        n=$((n+1))
 		else
-			einfo "Found dupe $(basename ${p})"
+			einfo "Found dupe $(basename ${p} | cut -c 7-46)"
 			rm "${p}" || die
 		fi
 	done
@@ -872,7 +883,17 @@ src_unpack() {
 			echo $(patch --dry-run -p1 -F 100 -i "${T}/rock-patches/${l}") | grep "FAILED at"
 			if [[ "$?" == "1" ]] ; then
 				case "${l}" in
+					*a703e062643f7fc299e8a13da025a1d6d3e660b1*)
+						# parts already applied
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-a703e062643f7fc299e8a13da025a1d6d3e660b1-fix.patch"
+						;;
+					*9c75d5a887d1d5f5815019c105e2ea25a2c9c823*)
+						# add missing part to patch
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-9c75d5a887d1d5f5815019c105e2ea25a2c9c823-fix-for-linux-5.1.4.patch"
+						;;
 					*816ebd64c1afdd6befaa8d8938e88087edfb5456*)
+						# redid
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
 						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-816ebd64c1afdd6befaa8d8938e88087edfb5456-fix.patch"
 						;;
 					*)
@@ -882,8 +903,11 @@ src_unpack() {
 				esac
 			else
 				case "${l}" in
+					*7d747bad71d72d0201603e796c7056c09d25d89f*)
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-7d747bad71d72d0201603e796c7056c09d25d89f-fix-for-linux-5.1.4.patch"
+						;;
 					*a1be09e2817415a3895b7f28fd7fe589ef9feed4*|\
-					*7d747bad71d72d0201603e796c7056c09d25d89f*|\
 					*e45d1970b20cb5d8dc9d0a6a9106fc79e0e77e5e*|\
 					*86f6dd1570da50f251e3be75bf0b6b4d6569a8f4*|\
 					*e2263ebec8e63ee717bcba0814d95d58cd01f24f*|\
@@ -909,19 +933,18 @@ src_unpack() {
 					*1e6f9843e8151706a0da2925145f575920678f9c*|\
 					*36394f28027839bfea67772715802dffa9288d38*)
 						# a1be0 already applied
-						# 7d747 it disappears in latest
 						# e45d1 it disappears in latest
-						# 86f6d not required, version check, skip
-						# e2263 not required, version check, skip
-						# df11f not required, version check, skip
-						# 6039d not required, version check, skip
-						# afd27 not required, version check, skip (temporary ignore, may need to revisit since I don't see the pattern.)
-						# 13af4 not required, version check, skip
-						# 6d024 not required, version check, skip
+						# 86f6d not required, version compat, skip
+						# e2263 not required, version compat, skip
+						# df11f not required, version compat, skip
+						# 6039d not required, version compat, skip
+						# afd27 not required, version compat, skip (temporary ignore, may need to revisit since I don't see the pattern.)
+						# 13af4 not required, version compat, skip
+						# 6d024 not required, version compat, skip
 						# bc6f1 already applied
-						# b9e3f not required, version check, skip
-						# fde91 may not be required, version check, likely skip but missing parts
-						# 467b9 not required, version check, skip
+						# b9e3f not required, version compat, skip
+						# fde91 may not be required, version compat, likely skip but missing parts
+						# 467b9 not required, version compat, skip
 						# 70023 it disappears in latest
 						# d37ce already applied
 						# 72681 some parts not applied in final or missing parts don't exist
@@ -933,7 +956,7 @@ src_unpack() {
 						# 1c033 gets reverted
 						# ab829 already applied reversion
 						# 1e6f9 already applied but in a different way
-						# 36394 not required, version check, skip
+						# 36394 not required, version compat, skip
 						;;
 					*7bd1d22945d8927c882b7dcbca5cc503d0d7f007*)
 						# adapted from amd-staging-drm-next
@@ -941,9 +964,8 @@ src_unpack() {
 						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-7bd1d22945d8927c882b7dcbca5cc503d0d7f007-fix-for-linux-5.1.patch"
 						;;
 					*4bcbb9e3ec0467e36f1f4b8f9b6eca2b6501a6b8*)
-						# adapted from amd-staging-drm-next
-						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-4bcbb9e3ec0467e36f1f4b8f9b6eca2b6501a6b8-fix-for-linux-5.1.patch"
+						# redid full patch
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-4bcbb9e3ec0467e36f1f4b8f9b6eca2b6501a6b8-fix.patch"
 						;;
 					*d6e22eaa160e455ca53157c6f79ab2cd5b0b9800*)
 						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
@@ -954,7 +976,6 @@ src_unpack() {
 						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
 						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-1254b5fe6aaabb58300a5929b6bb290bf1c49f63-fix.patch"
 						;;
-					*9c75d5a887d1d5f5815019c105e2ea25a2c9c823*|\
 					*8098a2f9c3ba6fba0055aa88d3830bbec585268b*)
 						# parts already patched
 						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
