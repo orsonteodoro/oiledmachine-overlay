@@ -66,8 +66,7 @@ AMD_STAGING_DRM_NEXT_SNAPSHOT="d97852aeef73a6bf35d01ef8fab0d93cd16a2797" # lates
 AMD_STAGING_DRM_NEXT_STABLE="f7fa4d8745fce7db056ee9fa040c6e31b50f2389" # corresponds to 19.10 picked commit from latest amd-staging-drm-next
 # 2019-04-17 drm/amdgpu: amdgpu_device_recover_vram got NULL of shadow->parent
 
-AMD_STAGING_DRM_NEXT_MILESTONE="6b0ff269208b1f4b25646aad538d086053a522d8" # corresponds to the commit before the current milestone:: drm/amd/display: 3.2.31
-# 2019-05-15 drm/amd/display: Disable ABM before destroy ABM struct
+AMD_STAGING_DRM_NEXT_MILESTONE="9d435455d4f62aea1458c0772ac67729685f1e97" # corresponds to the tagged commit:: drm/amd/display: 3.2.31
 
 # the 19.10 is behind ROCK-Kernel-Driver in AMDGPU_VERSION defined in drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
 ROCK_DIR="ROCK-Kernel-Driver"
@@ -300,7 +299,7 @@ pkg_setup() {
 	else
 		export CACHED_AMD_STAGING_DRM_NEXT_INDEX="1"
 		einfo "Using cached amd-staging-drm-next.commits.indexed"
-		einfo "Remove /var/cache/ot-sources/amd-staging-drm-next.commits.indexed if you changed your use flags.  Data cached for 1 week."
+		einfo "Remove /var/cache/ot-sources/amd-staging-drm-next.commits.indexed if you changed your use flags or are upgrading kernel.  Data cached for 1 week."
 	fi
 	if (( $(date +%s) > ${date_rock}+604800 )) || [[ "${NEW_ROCK_INDEX}" == "1" ]] ; then
 		cat /dev/null > /var/cache/ot-sources/rock.commits.indexed || die
@@ -309,7 +308,7 @@ pkg_setup() {
 	else
 		export CACHED_ROCK_INDEX="1"
 		einfo "Using cached rock.commits.indexed"
-		einfo "Remove /var/cache/ot-sources/rock.commits.indexed if you changed your use flags.  Data cached for 1 week."
+		einfo "Remove /var/cache/ot-sources/rock.commits.indexed if you changed your use flags or are upgrading kernel.  Data cached for 1 week."
 	fi
 }
 
