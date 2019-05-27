@@ -594,6 +594,12 @@ src_install() {
 
 			insinto /usr/include/libhsakmt/linux/
 			doins opt/amdgpu-pro/include/linux/kfd_ioctl.h
+
+			insinto /usr/lib64/pkgconfig/
+			sed -i -e "s|/opt/rocm||g" opt/amdgpu-pro/lib/x86_64-linux-gnu/pkgconfig/libhsakmt.pc
+			sed -i -e "s|//opt/amdgpu-pro/lib/x86_64-linux-gnu|/usr/lib64/opengl/amdgpu/lib/|g" opt/amdgpu-pro/lib/x86_64-linux-gnu/pkgconfig/libhsakmt.pc
+			sed -i -e "s|/include|/usr/include/libhsakmt/|g" opt/amdgpu-pro/lib/x86_64-linux-gnu/pkgconfig/libhsakmt.pc
+			doins opt/amdgpu-pro/lib/x86_64-linux-gnu/pkgconfig/libhsakmt.pc
 		fi
 		# no x86 abi
 	fi
