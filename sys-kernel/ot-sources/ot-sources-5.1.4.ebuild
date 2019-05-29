@@ -316,8 +316,8 @@ pkg_setup() {
 		einfo "You need PCIe 3.0 or a GPU that doesn't require PCIe atomics to use ROCK."
 		einfo "See needs_pci_atomics field for your GPU family in"
 		einfo "https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/master/drivers/gpu/drm/amd/amdkfd/kfd_device.c"
+		einfo "for the exception.  For supported CPUs see"
 		einfo "https://rocm.github.io/hardware.html"
-		einfo "for the exception."
 	fi
 }
 
@@ -1325,7 +1325,7 @@ pkg_postinst() {
 		ewarn "This might result in a denial of service that may require rebooting."
 	fi
 
-	if use is_rock ; then
+	if is_rock ; then
 		einfo "You must enable HSA kernel driver for AMD GPU devices (CONFIG_HSA_AMD=y) to use ROCM and add your users to the video group."
 	fi
 }
