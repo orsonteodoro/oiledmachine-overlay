@@ -310,6 +310,14 @@ pkg_setup() {
 		einfo "Using cached rock.commits.indexed"
 		einfo "Remove /var/cache/ot-sources/rock.commits.indexed if you changed your use flags or are upgrading kernel.  Data cached for 1 week."
 	fi
+
+	if is_rock ; then
+		einfo ""
+		einfo "You need PCIe 3.0 or a GPU that doesn't require PCIe atomics to use ROCK."
+		einfo "See needs_pci_atomics field for your GPU family in"
+		einfo "https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/master/drivers/gpu/drm/amd/amdkfd/kfd_device.c"
+		einfo "for the exception."
+	fi
 }
 
 function _dpatch() {
@@ -882,6 +890,11 @@ src_unpack() {
 			echo $(patch --dry-run -p1 -F 100 -i "${T}/rock-patches/${l}") | grep "FAILED at"
 			if [[ "$?" == "1" ]] ; then
 				case "${l}" in
+					*e8639130ca069a27acc9efd7b71de1b1183fedd8*)
+						# fix kfd_doorbell_vm_fault
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-e8639130ca069a27acc9efd7b71de1b1183fedd8-fix-for-linux-5.1.4.patch"
+						;;
 					*a703e062643f7fc299e8a13da025a1d6d3e660b1*)
 						# parts already applied
 						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-a703e062643f7fc299e8a13da025a1d6d3e660b1-fix.patch"
@@ -974,7 +987,6 @@ src_unpack() {
 						# parts of patch already applied and patched missing part
 						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
 						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-1254b5fe6aaabb58300a5929b6bb290bf1c49f63-fix.patch"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-1254b5fe6aaabb58300a5929b6bb290bf1c49f63-fix-for-linux-5.1.4.patch"
 						;;
 					*8098a2f9c3ba6fba0055aa88d3830bbec585268b*)
 						# parts already patched

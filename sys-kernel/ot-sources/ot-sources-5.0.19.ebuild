@@ -305,6 +305,14 @@ pkg_setup() {
 		einfo "Using cached rock.commits.indexed"
 		einfo "Remove /var/cache/ot-sources/rock.commits.indexed if you changed your use flags or are upgrading kernel.  Data cached for 1 week."
 	fi
+
+	if is_rock ; then
+		einfo ""
+		einfo "You need PCIe 3.0 or a GPU that doesn't require PCIe atomics to use ROCK."
+		einfo "See needs_pci_atomics field for your GPU family in"
+		einfo "https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/master/drivers/gpu/drm/amd/amdkfd/kfd_device.c"
+		einfo "for the exception."
+	fi
 }
 
 function _dpatch() {
