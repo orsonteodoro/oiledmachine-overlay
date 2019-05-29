@@ -316,6 +316,7 @@ pkg_setup() {
 		einfo "You need PCIe 3.0 or a GPU that doesn't require PCIe atomics to use ROCK."
 		einfo "See needs_pci_atomics field for your GPU family in"
 		einfo "https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/master/drivers/gpu/drm/amd/amdkfd/kfd_device.c"
+		einfo "https://rocm.github.io/hardware.html"
 		einfo "for the exception."
 	fi
 }
