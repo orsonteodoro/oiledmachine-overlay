@@ -265,18 +265,18 @@ pkg_setup() {
 	addwrite /var/cache
 	mkdir -p /var/cache/ot-sources
 	addwrite /var/cache/ot-sources
-	if [ ! -e /var/cache/ot-sources/amd-staging-drm-next.commits.indexed ] ; then
-		cat /dev/null > /var/cache/ot-sources/amd-staging-drm-next.commits.indexed
-		chmod 600 /var/cache/ot-sources/amd-staging-drm-next.commits.indexed || die
-		chown portage:portage /var/cache/ot-sources/amd-staging-drm-next.commits.indexed || die
+	if [ ! -e /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR} ] ; then
+		cat /dev/null > /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR}
+		chmod 600 /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR} || die
+		chown portage:portage /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR} || die
 		export NEW_AMD_STAGING_DRM_NEXT_INDEX="1"
 	else
 		export NEW_AMD_STAGING_DRM_NEXT_INDEX="0"
 	fi
-	if [ ! -e /var/cache/ot-sources/rock.commits.indexed ] ; then
-		cat /dev/null > /var/cache/ot-sources/rock.commits.indexed
-		chmod 600 /var/cache/ot-sources/rock.commits.indexed || die
-		chown portage:portage /var/cache/ot-sources/rock.commits.indexed || die
+	if [ ! -e /var/cache/ot-sources/rock.commits.indexed.${PVR} ] ; then
+		cat /dev/null > /var/cache/ot-sources/rock.commits.indexed.${PVR}
+		chmod 600 /var/cache/ot-sources/rock.commits.indexed.${PVR} || die
+		chown portage:portage /var/cache/ot-sources/rock.commits.indexed.${PVR} || die
 		export NEW_ROCK_INDEX="1"
 	else
 		export NEW_ROCK_INDEX="0"
@@ -284,26 +284,26 @@ pkg_setup() {
 	local date_amd_staging_drm_next
 	local date_rock
 
-	date_amd_staging_drm_next=$(date -r /var/cache/ot-sources/amd-staging-drm-next.commits.indexed +%s)
-	date_rock=$(date -r /var/cache/ot-sources/rock.commits.indexed +%s)
+	date_amd_staging_drm_next=$(date -r /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR} +%s)
+	date_rock=$(date -r /var/cache/ot-sources/rock.commits.indexed.${PVR} +%s)
 
 	if (( $(date +%s) > ${date_amd_staging_drm_next}+604800 )) || [[ "${NEW_AMD_STAGING_DRM_NEXT_INDEX}" == "1" ]] ; then
-		cat /dev/null > /var/cache/ot-sources/amd-staging-drm-next.commits.indexed || die
+		cat /dev/null > /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR} || die
 		export CACHED_AMD_STAGING_DRM_NEXT_INDEX="0"
-		einfo "Clearing stale amd-staging-drm-next.commits.indexed"
+		einfo "Clearing stale amd-staging-drm-next.commits.indexed.${PVR}"
 	else
 		export CACHED_AMD_STAGING_DRM_NEXT_INDEX="1"
-		einfo "Using cached amd-staging-drm-next.commits.indexed"
-		einfo "Remove /var/cache/ot-sources/amd-staging-drm-next.commits.indexed if you changed your use flags or are upgrading kernel.  Data cached for 1 week."
+		einfo "Using cached amd-staging-drm-next.commits.indexed.${PVR}"
+		einfo "Remove /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR} if you changed your use flags or are upgrading kernel.  Data cached for 1 week."
 	fi
 	if (( $(date +%s) > ${date_rock}+604800 )) || [[ "${NEW_ROCK_INDEX}" == "1" ]] ; then
-		cat /dev/null > /var/cache/ot-sources/rock.commits.indexed || die
+		cat /dev/null > /var/cache/ot-sources/rock.commits.indexed.${PVR} || die
 		export CACHED_ROCK_INDEX="0"
-		einfo "Clearing stale rock.commits.indexed"
+		einfo "Clearing stale rock.commits.indexed.${PVR}"
 	else
 		export CACHED_ROCK_INDEX="1"
-		einfo "Using cached rock.commits.indexed"
-		einfo "Remove /var/cache/ot-sources/rock.commits.indexed if you changed your use flags or are upgrading kernel.  Data cached for 1 week."
+		einfo "Using cached rock.commits.indexed.${PVR}"
+		einfo "Remove /var/cache/ot-sources/rock.commits.indexed.${PVR} if you changed your use flags or are upgrading kernel.  Data cached for 1 week."
 	fi
 
 	if is_rock ; then
@@ -735,7 +735,7 @@ function get_missing_rock_commits_list() {
 	local index
 
 	if [[ "${CACHED_AMD_STAGING_DRM_NEXT_INDEX}" == "1" ]] ; then
-		einfo "Using cached amd-staging-drm-next.commits.indexed"
+		einfo "Using cached amd-staging-drm-next.commits.indexed.${PVR}"
 	else
 		index=1
 		d_staging="${distdir}/ot-sources-src/linux-${AMD_STAGING_DRM_NEXT_DIR}"
@@ -744,13 +744,13 @@ function get_missing_rock_commits_list() {
 		git log --reverse --pretty=tformat:"%H %s" > "${T}"/amd-staging-drm-next.commits
 
 		while IFS= read -r l ; do
-			echo $(printf "%06d" ${index})" ${l}" >> /var/cache/ot-sources/amd-staging-drm-next.commits.indexed
+			echo $(printf "%06d" ${index})" ${l}" >> /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR}
 			index=$((${index} + 1))
 		done < "${T}"/amd-staging-drm-next.commits
 	fi
 
 	if [[ "${CACHED_ROCK_INDEX}" == "1" ]] ; then
-		einfo "Using cached rock.commits.indexed"
+		einfo "Using cached rock.commits.indexed.${PVR}"
 	else
 		index=1
 		d_rock="${distdir}/ot-sources-src/linux-${ROCK_DIR}"
@@ -759,13 +759,13 @@ function get_missing_rock_commits_list() {
 		git log --reverse --pretty=tformat:"%H %s" > "${T}"/rock.commits
 
 		while IFS= read -r l ; do
-			echo $(printf "%06d" ${index})" ${l}" >> /var/cache/ot-sources/rock.commits.indexed
+			echo $(printf "%06d" ${index})" ${l}" >> /var/cache/ot-sources/rock.commits.indexed.${PVR}
 			index=$((${index} + 1))
 		done < "${T}"/rock.commits
 	fi
 
-	cat /var/cache/ot-sources/amd-staging-drm-next.commits.indexed | cut -c 49- | sort > "${T}"/amd-staging-drm-next.summaries
-	cat /var/cache/ot-sources/rock.commits.indexed | cut -c 49- | sort > "${T}"/rock.summaries
+	cat /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR} | cut -c 49- | sort > "${T}"/amd-staging-drm-next.summaries
+	cat /var/cache/ot-sources/rock.commits.indexed.${PVR} | cut -c 49- | sort > "${T}"/rock.summaries
 
 	einfo "Comparing commit lists"
 	diff -urp "${T}"/rock.summaries "${T}"/amd-staging-drm-next.summaries > "${T}"/results
@@ -785,7 +785,7 @@ function get_missing_rock_commits() {
 
 	einfo "Picking commits"
 	for l in ${L} ; do
-		grep -F -e "${l}" "/var/cache/ot-sources/rock.commits.indexed" >> "${T}/rock.found"
+		grep -F -e "${l}" "/var/cache/ot-sources/rock.commits.indexed.${PVR}" >> "${T}/rock.found"
 	done
 
 	cat "${T}"/rock.found | sort | uniq > "${T}"/rock.found.sorted
@@ -903,6 +903,10 @@ src_unpack() {
 			echo $(patch --dry-run -p1 -F 100 -i "${T}/rock-patches/${l}") | grep "FAILED at"
 			if [[ "$?" == "1" ]] ; then
 				case "${l}" in
+					*8e07e2676a42e7d3e5fe8eebac6262ec975664a1*)
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-8e07e2676a42e7d3e5fe8eebac6262ec975664a1-fix-for-linux-5.0.19.patch"
+						;;
 					*b721056b34c6c045cd5eb0c003a6a2c2d6d077aa*)
 						# already applied
 						;;
@@ -1463,4 +1467,9 @@ pkg_postinst() {
 	if is_rock ; then
 		einfo "You must enable HSA kernel driver for AMD GPU devices (CONFIG_HSA_AMD=y) to use ROCM and add your users to the video group."
 	fi
+}
+
+pkg_postrm() {
+	[ -e /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR} ] && rm /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR}
+	[ -e /var/cache/ot-sources/rock.commits.indexed.${PVR} ] && rm /var/cache/ot-sources/rock.commits.indexed.${PVR}
 }
