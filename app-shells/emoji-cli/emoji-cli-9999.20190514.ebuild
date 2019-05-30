@@ -6,7 +6,7 @@ inherit eutils
 
 DESCRIPTION="Emoji completion on the command line"
 HOMEPAGE="https://github.com/b4b4r07/emoji-cli"
-COMMIT="ede4bfe6619a3d665503e9ab1ce7b9c58fd0c136"
+COMMIT="26e2d67d566bfcc741891c8e063a00e0674abc92"
 SRC_URI="https://github.com/b4b4r07/emoji-cli/archive/${COMMIT}.zip -> ${P}.zip"
 
 LICENSE="MIT"
