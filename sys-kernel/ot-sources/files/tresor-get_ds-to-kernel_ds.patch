@@ -1,0 +1,11 @@
+--- a/arch/x86/crypto/tresor_key.c.orig	2019-05-29 23:19:06.476756542 -0700
++++ b/arch/x86/crypto/tresor_key.c	2019-05-31 15:42:47.608812061 -0700
+@@ -234,7 +234,7 @@ int tresor_readkey(const char *terminal,
+ 
+ 	/* prepare to call systemcalls from kernelspace */
+ 	ofs = get_fs();
+-	set_fs(get_ds());
++	set_fs(KERNEL_DS);
+ 	/* try to open terminal */
+ 	term_fd = ksys_open((const char __user *) terminal, O_RDWR, 0);
+ 	if (term_fd < 0) {
