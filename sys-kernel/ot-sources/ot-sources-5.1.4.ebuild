@@ -41,7 +41,7 @@ PATCH_O3_RO_COMMIT="93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9"
 PATCH_CK_MAJOR="5.0"
 PATCH_CK_MAJOR_MINOR="5.1"
 PATCH_CK_REVISION="1"
-K_GENPATCHES_VER="4"
+K_GENPATCHES_VER="5"
 PATCH_GP_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
 PATCH_GRAYSKY_COMMIT="87168bfa27b782e1c9435ba28ebe3987ddea8d30"
 PATCH_PDS_MAJOR_MINOR="5.0"
@@ -58,8 +58,6 @@ DISABLE_DEBUG_V="1.1"
 
 AMD_STAGING_DRM_NEXT_LATEST="amd-staging-drm-next"
 AMD_STAGING_DRM_NEXT_DIR="amd-staging-drm-next"
-AMD_STAGING_DRM_NEXT_LAST="f7fa4d8745fce7db056ee9fa040c6e31b50f2389" # amd-19.10 branch latest commit equivalent
-# 2019-04-17 drm/amdgpu: amdgpu_device_recover_vram got NULL of shadow->parent
 
 AMD_STAGING_DRM_NEXT_SNAPSHOT="d97852aeef73a6bf35d01ef8fab0d93cd16a2797" # latest commit I tested
 # 2019-05-24 drm/amdgpu: sort probed modes before adding common modes
@@ -267,50 +265,6 @@ pkg_setup() {
 	#use deblob && python-any-r1_pkg_setup
         kernel-2_pkg_setup
 
-	addwrite /var/cache
-	mkdir -p /var/cache/ot-sources
-	addwrite /var/cache/ot-sources
-	if [ ! -e /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR} ] ; then
-		cat /dev/null > /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR}
-		chmod 600 /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR} || die
-		chown portage:portage /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR} || die
-		export NEW_AMD_STAGING_DRM_NEXT_INDEX="1"
-	else
-		export NEW_AMD_STAGING_DRM_NEXT_INDEX="0"
-	fi
-	if [ ! -e /var/cache/ot-sources/rock.commits.indexed.${PVR} ] ; then
-		cat /dev/null > /var/cache/ot-sources/rock.commits.indexed.${PVR}
-		chmod 600 /var/cache/ot-sources/rock.commits.indexed.${PVR} || die
-		chown portage:portage /var/cache/ot-sources/rock.commits.indexed.${PVR} || die
-		export NEW_ROCK_INDEX="1"
-	else
-		export NEW_ROCK_INDEX="0"
-	fi
-	local date_amd_staging_drm_next
-	local date_rock
-
-	date_amd_staging_drm_next=$(date -r /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR} +%s)
-	date_rock=$(date -r /var/cache/ot-sources/rock.commits.indexed.${PVR} +%s)
-
-	if (( $(date +%s) > ${date_amd_staging_drm_next}+604800 )) || [[ "${NEW_AMD_STAGING_DRM_NEXT_INDEX}" == "1" ]] ; then
-		cat /dev/null > /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR} || die
-		export CACHED_AMD_STAGING_DRM_NEXT_INDEX="0"
-		einfo "Clearing stale amd-staging-drm-next.commits.indexed.${PVR}"
-	else
-		export CACHED_AMD_STAGING_DRM_NEXT_INDEX="1"
-		einfo "Using cached amd-staging-drm-next.commits.indexed.${PVR}"
-		einfo "Remove /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR} if you changed your use flags or are upgrading kernel.  Data cached for 1 week."
-	fi
-	if (( $(date +%s) > ${date_rock}+604800 )) || [[ "${NEW_ROCK_INDEX}" == "1" ]] ; then
-		cat /dev/null > /var/cache/ot-sources/rock.commits.indexed.${PVR} || die
-		export CACHED_ROCK_INDEX="0"
-		einfo "Clearing stale rock.commits.indexed.${PVR}"
-	else
-		export CACHED_ROCK_INDEX="1"
-		einfo "Using cached rock.commits.indexed.${PVR}"
-		einfo "Remove /var/cache/ot-sources/rock.commits.indexed.${PVR} if you changed your use flags or are upgrading kernel.  Data cached for 1 week."
-	fi
-
 	if is_rock ; then
 		einfo ""
 		einfo "You need PCIe 3.0 or a GPU that doesn't require PCIe atomics to use ROCK."
@@ -360,7 +314,7 @@ function apply_genpatch_base() {
 	d="${T}/${GENPATCHES_BASE_FN%.tar.xz}"
 	mkdir "$d"
 	cd "$d"
-	unpack "${DISTDIR}/${GENPATCHES_BASE_FN}"
+	unpack "${GENPATCHES_BASE_FN}"
 
 	sed -r -i -e "s|EXTRAVERSION = ${EXTRAVERSION}|EXTRAVERSION =|" "${S}"/Makefile || die
 
@@ -368,7 +322,7 @@ function apply_genpatch_base() {
 	for a in ${KERNEL_PATCH_FNS_NOEXT[@]} ; do
 		local f="${T}/${a}"
 		cd "${T}"
-		unpack "${DISTDIR}/$a.xz"
+		unpack "$a.xz"
 		cd "${S}"
 		patch --dry-run ${PATCH_OPS} -N "${f}" | grep "FAILED at"
 		if [[ "$?" == "1" ]] ; then
@@ -397,7 +351,7 @@ function apply_genpatch_experimental() {
 	d="${T}/${GENPATCHES_EXPERIMENTAL_FN%.tar.xz}"
 	mkdir "$d"
 	cd "$d"
-	unpack "${DISTDIR}/${GENPATCHES_EXPERIMENTAL_FN}"
+	unpack "${GENPATCHES_EXPERIMENTAL_FN}"
 
 	cd "${S}"
 
@@ -411,7 +365,7 @@ function apply_genpatch_extras() {
 	d="${T}/${GENPATCHES_EXTRAS_FN%.tar.xz}"
 	mkdir "$d"
 	cd "$d"
-	unpack "${DISTDIR}/${GENPATCHES_EXTRAS_FN}"
+	unpack "${GENPATCHES_EXTRAS_FN}"
 
 	cd "${S}"
 
@@ -504,10 +458,19 @@ function fetch_amd_staging_drm_next() {
 	if [[ ! -d "${d}" ]] ; then
 		mkdir -p "${d}"
 		einfo "Cloning amd-staging-drm-next project"
-		git clone -b ${AMD_STAGING_DRM_NEXT_DIR} ${AMDREPO_URL} "${d}"
+		git clone ${AMDREPO_URL} "${d}"
+		cd "${d}"
+		git checkout master
+		git checkout -b amd-staging-drm-next remotes/origin/amd-staging-drm-next
 	else
 		einfo "Updating amd-staging-drm-next project"
 		cd "${d}"
+		git clean -fdx
+		git checkout master
+		git reset --hard master
+		git pull
+		git branch -D amd-staging-drm-next
+		git checkout -b amd-staging-drm-next remotes/origin/amd-staging-drm-next
 		git pull
 	fi
 	cd "${d}"
@@ -589,7 +552,8 @@ function fetch_amd_staging_drm_next_commits() {
 	L=$(git log ${base}..${target} --oneline --pretty=format:"%H %s %ce" | grep -e "@amd.com" | grep -v -e "uapi:" -e "drm/v3d" | cut -c 1-40 | tac)
 	for l in $L ; do
 	        einfo "$n $l"
-	        git format-patch --stdout -1 $l > "${T}"/amd-staging-drm-next-patches/$(printf "%05d" $n)-$l.patch
+		printf -v pn "%06d" ${n}
+	        git format-patch --stdout -1 $l > "${T}"/amd-staging-drm-next-patches/${pn}-$l.patch
 	        n=$((n+1))
 	done
 }
@@ -599,14 +563,16 @@ function _get_rock_commit()
 	local index="${1}"
 	local commit="${2}"
 	local postfix="${3}"
-	git format-patch --stdout -1 ${commit} > "${T}"/rock-patches/$(printf "%05d" ${index})${postfix}-${commit}.patch || die
+	printf -v pindex "%06d" ${index}
+	git format-patch --stdout -1 ${commit} > "${T}"/rock-patches/${pindex}${postfix}-${commit}.patch || die
 }
 
 function _get_amd_staging_drm_next_commit()
 {
 	local index="${1}"
 	local commit="${2}"
-	git format-patch --stdout -1 ${commit} > "${T}"/amd-staging-drm-next-patches/$(printf "%05d" ${index})-${commit}.patch || die
+	printf -v pindex "%06d" ${index}
+	git format-patch --stdout -1 ${commit} > "${T}"/amd-staging-drm-next-patches/${pindex}-${commit}.patch || die
 }
 
 function fetch_rock() {
@@ -621,11 +587,14 @@ function fetch_rock() {
 		mkdir -p "${d}"
 		einfo "Cloning ROCK project"
 		git clone ${ROCKREPO_URL} "${d}"
+		cd "${d}"
+		git checkout master
 	else
 		einfo "Updating ROCK project"
 		cd "${d}"
+		git clean -fdx
 		git checkout master
-		git reset --hard
+		git reset --hard master
 		git pull
 	fi
 	cd "${d}"
@@ -643,8 +612,10 @@ function prepend_rock_commit() {
 	local idx
 	local f
 	f=$(basename $(ls "${d}"/*${commit_b_postfix_before}*${commit_b}*))
-	idx=$(echo ${f} | cut -c 1-5)
-	mv "${d}"/${f} "${d}"/${idx}${commit_b_postfix_after}-${commit_b}.patch > /dev/null
+	idx=$(echo ${f} | cut -c 1-6)
+	if [[ "${f}" != "${idx}${commit_b_postfix_after}-${commit_b}.patch" ]] ; then
+		mv "${d}"/${f} "${d}"/${idx}${commit_b_postfix_after}-${commit_b}.patch
+	fi
 	_get_rock_commit $(echo ${idx} | sed 's/^0*//') ${commit_a} "${commit_a_postfix}"
 	sha1sum "${d}"/${idx}${commit_a_postfix}-${commit_a}.patch | cut -c 1-40 >> "${T}"/hashes
 }
@@ -658,7 +629,7 @@ function move_rock_commit() {
 	local idx
 	local f
 	f=$(basename $(ls "${d}"/*${postfix_before}*${commit}*))
-	idx=$(echo ${f} | cut -c 1-5)
+	idx=$(echo ${f} | cut -c 1-6)
 	einfo "idx=${idx} f=${f}"
 	mv "${d}"/${f} "${d}"/${idx}${postfix_after}-${commit}.patch || die
 	einfo "Moved to ${idx}${postfix_after}-${commit}.patch"
@@ -670,7 +641,7 @@ function get_rock_patch_index() {
 	local idx
 	local f
 	f=$(basename $(ls "${d}"/*${commit}*))
-	idx=$(echo ${f} | cut -c 1-5 | sed 's/^0*//')
+	idx=$(echo ${f} | cut -c 1-6 | sed 's/^0*//')
 	echo ${idx}
 }
 
@@ -704,8 +675,9 @@ function fetch_rock_commits() {
 	local p
 	for l in $L ; do
 	        einfo "$n $l"
-		p="${T}"/rock-patches/$(printf "%05d" $n)-$l.patch
-	        git format-patch --stdout -1 $l > "${T}"/rock-patches/$(printf "%05d" $n)-$l.patch
+		printf -v pn "%06d" ${n}
+		p="${T}"/rock-patches/${pn}-$l.patch
+	        git format-patch --stdout -1 $l > "${T}"/rock-patches/${pn}-$l.patch
 		h=$(sha1sum ${p} | cut -c 1-40)
 
 		# avoid adding duplicates
@@ -713,7 +685,7 @@ function fetch_rock_commits() {
 		if [[ "$?" == "1" ]] ; then
 		        n=$((n+1))
 		else
-			einfo "Found dupe $(basename ${p} | cut -c 7-46)"
+			einfo "Found dupe $(basename ${p} | cut -c 8-47)"
 			rm "${p}" || die
 		fi
 	done
@@ -723,38 +695,42 @@ function get_missing_rock_commits_list() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	local index
 
-	if [[ "${CACHED_AMD_STAGING_DRM_NEXT_INDEX}" == "1" ]] ; then
-		einfo "Using cached amd-staging-drm-next.commits.indexed.${PVR}"
-	else
-		index=1
-		d_staging="${distdir}/ot-sources-src/linux-${AMD_STAGING_DRM_NEXT_DIR}"
-		cd "${d_staging}"
-		einfo "Generating commit list for amd-staging-drm-next.  It may take half an hour."
-		git log --reverse --pretty=tformat:"%H %s" > "${T}"/amd-staging-drm-next.commits
+	index=1
+	d_staging="${distdir}/ot-sources-src/linux-${AMD_STAGING_DRM_NEXT_DIR}"
+	cd "${d_staging}"
+	einfo "Generating commit list for amd-staging-drm-next."
+	git log --reverse --pretty=tformat:"%H %s" > "${T}"/amd-staging-drm-next.commits
 
-		while IFS= read -r l ; do
-			echo $(printf "%06d" ${index})" ${l}" >> /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR}
-			index=$((${index} + 1))
-		done < "${T}"/amd-staging-drm-next.commits
-	fi
+	cat /dev/null > "${T}"/amd-staging-drm-next.commits.indexed.${PVR}
+	L=$(cat "${T}"/amd-staging-drm-next.commits)
+	IFS=$'\n'
+	A=""
+	for l in ${L} ; do
+		printf -v pindex "%06d" ${index}
+		echo "${pindex} ${l}" >> "${T}"/amd-staging-drm-next.commits.indexed.${PVR}
+		index=$((${index} + 1))
+	done
+	unset IFS
 
-	if [[ "${CACHED_ROCK_INDEX}" == "1" ]] ; then
-		einfo "Using cached rock.commits.indexed.${PVR}"
-	else
-		index=1
-		d_rock="${distdir}/ot-sources-src/linux-${ROCK_DIR}"
-		cd "${d_rock}"
-		einfo "Generating commit list for ROCK.  It may take half an hour."
-		git log --reverse --pretty=tformat:"%H %s" > "${T}"/rock.commits
+	index=1
+	d_rock="${distdir}/ot-sources-src/linux-${ROCK_DIR}"
+	cd "${d_rock}"
+	einfo "Generating commit list for ROCK."
+	git log --reverse --pretty=tformat:"%H %s" > "${T}"/rock.commits
 
-		while IFS= read -r l ; do
-			echo $(printf "%06d" ${index})" ${l}" >> /var/cache/ot-sources/rock.commits.indexed.${PVR}
-			index=$((${index} + 1))
-		done < "${T}"/rock.commits
-	fi
+	cat /dev/null > "${T}"/rock.commits.indexed.${PVR}
+	L=$(cat "${T}"/rock.commits)
+	IFS=$'\n'
+	A=""
+	for l in ${L} ; do
+		printf -v pindex "%06d" ${index}
+		echo "${pindex} ${l}" >> "${T}"/rock.commits.indexed.${PVR}
+		index=$((${index} + 1))
+	done
+	unset IFS
 
-	cat /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR} | cut -c 49- | sort > "${T}"/amd-staging-drm-next.summaries
-	cat /var/cache/ot-sources/rock.commits.indexed.${PVR} | cut -c 49- | sort > "${T}"/rock.summaries
+	cat "${T}"/amd-staging-drm-next.commits.indexed.${PVR} | cut -c 49- | sort > "${T}"/amd-staging-drm-next.summaries
+	cat "${T}"/rock.commits.indexed.${PVR} | cut -c 49- | sort > "${T}"/rock.summaries
 
 	einfo "Comparing commit lists"
 	diff -urp "${T}"/rock.summaries "${T}"/amd-staging-drm-next.summaries > "${T}"/results
@@ -774,19 +750,20 @@ function get_missing_rock_commits() {
 
 	einfo "Picking commits"
 	for l in ${L} ; do
-		grep -F -e "${l}" "/var/cache/ot-sources/rock.commits.indexed.${PVR}" >> "${T}/rock.found"
+		grep -F -e "${l}" "${T}/rock.commits.indexed.${PVR}" >> "${T}/rock.found"
 	done
 
 	cat "${T}"/rock.found | sort | uniq > "${T}"/rock.found.sorted
 
-	echo /dev/null > "${T}"/hashes
+	cat /dev/null > "${T}"/hashes
 	C=$(cat "${T}"/rock.found.sorted | cut -c 8-47)
 	einfo "Generating commits"
 	index=1
 	local p
 	for c in ${C} ; do
 		einfo "$index ${c}"
-		p="${T}"/rock-patches/$(printf "%05d" ${index})-${c}.patch
+		printf -v pindex "%06d" ${index}
+		p="${T}"/rock-patches/${pindex}-${c}.patch
 		git format-patch --stdout -1 ${c} > "${p}" || die
 		sha1sum ${p} | cut -c 1-40 >> "${T}"/hashes
 		index=$((index + 1))
@@ -1332,6 +1309,6 @@ pkg_postinst() {
 }
 
 pkg_postrm() {
-	[ -e /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR} ] && rm /var/cache/ot-sources/amd-staging-drm-next.commits.indexed.${PVR}
-	[ -e /var/cache/ot-sources/rock.commits.indexed.${PVR} ] && rm /var/cache/ot-sources/rock.commits.indexed.${PVR}
+	[ -e "${T}"/amd-staging-drm-next.commits.indexed.${PVR} ] && rm "${T}"/amd-staging-drm-next.commits.indexed.${PVR}
+	[ -e "${T}"/rock.commits.indexed.${PVR} ] && rm "${T}"/rock.commits.indexed.${PVR}
 }

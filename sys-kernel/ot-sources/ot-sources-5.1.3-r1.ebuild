@@ -231,7 +231,7 @@ function apply_genpatch_base() {
 	d="${T}/${GENPATCHES_BASE_FN%.tar.xz}"
 	mkdir "$d"
 	cd "$d"
-	unpack "${DISTDIR}/${GENPATCHES_BASE_FN}"
+	unpack "${GENPATCHES_BASE_FN}"
 
 	sed -r -i -e "s|EXTRAVERSION = ${EXTRAVERSION}|EXTRAVERSION =|" "${S}"/Makefile || die
 
@@ -239,7 +239,7 @@ function apply_genpatch_base() {
 	for a in ${KERNEL_PATCH_FNS_NOEXT[@]} ; do
 		local f="${T}/${a}"
 		cd "${T}"
-		unpack "${DISTDIR}/$a.xz"
+		unpack "$a.xz"
 		cd "${S}"
 		patch --dry-run ${PATCH_OPS} -N "${f}" | grep "FAILED at"
 		if [[ "$?" == "1" ]] ; then
@@ -268,7 +268,7 @@ function apply_genpatch_experimental() {
 	d="${T}/${GENPATCHES_EXPERIMENTAL_FN%.tar.xz}"
 	mkdir "$d"
 	cd "$d"
-	unpack "${DISTDIR}/${GENPATCHES_EXPERIMENTAL_FN}"
+	unpack "${GENPATCHES_EXPERIMENTAL_FN}"
 
 	cd "${S}"
 
@@ -282,7 +282,7 @@ function apply_genpatch_extras() {
 	d="${T}/${GENPATCHES_EXTRAS_FN%.tar.xz}"
 	mkdir "$d"
 	cd "$d"
-	unpack "${DISTDIR}/${GENPATCHES_EXTRAS_FN}"
+	unpack "${GENPATCHES_EXTRAS_FN}"
 
 	cd "${S}"
 

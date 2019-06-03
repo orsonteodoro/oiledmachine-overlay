@@ -38,7 +38,7 @@ PATCH_O3_RO_COMMIT="93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9"
 PATCH_CK_MAJOR="5.0"
 PATCH_CK_MAJOR_MINOR="5.0"
 PATCH_CK_REVISION="1"
-K_GENPATCHES_VER="1"
+K_GENPATCHES_VER="3"
 PATCH_GP_MAJOR_MINOR_REVISION="5.1-${K_GENPATCHES_VER}"
 PATCH_GRAYSKY_COMMIT="87168bfa27b782e1c9435ba28ebe3987ddea8d30"
 PATCH_PDS_MAJOR_MINOR="5.0"
@@ -231,7 +231,7 @@ function apply_genpatch_base() {
 	d="${T}/${GENPATCHES_BASE_FN%.tar.xz}"
 	mkdir "$d"
 	cd "$d"
-	unpack "${DISTDIR}/${GENPATCHES_BASE_FN}"
+	unpack "${GENPATCHES_BASE_FN}"
 
 	sed -r -i -e "s|EXTRAVERSION = ${EXTRAVERSION}|EXTRAVERSION =|" "${S}"/Makefile || die
 
@@ -239,7 +239,7 @@ function apply_genpatch_base() {
 	for a in ${KERNEL_PATCH_FNS_NOEXT[@]} ; do
 		local f="${T}/${a}"
 		cd "${T}"
-		unpack "${DISTDIR}/$a.xz"
+		unpack "$a.xz"
 		cd "${S}"
 		patch --dry-run ${PATCH_OPS} -N "${f}" | grep "FAILED at"
 		if [[ "$?" == "1" ]] ; then
@@ -268,7 +268,7 @@ function apply_genpatch_experimental() {
 	d="${T}/${GENPATCHES_EXPERIMENTAL_FN%.tar.xz}"
 	mkdir "$d"
 	cd "$d"
-	unpack "${DISTDIR}/${GENPATCHES_EXPERIMENTAL_FN}"
+	unpack "${GENPATCHES_EXPERIMENTAL_FN}"
 
 	cd "${S}"
 
@@ -282,7 +282,7 @@ function apply_genpatch_extras() {
 	d="${T}/${GENPATCHES_EXTRAS_FN%.tar.xz}"
 	mkdir "$d"
 	cd "$d"
-	unpack "${DISTDIR}/${GENPATCHES_EXTRAS_FN}"
+	unpack "${GENPATCHES_EXTRAS_FN}"
 
 	cd "${S}"
 

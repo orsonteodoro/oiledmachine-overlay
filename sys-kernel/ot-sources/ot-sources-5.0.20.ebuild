@@ -52,19 +52,19 @@ PATCH_BMQ_VER="093"
 PATCH_BMQ_MAJOR_MINOR="5.0"
 DISABLE_DEBUG_V="1.1"
 
-# included in 5.0.19:
+# included in 5.0.20:
 # DC_VER 3.2.08 in drivers/gpu/drm/amd/display/dc/dc.h 2019-02-06
 # KMS_DRIVER 3.27.0 in drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c 2019-02-21
 
 AMD_STAGING_DRM_NEXT_LATEST="amd-staging-drm-next"
 AMD_STAGING_DRM_NEXT_DIR="amd-staging-drm-next"
 
-AMD_STAGING_DRM_NEXT_SNAPSHOT="d97852aeef73a6bf35d01ef8fab0d93cd16a2797" # latest commit I tested
-# 2019-05-24 drm/amdgpu: sort probed modes before adding common modes
+AMD_STAGING_DRM_NEXT_SNAPSHOT="40cc64619a2580b26f924bcabdefd555e7831a14" # latest commit I tested
+# 2019-05-31 gpu: amdgpu: fix broken amdgpu_dma_buf.c references
 AMD_STAGING_DRM_NEXT_STABLE="f7fa4d8745fce7db056ee9fa040c6e31b50f2389" # corresponds to 19.10 picked commit from latest amd-staging-drm-next
 # 2019-04-17 drm/amdgpu: amdgpu_device_recover_vram got NULL of shadow->parent
 
-AMD_STAGING_DRM_NEXT_MILESTONE="9d435455d4f62aea1458c0772ac67729685f1e97" # corresponds to the tagged commit:: drm/amd/display: 3.2.31
+AMD_STAGING_DRM_NEXT_MILESTONE="1f8cd6e478e51b792e541f149038deb49fd5116b" # corresponds to the tagged commit:: drm/amd/display: 3.2.32
 
 # the 19.10 is behind ROCK-Kernel-Driver in AMDGPU_VERSION defined in drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
 ROCK_DIR="ROCK-Kernel-Driver"
