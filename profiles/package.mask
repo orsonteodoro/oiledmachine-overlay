@@ -303,13 +303,6 @@ x11-libs/amd-adl-sdk
 =sys-kernel/ot-sources-5.1
 
 # ebuild still in development
-# I need to fix the patching for use-flags for rock-* and amd-staging-drm-next-* otherwise it is okay.
-=sys-kernel/ot-sources-5.0.18
-=sys-kernel/ot-sources-5.0.19
-=sys-kernel/ot-sources-5.0.20
-=sys-kernel/ot-sources-5.1.4
-=sys-kernel/ot-sources-5.1.5
-=sys-kernel/ot-sources-5.1.6
 
 # updated and tested
 #app-editors/epic-journal
