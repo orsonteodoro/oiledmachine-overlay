@@ -49,7 +49,7 @@ _npm_audit_package_lock_update() {
 	pushd "${dir}"
 	# audit fix may fail on dependency but that is okay.  the eclass does another audit pass.
 	npm audit fix --force > /dev/null
-	rm package-lock.json
+	[ -e package-lock.json ] && rm package-lock.json
 	npm i --package-lock-only
 	popd
 }
@@ -93,11 +93,11 @@ _fix_vulnerabilities() {
 
 	# break babel-runtime circular dependency
 
-	npm i babel-code-frame@"${BABEL_CODE_FRAME_V}"
-	npm i babel-messages@"${BABEL_MESSSAGES_V}"
-	npm i babel-runtime@"${BABEL_RUNTIME_V}"
-	npm i babel-types@"${BABEL_TYPES_V}"
-	npm i babel-generator@"${BABEL_GENERATOR_V}"
+	npm i babel-code-frame@"${BABEL_CODE_FRAME_V}" || die
+	npm i babel-messages@"${BABEL_MESSSAGES_V}" || die
+	npm i babel-runtime@"${BABEL_RUNTIME_V}" || die
+	npm i babel-types@"${BABEL_TYPES_V}" || die
+	npm i babel-generator@"${BABEL_GENERATOR_V}" || die
 
 	_npm_audit_package_lock_update node_modules/babel-runtime
 
@@ -122,7 +122,7 @@ electron-app_src_compile() {
 	cd "${S}"
 
 	PATH="${S}/node_modules/.bin:${PATH}" \
-	gulp build
+	gulp build || die
 }
 
 src_install() {

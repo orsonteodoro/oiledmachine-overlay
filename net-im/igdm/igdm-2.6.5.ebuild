@@ -71,7 +71,7 @@ electron-app_src_compile() {
 	cd "${S}"
 
 	PATH="${S}/node_modules/.bin:${PATH}" \
-	gulp build
+	gulp build || die
 }
 
 src_install() {
