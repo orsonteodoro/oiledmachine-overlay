@@ -99,9 +99,7 @@ AMD_STAGING_LATEST_INTERSECTS_ROCK_MILESTONE="2941c091ffe6ad7a891c7961d6548d9404
 AMD_STAGING_SNAPSHOT_INTERSECTS_ROCK_MILESTONE="2941c091ffe6ad7a891c7961d6548d9404b040c2" # corresponds to 'A
 AMD_STAGING_MILESTONE_INTERSECTS_ROCK_MILESTONE="2941c091ffe6ad7a891c7961d6548d9404b040c2" # corresponds to 'A
 
-AMD_STAGING_LATEST_INTERSECTS_5_X="02205685e319bf6507feb95b1ee2ce3fb51fa60d" # corresponds to 'B
-AMD_STAGING_SNAPSHOT_INTERSECTS_5_X="02205685e319bf6507feb95b1ee2ce3fb51fa60d" # corresponds to 'B
-AMD_STAGING_MILESTONE_INTERSECTS_5_X="02205685e319bf6507feb95b1ee2ce3fb51fa60d" # corresponds to 'B
+AMD_STAGING_INTERSECTS_5_X="02205685e319bf6507feb95b1ee2ce3fb51fa60d" # corresponds to 'B
 
 IUSE="bfq bmq bmq-quick-fix amd-staging-drm-next-latest amd-staging-drm-next-snapshot amd-staging-drm-next-milestone +cfs disable_debug +graysky2 muqss +o3 pds rock-latest rock-snapshot rock-milestone uksm tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs -zentune"
 REQUIRED_USE="^^ ( muqss pds cfs bmq )
@@ -477,6 +475,10 @@ function fetch_amd_staging_drm_next() {
 }
 
 function fetch_amd_staging_drm_next_commits() {
+	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+	d="${distdir}/ot-sources-src/linux-${AMD_STAGING_DRM_NEXT_DIR}"
+	cd "${d}"
+
 	local target
 	if use amd-staging-drm-next-snapshot ; then
 		target="${AMD_STAGING_DRM_NEXT_SNAPSHOT}"
@@ -520,18 +522,10 @@ function fetch_amd_staging_drm_next_commits() {
 		einfo "amd-staging-drm-next-snapshot and rock-milestone"
 		base="${AMD_STAGING_MILESTONE_INTERSECTS_ROCK_MILESTONE}"
 
-	elif use amd-staging-drm-next-latest && ! use rock-latest && ! use rock-milestone ; then
-		einfo "amd-staging-drm-next-latest and 5.x"
+	elif is_amd_staging_drm_next && ! is_rock ; then
+		einfo "amd-staging-drm-next-* and 5.x"
 		# use 5.1.x
-		base="${AMD_STAGING_LATEST_INTERSECTS_5_X}"
-	elif use amd-staging-drm-next-snapshot && ! use rock-latest && ! use rock-milestone ; then
-		einfo "amd-staging-drm-next-snapshot and 5.x"
-		# use 5.1.x
-		base="${AMD_STAGING_SNAPSHOT_INTERSECTS_5_X}"
-	elif use amd-staging-drm-next-milestone && ! use rock-latest && ! use rock-milestone ; then
-		einfo "amd-staging-drm-next-milestone and 5.x"
-		# use 5.1.x
-		base="${AMD_STAGING_MILESTONE_INTERSECTS_5_X}"
+		base="${AMD_STAGING_INTERSECTS_5_X}"
 	else
 		die "cannot handle case"
 	fi
@@ -646,6 +640,10 @@ function get_rock_patch_index() {
 }
 
 function fetch_rock_commits() {
+	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+	d="${distdir}/ot-sources-src/linux-${ROCK_DIR}"
+	cd "${d}"
+
 	local target
 	if use rock-snapshot ; then
 		target="${ROCK_SNAPSHOT}"

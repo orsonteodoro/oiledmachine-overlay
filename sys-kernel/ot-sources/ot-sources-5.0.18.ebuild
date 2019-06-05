@@ -59,7 +59,7 @@ DISABLE_DEBUG_V="1.1"
 AMD_STAGING_DRM_NEXT_LATEST="amd-staging-drm-next"
 AMD_STAGING_DRM_NEXT_DIR="amd-staging-drm-next"
 
-AMD_STAGING_DRM_NEXT_SNAPSHOT="d97852aeef73a6bf35d01ef8fab0d93cd16a2797" # latest commit I tested
+AMD_STAGING_DRM_NEXT_SNAPSHOT="f1e5e913028669c2bbac6664b8f01cb124349692" # latest commit I tested
 # 2019-05-24 drm/amdgpu: sort probed modes before adding common modes
 AMD_STAGING_DRM_NEXT_STABLE="f7fa4d8745fce7db056ee9fa040c6e31b50f2389" # corresponds to 19.10 picked commit from latest amd-staging-drm-next
 # 2019-04-17 drm/amdgpu: amdgpu_device_recover_vram got NULL of shadow->parent
@@ -97,9 +97,8 @@ AMD_STAGING_LATEST_INTERSECTS_ROCK_MILESTONE="2941c091ffe6ad7a891c7961d6548d9404
 AMD_STAGING_SNAPSHOT_INTERSECTS_ROCK_MILESTONE="2941c091ffe6ad7a891c7961d6548d9404b040c2" # corresponds to 'A
 AMD_STAGING_MILESTONE_INTERSECTS_ROCK_MILESTONE="2941c091ffe6ad7a891c7961d6548d9404b040c2" # corresponds to 'A
 
-AMD_STAGING_LATEST_INTERSECTS_5_X="d1a3e239a6016f2bb42a91696056e223982e8538" # corresponds to 'B
-AMD_STAGING_SNAPSHOT_INTERSECTS_5_X="d1a3e239a6016f2bb42a91696056e223982e8538" # corresponds to 'B
-AMD_STAGING_MILESTONE_INTERSECTS_5_X="d1a3e239a6016f2bb42a91696056e223982e8538" # corresponds to 'B
+AMD_STAGING_INTERSECTS_5_X="d1a3e239a6016f2bb42a91696056e223982e8538" # corresponds to 'B
+# 2019-01-17 drm/amd/powerplay: drop the unnecessary uclk hard min setting
 
 IUSE="bfq bmq amd-staging-drm-next-latest amd-staging-drm-next-snapshot amd-staging-drm-next-milestone +cfs disable_debug +graysky2 muqss +o3 pds rock-latest rock-snapshot rock-milestone uksm tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs -zentune"
 REQUIRED_USE="^^ ( muqss pds cfs bmq )
@@ -242,8 +241,19 @@ SRC_URI="
 	 ${UKSM_SRC_URL}
 	 ${KERNEL_PATCH_URLS[@]}
 	 https://github.com/torvalds/linux/commit/47dd8048a1bf5b2fb96e5abe99b4f1dcd208ea4d.patch
+	 https://cgit.freedesktop.org/~agd5f/linux/patch/?id=5eb8c8c5871fa6f10236ecd67005bb0659c15d11 -> 5eb8c8c5871fa6f10236ecd67005bb0659c15d11.patch
+	 https://cgit.freedesktop.org/~agd5f/linux/patch/?id=346f2337dd44830751c3a66118df986a975c49f4 -> 346f2337dd44830751c3a66118df986a975c49f4.patch
+	 https://cgit.freedesktop.org/~agd5f/linux/patch/?id=3e70b04ab7874670e65c688f89ce210a6a482de6 -> 3e70b04ab7874670e65c688f89ce210a6a482de6.patch
+	 https://cgit.freedesktop.org/~agd5f/linux/patch/?id=02205685e319bf6507feb95b1ee2ce3fb51fa60d -> 02205685e319bf6507feb95b1ee2ce3fb51fa60d.patch
+	 https://cgit.freedesktop.org/~agd5f/linux/patch/?id=1c033d9f9bcb7019fb8d2c57e57c4c0c09188c4b -> 1c033d9f9bcb7019fb8d2c57e57c4c0c09188c4b.patch
+	 https://cgit.freedesktop.org/~agd5f/linux/patch/?id=588715bdcfbc2592f50b433a3ebaac72014d5fb4 -> 588715bdcfbc2592f50b433a3ebaac72014d5fb4.patch
+	 https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/commit/38684e46ef6622f25f141727fd9a9733b43eaf55.patch
 	 "
 #	 ${GENPATCHES_EXPERIMENTAL_SRC_URL}
+
+A="
+
+"
 
 UNIPATCH_LIST=""
 
@@ -462,6 +472,10 @@ function fetch_amd_staging_drm_next() {
 }
 
 function fetch_amd_staging_drm_next_commits() {
+	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+	d="${distdir}/ot-sources-src/linux-${AMD_STAGING_DRM_NEXT_DIR}"
+	cd "${d}"
+
 	local target
 	if use amd-staging-drm-next-snapshot ; then
 		target="${AMD_STAGING_DRM_NEXT_SNAPSHOT}"
@@ -505,30 +519,24 @@ function fetch_amd_staging_drm_next_commits() {
 		einfo "amd-staging-drm-next-snapshot and rock-milestone"
 		base="${AMD_STAGING_MILESTONE_INTERSECTS_ROCK_MILESTONE}"
 
-	elif use amd-staging-drm-next-latest && ! use rock-latest && ! use rock-milestone ; then
-		einfo "amd-staging-drm-next-latest and 5.x"
+	elif is_amd_staging_drm_next && ! is_rock ; then
+		einfo "amd-staging-drm-next-* and 5.x"
 		# use 5.1.x
-		base="${AMD_STAGING_LATEST_INTERSECTS_5_X}"
-	elif use amd-staging-drm-next-snapshot && ! use rock-latest && ! use rock-milestone ; then
-		einfo "amd-staging-drm-next-snapshot and 5.x"
-		# use 5.1.x
-		base="${AMD_STAGING_SNAPSHOT_INTERSECTS_5_X}"
-	elif use amd-staging-drm-next-milestone && ! use rock-latest && ! use rock-milestone ; then
-		einfo "amd-staging-drm-next-milestone and 5.x"
-		# use 5.1.x
-		base="${AMD_STAGING_MILESTONE_INTERSECTS_5_X}"
+		base="${AMD_STAGING_INTERSECTS_5_X}"
 	else
 		die "cannot handle case"
 	fi
 
 	mkdir -p "${T}/amd-staging-drm-next-patches"
 	if ! is_rock ; then
-#		_get_amd_staging_drm_next_commit 1 5eb8c8c5871fa6f10236ecd67005bb0659c15d11 # 2019-02-19 drm/amdgpu: replace get_user_pages with HMM mirror helpers
-#		_get_amd_staging_drm_next_commit 2 346f2337dd44830751c3a66118df986a975c49f4 # 2019-02-21 drm/amdgpu: fix HMM config dependency issue
+		_get_amd_staging_drm_next_commit 1 5eb8c8c5871fa6f10236ecd67005bb0659c15d11 # 2019-02-19 drm/amdgpu: replace get_user_pages with HMM mirror helpers
+		_get_amd_staging_drm_next_commit 2 346f2337dd44830751c3a66118df986a975c49f4 # 2019-02-21 drm/amdgpu: fix HMM config dependency issue
 		_get_amd_staging_drm_next_commit 3 3e70b04ab7874670e65c688f89ce210a6a482de6 # 2019-02-19 drm/amdgpu: use HMM callback to replace mmu notifier
-		_get_amd_staging_drm_next_commit 4 02205685e319bf6507feb95b1ee2ce3fb51fa60d # 2019-02-20 drm/amd/display: PPLIB Hookup
-		_get_amd_staging_drm_next_commit 5 1c033d9f9bcb7019fb8d2c57e57c4c0c09188c4b # 2019-02-19 drm/amdkfd: avoid HMM change cause circular lock
-		n="6"
+		_get_amd_staging_drm_next_commit 4 38684e46ef6622f25f141727fd9a9733b43eaf55 # 2018-11-22 drm/amd/display: Improve logging of validation failures during atomic_check
+		_get_amd_staging_drm_next_commit 5 588715bdcfbc2592f50b433a3ebaac72014d5fb4 # 2018-11-28 drm/amd/display: dal-pplib interface refactor dal part
+		_get_amd_staging_drm_next_commit 6 02205685e319bf6507feb95b1ee2ce3fb51fa60d # 2019-02-20 drm/amd/display: PPLIB Hookup
+		_get_amd_staging_drm_next_commit 7 1c033d9f9bcb7019fb8d2c57e57c4c0c09188c4b # 2019-02-19 drm/amdkfd: avoid HMM change cause circular lock
+		n="8"
 	else
 		n="1"
 	fi
@@ -557,7 +565,8 @@ function _get_amd_staging_drm_next_commit()
 	local index="${1}"
 	local commit="${2}"
 	printf -v pindex "%06d" ${index}
-	git format-patch --stdout -1 ${commit} > "${T}"/amd-staging-drm-next-patches/${pindex}-${commit}.patch || die
+	#git format-patch --stdout -1 ${commit} > "${T}"/amd-staging-drm-next-patches/${pindex}-${commit}.patch || die
+	cp "${DISTDIR}/${commit}.patch" "${T}"/amd-staging-drm-next-patches/${pindex}-${commit}.patch || die
 }
 
 function fetch_rock() {
@@ -631,6 +640,10 @@ function get_rock_patch_index() {
 }
 
 function fetch_rock_commits() {
+	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+	d="${distdir}/ot-sources-src/linux-${ROCK_DIR}"
+	cd "${d}"
+
 	local target
 	if use rock-snapshot ; then
 		target="${ROCK_SNAPSHOT}"
@@ -1178,6 +1191,18 @@ src_unpack() {
 				esac
 			else
 				case "${l}" in
+					*df1dd4f4a7271eb2744d8593c0da5d7a58dbe3a9*)
+						# df1dd4 already applied
+						;;
+					*ceb3dbb4690db8377ad127a5666cd4775d9f70f4*)
+						if is_rock ; then
+							# already applied
+							true
+						else
+							_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
+							_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-ceb3dbb4690db8377ad127a5666cd4775d9f70f4-fix-for-linux-5.0.18.patch"
+						fi
+						;;
 					*baf2289cda05bf9c8b2a156a87a11f703159bec9*)
 						if is_rock ; then
 							_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
