@@ -7,17 +7,14 @@ PYTHON_COMPAT=( python2_7 python3_5 python3_6 python3_7 )
 
 inherit distutils-r1 eutils
 
-COMMIT="ccef2af042566ad384977028cf0bde01bc524dda"
-
 DESCRIPTION="Browse Reddit from your terminal"
 HOMEPAGE="https://github.com/michael-lazar/rtv"
-SRC_URI="https://github.com/michael-lazar/${PN}/archive/${COMMIT}.zip -> ${P}.zip"
+SRC_URI="https://github.com/michael-lazar/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
-S="${WORKDIR}/${PN}-${COMMIT}"
 
 DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
 RDEPEND="
