@@ -25,11 +25,81 @@ IUSE="-analytics-tracking"
 
 S="${WORKDIR}/${PN}-${COMMIT}"
 
-src_unpack() {
-	default_src_unpack
+ELECTRON_APP_INSTALL_AUDIT=0
 
-	electron-app_src_prepare_default
+TAR_V="^4.4.2"
+UNDERSCORE_STRING_V="^3.3.5"
+GULP_CLI_V="2.0.1"
+HOEK_V="<5.0.0"
+JS_YAML_V="^3.13.1"
+LODASH_V="^4.17.11"
+GULP_BABEL_V="<7.0.0"
+BABEL_CORE_V="^6.26.0"
+BABEL_RUNTIME_V="^6.26.0"
 
+_patch_caw() {
+	local path="$1"
+	pushd "${path}" || die
+	patch -p1 -i "${FILESDIR}/caw-1.2.0-replace-tunnel-agent-with-node-tunnel.patch" || die
+	cd ../..
+	npm install || die
+	popd
+}
+
+_npm_install_sub() {
+	local dir="${1}"
+	einfo "dir=${dir}"
+	pushd "${dir}"
+	npm install
+	[ -e package-lock.json ] && rm package-lock.json
+	npm i --package-lock-only
+	popd
+}
+
+_npm_audit_package_lock_update() {
+	local dir="${1}"
+	einfo "dir=${dir}"
+	pushd "${dir}"
+	# audit fix may fail on dependency but that is okay.  the eclass does another audit pass.
+	npm audit fix --force > /dev/null
+	rm package-lock.json
+	npm i --package-lock-only
+	popd
+}
+
+_fix_vulnerabilities() {
+	cd "${S}"
+
+	npm audit fix --force
+
+	rm -rf node_modules/zopflipng-bin/node_modules/tunnel-agent || die
+	rm -rf node_modules/guetzli/node_modules/tunnel-agent || die
+
+	#_patch_caw node_modules/guetzli/node_modules/caw # not found
+	#_patch_caw node_modules/zopflipng-bin/node_modules/caw
+
+	# sshpk is for deep dependency of gulp-sass
+	npm install sshpk@"^1.14.1" --save-dev || die
+
+	_npm_install_sub node_modules/node-sass
+
+	sed -i -e "s|\"tar\": \"^2.0.0\",|\"tar\": \"${TAR_V}\",|g" node_modules/node-sass/node_modules/node-gyp/package.json || die
+	rm -rf node_modules/tar || die
+	npm install tar@"${TAR_V}" --no-save || die
+
+	pushd node_modules/micromatch
+		npm install underscore.string@"${UNDERSCORE_STRING_V}" || die
+	popd
+
+	electron-app_audit_fix
+
+	#sed -i -e "s|\"underscore.string\": \"~3.3.4\"|\"underscore.string\": \"${UNDERSCORE_STRING_V}\"|g" node_modules/zopflipng-bin/node_modules/upath/package.json || die
+	sed -i -e "s|\"underscore.string\": \"~3.3.4\"|\"underscore.string\": \"${UNDERSCORE_STRING_V}\"|g" node_modules/upath/package.json || die
+	#sed -i -e "s|\"underscore.string\": \"~3.3.4\"|\"underscore.string\": \"${UNDERSCORE_STRING_V}\"|g" node_modules/guetzli/node_modules/upath/package.json || die
+}
+
+electron-app_src_preprepare() {
+	einfo "electron-app_src_preprepare"
 	cd "${S}"
 
 	if ! use analytics-tracking ; then
@@ -37,47 +107,56 @@ src_unpack() {
 		rm "${S}"/app/src/main/analytics.js
 	fi
 
-	# fix stall bug in sandbox
-	#sed -i -e "s|\"electron\": \"\^[0-9.]*\",||g" package.json || die
-
 	npm install yarn --save-dev || die
 	pushd node_modules/micromatch/ || die
 	npm install braces@"^2.3.2" --save-prod || die
 	popd
+}
 
+electron-app_src_prepare() {
 	S="${WORKDIR}/${PN}-${COMMIT}/app" \
 	electron-app_fetch_deps
 
 	S="${WORKDIR}/${PN}-${COMMIT}/" \
 	electron-app_fetch_deps
+}
 
-	cd "${S}"
+electron-app_src_postprepare() {
+	einfo "electron-app_src_postprepare START"
+	_fix_vulnerabilities
 
-	# fix vulnerabilities
-	pushd node_modules/guetzli/node_modules/caw || die
-	patch -p1 -i "${FILESDIR}/caw-1.2.0-replace-tunnel-agent-with-node-tunnel.patch" || die
-	cd ../..
-	npm install || die
-	popd
-	pushd node_modules/zopflipng-bin/node_modules/caw || die
-	patch -p1 -i "${FILESDIR}/caw-1.2.0-replace-tunnel-agent-with-node-tunnel.patch" || die
-	cd ../..
-	npm install || die
-	popd
-	# sshpk is for deep dependency of gulp-sass
-	npm install sshpk@"^1.14.1" --save-dev || die
-	npm audit || die
+	# fix breakage from update
+	npm uninstall gulp-babel
+	npm install gulp-babel@"${GULP_BABEL_V}" --save-dev || die
+	npm install gulp-header --save-dev || die
+	npm install babel-register --save-dev || die
 
-	pushd app || die
-	npm audit fix
-	npm audit || die
-	popd
+	# babel-* circular dependency exist here
 
-	electron-app_src_compile
-	electron-app_src_preinst_default
+	_npm_audit_package_lock_update node_modules/babel-template/node_modules/babel-traverse/node_modules/babel-runtime
+
+	npm dedupe
+
+	npm install babel-core@"${BABEL_CORE_V}" || die
+	npm install babel-runtime@"${BABEL_RUNTIME_V}" || die
+
+	_npm_audit_package_lock_update node_modules/babel-register
+	_npm_audit_package_lock_update node_modules/babel-runtime
+
+	# fix cirular dependency here
+	npm dedupe
+
+	# must do again for some reason
+	_npm_audit_package_lock_update node_modules/babel-runtime
+
+	# fix cirular dependency again for some reason
+	npm dedupe
+
+	einfo "electron-app_src_postprepare DONE"
 }
 
 electron-app_src_compile() {
+	einfo "electron-app_src_compile"
 	cd "${S}"
 
 	electron-app_src_compile_default
@@ -85,6 +164,7 @@ electron-app_src_compile() {
 	cd "${S}"
 
 	npm uninstall yarn || die
+	einfo "electron-app_src_compile DONE"
 }
 
 src_install() {
