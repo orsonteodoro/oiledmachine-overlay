@@ -136,7 +136,7 @@ npm-secaudit_pkg_setup() {
 # Builds an electron app with security checks
 # MUST be called after default unpack AND patching.
 npm-secaudit_fetch_deps() {
-	pushd "${S}"
+	pushd "${S}" || die
 
 	_npm-secaudit_fix_locks
 	_npm-secaudit_yarn_access
@@ -282,7 +282,7 @@ npm-secaudit_audit_fix() {
 		einfo "Performing recursive package-lock.json audit fix"
 		L=$(find . -name "package-lock.json")
 		for l in $L; do
-			pushd $(dirname $l)
+			pushd $(dirname $l) || die
 			[ -e package-lock.json ] && rm package-lock.json
 			einfo "Running \`npm i --package-lock-only\`"
 			npm i --package-lock-only || die
@@ -300,7 +300,7 @@ npm-secaudit_audit_fix() {
 npm-secaudit_audit_dev() {
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
-		pushd $(dirname $l)
+		pushd $(dirname $l) || die
 		npm audit || die
 		popd
 	done
@@ -312,12 +312,11 @@ npm-secaudit_audit_dev() {
 npm-secaudit_audit_prod() {
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
-		pushd $(dirname $l) >/dev/null
+		pushd $(dirname $l) >/dev/null || die
 		[ -e "${T}"/npm-secaudit-result ] && rm "${T}"/npm-secaudit-result
 		npm audit &> "${T}"/npm-secaudit-result
 		cat "${T}"/npm-secaudit-result | grep "ELOCKVERIFY" >/dev/null
 		if [[ "$?" == "0" ]] ; then
-			dinfo "Ignoring results of packages referencing pruned dev packages.  You can re-emerge to verify if has a vulnerability."
 			cat "${T}"/npm-secaudit-result | grep "require manual review" >/dev/null
 			local result_found1="$?"
 			cat "${T}"/npm-secaudit-result | grep "npm audit fix" >/dev/null

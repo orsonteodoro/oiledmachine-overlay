@@ -165,7 +165,7 @@ electron-app_audit_fix_npm() {
 		einfo "Performing recursive package-lock.json audit fix"
 		L=$(find . -name "package-lock.json")
 		for l in $L; do
-			pushd $(dirname $l)
+			pushd $(dirname $l) || die
 			[ -e package-lock.json ] && rm package-lock.json
 			einfo "Running \`npm i --package-lock-only\`"
 			npm i --package-lock-only || die
@@ -249,7 +249,7 @@ electron-app_pkg_setup() {
 electron-app_fetch_deps_npm() {
 	_electron-app-flakey-check
 
-	pushd "${S}"
+	pushd "${S}" || die
 	npm install --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
 	popd
 }
@@ -259,7 +259,7 @@ electron-app_fetch_deps_npm() {
 # Fetches an Electron yarn app with security checks
 # MUST be called after default unpack AND patching.
 electron-app_fetch_deps_yarn() {
-	pushd "${S}"
+	pushd "${S}" || die
 		export FAKEROOTKEY="15574641" # don't check /usr/local/share/.yarnrc .  same number used in their testing.
 
 		# set global dir
@@ -426,7 +426,7 @@ electron-app_src_compile_default() {
 electron-app_audit_dev() {
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
-		pushd $(dirname $l)
+		pushd $(dirname $l) || die
 		npm audit || die
 		popd
 	done
@@ -439,12 +439,11 @@ electron-app_audit_dev() {
 electron-app_audit_prod() {
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
-		pushd $(dirname $l) >/dev/null
+		pushd $(dirname $l) >/dev/null || die
 		[ -e "${T}"/npm-secaudit-result ] && rm "${T}"/npm-secaudit-result
 		npm audit &> "${T}"/npm-secaudit-result
 		cat "${T}"/npm-secaudit-result | grep "ELOCKVERIFY" >/dev/null
 		if [[ "$?" == "0" ]] ; then
-			dinfo "Ignoring results of packages referencing pruned dev packages.  You can re-emerge to verify if has a vulnerability."
 			cat "${T}"/npm-secaudit-result | grep "require manual review" >/dev/null
 			local result_found1="$?"
 			cat "${T}"/npm-secaudit-result | grep "npm audit fix" >/dev/null
