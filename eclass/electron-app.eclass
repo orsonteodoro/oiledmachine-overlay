@@ -443,7 +443,7 @@ electron-app_audit_prod() {
 		[ -e "${T}"/npm-secaudit-result ] && rm "${T}"/npm-secaudit-result
 		npm audit &> "${T}"/npm-secaudit-result
 		cat "${T}"/npm-secaudit-result | grep "ELOCKVERIFY" >/dev/null
-		if [[ "$?" == "0" ]] ; then
+		if [[ "$?" != "0" ]] ; then
 			cat "${T}"/npm-secaudit-result | grep "require manual review" >/dev/null
 			local result_found1="$?"
 			cat "${T}"/npm-secaudit-result | grep "npm audit fix" >/dev/null
