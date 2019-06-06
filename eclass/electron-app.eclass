@@ -453,6 +453,7 @@ electron-app_audit_prod() {
 				die "package is still vulnerable at $(pwd)$l"
 			fi
 		fi
+		popd
 	done
 }
 
