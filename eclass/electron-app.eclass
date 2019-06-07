@@ -439,7 +439,7 @@ electron-app_audit_dev() {
 electron-app_audit_prod() {
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
-		pushd $(dirname $l) >/dev/null || die
+		pushd $(dirname $l) || die
 		[ -e "${T}"/npm-secaudit-result ] && rm "${T}"/npm-secaudit-result
 		npm audit &> "${T}"/npm-secaudit-result
 		cat "${T}"/npm-secaudit-result | grep "ELOCKVERIFY" >/dev/null
