@@ -424,14 +424,14 @@ electron-app_src_compile_default() {
 # @DESCRIPTION:
 # This will preform an recursive audit in place without adding packages.
 electron-app_audit_dev() {
+	[ ! -e package-lock.json ] && die "Missing package-lock.json in implied root $(pwd)"
+
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
 		pushd $(dirname $l) || die
 		npm audit || die
 		popd
 	done
-
-	[ ! -e package-lock.json ] && die "Missing package-lock.json in implied root $(pwd)"
 }
 
 
@@ -439,6 +439,8 @@ electron-app_audit_dev() {
 # @DESCRIPTION:
 # This will preform an recursive audit for production in place without adding packages ignoring pruned packages.
 electron-app_audit_prod() {
+	[ ! -e package-lock.json ] && die "Missing package-lock.json in implied root $(pwd)"
+
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
 		pushd $(dirname $l) || die
@@ -456,8 +458,6 @@ electron-app_audit_prod() {
 		fi
 		popd
 	done
-
-	[ ! -e package-lock.json ] && die "Missing package-lock.json in implied root $(pwd)"
 }
 
 # @FUNCTION: electron-app_src_preinst_default

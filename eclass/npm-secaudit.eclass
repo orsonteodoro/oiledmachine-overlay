@@ -298,20 +298,22 @@ npm-secaudit_audit_fix() {
 # @DESCRIPTION:
 # This will preform an recursive audit in place without adding packages.
 npm-secaudit_audit_dev() {
+	[ ! -e package-lock.json ] && die "Missing package-lock.json in implied root $(pwd)"
+
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
 		pushd $(dirname $l) || die
 		npm audit || die
 		popd
 	done
-
-	[ ! -e package-lock.json ] && die "Missing package-lock.json in implied root $(pwd)"
 }
 
 # @FUNCTION: npm-secaudit_audit_prod
 # @DESCRIPTION:
 # This will preform an recursive audit for production in place without adding packages ignoring pruned packages.
 npm-secaudit_audit_prod() {
+	[ ! -e package-lock.json ] && die "Missing package-lock.json in implied root $(pwd)"
+
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
 		pushd $(dirname $l) || die
@@ -329,8 +331,6 @@ npm-secaudit_audit_prod() {
 		fi
 		popd
 	done
-
-	[ ! -e package-lock.json ] && die "Missing package-lock.json in implied root $(pwd)"
 }
 
 # @FUNCTION: npm-secaudit_src_preinst_default
