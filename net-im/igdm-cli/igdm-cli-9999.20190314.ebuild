@@ -8,7 +8,7 @@ RDEPEND="${RDEPEND}"
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]"
 
-inherit eutils npm-secaudit versionator
+inherit eutils npm-secaudit npm-utils versionator
 
 COMMIT="e32789f40a9c5a1145be01ea8c1a6bc4a16bc972"
 
@@ -31,35 +31,6 @@ BABEL_GENERATOR_V="^6.26.0"
 BABEL_CORE_V="^6.26.0"
 DEBUG_V="2.6.9"
 
-_npm_install_sub() {
-	local dir="${1}"
-	einfo "dir=${dir}"
-	pushd "${dir}"
-	npm install
-	[ -e package-lock.json ] && rm package-lock.json
-	npm i --package-lock-only
-	popd
-}
-
-_npm_audit_package_lock_update() {
-	local dir="${1}"
-	einfo "dir=${dir}"
-	pushd "${dir}"
-	# audit fix may fail on dependency but that is okay.  the eclass does another audit pass.
-	npm audit fix --force > /dev/null
-	rm package-lock.json
-	npm i --package-lock-only
-	popd
-}
-
-_npm_audit_fix() {
-	local dir="${1}"
-	einfo "dir=${dir}"
-	pushd "${dir}"
-	npm audit fix --force
-	popd
-}
-
 npm-secaudit_src_postprepare() {
 	einfo "npm-secaudit_src_postprepare START"
 	npm install babel-code-frame@"${BABEL_CODE_FRAME_V}" || die
@@ -68,30 +39,30 @@ npm-secaudit_src_postprepare() {
 	npm install babel-types@"${BABEL_TYPES_V}" || die
 	npm install babel-generator@"${BABEL_GENERATOR_V}" || die
 
-	_npm_audit_package_lock_update node_modules/babel-template/node_modules/babel-traverse
-	_npm_audit_package_lock_update node_modules/babel-template/node_modules/babel-runtime
+	npm_audit_package_lock_update node_modules/babel-template/node_modules/babel-traverse
+	npm_audit_package_lock_update node_modules/babel-template/node_modules/babel-runtime
 
 	# break circular dependency sequence with babel-runtime
 	npm dedupe
 
 	npm install babel-core@"${BABEL_CORE_V}" || die
 
-	_npm_audit_package_lock_update node_modules/babel-register
-	_npm_audit_package_lock_update node_modules/babel-polyfill
-	_npm_audit_package_lock_update node_modules/babel-runtime
+	npm_audit_package_lock_update node_modules/babel-register
+	npm_audit_package_lock_update node_modules/babel-polyfill
+	npm_audit_package_lock_update node_modules/babel-runtime
 
 	# fix circular
 	npm dedupe
 
 	# must do again
-	_npm_audit_package_lock_update node_modules/babel-runtime
+	npm_audit_package_lock_update node_modules/babel-runtime
 
 	# fix circular
 	npm dedupe
 
-	_npm_audit_package_lock_update node_modules/babel-types
+	npm_audit_package_lock_update node_modules/babel-types
 
-	_npm_audit_package_lock_update ./
+	npm_audit_package_lock_update ./
 
 	# fix vulnerbilities
 	sed -i -e "s|\"debug\": \"~0.8.1\",|\"debug\": \"${DEBUG_V}\",|" node_modules/git-spawned-stream/package.json || die
@@ -104,13 +75,13 @@ npm-secaudit_src_postprepare() {
 	npm i debug@"${DEBUG_V}" --save-prod || die
 	popd
 
-	_npm_audit_package_lock_update node_modules/babel-traverse/node_modules/babel-runtime
+	npm_audit_package_lock_update node_modules/babel-traverse/node_modules/babel-runtime
 
 	# fix circular
 	npm dedupe
 
-	_npm_audit_package_lock_update node_modules/git-spawned-stream
-	_npm_audit_fix node_modules/git-spawned-stream
+	npm_audit_package_lock_update node_modules/git-spawned-stream
+	npm_audit_fix node_modules/git-spawned-stream
 
 	einfo "npm-secaudit_src_postprepare DONE"
 }
