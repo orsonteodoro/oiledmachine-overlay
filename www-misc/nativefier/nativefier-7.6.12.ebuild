@@ -9,7 +9,7 @@ RDEPEND="${RDEPEND}
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]"
 
-inherit eutils desktop npm-secaudit
+inherit eutils desktop npm-secaudit npm-utils
 
 DESCRIPTION="Make any web page a desktop application"
 HOMEPAGE="https://github.com/jiahaog/nativefier"
@@ -27,35 +27,6 @@ BABEL_MESSAGES_V="^6.23.0"
 BABEL_RUNTIME_V="^6.26.0"
 BABEL_TYPES_V="^6.26.0"
 BABEL_GENERATOR_V="^6.26.0"
-
-_npm_install_sub() {
-	local dir="${1}"
-	einfo "dir=${dir}"
-	pushd "${dir}"
-	npm install
-	[ -e package-lock.json ] && rm package-lock.json
-	npm i --package-lock-only
-	popd
-}
-
-_npm_audit_package_lock_update() {
-	local dir="${1}"
-	einfo "dir=${dir}"
-	pushd "${dir}"
-	# audit fix may fail on dependency but that is okay.  the eclass does another audit pass.
-	npm audit fix --force > /dev/null
-	rm package-lock.json
-	npm i --package-lock-only
-	popd
-}
-
-_npm_audit_fix() {
-	local dir="${1}"
-	einfo "dir=${dir}"
-	pushd "${dir}"
-	npm audit fix --force
-	popd
-}
 
 npm-secaudit_src_prepare() {
 	S="${WORKDIR}/${PN}-${PV}/app" \
@@ -76,27 +47,27 @@ npm-secaudit_src_postprepare() {
 	npm install babel-types@"${BABEL_TYPES_V}" || die
 	npm install babel-generator@"${BABEL_GENERATOR_V}" || die
 
-	_npm_audit_package_lock_update node_modules/babel-template/node_modules/babel-traverse
-	_npm_audit_package_lock_update node_modules/babel-template/node_modules/babel-runtime
+	npm_audit_package_lock_update node_modules/babel-template/node_modules/babel-traverse
+	npm_audit_package_lock_update node_modules/babel-template/node_modules/babel-runtime
 
 	# stop circular chain
 	npm dedupe
 
-	_npm_audit_package_lock_update node_modules/babel-runtime
+	npm_audit_package_lock_update node_modules/babel-runtime
 
 	# stop circular chain again
 	npm dedupe
 
-	_npm_audit_fix node_modules/babel-runtime
+	npm_audit_fix node_modules/babel-runtime
 
 	# stop circular chain again
 	npm dedupe
 
-	_npm_audit_package_lock_update node_modules/babel-types
-	_npm_audit_fix node_modules/babel-types
+	npm_audit_package_lock_update node_modules/babel-types
+	npm_audit_fix node_modules/babel-types
 
-	_npm_audit_package_lock_update node_modules/babel-types/node_modules/babel-runtime
-	_npm_audit_fix node_modules/babel-types/node_modules/babel-runtime
+	npm_audit_package_lock_update node_modules/babel-types/node_modules/babel-runtime
+	npm_audit_fix node_modules/babel-types/node_modules/babel-runtime
 
 	# stop circular chain again
 	npm dedupe
