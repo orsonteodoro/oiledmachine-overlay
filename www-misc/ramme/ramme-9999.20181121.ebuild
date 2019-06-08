@@ -10,7 +10,7 @@ RDEPEND="${RDEPEND}
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]"
 
-inherit eutils desktop electron-app
+inherit eutils desktop electron-app npm-utils
 
 COMMIT="ee922919f432f0d22b56b47a9d5d10a875184811"
 
@@ -46,27 +46,6 @@ _patch_caw() {
 	popd
 }
 
-_npm_install_sub() {
-	local dir="${1}"
-	einfo "dir=${dir}"
-	pushd "${dir}"
-	npm install
-	[ -e package-lock.json ] && rm package-lock.json
-	npm i --package-lock-only
-	popd
-}
-
-_npm_audit_package_lock_update() {
-	local dir="${1}"
-	einfo "dir=${dir}"
-	pushd "${dir}"
-	# audit fix may fail on dependency but that is okay.  the eclass does another audit pass.
-	npm audit fix --force > /dev/null
-	rm package-lock.json
-	npm i --package-lock-only
-	popd
-}
-
 _fix_vulnerabilities() {
 	cd "${S}"
 
@@ -81,7 +60,7 @@ _fix_vulnerabilities() {
 	# sshpk is for deep dependency of gulp-sass
 	npm install sshpk@"^1.14.1" --save-dev || die
 
-	_npm_install_sub node_modules/node-sass
+	npm_install_sub node_modules/node-sass
 
 	sed -i -e "s|\"tar\": \"^2.0.0\",|\"tar\": \"${TAR_V}\",|g" node_modules/node-sass/node_modules/node-gyp/package.json || die
 	rm -rf node_modules/tar || die
@@ -133,21 +112,21 @@ electron-app_src_postprepare() {
 
 	# babel-* circular dependency exist here
 
-	_npm_audit_package_lock_update node_modules/babel-template/node_modules/babel-traverse/node_modules/babel-runtime
+	npm_audit_package_lock_update node_modules/babel-template/node_modules/babel-traverse/node_modules/babel-runtime
 
 	npm dedupe
 
 	npm install babel-core@"${BABEL_CORE_V}" || die
 	npm install babel-runtime@"${BABEL_RUNTIME_V}" || die
 
-	_npm_audit_package_lock_update node_modules/babel-register
-	_npm_audit_package_lock_update node_modules/babel-runtime
+	npm_audit_package_lock_update node_modules/babel-register
+	npm_audit_package_lock_update node_modules/babel-runtime
 
 	# fix cirular dependency here
 	npm dedupe
 
 	# must do again for some reason
-	_npm_audit_package_lock_update node_modules/babel-runtime
+	npm_audit_package_lock_update node_modules/babel-runtime
 
 	# fix cirular dependency again for some reason
 	npm dedupe
