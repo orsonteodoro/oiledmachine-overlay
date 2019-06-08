@@ -10,7 +10,7 @@ RDEPEND="${RDEPEND}
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]"
 
-inherit eutils desktop electron-app
+inherit eutils desktop electron-app npm-utils
 
 DESCRIPTION="Desktop application for Instagram DMs "
 HOMEPAGE="https://igdm.me/"
@@ -32,27 +32,6 @@ BABEL_MESSSAGES_V="^6.23.0"
 BABEL_RUNTIME_V="^6.26.0"
 BABEL_TYPES_V="^6.26.0"
 BABEL_GENERATOR_V="^6.26.0"
-
-_npm_install_sub() {
-	local dir="${1}"
-	einfo "dir=${dir}"
-	pushd "${dir}"
-	npm install
-	[ -e package-lock.json ] && rm package-lock.json
-	npm i --package-lock-only
-	popd
-}
-
-_npm_audit_package_lock_update() {
-	local dir="${1}"
-	einfo "dir=${dir}"
-	pushd "${dir}"
-	# audit fix may fail on dependency but that is okay.  the eclass does another audit pass.
-	npm audit fix --force > /dev/null
-	[ -e package-lock.json ] && rm package-lock.json
-	npm i --package-lock-only
-	popd
-}
 
 _fix_vulnerabilities() {
 	#pushd node_modules/tough-cookie-filestore || die
@@ -89,7 +68,7 @@ _fix_vulnerabilities() {
 	npm install debug@"${DEBUG_V}" --save-prod || die
 	popd
 
-	_npm_audit_package_lock_update node_modules/instagram-private-api
+	npm_audit_package_lock_update node_modules/instagram-private-api
 
 	# break babel-runtime circular dependency
 
@@ -99,18 +78,18 @@ _fix_vulnerabilities() {
 	npm i babel-types@"${BABEL_TYPES_V}" || die
 	npm i babel-generator@"${BABEL_GENERATOR_V}" || die
 
-	_npm_audit_package_lock_update node_modules/babel-runtime
+	npm_audit_package_lock_update node_modules/babel-runtime
 
 	npm dedupe
 
-	_npm_audit_package_lock_update node_modules/babel-traverse
+	npm_audit_package_lock_update node_modules/babel-traverse
 
 	# has to be done again
-	_npm_audit_package_lock_update node_modules/babel-runtime
+	npm_audit_package_lock_update node_modules/babel-runtime
 
 	npm dedupe
 
-	_npm_audit_package_lock_update node_modules/babel-types
+	npm_audit_package_lock_update node_modules/babel-types
 }
 
 electron-app_src_postprepare() {
