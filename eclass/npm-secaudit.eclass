@@ -304,6 +304,8 @@ npm-secaudit_audit_dev() {
 		npm audit || die
 		popd
 	done
+
+	[ ! -e package-lock.json ] && die "Missing package-lock.json in implied root $(pwd)"
 }
 
 # @FUNCTION: npm-secaudit_audit_prod
@@ -327,6 +329,8 @@ npm-secaudit_audit_prod() {
 		fi
 		popd
 	done
+
+	[ ! -e package-lock.json ] && die "Missing package-lock.json in implied root $(pwd)"
 }
 
 # @FUNCTION: npm-secaudit_src_preinst_default
