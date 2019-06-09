@@ -131,30 +131,30 @@ function raudit() {
 		if [[ "$?" == "0" ]] ; then
 			dinfo "Ignoring results of packages referencing pruned dev packages.  You can re-emerge to verify if has a vulnerability."
 		else
-			cat /tmp/npm-secaudit-result | grep "require manual review" >/dev/null
+			cat /tmp/npm-secaudit-result | grep -F "require manual review" >/dev/null
 			local result_found1="$?"
-			cat /tmp/npm-secaudit-result | grep "npm audit fix" >/dev/null
+			cat /tmp/npm-secaudit-result | grep -F "npm audit fix" >/dev/null
 			local result_found2="$?"
-			cat /tmp/npm-secaudit-result | grep " Critical " >/dev/null
+			cat /tmp/npm-secaudit-result | grep -F "Critical" >/dev/null
 			local result_critical="$?"
-			cat /tmp/npm-secaudit-result | grep " High " >/dev/null
+			cat /tmp/npm-secaudit-result | grep -F "High" >/dev/null
 			local result_high="$?"
-			cat /tmp/npm-secaudit-result | grep " Moderate " >/dev/null
+			cat /tmp/npm-secaudit-result | grep -F "Moderate" >/dev/null
 			local result_moderate="$?"
-			cat /tmp/npm-secaudit-result | grep " Low " >/dev/null
+			cat /tmp/npm-secaudit-result | grep -F "Low" >/dev/null
 			local result_low="$?"
 			if [[ "${result_found1}" == "0" || "${result_found2}" == "0" ]] ; then
 				if [[ "${result_critical}" == "0" && "${G_SCAN_MODE}" == "critical" ]] ; then
 					dinfo "Critical vulnerability found"
 					result="1"
-				elif [[ "${result_high}" == "0" && "${G_SCAN_MODE}" == "high" ]] ; then
-					dinfo "High vulnerability found"
+				elif [[ ( "${result_high}" == "0" || "${result_critical}" == "0" ) && "${G_SCAN_MODE}" == "high" ]] ; then
+					dinfo "High and above vulnerability found"
 					result="1"
-				elif [[ "${result_moderate}" == "0" && "${G_SCAN_MODE}" == "moderate" ]] ; then
-					dinfo "Moderate vulnerability found"
+				elif [[ ( "${result_moderate}" == "0" || "${result_high}" == "0" || "${result_critical}" == "0" ) && "${G_SCAN_MODE}" == "moderate" ]] ; then
+					dinfo "Moderate and above vulnerability found"
 					result="1"
-				elif [[ "${result_low}" == "0" && "${G_SCAN_MODE}" == "low" ]] ; then
-					dinfo "Low vulnerability found"
+				elif [[ ( "${result_low}" == "0" || "${result_moderate}" == "0" || "${result_high}" == "0" || "${result_critical}" == "0" ) && "${G_SCAN_MODE}" == "low" ]] ; then
+					dinfo "Low and above vulnerability found"
 					result="1"
 				fi
 			fi
