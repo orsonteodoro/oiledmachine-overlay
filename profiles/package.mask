@@ -302,7 +302,8 @@ x11-libs/amd-adl-sdk
 =sys-kernel/ot-sources-5.1.1
 =sys-kernel/ot-sources-5.1
 
-# ebuild still in development
+# mask broken packages
+<app-portage/npm-secaudit-2019.06.08
 
 # updated and tested
 #app-editors/epic-journal
@@ -318,7 +319,6 @@ x11-libs/amd-adl-sdk
 #dev-lang/alice-3.5
 #dev-lang/qb64
 #dev-util/geeks-diary
-#dev-util/lepton
 #dev-util/pullp
 #dev-util/snippetstore
 #media-fonts/noto-color-emoji
