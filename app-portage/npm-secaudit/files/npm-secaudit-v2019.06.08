@@ -135,13 +135,13 @@ function raudit() {
 			local result_found1="$?"
 			cat /tmp/npm-secaudit-result | grep -F "npm audit fix" >/dev/null
 			local result_found2="$?"
-			cat /tmp/npm-secaudit-result | grep -F "Critical" >/dev/null
+			cat /tmp/npm-secaudit-result | grep -F " Critical " >/dev/null
 			local result_critical="$?"
-			cat /tmp/npm-secaudit-result | grep -F "High" >/dev/null
+			cat /tmp/npm-secaudit-result | grep -F " High " >/dev/null
 			local result_high="$?"
-			cat /tmp/npm-secaudit-result | grep -F "Moderate" >/dev/null
+			cat /tmp/npm-secaudit-result | grep -F " Moderate " >/dev/null
 			local result_moderate="$?"
-			cat /tmp/npm-secaudit-result | grep -F "Low" >/dev/null
+			cat /tmp/npm-secaudit-result | grep -F " Low " >/dev/null
 			local result_low="$?"
 			if [[ "${result_found1}" == "0" || "${result_found2}" == "0" ]] ; then
 				if [[ "${result_critical}" == "0" && "${G_SCAN_MODE}" == "critical" ]] ; then
