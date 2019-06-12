@@ -10,7 +10,7 @@ DEPEND="${RDEPEND}
 	media-libs/vips
         net-libs/nodejs[npm]"
 
-inherit eutils npm-secaudit versionator
+inherit eutils npm-secaudit versionator npm-utils
 
 MY_PN="TypeScript"
 
@@ -33,14 +33,14 @@ JS_YAML_VER="^3.13.0"
 _fix_vulnerbilities() {
 	npm i --package-lock || die
 
-	einfo "Performing recursive package-lock.json install"
-	L=$(find . -name "package-lock.json")
-	for l in $L; do
-		pushd $(dirname $l) || die
-		npm install
-		popd
-	done
-	einfo "Recursive install done"
+	#einfo "Performing recursive package-lock.json install"
+	#L=$(find . -name "package-lock.json")
+	#for l in $L; do
+	#	pushd $(dirname $l) || die
+	#	npm install
+	#	popd
+	#done
+	#einfo "Recursive install done"
 
 	# fix vulnerbilities top level
 	npm audit fix --force || die
@@ -138,6 +138,12 @@ _fix_vulnerbilities() {
 
 npm-secaudit_src_postprepare() {
 	_fix_vulnerbilities
+
+	npm_audit_package_lock_update node_modules/mocha/node_modules/gm-papandreou
+	npm_audit_package_lock_update node_modules/mocha/node_modules/browser-sync
+	npm_audit_package_lock_update node_modules/mocha/node_modules/babel-runtime
+	npm_audit_package_lock_update node_modules/mocha/node_modules/babel-types
+	npm_audit_package_lock_update node_modules/mocha
 }
 
 npm-secaudit_src_postcompile() {
