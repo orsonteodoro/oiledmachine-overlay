@@ -52,7 +52,7 @@ PATCH_BMQ_VER="096"
 PATCH_BMQ_MAJOR_MINOR="5.1"
 DISABLE_DEBUG_V="1.1"
 
-# included in 5.1.8:
+# included in 5.1.9:
 # DC_VER 3.2.17 in drivers/gpu/drm/amd/display/dc/dc.h 2019-02-06
 # KMS_DRIVER 3.30.0 in drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c 2019-02-21
 
@@ -142,8 +142,9 @@ DESCRIPTION="Orson Teodoro's patchset containing UKSM, zen-tune, GraySky's GCC P
 
 BMQ_FN="v${PATCH_BMQ_MAJOR_MINOR}_bmq${PATCH_BMQ_VER}.patch"
 BMQ_BASE_URL="https://gitlab.com/alfredchen/bmq/raw/master/${PATCH_BMQ_MAJOR_MINOR}/"
+BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.diff"
 BMQ_SRC_URL="${BMQ_BASE_URL}${BMQ_FN}
-	     https://gitlab.com/alfredchen/linux-bmq/commit/c98f44724fac5c2b42d831f0ad986008420d13c2.diff
+	     https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}
             "
 
 ROCKREPO_URL="https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver.git"
@@ -399,9 +400,8 @@ function apply_bmq() {
 	_dpatch "${PATCH_OPS}" "${DISTDIR}/${BMQ_FN}"
 	if use bmq-quick-fix ; then
 		# Upstream tends to add quick fixes immediately after releases, so this use flag exists.
-		# See https://gitlab.com/alfredchen/bmq/issues/5 .
-		# This issue wasn't an issue for me so it is optional.
-		_dpatch "${PATCH_OPS}" "${DISTDIR}/c98f44724fac5c2b42d831f0ad986008420d13c2.diff"
+		# See http://cchalpha.blogspot.com/2019/06/bmq-096-release.html?showComment=1560096391712#c540582441437278845 .
+		_dpatch "${PATCH_OPS}" "${DISTDIR}/${BMQ_QUICK_FIX_FN}"
 	fi
 }
 
