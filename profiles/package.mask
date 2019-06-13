@@ -307,6 +307,7 @@ x11-libs/amd-adl-sdk
 
 # mask =< gulp-4.0.0; no fix for vulnerable dependencies of gulp 3.x
 <dev-lang/typescript-3.3.4000
+dev-util/geeks-diary
 
 # updated and tested
 #app-editors/epic-journal
