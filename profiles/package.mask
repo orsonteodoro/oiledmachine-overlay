@@ -305,6 +305,9 @@ x11-libs/amd-adl-sdk
 # mask broken packages
 <app-portage/npm-secaudit-2019.06.08
 
+# mask =< gulp-4.0.0
+<dev-lang/typescript-3.3.4000
+
 # updated and tested
 #app-editors/epic-journal
 #app-editors/noty
