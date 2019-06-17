@@ -6,7 +6,7 @@ inherit eutils
 
 DESCRIPTION="Sync hook for npm security checks."
 HOMEPAGE="https://github.com/orsonteodoro/oiledmachine-overlay"
-LICENSE="GPL-2 or MIT"
+LICENSE="|| ( GPL-2 MIT )"
 SLOT="0"
 KEYWORDS="amd64"
 RDEPEND="sys-apps/portage
