@@ -52,7 +52,7 @@ PATCH_BMQ_VER="096"
 PATCH_BMQ_MAJOR_MINOR="5.1"
 DISABLE_DEBUG_V="1.1"
 
-# included in 5.1.9:
+# included in 5.1.19:
 # DC_VER 3.2.17 in drivers/gpu/drm/amd/display/dc/dc.h 2019-02-06
 # KMS_DRIVER 3.30.0 in drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c 2019-02-21
 
