@@ -32,6 +32,7 @@ HOMEPAGE="https://github.com/dolohow/uksm
           "
 
 K_MAJOR_MINOR="5.1"
+K_PATCH_XV="5.x"
 EXTRAVERSION="-ot"
 PATCH_UKSM_VER="5.0"
 PATCH_UKSM_MVER="5"
@@ -41,7 +42,7 @@ PATCH_O3_RO_COMMIT="93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9"
 PATCH_CK_MAJOR="5.0"
 PATCH_CK_MAJOR_MINOR="5.1"
 PATCH_CK_REVISION="1"
-K_GENPATCHES_VER="9"
+K_GENPATCHES_VER="10"
 PATCH_GP_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
 PATCH_GRAYSKY_COMMIT="87168bfa27b782e1c9435ba28ebe3987ddea8d30"
 PATCH_PDS_MAJOR_MINOR="5.0"
@@ -52,7 +53,7 @@ PATCH_BMQ_VER="096"
 PATCH_BMQ_MAJOR_MINOR="5.1"
 DISABLE_DEBUG_V="1.1"
 
-# included in 5.1.8:
+# included in 5.1.19:
 # DC_VER 3.2.17 in drivers/gpu/drm/amd/display/dc/dc.h 2019-02-06
 # KMS_DRIVER 3.30.0 in drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c 2019-02-21
 
@@ -142,8 +143,9 @@ DESCRIPTION="Orson Teodoro's patchset containing UKSM, zen-tune, GraySky's GCC P
 
 BMQ_FN="v${PATCH_BMQ_MAJOR_MINOR}_bmq${PATCH_BMQ_VER}.patch"
 BMQ_BASE_URL="https://gitlab.com/alfredchen/bmq/raw/master/${PATCH_BMQ_MAJOR_MINOR}/"
+BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.diff"
 BMQ_SRC_URL="${BMQ_BASE_URL}${BMQ_FN}
-	     https://gitlab.com/alfredchen/linux-bmq/commit/c98f44724fac5c2b42d831f0ad986008420d13c2.diff
+	     https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}
             "
 
 ROCKREPO_URL="https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver.git"
@@ -216,8 +218,8 @@ gen_kernel_seq()
 }
 
 KERNEL_PATCH_TO_FROM=($(gen_kernel_seq $(get_version_component_range 3 ${PV})))
-KERNEL_INC_BASEURL="https://cdn.kernel.org/pub/linux/kernel/v5.x/incr/"
-KERNEL_PATCH_0_TO_1_URL="https://cdn.kernel.org/pub/linux/kernel/v5.x/patch-${K_MAJOR_MINOR}.1.xz"
+KERNEL_INC_BASEURL="https://cdn.kernel.org/pub/linux/kernel/v${K_PATCH_XV}/incr/"
+KERNEL_PATCH_0_TO_1_URL="https://cdn.kernel.org/pub/linux/kernel/v${K_PATCH_XV}/patch-${K_MAJOR_MINOR}.1.xz"
 
 KERNEL_PATCH_FNS_EXT=(${KERNEL_PATCH_TO_FROM[@]/%/.xz})
 KERNEL_PATCH_FNS_EXT=(${KERNEL_PATCH_FNS_EXT[@]/#/patch-${K_MAJOR_MINOR}.})
@@ -285,10 +287,6 @@ function _tpatch() {
 	local path="$2"
 	einfo "Applying ${path}..."
 	patch ${patchops} -i ${path} || true
-}
-
-function remove_amd_fixes() {
-	local d="$1"
 }
 
 function apply_uksm() {
@@ -399,9 +397,8 @@ function apply_bmq() {
 	_dpatch "${PATCH_OPS}" "${DISTDIR}/${BMQ_FN}"
 	if use bmq-quick-fix ; then
 		# Upstream tends to add quick fixes immediately after releases, so this use flag exists.
-		# See https://gitlab.com/alfredchen/bmq/issues/5 .
-		# This issue wasn't an issue for me so it is optional.
-		_dpatch "${PATCH_OPS}" "${DISTDIR}/c98f44724fac5c2b42d831f0ad986008420d13c2.diff"
+		# See http://cchalpha.blogspot.com/2019/06/bmq-096-release.html?showComment=1560096391712#c540582441437278845 .
+		_dpatch "${PATCH_OPS}" "${DISTDIR}/${BMQ_QUICK_FIX_FN}"
 	fi
 }
 
@@ -523,7 +520,7 @@ function fetch_amd_staging_drm_next_commits() {
 		base="${AMD_STAGING_MILESTONE_INTERSECTS_ROCK_MILESTONE}"
 
 	elif is_amd_staging_drm_next && ! is_rock ; then
-		einfo "amd-staging-drm-next-* and 5.x"
+		einfo "amd-staging-drm-next-* and ${K_PATCH_XV}"
 		# use 5.1.x
 		base="${AMD_STAGING_INTERSECTS_5_X}"
 	else

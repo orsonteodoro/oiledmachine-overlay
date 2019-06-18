@@ -32,6 +32,7 @@ HOMEPAGE="https://github.com/dolohow/uksm
           "
 
 K_MAJOR_MINOR="5.0"
+K_PATCH_XV="5.x"
 EXTRAVERSION="-ot"
 PATCH_UKSM_VER="5.0"
 PATCH_UKSM_MVER="5"
@@ -209,8 +210,8 @@ gen_kernel_seq()
 }
 
 KERNEL_PATCH_TO_FROM=($(gen_kernel_seq $(get_version_component_range 3 ${PV})))
-KERNEL_INC_BASEURL="https://cdn.kernel.org/pub/linux/kernel/v5.x/incr/"
-KERNEL_PATCH_0_TO_1_URL="https://cdn.kernel.org/pub/linux/kernel/v5.x/patch-${K_MAJOR_MINOR}.1.xz"
+KERNEL_INC_BASEURL="https://cdn.kernel.org/pub/linux/kernel/v${K_PATCH_XV}/incr/"
+KERNEL_PATCH_0_TO_1_URL="https://cdn.kernel.org/pub/linux/kernel/v${K_PATCH_XV}/patch-${K_MAJOR_MINOR}.1.xz"
 
 KERNEL_PATCH_FNS_EXT=(${KERNEL_PATCH_TO_FROM[@]/%/.xz})
 KERNEL_PATCH_FNS_EXT=(${KERNEL_PATCH_FNS_EXT[@]/#/patch-${K_MAJOR_MINOR}.})
@@ -279,10 +280,6 @@ function _tpatch() {
 	local path="$2"
 	einfo "Applying ${path}..."
 	patch ${patchops} -i ${path} || true
-}
-
-function remove_amd_fixes() {
-	local d="$1"
 }
 
 function apply_uksm() {
@@ -508,7 +505,7 @@ function fetch_amd_staging_drm_next_commits() {
 		base="${AMD_STAGING_MILESTONE_INTERSECTS_ROCK_MILESTONE}"
 
 	elif is_amd_staging_drm_next && ! is_rock ; then
-		einfo "amd-staging-drm-next-* and 5.x"
+		einfo "amd-staging-drm-next-* and ${K_PATCH_XV}"
 		# use 5.1.x
 		base="${AMD_STAGING_INTERSECTS_5_X}"
 	else
