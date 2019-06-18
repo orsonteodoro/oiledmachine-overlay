@@ -178,7 +178,7 @@ UNIPATCH_STRICTORDER="yes"
 PATCH_OPS="-p1 -F 100"
 
 pkg_setup() {
-	ewarn "ot-sources is only for research purposes or to access tresor devices.  It is vulnerable and EOL."
+	ewarn "This ot-sources ${PV} release is only for research purposes or to access tresor devices.  It is vulnerable and EOL."
 
 	if use zentune || use muqss ; then
 		ewarn "The zen-tune patch or muqss might cause lock up or slow io under heavy load like npm.  These use flags are not recommended."
