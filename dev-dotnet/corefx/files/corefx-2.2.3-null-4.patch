@@ -1,0 +1,92 @@
+--- a/src/System.Transactions.Local/src/System/Transactions/TransactionState.cs.orig	2019-02-13 17:56:17.000000000 -0800
++++ b/src/System.Transactions.Local/src/System/Transactions/TransactionState.cs	2019-04-18 19:50:08.293831622 -0700
+@@ -301,7 +301,7 @@ namespace System.Transactions
+             TransactionsEtwProvider etwLog = TransactionsEtwProvider.Log;
+             if (etwLog.IsEnabled())
+             {
+-                if (tx != null && tx.TransactionTraceId != null && tx.TransactionTraceId.TransactionIdentifier != null)
++                if (tx != null && tx.TransactionTraceId != null && tx.TransactionTraceId.TransactionIdentifier != string.Empty)
+                     etwLog.TransactionExceptionTrace(TransactionExceptionType.InvalidOperationException, tx.TransactionTraceId.TransactionIdentifier.ToString(), e.ToString());
+                 else
+                     etwLog.TransactionExceptionTrace(TransactionExceptionType.InvalidOperationException, string.Empty, e.ToString());
+@@ -316,7 +316,7 @@ namespace System.Transactions
+             TransactionsEtwProvider etwLog = TransactionsEtwProvider.Log;
+             if (etwLog.IsEnabled())
+             {
+-                if (tx != null && tx.TransactionTraceId != null && tx.TransactionTraceId.TransactionIdentifier != null)
++                if (tx != null && tx.TransactionTraceId != null && tx.TransactionTraceId.TransactionIdentifier != string.Empty)
+                     etwLog.TransactionExceptionTrace(TransactionExceptionType.InvalidOperationException, tx.TransactionTraceId.TransactionIdentifier.ToString(), string.Empty);
+                 else
+                     etwLog.TransactionExceptionTrace(TransactionExceptionType.InvalidOperationException, string.Empty, string.Empty);
+@@ -331,7 +331,7 @@ namespace System.Transactions
+             TransactionsEtwProvider etwLog = TransactionsEtwProvider.Log;
+             if (etwLog.IsEnabled())
+             {
+-                if (tx != null && tx.TransactionTraceId != null && tx.TransactionTraceId.TransactionIdentifier != null)
++                if (tx != null && tx.TransactionTraceId != null && tx.TransactionTraceId.TransactionIdentifier != string.Empty)
+                     etwLog.TransactionExceptionTrace(TransactionExceptionType.InvalidOperationException, tx.TransactionTraceId.TransactionIdentifier.ToString(), string.Empty);
+                 else
+                     etwLog.TransactionExceptionTrace(TransactionExceptionType.InvalidOperationException, string.Empty, string.Empty);
+@@ -346,7 +346,7 @@ namespace System.Transactions
+             TransactionsEtwProvider etwLog = TransactionsEtwProvider.Log;
+             if (etwLog.IsEnabled())
+             {
+-                if (tx != null && tx.TransactionTraceId != null && tx.TransactionTraceId.TransactionIdentifier != null)
++                if (tx != null && tx.TransactionTraceId != null && tx.TransactionTraceId.TransactionIdentifier != string.Empty)
+                     etwLog.TransactionExceptionTrace(TransactionExceptionType.InvalidOperationException, tx.TransactionTraceId.TransactionIdentifier.ToString(), string.Empty);
+                 else
+                     etwLog.TransactionExceptionTrace(TransactionExceptionType.InvalidOperationException, string.Empty, string.Empty);
+@@ -361,7 +361,7 @@ namespace System.Transactions
+             TransactionsEtwProvider etwLog = TransactionsEtwProvider.Log;
+             if (etwLog.IsEnabled())
+             {
+-                if (tx != null && tx.TransactionTraceId != null && tx.TransactionTraceId.TransactionIdentifier != null)
++                if (tx != null && tx.TransactionTraceId != null && tx.TransactionTraceId.TransactionIdentifier != string.Empty)
+                     etwLog.TransactionExceptionTrace(TransactionExceptionType.InvalidOperationException, tx.TransactionTraceId.TransactionIdentifier.ToString(), string.Empty);
+                 else
+                     etwLog.TransactionExceptionTrace(TransactionExceptionType.InvalidOperationException, string.Empty, string.Empty);
+@@ -376,7 +376,7 @@ namespace System.Transactions
+             TransactionsEtwProvider etwLog = TransactionsEtwProvider.Log;
+             if (etwLog.IsEnabled())
+             {
+-                if (tx != null && tx.TransactionTraceId != null && tx.TransactionTraceId.TransactionIdentifier != null)
++                if (tx != null && tx.TransactionTraceId != null && tx.TransactionTraceId.TransactionIdentifier != string.Empty)
+                     etwLog.TransactionExceptionTrace(TransactionExceptionType.InvalidOperationException, tx.TransactionTraceId.TransactionIdentifier.ToString(), string.Empty);
+                 else
+                     etwLog.TransactionExceptionTrace(TransactionExceptionType.InvalidOperationException, string.Empty, string.Empty);
+@@ -391,7 +391,7 @@ namespace System.Transactions
+             TransactionsEtwProvider etwLog = TransactionsEtwProvider.Log;
+             if (etwLog.IsEnabled())
+             {
+-                if (tx != null && tx.TransactionTraceId != null && tx.TransactionTraceId.TransactionIdentifier != null)
++                if (tx != null && tx.TransactionTraceId != null && tx.TransactionTraceId.TransactionIdentifier != string.Empty)
+                     etwLog.TransactionExceptionTrace(TransactionExceptionType.InvalidOperationException, tx.TransactionTraceId.TransactionIdentifier.ToString(), string.Empty);
+                 else
+                     etwLog.TransactionExceptionTrace(TransactionExceptionType.InvalidOperationException, string.Empty, string.Empty);
+@@ -406,7 +406,7 @@ namespace System.Transactions
+             TransactionsEtwProvider etwLog = TransactionsEtwProvider.Log;
+             if (etwLog.IsEnabled())
+             {
+-                if (tx != null && tx.TransactionTraceId != null && tx.TransactionTraceId.TransactionIdentifier != null)
++                if (tx != null && tx.TransactionTraceId != null && tx.TransactionTraceId.TransactionIdentifier != string.Empty)
+                     etwLog.TransactionExceptionTrace(TransactionExceptionType.InvalidOperationException, tx.TransactionTraceId.TransactionIdentifier.ToString(), string.Empty);
+                 else
+                     etwLog.TransactionExceptionTrace(TransactionExceptionType.InvalidOperationException, string.Empty, string.Empty);
+@@ -421,7 +421,7 @@ namespace System.Transactions
+             TransactionsEtwProvider etwLog = TransactionsEtwProvider.Log;
+             if (etwLog.IsEnabled())
+             {
+-                if (tx != null && tx.TransactionTraceId != null && tx.TransactionTraceId.TransactionIdentifier != null)
++                if (tx != null && tx.TransactionTraceId != null && tx.TransactionTraceId.TransactionIdentifier != string.Empty)
+                     etwLog.TransactionExceptionTrace(TransactionExceptionType.InvalidOperationException, tx.TransactionTraceId.TransactionIdentifier.ToString(), string.Empty);
+                 else
+                     etwLog.TransactionExceptionTrace(TransactionExceptionType.InvalidOperationException, string.Empty, string.Empty);
+@@ -452,7 +452,7 @@ namespace System.Transactions
+             TransactionsEtwProvider etwLog = TransactionsEtwProvider.Log;
+             if (etwLog.IsEnabled())
+             {
+-                if (tx != null && tx.TransactionTraceId != null && tx.TransactionTraceId.TransactionIdentifier != null)
++                if (tx != null && tx.TransactionTraceId != null && tx.TransactionTraceId.TransactionIdentifier != string.Empty)
+                     etwLog.TransactionExceptionTrace(TransactionExceptionType.InvalidOperationException, tx.TransactionTraceId.TransactionIdentifier.ToString(), string.Empty);
+                 else
+                     etwLog.TransactionExceptionTrace(TransactionExceptionType.InvalidOperationException, string.Empty, string.Empty);

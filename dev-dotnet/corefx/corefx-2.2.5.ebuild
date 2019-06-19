@@ -7,6 +7,7 @@
 EAPI="6"
 
 CORE_V=${PV}
+DOTNETCLI_V=2.1.300
 
 DESCRIPTION="CoreFX is the foundational class libraries for .NET Core. It includes types for collections, file systems, console, JSON, XML, async and many others."
 HOMEPAGE="https://github.com/dotnet/corefx"
@@ -14,10 +15,17 @@ LICENSE="MIT"
 
 IUSE="heimdal tests debug"
 
-SRC_URI="https://github.com/dotnet/corefx/archive/v${CORE_V}.tar.gz -> corefx-${CORE_V}.tar.gz"
+SRC_URI="https://github.com/dotnet/corefx/archive/v${CORE_V}.tar.gz -> corefx-${CORE_V}.tar.gz
+	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-x64.tar.gz )
+	"
+#	 x86? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-x86.tar.gz )
+#	 arm64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-arm64.tar.gz )
+#	 arm? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-arm.tar.gz )
 
 SLOT="0"
-KEYWORDS="~amd64 ~x86 ~arm64 ~arm"
+KEYWORDS="~amd64"
+# based on init-tools.sh and dotnet-sdk-${DOTNETCLI_V}-linux-${myarch}.tar.gz
+# ~x86 ~arm64 ~arm
 
 RDEPEND="
 	>=sys-devel/llvm-4.0:*
@@ -45,7 +53,11 @@ DEPEND="${RDEPEND}
 	!dev-dotnet/dotnetcore-aspnet-bin"
 
 _PATCHES=(
-	"${FILESDIR}/corefx-2.2.3-werror.patch"
+	"${FILESDIR}/corefx-2.1.9-werror.patch"
+	"${FILESDIR}/corefx-2.2.3-null-1.patch"
+	"${FILESDIR}/corefx-2.2.3-null-2.patch"
+	"${FILESDIR}/corefx-2.2.3-null-3.patch"
+	"${FILESDIR}/corefx-2.2.3-null-4.patch"
 )
 
 S=${WORKDIR}
@@ -72,7 +84,7 @@ src_unpack() {
 
 _src_prepare() {
 #	default_src_prepare
-	cd "${WORKDIR}"
+	cd "${COREFX_S}"
 	eapply ${_PATCHES[@]}
 
 	# allow verbose output
@@ -135,7 +147,10 @@ _src_compile() {
 
 	einfo "Building CoreFX"
 	cd "${COREFX_S}" || die
+
+	DotNetBootstrapCliTarPath="${DISTDIR}/dotnet-sdk-${DOTNETCLI_V}-linux-${myarch}.tar.gz" \
 	./build.sh -buildArch -ArchGroup=${myarch} -${mydebug} ${buildargs_corefx} || die
+
 	if use tests ; then
 		einfo "Building CoreFX tests"
 		cd "${COREFX_S}"

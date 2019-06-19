@@ -1,5 +1,5 @@
---- a/corefx-2.1.9/src/Native/Unix/CMakeLists.txt.orig	2019-02-15 11:01:30.000000000 -0800
-+++ b/corefx-2.1.9/src/Native/Unix/CMakeLists.txt	2019-04-01 07:33:15.790505382 -0700
+--- a/src/Native/Unix/CMakeLists.txt.orig	2019-02-15 11:01:30.000000000 -0800
++++ b/src/Native/Unix/CMakeLists.txt	2019-04-01 07:33:15.790505382 -0700
 @@ -21,11 +21,12 @@ add_compile_options(-Wno-typedef-redefin
  add_compile_options(-Wno-unused-local-typedef)
  add_compile_options(-Wno-c99-extensions)

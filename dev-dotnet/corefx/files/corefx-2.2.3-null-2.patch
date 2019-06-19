@@ -1,0 +1,20 @@
+--- a/src/System.Security.Cryptography.Algorithms/src/System/Security/Cryptography/IncrementalHash.cs.orig	2019-02-13 17:56:17.000000000 -0800
++++ b/src/System.Security.Cryptography.Algorithms/src/System/Security/Cryptography/IncrementalHash.cs	2019-04-17 18:44:01.964111642 -0700
+@@ -19,7 +19,7 @@ namespace System.Security.Cryptography
+ 
+         private IncrementalHash(HashAlgorithmName name, HashProvider hash)
+         {
+-            Debug.Assert(name != null);
++            //Debug.Assert(name != null);
+             Debug.Assert(!string.IsNullOrEmpty(name.Name));
+             Debug.Assert(hash != null);
+ 
+@@ -29,7 +29,7 @@ namespace System.Security.Cryptography
+ 
+         private IncrementalHash(HashAlgorithmName name, HMACCommon hmac)
+         {
+-            Debug.Assert(name != null);
++            //Debug.Assert(name != null);
+             Debug.Assert(!string.IsNullOrEmpty(name.Name));
+             Debug.Assert(hmac != null);
+ 
