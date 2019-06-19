@@ -26,6 +26,8 @@ RDEPEND2="=dev-dotnet/core-${CORE_V}
 	 =dev-dotnet/core-setup-${CORE_V}
 	 =dev-dotnet/aspnetcore-${CORE_V}"
 
+# aspnetcore is blocking completion
+
 pkg_setup() {
 	# split due to flaky servers
 	ewarn "Still in development"
