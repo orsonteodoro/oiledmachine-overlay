@@ -1,0 +1,36 @@
+--- a/crypto/testmgr.c.orig	2019-06-19 13:29:47.877636825 -0700
++++ b/crypto/testmgr.c	2019-06-19 13:45:01.470375792 -0700
+@@ -2659,14 +2659,8 @@ static const struct alg_test_desc alg_te
+ 		.test = alg_test_skcipher,
+ 		.suite = {
+ 			.cipher = {
+-				.enc = {
+-					.vecs = aes_cbc_enc_tv_template,
+-					.count = AES_CBC_ENC_TEST_VECTORS
+-				},
+-				.dec = {
+-					.vecs = aes_cbc_dec_tv_template,
+-					.count = AES_CBC_DEC_TEST_VECTORS
+-				}
++				.enc = __VECS(aes_cbc_enc_tv_template),
++				.dec = __VECS(aes_cbc_dec_tv_template)
+ 			}
+ 		}
+ 	}, {
+@@ -3128,14 +3122,8 @@ static const struct alg_test_desc alg_te
+ 		.test = alg_test_skcipher,
+ 		.suite = {
+ 			.cipher = {
+-				.enc = {
+-					.vecs = aes_enc_tv_template,
+-					.count = AES_ENC_TEST_VECTORS
+-				},
+-				.dec = {
+-					.vecs = aes_dec_tv_template,
+-					.count = AES_DEC_TEST_VECTORS
+-				}
++				.enc = __VECS(aes_enc_tv_template),
++				.dec = __VECS(aes_dec_tv_template)
+ 			}
+ 		}
+ 	}, {

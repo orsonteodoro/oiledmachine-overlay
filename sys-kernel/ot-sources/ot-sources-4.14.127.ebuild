@@ -7,10 +7,16 @@
 #                               https://github.com/torvalds/linux/commit/93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9
 # GraySky2 GCC Patches:         https://github.com/graysky2/kernel_gcc_patch
 # MUQSS CPU Scheduler:          http://ck.kolivas.org/patches/5.0/5.0/5.0-ck1/
-# PDS CPU Scheduler:            http://cchalpha.blogspot.com/search/label/PDS
 # genpatches:                   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
 # BFQ updates:                  https://github.com/torvalds/linux/compare/v5.0...zen-kernel:5.0/bfq-backports
 # TRESOR:			http://www1.informatik.uni-erlangen.de/tresor
+
+# tresor passes cipher but not skcipher in self test (/proc/crypto); there is a error in dmesg
+
+#[    4.036411] alg: skcipher: setkey failed on test 2 for ecb(tresor-driver): flags=200000
+#[    4.038166] alg: skcipher: Failed to load transform for ecb(tresor): -2
+#[    4.042266] alg: skcipher: setkey failed on test 3 for cbc(tresor-driver): flags=200000
+#[    4.043783] alg: skcipher: Failed to load transform for cbc(tresor): -2
 
 EAPI="6"
 ETYPE="sources"
@@ -22,32 +28,29 @@ HOMEPAGE="https://github.com/dolohow/uksm
           http://users.on.net/~ckolivas/kernel/
           https://dev.gentoo.org/~mpagano/genpatches/
           http://algo.ing.unimo.it/people/paolo/disk_sched/
-	  http://cchalpha.blogspot.com/search/label/PDS
 	  http://www1.informatik.uni-erlangen.de/tresor
           "
 
-K_MAJOR_MINOR="4.18"
+K_MAJOR_MINOR="4.14"
 K_PATCH_XV="4.x"
 EXTRAVERSION="-ot"
-PATCH_UKSM_VER="4.18"
+PATCH_UKSM_VER="4.14"
 PATCH_UKSM_MVER="4"
-PATCH_ZENTUNE_VER="4.18"
+PATCH_ZENTUNE_VER="4.14"
 PATCH_O3_CO_COMMIT="a56a17374772a48a60057447dc4f1b4ec62697fb"
 PATCH_O3_RO_COMMIT="93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9"
 PATCH_CK_MAJOR="4.0"
-PATCH_CK_MAJOR_MINOR="4.18"
+PATCH_CK_MAJOR_MINOR="4.14"
 PATCH_CK_REVISION="1"
-K_GENPATCHES_VER="18"
-PATCH_GP_MAJOR_MINOR_REVISION="4.18-${K_GENPATCHES_VER}"
+K_GENPATCHES_VER="135"
+PATCH_GP_MAJOR_MINOR_REVISION="4.14-${K_GENPATCHES_VER}"
 PATCH_GRAYSKY_COMMIT="87168bfa27b782e1c9435ba28ebe3987ddea8d30"
-PATCH_PDS_MAJOR_MINOR="4.18"
-PATCH_PDS_VER="099a"
-PATCH_BFQ_VER="4.18"
+PATCH_BFQ_VER="4.14"
 PATCH_TRESOR_VER="3.18.5"
 DISABLE_DEBUG_V="1.1"
 
-IUSE="bfq +cfs disable_debug +graysky2 muqss +o3 pds uksm tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs -zentune"
-REQUIRED_USE="^^ ( muqss pds cfs )
+IUSE="bfq +cfs disable_debug +graysky2 muqss +o3 uksm tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs -zentune"
+REQUIRED_USE="^^ ( muqss cfs )
 	      tresor_sysfs? ( || ( tresor_i686 tresor_x86_64 tresor_aesni ) )
 	      tresor? ( ^^ ( tresor_i686 tresor_x86_64 tresor_aesni ) )
 	      tresor_i686? ( tresor )
@@ -68,11 +71,12 @@ detect_arch
 #DEPEND="deblob? ( ${PYTHON_DEPS} )"
 DEPEND="
 	dev-util/patchutils
+	<sys-devel/gcc-8.0
 	"
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="Orson Teodoro's patchset containing UKSM, zen-tune, GraySky's GCC Patches, MUQSS CPU Scheduler, PDS CPU Scheduler, Genpatches, BFQ updates, TRESOR"
+DESCRIPTION="Orson Teodoro's patchset containing UKSM, zen-tune, GraySky's GCC Patches, MUQSS CPU Scheduler, Genpatches, BFQ updates, TRESOR"
 
 UKSM_BASE="https://raw.githubusercontent.com/dolohow/uksm/master/v${PATCH_UKSM_MVER}.x/"
 UKSM_FN="uksm-${PATCH_UKSM_VER}.patch"
@@ -101,10 +105,6 @@ GRAYSKY_SRC_8_1_URL="${GRAYSKY_URL_BASE}${GRAYSKY_DL_8_1_FN}"
 CK_URL_BASE="http://ck.kolivas.org/patches/${PATCH_CK_MAJOR}/${PATCH_CK_MAJOR_MINOR}/${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}/"
 CK_FN="${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}-broken-out.tar.xz"
 CK_SRC_URL="${CK_URL_BASE}${CK_FN}"
-
-PDS_URL_BASE="https://gitlab.com/alfredchen/PDS-mq/raw/master/${PATCH_PDS_MAJOR_MINOR}/"
-PDS_FN="v${PATCH_PDS_MAJOR_MINOR}_pds${PATCH_PDS_VER}.patch"
-PDS_SRC_URL="${PDS_URL_BASE}${PDS_FN}"
 
 GENPATCHES_URL_BASE="https://dev.gentoo.org/~mpagano/genpatches/tarballs/"
 GENPATCHES_BASE_FN="genpatches-${PATCH_GP_MAJOR_MINOR_REVISION}.base.tar.xz"
@@ -159,7 +159,6 @@ SRC_URI="${KERNEL_URI}
 	 ${GRAYSKY_SRC_4_9_URL}
 	 ${GRAYSKY_SRC_8_1_URL}
 	 ${CK_SRC_URL}
-	 ${PDS_SRC_URL}
 	 ${GENPATCHES_BASE_SRC_URL}
 	 ${GENPATCHES_EXPERIMENTAL_SRC_URL}
 	 ${GENPATCHES_EXTRAS_SRC_URL}
@@ -178,7 +177,8 @@ UNIPATCH_STRICTORDER="yes"
 PATCH_OPS="-p1 -F 100"
 
 pkg_setup() {
-	ewarn "This ot-sources ${PV} release is only for research purposes or to access tresor devices.  It is vulnerable and EOL."
+	# tresor for x86_64 generic was known to pass crypto testmgr on this version.
+	ewarn "This ot-sources ${PV} release is only for research purposes or to access tresor devices.  It EOL for this repo but not for upstream."
 
 	if use zentune || use muqss ; then
 		ewarn "The zen-tune patch or muqss might cause lock up or slow io under heavy load like npm.  These use flags are not recommended."
@@ -186,6 +186,13 @@ pkg_setup() {
 
 	#use deblob && python-any-r1_pkg_setup
         kernel-2_pkg_setup
+
+	GCC_V=$(gcc-version)
+	version_compare ${GCC_V} 8.0
+	if (( $? >= 3 )) ; then
+		eerror "You must switch your gcc to <8.0 to compile this version of ot-sources"
+		die
+	fi
 }
 
 function _dpatch() {
@@ -248,8 +255,12 @@ function apply_genpatch_base() {
 
 	_tpatch "${PATCH_OPS} -N" "$d/1500_XATTR_USER_PREFIX.patch"
 	_tpatch "${PATCH_OPS} -N" "$d/1510_fs-enable-link-security-restrictions-by-default.patch"
+	_tpatch "${PATCH_OPS} -N" "$d/2100_bcache-data-corruption-fix-for-bi-partno.patch"
+	_tpatch "${PATCH_OPS} -N" "$d/2300_enable-poweroff-on-Mac-Pro-11.patch"
 	_tpatch "${PATCH_OPS} -N" "$d/2500_usb-storage-Disable-UAS-on-JMicron-SATA-enclosure.patch"
 	_tpatch "${PATCH_OPS} -N" "$d/2600_enable-key-swapping-for-apple-mac.patch"
+	_tpatch "${PATCH_OPS} -N" "$d/2900_dev-root-proc-mount-fix.patch"
+	_tpatch "${PATCH_OPS} -N" "$d/2901_tools-objtool-makefile-dont-assume-sync-checksh-is-executable.patch"
 }
 
 function apply_genpatch_experimental() {
@@ -277,6 +288,8 @@ function apply_genpatch_extras() {
 
 	cd "${S}"
 
+	_tpatch "${PATCH_OPS} -N" "$d/4200_fbcondecor.patch"
+	_tpatch "${PATCH_OPS} -N" "$d/4400_alpha-sysctl-uac.patch"
 	_tpatch "${PATCH_OPS} -N" "$d/4567_distro-Gentoo-Kconfig.patch"
 }
 
@@ -295,12 +308,6 @@ function apply_o3() {
 	_tpatch "-p1 -N" "${DISTDIR}/${O3_RO_FN}"
 }
 
-function apply_pds() {
-	cd "${S}"
-	einfo "Applying pds"
-	_dpatch "${PATCH_OPS}" "${DISTDIR}/${PDS_FN}"
-}
-
 function apply_tresor() {
 	cd "${S}"
 	einfo "Applying tresor"
@@ -314,7 +321,7 @@ function apply_tresor() {
 	fi
 
 	_tpatch "${PATCH_OPS}" "${DISTDIR}/tresor-patch-${PATCH_TRESOR_VER}_${platform}"
-	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-testmgr-ciphers-update.patch"
+	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-testmgr-ciphers-update-for-linux-4.14.patch"
 
 	if use tresor_x86_64 ; then
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_asm_64.patch"
@@ -326,7 +333,7 @@ function apply_tresor() {
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/wait.patch"
 	#fi
 
-	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
+	#_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
         #_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-testmgr-linux-5.0.13.patch"
         #_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-get_ds-to-kernel_ds.patch"
 }
@@ -385,10 +392,6 @@ src_unpack() {
 	if use muqss ; then
 		#_dpatch "${PATCH_OPS}" "${FILESDIR}/MuQSS-4.18-missing-se-member.patch"
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/muqss-dont-attach-ckversion.patch"
-	fi
-
-	if use pds ; then
-		apply_pds
 	fi
 
 	apply_genpatch_base

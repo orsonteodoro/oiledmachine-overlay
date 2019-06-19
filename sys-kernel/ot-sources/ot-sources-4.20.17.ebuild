@@ -248,6 +248,7 @@ function apply_genpatch_base() {
 
 	_tpatch "${PATCH_OPS} -N" "$d/1500_XATTR_USER_PREFIX.patch"
 	_tpatch "${PATCH_OPS} -N" "$d/1510_fs-enable-link-security-restrictions-by-default.patch"
+	_tpatch "${PATCH_OPS} -N" "$d/1700_ppc-vr-get-set-change-to-avoid-gcc-warning.patch"
 	_tpatch "${PATCH_OPS} -N" "$d/2500_usb-storage-Disable-UAS-on-JMicron-SATA-enclosure.patch"
 	_tpatch "${PATCH_OPS} -N" "$d/2600_enable-key-swapping-for-apple-mac.patch"
 }
@@ -277,6 +278,7 @@ function apply_genpatch_extras() {
 
 	cd "${S}"
 
+	_tpatch "${PATCH_OPS} -N" "$d/4400_alpha-sysctl-uac.patch"
 	_tpatch "${PATCH_OPS} -N" "$d/4567_distro-Gentoo-Kconfig.patch"
 }
 
