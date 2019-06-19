@@ -208,6 +208,8 @@ src_install() {
 	cp -a "${ASPNETCORE_S}/build/tasks/bin/publish"/* "${ddest_aspnetcoreall}"
 
 	# todo
+	# I still need to determine the placement of the dll per platform.
+	# The compile will produce both .net 4.x dlls and netcore dlls for some reason.
 	dodir "${ddest_aspnetcoreapp}"
 	cp -a "${ASPNETCORE_S}/bin"/* "${ddest_aspnetcoreapp}/" || die
 }
