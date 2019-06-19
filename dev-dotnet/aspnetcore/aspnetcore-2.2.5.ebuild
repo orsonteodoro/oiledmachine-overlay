@@ -14,7 +14,7 @@ LICENSE="MIT"
 
 IUSE="tests debug"
 
-ASPNETCORE_COMMIT="fbe49b396bf8ece2998791dedca487e581e2619c" # exactly ${PV}
+ASPNETCORE_COMMIT="33c2d01092d9a1b7a583fe99a50b15686e2b7de9" # exactly ${PV}
 SRC_URI=""
 RESTRICT="fetch"
 REQUIRED_USE="!tests" # broken
