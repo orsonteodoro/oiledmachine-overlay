@@ -24,9 +24,9 @@ SRC_URI="https://github.com/dotnet/core-setup/archive/v${CORE_V}.tar.gz -> cores
 
 SLOT="0"
 
-# based on dotnet-sdk-${DOTNETCLI_V}-linux-arm.tar.gz availability
-#KEYWORDS="~amd64 ~x86 ~arm64 ~arm"
 KEYWORDS="~amd64"
+# based on init-tools.sh and dotnet-sdk-${DOTNETCLI_V}-linux-${myarch}.tar.gz
+# ~x86 ~arm64 ~arm
 
 REQUIRED_USE="^^ ( amd64 x86 arm64 arm )"
 
