@@ -7,6 +7,7 @@
 EAPI="6"
 
 CORE_V=${PV}
+DOTNETCLI_V=2.1.300
 
 DESCRIPTION="Installer packages for the .NET Core runtime and libraries"
 HOMEPAGE="https://github.com/dotnet/core-setup"
@@ -14,10 +15,20 @@ LICENSE="MIT"
 
 IUSE="tests debug"
 
-SRC_URI="https://github.com/dotnet/core-setup/archive/v${CORE_V}.tar.gz -> coresetup-${CORE_V}.tar.gz"
+SRC_URI="https://github.com/dotnet/core-setup/archive/v${CORE_V}.tar.gz -> coresetup-${CORE_V}.tar.gz
+	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-x64.tar.gz )
+	"
+#	 x86? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-x86.tar.gz )
+#	 arm64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-arm64.tar.gz )
+#	 arm? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-arm.tar.gz )
 
 SLOT="0"
-KEYWORDS="~amd64 ~x86 ~arm64 ~arm"
+
+# based on dotnet-sdk-${DOTNETCLI_V}-linux-arm.tar.gz availability
+#KEYWORDS="~amd64 ~x86 ~arm64 ~arm"
+KEYWORDS="~amd64"
+
+REQUIRED_USE="^^ ( amd64 x86 arm64 arm )"
 
 RDEPEND="
 	>=sys-devel/llvm-4.0:*
@@ -53,6 +64,7 @@ pkg_pretend() {
 }
 
 src_unpack() {
+	local myarch
 	unpack "coresetup-${CORE_V}.tar.gz"
 
 	# gentoo or the sandbox doesn't allow downloads in compile phase so move here
@@ -118,6 +130,8 @@ _src_compile() {
 
 	einfo "Building Core-Setup"
 	cd "${CORESETUP_S}"
+
+	DotNetBootstrapCliTarPath="${DISTDIR}/dotnet-sdk-${DOTNETCLI_V}-linux-${myarch}.tar.gz" \
 	./build.sh -Platform=${myarch} -ConfigurationGroup=${mydebug^} ${buildargs_coresetup} || die
 }
 
