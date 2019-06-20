@@ -190,8 +190,7 @@ pkg_setup() {
 	GCC_V=$(gcc-version)
 	version_compare ${GCC_V} 8.0
 	if (( $? >= 3 )) ; then
-		eerror "You must switch your gcc to <8.0 to compile this version of ot-sources"
-		die
+		ewarn "You must switch your gcc to <8.0 to compile this version of ot-sources"
 	fi
 }
 
@@ -334,7 +333,7 @@ function apply_tresor() {
 	#fi
 
 	#_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
-        #_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-testmgr-linux-5.0.13.patch"
+        _dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-testmgr-linux-4.14.127.patch"
         #_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-get_ds-to-kernel_ds.patch"
 }
 

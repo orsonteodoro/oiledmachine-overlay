@@ -1,0 +1,48 @@
+--- a/crypto/testmgr.c.orig	2019-06-19 13:45:01.470375792 -0700
++++ b/crypto/testmgr.c	2019-06-19 16:49:17.707563958 -0700
+@@ -1179,16 +1179,16 @@ static int __test_skcipher(struct crypto
+ 		data += align_offset;
+ 		memcpy(data, template[i].input, template[i].ilen);
+ 
+-#ifdef CONFIG_CRYPTO_TRESOR
+-			if (strstr(algo, "tresor"))
+-				tresor_setkey(template[i].key);
+-#endif
+-
+ 		crypto_skcipher_clear_flags(tfm, ~0);
+ 		if (template[i].wk)
+ 			crypto_skcipher_set_flags(tfm,
+ 						  CRYPTO_TFM_REQ_WEAK_KEY);
+ 
++#ifdef CONFIG_CRYPTO_TRESOR
++			if (strstr(algo, "tresor"))
++				tresor_setkey(template[i].key);
++#endif
++
+ 		ret = crypto_skcipher_setkey(tfm, template[i].key,
+ 					     template[i].klen);
+ 		if (template[i].fail == !ret) {
+@@ -1248,11 +1248,6 @@ static int __test_skcipher(struct crypto
+ 	}
+ 
+ 	j = 0;
+-#ifdef CONFIG_CRYPTO_TRESOR
+-			if (strstr(algo, "tresor"))
+-				tresor_setkey(template[i].key);
+-#endif
+-
+ 	for (i = 0; i < tcount; i++) {
+ 		/* alignment tests are only done with continuous buffers */
+ 		if (align_offset != 0)
+@@ -1275,6 +1270,11 @@ static int __test_skcipher(struct crypto
+ 			crypto_skcipher_set_flags(tfm,
+ 						  CRYPTO_TFM_REQ_WEAK_KEY);
+ 
++#ifdef CONFIG_CRYPTO_TRESOR
++			if (strstr(algo, "tresor"))
++				tresor_setkey(template[i].key);
++#endif
++
+ 		ret = crypto_skcipher_setkey(tfm, template[i].key,
+ 					     template[i].klen);
+ 		if (template[i].fail == !ret) {
