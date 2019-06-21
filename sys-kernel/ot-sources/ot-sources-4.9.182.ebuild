@@ -11,18 +11,65 @@
 # BFQ updates:                  https://github.com/torvalds/linux/compare/v5.0...zen-kernel:5.0/bfq-backports
 # TRESOR:			http://www1.informatik.uni-erlangen.de/tresor
 
-# This one exist to debug tresor.  It is likely not working properly due to the two commits below.  See the 4.9.x ebuild instead.
+# This ebuild exists because less patching required for tresor.  It is mostly working.
 
-# tresor passes cipher but not skcipher in self test (/proc/crypto); there is a error in dmesg
+# errors from dmesg
 
-#[    4.036411] alg: skcipher: setkey failed on test 2 for ecb(tresor-driver): flags=200000
-#[    4.038166] alg: skcipher: Failed to load transform for ecb(tresor): -2
-#[    4.042266] alg: skcipher: setkey failed on test 3 for cbc(tresor-driver): flags=200000
-#[    4.043783] alg: skcipher: Failed to load transform for cbc(tresor): -2
+# [    3.355692] alg: skcipher: setkey failed on test 2 for ecb(tresor-driver): flags=200000
+# [    3.357297] alg: skcipher: Failed to load transform for ecb(tresor): -2
+# [    3.361164] alg: skcipher: setkey failed on test 3 for cbc(tresor-driver): flags=200000
 
-# commits that cause this skcipher-cbc-ecb error:
-# https://github.com/torvalds/linux/commit/12773d932fc22c60e0d5a20660d564542fab811b#diff-0decf6ca702623333221930ec9a62432
-# https://github.com/torvalds/linux/commit/7a7ffe65c8c5fbf272b132d8980b2511d5e5fc98#diff-5ae9b7f211e23aac3df5f2b8f3b8eada
+# results for /proc/crypto
+
+# name         : cbc(tresor)
+# driver       : cbc(tresor-driver)
+# module       : kernel
+# priority     : 100
+# refcnt       : 1
+# selftest     : passed
+# internal     : no
+# type         : blkcipher
+# blocksize    : 16
+# min keysize  : 16
+# max keysize  : 16
+# ivsize       : 16
+# geniv        : <default>
+
+# name         : tresor
+# driver       : tresor-driver
+# module       : kernel
+# priority     : 100
+# refcnt       : 1
+# selftest     : passed
+# internal     : no
+# type         : cipher
+# blocksize    : 16
+# min keysize  : 16
+# max keysize  : 16
+
+# missing ecb(tresor)?  it was reported in 5.1.x
+
+# results from cryptsetup
+
+# cryptsetup benchmark -c tresor-ecb -s 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+# tresor-ecb        128b        15.1 MiB/s        10.0 MiB/s
+
+# cryptsetup benchmark -c tresor-cbc -s 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+# tresor-cbc        128b        14.8 MiB/s        10.0 MiB/s
+
+# cryptsetup benchmark -c aes-cbc -s 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+#    aes-cbc        128b        75.3 MiB/s        83.6 MiB/s
+
+# cryptsetup benchmark -c aes-ecb -s 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+#    aes-ecb        128b        90.5 MiB/s        90.5 MiB/s
 
 EAPI="6"
 ETYPE="sources"
@@ -37,21 +84,21 @@ HOMEPAGE="https://github.com/dolohow/uksm
 	  http://www1.informatik.uni-erlangen.de/tresor
           "
 
-K_MAJOR_MINOR="4.14"
+K_MAJOR_MINOR="4.9"
 K_PATCH_XV="4.x"
 EXTRAVERSION="-ot"
-PATCH_UKSM_VER="4.14"
+PATCH_UKSM_VER="4.9"
 PATCH_UKSM_MVER="4"
-PATCH_ZENTUNE_VER="4.14"
+PATCH_ZENTUNE_VER="4.9"
 PATCH_O3_CO_COMMIT="a56a17374772a48a60057447dc4f1b4ec62697fb"
 PATCH_O3_RO_COMMIT="93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9"
 PATCH_CK_MAJOR="4.0"
-PATCH_CK_MAJOR_MINOR="4.14"
+PATCH_CK_MAJOR_MINOR="4.9"
 PATCH_CK_REVISION="1"
-K_GENPATCHES_VER="135"
-PATCH_GP_MAJOR_MINOR_REVISION="4.14-${K_GENPATCHES_VER}"
+K_GENPATCHES_VER="187"
+PATCH_GP_MAJOR_MINOR_REVISION="4.9-${K_GENPATCHES_VER}"
 PATCH_GRAYSKY_COMMIT="87168bfa27b782e1c9435ba28ebe3987ddea8d30"
-PATCH_BFQ_VER="4.14"
+PATCH_BFQ_VER="4.9"
 PATCH_TRESOR_VER="3.18.5"
 DISABLE_DEBUG_V="1.1"
 
@@ -260,12 +307,11 @@ function apply_genpatch_base() {
 
 	_tpatch "${PATCH_OPS} -N" "$d/1500_XATTR_USER_PREFIX.patch"
 	_tpatch "${PATCH_OPS} -N" "$d/1510_fs-enable-link-security-restrictions-by-default.patch"
-	_tpatch "${PATCH_OPS} -N" "$d/2100_bcache-data-corruption-fix-for-bi-partno.patch"
+	_tpatch "${PATCH_OPS} -N" "$d/1520_security-apparmor-Use-POSIX-compatible-printf.patch"
+	_tpatch "${PATCH_OPS} -N" "$d/1701_ia64_fix_ptrace.patch"
+	_tpatch "${PATCH_OPS} -N" "$d/2000_BT-Check-key-sizes-only-if-Secure-Simple-Pairing-enabled.patch"
 	_tpatch "${PATCH_OPS} -N" "$d/2300_enable-poweroff-on-Mac-Pro-11.patch"
-	_tpatch "${PATCH_OPS} -N" "$d/2500_usb-storage-Disable-UAS-on-JMicron-SATA-enclosure.patch"
-	_tpatch "${PATCH_OPS} -N" "$d/2600_enable-key-swapping-for-apple-mac.patch"
 	_tpatch "${PATCH_OPS} -N" "$d/2900_dev-root-proc-mount-fix.patch"
-	_tpatch "${PATCH_OPS} -N" "$d/2901_tools-objtool-makefile-dont-assume-sync-checksh-is-executable.patch"
 }
 
 function apply_genpatch_experimental() {
@@ -279,7 +325,12 @@ function apply_genpatch_experimental() {
 
 	cd "${S}"
 
-	# don't need since we apply upstream
+	_tpatch "${PATCH_OPS} -N" "$d/5001_block-cgroups-kconfig-build-bits-for-BFQ-v7r11-4.9.patch"
+	_tpatch "${PATCH_OPS} -N" "$d/5002_block-introduce-the-BFQ-v7r11-I-O-sched-for-4.9.patch1"
+	_tpatch "${PATCH_OPS} -N" "$d/5003_block-bfq-add-Early-Queue-Merge-EQM-to-BFQ-v7r11-for-4.9.patch"
+	_tpatch "${PATCH_OPS} -N" "$d/5004_Turn-BFQ-v7r11-into-BFQ-v8r7-for-4.9.0.patch1"
+	_tpatch "${PATCH_OPS} -N" "$d/5010_enable-additional-cpu-optimizations-for-gcc.patch"
+
 }
 
 function apply_genpatch_extras() {
@@ -326,7 +377,7 @@ function apply_tresor() {
 	fi
 
 	_tpatch "${PATCH_OPS}" "${DISTDIR}/tresor-patch-${PATCH_TRESOR_VER}_${platform}"
-	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-testmgr-ciphers-update-for-linux-4.14.patch"
+#	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-testmgr-ciphers-update-for-linux-4.14.patch"
 
 	if use tresor_x86_64 ; then
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_asm_64.patch"
@@ -335,7 +386,7 @@ function apply_tresor() {
 	fi
 
 	#if ! use tresor_sysfs ; then
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/wait.patch"
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/wait-for-linux-4.9.182.patch"
 	#fi
 
 	#_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
@@ -400,7 +451,7 @@ src_unpack() {
 	fi
 
 	apply_genpatch_base
-	#apply_genpatch_experimental
+	apply_genpatch_experimental
 	apply_genpatch_extras
 
 	if use o3 ; then
