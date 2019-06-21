@@ -47,7 +47,33 @@
 # min keysize  : 16
 # max keysize  : 16
 
-# missing ecb(tresor)?  it was reported in 5.1.x
+# name         : xts(tresor)
+# driver       : xts(tresor-driver)
+# module       : kernel
+# priority     : 100
+# refcnt       : 1
+# selftest     : passed
+# internal     : no
+# type         : blkcipher
+# blocksize    : 16
+# min keysize  : 32
+# max keysize  : 32
+# ivsize       : 16
+# geniv        : <default>
+
+# name         : ecb(tresor)
+# driver       : ecb(tresor-driver)
+# module       : kernel
+# priority     : 100
+# refcnt       : 1
+# selftest     : passed
+# internal     : no
+# type         : blkcipher
+# blocksize    : 16
+# min keysize  : 16
+# max keysize  : 16
+# ivsize       : 0
+# geniv        : <default>
 
 # results from cryptsetup
 
