@@ -11,6 +11,12 @@
 # BFQ updates:                  https://github.com/torvalds/linux/compare/v5.0...zen-kernel:5.0/bfq-backports
 # TRESOR:			http://www1.informatik.uni-erlangen.de/tresor
 
+# TRESOR is maybe broken.  It requires additional coding for skcipher.
+# See aesni-intel_glue.c chacha20_glue.c tresor_glue.c aesni-intel_asm.S aesni-intel_asm.S in arch/x86/crypto
+# It needs to fill out the skcipher_alg structure and provide callbacks that use the skcipher_request structure.
+# CBC uses CRYPTO_ALG_TYPE_SKCIPHER
+# ECB uses CRYPTO_ALG_TYPE_BLKCIPHER
+
 # This one exist to debug tresor.  It is likely not working properly due to the two commits below.  See the 4.9.x ebuild instead.
 
 # tresor passes cipher but not skcipher in self test (/proc/crypto); there is a error in dmesg
@@ -197,6 +203,10 @@ pkg_setup() {
 	version_compare ${GCC_V} 8.0
 	if (( $? >= 3 )) ; then
 		ewarn "You must switch your gcc to <8.0 to compile this version of ot-sources"
+	fi
+
+	if use tresor ; then
+		ewarn "TRESOR is broken for ${PV}.  Use 4.9.x series.  For ebuild devs only."
 	fi
 }
 

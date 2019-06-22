@@ -11,7 +11,6 @@
 # BMQ CPU Scheduler:		https://cchalpha.blogspot.com/search/label/BMQ
 # genpatches:                   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
 # BFQ updates:                  https://github.com/torvalds/linux/compare/v5.0...zen-kernel:5.0/bfq-backports
-# TRESOR:			http://www1.informatik.uni-erlangen.de/tresor
 
 EAPI="6"
 ETYPE="sources"
@@ -25,8 +24,6 @@ HOMEPAGE="https://github.com/dolohow/uksm
           http://algo.ing.unimo.it/people/paolo/disk_sched/
 	  http://cchalpha.blogspot.com/search/label/PDS
 	  https://cchalpha.blogspot.com/search/label/BMQ
-	  http://www1.informatik.uni-erlangen.de/tresor
-	  https://rocm.github.io/
           "
 
 K_MAJOR_MINOR="5.1"
@@ -46,18 +43,12 @@ PATCH_GRAYSKY_COMMIT="87168bfa27b782e1c9435ba28ebe3987ddea8d30"
 PATCH_PDS_MAJOR_MINOR="5.0"
 PATCH_PDS_VER="099o"
 PATCH_BFQ_VER="5.0"
-PATCH_TRESOR_VER="3.18.5"
 PATCH_BMQ_VER="096"
 PATCH_BMQ_MAJOR_MINOR="5.1"
 DISABLE_DEBUG_V="1.1"
 
-IUSE="bfq bmq bmq-quick-fix +cfs disable_debug +graysky2 muqss +o3 pds uksm tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs -zentune"
-REQUIRED_USE="^^ ( muqss pds cfs bmq )
-	     tresor_sysfs? ( || ( tresor_i686 tresor_x86_64 tresor_aesni ) )
-	     tresor? ( ^^ ( tresor_i686 tresor_x86_64 tresor_aesni ) )
-	     tresor_i686? ( tresor )
-	     tresor_x86_64? ( tresor )
-	     tresor_aesni? ( tresor )"
+IUSE="bfq bmq bmq-quick-fix +cfs disable_debug +graysky2 muqss +o3 pds uksm -zentune"
+REQUIRED_USE="^^ ( muqss pds cfs bmq )"
 
 # no released patch for 5.1 yet
 REQUIRED_USE+=" !pds !bfq"
@@ -77,7 +68,7 @@ DEPEND="dev-util/patchutils
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="Orson Teodoro's patchset containing UKSM, zen-tune, GraySky's GCC Patches, MUQSS CPU Scheduler, PDS CPU Scheduler, BMQ CPU Scheduler, Genpatches, BFQ updates, TRESOR"
+DESCRIPTION="Orson Teodoro's patchset containing UKSM, zen-tune, GraySky's GCC Patches, MUQSS CPU Scheduler, PDS CPU Scheduler, BMQ CPU Scheduler, Genpatches, BFQ updates"
 
 BMQ_FN="v${PATCH_BMQ_MAJOR_MINOR}_bmq${PATCH_BMQ_VER}.patch"
 BMQ_BASE_URL="https://gitlab.com/alfredchen/bmq/raw/master/${PATCH_BMQ_MAJOR_MINOR}/"
@@ -131,16 +122,6 @@ BFQ_REPO="bfq-backports"
 BFQ_DL_URL="https://github.com/torvalds/linux/compare/v${PATCH_BFQ_VER}...zen-kernel:${PATCH_BFQ_VER}/${BFQ_REPO}.diff"
 BFQ_SRC_URL="${BFQ_DL_URL} -> ${BFQ_FN}"
 
-TRESOR_AESNI_FN="tresor-patch-${PATCH_TRESOR_VER}_aesni"
-TRESOR_I686_FN="tresor-patch-${PATCH_TRESOR_VER}_i686"
-TRESOR_SYSFS_FN="tresor_sysfs.c"
-TRESOR_README_FN="tresor-readme.html"
-TRESOR_AESNI_DL_URL="http://www1.informatik.uni-erlangen.de/filepool/projects/tresor/${TRESOR_AESNI_FN}"
-TRESOR_I686_DL_URL="http://www1.informatik.uni-erlangen.de/filepool/projects/tresor/${TRESOR_I686_FN}"
-TRESOR_SYSFS_DL_URL="http://www1.informatik.uni-erlangen.de/filepool/projects/tresor/${TRESOR_SYSFS_FN}"
-TRESOR_README_DL_URL="https://www1.informatik.uni-erlangen.de/tresor?q=content/readme"
-TRESOR_SRC_URL="${TRESOR_README_DL_URL} -> ${TRESOR_README_FN}"
-
 gen_kernel_seq()
 {
 	# 1-2 2-3 3-4
@@ -175,11 +156,6 @@ SRC_URI="
 	 ${BMQ_SRC_URL}
 	 ${GENPATCHES_BASE_SRC_URL}
 	 ${GENPATCHES_EXTRAS_SRC_URL}
-	 ${TRESOR_AESNI_DL_URL}
-	 ${TRESOR_I686_DL_URL}
-	 ${TRESOR_SYSFS_DL_URL}
-	 ${TRESOR_README_DL_URL}
-	 ${TRESOR_SRC_URL}
 	 ${UKSM_SRC_URL}
 	 ${KERNEL_PATCH_URLS[@]}
 	 "
@@ -261,6 +237,7 @@ function apply_genpatch_base() {
 
 	_tpatch "${PATCH_OPS} -N" "$d/1500_XATTR_USER_PREFIX.patch"
 	_tpatch "${PATCH_OPS} -N" "$d/1510_fs-enable-link-security-restrictions-by-default.patch"
+	_tpatch "${PATCH_OPS} -N" "$d/2000_BT-Check-key-sizes-only-if-Secure-Simple-Pairing-enabled.patch"
 	_tpatch "${PATCH_OPS} -N" "$d/2500_usb-storage-Disable-UAS-on-JMicron-SATA-enclosure.patch"
 	_tpatch "${PATCH_OPS} -N" "$d/2600_enable-key-swapping-for-apple-mac.patch"
 }
@@ -325,36 +302,6 @@ function apply_bmq() {
 		# See http://cchalpha.blogspot.com/2019/06/bmq-096-release.html?showComment=1560096391712#c540582441437278845 .
 		_dpatch "${PATCH_OPS}" "${DISTDIR}/${BMQ_QUICK_FIX_FN}"
 	fi
-}
-
-function apply_tresor() {
-	cd "${S}"
-	einfo "Applying tresor"
-	ewarn "Some patches have hunk(s) failed but still good or may be fixed ASAP."
-	local platform
-	if use tresor_aesni ; then
-		platform="aesni"
-	fi
-	if use tresor_i686 || use tresor_x86_64 ; then
-		platform="i686"
-	fi
-
-	_tpatch "${PATCH_OPS}" "${DISTDIR}/tresor-patch-${PATCH_TRESOR_VER}_${platform}"
-	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-testmgr-ciphers-update.patch"
-
-	if use tresor_x86_64 ; then
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_asm_64.patch"
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_key_64.patch"
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-fix-addressing-mode-64-bit-index.patch"
-	fi
-
-	#if ! use tresor_sysfs ; then
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/wait.patch"
-	#fi
-
-	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
-	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-testmgr-linux-5.1.patch"
-        _dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-get_ds-to-kernel_ds.patch"
 }
 
 function fetch_bfq() {
@@ -429,21 +376,11 @@ src_unpack() {
 		apply_o3
 	fi
 
-	if use tresor ; then
-		apply_tresor
-	fi
-
 	#_dpatch "${PATCH_OPS}" "${FILESDIR}/linux-4.20-kconfig-ioscheds.patch"
 }
 
 src_compile() {
 	kernel-2_src_compile
-	if use tresor_sysfs ; then
-		cp -a "${DISTDIR}/tresor_sysfs.c" "${T}"
-		cd "${T}"
-		einfo "$(tc-getCC) ${CFLAGS}"
-		$(tc-getCC) ${CFLAGS} tresor_sysfs.c -o tresor_sysfs || die
-	fi
 }
 
 src_install() {
@@ -463,15 +400,6 @@ pkg_postinst() {
 		cp "${FILESDIR}/disable_debug_v${DISABLE_DEBUG_V}" "${EROOT}/usr/src/disable_debug" || die
 		chmod 700 "${EROOT}"/usr/src/_disable_debug || die
 		chmod 700 "${EROOT}"/usr/src/disable_debug || die
-	fi
-
-	if use tresor_sysfs ; then
-		# prevent merge conflicts
-		cd "${T}"
-		mv tresor_sysfs "${EROOT}/usr/bin" || die
-		chmod 700 "${EROOT}"/usr/bin/tresor_sysfs || die
-		# same hash for 5.1 and 5.0.13 for tresor_sysfs
-		einfo "/usr/bin/tresor_sysfs is provided to set your TRESOR key"
 	fi
 
 	if use muqss ; then
