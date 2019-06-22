@@ -7,7 +7,7 @@ PYTHON_COMPAT=( python{2_7,3_6,3_7} )
 
 inherit distutils-r1 eutils
 
-COMMIT="c6c33708ccd8aba999476326600a70438d7ec9ac"
+COMMIT="fe23b6090a093ac9cdc8389f47d5d1688c99140a"
 
 DESCRIPTION="Stack overflow command line client. Search and browse stack overflow without leaving the terminal"
 HOMEPAGE="https://github.com/gautamkrishnar/socli"
