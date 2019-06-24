@@ -28,7 +28,8 @@ PKG_VER_LLVM_MAJ="7"
 PKG_VER_LIBWAYLAND="1.15.0"
 PKG_VER_WAYLAND_PROTO="1.16"
 PKG_VER_GLAMOR="1.19.0"
-SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
+FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
+SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 
 RESTRICT="fetch strip"
 
@@ -57,7 +58,6 @@ RDEPEND="
 	>=sys-libs/libselinux-1.32
 	>=app-eselect/eselect-opengl-1.0.7
 	app-eselect/eselect-opencl
-	dev-libs/openssl[${MULTILIB_USEDEP}]
 	dev-util/cunit
 	media-libs/libomxil-bellagio
 	>=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
@@ -98,7 +98,7 @@ REQUIRED_USE="|| ( pal orca )" #incomplete
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	einfo "Please download"
-	einfo "  - ${PN}_${PV}.tar.xz"
+	einfo "  - ${FN}"
 	einfo "from ${HOMEPAGE} and place them in ${distdir}"
 }
 
