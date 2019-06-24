@@ -129,36 +129,6 @@ pkg_setup() {
 		einfo "OpenCL orca is being used. You are enabling the older legacy OpenCL driver implementation used by older fglrx."
 	fi
 
-	if use freesync ; then
-		if kernel_is -ge 4 15 0 && kernel_is -lt 4 16 0 ; then
-			CONFIG_CHECK="~DRM_AMD_DC"
-			if ! use vega ; then
-				CONFIG_CHECK+=" ~DRM_AMD_DC_PRE_VEGA"
-			fi
-
-			ERROR_KERNEL_DRM_AMD_DC="DRM_AMD_DC which is required for FreeSync to work"
-			ERROR_KERNEL_DRM_AMD_DC_PRE_VEGA="DRM_AMD_DC_PRE_VEGA which is required for pre Vega cards for FreeSync to work"
-
-			check_extra_config
-		elif kernel_is -ge 4 17 0; then
-			CONFIG_CHECK="~DRM_AMD_DC"
-
-			ERROR_KERNEL_DRM_AMD_DC="DRM_AMD_DC which is required for FreeSync to work"
-
-			check_extra_config
-		else
-			eerror "Kernel version not supported for FreeSync."
-			die
-		fi
-
-		einfo "Checking kernel is properly patched with freesync_capable."
-		grep -r -e "\"freesync_capable\"" ${EROOT}/usr/src/linux/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c >/dev/null
-		if [[ "$?" != "0" ]] ; then
-			einfo "Use the ot-sources with the amd use flag from the oiledmachine-overlay or the >=git-sources-5.0_rc1 ."
-			die
-		fi
-	fi
-
 	if use hsa ; then
 		# remove if it works and been tested on hsa hardware
 		eerror "hsa not supported and not tested"
