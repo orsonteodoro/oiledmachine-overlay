@@ -13,7 +13,7 @@ inherit eutils desktop electron-app
 
 DESCRIPTION="A Github pull request monitoring tool for Mac and Linux"
 HOMEPAGE="https://github.com/rkclark/pullp"
-SRC_URI="https://github.com/rkclark/pullp/archive/v2.1.0.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/rkclark/pullp/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MIT"
 SLOT="0"
