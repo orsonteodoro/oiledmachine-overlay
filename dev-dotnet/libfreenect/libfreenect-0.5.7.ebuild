@@ -20,7 +20,7 @@ SRC_URI="https://github.com/OpenKinect/${LIBNAME}/archive/v${PV}.tar.gz -> ${LIB
 PYTHON_DEPEND="!bindist? 2"
 
 COMMON_DEP=">=dev-lang/mono-4
-            dev-libs/libfreenect"
+            =dev-libs/libfreenect-${PV}"
 
 RDEPEND="${COMMON_DEP}"
 DEPEND="${COMMON_DEP}"
@@ -28,18 +28,29 @@ S="${WORKDIR}/${LIBNAME}-${PV}"
 SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_prepare() {
-	sed -i -e "s|\"freenect\"|\"libfreenect.dll\"|g" wrappers/csharp/src/lib/KinectNative.cs
+	sed -i -e "s|\"freenect\"|\"libfreenect.dll\"|g" wrappers/csharp/src/lib/KinectNative.cs || die
 
 	egenkey
+
+	sed -i -r -e "s|using System.Runtime.CompilerServices;|using System.Runtime.CompilerServices;\n[assembly:AssemblyKeyFileAttribute(\"${PN}-keypair.snk\")]|" wrappers/csharp/src/test/ConsoleTest/AssemblyInfo.cs || die
+	sed -i -r -e "s|using System.Runtime.CompilerServices;|using System.Runtime.CompilerServices;\n[assembly:AssemblyKeyFileAttribute(\"${PN}-keypair.snk\")]|" wrappers/csharp/src/lib/AssemblyInfo.cs || die
+
+	cp -a ${PN}-keypair.snk wrappers/csharp/src/lib/VS2010/ || die
 
 	eapply_user
 }
 
 src_compile() {
+	mydebug="Release"
+	if use debug; then
+		mydebug="Debug"
+	fi
+
+	addpredict /etc/mono/registry/last-btime
 	cd "${S}/wrappers/csharp/src/lib/VS2010"
 
         einfo "Building solution"
-        exbuild_strong "freenectdotnet.sln" || die
+        exbuild /p:Configuration=${mydebug} "freenectdotnet.sln" || die
 }
 
 src_install() {

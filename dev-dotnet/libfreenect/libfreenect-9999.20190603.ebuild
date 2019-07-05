@@ -14,8 +14,9 @@ KEYWORDS="~amd64 ~x86"
 USE_DOTNET="net45"
 IUSE="${USE_DOTNET} debug +gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
-LIBNAME="libfreenect"
-SRC_URI="https://github.com/OpenKinect/${LIBNAME}/archive/v${PV}.tar.gz -> ${LIBNAME}-${PV}.tar.gz"
+COMMIT="7cb0d3c3c43c9cc25a39492668858fd554c46e99"
+SRC_URI="https://github.com/OpenKinect/${PN}/archive/${COMMIT}.zip -> ${PN}-${PV}.zip"
+S="${WORKDIR}/${PN}-${COMMIT}"
 
 PYTHON_DEPEND="!bindist? 2"
 
@@ -24,7 +25,6 @@ COMMON_DEP=">=dev-lang/mono-4
 
 RDEPEND="${COMMON_DEP}"
 DEPEND="${COMMON_DEP}"
-S="${WORKDIR}/${LIBNAME}-${PV}"
 SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_prepare() {
