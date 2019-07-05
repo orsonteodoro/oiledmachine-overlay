@@ -15,7 +15,8 @@ LICENSE="Apache-2.0 GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="bindist +c_sync +cpp doc examples fakenect opencv openni2 python"
-SRC_URI="https://github.com/OpenKinect/libfreenect/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+COMMIT="7cb0d3c3c43c9cc25a39492668858fd554c46e99"
+SRC_URI="https://github.com/OpenKinect/libfreenect/archive/${COMMIT}.zip -> ${P}.zip"
 
 PYTHON_DEPEND="!bindist? 2"
 
@@ -33,7 +34,7 @@ DEPEND="${COMMON_DEP}
          virtual/pkgconfig
          doc? ( app-doc/doxygen )
          python? ( dev-python/cython )"
-
+S="${WORKDIR}/${PN}-${COMMIT}"
 
 src_configure() {
     local mycmakeargs=(
