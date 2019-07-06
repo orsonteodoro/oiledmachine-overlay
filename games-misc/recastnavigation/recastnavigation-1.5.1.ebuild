@@ -1,6 +1,5 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 inherit eutils
@@ -11,7 +10,7 @@ LICENSE="zlib"
 SLOT="0"
 KEYWORDS="amd64"
 DEPEND="
-	dev-util/premake:4
+	dev-util/premake:5
 "
 RDEPEND="${DEPEND}"
 IUSE="static debug"

@@ -2,22 +2,34 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-inherit eutils
+inherit eutils toolchain-funcs versionator
 
 DESCRIPTION="Recast & Detour is a navigation-mesh toolset for games"
 HOMEPAGE="https://github.com/memononen/recastnavigation"
 LICENSE="zlib"
 SLOT="0"
 KEYWORDS="amd64"
+CDEPEND="media-libs/libsdl2"
 DEPEND="
 	dev-util/premake:5
+	>=sys-devel/gcc-8.0
+	${CDEPEND}
 "
-RDEPEND="${DEPEND}"
+RDEPEND="${DEPEND}
+	 ${CDEPEND}
+"
 IUSE="static debug"
-COMMIT="5d4186046c8b6aec6a0784f07fb1fe5c771e6b98"
+COMMIT="c40188c796f089f89a42e0b939d934178dbcfc5c"
 SRC_URI="https://github.com/recastnavigation/recastnavigation/archive/${COMMIT}.zip -> ${P}.zip"
 
 S="${WORKDIR}/${PN}-${COMMIT}"
+
+pkg_setup() {
+	GCC_V=$(gcc-fullversion)
+	if ! $(version_is_at_least "8.0.0" ${GCC_V}) ; then
+		die "You need at least gcc 8.0.0 to compile."
+	fi
+}
 
 src_compile() {
 	BUILD_TYPE="release"
