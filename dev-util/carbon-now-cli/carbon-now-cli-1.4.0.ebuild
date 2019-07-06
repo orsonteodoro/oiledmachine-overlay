@@ -19,7 +19,9 @@ SRC_URI="https://github.com/mixn/carbon-now-cli/archive/v${PV}.tar.gz -> ${P}.ta
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE=""
+IUSE="clipboard"
+
+RDEPEND="clipboard? ( x11-misc/xclip )"
 
 S="${WORKDIR}/${PN}-${PV}"
 
