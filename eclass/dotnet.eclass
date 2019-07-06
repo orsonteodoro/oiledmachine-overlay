@@ -128,6 +128,7 @@ exbuild() {
 # @FUNCTION: exbuild_strong
 # @DESCRIPTION: run xbuild with default key signing
 exbuild_strong() {
+	addpredict /etc/mono/registry/last-btime
 	# http://stackoverflow.com/questions/7903321/only-sign-assemblies-with-strong-name-during-release-build
 	if use gac; then
 		if [[ -z ${SNK_FILENAME} ]]; then
