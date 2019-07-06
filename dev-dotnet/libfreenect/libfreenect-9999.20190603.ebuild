@@ -46,7 +46,6 @@ src_compile() {
 		mydebug="Debug"
 	fi
 
-	addpredict /etc/mono/registry/last-btime
 	cd "${S}/wrappers/csharp/src/lib/VS2010"
 
         einfo "Building solution"
