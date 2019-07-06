@@ -176,5 +176,5 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-util/geeks-diary | This is an Electron based diary / notetaker for programmers.
 | dev-util/lepton | This is a programmer reusable code snipplet manager based on Electron and able to sync with Gist.
 | app-editors/epic-journal | This is an Electron based encrypted journal.
-
+| dev-util/carbon-now-cli | This is a command line npm app that will create prettified code screenshots to share using the https://carbon.now.sh/ service.
 
