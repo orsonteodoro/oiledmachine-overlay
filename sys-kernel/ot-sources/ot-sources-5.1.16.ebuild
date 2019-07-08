@@ -59,7 +59,7 @@ PATCH_GP_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
 PATCH_GRAYSKY_COMMIT="87168bfa27b782e1c9435ba28ebe3987ddea8d30"
 PATCH_PDS_MAJOR_MINOR="5.0"
 PATCH_PDS_VER="099o"
-PATCH_BFQ_VER="5.0"
+PATCH_BFQ_VER="5.1"
 PATCH_TRESOR_VER="3.18.5"
 PATCH_BMQ_VER="096"
 PATCH_BMQ_MAJOR_MINOR="5.1"
@@ -71,8 +71,8 @@ DISABLE_DEBUG_V="1.1"
 AMD_STAGING_DRM_NEXT_LATEST="amd-staging-drm-next"
 AMD_STAGING_DRM_NEXT_DIR="amd-staging-drm-next"
 
-AMD_STAGING_DRM_NEXT_SNAPSHOT="5a48eec421ea938a08cc1fd2ef36888bfe4aa709" # latest commit I tested
-# 2019-07-02 drm/amdgpu/display: fix interrupt client id for navi
+AMD_STAGING_DRM_NEXT_SNAPSHOT="c34ab8648aa86df9fea617ab0fd32ea371fcab64" # latest commit I tested
+# 2019-07-03 drm/amdgpu: consolidate navi14 IP init
 AMD_STAGING_DRM_NEXT_STABLE="33e7fe16c02688478346e33f056f0a1f77fcedb1" # corresponds to 19.20 picked commit from latest amd-staging-drm-next
 # 2019-06-03 drm/amd/display: Don't set mode_changed=false if the stream was removed
 
@@ -130,7 +130,7 @@ REQUIRED_USE="^^ ( muqss pds cfs bmq )
 	     rock-milestone? ( !rock-latest !rock-snapshot )"
 
 # no released patch for 5.1 yet
-REQUIRED_USE+=" !pds !bfq"
+REQUIRED_USE+=" !pds"
 
 #K_WANT_GENPATCHES="base extras experimental"
 K_SECURITY_UNSUPPORTED="1"
@@ -560,7 +560,8 @@ function fetch_amd_staging_drm_next_commits() {
 		_get_amd_staging_drm_next_commit 3 3e70b04ab7874670e65c688f89ce210a6a482de6 # 2019-02-19 drm/amdgpu: use HMM callback to replace mmu notifier
 		_get_amd_staging_drm_next_commit 4 02205685e319bf6507feb95b1ee2ce3fb51fa60d # 2019-02-20 drm/amd/display: PPLIB Hookup
 		_get_amd_staging_drm_next_commit 5 1c033d9f9bcb7019fb8d2c57e57c4c0c09188c4b # 2019-02-19 drm/amdkfd: avoid HMM change cause circular lock
-		n="6"
+		_get_amd_staging_drm_next_commit 6 e8074f75f4449b9f9315f3a81d5d72425fba0a8c # 2019-03-14 drm/v3d: Fix calling drm_sched_resubmit_jobs for same sched.
+		n="7"
 	else
 		n="1"
 	fi
@@ -573,6 +574,15 @@ function fetch_amd_staging_drm_next_commits() {
 	        git format-patch --stdout -1 $l > "${T}"/amd-staging-drm-next-patches/${pn}-$l.patch
 	        n=$((n+1))
 	done
+	#bef7f3fbb1ae4f48917559de8870506a653dd7ce
+
+	# ignore missing commit
+	# ffae3e 2019-05-24 drm/scheduler: rework job destruction
+	local idx=$(get_patch_index "amd-staging-drm-next-patches" "ffae3e510d66ba854289f2cdff8a119ecd7f4ded")
+	printf -v pidx "%06d" ${idx}
+	[ ! -e ${T}/amd-staging-drm-next-patches/${pidx}-ffae3e510d66ba854289f2cdff8a119ecd7f4ded.patch ] && die "can't find"
+	filterdiff -x */lima_sched.c ${T}/amd-staging-drm-next-patches/${pidx}-ffae3e510d66ba854289f2cdff8a119ecd7f4ded.patch > ${T}/amd-staging-drm-next-patches/${pidx}-ffae3e510d66ba854289f2cdff8a119ecd7f4ded.patch.1 || die
+	mv ${T}/amd-staging-drm-next-patches/${pidx}-ffae3e510d66ba854289f2cdff8a119ecd7f4ded.patch{.1,} || die
 }
 
 function _get_rock_commit()
@@ -652,9 +662,10 @@ function move_rock_commit() {
 	einfo "Moved to ${idx}${postfix_after}-${commit}.patch"
 }
 
-function get_rock_patch_index() {
-	local commit="${1}"
-	d="${T}/rock-patches"
+function get_patch_index() {
+	local patchset_name="${1}"
+	local commit="${2}"
+	d="${T}/${patchset_name}"
 	local idx
 	local f
 	f=$(basename $(ls "${d}"/*${commit}*))
@@ -994,8 +1005,30 @@ function apply_amdgpu() {
 				esac
 			else
 				case "${l}" in
-					*0921c41e19028314830b33daa681e46b46477c5e*)
+					*0921c41e19028314830b33daa681e46b46477c5e*|\
+					*915d3eecfa23693bac9e54cdacf84fb4efdcc5c4*)
 						# 0921c doesn't exist in final
+						# 915d3 already applied
+						;;
+					*8628d02f60d4a568d02fc12a26273a55f7718ec0*)
+						if is_rock ; then
+							# fixme
+							die "${l} need intervention patch"
+							_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
+						else
+							_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-8628d02f60d4a568d02fc12a26273a55f7718ec0-fix.patch"
+							_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
+						fi
+						;;
+					*2c5a51f57042f9d686d72b96a41eb81dbfb86a64*)
+						if is_rock ; then
+							# fixme
+							die "${l} need intervention patch"
+							_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
+						else
+							_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-2c5a51f57042f9d686d72b96a41eb81dbfb86a64-fix.patch"
+							_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
+						fi
 						;;
 					*baf2289cda05bf9c8b2a156a87a11f703159bec9*)
 						if is_rock ; then

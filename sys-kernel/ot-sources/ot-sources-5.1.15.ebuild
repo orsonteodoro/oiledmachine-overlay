@@ -10,7 +10,7 @@
 # PDS CPU Scheduler:            http://cchalpha.blogspot.com/search/label/PDS
 # BMQ CPU Scheduler:		https://cchalpha.blogspot.com/search/label/BMQ
 # genpatches:                   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
-# BFQ updates:                  https://github.com/torvalds/linux/compare/v5.0...zen-kernel:5.0/bfq-backports
+# BFQ updates:                  https://github.com/torvalds/linux/compare/v5.1...zen-kernel:5.1/bfq-backports
 
 EAPI="6"
 ETYPE="sources"
@@ -42,7 +42,7 @@ PATCH_GP_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
 PATCH_GRAYSKY_COMMIT="87168bfa27b782e1c9435ba28ebe3987ddea8d30"
 PATCH_PDS_MAJOR_MINOR="5.0"
 PATCH_PDS_VER="099o"
-PATCH_BFQ_VER="5.0"
+PATCH_BFQ_VER="5.1"
 PATCH_BMQ_VER="096"
 PATCH_BMQ_MAJOR_MINOR="5.1"
 DISABLE_DEBUG_V="1.1"
@@ -51,7 +51,7 @@ IUSE="bfq bmq bmq-quick-fix +cfs disable_debug +graysky2 muqss +o3 pds uksm -zen
 REQUIRED_USE="^^ ( muqss pds cfs bmq )"
 
 # no released patch for 5.1 yet
-REQUIRED_USE+=" !pds !bfq"
+REQUIRED_USE+=" !pds"
 
 #K_WANT_GENPATCHES="base extras experimental"
 K_SECURITY_UNSUPPORTED="1"
@@ -63,8 +63,7 @@ detect_version
 detect_arch
 
 #DEPEND="deblob? ( ${PYTHON_DEPS} )"
-DEPEND="dev-util/patchutils
-	"
+DEPEND="dev-util/patchutils"
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
