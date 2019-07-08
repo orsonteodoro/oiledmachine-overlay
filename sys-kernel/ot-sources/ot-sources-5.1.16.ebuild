@@ -293,10 +293,6 @@ pkg_setup() {
 		einfo "for the exception.  For supported CPUs see"
 		einfo "https://rocm.github.io/hardware.html"
 	fi
-
-	if is_amd_staging_drm_next ; then
-		ewarn "Patching with amd-staging-drm-next is currently broken.  For ebuild devs only."
-	fi
 }
 
 function _dpatch() {
