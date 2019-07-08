@@ -4,8 +4,7 @@ sci-misc/setiathome-gpu astropulse
 sci-misc/astropulse-gpu classic
 
 # fixme: broken runtime test
-sys-kernel/ot-sources tresor
+#sys-kernel/ot-sources tresor
 
 # fixme: mispatch, patching needs rework, git update is broken and messed up
-sys-kernel/ot-sources amd-staging-drm-next-latest amd-staging-drm-next-milestone amd-staging-drm-next-snapshot
-sys-kernel/ot-sources rock-latest rock-milestone rock-snapshot
+#sys-kernel/ot-sources rock-latest rock-milestone rock-snapshot
