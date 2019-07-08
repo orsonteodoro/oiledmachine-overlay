@@ -6,10 +6,12 @@ inherit eutils cmake-utils dotnet gac multilib-minimal multilib-build versionato
 
 DESCRIPTION=".NET wrapper for the Bullet physics library using Platform Invoke"
 HOMEPAGE="http://andrestraks.github.io/BulletSharp/"
-MY_PV="$(get_version_component_range 1-2)"
-LIBBULLETC_PV="$(get_version_component_range 3-4)"
-SRC_URI="https://github.com/AndresTraks/${PN}/archive/${MY_PV}.tar.gz -> ${PN}-${MY_PV}.tar.gz
-         https://github.com/bulletphysics/bullet3/archive/${LIBBULLETC_PV}.tar.gz -> bullet-${LIBBULLETC_PV}.tar.gz"
+LIBBULLETC_PV="9999.20190702"
+BULLET_COMMIT="113c2a83ded447159c30bcb2a2e353b154c3879d"
+COMMIT="23159ab02e69cea88709d8cd383aef86d56329f8"
+MY_PV="${COMMIT}"
+SRC_URI="https://github.com/AndresTraks/BulletSharpPInvoke/archive/${COMMIT}.zip -> ${PN}-${MY_PV}.zip
+	 https://github.com/bulletphysics/bullet3/archive/${BULLET_COMMIT}.zip -> bullet-${LIBBULLETC_PV}.zip"
 
 LICENSE="MIT zlib"
 SLOT="0/${MY_PV}"
@@ -29,22 +31,22 @@ SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_unpack() {
 	unpack ${A}
-	mv bullet3-${LIBBULLETC_PV} bullet
+	mv bullet-${COMMIT} bullet
 }
 
 src_prepare() {
-	sed -i -e "s|\"libbulletc\"|\"libbulletc.dll\"|g" BulletSharpPInvoke/Native.cs || die
+	sed -i -e "s|\"libbulletc\"|\"libbulletc.dll\"|g" BulletSharp/Native.cs || die
 
 	egenkey
 
-	sed -i -e "s|<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>|<TargetFrameworkVersion>${EBF}</TargetFrameworkVersion>|" BulletSharpPInvoke/BulletSharpPInvoke.csproj || die
+	sed -i -e "s|<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>|<TargetFrameworkVersion>${EBF}</TargetFrameworkVersion>|" BulletSharp/BulletSharp.csproj || die
 
 	sed -i -e 's|ADD_SUBDIRECTORY\(test\)||g' libbulletc/CMakeLists.txt || die
 
 	S="${S_BASE}/libbulletc"
 
-	cp ${PN}-keypair.snk BulletSharpPInvoke/ || die
-	sed -i -r -e "s|using System.Runtime.InteropServices;|using System.Runtime.InteropServices;\n[assembly:AssemblyKeyFileAttribute(\"${PN}-keypair.snk\")]|" BulletSharpPInvoke/Properties/AssemblyInfo.cs || die
+	cp ${PN}-keypair.snk BulletSharp/ || die
+	sed -i -r -e "s|using System.Runtime.InteropServices;|using System.Runtime.InteropServices;\n[assembly:AssemblyKeyFileAttribute(\"${PN}-keypair.snk\")]|" BulletSharp/Properties/AssemblyInfo.cs || die
 
 	cmake-utils_src_prepare
 	multilib_copy_sources
@@ -67,9 +69,9 @@ multilib_src_compile() {
 	cmake-utils_src_compile
 
 	# Build C# wrapper
-	cd "${S_BASE}"/BulletSharpPInvoke || die
+	cd "${S_BASE}"/BulletSharp || die
 	addpredict /etc/mono/registry
-	exbuild BulletSharpPInvoke.sln /p:Configuration=${mydebug}  || die
+	exbuild BulletSharp.sln /p:Configuration=${mydebug}  || die
 }
 
 multilib_src_install() {
@@ -88,14 +90,14 @@ multilib_src_install() {
 	for x in ${USE_DOTNET} ; do
                 FW_UPPER=${x:3:1}
                 FW_LOWER=${x:4:1}
-		egacinstall "${S_BASE}/BulletSharpPInvoke/bin/${mydebug}/BulletSharp.dll"
+		egacinstall "${S_BASE}/BulletSharp/bin/${mydebug}/BulletSharp.dll"
         done
 
 	eend
 
 	if use developer ; then
 		insinto "/usr/$(get_libdir)/mono/${PN}"
-		doins BulletSharpPInvoke/bin/${mydebug}/BulletSharp.dll.mdb
+		doins BulletSharp/bin/${mydebug}/BulletSharp.dll.mdb
 	fi
 
         FILES=$(find "${D}" -name "BulletSharp.dll")
