@@ -29,7 +29,7 @@ SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_unpack() {
 	unpack ${A}
-	mv bullet3-${LIBBULLETC_PV} bullet
+	mv bullet3-${LIBBULLETC_PV} bullet || die
 }
 
 src_prepare() {

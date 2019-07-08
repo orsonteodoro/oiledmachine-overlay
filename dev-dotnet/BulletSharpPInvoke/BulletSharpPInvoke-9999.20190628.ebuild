@@ -31,7 +31,7 @@ SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_unpack() {
 	unpack ${A}
-	mv bullet-${COMMIT} bullet
+	mv bullet3-${BULLET_COMMIT} bullet || die
 }
 
 src_prepare() {
