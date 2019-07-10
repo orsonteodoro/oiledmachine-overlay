@@ -15,7 +15,7 @@ LICENSE="MIT"
 
 IUSE="tests debug"
 
-DOTNET_CLI_COMMIT="8757db13ec59d17f1e8c5f1e54dd10c7faf0befc" # exactly ${PV}
+DOTNET_CLI_COMMIT="33ed5b90ce6385c4bc6ee5ae4f79e4e62ac51c79" # exactly ${PV}
 SRC_URI=""
 RESTRICT="fetch"
 
