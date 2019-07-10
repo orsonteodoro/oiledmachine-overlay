@@ -14,7 +14,7 @@ LICENSE="MIT"
 
 IUSE="tests debug"
 
-ASPNETCORE_COMMIT="33c2d01092d9a1b7a583fe99a50b15686e2b7de9" # exactly ${PV}
+ASPNETCORE_COMMIT="e7f262e33108e92fc8805b925cc04b07d254118b" # exactly ${PV}
 SRC_URI=""
 RESTRICT="fetch"
 REQUIRED_USE="!tests" # broken
@@ -52,10 +52,10 @@ ASPNETCORE_S="${S}/AspNetCore-${ASPNETCORE_COMMIT}"
 pkg_setup() {
 	ewarn "This ebuild is still under development"
 	local free_vmem=$(free -th | tail -n1 | grep Total | tr -s ' ' | cut -f2 -d" " | sed -e "s|Gi||")
-	if (( $free_vmem < 11 )) ; then
-		# fix for: dotnet failed with exit code 134
-		die "You need 11 GiB total virtual memory to compile asp support."
-	fi
+#	if (( $(echo "$free_vmem < 11" | bc -l) )) ; then
+#		# fix for: dotnet failed with exit code 134
+#		die "You need 11 GiB total virtual memory to compile asp support."
+#	fi
 }
 
 pkg_pretend() {
@@ -127,13 +127,13 @@ _src_prepare() {
 	done
 
 	if ! use tests ; then
-		sed -i -e "s|-Werror||g" "${ASPNETCORE_S}"/src/SignalR/clients/cpp/test/gtest-1.8.0/xcode/Config/General.xcconfig
+		sed -i -e "s|-Werror||g" "${ASPNETCORE_S}"/src/submodules/googletest/googletest/xcode/Config/General.xcconfig
 	fi
 
 	cd "${ASPNETCORE_S}"
-	patch -p1 -i "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-1.patch" || die
-	patch -p1 -i "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-2.patch" || die
-	patch -p1 -i "${FILESDIR}/aspnetcore-2.1.9-skip-tests-1.patch" || die
+	eapply "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-1.patch" || die
+	eapply "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-2.patch" || die
+	eapply "${FILESDIR}/aspnetcore-2.1.9-skip-tests-1.patch" || die
 	rm src/Razor/CodeAnalysis.Razor/src/TextChangeExtensions.cs || die # Missing TextChange
 
 	mv src/SignalR "${T}" || die
