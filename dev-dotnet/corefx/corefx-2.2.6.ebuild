@@ -7,7 +7,7 @@
 EAPI="6"
 
 CORE_V=${PV}
-DOTNETCLI_V=2.1.300
+DOTNETCLI_V=2.2.108
 
 DESCRIPTION="CoreFX is the foundational class libraries for .NET Core. It includes types for collections, file systems, console, JSON, XML, async and many others."
 HOMEPAGE="https://github.com/dotnet/corefx"
