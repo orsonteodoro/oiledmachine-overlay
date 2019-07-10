@@ -7,7 +7,7 @@
 EAPI="6"
 
 CORE_V=${PV}
-DOTNETCLI_V=2.1.300
+DOTNETCLI_V=2.2.108
 
 DESCRIPTION="Installer packages for the .NET Core runtime and libraries"
 HOMEPAGE="https://github.com/dotnet/core-setup"
