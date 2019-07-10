@@ -7,7 +7,7 @@
 EAPI="6"
 
 CORE_V=${PV}
-DOTNETCLI_V=2.1.300
+DOTNETCLI_V=2.2.108
 
 DESCRIPTION="CoreCLR is the runtime for .NET Core. It includes the garbage collector, JIT compiler, primitive data types and low-level classes."
 HOMEPAGE="https://github.com/dotnet/coreclr"
