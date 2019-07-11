@@ -24,7 +24,6 @@
 
 # Parts that still need to be developed:
 # TRESOR - incomplete API
-# amd-staging-drm-next - forward porting incomplete
 # ROCK-Kernel-Driver - forward porting incomplete
 
 EAPI="6"
