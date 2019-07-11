@@ -978,6 +978,10 @@ function apply_amdgpu() {
 			echo $(patch --dry-run -p1 -F 100 -i "${T}/amd-staging-drm-next-patches/${l}") | grep "FAILED at"
 			if [[ "$?" == "1" ]] ; then
 				case "${l}" in
+					*e49f69363adf8920883fff7e8ffecb802d897c6b*)
+						# already partially applied but one chunk didn't apply
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-e49f69363adf8920883fff7e8ffecb802d897c6b-fix.patch"
+						;;
 					*f55be0be5b7296e73f1634e2839a1953dc12d11e*)
 						# fix mispatch
 						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
@@ -1018,6 +1022,10 @@ function apply_amdgpu() {
 				esac
 			else
 				case "${l}" in
+					*1bff7f6c679fb605d2d3fae77c9dd8d4cbad92b9*)
+						# 1 chunk disappears, in latest.  ignore it.
+						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
+						;;
 					*0921c41e19028314830b33daa681e46b46477c5e*|\
 					*915d3eecfa23693bac9e54cdacf84fb4efdcc5c4*)
 						# 0921c doesn't exist in final
@@ -1260,6 +1268,8 @@ function apply_amdgpu() {
 	if is_amd_staging_drm_next ; then
 		# c7b0f 2019-01-31 [PATCH] drm/amd/display: Add disable triple buffering DC debug option
 		_dpatch "${PATCH_OPS}" "${FILESDIR}"/amd-staging-drm-next-c7b0f71237af7e4ceb7bf723cf96b87178c00e54-mispatch.patch
+		_dpatch "${PATCH_OPS}" "${FILESDIR}"/amd-staging-drm-next-c238bfe0be9ef7420f7669a69e27c8c8f4d8a568-dedupe.patch
+		die "check"
 	fi
 }
 

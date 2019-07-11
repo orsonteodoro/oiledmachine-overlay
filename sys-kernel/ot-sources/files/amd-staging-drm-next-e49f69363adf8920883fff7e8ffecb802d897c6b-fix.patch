@@ -1,0 +1,11 @@
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c.orig	2019-07-10 21:50:10.894309629 -0700
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c	2019-07-10 22:08:30.377372621 -0700
+@@ -1693,7 +1693,7 @@ void decide_link_settings(struct dc_stre
+ 	struct dc_link *link;
+ 	uint32_t req_bw;
+ 
+-	req_bw = bandwidth_in_kbps_from_timing(&stream->timing);
++	req_bw = dc_bandwidth_in_kbps_from_timing(&stream->timing);
+ 
+ 	link = stream->link;
+ 
