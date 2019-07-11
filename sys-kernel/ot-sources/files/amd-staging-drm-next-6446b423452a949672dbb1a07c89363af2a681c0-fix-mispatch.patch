@@ -1,0 +1,10 @@
+--- a/drivers/gpu/drm/amd/display/dc/dc.h.orig	2019-07-10 16:52:41.490148185 -0700
++++ b/drivers/gpu/drm/amd/display/dc/dc.h	2019-07-10 16:54:04.873378322 -0700
+@@ -369,7 +369,6 @@ struct dc_debug_options {
+ 	bool disable_fec;
+ #endif
+ };
+-	struct dc_bw_validation_profile bw_val_profile;
+ 
+ struct dc_debug_data {
+ 	uint32_t ltFailCount;
