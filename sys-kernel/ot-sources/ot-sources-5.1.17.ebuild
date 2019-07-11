@@ -293,10 +293,6 @@ pkg_setup() {
 		einfo "for the exception.  For supported CPUs see"
 		einfo "https://rocm.github.io/hardware.html"
 	fi
-
-	if is_amd_staging_drm_next ; then
-		ewarn "Compiling with amd-staging-drm-next is currently broken.  For ebuild devs only."
-	fi
 }
 
 function _dpatch() {
@@ -1269,7 +1265,6 @@ function apply_amdgpu() {
 		# c7b0f 2019-01-31 [PATCH] drm/amd/display: Add disable triple buffering DC debug option
 		_dpatch "${PATCH_OPS}" "${FILESDIR}"/amd-staging-drm-next-c7b0f71237af7e4ceb7bf723cf96b87178c00e54-mispatch.patch
 		_dpatch "${PATCH_OPS}" "${FILESDIR}"/amd-staging-drm-next-c238bfe0be9ef7420f7669a69e27c8c8f4d8a568-dedupe.patch
-		die "check"
 	fi
 }
 
