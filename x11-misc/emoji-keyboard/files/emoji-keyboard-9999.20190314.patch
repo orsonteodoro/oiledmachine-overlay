@@ -1,0 +1,32 @@
+--- a/lib/emoji_shared.py.orig	2018-03-14 01:37:02.000000000 -0700
++++ b/lib/emoji_shared.py	2019-07-12 21:37:43.396299868 -0700
+@@ -74,22 +74,6 @@ except (FileNotFoundError, ValueError):
+ keyboard_visible = False
+ search_visible = False
+ 
+-def check_wayland():
+-
+-	sessions = run(
+-		['loginctl', 'list-sessions'], stdout=PIPE, universal_newlines=True)
+-	current_user = getpass.getuser()
+-	current_user = current_user if current_user != 'root' else os.getlogin()
+-	for line in sessions.stdout.split('\n'):
+-		if current_user in line:
+-			session = line.split()[0]
+-	type_ = run(
+-		['loginctl', 'show-session', session, '-p', 'Type'],
+-		stdout=PIPE, universal_newlines=True)
+-	if type_.stdout == 'Type=x11\n':
+-		return False
+-	return True
+-
+ def get_keycode():
+ 
+ 	keymap = Gdk.Keymap.get_default()
+@@ -99,5 +83,5 @@ def get_keycode():
+ 	except IndexError:
+ 		return key_list[1][0].keycode
+ 
+-wayland = check_wayland()
++wayland = False
+ keycode = get_keycode()

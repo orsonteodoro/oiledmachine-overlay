@@ -7,7 +7,7 @@ PYTHON_COMPAT=( python3_5 python3_6 python3_7 )
 DISTUTILS_SINGLE_IMPL=1
 # gobject-introspection complains about multiple implementations
 
-inherit distutils-r1 eutils python-single-r1 linux-info user
+inherit distutils-r1 eutils linux-info user
 
 DESCRIPTION="Virtual keyboard-like emoji picker for Linux. "
 HOMEPAGE="https://github.com/OzymandiasTheGreat/emoji-keyboard"
@@ -15,8 +15,9 @@ HOMEPAGE="https://github.com/OzymandiasTheGreat/emoji-keyboard"
 EMOJITWO_COMMIT="b851e2070faf5c707d2e74988d425d4956c17187"
 NOTOEMOJI_COMMIT="09d8fd121a6d35081fdc31a540735c4a2f924356"
 TWEMOJI_COMMIT="2f786b03d0bc0944eb3b66850a805dcadd5f853d"
+COMMIT="afe17aa0577db78f119f5595d0582e805365db4b"
 
-SRC_URI="https://github.com/OzymandiasTheGreat/emoji-keyboard/archive/${PV}.tar.gz -> ${P}.tar.gz
+SRC_URI="https://github.com/OzymandiasTheGreat/emoji-keyboard/archive/${COMMIT}.zip -> ${P}.zip
 	 https://github.com/EmojiTwo/emojitwo/archive/${EMOJITWO_COMMIT}.zip -> emoji-keyboard-deps-emojitwo-9999.20171213.zip
          https://github.com/googlei18n/noto-emoji/archive/${NOTOEMOJI_COMMIT}.zip -> emoji-keyboard-deps-noto-emoji-9999.20171216.zip
 	 https://github.com/twitter/twemoji/archive/${TWEMOJI_COMMIT}.zip -> emoji-keyboard-deps-twemoji-9999.20171208.zip"
@@ -35,6 +36,7 @@ RDEPEND="dev-python/python-evdev[${PYTHON_USEDEP}]
 	 X? ( >=dev-python/python-xlib-0.19[${PYTHON_USEDEP}] )
 	 wayland? ( sys-apps/systemd )"
 DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
+S="${WORKDIR}/${PN}-${COMMIT}"
 
 pkg_setup() {
 	ewarn "You may need to \`xhost +\` if it complains about No protocol specified."
@@ -67,7 +69,7 @@ src_unpack() {
 
 python_prepare_all() {
 	if ! use wayland ; then
-		epatch "${FILESDIR}/emoji-keyboard-2.3.0-no-wayland.patch"
+		epatch "${FILESDIR}/emoji-keyboard-9999.20190314.patch"
 	fi
 
 	einfo "Updating emojis please wait..."
