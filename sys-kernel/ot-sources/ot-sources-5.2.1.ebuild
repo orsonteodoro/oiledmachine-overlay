@@ -10,7 +10,7 @@
 # PDS CPU Scheduler:            http://cchalpha.blogspot.com/search/label/PDS
 # BMQ CPU Scheduler:		https://cchalpha.blogspot.com/search/label/BMQ
 # genpatches:                   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
-# BFQ updates:                  https://github.com/torvalds/linux/compare/v5.0...zen-kernel:5.0/bfq-backports
+# BFQ updates:                  https://github.com/torvalds/linux/compare/v5.2...zen-kernel:5.2/bfq-backports
 # amd-staging-drm-next:         https://cgit.freedesktop.org/~agd5f/linux/log/?h=amd-staging-drm-next
 # ROCK-Kernel-Driver:		https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/
 # TRESOR:			http://www1.informatik.uni-erlangen.de/tresor
@@ -42,7 +42,7 @@ HOMEPAGE="https://github.com/dolohow/uksm
 	  https://rocm.github.io/
           "
 
-K_MAJOR_MINOR="5.1"
+K_MAJOR_MINOR="5.2"
 K_PATCH_XV="5.x"
 EXTRAVERSION="-ot"
 PATCH_UKSM_VER="5.0"
@@ -53,38 +53,38 @@ PATCH_O3_RO_COMMIT="93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9"
 PATCH_CK_MAJOR="5.0"
 PATCH_CK_MAJOR_MINOR="5.1"
 PATCH_CK_REVISION="1"
-K_GENPATCHES_VER="17"
+K_GENPATCHES_VER="2"
 PATCH_GP_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
 PATCH_GRAYSKY_COMMIT="87168bfa27b782e1c9435ba28ebe3987ddea8d30"
 PATCH_PDS_MAJOR_MINOR="5.0"
 PATCH_PDS_VER="099o"
-PATCH_BFQ_VER="5.1"
+PATCH_BFQ_VER="5.2"
 PATCH_TRESOR_VER="3.18.5"
-PATCH_BMQ_VER="096"
-PATCH_BMQ_MAJOR_MINOR="5.1"
+PATCH_BMQ_VER="098"
+PATCH_BMQ_MAJOR_MINOR="5.2"
 DISABLE_DEBUG_V="1.1"
 
-# DC_VER 3.2.17 in drivers/gpu/drm/amd/display/dc/dc.h 2019-02-06
-# KMS_DRIVER 3.30.0 in drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c 2019-02-21
+# DC_VER 3.2.27 in drivers/gpu/drm/amd/display/dc/dc.h for ${PV}
+# KMS_DRIVER 3.32.0 in drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c for ${PV}
 
 AMD_STAGING_DRM_NEXT_LATEST="amd-staging-drm-next"
 AMD_STAGING_DRM_NEXT_DIR="amd-staging-drm-next"
 
-AMD_STAGING_DRM_NEXT_SNAPSHOT="eb57341c079630c8fd39f7e272b735a54bcbbdd7" # latest commit I tested
-# 2019-07-09 drm/amd/display: avoid 64-bit division
-AMD_STAGING_DRM_NEXT_STABLE="33e7fe16c02688478346e33f056f0a1f77fcedb1" # corresponds to 19.20 picked commit from latest amd-staging-drm-next
-# 2019-06-03 drm/amd/display: Don't set mode_changed=false if the stream was removed
+AMD_STAGING_DRM_NEXT_SNAPSHOT="412ef3eb157ed3096afb89597b1ca9afb9fd864b" # latest commit I tested which should be ideally head
+# 2019-07-12 drm/amd/powerplay: add pstate mclk(uclk) support for navi10
+AMD_STAGING_DRM_NEXT_STABLE="33e7fe16c02688478346e33f056f0a1f77fcedb1" # corresponds to 19.30 latest commit from amd-staging-drm-next
+# 2019-07-11 drm/amdgpu: support key database loading for navi10
 
 AMD_STAGING_DRM_NEXT_MILESTONE="e51341620d8958fdb950ff4e3513e8134b30c35b" # corresponds to the tagged commit:: 2019-06-10 drm/amd/display: 3.2.35
 
-# ROCK-Kernel-Driver DC_VER 3.2.31; amd-19.20 DC_VER 3.2.23; amd-staging-drm-next (head) DC_VER 3.2.35
 ROCK_DIR="ROCK-Kernel-Driver"
-#ROCK_BASE="11dd3bb45bce45103a79c9f044cfa74d33f898c9" # 2019-01-25 drm/amd/display: 3.2.17
-## KMS_DRIVER is 3.29.0 for DC_VER 3.2.17, pulling commits that 3.2.17 depend on
-ROCK_BASE="98c0172f3afd877554fde2db46f0541b1ab9e781" # 2019-01-25  drm/amd/display: Clear stream->mode_changed after commit
+# ROCK_BASE should match ${PV}'s DC_VER
+ROCK_BASE="be24e5a1149ddf4f4d97cafe5d82e868b2748e53" # 2019-04-08 drm/amd/display: 3.2.27
+## commit below pulls additional commits that 3.2.27 depends on that were missing
+#ROCK_BASE="" #
 # before .program_vline_interrupt = optc1_program_vline_interrupt,
-ROCK_SNAPSHOT="66bdd384710ba7fe63e36576f7f175b23b65011c" # corresponds to master snapshot at 2019-05-30 drm/amdgpu: Fix version-dependent use of kvmalloc/kvfree
-ROCK_MILESTONE="66bdd384710ba7fe63e36576f7f175b23b65011c" # corresponds to snapshot of roc-2.5.0
+ROCK_SNAPSHOT="b639e86df2f3456976ccbc089778245a705ff9ef" # corresponds to master snapshot at 2019-04-24 Revert "drm/amdgpu: re-enable retry faults"
+ROCK_MILESTONE="d529f2173a45572dd517a7f53fcfda82a10e5ac5" # corresponds to snapshot of roc-2.6.0
 ROCK_LATEST="master"
 
 # The intersection is defined to be the newer commit of rock_xxxx that intersects amd-staging-drm-next
@@ -92,13 +92,13 @@ ROCK_LATEST="master"
 # The intersection is not in perfect sync or easy to determine.  We will get the bulk of the amd-staging-drm-next and worry about the corner case which is the intersection.
 # The deviation from the intersection could be months.
 
-# Scan the git history logs (https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/commits/master/drivers/gpu/drm and https://cgit.freedesktop.org/~agd5f/linux/log/?h=amd-staging-drm-next) starting from ROCK-Kernel-Driver's
+# Scan the git history logs (https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/commits/master/ and https://cgit.freedesktop.org/~agd5f/linux/log/?h=amd-staging-drm-next) starting from ROCK-Kernel-Driver's
 # "drm/amd/display: 3.2.24" [same as min common DC_VER for amd-staging-drm-next (3.2.35) and ROCK-Kernel-Driver (3.2.24)] till you find the last sequential commits.  Get the commit hash from amd-staging-drm-next.
 # A 2019-03-15 drm/amd/display: fix odm output gamma programming
 
-# Scan the git history logs (https://github.com/torvalds/linux/commits/v5.1/drivers/gpu/drm and https://cgit.freedesktop.org/~agd5f/linux/log/?h=amd-staging-drm-next) starting from linus' tag of v5.1 for "drm/amd/display: 3.2.17" [same as the kernel's DC_VER]
-# till you find the last sequential commits before 3.2.18.  Get the commit hash from amd-staging-drm-next.
-# B 2019-03-05 drm/amd/display: PPLIB Hookup
+# Scan the git history logs (https://github.com/torvalds/linux/commits/v5.2/ and https://cgit.freedesktop.org/~agd5f/linux/log/?h=amd-staging-drm-next) starting from linus' tag of v5.2 for "drm/amd/display: 3.2.27" [same as the kernel's DC_VER]
+# till you find the last sequential commits before 3.2.28.  Get the commit hash from amd-staging-drm-next.
+# B 2019-05-16 Merge tag 'drm-next-2019-05-16' of git://anongit.freedesktop.org/drm/drm
 
 AMD_STAGING_LATEST_INTERSECTS_ROCK_LATEST="4f366c6bc25e666f237f1a336a31686a4490eef2" # corresponds to A
 AMD_STAGING_SNAPSHOT_INTERSECTS_ROCK_LATEST="4f366c6bc25e666f237f1a336a31686a4490eef2" # corresponds to A
@@ -112,7 +112,7 @@ AMD_STAGING_LATEST_INTERSECTS_ROCK_MILESTONE="4f366c6bc25e666f237f1a336a31686a44
 AMD_STAGING_SNAPSHOT_INTERSECTS_ROCK_MILESTONE="4f366c6bc25e666f237f1a336a31686a4490eef2" # corresponds to A
 AMD_STAGING_MILESTONE_INTERSECTS_ROCK_MILESTONE="4f366c6bc25e666f237f1a336a31686a4490eef2" # corresponds to A
 
-AMD_STAGING_INTERSECTS_5_X="0f1a6ad724cd5270c7c7d1bba98ac1222a0943b6" # corresponds to B
+AMD_STAGING_INTERSECTS_5_X="cc7ce90153e74f8266eefee9fba466faa1a2d5df" # corresponds to B
 
 IUSE="bfq bmq bmq-quick-fix amd-staging-drm-next-latest amd-staging-drm-next-snapshot amd-staging-drm-next-milestone +cfs disable_debug +graysky2 muqss +o3 pds rock-latest rock-snapshot rock-milestone uksm tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs -zentune"
 REQUIRED_USE="^^ ( muqss pds cfs bmq )
@@ -128,8 +128,8 @@ REQUIRED_USE="^^ ( muqss pds cfs bmq )
 	     rock-snapshot? ( !rock-latest !rock-milestone )
 	     rock-milestone? ( !rock-latest !rock-snapshot )"
 
-# no released patch for 5.1 yet
-REQUIRED_USE+=" !pds"
+# no released patch yet
+REQUIRED_USE+=" !pds !muqss"
 
 #K_WANT_GENPATCHES="base extras experimental"
 K_SECURITY_UNSUPPORTED="1"
@@ -294,7 +294,7 @@ pkg_setup() {
 	fi
 
 	if is_amd_staging_drm_next ; then
-		ewarn "Patching with amd-staging-drm-next is in testing it may cause runtime problems."
+		ewarn "Patching with amd-staging-drm-next is broken.  For ebuild devs only."
 	fi
 }
 
@@ -316,6 +316,7 @@ function apply_uksm() {
 	_tpatch "${PATCH_OPS} -N" "${DISTDIR}/${UKSM_FN}"
 	# the header patches fine with patch -N
 	_dpatch "${PATCH_OPS}" "${FILESDIR}/uksm-5.1-fixes.patch" # for reuse_ksm_page
+	_dpatch "${PATCH_OPS}" "${FILESDIR}/uksm-5.2-fixes.patch" # for mmu_notifier_range_init changes related to 6f4f13e8d9e27cefd2cd88dd4fd80aa6d68b9131 and ksm.c
 }
 
 function apply_bfq() {
@@ -556,11 +557,11 @@ function fetch_amd_staging_drm_next_commits() {
 		#_get_amd_staging_drm_next_commit 1 94a4ffd1d40b845dd19f9fdbb2cb6bf32de0946b # 2018-08-27 drm/amd/display: fix PIP bugs on Dal3
 		_get_amd_staging_drm_next_commit 1 5eb8c8c5871fa6f10236ecd67005bb0659c15d11 # 2019-02-19 drm/amdgpu: replace get_user_pages with HMM mirror helpers
 		_get_amd_staging_drm_next_commit 2 6b8f7e3dee7883084932bbdfce471a2960c6db5d # 2019-03-19 drm/amdgpu: fix HMM config dependency issue
-		_get_amd_staging_drm_next_commit 3 3e70b04ab7874670e65c688f89ce210a6a482de6 # 2019-02-19 drm/amdgpu: use HMM callback to replace mmu notifier
-		_get_amd_staging_drm_next_commit 4 02205685e319bf6507feb95b1ee2ce3fb51fa60d # 2019-02-20 drm/amd/display: PPLIB Hookup
-		_get_amd_staging_drm_next_commit 5 1c033d9f9bcb7019fb8d2c57e57c4c0c09188c4b # 2019-02-19 drm/amdkfd: avoid HMM change cause circular lock
-		_get_amd_staging_drm_next_commit 6 e8074f75f4449b9f9315f3a81d5d72425fba0a8c # 2019-03-14 drm/v3d: Fix calling drm_sched_resubmit_jobs for same sched.
-		n="7"
+		#_get_amd_staging_drm_next_commit 3 3e70b04ab7874670e65c688f89ce210a6a482de6 # 2019-02-19 drm/amdgpu: use HMM callback to replace mmu notifier # already pulled later
+		_get_amd_staging_drm_next_commit 3 02205685e319bf6507feb95b1ee2ce3fb51fa60d # 2019-02-20 drm/amd/display: PPLIB Hookup
+		_get_amd_staging_drm_next_commit 4 1c033d9f9bcb7019fb8d2c57e57c4c0c09188c4b # 2019-02-19 drm/amdkfd: avoid HMM change cause circular lock
+		_get_amd_staging_drm_next_commit 5 e8074f75f4449b9f9315f3a81d5d72425fba0a8c # 2019-03-14 drm/v3d: Fix calling drm_sched_resubmit_jobs for same sched.
+		n="6"
 	else
 		n="1"
 	fi
