@@ -420,11 +420,11 @@ function apply_bmq() {
 	cd "${S}"
 	einfo "Applying bmq"
 	_dpatch "${PATCH_OPS}" "${DISTDIR}/${BMQ_FN}"
-	if use bmq-quick-fix ; then
+	#if use bmq-quick-fix ; then
 		# Upstream tends to add quick fixes immediately after releases, so this use flag exists.
 		# See http://cchalpha.blogspot.com/2019/06/bmq-096-release.html?showComment=1560096391712#c540582441437278845 .
-		_dpatch "${PATCH_OPS}" "${DISTDIR}/${BMQ_QUICK_FIX_FN}"
-	fi
+		#_dpatch "${PATCH_OPS}" "${DISTDIR}/${BMQ_QUICK_FIX_FN}"
+	#fi
 }
 
 function apply_tresor() {
