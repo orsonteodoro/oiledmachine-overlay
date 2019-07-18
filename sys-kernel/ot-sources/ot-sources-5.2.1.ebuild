@@ -294,7 +294,7 @@ pkg_setup() {
 	fi
 
 	if is_amd_staging_drm_next ; then
-		ewarn "Patching with amd-staging-drm-next is broken.  For ebuild devs only."
+		ewarn "The amd-staging-drm-next use flag is in testing and could exhibit runtime problems."
 	fi
 }
 
