@@ -1,0 +1,25 @@
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c.orig	2019-07-17 18:06:54.141643569 -0700
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_pm.c	2019-07-17 19:19:55.820855381 -0700
+@@ -2760,22 +2760,6 @@ int amdgpu_pm_load_smu_firmware(struct a
+ 	return 0;
+ }
+ 
+-int amdgpu_pm_load_smu_firmware(struct amdgpu_device *adev, uint32_t *smu_version)
+-{
+-	int r;
+-
+-
+-	if (adev->powerplay.pp_funcs && adev->powerplay.pp_funcs->load_firmware) {
+-		r = adev->powerplay.pp_funcs->load_firmware(adev->powerplay.pp_handle);
+-		if (r) {
+-			pr_err("smu firmware loading failed\n");
+-			return r;
+-		}
+-		*smu_version = adev->pm.fw_version;
+-	}
+-	return 0;
+-}
+-
+ int amdgpu_pm_sysfs_init(struct amdgpu_device *adev)
+ {
+ 	struct pp_hwmgr *hwmgr = adev->powerplay.pp_handle;

@@ -558,7 +558,7 @@ function fetch_amd_staging_drm_next_commits() {
 		_get_amd_staging_drm_next_commit 1 5eb8c8c5871fa6f10236ecd67005bb0659c15d11 # 2019-02-19 drm/amdgpu: replace get_user_pages with HMM mirror helpers
 		_get_amd_staging_drm_next_commit 2 6b8f7e3dee7883084932bbdfce471a2960c6db5d # 2019-03-19 drm/amdgpu: fix HMM config dependency issue
 		#_get_amd_staging_drm_next_commit 3 3e70b04ab7874670e65c688f89ce210a6a482de6 # 2019-02-19 drm/amdgpu: use HMM callback to replace mmu notifier # already pulled later
-		_get_amd_staging_drm_next_commit 3 02205685e319bf6507feb95b1ee2ce3fb51fa60d # 2019-02-20 drm/amd/display: PPLIB Hookup
+		#_get_amd_staging_drm_next_commit 3 02205685e319bf6507feb95b1ee2ce3fb51fa60d # 2019-02-20 drm/amd/display: PPLIB Hookup # already applied
 		_get_amd_staging_drm_next_commit 4 1c033d9f9bcb7019fb8d2c57e57c4c0c09188c4b # 2019-02-19 drm/amdkfd: avoid HMM change cause circular lock
 		_get_amd_staging_drm_next_commit 5 e8074f75f4449b9f9315f3a81d5d72425fba0a8c # 2019-03-14 drm/v3d: Fix calling drm_sched_resubmit_jobs for same sched.
 		n="6"
@@ -987,14 +987,9 @@ function apply_amdgpu() {
 						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
 						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-f55be0be5b7296e73f1634e2839a1953dc12d11e-fix-2.patch"
 						;;
-					*6446b423452a949672dbb1a07c89363af2a681c0*)
-						# fix mispatch
-						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-6446b423452a949672dbb1a07c89363af2a681c0-fix-mispatch.patch"
-						;;
-					*7d8865d9e8600701fedceb76f16e8287553a52e9*)
-						# 7d8865 5.2 kernel only
-						;;
+#					*7d8865d9e8600701fedceb76f16e8287553a52e9*)
+#						# 7d8865 5.2 kernel only
+#						;;
 					*96b44440a670e9b329ae94c0b292fc8441d0ba81*)
 						# mispatch
 						if is_rock ; then
@@ -1027,9 +1022,11 @@ function apply_amdgpu() {
 						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
 						;;
 					*0921c41e19028314830b33daa681e46b46477c5e*|\
-					*915d3eecfa23693bac9e54cdacf84fb4efdcc5c4*)
+					*915d3eecfa23693bac9e54cdacf84fb4efdcc5c4*|\
+					*899fbde1464639e3d12eaffdad8481a59b367fcb*)
 						# 0921c doesn't exist in final
 						# 915d3 already applied
+						# 899fb already applied
 						;;
 					*8628d02f60d4a568d02fc12a26273a55f7718ec0*)
 						if is_rock ; then
@@ -1266,9 +1263,7 @@ function apply_amdgpu() {
 	fi
 
 	if is_amd_staging_drm_next ; then
-		# c7b0f 2019-01-31 [PATCH] drm/amd/display: Add disable triple buffering DC debug option
-		_dpatch "${PATCH_OPS}" "${FILESDIR}"/amd-staging-drm-next-c7b0f71237af7e4ceb7bf723cf96b87178c00e54-mispatch.patch
-		_dpatch "${PATCH_OPS}" "${FILESDIR}"/amd-staging-drm-next-c238bfe0be9ef7420f7669a69e27c8c8f4d8a568-dedupe.patch
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-feb13542aca1d60c37d01a661b54dc0dae46ed6e-dedupe.patch"
 	fi
 }
 
