@@ -189,6 +189,7 @@ GRAYSKY_DL_9_1_FN="enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v4
 GRAYSKY_URL_BASE="https://raw.githubusercontent.com/graysky2/kernel_gcc_patch/master/"
 GRAYSKY_SRC_4_9_URL="${GRAYSKY_URL_BASE}${GRAYSKY_DL_4_9_FN}"
 GRAYSKY_SRC_8_1_URL="${GRAYSKY_URL_BASE}${GRAYSKY_DL_8_1_FN}"
+GRAYSKY_SRC_9_1_URL="${GRAYSKY_URL_BASE}${GRAYSKY_DL_9_1_FN}"
 
 CK_URL_BASE="http://ck.kolivas.org/patches/${PATCH_CK_MAJOR}/${PATCH_CK_MAJOR_MINOR}/${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}/"
 CK_FN="${PATCH_CK_MAJOR_MINOR}-broken-out.tar.xz"
@@ -252,6 +253,7 @@ SRC_URI="
 	 ${O3_RO_SRC_URL}
 	 ${GRAYSKY_SRC_4_9_URL}
 	 ${GRAYSKY_SRC_8_1_URL}
+	 ${GRAYSKY_SRC_9_1_URL}
 	 ${BMQ_SRC_URL}
 	 ${GENPATCHES_BASE_SRC_URL}
 	 ${GENPATCHES_EXTRAS_SRC_URL}
