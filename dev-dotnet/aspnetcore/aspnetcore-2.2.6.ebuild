@@ -13,10 +13,15 @@ HOMEPAGE="https://github.com/aspnet/AspNetCore/"
 LICENSE="MIT"
 
 IUSE="tests debug"
+NETFX_V="4.7.2"
+SDK_V="2.2.102"
 
 ASPNETCORE_COMMIT="e7f262e33108e92fc8805b925cc04b07d254118b" # exactly ${PV}
-SRC_URI=""
-RESTRICT="fetch"
+SRC_URI="https://aspnetcore.blob.core.windows.net/buildtools/netfx/${NETFX_V}/netfx.${NETFX_V}.tar.gz
+	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )"
+#	 x86? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-x32.tar.gz )
+#	 arm64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
+#	 arm? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )"
 REQUIRED_USE="!tests" # broken
 
 SLOT="0"
@@ -130,6 +135,8 @@ _src_prepare() {
 		sed -i -e "s|-Werror||g" "${ASPNETCORE_S}"/src/submodules/googletest/googletest/xcode/Config/General.xcconfig
 	fi
 
+
+
 	cd "${ASPNETCORE_S}"
 	eapply "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-1.patch" || die
 	eapply "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-2.patch" || die
@@ -149,6 +156,22 @@ _src_prepare() {
 	mv "${T}"/Identity src || die
 	mv "${T}"/EntityFrameworkCore modules || die
 	mv "${T}"/test.3 src/Templating/test || die
+
+	local p
+	p="${HOME}/.dotnet/buildtools/netfx/${NETFX_V}"
+	mkdir -p "${p}"
+	pushd "${p}"
+	tar -xvf "${DISTDIR}/netfx.${NETFX_V}.tar.gz"
+	popd
+
+	p="${HOME}/.dotnet/sdk/2.2.102"
+	mkdir -p "${p}"
+	pushd "${p}"
+	tar -xvf "${DISTDIR}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz"
+	popd
+
+	# It has to be done manually if you don't let the installer get the tarballs.
+	export PATH="${p}:${PATH}"
 }
 
 _src_compile() {
