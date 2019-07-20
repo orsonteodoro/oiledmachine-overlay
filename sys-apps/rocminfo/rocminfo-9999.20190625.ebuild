@@ -14,7 +14,8 @@ SRC_URI="https://github.com/RadeonOpenCompute/rocminfo/archive/${COMMIT}.zip -> 
 LICENSE="NCSA"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="|| ( rock-latest rock-milestone rock-snapshot )"
+IUSE="rock-latest rock-milestone rock-snapshot"
+REQUIRED_USE="|| ( rock-latest rock-milestone rock-snapshot )"
 
 RDEPEND="sys-kernel/ot-sources[rock-latest?,rock-milestone?,rock-snapshot?]
 	 || ( x11-drivers/amdgpu-pro[hsa] dev-libs/roct-thunk-interface )
