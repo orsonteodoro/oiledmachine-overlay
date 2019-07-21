@@ -14,13 +14,16 @@ HOMEPAGE="https://github.com/dotnet/cli"
 LICENSE="MIT"
 
 IUSE="tests debug"
+SDK_V="2.1.403"
+FXR_V="2.2.5"
 
 DOTNET_CLI_COMMIT="33ed5b90ce6385c4bc6ee5ae4f79e4e62ac51c79" # exactly ${PV}
-SRC_URI=""
-RESTRICT="fetch"
+SRC_URI="amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )"
+#	 arm64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
+#	 arm? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )"
 
 SLOT="0"
-KEYWORDS="~amd64 ~x86 ~arm64 ~arm"
+KEYWORDS="~amd64"
 
 RDEPEND="
 	>=sys-devel/llvm-4.0:*
@@ -62,6 +65,8 @@ pkg_pretend() {
 DOTNET_CLI_REPO_URL="https://github.com/dotnet/cli.git"
 
 _fetch_cli() {
+	# git is used because we need the git metadata because the scripts rely on it to pull versioning info
+
 	einfo "Fetching dotnet-cli"
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	b="${distdir}/dotnet-sdk"
@@ -70,22 +75,27 @@ _fetch_cli() {
 	if [[ ! -d "${d}" ]] ; then
 		mkdir -p "${d}"
 		einfo "Cloning project"
-		git clone -b v${PV} ${DOTNET_CLI_REPO_URL} "${d}" || die
+		git clone ${DOTNET_CLI_REPO_URL} "${d}"
+		cd "${d}"
+		git checkout master
+		git checkout tags/v${PV} -b v${PV} || die
 	else
 		einfo "Updating project"
 		cd "${d}"
-		git checkout v${PV}
-		git reset --hard
-		git pull origin v${PV}|| die
+		git clean -fdx
+		git checkout master
+		git reset --hard master
+		git pull
+		git branch -D v${PV}
+		git checkout tags/v${PV} -b v${PV} || die
 	fi
 	cd "${d}"
-	git checkout ${DOTNET_CLI_COMMIT} . || die
 	[ ! -e "README.md" ] && die "found nothing"
 	cp -a "${d}" "${CLI_S}"
 	mv "${S}/dotnetcli-${DOTNET_CLI_COMMIT}/" "${S}/dotnet-cli-${PV}" || die
 	export CLI_S="${S}/dotnet-cli-${PV}"
 	cd "${CLI_S}"
-	local rev=$(printf "%06d" $(git rev-list --count v${DOTNET_CLI_COMMIT}))
+	local rev=$(printf "%06d" $(git rev-list --count v${PV}))
 	if [[ "${DropSuffix}" != "true" ]] ; then
 		export VERSION_SUFFIX="-preview-${rev}"
 	fi
@@ -101,6 +111,16 @@ src_unpack() {
 }
 
 _src_prepare() {
+	if [[ ${ARCH} =~ (amd64) ]]; then
+		myarch="x64"
+	elif [[ ${ARCH} =~ (x86) ]] ; then
+		myarch="x32"
+	elif [[ ${ARCH} =~ (arm64) ]] ; then
+		myarch="arm64"
+	elif [[ ${ARCH} =~ (arm) ]] ; then
+		myarch="arm"
+	fi
+
 #	default_src_prepare
 	cd "${CLI_S}"
 	eapply -p2 ${_PATCHES[@]}
@@ -118,6 +138,17 @@ _src_prepare() {
 		echo "Patching $f"
 		sed -i -e 's|-sSL|-L|g' -e 's|wget -q |wget |g' "$f" || die
 	done
+
+	local p
+	p="${CLI_S}/.dotnet_stage0/${myarch}"
+	mkdir -p "${p}" || die
+	pushd "${p}" || die
+	tar -xvf "${DISTDIR}/dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz" || die
+	popd
+	[ ! -f "${CLI_S}/.dotnet_stage0/${myarch}/dotnet" ] && die "dotnet not found"
+
+	# It has to be done manually if you don't let the installer get the tarballs.
+	export PATH="${p}:${PATH}"
 }
 
 _src_compile() {
@@ -177,8 +208,19 @@ src_install() {
 		myarch="arm"
 	fi
 
+	# partly based on:
+	# https://www.archlinux.org/packages/community/x86_64/dotnet-host/files/ for dotnet binary and fxr
+	# https://www.archlinux.org/packages/community/x86_64/dotnet-runtime/files/ for shared dlls
+	# using the unpacked binary distribution
+
 	dodir "${dest_sdk}"
 	cp -a "${CLI_S}/bin/2/linux-${myarch}/dotnet/sdk/${PV}${VERSION_SUFFIX}"/* "${ddest_sdk}/" || die
+	cp -a "${CLI_S}/bin/2/linux-${myarch}/dotnet/dotnet" "${ddest}/" || die
+	cp -a "${CLI_S}/bin/2/linux-x64/dotnet/host/" "${ddest}/" || die
+	cp -a "${CLI_S}/bin/2/linux-x64/dotnet/shared/" "${ddest}/" || die
 
 	dosym "${dest}/dotnet" "/usr/bin/dotnet"
+
+	dodir /usr/share/licenses/cli-tools
+	cp -a "${CLI_S}/bin/2/linux-${myarch}/dotnet"/{LICENSE.txt,ThirdPartyNotices.txt} "${D}/usr/share/licenses/cli-tools" || die
 }
