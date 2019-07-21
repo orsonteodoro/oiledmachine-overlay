@@ -140,6 +140,7 @@ _src_prepare() {
 	cd "${ASPNETCORE_S}"
 	eapply "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-1.patch" || die
 	eapply "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-2.patch" || die
+	eapply "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-3.patch" || die
 	eapply "${FILESDIR}/aspnetcore-2.1.9-skip-tests-1.patch" || die
 	rm src/Razor/CodeAnalysis.Razor/src/TextChangeExtensions.cs || die # Missing TextChange
 
@@ -149,6 +150,7 @@ _src_prepare() {
 	mv src/Identity "${T}" || die
 	mv modules/EntityFrameworkCore "${T}" || die
 	mv src/Templating/test "${T}"/test.3 || die
+	mv src/Http/Routing/test/UnitTests "${T}" || die
 	rm -rf $(find . -iname "test" -o -iname "tests" -o -iname "testassets" -o -iname "*.Tests" -o -iname "sample" -o -iname "samples" -type d)
 	mv "${T}"/SignalR src || die
 	mv "${T}"/test.1 src/Servers/Kestrel/shared/test || die
@@ -156,6 +158,11 @@ _src_prepare() {
 	mv "${T}"/Identity src || die
 	mv "${T}"/EntityFrameworkCore modules || die
 	mv "${T}"/test.3 src/Templating/test || die
+	mkdir -p src/Http/Routing/test/
+	mv "${T}"/UnitTests src/Http/Routing/test/ || die
+
+	# requires removed FunctionalTests and TestServer
+	rm src/Servers/IIS/IIS/benchmarks/IIS.Performance/PlaintextBenchmark.cs || die
 
 	local p
 	p="${HOME}/.dotnet/buildtools/netfx/${NETFX_V}"
