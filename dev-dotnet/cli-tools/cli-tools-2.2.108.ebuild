@@ -7,7 +7,7 @@
 EAPI="6"
 
 VERSION_SUFFIX=''
-DropSuffix="true" # true=official release, false=dev
+DropSuffix="true" # true=official latest release, false=dev for live ebuilds
 
 DESCRIPTION="This repo contains the .NET Core command-line (CLI) tools, used for building .NET Core apps and libraries through your development flow (compiling, NuGet package management, running, testing, ...)."
 HOMEPAGE="https://github.com/dotnet/cli"
@@ -18,7 +18,8 @@ SDK_V="2.1.403"
 FXR_V="2.2.5"
 
 DOTNET_CLI_COMMIT="33ed5b90ce6385c4bc6ee5ae4f79e4e62ac51c79" # exactly ${PV}
-SRC_URI="amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )"
+SRC_URI="https://github.com/dotnet/cli/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
+	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )"
 #	 arm64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
 #	 arm? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )"
 
@@ -64,8 +65,14 @@ pkg_pretend() {
 
 DOTNET_CLI_REPO_URL="https://github.com/dotnet/cli.git"
 
+_unpack_cli() {
+	unpack ${PN}-${PV}.tar.gz
+	mv "${WORKDIR}/cli-${PV}" "${S}/dotnet-cli-${PV}"
+	export CLI_S="${S}/dotnet-cli-${PV}"
+}
+
 _fetch_cli() {
-	# git is used because we need the git metadata because the scripts rely on it to pull versioning info
+	# git is used because we need the git metadata because the scripts rely on it to pull versioning info for VERSION_SUFFIX iif DropSuffix=false
 
 	einfo "Fetching dotnet-cli"
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
@@ -96,14 +103,15 @@ _fetch_cli() {
 	export CLI_S="${S}/dotnet-cli-${PV}"
 	cd "${CLI_S}"
 	local rev=$(printf "%06d" $(git rev-list --count v${PV}))
+	einfo "rev=${rev}"
 	if [[ "${DropSuffix}" != "true" ]] ; then
 		export VERSION_SUFFIX="-preview-${rev}"
 	fi
 }
 
 src_unpack() {
-	# need the .git folder
-	_fetch_cli
+	#_fetch_cli # uncomment for dev
+	_unpack_cli # uncomment for official latest release
 
 	# gentoo or the sandbox doesn't allow downloads in compile phase so move here
 	_src_prepare
