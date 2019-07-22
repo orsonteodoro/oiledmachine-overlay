@@ -110,8 +110,11 @@ _fetch_cli() {
 }
 
 src_unpack() {
-	#_fetch_cli # uncomment for dev
-	_unpack_cli # uncomment for official latest release
+	if [[ "${DropSuffix}" == "false" ]] ; then
+		_fetch_cli # for dev
+	else
+		_unpack_cli # for official latest release (i.e. tarball)
+	fi
 
 	# gentoo or the sandbox doesn't allow downloads in compile phase so move here
 	_src_prepare
@@ -187,6 +190,11 @@ _src_compile() {
 	export TERM=linux # pretend to be outside of X
 
 	buildargs_corecli+=" /property:DropSuffix=${DropSuffix}"
+
+	if [[ "${DropSuffix}" == "true" ]] ; then
+		# workaround for not requiring git with tarball builds.
+		buildargs_corecli+=" /property:GitInfoCommitCount=0 /property:GitInfoCommitHash=${DOTNET_CLI_COMMIT}"
+	fi
 
 	if ! use tests ; then
 		buildargs_corecli+=" /t:Compile"
