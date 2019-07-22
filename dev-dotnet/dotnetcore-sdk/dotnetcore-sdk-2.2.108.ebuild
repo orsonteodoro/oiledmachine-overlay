@@ -19,16 +19,9 @@ RESTRICT="fetch"
 SLOT="0"
 KEYWORDS="~amd64 ~x86 ~arm64 ~arm"
 
-RDEPEND2="=dev-dotnet/core-${CORE_V}
+# split due to flaky servers
+RDEPEND="=dev-dotnet/core-${CORE_V}
 	 =dev-dotnet/coreclr-${CORE_V}
 	 =dev-dotnet/corefx-${CORE_V}
 	 =dev-dotnet/cli-tools-${PV}
-	 =dev-dotnet/core-setup-${CORE_V}
 	 =dev-dotnet/aspnetcore-${CORE_V}"
-
-# aspnetcore is blocking completion
-
-pkg_setup() {
-	# split due to flaky servers
-	ewarn "Still in development"
-}
