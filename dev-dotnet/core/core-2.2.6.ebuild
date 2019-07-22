@@ -9,7 +9,7 @@ DESCRIPTION="Home repository for .NET Core"
 HOMEPAGE="https://github.com/dotnet/core"
 LICENSE="MIT"
 
-IUSE=""
+IUSE="samples docs"
 
 SRC_URI="https://github.com/dotnet/core/archive/v${CORE_V}.tar.gz -> core-${CORE_V}.tar.gz"
 
@@ -34,7 +34,14 @@ src_install() {
 
 	dodir "${dest_core}"
 
-	cp -a "${CORE_S}/"/* "${ddest_core}"/ || die
+	if use samples ; then
+		cp -a "${CORE_S}/"/samples "${ddest_core}"/ || die
+	else
+		rm -rf "${CORE_S}/"/samples || die
+	fi
+	if use docs ; then
+		cp -a "${CORE_S}/"/* "${ddest_core}"/ || die
+	fi
 }
 
 pkg_postinst() {
