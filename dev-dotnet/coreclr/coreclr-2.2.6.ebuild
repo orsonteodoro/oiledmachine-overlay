@@ -16,8 +16,7 @@ LICENSE="MIT"
 IUSE="numa tests debug"
 
 SRC_URI="https://github.com/dotnet/coreclr/archive/v${CORE_V}.tar.gz -> coreclr-${CORE_V}.tar.gz
-	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-x64.tar.gz )
-	"
+	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-x64.tar.gz )"
 #	 x86? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-x86.tar.gz )
 #	 arm64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-arm64.tar.gz )
 #	 arm? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-arm.tar.gz )
@@ -73,8 +72,6 @@ pkg_pretend() {
 	fi
 }
 
-DOTNET_CLI_REPO_URL="https://github.com/dotnet/cli.git"
-
 src_unpack() {
 	unpack "coreclr-${CORE_V}.tar.gz"
 
@@ -84,8 +81,6 @@ src_unpack() {
 }
 
 _src_prepare() {
-
-#	default_src_prepare
 	cd "${CORECLR_S}"
 	eapply -p2 ${_PATCHES[@]}
 
