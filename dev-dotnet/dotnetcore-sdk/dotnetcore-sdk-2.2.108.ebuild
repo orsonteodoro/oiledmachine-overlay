@@ -11,7 +11,7 @@ DESCRIPTION="Core functionality needed to create .NET Core projects, that is sha
 HOMEPAGE="https://github.com/dotnet/sdk"
 LICENSE="MIT"
 
-IUSE="samples"
+IUSE="samples docs"
 
 SRC_URI=""
 RESTRICT="fetch"
@@ -20,7 +20,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86 ~arm64 ~arm"
 
 # split due to flaky servers
-RDEPEND="samples? ( =dev-dotnet/core-${CORE_V} )
+RDEPEND="=dev-dotnet/core-${CORE_V}[samples?,docs?]
 	 =dev-dotnet/coreclr-${CORE_V}
 	 =dev-dotnet/corefx-${CORE_V}
 	 =dev-dotnet/cli-tools-${PV}
