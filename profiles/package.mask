@@ -309,6 +309,9 @@ x11-libs/amd-adl-sdk
 <dev-lang/typescript-3.3.4000
 dev-util/geeks-diary
 
+# mask unstable.  frequent stall crash with minimal patching and high resource usage (with compiling aspcorenet)
+=sys-kernel/ot-sources-5.2.1
+
 # updated and tested
 #app-editors/epic-journal
 #app-editors/noty
