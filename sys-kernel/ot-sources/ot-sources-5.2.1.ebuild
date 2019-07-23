@@ -274,6 +274,9 @@ UNIPATCH_STRICTORDER="yes"
 PATCH_OPS="-p1 -F 100"
 
 pkg_setup() {
+	# happens when compiling aspnetcore or dev-dotnet/cli-tools
+	ewarn "You may experience kernel freeze/crash when resource usage is high."
+
 	if use zentune || use muqss ; then
 		ewarn "The zen-tune patch or muqss might cause lock up or slow io under heavy load like npm.  These use flags are not recommended."
 	fi
