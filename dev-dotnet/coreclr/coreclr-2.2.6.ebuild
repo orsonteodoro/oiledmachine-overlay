@@ -168,9 +168,12 @@ src_install() {
 
 	dodir "${dest_core}"
 
+	# based on https://www.archlinux.org/packages/community/x86_64/dotnet-runtime/files/
+	# aspdotnet requires libhostpolicy.so
+
 	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
-	cp -a "${CORECLR_S}/bin/Product/Linux.${myarch}.${mydebug^}"/* "${ddest_core}"/ || die
+	cp -a "${CORECLR_S}/Tools/dotnetcli/shared/Microsoft.NETCore.App/${PV}"/* "${ddest_core}"/ || die
 	if [[ "${old_dotglob}" == "on" ]] ; then
 		shopt -s dotglob
 	else
