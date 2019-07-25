@@ -233,7 +233,7 @@ src_unpack() {
 	fi
 
 	if use abi_x86_32 ; then
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DRI}/libdrm-amdgpu-utils_${PKG_VER_LIBDRM}-${PKG_REV}_i386.deb"
+		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libdrm-amdgpu-utils_${PKG_VER_LIBDRM}-${PKG_REV}_i386.deb"
 
 		if use opencl ; then
 			# Install OpenCL components
