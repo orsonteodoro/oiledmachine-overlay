@@ -423,7 +423,7 @@ EOF
 	if use opengl ; then
 		if use abi_x86_32 ; then
 			# todo 32 bit version
-			warn "20-opengl.conf not tested for abi_x86_32 abi"
+			ewarn "20-opengl.conf not tested for abi_x86_32 abi"
 			cat << EOF > "${T}/20-opengl.conf" || die
 Section "OutputClass"
         Identifier "AMDgpu"
