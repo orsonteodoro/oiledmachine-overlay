@@ -316,6 +316,9 @@ dev-util/geeks-diary
 =sys-kernel/ot-sources-5.1.19
 =sys-kernel/ot-sources-5.2.2
 
+# mask for most users, for RX 5700 series only
+=x11-drivers/amdgpu-pro-19.30.838629
+
 # updated and tested
 #app-editors/epic-journal
 #app-editors/noty
