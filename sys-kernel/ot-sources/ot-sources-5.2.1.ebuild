@@ -488,8 +488,8 @@ function fetch_amd_staging_drm_next() {
 		einfo "Updating amd-staging-drm-next project"
 		cd "${d}"
 		git clean -fdx
-		git checkout master
 		git reset --hard master
+		git checkout master
 		git pull
 		git branch -D amd-staging-drm-next
 		git checkout -b amd-staging-drm-next remotes/origin/amd-staging-drm-next
@@ -622,8 +622,8 @@ function fetch_rock() {
 		einfo "Updating ROCK project"
 		cd "${d}"
 		git clean -fdx
-		git checkout master
 		git reset --hard master
+		git checkout master
 		git pull
 	fi
 	cd "${d}"

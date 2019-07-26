@@ -70,10 +70,10 @@ DISABLE_DEBUG_V="1.1"
 AMD_STAGING_DRM_NEXT_LATEST="amd-staging-drm-next"
 AMD_STAGING_DRM_NEXT_DIR="amd-staging-drm-next"
 
-AMD_STAGING_DRM_NEXT_SNAPSHOT="412ef3eb157ed3096afb89597b1ca9afb9fd864b" # latest commit I tested which should be ideally head
-# 2019-07-12 drm/amd/powerplay: add pstate mclk(uclk) support for navi10
-AMD_STAGING_DRM_NEXT_STABLE="33e7fe16c02688478346e33f056f0a1f77fcedb1" # corresponds to 19.30 latest commit from amd-staging-drm-next
-# 2019-07-11 drm/amdgpu: support key database loading for navi10
+AMD_STAGING_DRM_NEXT_SNAPSHOT="20d6b9c3b7f40ec427af912d140f2be0de098d2d" # latest commit I tested which should be ideally head
+# 2019-07-22 drm/amdkfd/kfd_mqd_manager_v10: Avoid fall-through warning
+AMD_STAGING_DRM_NEXT_STABLE="c1df60f723b34b6ac5b8cd4e0b6782081a33cb81" # corresponds to 19.30 latest commit from amd-staging-drm-next
+# 2019-07-18 drm/amd/powerplay: change sysfs pp_dpm_xxx format for navi10
 
 AMD_STAGING_DRM_NEXT_MILESTONE="e51341620d8958fdb950ff4e3513e8134b30c35b" # corresponds to the tagged commit:: 2019-06-10 drm/amd/display: 3.2.35
 
@@ -488,8 +488,8 @@ function fetch_amd_staging_drm_next() {
 		einfo "Updating amd-staging-drm-next project"
 		cd "${d}"
 		git clean -fdx
-		git checkout master
 		git reset --hard master
+		git checkout master
 		git pull
 		git branch -D amd-staging-drm-next
 		git checkout -b amd-staging-drm-next remotes/origin/amd-staging-drm-next
@@ -622,8 +622,8 @@ function fetch_rock() {
 		einfo "Updating ROCK project"
 		cd "${d}"
 		git clean -fdx
-		git checkout master
 		git reset --hard master
+		git checkout master
 		git pull
 	fi
 	cd "${d}"

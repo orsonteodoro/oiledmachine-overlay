@@ -371,8 +371,6 @@ src_unpack() {
 	#apply_genpatch_experimental
 	apply_genpatch_extras
 
-	apply_amdgpu
-
 	if use o3 ; then
 		apply_o3
 	fi
