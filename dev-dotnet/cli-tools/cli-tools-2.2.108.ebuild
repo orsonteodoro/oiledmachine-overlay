@@ -90,13 +90,14 @@ _fetch_cli() {
 		einfo "Updating project"
 		cd "${d}"
 		git clean -fdx
-		git checkout master
 		git reset --hard master
+		git checkout master
 		git pull
 		git branch -D v${PV}
 		git checkout tags/v${PV} -b v${PV} || die
 	fi
 	cd "${d}"
+	#git checkout ${DOTNET_CLI_COMMIT} # uncomment for forced deterministic build.  comment to follow head of tag.
 	[ ! -e "README.md" ] && die "found nothing"
 	cp -a "${d}" "${CLI_S}"
 	mv "${S}/dotnetcli-${DOTNET_CLI_COMMIT}/" "${S}/dotnet-cli-${PV}" || die
