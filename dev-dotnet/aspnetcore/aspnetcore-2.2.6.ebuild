@@ -7,19 +7,32 @@
 EAPI="6"
 
 CORE_V=${PV}
+DropSuffix="false" # true=official latest release, false=dev for live ebuilds
 
 DESCRIPTION="ASP.NET Core is a cross-platform .NET framework for building modern cloud-based web applications on Windows, Mac, or Linux."
 HOMEPAGE="https://github.com/aspnet/AspNetCore/"
 LICENSE="MIT"
 
+MY_PN="AspNetCore"
 IUSE="tests debug"
 NETFX_V="4.7.2"
 SDK_V="2.2.102"
 
 ASPNETCORE_COMMIT="e7f262e33108e92fc8805b925cc04b07d254118b" # exactly ${PV}
-SRC_URI="https://aspnetcore.blob.core.windows.net/buildtools/netfx/${NETFX_V}/netfx.${NETFX_V}.tar.gz
+GOOGLETEST_COMMIT="4e4df226fc197c0dda6e37f5c8c3845ca1e73a49"
+ENTITYFRAMEWORKCORE_COMMIT="01da710cdeff0431fc60379580aa63f335fbc165"
+
+# currently using only tarballs to avoid git is a problem at build time
+if [[ "${DropSuffix}" == "true" ]] ; then
+SRC_URI_TGZ="https://github.com/aspnet/AspNetCore/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
+	     https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT}.zip -> googletest-${GOOGLETEST_COMMIT}.zip
+	     https://github.com/aspnet/EntityFrameworkCore/archive/${ENTITYFRAMEWORKCORE_COMMIT}.zip -> entityframeworkcore-${ENTITYFRAMEWORKCORE_COMMIT}.zip"
+SRC_URI_TGZ=""
+fi
+
+SRC_URI="${SRC_URI_TGZ}
+	 https://aspnetcore.blob.core.windows.net/buildtools/netfx/${NETFX_V}/netfx.${NETFX_V}.tar.gz
 	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )"
-#	 x86? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-x32.tar.gz )
 #	 arm64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
 #	 arm? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )"
 REQUIRED_USE="!tests" # broken
@@ -37,6 +50,8 @@ RDEPEND="
 	>=net-misc/curl-7.49.0
 	>=sys-libs/zlib-1.2.8-r1"
 DEPEND="${RDEPEND}
+	dev-dotnet/corefx
+	dev-dotnet/cli-tools
 	dev-vcs/git
 	>=dev-util/cmake-3.3.1-r1
 	>=sys-devel/make-4.1-r1
@@ -72,7 +87,28 @@ pkg_pretend() {
 
 ASPNETCORE_REPO_URL="https://github.com/aspnet/AspNetCore.git"
 
+_unpack_asp() {
+	unpack ${A}
+
+	cd ${MY_PN}-${PV} || die
+
+	mkdir -p modules || die
+	mkdir -p src/submodules || die
+	pushd modules || die
+	mv "${WORKDIR}/EntityFrameworkCore-${ENTITYFRAMEWORKCORE_COMMIT}"/ "${WORKDIR}/EntityFrameworkCore" || die
+	mv "${WORKDIR}/EntityFrameworkCore" . || die
+	popd
+
+	pushd src/submodules || die
+	mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT}"/ "${WORKDIR}/googletest" || die
+	mv "${WORKDIR}/googletest" . || die
+	popd
+	export ASPNETCORE_S="${S}/AspNetCore-${CORE_V}"
+}
+
 _fetch_asp() {
+	# git is used to fetch dependencies.
+
 	einfo "Fetching AspNetCore"
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	b="${distdir}/dotnet-sdk"
@@ -82,17 +118,23 @@ _fetch_asp() {
 	if [[ ! -d "${d}" ]] ; then
 		mkdir -p "${d}"
 		einfo "Cloning project"
-		git clone --recursive -b v${CORE_V} ${ASPNETCORE_REPO_URL} "${d}" || die
+		git clone --recursive ${ASPNETCORE_REPO_URL} "${d}" || die
+		cd "${d}"
+		git checkout master
+		git checkout tags/v${PV} -b v${PV} || die
 	else
 		einfo "Updating project"
 		cd "${d}"
-		git checkout v${CORE_V}
-		git reset --hard
-		git pull origin v${CORE_V} || die
+		git clean -fdx
+		git reset --hard master
+		git checkout master
+		git pull
+		git branch -D v${PV}
+		git checkout tags/v${CORE_V} -b v${PV} || die $(pwd)
 		local update=1
 	fi
 	cd "${d}"
-	git checkout ${ASPNETCORE_COMMIT} . || die
+	#git checkout ${ASPNETCORE_COMMIT} . || die # uncomment to force deterministic build.  comment to follow tag and future added commits applied to tag.
 	if [[ "$update" == "1" ]] ; then
 		git submodule update --recursive || die
 	else
@@ -106,7 +148,11 @@ _fetch_asp() {
 
 src_unpack() {
 	# need repo references
-	_fetch_asp
+	if [[ "${DropSuffix}" == "true" ]] ; then
+		_unpack_asp
+	else
+		_fetch_asp
+	fi
 
 	# gentoo or the sandbox doesn't allow downloads in compile phase so move here
 	_src_prepare
@@ -114,7 +160,6 @@ src_unpack() {
 }
 
 _src_prepare() {
-#	default_src_prepare
 	cd "${WORKDIR}"
 
 	# allow verbose output
@@ -134,8 +179,6 @@ _src_prepare() {
 	if ! use tests ; then
 		sed -i -e "s|-Werror||g" "${ASPNETCORE_S}"/src/submodules/googletest/googletest/xcode/Config/General.xcconfig
 	fi
-
-
 
 	cd "${ASPNETCORE_S}"
 	eapply "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-1.patch" || die
@@ -161,20 +204,26 @@ _src_prepare() {
 	mkdir -p src/Http/Routing/test/
 	mv "${T}"/UnitTests src/Http/Routing/test/ || die
 
-	# requires removed FunctionalTests and TestServer
+	# requires removed; FunctionalTests and TestServer are missing
 	rm src/Servers/IIS/IIS/benchmarks/IIS.Performance/PlaintextBenchmark.cs || die
 
 	local p
 	p="${HOME}/.dotnet/buildtools/netfx/${NETFX_V}"
 	mkdir -p "${p}"
 	pushd "${p}"
-	tar -xvf "${DISTDIR}/netfx.${NETFX_V}.tar.gz"
+	tar -xvf "${DISTDIR}/netfx.${NETFX_V}.tar.gz" || die
+	# todo symlink
+#	mkdir -p "${HOME}/.dotnet/buildtools/netfx" || die
+#	ln -s /opt/dotnet/shared/Microsoft.NETCore.App/${PV}/ ${p} || die
 	popd
 
-	p="${HOME}/.dotnet/sdk/2.2.102"
+	p="${HOME}/.dotnet/sdk/${SDK_V}"
 	mkdir -p "${p}"
 	pushd "${p}"
-	tar -xvf "${DISTDIR}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz"
+	tar -xvf "${DISTDIR}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz" || die
+	# todo symlink
+#	mkdir -p "${HOME}/.dotnet/sdk" || die
+#	ln -s /opt/dotnet/ ${p} || die
 	popd
 
 	# It has to be done manually if you don't let the installer get the tarballs.
@@ -219,6 +268,11 @@ _src_compile() {
 		buildargs_coreasp+=" /p:SkipTests=false /p:CompileOnly=false"
 	fi
 
+	#if [[ "${DropSuffix}" == "true" ]] ; then
+		# stop warning
+	#	buildargs_coreasp+=" /property:RepositoryCommit=${ASPNETCORE_COMMIT}"
+	#fi
+
 	if [[ ${ARCH} =~ (amd64) ]]; then
 		einfo "Building AspNetCore"
 		cd "${ASPNETCORE_S}"
@@ -234,12 +288,12 @@ src_install() {
 	local ddest_aspnetcoreall="${ddest}/shared/Microsoft.AspNetCore.All/${PV}/"
 	local ddest_aspnetcoreapp="${ddest}/shared/Microsoft.AspNetCore.App/${PV}/"
 
-	dodir "${ddest_aspnetcoreall}"
-	cp -a "${ASPNETCORE_S}/build/tasks/bin/publish"/* "${ddest_aspnetcoreall}"
+	# based on https://www.archlinux.org/packages/community/x86_64/aspnet-runtime/
+	# i.e. unpacked binary distribution
 
-	# todo
-	# I still need to determine the placement of the dll per platform.
-	# The compile will produce both .net 4.x dlls and netcore dlls for some reason.
+	dodir "${ddest_aspnetcoreall}"
+	cp -a "${ASPNETCORE_S}/bin/fx/linux-x64/Microsoft.AspNetCore.All/lib/netcoreapp2.2"/* "${ddest_aspnetcoreall}" || die
+
 	dodir "${ddest_aspnetcoreapp}"
-	cp -a "${ASPNETCORE_S}/bin"/* "${ddest_aspnetcoreapp}/" || die
+	cp -a "${ASPNETCORE_S}/bin/fx/linux-x64/Microsoft.AspNetCore.App/lib/netcoreapp2.2"/* "${ddest_aspnetcoreapp}" || die
 }
