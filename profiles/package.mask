@@ -319,6 +319,11 @@ dev-util/geeks-diary
 =sys-kernel/ot-sources-5.2.1
 =sys-kernel/ot-sources-5.2.2
 
+# untested kernels
+=sys-kernel/ot-sources-5.1.20
+=sys-kernel/ot-sources-5.2.3
+
+
 # updated and tested
 #app-editors/epic-journal
 #app-editors/noty
