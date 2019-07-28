@@ -9,7 +9,7 @@ inherit eutils distutils-r1
 
 LANGS="en ja"
 
-COMMIT="dac03893830c6b638a6292295580007fad7cdf17"
+COMMIT="4b28037e328da3d0fe8165c11b800cbaddcb525e"
 DESCRIPTION="Adds flavor of interactive filtering to the traditional pipe concept of shell"
 HOMEPAGE="https://github.com/mooz/percol"
 SRC_URI="https://github.com/mooz/percol/archive/${COMMIT}.zip -> ${P}.zip"
