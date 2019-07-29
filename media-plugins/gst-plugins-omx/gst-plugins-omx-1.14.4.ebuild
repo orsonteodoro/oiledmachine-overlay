@@ -12,7 +12,7 @@ SRC_URI="http://gstreamer.freedesktop.org/src/${MY_PN}/${MY_PN}-${PV}.tar.xz"
 
 LICENSE="LGPL-2.1"
 SLOT="1.0"
-KEYWORDS="~arm"
+KEYWORDS="~arm ~amd64"
 IUSE="rpi omx-bellagio omx-tizonia examples test"
 
 # FIXME: What >=media-libs/gst-plugins-bad-1.4.0:1.0[gl] stuff for non-rpi?
