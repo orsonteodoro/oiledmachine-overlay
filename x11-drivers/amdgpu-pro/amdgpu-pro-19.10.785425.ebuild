@@ -22,6 +22,7 @@ PKG_VER_ROCT="1.0.9"
 PKG_VER_XORG_VIDEO_AMDGPU_DRV="18.1.99" # about the same as the mesa version
 PKG_VER_AMF="1.4.12"
 PKG_VER_ID="1.0.0"
+PKG_VER_GST_OMX="1.0.0.1"
 PKG_VER_LLVM="7.1"
 PKG_VER_LLVM_MAJ="7"
 PKG_VER_LLVM_TRIPLE="7.1.0"
@@ -33,7 +34,7 @@ SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 
 RESTRICT="fetch strip"
 
-IUSE="+amf +egl +gles2 freesync hsa +opencl +opengl orca pal +vaapi vega +vdpau +vulkan wayland"
+IUSE="+amf +egl +gles2 freesync hsa +opencl +opengl openmax orca pal +vaapi vega +vdpau +vulkan wayland"
 
 LICENSE="AMD GPL-2 QPL-1.0"
 KEYWORDS="~amd64 ~x86"
@@ -59,10 +60,11 @@ RDEPEND="
 	>=app-eselect/eselect-opengl-1.0.7
 	app-eselect/eselect-opencl
 	dev-util/cunit
+	media-libs/libomxil-bellagio
 	>=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
 	>=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
-	!vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
-	vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
+	!vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[openmax?] )
+	vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[openmax?,-vulkan]
 		  media-libs/vulkan-loader )
 	opencl? ( >=sys-devel/gcc-5.2.0 )
 	vdpau? ( >=media-libs/mesa-${PKG_VER_MESA}[-vdpau] )
@@ -189,6 +191,11 @@ src_unpack() {
 			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/vulkan-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
 		fi
 
+		if use openmax ; then
+			# Install gstreamer OpenMAX plugin
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/gst-omx-amdgpu_${PKG_VER_GST_OMX}-${PKG_REV}_amd64.deb"
+		fi
+
 		if use vdpau ; then
 			# Install VDPAU
 			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/mesa-amdgpu-vdpau-drivers_${PKG_VER_MESA}-${PKG_REV}_amd64.deb"
@@ -263,6 +270,11 @@ src_unpack() {
 
 		if use vulkan ; then
 			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/vulkan-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
+		fi
+
+		if use openmax ; then
+			# Install gstreamer OpenMAX plugin
+			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/gst-omx-amdgpu_${PKG_VER_GST_OMX}-${PKG_REV}_i386.deb"
 		fi
 
 		if use vdpau ; then
@@ -823,6 +835,20 @@ src_install() {
 			exeinto /usr/lib32/opengl/amdgpu/modules/drivers/
 			mv opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv32.so opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so || die
 			doexe opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so
+		fi
+	fi
+
+	if use openmax ; then
+		# Install gstreamer OpenMAX plugin
+		insinto /etc/xdg/
+		doins etc/xdg/gstomx.conf
+		if use abi_x86_64 ; then
+			exeinto /usr/lib64/gstreamer-1.0/
+			doexe opt/amdgpu/lib/x86_64-linux-gnu/gstreamer-1.0/libgstomx.so
+		fi
+		if use abi_x86_32 ; then
+			exeinto /usr/lib32/gstreamer-1.0/
+			doexe opt/amdgpu/lib/i386-linux-gnu/gstreamer-1.0/libgstomx.so
 		fi
 	fi
 
