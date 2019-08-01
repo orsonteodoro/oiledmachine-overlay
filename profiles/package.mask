@@ -1,3 +1,7 @@
+# i'm still working as on 20190731
+# compiles everything with full features, but use customization with flags still need work.
+media-sound/tizonia
+
 # i'm stil working on them 20190407
 dev-dotnet/core
 dev-dotnet/coreclr
