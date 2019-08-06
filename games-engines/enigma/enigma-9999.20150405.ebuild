@@ -48,22 +48,15 @@ src_install() {
 
 	mkdir -p "${D}/usr/bin"
 
-	MY_CXXFLAGS=""
-        if (( $(gcc-major-version) <= 5 )) ; then
-		MY_CXXFLAGS="-std=c++11"
-        else
-		MY_CXXFLAGS="-std=c++14"
-        fi
-
 	echo "#!/bin/bash" > "${D}/usr/bin/enigma" || die
 	echo "cd /usr/$(get_libdir)/enigma" >> "${D}/usr/bin/enigma" || die
-	echo "OUTPUTNAME=game WORKDIR=\"\$HOME/.enigma\" CXXFLAGS=\"${MY_CXXFLAGS} -I\$HOME/.enigma\" CFLAGS=\"-I\$HOME/.enigma\" \\" >> "${D}/usr/bin/enigma" || die
+	echo "OUTPUTNAME=game WORKDIR=\"\$HOME/.enigma\" CXXFLAGS=\" -I\$HOME/.enigma\" CFLAGS=\"-I\$HOME/.enigma\" \\" >> "${D}/usr/bin/enigma" || die
 	echo "java -Djna.nosys=true -jar /usr/$(get_libdir)/enigma/lateralgm.jar \$*" >> "${D}/usr/bin/enigma" || die
 	chmod +x "${D}/usr/bin/enigma" || die
 
 	echo "#!/bin/bash" > "${D}/usr/bin/enigma-cli" || die
 	echo "cd /usr/$(get_libdir)/enigma" >> "${D}/usr/bin/enigma-cli" || die
-	echo "OUTPUTNAME=game WORKDIR=\"\$HOME/.enigma\" CXXFLAGS=\"${MY_CXXFLAGS} -I\$HOME/.enigma\" CFLAGS=\"-I\$HOME/.enigma\" \\" >> "${D}/usr/bin/enigma-cli" || die
+	echo "OUTPUTNAME=game WORKDIR=\"\$HOME/.enigma\" CXXFLAGS=\" -I\$HOME/.enigma\" CFLAGS=\"-I\$HOME/.enigma\" \\" >> "${D}/usr/bin/enigma-cli" || die
 	echo "java -Djna.nosys=true -jar /usr/$(get_libdir)/enigma/plugins/enigma.jar \$*" >> "${D}/usr/bin/enigma-cli" || die
 	chmod +x "${D}/usr/bin/enigma-cli" || die
 
