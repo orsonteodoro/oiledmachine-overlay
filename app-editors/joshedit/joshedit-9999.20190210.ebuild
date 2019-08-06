@@ -39,7 +39,7 @@ src_compile() {
 src_install() {
 	if use lateralgm ; then
 		mkdir -p "${D}/usr/share/joshedit-${SLOT}/source"
-		cp -r "${S}"/* "${D}/usr/share/joshedit-${SLOT}/source"
+		cp -r "${S}"/src/main/java/* "${D}/usr/share/joshedit-${SLOT}/source"
 		rm "${D}/usr/share/joshedit-${SLOT}/source/joshedit.jar"
 	fi
 	mkdir -p "${D}/usr/share/joshedit-${SLOT}/lib/"
