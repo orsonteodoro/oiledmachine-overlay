@@ -31,6 +31,8 @@ src_prepare() {
 
 	cp -r "${ROOT}"/usr/share/joshedit-${SLOT_JOSHEDIT}/source/org ./ || die
 	sed -i -e "s|JC = ecj -1.6 -nowarn -cp .|JC = $(ls /usr/bin/ecj-${ECJ_V}) -${JAVA_V} -nowarn -cp .|" Makefile || die
+	sed -i -e "s|/usr/share/java/eclipse-ecj.jar:/usr/share/java/ecj.jar|/usr/share/eclipse-ecj-${ECJ_V}/lib/ecj.jar|g" Makefile || die
+	sed -i -e "s|@jar|jar|g" Makefile || die
 	touch README
 
 	eapply_user
@@ -53,7 +55,7 @@ src_install() {
 	echo "java -jar /usr/$(get_libdir)/enigma/lateralgm.jar \$*" >> "${D}/usr/bin/lateralgm" || die
 	chmod +x "${D}/usr/bin/lateralgm" || die
 
-	mkdir -p "${D}/usr/share/lateralgm" || die
+	mkdir -p "${D}/usr/share/lateralgm"
 	cp "${S}"/org/lateralgm/main/lgm-logo.png "${D}"/usr/share/lateralgm || die
 
 	make_desktop_entry "/usr/bin/lateralgm" "LateralGM" "/usr/share/lateralgm/lgm-logo.png" "Development;IDE"

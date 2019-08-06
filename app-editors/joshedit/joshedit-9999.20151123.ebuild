@@ -28,25 +28,25 @@ src_prepare() {
 }
 
 src_compile() {
-	cd "${S}"/org/lateralgm/joshedit
-	javac $(find . -name "*.java")
-	cd "${S}"
-	mkdir META-INF
-	echo 'Main-Class: org.lateralgm.joshedit.Runner' > META-INF/MANIFEST.MF
-	jar cmvf META-INF/MANIFEST.MF joshedit.jar $(find . -name "*.class") $(find . -name "*.properties") $(find . -name "*.flex") $(find . -name "*.gif") $(find . -name "*.png") $(find . -name "*.txt")
+	cd "${S}"/org/lateralgm/joshedit || die
+	javac $(find . -name "*.java") || die
+	cd "${S}" || die
+	mkdir META-INF || die
+	echo 'Main-Class: org.lateralgm.joshedit.Runner' > META-INF/MANIFEST.MF || die
+	jar cmvf META-INF/MANIFEST.MF joshedit.jar $(find . -name "*.class") $(find . -name "*.properties") $(find . -name "*.flex") $(find . -name "*.gif") $(find . -name "*.png") $(find . -name "*.txt") || die
 }
 
 src_install() {
 	if use lateralgm ; then
-		mkdir -p "${D}/usr/share/joshedit-${SLOT}/source"
-		cp -r "${S}"/* "${D}/usr/share/joshedit-${SLOT}/source"
-		rm "${D}/usr/share/joshedit-${SLOT}/source/joshedit.jar"
+		mkdir -p "${D}/usr/share/joshedit-${SLOT}/source" || die
+		cp -r "${S}"/* "${D}/usr/share/joshedit-${SLOT}/source" || die
+#		rm "${D}/usr/share/joshedit-${SLOT}/source/joshedit.jar" || die
 	fi
-	mkdir -p "${D}/usr/share/joshedit-${SLOT}/lib/"
-	cp joshedit.jar "${D}/usr/share/joshedit-${SLOT}/lib/"
-	mkdir -p "${D}/usr/bin"
-	echo "#!/bin/bash" > "${D}/usr/bin/joshedit"
-	echo "java -jar /usr/share/joshedit-${SLOT}/lib/joshedit.jar \$*" > "${D}/usr/bin/joshedit"
-	chmod +x "${D}/usr/bin/joshedit"
+	mkdir -p "${D}/usr/share/joshedit-${SLOT}/lib/" || die
+	cp joshedit.jar "${D}/usr/share/joshedit-${SLOT}/lib/" || die
+	mkdir -p "${D}/usr/bin" || die
+	echo "#!/bin/bash" > "${D}/usr/bin/joshedit" || die
+	echo "java -jar /usr/share/joshedit-${SLOT}/lib/joshedit.jar \$*" > "${D}/usr/bin/joshedit" || die
+	chmod +x "${D}/usr/bin/joshedit" || die
 	make_desktop_entry "/usr/bin/joshedit" "JoshEdit" "" "Utility;TextEditor"
 }
