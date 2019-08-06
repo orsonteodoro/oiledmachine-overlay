@@ -23,9 +23,6 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
 
 src_prepare() {
-	if use lateralgm ; then
-		eapply "${FILESDIR}"/joshedit-9999.20190210-exception-handler.patch
-	fi
 	eapply_user
 }
 
