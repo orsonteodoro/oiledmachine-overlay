@@ -331,9 +331,6 @@ dev-util/geeks-diary
 =sys-kernel/ot-sources-5.2.6
 =sys-kernel/ot-sources-5.2.21
 
-# currently broken, compiling with maven-bin complains that the server is offline
-=app-editors/joshedit-9999.20190210
-
 # updated and tested
 #app-editors/epic-journal
 #app-editors/noty
