@@ -12,7 +12,7 @@ RESTRICT=""
 
 LICENSE="GPL-3+"
 SLOT="0"
-KEYWORDS="~amd64 ~ppc ~x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 IUSE=""
 JAVA_V="1.7"
 ECJ_V="4.4"
