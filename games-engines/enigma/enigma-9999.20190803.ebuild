@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=5
@@ -6,7 +6,7 @@ inherit eutils toolchain-funcs
 
 DESCRIPTION="ENIGMA, the Extensible Non-Interpreted Game Maker Augmentation, is an open source cross-platform game development environment derived from that of the popular software Game Maker."
 HOMEPAGE="http://enigma-dev.org"
-COMMIT="7049b411e3f4c2f9a52c652b86a4a83a8120db05"
+COMMIT="1ffaceaf72fe3ce8c956074237e59513e708be33"
 SRC_URI="https://github.com/enigma-dev/enigma-dev/archive/${COMMIT}.zip -> ${P}.zip"
 
 RESTRICT=""
@@ -28,10 +28,10 @@ RDEPEND="games-engines/lateralgm
 "
 DEPEND="${RDEPEND}"
 
-S="${WORKDIR}/enigma-${COMMIT}"
+S="${WORKDIR}/enigma-dev-${COMMIT}"
 
 src_prepare() {
-	sed -i -e "s|C:/ProgramData/ENIGMA/|/usr/lib/enigma|" CommandLine/programs/emake/main.cpp || die
+	true
 }
 
 src_compile() {
@@ -46,14 +46,14 @@ src_install() {
 	cp "${S}/settings.ey" "${D}/usr/$(get_libdir)/enigma"/ || die
 	cp "${S}/events.res" "${D}/usr/$(get_libdir)/enigma"/ || die
 
-	mkdir -p "${D}/usr/bin"
+	mkdir -p "${D}/usr/bin" || die
 
-	MY_CXXFLAGS=""
-        if (( $(gcc-major-version) <= 5 )) ; then
-		MY_CXXFLAGS="-std=c++11"
-        else
-		MY_CXXFLAGS="-std=c++14"
-        fi
+	#MY_CXXFLAGS=""
+        #if (( $(gcc-major-version) <= 5 )) ; then
+	#	MY_CXXFLAGS="-std=c++11"
+        #else
+	#	MY_CXXFLAGS="-std=c++14"
+        #fi
 
 	echo "#!/bin/bash" > "${D}/usr/bin/enigma" || die
 	echo "cd /usr/$(get_libdir)/enigma" >> "${D}/usr/bin/enigma" || die
