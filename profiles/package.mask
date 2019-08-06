@@ -108,10 +108,8 @@ dev-embedded/diligent-adept2-runtime
 dev-embedded/diligent-plugin-xilinx
 dev-embedded/modelsim
 dev-embedded/xilinx-ise-webpack
-games-engines/enigma
 games-engines/fna
 games-engines/godot
-games-engines/lateralgm
 games-engines/monogame
 games-engines/urho3d
 games-engines/urho3d-web
@@ -135,7 +133,6 @@ app-admin/amdoverdrivectrl
 app-arch/crark
 app-arch/rarcrack
 app-crypt/libsecret
-app-editors/joshedit
 app-editors/nano-ycmd
 app-eselect/eselect-opencl
 app-shells/percol
@@ -330,6 +327,9 @@ dev-util/geeks-diary
 =sys-kernel/ot-sources-5.2.5
 =sys-kernel/ot-sources-5.2.6
 =sys-kernel/ot-sources-5.2.21
+
+# untested
+games-engines/enigma
 
 # updated and tested
 #app-editors/epic-journal
