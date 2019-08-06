@@ -16,7 +16,8 @@ ECJ_V="4.4"
 SLOT_JOSHEDIT="0"
 JAVA_V="1.7"
 
-RDEPEND="app-editors/joshedit[lateralgm]
+# fixme?: higher joshedit breaks script editor
+RDEPEND="<=app-editors/joshedit-9999.20161002[lateralgm]
 	 dev-java/eclipse-ecj:${ECJ_V}
 	 virtual/jre
 	 "
