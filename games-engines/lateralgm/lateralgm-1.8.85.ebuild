@@ -16,8 +16,7 @@ ECJ_V="4.4"
 SLOT_JOSHEDIT="0"
 JAVA_V="1.7"
 
-# fixme?: higher joshedit breaks script editor
-RDEPEND="<=app-editors/joshedit-9999.20161002[lateralgm]
+RDEPEND="app-editors/joshedit[lateralgm]
 	 dev-java/eclipse-ecj:${ECJ_V}
 	 virtual/jre
 	 "
@@ -33,7 +32,6 @@ src_prepare() {
 	cp -r "${ROOT}"/usr/share/joshedit-${SLOT_JOSHEDIT}/source/org ./ || die
 	sed -i -e "s|JC = ecj -1.6 -nowarn -cp .|JC = $(ls /usr/bin/ecj-${ECJ_V}) -${JAVA_V} -nowarn -cp .|" Makefile || die
 	sed -i -e "s|/usr/share/java/eclipse-ecj.jar:/usr/share/java/ecj.jar|/usr/share/eclipse-ecj-${ECJ_V}/lib/ecj.jar|g" Makefile || die
-	sed -i -e "s|@jar|jar|g" Makefile || die
 	touch README
 
 	eapply_user
