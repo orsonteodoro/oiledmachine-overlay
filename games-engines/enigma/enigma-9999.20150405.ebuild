@@ -28,7 +28,7 @@ RDEPEND="games-engines/lateralgm
 "
 DEPEND="${RDEPEND}"
 
-S="${WORKDIR}/enigma-${COMMIT}"
+S="${WORKDIR}/enigma-dev-${COMMIT}"
 
 src_prepare() {
 	sed -i -e "s|C:/ProgramData/ENIGMA/|/usr/lib/enigma|" CommandLine/programs/emake/main.cpp || die
