@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=5
@@ -46,7 +46,7 @@ src_install() {
 	cp "${S}/settings.ey" "${D}/usr/$(get_libdir)/enigma"/ || die
 	cp "${S}/events.res" "${D}/usr/$(get_libdir)/enigma"/ || die
 
-	mkdir -p "${D}/usr/bin"
+	mkdir -p "${D}/usr/bin" || die
 
 	echo "#!/bin/bash" > "${D}/usr/bin/enigma" || die
 	echo "cd /usr/$(get_libdir)/enigma" >> "${D}/usr/bin/enigma" || die

@@ -30,10 +30,6 @@ DEPEND="${RDEPEND}"
 
 S="${WORKDIR}/enigma-dev-${COMMIT}"
 
-src_prepare() {
-	true
-}
-
 src_compile() {
 	emake ENIGMA || die
 }
