@@ -40,7 +40,7 @@ src_install() {
 	if use lateralgm ; then
 		mkdir -p "${D}/usr/share/joshedit-${SLOT}/source" || die
 		cp -r "${S}"/* "${D}/usr/share/joshedit-${SLOT}/source" || die
-#		rm "${D}/usr/share/joshedit-${SLOT}/source/joshedit.jar" || die
+		rm "${D}/usr/share/joshedit-${SLOT}/source/joshedit.jar" || die
 	fi
 	mkdir -p "${D}/usr/share/joshedit-${SLOT}/lib/" || die
 	cp joshedit.jar "${D}/usr/share/joshedit-${SLOT}/lib/" || die
