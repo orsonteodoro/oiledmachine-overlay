@@ -10,7 +10,7 @@ SRC_URI="https://github.com/IsmAvatar/LateralGM/archive/v${PV}.tar.gz -> ${P}.ta
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~ppc ~x86"
+KEYWORDS="~amd64 ~ppc ~ppc64 ~x86 ~arm ~arm64"
 IUSE=""
 ECJ_V="4.4"
 SLOT_JOSHEDIT="0"
