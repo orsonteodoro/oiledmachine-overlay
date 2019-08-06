@@ -6,7 +6,8 @@ inherit eutils
 
 DESCRIPTION="LateralGM Plugin"
 HOMEPAGE="https://github.com/enigma-dev/lgmplugin"
-SRC_URI="https://github.com/enigma-dev/lgmplugin/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+COMMIT="2bd2060f19114f81d3f808ed7ce2661986cadb75"
+SRC_URI="https://github.com/enigma-dev/lgmplugin/archive/${COMMIT}.zip -> ${P}.zip"
 
 RESTRICT=""
 
@@ -24,7 +25,7 @@ RDEPEND="virtual/jre
 	 || ( dev-java/icedtea dev-java/icedtea-bin )"
 DEPEND="${RDEPEND}"
 
-S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/${PN}-${COMMIT}"
 
 src_prepare() {
 	sed -i -e "s|JC = ecj -1.6 -nowarn -cp .|JC = $(ls /usr/bin/ecj-${ECJ_V}*) -${JAVA_V} -nowarn -cp .|" Makefile
