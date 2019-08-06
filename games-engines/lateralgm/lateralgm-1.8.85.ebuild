@@ -56,7 +56,7 @@ src_install() {
 	chmod +x "${D}/usr/bin/lateralgm" || die
 
 	mkdir -p "${D}/usr/share/lateralgm"
-	cp "${S}"/org/lateralgm/main/lgm-logo.png "${D}"/usr/share/lateralgm || die
+	cp "${S}"/org/lateralgm/main/lgm-logo.ico "${D}"/usr/share/lateralgm || die
 
-	make_desktop_entry "/usr/bin/lateralgm" "LateralGM" "/usr/share/lateralgm/lgm-logo.png" "Development;IDE"
+	make_desktop_entry "/usr/bin/lateralgm" "LateralGM" "/usr/share/lateralgm/lgm-logo.ico" "Development;IDE"
 }
