@@ -21,7 +21,7 @@ DEPEND="${RDEPEND}"
 S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
 
 src_prepare() {
-	eapply "${FILESDIR}"/joshedit-9999.20190210-exception-handler.patch
+	#eapply "${FILESDIR}"/joshedit-9999.20190210-exception-handler.patch
 	eapply_user
 }
 
