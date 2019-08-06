@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -13,7 +13,7 @@ SRC_URI="https://github.com/JoshDreamland/${PROJECT_NAME}/archive/${COMMIT}.zip 
 LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86"
-IUSE=""
+IUSE="lateralgm"
 
 RDEPEND="virtual/jdk"
 DEPEND="${RDEPEND}"
@@ -21,7 +21,9 @@ DEPEND="${RDEPEND}"
 S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
 
 src_prepare() {
-	eapply "${FILESDIR}"/joshedit-9999-exception-handler.patch
+	if use lateralgm ; then
+		eapply "${FILESDIR}"/joshedit-9999-exception-handler.patch
+	fi
 	eapply_user
 }
 
@@ -35,9 +37,11 @@ src_compile() {
 }
 
 src_install() {
-	mkdir -p "${D}/usr/share/joshedit-${SLOT}/source"
-	cp -r "${S}"/* "${D}/usr/share/joshedit-${SLOT}/source"
-	rm "${D}/usr/share/joshedit-${SLOT}/source/joshedit.jar"
+	if use lateralgm ; then
+		mkdir -p "${D}/usr/share/joshedit-${SLOT}/source"
+		cp -r "${S}"/* "${D}/usr/share/joshedit-${SLOT}/source"
+		rm "${D}/usr/share/joshedit-${SLOT}/source/joshedit.jar"
+	fi
 	mkdir -p "${D}/usr/share/joshedit-${SLOT}/lib/"
 	cp joshedit.jar "${D}/usr/share/joshedit-${SLOT}/lib/"
 	mkdir -p "${D}/usr/bin"
