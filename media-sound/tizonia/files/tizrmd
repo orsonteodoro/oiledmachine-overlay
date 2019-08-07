@@ -12,6 +12,7 @@
 description="Tizonia's resource manager daemon"
 PIDDIR=/run/tizonia
 PIDFILE=$PIDDIR/$SVCNAME.pid
+PIDFILE097=/var/run/$SVCNAME.pid
 
 depend()
 {
@@ -30,11 +31,11 @@ start()
 
 stop() {
 	ebegin "Stopping ${description}"
-	if [ ! -e "${PIDFILE}" ] && [ -e /var/run/NetworkManager.pid ]; then 
+	if [ ! -e "${PIDFILE}" ] && [ -e ${PIDFILE097} ]; then
 		# Try stopping the pid file used by <0.9.7
-		start-stop-daemon --stop --quiet --pidfile "${PIDFILE}"
+		start-stop-daemon --stop --quiet --pidfile "${PIDFILE097}"
 		ret=$?
-		[ ${ret} = 0 ] && [ -e "${PIDFILE}" ] && rm "${PIDFILE}"
+		[ ${ret} = 0 ] && [ -e "${PIDFILE097}" ] && rm "${PIDFILE097}"
 		eend ${ret}
 	else
 		start-stop-daemon --stop --quiet --pidfile "${PIDFILE}"
