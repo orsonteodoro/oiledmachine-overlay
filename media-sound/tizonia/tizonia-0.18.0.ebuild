@@ -219,7 +219,7 @@ multilib_src_install() {
 	if use openrc ; then
 		dodir /etc/init.d
 		exeinto /etc/init.d
-		doexe ${FILESDIR}/tizrmd
+		doexe "${FILESDIR}/tizrmd"
 	fi
 	if use systemd ; then
 		dodir /usr/lib/systemd/system/
