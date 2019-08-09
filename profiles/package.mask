@@ -204,14 +204,12 @@ dev-util/ycm-generator
 games-misc/beatdetectorforgames
 games-misc/gwen-dotnet
 games-misc/lgmplugin
-games-misc/libmaker
 games-misc/libmpq
 games-misc/monogame-extended
 games-misc/recastnavigation
 games-misc/sharpnav
 games-misc/tiledsharp
 media-gfx/fim
-media-gfx/mojoshader
 media-gfx/nvidia-texture-tools
 media-libs/freeimage
 media-libs/libcaca
@@ -255,6 +253,7 @@ www-servers/civetweb
 media-sound/shazam-on-linux
 =dev-lang/alice-2.4.3-r1
 x11-misc/emoji-keyboard
+games-misc/libmaker
 
 # mask not tested
 dev-dotnet/nuget
