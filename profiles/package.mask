@@ -1,11 +1,5 @@
 # i'm stil working on them 20190407
-dev-dotnet/core
-dev-dotnet/coreclr
-dev-dotnet/corefx
 dev-dotnet/aspnetcore
-dev-dotnet/core-setup
-dev-dotnet/dotnetcore-sdk
-dev-dotnet/cli-tools
 
 # old package to be remove soon by dev-dotnet/cli-tools and dev-dotnet/dotnetcore-sdk (non binary version)
 dev-dotnet/dotnet-cli
