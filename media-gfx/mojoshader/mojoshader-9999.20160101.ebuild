@@ -66,15 +66,15 @@ src_compile() {
 
 src_install() {
 	#cmake-utils_src_install
-	cd "${WORKDIR}/${PN}-${PV}_build"
-	mkdir -p "${D}/usr/$(get_libdir)/mojoshader"
-	cp libmojoshader.so "${D}/usr/$(get_libdir)"
-	cp $(find . -maxdepth 1 -type f -executable | grep -v "\.so") "${D}/usr/$(get_libdir)/mojoshader"
+	cd "${WORKDIR}/${PN}-${PV}_build" || die
+	mkdir -p "${D}/usr/$(get_libdir)/mojoshader" || die
+	cp libmojoshader.so "${D}/usr/$(get_libdir)" || die
+	cp $(find . -maxdepth 1 -type f -executable | grep -v "\.so") "${D}/usr/$(get_libdir)/mojoshader" || die
 
-	cd "${S}"
-	mkdir -p "${D}/usr/include/MojoShader"
-	cp mojoshader_internal.h "${D}/usr/include/MojoShader"
-	cp mojoshader.h "${D}/usr/include/MojoShader"
-	cp mojoshader_effects.h "${D}/usr/include/MojoShader"
+	cd "${S}" || die
+	mkdir -p "${D}/usr/include/MojoShader" || die
+	cp mojoshader_internal.h "${D}/usr/include/MojoShader" || die
+	cp mojoshader.h "${D}/usr/include/MojoShader" || die
+	cp mojoshader_effects.h "${D}/usr/include/MojoShader" || die
 	dodoc README.txt
 }
