@@ -167,10 +167,8 @@ _use_native_netfx() {
 
 	# trick the scripts by creating the dummy dir to skip downloading
 	local p
-	p="${HOME}/.dotnet/buildtools/netfx/${NETFX_V}/" # for Microsoft tarball
+	p="${HOME}/.dotnet/buildtools/netfx/${NETFX_V}/"
 	mkdir -p "${p}"
-
-	cp "${FILESDIR}"/netfx.props "${ASPNETCORE_S}"/modules/EntityFrameworkCore/ || die
 
 	L=$(find "${ASPNETCORE_S}"/modules/EntityFrameworkCore/ -name "*.csproj")
 	for f in $L ; do
