@@ -1,6 +1,3 @@
-# i'm stil working on them 20190407
-dev-dotnet/aspnetcore
-
 # old package to be remove soon by dev-dotnet/cli-tools and dev-dotnet/dotnetcore-sdk (non binary version)
 dev-dotnet/dotnet-cli
 
