@@ -49,8 +49,7 @@ RDEPEND="
 	>=dev-util/lttng-ust-2.8.1
 	>=dev-libs/openssl-1.0.2h-r2
 	>=net-misc/curl-7.49.0
-	>=sys-libs/zlib-1.2.8-r1
-	>=dev-dotnet/coreclr-2.2.6"
+	>=sys-libs/zlib-1.2.8-r1"
 DEPEND="${RDEPEND}
 	>=dev-lang/mono-5.18.0
 	dev-dotnet/cli-tools
@@ -172,7 +171,6 @@ _use_native_netfx() {
 	mkdir -p "${p}"
 
 	cp "${FILESDIR}"/netfx.props "${ASPNETCORE_S}"/modules/EntityFrameworkCore/ || die
-	#eapply "${FILESDIR}/aspnetcore-2.1.9-razor-netfx-1.patch"
 
 	L=$(find "${ASPNETCORE_S}"/modules/EntityFrameworkCore/ -name "*.csproj")
 	for f in $L ; do
