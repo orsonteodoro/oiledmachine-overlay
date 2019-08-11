@@ -300,22 +300,12 @@ _src_compile() {
 
 	# force 1 since it slows down the pc
 	local numproc="1"
-	#buildargs_coreasp+=" "
 
 	if ! use tests ; then
-#		buildargs_coreasp+=" /p:SkipTests=true /p:_ProjectsOnly=true"
 		buildargs_coreasp+=" /p:SkipTests=true /p:CompileOnly=true"
 	else
 		buildargs_coreasp+=" /p:SkipTests=false /p:CompileOnly=false"
 	fi
-
-	#if [[ "${DropSuffix}" == "true" ]] ; then
-		# stop warning
-	#	buildargs_coreasp+=" /property:RepositoryCommit=${ASPNETCORE_COMMIT}"
-	#fi
-
-	# for use for system wide netfx else comment out
-	#buildargs_coreasp+=" /property:TargetFrameworkRootPath=${HOME}/.dotnet/buildtools/netfx/ /property:TargetFrameworkIdentifier=.NETFramework"
 
 	export DropSuffix="true" # to avoid problems for now as in directory name changes... kinda like a work around
 
