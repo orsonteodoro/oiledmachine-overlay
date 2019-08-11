@@ -59,7 +59,7 @@ _PATCHES=(
 	"${FILESDIR}/corefx-2.2.3-null-4.patch"
 )
 
-S=${WORKDIR}
+S="${WORKDIR}"
 COREFX_S="${S}/corefx-${CORE_V}"
 
 # This currently isn't required but may be needed in later ebuilds
