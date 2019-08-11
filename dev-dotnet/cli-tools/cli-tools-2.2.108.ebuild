@@ -237,7 +237,7 @@ src_install() {
 	cp -a "${CLI_S}/bin/2/linux-x64/dotnet/shared/" "${ddest}/" || die
 
 	# prevent collision with coreclr ebuild
-	rm -rf "${ddest}"/dotnet/shared/Microsoft.NETCore.App/${FXR_V} || die
+	rm -rf "${ddest}"/shared/Microsoft.NETCore.App/${FXR_V} || die
 
 	dosym "${dest}/dotnet" "/usr/bin/dotnet"
 
