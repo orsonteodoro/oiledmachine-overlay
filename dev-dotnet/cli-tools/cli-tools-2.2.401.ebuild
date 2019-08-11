@@ -15,9 +15,9 @@ LICENSE="MIT"
 
 IUSE="tests debug"
 SDK_V="2.1.403"
-FXR_V="2.2.5"
+FXR_V="2.2.6"
 
-DOTNET_CLI_COMMIT="33ed5b90ce6385c4bc6ee5ae4f79e4e62ac51c79" # exactly ${PV}
+DOTNET_CLI_COMMIT="729b316c13bf9289b033272c07c7dfd046ffbcaf" # exactly ${PV}
 SRC_URI="https://github.com/dotnet/cli/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
 	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )"
 #	 arm64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
