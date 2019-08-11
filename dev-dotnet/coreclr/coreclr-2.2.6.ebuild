@@ -58,7 +58,7 @@ _PATCHES=(
 	"${FILESDIR}/coreclr-2.1.9-jit-hex-format-change-9.patch"
 )
 
-S=${WORKDIR}
+S="${WORKDIR}"
 CORECLR_S="${S}/coreclr-${CORE_V}"
 
 # This currently isn't required but may be needed in later ebuilds
@@ -85,14 +85,14 @@ _src_prepare() {
 	eapply -p2 ${_PATCHES[@]}
 
 	# allow verbose output
-	local F=$(grep -l -r -e "__init_tools_log" $(find ${WORKDIR} -name "*.sh"))
+	local F=$(grep -l -r -e "__init_tools_log" $(find "${WORKDIR}" -name "*.sh"))
 	for f in $F ; do
 		echo "Patching $f"
 		sed -i -e 's|>> "$__init_tools_log" 2>&1|\|\& tee -a "$__init_tools_log"|g' -e 's|>> "$__init_tools_log"|\| tee -a "$__init_tools_log"|g' -e 's| > "$__init_tools_log"| \| tee "$__init_tools_log"|g' "$f" || die
 	done
 
 	# allow wget curl output
-	local F=$(grep -l -r -e "-sSL" $(find ${WORKDIR} -name "*.sh"))
+	local F=$(grep -l -r -e "-sSL" $(find "${WORKDIR}" -name "*.sh"))
 	for f in $F ; do
 		echo "Patching $f"
 		sed -i -e 's|-sSL|-L|g' -e 's|wget -q |wget |g' "$f" || die
