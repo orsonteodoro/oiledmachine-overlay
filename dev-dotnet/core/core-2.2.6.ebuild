@@ -19,7 +19,7 @@ KEYWORDS="~amd64 ~x86 ~arm64 ~arm"
 RDEPEND=""
 DEPEND="${RDEPEND}"
 
-S=${WORKDIR}
+S="${WORKDIR}"
 CORE_S="${S}/core-${CORE_V}"
 
 src_unpack() {
