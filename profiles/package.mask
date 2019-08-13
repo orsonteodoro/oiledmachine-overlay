@@ -1,3 +1,6 @@
+# ebuild in development as of 20190812
+=dev-dotnet/libgit2sharp-0.26
+
 # old package to be remove soon by dev-dotnet/cli-tools and dev-dotnet/dotnetcore-sdk (non binary version)
 dev-dotnet/dotnet-cli
 
