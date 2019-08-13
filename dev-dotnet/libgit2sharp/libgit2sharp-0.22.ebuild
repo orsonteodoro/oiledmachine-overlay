@@ -1,6 +1,5 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
@@ -40,6 +39,9 @@ NUSPEC_FILE="nuget.package/LibGit2Sharp.nuspec"
 SNK_FILENAME="${S}/mono.snk"
 
 src_unpack() {
+	if use gac ; then
+		die "USE gac is broken"
+	fi
 	default
 	# remove rogue binaries
 	rm -rf "${S}/Lib/NuGet/" || die
@@ -47,6 +49,7 @@ src_unpack() {
 }
 
 src_prepare() {
+	addpredict /etc/mono/registry/last-btime
 	if use monodevelop ; then
 		eapply "${FILESDIR}/libgit2sharp-0.22-monodevelop.patch"
 		eapply "${FILESDIR}/remove-NativeBinaries-package-dependency-monodevelop.patch"
@@ -106,7 +109,7 @@ src_install() {
 
 	if use developer ; then
 		insinto "/usr/$(get_libdir)/mono/${PN}"
-		doins LibGit2Sharp/libgit2sharp.snk
+		doins LibGit2Sharp/mono.snk
 		doins LibGit2Sharp/bin/${DIR}/LibGit2Sharp.dll.mdb
 		doins LibGit2Sharp/bin/${DIR}/LibGit2Sharp.xml
 	fi

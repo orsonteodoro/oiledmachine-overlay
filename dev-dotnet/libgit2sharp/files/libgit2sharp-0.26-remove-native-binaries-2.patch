@@ -1,0 +1,29 @@
+--- a/obj/LibGit2Sharp/LibGit2Sharp.csproj.nuget.g.props.orig	2019-08-12 21:20:41.869676774 -0700
++++ b/obj/LibGit2Sharp/LibGit2Sharp.csproj.nuget.g.props	2019-08-12 21:45:59.548004174 -0700
+@@ -16,19 +16,16 @@
+     <Import Project="$(NuGetPackageRoot)microsoft.sourcelink.common/1.0.0-beta-63127-02/buildCrossTargeting/Microsoft.SourceLink.Common.props" Condition="Exists('$(NuGetPackageRoot)microsoft.sourcelink.common/1.0.0-beta-63127-02/buildCrossTargeting/Microsoft.SourceLink.Common.props')" />
+     <Import Project="$(NuGetPackageRoot)microsoft.build.tasks.git/1.0.0-beta-63127-02/buildCrossTargeting/Microsoft.Build.Tasks.Git.props" Condition="Exists('$(NuGetPackageRoot)microsoft.build.tasks.git/1.0.0-beta-63127-02/buildCrossTargeting/Microsoft.Build.Tasks.Git.props')" />
+     <Import Project="$(NuGetPackageRoot)microsoft.sourcelink.github/1.0.0-beta-63127-02/buildCrossTargeting/Microsoft.SourceLink.GitHub.props" Condition="Exists('$(NuGetPackageRoot)microsoft.sourcelink.github/1.0.0-beta-63127-02/buildCrossTargeting/Microsoft.SourceLink.GitHub.props')" />
+-    <Import Project="$(NuGetPackageRoot)libgit2sharp.nativebinaries/2.0.267/buildMultiTargeting/LibGit2Sharp.NativeBinaries.props" Condition="Exists('$(NuGetPackageRoot)libgit2sharp.nativebinaries/2.0.267/buildMultiTargeting/LibGit2Sharp.NativeBinaries.props')" />
+   </ImportGroup>
+   <ImportGroup Condition=" '$(TargetFramework)' == 'net46' AND '$(ExcludeRestorePackageImports)' != 'true' ">
+     <Import Project="$(NuGetPackageRoot)microsoft.sourcelink.common/1.0.0-beta-63127-02/build/Microsoft.SourceLink.Common.props" Condition="Exists('$(NuGetPackageRoot)microsoft.sourcelink.common/1.0.0-beta-63127-02/build/Microsoft.SourceLink.Common.props')" />
+     <Import Project="$(NuGetPackageRoot)microsoft.build.tasks.git/1.0.0-beta-63127-02/build/Microsoft.Build.Tasks.Git.props" Condition="Exists('$(NuGetPackageRoot)microsoft.build.tasks.git/1.0.0-beta-63127-02/build/Microsoft.Build.Tasks.Git.props')" />
+     <Import Project="$(NuGetPackageRoot)microsoft.sourcelink.github/1.0.0-beta-63127-02/build/Microsoft.SourceLink.GitHub.props" Condition="Exists('$(NuGetPackageRoot)microsoft.sourcelink.github/1.0.0-beta-63127-02/build/Microsoft.SourceLink.GitHub.props')" />
+-    <Import Project="$(NuGetPackageRoot)libgit2sharp.nativebinaries/2.0.267/build/net46/LibGit2Sharp.NativeBinaries.props" Condition="Exists('$(NuGetPackageRoot)libgit2sharp.nativebinaries/2.0.267/build/net46/LibGit2Sharp.NativeBinaries.props')" />
+   </ImportGroup>
+   <ImportGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' AND '$(ExcludeRestorePackageImports)' != 'true' ">
+     <Import Project="$(NuGetPackageRoot)microsoft.sourcelink.common/1.0.0-beta-63127-02/build/Microsoft.SourceLink.Common.props" Condition="Exists('$(NuGetPackageRoot)microsoft.sourcelink.common/1.0.0-beta-63127-02/build/Microsoft.SourceLink.Common.props')" />
+     <Import Project="$(NuGetPackageRoot)microsoft.build.tasks.git/1.0.0-beta-63127-02/build/Microsoft.Build.Tasks.Git.props" Condition="Exists('$(NuGetPackageRoot)microsoft.build.tasks.git/1.0.0-beta-63127-02/build/Microsoft.Build.Tasks.Git.props')" />
+     <Import Project="$(NuGetPackageRoot)microsoft.sourcelink.github/1.0.0-beta-63127-02/build/Microsoft.SourceLink.GitHub.props" Condition="Exists('$(NuGetPackageRoot)microsoft.sourcelink.github/1.0.0-beta-63127-02/build/Microsoft.SourceLink.GitHub.props')" />
+-    <Import Project="$(NuGetPackageRoot)libgit2sharp.nativebinaries/2.0.267/build/LibGit2Sharp.NativeBinaries.props" Condition="Exists('$(NuGetPackageRoot)libgit2sharp.nativebinaries/2.0.267/build/LibGit2Sharp.NativeBinaries.props')" />
+   </ImportGroup>
+   <PropertyGroup Condition=" '$(TargetFramework)' == 'net46' AND '$(ExcludeRestorePackageImports)' != 'true' ">
+     <PkgNerdbank_GitVersioning Condition=" '$(PkgNerdbank_GitVersioning)' == '' ">/var/tmp/portage/dev-dotnet/libgit2sharp-0.26/homedir/.nuget/packages/nerdbank.gitversioning/2.2.13</PkgNerdbank_GitVersioning>
+@@ -42,4 +39,4 @@
+     <PkgMicrosoft_Build_Tasks_Git Condition=" '$(PkgMicrosoft_Build_Tasks_Git)' == '' ">/var/tmp/portage/dev-dotnet/libgit2sharp-0.26/homedir/.nuget/packages/microsoft.build.tasks.git/1.0.0-beta-63127-02</PkgMicrosoft_Build_Tasks_Git>
+     <PkgMicrosoft_SourceLink_GitHub Condition=" '$(PkgMicrosoft_SourceLink_GitHub)' == '' ">/var/tmp/portage/dev-dotnet/libgit2sharp-0.26/homedir/.nuget/packages/microsoft.sourcelink.github/1.0.0-beta-63127-02</PkgMicrosoft_SourceLink_GitHub>
+   </PropertyGroup>
+-</Project>
+\ No newline at end of file
++</Project>
