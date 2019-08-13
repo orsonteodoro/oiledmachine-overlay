@@ -7,7 +7,7 @@ KEYWORDS="~x86 ~amd64"
 
 USE_DOTNET="net45"
 EBUILD_FRAMEWORK="4.5"
-IUSE="${USE_DOTNET} +gac debug developer test"
+IUSE="${USE_DOTNET} +gac debug developer system-libgit2 test"
 REQUIRED_USE="|| ( ${USE_DOTNET} )"
 
 inherit dotnet eutils
@@ -110,13 +110,15 @@ src_prepare() {
 
 	dotnet restore --verbosity normal || die
 
-	# native lib
-	sed -i -e "s|lib/linux-x64/libgit2-${LIBGIT2_SHORT_HASH}.so|/usr/lib64/libgit2.so|g" "${HOME}/.nuget/packages/libgit2sharp.nativebinaries/${LIBGIT2_NATIVE_BINARIES_V}/libgit2/LibGit2Sharp.dll.config" || die
+	if use system-libgit2 ; then
+		# native lib
+		sed -i -e "s|lib/linux-x64/libgit2-${LIBGIT2_SHORT_HASH}.so|/usr/lib64/libgit2.so|g" "${HOME}/.nuget/packages/libgit2sharp.nativebinaries/${LIBGIT2_NATIVE_BINARIES_V}/libgit2/LibGit2Sharp.dll.config" || die
 
-	# native lib name
-	sed -i -e "s|git2-${LIBGIT2_SHORT_HASH}|git2-${NATIVE_LIBGIT2_SHORT_HASH}|g" "${HOME}/.nuget/packages/libgit2sharp.nativebinaries/${LIBGIT2_NATIVE_BINARIES_V}/libgit2/LibGit2Sharp.dll.config" || die
+		# native lib name
+		sed -i -e "s|git2-${LIBGIT2_SHORT_HASH}|git2-${NATIVE_LIBGIT2_SHORT_HASH}|g" "${HOME}/.nuget/packages/libgit2sharp.nativebinaries/${LIBGIT2_NATIVE_BINARIES_V}/libgit2/LibGit2Sharp.dll.config" || die
 
-	sed -i -e "s|\$(MSBuildThisFileDirectory)\..\..\runtimes\linux-x64\native\libgit2-${LIBGIT2_SHORT_HASH}.so|/usr/lib64/libgit2.so|g" "${HOME}/.nuget/packages/libgit2sharp.nativebinaries/${LIBGIT2_NATIVE_BINARIES_V}/build/net46/LibGit2Sharp.NativeBinaries.props" || die
+		sed -i -e "s|\$(MSBuildThisFileDirectory)\..\..\runtimes\linux-x64\native\libgit2-${LIBGIT2_SHORT_HASH}.so|/usr/lib64/libgit2.so|g" "${HOME}/.nuget/packages/libgit2sharp.nativebinaries/${LIBGIT2_NATIVE_BINARIES_V}/build/net46/LibGit2Sharp.NativeBinaries.props" || die
+	fi
 
 	default
 }
