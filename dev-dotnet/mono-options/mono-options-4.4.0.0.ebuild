@@ -1,6 +1,5 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 KEYWORDS="~amd64 ~x86"
@@ -12,8 +11,10 @@ REQUIRED_USE="|| ( ${USE_DOTNET} ) nupkg"
 
 inherit gac nupkg
 
-SRC_URI="https://github.com/ArsenShnurkov/shnurise-tarballs/raw/master/mono-4.5.2_p2016061606.tar.bz2"
-S="${WORKDIR}/mono-4.5.2"
+SHORT_HASH="3abbe5b" # obtained from string cmd
+COMMIT="3abbe5b7e6cb6fed2cd1f85598ccd5d5f63a3bda"
+SRC_URI="https://github.com/mono/mono/archive/${COMMIT}.zip -> ${P}.zip"
+S="${WORKDIR}/mono-${COMMIT}"
 
 SLOT="0"
 
@@ -30,7 +31,13 @@ RDEPEND="${CDEPEND}
 	"
 
 get_dlldir() {
-	echo /usr/lib64/mono/mono-options
+	if use abi_x86_64 ; then
+		echo /usr/lib32/mono/mono-options
+	elif use abi_x86_32 ; then
+		echo /usr/lib64/mono/mono-options
+	else
+		die "Unsupported arch.  Contact ebuild maintainer."
+	fi
 }
 
 NUSPEC_VERSION=${PV}
@@ -48,6 +55,7 @@ src_configure() {
 }
 
 src_compile() {
+	addpredict /etc/mono/registry/last-btime
 	# exbuild_strong "mcs/class/Mono.Options/Mono.Options-net_4_x.csproj" # csproj is created during configure
 	if use gac; then
 		PARAMETERS=-keyfile:mcs/class/mono.snk
