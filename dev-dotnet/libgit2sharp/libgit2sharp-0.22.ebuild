@@ -17,9 +17,7 @@ DESCRIPTION="A C# PInvoke wrapper library for LibGit2 C library"
 
 EGIT_COMMIT="8daef23223e1374141bf496e4b310ded9ae4639e"
 HOMEPAGE="https://github.com/libgit2/libgit2sharp"
-SRC_URI="${HOMEPAGE}/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz
-	https://github.com/mono/mono/raw/master/mcs/class/mono.snk"
-#RESTRICT="mirror"
+SRC_URI="${HOMEPAGE}/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
 
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 
@@ -36,12 +34,9 @@ DEPEND="${CDEPEND}
 RDEPEND="${CDEPEND}"
 
 NUSPEC_FILE="nuget.package/LibGit2Sharp.nuspec"
-SNK_FILENAME="${S}/mono.snk"
+SNK_FILENAME="${S}/LibGit2Sharp/libgit2sharp.snk"
 
 src_unpack() {
-	if use gac ; then
-		die "USE gac is broken"
-	fi
 	default
 	# remove rogue binaries
 	rm -rf "${S}/Lib/NuGet/" || die
@@ -73,18 +68,16 @@ src_prepare() {
 	fi
 	sed -i "s=\\\$configuration\\\$=${DIR}=g" "${NUSPEC_FILE}" || die
 
-	cp "${DISTDIR}/mono.snk" "${S}"
-
 	default
 }
 
 src_compile() {
 	# recreate custom build tasks .dll
 	sed -i "s#<OutputPath>.*</OutputPath>#<OutputPath>.</OutputPath>#g" "Lib/CustomBuildTasks/CustomBuildTasks.csproj" || die
-	exbuild "Lib/CustomBuildTasks/CustomBuildTasks.csproj"
+	exbuild_strong "Lib/CustomBuildTasks/CustomBuildTasks.csproj"
 
 	# main compilation
-	exbuild_strong "LibGit2Sharp.sln"
+	exbuild "LibGit2Sharp.sln"
 
 	enuspec "${NUSPEC_FILE}"
 }
@@ -107,9 +100,11 @@ src_install() {
 
 	enupkg "${WORKDIR}/LibGit2Sharp.0.22.nupkg"
 
+	insinto "/usr/$(get_libdir)/mono/${PN}"
+	doins LibGit2Sharp/libgit2sharp.snk
+
 	if use developer ; then
 		insinto "/usr/$(get_libdir)/mono/${PN}"
-		doins LibGit2Sharp/mono.snk
 		doins LibGit2Sharp/bin/${DIR}/LibGit2Sharp.dll.mdb
 		doins LibGit2Sharp/bin/${DIR}/LibGit2Sharp.xml
 	fi
@@ -121,8 +116,14 @@ pkg_postinst() {
 	genlibdir
 
 	if use gac; then
-		einfo "adding to GAC"
-		gacutil -i "${libdir}/LibGit2Sharp.dll" || die
+		for x in ${USE_DOTNET} ; do
+			FW_UPPER=${x:3:1}
+			FW_LOWER=${x:4:1}
+			einfo "strong signing"
+			sn -R /usr/$(get_libdir)/mono/${FW_UPPER}.${FW_LOWER}/LibGit2Sharp.dll "/usr/$(get_libdir)/mono/${PN}/libgit2sharp.snk" || die
+			einfo "adding to GAC"
+			gacutil -i "/usr/$(get_libdir)/mono/${FW_UPPER}.${FW_LOWER}/LibGit2Sharp.dll" || die
+		done
 	fi
 
 	# cd "${WORKDIR}
@@ -133,9 +134,13 @@ pkg_postrm() {
 	genlibdir
 
 	if use gac; then
-		einfo "removing from GAC"
-		gacutil -u LibGit2Sharp
-		# don't die, it there is no such assembly in GAC
+		for x in ${USE_DOTNET} ; do
+			FW_UPPER=${x:3:1}
+			FW_LOWER=${x:4:1}
+			einfo "removing from GAC"
+			gacutil -u LibGit2Sharp
+			# don't die, it there is no such assembly in GAC
+		done
 	fi
 
 	# yes | nuget delete -source "Local NuGet packages" LibGit2Sharp 0.22

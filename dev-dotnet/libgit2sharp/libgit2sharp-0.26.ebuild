@@ -17,10 +17,8 @@ DESCRIPTION="A C# PInvoke wrapper library for LibGit2 C library"
 COMMIT="a709ab84d4b3c14e7aa9038c2c6b05c57a6b007f"
 REPO_URL="https://github.com/libgit2/libgit2sharp.git"
 HOMEPAGE="https://github.com/libgit2/libgit2sharp"
-SRC_URI="
-	https://github.com/mono/mono/raw/master/mcs/class/mono.snk"
+SRC_URI=""
 #${HOMEPAGE}/archive/v0.26.tar.gz -> ${P}.tar.gz
-#RESTRICT="mirror"
 
 S="${WORKDIR}/${PN}-${PV}"
 
@@ -39,7 +37,7 @@ DEPEND="${CDEPEND}
 RDEPEND="${CDEPEND}
 	 dev-vcs/git"
 
-SNK_FILENAME="${S}/mono.snk"
+SNK_FILENAME="${S}/LibGit2Sharp/libgit2sharp.snk"
 
 _fetch_project() {
 	# using git is required.
@@ -97,7 +95,6 @@ src_prepare() {
 	#epatch "${FILESDIR}/packages-config-remove-xunit.patch"
 	echo "/usr/lib64/libgit2.so" >"LibGit2Sharp/libgit2_filename.txt" || die
 
-	cp "${DISTDIR}/mono.snk" "${S}"
 	if use debug; then
 		export Configuration=debug
 	else
@@ -156,8 +153,14 @@ pkg_postinst() {
 	genlibdir
 
 	if use gac; then
-		einfo "adding to GAC"
-		gacutil -i "${libdir}/LibGit2Sharp.dll" || die
+		for x in ${USE_DOTNET} ; do
+			FW_UPPER=${x:3:1}
+			FW_LOWER=${x:4:1}
+			einfo "strong signing"
+			sn -R /usr/$(get_libdir)/mono/${FW_UPPER}.${FW_LOWER}/LibGit2Sharp.dll "/usr/$(get_libdir)/mono/${PN}/libgit2sharp.snk" || die
+			einfo "adding to GAC"
+			gacutil -i "/usr/$(get_libdir)/mono/${FW_UPPER}.${FW_LOWER}/LibGit2Sharp.dll" || die
+		done
 	fi
 }
 
