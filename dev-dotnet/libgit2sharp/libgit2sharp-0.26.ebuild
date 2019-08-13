@@ -98,7 +98,6 @@ src_prepare() {
 	addpredict /etc/mono/registry/last-btime
 	epatch "${FILESDIR}/libgit2sharp-0.26-sln.patch"
 	#epatch "${FILESDIR}/packages-config-remove-xunit.patch"
-	echo "/usr/lib64/libgit2.so" >"LibGit2Sharp/libgit2_filename.txt" || die
 
 	if use debug; then
 		export Configuration=debug
