@@ -5,12 +5,12 @@ EAPI=6
 
 KEYWORDS="~x86 ~amd64"
 
-USE_DOTNET="net46"
+USE_DOTNET="net45"
 EBUILD_FRAMEWORK="4.5"
-IUSE="${USE_DOTNET} +gac debug test"
+IUSE="${USE_DOTNET} +gac debug developer test"
 REQUIRED_USE="|| ( ${USE_DOTNET} )"
 
-inherit eutils
+inherit dotnet eutils
 
 DESCRIPTION="A C# PInvoke wrapper library for LibGit2 C library"
 
@@ -37,7 +37,12 @@ DEPEND="${CDEPEND}
 RDEPEND="${CDEPEND}
 	 dev-vcs/git"
 
-SNK_FILENAME="${S}/LibGit2Sharp/libgit2sharp.snk"
+SNK_FILENAME="${S}/libgit2sharp.snk"
+
+LIBGIT2_NATIVE_BINARIES_V="2.0.267"
+LIBGIT2_COMMIT="572e4d8c1f1d42feac1c770f0cddf6fda6c4eca0" # v0.28.1
+LIBGIT2_SHORT_HASH="572e4d8" # short hash of commit
+NATIVE_LIBGIT2_SHORT_HASH="572e4d8" # pretend
 
 _fetch_project() {
 	# using git is required.
@@ -106,8 +111,13 @@ src_prepare() {
 
 	dotnet restore --verbosity normal || die
 
-	eapply "${FILESDIR}/libgit2sharp-0.26-remove-native-binaries-1.patch"
-	eapply "${FILESDIR}/libgit2sharp-0.26-remove-native-binaries-2.patch"
+	# native lib
+	sed -i -e "s|lib/linux-x64/libgit2-${LIBGIT2_SHORT_HASH}.so|/usr/lib64/libgit2.so|g" "${HOME}/.nuget/packages/libgit2sharp.nativebinaries/${LIBGIT2_NATIVE_BINARIES_V}/libgit2/LibGit2Sharp.dll.config" || die
+
+	# native lib name
+	sed -i -e "s|git2-${LIBGIT2_SHORT_HASH}|git2-${NATIVE_LIBGIT2_SHORT_HASH}|g" "${HOME}/.nuget/packages/libgit2sharp.nativebinaries/${LIBGIT2_NATIVE_BINARIES_V}/libgit2/LibGit2Sharp.dll.config" || die
+
+	sed -i -e "s|\$(MSBuildThisFileDirectory)\..\..\runtimes\linux-x64\native\libgit2-${LIBGIT2_SHORT_HASH}.so|/usr/lib64/libgit2.so|g" "${HOME}/.nuget/packages/libgit2sharp.nativebinaries/${LIBGIT2_NATIVE_BINARIES_V}/build/net46/LibGit2Sharp.NativeBinaries.props" || die
 
 	default
 }
@@ -133,9 +143,11 @@ src_install() {
 	fi
 	doins "bin/LibGit2Sharp/${DIR}/netstandard2.0/LibGit2Sharp.dll"
 
+	insinto "/usr/$(get_libdir)/mono/${PN}"
+	doins libgit2sharp.snk
+
 	if use developer ; then
 		insinto "/usr/$(get_libdir)/mono/${PN}"
-		doins mono.snk
 		doins "bin/LibGit2Sharp/${DIR}/netstandard2.0/LibGit2Sharp.pdb"
 		doins "bin/LibGit2Sharp/${DIR}/netstandard2.0/LibGit2Sharp.xml"
 	fi
