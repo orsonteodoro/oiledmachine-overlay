@@ -60,7 +60,6 @@ dev-dotnet/microsoft-net-http-bin
 dev-dotnet/microsoft-web-infrastructure
 dev-dotnet/mojoshader-cs
 dev-dotnet/mono-addins
-dev-dotnet/mono-options
 dev-dotnet/msbuildtasks
 dev-dotnet/nancy
 dev-dotnet/ndesk-options
@@ -133,7 +132,6 @@ dev-go/godef
 dev-java/icedtea
 dev-lang/gambas
 dev-lang/lua
-dev-lang/mono
 dev-lang/rust
 dev-lang/turboturtle
 dev-libs/asmlib
@@ -318,9 +316,8 @@ dev-util/geeks-diary
 
 # untested
 games-engines/enigma
-=dev-lang/mono-4.8.0.524
 =dev-dotnet/libgit2sharp-0.26
-=dev-dotnet/mono-options-5.3.0.1
+dev-dotnet/mono-options
 
 # updated and tested
 #app-editors/epic-journal
