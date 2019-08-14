@@ -112,5 +112,6 @@ multilib_src_install() {
 		# Remove merge conflict
 		rm -f "${ED}"/usr/$(get_libdir)/pkgconfig/mono-options.pc || die
 		rm -rf $(find "${ED}"/usr/lib/mono/ -name "Mono.Options.dll") || die
+		rm -rf "${ED}"/usr/lib/mono-source-libs/Options.cs || die
 	fi
 }
