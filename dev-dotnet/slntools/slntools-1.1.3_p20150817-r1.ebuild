@@ -10,11 +10,11 @@ REQUIRED_USE="|| ( ${USE_DOTNET} ) nupkg"
 inherit dotnet gac
 
 NAME="slntools"
-HOMEPAGE="https://github.com/ArsenShnurkov/${NAME}"
+HOMEPAGE="https://github.com/ArsenShnurkov/slntools"
 
 EGIT_COMMIT="705869e96a2f0e401be03f8e8478df3e1f2b9373"
 SRC_URI="${HOMEPAGE}/archive/${EGIT_COMMIT}.zip -> ${PF}.zip
-	https://github.com/mono/mono/raw/master/mcs/class/mono.snk"
+	 https://github.com/mono/mono/raw/master/mcs/class/mono.snk"
 
 RESTRICT="mirror"
 S="${WORKDIR}/${NAME}-${EGIT_COMMIT}"
@@ -35,7 +35,7 @@ METAFILETOBUILD="${S}/Main/${SLN_FILE}"
 SNK_FILENAME="${S}/mono.snk"
 
 src_prepare() {
-	eapply "${FILESDIR}/remove-wix-project-from-sln-file.patch"
+	eapply "${FILESDIR}/slntools-1.1.3_p20150817-remove-wix-project-from-sln-file.patch"
 
 	# System.EntryPointNotFoundException: GetStdHandle
 	#   at (wrapper managed-to-native) CWDev.SLNTools.CommandLine.Parser:GetStdHandle (int)
@@ -74,7 +74,7 @@ src_compile() {
 	exbuild_strong ${ARGS} ${METAFILETOBUILD}
 
 	if use nupkg; then
-		nuget pack "${FILESDIR}/${SLN_FILE}.nuspec" -Properties ${ARGSN} -BasePath "${S}" -OutputDirectory "${WORKDIR}" -NonInteractive -Verbosity detailed
+		nuget pack "${FILESDIR}/slntools-1.1.3_p20150817-${SLN_FILE}.nuspec" -Properties ${ARGSN} -BasePath "${S}" -OutputDirectory "${WORKDIR}" -NonInteractive -Verbosity detailed
 	fi
 }
 
