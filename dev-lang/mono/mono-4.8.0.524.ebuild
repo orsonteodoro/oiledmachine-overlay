@@ -111,5 +111,6 @@ multilib_src_install() {
 	if use extern-mono-options ; then
 		# Remove merge conflict
 		rm -f "${ED}"/usr/$(get_libdir)/pkgconfig/mono-options.pc || die
+		rm -rf $(find "${ED}"/usr/lib/mono/ -name "Mono.Options.dll") || die
 	fi
 }
