@@ -1,6 +1,5 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 KEYWORDS="~amd64 ~x86"
@@ -89,15 +88,15 @@ src_install() {
 		DIR="Release"
 	fi
 
-	# insinto "/usr/$(get_libdir)"
 	insinto "/usr/share/slntools/"
 
-	# || die is not necessary after doins,
-	# see examples at https://devmanual.gentoo.org/ebuild-writing/functions/src_install/index.html
 	doins Main/SLNTools.exe/bin/${DIR}/CWDev.SLNTools.Core.dll
 	if use developer; then
 		doins Main/SLNTools.exe/bin/${DIR}/CWDev.SLNTools.Core.dll.mdb
 	fi
+	einfo "Strong signing dll again"
+	sn -R Main/SLNTools.exe/bin/${DIR}/CWDev.SLNTools.Core.dll "${S}"/mono.snk || die
+	einfo "GAC install"
 	egacinstall Main/SLNTools.exe/bin/${DIR}/CWDev.SLNTools.Core.dll
 
 	if use cli; then
@@ -126,9 +125,3 @@ src_install() {
 
 	dotnet_multilib_comply
 }
-
-# Usage:
-# SLNTools.exe 
-# @<file>    Read response file for more options
-# <Command>  Command Name (CompareSolutions|MergeSolutions|CreateFilterFileFromSolution|EditFilterFile|OpenFilterFile|SortProjects)
-
