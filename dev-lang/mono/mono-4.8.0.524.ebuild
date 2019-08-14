@@ -14,7 +14,7 @@ SLOT="0"
 
 KEYWORDS="amd64 ~arm ~arm64 ppc ~ppc64 x86 ~amd64-linux"
 
-IUSE="nls minimal pax_kernel xen doc extern-mono-options"
+IUSE="nls minimal pax_kernel xen doc external-mono-options"
 
 COMMONDEPEND="
 	!minimal? ( >=dev-dotnet/libgdiplus-2.10 )
@@ -108,7 +108,7 @@ multilib_src_install() {
 	rm -f "${ED}"/usr/lib/mono/{2.0,4.5}/mscorlib.dll.so || die
 	rm -f "${ED}"/usr/lib/mono/{2.0,4.5}/mcs.exe.so || die
 
-	if use extern-mono-options ; then
+	if use external-mono-options ; then
 		# Remove merge conflict
 		rm -f "${ED}"/usr/$(get_libdir)/pkgconfig/mono-options.pc || die
 		rm -rf $(find "${ED}"/usr/lib/mono/ -name "Mono.Options.dll") || die
