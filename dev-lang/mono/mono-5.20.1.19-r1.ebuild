@@ -1,29 +1,31 @@
-# Copyright 1999-2018 Gentoo Authors
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
-inherit autotools eutils linux-info mono-env flag-o-matic pax-utils versionator multilib-minimal
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86 ~amd64-linux"
 
-DESCRIPTION="Mono runtime and class libraries, a C# compiler/interpreter"
-HOMEPAGE="https://www.mono-project.com/Main_Page"
-SRC_URI="https://download.mono-project.com/sources/${PN}/${P}.tar.bz2"
-
-LICENSE="MIT LGPL-2.1 GPL-2 BSD-4 NPL-1.1 Ms-PL GPL-2-with-linking-exception IDPL"
 SLOT="0"
 
-KEYWORDS="amd64 ~arm ~arm64 ppc ~ppc64 x86 ~amd64-linux"
+IUSE="nls minimal pax_kernel xen doc"
+IUSE+=" external-mono-options"
 
-IUSE="nls minimal pax_kernel xen doc external-mono-options"
+inherit autotools eutils linux-info mono-env flag-o-matic pax-utils multilib-minimal
 
+DESCRIPTION="Mono runtime and class libraries, a C# compiler/interpreter"
+HOMEPAGE="http://www.mono-project.com/Main_Page"
+LICENSE="MIT LGPL-2.1 GPL-2 BSD-4 NPL-1.1 Ms-PL GPL-2-with-linking-exception IDPL"
+
+SRC_URI="http://download.mono-project.com/sources/mono/${P}.tar.bz2"
+
+#Note: mono works incorrect with older versions of libgdiplus
+#details on dotnet overlay issue: https://github.com/gentoo/dotnet/issues/429
 COMMONDEPEND="
-	!minimal? ( >=dev-dotnet/libgdiplus-2.10 )
+	!minimal? ( >=dev-dotnet/libgdiplus-5.6.1 )
 	ia64? ( sys-libs/libunwind )
 	nls? ( sys-devel/gettext )
 "
-RDEPEND="${COMMONDEPEND}
-	|| ( www-client/links www-client/lynx )
-"
+RDEPEND="${COMMONDEPEND}"
 DEPEND="${COMMONDEPEND}
 	sys-devel/bc
 	virtual/yacc
@@ -32,11 +34,9 @@ DEPEND="${COMMONDEPEND}
 "
 
 PATCHES=(
-	"${FILESDIR}"/${PN}-4.8.0.371-makedev.patch
-	"${FILESDIR}"/${PN}-4.8.0.371-x86_32.patch
+	"${FILESDIR}"/${PN}-5.0.1.1-x86_32.patch
+	"${FILESDIR}"/mono-5.12-try-catch.patch
 )
-
-S="${WORKDIR}/${PN}-$(get_version_component_range 1-3)"
 
 pkg_pretend() {
 	linux-info_pkg_setup
@@ -47,7 +47,7 @@ pkg_pretend() {
 			# https://github.com/gentoo/gentoo/blob/f200e625bda8de696a28338318c9005b69e34710/eclass/linux-info.eclass#L686
 			ewarn "kernel config not found"
 			ewarn "If CONFIG_SYSVIPC is not set in your kernel .config, mono will hang while compiling."
-			ewarn "See http://bugs.gentoo.org/261869 for more info."
+			ewarn "See https://bugs.gentoo.org/261869 for more info."
 		fi
 	fi
 }
@@ -71,11 +71,12 @@ src_prepare() {
 	# mono build system can fail otherwise
 	strip-flags
 
-	#TODO: resolve problem with newer binutils
-	#bug: https://bugs.gentoo.org/show_bug.cgi?id=600664
-	#append-flags -fPIC
+	# prebuilt files were left in tarball by accident:
+	rm -rv external/corefx/src/Native/Unix/System.Native/.libs || die
+	rm -rv external/corefx/src/Native/Unix/System.Native/*.{o,lo} || die
 
 	default
+
 	# PATCHES contains configure.ac patch
 	eautoreconf
 	multilib_copy_sources
