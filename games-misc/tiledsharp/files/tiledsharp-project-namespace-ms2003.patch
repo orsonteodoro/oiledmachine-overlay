@@ -1,0 +1,16 @@
+--- a/TiledSharp/TiledSharp.csproj.orig	2019-07-05 21:50:06.881994536 -0700
++++ b/TiledSharp/TiledSharp.csproj	2019-07-05 21:50:14.642310468 -0700
+@@ -1,4 +1,4 @@
+-﻿<Project Sdk="Microsoft.NET.Sdk">
++﻿<Project Sdk="Microsoft.NET.Sdk" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+ 
+   <PropertyGroup>
+     <TargetFrameworks>netstandard2.0;net35;net40;net45</TargetFrameworks>
+--- a/TiledSharp.Test/TiledSharp.Test.csproj.orig	2019-05-19 07:06:33.000000000 -0700
++++ b/TiledSharp.Test/TiledSharp.Test.csproj	2019-07-05 21:49:42.581005082 -0700
+@@ -1,4 +1,4 @@
+-<Project Sdk="Microsoft.NET.Sdk">
++<Project Sdk="Microsoft.NET.Sdk" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+ 
+   <PropertyGroup>
+     <TargetFrameworks>netcoreapp2.0;netcoreapp2.1;net35;net40;net45</TargetFrameworks>
