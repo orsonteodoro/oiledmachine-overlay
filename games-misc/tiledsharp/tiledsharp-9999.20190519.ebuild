@@ -10,6 +10,9 @@ COMMIT="f29fb71591200093fa159f53094b8b8d7fab1d17"
 PROJECT_NAME="TiledSharp"
 SRC_URI="https://github.com/marshallward/TiledSharp/archive/${COMMIT}.zip -> ${P}.zip"
 
+NETCORE20_NAME="TiledSharp"
+NETCORE20_V="1.0.0"
+
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
@@ -106,22 +109,40 @@ src_install() {
 
         ebegin "Installing dlls into the GAC"
 
+	for x in ${USE_DOTNET} ; do
+		if [[ ${x} == *netstandard* ]] ; then
+			# todo
+	                insinto "/opt/dotnet/shared/${NETCORE20_NAME}/${NETCORE20_V}/"
+			doins TiledSharp/bin/Release/$(_dotnet_use_to_folder_name ${x})/{TiledSharp.dll,TiledSharp.deps.json}
+			use developer && doins TiledSharp/bin/Release/$(_dotnet_use_to_folder_name ${x})/TiledSharp.pdb
+		else
+	                insinto "/usr/$(get_libdir)/mono/${PN}/$(_dotnet_use_to_folder_name ${x})"
+			doins TiledSharp/bin/Release/$(_dotnet_use_to_folder_name ${x})/TiledSharp.dll
+			use developer && doins TiledSharp/bin/Release/$(_dotnet_use_to_folder_name ${x})/TiledSharp.pdb
+		fi
+	done
+
 	if use gac ; then
 		esavekey
+	fi
 
-		for x in ${USE_DOTNET} ; do
-	                FW_UPPER=${x:3:1}
-	                FW_LOWER=${x:4:1}
+	# fixme different strong sign per net version
+	for x in ${USE_DOTNET} ; do
+		if [[ ${x} == *netstandard* ]] ; then
+			einfo "Skipping ${x} into GAC"
+			continue
+		fi
+		if use gac ; then
+			einfo "Installing ${x} into GAC"
 			sn -R "${S}/TiledSharp/bin/Release/$(_dotnet_use_to_folder_name ${x})/TiledSharp.dll" "${SNK_FILENAME}" || die
 	                egacinstall "${S}/TiledSharp/bin/Release/$(_dotnet_use_to_folder_name ${x})/TiledSharp.dll"
-	        done
-	fi
+			insinto "/usr/$(get_libdir)/mono/${PN}"
+			use developer && doins TiledSharp/bin/Release/$(_dotnet_use_to_folder_name ${x})/TiledSharp.pdb
+		fi
+                insinto "/usr/$(get_libdir)/mono/${PN}"
+		use developer && doins TiledSharp/bin/Release/$(_dotnet_use_to_folder_name ${x})/TiledSharp.pdb
+        done
 	eend
-
-	if use developer ; then
-		insinto "/usr/$(get_libdir)/mono/${PN}"
-		doins TiledSharp/bin/${mydebug}/TiledSharp.dll.mdb
-	fi
 
 	use doc && dodoc -r docs/html
 
