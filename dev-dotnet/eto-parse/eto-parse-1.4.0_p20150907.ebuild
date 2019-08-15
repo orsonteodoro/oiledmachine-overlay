@@ -10,7 +10,7 @@ IUSE="${USE_DOTNET} developer nupkg debug"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) nupkg"
 
 NAME="Eto.Parse"
-HOMEPAGE="https://github.com/picoe/${NAME}"
+HOMEPAGE="https://github.com/picoe/Eto.Parse"
 
 EGIT_COMMIT="7d7884fb4f481e28dd24bc273fbd6615d0ba539a" # 2015-09-07
 SRC_URI="${HOMEPAGE}/archive/${EGIT_COMMIT}.zip -> ${PF}.zip
