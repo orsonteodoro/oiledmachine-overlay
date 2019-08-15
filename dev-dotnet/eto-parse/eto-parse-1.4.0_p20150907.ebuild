@@ -1,6 +1,5 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
@@ -116,6 +115,7 @@ src_install() {
 	else
 		DIR="Release"
 	fi
+	sn -R "Eto.Parse/bin/${DIR}/net40/Eto.Parse.dll" "${SNK_FILENAME}" || die
 	egacinstall "Eto.Parse/bin/${DIR}/net40/Eto.Parse.dll"
 
 	enupkg "${WORKDIR}/${NAME}.${NUSPEC_VERSION}.nupkg"
