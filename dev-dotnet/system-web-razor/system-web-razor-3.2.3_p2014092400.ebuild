@@ -1,12 +1,11 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 inherit dotnet gac nupkg
 
 REPO_NAME="aspnetwebstack"
-HOMEPAGE="https://github.com/ASP-NET-MVC/aspnetwebstack"
+HOMEPAGE="https://github.com/aspnet/AspNetWebStack"
 
 EGIT_BRANCH="master"
 EGIT_COMMIT="4e40cdef9c8a8226685f95ef03b746bc8322aa92"
@@ -27,13 +26,9 @@ USE_DOTNET="net45"
 IUSE="+${USE_DOTNET} developer debug"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) nupkg"
 
-COMMON_DEPEND=">=dev-lang/mono-4.0.2.5
-	dev-dotnet/microsoft-web-infrastructure
-"
-RDEPEND="${COMMON_DEPEND}
-"
-DEPEND="${COMMON_DEPEND}
-"
+COMMON_DEPEND=">=dev-lang/mono-5.14.0.177"
+RDEPEND="${COMMON_DEPEND}"
+DEPEND="${COMMON_DEPEND}"
 
 DLL_NAME=System.Web.Razor
 DLL_PATH=bin
