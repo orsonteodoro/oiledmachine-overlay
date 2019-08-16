@@ -28,6 +28,7 @@ REQUIRED_USE="|| ( ${USE_DOTNET} )"
 
 COMMON_DEPEND=">=dev-lang/mono-4.0.2.5
 	dev-dotnet/system-web-razor
+	dev-dotnet/mailkit
 "
 RDEPEND="${COMMON_DEPEND}
 "
@@ -47,6 +48,10 @@ NUSPEC_VERSION=$(get_version_component_range 1-3)"${COMMIT_DATE//p/.}"
 SNK_FILENAME="${S}/mono.snk"
 
 src_prepare() {
+	ewarn "Ebuild still in development as of Aug 15, 2019."
+
+	ewarn "Missing mailkit patch.  Build will fail due to mono/netfx removal of SmtpClient."
+
 	cp "${FILESDIR}/${NUSPEC_ID}.nuspec" "${S}" || die
 	chmod -R +rw "${S}" || die
 	patch_nuspec_file "${S}/${NUSPEC_ID}.nuspec"
