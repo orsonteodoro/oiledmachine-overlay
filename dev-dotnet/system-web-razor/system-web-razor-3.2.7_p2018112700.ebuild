@@ -8,7 +8,7 @@ REPO_NAME="AspNetWebStack"
 HOMEPAGE="https://github.com/aspnet/AspNetWebStack"
 
 EGIT_BRANCH="master"
-EGIT_COMMIT="4e40cdef9c8a8226685f95ef03b746bc8322aa92"
+EGIT_COMMIT="39d3064baf13181f5718ec5d85ba644b47d0704b"
 SRC_URI="${HOMEPAGE}/archive/${EGIT_BRANCH}/${EGIT_COMMIT}.tar.gz -> ${PF}.tar.gz
 	https://github.com/mono/mono/raw/master/mcs/class/mono.snk"
 RESTRICT="mirror"
