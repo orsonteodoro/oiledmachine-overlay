@@ -4,7 +4,7 @@
 EAPI=6
 inherit dotnet gac nupkg
 
-REPO_NAME="aspnetwebstack"
+REPO_NAME="AspNetWebStack"
 HOMEPAGE="https://github.com/aspnet/AspNetWebStack"
 
 EGIT_BRANCH="master"
