@@ -52,7 +52,7 @@ src_unpack() {
 _src_prepare() {
 	egenkey
 
-	# to fix: The reference assemblies for .NETFramework,Version=v3.5 were not found.
+	# to fix: error MSB3644: The reference assemblies for .NETFramework,Version=v4.5 were not found
 	L=$(find "${S}" -name "*.csproj")
 	for f in $L ; do
 		cp "${FILESDIR}"/netfx.props "$(dirname $f)" || die
