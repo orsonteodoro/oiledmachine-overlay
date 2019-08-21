@@ -913,8 +913,10 @@ function ot-kernel-common_src_unpack() {
 		apply_o3
 	fi
 
-	if use tresor ; then
-		apply_tresor
+	if has tresor ; then
+		if use tresor ; then
+			apply_tresor
+		fi
 	fi
 
 	#_dpatch "${PATCH_OPS}" "${FILESDIR}/linux-4.20-kconfig-ioscheds.patch"
