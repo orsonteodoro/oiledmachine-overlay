@@ -723,25 +723,6 @@ function ot-kernel-common_amdgpu_amd_staging_drm_next_fixes() {
 # @DESCRIPTION:
 # Show messages and avoid collision triggering
 function ot-kernel-common_ot-kernel-common_pkg_postinst_cb() {
-	if use disable_debug ; then
-		einfo "The disable debug scripts have been placed in your /usr/src folder."
-		einfo "They disable debug paths, logging, output for a performance gain."
-		einfo "You should run it like \`/usr/src/disable_debug x86_64 /usr/src/.config\`"
-		cp "${FILESDIR}/_disable_debug_v${DISABLE_DEBUG_V}" "${EROOT}/usr/src/_disable_debug" || die
-		cp "${FILESDIR}/disable_debug_v${DISABLE_DEBUG_V}" "${EROOT}/usr/src/disable_debug" || die
-		chmod 700 "${EROOT}"/usr/src/_disable_debug || die
-		chmod 700 "${EROOT}"/usr/src/disable_debug || die
-	fi
-
-	if use tresor_sysfs ; then
-		# prevent merge conflicts
-		cd "${T}"
-		mv tresor_sysfs "${EROOT}/usr/bin" || die
-		chmod 700 "${EROOT}"/usr/bin/tresor_sysfs || die
-		# same hash for 5.1 and 5.0.13 for tresor_sysfs
-		einfo "/usr/bin/tresor_sysfs is provided to set your TRESOR key"
-	fi
-
 	if use muqss ; then
 		ewarn "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL and"
 		ewarn "Idle dynticks system (tickless idle) CONFIG_NO_HZ_IDLE may cause the system to lock up."

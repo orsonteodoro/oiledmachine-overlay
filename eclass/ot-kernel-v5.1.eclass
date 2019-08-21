@@ -129,23 +129,6 @@ function ot-kernel-common_apply_bmq_quickfixes() {
 # @DESCRIPTION:
 # Show messages and avoid collision triggering
 function ot-kernel-common_ot-kernel-common_pkg_postinst_cb() {
-	if use disable_debug ; then
-		einfo "The disable debug scripts have been placed in your /usr/src folder."
-		einfo "They disable debug paths, logging, output for a performance gain."
-		einfo "You should run it like \`/usr/src/disable_debug x86_64 /usr/src/.config\`"
-		cp "${FILESDIR}/_disable_debug_v${DISABLE_DEBUG_V}" "${EROOT}/usr/src/_disable_debug" || die
-		cp "${FILESDIR}/disable_debug_v${DISABLE_DEBUG_V}" "${EROOT}/usr/src/disable_debug" || die
-		chmod 700 "${EROOT}"/usr/src/_disable_debug || die
-		chmod 700 "${EROOT}"/usr/src/disable_debug || die
-	fi
-
-	if use muqss ; then
-		ewarn "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL and"
-		ewarn "Idle dynticks system (tickless idle) CONFIG_NO_HZ_IDLE may cause the system to lock up."
-		ewarn "You must choose Periodic timer ticks (constant rate, no dynticks) CONFIG_HZ_PERIODIC for it not to lock up."
-		ewarn "The MuQSS scheduler may have random system hard pauses for few seconds to around a minute when resource usage is high."
-	fi
-
 	if use bmq ; then
 		ewarn "Using bmq with lots of resources may leave zombie processes, or high CPU processes/threads with little processing."
 		ewarn "This might result in a denial of service that may require rebooting."

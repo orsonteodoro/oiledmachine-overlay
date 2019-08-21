@@ -959,6 +959,27 @@ function ot-kernel-common_src_install() {
 # ot-kernel-common_ot-kernel-common_pkg_postinst_cb - callback if any to handle after emerge phase
 #
 function ot-kernel-common_pkg_postinst() {
+	if use disable_debug ; then
+		einfo "The disable debug scripts have been placed in your /usr/src folder."
+		einfo "They disable debug paths, logging, output for a performance gain."
+		einfo "You should run it like \`/usr/src/disable_debug x86_64 /usr/src/.config\`"
+		cp "${FILESDIR}/_disable_debug_v${DISABLE_DEBUG_V}" "${EROOT}/usr/src/_disable_debug" || die
+		cp "${FILESDIR}/disable_debug_v${DISABLE_DEBUG_V}" "${EROOT}/usr/src/disable_debug" || die
+		chmod 700 "${EROOT}"/usr/src/_disable_debug || die
+		chmod 700 "${EROOT}"/usr/src/disable_debug || die
+	fi
+
+	if has tresor_sysfs ; then
+		if use tresor_sysfs ; then
+			# prevent merge conflicts
+			cd "${T}"
+			mv tresor_sysfs "${EROOT}/usr/bin" || die
+			chmod 700 "${EROOT}"/usr/bin/tresor_sysfs || die
+			# same hash for 5.1 and 5.0.13 for tresor_sysfs
+			einfo "/usr/bin/tresor_sysfs is provided to set your TRESOR key"
+		fi
+	fi
+
 	if declare -f ot-kernel-common_ot-kernel-common_pkg_postinst_cb > /dev/null ; then
 		ot-kernel-common_ot-kernel-common_pkg_postinst_cb
 	fi
