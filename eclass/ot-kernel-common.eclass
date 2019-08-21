@@ -913,8 +913,10 @@ function ot-kernel-common_src_unpack() {
 		apply_o3
 	fi
 
-	if use tresor ; then
-		apply_tresor
+	if has tresor ; then
+		if use tresor ; then
+			apply_tresor
+		fi
 	fi
 
 	#_dpatch "${PATCH_OPS}" "${FILESDIR}/linux-4.20-kconfig-ioscheds.patch"
@@ -933,11 +935,13 @@ function ot-kernel-common_pkg_setup() {
 # @DESCRIPTION:
 # Compiles the userland programs especially the post-boot TRESOR AES post boot program.
 function ot-kernel-common_src_compile() {
-	if use tresor_sysfs ; then
-		cp -a "${DISTDIR}/tresor_sysfs.c" "${T}"
-		cd "${T}"
-		einfo "$(tc-getCC) ${CFLAGS}"
-		$(tc-getCC) ${CFLAGS} tresor_sysfs.c -o tresor_sysfs || die
+	if has tresor_sysfs ; then
+		if use tresor_sysfs ; then
+			cp -a "${DISTDIR}/tresor_sysfs.c" "${T}"
+			cd "${T}"
+			einfo "$(tc-getCC) ${CFLAGS}"
+			$(tc-getCC) ${CFLAGS} tresor_sysfs.c -o tresor_sysfs || die
+		fi
 	fi
 }
 
