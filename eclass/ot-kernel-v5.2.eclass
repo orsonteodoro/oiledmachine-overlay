@@ -247,9 +247,9 @@ function ot-kernel-common_fetch_amd_staging_drm_next_commits_extra_patches2() {
 	# ffae3e 2019-05-24 drm/scheduler: rework job destruction
 	local idx=$(get_patch_index "amd-staging-drm-next-patches" "ffae3e510d66ba854289f2cdff8a119ecd7f4ded")
 	printf -v pidx "%06d" ${idx}
-	[ ! -e ${T}/amd-staging-drm-next-patches/${pidx}-ffae3e510d66ba854289f2cdff8a119ecd7f4ded.patch ] && die "can't find"
-	filterdiff -x */lima_sched.c ${T}/amd-staging-drm-next-patches/${pidx}-ffae3e510d66ba854289f2cdff8a119ecd7f4ded.patch > ${T}/amd-staging-drm-next-patches/${pidx}-ffae3e510d66ba854289f2cdff8a119ecd7f4ded.patch.1 || die
-	mv ${T}/amd-staging-drm-next-patches/${pidx}-ffae3e510d66ba854289f2cdff8a119ecd7f4ded.patch{.1,} || die
+	[ ! -e "${T}"/amd-staging-drm-next-patches/${pidx}-ffae3e510d66ba854289f2cdff8a119ecd7f4ded.patch ] && die "can't find"
+	filterdiff -x */lima_sched.c "${T}"/amd-staging-drm-next-patches/${pidx}-ffae3e510d66ba854289f2cdff8a119ecd7f4ded.patch > "${T}"/amd-staging-drm-next-patches/${pidx}-ffae3e510d66ba854289f2cdff8a119ecd7f4ded.patch.1 || die
+	mv "${T}"/amd-staging-drm-next-patches/${pidx}-ffae3e510d66ba854289f2cdff8a119ecd7f4ded.patch{.1,} || die
 }
 
 # @FUNCTION: ot-kernel-common_apply_genpatch_extras_patchset

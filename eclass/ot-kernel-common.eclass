@@ -289,7 +289,7 @@ function apply_o3() {
 	cd "${S}"
 
 	# fix patch
-	sed -r -e "s|-1028,6 +1028,13|-1076,6 +1076,13|" ${DISTDIR}/${O3_CO_FN} > ${T}/${O3_CO_FN} || die
+	sed -r -e "s|-1028,6 +1028,13|-1076,6 +1076,13|" "${DISTDIR}"/${O3_CO_FN} > "${T}"/${O3_CO_FN} || die
 
 	einfo "Applying O3"
 	ewarn "Some patches have hunk(s) failed but still good or may be fixed ASAP."
@@ -377,7 +377,7 @@ function fetch_zentune() {
 # Clones or updates the amd-staging-drm-next patchset for recent fixes or GPU compatibility updates.
 function fetch_amd_staging_drm_next() {
 	einfo "Fetching patch please wait.  It may take hours."
-	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	cd "${DISTDIR}"
 	d="${distdir}/ot-sources-src/linux-${AMD_STAGING_DRM_NEXT_DIR}"
 	b="${distdir}/ot-sources-src"
@@ -386,7 +386,7 @@ function fetch_amd_staging_drm_next() {
 	if [[ ! -d "${d}" ]] ; then
 		mkdir -p "${d}"
 		einfo "Cloning amd-staging-drm-next project"
-		git clone ${AMDREPO_URL} "${d}"
+		git clone "${AMDREPO_URL}" "${d}"
 		cd "${d}"
 		git checkout master
 		git checkout -b amd-staging-drm-next remotes/origin/amd-staging-drm-next
@@ -415,7 +415,7 @@ function fetch_amd_staging_drm_next() {
 #   for fixes to patches before the patching proces
 #
 function fetch_amd_staging_drm_next_commits() {
-	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	d="${distdir}/ot-sources-src/linux-${AMD_STAGING_DRM_NEXT_DIR}"
 	cd "${d}"
 
@@ -537,7 +537,7 @@ function _get_amd_staging_drm_next_commit()
 # additional multi GPU features and optimizations if apps support it.
 function fetch_rock() {
 	einfo "Fetching patch please wait.  It may take hours."
-	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	cd "${DISTDIR}"
 	d="${distdir}/ot-sources-src/linux-${ROCK_DIR}"
 	b="${distdir}/ot-sources-src"
@@ -546,7 +546,7 @@ function fetch_rock() {
 	if [[ ! -d "${d}" ]] ; then
 		mkdir -p "${d}"
 		einfo "Cloning ROCK project"
-		git clone ${ROCKREPO_URL} "${d}"
+		git clone "${ROCKREPO_URL}" "${d}"
 		cd "${d}"
 		git checkout master
 	else
@@ -639,7 +639,7 @@ function get_patch_index() {
 # @DESCRIPTION:
 # Grabs all the commits and generates .patch files for individual evaluation.
 function fetch_rock_commits() {
-	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	d="${distdir}/ot-sources-src/linux-${ROCK_DIR}"
 	cd "${d}"
 
@@ -692,7 +692,7 @@ function fetch_rock_commits() {
 # @DESCRIPTION:
 # Gets a list of rock commits that were not found in the amd-staging-drm-next repository.
 function get_missing_rock_commits_list() {
-	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	local index
 
 	index=1
