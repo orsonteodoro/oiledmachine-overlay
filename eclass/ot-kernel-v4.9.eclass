@@ -161,6 +161,8 @@ CK_URL_BASE="http://ck.kolivas.org/patches/${PATCH_CK_MAJOR}/${PATCH_CK_MAJOR_MI
 CK_FN="${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}-broken-out.tar.xz"
 CK_SRC_URL="${CK_URL_BASE}${CK_FN}"
 
+GRAYSKY_DL_4_9_FN="enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v3.15%2B.patch"
+
 inherit ot-kernel-common
 
 SRC_URI="${KERNEL_URI}
@@ -170,7 +172,6 @@ SRC_URI="${KERNEL_URI}
 	 ${O3_CO_SRC_URL}
 	 ${O3_RO_SRC_URL}
 	 ${GRAYSKY_SRC_4_9_URL}
-	 ${GRAYSKY_SRC_8_1_URL}
 	 ${CK_SRC_URL}
 	 ${GENPATCHES_BASE_SRC_URL}
 	 ${GENPATCHES_EXPERIMENTAL_SRC_URL}

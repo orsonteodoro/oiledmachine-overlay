@@ -82,7 +82,7 @@ O3_RO_DL_FN="${PATCH_O3_RO_COMMIT}.diff"
 O3_CO_SRC_URL="${O3_SRC_URL}${O3_CO_DL_FN} -> ${O3_CO_FN}"
 O3_RO_SRC_URL="${O3_SRC_URL}${O3_RO_DL_FN} -> ${O3_RO_FN}"
 
-GRAYSKY_DL_4_9_FN="enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B.patch"
+GRAYSKY_DL_4_9_FN="${GRAYSKY_DL_4_9_FN:=enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B.patch}"
 GRAYSKY_DL_8_1_FN="enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B.patch"
 GRAYSKY_DL_9_1_FN="enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v4.13%2B.patch"
 GRAYSKY_URL_BASE="https://raw.githubusercontent.com/graysky2/kernel_gcc_patch/master/"
@@ -848,15 +848,17 @@ function ot-kernel-common_src_unpack() {
 		UNIPATCH_LIST+=" ${DISTDIR}/${CK_FN}"
 	fi
 	if use graysky2 ; then
-		if $(version_is_at_least 9.1 $(gcc-version)) ; then
+		if $(version_is_at_least 9.1 $(gcc-version)) && test -f "${DISTDIR}/${GRAYSKY_DL_9_1_FN}" ; then
 			einfo "gcc patch is 9.1"
 			UNIPATCH_LIST+=" ${DISTDIR}/${GRAYSKY_DL_9_1_FN}"
-		elif $(version_is_at_least 8.1 $(gcc-version)) ; then
+		elif $(version_is_at_least 8.1 $(gcc-version)) && test -f "${DISTDIR}/${GRAYSKY_DL_8_1_FN}" ; then
 			einfo "gcc patch is 8.1"
 			UNIPATCH_LIST+=" ${DISTDIR}/${GRAYSKY_DL_8_1_FN}"
-		else
+		elif test -f "${DISTDIR}/${GRAYSKY_DL_4_9_FN}" ; then
 			einfo "gcc patch is 4.9"
 			UNIPATCH_LIST+=" ${DISTDIR}/${GRAYSKY_DL_4_9_FN}"
+		else
+			die "Cannot find graysky2's gcc patch."
 		fi
 	fi
 	#if use bfq ; then
