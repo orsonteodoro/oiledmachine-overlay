@@ -85,6 +85,7 @@ SRC_URI="
 	 "
 
 function ot-kernel-common_ot-kernel-common_pkg_setup_cb() {
+	ewarn "This kernel series is EOL and not supported.  It exists for migrating to supported kernels and for propretary drivers that rely on 5.1."
 	if use zentune || use muqss ; then
 		ewarn "The zen-tune patch or muqss might cause lock up or slow io under heavy load like npm.  These use flags are not recommended."
 	fi
