@@ -114,9 +114,9 @@ function ot-kernel-common_apply_o3_fixes() {
 	_dpatch "${PATCH_OPS}" "${FILESDIR}/O3-config-option-a56a17374772a48a60057447dc4f1b4ec62697fb-fix-for-5.1.patch"
 }
 
-# @FUNCTION: ot-kernel-common_apply_o3_fixes
+# @FUNCTION: ot-kernel-common_apply_bmq_quickfixes
 # @DESCRIPTION:
-# Apply fixes to O3
+# Apply quick fixes if any
 function ot-kernel-common_apply_bmq_quickfixes() {
 	if use bmq-quick-fix ; then
 		# Upstream tends to add quick fixes immediately after releases, so this use flag exists.
