@@ -20,7 +20,7 @@ USE_DOTNET="net40 net45 net46"
 IUSE="${USE_DOTNET} debug +gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
 
-RDEPEND="=sci-physics/bullet-${LIBBULLETC_PV}"
+RDEPEND=">=sci-physics/bullet-${LIBBULLETC_PV}"
 DEPEND="${RDEPEND}
 	>=dev-lang/mono-4
 "

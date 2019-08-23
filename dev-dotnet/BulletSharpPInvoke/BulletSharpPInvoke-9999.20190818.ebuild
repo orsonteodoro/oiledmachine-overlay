@@ -6,9 +6,9 @@ inherit eutils cmake-utils dotnet gac multilib-minimal multilib-build versionato
 
 DESCRIPTION=".NET wrapper for the Bullet physics library using Platform Invoke"
 HOMEPAGE="http://andrestraks.github.io/BulletSharp/"
-LIBBULLETC_PV="9999.20190702"
-BULLET_COMMIT="113c2a83ded447159c30bcb2a2e353b154c3879d"
-COMMIT="0d0bceb4f3a4be94fbfded04f7b088f150b48424"
+LIBBULLETC_PV="9999.20190814"
+BULLET_COMMIT="cb654ddc803a56567fdc8f6dcc4eb3e8291b3e98"
+COMMIT="498e8b8d0f57d43b55ad9179e3daf416eae33dcb"
 MY_PV="${COMMIT}"
 SRC_URI="https://github.com/AndresTraks/BulletSharpPInvoke/archive/${COMMIT}.zip -> ${PN}-${MY_PV}.zip
 	 https://github.com/bulletphysics/bullet3/archive/${BULLET_COMMIT}.zip -> bullet-${LIBBULLETC_PV}.zip"
