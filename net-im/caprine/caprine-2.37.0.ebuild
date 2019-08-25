@@ -25,7 +25,8 @@ IUSE=""
 electron-app_src_compile() {
 	cd "${S}"
 
-	PATH="/usr/$(get_libdir)/node/${PN}/${SLOT}/node_modules/.bin:$PATH" \
+	export PATH="${S}/node_modules/.bin:${PATH}"
+	tsc || die
 	electron-builder -l dir || die
 }
 
