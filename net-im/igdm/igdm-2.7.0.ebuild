@@ -14,9 +14,8 @@ inherit eutils desktop electron-app npm-utils
 
 DESCRIPTION="Desktop application for Instagram DMs "
 HOMEPAGE="https://igdm.me/"
-COMMIT="56aa083972ed49251ca48ef4196526f175645e0e"
-SRC_URI="https://github.com/ifedapoolarewaju/igdm/archive/${COMMIT}.zip -> ${PN}-${PV}.zip"
-S="${WORKDIR}/${PN}-${COMMIT}"
+SRC_URI="https://github.com/ifedapoolarewaju/igdm/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz"
+S="${WORKDIR}/${PN}-${PV}"
 
 LICENSE="MIT"
 SLOT="0"
@@ -82,7 +81,7 @@ _fix_vulnerabilities() {
 
 	npm dedupe
 
-	npm_audit_package_lock_update node_modules/babel-traverse
+	#npm_audit_package_lock_update node_modules/babel-traverse
 
 	# has to be done again
 	npm_audit_package_lock_update node_modules/babel-runtime
