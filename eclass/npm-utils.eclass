@@ -20,7 +20,7 @@ npm_install_sub() {
 	shift
 	einfo "dir=${dir}"
 	pushd "${dir}" || die
-	npm install ${@}
+	npm install ${@} || die
 	[ -e package-lock.json ] && rm package-lock.json
 	npm i --package-lock-only
 	popd
