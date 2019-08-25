@@ -33,8 +33,7 @@ npm_audit_package_lock_update() {
 	local dir="${1}"
 	einfo "dir=${dir}"
 	pushd "${dir}" || die
-	#npm audit fix --force
-	rm package-lock.json
+	[ -e package-lock.json ] && rm package-lock.json
 	npm i --package-lock-only
 	popd
 }
