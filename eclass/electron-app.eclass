@@ -358,6 +358,9 @@ electron-app_src_unpack() {
 	else
 		electron-app_src_preinst_default
 	fi
+
+	cd "${S}"
+	electron-app_dedupe_and_prune
 }
 
 # @FUNCTION: electron-app_src_prepare_default
@@ -462,39 +465,42 @@ electron-app_audit_prod() {
 
 # @FUNCTION: electron-app_src_preinst_default
 # @DESCRIPTION:
-# A user can define electron-app_fix_prune to reinstall dependencies
-# caused by breakage by pruning or auditing.
+# Dummy function
 electron-app_src_preinst_default() {
-	local rel_src_path="$1"
-	local rel_icon_path="$2"
-	local pkg_name="$3"
-	local category="$4"
-	local cmd="$5"
+	true
+}
+
+# @FUNCTION: electron-app_dedupe_and_prune
+# @DESCRIPTION:
+# Preforms dedupe and pruning
+electron-app_dedupe_and_prune() {
+	einfo "Deduping and pruning"
 
 	cd "${S}"
 
 	case "$ELECTRON_APP_MODE" in
 		npm)
-			# disabled dedupe and pruning for less problematic audits.  audit doesn't work well if you prune dev packages.
+			electron-app_dedupe_npm
 
-			#electron-app_dedupe_npm
+			electron-app_store_package_jsons "${S}"
 
-			#if ! use debug ; then
-			#	if [[ "${ELECTRON_APP_PRUNE}" == "1" ||
-			#		"${ELECTRON_APP_PRUNE,,}" == "true" ]] ; then
-			#		einfo "Running \`npm prune --production\`"
-			#		npm prune --production
-			#	fi
-			#fi
+			if ! use debug ; then
+				if [[ "${ELECTRON_APP_PRUNE}" == "1" ||
+					"${ELECTRON_APP_PRUNE,,}" == "true" ]] ; then
+					einfo "Running \`npm prune --production\`"
+					npm prune --production
+				fi
+			fi
 
-			#if declare -f electron-app_fix_prune > /dev/null ; then
-			#	electron-app_fix_prune
-			#fi
+			#electron-app_audit_prod
+			electron-app_audit_dev
 
-			electron-app_audit_prod
+			electron-app_restore_package_jsons "${S}"
 
 			;;
 		yarn)
+			electron-app_store_package_jsons "${S}"
+
 			if ! use debug ; then
 				if [[ "${ELECTRON_APP_PRUNE}" == "1" ||
 					"${ELECTRON_APP_PRUNE,,}" == "true" ]] ; then
@@ -508,6 +514,8 @@ electron-app_src_preinst_default() {
 			echo "prefix \"/usr/$(get_libdir)/node/${PN}/${SLOT}/.yarn\"" >> "${S}/.yarnrc" || die
 
 			# todo final audit fix
+
+			electron-app_restore_package_jsons "${S}"
 
 			;;
 		*)
@@ -647,4 +655,52 @@ electron-app_pkg_postrm() {
 			die "Unsupported package system"
 			;;
 	esac
+}
+
+# @FUNCTION: electron-app_store_package_jsons
+# @DESCRIPTION: Saves the package{,-lock}.json to T for auditing
+electron-app_store_package_jsons() {
+	einfo "Saving package.json and package-lock.json for future audits ..."
+
+	local old_dotglob=$(shopt dotglob | cut -f 2)
+	shopt -s dotglob # copy hidden files
+
+	local ROOTDIR="${1}"
+	local d
+	local rd
+	local F=$(find ${ROOTDIR} -name "package*.json*" -o -name "yarn.lock")
+	local td="${T}/package_jsons/"
+	for f in $F; do
+		d=$(dirname $f)
+		rd=$(dirname ${f//${ROOTDIR}/})
+		mkdir -p "${td}/${rd}"
+		einfo "Copying $f to ${td}/${rd}"
+		cp -a "${f}" "${td}/${rd}" || die
+	done
+
+	if [[ "${old_dotglob}" == "on" ]] ; then
+		shopt -s dotglob
+	else
+		shopt -u dotglob
+	fi
+}
+
+# @FUNCTION: electron-app_restore_package_jsons
+# @DESCRIPTION: Restores the package{,-lock}.json to T for auditing
+electron-app_restore_package_jsons() {
+	local dest="${1}"
+	einfo "Restoring package.jsons to ${dest} ..."
+
+	local old_dotglob=$(shopt dotglob | cut -f 2)
+	shopt -s dotglob # copy hidden files
+
+	local td="${T}/package_jsons/${rd}"
+
+	cp -a "${td}"/* "${dest}" || die
+
+	if [[ "${old_dotglob}" == "on" ]] ; then
+		shopt -s dotglob
+	else
+		shopt -u dotglob
+	fi
 }

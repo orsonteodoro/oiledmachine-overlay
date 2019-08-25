@@ -198,6 +198,9 @@ npm-secaudit_src_unpack() {
 	else
 		npm-secaudit_src_preinst_default
 	fi
+
+	cd "${S}"
+	npm-secaudit_dedupe_and_prune
 }
 
 # @FUNCTION: npm-secaudit_src_prepare_default
@@ -335,33 +338,37 @@ npm-secaudit_audit_prod() {
 
 # @FUNCTION: npm-secaudit_src_preinst_default
 # @DESCRIPTION:
-# Preforms audits and fixes
-# A user can define npm-secaudit_fix_prune to reinstall dependencies
-# caused by breakage by pruning or auditing.
+# Dummy function
 npm-secaudit_src_preinst_default() {
-	local rel_src_path="$1"
+	true
+}
+
+# @FUNCTION: npm-secaudit_dedupe_and_prune
+# @DESCRIPTION:
+# Preforms dedupe and pruning
+npm-secaudit_dedupe_and_prune() {
+	einfo "Deduping and pruning"
 
 	cd "${S}"
 
-	# disabled dedupe and pruning for less problematic audits.  audit doesn't work well if you prune dev packages.
+	npm-secaudit_dedupe_npm
 
-	#npm-secaudit_dedupe_npm
+	npm-secaudit_store_package_jsons "${S}"
 
 	cd "${S}"
 
-	#if ! use debug ; then
-	#	if [[ "${NPM_SECAUDIT_PRUNE}" == "1" &&
-	#		"${NPM_SECAUDIT_PRUNE,,}" == "true" ]] ; then
-	#		einfo "Running \`npm prune --production\`"
-	#		npm prune --production
-	#	fi
-	#fi
+	if ! use debug ; then
+		if [[ "${NPM_SECAUDIT_PRUNE}" == "1" &&
+			"${NPM_SECAUDIT_PRUNE,,}" == "true" ]] ; then
+			einfo "Running \`npm prune --production\`"
+			npm prune --production
+		fi
+	fi
 
-	#if declare -f npm-secaudit_fix_prune > /dev/null ; then
-	#	npm-secaudit_fix_prune
-	#fi
+	#npm-secaudit_audit_prod
+	npm-secaudit_audit_dev
 
-	npm-secaudit_audit_prod
+	npm-secaudit_restore_package_jsons "${S}"
 }
 
 # @FUNCTION: npm-secaudit_install
@@ -402,4 +409,52 @@ npm-secaudit_pkg_postrm() {
 
 	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
 	sed -i '/^$/d' "${NPM_PACKAGE_DB}"
+}
+
+# @FUNCTION: npm-secaudit_store_package_jsons
+# @DESCRIPTION: Saves the package{,-lock}.json to T for auditing
+npm-secaudit_store_package_jsons() {
+	einfo "Saving package.json and package-lock.json for future audits ..."
+
+	local old_dotglob=$(shopt dotglob | cut -f 2)
+	shopt -s dotglob # copy hidden files
+
+	local ROOTDIR="${1}"
+	local d
+	local rd
+	local F=$(find ${ROOTDIR} -name "package*.json*" -o "yarn.lock")
+	local td="${T}/package_jsons/"
+	for f in $F; do
+		d=$(dirname $f)
+		rd=$(dirname ${f//${ROOTDIR}/})
+		mkdir -p "${td}/${rd}"
+		einfo "Copying $f to ${td}/${rd}"
+		cp -a "${f}" "${td}/${rd}" || die
+	done
+
+	if [[ "${old_dotglob}" == "on" ]] ; then
+		shopt -s dotglob
+	else
+		shopt -u dotglob
+	fi
+}
+
+# @FUNCTION: npm-secaudit_restore_package_jsons
+# @DESCRIPTION: Restores the package{,-lock}.json to T for auditing
+npm-secaudit_restore_package_jsons() {
+	local dest="${1}"
+	einfo "Restoring package.jsons to ${dest} ..."
+
+	local old_dotglob=$(shopt dotglob | cut -f 2)
+	shopt -s dotglob # copy hidden files
+
+	local td="${T}/package_jsons/${rd}"
+
+	cp -a "${td}"/* "${dest}" || die
+
+	if [[ "${old_dotglob}" == "on" ]] ; then
+		shopt -s dotglob
+	else
+		shopt -u dotglob
+	fi
 }
