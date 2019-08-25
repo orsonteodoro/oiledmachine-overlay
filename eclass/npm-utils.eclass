@@ -17,9 +17,10 @@
 # Installs a npm package in a subdirectory.
 npm_install_sub() {
 	local dir="${1}"
+	shift
 	einfo "dir=${dir}"
 	pushd "${dir}" || die
-	npm install
+	npm install ${@}
 	[ -e package-lock.json ] && rm package-lock.json
 	npm i --package-lock-only
 	popd
