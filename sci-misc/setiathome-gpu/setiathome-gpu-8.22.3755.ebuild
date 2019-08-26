@@ -38,7 +38,7 @@ RDEPEND="
 			virtual/opencl
 			dev-util/nvidia-cuda-sdk[opencl]
 			video_cards_fglrx? ( || ( x11-drivers/ati-drivers ) )
-			video_cards_amdgpu? ( || ( dev-util/amdapp x11-drivers/amdgpu-pro ) )
+			video_cards_amdgpu? ( || ( dev-util/amdapp x11-drivers/amdgpu-pro[opencl] ) )
 		)
 	)
 	sci-misc/setiathome-art:7
