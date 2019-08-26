@@ -177,6 +177,9 @@ npm-secaudit_src_unpack() {
 		npm-secaudit_src_postprepare
 	fi
 
+	npm-secaudit_dedupe_npm
+	# post dedupe hook?
+
 	# audit before possibly bundling a vulnerable package
 	npm-secaudit_audit_dev
 

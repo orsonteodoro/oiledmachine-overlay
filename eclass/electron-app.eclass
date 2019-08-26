@@ -337,6 +337,9 @@ electron-app_src_unpack() {
 		electron-app_src_postprepare
 	fi
 
+	electron-app_dedupe_npm
+	# post dedupe hook?
+
 	# audit before possibly bundling a vulnerable package
 	electron-app_audit_dev
 
