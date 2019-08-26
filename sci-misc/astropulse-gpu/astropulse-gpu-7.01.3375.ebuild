@@ -32,12 +32,14 @@ REQUIRED_USE=""
 
 RDEPEND="
 	sci-libs/fftw[static-libs]
-	video_cards_nvidia? ( || ( x11-drivers/nvidia-drivers dev-util/nvidia-cuda-toolkit ) )
-	video_cards_fglrx? ( || ( x11-drivers/ati-drivers ) )
-	video_cards_amdgpu? ( || ( dev-util/amdapp x11-drivers/amdgpu-pro ) )
-	video_cards_intel? ( dev-libs/beignet )
-	video_cards_r600? ( media-libs/mesa[opencl] )
-	video_cards_radeonsi? ( media-libs/mesa[opencl] )
+	opencl? (
+		|| (
+			virtual/opencl
+			dev-util/nvidia-cuda-sdk[opencl]
+			video_cards_fglrx? ( || ( x11-drivers/ati-drivers ) )
+			video_cards_amdgpu? ( || ( dev-util/amdapp x11-drivers/amdgpu-pro[opencl] ) )
+		)
+	)
 	sci-misc/astropulse-art:7
 	sci-misc/setiathome-updater:8
 "
@@ -470,11 +472,11 @@ function gpu_setup {
 			fi
 		elif use intel_hd || use intel_hd2xxx || use intel_hd3xxx || use intel_hd_gt1 || use intel_hd4xxx || use intel_hd5xxx || use intel_iris5xxx ; then
 			AP_PLAN_CLASS=""
-			ewarn "Intel GPUs may not be supported."
+			ewarn "Intel GPUs may not be supported.  Using the fallback plan class."
 			# none listed in https://setiathome.berkeley.edu/apps.php for linux
 		elif use cpu_flags_x86_sse2 ; then
 			AP_PLAN_CLASS="sse2"
-			ewarn "No specific GPU chosen.  Consider re-emerging with proper GPU.  Using FPU and SSE only"
+			ewarn "No specific GPU chosen.  Consider re-emerging with proper GPU.  Using the FPU and SSE only."
 		else
 			AP_PLAN_CLASS=""
 			ewarn "Using the fallback plan class."
