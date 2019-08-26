@@ -14,11 +14,21 @@ LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="opencl cuda cpu"
+IUSE+=" video_cards_fglrx video_cards_amdgpu"
 REQUIRED_USE="^^ ( opencl cuda cpu )"
 
-DEPEND="app-arch/unrar"
-RDEPEND="${DEPEND}
-"
+RDEPEND="opencl? (
+		|| (
+			virtual/opencl
+			dev-util/nvidia-cuda-sdk[opencl]
+			video_cards_fglrx? ( || ( x11-drivers/ati-drivers ) )
+			video_cards_amdgpu? ( || ( dev-util/amdapp x11-drivers/amdgpu-pro[opencl] ) )
+		)
+	)
+	cuda? ( dev-util/nvidia-cuda-sdk )
+	"
+DEPEND="${RDEPEND}
+	app-arch/unrar"
 PROPERTIES="interactive"
 S="${WORKDIR}"
 
