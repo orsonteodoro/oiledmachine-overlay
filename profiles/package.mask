@@ -226,7 +226,6 @@ net-p2p/bitcoind
 net-p2p/ckpool
 net-p2p/eloipool
 portage-bashrc/systemwide-pgo
-sci-libs/gdal
 sci-physics/box2d
 sci-physics/bullet
 sci-physics/farseer-physics-engine
