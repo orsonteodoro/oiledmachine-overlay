@@ -69,6 +69,8 @@ RDEPEND="${DEPEND}
 		|| (
 			virtual/opencl
 			dev-util/nvidia-cuda-sdk[opencl]
+			video_cards_fglrx? ( || ( x11-drivers/ati-drivers ) )
+			video_cards_amdgpu? ( || ( dev-util/amdapp x11-drivers/amdgpu-pro[opencl] ) )
 		)
 	)
 "
@@ -80,12 +82,6 @@ DEPEND="${DEPEND}
 DEPEND+="
 	!net-misc/bfgminer
 	boinc? ( sci-misc/boinc sci-misc/boinc-server )
-	video_cards_nvidia? ( || ( x11-drivers/nvidia-drivers dev-util/nvidia-cuda-toolkit ) )
-	video_cards_fglrx? ( || ( x11-drivers/ati-drivers ) )
-	video_cards_amdgpu? ( || ( dev-util/amdapp x11-drivers/amdgpu-pro ) )
-	video_cards_intel? ( dev-libs/beignet )
-	video_cards_r600? ( media-libs/mesa[opencl] )
-	video_cards_radeonsi? ( media-libs/mesa[opencl] )
 "
 
 S="${WORKDIR}/bfgminer-${PV}"
