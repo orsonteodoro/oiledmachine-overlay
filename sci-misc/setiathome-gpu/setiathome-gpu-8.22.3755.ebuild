@@ -33,12 +33,14 @@ REQUIRED_USE=""
 
 RDEPEND="
 	sci-libs/fftw[static-libs]
-	video_cards_nvidia? ( || ( x11-drivers/nvidia-drivers dev-util/nvidia-cuda-toolkit ) )
-	video_cards_fglrx? ( || ( x11-drivers/ati-drivers ) )
-	video_cards_amdgpu? ( || ( dev-util/amdapp x11-drivers/amdgpu-pro ) )
-	video_cards_intel? ( dev-libs/beignet )
-	video_cards_r600? ( media-libs/mesa[opencl] )
-	video_cards_radeonsi? ( media-libs/mesa[opencl] )
+	opencl? (
+		|| (
+			virtual/opencl
+			dev-util/nvidia-cuda-sdk[opencl]
+			video_cards_fglrx? ( || ( x11-drivers/ati-drivers ) )
+			video_cards_amdgpu? ( || ( dev-util/amdapp x11-drivers/amdgpu-pro ) )
+		)
+	)
 	sci-misc/setiathome-art:7
 	sci-misc/setiathome-updater:8
 "
