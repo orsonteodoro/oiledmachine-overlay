@@ -16,6 +16,7 @@ KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86"
 
 IUSE="adl +cpumining examples hardened keccak lm_sensors ncurses +opencl proxy proxy_getwork proxy_stratum screen scrypt +sha256d +udev udev-broad-rules unicode"
 IUSE+=" pgo boinc"
+IUSE+=" video_cards_fglrx video_cards_amdgpu"
 REQUIRED_USE='
 	|| ( keccak scrypt sha256d )
 	|| ( cpumining opencl proxy )
@@ -69,6 +70,8 @@ RDEPEND="${DEPEND}
 		|| (
 			virtual/opencl
 			dev-util/nvidia-cuda-sdk[opencl]
+			video_cards_fglrx? ( || ( x11-drivers/ati-drivers ) )
+			video_cards_amdgpu? ( || ( dev-util/amdapp x11-drivers/amdgpu-pro[opencl] ) )
 		)
 	)
 "
