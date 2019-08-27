@@ -13,7 +13,7 @@ HOMEPAGE_DL="https://www.amd.com/en/technologies/radeon-prorender-downloads"
 
 PLUGIN_NAME="rprblender"
 FN="radeonprorenderforblender.run"
-SRC_URI="https://drivers.amd.com/other/ver_2.x/${FN}"
+SRC_URI="https://www2.ati.com/other/${FN}"
 
 RESTRICT="fetch strip"
 
