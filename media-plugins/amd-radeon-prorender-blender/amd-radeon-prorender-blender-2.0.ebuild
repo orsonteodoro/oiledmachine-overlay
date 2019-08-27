@@ -186,6 +186,8 @@ src_install() {
 	else
 		shopt -u dotglob
 	fi
+
+	doenvd "${FILESDIR}"/99${PN}
 }
 
 pkg_postinst() {
