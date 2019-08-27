@@ -185,7 +185,6 @@ pkg_postinst() {
 	einfo "You must enable the addon manually."
 	einfo "It is listed under: File > User Preferences > Add-ons > Testing > All > Render: Radeon ProRender"
 
-	local d_materals
 	if use materials ; then
 		einfo "The material library have been installed in:"
 		einfo "/usr/share/${PN}/Radeon_ProRender/Blender/Material_Library"
