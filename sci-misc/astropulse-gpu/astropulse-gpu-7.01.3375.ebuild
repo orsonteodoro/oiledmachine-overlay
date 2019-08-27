@@ -115,7 +115,9 @@ pkg_pretend() {
 	        do
 	                cat /etc/sandbox.conf | grep -e "${DEVICE}"
 	                if [ $? == 1 ] ; then
-	                        die "SANDBOX_WRITE=\"${DEVICE}\" needs to be added to /etc/sandbox.conf"
+				if [ -e ${DEVICE} ] ; then
+		                        die "SANDBOX_WRITE=\"${DEVICE}\" needs to be added to /etc/sandbox.conf"
+				fi
 	                fi
 	        done
 	fi
