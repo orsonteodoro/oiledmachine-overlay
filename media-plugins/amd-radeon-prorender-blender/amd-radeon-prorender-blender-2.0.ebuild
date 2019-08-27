@@ -139,9 +139,6 @@ _pkg_setup() {
 		eerror "You need to set the environmental variable PRORENDER_REG_KEY in make.conf or in your package.env."
 		die
 	fi
-
-	export REGISTRATION_HASH_SHA1=$(echo "${PRORENDER_REG_KEY}" | sha1sum | cut -c 1-40)
-	export REGISTRATION_HASH_MD5=$(echo "${PRORENDER_REG_KEY}" | md5sum | cut -c 1-32)
 }
 
 src_unpack() {
