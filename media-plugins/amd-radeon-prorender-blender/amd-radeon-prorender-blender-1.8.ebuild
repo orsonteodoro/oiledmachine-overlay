@@ -36,7 +36,7 @@ RDEPEND="${PYTHON_DEPS}
 	>=media-libs/freeimage-3.0
 	embree? ( media-libs/embree:2 )
 	denoiser? ( >=media-libs/openimageio-1.2.3 )
-	sys-devel/gcc[gomp]
+	sys-devel/gcc[openmp]
 	dev-libs/libbsd
 	x11-libs/libX11
 	x11-libs/libXau
@@ -47,6 +47,9 @@ RDEPEND="${PYTHON_DEPS}
 	x11-libs/libXfixes
 	x11-libs/libxshmfence
 	x11-libs/libXxf86vm
+	dev-python/imageio
+	dev-python/numpy
+	dev-python/pytest
 	"
 DEPEND="${RDEPEND}
 	dev-libs/openssl"
