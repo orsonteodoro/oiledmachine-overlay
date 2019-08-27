@@ -119,7 +119,6 @@ _pkg_setup() {
 		URL=$(yes | BLENDER_VERSION=${BLENDER_VER_NO_SUB} ./addon/checker | grep -o https.*)
 	else
 		ewarn "Disabling checker is experimental."
-		_registration_link_nochecker
 	fi
 
 	if [[ -z "${PRORENDER_REG_KEY}" ]] ; then
