@@ -34,7 +34,7 @@ RDEPEND="${PYTHON_DEPS}
 		video_cards_amdgpu? ( || ( dev-util/amdapp x11-drivers/amdgpu-pro[opencl] ) )
 	)
 	>=media-libs/freeimage-3.0
-	embree? ( || ( media-libs/embree media-gfx/embree ) )
+	embree? ( media-libs/embree )
 	"
 DEPEND="${RDEPEND}
 	dev-libs/openssl"
