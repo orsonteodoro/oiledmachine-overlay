@@ -82,8 +82,6 @@ _registration_link_checker() {
 	einfo ""
 	einfo "${URL}"
 	einfo ""
-	einfo "If it fails, enable checker USE flag to generate a proper registration link."
-	einfo ""
 }
 
 _pkg_setup() {
