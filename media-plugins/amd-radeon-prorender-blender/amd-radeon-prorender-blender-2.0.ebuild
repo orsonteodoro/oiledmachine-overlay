@@ -17,7 +17,7 @@ SRC_URI="https://drivers.amd.com/other/ver_2.x/${FN} -> ${P}.run"
 
 RESTRICT="fetch strip"
 
-IUSE="+materials +checker embree video_cards_radeonsi video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel video_cards_r600"
+IUSE="+checker denoiser embree +materials video_cards_radeonsi video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel video_cards_r600"
 
 # if amdgpu-pro is installed libgl-mesa-dev containing development headers and libs were pulled and noted in the Packages file:
 # amdgpu-pro 19.20.812932 -> libgl-mesa-dev 18.3.0-812932
@@ -34,7 +34,8 @@ RDEPEND="${PYTHON_DEPS}
 		video_cards_amdgpu? ( || ( dev-util/amdapp x11-drivers/amdgpu-pro[opencl] ) )
 	)
 	>=media-libs/freeimage-3.0
-	embree? ( media-libs/embree )
+	embree? ( >=media-libs/embree-2.12.0 )
+	denoiser? ( >=media-libs/openimageio-1.2.3[${PYTHON_USEDEP}] )
 	"
 DEPEND="${RDEPEND}"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
@@ -116,7 +117,7 @@ _pkg_setup() {
 	else
 		ewarn "Your card may not be supported but may be limited to CPU rendering."
 		if ! use embree ; then
-			einfo "You may need to enable the embree USE flag for CPU rendering."
+			einfo "You may need to enable the embree USE flag for CPU rendering / raytracing."
 		fi
 	fi
 
