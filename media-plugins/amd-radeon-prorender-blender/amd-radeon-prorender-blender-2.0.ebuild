@@ -119,7 +119,6 @@ _pkg_setup() {
 		# Checker needs OpenCL or it will crash
 		# The checker will check your hardware for compatibility and generate a registration url based on BLENDER_VER and KERNEL_VER
 		yes | BLENDER_VERSION=${APPVERSION} ./addon/checker || die
-		URL=$(yes | BLENDER_VERSION=${APPVERSION} ./addon/checker | grep -o https.*)
 	else
 		ewarn "Disabling checker is experimental."
 	fi
