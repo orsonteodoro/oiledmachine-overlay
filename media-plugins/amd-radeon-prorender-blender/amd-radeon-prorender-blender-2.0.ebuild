@@ -159,11 +159,6 @@ src_unpack() {
 	_pkg_setup
 }
 
-_decode_error_message() {
-	eerror "Your registration key is incorrect."
-	die
-}
-
 src_install() {
 	local d
 	DIRS=$(find /usr/share/blender/ -maxdepth 1 | tail -n +2)
