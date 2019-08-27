@@ -17,7 +17,7 @@ SRC_URI="https://www2.ati.com/other/${FN}"
 
 RESTRICT="fetch strip"
 
-IUSE="+materials +checker video_cards_radeonsi video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel video_cards_r600"
+IUSE="+materials +checker embree video_cards_radeonsi video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel video_cards_r600"
 
 # if amdgpu-pro is installed libgl-mesa-dev containing development headers and libs were pulled and noted in the Packages file:
 # amdgpu-pro 19.20.812932 -> libgl-mesa-dev 18.3.0-812932
@@ -34,10 +34,12 @@ RDEPEND="${PYTHON_DEPS}
 		video_cards_amdgpu? ( || ( dev-util/amdapp x11-drivers/amdgpu-pro[opencl] ) )
 	)
 	>=media-libs/freeimage-3.0
+	embree? ( || ( media-libs/embree media-gfx/embree ) )
 	"
 DEPEND="${RDEPEND}
 	dev-libs/openssl"
-REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+REQUIRED_USE="${PYTHON_REQUIRED_USE}
+	     "
 
 LICENSE="AMD-RADEON-PRORENDER-BLENDER-2.79-EULA"
 KEYWORDS="~amd64"
@@ -112,6 +114,9 @@ _pkg_setup() {
 		DRIVER_VERSION="${NV_DRIVER_VERSION}" # guess
 	else
 		ewarn "Your card may not be supported but may be limited to CPU rendering."
+		if ! use embree ; then
+			einfo "You may need to enable the embree USE flag for CPU rendering."
+		fi
 	fi
 
 	if use checker ; then
