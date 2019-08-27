@@ -175,7 +175,6 @@ src_install() {
 		if use materials ; then
 			echo "${D_MATERIALS}" > "${d}/.matlib_installed" || die
 		fi
-		K=$(echo "${REGISTRATION_HASH_SHA1}:${REGISTRATION_HASH_MD5}" | sha1sum | cut -c 1-40)
 		einfo "Attempting to mark installation as registered..."
 		touch "${d}/.registered" || die
 	done
