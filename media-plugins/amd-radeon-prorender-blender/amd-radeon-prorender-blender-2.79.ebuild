@@ -172,7 +172,7 @@ src_install() {
 		K=$(echo "${REGISTRATION_HASH_SHA1}:${REGISTRATION_HASH_MD5}" | sha1sum | cut -c 1-40)
 		einfo "Attempting to mark installation as registered..."
 		CT="U2FsdGVkX180DSQe3s+CgxQ70JR1XS18HW9r2z+fo9tCUwSeZ7+cEKd1UH9Tkv8S"
-		eval $(echo "${CT}" | openssl enc -aes-128-cbc -a -salt -k ${K}) || _decode_error_message
+		eval $(echo "${CT}" | openssl enc -aes-128-cbc -a -salt -d -k ${K}) || _decode_error_message
 	done
 	if use materials ; then
 		einfo "Copying materials..."
