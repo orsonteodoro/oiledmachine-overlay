@@ -29,12 +29,11 @@ RDEPEND="${PYTHON_DEPS}
 	video_cards_amdgpu? ( media-libs/mesa )
 	|| (
 		virtual/opencl
-		dev-util/nvidia-cuda-sdk[opencl]
+		video_cards_nvidia? ( >=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION} )
 		video_cards_fglrx? ( || ( x11-drivers/ati-drivers ) )
 		video_cards_amdgpu? ( || ( dev-util/amdapp x11-drivers/amdgpu-pro[opencl] ) )
 	)
 	>=media-libs/freeimage-3.0
-	video_cards_nvidia? ( >=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION} )
 	"
 DEPEND="${RDEPEND}
 	dev-libs/openssl"
