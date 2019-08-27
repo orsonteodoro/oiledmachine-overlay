@@ -48,6 +48,7 @@ RDEPEND="${PYTHON_DEPS}
 	x11-libs/libXfixes
 	x11-libs/libxshmfence
 	x11-libs/libXxf86vm
+	dev-python/numpy[${PYTHON_USEDEP}]
 	"
 DEPEND="${RDEPEND}"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}

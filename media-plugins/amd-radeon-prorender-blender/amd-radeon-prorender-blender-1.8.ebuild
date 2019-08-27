@@ -47,9 +47,9 @@ RDEPEND="${PYTHON_DEPS}
 	x11-libs/libXfixes
 	x11-libs/libxshmfence
 	x11-libs/libXxf86vm
-	dev-python/imageio
-	dev-python/numpy
-	dev-python/pytest
+	dev-python/imageio[${PYTHON_USEDEP}]
+	dev-python/numpy[${PYTHON_USEDEP}]
+	dev-python/pytest[${PYTHON_USEDEP}]
 	"
 DEPEND="${RDEPEND}
 	dev-libs/openssl"
