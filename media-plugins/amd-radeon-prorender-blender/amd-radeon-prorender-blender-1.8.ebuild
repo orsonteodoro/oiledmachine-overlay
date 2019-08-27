@@ -168,6 +168,10 @@ _decode_error_message() {
 src_install() {
 	local d
 	DIRS=$(find /usr/share/blender/ -maxdepth 1 | tail -n +2)
+
+	local old_dotglob=$(shopt dotglob | cut -f 2)
+	shopt -s dotglob # copy hidden files
+
 	for d in ${DIRS} ; do
 		d="${D}/${d}/scripts/addons_contrib/${PLUGIN_NAME}"
 		mkdir -p "${d}" || die
@@ -186,6 +190,12 @@ src_install() {
 		einfo "Copying materials..."
 		mkdir -p "${D}/${D_MATERIALS}" || die
 		cp -a "${S}"/matlib/feature_MaterialLibrary/* "${D}/${D_MATERIALS}" || die
+	fi
+
+	if [[ "${old_dotglob}" == "on" ]] ; then
+		shopt -s dotglob
+	else
+		shopt -u dotglob
 	fi
 }
 
