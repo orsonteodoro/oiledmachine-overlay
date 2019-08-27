@@ -1,3 +1,7 @@
+# mask in development
+# still need to test GPU side, CPU works
+media-plugins/amd-radeon-prorender-blender
+
 # old package to be remove soon by dev-dotnet/cli-tools and dev-dotnet/dotnetcore-sdk (non binary version)
 dev-dotnet/dotnet-cli
 
