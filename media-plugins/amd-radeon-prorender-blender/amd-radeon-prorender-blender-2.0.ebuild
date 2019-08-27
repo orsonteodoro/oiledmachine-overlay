@@ -84,24 +84,6 @@ pkg_nofetch() {
 	einfo "from ${HOMEPAGE_DL} and rename it to ${P}.run place it in ${distdir}"
 }
 
-_registration_link_nochecker() {
-	einfo ""
-	einfo "You can register at:"
-	einfo ""
-	einfo "https://feedback.amd.com/se/${UNK_ID}?registrationid=${REGISTRATION_ID}&appname=${APPNAME}&appversion=${APPVERSION}&frversion=${FR_VER}&os=${MY_OS}&gfxcard=${GFXCARD_MFG}&driverversion=${DRIVER_VERSION}"
-	einfo ""
-	einfo "If it fails, enable checker USE flag to generate a proper registration link."
-	einfo ""
-}
-
-_registration_link_checker() {
-	einfo ""
-	einfo "You can register at:"
-	einfo ""
-	einfo "${URL}"
-	einfo ""
-}
-
 _pkg_setup() {
 	ewarn "Package still in testing/development"
 
@@ -140,16 +122,6 @@ _pkg_setup() {
 		URL=$(yes | BLENDER_VERSION=${APPVERSION} ./addon/checker | grep -o https.*)
 	else
 		ewarn "Disabling checker is experimental."
-	fi
-
-	if [[ -z "${PRORENDER_REG_KEY}" ]] ; then
-		if use checker ; then
-			_registration_link_checker
-		else
-			_registration_link_nochecker
-		fi
-		eerror "You need to set the environmental variable PRORENDER_REG_KEY in make.conf or in your package.env."
-		die
 	fi
 }
 
