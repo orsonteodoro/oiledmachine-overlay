@@ -90,6 +90,10 @@ _registration_link_checker() {
 	einfo ""
 }
 
+_check_supported_card() {
+	device=$(glxinfo -B | grep "OpenGL renderer string" | sed -e "s|OpenGL renderer string: ||g")
+}
+
 _pkg_setup() {
 	ewarn "Package still in testing/development"
 
