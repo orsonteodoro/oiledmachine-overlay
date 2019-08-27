@@ -2,6 +2,9 @@
 # still need to test GPU side, CPU works
 media-plugins/amd-radeon-prorender-blender
 
+# mask no blender 2.80 yet
+=media-plugins/amd-radeon-prorender-blender-2.0
+
 # old package to be remove soon by dev-dotnet/cli-tools and dev-dotnet/dotnetcore-sdk (non binary version)
 dev-dotnet/dotnet-cli
 
