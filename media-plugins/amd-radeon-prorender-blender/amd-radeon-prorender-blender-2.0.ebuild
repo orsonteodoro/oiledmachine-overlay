@@ -35,7 +35,19 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	>=media-libs/freeimage-3.0
 	embree? ( media-libs/embree:2 )
-	denoiser? ( >=media-libs/openimageio-1.2.3 )
+	denoiser? ( >=media-libs/openimageio-1.2.3
+		    dev-cpp/tbb )
+	sys-devel/gcc[gomp]
+	dev-libs/libbsd
+	x11-libs/libX11
+	x11-libs/libXau
+	x11-libs/libxcb
+	x11-libs/libXdamage
+	x11-libs/libXdmcp
+	x11-libs/libXext
+	x11-libs/libXfixes
+	x11-libs/libxshmfence
+	x11-libs/libXxf86vm
 	"
 DEPEND="${RDEPEND}"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
@@ -179,6 +191,7 @@ src_install() {
 		einfo "Copying materials..."
 		mkdir -p "${D}/${D_MATERIALS}" || die
 		cp -a "${S}"/matlib/feature_MaterialLibrary/* "${D}/${D_MATERIALS}" || die
+		doenvd "${FILESDIR}"/99${PN}
 	fi
 
 	if [[ "${old_dotglob}" == "on" ]] ; then
@@ -186,8 +199,6 @@ src_install() {
 	else
 		shopt -u dotglob
 	fi
-
-	doenvd "${FILESDIR}"/99${PN}
 }
 
 pkg_postinst() {
