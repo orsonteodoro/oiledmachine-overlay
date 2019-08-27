@@ -67,7 +67,7 @@ pkg_nofetch() {
 	einfo "from ${HOMEPAGE_DL} and place them in ${distdir}"
 }
 
-_checker_bypass_nochecker() {
+_registration_link_nochecker() {
 	einfo ""
 	einfo "You need a registration key.  Obtain one at:"
 	einfo ""
@@ -77,7 +77,7 @@ _checker_bypass_nochecker() {
 	einfo ""
 }
 
-_checker_bypass_checker() {
+_registration_link_checker() {
 	einfo ""
 	einfo "You need a registration key.  Obtain one at:"
 	einfo ""
@@ -122,14 +122,14 @@ _pkg_setup() {
 		URL=$(yes | BLENDER_VERSION=${BLENDER_VER_NO_SUB} ./addon/checker | grep -o https.*)
 	else
 		ewarn "Disabling checker is experimental."
-		_checker_bypass_nochecker
+		_registration_link_nochecker
 	fi
 
 	if [[ -z "${PRORENDER_REG_KEY}" ]] ; then
 		if use checker ; then
-			_checker_bypass_checker
+			_registration_link_checker
 		else
-			_checker_bypass_nochecker
+			_registration_link_nochecker
 		fi
 		eerror "You need to set the environmental variable PRORENDER_REG_KEY in make.conf or in your package.env."
 		die
