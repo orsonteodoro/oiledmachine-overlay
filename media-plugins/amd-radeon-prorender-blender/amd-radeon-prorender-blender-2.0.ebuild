@@ -35,7 +35,7 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	>=media-libs/freeimage-3.0
 	embree? ( >=media-libs/embree-2.12.0 )
-	denoiser? ( >=media-libs/openimageio-1.2.3[${PYTHON_USEDEP}] )
+	denoiser? ( >=media-libs/openimageio-1.2.3 )
 	"
 DEPEND="${RDEPEND}"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
