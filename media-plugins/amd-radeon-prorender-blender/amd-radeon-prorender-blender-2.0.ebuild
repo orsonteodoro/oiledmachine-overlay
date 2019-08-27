@@ -13,7 +13,7 @@ HOMEPAGE_DL="https://www.amd.com/en/technologies/radeon-prorender-downloads"
 
 PLUGIN_NAME="rprblender"
 FN="radeonprorenderforblender.run"
-SRC_URI="https://www2.ati.com/other/${FN} -> ${P}.run"
+SRC_URI="https://drivers.amd.com/other/ver_2.x/${FN} -> ${P}.run"
 
 RESTRICT="fetch strip"
 
@@ -25,7 +25,7 @@ IUSE="+materials +checker embree video_cards_radeonsi video_cards_nvidia video_c
 #
 NV_DRIVER_VERSION="368.39"
 RDEPEND="${PYTHON_DEPS}
-	>=media-gfx/blender-2.79[${PYTHON_USEDEP}]
+	>=media-gfx/blender-2.80[${PYTHON_USEDEP}]
 	video_cards_amdgpu? ( media-libs/mesa )
 	|| (
 		virtual/opencl
@@ -100,7 +100,7 @@ _pkg_setup() {
 	MY_OS="Linux${KERNEL_VER}"
 	GFXCARD_MFG="AMD_"
 	BLENDER_BUILD_HASH="unknown" # from --version inspection but none found
-	FR_VER="1.205057" # unknown source
+	FR_VER="0.1061889" # unknown source
 	APPNAME="blender"
 	APPVERSION="${BLENDER_VER}__${BLENDER_BUILD_HASH}"
 	REGISTRATION_ID="5A1E27D259A3291C" # unknown source
