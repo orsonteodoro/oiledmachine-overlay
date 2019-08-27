@@ -1,0 +1,2 @@
+CPATH="/usr/include/embree2"
+PATH="/usr/bin/embree2"
