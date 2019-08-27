@@ -88,6 +88,10 @@ pkg_nofetch() {
 _pkg_setup() {
 	ewarn "Package still in testing/development"
 
+	if use python_targets_python3_6 ; then
+		ewarn "python_targets_python3_6 USE flag is for debugging ebuild only use only python_targets_python3_7."
+	fi
+
 	cd "${S}"
 	BLENDER_VER=$(/usr/bin/blender --version | grep -e "Blender [0-9.]*" | tr "(" "_" | tr ")" "_" | tr " " "_" | sed "s|Blender||" | cut -c 2-)
 	BLENDER_VER_NO_SUB=$(/usr/bin/blender --version | grep -e "Blender [0-9.]*" | sed -r -e "s|Blender ([0-9.]*).*|\1|g")
