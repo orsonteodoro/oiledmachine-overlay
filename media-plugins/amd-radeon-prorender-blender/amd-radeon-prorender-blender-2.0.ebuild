@@ -74,7 +74,7 @@ pkg_nofetch() {
 
 _registration_link_nochecker() {
 	einfo ""
-	einfo "You need a registration key.  Obtain one at:"
+	einfo "You can register at:"
 	einfo ""
 	einfo "https://feedback.amd.com/se/${UNK_ID}?registrationid=${REGISTRATION_ID}&appname=${APPNAME}&appversion=${APPVERSION}&frversion=${FR_VER}&os=${MY_OS}&gfxcard=${GFXCARD_MFG}&driverversion=${DRIVER_VERSION}"
 	einfo ""
@@ -84,7 +84,7 @@ _registration_link_nochecker() {
 
 _registration_link_checker() {
 	einfo ""
-	einfo "You need a registration key.  Obtain one at:"
+	einfo "You can register at:"
 	einfo ""
 	einfo "${URL}"
 	einfo ""
