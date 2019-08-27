@@ -49,6 +49,8 @@ PROPERTIES="interactive"
 
 S="${WORKDIR}/${PN}-${PV}"
 
+D_MATERIALS="/usr/share/${PN}/Radeon_ProRender/Blender/Material_Library"
+
 pkg_pretend() {
 	if use checker ; then
 		for DEVICE in $(ls /dev/*/card* /dev/dri/renderD128)
@@ -164,8 +166,6 @@ _decode_error_message() {
 
 src_install() {
 	local d
-	local d_materals
-	d_materials="/usr/share/${PN}/Radeon_ProRender/Blender/Material_Library"
 	DIRS=$(find /usr/share/blender/ -maxdepth 1 | tail -n +2)
 	for d in ${DIRS} ; do
 		d="${D}/${d}/scripts/addons_contrib/${PLUGIN_NAME}"
@@ -174,7 +174,7 @@ src_install() {
 		chown root:users "${d}" || die
 		cp -a "${WORKDIR}/${PLUGIN_NAME}"/* "${d}" || die
 		if use materials ; then
-			echo "${d_materials}" > "${d}/.matlib_installed" || die
+			echo "${D_MATERIALS}" > "${d}/.matlib_installed" || die
 		fi
 		K=$(echo "${REGISTRATION_HASH_SHA1}:${REGISTRATION_HASH_MD5}" | sha1sum | cut -c 1-40)
 		einfo "Attempting to mark installation as registered..."
@@ -183,8 +183,8 @@ src_install() {
 	done
 	if use materials ; then
 		einfo "Copying materials..."
-		mkdir -p "${D}/${d_materials}" || die
-		cp -a "${S}"/matlib/feature_MaterialLibrary/* "${D}/${d_materials}" || die
+		mkdir -p "${D}/${D_MATERIALS}" || die
+		cp -a "${S}"/matlib/feature_MaterialLibrary/* "${D}/${D_MATERIALS}" || die
 	fi
 }
 
@@ -194,6 +194,6 @@ pkg_postinst() {
 
 	if use materials ; then
 		einfo "The material library have been installed in:"
-		einfo "/usr/share/${PN}/Radeon_ProRender/Blender/Material_Library"
+		einfo "${D_MATERIALS}"
 	fi
 }
