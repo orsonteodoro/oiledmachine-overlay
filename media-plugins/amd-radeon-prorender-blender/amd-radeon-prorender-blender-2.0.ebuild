@@ -3,7 +3,7 @@
 
 EAPI=6
 
-PYTHON_COMPAT=( python{3_5,3_6} )
+PYTHON_COMPAT=( python3_7 )
 
 inherit unpacker python-single-r1
 
@@ -36,8 +36,7 @@ RDEPEND="${PYTHON_DEPS}
 	>=media-libs/freeimage-3.0
 	embree? ( media-libs/embree )
 	"
-DEPEND="${RDEPEND}
-	dev-libs/openssl"
+DEPEND="${RDEPEND}"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	     "
 
@@ -178,8 +177,7 @@ src_install() {
 		fi
 		K=$(echo "${REGISTRATION_HASH_SHA1}:${REGISTRATION_HASH_MD5}" | sha1sum | cut -c 1-40)
 		einfo "Attempting to mark installation as registered..."
-		CT="U2FsdGVkX180DSQe3s+CgxQ70JR1XS18HW9r2z+fo9tCUwSeZ7+cEKd1UH9Tkv8S"
-		eval $(echo "${CT}" | openssl enc -aes-128-cbc -a -salt -d -k ${K}) || _decode_error_message
+		touch "${d}/.registered" || die
 	done
 	if use materials ; then
 		einfo "Copying materials..."
