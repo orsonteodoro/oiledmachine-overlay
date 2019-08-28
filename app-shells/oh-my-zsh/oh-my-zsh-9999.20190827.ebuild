@@ -13,8 +13,9 @@ inherit eutils python-r1 ruby-ng
 DESCRIPTION="A delightful community-driven framework for managing your zsh configuration that includes optional plugins and themes."
 HOMEPAGE="http://ohmyz.sh/"
 COMMIT="9524db7398f405b26091f58fa8e2125d4e440a24"
-SRC_URI="https://github.com/robbyrussell/oh-my-zsh/archive/${COMMIT}.zip -> ${P}.zip
-	 update-emoji-data? ( http://www.unicode.org/Public/emoji/12.0/emoji-data.txt -> ${P}-plugin-emoji-emoji-data.txt )"
+FN="${COMMIT}.zip"
+A_URL="https://github.com/robbyrussell/oh-my-zsh/archive/${FN}"
+SRC_URI="${A_URL} -> ${P}.zip"
 
 LICENSE="MIT
 	 plugins_shrink-path? ( WTFPL-2 )
@@ -38,8 +39,12 @@ LICENSE="MIT
 	 plugins_zsh-navigation-tools? ( MIT GPL-3 )
 	 plugins_kube-ps1? ( Apache-2.0 )
 	 plugins_sfdx? ( Apache-2.0 )
-	 plugins_emoji? ( UNICODE-INC-DATA-FILES-AND-SOFTWARE )
+	 UNICODE-INC-DATA-FILES-AND-SOFTWARE
         "
+
+# Probably needs to be done because the archive contains the UNICODE data file.  It should be addressed upstream to get rid of emoji-data.txt.
+RESTRICT="fetch"
+
 SLOT="0"
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
 IUSE="branding bzr clipboard curl emojis update-emoji-data java git gpg mercurial nodejs powerline python ruby rust subversion sudo wget"
@@ -168,8 +173,9 @@ RDEPEND="app-shells/zsh
 	 xz? ( app-arch/xz-utils )
 	 7zip? ( app-arch/p7zip )
 	"
-DEPEND="${RDEPEND}"
-S="${WORKDIR}/all/${PN}-${COMMIT}"
+DEPEND="${RDEPEND}
+	net-misc/wget"
+S="${WORKDIR}/${PN}-${COMMIT}"
 REQUIRED_USE="branding? ( themes_gentoo ) themes_agnoster? ( powerline ) themes_emotty? ( powerline ) themes_amuse? ( powerline )
 	      plugins_emoji-clock? ( emojis )
 	      plugins_emoji? ( emojis )
@@ -253,13 +259,42 @@ REQUIRED_USE="branding? ( themes_gentoo ) themes_agnoster? ( powerline ) themes_
 	      ) )
 	      themes_adben? ( wget )
 	      update-emoji-data? ( plugins_emoji )
-	      !update-emoji-data
              "
-# update-emoji-data USE flag currently broken with unicode 12.0 data file
 
 ZSH_DEST="/usr/share/zsh/site-contrib/${PN}"
 ZSH_EDEST="${EPREFIX}${ZSH_DEST}"
 ZSH_TEMPLATE="templates/zshrc.zsh-template"
+
+#pkg_pretend() {
+	# the sandbox won't allow us to use dotnet restore properly so sandbox restrictions must be dropped
+	#if has network-sandbox $FEATURES ; then
+	#	die "The update-emoji-data USE flag network-sandbox to be disabled in FEATURES per package-wise."
+	#fi
+#}
+
+pkg_nofetch() {
+	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+	einfo ""
+	einfo "You must also read and agree to the licenses:"
+	einfo "  https://www.unicode.org/license.html"
+	einfo "  http://www.unicode.org/copyright.html"
+	einfo ""
+	einfo "Before downloading ${P}"
+	einfo ""
+	einfo "If you agree, you may download"
+	einfo "  - ${FN}"
+	einfo "from ${A_URL} and rename it to ${P}.zip and place them in ${distdir}"
+	einfo ""
+}
+
+src_unpack() {
+	default
+	if use update-emoji-data ; then
+		# update-emoji-data USE flag currently broken with unicode 12.0 data file
+		# Downloading must be done here after we agree with license agreement.  The data file gets downloaded before reading the license agreement.
+		wget http://www.unicode.org/Public/emoji/12.0/emoji-data.txt -O "${S}"/plugins/emoji/emoji-data.txt || die
+	fi
+}
 
 src_prepare() {
 	local i
@@ -316,7 +351,6 @@ src_prepare() {
 
 src_compile() {
 	if use update-emoji-data ; then
-		cp "${DISTFILES}"/${P}-plugin-emoji-emoji-data.txt "${S}"/plugins/emoji/emoji-data.txt
 		pushd "${S}"/plugins/emoji || die
 			perl update_emoji.pl || die
 		popd
