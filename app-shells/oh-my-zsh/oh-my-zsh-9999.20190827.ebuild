@@ -20,7 +20,8 @@ OMZSH_PLUGINS=( adb alias-finder ansible ant apache2-macports arcanist archlinux
 IUSE+=" ${OMZSH_PLUGINS[@]/#/-plugins_}"
 
 RDEPEND="app-shells/zsh
-         powerline? ( media-fonts/powerline-symbols )"
+         powerline? ( media-fonts/powerline-symbols )
+	 plugins_autojump? ( app-shells/autojump )"
 DEPEND="${RDEPEND}"
 S="${WORKDIR}/${PN}-${COMMIT}"
 REQUIRED_USE="branding? ( themes_gentoo ) themes_agnoster? ( powerline ) themes_emotty? ( powerline ) themes_amuse? ( powerline )"
