@@ -21,7 +21,12 @@ IUSE+=" ${OMZSH_PLUGINS[@]/#/-plugins_}"
 
 RDEPEND="app-shells/zsh
          powerline? ( media-fonts/powerline-symbols )
-	 plugins_autojump? ( app-shells/autojump )"
+	 plugins_autojump? ( app-shells/autojump )
+	 plugins_thefuck? ( app-shells/thefuck )
+	 plugins_tmux? ( app-misc/tmux )
+	 plugins_percol? ( app-shells/percol )
+	 plugins_pipenv? ( dev-python/pipenv )
+	 plugins_virtualenvwrapper? ( dev-python/virtualenvwrapper )"
 DEPEND="${RDEPEND}"
 S="${WORKDIR}/${PN}-${COMMIT}"
 REQUIRED_USE="branding? ( themes_gentoo ) themes_agnoster? ( powerline ) themes_emotty? ( powerline ) themes_amuse? ( powerline )"
