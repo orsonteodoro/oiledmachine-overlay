@@ -35,7 +35,7 @@ LICENSE="MIT
         "
 SLOT="0"
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
-IUSE="branding clipboard git powerline"
+IUSE="branding clipboard emojis git gpg powerline sudo"
 OMZSH_THEMES=( 3den adben af-magic afowler agnoster alanpeabody amuse apple arrow aussiegeek avit awesomepanda bira blinks bureau candy-kingdom candy clean cloud crcandy crunch cypher dallas darkblood daveverwer dieter dogenpunk dpoggi dstufft dst duellj eastwood edvardm emotty essembeh evan fino-time fino fishy flazz fletcherm fox frisk frontcube funky fwalch gallifrey gallois garyblessington gentoo geoffgarside gianu gnzh gozilla half-life humza imajes intheloop itchy jaischeema jbergantine jispwoso jnrowe jonathan josh jreese jtriley juanghurtado junkfood kafeitu kardan kennethreitz kiwi kolo kphoen lambda linuxonly lukerandall macovsky-ruby macovsky maran mgutz mh michelebologna mikeh miloshadzic minimal mira mortalscumbag mrtazz murilasso muse nanotech nebirhos nicoulaj norm obraun peepcode philips pmcgee pygmalion-virtualenv pygmalion re5et refined rgm risto rixius rkj-repos rkj robbyrussell sammy simonoff simple skaro smt Soliah sonicradish sorin sporty_256 steeef strug sunaku sunrise superjarin suvash takashiyoshida terminalparty theunraveler tjkirch_mod tjkirch tonotdo trapd00r wedisagree wezm+ wezm wuffers xiong-chiamiov-plus xiong-chiamiov ys zhann )
 IUSE+=" ${OMZSH_THEMES[@]/#/-themes_}"
 OMZSH_PLUGINS=( adb alias-finder ansible ant apache2-macports arcanist archlinux asdf autoenv autojump autopep8 aws battery bbedit bgnotify boot2docker bower branch brew bundler cabal cake cakephp3 capistrano cargo cask catimg celery chruby chucknorris cloudapp cloudfoundry codeclimate coffee colemak colored-man-pages colorize command-not-found common-aliases compleat composer copybuffer copydir copyfile cp cpanm dash debian dircycle dirhistory dirpersist django dnf dnote docker docker-compose docker-machine doctl dotenv droplr drush eecms emacs ember-cli emoji emoji-clock emotty encode64 extract fabric fancy-ctrl-z fasd fastfile fbterm fd fedora firewalld forklift fossil frontend-search fzf gas gatsby gb geeknote gem git git-auto-fetch git-escape-magic git-extras gitfast git-flow git-flow-avh github git-hubflow gitignore git-prompt git-remote-branch glassfish globalias gnu-utils go golang gpg-agent gradle grails grunt gulp hanami helm heroku history history-substring-search homestead httpie iterm2 jake-node jenv jhbuild jira jruby jsontools jump kate keychain kitchen knife knife_ssh kops kubectl kube-ps1 laravel laravel4 laravel5 last-working-dir lein lighthouse lol macports magic-enter man marked2 mercurial meteor minikube mix mix-fast mosh mvn mysql-macports n98-magerun nanoc ng nmap node nomad npm npx nvm nyan oc osx otp pass paver pep8 percol per-directory-history perl perms phing pip pipenv pj please pod postgres pow powder powify profiles pyenv pylint python rails rake rake-fast rand-quote rbenv rbfu react-native rebar redis-cli repo ripgrep ros rsync ruby rust rvm safe-paste salt sbt scala scd screen scw sdk sfdx sfffe shrink-path singlechar spring sprunge ssh-agent stack sublime sudo supervisor suse svcat svn svn-fast-info swiftpm symfony symfony2 systemadmin systemd taskwarrior terminalapp terminitor terraform textastic textmate thefuck themes thor tig timer tmux tmux-cssh tmuxinator torrent transfer tugboat ubuntu ufw urltools vagrant vagrant-prompt vault vim-interaction vi-mode virtualenv virtualenvwrapper vscode vundle wakeonlan wd web-search wp-cli xcode yarn yii yii2 yum z zeus zsh-navigation-tools zsh_reload )
@@ -45,24 +45,45 @@ RDEPEND="app-shells/zsh
 	 clipboard? ( x11-misc/xclip )
 	 git? ( dev-vcs/git )
          powerline? ( media-fonts/powerline-symbols )
+	 plugins_adb? ( dev-util/android-tools )
+	 plugins_ansible? ( app-admin/ansible )
 	 plugins_autojump? ( app-shells/autojump )
 	 plugins_bundler? ( dev-ruby/bundler )
 	 plugins_cargo? ( dev-util/cargo )
+	 plugins_celery? ( dev-python/celery )
 	 plugins_colorize? ( dev-python/pygments )
 	 plugins_chucknorris? ( games-misc/fortune-mod )
+	 plugins_docker-machine? ( app-emulation/docker-machine )
+	 emojis? ( || ( media-fonts/noto-color-emoji media-fonts/noto-color-emoji-bin media-fonts/emojione-color-font media-fonts/unifont media-fonts/twemoji-color-font media-fonts/symbola ) )
+	 gpg? ( app-crypt/gnupg )
 	 plugins_emacs? ( >=app-editors/emacs-24.0 )
+	 plugins_fossil? ( dev-vcs/fossil )
+	 plugins_fzf? ( app-shells/fzf )
+	 plugins_go? ( dev-lang/go )
+	 plugins_kate? ( kde-apps/kate )
+	 plugins_kubectl? ( sys-cluster/kubectl )
+	 plugins_mercurial? ( dev-vcs/mercurial )
+	 plugins_nmap? ( net-analyzer/nmap )
+	 plugins_npm? ( net-libs/nodejs[npm] )
+	 plugins_node? ( net-libs/nodejs )
+	 plugins_ruby? ( dev-lang/ruby )
 	 plugins_sfffe? ( sys-apps/ack )
+	 plugins_systemd? ( sys-apps/systemd )
 	 plugins_thefuck? ( app-shells/thefuck )
 	 plugins_tmux? ( app-misc/tmux )
 	 plugins_percol? ( app-shells/percol )
 	 plugins_perl? ( dev-lang/perl )
 	 plugins_pipenv? ( dev-python/pipenv )
+	 plugins_postgres? ( dev-db/postgresql )
 	 plugins_vim-interaction? ( app-editors/gvim )
 	 plugins_virtualenvwrapper? ( dev-python/virtualenvwrapper )
-	 plugins_vundle? ( app-editors/vim )"
+	 plugins_vundle? ( app-editors/vim )
+	 sudo? ( app-admin/sudo )"
 DEPEND="${RDEPEND}"
 S="${WORKDIR}/${PN}-${COMMIT}"
 REQUIRED_USE="branding? ( themes_gentoo ) themes_agnoster? ( powerline ) themes_emotty? ( powerline ) themes_amuse? ( powerline )
+	      plugins_emoji-clock? ( emojis )
+	      plugins_emoji? ( emojis )
 	      plugins_git? ( git )
 	      plugins_github? ( git )
 	      plugins_git-auto-fetch? ( git )
@@ -73,6 +94,54 @@ REQUIRED_USE="branding? ( themes_gentoo ) themes_agnoster? ( powerline ) themes_
 	      plugins_git-remote-branch? ( git )
 	      plugins_git-flow? ( git )
 	      git? ( || ( plugins_git plugins_github plugins_git-auto-fetch plugins_git-extras plugins_gitfast plugins_git-hubflow plugins_git-prompt plugins_git-remote-branch plugins_git-flow ) )
+	      emojis? ( || ( plugins_emoji-clock plugins_emoji ) )
+	      plugins_apache2-macports? ( sudo )
+	      plugins_dnf? ( sudo )
+	      plugins_drush? ( sudo )
+	      plugins_firewalld? ( sudo )
+	      plugins_archlinux? ( sudo )
+	      plugins_macports? ( sudo )
+	      plugins_mysql-macports? ( sudo )
+	      plugins_nmap? ( sudo )
+	      plugins_rake? ( sudo )
+	      plugins_sudo? ( sudo )
+	      plugins_suse? ( sudo )
+	      plugins_systemadmin? ( sudo )
+	      plugins_ubuntu? ( sudo )
+	      plugins_xcode? ( sudo )
+	      plugins_yum? ( sudo )
+	      gpg? ( || (
+		plugins_archlinux
+		plugins_gpg-agent
+		plugins_otp
+		plugins_pass
+		)
+	      )
+	      plugins_archlinux? ( gpg )
+	      plugins_gpg-agent? ( gpg )
+	      plugins_otp? ( gpg )
+	      plugins_pass? ( gpg )
+	      sudo? ( || (
+		plugins_archlinux
+		plugins_apache2-macports
+		plugins_debian
+		plugins_dnf
+		plugins_drush
+		plugins_firewalld
+		plugins_macports
+		plugins_mysql-macports
+		plugins_nmap
+		plugins_rake
+		plugins_ruby
+		plugins_sudo
+		plugins_suse
+		plugins_sublime
+		plugins_systemadmin
+		plugins_ubuntu
+		plugins_xcode
+		plugins_yum
+			 )
+	      )
              "
 
 ZSH_DEST="/usr/share/zsh/site-contrib/${PN}"
@@ -139,4 +208,9 @@ src_install() {
 
 pkg_postinst() {
 	einfo "You must add \`source '${ZSH_DEST}/${ZSH_TEMPLATE}'\` to your ~/.zshrc."
+	use sudo && use plugins_debian
+	if use sudo ; then
+		einfo "The following are option"
+		einfo "plugins_debian"
+	fi
 }
