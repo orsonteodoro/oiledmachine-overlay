@@ -13,7 +13,8 @@ inherit eutils python-r1 ruby-ng
 DESCRIPTION="A delightful community-driven framework for managing your zsh configuration that includes optional plugins and themes."
 HOMEPAGE="http://ohmyz.sh/"
 COMMIT="9524db7398f405b26091f58fa8e2125d4e440a24"
-SRC_URI="https://github.com/robbyrussell/oh-my-zsh/archive/${COMMIT}.zip -> ${P}.zip"
+SRC_URI="https://github.com/robbyrussell/oh-my-zsh/archive/${COMMIT}.zip -> ${P}.zip
+	 update-emoji-data? ( http://www.unicode.org/Public/emoji/12.0/emoji-data.txt -> ${P}-plugin-emoji-emoji-data.txt )"
 
 LICENSE="MIT
 	 plugins_shrink-path? ( WTFPL-2 )
@@ -37,10 +38,11 @@ LICENSE="MIT
 	 plugins_zsh-navigation-tools? ( MIT GPL-3 )
 	 plugins_kube-ps1? ( Apache-2.0 )
 	 plugins_sfdx? ( Apache-2.0 )
+	 plugins_emoji? ( UNICODE-INC-DATA-FILES-AND-SOFTWARE )
         "
 SLOT="0"
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
-IUSE="branding bzr clipboard curl emojis java git gpg mercurial nodejs powerline python ruby rust subversion sudo wget"
+IUSE="branding bzr clipboard curl emojis update-emoji-data java git gpg mercurial nodejs powerline python ruby rust subversion sudo wget"
 IUSE+=" 7zip bzip2 gzip lzma unzip rar xz"
 OMZSH_THEMES=( 3den adben af-magic afowler agnoster alanpeabody amuse apple arrow aussiegeek avit awesomepanda bira blinks bureau candy-kingdom candy clean cloud crcandy crunch cypher dallas darkblood daveverwer dieter dogenpunk dpoggi dstufft dst duellj eastwood edvardm emotty essembeh evan fino-time fino fishy flazz fletcherm fox frisk frontcube funky fwalch gallifrey gallois garyblessington gentoo geoffgarside gianu gnzh gozilla half-life humza imajes intheloop itchy jaischeema jbergantine jispwoso jnrowe jonathan josh jreese jtriley juanghurtado junkfood kafeitu kardan kennethreitz kiwi kolo kphoen lambda linuxonly lukerandall macovsky-ruby macovsky maran mgutz mh michelebologna mikeh miloshadzic minimal mira mortalscumbag mrtazz murilasso muse nanotech nebirhos nicoulaj norm obraun peepcode philips pmcgee pygmalion-virtualenv pygmalion re5et refined rgm risto rixius rkj-repos rkj robbyrussell sammy simonoff simple skaro smt Soliah sonicradish sorin sporty_256 steeef strug sunaku sunrise superjarin suvash takashiyoshida terminalparty theunraveler tjkirch_mod tjkirch tonotdo trapd00r wedisagree wezm+ wezm wuffers xiong-chiamiov-plus xiong-chiamiov ys zhann )
 IUSE+=" ${OMZSH_THEMES[@]/#/-themes_}"
@@ -66,6 +68,7 @@ PLUGINS_DEPEND="
 	 plugins_doctl? ( app-admin/doctl )
 	 plugins_drush? ( app-admin/drush )
 	 plugins_emacs? ( >=app-editors/emacs-24.0 )
+	 plugins_emoji? ( dev-lang/perl dev-perl/Path-Class )
 	 plugins_fbterm? ( app-i18n/fbterm )
 	 plugins_firewalld? ( net-firewall/firewalld )
 	 plugins_fossil? ( dev-vcs/fossil )
@@ -249,7 +252,10 @@ REQUIRED_USE="branding? ( themes_gentoo ) themes_agnoster? ( powerline ) themes_
 		plugins_n98-magerun
 	      ) )
 	      themes_adben? ( wget )
+	      update-emoji-data? ( plugins_emoji )
+	      !update-emoji-data
              "
+# update-emoji-data USE flag currently broken with unicode 12.0 data file
 
 ZSH_DEST="/usr/share/zsh/site-contrib/${PN}"
 ZSH_EDEST="${EPREFIX}${ZSH_DEST}"
@@ -306,6 +312,15 @@ src_prepare() {
 	rm -rf plugins.trash
 
 	eapply_user
+}
+
+src_compile() {
+	if use update-emoji-data ; then
+		cp "${DISTFILES}"/${P}-plugin-emoji-emoji-data.txt "${S}"/plugins/emoji/emoji-data.txt
+		pushd "${S}"/plugins/emoji || die
+			perl update_emoji.pl || die
+		popd
+	fi
 }
 
 src_install() {
