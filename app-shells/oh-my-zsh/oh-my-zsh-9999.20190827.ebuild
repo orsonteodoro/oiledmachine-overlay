@@ -265,13 +265,6 @@ ZSH_DEST="/usr/share/zsh/site-contrib/${PN}"
 ZSH_EDEST="${EPREFIX}${ZSH_DEST}"
 ZSH_TEMPLATE="templates/zshrc.zsh-template"
 
-#pkg_pretend() {
-	# the sandbox won't allow us to use dotnet restore properly so sandbox restrictions must be dropped
-	#if has network-sandbox $FEATURES ; then
-	#	die "The update-emoji-data USE flag network-sandbox to be disabled in FEATURES per package-wise."
-	#fi
-#}
-
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	einfo ""
