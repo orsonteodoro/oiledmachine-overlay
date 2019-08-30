@@ -39,7 +39,7 @@ LICENSE="MIT
 	 plugins_zsh-navigation-tools? ( MIT GPL-3 )
 	 plugins_kube-ps1? ( Apache-2.0 )
 	 plugins_sfdx? ( Apache-2.0 )
-	 UNICODE-INC-DATA-FILES-AND-SOFTWARE
+	 Unicode-DFS-2016
         "
 
 # Probably needs to be done because the archive contains the UNICODE data file.  It should be addressed upstream to get rid of emoji-data.txt.
