@@ -117,7 +117,7 @@ pkg_setup() {
 
 	CONFIG_CHECK="~DRM_AMDGPU"
 
-	ERROR_KERNEL_DRM_AMDGPU="DRM_AMDGPU which is required for FreeSync or AMDGPU-PRO driver to work"
+	WARNING_DRM_AMDGPU="DRM_AMDGPU which is required for FreeSync or AMDGPU-PRO driver to work"
 
 	linux-info_pkg_setup
 
