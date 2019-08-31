@@ -119,19 +119,19 @@ src_configure() {
 	fi
 
 	if use cpu_flags_x86_avx512skx ; then
-		mycmakeargs+=( -DEMBREE_MAX_ISA=AVX512SKX )
+		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="AVX512SKX" )
 	elif use cpu_flags_x86_avx512knl ; then
-		mycmakeargs+=( -DEMBREE_MAX_ISA=AVX512KNL )
+		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="AVX512KNL" )
 	elif use cpu_flags_x86_avx2 ; then
-		mycmakeargs+=( -DEMBREE_MAX_ISA=AVX2 )
+		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="AVX2" )
 	elif use cpu_flags_x86_avx ; then
-		mycmakeargs+=( -DEMBREE_MAX_ISA=AVX )
+		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="AVX" )
 	elif use cpu_flags_x86_sse4_2 ; then
-		mycmakeargs+=( -DEMBREE_MAX_ISA=SSE4.2 )
+		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="SSE4.2" )
 	elif use cpu_flags_x86_sse2 ; then
-		mycmakeargs+=( -DEMBREE_MAX_ISA=SSE2 )
+		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="SSE2" )
 	else
-		mycmakeargs+=( -DEMBREE_MAX_ISA=NONE )
+		mycmakeargs+=( -DEMBREE_MAX_ISA:STRING="NONE" )
 	fi
 
 	cmake-utils_src_configure
