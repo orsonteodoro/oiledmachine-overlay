@@ -8,6 +8,8 @@ PYTHON_COMPAT=( python{2_7,3_4,3_5} )
 USE_RUBY="ruby24 ruby25 ruby26"
 RUBY_OPTIONAL=1
 
+EMOJI_LANG_DEFAULT=${EMOJI_LANG_DEFAULT:=en}
+
 inherit eutils python-r1 ruby-ng
 
 DESCRIPTION="A delightful community-driven framework for managing your zsh configuration that includes optional plugins and themes."
@@ -166,6 +168,8 @@ RDEPEND="app-shells/zsh
 	 ruby? ( $(ruby_implementations_depend) )
 	 subversion? ( dev-vcs/subversion )
 	 ${THEMES_DEPEND}
+	 update-emoji-data? ( dev-perl/XML-LibXML
+			      dev-perl/Text-Unaccent )
 	 unzip? ( app-arch/unzip )
 	 virtual/awk
 	 wget? ( net-misc/wget )
@@ -282,10 +286,18 @@ pkg_nofetch() {
 
 src_unpack() {
 	default
+
+	cd "${S}" || die
+
 	if use update-emoji-data ; then
-		# update-emoji-data USE flag currently broken with unicode 12.0 data file
-		# Downloading must be done here after we agree with license agreement.  The data file gets downloaded before reading the license agreement.
-		wget http://www.unicode.org/Public/emoji/12.0/emoji-data.txt -O "${S}"/plugins/emoji/emoji-data.txt || die
+		eapply "${FILESDIR}/oh-my-zsh-emoji-plugin-update-for-emoji-updater-perl-script-for-international-support-and-emoji-13_x-support.patch"
+		einfo "update-emoji-data USE flag is experimental.  It's not an official patch."
+	fi
+
+	if use update-emoji-data ; then
+		pushd "${S}"/plugins/emoji || die
+			perl update_emoji.pl "${EMOJI_LANG_DEFAULT}" || die
+		popd
 	fi
 }
 
@@ -342,17 +354,12 @@ src_prepare() {
 	eapply_user
 }
 
-src_compile() {
-	if use update-emoji-data ; then
-		pushd "${S}"/plugins/emoji || die
-			perl update_emoji.pl || die
-		popd
-	fi
-}
-
 src_install() {
 	insinto "${ZSH_DEST}"
 	doins -r *
+	if use plugins_emoji ; then
+		cp -a "${FILESDIR}/Unicode-DFS-2016" "${D}/${ZSH_DEST}"/plugins/emoji/Unicode-DFS-2016-license.html || die
+	fi
 }
 
 pkg_postinst() {
