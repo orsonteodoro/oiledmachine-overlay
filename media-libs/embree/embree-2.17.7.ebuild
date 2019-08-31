@@ -20,12 +20,12 @@ fi
 LICENSE="Apache-2.0"
 SLOT="2"
 
-#X86_CPU_FLAGS=(
-#	sse2:sse2 sse4_2:sse4_2 avx:avx avx2:avx2
-#)
-#CPU_FLAGS=( ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_} )
+X86_CPU_FLAGS=(
+	sse2:sse2 sse4_2:sse4_2 avx:avx avx2:avx2 avx512knl:avx512knl avx512skx:avx512skx
+)
+CPU_FLAGS=( ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_} )
 
-IUSE="clang ispc raymask +tbb tutorial static-libs" # ${CPU_FLAGS[@]%:*}
+IUSE="clang ispc raymask +tbb tutorial static-libs ${CPU_FLAGS[@]%:*}"
 
 REQUIRED_USE="clang? ( !tutorial )"
 
@@ -115,6 +115,22 @@ src_configure() {
 			-DEMBREE_TUTORIALS_LIBJPEG=ON
 			-DEMBREE_TUTORIALS_LIBPNG=ON
 		)
+	fi
+
+	if use cpu_flags_x86_avx512skx ; then
+		mycmakeargs+=( -DEMBREE_MAX_ISA=AVX512SKX )
+	elif use cpu_flags_x86_avx512knl ; then
+		mycmakeargs+=( -DEMBREE_MAX_ISA=AVX512KNL )
+	elif use cpu_flags_x86_avx2 ; then
+		mycmakeargs+=( -DEMBREE_MAX_ISA=AVX2 )
+	elif use cpu_flags_x86_avx ; then
+		mycmakeargs+=( -DEMBREE_MAX_ISA=AVX )
+	elif use cpu_flags_x86_sse4_2 ; then
+		mycmakeargs+=( -DEMBREE_MAX_ISA=SSE4.2 )
+	elif use cpu_flags_x86_sse2 ; then
+		mycmakeargs+=( -DEMBREE_MAX_ISA=SSE2 )
+	else
+		mycmakeargs+=( -DEMBREE_MAX_ISA=NONE )
 	fi
 
 	cmake-utils_src_configure
