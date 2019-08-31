@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit cmake-utils flag-o-matic toolchain-funcs
+inherit cmake-utils flag-o-matic linux-info toolchain-funcs
 
 DESCRIPTION="Collection of high-performance ray tracing kernels"
 HOMEPAGE="https://github.com/embree/embree"
@@ -50,6 +50,12 @@ BDEPEND="
 DOCS=( CHANGELOG.md README.md readme.pdf )
 
 CMAKE_BUILD_TYPE=Release
+
+pkg_setup() {
+	CONFIG_CHECK="~TRANSPARENT_HUGEPAGE"
+	WARNING_TRANSPARENT_HUGEPAGE="Not enabling Transparent Hugepages will impact rendering performance."
+	linux-info_pkg_setup
+}
 
 src_prepare() {
 	cmake-utils_src_prepare
