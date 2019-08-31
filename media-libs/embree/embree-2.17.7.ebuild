@@ -52,9 +52,8 @@ DOCS=( CHANGELOG.md README.md readme.pdf )
 CMAKE_BUILD_TYPE=Release
 
 pkg_setup() {
-	CONFIG_CHECK="~TRANSPARENT_HUGEPAGE ~TRANSPARENT_HUGEPAGE_ALWAYS"
+	CONFIG_CHECK="~TRANSPARENT_HUGEPAGE"
 	WARNING_TRANSPARENT_HUGEPAGE="Not enabling Transparent Hugepages (CONFIG_TRANSPARENT_HUGEPAGE) will impact rendering performance."
-	WARNING_TRANSPARENT_HUGEPAGE_ALWAYS="Enabling Transparent Hugepage always (CONFIG_HUGEPAGE_ALWAYS) was recommended upstream."
 	linux-info_pkg_setup
 }
 
