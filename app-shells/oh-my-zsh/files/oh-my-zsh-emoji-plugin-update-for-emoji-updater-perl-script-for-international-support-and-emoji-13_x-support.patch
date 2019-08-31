@@ -317,7 +317,7 @@
 +foreach my $arg (@ARGV) {
 +	if ( index($arg, "--help") ne -1 || index($arg, "-help") ne -1 || index($arg, "-h") ne -1 ) {
 +		print("
-+Usage: $0 cldr_annotations cldr_annotations_derived
++Usage: $0 lang_code
  
 -print "Updated definition file $zsh_def_file\n";
 +    lang_code                 - language code in ISO 639-1
