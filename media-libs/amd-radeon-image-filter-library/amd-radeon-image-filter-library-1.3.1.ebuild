@@ -19,7 +19,7 @@ KEYWORDS="~amd64"
 SLOT="0"
 RESTRICT="fetch strip"
 IUSE="+samples +models"
-IUSE+="video_cards_radeonsi video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel video_cards_r600"
+IUSE+=" video_cards_radeonsi video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel video_cards_r600"
 
 S="${WORKDIR}"
 
