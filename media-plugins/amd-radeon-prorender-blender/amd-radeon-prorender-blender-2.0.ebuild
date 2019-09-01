@@ -3,7 +3,7 @@
 
 EAPI=6
 
-PYTHON_COMPAT=( python{3_6,3_7} )
+PYTHON_COMPAT=( python{3_5,3_6,3_7} )
 
 inherit unpacker python-single-r1
 
@@ -34,7 +34,7 @@ RDEPEND="${PYTHON_DEPS}
 		video_cards_amdgpu? ( || ( dev-util/amdapp x11-drivers/amdgpu-pro[opencl] ) )
 	)
 	>=media-libs/freeimage-3.0
-	embree? ( media-libs/embree:2 )
+	embree? ( media-libs/embree:2[tbb,raymask] )
 	denoiser? ( >=media-libs/openimageio-1.2.3
 		    dev-cpp/tbb )
 	sys-devel/gcc[openmp]
@@ -162,6 +162,9 @@ src_install() {
 		fi
 		einfo "Attempting to mark installation as registered..."
 		touch "${d}/.registered" || die
+		mkdir -p "${d}/addon" || die
+		touch "${d}/addon/.installed" || die
+		touch "${d}/.files_installed" || die
 	done
 	if use materials ; then
 		einfo "Copying materials..."
@@ -185,4 +188,7 @@ pkg_postinst() {
 		einfo "The material library have been installed in:"
 		einfo "${D_MATERIALS}"
 	fi
+
+	einfo "For this version, you are opt-in in sending render statistics to AMD.  See link below to disable this feature."
+	einfo "https://radeon-pro.github.io/RadeonProRenderDocs/plugins/blender/debug.html"
 }

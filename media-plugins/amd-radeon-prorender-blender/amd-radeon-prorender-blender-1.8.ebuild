@@ -25,7 +25,8 @@ IUSE="+checker denoiser embree +materials video_cards_radeonsi video_cards_nvidi
 #
 NV_DRIVER_VERSION="368.39"
 RDEPEND="${PYTHON_DEPS}
-	>=media-gfx/blender-2.79[${PYTHON_USEDEP}]
+	>=media-gfx/blender-2.79[${PYTHON_USEDEP},opensubdiv]
+	media-libs/opensubdiv[opencl]
 	video_cards_amdgpu? ( media-libs/mesa )
 	|| (
 		virtual/opencl
@@ -34,7 +35,7 @@ RDEPEND="${PYTHON_DEPS}
 		video_cards_amdgpu? ( || ( dev-util/amdapp x11-drivers/amdgpu-pro[opencl] ) )
 	)
 	>=media-libs/freeimage-3.0
-	embree? ( media-libs/embree:2 )
+	embree? ( media-libs/embree:2[tbb,raymask] )
 	denoiser? ( >=media-libs/openimageio-1.2.3 )
 	sys-devel/gcc[openmp]
 	dev-libs/libbsd
@@ -199,6 +200,9 @@ src_install() {
 		einfo "Attempting to mark installation as registered..."
 		CT="U2FsdGVkX180DSQe3s+CgxQ70JR1XS18HW9r2z+fo9tCUwSeZ7+cEKd1UH9Tkv8S"
 		eval $(echo "${CT}" | openssl enc -aes-128-cbc -a -salt -d -k ${K}) || _decode_error_message
+		mkdir -p "${d}/addon" || die
+		touch "${d}/addon/.installed" || die
+		touch "${d}/.files_installed" || die
 	done
 	if use materials ; then
 		einfo "Copying materials..."
