@@ -22,8 +22,7 @@ IUSE="premake +tutorials +resources"
 
 RDEPEND="premake? ( dev-util/premake:4 )
 	 sys-devel/gcc[openmp]"
-DEPEND=""
-
+DEPEND="${RDEPEND}"
 
 S="${WORKDIR}/${MY_PN}-${PV}"
 
