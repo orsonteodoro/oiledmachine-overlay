@@ -52,6 +52,7 @@ RDEPEND="${PYTHON_DEPS}
 	dev-python/imageio[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/pytest[${PYTHON_USEDEP}]
+	dev-cpp/CastXML
 	"
 DEPEND="${RDEPEND}
 	dev-libs/openssl"
