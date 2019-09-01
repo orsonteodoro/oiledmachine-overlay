@@ -18,7 +18,7 @@ SRC_URI="https://www2.ati.com/other/${FN} -> ${P}.run"
 RESTRICT="fetch strip"
 
 # need the prorender sdk to support export?
-IUSE="+checker denoiser embree +materials sdk test video_cards_radeonsi video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel video_cards_r600"
+IUSE="+checker denoiser embree +materials test video_cards_radeonsi video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel video_cards_r600"
 
 # if amdgpu-pro is installed libgl-mesa-dev containing development headers and libs were pulled and noted in the Packages file:
 # amdgpu-pro 19.20.812932 -> libgl-mesa-dev 18.3.0-812932
@@ -38,7 +38,8 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	>=media-libs/freeimage-3.0
 	embree? ( media-libs/embree:2[tbb,raymask] )
-	denoiser? ( >=media-libs/openimageio-1.2.3 )
+	denoiser? ( >=media-libs/openimageio-1.2.3
+		    media-libs/amd-radeon-image-filter-library )
 	sys-devel/gcc[openmp]
 	dev-libs/libbsd
 	x11-libs/libX11
@@ -54,7 +55,8 @@ RDEPEND="${PYTHON_DEPS}
 	test? ( dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/imageio[${PYTHON_USEDEP}]
 	      )
-	sdk? ( dev-cpp/castxml )
+	dev-cpp/castxml
+	media-libs/amd-radeon-prorender-sdk
 	"
 DEPEND="${RDEPEND}
 	dev-libs/openssl"
