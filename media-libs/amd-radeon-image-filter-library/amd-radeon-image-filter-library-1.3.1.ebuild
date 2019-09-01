@@ -7,7 +7,7 @@ inherit unpacker
 
 # version based on Ubuntu18/RadeonImageFilters/RadeonImageFilters.h
 
-DESCRIPTION="The non commerical sdk includes tools, object code, AMD ProRender, AMD Radeon Rays Library, AMD Image Filter Library"
+DESCRIPTION="AI accelerated image enhancement for denoising and GPU accelerated image processing"
 HOMEPAGE="https://www.amd.com/en/technologies/radeon-prorender-developers"
 
 MY_PN="RadeonProRenderSDK"
