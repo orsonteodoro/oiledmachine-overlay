@@ -19,7 +19,7 @@ KEYWORDS="~amd64"
 SLOT="0"
 RESTRICT="fetch strip"
 IUSE="+samples +models"
-IUSE+="video_cards_radeonsi video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel video_cards_r600"
+IUSE+=" video_cards_radeonsi video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel video_cards_r600"
 
 S="${WORKDIR}"
 
@@ -33,7 +33,7 @@ RDEPEND="
 	"
 DEPEND="${RDEPEND}"
 
-FINGERPRINT="f79cc5e0fd5d87d63705a9f660a1ab653385ed0"
+FINGERPRINT="f79cc5e0fd5d87d63705a9f660a1ab653385ed0a"
 
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
@@ -44,6 +44,7 @@ pkg_nofetch() {
 
 src_unpack() {
 	default
+	cd "${S}"
 	X_FINGERPRINT=$(sha1sum Ubuntu18/RadeonImageFilters/RadeonImageFilters.h | cut -c 1-40)
 	if [[ "${FINGERPRINT}" != "${X_FINGERPRINT}" ]] ; then
 		die "Wrong version or newer"
@@ -51,14 +52,19 @@ src_unpack() {
 }
 
 src_install() {
+	cd "${S}"
 	dodir /opt/${PN}
 	insinto /opt/${PN}
+	einfo "Installing license"
 	doins license.txt
 	if use samples ; then
-		doins Samples
+		einfo "Installing samples"
+		doins -r Samples
 	fi
 	if use models ; then
-		doins models
+		einfo "Installing models"
+		doins -r models
 	fi
-	doins Ubuntu18
+	einfo "Installing library and headers"
+	doins -r Ubuntu18
 }
