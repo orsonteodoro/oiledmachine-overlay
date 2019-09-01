@@ -38,8 +38,7 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	>=media-libs/freeimage-3.0
 	embree? ( media-libs/embree:2[tbb,raymask] )
-	denoiser? ( >=media-libs/openimageio-1.2.3
-		    media-libs/amd-radeon-image-filter-library )
+	denoiser? ( >=media-libs/openimageio-1.2.3 )
 	sys-devel/gcc[openmp]
 	dev-libs/libbsd
 	x11-libs/libX11
@@ -56,7 +55,6 @@ RDEPEND="${PYTHON_DEPS}
 		dev-python/imageio[${PYTHON_USEDEP}]
 	      )
 	dev-cpp/castxml
-	media-libs/amd-radeon-prorender-sdk
 	"
 DEPEND="${RDEPEND}
 	dev-libs/openssl"
@@ -193,8 +191,8 @@ src_install() {
 	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
 
-	for d in ${DIRS} ; do
-		d="${D}/${d}/scripts/addons_contrib/${PLUGIN_NAME}"
+	for d_ver in ${DIRS} ; do
+		d="${D}/${d_ver}/scripts/addons_contrib/${PLUGIN_NAME}"
 		mkdir -p "${d}" || die
 		chmod 775 "${d}" || die
 		chown root:users "${d}" || die
