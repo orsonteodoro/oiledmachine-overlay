@@ -28,7 +28,7 @@ IUSE="debug +modules qt4 static-libs pax_kernel gdm-hack"
 LICENSE="AMD GPL-2 QPL-1.0"
 KEYWORDS="-* ~amd64 ~x86"
 
-RESTRICT="bindist test fetch"
+RESTRICT="bindist fetch mirror test"
 
 RDEPEND="
 	<x11-base/xorg-server-1.18[-minimal]
@@ -153,30 +153,33 @@ QA_DT_HASH="
 "
 
 pkg_nofetch() {
+	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	einfo "The driver packages"
 	einfo ${A}
 	einfo "need to be downloaded manually from"
 	einfo "http://support.amd.com/en-us/download/desktop?os=Linux+x86"
-	einfo "and ${XVBA_SDK_URI}"
+	einfo "and ${XVBA_SDK_URI} and place them in ${distdir}"
 }
 
 pkg_pretend() {
-	local CONFIG_CHECK="~MTRR ~!DRM ACPI PCI_MSI \
+	CONFIG_CHECK="~MTRR ~!DRM ACPI PCI_MSI \
 		!LOCKDEP !PAX_KERNEXEC_PLUGIN_METHOD_OR"
 	use amd64 && CONFIG_CHECK+=" COMPAT"
 
-	local ERROR_MTRR="CONFIG_MTRR required for direct rendering."
-	local ERROR_DRM="CONFIG_DRM must be disabled or compiled as a
+	WARNING_MTRR="CONFIG_MTRR required for direct rendering."
+	WARNING_DRM="CONFIG_DRM must be disabled or compiled as a
 		module and not loaded for direct rendering to work."
-	local ERROR_LOCKDEP="CONFIG_LOCKDEP (lock tracking) exports
+	ERROR_DRM="CONFIG_DRM must be disabled or compiled as a
+		module and not loaded for direct rendering to work."
+	ERROR_LOCKDEP="CONFIG_LOCKDEP (lock tracking) exports
 		the symbol lock_acquire as GPL-only. This prevents ${P} from
 		compiling with an error like this:
 		FATAL: modpost: GPL-incompatible module fglrx.ko uses GPL-only symbol 'lock_acquire'"
-	local ERROR_PAX_KERNEXEC_PLUGIN_METHOD_OR="This config option will cause
+	ERROR_PAX_KERNEXEC_PLUGIN_METHOD_OR="This config option will cause
 		kernel to reject loading the fglrx module with
 		\"ERROR: could not insert 'fglrx': Exec format error.\"
 		You may want to try CONFIG_PAX_KERNEXEC_PLUGIN_METHOD_BTS instead."
-	local ERROR_BKL="CONFIG_BKL must be enabled for kernels 2.6.37-2.6.38."
+	ERROR_BKL="CONFIG_BKL must be enabled for kernels 2.6.37-2.6.38."
 
 	# workaround until bug 365543 is solved
 	if use modules; then
