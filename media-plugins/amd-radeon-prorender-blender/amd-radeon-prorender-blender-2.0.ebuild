@@ -25,6 +25,7 @@ IUSE="+checker denoiser embree +materials video_cards_radeonsi video_cards_nvidi
 #
 NV_DRIVER_VERSION="368.39"
 RDEPEND="${PYTHON_DEPS}
+	dev-lang/python[xml]
 	>=media-gfx/blender-2.80[${PYTHON_USEDEP}]
 	video_cards_amdgpu? ( media-libs/mesa )
 	|| (
