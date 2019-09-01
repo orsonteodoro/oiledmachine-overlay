@@ -327,6 +327,9 @@ dev-util/geeks-diary
 games-engines/enigma
 =dev-dotnet/libgit2sharp-0.26
 dev-dotnet/mono-options
+media-libs/amd-radeon-image-filter-library
+media-libs/amd-radeon-prorender-sdk
+
 
 # updated and tested
 #app-editors/epic-journal
