@@ -51,6 +51,7 @@ src_unpack() {
 }
 
 src_install() {
+	dodir /opt/${PN}
 	insinto /opt/${PN}
 	doins license.txt
 	if use samples ; then
