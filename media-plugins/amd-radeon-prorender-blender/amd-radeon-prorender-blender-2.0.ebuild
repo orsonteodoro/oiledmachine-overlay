@@ -17,7 +17,8 @@ SRC_URI="https://drivers.amd.com/other/ver_2.x/${FN} -> ${P}.run"
 
 RESTRICT="fetch strip"
 
-IUSE="+checker denoiser embree +materials video_cards_radeonsi video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel video_cards_r600"
+# need the prorender sdk to support export?
+IUSE="+checker denoiser embree +materials sdk test video_cards_radeonsi video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel video_cards_r600"
 
 # if amdgpu-pro is installed libgl-mesa-dev containing development headers and libs were pulled and noted in the Packages file:
 # amdgpu-pro 19.20.812932 -> libgl-mesa-dev 18.3.0-812932
@@ -50,7 +51,7 @@ RDEPEND="${PYTHON_DEPS}
 	x11-libs/libxshmfence
 	x11-libs/libXxf86vm
 	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-cpp/CastXML
+	sdk? ( dev-cpp/castxml )
 	"
 DEPEND="${RDEPEND}"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
