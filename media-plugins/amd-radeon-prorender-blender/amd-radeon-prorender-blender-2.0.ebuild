@@ -94,25 +94,13 @@ _pkg_setup() {
 
 	cd "${S}"
 	BLENDER_VER=$(/usr/bin/blender --version | grep -e "Blender [0-9.]*" | tr "(" "_" | tr ")" "_" | tr " " "_" | sed "s|Blender||" | cut -c 2-)
-	BLENDER_VER_NO_SUB=$(/usr/bin/blender --version | grep -e "Blender [0-9.]*" | sed -r -e "s|Blender ([0-9.]*).*|\1|g")
-	KERNEL_VER=$(uname -r)
-	MY_OS="Linux${KERNEL_VER}"
-	GFXCARD_MFG="AMD_"
 	BLENDER_BUILD_HASH="unknown" # from --version inspection but none found
-	FR_VER="0.1061889" # unknown source
-	APPNAME="blender"
 	APPVERSION="${BLENDER_VER}__${BLENDER_BUILD_HASH}"
-	REGISTRATION_ID="5A1E27D259A3291C" # unknown source
-	UNK_ID="5A1E27D23E8EC664" # unknown source
-	DRIVER_VERSION=""
 
 	if use video_cards_amdgpu || use video_cards_radeonsi || use video_cards_r600 || use video_cards_fglrx ; then
-		GFXCARD_MFG="AMD_"
+		true
 	elif use video_cards_nvidia ; then
-		GFXCARD_MFG="NVIDIA_" # guess
-
-		NV_DRIVER_VERSION=$(/proc/driver/nvidia/version | grep NVRM | cut -f8)
-		DRIVER_VERSION="${NV_DRIVER_VERSION}" # guess
+		true
 	else
 		ewarn "Your card may not be supported but may be limited to CPU rendering."
 		if ! use embree ; then
@@ -122,7 +110,7 @@ _pkg_setup() {
 
 	if use checker ; then
 		# Checker needs OpenCL or it will crash
-		# The checker will check your hardware for compatibility and generate a registration url based on BLENDER_VER and KERNEL_VER
+		# The checker will check your hardware for compatibility and generate a registration url
 		yes | BLENDER_VERSION=${APPVERSION} ./addon/checker || die
 	else
 		ewarn "Disabling checker is experimental."
