@@ -17,8 +17,7 @@ SRC_URI="https://drivers.amd.com/other/ver_2.x/${FN} -> ${P}.run"
 
 RESTRICT="fetch strip"
 
-# need the prorender sdk to support export?
-IUSE="+checker denoiser embree +materials test video_cards_radeonsi video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel video_cards_r600"
+IUSE="+checker denoiser embree +materials system-cffi system-tbb test video_cards_radeonsi video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel video_cards_r600"
 
 # if amdgpu-pro is installed libgl-mesa-dev containing development headers and libs were pulled and noted in the Packages file:
 # amdgpu-pro 19.20.812932 -> libgl-mesa-dev 18.3.0-812932
@@ -27,7 +26,8 @@ IUSE="+checker denoiser embree +materials test video_cards_radeonsi video_cards_
 NV_DRIVER_VERSION="368.39"
 RDEPEND="${PYTHON_DEPS}
 	dev-lang/python[xml]
-	>=media-gfx/blender-2.80[${PYTHON_USEDEP}]
+	>=media-gfx/blender-2.80[${PYTHON_USEDEP},opensubdiv]
+	media-libs/opensubdiv[opencl]
 	video_cards_amdgpu? ( media-libs/mesa )
 	|| (
 		virtual/opencl
@@ -37,8 +37,7 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	>=media-libs/freeimage-3.0
 	embree? ( media-libs/embree:2[tbb,raymask] )
-	denoiser? ( >=media-libs/openimageio-1.2.3
-		    dev-cpp/tbb )
+	denoiser? ( >=media-libs/openimageio-1.2.3 )
 	sys-devel/gcc[openmp]
 	dev-libs/libbsd
 	x11-libs/libX11
@@ -51,7 +50,8 @@ RDEPEND="${PYTHON_DEPS}
 	x11-libs/libxshmfence
 	x11-libs/libXxf86vm
 	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-cpp/castxml
+	system-cffi? ( dev-python/cffi[${PYTHON_USEDEP}] )
+	system-tbb? ( dev-cpp/tbb )
 	"
 DEPEND="${RDEPEND}"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
@@ -60,8 +60,6 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 LICENSE="AMD-RADEON-PRORENDER-BLENDER-EULA AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES PSF-2 MIT BSD BSD-2 CC-BY"
 KEYWORDS="~amd64"
 SLOT="0"
-
-PROPERTIES="interactive"
 
 S="${WORKDIR}/${PN}-${PV}"
 
@@ -143,19 +141,32 @@ src_install() {
 	shopt -s dotglob # copy hidden files
 
 	for d_ver in ${DIRS} ; do
-		d="${D}/${d_ver}/scripts/addons_contrib/${PLUGIN_NAME}"
-		mkdir -p "${d}" || die
-		chmod 775 "${d}" || die
-		chown root:users "${d}" || die
-		cp -a "${WORKDIR}/${PLUGIN_NAME}"/* "${d}" || die
+		d_install="${D}/${d_ver}/scripts/addons_contrib/${PLUGIN_NAME}"
+		mkdir -p "${d_install}" || die
+		chmod 775 "${d_install}" || die
+		chown root:users "${d_install}" || die
+		cp -a "${WORKDIR}/${PLUGIN_NAME}"/* "${d_install}" || die
 		if use materials ; then
-			echo "${D_MATERIALS}" > "${d}/.matlib_installed" || die
+			echo "${D_MATERIALS}" > "${d_install}/.matlib_installed" || die
 		fi
+		K=$(echo "${REGISTRATION_HASH_SHA1}:${REGISTRATION_HASH_MD5}" | sha1sum | cut -c 1-40)
 		einfo "Attempting to mark installation as registered..."
-		touch "${d}/.registered" || die
-		mkdir -p "${d}/addon" || die
-		touch "${d}/addon/.installed" || die
-		touch "${d}/.files_installed" || die
+		touch "${d_install}/.registered" || die
+		mkdir -p "${d_install}/addon" || die
+		touch "${d_install}/addon/.installed" || die
+		touch "${d_install}/.files_installed" || die
+
+		if use system-cffi ; then
+			pushd "${d_install}" || die
+				rm _cffi_backend.cpython-*m-x86_64-linux-gnu.so libffi-*.so.*.*.* || die
+			popd
+		fi
+
+		if use system-tbb ; then
+			pushd "${d_install}" || die
+				rm libtbbmalloc.so libtbb.so || die
+			popd
+		fi
 	done
 	if use materials ; then
 		einfo "Copying materials..."

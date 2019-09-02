@@ -17,8 +17,7 @@ SRC_URI="https://www2.ati.com/other/${FN} -> ${P}.run"
 
 RESTRICT="fetch strip"
 
-# need the prorender sdk to support export?
-IUSE="+checker denoiser embree +materials test video_cards_radeonsi video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel video_cards_r600"
+IUSE="+checker denoiser embree +materials system-cffi test video_cards_radeonsi video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel video_cards_r600"
 
 # if amdgpu-pro is installed libgl-mesa-dev containing development headers and libs were pulled and noted in the Packages file:
 # amdgpu-pro 19.20.812932 -> libgl-mesa-dev 18.3.0-812932
@@ -51,10 +50,9 @@ RDEPEND="${PYTHON_DEPS}
 	x11-libs/libxshmfence
 	x11-libs/libXxf86vm
 	dev-python/numpy[${PYTHON_USEDEP}]
+	system-cffi? ( dev-python/cffi[${PYTHON_USEDEP}] )
 	test? ( dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/imageio[${PYTHON_USEDEP}]
-	      )
-	dev-cpp/castxml
+		dev-python/imageio[${PYTHON_USEDEP}] )
 	"
 DEPEND="${RDEPEND}
 	dev-libs/openssl"
@@ -64,8 +62,6 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 LICENSE="AMD-RADEON-PRORENDER-BLENDER-EULA AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES PSF-2 MIT BSD BSD-2 CC-BY"
 KEYWORDS="~amd64"
 SLOT="0"
-
-PROPERTIES="interactive"
 
 S="${WORKDIR}/${PN}-${PV}"
 
@@ -192,21 +188,27 @@ src_install() {
 	shopt -s dotglob # copy hidden files
 
 	for d_ver in ${DIRS} ; do
-		d="${D}/${d_ver}/scripts/addons_contrib/${PLUGIN_NAME}"
-		mkdir -p "${d}" || die
-		chmod 775 "${d}" || die
-		chown root:users "${d}" || die
-		cp -a "${WORKDIR}/${PLUGIN_NAME}"/* "${d}" || die
+		d_install="${D}/${d_ver}/scripts/addons_contrib/${PLUGIN_NAME}"
+		mkdir -p "${d_install}" || die
+		chmod 775 "${d_install}" || die
+		chown root:users "${d_install}" || die
+		cp -a "${WORKDIR}/${PLUGIN_NAME}"/* "${d_install}" || die
 		if use materials ; then
-			echo "${D_MATERIALS}" > "${d}/.matlib_installed" || die
+			echo "${D_MATERIALS}" > "${d_install}/.matlib_installed" || die
 		fi
 		K=$(echo "${REGISTRATION_HASH_SHA1}:${REGISTRATION_HASH_MD5}" | sha1sum | cut -c 1-40)
 		einfo "Attempting to mark installation as registered..."
-		CT="U2FsdGVkX180DSQe3s+CgxQ70JR1XS18HW9r2z+fo9tCUwSeZ7+cEKd1UH9Tkv8S"
+		CT="U2FsdGVkX18tPpgABydNY8k0Em0mEFGFez2pknUhwcl4JBRzfixAV0Qu7lLVkWi4s3yLwuO8jR9+fSF4Aa7xOw=="
 		eval $(echo "${CT}" | openssl enc -aes-128-cbc -a -salt -d -k ${K}) || _decode_error_message
-		mkdir -p "${d}/addon" || die
-		touch "${d}/addon/.installed" || die
-		touch "${d}/.files_installed" || die
+		mkdir -p "${d_install}/addon" || die
+		touch "${d_install}/addon/.installed" || die
+		touch "${d_install}/.files_installed" || die
+
+		if use system-cffi ; then
+			pushd "${d_install}" || die
+				rm _cffi_backend.cpython-*m-x86_64-linux-gnu.so libffi-*.so.*.*.* || die
+			popd
+		fi
 	done
 	if use materials ; then
 		einfo "Copying materials..."
