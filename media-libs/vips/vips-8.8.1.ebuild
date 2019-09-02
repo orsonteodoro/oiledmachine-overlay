@@ -13,33 +13,39 @@ RESTRICT="mirror"
 LICENSE="LGPL-2.1"
 SLOT="1"
 KEYWORDS="~amd64 ~x86"
-IUSE="cxx doc debug exif fits fftw graphicsmagick imagemagick jpeg lcms matio openexr openslide +orc png python svg static-libs tiff webp"
+IUSE="+analyze cairo cxx debug doc exif fftw fits graphicsmagick giflib gsf heif imagemagick imagequant jpeg lcms matio openexr openslide +orc poppler png +ppm python +radiance static-libs svg tiff webp zlib"
 
 RDEPEND="
 	debug? ( dev-libs/dmalloc )
 	dev-util/gtk-doc
 	>=dev-libs/glib-2.6:2
 	dev-libs/libxml2
-	sys-libs/zlib
+	zlib? ( >=sys-libs/zlib-0.4 )
 	>=x11-libs/pango-1.8
+	cairo? ( >=x11-libs/cairo-1.2 )
+	exif? ( >=media-libs/libexif-0.6 )
 	fftw? ( sci-libs/fftw:3.0= )
+	giflib? ( media-libs/giflib )
+	gsf? ( >=gnome-extra/libgsf-1.14.26 )
+	heif? ( media-libs/libheif )
 	imagemagick? (
 		graphicsmagick? ( media-gfx/graphicsmagick )
 		!graphicsmagick? ( media-gfx/imagemagick )
 	)
+	imagequant? ( media-gfx/libimagequant )
+	jpeg? ( virtual/jpeg:0= )
 	lcms? ( media-libs/lcms )
 	svg? ( gnome-base/librsvg )
 	matio? ( >=sci-libs/matio-1.3.4 )
 	openexr? ( >=media-libs/openexr-1.2.2 )
-	exif? ( >=media-libs/libexif-0.6 )
-	tiff? ( media-libs/tiff:0= )
-	jpeg? ( virtual/jpeg:0= )
+	openslide? ( >=media-libs/openslide-3.3.0 )
+	orc? ( >=dev-lang/orc-0.4.11 )
+	poppler? ( app-text/poppler[cairo,introspection] )
+	tiff? ( >=media-libs/tiff-4.0:0= )
 	fits? ( sci-libs/cfitsio )
 	png? ( >=media-libs/libpng-1.2.9:0= )
 	python? ( ${PYTHON_DEPS} )
-	webp? ( media-libs/libwebp )
-	orc? ( >=dev-lang/orc-0.4.11 )
-	openslide? ( media-libs/openslide )
+	webp? ( >=media-libs/libwebp-0.6 )
 "
 DEPEND="
 	${RDEPEND}
@@ -49,6 +55,9 @@ DEPEND="
 
 REQUIRED_USE="
 	python? ( ${PYTHON_REQUIRED_USE} )
+	imagequant? ( png )
+	poppler? ( cairo )
+	svg? ( cairo )
 "
 
 S="${WORKDIR}/libvips-${PV}"
@@ -84,22 +93,31 @@ multilib_src_configure() {
 		${magick} \
 		$(multilib_native_use_enable doc gtk-doc) \
 		$(use_enable debug) \
-		$(use_with debug dmalloc) \
+		$(use_with analyze) \
 		$(use cxx || echo "--disable-cxx") \
-		$(use_with fftw) \
-		$(use_with lcms) \
-		$(use_with openexr OpenEXR) \
-		$(use_with matio ) \
+		$(use_with debug dmalloc) \
 		$(use_with exif libexif) \
+		$(use_with jpeg) \
+		$(use_with fits cfitsio) \
+		$(use_with fftw) \
+		$(use_with heif) \
+		$(use_with imagequant) \
+		$(use_with lcms) \
+		$(use_with matio ) \
+		$(use_with openexr OpenEXR) \
+		$(use_with openslide) \
+		$(use_with giflib) \
+		$(use_with gsf) \
 		$(use_with png) \
 		$(use_with svg rsvg) \
 		$(use_with tiff) \
-		$(use_with fits cfitsio) \
-		$(use_with jpeg) \
 		$(use_with orc) \
+		$(use_with poppler) \
+		$(use_with ppm) \
 		$(use_with python) \
+		$(use_with radiance) \
 		$(use_with webp libwebp) \
-		$(use_with openslide) \
+		$(use_with zlib) \
 		$(use_enable static-libs static) \
 		--with-html-dir="/usr/share/gtk-doc/html"
 }

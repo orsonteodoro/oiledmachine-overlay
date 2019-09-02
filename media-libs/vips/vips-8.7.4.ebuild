@@ -13,7 +13,7 @@ RESTRICT="mirror"
 LICENSE="LGPL-2.1"
 SLOT="1"
 KEYWORDS="~amd64 ~x86"
-IUSE="cxx doc debug exif fits fftw graphicsmagick imagemagick jpeg lcms matio openexr openslide +orc png python svg static-libs tiff webp"
+IUSE="cxx doc debug exif fits fftw graphicsmagick imagemagick jpeg lcms matio openexr openslide +orc png python svg static-libs tiff webp zlib"
 
 RDEPEND="
 	debug? ( dev-libs/dmalloc )
