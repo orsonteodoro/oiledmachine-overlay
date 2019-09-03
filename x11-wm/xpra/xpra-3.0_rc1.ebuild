@@ -80,10 +80,11 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	minify? ( || ( dev-util/yuicompressor dev-util/uglifyjs ) )
 	nvenc? ( >=x11-drivers/nvidia-drivers-418.30
 		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/pycuda[${PYTHON_USEDEP}]
 		media-video/nvidia-video-codec )
 	nvfbc? ( >=x11-drivers/nvidia-drivers-410.66
 		dev-python/numpy[${PYTHON_USEDEP}]
-		media-video/nvidia-capture-sdk )
+		dev-python/pycuda[${PYTHON_USEDEP}] )
 	opengl? ( dev-python/pygtkglext
 		  dev-python/numpy[${PYTHON_USEDEP}] )
 	pam? ( sys-libs/pam )
