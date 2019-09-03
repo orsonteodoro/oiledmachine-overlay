@@ -191,6 +191,7 @@ python_configure_all() {
 		$(use_with sd_listen)
 		--with-strict
 		$(use_with vpx)
+		$(use_with vsock)
 		$(use_with v4l2)
 		--with-warn
 		$(use_with webcam)
