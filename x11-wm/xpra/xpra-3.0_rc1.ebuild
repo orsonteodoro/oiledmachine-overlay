@@ -82,6 +82,7 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	opengl? ( dev-python/pygtkglext
 		  dev-python/numpy[${PYTHON_USEDEP}] )
 	pam? ( sys-libs/pam )
+	pillow? ( dev-python/pillow[${PYTHON_USEDEP},webp?] )
 	pulseaudio? ( media-sound/pulseaudio )
 	sound? ( media-libs/gstreamer:1.0
 		media-libs/gst-plugins-base:1.0
@@ -92,9 +93,9 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	vpx? ( >=media-libs/libvpx-1.4 virtual/ffmpeg )
 	vsock? ( sys-kernel/linux-headers )
 	webp? ( >=media-libs/libwebp-0.5[opengl?] )
-	xdg? ( x11-misc/xdg-utils )"
+	xdg? ( x11-misc/xdg-utils )
+	"
 
-#	pillow? ( dev-python/pillow[${PYTHON_USEDEP},jpeg?,webp?] )
 #		media-video/ffmpeg[opengl]
 RDEPEND="${COMMON_DEPEND}
 	dev-python/netifaces[${PYTHON_USEDEP}]
@@ -109,7 +110,6 @@ RDEPEND="${COMMON_DEPEND}
 		client? ( dev-python/pyopengl_accelerate[${PYTHON_USEDEP}] )
 		x11-base/xorg-drivers[video_cards_dummy]
 	)
-	pillow? ( dev-python/pillow[${PYTHON_USEDEP}] )
 	server? ( x11-base/xorg-server[-minimal,xvfb]
 		x11-drivers/xf86-input-void
 	)
@@ -182,6 +182,7 @@ python_configure_all() {
 		$(use_with minify)
 		$(use_with opengl)
 		$(use_with pam)
+		$(use_with pillow)
 		$(use_with nvenc)
 		$(use_with notifications)
 		$(use_with server shadow)
