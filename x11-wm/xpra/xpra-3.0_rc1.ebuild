@@ -82,7 +82,7 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	opengl? ( dev-python/pygtkglext
 		  dev-python/numpy[${PYTHON_USEDEP}] )
 	pam? ( sys-libs/pam )
-	pillow? ( dev-python/pillow[${PYTHON_USEDEP},webp?] )
+	pillow? ( dev-python/pillow[${PYTHON_USEDEP},webp] )
 	pulseaudio? ( media-sound/pulseaudio )
 	sound? ( media-libs/gstreamer:1.0
 		media-libs/gst-plugins-base:1.0
