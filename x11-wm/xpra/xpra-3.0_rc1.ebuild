@@ -15,7 +15,7 @@ SRC_URI="http://xpra.org/src/${PN}-${MY_PV//_/-}.tar.xz"
 LICENSE="GPL-2 BSD"
 SLOT="0"
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
-IUSE="+client +clipboard csc cuda cuda_rebuild cups dbus dec_avcodec2 enc_ffmpeg enc_x264 enc_x265 gtk2 gtk3 html5 html5_gzip html5_brotli jpeg libav +lz4 lzo opengl minify +notifications nvenc nvfbc pam pillow pulseaudio sd_listen ssl server sound systemd test vpx vsock v4l2 webcam webp xdg"
+IUSE="avahi +client +clipboard csc cuda cuda_rebuild cups dbus dec_avcodec2 enc_ffmpeg enc_x264 enc_x265 gtk2 gtk3 html5 html5_gzip html5_brotli jpeg libav +lz4 lzo opengl minify +notifications nvenc nvfbc pam pillow pulseaudio sd_listen ssl server sound systemd test vpx vsock v4l2 webcam webp websockets xdg"
 REQUIRED_USE="gtk3? ( !gtk2 ) gtk2? ( !gtk3 ) ^^ ( python_targets_python3_4 python_targets_python3_5 python_targets_python3_6 python_targets_python3_7 ) ^^ ( gtk2 gtk3 )"
 REQUIRED_USE+=" python_targets_python3_4? ( gtk3 !gtk2 ) python_targets_python3_5 ( gtk3 !gtk2 ) python_targets_python3_6 ( gtk3 !gtk2 ) python_targets_python3_7 ( gtk3 !gtk2 )"
 
@@ -23,6 +23,7 @@ S="${WORKDIR}/xpra-${MY_PV//_/-}"
 
 #	opengl? ( client jpeg webp )
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
+	avahi? ( dbus )
 	client? ( enc_x264? ( dec_avcodec2 ) enc_x265? ( dec_avcodec2 ) )
 	clipboard? ( || ( server client ) || ( gtk2 gtk3 ) )
 	cups? ( dbus )
@@ -178,7 +179,7 @@ python_configure_all() {
 		$(use_with html5_brotli)
 		$(use_with jpeg jpeg_encoder)
 		$(use_with jpeg jpeg_decoder)
-		--without-mdns
+		$(use_with avahi mdns)
 		$(use_with minify)
 		$(use_with opengl)
 		$(use_with pam)
@@ -196,6 +197,7 @@ python_configure_all() {
 		--with-warn
 		$(use_with webcam)
 		$(use_with webp)
+		$(use_with websockets)
 		$(use_with xdg xdg_open)
 		--with-x11
 	)
