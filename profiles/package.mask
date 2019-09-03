@@ -1,5 +1,3 @@
-# mask sandbox violation and under development
-=x11-wm/xpra-3.0_rc1
 
 # mask in development
 # still need to test GPU side, CPU works
@@ -332,7 +330,7 @@ games-engines/enigma
 dev-dotnet/mono-options
 media-libs/amd-radeon-image-filter-library
 media-libs/amd-radeon-prorender-sdk
-
+=x11-wm/xpra-3.0_rc1
 
 # updated and tested
 #app-editors/epic-journal
