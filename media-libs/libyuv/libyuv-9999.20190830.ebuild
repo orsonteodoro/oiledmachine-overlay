@@ -54,9 +54,16 @@ multilib_src_install() {
 	dodir /usr/lib/$(get_libdir)
 	mv "${D}/usr/lib/libyuv.so" "${D}/usr/lib/$(get_libdir)" || die
 	if use static ; then
-		mv "${D}/usr/lib/libyuv.a" "${D}/usr/lib/$(get_libdir)" || die
+		mv "${D}/usr/lib/libyuv.a" "${D}/usr/$(get_libdir)" || die
 	else
 		rm "${D}/usr/lib/libyuv.a" || die
 	fi
+	mkdir -p "${D}/usr/$(get_libdir)/pkgconfig" || die
+	cat "${FILESDIR}/${PN}.pc.in" | \
+	sed -e "s|@prefix@|/usr|" \
+	    -e "s|@exec_prefix@|\${prefix}|" \
+	    -e "s|@libdir@|/usr/$(get_libdir)|" \
+	    -e "s|@includedir@|\${prefix}/include|" \
+	    -e "s|@version@|${PV}|" > "${D}/usr/$(get_libdir)/pkgconfig/${PN}.pc" || die
 }
 
