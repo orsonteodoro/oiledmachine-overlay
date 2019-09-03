@@ -25,7 +25,6 @@ S="${WORKDIR}/xpra-${MY_PV//_/-}"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	client? ( enc_x264? ( dec_avcodec2 ) enc_x265? ( dec_avcodec2 ) )
 	clipboard? ( || ( server client ) || ( gtk2 gtk3 ) )
-	crypto
 	crypto? ( ssl )
 	cups? ( dbus )
 	opengl? ( client )
@@ -51,10 +50,6 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	x11-libs/libXrandr
 	x11-libs/libXtst
 	x11-libs/libxkbfile
-	crypto? ( dev-python/cffi[${PYTHON_USEDEP}]
-		  dev-python/idna[${PYTHON_USEDEP}]
-		  dev-python/cryptography[${PYTHON_USEDEP}]
-		  dev-python/setuptools[${PYTHON_USEDEP}] )
 	csc? (
 		!libav? ( >=media-video/ffmpeg-1.2.2:0= )
 		libav? ( media-video/libav:0= )
