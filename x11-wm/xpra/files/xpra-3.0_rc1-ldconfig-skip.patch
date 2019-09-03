@@ -1,0 +1,18 @@
+--- a/xpra/os_util.py.orig	2019-09-01 06:45:27.000000000 -0700
++++ b/xpra/os_util.py	2019-09-03 00:02:29.247773907 -0700
+@@ -697,14 +697,7 @@ def find_lib_ldconfig(libname):
+         if os.path.exists(t):
+             ldconfig = t
+             break
+-    import subprocess
+-    p = subprocess.Popen([ldconfig, "-p"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+-    data = bytestostr(p.communicate()[0])
+-
+-    libpath = re.search(pattern, data, re.MULTILINE)        #@UndefinedVariable
+-    if libpath:
+-        libpath = libpath.group(1)
+-    return libpath
++    return ""
+ 
+ def find_lib(libname):
+     #it would be better to rely on dlopen to find the paths

@@ -127,10 +127,10 @@ DEPEND="${COMMON_DEPEND}
 
 PATCHES=( "${FILESDIR}"/${PN}-2.5.0_rc5-ignore-gentoo-no-compile.patch
 	"${FILESDIR}"/${PN}-2.0-suid-warning.patch
-	"${FILESDIR}"/${PN}-2.5.0_rc5-openrc-init-fix.patch)
+	"${FILESDIR}"/${PN}-2.5.0_rc5-openrc-init-fix.patch
+	"${FILESDIR}"/${PN}-3.0_rc1-ldconfig-skip.patch)
 
 pkg_setup() {
-	ewarn "package under development"
 	if use v4l2 ; then
 		CONFIG_CHECK="VIDEO_V4L2"
 		ERROR_VIDEO_V4L2="You need CONFIG_VIDEO_V4L2 kernel config in order to use v4l2 support."
@@ -220,7 +220,7 @@ python_configure_all() {
 python_install_all() {
 	distutils-r1_python_install_all
 	fperms 0750 /etc/init.d/xpra
-	mkdir -p "${D}"/usr/X11/ || die
+	mkdir -p "${D}"/etc/X11/ || die
 	cp "${D}"/etc/xpra/xorg.conf "${D}"/etc/X11/xorg.dummy.conf || die
 }
 
