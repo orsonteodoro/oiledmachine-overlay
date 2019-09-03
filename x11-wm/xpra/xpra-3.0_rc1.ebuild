@@ -15,7 +15,7 @@ SRC_URI="http://xpra.org/src/${PN}-${MY_PV//_/-}.tar.xz"
 LICENSE="GPL-2 BSD"
 SLOT="0"
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
-IUSE="avahi +client +clipboard csc cuda cuda_rebuild cups dbus dec_avcodec2 enc_ffmpeg enc_x264 enc_x265 gtk2 gtk3 html5 html5_gzip html5_brotli jpeg libav +lz4 lzo opengl minify +notifications nvenc nvfbc pam pillow pulseaudio sd_listen ssl server sound systemd test vpx vsock v4l2 webcam webp websockets xdg"
+IUSE="avahi +client +clipboard csc_swscale csc_libyuv cuda cuda_rebuild cups dbus dec_avcodec2 enc_ffmpeg enc_x264 enc_x265 gtk2 gtk3 html5 html5_gzip html5_brotli jpeg libav +lz4 lzo opengl minify +notifications nvenc nvfbc pam pillow pulseaudio sd_listen ssl server sound systemd test vpx vsock v4l2 webcam webp websockets xdg"
 REQUIRED_USE="gtk3? ( !gtk2 ) gtk2? ( !gtk3 ) ^^ ( python_targets_python3_4 python_targets_python3_5 python_targets_python3_6 python_targets_python3_7 ) ^^ ( gtk2 gtk3 )"
 REQUIRED_USE+=" python_targets_python3_4? ( gtk3 !gtk2 ) python_targets_python3_5 ( gtk3 !gtk2 ) python_targets_python3_6 ( gtk3 !gtk2 ) python_targets_python3_7 ( gtk3 !gtk2 )"
 
@@ -50,10 +50,11 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	x11-libs/libXrandr
 	x11-libs/libXtst
 	x11-libs/libxkbfile
-	csc? (
+	csc_swscale? (
 		!libav? ( >=media-video/ffmpeg-1.2.2:0= )
 		libav? ( media-video/libav:0= )
 	)
+	csc_libyuv? ( media-libs/libyuv )
 	cuda? ( >=x11-drivers/nvidia-drivers-352.31
 		dev-python/pycuda[${PYTHON_USEDEP}] )
 	dec_avcodec2? (
@@ -165,8 +166,8 @@ python_configure_all() {
 		$(use_with clipboard)
 		$(use_with cuda cuda_kernels)
 		$(use_with cuda_rebuild)
-		$(use_with csc csc_swscale)
-		--without-csc_libyuv
+		$(use_with csc_swscale)
+		$(use_with csc_libyuv)
 		$(use_with cups printing)
 		--without-debug
 		$(use_with dbus)
