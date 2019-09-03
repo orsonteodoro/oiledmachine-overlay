@@ -128,8 +128,8 @@ PATCHES=( "${FILESDIR}"/${PN}-2.5.0_rc5-ignore-gentoo-no-compile.patch
 
 pkg_setup() {
 	if use v4l2 ; then
-		CONFIG_CHECK="VIDEO_V4L2"
-		ERROR_VIDEO_V4L2="You need CONFIG_VIDEO_V4L2 kernel config in order to use v4l2 support."
+		CONFIG_CHECK="~VIDEO_V4L2"
+		WARNING_VIDEO_V4L2="You need CONFIG_VIDEO_V4L2 kernel config in order to use v4l2 support."
 		linux-info_pkg_setup
 	fi
 }
