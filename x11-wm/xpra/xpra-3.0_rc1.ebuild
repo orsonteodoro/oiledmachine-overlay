@@ -54,7 +54,7 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	crypto? ( dev-python/cffi[${PYTHON_USEDEP}]
 		  dev-python/idna[${PYTHON_USEDEP}]
 		  dev-python/cryptography[${PYTHON_USEDEP}]
-		  dev-python/setuptools )
+		  dev-python/setuptools[${PYTHON_USEDEP}] )
 	csc? (
 		!libav? ( >=media-video/ffmpeg-1.2.2:0= )
 		libav? ( media-video/libav:0= )
