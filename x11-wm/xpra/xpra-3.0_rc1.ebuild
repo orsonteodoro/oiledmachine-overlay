@@ -82,7 +82,8 @@ COMMON_DEPEND="${PYTHON_DEPS}
 		dev-python/numpy[${PYTHON_USEDEP}]
 		media-video/nvidia-video-codec )
 	nvfbc? ( >=x11-drivers/nvidia-drivers-410.66
-		dev-python/numpy[${PYTHON_USEDEP}] )
+		dev-python/numpy[${PYTHON_USEDEP}]
+		media-video/nvidia-capture-sdk )
 	opengl? ( dev-python/pygtkglext
 		  dev-python/numpy[${PYTHON_USEDEP}] )
 	pam? ( sys-libs/pam )
