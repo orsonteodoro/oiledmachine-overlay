@@ -1,3 +1,6 @@
+# mask sandbox violation and under development
+=x11-wm/xpra-3.0_rc1
+
 # mask in development
 # still need to test GPU side, CPU works
 media-plugins/amd-radeon-prorender-blender
