@@ -1,9 +1,9 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6 # >=portage-2.2.25
 KEYWORDS="~x86 ~amd64"
+RESTRICT="mirror"
 
 USE_DOTNET="net45"
 # debug = debug configuration (symbols and defines for debugging)
@@ -14,9 +14,10 @@ USE_DOTNET="net45"
 # gac = install into gac
 # pkg-config = register in pkg-config database
 IUSE="+${USE_DOTNET} debug +developer test +aot doc"
-REQUIRED_USE="|| ( ${USE_DOTNET} )"
 
-inherit gac nupkg
+TOOLS_VERSION=14.0
+
+inherit dotnet gac nupkg
 
 get_revision()
 {
@@ -32,10 +33,8 @@ HOMEPAGE="http://arsenshnurkov.github.io/mono-packaging-tools"
 
 REPOSITORY_URL="https://github.com/ArsenShnurkov/${NAME}"
 
-EGIT_COMMIT="18cd15a7b009b2260eb999e6e16cabad553586ad"
-SRC_URI="${REPOSITORY_URL}/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${PV}.tar.gz
-	https://github.com/mono/mono/raw/master/mcs/class/mono.snk"
-RESTRICT="mirror"
+EGIT_COMMIT="2b56244890554778a78c82f685610f31e5ee760f"
+SRC_URI="${REPOSITORY_URL}/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${PVR}.tar.gz"
 S="${WORKDIR}/${NAME}-${EGIT_COMMIT}"
 
 SLOT="0"
@@ -50,14 +49,13 @@ COMMON_DEPENDENCIES="|| ( >=dev-lang/mono-4.2 <dev-lang/mono-9999 )
 	>=dev-dotnet/eto-parse-1.4.0[gac]
 	"
 DEPEND="${COMMON_DEPENDENCIES}
-        dev-util/nunit:2
-	dev-dotnet/msbuildtasks[gac]
+	dev-dotnet/msbuildtasks
 	sys-apps/sed"
 RDEPEND="${COMMON_DEPENDENCIES}
 	"
 
-NUSPEC_VERSION=${PV}
-ASSEMBLY_VERSION=${PV}
+NUSPEC_VERSION=${PV%_p*}
+ASSEMBLY_VERSION=${PV%_p*}
 
 SLN_FILE="mono-packaging-tools.sln"
 METAFILETOBUILD="${S}/${SLN_FILE}"
@@ -68,7 +66,6 @@ NUSPEC_FILENAME="${PN}.nuspec"
 #ICON_FILENAME="${PN}.png"
 #ICON_FINALNAME="${NUSPEC_ID}.${NUSPEC_VERSION}.png"
 #ICON_PATH="$(get_nuget_trusted_icons_location)/${ICON_FINALNAME}"
-SNK_FILENAME="${S}/mono.snk"
 
 src_prepare() {
 	#change version in .nuspec
@@ -78,17 +75,11 @@ src_prepare() {
 
 	# restoring is not necessary after switching to GAC references
 	# enuget_restore "${METAFILETOBUILD}"
-
-	eapply "${FILESDIR}/mono-packaging-tools-1.4.1.6.patch"
-	eapply "${FILESDIR}/mono-packaging-tools-ot1.patch"
-
-	cp "${DISTDIR}/mono.snk" "${S}"
-
 	default
 }
 
 src_compile() {
-	exbuild_strong /p:VersionNumber="${ASSEMBLY_VERSION}"  "${METAFILETOBUILD}"
+	exbuild /p:VersionNumber="${ASSEMBLY_VERSION}" "${METAFILETOBUILD}"
 	enuspec "${NUSPEC_ID}.nuspec"
 }
 
@@ -116,8 +107,6 @@ src_install() {
 	if use doc; then
 		dodoc README.md
 	fi
-
-	dotnet_multilib_comply
 }
 
 pkg_prerm() {
