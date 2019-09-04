@@ -34,7 +34,8 @@ HOMEPAGE="http://arsenshnurkov.github.io/mono-packaging-tools"
 REPOSITORY_URL="https://github.com/ArsenShnurkov/${NAME}"
 
 EGIT_COMMIT="2b56244890554778a78c82f685610f31e5ee760f"
-SRC_URI="${REPOSITORY_URL}/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${PVR}.tar.gz"
+SRC_URI="${REPOSITORY_URL}/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${PVR}.tar.gz
+	 https://github.com/gentoo/dotnet/raw/master/eclass/mono.snk"
 S="${WORKDIR}/${NAME}-${EGIT_COMMIT}"
 
 SLOT="0"
@@ -66,6 +67,7 @@ NUSPEC_FILENAME="${PN}.nuspec"
 #ICON_FILENAME="${PN}.png"
 #ICON_FINALNAME="${NUSPEC_ID}.${NUSPEC_VERSION}.png"
 #ICON_PATH="$(get_nuget_trusted_icons_location)/${ICON_FINALNAME}"
+SNK_FILENAME="${S}/mono.snk"
 
 src_prepare() {
 	#change version in .nuspec
@@ -76,6 +78,9 @@ src_prepare() {
 	# restoring is not necessary after switching to GAC references
 	# enuget_restore "${METAFILETOBUILD}"
 	default
+
+	cp "${DISTDIR}/mono.snk" "${SNK_FILENAME}" || die
+	sed -i -r -e "s|using System.Runtime.CompilerServices;|using System.Runtime.CompilerServices;\n[assembly:AssemblyKeyFileAttribute(\"${SNK_FILENAME}\")]|" AssemblyInfo.cs || die
 }
 
 src_compile() {
@@ -91,6 +96,7 @@ src_install() {
 	else
 		DIR="Release"
 	fi
+
 	doins mpt-core/bin/${DIR}/mpt-core.dll
 	dosym slot-${SLOT}/mpt-core.dll $(get_dlldir)/mpt-core.dll
 	einstall_pc_file ${PN} ${ASSEMBLY_VERSION} mpt-core
@@ -138,7 +144,7 @@ install_tool() {
 		doins "$1"/bin/${DIR}/*.exe.config
 	fi
 	if use developer; then
-		doins "$1"/bin/${DIR}/*.mdb
+		doins "$1"/bin/${DIR}/*.pdb
 	fi
 
 	MONO=/usr/bin/mono
