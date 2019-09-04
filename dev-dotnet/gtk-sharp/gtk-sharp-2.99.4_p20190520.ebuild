@@ -1,29 +1,32 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
-inherit dotnet autotools gnome2
+inherit autotools dotnet autotools
 
 SLOT="3"
 DESCRIPTION="gtk bindings for mono"
 LICENSE="GPL-2"
 HOMEPAGE="http://www.mono-project.com/GtkSharp"
 KEYWORDS="~amd64 ~x86 ~ppc"
-SRC_URI="https://download.gnome.org/sources/${PN}/${PV:0:4}/${PN}-${PV}.tar.xz"
+COMMIT="05e47a49fc62e1108750d2fbdfb883a06a9d1ec6"
+SRC_URI="https://github.com/mono/gtk-sharp/archive/${COMMIT}.zip -> ${PN}-${PVR}.zip
+	 https://github.com/mono/gtk-sharp/commit/05e47a49fc62e1108750d2fbdfb883a06a9d1ec6.patch -> ${PN}-${PVR}-use-csc-instead-of-mcs.patch"
 USE_DOTNET="net45"
 IUSE="${USE_DOTNET} debug"
 REQUIRED_USE="|| ( ${USE_DOTNET} )"
 
 RESTRICT="test"
+S="${WORKDIR}/${PN}-${COMMIT}"
 
 RDEPEND="
-	>=dev-lang/mono-3.0
+	>=x11-libs/cairo-1.10
+	>=dev-lang/mono-3.2.8
 	x11-libs/pango
-	>=dev-libs/glib-2.31
+	>=dev-libs/glib-2.32
 	dev-libs/atk
-	x11-libs/gtk+:2
+	x11-libs/gtk+:3
 	gnome-base/libglade
 	dev-perl/XML-LibXML
 	!dev-dotnet/gtk-sharp-gapi
@@ -40,7 +43,6 @@ DEPEND="${RDEPEND}
 
 src_prepare() {
 	default
-	#gnome2_src_prepare
 
 	#step 1: manually mark lib to lib64 to hint which parts to edit
 	eapply "${FILESDIR}/gtk-sharp-2.99.9999-multilib-hint.patch"
@@ -49,17 +51,20 @@ src_prepare() {
 	FILES=$(grep -l -r -e "lib64")
 	for f in $FILES
 	do
-		sed -i -r -e "s|lib64|$(get_libdir)|g" "$f"
+		sed -i -r -e "s|lib64|$(get_libdir)|g" "$f" || die
 	done
 
 	#fix the gac
-	sed -i -r -e "s|GACDIR_GENTOO_HINT||g" configure.ac
-	sed -i -r -e "s|GAC_GENTOO_OTHER_ARGS|-root \"${ED}\"/usr/$(get_libdir)|g" configure.ac
+	sed -i -r -e "s|GACDIR_GENTOO_HINT|/usr/$(get_libdir)|g" configure.ac || die
+	sed -i -r -e "s|GAC_GENTOO_OTHER_ARGS|-root \"${ED}\"/usr/$(get_libdir)|g" configure.ac || die
+
+	# use mcs instead
+	eapply -R "${DISTDIR}/${PN}-${PVR}-use-csc-instead-of-mcs.patch"
 
 	eapply_user
 
 	eautoreconf
-	libtoolize
+	elibtoolize
 }
 
 src_configure() {
@@ -71,13 +76,15 @@ src_configure() {
 }
 
 src_compile() {
+	addpredict /etc/mono/registry/last-btime
+
 	CSFLAGS="${CSFLAGS} -sdk:${EBF}" \
 	emake
 }
 
 src_install() {
-	#emake DESTDIR="${D}"
 	default
+	#emake DESTDIR="${D}"
 
 	sed -i "s/\\r//g" "${D}"/usr/bin/* || die "sed failed"
 
