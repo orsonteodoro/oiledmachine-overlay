@@ -243,4 +243,8 @@ src_install() {
 
 	dodir /usr/share/licenses/cli-tools
 	cp -a "${CLI_S}/bin/2/linux-${myarch}/dotnet"/{LICENSE.txt,ThirdPartyNotices.txt} "${D}/usr/share/licenses/cli-tools" || die
+
+	# for monodevelop.  15.0 is toolsversion
+	cd "${ddest_sdk}" || die
+	ln -s Current 15.0 || die
 }
