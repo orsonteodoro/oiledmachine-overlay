@@ -6,7 +6,7 @@ EAPI=6
 inherit autotools dotnet
 
 SLOT="2"
-DESCRIPTION="gtk bindings for mono"
+DESCRIPTION="Gtk# is a Mono/.NET binding to the cross platform Gtk+ GUI toolkit and the foundation of most GUI apps built with Mono"
 LICENSE="GPL-2"
 HOMEPAGE="http://www.mono-project.com/GtkSharp"
 KEYWORDS="~amd64 ~x86 ~ppc"
