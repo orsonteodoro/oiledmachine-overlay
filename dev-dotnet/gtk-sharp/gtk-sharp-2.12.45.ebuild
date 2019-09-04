@@ -7,7 +7,7 @@ inherit autotools dotnet
 
 SLOT="2"
 DESCRIPTION="Gtk# is a Mono/.NET binding to the cross platform Gtk+ GUI toolkit and the foundation of most GUI apps built with Mono"
-LICENSE="GPL-2"
+LICENSE="LGPL-2 MIT"
 HOMEPAGE="http://www.mono-project.com/GtkSharp"
 KEYWORDS="~amd64 ~x86 ~ppc"
 SRC_URI="http://download.mono-project.com/sources/gtk-sharp212/${P}.tar.gz"
