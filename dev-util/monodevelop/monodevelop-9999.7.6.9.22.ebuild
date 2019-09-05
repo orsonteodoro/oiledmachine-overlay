@@ -50,6 +50,7 @@ COMMON_DEPEND="
 	|| ( dev-dotnet/cli-tools dev-dotnet/dotnetcore-sdk-bin )
 "
 #        dev-dotnet/gdk-sharp:3
+PV_MONODEV="${PV//9999./}"
 RDEPEND="${COMMON_DEPEND}
 	dev-util/ctags
 	sys-apps/dbus[X]
@@ -57,12 +58,12 @@ RDEPEND="${COMMON_DEPEND}
 	doc? ( dev-util/mono-docbrowser )
 	git? ( dev-vcs/git )
 	subversion? ( dev-vcs/subversion )
-	!<dev-util/monodevelop-boo-$(get_version_component_range 1-2)
-	!<dev-util/monodevelop-java-$(get_version_component_range 1-2)
-	!<dev-util/monodevelop-database-$(get_version_component_range 1-2)
-	!<dev-util/monodevelop-debugger-gdb-$(get_version_component_range 1-2)
-	!<dev-util/monodevelop-debugger-mdb-$(get_version_component_range 1-2)
-	!<dev-util/monodevelop-vala-$(get_version_component_range 1-2)"
+	!<dev-util/monodevelop-boo-$(get_version_component_range 1-2 ${PV_MONODEV})
+	!<dev-util/monodevelop-java-$(get_version_component_range 1-2 ${PV_MONODEV})
+	!<dev-util/monodevelop-database-$(get_version_component_range 1-2 ${PV_MONODEV})
+	!<dev-util/monodevelop-debugger-gdb-$(get_version_component_range 1-2 ${PV_MONODEV})
+	!<dev-util/monodevelop-debugger-mdb-$(get_version_component_range 1-2 ${PV_MONODEV})
+	!<dev-util/monodevelop-vala-$(get_version_component_range 1-2 ${PV_MONODEV})"
 DEPEND="${COMMON_DEPEND}
 	>=dev-util/mono-packaging-tools-1.4.3
 	>=dev-util/nunit-2.6.4:2
