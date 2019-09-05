@@ -26,6 +26,7 @@ LICENSE="MIT"
 CDEPEND=""
 DEPEND="${CDEPEND}
 	nupkg? ( dev-dotnet/nuget )
+	dev-lang/mono[external-mono-options]
 	"
 RDEPEND="${CDEPEND}
 	"
