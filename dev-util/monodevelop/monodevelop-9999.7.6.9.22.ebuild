@@ -236,7 +236,6 @@ src_prepare() {
 	mv main/src/core/MonoDevelop.Core/packages.config{.t,} || die
 
 	eapply "${FILESDIR}/monodevelop-7.6.9.22-no-msbuild-restore-for-refactoringessentials.patch"
-	eapply "${FILESDIR}/monodevelop-7.6.9.22-add-reference-microsoft-build-utilities-core.patch"
 
 	eapply_user
 }
