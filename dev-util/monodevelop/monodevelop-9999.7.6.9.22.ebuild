@@ -16,7 +16,7 @@ HOMEPAGE="http://www.monodevelop.com/"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-USE_DOTNET="net40 net45 net46"
+USE_DOTNET="net40 net45 net46 net472"
 IUSE="${USE_DOTNET} -aspnet-addin doc fsharp +git +gnome qtcurve +subversion"
 REQUIRED_USE="^^ ( ${USE_DOTNET} ) fsharp? ( !net45 )"
 
@@ -47,7 +47,7 @@ COMMON_DEPEND="
 	gnome? ( >=dev-dotnet/gnome-sharp-2.24.2-r1 )
 	>=dev-dotnet/libgit2sharp-0.26[gac]
 	dev-dotnet/referenceassemblies-pcl
-	dev-dotnet/dotnetcore-sdk
+	|| ( dev-dotnet/cli-tools dev-dotnet/dotnetcore-sdk-bin )
 "
 #        dev-dotnet/gdk-sharp:3
 RDEPEND="${COMMON_DEPEND}
@@ -121,10 +121,15 @@ pkg_pretend() {
 	fi
 }
 
-src_prepare() {
+pkg_setup() {
 	ewarn "This ebuild is currently work-in-progress / in-development and will not work.  for ebuild/package developers to research or provide suggestions to get it to work."
-	if use net46 ; then
+	if use net472 ; then
+		USE_DOTNET="net472" \
+		FRAMEWORK="4.72" \
+		dotnet_pkg_setup
+	elif use net46 ; then
 		USE_DOTNET="net46" \
+		FRAMEWORK="4.6" \
 		dotnet_pkg_setup
 	elif use net45 ; then
 		USE_DOTNET="net45" \
@@ -230,6 +235,7 @@ src_prepare() {
 	mv main/src/core/MonoDevelop.Core/packages.config{.t,} || die
 
 	eapply "${FILESDIR}/monodevelop-7.6.9.22-no-msbuild-restore-for-refactoringessentials.patch"
+	eapply "${FILESDIR}/monodevelop-7.6.9.22-add-reference-microsoft-build-utilities-core.patch"
 
 	eapply_user
 }
@@ -277,11 +283,16 @@ src_configure() {
 	#sed -i -e 's|\$(MSBuildThisFileDirectory)..\\tools|/usr/bin|g' main/external/fsharpbinding/packages/Microsoft.Net.Compilers/build/Microsoft.Net.Compilers.props || die
 	#sed -i -e "s|csc.exe|csc|g" main/external/fsharpbinding/packages/Microsoft.Net.Compilers/build/Microsoft.Net.Compilers.props || die
 	#sed -i -e "s|vbc.exe|vbc|g" main/external/fsharpbinding/packages/Microsoft.Net.Compilers/build/Microsoft.Net.Compilers.props || die
+
+	local dotnet_folder_name="dotnet" # for cli-tools
+	if [ -d /opt/dotnet_core ] ; then
+		dotnet_folder_name="dotnet_core" # for dotnetcore-sdk-bin
+	fi
+	export MSBuildSDKsPath=$(find /opt/${dotnet_folder_name}/sdk/[1-9]*/Sdks -maxdepth 0 | sort | tail -n 1)
+	export MSBuildExtensionsPath=$(find /opt/${dotnet_folder_name}/sdk/[1-9]* -maxdepth 0 | sort | tail -n 1)
 }
 
 src_compile() {
-	export MSBuildSDKsPath=$(find /opt/dotnet/sdk/[1-9]*/Sdks -maxdepth 0 | sort | tail -n 1)
-	export MSBuildExtensionsPath=$(find /opt/dotnet/sdk/[1-9]* -maxdepth 0 | sort | tail -n 1)
 	addpredict /etc/mono/registry/last-btime
 	default
 }
