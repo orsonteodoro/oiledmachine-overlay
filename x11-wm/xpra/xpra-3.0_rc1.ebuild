@@ -12,7 +12,7 @@ HOMEPAGE="http://xpra.org/ http://xpra.org/src/"
 MY_PV="$(get_version_component_range 1-3)"
 SRC_URI="http://xpra.org/src/${PN}-${MY_PV//_/-}.tar.xz"
 
-LICENSE="GPL-2 BSD"
+LICENSE="GPL-2 BSD html5? ( MPL-2.0 )"
 SLOT="0"
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
 IUSE="avahi +client +clipboard csc_swscale csc_libyuv cuda cuda_rebuild cups dbus dec_avcodec2 enc_ffmpeg enc_x264 enc_x265 gtk2 gtk3 html5 html5_gzip html5_brotli jpeg libav +lz4 lzo opengl minify +notifications nvenc nvfbc pam pillow pulseaudio sd_listen ssl server sound systemd test vpx vsock v4l2 webcam webp websockets xdg"
@@ -95,6 +95,7 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	vpx? ( >=media-libs/libvpx-1.4 virtual/ffmpeg )
 	vsock? ( sys-kernel/linux-headers )
 	webp? ( >=media-libs/libwebp-0.5[opengl?] )
+	websockets? ( dev-python/websockify[${PYTHON_USEDEP}] )
 	xdg? ( x11-misc/xdg-utils )
 	"
 
