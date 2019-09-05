@@ -268,6 +268,15 @@ src_configure() {
 
 	# fix of https://github.com/gentoo/dotnet/issues/38
 	sed -i -E -e 's#(EXE_PATH=")(.*)(/lib/monodevelop/bin/MonoDevelop.exe")#\1'${EPREFIX}'/usr\3#g' "${S}/main/monodevelop.in" || die
+
+	cd "${S}" || die
+	sed -i -e "s|csc.exe|csc|g" main/msbuild/MonoDevelop.BeforeCommon.targets || die
+	sed -i -e 's|\$(MSBuildBinPath)\\..\\..\\..\\4.5\\|/usr/bin|g' main/msbuild/MonoDevelop.BeforeCommon.targets || die
+
+	# gets dynamically generated or pulled in the restore phase
+	#sed -i -e 's|\$(MSBuildThisFileDirectory)..\\tools|/usr/bin|g' main/external/fsharpbinding/packages/Microsoft.Net.Compilers/build/Microsoft.Net.Compilers.props || die
+	#sed -i -e "s|csc.exe|csc|g" main/external/fsharpbinding/packages/Microsoft.Net.Compilers/build/Microsoft.Net.Compilers.props || die
+	#sed -i -e "s|vbc.exe|vbc|g" main/external/fsharpbinding/packages/Microsoft.Net.Compilers/build/Microsoft.Net.Compilers.props || die
 }
 
 src_compile() {
