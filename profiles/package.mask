@@ -2,6 +2,8 @@
 # mask in development
 # still need to test GPU side, CPU works
 media-plugins/amd-radeon-prorender-blender
+=dev-utils/monodevelop-9999.7.6.9.22
+=dev-utils/monodevelop-7.6.9.22
 
 # mask no blender 2.80 yet
 =media-plugins/amd-radeon-prorender-blender-2.0
