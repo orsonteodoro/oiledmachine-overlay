@@ -115,10 +115,9 @@ monodevelop_git_checkout_submodule() {
 }
 
 pkg_pretend() {
-	# the sandbox won't allow us to use dotnet restore properly so sandbox restrictions must be dropped
-	#if has sandbox $FEATURES || has usersandbox $FEATURES || has network-sandbox $FEATURES ; then
+	# the sandbox won't allow us to download (or restore dependencies aka fetch from nuget) beyond src_unpack.
 	if has network-sandbox $FEATURES ; then
-		die ".NET core command-line (CLI) tools require sandbox and usersandbox and network-sandbox to be disabled in FEATURES."
+		die "${PN} require network-sandbox to be disabled in FEATURES."
 	fi
 }
 
@@ -235,7 +234,7 @@ src_prepare() {
 	xml ed -d "//package[@id='Microsoft.VisualStudio.Text.Internal']" main/src/core/MonoDevelop.Core/packages.config > main/src/core/MonoDevelop.Core/packages.config.t || die
 	mv main/src/core/MonoDevelop.Core/packages.config{.t,} || die
 
-	eapply "${FILESDIR}/monodevelop-7.6.9.22-no-msbuild-restore-for-refactoringessentials.patch"
+	#eapply "${FILESDIR}/monodevelop-7.6.9.22-no-msbuild-restore-for-refactoringessentials.patch"
 
 	eapply_user
 }
@@ -284,6 +283,7 @@ src_configure() {
 	#sed -i -e "s|csc.exe|csc|g" main/external/fsharpbinding/packages/Microsoft.Net.Compilers/build/Microsoft.Net.Compilers.props || die
 	#sed -i -e "s|vbc.exe|vbc|g" main/external/fsharpbinding/packages/Microsoft.Net.Compilers/build/Microsoft.Net.Compilers.props || die
 
+	# fixes main/MonoDevelop.props(10,2): error MSB4019: The imported project "/usr/share/msbuild/15.0/Microsoft.Common.props" was not found.
 	local dotnet_folder_name="dotnet" # for cli-tools
 	if [ -d /opt/dotnet_core ] ; then
 		dotnet_folder_name="dotnet_core" # for dotnetcore-sdk-bin
