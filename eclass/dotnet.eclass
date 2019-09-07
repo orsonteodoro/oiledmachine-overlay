@@ -98,7 +98,6 @@ _dotnet_sandbox_network_disabled_check() {
 dotnet_pkg_pretend() {
 	for x in ${USE_DOTNET} ; do
 		case ${x} in
-			netcorestandard21) if use netstandard21; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
 			netcorestandard20) if use netstandard20; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
 			netcorestandard16) if use netstandard16; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
 			netcorestandard15) if use netstandard15; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
@@ -107,7 +106,6 @@ dotnet_pkg_pretend() {
 			netcorestandard12) if use netstandard12; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
 			netcorestandard11) if use netstandard11; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
 			netcorestandard10) if use netstandard10; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
-			netcoreapp30) if use netcoreapp30; then _DOTNET_ECLASS_MODE="netcore"; fi;;
 			netcoreapp22) if use netcoreapp22; then _DOTNET_ECLASS_MODE="netcore"; fi;;
 			netcoreapp21) if use netcoreapp21; then _DOTNET_ECLASS_MODE="netcore"; fi;;
 			netcoreapp20) if use netcoreapp20; then _DOTNET_ECLASS_MODE="netcore"; fi;;
