@@ -287,19 +287,19 @@ dotnet_pkg_setup() {
 	mono-env_pkg_setup
 	for x in ${USE_DOTNET} ; do
 		case ${x} in
-			netcorestandard20) EBF="2.0"; if use netstandard20; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netcorestandard16) EBF="1.6"; if use netstandard16; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netcorestandard15) EBF="1.5"; if use netstandard15; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netcorestandard14) EBF="1.4"; if use netstandard14; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netcorestandard13) EBF="1.3"; if use netstandard13; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netcorestandard12) EBF="1.2"; if use netstandard12; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netcorestandard11) EBF="1.1"; if use netstandard11; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netcorestandard10) EBF="1.0"; if use netstandard10; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netcoreapp22) EBF="2.2"; if use netcoreapp22; then F="${EBF}"; _DOTNET_ECLASS_MODE="netcore";fi;;
-			netcoreapp21) EBF="2.1"; if use netcoreapp21; then F="${EBF}"; _DOTNET_ECLASS_MODE="netcore";fi;;
-			netcoreapp20) EBF="2.0"; if use netcoreapp20; then F="${EBF}"; _DOTNET_ECLASS_MODE="netcore";fi;;
-			netcoreapp11) EBF="1.1"; if use netcoreapp11; then F="${EBF}"; _DOTNET_ECLASS_MODE="netcore";fi;;
-			netcoreapp10) EBF="1.0"; if use netcoreapp10; then F="${EBF}"; _DOTNET_ECLASS_MODE="netcore";fi;;
+			netcorestandard20) EBF="200.0"; if use netstandard20; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
+			netcorestandard16) EBF="100.6"; if use netstandard16; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
+			netcorestandard15) EBF="100.5"; if use netstandard15; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
+			netcorestandard14) EBF="100.4"; if use netstandard14; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
+			netcorestandard13) EBF="100.3"; if use netstandard13; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
+			netcorestandard12) EBF="100.2"; if use netstandard12; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
+			netcorestandard11) EBF="100.1"; if use netstandard11; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
+			netcorestandard10) EBF="100.0"; if use netstandard10; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
+			netcoreapp22) EBF="20.2"; if use netcoreapp22; then F="${EBF}"; _DOTNET_ECLASS_MODE="netcore";fi;;
+			netcoreapp21) EBF="20.1"; if use netcoreapp21; then F="${EBF}"; _DOTNET_ECLASS_MODE="netcore";fi;;
+			netcoreapp20) EBF="20.0"; if use netcoreapp20; then F="${EBF}"; _DOTNET_ECLASS_MODE="netcore";fi;;
+			netcoreapp11) EBF="10.1"; if use netcoreapp11; then F="${EBF}"; _DOTNET_ECLASS_MODE="netcore";fi;;
+			netcoreapp10) EBF="10.0"; if use netcoreapp10; then F="${EBF}"; _DOTNET_ECLASS_MODE="netcore";fi;;
 			net472) EBF="4.8"; if use net48; then F="${EBF}"; _DOTNET_ECLASS_MODE="netfx";fi;;
 			net472) EBF="4.8"; if use net48; then F="${EBF}"; _DOTNET_ECLASS_MODE="netfx";fi;;
 			net472) EBF="4.72"; if use net472; then F="${EBF}"; _DOTNET_ECLASS_MODE="netfx";fi;;
@@ -318,7 +318,7 @@ dotnet_pkg_setup() {
 				FRAMEWORK="${F}";
 			fi
 		else
-			version_is_at_least "${F}" "${FRAMEWORK}" || FRAMEWORK="${FRAMEWORK:=${F}}"
+			version_is_at_least "${F}" "${FRAMEWORK}" || FRAMEWORK="${F}"
 		fi
 		if [[ -z ${EBUILD_FRAMEWORK} ]]; then
 			if [[ ${EBF} ]]; then
@@ -330,14 +330,22 @@ dotnet_pkg_setup() {
 	done
 	if [[ -z ${FRAMEWORK} ]]; then
 		if [[ -z ${EBUILD_FRAMEWORK} ]]; then
-			FRAMEWORK="${FRAMEWORK:=4.5}"
+			FRAMEWORK="4.5"
 			elog "Ebuild doesn't contain USE_DOTNET="
 		else
 			FRAMEWORK="${EBUILD_FRAMEWORK}"
 			elog "User did not set any netNN use-flags in make.conf or profile, .ebuild demands USE_DOTNET=""${USE_DOTNET}"""
 		fi
 	fi
-	einfo " -- USING .NET ${FRAMEWORK} FRAMEWORK -- "
+	if (( ${FRAMEWORK} >= 100 )) ; then
+		FRAMEWORK=$(echo "scale=1 ; ${FRAMEWORK}/100" | bc)
+		einfo " -- USING .NET STANDARD ${FRAMEWORK} -- "
+	elif (( ${FRAMEWORK} >= 10 )) ; then
+		FRAMEWORK=$(echo "scale=1 ; ${FRAMEWORK}/100" | bc)
+		einfo " -- USING .NET CORE ${FRAMEWORK} -- "
+	else
+		einfo " -- USING .NET FRAMEWORK ${FRAMEWORK} -- "
+	fi
 }
 
 # >=mono-0.92 versions using mcs -pkg:foo-sharp require shared memory, so we set the
