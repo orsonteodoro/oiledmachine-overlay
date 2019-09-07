@@ -116,6 +116,7 @@ dotnet_pkg_pretend() {
 			netcoreapp20) if use netcoreapp20; then _DOTNET_ECLASS_MODE="netcore"; fi;;
 			netcoreapp11) if use netcoreapp11; then _DOTNET_ECLASS_MODE="netcore"; fi;;
 			netcoreapp10) if use netcoreapp10; then _DOTNET_ECLASS_MODE="netcore"; fi;;
+			*) _DOTNET_ECLASS_MODE="netfx" ;;
 		esac
 
 		if [[ "${_DOTNET_ECLASS_MODE}" == "netstandard" || "${_DOTNET_ECLASS_MODE}" == "netcore" ]] ; then
