@@ -444,8 +444,39 @@ _exbuild_netstandard() {
 }
 
 # @FUNCTION: _exbuild_netcore
-# @DESCRIPTION: run dotnet msbuild with Release configuration and configurated FRAMEWORK, for .NET Core and .NET Standard
+# @DESCRIPTION: run dotnet build with Release configuration and configurated FRAMEWORK, for .NET Core and .NET Standard
 _exbuild_netcore() {
+	local project="$1"
+	shift
+
+	if use debug; then
+		CARGS=-p:Configuration=Debug
+	else
+		CARGS=-p:Configuration=Release
+	fi
+
+	if use developer; then
+		SARGS=-p:DebugSymbols=True
+	else
+		SARGS=-p:DebugSymbols=False
+	fi
+
+	_exbuild_netcore_raw build "${project}" "-verbosity detailed" "-f ${_DOTNET_ECLASS_MODE}${FRAMEWORK}" "${CARGS}" "${SARGS}" "$@"
+}
+
+# @FUNCTION: exbuild
+# @DESCRIPTION: frontend for xbuild and dotnet
+exbuild() {
+	if [[ "${_DOTNET_ECLASS_MODE}" == "netfx" ]] ; then
+		_exbuild_netfx $@
+	elif [[ "${_DOTNET_ECLASS_MODE}" == "netcore" || "${_DOTNET_ECLASS_MODE}" == "netstandard" ]] ; then
+		_exbuild_netcore $@
+	fi
+}
+
+# @FUNCTION: embuild
+# @DESCRIPTION: frontend for dotnet msbuild
+embuild() {
 	if use debug; then
 		CARGS=-p:Configuration=Debug
 	else
@@ -462,17 +493,7 @@ _exbuild_netcore() {
 		TOOLS_VERSION=15.0
 	fi
 
-	_exbuild_netcore_raw msbuild "-verbosity:detailed" "-toolsVersion:${TOOLS_VERSION}" "-f ${_DOTNET_ECLASS_MODE}${FRAMEWORK}" "${CARGS}" "${SARGS}" "$@"
-}
-
-# @FUNCTION: exbuild
-# @DESCRIPTION: frontend for xbuild and dotnet
-exbuild() {
-	if [[ "${_DOTNET_ECLASS_MODE}" == "netfx" ]] ; then
-		_exbuild_netfx $@
-	elif [[ "${_DOTNET_ECLASS_MODE}" == "netcore" || "${_DOTNET_ECLASS_MODE}" == "netstandard" ]] ; then
-		_exbuild_netcore $@
-	fi
+	_exbuild_netcore_raw msbuild "${project}" "-verbosity:detailed" "-toolsversion:${TOOLS_VERSION}" "${CARGS}" "${SARGS}" "$@"
 }
 
 # @FUNCTION: dotnet_multilib_comply
