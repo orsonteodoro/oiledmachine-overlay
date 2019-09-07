@@ -522,9 +522,17 @@ dotnet_multilib_comply() {
 # $1 - injection line usually "using System.Runtime.InteropServices;"
 # $2 - path to the private key
 # $3 - the path to the AssemblyInfo.cs file to inject the key into
+# $4 - patch with using System.Reflection; (optional) -- set to 1
 # @CODE
 estrong_assembly_info() {
 	sed -i -r -e "s|$1|$1\n[assembly:AssemblyKeyFileAttribute(\"$2\")]|" "$3" || die
+
+	if [[ -n "$4" ]] ; then
+		if [[ "${4,,}" == "true" || "$4" == "1" || "${4,,}" == "yes" || "${4,,}" == "y" ]] ; then
+			# required if it complains about AssemblyKeyFileAttribute
+			sed -i -e "s|$1|using System.Reflection;\n$1\n|g" "$3" || die
+		fi
+	fi
 }
 
 # @FUNCTION: estrong_resign
