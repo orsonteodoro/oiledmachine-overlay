@@ -33,31 +33,206 @@ _NETCORE_TOOLS_DEPS="|| ( dev-dotnet/cli-tools dev-dotnet/dotnetcore-sdk-bin )"
 # SET default use flags according on DOTNET_TARGETS
 for x in ${USE_DOTNET}; do
 	case ${x} in
-		netstandard20) if [[ ${DOTNET_TARGETS} == *netstandard20* ]]; then IUSE+=" +netstandard20"; else IUSE+=" netstandard20"; _CDEPEND=" netstandard20? ( >=dev-lang/mono-5.2 )" ; DEPEND+=" ${_CDEPEND} netstandard20? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}"; fi;;
-		netstandard16) if [[ ${DOTNET_TARGETS} == *netstandard16* ]]; then IUSE+=" +netstandard16"; else IUSE+=" netstandard16"; _CDEPEND=" netstandard16? ( >=dev-lang/mono-4.6 )" ; DEPEND+=" ${_CDEPEND} netstandard16? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}"; fi;;
-		netstandard15) if [[ ${DOTNET_TARGETS} == *netstandard15* ]]; then IUSE+=" +netstandard15"; else IUSE+=" netstandard15"; _CDEPEND=" netstandard15? ( >=dev-lang/mono-4.6 )" ; DEPEND+=" ${_CDEPEND} netstandard15? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}"; fi;;
-		netstandard14) if [[ ${DOTNET_TARGETS} == *netstandard14* ]]; then IUSE+=" +netstandard14"; else IUSE+=" netstandard14"; _CDEPEND=" netstandard14? ( >=dev-lang/mono-4.6 )" ; DEPEND+=" ${_CDEPEND} netstandard14? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}"; fi;;
-		netstandard13) if [[ ${DOTNET_TARGETS} == *netstandard13* ]]; then IUSE+=" +netstandard13"; else IUSE+=" netstandard13"; _CDEPEND=" netstandard13? ( >=dev-lang/mono-4.6 )" ; DEPEND+=" ${_CDEPEND} netstandard13? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}"; fi;;
-		netstandard12) if [[ ${DOTNET_TARGETS} == *netstandard12* ]]; then IUSE+=" +netstandard12"; else IUSE+=" netstandard12"; _CDEPEND=" netstandard12? ( >=dev-lang/mono-4.6 )" ; DEPEND+=" ${_CDEPEND} netstandard12? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}"; fi;;
-		netstandard11) if [[ ${DOTNET_TARGETS} == *netstandard11* ]]; then IUSE+=" +netstandard11"; else IUSE+=" netstandard11"; _CDEPEND=" netstandard11? ( >=dev-lang/mono-4.6 )" ; DEPEND+=" ${_CDEPEND} netstandard11? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}"; fi;;
-		netstandard10) if [[ ${DOTNET_TARGETS} == *netstandard10* ]]; then IUSE+=" +netstandard10"; else IUSE+=" netstandard10"; _CDEPEND=" netstandard10? ( >=dev-lang/mono-4.6 )" ; DEPEND+=" ${_CDEPEND} netstandard10? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}"; fi;;
-		netcoreapp22) if [[ ${DOTNET_TARGETS} == *netcoreapp22* ]]; then IUSE+=" +netcoreapp22"; else IUSE+=" netcoreapp22"; _CDEPEND=" netcoreapp22? ( >=dev-lang/mono-5.4 )" ; DEPEND+=" ${_CDEPEND} netcoreapp22? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}"; fi;;
-		netcoreapp21) if [[ ${DOTNET_TARGETS} == *netcoreapp21* ]]; then IUSE+=" +netcoreapp21"; else IUSE+=" netcoreapp21"; _CDEPEND=" netcoreapp21? ( >=dev-lang/mono-5.4 )" ; DEPEND+=" ${_CDEPEND} netcoreapp21? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}"; fi;;
-		netcoreapp20) if [[ ${DOTNET_TARGETS} == *netcoreapp20* ]]; then IUSE+=" +netcoreapp20"; else IUSE+=" netcoreapp20"; _CDEPEND=" netcoreapp20? ( >=dev-lang/mono-5.4 )" ; DEPEND+=" ${_CDEPEND} netcoreapp20? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}"; fi;;
-		netcoreapp11) if [[ ${DOTNET_TARGETS} == *netcoreapp11* ]]; then IUSE+=" +netcoreapp11"; else IUSE+=" netcoreapp11"; _CDEPEND=" netcoreapp11? ( >=dev-lang/mono-5.4 )" ; DEPEND+=" ${_CDEPEND} netcoreapp11? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}"; fi;;
-		netcoreapp10) if [[ ${DOTNET_TARGETS} == *netcoreapp10* ]]; then IUSE+=" +netcoreapp10"; else IUSE+=" netcoreapp10"; _CDEPEND=" netcoreapp10? ( >=dev-lang/mono-5.4 )" ; DEPEND+=" ${_CDEPEND} netcoreapp10? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}"; fi;;
-		net472) if [[ ${DOTNET_TARGETS} == *net472* ]]; then IUSE+=" +net472"; else IUSE+=" net472"; _CDEPEND=" net472? ( >=dev-lang/mono-5.18 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}"; fi;;
-		net471) if [[ ${DOTNET_TARGETS} == *net471* ]]; then IUSE+=" +net471"; else IUSE+=" net471"; _CDEPEND=" net471? ( >=dev-lang/mono-5.10 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}"; fi;;
-		net47) if [[ ${DOTNET_TARGETS} == *net47* ]]; then IUSE+=" +net47"; else IUSE+=" net47"; _CDEPEND=" net47? ( >=dev-lang/mono-5.2 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}"; fi;;
-		net462) if [[ ${DOTNET_TARGETS} == *net462* ]]; then IUSE+=" +net462"; else IUSE+=" net462"; _CDEPEND=" net462? ( >=dev-lang/mono-4.6 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}"; fi;;
-		net461) if [[ ${DOTNET_TARGETS} == *net461* ]]; then IUSE+=" +net461"; else IUSE+=" net461"; _CDEPEND=" net461? ( >=dev-lang/mono-4.6 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}"; fi;;
-		net46) if [[ ${DOTNET_TARGETS} == *net46* ]]; then IUSE+=" +net46"; else IUSE+=" net46"; _CDEPEND=" net46? ( >=dev-lang/mono-4.6 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}"; fi;;
-		net452) if [[ ${DOTNET_TARGETS} == *net452* ]]; then IUSE+=" +net452"; else IUSE+=" net452"; _CDEPEND=" net452? ( >=dev-lang/mono-4.6 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}"; fi;;
-		net451) if [[ ${DOTNET_TARGETS} == *net451* ]]; then IUSE+=" +net451"; else IUSE+=" net451"; _CDEPEND=" net451? ( >=dev-lang/mono-4.6 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}"; fi;;
-		net45) if [[ ${DOTNET_TARGETS} == *net45* ]]; then IUSE+=" +net45"; else IUSE+=" net45"; _CDEPEND=" net45? ( >=dev-lang/mono-4.0 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}"; fi;;
-		net40) if [[ ${DOTNET_TARGETS} == *net40* ]]; then IUSE+=" +net40"; else IUSE+=" net40"; _CDEPEND=" net40? ( <dev-lang/mono-4.0 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}"; die "no longer supported"; fi;; # dropped in mono 4.0
-		net35) if [[ ${DOTNET_TARGETS} == *net35* ]]; then IUSE+=" +net35"; else IUSE+=" net35"; _CDEPEND=" net35? ( <dev-lang/mono-4.0 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}"; die "no longer supported"; fi;; # dropped in mono 4.0
-		net20) if [[ ${DOTNET_TARGETS} == *net20* ]]; then IUSE+=" +net20"; else IUSE+=" net20"; _CDEPEND=" net20? ( <dev-lang/mono-4.0 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}"; die "no longer supported"; fi;; # dropped in mono 4.0
+		netstandard20)
+			if [[ ${DOTNET_TARGETS} == *netstandard20* ]]; then
+				IUSE+=" +netstandard20";
+			else
+				IUSE+=" netstandard20";
+			fi
+			_CDEPEND=" netstandard20? ( >=dev-lang/mono-5.2 )" ; DEPEND+=" ${_CDEPEND} netstandard20? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}";
+			;;
+		netstandard16)
+			if [[ ${DOTNET_TARGETS} == *netstandard16* ]]; then
+				IUSE+=" +netstandard16";
+			else
+				IUSE+=" netstandard16";
+			fi
+			_CDEPEND=" netstandard16? ( >=dev-lang/mono-4.6 )" ; DEPEND+=" ${_CDEPEND} netstandard16? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}";
+			;;
+		netstandard15)
+			if [[ ${DOTNET_TARGETS} == *netstandard15* ]]; then
+				IUSE+=" +netstandard15";
+			else
+				IUSE+=" netstandard15";
+			fi
+			_CDEPEND=" netstandard15? ( >=dev-lang/mono-4.6 )" ; DEPEND+=" ${_CDEPEND} netstandard15? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}";
+			;;
+		netstandard14)
+			if [[ ${DOTNET_TARGETS} == *netstandard14* ]]; then
+				IUSE+=" +netstandard14";
+			else
+				IUSE+=" netstandard14";
+			fi
+				_CDEPEND=" netstandard14? ( >=dev-lang/mono-4.6 )" ; DEPEND+=" ${_CDEPEND} netstandard14? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}";
+			;;
+		netstandard13)
+			if [[ ${DOTNET_TARGETS} == *netstandard13* ]]; then
+				IUSE+=" +netstandard13";
+			else
+				IUSE+=" netstandard13";
+			fi
+			_CDEPEND=" netstandard13? ( >=dev-lang/mono-4.6 )" ; DEPEND+=" ${_CDEPEND} netstandard13? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}";
+			;;
+		netstandard12)
+			if [[ ${DOTNET_TARGETS} == *netstandard12* ]]; then
+				IUSE+=" +netstandard12";
+			else
+				IUSE+=" netstandard12";
+			fi
+			_CDEPEND=" netstandard12? ( >=dev-lang/mono-4.6 )" ; DEPEND+=" ${_CDEPEND} netstandard12? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}";
+			;;
+		netstandard11)
+			if [[ ${DOTNET_TARGETS} == *netstandard11* ]]; then
+				IUSE+=" +netstandard11";
+			else
+				IUSE+=" netstandard11";
+			fi
+			_CDEPEND=" netstandard11? ( >=dev-lang/mono-4.6 )" ; DEPEND+=" ${_CDEPEND} netstandard11? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}";
+			;;
+		netstandard10)
+			if [[ ${DOTNET_TARGETS} == *netstandard10* ]]; then
+				IUSE+=" +netstandard10";
+			else
+				IUSE+=" netstandard10";
+			fi
+			_CDEPEND=" netstandard10? ( >=dev-lang/mono-4.6 )" ; DEPEND+=" ${_CDEPEND} netstandard10? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}";
+			;;
+		netcoreapp22)
+			if [[ ${DOTNET_TARGETS} == *netcoreapp22* ]]; then
+				IUSE+=" +netcoreapp22";
+			else
+				IUSE+=" netcoreapp22";
+			fi
+			_CDEPEND=" netcoreapp22? ( >=dev-lang/mono-5.4 )" ; DEPEND+=" ${_CDEPEND} netcoreapp22? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}";
+			;;
+		netcoreapp21)
+			if [[ ${DOTNET_TARGETS} == *netcoreapp21* ]]; then
+				IUSE+=" +netcoreapp21";
+			else
+				IUSE+=" netcoreapp21";
+			fi
+			_CDEPEND=" netcoreapp21? ( >=dev-lang/mono-5.4 )" ; DEPEND+=" ${_CDEPEND} netcoreapp21? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}";
+			;;
+		netcoreapp20)
+			if [[ ${DOTNET_TARGETS} == *netcoreapp20* ]]; then
+				IUSE+=" +netcoreapp20";
+			else
+				IUSE+=" netcoreapp20";
+			fi
+			_CDEPEND=" netcoreapp20? ( >=dev-lang/mono-5.4 )" ; DEPEND+=" ${_CDEPEND} netcoreapp20? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}";
+			;;
+		netcoreapp11)
+			if [[ ${DOTNET_TARGETS} == *netcoreapp11* ]]; then
+				IUSE+=" +netcoreapp11";
+			else
+				IUSE+=" netcoreapp11";
+			fi
+			_CDEPEND=" netcoreapp11? ( >=dev-lang/mono-5.4 )" ; DEPEND+=" ${_CDEPEND} netcoreapp11? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}";
+			;;
+		netcoreapp10)
+			if [[ ${DOTNET_TARGETS} == *netcoreapp10* ]]; then
+				IUSE+=" +netcoreapp10";
+			else
+				IUSE+=" netcoreapp10";
+			fi
+			_CDEPEND=" netcoreapp10? ( >=dev-lang/mono-5.4 )" ; DEPEND+=" ${_CDEPEND} netcoreapp10? ( ${_NETCORE_TOOLS_DEPS} )"; RDEPEND+=" ${_CDEPEND}";
+			;;
+		net472)
+			if [[ ${DOTNET_TARGETS} == *net472* ]];	then
+				IUSE+=" +net472";
+			else
+				IUSE+=" net472";
+			fi
+			_CDEPEND=" net472? ( >=dev-lang/mono-5.18 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}";
+			;;
+		net471)
+			if [[ ${DOTNET_TARGETS} == *net471* ]]; then
+				IUSE+=" +net471";
+			else
+				IUSE+=" net471";
+			fi
+			_CDEPEND=" net471? ( >=dev-lang/mono-5.10 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}";
+			;;
+		net47)
+			if [[ ${DOTNET_TARGETS} == *net47* ]]; then
+				IUSE+=" +net47";
+			else
+				IUSE+=" net47";
+			fi
+			_CDEPEND=" net47? ( >=dev-lang/mono-5.2 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}";
+			;;
+		net462)
+			if [[ ${DOTNET_TARGETS} == *net462* ]];	then
+				IUSE+=" +net462";
+			else
+				IUSE+=" net462";
+			fi
+			_CDEPEND=" net462? ( >=dev-lang/mono-4.6 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}";
+			;;
+		net461)
+			if [[ ${DOTNET_TARGETS} == *net461* ]]; then
+				IUSE+=" +net461";
+			else
+				IUSE+=" net461";
+			fi
+			_CDEPEND=" net461? ( >=dev-lang/mono-4.6 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}";
+			;;
+		net46)
+			if [[ ${DOTNET_TARGETS} == *net46* ]]; then
+				IUSE+=" +net46";
+			else
+				IUSE+=" net46";
+			fi
+			_CDEPEND=" net46? ( >=dev-lang/mono-4.6 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}";
+			;;
+		net452)
+			if [[ ${DOTNET_TARGETS} == *net452* ]]; then
+				IUSE+=" +net452";
+			else
+				IUSE+=" net452";
+			fi
+			_CDEPEND=" net452? ( >=dev-lang/mono-4.6 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}";
+			;;
+		net451)
+			if [[ ${DOTNET_TARGETS} == *net451* ]];	then
+				IUSE+=" +net451";
+			else
+				IUSE+=" net451";
+			fi
+			_CDEPEND=" net451? ( >=dev-lang/mono-4.6 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}";
+			;;
+		net45)
+			if [[ ${DOTNET_TARGETS} == *net45* ]]; then
+				IUSE+=" +net45";
+			else
+				IUSE+=" net45";
+			fi
+			_CDEPEND=" net45? ( >=dev-lang/mono-4.0 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}";
+			;;
+		net40)
+			if [[ ${DOTNET_TARGETS} == *net40* ]]; then
+				IUSE+=" +net40";
+			else
+				IUSE+=" net40";
+			fi
+			_CDEPEND=" net40? ( <dev-lang/mono-4.0 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}";
+			;;
+		net35)
+			if [[ ${DOTNET_TARGETS} == *net35* ]]; then
+				IUSE+=" +net35";
+			else
+				IUSE+=" net35";
+			fi
+			_CDEPEND=" net35? ( <dev-lang/mono-4.0 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}";
+			;;
+		net20)
+			if [[ ${DOTNET_TARGETS} == *net20* ]]; then
+				IUSE+=" +net20";
+			else
+				IUSE+=" net20";
+			fi
+			_CDEPEND=" net20? ( <dev-lang/mono-4.0 )"; DEPEND+="${_CDEPEND}"; RDEPEND+="${_CDEPEND}";
+			;;
 	esac
 done
 
