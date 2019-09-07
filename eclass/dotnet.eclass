@@ -24,7 +24,7 @@ inherit eutils multibuild mono-env versionator
 
 IUSE+=" debug developer"
 
-_DOTNET_ECLASS_MODE="" # can be netfx or netcore or netstandard (private variable not to be used outside of eclass)
+_DOTNET_ECLASS_MODE="" # can be netfx or netcoreapp or netstandard (private variable not to be used outside of eclass)
 
 _SET_DEPENDS_NETCORE=""
 
@@ -261,20 +261,20 @@ dotnet_pkg_pretend() {
 			netstandard12) if use netstandard12; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
 			netstandard11) if use netstandard11; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
 			netstandard10) if use netstandard10; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
-			netcoreapp22) if use netcoreapp22; then _DOTNET_ECLASS_MODE="netcore"; fi;;
-			netcoreapp21) if use netcoreapp21; then _DOTNET_ECLASS_MODE="netcore"; fi;;
-			netcoreapp20) if use netcoreapp20; then _DOTNET_ECLASS_MODE="netcore"; fi;;
-			netcoreapp11) if use netcoreapp11; then _DOTNET_ECLASS_MODE="netcore"; fi;;
-			netcoreapp10) if use netcoreapp10; then _DOTNET_ECLASS_MODE="netcore"; fi;;
+			netcoreapp22) if use netcoreapp22; then _DOTNET_ECLASS_MODE="netcoreapp"; fi;;
+			netcoreapp21) if use netcoreapp21; then _DOTNET_ECLASS_MODE="netcoreapp"; fi;;
+			netcoreapp20) if use netcoreapp20; then _DOTNET_ECLASS_MODE="netcoreapp"; fi;;
+			netcoreapp11) if use netcoreapp11; then _DOTNET_ECLASS_MODE="netcoreapp"; fi;;
+			netcoreapp10) if use netcoreapp10; then _DOTNET_ECLASS_MODE="netcoreapp"; fi;;
 			*) _DOTNET_ECLASS_MODE="netfx" ;;
 		esac
 
-		if [[ "${_DOTNET_ECLASS_MODE}" == "netstandard" || "${_DOTNET_ECLASS_MODE}" == "netcore" ]] ; then
+		if [[ "${_DOTNET_ECLASS_MODE}" == "netstandard" || "${_DOTNET_ECLASS_MODE}" == "netcoreapp" ]] ; then
 			_dotnet_sandbox_disabled_check
 		fi
 
 		# applies to netfx or those that use nuget as well; almost always for netcore and netstandard packages
-		if [[ -n "${USE_DOTNET_RESTORE}" || "${_DOTNET_ECLASS_MODE}" == "netstandard" || "${_DOTNET_ECLASS_MODE}" == "netcore" ]] ; then
+		if [[ -n "${USE_DOTNET_RESTORE}" || "${_DOTNET_ECLASS_MODE}" == "netstandard" || "${_DOTNET_ECLASS_MODE}" == "netcoreapp" ]] ; then
 			_dotnet_sandbox_network_disabled_check
 		fi
 	done
@@ -344,7 +344,7 @@ dotnet_pkg_setup() {
 		FRAMEWORK=$(echo "scale=1 ; ${FRAMEWORK}/100" | bc)
 		einfo " -- USING .NET STANDARD ${FRAMEWORK} -- "
 	elif [[ "${R2}" == "3" ]] ; then
-		_DOTNET_ECLASS_MODE="netcore"
+		_DOTNET_ECLASS_MODE="netcoreapp"
 		FRAMEWORK=$(echo "scale=1 ; ${FRAMEWORK}/10" | bc)
 		einfo " -- USING .NET CORE ${FRAMEWORK} -- "
 	else
@@ -410,7 +410,7 @@ _exbuild_netcore_raw() {
 exbuild_raw() {
 	if [[ "${_DOTNET_ECLASS_MODE}" == "netfx" ]] ; then
 		_exbuild_netfx_raw $@
-	elif [[ "${_DOTNET_ECLASS_MODE}" == "netcore" || "${_DOTNET_ECLASS_MODE}" == "netstandard" ]] ; then
+	elif [[ "${_DOTNET_ECLASS_MODE}" == "netcoreapp" || "${_DOTNET_ECLASS_MODE}" == "netstandard" ]] ; then
 		_exbuild_netcore_raw $@
 	fi
 }
@@ -461,7 +461,7 @@ _exbuild_netcore() {
 		SARGS=-p:DebugSymbols=False
 	fi
 
-	_exbuild_netcore_raw build "${project}" "-verbosity detailed" "-f ${_DOTNET_ECLASS_MODE}${FRAMEWORK}" "${CARGS}" "${SARGS}" "$@"
+	_exbuild_netcore_raw build "${project}" "-verbosity:detailed" "-f ${_DOTNET_ECLASS_MODE}${FRAMEWORK}" "${CARGS}" "${SARGS}" "$@"
 }
 
 # @FUNCTION: exbuild
@@ -469,7 +469,7 @@ _exbuild_netcore() {
 exbuild() {
 	if [[ "${_DOTNET_ECLASS_MODE}" == "netfx" ]] ; then
 		_exbuild_netfx $@
-	elif [[ "${_DOTNET_ECLASS_MODE}" == "netcore" || "${_DOTNET_ECLASS_MODE}" == "netstandard" ]] ; then
+	elif [[ "${_DOTNET_ECLASS_MODE}" == "netcoreapp" || "${_DOTNET_ECLASS_MODE}" == "netstandard" ]] ; then
 		_exbuild_netcore $@
 	fi
 }
