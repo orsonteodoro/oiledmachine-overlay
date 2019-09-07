@@ -364,7 +364,7 @@ function estrong_assembly_info() {
 }
 
 # @FUNCTION: estrong_resign
-# @DESCRIPTION:  This will re-sign the key in AssemblyInfo.cs
+# @DESCRIPTION:  This will re-sign the dll with the key
 # @CODE
 # Parameters:
 # $1 - the path to the dll
