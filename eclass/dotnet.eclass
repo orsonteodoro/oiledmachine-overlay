@@ -98,7 +98,9 @@ _dotnet_sandbox_network_disabled_check() {
 	fi
 }
 
-pkg_pretend() {
+# @FUNCTION: dotnet_pkg_pretend
+# @DESCRIPTION:  This function will inspect sandbox readiness for dotnet build (which implies dotnet restore) or nuget restore
+dotnet_pkg_pretend() {
 	for x in ${USE_DOTNET} ; do
 		case ${x} in
 			netcorestandard20) if use netstandard20; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
@@ -115,16 +117,16 @@ pkg_pretend() {
 			netcoreapp11) if use netcoreapp11; then _DOTNET_ECLASS_MODE="netcore"; fi;;
 			netcoreapp10) if use netcoreapp10; then _DOTNET_ECLASS_MODE="netcore"; fi;;
 		esac
+
+		if [[ "${_DOTNET_ECLASS_MODE}" == "netstandard" || "${_DOTNET_ECLASS_MODE}" == "netcore" ]] ; then
+			_dotnet_sandbox_disabled_check
+		fi
+
+		# applies to netfx or those that use nuget as well; almost always for netcore and netstandard packages
+		if [[ -n "${USE_DOTNET_RESTORE}" || "${_DOTNET_ECLASS_MODE}" == "netstandard" || "${_DOTNET_ECLASS_MODE}" == "netcore" ]] ; then
+			_dotnet_sandbox_network_disabled_check
+		fi
 	done
-
-	if [[ "${_DOTNET_ECLASS_MODE}" == "netstandard" || "${_DOTNET_ECLASS_MODE}" == "netcore" ]] ; then
-		_dotnet_sandbox_disabled_check
-	fi
-
-	# applies to netfx or those that use nuget as well; almost always for netcore and netstandard packages
-	if [[ -n "${USE_DOTNET_RESTORE}" || "${_DOTNET_ECLASS_MODE}" == "netstandard" || "${_DOTNET_ECLASS_MODE}" == "netcore" ]] ; then
-		_dotnet_sandbox_network_disabled_check
-	fi
 }
 
 # @FUNCTION: dotnet_pkg_setup
@@ -372,5 +374,5 @@ function estrong_resign() {
 	sn -R "$1" "$2" || die
 }
 
-EXPORT_FUNCTIONS pkg_setup
+EXPORT_FUNCTIONS pkg_setup pkg_pretend
 
