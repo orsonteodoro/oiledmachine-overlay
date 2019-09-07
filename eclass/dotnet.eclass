@@ -16,7 +16,7 @@ case ${EAPI:-0} in
 	*) ;; #if [[ ${USE_DOTNET} ]]; then REQUIRED_USE="|| (${USE_DOTNET})"; fi;;
 esac
 
-inherit eutils versionator mono-env
+inherit eutils multibuild mono-env versionator
 
 # @ECLASS-VARIABLE: USE_DOTNET
 # @DESCRIPTION:
@@ -24,9 +24,6 @@ inherit eutils versionator mono-env
 
 DEPEND+=" dev-lang/mono"
 IUSE+=" debug developer"
-
-# SRC_URI+=" https://github.com/mono/mono/raw/master/mcs/class/mono.snk"
-# I was unable to setup it this ^^ way
 
 _DOTNET_ECLASS_MODE="" # can be netfx or netcore or netstandard (private variable not to be used outside of eclass)
 
@@ -373,6 +370,50 @@ function estrong_assembly_info() {
 # @CODE
 function estrong_resign() {
 	sn -R "$1" "$2" || die
+}
+
+_IMPLS="net{20,35,40,45,46,47,471,472,48} netcore{10,11,20,21,22} netcorestandard{10,11,12,13,14,15,16,20}"
+
+# @FUNCTION: _python_multibuild_wrapper
+# @DESCRIPTION: Initialize the environment for this implementation
+_python_multibuild_wrapper() {
+	debug-print-function ${FUNCNAME} "${@}"
+
+	einfo "MULTIBUILD_VARIANT=${MULTIBUILD_VARIANT}"
+
+	# run it
+	"${@}"
+}
+
+# @FUNCTION: dotnet_foreach_impl
+# @DESCRIPTION:  This will execute a callback for each dotnet implementation
+dotnet_foreach_impl() {
+	debug-print-function ${FUNCNAME} "${@}"
+
+	local MULTIBUILD_VARIANTS
+	_dotnet_obtain_impls
+
+	multibuild_foreach_variant _dotnet_multibuild_wrapper "${@}"
+}
+
+# @FUNCTION: dotnet_copy_sources
+# @DESCRIPTION:  This will copy the source code in another folder per implementation
+dotnet_copy_sources() {
+	debug-print-function ${FUNCNAME} "${@}"
+
+	local MULTIBUILD_VARIANTS
+	_dotnet_obtain_impls
+
+	multibuild_copy_sources
+}
+
+# @FUNCTION: _dotnet_obtain_impls
+# @DESCRIPTION:  This will fill up MULTIBUILD_VARIANTS if user chosen implementation
+_dotnet_obtain_impls() {
+	MULTIBUILD_VARIANTS=()
+	for impl in ${_IMPLS} ; do
+		has "${impl}" "${_IMPLS}" && MULTIBUILD_VARIANTS+=( ${impl} )
+	done
 }
 
 EXPORT_FUNCTIONS pkg_setup pkg_pretend
