@@ -45,6 +45,12 @@ mono-env_pkg_setup() {
 
 	# opt out by default for data collection for Microsoft.  You can opt-in by setting to 0 in make.conf.
 	export DOTNET_CLI_TELEMETRY_OPTOUT=${DOTNET_CLI_TELEMETRY_OPTOUT:=1}
+
+	if [ -d /opt/dotnet ] ; then
+		export PATH="/opt/dotnet:${PATH}"
+	elif [ -d /opt/dotnet_core ] ; then
+		export PATH="/opt/dotnet_core:${PATH}"
+	fi
 }
 
 _MONO_ENV=1
