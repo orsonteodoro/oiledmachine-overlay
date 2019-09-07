@@ -408,10 +408,10 @@ _exbuild_netcore_raw() {
 # @FUNCTION: exbuild_raw
 # @DESCRIPTION: run xbuild or dotnet with given parameters
 exbuild_raw() {
-	if [[ "${_DOTNET_ECLASS_MODE}" == "netfx" ]] ; then
-		_exbuild_netfx_raw $@
-	elif [[ "${_DOTNET_ECLASS_MODE}" == "netcoreapp" || "${_DOTNET_ECLASS_MODE}" == "netstandard" ]] ; then
+	if [[ "${TOOLS_VERSION}" == "15.0" || "${_DOTNET_ECLASS_MODE}" == "netcoreapp" || "${_DOTNET_ECLASS_MODE}" == "netstandard" ]] ; then
 		_exbuild_netcore_raw $@
+	elif [[ "${_DOTNET_ECLASS_MODE}" == "netfx" ]] ; then
+		_exbuild_netfx_raw $@
 	fi
 }
 
@@ -461,16 +461,16 @@ _exbuild_netcore() {
 		SARGS=-p:DebugSymbols=False
 	fi
 
-	_exbuild_netcore_raw build "${project}" "-verbosity:detailed" "-f" "${_DOTNET_ECLASS_MODE}${FRAMEWORK}" "${CARGS}" "${SARGS}" "$@"
+	_exbuild_netcore_raw build "${project}" "-verbosity:detailed" "-f" "${_DOTNET_ECLASS_MODE//fx/}${FRAMEWORK}" "${CARGS}" "${SARGS}" "$@"
 }
 
 # @FUNCTION: exbuild
 # @DESCRIPTION: frontend for xbuild and dotnet
 exbuild() {
-	if [[ "${_DOTNET_ECLASS_MODE}" == "netfx" ]] ; then
-		_exbuild_netfx $@
-	elif [[ "${_DOTNET_ECLASS_MODE}" == "netcoreapp" || "${_DOTNET_ECLASS_MODE}" == "netstandard" ]] ; then
+	if [[ "${TOOLS_VERSION}" == "15.0" ||  "${_DOTNET_ECLASS_MODE}" == "netcoreapp" || "${_DOTNET_ECLASS_MODE}" == "netstandard" ]] ; then
 		_exbuild_netcore $@
+	elif [[ "${_DOTNET_ECLASS_MODE}" == "netfx" ]] ; then
+		_exbuild_netfx $@
 	fi
 }
 
