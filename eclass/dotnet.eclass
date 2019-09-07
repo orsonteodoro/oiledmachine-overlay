@@ -376,7 +376,7 @@ _IMPLS="net{20,35,40,45,46,47,471,472,48} netcore{10,11,20,21,22} netstandard{10
 
 # @FUNCTION: _python_multibuild_wrapper
 # @DESCRIPTION: Initialize the environment for this implementation
-_python_multibuild_wrapper() {
+_dotnet_multibuild_wrapper() {
 	debug-print-function ${FUNCNAME} "${@}"
 
 	einfo "MULTIBUILD_VARIANT=${MULTIBUILD_VARIANT}"
