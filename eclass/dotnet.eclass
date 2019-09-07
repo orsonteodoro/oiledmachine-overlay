@@ -490,7 +490,7 @@ embuild() {
 	fi
 
 	if [[ -z ${TOOLS_VERSION} ]]; then
-		TOOLS_VERSION=15.0
+		TOOLS_VERSION="Current"
 	fi
 
 	_exbuild_netcore_raw msbuild "-verbosity:detailed" "-toolsversion:${TOOLS_VERSION}" "${CARGS}" "${SARGS}" "$@"
