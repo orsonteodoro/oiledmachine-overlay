@@ -300,8 +300,6 @@ dotnet_pkg_setup() {
 			netcoreapp20) EBF="20.0"; if use netcoreapp20; then F="${EBF}";fi;;
 			netcoreapp11) EBF="10.1"; if use netcoreapp11; then F="${EBF}";fi;;
 			netcoreapp10) EBF="10.0"; if use netcoreapp10; then F="${EBF}";fi;;
-			net472) EBF="4.8"; if use net48; then F="${EBF}";fi;;
-			net472) EBF="4.8"; if use net48; then F="${EBF}";fi;;
 			net472) EBF="4.72"; if use net472; then F="${EBF}";fi;;
 			net471) EBF="4.71"; if use net471; then F="${EBF}";fi;;
 			net47) EBF="4.7"; if use net47; then F="${EBF}";fi;;
