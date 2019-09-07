@@ -1,6 +1,5 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 # @ECLASS: mono-env.eclass
 # @MAINTAINER:
@@ -37,8 +36,19 @@ mono-env_pkg_setup() {
 
 	# mono libs can live on /usr/lib as they are not arch specific
 	QA_MULTILIB_PATHS="usr/lib/"
+
+	# used by restore for nuget and dotnet
+	# store the cache outside the sandbox
+	addwrite "${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	export NUGET_HTTP_CACHE_PATH=${NUGET_HTTP_CACHE_PATH:="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/nuget/v3-cache"}
+	mkdir -p "${NUGET_HTTP_CACHE_PATH}" || die
+	einfo "NUGET_HTTP_CACHE_PATH=${NUGET_HTTP_CACHE_PATH}"
+
+	# opt out by default for data collection for Microsoft.  You can opt-in by setting to 0 in make.conf.
+	export ${DOTNET_CLI_TELEMETRY_OPTOUT:=1}
 }
 
 _MONO_ENV=1
 fi
 
+SANDBOX_WRITE="${SANDBOX_WRITE}:/etc/mono/registry/:/etc/mono/registry/last-btime"
