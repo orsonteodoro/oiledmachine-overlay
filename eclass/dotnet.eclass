@@ -345,7 +345,7 @@ dotnet_pkg_setup() {
 		FRAMEWORK=$(echo "scale=1 ; ${FRAMEWORK}/100" | bc)
 		einfo " -- USING .NET STANDARD ${FRAMEWORK} -- "
 	elif [[ "${R2}" == "3" ]] ; then
-		FRAMEWORK=$(echo "scale=1 ; ${FRAMEWORK}/100" | bc)
+		FRAMEWORK=$(echo "scale=1 ; ${FRAMEWORK}/10" | bc)
 		einfo " -- USING .NET CORE ${FRAMEWORK} -- "
 	else
 		einfo " -- USING .NET FRAMEWORK ${FRAMEWORK} -- "
