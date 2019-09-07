@@ -510,7 +510,7 @@ dotnet_multilib_comply() {
 # $2 - path to the private key
 # $3 - the path to the AssemblyInfo.cs file to inject the key into
 # @CODE
-function estrong_assembly_info() {
+estrong_assembly_info() {
 	sed -i -r -e "s|$1|$1\n[assembly:AssemblyKeyFileAttribute(\"$2\")]|" "$3" || die
 }
 
@@ -521,8 +521,14 @@ function estrong_assembly_info() {
 # $1 - the path to the dll
 # $2 - the private key
 # @CODE
-function estrong_resign() {
+estrong_resign() {
 	sn -R "$1" "$2" || die
+}
+
+# @FUNCTION: erestore
+# @DESCRIPTION:  This will explicitly pull the dependencies for the package.
+erestore() {
+	dotnet restore || die
 }
 
 _IMPLS="net{20,35,40,45,46,461,462,47,471,472,48} netcore{10,11,20,21,22} netstandard{10,11,12,13,14,15,16,20}"
