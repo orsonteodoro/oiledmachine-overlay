@@ -461,7 +461,7 @@ _exbuild_netcore() {
 		SARGS=-p:DebugSymbols=False
 	fi
 
-	_exbuild_netcore_raw build "${project}" "-verbosity:detailed" "-f ${_DOTNET_ECLASS_MODE}${FRAMEWORK}" "${CARGS}" "${SARGS}" "$@"
+	_exbuild_netcore_raw build "${project}" "-verbosity:detailed" "-f" "${_DOTNET_ECLASS_MODE}${FRAMEWORK}" "${CARGS}" "${SARGS}" "$@"
 }
 
 # @FUNCTION: exbuild
