@@ -240,7 +240,7 @@ _exbuild_netcore_raw() {
 }
 
 # @FUNCTION: exbuild_raw
-# @DESCRIPTION: run xbuild with given parameters
+# @DESCRIPTION: run xbuild or dotnet with given parameters
 exbuild_raw() {
 	if [[ "${_DOTNET_ECLASS_MODE}" == "netfx" ]] ; then
 		_exbuild_netfx_raw $@
