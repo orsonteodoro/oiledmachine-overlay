@@ -253,14 +253,14 @@ _dotnet_sandbox_network_disabled_check() {
 dotnet_pkg_pretend() {
 	for x in ${USE_DOTNET} ; do
 		case ${x} in
-			netcorestandard20) if use netstandard20; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
-			netcorestandard16) if use netstandard16; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
-			netcorestandard15) if use netstandard15; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
-			netcorestandard14) if use netstandard14; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
-			netcorestandard13) if use netstandard13; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
-			netcorestandard12) if use netstandard12; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
-			netcorestandard11) if use netstandard11; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
-			netcorestandard10) if use netstandard10; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
+			netstandard20) if use netstandard20; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
+			netstandard16) if use netstandard16; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
+			netstandard15) if use netstandard15; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
+			netstandard14) if use netstandard14; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
+			netstandard13) if use netstandard13; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
+			netstandard12) if use netstandard12; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
+			netstandard11) if use netstandard11; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
+			netstandard10) if use netstandard10; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
 			netcoreapp22) if use netcoreapp22; then _DOTNET_ECLASS_MODE="netcore"; fi;;
 			netcoreapp21) if use netcoreapp21; then _DOTNET_ECLASS_MODE="netcore"; fi;;
 			netcoreapp20) if use netcoreapp20; then _DOTNET_ECLASS_MODE="netcore"; fi;;
@@ -287,14 +287,14 @@ dotnet_pkg_setup() {
 	mono-env_pkg_setup
 	for x in ${USE_DOTNET} ; do
 		case ${x} in
-			netcorestandard20) EBF="200.0"; if use netstandard20; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netcorestandard16) EBF="100.6"; if use netstandard16; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netcorestandard15) EBF="100.5"; if use netstandard15; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netcorestandard14) EBF="100.4"; if use netstandard14; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netcorestandard13) EBF="100.3"; if use netstandard13; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netcorestandard12) EBF="100.2"; if use netstandard12; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netcorestandard11) EBF="100.1"; if use netstandard11; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netcorestandard10) EBF="100.0"; if use netstandard10; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
+			netstandard20) EBF="200.0"; if use netstandard20; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
+			netstandard16) EBF="100.6"; if use netstandard16; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
+			netstandard15) EBF="100.5"; if use netstandard15; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
+			netstandard14) EBF="100.4"; if use netstandard14; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
+			netstandard13) EBF="100.3"; if use netstandard13; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
+			netstandard12) EBF="100.2"; if use netstandard12; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
+			netstandard11) EBF="100.1"; if use netstandard11; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
+			netstandard10) EBF="100.0"; if use netstandard10; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
 			netcoreapp22) EBF="20.2"; if use netcoreapp22; then F="${EBF}"; _DOTNET_ECLASS_MODE="netcore";fi;;
 			netcoreapp21) EBF="20.1"; if use netcoreapp21; then F="${EBF}"; _DOTNET_ECLASS_MODE="netcore";fi;;
 			netcoreapp20) EBF="20.0"; if use netcoreapp20; then F="${EBF}"; _DOTNET_ECLASS_MODE="netcore";fi;;
@@ -321,7 +321,7 @@ dotnet_pkg_setup() {
 			version_is_at_least "${F}" "${FRAMEWORK}" || FRAMEWORK="${F}"
 		fi
 		if [[ -z ${EBUILD_FRAMEWORK} ]]; then
-			if [[ ${EBF} ]]; then
+			if [[ -n ${EBF} ]]; then
 				EBUILD_FRAMEWORK="${EBF}";
 			fi
 		else
@@ -337,10 +337,14 @@ dotnet_pkg_setup() {
 			elog "User did not set any netNN use-flags in make.conf or profile, .ebuild demands USE_DOTNET=""${USE_DOTNET}"""
 		fi
 	fi
-	if (( ${FRAMEWORK} >= 100 )) ; then
+	version_compare "${FRAMEWORK}" "100"
+	R1="$?"
+	version_compare "${FRAMEWORK}" "10"
+	R2="$?"
+	if [[ "${R1}" == "3" ]] ; then
 		FRAMEWORK=$(echo "scale=1 ; ${FRAMEWORK}/100" | bc)
 		einfo " -- USING .NET STANDARD ${FRAMEWORK} -- "
-	elif (( ${FRAMEWORK} >= 10 )) ; then
+	elif [[ "${R2}" == "3" ]] ; then
 		FRAMEWORK=$(echo "scale=1 ; ${FRAMEWORK}/100" | bc)
 		einfo " -- USING .NET CORE ${FRAMEWORK} -- "
 	else
