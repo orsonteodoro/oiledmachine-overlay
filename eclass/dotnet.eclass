@@ -493,7 +493,7 @@ embuild() {
 		TOOLS_VERSION=15.0
 	fi
 
-	_exbuild_netcore_raw msbuild "${project}" "-verbosity:detailed" "-toolsversion:${TOOLS_VERSION}" "${CARGS}" "${SARGS}" "$@"
+	_exbuild_netcore_raw msbuild "-verbosity:detailed" "-toolsversion:${TOOLS_VERSION}" "${CARGS}" "${SARGS}" "$@"
 }
 
 # @FUNCTION: dotnet_multilib_comply
