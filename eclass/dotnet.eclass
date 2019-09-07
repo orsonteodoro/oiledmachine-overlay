@@ -462,7 +462,7 @@ _exbuild_netcore() {
 		TOOLS_VERSION=15.0
 	fi
 
-	_exbuild_netcore_raw msbuild "-verbosity=detailed" "-toolsVersion:${TOOLS_VERSION}" "-f ${_DOTNET_ECLASS_MODE}${FRAMEWORK}" "${CARGS}" "${SARGS}" "$@"
+	_exbuild_netcore_raw msbuild "-verbosity:detailed" "-toolsVersion:${TOOLS_VERSION}" "-f ${_DOTNET_ECLASS_MODE}${FRAMEWORK}" "${CARGS}" "${SARGS}" "$@"
 }
 
 # @FUNCTION: exbuild
