@@ -335,6 +335,8 @@ dotnet_pkg_setup() {
 			elog "User did not set any netNN use-flags in make.conf or profile, .ebuild demands USE_DOTNET=""${USE_DOTNET}"""
 		fi
 	fi
+
+	# FRAMEWORK is the highest wanted by the user?
 	version_compare "${FRAMEWORK}" "100"
 	R1="$?"
 	version_compare "${FRAMEWORK}" "10"
@@ -350,6 +352,21 @@ dotnet_pkg_setup() {
 	else
 		_DOTNET_ECLASS_MODE="netfx"
 		einfo " -- USING .NET FRAMEWORK ${FRAMEWORK} -- "
+	fi
+
+	# EBUILD_FRAMEWORK is the highest suppored by ebuild?
+	version_compare "${EBUILD_FRAMEWORK}" "100"
+	R1="$?"
+	version_compare "${EBUILD_FRAMEWORK}" "10"
+	R2="$?"
+	if [[ "${R1}" == "3" ]] ; then
+		_DOTNET_ECLASS_MODE_EF="netstandard"
+		EBUILD_FRAMEWORK=$(echo "scale=1 ; ${EBUILD_FRAMEWORK}/100" | bc)
+	elif [[ "${R2}" == "3" ]] ; then
+		_DOTNET_ECLASS_MODE_EF="netcoreapp"
+		EBUILD_FRAMEWORK=$(echo "scale=1 ; ${EBUILD_FRAMEWORK}/10" | bc)
+	else
+		_DOTNET_ECLASS_MODE_EF="netfx"
 	fi
 }
 
