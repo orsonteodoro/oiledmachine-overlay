@@ -11,6 +11,8 @@ LIBBULLETC_PV="$(get_version_component_range 3-4)"
 SRC_URI="https://github.com/AndresTraks/${PN}/archive/${MY_PV}.tar.gz -> ${PN}-${MY_PV}.tar.gz
          https://github.com/bulletphysics/bullet3/archive/${LIBBULLETC_PV}.tar.gz -> bullet-${LIBBULLETC_PV}.tar.gz"
 
+inherit dotnet-key
+
 LICENSE="MIT zlib"
 SLOT="0/${MY_PV}"
 KEYWORDS="~amd64 ~x86"
@@ -25,7 +27,6 @@ DEPEND="${RDEPEND}
 
 S_BASE="${WORKDIR}/${PN}-${MY_PV}"
 S="${S_BASE}"
-SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_unpack() {
 	unpack ${A}
@@ -35,16 +36,14 @@ src_unpack() {
 src_prepare() {
 	sed -i -e "s|\"libbulletc\"|\"libbulletc.dll\"|g" BulletSharpPInvoke/Native.cs || die
 
-	egenkey
-
 	sed -i -e "s|<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>|<TargetFrameworkVersion>${EBF}</TargetFrameworkVersion>|" BulletSharpPInvoke/BulletSharpPInvoke.csproj || die
 
 	sed -i -e 's|ADD_SUBDIRECTORY\(test\)||g' libbulletc/CMakeLists.txt || die
 
 	S="${S_BASE}/libbulletc"
 
-	cp ${PN}-keypair.snk BulletSharpPInvoke/ || die
-	sed -i -r -e "s|using System.Runtime.InteropServices;|using System.Runtime.InteropServices;\n[assembly:AssemblyKeyFileAttribute(\"${PN}-keypair.snk\")]|" BulletSharpPInvoke/Properties/AssemblyInfo.cs || die
+	cp "${DISTDIR}/mono.snk" BulletSharpPInvoke/ || die
+	estrong_assembly_info "using System.Runtime.InteropServices;" "mono.snk" "BulletSharpPInvoke/Properties/AssemblyInfo.cs"
 
 	cmake-utils_src_prepare
 	multilib_copy_sources
@@ -68,7 +67,6 @@ multilib_src_compile() {
 
 	# Build C# wrapper
 	cd "${S_BASE}"/BulletSharpPInvoke || die
-	addpredict /etc/mono/registry
 	exbuild BulletSharpPInvoke.sln /p:Configuration=${mydebug}  || die
 }
 
@@ -82,8 +80,6 @@ multilib_src_install() {
 
 	mkdir -p "${D}/usr/$(get_libdir)"
 	cp -a "${S_BASE}/libbulletc-${MULTILIB_ABI_FLAG}.${ABI}/libbulletc.so" "${D}/usr/$(get_libdir)" || die
-
-	esavekey
 
 	for x in ${USE_DOTNET} ; do
                 FW_UPPER=${x:3:1}
