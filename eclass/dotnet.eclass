@@ -246,7 +246,7 @@ _exbuild_netfx() {
 		TOOLS_VERSION=4.0
 	fi
 
-	_exbuild_netcore_raw "/v:detailed" "/tv:${TOOLS_VERSION}" "/p:TargetFrameworkVersion=v${FRAMEWORK}" "${CARGS}" "${SARGS}" "$@"
+	_exbuild_netfx_raw "/v:detailed" "/tv:${TOOLS_VERSION}" "/p:TargetFrameworkVersion=v${FRAMEWORK}" "${CARGS}" "${SARGS}" "$@"
 }
 
 # @FUNCTION: _exbuild_netstandard
