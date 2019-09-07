@@ -28,29 +28,24 @@ _DOTNET_ECLASS_MODE="" # can be netfx or netcore or netstandard (private variabl
 
 _SET_DEPENDS_NETCORE=""
 
-_depends_netcore() {
-	if [[ -z ${_SET_DEPENDS_NETCORE} ]]; then
-		DEPEND+=" || ( dev-dotnet/cli-tools dev-dotnet/dotnetcore-sdk-bin ) ";
-		_SET_DEPENDS_NETCORE=1
-	fi
-}
+_NETCORE_TOOLS_DEPS="|| ( dev-dotnet/cli-tools dev-dotnet/dotnetcore-sdk-bin )"
 
 # SET default use flags according on DOTNET_TARGETS
 for x in ${USE_DOTNET}; do
 	case ${x} in
-		netstandard20) if [[ ${DOTNET_TARGETS} == *netstandard20* ]]; then IUSE+=" +netstandard20"; else IUSE+=" netstandard20"; DEPEND+=" netstandard20? ( >=dev-lang/mono-5.2 )"; fi;;
-		netstandard16) if [[ ${DOTNET_TARGETS} == *netstandard16* ]]; then IUSE+=" +netstandard16"; else IUSE+=" netstandard16"; DEPEND+=" netstandard16? ( >=dev-lang/mono-4.6 )"; fi;;
-		netstandard15) if [[ ${DOTNET_TARGETS} == *netstandard15* ]]; then IUSE+=" +netstandard15"; else IUSE+=" netstandard15"; DEPEND+=" netstandard15? ( >=dev-lang/mono-4.6 )"; fi;;
-		netstandard14) if [[ ${DOTNET_TARGETS} == *netstandard14* ]]; then IUSE+=" +netstandard14"; else IUSE+=" netstandard14"; DEPEND+=" netstandard14? ( >=dev-lang/mono-4.6 )"; fi;;
-		netstandard13) if [[ ${DOTNET_TARGETS} == *netstandard13* ]]; then IUSE+=" +netstandard13"; else IUSE+=" netstandard13"; DEPEND+=" netstandard13? ( >=dev-lang/mono-4.6 )"; fi;;
-		netstandard12) if [[ ${DOTNET_TARGETS} == *netstandard12* ]]; then IUSE+=" +netstandard12"; else IUSE+=" netstandard12"; DEPEND+=" netstandard12? ( >=dev-lang/mono-4.6 )"; fi;;
-		netstandard11) if [[ ${DOTNET_TARGETS} == *netstandard11* ]]; then IUSE+=" +netstandard11"; else IUSE+=" netstandard11"; DEPEND+=" netstandard11? ( >=dev-lang/mono-4.6 )"; fi;;
-		netstandard10) if [[ ${DOTNET_TARGETS} == *netstandard10* ]]; then IUSE+=" +netstandard10"; else IUSE+=" netstandard10"; DEPEND+=" netstandard10? ( >=dev-lang/mono-4.6 )"; fi;;
-		netcoreapp22) if [[ ${DOTNET_TARGETS} == *netcoreapp22* ]]; then IUSE+=" +netcoreapp22"; else IUSE+=" netcoreapp22"; DEPEND+=" netcoreapp22? ( >=dev-lang/mono-5.4 )"; fi;;
-		netcoreapp21) if [[ ${DOTNET_TARGETS} == *netcoreapp21* ]]; then IUSE+=" +netcoreapp21"; else IUSE+=" netcoreapp21"; DEPEND+=" netcoreapp21? ( >=dev-lang/mono-5.4 )"; fi;;
-		netcoreapp20) if [[ ${DOTNET_TARGETS} == *netcoreapp20* ]]; then IUSE+=" +netcoreapp20"; else IUSE+=" netcoreapp20"; DEPEND+=" netcoreapp20? ( >=dev-lang/mono-5.4 )"; fi;;
-		netcoreapp11) if [[ ${DOTNET_TARGETS} == *netcoreapp11* ]]; then IUSE+=" +netcoreapp11"; else IUSE+=" netcoreapp11"; DEPEND+=" netcoreapp11? ( >=dev-lang/mono-5.4 )"; fi;;
-		netcoreapp10) if [[ ${DOTNET_TARGETS} == *netcoreapp10* ]]; then IUSE+=" +netcoreapp10"; else IUSE+=" netcoreapp10"; DEPEND+=" netcoreapp10? ( >=dev-lang/mono-5.4 )"; fi;;
+		netstandard20) if [[ ${DOTNET_TARGETS} == *netstandard20* ]]; then IUSE+=" +netstandard20"; else IUSE+=" netstandard20"; DEPEND+=" netstandard20? ( >=dev-lang/mono-5.2 ${_NETCORE_TOOLS_DEPS} )"; fi;;
+		netstandard16) if [[ ${DOTNET_TARGETS} == *netstandard16* ]]; then IUSE+=" +netstandard16"; else IUSE+=" netstandard16"; DEPEND+=" netstandard16? ( >=dev-lang/mono-4.6 ${_NETCORE_TOOLS_DEPS} )"; fi;;
+		netstandard15) if [[ ${DOTNET_TARGETS} == *netstandard15* ]]; then IUSE+=" +netstandard15"; else IUSE+=" netstandard15"; DEPEND+=" netstandard15? ( >=dev-lang/mono-4.6 ${_NETCORE_TOOLS_DEPS} )"; fi;;
+		netstandard14) if [[ ${DOTNET_TARGETS} == *netstandard14* ]]; then IUSE+=" +netstandard14"; else IUSE+=" netstandard14"; DEPEND+=" netstandard14? ( >=dev-lang/mono-4.6 ${_NETCORE_TOOLS_DEPS} )"; fi;;
+		netstandard13) if [[ ${DOTNET_TARGETS} == *netstandard13* ]]; then IUSE+=" +netstandard13"; else IUSE+=" netstandard13"; DEPEND+=" netstandard13? ( >=dev-lang/mono-4.6 ${_NETCORE_TOOLS_DEPS} )"; fi;;
+		netstandard12) if [[ ${DOTNET_TARGETS} == *netstandard12* ]]; then IUSE+=" +netstandard12"; else IUSE+=" netstandard12"; DEPEND+=" netstandard12? ( >=dev-lang/mono-4.6 ${_NETCORE_TOOLS_DEPS} )"; fi;;
+		netstandard11) if [[ ${DOTNET_TARGETS} == *netstandard11* ]]; then IUSE+=" +netstandard11"; else IUSE+=" netstandard11"; DEPEND+=" netstandard11? ( >=dev-lang/mono-4.6 ${_NETCORE_TOOLS_DEPS} )"; fi;;
+		netstandard10) if [[ ${DOTNET_TARGETS} == *netstandard10* ]]; then IUSE+=" +netstandard10"; else IUSE+=" netstandard10"; DEPEND+=" netstandard10? ( >=dev-lang/mono-4.6 ${_NETCORE_TOOLS_DEPS} )"; fi;;
+		netcoreapp22) if [[ ${DOTNET_TARGETS} == *netcoreapp22* ]]; then IUSE+=" +netcoreapp22"; else IUSE+=" netcoreapp22"; DEPEND+=" netcoreapp22? ( >=dev-lang/mono-5.4 ${_NETCORE_TOOLS_DEPS} )"; fi;;
+		netcoreapp21) if [[ ${DOTNET_TARGETS} == *netcoreapp21* ]]; then IUSE+=" +netcoreapp21"; else IUSE+=" netcoreapp21"; DEPEND+=" netcoreapp21? ( >=dev-lang/mono-5.4 ${_NETCORE_TOOLS_DEPS} )"; fi;;
+		netcoreapp20) if [[ ${DOTNET_TARGETS} == *netcoreapp20* ]]; then IUSE+=" +netcoreapp20"; else IUSE+=" netcoreapp20"; DEPEND+=" netcoreapp20? ( >=dev-lang/mono-5.4 ${_NETCORE_TOOLS_DEPS} )"; fi;;
+		netcoreapp11) if [[ ${DOTNET_TARGETS} == *netcoreapp11* ]]; then IUSE+=" +netcoreapp11"; else IUSE+=" netcoreapp11"; DEPEND+=" netcoreapp11? ( >=dev-lang/mono-5.4 ${_NETCORE_TOOLS_DEPS} )"; fi;;
+		netcoreapp10) if [[ ${DOTNET_TARGETS} == *netcoreapp10* ]]; then IUSE+=" +netcoreapp10"; else IUSE+=" netcoreapp10"; DEPEND+=" netcoreapp10? ( >=dev-lang/mono-5.4 ${_NETCORE_TOOLS_DEPS} )"; fi;;
 		net472) if [[ ${DOTNET_TARGETS} == *net472* ]]; then IUSE+=" +net472"; else IUSE+=" net472"; DEPEND+=" net472? ( >=dev-lang/mono-5.18 )"; fi;;
 		net471) if [[ ${DOTNET_TARGETS} == *net471* ]]; then IUSE+=" +net471"; else IUSE+=" net471"; DEPEND+=" net471? ( >=dev-lang/mono-5.10 )"; fi;;
 		net47) if [[ ${DOTNET_TARGETS} == *net47* ]]; then IUSE+=" +net47"; else IUSE+=" net47"; DEPEND+=" net47? ( >=dev-lang/mono-5.2 )"; fi;;
@@ -63,21 +58,6 @@ for x in ${USE_DOTNET}; do
 		net40) if [[ ${DOTNET_TARGETS} == *net40* ]]; then IUSE+=" +net40"; else IUSE+=" net40"; DEPEND+=" net40? ( <dev-lang/mono-4.0 )"; die "no longer supported"; fi;; # dropped in mono 4.0
 		net35) if [[ ${DOTNET_TARGETS} == *net35* ]]; then IUSE+=" +net35"; else IUSE+=" net35"; DEPEND+=" net35? ( <dev-lang/mono-4.0 )"; die "no longer supported"; fi;; # dropped in mono 4.0
 		net20) if [[ ${DOTNET_TARGETS} == *net20* ]]; then IUSE+=" +net20"; else IUSE+=" net20"; DEPEND+=" net20? ( <dev-lang/mono-4.0 )"; die "no longer supported"; fi;; # dropped in mono 4.0
-	esac
-	case ${x} in
-		netstandard20) _depends_netcore ;;
-		netstandard16) _depends_netcore ;;
-		netstandard15) _depends_netcore ;;
-		netstandard14) _depends_netcore ;;
-		netstandard13) _depends_netcore ;;
-		netstandard12) _depends_netcore ;;
-		netstandard11) _depends_netcore ;;
-		netstandard10) _depends_netcore ;;
-		netcoreapp22) _depends_netcore ;;
-		netcoreapp21) _depends_netcore ;;
-		netcoreapp20) _depends_netcore ;;
-		netcoreapp11) _depends_netcore ;;
-		netcoreapp10) _depends_netcore ;;
 	esac
 done
 
