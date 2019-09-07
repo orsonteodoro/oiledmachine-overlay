@@ -281,37 +281,37 @@ dotnet_pkg_pretend() {
 }
 
 # @FUNCTION: dotnet_pkg_setup
-# @DESCRIPTION:  This function set FRAMEWORK
+# @DESCRIPTION:  This function set FRAMEWORK to the highest requested framework
 dotnet_pkg_setup() {
 	EBUILD_FRAMEWORK=""
 	mono-env_pkg_setup
 	for x in ${USE_DOTNET} ; do
 		case ${x} in
-			netstandard20) EBF="200.0"; if use netstandard20; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netstandard16) EBF="100.6"; if use netstandard16; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netstandard15) EBF="100.5"; if use netstandard15; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netstandard14) EBF="100.4"; if use netstandard14; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netstandard13) EBF="100.3"; if use netstandard13; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netstandard12) EBF="100.2"; if use netstandard12; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netstandard11) EBF="100.1"; if use netstandard11; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netstandard10) EBF="100.0"; if use netstandard10; then F="${EBF}"; _DOTNET_ECLASS_MODE="netstandard";fi;;
-			netcoreapp22) EBF="20.2"; if use netcoreapp22; then F="${EBF}"; _DOTNET_ECLASS_MODE="netcore";fi;;
-			netcoreapp21) EBF="20.1"; if use netcoreapp21; then F="${EBF}"; _DOTNET_ECLASS_MODE="netcore";fi;;
-			netcoreapp20) EBF="20.0"; if use netcoreapp20; then F="${EBF}"; _DOTNET_ECLASS_MODE="netcore";fi;;
-			netcoreapp11) EBF="10.1"; if use netcoreapp11; then F="${EBF}"; _DOTNET_ECLASS_MODE="netcore";fi;;
-			netcoreapp10) EBF="10.0"; if use netcoreapp10; then F="${EBF}"; _DOTNET_ECLASS_MODE="netcore";fi;;
-			net472) EBF="4.8"; if use net48; then F="${EBF}"; _DOTNET_ECLASS_MODE="netfx";fi;;
-			net472) EBF="4.8"; if use net48; then F="${EBF}"; _DOTNET_ECLASS_MODE="netfx";fi;;
-			net472) EBF="4.72"; if use net472; then F="${EBF}"; _DOTNET_ECLASS_MODE="netfx";fi;;
-			net471) EBF="4.71"; if use net471; then F="${EBF}"; _DOTNET_ECLASS_MODE="netfx";fi;;
-			net47) EBF="4.7"; if use net47; then F="${EBF}"; _DOTNET_ECLASS_MODE="netfx";fi;;
-			net462) EBF="4.62"; if use net462; then F="${EBF}"; _DOTNET_ECLASS_MODE="netfx";fi;;
-			net461) EBF="4.61"; if use net461; then F="${EBF}"; _DOTNET_ECLASS_MODE="netfx";fi;;
-			net46) EBF="4.6"; if use net46; then F="${EBF}"; _DOTNET_ECLASS_MODE="netfx";fi;;
-			net45) EBF="4.5"; if use net45; then F="${EBF}"; _DOTNET_ECLASS_MODE="netfx";fi;;
-			net40) EBF="4.0"; if use net40; then F="${EBF}"; _DOTNET_ECLASS_MODE="netfx";fi;;
-			net35) EBF="3.5"; if use net35; then F="${EBF}"; _DOTNET_ECLASS_MODE="netfx";fi;;
-			net20) EBF="2.0"; if use net20; then F="${EBF}"; _DOTNET_ECLASS_MODE="netfx";fi;;
+			netstandard20) EBF="200.0"; if use netstandard20; then F="${EBF}";fi;;
+			netstandard16) EBF="100.6"; if use netstandard16; then F="${EBF}";fi;;
+			netstandard15) EBF="100.5"; if use netstandard15; then F="${EBF}";fi;;
+			netstandard14) EBF="100.4"; if use netstandard14; then F="${EBF}";fi;;
+			netstandard13) EBF="100.3"; if use netstandard13; then F="${EBF}";fi;;
+			netstandard12) EBF="100.2"; if use netstandard12; then F="${EBF}";fi;;
+			netstandard11) EBF="100.1"; if use netstandard11; then F="${EBF}";fi;;
+			netstandard10) EBF="100.0"; if use netstandard10; then F="${EBF}";fi;;
+			netcoreapp22) EBF="20.2"; if use netcoreapp22; then F="${EBF}";fi;;
+			netcoreapp21) EBF="20.1"; if use netcoreapp21; then F="${EBF}";fi;;
+			netcoreapp20) EBF="20.0"; if use netcoreapp20; then F="${EBF}";fi;;
+			netcoreapp11) EBF="10.1"; if use netcoreapp11; then F="${EBF}";fi;;
+			netcoreapp10) EBF="10.0"; if use netcoreapp10; then F="${EBF}";fi;;
+			net472) EBF="4.8"; if use net48; then F="${EBF}";fi;;
+			net472) EBF="4.8"; if use net48; then F="${EBF}";fi;;
+			net472) EBF="4.72"; if use net472; then F="${EBF}";fi;;
+			net471) EBF="4.71"; if use net471; then F="${EBF}";fi;;
+			net47) EBF="4.7"; if use net47; then F="${EBF}";fi;;
+			net462) EBF="4.62"; if use net462; then F="${EBF}";fi;;
+			net461) EBF="4.61"; if use net461; then F="${EBF}";fi;;
+			net46) EBF="4.6"; if use net46; then F="${EBF}";fi;;
+			net45) EBF="4.5"; if use net45; then F="${EBF}";fi;;
+			net40) EBF="4.0"; if use net40; then F="${EBF}";fi;;
+			net35) EBF="3.5"; if use net35; then F="${EBF}";fi;;
+			net20) EBF="2.0"; if use net20; then F="${EBF}";fi;;
 		esac
 		if [[ -z ${FRAMEWORK} ]]; then
 			if [[ -n ${F} ]]; then
@@ -342,12 +342,15 @@ dotnet_pkg_setup() {
 	version_compare "${FRAMEWORK}" "10"
 	R2="$?"
 	if [[ "${R1}" == "3" ]] ; then
+		_DOTNET_ECLASS_MODE="netstandard"
 		FRAMEWORK=$(echo "scale=1 ; ${FRAMEWORK}/100" | bc)
 		einfo " -- USING .NET STANDARD ${FRAMEWORK} -- "
 	elif [[ "${R2}" == "3" ]] ; then
+		_DOTNET_ECLASS_MODE="netcore"
 		FRAMEWORK=$(echo "scale=1 ; ${FRAMEWORK}/10" | bc)
 		einfo " -- USING .NET CORE ${FRAMEWORK} -- "
 	else
+		_DOTNET_ECLASS_MODE="netfx"
 		einfo " -- USING .NET FRAMEWORK ${FRAMEWORK} -- "
 	fi
 }
