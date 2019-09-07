@@ -372,7 +372,7 @@ function estrong_resign() {
 	sn -R "$1" "$2" || die
 }
 
-_IMPLS="net{20,35,40,45,46,47,471,472,48} netcore{10,11,20,21,22} netcorestandard{10,11,12,13,14,15,16,20}"
+_IMPLS="net{20,35,40,45,46,47,471,472,48} netcore{10,11,20,21,22} netstandard{10,11,12,13,14,15,16,20}"
 
 # @FUNCTION: _python_multibuild_wrapper
 # @DESCRIPTION: Initialize the environment for this implementation
