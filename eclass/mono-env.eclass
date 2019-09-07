@@ -42,7 +42,6 @@ mono-env_pkg_setup() {
 	addwrite "${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	export NUGET_HTTP_CACHE_PATH=${NUGET_HTTP_CACHE_PATH:="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/nuget/v3-cache"}
 	mkdir -p "${NUGET_HTTP_CACHE_PATH}" || die
-	einfo "NUGET_HTTP_CACHE_PATH=${NUGET_HTTP_CACHE_PATH}"
 
 	# opt out by default for data collection for Microsoft.  You can opt-in by setting to 0 in make.conf.
 	export DOTNET_CLI_TELEMETRY_OPTOUT=${DOTNET_CLI_TELEMETRY_OPTOUT:=1}
