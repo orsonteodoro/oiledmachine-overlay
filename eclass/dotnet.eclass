@@ -461,7 +461,14 @@ _exbuild_netcore() {
 		SARGS=-p:DebugSymbols=False
 	fi
 
-	_exbuild_netcore_raw build "${project}" "-verbosity:detailed" "-f" "${_DOTNET_ECLASS_MODE//fx/}${FRAMEWORK}" "${CARGS}" "${SARGS}" "$@"
+	local framework
+	if [[ -n ${TOOLS_VERSION} && "${TOOLS_VERSION}" == "15.0" && "${_DOTNET_ECLASS_MODE}" == "netfx" ]] ; then
+		framework=${_DOTNET_ECLASS_MODE//fx/}${FRAMEWORK//./}
+	else
+		framework=${_DOTNET_ECLASS_MODE}${FRAMEWORK}
+	fi
+
+	_exbuild_netcore_raw build "${project}" "-verbosity:detailed" "-f" "${framework}" "${CARGS}" "${SARGS}" "$@"
 }
 
 # @FUNCTION: exbuild
