@@ -597,14 +597,19 @@ erestore() {
 	dotnet restore || die
 }
 
-_IMPLS="net{20,35,40,45,46,461,462,47,471,472,48} netcore{10,11,20,21,22} netstandard{10,11,12,13,14,15,16,20}"
+_NETFX_VERS=( 20 35 40 45 46 461 462 47 471 472 48 )
+_NETCORE_VERS=( 10 11 20 21 22 )
+_NETSTANDARD_VERS=( 10 11 12 13 14 15 16 20 )
+_IMPLS="${_NETFX_VERS[@]/#/net} ${_NETCORE_VERS[@]/#/netcoreapp} ${_NETSTANDARD_VERS[@]/#/netstandard}"
 
 # @FUNCTION: _python_multibuild_wrapper
 # @DESCRIPTION: Initialize the environment for this implementation
+# EDOTNET contains the implementination of dotnet to process like EPYTHON
+# BUILD_DIR contains the path to the instance of the copied sources
 _dotnet_multibuild_wrapper() {
 	debug-print-function ${FUNCNAME} "${@}"
 
-	einfo "MULTIBUILD_VARIANT=${MULTIBUILD_VARIANT}"
+	EDOTNET="${MULTIBUILD_VARIANT}"
 
 	# run it
 	"${@}"
@@ -637,7 +642,8 @@ dotnet_copy_sources() {
 _dotnet_obtain_impls() {
 	MULTIBUILD_VARIANTS=()
 	for impl in ${_IMPLS} ; do
-		has "${impl}" "${_IMPLS}" && MULTIBUILD_VARIANTS+=( ${impl} )
+		local A_USE_DOTNET=($(echo "${USE_DOTNET}" | tr ' ' '\n'))
+		has "${impl}" ${A_USE_DOTNET[@]} && use "${impl}" && MULTIBUILD_VARIANTS+=( "${impl}" )
 	done
 }
 
