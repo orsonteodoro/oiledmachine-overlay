@@ -641,5 +641,76 @@ _dotnet_obtain_impls() {
 	done
 }
 
+# @FUNCTION: dotnet_netcore_install_loc
+# @DESCRIPTION:  This will generate the recommended location to install the package for netcore and netstandard.
+# @CODE
+# Parameters:
+# $1 - the framework moniker e.g. net46 netstandard2.0 (optional)
+# @CODE
+dotnet_netcore_install_loc() {
+	local moniker="${1}"
+	local _dotnet
+	if [ -d /opt/dotnet ] ; then
+		# built from source code: dev-dotnet/cli-tools
+		_dotnet="dotnet"
+	else
+		# precompiled: dev-dotnet/dotnetcore-sdk-bin
+		_dotnet="dotnet_core"
+	fi
+
+	local framework
+
+	if [[ -n "${moniker}" ]]; then
+		framework="${moniker}"
+	else
+		if [[ -n ${TOOLS_VERSION} && "${TOOLS_VERSION}" == "15.0" && "${_DOTNET_ECLASS_MODE}" == "netfx" ]] ; then
+			framework=${_DOTNET_ECLASS_MODE//fx/}${FRAMEWORK//./}
+		else
+			framework=${_DOTNET_ECLASS_MODE}${FRAMEWORK}
+		fi
+	fi
+
+	echo "/opt/${_dotnet}/sdk/NuGetFallbackFolder/${PN,,}/${PV,,}/lib/${framework}"
+}
+
+# @FUNCTION: dotnet_netfx_install_loc
+# @DESCRIPTION:  This will generate the recommended location to install the package for netfx.
+# @CODE
+# Parameters:
+# $1 - the framework moniker e.g. net46 (optional)
+# @CODE
+dotnet_netfx_install_loc() {
+	local moniker="${1}"
+	if [[ -z "${moniker}" ]] ; then
+		moniker=${_DOTNET_ECLASS_MODE//fx/}${FRAMEWORK//./}
+	fi
+
+	if [[ "${moniker}" == "net472" ]] ; then
+		echo "/usr/lib/mono/4.7.2-api"
+	elif [[ "${moniker}" == "net471" ]] ; then
+		echo "/usr/lib/mono/4.7.1-api"
+	elif [[ "${moniker}" == "net47" ]] ; then
+		echo "/usr/lib/mono/4.7-api"
+	elif [[ "${moniker}" == "net462" ]] ; then
+		echo "/usr/lib/mono/4.6.2-api"
+	elif [[ "${moniker}" == "net461" ]] ; then
+		echo "/usr/lib/mono/4.6.1-api"
+	elif [[ "${moniker}" == "net46" ]] ; then
+		echo "/usr/lib/mono/4.6-api"
+	elif [[ "${moniker}" == "net452" ]] ; then
+		echo "/usr/lib/mono/4.5.2-api"
+	elif [[ "${moniker}" == "net451" ]] ; then
+		echo "/usr/lib/mono/4.5.1-api"
+	elif [[ "${moniker}" == "net45" ]] ; then
+		echo "/usr/lib/mono/4.5"
+	elif [[ "${moniker}" == "net40" ]] ; then
+		echo "/usr/lib/mono/4.0-api"
+	elif [[ "${moniker}" == "net35" ]] ; then
+		echo "/usr/lib/mono/3.5-api"
+	elif [[ "${moniker}" == "net20" ]] ; then
+		echo "/usr/lib/mono/2.0-api"
+	fi
+}
+
 EXPORT_FUNCTIONS pkg_setup pkg_pretend
 

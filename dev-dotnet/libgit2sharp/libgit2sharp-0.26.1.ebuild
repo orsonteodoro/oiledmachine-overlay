@@ -5,16 +5,19 @@ EAPI=6
 
 KEYWORDS="~x86 ~amd64"
 
-USE_DOTNET="net45"
-EBUILD_FRAMEWORK="4.5"
-IUSE="${USE_DOTNET} +gac debug developer system-libgit2 test"
+# test do not work for netstandard20
+#USE_DOTNET="netcoreapp20"
+USE_DOTNET="netstandard20 net46"
+TOOLS_VERSION="15.0"
+
+IUSE="${USE_DOTNET} debug developer gac system-libgit2 test"
 REQUIRED_USE="|| ( ${USE_DOTNET} )"
 
 inherit dotnet eutils
 
 DESCRIPTION="A C# PInvoke wrapper library for LibGit2 C library"
 
-COMMIT="a709ab84d4b3c14e7aa9038c2c6b05c57a6b007f"
+COMMIT="8950f498511d9e4cc1756193682ac3bb08581166"
 REPO_URL="https://github.com/libgit2/libgit2sharp.git"
 HOMEPAGE="https://github.com/libgit2/libgit2sharp"
 SRC_URI=""
@@ -39,10 +42,10 @@ RDEPEND="${CDEPEND}
 
 SNK_FILENAME="${S}/libgit2sharp.snk"
 
-LIBGIT2_NATIVE_BINARIES_V="2.0.267"
-LIBGIT2_COMMIT="572e4d8c1f1d42feac1c770f0cddf6fda6c4eca0" # v0.28.1
-LIBGIT2_SHORT_HASH="572e4d8" # short hash of commit
-NATIVE_LIBGIT2_SHORT_HASH="572e4d8" # pretend
+LIBGIT2_NATIVE_BINARIES_V="2.0.289"
+LIBGIT2_COMMIT="7ce88e66a19e3b48340abcdd86aeaae1882e63cc" # v0.28.3
+LIBGIT2_SHORT_HASH="7ce88e6" # short hash of commit
+NATIVE_LIBGIT2_SHORT_HASH="7ce88e6" # pretend
 
 _fetch_project() {
 	# using git is required.
@@ -95,8 +98,19 @@ src_unpack() {
 src_prepare() {
 	cd "${S}"
 
-	addpredict /etc/mono/registry/last-btime
-	epatch "${FILESDIR}/libgit2sharp-0.26-sln.patch"
+	if use net46 ; then
+		eapply "${FILESDIR}/libgit2sharp-0.26-net46-references.patch"
+
+		L=$(find "${S}" -name "*.csproj")
+		for f in $L ; do
+			cp "${FILESDIR}"/netfx.props "$(dirname $f)" || die
+			einfo "Editing $f"
+			sed -i -e "s|<Project Sdk=\"Microsoft.NET.Sdk\">|<Project Sdk=\"Microsoft.NET.Sdk\">\n  <Import Project=\"netfx.props\" />\n|" "$f" || die
+		done
+
+	fi
+
+	epatch "${FILESDIR}/libgit2sharp-0.26.1-sln.patch"
 	#epatch "${FILESDIR}/packages-config-remove-xunit.patch"
 
 	if use debug; then
@@ -108,7 +122,7 @@ src_prepare() {
 	# explained in buildandtest.sh
 	export LD_LIBRARY_PATH=.
 
-	dotnet restore --verbosity normal || die
+	erestore
 
 	if use system-libgit2 ; then
 		# native lib
@@ -120,12 +134,22 @@ src_prepare() {
 		sed -i -e "s|\$(MSBuildThisFileDirectory)\..\..\runtimes\linux-x64\native\libgit2-${LIBGIT2_SHORT_HASH}.so|/usr/lib64/libgit2.so|g" "${HOME}/.nuget/packages/libgit2sharp.nativebinaries/${LIBGIT2_NATIVE_BINARIES_V}/build/net46/LibGit2Sharp.NativeBinaries.props" || die
 	fi
 
+	#estrong_assembly_info "using System.Runtime.InteropServices;" "${S}/libgit2sharp.snk" "LibGit2Sharp/Properties/AssemblyInfo.cs"
+	#sed -i -e "s|using System.Runtime.InteropServices;|using System.Reflection;\nusing System.Runtime.InteropServices;\n|g" "LibGit2Sharp/Properties/AssemblyInfo.cs" || die
+
 	default
 }
 
 src_compile() {
+	# build #1 using this way linux-x64 dlls?
+	if use net46 ; then
+		export FrameworkPathOverride=/usr/lib/mono/4.6-api/
+		_exbuild_netcore_raw build -f net46 --verbosity detailed
+	fi
+
+	# build #2 using this way results in gentoo-x64 dlls?
 	export EXTRADEFINE='LEAKS_IDENTIFYING'
-	dotnet build LibGit2Sharp.Tests -f netcoreapp2.0 -property:ExtraDefine="$EXTRADEFINE" -fl -flp:verbosity=detailed || die
+	exbuild LibGit2Sharp.Tests -property:ExtraDefine="$EXTRADEFINE" -fl -flp:verbosity=detailed
 }
 
 genlibdir() {
@@ -135,22 +159,49 @@ genlibdir() {
 }
 
 src_install() {
-	genlibdir
-	insinto "${libdir}"
 	if use debug; then
-		DIR="debug"
+		DIR="Debug"
 	else
-		DIR="release"
+		DIR="Release"
 	fi
-	doins "bin/LibGit2Sharp/${DIR}/netstandard2.0/LibGit2Sharp.dll"
 
-	insinto "/usr/$(get_libdir)/mono/${PN}"
-	doins libgit2sharp.snk
+	local _dotnet
+	if [ -d /opt/dotnet ] ; then
+		_dotnet="dotnet"
+	elif [ -d /opt/dotnet_core ] ; then
+		_dotnet="dotnet_core"
+	fi
+
+	if use net46 ; then
+		insinto "/usr/lib/mono/4.6-api"
+		estrong_resign "bin/LibGit2Sharp/${DIR}/net46/LibGit2Sharp.dll" "${S}/libgit2sharp.snk"
+		doins "bin/LibGit2Sharp/${DIR}/net46/LibGit2Sharp.dll"
+
+		if [ -n "${_dotnet}" ] ; then
+			insinto "/opt/${_dotnet}/sdk/NuGetFallbackFolder/${PN}/${PV}/lib/net46/"
+			dosym "/usr/lib/mono/4.6-api/LibGit2Sharp.dll" "/opt/${_dotnet}/sdk/NuGetFallbackFolder/${PN}/${PV}/lib/net46/LibGit2Sharp.dll"
+		fi
+	elif use netstandard20 ; then
+		insinto "/opt/${_dotnet}/sdk/NuGetFallbackFolder/${PN}/${PV}/lib/netstandard2.0"
+		estrong_resign "bin/LibGit2Sharp/${DIR}/netstandard2.0/LibGit2Sharp.dll" "${S}/libgit2sharp.snk"
+		doins "bin/LibGit2Sharp/${DIR}/netstandard2.0/LibGit2Sharp.dll"
+	fi
 
 	if use developer ; then
-		insinto "/usr/$(get_libdir)/mono/${PN}"
-		doins "bin/LibGit2Sharp/${DIR}/netstandard2.0/LibGit2Sharp.pdb"
-		doins "bin/LibGit2Sharp/${DIR}/netstandard2.0/LibGit2Sharp.xml"
+		if use net46 ; then
+			insinto "/usr/lib/mono/4.6-api"
+			doins "bin/LibGit2Sharp/${DIR}/net46/LibGit2Sharp.pdb"
+			doins "bin/LibGit2Sharp/${DIR}/net46/LibGit2Sharp.xml"
+			if [ -n "${_dotnet}" ] ; then
+				dosym "/usr/lib/mono/4.6-api/LibGit2Sharp.pdb" "/opt/${_dotnet}/sdk/NuGetFallbackFolder/${PN}/${PV}/lib/net46/LibGit2Sharp.pdb"
+				dosym "/usr/lib/mono/4.6-api/LibGit2Sharp.xml" "/opt/${_dotnet}/sdk/NuGetFallbackFolder/${PN}/${PV}/lib/net46/LibGit2Sharp.xml"
+			fi
+		elif use netstandard20 ; then
+			insinto "/opt/${_dotnet}/sdk/NuGetFallbackFolder/${PN}/${PV}/lib/netstandard2.0"
+			doins "bin/LibGit2Sharp/${DIR}/netstandard2.0/LibGit2Sharp.pdb"
+			doins "bin/LibGit2Sharp/${DIR}/netstandard2.0/LibGit2Sharp.xml"
+		fi
+
 	fi
 
 	dotnet_multilib_comply
@@ -158,30 +209,24 @@ src_install() {
 
 src_test() {
 	if use test ; then
-		dotnet test LibGit2Sharp.Tests/LibGit2Sharp.Tests.csproj -f netcoreapp2.0 --no-restore --no-build || die
+		exbuild_raw test LibGit2Sharp.Tests/LibGit2Sharp.Tests.csproj -f netcoreapp2.0 --no-restore --no-build || die
 	fi
 }
 
 pkg_postinst() {
 	genlibdir
 
-	if use gac; then
-		for x in ${USE_DOTNET} ; do
-			FW_UPPER=${x:3:1}
-			FW_LOWER=${x:4:1}
-			einfo "strong signing"
-			sn -R /usr/$(get_libdir)/mono/${FW_UPPER}.${FW_LOWER}/LibGit2Sharp.dll "/usr/$(get_libdir)/mono/${PN}/libgit2sharp.snk" || die
-			einfo "adding to GAC"
-			gacutil -i "/usr/$(get_libdir)/mono/${FW_UPPER}.${FW_LOWER}/LibGit2Sharp.dll" || die
-		done
+	if use net46 && use gac; then
+		einfo "Adding to GAC"
+		gacutil -i "/usr/lib/mono/4.6-api/LibGit2Sharp.dll" || die
 	fi
 }
 
 pkg_postrm() {
 	genlibdir
 
-	if use gac; then
-		einfo "removing from GAC"
+	if use net46 && use gac; then
+		einfo "Removing from GAC"
 		gacutil -u LibGit2Sharp
 		# don't die, it there is no such assembly in GAC
 	fi

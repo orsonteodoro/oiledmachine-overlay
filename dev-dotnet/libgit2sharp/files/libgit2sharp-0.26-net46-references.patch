@@ -1,0 +1,14 @@
+--- a/LibGit2Sharp.Tests/LibGit2Sharp.Tests.csproj.orig	2019-09-07 12:27:38.543003934 -0700
++++ b/LibGit2Sharp.Tests/LibGit2Sharp.Tests.csproj	2019-09-07 12:59:53.681504659 -0700
+@@ -19,6 +19,11 @@
+     <PackageReference Include="xunit.skippablefact" Version="1.3.6" />
+   </ItemGroup>
+ 
++  <ItemGroup Condition=" $(TargetFramework.StartsWith('net4')) ">
++    <Reference Include="System.Runtime" />
++    <Reference Include="System.Threading.Tasks" />
++  </ItemGroup>
++
+   <ItemGroup>
+     <Compile Include="..\LibGit2Sharp\Core\Platform.cs" Link="TestHelpers\Platform.cs" />
+     <Compile Remove="desktop\**" Condition=" '$(TargetFramework)' != 'net46' " />
