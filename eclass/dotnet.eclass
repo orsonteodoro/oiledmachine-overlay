@@ -24,7 +24,7 @@ inherit eutils multibuild mono-env versionator
 
 IUSE+=" debug developer"
 
-_DOTNET_ECLASS_MODE="" # can be netfx or netcoreapp or netstandard (private variable not to be used outside of eclass)
+DOTNET_ACTIVE_FRAMEWORK="" # can be netfx or netcoreapp or netstandard
 
 _SET_DEPENDS_NETCORE=""
 
@@ -253,28 +253,28 @@ _dotnet_sandbox_network_disabled_check() {
 dotnet_pkg_pretend() {
 	for x in ${USE_DOTNET} ; do
 		case ${x} in
-			netstandard20) if use netstandard20; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
-			netstandard16) if use netstandard16; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
-			netstandard15) if use netstandard15; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
-			netstandard14) if use netstandard14; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
-			netstandard13) if use netstandard13; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
-			netstandard12) if use netstandard12; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
-			netstandard11) if use netstandard11; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
-			netstandard10) if use netstandard10; then _DOTNET_ECLASS_MODE="netstandard"; fi;;
-			netcoreapp22) if use netcoreapp22; then _DOTNET_ECLASS_MODE="netcoreapp"; fi;;
-			netcoreapp21) if use netcoreapp21; then _DOTNET_ECLASS_MODE="netcoreapp"; fi;;
-			netcoreapp20) if use netcoreapp20; then _DOTNET_ECLASS_MODE="netcoreapp"; fi;;
-			netcoreapp11) if use netcoreapp11; then _DOTNET_ECLASS_MODE="netcoreapp"; fi;;
-			netcoreapp10) if use netcoreapp10; then _DOTNET_ECLASS_MODE="netcoreapp"; fi;;
-			*) _DOTNET_ECLASS_MODE="netfx" ;;
+			netstandard20) if use netstandard20; then DOTNET_ACTIVE_FRAMEWORK="netstandard"; fi;;
+			netstandard16) if use netstandard16; then DOTNET_ACTIVE_FRAMEWORK="netstandard"; fi;;
+			netstandard15) if use netstandard15; then DOTNET_ACTIVE_FRAMEWORK="netstandard"; fi;;
+			netstandard14) if use netstandard14; then DOTNET_ACTIVE_FRAMEWORK="netstandard"; fi;;
+			netstandard13) if use netstandard13; then DOTNET_ACTIVE_FRAMEWORK="netstandard"; fi;;
+			netstandard12) if use netstandard12; then DOTNET_ACTIVE_FRAMEWORK="netstandard"; fi;;
+			netstandard11) if use netstandard11; then DOTNET_ACTIVE_FRAMEWORK="netstandard"; fi;;
+			netstandard10) if use netstandard10; then DOTNET_ACTIVE_FRAMEWORK="netstandard"; fi;;
+			netcoreapp22) if use netcoreapp22; then DOTNET_ACTIVE_FRAMEWORK="netcoreapp"; fi;;
+			netcoreapp21) if use netcoreapp21; then DOTNET_ACTIVE_FRAMEWORK="netcoreapp"; fi;;
+			netcoreapp20) if use netcoreapp20; then DOTNET_ACTIVE_FRAMEWORK="netcoreapp"; fi;;
+			netcoreapp11) if use netcoreapp11; then DOTNET_ACTIVE_FRAMEWORK="netcoreapp"; fi;;
+			netcoreapp10) if use netcoreapp10; then DOTNET_ACTIVE_FRAMEWORK="netcoreapp"; fi;;
+			*) DOTNET_ACTIVE_FRAMEWORK="netfx" ;;
 		esac
 
-		if [[ "${_DOTNET_ECLASS_MODE}" == "netstandard" || "${_DOTNET_ECLASS_MODE}" == "netcoreapp" ]] ; then
+		if [[ "${DOTNET_ACTIVE_FRAMEWORK}" == "netstandard" || "${DOTNET_ACTIVE_FRAMEWORK}" == "netcoreapp" ]] ; then
 			_dotnet_sandbox_disabled_check
 		fi
 
 		# applies to netfx or those that use nuget as well; almost always for netcore and netstandard packages
-		if [[ -n "${USE_DOTNET_RESTORE}" || "${_DOTNET_ECLASS_MODE}" == "netstandard" || "${_DOTNET_ECLASS_MODE}" == "netcoreapp" ]] ; then
+		if [[ -n "${USE_DOTNET_RESTORE}" || "${DOTNET_ACTIVE_FRAMEWORK}" == "netstandard" || "${DOTNET_ACTIVE_FRAMEWORK}" == "netcoreapp" ]] ; then
 			_dotnet_sandbox_network_disabled_check
 		fi
 	done
@@ -342,15 +342,15 @@ dotnet_pkg_setup() {
 	version_compare "${FRAMEWORK}" "10"
 	R2="$?"
 	if [[ "${R1}" == "3" ]] ; then
-		_DOTNET_ECLASS_MODE="netstandard"
+		DOTNET_ACTIVE_FRAMEWORK="netstandard"
 		FRAMEWORK=$(echo "scale=1 ; ${FRAMEWORK}/100" | bc)
 		einfo " -- USING .NET STANDARD ${FRAMEWORK} -- "
 	elif [[ "${R2}" == "3" ]] ; then
-		_DOTNET_ECLASS_MODE="netcoreapp"
+		DOTNET_ACTIVE_FRAMEWORK="netcoreapp"
 		FRAMEWORK=$(echo "scale=1 ; ${FRAMEWORK}/10" | bc)
 		einfo " -- USING .NET CORE ${FRAMEWORK} -- "
 	else
-		_DOTNET_ECLASS_MODE="netfx"
+		DOTNET_ACTIVE_FRAMEWORK="netfx"
 		einfo " -- USING .NET FRAMEWORK ${FRAMEWORK} -- "
 	fi
 
@@ -360,13 +360,13 @@ dotnet_pkg_setup() {
 	version_compare "${EBUILD_FRAMEWORK}" "10"
 	R2="$?"
 	if [[ "${R1}" == "3" ]] ; then
-		_DOTNET_ECLASS_MODE_EF="netstandard"
+		DOTNET_ACTIVE_FRAMEWORK_EF="netstandard"
 		EBUILD_FRAMEWORK=$(echo "scale=1 ; ${EBUILD_FRAMEWORK}/100" | bc)
 	elif [[ "${R2}" == "3" ]] ; then
-		_DOTNET_ECLASS_MODE_EF="netcoreapp"
+		DOTNET_ACTIVE_FRAMEWORK_EF="netcoreapp"
 		EBUILD_FRAMEWORK=$(echo "scale=1 ; ${EBUILD_FRAMEWORK}/10" | bc)
 	else
-		_DOTNET_ECLASS_MODE_EF="netfx"
+		DOTNET_ACTIVE_FRAMEWORK_EF="netfx"
 	fi
 }
 
@@ -425,9 +425,9 @@ _exbuild_netcore_raw() {
 # @FUNCTION: exbuild_raw
 # @DESCRIPTION: run xbuild or dotnet with given parameters
 exbuild_raw() {
-	if [[ "${TOOLS_VERSION}" == "15.0" || "${_DOTNET_ECLASS_MODE}" == "netcoreapp" || "${_DOTNET_ECLASS_MODE}" == "netstandard" ]] ; then
+	if [[ "${TOOLS_VERSION}" == "15.0" || "${DOTNET_ACTIVE_FRAMEWORK}" == "netcoreapp" || "${DOTNET_ACTIVE_FRAMEWORK}" == "netstandard" ]] ; then
 		_exbuild_netcore_raw $@
-	elif [[ "${_DOTNET_ECLASS_MODE}" == "netfx" ]] ; then
+	elif [[ "${DOTNET_ACTIVE_FRAMEWORK}" == "netfx" ]] ; then
 		_exbuild_netfx_raw $@
 	fi
 }
@@ -479,10 +479,10 @@ _exbuild_netcore() {
 	fi
 
 	local framework
-	if [[ -n ${TOOLS_VERSION} && "${TOOLS_VERSION}" == "15.0" && "${_DOTNET_ECLASS_MODE}" == "netfx" ]] ; then
-		framework=${_DOTNET_ECLASS_MODE//fx/}${FRAMEWORK//./}
+	if [[ -n ${TOOLS_VERSION} && "${TOOLS_VERSION}" == "15.0" && "${DOTNET_ACTIVE_FRAMEWORK}" == "netfx" ]] ; then
+		framework=${DOTNET_ACTIVE_FRAMEWORK//fx/}${FRAMEWORK//./}
 	else
-		framework=${_DOTNET_ECLASS_MODE}${FRAMEWORK}
+		framework=${DOTNET_ACTIVE_FRAMEWORK}${FRAMEWORK}
 	fi
 
 	_exbuild_netcore_raw build "${project}" "-verbosity:detailed" "-f" "${framework}" "${CARGS}" "${SARGS}" "$@"
@@ -491,9 +491,9 @@ _exbuild_netcore() {
 # @FUNCTION: exbuild
 # @DESCRIPTION: frontend for xbuild and dotnet
 exbuild() {
-	if [[ "${TOOLS_VERSION}" == "15.0" ||  "${_DOTNET_ECLASS_MODE}" == "netcoreapp" || "${_DOTNET_ECLASS_MODE}" == "netstandard" ]] ; then
+	if [[ "${TOOLS_VERSION}" == "15.0" ||  "${DOTNET_ACTIVE_FRAMEWORK}" == "netcoreapp" || "${DOTNET_ACTIVE_FRAMEWORK}" == "netstandard" ]] ; then
 		_exbuild_netcore $@
-	elif [[ "${_DOTNET_ECLASS_MODE}" == "netfx" ]] ; then
+	elif [[ "${DOTNET_ACTIVE_FRAMEWORK}" == "netfx" ]] ; then
 		_exbuild_netfx $@
 	fi
 }
@@ -610,6 +610,11 @@ _dotnet_multibuild_wrapper() {
 	debug-print-function ${FUNCNAME} "${@}"
 
 	EDOTNET="${MULTIBUILD_VARIANT}"
+	DOTNET_ACTIVE_FRAMEWORK="${MULTIBUILD_VARIANT}"
+	EBF=$(dotnet_dotted_moniker "${MULTIBUILD_VARIANT}")
+	EBF="${EBF//netstandard/}"
+	EBF="${EBF//netcoreapp/}"
+	EBF="${EBF//net/}"
 
 	# run it
 	"${@}"
@@ -669,10 +674,10 @@ dotnet_netcore_install_loc() {
 	if [[ -n "${moniker}" ]]; then
 		framework="${moniker}"
 	else
-		if [[ -n ${TOOLS_VERSION} && "${TOOLS_VERSION}" == "15.0" && "${_DOTNET_ECLASS_MODE}" == "netfx" ]] ; then
-			framework=${_DOTNET_ECLASS_MODE//fx/}${FRAMEWORK//./}
+		if [[ -n ${TOOLS_VERSION} && "${TOOLS_VERSION}" == "15.0" && "${DOTNET_ACTIVE_FRAMEWORK}" == "netfx" ]] ; then
+			framework=${DOTNET_ACTIVE_FRAMEWORK//fx/}${FRAMEWORK//./}
 		else
-			framework=${_DOTNET_ECLASS_MODE}${FRAMEWORK}
+			framework=${DOTNET_ACTIVE_FRAMEWORK}${FRAMEWORK}
 		fi
 	fi
 
@@ -688,7 +693,7 @@ dotnet_netcore_install_loc() {
 dotnet_netfx_install_loc() {
 	local moniker="${1}"
 	if [[ -z "${moniker}" ]] ; then
-		moniker=${_DOTNET_ECLASS_MODE//fx/}${FRAMEWORK//./}
+		moniker=${DOTNET_ACTIVE_FRAMEWORK//fx/}${FRAMEWORK//./}
 	fi
 
 	if [[ "${moniker}" == "net472" ]] ; then
