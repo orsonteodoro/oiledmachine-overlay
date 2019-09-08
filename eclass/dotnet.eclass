@@ -718,5 +718,66 @@ dotnet_netfx_install_loc() {
 	fi
 }
 
+# @FUNCTION: dotnet_dotted_moniker
+# @DESCRIPTION:  This will restore the periods netstandard20 will report netstandard2.0
+# @RETURN: A dotted version string e.g. netstandard2.0
+# @CODE
+# Parameters:
+# $1 - the framework moniker e.g. net46 (optional)
+# @CODE
+dotnet_dotted_moniker() {
+	if [[ "${moniker}" == "netstandard20" ]] ; then
+		echo "netstandard2.0"
+	elif [[ "${moniker}" == "netstandard16" ]] ; then
+		echo "netstandard1.6"
+	elif [[ "${moniker}" == "netstandard15" ]] ; then
+		echo "netstandard1.5"
+	elif [[ "${moniker}" == "netstandard14" ]] ; then
+		echo "netstandard1.4"
+	elif [[ "${moniker}" == "netstandard13" ]] ; then
+		echo "netstandard1.3"
+	elif [[ "${moniker}" == "netstandard12" ]] ; then
+		echo "netstandard1.2"
+	elif [[ "${moniker}" == "netstandard11" ]] ; then
+		echo "netstandard1.1"
+	elif [[ "${moniker}" == "netstandard10" ]] ; then
+		echo "netstandard1.0"
+	elif [[ "${moniker}" == "netcoreapp22" ]] ; then
+		echo "netcoreapp2.2"
+	elif [[ "${moniker}" == "netcoreapp21" ]] ; then
+		echo "netcoreapp2.1"
+	elif [[ "${moniker}" == "netcoreapp20" ]] ; then
+		echo "netcoreapp2.0"
+	elif [[ "${moniker}" == "netcoreapp11" ]] ; then
+		echo "netcoreapp1.1"
+	elif [[ "${moniker}" == "netcoreapp10" ]] ; then
+		echo "netcoreapp1.0"
+	elif [[ "${moniker}" == "net472" ]] ; then
+		echo "net4.7.2"
+	elif [[ "${moniker}" == "net471" ]] ; then
+		echo "net4.7.1"
+	elif [[ "${moniker}" == "net47" ]] ; then
+		echo "net4.7"
+	elif [[ "${moniker}" == "net462" ]] ; then
+		echo "net4.6.2"
+	elif [[ "${moniker}" == "net461" ]] ; then
+		echo "net4.6.1"
+	elif [[ "${moniker}" == "net46" ]] ; then
+		echo "net4.6"
+	elif [[ "${moniker}" == "net452" ]] ; then
+		echo "net4.5.2"
+	elif [[ "${moniker}" == "net451" ]] ; then
+		echo "net4.5.1"
+	elif [[ "${moniker}" == "net45" ]] ; then
+		echo "net4.5"
+	elif [[ "${moniker}" == "net40" ]] ; then
+		echo "net4.0"
+	elif [[ "${moniker}" == "net35" ]] ; then
+		echo "net3.5"
+	elif [[ "${moniker}" == "net20" ]] ; then
+		echo "net2.0"
+	fi
+}
+
 EXPORT_FUNCTIONS pkg_setup pkg_pretend
 
