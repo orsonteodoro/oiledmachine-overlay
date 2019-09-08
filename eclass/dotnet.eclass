@@ -616,6 +616,9 @@ _dotnet_multibuild_wrapper() {
 	EBF="${EBF//netcoreapp/}"
 	EBF="${EBF//net/}"
 
+	mkdir -p "${PORTAGE_BUILDDIR}/homedir-${MULTIBUILD_VARIANT}"
+	HOME="${PORTAGE_BUILDDIR}/homedir-${MULTIBUILD_VARIANT}"
+
 	# run it
 	"${@}"
 }
@@ -731,6 +734,11 @@ dotnet_netfx_install_loc() {
 # $1 - the framework moniker e.g. net46 (optional)
 # @CODE
 dotnet_dotted_moniker() {
+	local moniker="${1}"
+	if [[ -z "${moniker}" ]] ; then
+		moniker=${DOTNET_ACTIVE_FRAMEWORK//fx/}${FRAMEWORK//./}
+	fi
+
 	if [[ "${moniker}" == "netstandard20" ]] ; then
 		echo "netstandard2.0"
 	elif [[ "${moniker}" == "netstandard16" ]] ; then
@@ -782,6 +790,25 @@ dotnet_dotted_moniker() {
 	elif [[ "${moniker}" == "net20" ]] ; then
 		echo "net2.0"
 	fi
+}
+
+# @FUNCTION: dotnet_is_netfx
+# @DESCRIPTION:  This will inspect the moniker to see if it is dotnet
+# @RETURN: 0 (OK) is netfx/.NET Framework, 1 (NO) is not netfx/.NET Framework moniker
+# @CODE
+# Parameters:
+# $1 - the framework moniker e.g. net46 (optional)
+# @CODE
+dotnet_is_netfx() {
+	local moniker="${1}"
+	if [[ -z "${moniker}" ]] ; then
+		moniker=${DOTNET_ACTIVE_FRAMEWORK//fx/}${FRAMEWORK//./}
+	fi
+
+	if [[ "${moniker}" =~ net[0-9][0-9][0-9]? ]]; then
+		return 1
+	fi
+	return 0
 }
 
 EXPORT_FUNCTIONS pkg_setup pkg_pretend
