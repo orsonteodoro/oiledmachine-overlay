@@ -806,9 +806,9 @@ dotnet_is_netfx() {
 	fi
 
 	if [[ "${moniker}" =~ net[0-9][0-9][0-9]? ]]; then
-		return 1
+		return 0
 	fi
-	return 0
+	return 1
 }
 
 EXPORT_FUNCTIONS pkg_setup pkg_pretend
