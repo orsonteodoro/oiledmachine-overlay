@@ -368,6 +368,9 @@ dotnet_pkg_setup() {
 	else
 		DOTNET_ACTIVE_FRAMEWORK_EF="netfx"
 	fi
+
+	einfo "FRAMEWORK=${FRAMEWORK}"
+	einfo "EBUILD_FRAMEWORK=${EBUILD_FRAMEWORK}"
 }
 
 # >=mono-0.92 versions using mcs -pkg:foo-sharp require shared memory, so we set the
@@ -610,7 +613,7 @@ _dotnet_multibuild_wrapper() {
 	debug-print-function ${FUNCNAME} "${@}"
 
 	EDOTNET="${MULTIBUILD_VARIANT}"
-	DOTNET_ACTIVE_FRAMEWORK="${MULTIBUILD_VARIANT}"
+	DOTNET_ACTIVE_FRAMEWORK="${MULTIBUILD_VARIANT//[0-9\.]/}"
 	EBF=$(dotnet_dotted_moniker "${MULTIBUILD_VARIANT}")
 	EBF="${EBF//netstandard/}"
 	EBF="${EBF//netcoreapp/}"
