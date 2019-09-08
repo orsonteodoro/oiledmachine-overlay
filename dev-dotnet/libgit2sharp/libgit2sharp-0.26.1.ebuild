@@ -5,13 +5,12 @@ EAPI=6
 
 KEYWORDS="~x86 ~amd64"
 
-# test do not work for netstandard20
-#USE_DOTNET="netcoreapp20"
-USE_DOTNET="netstandard20 net46"
+# tests are supposed to be built with netcoreapp, the dlls are supposed be compiled for netstandard20
+USE_DOTNET="netstandard20 net46 netcoreapp21"
 TOOLS_VERSION="15.0"
 
 IUSE="${USE_DOTNET} debug developer gac system-libgit2 test"
-REQUIRED_USE="|| ( ${USE_DOTNET} )"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) test? ( netcoreapp21 )"
 
 inherit dotnet eutils
 
@@ -131,11 +130,14 @@ src_compile() {
 	if use net46 ; then
 		export FrameworkPathOverride=/usr/lib/mono/4.6-api/
 		_exbuild_netcore_raw build -f net46 --verbosity detailed
+	elif use netstandard20 ; then
+		_exbuild_netcore_raw build -f netstandard2.0 --verbosity detailed
 	fi
 
-	# build #2 using this way results in gentoo-x64 dlls?
-	export EXTRADEFINE='LEAKS_IDENTIFYING'
-	exbuild LibGit2Sharp.Tests -property:ExtraDefine="$EXTRADEFINE" -fl -flp:verbosity=detailed
+	if use test ; then
+		export EXTRADEFINE='LEAKS_IDENTIFYING'
+		exbuild LibGit2Sharp.Tests -property:ExtraDefine="$EXTRADEFINE" -fl -flp:verbosity=detailed
+	fi
 }
 
 src_install() {
