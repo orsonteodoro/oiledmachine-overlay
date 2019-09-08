@@ -353,6 +353,7 @@ dotnet_pkg_setup() {
 		DOTNET_ACTIVE_FRAMEWORK="netfx"
 		einfo " -- USING .NET FRAMEWORK ${FRAMEWORK} -- "
 	fi
+	export EBF="${FRAMEWORK}"
 
 	# EBUILD_FRAMEWORK is the highest suppored by ebuild?
 	version_compare "${EBUILD_FRAMEWORK}" "100"
@@ -451,7 +452,7 @@ _exbuild_netfx() {
 		TOOLS_VERSION=4.0
 	fi
 
-	_exbuild_netfx_raw "/v:detailed" "/tv:${TOOLS_VERSION}" "/p:TargetFrameworkVersion=v${FRAMEWORK}" "${CARGS}" "${SARGS}" "$@"
+	_exbuild_netfx_raw "/v:detailed" "/tv:${TOOLS_VERSION}" "/p:TargetFrameworkVersion=v${EBF}" "${CARGS}" "${SARGS}" "$@"
 }
 
 # @FUNCTION: _exbuild_netstandard
@@ -480,9 +481,9 @@ _exbuild_netcore() {
 
 	local framework
 	if [[ -n ${TOOLS_VERSION} && "${TOOLS_VERSION}" == "15.0" && "${DOTNET_ACTIVE_FRAMEWORK}" == "netfx" ]] ; then
-		framework=${DOTNET_ACTIVE_FRAMEWORK//fx/}${FRAMEWORK//./}
+		framework=${DOTNET_ACTIVE_FRAMEWORK//fx/}${EBF//./}
 	else
-		framework=${DOTNET_ACTIVE_FRAMEWORK}${FRAMEWORK}
+		framework=${DOTNET_ACTIVE_FRAMEWORK}${EBF}
 	fi
 
 	_exbuild_netcore_raw build "${project}" "-verbosity:detailed" "-f" "${framework}" "${CARGS}" "${SARGS}" "$@"
@@ -678,9 +679,9 @@ dotnet_netcore_install_loc() {
 		framework="${moniker}"
 	else
 		if [[ -n ${TOOLS_VERSION} && "${TOOLS_VERSION}" == "15.0" && "${DOTNET_ACTIVE_FRAMEWORK}" == "netfx" ]] ; then
-			framework=${DOTNET_ACTIVE_FRAMEWORK//fx/}${FRAMEWORK//./}
+			framework=${DOTNET_ACTIVE_FRAMEWORK//fx/}${EBF//./}
 		else
-			framework=${DOTNET_ACTIVE_FRAMEWORK}${FRAMEWORK}
+			framework=${DOTNET_ACTIVE_FRAMEWORK}${EBF}
 		fi
 	fi
 
@@ -696,7 +697,7 @@ dotnet_netcore_install_loc() {
 dotnet_netfx_install_loc() {
 	local moniker="${1}"
 	if [[ -z "${moniker}" ]] ; then
-		moniker=${DOTNET_ACTIVE_FRAMEWORK//fx/}${FRAMEWORK//./}
+		moniker=${DOTNET_ACTIVE_FRAMEWORK//fx/}${EBF//./}
 	fi
 
 	if [[ "${moniker}" == "net472" ]] ; then
@@ -736,7 +737,7 @@ dotnet_netfx_install_loc() {
 dotnet_dotted_moniker() {
 	local moniker="${1}"
 	if [[ -z "${moniker}" ]] ; then
-		moniker=${DOTNET_ACTIVE_FRAMEWORK//fx/}${FRAMEWORK//./}
+		moniker=${DOTNET_ACTIVE_FRAMEWORK//fx/}${EBF//./}
 	fi
 
 	if [[ "${moniker}" == "netstandard20" ]] ; then
@@ -802,7 +803,7 @@ dotnet_dotted_moniker() {
 dotnet_is_netfx() {
 	local moniker="${1}"
 	if [[ -z "${moniker}" ]] ; then
-		moniker=${DOTNET_ACTIVE_FRAMEWORK//fx/}${FRAMEWORK//./}
+		moniker=${DOTNET_ACTIVE_FRAMEWORK//fx/}${EBF//./}
 	fi
 
 	if [[ "${moniker}" =~ net[0-9][0-9][0-9]? ]]; then
