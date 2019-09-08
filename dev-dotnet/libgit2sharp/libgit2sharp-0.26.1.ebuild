@@ -40,8 +40,6 @@ DEPEND="${CDEPEND}
 RDEPEND="${CDEPEND}
 	 dev-vcs/git"
 
-SNK_FILENAME="${S}/libgit2sharp.snk"
-
 LIBGIT2_NATIVE_BINARIES_V="2.0.289"
 LIBGIT2_COMMIT="7ce88e66a19e3b48340abcdd86aeaae1882e63cc" # v0.28.3
 LIBGIT2_SHORT_HASH="7ce88e6" # short hash of commit
@@ -76,13 +74,6 @@ _fetch_project() {
 	#git checkout ${COMMIT} # uncomment for forced deterministic build.  comment to follow head of tag.
 	[ ! -e "README.md" ] && die "found nothing"
 	cp -a "${d}" "${S}" || die
-}
-
-pkg_pretend() {
-	# the sandbox won't allow us to use dotnet restore properly so sandbox restrictions must be dropped
-	if has sandbox $FEATURES || has usersandbox $FEATURES || has network-sandbox $FEATURES ; then
-		die ".NET core command-line (CLI) tools require sandbox and usersandbox and network-sandbox to be disabled in FEATURES."
-	fi
 }
 
 src_unpack() {
@@ -134,9 +125,6 @@ src_prepare() {
 		sed -i -e "s|\$(MSBuildThisFileDirectory)\..\..\runtimes\linux-x64\native\libgit2-${LIBGIT2_SHORT_HASH}.so|/usr/lib64/libgit2.so|g" "${HOME}/.nuget/packages/libgit2sharp.nativebinaries/${LIBGIT2_NATIVE_BINARIES_V}/build/net46/LibGit2Sharp.NativeBinaries.props" || die
 	fi
 
-	#estrong_assembly_info "using System.Runtime.InteropServices;" "${S}/libgit2sharp.snk" "LibGit2Sharp/Properties/AssemblyInfo.cs"
-	#sed -i -e "s|using System.Runtime.InteropServices;|using System.Reflection;\nusing System.Runtime.InteropServices;\n|g" "LibGit2Sharp/Properties/AssemblyInfo.cs" || die
-
 	default
 }
 
@@ -150,12 +138,6 @@ src_compile() {
 	# build #2 using this way results in gentoo-x64 dlls?
 	export EXTRADEFINE='LEAKS_IDENTIFYING'
 	exbuild LibGit2Sharp.Tests -property:ExtraDefine="$EXTRADEFINE" -fl -flp:verbosity=detailed
-}
-
-genlibdir() {
-	prefix=${PREFIX}/usr
-	exec_prefix=${prefix}
-	libdir=${exec_prefix}/$(get_libdir)/mono/${EBUILD_FRAMEWORK}
 }
 
 src_install() {
@@ -214,8 +196,6 @@ src_test() {
 }
 
 pkg_postinst() {
-	genlibdir
-
 	if use net46 && use gac; then
 		einfo "Adding to GAC"
 		gacutil -i "/usr/lib/mono/4.6-api/LibGit2Sharp.dll" || die
@@ -223,8 +203,6 @@ pkg_postinst() {
 }
 
 pkg_postrm() {
-	genlibdir
-
 	if use net46 && use gac; then
 		einfo "Removing from GAC"
 		gacutil -u LibGit2Sharp
