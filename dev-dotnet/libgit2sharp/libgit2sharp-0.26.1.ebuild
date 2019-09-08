@@ -34,8 +34,6 @@ CDEPEND="
 
 DEPEND="${CDEPEND}
 	>=dev-dotnet/nuget-2.7
-	>=dev-lang/mono-5.4
-	|| ( dev-dotnet/dotnetcore-sdk dev-dotnet/dotnetcore-sdk-bin )
 "
 RDEPEND="${CDEPEND}
 	 dev-vcs/git"
