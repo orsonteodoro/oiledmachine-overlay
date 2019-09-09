@@ -41,10 +41,6 @@ src_compile() {
 	fi
 
 	compile_impl() {
-		cd "${BUILD_DIR}"
-
-		cd "wrappers/csharp/src/lib/VS2010"
-
 	        einfo "Building solution"
 	        exbuild /p:Configuration=${mydebug} "freenectdotnet.sln" || die
 	}
@@ -59,31 +55,16 @@ src_install() {
 	fi
 
 	install_impl() {
-		cd "${BUILD_DIR}"
-
                 insinto "$(dotnet_netfx_install_loc ${EDOTNET})"
 		use developer && doins "wrappers/csharp/bin/freenectdotnet.dll.mdb"
 		cp -a "${FILESDIR}/freenectdotnet.dll.config" "${BUILD_DIR}"
 
-		# pinvoke: https://www.mono-project.com/docs/advanced/pinvoke/dllmap/
 		local wordsize
-		local cpu
-		if [[ ${ARCH} =~ (amd64) ]]; then
-			wordsize="64"
-			cpu="x86-64"
-		elif [[ ${ARCH} =~ (x86) ]] ; then
-			wordsize="32"
-			cpu="x86"
-		elif [[ ${ARCH} =~ (arm64) ]] ; then
-			wordsize="64"
-			cpu="arm"
-		elif [[ ${ARCH} =~ (ppc64) ]] ; then
-			wordsize="64"
-			cpu="arm"
-		fi
+		wordsize="$(get_libdir)"
+		wordsize="${wordsize//lib/}"
+		wordsize="${wordsize//[on]/}"
 
 		sed -i -e "s|wordsize=\"[0-9]+\"|wordsize=\"${wordsize}\"|g" freenectdotnet.dll.config || die
-		sed -i -e "s|cpu=\"[a-z0-9-]+\"|cpu=\"${cpu}\"|g" freenectdotnet.dll.config || die
 
                 doins freenectdotnet.dll.config
 		doins wrappers/csharp/bin/freenectdotnet.dll
