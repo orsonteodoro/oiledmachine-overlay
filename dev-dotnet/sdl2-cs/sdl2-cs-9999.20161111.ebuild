@@ -44,13 +44,9 @@ src_compile() {
 	        exbuild ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" /p:Configuration=${mydebug} SDL2-CS.csproj || die
 
 		local wordsize
-		if [[ "$(get_libdir)" == "lib64" ]]; then
-			wordsize="64"
-		elif [[ "$(get_libdir)" == "lib32" ]]; then
-			wordsize="32"
-		else
-			die "${ABI} not supported"
-		fi
+		wordsize="$(get_libdir)"
+		wordsize="${wordsize//lib/}"
+		wordsize="${wordsize//[on]/}"
 
 		sed -i -e "s|wordsize=\"[0-9]+\"|wordsize=\"${wordsize}\"|g" "${f}" || die
 		sed -i -e "s|lib64|$(get_libdir)|g" "${f}" || die
