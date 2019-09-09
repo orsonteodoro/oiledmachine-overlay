@@ -23,7 +23,6 @@ inherit eutils multibuild mono-env versionator
 # Use flags added to IUSE
 
 IUSE+=" debug developer"
-REQUIRED_USE+=" || ( ${USE_DOTNET} )"
 
 # @ECLASS-VARIABLE: STRONG_ARGS_NETFX
 # @DESCRIPTION: Args to expand for exbuild
