@@ -9,11 +9,14 @@ USE_DOTNET="net45"
 IUSE="+${USE_DOTNET} nupkg"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) nupkg"
 
-inherit gac nupkg
+inherit nupkg pc-file
 
 SHORT_HASH="7e2571e" # obtained from string cmd
 COMMIT="7e2571ed334e9cee3f0d3bafeef02852310f4d3b"
 SRC_URI="https://github.com/mono/mono/archive/${COMMIT}.zip -> ${P}.zip"
+
+inherit gac
+
 S="${WORKDIR}/mono-${COMMIT}"
 
 SLOT="0"
@@ -22,14 +25,11 @@ DESCRIPTION="A Getopt.Long-inspired option parsing library for CSharp"
 HOMEPAGE="http://tirania.org/blog/archive/2008/Oct-14.html"
 LICENSE="MIT"
 
-
 CDEPEND=""
 DEPEND="${CDEPEND}
 	nupkg? ( dev-dotnet/nuget )
-	dev-lang/mono[external-mono-options]
-	"
-RDEPEND="${CDEPEND}
-	"
+	dev-lang/mono[external-mono-options]"
+RDEPEND="${CDEPEND}"
 
 get_dlldir() {
 	if use abi_x86_64 ; then
@@ -56,8 +56,7 @@ src_configure() {
 }
 
 src_compile() {
-	addpredict /etc/mono/registry/last-btime
-	# exbuild_strong "mcs/class/Mono.Options/Mono.Options-net_4_x.csproj" # csproj is created during configure
+	# exbuild "mcs/class/Mono.Options/Mono.Options-net_4_x.csproj" # csproj is created during configure
 	if use gac; then
 		PARAMETERS=-keyfile:mcs/class/mono.snk
 	else
@@ -95,3 +94,4 @@ pkg_prerm() {
 		# don't die, it there is no such assembly in GAC
 	fi
 }
+
