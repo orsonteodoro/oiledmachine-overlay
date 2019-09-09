@@ -733,7 +733,7 @@ dotnet_netfx_install_loc() {
 }
 
 # @FUNCTION: dotnet_dotted_moniker
-# @DESCRIPTION:  This will restore the periods netstandard20 will report netstandard2.0
+# @DESCRIPTION:  This will restore the periods for the moniker.  netstandard20 will report netstandard2.0 .
 # @RETURN: A dotted version string e.g. netstandard2.0
 # @CODE
 # Parameters:
@@ -795,6 +795,72 @@ dotnet_dotted_moniker() {
 		echo "net3.5"
 	elif [[ "${moniker}" == "net20" ]] ; then
 		echo "net2.0"
+	fi
+}
+
+# @FUNCTION: dotnet_use_flag_moniker_to_ms_moniker
+# @DESCRIPTION:  This will conver the use flag moniker to ms format
+# @RETURN: A dotted version string for netcore and netstandard, except netfx
+# @CODE
+# Parameters:
+# $1 - the framework moniker e.g. net46 (optional)
+# @CODE
+dotnet_use_flag_moniker_to_ms_moniker() {
+	local moniker="${1}"
+	if [[ -z "${moniker}" ]] ; then
+		moniker=${DOTNET_ACTIVE_FRAMEWORK//fx/}${EBF//./}
+	fi
+
+	if [[ "${moniker}" == "netstandard20" ]] ; then
+		echo "netstandard2.0"
+	elif [[ "${moniker}" == "netstandard16" ]] ; then
+		echo "netstandard1.6"
+	elif [[ "${moniker}" == "netstandard15" ]] ; then
+		echo "netstandard1.5"
+	elif [[ "${moniker}" == "netstandard14" ]] ; then
+		echo "netstandard1.4"
+	elif [[ "${moniker}" == "netstandard13" ]] ; then
+		echo "netstandard1.3"
+	elif [[ "${moniker}" == "netstandard12" ]] ; then
+		echo "netstandard1.2"
+	elif [[ "${moniker}" == "netstandard11" ]] ; then
+		echo "netstandard1.1"
+	elif [[ "${moniker}" == "netstandard10" ]] ; then
+		echo "netstandard1.0"
+	elif [[ "${moniker}" == "netcoreapp22" ]] ; then
+		echo "netcoreapp2.2"
+	elif [[ "${moniker}" == "netcoreapp21" ]] ; then
+		echo "netcoreapp2.1"
+	elif [[ "${moniker}" == "netcoreapp20" ]] ; then
+		echo "netcoreapp2.0"
+	elif [[ "${moniker}" == "netcoreapp11" ]] ; then
+		echo "netcoreapp1.1"
+	elif [[ "${moniker}" == "netcoreapp10" ]] ; then
+		echo "netcoreapp1.0"
+	elif [[ "${moniker}" == "net472" ]] ; then
+		echo "net472"
+	elif [[ "${moniker}" == "net471" ]] ; then
+		echo "net471"
+	elif [[ "${moniker}" == "net47" ]] ; then
+		echo "net47"
+	elif [[ "${moniker}" == "net462" ]] ; then
+		echo "net462"
+	elif [[ "${moniker}" == "net461" ]] ; then
+		echo "net461"
+	elif [[ "${moniker}" == "net46" ]] ; then
+		echo "net46"
+	elif [[ "${moniker}" == "net452" ]] ; then
+		echo "net452"
+	elif [[ "${moniker}" == "net451" ]] ; then
+		echo "net451"
+	elif [[ "${moniker}" == "net45" ]] ; then
+		echo "net45"
+	elif [[ "${moniker}" == "net40" ]] ; then
+		echo "net40"
+	elif [[ "${moniker}" == "net35" ]] ; then
+		echo "net35"
+	elif [[ "${moniker}" == "net20" ]] ; then
+		echo "net20"
 	fi
 }
 
