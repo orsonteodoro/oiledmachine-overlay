@@ -705,31 +705,20 @@ dotnet_netfx_install_loc() {
 		moniker=${DOTNET_ACTIVE_FRAMEWORK//fx/}${EBF//./}
 	fi
 
-	if [[ "${moniker}" == "net472" ]] ; then
-		echo "/usr/lib/mono/4.7.2-api"
-	elif [[ "${moniker}" == "net471" ]] ; then
-		echo "/usr/lib/mono/4.7.1-api"
-	elif [[ "${moniker}" == "net47" ]] ; then
-		echo "/usr/lib/mono/4.7-api"
-	elif [[ "${moniker}" == "net462" ]] ; then
-		echo "/usr/lib/mono/4.6.2-api"
-	elif [[ "${moniker}" == "net461" ]] ; then
-		echo "/usr/lib/mono/4.6.1-api"
-	elif [[ "${moniker}" == "net46" ]] ; then
-		echo "/usr/lib/mono/4.6-api"
-	elif [[ "${moniker}" == "net452" ]] ; then
-		echo "/usr/lib/mono/4.5.2-api"
-	elif [[ "${moniker}" == "net451" ]] ; then
-		echo "/usr/lib/mono/4.5.1-api"
-	elif [[ "${moniker}" == "net45" ]] ; then
-		echo "/usr/lib/mono/4.5"
-	elif [[ "${moniker}" == "net40" ]] ; then
-		echo "/usr/lib/mono/4.0-api"
-	elif [[ "${moniker}" == "net35" ]] ; then
-		echo "/usr/lib/mono/3.5-api"
-	elif [[ "${moniker}" == "net20" ]] ; then
-		echo "/usr/lib/mono/2.0-api"
-	fi
+	case ${moniker} in
+		net472) echo "/usr/lib/mono/4.7.2-api" ;;
+		net471) echo "/usr/lib/mono/4.7.1-api" ;;
+		net47) echo "/usr/lib/mono/4.7-api" ;;
+		net462) echo "/usr/lib/mono/4.6.2-api" ;;
+		net461) echo "/usr/lib/mono/4.6.1-api" ;;
+		net46) echo "/usr/lib/mono/4.6-api" ;;
+		net452) echo "/usr/lib/mono/4.5.2-api" ;;
+		net451) echo "/usr/lib/mono/4.5.1-api" ;;
+		net45) echo "/usr/lib/mono/4.5" ;;
+		net40) echo "/usr/lib/mono/4.0-api" ;;
+		net35) echo "/usr/lib/mono/3.5-api" ;;
+		net20) echo "/usr/lib/mono/2.0-api" ;;
+	esac
 }
 
 # @FUNCTION: dotnet_dotted_moniker
@@ -745,57 +734,33 @@ dotnet_dotted_moniker() {
 		moniker=${DOTNET_ACTIVE_FRAMEWORK//fx/}${EBF//./}
 	fi
 
-	if [[ "${moniker}" == "netstandard20" ]] ; then
-		echo "netstandard2.0"
-	elif [[ "${moniker}" == "netstandard16" ]] ; then
-		echo "netstandard1.6"
-	elif [[ "${moniker}" == "netstandard15" ]] ; then
-		echo "netstandard1.5"
-	elif [[ "${moniker}" == "netstandard14" ]] ; then
-		echo "netstandard1.4"
-	elif [[ "${moniker}" == "netstandard13" ]] ; then
-		echo "netstandard1.3"
-	elif [[ "${moniker}" == "netstandard12" ]] ; then
-		echo "netstandard1.2"
-	elif [[ "${moniker}" == "netstandard11" ]] ; then
-		echo "netstandard1.1"
-	elif [[ "${moniker}" == "netstandard10" ]] ; then
-		echo "netstandard1.0"
-	elif [[ "${moniker}" == "netcoreapp22" ]] ; then
-		echo "netcoreapp2.2"
-	elif [[ "${moniker}" == "netcoreapp21" ]] ; then
-		echo "netcoreapp2.1"
-	elif [[ "${moniker}" == "netcoreapp20" ]] ; then
-		echo "netcoreapp2.0"
-	elif [[ "${moniker}" == "netcoreapp11" ]] ; then
-		echo "netcoreapp1.1"
-	elif [[ "${moniker}" == "netcoreapp10" ]] ; then
-		echo "netcoreapp1.0"
-	elif [[ "${moniker}" == "net472" ]] ; then
-		echo "net4.7.2"
-	elif [[ "${moniker}" == "net471" ]] ; then
-		echo "net4.7.1"
-	elif [[ "${moniker}" == "net47" ]] ; then
-		echo "net4.7"
-	elif [[ "${moniker}" == "net462" ]] ; then
-		echo "net4.6.2"
-	elif [[ "${moniker}" == "net461" ]] ; then
-		echo "net4.6.1"
-	elif [[ "${moniker}" == "net46" ]] ; then
-		echo "net4.6"
-	elif [[ "${moniker}" == "net452" ]] ; then
-		echo "net4.5.2"
-	elif [[ "${moniker}" == "net451" ]] ; then
-		echo "net4.5.1"
-	elif [[ "${moniker}" == "net45" ]] ; then
-		echo "net4.5"
-	elif [[ "${moniker}" == "net40" ]] ; then
-		echo "net4.0"
-	elif [[ "${moniker}" == "net35" ]] ; then
-		echo "net3.5"
-	elif [[ "${moniker}" == "net20" ]] ; then
-		echo "net2.0"
-	fi
+	case ${moniker} in
+		netstandard20) echo "netstandard2.0" ;;
+		netstandard16) echo "netstandard1.6" ;;
+		netstandard15) echo "netstandard1.5" ;;
+		netstandard14) echo "netstandard1.4" ;;
+		netstandard13) echo "netstandard1.3" ;;
+		netstandard12) echo "netstandard1.2" ;;
+		netstandard11) echo "netstandard1.1" ;;
+		netstandard10) echo "netstandard1.0" ;;
+		netcoreapp22) echo "netcoreapp2.2" ;;
+		netcoreapp21) echo "netcoreapp2.1" ;;
+		netcoreapp20) echo "netcoreapp2.0" ;;
+		netcoreapp11) echo "netcoreapp1.1" ;;
+		netcoreapp10) echo "netcoreapp1.0" ;;
+		net472) echo "net4.7.2" ;;
+		net471) echo "net4.7.1" ;;
+		net47) echo "net4.7" ;;
+		net462) echo "net4.6.2" ;;
+		net461) echo "net4.6.1" ;;
+		net46) echo "net4.6" ;;
+		net452) echo "net4.5.2" ;;
+		net451) echo "net4.5.1" ;;
+		net45) echo "net4.5" ;;
+		net40) echo "net4.0" ;;
+		net35) echo "net3.5" ;;
+		net20) echo "net2.0" ;;
+	esac
 }
 
 # @FUNCTION: dotnet_use_flag_moniker_to_ms_moniker
@@ -811,57 +776,33 @@ dotnet_use_flag_moniker_to_ms_moniker() {
 		moniker=${DOTNET_ACTIVE_FRAMEWORK//fx/}${EBF//./}
 	fi
 
-	if [[ "${moniker}" == "netstandard20" ]] ; then
-		echo "netstandard2.0"
-	elif [[ "${moniker}" == "netstandard16" ]] ; then
-		echo "netstandard1.6"
-	elif [[ "${moniker}" == "netstandard15" ]] ; then
-		echo "netstandard1.5"
-	elif [[ "${moniker}" == "netstandard14" ]] ; then
-		echo "netstandard1.4"
-	elif [[ "${moniker}" == "netstandard13" ]] ; then
-		echo "netstandard1.3"
-	elif [[ "${moniker}" == "netstandard12" ]] ; then
-		echo "netstandard1.2"
-	elif [[ "${moniker}" == "netstandard11" ]] ; then
-		echo "netstandard1.1"
-	elif [[ "${moniker}" == "netstandard10" ]] ; then
-		echo "netstandard1.0"
-	elif [[ "${moniker}" == "netcoreapp22" ]] ; then
-		echo "netcoreapp2.2"
-	elif [[ "${moniker}" == "netcoreapp21" ]] ; then
-		echo "netcoreapp2.1"
-	elif [[ "${moniker}" == "netcoreapp20" ]] ; then
-		echo "netcoreapp2.0"
-	elif [[ "${moniker}" == "netcoreapp11" ]] ; then
-		echo "netcoreapp1.1"
-	elif [[ "${moniker}" == "netcoreapp10" ]] ; then
-		echo "netcoreapp1.0"
-	elif [[ "${moniker}" == "net472" ]] ; then
-		echo "net472"
-	elif [[ "${moniker}" == "net471" ]] ; then
-		echo "net471"
-	elif [[ "${moniker}" == "net47" ]] ; then
-		echo "net47"
-	elif [[ "${moniker}" == "net462" ]] ; then
-		echo "net462"
-	elif [[ "${moniker}" == "net461" ]] ; then
-		echo "net461"
-	elif [[ "${moniker}" == "net46" ]] ; then
-		echo "net46"
-	elif [[ "${moniker}" == "net452" ]] ; then
-		echo "net452"
-	elif [[ "${moniker}" == "net451" ]] ; then
-		echo "net451"
-	elif [[ "${moniker}" == "net45" ]] ; then
-		echo "net45"
-	elif [[ "${moniker}" == "net40" ]] ; then
-		echo "net40"
-	elif [[ "${moniker}" == "net35" ]] ; then
-		echo "net35"
-	elif [[ "${moniker}" == "net20" ]] ; then
-		echo "net20"
-	fi
+	case ${moniker} in
+		netstandard20) echo "netstandard2.0" ;;
+		netstandard16) echo "netstandard1.6" ;;
+		netstandard15) echo "netstandard1.5" ;;
+		netstandard14) echo "netstandard1.4" ;;
+		netstandard13) echo "netstandard1.3" ;;
+		netstandard12) echo "netstandard1.2" ;;
+		netstandard11) echo "netstandard1.1" ;;
+		netstandard10) echo "netstandard1.0" ;;
+		netcoreapp22) echo "netcoreapp2.2" ;;
+		netcoreapp21) echo "netcoreapp2.1" ;;
+		netcoreapp20) echo "netcoreapp2.0" ;;
+		netcoreapp11) echo "netcoreapp1.1" ;;
+		netcoreapp10) echo "netcoreapp1.0" ;;
+		net472) echo "net472" ;;
+		net471) echo "net471" ;;
+		net47) echo "net47" ;;
+		net462) echo "net462" ;;
+		net461) echo "net461" ;;
+		net46) echo "net46" ;;
+		net452) echo "net452" ;;
+		net451) echo "net451" ;;
+		net45) echo "net45" ;;
+		net40) echo "net40" ;;
+		net35) echo "net35" ;;
+		net20) echo "net20" ;;
+	esac
 }
 
 # @FUNCTION: dotnet_is_netfx
