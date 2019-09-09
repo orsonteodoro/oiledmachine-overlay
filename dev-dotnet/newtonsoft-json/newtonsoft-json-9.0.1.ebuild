@@ -1,6 +1,5 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
@@ -14,15 +13,18 @@ USE_DOTNET="net45"
 IUSE="${USE_DOTNET} debug developer test +nupkg +gac +pkg-config"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac nupkg"
 
-inherit dotnet nupkg gac
+inherit dotnet nupkg pc-file
 
 NAME="Newtonsoft.Json"
 NUSPEC_ID="${NAME}"
 HOMEPAGE="https://github.com/JamesNK/${NAME}"
 
 EGIT_COMMIT="865c08d95d89565b4f6b463b57da8f5324f6ce7c"
-SRC_URI="${HOMEPAGE}/archive/${PV}.tar.gz -> ${P}.tar.gz
-	https://github.com/mono/mono/raw/master/mcs/class/mono.snk"
+SRC_URI="${HOMEPAGE}/archive/${PV}.tar.gz -> ${P}.tar.gz"
+RESTRICT="mirror"
+
+inherit gac
+
 S="${WORKDIR}/${NAME}-${PV}"
 
 SLOT="0"
@@ -33,11 +35,9 @@ LICENSE_URL="https://raw.github.com/JamesNK/Newtonsoft.Json/master/LICENSE.md"
 
 KEYWORDS="~amd64 ~x86"
 COMMON_DEPENDENCIES="|| ( >=dev-lang/mono-4.2 <dev-lang/mono-9999 )"
-RDEPEND="${COMMON_DEPENDENCIES}
-"
+RDEPEND="${COMMON_DEPENDENCIES}"
 DEPEND="${COMMON_DEPENDENCIES}
-	dev-util/nunit:2[nupkg]
-"
+	dev-util/nunit:2[nupkg]"
 
 METAFILETOBUILD=Src/Newtonsoft.Json.sln
 
@@ -77,6 +77,7 @@ src_prepare() {
         public_key=$(sn -tp "${DISTDIR}/mono.snk" | tail -n 7 | head -n 5 | tr -d '\n')
         echo "pk is: ${public_key}"
         cd "${S}"
+
 	sed -i -r -e "s|\[assembly\: InternalsVisibleTo\(\"Newtonsoft.Json.Schema\"\)\]|\[assembly: InternalsVisibleTo(\"Newtonsoft.Json.Schema, PublicKey=${public_key}\")\]|" Src/Newtonsoft.Json/Properties/AssemblyInfo.cs
 	sed -i -r -e "s|\[assembly\: InternalsVisibleTo\(\"Newtonsoft.Json.Tests\"\)\]|\[assembly: InternalsVisibleTo(\"Newtonsoft.Json.Tests, PublicKey=${public_key}\")\]|" Src/Newtonsoft.Json/Properties/AssemblyInfo.cs
 
@@ -84,7 +85,7 @@ src_prepare() {
 }
 
 src_compile() {
-	exbuild_strong "${METAFILETOBUILD}"
+	exbuild "${METAFILETOBUILD}"
 
 	NUSPEC_PROPS+="nuget_version=${NUSPEC_VERSION};"
 	NUSPEC_PROPS+="nuget_id=${NUSPEC_ID};"
@@ -117,7 +118,7 @@ src_install() {
 	einstall_pc_file "${PN}" "8.0" "${NAME}"
 
 	if use developer ; then
-               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		insinto "/usr/$(get_libdir)/mono/${PN}"
 		doins Src/Newtonsoft.Json/Dynamic.snk
 		doins Src/Newtonsoft.Json/obj/Release/Net${EBF//./}/Newtonsoft.Json.Dynamic.snk
 		doins Src/Newtonsoft.Json/bin/Release/Net${EBF//./}/Newtonsoft.Json.dll.mdb
