@@ -706,18 +706,18 @@ dotnet_netfx_install_loc() {
 	fi
 
 	case ${moniker} in
-		net472) echo "/usr/lib/mono/4.7.2-api" ;;
-		net471) echo "/usr/lib/mono/4.7.1-api" ;;
-		net47) echo "/usr/lib/mono/4.7-api" ;;
-		net462) echo "/usr/lib/mono/4.6.2-api" ;;
-		net461) echo "/usr/lib/mono/4.6.1-api" ;;
-		net46) echo "/usr/lib/mono/4.6-api" ;;
-		net452) echo "/usr/lib/mono/4.5.2-api" ;;
-		net451) echo "/usr/lib/mono/4.5.1-api" ;;
-		net45) echo "/usr/lib/mono/4.5" ;;
-		net40) echo "/usr/lib/mono/4.0-api" ;;
-		net35) echo "/usr/lib/mono/3.5-api" ;;
-		net20) echo "/usr/lib/mono/2.0-api" ;;
+		net472) echo "/usr/$(get_libdir)/mono/4.7.2-api" ;;
+		net471) echo "/usr/$(get_libdir)/mono/4.7.1-api" ;;
+		net47) echo "/usr/$(get_libdir)/mono/4.7-api" ;;
+		net462) echo "/usr/$(get_libdir)/mono/4.6.2-api" ;;
+		net461) echo "/usr/$(get_libdir)/mono/4.6.1-api" ;;
+		net46) echo "/usr/$(get_libdir)/mono/4.6-api" ;;
+		net452) echo "/usr/$(get_libdir)/mono/4.5.2-api" ;;
+		net451) echo "/usr/$(get_libdir)/mono/4.5.1-api" ;;
+		net45) echo "/usr/$(get_libdir)/mono/4.5" ;;
+		net40) echo "/usr/$(get_libdir)/mono/4.0-api" ;;
+		net35) echo "/usr/$(get_libdir)/mono/3.5-api" ;;
+		net20) echo "/usr/$(get_libdir)/mono/2.0-api" ;;
 	esac
 }
 
