@@ -9,8 +9,8 @@ RDEPEND=">=media-libs/libsdl2-2.0.5
          media-libs/sdl2-ttf
          media-libs/sdl2-mixer"
 DEPEND="${RDEPEND}"
-IUSE="${USE_DOTNET} debug +gac"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
+IUSE="${USE_DOTNET} debug gac"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 )"
 
 inherit dotnet eutils mono
 

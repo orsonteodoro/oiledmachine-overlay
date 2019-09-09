@@ -2,105 +2,148 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-inherit eutils cmake-utils dotnet gac multilib-minimal multilib-build versionator
+
+inherit versionator
+
+USE_DOTNET="net40"
+IUSE="${USE_DOTNET} debug gac test"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 )"
+LIBBULLETC_PV="9999.20190814"
+RDEPEND=">=sci-physics/bullet-${LIBBULLETC_PV}"
+DEPEND="${RDEPEND}"
+
+inherit cmake-utils dotnet eutils multilib-minimal multilib-build
 
 DESCRIPTION=".NET wrapper for the Bullet physics library using Platform Invoke"
 HOMEPAGE="http://andrestraks.github.io/BulletSharp/"
-LIBBULLETC_PV="9999.20190814"
 BULLET_COMMIT="cb654ddc803a56567fdc8f6dcc4eb3e8291b3e98"
 COMMIT="498e8b8d0f57d43b55ad9179e3daf416eae33dcb"
 MY_PV="${COMMIT}"
 SRC_URI="https://github.com/AndresTraks/BulletSharpPInvoke/archive/${COMMIT}.zip -> ${PN}-${MY_PV}.zip
 	 https://github.com/bulletphysics/bullet3/archive/${BULLET_COMMIT}.zip -> bullet-${LIBBULLETC_PV}.zip"
 
-inherit dotnet-key
+inherit gac
 
 LICENSE="MIT zlib"
 SLOT="0/${MY_PV}"
-KEYWORDS="~amd64 ~x86"
-USE_DOTNET="net40 net45 net46"
-IUSE="${USE_DOTNET} debug +gac"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 
-RDEPEND=">=sci-physics/bullet-${LIBBULLETC_PV}"
-DEPEND="${RDEPEND}
-	>=dev-lang/mono-4
-"
-
-S_BASE="${WORKDIR}/${PN}-${MY_PV}"
-S="${S_BASE}"
+S="${WORKDIR}/${PN}-${MY_PV}"
 
 src_unpack() {
 	unpack ${A}
 	mv bullet3-${BULLET_COMMIT} bullet || die
+	cp -a "${FILESDIR}/BulletSharp.dll.config" "${S}"
 }
 
 src_prepare() {
+	default
 	sed -i -e "s|\"libbulletc\"|\"libbulletc.dll\"|g" BulletSharp/Native.cs || die
 
-	sed -i -e "s|<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>|<TargetFrameworkVersion>${EBF}</TargetFrameworkVersion>|" BulletSharp/BulletSharp.csproj || die
+	if ! use test ; then
+		sed -i -e 's|ADD_SUBDIRECTORY\(test\)||g' libbulletc/CMakeLists.txt || die
+	fi
 
-	sed -i -e 's|ADD_SUBDIRECTORY\(test\)||g' libbulletc/CMakeLists.txt || die
+	estrong_assembly_info "using System.Runtime.InteropServices;" "${DISTDIR}/mono.snk" "BulletSharp/Properties/AssemblyInfo.cs"
 
-	S="${S_BASE}/libbulletc"
-
-	cp "${DISTDIR}/mono.snk" BulletSharp/ || die
-	estrong_assembly_info "using System.Runtime.InteropServices;" "mono.snk" "BulletSharp/Properties/AssemblyInfo.cs"
-
-	cmake-utils_src_prepare
 	multilib_copy_sources
+
+	ml_prepare() {
+		cd "${BUILD_DIR}/libbulletc" || die
+		S="${BUILD_DIR}/libbulletc" \
+		cmake-utils_src_prepare
+	}
+
+	multilib_foreach_abi ml_prepare
+
+	dotnet_copy_sources
 }
 
-multilib_src_configure() {
-        local mycmakeargs=(
-		-DBUILD_BULLET3=1
-	)
-	cmake-utils_src_configure
+src_configure() {
+	ml_configure() {
+		cd "${BUILD_DIR}/libbulletc" || die
+	        local mycmakeargs=( -DBUILD_BULLET3=1 )
+		cmake-utils_src_configure
+	}
+
+	multilib_foreach_abi ml_configure
 }
 
-multilib_src_compile() {
+src_compile() {
+	ml_compile() {
+		cd "${BUILD_DIR}/libbulletc" || die
+		# Build native shared library wrapper
+		cmake-utils_src_compile
+	}
+	multilib_foreach_abi ml_compile
+
 	mydebug="Release"
 	if use debug; then
 		mydebug="Debug"
 	fi
 
-	# Build native shared library wrapper
-	cmake-utils_src_compile
+	compile_impl() {
+		local wordsize
+		wordsize="$(get_libdir)"
+		wordsize="${wordsize//lib/}"
+		wordsize="${wordsize//[on]/}"
 
-	# Build C# wrapper
-	cd "${S_BASE}"/BulletSharp || die
-	exbuild BulletSharp.sln /p:Configuration=${mydebug}  || die
+		sed -i -e "s|wordsize=\"[0-9]+\"|wordsize=\"${wordsize}\"|g" BulletSharp.dll.config || die
+		sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|" BulletSharp.dll.config || die
+
+		# Build C# wrapper
+		cd BulletSharp || die
+		exbuild BulletSharp.sln /p:Configuration=${mydebug}  || die
+	}
+
+	dotnet_foreach_impl compile_impl
 }
 
-multilib_src_install() {
-	mydebug="Release"
-	if use debug; then
-		mydebug="Debug"
-	fi
+src_install() {
+	ml_install() {
+		cd "${BUILD_DIR}"
+		insinto /usr/$(get_libdir)
+		doins "libbulletc.so"
+	}
 
-        ebegin "Installing dlls into the GAC"
+	multilib_foreach_abi ml_install
 
-	mkdir -p "${D}/usr/$(get_libdir)"
-	cp -a "${S_BASE}/libbulletc-${MULTILIB_ABI_FLAG}.${ABI}/libbulletc.so" "${D}/usr/$(get_libdir)" || die
+	install_impl() {
+		mydebug="Release"
+		if use debug; then
+			mydebug="Debug"
+		fi
 
-	for x in ${USE_DOTNET} ; do
-                FW_UPPER=${x:3:1}
-                FW_LOWER=${x:4:1}
-		egacinstall "${S_BASE}/BulletSharp/bin/${mydebug}/BulletSharp.dll"
-        done
+		local d
+		if [[ "${EDOTNET}" =~ netstandard ]] ; then
+			d="$(dotnet_netcore_install_loc ${EDOTNET})"
+		elif [[ "${EDOTNET}" =~ net[0-9][0-9][0-9]? ]] ; then
+			d="$(dotnet_netfx_install_loc ${EDOTNET})"
+		fi
+		insinto "${d}"
 
-	eend
+		if [[ "${EDOTNET}" == "net40" ]] ; then
+			egacinstall "BulletSharp/bin/${mydebug}/BulletSharp.dll"
+		fi
 
-	if use developer ; then
-		insinto "/usr/$(get_libdir)/mono/${PN}"
-		doins BulletSharp/bin/${mydebug}/BulletSharp.dll.mdb
-	fi
+		doins BulletSharp/bin/${mydebug}/BulletSharp.dll
+		doins BulletSharp.dll.config
 
-        FILES=$(find "${D}" -name "BulletSharp.dll")
-        for f in $FILES
-        do
-                cp -a "${FILESDIR}/BulletSharp.dll.config" "$(dirname $f)"
-        done
+		if use developer ; then
+			doins BulletSharp/bin/${mydebug}/BulletSharp.dll.mdb
+		fi
+
+	        FILES=$(find "${D}" -name "BulletSharp.dll")
+	        for f in $FILES
+	        do
+			f="/"$(echo "${f}" | sed -e "s|${D}||g")
+			if [[ "${d}/BulletSharp.dll.config" != "${f}.config" ]] ; then
+		                dosym "${d}/BulletSharp.dll.config" "${f}.config"
+			fi
+	        done
+	}
+
+	dotnet_foreach_impl install_impl
 
 	dotnet_multilib_comply
 }
