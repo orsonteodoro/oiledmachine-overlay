@@ -24,6 +24,14 @@ inherit eutils multibuild mono-env versionator
 
 IUSE+=" debug developer"
 
+# @ECLASS-VARIABLE: STRONG_ARGS_NETFX
+# @DESCRIPTION: Args to expand for exbuild
+STRONG_ARGS_NETFX="/p:SignAssembly=true /p:AssemblyOriginatorKeyFile="
+
+# @ECLASS-VARIABLE: STRONG_ARGS_NETCORE
+# @DESCRIPTION: Args to expand for exbuild for use for dotnet command
+STRONG_ARGS_NETCORE="-p:SignAssembly=true -p:AssemblyOriginatorKeyFile="
+
 DOTNET_ACTIVE_FRAMEWORK="" # can be netfx or netcoreapp or netstandard
 
 _SET_DEPENDS_NETCORE=""
