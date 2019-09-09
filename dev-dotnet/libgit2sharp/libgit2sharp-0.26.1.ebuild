@@ -127,16 +127,13 @@ src_prepare() {
 				einfo "Editing ${f}"
 				sed -i -e "s|lib/linux-x64/libgit2-${LIBGIT2_SHORT_HASH}.so|/usr/$(get_libdir)/libgit2.so|g" "${f}" || die
 
-				# pinvoke: https://www.mono-project.com/docs/advanced/pinvoke/dllmap/
 				local wordsize
-				if [[ ${ARCH} =~ (amd64) ]]; then
+				if [[ "$(get_libdir)" == "lib64" ]]; then
 					wordsize="64"
-				elif [[ ${ARCH} =~ (x86) ]] ; then
+				elif [[ "$(get_libdir)" == "lib32" ]]; then
 					wordsize="32"
-				elif [[ ${ARCH} =~ (arm64) ]] ; then
-					wordsize="64"
-				elif [[ ${ARCH} =~ (arm) ]] ; then
-					wordsize="32"
+				else
+					die "${ABI} not supported"
 				fi
 
 				sed -i -e "s|wordsize=\"[0-9]+\"|wordsize=\"${wordsize}\"|g" "${f}" || die
