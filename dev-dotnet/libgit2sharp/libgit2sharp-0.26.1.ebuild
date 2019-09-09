@@ -129,23 +129,18 @@ src_prepare() {
 
 				# pinvoke: https://www.mono-project.com/docs/advanced/pinvoke/dllmap/
 				local wordsize
-				local cpu
 				if [[ ${ARCH} =~ (amd64) ]]; then
 					wordsize="64"
-					cpu="x86-64"
 				elif [[ ${ARCH} =~ (x86) ]] ; then
 					wordsize="32"
-					cpu="x86"
 				elif [[ ${ARCH} =~ (arm64) ]] ; then
 					wordsize="64"
-					cpu="arm"
 				elif [[ ${ARCH} =~ (arm) ]] ; then
 					wordsize="32"
-					cpu="arm"
 				fi
 
 				sed -i -e "s|wordsize=\"[0-9]+\"|wordsize=\"${wordsize}\"|g" "${f}" || die
-				sed -i -e "s|cpu=\"[a-z0-9-]+\"|cpu=\"${cpu}\"|g" "${f}" || die
+				sed -i -e "s|cpu=\"[,a-z0-9-]+\"||g" "${f}" || die
 			done
 		fi
 	}
