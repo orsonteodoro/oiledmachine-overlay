@@ -103,8 +103,6 @@ src_prepare() {
 	fi
 
 	patch_impl() {
-		cd "${BUILD_DIR}"
-
 		if dotnet_is_netfx "${EDOTNET}" ; then
 			eapply "${FILESDIR}/libgit2sharp-0.26-net46-references.patch"
 
@@ -147,8 +145,6 @@ src_prepare() {
 
 src_compile() {
 	build_impl() {
-		cd "${BUILD_DIR}"
-
 		if [[ "${EDOTNET}" =~ "netcoreapp" ]] ; then
 			einfo "The netcoreapp USE flag is only for testing the package.  No .NET Core ${PN} library will be produced but only a .NET Standard version."
 		fi
@@ -180,7 +176,6 @@ src_compile() {
 
 src_install() {
 	install_impl() {
-		cd "${BUILD_DIR}"
 		if use debug; then
 			DIR="debug"
 		else
@@ -252,8 +247,6 @@ src_install() {
 
 src_test() {
 	test_impl() {
-		cd "${BUILD_DIR}"
-
 		# explained in buildandtest.sh
 		export LD_LIBRARY_PATH=.
 
