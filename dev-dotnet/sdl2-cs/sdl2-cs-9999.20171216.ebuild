@@ -41,7 +41,6 @@ src_compile() {
 	fi
 
 	compile_impl() {
-		cd "${BUILD_DIR}"
 		if [[ "${EDOTNET}" =~ netcore || "${EDOTNET}" =~ netstandard ]] ; then
 		        exbuild SDL2-CS.Core.csproj ${STRONG_ARGS_NETCORE}"${DISTDIR}/mono.snk" -p:Configuration=${mydebug} || die
 		else
@@ -66,8 +65,6 @@ src_compile() {
 
 src_install() {
 	install_impl() {
-		cd "${BUILD_DIR}"
-
 		mydebug="Release"
 		if use debug; then
 			mydebug="Debug"

@@ -41,7 +41,6 @@ src_compile() {
 	fi
 
 	compile_impl() {
-		cd "${BUILD_DIR}"
 	        exbuild ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" /p:Configuration=${mydebug} SDL2-CS.csproj || die
 
 		local wordsize
@@ -62,8 +61,6 @@ src_compile() {
 
 src_install() {
 	install_impl() {
-		cd "${BUILD_DIR}"
-
 		mydebug="Release"
 		if use debug; then
 			mydebug="Debug"
