@@ -3,14 +3,13 @@
 
 EAPI=6
 
-KEYWORDS="~x86 ~amd64"
+KEYWORDS="~arm ~arm64 ~x86 ~amd64"
 
-# tests are supposed to be built with netcoreapp, the dlls are supposed be compiled for netstandard20
 USE_DOTNET="netstandard20 net46 netcoreapp21"
 TOOLS_VERSION="15.0"
 
 IUSE="${USE_DOTNET} debug developer gac system-libgit2 test"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) test? ( netcoreapp21 )"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) test? ( || ( netcoreapp21 net46 ) )"
 
 inherit dotnet eutils
 
@@ -33,14 +32,13 @@ CDEPEND="
 
 DEPEND="${CDEPEND}
 	>=dev-dotnet/nuget-2.7
+	!system-libgit2? ( dev-libs/libgit2 )
 "
 RDEPEND="${CDEPEND}
 	 dev-vcs/git"
 
-LIBGIT2_NATIVE_BINARIES_V="2.0.289"
-LIBGIT2_COMMIT="7ce88e66a19e3b48340abcdd86aeaae1882e63cc" # v0.28.3
-LIBGIT2_SHORT_HASH="7ce88e6" # short hash of commit
-NATIVE_LIBGIT2_SHORT_HASH="7ce88e6" # pretend
+LIBGIT2_HASH="7ce88e66a19e3b48340abcdd86aeaae1882e63cc"
+LIBGIT2_SHORT_HASH="7ce88e6" # short hash of commit ; v0.28.3
 
 _fetch_project() {
 	# using git is required.
@@ -84,22 +82,19 @@ src_unpack() {
 }
 
 src_prepare() {
-	cd "${S}"
+	default
 
-	if use net46 ; then
-		eapply "${FILESDIR}/libgit2sharp-0.26-net46-references.patch"
-
-		L=$(find "${S}" -name "*.csproj")
-		for f in $L ; do
-			cp "${FILESDIR}"/netfx.props "$(dirname $f)" || die
-			einfo "Editing $f"
-			sed -i -e "s|<Project Sdk=\"Microsoft.NET.Sdk\">|<Project Sdk=\"Microsoft.NET.Sdk\">\n  <Import Project=\"netfx.props\" />\n|" "$f" || die
-		done
-
+	# check if platform has libgit2.so
+	if ! use system-libgit2 ; then
+		if ! use amd64 ; then
+			die "Recompile with system-libgit2 USE flag enabled."
+		fi
 	fi
 
 	epatch "${FILESDIR}/libgit2sharp-0.26.1-sln.patch"
 	#epatch "${FILESDIR}/packages-config-remove-xunit.patch"
+
+	dotnet_copy_sources
 
 	if use debug; then
 		export Configuration=debug
@@ -107,92 +102,181 @@ src_prepare() {
 		export Configuration=release
 	fi
 
-	# explained in buildandtest.sh
-	export LD_LIBRARY_PATH=.
+	patch_impl() {
+		cd "${BUILD_DIR}"
 
-	erestore
+		if dotnet_is_netfx "${EDOTNET}" ; then
+			eapply "${FILESDIR}/libgit2sharp-0.26-net46-references.patch"
 
-	if use system-libgit2 ; then
-		# native lib
-		sed -i -e "s|lib/linux-x64/libgit2-${LIBGIT2_SHORT_HASH}.so|/usr/lib64/libgit2.so|g" "${HOME}/.nuget/packages/libgit2sharp.nativebinaries/${LIBGIT2_NATIVE_BINARIES_V}/libgit2/LibGit2Sharp.dll.config" || die
+			L=$(find "${S}" -name "*.csproj")
+			for f in $L ; do
+				cp "${FILESDIR}"/netfx.props "$(dirname $f)" || die
+				einfo "Editing $f"
+				sed -i -e "s|<Project Sdk=\"Microsoft.NET.Sdk\">|<Project Sdk=\"Microsoft.NET.Sdk\">\n  <Import Project=\"netfx.props\" />\n|" "$f" || die
+			done
+		fi
 
-		# native lib name
-		sed -i -e "s|git2-${LIBGIT2_SHORT_HASH}|git2-${NATIVE_LIBGIT2_SHORT_HASH}|g" "${HOME}/.nuget/packages/libgit2sharp.nativebinaries/${LIBGIT2_NATIVE_BINARIES_V}/libgit2/LibGit2Sharp.dll.config" || die
+		# explained in buildandtest.sh
+		export LD_LIBRARY_PATH=.
 
-		sed -i -e "s|\$(MSBuildThisFileDirectory)\..\..\runtimes\linux-x64\native\libgit2-${LIBGIT2_SHORT_HASH}.so|/usr/lib64/libgit2.so|g" "${HOME}/.nuget/packages/libgit2sharp.nativebinaries/${LIBGIT2_NATIVE_BINARIES_V}/build/net46/LibGit2Sharp.NativeBinaries.props" || die
-	fi
+		erestore
 
-	default
+		if use system-libgit2 ; then
+			L=$(grep -l -r -e "${LIBGIT2_SHORT_HASH}" $(find "${HOME}" -name "LibGit2Sharp.dll.config"))
+			for f in ${L} ; do
+				einfo "Editing ${f}"
+				sed -i -e "s|lib/linux-x64/libgit2-${LIBGIT2_SHORT_HASH}.so|/usr/lib64/libgit2.so|g" "${f}" || die
+
+				# pinvoke: https://www.mono-project.com/docs/advanced/pinvoke/dllmap/
+				local wordsize
+				local cpu
+				if [[ ${ARCH} =~ (amd64) ]]; then
+					wordsize="64"
+					cpu="x86-64"
+				elif [[ ${ARCH} =~ (x86) ]] ; then
+					wordsize="32"
+					cpu="x86"
+				elif [[ ${ARCH} =~ (arm64) ]] ; then
+					wordsize="64"
+					cpu="arm"
+				elif [[ ${ARCH} =~ (arm) ]] ; then
+					wordsize="32"
+					cpu="arm"
+				fi
+
+				sed -i -e "s|wordsize=\"[0-9]+\"|wordsize=\"${wordsize}\"|g" "${f}" || die
+				sed -i -e "s|cpu=\"[a-z0-9-]+\"|cpu=\"${cpu}\"|g" "${f}" || die
+			done
+		fi
+	}
+
+	dotnet_foreach_impl patch_impl
 }
 
 src_compile() {
-	# build #1 using this way linux-x64 dlls?
-	if use net46 ; then
-		export FrameworkPathOverride=/usr/lib/mono/4.6-api/
-		_exbuild_netcore_raw build -f net46 --verbosity detailed
-	elif use netstandard20 ; then
-		_exbuild_netcore_raw build -f netstandard2.0 --verbosity detailed
-	fi
+	build_impl() {
+		cd "${BUILD_DIR}"
 
-	if use test ; then
-		export EXTRADEFINE='LEAKS_IDENTIFYING'
-		exbuild LibGit2Sharp.Tests -property:ExtraDefine="$EXTRADEFINE" -fl -flp:verbosity=detailed
-	fi
+		if [[ "${EDOTNET}" =~ "netcoreapp" ]] ; then
+			einfo "The netcoreapp USE flag is only for testing the package.  No .NET Core ${PN} library will be produced but only a .NET Standard version."
+		fi
+
+		# explained in buildandtest.sh
+		export LD_LIBRARY_PATH=.
+
+		# build #1 using this way linux-x64 dlls?
+		if dotnet_is_netfx "${EDOTNET}" ; then
+			export FrameworkPathOverride="$(dotnet_netfx_install_loc ${EDOTNET})/"
+		else
+			unset FrameworkPathOverride
+		fi
+
+		if [[ "${EDOTNET}" =~ "netstandard" || "${EDOTNET}" =~ net[0-9][0-9][0-9]? ]] ; then
+			exbuild LibGit2Sharp/LibGit2Sharp.csproj
+		fi
+
+		if [[ "${EDOTNET}" =~ "netcoreapp" || "${EDOTNET}" =~ net[0-9][0-9][0-9]? ]] ; then
+#			if use test ; then
+				export EXTRADEFINE='LEAKS_IDENTIFYING'
+				exbuild LibGit2Sharp.Tests -property:ExtraDefine="$EXTRADEFINE" -fl -flp:verbosity=detailed
+#			fi
+		fi
+	}
+
+	dotnet_foreach_impl build_impl
 }
 
 src_install() {
-	if use debug; then
-		DIR="Debug"
-	else
-		DIR="Release"
-	fi
-
-	local _dotnet
-	if [ -d /opt/dotnet ] ; then
-		_dotnet="dotnet"
-	elif [ -d /opt/dotnet_core ] ; then
-		_dotnet="dotnet_core"
-	fi
-
-	if use net46 ; then
-		insinto "/usr/lib/mono/4.6-api"
-		estrong_resign "bin/LibGit2Sharp/${DIR}/net46/LibGit2Sharp.dll" "${S}/libgit2sharp.snk"
-		doins "bin/LibGit2Sharp/${DIR}/net46/LibGit2Sharp.dll"
-
-		if [ -n "${_dotnet}" ] ; then
-			insinto "/opt/${_dotnet}/sdk/NuGetFallbackFolder/${PN}/${PV}/lib/net46/"
-			dosym "/usr/lib/mono/4.6-api/LibGit2Sharp.dll" "/opt/${_dotnet}/sdk/NuGetFallbackFolder/${PN}/${PV}/lib/net46/LibGit2Sharp.dll"
+	install_impl() {
+		cd "${BUILD_DIR}"
+		if use debug; then
+			DIR="debug"
+		else
+			DIR="release"
 		fi
-	elif use netstandard20 ; then
-		insinto "/opt/${_dotnet}/sdk/NuGetFallbackFolder/${PN}/${PV}/lib/netstandard2.0"
-		estrong_resign "bin/LibGit2Sharp/${DIR}/netstandard2.0/LibGit2Sharp.dll" "${S}/libgit2sharp.snk"
-		doins "bin/LibGit2Sharp/${DIR}/netstandard2.0/LibGit2Sharp.dll"
-	fi
 
-	if use developer ; then
-		if use net46 ; then
-			insinto "/usr/lib/mono/4.6-api"
-			doins "bin/LibGit2Sharp/${DIR}/net46/LibGit2Sharp.pdb"
-			doins "bin/LibGit2Sharp/${DIR}/net46/LibGit2Sharp.xml"
-			if [ -n "${_dotnet}" ] ; then
-				dosym "/usr/lib/mono/4.6-api/LibGit2Sharp.pdb" "/opt/${_dotnet}/sdk/NuGetFallbackFolder/${PN}/${PV}/lib/net46/LibGit2Sharp.pdb"
-				dosym "/usr/lib/mono/4.6-api/LibGit2Sharp.xml" "/opt/${_dotnet}/sdk/NuGetFallbackFolder/${PN}/${PV}/lib/net46/LibGit2Sharp.xml"
+		if [[ "${EDOTNET}" =~ "netstandard" || "${EDOTNET}" =~ net[0-9][0-9][0-9]? ]] ; then
+			DIR="${DIR^}"
+		fi
+
+		local _dotnet
+		if [ -d /opt/dotnet ] ; then
+			_dotnet="dotnet"
+		elif [ -d /opt/dotnet_core ] ; then
+			_dotnet="dotnet_core"
+		fi
+
+		local d
+		if [[ "${EDOTNET}" =~ "netcore" || "${EDOTNET}" =~ "netstandard" ]] ; then
+			d="$(dotnet_netcore_install_loc ${EDOTNET})"
+		else
+			d="$(dotnet_netfx_install_loc ${EDOTNET})"
+		fi
+		insinto "${d}"
+
+		local s_base
+		s_base="bin/LibGit2Sharp/${DIR}/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})"
+		if [[ "${EDOTNET}" =~ net[0-9][0-9][0-9]? ]] ; then
+			estrong_resign "${s_base}/LibGit2Sharp.dll" "${S}/libgit2sharp.snk"
+		fi
+
+		if [[ "${EDOTNET}" =~ "netstandard" || "${EDOTNET}" =~ net[0-9][0-9][0-9]? ]] ; then
+			doins "${s_base}/LibGit2Sharp.dll"
+			doins "${s_base}/LibGit2Sharp.dll.config"
+		fi
+
+		if ! use system-libgit2 ; then
+			if use amd64 ; then
+				insinto "${d}/lib/linux-x64"
+				doins "${s_base}"/lib/linux-x64/libgit2-${LIBGIT2_SHORT_HASH}.so
+			else
+				die "Missing support for ${ARCH}"
 			fi
-		elif use netstandard20 ; then
-			insinto "/opt/${_dotnet}/sdk/NuGetFallbackFolder/${PN}/${PV}/lib/netstandard2.0"
-			doins "bin/LibGit2Sharp/${DIR}/netstandard2.0/LibGit2Sharp.pdb"
-			doins "bin/LibGit2Sharp/${DIR}/netstandard2.0/LibGit2Sharp.xml"
 		fi
 
-	fi
+		if [[ "${EDOTNET}" =~ net[0-9][0-9][0-9]? && -n "${_dotnet}" ]] ; then
+			insinto "$(dotnet_netcore_install_loc ${EDOTNET})"
+			dosym "$(dotnet_netfx_install_loc ${EDOTNET})/LibGit2Sharp.dll" "$(dotnet_netcore_install_loc ${EDOTNET})/LibGit2Sharp.dll"
+			dosym "$(dotnet_netfx_install_loc ${EDOTNET})/LibGit2Sharp.dll.config" "$(dotnet_netcore_install_loc ${EDOTNET})/LibGit2Sharp.dll.config"
+		fi
+
+		if [[ "${EDOTNET}" =~ "netstandard" || "${EDOTNET}" =~ net[0-9][0-9][0-9]? ]] ; then
+			if use developer ; then
+				insinto "${d}"
+				doins "bin/LibGit2Sharp/${DIR}/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/LibGit2Sharp.pdb"
+				doins "bin/LibGit2Sharp/${DIR}/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/LibGit2Sharp.xml"
+				if [[ "${EDOTNET}" == "net46" && -n "${_dotnet}" ]] ; then
+					dosym "$(dotnet_netfx_install_loc ${EDOTNET})/LibGit2Sharp.pdb" "$(dotnet_netcore_install_loc ${EDOTNET})/LibGit2Sharp.pdb"
+					dosym "$(dotnet_netfx_install_loc ${EDOTNET})/LibGit2Sharp.xml" "$(dotnet_netcore_install_loc ${EDOTNET})/LibGit2Sharp.xml"
+				fi
+			fi
+		fi
+	}
+
+	dotnet_foreach_impl install_impl
 
 	dotnet_multilib_comply
 }
 
 src_test() {
-	if use test ; then
-		exbuild_raw test LibGit2Sharp.Tests/LibGit2Sharp.Tests.csproj -f netcoreapp2.0 --no-restore --no-build || die
-	fi
+	test_impl() {
+		cd "${BUILD_DIR}"
+
+		# explained in buildandtest.sh
+		export LD_LIBRARY_PATH=.
+
+#		if [[ "${EDOTNET}" =~ "netcoreapp" || "${EDOTNET}" =~ net[0-9][0-9][0-9]? ]] ; then
+		if [[ "${EDOTNET}" =~ "netcoreapp" ]] ; then
+			if use test ; then
+				pushd "bin/LibGit2Sharp.Tests" || die
+					[ -d release ] || ln -s "Release" "release" || die
+				popd
+				exbuild_raw test LibGit2Sharp.Tests/LibGit2Sharp.Tests.csproj -f $(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET}) --no-restore --no-build || die
+			fi
+		fi
+	}
+
+	dotnet_foreach_impl test_impl
 }
 
 pkg_postinst() {
