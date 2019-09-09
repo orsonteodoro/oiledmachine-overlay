@@ -125,7 +125,7 @@ src_prepare() {
 			L=$(grep -l -r -e "${LIBGIT2_SHORT_HASH}" $(find "${HOME}" -name "LibGit2Sharp.dll.config"))
 			for f in ${L} ; do
 				einfo "Editing ${f}"
-				sed -i -e "s|lib/linux-x64/libgit2-${LIBGIT2_SHORT_HASH}.so|/usr/lib64/libgit2.so|g" "${f}" || die
+				sed -i -e "s|lib/linux-x64/libgit2-${LIBGIT2_SHORT_HASH}.so|/usr/$(get_libdir)/libgit2.so|g" "${f}" || die
 
 				# pinvoke: https://www.mono-project.com/docs/advanced/pinvoke/dllmap/
 				local wordsize
