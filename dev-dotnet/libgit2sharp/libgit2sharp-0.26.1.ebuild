@@ -176,10 +176,10 @@ src_compile() {
 		fi
 
 		if [[ "${EDOTNET}" =~ "netcoreapp" || "${EDOTNET}" =~ net[0-9][0-9][0-9]? ]] ; then
-#			if use test ; then
+			if use test ; then
 				export EXTRADEFINE='LEAKS_IDENTIFYING'
 				exbuild LibGit2Sharp.Tests -property:ExtraDefine="$EXTRADEFINE" -fl -flp:verbosity=detailed
-#			fi
+			fi
 		fi
 	}
 
