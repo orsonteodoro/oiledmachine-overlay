@@ -625,10 +625,7 @@ _dotnet_multibuild_wrapper() {
 		DOTNET_ACTIVE_FRAMEWORK="${EDOTNET}"
 	fi
 	DOTNET_ACTIVE_FRAMEWORK="${DOTNET_ACTIVE_FRAMEWORK//[0-9\.]/}"
-	EBF=$(dotnet_dotted_moniker "${MULTIBUILD_VARIANT}")
-	EBF="${EBF//netstandard/}"
-	EBF="${EBF//netcoreapp/}"
-	EBF="${EBF//net/}"
+	EBF=$(dotnet_use_moniker_to_dotted_ver "${MULTIBUILD_VARIANT}")
 
 	mkdir -p "${PORTAGE_BUILDDIR}/homedir-${MULTIBUILD_VARIANT}"
 	HOME="${PORTAGE_BUILDDIR}/homedir-${MULTIBUILD_VARIANT}"
@@ -768,6 +765,48 @@ dotnet_dotted_moniker() {
 		net40) echo "net4.0" ;;
 		net35) echo "net3.5" ;;
 		net20) echo "net2.0" ;;
+	esac
+}
+
+# @FUNCTION: dotnet_use_moniker_to_dotted_ver
+# @DESCRIPTION:  This will report the version
+# @RETURN: A dotted version string e.g. 4.7.2
+# @CODE
+# Parameters:
+# $1 - the framework moniker e.g. net46 (optional)
+# @CODE
+dotnet_use_moniker_to_dotted_ver() {
+	local moniker="${1}"
+	if [[ -z "${moniker}" ]] ; then
+		moniker=${DOTNET_ACTIVE_FRAMEWORK//fx/}${EBF//./}
+	fi
+
+	case ${moniker} in
+		netstandard20) echo "2.0" ;;
+		netstandard16) echo "1.6" ;;
+		netstandard15) echo "1.5" ;;
+		netstandard14) echo "1.4" ;;
+		netstandard13) echo "1.3" ;;
+		netstandard12) echo "1.2" ;;
+		netstandard11) echo "1.1" ;;
+		netstandard10) echo "1.0" ;;
+		netcoreapp22) echo "2.2" ;;
+		netcoreapp21) echo "2.1" ;;
+		netcoreapp20) echo "2.0" ;;
+		netcoreapp11) echo "1.1" ;;
+		netcoreapp10) echo "1.0" ;;
+		net472) echo "4.7.2" ;;
+		net471) echo "4.7.1" ;;
+		net47) echo "4.7" ;;
+		net462) echo "4.6.2" ;;
+		net461) echo "4.6.1" ;;
+		net46) echo "4.6" ;;
+		net452) echo "4.5.2" ;;
+		net451) echo "4.5.1" ;;
+		net45) echo "4.5" ;;
+		net40) echo "4.0" ;;
+		net35) echo "3.5" ;;
+		net20) echo "2.0" ;;
 	esac
 }
 
