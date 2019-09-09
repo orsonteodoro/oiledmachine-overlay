@@ -421,7 +421,7 @@ _exbuild_netfx_raw() {
 # @FUNCTION: _exbuild_netstandard_raw
 # @DESCRIPTION: alias for _exbuild_netcore_raw
 _exbuild_netstandard_raw() {
-	_exbuild_netcore_raw $@
+	_exbuild_netcore_raw "$@"
 }
 
 # @FUNCTION: _exbuild_netcore_raw
@@ -435,9 +435,9 @@ _exbuild_netcore_raw() {
 # @DESCRIPTION: run xbuild or dotnet with given parameters
 exbuild_raw() {
 	if [[ "${TOOLS_VERSION}" == "15.0" || "${DOTNET_ACTIVE_FRAMEWORK}" == "netcoreapp" || "${DOTNET_ACTIVE_FRAMEWORK}" == "netstandard" ]] ; then
-		_exbuild_netcore_raw $@
+		_exbuild_netcore_raw "$@"
 	elif [[ "${DOTNET_ACTIVE_FRAMEWORK}" == "netfx" ]] ; then
-		_exbuild_netfx_raw $@
+		_exbuild_netfx_raw "$@"
 	fi
 }
 
@@ -466,7 +466,7 @@ _exbuild_netfx() {
 # @FUNCTION: _exbuild_netstandard
 # @DESCRIPTION: alias for _exbuild_netcore
 _exbuild_netstandard() {
-	_exbuild_netcore $@
+	_exbuild_netcore "$@"
 }
 
 # @FUNCTION: _exbuild_netcore
@@ -501,9 +501,9 @@ _exbuild_netcore() {
 # @DESCRIPTION: frontend for xbuild and dotnet
 exbuild() {
 	if [[ "${TOOLS_VERSION}" == "15.0" ||  "${DOTNET_ACTIVE_FRAMEWORK}" == "netcoreapp" || "${DOTNET_ACTIVE_FRAMEWORK}" == "netstandard" ]] ; then
-		_exbuild_netcore $@
+		_exbuild_netcore "$@"
 	elif [[ "${DOTNET_ACTIVE_FRAMEWORK}" == "netfx" ]] ; then
-		_exbuild_netfx $@
+		_exbuild_netfx "$@"
 	fi
 }
 
