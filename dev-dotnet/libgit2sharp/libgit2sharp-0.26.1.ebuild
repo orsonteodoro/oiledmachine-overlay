@@ -108,7 +108,7 @@ src_prepare() {
 		if dotnet_is_netfx "${EDOTNET}" ; then
 			eapply "${FILESDIR}/libgit2sharp-0.26-net46-references.patch"
 
-			L=$(find "${S}" -name "*.csproj")
+			L=$(find . -name "*.csproj")
 			for f in $L ; do
 				cp "${FILESDIR}"/netfx.props "$(dirname $f)" || die
 				einfo "Editing $f"
