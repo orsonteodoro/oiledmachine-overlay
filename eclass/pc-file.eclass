@@ -1,6 +1,8 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+IUSE+=" pkg-config"
+
 # http://www.gossamer-threads.com/lists/gentoo/dev/263462
 # pkg config files should always come from upstream
 # but what if they are not?
