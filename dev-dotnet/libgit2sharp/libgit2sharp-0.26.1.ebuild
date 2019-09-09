@@ -126,14 +126,11 @@ src_prepare() {
 				sed -i -e "s|lib/linux-x64/libgit2-${LIBGIT2_SHORT_HASH}.so|/usr/$(get_libdir)/libgit2.so|g" "${f}" || die
 
 				local wordsize
-				if [[ "$(get_libdir)" == "lib64" ]]; then
-					wordsize="64"
-				elif [[ "$(get_libdir)" == "lib32" ]]; then
-					wordsize="32"
-				else
-					die "${ABI} not supported"
-				fi
+				wordsize="$(get_libdir)"
+				wordsize="${wordsize//lib/}"
+				wordsize="${wordsize//[on]/}"
 
+				# this may mess up the unit testing
 				sed -i -e "s|wordsize=\"[0-9]+\"|wordsize=\"${wordsize}\"|g" "${f}" || die
 				sed -i -e "s|cpu=\"[,a-z0-9-]+\"||g" "${f}" || die
 			done
