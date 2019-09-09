@@ -17,7 +17,7 @@ inherit dotnet eutils mono
 DESCRIPTION="SDL2-CS is a C# wrapper for SDL2"
 HOMEPAGE="https://github.com/flibitijibibo/SDL2-CS"
 PROJECT_NAME="SDL2-CS"
-COMMIT="ed4838b75dadbdfcef4c23edb0c607c38d7237a2"
+COMMIT="499ad108b93f28c7a8aa2f357206ddc98980614e"
 SRC_URI="https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${COMMIT}.tar.gz -> ${P}.tar.gz"
 
 inherit gac
