@@ -630,6 +630,8 @@ _dotnet_multibuild_wrapper() {
 	mkdir -p "${PORTAGE_BUILDDIR}/homedir-${MULTIBUILD_VARIANT}"
 	HOME="${PORTAGE_BUILDDIR}/homedir-${MULTIBUILD_VARIANT}"
 
+	cd "${BUILD_DIR}"
+
 	# run it
 	"${@}"
 }
