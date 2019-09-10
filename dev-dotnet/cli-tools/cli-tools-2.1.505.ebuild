@@ -23,7 +23,7 @@ SRC_URI="https://github.com/dotnet/cli/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.
 #	 arm64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
 #	 arm? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )"
 
-SLOT="2.2"
+SLOT="2.1"
 KEYWORDS="~amd64"
 
 RDEPEND="
