@@ -62,13 +62,6 @@ src_install() {
 		dotnet_install_loc
 		use developer && doins "wrappers/csharp/bin/freenectdotnet.dll.mdb"
 
-		local wordsize
-		wordsize="$(get_libdir)"
-		wordsize="${wordsize//lib/}"
-		wordsize="${wordsize//[on]/}"
-
-		sed -i -e "s|wordsize=\"[0-9]+\"|wordsize=\"${wordsize}\"|g" freenectdotnet.dll.config || die
-
                 doins freenectdotnet.dll.config
 		doins wrappers/csharp/bin/freenectdotnet.dll
 
