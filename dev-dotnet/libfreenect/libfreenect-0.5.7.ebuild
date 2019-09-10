@@ -86,10 +86,3 @@ src_install() {
 
 	dotnet_multilib_comply
 }
-
-pkg_postrm() {
-	if use net45 && use gac; then
-		einfo "Removing from GAC"
-		gacutil -u freenectdotnet
-	fi
-}
