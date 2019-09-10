@@ -14,7 +14,7 @@ inherit dotnet eutils mono
 DESCRIPTION="Vorbisfile# is a C# wrapper for Vorbisfile"
 HOMEPAGE="https://github.com/flibitijibibo/Vorbisfile-CS"
 PROJECT_NAME="Vorbisfile-CS"
-COMMIT="844fbd1ab7342a95d761f5e177678de954ec2a21"
+COMMIT="b929dedf3dab9ef85a3e6080f44227643f970710"
 SRC_URI="https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${COMMIT}.tar.gz -> ${P}.tar.gz"
 
 inherit gac

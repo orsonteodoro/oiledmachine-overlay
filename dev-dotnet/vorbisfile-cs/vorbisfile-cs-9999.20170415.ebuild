@@ -1,36 +1,34 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
-inherit dotnet eutils mono gac
+
+USE_DOTNET="net40"
+IUSE="${USE_DOTNET} debug gac"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 )"
+RDEPEND="media-libs/libvorbis"
+DEPEND="${RDEPEND}"
+
+inherit dotnet eutils mono
 
 DESCRIPTION="Vorbisfile# is a C# wrapper for Vorbisfile"
-HOMEPAGE=""
+HOMEPAGE="https://github.com/flibitijibibo/Vorbisfile-CS"
 PROJECT_NAME="Vorbisfile-CS"
 COMMIT="24e9ece0239da6b03890d47f6118df85d52cf179"
-SRC_URI="https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${COMMIT}.zip -> ${P}.zip"
+SRC_URI="https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${COMMIT}.tar.gz -> ${P}.tar.gz"
+
+inherit gac
 
 LICENSE="zlib"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-USE_DOTNET="net45"
-IUSE="${USE_DOTNET} debug +gac"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
-
-RDEPEND=">=dev-lang/mono-4
-         media-libs/libvorbis"
-DEPEND="${RDEPEND}
-	>=dev-lang/mono-4
-"
 
 S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
-SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_prepare() {
-	egenkey
+	default
 
-	eapply_user
+	dotnet_copy_sources
 }
 
 src_compile() {
@@ -38,10 +36,15 @@ src_compile() {
 	if use debug; then
 		mydebug="debug"
 	fi
-	cd "${S}"
 
-        einfo "Building solution"
-        exbuild_strong /p:Configuration=${mydebug} ${PROJECT_NAME}.sln || die
+	compile_impl() {
+	        einfo "Building solution"
+	        exbuild /p:Configuration=${mydebug} ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" ${PROJECT_NAME}.sln || die
+
+		dotnet_copy_dllmap_config "${FILESDIR}/Vorbisfile-CS.dll.config"
+	}
+
+	dotnet_foreach_impl compile_impl
 }
 
 src_install() {
@@ -50,22 +53,19 @@ src_install() {
 		mydebug="Debug"
 	fi
 
-	esavekey
+	install_impl() {
+		dotnet_install_loc
 
-        ebegin "Installing dlls into the GAC"
+		if use gac ; then
+			estrong_resign "bin/${mydebug}/${PROJECT_NAME}.dll" "${DISTDIR}/mono.snk"
+	                egacinstall "bin/${mydebug}/${PROJECT_NAME}.dll"
+		fi
+		doins "bin/${mydebug}/${PROJECT_NAME}.dll"
+		doins Vorbisfile-CS.dll.config
 
-	for x in ${USE_DOTNET} ; do
-                FW_UPPER=${x:3:1}
-                FW_LOWER=${x:4:1}
-                egacinstall "${S}/bin/${mydebug}/${PROJECT_NAME}.dll"
-        done
+		doins bin/${mydebug}/Vorbisfile-CS.dll.config
+		dotnet_distribute_dllmap_config "Vorbisfile-CS.dll"
+	}
 
-	if use developer ; then
-               	insinto "/usr/$(get_libdir)/mono/${PN}"
-	fi
-
-       	insinto "/usr/$(get_libdir)/mono/${PN}"
-	doins bin/${mydebug}/Vorbisfile-CS.dll.config
-
-	eend
+	dotnet_foreach_impl install_impl
 }
