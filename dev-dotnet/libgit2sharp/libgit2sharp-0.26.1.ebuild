@@ -9,7 +9,7 @@ USE_DOTNET="netstandard20 net46 netcoreapp21"
 TOOLS_VERSION="15.0"
 
 IUSE="${USE_DOTNET} debug developer gac system-libgit2 test"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) test? ( || ( netcoreapp21 net46 ) )"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) test? ( || ( netcoreapp21 net46 ) ) gac? ( net46 )"
 
 inherit dotnet eutils
 
@@ -262,12 +262,4 @@ src_test() {
 	}
 
 	dotnet_foreach_impl test_impl
-}
-
-pkg_postrm() {
-	if use net46 && use gac; then
-		einfo "Removing from GAC"
-		gacutil -u LibGit2Sharp
-		# don't die, it there is no such assembly in GAC
-	fi
 }
