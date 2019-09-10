@@ -239,12 +239,18 @@ src_install() {
 	# prevent collision with coreclr ebuild
 	rm -rf "${ddest}"/shared/Microsoft.NETCore.App/${FXR_V} || die
 
-	dosym "${dest}/dotnet" "/usr/bin/dotnet"
-
-	dodir /usr/share/licenses/cli-tools
+	dodir /usr/share/licenses/cli-tools-${PV}
 	cp -a "${CLI_S}/bin/2/linux-${myarch}/dotnet"/{LICENSE.txt,ThirdPartyNotices.txt} "${D}/usr/share/licenses/cli-tools" || die
 
 	# for monodevelop.  15.0 is toolsversion.
 	cd "${ddest_sdk}" || die
 	ln -s Current 15.0 || die
+
+	mv "${D}"/opt/dotnet/dotnet "${D}"/opt/dotnet/dotnet-${PV}
+}
+
+pkg_postinst() {
+	einfo "You may need to symlink from /opt/dotnet/dotnet-${PV} to /usr/bin/dotnet"
+	# clobbler the symlink anyway
+	ln -s /opt/dotnet/dotnet-${PV} /usr/bin/dotnet
 }
