@@ -728,6 +728,28 @@ dotnet_netfx_install_loc() {
 	esac
 }
 
+# @FUNCTION: dotnet_install_loc
+# @DESCRIPTION:  This will set the install location.  d variable, referring to the destination, will be reuseable after the call
+# @CODE
+# Parameters:
+# $1 - more stuff to add to the base address as in foobar part of /usr/lib64/mono/4.0-api/foobar .  It is usually the project name.  (optional)
+# @CODE
+dotnet_install_loc() {
+	local foldername="${1}"
+	local -x d
+
+	if [[ -n "${foldername}" ]] ; then
+		foldername="/${foldername}"
+	fi
+
+	if [[ "${EDOTNET}" =~ netstandard || "${EDOTNET}" =~ netcoreapp ]] ; then
+		d=$(dotnet_netcore_install_loc ${EDOTNET})${foldername}
+	elif dotnet_is_netfx "${EDOTNET}" ; then
+		d=$(dotnet_netfx_install_loc ${EDOTNET})${foldername}
+	fi
+	insinto "${d}"
+}
+
 # @FUNCTION: dotnet_dotted_moniker
 # @DESCRIPTION:  This will restore the periods for the moniker.  netstandard20 will report netstandard2.0 .
 # @RETURN: A dotted version string e.g. netstandard2.0
@@ -871,6 +893,41 @@ dotnet_is_netfx() {
 		return 0
 	fi
 	return 1
+}
+
+
+
+# @FUNCTION: dotnet_distribute_dllmap_config
+# @DESCRIPTION:  This will distribute the DLL map from the current directory
+dotnet_distribute_dllmap_config() {
+	local dllname="${1}"
+        FILES=$(find "${D}/usr/$(get_libdir)" -name "${dllname}")
+        for f in $FILES
+        do
+		f="/"$(echo "${f}" | sed -e "s|${D}||g")
+		if [[ "${d}/${dllname}.config" != "${f}.config" ]] ; then
+	                dosym "${d}/${dllname}.config" "${f}.config"
+		fi
+        done
+}
+
+# @FUNCTION: dotnet_copy_dllmap_config
+# @DESCRIPTION:  This will copy and edit the dllmap in the current directory
+# @CODE
+# Parameters:
+# $1 - the path to the source of the dllmap
+# @CODE
+dotnet_copy_dllmap_config() {
+	local dllmap_src="$1"
+	local dllmap_basename="$(basename $dllmap_src)"
+	cp -a "${dllmap_src}" ./
+	local wordsize
+	wordsize="$(get_libdir)"
+	wordsize="${wordsize//lib/}"
+	wordsize="${wordsize//[on]/}"
+
+	sed -i -e "s|wordsize=\"[0-9]+\"|wordsize=\"${wordsize}\"|g" "${dllmap_basename}" || die
+	sed -i -e "s|lib64|$(get_libdir)|g" "${dllmap_basename}" || die
 }
 
 EXPORT_FUNCTIONS pkg_setup pkg_pretend
