@@ -3,11 +3,11 @@
 
 EAPI="6"
 
+USE_DOTNET="net35 net45"
 RDEPEND="=dev-libs/libfreenect-${PV}"
 DEPEND="${RDEPEND}"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net45 )"
-USE_DOTNET="net35 net45"
 IUSE="${USE_DOTNET} debug +gac"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net45 )"
 
 inherit dotnet multilib
 
@@ -42,6 +42,8 @@ src_compile() {
 	fi
 
 	compile_impl() {
+		dotnet_copy_dllmap_config "freenectdotnet.dll.config"
+
 		cd "wrappers/csharp/src/lib/VS2010"
 
 	        einfo "Building solution"
@@ -58,9 +60,8 @@ src_install() {
 	fi
 
 	install_impl() {
-                insinto "$(dotnet_netfx_install_loc ${EDOTNET})"
+		dotnet_install_loc
 		use developer && doins "wrappers/csharp/bin/freenectdotnet.dll.mdb"
-		cp -a "${FILESDIR}/freenectdotnet.dll.config" "${BUILD_DIR}"
 
 		local wordsize
 		wordsize="$(get_libdir)"
@@ -75,12 +76,9 @@ src_install() {
 		if [[ "${EDOTNET}" == net45 ]]; then
 			if use gac ; then
 		                egacinstall "wrappers/csharp/bin/freenectdotnet.dll"
-				L=$(find /usr/$(get_libdir)/mono/gac/freenectdotnet/ -maxdepth 1 -name "[0-9.]*__[0-9a-z]*")
-				for d in $L ; do
-					dosym "$(dotnet_netfx_install_loc ${EDOTNET})/freenectdotnet.dll.config" "${d}/freenectdotnet.dll.config"
-				done
 			fi
 		fi
+		dotnet_distribute_dllmap_config "freenectdotnet.dll"
 	}
 
 	dotnet_foreach_impl install_impl
