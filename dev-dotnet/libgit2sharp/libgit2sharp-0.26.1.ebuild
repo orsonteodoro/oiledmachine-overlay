@@ -190,13 +190,7 @@ src_install() {
 			_dotnet="dotnet_core"
 		fi
 
-		local d
-		if [[ "${EDOTNET}" =~ "netcore" || "${EDOTNET}" =~ "netstandard" ]] ; then
-			d="$(dotnet_netcore_install_loc ${EDOTNET})"
-		else
-			d="$(dotnet_netfx_install_loc ${EDOTNET})"
-		fi
-		insinto "${d}"
+		dotnet_install_loc
 
 		local s_base
 		s_base="bin/LibGit2Sharp/${DIR}/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})"
@@ -210,6 +204,7 @@ src_install() {
 		if [[ "${EDOTNET}" =~ "netstandard" || "${EDOTNET}" =~ net[0-9][0-9][0-9]? ]] ; then
 			doins "${s_base}/LibGit2Sharp.dll"
 			doins "${s_base}/LibGit2Sharp.dll.config"
+			dotnet_distribute_dllmap_config "LibGit2Sharp.dll"
 		fi
 
 		if ! use system-libgit2 ; then
@@ -224,7 +219,6 @@ src_install() {
 		if [[ "${EDOTNET}" =~ net[0-9][0-9][0-9]? && -n "${_dotnet}" ]] ; then
 			insinto "$(dotnet_netcore_install_loc ${EDOTNET})"
 			dosym "$(dotnet_netfx_install_loc ${EDOTNET})/LibGit2Sharp.dll" "$(dotnet_netcore_install_loc ${EDOTNET})/LibGit2Sharp.dll"
-			dosym "$(dotnet_netfx_install_loc ${EDOTNET})/LibGit2Sharp.dll.config" "$(dotnet_netcore_install_loc ${EDOTNET})/LibGit2Sharp.dll.config"
 		fi
 
 		if [[ "${EDOTNET}" =~ "netstandard" || "${EDOTNET}" =~ net[0-9][0-9][0-9]? ]] ; then
