@@ -41,11 +41,6 @@ src_compile() {
 	fi
 
 	compile_impl() {
-		local wordsize
-		wordsize="$(get_libdir)"
-		wordsize="${wordsize//lib/}"
-		wordsize="${wordsize//[on]/}"
-
 		if use kinect ; then
 			dotnet_copy_dllmap_config "${FILESDIR}/AForge.Video.Kinect.dll.config"
 		fi
@@ -61,18 +56,6 @@ src_compile() {
 	}
 
 	dotnet_foreach_impl compile_impl
-}
-
-_distribute_dllmap_config() {
-	local dllname="${1}"
-        FILES=$(find "${D}" -name "${dllname}")
-        for f in $FILES
-        do
-		f="/"$(echo "${f}" | sed -e "s|${D}||g")
-		if [[ "${d}/${dllname}" != "${f}.config" ]] ; then
-	                dosym "${d}/${dllname}.config" "${f}.config"
-		fi
-        done
 }
 
 src_install() {
