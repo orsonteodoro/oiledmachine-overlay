@@ -100,3 +100,9 @@ src_install() {
 	dotnet_multilib_comply
 }
 
+pkg_postrm() {
+	if use gac; then
+		einfo "Removing from GAC"
+		gacutil -u ${PROJECT_NAME}
+	fi
+}
