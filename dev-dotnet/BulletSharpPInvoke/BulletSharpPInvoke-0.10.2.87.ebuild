@@ -31,7 +31,6 @@ S="${WORKDIR}/${PN}-${MY_PV}"
 src_unpack() {
 	unpack ${A}
 	mv bullet3-${LIBBULLETC_PV} bullet || die
-	cp -a "${FILESDIR}/BulletSharp.dll.config" "${S}"
 }
 
 src_prepare() {
@@ -82,13 +81,7 @@ src_compile() {
 	fi
 
 	compile_impl() {
-		local wordsize
-		wordsize="$(get_libdir)"
-		wordsize="${wordsize//lib/}"
-		wordsize="${wordsize//[on]/}"
-
-		sed -i -e "s|wordsize=\"[0-9]+\"|wordsize=\"${wordsize}\"|g" BulletSharp.dll.config || die
-		sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|" BulletSharp.dll.config || die
+		dotnet_copy_dllmap_config "${FILESDIR}/BulletSharp.dll.config"
 
 		# Build C# wrapper
 		cd BulletSharpPInvoke || die
@@ -113,13 +106,7 @@ src_install() {
 			mydebug="Debug"
 		fi
 
-		local d
-		if [[ "${EDOTNET}" =~ netstandard ]] ; then
-			d="$(dotnet_netcore_install_loc ${EDOTNET})"
-		elif [[ "${EDOTNET}" =~ net[0-9][0-9][0-9]? ]] ; then
-			d="$(dotnet_netfx_install_loc ${EDOTNET})"
-		fi
-		insinto "${d}"
+		dotnet_install_loc
 
 		if [[ "${EDOTNET}" == "net40" ]] ; then
 			egacinstall "BulletSharpPInvoke/bin/${mydebug}/BulletSharp.dll"
@@ -132,14 +119,7 @@ src_install() {
 			doins BulletSharpPInvoke/bin/${mydebug}/BulletSharp.dll.mdb
 		fi
 
-	        FILES=$(find "${D}" -name "BulletSharp.dll")
-	        for f in $FILES
-	        do
-			f="/"$(echo "${f}" | sed -e "s|${D}||g")
-			if [[ "${d}/BulletSharp.dll.config" != "${f}.config" ]] ; then
-		                dosym "${d}/BulletSharp.dll.config" "${f}.config"
-			fi
-	        done
+		dotnet_distribute_dllmap_config "BulletSharp.dll"
 	}
 
 	dotnet_foreach_impl install_impl
