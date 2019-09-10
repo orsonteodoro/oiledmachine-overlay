@@ -15,7 +15,7 @@ inherit dotnet eutils mono versionator
 DESCRIPTION="AForge.NET Framework is a C# framework designed for developers and researchers in the fields of Computer Vision and Artificial Intelligence - image processing, neural networks, genetic algorithms, machine learning, robotics, etc."
 HOMEPAGE="http://www.aforgenet.com/"
 PROJECT_NAME="AForge.NET"
-COMMIT="d70730b24aace6f3e108916dbfef60331b320b2c"
+COMMIT="a9453dad025d1fbffab165293cedc976187da535"
 SRC_URI="https://github.com/andrewkirillov/AForge.NET/archive/${COMMIT}.tar.gz -> ${P}.tar.gz"
 
 inherit gac
@@ -60,7 +60,7 @@ src_compile() {
 
 		cd "Sources"
 
-	        einfo "Building solution"
+		einfo "Building solution"
 	        exbuild /p:Configuration=${mydebug} "Build All.sln" || die
 	}
 
@@ -98,7 +98,7 @@ src_install() {
 		version_compare $(dotnet_use_moniker_to_dotted_ver "${EDOTNET}") "4.0"
 		local r="$?"
 		if [[ "$r" == "2" || "$r" == "3" ]] ; then
-			if use gac ; then
+			if use gac; then
 				estrong_resign ${mydebug}/AForge.Vision.dll               Sources/Vision/AForge.Vision.snk
 				estrong_resign ${mydebug}/AForge.MachineLearning.dll      Sources/MachineLearning/AForge.MachineLearning.snk
 				estrong_resign ${mydebug}/AForge.Imaging.Formats.dll      Sources/Imaging.Formats/AForge.Imaging.Formats.snk
