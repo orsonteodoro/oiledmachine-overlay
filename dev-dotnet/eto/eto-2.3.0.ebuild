@@ -1,36 +1,33 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
+
+USE_DOTNET="net40 net45"
+IUSE="${USE_DOTNET} debug +gac developer gtk-sharp3 gtk-sharp2"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 net45 ) || ( gtk-sharp3 gtk-sharp2 )"
+RDEPEND=">=dev-util/monodevelop-5
+	 gtk-sharp3? ( dev-dotnet/gtk-sharp:3 )
+	 gtk-sharp2? ( dev-dotnet/gtk-sharp:2 )
+         net45? ( dev-dotnet/referenceassemblies-pcl )"
+DEPEND="${RDEPEND}"
+
 inherit dotnet eutils mono gac
 
 DESCRIPTION="Cross platform GUI framework for desktop and mobile applications in .NET"
-HOMEPAGE=""
-SRC_URI="https://github.com/picoe/Eto/archive/${PV}.tar.gz -> ${PN}-${PV}.tar.gz"
+HOMEPAGE="https://github.com/picoe/Eto"
+SRC_URI="https://github.com/picoe/Eto/archive/${PV}.tar.gz -> ${P}.tar.gz"
+
+inherit gac
 
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
-USE_DOTNET="net45"
-IUSE="${USE_DOTNET} debug +gac developer gtk-sharp3 gtk-sharp2"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac || ( gtk-sharp3 gtk-sharp2 )"
-
-RDEPEND=">=dev-lang/mono-4
-	 >=dev-util/monodevelop-5
-	 gtk-sharp3? ( dev-dotnet/gtk-sharp:3 )
-	 gtk-sharp2? ( dev-dotnet/gtk-sharp:2 )
-         net45? ( dev-dotnet/referenceassemblies-pcl )
-        "
-DEPEND="${RDEPEND}
-	>=dev-lang/mono-4
-"
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 MY_PN="Eto"
-
 S="${WORKDIR}/${MY_PN}-${PV}"
-SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_prepare() {
+	default
 	epatch "${FILESDIR}/${PN}-2.3.0-remove-projects.patch"
 
 	PCL_OLD_VERSION="259"
@@ -40,13 +37,7 @@ src_prepare() {
 	sed -i -r -e "s|Profile${PCL_OLD_VERSION}|Profile${PCL_NEW_VERSION}|g" "${S}/Source/Eto.Serialization.Xaml/Eto.Serialization.Xaml - pcl.csproj" || die
 	sed -i -r -e "s|Profile${PCL_OLD_VERSION}|Profile${PCL_NEW_VERSION}|g" "${S}/Source/Eto.Test/Eto.Test/Eto.Test - pcl.csproj" || die
 
-	egenkey
-
-	eapply_user
-}
-
-src_configure() {
-	default
+	dotnet_copy_sources
 }
 
 src_compile() {
@@ -54,10 +45,15 @@ src_compile() {
 	if use debug; then
 		mydebug="Debug"
 	fi
-	cd "${S}/Source"
 
-        einfo "Building solution"
-        exbuild_strong /p:Configuration=${mydebug} 'Eto - net45.sln' || die
+	compile_impl() {
+		cd "Source"
+
+	        einfo "Building solution"
+	        exbuild /p:Configuration=${mydebug} ${STRONG_ARGS_NETFX}${DISTDIR}/mono.snk 'Eto - net45.sln' || die
+	}
+
+	dotnet_foreach_impl compile_impl
 }
 
 src_install() {
@@ -66,25 +62,28 @@ src_install() {
 		mydebug="Debug"
 	fi
 
-	esavekey
-
-        ebegin "Installing dlls into the GAC"
-
-	for x in ${USE_DOTNET} ; do
-                FW_UPPER=${x:3:1}
-                FW_LOWER=${x:4:1}
-                egacinstall "${S}/BuildOutput/${x}/${mydebug}/Eto.dll"
-		if use gtk-sharp3 ; then
-	                egacinstall "${S}/BuildOutput/${x}/${mydebug}/Eto.Gtk3.dll"
+	install_impl() {
+		local d
+		if [[ "${EDOTNET}" =~ netstandard ]] ; then
+			d=$(dotnet_netcore_install_loc ${EDOTNET})
+		elif dotnet_is_netfx "${EDOTNET}" ; then
+			d=$(dotnet_netfx_install_loc ${EDOTNET})
 		fi
-		if use gtk-sharp2 ; then
-	                egacinstall "${S}/BuildOutput/${x}/${mydebug}/Eto.Gtk2.dll"
-		fi
-                egacinstall "${S}/BuildOutput/${x}/${mydebug}/Eto.Serialization.Json.dll"
-        done
+		insinto "${d}"
 
-	eend
+		if use gac ; then
+	                egacinstall "BuildOutput/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/${mydebug}/Eto.dll"
+			use gtk-sharp3 && egacinstall "BuildOutput/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/${mydebug}/Eto.Gtk3.dll"
+			use gtk-sharp2 && egacinstall "BuildOutput/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/${mydebug}/Eto.Gtk2.dll"
+	                egacinstall "BuildOutput/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/${mydebug}/Eto.Serialization.Json.dll"
+		fi
+		doins "BuildOutput/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/${mydebug}/Eto.dll"
+		use gtk-sharp3 && doins "BuildOutput/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/${mydebug}/Eto.Gtk3.dll"
+		use gtk-sharp2 && doins "BuildOutput/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/${mydebug}/Eto.Gtk2.dll"
+		doins "BuildOutput/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/${mydebug}/Eto.Serialization.Json.dll"
+	}
+
+	dotnet_foreach_impl install_impl
 
 	dotnet_multilib_comply
 }
-

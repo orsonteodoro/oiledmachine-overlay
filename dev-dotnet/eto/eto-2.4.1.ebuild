@@ -3,9 +3,9 @@
 
 EAPI=6
 
-USE_DOTNET="net45"
-IUSE="${USE_DOTNET} debug gac developer gtk-sharp3 gtk-sharp2"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net45 ) || ( gtk-sharp3 gtk-sharp2 )"
+USE_DOTNET="netcoreapp20"
+IUSE="${USE_DOTNET} debug developer gtk-sharp3 gtk-sharp2"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) || ( gtk-sharp3 gtk-sharp2 )"
 RDEPEND=">=dev-util/monodevelop-5
 	 gtk-sharp3? ( dev-dotnet/gtk-sharp:3 )
 	 gtk-sharp2? ( dev-dotnet/gtk-sharp:2 )
@@ -17,7 +17,7 @@ inherit dotnet eutils mono gac
 DESCRIPTION="Cross platform GUI framework for desktop and mobile applications in .NET"
 HOMEPAGE="https://github.com/picoe/Eto"
 COMMIT="d7a6d4bbdb5ac1263d3036d9177cadcfb2f0e63e"
-SRC_URI="https://github.com/picoe/Eto/archive/${COMMIT}.tar.gz -> ${PN}-${PV}.tar.gz"
+SRC_URI="https://github.com/picoe/Eto/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 inherit gac
 
@@ -25,24 +25,28 @@ LICENSE="BSD"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 MY_PN="Eto"
-S="${WORKDIR}/${MY_PN}-${COMMIT}"
+S="${WORKDIR}/${MY_PN}-${PV}"
 
 src_prepare() {
 	default
-	epatch "${FILESDIR}/${PN}-9999.20171218-remove-projects.patch"
-	epatch "${FILESDIR}/${PN}-9999.20171218-posx.patch"
-	epatch "${FILESDIR}/${PN}-9999.20171218-prevnextsel.patch"
-	epatch "${FILESDIR}/${PN}-9999.20171218-suppress-warnings.patch"
-	epatch "${FILESDIR}/${PN}-9999.20171218-csharp6-compat.patch"
-	epatch "${FILESDIR}/${PN}-9999.20171218-context.patch"
-	epatch "${FILESDIR}/${PN}-9999.20171218-targets.patch"
+	ewarn "Ebuild early stages of development and is WIP.  It's unfinished and will not work."
 
-	PCL_OLD_VERSION="259"
-	PCL_NEW_VERSION="78"
-	sed -i -r -e "s|Profile${PCL_OLD_VERSION}|Profile${PCL_NEW_VERSION}|g" "${S}/Source/Eto/Eto - pcl.csproj" || die
-	sed -i -r -e "s|Profile${PCL_OLD_VERSION}|Profile${PCL_NEW_VERSION}|g" "${S}/Source/Eto.Serialization.Json/Eto.Serialization.Json - pcl.csproj" || die
-	sed -i -r -e "s|Profile${PCL_OLD_VERSION}|Profile${PCL_NEW_VERSION}|g" "${S}/Source/Eto.Serialization.Xaml/Eto.Serialization.Xaml - pcl.csproj" || die
-	sed -i -r -e "s|Profile${PCL_OLD_VERSION}|Profile${PCL_NEW_VERSION}|g" "${S}/Source/Eto.Test/Eto.Test/Eto.Test - pcl.csproj" || die
+	# TODO
+	# disabled patches based on 2017
+#	epatch "${FILESDIR}/${PN}-9999.20171218-remove-projects.patch"
+#	epatch "${FILESDIR}/${PN}-9999.20171218-posx.patch"
+#	epatch "${FILESDIR}/${PN}-9999.20171218-prevnextsel.patch"
+#	epatch "${FILESDIR}/${PN}-9999.20171218-suppress-warnings.patch"
+#	epatch "${FILESDIR}/${PN}-9999.20171218-csharp6-compat.patch"
+#	epatch "${FILESDIR}/${PN}-9999.20171218-context.patch"
+#	epatch "${FILESDIR}/${PN}-9999.20171218-targets.patch"
+
+#	PCL_OLD_VERSION="259"
+#	PCL_NEW_VERSION="78"
+#	sed -i -r -e "s|Profile${PCL_OLD_VERSION}|Profile${PCL_NEW_VERSION}|g" "${S}/Source/Eto/Eto - pcl.csproj" || die
+#	sed -i -r -e "s|Profile${PCL_OLD_VERSION}|Profile${PCL_NEW_VERSION}|g" "${S}/Source/Eto.Serialization.Json/Eto.Serialization.Json - pcl.csproj" || die
+#	sed -i -r -e "s|Profile${PCL_OLD_VERSION}|Profile${PCL_NEW_VERSION}|g" "${S}/Source/Eto.Serialization.Xaml/Eto.Serialization.Xaml - pcl.csproj" || die
+#	sed -i -r -e "s|Profile${PCL_OLD_VERSION}|Profile${PCL_NEW_VERSION}|g" "${S}/Source/Eto.Test/Eto.Test/Eto.Test - pcl.csproj" || die
 
 	dotnet_copy_sources
 }
@@ -54,10 +58,8 @@ src_compile() {
 	fi
 
 	compile_impl() {
-		cd "Source"
-
 	        einfo "Building solution"
-	        exbuild /p:Configuration=${mydebug} ${STRONG_ARGS_NETFX}${DISTDIR}/mono.snk 'Eto - net45.sln' || die
+	        exbuild -p:Configuration=${mydebug} ${STRONG_ARGS_NETCORE}${DISTDIR}/mono.snk || die
 	}
 
 	dotnet_foreach_impl compile_impl
