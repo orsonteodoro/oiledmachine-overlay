@@ -1,29 +1,25 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
+
+USE_DOTNET="net45"
+IUSE="${USE_DOTNET} debug gac"
+REQUIRED_USE="|| ( ${USE_DOTNET} )"
+RDEPEND="dev-util/nant"
+DEPEND="${RDEPEND}"
+
 inherit dotnet eutils mono
 
 COMMIT="35a15c0a1755e15bc4109fffa6c812fd834b7c85"
 DESCRIPTION="Protobuild is a Cross-platform project generation for C#"
 HOMEPAGE="https://protobuild.org/"
-SRC_URI="https://github.com/Protobuild/Protobuild/archive/${COMMIT}.zip -> ${P}.zip"
-
+SRC_URI="https://github.com/Protobuild/Protobuild/archive/${COMMIT}.tar.gz -> ${P}.tar.gz"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-USE_DOTNET="net45"
-IUSE="${USE_DOTNET} debug gac"
-REQUIRED_USE="|| ( ${USE_DOTNET} )"
 
-RDEPEND=">=dev-lang/mono-4
-         dev-util/nant"
-DEPEND="${RDEPEND}
-	>=dev-lang/mono-4
-"
-
-S="${WORKDIR}/Protobuild-${COMMIT}"
+S="${WORKDIR}/${PN^}-${COMMIT}"
 
 pkg_setup() {
 	ewarn "You will be bootstrapping protobuild from Protobuild.exe.  We cannot guarantee that this specific binary is safe.  Use at your own risk."
@@ -39,8 +35,8 @@ src_prepare() {
 
 src_compile() {
         einfo "Building solution"
-	mono ./Protobuild.exe -generate Linux
-        exbuild ./Protobuild.Linux.sln || die
+	mono ${PN^}.exe -generate Linux
+        exbuild ${PN^}.Linux.sln || die
 }
 
 src_install() {
@@ -49,9 +45,8 @@ src_install() {
 		mydebug="Debug"
 	fi
 
-	mkdir -p "${D}/usr/bin"
-	cp ./Protobuild/bin/Linux/AnyCPU/${mydebug}/Protobuild.exe "${D}/usr/bin/"
+	exeinto /usr/bin
+	doexe ${PN^}/bin/Linux/AnyCPU/${mydebug}/${PN^}.exe
 
 	dotnet_multilib_comply
 }
-
