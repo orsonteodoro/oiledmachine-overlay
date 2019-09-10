@@ -43,13 +43,7 @@ src_compile() {
 	compile_impl() {
 	        exbuild ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" /p:Configuration=${mydebug} SDL2-CS.csproj || die
 
-		local wordsize
-		wordsize="$(get_libdir)"
-		wordsize="${wordsize//lib/}"
-		wordsize="${wordsize//[on]/}"
-
-		sed -i -e "s|wordsize=\"[0-9]+\"|wordsize=\"${wordsize}\"|g" "${f}" || die
-		sed -i -e "s|lib64|$(get_libdir)|g" "${f}" || die
+		dotnet_copy_dllmap_config "${FILESDIR}/SDL2-CS.dll.config"
 	}
 
 	dotnet_foreach_impl compile_impl
@@ -62,9 +56,12 @@ src_install() {
 			mydebug="Debug"
 		fi
 
-		local d
-		d=$(dotnet_netfx_install_loc ${EDOTNET})
-		insinto "${d}"
+		if [[ "${EDOTNET}" =~ netstandard ]] ; then
+			mydebug="${mydebug,,}"
+		fi
+
+		dotnet_install_loc
+
 		if use gac ; then
 			estrong_resign "bin/${mydebug}/${PROJECT_NAME}.dll" "${DISTDIR}/mono.snk"
 		fi
