@@ -240,7 +240,7 @@ src_install() {
 	rm -rf "${ddest}"/shared/Microsoft.NETCore.App/${FXR_V} || die
 
 	dodir /usr/share/licenses/cli-tools-${PV}
-	cp -a "${CLI_S}/bin/2/linux-${myarch}/dotnet"/{LICENSE.txt,ThirdPartyNotices.txt} "${D}/usr/share/licenses/cli-tools" || die
+	cp -a "${CLI_S}/bin/2/linux-${myarch}/dotnet"/{LICENSE.txt,ThirdPartyNotices.txt} "${D}/usr/share/licenses/cli-tools-${PV}" || die
 
 	# for monodevelop.  15.0 is toolsversion
 	cd "${ddest_sdk}" || die
