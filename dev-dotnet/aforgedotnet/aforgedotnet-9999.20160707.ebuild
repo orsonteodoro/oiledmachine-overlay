@@ -41,21 +41,12 @@ src_compile() {
 	fi
 
 	compile_impl() {
-		local wordsize
-		wordsize="$(get_libdir)"
-		wordsize="${wordsize//lib/}"
-		wordsize="${wordsize//[on]/}"
-
 		if use kinect ; then
-			cp -a "${FILESDIR}/AForge.Video.Kinect.dll.config" ./
-			sed -i -e "s|wordsize=\"[0-9]+\"|wordsize=\"${wordsize}\"|g" AForge.Video.Kinect.dll.config || die
-			sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|" AForge.Video.Kinect.dll.config || die
+			dotnet_copy_dllmap_config "${FILESDIR}/AForge.Video.Kinect.dll.config"
 		fi
 
 		if use ximea ; then
-			cp -a "${FILESDIR}/AForge.Video.Ximea.dll.config" ./
-			sed -i -e "s|wordsize=\"[0-9]+\"|wordsize=\"${wordsize}\"|g" AForge.Video.Ximea.dll.config || die
-			sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|" AForge.Video.Ximea.dll.config || die
+			dotnet_copy_dllmap_config "${FILESDIR}/AForge.Video.Ximea.dll.config"
 		fi
 
 		cd "Sources"
@@ -67,18 +58,6 @@ src_compile() {
 	dotnet_foreach_impl compile_impl
 }
 
-_distribute_dllmap_config() {
-	local dllname="${1}"
-        FILES=$(find "${D}" -name "${dllname}")
-        for f in $FILES
-        do
-		f="/"$(echo "${f}" | sed -e "s|${D}||g")
-		if [[ "${d}/${dllname}" != "${f}.config" ]] ; then
-	                dosym "${d}/${dllname}.config" "${f}.config"
-		fi
-        done
-}
-
 src_install() {
 	#_src_preinstall
 	mydebug="Release"
@@ -87,13 +66,7 @@ src_install() {
 	fi
 
 	install_impl() {
-		local d
-		if [[ "${EDOTNET}" =~ netstandard ]] ; then
-			d=$(dotnet_netcore_install_loc ${EDOTNET})
-		elif dotnet_is_netfx "${EDOTNET}" ; then
-			d=$(dotnet_netfx_install_loc ${EDOTNET})
-		fi
-		insinto "${d}"
+		dotnet_install_loc
 
 		version_compare $(dotnet_use_moniker_to_dotted_ver "${EDOTNET}") "4.0"
 		local r="$?"
@@ -164,12 +137,12 @@ src_install() {
 
 		if use kinect ; then
 			doins "AForge.Video.Kinect.dll.config"
-			_distribute_dllmap_config "AForge.Video.Kinect.dll"
+			dotnet_distribute_dllmap_config "AForge.Video.Kinect.dll"
 		fi
 
 		if use ximea ; then
 			doins "AForge.Video.Ximea.dll.config"
-			_distribute_dllmap_config "AForge.Video.Ximea.dll"
+			dotnet_distribute_dllmap_config "AForge.Video.Ximea.dll"
 		fi
 
 		if use developer ; then

@@ -47,15 +47,11 @@ src_compile() {
 		wordsize="${wordsize//[on]/}"
 
 		if use kinect ; then
-			cp -a "${FILESDIR}/AForge.Video.Kinect.dll.config" ./
-			sed -i -e "s|wordsize=\"[0-9]+\"|wordsize=\"${wordsize}\"|g" AForge.Video.Kinect.dll.config || die
-			sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|" AForge.Video.Kinect.dll.config || die
+			dotnet_copy_dllmap_config "${FILESDIR}/AForge.Video.Kinect.dll.config"
 		fi
 
 		if use ximea ; then
-			cp -a "${FILESDIR}/AForge.Video.Ximea.dll.config" ./
-			sed -i -e "s|wordsize=\"[0-9]+\"|wordsize=\"${wordsize}\"|g" AForge.Video.Ximea.dll.config || die
-			sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|" AForge.Video.Ximea.dll.config || die
+			dotnet_copy_dllmap_config "${FILESDIR}/AForge.Video.Ximea.dll.config"
 		fi
 
 		cd "Sources"
@@ -164,12 +160,12 @@ src_install() {
 
 		if use kinect ; then
 			doins "AForge.Video.Kinect.dll.config"
-			_distribute_dllmap_config "AForge.Video.Kinect.dll"
+			dotnet_distribute_dllmap_config "AForge.Video.Kinect.dll"
 		fi
 
 		if use ximea ; then
 			doins "AForge.Video.Ximea.dll.config"
-			_distribute_dllmap_config "AForge.Video.Ximea.dll"
+			dotnet_distribute_dllmap_config "AForge.Video.Ximea.dll"
 		fi
 
 		if use developer ; then
