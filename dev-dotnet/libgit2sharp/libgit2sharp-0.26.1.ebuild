@@ -202,6 +202,9 @@ src_install() {
 		s_base="bin/LibGit2Sharp/${DIR}/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})"
 		if [[ "${EDOTNET}" =~ net[0-9][0-9][0-9]? ]] ; then
 			estrong_resign "${s_base}/LibGit2Sharp.dll" "${S}/libgit2sharp.snk"
+			if use gac ; then
+				egacinstall "${s_base}/LibGit2Sharp.dll"
+			fi
 		fi
 
 		if [[ "${EDOTNET}" =~ "netstandard" || "${EDOTNET}" =~ net[0-9][0-9][0-9]? ]] ; then
@@ -259,13 +262,6 @@ src_test() {
 	}
 
 	dotnet_foreach_impl test_impl
-}
-
-pkg_postinst() {
-	if use net46 && use gac; then
-		einfo "Adding to GAC"
-		gacutil -i "/usr/lib/mono/4.6-api/LibGit2Sharp.dll" || die
-	fi
 }
 
 pkg_postrm() {
