@@ -743,9 +743,9 @@ dotnet_install_loc() {
 	fi
 
 	if [[ "${EDOTNET}" =~ netstandard || "${EDOTNET}" =~ netcoreapp ]] ; then
-		d=$(dotnet_netcore_install_loc ${EDOTNET})${foldername}
+		d="$(dotnet_netcore_install_loc ${EDOTNET})${foldername}"
 	elif dotnet_is_netfx "${EDOTNET}" ; then
-		d=$(dotnet_netfx_install_loc ${EDOTNET})${foldername}
+		d="$(dotnet_netfx_install_loc ${EDOTNET})${foldername}"
 	fi
 	insinto "${d}"
 }
