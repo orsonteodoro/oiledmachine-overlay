@@ -736,7 +736,6 @@ dotnet_netfx_install_loc() {
 # @CODE
 dotnet_install_loc() {
 	local foldername="${1}"
-	local -x d
 
 	if [[ -n "${foldername}" ]] ; then
 		foldername="/${foldername}"
@@ -748,6 +747,7 @@ dotnet_install_loc() {
 		d="$(dotnet_netfx_install_loc ${EDOTNET})${foldername}"
 	fi
 	insinto "${d}"
+	export d
 }
 
 # @FUNCTION: dotnet_dotted_moniker
@@ -904,7 +904,10 @@ dotnet_distribute_dllmap_config() {
         FILES=$(find "${D}/usr/$(get_libdir)" -name "${dllname}")
         for f in $FILES
         do
-		f="/"$(echo "${f}" | sed -e "s|${D}||g")
+		f=$(echo "${f}" | sed -e "s|${D}||g")
+		if [[ "${f:0:1}" != "/" ]] ; then
+			f="/${f}"
+		fi
 		if [[ "${d}/${dllname}.config" != "${f}.config" ]] ; then
 	                dosym "${d}/${dllname}.config" "${f}.config"
 		fi
