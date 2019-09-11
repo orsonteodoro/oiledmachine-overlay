@@ -56,10 +56,9 @@ src_install() {
 	install_impl() {
 		dotnet_install_loc
 
-		if use gac ; then
-			estrong_resign "bin/${mydebug}/${PROJECT_NAME}.dll" "${DISTDIR}/mono.snk"
-	                egacinstall "bin/${mydebug}/${PROJECT_NAME}.dll"
-		fi
+		estrong_resign "bin/${mydebug}/${PROJECT_NAME}.dll" "${DISTDIR}/mono.snk"
+                egacinstall "bin/${mydebug}/${PROJECT_NAME}.dll"
+
 		doins "bin/${mydebug}/${PROJECT_NAME}.dll"
 		doins Vorbisfile-CS.dll.config
 
