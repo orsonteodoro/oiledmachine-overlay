@@ -495,12 +495,7 @@ _exbuild_netcore() {
 		SARGS=-p:DebugSymbols=False
 	fi
 
-	local framework
-	if [[ -n "${TOOLS_VERSION}" && "${TOOLS_VERSION}" == "Current" && "${DOTNET_ACTIVE_FRAMEWORK}" == "netfx" ]] ; then
-		framework=${DOTNET_ACTIVE_FRAMEWORK//fx/}${EBF//./}
-	else
-		framework=${DOTNET_ACTIVE_FRAMEWORK}${EBF}
-	fi
+	local framework=$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})
 
 	if dotnet_is_netfx "${EDOTNET}" ; then
 		export FrameworkPathOverride="$(dotnet_netfx_install_loc ${EDOTNET})/"
@@ -614,8 +609,12 @@ estrong_resign() {
 
 # @FUNCTION: erestore
 # @DESCRIPTION:  This will explicitly pull the dependencies for the package.
+# @CODE
+# Parameters:
+# $1 ... $n - extra params
+# @CODE
 erestore() {
-	dotnet restore || die
+	dotnet restore $@ || die
 }
 
 _NETFX_VERS=( 20 35 40 45 46 461 462 47 471 472 48 )
@@ -705,11 +704,7 @@ dotnet_netcore_install_loc() {
 	if [[ -n "${moniker}" ]]; then
 		framework="${moniker}"
 	else
-		if [[ -n ${TOOLS_VERSION} && "${TOOLS_VERSION}" == "Current" && "${DOTNET_ACTIVE_FRAMEWORK}" == "netfx" ]] ; then
-			framework=${DOTNET_ACTIVE_FRAMEWORK//fx/}${EBF//./}
-		else
-			framework=${DOTNET_ACTIVE_FRAMEWORK}${EBF}
-		fi
+		framework=$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})
 	fi
 
 	echo "/opt/${_dotnet}/sdk/NuGetFallbackFolder/${PN,,}/${PV,,}/lib/${framework}"
