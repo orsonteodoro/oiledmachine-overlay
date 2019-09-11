@@ -941,13 +941,13 @@ dotnet_copy_dllmap_config() {
 }
 
 # @FUNCTION: dotnet_fill_tools_version_recursive
-# @DESCRIPTION:  This will fill the highest TOOLS_VERSION by scanning recursively the csprojs and props in current directory
+# @DESCRIPTION:  This will fill the highest TOOLS_VERSION by scanning recursively the csprojs in current directory
 dotnet_fill_tools_version_recursive() {
-	grep -r -e "ToolsVersion=\"Current\"" $(find . -name "*.csproj" -o -name "*.props") && export TOOLS_VERSION="Current" && return
-	grep -r -e "ToolsVersion=\"15.0\"" $(find . -name "*.csproj" -o -name "*.props") && export TOOLS_VERSION="Current" && return
-	grep -r -e "ToolsVersion=\"4.0\"" $(find . -name "*.csproj" -o -name "*.props") && export TOOLS_VERSION="4.0" && return
-	grep -r -e "ToolsVersion=\"3.5\"" $(find . -name "*.csproj" -o -name "*.props") && export TOOLS_VERSION="3.5" && return
-	grep -r -e "ToolsVersion=\"2.0\"" $(find . -name "*.csproj" -o -name "*.props") && export TOOLS_VERSION="2.0" && return
+	grep -r -e "ToolsVersion=\"Current\"" $(find . -name "*.csproj") && export TOOLS_VERSION="Current" && return
+	grep -r -e "ToolsVersion=\"15.0\"" $(find . -name "*.csproj") && export TOOLS_VERSION="Current" && return
+	grep -r -e "ToolsVersion=\"4.0\"" $(find . -name "*.csproj") && export TOOLS_VERSION="4.0" && return
+	grep -r -e "ToolsVersion=\"3.5\"" $(find . -name "*.csproj") && export TOOLS_VERSION="3.5" && return
+	grep -r -e "ToolsVersion=\"2.0\"" $(find . -name "*.csproj") && export TOOLS_VERSION="2.0" && return
 }
 
 # @FUNCTION: dotnet_fill_tools_version_by_file
