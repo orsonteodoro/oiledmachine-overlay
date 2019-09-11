@@ -308,17 +308,17 @@ dotnet_pkg_setup() {
 	for x in ${USE_DOTNET} ; do
 		case ${x} in
 			netstandard20) EBF="200.0"; if use netstandard20; then F="${EBF}";fi;;
-			netstandard16) EBF="100.6"; if use netstandard16; then F="${EBF}";fi;;
-			netstandard15) EBF="100.5"; if use netstandard15; then F="${EBF}";fi;;
-			netstandard14) EBF="100.4"; if use netstandard14; then F="${EBF}";fi;;
-			netstandard13) EBF="100.3"; if use netstandard13; then F="${EBF}";fi;;
-			netstandard12) EBF="100.2"; if use netstandard12; then F="${EBF}";fi;;
-			netstandard11) EBF="100.1"; if use netstandard11; then F="${EBF}";fi;;
+			netstandard16) EBF="160.0"; if use netstandard16; then F="${EBF}";fi;;
+			netstandard15) EBF="150.0"; if use netstandard15; then F="${EBF}";fi;;
+			netstandard14) EBF="140.0"; if use netstandard14; then F="${EBF}";fi;;
+			netstandard13) EBF="130.0"; if use netstandard13; then F="${EBF}";fi;;
+			netstandard12) EBF="120.0"; if use netstandard12; then F="${EBF}";fi;;
+			netstandard11) EBF="110.0"; if use netstandard11; then F="${EBF}";fi;;
 			netstandard10) EBF="100.0"; if use netstandard10; then F="${EBF}";fi;;
-			netcoreapp22) EBF="20.2"; if use netcoreapp22; then F="${EBF}";fi;;
-			netcoreapp21) EBF="20.1"; if use netcoreapp21; then F="${EBF}";fi;;
+			netcoreapp22) EBF="22.0"; if use netcoreapp22; then F="${EBF}";fi;;
+			netcoreapp21) EBF="21.0"; if use netcoreapp21; then F="${EBF}";fi;;
 			netcoreapp20) EBF="20.0"; if use netcoreapp20; then F="${EBF}";fi;;
-			netcoreapp11) EBF="10.1"; if use netcoreapp11; then F="${EBF}";fi;;
+			netcoreapp11) EBF="11.0"; if use netcoreapp11; then F="${EBF}";fi;;
 			netcoreapp10) EBF="10.0"; if use netcoreapp10; then F="${EBF}";fi;;
 			net472) EBF="4.72"; if use net472; then F="${EBF}";fi;;
 			net471) EBF="4.71"; if use net471; then F="${EBF}";fi;;
