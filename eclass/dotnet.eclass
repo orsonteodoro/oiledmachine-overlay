@@ -434,7 +434,7 @@ _exbuild_netcore_raw() {
 # @FUNCTION: exbuild_raw
 # @DESCRIPTION: run xbuild or dotnet with given parameters
 exbuild_raw() {
-	if [[ "${TOOLS_VERSION}" == "15.0" || "${DOTNET_ACTIVE_FRAMEWORK}" == "netcoreapp" || "${DOTNET_ACTIVE_FRAMEWORK}" == "netstandard" ]] ; then
+	if [[ "${TOOLS_VERSION}" == "Current" || "${DOTNET_ACTIVE_FRAMEWORK}" == "netcoreapp" || "${DOTNET_ACTIVE_FRAMEWORK}" == "netstandard" ]] ; then
 		_exbuild_netcore_raw "$@"
 	elif [[ "${DOTNET_ACTIVE_FRAMEWORK}" == "netfx" ]] ; then
 		_exbuild_netfx_raw "$@"
@@ -488,7 +488,7 @@ _exbuild_netcore() {
 	fi
 
 	local framework
-	if [[ -n ${TOOLS_VERSION} && "${TOOLS_VERSION}" == "15.0" && "${DOTNET_ACTIVE_FRAMEWORK}" == "netfx" ]] ; then
+	if [[ -n ${TOOLS_VERSION} && "${TOOLS_VERSION}" == "Current" && "${DOTNET_ACTIVE_FRAMEWORK}" == "netfx" ]] ; then
 		framework=${DOTNET_ACTIVE_FRAMEWORK//fx/}${EBF//./}
 	else
 		framework=${DOTNET_ACTIVE_FRAMEWORK}${EBF}
@@ -500,7 +500,7 @@ _exbuild_netcore() {
 # @FUNCTION: exbuild
 # @DESCRIPTION: frontend for xbuild and dotnet
 exbuild() {
-	if [[ "${TOOLS_VERSION}" == "15.0" ||  "${DOTNET_ACTIVE_FRAMEWORK}" == "netcoreapp" || "${DOTNET_ACTIVE_FRAMEWORK}" == "netstandard" ]] ; then
+	if [[ "${TOOLS_VERSION}" == "Current" ||  "${DOTNET_ACTIVE_FRAMEWORK}" == "netcoreapp" || "${DOTNET_ACTIVE_FRAMEWORK}" == "netstandard" ]] ; then
 		_exbuild_netcore "$@"
 	elif [[ "${DOTNET_ACTIVE_FRAMEWORK}" == "netfx" ]] ; then
 		_exbuild_netfx "$@"
@@ -690,7 +690,7 @@ dotnet_netcore_install_loc() {
 	if [[ -n "${moniker}" ]]; then
 		framework="${moniker}"
 	else
-		if [[ -n ${TOOLS_VERSION} && "${TOOLS_VERSION}" == "15.0" && "${DOTNET_ACTIVE_FRAMEWORK}" == "netfx" ]] ; then
+		if [[ -n ${TOOLS_VERSION} && "${TOOLS_VERSION}" == "Current" && "${DOTNET_ACTIVE_FRAMEWORK}" == "netfx" ]] ; then
 			framework=${DOTNET_ACTIVE_FRAMEWORK//fx/}${EBF//./}
 		else
 			framework=${DOTNET_ACTIVE_FRAMEWORK}${EBF}
