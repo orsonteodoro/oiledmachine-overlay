@@ -67,9 +67,7 @@ src_install() {
 		doins wrappers/csharp/bin/freenectdotnet.dll
 
 		if [[ "${EDOTNET}" == net45 ]]; then
-			if use gac ; then
-		                egacinstall "wrappers/csharp/bin/freenectdotnet.dll"
-			fi
+	                egacinstall "wrappers/csharp/bin/freenectdotnet.dll"
 		fi
 		dotnet_distribute_dllmap_config "freenectdotnet.dll"
 	}
