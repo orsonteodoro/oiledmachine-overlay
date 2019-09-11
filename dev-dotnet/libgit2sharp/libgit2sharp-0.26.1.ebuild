@@ -196,9 +196,7 @@ src_install() {
 		s_base="bin/LibGit2Sharp/${DIR}/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})"
 		if [[ "${EDOTNET}" =~ net[0-9][0-9][0-9]? ]] ; then
 			estrong_resign "${s_base}/LibGit2Sharp.dll" "${S}/libgit2sharp.snk"
-			if use gac ; then
-				egacinstall "${s_base}/LibGit2Sharp.dll"
-			fi
+			egacinstall "${s_base}/LibGit2Sharp.dll"
 		fi
 
 		if [[ "${EDOTNET}" =~ "netstandard" || "${EDOTNET}" =~ net[0-9][0-9][0-9]? ]] ; then
