@@ -4,8 +4,8 @@
 EAPI=6
 
 USE_DOTNET="net35 net40 net45 netstandard20 netcoreapp20 netcoreapp21 test"
-IUSE="${USE_DOTNET} debug gac ${PACKAGE_FEATURES} doc test? ( || ( netcoreapp20 netcoreapp21 net35 net40 net45 ) )"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( || ( net40 net45 ) )"
+IUSE="${USE_DOTNET} debug gac ${PACKAGE_FEATURES} doc"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( || ( net40 net45 ) ) test? ( || ( netcoreapp20 netcoreapp21 net35 net40 net45 ) )"
 RDEPEND=""
 DEPEND="${RDEPEND}
         doc? ( app-doc/doxygen )"
