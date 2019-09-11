@@ -77,17 +77,12 @@ src_install() {
 		if [[ "${EDOTNET}" =~ netstandard ]] ; then
 			doins TiledSharp/bin/Release/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/{TiledSharp.dll,TiledSharp.deps.json}
 			use developer && doins TiledSharp/bin/Release/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/TiledSharp.pdb
-		else
+		elif dotnet_is_netfx "${EDOTNET}" ; then
 			doins TiledSharp/bin/Release/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/TiledSharp.dll
 			use developer && doins TiledSharp/bin/Release/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/TiledSharp.pdb
-		fi
-
-		if [[ "${EDOTNET}" == net[0-9][0-9][0-9]? ]] ; then
 			estrong_resign "TiledSharp/bin/Release/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/TiledSharp.dll" "${SNK_FILENAME}" || die
 	                egacinstall "TiledSharp/bin/Release/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/TiledSharp.dll"
-			use developer && doins TiledSharp/bin/Release/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/TiledSharp.pdb
 		fi
-		use developer && doins TiledSharp/bin/Release/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/TiledSharp.pdb
 	}
 
 	dotnet_foreach_impl install_impl
