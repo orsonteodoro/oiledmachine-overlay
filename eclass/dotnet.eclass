@@ -32,10 +32,22 @@ STRONG_ARGS_NETFX="/p:SignAssembly=true /p:AssemblyOriginatorKeyFile="
 # @DESCRIPTION: Args to expand for exbuild for use for dotnet command
 STRONG_ARGS_NETCORE="-p:SignAssembly=true -p:AssemblyOriginatorKeyFile="
 
+# @ECLASS-VARIABLE: TOOLS_VERSION
+# @DESCRIPTION: Controls behavior of the toolchain.
+#  Acceptable or reported versions:
+#    Current = dotnet commands with netfx, netcore, or netstandard
+#    15.0 = Alias or same as Current
+#    4.0 = netfx 4.0 or netstandard with xbuild
+#    3.5 = netfx 3.0 with xbuild
+#    2.0 = netfx 2.0 with xbuild
+TOOLS_VERSION="${TOOLS_VERSION:=4.0}"
+
+# @ECLASS-VARIABLE: DOTNET_ACTIVE_FRAMEWORK
+# @DESCRIPTION: Sets or gets the current framework context
 DOTNET_ACTIVE_FRAMEWORK="" # can be netfx or netcoreapp or netstandard
 
-_SET_DEPENDS_NETCORE=""
-
+# @ECLASS-VARIABLE: _NETCORE_TOOLS_DEPS
+# @DESCRIPTION: (Private) Defines compatible dotnet packages for DEPEND, RDEPEND, REQUIRED_USE
 _NETCORE_TOOLS_DEPS="|| ( dev-dotnet/cli-tools dev-dotnet/dotnetcore-sdk-bin )"
 
 # SET default use flags according on DOTNET_TARGETS
@@ -456,10 +468,6 @@ _exbuild_netfx() {
 		SARGS=/p:DebugSymbols=False
 	fi
 
-	if [[ -z ${TOOLS_VERSION} ]]; then
-		TOOLS_VERSION=4.0
-	fi
-
 	_exbuild_netfx_raw "/v:detailed" "/tv:${TOOLS_VERSION}" "/p:TargetFrameworkVersion=v${EBF}" "${CARGS}" "${SARGS}" "$@"
 }
 
@@ -520,10 +528,6 @@ embuild() {
 		SARGS=-p:DebugSymbols=True
 	else
 		SARGS=-p:DebugSymbols=False
-	fi
-
-	if [[ -z ${TOOLS_VERSION} ]]; then
-		TOOLS_VERSION="Current"
 	fi
 
 	_exbuild_netcore_raw msbuild "-verbosity:detailed" "-toolsversion:${TOOLS_VERSION}" "${CARGS}" "${SARGS}" "$@"
@@ -609,6 +613,9 @@ erestore() {
 _NETFX_VERS=( 20 35 40 45 46 461 462 47 471 472 48 )
 _NETCORE_VERS=( 10 11 20 21 22 )
 _NETSTANDARD_VERS=( 10 11 12 13 14 15 16 20 )
+
+# @ECLASS-VARIABLE: _IMPLS
+# @DESCRIPTION: (Private) Generates a list of implementations for the dotnet-multibuild context
 _IMPLS="${_NETFX_VERS[@]/#/net} ${_NETCORE_VERS[@]/#/netcoreapp} ${_NETSTANDARD_VERS[@]/#/netstandard}"
 
 # @FUNCTION: _python_multibuild_wrapper
