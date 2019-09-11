@@ -601,7 +601,9 @@ estrong_assembly_info() {
 # $2 - the private key
 # @CODE
 estrong_resign() {
-	sn -R "$1" "$2" || die
+	if use gac; then
+		sn -R "$1" "$2" || die
+	fi
 }
 
 # @FUNCTION: erestore
