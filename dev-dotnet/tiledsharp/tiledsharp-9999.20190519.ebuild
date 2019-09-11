@@ -51,10 +51,10 @@ src_compile() {
 
 	compile_impl() {
 		if [[ ! ( "${EDOTNET}" =~ netcoreapp ) ]] ; then
-			exbuild TiledSharp/TiledSharp.csproj -p:Configuration=${mydebug} ${STRONG_ARGS_NETFX}${DISTDIR}/mono.snk || die
+			exbuild TiledSharp/TiledSharp.csproj -p:Configuration=${mydebug} ${STRONG_ARGS_NETCORE}${DISTDIR}/mono.snk || die
 		fi
 		if use test ; then
-			exbuild TiledSharp.Test/TiledSharp.Test.csproj -p:Configuration=${mydebug} ${STRONG_ARGS_NETFX}${DISTDIR}/mono.snk || die
+			exbuild TiledSharp.Test/TiledSharp.Test.csproj -p:Configuration=${mydebug} ${STRONG_ARGS_NETCORE}${DISTDIR}/mono.snk || die
 		fi
 	}
 
