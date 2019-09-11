@@ -80,7 +80,7 @@ src_install() {
 		elif dotnet_is_netfx "${EDOTNET}" ; then
 			doins TiledSharp/bin/Release/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/TiledSharp.dll
 			use developer && doins TiledSharp/bin/Release/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/TiledSharp.pdb
-			estrong_resign "TiledSharp/bin/Release/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/TiledSharp.dll" "${SNK_FILENAME}" || die
+			estrong_resign "TiledSharp/bin/Release/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/TiledSharp.dll" "${DISTDIR}/mono.snk" || die
 	                egacinstall "TiledSharp/bin/Release/$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})/TiledSharp.dll"
 		fi
 	}
