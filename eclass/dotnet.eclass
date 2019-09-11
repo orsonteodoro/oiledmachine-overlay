@@ -502,6 +502,12 @@ _exbuild_netcore() {
 		framework=${DOTNET_ACTIVE_FRAMEWORK}${EBF}
 	fi
 
+	if dotnet_is_netfx "${EDOTNET}" ; then
+		export FrameworkPathOverride="$(dotnet_netfx_install_loc ${EDOTNET})/"
+	else
+		unset FrameworkPathOverride
+	fi
+
 	_exbuild_netcore_raw build "${project}" "-verbosity:detailed" "-f" "${framework}" "${CARGS}" "${SARGS}" "$@"
 }
 
