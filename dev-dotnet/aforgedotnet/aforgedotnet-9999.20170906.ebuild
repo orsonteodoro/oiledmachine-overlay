@@ -77,50 +77,48 @@ src_install() {
 		version_compare $(dotnet_use_moniker_to_dotted_ver "${EDOTNET}") "4.0"
 		local r="$?"
 		if [[ "$r" == "2" || "$r" == "3" ]] ; then
-			if use gac; then
-				estrong_resign ${mydebug}/AForge.Vision.dll               Sources/Vision/AForge.Vision.snk
-				estrong_resign ${mydebug}/AForge.MachineLearning.dll      Sources/MachineLearning/AForge.MachineLearning.snk
-				estrong_resign ${mydebug}/AForge.Imaging.Formats.dll      Sources/Imaging.Formats/AForge.Imaging.Formats.snk
-				estrong_resign ${mydebug}/AForge.Fuzzy.dll                Sources/Fuzzy/AForge.Fuzzy.snk
-				#estrong_resign ${mydebug}/AForge.Controls.dll            Sources/Controls/AForge.Controls.snk
-				#estrong_resign ${mydebug}/AForge.Robotics.Surveyor.dll   Sources/Robotics.Surveyor/AForge.Robotics.Surveyor.snk
-				#estrong_resign ${mydebug}/AForge.Video.VFW.dll           Sources/Video.VFW/AForge.Video.VFW.snk
-				estrong_resign ${mydebug}/AForge.Video.dll                Sources/Video/AForge.Video.snk
-				estrong_resign ${mydebug}/AForge.Neuro.dll                Sources/Neuro/AForge.Neuro.snk
-				estrong_resign ${mydebug}/AForge.Genetic.dll              Sources/Genetic/AForge.Genetic.snk
-				estrong_resign ${mydebug}/AForge.Imaging.dll              Sources/Imaging/AForge.Imaging.snk
-				#estrong_resign ${mydebug}/AForge.Robotics.Lego.dll       Sources/Robotics.Lego/AForge.Robotics.Lego.snk
-				estrong_resign ${mydebug}/AForge.Video.Ximea.dll          Sources/Video.Ximea/AForge.Video.Ximea.snk
-				estrong_resign ${mydebug}/AForge.dll                      Sources/Core/AForge.snk
-				estrong_resign ${mydebug}/AForge.Video.Kinect.dll         Sources/Video.Kinect/AForge.Video.Kinect.snk
-				#estrong_resign ${mydebug}/AForge.Video.DirectShow.dll    Sources/Video.DirectShow/AForge.Video.DirectShow.snk
-				estrong_resign ${mydebug}/AForge.Math.dll                 Sources/Math/AForge.Math.snk
+			estrong_resign ${mydebug}/AForge.Vision.dll               Sources/Vision/AForge.Vision.snk
+			estrong_resign ${mydebug}/AForge.MachineLearning.dll      Sources/MachineLearning/AForge.MachineLearning.snk
+			estrong_resign ${mydebug}/AForge.Imaging.Formats.dll      Sources/Imaging.Formats/AForge.Imaging.Formats.snk
+			estrong_resign ${mydebug}/AForge.Fuzzy.dll                Sources/Fuzzy/AForge.Fuzzy.snk
+			#estrong_resign ${mydebug}/AForge.Controls.dll            Sources/Controls/AForge.Controls.snk
+			#estrong_resign ${mydebug}/AForge.Robotics.Surveyor.dll   Sources/Robotics.Surveyor/AForge.Robotics.Surveyor.snk
+			#estrong_resign ${mydebug}/AForge.Video.VFW.dll           Sources/Video.VFW/AForge.Video.VFW.snk
+			estrong_resign ${mydebug}/AForge.Video.dll                Sources/Video/AForge.Video.snk
+			estrong_resign ${mydebug}/AForge.Neuro.dll                Sources/Neuro/AForge.Neuro.snk
+			estrong_resign ${mydebug}/AForge.Genetic.dll              Sources/Genetic/AForge.Genetic.snk
+			estrong_resign ${mydebug}/AForge.Imaging.dll              Sources/Imaging/AForge.Imaging.snk
+			#estrong_resign ${mydebug}/AForge.Robotics.Lego.dll       Sources/Robotics.Lego/AForge.Robotics.Lego.snk
+			estrong_resign ${mydebug}/AForge.Video.Ximea.dll          Sources/Video.Ximea/AForge.Video.Ximea.snk
+			estrong_resign ${mydebug}/AForge.dll                      Sources/Core/AForge.snk
+			estrong_resign ${mydebug}/AForge.Video.Kinect.dll         Sources/Video.Kinect/AForge.Video.Kinect.snk
+			#estrong_resign ${mydebug}/AForge.Video.DirectShow.dll    Sources/Video.DirectShow/AForge.Video.DirectShow.snk
+			estrong_resign ${mydebug}/AForge.Math.dll                 Sources/Math/AForge.Math.snk
 
-				# has key but missing in dlls/gac
-#				#estrong_resign ${mydebug}/AForge.Robotics.TeRK.dll       Sources/Robotics.TeRK/AForge.Robotics.TeRK.snk
-#				estrong_resign ${mydebug}/AForge.Video.FFMPEG.dll         Sources/Video.FFMPEG/AForge.Video.FFMPEG.snk
-#				estrong_resign ${mydebug}/AForge.DebuggerVisualizers.dll  Tools/DebuggerVisualizers/AForge.DebuggerVisualizers.snk
-#				estrong_resign ${mydebug}/AForge.Imaging.IPPrototyper.dll Tools/IPPrototyper/Interfaces/AForge.Imaging.IPPrototyper.snk
-#				estrong_resign ${mydebug}/AForge.IPPrototyper.dll         Tools/IPPrototyper/AForge.IPPrototyper.snk
+			# has key but missing in dlls/gac
+#			#estrong_resign ${mydebug}/AForge.Robotics.TeRK.dll       Sources/Robotics.TeRK/AForge.Robotics.TeRK.snk
+#			estrong_resign ${mydebug}/AForge.Video.FFMPEG.dll         Sources/Video.FFMPEG/AForge.Video.FFMPEG.snk
+#			estrong_resign ${mydebug}/AForge.DebuggerVisualizers.dll  Tools/DebuggerVisualizers/AForge.DebuggerVisualizers.snk
+#			estrong_resign ${mydebug}/AForge.Imaging.IPPrototyper.dll Tools/IPPrototyper/Interfaces/AForge.Imaging.IPPrototyper.snk
+#			estrong_resign ${mydebug}/AForge.IPPrototyper.dll         Tools/IPPrototyper/AForge.IPPrototyper.snk
 
-				egacinstall ${mydebug}/AForge.Vision.dll
-				egacinstall ${mydebug}/AForge.MachineLearning.dll
-				egacinstall ${mydebug}/AForge.Imaging.Formats.dll
-				egacinstall ${mydebug}/AForge.Fuzzy.dll
-				#egacinstall ${mydebug}/AForge.Controls.dll
-				#egacinstall ${mydebug}/AForge.Robotics.Surveyor.dll
-				#egacinstall ${mydebug}/AForge.Video.VFW.dll
-				egacinstall ${mydebug}/AForge.Video.dll
-				egacinstall ${mydebug}/AForge.Neuro.dll
-				egacinstall ${mydebug}/AForge.Genetic.dll
-				egacinstall ${mydebug}/AForge.Imaging.dll
-				#egacinstall ${mydebug}/AForge.Robotics.Lego.dll
-				use ximea && egacinstall ${mydebug}/AForge.Video.Ximea.dll
-				egacinstall ${mydebug}/AForge.dll
-				use kinect && egacinstall ${mydebug}/AForge.Video.Kinect.dll
-				#egacinstall ${mydebug}/AForge.Video.DirectShow.dll
-				egacinstall ${mydebug}/AForge.Math.dll
-			fi
+			egacinstall ${mydebug}/AForge.Vision.dll
+			egacinstall ${mydebug}/AForge.MachineLearning.dll
+			egacinstall ${mydebug}/AForge.Imaging.Formats.dll
+			egacinstall ${mydebug}/AForge.Fuzzy.dll
+			#egacinstall ${mydebug}/AForge.Controls.dll
+			#egacinstall ${mydebug}/AForge.Robotics.Surveyor.dll
+			#egacinstall ${mydebug}/AForge.Video.VFW.dll
+			egacinstall ${mydebug}/AForge.Video.dll
+			egacinstall ${mydebug}/AForge.Neuro.dll
+			egacinstall ${mydebug}/AForge.Genetic.dll
+			egacinstall ${mydebug}/AForge.Imaging.dll
+			#egacinstall ${mydebug}/AForge.Robotics.Lego.dll
+			use ximea && egacinstall ${mydebug}/AForge.Video.Ximea.dll
+			egacinstall ${mydebug}/AForge.dll
+			use kinect && egacinstall ${mydebug}/AForge.Video.Kinect.dll
+			#egacinstall ${mydebug}/AForge.Video.DirectShow.dll
+			egacinstall ${mydebug}/AForge.Math.dll
 		fi
 
 		doins ${mydebug}/AForge.Vision.dll
