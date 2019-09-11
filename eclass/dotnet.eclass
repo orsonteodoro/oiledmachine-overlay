@@ -933,5 +933,32 @@ dotnet_copy_dllmap_config() {
 	sed -i -e "s|lib64|$(get_libdir)|g" "${dllmap_basename}" || die
 }
 
+# @FUNCTION: dotnet_fill_tools_version_recursive
+# @DESCRIPTION:  This will fill the highest TOOLS_VERSION by scanning recursively the csprojs and props in current directory
+dotnet_fill_tools_version_recursive() {
+	grep -r -e "ToolsVersion=\"Current\"" $(find . -name "*.csproj" -o -name "*.props") && export TOOLS_VERSION="Current" && return
+	grep -r -e "ToolsVersion=\"15.0\"" $(find . -name "*.csproj" -o -name "*.props") && export TOOLS_VERSION="Current" && return
+	grep -r -e "ToolsVersion=\"4.0\"" $(find . -name "*.csproj" -o -name "*.props") && export TOOLS_VERSION="4.0" && return
+	grep -r -e "ToolsVersion=\"3.5\"" $(find . -name "*.csproj" -o -name "*.props") && export TOOLS_VERSION="3.5" && return
+	grep -r -e "ToolsVersion=\"2.0\"" $(find . -name "*.csproj" -o -name "*.props") && export TOOLS_VERSION="2.0" && return
+}
+
+# @FUNCTION: dotnet_fill_tools_version_by_file
+# @DESCRIPTION:  This will fill the highest TOOLS_VERSION by a file in current directory
+# @CODE
+# Parameters:
+# $1 - the path to a csproj or props file
+# @CODE
+dotnet_fill_tools_version_by_file() {
+	local file="$1"
+	grep -e "ToolsVersion=\"Current\"" "${file}" && export TOOLS_VERSION="Current" && return
+	grep -e "ToolsVersion=\"15.0\"" "${file}" && export TOOLS_VERSION="Current" && return
+	grep -e "ToolsVersion=\"4.0\"" "${file}" && export TOOLS_VERSION="4.0" && return
+	grep -e "ToolsVersion=\"3.5\"" "${file}" && export TOOLS_VERSION="3.5" && return
+	grep -e "ToolsVersion=\"2.0\"" "${file}" && export TOOLS_VERSION="2.0" && return
+}
+
+
+
 EXPORT_FUNCTIONS pkg_setup pkg_pretend
 
