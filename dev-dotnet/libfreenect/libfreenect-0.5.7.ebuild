@@ -41,7 +41,7 @@ src_compile() {
 	fi
 
 	compile_impl() {
-		dotnet_copy_dllmap_config "freenectdotnet.dll.config"
+		dotnet_copy_dllmap_config "${FILESDIR}/freenectdotnet.dll.config"
 
 		cd "wrappers/csharp/src/lib/VS2010"
 
