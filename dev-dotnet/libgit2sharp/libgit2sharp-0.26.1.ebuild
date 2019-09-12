@@ -6,7 +6,7 @@ EAPI=6
 KEYWORDS="~arm ~arm64 ~x86 ~amd64"
 
 USE_DOTNET="netstandard20 net46 netcoreapp21"
-TOOLS_VERSION="15.0"
+TOOLS_VERSION="Current"
 
 IUSE="${USE_DOTNET} debug developer gac system-libgit2 test"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) test? ( || ( netcoreapp21 net46 ) ) gac? ( net46 )"
