@@ -21,7 +21,7 @@ inherit gac
 
 LICENSE="zlib"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 
 S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
 
