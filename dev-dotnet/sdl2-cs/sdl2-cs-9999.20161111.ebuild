@@ -30,7 +30,6 @@ S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
 
 src_prepare() {
 	default
-	cp -a "${FILESDIR}/SDL2-CS.dll.config" "${S}"
 	dotnet_copy_sources
 }
 
@@ -62,17 +61,11 @@ src_install() {
 
 		dotnet_install_loc
 
-		if use gac ; then
-			estrong_resign "bin/${mydebug}/${PROJECT_NAME}.dll" "${DISTDIR}/mono.snk"
-		fi
+		estrong_resign "bin/${mydebug}/${PROJECT_NAME}.dll" "${DISTDIR}/mono.snk"
 		doins bin/${mydebug}/SDL2-CS.dll
 		doins SDL2-CS.dll.config
-		if use gac ; then
-			egacinstall "bin/${mydebug}/${PROJECT_NAME}.dll"
-			d=$(find "${D}"/usr/$(get_libdir)/mono/gac/${PROJECT_NAME}/ -maxdepth 1 -name "[0-9.]*__[0-9a-z]*")
-			d=$(echo "${d}" | sed -e "s|${D}||")
-			dosym "$(dotnet_netfx_install_loc ${EDOTNET})/${PROJECT_NAME}.dll.config" "${d}/${PROJECT_NAME}.dll.config"
-		fi
+		egacinstall "bin/${mydebug}/${PROJECT_NAME}.dll"
+		dotnet_distribute_dllmap_config "${PROJECT_NAME}.dll"
 	}
 
 	dotnet_foreach_impl install_impl

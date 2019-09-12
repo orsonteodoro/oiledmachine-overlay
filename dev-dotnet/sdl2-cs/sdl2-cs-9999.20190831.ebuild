@@ -30,7 +30,6 @@ S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
 
 src_prepare() {
 	default
-	cp -a "${FILESDIR}/SDL2-CS.dll.config" "${S}"
 	dotnet_copy_sources
 }
 
@@ -42,7 +41,7 @@ src_compile() {
 
 	compile_impl() {
 		if [[ "${EDOTNET}" =~ netcore || "${EDOTNET}" =~ netstandard ]] ; then
-		        exbuild SDL2-CS.Core.csproj ${STRONG_ARGS_NETCORE}"${DISTDIR}/mono.snk" -p:Configuration=${mydebug} || die
+		        exbuild ${STRONG_ARGS_NETCORE}"${DISTDIR}/mono.snk" -p:Configuration=${mydebug} SDL2-CS.Core.csproj || die
 		else
 		        exbuild ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" /p:Configuration=${mydebug} SDL2-CS.csproj || die
 		fi
@@ -77,12 +76,7 @@ src_install() {
 			fi
 			doins SDL2-CS.dll.config
 			doins bin/${mydebug}/SDL2-CS.dll
-			if use gac ; then
-				egacinstall "bin/${mydebug}/${PROJECT_NAME}.dll"
-				d=$(find "${D}"/usr/$(get_libdir)/mono/gac/${PROJECT_NAME}/ -maxdepth 1 -name "[0-9.]*__[0-9a-z]*")
-				d=$(echo "${d}" | sed -e "s|${D}||")
-				dosym "$(dotnet_netfx_install_loc ${EDOTNET})/${PROJECT_NAME}.dll.config" "${d}/${PROJECT_NAME}.dll.config"
-			fi
+			dotnet_distribute_dllmap_config "${PROJECT_NAME}.dll"
 		fi
 	}
 
