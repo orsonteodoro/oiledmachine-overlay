@@ -1,0 +1,5 @@
+#!/bin/bash
+cd /usr/lib64/enigma
+OUTPUTNAME=game WORKDIR="$HOME/.enigma" CXXFLAGS=" -I$HOME/.enigma" CFLAGS="-I$HOME/.enigma" \
+java -Djna.nosys=true -jar /usr/lib64/enigma/lateralgm.jar $*
+

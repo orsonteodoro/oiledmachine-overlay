@@ -1,70 +1,68 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
-inherit eutils toolchain-funcs
+EAPI=7
+
+inherit desktop eutils toolchain-funcs
 
 DESCRIPTION="ENIGMA, the Extensible Non-Interpreted Game Maker Augmentation, is an open source cross-platform game development environment derived from that of the popular software Game Maker."
 HOMEPAGE="http://enigma-dev.org"
-COMMIT="1ffaceaf72fe3ce8c956074237e59513e708be33"
-SRC_URI="https://github.com/enigma-dev/enigma-dev/archive/${COMMIT}.zip -> ${P}.zip"
-
-RESTRICT=""
-
-LICENSE="GPL-3"
-SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~x86"
+LICENSE="GPL-3+"
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 IUSE="extras"
-
-RDEPEND="games-engines/lateralgm
+EGIT_COMMIT="1ffaceaf72fe3ce8c956074237e59513e708be33"
+SRC_URI="https://github.com/enigma-dev/enigma-dev/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
+RESTRICT="mirror"
+SLOT="0"
+RDEPEND="games-util/lateralgm
 	 sys-libs/zlib
 	 media-libs/glu
 	 media-libs/glew
          media-libs/alure
 	 media-libs/libvorbis
          media-libs/dumb
-	 extras? ( games-misc/libmaker )
-	 games-misc/lgmplugin
-"
+	 extras? ( dev-java/libmaker )
+	 games-misc/lgmplugin"
 DEPEND="${RDEPEND}"
+S="${WORKDIR}/enigma-dev-${EGIT_COMMIT}"
+QA_SONAME="/usr/lib64/libcompileEGMf.so"
 
-S="${WORKDIR}/enigma-dev-${COMMIT}"
+src_prepare() {
+	default
 
-src_compile() {
-	emake ENIGMA || die
+	F=( Makefile CommandLine/emake/Makefile CompilerSource/Makefile )
+	for f in ${F[@]} ; do
+		einfo "Editing $f"
+		sed -i -e "s|-Wl,-rpath,./||g" "${f}" || die
+	done
 }
 
+src_compile() {
+	emake ENIGMA
+}
+
+# new line replace
+NLR=( -e ':a' -e 'N' -e '$!ba' )
+
 src_install() {
-	#install the minimal required toolchain
-	mkdir -p "${D}/usr/$(get_libdir)/enigma"/ || die
-	cp -r "${S}/ENIGMAsystem" "${D}/usr/$(get_libdir)/enigma"/ || die
-	cp -r "${S}/Compilers" "${D}/usr/$(get_libdir)/enigma"/ || die
-	cp "${S}/settings.ey" "${D}/usr/$(get_libdir)/enigma"/ || die
-	cp "${S}/events.res" "${D}/usr/$(get_libdir)/enigma"/ || die
+	insinto /usr/$(get_libdir)/enigma/
+	doins -r ENIGMAsystem Compilers settings.ey events.res
 
-	mkdir -p "${D}/usr/bin" || die
+	exeinto /usr/bin
+	doexe "${FILESDIR}/enigma" "${FILESDIR}/enigma-cli"
 
-	echo "#!/bin/bash" > "${D}/usr/bin/enigma" || die
-	echo "cd /usr/$(get_libdir)/enigma" >> "${D}/usr/bin/enigma" || die
-	echo "OUTPUTNAME=game WORKDIR=\"\$HOME/.enigma\" CXXFLAGS=\" -I\$HOME/.enigma\" CFLAGS=\"-I\$HOME/.enigma\" \\" >> "${D}/usr/bin/enigma" || die
-	echo "java -Djna.nosys=true -jar /usr/$(get_libdir)/enigma/lateralgm.jar \$*" >> "${D}/usr/bin/enigma" || die
-	chmod +x "${D}/usr/bin/enigma" || die
+	sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|g" "${D}/usr/bin/enigma" || die
+	sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|g" "${D}/usr/bin/enigma-cli" || die
 
-	echo "#!/bin/bash" > "${D}/usr/bin/enigma-cli" || die
-	echo "cd /usr/$(get_libdir)/enigma" >> "${D}/usr/bin/enigma-cli" || die
-	echo "OUTPUTNAME=game WORKDIR=\"\$HOME/.enigma\" CXXFLAGS=\" -I\$HOME/.enigma\" CFLAGS=\"-I\$HOME/.enigma\" \\" >> "${D}/usr/bin/enigma-cli" || die
-	echo "java -Djna.nosys=true -jar /usr/$(get_libdir)/enigma/plugins/enigma.jar \$*" >> "${D}/usr/bin/enigma-cli" || die
-	chmod +x "${D}/usr/bin/enigma-cli" || die
+	insinto "/usr/$(get_libdir)/enigma/"
+	dolib.so libcompileEGMf.so
+	doins Makefile
+	sed -i ${NLR[@]} -e 's|.PHONY: ENIGMA||g' "${D}/usr/$(get_libdir)/enigma/Makefile" || die
+	sed -i ${NLR[@]} -e 's|ENIGMA:\n\t\$(MAKE) -j 3 -C CompilerSource||g' "${D}/usr/$(get_libdir)/enigma/Makefile" || die
+	sed -i ${NLR[@]} -e 's|clean:\n\t\$(MAKE) -C CompilerSource clean||g' "${D}/usr/$(get_libdir)/enigma/Makefile" || die
 
-	mkdir -p "${D}/usr/$(get_libdir)/enigma"/ || die
-	cp libcompileEGMf.so "${D}/usr/$(get_libdir)/enigma"/ || die
-	cp Makefile "${D}/usr/$(get_libdir)/enigma"/ || die
-	sed -i -e ':a' -e 'N' -e '$!ba' -e 's|.PHONY: ENIGMA||g' "${D}/usr/$(get_libdir)/enigma/Makefile" || die
-	sed -i -e ':a' -e 'N' -e '$!ba' -e 's|ENIGMA:\n\t\$(MAKE) -j 3 -C CompilerSource||g' "${D}/usr/$(get_libdir)/enigma/Makefile" || die
-	sed -i -e ':a' -e 'N' -e '$!ba' -e 's|clean:\n\t\$(MAKE) -C CompilerSource clean||g' "${D}/usr/$(get_libdir)/enigma/Makefile" || die
-
-	mkdir -p "${D}/usr/share/enigma" || die
-	cp "${S}/Resources/logo.png" "${D}/usr/share/enigma" || die
+	insinto /usr/share/enigma
+	doins Resources/logo.png
 
 	make_desktop_entry "/usr/bin/enigma" "ENIGMA" "/usr/share/enigma/logo.png" "Development;IDE"
 }
