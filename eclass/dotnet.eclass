@@ -480,9 +480,6 @@ _exbuild_netstandard() {
 # @FUNCTION: _exbuild_netcore
 # @DESCRIPTION: run dotnet build with Release configuration and configurated FRAMEWORK, for .NET Core and .NET Standard
 _exbuild_netcore() {
-	local project="$1"
-	shift
-
 	if use debug; then
 		CARGS=-p:Configuration=Debug
 	else
@@ -503,7 +500,7 @@ _exbuild_netcore() {
 		unset FrameworkPathOverride
 	fi
 
-	_exbuild_netcore_raw build "${project}" "-verbosity:detailed" "-f" "${framework}" "${CARGS}" "${SARGS}" "$@"
+	_exbuild_netcore_raw build "-verbosity:detailed" "-f" "${framework}" "${CARGS}" "${SARGS}" "$@"
 }
 
 # @FUNCTION: exbuild
