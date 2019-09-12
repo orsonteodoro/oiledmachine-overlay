@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    LateralGM is a cross platform Game Maker editor and IDE.  It allows game
+    designers to rearrange the scene and levels.
+  </longdescription>
+  <upstream>
+    <doc lang="en">http://enigma-dev.org/docs/Wiki/LateralGM</doc>
+    <bugs-to>https://github.com/IsmAvatar/LateralGM/issues</bugs-to>
+    <maintainer>
+      <email>IsmAvatar@gmail.com</email>
+      <name>IsmAvatar</name>
+    </maintainer>
+    <maintainer status="active">
+      <email>robertbcolton@hotmail.com</email>
+      <name>Robert B. Colton</name>
+    </maintainer>
+    <remote-id type="github">IsmAvatar/LateralGM</remote-id>
+  </upstream>
+</pkgmetadata>
