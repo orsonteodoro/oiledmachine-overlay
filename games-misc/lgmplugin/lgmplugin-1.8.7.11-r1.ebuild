@@ -1,16 +1,15 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
+
 inherit eutils
 
 DESCRIPTION="LateralGM Plugin"
 HOMEPAGE="https://github.com/enigma-dev/lgmplugin"
-SRC_URI="https://github.com/enigma-dev/lgmplugin/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-
-RESTRICT="mirror"
-
 LICENSE="GPL-3+"
+SRC_URI="https://github.com/enigma-dev/lgmplugin/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+RESTRICT="mirror"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 IUSE=""
@@ -20,7 +19,7 @@ ECJ_V="4.4"
 RDEPEND="virtual/jre
 	 dev-java/eclipse-ecj:${ECJ_V}
 	 dev-java/jna[nio-buffers]
-	 games-engines/lateralgm
+	 games-misc/lateralgm
 	 || ( dev-java/icedtea dev-java/icedtea-bin )"
 DEPEND="${RDEPEND}"
 
