@@ -35,7 +35,6 @@ TOOLS_VERSION="Current"
 
 src_prepare() {
 	default
-	#enuget_restore "${METAFILETOBUILD}"
 
 	dotnet_copy_sources
 
