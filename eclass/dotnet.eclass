@@ -712,7 +712,6 @@ dotnet_netcore_install_loc() {
 # @CODE
 # Parameters:
 # $1 - the framework moniker e.g. net46 (optional)
-# $2 - the libdir e.g. lib64 or lib32 (optional)
 # @CODE
 dotnet_netfx_install_loc() {
 	local moniker="${1}"
@@ -721,9 +720,7 @@ dotnet_netfx_install_loc() {
 		moniker=${DOTNET_ACTIVE_FRAMEWORK//fx/}${EBF//./}
 	fi
 
-	if [[ -z "${libdir}" ]] ; then
-		libdir=$(get_libdir)
-	fi
+	libdir=$(get_libdir)
 
 	case ${moniker} in
 		net472) echo "/usr/${libdir}/mono/4.7.2-api" ;;
