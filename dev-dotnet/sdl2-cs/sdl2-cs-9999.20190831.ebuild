@@ -71,11 +71,10 @@ src_install() {
 			doins bin/${mydebug}/$(dotnet_use_flag_moniker_to_ms_moniker ${ENETCORE})/SDL2-CS.deps.json
 			doins bin/${mydebug}/$(dotnet_use_flag_moniker_to_ms_moniker ${ENETCORE})/SDL2-CS.pdb
 		elif dotnet_is_netfx "${EDOTNET}" ; then
-			if use gac ; then
-				estrong_resign "bin/${mydebug}/${PROJECT_NAME}.dll" "${DISTDIR}/mono.snk"
-			fi
+			estrong_resign "bin/${mydebug}/${PROJECT_NAME}.dll" "${DISTDIR}/mono.snk"
 			doins SDL2-CS.dll.config
 			doins bin/${mydebug}/SDL2-CS.dll
+			egacinstall "bin/${mydebug}/${PROJECT_NAME}.dll"
 			dotnet_distribute_dllmap_config "${PROJECT_NAME}.dll"
 		fi
 	}
