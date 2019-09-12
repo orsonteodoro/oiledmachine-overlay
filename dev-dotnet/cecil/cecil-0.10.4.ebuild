@@ -11,7 +11,7 @@ IUSE="+${USE_DOTNET} +gac nupkg +pkg-config +debug +developer test"
 RDEPEND=""
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) nupkg? ( !debug net35 net40 netstandard13 )"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) nupkg? ( !debug net35 net40 netstandard13 ) gac? ( || ( net40 net462 ) )"
 
 inherit dotnet mono-pkg-config nupkg
 

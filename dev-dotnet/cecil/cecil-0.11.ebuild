@@ -11,7 +11,7 @@ IUSE="+${USE_DOTNET} +gac nupkg +pkg-config +debug +developer test"
 RDEPEND=""
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
-REQUIRED_USE="test? ( || ( netcoreapp21 net40 ) ) nupkg? ( !debug net40 netstandard20 )"
+REQUIRED_USE="test? ( || ( netcoreapp21 net40 ) ) nupkg? ( !debug net40 netstandard20 ) gac? ( net40 )"
 
 inherit dotnet mono-pkg-config nupkg
 
