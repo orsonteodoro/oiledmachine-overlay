@@ -712,26 +712,32 @@ dotnet_netcore_install_loc() {
 # @CODE
 # Parameters:
 # $1 - the framework moniker e.g. net46 (optional)
+# $2 - the libdir e.g. lib64 or lib32 (optional)
 # @CODE
 dotnet_netfx_install_loc() {
 	local moniker="${1}"
+	local libdir="${2}"
 	if [[ -z "${moniker}" ]] ; then
 		moniker=${DOTNET_ACTIVE_FRAMEWORK//fx/}${EBF//./}
 	fi
 
+	if [[ -z "${libdir}" ]] ; then
+		libdir=$(get_libdir)
+	fi
+
 	case ${moniker} in
-		net472) echo "/usr/$(get_libdir)/mono/4.7.2-api" ;;
-		net471) echo "/usr/$(get_libdir)/mono/4.7.1-api" ;;
-		net47) echo "/usr/$(get_libdir)/mono/4.7-api" ;;
-		net462) echo "/usr/$(get_libdir)/mono/4.6.2-api" ;;
-		net461) echo "/usr/$(get_libdir)/mono/4.6.1-api" ;;
-		net46) echo "/usr/$(get_libdir)/mono/4.6-api" ;;
-		net452) echo "/usr/$(get_libdir)/mono/4.5.2-api" ;;
-		net451) echo "/usr/$(get_libdir)/mono/4.5.1-api" ;;
-		net45) echo "/usr/$(get_libdir)/mono/4.5" ;;
-		net40) echo "/usr/$(get_libdir)/mono/4.0-api" ;;
-		net35) echo "/usr/$(get_libdir)/mono/3.5-api" ;;
-		net20) echo "/usr/$(get_libdir)/mono/2.0-api" ;;
+		net472) echo "/usr/${libdir}/mono/4.7.2-api" ;;
+		net471) echo "/usr/${libdir}/mono/4.7.1-api" ;;
+		net47) echo "/usr/${libdir}/mono/4.7-api" ;;
+		net462) echo "/usr/${libdir}/mono/4.6.2-api" ;;
+		net461) echo "/usr/${libdir}/mono/4.6.1-api" ;;
+		net46) echo "/usr/${libdir}/mono/4.6-api" ;;
+		net452) echo "/usr/${libdir}/mono/4.5.2-api" ;;
+		net451) echo "/usr/${libdir}/mono/4.5.1-api" ;;
+		net45) echo "/usr/${libdir}/mono/4.5" ;;
+		net40) echo "/usr/${libdir}/mono/4.0-api" ;;
+		net35) echo "/usr/${libdir}/mono/3.5-api" ;;
+		net20) echo "/usr/${libdir}/mono/2.0-api" ;;
 	esac
 }
 
