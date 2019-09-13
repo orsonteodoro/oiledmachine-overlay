@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    JoshEdit is a lightweight code editor.
+  </longdescription>
+  <upstream>
+    <bugs-to>https://github.com/JoshDreamland/JoshEdit/issues</bugs-to>
+    <maintainer status="active" type="person">
+      <name>Josh Ventura</name>
+    </maintainer>
+  </upstream>
+  <use>
+    <flag name="lateralgm">Install sources for lateralgm</flag>
+    <flag name="maven">Build using Maven.  May be unreliable due to flaky servers.</flag>
+    <flag name="ecj">Build using ECJ.</flag>
+  </use>
+</pkgmetadata>

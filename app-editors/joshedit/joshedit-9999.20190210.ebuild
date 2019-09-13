@@ -1,30 +1,24 @@
 # Copyright 1999-2018 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-inherit eutils
+EAPI=7
+
+inherit desktop eutils
 
 DESCRIPTION="A lightweight code editor for use in Java applications."
 HOMEPAGE="https://github.com/JoshDreamland/JoshEdit"
+LICENSE="GPL-3"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 COMMIT="1eb8e3af94ed24e4508e922629c39c3b16e93ec1"
 PROJECT_NAME="JoshEdit"
 SRC_URI="https://github.com/JoshDreamland/${PROJECT_NAME}/archive/${COMMIT}.zip -> ${P}.zip"
-
-LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 IUSE="lateralgm maven ecj"
 REQUIRED_USE="^^ ( maven ecj )"
-
 RDEPEND="virtual/jdk"
 DEPEND="${RDEPEND}
 	maven? ( dev-java/maven-bin )"
-
 S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
-
-src_prepare() {
-	eapply_user
-}
 
 src_compile() {
 	if use maven ; then
@@ -50,16 +44,13 @@ src_compile_ecj() {
 
 src_install() {
 	if use lateralgm ; then
-		mkdir -p "${D}/usr/share/joshedit-${SLOT}/source" || die
-		cp -r "${S}"/src/main/java/org "${D}/usr/share/joshedit-${SLOT}/source" || die
-		cp -r "${S}"/src/main/java/META-INF "${D}/usr/share/joshedit-${SLOT}/source" || die
-		cp -r "${S}"/eclipse "${D}/usr/share/joshedit-${SLOT}/source" || die
+		insinto /usr/share/joshedit-${SLOT}/source
+		doins -r src/main/java/org src/main/java/META-INF eclipse
 	fi
-	mkdir -p "${D}/usr/share/joshedit-${SLOT}/lib/" || die
-	cp "${S}"/src/main/java/joshedit.jar "${D}/usr/share/joshedit-${SLOT}/lib/" || die
-	mkdir -p "${D}/usr/bin" || die
-	echo "#!/bin/bash" > "${D}/usr/bin/joshedit" || die
-	echo "java -jar /usr/share/joshedit-${SLOT}/lib/joshedit.jar \$*" > "${D}/usr/bin/joshedit" || die
-	chmod +x "${D}/usr/bin/joshedit" || die
+	insinto /usr/share/joshedit-${SLOT}/lib/
+	doins src/main/java/joshedit.jar
+	exeinto /usr/bin
+	doexe "${FILESDIR}/joshedit"
+	sed -i -e "s|joshedit-0|${PN}-${SLOT}|" "${D}/usr/bin/joshedit"
 	make_desktop_entry "/usr/bin/joshedit" "JoshEdit" "" "Utility;TextEditor"
 }
