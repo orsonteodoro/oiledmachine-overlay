@@ -13,6 +13,7 @@
     <maintainer status="active" type="person">
       <name>Josh Ventura</name>
     </maintainer>
+    <remote-id type="github">JoshDreamland/JoshEdit</remote-id>
   </upstream>
   <use>
     <flag name="lateralgm">Install sources for lateralgm</flag>
