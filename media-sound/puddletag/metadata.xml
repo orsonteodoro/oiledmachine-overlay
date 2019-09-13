@@ -1,18 +1,34 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer type="person">
-		<email>billie@gentoo.org</email>
-		<name>Daniel Pielmeier</name>
-	</maintainer>
-	<use>
-		<flag name="cover"> Enables editing of FLAC cover art</flag>
-		<flag name="musicbrainz"> Enables support for musicbrainz, needs <pkg>dev-python/python-musicbrainz</pkg></flag>
-		<flag name="quodlibet">Enables support for editing <pkg>media-sound/quodlibet</pkg> databases</flag>
-		<flag name="acoustid">Use <pkg>media-libs/chromaprint</pkg> for acoustic fingerprinting</flag>
-	</use>
-	<upstream>
-		<remote-id type="sourceforge">puddletag</remote-id>
-		<remote-id type="github">keithgg/puddletag</remote-id>
-	</upstream>
+  <maintainer status="active" type="person">
+    <!-- only in the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer status="inactive" type="person">
+    <email>billie@gentoo.org</email>
+    <name>Daniel Pielmeier</name>
+  </maintainer>
+  <longdescription lang="en">
+    Puddletag is a MP3 metatag editor.
+  </longdescription>
+  <use>
+    <flag name="acoustid">Use <pkg>media-libs/chromaprint</pkg> for acoustic fingerprinting</flag>
+    <flag name="cover"> Enables editing of FLAC cover art</flag>
+    <flag name="musicbrainz"> Enables support for musicbrainz, needs <pkg>dev-python/python-musicbrainz</pkg></flag>
+    <flag name="quodlibet">Enables support for editing <pkg>media-sound/quodlibet</pkg> databases</flag>
+  </use>
+  <upstream>
+    <bugs-to>https://github.com/keithgg/puddletag/issues</bugs-to>
+    <doc lang="en">http://docs.puddletag.net/docs.html</doc>
+    <maintainer status="active">
+      <name>Keith Grootboom</name>
+    </maintainer>
+    <maintainer status="active">
+      <name>Marko Hauptvogel</name>
+    </maintainer>
+    <remote-id type="github">keithgg/puddletag</remote-id>
+    <remote-id type="sourceforge">puddletag</remote-id>
+  </upstream>
 </pkgmetadata>
