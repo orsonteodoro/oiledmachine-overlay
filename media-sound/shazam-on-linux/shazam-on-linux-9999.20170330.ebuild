@@ -56,9 +56,9 @@ src_install() {
 	use doc && dodoc README.md
 	use examples && doins shazam_on_linux.conf alsa
 
-	dosym "/usr/$(get_libdir)/${EPYTHON}/site-packages/${PN}/identify_sound.py" "/usr/lib/python-exec/${EPYTHON}/identify_sound.py"
-	dosym "/usr/$(get_libdir)/${EPYTHON}/site-packages/${PN}/shazam.sh" "/usr/bin/shazam-on-linux"
-	dosym "/usr/lib/python-exec/python-exec2" "/usr/bin/identify_sound.py"
+	dosym /usr/$(get_libdir)/${EPYTHON}/site-packages/${PN}/identify_sound.py /usr/lib/python-exec/${EPYTHON}/identify_sound.py
+	dosym /usr/$(get_libdir)/${EPYTHON}/site-packages/${PN}/shazam.sh /usr/bin/shazam-on-linux
+	dosym /usr/lib/python-exec/python-exec2 /usr/bin/identify_sound.py
 
 	if use extras ; then
 		insinto /usr/share/${PN}
