@@ -1,42 +1,39 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 MULTILIB_COMPAT=( abi_x86_{32,64} )
-inherit multilib-build unpacker linux-info
+inherit linux-info multilib-build unpacker
 
 DESCRIPTION="New generation AMD closed-source drivers for Southern Islands (HD7730 Series) and newer chipsets"
 HOMEPAGE="https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-18-50-unified"
+LICENSE="AMD GPL-2 QPL-1.0"
+KEYWORDS="~amd64 ~x86"
 PKG_VER=${PV:0:5}
 PKG_VER_MAJ=${PV:0:2}
 PKG_REV=${PV:6:6}
 PKG_ARCH="ubuntu"
 PKG_ARCH_VER="18.04"
-PKG_VER_STRING=${PKG_VER}-${PKG_REV}
-PKG_VER_STRING_DIR=${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}
-PKG_VER_LIBDRM="2.4.95"
-PKG_VER_MESA="18.2.0"
-PKG_VER_HSA="1.1.6"
-PKG_VER_ROCT="1.0.9"
-PKG_VER_XORG_VIDEO_AMDGPU_DRV="18.1.99" # about the same as the mesa version
 PKG_VER_AMF="1.4.11"
-PKG_VER_ID="1.0.0"
+PKG_VER_GLAMOR="1.19.0"
 PKG_VER_GST_OMX="1.0.0.1"
+PKG_VER_HSA="1.1.6"
+PKG_VER_ID="1.0.0"
+PKG_VER_LIBDRM="2.4.95"
+PKG_VER_LIBWAYLAND="1.15.0"
 PKG_VER_LLVM="7.0"
 PKG_VER_LLVM_MAJ="7"
-PKG_VER_LIBWAYLAND="1.15.0"
+PKG_VER_MESA="18.2.0"
+PKG_VER_ROCT="1.0.9"
+PKG_VER_STRING=${PKG_VER}-${PKG_REV}
+PKG_VER_STRING_DIR=${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}
 PKG_VER_WAYLAND_PROTO="1.16"
-PKG_VER_GLAMOR="1.19.0"
+PKG_VER_XORG_VIDEO_AMDGPU_DRV="18.1.99" # about the same as the mesa version
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
-
 RESTRICT="fetch strip"
-
-IUSE="+amf +egl +gles2 freesync hsa +opencl +opengl openmax orca pal +vaapi vega +vdpau +vulkan wayland"
-
-LICENSE="AMD GPL-2 QPL-1.0"
-KEYWORDS="~amd64 ~x86"
+IUSE="+amf +egl +gles2 freesync hsa +opencl +opengl openmax orca pal +vaapi +vdpau +vulkan wayland"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error will be produced:
@@ -50,50 +47,44 @@ SLOT="1"
 #	>=sys-devel/lld-7.0.0
 #	>=sys-devel/llvm-7.0.0
 # libglapi.so.0 needs libselinux
-RDEPEND="
-	hsa? ( sys-process/numactl
-	       !dev-libs/roct-thunk-interface )
-	sys-libs/ncurses[tinfo]
-	dev-libs/libedit
-	>=sys-libs/libselinux-1.32
-	>=app-eselect/eselect-opengl-1.0.7
-	app-eselect/eselect-opencl
-	dev-util/cunit
-	media-libs/libomxil-bellagio
-	>=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
-	>=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
-	!vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[openmax?] )
-	vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[openmax?,-vulkan]
-		  media-libs/vulkan-loader )
-	opencl? ( >=sys-devel/gcc-5.2.0 )
-	vdpau? ( >=media-libs/mesa-${PKG_VER_MESA}[-vdpau] )
-	>=x11-base/xorg-drivers-1.19
-	<x11-base/xorg-drivers-1.20
-	>=x11-base/xorg-server-1.19[glamor]
-	>=x11-libs/libdrm-${PKG_VER_LIBDRM}[libkms]
-	x11-libs/libX11[${MULTILIB_USEDEP}]
-	x11-libs/libXext[${MULTILIB_USEDEP}]
-	x11-libs/libXinerama[${MULTILIB_USEDEP}]
-	x11-libs/libXrandr[${MULTILIB_USEDEP}]
-	x11-libs/libXrender[${MULTILIB_USEDEP}]
-	x11-base/xorg-proto
-	freesync? ( || (   sys-kernel/ot-sources
-			 >=sys-kernel/git-sources-5.0_rc1
-			 >=sys-kernel/gentoo-sources-5.0
-			 >=sys-kernel/vanilla-sources-5.0 ) )
-"
-#hsakmt requires libnuma.so.1
-#kmstest requires libkms
-#amdgpu_dri.so requires wayland?
-#vdpau requires llvm7
-
-DEPEND="
-	>=sys-kernel/linux-firmware-20161205
-"
-
+RDEPEND="app-eselect/eselect-opencl
+	 >=app-eselect/eselect-opengl-1.0.7
+	 dev-util/cunit
+	 dev-libs/libedit
+	 freesync? ( || ( >=sys-kernel/gentoo-sources-5.0
+			  >=sys-kernel/git-sources-5.0_rc1
+			    sys-kernel/ot-sources
+			  >=sys-kernel/vanilla-sources-5.0 ) )
+	 hsa? ( !dev-libs/roct-thunk-interface
+		 sys-process/numactl )
+	 media-libs/libomxil-bellagio
+	 >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
+	 >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
+	 opencl? ( >=sys-devel/gcc-5.2.0 )
+	 >=sys-libs/libselinux-1.32
+	 sys-libs/ncurses[tinfo]
+	 vdpau? ( >=media-libs/mesa-${PKG_VER_MESA}[-vdpau] )
+	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[openmax?] )
+	 vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[openmax?,-vulkan]
+		     media-libs/vulkan-loader )
+	 >=x11-base/xorg-drivers-1.19
+	 <x11-base/xorg-drivers-1.20
+	 >=x11-base/xorg-server-1.19[glamor]
+	 >=x11-libs/libdrm-${PKG_VER_LIBDRM}[libkms]
+	 x11-base/xorg-proto
+	 x11-libs/libX11[${MULTILIB_USEDEP}]
+	 x11-libs/libXext[${MULTILIB_USEDEP}]
+	 x11-libs/libXinerama[${MULTILIB_USEDEP}]
+	 x11-libs/libXrandr[${MULTILIB_USEDEP}]
+	 x11-libs/libXrender[${MULTILIB_USEDEP}]"
+# hsakmt requires libnuma.so.1
+# kmstest requires libkms
+# amdgpu_dri.so requires wayland?
+# vdpau requires llvm7
+DEPEND=">=sys-kernel/linux-firmware-20161205"
 S="${WORKDIR}"
-REQUIRED_USE="|| ( pal orca )" #incomplete
-#!hsa
+REQUIRED_USE="|| ( pal orca )" # incomplete
+# !hsa
 
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
@@ -117,7 +108,7 @@ pkg_setup() {
 
 	CONFIG_CHECK="~DRM_AMDGPU"
 
-	WARNING_DRM_AMDGPU="DRM_AMDGPU which is required for FreeSync or AMDGPU-PRO driver to work"
+	WARNING_DRM_AMDGPU="The CONFIG_DRM_AMDGPU kernel option is required for FreeSync or AMDGPU-PRO driver to work"
 
 	linux-info_pkg_setup
 
@@ -845,7 +836,7 @@ src_install() {
 	fi
 
 	# Install wayland libraries.  Installing these are required.
-	#if use wayland ; then
+	# if use wayland ; then
 	if use abi_x86_64 ; then
 		exeinto /usr/lib64/opengl/amdgpu/lib/
 		doexe opt/amdgpu/lib/x86_64-linux-gnu/libwayland-client.so.0.3.0
@@ -864,7 +855,7 @@ src_install() {
 		doexe opt/amdgpu/lib/i386-linux-gnu/libwayland-egl.so.1.0.0
 		dosym libwayland-egl.so.1.0.0 /usr/lib32/opengl/amdgpu/lib/libwayland-egl.so.1
 	fi
-	#fi
+	# fi
 
 	# TODO: install dev libraries if any
 
@@ -900,5 +891,5 @@ pkg_postinst() {
 	fi
 
 	# remove generated by eselect-opengl
-	#rm "${ROOT}"/etc/X11/xorg.conf.d/20opengl.conf > /dev/null
+	# rm "${ROOT}"/etc/X11/xorg.conf.d/20opengl.conf > /dev/null
 }
