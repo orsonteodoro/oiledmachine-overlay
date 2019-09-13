@@ -15,7 +15,8 @@ EGIT_COMMIT="8010f3341301ee36bb1782b21384ce1609de36ea" # pyqt5 branch
 DOCS=( changelog HACKING NEWS THANKS TODO )
 RESTRICT="mirror"
 SLOT="0"
-SRC_URI="https://github.com/keithgg/${PN}/archive/${EGIT_COMMIT}.zip"
+# version string contained in puddletag/source/puddlestuff/__init__.py
+SRC_URI="https://github.com/keithgg/${PN}/archive/${EGIT_COMMIT}.tar.gz -> ${PF}.tar.gz"
 IUSE="acoustid cover musicbrainz quodlibet"
 RDEPEND="acoustid? ( >=media-libs/chromaprint-0.6 )
 	 dev-python/PyQt5[${PYTHON_USEDEP},svg,gui,widgets]
