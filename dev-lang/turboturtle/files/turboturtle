@@ -1,0 +1,10 @@
+#!/bin/bash
+OLDDIR=$(pwd)
+cp $1 /usr/lib64/turboturtle
+cd /usr/lib64/turboturtle
+./runlogo.sh $@
+name=`basename "$1
+destdir=$(dirname "$1")
+basename=${name%%.*}
+cp $basename ${OLDDIR}
+rm -f /usr/lib64/turboturtle/$basename{.o,.cpp,.logo,}

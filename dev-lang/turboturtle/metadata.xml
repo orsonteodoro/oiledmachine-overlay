@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    TurboTurtle is a LOGO compiler with OpenGL Turtle Graphics.
+  </longdescription>
+  <upstream>
+    <bugs-to>https://github.com/richard42/turboturtle/issues</bugs-to>
+    <maintainer type="person">
+      <email>Richard@fascinationsoftware.com</email>
+      <name>Richard Goedeken</name>
+    </maintainer>
+    <remote-id type="github">richard42/turboturtle</remote-id>
+  </upstream>
+  <use>
+    <flag name="examples">Installs the examples.</flag>
+  </use>
+</pkgmetadata>
