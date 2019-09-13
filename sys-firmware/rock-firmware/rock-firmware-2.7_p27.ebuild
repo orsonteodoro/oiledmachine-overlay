@@ -6,6 +6,7 @@ EAPI=7
 inherit unpacker
 
 HOMEPAGE="https://rocm.github.io/"
+DESCRIPTION="Radeon Open Compute (ROCk) firmware"
 LICENSE="LICENSE.ucode"
 KEYWORDS="~amd64"
 FN="rock-dkms_2.7-27_all.deb"
@@ -29,7 +30,12 @@ src_unpack() {
 }
 
 src_install() {
-	insinto /lib/firmware/compute-firmware
+	insinto /lib/firmware/rock-firmware
 	doins -r usr/src/amdgpu-${MY_RPR}/firmware/{radeon,amdgpu}
 }
 
+pkg_postrm() {
+	einfo "The original upstream scripts would replace the existing AMD GPU firmware."
+	einfo "This installation allows both to exist side-by-side."
+	einfo "Replace the old references of firmware to new location with same name."
+}
