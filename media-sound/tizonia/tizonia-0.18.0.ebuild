@@ -5,7 +5,7 @@ EAPI=7
 
 PYTHON_COMPAT=( python2_7 python3_{4,5,6,7} )
 
-inherit autotools distutils-r1 eutils flag-o-matic multilib multilib-minimal multilib-build
+inherit autotools distutils-r1 eutils flag-o-matic multilib multilib-build multilib-minimal
 
 MY_PN="tizonia-openmax-il"
 DESCRIPTION="Command-line cloud music player for Linux with support for Spotify, Google Play Music, YouTube, SoundCloud, Dirble Internet Radio, Plex servers and Chromecast devices."
@@ -226,10 +226,6 @@ multilib_src_install() {
 	else
 		rm -rf "${D}"/usr/share/dbus-1/services/com.aratelia.tiz.rm.service || die
 	fi
-
-	#if ! use bash-completion ; then
-	#	[ -d "${D}"/usr/share/bash-completion ] && rm -rf "${D}"/usr/share/bash-completion || die
-	#fi
 }
 
 python_install_all() {
