@@ -76,7 +76,6 @@
       <email>johannes@jgoetzfried.de</email>
       <name>Johannes Goetzfried</name>
     </maintainer>
-    <remote-id type="github">IsmAvatar/LateralGM</remote-id>
   </upstream>
   <use>
     <flag name="amd-staging-drm-next-latest">Patches the kernel with latest AMD GPU compatibility and fixes.  May break compile time anytime.</flag>
