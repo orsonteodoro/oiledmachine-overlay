@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    Tizonia is a command line client with support for cloud streaming and local playback.
+    It also implements OpenMAX IL 1.2.  OpenMAX is a open standards, royalty free, 
+    multimedia acceleration and deployment C API for audio, video, still processing, codecs.
+  </longdescription>
+  <upstream>
+    <doc lang="en">http://docs.tizonia.org/<doc>
+    <bugs-to>https://github.com/tizonia/tizonia-openmax-il/issues</bugs-to>
+    <maintainer status="active" type="person">
+      <name>Juan A. Rubio</name>
+    </maintainer>
+    <remote-id type="github">tizonia/tizonia-openmax-il</remote-id>
+  </upstream>
+  <use>
+    <flag name="aac">Enables AAC support.</flag>
+    <flag name="alsa">Enables ALSA support.</flag>
+    <flag name="bash-completion">Enables installing the bash-completion script.</flag>
+    <flag name="blocking-etb-ftb">Enables conforming behavior for ETB and FTB APIs.</flag>
+    <flag name="blocking-sendcommand">Enables conforming behavior for SendCommand API.</flag>
+    <flag name="boost">Enables boost support.</flag>
+    <flag name="curl">Enables curl support.</flag>
+    <flag name="dbus">Enables DBUS support.</flag>
+    <flag name="file-io">Enables file IO operations.</flag>
+    <flag name="flac">Enables FLAC support.</flag>
+    <flag name="fuzzywuzzy">Enables dependency use of fuzzywuzzy library.</flag>
+    <flag name="inproc-io">Enables in-process IO.</flag>
+    <flag name="mp4">Enables MP4 support.</flag>
+    <flag name="ogg">Enables OGG support.</flag>
+    <flag name="opus">Enables Opus codec support.</flag>
+    <flag name="lame">Enables LAME MP3 encoding.</flag>
+    <flag name="libsndfile">Enables support for WAV, PCM, AU files.</flag>
+    <flag name="mad">Enables MAD MP3 decoding.</flag>
+    <flag name="mp3-metadata-eraser">Enables building the</flag>
+    <flag name="mp2">Enables building MP2 support.</flag>
+    <flag name="mpg123">Enables dependency use of mpg123.</flag>
+    <flag name="player">Enables the CLI player.</flag>
+    <flag name="pulseaudio">Enables building PulseAudio support.</flag>
+    <flag name="sdl">Enables SDL for viewing image or video playback.</flag>
+    <flag name="icecast-client">Enables LAN icecast client feature.</flag>
+    <flag name="icecast-server">Enables LAN icecast server feature.</flag>
+    <flag name="test">Enables testing.</flag>
+    <flag name="vorbis">Enables Vorbis support.</flag>
+    <flag name="vpx">Enables VPX support.</flag>
+    <flag name="webm">Enables WebM support.</flag>
+    <flag name="zsh-completion">Installs zsh-completion script.</flag>
+    <flag name="openrc">Installs OpenRC service files.</flag>
+    <flag name="systemd">Installs systemd service files.</flag>
+    <flag name="chromecast">Enables Chromecast support.</flag>
+    <flag name="dirble">Enables Dirable service support.</flag>
+    <flag name="google-music">Enables Google Music service support.</flag>
+    <flag name="plex">Enables Plex service support.</flag>
+    <flag name="soundcloud">Enables SoundCloud service support.</flag>
+    <flag name="spotify">Enables Spotify service support.</flag>
+    <flag name="youtube">Enables YouTube service support.</flag>
+  </use>
+</pkgmetadata>
