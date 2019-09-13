@@ -5,7 +5,7 @@ EAPI=7
 
 inherit eutils
 
-DESCRIPTION="LateralGM Plugin"
+DESCRIPTION="Java based plugin allowing LateralGM to compile games using ENIGMA."
 HOMEPAGE="https://github.com/enigma-dev/lgmplugin"
 LICENSE="GPL-3+"
 SRC_URI="https://github.com/enigma-dev/lgmplugin/archive/v${PV}.tar.gz -> ${P}.tar.gz"
