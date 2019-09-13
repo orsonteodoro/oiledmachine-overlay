@@ -34,7 +34,7 @@ src_install() {
 	doins -r usr/src/amdgpu-${MY_RPR}/firmware/{radeon,amdgpu}
 }
 
-pkg_postrm() {
+pkg_postinst() {
 	einfo "The original upstream scripts would replace the existing AMD GPU firmware."
 	einfo "This installation allows both to exist side-by-side."
 	einfo "Replace the old references of firmware to new location with same name."
