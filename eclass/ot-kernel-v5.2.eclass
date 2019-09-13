@@ -113,9 +113,9 @@ detect_version
 detect_arch
 
 #DEPEND="deblob? ( ${PYTHON_DEPS} )"
-DEPEND="rock-latest? ( dev-vcs/git )
-	rock-snapshot? ( dev-vcs/git )
-	rock-milestone? ( dev-vcs/git )
+DEPEND="rock-latest? ( dev-vcs/git sys-firmware/compute-firmware )
+	rock-snapshot? ( dev-vcs/git sys-firmware/compute-firmware )
+	rock-milestone? ( dev-vcs/git sys-firmware/compute-firmware )
 	amd-staging-drm-next-snapshot? ( dev-vcs/git )
 	amd-staging-drm-next-latest? ( dev-vcs/git )
 	amd-staging-drm-next-milestone? ( dev-vcs/git )
