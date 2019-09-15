@@ -40,7 +40,7 @@ src_install() {
 	doexe qb64
 
 	insinto /usr/$(get_libdir)/qb64
-	doins -r internal source
+	doins -r internal source LICENSE
 
 	insinto /usr/share/${PN}
 	use samples && doins -r programs/samples
