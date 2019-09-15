@@ -1,3 +1,0 @@
-CKPOOL_CONFIG="/etc/ckpool/ckpool.conf"
-CKPOOL_OPTS=""
-CKPOOL_PIDFILE="/var/run/ckpool.pid"
