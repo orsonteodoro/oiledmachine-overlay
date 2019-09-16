@@ -27,6 +27,6 @@
   <use>
     <flag name="android">Checks the android dependencies to build Android executibles and installs android examples.</flag>
     <flag name="samples">Installs example BASIC scripts.</flag>
-    <flag name="systemwide">Installs and configures the program for systemwide use.</flag>
+    <flag name="systemwide">Installs and configures the program for systemwide use.  Not recommended.</flag>
   </use>
 </pkgmetadata>

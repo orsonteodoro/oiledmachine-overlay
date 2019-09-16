@@ -136,7 +136,7 @@ pkg_config() {
 		if [ -d "${prefix}/programs" ] ; then
 			cp -a "${prefix}/programs" "${d}" || die
 			mkdir -p "${d}/found" || die
-			find "${prefix}" -iname "*.bas" -maxdepth 1 -exec cp -a '{}' "${d}/found" \;
+			find "${prefix}" -maxdepth 1 -iname "*.bas" -exec cp -a '{}' "${d}/found" \;
 			ewarn "Your saved programs have been moved to ${d} and in ${d}/found"
 		fi
 		rm -rf "${prefix}"
