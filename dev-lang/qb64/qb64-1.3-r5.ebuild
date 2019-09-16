@@ -140,6 +140,9 @@ pkg_config() {
 			ewarn "Your saved programs have been moved to ${d} and in ${d}/found"
 		fi
 		rm -rf "${prefix}"
+	else
+		einfo "Aborting per user install"
+		return 0
 	fi
 
 	local logged
