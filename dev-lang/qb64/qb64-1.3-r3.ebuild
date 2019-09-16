@@ -7,7 +7,7 @@ inherit check-reqs desktop eutils
 
 DESCRIPTION="QB64 is a modern extended BASIC+OpenGL language that retains QB4.5/QBasic compatibility and compiles native binaries for Windows (XP and up), Linux and macOS."
 HOMEPAGE="http://www.qb64.net/"
-# Many licenses because of the mingw compiler and internal third parties
+# Many licenses because of the mingw compiler and internal third party packages
 LICENSE="Apache-2.0 BSD CC-BY-SA-3.0 CC0-1.0 FTL gcc-runtime-library-exception-3.1 GPL-2+ GPL-3+ LGPL-2+ LGPL-2.1 LGPL-2.1+ MIT openssl SGI-B-2.0 ZLIB ZPL"
 KEYWORDS="~amd64 ~x86"
 SRC_URI="https://github.com/Galleondragon/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
@@ -41,6 +41,12 @@ fpo() {
 	fowners root:users $@
 }
 
+# Recursive version
+fpor() {
+	fperms -R g+w $@
+	fowners -R root:users $@
+}
+
 src_install() {
 	local prefix="/opt/${PN}"
 	exeinto "${prefix}"
@@ -66,6 +72,20 @@ src_install() {
 	    $(find "${D}${prefix}/internal/temp/" -name "*.bin" -o -name "*.rc" -o -name "*.txt" | sed -e "s|${D}||") \
 	    $(find "${D}${prefix}/source/virtual_keyboard" -name "*.bas" | sed -e "s|${D}||")
 
+
+	# Fix running examples
+	fpo $(find "${D}${prefix}/programs" -name "*.bas" | sed -e "s|${D}||") \
+	    "${prefix}/internal/c/makeline_lnx.txt" \
+	    "${prefix}/internal/c/makedat_lnx32.txt" \
+	    "${prefix}/internal/c/makedat_lnx64.txt"
+	fpor $(find "${D}${prefix}/internal/c" -name "temp" | sed -e "s|${D}||") \
+	     $(find "${D}${prefix}/internal/c" -name "lnx" | sed -e "s|${D}||")
+
 	newicon internal/source/${PN}icon32.png ${PN}.png
 	make_desktop_entry "/usr/bin/${PN}" "${PN^^} Programming IDE" "/usr/share/pixmaps/${PN}.png" "Development;IDE"
+}
+
+pkg_postinst() {
+	einfo "If you are playing sound, ${PN} may not run your program.  Close the other sound program and try running again."
+	einfo "You need to be part of the users group in order to run ${PN}."
 }
