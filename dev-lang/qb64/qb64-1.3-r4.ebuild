@@ -43,7 +43,7 @@ src_compile() {
 fpo() {
 	if [[ "${EBUILD_PHASE_FUNC}" == "pkg_config" ]] ; then
 		chmod g+w $@ || die
-		chown -R ${name}:${name} $@ || die
+		chown ${name}:${name} $@ || die
 	else
 		fperms g+w $@
 		fowners root:users $@
