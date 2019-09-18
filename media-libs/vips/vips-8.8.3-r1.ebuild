@@ -13,36 +13,36 @@ LICENSE="LGPL-2.1"
 KEYWORDS="~amd64 ~x86"
 IUSE="+analyze cairo cxx debug doc exif fftw fits giflib graphicsmagick gsf heif imagemagick imagequant jpeg lcms matio openexr openslide +orc png poppler +ppm python +radiance static-libs svg tiff webp zlib"
 SRC_URI="https://github.com/libvips/libvips/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-RDEPEND="cairo? ( >=x11-libs/cairo-1.2 )
+RDEPEND="cairo? ( >=x11-libs/cairo-1.2[${MULTILIB_USEDEP}] )
 	 debug? ( dev-libs/dmalloc )
-	 >=dev-libs/glib-2.6:2
-	 dev-libs/libxml2
+	 >=dev-libs/glib-2.6:2[${MULTILIB_USEDEP}]
+	 dev-libs/libxml2[${MULTILIB_USEDEP}]
 	 dev-util/gtk-doc
-	 exif? ( >=media-libs/libexif-0.6 )
-	 fftw? ( sci-libs/fftw:3.0= )
-	 fits? ( sci-libs/cfitsio )
-	 giflib? ( media-libs/giflib )
+	 exif? ( >=media-libs/libexif-0.6[${MULTILIB_USEDEP}] )
+	 fftw? ( sci-libs/fftw:3.0=[${MULTILIB_USEDEP}] )
+	 fits? ( sci-libs/cfitsio[${MULTILIB_USEDEP}] )
+	 giflib? ( media-libs/giflib[${MULTILIB_USEDEP}] )
 	 gsf? ( >=gnome-extra/libgsf-1.14.26 )
-	 heif? ( media-libs/libheif )
+	 heif? ( media-libs/libheif[${MULTILIB_USEDEP}] )
 	 imagemagick? (
 		graphicsmagick? ( media-gfx/graphicsmagick )
 		!graphicsmagick? ( media-gfx/imagemagick )
 	 )
 	 imagequant? ( media-gfx/libimagequant )
-	 jpeg? ( virtual/jpeg:0= )
-	 lcms? ( media-libs/lcms )
-	 matio? ( >=sci-libs/matio-1.3.4 )
-	 openexr? ( >=media-libs/openexr-1.2.2 )
-	 openslide? ( >=media-libs/openslide-3.3.0 )
-	 orc? ( >=dev-lang/orc-0.4.11 )
-	 png? ( >=media-libs/libpng-1.2.9:0= )
+	 jpeg? ( virtual/jpeg:0=[${MULTILIB_USEDEP}] )
+	 lcms? ( media-libs/lcms[${MULTILIB_USEDEP}] )
+	 matio? ( >=sci-libs/matio-1.3.4[${MULTILIB_USEDEP}] )
+	 openexr? ( >=media-libs/openexr-1.2.2[${MULTILIB_USEDEP}] )
+	 openslide? ( >=media-libs/openslide-3.3.0[${MULTILIB_USEDEP}] )
+	 orc? ( >=dev-lang/orc-0.4.11[${MULTILIB_USEDEP}] )
+	 png? ( >=media-libs/libpng-1.2.9:0=[${MULTILIB_USEDEP}] )
 	 poppler? ( app-text/poppler[cairo,introspection] )
 	 python? ( ${PYTHON_DEPS} )
-	 svg? ( gnome-base/librsvg )
-	 tiff? ( >=media-libs/tiff-4.0:0= )
-	 webp? ( >=media-libs/libwebp-0.6 )
-	 >=x11-libs/pango-1.8
-	 zlib? ( >=sys-libs/zlib-0.4 )"
+	 svg? ( gnome-base/librsvg[${MULTILIB_USEDEP}] )
+	 tiff? ( >=media-libs/tiff-4.0:0=[${MULTILIB_USEDEP}] )
+	 webp? ( >=media-libs/libwebp-0.6[${MULTILIB_USEDEP}] )
+	 >=x11-libs/pango-1.8[${MULTILIB_USEDEP}]
+	 zlib? ( >=sys-libs/zlib-0.4[${MULTILIB_USEDEP}] )"
 DEPEND="dev-util/gtk-doc-am
 	doc? ( dev-util/gtk-doc )
 	${RDEPEND}"
@@ -101,9 +101,9 @@ multilib_src_configure() {
 		$(use_with poppler) \
 		$(use_with ppm) \
 		$(use_with python) \
-		$(use_with radiance) \
 		$(use_with svg rsvg) \
 		$(use_with tiff) \
+		$(use_with radiance) \
 		$(use_with webp libwebp) \
 		$(use_with zlib) \
 		$(use_enable static-libs static) \
