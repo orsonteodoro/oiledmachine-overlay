@@ -88,21 +88,21 @@ multilib_src_configure() {
 		$(use_with jpeg) \
 		$(use_with fits cfitsio) \
 		$(use_with fftw) \
+		$(use_with giflib) \
+		$(use_with gsf) \
 		$(use_with heif) \
 		$(use_with imagequant) \
 		$(use_with lcms) \
 		$(use_with matio ) \
 		$(use_with openexr OpenEXR) \
 		$(use_with openslide) \
-		$(use_with giflib) \
-		$(use_with gsf) \
-		$(use_with png) \
-		$(use_with svg rsvg) \
-		$(use_with tiff) \
 		$(use_with orc) \
+		$(use_with png) \
 		$(use_with poppler) \
 		$(use_with ppm) \
 		$(use_with python) \
+		$(use_with svg rsvg) \
+		$(use_with tiff) \
 		$(use_with radiance) \
 		$(use_with webp libwebp) \
 		$(use_with zlib) \
