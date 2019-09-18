@@ -9,7 +9,7 @@ inherit autotools eutils multilib-minimal python-single-r1
 
 DESCRIPTION="VIPS Image Processing Library"
 HOMEPAGE="https://jcupitt.github.io/libvips/"
-LICENSE="LGPL-2.1"
+LICENSE="LGPL-2.1+"
 KEYWORDS="~amd64 ~x86"
 IUSE="+analyze cairo cxx debug doc exif fftw fits giflib graphicsmagick gsf heif imagemagick imagequant jpeg lcms matio openexr openslide +orc png poppler +ppm python +radiance static-libs svg tiff webp zlib"
 SRC_URI="https://github.com/libvips/libvips/archive/v${PV}.tar.gz -> ${P}.tar.gz"
@@ -82,6 +82,7 @@ multilib_src_configure() {
 		$(multilib_native_use_enable doc gtk-doc) \
 		$(use cxx || echo "--disable-cxx") \
 		$(use_enable debug) \
+		$(use_enable static-libs static) \
 		$(use_with analyze) \
 		$(use_with debug dmalloc) \
 		$(use_with exif libexif) \
@@ -106,7 +107,6 @@ multilib_src_configure() {
 		$(use_with tiff) \
 		$(use_with webp libwebp) \
 		$(use_with zlib) \
-		$(use_enable static-libs static) \
 		--with-html-dir="/usr/share/gtk-doc/html"
 }
 

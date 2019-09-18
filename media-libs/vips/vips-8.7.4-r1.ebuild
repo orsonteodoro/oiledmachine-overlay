@@ -9,7 +9,7 @@ inherit autotools eutils multilib-minimal python-single-r1
 
 DESCRIPTION="VIPS Image Processing Library"
 HOMEPAGE="https://jcupitt.github.io/libvips/"
-LICENSE="LGPL-2.1"
+LICENSE="LGPL-2.1+"
 KEYWORDS="~amd64 ~x86"
 IUSE="cxx doc debug exif fits fftw graphicsmagick imagemagick jpeg lcms matio openexr openslide +orc png python static-libs svg tiff webp zlib"
 SRC_URI="https://github.com/libvips/libvips/archive/v${PV}.tar.gz -> ${P}.tar.gz"
