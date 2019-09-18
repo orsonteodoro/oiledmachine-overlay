@@ -11,7 +11,7 @@ DESCRIPTION="VIPS Image Processing Library"
 HOMEPAGE="https://jcupitt.github.io/libvips/"
 LICENSE="LGPL-2.1+"
 KEYWORDS="~amd64 ~x86"
-IUSE="+analyze cairo cxx debug doc exif fftw fits giflib graphicsmagick gsf heif imagemagick imagequant jpeg lcms matio openexr openslide +orc png poppler +ppm python +radiance static-libs svg tiff webp zlib"
+IUSE="+analyze cairo cxx debug doc exif fftw fits giflib graphicsmagick gsf +hdr heif imagemagick imagequant jpeg lcms matio openexr openslide +orc png poppler +ppm python static-libs svg tiff webp zlib"
 SRC_URI="https://github.com/libvips/libvips/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 RDEPEND="cairo? ( >=x11-libs/cairo-1.2[${MULTILIB_USEDEP}] )
 	 debug? ( dev-libs/dmalloc )
@@ -91,6 +91,7 @@ multilib_src_configure() {
 		$(use_with fftw) \
 		$(use_with giflib) \
 		$(use_with gsf) \
+		$(use_with hdr radiance) \
 		$(use_with heif) \
 		$(use_with imagequant) \
 		$(use_with lcms) \
@@ -102,7 +103,6 @@ multilib_src_configure() {
 		$(use_with poppler) \
 		$(use_with ppm) \
 		$(use_with python) \
-		$(use_with radiance) \
 		$(use_with svg rsvg) \
 		$(use_with tiff) \
 		$(use_with webp libwebp) \
