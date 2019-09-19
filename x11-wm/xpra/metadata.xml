@@ -64,7 +64,7 @@
   <flag name="vsock">Enable support for VSOCK and the vsock:// connection string.</flag>
   <flag name="webcam">Enable webcam support via opencv.</flag>
   <flag name="webp">Enables encoding and decoding WebP images.</flag>
-  <flag name="websockets">Enables server support for the websockets.</flag>
+  <flag name="websockets">Enables server support for the websockets and to serve html5 clients.</flag>
   <flag name="xdg">Enables support for xdg_open.</flag>
 </use>
 </pkgmetadata>

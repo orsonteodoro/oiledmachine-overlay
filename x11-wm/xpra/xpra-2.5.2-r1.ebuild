@@ -161,7 +161,7 @@ python_configure_all() {
 python_install_all() {
 	distutils-r1_python_install_all
 	fperms 0750 /etc/init.d/xpra
-	mkdir -p "${D}"/etc/X11/ || die
+	dodir /etc/X11
 	cp "${D}"/etc/xpra/xorg.conf "${D}"/etc/X11/xorg.dummy.conf || die
 }
 

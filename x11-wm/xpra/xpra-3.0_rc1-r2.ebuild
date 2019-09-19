@@ -185,7 +185,6 @@ python_configure_all() {
 		--with-warn
 		$(use_with webcam)
 		$(use_with webp)
-		$(use_with websockets)
 		--without-Xdummy
 		$(use_with xdg xdg_open)
 		--with-x11
@@ -209,8 +208,13 @@ python_configure_all() {
 python_install_all() {
 	distutils-r1_python_install_all
 	fperms 0750 /etc/init.d/xpra
-	mkdir -p "${D}"/etc/X11/ || die
+	dodir /etc/X11
 	cp "${D}"/etc/xpra/xorg.conf "${D}"/etc/X11/xorg.dummy.conf || die
+
+	if use websockets ; then
+		dodir /usr/share/xpra
+		./setup_html5.py "${D}/usr/share/xpra"
+	fi
 }
 
 pkg_postinst() {
