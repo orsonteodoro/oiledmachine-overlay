@@ -33,17 +33,20 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	|| ( client server )"
 
 COMMON_DEPEND="${PYTHON_DEPS}
-	cuda? ( dev-python/pycuda[${PYTHON_USEDEP}]
-	      >=x11-drivers/nvidia-drivers-352.31 )
-	csc_libyuv? ( media-libs/libyuv )
-	csc_swscale? ( !libav? ( >=media-video/ffmpeg-1.2.2:0= )
-			libav? ( media-video/libav:0= )	)
-	dec_avcodec2? ( !libav? ( >=media-video/ffmpeg-3.1:0=[x264,x265] )
-			 libav? ( media-video/libav:0=[x264,x265] ) )
 	dev-lang/python[ssl?]
 	dev-python/pygtk:2[python_targets_python2_7]
 	gtk2? (	dev-python/pygobject:2[${PYTHON_USEDEP}]
 		x11-libs/gtk+:2 )
+	gtk3? (	dev-python/pygobject:3[${PYTHON_USEDEP}]
+		dev-libs/gobject-introspection
+		x11-libs/gtk+:3 )
+	csc_libyuv? ( media-libs/libyuv )
+	csc_swscale? ( !libav? ( >=media-video/ffmpeg-1.2.2:0= )
+			libav? ( media-video/libav:0= ) )
+	cuda? ( dev-python/pycuda[${PYTHON_USEDEP}]
+	      >=x11-drivers/nvidia-drivers-352.31 )
+	dec_avcodec2? ( !libav? ( >=media-video/ffmpeg-3.1:0=[x264,x265] )
+			 libav? ( media-video/libav:0=[x264,x265] ) )
 	enc_ffmpeg? ( !libav? ( >=media-video/ffmpeg-4.0:0= )
 		       libav? ( media-video/libav:0= ) )
 	enc_x264? ( !libav? ( >=media-video/ffmpeg-1.0.4:0=[x264] )
@@ -52,12 +55,8 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	enc_x265? ( !libav? ( >=media-video/ffmpeg-2:0=[x264] )
 		     libav? ( media-video/libav:0=[x264] )
 		     media-libs/x265 )
-	gtk3? (	dev-libs/gobject-introspection
-		dev-python/pygobject:3[${PYTHON_USEDEP}]
-		x11-libs/gtk+:3 )
 	jpeg? ( >=media-libs/libjpeg-turbo-1.4 )
-	minify? ( || ( dev-util/uglifyjs
-		       dev-util/yuicompressor ) )
+	minify? ( || ( dev-util/yuicompressor dev-util/uglifyjs ) )
 	nvenc? ( dev-python/numpy[${PYTHON_USEDEP}]
 		 dev-python/pycuda[${PYTHON_USEDEP}]
 		 media-video/nvidia-video-codec
@@ -65,15 +64,15 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	nvfbc? ( dev-python/numpy[${PYTHON_USEDEP}]
 		 dev-python/pycuda[${PYTHON_USEDEP}]
 	       >=x11-drivers/nvidia-drivers-410.66 )
-	opengl? ( dev-python/numpy[${PYTHON_USEDEP}]
-		  dev-python/pygtkglext )
+	opengl? (  dev-python/numpy[${PYTHON_USEDEP}]
+		   dev-python/pygtkglext )
 	pam? ( sys-libs/pam )
 	pillow? ( dev-python/pillow[${PYTHON_USEDEP}] )
 	pulseaudio? ( media-sound/pulseaudio )
 	sound? ( dev-libs/gobject-introspection
 		 dev-python/gst-python:1.0[${PYTHON_USEDEP}]
-		 media-libs/gst-plugins-base:1.0
-		 media-libs/gstreamer:1.0 )
+		 media-libs/gstreamer:1.0
+		 media-libs/gst-plugins-base:1.0 )
 	systemd? ( sys-apps/systemd )
 	v4l2? ( media-video/v4l2loopback
 		sys-kernel/linux-headers )
@@ -169,26 +168,26 @@ python_configure_all() {
 		$(use_with jpeg jpeg_decoder)
 		$(use_with minify)
 		$(use_with opengl)
-		--without-PIC
 		$(use_with pam)
+		--without-PIC
 		$(use_with pillow)
 		$(use_with notifications)
 		$(use_with nvenc)
-		$(use_with sd_listen)
 		$(use_with server)
 		$(use_with server shadow)
 		$(use_with sound)
+		$(use_with sd_listen)
 		--with-strict
-		$(use_with v4l2)
 		$(use_with vpx)
 		$(use_with vsock)
+		$(use_with v4l2)
 		--with-warn
 		$(use_with webcam)
 		$(use_with webp)
 		$(use_with websockets)
-		--without-Xdummy
 		$(use_with xdg xdg_open)
 		--with-x11
+		--without-Xdummy
 	)
 
 	if use gtk3 ; then

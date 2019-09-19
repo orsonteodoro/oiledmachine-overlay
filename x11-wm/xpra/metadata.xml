@@ -1,25 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
+<!-- for this forked ebuild version only on oiledmachine-overlay -->
+<maintainer type="person" status="active">
+  <email>orsonteodoro@hotmail.com</email>
+  <name>Orson Teodoro</name>
+</maintainer>
+<!-- originator -->
 <maintainer type="person">
-	<email>dilfridge@gentoo.org</email>
-	<name>Andreas K. Huettel</name>
+  <email>dilfridge@gentoo.org</email>
+  <name>Andreas K. Huettel</name>
 </maintainer>
 <upstream>
-	<bugs-to>https://www.xpra.org/trac/report</bugs-to>
+  <bugs-to>https://www.xpra.org/trac/wiki/ReportingBugs</bugs-to>
+  <doc lang="en">https://www.xpra.org/trac/wiki/Index</doc>
+  <maintainer type="person" status="active">
+    <name>Antoine Martin</name>
+  </maintainer>
 </upstream>
 <use>
-	<flag name="client">Build client-side code</flag>
-	<flag name="clipboard">Enable clipboard support</flag>
-	<flag name="csc">Enable csc softscaler support</flag>
-	<flag name="dec_avcodec2">Enable avcodec2 decoder support</flag>
-	<flag name="enc_ffmpeg">Enable advanced ffmpeg/libav encoder support</flag>
-	<flag name="enc_x264">Enable x264 encoder support</flag>
-	<flag name="enc_x265">Enable x265 encoder support</flag>
-	<flag name="lz4">Enable support for lz4 compression</flag>
-	<flag name="pillow">Enable pillow support</flag>
-	<flag name="server">Build server-side code</flag>
-	<flag name="vpx">Enable vpx image format support</flag>
-	<flag name="webcam">Enable webcam support via opencv</flag>
+  <flag name="avahi">Enables support for Avahi auto discovery.</flag>
+  <flag name="client">Build client-side code.</flag>
+  <flag name="clipboard">Enable clipboard support.</flag>
+  <flag name="csc">Enable csc (color space conversion) softscaler support.  Equivalent to csc_swscale in older ebuilds.</flag>
+  <flag name="csc_libyuv">Enables the color space conversion module using libyuv.</flag>
+  <flag name="csc_swscale">Enables the color space conversion module using swscale.</flag>
+  <flag name="cuda">Enables CUDA device access.</flag>
+  <flag name="cuda_rebuild">Enables rebuilding CUDA kernels.</flag>
+  <flag name="cups">Enables printer support.</flag>
+  <flag name="dbus">Checks and enables support for DBus.</flag>
+  <flag name="dec_avcodec2">Enables support for encoding and decoding video (MPEG1/2/4, H264, H265, WEBM, VP8/9) and audio (MP4A, AAC).</flag>
+  <flag name="enc_ffmpeg">Enable advanced ffmpeg/libav encoder support.</flag>
+  <flag name="enc_x264">Enable x264 encoder support.</flag>
+  <flag name="enc_x265">Enable x265 encoder support.</flag>
+  <flag name="gtk2">Uses GTK2 library to create the GUI.</flag>
+  <flag name="gtk3">Uses GTK3 library to create the GUI.</flag>
+  <flag name="html5">Enables the HTML5 client allowing to view a xpra session on a web browser.</flag>
+  <flag name="html5_brotli">Enables brotli compression for clipboard.</flag>
+  <flag name="html5_gzip">Enables accepting gzip compressed files.</flag>
+  <flag name="jpeg">Enables support for JPEG encoding and decoding.</flag>
+  <flag name="libav">Uses libav instead of ffmpeg.</flag>
+  <flag name="lz4">Enable support for lz4 compression.</flag>
+  <flag name="lzo">Enable support for lzo compression.</flag>
+  <flag name="minify">Enables minifying the client.</flag>
+  <flag name="notifications">Enables support for system notifications.</flag>
+  <flag name="nvenc">Enables support for the nvenc hardware encoder.</flag>
+  <flag name="nvfbc">Enables support for nvfbc screen capture.</flag>
+  <flag name="opengl">Enables support for OpenGL accelerated rendering on client.</flag>
+  <flag name="pam">Enables support for PAM.</flag>
+  <flag name="pillow">Enable pillow support to encode and decode PNG, JPEG, WebP.</flag>
+  <flag name="pulseaudio">Enables support for PulseAudio.</flag>
+  <flag name="python_targets_python3_5">Compatible with this python version.</flag>
+  <flag name="python_targets_python3_6">Compatible with this python version.</flag>
+  <flag name="python_targets_python3_7">Compatible with this python version.</flag>
+  <flag name="sd_listen">Enables support for systemd's socket activation feature.</flag>
+  <flag name="server">Enables server-side code.</flag>
+  <flag name="sound">Enables the sound support.</flag>
+  <flag name="ssl">Enables SSL support for secured connections and the ssl:// connection string.</flag>
+  <flag name="systemd">Installs systemd services.</flag>
+  <flag name="test">Enables self tests.</flag>
+  <flag name="v4l2">Enables support for v4l2loopback devices for additional post-processing.</flag>
+  <flag name="vpx">Enable vpx image format support.</flag>
+  <flag name="vsock">Enable support for VSOCK and the vsock:// connection string.</flag>
+  <flag name="webcam">Enable webcam support via opencv.</flag>
+  <flag name="webp">Enables encoding and decoding WebP images.</flag>
+  <flag name="websockets">Enables server support for the websockets.</flag>
+  <flag name="xdg">Enables support for xdg_open.</flag>
 </use>
 </pkgmetadata>
