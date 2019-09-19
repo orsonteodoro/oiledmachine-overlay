@@ -60,7 +60,7 @@
   <flag name="systemd">Installs systemd services.</flag>
   <flag name="test">Enables self tests.</flag>
   <flag name="v4l2">Enables support for v4l2loopback devices for additional post-processing.</flag>
-  <flag name="vpx">Enable vpx image format support.</flag>
+  <flag name="vpx">Enables VP8/VP9 video format support.</flag>
   <flag name="vsock">Enable support for VSOCK and the vsock:// connection string.</flag>
   <flag name="webcam">Enable webcam support via opencv.</flag>
   <flag name="webp">Enables encoding and decoding WebP images.</flag>
