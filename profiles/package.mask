@@ -325,7 +325,6 @@ dev-util/geeks-diary
 =sys-kernel/ot-sources-5.2.10
 =sys-kernel/ot-sources-5.2.11
 =sys-kernel/ot-sources-5.2.14
-=sys-kernel/ot-sources-5.2.16
 =sys-kernel/ot-sources-5.1.21
 
 # untested
