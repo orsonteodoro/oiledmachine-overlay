@@ -13,15 +13,15 @@
 # The ot-kernel-common eclass defines common patching steps for any linux kernel version.
 
 # UKSM:                         https://github.com/dolohow/uksm
-# zen-tune:                     https://github.com/torvalds/linux/compare/v5.1...zen-kernel:5.1/zen-tune
+# zen-tune:                     https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/zen-tune
 # O3 (Optimize Harder):         https://github.com/torvalds/linux/commit/a56a17374772a48a60057447dc4f1b4ec62697fb
 #                               https://github.com/torvalds/linux/commit/93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9
 # GraySky2 GCC Patches:         https://github.com/graysky2/kernel_gcc_patch
-# MUQSS CPU Scheduler:          http://ck.kolivas.org/patches/5.0/5.1/5.1-ck1/
+# MUQSS CPU Scheduler:          http://ck.kolivas.org/patches/5.0/5.2/5.2-ck1/
 # PDS CPU Scheduler:            http://cchalpha.blogspot.com/search/label/PDS
 # BMQ CPU Scheduler:		https://cchalpha.blogspot.com/search/label/BMQ
 # genpatches:                   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
-# BFQ updates:                  https://github.com/torvalds/linux/compare/v5.2...zen-kernel:5.2/bfq-backports
+# BFQ updates:                  https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/bfq-backports
 # amd-staging-drm-next:         https://cgit.freedesktop.org/~agd5f/linux/log/?h=amd-staging-drm-next
 # ROCK-Kernel-Driver:		https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/
 # TRESOR:			http://www1.informatik.uni-erlangen.de/tresor
