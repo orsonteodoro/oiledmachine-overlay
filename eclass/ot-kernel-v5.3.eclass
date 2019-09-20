@@ -108,7 +108,7 @@ REQUIRED_USE="^^ ( muqss pds cfs bmq )
 	     rock-milestone? ( !rock-latest !rock-snapshot )"
 
 # no released patch yet
-REQUIRED_USE+=" !pds !bmq-quick-fix"
+REQUIRED_USE+=" !pds !bmq-quick-fix !muqss"
 
 if [[ -z "${OT_SOURCES_DEVELOPER}" || "${OT_SOURCES_DEVELOPER}" != "1" ]] ; then
 # disabled because unfinished
@@ -154,28 +154,31 @@ inherit ot-kernel-common
 BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.diff"
 BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
 
-SRC_URI="
-	 ${CK_SRC_URL}
-	 ${KERNEL_URI}
-	 ${GENPATCHES_URI}
-	 ${ARCH_URI}
-	 ${O3_CO_SRC_URL}
-	 ${O3_RO_SRC_URL}
-	 ${GRAYSKY_SRC_4_9_URL}
-	 ${GRAYSKY_SRC_8_1_URL}
-	 ${GRAYSKY_SRC_9_1_URL}
-	 ${BMQ_SRC_URL}
-	 ${GENPATCHES_BASE_SRC_URL}
-	 ${GENPATCHES_EXPERIMENTAL_SRC_URL}
-	 ${GENPATCHES_EXTRAS_SRC_URL}
-	 ${TRESOR_AESNI_DL_URL}
-	 ${TRESOR_I686_DL_URL}
-	 ${TRESOR_SYSFS_DL_URL}
-	 ${TRESOR_README_DL_URL}
-	 ${TRESOR_SRC_URL}
-	 ${UKSM_SRC_URL}
-	 ${KERNEL_PATCH_URLS[@]}
-	 "
+SRC_URI=""
+
+# no release yet
+#SRC_URI+=" ${CK_SRC_URL}"
+
+
+SRC_URI+=" ${KERNEL_URI}
+	   ${GENPATCHES_URI}
+	   ${ARCH_URI}
+	   ${O3_CO_SRC_URL}
+	   ${O3_RO_SRC_URL}
+	   ${GRAYSKY_SRC_4_9_URL}
+	   ${GRAYSKY_SRC_8_1_URL}
+	   ${GRAYSKY_SRC_9_1_URL}
+	   ${BMQ_SRC_URL}
+	   ${GENPATCHES_BASE_SRC_URL}
+	   ${GENPATCHES_EXPERIMENTAL_SRC_URL}
+	   ${GENPATCHES_EXTRAS_SRC_URL}
+	   ${TRESOR_AESNI_DL_URL}
+	   ${TRESOR_I686_DL_URL}
+	   ${TRESOR_SYSFS_DL_URL}
+	   ${TRESOR_README_DL_URL}
+	   ${TRESOR_SRC_URL}
+	   ${UKSM_SRC_URL}
+	   ${KERNEL_PATCH_URLS[@]}"
 
 # @FUNCTION: ot-kernel-common_ot-kernel-common_pkg_setup_cb
 # @DESCRIPTION:
