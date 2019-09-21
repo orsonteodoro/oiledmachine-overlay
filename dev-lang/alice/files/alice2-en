@@ -1,0 +1,10 @@
+#!/bin/bash
+which wmname
+R_WMNAME="$?"
+pidof dwm > /dev/null
+R_DWM="$?"
+if [[ "$R_DWM" == "0" && "$R_WMNAME" == "0" ]] ; then
+  wmname LG3D &
+fi
+cd "/opt/alice2/en"
+./run-alice

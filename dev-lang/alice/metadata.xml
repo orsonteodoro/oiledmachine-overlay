@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+   Alice is an educational software used to teach programming, game programming, and 3D animation.
+   Alice comes with 3D models.  Models may be arranged in a what you see is what you get (WYSIWYG)
+   virtual reality space.  Programming of 3D model behavior done using drag and drop in a Java like
+   syntax.
+  </longdescription>
+  <upstream>
+    <bugs-to>http://www.alice.org/contact/</bugs-to>
+    <doc lang="en">http://www.alice.org/resources/</doc>
+    <maintainer status="active">
+      <name>Carnegie Mellon University</name>
+    </maintainer>
+    <maintainer status="active">
+      <name>Entertainment Technology Center</name>
+    </maintainer>
+  </upstream>
+  <use>
+    <flag name="l10n_en">Installs the English version.</flag>
+    <flag name="l10n_es">Installs the Spanish version.</flag>
+    <flag name="minimal">Installs the Slim English gallery version.</flag>
+    <flag name="netbeans_modules_alice3">Installs the NetBeans plugin.  You still need to install the plugin manually.</flag>
+  </use>
+  <slots>
+    <slot name="2">
+      Provides the 2.x GUI experience and art assets.
+    </slot>
+    <slot name="3">
+      Provides the 3.x GUI experience and art assets.
+    </slot>
+  </slots>
+</pkgmetadata>
