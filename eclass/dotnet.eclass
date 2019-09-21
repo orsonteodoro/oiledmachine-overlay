@@ -713,18 +713,18 @@ dotnet_netfx_install_loc() {
 	local libdir=$(get_libdir)
 
 	case ${moniker} in
-		net472) echo "/usr/${libdir}/mono/${PN}/${SLOT}/net472" ;;
-		net471) echo "/usr/${libdir}/mono/${PN}/${SLOT}/net471" ;;
-		net47) echo "/usr/${libdir}/mono/${PN}/${SLOT}/net47" ;;
-		net462) echo "/usr/${libdir}/mono/${PN}/${SLOT}/net462" ;;
-		net461) echo "/usr/${libdir}/mono/${PN}/${SLOT}/net461" ;;
-		net46) echo "/usr/${libdir}/mono/${PN}/${SLOT}/net46" ;;
-		net452) echo "/usr/${libdir}/mono/${PN}/${SLOT}/net452" ;;
-		net451) echo "/usr/${libdir}/mono/${PN}/${SLOT}/net451" ;;
-		net45) echo "/usr/${libdir}/mono/${PN}/${SLOT}/net45" ;;
-		net40) echo "/usr/${libdir}/mono/${PN}/${SLOT}/net40" ;;
-		net35) echo "/usr/${libdir}/mono/${PN}/${SLOT}/net35" ;;
-		net20) echo "/usr/${libdir}/mono/${PN}/${SLOT}/net20" ;;
+		net472) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net472" ;;
+		net471) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net471" ;;
+		net47) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net47" ;;
+		net462) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net462" ;;
+		net461) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net461" ;;
+		net46) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net46" ;;
+		net452) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net452" ;;
+		net451) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net451" ;;
+		net45) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net45" ;;
+		net40) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net40" ;;
+		net35) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net35" ;;
+		net20) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net20" ;;
 	esac
 }
 
