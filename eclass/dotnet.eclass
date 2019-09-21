@@ -336,14 +336,14 @@ dotnet_pkg_setup() {
 				FRAMEWORK="${F}";
 			fi
 		else
-			version_is_at_least "${F}" "${FRAMEWORK}" || FRAMEWORK="${F}"
+			ver_test "${F}" -ge "${FRAMEWORK}" || FRAMEWORK="${F}"
 		fi
 		if [[ -z ${EBUILD_FRAMEWORK} ]]; then
 			if [[ -n ${EBF} ]]; then
 				EBUILD_FRAMEWORK="${EBF}";
 			fi
 		else
-			version_is_at_least "${EBF}" "${EBUILD_FRAMEWORK}" || EBUILD_FRAMEWORK="${EBF}"
+			ver_test "${EBF}" -ge "${EBUILD_FRAMEWORK}" || EBUILD_FRAMEWORK="${EBF}"
 		fi
 	done
 	if [[ -z ${FRAMEWORK} ]]; then

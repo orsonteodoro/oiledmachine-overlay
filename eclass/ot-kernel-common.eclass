@@ -860,10 +860,10 @@ function ot-kernel-common_src_unpack() {
 		UNIPATCH_LIST+=" ${DISTDIR}/${CK_FN}"
 	fi
 	if use graysky2 ; then
-		if $(version_is_at_least 9.1 $(gcc-version)) && test -f "${DISTDIR}/${GRAYSKY_DL_9_1_FN}" ; then
+		if $(ver_test $(gcc-version) -ge 9.1) && test -f "${DISTDIR}/${GRAYSKY_DL_9_1_FN}" ; then
 			einfo "gcc patch is 9.1"
 			UNIPATCH_LIST+=" ${DISTDIR}/${GRAYSKY_DL_9_1_FN}"
-		elif $(version_is_at_least 8.1 $(gcc-version)) && test -f "${DISTDIR}/${GRAYSKY_DL_8_1_FN}" ; then
+		elif $(ver_test $(gcc-version) -ge 8.1) && test -f "${DISTDIR}/${GRAYSKY_DL_8_1_FN}" ; then
 			einfo "gcc patch is 8.1"
 			UNIPATCH_LIST+=" ${DISTDIR}/${GRAYSKY_DL_8_1_FN}"
 		elif test -f "${DISTDIR}/${GRAYSKY_DL_4_9_FN}" ; then
