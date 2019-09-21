@@ -11,9 +11,8 @@
 # of dotnet packages.
 
 case ${EAPI:-0} in
-	0) die "this eclass doesn't support EAPI 0" ;;
-	1|2|3) ;;
-	*) ;; #if [[ ${USE_DOTNET} ]]; then REQUIRED_USE="|| (${USE_DOTNET})"; fi;;
+	0|1|2|3|4|5|6) die "this eclass doesn't support EAPI ${EAPI}" ;;
+	*) ;;
 esac
 
 inherit eutils multibuild mono-env
@@ -357,15 +356,11 @@ dotnet_pkg_setup() {
 	fi
 
 	# FRAMEWORK is the highest wanted by the user?
-	version_compare "${FRAMEWORK}" "100"
-	R1="$?"
-	version_compare "${FRAMEWORK}" "10"
-	R2="$?"
-	if [[ "${R1}" == "3" ]] ; then
+	if ver_test "${FRAMEWORK}" -gt "100" ; then
 		DOTNET_ACTIVE_FRAMEWORK="netstandard"
 		FRAMEWORK=$(echo "scale=1 ; ${FRAMEWORK}/100" | bc)
 		einfo " -- USING .NET STANDARD ${FRAMEWORK} -- "
-	elif [[ "${R2}" == "3" ]] ; then
+	elif ver_test "${FRAMEWORK}" -gt "10" ; then
 		DOTNET_ACTIVE_FRAMEWORK="netcoreapp"
 		FRAMEWORK=$(echo "scale=1 ; ${FRAMEWORK}/10" | bc)
 		einfo " -- USING .NET CORE ${FRAMEWORK} -- "
@@ -376,14 +371,10 @@ dotnet_pkg_setup() {
 	export EBF="${FRAMEWORK}"
 
 	# EBUILD_FRAMEWORK is the highest suppored by ebuild?
-	version_compare "${EBUILD_FRAMEWORK}" "100"
-	R1="$?"
-	version_compare "${EBUILD_FRAMEWORK}" "10"
-	R2="$?"
-	if [[ "${R1}" == "3" ]] ; then
+	if ver_test "${EBUILD_FRAMEWORK}" -gt "100" ; then
 		DOTNET_ACTIVE_FRAMEWORK_EF="netstandard"
 		EBUILD_FRAMEWORK=$(echo "scale=1 ; ${EBUILD_FRAMEWORK}/100" | bc)
-	elif [[ "${R2}" == "3" ]] ; then
+	elif ver_test "${EBUILD_FRAMEWORK}" -gt "10" ; then
 		DOTNET_ACTIVE_FRAMEWORK_EF="netcoreapp"
 		EBUILD_FRAMEWORK=$(echo "scale=1 ; ${EBUILD_FRAMEWORK}/10" | bc)
 	else

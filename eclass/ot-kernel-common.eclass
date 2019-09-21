@@ -7,7 +7,7 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 4 5 6
+# @SUPPORTED_EAPIS: 7
 # @BLURB: Eclass for patching the kernel
 # @DESCRIPTION:
 # The ot-kernel-common eclass defines common patching steps for any linux kernel version.
@@ -36,6 +36,11 @@
 # Parts that still need to be developed:
 # TRESOR - incomplete API
 # ROCK-Kernel-Driver - forward porting incomplete
+
+case ${EAPI:-0} in
+	0|1|2|3|4|5|6) die "this eclass doesn't support EAPI ${EAPI}" ;;
+	*) ;;
+esac
 
 HOMEPAGE+="
           https://github.com/dolohow/uksm

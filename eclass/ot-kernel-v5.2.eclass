@@ -7,10 +7,15 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 4 5 6
+# @SUPPORTED_EAPIS: 7
 # @BLURB: Eclass for patching the 5.2.x kernel
 # @DESCRIPTION:
 # The ot-kernel-v5.2 eclass defines specific applicable patching for the 5.2.x linux kernel.
+
+case ${EAPI:-0} in
+	0|1|2|3|4|5|6) die "this eclass doesn't support EAPI ${EAPI}" ;;
+	*) ;;
+esac
 
 ETYPE="sources"
 
