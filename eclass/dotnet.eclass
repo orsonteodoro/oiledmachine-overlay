@@ -16,7 +16,7 @@ case ${EAPI:-0} in
 	*) ;; #if [[ ${USE_DOTNET} ]]; then REQUIRED_USE="|| (${USE_DOTNET})"; fi;;
 esac
 
-inherit eutils multibuild mono-env versionator
+inherit eutils multibuild mono-env
 
 # @ECLASS-VARIABLE: USE_DOTNET
 # @DESCRIPTION:
