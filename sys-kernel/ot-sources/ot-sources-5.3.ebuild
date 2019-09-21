@@ -15,7 +15,9 @@ function ot-kernel-common_apply_genpatch_base_patchset() {
 	_tpatch "${PATCH_OPS} -N" "$d/2600_enable-key-swapping-for-apple-mac.patch"
 }
 
-inherit ot-kernel-v5.3
+inherit check-reqs ot-kernel-v5.3
+
+CHECKREQS_DISK_USR="987M"
 
 KEYWORDS="~amd64 ~x86"
 
