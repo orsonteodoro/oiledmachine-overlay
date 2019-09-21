@@ -934,12 +934,21 @@ function ot-kernel-common_src_unpack() {
 	#_dpatch "${PATCH_OPS}" "${FILESDIR}/linux-4.20-kconfig-ioscheds.patch"
 }
 
-# @FUNCTION: ot-kernel-common_ot-kernel-common_pkg_setup_cb
+# @FUNCTION: ot-kernel-common_pkg_setup_cb
 # @DESCRIPTION:
 # Perform checks and warnings before emerging
 function ot-kernel-common_pkg_setup() {
-	if declare -f ot-kernel-common_ot-kernel-common_pkg_setup_cb > /dev/null ; then
-		ot-kernel-common_ot-kernel-common_pkg_setup_cb
+	if declare -f ot-kernel-common_pkg_setup_cb > /dev/null ; then
+		ot-kernel-common_pkg_setup_cb
+	fi
+}
+
+# @FUNCTION: ot-kernel-common_src_prepare_cb
+# @DESCRIPTION:
+# Perform checks and warnings before emerging
+function ot-kernel-common_src_prepare() {
+	if declare -f ot-kernel-common_src_prepare_cb > /dev/null ; then
+		ot-kernel-common_src_prepare_cb
 	fi
 }
 

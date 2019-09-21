@@ -176,10 +176,10 @@ SRC_URI="
 	 ${KERNEL_PATCH_URLS[@]}
 	 "
 
-# @FUNCTION: ot-kernel-common_ot-kernel-common_pkg_setup_cb
+# @FUNCTION: ot-kernel-common_pkg_setup_cb
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
-function ot-kernel-common_ot-kernel-common_pkg_setup_cb() {
+function ot-kernel-common_pkg_setup_cb() {
 	if ver_test "${PV}" -lt 5.2.16 ; then
 		# happens when compiling aspnetcore or dev-dotnet/cli-tools
 		ewarn "You may experience kernel freeze/crash when resource usage is high."

@@ -149,7 +149,7 @@ CK_URL_BASE="http://ck.kolivas.org/patches/${PATCH_CK_MAJOR}/${PATCH_CK_MAJOR_MI
 CK_FN="${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}-broken-out.tar.xz"
 CK_SRC_URL="${CK_URL_BASE}${CK_FN}"
 
-inherit ot-kernel-common
+inherit check-reqs ot-kernel-common
 
 BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.diff"
 BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
@@ -180,10 +180,10 @@ SRC_URI+=" ${KERNEL_URI}
 	   ${UKSM_SRC_URL}
 	   ${KERNEL_PATCH_URLS[@]}"
 
-# @FUNCTION: ot-kernel-common_ot-kernel-common_pkg_setup_cb
+# @FUNCTION: ot-kernel-common_pkg_setup_cb
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
-function ot-kernel-common_ot-kernel-common_pkg_setup_cb() {
+function ot-kernel-common_pkg_setup_cb() {
 	if use zentune || use muqss ; then
 		ewarn "The zen-tune patch or muqss might cause lock up or slow io under heavy load like npm.  These use flags are not recommended."
 	fi
@@ -201,6 +201,37 @@ function ot-kernel-common_ot-kernel-common_pkg_setup_cb() {
 		einfo "https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/master/drivers/gpu/drm/amd/amdkfd/kfd_device.c"
 		einfo "for the exception.  For supported CPUs see"
 		einfo "https://rocm.github.io/hardware.html"
+	fi
+
+	# for 3.1 kernel
+	# source merge alone: 986.2 MiB
+	# linux-amd-staging-drm-next local repo: 2002.72 MiB
+	# rock local repo: 2479.55 MiB
+	if is_rock && is_amd_staging_drm_next ; then
+		CHECKREQS_DISK_USR="5470M"
+		check-reqs_pkg_setup
+	elif is_rock ; then
+		CHECKREQS_DISK_USR="3467M"
+		check-reqs_pkg_setup
+	elif is_amd_staging_drm_next ; then
+		CHECKREQS_DISK_USR="2990M"
+		check-reqs_pkg_setup
+	fi
+}
+
+# @FUNCTION: ot-kernel-common_src_prepare_cb
+# @DESCRIPTION:
+# Does checks and warnings
+function ot-kernel-common_src_prepare_cb() {
+	if is_rock && is_amd_staging_drm_next ; then
+		CHECKREQS_DISK_USR="5470M"
+		check-reqs_pkg_pretend
+	elif is_rock ; then
+		CHECKREQS_DISK_USR="3467M"
+		check-reqs_pkg_pretend
+	elif is_amd_staging_drm_next ; then
+		CHECKREQS_DISK_USR="2990M"
+		check-reqs_pkg_pretend
 	fi
 }
 

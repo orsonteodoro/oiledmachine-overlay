@@ -184,10 +184,10 @@ SRC_URI="${KERNEL_URI}
 	 ${KERNEL_PATCH_URLS[@]}
 	 "
 
-# @FUNCTION: ot-kernel-common_ot-kernel-common_pkg_setup_cb
+# @FUNCTION: ot-kernel-common_pkg_setup_cb
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
-function ot-kernel-common_ot-kernel-common_pkg_setup_cb() {
+function ot-kernel-common_pkg_setup_cb() {
 	# tresor for x86_64 generic was known to pass crypto testmgr on this version.
 	ewarn "This ot-sources ${PV} release is only for research purposes or to access tresor devices.  This 4.9.x series EOL for this repo but not for upstream."
 
