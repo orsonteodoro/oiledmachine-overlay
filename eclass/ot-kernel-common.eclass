@@ -7,7 +7,7 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 4 5 6 7
+# @SUPPORTED_EAPIS: 4 5 6
 # @BLURB: Eclass for patching the kernel
 # @DESCRIPTION:
 # The ot-kernel-common eclass defines common patching steps for any linux kernel version.
