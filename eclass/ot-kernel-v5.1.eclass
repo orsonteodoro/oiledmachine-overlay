@@ -46,7 +46,7 @@ K_SECURITY_UNSUPPORTED="1"
 K_DEBLOB_AVAILABLE="0"
 
 PYTHON_COMPAT=( python2_7 )
-inherit python-any-r1 kernel-2 toolchain-funcs versionator
+inherit python-any-r1 kernel-2 toolchain-funcs
 detect_version
 detect_arch
 

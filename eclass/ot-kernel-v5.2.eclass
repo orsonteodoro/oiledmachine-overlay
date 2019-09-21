@@ -122,7 +122,7 @@ K_SECURITY_UNSUPPORTED="1"
 K_DEBLOB_AVAILABLE="0"
 
 PYTHON_COMPAT=( python2_7 )
-inherit python-any-r1 kernel-2 toolchain-funcs versionator
+inherit python-any-r1 kernel-2 toolchain-funcs
 detect_version
 detect_arch
 
@@ -180,8 +180,10 @@ SRC_URI="
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel-common_ot-kernel-common_pkg_setup_cb() {
-	# happens when compiling aspnetcore or dev-dotnet/cli-tools
-	ewarn "You may experience kernel freeze/crash when resource usage is high."
+	if ver_test "${PV}" -lt 5.2.16 ; then
+		# happens when compiling aspnetcore or dev-dotnet/cli-tools
+		ewarn "You may experience kernel freeze/crash when resource usage is high."
+	fi
 
 	if use zentune || use muqss ; then
 		ewarn "The zen-tune patch or muqss might cause lock up or slow io under heavy load like npm.  These use flags are not recommended."
