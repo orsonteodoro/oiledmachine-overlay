@@ -701,7 +701,7 @@ dotnet_netcore_install_loc() {
 
 	local framework
 
-	local pv="${PN}$(dotnet_netfx_slot)"
+	local pv="$(dotnet_netfx_slot)"
 
 	if [[ -n "${moniker}" ]]; then
 		framework="${moniker}"
