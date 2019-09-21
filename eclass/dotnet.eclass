@@ -670,6 +670,18 @@ _dotnet_obtain_impls() {
 	done
 }
 
+# @FUNCTION: dotnet_netcore_slot
+# @DESCRIPTION:  This will generate the recommended slot naming scheme
+dotnet_netcore_slot() {
+	if [[ "${SLOT}" == "0" ]] ; then
+		echo "${PV}"
+	else
+		# This should be similar to SEMVER v2 format
+		# + indicates metadata
+		echo "${PV}+${SLOT}"
+	fi
+}
+
 # @FUNCTION: dotnet_netcore_install_loc
 # @DESCRIPTION:  This will generate the recommended location to install the package for netcore and netstandard.
 # @CODE
@@ -689,13 +701,27 @@ dotnet_netcore_install_loc() {
 
 	local framework
 
+	local pv="${PN}$(dotnet_netfx_slot)"
+
 	if [[ -n "${moniker}" ]]; then
 		framework="${moniker}"
 	else
 		framework=$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})
 	fi
 
-	echo "/opt/${_dotnet}/sdk/NuGetFallbackFolder/${PN,,}/${PV,,}/lib/${framework}"
+	echo "/opt/${_dotnet}/sdk/NuGetFallbackFolder/${PN,,}/${pv}/lib/${framework}"
+}
+
+# @FUNCTION: dotnet_netfx_slot
+# @DESCRIPTION:  This will generate the recommended slot naming scheme
+dotnet_netfx_slot() {
+	if [[ "${SLOT}" == "0" ]] ; then
+		echo ""
+	else
+		# This should be similar to SEMVER v2 format
+		# + indicates metadata
+		echo "-${PV}+${SLOT}"
+	fi
 }
 
 # @FUNCTION: dotnet_netfx_install_loc
@@ -712,19 +738,21 @@ dotnet_netfx_install_loc() {
 
 	local libdir=$(get_libdir)
 
+	local pn="${PN}$(dotnet_netfx_slot)"
+
 	case ${moniker} in
-		net472) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net472" ;;
-		net471) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net471" ;;
-		net47) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net47" ;;
-		net462) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net462" ;;
-		net461) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net461" ;;
-		net46) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net46" ;;
-		net452) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net452" ;;
-		net451) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net451" ;;
-		net45) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net45" ;;
-		net40) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net40" ;;
-		net35) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net35" ;;
-		net20) echo "/usr/${libdir}/mono/${PN}-${SLOT}/net20" ;;
+		net472) echo "/usr/${libdir}/mono/${pn}/net472" ;;
+		net471) echo "/usr/${libdir}/mono/${pn}/net471" ;;
+		net47) echo "/usr/${libdir}/mono/${pn}/net47" ;;
+		net462) echo "/usr/${libdir}/mono/${pn}/net462" ;;
+		net461) echo "/usr/${libdir}/mono/${pn}/net461" ;;
+		net46) echo "/usr/${libdir}/mono/${pn}/net46" ;;
+		net452) echo "/usr/${libdir}/mono/${pn}/net452" ;;
+		net451) echo "/usr/${libdir}/mono/${pn}/net451" ;;
+		net45) echo "/usr/${libdir}/mono/${pn}/net45" ;;
+		net40) echo "/usr/${libdir}/mono/${pn}/net40" ;;
+		net35) echo "/usr/${libdir}/mono/${pn}/net35" ;;
+		net20) echo "/usr/${libdir}/mono/${pn}/net20" ;;
 	esac
 }
 
