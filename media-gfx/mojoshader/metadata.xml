@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    MojoShader is a library to work with Direct3D on alternative 3D APIs.
+  </longdescription>
+  <upstream>
+    <maintainer status="active" type="person">
+      <name>Ryan C. Gordon</name>
+      <email>icculus@icculus.org</email>
+    </maintainer>
+    <maintainer status="active" type="person">
+      <name>Ethan Lee</name>
+    </maintainer>
+  </upstream>
+  <use>
+    <flag name="compiler_support">Build support for HLSL source files.</flag>
+    <flag name="debug">Sets the build type for CMake to debug.</flag>
+    <flag name="depth_clipping">Build the ability to simulate [0, 1] depth clipping</flag>
+    <flag name="effect_support">Build support with the Effect framework files.</flag>
+    <flag name="flip_viewport">Build with the ability to flip the GL viewport.</flag>
+    <flag name="static">Build static libraries.</flag>
+    <flag name="profile_bytecode">Build support for BYTECODE profile.</flag>
+    <flag name="profile_d3d">Build support for D3D profile.</flag>
+    <flag name="profile_glsl120">Build support for the GLSL120 profile.</flag>
+    <flag name="profile_glsl">Build support for the GLSL profile.</flag>
+    <flag name="profile_arb1">Build support for the ARB1 profile.</flag>
+    <flag name="profile_arb1_nv">Build support for the ARB1_NV1 profile.</flag>
+    <flag name="profile_metal">Build support for the Metal profile.</flag>
+    <flag name="xna_vertextexture">Build with XNA vertex texturing behavior.</flag>
+  </use>
+</pkgmetadata>
