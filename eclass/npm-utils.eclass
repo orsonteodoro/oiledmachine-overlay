@@ -43,7 +43,6 @@ npm_audit_package_lock_update() {
 		npm i --package-lock-only || die
 		[ ! -e package-lock.json ] && ewarn "package-lock.json was not created in ${dir}"
 	popd
-	einfo "Updated package-lock.json in ${dir}"
 }
 
 # @FUNCTION: npm_audit_fix
