@@ -1,27 +1,22 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-PYTHON_COMPAT=( python{3_5,3_6,3_7} )
+PYTHON_COMPAT=( python{3_4,3_5,3_6,3_7} )
 
-inherit python-single-r1 eutils python-utils-r1
+inherit eutils python-single-r1 python-utils-r1
 
-COMMIT="cbc24cd49807fed3ab512a157bfa3ace82df56eb"
 DESCRIPTION="DuckDuckGo from the terminal"
 HOMEPAGE="https://github.com/jarun/ddgr"
-SRC_URI="https://github.com/jarun/ddgr/archive/${COMMIT}.zip -> ${P}.zip"
 LICENSE="GPL-3+"
-
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+SRC_URI="https://github.com/jarun/ddgr/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
-
-IUSE=""
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
-
 RDEPEND="${PYTHON_DEPS}"
 DEPEND="${RDEPEND}"
-S="${WORKDIR}/${PN}-${COMMIT}"
+S="${WORKDIR}/${P}"
 
 pkg_setup() {
 	python_setup
@@ -32,8 +27,7 @@ src_install() {
 	python_scriptinto "${SITEDIR}/${PN}"
 	python_doexe ddgr
 
-	mkdir -p "${D}/usr/bin/"
-	ln -s "${D}/usr/lib/python-exec/${EPYTHON}/ddgr" "${D}/usr/bin/ddgr"
+	dosym "/usr/lib/python-exec/${EPYTHON}/ddgr" "/usr/bin/ddgr"
 
 	doman ddgr.1
 }

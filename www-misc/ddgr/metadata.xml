@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <!-- only for this forked version of this ebuild on oiledmachine-overlay -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    DDGR is DuckDuckGo from the terminal.
+  </longdescription>
+  <upstream>
+    <bugs-to>https://github.com/jarun/ddgr/issues</bugs-to>
+    <doc lang="en">https://github.com/jarun/ddgr/blob/master/README.md</doc>
+    <maintainer status="active" type="person">
+      <name>Mischievous Meerkat</name>
+    </maintainer>
+    <remote-id type="github">jarun/ddgr</remote-id>
+  </upstream>
+</pkgmetadata>
