@@ -709,7 +709,7 @@ dotnet_netcore_install_loc() {
 		framework=$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})
 	fi
 
-	echo "/opt/${_dotnet}/sdk/NuGetFallbackFolder/${PN,,}/${pv}/lib/${framework}"
+	echo "/opt/${_dotnet}/sdk/NuGetFallbackFolder/${PN,,}/${pv}/ref/${framework}"
 }
 
 # @FUNCTION: dotnet_netfx_slot
