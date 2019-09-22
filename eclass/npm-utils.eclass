@@ -35,8 +35,13 @@ npm_audit_package_lock_update() {
 	local dir="${1}"
 	einfo "npm_audit_package_lock_update: dir=${dir}"
 	pushd "${dir}" || die
-		[ -e package-lock.json ] && rm package-lock.json
+		if [ -e package-lock.json ] ; then
+			rm package-lock.json
+		else
+			ewarn "package-lock.json was not found as expected"
+		fi
 		npm i --package-lock-only || die
+		[ ! -e package-lock.json ] && ewarn "package-lock.json was not created in ${dir}"
 	popd
 	einfo "Updated package-lock.json in ${dir}"
 }
