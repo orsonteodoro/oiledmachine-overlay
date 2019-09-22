@@ -976,6 +976,12 @@ function ot-kernel-common_src_compile() {
 # Removes patch cruft.
 function ot-kernel-common_src_install() {
 	find "${S}" -name "*.orig" -print0 -o -name "*.rej" -print0 | xargs -0 rm
+
+	if has tresor ; then
+		if use tresor ; then
+			dodoc "${DISTDIR}/tresor-readme.html"
+		fi
+	fi
 }
 
 # @FUNCTION: ot-kernel-common_pkg_postinst
