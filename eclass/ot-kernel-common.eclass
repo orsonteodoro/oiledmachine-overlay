@@ -979,9 +979,11 @@ function ot-kernel-common_src_install() {
 
 	if has tresor ; then
 		if use tresor ; then
+			docinto /usr/share/${PF}
 			dodoc "${DISTDIR}/tresor-readme.html"
 		fi
 	fi
+
 }
 
 # @FUNCTION: ot-kernel-common_pkg_postinst
