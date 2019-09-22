@@ -18,11 +18,11 @@
 npm_install_sub() {
 	local dir="${1}"
 	shift
-	einfo "dir=${dir}"
+	einfo "npm_install_sub: dir=${dir}"
 	pushd "${dir}" || die
 	npm install ${@} || die
 	[ -e package-lock.json ] && rm package-lock.json
-	npm i --package-lock-only
+	npm i --package-lock || die
 	popd
 }
 
@@ -31,11 +31,12 @@ npm_install_sub() {
 # Creates a package lock in a subdirectory.
 npm_audit_package_lock_update() {
 	local dir="${1}"
-	einfo "dir=${dir}"
+	einfo "npm_audit_package_lock_update: dir=${dir}"
 	pushd "${dir}" || die
 	[ -e package-lock.json ] && rm package-lock.json
-	npm i --package-lock-only
+	npm i --package-lock || die
 	popd
+	einfo "Updated package-lock.json in ${dir}"
 }
 
 # @FUNCTION: npm_audit_fix
@@ -43,7 +44,7 @@ npm_audit_package_lock_update() {
 # Performs an audit fix in a sub directory.
 npm_audit_fix() {
 	local dir="${1}"
-	einfo "dir=${dir}"
+	einfo "npm_audit_fix: dir=${dir}"
 	pushd "${dir}" || die
 	npm audit fix --force
 	popd

@@ -167,8 +167,8 @@ electron-app_audit_fix_npm() {
 		for l in $L; do
 			pushd $(dirname $l) || die
 			[ -e package-lock.json ] && rm package-lock.json
-			einfo "Running \`npm i --package-lock-only\`"
-			npm i --package-lock-only || die
+			einfo "Running \`npm i --package-lock\`"
+			npm i --package-lock || die
 			einfo "Running \`npm audit fix --force\`"
 			npm audit fix --force --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die "location: $l"
 			popd
