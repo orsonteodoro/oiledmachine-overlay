@@ -1,0 +1,45 @@
+--- a/modules/mono/editor/godotsharp_export.cpp.orig	2019-09-19 01:47:16.434935614 -0700
++++ b/modules/mono/editor/godotsharp_export.cpp	2019-09-19 02:00:09.442635384 -0700
+@@ -118,10 +118,10 @@ void GodotSharpExport::_export_begin(con
+ 			_GDMONO_SCOPE_DOMAIN_(export_domain);
+ 
+ 			GDMonoAssembly *scripts_assembly = NULL;
+-			bool load_success = GDMono::get_singleton()->load_assembly_from(project_dll_name,
++			bool load_success = GDMono::get_singleton()->load_assembly_from(project_dll_name_safe,
+ 					project_dll_src_path, &scripts_assembly, /* refonly: */ true);
+ 
+-			ERR_EXPLAIN("Cannot load refonly assembly: " + project_dll_name);
++			ERR_EXPLAIN("Cannot load refonly assembly: " + project_dll_name_safe);
+ 			ERR_FAIL_COND(!load_success);
+ 
+ 			Vector<String> search_dirs;
+--- a/modules/mono/build_scripts/mono_configure.py.orig	2019-09-19 01:47:16.431935498 -0700
++++ b/modules/mono/build_scripts/mono_configure.py	2019-09-19 02:03:31.118390822 -0700
+@@ -38,6 +38,7 @@ def configure(env):
+     envvars.Update(env)
+ 
+     bits = env['bits']
++    is_android = env['platform'] == 'android'
+ 
+     tools_enabled = env['tools']
+     mono_static = env['mono_static']
+@@ -45,6 +46,10 @@ def configure(env):
+ 
+     mono_lib_names = ['mono-2.0-sgen', 'monosgen-2.0']
+ 
++    if is_android and mono_static:
++        # When static linking and doing something that requires libmono-native, we get a dlopen error as libmono-native seems to depend on libmonosgen-2.0
++        raise RuntimeError('Linking Mono statically is not currently supported on Android')
++
+     if env['platform'] == 'windows':
+         mono_root = ''
+ 
+@@ -174,6 +179,8 @@ def configure(env):
+ 
+             if is_apple:
+                 env.Append(LIBS=['iconv', 'pthread'])
++            elif is_android:
++                pass # Nothing
+             else:
+                 env.Append(LIBS=['m', 'rt', 'dl', 'pthread'])
+ 

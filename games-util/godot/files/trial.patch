@@ -1,0 +1,10 @@
+--- a/modules/mono/editor/bindings_generator.cpp.orig	2019-04-26 07:43:03.000000000 -0700
++++ b/modules/mono/editor/bindings_generator.cpp	2019-09-19 10:14:27.414242576 -0700
+@@ -853,6 +853,7 @@ Error BindingsGenerator::generate_cs_cor
+ 		}
+ 
+ 		FileAccessRef file = FileAccess::open(output_file, FileAccess::WRITE);
++		WARN_PRINTS("file attempt: "+output_file);
+ 		ERR_FAIL_COND_V(!file, ERR_FILE_CANT_WRITE);
+ 		file->store_buffer(data.ptr(), data.size());
+ 		file->close();
