@@ -22,7 +22,7 @@ npm_install_sub() {
 	pushd "${dir}" || die
 	npm install ${@} || die
 	[ -e package-lock.json ] && rm package-lock.json
-	npm i --package-lock || die
+	npm i --package-lock-only || die
 	popd
 }
 
@@ -34,7 +34,7 @@ npm_audit_package_lock_update() {
 	einfo "npm_audit_package_lock_update: dir=${dir}"
 	pushd "${dir}" || die
 	[ -e package-lock.json ] && rm package-lock.json
-	npm i --package-lock || die
+	npm i --package-lock-only || die
 	popd
 	einfo "Updated package-lock.json in ${dir}"
 }

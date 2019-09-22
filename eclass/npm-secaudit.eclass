@@ -290,8 +290,8 @@ npm-secaudit_audit_fix() {
 		for l in $L; do
 			pushd $(dirname $l) || die
 			[ -e package-lock.json ] && rm package-lock.json
-			einfo "Running \`npm i --package-lock\`"
-			npm i --package-lock || die
+			einfo "Running \`npm i --package-lock-only\`"
+			npm i --package-lock-only || die
 			einfo "Running \`npm audit fix --force\`"
 			npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die "location: $l"
 			popd
