@@ -289,7 +289,7 @@ npm-secaudit_audit_fix() {
 		L=$(find . -name "package-lock.json")
 		for l in $L; do
 			pushd $(dirname $l) || die
-			[ -e package-lock.json ] && rm package-lock.json
+			rm package-lock.json || die
 			einfo "Running \`npm i --package-lock-only\`"
 			npm i --package-lock-only || die
 			einfo "Running \`npm audit fix --force\`"
