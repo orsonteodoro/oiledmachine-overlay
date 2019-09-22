@@ -444,7 +444,7 @@
     <flag name="bzr">Checks for proper bzr support.</flag>
     <flag name="clipboard">Checks dependencies for X clipboard support.</flag>
     <flag name="curl">Checks for proper cURL support.</flag>
-    <flag name="emojis">Adds emoji support</flag>
+    <flag name="emojis">Checks for proper emoji support.</flag>
     <flag name="update-emoji-data">Updates emoji information on emerge time to the bleeding edge emoji version (currently emoji version 13.0).  If disabled, it may only support emoji 1.0 plus some of emoji 2.0.</flag>
     <flag name="java">Checks for proper Java support.</flag>
     <flag name="git">Checks for proper Git support.</flag>
