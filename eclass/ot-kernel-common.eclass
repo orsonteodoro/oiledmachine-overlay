@@ -7,7 +7,7 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 7
+# @SUPPORTED_EAPIS: 2 3 4 5 6
 # @BLURB: Eclass for patching the kernel
 # @DESCRIPTION:
 # The ot-kernel-common eclass defines common patching steps for any linux kernel version.
@@ -38,7 +38,7 @@
 # ROCK-Kernel-Driver - forward porting incomplete
 
 case ${EAPI:-0} in
-	0|1|2|3|4|5|6) die "this eclass doesn't support EAPI ${EAPI}" ;;
+	7) die "this eclass doesn't support EAPI ${EAPI}" ;;
 	*) ;;
 esac
 
@@ -948,12 +948,12 @@ function ot-kernel-common_pkg_setup() {
 	fi
 }
 
-# @FUNCTION: ot-kernel-common_src_prepare_cb
+# @FUNCTION: ot-kernel-common_pkg_pretend_cb
 # @DESCRIPTION:
 # Perform checks and warnings before emerging
-function ot-kernel-common_src_prepare() {
-	if declare -f ot-kernel-common_src_prepare_cb > /dev/null ; then
-		ot-kernel-common_src_prepare_cb
+function ot-kernel-common_pkg_pretend() {
+	if declare -f ot-kernel-common_pkg_pretend_cb > /dev/null ; then
+		ot-kernel-common_pkg_pretend_cb
 	fi
 }
 

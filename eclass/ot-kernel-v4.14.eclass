@@ -7,7 +7,7 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 4 5 6 7
+# @SUPPORTED_EAPIS: 2 3 4 5 6
 # @BLURB: Eclass for patching the 4.14.x kernel
 # @DESCRIPTION:
 # The ot-kernel-v4.14 eclass defines specific applicable patching for the 4.14.x linux kernel.

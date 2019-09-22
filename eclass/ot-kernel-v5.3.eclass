@@ -7,7 +7,7 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 4 5 6
+# @SUPPORTED_EAPIS: 2 3 4 5 6
 # @BLURB: Eclass for patching the 5.3.x kernel
 # @DESCRIPTION:
 # The ot-kernel-v5.3 eclass defines specific applicable patching for the 5.3.x linux kernel.
@@ -219,10 +219,10 @@ function ot-kernel-common_pkg_setup_cb() {
 	fi
 }
 
-# @FUNCTION: ot-kernel-common_src_prepare_cb
+# @FUNCTION: ot-kernel-common_pkg_pretend_cb
 # @DESCRIPTION:
 # Does checks and warnings
-function ot-kernel-common_src_prepare_cb() {
+function ot-kernel-common_pkg_pretend_cb() {
 	if is_rock && is_amd_staging_drm_next ; then
 		CHECKREQS_DISK_USR="5470M"
 		check-reqs_pkg_pretend
