@@ -12,7 +12,7 @@
 
 if [[ -z "${DOTNET_ECLASS_DEVELOPER}" ]] ; then
 	# still need to sort out the install locations for multiple netfx targets
-	inherit currently-broken-do-not-use
+	inherit currently-broken-do-not-use-try-other-dotnet-repos-instead
 fi
 
 case ${EAPI:-0} in
