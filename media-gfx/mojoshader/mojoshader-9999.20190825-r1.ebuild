@@ -60,8 +60,9 @@ src_compile() {
 
 src_install() {
 	cd "${WORKDIR}/${PN}-${PV}_build" || die
-	into /usr/$(get_libdir)/${PN}
-	dolib.so libmojoshader.so $(find . -maxdepth 1 -type f -executable | grep -v "\.so" | sed -e "s|${D}||")
+	dolib.so libmojoshader.so
+	exeinto /usr/$(get_libdir)/${PN}
+	doexe availableprofiles bestprofile glcaps testoutput testparse
 
 	cd "${S}" || die
 	insinto /usr/include/MojoShader
