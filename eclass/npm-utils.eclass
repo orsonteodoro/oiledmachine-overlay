@@ -20,9 +20,11 @@ npm_install_sub() {
 	shift
 	einfo "npm_install_sub: dir=${dir}"
 	pushd "${dir}" || die
-	npm install ${@} || die
-	[ -e package-lock.json ] && rm package-lock.json
-	npm i --package-lock-only || die
+		npm install ${@} || die
+		if [ -e package-lock.json ] ; then
+			rm package-lock.json
+			npm i --package-lock-only || die
+		fi
 	popd
 }
 
@@ -33,8 +35,8 @@ npm_audit_package_lock_update() {
 	local dir="${1}"
 	einfo "npm_audit_package_lock_update: dir=${dir}"
 	pushd "${dir}" || die
-	[ -e package-lock.json ] && rm package-lock.json
-	npm i --package-lock-only || die
+		[ -e package-lock.json ] && rm package-lock.json
+		npm i --package-lock-only || die
 	popd
 	einfo "Updated package-lock.json in ${dir}"
 }
@@ -46,6 +48,6 @@ npm_audit_fix() {
 	local dir="${1}"
 	einfo "npm_audit_fix: dir=${dir}"
 	pushd "${dir}" || die
-	npm audit fix --force
+		npm audit fix --force
 	popd
 }
