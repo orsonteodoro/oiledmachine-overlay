@@ -7,54 +7,42 @@ inherit cmake-utils flag-o-matic linux-info toolchain-funcs
 
 DESCRIPTION="Collection of high-performance ray tracing kernels"
 HOMEPAGE="https://github.com/embree/embree"
-
+LICENSE="Apache-2.0"
+KEYWORDS="~amd64 ~x86"
 if [[ ${PV} = *9999 ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/embree/embree.git"
-	KEYWORDS=""
 else
 	SRC_URI="https://github.com/embree/embree/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-	KEYWORDS="~amd64 ~x86"
 fi
-
-LICENSE="Apache-2.0"
 SLOT="2"
-
-X86_CPU_FLAGS=(
-	sse2:sse2 sse4_2:sse4_2 avx:avx avx2:avx2 avx512knl:avx512knl avx512skx:avx512skx
-)
+X86_CPU_FLAGS=( sse2:sse2 sse4_2:sse4_2 avx:avx avx2:avx2 avx512knl:avx512knl avx512skx:avx512skx )
 CPU_FLAGS=( ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_} )
-
 IUSE="clang ispc raymask +tbb tutorial static-libs ${CPU_FLAGS[@]%:*}"
-
 REQUIRED_USE="clang? ( !tutorial )"
-
-RDEPEND="
-	>=media-libs/freeglut-3.0.0
-	virtual/opengl
-	ispc? ( dev-lang/ispc )
-	tbb? ( dev-cpp/tbb )
-	tutorial? (
+RDEPEND="ispc? ( dev-lang/ispc )
+	 >=media-libs/freeglut-3.0.0
+	 tbb? ( dev-cpp/tbb )
+	 tutorial? (
 		>=media-libs/libpng-1.6.34:0=
 		media-gfx/imagemagick
 		virtual/jpeg:0
-	)
-"
-
+	 )
+	 virtual/opengl"
 DEPEND="${RDEPEND}"
-BDEPEND="
-	virtual/pkgconfig
-	clang? ( sys-devel/clang )
-"
-
+BDEPEND="clang? ( sys-devel/clang )
+	 virtual/pkgconfig"
 DOCS=( CHANGELOG.md README.md readme.pdf )
-
 CMAKE_BUILD_TYPE=Release
 
 pkg_setup() {
 	CONFIG_CHECK="~TRANSPARENT_HUGEPAGE"
 	WARNING_TRANSPARENT_HUGEPAGE="Not enabling Transparent Hugepages (CONFIG_TRANSPARENT_HUGEPAGE) will impact rendering performance."
 	linux-info_pkg_setup
+
+	if ! ( cat /proc/cpuinfo | grep sse2 > /dev/null ) ; then
+		die "You need a CPU with at least sse2 support"
+	fi
 }
 
 src_prepare() {
