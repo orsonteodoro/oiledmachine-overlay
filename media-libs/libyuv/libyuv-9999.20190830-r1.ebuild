@@ -8,7 +8,7 @@ inherit cmake-utils git-r3 multilib-build multilib-minimal
 DESCRIPTION="libyuv is an open source project that includes YUV scaling and conversion functionality."
 HOMEPAGE="https://chromium.googlesource.com/libyuv/libyuv/"
 LICENSE="BSD"
-KEYWORDS="~amd64 ~arm ~arm64 ~x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
 RESTRICT="fetch"
 RDEPEND="virtual/jpeg"
 DEPEND="${RDEPEND}
