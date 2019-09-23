@@ -1,29 +1,24 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 inherit cmake-utils git-r3 multilib-build multilib-minimal
 
 DESCRIPTION="libyuv is an open source project that includes YUV scaling and conversion functionality."
 HOMEPAGE="https://chromium.googlesource.com/libyuv/libyuv/"
-
+LICENSE="BSD"
+KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 RESTRICT="fetch"
-
 RDEPEND="virtual/jpeg"
 DEPEND="${RDEPEND}
 	test? ( dev-cpp/gtest
 		dev-cpp/gflags )
 	dev-util/cmake"
-
-LICENSE="BSD"
-KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 SLOT="0"
-IUSE="system-gflags static test"
-
+IUSE="static system-gflags test"
 S="${WORKDIR}/${PN}-${PV}"
 DOCS=( AUTHORS LICENSE PATENTS README.chromium README.md )
-
 EGIT_COMMIT="43d37c05e5468855e412946dc6369d60a7849998"
 EGIT_REPO_URI="https://chromium.googlesource.com/libyuv/libyuv"
 
@@ -51,19 +46,17 @@ multilib_src_compile() {
 
 multilib_src_install() {
 	cmake-utils_src_install
-	dodir /usr/lib/$(get_libdir)
-	mv "${D}/usr/lib/libyuv.so" "${D}/usr/lib/$(get_libdir)" || die
-	if use static ; then
-		mv "${D}/usr/lib/libyuv.a" "${D}/usr/$(get_libdir)" || die
-	else
-		rm "${D}/usr/lib/libyuv.a" || die
+	dodir /usr/$(get_libdir)
+	mv "${D}/usr/lib/libyuv."* "${D}/usr/$(get_libdir)" || die
+	if ! use static ; then
+		rm "${D}/usr/$(get_libdir)/libyuv.a" || die
 	fi
-	mkdir -p "${D}/usr/$(get_libdir)/pkgconfig" || die
+	insinto /usr/$(get_libdir)/pkgconfig
 	cat "${FILESDIR}/${PN}.pc.in" | \
 	sed -e "s|@prefix@|/usr|" \
 	    -e "s|@exec_prefix@|\${prefix}|" \
 	    -e "s|@libdir@|/usr/$(get_libdir)|" \
 	    -e "s|@includedir@|\${prefix}/include|" \
-	    -e "s|@version@|${PV}|" > "${D}/usr/$(get_libdir)/pkgconfig/${PN}.pc" || die
+	    -e "s|@version@|${PV}|" > "${T}/${PN}.pc" || die
+	doins "${T}/${PN}.pc"
 }
-
