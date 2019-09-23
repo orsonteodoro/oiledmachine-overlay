@@ -9,29 +9,22 @@ DESCRIPTION="Collection of high-performance ray tracing kernels"
 HOMEPAGE="https://github.com/embree/embree"
 LICENSE="Apache-2.0"
 KEYWORDS="~amd64 ~x86"
-if [[ ${PV} = *9999 ]]; then
-	inherit git-r3
-	EGIT_REPO_URI="https://github.com/embree/embree.git"
-else
-	SRC_URI="https://github.com/embree/embree/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-fi
+SRC_URI="https://github.com/embree/embree/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 SLOT="3"
 X86_CPU_FLAGS=( sse2:sse2 sse4_2:sse4_2 avx:avx avx2:avx2 avx512knl:avx512knl avx512skx:avx512skx )
 CPU_FLAGS=( ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_} )
-IUSE="clang ispc raymask +tbb tutorial static-libs ${CPU_FLAGS[@]%:*}"
+IUSE="clang ispc raymask -ssp +tbb tutorial static-libs ${CPU_FLAGS[@]%:*}"
 REQUIRED_USE="clang? ( !tutorial )"
+BDEPEND="clang? ( sys-devel/clang )
+	 virtual/pkgconfig"
 RDEPEND="ispc? ( dev-lang/ispc )
 	 >=media-libs/glfw-3.2.1
 	 tbb? ( dev-cpp/tbb )
-	 tutorial? (
-		>=media-libs/libpng-1.6.34:0=
-		>=media-libs/openimageio-1.8.7
-		virtual/jpeg:0
-	 )
+	 tutorial? ( >=media-libs/libpng-1.6.34:0=
+		     >=media-libs/openimageio-1.8.7
+		       virtual/jpeg:0 )
 	 virtual/opengl"
 DEPEND="${RDEPEND}"
-BDEPEND="clang? ( sys-devel/clang )
-	 virtual/pkgconfig"
 DOCS=( CHANGELOG.md README.md readme.pdf )
 CMAKE_BUILD_TYPE=Release
 
@@ -83,33 +76,31 @@ src_configure() {
 #		-DCMAKE_CXX_COMPILER=$(tc-getCXX)
 		-DCMAKE_SKIP_INSTALL_RPATH:BOOL=ON
 		-DEMBREE_BACKFACE_CULLING=OFF			# default
-		-DEMBREE_FILTER_FUNCTION=ON				# default
-		-DEMBREE_GEOMETRY_CURVE=ON				# default
-		-DEMBREE_GEOMETRY_GRID=ON				# default
+		-DEMBREE_FILTER_FUNCTION=ON			# default
+		-DEMBREE_GEOMETRY_CURVE=ON			# default
+		-DEMBREE_GEOMETRY_GRID=ON			# default
 		-DEMBREE_GEOMETRY_INSTANCE=ON			# default
-		-DEMBREE_GEOMETRY_POINT=ON				# default
-		-DEMBREE_GEOMETRY_QUAD=ON				# default
+		-DEMBREE_GEOMETRY_POINT=ON			# default
+		-DEMBREE_GEOMETRY_QUAD=ON			# default
 		-DEMBREE_GEOMETRY_SUBDIVISION=ON		# default
 		-DEMBREE_GEOMETRY_TRIANGLE=ON			# default
-		-DEMBREE_GEOMETRY_USER=ON				# default
+		-DEMBREE_GEOMETRY_USER=ON			# default
 		-DEMBREE_IGNORE_INVALID_RAYS=OFF		# default
 		-DEMBREE_ISPC_SUPPORT=$(usex ispc)
 		-DEMBREE_RAY_MASK=$(usex raymask)
-		-DEMBREE_RAY_PACKETS=ON					# default
-		-DEMBREE_STACK_PROTECTOR=OFF			# default
+		-DEMBREE_RAY_PACKETS=ON				# default
+		-DEMBREE_STACK_PROTECTOR=$(usex ssp)
 		-DEMBREE_STATIC_LIB=$(usex static-libs)
 		-DEMBREE_STAT_COUNTERS=OFF
 		-DEMBREE_TASKING_SYSTEM:STRING=$(usex tbb "TBB" "INTERNAL")
-		-DEMBREE_TUTORIALS=$(usex tutorial)
-	)
+		-DEMBREE_TUTORIALS=$(usex tutorial) )
 
 	if use tutorial; then
 		mycmakeargs+=(
 			-DEMBREE_ISPC_ADDRESSING:STRING="64"
 			-DEMBREE_TUTORIALS_LIBJPEG=ON
 			-DEMBREE_TUTORIALS_LIBPNG=ON
-			-DEMBREE_TUTORIALS_OPENIMAGEIO=ON
-		)
+			-DEMBREE_TUTORIALS_OPENIMAGEIO=ON )
 	fi
 
 	if use cpu_flags_x86_avx512skx ; then
