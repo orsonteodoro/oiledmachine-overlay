@@ -17,7 +17,7 @@ SRC_URI="https://gitlab.com/at-home-modifier/download/raw/master/source/ahm-${PV
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~x86 ~amd64"
-IUSE=""
+IUSE="warning"
 
 RDEPEND="sys-libs/mtdev
 	>=x11-base/xorg-server-1.12[udev]"
@@ -28,3 +28,8 @@ DEPEND="${RDEPEND}
 DOCS="README"
 
 S="${WORKDIR}/at-home-modifer"
+
+pkg_setup() {
+	ewarn "This package is marked for removal 1 year from now; at Sept 23 2020.  Please copy to your local repo."
+	xorg-2_pkg_setup
+}
