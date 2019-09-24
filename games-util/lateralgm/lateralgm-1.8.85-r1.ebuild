@@ -11,12 +11,13 @@ LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86 ~arm ~arm64"
 SRC_URI="https://github.com/IsmAvatar/LateralGM/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 SLOT="0"
-IUSE=""
+IUSE="libmaker"
 ECJ_V="4.4"
 SLOT_JOSHEDIT="0"
 JAVA_V="1.7"
 RDEPEND="app-editors/joshedit[lateralgm]
 	 dev-java/eclipse-ecj:${ECJ_V}
+	 libmaker? ( dev-java/libmaker )
 	 virtual/jre"
 DEPEND="${RDEPEND}
 	 virtual/jdk"
