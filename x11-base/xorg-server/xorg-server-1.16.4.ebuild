@@ -15,7 +15,7 @@ SLOT="0/${PV}"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~arm-linux ~x86-linux"
 
 IUSE_SERVERS="dmx kdrive xephyr xnest xorg xvfb"
-IUSE="${IUSE_SERVERS} glamor ipv6 minimal nptl selinux +suid systemd tslib +udev unwind wayland"
+IUSE="${IUSE_SERVERS} glamor ipv6 minimal nptl selinux +suid systemd tslib +udev unwind wayland warning"
 
 CDEPEND="<app-eselect/eselect-opengl-1.3.0
 	dev-libs/openssl
@@ -152,6 +152,7 @@ PATCHES=(
 #	"${FILESDIR}"/${PN}-1.17-ia64-fix_inx_outx.patch
 
 pkg_pretend() {
+	ewarn "This package is marked for removal 1 year from now; removing on Sep 23 2020."
 	# older gcc is not supported
 	[[ "${MERGE_TYPE}" != "binary" && $(gcc-major-version) -lt 4 ]] && \
 		die "Sorry, but gcc earlier than 4.0 will not work for xorg-server."
