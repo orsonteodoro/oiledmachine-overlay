@@ -1,4 +1,0 @@
-#!/bin/bash
-export PATH=$PATH:/opt/crark
-DIR=`pwd`
-/opt/crark/crark $*
