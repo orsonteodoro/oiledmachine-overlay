@@ -22,4 +22,7 @@
     </maintainer>
     <remote-id type="github">IsmAvatar/LateralGM</remote-id>
   </upstream>
+  <use>
+    <flag name="libmaker">Adds an action library maker to extend LateralGM's drag-and-drop interface.</flag>
+  </use>
 </pkgmetadata>
