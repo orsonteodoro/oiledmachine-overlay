@@ -18,7 +18,7 @@ DRIVERS_URI="mirror://gentoo/${DRV_VER}"
 XVBA_SDK_URI="http://developer.amd.com/wordpress/media/2012/10/xvba-sdk-0.74-404001.tar.gz"
 SRC_URI="${DRIVERS_URI} ${XVBA_SDK_URI}"
 FOLDER_PREFIX="common/"
-IUSE="debug +modules qt4 static-libs pax_kernel gdm-hack"
+IUSE="debug +modules qt4 static-libs pax_kernel gdm-hack warning"
 
 LICENSE="AMD GPL-2 QPL-1.0"
 KEYWORDS="-* ~amd64 ~x86"
@@ -157,6 +157,8 @@ pkg_nofetch() {
 }
 
 pkg_pretend() {
+	ewarn "This package is marked for removal 1 year from now (at Sep 23 2020).  Please make a copy to your local repo."
+
 	CONFIG_CHECK="~MTRR ~!DRM ACPI PCI_MSI !LOCKDEP !PAX_KERNEXEC_PLUGIN_METHOD_OR"
 	use amd64 && CONFIG_CHECK+=" COMPAT"
 
