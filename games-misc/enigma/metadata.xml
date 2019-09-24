@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    This ENIGMA package is both the backend and engine to the LateralGM frontend GUI.
+    ENIGMA is a developer environment/toolchain used to compile Game Maker games, 
+    GML (Game Maker Language) scripts, and EDL (Enigma Development Language)
+    scripts that have syntax between GML and C++.
+    The ENIGMA engine is the API and the game state mangement offerings and
+    management.
+  </longdescription>
+  <upstream>
+    <bugs-to>https://github.com/enigma-dev/enigma-dev/issues</bugs-to>
+    <doc lang="en">https://enigma-dev.org/docs/Wiki/Main_Page</doc>
+    <doc lang="de">https://enigma-dev.org/docs/Wiki/Main_Page/de</doc>
+    <doc lang="es">https://enigma-dev.org/docs/Wiki/Main_Page/es</doc>
+    <doc lang="fr">https://enigma-dev.org/docs/Wiki/Main_Page/fr</doc>
+    <doc lang="it">https://enigma-dev.org/docs/Wiki/Main_Page/it</doc>
+    <maintainer status="active" type="person">
+      <name>Robert Colton</name>
+    </maintainer>
+    <maintainer status="active" type="person">
+      <name>Josh Ventura</name>
+    </maintainer>
+    <remote-id type="github">enigma-dev/enigma-dev</remote-id>
+  </upstream>
+</pkgmetadata>

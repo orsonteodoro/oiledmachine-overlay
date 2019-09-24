@@ -9,7 +9,7 @@ DESCRIPTION="ENIGMA, the Extensible Non-Interpreted Game Maker Augmentation, is 
 HOMEPAGE="http://enigma-dev.org"
 LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
-IUSE="extras"
+IUSE=""
 EGIT_COMMIT="c9352a7e1a52b0add48543ed76c01ad12bca9c83"
 SRC_URI="https://github.com/enigma-dev/enigma-dev/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
 RESTRICT="mirror"
@@ -21,7 +21,6 @@ RDEPEND="games-util/lateralgm
          media-libs/alure
 	 media-libs/libvorbis
          media-libs/dumb
-	 extras? ( dev-java/libmaker )
 	 games-misc/lgmplugin"
 DEPEND="${RDEPEND}"
 S="${WORKDIR}/enigma-dev-${EGIT_COMMIT}"
