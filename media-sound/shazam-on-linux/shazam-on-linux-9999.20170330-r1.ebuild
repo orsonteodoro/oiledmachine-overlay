@@ -9,7 +9,7 @@ inherit eutils linux-info python-single-r1
 
 DESCRIPTION="Capture sound from your soundcard and identify it."
 HOMEPAGE="https://github.com/Lahorde/shazam-on-linux"
-LICENSE=""
+LICENSE="all-rights-reserved"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 EGIT_COMMIT="055bc3299036998408f4e2de43246aabaf829e6a"
 SRC_URI="https://github.com/Lahorde/shazam-on-linux/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
