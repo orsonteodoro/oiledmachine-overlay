@@ -185,6 +185,9 @@ SRC_URI="
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel-common_pkg_setup_cb() {
+	if ver_test "${PV}" -eq 5.2.16 ; then
+		ewarn "You may experience a unresponsive system after hours of idle use."
+	fi
 	if ver_test "${PV}" -lt 5.2.16 ; then
 		# happens when compiling aspnetcore or dev-dotnet/cli-tools
 		ewarn "You may experience kernel freeze/crash when resource usage is high."
