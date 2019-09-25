@@ -180,6 +180,20 @@ SRC_URI+=" ${KERNEL_URI}
 	   ${UKSM_SRC_URL}
 	   ${KERNEL_PATCH_URLS[@]}"
 
+_set_check_reqs_requirements() {
+	# for 3.1 kernel
+	# source merge alone: 986.2 MiB
+	# linux-amd-staging-drm-next local repo: 2002.72 MiB
+	# rock local repo: 2479.55 MiB
+	if is_rock && is_amd_staging_drm_next ; then
+		CHECKREQS_DISK_USR="5470M"
+	elif is_rock ; then
+		CHECKREQS_DISK_USR="3467M"
+	elif is_amd_staging_drm_next ; then
+		CHECKREQS_DISK_USR="2990M"
+	fi
+}
+
 # @FUNCTION: ot-kernel-common_pkg_setup_cb
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
@@ -203,18 +217,8 @@ function ot-kernel-common_pkg_setup_cb() {
 		einfo "https://rocm.github.io/hardware.html"
 	fi
 
-	# for 3.1 kernel
-	# source merge alone: 986.2 MiB
-	# linux-amd-staging-drm-next local repo: 2002.72 MiB
-	# rock local repo: 2479.55 MiB
-	if is_rock && is_amd_staging_drm_next ; then
-		CHECKREQS_DISK_USR="5470M"
-		check-reqs_pkg_setup
-	elif is_rock ; then
-		CHECKREQS_DISK_USR="3467M"
-		check-reqs_pkg_setup
-	elif is_amd_staging_drm_next ; then
-		CHECKREQS_DISK_USR="2990M"
+	if ( is_rock || is_amd_staging_drm_next )
+		_set_check_reqs_requirements
 		check-reqs_pkg_setup
 	fi
 }
@@ -223,14 +227,8 @@ function ot-kernel-common_pkg_setup_cb() {
 # @DESCRIPTION:
 # Does checks and warnings
 function ot-kernel-common_pkg_pretend_cb() {
-	if is_rock && is_amd_staging_drm_next ; then
-		CHECKREQS_DISK_USR="5470M"
-		check-reqs_pkg_pretend
-	elif is_rock ; then
-		CHECKREQS_DISK_USR="3467M"
-		check-reqs_pkg_pretend
-	elif is_amd_staging_drm_next ; then
-		CHECKREQS_DISK_USR="2990M"
+	if ( is_rock || is_amd_staging_drm_next )
+		_set_check_reqs_requirements
 		check-reqs_pkg_pretend
 	fi
 }
