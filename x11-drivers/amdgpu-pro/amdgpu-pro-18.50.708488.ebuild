@@ -61,11 +61,12 @@ RDEPEND="app-eselect/eselect-opencl
 	 >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
 	 >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
 	 opencl? ( >=sys-devel/gcc-5.2.0 )
+	 openmax? ( >=media-libs/mesa-${PKG_VER_MESA}[openmax] )
 	 >=sys-libs/libselinux-1.32
 	 sys-libs/ncurses[tinfo]
 	 vdpau? ( >=media-libs/mesa-${PKG_VER_MESA}[-vdpau] )
-	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[openmax?] )
-	 vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[openmax?,-vulkan]
+	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
+	 vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
 		     media-libs/vulkan-loader )
 	 >=x11-base/xorg-drivers-1.19
 	 <x11-base/xorg-drivers-1.20
