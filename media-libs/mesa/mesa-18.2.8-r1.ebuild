@@ -65,7 +65,7 @@ REQUIRED_USE="
 	video_cards_virgl? ( gallium )
 	video_cards_vivante? ( gallium gbm )
 	video_cards_vmware? ( gallium )
-	openmax? ( gallium || ( video_cards_r600 video_cards_radeonsi video_cards_nouveau ) || ( omx-bellagio omx-tizonia ) )
+	openmax? ( egl gallium || ( video_cards_r600 video_cards_radeonsi video_cards_nouveau ) || ( omx-bellagio omx-tizonia ) )
 "
 
 LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.93"
@@ -516,15 +516,13 @@ pkg_postinst() {
 			BELLAGIO_SEARCH_PATH="${EPREFIX}/usr/$(get_libdir)/libomxil-bellagio0" \
 				OMX_BELLAGIO_REGISTRY=${EPREFIX}/usr/share/mesa/xdg/.omxregister \
 				omxregister-bellagio
-#		else
-#			todo: libtizonia?
 		fi
 		eend $?
 	fi
 }
 
 pkg_prerm() {
-	if use openmax; then
+	if use openmax && use omx-bellagio ; then
 		rm "${EPREFIX}"/usr/share/mesa/xdg/.omxregister
 	fi
 }

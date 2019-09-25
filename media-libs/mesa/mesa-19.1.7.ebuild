@@ -20,7 +20,7 @@ if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
 else
 	SRC_URI="https://mesa.freedesktop.org/archive/${MY_P}.tar.xz"
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux ~sparc-solaris ~x64-solaris ~x86-solaris"
+	KEYWORDS="~alpha amd64 ~arm arm64 ~hppa ~ia64 ~mips ppc ppc64 s390 ~sh ~sparc x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux ~sparc-solaris ~x64-solaris ~x86-solaris"
 fi
 
 LICENSE="MIT"
@@ -30,14 +30,14 @@ RESTRICT="
 "
 
 RADEON_CARDS="r100 r200 r300 r600 radeon radeonsi"
-VIDEO_CARDS="${RADEON_CARDS} freedreno i915 i965 intel iris lima nouveau panfrost vc4 virgl vivante vmware"
+VIDEO_CARDS="${RADEON_CARDS} freedreno i915 i965 intel iris nouveau vc4 virgl vivante vmware"
 for card in ${VIDEO_CARDS}; do
 	IUSE_VIDEO_CARDS+=" video_cards_${card}"
 done
 
 IUSE="${IUSE_VIDEO_CARDS}
 	+classic d3d9 debug +dri3 +egl +gallium +gbm gles1 +gles2 +libglvnd +llvm
-	lm_sensors opencl osmesa pax_kernel selinux test unwind vaapi valgrind
+	lm-sensors opencl osmesa pax_kernel pic selinux test unwind vaapi valgrind
 	vdpau vulkan vulkan-overlay wayland xa xvmc"
 IUSE+=" openmax omx-bellagio omx-tizonia"
 
@@ -55,9 +55,7 @@ REQUIRED_USE="
 	video_cards_i915?   ( || ( classic gallium ) )
 	video_cards_i965?   ( classic )
 	video_cards_iris?   ( gallium )
-	video_cards_lima?   ( gallium )
 	video_cards_nouveau? ( || ( classic gallium ) )
-	video_cards_panfrost? ( gallium )
 	video_cards_radeon? ( || ( classic gallium )
 						  gallium? ( x86? ( llvm ) amd64? ( llvm ) ) )
 	video_cards_r100?   ( classic )
@@ -70,9 +68,9 @@ REQUIRED_USE="
 	video_cards_vivante? ( gallium gbm )
 	video_cards_vmware? ( gallium )
 "
-REQUIRED_USE+=" openmax? ( gallium || ( video_cards_r600 video_cards_radeonsi video_cards_nouveau ) || ( omx-bellagio omx-tizonia ) )"
+REQUIRED_USE+=" openmax? ( egl gallium || ( video_cards_r600 video_cards_radeonsi video_cards_nouveau ) || ( omx-bellagio omx-tizonia ) )"
 
-LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.99"
+LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.97"
 RDEPEND="
 	!app-eselect/eselect-mesa
 	>=dev-libs/expat-2.1.0-r3:=[${MULTILIB_USEDEP}]
@@ -104,7 +102,7 @@ RDEPEND="
 				virtual/libelf:0=[${MULTILIB_USEDEP}]
 			)
 		)
-		lm_sensors? ( sys-apps/lm_sensors:=[${MULTILIB_USEDEP}] )
+		lm-sensors? ( sys-apps/lm-sensors:=[${MULTILIB_USEDEP}] )
 		opencl? (
 					dev-libs/ocl-icd[khronos-headers,${MULTILIB_USEDEP}]
 					dev-libs/libclc
@@ -136,7 +134,6 @@ RDEPEND+="
 		x11-misc/xdg-utils
 	)
 "
-
 for card in ${RADEON_CARDS}; do
 	RDEPEND="${RDEPEND}
 		video_cards_${card}? ( ${LIBDRM_DEPSTRING}[video_cards_radeon] )
@@ -242,11 +239,13 @@ EGIT_CHECKOUT_DIR=${S}
 
 QA_WX_LOAD="
 x86? (
-	usr/lib*/libglapi.so.0.0.0
-	usr/lib*/libGLESv1_CM.so.1.0.0
-	usr/lib*/libGLESv2.so.2.0.0
-	usr/lib*/libGL.so.1.2.0
-	usr/lib*/libOSMesa.so.8.0.0
+	!pic? (
+		usr/lib*/libglapi.so.0.0.0
+		usr/lib*/libGLESv1_CM.so.1.0.0
+		usr/lib*/libGLESv2.so.2.0.0
+		usr/lib*/libGL.so.1.2.0
+		usr/lib*/libOSMesa.so.8.0.0
+	)
 )"
 
 llvm_check_deps() {
@@ -303,7 +302,7 @@ pkg_pretend() {
 	fi
 
 	if ! use gallium; then
-		use lm_sensors && ewarn "Ignoring USE=lm_sensors since USE does not contain gallium"
+		use lm-sensors && ewarn "Ignoring USE=lm-sensors since USE does not contain gallium"
 		use llvm       && ewarn "Ignoring USE=llvm       since USE does not contain gallium"
 		use opencl     && ewarn "Ignoring USE=opencl     since USE does not contain gallium"
 		use vaapi      && ewarn "Ignoring USE=vaapi      since USE does not contain gallium"
@@ -364,7 +363,7 @@ multilib_src_configure() {
 	if use gallium; then
 		emesonargs+=(
 			$(meson_use llvm)
-			$(meson_use lm_sensors lmsensors)
+			$(meson_use lm-sensors lmsensors)
 			$(meson_use unwind libunwind)
 		)
 
@@ -413,15 +412,11 @@ multilib_src_configure() {
 		fi
 
 		if use video_cards_freedreno ||
-		   use video_cards_lima ||
-		   use video_cards_panfrost ||
 		   use video_cards_vc4 ||
 		   use video_cards_vivante; then
 			gallium_enable -- kmsro
 		fi
 
-		gallium_enable video_cards_lima lima
-		gallium_enable video_cards_panfrost panfrost
 		gallium_enable video_cards_vc4 vc4
 		gallium_enable video_cards_vivante etnaviv
 		gallium_enable video_cards_vmware svga
@@ -466,6 +461,11 @@ multilib_src_configure() {
 		emesonargs+=( $(meson_use pax_kernel glx-read-only-text) )
 	fi
 
+	# on abi_x86_32 hardened we need to have asm disable
+	if [[ ${ABI} == x86* ]] && use pic; then
+		emesonargs+=( -Dasm=false )
+	fi
+
 	if use gallium; then
 		gallium_enable -- swrast
 		emesonargs+=( -Dosmesa=$(usex osmesa gallium none) )
@@ -478,14 +478,6 @@ multilib_src_configure() {
 		local drivers="$(sort -u <<< "${1// /$'\n'}")"
 		echo "${drivers//$'\n'/,}"
 	}
-
-	if use omx-bellagio ; then
-		emesonargs+=( -Dgallium-omx=bellagio )
-	elif use omx-tizonia ; then
-		emesonargs+=( -Dgallium-omx=tizonia )
-	else
-		emesonargs+=( -Dgallium-omx=disable )
-	fi
 
 	emesonargs+=(
 		$(meson_use test build-tests)
@@ -544,15 +536,13 @@ pkg_postinst() {
 			BELLAGIO_SEARCH_PATH="${EPREFIX}/usr/$(get_libdir)/libomxil-bellagio0" \
 				OMX_BELLAGIO_REGISTRY=${EPREFIX}/usr/share/mesa/xdg/.omxregister \
 				omxregister-bellagio
-#		else
-#			todo: libtizonia?
 		fi
 		eend $?
 	fi
 }
 
 pkg_prerm() {
-	if use openmax; then
+	if use openmax && use omx-bellagio ; then
 		rm "${EPREFIX}"/usr/share/mesa/xdg/.omxregister
 	fi
 }
