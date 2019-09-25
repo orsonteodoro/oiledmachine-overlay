@@ -11,8 +11,12 @@ DESCRIPTION="Capture sound from your soundcard and identify it."
 HOMEPAGE="https://github.com/Lahorde/shazam-on-linux"
 LICENSE="all-rights-reserved"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
+DL_LOCATION="https://github.com/Lahorde/shazam-on-linux/tree/055bc3299036998408f4e2de43246aabaf829e6a"
 EGIT_COMMIT="055bc3299036998408f4e2de43246aabaf829e6a"
-SRC_URI="https://github.com/Lahorde/shazam-on-linux/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
+FN_S="${EGIT_COMMIT}.zip"
+FN_D="${P}.zip"
+
+SRC_URI="https://github.com/Lahorde/shazam-on-linux/archive/${FN_S} -> ${FN_D}"
 SLOT="0"
 IUSE="doc examples extras"
 RESTRICT="mirror"
@@ -21,6 +25,14 @@ DEPEND="${PYTHON_DEPS}
         media-sound/alsa-utils"
 RDEPEND="${DEPEND}"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+RESTRICT="fetch"
+
+pkg_nofetch() {
+	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+	einfo "Please download"
+	einfo "  - ${FN_S}"
+	einfo "from ${DL_LOCATION} and rename it to ${FN_D} place them in ${distdir}"
+}
 
 pkg_setup() {
 	linux-info_pkg_setup
@@ -40,7 +52,7 @@ pkg_setup() {
 src_prepare() {
 	default
 	sed -i "1i #!/usr/bin/env python" identify_sound.py || die
-	epatch "${FILESDIR}/${PN}-9999.20170330-config.patch"
+	eapply "${FILESDIR}/${PN}-9999.20170330-config.patch"
 	sed -i -e 's|Usage: python2 ./identify_sound.py|Usage: python2 /usr/bin/identify_sound.py|g' identify_sound.py || die
 	sed -i -e 's|python2 ${DIR}/identify_sound.py|python2 ${DIR}/identify_sound.py|g' shazam.sh || die
 }
