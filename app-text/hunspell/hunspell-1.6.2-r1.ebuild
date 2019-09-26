@@ -1,30 +1,34 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-inherit eutils multilib multilib-minimal autotools flag-o-matic versionator
+inherit autotools flag-o-matic versionator
+inherit multilib-minimal
 
-MY_P=${PN}-${PV/_beta/b}
+MY_P="${PN}-${PV/_beta/b}"
 
 DESCRIPTION="Hunspell spell checker - an improved replacement for myspell in OOo"
 SRC_URI="https://github.com/${PN}/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-HOMEPAGE="http://hunspell.sourceforge.net/"
+HOMEPAGE="https://github.com/hunspell"
 
 SLOT="0/$(get_version_component_range 1-2)"
 LICENSE="MPL-1.1 GPL-2 LGPL-2.1"
 IUSE="ncurses nls readline static-libs"
-KEYWORDS="alpha amd64 arm ~arm64 hppa ~ia64 ~mips ppc ppc64 ~sh sparc x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~x64-solaris ~x86-solaris"
+KEYWORDS="alpha amd64 arm ~arm64 hppa ia64 ~mips ppc ppc64 ~sh sparc x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~x64-solaris ~x86-solaris"
 
 RDEPEND="
 	ncurses? ( sys-libs/ncurses:0= )
-	readline? ( sys-libs/readline:= )"
+	readline? ( sys-libs/readline:= )
+"
 DEPEND="${RDEPEND}
-	sys-devel/gettext"
+	sys-devel/gettext
+"
 
 LANGS="af bg ca cs cy da de de-1901 el en eo es et fo fr ga gl he hr hu ia id
-is it km ku lt lv mi mk ms nb nl nn pl pt pt-BR ro ru sk sl sq sv sw tn uk zu"
+is it kk km ku lt lv mi mk ms nb nl nn pl pt pt-BR ro ru sk sl sq sv sw tn uk
+zu"
 
-PDEPEND="app-dicts/myspell-en"
+PDEPEND=""
 for lang in ${LANGS}; do
 	IUSE+=" l10n_${lang}"
 	case ${lang} in
@@ -36,7 +40,7 @@ for lang in ${LANGS}; do
 done
 unset dict lang LANGS
 
-S=${WORKDIR}/${MY_P}
+S="${WORKDIR}/${MY_P}"
 
 DOCS=(
 	AUTHORS ChangeLog NEWS README THANKS TODO license.hunspell
@@ -47,7 +51,7 @@ PATCHES=(
 	# Upstream package creates some executables which names are too generic
 	# to be placed in /usr/bin - this patch prefixes them with 'hunspell-'.
 	# It modifies a Makefile.am file, hence eautoreconf.
-	"${FILESDIR}/${PN}-1.6.0-renameexes.patch"
+	"${FILESDIR}/${PN}-1.6.2-renameexes.patch"
 )
 
 src_prepare() {
@@ -63,22 +67,22 @@ multilib_src_configure() {
 	# I wanted to put the include files in /usr/include/hunspell.
 	# You can do that, libreoffice can find them anywhere, just
 	# ping me when you do so ; -- scarabeus
-	econf \
-		$(use_enable nls) \
-		$(use_with ncurses ui) \
-		$(use_with readline readline) \
+	local myeconfargs=(
+		$(use_enable nls)
+		$(use_with ncurses ui)
+		$(use_with readline readline)
 		$(use_enable static-libs static)
+	)
+	econf "${myeconfargs[@]}"
 }
 
 multilib_src_install() {
 	default
-
 	einstalldocs
-
-	prune_libtool_files --all
+	find "${D}" -name '*.la' -delete || die
 
 	#342449
-	pushd "${ED}"/usr/$(get_libdir)/ >/dev/null
+	pushd "${ED%/}"/usr/$(get_libdir)/ >/dev/null
 	ln -s lib${PN}{-$(get_major_version).$(get_version_component_range 2).so.0.0.1,.so}
 	popd >/dev/null
 }
