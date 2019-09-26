@@ -17,8 +17,8 @@ IUSE="ncurses nls readline static-libs"
 KEYWORDS="alpha amd64 arm ~arm64 hppa ia64 ~mips ppc ppc64 ~sh sparc x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~x64-solaris ~x86-solaris"
 
 RDEPEND="
-	ncurses? ( sys-libs/ncurses:0= )
-	readline? ( sys-libs/readline:= )
+	ncurses? ( sys-libs/ncurses:0=[${MULTILIB_USEDEP}] )
+	readline? ( sys-libs/readline:=[${MULTILIB_USEDEP}] )
 "
 DEPEND="${RDEPEND}
 	sys-devel/gettext
