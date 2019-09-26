@@ -82,12 +82,9 @@ _boilerplate_dl_link_hints() {
 	einfo "from ${dl_location} and rename it to ${fn_d} place them in ${distdir} ."
 	einfo "If copied correctly, the sha1sum should be ${hash} ."
 	einfo
-	die
 }
 
 pkg_nofetch() {
-	env
-	die
 	ewarn "This ebuild is still in development"
 	if use mod_link_hints ; then
 		_boilerplate_dl_link_hints "${LINK_HINTS_FN}" "https://surf.suckless.org/files/link_hints/" "Copy and paste the Code section into a file" "9527d1240cd4a2c3cde077ae2b287d2f1a5ae758"
@@ -145,9 +142,12 @@ src_prepare() {
 
 	touch NEWS AUTHORS ChangeLog
 
-	eautoreconf
-
 	multilib_copy_sources
+
+	local num_abis=$(multilib_get_enabled_abi_pairs | wc -l)
+	if [[ "${num_abis}" != "1" ]] ; then
+		die "You can only install for one abi"
+	fi
 }
 
 multilib_src_install() {
