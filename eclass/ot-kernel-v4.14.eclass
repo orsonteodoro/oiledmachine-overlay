@@ -97,25 +97,24 @@ CK_SRC_URL="${CK_URL_BASE}${CK_FN}"
 
 inherit ot-kernel-common
 
-SRC_URI="${KERNEL_URI}
-	 ${GENPATCHES_URI}
-	 ${ARCH_URI}
-	 ${UKSM_SRC_URL}
-	 ${O3_CO_SRC_URL}
-	 ${O3_RO_SRC_URL}
-	 ${GRAYSKY_SRC_4_9_URL}
-	 ${GRAYSKY_SRC_8_1_URL}
-	 ${CK_SRC_URL}
-	 ${GENPATCHES_BASE_SRC_URL}
-	 ${GENPATCHES_EXPERIMENTAL_SRC_URL}
-	 ${GENPATCHES_EXTRAS_SRC_URL}
-	 ${TRESOR_AESNI_DL_URL}
-	 ${TRESOR_I686_DL_URL}
-	 ${TRESOR_SYSFS_DL_URL}
-	 ${TRESOR_README_DL_URL}
-	 ${TRESOR_SRC_URL}
-	 ${KERNEL_PATCH_URLS[@]}
-	 "
+SRC_URI+=" ${KERNEL_URI}
+	   ${GENPATCHES_URI}
+	   ${ARCH_URI}
+	   ${UKSM_SRC_URL}
+	   ${O3_CO_SRC_URL}
+	   ${O3_RO_SRC_URL}
+	   ${GRAYSKY_SRC_4_9_URL}
+	   ${GRAYSKY_SRC_8_1_URL}
+	   ${CK_SRC_URL}
+	   ${GENPATCHES_BASE_SRC_URL}
+	   ${GENPATCHES_EXPERIMENTAL_SRC_URL}
+	   ${GENPATCHES_EXTRAS_SRC_URL}
+	   ${TRESOR_AESNI_DL_URL}
+	   ${TRESOR_I686_DL_URL}
+	   ${TRESOR_SYSFS_DL_URL}
+	   ${TRESOR_README_DL_URL}
+	   ${TRESOR_SRC_URL}
+	   ${KERNEL_PATCH_URLS[@]}"
 
 # @FUNCTION: ot-kernel-common_pkg_setup_cb
 # @DESCRIPTION:
@@ -177,10 +176,10 @@ function ot-kernel-common_apply_tresor_fixes() {
         #_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-get_ds-to-kernel_ds.patch"
 }
 
-# @FUNCTION: ot-kernel-common_amdgpu_amd_staging_drm_next_fixes
+# @FUNCTION: ot-kernel-common_pkg_postinst_cb
 # @DESCRIPTION:
 # Show messages and avoid collision triggering
-function ot-kernel-common_ot-kernel-common_pkg_postinst_cb() {
+function ot-kernel-common_pkg_postinst_cb() {
 	if use muqss ; then
 		ewarn "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL will cause a kernel panic on boot."
 		ewarn "The MuQSS scheduler may have random system hard pauses for few seconds to around a minute when resource usage is high."

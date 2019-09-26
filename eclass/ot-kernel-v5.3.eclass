@@ -154,11 +154,8 @@ inherit check-reqs ot-kernel-common
 BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.diff"
 BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
 
-SRC_URI=""
-
 # no release yet
 #SRC_URI+=" ${CK_SRC_URL}"
-
 
 SRC_URI+=" ${KERNEL_URI}
 	   ${GENPATCHES_URI}
@@ -763,10 +760,10 @@ function ot-kernel-common_amdgpu_amd_staging_drm_next_fixes() {
 	fi
 }
 
-# @FUNCTION: ot-kernel-common_amdgpu_amd_staging_drm_next_fixes
+# @FUNCTION: ot-kernel-common_pkg_postinst_cb
 # @DESCRIPTION:
 # Show messages and avoid collision triggering
-function ot-kernel-common_ot-kernel-common_pkg_postinst_cb() {
+function ot-kernel-common_pkg_postinst_cb() {
 	if use muqss ; then
 		ewarn "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL and"
 		ewarn "Idle dynticks system (tickless idle) CONFIG_NO_HZ_IDLE may cause the system to lock up."

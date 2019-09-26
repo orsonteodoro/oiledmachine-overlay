@@ -55,6 +55,15 @@ HOMEPAGE+="
 	  https://rocm.github.io/
           "
 
+# These are not enabled by default because of licensing, government interest, no crypto applied (as in PGP/GPG signed emails) to messages to authenticate or verify them.
+IUSE+=" cve_hotfix"
+LICENSE+=" cve_hotfix? ( GPL-2 )"
+
+CVE_2019_16746_FN="linux-wireless-20190920-nl80211-validate-beacon-head.patch"
+CVE_2019_16746_SEVERITY="Critical (CVSS v3.1)"
+
+SRC_URI+=" cve_hotfix? ( https://marc.info/?l=linux-wireless&m=156901391225058&q=mbox -> ${CVE_2019_16746_FN} )"
+
 gen_kernel_seq()
 {
 	# 1-2 2-3 3-4
@@ -851,6 +860,72 @@ function apply_amdgpu() {
 	fi
 }
 
+# @FUNCTION: fetch_cve_2019_16746_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_16746 patch
+function fetch_cve_2019_16746_hotfix() {
+	if grep -r -e "validate_beacon_head" "${S}/net/wireless/nl80211.c" >/dev/null ; then
+		# already patched
+		return
+	fi
+	local PS="https://marc.info/?l=linux-wireless&m=156901391225058&q=mbox"
+	local PM="https://marc.info/?l=linux-wireless&m=156901391225058&w=2"
+	local NIST_CVE_M="https://nvd.nist.gov/vuln/detail/CVE-2019-16746"
+	if ! use cve_hotfix ; then
+		ewarn
+		ewarn "CVE-2019-16746"
+		ewarn "Severity: ${CVE_2019_16746_SEVERITY}"
+		ewarn "Synopsis: An issue was discovered in net/wireless/nl80211.c in the Linux kernel through 5.2.17. It does not check the length of variable elements in a beacon head, leading to a buffer overflow."
+		ewarn "URI: ${NIST_CVE_M}"
+		ewarn "Patch download: ${PS}"
+		ewarn "Patch message: ${PM}"
+		ewarn
+		ewarn "Re-enable the cve_hotfix USE flag to fix this, or you may ignore this and wait for an official fix."
+		ewarn
+	fi
+}
+
+# @FUNCTION: apply_cve_2019_16746_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_16746 patch if it needs to
+function apply_cve_2019_16746_hotfix() {
+	if grep -r -e "validate_beacon_head" "${S}/net/wireless/nl80211.c" >/dev/null ; then
+		einfo "CVE_2019_16746 is already patched."
+		# already patched
+		return
+	fi
+	if use cve_hotfix ; then
+		if [ -e "${DISTDIR}/${CVE_2019_16746_FN}" ] ; then
+			# patch applies without problems in 5.2.17
+			einfo "${CVE_2019_16746_FN} may break in different kernel versions."
+			_dpatch "${PATCH_OPS}" "${DISTDIR}/${CVE_2019_16746_FN}"
+		else
+			ewarn "No CVE_2019_16746 fixes applied.  This is a ${CVE_2019_16746_SEVERITY} risk vulnerability."
+		fi
+	else
+		ewarn "No CVE_2019_16746 fixes applied.  This is a ${CVE_2019_16746_SEVERITY} risk vulnerability."
+	fi
+}
+
+# @FUNCTION: fetch_cve_hotfixes
+# @DESCRIPTION:
+# Fetches all the CVE kernel patches
+function fetch_cve_hotfixes() {
+	if has cve_hotfix ${IUSE_EFFECTIVE} ; then
+		fetch_cve_2019_16746_hotfix
+	fi
+}
+
+# @FUNCTION: apply_cve_hotfixes
+# @DESCRIPTION:
+# Applies all the CVE kernel patches
+function apply_cve_hotfixes() {
+	if has cve_hotfix ${IUSE_EFFECTIVE} ; then
+		einfo "Applying CVE hotfixes"
+		apply_cve_2019_16746_hotfix
+	fi
+}
+
 # @FUNCTION: ot-kernel-common_src_unpack
 # @DESCRIPTION:
 # Applies patch sets in order.  It calls kernel-2_src_unpack.
@@ -886,6 +961,8 @@ function ot-kernel-common_src_unpack() {
 
 	cd "${S}"
 
+	fetch_cve_hotfixes
+
 	if use zentune ; then
 		fetch_zentune
 		apply_zentune
@@ -905,13 +982,13 @@ function ot-kernel-common_src_unpack() {
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/muqss-dont-attach-ckversion.patch"
 	fi
 
-	if has pds ; then
+	if has pds ${IUSE_EFFECTIVE} ; then
 		if use pds ; then
 			apply_pds
 		fi
 	fi
 
-	if has bmq ; then
+	if has bmq ${IUSE_EFFECTIVE} ; then
 		if use bmq ; then
 			apply_bmq
 		fi
@@ -921,8 +998,8 @@ function ot-kernel-common_src_unpack() {
 	apply_genpatch_experimental
 	apply_genpatch_extras
 
-	if has amd-staging-drm-next-snapshot || has amd-staging-drm-next-latest || has amd-staging-drm-next-milestone || \
-		has rock-snapshot || has rock-latest || has rock-milestone ; then
+	if has amd-staging-drm-next-snapshot ${IUSE_EFFECTIVE} || has amd-staging-drm-next-latest ${IUSE_EFFECTIVE} || has amd-staging-drm-next-milestone ${IUSE_EFFECTIVE} || \
+		has rock-snapshot ${IUSE_EFFECTIVE} || has rock-latest ${IUSE_EFFECTIVE} || has rock-milestone ${IUSE_EFFECTIVE} ; then
 		apply_amdgpu
 	fi
 
@@ -930,11 +1007,13 @@ function ot-kernel-common_src_unpack() {
 		apply_o3
 	fi
 
-	if has tresor ; then
+	if has tresor ${IUSE_EFFECTIVE} ; then
 		if use tresor ; then
 			apply_tresor
 		fi
 	fi
+
+	apply_cve_hotfixes
 
 	#_dpatch "${PATCH_OPS}" "${FILESDIR}/linux-4.20-kconfig-ioscheds.patch"
 }
@@ -961,7 +1040,7 @@ function ot-kernel-common_pkg_pretend() {
 # @DESCRIPTION:
 # Compiles the userland programs especially the post-boot TRESOR AES post boot program.
 function ot-kernel-common_src_compile() {
-	if has tresor_sysfs ; then
+	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
 		if use tresor_sysfs ; then
 			cp -a "${DISTDIR}/tresor_sysfs.c" "${T}"
 			cd "${T}"
@@ -977,7 +1056,7 @@ function ot-kernel-common_src_compile() {
 function ot-kernel-common_src_install() {
 	find "${S}" -name "*.orig" -print0 -o -name "*.rej" -print0 | xargs -0 rm
 
-	if has tresor ; then
+	if has tresor ${IUSE_EFFECTIVE} ; then
 		if use tresor ; then
 			docinto /usr/share/${PF}
 			dodoc "${DISTDIR}/tresor-readme.html"
@@ -990,7 +1069,7 @@ function ot-kernel-common_src_install() {
 # @DESCRIPTION:
 # Present warnings and avoid collision checks.
 #
-# ot-kernel-common_ot-kernel-common_pkg_postinst_cb - callback if any to handle after emerge phase
+# ot-kernel-common_pkg_postinst_cb - callback if any to handle after emerge phase
 #
 function ot-kernel-common_pkg_postinst() {
 	if use disable_debug ; then
@@ -1003,7 +1082,7 @@ function ot-kernel-common_pkg_postinst() {
 		chmod 700 "${EROOT}"/usr/src/disable_debug || die
 	fi
 
-	if has tresor_sysfs ; then
+	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
 		if use tresor_sysfs ; then
 			# prevent merge conflicts
 			cd "${T}"
@@ -1014,8 +1093,8 @@ function ot-kernel-common_pkg_postinst() {
 		fi
 	fi
 
-	if declare -f ot-kernel-common_ot-kernel-common_pkg_postinst_cb > /dev/null ; then
-		ot-kernel-common_ot-kernel-common_pkg_postinst_cb
+	if declare -f ot-kernel-common_pkg_postinst_cb > /dev/null ; then
+		ot-kernel-common_pkg_postinst_cb
 	fi
 
 }
