@@ -300,11 +300,8 @@ multilib_src_configure() {
 #	fi
 
 	# Used to properly control cross compile with debian fix-ftbfs-x86.patch.
-	if use abi_x86_64 ; then
-		mycmakeargs+=( -DCMAKE_CXX_LIBRARY_ARCHITECTURE="x86_64-pc-linux-gnu" )
-	elif use abi_x86_32 ; then
-		mycmakeargs+=( -DCMAKE_CXX_LIBRARY_ARCHITECTURE="i686-pc-linux-gnu" )
-	fi
+	[[ "${ABI}" == "amd64" ]] && mycmakeargs+=( -DCMAKE_CXX_LIBRARY_ARCHITECTURE="x86_64-pc-linux-gnu" )
+	[[ "${ABI}" == "x86" ]] && mycmakeargs+=( -DCMAKE_CXX_LIBRARY_ARCHITECTURE="i686-pc-linux-gnu" )
 
 	cmake-utils_src_configure
 }
