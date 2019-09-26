@@ -217,7 +217,7 @@ function ot-kernel-common_pkg_setup_cb() {
 		einfo "https://rocm.github.io/hardware.html"
 	fi
 
-	if ( is_rock || is_amd_staging_drm_next )
+	if ( is_rock || is_amd_staging_drm_next ) ; then
 		_set_check_reqs_requirements
 		check-reqs_pkg_setup
 	fi
@@ -227,7 +227,7 @@ function ot-kernel-common_pkg_setup_cb() {
 # @DESCRIPTION:
 # Does checks and warnings
 function ot-kernel-common_pkg_pretend_cb() {
-	if ( is_rock || is_amd_staging_drm_next )
+	if ( is_rock || is_amd_staging_drm_next ) ; then
 		_set_check_reqs_requirements
 		check-reqs_pkg_pretend
 	fi
