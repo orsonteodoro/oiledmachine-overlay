@@ -1,12 +1,12 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
-PYTHON_COMPAT=( python3_3 python3_4 )
+PYTHON_COMPAT=( python3_{5,6} )
 
-inherit eutils python-r1 multilib-minimal
+inherit eutils python-r1
+inherit multilib-minimal
 
 DESCRIPTION="Speech synthesis interface"
 HOMEPAGE="http://www.freebsoft.org/speechd"
@@ -14,33 +14,37 @@ SRC_URI="http://www.freebsoft.org/pub/projects/speechd/${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="alpha amd64 arm ~arm64 hppa ia64 ppc ppc64 sparc x86 ~amd64-linux ~x86-linux"
+KEYWORDS="alpha amd64 arm arm64 ~hppa ia64 ppc ppc64 sparc x86 ~amd64-linux ~x86-linux"
 IUSE="alsa ao +espeak flite nas pulseaudio python static-libs"
 
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 COMMON_DEPEND="python? ( ${PYTHON_DEPS} )
-	>=dev-libs/dotconf-1.3
-	>=dev-libs/glib-2.28:2
-	>=media-libs/libsndfile-1.0.2
-	alsa? ( media-libs/alsa-lib )
-	ao? ( media-libs/libao )
+	>=dev-libs/dotconf-1.3[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.28:2[${MULTILIB_USEDEP}]
+	dev-libs/libltdl:0[${MULTILIB_USEDEP}]
+	>=media-libs/libsndfile-1.0.2[${MULTILIB_USEDEP}]
+	alsa? ( media-libs/alsa-lib[${MULTILIB_USEDEP}] )
+	ao? ( media-libs/libao[${MULTILIB_USEDEP}] )
 	espeak? ( app-accessibility/espeak )
-	flite? ( app-accessibility/flite )
-	nas? ( media-libs/nas )
-	pulseaudio? ( media-sound/pulseaudio )"
+	flite? ( app-accessibility/flite[${MULTILIB_USEDEP}] )
+	nas? ( media-libs/nas[${MULTILIB_USEDEP}] )
+	pulseaudio? ( media-sound/pulseaudio[${MULTILIB_USEDEP}] )"
 DEPEND="${COMMON_DEPEND}
 	>=dev-util/intltool-0.40.0
-	virtual/pkgconfig"
-	RDEPEND="${COMMON_DEPEND}
-	dev-python/pyxdg"
+	virtual/pkgconfig[${MULTILIB_USEDEP}]"
+RDEPEND="${COMMON_DEPEND}
+	python? ( dev-python/pyxdg[${PYTHON_USEDEP}] )"
 
 src_prepare() {
-	eapply_user
+	default
 	multilib_copy_sources
 }
 
 multilib_src_configure() {
+	# bug 573732
+	export GIT_CEILING_DIRECTORIES="${WORKDIR}"
+
 	local myeconfargs=(
 		--disable-python
 		$(use_enable static-libs static)
@@ -51,7 +55,6 @@ multilib_src_configure() {
 		$(use_with pulseaudio pulse)
 		$(use_with nas)
 	)
-	ECONF_SOURCE=${S} \
 	econf ${myeconfargs[@]}
 }
 
@@ -73,6 +76,7 @@ multilib_src_compile() {
 
 multilib_src_install() {
 	emake DESTDIR="${D}" install
+	dodoc ANNOUNCE AUTHORS BUGS FAQ NEWS README*
 
 	prune_libtool_files --all
 
@@ -88,9 +92,6 @@ multilib_src_install() {
 		python_foreach_impl run_in_build_dir installation
 		python_replicate_script "${ED}"/usr/bin/spd-conf
 	fi
-
-	cd "${WORKDIR}/${P}"
-	dodoc ANNOUNCE AUTHORS BUGS ChangeLog FAQ NEWS README*
 }
 
 pkg_postinst() {
