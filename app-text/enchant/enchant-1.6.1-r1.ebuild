@@ -19,9 +19,9 @@ REQUIRED_USE="|| ( hunspell aspell )"
 
 # FIXME: depends on unittest++ but through pkgconfig which is a Debian hack, bug #629742
 COMMON_DEPENDS="
-	>=dev-libs/glib-2.6:2
+	>=dev-libs/glib-2.6:2[${MULTILIB_USEDEP}]
 	aspell? ( app-text/aspell )
-	hunspell? ( >=app-text/hunspell-1.2.1:0= )"
+	hunspell? ( >=app-text/hunspell-1.2.1:0=[${MULTILIB_USEDEP}] )"
 RDEPEND="${COMMON_DEPENDS}"
 
 DEPEND="${COMMON_DEPENDS}
@@ -40,6 +40,7 @@ src_prepare() {
 	sed -e "/SUBDIRS/ s/unittests//" -i "${S}"/Makefile.{am,in} || die
 	sed -e "s/build_zemberek=yes//" -i "${S}"/configure{.ac,} || die # bug 662484, shouldn't be an issue in 2.2
 	multilib_copy_sources
+	use aspell && ewarn "The aspell USE flag has not been tested."
 }
 
 multilib_src_configure() {
