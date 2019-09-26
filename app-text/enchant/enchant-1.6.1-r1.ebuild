@@ -39,6 +39,7 @@ src_prepare() {
 	default
 	sed -e "/SUBDIRS/ s/unittests//" -i "${S}"/Makefile.{am,in} || die
 	sed -e "s/build_zemberek=yes//" -i "${S}"/configure{.ac,} || die # bug 662484, shouldn't be an issue in 2.2
+	multilib_copy_sources
 }
 
 multilib_src_configure() {
