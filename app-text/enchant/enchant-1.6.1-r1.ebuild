@@ -1,9 +1,9 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-inherit versionator \
-	eutils autotools multilib multilib-minimal
+inherit versionator
+inherit multilib-minimal
 
 MY_PV="$(replace_all_version_separators '-')"
 DESCRIPTION="Spellchecker wrapping library"
@@ -12,21 +12,18 @@ SRC_URI="https://github.com/AbiWord/enchant/releases/download/${PN}-${MY_PV}/${P
 
 LICENSE="LGPL-2.1"
 SLOT="0"
-KEYWORDS="alpha amd64 arm ~arm64 hppa ia64 ~mips ppc ppc64 ~sh sparc x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x86-macos ~x86-solaris"
+KEYWORDS="alpha amd64 arm arm64 ~hppa ia64 ~mips ppc ppc64 ~sh sparc x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x86-macos ~x86-solaris"
 
-IUSE="aspell +hunspell static-libs test zemberek"
-REQUIRED_USE="|| ( hunspell aspell zemberek )"
+IUSE="aspell +hunspell static-libs test"
+REQUIRED_USE="|| ( hunspell aspell )"
 
 # FIXME: depends on unittest++ but through pkgconfig which is a Debian hack, bug #629742
 COMMON_DEPENDS="
 	>=dev-libs/glib-2.6:2
 	aspell? ( app-text/aspell )
-	hunspell? ( >=app-text/hunspell-1.2.1:0= )
-	zemberek? ( dev-libs/dbus-glib )
-"
-RDEPEND="${COMMON_DEPENDS}
-	zemberek? ( app-text/zemberek-server )
-"
+	hunspell? ( >=app-text/hunspell-1.2.1:0= )"
+RDEPEND="${COMMON_DEPENDS}"
+
 DEPEND="${COMMON_DEPENDS}
 	virtual/pkgconfig
 "
@@ -40,12 +37,8 @@ PATCHES=(
 
 src_prepare() {
 	default
-	eautoreconf
-
 	sed -e "/SUBDIRS/ s/unittests//" -i "${S}"/Makefile.{am,in} || die
-	epatch "${FILESDIR}/enchant-1.6.1-tag.patch"
-
-	multilib_copy_sources
+	sed -e "s/build_zemberek=yes//" -i "${S}"/configure{.ac,} || die # bug 662484, shouldn't be an issue in 2.2
 }
 
 multilib_src_configure() {
@@ -53,11 +46,11 @@ multilib_src_configure() {
 		$(use_enable aspell) \
 		$(use_enable hunspell myspell) \
 		$(use_enable static-libs static) \
-		$(use_enable zemberek) \
 		--disable-hspell \
 		--disable-ispell \
 		--disable-uspell \
 		--disable-voikko \
+		--disable-zemberek \
 		--with-myspell-dir="${EPREFIX}"/usr/share/myspell/
 }
 
