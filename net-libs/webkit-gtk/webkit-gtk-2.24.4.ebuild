@@ -20,7 +20,7 @@ SLOT="4/37" # soname version of libwebkit2gtk-4.0
 KEYWORDS="~alpha amd64 ~arm arm64 ~ia64 ~ppc ~ppc64 ~sparc x86 ~amd64-fbsd ~amd64-linux ~x86-linux ~x86-macos"
 
 IUSE="aqua coverage doc +egl +geolocation gles2 gnome-keyring +gstreamer +introspection +jpeg2k libnotify nsplugin +opengl spell wayland +webgl +X"
-IUSE+=" +jit bmalloc accelerated-2d-canvas accelerated-overflow-scrolling ftl-jit hardened"
+IUSE+=" +jit +bmalloc accelerated-2d-canvas accelerated-overflow-scrolling ftl-jit hardened"
 
 # webgl needs gstreamer, bug #560612
 # gstreamer with opengl/gles2 needs egl
