@@ -4,7 +4,7 @@
 EAPI="6"
 
 KERNEL_0_TO_1_ONLY="1"
-K_GENPATCHES_VER="2"
+K_GENPATCHES_VER="3"
 PATCH_BMQ_VER="100"
 
 function ot-kernel-common_apply_genpatch_base_patchset() {
