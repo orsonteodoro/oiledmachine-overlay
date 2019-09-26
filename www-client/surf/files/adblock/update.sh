@@ -12,12 +12,12 @@ customblockfile="customrules"
 
 lists="
 https://easylist-downloads.adblockplus.org/easylist.txt
-http://spam404bl.com/spam404scamlist.txt
 https://easylist-downloads.adblockplus.org/malwaredomains_full.txt
+https://raw.githubusercontent.com/Spam404/lists/master/adblock-list.txt
 "
 
 #sort properly
-LC_ALL=C 
+LC_ALL=C
 
 for list in $lists; do
 	wget --no-cache -q -O - $list

@@ -1,16 +1,15 @@
-diff -urp surf-2.0.orig/surf.c surf-2.0/surf.c
---- surf-2.0.orig/surf.c	2017-03-28 09:17:45.000000000 -0700
-+++ surf-2.0/surf.c	2017-12-30 16:20:40.041088870 -0800
-@@ -44,7 +44,7 @@
- #define CSETV(p, s)             [p] = (Parameter){ { .v = s }, 1 }
- #define CSETF(p, s)             [p] = (Parameter){ { .f = s }, 1 }
+--- a/surf.c.orig	2019-09-25 15:20:42.057920777 -0700
++++ b/surf.c	2019-09-25 15:27:46.601295192 -0700
+@@ -35,7 +35,7 @@
+ #define LENGTH(x)               (sizeof(x) / sizeof(x[0]))
+ #define CLEANMASK(mask)         (mask & (MODKEY|GDK_SHIFT_MASK))
  
 -enum { AtomFind, AtomGo, AtomUri, AtomLast };
 +enum { AtomFind, AtomGo, AtomUri, AtomScriptFile, AtomLast };
  
  enum {
  	OnDoc   = WEBKIT_HIT_TEST_RESULT_CONTEXT_DOCUMENT,
-@@ -278,6 +278,7 @@ setup(void)
+@@ -328,6 +328,7 @@ setup(void)
  	atoms[AtomFind] = XInternAtom(dpy, "_SURF_FIND", False);
  	atoms[AtomGo] = XInternAtom(dpy, "_SURF_GO", False);
  	atoms[AtomUri] = XInternAtom(dpy, "_SURF_URI", False);
@@ -18,7 +17,7 @@ diff -urp surf-2.0.orig/surf.c surf-2.0/surf.c
  
  	gtk_init(NULL, NULL);
  
-@@ -482,6 +483,7 @@ loaduri(Client *c, const Arg *a)
+@@ -567,6 +568,7 @@ loaduri(Client *c, const Arg *a)
  
  	setatom(c, AtomUri, url);
  
@@ -26,7 +25,7 @@ diff -urp surf-2.0.orig/surf.c surf-2.0/surf.c
  	if (strcmp(url, geturi(c)) == 0) {
  		reload(c, a);
  	} else {
-@@ -1092,6 +1094,15 @@ processx(GdkXEvent *e, GdkEvent *event,
+@@ -1316,6 +1318,15 @@ processx(GdkXEvent *e, GdkEvent *event,
  				loaduri(c, &a);
  
  				return GDK_FILTER_REMOVE;
@@ -42,7 +41,7 @@ diff -urp surf-2.0.orig/surf.c surf-2.0/surf.c
  			}
  		}
  	}
-@@ -1178,6 +1189,7 @@ showview(WebKitWebView *v, Client *c)
+@@ -1404,6 +1415,7 @@ showview(WebKitWebView *v, Client *c)
  
  	setatom(c, AtomFind, "");
  	setatom(c, AtomUri, "about:blank");
@@ -50,15 +49,15 @@ diff -urp surf-2.0.orig/surf.c surf-2.0/surf.c
  }
  
  GtkWidget *
-@@ -1240,6 +1252,7 @@ loadchanged(WebKitWebView *v, WebKitLoad
- 		    &(c->tlsflags)))
- 			c->tlsflags = G_TLS_CERTIFICATE_VALIDATE_ALL + 1;
- 
+@@ -1516,6 +1528,7 @@ loadchanged(WebKitWebView *v, WebKitLoad
+ 		seturiparameters(c, uri, loadcommitted);
+ 		c->https = webkit_web_view_get_tls_info(c->view, &c->cert,
+ 		                                        &c->tlserr);
 +		PAGE_LOAD_COMMITTED(c);
  		break;
  	case WEBKIT_LOAD_FINISHED:
- 		/* Disabled until we write some WebKitWebExtension for
-@@ -1248,6 +1261,7 @@ loadchanged(WebKitWebView *v, WebKitLoad
+ 		seturiparameters(c, uri, loadfinished);
+@@ -1525,6 +1538,7 @@ loadchanged(WebKitWebView *v, WebKitLoad
  		    enablescrollbars ? "auto" : "hidden");
  		*/
  		runscript(c);

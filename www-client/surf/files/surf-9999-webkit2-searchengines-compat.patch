@@ -1,0 +1,11 @@
+--- a/surf.c.orig	2019-09-25 18:18:38.917293179 -0700
++++ b/surf.c	2019-09-25 18:19:46.856924060 -0700
+@@ -566,7 +566,7 @@ loaduri(Client *c, const Arg *a)
+ 			url = g_strdup_printf("file://%s", path);
+ 			free(path);
+ 		} else {
+-			url = g_strdup_printf("http://%s", uri);
++			url = parseuri(uri);
+ 		}
+ 		if (apath != uri)
+ 			free(apath);
