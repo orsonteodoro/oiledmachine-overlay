@@ -202,6 +202,10 @@ function fetch_cve_hotfixes() {
 		fetch_cve_2019_16746_hotfix
 		fetch_cve_2019_14814_hotfix
 		fetch_cve_2019_14821_hotfix
+		local cve_copyright="CVE_COPYRIGHT_${CVE_LANG}"
+		einfo
+		einfo "${!cve_copyright}"
+		einfo
 	fi
 }
 
