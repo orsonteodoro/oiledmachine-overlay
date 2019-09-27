@@ -10,7 +10,7 @@
 # @SUPPORTED_EAPIS: 2 3 4 5 6
 # @BLURB: Eclass for CVE patching the kernel
 # @DESCRIPTION:
-# The ot-kernel-cve eclass resolves CVE vulnerabilities for any linux kernel version.
+# The ot-kernel-cve eclass resolves CVE vulnerabilities for any linux kernel version, preferably latest stable.
 
 # These are not enabled by default because of licensing, government interest, no crypto applied (as in PGP/GPG signed emails) to messages to authenticate or verify them.
 IUSE+=" cve_hotfix"
