@@ -45,7 +45,7 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 # Message to report the important items to user about the CVE.
 function _fetch_cve_boilerplate_msg() {
 	local CVE_ID_="${CVE_ID//-/_}"
-	local cve_serverity="${CVE_ID_}_SEVERITY"
+	local cve_severity="${CVE_ID_}_SEVERITY"
 	local PS="${CVE_ID_}_FIX_SRC_URI"
 	local NIST_NVD_CVE_M="https://nvd.nist.gov/vuln/detail/${CVE_ID}"
 	local MITRE_M="https://cve.mitre.org/cgi-bin/cvename.cgi?name=${CVE_ID}"
