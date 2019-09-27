@@ -55,14 +55,7 @@ HOMEPAGE+="
 	  https://rocm.github.io/
           "
 
-# These are not enabled by default because of licensing, government interest, no crypto applied (as in PGP/GPG signed emails) to messages to authenticate or verify them.
-IUSE+=" cve_hotfix"
-LICENSE+=" cve_hotfix? ( GPL-2 )"
-
-CVE_2019_16746_FN="linux-wireless-20190920-nl80211-validate-beacon-head.patch"
-CVE_2019_16746_SEVERITY="Critical (CVSS v3.1)"
-
-SRC_URI+=" cve_hotfix? ( https://marc.info/?l=linux-wireless&m=156901391225058&q=mbox -> ${CVE_2019_16746_FN} )"
+inherit ot-kernel-cve
 
 gen_kernel_seq()
 {
@@ -860,72 +853,6 @@ function apply_amdgpu() {
 	fi
 }
 
-# @FUNCTION: fetch_cve_2019_16746_hotfix
-# @DESCRIPTION:
-# Checks for the CVE_2019_16746 patch
-function fetch_cve_2019_16746_hotfix() {
-	if grep -r -e "validate_beacon_head" "${S}/net/wireless/nl80211.c" >/dev/null ; then
-		# already patched
-		return
-	fi
-	local PS="https://marc.info/?l=linux-wireless&m=156901391225058&q=mbox"
-	local PM="https://marc.info/?l=linux-wireless&m=156901391225058&w=2"
-	local NIST_CVE_M="https://nvd.nist.gov/vuln/detail/CVE-2019-16746"
-	if ! use cve_hotfix ; then
-		ewarn
-		ewarn "CVE-2019-16746"
-		ewarn "Severity: ${CVE_2019_16746_SEVERITY}"
-		ewarn "Synopsis: An issue was discovered in net/wireless/nl80211.c in the Linux kernel through 5.2.17. It does not check the length of variable elements in a beacon head, leading to a buffer overflow."
-		ewarn "URI: ${NIST_CVE_M}"
-		ewarn "Patch download: ${PS}"
-		ewarn "Patch message: ${PM}"
-		ewarn
-		ewarn "Re-enable the cve_hotfix USE flag to fix this, or you may ignore this and wait for an official fix."
-		ewarn
-	fi
-}
-
-# @FUNCTION: apply_cve_2019_16746_hotfix
-# @DESCRIPTION:
-# Applies the CVE_2019_16746 patch if it needs to
-function apply_cve_2019_16746_hotfix() {
-	if grep -r -e "validate_beacon_head" "${S}/net/wireless/nl80211.c" >/dev/null ; then
-		einfo "CVE_2019_16746 is already patched."
-		# already patched
-		return
-	fi
-	if use cve_hotfix ; then
-		if [ -e "${DISTDIR}/${CVE_2019_16746_FN}" ] ; then
-			# patch applies without problems in 5.2.17
-			einfo "${CVE_2019_16746_FN} may break in different kernel versions."
-			_dpatch "${PATCH_OPS}" "${DISTDIR}/${CVE_2019_16746_FN}"
-		else
-			ewarn "No CVE_2019_16746 fixes applied.  This is a ${CVE_2019_16746_SEVERITY} risk vulnerability."
-		fi
-	else
-		ewarn "No CVE_2019_16746 fixes applied.  This is a ${CVE_2019_16746_SEVERITY} risk vulnerability."
-	fi
-}
-
-# @FUNCTION: fetch_cve_hotfixes
-# @DESCRIPTION:
-# Fetches all the CVE kernel patches
-function fetch_cve_hotfixes() {
-	if has cve_hotfix ${IUSE_EFFECTIVE} ; then
-		fetch_cve_2019_16746_hotfix
-	fi
-}
-
-# @FUNCTION: apply_cve_hotfixes
-# @DESCRIPTION:
-# Applies all the CVE kernel patches
-function apply_cve_hotfixes() {
-	if has cve_hotfix ${IUSE_EFFECTIVE} ; then
-		einfo "Applying CVE hotfixes"
-		apply_cve_2019_16746_hotfix
-	fi
-}
-
 # @FUNCTION: ot-kernel-common_src_unpack
 # @DESCRIPTION:
 # Applies patch sets in order.  It calls kernel-2_src_unpack.
@@ -961,8 +888,6 @@ function ot-kernel-common_src_unpack() {
 
 	cd "${S}"
 
-	fetch_cve_hotfixes
-
 	if use zentune ; then
 		fetch_zentune
 		apply_zentune
@@ -997,6 +922,9 @@ function ot-kernel-common_src_unpack() {
 	apply_genpatch_base
 	apply_genpatch_experimental
 	apply_genpatch_extras
+
+	# should be done after all the kernel point releases contained in apply_genpatch_base
+	fetch_cve_hotfixes
 
 	if has amd-staging-drm-next-snapshot ${IUSE_EFFECTIVE} || has amd-staging-drm-next-latest ${IUSE_EFFECTIVE} || has amd-staging-drm-next-milestone ${IUSE_EFFECTIVE} || \
 		has rock-snapshot ${IUSE_EFFECTIVE} || has rock-latest ${IUSE_EFFECTIVE} || has rock-milestone ${IUSE_EFFECTIVE} ; then
