@@ -54,13 +54,13 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 # @DESCRIPTION:
 # Message to report the important items to user about the CVE.
 function _fetch_cve_boilerplate_msg() {
-	local CVE_ID_="${CVE_ID//-/_}"
-	local cve_severity="${CVE_ID_}_SEVERITY"
-	local PS="${CVE_ID_}_FIX_SRC_URI"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local PS="${CVE_ID_}FIX_SRC_URI"
 	local NIST_NVD_CVE_M="https://nvd.nist.gov/vuln/detail/${CVE_ID}"
 	local MITRE_M="https://cve.mitre.org/cgi-bin/cvename.cgi?name=${CVE_ID}"
-	local summary="${CVE_ID_}_SUMMARY"
-	local pm="${CVE_ID_}_PM"
+	local summary="${CVE_ID_}SUMMARY"
+	local pm="${CVE_ID_}PM"
 	PS="${!PS}"
 	ewarn
 	ewarn "${CVE_ID}"
@@ -124,9 +124,9 @@ function fetch_cve_2019_14821_hotfix() {
 # Applies the CVE_2019_16746 patch if it needs to
 function apply_cve_2019_16746_hotfix() {
 	local CVE_ID="CVE-2019-16746"
-	local CVE_ID_="${CVE_ID//-/_}"
-	local cve_severity="${CVE_ID_}_SEVERITY"
-	local cve_fn="${CVE_ID_}_FN"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
 	if grep -F -e "validate_beacon_head" "${S}/net/wireless/nl80211.c" >/dev/null ; then
 		einfo "${CVE_ID} is already patched."
 		# already patched
@@ -149,9 +149,9 @@ function apply_cve_2019_16746_hotfix() {
 # Applies the CVE_2019_14814 patch if it needs to
 function apply_cve_2019_14814_hotfix() {
 	local CVE_ID="CVE-2019-14814"
-	local CVE_ID_="${CVE_ID//-/_}"
-	local cve_severity="${CVE_ID_}_SEVERITY"
-	local cve_fn="${CVE_ID_}_FN"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
 	if grep -F -e "if (le16_to_cpu(ie->ie_length) + vs_ie->len + 2 >" "${S}/drivers/net/wireless/marvell/mwifiex/ie.c" >/dev/null ; then
 		einfo "${CVE_ID} is already patched."
 		# already patched
@@ -174,9 +174,9 @@ function apply_cve_2019_14814_hotfix() {
 # Applies the CVE_2019_14821 patch if it needs to
 function apply_cve_2019_14821_hotfix() {
 	local CVE_ID="CVE-2019-14821"
-	local CVE_ID_="${CVE_ID//-/_}"
-	local cve_severity="${CVE_ID_}_SEVERITY"
-	local cve_fn="${CVE_ID_}_FN"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
 	if grep -F -e "if (!coalesced_mmio_has_room(dev, insert) ||" "${S}/virt/kvm/coalesced_mmio.c" >/dev/null ; then
 		einfo "${CVE_ID} is already patched."
 		# already patched
