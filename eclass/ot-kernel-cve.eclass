@@ -18,23 +18,33 @@ LICENSE+=" cve_hotfix? ( GPL-2 )"
 
 # _PM = patch message from person who fixed it, _FN = patch file name
 
+inherit ot-kernel-cve-en
+
+CVE_LANG="${CVE_LANG:=en}" # You can define this in your make.conf.  Currently en is only supported.
+
 CVE_2019_16746_FIX_SRC_URI="https://marc.info/?l=linux-wireless&m=156901391225058&q=mbox"
 CVE_2019_16746_FN="CVE-2019-16746-fix--linux-wireless-20190920-nl80211-validate-beacon-head.patch"
-CVE_2019_16746_SEVERITY="Critical (CVSS v3.1)"
+CVE_2019_16746_SEVERITY_LANG="CVE_2019_16746_SEVERITY_${CVE_LANG}"
+CVE_2019_16746_SEVERITY="${!CVE_2019_16746_SEVERITY_LANG}"
 CVE_2019_16746_PM="https://marc.info/?l=linux-wireless&m=156901391225058&w=2"
-CVE_2019_16746_SUMMARY="An issue was discovered in net/wireless/nl80211.c in the Linux kernel through 5.2.17. It does not check the length of variable elements in a beacon head, leading to a buffer overflow."
+CVE_2019_16746_SUMMARY_LANG="CVE_2019_16746_SUMMARY_${CVE_LANG}"
+CVE_2019_16746_SUMMARY="${!CVE_2019_16746_SUMMARY_LANG}"
 
 CVE_2019_14814_FIX_SRC_URI="https://github.com/torvalds/linux/commit/7caac62ed598a196d6ddf8d9c121e12e082cac3a.patch"
 CVE_2019_14814_FN="CVE-2019-14814-fix--linux-mwifiex-fix-three-heap-overflow-at-parsing-element-in-cfg80211_ap_settings.patch"
-CVE_2019_14814_SEVERITY="High (CVSS v3.1)"
+CVE_2019_14814_SEVERITY_LANG="CVE_2019_14814_SEVERITY_${CVE_LANG}"
+CVE_2019_14814_SEVERITY="${!CVE_2019_14814_SEVERITY_LANG}"
 CVE_2019_14814_PM="https://github.com/torvalds/linux/commit/7caac62ed598a196d6ddf8d9c121e12e082cac3a"
-CVE_2019_14814_SUMMARY="There is heap-based buffer overflow in Linux kernel, all versions up to, excluding 5.3, in the marvell wifi chip driver in Linux kernel, that allows local users to cause a denial of service(system crash) or possibly execute arbitrary code."
+CVE_2019_14814_SUMMARY_LANG="CVE_2019_14814_SUMMARY_${CVE_LANG}"
+CVE_2019_14814_SUMMARY="${!CVE_2019_14814_SUMMARY_LANG}"
 
 CVE_2019_14821_FIX_SRC_URI="https://github.com/torvalds/linux/commit/b60fe990c6b07ef6d4df67bc0530c7c90a62623a.patch"
 CVE_2019_14821_FN="CVE-2019-14821-fix--linux-kvm-20190916-coalesced-mmio-add-bounds-checking.patch"
-CVE_2019_14821_SEVERITY="High (CVSS v3.1)"
+CVE_2019_14821_SEVERITY_LANG="CVE_2019_14821_SEVERITY_${CVE_LANG}"
+CVE_2019_14821_SEVERITY="${!CVE_2019_14821_SEVERITY_LANG}"
 CVE_2019_14821_PM="https://github.com/torvalds/linux/commit/b60fe990c6b07ef6d4df67bc0530c7c90a62623a"
-CVE_2019_14821_SUMMARY="An out-of-bounds access issue was found in the Linux kernel, all versions through 5.3, in the way Linux kernel's KVM hypervisor implements the Coalesced MMIO write operation. It operates on an MMIO ring buffer 'struct kvm_coalesced_mmio' object, wherein write indices 'ring->first' and 'ring->last' value could be supplied by a host user-space process. An unprivileged host user or process with access to '/dev/kvm' device could use this flaw to crash the host kernel, resulting in a denial of service or potentially escalating privileges on the system."
+CVE_2019_14821_SUMMARY_LANG="CVE_2019_14821_SUMMARY_${CVE_LANG}"
+CVE_2019_14821_SUMMARY="${!CVE_2019_14821_SUMMARY_LANG}"
 
 SRC_URI+=" cve_hotfix? ( ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 			 ${CVE_2019_14814_FIX_SRC_URI} -> ${CVE_2019_14814_FN}
