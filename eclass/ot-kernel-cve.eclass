@@ -20,6 +20,16 @@ LICENSE+=" cve_hotfix? ( GPL-2 )"
 
 inherit ot-kernel-cve-en
 
+# based on my last edit in unix timestamp (date -u +%Y%m%d_%I%M_%p_%Z)
+LATEST_CVE_KERNEL_INDEX="20190927_1122_PM_UTC"
+LATEST_CVE_KERNEL_INDEX="${LATEST_CVE_KERNEL_INDEX,,}"
+
+# this will trigger a kernel re-install based on use flag timestamp
+# there is no need to set this flag but tricks the emerge system to re-emerge.
+if [[ -n "${CVE_SUBSCRIBE_KERNEL_HOTFIXES}" && "${CVE_SUBSCRIBE_KERNEL_HOTFIXES}" == "1" ]] ; then
+	IUSE+=" cve_update_${LATEST_CVE_KERNEL_INDEX}"
+fi
+
 CVE_LANG="${CVE_LANG:=en}" # You can define this in your make.conf.  Currently en is only supported.
 
 CVE_2019_16746_FIX_SRC_URI="https://marc.info/?l=linux-wireless&m=156901391225058&q=mbox"
@@ -46,9 +56,18 @@ CVE_2019_14821_PM="https://github.com/torvalds/linux/commit/b60fe990c6b07ef6d4df
 CVE_2019_14821_SUMMARY_LANG="CVE_2019_14821_SUMMARY_${CVE_LANG}"
 CVE_2019_14821_SUMMARY="${!CVE_2019_14821_SUMMARY_LANG}"
 
+CVE_2019_16921_FIX_SRC_URI="https://github.com/torvalds/linux/commit/df7e40425813c50cd252e6f5e348a81ef1acae56.patch"
+CVE_2019_16921_FN="CVE-2019-16921-fix--linux-rdma-hns-fix-init-resp-when-alloc-ucontext.patch"
+CVE_2019_16921_SEVERITY_LANG="CVE_2019_16921_SEVERITY_${CVE_LANG}"
+CVE_2019_16921_SEVERITY="${!CVE_2019_16921_SEVERITY_LANG}"
+CVE_2019_16921_PM="https://github.com/torvalds/linux/commit/df7e40425813c50cd252e6f5e348a81ef1acae56"
+CVE_2019_16921_SUMMARY_LANG="CVE_2019_16921_SUMMARY_${CVE_LANG}"
+CVE_2019_16921_SUMMARY="${!CVE_2019_16921_SUMMARY_LANG}"
+
 SRC_URI+=" cve_hotfix? ( ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 			 ${CVE_2019_14814_FIX_SRC_URI} -> ${CVE_2019_14814_FN}
-			 ${CVE_2019_14821_FIX_SRC_URI} -> ${CVE_2019_14821_FN} )"
+			 ${CVE_2019_14821_FIX_SRC_URI} -> ${CVE_2019_14821_FN}
+			 ${CVE_2019_16921_FIX_SRC_URI} -> ${CVE_2019_16921_FN} )"
 
 # @FUNCTION: _fetch_cve_boilerplate_msg
 # @DESCRIPTION:
@@ -92,8 +111,11 @@ function fetch_cve_2019_16746_hotfix() {
 		einfo "${CVE_ID} already patched."
 		return
 	fi
+	local cve_fn="${CVE_ID_}FN"
 	_fetch_cve_boilerplate_msg
-	if ! use cve_hotfix ; then
+	if use cve_hotfix && test -n "${!cve_fn}"; then
+		einfo "A ${CVE_ID} fix will be applied."
+	else
 		_fetch_cve_boilerplate_msg_footer
 	fi
 }
@@ -128,6 +150,21 @@ function fetch_cve_2019_14821_hotfix() {
 	fi
 }
 
+# @FUNCTION: fetch_cve_2019_16921_hotfix
+# @DESCRIPTION:
+# Checks for the CVE-2019-16921 patch
+function fetch_cve_2019_16921_hotfix() {
+	local CVE_ID="CVE-2019-16921"
+	if grep -F -e "struct hns_roce_ib_alloc_ucontext_resp resp = {};" "${S}/drivers/infiniband/hw/hns/hns_roce_main.c" >/dev/null ; then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	if ! use cve_hotfix ; then
+		_fetch_cve_boilerplate_msg_footer
+	fi
+}
+
 # @FUNCTION: apply_cve_2019_16746_hotfix
 # @DESCRIPTION:
 # Applies the CVE_2019_16746 patch if it needs to
@@ -138,7 +175,6 @@ function apply_cve_2019_16746_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if grep -F -e "validate_beacon_head" "${S}/net/wireless/nl80211.c" >/dev/null ; then
 		einfo "${CVE_ID} is already patched."
-		# already patched
 		return
 	fi
 	if use cve_hotfix ; then
@@ -163,7 +199,6 @@ function apply_cve_2019_14814_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if grep -F -e "if (le16_to_cpu(ie->ie_length) + vs_ie->len + 2 >" "${S}/drivers/net/wireless/marvell/mwifiex/ie.c" >/dev/null ; then
 		einfo "${CVE_ID} is already patched."
-		# already patched
 		return
 	fi
 	if use cve_hotfix ; then
@@ -188,7 +223,30 @@ function apply_cve_2019_14821_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if grep -F -e "if (!coalesced_mmio_has_room(dev, insert) ||" "${S}/virt/kvm/coalesced_mmio.c" >/dev/null ; then
 		einfo "${CVE_ID} is already patched."
-		# already patched
+		return
+	fi
+	if use cve_hotfix ; then
+		if [ -e "${DISTDIR}/${!cve_fn}" ] ; then
+			einfo "Resolving ${CVE_ID}.  ${!cve_fn} may break in different kernel versions."
+			_dpatch "${PATCH_OPS}" "${DISTDIR}/${!cve_fn}"
+		else
+			ewarn "No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
+		fi
+	else
+		ewarn "No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
+	fi
+}
+
+# @FUNCTION: apply_cve_2019_16921_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_16921 patch if it needs to
+function apply_cve_2019_16921_hotfix() {
+	local CVE_ID="CVE-2019-16921"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e "struct hns_roce_ib_alloc_ucontext_resp resp = {};" "${S}/drivers/infiniband/hw/hns/hns_roce_main.c" >/dev/null ; then
+		einfo "${CVE_ID} is already patched."
 		return
 	fi
 	if use cve_hotfix ; then
@@ -214,6 +272,7 @@ function fetch_cve_hotfixes() {
 		fetch_cve_2019_16746_hotfix
 		fetch_cve_2019_14814_hotfix
 		fetch_cve_2019_14821_hotfix
+		fetch_cve_2019_16921_hotfix
 		local cve_copyright1="CVE_COPYRIGHT1_${CVE_LANG}"
 		local cve_copyright2="CVE_COPYRIGHT2_${CVE_LANG}"
 		einfo
@@ -221,6 +280,8 @@ function fetch_cve_hotfixes() {
 		einfo "${!cve_copyright2}"
 		einfo
 		einfo "--------------------------------------------------"
+		einfo
+		einfo "You may set CVE_SUBSCRIBE_KERNEL_HOTFIXES=1 in your make.conf to get CVE hotfix updates."
 		einfo
 		sleep 10s
 	fi
@@ -235,5 +296,6 @@ function apply_cve_hotfixes() {
 		apply_cve_2019_16746_hotfix
 		apply_cve_2019_14814_hotfix
 		apply_cve_2019_14821_hotfix
+		apply_cve_2019_16921_hotfix
 	fi
 }
