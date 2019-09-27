@@ -71,6 +71,12 @@ function _fetch_cve_boilerplate_msg() {
 	ewarn "Patch download: ${PS}"
 	ewarn "Patch message: ${!pm}"
 	ewarn
+}
+
+# @FUNCTION: _fetch_cve_boilerplate_msg_footer
+# @DESCRIPTION:
+# Message to report action to user to fix the CVE.
+function _fetch_cve_boilerplate_msg_footer() {
 	ewarn "Re-enable the cve_hotfix USE flag to fix this, or you may ignore this and wait for an official fix."
 	ewarn
 	echo -e "\07" # ring the bell
@@ -81,13 +87,14 @@ function _fetch_cve_boilerplate_msg() {
 # @DESCRIPTION:
 # Checks for the CVE_2019_16746 patch
 function fetch_cve_2019_16746_hotfix() {
+	local CVE_ID="CVE-2019-16746"
 	if grep -F -e "validate_beacon_head" "${S}/net/wireless/nl80211.c" >/dev/null ; then
-		# already patched
+		einfo "${CVE_ID} already patched."
 		return
 	fi
-	local CVE_ID="CVE-2019-16746"
+	_fetch_cve_boilerplate_msg
 	if ! use cve_hotfix ; then
-		_fetch_cve_boilerplate_msg
+		_fetch_cve_boilerplate_msg_footer
 	fi
 }
 
@@ -95,13 +102,14 @@ function fetch_cve_2019_16746_hotfix() {
 # @DESCRIPTION:
 # Checks for the CVE-2019-14814 patch
 function fetch_cve_2019_14814_hotfix() {
+	local CVE_ID="CVE-2019-14814"
 	if grep -F -e "if (le16_to_cpu(ie->ie_length) + vs_ie->len + 2 >" "${S}/drivers/net/wireless/marvell/mwifiex/ie.c" >/dev/null ; then
-		# already patched
+		einfo "${CVE_ID} already patched."
 		return
 	fi
-	local CVE_ID="CVE-2019-14814"
+	_fetch_cve_boilerplate_msg
 	if ! use cve_hotfix ; then
-		_fetch_cve_boilerplate_msg
+		_fetch_cve_boilerplate_msg_footer
 	fi
 }
 
@@ -109,13 +117,14 @@ function fetch_cve_2019_14814_hotfix() {
 # @DESCRIPTION:
 # Checks for the CVE-2019-14821 patch
 function fetch_cve_2019_14821_hotfix() {
+	local CVE_ID="CVE-2019-14821"
 	if grep -F -e "if (!coalesced_mmio_has_room(dev, insert) ||" "${S}/virt/kvm/coalesced_mmio.c" >/dev/null ; then
-		# already patched
+		einfo "${CVE_ID} already patched."
 		return
 	fi
-	local CVE_ID="CVE-2019-14821"
+	_fetch_cve_boilerplate_msg
 	if ! use cve_hotfix ; then
-		_fetch_cve_boilerplate_msg
+		_fetch_cve_boilerplate_msg_footer
 	fi
 }
 
@@ -199,6 +208,9 @@ function apply_cve_2019_14821_hotfix() {
 # Fetches all the CVE kernel patches
 function fetch_cve_hotfixes() {
 	if has cve_hotfix ${IUSE_EFFECTIVE} ; then
+		einfo
+		einfo "--------------------------------------------------"
+		einfo
 		fetch_cve_2019_16746_hotfix
 		fetch_cve_2019_14814_hotfix
 		fetch_cve_2019_14821_hotfix
@@ -208,6 +220,9 @@ function fetch_cve_hotfixes() {
 		einfo "${!cve_copyright1}"
 		einfo "${!cve_copyright2}"
 		einfo
+		einfo "--------------------------------------------------"
+		einfo
+		sleep 10s
 	fi
 }
 
