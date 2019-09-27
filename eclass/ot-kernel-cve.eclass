@@ -165,6 +165,22 @@ function fetch_cve_2019_16921_hotfix() {
 	fi
 }
 
+# @FUNCTION: _resolve_hotfix_default
+# @DESCRIPTION:
+# Applies the fix or warns if not applied
+function _resolve_hotfix_default() {
+	if use cve_hotfix ; then
+		if [ -e "${DISTDIR}/${!cve_fn}" ] ; then
+			einfo "Resolving ${CVE_ID}.  ${!cve_fn} may break in different kernel versions."
+			_dpatch "${PATCH_OPS}" "${DISTDIR}/${!cve_fn}"
+		else
+			ewarn "No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
+		fi
+	else
+		ewarn "No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
+	fi
+}
+
 # @FUNCTION: apply_cve_2019_16746_hotfix
 # @DESCRIPTION:
 # Applies the CVE_2019_16746 patch if it needs to
@@ -177,16 +193,7 @@ function apply_cve_2019_16746_hotfix() {
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
-	if use cve_hotfix ; then
-		if [ -e "${DISTDIR}/${!cve_fn}" ] ; then
-			einfo "Resolving ${CVE_ID}.  ${!cve_fn} may break in different kernel versions."
-			_dpatch "${PATCH_OPS}" "${DISTDIR}/${!cve_fn}"
-		else
-			ewarn "No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
-		fi
-	else
-		ewarn "No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
-	fi
+	_resolve_hotfix_default
 }
 
 # @FUNCTION: apply_cve_2019_14814_hotfix
@@ -201,16 +208,7 @@ function apply_cve_2019_14814_hotfix() {
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
-	if use cve_hotfix ; then
-		if [ -e "${DISTDIR}/${!cve_fn}" ] ; then
-			einfo "Resolving ${CVE_ID}.  ${!cve_fn} may break in different kernel versions."
-			_dpatch "${PATCH_OPS}" "${DISTDIR}/${!cve_fn}"
-		else
-			ewarn "No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
-		fi
-	else
-		ewarn "No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
-	fi
+	_resolve_hotfix_default
 }
 
 # @FUNCTION: apply_cve_2019_14821_hotfix
@@ -225,16 +223,7 @@ function apply_cve_2019_14821_hotfix() {
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
-	if use cve_hotfix ; then
-		if [ -e "${DISTDIR}/${!cve_fn}" ] ; then
-			einfo "Resolving ${CVE_ID}.  ${!cve_fn} may break in different kernel versions."
-			_dpatch "${PATCH_OPS}" "${DISTDIR}/${!cve_fn}"
-		else
-			ewarn "No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
-		fi
-	else
-		ewarn "No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
-	fi
+	_resolve_hotfix_default
 }
 
 # @FUNCTION: apply_cve_2019_16921_hotfix
@@ -249,16 +238,7 @@ function apply_cve_2019_16921_hotfix() {
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
-	if use cve_hotfix ; then
-		if [ -e "${DISTDIR}/${!cve_fn}" ] ; then
-			einfo "Resolving ${CVE_ID}.  ${!cve_fn} may break in different kernel versions."
-			_dpatch "${PATCH_OPS}" "${DISTDIR}/${!cve_fn}"
-		else
-			ewarn "No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
-		fi
-	else
-		ewarn "No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
-	fi
+	_resolve_hotfix_default
 }
 
 # @FUNCTION: fetch_cve_hotfixes
