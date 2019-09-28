@@ -30,6 +30,8 @@ if [[ -n "${CVE_SUBSCRIBE_KERNEL_HOTFIXES}" && "${CVE_SUBSCRIBE_KERNEL_HOTFIXES}
 	IUSE+=" cve_update_${LATEST_CVE_KERNEL_INDEX}"
 fi
 
+CVE_DELAY="${CVE_DELAY:=1}"
+
 CVE_LANG="${CVE_LANG:=en}" # You can define this in your make.conf.  Currently en is only supported.
 
 CVE_2019_16746_FIX_SRC_URI="https://marc.info/?l=linux-wireless&m=156901391225058&q=mbox"
@@ -96,10 +98,10 @@ function _fetch_cve_boilerplate_msg() {
 # @DESCRIPTION:
 # Message to report action to user to fix the CVE.
 function _fetch_cve_boilerplate_msg_footer() {
-	ewarn "Re-enable the cve_hotfix USE flag to fix this, or you may ignore this and wait for an official fix."
+	ewarn "Re-enable the cve_hotfix USE flag to fix this, or you may ignore this and wait for an official fix in later kernel point releases."
 	ewarn
 	echo -e "\07" # ring the bell
-	sleep 30s
+	[[ "${CVE_DELAY}" == "1" ]] && sleep 30s
 }
 
 # @FUNCTION: fetch_cve_2019_16746_hotfix
@@ -263,7 +265,7 @@ function fetch_cve_hotfixes() {
 		einfo
 		einfo "You may set CVE_SUBSCRIBE_KERNEL_HOTFIXES=1 in your make.conf to get CVE hotfix updates."
 		einfo
-		sleep 10s
+		[[ "${CVE_DELAY}" == "1" ]] && sleep 10s
 	fi
 }
 
