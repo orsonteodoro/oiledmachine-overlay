@@ -410,10 +410,12 @@ function fetch_amd_staging_drm_next() {
 		git checkout master
 		git checkout -b amd-staging-drm-next remotes/origin/amd-staging-drm-next
 	else
+		einfo "If you updated the local repos git repos outside of this ebuild or see permission denied, you must manually \`chown -R portage:portage ${d}\`."
 		einfo "Updating amd-staging-drm-next project"
 		cd "${d}"
 		git clean -fdx
 		git reset --hard master
+		git reset --hard origin/master
 		git checkout master
 		git pull
 		git branch -D amd-staging-drm-next
@@ -569,10 +571,12 @@ function fetch_rock() {
 		cd "${d}"
 		git checkout master
 	else
+		einfo "If you updated the local repos git repos outside of this ebuild or see permission denied, you must manually \`chown -R portage:portage ${d}\`."
 		einfo "Updating ROCK project"
 		cd "${d}"
 		git clean -fdx
 		git reset --hard master
+		git reset --hard origin/master
 		git checkout master
 		git pull
 	fi
