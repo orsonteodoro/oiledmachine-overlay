@@ -246,6 +246,7 @@
     <flag name="plugins_fd">Installs the fd plugin.</flag>
     <flag name="plugins_fedora">Installs the fedora plugin.</flag>
     <flag name="plugins_firewalld">Installs the firewalld plugin.</flag>
+    <flag name="plugins_flutter">Installs the flutter plugin.</flag>
     <flag name="plugins_forklift">Installs the forklift plugin.</flag>
     <flag name="plugins_fossil">Installs the fossil plugin.</flag>
     <flag name="plugins_frontend-search">Installs the frontend-search plugin.</flag>
