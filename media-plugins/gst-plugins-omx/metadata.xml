@@ -18,7 +18,6 @@
     <maintainer status="active">
       <name>Shinya Saito</name>
     </maintainer>
-    <remote-id type="gitlab">gstreamer/gst-omx</remote-id>
   </upstream>
   <use>
     <flag name="examples">Builds examples</flag>
