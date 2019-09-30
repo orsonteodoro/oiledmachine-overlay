@@ -18,7 +18,8 @@ RDEPEND="sys-kernel/ot-sources[rock-latest?,rock-milestone?,rock-snapshot?]
 	 dev-libs/rocm-cmake
 	 dev-libs/rocr-runtime"
 DEPEND="${RDEPEND}"
-S="${WORKDIR}/${PN}-${PV}"
+MY_PN="rocminfo-roc"
+S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
 
 src_configure() {
