@@ -17,6 +17,7 @@ IUSE="rpi omx-bellagio omx-tizonia examples test"
 
 # FIXME: What >=media-libs/gst-plugins-bad-1.4.0:1.0[gl] stuff for non-rpi?
 RDEPEND="
+	>=dev-libs/glib-2.40.0
 	>=media-libs/gstreamer-${PV}:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/gst-plugins-good-${PV}:1.0[${MULTILIB_USEDEP}]
@@ -29,9 +30,10 @@ RDEPEND="
 "
 DEPEND="${RDEPEND}
 	>=dev-util/gtk-doc-am-1.3
+	>=dev-util/meson-0.47
 	virtual/pkgconfig
 "
-REQUIRED_USE="|| ( rpi omx-bellagio omx-tizonia )"
+REQUIRED_USE="^^ ( rpi omx-bellagio omx-tizonia )"
 
 S="${WORKDIR}/${MY_PN}-${PV}"
 

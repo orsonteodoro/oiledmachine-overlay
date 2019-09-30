@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <!-- only for this ebuild fork on oiledmachine-overlay -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    This plugin wraps available OpenMAX IL components and makes them available as standard GStreamer elements.
+  </longdescription>
+  <upstream>
+    <bugs-to>https://bugzilla.gnome.org/enter_bug.cgi?product=GStreamer</bugs-to>
+    <changelog>https://gitlab.freedesktop.org/gstreamer/gst-omx/blob/master/ChangeLog</changelog>
+    <maintainer status="active">
+      <name>Guillaume Desmottes</name>
+    </maintainer>
+    <maintainer status="active">
+      <name>Shinya Saito</name>
+    </maintainer>
+    <remote-id type="gitlab">gstreamer/gst-omx</remote-id>
+  </upstream>
+  <use>
+    <flag name="examples">Builds examples</flag>
+    <flag name="omx-bellagio">Use Bellagio as the OpenMAX IL target.</flag>
+    <flag name="omx-tizonia">Use Tizonia as the OpenMAX IL target.</flag>
+    <flag name="rpi">Use Raspberry Pi as the OpenMAX IL target.</flag>
+    <flag name="test">Builds tests</flag>
+  </use>
+</pkgmetadata>
