@@ -1,18 +1,16 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-inherit eutils cmake-utils multilib-minimal multilib-build
-
-COMMIT="0f9f4bc3d0c6880f673e04cb089aac878331f5ae"
+inherit cmake-utils
 
 DESCRIPTION="ROCm Application for Reporting System Info "
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocminfo"
-SRC_URI="https://github.com/RadeonOpenCompute/rocminfo/archive/${COMMIT}.zip -> ${PN}-${PV}.zip"
+SRC_URI="https://github.com/RadeonOpenCompute/rocminfo/archive/roc-${PV}.tar.gz -> ${PV}.tar.gz"
 
 LICENSE="NCSA"
-SLOT="0"
+SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="~amd64 ~x86"
 IUSE="rock-latest rock-milestone rock-snapshot"
 REQUIRED_USE="|| ( rock-latest rock-milestone rock-snapshot )"
@@ -22,21 +20,13 @@ RDEPEND="sys-kernel/ot-sources[rock-latest?,rock-milestone?,rock-snapshot?]
 	 dev-libs/rocm-cmake
 	 dev-libs/rocr-runtime"
 DEPEND="${RDEPEND}"
-S="${WORKDIR}/${PN}-${COMMIT}"
+S="${WORKDIR}/${PN}-${PV}"
 
-src_prepare() {
-	cmake-utils_src_prepare
-	multilib_copy_sources
-}
-
-multilib_src_configure() {
+src_configure() {
+	local mycmakeargs=(
+		-DROCM_DIR="${ESYSROOT}/usr"
+		-DROCR_INC_DIR="${ESYSROOT}/usr/include"
+		-DROCR_LIB_DIR="${EPREFIX}/usr/$(get_libdir)"
+	)
 	cmake-utils_src_configure
-}
-
-multilib_src_compile() {
-	cmake-utils_src_compile
-}
-
-multilib_src_install() {
-	cmake-utils_src_install
 }
