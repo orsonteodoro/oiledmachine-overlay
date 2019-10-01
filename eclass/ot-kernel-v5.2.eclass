@@ -57,7 +57,7 @@ AMD_STAGING_DRM_NEXT_MILESTONE="e51341620d8958fdb950ff4e3513e8134b30c35b" # corr
 ROCK_DIR="ROCK-Kernel-Driver"
 # ROCK_BASE should match ${PV}'s DC_VER
 ROCK_BASE="be24e5a1149ddf4f4d97cafe5d82e868b2748e53" # 2019-04-08 drm/amd/display: 3.2.27
-## commit below pulls additional commits that 3.2.27 depends on that were missing
+## commit below pulls additional commits further back that 3.2.27 depends on that were missing
 #ROCK_BASE="" #
 # before .program_vline_interrupt = optc1_program_vline_interrupt,
 ROCK_SNAPSHOT="b639e86df2f3456976ccbc089778245a705ff9ef" # corresponds to master snapshot at 2019-04-24 Revert "drm/amdgpu: re-enable retry faults"

@@ -118,6 +118,8 @@ TRESOR_SRC_URL="${TRESOR_README_DL_URL} -> ${TRESOR_README_FN}"
 KERNEL_INC_BASEURL="https://cdn.kernel.org/pub/linux/kernel/v${K_PATCH_XV}/incr/"
 KERNEL_PATCH_0_TO_1_URL="https://cdn.kernel.org/pub/linux/kernel/v${K_PATCH_XV}/patch-${K_MAJOR_MINOR}.1.xz"
 
+LINUX_REPO_URL="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git"
+
 if [[ -n "${KERNEL_NO_POINT_RELEASE}" && "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; then
 	KERNEL_PATCH_URLS=()
 elif [[ -n "${KERNEL_0_TO_1_ONLY}" && "${KERNEL_0_TO_1_ONLY}" == "1" ]] ; then
@@ -391,6 +393,40 @@ function fetch_zentune() {
 	wget -O "${T}/${ZENTUNE_FN}" "${ZENTUNE_DL_URL}" || die
 }
 
+function fetch_linux_sources() {
+	einfo "Fetching vanilla Linux kernel sources.  It may take hours."
+	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	cd "${DISTDIR}"
+	d="${distdir}/ot-sources-src/linux"
+	b="${distdir}/ot-sources-src"
+	addwrite "${b}"
+	cd "${b}"
+	if [[ ! -d "${d}" ]] ; then
+		mkdir -p "${d}"
+		einfo "Cloning vanilla Linux kernel"
+		git clone "${LINUX_REPO_URL}" "${d}"
+		cd "${d}"
+		git checkout master
+		git checkout -b v${K_MAJOR_MINOR} tags/v${K_MAJOR_MINOR}
+	else
+		local G=$(find "${d}" -group "root")
+		if (( ${#G} > 0 )) ; then
+			die "You must manually \`chown -R portage:portage ${d}\`.  Re-emerge again."
+		fi
+		einfo "Updating vanilla Linux kernel sources"
+		cd "${d}"
+		git clean -fdx
+		git reset --hard master
+		git reset --hard origin/master
+		git checkout master
+		git pull
+		git branch -D v${K_MAJOR_MINOR}
+		git checkout -b v${K_MAJOR_MINOR} tags/v${K_MAJOR_MINOR}
+		git pull
+	fi
+	cd "${d}"
+}
+
 # @FUNCTION: fetch_amd_staging_drm_next
 # @DESCRIPTION:
 # Clones or updates the amd-staging-drm-next patchset for recent fixes or GPU compatibility updates.
@@ -410,7 +446,10 @@ function fetch_amd_staging_drm_next() {
 		git checkout master
 		git checkout -b amd-staging-drm-next remotes/origin/amd-staging-drm-next
 	else
-		einfo "If you updated the local repos git repos outside of this ebuild or see permission denied, you must manually \`chown -R portage:portage ${d}\`."
+		local G=$(find "${d}" -group "root")
+		if (( ${#G} > 0 )) ; then
+			die "You must manually \`chown -R portage:portage ${d}\`.  Re-emerge again."
+		fi
 		einfo "Updating amd-staging-drm-next project"
 		cd "${d}"
 		git clean -fdx
@@ -425,22 +464,7 @@ function fetch_amd_staging_drm_next() {
 	cd "${d}"
 }
 
-# @FUNCTION: fetch_amd_staging_drm_next_commits
-# @DESCRIPTION:
-# Pulls all the commits as .patch files to be individually evaluated.  It
-# also pulls required missing commits to smooth out the patching process.
-#
-# ot-kernel-common_fetch_amd_staging_drm_next_commits_extra_patches1 - callback to reorder or fetch patches
-# ot-kernel-common_fetch_amd_staging_drm_next_commits_extra_patches1_num - callback to set the next patch number
-# ot-kernel-common_fetch_amd_staging_drm_next_commits_extra_patches2 - callback to apply additonal patches
-#   for fixes to patches before the patching proces
-#
-function fetch_amd_staging_drm_next_commits() {
-	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	d="${distdir}/ot-sources-src/linux-${AMD_STAGING_DRM_NEXT_DIR}"
-	cd "${d}"
-
-	local target
+function set_amd_staging_drm_next_commits_target_base() {
 	if use amd-staging-drm-next-snapshot ; then
 		target="${AMD_STAGING_DRM_NEXT_SNAPSHOT}"
 	elif use amd-staging-drm-next-latest ; then
@@ -451,8 +475,6 @@ function fetch_amd_staging_drm_next_commits() {
 		target="${AMD_STAGING_DRM_NEXT_STABLE}"
 	fi
 
-	# base is not inclusive
-	local base
 	if   use amd-staging-drm-next-latest && use rock-latest ; then
 		einfo "amd-staging-drm-next-latest and rock-latest"
 		base="${AMD_STAGING_LATEST_INTERSECTS_ROCK_LATEST}"
@@ -490,6 +512,29 @@ function fetch_amd_staging_drm_next_commits() {
 	else
 		die "cannot handle case"
 	fi
+}
+
+# @FUNCTION: fetch_amd_staging_drm_next_commits
+# @DESCRIPTION:
+# Pulls all the commits as .patch files to be individually evaluated.  It
+# also pulls required missing commits to smooth out the patching process.
+#
+# ot-kernel-common_fetch_amd_staging_drm_next_commits_extra_patches1 - callback to reorder or fetch patches
+# ot-kernel-common_fetch_amd_staging_drm_next_commits_extra_patches1_num - callback to set the next patch number
+# ot-kernel-common_fetch_amd_staging_drm_next_commits_extra_patches2 - callback to apply additonal patches
+#   for fixes to patches before the patching proces
+#
+function fetch_amd_staging_drm_next_commits() {
+	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	d="${distdir}/ot-sources-src/linux-${AMD_STAGING_DRM_NEXT_DIR}"
+	cd "${d}"
+
+	local target
+
+	# base is not inclusive
+	local base
+
+	set_amd_staging_drm_next_commits_target_base
 
 	mkdir -p "${T}/amd-staging-drm-next-patches"
 	if ! is_rock ; then
@@ -505,11 +550,12 @@ function fetch_amd_staging_drm_next_commits() {
 	fi
 
 	einfo "Saving only the amd-staging-drm-next commits for commit-by-commit evaluation."
-	L=$(git log ${base}..${target} --oneline --pretty=format:"%H %s %ce" | grep -e "@amd.com" | grep -v -e "uapi:" -e "drm/v3d" | cut -c 1-40 | tac)
+	einfo "Doing commit -> .patch conversion for amd-staging-drm-next-patches set:"
+	L=$(git log ${base}..${target} --oneline --pretty=format:"%H%x07%s%x07%ce" | grep -e "@amd.com" | grep -v -e "uapi:" -e "drm/v3d" | cut -f1 -d$'\007' | tac)
 	for l in $L ; do
-	        einfo "$n $l"
 		printf -v pn "%06d" ${n}
 	        git format-patch --stdout -1 $l > "${T}"/amd-staging-drm-next-patches/${pn}-$l.patch
+	        einfo "Added ${pn}-$l.patch"
 	        n=$((n+1))
 	done
 
@@ -571,7 +617,10 @@ function fetch_rock() {
 		cd "${d}"
 		git checkout master
 	else
-		einfo "If you updated the local repos git repos outside of this ebuild or see permission denied, you must manually \`chown -R portage:portage ${d}\`."
+		local G=$(find "${d}" -group "root")
+		if (( ${#G} > 0 )) ; then
+			die "You must manually \`chown -R portage:portage ${d}\`.  Re-emerge again."
+		fi
 		einfo "Updating ROCK project"
 		cd "${d}"
 		git clean -fdx
@@ -607,12 +656,12 @@ function prepend_rock_commit() {
 	local idx
 	local f
 	f=$(basename $(ls "${d}"/*${commit_b_postfix_before}*${commit_b}*))
-	idx=$(echo ${f} | cut -c 1-6)
+	idx=$(echo ${f} | cut -f1 -d'-')
 	if [[ "${f}" != "${idx}${commit_b_postfix_after}-${commit_b}.patch" ]] ; then
 		mv "${d}"/${f} "${d}"/${idx}${commit_b_postfix_after}-${commit_b}.patch
 	fi
 	_get_rock_commit $(echo ${idx} | sed 's/^0*//') ${commit_a} "${commit_a_postfix}"
-	sha1sum "${d}"/${idx}${commit_a_postfix}-${commit_a}.patch | cut -c 1-40 >> "${T}"/hashes
+	sha1sum "${d}"/${idx}${commit_a_postfix}-${commit_a}.patch | cut -f1 -d' ' >> "${T}"/hashes
 }
 
 # @FUNCTION: move_rock_commit
@@ -633,8 +682,8 @@ function move_rock_commit() {
 	local idx
 	local f
 	f=$(basename $(ls "${d}"/*${postfix_before}*${commit}*))
-	idx=$(echo ${f} | cut -c 1-6)
-	einfo "idx=${idx} f=${f}"
+	idx=$(echo ${f} | cut -f1 -d'-')
+	einfo "move_rock_commit:  idx=${idx} f=${f}"
 	mv "${d}"/${f} "${d}"/${idx}${postfix_after}-${commit}.patch || die
 	einfo "Moved to ${idx}${postfix_after}-${commit}.patch"
 }
@@ -654,10 +703,28 @@ function get_patch_index() {
 	local idx
 	local f
 	f=$(basename $(ls "${d}"/*${commit}*))
-	idx=$(echo ${f} | cut -c 1-6 | sed 's/^0*//')
+	idx=$(echo ${f} | cut -f1 -d'-' | sed 's/^0*//')
 	echo ${idx}
 }
 
+# @FUNCTION: get_linux_commit_list_for_rock
+# @DESCRIPTION:
+# Gets the list of ROCK commits between ROCK_BASE and v${K_MAJOR_MINOR}
+function get_linux_commit_list_for_rock() {
+	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	d="${distdir}/ot-sources-src/linux"
+	cd "${d}"
+	einfo "Grabbing list of already merged rock commits in v${K_MAJOR_MINOR}."
+	L=$(git log ${ROCK_BASE}..v${K_MAJOR_MINOR} --oneline --pretty=format:"%H%x07%s%x07%ce" | grep -e "@amd.com" | \
+			cut -f1 -d$'\007' | tac)
+
+	cat /dev/null > "${T}/linux.commits.rock"
+	for l in $L ; do
+		echo "${l}" >> "${T}/linux.commits.rock"
+	done
+}
+
+# DEPRECATED: TO BE REMOVED
 # @FUNCTION: fetch_rock_commits
 # @DESCRIPTION:
 # Grabs all the commits and generates .patch files for individual evaluation.
@@ -678,8 +745,8 @@ function fetch_rock_commits() {
 	git checkout ${target} . || die
 
 	einfo "Saving only the AMD ROCK commits for commit-by-commit evaluation."
-	L=$(git log ${ROCK_BASE}..${target} --oneline --pretty=format:"%H %s %ce" | grep -e "@amd.com" | \
-			cut -c 1-40 | tac)
+	L=$(git log ${ROCK_BASE}..${target} --oneline --pretty=format:"%H%x07%s%x07%ce" | grep -e "@amd.com" | \
+			cut -f1 -d$'\007' | tac)
 	mkdir -p "${T}/rock-patches"
 
 	n="${NEXT_ROCK_COMMIT}"
@@ -688,23 +755,28 @@ function fetch_rock_commits() {
 		ot-kernel-common_fetch_rock_commits_patchset1
 	fi
 
+	OIFS="${IFS}"
+	IFS=$'\n'
 	local p
+	einfo "Doing commit -> .patch conversion for rock-patches set:"
 	for l in $L ; do
-	        einfo "$n $l"
 		printf -v pn "%06d" ${n}
 		p="${T}"/rock-patches/${pn}-$l.patch
 	        git format-patch --stdout -1 $l > "${T}"/rock-patches/${pn}-$l.patch
-		h=$(sha1sum ${p} | cut -c 1-40)
+		h=$(sha1sum ${p} | cut -f1 -d' ')
 
 		# avoid adding duplicates
 		grep -F -e "${h}" "${T}"/hashes > /dev/null
 		if [[ "$?" == "1" ]] ; then
+		        einfo "Added ${pn}-$l.patch"
 		        n=$((n+1))
 		else
-			einfo "Found dupe $(basename ${p} | cut -c 8-47)"
+			h=$(basename ${p} | sed -e "s|[.]|-|" | cut -f2 -d'-')
+			einfo "Found dupe ${h}"
 			rm "${p}" || die
 		fi
 	done
+	IFS="${OIFS}"
 
 	if declare -f ot-kernel-common_fetch_rock_commits_patchset2 > /dev/null ; then
 		ot-kernel-common_fetch_rock_commits_patchset2
@@ -719,45 +791,79 @@ function get_missing_rock_commits_list() {
 	local index
 
 	index=1
-	d_staging="${distdir}/ot-sources-src/linux-${AMD_STAGING_DRM_NEXT_DIR}"
-	cd "${d_staging}"
-	einfo "Generating commit list for amd-staging-drm-next."
-	git log --reverse --pretty=tformat:"%H %s" > "${T}"/amd-staging-drm-next.commits
 
-	cat /dev/null > "${T}"/amd-staging-drm-next.commits.indexed.${PVR}
-	L=$(cat "${T}"/amd-staging-drm-next.commits)
-	IFS=$'\n'
-	A=""
-	for l in ${L} ; do
-		printf -v pindex "%06d" ${index}
-		echo "${pindex} ${l}" >> "${T}"/amd-staging-drm-next.commits.indexed.${PVR}
-		index=$((${index} + 1))
-	done
-	unset IFS
+	touch "${T}"/amd-staging-drm-next.commits
+	touch "${T}"/amd-staging-drm-next.commits.indexed.${PVR}
+
+	if is_amd_staging_drm_next ; then
+		d_staging="${distdir}/ot-sources-src/linux-${AMD_STAGING_DRM_NEXT_DIR}"
+		cd "${d_staging}"
+		einfo "Generating commit list for amd-staging-drm-next."
+		git log --reverse --pretty=tformat:"%H%x07%s" | column -t -s $'\007' -o $'\t' > "${T}"/amd-staging-drm-next.commits
+
+		cat /dev/null > "${T}"/amd-staging-drm-next.commits.indexed.${PVR}
+		L=$(cat "${T}"/amd-staging-drm-next.commits)
+		OIFS="${IFS}"
+		IFS=$'\n'
+		A=""
+		for l in ${L} ; do
+			printf -v pindex "%06d" ${index}
+			echo -e "${pindex}\t${l}" >> "${T}"/amd-staging-drm-next.commits.indexed.${PVR}
+			index=$((${index} + 1))
+		done
+		IFS="${OIFS}"
+	fi
 
 	index=1
 	d_rock="${distdir}/ot-sources-src/linux-${ROCK_DIR}"
 	cd "${d_rock}"
+
+	local target
+	if use rock-snapshot ; then
+		target="${ROCK_SNAPSHOT}"
+	elif use rock-latest ; then
+		target="${ROCK_LATEST}"
+	else
+		target="${ROCK_MILESTONE}"
+	fi
+
+	git checkout ${target} . || die
+
 	einfo "Generating commit list for ROCK."
-	git log --reverse --pretty=tformat:"%H %s" > "${T}"/rock.commits
+	git log ${ROCK_BASE}..${target} --reverse --pretty=tformat:"%H%x07%s" | column -t -s $'\007' -o $'\t' > "${T}"/rock.commits
 
 	cat /dev/null > "${T}"/rock.commits.indexed.${PVR}
 	L=$(cat "${T}"/rock.commits)
+	OIFS="${IFS}"
 	IFS=$'\n'
 	A=""
 	for l in ${L} ; do
 		printf -v pindex "%06d" ${index}
-		echo "${pindex} ${l}" >> "${T}"/rock.commits.indexed.${PVR}
+		echo -e "${pindex}\t${l}" >> "${T}"/rock.commits.indexed.${PVR}
 		index=$((${index} + 1))
 	done
-	unset IFS
+	IFS="${OIFS}"
 
-	cat "${T}"/amd-staging-drm-next.commits.indexed.${PVR} | cut -c 49- | sort > "${T}"/amd-staging-drm-next.summaries
-	cat "${T}"/rock.commits.indexed.${PVR} | cut -c 49- | sort > "${T}"/rock.summaries
+	cat "${T}"/amd-staging-drm-next.commits.indexed.${PVR} | cut -f3 | sort > "${T}"/amd-staging-drm-next.summaries
+	cat "${T}"/rock.commits.indexed.${PVR} | cut -f3 | sort > "${T}"/rock.summaries
 
+	# It's important that amd-staging-drm-next- USE flag be enabled or else all the commits will be pulled in rock.commits.indexed.${PVR}.
+	# A cached copy of amd-staging-drm-next.commits can be used with modifcations below, or one can modify the below section to compare against the linux vanilla commit list if the amd-staging-drm-next- USE flag is disabled.
+
+	# The ROCK patch set is the set of commits assumed to be the set not in amd-staging-drm-next commit set
 	einfo "Comparing commit lists"
-	diff -urp "${T}"/rock.summaries "${T}"/amd-staging-drm-next.summaries > "${T}"/results
-	grep -e "^-" "${T}"/results | cut -c 2- > "${T}"/results.no-dash
+	diff -urp "${T}"/rock.summaries "${T}"/amd-staging-drm-next.summaries | tail -n +3 > "${T}"/results
+	grep -a -P -e "^-" "${T}"/results | cut -c 2- > "${T}"/results.no-dash
+}
+
+# @FUNCTION: _add_rock_patch
+# @DESCRIPTION:
+# Add rock patch and increments index
+function _add_rock_patch() {
+	git format-patch --stdout -1 ${c} > "${p}" || die
+	einfo "Added ${pindex}-${c}.patch"
+	sha1sum ${p} | cut -f1 -d' ' >> "${T}"/hashes
+	index=$((index + 1))
 }
 
 # @FUNCTION: get_missing_rock_commits
@@ -768,7 +874,7 @@ function get_missing_rock_commits() {
 	mkdir -p "${T}"/rock-patches
 	local index
 
-	OIFS=${IFS}
+	OIFS="${IFS}"
 	IFS=$'\n'
 	L=$(cat "${T}"/results.no-dash)
 
@@ -776,24 +882,48 @@ function get_missing_rock_commits() {
 
 	einfo "Picking commits"
 	for l in ${L} ; do
-		grep -F -e "${l}" "${T}/rock.commits.indexed.${PVR}" >> "${T}/rock.found"
+		if echo "${l}" | grep -P -q -e "\[(RHEL|SLE)?[ .0-9_]+\]" ; then
+			echo "Rejected ${l} because it does not apply to v${K_MAJOR_MINOR} kernel version."
+		else
+			grep -a -F -e "${l}" "${T}/rock.commits.indexed.${PVR}" >> "${T}/rock.found"
+		fi
 	done
+
+	# drm/amdgpu: remove chash (04ed8459f3348f95c119569338e39294a8e02349) gets removed in +5.2 we need to add it temporarly for smoother patching
+	# the patch below will re add it back
+
+	# /drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c
+	# gets renamed in 2fbd6f94accdbb223acccada68940b50b0c668d9
+	# drm/amdgpu: rename amdgpu_prime.[ch] into amdgpu_dma_buf.[ch]
+	# may 6, 2019
+	# reverse the patch
+
+	# inject missing patches
+	# This one was in 5.1 vanilla repo but does not show up in the tarball
+	echo -e "000000\t5d86b2c391965cbcb295e8fa795276977b2a416e\tdrm/amd: Closed hash table with low overhead (v2)" >> "${T}/rock.found" || die
 
 	cat "${T}"/rock.found | sort | uniq > "${T}"/rock.found.sorted
 
-	cat /dev/null > "${T}"/hashes
-	C=$(cat "${T}"/rock.found.sorted | cut -c 8-47)
-	einfo "Generating commits"
 	index=1
-	local p
-	for c in ${C} ; do
-		einfo "$index ${c}"
-		printf -v pindex "%06d" ${index}
-		p="${T}"/rock-patches/${pindex}-${c}.patch
-		git format-patch --stdout -1 ${c} > "${p}" || die
-		sha1sum ${p} | cut -c 1-40 >> "${T}"/hashes
-		index=$((index + 1))
-	done
+	cat /dev/null > "${T}"/hashes
+	if [[ $(stat -c %s "${T}/rock.found.sorted") != "0" ]] ; then
+		C=$(cat "${T}"/rock.found.sorted | cut -f2)
+		einfo "Saving only the missing ROCK commits for commit-by-commit evaluation."
+		local p
+		for c in ${C} ; do
+			printf -v pindex "%06d" ${index}
+			p="${T}"/rock-patches/${pindex}-${c}.patch
+
+			if [[ "${c}" == "5d86b2c391965cbcb295e8fa795276977b2a416e" || \
+			      "${c}" == "2fbd6f94accdbb223acccada68940b50b0c668d9" ]] ; then
+				_add_rock_patch
+			elif grep -q -a -F -e "${c}" "${T}/linux.commits.rock" ; then
+				einfo "Already merged ${c} in vanilla linux kernel v${K_MAJOR_MINOR}.  Skipping..."
+			else
+				_add_rock_patch
+			fi
+		done
+	fi
 	export NEXT_ROCK_COMMIT="${index}"
 	IFS="${OIFS}"
 	einfo "NEXT_ROCK_COMMIT=${NEXT_ROCK_COMMIT}"
@@ -803,11 +933,29 @@ function get_missing_rock_commits() {
 # @DESCRIPTION:
 # Generalization of steps for fetching and generating commit list.
 function fetch_staging_with_rock() {
+	if is_amd_staging_drm_next || is_rock; then
+		if [[ -z "$OT_KERNEL_CACHED_COMMITS" ]] ; then
+			fetch_linux_sources
+		else
+			fetch_linux_sources_cached
+		fi
+	fi
 	if is_amd_staging_drm_next ; then
-		fetch_amd_staging_drm_next
+		get_linux_commit_list_for_amd_staging_drm_next
+		if [[ -z "$OT_KERNEL_CACHED_COMMITS" ]] ; then
+			fetch_amd_staging_drm_next
+		else
+			fetch_amd_staging_drm_next_cached
+		fi
 	fi
 	if is_rock ; then
 		fetch_rock
+
+		if [[ -z "$OT_KERNEL_CACHED_COMMITS" ]] ; then
+			get_linux_commit_list_for_rock
+		else
+			get_linux_commit_list_for_rock_cached
+		fi
 
 		get_missing_rock_commits_list
 		get_missing_rock_commits

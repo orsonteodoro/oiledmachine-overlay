@@ -21,7 +21,7 @@ LICENSE+=" cve_hotfix? ( GPL-2 )"
 inherit ot-kernel-cve-en
 
 # based on my last edit in unix timestamp (date -u +%Y%m%d_%I%M_%p_%Z)
-LATEST_CVE_KERNEL_INDEX="20190927_1122_PM_UTC"
+LATEST_CVE_KERNEL_INDEX="20191001_0325_AM_UTC"
 LATEST_CVE_KERNEL_INDEX="${LATEST_CVE_KERNEL_INDEX,,}"
 
 # this will trigger a kernel re-install based on use flag timestamp
@@ -66,10 +66,28 @@ CVE_2019_16921_PM="https://github.com/torvalds/linux/commit/df7e40425813c50cd252
 CVE_2019_16921_SUMMARY_LANG="CVE_2019_16921_SUMMARY_${CVE_LANG}"
 CVE_2019_16921_SUMMARY="${!CVE_2019_16921_SUMMARY_LANG}"
 
+CVE_2019_16994_FIX_SRC_URI="https://github.com/torvalds/linux/commit/07f12b26e21ab359261bf75cfcb424fdc7daeb6d.patch"
+CVE_2019_16994_FN="CVE-2019-16994-fix--linux-net-sit-fix-memory-leak-in-sit_init_net.patch"
+CVE_2019_16994_SEVERITY_LANG="CVE_2019_16994_SEVERITY_${CVE_LANG}"
+CVE_2019_16994_SEVERITY="${!CVE_2019_16994_SEVERITY_LANG}"
+CVE_2019_16994_PM="https://github.com/torvalds/linux/commit/07f12b26e21ab359261bf75cfcb424fdc7daeb6d"
+CVE_2019_16994_SUMMARY_LANG="CVE_2019_16994_SUMMARY_${CVE_LANG}"
+CVE_2019_16994_SUMMARY="${!CVE_2019_16994_SUMMARY_LANG}"
+
+CVE_2019_16995_FIX_SRC_URI="https://github.com/torvalds/linux/commit/6caabe7f197d3466d238f70915d65301f1716626.patch"
+CVE_2019_16995_FN="CVE-2019-16995-fix--linux-net-hsr-fix-memory_leak-in-hsr_dev_finalize.patch"
+CVE_2019_16995_SEVERITY_LANG="CVE_2019_16995_SEVERITY_${CVE_LANG}"
+CVE_2019_16995_SEVERITY="${!CVE_2019_16995_SEVERITY_LANG}"
+CVE_2019_16995_PM="https://github.com/torvalds/linux/commit/6caabe7f197d3466d238f70915d65301f1716626"
+CVE_2019_16995_SUMMARY_LANG="CVE_2019_16995_SUMMARY_${CVE_LANG}"
+CVE_2019_16995_SUMMARY="${!CVE_2019_16995_SUMMARY_LANG}"
+
 SRC_URI+=" cve_hotfix? ( ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 			 ${CVE_2019_14814_FIX_SRC_URI} -> ${CVE_2019_14814_FN}
 			 ${CVE_2019_14821_FIX_SRC_URI} -> ${CVE_2019_14821_FN}
-			 ${CVE_2019_16921_FIX_SRC_URI} -> ${CVE_2019_16921_FN} )"
+			 ${CVE_2019_16921_FIX_SRC_URI} -> ${CVE_2019_16921_FN}
+			 ${CVE_2019_16994_FIX_SRC_URI} -> ${CVE_2019_16994_FN}
+			 ${CVE_2019_16995_FIX_SRC_URI} -> ${CVE_2019_16995_FN} )"
 
 # @FUNCTION: _fetch_cve_boilerplate_msg
 # @DESCRIPTION:
@@ -167,6 +185,38 @@ function fetch_cve_2019_16921_hotfix() {
 	fi
 }
 
+
+# @FUNCTION: fetch_cve_2019_16994_hotfix
+# @DESCRIPTION:
+# Checks for the CVE-2019-16994 patch
+function fetch_cve_2019_16994_hotfix() {
+	local CVE_ID="CVE-2019-16994"
+	if grep -F -e "free_netdev(sitn->fb_tunnel_dev);" "${S}/net/ipv6/sit.c" >/dev/null ; then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	if ! use cve_hotfix ; then
+		_fetch_cve_boilerplate_msg_footer
+	fi
+}
+
+# @FUNCTION: fetch_cve_2019_16995_hotfix
+# @DESCRIPTION:
+# Checks for the CVE-2019-16995 patch
+function fetch_cve_2019_16995_hotfix() {
+	local CVE_ID="CVE-2019-16995"
+	if grep -F -e "goto err_add_port;" "${S}/net/hsr/hsr_device.c" >/dev/null ; then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	if ! use cve_hotfix ; then
+		_fetch_cve_boilerplate_msg_footer
+	fi
+}
+
+
 # @FUNCTION: _resolve_hotfix_default
 # @DESCRIPTION:
 # Applies the fix or warns if not applied
@@ -243,6 +293,36 @@ function apply_cve_2019_16921_hotfix() {
 	_resolve_hotfix_default
 }
 
+# @FUNCTION: apply_cve_2019_16994_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_16994 patch if it needs to
+function apply_cve_2019_16994_hotfix() {
+	local CVE_ID="CVE-2019-16994"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e "free_netdev(sitn->fb_tunnel_dev);" "${S}/net/ipv6/sit.c" >/dev/null ; then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_16995_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_16995 patch if it needs to
+function apply_cve_2019_16995_hotfix() {
+	local CVE_ID="CVE-2019-16995"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e "goto err_add_port;" "${S}/net/hsr/hsr_device.c" >/dev/null ; then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
 # @FUNCTION: fetch_cve_hotfixes
 # @DESCRIPTION:
 # Fetches all the CVE kernel patches
@@ -255,6 +335,8 @@ function fetch_cve_hotfixes() {
 		fetch_cve_2019_14814_hotfix
 		fetch_cve_2019_14821_hotfix
 		fetch_cve_2019_16921_hotfix
+		fetch_cve_2019_16994_hotfix
+		fetch_cve_2019_16995_hotfix
 		local cve_copyright1="CVE_COPYRIGHT1_${CVE_LANG}"
 		local cve_copyright2="CVE_COPYRIGHT2_${CVE_LANG}"
 		einfo
@@ -279,5 +361,7 @@ function apply_cve_hotfixes() {
 		apply_cve_2019_14814_hotfix
 		apply_cve_2019_14821_hotfix
 		apply_cve_2019_16921_hotfix
+		apply_cve_2019_16994_hotfix
+		apply_cve_2019_16995_hotfix
 	fi
 }
