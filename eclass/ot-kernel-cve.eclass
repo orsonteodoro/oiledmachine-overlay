@@ -75,7 +75,7 @@ CVE_2019_16994_SUMMARY_LANG="CVE_2019_16994_SUMMARY_${CVE_LANG}"
 CVE_2019_16994_SUMMARY="${!CVE_2019_16994_SUMMARY_LANG}"
 
 CVE_2019_16995_FIX_SRC_URI="https://github.com/torvalds/linux/commit/6caabe7f197d3466d238f70915d65301f1716626.patch"
-CVE_2019_16995_FN="CVE-2019-16995-fix--linux-net-hsr-fix-memory_leak-in-hsr_dev_finalize.patch"
+CVE_2019_16995_FN="CVE-2019-16995-fix--linux-net-hsr-fix-memory-leak-in-hsr_dev_finalize.patch"
 CVE_2019_16995_SEVERITY_LANG="CVE_2019_16995_SEVERITY_${CVE_LANG}"
 CVE_2019_16995_SEVERITY="${!CVE_2019_16995_SEVERITY_LANG}"
 CVE_2019_16995_PM="https://github.com/torvalds/linux/commit/6caabe7f197d3466d238f70915d65301f1716626"
