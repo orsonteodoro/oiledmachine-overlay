@@ -882,7 +882,12 @@ function get_missing_rock_commits() {
 
 	einfo "Picking commits"
 	for l in ${L} ; do
-		if echo "${l}" | grep -P -q -e "\[(RHEL|SLE)?[ .0-9_]+\]" ; then
+		if echo "${l}" | grep -F -q -e "drm/amdkcl: [4.5] add drm_pcie_get_max_link_width()" ; then
+			# Required by
+			# Commit:  ca15ec98d6ee4216ab8fef54d544e8efb170e684
+			# Subject: [PATCH] drm/amdkcl: fix fb functions
+			grep -a -F -e "${l}" "${T}/rock.commits.indexed.${PVR}" >> "${T}/rock.found"
+		elif echo "${l}" | grep -P -q -e "\[(RHEL|SLE)?[ .0-9_]+\]" ; then
 			echo "Rejected ${l} because it does not apply to v${K_MAJOR_MINOR} kernel version."
 		else
 			grep -a -F -e "${l}" "${T}/rock.commits.indexed.${PVR}" >> "${T}/rock.found"

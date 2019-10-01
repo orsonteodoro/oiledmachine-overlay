@@ -1,0 +1,10 @@
+--- a/drivers/gpu/drm/amd/amdkcl/Makefile.orig	2019-10-01 02:13:34.975173844 -0700
++++ b/drivers/gpu/drm/amd/amdkcl/Makefile	2019-10-01 02:18:36.668186203 -0700
+@@ -1,6 +1,6 @@
+ LINUXINCLUDE := $(DKMS_INCLUDE_PREFIX) $(LINUXINCLUDE)
+ 
+ amdkcl-y += kcl_drm.o main.o symbols.o kcl_fence.o \
+-	kcl_kthread.o
++	kcl_kthread.o kcl_pci.o
+ 
+ obj-m += amdkcl.o

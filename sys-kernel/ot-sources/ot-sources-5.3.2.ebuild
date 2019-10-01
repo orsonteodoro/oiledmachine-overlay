@@ -3,7 +3,6 @@
 
 EAPI="6"
 
-KERNEL_0_TO_1_ONLY="1"
 K_GENPATCHES_VER="3"
 PATCH_BMQ_VER="100"
 
@@ -42,6 +41,7 @@ src_install() {
 }
 
 pkg_postinst() {
+	unset K_SECURITY_UNSUPPORTED
 	kernel-2_pkg_postinst
 	ot-kernel-common_pkg_postinst
 }

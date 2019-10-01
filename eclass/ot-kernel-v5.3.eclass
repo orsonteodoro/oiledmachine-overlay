@@ -64,7 +64,7 @@ ROCK_DIR="ROCK-Kernel-Driver"
 # Rechange base
 # Commit date: Oct 10, 2015
 # Commit hash: 61cc8365b3cc4c549dbddd5d1576e6cf499bbef7
-# Subject drm/amdgpu: [hybrid] add query for aperture va range
+# Subject:: drm/amdgpu: [hybrid] add query for aperture va range
 
 # commit below pulls additional commits further back that 3.2.35 depends on that were missing
 #ROCK_BASE="61cc8365b3cc4c549dbddd5d1576e6cf499bbef7" # drm/amdgpu: [hybrid] add query for aperture va range
@@ -382,6 +382,10 @@ function ot-kernel-common_apply_amdgpu_rock_fixes() {
 					*6ec0b971827f8146631dbe7f57ab78786ea6506e*)
 						# Already applied
 						;;
+					*c5bc6042ffb8106680d17e2d0e86130e0111906c*|\
+					*077c20b1280db05048733bb3076ffb5403b4b4f7*)
+						# not required; obsolete
+						;;
 					*)
 						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
 						# already has been applied or partially patched already or success
@@ -392,9 +396,21 @@ function ot-kernel-common_apply_amdgpu_rock_fixes() {
 					*6ec0b971827f8146631dbe7f57ab78786ea6506e*)
 						# Already applied
 						;;
+					*c5bc6042ffb8106680d17e2d0e86130e0111906c*|\
+					*077c20b1280db05048733bb3076ffb5403b4b4f7*)
+						# not required; obsolete
+						;;
 					*593428bcfeb90e93621b66dbb2909b91da999344*)
 						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
 						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-593428bcfeb90e93621b66dbb2909b91da999344-fix-for-linux-5.3.1-xy.patch"
+						;;
+					*6999fd9f149e16ffcad6941e317def9ec32bd64c*)
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-6999fd9f149e16ffcad6941e317def9ec32bd64c-fix-for-linux-5.3.1-xy.patch"
+						;;
+					*21e7a42fe26d0dcee15b988b1d523363324d07c5*)
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-21e7a42fe26d0dcee15b988b1d523363324d07c5-fix-for-linux-5.3.1-xy.patch"
 						;;
 					*)
 						eerror "Patch failure ${l}.  Did not find the intervention patch."
