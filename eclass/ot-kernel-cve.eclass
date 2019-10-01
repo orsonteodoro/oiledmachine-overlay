@@ -164,10 +164,16 @@ function _fetch_cve_boilerplate_msg() {
 # @DESCRIPTION:
 # Message to report action to user to fix the CVE.
 function _fetch_cve_boilerplate_msg_footer() {
-	ewarn "Re-enable the cve_hotfix USE flag to fix this, or you may ignore this and wait for an official fix in later kernel point releases."
-	ewarn
-	echo -e "\07" # ring the bell
-	[[ "${CVE_DELAY}" == "1" ]] && sleep 30s
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_fn="${CVE_ID_}FN"
+	if use cve_hotfix && test -n "${!cve_fn}"; then
+		einfo "A ${CVE_ID} fix will be applied."
+	else
+		ewarn "Re-enable the cve_hotfix USE flag to fix this, or you may ignore this and wait for an official fix in later kernel point releases."
+		ewarn
+		echo -e "\07" # ring the bell
+		[[ "${CVE_DELAY}" == "1" ]] && sleep 30s
+	fi
 }
 
 # @FUNCTION: fetch_cve_2019_16746_hotfix
@@ -179,13 +185,8 @@ function fetch_cve_2019_16746_hotfix() {
 		einfo "${CVE_ID} already patched."
 		return
 	fi
-	local cve_fn="${CVE_ID_}FN"
 	_fetch_cve_boilerplate_msg
-	if use cve_hotfix && test -n "${!cve_fn}"; then
-		einfo "A ${CVE_ID} fix will be applied."
-	else
-		_fetch_cve_boilerplate_msg_footer
-	fi
+	_fetch_cve_boilerplate_msg_footer
 }
 
 # @FUNCTION: fetch_cve_2019_14814_hotfix
@@ -198,9 +199,7 @@ function fetch_cve_2019_14814_hotfix() {
 		return
 	fi
 	_fetch_cve_boilerplate_msg
-	if ! use cve_hotfix ; then
-		_fetch_cve_boilerplate_msg_footer
-	fi
+	_fetch_cve_boilerplate_msg_footer
 }
 
 # @FUNCTION: fetch_cve_2019_14821_hotfix
@@ -213,9 +212,7 @@ function fetch_cve_2019_14821_hotfix() {
 		return
 	fi
 	_fetch_cve_boilerplate_msg
-	if ! use cve_hotfix ; then
-		_fetch_cve_boilerplate_msg_footer
-	fi
+	_fetch_cve_boilerplate_msg_footer
 }
 
 # @FUNCTION: fetch_cve_2019_16921_hotfix
@@ -228,9 +225,7 @@ function fetch_cve_2019_16921_hotfix() {
 		return
 	fi
 	_fetch_cve_boilerplate_msg
-	if ! use cve_hotfix ; then
-		_fetch_cve_boilerplate_msg_footer
-	fi
+	_fetch_cve_boilerplate_msg_footer
 }
 
 
@@ -244,9 +239,7 @@ function fetch_cve_2019_16994_hotfix() {
 		return
 	fi
 	_fetch_cve_boilerplate_msg
-	if ! use cve_hotfix ; then
-		_fetch_cve_boilerplate_msg_footer
-	fi
+	_fetch_cve_boilerplate_msg_footer
 }
 
 # @FUNCTION: fetch_cve_2019_16995_hotfix
@@ -259,9 +252,7 @@ function fetch_cve_2019_16995_hotfix() {
 		return
 	fi
 	_fetch_cve_boilerplate_msg
-	if ! use cve_hotfix ; then
-		_fetch_cve_boilerplate_msg_footer
-	fi
+	_fetch_cve_boilerplate_msg_footer
 }
 
 # @FUNCTION: fetch_cve_2019_17052_hotfix
@@ -274,9 +265,7 @@ function fetch_cve_2019_17052_hotfix() {
 		return
 	fi
 	_fetch_cve_boilerplate_msg
-	if ! use cve_hotfix ; then
-		_fetch_cve_boilerplate_msg_footer
-	fi
+	_fetch_cve_boilerplate_msg_footer
 }
 
 # @FUNCTION: fetch_cve_2019_17053_hotfix
@@ -289,9 +278,7 @@ function fetch_cve_2019_17053_hotfix() {
 		return
 	fi
 	_fetch_cve_boilerplate_msg
-	if ! use cve_hotfix ; then
-		_fetch_cve_boilerplate_msg_footer
-	fi
+	_fetch_cve_boilerplate_msg_footer
 }
 
 # @FUNCTION: fetch_cve_2019_17054_hotfix
@@ -304,9 +291,7 @@ function fetch_cve_2019_17054_hotfix() {
 		return
 	fi
 	_fetch_cve_boilerplate_msg
-	if ! use cve_hotfix ; then
-		_fetch_cve_boilerplate_msg_footer
-	fi
+	_fetch_cve_boilerplate_msg_footer
 }
 
 # @FUNCTION: fetch_cve_2019_17055_hotfix
@@ -319,9 +304,7 @@ function fetch_cve_2019_17055_hotfix() {
 		return
 	fi
 	_fetch_cve_boilerplate_msg
-	if ! use cve_hotfix ; then
-		_fetch_cve_boilerplate_msg_footer
-	fi
+	_fetch_cve_boilerplate_msg_footer
 }
 
 # @FUNCTION: fetch_cve_2019_17056_hotfix
@@ -334,9 +317,7 @@ function fetch_cve_2019_17056_hotfix() {
 		return
 	fi
 	_fetch_cve_boilerplate_msg
-	if ! use cve_hotfix ; then
-		_fetch_cve_boilerplate_msg_footer
-	fi
+	_fetch_cve_boilerplate_msg_footer
 }
 
 
