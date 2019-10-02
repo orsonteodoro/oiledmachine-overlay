@@ -122,6 +122,15 @@ CVE_2019_17056_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linu
 CVE_2019_17056_SUMMARY_LANG="CVE_2019_17056_SUMMARY_${CVE_LANG}"
 CVE_2019_17056_SUMMARY="${!CVE_2019_17056_SUMMARY_LANG}"
 
+CVE_2019_17075_FIX_SRC_URI=""
+CVE_2019_17075_FN=""
+CVE_2019_17075_SEVERITY_LANG="CVE_2019_17075_SEVERITY_${CVE_LANG}"
+CVE_2019_17075_SEVERITY="${!CVE_2019_17075_SEVERITY_LANG}"
+CVE_2019_17075_PM=""
+CVE_2019_17075_SUMMARY_LANG="CVE_2019_17075_SUMMARY_${CVE_LANG}"
+CVE_2019_17075_SUMMARY="${!CVE_2019_17075_SUMMARY_LANG}"
+
+
 
 SRC_URI+=" cve_hotfix? ( ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 			 ${CVE_2019_14814_FIX_SRC_URI} -> ${CVE_2019_14814_FN}
@@ -135,7 +144,9 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 			 ${CVE_2019_17054_FIX_SRC_URI} -> ${CVE_2019_17054_FN}
 			 ${CVE_2019_17055_FIX_SRC_URI} -> ${CVE_2019_17055_FN}
 			 ${CVE_2019_17056_FIX_SRC_URI} -> ${CVE_2019_17056_FN}
+
 		       )"
+#			 ${CVE_2019_17075_FIX_SRC_URI} -> ${CVE_2019_17075_FN}
 
 # @FUNCTION: _fetch_cve_boilerplate_msg
 # @DESCRIPTION:
@@ -166,7 +177,9 @@ function _fetch_cve_boilerplate_msg() {
 function _fetch_cve_boilerplate_msg_footer() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_fn="${CVE_ID_}FN"
-	if use cve_hotfix && test -n "${!cve_fn}"; then
+	if ! test -n "${!cve_fn}" ; then
+		einfo "No de-facto patch exists or the patch is undergoing code review.  No patch will be applied.  This fix is still being worked on."
+	elif use cve_hotfix && test -n "${!cve_fn}"; then
 		einfo "A ${CVE_ID} fix will be applied."
 	else
 		ewarn "Re-enable the cve_hotfix USE flag to fix this, or you may ignore this and wait for an official fix in later kernel point releases."
@@ -316,6 +329,19 @@ function fetch_cve_2019_17056_hotfix() {
 		einfo "${CVE_ID} already patched."
 		return
 	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_17075_hotfix
+# @DESCRIPTION:
+# Checks for the CVE-2019-17075 patch
+function fetch_cve_2019_17075_hotfix() {
+	local CVE_ID="CVE-2019-17075"
+#	if grep -F -e "" "${S}" >/dev/null ; then
+#		einfo "${CVE_ID} already patched."
+#		return
+#	fi
 	_fetch_cve_boilerplate_msg
 	_fetch_cve_boilerplate_msg_footer
 }
@@ -504,6 +530,21 @@ function apply_cve_2019_17056_hotfix() {
 	_resolve_hotfix_default
 }
 
+# @FUNCTION: apply_cve_2019_17075_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_17075 patch if it needs to
+function apply_cve_2019_17075_hotfix() {
+	local CVE_ID="CVE-2019-17075"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+#	if grep -F -e "" "${S}/" >/dev/null ; then
+#		einfo "${CVE_ID} is already patched."
+#		return
+#	fi
+#	_resolve_hotfix_default
+}
+
 # @FUNCTION: fetch_cve_hotfixes
 # @DESCRIPTION:
 # Fetches all the CVE kernel patches
@@ -523,6 +564,7 @@ function fetch_cve_hotfixes() {
 		fetch_cve_2019_17054_hotfix
 		fetch_cve_2019_17055_hotfix
 		fetch_cve_2019_17056_hotfix
+		fetch_cve_2019_17075_hotfix
 		local cve_copyright1="CVE_COPYRIGHT1_${CVE_LANG}"
 		local cve_copyright2="CVE_COPYRIGHT2_${CVE_LANG}"
 		einfo
@@ -554,5 +596,6 @@ function apply_cve_hotfixes() {
 		apply_cve_2019_17054_hotfix
 		apply_cve_2019_17055_hotfix
 		apply_cve_2019_17056_hotfix
+		apply_cve_2019_17075_hotfix
 	fi
 }

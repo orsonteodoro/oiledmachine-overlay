@@ -1,0 +1,23 @@
+diff -urNp linux-5.3.2-ot.orig/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c linux-5.3.2-ot/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+--- linux-5.3.2-ot.orig/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c	2019-10-02 04:23:18.192105806 -0700
++++ linux-5.3.2-ot/drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c	2019-10-02 10:43:09.925451930 -0700
+@@ -1640,7 +1640,7 @@ static int amdgpu_vm_bo_split_mapping(st
+ 			}
+ 
+ 		} else if (flags & AMDGPU_PTE_VALID) {
+-			addr += bo_adev->vm_manager.vram_base_offset;
++			addr += vram_base_offset;
+ 			addr += pfn << PAGE_SHIFT;
+ 		}
+ 
+@@ -1730,8 +1730,8 @@ int amdgpu_vm_bo_update(struct amdgpu_de
+ 
+ 	list_for_each_entry(mapping, &bo_va->invalids, list) {
+ 		r = amdgpu_vm_bo_split_mapping(adev, exclusive, pages_addr, vm,
+-					       mapping, flags, bo_adev, nodes,
+-					       last_update);
++					       mapping, flags, bo_adev,
++					       mem, last_update);
+ 		if (r)
+ 			return r;
+ 	}
