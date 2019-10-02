@@ -10,10 +10,10 @@
 # MONO_SHARED_DIR and sets LC_ALL in order to prevent errors during compilation
 # of dotnet packages.
 
-if [[ -z "${DOTNET_ECLASS_DEVELOPER}" ]] ; then
-	# still need to sort out the install locations for multiple netfx targets
-	inherit currently-broken-do-not-use-try-other-dotnet-repos-instead
-fi
+#if [[ -z "${DOTNET_ECLASS_DEVELOPER}" ]] ; then
+#	# still need to sort out the install locations for multiple netfx targets
+#	inherit currently-broken-do-not-use-try-other-dotnet-repos-instead
+#fi
 
 case ${EAPI:-0} in
 	0|1|2|3|4|5|6) die "this eclass doesn't support EAPI ${EAPI}" ;;
