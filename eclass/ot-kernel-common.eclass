@@ -57,6 +57,8 @@ HOMEPAGE+="
 
 inherit ot-kernel-cve
 
+DEPEND+=" dev-util/patchutils"
+
 gen_kernel_seq()
 {
 	# 1-2 2-3 3-4
@@ -177,7 +179,7 @@ function _dpatch() {
 function _tpatch() {
 	local patchops="$1"
 	local path="$2"
-	einfo "Applying ${path}..."
+	einfo "Applying ${path}"
 	patch ${patchops} -i ${path} || true
 }
 
@@ -216,7 +218,7 @@ function apply_zentune() {
 # ot-kernel-common_apply_genpatch_base_patchset - callback to apply individual patches
 #
 function apply_genpatch_base() {
-	einfo "Applying genpatch base"
+	einfo "Applying the genpatch base"
 	ewarn "Some patches have hunk(s) failed but still good or may be fixed ASAP."
 	local d
 	d="${T}/${GENPATCHES_BASE_FN%.tar.xz}"
@@ -381,7 +383,7 @@ function apply_tresor() {
 # @DESCRIPTION:
 # Fetches the BFQ patchset.
 function fetch_bfq() {
-	einfo "Fetching bfq patch from live source..."
+	einfo "Fetching the BFQ patch from a live source..."
 	wget -O "${T}/${BFQ_FN}" "${BFQ_DL_URL}" || die
 }
 
@@ -389,12 +391,12 @@ function fetch_bfq() {
 # @DESCRIPTION:
 # Fetches the zentune patchset.
 function fetch_zentune() {
-	einfo "Fetching zentune patch from live source..."
+	einfo "Fetching the zen-tune patch from a live source..."
 	wget -O "${T}/${ZENTUNE_FN}" "${ZENTUNE_DL_URL}" || die
 }
 
 function fetch_linux_sources() {
-	einfo "Fetching vanilla Linux kernel sources.  It may take hours."
+	einfo "Fetching the vanilla Linux kernel sources.  It may take hours."
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	cd "${DISTDIR}"
 	d="${distdir}/ot-sources-src/linux"
@@ -403,7 +405,7 @@ function fetch_linux_sources() {
 	cd "${b}"
 	if [[ ! -d "${d}" ]] ; then
 		mkdir -p "${d}"
-		einfo "Cloning vanilla Linux kernel"
+		einfo "Cloning the vanilla Linux kernel project"
 		git clone "${LINUX_REPO_URL}" "${d}"
 		cd "${d}"
 		git checkout master
@@ -413,7 +415,7 @@ function fetch_linux_sources() {
 		if (( ${#G} > 0 )) ; then
 			die "You must manually \`chown -R portage:portage ${d}\`.  Re-emerge again."
 		fi
-		einfo "Updating vanilla Linux kernel sources"
+		einfo "Updating the vanilla Linux kernel project"
 		cd "${d}"
 		git clean -fdx
 		git reset --hard master
@@ -431,7 +433,7 @@ function fetch_linux_sources() {
 # @DESCRIPTION:
 # Clones or updates the amd-staging-drm-next patchset for recent fixes or GPU compatibility updates.
 function fetch_amd_staging_drm_next() {
-	einfo "Fetching patch please wait.  It may take hours."
+	einfo "Fetching the amd-staging-drm-next project please wait.  It may take hours."
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	cd "${DISTDIR}"
 	d="${distdir}/ot-sources-src/linux-${AMD_STAGING_DRM_NEXT_DIR}"
@@ -440,7 +442,7 @@ function fetch_amd_staging_drm_next() {
 	cd "${b}"
 	if [[ ! -d "${d}" ]] ; then
 		mkdir -p "${d}"
-		einfo "Cloning amd-staging-drm-next project"
+		einfo "Cloning the amd-staging-drm-next project"
 		git clone "${AMDREPO_URL}" "${d}"
 		cd "${d}"
 		git checkout master
@@ -450,7 +452,7 @@ function fetch_amd_staging_drm_next() {
 		if (( ${#G} > 0 )) ; then
 			die "You must manually \`chown -R portage:portage ${d}\`.  Re-emerge again."
 		fi
-		einfo "Updating amd-staging-drm-next project"
+		einfo "Updating the amd-staging-drm-next project"
 		cd "${d}"
 		git clean -fdx
 		git reset --hard master
@@ -566,7 +568,7 @@ function fetch_amd_staging_drm_next_commits() {
 
 # @FUNCTION: _get_rock_commit
 # @DESCRIPTION:
-# Gets a rock commit and makes a .patch file.
+# Gets a ROCk commit and makes a .patch file.
 # @CODE
 # Parameters:
 # $1 - index to generate to file name
@@ -600,10 +602,10 @@ function _get_amd_staging_drm_next_commit()
 
 # @FUNCTION: fetch_rock
 # @DESCRIPTION:
-# Clones or updates the ROCK repository.  ROCK patches contain
+# Clones or updates the ROCk repository.  ROCk patches contain
 # additional multi GPU features and optimizations if apps support it.
 function fetch_rock() {
-	einfo "Fetching patch please wait.  It may take hours."
+	einfo "Fetching the ROCk project please wait.  It may take hours."
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	cd "${DISTDIR}"
 	d="${distdir}/ot-sources-src/linux-${ROCK_DIR}"
@@ -612,7 +614,7 @@ function fetch_rock() {
 	cd "${b}"
 	if [[ ! -d "${d}" ]] ; then
 		mkdir -p "${d}"
-		einfo "Cloning ROCK project"
+		einfo "Cloning the ROCk project"
 		git clone "${ROCKREPO_URL}" "${d}"
 		cd "${d}"
 		git checkout master
@@ -621,7 +623,7 @@ function fetch_rock() {
 		if (( ${#G} > 0 )) ; then
 			die "You must manually \`chown -R portage:portage ${d}\`.  Re-emerge again."
 		fi
-		einfo "Updating ROCK project"
+		einfo "Updating the ROCk project"
 		cd "${d}"
 		git clean -fdx
 		git reset --hard master
@@ -634,7 +636,7 @@ function fetch_rock() {
 
 # @FUNCTION: prepend_rock_commit
 # @DESCRIPTION:
-# Allows to add ROCK commits before others if necessary for smoothing patching.
+# Allows to add ROCk commits before others if necessary for smoothing patching.
 # Patch A comes before patch B.
 # @CODE
 # Parameters:
@@ -666,7 +668,7 @@ function prepend_rock_commit() {
 
 # @FUNCTION: move_rock_commit
 # @DESCRIPTION:
-# Allows to reorder ROCK commits before others if necessary for smoothing patching.
+# Allows to reorder ROCk commits before others if necessary for smoothing patching.
 # @CODE
 # Parameters:
 # $1 - commit
@@ -709,12 +711,12 @@ function get_patch_index() {
 
 # @FUNCTION: get_linux_commit_list_for_rock
 # @DESCRIPTION:
-# Gets the list of ROCK commits between ROCK_BASE and v${K_MAJOR_MINOR}
+# Gets the list of ROCk commits between ROCK_BASE and v${K_MAJOR_MINOR}
 function get_linux_commit_list_for_rock() {
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	d="${distdir}/ot-sources-src/linux"
 	cd "${d}"
-	einfo "Grabbing list of already merged rock commits in v${K_MAJOR_MINOR}."
+	einfo "Grabbing list of already merged ROCk commits in v${K_MAJOR_MINOR}."
 	L=$(git log ${ROCK_BASE}..v${K_MAJOR_MINOR} --oneline --pretty=format:"%H%x07%s%x07%ce" | grep -e "@amd.com" | \
 			cut -f1 -d$'\007' | tac)
 
@@ -744,7 +746,7 @@ function fetch_rock_commits() {
 
 	git checkout ${target} . || die
 
-	einfo "Saving only the AMD ROCK commits for commit-by-commit evaluation."
+	einfo "Saving only the ROCk commits for commit-by-commit evaluation."
 	L=$(git log ${ROCK_BASE}..${target} --oneline --pretty=format:"%H%x07%s%x07%ce" | grep -e "@amd.com" | \
 			cut -f1 -d$'\007' | tac)
 	mkdir -p "${T}/rock-patches"
@@ -785,7 +787,7 @@ function fetch_rock_commits() {
 
 # @FUNCTION: get_missing_rock_commits_list
 # @DESCRIPTION:
-# Gets a list of rock commits that were not found in the amd-staging-drm-next repository.
+# Gets a list of ROCk commits that were not found in the amd-staging-drm-next repository.
 function get_missing_rock_commits_list() {
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	local index
@@ -798,7 +800,7 @@ function get_missing_rock_commits_list() {
 	if is_amd_staging_drm_next ; then
 		d_staging="${distdir}/ot-sources-src/linux-${AMD_STAGING_DRM_NEXT_DIR}"
 		cd "${d_staging}"
-		einfo "Generating commit list for amd-staging-drm-next."
+		einfo "Generating a commit list for amd-staging-drm-next."
 		git log --reverse --pretty=tformat:"%H%x07%s" | column -t -s $'\007' -o $'\t' > "${T}"/amd-staging-drm-next.commits
 
 		cat /dev/null > "${T}"/amd-staging-drm-next.commits.indexed.${PVR}
@@ -829,7 +831,7 @@ function get_missing_rock_commits_list() {
 
 	git checkout ${target} . || die
 
-	einfo "Generating commit list for ROCK."
+	einfo "Generating a commit list for ROCk."
 	git log ${ROCK_BASE}..${target} --reverse --pretty=tformat:"%H%x07%s" | column -t -s $'\007' -o $'\t' > "${T}"/rock.commits
 
 	cat /dev/null > "${T}"/rock.commits.indexed.${PVR}
@@ -850,7 +852,7 @@ function get_missing_rock_commits_list() {
 	# It's important that amd-staging-drm-next- USE flag be enabled or else all the commits will be pulled in rock.commits.indexed.${PVR}.
 	# A cached copy of amd-staging-drm-next.commits can be used with modifcations below, or one can modify the below section to compare against the linux vanilla commit list if the amd-staging-drm-next- USE flag is disabled.
 
-	# The ROCK patch set is the set of commits assumed to be the set not in amd-staging-drm-next commit set
+	# The ROCk patch set is the set of commits assumed to be the set not in amd-staging-drm-next commit set
 	einfo "Comparing commit lists"
 	diff -urp "${T}"/rock.summaries "${T}"/amd-staging-drm-next.summaries | tail -n +3 > "${T}"/results
 	grep -a -P -e "^-" "${T}"/results | cut -c 2- > "${T}"/results.no-dash
@@ -858,7 +860,7 @@ function get_missing_rock_commits_list() {
 
 # @FUNCTION: _add_rock_patch
 # @DESCRIPTION:
-# Add rock patch and increments index
+# Add ROCk patch and increments index
 function _add_rock_patch() {
 	git format-patch --stdout -1 ${c} > "${p}" || die
 	einfo "Added ${pindex}-${c}.patch"
@@ -868,7 +870,7 @@ function _add_rock_patch() {
 
 # @FUNCTION: get_missing_rock_commits
 # @DESCRIPTION:
-# Gets the ROCK commit list and generates .patch files for step-by-step evaluation.
+# Gets the ROCk commit list and generates .patch files for step-by-step evaluation.
 function get_missing_rock_commits() {
 	local commit
 	mkdir -p "${T}"/rock-patches
@@ -882,15 +884,62 @@ function get_missing_rock_commits() {
 
 	einfo "Picking commits"
 	for l in ${L} ; do
-		if echo "${l}" | grep -F -q -e "drm/amdkcl: [4.5] add drm_pcie_get_max_link_width()" ; then
-			# Required by
-			# Commit:  ca15ec98d6ee4216ab8fef54d544e8efb170e684
-			# Subject: [PATCH] drm/amdkcl: fix fb functions
-			grep -a -F -e "${l}" "${T}/rock.commits.indexed.${PVR}" >> "${T}/rock.found"
-		elif echo "${l}" | grep -P -q -e "\[(RHEL|SLE)?[ .0-9_]+\]" ; then
-			echo "Rejected ${l} because it does not apply to v${K_MAJOR_MINOR} kernel version."
+		local entry=$(grep -a -F -e "${l}" "${T}/rock.commits.indexed.${PVR}")
+		local c=$(echo "${entry}" | cut -f2)
+		if echo "${l}" | grep -F -q -e "drm/amdkcl" ; then
+			# kcl is the Kernel Compatibility Layer
+			einfo "Rejected \"${l}\" because using the non DKMS."
+		elif echo "${l}" | grep -P -q -e "\[(RHEL|SLE|DEBIAN)[ .0-9_]*\]" ; then
+			einfo "Rejected \"${l}\" because it does not apply to Gentoo."
+		elif echo "${l}" | grep -P -q -e "\[DKMS[ .0-9_]*\]" ; then
+			einfo "Rejected \"${l}\" because using the non DKMS version."
+		elif echo "${l}" | grep -P -q -e "\[[ .0-9_]*\]" ; then
+			einfo "Rejected \"${l}\" because it does not apply to v${K_MAJOR_MINOR} kernel version."
+		elif [[ "${c}" =~ 1c0e722ee1bf41681a8cc7101b7721e52f503da9 || \
+			"${c}" =~ 593428bcfeb90e93621b66dbb2909b91da999344 ]] ; then
+			# 1c0e [PATCH] drm/amdkcl: [KFD] ALL in One KFD KCL Fix for 4.18 rebase
+			# 5934 drm/amdkcl: [4.5] fix drm encoder and plane functions
+			einfo "Rejected \"${l}\" because it does not apply to v${K_MAJOR_MINOR} kernel version."
+		elif [[ "${c}" =~ 58dfa09e4da6c13a4e074d1e6602b98e7f69474d || \
+			"${c}" =~ cb487f9804a402f1b082ba6cc7e9736659951c6a || \
+			"${c}" =~ d732ef0efc3beed8b8c30433aa11d5b6895cb457 || \
+			"${c}" =~ c580415a6e1187f629b487f6c84e6453b67a4cd7 || \
+			"${c}" =~ 02507c4d6d3111ec9f3918aad1ec68e5293ca32a || \
+			"${c}" =~ 1e13f29eebc9f436419b7e15ad16a4eecd164953 || \
+			"${c}" =~ 56e3a504356d5b1d39d3a06d9b70ebaab1ca0120 || \
+			"${c}" =~ fbb2398b29e0de236e9ee3ad48385095ebcb2a84 || \
+			"${c}" =~ dc8d9340b03c49743081707f1a9e845fd7347bfc || \
+			"${c}" =~ 77843fb3174f0903bf48141cdb7ad0e545364194 || \
+			"${c}" =~ 5fb3731bafd89d2cb5fc24651410ec79980eff4b || \
+			"${c}" =~ d6a1c6e9da2ed2e2ceffc7742c6c316a1b66d92c || \
+			"${c}" =~ 38d5546b8cd23bc4e265c4ec430f019de620eaf7 || \
+			"${c}" =~ 05b0848bf51c7e4f33c633c72aecb3c94366482f || \
+			"${c}" =~ 9b5c679e8175c5f311c45df5d2eed70aa3a7cddf || \
+			"${c}" =~ 21e7a42fe26d0dcee15b988b1d523363324d07c5 ]] ; then
+			# 58df drm/amdkcl: Enable DC by default on dce8 for dkms builds
+			# cb48 drm/amd/dkms: enable dcn2 in dkms
+			# d732 drm/amdkcl: add dkms support
+			# c580 drm/amd/autoconf: Add AC_AMDGPU_CONFIG macro with basic configuration
+			# 0250 drm/amdkcl: fix ttm_buffer_object has no moving
+			# 1e13 drm/amd/autoconf: Add initial autoconf framework to DKMS build
+			# 56e3 drm/amd/autoconf: Add AC_KERNEL_TRY_COMPILE macro
+			# fbb2 drm/amd/autoconf: fix in-build error for O=...
+			# dc8d Drop autogen.sh call
+			# 7784 drm/amdgpu: add DKMS support for amdkfd module build in amdgpu.
+			# 5fb3  drm/amdkcl: fix amdkfd moudle confusion by correcting value of CONFIG_HSA_AMD
+			# d6a1 drm/amd/autoconf: Add AC_KERNEL_TRY_COMPILE_SYMBOL macro
+			# 38d5 drm/amd/dkms: Disable DC_DCN2_0
+			# 05b0 drm/amdkcl: [KFD] add kfd dkms support
+			# 9b5c [PATCH] drm/amd/autoconf: Test whether ACPI_HANDLE is defined
+			# 21e7 drm/amdkcl: fix no pci_enable_atomic_ops_to_root
+			einfo "Rejected \"${l}\" because using the non DKMS version of ROCk."
+		elif [[ "${c}" =~ 84eda13eb222032258084a330a334ced3b247f84 || \
+			"${c}" =~ 58818a063b4f2db5dfb3cf45bbfb3cc6c1d66547 || \
+			"${c}" =~ 8835687645d32c218aaab226b71276263174ef72 ]] ; then
+			# 84ed drm/amdkcl: fix ubuntu 4.15-oem modprobe error
+			einfo "Rejected \"${l}\" because it doesn't apply to Gentoo."
 		else
-			grep -a -F -e "${l}" "${T}/rock.commits.indexed.${PVR}" >> "${T}/rock.found"
+			echo "${entry}" >> "${T}/rock.found"
 		fi
 	done
 
@@ -913,7 +962,7 @@ function get_missing_rock_commits() {
 	cat /dev/null > "${T}"/hashes
 	if [[ $(stat -c %s "${T}/rock.found.sorted") != "0" ]] ; then
 		C=$(cat "${T}"/rock.found.sorted | cut -f2)
-		einfo "Saving only the missing ROCK commits for commit-by-commit evaluation."
+		einfo "Saving only the missing ROCk commits for commit-by-commit evaluation."
 		local p
 		for c in ${C} ; do
 			printf -v pindex "%06d" ${index}
@@ -993,9 +1042,9 @@ function is_amd_staging_drm_next() {
 
 # @FUNCTION: apply_amdgpu
 # @DESCRIPTION:
-# Applies intervention patches, or patches for mispatches, for both rock and amd-staging-drm-next.
+# Applies intervention patches, or patches for mispatches, for both ROCk and amd-staging-drm-next.
 #
-# ot-kernel-common_apply_amdgpu_rock_fixes - optional callback for rock fixes
+# ot-kernel-common_apply_amdgpu_rock_fixes - optional callback for ROCk fixes
 # ot-kernel-common_amdgpu_amd_staging_drm_next_fixes - optional callback for amd-staging-drm-next fixes
 #
 function apply_amdgpu() {
@@ -1025,16 +1074,16 @@ function ot-kernel-common_src_unpack() {
 	fi
 	if use graysky2 ; then
 		if $(ver_test $(gcc-version) -ge 9.1) && test -f "${DISTDIR}/${GRAYSKY_DL_9_1_FN}" ; then
-			einfo "gcc patch is 9.1"
+			einfo "GCC patch is 9.1"
 			UNIPATCH_LIST+=" ${DISTDIR}/${GRAYSKY_DL_9_1_FN}"
 		elif $(ver_test $(gcc-version) -ge 8.1) && test -f "${DISTDIR}/${GRAYSKY_DL_8_1_FN}" ; then
-			einfo "gcc patch is 8.1"
+			einfo "GCC patch is 8.1"
 			UNIPATCH_LIST+=" ${DISTDIR}/${GRAYSKY_DL_8_1_FN}"
 		elif test -f "${DISTDIR}/${GRAYSKY_DL_4_9_FN}" ; then
-			einfo "gcc patch is 4.9"
+			einfo "GCC patch is 4.9"
 			UNIPATCH_LIST+=" ${DISTDIR}/${GRAYSKY_DL_4_9_FN}"
 		else
-			die "Cannot find graysky2's gcc patch."
+			die "Cannot find graysky2's GCC patch."
 		fi
 	fi
 	#if use bfq ; then

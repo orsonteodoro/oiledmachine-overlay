@@ -72,7 +72,7 @@ ROCK_DIR="ROCK-Kernel-Driver"
 # 61cc8365b3cc4c549dbddd5d1576e6cf499bbef7 depends on ca3324ff2f43c67cc100e67332589b054d97b774
 
 # Rechange base
-# Pull the first ROCK commit referencing amdkfd
+# Pull the first ROCk commit referencing amdkfd
 # Commit date: Jul 15, 2014
 # Commit hash: e28740ece34d314002b1ddfa14e8fb7c7b909489
 # Subject: drm/radeon: Add radeon <--> amdkfd interface
@@ -89,7 +89,7 @@ ROCK_LATEST="master"
 # The intersection is not in perfect sync or easy to determine.  We will get the bulk of the amd-staging-drm-next and worry about the corner case which is the intersection.
 # The deviation from the intersection could be months.
 
-# The rock patches get applied first, then the amd-staging-drm-next patches follow after.
+# The ROCk patches get applied first, then the amd-staging-drm-next patches follow after.
 
 # The AMD_STAGING_*_INTERSECS_ROCK_* and the AMD_STAGING_INTERSECTS_5_X constants marks the starting point of the amd-staging-drm-next patching.
 # Scan the git history logs (https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/commits/master/ of the drivers/gpu/drm/amd folder
@@ -135,7 +135,7 @@ REQUIRED_USE="^^ ( muqss pds cfs bmq )
 # rock- needs amd-staging-drm-next for diff comparison or it pulls more than it should.  Should use cached copies.
 
 # The reason why we make rock-snapshot a dependency of amd-staging-drm-next so we don't have to git clone torvalds/linux which saves time and space.  We assume that amd-staging-drm-next repo contains torvalds/linux
-# This dependency with log comparison provides more accurate way to determine if rock commits are duplicates instead of manually eliminating commits which human error can screw up.
+# This dependency with log comparison provides more accurate way to determine if ROCk commits are duplicates instead of manually eliminating commits which human error can screw up.
 
 # amd-staging-drm-next head will contain Linux 5.3-rc3 which are linux commits up to aug 4, 2019
 # In amd-staging-drm-next, Linux 5.3-rc3 is commit e21a712a9685488f5ce80495b37b9fdbe96c230d .
@@ -217,7 +217,7 @@ _set_check_reqs_requirements() {
 	# for 3.1 kernel
 	# source merge alone: 986.2 MiB
 	# linux-amd-staging-drm-next local repo: 2002.72 MiB
-	# rock local repo: 2479.55 MiB
+	# ROCk local repo: 2479.55 MiB
 	if is_rock && is_amd_staging_drm_next ; then
 		CHECKREQS_DISK_USR="5470M"
 	elif is_rock ; then
@@ -240,7 +240,7 @@ function ot-kernel-common_pkg_setup_cb() {
 	fi
 
 	if is_rock ; then
-		ewarn "Patching with rock is broken.  For ebuild devs only."
+		ewarn "Patching with ROCk is broken.  For ebuild devs only."
 
 		einfo ""
 		einfo "You need PCIe 3.0 or a GPU that doesn't require PCIe atomics to use ROCK."
@@ -349,7 +349,7 @@ function ot-kernel-common_apply_o3_fixes() {
 
 # @FUNCTION: ot-kernel-common_fetch_rock_commits_patchset1
 # @DESCRIPTION:
-# Prepend rock commits
+# Prepend ROCk commits
 #function ot-kernel-common_fetch_rock_commits_patchset1() {
 #	prepend_rock_commit "bf96e47b4474f992095d9fae9ccfc46633bf4343" "9c75d5a887d1d5f5815019c105e2ea25a2c9c823" "a" "" "b"
 	# bf96e drm/amdgpu: Bring back support for non-upstream FreeSync
@@ -362,13 +362,20 @@ function ot-kernel-common_apply_o3_fixes() {
 
 # @FUNCTION: ot-kernel-common_apply_amdgpu_rock_fixes
 # @DESCRIPTION:
-# Apply ROCK fixes
+# Apply ROCk fixes
 function ot-kernel-common_apply_amdgpu_rock_fixes() {
 	# patches will be appended with x and y.
 	# x means amd-staging-drm-next
 	# y means rock
 	# xy meand both amd-staging-drm-next- and rock- USE flags are activated
 	# this system will try to manage the 3 possibilities and independendent.
+
+	# rebasing ROCk will try to do the following
+	# 1. eliminate unnessary patchwork
+	# 2. the final copy will be used instead of the intermediate change
+	# 3. no adding intermediate additions/lines that never made it as the final copy
+	# 4. cosmetic changes will rejected
+	# 5. renames of variables will be rejected if not the final version
 
 	if is_rock && is_amd_staging_drm_next ; then
 		einfo "fixme"
@@ -400,20 +407,28 @@ function ot-kernel-common_apply_amdgpu_rock_fixes() {
 					*077c20b1280db05048733bb3076ffb5403b4b4f7*)
 						# not required; obsolete
 						;;
-					*593428bcfeb90e93621b66dbb2909b91da999344*)
-						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-593428bcfeb90e93621b66dbb2909b91da999344-fix-for-linux-5.3.1-xy.patch"
-						;;
 					*6999fd9f149e16ffcad6941e317def9ec32bd64c*)
 						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
 						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-6999fd9f149e16ffcad6941e317def9ec32bd64c-fix-for-linux-5.3.1-xy.patch"
 						;;
-					*21e7a42fe26d0dcee15b988b1d523363324d07c5*)
+					*1254b5fe6aaabb58300a5929b6bb290bf1c49f63*)
+						# Low confidence patching marked by x?.  They may cause runtime/compile time breakage or not match up with final version matching ROCK-Kernel-Driver.
+						# They may need to be revisited to match exactly upstream's version of the files.
+						# High confidence patching are ones that are very straightforward and easy to patch.
+						#
+						# x? drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.h
+						# x? drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_vi.c
+						# x? drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c
 						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-21e7a42fe26d0dcee15b988b1d523363324d07c5-fix-for-linux-5.3.1-xy.patch"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-1254b5fe6aaabb58300a5929b6bb290bf1c49f63-fix-for-linux-5.3.2-xy.patch"
+						;;
+					*4766d6eb3c11d7dffc9e8e34350c5658267b0281*)
+						# x? drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-4766d6eb3c11d7dffc9e8e34350c5658267b0281-fix-for-linux-5.3.2-xy.patch"
 						;;
 					*)
-						eerror "Patch failure ${l}.  Did not find the intervention patch."
+						eerror "Patch failure ${T}/rock-patches/${l} .  Did not find the intervention patch."
 						die
 						;;
 				esac
@@ -437,7 +452,7 @@ function ot-kernel-common_apply_amdgpu_rock_fixes() {
 			else
 				case "${l}" in
 					*)
-						eerror "Patch failure ${l}.  Did not find the intervention patch."
+						eerror "Patch failure ${T}/rock-patches/${l} .  Did not find the intervention patch."
 						die
 						;;
 				esac
@@ -474,7 +489,7 @@ function ot-kernel-common_amdgpu_amd_staging_drm_next_fixes() {
 			else
 				case "${l}" in
 					*)
-						eerror "Patch failure ${l}.  Did not find the intervention patch."
+						eerror "Patch failure ${T}/amd-staging-drm-next-patches/${l} .  Did not find the intervention patch."
 						die
 						;;
 				esac
@@ -514,7 +529,7 @@ function ot-kernel-common_amdgpu_amd_staging_drm_next_fixes() {
 						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-fcd90fee8ac22da3bce1c6652cf36bc24e7a0749-fix-for-linux-5.3.1-x.patch"
 						;;
 					*)
-						eerror "Patch failure ${l}.  Did not find the intervention patch."
+						eerror "Patch failure ${T}/amd-staging-drm-next-patches/${l} .  Did not find the intervention patch."
 						die
 						;;
 				esac

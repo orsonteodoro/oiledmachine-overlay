@@ -69,7 +69,7 @@ ROCK_LATEST="master"
 # The intersection is not in perfect sync or easy to determine.  We will get the bulk of the amd-staging-drm-next and worry about the corner case which is the intersection.
 # The deviation from the intersection could be months.
 
-# The rock patches get applied first, then the amd-staging-drm-next patches follow after.
+# The ROCk patches get applied first, then the amd-staging-drm-next patches follow after.
 
 # The AMD_STAGING_*_INTERSECS_ROCK_* and the AMD_STAGING_INTERSECTS_5_X constants marks the starting point of the amd-staging-drm-next patching.
 # Scan the git history logs (https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/commits/master/ of the drivers/gpu/drm/amd folder
@@ -200,7 +200,7 @@ function ot-kernel-common_pkg_setup_cb() {
 	fi
 
 	if is_rock ; then
-		ewarn "Patching with rock is broken.  For ebuild devs only."
+		ewarn "Patching with ROCk is broken.  For ebuild devs only."
 
 		einfo ""
 		einfo "You need PCIe 3.0 or a GPU that doesn't require PCIe atomics to use ROCK."
@@ -292,7 +292,7 @@ function ot-kernel-common_apply_o3_fixes() {
 
 # @FUNCTION: ot-kernel-common_fetch_rock_commits_patchset1
 # @DESCRIPTION:
-# Prepend rock commits
+# Prepend ROCk commits
 function ot-kernel-common_fetch_rock_commits_patchset1() {
 	prepend_rock_commit "bf96e47b4474f992095d9fae9ccfc46633bf4343" "9c75d5a887d1d5f5815019c105e2ea25a2c9c823" "a" "" "b"
 	# bf96e drm/amdgpu: Bring back support for non-upstream FreeSync
@@ -305,7 +305,7 @@ function ot-kernel-common_fetch_rock_commits_patchset1() {
 
 # @FUNCTION: ot-kernel-common_apply_amdgpu_rock_fixes
 # @DESCRIPTION:
-# Apply ROCK fixes
+# Apply ROCk fixes
 function ot-kernel-common_apply_amdgpu_rock_fixes() {
 	if is_rock ; then
 		fetch_rock_commits
@@ -432,7 +432,7 @@ function ot-kernel-common_apply_amdgpu_rock_fixes() {
 						_dpatch "${PATCH_OPS}" "${FILESDIR}/rock-6abe8339ca1f77c3d86146e8ce91e4f56a852a65-fix.patch"
 						;;
 					*)
-						eerror "Patch failure ${l}.  Did not find the intervention patch."
+						eerror "Patch failure ${T}/rock-patches/${l} .  Did not find the intervention patch."
 						die
 						;;
 				esac
@@ -729,7 +729,7 @@ function ot-kernel-common_amdgpu_amd_staging_drm_next_fixes() {
 						fi
 						;;
 					*)
-						eerror "Patch failure ${l}.  Did not find the intervention patch."
+						eerror "Patch failure ${T}/amd-staging-drm-next-patches/${l} .  Did not find the intervention patch."
 						die
 						;;
 				esac
