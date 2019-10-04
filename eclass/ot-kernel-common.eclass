@@ -69,7 +69,7 @@ gen_kernel_seq()
 	echo $s
 }
 
-BMQ_FN="v${PATCH_BMQ_MAJOR_MINOR}_bmq${PATCH_BMQ_VER}.patch"
+BMQ_FN="${BMQ_FN:=v${PATCH_BMQ_MAJOR_MINOR}_bmq${PATCH_BMQ_VER}.patch}"
 BMQ_BASE_URL="https://gitlab.com/alfredchen/bmq/raw/master/${PATCH_BMQ_MAJOR_MINOR}/"
 BMQ_SRC_URL="${BMQ_BASE_URL}${BMQ_FN}"
 

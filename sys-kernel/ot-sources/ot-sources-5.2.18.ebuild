@@ -3,7 +3,7 @@
 
 EAPI="6"
 
-K_GENPATCHES_VER="17"
+K_GENPATCHES_VER="18"
 PATCH_BMQ_VER="099"
 
 function ot-kernel-common_apply_genpatch_base_patchset() {
