@@ -1,0 +1,26 @@
+--- a/amd/amdgpu/dce_v6_0.c.orig	2019-10-03 06:11:48.309047684 -0700
++++ b/amd/amdgpu/dce_v6_0.c	2019-10-03 06:16:27.313168670 -0700
+@@ -1434,6 +1434,9 @@ static void dce_v6_0_audio_set_avi_infof
+ 	struct amdgpu_device *adev = dev->dev_private;
+ 	struct amdgpu_encoder *amdgpu_encoder = to_amdgpu_encoder(encoder);
+ 	struct amdgpu_encoder_atom_dig *dig = amdgpu_encoder->enc_priv;
++#if DRM_VERSION_CODE >= DRM_VERSION(5, 1, 0)
++	struct drm_connector *connector = amdgpu_get_connector_for_encoder(encoder);
++#endif
+ 	struct hdmi_avi_infoframe frame;
+ 	u8 buffer[HDMI_INFOFRAME_HEADER_SIZE + HDMI_AVI_INFOFRAME_SIZE];
+ 	uint8_t *payload = buffer + 3;
+@@ -1441,9 +1444,11 @@ static void dce_v6_0_audio_set_avi_infof
+ 	ssize_t err;
+ 	u32 tmp;
+ 
+-#if defined(HAVE_2ARGS_DRM_HDMI_AVI_INFOFRAME_FROM_DISPLAY_MODE)
++#if DRM_VERSION_CODE >= DRM_VERSION(5, 1, 0)
++	err = drm_hdmi_avi_infoframe_from_display_mode(&frame, connector, mode);
++#elif defined(HAVE_2ARGS_DRM_HDMI_AVI_INFOFRAME_FROM_DISPLAY_MODE) && DRM_VERSION_CODE < DRM_VERSION(4, 14, 0)
+ 	err = drm_hdmi_avi_infoframe_from_display_mode(&frame, mode);
+-#else
++#elif DRM_VERSION_CODE < DRM_VERSION(5, 1, 0)
+ 	err = drm_hdmi_avi_infoframe_from_display_mode(&frame, mode, false);
+ #endif
+ 	if (err < 0) {

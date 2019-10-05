@@ -1,0 +1,14 @@
+--- a/amd/amdgpu/amdgpu_device.c.orig	2019-10-04 15:51:20.483842305 -0700
++++ b/amd/amdgpu/amdgpu_device.c	2019-10-04 16:42:06.401757358 -0700
+@@ -2933,7 +2933,11 @@ void amdgpu_device_fini(struct amdgpu_de
+ 			drm_atomic_helper_shutdown(adev->ddev);
+ 		else
+ #endif
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 1, 0)
++			drm_helper_force_disable_all(adev->ddev);
++#else
+ 			drm_crtc_force_disable_all(adev->ddev);
++#endif
+ 	}
+ 	amdgpu_ib_pool_fini(adev);
+ 	amdgpu_fence_driver_fini(adev);

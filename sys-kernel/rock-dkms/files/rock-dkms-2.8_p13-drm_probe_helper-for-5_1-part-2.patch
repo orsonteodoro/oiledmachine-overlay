@@ -1,0 +1,12 @@
+--- a/amd/amdgpu/amdgpu_drv.c.orig	2019-10-03 02:40:23.537006741 -0700
++++ b/amd/amdgpu/amdgpu_drv.c	2019-10-03 02:57:50.280180187 -0700
+@@ -33,6 +33,9 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/vga_switcheroo.h>
+ #include <drm/drm_crtc_helper.h>
++#if DRM_VERSION_CODE >= DRM_VERSION(5, 1, 0)
++#include <drm/drm_probe_helper.h>
++#endif
+ 
+ #include "amdgpu.h"
+ #include "amdgpu_irq.h"

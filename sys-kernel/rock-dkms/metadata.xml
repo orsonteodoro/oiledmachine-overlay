@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    The rock-dkms a package containing both the ROCK-Kernel-Driver and the latest firmware (which is not installed in this package).
+    This package will build the kernel modules using the DKMS framework allowing for version agnostic compatibility meaning that
+    you can compile this package against 4.20.x, 5.0.x, 5.1.x, 5.2.x kernel versions.
+    The ROCk package has more GPU features like IPC related features (Memory sharing API, Signal sharing API); increasing 
+    GPU system memory limits from 3/8 of system memory to 29/32 of system memory; RDMA (aka Remote Device Programming or ROCmRDMA)
+    to allow other PCIe kernel modules and devices DMA access to GPU memory, KFD (Kernel Fusion Driver) features.  ROCk is also a 
+    core componenet of the ROCm platform.
+  </longdescription>
+  <upstream>
+    <bugs-to>https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver</bugs-to>
+    <!-- for a full list see https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/commits/master -->
+    <maintainer status="active" type="person">
+      <!-- for tag releasing ROCk -->
+      <name>Kent Russell</name>
+    </maintainer>
+    <maintainer status="active" type="person">
+      <name>Rui Teng</name>
+    </maintainer>
+    <remote-id type="github">RadeonOpenCompute/ROCK-Kernel-Driver</remote-id>
+  </upstream>
+  <use>
+    <flag name="build">Builds the kernel module.</flag>
+    <flag name="check-mmu-notifier-hard">Checks MMU_NOTIFIER is enabled indirectly through more than one options.</flag>
+    <flag name="check-mmu-notifier-easy">Checks MMU_NOTIFIER is enabled indirectly through one option set.</flag>
+    <flag name="firmware">Pulls in the firmware package containing the latest firmware version. (optional)</flag>
+  </use>
+</pkgmetadata>
