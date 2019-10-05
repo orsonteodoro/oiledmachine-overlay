@@ -533,7 +533,6 @@ function get_patch_index() {
 # Generalization of steps for fetching and generating commit list.
 function fetch_staging() {
 	if is_amd_staging_drm_next ; then
-		get_linux_commit_list_for_amd_staging_drm_next
 		fetch_amd_staging_drm_next
 	fi
 }
