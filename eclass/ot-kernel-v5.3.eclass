@@ -212,9 +212,6 @@ function ot-kernel-common_apply_o3_fixes() {
 # @DESCRIPTION:
 # Apply amd-staging-drm-next fixes.
 function ot-kernel-common_amdgpu_amd_staging_drm_next_fixes() {
-	# patches will be appended with x.
-	# x means amd-staging-drm-next
-
 	if is_amd_staging_drm_next ; then
 		fetch_amd_staging_drm_next_commits
 		cd "${S}"
@@ -239,11 +236,11 @@ function ot-kernel-common_amdgpu_amd_staging_drm_next_fixes() {
 						;;
 					*22a8f442866bf539c7a659923155d9afa03d77bb*)
 						# readapted patch
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-22a8f442866bf539c7a659923155d9afa03d77bb-fix-for-linux-5.3.1-x.patch"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-22a8f442866bf539c7a659923155d9afa03d77bb-fix-for-linux-5.3.1.patch"
 						;;
 					*fcd90fee8ac22da3bce1c6652cf36bc24e7a0749*)
 						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-fcd90fee8ac22da3bce1c6652cf36bc24e7a0749-fix-for-linux-5.3.1-x.patch"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-fcd90fee8ac22da3bce1c6652cf36bc24e7a0749-fix-for-linux-5.3.1.patch"
 						;;
 					*)
 						eerror "Patch failure ${T}/amd-staging-drm-next-patches/${l} .  Did not find the intervention patch."
