@@ -471,8 +471,6 @@ function set_amd_staging_drm_next_commits_target_base() {
 		target="${AMD_STAGING_DRM_NEXT_LATEST}"
 	elif use amd-staging-drm-next-milestone ; then
 		target="${AMD_STAGING_DRM_NEXT_MILESTONE}"
-	else
-		target="${AMD_STAGING_DRM_NEXT_STABLE}"
 	fi
 
 	if is_amd_staging_drm_next ; then

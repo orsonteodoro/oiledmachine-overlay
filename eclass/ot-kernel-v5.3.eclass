@@ -42,10 +42,8 @@ DISABLE_DEBUG_V="1.1"
 AMD_STAGING_DRM_NEXT_LATEST="amd-staging-drm-next"
 AMD_STAGING_DRM_NEXT_DIR="amd-staging-drm-next"
 
-AMD_STAGING_DRM_NEXT_SNAPSHOT="4a6c7afe7d1acc6d2f4b94d62843c72cbf2c60a" # latest commit I tested which should be ideally head
-# 2019-09-20 drm/amdgpu/ras: fix and update the documentation for RAS
-AMD_STAGING_DRM_NEXT_STABLE="b2e02e6df8bb7850db1a43389d4afe5d486cdd51" # corresponds to 19.30 latest commit from amd-staging-drm-next
-# 2019-09-19 drm/amdgpu/gfx10: update gfx golden settings for navi14
+AMD_STAGING_DRM_NEXT_SNAPSHOT="e025c334b6c7aa66c0fc67548643bd52c4a39eef" # latest commit I tested which should be ideally head
+# 2019-10-04 drm/amdgpu: remove redundant variable r and redundant return statement
 
 AMD_STAGING_DRM_NEXT_MILESTONE="a35d69a03b08e868ad222b1faa6ae5cc2c39113e" # corresponds to the tagged commit:: 2019-09-17 drm/amd/display: 3.2.51.1
 
