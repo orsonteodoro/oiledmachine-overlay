@@ -28,8 +28,10 @@
   </upstream>
   <use>
     <flag name="build">Builds the kernel module.</flag>
+    <flag name="check-gpu">Checks if the GPU(s) are supported.</flag>
     <flag name="check-mmu-notifier-hard">Checks MMU_NOTIFIER is enabled indirectly through more than one options.</flag>
     <flag name="check-mmu-notifier-easy">Checks MMU_NOTIFIER is enabled indirectly through one option set.</flag>
+    <flag name="check-pcie">Checks if the PCIe slots are supported.</flag>
     <flag name="firmware">Pulls in the firmware package containing the latest firmware version. (optional)</flag>
   </use>
 </pkgmetadata>
