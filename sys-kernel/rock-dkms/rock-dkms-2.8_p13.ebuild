@@ -229,7 +229,7 @@ check_hardware() {
 			x_atomic_f=$(echo "${asics}" | grep -P -o -e "${found_asic}_[01]" | sed -e "s|${found_asic}_||g")
 			atomic_f=$(( ${atomic_f} | ${x_atomic_f} ))
 			if [[ "${x_atomic_f}" == "1" ]] ; then
-				ewarn "Your APU/GPU requires atomics support for device_id=${device_id}"
+				ewarn "Your APU/GPU requires PCIe atomics support for device_id=${device_id}"
 			else
 				atomic_not_required=1
 				einfo "Your APU/GPU is supported for device_id=${device_id}"
