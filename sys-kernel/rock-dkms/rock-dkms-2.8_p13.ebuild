@@ -204,11 +204,11 @@ pkg_setup_error() {
 
 # The sandbox/ebuild doesn't allow to check in setup phase
 check_hardware() {
-	local is_pci3=1
+	local is_pci_slots_supported=1
 	if use check-pcie ; then
 		if ! ( dmidecode -t slot | grep "PCI Express 3" > /dev/null ); then
 			ewarn "Your PCIe slots are not supported."
-			is_pci3=0
+			is_pci_slots_supported=0
 		fi
 	fi
 
@@ -238,11 +238,11 @@ check_hardware() {
 	fi
 
 	if use check-pcie && use check-gpu ; then
-		if (( ${#device_ids} == 1 )) && [[ "${atomic_f}" == "1" && "${is_pci3}" != "1" ]] ; then
+		if (( ${#device_ids} == 1 )) && [[ "${atomic_f}" == "1" && "${is_pci_slots_supported}" != "1" ]] ; then
 			die "Your APU/GPU and PCIe combo is not supported.  You may disable check-pcie or check-gpu to continue."
-		elif (( ${#device_ids} > 1 )) && [[ "${atomic_f}" == "1" && "${is_pci3}" != "1" && "${atomic_not_required}" == "0" ]] ; then
+		elif (( ${#device_ids} > 1 )) && [[ "${atomic_f}" == "1" && "${is_pci_slots_supported}" != "1" && "${atomic_not_required}" == "0" ]] ; then
 			die "You APU/GPU and PCIe combo is not supported for your multiple GPU setup.  You may disable check-pcie or check-gpu to continue."
-		elif (( ${#device_ids} > 1 )) && [[ "${atomic_f}" == "1" && "${is_pci3}" != "1" && "${atomic_not_required}" == "1" ]] ; then
+		elif (( ${#device_ids} > 1 )) && [[ "${atomic_f}" == "1" && "${is_pci_slots_supported}" != "1" && "${atomic_not_required}" == "1" ]] ; then
 			ewarn "You APU/GPU and PCIe combo may not supported for some of your GPUs."
 		fi
 	fi
