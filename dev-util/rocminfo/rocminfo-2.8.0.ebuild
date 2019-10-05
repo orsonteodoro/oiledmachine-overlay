@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~x86"
 SRC_URI="https://github.com/RadeonOpenCompute/rocminfo/archive/roc-${PV}.tar.gz -> ${P}.tar.gz"
 SLOT="0/$(ver_cut 1-2)"
 IUSE=""
-RDEPEND="|| ( sys-kernel/ot-sources sys-kernel/rock-dkms )
+RDEPEND="sys-kernel/rock-dkms
 	 || ( x11-drivers/amdgpu-pro[hsa] dev-libs/roct-thunk-interface )
 	 dev-libs/rocm-cmake
 	 dev-libs/rocr-runtime"
@@ -28,8 +28,4 @@ src_configure() {
 		-DROCR_LIB_DIR="${EPREFIX}/usr/$(get_libdir)"
 	)
 	cmake-utils_src_configure
-}
-
-pkg_postinst() {
-	einfo "If you are using sys-kernel/ot-sources, you need to enable one of the rock- use flags."
 }
