@@ -214,8 +214,9 @@ check_hardware() {
 
 	# sandbox or emerge won't allow reading FILESDIR in setup phase
 	local atomic_f=0
+	local atomic_not_required=0
 	if use check-gpu ; then
-		local device_ids=$(lspci -nn | grep VGA | grep -P -o -e "[0-9a-f]{4}:[0-9a-f]{4}" | cut -f2 -d ":" | tr "[:lower:]" "[:upper:]")
+		device_ids=$(lspci -nn | grep VGA | grep -P -o -e "[0-9a-f]{4}:[0-9a-f]{4}" | cut -f2 -d ":" | tr "[:lower:]" "[:upper:]")
 		for device_id in ${device_ids} ; do
 			if [[ -z "${device_id}" ]] ; then
 				ewarn "Your APU/GPU is not supported for device_id=${device_id}"
@@ -228,14 +229,19 @@ check_hardware() {
 			if [[ "${x_atomic_f}" == "1" ]] ; then
 				ewarn "Your APU/GPU requires atomics support for device_id=${device_id}"
 			else
+				atomic_not_required=1
 				einfo "Your APU/GPU is supported for device_id=${device_id}"
 			fi
 		done
 	fi
 
 	if use check-pcie && use check-gpu ; then
-		if [[ "${atomic_f}" == "1" && "${is_pci3}" != "1" ]] ; then
-			die "Your APU/GPU and PCIe combo is not supported, but you may disable check-pcie or check-gpu USE flags to continue compiling."
+		if (( ${#device_ids} == 1 )) && [[ "${atomic_f}" == "1" && "${is_pci3}" != "1" ]] ; then
+			die "Your APU/GPU and PCIe combo is not supported.  You may disable check-pcie or check-gpu to continue."
+		elif (( ${#device_ids} > 1 )) && [[ "${atomic_f}" == "1" && "${is_pci3}" != "1" && "${atomic_not_required}" == "0" ]] ; then
+			die "You APU/GPU and PCIe combo is not supported for your multiple GPU setup.  You may disable check-pcie or check-gpu to continue."
+		elif (( ${#device_ids} > 1 )) && [[ "${atomic_f}" == "1" && "${is_pci3}" != "1" && "${atomic_not_required}" == "1" ]] ; then
+			ewarn "You APU/GPU and PCIe combo may not supported for some of your GPUs."
 		fi
 	fi
 }
