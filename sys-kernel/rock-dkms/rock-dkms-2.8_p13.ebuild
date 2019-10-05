@@ -15,7 +15,7 @@ BASE_URL="http://repo.radeon.com/rocm/apt/debian"
 FOLDER="pool/main/r/rock-dkms"
 SRC_URI="http://repo.radeon.com/rocm/apt/debian/pool/main/r/rock-dkms/${FN}"
 SLOT="0"
-IUSE="+build check-mmu-notifier-hard +check-mmu-notifier-easy +check-pcie-2_1 firmware"
+IUSE="+build check-mmu-notifier-hard +check-mmu-notifier-easy +check-pcie +check-gpu firmware"
 RDEPEND="firmware? ( sys-firmware/rock-firmware )
 	 sys-kernel/dkms"
 # drm_format_info_plane_cpp got removed in 5.3 and this module uses it
@@ -26,7 +26,9 @@ DEPEND="${RDEPEND}
 	     <sys-kernel/ot-sources-5.3
 	     <sys-kernel/pf-sources-5.3
 	     <sys-kernel/vanilla-sources-5.3
-	     <sys-kernel/zen-sources-5.3 )"
+	     <sys-kernel/zen-sources-5.3 )
+	check-pcie? ( sys-apps/dmidecode )
+	check-gpu? ( sys-apps/pciutils )"
 S="${WORKDIR}/usr/src/amdgpu-${MY_RPR}"
 RESTRICT="fetch"
 DKMS_PKG_NAME="amdgpu"
@@ -85,6 +87,14 @@ pkg_nofetch() {
         einfo "Please download"
         einfo "  - ${FN}"
         einfo "from ${BASE_URL} in the ${FOLDER} folder and place them in ${distdir}"
+}
+
+pkg_pretend() {
+	if use check-pcie ; then
+		if has sandbox $FEATURES ; then
+			die "${PN} require sandbox to be disabled in FEATURES when testing hardware with check-pcie USE flag."
+		fi
+	fi
 }
 
 pkg_setup_warn() {
@@ -192,6 +202,41 @@ pkg_setup_error() {
 
 }
 
+# The sandbox/ebuild doesn't allow to check in setup phase
+check_hardware() {
+	local is_pci3=1
+	if use check-pcie ; then
+		if ! ( dmidecode -t slot | grep "PCI Express 3" > /dev/null ); then
+			ewarn "Your PCIe slots are not supported."
+			is_pci3=0
+		fi
+	fi
+
+	# sandbox or emerge won't allow reading FILESDIR in setup phase
+	local atomic_f=1
+	if use check-gpu ; then
+		local device_id=$(lspci -nn | grep VGA | grep -P -o -e "1002:[0-9a-f]{4}" | cut -f2 -d ":" | tr "[:lower:]" "[:upper:]")
+		if [[ -z "${device_id}" ]] ; then
+			die "Your APU/GPU is not supported"
+		fi
+		# the format is asicname_needspciatomics
+		local asics="kaveri_0 carrizo_0 raven_1 hawaii_1 tonga_1 fiji_1 fijivf_0 polaris10_1 polaris10vf_0 polaris11_1 polaris12_1 vegam_1 vega10_0 vega10vf_0 vega12_0 vega20_0 arcturus_0 navi10_0"
+		local found_asic=$(grep -i "${device_id}" "${FILESDIR}/kfd_device.c_v2.8" | grep -P -o -e "/\* [ a-zA-Z0-9]+\*/" | sed -e "s|[ /*]||g" | tr "[:upper:]" "[:lower:]")
+		atomic_f=$(echo "${asics}" | grep -P -o -e "${found_asic}_[01]" | sed -e "s|${found_asic}_||g")
+		if [[ "${atomic_f}" == "1" ]] ; then
+			ewarn "Your APU/GPU requires atomics support"
+		else
+			einfo "Your APU/GPU is supported"
+		fi
+	fi
+
+	if use check-pcie && use check-gpu ; then
+		if [[ "${atomic_f}" == "1" && "${is_pci3}" != "1" ]] ; then
+			die "Your APU/GPU and PCIe combo is not supported, but you may disable check-pcie or check-gpu USE flags to continue compiling."
+		fi
+	fi
+}
+
 pkg_setup() {
 	if [[ -z "${ROCK_DKMS_KERNELS}" ]] ; then
 		eerror "You must define a per-package env or add to /etc/portage/make.conf a environmental variable ROCK_DKMS_KERNELS"
@@ -213,11 +258,6 @@ pkg_setup() {
 			pkg_setup_warn
 		fi
 	done
-
-	if use check-pcie-2_1 ; then
-		#todo
-		true
-	fi
 }
 
 src_unpack() {
@@ -227,6 +267,7 @@ src_unpack() {
 
 src_prepare() {
 	default
+	check_hardware
 	chmod 0770 autogen.sh || die
 	./autogen.sh || die
 	pushd amd/dkms || die
@@ -263,10 +304,12 @@ pkg_postinst() {
 			einfo "The modules where installed in /lib/modules/${kernel_ver}-${kernel_extraversion}/updates"
 		done
 	else
+		einfo
 		einfo "The ${PN} source code has been installed but not compiled."
 		einfo "You may do \`emerge ${PN} --config\` to compile them"
 		einfo " or "
 		einfo "Run something like \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k 5.2.17-gentoo/x86_64\`"
+		einfo
 	fi
 	einfo
 	einfo "For fully utilizing ROCmRDMA, it is recommend to set iommu off or in passthough mode."
@@ -275,14 +318,7 @@ pkg_postinst() {
 	einfo "If Intel IOMMU, add to kernel parameters either intel_iommu=off or iommu=pt"
 	einfo "For more information, See https://rocm-documentation.readthedocs.io/en/latest/Remote_Device_Programming/Remote-Device-Programming.html#rocmrdma ."
 	einfo
-	einfo
 	einfo "Only <5.3 kernels are supported for these kernel modules."
-	einfo
-	einfo "You need a PCIe 3.0 or a GPU that doesn't require PCIe atomics to use ROCK."
-	einfo "See needs_pci_atomics field for your GPU family in"
-	einfo "https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/master/drivers/gpu/drm/amd/amdkfd/kfd_device.c"
-	einfo "for the exception.  For supported CPUs see"
-	einfo "https://rocm.github.io/hardware.html"
 	einfo
 }
 
