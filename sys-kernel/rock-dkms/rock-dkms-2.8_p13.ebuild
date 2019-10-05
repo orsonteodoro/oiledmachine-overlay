@@ -258,6 +258,9 @@ pkg_postinst() {
 		for k in ${ROCK_DKMS_KERNELS} ; do
 			einfo "Running: \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH}\`"
 			dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} || die
+			einfo "Running: \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH}\`"
+			dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} || die
+			einfo "The modules where installed in /lib/modules/${kernel_ver}-${kernel_extraversion}/updates"
 		done
 	else
 		einfo "The ${PN} source code has been installed but not compiled."
@@ -290,8 +293,12 @@ pkg_prerm() {
 pkg_config() {
 	einfo "What is your kernel version? (5.2.17)"
 	read kernel_ver
-	einfo "What is your kernel tag? (gentoo, pf, git, ...)"
-	read kernel_tag
+	einfo "What is your kernel extraversion? (gentoo, pf, git, ...)"
+	read kernel_extraversion
 
-	dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${kernel_ver}-${tag}/${ARCH} || die "Your module build failed."
+	einfo "Running: \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${kernel_ver}-${kernel_extraversion}/${ARCH}\`"
+	dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${kernel_ver}-${kernel_extraversion}/${ARCH} || die "Your module build failed."
+	einfo "Running: \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${kernel_ver}-${kernel_extraversion}/${ARCH}\`"
+	dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${kernel_ver}-${kernel_extraversion}/${ARCH} || die "Your module install failed."
+	einfo "The modules where installed in /lib/modules/${kernel_ver}-${kernel_extraversion}/updates"
 }
