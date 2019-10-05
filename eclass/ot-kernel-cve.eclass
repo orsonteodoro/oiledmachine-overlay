@@ -130,7 +130,13 @@ CVE_2019_17075_PM=""
 CVE_2019_17075_SUMMARY_LANG="CVE_2019_17075_SUMMARY_${CVE_LANG}"
 CVE_2019_17075_SUMMARY="${!CVE_2019_17075_SUMMARY_LANG}"
 
-
+CVE_2019_17133_FIX_SRC_URI=""
+CVE_2019_17133_FN=""
+CVE_2019_17133_SEVERITY_LANG="CVE_2019_17133_SEVERITY_${CVE_LANG}"
+CVE_2019_17133_SEVERITY="${!CVE_2019_17133_SEVERITY_LANG}"
+CVE_2019_17133_PM=""
+CVE_2019_17133_SUMMARY_LANG="CVE_2019_17133_SUMMARY_${CVE_LANG}"
+CVE_2019_17133_SUMMARY="${!CVE_2019_17133_SUMMARY_LANG}"
 
 SRC_URI+=" cve_hotfix? ( ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 			 ${CVE_2019_14814_FIX_SRC_URI} -> ${CVE_2019_14814_FN}
@@ -147,6 +153,7 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 
 		       )"
 #			 ${CVE_2019_17075_FIX_SRC_URI} -> ${CVE_2019_17075_FN}
+#			 ${CVE_2019_17133_FIX_SRC_URI} -> ${CVE_2019_17133_FN}
 
 # @FUNCTION: _fetch_cve_boilerplate_msg
 # @DESCRIPTION:
@@ -338,6 +345,19 @@ function fetch_cve_2019_17056_hotfix() {
 # Checks for the CVE-2019-17075 patch
 function fetch_cve_2019_17075_hotfix() {
 	local CVE_ID="CVE-2019-17075"
+#	if grep -F -e "" "${S}" >/dev/null ; then
+#		einfo "${CVE_ID} already patched."
+#		return
+#	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_17133_hotfix
+# @DESCRIPTION:
+# Checks for the CVE-2019-17133 patch
+function fetch_cve_2019_17133_hotfix() {
+	local CVE_ID="CVE-2019-17133"
 #	if grep -F -e "" "${S}" >/dev/null ; then
 #		einfo "${CVE_ID} already patched."
 #		return
@@ -545,6 +565,21 @@ function apply_cve_2019_17075_hotfix() {
 #	_resolve_hotfix_default
 }
 
+# @FUNCTION: apply_cve_2019_17133_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_17133 patch if it needs to
+function apply_cve_2019_17133_hotfix() {
+	local CVE_ID="CVE-2019-17133"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+#	if grep -F -e "" "${S}/" >/dev/null ; then
+#		einfo "${CVE_ID} is already patched."
+#		return
+#	fi
+#	_resolve_hotfix_default
+}
+
 # @FUNCTION: fetch_cve_hotfixes
 # @DESCRIPTION:
 # Fetches all the CVE kernel patches
@@ -565,6 +600,7 @@ function fetch_cve_hotfixes() {
 		fetch_cve_2019_17055_hotfix
 		fetch_cve_2019_17056_hotfix
 		fetch_cve_2019_17075_hotfix
+		fetch_cve_2019_17133_hotfix
 		local cve_copyright1="CVE_COPYRIGHT1_${CVE_LANG}"
 		local cve_copyright2="CVE_COPYRIGHT2_${CVE_LANG}"
 		einfo
@@ -597,5 +633,6 @@ function apply_cve_hotfixes() {
 		apply_cve_2019_17055_hotfix
 		apply_cve_2019_17056_hotfix
 		apply_cve_2019_17075_hotfix
+		apply_cve_2019_17133_hotfix
 	fi
 }
