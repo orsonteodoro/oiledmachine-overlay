@@ -215,11 +215,13 @@ check_hardware() {
 	# sandbox or emerge won't allow reading FILESDIR in setup phase
 	local atomic_f=0
 	local atomic_not_required=0
+	local device_ids
 	if use check-gpu ; then
 		device_ids=$(lspci -nn | grep VGA | grep -P -o -e "[0-9a-f]{4}:[0-9a-f]{4}" | cut -f2 -d ":" | tr "[:lower:]" "[:upper:]")
 		for device_id in ${device_ids} ; do
 			if [[ -z "${device_id}" ]] ; then
 				ewarn "Your APU/GPU is not supported for device_id=${device_id}"
+				continue
 			fi
 			# the format is asicname_needspciatomics
 			local asics="kaveri_0 carrizo_0 raven_1 hawaii_1 tonga_1 fiji_1 fijivf_0 polaris10_1 polaris10vf_0 polaris11_1 polaris12_1 vegam_1 vega10_0 vega10vf_0 vega12_0 vega20_0 arcturus_0 navi10_0"
