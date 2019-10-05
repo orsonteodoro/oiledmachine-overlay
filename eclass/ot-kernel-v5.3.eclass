@@ -121,7 +121,6 @@ SRC_URI+=" ${KERNEL_URI}
 	   ${TRESOR_SRC_URL}
 	   ${UKSM_SRC_URL}
 	   ${KERNEL_PATCH_URLS[@]}
-	   https://github.com/torvalds/linux/commit/2fbd6f94accdbb223acccada68940b50b0c668d9.patch -> linux-kernel-2fbd6f94accdbb223acccada68940b50b0c668d9.patch
 	   "
 
 _set_check_reqs_requirements() {
