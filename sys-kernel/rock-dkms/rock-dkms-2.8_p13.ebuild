@@ -213,21 +213,24 @@ check_hardware() {
 	fi
 
 	# sandbox or emerge won't allow reading FILESDIR in setup phase
-	local atomic_f=1
+	local atomic_f=0
 	if use check-gpu ; then
-		local device_id=$(lspci -nn | grep VGA | grep -P -o -e "1002:[0-9a-f]{4}" | cut -f2 -d ":" | tr "[:lower:]" "[:upper:]")
-		if [[ -z "${device_id}" ]] ; then
-			die "Your APU/GPU is not supported"
-		fi
-		# the format is asicname_needspciatomics
-		local asics="kaveri_0 carrizo_0 raven_1 hawaii_1 tonga_1 fiji_1 fijivf_0 polaris10_1 polaris10vf_0 polaris11_1 polaris12_1 vegam_1 vega10_0 vega10vf_0 vega12_0 vega20_0 arcturus_0 navi10_0"
-		local found_asic=$(grep -i "${device_id}" "${FILESDIR}/kfd_device.c_v2.8" | grep -P -o -e "/\* [ a-zA-Z0-9]+\*/" | sed -e "s|[ /*]||g" | tr "[:upper:]" "[:lower:]")
-		atomic_f=$(echo "${asics}" | grep -P -o -e "${found_asic}_[01]" | sed -e "s|${found_asic}_||g")
-		if [[ "${atomic_f}" == "1" ]] ; then
-			ewarn "Your APU/GPU requires atomics support"
-		else
-			einfo "Your APU/GPU is supported"
-		fi
+		local device_ids=$(lspci -nn | grep VGA | grep -P -o -e "[0-9a-f]{4}:[0-9a-f]{4}" | cut -f2 -d ":" | tr "[:lower:]" "[:upper:]")
+		for device_id in ${device_ids} ; do
+			if [[ -z "${device_id}" ]] ; then
+				ewarn "Your APU/GPU is not supported for device_id=${device_id}"
+			fi
+			# the format is asicname_needspciatomics
+			local asics="kaveri_0 carrizo_0 raven_1 hawaii_1 tonga_1 fiji_1 fijivf_0 polaris10_1 polaris10vf_0 polaris11_1 polaris12_1 vegam_1 vega10_0 vega10vf_0 vega12_0 vega20_0 arcturus_0 navi10_0"
+			local found_asic=$(grep -i "${device_id}" "${FILESDIR}/kfd_device.c_v2.8" | grep -P -o -e "/\* [ a-zA-Z0-9]+\*/" | sed -e "s|[ /*]||g" | tr "[:upper:]" "[:lower:]")
+			x_atomic_f=$(echo "${asics}" | grep -P -o -e "${found_asic}_[01]" | sed -e "s|${found_asic}_||g")
+			atomic_f=$(( ${atomic_f} | ${x_atomic_f} ))
+			if [[ "${x_atomic_f}" == "1" ]] ; then
+				ewarn "Your APU/GPU requires atomics support for device_id=${device_id}"
+			else
+				einfo "Your APU/GPU is supported for device_id=${device_id}"
+			fi
+		done
 	fi
 
 	if use check-pcie && use check-gpu ; then
