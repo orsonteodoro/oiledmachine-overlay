@@ -393,40 +393,6 @@ function fetch_zentune() {
 	wget -O "${T}/${ZENTUNE_FN}" "${ZENTUNE_DL_URL}" || die
 }
 
-function fetch_linux_sources() {
-	einfo "Fetching the vanilla Linux kernel sources.  It may take hours."
-	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	cd "${DISTDIR}"
-	d="${distdir}/ot-sources-src/linux"
-	b="${distdir}/ot-sources-src"
-	addwrite "${b}"
-	cd "${b}"
-	if [[ ! -d "${d}" ]] ; then
-		mkdir -p "${d}"
-		einfo "Cloning the vanilla Linux kernel project"
-		git clone "${LINUX_REPO_URL}" "${d}"
-		cd "${d}"
-		git checkout master
-		git checkout -b v${K_MAJOR_MINOR} tags/v${K_MAJOR_MINOR}
-	else
-		local G=$(find "${d}" -group "root")
-		if (( ${#G} > 0 )) ; then
-			die "You must manually \`chown -R portage:portage ${d}\`.  Re-emerge again."
-		fi
-		einfo "Updating the vanilla Linux kernel project"
-		cd "${d}"
-		git clean -fdx
-		git reset --hard master
-		git reset --hard origin/master
-		git checkout master
-		git pull
-		git branch -D v${K_MAJOR_MINOR}
-		git checkout -b v${K_MAJOR_MINOR} tags/v${K_MAJOR_MINOR}
-		git pull
-	fi
-	cd "${d}"
-}
-
 # @FUNCTION: fetch_amd_staging_drm_next
 # @DESCRIPTION:
 # Clones or updates the amd-staging-drm-next patchset for recent fixes or GPU compatibility updates.
@@ -567,19 +533,8 @@ function get_patch_index() {
 # Generalization of steps for fetching and generating commit list.
 function fetch_staging() {
 	if is_amd_staging_drm_next ; then
-		if [[ -z "$OT_KERNEL_CACHED_COMMITS" ]] ; then
-			fetch_linux_sources
-		else
-			fetch_linux_sources_cached
-		fi
-	fi
-	if is_amd_staging_drm_next ; then
 		get_linux_commit_list_for_amd_staging_drm_next
-		if [[ -z "$OT_KERNEL_CACHED_COMMITS" ]] ; then
-			fetch_amd_staging_drm_next
-		else
-			fetch_amd_staging_drm_next_cached
-		fi
+		fetch_amd_staging_drm_next
 	fi
 }
 
