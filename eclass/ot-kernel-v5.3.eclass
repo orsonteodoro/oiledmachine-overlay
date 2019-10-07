@@ -208,15 +208,19 @@ function ot-kernel-common_amdgpu_amd_staging_drm_next_fixes() {
 	if is_amd_staging_drm_next ; then
 		fetch_amd_staging_drm_next_commits
 
-#		# remove already patched
+		# remove already patched
 		rm "${T}/amd-staging-drm-next-patches/"*4d7fd9e20b0784b07777728316da5bcc13f9f2ab*
 		rm "${T}/amd-staging-drm-next-patches/"*b48935b3bfc1350737e759fef5e92db14a2e2fbb*
 		rm "${T}/amd-staging-drm-next-patches/"*c74dbe44eacf00a5ccc229b5cc340a9b7f6851a0*
 		rm "${T}/amd-staging-drm-next-patches/"*ebecc6c48f39b3c549bee1e4ecb9be01bf341a0f*
 
-#		# remove obsolete
+		# remove obsolete
 		rm "${T}/amd-staging-drm-next-patches/"*5fa790f6c936c4705dea5883fa12da9e017ceb4f*
 		rm "${T}/amd-staging-drm-next-patches/"*32e40ffbced3b14ceac1ae13a1a66c5849a6d2d3*
+
+		# fix change location from 5.4 to 5.3
+		sed -i -e "s|drivers/gpu/drm/i915/i915_gem_dmabuf.c|drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c|g" "${T}/amd-staging-drm-next-patches/"*e4fa8457b2197118538a1400b75c898f9faaf164* || die
+		sed -i -e "s|drivers/gpu/drm/i915/selftests/i915_gem_dmabuf.c|drivers/gpu/drm/i915/gem/selftests/i915_gem_dmabuf.c|g" "${T}/amd-staging-drm-next-patches/"*e4fa8457b2197118538a1400b75c898f9faaf164* || die
 
 		cd "${S}"
 		L=$(ls -1 "${T}"/amd-staging-drm-next-patches)
@@ -309,6 +313,23 @@ ot-kernel-common_fetch_amd_staging_drm_next_commits_post() {
 	index=$((index-1))
 	# Missing commit from DC_VER 3.2.32, committer is @intel.com, v5.4.x, master
 	_get_amd_staging_drm_next_commit ${index} 4f5368b5541a902f6596558b05f5c21a9770dd32 "a"
+
+	# post emerge build failure fixes
+	# Fixes error: ‘struct dma_resv’ has no member named ‘seq’
+	_get_amd_staging_drm_next_commit ${index} b016cd6ed4b772759804e0d6082bd1f5ca63b8ee "b"
+
+	# pull all the drm/prime commits after commit 0500c04ea14a4143edf902d087079c4e7b2f0229 (drm: drop use of drmP.h in drm/*)
+	# the amd-staging-drm-next is a 5.3-rc3 kernel but doesn't contain some of the drm/prime commits in the vanilla 5.3
+
+	# using history for drm_prime.c
+	# https://cgit.freedesktop.org/~agd5f/linux/log/drivers/gpu/drm/drm_prime.c?h=amd-staging-drm-next
+	_get_amd_staging_drm_next_commit ${index} b283e92a2315f9368dda010c9633183147fe87e0 "c"
+	_get_amd_staging_drm_next_commit ${index} 805dc614d58a8fb069ed079005e591247df85246 "d"
+	_get_amd_staging_drm_next_commit ${index} ee8375d5dc5bbb50b03bedfb0020d3e1c27ceacb "e"
+	_get_amd_staging_drm_next_commit ${index} e4fa8457b2197118538a1400b75c898f9faaf164 "f"
+	_get_amd_staging_drm_next_commit ${index} 5f6ed9879a414636405a2bd77f122881695959e4 "g"
+	_get_amd_staging_drm_next_commit ${index} 39716270d88c157b722e1f11adf9dada6bec3f11 "h"
+	_get_amd_staging_drm_next_commit ${index} 51c98747113e93b6229f12d1a744a51fd59eff3a "i"
 }
 
 # @FUNCTION: ot-kernel-common_pkg_postinst_cb

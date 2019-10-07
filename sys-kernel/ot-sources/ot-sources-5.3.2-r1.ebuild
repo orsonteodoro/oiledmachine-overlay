@@ -46,7 +46,3 @@ pkg_postinst() {
 	ot-kernel-common_pkg_postinst
 }
 
-pkg_postrm() {
-	ot-kernel-common_pkg_postrm
-}
-
