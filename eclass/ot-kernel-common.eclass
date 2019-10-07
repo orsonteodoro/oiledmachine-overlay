@@ -120,7 +120,7 @@ KERNEL_PATCH_0_TO_1_URL="https://cdn.kernel.org/pub/linux/kernel/v${K_PATCH_XV}/
 
 LINUX_REPO_URL="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 
-LINUX_COMMITS_ASDN_RANGE_FN="linux.commits.amd_staging_drm_next_range.${PV}"
+LINUX_COMMITS_ASDN_RANGE_FN="${LINUX_COMMITS_ASDN_RANGE_FN:=linux.commits.amd_staging_drm_next_range.${K_MAJOR_MINOR}}"
 
 if [[ -n "${KERNEL_NO_POINT_RELEASE}" && "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; then
 	KERNEL_PATCH_URLS=()

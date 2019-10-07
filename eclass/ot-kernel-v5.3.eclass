@@ -217,11 +217,9 @@ function ot-kernel-common_amdgpu_amd_staging_drm_next_fixes() {
 		rm "${T}/amd-staging-drm-next-patches/"*4d7fd9e20b0784b07777728316da5bcc13f9f2ab*
 		rm "${T}/amd-staging-drm-next-patches/"*b48935b3bfc1350737e759fef5e92db14a2e2fbb*
 		rm "${T}/amd-staging-drm-next-patches/"*c74dbe44eacf00a5ccc229b5cc340a9b7f6851a0*
-#		rm "${T}/amd-staging-drm-next-patches/"*f0bc1ee473fefd4d9f2ace9fad1cefdc0b7f6fdd*
 		rm "${T}/amd-staging-drm-next-patches/"*ebecc6c48f39b3c549bee1e4ecb9be01bf341a0f*
 
 #		# remove obsolete
-#		rm "${T}/amd-staging-drm-next-patches/"*a3ebbdb95f8c343a547ee2abec4d8abbf71f8a94*
 		rm "${T}/amd-staging-drm-next-patches/"*5fa790f6c936c4705dea5883fa12da9e017ceb4f*
 		rm "${T}/amd-staging-drm-next-patches/"*32e40ffbced3b14ceac1ae13a1a66c5849a6d2d3*
 
@@ -308,8 +306,10 @@ ot-kernel-common_fetch_amd_staging_drm_next_commits_post() {
 	_get_amd_staging_drm_next_commit ${index} 1a058c3376765ee31d65e28cbbb9d4ff15120056 "a"
 	_get_amd_staging_drm_next_commit ${index} cf401e2856b27b2deeada498eab864e2a50cf219 "b"
 	_get_amd_staging_drm_next_commit ${index} 443e902eeef96f3bed54a7067c50a07f06074373 "c"
-#	_get_amd_staging_drm_next_commit ${index} be8454afc50f43016ca8b6130d9673bdd0bd56ec "a"
 
+	index=$(get_patch_index "amd-staging-drm-next-patches" d2a230311d79a8d99ea7b199bc36367c63f6442f)
+	index=$((index-1))
+	_get_amd_staging_drm_next_commit ${index} 4f5368b5541a902f6596558b05f5c21a9770dd32 "a"
 }
 
 # @FUNCTION: ot-kernel-common_pkg_postinst_cb
