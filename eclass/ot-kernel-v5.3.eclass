@@ -47,7 +47,8 @@ AMD_STAGING_DRM_NEXT_SNAPSHOT="e025c334b6c7aa66c0fc67548643bd52c4a39eef" # lates
 
 AMD_STAGING_DRM_NEXT_MILESTONE="a35d69a03b08e868ad222b1faa6ae5cc2c39113e" # corresponds to the tagged commit:: 2019-09-17 drm/amd/display: 3.2.51.1
 
-AMD_STAGING_INTERSECTS_5_X="b70666934b41c081489d5ff3c5bf017796545d35" # corresponds to B
+#AMD_STAGING_INTERSECTS_5_X="b70666934b41c081489d5ff3c5bf017796545d35" # corresponds to B
+AMD_STAGING_INTERSECTS_5_X="70bcf2bc5203e358e5e2ac30718caea53204dfe9" # corresponds to drm/amd/display: 3.2.35
 
 IUSE="bfq bmq bmq-quick-fix amd-staging-drm-next-latest amd-staging-drm-next-snapshot amd-staging-drm-next-milestone +cfs disable_debug +graysky2 muqss +o3 pds uksm tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs -zentune"
 REQUIRED_USE="^^ ( muqss pds cfs bmq )
@@ -211,14 +212,39 @@ function ot-kernel-common_apply_o3_fixes() {
 function ot-kernel-common_amdgpu_amd_staging_drm_next_fixes() {
 	if is_amd_staging_drm_next ; then
 		fetch_amd_staging_drm_next_commits
+
+#		# remove already patched
+		rm "${T}/amd-staging-drm-next-patches/"*4d7fd9e20b0784b07777728316da5bcc13f9f2ab*
+		rm "${T}/amd-staging-drm-next-patches/"*b48935b3bfc1350737e759fef5e92db14a2e2fbb*
+		rm "${T}/amd-staging-drm-next-patches/"*c74dbe44eacf00a5ccc229b5cc340a9b7f6851a0*
+#		rm "${T}/amd-staging-drm-next-patches/"*f0bc1ee473fefd4d9f2ace9fad1cefdc0b7f6fdd*
+		rm "${T}/amd-staging-drm-next-patches/"*ebecc6c48f39b3c549bee1e4ecb9be01bf341a0f*
+
+#		# remove obsolete
+#		rm "${T}/amd-staging-drm-next-patches/"*a3ebbdb95f8c343a547ee2abec4d8abbf71f8a94*
+		rm "${T}/amd-staging-drm-next-patches/"*5fa790f6c936c4705dea5883fa12da9e017ceb4f*
+		rm "${T}/amd-staging-drm-next-patches/"*32e40ffbced3b14ceac1ae13a1a66c5849a6d2d3*
+
 		cd "${S}"
 		L=$(ls -1 "${T}"/amd-staging-drm-next-patches)
 		for l in $L ; do
 			echo $(patch --dry-run -p1 -F 100 -i "${T}/amd-staging-drm-next-patches/${l}") | grep "FAILED at"
 			if [[ "$?" == "1" ]] ; then
 				case "${l}" in
-					*4d7fd9e20b0784b07777728316da5bcc13f9f2ab*)
-						# already patched
+					*5a5011a72489545343a1599362e9ec126d7bd297*)
+						# fix mispatch
+						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-5a5011a72489545343a1599362e9ec126d7bd297-rebase-for-linux-5.3.1.patch"
+						;;
+					*27c44acebd3fab5448aa3cffdc1996c897965a4a*)
+						# fix mispatch
+						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-27c44acebd3fab5448aa3cffdc1996c897965a4a-rebase-for-linux-5.3.1.patch"
+						;;
+					*336ac942f115dd076bd7287c7cf03f37c710895c*)
+						# fix mispatch
+						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-336ac942f115dd076bd7287c7cf03f37c710895c-rebase-for-linux-5.3.1.patch"
 						;;
 					*)
 						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
@@ -227,17 +253,21 @@ function ot-kernel-common_amdgpu_amd_staging_drm_next_fixes() {
 				esac
 			else
 				case "${l}" in
-					*b48935b3bfc1350737e759fef5e92db14a2e2fbb*|\
-					*4d7fd9e20b0784b07777728316da5bcc13f9f2ab*)
-						# already patched
-						;;
 					*22a8f442866bf539c7a659923155d9afa03d77bb*)
-						# readapted patch
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-22a8f442866bf539c7a659923155d9afa03d77bb-fix-for-linux-5.3.1.patch"
+						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-22a8f442866bf539c7a659923155d9afa03d77bb-rebase-for-linux-5.3.1.patch"
 						;;
 					*fcd90fee8ac22da3bce1c6652cf36bc24e7a0749*)
 						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-fcd90fee8ac22da3bce1c6652cf36bc24e7a0749-fix-for-linux-5.3.1.patch"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-fcd90fee8ac22da3bce1c6652cf36bc24e7a0749-rebase-for-linux-5.3.1.patch"
+						;;
+					*98eb03bbf0175f009a74c80ac12b91a9680292f4*)
+						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-98eb03bbf0175f009a74c80ac12b91a9680292f4-rebase-for-linux-5.3.2.patch"
+						;;
+					*52791eeec1d9f4a7e7fe08aaba0b1553149d93bc*)
+						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-52791eeec1d9f4a7e7fe08aaba0b1553149d93bc-rebase-for-linux-5.3.1.patch"
 						;;
 					*)
 						eerror "Patch failure ${T}/amd-staging-drm-next-patches/${l} .  Did not find the intervention patch."
@@ -248,6 +278,38 @@ function ot-kernel-common_amdgpu_amd_staging_drm_next_fixes() {
 
 		done
 	fi
+}
+
+# @FUNCTION: ot-kernel-common_fetch_amd_staging_drm_next_commits_post
+# @DESCRIPTION:
+# Prepends patches.  The pattern is similar to 1 1a 1b 1c 2, where 1a 12 1c are new patches and the 2 is the problematic patch which the index is obtained.
+ot-kernel-common_fetch_amd_staging_drm_next_commits_post() {
+	local index=$(get_patch_index "amd-staging-drm-next-patches" 96e95496b02dbf1b19a2d4ce238810572e149606)
+	_get_amd_staging_drm_next_commit $((index-1)) 94eb1e10a34d3c7fc42208faaa4954fe482ac091 "a"
+
+	index=$(get_patch_index "amd-staging-drm-next-patches" 52791eeec1d9f4a7e7fe08aaba0b1553149d93bc)
+	index=$((index-1))
+
+	_get_amd_staging_drm_next_commit ${index} 5a5011a72489545343a1599362e9ec126d7bd297 "a"
+	_get_amd_staging_drm_next_commit ${index} e532a135d7044b5477c1c56169fa131d77c57f75 "b"
+	_get_amd_staging_drm_next_commit ${index} 7a4db29660a9d16024fd843b720fb7449ebc2538 "c"
+	_get_amd_staging_drm_next_commit ${index} 5c69f132a2660435ec30d8531d77515b7ba4148e "d"
+	_get_amd_staging_drm_next_commit ${index} 4922f55294bbc48d670bb57c025904b4d4878d1b "e"
+	_get_amd_staging_drm_next_commit ${index} 336ac942f115dd076bd7287c7cf03f37c710895c "f"
+	_get_amd_staging_drm_next_commit ${index} 27c44acebd3fab5448aa3cffdc1996c897965a4a "g"
+
+	_get_amd_staging_drm_next_commit ${index} bd630a86be381992fac99f9ab82c5c5b43a5ee3b "h"
+
+	index=$(get_patch_index "amd-staging-drm-next-patches" e532a135d7044b5477c1c56169fa131d77c57f75)
+	_get_amd_staging_drm_next_commit $((index-1)) 1e053b10ba60eae6a3f9de64cbc74bdf6cb0e715 "a"
+
+	index=$(get_patch_index "amd-staging-drm-next-patches" cfb7c11bb7a590c7e9c3d241d85388db108ceeb7)
+	index=$((index-1))
+	_get_amd_staging_drm_next_commit ${index} 1a058c3376765ee31d65e28cbbb9d4ff15120056 "a"
+	_get_amd_staging_drm_next_commit ${index} cf401e2856b27b2deeada498eab864e2a50cf219 "b"
+	_get_amd_staging_drm_next_commit ${index} 443e902eeef96f3bed54a7067c50a07f06074373 "c"
+#	_get_amd_staging_drm_next_commit ${index} be8454afc50f43016ca8b6130d9673bdd0bd56ec "a"
+
 }
 
 # @FUNCTION: ot-kernel-common_pkg_postinst_cb
