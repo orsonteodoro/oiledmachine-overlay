@@ -138,14 +138,6 @@ function ot-kernel-common_pkg_setup_cb() {
 	fi
 }
 
-# @FUNCTION: ot-kernel-common_uksm_fixes
-# @DESCRIPTION:
-# Applies specific UKMS fixes for this kernel major version
-function ot-kernel-common_uksm_fixes() {
-	#_dpatch "${PATCH_OPS}" "${FILESDIR}/uksm-4.19-invalidate-range-linux-5.0.6.patch"
-	true
-}
-
 # @FUNCTION: ot-kernel-common_apply_genpatch_extras_patchset
 # @DESCRIPTION:
 # Apply genpatches extra patches

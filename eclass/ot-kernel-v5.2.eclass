@@ -22,7 +22,7 @@ ETYPE="sources"
 K_MAJOR_MINOR="5.2"
 K_PATCH_XV="5.x"
 EXTRAVERSION="-ot"
-PATCH_UKSM_VER="5.0"
+PATCH_UKSM_VER="5.2"
 PATCH_UKSM_MVER="5"
 PATCH_ZENTUNE_VER="5.2"
 PATCH_O3_CO_COMMIT="a56a17374772a48a60057447dc4f1b4ec62697fb"
@@ -105,15 +105,6 @@ function ot-kernel-common_pkg_setup_cb() {
 	if use zentune || use muqss ; then
 		ewarn "The zen-tune patch or muqss might cause lock up or slow io under heavy load like npm.  These use flags are not recommended."
 	fi
-}
-
-# @FUNCTION: ot-kernel-common_uksm_fixes
-# @DESCRIPTION:
-# Applies specific UKMS fixes for this kernel major version
-function ot-kernel-common_uksm_fixes() {
-	# the header patches fine with patch -N
-	_dpatch "${PATCH_OPS}" "${FILESDIR}/uksm-5.1-fixes.patch" # for reuse_ksm_page
-	_dpatch "${PATCH_OPS}" "${FILESDIR}/uksm-5.2-fixes.patch" # for mmu_notifier_range_init changes related to 6f4f13e8d9e27cefd2cd88dd4fd80aa6d68b9131 and ksm.c
 }
 
 # @FUNCTION: ot-kernel-common_apply_genpatch_extras_patchset

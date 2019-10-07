@@ -481,6 +481,11 @@ function fetch_linux_sources() {
 # @DESCRIPTION:
 # Clones or updates the amd-staging-drm-next patchset for recent fixes or GPU compatibility updates.
 function fetch_amd_staging_drm_next_local_copy() {
+	# I would like to store/cache the converted commits to .patch files in ${FILESDIR}/amd-staging-drm-next/5.3 but unfortunately
+	# I cannot do it because of licensing problems.  It would require to prepend each patch with the license or extract the
+	# license header from the source code and store it in a single LICENSE file, or creative license fingerprinting and IDing
+	# the headers.  It is practically impossible or too time consuming to do it for 1100+ commits which refer to several files each.
+
 	einfo "Fetching the amd-staging-drm-next project please wait.  It may take hours."
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	cd "${DISTDIR}"
