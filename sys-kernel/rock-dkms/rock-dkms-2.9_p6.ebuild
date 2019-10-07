@@ -89,6 +89,7 @@ pkg_nofetch() {
 }
 
 pkg_pretend() {
+	ewarn "This package version is undergoing development.  It may not work."
 	if use check-pcie ; then
 		if has sandbox $FEATURES ; then
 			die "${PN} require sandbox to be disabled in FEATURES when testing hardware with check-pcie USE flag."
