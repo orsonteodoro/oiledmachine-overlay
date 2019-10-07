@@ -15,7 +15,7 @@ BASE_URL="http://repo.radeon.com/rocm/apt/debian"
 FOLDER="pool/main/r/rock-dkms"
 SRC_URI="http://repo.radeon.com/rocm/apt/debian/pool/main/r/rock-dkms/${FN}"
 SLOT="0"
-IUSE="+build check-mmu-notifier-hard +check-mmu-notifier-easy +check-pcie +check-gpu firmware"
+IUSE="+build +check-mmu-notifier +check-pcie +check-gpu firmware"
 RDEPEND="firmware? ( sys-firmware/rock-firmware )
 	 sys-kernel/dkms"
 # drm_format_info_plane_cpp got removed in 5.3 and this module uses it
@@ -80,7 +80,6 @@ PATCHES=( "${FILESDIR}/rock-dkms-2.8_p13-makefile-recognize-gentoo.patch"
 	  "${FILESDIR}/rock-dkms-2.8_p13-use-drm_need_swiotlb-for-5_2-part-2.patch"
 	  "${FILESDIR}/rock-dkms-2.8_p13-use-drm_need_swiotlb-for-5_2-part-3.patch"
 	  "${FILESDIR}/rock-dkms-2.8_p13-use-drm_need_swiotlb-for-5_2-part-4.patch" )
-REQUIRED_USE="|| ( check-mmu-notifier-hard check-mmu-notifier-easy )"
 
 pkg_nofetch() {
         local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
@@ -100,42 +99,21 @@ pkg_pretend() {
 pkg_setup_warn() {
 	ewarn "Disabling build is not recommended.  It is intended for unattended installs.  You are responsible for the following .config flags:"
 
-	# The CONFIG_MMU_NOTIFIER must be set to =y indirectly with CONFIG_HMM_MIRROR, CONFIG_DEVICE_PRIVATE, CONFIG_DEVICE_PUBLIC, CONFIG_DRM_AMDGPU_USERPTR.
-	# You can do it the hard way with more kernel options or easy way with less kernel options.
-
 	CONFIG_CHECK+=" !TRIM_UNUSED_KSYMS"
 	WARNING_TRIM_UNUSED_KSYMS="CONFIG_TRIM_UNUSED_KSYMS should not be set and the kernel recompiled without it."
 	check_extra_config
 
 	unset CONFIG_CHECK
 
-	_COMMON_MMU_NOTIFIER_ALT="CONFIG_HMM_MIRROR, CONFIG_DEVICE_PRIVATE, or CONFIG_DEVICE_PUBLIC"
-	_COMMON_MMU_NOTIFIER_REQ="Either CONFIG_HMM_MIRROR, CONFIG_DEVICE_PRIVATE, or CONFIG_DEVICE_PUBLIC must be set to =y in the kernel .config."
-	if use check-mmu-notifier-hard ; then
-		# HARD WAY:
-		CONFIG_CHECK+=" ~MEMORY_HOTPLUG ~MEMORY_HOTREMOVE ~ZONE_DEVICE ~SPARSEMEM_VMEMMAP ~ZONE_DEVICE"
-		CONFIG_CHECK+=" ~HMM_MIRROR ~DEVICE_PRIVATE ~DEVICE_PUBLIC"
-		WARNING_MEMORY_HOTPLUG="You may need to set up MEMORY_HOTPLUG in the kernel .config to unlock ${_COMMON_MMU_NOTIFIER_ALT}."
-		WARNING_MEMORY_HOTREMOVE="You may need to set up MEMORY_HOTREMOVE"
-		WARNING_ZONE_DEVICE="You may need to set up ZONE_DEVICE"
-		WARNING_SPARSEMEM_VMEMMAP="You may need to set up SPARSEMEM_VMEMMAP"
-		WARNING_ZONE_DEVICE="You may need to set up ZONE_DEVICE"
-		WARNING_HMM_MIRROR=" ${_COMMON_MMU_NOTIFIER_REQ}"
-		WARNING_DEVICE_PRIVATE=" ${_COMMON_MMU_NOTIFIER_REQ}"
-		WARNING_DEVICE_PUBLIC=" ${_COMMON_MMU_NOTIFIER_REQ}"
-	fi
-
-	if use check-mmu-notifier-easy ; then
-		# EASY WAY:
-		CONFIG_CHECK+=" ~DRM_AMDGPU_USERPTR"
-		WARNING_DRM_AMDGPU_USERPTR=" CONFIG_DRM_AMDGPU_USERPTR must be set to =y in the kernel .config."
+	if use check-mmu-notifier ; then
+		CONFIG_CHECK+=" ~HSA_AMD"
+		WARNING_CONFIG_HSA_AMD=" CONFIG_HSA_AMD must be set to =y in the kernel .config."
 	fi
 
 	check_extra_config
 
 	unset CONFIG_CHECK
 
-	# Either HARD WAY or EASY WAY will enable MMU_NOTIFIER
 	CONFIG_CHECK+=" ~MMU_NOTIFIER"
 	WARNING_MMU_NOTIFIER=" CONFIG_MMU_NOTIFIER must be set to =y in the kernel or it will fail in the link stage."
 
@@ -151,42 +129,21 @@ pkg_setup_warn() {
 }
 
 pkg_setup_error() {
-	# The CONFIG_MMU_NOTIFIER must be set to =y indirectly with CONFIG_HMM_MIRROR, CONFIG_DEVICE_PRIVATE, CONFIG_DEVICE_PUBLIC, CONFIG_DRM_AMDGPU_USERPTR.
-	# You can do it the hard way with more kernel options or easy way with less kernel options.
-
 	CONFIG_CHECK+=" !TRIM_UNUSED_KSYMS"
 	ERROR_TRIM_UNUSED_KSYMS="CONFIG_TRIM_UNUSED_KSYMS should not be set and the kernel recompiled without it."
 	check_extra_config
 
 	unset CONFIG_CHECK
 
-	_COMMON_MMU_NOTIFIER_ALT="CONFIG_HMM_MIRROR, CONFIG_DEVICE_PRIVATE, or CONFIG_DEVICE_PUBLIC"
-	_COMMON_MMU_NOTIFIER_REQ="Either CONFIG_HMM_MIRROR, CONFIG_DEVICE_PRIVATE, or CONFIG_DEVICE_PUBLIC must be set to =y in the kernel .config."
-	if use check-mmu-notifier-hard ; then
-		# HARD WAY:
-		CONFIG_CHECK+=" ~MEMORY_HOTPLUG ~MEMORY_HOTREMOVE ~ZONE_DEVICE ~SPARSEMEM_VMEMMAP ~ZONE_DEVICE"
-		CONFIG_CHECK+=" ~HMM_MIRROR ~DEVICE_PRIVATE ~DEVICE_PUBLIC"
-		WARNING_MEMORY_HOTPLUG="You may need to set up MEMORY_HOTPLUG in the kernel .config to unlock ${_COMMON_MMU_NOTIFIER_ALT}."
-		WARNING_MEMORY_HOTREMOVE="You may need to set up MEMORY_HOTREMOVE"
-		WARNING_ZONE_DEVICE="You may need to set up ZONE_DEVICE"
-		WARNING_SPARSEMEM_VMEMMAP="You may need to set up SPARSEMEM_VMEMMAP"
-		WARNING_ZONE_DEVICE="You may need to set up ZONE_DEVICE"
-		WARNING_HMM_MIRROR=" ${_COMMON_MMU_NOTIFIER_REQ}"
-		WARNING_DEVICE_PRIVATE=" ${_COMMON_MMU_NOTIFIER_REQ}"
-		WARNING_DEVICE_PUBLIC=" ${_COMMON_MMU_NOTIFIER_REQ}"
-	fi
-
-	if use check-mmu-notifier-easy ; then
-		# EASY WAY:
-		CONFIG_CHECK+=" ~DRM_AMDGPU_USERPTR"
-		WARNING_DRM_AMDGPU_USERPTR=" CONFIG_DRM_AMDGPU_USERPTR must be set to =y in the kernel .config."
+	if use check-mmu-notifier ; then
+		CONFIG_CHECK+=" HSA_AMD"
+		ERROR_CONFIG_HSA_AMD=" CONFIG_HSA_AMD must be set to =y in the kernel .config."
 	fi
 
 	check_extra_config
 
 	unset CONFIG_CHECK
 
-	# Either having HARD WAY or EASY WAY will enable MMU_NOTIFIER
 	CONFIG_CHECK+=" MMU_NOTIFIER"
 	ERROR_MMU_NOTIFIER=" CONFIG_MMU_NOTIFIER must be set to =y in the kernel or it will fail in the link stage."
 
