@@ -3,7 +3,7 @@
 
 EAPI="6"
 
-K_GENPATCHES_VER="4"
+K_GENPATCHES_VER="5"
 PATCH_BMQ_VER="5.3.1"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
 
@@ -42,6 +42,7 @@ src_install() {
 }
 
 pkg_postinst() {
+	unset K_SECURITY_UNSUPPORTED
 	kernel-2_pkg_postinst
 	ot-kernel-common_pkg_postinst
 }

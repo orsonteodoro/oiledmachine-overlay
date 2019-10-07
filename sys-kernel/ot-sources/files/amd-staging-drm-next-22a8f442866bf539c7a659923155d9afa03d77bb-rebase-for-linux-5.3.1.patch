@@ -1,0 +1,39 @@
+--- a/drivers/gpu/drm/amd/amdgpu/vcn_v2_0.c.orig	2019-10-05 11:50:51.068835564 -0700
++++ b/drivers/gpu/drm/amd/amdgpu/vcn_v2_0.c	2019-10-05 11:52:34.216834432 -0700
+@@ -1543,27 +1543,28 @@ static void vcn_v2_0_dec_ring_insert_nop
+ static void vcn_v2_0_dec_ring_emit_fence(struct amdgpu_ring *ring, u64 addr, u64 seq,
+ 				     unsigned flags)
+ {
+-	WARN_ON(flags & AMDGPU_FENCE_FLAG_64BIT);
++	struct amdgpu_device *adev = ring->adev;
+ 
+-	amdgpu_ring_write(ring, PACKET0(mmUVD_CONTEXT_ID_INTERNAL_OFFSET, 0));
++	WARN_ON(flags & AMDGPU_FENCE_FLAG_64BIT);
++	amdgpu_ring_write(ring, PACKET0(adev->vcn.internal.context_id, 0));
+ 	amdgpu_ring_write(ring, seq);
+ 
+-	amdgpu_ring_write(ring, PACKET0(mmUVD_GPCOM_VCPU_DATA0_INTERNAL_OFFSET, 0));
++	amdgpu_ring_write(ring, PACKET0(adev->vcn.internal.data0, 0));
+ 	amdgpu_ring_write(ring, addr & 0xffffffff);
+ 
+-	amdgpu_ring_write(ring, PACKET0(mmUVD_GPCOM_VCPU_DATA1_INTERNAL_OFFSET, 0));
++	amdgpu_ring_write(ring, PACKET0(adev->vcn.internal.data1, 0));
+ 	amdgpu_ring_write(ring, upper_32_bits(addr) & 0xff);
+ 
+-	amdgpu_ring_write(ring, PACKET0(mmUVD_GPCOM_VCPU_CMD_INTERNAL_OFFSET, 0));
++	amdgpu_ring_write(ring, PACKET0(adev->vcn.internal.cmd, 0));
+ 	amdgpu_ring_write(ring, VCN_DEC_KMD_CMD | (VCN_DEC_CMD_FENCE << 1));
+ 
+-	amdgpu_ring_write(ring, PACKET0(mmUVD_GPCOM_VCPU_DATA0_INTERNAL_OFFSET, 0));
++	amdgpu_ring_write(ring, PACKET0(adev->vcn.internal.data0, 0));
+ 	amdgpu_ring_write(ring, 0);
+ 
+-	amdgpu_ring_write(ring, PACKET0(mmUVD_GPCOM_VCPU_DATA1_INTERNAL_OFFSET, 0));
++	amdgpu_ring_write(ring, PACKET0(adev->vcn.internal.data1, 0));
+ 	amdgpu_ring_write(ring, 0);
+ 
+-	amdgpu_ring_write(ring, PACKET0(mmUVD_GPCOM_VCPU_CMD_INTERNAL_OFFSET, 0));
++	amdgpu_ring_write(ring, PACKET0(adev->vcn.internal.cmd, 0));
+ 
+ 	amdgpu_ring_write(ring, VCN_DEC_KMD_CMD | (VCN_DEC_CMD_TRAP << 1));
+ }
