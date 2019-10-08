@@ -36,6 +36,8 @@ PATCH_BMQ_VER="${PATCH_BMQ_VER:=100}"
 PATCH_BMQ_MAJOR_MINOR="5.3"
 DISABLE_DEBUG_V="1.1"
 
+# When the Kernel version is >5.3, the AMD_STAGING_DRM_NEXT variables should be no longer updated, otherwise it may exhibit runtime errors.  This is based on experience.
+
 # DC_VER 3.2.35 in drivers/gpu/drm/amd/display/dc/dc.h for ${PV}
 # KMS_DRIVER 3.33.0 in drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c for ${PV}
 
@@ -50,9 +52,6 @@ AMD_STAGING_DRM_NEXT_MILESTONE="a35d69a03b08e868ad222b1faa6ae5cc2c39113e" # corr
 #AMD_STAGING_INTERSECTS_5_X="70bcf2bc5203e358e5e2ac30718caea53204dfe9" # corresponds to drm/amd/display: 3.2.35 (tested) same as 5.x kernel release
 AMD_STAGING_INTERSECTS_5_X="5408887141baac0ad1a5e6cf514ceadf33090114" # corresponds to drm/amd/display: 3.2.30 (testing); needs to go back x.x.-1 point release assuming that 3.2.31 is botched.
 # 3.2.31 is pattern of missing commits in ot-kernel-common_fetch_amd_staging_drm_next_commits_post
-
-#AMD_STAGING_INTERSECTS_5_X="8735f16803f00f5efca7738afe3b9a304b539181" # corresponds to dma-buf: cleanup reservation_object_init/fini ; the start of the non-rejected run of patches ; DC_VER "3.2.32" ; kernel v5.4.x, master
-# Targeting this commit doesn't work well.
 
 IUSE="bfq bmq bmq-quick-fix amd-staging-drm-next-latest amd-staging-drm-next-snapshot amd-staging-drm-next-milestone +cfs disable_debug +graysky2 muqss +o3 pds uksm tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs -zentune"
 REQUIRED_USE="^^ ( muqss pds cfs bmq )
@@ -214,7 +213,7 @@ function ot-kernel-common_amdgpu_amd_staging_drm_next_fixes() {
 		rm "${T}/amd-staging-drm-next-patches/"*c74dbe44eacf00a5ccc229b5cc340a9b7f6851a0*
 		rm "${T}/amd-staging-drm-next-patches/"*ebecc6c48f39b3c549bee1e4ecb9be01bf341a0f*
 
-		# remove obsolete
+		# remove obsolete, i.e. hunk(s) does not appear in the final image
 		rm "${T}/amd-staging-drm-next-patches/"*5fa790f6c936c4705dea5883fa12da9e017ceb4f*
 		rm "${T}/amd-staging-drm-next-patches/"*32e40ffbced3b14ceac1ae13a1a66c5849a6d2d3*
 
@@ -225,9 +224,14 @@ function ot-kernel-common_amdgpu_amd_staging_drm_next_fixes() {
 		cd "${S}"
 		L=$(ls -1 "${T}"/amd-staging-drm-next-patches)
 		for l in $L ; do
-			echo $(patch --dry-run -p1 -F 100 -i "${T}/amd-staging-drm-next-patches/${l}") | grep "FAILED at"
+			echo $(patch --dry-run -p1 -F 100 -i "${T}/amd-staging-drm-next-patches/${l}") | grep -F "FAILED at"
 			if [[ "$?" == "1" ]] ; then
 				case "${l}" in
+					*27c44acebd3fab5448aa3cffdc1996c897965a4a*)
+						# 2 hunks ignored by mistake
+						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-27c44acebd3fab5448aa3cffdc1996c897965a4a-rebase-for-linux-5.3.4.patch"
+						;;
 					*)
 						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
 						# already has been applied or partially patched already or success
@@ -250,10 +254,10 @@ function ot-kernel-common_amdgpu_amd_staging_drm_next_fixes() {
 						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
 						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-98eb03bbf0175f009a74c80ac12b91a9680292f4-rebase-for-linux-5.3.2.patch"
 						;;
-					*52791eeec1d9f4a7e7fe08aaba0b1553149d93bc*)
-						# Multiple failed hunks due to missing patches.  See 52791eeec1d9f4a7e7fe08aaba0b1553149d93bc in ot-kernel-common_fetch_amd_staging_drm_next_commits_post
+					*27c44acebd3fab5448aa3cffdc1996c897965a4a*)
+						die "fixme ${T}/amd-staging-drm-next-patches/${l}"
 						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-52791eeec1d9f4a7e7fe08aaba0b1553149d93bc-rebase-for-linux-5.3.1.patch"
+						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-27c44acebd3fab5448aa3cffdc1996c897965a4a-rebase-for-linux-5.3.1.patch"
 						;;
 					*)
 						eerror "Patch failure ${T}/amd-staging-drm-next-patches/${l} .  Did not find the intervention patch."
@@ -273,63 +277,31 @@ ot-kernel-common_fetch_amd_staging_drm_next_commits_post() {
 	# Most of these prepended patches are missing patches that are futher back than DC_VER 3.2.35
 	# They were missed because the committer e-mail is not @amd.com or the commit was less than DC_VER 3.2.35
 
-	local index=$(get_patch_index "amd-staging-drm-next-patches" 96e95496b02dbf1b19a2d4ce238810572e149606)
-	# Missing commit from DC_VER 3.2.32, committer is @chris-wilson.co.uk, v5.4.x master
-	_get_amd_staging_drm_next_commit $((index-1)) 94eb1e10a34d3c7fc42208faaa4954fe482ac091 "a"
-
 	# Fixes multiple failed hunks in 96e9
 	index=$(get_patch_index "amd-staging-drm-next-patches" 52791eeec1d9f4a7e7fe08aaba0b1553149d93bc)
 	index=$((index-1))
 
 	# Missing commit from DC_VER 3.2.35, committer is @redhat.com, kernel v5.4.x, master
-	_get_amd_staging_drm_next_commit ${index} 5a5011a72489545343a1599362e9ec126d7bd297 "a"
-	_get_amd_staging_drm_next_commit ${index} e532a135d7044b5477c1c56169fa131d77c57f75 "b"
-	_get_amd_staging_drm_next_commit ${index} 7a4db29660a9d16024fd843b720fb7449ebc2538 "c"
-	_get_amd_staging_drm_next_commit ${index} 5c69f132a2660435ec30d8531d77515b7ba4148e "d"
-	_get_amd_staging_drm_next_commit ${index} 4922f55294bbc48d670bb57c025904b4d4878d1b "e"
-	_get_amd_staging_drm_next_commit ${index} 336ac942f115dd076bd7287c7cf03f37c710895c "f"
-	_get_amd_staging_drm_next_commit ${index} 27c44acebd3fab5448aa3cffdc1996c897965a4a "g"
+	_get_amd_staging_drm_next_commit ${index} 7a4db29660a9d16024fd843b720fb7449ebc2538 "a" # drm/virtio
+	_get_amd_staging_drm_next_commit ${index} 5c69f132a2660435ec30d8531d77515b7ba4148e "b" # drm/qxl
+	_get_amd_staging_drm_next_commit ${index} 4922f55294bbc48d670bb57c025904b4d4878d1b "c" # drm/vmwgfx
+	_get_amd_staging_drm_next_commit ${index} 27c44acebd3fab5448aa3cffdc1996c897965a4a "d" # drm/nouveau
 
 	# Missing commit from DC_VER 3.2.32, committer is @ffwll.ch, kernel v5.4.x, master
-	_get_amd_staging_drm_next_commit ${index} bd630a86be381992fac99f9ab82c5c5b43a5ee3b "h"
-
-	# committer is @redhat.com, kernel v5.4.x, master
-	index=$(get_patch_index "amd-staging-drm-next-patches" e532a135d7044b5477c1c56169fa131d77c57f75)
-	# Missing commit from DC_VER 3.2.35, committer is @redhat.com v5.4.x
-	_get_amd_staging_drm_next_commit $((index-1)) 1e053b10ba60eae6a3f9de64cbc74bdf6cb0e715 "a"
+	_get_amd_staging_drm_next_commit ${index} bd630a86be381992fac99f9ab82c5c5b43a5ee3b "e" # drm/fb-helper
 
 	# We still need to use _get_amd_staging_drm_next_commit for this commit dependency chain even though DC_VER was set to 3.2.30 and was commented out.
 	index=$(get_patch_index "amd-staging-drm-next-patches" cfb7c11bb7a590c7e9c3d241d85388db108ceeb7)
 	index=$((index-1))
 
 	# Missing commit from DC_VER 3.2.31, committer is @amd.com, v5.3.x, 5.4.x, master
-	_get_amd_staging_drm_next_commit ${index} 1a058c3376765ee31d65e28cbbb9d4ff15120056 "a"
-	_get_amd_staging_drm_next_commit ${index} cf401e2856b27b2deeada498eab864e2a50cf219 "b"
+	# in amd-staging-drm-next kfd_ioctl_alloc_queue_gws exists in head, but in vanilla it is removed for v5.4.
+	# The dupe checker rejects it.  It needs to come back to patch uninterrupted.
+	_get_amd_staging_drm_next_commit ${index} 1a058c3376765ee31d65e28cbbb9d4ff15120056 "a" # drm/amdkfd
+	_get_amd_staging_drm_next_commit ${index} cf401e2856b27b2deeada498eab864e2a50cf219 "b" # drm/amdkfd
 
 	# Missing commit from DC_VER 3.2.32, committer is @amd.com, v5.3.x, 5.4.x, master
-	_get_amd_staging_drm_next_commit ${index} 443e902eeef96f3bed54a7067c50a07f06074373 "c"
-
-	index=$(get_patch_index "amd-staging-drm-next-patches" d2a230311d79a8d99ea7b199bc36367c63f6442f)
-	index=$((index-1))
-	# Missing commit from DC_VER 3.2.32, committer is @intel.com, v5.4.x, master
-	_get_amd_staging_drm_next_commit ${index} 4f5368b5541a902f6596558b05f5c21a9770dd32 "a"
-
-	# post emerge build failure fixes
-	# Fixes error: ‘struct dma_resv’ has no member named ‘seq’
-	_get_amd_staging_drm_next_commit ${index} b016cd6ed4b772759804e0d6082bd1f5ca63b8ee "b"
-
-	# pull all the drm/prime commits after commit 0500c04ea14a4143edf902d087079c4e7b2f0229 (drm: drop use of drmP.h in drm/*)
-	# the amd-staging-drm-next is a 5.3-rc3 kernel but doesn't contain some of the drm/prime commits in the vanilla 5.3
-
-	# using history for drm_prime.c
-	# https://cgit.freedesktop.org/~agd5f/linux/log/drivers/gpu/drm/drm_prime.c?h=amd-staging-drm-next
-	_get_amd_staging_drm_next_commit ${index} b283e92a2315f9368dda010c9633183147fe87e0 "c"
-	_get_amd_staging_drm_next_commit ${index} 805dc614d58a8fb069ed079005e591247df85246 "d"
-	_get_amd_staging_drm_next_commit ${index} ee8375d5dc5bbb50b03bedfb0020d3e1c27ceacb "e"
-	_get_amd_staging_drm_next_commit ${index} e4fa8457b2197118538a1400b75c898f9faaf164 "f"
-	_get_amd_staging_drm_next_commit ${index} 5f6ed9879a414636405a2bd77f122881695959e4 "g"
-	_get_amd_staging_drm_next_commit ${index} 39716270d88c157b722e1f11adf9dada6bec3f11 "h"
-	_get_amd_staging_drm_next_commit ${index} 51c98747113e93b6229f12d1a744a51fd59eff3a "i"
+	_get_amd_staging_drm_next_commit ${index} 443e902eeef96f3bed54a7067c50a07f06074373 "c" # drm/amdkfd
 }
 
 # @FUNCTION: ot-kernel-common_pkg_postinst_cb
