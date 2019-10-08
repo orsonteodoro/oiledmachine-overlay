@@ -411,19 +411,19 @@ function get_linux_commit_list_for_amd_staging_drm_next_range() {
 	d="${distdir}/ot-sources-src/linux"
 	cd "${d}" || die
 	einfo "Grabbing list of already merged amd-staging-drm-next commits in v${K_MAJOR_MINOR} vanilla sources."
-	#L=$(git log ${AMD_STAGING_INTERSECTS_5_X}..v${K_MAJOR_MINOR} --oneline --pretty=format:"%H%x07%s%x07%ce" | grep -F -e "@amd.com" | \
-	#		cut -f1 -d$'\007' | tac)
-
 	L=$(git log ${AMD_STAGING_INTERSECTS_5_X}..v${K_MAJOR_MINOR} --oneline --pretty=format:"%H%x07%s%x07%ce" | grep -F \
-		-e "@amd.com" -e "drm/amd" -e "drm/ttm" -e "drm/prime" -e "dma-buf" -e "drm/kms" -e "drm/scheduler" -e "radeon" -e "amdgpu" -e "~agd5f" -e 'anongit.freedesktop.org/drm/drm\007' \
+		-e "@amd.com" -e "drm/amd" -e "drm/ttm" -e "drm/prime" -e "dma-buf" -e "drm/kms" -e "drm/scheduler" -e "radeon" -e "amdgpu" -e "~agd5f" -e "anongit.freedesktop.org/drm/drm\007" \
 			| tac)
 
+	OIFS="${IFS}"
+	IFS=$'\n'
 	cat /dev/null > "${T}/${LINUX_COMMITS_ASDN_RANGE_FN}"
 	for l in $L ; do
-		local ct=$(cut -f1 -d$'\007')
-		local h=$(cut -f2 -d$'\007')
+		# left here to be able to parse and filter by timestamp
+		local h=$(echo "${l}" | cut -f1 -d$'\007')
 		echo "${h}" >> "${T}/${LINUX_COMMITS_ASDN_RANGE_FN}"
 	done
+	IFS="${OIFS}"
 }
 
 # @FUNCTION: fetch_linux_sources
@@ -566,9 +566,8 @@ function fetch_amd_staging_drm_next_commits() {
 
 	einfo "Saving only the amd-staging-drm-next commits for commit-by-commit evaluation."
 	einfo "Doing commit -> .patch conversion for amd-staging-drm-next-patches set:"
-#	L=$(git log ${base}..${target} --oneline --pretty=format:"%H%x07%s%x07%ce" | grep -F -e "@amd.com" | grep -F -v -e "uapi:" -e "drm/v3d" | cut -f1 -d$'\007' | tac)
 	L=$(git log ${base}..${target} --oneline --pretty=format:"%H%x07%s%x07%ce" | grep -F \
-		-e "@amd.com" -e "drm/amd" -e "drm/ttm" -e "drm/prime" -e "dma-buf" -e "drm/kms" -e "drm/scheduler" -e "radeon" -e "amdgpu" -e "~agd5f" -e 'anongit.freedesktop.org/drm/drm\007' \
+		-e "@amd.com" -e "drm/amd" -e "drm/ttm" -e "drm/prime" -e "dma-buf" -e "drm/kms" -e "drm/scheduler" -e "radeon" -e "amdgpu" -e "~agd5f" -e "anongit.freedesktop.org/drm/drm\007" \
 		| grep -F -v -e "uapi:" -e "drm/v3d" | cut -f1 -d$'\007' | tac)
 	for l in $L ; do
 		if grep -F "${l}" "${T}/${LINUX_COMMITS_ASDN_RANGE_FN}" ; then
