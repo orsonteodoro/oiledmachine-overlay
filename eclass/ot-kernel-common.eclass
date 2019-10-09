@@ -22,7 +22,6 @@
 # BMQ CPU Scheduler:		https://cchalpha.blogspot.com/search/label/BMQ
 # genpatches:                   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
 # BFQ updates:                  https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/bfq-backports
-# amd-staging-drm-next:         https://cgit.freedesktop.org/~agd5f/linux/log/?h=amd-staging-drm-next
 # TRESOR:			http://www1.informatik.uni-erlangen.de/tresor
 
 # TRESOR is maybe broken.  It requires additional coding for skcipher.
@@ -54,6 +53,8 @@ HOMEPAGE+="
           "
 
 inherit ot-kernel-cve
+inherit ot-kernel-asdn
+inherit ot-kernel-rock
 
 DEPEND+=" dev-util/patchutils
 	  sys-apps/grep[pcre]"
@@ -121,8 +122,6 @@ KERNEL_PATCH_0_TO_1_URL="https://cdn.kernel.org/pub/linux/kernel/v${K_PATCH_XV}/
 
 LINUX_REPO_URL="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 
-LINUX_COMMITS_ASDN_RANGE_FN="${LINUX_COMMITS_ASDN_RANGE_FN:=linux.commits.amd_staging_drm_next_range.${K_MAJOR_MINOR}}"
-
 if [[ -n "${KERNEL_NO_POINT_RELEASE}" && "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; then
 	KERNEL_PATCH_URLS=()
 elif [[ -n "${KERNEL_0_TO_1_ONLY}" && "${KERNEL_0_TO_1_ONLY}" == "1" ]] ; then
@@ -181,7 +180,7 @@ function _tpatch() {
 	local patchops="$1"
 	local path="$2"
 	einfo "Applying ${path}"
-	patch ${patchops} -i ${path} || true
+	patch ${patchops} -i ${path} > /dev/null || true
 }
 
 # @FUNCTION: apply_uksm
@@ -220,7 +219,6 @@ function apply_zentune() {
 #
 function apply_genpatch_base() {
 	einfo "Applying the genpatch base"
-	ewarn "Some patches have hunk(s) failed but still good or may be fixed ASAP."
 	local d
 	d="${T}/${GENPATCHES_BASE_FN%.tar.xz}"
 	mkdir "$d"
@@ -396,36 +394,6 @@ function fetch_zentune() {
 	wget -O "${T}/${ZENTUNE_FN}" "${ZENTUNE_DL_URL}" || die
 }
 
-# @FUNCTION: get_linux_commit_list_for_amd_staging_drm_next_range
-# @DESCRIPTION:
-# Gets the list of commits between AMD_STAGING_INTERSECTS_5_X and target
-function get_linux_commit_list_for_amd_staging_drm_next_range() {
-	if use amd-staging-drm-next-snapshot || use amd-staging-drm-next-milestone ; then
-		if [[ -e "${FILESDIR}/${LINUX_COMMITS_ASDN_RANGE_FN}" ]] ; then
-			cp -a "${FILESDIR}/${LINUX_COMMITS_ASDN_RANGE_FN}" "${T}"
-			return
-		fi
-	fi
-
-	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	d="${distdir}/ot-sources-src/linux"
-	cd "${d}" || die
-	einfo "Grabbing list of already merged amd-staging-drm-next commits in v${K_MAJOR_MINOR} vanilla sources."
-	L=$(git log ${AMD_STAGING_INTERSECTS_5_X}..v${K_MAJOR_MINOR} --oneline --pretty=format:"%H%x07%s%x07%ce" | grep -F \
-		-e "@amd.com" -e "drm/amd" -e "drm/ttm" -e "drm/prime" -e "dma-buf" -e "drm/kms" -e "drm/scheduler" -e "radeon" -e "amdgpu" -e "~agd5f" -e "anongit.freedesktop.org/drm/drm\007" \
-			| tac)
-
-	OIFS="${IFS}"
-	IFS=$'\n'
-	cat /dev/null > "${T}/${LINUX_COMMITS_ASDN_RANGE_FN}"
-	for l in $L ; do
-		# left here to be able to parse and filter by timestamp
-		local h=$(echo "${l}" | cut -f1 -d$'\007')
-		echo "${h}" >> "${T}/${LINUX_COMMITS_ASDN_RANGE_FN}"
-	done
-	IFS="${OIFS}"
-}
-
 # @FUNCTION: fetch_linux_sources
 # @DESCRIPTION:
 # Fetches a local copy of the linux kernel repo.
@@ -484,129 +452,6 @@ function fetch_linux_sources() {
 	cd "${d}" || die
 }
 
-# @FUNCTION: fetch_amd_staging_drm_next_local_copy
-# @DESCRIPTION:
-# Clones or updates the amd-staging-drm-next patchset for recent fixes or GPU compatibility updates.
-function fetch_amd_staging_drm_next_local_copy() {
-	# I would like to store/cache the converted commits to .patch files in ${FILESDIR}/amd-staging-drm-next/5.3 but unfortunately
-	# I cannot do it because of licensing problems.  It would require to prepend each patch with the license or extract the
-	# license header from the source code and store it in a single LICENSE file, or creative license fingerprinting and IDing
-	# the headers.  It is practically impossible or too time consuming to do it for 1100+ commits which refer to several files each.
-
-	einfo "Fetching the amd-staging-drm-next project please wait.  It may take hours."
-	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	cd "${DISTDIR}"
-	d="${distdir}/ot-sources-src/linux-${AMD_STAGING_DRM_NEXT_DIR}"
-	b="${distdir}/ot-sources-src"
-	addwrite "${b}"
-	cd "${b}"
-	if [[ ! -d "${d}" ]] ; then
-		mkdir -p "${d}" || die
-		einfo "Cloning the amd-staging-drm-next project"
-		git clone "${AMDREPO_URL}" "${d}"
-		cd "${d}" || die
-		git checkout master
-		git checkout -b amd-staging-drm-next remotes/origin/amd-staging-drm-next
-	else
-		local G=$(find "${d}" -group "root")
-		if (( ${#G} > 0 )) ; then
-			die "You must manually \`chown -R portage:portage ${d}\`.  Re-emerge again."
-		fi
-		einfo "Updating the amd-staging-drm-next project"
-		cd "${d}" || die
-		git clean -fdx
-		git reset --hard master
-		git reset --hard origin/master
-		git checkout master
-		git pull
-		git branch -D amd-staging-drm-next
-		git checkout -b amd-staging-drm-next remotes/origin/amd-staging-drm-next
-		git pull
-	fi
-	cd "${d}" || die
-}
-
-# @FUNCTION: fetch_amd_staging_drm_next_commits
-# @DESCRIPTION:
-# Pulls all the commits as .patch files to be individually evaluated.  It
-# also pulls required missing commits to smooth out the patching process.
-#
-# ot-kernel-common_fetch_amd_staging_drm_next_commits_pre - callback to reorder or fetch patches
-# ot-kernel-common_fetch_amd_staging_drm_next_commits_pre_num - callback to set the next patch number
-# ot-kernel-common_fetch_amd_staging_drm_next_commits_post - callback to apply additonal patches
-#   for fixes to patches before the patching proces
-#
-function fetch_amd_staging_drm_next_commits() {
-	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	d="${distdir}/ot-sources-src/linux-${AMD_STAGING_DRM_NEXT_DIR}"
-	cd "${d}" || die
-
-	local target
-
-	# base is not inclusive
-	local base
-
-	if use amd-staging-drm-next-snapshot ; then
-		target="${AMD_STAGING_DRM_NEXT_SNAPSHOT}"
-	elif use amd-staging-drm-next-latest ; then
-		target="${AMD_STAGING_DRM_NEXT_LATEST}"
-	elif use amd-staging-drm-next-milestone ; then
-		target="${AMD_STAGING_DRM_NEXT_MILESTONE}"
-	fi
-
-	base="${AMD_STAGING_INTERSECTS_5_X}"
-
-	mkdir -p "${T}/amd-staging-drm-next-patches"
-	if declare -f ot-kernel-common_fetch_amd_staging_drm_next_commits_pre > /dev/null ; then
-		ot-kernel-common_fetch_amd_staging_drm_next_commits_pre
-		n="$(ot-kernel-common_fetch_amd_staging_drm_next_commits_pre_num)"
-	else
-		n="1"
-	fi
-
-	einfo "Saving only the amd-staging-drm-next commits for commit-by-commit evaluation."
-	einfo "Doing commit -> .patch conversion for amd-staging-drm-next-patches set:"
-	L=$(git log ${base}..${target} --oneline --pretty=format:"%H%x07%s%x07%ce" | grep -F \
-		-e "@amd.com" -e "drm/amd" -e "drm/ttm" -e "drm/prime" -e "dma-buf" -e "drm/kms" -e "drm/scheduler" -e "radeon" -e "amdgpu" -e "~agd5f" -e "anongit.freedesktop.org/drm/drm\007" \
-		| grep -F -v -e "uapi:" -e "drm/v3d" | cut -f1 -d$'\007' | tac)
-	for l in $L ; do
-		if grep -F "${l}" "${T}/${LINUX_COMMITS_ASDN_RANGE_FN}" ; then
-			einfo "Rejected ${l}.  Already merged."
-			continue
-		fi
-
-		printf -v pn "%06d" ${n}
-	        git format-patch --stdout -1 $l > "${T}"/amd-staging-drm-next-patches/${pn}-$l.patch
-	        einfo "Added ${pn}-$l.patch"
-	        n=$((n+1))
-	done
-
-	if declare -f ot-kernel-common_fetch_amd_staging_drm_next_commits_post > /dev/null ; then
-		ot-kernel-common_fetch_amd_staging_drm_next_commits_post
-	fi
-}
-
-# @FUNCTION: _get_amd_staging_drm_next_commit
-# @DESCRIPTION:
-# Gets an amd-staging-drm-next commit and makes a .patch file
-# @CODE
-# Parameters:
-# $1 - index to generate to file name
-# $2 - commit pull and to attach to filename
-# $3 - postfix to attack to index (optional)
-# @CODE
-function _get_amd_staging_drm_next_commit()
-{
-	local index="${1}"
-	local commit="${2}"
-	local postfix="${3}"
-	printf -v pindex "%06d" ${index}
-	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	local d="${distdir}/ot-sources-src/linux-${AMD_STAGING_DRM_NEXT_DIR}"
-	cd "${d}" || die
-	git format-patch --stdout -1 ${commit} > "${T}"/amd-staging-drm-next-patches/${pindex}${postfix}-${commit}.patch || die
-}
-
 # @FUNCTION: get_patch_index
 # @DESCRIPTION:
 # Returns the index of a commit.
@@ -626,29 +471,6 @@ function get_patch_index() {
 	echo ${idx}
 }
 
-# @FUNCTION: fetch_amd_staging_drm_next
-# @DESCRIPTION:
-# Generalization of steps for fetching and generating commit list.
-function fetch_amd_staging_drm_next() {
-	if is_amd_staging_drm_next ; then
-		fetch_linux_sources
-		get_linux_commit_list_for_amd_staging_drm_next_range
-		fetch_amd_staging_drm_next_local_copy
-	fi
-}
-
-# @FUNCTION: is_amd_staging_drm_next
-# @DESCRIPTION:
-# Check if user wanted amd-staging-drm-next
-# @RETURN: zero - user wants amd-staging-drm-next; non-zero user doesn't want amd-staging-drm-next
-function is_amd_staging_drm_next() {
-	if use amd-staging-drm-next-snapshot || use amd-staging-drm-next-latest || use amd-staging-drm-next-milestone ; then
-		return 0
-	else
-		return 1
-	fi
-}
-
 # @FUNCTION: apply_amdgpu
 # @DESCRIPTION:
 # Applies intervention patches, or patches for mispatches, for amd-staging-drm-next.
@@ -657,6 +479,7 @@ function is_amd_staging_drm_next() {
 #
 function apply_amdgpu() {
 	fetch_amd_staging_drm_next
+	fetch_rock_main
 
 	if declare -f ot-kernel-common_amdgpu_amd_staging_drm_next_fixes > /dev/null ; then
 		ot-kernel-common_amdgpu_amd_staging_drm_next_fixes

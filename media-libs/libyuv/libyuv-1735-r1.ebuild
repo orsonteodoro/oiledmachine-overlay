@@ -15,11 +15,11 @@ DEPEND="${RDEPEND}
 	test? ( dev-cpp/gtest
 		dev-cpp/gflags )
 	dev-util/cmake"
-SLOT="0"
+SLOT="0/${PV}"
 IUSE="static system-gflags test"
 S="${WORKDIR}/${PN}-${PV}"
 DOCS=( AUTHORS LICENSE PATENTS README.chromium README.md )
-EGIT_COMMIT="e278d4617fe0fd709bef52ef10137edcd85026f6"
+EGIT_COMMIT="43d37c05e5468855e412946dc6369d60a7849998"
 EGIT_REPO_URI="https://chromium.googlesource.com/libyuv/libyuv"
 
 src_unpack() {

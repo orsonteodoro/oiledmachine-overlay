@@ -49,6 +49,8 @@ AMD_STAGING_DRM_NEXT_SNAPSHOT="e025c334b6c7aa66c0fc67548643bd52c4a39eef" # lates
 
 AMD_STAGING_DRM_NEXT_MILESTONE="a35d69a03b08e868ad222b1faa6ae5cc2c39113e" # corresponds to the tagged commit:: 2019-09-17 drm/amd/display: 3.2.51.1
 
+AMD_STAGING_INTERSECTS_ROCK="9c5ab937b15f87523dd057ba05b9869331283286"
+
 #AMD_STAGING_INTERSECTS_5_X="70bcf2bc5203e358e5e2ac30718caea53204dfe9" # corresponds to drm/amd/display: 3.2.35 (tested) same as 5.x kernel release
 AMD_STAGING_INTERSECTS_5_X="5408887141baac0ad1a5e6cf514ceadf33090114" # corresponds to drm/amd/display: 3.2.30 (testing); needs to go back x.x.-1 point release assuming that 3.2.31 is botched.
 # 3.2.31 is pattern of missing commits in ot-kernel-common_fetch_amd_staging_drm_next_commits_post
@@ -59,10 +61,7 @@ REQUIRED_USE="^^ ( muqss pds cfs bmq )
 	     tresor? ( ^^ ( tresor_i686 tresor_x86_64 tresor_aesni ) )
 	     tresor_i686? ( tresor )
 	     tresor_x86_64? ( tresor )
-	     tresor_aesni? ( tresor )
-	     amd-staging-drm-next-snapshot? ( !amd-staging-drm-next-latest !amd-staging-drm-next-milestone )
-	     amd-staging-drm-next-latest? ( !amd-staging-drm-next-snapshot !amd-staging-drm-next-milestone )
-	     amd-staging-drm-next-milestone? ( !amd-staging-drm-next-snapshot !amd-staging-drm-next-latest )"
+	     tresor_aesni? ( tresor )"
 
 # no released patch yet
 REQUIRED_USE+=" !pds !bmq-quick-fix !muqss"
@@ -131,7 +130,11 @@ _set_check_reqs_requirements() {
 	# for 3.1 kernel
 	# source merge alone: 986.2 MiB
 	# linux-amd-staging-drm-next local repo: 2002.72 MiB
-	if is_amd_staging_drm_next ; then
+	if is_rock && is_amd_staging_drm_next ; then
+		CHECKREQS_DISK_USR="5470M"
+	elif is_rock ; then
+		CHECKREQS_DISK_USR="3467M"
+	elif is_amd_staging_drm_next ; then
 		CHECKREQS_DISK_USR="2990M"
 	fi
 }
@@ -148,7 +151,18 @@ function ot-kernel-common_pkg_setup_cb() {
 		ewarn "TRESOR is broken for ${PV}.  Use 4.9.x series.  For ebuild devs only."
 	fi
 
-	if ( is_amd_staging_drm_next ) ; then
+	if is_rock ; then
+		ewarn "Patching with ROCk is broken.  For ebuild devs only."
+
+		einfo ""
+		einfo "You need PCIe 3.0 or a GPU that doesn't require PCIe atomics to use ROCK."
+		einfo "See needs_pci_atomics field for your GPU family in"
+		einfo "https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/master/drivers/gpu/drm/amd/amdkfd/kfd_device.c"
+		einfo "for the exception.  For supported CPUs see"
+		einfo "https://rocm.github.io/hardware.html"
+	fi
+
+	if ( is_rock || is_amd_staging_drm_next ) ; then
 		_set_check_reqs_requirements
 		check-reqs_pkg_setup
 	fi
@@ -158,7 +172,7 @@ function ot-kernel-common_pkg_setup_cb() {
 # @DESCRIPTION:
 # Does checks and warnings
 function ot-kernel-common_pkg_pretend_cb() {
-	if ( is_amd_staging_drm_next ) ; then
+	if ( is_rock || is_amd_staging_drm_next ) ; then
 		_set_check_reqs_requirements
 		check-reqs_pkg_pretend
 	fi
@@ -207,31 +221,12 @@ function ot-kernel-common_amdgpu_amd_staging_drm_next_fixes() {
 	if is_amd_staging_drm_next ; then
 		fetch_amd_staging_drm_next_commits
 
-		# remove already patched
-		rm "${T}/amd-staging-drm-next-patches/"*4d7fd9e20b0784b07777728316da5bcc13f9f2ab*
-		rm "${T}/amd-staging-drm-next-patches/"*b48935b3bfc1350737e759fef5e92db14a2e2fbb*
-		rm "${T}/amd-staging-drm-next-patches/"*c74dbe44eacf00a5ccc229b5cc340a9b7f6851a0*
-		rm "${T}/amd-staging-drm-next-patches/"*ebecc6c48f39b3c549bee1e4ecb9be01bf341a0f*
-
-		# remove obsolete, i.e. hunk(s) does not appear in the final image
-		rm "${T}/amd-staging-drm-next-patches/"*5fa790f6c936c4705dea5883fa12da9e017ceb4f*
-		rm "${T}/amd-staging-drm-next-patches/"*32e40ffbced3b14ceac1ae13a1a66c5849a6d2d3*
-
-		# fix change location from 5.4 to 5.3
-		sed -i -e "s|drivers/gpu/drm/i915/i915_gem_dmabuf.c|drivers/gpu/drm/i915/gem/i915_gem_dmabuf.c|g" "${T}/amd-staging-drm-next-patches/"*e4fa8457b2197118538a1400b75c898f9faaf164* || die
-		sed -i -e "s|drivers/gpu/drm/i915/selftests/i915_gem_dmabuf.c|drivers/gpu/drm/i915/gem/selftests/i915_gem_dmabuf.c|g" "${T}/amd-staging-drm-next-patches/"*e4fa8457b2197118538a1400b75c898f9faaf164* || die
-
 		cd "${S}"
 		L=$(ls -1 "${T}"/amd-staging-drm-next-patches)
 		for l in $L ; do
 			echo $(patch --dry-run -p1 -F 100 -i "${T}/amd-staging-drm-next-patches/${l}") | grep -F "FAILED at"
 			if [[ "$?" == "1" ]] ; then
 				case "${l}" in
-					*27c44acebd3fab5448aa3cffdc1996c897965a4a*)
-						# 2 hunks ignored by mistake
-						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-27c44acebd3fab5448aa3cffdc1996c897965a4a-rebase-for-linux-5.3.4.patch"
-						;;
 					*)
 						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
 						# already has been applied or partially patched already or success
@@ -239,26 +234,6 @@ function ot-kernel-common_amdgpu_amd_staging_drm_next_fixes() {
 				esac
 			else
 				case "${l}" in
-					*22a8f442866bf539c7a659923155d9afa03d77bb*)
-						# Hunk #5 FAILED at 1546 of drivers/gpu/drm/amd/amdgpu/vcn_v2_0.c
-						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-22a8f442866bf539c7a659923155d9afa03d77bb-rebase-for-linux-5.3.1.patch"
-						;;
-					*fcd90fee8ac22da3bce1c6652cf36bc24e7a0749*)
-						# Hunk #2 FAILED at 1423 of drivers/gpu/drm/amd/powerplay/smu_v11_0.c
-						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-fcd90fee8ac22da3bce1c6652cf36bc24e7a0749-rebase-for-linux-5.3.1.patch"
-						;;
-					*98eb03bbf0175f009a74c80ac12b91a9680292f4*)
-						# Hunk #2 FAILED at 1527 of drivers/gpu/drm/amd/powerplay/navi10_ppt.c
-						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-98eb03bbf0175f009a74c80ac12b91a9680292f4-rebase-for-linux-5.3.2.patch"
-						;;
-					*27c44acebd3fab5448aa3cffdc1996c897965a4a*)
-						die "fixme ${T}/amd-staging-drm-next-patches/${l}"
-						_tpatch "${PATCH_OPS} -N" "${T}/amd-staging-drm-next-patches/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amd-staging-drm-next-27c44acebd3fab5448aa3cffdc1996c897965a4a-rebase-for-linux-5.3.1.patch"
-						;;
 					*)
 						eerror "Patch failure ${T}/amd-staging-drm-next-patches/${l} .  Did not find the intervention patch."
 						die
@@ -270,38 +245,48 @@ function ot-kernel-common_amdgpu_amd_staging_drm_next_fixes() {
 	fi
 }
 
-# @FUNCTION: ot-kernel-common_fetch_amd_staging_drm_next_commits_post
-# @DESCRIPTION:
-# Prepends patches.  The pattern is similar to 1 1a 1b 1c 2, where 1a 12 1c are new patches and the 2 is the problematic patch which the index is obtained.
 ot-kernel-common_fetch_amd_staging_drm_next_commits_post() {
-	# Most of these prepended patches are missing patches that are futher back than DC_VER 3.2.35
-	# They were missed because the committer e-mail is not @amd.com or the commit was less than DC_VER 3.2.35
+	einfo "Stripping modules for drivers/gpu/drm/{amd,ttm,scheduler,radeon}"
+	REQUIRED_MODULES="amd radeon ttm scheduler"
+	OTHER_VENDORS="arc arm armada aspeed ast atmel-hlcdc bochs bridge cirrus etnaviv exynos fsl-dcu gma500 hisilicon i2c i810 i915 imx ingenic lib lima mcde mediatek meson mga mgag200 msm mxsfb nouveau omapdrm panel panfrost pl111 qxl r128 rcar-du rockchip savage selftests shmobile sis sti stm sun4i tdfx tegra tilcdc tinydrm tve200 udl v3d vboxvideo vc4 vgem via virtio vkms vmwgfx xen zte"
+	for f in $(find "${T}/amd-staging-drm-next-patches" | sort) ; do
+		# we are only interested in ${REQUIRED_MODULES} but some of the patches that refer to them reside in non conforming subject tags
+		# in the dkms module it will only distribute the drivers/gpu/drm/${REQUIRED_MODULES} yet still compile fine against compatible MAJOR.MINOR kernel version
+		einfo "Filtering ${f}"
+		filterdiff -i "*/drivers/gpu/drm/amd/*" -i "*/drivers/gpu/drm/ttm/*" -i "*/drm/gpu/drm/scheduler/*" -i "*/drm/gpu/drm/radeon/*" > "${f}.t"
+		mv "${f}.t" "${f}"
+	done
+	[ -e "${T}/amd-staging-drm-next-patches.t" ]] && rm "${T}/amd-staging-drm-next-patches.t"
+}
 
-	# Fixes multiple failed hunks in 96e9
-	index=$(get_patch_index "amd-staging-drm-next-patches" 52791eeec1d9f4a7e7fe08aaba0b1553149d93bc)
-	index=$((index-1))
+# @FUNCTION: ot-kernel-common_apply_amdgpu_rock_fixes
+# @DESCRIPTION:
+# Apply ROCk fixes
+function ot-kernel-common_apply_amdgpu_rock_fixes() {
+	if is_rock && is_amd_staging_drm_next ; then
+		einfo "fixme"
+		cd "${S}"
+		L=$(ls -1 "${T}"/rock-patches)
+		for l in $L ; do
+			echo $(patch --dry-run -p1 -F 100 -i "${T}/rock-patches/${l}") | grep "FAILED at"
+			if [[ "$?" == "1" ]] ; then
+				case "${l}" in
+					*)
+						_tpatch "${PATCH_OPS} -N" "${T}/rock-patches/${l}"
+						# already has been applied or partially patched already or success
+						;;
+				esac
+			else
+				case "${l}" in
+					*)
+						eerror "Patch failure ${T}/rock-patches/${l} .  Did not find the intervention patch."
+						die
+						;;
+				esac
+			fi
 
-	# Missing commit from DC_VER 3.2.35, committer is @redhat.com, kernel v5.4.x, master
-	_get_amd_staging_drm_next_commit ${index} 7a4db29660a9d16024fd843b720fb7449ebc2538 "a" # drm/virtio
-	_get_amd_staging_drm_next_commit ${index} 5c69f132a2660435ec30d8531d77515b7ba4148e "b" # drm/qxl
-	_get_amd_staging_drm_next_commit ${index} 4922f55294bbc48d670bb57c025904b4d4878d1b "c" # drm/vmwgfx
-	_get_amd_staging_drm_next_commit ${index} 27c44acebd3fab5448aa3cffdc1996c897965a4a "d" # drm/nouveau
-
-	# Missing commit from DC_VER 3.2.32, committer is @ffwll.ch, kernel v5.4.x, master
-	_get_amd_staging_drm_next_commit ${index} bd630a86be381992fac99f9ab82c5c5b43a5ee3b "e" # drm/fb-helper
-
-	# We still need to use _get_amd_staging_drm_next_commit for this commit dependency chain even though DC_VER was set to 3.2.30 and was commented out.
-	index=$(get_patch_index "amd-staging-drm-next-patches" cfb7c11bb7a590c7e9c3d241d85388db108ceeb7)
-	index=$((index-1))
-
-	# Missing commit from DC_VER 3.2.31, committer is @amd.com, v5.3.x, 5.4.x, master
-	# in amd-staging-drm-next kfd_ioctl_alloc_queue_gws exists in head, but in vanilla it is removed for v5.4.
-	# The dupe checker rejects it.  It needs to come back to patch uninterrupted.
-	_get_amd_staging_drm_next_commit ${index} 1a058c3376765ee31d65e28cbbb9d4ff15120056 "a" # drm/amdkfd
-	_get_amd_staging_drm_next_commit ${index} cf401e2856b27b2deeada498eab864e2a50cf219 "b" # drm/amdkfd
-
-	# Missing commit from DC_VER 3.2.32, committer is @amd.com, v5.3.x, 5.4.x, master
-	_get_amd_staging_drm_next_commit ${index} 443e902eeef96f3bed54a7067c50a07f06074373 "c" # drm/amdkfd
+		done
+	fi
 }
 
 # @FUNCTION: ot-kernel-common_pkg_postinst_cb

@@ -12,6 +12,8 @@
 # @DESCRIPTION:
 # The ot-kernel-cve eclass resolves CVE vulnerabilities for any linux kernel version, preferably latest stable.
 
+# WARNING: The patch tests assume the whole commit or patch is used.  Do not try to manually apply a custom patch to attempt to rig the result as pass.
+
 # These are not enabled by default because of licensing, government interest, no crypto applied (as in PGP/GPG signed emails) to messages to authenticate or verify them.
 IUSE+=" cve_hotfix"
 LICENSE+=" cve_hotfix? ( GPL-2 )"
@@ -21,7 +23,7 @@ LICENSE+=" cve_hotfix? ( GPL-2 )"
 inherit ot-kernel-cve-en
 
 # based on my last edit in unix timestamp (date -u +%Y%m%d_%I%M_%p_%Z)
-LATEST_CVE_KERNEL_INDEX="20191001_0516_PM_UTC"
+LATEST_CVE_KERNEL_INDEX="20191009_0624_AM_UTC"
 LATEST_CVE_KERNEL_INDEX="${LATEST_CVE_KERNEL_INDEX,,}"
 
 # this will trigger a kernel re-install based on use flag timestamp
@@ -122,21 +124,29 @@ CVE_2019_17056_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linu
 CVE_2019_17056_SUMMARY_LANG="CVE_2019_17056_SUMMARY_${CVE_LANG}"
 CVE_2019_17056_SUMMARY="${!CVE_2019_17056_SUMMARY_LANG}"
 
-CVE_2019_17075_FIX_SRC_URI=""
-CVE_2019_17075_FN=""
+CVE_2019_17075_FIX_SRC_URI="https://lore.kernel.org/lkml/20191001165611.GA3542072@kroah.com/raw"
+CVE_2019_17075_FN="CVE-2019-17075-fix--linux-drivers-infiniband-PATCH-v2-cxgb4-do-not-dma-memory-off-of-the-stack.patch"
 CVE_2019_17075_SEVERITY_LANG="CVE_2019_17075_SEVERITY_${CVE_LANG}"
 CVE_2019_17075_SEVERITY="${!CVE_2019_17075_SEVERITY_LANG}"
-CVE_2019_17075_PM=""
+CVE_2019_17075_PM="https://lore.kernel.org/lkml/20191001165611.GA3542072@kroah.com/"
 CVE_2019_17075_SUMMARY_LANG="CVE_2019_17075_SUMMARY_${CVE_LANG}"
 CVE_2019_17075_SUMMARY="${!CVE_2019_17075_SUMMARY_LANG}"
 
-CVE_2019_17133_FIX_SRC_URI=""
-CVE_2019_17133_FN=""
+CVE_2019_17133_FIX_SRC_URI="https://marc.info/?l=linux-wireless&m=157018270915487&q=mbox"
+CVE_2019_17133_FN="CVE-2019-17351-fix--linux-net-wireless-wext-sme-cfg80211-wext-Reject-malformed-SSID-elements.patch"
 CVE_2019_17133_SEVERITY_LANG="CVE_2019_17133_SEVERITY_${CVE_LANG}"
 CVE_2019_17133_SEVERITY="${!CVE_2019_17133_SEVERITY_LANG}"
-CVE_2019_17133_PM=""
+CVE_2019_17133_PM="https://marc.info/?l=linux-wireless&m=157018270915487&w=2"
 CVE_2019_17133_SUMMARY_LANG="CVE_2019_17133_SUMMARY_${CVE_LANG}"
 CVE_2019_17133_SUMMARY="${!CVE_2019_17133_SUMMARY_LANG}"
+
+CVE_2019_17351_FIX_SRC_URI="https://github.com/torvalds/linux/commit/6ef36ab967c71690ebe7e5ef997a8be4da3bc844.patch"
+CVE_2019_17351_FN="CVE-2019-17351-fix--linux-drivers-xen-let-alloc_xenballooned_pages-fail-if-not-enough-memory-free.patch"
+CVE_2019_17351_SEVERITY_LANG="CVE_2019_17351_SEVERITY_${CVE_LANG}"
+CVE_2019_17351_SEVERITY="${!CVE_2019_17351_SEVERITY_LANG}"
+CVE_2019_17351_PM="https://github.com/torvalds/linux/commit/6ef36ab967c71690ebe7e5ef997a8be4da3bc844"
+CVE_2019_17351_SUMMARY_LANG="CVE_2019_17351_SUMMARY_${CVE_LANG}"
+CVE_2019_17351_SUMMARY="${!CVE_2019_17351_SUMMARY_LANG}"
 
 SRC_URI+=" cve_hotfix? ( ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 			 ${CVE_2019_14814_FIX_SRC_URI} -> ${CVE_2019_14814_FN}
@@ -151,9 +161,10 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 			 ${CVE_2019_17055_FIX_SRC_URI} -> ${CVE_2019_17055_FN}
 			 ${CVE_2019_17056_FIX_SRC_URI} -> ${CVE_2019_17056_FN}
 
+			 ${CVE_2019_17075_FIX_SRC_URI} -> ${CVE_2019_17075_FN}
+			 ${CVE_2019_17133_FIX_SRC_URI} -> ${CVE_2019_17133_FN}
+			 ${CVE_2019_17351_FIX_SRC_URI} -> ${CVE_2019_17351_FN}
 		       )"
-#			 ${CVE_2019_17075_FIX_SRC_URI} -> ${CVE_2019_17075_FN}
-#			 ${CVE_2019_17133_FIX_SRC_URI} -> ${CVE_2019_17133_FN}
 
 # @FUNCTION: _fetch_cve_boilerplate_msg
 # @DESCRIPTION:
@@ -345,10 +356,10 @@ function fetch_cve_2019_17056_hotfix() {
 # Checks for the CVE-2019-17075 patch
 function fetch_cve_2019_17075_hotfix() {
 	local CVE_ID="CVE-2019-17075"
-#	if grep -F -e "" "${S}" >/dev/null ; then
-#		einfo "${CVE_ID} already patched."
-#		return
-#	fi
+	if grep -F -e "tpt->valid_to_pdid = cpu_to_be32(FW_RI_TPTE_VALID_F |" "${S}/drivers/infiniband/hw/cxgb4/mem.c" >/dev/null ; then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
 	_fetch_cve_boilerplate_msg
 	_fetch_cve_boilerplate_msg_footer
 }
@@ -358,10 +369,23 @@ function fetch_cve_2019_17075_hotfix() {
 # Checks for the CVE-2019-17133 patch
 function fetch_cve_2019_17133_hotfix() {
 	local CVE_ID="CVE-2019-17133"
-#	if grep -F -e "" "${S}" >/dev/null ; then
-#		einfo "${CVE_ID} already patched."
-#		return
-#	fi
+	if grep -F -e "if (data->length > IW_ESSID_MAX_SIZE)" "${S}/net/wireless/wext-sme.c" >/dev/null ; then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_17351_hotfix
+# @DESCRIPTION:
+# Checks for the CVE-2019-17351 patch
+function fetch_cve_2019_17351_hotfix() {
+	local CVE_ID="CVE-2019-17351"
+	if grep -F -e "balloon_stats.max_retry_count = 4;" "${S}/drivers/xen/balloon.c" >/dev/null ; then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
 	_fetch_cve_boilerplate_msg
 	_fetch_cve_boilerplate_msg_footer
 }
@@ -558,11 +582,11 @@ function apply_cve_2019_17075_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
-#	if grep -F -e "" "${S}/" >/dev/null ; then
-#		einfo "${CVE_ID} is already patched."
-#		return
-#	fi
-#	_resolve_hotfix_default
+	if grep -F -e "tpt->valid_to_pdid = cpu_to_be32(FW_RI_TPTE_VALID_F |" "${S}/drivers/infiniband/hw/cxgb4/mem.c" >/dev/null ; then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
 }
 
 # @FUNCTION: apply_cve_2019_17133_hotfix
@@ -573,11 +597,26 @@ function apply_cve_2019_17133_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
-#	if grep -F -e "" "${S}/" >/dev/null ; then
-#		einfo "${CVE_ID} is already patched."
-#		return
-#	fi
-#	_resolve_hotfix_default
+	if grep -F -e "if (data->length > IW_ESSID_MAX_SIZE)" "${S}/net/wireless/wext-sme.c" >/dev/null ; then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_17351_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_17351 patch if it needs to
+function apply_cve_2019_17351_hotfix() {
+	local CVE_ID="CVE-2019-17351"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e "balloon_stats.max_retry_count = 4;" "${S}/drivers/xen/balloon.c" >/dev/null ; then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
 }
 
 # @FUNCTION: fetch_cve_hotfixes
@@ -601,6 +640,7 @@ function fetch_cve_hotfixes() {
 		fetch_cve_2019_17056_hotfix
 		fetch_cve_2019_17075_hotfix
 		fetch_cve_2019_17133_hotfix
+		fetch_cve_2019_17351_hotfix
 		local cve_copyright1="CVE_COPYRIGHT1_${CVE_LANG}"
 		local cve_copyright2="CVE_COPYRIGHT2_${CVE_LANG}"
 		einfo
@@ -634,5 +674,6 @@ function apply_cve_hotfixes() {
 		apply_cve_2019_17056_hotfix
 		apply_cve_2019_17075_hotfix
 		apply_cve_2019_17133_hotfix
+		apply_cve_2019_17351_hotfix
 	fi
 }
