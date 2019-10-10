@@ -247,16 +247,16 @@ function ot-kernel-common_amdgpu_amd_staging_drm_next_fixes() {
 
 ot-kernel-common_fetch_amd_staging_drm_next_commits_post() {
 	einfo "Stripping modules for drivers/gpu/drm/{amd,ttm,scheduler,radeon}"
-	REQUIRED_MODULES="amd radeon ttm scheduler"
-	OTHER_VENDORS="arc arm armada aspeed ast atmel-hlcdc bochs bridge cirrus etnaviv exynos fsl-dcu gma500 hisilicon i2c i810 i915 imx ingenic lib lima mcde mediatek meson mga mgag200 msm mxsfb nouveau omapdrm panel panfrost pl111 qxl r128 rcar-du rockchip savage selftests shmobile sis sti stm sun4i tdfx tegra tilcdc tinydrm tve200 udl v3d vboxvideo vc4 vgem via virtio vkms vmwgfx xen zte"
+	REQUIRED_MODULES="amd ttm scheduler"
+	OTHER_VENDORS="arc arm armada aspeed ast atmel-hlcdc bochs bridge cirrus etnaviv exynos fsl-dcu gma500 hisilicon i2c i810 i915 imx ingenic lib lima mcde mediatek meson mga mgag200 msm mxsfb nouveau omapdrm panel panfrost pl111 qxl r128 radeon rcar-du rockchip savage selftests shmobile sis sti stm sun4i tdfx tegra tilcdc tinydrm tve200 udl v3d vboxvideo vc4 vgem via virtio vkms vmwgfx xen zte"
 	for f in $(find "${T}/amd-staging-drm-next-patches" | sort) ; do
 		# we are only interested in ${REQUIRED_MODULES} but some of the patches that refer to them reside in non conforming subject tags
 		# in the dkms module it will only distribute the drivers/gpu/drm/${REQUIRED_MODULES} yet still compile fine against compatible MAJOR.MINOR kernel version
 		einfo "Filtering ${f}"
-		filterdiff -i "*/drivers/gpu/drm/amd/*" -i "*/drivers/gpu/drm/ttm/*" -i "*/drm/gpu/drm/scheduler/*" -i "*/drm/gpu/drm/radeon/*" > "${f}.t"
+		filterdiff -i "*/drivers/gpu/drm/amd/*" -i "*/drivers/gpu/drm/ttm/*" -i "*/drm/gpu/drm/scheduler/*" -i "*/drivers/gpu/drm/radeon/cik_reg.h" > "${f}.t"
 		mv "${f}.t" "${f}"
 	done
-	[ -e "${T}/amd-staging-drm-next-patches.t" ]] && rm "${T}/amd-staging-drm-next-patches.t"
+	[ -e "${T}/amd-staging-drm-next-patches.t" ] && rm "${T}/amd-staging-drm-next-patches.t"
 }
 
 # @FUNCTION: ot-kernel-common_apply_amdgpu_rock_fixes

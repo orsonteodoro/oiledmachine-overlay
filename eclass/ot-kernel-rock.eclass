@@ -361,7 +361,7 @@ function _add_rock_patch() {
 # @FUNCTION: get_missing_rock_commits
 # @DESCRIPTION:
 # Gets the ROCk commit list and generates .patch files for step-by-step evaluation.
-function get_missing_rock_commits() {
+function get_missing_rock_commits_trash() {
 	local commit
 	mkdir -p "${T}"/rock-patches
 	local index

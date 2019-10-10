@@ -40,6 +40,7 @@ function fetch_amd_staging_drm_next() {
 # @DESCRIPTION:
 # Gets the list of commits between AMD_STAGING_INTERSECTS_5_X and target
 function get_linux_commit_list_for_amd_staging_drm_next_range() {
+	einfo "entered get_linux_commit_list_for_amd_staging_drm_next_range"
 	if use amd-staging-drm-next-snapshot || use amd-staging-drm-next-milestone ; then
 		if [[ -e "${FILESDIR}/${LINUX_COMMITS_ASDN_RANGE_FN}" ]] ; then
 			cp -a "${FILESDIR}/${LINUX_COMMITS_ASDN_RANGE_FN}" "${T}"
@@ -51,8 +52,9 @@ function get_linux_commit_list_for_amd_staging_drm_next_range() {
 	d="${distdir}/ot-sources-src/linux"
 	cd "${d}" || die
 	einfo "Grabbing list of already merged amd-staging-drm-next commits in v${K_MAJOR_MINOR} vanilla sources."
-	L=$(git log ${AMD_STAGING_INTERSECTS_5_X}..v${K_MAJOR_MINOR} --oneline --pretty=format:"%H%x07%s%x07%ce" -- \
-		$(find drivers/gpu/drm -name "*.c" -type f -maxdepth 1 ) drivers/gpu/drm/amd drivers/gpu/drm/ttm drivers/gpu/drm/scheduler | tac >> "${T}/${LINUX_COMMITS_ASDN_RANGE_FN}")
+	git log ${AMD_STAGING_INTERSECTS_5_X}..v${K_MAJOR_MINOR} --oneline --pretty=format:"%H%x07%s%x07%ce" -- \
+		drivers/gpu/drm/amd drivers/gpu/drm/ttm drivers/gpu/drm/scheduler drivers/gpu/drm/radeon/cik_reg.h \
+		| tac > "${T}/${LINUX_COMMITS_ASDN_RANGE_FN}"
 }
 
 # @FUNCTION: fetch_amd_staging_drm_next_local_copy
@@ -142,7 +144,7 @@ function fetch_amd_staging_drm_next_commits() {
 	einfo "Saving only the amd-staging-drm-next commits for commit-by-commit evaluation."
 	einfo "Doing commit -> .patch conversion for amd-staging-drm-next-patches set:"
 	L=$(git log ${base}..${target} --oneline --pretty=format:"%H%x07%s%x07%ce" -- \
-		$(find drivers/gpu/drm -name "*.c" -type f -maxdepth 1 ) drivers/gpu/drm/amd drivers/gpu/drm/ttm drivers/gpu/drm/scheduler \
+		drivers/gpu/drm/amd drivers/gpu/drm/ttm drivers/gpu/drm/scheduler drivers/gpu/drm/radeon/cik_reg.h \
 		| cut -f1 -d$'\007' | tac)
 
 	for l in $L ; do

@@ -133,7 +133,7 @@ CVE_2019_17075_SUMMARY_LANG="CVE_2019_17075_SUMMARY_${CVE_LANG}"
 CVE_2019_17075_SUMMARY="${!CVE_2019_17075_SUMMARY_LANG}"
 
 CVE_2019_17133_FIX_SRC_URI="https://marc.info/?l=linux-wireless&m=157018270915487&q=mbox"
-CVE_2019_17133_FN="CVE-2019-17351-fix--linux-net-wireless-wext-sme-cfg80211-wext-Reject-malformed-SSID-elements.patch"
+CVE_2019_17133_FN="CVE-2019-17133-fix--linux-net-wireless-wext-sme-cfg80211-wext-Reject-malformed-SSID-elements.patch"
 CVE_2019_17133_SEVERITY_LANG="CVE_2019_17133_SEVERITY_${CVE_LANG}"
 CVE_2019_17133_SEVERITY="${!CVE_2019_17133_SEVERITY_LANG}"
 CVE_2019_17133_PM="https://marc.info/?l=linux-wireless&m=157018270915487&w=2"
