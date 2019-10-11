@@ -1,41 +1,34 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=6
-inherit dotnet eutils mono gac
-
+EAPI=7
 DESCRIPTION="SharpNav is advanced pathfinding for C#"
-HOMEPAGE=""
-PROJECT_NAME="SharpNav"
-COMMIT="fd2b70e25a8d30a94e1a64629e42a1de8809c431"
-SRC_URI="https://github.com/Robmaister/${PROJECT_NAME}/archive/${COMMIT}.zip -> ${P}.zip"
-
+HOMEPAGE="http://sharpnav.com"
 LICENSE="MIT"
-SLOT="0"
 KEYWORDS="~amd64 ~x86"
+PROJECT_NAME="SharpNav"
+EGIT_COMMIT="fd2b70e25a8d30a94e1a64629e42a1de8809c431"
 USE_DOTNET="net45"
-PACKAGE_FEATURES="opentk monogame standalone"
+PACKAGE_FEATURES="monogame opentk standalone"
 IUSE="${USE_DOTNET} debug +gac ${PACKAGE_FEATURES} tests developer extras"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac || ( ${PACKAGE_FEATURES} )"
-
-RDEPEND=">=dev-lang/mono-4
-         games-misc/gwen-dotnet
-         dev-dotnet/yamldotnet
-	 monogame? ( games-engines/monogame
-                     dev-dotnet/nvorbis
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac gac? ( net45 ) || ( ${PACKAGE_FEATURES} )"
+SLOT="0"
+RDEPEND="dev-dotnet/gwen-dotnet
+	 monogame? ( dev-dotnet/monogame
+		     dev-dotnet/nvorbis
                      dev-dotnet/opentk )
          dev-dotnet/newtonsoft-json
-         dev-util/nunit:3
-"
-DEPEND="${RDEPEND}
-	>=dev-lang/mono-4
-"
-
-S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
-SNK_FILENAME="${S}/${PN}-keypair.snk"
+	 dev-dotnet/yamldotnet
+         dev-util/nunit:3"
+DEPEND="${RDEPEND}"
+inherit dotnet eutils mono
+SRC_URI="https://github.com/Robmaister/${PROJECT_NAME}/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
+inherit gac
+S="${WORKDIR}/${PROJECT_NAME}-${EGIT_COMMIT}"
+RESTRICT="mirror"
 
 src_prepare() {
+	default
 	eapply "${FILESDIR}/${PN}-9999.20161023-refs-1.patch"
 	eapply "${FILESDIR}/${PN}-9999.20161023-refs-2.patch"
 
@@ -51,25 +44,11 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-9999.20161013-no-tests.patch"
 	fi
 
-	egenkey
-
-	if use opentk ; then
-		egenkey "${PN}-opentk-keypair.snk"
-	fi
-	if use monogame ; then
-		egenkey "${PN}-monogame-keypair.snk"
-	fi
-	if use standalone ; then
-		egenkey "${PN}-standalone-keypair.snk"
-	fi
-
-       	#inject public key into assembly
-        public_key=$(sn -tp "${S}/${PN}-keypair.snk" | tail -n 7 | head -n 5 | tr -d '\n')
+	#inject public key into assembly
+        public_key=$(sn -tp "${DISTDIR}/mono.snk" | tail -n 7 | head -n 5 | tr -d '\n')
         echo "pk is: ${public_key}"
-        cd "${S}"
-	sed -i -r -e "s|\[assembly\: InternalsVisibleTo\(\"SharpNav.Tests\"\)\]|\[assembly: InternalsVisibleTo(\"SharpNav.Tests, PublicKey=${public_key}\")\]|" Source/SharpNav/Properties/AssemblyInfo.cs
-
-	eapply_user
+        cd "${S}" || die
+	sed -i -r -e "s|\[assembly\: InternalsVisibleTo\(\"SharpNav.Tests\"\)\]|\[assembly: InternalsVisibleTo(\"SharpNav.Tests, PublicKey=${public_key}\")\]|" Source/SharpNav/Properties/AssemblyInfo.cs || die
 }
 
 src_compile() {
@@ -82,20 +61,17 @@ src_compile() {
 
         einfo "Building solutions"
 	if use opentk ; then
-		SNK_FILENAME="${S}/${PN}-opentk-keypair.snk" \
-	        exbuild_strong /p:Configuration="OpenTk" ${PROJECT_NAME}.sln || die
+	        exbuild /p:Configuration="OpenTk" ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" ${PROJECT_NAME}.sln || die
 		#save it before it cleans it out
 		cp -a "${S}/Binaries/SharpNav/OpenTK" "${WORKDIR}"/
 	fi
 	if use monogame ; then
-		SNK_FILENAME="${S}/${PN}-monogame-keypair.snk" \
-	        exbuild_strong /p:Configuration="MonoGame" ${PROJECT_NAME}.sln || die
+	        exbuild /p:Configuration="MonoGame" ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" ${PROJECT_NAME}.sln || die
 		#save it before it cleans it out
 		cp -a "${S}/Binaries/SharpNav/MonoGame" "${WORKDIR}"/
 	fi
 	if use standalone ; then
-		SNK_FILENAME="${S}/${PN}-standalone-keypair.snk" \
-	        exbuild_strong /p:Configuration="Standalone" ${PROJECT_NAME}.sln || die
+	        exbuild /p:Configuration="Standalone" ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" ${PROJECT_NAME}.sln || die
 		#save it before it cleans it out
 		cp -a "${S}/Binaries/SharpNav/Standalone" "${WORKDIR}"/
 	fi
@@ -107,32 +83,27 @@ src_install() {
 		mydebug="Debug"
 	fi
 
-	esavekey
-
         ebegin "Installing dlls into the GAC"
 
 	for x in ${USE_DOTNET} ; do
-                FW_UPPER=${x:3:1}
-                FW_LOWER=${x:4:1}
-               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		FW_UPPER=${x:3:1}
+		FW_LOWER=${x:4:1}
+		insinto "/usr/$(get_libdir)/mono/${PN}"
 		if use standalone ; then
 	                egacinstall "${WORKDIR}/Standalone/SharpNav.dll" "${PN}/Standalone"
 			use developer && doins "${WORKDIR}/Standalone/SharpNav.dll.mdb"
 			use developer && doins "${WORKDIR}/Standalone/SharpNav.XML"
-			esavekey "${S}/${PN}-standalone-keypair.snk"
 		fi
 		#they override the dll in the gac so standalone is the default gac
 		if use opentk ; then
 			egacinstall "${WORKDIR}/OpenTK/SharpNav.dll" "${PN}/OpenTK"
 			use developer && doins "${WORKDIR}/OpenTK/SharpNav.dll.mdb"
 			use developer && doins "${WORKDIR}/OpenTK/SharpNav.XML"
-			esavekey "${S}/${PN}-opentk-keypair.snk"
 		fi
 		if use monogame ; then
 			egacinstall "${WORKDIR}/MonoGame/SharpNav.dll" "${PN}/MonoGame"
 			use developer && doins "${WORKDIR}/MonoGame/SharpNav.dll.mdb"
 			use developer && doins "${WORKDIR}/MonoGame/SharpNav.XML"
-			esavekey "${S}/${PN}-monogame-keypair.snk"
 		fi
         done
 
@@ -164,7 +135,7 @@ src_install() {
 	fi
 
 	if use developer ; then
-               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		insinto "/usr/$(get_libdir)/mono/${PN}"
 		doins Source/SharpNav.GUI/SharpNav.GUI.snk
 		doins Source/SharpNav/SharpNav.snk
 		doins Source/SharpNav/SharpNav.OpenTK.snk
