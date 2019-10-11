@@ -1,55 +1,50 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=6
-inherit dotnet eutils mono multilib-build gac
-
-DESCRIPTION="MonoGame"
+EAPI=7
+DESCRIPTION="One framework for creating powerful cross-platform games."
 HOMEPAGE="http://www.monogame.net"
 LICENSE="Ms-PL"
-SLOT="0"
 KEYWORDS="~amd64 ~x86"
-RDEPEND="
-	dev-dotnet/sharpfont
-	dev-dotnet/assimp-net
-	media-libs/openal
-	>=dev-lang/mono-4.0.0
-	dev-dotnet/gtk-sharp:3
-	addin? (
+inherit multilib-build
+RDEPEND="addin? (
+		 >=dev-dotnet/mono-addins-1.0
 		!>=dev-util/monodevelop-6.0.0.0
-		<=dev-util/monodevelop-5.9.5.9
-		>=dev-dotnet/mono-addins-1.0
-	)
-	dev-dotnet/opentk
-	>=dev-util/nant-0.93_pre20151114
-	>=dev-dotnet/lidgren-network-gen3-2015.12.18
-	media-libs/assimp
-	media-gfx/nvidia-texture-tools[gac]
-        dev-dotnet/pvrtexlibnet[${MULTILIB_USEDEP}]
-	dev-dotnet/atitextureconverter
-	virtual/ffmpeg
-	dev-dotnet/ndesk-options
-	>=dev-util/nunit-3.0.1:3
-	dev-util/nunit:2
-	dev-dotnet/tao-framework
-	media-libs/libsdl2
-	media-libs/freealut
-	dev-dotnet/freeimagenet
-	>=dev-dotnet/nvorbis-9999
-"
-DEPEND="
-	${RDEPEND}
+		 <=dev-util/monodevelop-5.9.5.9
+	 )
+	   dev-dotnet/assimp-net
+	   dev-dotnet/atitextureconverter
+	   dev-dotnet/freeimagenet
+	   dev-dotnet/gtk-sharp:3
+	 >=dev-dotnet/lidgren-network-gen3-2015.12.18
+	   dev-dotnet/ndesk-options
+	 >=dev-dotnet/nvorbis-9999
+	   dev-dotnet/opentk
+           dev-dotnet/pvrtexlibnet[${MULTILIB_USEDEP}]
+	   dev-dotnet/sharpfont
+	   dev-dotnet/tao-framework
+	 >=dev-util/nant-0.93_pre20151114
+	 >=dev-util/nunit-3.0.1:3
+	   dev-util/nunit:2
+	   media-gfx/nvidia-texture-tools[gac]
+	   media-libs/assimp[${MULTILIB_USEDEP}]
+	   media-libs/freealut[${MULTILIB_USEDEP}]
+	   media-libs/libsdl2[${MULTILIB_USEDEP}]
+	   media-libs/openal[${MULTILIB_USEDEP}]
+	   virtual/ffmpeg"
+DEPEND="${RDEPEND}
 	app-text/xmlstarlet
-        dev-dotnet/protobuild
-"
+        dev-dotnet/protobuild"
 USE_DOTNET="net45"
-IUSE="${USE_DOTNET} debug bindist mgcb pipeline abi_x86_64 abi_x86_32 +gac doc addin"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
+IUSE="${USE_DOTNET} abi_x86_32 abi_x86_64 addin bindist debug doc +gac mgcb pipeline"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac gac? ( net45 )"
+inherit dotnet eutils mono
 SRC_URI="https://github.com/MonoGame/MonoGame/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-
+inherit gac
+SLOT="0"
 S="${WORKDIR}/MonoGame-${PV}"
 SNK_FILENAME="${S}/${PN}-keypair.snk"
+RESTRICT="mirror"
 
 pkg_setup() {
 	dotnet_pkg_setup
