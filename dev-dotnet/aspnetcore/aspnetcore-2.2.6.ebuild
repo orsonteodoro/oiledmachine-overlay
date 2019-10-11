@@ -4,25 +4,42 @@
 # BASED ON https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=dotnet-cli
 #          https://git.archlinux.org/svntogit/community.git/tree/trunk/PKGBUILD?h=packages/dotnet-core
 
-EAPI="6"
-
-CORE_V=${PV}
-DropSuffix="false" # true=official latest release, false=dev for live ebuilds
-
+EAPI=7
 DESCRIPTION="ASP.NET Core is a cross-platform .NET framework for building modern cloud-based web applications on Windows, Mac, or Linux."
 HOMEPAGE="https://github.com/aspnet/AspNetCore/"
 LICENSE="MIT"
-
+KEYWORDS="~amd64"
+CORE_V=${PV}
+DropSuffix="false" # true=official latest release, false=dev for live ebuilds
 MY_PN="AspNetCore"
-IUSE="tests debug"
+IUSE="debug tests"
+REQUIRED_USE="!tests" # broken
 NETFX_V="4.7.2" # max .NETFramework requested
 SDK_V="2.2.102"
 KOREBUILD_V="2.2.1-build-20190318.1"
-
 ASPNETCORE_COMMIT="e7f262e33108e92fc8805b925cc04b07d254118b" # exactly ${PV}
 GOOGLETEST_COMMIT="4e4df226fc197c0dda6e37f5c8c3845ca1e73a49"
 ENTITYFRAMEWORKCORE_COMMIT="01da710cdeff0431fc60379580aa63f335fbc165"
-
+SLOT="0"
+RDEPEND=">=dev-libs/icu-57.1
+	 >=dev-libs/openssl-1.0.2h-r2
+	 >=dev-util/lldb-4.0
+	 >=dev-util/lttng-ust-2.8.1
+	 >=net-misc/curl-7.49.0
+	 >=sys-devel/llvm-4.0:*
+	 >=sys-libs/libunwind-1.1-r1
+	 >=sys-libs/zlib-1.2.8-r1"
+DEPEND="${RDEPEND}
+	  dev-dotnet/cli-tools
+	 !dev-dotnet/dotnetcore-aspnet-bin
+	 !dev-dotnet/dotnetcore-runtime-bin
+	 !dev-dotnet/dotnetcore-sdk-bin
+	>=dev-lang/mono-5.18.0
+	>=dev-util/cmake-3.3.1-r1
+	  dev-vcs/git
+	>=sys-devel/clang-3.7.1-r100
+	>=sys-devel/gettext-0.19.7
+	>=sys-devel/make-4.1-r1"
 # currently using only tarballs to avoid git is a problem at build time
 if [[ "${DropSuffix}" == "true" ]] ; then
 SRC_URI_TGZ="https://github.com/aspnet/AspNetCore/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
@@ -30,39 +47,13 @@ SRC_URI_TGZ="https://github.com/aspnet/AspNetCore/archive/v${PV}.tar.gz -> ${PN}
 	     https://github.com/aspnet/EntityFrameworkCore/archive/${ENTITYFRAMEWORKCORE_COMMIT}.zip -> entityframeworkcore-${ENTITYFRAMEWORKCORE_COMMIT}.zip"
 SRC_URI_TGZ=""
 fi
-
 SRC_URI="${SRC_URI_TGZ}"
 #	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )
 #	 https://aspnetcore.blob.core.windows.net/buildtools/netfx/${NETFX_V}/netfx.${NETFX_V}.tar.gz"
 #	 arm64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
 #	 arm? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )"
-REQUIRED_USE="!tests" # broken
-
-SLOT="0"
-KEYWORDS="~amd64"
-
-RDEPEND="
-	>=sys-devel/llvm-4.0:*
-	>=dev-util/lldb-4.0
-	>=sys-libs/libunwind-1.1-r1
-	>=dev-libs/icu-57.1
-	>=dev-util/lttng-ust-2.8.1
-	>=dev-libs/openssl-1.0.2h-r2
-	>=net-misc/curl-7.49.0
-	>=sys-libs/zlib-1.2.8-r1"
-DEPEND="${RDEPEND}
-	>=dev-lang/mono-5.18.0
-	dev-dotnet/cli-tools
-	dev-vcs/git
-	>=dev-util/cmake-3.3.1-r1
-	>=sys-devel/make-4.1-r1
-	>=sys-devel/clang-3.7.1-r100
-	>=sys-devel/gettext-0.19.7
-	!dev-dotnet/dotnetcore-runtime-bin
-	!dev-dotnet/dotnetcore-sdk-bin
-	!dev-dotnet/dotnetcore-aspnet-bin"
-
 S=${WORKDIR}
+ASPNETCORE_REPO_URL="https://github.com/aspnet/AspNetCore.git"
 ASPNETCORE_S="${S}/AspNetCore-${ASPNETCORE_COMMIT}"
 #ASPNETCORE_S="${S}/AspNetCore-${CORE_V}"
 
@@ -85,8 +76,6 @@ pkg_pretend() {
 		die ".NET core command-line (CLI) tools require sandbox and usersandbox to be disabled in FEATURES."
 	fi
 }
-
-ASPNETCORE_REPO_URL="https://github.com/aspnet/AspNetCore.git"
 
 _unpack_asp() {
 	unpack ${A}
