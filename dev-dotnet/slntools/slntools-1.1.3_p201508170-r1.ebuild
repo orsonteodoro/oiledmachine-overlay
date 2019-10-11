@@ -2,37 +2,26 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+DESCRIPTION="Validator.nu HTML Parser, a HTML5 parser, port from Java Version 1.4 to C#"
+HOMEPAGE="https://github.com/ArsenShnurkov/slntools"
+LICENSE="MIT" # https://github.com/jamietre/HtmlParserSharp/blob/master/LICENSE.txt
 KEYWORDS="~amd64 ~x86"
 USE_DOTNET="net45"
 # cli = do install command line interface
 IUSE="${USE_DOTNET} developer gac nupkg debug cli"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) nupkg"
-inherit dotnet gac
-
-NAME="slntools"
-HOMEPAGE="https://github.com/ArsenShnurkov/slntools"
-
-EGIT_COMMIT="705869e96a2f0e401be03f8e8478df3e1f2b9373"
-SRC_URI="${HOMEPAGE}/archive/${EGIT_COMMIT}.zip -> ${PF}.zip
-	 https://github.com/mono/mono/raw/master/mcs/class/mono.snk"
-
-RESTRICT="mirror"
-S="${WORKDIR}/${NAME}-${EGIT_COMMIT}"
-
-SLOT=0
-
-DESCRIPTION="Validator.nu HTML Parser, a HTML5 parser, port from Java Version 1.4 to C#"
-LICENSE="MIT" # https://github.com/jamietre/HtmlParserSharp/blob/master/LICENSE.txt
-
-RDEPEND=">=dev-lang/mono-4.0.2.5"
 DEPEND="${RDEPEND}
-	sys-apps/sed
-	nupkg? ( dev-dotnet/nuget )"
-
+	sys-apps/sed"
+inherit dotnet nupkg
+NAME="slntools"
+EGIT_COMMIT="705869e96a2f0e401be03f8e8478df3e1f2b9373"
+SRC_URI="${HOMEPAGE}/archive/${EGIT_COMMIT}.tar.gz -> ${PF}.tar.gz"
+inherit gac
+SLOT=0
+RESTRICT="mirror"
 S="${WORKDIR}/${NAME}-${EGIT_COMMIT}"
 SLN_FILE=SLNTools.sln
 METAFILETOBUILD="${S}/Main/${SLN_FILE}"
-SNK_FILENAME="${S}/mono.snk"
 
 src_prepare() {
 	eapply "${FILESDIR}/slntools-1.1.3_p20150817-remove-wix-project-from-sln-file.patch"
@@ -48,33 +37,18 @@ src_prepare() {
 	# no need to restore if all dependencies are from GAC
 	# nuget restore "${METAFILETOBUILD}" || die
 
-	cp "${DISTDIR}/mono.snk" "${S}"
-
 	default
 }
 
 src_compile() {
-	ARGS=""
-	ARGSN=""
-
-	if use debug; then
-		ARGS="${ARGS} /p:Configuration=Debug"
-		ARGSN="${ARGSN} Configuration=Debug"
-	else
-		ARGS="${ARGS} /p:Configuration=Release"
-		ARGSN="${ARGSN} Configuration=Release"
-	fi
-
-	if use developer; then
-		ARGS="${ARGS} /p:DebugSymbols=True"
-	else
-		ARGS="${ARGS} /p:DebugSymbols=False"
-	fi
-
-	exbuild_strong ${ARGS} ${METAFILETOBUILD}
+	exbuild /p:Configuration=$(usex debug "Debug" "Release")
+		/p:DebugSymbols=$(usex developer "True" "False")
+		${ARGS} \
+		${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" \
+		${METAFILETOBUILD}
 
 	if use nupkg; then
-		nuget pack "${FILESDIR}/slntools-1.1.3_p20150817-${SLN_FILE}.nuspec" -Properties ${ARGSN} -BasePath "${S}" -OutputDirectory "${WORKDIR}" -NonInteractive -Verbosity detailed
+		nuget pack "${FILESDIR}/slntools-1.1.3_p20150817-${SLN_FILE}.nuspec" -Properties $(usex debug "Configuration=Debug" "Configuration=Release") -BasePath "${S}" -OutputDirectory "${WORKDIR}" -NonInteractive -Verbosity detailed
 	fi
 }
 
@@ -95,7 +69,7 @@ src_install() {
 		doins Main/SLNTools.exe/bin/${DIR}/CWDev.SLNTools.Core.dll.mdb
 	fi
 	einfo "Strong signing dll again"
-	sn -R Main/SLNTools.exe/bin/${DIR}/CWDev.SLNTools.Core.dll "${S}"/mono.snk || die
+	estrong_resign Main/SLNTools.exe/bin/${DIR}/CWDev.SLNTools.Core.dll "${DISTDIR}"/mono.snk
 	einfo "GAC install"
 	egacinstall Main/SLNTools.exe/bin/${DIR}/CWDev.SLNTools.Core.dll
 
