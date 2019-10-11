@@ -1,59 +1,50 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=6
-inherit dotnet eutils mono gac toolchain-funcs
-
+EAPI=7
 DESCRIPTION="BeatDetectorForGames is a A C++ and C# Beat Detector to be used in Video Games."
 HOMEPAGE="https://github.com/Terracorrupt/BeatDetectorForGames"
-PROJECT_NAME="BeatDetectorForGames"
-COMMIT="e3143cbde1261a9bfa566633377d282ac46a7750"
-SRC_URI="https://github.com/Terracorrupt/BeatDetectorForGames/archive/${COMMIT}.zip -> ${P}.zip"
-
 LICENSE="MIT"
-SLOT="0"
 KEYWORDS="~amd64 ~x86"
 USE_DOTNET="net45"
 IUSE="${USE_DOTNET} debug +gac c++ static"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) || ( gac c++ )"
-
-RDEPEND=">=dev-lang/mono-4
-         media-libs/fmod"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) || ( gac c++ ) gac? ( net45 )"
+RDEPEND="media-libs/fmod"
 DEPEND="${RDEPEND}
-	>=dev-lang/mono-4
-        dev-util/premake:5
-"
-
-S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
-SNK_FILENAME="${S}/${PN}-keypair.snk"
+        dev-util/premake:5"
+inherit dotnet eutils mono toolchain-funcs
+PROJECT_NAME="BeatDetectorForGames"
+EGIT_COMMIT="e3143cbde1261a9bfa566633377d282ac46a7750"
+SRC_URI="https://github.com/Terracorrupt/BeatDetectorForGames/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
+inherit gac
+SLOT="0"
+S="${WORKDIR}/${PROJECT_NAME}-${EGIT_COMMIT}"
+RESTRICT="mirror"
 
 src_prepare() {
 	eapply "${FILESDIR}/beatdetectorforgames-9999.20150415-cpp-header-fixes.patch"
 
-	cp "${FILESDIR}/buildcpp.lua" "${S}/BeatDetector/BeatDetectorC++Version/Detector"
-	cp "${FILESDIR}/buildcs.lua" "${S}/BeatDetector/BeatDetectorC#Version"
+	cp "${FILESDIR}/buildcpp.lua" "${S}/BeatDetector/BeatDetectorC++Version/Detector" || die
+	cp "${FILESDIR}/buildcs.lua" "${S}/BeatDetector/BeatDetectorC#Version" || die
 
         if (( $(gcc-major-version) >= 6 )) ; then
 		sed -i -e 's|std=c++11|std=c++14|g' BeatDetector/BeatDetectorC++Version/Detector/buildcpp.lua || die
 	fi
 
-	cd "${S}/BeatDetector/BeatDetectorC++Version/Detector"
-	premake5 --file=buildcpp.lua gmake
+	cd "${S}/BeatDetector/BeatDetectorC++Version/Detector" || die
+	premake5 --file=buildcpp.lua gmake || die
 
-	cd "${S}/BeatDetector/BeatDetectorC#Version"
-	sed -i -r -e "s|@S@|${S}|g" buildcs.lua
-	premake5 --file=buildcs.lua gmake
+	cd "${S}/BeatDetector/BeatDetectorC#Version" || die
+	sed -i -r -e "s|@S@|${S}|g" buildcs.lua || die
+	premake5 --file=buildcs.lua gmake || die
 
 	#use the system fmod
-	rm -rf "${S}"/BeatDetector/BeatDetectorC++Version/Detector/{inc,*.dll,lib}
+	rm -rf "${S}"/BeatDetector/BeatDetectorC++Version/Detector/{inc,*.dll,lib} || die
 
 	sed -i -r -e 's|"fmodex64"|"fmodex.dll"|g' "${S}/BeatDetector/BeatDetectorC#Version/fmod.cs" || die p1
 	sed -i -r -e 's|"fmodex"|"fmodex.dll"|g' "${S}/BeatDetector/BeatDetectorC#Version/fmod.cs" || die p2
 	sed -i -r -e 's|"fmodex64"|"fmodex.dll"|g' "${S}/BeatDetector/BeatDetectorC++Version/FMOD/csharp/fmod.cs" || die p3
 	sed -i -r -e 's|"fmodex"|"fmodex.dll"|g' "${S}/BeatDetector/BeatDetectorC++Version/FMOD/csharp/fmod.cs" || die p4
-
-	egenkey
 
 	eapply_user
 }
@@ -98,10 +89,10 @@ src_install() {
         ebegin "Installing dlls into the GAC"
 
 	for x in ${USE_DOTNET} ; do
-                FW_UPPER=${x:3:1}
-                FW_LOWER=${x:4:1}
-                egacinstall "${S}/BeatDetector/BeatDetectorC#Version/build/bin/${mydebug}SharedLib/BeatDetectorForGames.dll"
-               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		FW_UPPER=${x:3:1}
+		FW_LOWER=${x:4:1}
+		egacinstall "${S}/BeatDetector/BeatDetectorC#Version/build/bin/${mydebug}SharedLib/BeatDetectorForGames.dll"
+		insinto "/usr/$(get_libdir)/mono/${PN}"
 		use debug && use gac && use developer && doins BeatDetector/BeatDetectorC#Version/build/bin/${mydebug}${mystatic}Lib/BeatDetectorForGames.dll.mdb
         done
 
