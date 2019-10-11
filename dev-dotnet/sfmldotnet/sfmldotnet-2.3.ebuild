@@ -1,32 +1,24 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=6
-inherit dotnet eutils mono gac multilib-build multilib-minimal
-
+EAPI=7
 DESCRIPTION="SFML.Net is a C# language binding for SFML"
-HOMEPAGE=""
-GIT_USER="SFML"
-PROJECT_NAME="SFML.Net"
-SRC_URI="https://github.com/${GIT_USER}/${PROJECT_NAME}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-
+HOMEPAGE="http://www.sfml-dev.org"
 LICENSE="zlib"
-SLOT="0/${PV}"
-KEYWORDS="~amd64 ~x86"
 USE_DOTNET="net45"
 IUSE="${USE_DOTNET} debug +gac abi_x86_64 abi_x86_32 developer"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
-
-RDEPEND=">=dev-lang/mono-4
-         media-libs/libsfml:0
-        "
-DEPEND="${RDEPEND}
-	>=dev-lang/mono-4
-"
-
+RDEPEND="media-libs/libsfml:0"
+DEPEND="${RDEPEND}"
+inherit dotnet eutils mono multilib-minimal
+GIT_USER="SFML"
+PROJECT_NAME="SFML.Net"
+SRC_URI="https://github.com/${GIT_USER}/${PROJECT_NAME}/archive/${PV}.tar.gz -> ${P}.tar.gz"
+inherit gac
+SLOT="0/${PV}"
+KEYWORDS="~amd64 ~x86"
 S="${WORKDIR}/${PROJECT_NAME}-${PV}"
-SNK_FILENAME="${S}/${PN}-keypair.snk"
+RESTRICT="mirror"
 
 src_prepare() {
 	cd "${WORKDIR}"
@@ -44,8 +36,6 @@ src_prepare() {
 		sed -i -e "s|sfmlnet-system-2|libsfml-system.dll|g" "$f" || die
 		sed -i -e "s|sfmlnet-window-2|libsfml-window.dll|g" "$f" || die
 	done
-
-	egenkey
 
 	eapply_user
 
@@ -69,7 +59,7 @@ multilib_src_compile() {
 	fi
 
         einfo "Building solution"
-        exbuild_strong /p:Configuration=${mydebug} /p:Platform=${myarch} SFML.net.sln || die
+        exbuild /p:Configuration=${mydebug} /p:Platform=${myarch} ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" SFML.net.sln || die
 }
 
 multilib_src_install() {
@@ -85,8 +75,6 @@ multilib_src_install() {
 	if use abi_x86_32 ; then
 		myarch="x86"
 	fi
-
-	esavekey
 
         ebegin "Installing dlls into the GAC"
 
