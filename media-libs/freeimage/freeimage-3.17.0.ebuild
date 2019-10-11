@@ -1,9 +1,8 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=6
-inherit toolchain-funcs eutils multilib versionator multilib-minimal multilib-build flag-o-matic
+EAPI=7
+inherit toolchain-funcs eutils multilib multilib-minimal flag-o-matic
 
 MY_PN=FreeImage
 MY_PV=${PV//.}
@@ -16,7 +15,7 @@ SRC_URI="mirror://sourceforge/${PN}/${MY_P}.zip
 	https://dev.gentoo.org/~gienah/2big4tree/media-libs/freeimage/${PN}-3.15.4-libjpeg-turbo.patch.gz"
 
 LICENSE="|| ( GPL-2 FIPL-1.0 )"
-SLOT="0/$(get_version_component_range 1-2)"
+SLOT="0/$(ver_cut 1-2)"
 KEYWORDS="amd64 ~arm x86 ~amd64-linux ~x86-linux"
 IUSE="jpeg jpeg2k mng openexr png raw static-libs tiff"
 
