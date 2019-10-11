@@ -1,26 +1,21 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="6"
-
-USE_DOTNET="net35 net45"
-RDEPEND="=dev-libs/libfreenect-${PV}"
-DEPEND="${RDEPEND}"
-IUSE="${USE_DOTNET} debug +gac"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net45 )"
-
-inherit dotnet multilib
-
+EAPI=7
 DESCRIPTION="Drivers and libraries for the Xbox Kinect device on Windows, Linux, and OS X"
 HOMEPAGE="https://github.com/OpenKinect/libfreenect"
 LICENSE="|| ( Apache-2.0 GPL-2 )"
-SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
-SRC_URI="https://github.com/OpenKinect/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-
-inherit gac
-
+USE_DOTNET="net35 net45"
+IUSE="${USE_DOTNET} debug +gac"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net45 )"
+RDEPEND="=dev-libs/libfreenect-${PV}"
+DEPEND="${RDEPEND}"
 PYTHON_DEPEND="!bindist? 2"
+SLOT="0"
+inherit dotnet
+SRC_URI="https://github.com/OpenKinect/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+inherit gac
 S="${WORKDIR}/${PN}-${PV}"
 
 src_prepare() {
