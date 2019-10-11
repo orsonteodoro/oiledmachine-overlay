@@ -1,31 +1,24 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-
+EAPI=7
+DESCRIPTION="SDL2-CS is a C# wrapper for SDL2"
+HOMEPAGE="https://github.com/flibitijibibo/SDL2-CS"
+LICENSE="zlib"
+KEYWORDS="~amd64 ~x86"
 USE_DOTNET="net461 netstandard20"
-
 RDEPEND=">=media-libs/libsdl2-2.0.7
          media-libs/sdl2-ttf
          media-libs/sdl2-mixer"
 DEPEND="${RDEPEND}"
 IUSE="${USE_DOTNET} debug gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net461 )"
-
 inherit dotnet eutils mono
-
-DESCRIPTION="SDL2-CS is a C# wrapper for SDL2"
-HOMEPAGE="https://github.com/flibitijibibo/SDL2-CS"
 PROJECT_NAME="SDL2-CS"
 COMMIT="499ad108b93f28c7a8aa2f357206ddc98980614e"
 SRC_URI="https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${COMMIT}.tar.gz -> ${P}.tar.gz"
-
 inherit gac
-
-LICENSE="zlib"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
-
 S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
 
 src_prepare() {
