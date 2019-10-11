@@ -1,7 +1,7 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 USE_DOTNET="net20 net40"
 RDEPEND="media-video/ffmpeg
@@ -10,7 +10,7 @@ DEPEND="${RDEPEND}"
 IUSE="${USE_DOTNET} debug gac kinect ximea"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 )"
 
-inherit dotnet eutils mono versionator
+inherit dotnet eutils mono
 
 DESCRIPTION="AForge.NET Framework is a C# framework designed for developers and researchers in the fields of Computer Vision and Artificial Intelligence - image processing, neural networks, genetic algorithms, machine learning, robotics, etc."
 HOMEPAGE="http://www.aforgenet.com/"
@@ -68,9 +68,7 @@ src_install() {
 	install_impl() {
 		dotnet_install_loc
 
-		version_compare $(dotnet_use_moniker_to_dotted_ver "${EDOTNET}") "4.0"
-		local r="$?"
-		if [[ "$r" == "2" || "$r" == "3" ]] ; then
+		if ver_test $(dotnet_use_moniker_to_dotted_ver "${EDOTNET}") -ge 4.0 ; then
 			estrong_resign ${mydebug}/AForge.Vision.dll               Sources/Vision/AForge.Vision.snk
 			estrong_resign ${mydebug}/AForge.MachineLearning.dll      Sources/MachineLearning/AForge.MachineLearning.snk
 			estrong_resign ${mydebug}/AForge.Imaging.Formats.dll      Sources/Imaging.Formats/AForge.Imaging.Formats.snk
