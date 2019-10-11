@@ -1,31 +1,26 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-
-inherit versionator
+EAPI=7
 
 USE_DOTNET="net40"
 IUSE="${USE_DOTNET} debug gac test"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 )"
-LIBBULLETC_PV="$(get_version_component_range 3-4)"
+LIBBULLETC_PV="$(ver_cut 3-4)"
 RDEPEND="=sci-physics/bullet-${LIBBULLETC_PV}"
 DEPEND="${RDEPEND}"
 
-inherit cmake-utils dotnet eutils multilib-minimal multilib-build
+inherit cmake-utils dotnet eutils multilib-minimal
 
 DESCRIPTION=".NET wrapper for the Bullet physics library using Platform Invoke"
 HOMEPAGE="http://andrestraks.github.io/BulletSharp/"
-MY_PV="$(get_version_component_range 1-2)"
+LICENSE="MIT zlib"
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+MY_PV="$(ver_cut 1-2)"
 SRC_URI="https://github.com/AndresTraks/${PN}/archive/${MY_PV}.tar.gz -> ${PN}-${MY_PV}.tar.gz
          https://github.com/bulletphysics/bullet3/archive/${LIBBULLETC_PV}.tar.gz -> bullet-${LIBBULLETC_PV}.tar.gz"
-
 inherit gac
-
-LICENSE="MIT zlib"
 SLOT="0/${MY_PV}"
-KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
-
 S="${WORKDIR}/${PN}-${MY_PV}"
 
 src_unpack() {
