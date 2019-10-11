@@ -12,6 +12,7 @@ SRC_URI="https://github.com/dotnet/core/archive/v${CORE_V}.tar.gz -> core-${CORE
 SLOT="0"
 S="${WORKDIR}"
 CORE_S="${S}/core-${CORE_V}"
+RESTRICT="mirror"
 
 src_unpack() {
 	unpack "core-${CORE_V}.tar.gz"
