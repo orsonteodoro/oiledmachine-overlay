@@ -26,7 +26,8 @@ DEPEND="${RDEPEND}
 	virtual/pkgconfig
 	sys-devel/automake:1.11"
 USE_DOTNET="net45"
-IUSE="debug"
+IUSE="${USE_DOTNET} debug"
+REQUIRED_USE="|| ( ${USE_DOTNET} )"
 inherit autotools dotnet
 SLOT="2"
 SRC_URI="http://download.mono-project.com/sources/gtk-sharp212/${P}.tar.gz"

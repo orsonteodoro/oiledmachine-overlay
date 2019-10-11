@@ -28,6 +28,7 @@ DEPEND="${RDEPEND}
 	sys-devel/automake:1.11"
 USE_DOTNET="net45"
 IUSE="${USE_DOTNET} debug"
+REQUIRED_USE="|| ( ${USE_DOTNET} )"
 inherit autotools dotnet
 SLOT="3"
 COMMIT="05e47a49fc62e1108750d2fbdfb883a06a9d1ec6"
