@@ -1,29 +1,25 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=6
-
-inherit eutils dotnet multilib autotools
-
+EAPI=7
 DESCRIPTION="A generic framework for creating extensible applications"
 HOMEPAGE="http://www.mono-project.com/Mono.Addins"
-SRC_URI="https://github.com/mono/${PN}/archive/${P}.tar.gz -> ${P}.tar.gz"
-
 LICENSE="GPL-2"
-SLOT="0"
 KEYWORDS="amd64 ppc ~x86"
-USE_DOTNET="net45"
+
 IUSE="${USE_DOTNET} +gtk"
 REQUIRED_USE="|| ( ${USE_DOTNET} )"
-
 RDEPEND=">=dev-lang/mono-3
 	gtk? ( >=dev-dotnet/gtk-sharp-2.12.21:2 )"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
+USE_DOTNET="net45"
+inherit autotools dotnet eutils
+SRC_URI="https://github.com/mono/${PN}/archive/${P}.tar.gz -> ${P}.tar.gz"
+SLOT="0"
 MAKEOPTS="${MAKEOPTS} -j1" #nowarn
-
 S="${WORKDIR}/${PN}-${P}"
+RESTRICT="mirror"
 
 src_prepare() {
 	epatch "${FILESDIR}/gmcs.patch"
@@ -45,10 +41,6 @@ src_prepare() {
 
 src_configure() {
 	econf $(use_enable gtk gui)
-}
-
-src_compile() {
-	default
 }
 
 src_install() {
