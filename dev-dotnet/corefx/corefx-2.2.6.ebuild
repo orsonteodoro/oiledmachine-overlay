@@ -4,63 +4,49 @@
 # BASED ON https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=dotnet-cli
 #          https://git.archlinux.org/svntogit/community.git/tree/trunk/PKGBUILD?h=packages/dotnet-core
 
-EAPI="6"
-
-CORE_V=${PV}
-DOTNETCLI_V=2.2.108
-
+EAPI=7
 DESCRIPTION="CoreFX is the foundational class libraries for .NET Core. It includes types for collections, file systems, console, JSON, XML, async and many others."
 HOMEPAGE="https://github.com/dotnet/corefx"
 LICENSE="MIT"
-
-IUSE="heimdal tests debug"
-
+KEYWORDS="~amd64"
+CORE_V=${PV}
+DOTNETCLI_V=2.2.108
+IUSE="debug heimdal tests"
 SRC_URI="https://github.com/dotnet/corefx/archive/v${CORE_V}.tar.gz -> corefx-${CORE_V}.tar.gz
 	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-x64.tar.gz )"
 #	 x86? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-x86.tar.gz )
 #	 arm64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-arm64.tar.gz )
 #	 arm? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-arm.tar.gz )
-
 SLOT="0"
-KEYWORDS="~amd64"
 # based on init-tools.sh and dotnet-sdk-${DOTNETCLI_V}-linux-${myarch}.tar.gz
 # ~x86 ~arm64 ~arm
-
-RDEPEND="
-	>=sys-devel/llvm-4.0:*
-	>=dev-util/lldb-4.0
-	>=sys-libs/libunwind-1.1-r1
-	>=dev-libs/icu-57.1
-	>=dev-util/lttng-ust-2.8.1
-	>=dev-libs/openssl-1.0.2h-r2
-	>=net-misc/curl-7.49.0
-	heimdal? (
-		>=app-crypt/heimdal-1.5.3-r2
-	)
-	!heimdal? (
-		>=app-crypt/mit-krb5-1.14.2
-	)
-	>=sys-libs/zlib-1.2.8-r1"
+RDEPEND=">=dev-libs/icu-57.1
+	 >=dev-libs/openssl-1.0.2h-r2
+	 >=dev-util/lldb-4.0
+	 >=dev-util/lttng-ust-2.8.1
+	 >=net-misc/curl-7.49.0
+	 heimdal? ( >=app-crypt/heimdal-1.5.3-r2 )
+	!heimdal? ( >=app-crypt/mit-krb5-1.14.2 )
+	 >=sys-devel/llvm-4.0:*
+	 >=sys-libs/libunwind-1.1-r1
+	 >=sys-libs/zlib-1.2.8-r1"
 DEPEND="${RDEPEND}
-	dev-vcs/git
 	>=dev-util/cmake-3.3.1-r1
-	>=sys-devel/make-4.1-r1
+	  dev-vcs/git
 	>=sys-devel/clang-3.7.1-r100
 	>=sys-devel/gettext-0.19.7
-	!dev-dotnet/dotnetcore-runtime-bin
-	!dev-dotnet/dotnetcore-sdk-bin
-	!dev-dotnet/dotnetcore-aspnet-bin"
-
-_PATCHES=(
-	"${FILESDIR}/corefx-2.1.9-werror.patch"
-	"${FILESDIR}/corefx-2.2.3-null-1.patch"
-	"${FILESDIR}/corefx-2.2.3-null-2.patch"
-	"${FILESDIR}/corefx-2.2.3-null-3.patch"
-	"${FILESDIR}/corefx-2.2.3-null-4.patch"
-)
-
+	>=sys-devel/make-4.1-r1
+	 !dev-dotnet/dotnetcore-aspnet-bin
+	 !dev-dotnet/dotnetcore-runtime-bin
+	 !dev-dotnet/dotnetcore-sdk-bin"
+_PATCHES=( "${FILESDIR}/corefx-2.1.9-werror.patch"
+	   "${FILESDIR}/corefx-2.2.3-null-1.patch"
+	   "${FILESDIR}/corefx-2.2.3-null-2.patch"
+	   "${FILESDIR}/corefx-2.2.3-null-3.patch"
+	   "${FILESDIR}/corefx-2.2.3-null-4.patch" )
 S="${WORKDIR}"
 COREFX_S="${S}/corefx-${CORE_V}"
+RESTRICT="mirror"
 
 # This currently isn't required but may be needed in later ebuilds
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
