@@ -53,6 +53,7 @@ SRC_URI="${SRC_URI_TGZ}"
 #	 arm64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
 #	 arm? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )"
 S=${WORKDIR}
+RESTRICT="mirror"
 ASPNETCORE_REPO_URL="https://github.com/aspnet/AspNetCore.git"
 ASPNETCORE_S="${S}/AspNetCore-${ASPNETCORE_COMMIT}"
 #ASPNETCORE_S="${S}/AspNetCore-${CORE_V}"
