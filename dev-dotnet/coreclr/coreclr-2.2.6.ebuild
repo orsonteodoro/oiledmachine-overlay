@@ -47,6 +47,7 @@ _PATCHES=( "${FILESDIR}/coreclr-2.1.9-jit-hex-format-change-1.patch"
 	   "${FILESDIR}/coreclr-2.1.9-jit-hex-format-change-7.patch"
 	   "${FILESDIR}/coreclr-2.1.9-jit-hex-format-change-8.patch"
 	   "${FILESDIR}/coreclr-2.1.9-jit-hex-format-change-9.patch" )
+RESTRICT="mirror"
 S="${WORKDIR}"
 CORECLR_S="${S}/coreclr-${CORE_V}"
 
