@@ -4,28 +4,22 @@
 # BASED ON https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=dotnet-cli
 #          https://git.archlinux.org/svntogit/community.git/tree/trunk/PKGBUILD?h=packages/dotnet-core
 
-EAPI="6"
-
-VERSION_SUFFIX=''
-DropSuffix="true" # true=official latest release, false=dev for live ebuilds
-
+EAPI=7
 DESCRIPTION="This repo contains the .NET Core command-line (CLI) tools, used for building .NET Core apps and libraries through your development flow (compiling, NuGet package management, running, testing, ...)."
 HOMEPAGE="https://github.com/dotnet/cli"
 LICENSE="MIT"
-
+KEYWORDS="~amd64"
+VERSION_SUFFIX=''
+DropSuffix="true" # true=official latest release, false=dev for live ebuilds
 IUSE="tests debug"
 SDK_V="2.1.403"
 FXR_V="2.2.6"
-
 DOTNET_CLI_COMMIT="729b316c13bf9289b033272c07c7dfd046ffbcaf" # exactly ${PV}
 SRC_URI="https://github.com/dotnet/cli/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
 	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )"
 #	 arm64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
 #	 arm? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )"
-
 SLOT="${PV}"
-KEYWORDS="~amd64"
-
 RDEPEND="
 	>=sys-devel/llvm-4.0:*
 	>=dev-util/lldb-4.0
@@ -44,13 +38,10 @@ DEPEND="${RDEPEND}
 	!dev-dotnet/dotnetcore-runtime-bin
 	!dev-dotnet/dotnetcore-sdk-bin
 	!dev-dotnet/dotnetcore-aspnet-bin"
-
-_PATCHES=(
-	"${FILESDIR}/dotnet-cli-2.1.505-null-LastWriteTimeUtc-minval.patch"
-)
-
+_PATCHES=( "${FILESDIR}/dotnet-cli-2.1.505-null-LastWriteTimeUtc-minval.patch" )
 S="${WORKDIR}"
 CLI_S="${S}/dotnetcli-${DOTNET_CLI_COMMIT}"
+DOTNET_CLI_REPO_URL="https://github.com/dotnet/cli.git"
 
 # This currently isn't required but may be needed in later ebuilds
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
@@ -62,8 +53,6 @@ pkg_pretend() {
 		die ".NET core command-line (CLI) tools require sandbox and usersandbox to be disabled in FEATURES."
 	fi
 }
-
-DOTNET_CLI_REPO_URL="https://github.com/dotnet/cli.git"
 
 _unpack_cli() {
 	unpack ${PN}-${PV}.tar.gz
