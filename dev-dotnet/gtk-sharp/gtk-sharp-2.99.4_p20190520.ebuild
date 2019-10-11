@@ -1,25 +1,11 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-
-inherit autotools dotnet
-
-SLOT="3"
+EAPI=7
 DESCRIPTION="Gtk# is a Mono/.NET binding to the cross platform Gtk+ GUI toolkit and the foundation of most GUI apps built with Mono"
-LICENSE="LGPL-2 MIT"
 HOMEPAGE="http://www.mono-project.com/GtkSharp"
+LICENSE="LGPL-2 MIT"
 KEYWORDS="~amd64 ~x86 ~ppc"
-COMMIT="05e47a49fc62e1108750d2fbdfb883a06a9d1ec6"
-SRC_URI="https://github.com/mono/gtk-sharp/archive/${COMMIT}.zip -> ${PN}-${PVR}.zip
-	 https://github.com/mono/gtk-sharp/commit/05e47a49fc62e1108750d2fbdfb883a06a9d1ec6.patch -> ${PN}-${PVR}-use-csc-instead-of-mcs.patch"
-USE_DOTNET="net45"
-IUSE="${USE_DOTNET} debug"
-REQUIRED_USE="|| ( ${USE_DOTNET} )"
-
-RESTRICT="test"
-S="${WORKDIR}/${PN}-${COMMIT}"
-
 RDEPEND="
 	>=x11-libs/cairo-1.10
 	>=dev-lang/mono-3.2.8
@@ -40,6 +26,15 @@ RDEPEND="
 DEPEND="${RDEPEND}
 	virtual/pkgconfig
 	sys-devel/automake:1.11"
+USE_DOTNET="net45"
+IUSE="${USE_DOTNET} debug"
+inherit autotools dotnet
+SLOT="3"
+COMMIT="05e47a49fc62e1108750d2fbdfb883a06a9d1ec6"
+SRC_URI="https://github.com/mono/gtk-sharp/archive/${COMMIT}.zip -> ${PN}-${PVR}.zip
+	 https://github.com/mono/gtk-sharp/commit/05e47a49fc62e1108750d2fbdfb883a06a9d1ec6.patch -> ${PN}-${PVR}-use-csc-instead-of-mcs.patch"
+RESTRICT="test mirror"
+S="${WORKDIR}/${PN}-${COMMIT}"
 
 src_prepare() {
 	default

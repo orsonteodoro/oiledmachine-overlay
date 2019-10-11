@@ -1,20 +1,11 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-
-inherit autotools dotnet
-
-SLOT="2"
+EAPI=7
 DESCRIPTION="Gtk# is a Mono/.NET binding to the cross platform Gtk+ GUI toolkit and the foundation of most GUI apps built with Mono"
-LICENSE="LGPL-2 MIT"
 HOMEPAGE="http://www.mono-project.com/GtkSharp"
+LICENSE="LGPL-2 MIT"
 KEYWORDS="~amd64 ~x86 ~ppc"
-SRC_URI="http://download.mono-project.com/sources/gtk-sharp212/${P}.tar.gz"
-IUSE="debug"
-
-RESTRICT="test"
-
 RDEPEND="
 	>=dev-lang/mono-3.0
 	x11-libs/pango
@@ -34,6 +25,12 @@ RDEPEND="
 DEPEND="${RDEPEND}
 	virtual/pkgconfig
 	sys-devel/automake:1.11"
+USE_DOTNET="net45"
+IUSE="debug"
+inherit autotools dotnet
+SLOT="2"
+SRC_URI="http://download.mono-project.com/sources/gtk-sharp212/${P}.tar.gz"
+RESTRICT="test mirror"
 
 src_prepare() {
 	default
