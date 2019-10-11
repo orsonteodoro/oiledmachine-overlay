@@ -7,18 +7,16 @@ inherit eutils autotools multilib-minimal multilib-build
 
 DESCRIPTION="WebM demuxer"
 HOMEPAGE="https://github.com/kinetiknz/nestegg/"
-COMMIT="773adcc29d2c52891421c0b0c10059abf9bc17ea"
-SRC_URI="https://github.com/kinetiknz/nestegg/archive/${COMMIT}.zip -> ${PN}-${PV}.zip"
-
 LICENSE="ISC"
-SLOT="0"
 KEYWORDS="~amd64 ~x86"
+COMMIT="febf18700cfa133003d787ca93a4d60251517aee"
+SRC_URI="https://github.com/kinetiknz/nestegg/archive/${COMMIT}.tar.gz -> ${PN}-${PV}.tar.gz"
+SLOT="0"
 IUSE=""
-
 RDEPEND=""
 DEPEND="${RDEPEND}"
-
 S="${WORKDIR}/${PN}-${COMMIT}"
+RESTRICT="mirror"
 
 src_prepare() {
 	eapply_user
