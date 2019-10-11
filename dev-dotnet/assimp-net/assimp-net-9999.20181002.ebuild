@@ -12,11 +12,11 @@ REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net452 )"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
 inherit dotnet eutils nupkg
-COMMIT="9002f2b5eb2d096b880c61714c26a3924254489e"
-SRC_URI="https://github.com/assimp/assimp-net/archive/${COMMIT}.tar.gz -> ${P}.tar.gz"
+EGIT_COMMIT="9002f2b5eb2d096b880c61714c26a3924254489e"
+SRC_URI="https://github.com/assimp/assimp-net/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
 inherit gac
 SLOT="0"
-S="${WORKDIR}/assimp-net-${COMMIT}"
+S="${WORKDIR}/assimp-net-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
 src_prepare() {
