@@ -1,28 +1,22 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-
+EAPI=7
+DESCRIPTION="Vorbisfile# is a C# wrapper for Vorbisfile"
+HOMEPAGE="https://github.com/flibitijibibo/Vorbisfile-CS"
+LICENSE="zlib"
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 USE_DOTNET="net40"
 IUSE="${USE_DOTNET} debug gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 )"
 RDEPEND="media-libs/libvorbis"
 DEPEND="${RDEPEND}"
-
 inherit dotnet eutils mono
-
-DESCRIPTION="Vorbisfile# is a C# wrapper for Vorbisfile"
-HOMEPAGE="https://github.com/flibitijibibo/Vorbisfile-CS"
 PROJECT_NAME="Vorbisfile-CS"
 COMMIT="24e9ece0239da6b03890d47f6118df85d52cf179"
 SRC_URI="https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${COMMIT}.tar.gz -> ${P}.tar.gz"
-
 inherit gac
-
-LICENSE="zlib"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
-
 S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
 
 src_prepare() {
