@@ -1,35 +1,27 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-dotnet/mysql-connector-net/mysql-connector-net-1.0.9.ebuild,v 1.3 2008/03/02 09:12:46 compnerd Exp $
 
-EAPI="6"
-
-inherit dotnet eutils multilib mono versionator subversion autotools gac
-
-DESCRIPTION="Tao Framework"
+EAPI=7
+DESCRIPTION="The Tao Framework for .NET is a collection of bindings to facilitate cross-platform game-related development utilizing the .NET platform."
 HOMEPAGE="http://sourceforge.net/projects/taoframework/"
-SRC_URI=""
-
 LICENSE="MIT"
-SLOT="0"
 KEYWORDS="~amd64 ~x86"
 USE_DOTNET="net45"
 IUSE="${USE_DOTNET} gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
-
-RESTRICT="fetch"
-
-RDEPEND=">=dev-lang/mono-2.0
-		media-libs/openal
-		virtual/opengl
-		media-libs/libsdl
-	"
+RDEPEND="media-libs/openal
+	 media-libs/libsdl
+	 virtual/opengl"
 DEPEND="${RDEPEND}
-                dev-util/nant
-		dev-util/nunit:2
-		app-arch/p7zip"
-
+	app-arch/p7zip
+	dev-util/nant
+	dev-util/nunit:2"
+SLOT="0"
+inherit autotools dotnet eutils mono subversion
+SRC_URI=""
+inherit gac
 S="${WORKDIR}/taoframework-${PV}"
+
 src_unpack() {
         ESVN_REPO_URI="svn://svn.code.sf.net/p/taoframework/code/tags/taoframework-2.1.0/"
         ESVN_REVISION="237"
@@ -54,19 +46,11 @@ src_prepare() {
 	eautoreconf || die
 }
 
-src_configure() {
-	econf || die
-}
-
-src_compile() {
-	emake || die
-}
-
 src_install() {
 	emake DESTDIR="${D}" install
 
 	if use developer ; then
-               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		insinto "/usr/$(get_libdir)/mono/${PN}"
 		doins src/Tao.FreeType/Tao.FreeType{.snk,.xml}
 		doins src/Tao.Platform.Windows/Tao.Platform.Windows{.snk,.xml}
 		doins src/Tao.Lua/Tao.Lua{.snk,.xml}
@@ -77,14 +61,14 @@ src_install() {
 		doins src/Tao.FreeGlut/Tao.FreeGlut{.snk,.xml}
 		doins src/Tao.PhysFs/Tao.PhysFs{.snk,.xml}
 		doins src/Tao.Sdl/Tao.Sdl{.snk,.xml}
-                doins src/Tao.GlBindGen/Tao.GlBindGen.snk
+		doins src/Tao.GlBindGen/Tao.GlBindGen.snk
 		doins src/Tao.FFmpeg/Tao.FFmpeg{.snk,.xml}
 		doins src/Tao.OpenAl/Tao.OpenAl{.snk,.xml}
 		doins src/Tao.Cg/Tao.Cg{.snk,.xml}
 		doins src/Tao.Platform.X11/Tao.Platform.X11{.snk,.xml}
 	fi
 
-       	insinto "/usr/$(get_libdir)/mono/${PN}"
+	insinto "/usr/$(get_libdir)/mono/${PN}"
 	doins src/Tao.FreeType/Tao.FreeType.dll.config
 	doins src/Tao.Platform.Windows/Tao.Platform.Windows.dll.config
 	doins src/Tao.Lua/Tao.Lua.dll.config
@@ -99,7 +83,6 @@ src_install() {
 	doins src/Tao.OpenAl/Tao.OpenAl.dll.config
 	doins src/Tao.Cg/Tao.Cg.dll.config
 	doins src/Tao.Platform.X11/Tao.Platform.X11.dll.config
-
 
 	dotnet_multilib_comply
 }
