@@ -30,18 +30,13 @@ src_prepare() {
 }
 
 src_compile() {
-	mydebug="Release"
-	if use debug; then
-		mydebug="Debug"
-	fi
-
 	compile_impl() {
 		dotnet_copy_dllmap_config "${FILESDIR}/freenectdotnet.dll.config"
 
 		cd "wrappers/csharp/src/lib/VS2010"
 
 	        einfo "Building solution"
-	        exbuild /p:Configuration=${mydebug} "freenectdotnet.sln" || die
+	        exbuild /p:Configuration=$(usex debug "Debug" "Release") "freenectdotnet.sln" || die
 	}
 
 	dotnet_foreach_impl compile_impl
