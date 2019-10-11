@@ -6,16 +6,17 @@ DESCRIPTION="AssimpNet is a C# language binding to the Assimp library"
 HOMEPAGE="https://github.com/assimp/assimp-net"
 LICENSE="BSD MIT ASSIMPNET"
 KEYWORDS="~amd64 ~arm64 ~x86"
-USE_DOTNET="net20 net45"
+USE_DOTNET="net20 net452"
 IUSE="${USE_DOTNET} debug doc gac"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net45 )"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net452 )"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
-inherit dotnet eutils
-SRC_URI="https://github.com/assimp/assimp-net/archive/${PV}.tar.gz -> ${P}.tar.gz"
+inherit dotnet eutils nupkg
+COMMIT="9002f2b5eb2d096b880c61714c26a3924254489e"
+SRC_URI="https://github.com/assimp/assimp-net/archive/${COMMIT}.tar.gz -> ${P}.tar.gz"
 inherit gac
 SLOT="0"
-S="${WORKDIR}/assimp-net-${PV}"
+S="${WORKDIR}/assimp-net-${COMMIT}"
 RESTRICT="mirror"
 
 src_prepare() {
@@ -28,6 +29,7 @@ src_prepare() {
 	prepare_impl() {
 		sed -i -e "s|\"Assimp32.so\"|\"libassimp.so\"|g" AssimpNet/Unmanaged/AssimpLibrary.cs || die
 		sed -i -e "s|\"Assimp64.so\"|\"libassimp.so\"|g" AssimpNet/Unmanaged/AssimpLibrary.cs || die
+		enuget_restore "AssimpNet.sln"
 	}
 
 	dotnet_foreach_impl prepare_impl
@@ -43,7 +45,7 @@ _use_flag_to_configuration() {
 	fi
 	case ${moniker} in
 		net20) echo "Net20-${mydebug}" ;;
-		net45) echo "Net45-${mydebug}" ;;
+		net452) echo "Net45-${mydebug}" ;;
 	esac
 }
 
@@ -77,4 +79,3 @@ src_install() {
 
 	dotnet_multilib_comply
 }
-
