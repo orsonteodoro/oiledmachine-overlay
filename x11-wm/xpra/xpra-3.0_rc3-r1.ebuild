@@ -1,26 +1,28 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-
-# PyCObject_Check and PyCObject_AsVoidPtr vanished with python 3.3
-PYTHON_COMPAT=( python3_4 python3_5 python3_6 python3_7 )
-inherit distutils-r1 eutils flag-o-matic linux-info prefix user tmpfiles versionator xdg
-
+EAPI=7
 DESCRIPTION="X Persistent Remote Apps (xpra) and Partitioning WM (parti) based on wimpiggy"
 HOMEPAGE="http://xpra.org/ http://xpra.org/src/"
-MY_PV="$(get_version_component_range 1-3)"
-SRC_URI="http://xpra.org/src/${PN}-${MY_PV//_/-}.tar.xz"
-
 LICENSE="GPL-2 BSD html5? ( MPL-2.0 )"
-SLOT="0"
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
-IUSE="avahi +client +clipboard csc_swscale csc_libyuv cuda cuda_rebuild cups dbus dec_avcodec2 enc_ffmpeg enc_x264 enc_x265 gtk2 gtk3 html5 html5_gzip html5_brotli jpeg libav +lz4 lzo opengl minify +notifications nvenc nvfbc pam pillow pulseaudio sd_listen ssl server sound systemd test vpx vsock v4l2 webcam webp websockets xdg"
-REQUIRED_USE="gtk3? ( !gtk2 ) gtk2? ( !gtk3 ) ^^ ( python_targets_python3_4 python_targets_python3_5 python_targets_python3_6 python_targets_python3_7 ) ^^ ( gtk2 gtk3 )"
-REQUIRED_USE+=" python_targets_python3_4? ( gtk3 !gtk2 ) python_targets_python3_5 ( gtk3 !gtk2 ) python_targets_python3_6 ( gtk3 !gtk2 ) python_targets_python3_7 ( gtk3 !gtk2 )"
-
-S="${WORKDIR}/xpra-${MY_PV//_/-}"
-
+# PyCObject_Check and PyCObject_AsVoidPtr vanished with python 3.3
+PYTHON_COMPAT=( python3_4 python3_5 python3_6 python3_7 )
+IUSE="avahi +client +clipboard csc_swscale csc_libyuv cuda cuda_rebuild cups"
+IUSE+=" dbus dec_avcodec2 enc_ffmpeg enc_x264 enc_x265 gtk2 gtk3 html5"
+IUSE+=" html5_gzip html5_brotli jpeg libav +lz4 lzo opengl minify"
+IUSE+=" +notifications nvenc nvfbc pam pillow pulseaudio sd_listen ssl server"
+IUSE+=" sound systemd test vpx vsock v4l2 webcam webp websockets xdg"
+REQUIRED_USE="gtk3? ( !gtk2 ) gtk2? ( !gtk3 ) ^^ ( python_targets_python3_4"
+REQUIRED_USE+=" python_targets_python3_5 python_targets_python3_6"
+REQUIRED_USE+=" python_targets_python3_7 ) ^^ ( gtk2 gtk3 )"
+REQUIRED_USE+=" python_targets_python3_4? ( gtk3 !gtk2 )"
+REQUIRED_USE+=" python_targets_python3_5 ( gtk3 !gtk2 )"
+REQUIRED_USE+=" python_targets_python3_6 ( gtk3 !gtk2 )"
+REQUIRED_USE+=" python_targets_python3_7 ( gtk3 !gtk2 )"
+SLOT="0"
+MY_PV="$(ver_cut 1-4)"
+inherit distutils-r1
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	avahi? ( dbus )
 	client? ( enc_x264? ( dec_avcodec2 )
@@ -31,7 +33,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	opengl? ( client )
 	sd_listen? ( systemd )
 	|| ( client server )"
-
+inherit multilib-build
 COMMON_DEPEND="${PYTHON_DEPS}
 	dev-lang/python[ssl?]
 	dev-python/pygtk:2[python_targets_python2_7]
@@ -88,7 +90,6 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	x11-libs/libXtst
 	x11-libs/libxkbfile
 	xdg? ( x11-misc/xdg-utils )"
-
 RDEPEND="${COMMON_DEPEND}
 	cups? ( dev-python/pycups[${PYTHON_USEDEP}] )
 	dbus? ( dev-python/dbus-python[${PYTHON_USEDEP}] )
@@ -109,11 +110,14 @@ DEPEND="${COMMON_DEPEND}
 	cuda? ( dev-util/nvidia-cuda-sdk )
 	>=dev-python/cython-0.16[${PYTHON_USEDEP}]
 	virtual/pkgconfig"
-
 PATCHES=( "${FILESDIR}"/${PN}-2.5.0_rc5-ignore-gentoo-no-compile.patch
 	  "${FILESDIR}"/${PN}-2.0-suid-warning.patch
 	  "${FILESDIR}"/${PN}-2.5.0_rc5-openrc-init-fix.patch
 	  "${FILESDIR}"/${PN}-3.0_rc1-ldconfig-skip.patch )
+inherit eutils flag-o-matic linux-info prefix user tmpfiles xdg
+SRC_URI="http://xpra.org/src/${PN}-${MY_PV//_/-}.tar.xz"
+S="${WORKDIR}/xpra-${MY_PV//_/-}"
+RESTRICT="mirror"
 
 pkg_setup() {
 	if use v4l2 ; then

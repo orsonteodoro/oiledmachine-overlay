@@ -1,26 +1,27 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-
-# PyCObject_Check and PyCObject_AsVoidPtr vanished with python 3.3
-PYTHON_COMPAT=( python2_7 python3_5 python3_6 python3_7 )
-inherit distutils-r1 eutils flag-o-matic prefix user tmpfiles versionator xdg
-
+EAPI=7
 DESCRIPTION="X Persistent Remote Apps (xpra) and Partitioning WM (parti) based on wimpiggy"
 HOMEPAGE="http://xpra.org/ http://xpra.org/src/"
-MY_PV="$(get_version_component_range 1-3)"
-SRC_URI="http://xpra.org/src/${PN}-${MY_PV}.tar.xz"
-
 LICENSE="GPL-2 BSD"
-SLOT="0"
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
-IUSE="+client +clipboard csc cups dbus dec_avcodec2 enc_ffmpeg enc_x264 enc_x265 gtk2 gtk3 jpeg libav +lz4 lzo opengl +notifications pillow pulseaudio server sound test vpx webcam webp"
-REQUIRED_USE="gtk3? ( !gtk2 ) gtk2? ( !gtk3 ) ^^ ( python_targets_python2_7 python_targets_python3_5 python_targets_python3_6 python_targets_python3_7 ) ^^ ( gtk2 gtk3 )"
-REQUIRED_USE+=" python_targets_python2_7? ( !gtk3 gtk2 ) python_targets_python3_5 ( gtk3 !gtk2 ) python_targets_python3_6 ( gtk3 !gtk2 ) python_targets_python3_7 ( gtk3 !gtk2 )"
-
+# PyCObject_Check and PyCObject_AsVoidPtr vanished with python 3.3
+PYTHON_COMPAT=( python2_7 python3_5 python3_6 python3_7 )
+IUSE="+client +clipboard csc cups dbus dec_avcodec2 enc_ffmpeg enc_x264"
+IUSE+=" enc_x265 gtk2 gtk3 jpeg libav +lz4 lzo opengl +notifications pillow"
+IUSE+=" pulseaudio server sound test vpx webcam webp"
+REQUIRED_USE="gtk3? ( !gtk2 ) gtk2? ( !gtk3 ) ^^ ( python_targets_python2_7"
+REQUIRED_USE+=" python_targets_python3_5 python_targets_python3_6"
+REQUIRED_USE+=" python_targets_python3_7 ) ^^ ( gtk2 gtk3 )"
+REQUIRED_USE+=" python_targets_python2_7? ( !gtk3 gtk2 )"
+REQUIRED_USE+=" python_targets_python3_5 ( gtk3 !gtk2 )"
+REQUIRED_USE+=" python_targets_python3_6 ( gtk3 !gtk2 )"
+REQUIRED_USE+=" python_targets_python3_7 ( gtk3 !gtk2 )"
+SLOT="0"
+MY_PV="$(ver_cut 1-3)"
 S="${WORKDIR}/xpra-${MY_PV}"
-
+inherit distutils-r1
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	client? ( enc_x264? ( dec_avcodec2 )
 		  enc_x265? ( dec_avcodec2 ) )
@@ -28,7 +29,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	cups? ( dbus )
 	opengl? ( client )
 	|| ( client server )"
-
+inherit multilib-build
 COMMON_DEPEND="${PYTHON_DEPS}
 	csc? ( !libav? ( >=media-video/ffmpeg-1.2.2:0= )
 		libav? ( media-video/libav:0= ) )
@@ -62,7 +63,6 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	x11-libs/libXrandr
 	x11-libs/libXtst
 	x11-libs/libxkbfile"
-
 RDEPEND="${COMMON_DEPEND}
 	cups? ( dev-python/pycups[${PYTHON_USEDEP}] )
 	dbus? ( dev-python/dbus-python[${PYTHON_USEDEP}] )
@@ -83,10 +83,12 @@ RDEPEND="${COMMON_DEPEND}
 DEPEND="${COMMON_DEPEND}
 	>=dev-python/cython-0.16[${PYTHON_USEDEP}]
 	virtual/pkgconfig"
-
+inherit eutils flag-o-matic prefix user tmpfiles xdg
+SRC_URI="http://xpra.org/src/${PN}-${MY_PV}.tar.xz"
 PATCHES=( "${FILESDIR}"/${PN}-2.5.0_rc5-ignore-gentoo-no-compile.patch
 	  "${FILESDIR}"/${PN}-2.0-suid-warning.patch
 	  "${FILESDIR}"/${PN}-2.5.0_rc5-openrc-init-fix.patch )
+RESTRICT="mirror"
 
 pkg_postinst() {
 	enewgroup ${PN}
