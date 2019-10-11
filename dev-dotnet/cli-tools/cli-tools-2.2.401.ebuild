@@ -39,6 +39,7 @@ DEPEND="${RDEPEND}
 	!dev-dotnet/dotnetcore-sdk-bin
 	!dev-dotnet/dotnetcore-aspnet-bin"
 _PATCHES=( "${FILESDIR}/dotnet-cli-2.1.505-null-LastWriteTimeUtc-minval.patch" )
+RESTRICT="mirror"
 S="${WORKDIR}"
 CLI_S="${S}/dotnetcli-${DOTNET_CLI_COMMIT}"
 DOTNET_CLI_REPO_URL="https://github.com/dotnet/cli.git"
