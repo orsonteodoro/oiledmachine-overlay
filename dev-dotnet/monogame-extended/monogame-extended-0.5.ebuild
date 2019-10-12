@@ -22,10 +22,9 @@ S="${WORKDIR}/${PROJECT_NAME}-${PV}"
 RESTRICT="mirror"
 
 src_prepare() {
+	default
 	eapply "${FILESDIR}/monogame-extended-0.5-linux-fixes.patch"
 	eapply "${FILESDIR}/monogame-extended-0.5-no-demos.patch"
-
-	eapply_user
 }
 
 src_compile() {
@@ -39,8 +38,6 @@ src_install() {
 	if use debug; then
 		mydebug="Debug"
 	fi
-
-	esavekey
 
 	ebegin "Installing dlls into the GAC"
 

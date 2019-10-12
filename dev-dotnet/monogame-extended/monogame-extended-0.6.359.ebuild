@@ -22,6 +22,7 @@ S="${WORKDIR}/${PROJECT_NAME}-${PV}"
 RESTRICT="mirror"
 
 src_prepare() {
+	default
 	eapply "${FILESDIR}/monogame-extended-0.6.359-linux-fixes-1.patch"
 	eapply "${FILESDIR}/monogame-extended-0.6.359-no-demos.patch"
 	eapply "${FILESDIR}/monogame-extended-0.6.359-no-portable-1.patch"
@@ -42,8 +43,6 @@ src_prepare() {
 	sed -i -r -e "s|\[assembly\: InternalsVisibleTo\(\"MonoGame.Extended.Tests\"\)\]|\[assembly: InternalsVisibleTo(\"MonoGame.Extended.Tests, PublicKey=${public_key}\")\]|" "Source/MonoGame.Extended/Properties/AssemblyInfo.cs"
 	sed -i -r -e "s|\[assembly\: InternalsVisibleToAttribute\(\"MonoGame.Extended.Graphics\"\)\]|\[assembly: InternalsVisibleToAttribute(\"MonoGame.Extended.Graphics, PublicKey=${public_key}\")\]|" "Source/MonoGame.Extended/Properties/AssemblyInfo.cs"
 	sed -i -r -e "s|\[assembly\: InternalsVisibleToAttribute\(\"MonoGame.Extended.Tiled\"\)\]|\[assembly: InternalsVisibleToAttribute(\"MonoGame.Extended.Tiled, PublicKey=${public_key}\")\]|" "Source/MonoGame.Extended/Properties/AssemblyInfo.cs"
-
-	eapply_user
 }
 
 src_compile() {
