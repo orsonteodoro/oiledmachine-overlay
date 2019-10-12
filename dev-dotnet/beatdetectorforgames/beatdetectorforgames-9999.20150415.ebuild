@@ -84,8 +84,6 @@ src_install() {
 		mystatic="Static"
 	fi
 
-	esavekey
-
         ebegin "Installing dlls into the GAC"
 
 	for x in ${USE_DOTNET} ; do
