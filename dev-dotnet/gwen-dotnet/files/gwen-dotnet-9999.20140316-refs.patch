@@ -1,6 +1,6 @@
-diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.OpenTK/Gwen.Renderer.OpenTK.csproj gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.OpenTK/Gwen.Renderer.OpenTK.csproj
---- gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.OpenTK/Gwen.Renderer.OpenTK.csproj	2017-01-08 13:20:23.374511844 -0800
-+++ gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.OpenTK/Gwen.Renderer.OpenTK.csproj	2017-01-08 13:42:04.077033992 -0800
+diff -urp a/Gwen.Renderer.OpenTK/Gwen.Renderer.OpenTK.csproj b/Gwen.Renderer.OpenTK/Gwen.Renderer.OpenTK.csproj
+--- a/Gwen.Renderer.OpenTK/Gwen.Renderer.OpenTK.csproj	2017-01-08 13:20:23.374511844 -0800
++++ b/Gwen.Renderer.OpenTK/Gwen.Renderer.OpenTK.csproj	2017-01-08 13:42:04.077033992 -0800
 @@ -48,9 +48,7 @@
      <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
    </PropertyGroup>
@@ -19,9 +19,9 @@ diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.
 -</Project>
 \ No newline at end of file
 +</Project>
-diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.SFML/Gwen.Renderer.SFML.csproj gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.SFML/Gwen.Renderer.SFML.csproj
---- gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.SFML/Gwen.Renderer.SFML.csproj	2017-01-08 13:20:23.389512418 -0800
-+++ gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.SFML/Gwen.Renderer.SFML.csproj	2017-01-08 13:44:44.970087713 -0800
+diff -urp a/Gwen.Renderer.SFML/Gwen.Renderer.SFML.csproj b/Gwen.Renderer.SFML/Gwen.Renderer.SFML.csproj
+--- a/Gwen.Renderer.SFML/Gwen.Renderer.SFML.csproj	2017-01-08 13:20:23.389512418 -0800
++++ b/Gwen.Renderer.SFML/Gwen.Renderer.SFML.csproj	2017-01-08 13:44:44.970087713 -0800
 @@ -46,18 +46,13 @@
      <CodeAnalysisRuleDirectories>;C:\vs10\Team Tools\Static Analysis Tools\FxCop\\Rules;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
    </PropertyGroup>
@@ -52,9 +52,9 @@ diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.
 -</Project>
 \ No newline at end of file
 +</Project>
-diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.Tao/Gwen.Renderer.Tao.csproj gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.Tao/Gwen.Renderer.Tao.csproj
---- gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.Tao/Gwen.Renderer.Tao.csproj	2017-01-08 13:20:23.366511538 -0800
-+++ gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.Tao/Gwen.Renderer.Tao.csproj	2017-01-08 13:41:19.022339070 -0800
+diff -urp a/Gwen.Renderer.Tao/Gwen.Renderer.Tao.csproj b/Gwen.Renderer.Tao/Gwen.Renderer.Tao.csproj
+--- a/Gwen.Renderer.Tao/Gwen.Renderer.Tao.csproj	2017-01-08 13:20:23.366511538 -0800
++++ b/Gwen.Renderer.Tao/Gwen.Renderer.Tao.csproj	2017-01-08 13:41:19.022339070 -0800
 @@ -51,9 +51,7 @@
      <Reference Include="System" />
      <Reference Include="System.Core" />
@@ -73,9 +73,9 @@ diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.
 -</Project>
 \ No newline at end of file
 +</Project>
-diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Sample.OpenTK/Gwen.Sample.OpenTK.csproj gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Sample.OpenTK/Gwen.Sample.OpenTK.csproj
---- gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Sample.OpenTK/Gwen.Sample.OpenTK.csproj	2017-01-08 13:20:23.370511691 -0800
-+++ gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Sample.OpenTK/Gwen.Sample.OpenTK.csproj	2017-01-08 13:41:44.957314707 -0800
+diff -urp a/Gwen.Sample.OpenTK/Gwen.Sample.OpenTK.csproj b/Gwen.Sample.OpenTK/Gwen.Sample.OpenTK.csproj
+--- a/Gwen.Sample.OpenTK/Gwen.Sample.OpenTK.csproj	2017-01-08 13:20:23.370511691 -0800
++++ b/Gwen.Sample.OpenTK/Gwen.Sample.OpenTK.csproj	2017-01-08 13:41:44.957314707 -0800
 @@ -48,9 +48,7 @@
      <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
    </PropertyGroup>
@@ -94,9 +94,9 @@ diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.
 -</Project>
 \ No newline at end of file
 +</Project>
-diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Sample.SFML/Gwen.Sample.SFML.csproj gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Sample.SFML/Gwen.Sample.SFML.csproj
---- gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Sample.SFML/Gwen.Sample.SFML.csproj	2017-01-08 13:20:23.385512265 -0800
-+++ gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Sample.SFML/Gwen.Sample.SFML.csproj	2017-01-08 13:44:04.699572353 -0800
+diff -urp a/Gwen.Sample.SFML/Gwen.Sample.SFML.csproj b/Gwen.Sample.SFML/Gwen.Sample.SFML.csproj
+--- a/Gwen.Sample.SFML/Gwen.Sample.SFML.csproj	2017-01-08 13:20:23.385512265 -0800
++++ b/Gwen.Sample.SFML/Gwen.Sample.SFML.csproj	2017-01-08 13:44:04.699572353 -0800
 @@ -55,19 +55,14 @@
      <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
    </PropertyGroup>
@@ -128,9 +128,9 @@ diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.
 -</Project>
 \ No newline at end of file
 +</Project>
-diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Sample.Tao/Gwen.Sample.Tao.csproj gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Sample.Tao/Gwen.Sample.Tao.csproj
---- gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Sample.Tao/Gwen.Sample.Tao.csproj	2017-01-08 13:20:23.380512074 -0800
-+++ gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Sample.Tao/Gwen.Sample.Tao.csproj	2017-01-08 13:43:25.228087158 -0800
+diff -urp a/Gwen.Sample.Tao/Gwen.Sample.Tao.csproj b/Gwen.Sample.Tao/Gwen.Sample.Tao.csproj
+--- a/Gwen.Sample.Tao/Gwen.Sample.Tao.csproj	2017-01-08 13:20:23.380512074 -0800
++++ b/Gwen.Sample.Tao/Gwen.Sample.Tao.csproj	2017-01-08 13:43:25.228087158 -0800
 @@ -53,12 +53,8 @@
      <Reference Include="System.Core" />
      <Reference Include="System.Drawing" />

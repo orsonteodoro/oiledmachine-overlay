@@ -1,6 +1,6 @@
-diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/GwenNet.sln gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/GwenNet.sln
---- gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/GwenNet.sln	2014-03-16 17:50:52.000000000 -0700
-+++ gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/GwenNet.sln	2017-01-08 15:02:53.068497415 -0800
+diff -urp a/GwenNet.sln b/GwenNet.sln
+--- a/GwenNet.sln	2014-03-16 17:50:52.000000000 -0700
++++ b/GwenNet.sln	2017-01-08 15:02:53.068497415 -0800
 @@ -4,16 +4,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F
  EndProject
  Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gwen.Renderer.SFML", "Gwen.Renderer.SFML\Gwen.Renderer.SFML.csproj", "{D97B4F91-9FC8-46E0-A511-68D006662051}"

@@ -1,6 +1,6 @@
-diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.SFML/Input/SFML.cs gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.SFML/Input/SFML.cs
---- gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.SFML/Input/SFML.cs	2014-03-16 17:50:52.000000000 -0700
-+++ gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.SFML/Input/SFML.cs	2017-01-08 14:01:43.322384946 -0800
+diff -urp a/Gwen.Renderer.SFML/Input/SFML.cs b/Gwen.Renderer.SFML/Input/SFML.cs
+--- a/Gwen.Renderer.SFML/Input/SFML.cs	2014-03-16 17:50:52.000000000 -0700
++++ b/Gwen.Renderer.SFML/Input/SFML.cs	2017-01-08 14:01:43.322384946 -0800
 @@ -2,6 +2,7 @@
  using Gwen.Control;
  using SFML.Graphics;
@@ -18,9 +18,9 @@ diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.
                  case Keyboard.Key.Return: return Key.Return;
                  case Keyboard.Key.Escape: return Key.Escape;
                  case Keyboard.Key.Tab: return Key.Tab;
-diff -urp gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.SFML/Renderer/SFML.cs gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.SFML/Renderer/SFML.cs
---- gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086.orig/GwenCS/Gwen.Renderer.SFML/Renderer/SFML.cs	2017-01-08 13:55:30.839395635 -0800
-+++ gwen-dotnet-f491e6563e30dc45f28e5586f02b89bbd8188086/GwenCS/Gwen.Renderer.SFML/Renderer/SFML.cs	2017-01-08 14:02:49.352865956 -0800
+diff -urp a/Gwen.Renderer.SFML/Renderer/SFML.cs b/Gwen.Renderer.SFML/Renderer/SFML.cs
+--- a/Gwen.Renderer.SFML/Renderer/SFML.cs	2017-01-08 13:55:30.839395635 -0800
++++ b/Gwen.Renderer.SFML/Renderer/SFML.cs	2017-01-08 14:02:49.352865956 -0800
 @@ -196,7 +196,7 @@ namespace Gwen.Renderer
                      text += '\0';
              }
