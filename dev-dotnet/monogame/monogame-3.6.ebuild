@@ -441,9 +441,9 @@ src_prepare() {
 src_compile() {
 	einfo "Building monogame and tools"
 	#nant -t:mono-4.5 build_linux || die
-	exbuild_strong /t:Clean MonoGame.Framework.Linux.sln || die
+	exbuild /t:Clean ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" MonoGame.Framework.Linux.sln || die
 
-	exbuild_strong /t:Build MonoGame.Framework.Linux.sln || die
+	exbuild /t:Build ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" MonoGame.Framework.Linux.sln || die
 
 	if use addin ; then
 		einfo "Building addin"
