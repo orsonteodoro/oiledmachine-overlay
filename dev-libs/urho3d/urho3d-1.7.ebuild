@@ -70,7 +70,7 @@ RDEPEND="javascript? ( dev-libs/urho3d-web )
                                              dev-db/unixODBC ) )
                    !odbc? ( sqlite? ( !dev-db/unixODBC ) )
 		   sqlite? ( system-sqlite? ( dev-db/sqlite[static-libs=] ) )
-		   recastnavigation? ( system-recastnavigation? ( games-misc/recastnavigation[static=] ) )
+		   recastnavigation? ( system-recastnavigation? ( dev-libs/recastnavigation[static=] ) )
 		   box2d? ( system-box2d? ( sci-physics/box2d[static=] ) )
 		   bullet? ( system-bullet? ( sci-physics/bullet ) )
 		   opengl? ( system-glew? ( media-libs/glew[static-libs=] )
@@ -102,7 +102,7 @@ RDEPEND="javascript? ( dev-libs/urho3d-web )
 #mustache is clang tools dependency from https://github.com/kainjow/Mustache
 #todo jo, stanhull, stb #these may have been slightly modified
 #spine didn't exist
-#games-misc/recastnavigation has Recast, DetourCrowd, DetourTileCache, Detour
+#dev-libs/recastnavigation has Recast, DetourCrowd, DetourTileCache, Detour
 DEPEND="${RDEPEND}
 	dev-util/cmake"
 #REQUIRED_USE="network? ( boost )"
