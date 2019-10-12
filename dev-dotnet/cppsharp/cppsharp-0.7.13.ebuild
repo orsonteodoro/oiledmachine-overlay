@@ -30,6 +30,7 @@ pkg_setup() {
 }
 
 src_prepare() {
+	default
 	mydebug=$(usex debug "debug" "release")
 
 	eapply "${FILESDIR}/cppsharp-9999.20160115-llvm-9999-smallstring.patch"
@@ -64,7 +65,7 @@ src_prepare() {
 	for f in $FILES
 	do
 		einfo "Patching $f..."
-		sed -i -r -e "s|FLAGS = /unsafe|FLAGS = -sdk:${EBF} -keyfile:\"${S}/${PN}-keypair.snk\" /unsafe|g" "$f" || die
+		sed -i -r -e "s|FLAGS = /unsafe|FLAGS = -sdk:${EBF} -keyfile:\"${DISTDIR}/mono.snk\" /unsafe|g" "$f" || die
 	done
 
 	#inject strong name and force net version
@@ -72,11 +73,11 @@ src_prepare() {
 	for f in $FILES
 	do
 		einfo "Patching $f..."
-		sed -i -r -e "s|/nologo|-sdk:${EBF} -keyfile:\"${S}/${PN}-keypair.snk\" /nologo|g" "$f" || die
+		sed -i -r -e "s|/nologo|-sdk:${EBF} -keyfile:\"${DISTDIR}/mono.snk\" /nologo|g" "$f" || die
 	done
 
 	#inject public key into assembly
-        public_key=$(sn -tp "${S}/${PN}-keypair.snk" | tail -n 7 | head -n 5 | tr -d '\n')
+        public_key=$(sn -tp "${DISTDIR}/mono.snk" | tail -n 7 | head -n 5 | tr -d '\n')
         echo "pk is: ${public_key}"
 	FILES=$(grep -l -r -e "InternalsVisibleTo" ./)
 	for f in $FILES
@@ -91,8 +92,6 @@ src_prepare() {
 	sed -i -r -e "s|\[assembly\:InternalsVisibleTo\(\\\\\"CppSharp.Parser\\\\\"\)\]|\[assembly:InternalsVisibleTo(\\\\\"CppSharp.Parser, PublicKey=${public_key}\\\\\")\]|" ./src/CppParser/ParserGen/ParserGen.cs || die
 	sed -i -r -e "s|\[assembly\:InternalsVisibleTo\(\\\\\"\{library\}\\\\\"\)\]|\[assembly:InternalsVisibleTo(\\\\\"\{library\}, PublicKey=${public_key}\\\\\")\]|" ./src/Generator/Generators/CSharp/CSharpSources.cs || die
 	sed -i -r -e "s|\[assembly\:InternalsVisibleTo\(\\\\\"NamespacesDerived.CSharp\\\\\"\)\]|\[assembly:InternalsVisibleTo(\\\\\"NamespacesDerived.CSharp, PublicKey=${public_key}\\\\\")\]|" ./tests/NamespacesDerived/NamespacesDerived.cs || die
-
-	eapply_user
 }
 
 src_compile() {
