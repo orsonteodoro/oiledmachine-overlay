@@ -1,31 +1,22 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=6
-inherit dotnet eutils git-r3 mono gac
-
-DESCRIPTION="lidgren-network-gen3"
+EAPI=7
+DESCRIPTION="Lidgren Network Library"
 HOMEPAGE="https://github.com/lidgren/lidgren-network-gen3"
-SRC_URI=""
-
 LICENSE="MIT"
-SLOT="0"
 KEYWORDS="~amd64 ~x86"
+SLOT="0"
 USE_DOTNET="net45"
 IUSE="${USE_DOTNET} debug +gac"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
-
-RDEPEND=">=dev-lang/mono-4"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac gac? ( net45 )"
 DEPEND="${RDEPEND}
-	>=dev-lang/mono-4
-	virtual/pkgconfig
-"
-
+	virtual/pkgconfig"
+inherit dotnet eutils git-r3 mono
+SRC_URI=""
+inherit gac
 RESTRICT="fetch"
-
 S="${WORKDIR}/${PN}-${PV}"
-SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_unpack() {
         #EGIT_CHECKOUT_DIR="${WORKDIR}"
@@ -36,14 +27,8 @@ src_unpack() {
         git-r3_checkout
 }
 
-src_prepare() {
-	egenkey
-
-	eapply_user
-}
-
 src_compile() {
-	exbuild_strong Lidgren.Network.sln
+	exbuild ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" Lidgren.Network.sln
 }
 
 src_install() {
@@ -54,13 +39,11 @@ src_install() {
 
         ebegin "Installing dlls into the GAC"
 
-	esavekey
-
 	for x in ${USE_DOTNET} ; do
-                FW_UPPER=${x:3:1}
-                FW_LOWER=${x:4:1}
-                egacinstall "${S}/Lidgren.Network/bin/${mydebug}/Lidgren.Network.dll"
-               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		FW_UPPER=${x:3:1}
+		FW_LOWER=${x:4:1}
+		egacinstall "${S}/Lidgren.Network/bin/${mydebug}/Lidgren.Network.dll"
+		insinto "/usr/$(get_libdir)/mono/${PN}"
 		use developer && doins Lidgren.Network/bin/${mydebug}/Lidgren.Network.dll.mdb
         done
 
