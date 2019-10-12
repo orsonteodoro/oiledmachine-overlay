@@ -161,5 +161,5 @@ src_install() {
 }
 
 pkg_postinst() {
-	einfo "Use games-engines/urho3d to install include headers"
+	einfo "Use dev-libs/urho3d to install include headers"
 }
