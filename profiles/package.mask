@@ -110,6 +110,11 @@ games-engines/godot
 games-engines/monogame
 games-engines/urho3d
 games-engines/urho3d-web
+dev-dotnet/fna
+games-util/godot
+dev-dotnet/monogame
+dev-libs/urho3d
+dev-libs/urho3d-web
 sys-fs/jmtpfs
 sys-fs/mtpfs
 sys-process/psdoom-ng
@@ -327,6 +332,7 @@ dev-util/geeks-diary
 =sys-kernel/ot-sources-5.2.11
 =sys-kernel/ot-sources-5.2.14
 =sys-kernel/ot-sources-5.2.17
+=sys-kernel/ot-sources-5.2.19
 =sys-kernel/ot-sources-5.1.21
 =sys-kernel/ot-sources-5.3
 =sys-kernel/ot-sources-5.3.1
