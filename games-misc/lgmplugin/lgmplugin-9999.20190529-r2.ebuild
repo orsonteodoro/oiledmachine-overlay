@@ -20,7 +20,7 @@ ECJ_V="4.4"
 RDEPEND="virtual/jre
 	 dev-java/eclipse-ecj:${ECJ_V}
 	 dev-java/jna[nio-buffers]
-	 games-misc/lateralgm
+	 games-util/lateralgm
 	 || ( dev-java/icedtea dev-java/icedtea-bin )"
 DEPEND="${RDEPEND}"
 

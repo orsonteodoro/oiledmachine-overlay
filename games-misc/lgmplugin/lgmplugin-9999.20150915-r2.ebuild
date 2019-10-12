@@ -8,7 +8,8 @@ inherit eutils
 DESCRIPTION="Java based plugin allowing LateralGM to compile games using ENIGMA."
 HOMEPAGE="https://github.com/enigma-dev/lgmplugin"
 LICENSE="GPL-3+"
-SRC_URI="https://github.com/enigma-dev/lgmplugin/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+EGIT_COMMIT="9bfe9c0788c9ea13bcd304c41739932be231ba0b"
+SRC_URI="https://github.com/enigma-dev/lgmplugin/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
 RESTRICT="mirror"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
@@ -19,11 +20,11 @@ ECJ_V="4.4"
 RDEPEND="virtual/jre
 	 dev-java/eclipse-ecj:${ECJ_V}
 	 dev-java/jna[nio-buffers]
-	 games-misc/lateralgm
+	 games-util/lateralgm
 	 || ( dev-java/icedtea dev-java/icedtea-bin )"
 DEPEND="${RDEPEND}"
 
-S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 
 src_prepare() {
 	default
