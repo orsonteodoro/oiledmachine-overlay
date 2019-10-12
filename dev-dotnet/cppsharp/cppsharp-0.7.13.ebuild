@@ -1,31 +1,25 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=6
-inherit dotnet eutils mono gac toolchain-funcs flag-o-matic
-
-DESCRIPTION="CppSharp"
+EAPI=7
+DESCRIPTION="Tools and libraries to glue C/C++ APIs to high-level languages "
 HOMEPAGE="https://github.com/mono/CppSharp"
-PROJECT_NAME="CppSharp"
-SRC_URI="https://github.com/mono/${PROJECT_NAME}/archive/0.7.14.tar.gz"
-
 LICENSE="MIT"
-SLOT="0"
 KEYWORDS="~amd64 ~x86"
+PROJECT_NAME="CppSharp"
+SLOT="0"
 USE_DOTNET="net45"
-IUSE="${USE_DOTNET} debug abi_x86_64 abi_x86_32 +gac developer"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) abi_x86_64? ( !abi_x86_32 ) gac"
-
-RDEPEND=">=dev-lang/mono-4"
+IUSE="${USE_DOTNET} abi_x86_64 abi_x86_32 debug +gac developer"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) abi_x86_64? ( !abi_x86_32 ) gac gac? ( net45 )"
 DEPEND="${RDEPEND}
-	>=dev-lang/mono-4
 	>=dev-util/premake-5.0.0_alpha10
-	>=sys-devel/llvm-3.9.0[codegen]
-	!sys-devel/llvm:0/9999
 	>=sys-devel/clang-3.9.0
-"
-
+	>=sys-devel/llvm-3.9.0[codegen]
+	 !sys-devel/llvm:0/9999"
+inherit dotnet eutils flag-o-matic mono toolchain-funcs
+SRC_URI="https://github.com/mono/${PROJECT_NAME}/archive/${PV}.tar.gz -> ${P}.tar.gz"
+inherit gac
+RESTRICT="mirror"
 S="${WORKDIR}/${PROJECT_NAME}-${PV}"
 
 pkg_setup() {
@@ -36,10 +30,7 @@ pkg_setup() {
 }
 
 src_prepare() {
-	mydebug="release"
-	if use debug; then
-		mydebug="debug"
-	fi
+	mydebug=$(usex debug "debug" "release")
 
 	eapply "${FILESDIR}/cppsharp-9999.20160115-llvm-9999-smallstring.patch"
 	#eapply "${FILESDIR}/cppsharp-9999.20160115-llvm-9999-toolchain.patch"
@@ -47,7 +38,7 @@ src_prepare() {
 	eapply "${FILESDIR}"/cppsharp-9999.20161221-stdarg-search-path.patch
 	sed -i -e "s|/usr/lib/clang/3.9.1/include|/usr/lib/clang/$(clang-fullversion)/include|g" src/Generator.Tests/GeneratorTest.cs || die p14
 
-	cd "${S}"/build
+	cd "${S}"/build || die
 	#echo "c1316b6adfbb17b961a3bee357e728ca0d4d1c96" > LLVM-commit
 	sed -i -e 's|path.join(LLVMRootDirDebug, "include"),|path.join("/usr/lib/clang/3.9.0/include/"),path.join("/usr/include/llvm"),path.join("/usr/include/clang"),path.join(LLVMRootDirDebug, "include"),|g' LLVM.lua || die p1
 	sed -i -e 's|path.join(LLVMRootDirRelease, "include"),|path.join("/usr/lib/clang/3.9.0/include/"),path.join("/usr/include/llvm"),path.join("/usr/include/clang"),path.join(LLVMRootDirRelease, "include"),|g' LLVM.lua || die p2
@@ -68,8 +59,6 @@ src_prepare() {
 
 	sed -i -e "s|-I/usr/lib/clang/3.9.0/include|-I/usr/lib/clang/$(clang-fullversion)/include|g" ./build/gmake/projects/CppSharp.CppParser.make || die p13
 
-	egenkey
-
 	#inject strong name and force net version
 	FILES=$(grep -l -r -e "FLAGS = /unsafe" ./)
 	for f in $FILES
@@ -86,7 +75,7 @@ src_prepare() {
 		sed -i -r -e "s|/nologo|-sdk:${EBF} -keyfile:\"${S}/${PN}-keypair.snk\" /nologo|g" "$f" || die
 	done
 
-       	#inject public key into assembly
+	#inject public key into assembly
         public_key=$(sn -tp "${S}/${PN}-keypair.snk" | tail -n 7 | head -n 5 | tr -d '\n')
         echo "pk is: ${public_key}"
 	FILES=$(grep -l -r -e "InternalsVisibleTo" ./)
@@ -107,10 +96,7 @@ src_prepare() {
 }
 
 src_compile() {
-	mydebug="release"
-	if use debug; then
-		mydebug="debug"
-	fi
+	mydebug=$(usex debug "debug" "release")
 	cd "${S}"/build/gmake
 
 	myabi="x64"
@@ -125,10 +111,7 @@ src_compile() {
 }
 
 src_install() {
-	mydebug="Release"
-	if use debug; then
-		mydebug="Debug"
-	fi
+	mydebug=$(usex debug "Debug" "Release")
 
 	myabi="x64"
 	if use abi_x86_32; then
@@ -139,20 +122,18 @@ src_install() {
 
         ebegin "Installing dlls into the GAC"
 
-	esavekey
-
 	cp "${S}"/src/Generator/Passes/verbs.txt "${S}/build/gmake/lib/${mydebug}_${myabi}/"
 
 	cd "${S}/build/gmake/lib/${mydebug}_${myabi}/"
 	for FILE in $(ls *.dll)
 	do
 		for x in ${USE_DOTNET} ; do
-        	        FW_UPPER=${x:3:1}
-	                FW_LOWER=${x:4:1}
-	                egacinstall "${S}/build/gmake/lib/${mydebug}_${myabi}/${FILE}"
-	               	insinto "/usr/$(get_libdir)/mono/${PN}"
-        	        use developer && doins "${S}/build/gmake/lib/${mydebug}_${myabi}/${FILE}.mdb"
-	        done
+			FW_UPPER=${x:3:1}
+			FW_LOWER=${x:4:1}
+			egacinstall "${S}/build/gmake/lib/${mydebug}_${myabi}/${FILE}"
+			insinto "/usr/$(get_libdir)/mono/${PN}"
+			use developer && doins "${S}/build/gmake/lib/${mydebug}_${myabi}/${FILE}.mdb"
+		done
 	done
 
 	eend
