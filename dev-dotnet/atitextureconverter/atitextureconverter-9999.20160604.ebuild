@@ -1,43 +1,31 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=6
-inherit dotnet eutils mono gac git-r3
-
+EAPI=7
 DESCRIPTION="A C# Wrapper for the TextureConverter native library to allow developers to convert images to ATI supported compressed textures"
 HOMEPAGE="https://github.com/infinitespace-studios/ATI.TextureConverter"
-SRC_URI=""
-
 LICENSE="Ms-PL"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 USE_DOTNET="net45"
 IUSE="${USE_DOTNET} debug bindist +gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
-
-RDEPEND=">=dev-lang/mono-4"
 DEPEND="${RDEPEND}
-	>=dev-lang/mono-4
-	virtual/pkgconfig
-"
-
+	virtual/pkgconfig"
+inherit dotnet eutils git-r3 mono
+SRC_URI=""
+inherit gac
+RESTRICT=""
 S="${WORKDIR}/${PN}-${PV}"
-SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_unpack() {
+	unpack ${A}
         #EGIT_CHECKOUT_DIR="${WORKDIR}"
         EGIT_REPO_URI="https://github.com/infinitespace-studios/ATI.TextureConverter"
         EGIT_BRANCH="master"
         EGIT_COMMIT="ac1103f765ade4c59b2475a43e1d4ea98d4bbd26"
         git-r3_fetch
         git-r3_checkout
-}
-
-src_prepare() {
-	egenkey
-
-	eapply_user
 }
 
 src_compile() {
@@ -54,9 +42,8 @@ src_compile() {
 	#cd "${S}/ATI.TextureConverter"
 	#xbuild ATI.TextureConverter.csproj /p:Configuration=${mydebug} /p:SignAssembly=true /p:AssemblyOriginatorKeyFile="${S}/${PN}-keypair.snk"
 
-	einfo "Building..."
 	cd "${S}"
-	exbuild_strong ATI.TextureConverter.sln
+	exbuild ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" ATI.TextureConverter.sln
 }
 
 src_install() {
@@ -66,8 +53,6 @@ src_install() {
 	fi
 
         ebegin "Installing dlls into the GAC"
-
-	savekey
 
 	for x in ${USE_DOTNET} ; do
                 FW_UPPER=${x:3:1}
