@@ -1,0 +1,2 @@
+#!/bin/bash
+java -jar /usr/share/libmaker-0/lib/libmaker.jar $*
