@@ -14,14 +14,13 @@ RDEPEND="sci-physics/bullet:0/${LIBBULLETC_PV}"
 DEPEND="${RDEPEND}"
 BULLET_COMMIT="113c2a83ded447159c30bcb2a2e353b154c3879d"
 EGIT_COMMIT="23159ab02e69cea88709d8cd383aef86d56329f8"
-MY_PV="${PV}"
 inherit cmake-utils dotnet eutils multilib-minimal
-SRC_URI="https://github.com/AndresTraks/BulletSharpPInvoke/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${MY_PV}.tar.gz
+SRC_URI="https://github.com/AndresTraks/BulletSharpPInvoke/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${PV}.tar.gz
 	 https://github.com/bulletphysics/bullet3/archive/${BULLET_COMMIT}.tar.gz -> bullet-${LIBBULLETC_PV}.tar.gz"
 inherit gac
-SLOT="0/${MY_PV}"
+SLOT="0/${PV}"
 RESTRICT="mirror"
-S="${WORKDIR}/${PN}-${MY_PV}"
+S="${WORKDIR}/${PN}-${PV}"
 
 src_unpack() {
 	unpack ${A}
