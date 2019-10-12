@@ -1,38 +1,27 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-SLOT="0"
-
-KEYWORDS="~amd64 ~ppc ~x86"
-USE_DOTNET="net45"
-
-inherit dotnet pc-file
-
-SRC_URI="https://github.com/loresoft/msbuildtasks/archive/1.5.0.196.tar.gz -> ${P}.tar.gz"
-
-inherit gac
-
-RESTRICT="mirror"
-S="${WORKDIR}/${PN}-${PV}"
-
+EAPI=7
 HOMEPAGE="https://github.com/loresoft/msbuildtasks"
 DESCRIPTION="The MSBuild Community Tasks Project is an open source project for MSBuild tasks."
 LICENSE="BSD" # https://github.com/loresoft/msbuildtasks/blob/master/LICENSE
-
+KEYWORDS="~amd64 ~ppc ~x86"
+SLOT="0"
+USE_DOTNET="net45"
 IUSE="+${USE_DOTNET} +debug developer doc"
 REQUIRED_USE="|| ( ${USE_DOTNET} )"
-
-COMMON_DEPEND=">=dev-lang/mono-4.0.2.5
-	       =dev-dotnet/dotnetzip-semverd-1.9.3-r1[gac]"
-RDEPEND="${COMMON_DEPEND}"
-DEPEND="${COMMON_DEPEND}"
+RDEPEND="=dev-dotnet/dotnetzip-semverd-1.9.3-r1[gac]"
+DEPEND="${RDEPEND}"
+inherit dotnet pc-file
+SRC_URI="https://github.com/loresoft/msbuildtasks/archive/1.5.0.196.tar.gz -> ${P}.tar.gz"
+inherit gac
+RESTRICT="mirror"
+S="${WORKDIR}/${PN}-${PV}"
 
 src_prepare() {
+	default
 	eapply "${FILESDIR}/references-2016052301.patch"
 	eapply "${FILESDIR}/location.patch"
-
-	eapply_user
 }
 
 src_compile() {
@@ -40,11 +29,7 @@ src_compile() {
 }
 
 src_install() {
-	if use debug; then
-		DIR="Debug"
-	else
-		DIR="Release"
-	fi
+	DIR=$(usex debug "Debug" "Release")
 	egacinstall "Source/MSBuild.Community.Tasks/obj/${DIR}/MSBuild.Community.Tasks.dll"
 	einstall_pc_file "${PN}" "${PV}" "MSBuild.Community.Tasks.dll"
 	insinto "/usr/$(get_libdir)/mono/${EBF}"
