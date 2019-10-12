@@ -1,64 +1,37 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=6
-inherit dotnet eutils mono gac
-
+EAPI=7
 DESCRIPTION="Cross platform GUI framework for desktop and mobile applications in .NET"
-HOMEPAGE=""
-COMMIT="cd710a42a895b05337047079b0ba16d081dd87ed"
-SRC_URI="https://github.com/mono/xwt/archive/${COMMIT}.zip -> ${PN}-${PV}.zip"
-
-LICENSE="BSD"
-SLOT="0"
+HOMEPAGE="https://github.com/mono/xwt"
+LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
+SLOT="0"
 USE_DOTNET="net45"
-IUSE="${USE_DOTNET} debug +gac developer"
+IUSE="${USE_DOTNET} debug developer +gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
-
-RDEPEND=">=dev-lang/mono-4
-        "
-DEPEND="${RDEPEND}
-	>=dev-lang/mono-4
-"
-
-S="${WORKDIR}/${PN}-${COMMIT}"
-SNK_FILENAME="${S}/${PN}-keypair.snk"
+EGIT_COMMIT="cd710a42a895b05337047079b0ba16d081dd87ed"
+inherit dotnet eutils mono
+SRC_URI="https://github.com/mono/xwt/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${PV}.tar.gz"
+inherit gac
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+RESTRICT="mirror"
 
 src_prepare() {
+	default
 	epatch "${FILESDIR}/${PN}-9999.20171206-linux-only-projects.patch"
 	epatch "${FILESDIR}/${PN}-9999.20171206-AccessibleBackend-val-never-used.patch"
 	epatch "${FILESDIR}/${PN}-9999.20171206-AccessibleBackend-suppress-value-assigned-never-used.patch"
 	epatch "${FILESDIR}/${PN}-9999.20171206-disable-tests.patch"
-
-	egenkey
-
-	eapply_user
-}
-
-src_configure() {
-	default
 }
 
 src_compile() {
-	mydebug="Release"
-	if use debug; then
-		mydebug="Debug"
-	fi
 	cd "${S}/Source"
-
-        einfo "Building solution"
-        exbuild_strong /p:Configuration=${mydebug} 'Xwt.sln' || die
+        exbuild /p:Configuration=$(usex debug "Debug" "Release") ${STRONG_ARGS_NETFX}"${S}/xwt.snk" 'Xwt.sln' || die
 }
 
 src_install() {
-	mydebug="Release"
-	if use debug; then
-		mydebug="Debug"
-	fi
-
-	esavekey
+	local mydebug=$(usex debug "Debug" "Release")
 
         ebegin "Installing dlls into the GAC"
 
