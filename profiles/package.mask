@@ -214,6 +214,16 @@ games-misc/monogame-extended
 games-misc/recastnavigation
 games-misc/sharpnav
 games-misc/tiledsharp
+
+dev-dotnet/beatdetectorforgames
+dev-dotnet/gwen-dotnet
+games-misc/lgmplugin
+dev-libs/libmpq
+dev-dotnet/monogame-extended
+dev-libs/recastnavigation
+dev-dotnet/sharpnav
+dev-dotnet/tiledsharp
+
 media-gfx/fim
 media-gfx/nvidia-texture-tools
 media-libs/freeimage
