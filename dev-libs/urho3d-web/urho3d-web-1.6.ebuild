@@ -51,7 +51,7 @@ RDEPEND="javascript? ( sys-devel/llvm )
 #mustache is clang tools dependency from https://github.com/kainjow/Mustache
 #todo jo, stanhull, stb #these may have been slightly modified
 #spine didn't exist
-#games-misc/recastnavigation has Recast, DetourCrowd, DetourTileCache, Detour
+#dev-libs/recastnavigation has Recast, DetourCrowd, DetourTileCache, Detour
 DEPEND="${RDEPEND}
 	dev-util/cmake"
 #REQUIRED_USE="network? ( boost )"
