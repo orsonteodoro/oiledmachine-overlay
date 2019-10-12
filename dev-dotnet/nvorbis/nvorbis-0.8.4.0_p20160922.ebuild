@@ -1,33 +1,25 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI=6
-inherit dotnet eutils git-r3 mono gac
-
+EAPI=7
 DESCRIPTION="NVorbis is a C# vorbis decoder"
-HOMEPAGE=""
-SRC_URI=""
-
+HOMEPAGE="https://github.com/ioctlLR/NVorbis"
 LICENSE="MIT"
-SLOT="0"
 KEYWORDS="~amd64 ~x86"
-USE_DOTNET="net45"
-IUSE="${USE_DOTNET} debug opentk +gac developer"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
-
-RDEPEND=">=dev-lang/mono-4
-	 dev-dotnet/opentk"
-DEPEND="${RDEPEND}
-	>=dev-lang/mono-4
-"
-
+SLOT="0"
+USE_DOTNET="net35 net40"
+IUSE="${USE_DOTNET} debug developer +gac opentk"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac gac? ( net40 )"
+RDEPEND="dev-dotnet/opentk"
+DEPEND="${RDEPEND}"
 RESTRICT="fetch"
-
+inherit dotnet eutils git-r3 mono
+SRC_URI=""
+inherit gac
 S="${WORKDIR}/${PN}-${PV}"
-SNK_FILENAME="${S}/${PN}-keypair.snk"
 
 src_unpack() {
+	unpack "${A}"
         #EGIT_CHECKOUT_DIR="${WORKDIR}"
         EGIT_REPO_URI="https://github.com/ioctlLR/NVorbis.git"
         EGIT_BRANCH="master"
@@ -38,27 +30,18 @@ src_unpack() {
 }
 
 src_prepare() {
+	default
 	eapply "${FILESDIR}/nvorbis-9999.20160922-opentksupport.patch"
 	eapply "${FILESDIR}/nvorbis-9999.20160922-nuget.patch"
 	eapply "${FILESDIR}/nvorbis-9999.20160922-unittests.patch"
 	eapply "${FILESDIR}/nvorbis-9999.20160922-unittests-ref.patch"
 	eapply "${FILESDIR}/nvorbis-9999.20160922-testapp.patch"
 	eapply "${FILESDIR}/nvorbis-9999.20160922-disable-testapp.patch"
-
-	egenkey
-
-	eapply_user
 }
 
 src_compile() {
-	mydebug="release"
-	if use debug; then
-		mydebug="debug"
-	fi
 	cd "${S}"
-
-        einfo "Building solution"
-        exbuild_strong /p:Configuration=${mydebug} NVorbis.sln || die
+	exbuild /p:Configuration=$(usex debug "debug" "release") ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" NVorbis.sln || die
 }
 
 src_install() {
@@ -67,15 +50,13 @@ src_install() {
 		mydebug="Debug"
 	fi
 
-	esavekey
-
         ebegin "Installing dlls into the GAC"
 
 	for x in ${USE_DOTNET} ; do
-                FW_UPPER=${x:3:1}
-                FW_LOWER=${x:4:1}
-                egacinstall "${S}/bin/NVorbis.dll"
-               	insinto "/usr/$(get_libdir)/mono/${PN}"
+		FW_UPPER=${x:3:1}
+		FW_LOWER=${x:4:1}
+		egacinstall "${S}/bin/NVorbis.dll"
+		insinto "/usr/$(get_libdir)/mono/${PN}"
 		if use developer ; then
 			doins "${S}/bin/NVorbis.dll"
 			doins bin/{NVorbis.dll.mdb,NVorbis.XML}
@@ -84,15 +65,15 @@ src_install() {
 
 	if use opentk ; then
 		for x in ${USE_DOTNET} ; do
-	                FW_UPPER=${x:3:1}
-        	        FW_LOWER=${x:4:1}
-	                egacinstall "${S}/OpenTKSupport/bin/${mydebug}/NVorbis.OpenTKSupport.dll"
-	               	insinto "/usr/$(get_libdir)/mono/${PN}"
+			FW_UPPER=${x:3:1}
+			FW_LOWER=${x:4:1}
+			egacinstall "${S}/OpenTKSupport/bin/${mydebug}/NVorbis.OpenTKSupport.dll"
+			insinto "/usr/$(get_libdir)/mono/${PN}"
 			if use developer ; then
 				doins OpenTKSupport/bin/${mydebug}/NVorbis.OpenTKSupport.dll.mdb
 				doins bin/NVorbis.OpenTKSupport.XML
 			fi
-	        done
+		done
 	fi
 
 	eend
