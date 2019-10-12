@@ -43,7 +43,6 @@ SRC_URI="https://github.com/MonoGame/MonoGame/archive/v${PV}.tar.gz -> ${P}.tar.
 inherit gac
 SLOT="0"
 S="${WORKDIR}/MonoGame-${PV}"
-SNK_FILENAME="${S}/${PN}-keypair.snk"
 RESTRICT="mirror"
 
 pkg_setup() {
@@ -351,10 +350,8 @@ src_prepare() {
 	#sed -r -e "s|workingdir="/Applications/Xamarin Studio.app/Contents/Resources/lib/monodevelop/bin/"|workingdir="/usr/lib/monodevelop/bin/"|g" ./IDE/MonoDevelop/MonoDevelop.MonoGame/MonoDevelop.MonoGame.csproj
 	xml ed -L -s "//Project" -t attr -n "xmlns" -v "http://schemas.microsoft.com/developer/msbuild/2003" ./IDE/MonoDevelop/MonoDevelop.MonoGame/MonoDevelop.MonoGame.csproj
 
-	egenkey
-
 	#inject public key into assembly
-	public_key=$(sn -tp "${PN}-keypair.snk" | tail -n 7 | head -n 5 | tr -d '\n')
+	public_key=$(sn -tp "${DISTDIR}/mono.snk" | tail -n 7 | head -n 5 | tr -d '\n')
 	echo "pk is: ${public_key}"
 	cd "${S}"
 	sed -i -r -e "s|\[assembly\: InternalsVisibleTo\(\"MonoGame.Framework.Content.Pipeline\"\)\]|\[assembly: InternalsVisibleTo(\"MonoGame.Framework.Content.Pipeline, PublicKey=${public_key}\")\]|" ./MonoGame.Framework/Properties/AssemblyInfo.cs
@@ -382,8 +379,6 @@ src_install() {
 	fi
 
 	cd "${S}"
-
-	esavekey
 
         ebegin "Installing dlls into the GAC"
 
