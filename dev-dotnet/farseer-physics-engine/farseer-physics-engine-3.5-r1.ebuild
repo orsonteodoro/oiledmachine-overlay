@@ -28,7 +28,7 @@ pkg_setup() {
 }
 
 src_unpack() {
-	unpack_zip "${DISTFILES}/${P}.zip"
+	unpack_zip "${DISTDIR}/${P}.zip"
 
 	# engine
 	mkdir -p "${WORKDIR}/engine" || die
