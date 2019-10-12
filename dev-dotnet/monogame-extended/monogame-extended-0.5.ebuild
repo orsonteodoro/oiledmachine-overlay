@@ -10,7 +10,7 @@ PROJECT_NAME="MonoGame.Extended"
 USE_DOTNET="net45"
 IUSE="${USE_DOTNET} debug +gac static"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac gac? ( net45 )"
-RDEPEND="games-engines/monogame
+RDEPEND="dev-dotnet/monogame
          dev-dotnet/nsubstitute
 	 media-libs/freeimage[tiff,openexr,raw,png]"
 DEPEND="${RDEPEND}"
