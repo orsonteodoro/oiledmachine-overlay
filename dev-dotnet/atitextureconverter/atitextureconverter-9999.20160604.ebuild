@@ -29,28 +29,11 @@ src_unpack() {
 }
 
 src_compile() {
-	mydebug="Release"
-	if use debug; then
-		mydebug="Debug"
-	fi
-
-	#sed -i -e 's|<Import Project=\"\$(VCTargetsPath)\\Microsoft.Cpp.props\" />||g' "${S}"/PVRTexLibWrapper/PVRTexLibWrapper.vcxproj
-	#sed -i -e 's|<Import Project=\"\$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />||g' "${S}"/PVRTexLibWrapper/PVRTexLibWrapper.vcxproj
-	#sed -i -e 's|<Import Project=\"\$(VCTargetsPath)\\Microsoft.Cpp.targets\" />|<Target Name="Build" DependsOnTargets="$(BuildDependsOn)" Outputs="$(TargetPath)"/>|g' "${S}"/PVRTexLibWrapper/PVRTexLibWrapper.vcxproj
-
-	#einfo "Building ATI.TextureConverter..."
-	#cd "${S}/ATI.TextureConverter"
-	#xbuild ATI.TextureConverter.csproj /p:Configuration=${mydebug} /p:SignAssembly=true /p:AssemblyOriginatorKeyFile="${S}/${PN}-keypair.snk"
-
-	cd "${S}"
 	exbuild ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" ATI.TextureConverter.sln
 }
 
 src_install() {
-	mydebug="Release"
-	if use debug; then
-		mydebug="Debug"
-	fi
+	local mydebug=$(usex debug "Debug" "Release")
 
         ebegin "Installing dlls into the GAC"
 
