@@ -22,7 +22,7 @@ RESTRICT="mirror"
 
 src_compile() {
 	compile_impl() {
-	        exbuild /p:Configuration=$(usex debug "debug" "release") STRONG_ARGS_NETFX"${DISTDIR}/mono.snk" ${PROJECT_NAME}.sln || die
+	        exbuild /p:Configuration=$(usex debug "debug" "release") ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" ${PROJECT_NAME}.sln || die
 	}
 	dotnet_foreach_impl compile_impl
 }
