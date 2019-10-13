@@ -22,6 +22,7 @@ S="${WORKDIR}/${PROJECT_NAME}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
 src_prepare() {
+	default
 	eapply "${FILESDIR}/beatdetectorforgames-9999.20150415-cpp-header-fixes.patch"
 
 	cp "${FILESDIR}/buildcpp.lua" "${S}/BeatDetector/BeatDetectorC++Version/Detector" || die
@@ -35,29 +36,21 @@ src_prepare() {
 	premake5 --file=buildcpp.lua gmake || die
 
 	cd "${S}/BeatDetector/BeatDetectorC#Version" || die
-	sed -i -r -e "s|@S@|${S}|g" buildcs.lua || die
+	sed -i -r -e "s|@DISTDIR@|${DISTDIR}|g" buildcs.lua || die
 	premake5 --file=buildcs.lua gmake || die
 
 	#use the system fmod
 	rm -rf "${S}"/BeatDetector/BeatDetectorC++Version/Detector/{inc,*.dll,lib} || die
 
-	sed -i -r -e 's|"fmodex64"|"fmodex.dll"|g' "${S}/BeatDetector/BeatDetectorC#Version/fmod.cs" || die p1
-	sed -i -r -e 's|"fmodex"|"fmodex.dll"|g' "${S}/BeatDetector/BeatDetectorC#Version/fmod.cs" || die p2
-	sed -i -r -e 's|"fmodex64"|"fmodex.dll"|g' "${S}/BeatDetector/BeatDetectorC++Version/FMOD/csharp/fmod.cs" || die p3
-	sed -i -r -e 's|"fmodex"|"fmodex.dll"|g' "${S}/BeatDetector/BeatDetectorC++Version/FMOD/csharp/fmod.cs" || die p4
-
-	eapply_user
+	sed -i -r -e 's|"fmodex64"|"fmodex.dll"|g' "${S}/BeatDetector/BeatDetectorC#Version/fmod.cs" || die
+	sed -i -r -e 's|"fmodex"|"fmodex.dll"|g' "${S}/BeatDetector/BeatDetectorC#Version/fmod.cs" || die
+	sed -i -r -e 's|"fmodex64"|"fmodex.dll"|g' "${S}/BeatDetector/BeatDetectorC++Version/FMOD/csharp/fmod.cs" || die
+	sed -i -r -e 's|"fmodex"|"fmodex.dll"|g' "${S}/BeatDetector/BeatDetectorC++Version/FMOD/csharp/fmod.cs" || die
 }
 
 src_compile() {
-	mydebug="release"
-	if use debug; then
-		mydebug="debug"
-	fi
-	mystatic="shared"
-	if use static; then
-		mystatic="static"
-	fi
+	local mydebug=$(usex debug "debug" "release")
+	local mystatic=$(usex static "static" "shared")
 
 	cd "${S}/BeatDetector"
 
@@ -75,14 +68,8 @@ src_compile() {
 }
 
 src_install() {
-	mydebug="Release"
-	if use debug; then
-		mydebug="Debug"
-	fi
-	mystatic="Shared"
-	if use static; then
-		mystatic="Static"
-	fi
+	local mydebug=$(usex debug "Debug" "Release")
+	local mystatic=$(usex static "Static" "Shared")
 
         ebegin "Installing dlls into the GAC"
 

@@ -5,7 +5,7 @@ project "BeatDetectorForGames"
       language "C#"
       files { "**.cs" }
       location "build"
-      buildoptions { "-sdk:4.5", "-keyfile:@S@/beatdetectorforgames-keypair.snk" }
+      buildoptions { "-sdk:4.5", "-keyfile:@DISTDIR@/mono.snk" }
 
       configuration "DebugSharedLib"
          defines { "DEBUG" }
