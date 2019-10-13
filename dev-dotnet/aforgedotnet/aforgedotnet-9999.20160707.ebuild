@@ -37,23 +37,18 @@ src_compile() {
 		if use kinect ; then
 			dotnet_copy_dllmap_config "${FILESDIR}/AForge.Video.Kinect.dll.config"
 		fi
-
 		if use ximea ; then
 			dotnet_copy_dllmap_config "${FILESDIR}/AForge.Video.Ximea.dll.config"
 		fi
-
 		cd "Sources"
-
 	        einfo "Building solution"
 	        exbuild "Build All.sln" || die
 	}
-
 	dotnet_foreach_impl compile_impl
 }
 
 src_install() {
 	local mydebug=$(usex debug "Debug" "Release")
-
 	install_impl() {
 		dotnet_install_loc
 
@@ -123,7 +118,6 @@ src_install() {
 			#egacinstall ${mydebug}/AForge.Video.DirectShow.dll
 			egacinstall ${mydebug}/AForge.Math.dll
 		fi
-
 		doins ${mydebug}/AForge.Vision.dll
 		doins ${mydebug}/AForge.MachineLearning.dll
 		doins ${mydebug}/AForge.Imaging.Formats.dll
@@ -141,17 +135,14 @@ src_install() {
 		use kinect && doins ${mydebug}/AForge.Video.Kinect.dll
 		#doins ${mydebug}/AForge.Video.DirectShow.dll
 		doins ${mydebug}/AForge.Math.dll
-
 		if use kinect ; then
 			doins "AForge.Video.Kinect.dll.config"
 			dotnet_distribute_dllmap_config "AForge.Video.Kinect.dll"
 		fi
-
 		if use ximea ; then
 			doins "AForge.Video.Ximea.dll.config"
 			dotnet_distribute_dllmap_config "AForge.Video.Ximea.dll"
 		fi
-
 		if use developer ; then
 			if [[ "${EDOTNET}" == "net40" ]] ; then
 				doins Sources/Vision/AForge.Vision.xml
@@ -193,9 +184,7 @@ src_install() {
 			fi
 		fi
 	}
-
 	dotnet_foreach_impl install_impl
-
 	dotnet_multilib_comply
 }
 
