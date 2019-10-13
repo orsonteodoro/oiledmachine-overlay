@@ -49,7 +49,7 @@ src_prepare() {
 }
 
 src_compile() {
-        exbuild STRONG_ARGS_NETFX"${DISTDIR}/mono.snk" ${PROJECT_NAME}.sln || die
+        exbuild ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" ${PROJECT_NAME}.sln || die
 }
 
 src_install() {
