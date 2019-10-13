@@ -25,7 +25,7 @@ src_prepare() {
 }
 
 src_compile() {
-	CSFLAGS="${CSFLAGS} -sdk:${EBF} -keyfile:\"${S}/${PN}-keypair.snk\"" \
+	CSFLAGS="${CSFLAGS} -sdk:${EBF} -keyfile:\"${DISTDIR}/mono.snk\"" \
 	emake || die "emake failed"
 }
 
@@ -40,7 +40,6 @@ src_install() {
 
 	eend
 
-	cd "${S}"
 	dodoc AUTHORS ChangeLog README COPYING
 	dodoc -r doc
 
