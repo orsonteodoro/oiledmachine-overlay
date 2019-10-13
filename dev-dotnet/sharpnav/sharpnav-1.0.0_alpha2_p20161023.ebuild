@@ -52,11 +52,6 @@ src_prepare() {
 }
 
 src_compile() {
-	mydebug="Release"
-	if use debug; then
-		mydebug="Debug"
-	fi
-
 	cd "${S}/Source"
 
         einfo "Building solutions"
@@ -78,10 +73,7 @@ src_compile() {
 }
 
 src_install() {
-	mydebug="Release"
-	if use debug; then
-		mydebug="Debug"
-	fi
+	local mydebug=$(usex debug "Debug" "Release")
 
         ebegin "Installing dlls into the GAC"
 
