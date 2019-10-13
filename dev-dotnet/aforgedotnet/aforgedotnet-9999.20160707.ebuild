@@ -2,44 +2,37 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-
+DESCRIPTION="AForge.NET Framework is a C# framework designed for developers and"
+DESCRIPTION+=" researchers in the fields of Computer Vision and Artificial"
+DESCRIPTION+=" Intelligence - image processing, neural networks, genetic"
+DESCRIPTION+=" algorithms, machine learning, robotics, etc."
+HOMEPAGE="http://www.aforgenet.com/"
+LICENSE="LGPL-3 GPL-3"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 USE_DOTNET="net20 net40"
 RDEPEND="media-video/ffmpeg
          kinect? ( dev-libs/libfreenect )"
 DEPEND="${RDEPEND}"
 IUSE="${USE_DOTNET} debug gac kinect ximea"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 )"
-
+SLOT="0"
 inherit dotnet eutils mono
-
-DESCRIPTION="AForge.NET Framework is a C# framework designed for developers and researchers in the fields of Computer Vision and Artificial Intelligence - image processing, neural networks, genetic algorithms, machine learning, robotics, etc."
-HOMEPAGE="http://www.aforgenet.com/"
 PROJECT_NAME="AForge.NET"
 COMMIT="d70730b24aace6f3e108916dbfef60331b320b2c"
 SRC_URI="https://github.com/andrewkirillov/AForge.NET/archive/${COMMIT}.tar.gz -> ${P}.tar.gz"
-
 inherit gac
-
-LICENSE="LGPL-3 GPL-3"
-SLOT="0"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
-
 S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
 
 src_prepare() {
 	default
-	sed -i -e "s|\"freenect\"|\"libfreenect.dll\"|g" ./Sources/Video.Kinect/KinectNative.cs || die
-	sed -i -e "s|\"m3api.dll\"|\"libm3api.dll\"|g" ./Sources/Video.Ximea/Internal/XimeaAPI.cs || die
-
+	sed -i -e "s|\"freenect\"|\"libfreenect.dll\"|g" \
+		Sources/Video.Kinect/KinectNative.cs || die
+	sed -i -e "s|\"m3api.dll\"|\"libm3api.dll\"|g" \
+		Sources/Video.Ximea/Internal/XimeaAPI.cs || die
 	dotnet_copy_sources
 }
 
 src_compile() {
-	mydebug="Release"
-	if use debug; then
-		mydebug="Debug"
-	fi
-
 	compile_impl() {
 		if use kinect ; then
 			dotnet_copy_dllmap_config "${FILESDIR}/AForge.Video.Kinect.dll.config"
@@ -52,47 +45,65 @@ src_compile() {
 		cd "Sources"
 
 	        einfo "Building solution"
-	        exbuild /p:Configuration=${mydebug} "Build All.sln" || die
+	        exbuild "Build All.sln" || die
 	}
 
 	dotnet_foreach_impl compile_impl
 }
 
 src_install() {
-	#_src_preinstall
-	mydebug="Release"
-	if use debug; then
-		mydebug="Debug"
-	fi
+	local mydebug=$(usex debug "Debug" "Release")
 
 	install_impl() {
 		dotnet_install_loc
 
 		if ver_test $(dotnet_use_moniker_to_dotted_ver "${EDOTNET}") -ge 4.0 ; then
-			estrong_resign ${mydebug}/AForge.Vision.dll               Sources/Vision/AForge.Vision.snk
-			estrong_resign ${mydebug}/AForge.MachineLearning.dll      Sources/MachineLearning/AForge.MachineLearning.snk
-			estrong_resign ${mydebug}/AForge.Imaging.Formats.dll      Sources/Imaging.Formats/AForge.Imaging.Formats.snk
-			estrong_resign ${mydebug}/AForge.Fuzzy.dll                Sources/Fuzzy/AForge.Fuzzy.snk
-			#estrong_resign ${mydebug}/AForge.Controls.dll            Sources/Controls/AForge.Controls.snk
-			#estrong_resign ${mydebug}/AForge.Robotics.Surveyor.dll   Sources/Robotics.Surveyor/AForge.Robotics.Surveyor.snk
-			#estrong_resign ${mydebug}/AForge.Video.VFW.dll           Sources/Video.VFW/AForge.Video.VFW.snk
-			estrong_resign ${mydebug}/AForge.Video.dll                Sources/Video/AForge.Video.snk
-			estrong_resign ${mydebug}/AForge.Neuro.dll                Sources/Neuro/AForge.Neuro.snk
-			estrong_resign ${mydebug}/AForge.Genetic.dll              Sources/Genetic/AForge.Genetic.snk
-			estrong_resign ${mydebug}/AForge.Imaging.dll              Sources/Imaging/AForge.Imaging.snk
-			#estrong_resign ${mydebug}/AForge.Robotics.Lego.dll       Sources/Robotics.Lego/AForge.Robotics.Lego.snk
-			estrong_resign ${mydebug}/AForge.Video.Ximea.dll          Sources/Video.Ximea/AForge.Video.Ximea.snk
-			estrong_resign ${mydebug}/AForge.dll                      Sources/Core/AForge.snk
-			estrong_resign ${mydebug}/AForge.Video.Kinect.dll         Sources/Video.Kinect/AForge.Video.Kinect.snk
-			#estrong_resign ${mydebug}/AForge.Video.DirectShow.dll    Sources/Video.DirectShow/AForge.Video.DirectShow.snk
-			estrong_resign ${mydebug}/AForge.Math.dll                 Sources/Math/AForge.Math.snk
+			estrong_resign ${mydebug}/AForge.Vision.dll \
+				Sources/Vision/AForge.Vision.snk
+			estrong_resign ${mydebug}/AForge.MachineLearning.dll \
+				Sources/MachineLearning/AForge.MachineLearning.snk
+			estrong_resign ${mydebug}/AForge.Imaging.Formats.dll \
+				Sources/Imaging.Formats/AForge.Imaging.Formats.snk
+			estrong_resign ${mydebug}/AForge.Fuzzy.dll \
+				Sources/Fuzzy/AForge.Fuzzy.snk
+			#estrong_resign ${mydebug}/AForge.Controls.dll \
+			#	Sources/Controls/AForge.Controls.snk
+			#estrong_resign ${mydebug}/AForge.Robotics.Surveyor.dll \
+			#	Sources/Robotics.Surveyor/AForge.Robotics.Surveyor.snk
+			#estrong_resign ${mydebug}/AForge.Video.VFW.dll \
+			#	Sources/Video.VFW/AForge.Video.VFW.snk
+			estrong_resign ${mydebug}/AForge.Video.dll \
+				Sources/Video/AForge.Video.snk
+			estrong_resign ${mydebug}/AForge.Neuro.dll \
+				Sources/Neuro/AForge.Neuro.snk
+			estrong_resign ${mydebug}/AForge.Genetic.dll \
+				Sources/Genetic/AForge.Genetic.snk
+			estrong_resign ${mydebug}/AForge.Imaging.dll \
+				Sources/Imaging/AForge.Imaging.snk
+			#estrong_resign ${mydebug}/AForge.Robotics.Lego.dll \
+			#	Sources/Robotics.Lego/AForge.Robotics.Lego.snk
+			estrong_resign ${mydebug}/AForge.Video.Ximea.dll \
+				Sources/Video.Ximea/AForge.Video.Ximea.snk
+			estrong_resign ${mydebug}/AForge.dll \
+				Sources/Core/AForge.snk
+			estrong_resign ${mydebug}/AForge.Video.Kinect.dll \
+				Sources/Video.Kinect/AForge.Video.Kinect.snk
+			#estrong_resign ${mydebug}/AForge.Video.DirectShow.dll \
+			#	Sources/Video.DirectShow/AForge.Video.DirectShow.snk
+			estrong_resign ${mydebug}/AForge.Math.dll \
+				Sources/Math/AForge.Math.snk
 
 			# has key but missing in dlls/gac
-#			#estrong_resign ${mydebug}/AForge.Robotics.TeRK.dll       Sources/Robotics.TeRK/AForge.Robotics.TeRK.snk
-#			estrong_resign ${mydebug}/AForge.Video.FFMPEG.dll         Sources/Video.FFMPEG/AForge.Video.FFMPEG.snk
-#			estrong_resign ${mydebug}/AForge.DebuggerVisualizers.dll  Tools/DebuggerVisualizers/AForge.DebuggerVisualizers.snk
-#			estrong_resign ${mydebug}/AForge.Imaging.IPPrototyper.dll Tools/IPPrototyper/Interfaces/AForge.Imaging.IPPrototyper.snk
-#			estrong_resign ${mydebug}/AForge.IPPrototyper.dll         Tools/IPPrototyper/AForge.IPPrototyper.snk
+			#estrong_resign ${mydebug}/AForge.Robotics.TeRK.dll \
+			#	Sources/Robotics.TeRK/AForge.Robotics.TeRK.snk
+			#estrong_resign ${mydebug}/AForge.Video.FFMPEG.dll \
+			#	Sources/Video.FFMPEG/AForge.Video.FFMPEG.snk
+			#estrong_resign ${mydebug}/AForge.DebuggerVisualizers.dll \
+			#	Tools/DebuggerVisualizers/AForge.DebuggerVisualizers.snk
+			#estrong_resign ${mydebug}/AForge.Imaging.IPPrototyper.dll \
+			#	Tools/IPPrototyper/Interfaces/AForge.Imaging.IPPrototyper.snk
+			#estrong_resign ${mydebug}/AForge.IPPrototyper.dll \
+			#	Tools/IPPrototyper/AForge.IPPrototyper.snk
 
 			egacinstall ${mydebug}/AForge.Vision.dll
 			egacinstall ${mydebug}/AForge.MachineLearning.dll
@@ -189,6 +200,15 @@ src_install() {
 }
 
 pkg_postinst() {
-	use ximea && einfo "This package does not pull the XIMEA xiAPI package.  You must manually create it yourself or install the library yourself."
-	einfo "This package doesn't support: AForge.Controls.dll, AForge.Robotics.Surveyor.dll, AForge.Video.VFW.dll, AForge.Robotics.Lego.dll, AForge.Video.DirectShow.dll."
+	if use ximea ; then
+		einfo "This package does not pull the XIMEA xiAPI package."
+		einfo "You must manually create it yourself or install the"
+		einfo "library yourself."
+	fi
+	einfo "This package doesn't support:"
+	einfo "  AForge.Controls.dll,"
+	einfo "  AForge.Robotics.Lego.dll,"
+	einfo "  AForge.Robotics.Surveyor.dll,"
+	einfo "  AForge.Video.DirectShow.dll,"
+	einfo "  AForge.Video.VFW.dll."
 }
