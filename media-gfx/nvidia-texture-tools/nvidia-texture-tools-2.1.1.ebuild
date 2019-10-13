@@ -66,13 +66,6 @@ src_prepare() {
 		wget -O "${S}/project/monogame/Nvidia.TextureTools/TextureTools.cs"  "https://github.com/castano/nvidia-texture-tools/raw/a382ea5b21796b62a25fc1eb99871735a25db64f/project/vc9/Nvidia.TextureTools/TextureTools.cs" || die
 		sed -i -r -e "s|\"nvtt\"|\"libnvtt.dll\"|g"  ./project/monogame/Nvidia.TextureTools/TextureTools.cs
 	fi
-
-	for dll in $NVTT_DLLS
-	do
-		if use $dll ; then
-			egenkey "${PN}-${dll}.snk"
-		fi
-	done
 }
 
 src_configure() {
