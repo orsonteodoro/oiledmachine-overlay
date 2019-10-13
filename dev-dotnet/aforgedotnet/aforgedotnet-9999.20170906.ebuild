@@ -18,10 +18,10 @@ REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 )"
 SLOT="0"
 inherit dotnet eutils mono
 PROJECT_NAME="AForge.NET"
-COMMIT="a9453dad025d1fbffab165293cedc976187da535"
-SRC_URI="https://github.com/andrewkirillov/AForge.NET/archive/${COMMIT}.tar.gz -> ${P}.tar.gz"
+EGIT_COMMIT="a9453dad025d1fbffab165293cedc976187da535"
+SRC_URI="https://github.com/andrewkirillov/AForge.NET/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
 inherit gac
-S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
+S="${WORKDIR}/${PROJECT_NAME}-${EGIT_COMMIT}"
 
 src_prepare() {
 	default
