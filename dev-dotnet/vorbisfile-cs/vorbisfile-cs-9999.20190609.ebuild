@@ -21,15 +21,11 @@ S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
 
 src_prepare() {
 	default
-
 	dotnet_copy_sources
 }
 
 src_compile() {
-	mydebug="release"
-	if use debug; then
-		mydebug="debug"
-	fi
+	local mydebug=$(usex debug "debug" "release")
 
 	compile_impl() {
 	        einfo "Building solution"
@@ -42,10 +38,7 @@ src_compile() {
 }
 
 src_install() {
-	mydebug="Release"
-	if use debug; then
-		mydebug="Debug"
-	fi
+	local mydebug=$(usex debug "Debug" "Release")
 
 	install_impl() {
 		dotnet_install_loc
