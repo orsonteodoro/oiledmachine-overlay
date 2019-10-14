@@ -88,11 +88,10 @@ src_install() {
 			  "${dll_path}/BeatDetectorForGames.dll.mdb"
 		fi
 		if use c++ ; then
-			insinto /usr/$(get_libdir)
-			doins ${dll_path}/libBeatDetectorForGames.so
+			dolib.so ${dll_path}/libBeatDetectorForGames.so
 		fi
 		dotnet_distribute_file_matching_dll_in_gac \
-			"${dll_path}/BeatDetectorForGames.dll" \
+			"${dll_path/C#/C++}/BeatDetectorForGames.dll" \
 			"BeatDetectorForGames.dll.config"
 	}
 	dotnet_foreach_impl install_impl
