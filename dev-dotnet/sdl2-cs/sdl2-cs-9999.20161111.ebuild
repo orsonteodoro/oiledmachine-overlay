@@ -52,8 +52,6 @@ src_install() {
 			"bin/${mydebug}/${PROJECT_NAME}.dll" \
 			"${PROJECT_NAME}.dll.config"
 	}
-
 	dotnet_foreach_impl install_impl
-
 	dotnet_multilib_comply
 }
