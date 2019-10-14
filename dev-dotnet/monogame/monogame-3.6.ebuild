@@ -819,19 +819,12 @@ src_prepare() {
 	xml ed -L -s "//Project" -t attr -n "xmlns" -v "http://schemas.microsoft.com/developer/msbuild/2003" \
 	  IDE/MonoDevelop/MonoDevelop.MonoGame/MonoDevelop.MonoGame.csproj
 
-	#inject public key into assembly
-	public_key=$(sn -tp "${DISTDIR}/mono.snk" | tail -n 7 | head -n 5 \
-	  | tr -d '\n')
-	echo "pk is: ${public_key}"
-	sed -i -r \
-	  -e "s|\[assembly\: InternalsVisibleTo\(\"MonoGame.Framework.Content.Pipeline\"\)\]|\[assembly: InternalsVisibleTo(\"MonoGame.Framework.Content.Pipeline, PublicKey=${public_key}\")\]|" \
-	  MonoGame.Framework/Properties/AssemblyInfo.cs
-	sed -i -r \
-	  -e "s|\[assembly\: InternalsVisibleTo\(\"MonoGame.Framework.Net\"\)\]|\[assembly: InternalsVisibleTo(\"MonoGame.Framework.Net, PublicKey=${public_key}\")\]|" \
-	  MonoGame.Framework/Properties/AssemblyInfo.cs
-	sed -i -r \
-	  -e "s|\[assembly\: InternalsVisibleTo\(\"MonoGameTests\"\)\]|\[assembly: InternalsVisibleTo(\"MonoGameTests, PublicKey=${public_key}\")\]|" \
-	  MonoGame.Framework/Properties/AssemblyInfo.cs
+	estrong_assembly_info2 "MonoGame.Framework.Content.Pipeline" \
+		"${DISTDIR}/mono.snk" "MonoGame.Framework/Properties/AssemblyInfo.cs"
+	estrong_assembly_info2 "MonoGame.Framework.Net" "${DISTDIR}/mono.snk" \
+		"MonoGame.Framework/Properties/AssemblyInfo.cs"
+	estrong_assembly_info2 "MonoGameTests" "${DISTDIR}/mono.snk" \
+		"MonoGame.Framework/Properties/AssemblyInfo.cs"
 	dotnet_copy_sources
 }
 
