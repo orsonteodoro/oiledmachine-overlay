@@ -48,142 +48,74 @@ src_compile() {
 	dotnet_foreach_impl compile_impl
 }
 
+_mydoins() {
+	local name="$1"
+	if ver_test $(dotnet_use_moniker_to_dotted_ver "${EDOTNET}") -ge 4.0 ; then
+		if [[ -z "${name}" ]] ; then
+			estrong_resign ${mydebug}/AForge.dll \
+			Sources/Core/AForge.${name}.snk
+		else
+			estrong_resign ${mydebug}/AForge.${name}.dll \
+			Sources/${name}/AForge.${name}.snk
+		fi
+	fi
+	if dotnet_is_netfx ; then
+		egacinstall ${mydebug}/AForge.${name}.dll
+		if use kinect ; then
+			dotnet_distribute_file_matching_dll_in_gac \
+			  "${mydebug}/AForge.Video.Kinect.dll" \
+			  "AForge.Video.Kinect.dll.config"
+		fi
+		if use ximea ; then
+			dotnet_distribute_file_matching_dll_in_gac \
+			  "${mydebug}/AForge.Video.Ximea.dll" \
+			  "AForge.Video.Ximea.dll.config"
+		fi
+	fi
+	if use developer ; then
+		if [[ "${EDOTNET}" == "net40" ]] ; then
+			if [[ -z "${name}" ]] ; then
+				doins Sources/Core/AForge.xml
+			else
+				doins Sources/${name}/AForge.${name}.xml
+			fi
+		fi
+		if [[ "${EDOTNET}" == "net20" ]] ; then
+			if [[ -z "${name}" ]] ; then
+				doins ${mydebug}/AForge.pdb
+			else
+				doins ${mydebug}/AForge.${name}.pdb
+			fi
+		fi
+	fi
+}
+
 src_install() {
 	local mydebug=$(usex debug "Debug" "Release")
 	install_impl() {
 		dotnet_install_loc
-
-		if ver_test $(dotnet_use_moniker_to_dotted_ver "${EDOTNET}") -ge 4.0 ; then
-			estrong_resign ${mydebug}/AForge.Vision.dll \
-				Sources/Vision/AForge.Vision.snk
-			estrong_resign ${mydebug}/AForge.MachineLearning.dll \
-				Sources/MachineLearning/AForge.MachineLearning.snk
-			estrong_resign ${mydebug}/AForge.Imaging.Formats.dll \
-				Sources/Imaging.Formats/AForge.Imaging.Formats.snk
-			estrong_resign ${mydebug}/AForge.Fuzzy.dll \
-				Sources/Fuzzy/AForge.Fuzzy.snk
-			#estrong_resign ${mydebug}/AForge.Controls.dll \
-			#	Sources/Controls/AForge.Controls.snk
-			#estrong_resign ${mydebug}/AForge.Robotics.Surveyor.dll \
-			#	Sources/Robotics.Surveyor/AForge.Robotics.Surveyor.snk
-			#estrong_resign ${mydebug}/AForge.Video.VFW.dll \
-			#	Sources/Video.VFW/AForge.Video.VFW.snk
-			estrong_resign ${mydebug}/AForge.Video.dll \
-				Sources/Video/AForge.Video.snk
-			estrong_resign ${mydebug}/AForge.Neuro.dll \
-				Sources/Neuro/AForge.Neuro.snk
-			estrong_resign ${mydebug}/AForge.Genetic.dll \
-				Sources/Genetic/AForge.Genetic.snk
-			estrong_resign ${mydebug}/AForge.Imaging.dll \
-				Sources/Imaging/AForge.Imaging.snk
-			#estrong_resign ${mydebug}/AForge.Robotics.Lego.dll \
-			#	Sources/Robotics.Lego/AForge.Robotics.Lego.snk
-			estrong_resign ${mydebug}/AForge.Video.Ximea.dll \
-				Sources/Video.Ximea/AForge.Video.Ximea.snk
-			estrong_resign ${mydebug}/AForge.dll \
-				Sources/Core/AForge.snk
-			estrong_resign ${mydebug}/AForge.Video.Kinect.dll \
-				Sources/Video.Kinect/AForge.Video.Kinect.snk
-			#estrong_resign ${mydebug}/AForge.Video.DirectShow.dll \
-			#	Sources/Video.DirectShow/AForge.Video.DirectShow.snk
-			estrong_resign ${mydebug}/AForge.Math.dll \
-				Sources/Math/AForge.Math.snk
-
-			# has key but missing in dlls/gac
-			#estrong_resign ${mydebug}/AForge.Robotics.TeRK.dll \
-			#	Sources/Robotics.TeRK/AForge.Robotics.TeRK.snk
-			#estrong_resign ${mydebug}/AForge.Video.FFMPEG.dll \
-			#	Sources/Video.FFMPEG/AForge.Video.FFMPEG.snk
-			#estrong_resign ${mydebug}/AForge.DebuggerVisualizers.dll \
-			#	Tools/DebuggerVisualizers/AForge.DebuggerVisualizers.snk
-			#estrong_resign ${mydebug}/AForge.Imaging.IPPrototyper.dll \
-			#	Tools/IPPrototyper/Interfaces/AForge.Imaging.IPPrototyper.snk
-			#estrong_resign ${mydebug}/AForge.IPPrototyper.dll \
-			#	Tools/IPPrototyper/AForge.IPPrototyper.snk
-
-			egacinstall ${mydebug}/AForge.Vision.dll
-			egacinstall ${mydebug}/AForge.MachineLearning.dll
-			egacinstall ${mydebug}/AForge.Imaging.Formats.dll
-			egacinstall ${mydebug}/AForge.Fuzzy.dll
-			#egacinstall ${mydebug}/AForge.Controls.dll
-			#egacinstall ${mydebug}/AForge.Robotics.Surveyor.dll
-			#egacinstall ${mydebug}/AForge.Video.VFW.dll
-			egacinstall ${mydebug}/AForge.Video.dll
-			egacinstall ${mydebug}/AForge.Neuro.dll
-			egacinstall ${mydebug}/AForge.Genetic.dll
-			egacinstall ${mydebug}/AForge.Imaging.dll
-			#egacinstall ${mydebug}/AForge.Robotics.Lego.dll
-			use ximea && egacinstall ${mydebug}/AForge.Video.Ximea.dll
-			egacinstall ${mydebug}/AForge.dll
-			use kinect && egacinstall ${mydebug}/AForge.Video.Kinect.dll
-			#egacinstall ${mydebug}/AForge.Video.DirectShow.dll
-			egacinstall ${mydebug}/AForge.Math.dll
-		fi
-		doins ${mydebug}/AForge.Vision.dll
-		doins ${mydebug}/AForge.MachineLearning.dll
-		doins ${mydebug}/AForge.Imaging.Formats.dll
-		doins ${mydebug}/AForge.Fuzzy.dll
-		#doins ${mydebug}/AForge.Controls.dll
-		#doins ${mydebug}/AForge.Robotics.Surveyor.dll
-		#doins ${mydebug}/AForge.Video.VFW.dll
-		doins ${mydebug}/AForge.Video.dll
-		doins ${mydebug}/AForge.Neuro.dll
-		doins ${mydebug}/AForge.Genetic.dll
-		doins ${mydebug}/AForge.Imaging.dll
-		#doins ${mydebug}/AForge.Robotics.Lego.dll
-		use ximea && doins ${mydebug}/AForge.Video.Ximea.dll
-		doins ${mydebug}/AForge.dll
-		use kinect && doins ${mydebug}/AForge.Video.Kinect.dll
-		#doins ${mydebug}/AForge.Video.DirectShow.dll
-		doins ${mydebug}/AForge.Math.dll
-		if use kinect ; then
-			doins "AForge.Video.Kinect.dll.config"
-			dotnet_distribute_dllmap_config "AForge.Video.Kinect.dll"
-		fi
-		if use ximea ; then
-			doins "AForge.Video.Ximea.dll.config"
-			dotnet_distribute_dllmap_config "AForge.Video.Ximea.dll"
-		fi
-		if use developer ; then
-			if [[ "${EDOTNET}" == "net40" ]] ; then
-				doins Sources/Vision/AForge.Vision.xml
-				doins Sources/MachineLearning/AForge.MachineLearning.xml
-				doins Sources/Imaging.Formats/AForge.Imaging.Formats.xml
-				doins Sources/Fuzzy/AForge.Fuzzy.xml
-				#doins Sources/Controls/AForge.Controls.xml
-				#doins Sources/Robotics.Surveyor/AForge.Robotics.Surveyor.xml
-				#doins Sources/Video.VFW/AForge.Video.VFW.xml
-				doins Sources/Video/AForge.Video.xml
-				doins Sources/Neuro/AForge.Neuro.xml
-				doins Sources/Genetic/AForge.Genetic.xml
-				doins Sources/Imaging/AForge.Imaging.xml
-				#doins Sources/Robotics.Lego/AForge.Robotics.Lego.xml
-				use ximea && doins Sources/Video.Ximea/AForge.Video.Ximea.xml
-				doins Sources/Core/AForge.xml
-				use kinect && doins Sources/Video.Kinect/AForge.Video.Kinect.xml
-				#doins Sources/Video.DirectShow/AForge.Video.DirectShow.xml
-				doins Sources/Math/AForge.Math.xml
-			fi
-			if [[ "${EDOTNET}" == "net20" ]] ; then
-				doins ${mydebug}/AForge.Vision.pdb
-				doins ${mydebug}/AForge.MachineLearning.pdb
-				doins ${mydebug}/AForge.Imaging.Formats.pdb
-				doins ${mydebug}/AForge.Fuzzy.pdb
-				#doins ${mydebug}/AForge.Controls.pdb
-				#doins ${mydebug}/AForge.Robotics.Surveyor.pdb
-				#doins ${mydebug}/AForge.Video.VFW.pdb
-				doins ${mydebug}/AForge.Video.pdb
-				doins ${mydebug}/AForge.Neuro.pdb
-				doins ${mydebug}/AForge.Genetic.pdb
-				doins ${mydebug}/AForge.Imaging.pdb
-				#doins ${mydebug}/AForge.Robotics.Lego.pdb
-				use ximea && doins ${mydebug}/AForge.Video.Ximea.pdb
-				doins ${mydebug}/AForge.pdb
-				use kinect && doins ${mydebug}/AForge.Video.Kinect.pdb
-				#doins ${mydebug}/AForge.Video.DirectShow.pdb
-				doins ${mydebug}/AForge.Math.pdb
-			fi
-		fi
+		_mydoins Vision
+		_mydoins MachineLearning
+		_mydoins Imaging.Formats
+		_mydoins Fuzzy
+		#_mydoins Controls
+		#_mydoins Robotics.Surveyor
+		#_mydoins Video.VFW
+		_mydoins Video
+		_mydoins Neuro
+		_mydoins Genetic
+		_mydoins Imaging
+		#_mydoins Robotics.Lego
+		_mydoins Video.Ximea
+		_mydoins ""
+		_mydoins Video.Kinect
+		#_mydoins Video.DirectShow
+		_mydoins Math
+		#_mydoins Robotics.TeRK
+		#_mydoins Video.FFMPEG
+		#_mydoins DebuggerVisualizers
+		#_mydoins Imaging.IPPrototyper
+		#_mydoins IPPrototype
 	}
 	dotnet_foreach_impl install_impl
 	dotnet_multilib_comply
