@@ -31,10 +31,23 @@ src_compile() {
 	        einfo "Building solution"
 	        exbuild /p:Configuration=${mydebug} ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" ${PROJECT_NAME}.sln || die
 
-		dotnet_copy_dllmap_config "${FILESDIR}/Vorbisfile-CS.dll.config"
+		dotnet_copy_dllmap_config "${FILESDIR}/${PROJECT_NAME}.dll.config"
 	}
 
 	dotnet_foreach_impl compile_impl
+}
+
+# @FUNCTION: _mydoins
+# @DESCRIPTION: combines gac install, regular install, .config install
+_mydoins() {
+	local path="$1"
+	if dotnet_is_netfx ; then
+		estrong_resign "${path}" "${DISTDIR}/mono.snk"
+		egacinstall "${path}"
+		dotnet_distribute_file_matching_dll_in_gac "${path}" "${PROJECT_NAME}.dll.config"
+	fi
+	doins "${path}"
+	doins "${PROJECT_NAME}.dll.config"
 }
 
 src_install() {
@@ -42,15 +55,7 @@ src_install() {
 
 	install_impl() {
 		dotnet_install_loc
-
-		estrong_resign "bin/${mydebug}/${PROJECT_NAME}.dll" "${DISTDIR}/mono.snk"
-                egacinstall "bin/${mydebug}/${PROJECT_NAME}.dll"
-
-		doins "bin/${mydebug}/${PROJECT_NAME}.dll"
-		doins Vorbisfile-CS.dll.config
-
-		doins bin/${mydebug}/Vorbisfile-CS.dll.config
-		dotnet_distribute_dllmap_config "Vorbisfile-CS.dll"
+		_mydoins bin/${mydebug}/${PROJECT_NAME}.dll
 	}
 
 	dotnet_foreach_impl install_impl
