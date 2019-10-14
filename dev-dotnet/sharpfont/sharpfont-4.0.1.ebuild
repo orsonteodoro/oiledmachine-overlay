@@ -13,7 +13,8 @@ DEPEND="${RDEPEND}
 	virtual/pkgconfig"
 SLOT="0"
 inherit dotnet eutils mono
-SRC_URI="https://github.com/Robmaister/SharpFont/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/Robmaister/SharpFont/archive/v${PV}.tar.gz
+		-> ${P}.tar.gz"
 inherit gac
 S="${WORKDIR}/SharpFont-${PV}"
 
