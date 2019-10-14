@@ -77,21 +77,21 @@ src_install() {
 	local mydebug=$(usex debug "Debug" "Release")
 	install_impl() {
 		dotnet_install_loc
-		_mydoins Source/MonoGame.Extended/bin/Release/MonoGame.Extended.dll
-		_mydoins Source/MonoGame.Extended.Animations/bin/Release/MonoGame.Extended.Animations.dll
-		_mydoins Source/MonoGame.Extended.Collisions/bin/Release/MonoGame.Extended.Collisions.dll
+		_mydoins Source/MonoGame.Extended/bin/${mydebug}/MonoGame.Extended.dll
+		_mydoins Source/MonoGame.Extended.Animations/bin/${mydebug}/MonoGame.Extended.Animations.dll
+		_mydoins Source/MonoGame.Extended.Collisions/bin/${mydebug}/MonoGame.Extended.Collisions.dll
 		_mydoins Source/MonoGame.Extended.Content.Pipeline/bin/MonoGame.Extended.Content.Pipeline.dll
 		_mydoins Source/MonoGame.Extended.Content.Pipeline.Animations/bin/MonoGame.Extended.Content.Pipeline.Animations.dll
 		_mydoins Source/MonoGame.Extended.Content.Pipeline.Tiled/bin/MonoGame.Extended.Content.Pipeline.Tiled.dll
-		_mydoins Source/MonoGame.Extended.Entities/bin/Release/MonoGame.Extended.Entities.dll
-		_mydoins Source/MonoGame.Extended.Graphics/bin/Release/MonoGame.Extended.Graphics.dll
-		_mydoins Source/MonoGame.Extended.Gui/bin/Release/MonoGame.Extended.Gui.dll
-		_mydoins Source/MonoGame.Extended.Input/bin/Release/MonoGame.Extended.Input.dll
-		_mydoins Source/MonoGame.Extended.NuclexGui/bin/Release/MonoGame.Extended.NuclexGui.dll
-		_mydoins Source/MonoGame.Extended.Particles/bin/Release/MonoGame.Extended.Particles.dll
-		_mydoins Source/MonoGame.Extended.Tiled/bin/Release/MonoGame.Extended.Tiled.dll
-		_mydoins Source/MonoGame.Extended.Tweening/bin/Release/MonoGame.Extended.Tweening.dll
-		_mydoins Source/MonoGame.Extended.SceneGraphs/bin/Release/MonoGame.Extended.SceneGraphs.dll
+		_mydoins Source/MonoGame.Extended.Entities/bin/${mydebug}/MonoGame.Extended.Entities.dll
+		_mydoins Source/MonoGame.Extended.Graphics/bin/${mydebug}/MonoGame.Extended.Graphics.dll
+		_mydoins Source/MonoGame.Extended.Gui/bin/${mydebug}/MonoGame.Extended.Gui.dll
+		_mydoins Source/MonoGame.Extended.Input/bin/${mydebug}/MonoGame.Extended.Input.dll
+		_mydoins Source/MonoGame.Extended.NuclexGui/bin/${mydebug}/MonoGame.Extended.NuclexGui.dll
+		_mydoins Source/MonoGame.Extended.Particles/bin/${mydebug}/MonoGame.Extended.Particles.dll
+		_mydoins Source/MonoGame.Extended.Tiled/bin/${mydebug}/MonoGame.Extended.Tiled.dll
+		_mydoins Source/MonoGame.Extended.Tweening/bin/${mydebug}/MonoGame.Extended.Tweening.dll
+		_mydoins Source/MonoGame.Extended.SceneGraphs/bin/${mydebug}/MonoGame.Extended.SceneGraphs.dll
 	}
 	dotnet_foreach_impl install_impl
 	dotnet_multilib_comply
