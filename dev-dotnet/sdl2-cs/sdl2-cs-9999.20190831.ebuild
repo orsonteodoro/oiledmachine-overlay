@@ -27,52 +27,42 @@ src_prepare() {
 }
 
 src_compile() {
-	mydebug="release"
-	if use debug; then
-		mydebug="debug"
-	fi
-
+	local mydebug=$(usex debug "debug" "release")
 	compile_impl() {
 		if [[ "${EDOTNET}" =~ netcore || "${EDOTNET}" =~ netstandard ]] ; then
-		        exbuild ${STRONG_ARGS_NETCORE}"${DISTDIR}/mono.snk" -p:Configuration=${mydebug} SDL2-CS.Core.csproj || die
+		        exbuild ${STRONG_ARGS_NETCORE}"${DISTDIR}/mono.snk" \
+			  -p:Configuration=${mydebug} ${PROJECT_NAME}.Core.csproj || die
 		else
-		        exbuild ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" /p:Configuration=${mydebug} SDL2-CS.csproj || die
+		        exbuild ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" \
+			  /p:Configuration=${mydebug} ${PROJECT_NAME}.csproj || die
 		fi
-
-		dotnet_copy_dllmap_config "${FILESDIR}/SDL2-CS.dll.config"
+		dotnet_copy_dllmap_config "${FILESDIR}/${PROJECT_NAME}.dll.config"
 	}
-
 	dotnet_foreach_impl compile_impl
 }
 
 src_install() {
 	install_impl() {
-		mydebug="Release"
-		if use debug; then
-			mydebug="Debug"
-		fi
-
+		local mydebug=$(usex debug "Debug" "Release")
 		if [[ "${EDOTNET}" =~ netstandard ]] ; then
 			mydebug="${mydebug,,}"
 		fi
-
 		dotnet_install_loc
-
 		if [[ "${EDOTNET}" =~ netstandard ]] ; then
-			doins bin/${mydebug}/$(dotnet_use_flag_moniker_to_ms_moniker ${ENETCORE})/SDL2-CS.dll
-			doins SDL2-CS.dll.config
-			doins bin/${mydebug}/$(dotnet_use_flag_moniker_to_ms_moniker ${ENETCORE})/SDL2-CS.deps.json
-			doins bin/${mydebug}/$(dotnet_use_flag_moniker_to_ms_moniker ${ENETCORE})/SDL2-CS.pdb
+			doins bin/${mydebug}/$(dotnet_use_flag_moniker_to_ms_moniker ${ENETCORE})/${PROJECT_NAME}.dll
+			doins ${PROJECT_NAME}.dll.config
+			doins bin/${mydebug}/$(dotnet_use_flag_moniker_to_ms_moniker ${ENETCORE})/${PROJECT_NAME}.deps.json
+			doins bin/${mydebug}/$(dotnet_use_flag_moniker_to_ms_moniker ${ENETCORE})/${PROJECT_NAME}.pdb
 		elif dotnet_is_netfx "${EDOTNET}" ; then
 			estrong_resign "bin/${mydebug}/${PROJECT_NAME}.dll" "${DISTDIR}/mono.snk"
-			doins SDL2-CS.dll.config
-			doins bin/${mydebug}/SDL2-CS.dll
+			doins ${PROJECT_NAME}.dll.config
+			doins bin/${mydebug}/${PROJECT_NAME}.dll
 			egacinstall "bin/${mydebug}/${PROJECT_NAME}.dll"
-			dotnet_distribute_dllmap_config "${PROJECT_NAME}.dll"
+			dotnet_distribute_file_matching_dll_in_gac \
+				"bin/${mydebug}/${PROJECT_NAME}.dll" \
+				"${PROJECT_NAME}.dll.config"
 		fi
 	}
-
 	dotnet_foreach_impl install_impl
-
 	dotnet_multilib_comply
 }

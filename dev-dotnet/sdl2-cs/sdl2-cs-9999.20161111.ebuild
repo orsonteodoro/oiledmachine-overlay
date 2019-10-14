@@ -27,38 +27,30 @@ src_prepare() {
 }
 
 src_compile() {
-	mydebug="release"
-	if use debug; then
-		mydebug="debug"
-	fi
-
+	local mydebug=$(usex debug "debug" "release")
 	compile_impl() {
-	        exbuild ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" /p:Configuration=${mydebug} SDL2-CS.csproj || die
-
-		dotnet_copy_dllmap_config "${FILESDIR}/SDL2-CS.dll.config"
+	        exbuild ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" \
+			/p:Configuration=${mydebug} ${PROJECT_NAME}.csproj || die
+		dotnet_copy_dllmap_config "${FILESDIR}/${PROJECT_NAME}.dll.config"
 	}
-
 	dotnet_foreach_impl compile_impl
 }
 
 src_install() {
 	install_impl() {
-		mydebug="Release"
-		if use debug; then
-			mydebug="Debug"
-		fi
-
+		local mydebug=$(usex debug "Debug" "Release")
 		if [[ "${EDOTNET}" =~ netstandard ]] ; then
 			mydebug="${mydebug,,}"
 		fi
-
 		dotnet_install_loc
-
-		estrong_resign "bin/${mydebug}/${PROJECT_NAME}.dll" "${DISTDIR}/mono.snk"
-		doins bin/${mydebug}/SDL2-CS.dll
-		doins SDL2-CS.dll.config
+		estrong_resign "bin/${mydebug}/${PROJECT_NAME}.dll" \
+			"${DISTDIR}/mono.snk"
+		doins bin/${mydebug}/${PROJECT_NAME}.dll
+		doins ${PROJECT_NAME}.dll.config
 		egacinstall "bin/${mydebug}/${PROJECT_NAME}.dll"
-		dotnet_distribute_dllmap_config "${PROJECT_NAME}.dll"
+		dotnet_distribute_file_matching_dll_in_gac \
+			"bin/${mydebug}/${PROJECT_NAME}.dll" \
+			"${PROJECT_NAME}.dll.config"
 	}
 
 	dotnet_foreach_impl install_impl
