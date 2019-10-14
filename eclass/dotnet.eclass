@@ -588,6 +588,19 @@ estrong_assembly_info() {
 	fi
 }
 
+# @FUNCTION: estrong_assembly_info2
+# @DESCRIPTION:  This will inject the key in AssemblyInfo.cs if InternalsVisibleTo exists
+# @CODE
+# Parameters:
+# $1 - Assembly name
+# $2 - path to the private key
+# $3 - the path to the AssemblyInfo.cs file to inject the key into
+# @CODE
+estrong_assembly_info2() {
+	local public_key=$(sn -tp "$2" | tail -n 7 | head -n 5 | tr -d '\n')
+	sed -i -r -e "s|\[assembly\: InternalsVisibleTo\(\"$1\"\)\]|\[assembly: InternalsVisibleTo(\"$1, PublicKey=${public_key}\")\]|" "$3" || die
+}
+
 # @FUNCTION: estrong_resign
 # @DESCRIPTION:  This will re-sign the dll with the key
 # @CODE
