@@ -15,8 +15,10 @@ DEPEND="${RDEPEND}"
 BULLET_COMMIT="cb654ddc803a56567fdc8f6dcc4eb3e8291b3e98"
 EGIT_COMMIT="498e8b8d0f57d43b55ad9179e3daf416eae33dcb"
 inherit cmake-utils dotnet eutils multilib-minimal
-SRC_URI="https://github.com/AndresTraks/BulletSharpPInvoke/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${PV}.tar.gz
-	 https://github.com/bulletphysics/bullet3/archive/${BULLET_COMMIT}.tar.gz -> bullet-${LIBBULLETC_PV}.tar.gz"
+SRC_URI="https://github.com/AndresTraks/BulletSharpPInvoke/archive/${EGIT_COMMIT}.tar.gz
+	   -> ${PN}-${PV}.tar.gz
+	 https://github.com/bulletphysics/bullet3/archive/${BULLET_COMMIT}.tar.gz
+	   -> bullet-${LIBBULLETC_PV}.tar.gz"
 inherit gac
 SLOT="0/${PV}"
 RESTRICT="mirror"
@@ -29,23 +31,21 @@ src_unpack() {
 
 src_prepare() {
 	default
-	sed -i -e "s|\"libbulletc\"|\"libbulletc.dll\"|g" BulletSharp/Native.cs || die
-
+	sed -i -e "s|\"libbulletc\"|\"libbulletc.dll\"|g" \
+		BulletSharp/Native.cs || die
 	if ! use test ; then
-		sed -i -e 's|ADD_SUBDIRECTORY\(test\)||g' libbulletc/CMakeLists.txt || die
+		sed -i -e 's|ADD_SUBDIRECTORY\(test\)||g' \
+		  libbulletc/CMakeLists.txt || die
 	fi
-
-	estrong_assembly_info "using System.Runtime.InteropServices;" "${DISTDIR}/mono.snk" "BulletSharp/Properties/AssemblyInfo.cs"
-
+	estrong_assembly_info "using System.Runtime.InteropServices;" \
+		"${DISTDIR}/mono.snk" "BulletSharp/Properties/AssemblyInfo.cs"
 	multilib_copy_sources
-
 	ml_prepare() {
 		cd "${BUILD_DIR}/libbulletc" || die
 		S="${BUILD_DIR}/libbulletc" \
 		cmake-utils_src_prepare
 	}
 	multilib_foreach_abi ml_prepare
-
 	dotnet_copy_sources
 }
 
@@ -65,15 +65,28 @@ src_compile() {
 		cmake-utils_src_compile
 	}
 	multilib_foreach_abi ml_compile
-
 	compile_impl() {
 		dotnet_copy_dllmap_config "${FILESDIR}/BulletSharp.dll.config"
-
 		# Build C# wrapper
 		cd BulletSharp || die
 		exbuild BulletSharp.sln || die
 	}
 	dotnet_foreach_impl compile_impl
+}
+
+_mydoins() {
+	local path="$1"
+	if dotnet_is_netfx ; then
+		egacinstall "${path}"
+		dotnet_distribute_file_matching_dll_in_gac "${path}" \
+			"BulletSharp.dll.config"
+		use developer && \
+			dotnet_distribute_file_matching_dll_in_gac "${path}" \
+			"${path}.mdb"
+	fi
+	doins "${path}"
+	doins "BulletSharp.dll.config"
+	use developer && doins "${path}.mdb"
 }
 
 src_install() {
@@ -83,26 +96,11 @@ src_install() {
 		doins "libbulletc.so"
 	}
 	multilib_foreach_abi ml_install
-
 	install_impl() {
 		local mydebug=$(usex debug "Debug" "Release")
-
 		dotnet_install_loc
-
-		if [[ "${EDOTNET}" == "net40" ]] ; then
-			egacinstall "BulletSharp/bin/${mydebug}/BulletSharp.dll"
-		fi
-
-		doins BulletSharp/bin/${mydebug}/BulletSharp.dll
-		doins BulletSharp.dll.config
-
-		if use developer ; then
-			doins BulletSharp/bin/${mydebug}/BulletSharp.dll.mdb
-		fi
-
-		dotnet_distribute_dllmap_config "BulletSharp.dll"
+		_mydoins BulletSharp/bin/${mydebug}/BulletSharp.dll
 	}
 	dotnet_foreach_impl install_impl
-
 	dotnet_multilib_comply
 }
