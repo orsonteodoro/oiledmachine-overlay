@@ -91,14 +91,14 @@ _mydoins() {
 		if [[ "${EDOTNET}" == "net20" ]] ; then
 			if [[ -z "${name}" ]] ; then
 				doins ${mydebug}/AForge.pdb
-				dotnet_distribute_file_matching_dll_in_gac \
-					"${mydebug}/AForge.dll" \
-					"${mydebug}/AForge.pdb"
+				#dotnet_distribute_file_matching_dll_in_gac \
+				#	"${mydebug}/AForge.dll" \
+				#	"${mydebug}/AForge.pdb"
 			else
 				doins ${mydebug}/AForge.${name}.pdb
-				dotnet_distribute_file_matching_dll_in_gac \
-					"${mydebug}/AForge.${name}.dll" \
-					"${mydebug}/AForge.${name}.pdb"
+				#dotnet_distribute_file_matching_dll_in_gac \
+				#	"${mydebug}/AForge.${name}.dll" \
+				#	"${mydebug}/AForge.${name}.pdb"
 			fi
 		fi
 	fi
