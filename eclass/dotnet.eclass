@@ -308,6 +308,8 @@ dotnet_pkg_pretend() {
 # @FUNCTION: dotnet_pkg_setup
 # @DESCRIPTION:  This function set FRAMEWORK to the highest requested framework
 dotnet_pkg_setup() {
+	ewarn "oiledmachine-overlay's dev-dotnet is undergoing renovation.  Please do not use."
+	ewarn "The install phase is broken."
 	EBUILD_FRAMEWORK=""
 	mono-env_pkg_setup
 	for x in ${USE_DOTNET} ; do
