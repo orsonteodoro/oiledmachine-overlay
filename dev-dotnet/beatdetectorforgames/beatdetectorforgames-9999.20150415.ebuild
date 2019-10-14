@@ -20,7 +20,7 @@ SRC_URI="
 https://github.com/Terracorrupt/BeatDetectorForGames/archive/${EGIT_COMMIT}.tar.gz
 		-> ${P}.tar.gz"
 inherit gac
-SLOT="0"
+SLOT="0/${PV}"
 S="${WORKDIR}/${PROJECT_NAME}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
