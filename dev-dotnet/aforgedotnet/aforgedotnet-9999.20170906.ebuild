@@ -65,26 +65,40 @@ _mydoins() {
 			dotnet_distribute_file_matching_dll_in_gac \
 			  "${mydebug}/AForge.Video.Kinect.dll" \
 			  "AForge.Video.Kinect.dll.config"
+			doins AForge.Video.Kinect.dll.config
 		fi
 		if use ximea ; then
 			dotnet_distribute_file_matching_dll_in_gac \
 			  "${mydebug}/AForge.Video.Ximea.dll" \
 			  "AForge.Video.Ximea.dll.config"
+			doins AForge.Video.Ximea.dll.config
 		fi
 	fi
 	if use developer ; then
 		if [[ "${EDOTNET}" == "net40" ]] ; then
 			if [[ -z "${name}" ]] ; then
 				doins Sources/Core/AForge.xml
+				dotnet_distribute_file_matching_dll_in_gac \
+					"${mydebug}/AForge.dll" \
+					"Sources/Core/AForge.xml"
 			else
 				doins Sources/${name}/AForge.${name}.xml
+				dotnet_distribute_file_matching_dll_in_gac \
+					"${mydebug}/AForge.${name}.dll" \
+					"Sources/${name}/AForge.${name}.xml"
 			fi
 		fi
 		if [[ "${EDOTNET}" == "net20" ]] ; then
 			if [[ -z "${name}" ]] ; then
 				doins ${mydebug}/AForge.pdb
+				dotnet_distribute_file_matching_dll_in_gac \
+					"${mydebug}/AForge.dll" \
+					"${mydebug}/AForge.pdb"
 			else
 				doins ${mydebug}/AForge.${name}.pdb
+				dotnet_distribute_file_matching_dll_in_gac \
+					"${mydebug}/AForge.${name}.dll" \
+					"${mydebug}/AForge.${name}.pdb"
 			fi
 		fi
 	fi
