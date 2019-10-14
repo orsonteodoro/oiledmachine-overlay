@@ -13,7 +13,7 @@ REQUIRED_USE="|| ( ${USE_DOTNET} ) gac gac? ( net40 )"
 RDEPEND="dev-dotnet/opentk"
 DEPEND="${RDEPEND}"
 RESTRICT="fetch"
-inherit dotnet eutils git-r3 mono
+inherit dotnet eutils git-r3
 SRC_URI=""
 inherit gac
 S="${WORKDIR}/${PN}-${PV}"
@@ -37,46 +37,33 @@ src_prepare() {
 	eapply "${FILESDIR}/nvorbis-9999.20160922-unittests-ref.patch"
 	eapply "${FILESDIR}/nvorbis-9999.20160922-testapp.patch"
 	eapply "${FILESDIR}/nvorbis-9999.20160922-disable-testapp.patch"
+	dotnet_copy_sources
 }
 
 src_compile() {
-	cd "${S}"
-	exbuild /p:Configuration=$(usex debug "debug" "release") ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" NVorbis.sln || die
+	compile_impl() {
+		exbuild /p:Configuration=$(usex debug "debug" "release") ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" NVorbis.sln || die
+	}
+	dotnet_foreach_impl compile_impl
 }
 
 src_install() {
-	mydebug="Release"
-	if use debug; then
-		mydebug="Debug"
-	fi
-
-        ebegin "Installing dlls into the GAC"
-
-	for x in ${USE_DOTNET} ; do
-		FW_UPPER=${x:3:1}
-		FW_LOWER=${x:4:1}
-		egacinstall "${S}/bin/NVorbis.dll"
-		insinto "/usr/$(get_libdir)/mono/${PN}"
+	local mydebug=$(usex debug "Debug" "Release")
+	install_impl() {
+		dotnet_install_loc
+		egacinstall bin/NVorbis.dll
 		if use developer ; then
-			doins "${S}/bin/NVorbis.dll"
+			doins bin/NVorbis.dll
 			doins bin/{NVorbis.dll.mdb,NVorbis.XML}
 		fi
-        done
-
-	if use opentk ; then
-		for x in ${USE_DOTNET} ; do
-			FW_UPPER=${x:3:1}
-			FW_LOWER=${x:4:1}
-			egacinstall "${S}/OpenTKSupport/bin/${mydebug}/NVorbis.OpenTKSupport.dll"
-			insinto "/usr/$(get_libdir)/mono/${PN}"
+		if use opentk ; then
+			egacinstall OpenTKSupport/bin/${mydebug}/NVorbis.OpenTKSupport.dll
 			if use developer ; then
 				doins OpenTKSupport/bin/${mydebug}/NVorbis.OpenTKSupport.dll.mdb
 				doins bin/NVorbis.OpenTKSupport.XML
 			fi
-		done
-	fi
-
-	eend
-
+		fi
+	}
+	dotnet_foreach_impl install_impl
 	dotnet_multilib_comply
 }
