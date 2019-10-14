@@ -51,13 +51,7 @@ src_compile() {
 src_install() {
 	local mydebug=$(usex debug "Debug" "Release")
 	install_impl() {
-		local d
-		if [[ "${EDOTNET}" =~ netstandard ]] ; then
-			d=$(dotnet_netcore_install_loc ${EDOTNET})
-		elif dotnet_is_netfx "${EDOTNET}" ; then
-			d=$(dotnet_netfx_install_loc ${EDOTNET})
-		fi
-		insinto "${d}"
+		dotnet_install_loc
 
 		if ver_test $(dotnet_use_moniker_to_dotted_ver "${EDOTNET}") -ge 4.0 ; then
 			estrong_resign ${mydebug}/AForge.Vision.dll \
