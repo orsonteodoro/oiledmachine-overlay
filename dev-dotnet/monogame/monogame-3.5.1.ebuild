@@ -94,16 +94,16 @@ src_prepare() {
 
 	# Windows is not supported.
 	xml ed -d "/Addin/ConditionType[contains(@id,'IsWindows')]" MonoDevelop.MonoGame.addin.xml \
-	| xml ed -d "/Addin/Extension/Condition[contains(@id,'IsWindows')]" > \
+	  | xml ed -d "/Addin/Extension/Condition[contains(@id,'IsWindows')]" > \
 	  MonoDevelop.MonoGame.addin.xml.tmp
 	cp MonoDevelop.MonoGame.addin.xml.tmp MonoDevelop.MonoGame.addin.xml
 
 	# Android is not supported.
 	xml ed -d "/Addin/Runtime/Import[contains(@file,'Android')]" \
 	  MonoDevelop.MonoGame.addin.xml \
-	| xml ed -d "/Addin/Runtime/Import[contains(@file,'OUYA')]" \
-	| xml ed -d "/Addin/Module/Runtime/Import[contains(@assembly,'Android')]/../.." \
-	| xml ed -d "/Addin/Module/Dependencies/Addin[contains(@id,'MonoAndroid')]" \
+	  | xml ed -d "/Addin/Runtime/Import[contains(@file,'OUYA')]" \
+	  | xml ed -d "/Addin/Module/Runtime/Import[contains(@assembly,'Android')]/../.." \
+	  | xml ed -d "/Addin/Module/Dependencies/Addin[contains(@id,'MonoAndroid')]" \
 	  > MonoDevelop.MonoGame.addin.xml.tmp
 	cp MonoDevelop.MonoGame.addin.xml.tmp MonoDevelop.MonoGame.addin.xml
 
@@ -134,10 +134,10 @@ src_prepare() {
 	# Mac is not supported.
 	xml ed -d "/Addin/Runtime/Import[contains(@file,'Mac')]" \
 	  MonoDevelop.MonoGame.addin.xml \
-	| xml ed -d "/Addin/Runtime/Import[contains(@file,'OSX')]" \
-	| xml ed -d "/Addin/ConditionType[contains(@id,'IsMac')]" \
-	| xml ed -d "/Addin/Extension/Condition[contains(@id,'IsMac')]" \
-	| xml ed -d "/Addin/Module/Runtime/Import[contains(@assembly,'Mac')]/../.." \
+	  | xml ed -d "/Addin/Runtime/Import[contains(@file,'OSX')]" \
+	  | xml ed -d "/Addin/ConditionType[contains(@id,'IsMac')]" \
+	  | xml ed -d "/Addin/Extension/Condition[contains(@id,'IsMac')]" \
+	  | xml ed -d "/Addin/Module/Runtime/Import[contains(@assembly,'Mac')]/../.." \
 	  > MonoDevelop.MonoGame.addin.xml.tmp
 	cp MonoDevelop.MonoGame.addin.xml.tmp MonoDevelop.MonoGame.addin.xml
 
