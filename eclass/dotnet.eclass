@@ -942,24 +942,6 @@ dotnet_is_netfx() {
 	return 1
 }
 
-# DEPRECATED
-# @FUNCTION: dotnet_distribute_dllmap_config
-# @DESCRIPTION:  This will distribute the DLL map from the current directory
-dotnet_distribute_dllmap_config() {
-	local dllname="${1}"
-        FILES=$(find "${D}/usr/$(get_libdir)" -name "${dllname}")
-        for f in $FILES
-        do
-		f=$(echo "${f}" | sed -e "s|${D}||g")
-		if [[ "${f:0:1}" != "/" ]] ; then
-			f="/${f}"
-		fi
-		if [[ "${d}/${dllname}.config" != "${f}.config" ]] ; then
-	                dosym "${d}/${dllname}.config" "${f}.config"
-		fi
-        done
-}
-
 # @FUNCTION: dotnet_distribute_file_matching_dll_in_gac
 # @DESCRIPTION:  This will distribute a file next to a dll ${D}'s gac
 # @CODE
@@ -968,17 +950,19 @@ dotnet_distribute_dllmap_config() {
 # $2 - the path to the file to distribute
 # @CODE
 dotnet_distribute_file_matching_dll_in_gac() {
-	local dll="${1}"
-	local h=$(sha1sum "${1}")
-	local payload_path="${2}"
-	DLLS=$(find "${D}"/usr/$(get_libdir)/mono/gac/ -name "*.dll")
-	for f in ${DLLS} ; do
-		x_h=$(sha1sum "${f}")
-		if [[ "${x_h}" == "${h}" ]] ; then
-			local loc=$(dirname "${f}")
-			cp -a "${payload_path}" "${loc}"
-		fi
-	done
+	if use gac ; then
+		local dll="${1}"
+		local h=$(sha1sum "${1}")
+		local payload_path="${2}"
+		DLLS=$(find "${D}"/usr/$(get_libdir)/mono/gac/ -name "*.dll")
+		for f in ${DLLS} ; do
+			x_h=$(sha1sum "${f}")
+			if [[ "${x_h}" == "${h}" ]] ; then
+				local loc=$(dirname "${f}")
+				cp -a "${payload_path}" "${loc}"
+			fi
+		done
+	fi
 }
 
 # @FUNCTION: dotnet_copy_dllmap_config
