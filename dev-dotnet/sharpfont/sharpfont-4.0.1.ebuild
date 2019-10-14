@@ -17,39 +17,37 @@ SRC_URI="https://github.com/Robmaister/SharpFont/archive/v${PV}.tar.gz -> ${P}.t
 inherit gac
 S="${WORKDIR}/SharpFont-${PV}"
 
+src_prepare() {
+	default
+	dotnet_copy_sources
+}
+
 src_compile() {
-	cd "${S}/Source/SharpFont"
-	exbuild_raw SharpFont.csproj /p:Configuration=$(usex debug "Debug" "Release") ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" || die
+	compile_impl() {
+		cd Source/SharpFont
+		exbuild ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" \
+			SharpFont.csproj || die
+	}
+	dotnet_foreach_impl compile_impl
 }
 
 src_install() {
-	mydebug="Release"
-	if use debug; then
-		mydebug="Debug"
-	fi
-
-        ebegin "Installing dlls into the GAC"
-
-	if use developer ; then
-		insinto "/usr/$(get_libdir)/mono/${PN}"
-		doins Source/SharpFont/SharpFont.snk
-	fi
-
-	for x in ${USE_DOTNET} ; do
-                FW_UPPER=${x:3:1}
-                FW_LOWER=${x:4:1}
-                egacinstall "${S}/Binaries/SharpFont/${mydebug}/SharpFont.dll"
-		insinto "/usr/$(get_libdir)/mono/${PN}"
-		use developer && doins "${S}/Binaries/SharpFont/${mydebug}/SharpFont.dll.mdb"
-        done
-
-	eend
-
-	insinto "/usr/$(get_libdir)/mono/${PN}"
-	doins Binaries/SharpFont/${mydebug}/SharpFont.dll.config
-
-	cd "${S}"
+	local mydebug=$(usex debug "Debug" "Release")
+	install_impl() {
+		dotnet_install_loc
+                egacinstall Binaries/SharpFont/${mydebug}/SharpFont.dll
+		dotnet_distribute_file_matching_dll_in_gac \
+			"Binaries/SharpFont/${mydebug}/SharpFont.dll" \
+			"Binaries/SharpFont/${mydebug}/SharpFont.dll.config"
+		doins Binaries/SharpFont/${mydebug}/SharpFont.dll.config
+		if use developer ; then
+			dotnet_distribute_file_matching_dll_in_gac \
+			  "Binaries/SharpFont/${mydebug}/SharpFont.dll" \
+			  "Binaries/SharpFont/${mydebug}/SharpFont.dll.mdb"
+			doins Binaries/SharpFont/${mydebug}/SharpFont.dll.mdb
+		fi
+	}
+	dotnet_foreach_impl install_impl
 	dodoc README.md "LICENSE"
-
 	dotnet_multilib_comply
 }
