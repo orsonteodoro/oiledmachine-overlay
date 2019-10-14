@@ -942,8 +942,7 @@ dotnet_is_netfx() {
 	return 1
 }
 
-
-
+# DEPRECATED
 # @FUNCTION: dotnet_distribute_dllmap_config
 # @DESCRIPTION:  This will distribute the DLL map from the current directory
 dotnet_distribute_dllmap_config() {
@@ -959,6 +958,27 @@ dotnet_distribute_dllmap_config() {
 	                dosym "${d}/${dllname}.config" "${f}.config"
 		fi
         done
+}
+
+# @FUNCTION: dotnet_distribute_file_matching_dll_in_gac
+# @DESCRIPTION:  This will distribute a file next to a dll ${D}'s gac
+# @CODE
+# Parameters:
+# $1 - the dll to fingerprint
+# $2 - the path to the file to distribute
+# @CODE
+dotnet_distribute_file_matching_dll_in_gac() {
+	local dll="${1}"
+	local h=$(sha1sum "${1}")
+	local payload_path="${2}"
+	DLLS=$(find "${D}"/usr/$(get_libdir)/mono/gac/ -name "*.dll")
+	for f in ${DLLS} ; do
+		x_h=$(sha1sum "${f}")
+		if [[ "${x_h}" == "${h}" ]] ; then
+			local loc=$(dirname "${f}")
+			cp -a "${payload_path}" "${loc}"
+		fi
+	done
 }
 
 # @FUNCTION: dotnet_copy_dllmap_config
