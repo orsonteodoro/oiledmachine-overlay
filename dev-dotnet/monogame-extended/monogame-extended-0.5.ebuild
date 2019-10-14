@@ -2,7 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-DESCRIPTION="MonoGame.Extended are classes and extensions to make MonoGame more awesome "
+DESCRIPTION="MonoGame.Extended are classes and extensions to make MonoGame more"
+DESCRIPTION+=" awesome"
 HOMEPAGE="http://www.monogameextended.net/"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
@@ -25,40 +26,44 @@ src_prepare() {
 	default
 	eapply "${FILESDIR}/monogame-extended-0.5-linux-fixes.patch"
 	eapply "${FILESDIR}/monogame-extended-0.5-no-demos.patch"
+	dotnet_copy_sources
 }
 
 src_compile() {
-	cd "${S}/Source"
+	compile_impl() {
+		cd Source
+		exbuild ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" \
+			${PROJECT_NAME}.sln
+	}
+	dotnet_foreach_impl compile_impl
+}
 
-	exbuild ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" ${PROJECT_NAME}.sln
+# @FUNCTION: _mydoins
+# @DESCRIPTION:  Combines both egacinstall, regular, and developer meta
+_mydoins() {
+	local path="$1"
+	if dotnet_is_netfx ; then
+		egacinstall "${path}"
+	fi
+	doins "${path}"
+	if use developer ; then
+		doins "${path}.mdb"
+	fi
 }
 
 src_install() {
-	mydebug="Release"
-	if use debug; then
-		mydebug="Debug"
-	fi
-
-	ebegin "Installing dlls into the GAC"
-
-	for x in ${USE_DOTNET} ; do
-		FW_UPPER=${x:3:1}
-		FW_LOWER=${x:4:1}
-		egacinstall "${S}/Source/MonoGame.Extended.Content.Pipeline/bin/MonoGame.Extended.dll"
-		egacinstall "${S}/Source/MonoGame.Extended.Content.Pipeline/bin/MonoGame.Extended.Content.Pipeline.dll"
-        done
-
-	eend
-
-	if use developer ; then
-		insinto "/usr/$(get_libdir)/mono/${PN}"
-		doins "${S}/Source/MonoGame.Extended.Content.Pipeline/bin/MonoGame.Extended.dll.mdb"
-		doins "${S}/Source/MonoGame.Extended.Content.Pipeline/bin/MonoGame.Extended.Content.Pipeline.dll.mdb"
-	fi
-
+	local mydebug=$(usex debug "Debug" "Release")
+	install_impl() {
+		dotnet_install_loc
+		_mydoins "Source/MonoGame.Extended.Content.Pipeline/bin/MonoGame.Extended.dll"
+		_mydoins "Source/MonoGame.Extended.Content.Pipeline/bin/MonoGame.Extended.Content.Pipeline.dll"
+	}
+	dotnet_foreach_impl install_impl
 	dotnet_multilib_comply
 }
 
 pkg_postinst() {
-	einfo "Currently MonoGame doesn't support shaders in Linux on the stable branch.  This means some of the features in monogame-extended will not work."
+	einfo "Currently MonoGame doesn't support shaders in Linux on the "
+	einfo "stable branch.  This means some of the features in"
+	einfo "monogame-extended will not work."
 }
