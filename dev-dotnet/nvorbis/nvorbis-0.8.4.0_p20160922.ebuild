@@ -6,28 +6,19 @@ DESCRIPTION="NVorbis is a C# vorbis decoder"
 HOMEPAGE="https://github.com/ioctlLR/NVorbis"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
-SLOT="0"
+SLOT="0/${PV}"
 USE_DOTNET="net35 net40"
 IUSE="${USE_DOTNET} debug developer +gac opentk"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 )"
 RDEPEND="dev-dotnet/opentk"
 DEPEND="${RDEPEND}"
-RESTRICT="fetch"
-inherit dotnet eutils git-r3
-SRC_URI=""
+RESTRICT="mirror"
+inherit dotnet eutils
+EGIT_COMMIT="0d40b48a48c4f87bb18b3593e7db0dab74dbb829"
+SRC_URI="https://github.com/ioctlLR/NVorbis/archive/${EGIT_COMMIT}.tar.gz \
+		-> ${P}.tar.gz"
 inherit gac
 S="${WORKDIR}/${PN}-${PV}"
-
-src_unpack() {
-	unpack "${A}"
-        #EGIT_CHECKOUT_DIR="${WORKDIR}"
-        EGIT_REPO_URI="https://github.com/ioctlLR/NVorbis.git"
-        EGIT_BRANCH="master"
-        EGIT_COMMIT="0d40b48a48c4f87bb18b3593e7db0dab74dbb829"
-        git-r3_fetch
-        git-r3_checkout
-
-}
 
 src_prepare() {
 	default
