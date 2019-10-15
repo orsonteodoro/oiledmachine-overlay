@@ -21,6 +21,11 @@ inherit gac
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${PV}"
 
+src_prepare() {
+	default
+	dotnet_copy_sources
+}
+
 src_compile() {
 	compile_impl() {
 		exbuild ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" \
