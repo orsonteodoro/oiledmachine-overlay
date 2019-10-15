@@ -10,13 +10,14 @@ KEYWORDS="~amd64 ~x86"
 PROJECT_NAME="MonoGame.Extended"
 USE_DOTNET="net45"
 IUSE="${USE_DOTNET} debug +gac static"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac gac? ( net45 )"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net45 )"
 RDEPEND="dev-dotnet/monogame
          dev-dotnet/nsubstitute
 	 media-libs/freeimage[tiff,openexr,raw,png]"
 DEPEND="${RDEPEND}"
 inherit dotnet eutils mono
-SRC_URI="https://github.com/craftworkgames/${PROJECT_NAME}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/craftworkgames/${PROJECT_NAME}/archive/v${PV}.tar.gz \
+		-> ${P}.tar.gz"
 inherit gac
 SLOT="0"
 S="${WORKDIR}/${PROJECT_NAME}-${PV}"
@@ -48,6 +49,9 @@ _mydoins() {
 	doins "${path}"
 	if use developer ; then
 		doins "${path}.mdb"
+		dotnet_distribute_file_matching_dll_in_gac \
+			"${path}"
+			"${path}.mdb"
 	fi
 }
 
@@ -55,8 +59,10 @@ src_install() {
 	local mydebug=$(usex debug "Debug" "Release")
 	install_impl() {
 		dotnet_install_loc
-		_mydoins "Source/MonoGame.Extended.Content.Pipeline/bin/MonoGame.Extended.dll"
-		_mydoins "Source/MonoGame.Extended.Content.Pipeline/bin/MonoGame.Extended.Content.Pipeline.dll"
+		_mydoins \
+"Source/MonoGame.Extended.Content.Pipeline/bin/MonoGame.Extended.dll"
+		_mydoins \
+"Source/MonoGame.Extended.Content.Pipeline/bin/MonoGame.Extended.Content.Pipeline.dll"
 	}
 	dotnet_foreach_impl install_impl
 	dotnet_multilib_comply

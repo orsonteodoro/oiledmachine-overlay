@@ -10,13 +10,14 @@ KEYWORDS="~amd64 ~x86"
 PROJECT_NAME="MonoGame.Extended"
 USE_DOTNET="net45"
 IUSE="${USE_DOTNET} debug +gac static"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac gac? ( net45 )"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net45 )"
 RDEPEND="dev-dotnet/monogame
          dev-dotnet/nsubstitute
 	 media-libs/freeimage[tiff,openexr,raw,png]"
 DEPEND="${RDEPEND}"
 inherit dotnet eutils mono
-SRC_URI="https://github.com/craftworkgames/${PROJECT_NAME}/archive/${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/craftworkgames/${PROJECT_NAME}/archive/${PV}.tar.gz \
+		-> ${P}.tar.gz"
 inherit gac
 SLOT="0"
 S="${WORKDIR}/${PROJECT_NAME}-${PV}"
@@ -59,6 +60,17 @@ src_compile() {
 	}
 	dotnet_foreach_impl install_impl
 }
+# Path Generator for modules
+_pgm() {
+	local assembly_name="$1"
+	echo "Source/${assembly_name}/bin/${mydebug}/${assembly_name}.dll"
+}
+
+# Path Generator for pipeline
+_pgp() {
+	local assembly_name="$1"
+	echo "Source/${assembly_name}/bin/${assembly_name}.dll"
+}
 
 # @FUNCTION: _mydoins
 # @DESCRIPTION:  Combines both egacinstall, regular, and developer meta
@@ -70,6 +82,9 @@ _mydoins() {
 	doins "${path}"
 	if use developer ; then
 		doins "${path}.mdb"
+		dotnet_distribute_file_matching_dll_in_gac \
+			"${path}"
+			"${path}.mdb"
 	fi
 }
 
@@ -77,21 +92,21 @@ src_install() {
 	local mydebug=$(usex debug "Debug" "Release")
 	install_impl() {
 		dotnet_install_loc
-		_mydoins Source/MonoGame.Extended/bin/${mydebug}/MonoGame.Extended.dll
-		_mydoins Source/MonoGame.Extended.Animations/bin/${mydebug}/MonoGame.Extended.Animations.dll
-		_mydoins Source/MonoGame.Extended.Collisions/bin/${mydebug}/MonoGame.Extended.Collisions.dll
-		_mydoins Source/MonoGame.Extended.Content.Pipeline/bin/MonoGame.Extended.Content.Pipeline.dll
-		_mydoins Source/MonoGame.Extended.Content.Pipeline.Animations/bin/MonoGame.Extended.Content.Pipeline.Animations.dll
-		_mydoins Source/MonoGame.Extended.Content.Pipeline.Tiled/bin/MonoGame.Extended.Content.Pipeline.Tiled.dll
-		_mydoins Source/MonoGame.Extended.Entities/bin/${mydebug}/MonoGame.Extended.Entities.dll
-		_mydoins Source/MonoGame.Extended.Graphics/bin/${mydebug}/MonoGame.Extended.Graphics.dll
-		_mydoins Source/MonoGame.Extended.Gui/bin/${mydebug}/MonoGame.Extended.Gui.dll
-		_mydoins Source/MonoGame.Extended.Input/bin/${mydebug}/MonoGame.Extended.Input.dll
-		_mydoins Source/MonoGame.Extended.NuclexGui/bin/${mydebug}/MonoGame.Extended.NuclexGui.dll
-		_mydoins Source/MonoGame.Extended.Particles/bin/${mydebug}/MonoGame.Extended.Particles.dll
-		_mydoins Source/MonoGame.Extended.Tiled/bin/${mydebug}/MonoGame.Extended.Tiled.dll
-		_mydoins Source/MonoGame.Extended.Tweening/bin/${mydebug}/MonoGame.Extended.Tweening.dll
-		_mydoins Source/MonoGame.Extended.SceneGraphs/bin/${mydebug}/MonoGame.Extended.SceneGraphs.dll
+		_mydoins $(_pgm MonoGame.Extended)
+		_mydoins $(_pgm MonoGame.Extended.Animations)
+		_mydoins $(_pgm MonoGame.Extended.Collisions)
+		_mydoins $(_pgp MonoGame.Extended.Content.Pipeline)
+		_mydoins $(_pgp MonoGame.Extended.Content.Pipeline.Animations)
+		_mydoins $(_pgp MonoGame.Extended.Content.Pipeline.Tiled)
+		_mydoins $(_pgm MonoGame.Extended.Entities)
+		_mydoins $(_pgm MonoGame.Extended.Graphics)
+		_mydoins $(_pgm MonoGame.Extended.Gui)
+		_mydoins $(_pgm MonoGame.Extended.Input)
+		_mydoins $(_pgm MonoGame.Extended.NuclexGui)
+		_mydoins $(_pgm MonoGame.Extended.Particles)
+		_mydoins $(_pgm MonoGame.Extended.Tiled)
+		_mydoins $(_pgm MonoGame.Extended.Tweening)
+		_mydoins $(_pgm MonoGame.Extended.SceneGraphs)
 	}
 	dotnet_foreach_impl install_impl
 	dotnet_multilib_comply
