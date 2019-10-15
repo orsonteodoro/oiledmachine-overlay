@@ -46,7 +46,6 @@ _get_abi() {
 		die "ABI is not supported"
 	fi
 }
-
 src_compile() {
 	ml_compile_impl() {
 		local myabi_dll
@@ -59,7 +58,9 @@ src_compile() {
 -e 's|<Import Project=\"\$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />||g' \
 			${SO_NAME}/${SO_NAME}.vcxproj || die
 		sed -i \
--e 's|<Import Project=\"\$(VCTargetsPath)\\Microsoft.Cpp.targets\" />|<Target Name="Build" DependsOnTargets="$(BuildDependsOn)" Outputs="$(TargetPath)"/>|g' \
+-e 's|<Import Project=\"\$(VCTargetsPath)\\Microsoft.Cpp.targets\" />|\
+<Target Name="Build" DependsOnTargets="$(BuildDependsOn)" \
+Outputs="$(TargetPath)"/>|g' \
 			${SO_NAME}/${SO_NAME}.vcxproj || die
 		cd ${SO_NAME}/Linux/x${myabi_so} || die
 		emake
