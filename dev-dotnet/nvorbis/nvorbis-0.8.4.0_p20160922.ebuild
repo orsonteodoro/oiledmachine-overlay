@@ -9,7 +9,7 @@ KEYWORDS="~amd64 ~x86"
 SLOT="0"
 USE_DOTNET="net35 net40"
 IUSE="${USE_DOTNET} debug developer +gac opentk"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac gac? ( net40 )"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 )"
 RDEPEND="dev-dotnet/opentk"
 DEPEND="${RDEPEND}"
 RESTRICT="fetch"
@@ -42,7 +42,8 @@ src_prepare() {
 
 src_compile() {
 	compile_impl() {
-		exbuild /p:Configuration=$(usex debug "debug" "release") ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" NVorbis.sln || die
+		exbuild /p:Configuration=$(usex debug "debug" "release") \
+		  ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" NVorbis.sln || die
 	}
 	dotnet_foreach_impl compile_impl
 }
@@ -52,15 +53,32 @@ src_install() {
 	install_impl() {
 		dotnet_install_loc
 		egacinstall bin/NVorbis.dll
+		doins bin/NVorbis.dll
 		if use developer ; then
-			doins bin/NVorbis.dll
 			doins bin/{NVorbis.dll.mdb,NVorbis.XML}
+			dotnet_distribute_file_matching_dll_in_gac \
+				"bin/NVorbis.dll" \
+				"bin/NVorbis.dll.mdb"
+			dotnet_distribute_file_matching_dll_in_gac \
+				"bin/NVorbis.dll" \
+				"NVorbis.XML"
 		fi
 		if use opentk ; then
-			egacinstall OpenTKSupport/bin/${mydebug}/NVorbis.OpenTKSupport.dll
+			egacinstall \
+			  OpenTKSupport/bin/${mydebug}/NVorbis.OpenTKSupport.dll
+			doins \
+			  OpenTKSupport/bin/${mydebug}/NVorbis.OpenTKSupport.dll
 			if use developer ; then
-				doins OpenTKSupport/bin/${mydebug}/NVorbis.OpenTKSupport.dll.mdb
-				doins bin/NVorbis.OpenTKSupport.XML
+				doins \
+		OpenTKSupport/bin/${mydebug}/NVorbis.OpenTKSupport.dll.mdb
+				doins \
+		bin/NVorbis.OpenTKSupport.XML
+				dotnet_distribute_file_matching_dll_in_gac \
+		"OpenTKSupport/bin/${mydebug}/NVorbis.OpenTKSupport.dll" \
+		"OpenTKSupport/bin/${mydebug}/NVorbis.OpenTKSupport.dll.mdb"
+				dotnet_distribute_file_matching_dll_in_gac \
+		"OpenTKSupport/bin/${mydebug}/NVorbis.OpenTKSupport.dll" \
+		"bin/NVorbis.OpenTKSupport.XML"
 			fi
 		fi
 	}
