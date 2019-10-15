@@ -54,6 +54,7 @@ src_prepare() {
 	sed -i -r -e 's|"fmodex"|"fmodex.dll"|g' \
 		BeatDetector/BeatDetectorC++Version/FMOD/csharp/fmod.cs \
 		|| die
+	dotnet_copy_sources
 }
 
 src_compile() {
