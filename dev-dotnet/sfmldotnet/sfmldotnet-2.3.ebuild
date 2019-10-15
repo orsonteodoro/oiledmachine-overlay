@@ -46,6 +46,10 @@ src_prepare() {
 			|| die
 	done
 	multilib_copy_sources
+	ml_prepare_impl() {
+		dotnet_copy_sources
+	}
+	multlib_foreach_impl ml_prepare_impl
 }
 
 src_compile() {
