@@ -18,7 +18,7 @@ EGIT_COMMIT="0d40b48a48c4f87bb18b3593e7db0dab74dbb829"
 SRC_URI="https://github.com/ioctlLR/NVorbis/archive/${EGIT_COMMIT}.tar.gz \
 		-> ${P}.tar.gz"
 inherit gac
-S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/NVorbis-${EGIT_COMMIT}"
 
 src_prepare() {
 	default
