@@ -45,11 +45,11 @@ src_compile() {
 	compile_impl() {
 		if [[ ! ( "${EDOTNET}" =~ netcoreapp ) ]] ; then
 			exbuild TiledSharp/TiledSharp.csproj \
-				${STRONG_ARGS_NETCORE}${DISTDIR}/mono.snk || die
+				${STRONG_ARGS_NETCORE}"${DISTDIR}/mono.snk" || die
 		fi
 		if use test ; then
 			exbuild TiledSharp.Test/TiledSharp.Test.csproj \
-				${STRONG_ARGS_NETCORE}${DISTDIR}/mono.snk || die
+				${STRONG_ARGS_NETCORE}"${DISTDIR}/mono.snk" || die
 		fi
 	}
 	dotnet_foreach_impl compile_impl
