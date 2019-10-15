@@ -19,7 +19,7 @@ inherit dotnet eutils mono
 SRC_URI="https://github.com/craftworkgames/${PROJECT_NAME}/archive/v${PV}.tar.gz \
 		-> ${P}.tar.gz"
 inherit gac
-SLOT="0"
+SLOT="0/${PV}"
 S="${WORKDIR}/${PROJECT_NAME}-${PV}"
 RESTRICT="mirror"
 
