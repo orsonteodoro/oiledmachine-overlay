@@ -71,6 +71,7 @@ src_prepare() {
 	sed -i -r \
 	-e "s|<TargetFrameworkProfile>Client</TargetFrameworkProfile>||g" \
 		'Farseer Physics MonoGame.csproj' || die
+	dotnet_copy_sources
 }
 
 src_compile() {
