@@ -15,12 +15,14 @@ RDEPEND="media-video/ffmpeg
 DEPEND="${RDEPEND}"
 IUSE="${USE_DOTNET} debug gac kinect ximea"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 )"
-SLOT="0"
+SLOT="0/${PV}"
 inherit dotnet eutils mono
 PROJECT_NAME="AForge.NET"
 EGIT_COMMIT="a9453dad025d1fbffab165293cedc976187da535"
-SRC_URI="https://github.com/andrewkirillov/AForge.NET/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/andrewkirillov/AForge.NET/archive/${EGIT_COMMIT}.tar.gz
+		-> ${P}.tar.gz"
 inherit gac
+RESTRICT="mirror"
 S="${WORKDIR}/${PROJECT_NAME}-${EGIT_COMMIT}"
 
 src_prepare() {
@@ -58,6 +60,11 @@ _mydoins() {
 			estrong_resign ${mydebug}/AForge.${name}.dll \
 			Sources/${name}/AForge.${name}.snk
 		fi
+	fi
+	if [[ -z "${name}" ]] ; then
+		doins ${mydebug}/AForge.dll
+	else
+		doins ${mydebug}/AForge.${name}.dll
 	fi
 	if dotnet_is_netfx ; then
 		egacinstall ${mydebug}/AForge.${name}.dll
