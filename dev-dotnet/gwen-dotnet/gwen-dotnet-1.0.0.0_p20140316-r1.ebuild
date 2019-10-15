@@ -50,6 +50,7 @@ src_prepare() {
 	sed -i \
 	  -e 's|<TargetFrameworkProfile>Client</TargetFrameworkProfile>||g' \
 	  Gwen.Renderer.OpenTK/Gwen.Renderer.OpenTK.csproj || die
+	dotnet_copy_sources
 }
 
 src_compile() {
