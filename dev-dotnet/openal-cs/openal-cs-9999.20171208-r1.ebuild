@@ -16,9 +16,14 @@ inherit dotnet eutils mono
 EGIT_COMMIT="381275db51451260d08cdd3fa0152f46aa1727c4"
 SRC_URI="https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
 inherit gac
-SLOT="0"
+SLOT="0/${PV}"
 S="${WORKDIR}/${PROJECT_NAME}-${EGIT_COMMIT}"
 RESTRICT="mirror"
+
+src_prepare() {
+	default
+	dotnet_copy_sources
+}
 
 src_compile() {
 	compile_impl() {
