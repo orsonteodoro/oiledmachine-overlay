@@ -15,11 +15,13 @@ IUSE="${USE_DOTNET} debug gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 )"
 inherit dotnet eutils mono
 PROJECT_NAME="SDL2-CS"
-COMMIT="4ec65bc5a00049f7211b506ed85033f1c72c60af"
-SRC_URI="https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${COMMIT}.tar.gz -> ${P}.tar.gz"
+EGIT_COMMIT="4ec65bc5a00049f7211b506ed85033f1c72c60af"
+SRC_URI="\
+https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${EGIT_COMMIT}.tar.gz \
+	-> ${P}.tar.gz"
 inherit gac
-SLOT="0"
-S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
+SLOT="0/${PV}"
+S="${WORKDIR}/${PROJECT_NAME}-${EGIT_COMMIT}"
 
 src_prepare() {
 	default
@@ -30,8 +32,10 @@ src_compile() {
 	local mydebug=$(usex debug "debug" "release")
 	compile_impl() {
 	        exbuild ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" \
-			/p:Configuration=${mydebug} ${PROJECT_NAME}.csproj || die
-		dotnet_copy_dllmap_config "${FILESDIR}/${PROJECT_NAME}.dll.config"
+			/p:Configuration=${mydebug} ${PROJECT_NAME}.csproj \
+			|| die
+		dotnet_copy_dllmap_config \
+			"${FILESDIR}/${PROJECT_NAME}.dll.config"
 	}
 	dotnet_foreach_impl compile_impl
 }

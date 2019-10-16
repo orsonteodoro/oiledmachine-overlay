@@ -15,11 +15,13 @@ IUSE="${USE_DOTNET} debug gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net461 )"
 inherit dotnet eutils mono
 PROJECT_NAME="SDL2-CS"
-COMMIT="499ad108b93f28c7a8aa2f357206ddc98980614e"
-SRC_URI="https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${COMMIT}.tar.gz -> ${P}.tar.gz"
+EGIT_COMMIT="499ad108b93f28c7a8aa2f357206ddc98980614e"
+SRC_URI="\
+https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${EGIT_COMMIT}.tar.gz \
+	-> ${P}.tar.gz"
 inherit gac
-SLOT="0"
-S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
+SLOT="0/${PV}"
+S="${WORKDIR}/${PROJECT_NAME}-${EGIT_COMMIT}"
 
 src_prepare() {
 	default
@@ -29,14 +31,18 @@ src_prepare() {
 src_compile() {
 	local mydebug=$(usex debug "debug" "release")
 	compile_impl() {
-		if [[ "${EDOTNET}" =~ netcore || "${EDOTNET}" =~ netstandard ]] ; then
+		if [[ "${EDOTNET}" =~ netcore \
+			|| "${EDOTNET}" =~ netstandard ]] ; then
 		        exbuild ${STRONG_ARGS_NETCORE}"${DISTDIR}/mono.snk" \
-			  -p:Configuration=${mydebug} ${PROJECT_NAME}.Core.csproj || die
+			  -p:Configuration=${mydebug} \
+			  ${PROJECT_NAME}.Core.csproj || die
 		else
 		        exbuild ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" \
-			  /p:Configuration=${mydebug} ${PROJECT_NAME}.csproj || die
+			  /p:Configuration=${mydebug} \
+			  ${PROJECT_NAME}.csproj || die
 		fi
-		dotnet_copy_dllmap_config "${FILESDIR}/${PROJECT_NAME}.dll.config"
+		dotnet_copy_dllmap_config \
+			"${FILESDIR}/${PROJECT_NAME}.dll.config"
 	}
 	dotnet_foreach_impl compile_impl
 }
@@ -49,12 +55,15 @@ src_install() {
 		fi
 		dotnet_install_loc
 		if [[ "${EDOTNET}" =~ netstandard ]] ; then
-			doins bin/${mydebug}/$(dotnet_use_flag_moniker_to_ms_moniker ${ENETCORE})/${PROJECT_NAME}.dll
+			local pnc=\
+	"bin/${mydebug}/$(dotnet_use_flag_moniker_to_ms_moniker ${ENETCORE})"
+			doins ${pnc}/${PROJECT_NAME}.dll
 			doins ${PROJECT_NAME}.dll.config
-			doins bin/${mydebug}/$(dotnet_use_flag_moniker_to_ms_moniker ${ENETCORE})/${PROJECT_NAME}.deps.json
-			doins bin/${mydebug}/$(dotnet_use_flag_moniker_to_ms_moniker ${ENETCORE})/${PROJECT_NAME}.pdb
+			doins ${pnc}/${PROJECT_NAME}.deps.json
+			doins ${pnc}/${PROJECT_NAME}.pdb
 		elif dotnet_is_netfx "${EDOTNET}" ; then
-			estrong_resign "bin/${mydebug}/${PROJECT_NAME}.dll" "${DISTDIR}/mono.snk"
+			estrong_resign "bin/${mydebug}/${PROJECT_NAME}.dll" \
+				"${DISTDIR}/mono.snk"
 			doins ${PROJECT_NAME}.dll.config
 			doins bin/${mydebug}/${PROJECT_NAME}.dll
 			egacinstall "bin/${mydebug}/${PROJECT_NAME}.dll"
