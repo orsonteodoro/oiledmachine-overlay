@@ -11,12 +11,14 @@ IUSE="${USE_DOTNET} debug gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 )"
 RDEPEND="media-libs/libvorbis"
 DEPEND="${RDEPEND}"
-inherit dotnet eutils mono
+inherit dotnet eutils
 PROJECT_NAME="Vorbisfile-CS"
 COMMIT="844fbd1ab7342a95d761f5e177678de954ec2a21"
-SRC_URI="https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${COMMIT}.tar.gz -> ${P}.tar.gz"
+SRC_URI=\
+"https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${COMMIT}.tar.gz \
+	-> ${P}.tar.gz"
 inherit gac
-SLOT="0"
+SLOT="0/${PV}"
 S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
 
 src_prepare() {
@@ -29,9 +31,11 @@ src_compile() {
 
 	compile_impl() {
 	        einfo "Building solution"
-	        exbuild /p:Configuration=${mydebug} ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" ${PROJECT_NAME}.sln || die
-
-		dotnet_copy_dllmap_config "${FILESDIR}/${PROJECT_NAME}.dll.config"
+		exbuild /p:Configuration=${mydebug} \
+			${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" \
+			${PROJECT_NAME}.sln || die
+		dotnet_copy_dllmap_config \
+			"${FILESDIR}/${PROJECT_NAME}.dll.config"
 	}
 
 	dotnet_foreach_impl compile_impl
@@ -44,7 +48,8 @@ _mydoins() {
 	if dotnet_is_netfx ; then
 		estrong_resign "${path}" "${DISTDIR}/mono.snk"
 		egacinstall "${path}"
-		dotnet_distribute_file_matching_dll_in_gac "${path}" "${PROJECT_NAME}.dll.config"
+		dotnet_distribute_file_matching_dll_in_gac "${path}" \
+			"${PROJECT_NAME}.dll.config"
 	fi
 	doins "${path}"
 	doins "${PROJECT_NAME}.dll.config"
