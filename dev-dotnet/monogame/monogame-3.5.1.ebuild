@@ -34,7 +34,7 @@ RDEPEND="addin? (
 	   virtual/ffmpeg"
 DEPEND="${RDEPEND}
 	app-text/xmlstarlet
-        dev-dotnet/protobuild"
+        dev-dotnet/protobuild-bin"
 USE_DOTNET="net45"
 IUSE="${USE_DOTNET} abi_x86_32 abi_x86_64 addin bindist debug doc +gac mgcb"
 IUSE+=" pipeline"
@@ -602,7 +602,7 @@ src_prepare() {
 	rm Protobuild.exe
 
 	einfo "Generating project files"
-	mono /usr/bin/Protobuild.exe -generate Linux
+	Protobuild -generate Linux
 
 	# Force absolute paths because Protobuild wants relative paths
 	sed -i -e 's|\.\.\\usr\\|\\usr\\|g' \
