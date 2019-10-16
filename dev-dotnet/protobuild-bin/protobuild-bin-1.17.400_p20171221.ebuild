@@ -6,10 +6,7 @@ DESCRIPTION="Protobuild is a Cross-platform project generation for C#"
 HOMEPAGE="https://protobuild.org/"
 LICENSE="MIT Apache-2.0 BSD"
 KEYWORDS="~amd64 ~x86"
-IUSE="${USE_DOTNET} debug"
-REQUIRED_USE="|| ( ${USE_DOTNET} )"
-RDEPEND="dev-util/nant"
-DEPEND="${RDEPEND}"
+RDEPEND="dev-lang/mono"
 USE_DOTNET="net45"
 inherit dotnet eutils
 EGIT_COMMIT="f73848e43ee441c5db2670ce776a3be421815475"
@@ -18,6 +15,7 @@ SRC_URI=\
 	-> ${P}.tar.gz"
 MY_PN="Protobuild"
 SLOT="0/${PV}"
+RESTRICT="mirror"
 S="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
 
 src_install() {
