@@ -33,7 +33,7 @@ PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.0.1" # about the same as the mesa version
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="+amf dkms +egl +gles2 freesync hsa +opencl +opengl openmax orca navi pal"
+IUSE="+amf dkms +egl +gles2 freesync hsa +opencl +opengl openmax orca +navi pal"
 IUSE+=" +vaapi +vdpau +vulkan wayland"
 SLOT="1"
 
