@@ -260,12 +260,6 @@ src_prepare() {
 	einfo "AMDGPU_VERSION=${AMDGPU_VERSION}"
 	einfo "ROCK_VER=${ROCK_VER}"
 	check_hardware
-	chmod 0770 autogen.sh || die
-	./autogen.sh || die
-	pushd amd/dkms || die
-	chmod 0770 autogen.sh || die
-	./autogen.sh || die
-	popd
 }
 
 src_configure() {
@@ -280,9 +274,11 @@ src_install() {
 	dodir usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}
 	insinto usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}
 	doins -r "${S}"/*
-	fperms 0770 /usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/{post-install.sh,post-remove.sh,pre-build.sh,config/install-sh,configure,amd/dkms/pre-build.sh,autogen.sh,amd/dkms/autogen.sh}
+	fperms 0770 /usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/{post-remove.sh,pre-build.sh,config/install-sh,amd/dkms/pre-build.sh}
 	insinto /etc/modprobe.d
 	doins "${WORKDIR}/etc/modprobe.d/blacklist-radeon.conf"
+	insinto /lib/udev/rules.d
+	doins "${WORKDIR}/etc/udev/rules.d/70-amdgpu.rules"
 }
 
 pkg_postinst() {
