@@ -16,7 +16,7 @@ RDEPEND="  dev-dotnet/mojoshader-cs
          >=dev-dotnet/vorbisfile-cs-9999.20170415
 	   media-libs/theorafile"
 DEPEND="${RDEPEND}"
-SLOT="0"
+SLOT="0/${PV}"
 inherit dotnet eutils mono multilib-build
 SRC_URI="https://github.com/FNA-XNA/FNA/archive/${PV}.tar.gz \
 		-> ${P}.tar.gz"
