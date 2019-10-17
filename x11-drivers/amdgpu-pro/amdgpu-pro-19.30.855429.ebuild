@@ -121,8 +121,6 @@ unpack_deb() {
 }
 
 pkg_setup() {
-	ewarn "This package is compatible for only the Radeon RX 5700 series only.  Other products are not supported."
-
 	if [ ! -L /lib64/libedit.so.2 ] ; then
 		einfo "You need to do \`ln -s /lib64/libedit.so.0 /lib64/libedit.so.2\`"
 		die
