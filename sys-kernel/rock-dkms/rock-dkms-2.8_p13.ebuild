@@ -101,39 +101,39 @@ pkg_pretend() {
 pkg_setup_warn() {
 	ewarn "Disabling build is not recommended.  It is intended for unattended installs.  You are responsible for the following .config flags:"
 
-	CONFIG_CHECK+=" !TRIM_UNUSED_KSYMS"
+	if ! linux_config_exists ; then
+		ewarn "You are missing a .config file in your linux sources."
+	fi
+
+	if ! linux_chkconfig_builtin "MODULES" ; then
+		ewarn "You need loadable modules support in your .config."
+	fi
+
+	CONFIG_CHECK=" !TRIM_UNUSED_KSYMS"
 	WARNING_TRIM_UNUSED_KSYMS="CONFIG_TRIM_UNUSED_KSYMS should not be set and the kernel recompiled without it."
 	check_extra_config
 
-	unset CONFIG_CHECK
-
 	if use check-mmu-notifier ; then
-		CONFIG_CHECK+=" ~HSA_AMD"
+		CONFIG_CHECK=" ~HSA_AMD"
 		WARNING_CONFIG_HSA_AMD=" CONFIG_HSA_AMD must be set to =y in the kernel .config."
 	fi
 
 	check_extra_config
 
-	unset CONFIG_CHECK
-
-	CONFIG_CHECK+=" ~MMU_NOTIFIER"
+	CONFIG_CHECK=" ~MMU_NOTIFIER"
 	WARNING_MMU_NOTIFIER=" CONFIG_MMU_NOTIFIER must be set to =y in the kernel or it will fail in the link stage."
 
 	check_extra_config
 
-	unset CONFIG_CHECK
-
-	CONFIG_CHECK+=" ~DRM_AMD_ACP"
+	CONFIG_CHECK=" ~DRM_AMD_ACP"
 	WARNING_DRM_AMD_ACP=" CONFIG_DRM_AMD_ACP (Enable ACP IP support) must be set to =y in the kernel or it will fail in the link stage."
 
 	check_extra_config
 
-	unset CONFIG_CHECK
-
-	CONFIG_CHECK+=" ~MFD_CORE"
+	CONFIG_CHECK=" ~MFD_CORE"
 	WARNING_MFD_CORE=" CONFIG_MFD_CORE must be set to =y or =m in the kernel or it will fail in the link stage."
 
-	linux-info_pkg_setup
+	check_extra_config
 
 	if ! linux_chkconfig_module "DRM_AMDGPU" ; then
 		ewarn "CONFIG_DRM_AMDGPU (Graphics support > AMD GPU) must be compiled as a module (=m)."
@@ -145,7 +145,13 @@ pkg_setup_warn() {
 }
 
 pkg_setup_error() {
-	CONFIG_CHECK+=" !TRIM_UNUSED_KSYMS"
+	if ! linux_config_exists ; then
+		die "You must have a .config file in your linux sources"
+	fi
+
+	check_modules_supported
+
+	CONFIG_CHECK=" !TRIM_UNUSED_KSYMS"
 	ERROR_TRIM_UNUSED_KSYMS="CONFIG_TRIM_UNUSED_KSYMS should not be set and the kernel recompiled without it."
 	check_extra_config
 
@@ -158,26 +164,20 @@ pkg_setup_error() {
 
 	check_extra_config
 
-	unset CONFIG_CHECK
-
-	CONFIG_CHECK+=" MMU_NOTIFIER"
+	CONFIG_CHECK=" MMU_NOTIFIER"
 	ERROR_MMU_NOTIFIER=" CONFIG_MMU_NOTIFIER must be set to =y in the kernel or it will fail in the link stage."
 
 	check_extra_config
 
-	unset CONFIG_CHECK
-
-	CONFIG_CHECK+=" DRM_AMD_ACP"
+	CONFIG_CHECK=" DRM_AMD_ACP"
 	ERROR_DRM_AMD_ACP=" CONFIG_DRM_AMD_ACP (Enable ACP IP support) must be set to =y in the kernel or it will fail in the link stage."
 
 	check_extra_config
 
-	unset CONFIG_CHECK
-
-	CONFIG_CHECK+=" MFD_CORE"
+	CONFIG_CHECK=" MFD_CORE"
 	ERROR_MFD_CORE=" CONFIG_MFD_CORE must be set to =y or =m in the kernel or it will fail in the link stage."
 
-	linux-info_pkg_setup
+	check_extra_config
 
 	if ! linux_chkconfig_module DRM_AMDGPU ; then
 		die "CONFIG_DRM_AMDGPU (Graphics support > AMD GPU) must be compiled as a module (=m)."
@@ -241,10 +241,8 @@ check_kernel() {
 		if ver_test ${kv} -ge ${KV_NOT_SUPPORTED} ; then
 		die "Kernel version ${kv} is not supported."
 	fi
-	if [ ! -e /usr/src/linux-${k} ] ; then
-		die "Reference to the source code is missing.  Expected /usr/src/linux-${k}."
-	fi
 	KERNEL_DIR="/usr/src/linux-${k}"
+	get_version || die
 	if use build || [[ "${EBUILD_PHASE_FUNC}" == "pkg_config" ]]; then
 		pkg_setup_error
 	else
