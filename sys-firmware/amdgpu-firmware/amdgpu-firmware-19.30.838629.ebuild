@@ -3,7 +3,8 @@
 
 EAPI=7
 DESCRIPTION="AMDGPU firmware"
-HOMEPAGE="https://www.amd.com/zh-hant/support/kb/release-notes/rn-amdgpu-unified-navi-linux"
+HOMEPAGE=\
+"https://www.amd.com/zh-hant/support/kb/release-notes/rn-amdgpu-unified-navi-linux"
 LICENSE="LICENSE.ucode"
 KEYWORDS="~amd64"
 PKG_VER=$(ver_cut 1-2 ${PV})
@@ -36,7 +37,8 @@ unpack_deb() {
 
 src_unpack() {
 	default
-	unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/amdgpu-dkms_${PKG_VER}-${PKG_REV}_all.deb"
+	unpack_deb \
+"amdgpu-pro-${PKG_VER_STRING_DIR}/amdgpu-dkms_${PKG_VER}-${PKG_REV}_all.deb"
 	export S="${WORKDIR}/usr/src/amdgpu-${PKG_VER}-${PKG_REV}"
 }
 
@@ -50,7 +52,8 @@ src_install() {
 }
 
 pkg_postinst() {
-	einfo "The original upstream scripts would replace the existing AMD GPU firmware."
-	einfo "This installation allows both to exist side-by-side."
-	einfo "Replace the old references of firmware to new location with same name."
+	einfo "The original upstream scripts would replace the existing AMD GPU"
+	einfo "firmware.  This installation allows both to exist side-by-side."
+	einfo "Replace the old references of firmware to new location with same"
+	einfo "name."
 }
