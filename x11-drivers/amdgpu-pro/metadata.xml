@@ -6,6 +6,9 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <upstream>
+    <bugs-to>https://www.amd.com/report</bugs-to>
+  </upstream>
   <use>
     <flag name="amf">Install the Accelerated Media Framework support.</flag>
     <flag name="dkms">Installs the enhanced amdgpu kernel driver with ROCm API support and updated DRM driver.</flag>
