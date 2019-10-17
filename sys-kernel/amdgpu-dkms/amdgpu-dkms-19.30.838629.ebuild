@@ -245,6 +245,23 @@ check_hardware() {
 	fi
 }
 
+check_kernel() {
+	local k="$1"
+	local kv=$(echo "${k}" | cut -f1 -d'-')
+		if ver_test ${kv} -ge ${KV_NOT_SUPPORTED} ; then
+		die "Kernel version ${kv} is not supported."
+	fi
+	if [ ! -e /usr/src/linux-${kv} ] ; then
+		die "Reference to the source code is missing.  Expected /usr/src/linux-${kv}."
+	fi
+	KERNEL_DIR="/usr/src/linux-${kv}"
+	if use build ; then
+		pkg_setup_error
+	else
+		pkg_setup_warn
+	fi
+}
+
 pkg_setup() {
 	if [[ -z "${ROCK_DKMS_KERNELS}" ]] ; then
 		eerror "You must define a per-package env or add to /etc/portage/make.conf a environmental variable ROCK_DKMS_KERNELS"
@@ -255,19 +272,7 @@ pkg_setup() {
 	fi
 
 	for k in ${ROCK_DKMS_KERNELS} ; do
-		local kv=$(echo "${k}" | cut -f1 -d'/')
-		if ver_test ${kv} -ge ${KV_NOT_SUPPORTED} ; then
-			die "Kernel version ${kv} is not supported."
-		fi
-		if [ ! -e /usr/src/linux-${kv} ] ; then
-			die "You need to build your ${kv} kernel first before using the build USE flag."
-		fi
-		KERNEL_DIR="/usr/src/linux-${kv}"
-		if use build ; then
-			pkg_setup_error
-		else
-			pkg_setup_warn
-		fi
+		check_kernel "${k}"
 	done
 }
 
@@ -316,10 +321,7 @@ pkg_postinst() {
 	dkms add ${DKMS_PKG_NAME}/${DKMS_PKG_VER}
 	if use build ; then
 		for k in ${ROCK_DKMS_KERNELS} ; do
-			local kv=$(echo "${k}" | cut -f1 -d'/')
-			if ver_test ${kv} -ge ${KV_NOT_SUPPORTED} ; then
-				die "Kernel version ${kv} is not supported."
-			fi
+			check_kernel "${k}"
 			einfo "Running: \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH}\`"
 			dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} || die
 			einfo "Running: \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH}\`"
@@ -354,7 +356,7 @@ pkg_config() {
 	read kernel_ver
 	einfo "What is your kernel extraversion? (gentoo, pf, git, ...)"
 	read kernel_extraversion
-
+	check_kernel "${kernel_ver}-${kernel_extraversion}"
 	einfo "Running: \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${kernel_ver}-${kernel_extraversion}/${ARCH}\`"
 	dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${kernel_ver}-${kernel_extraversion}/${ARCH} || die "Your module build failed."
 	einfo "Running: \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${kernel_ver}-${kernel_extraversion}/${ARCH}\`"
