@@ -115,6 +115,10 @@ pkg_setup_warn() {
 		ewarn "You are missing a .config file in your linux sources."
 	fi
 
+	if ! linux_chkconfig_builtin "MODULES" ; then
+		ewarn "You need loadable modules support in your .config."
+	fi
+
 	CONFIG_CHECK=" !TRIM_UNUSED_KSYMS"
 	WARNING_TRIM_UNUSED_KSYMS="CONFIG_TRIM_UNUSED_KSYMS should not be set and the kernel recompiled without it."
 
