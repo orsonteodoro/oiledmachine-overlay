@@ -43,6 +43,7 @@ DKMS_PKG_VER="${MY_RPR}"
 DC_VER="3.2.35"
 AMDGPU_VERSION="5.0.73"
 ROCK_VER="2.8.0" # See changes in kfd keywords and tag ;  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/commits/roc-2.8.0/drivers/gpu/drm/amd/amdkfd
+KV_NOT_SUPPORTED="5.3"
 
 # patches based on https://aur.archlinux.org/cgit/aur.git/tree/?h=amdgpu-dkms
 # patches try to make it linux kernel 5.1+ compatible but still missing 5.3 compatibility.
@@ -255,6 +256,9 @@ pkg_setup() {
 
 	for k in ${ROCK_DKMS_KERNELS} ; do
 		local kv=$(echo "${k}" | cut -f1 -d'/')
+		if ver_test ${kv} -ge ${KV_NOT_SUPPORTED} ; then
+			die "Kernel version ${kv} is not supported."
+		fi
 		if [ ! -e /usr/src/linux-${kv} ] ; then
 			die "You need to build your ${kv} kernel first before using the build USE flag."
 		fi
@@ -312,6 +316,10 @@ pkg_postinst() {
 	dkms add ${DKMS_PKG_NAME}/${DKMS_PKG_VER}
 	if use build ; then
 		for k in ${ROCK_DKMS_KERNELS} ; do
+			local kv=$(echo "${k}" | cut -f1 -d'/')
+			if ver_test ${kv} -ge ${KV_NOT_SUPPORTED} ; then
+				die "Kernel version ${kv} is not supported."
+			fi
 			einfo "Running: \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH}\`"
 			dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} || die
 			einfo "Running: \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH}\`"
