@@ -324,7 +324,7 @@ pkg_postinst() {
 	einfo "If Intel IOMMU, add to kernel parameters either intel_iommu=off or iommu=pt"
 	einfo "For more information, See https://rocm-documentation.readthedocs.io/en/latest/Remote_Device_Programming/Remote-Device-Programming.html#rocmrdma ."
 	einfo
-	einfo "Only <5.3 kernels are supported for these kernel modules."
+	einfo "Only <${KV_NOT_SUPPORTED} kernels are supported for these kernel modules."
 	einfo
 }
 
