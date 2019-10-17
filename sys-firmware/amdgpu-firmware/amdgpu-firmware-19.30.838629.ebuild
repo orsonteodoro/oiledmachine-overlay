@@ -17,8 +17,7 @@ PKG_VER_STRING_DIR=${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 RESTRICT="fetch"
 RDEPEND="!sys-kernel/linux-firmware
-	 !sys-firmware/rock-firmware
-	"
+	 !sys-firmware/rock-firmware"
 SLOT="0/${PV}"
 inherit unpacker
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
