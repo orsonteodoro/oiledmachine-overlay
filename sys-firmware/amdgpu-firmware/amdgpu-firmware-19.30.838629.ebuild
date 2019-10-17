@@ -16,6 +16,9 @@ PKG_VER_STRING=${PKG_VER}-${PKG_REV}
 PKG_VER_STRING_DIR=${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 RESTRICT="fetch"
+RDEPEND="!sys-kernel/linux-firmware
+	 !sys-firmware/rock-firmware
+	"
 SLOT="0/${PV}"
 inherit unpacker
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
@@ -47,13 +50,6 @@ src_compile() {
 }
 
 src_install() {
-	insinto /lib/firmware/amdgpu-firmware
+	insinto /lib/firmware
 	doins -r firmware/amdgpu
-}
-
-pkg_postinst() {
-	einfo "The original upstream scripts would replace the existing AMD GPU"
-	einfo "firmware.  This installation allows both to exist side-by-side."
-	einfo "Replace the old references of firmware to new location with same"
-	einfo "name."
 }
