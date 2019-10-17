@@ -22,7 +22,7 @@ SLOT="0/${PV}"
 inherit autotools dotnet eutils
 SRC_URI="mirror://sourceforge/${PN}/${P}.tar.gz"
 inherit gac
-RESTRICT="fetch"
+RESTRICT="mirror"
 S="${WORKDIR}/taoframework-${PV}/source"
 
 src_prepare() {
