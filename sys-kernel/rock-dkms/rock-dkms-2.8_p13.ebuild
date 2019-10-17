@@ -18,15 +18,7 @@ SLOT="0"
 IUSE="+build +check-mmu-notifier +check-pcie +check-gpu firmware"
 RDEPEND="firmware? ( sys-firmware/rock-firmware )
 	 sys-kernel/dkms"
-# drm_format_plane_cpp in amd/amdgpu/amdgpu_fb.c got removed in 5.3 and this module uses it
 DEPEND="${RDEPEND}
-	|| ( <sys-kernel/ck-sources-5.3
-	     <sys-kernel/gentoo-sources-5.3
-	     <sys-kernel/git-sources-5.3
-	     <sys-kernel/ot-sources-5.3
-	     <sys-kernel/pf-sources-5.3
-	     <sys-kernel/vanilla-sources-5.3
-	     <sys-kernel/zen-sources-5.3 )
 	check-pcie? ( sys-apps/dmidecode )
 	check-gpu? ( sys-apps/pciutils )"
 S="${WORKDIR}/usr/src/amdgpu-${MY_RPR}"
