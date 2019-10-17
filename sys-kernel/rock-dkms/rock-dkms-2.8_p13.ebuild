@@ -241,10 +241,10 @@ check_kernel() {
 		if ver_test ${kv} -ge ${KV_NOT_SUPPORTED} ; then
 		die "Kernel version ${kv} is not supported."
 	fi
-	if [ ! -e /usr/src/linux-${kv} ] ; then
-		die "Reference to the source code is missing.  Expected /usr/src/linux-${kv}."
+	if [ ! -e /usr/src/linux-${k} ] ; then
+		die "Reference to the source code is missing.  Expected /usr/src/linux-${k}."
 	fi
-	KERNEL_DIR="/usr/src/linux-${kv}"
+	KERNEL_DIR="/usr/src/linux-${k}"
 	if use build || [[ "${EBUILD_PHASE_FUNC}" == "pkg_config" ]]; then
 		pkg_setup_error
 	else
