@@ -23,6 +23,7 @@ FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 SLOT="0/${PV}"
 IUSE="+build +check-mmu-notifier check-pcie check-gpu firmware rock"
+REQUIRED_USE="rock? ( check-pcie check-gpu )"
 RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
 	 sys-kernel/dkms"
 # drm_format_info_plane_cpp got removed in 5.3 and this module uses it
