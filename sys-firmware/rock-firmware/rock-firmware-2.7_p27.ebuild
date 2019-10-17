@@ -10,6 +10,8 @@ MY_RPR="${PV//_p/-}" # Remote PR
 FN="rock-dkms_${MY_RPR}_all.deb"
 BASE_URL="http://repo.radeon.com/rocm/apt/debian"
 FOLDER="pool/main/r/rock-dkms"
+RDEPEND="!sys-kernel/linux-firmware
+	 !sys-firmware/amdgpu-firmware"
 RESTRICT="fetch"
 SLOT="0/${PV}"
 inherit unpacker
@@ -33,13 +35,6 @@ src_compile() {
 }
 
 src_install() {
-	insinto /lib/firmware/rock-firmware
+	insinto /lib/firmware
 	doins -r usr/src/amdgpu-${MY_RPR}/firmware/{radeon,amdgpu}
-}
-
-pkg_postinst() {
-	einfo "The original upstream scripts would replace the existing AMD GPU"
-	einfo "firmware.  This installation allows both to exist side-by-side."
-	einfo "Replace the old references of firmware to new location with same"
-	einfo "name."
 }
