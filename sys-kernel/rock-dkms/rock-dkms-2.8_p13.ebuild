@@ -33,6 +33,8 @@ S="${WORKDIR}/usr/src/amdgpu-${MY_RPR}"
 RESTRICT="fetch"
 DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${MY_RPR}"
+DC_VER="3.2.46"
+AMDGPU_VERSION="5.0.79"
 
 # patches based on https://aur.archlinux.org/cgit/aur.git/tree/?h=amdgpu-dkms
 # patches try to make it linux kernel 5.1+ compatible but still missing 5.3 compatibility.
@@ -235,6 +237,9 @@ src_unpack() {
 
 src_prepare() {
 	default
+	einfo "DC_VER=${DC_VER}"
+	einfo "AMDGPU_VERSION=${AMDGPU_VERSION}"
+	einfo "ROCk version $(ver_cut 1-2)"
 	check_hardware
 	chmod 0770 autogen.sh || die
 	./autogen.sh || die

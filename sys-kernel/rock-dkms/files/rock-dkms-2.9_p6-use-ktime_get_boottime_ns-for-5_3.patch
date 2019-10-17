@@ -1,0 +1,14 @@
+--- a/amd/amdkfd/kfd_chardev.c.orig	2019-09-25 12:13:06.000000000 -0700
++++ b/amd/amdkfd/kfd_chardev.c	2019-10-17 01:15:27.931738903 -0700
+@@ -846,7 +846,11 @@ static int kfd_ioctl_get_clock_counters(
+ 
+ 	/* No access to rdtsc. Using raw monotonic time */
+ 	args->cpu_clock_counter = ktime_get_raw_ns();
++#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 3, 0)
+ 	args->system_clock_counter = ktime_get_boottime_ns();
++#elif LINUX_VERSION_CODE >= KERNEL_VERSION(4, 17, 0) && LINUX_VERSION_CODE < KERNEL_VERSION(5, 3, 0)
++ 	args->system_clock_counter = ktime_get_boot_ns();
++#endif
+ 
+ 	/* Since the counter is in nano-seconds we use 1GHz frequency */
+ 	args->system_clock_freq = 1000000000;

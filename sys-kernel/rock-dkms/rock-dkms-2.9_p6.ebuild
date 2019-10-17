@@ -33,6 +33,8 @@ S="${WORKDIR}/usr/src/amdgpu-${MY_RPR}"
 RESTRICT="fetch"
 DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${MY_RPR}"
+DC_VER="3.2.48"
+AMDGPU_VERSION="5.0.82"
 
 # patches based on https://aur.archlinux.org/cgit/aur.git/tree/?h=amdgpu-dkms
 # patches try to make it linux kernel 5.1+ compatible but still missing 5.3 compatibility.
@@ -63,13 +65,13 @@ PATCHES=( "${FILESDIR}/rock-dkms-2.8_p13-makefile-recognize-gentoo.patch"
 	  "${FILESDIR}/rock-dkms-2.8_p13-drm_hdmi_avi_infoframe_from_display_mode-for-5_1-part-3.patch"
 	  "${FILESDIR}/rock-dkms-2.8_p13-drm_hdmi_avi_infoframe_from_display_mode-for-5_1-part-4.patch"
 	  "${FILESDIR}/rock-dkms-2.8_p13-drm_format_plane_cpp-ditched-in-5_3.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-use-ktime_get_boottime_ns-for-5_3.patch"
+	  "${FILESDIR}/rock-dkms-2.9_p6-use-ktime_get_boottime_ns-for-5_3.patch"
 	  "${FILESDIR}/rock-dkms-2.8_p13-enable-mmu_notifier.patch"
 	  "${FILESDIR}/rock-dkms-2.8_p13-fix-configure-test-invalidate_range_start-wants-2-args-requires-config-mmu-notifier.patch"
 	  "${FILESDIR}/rock-dkms-2.8_p13-mmu_notifier_range_blockable-for-5_2.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-vm_fault_t-is-__bitwise-unsigned-int-for-5_1.patch"
+	  "${FILESDIR}/rock-dkms-2.9_p6-vm_fault_t-is-__bitwise-unsigned-int-for-5_1.patch"
 	  "${FILESDIR}/rock-dkms-2.8_p13-drm_atomic_private_obj_init-adev-ddev-arg-for-5_1.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-no-firmware-install.patch"
+	  "${FILESDIR}/rock-dkms-2.9_p6-no-firmware-install.patch"
 	  "${FILESDIR}/rock-dkms-2.8_p13-no-update-initramfs.patch"
 
 	  # drm_crtc_force_disable_all was not marked error
@@ -236,6 +238,9 @@ src_unpack() {
 
 src_prepare() {
 	default
+	einfo "DC_VER=${DC_VER}"
+	einfo "AMDGPU_VERSION=${AMDGPU_VERSION}"
+	einfo "ROCk version $(ver_cut 1-2)"
 	check_hardware
 	chmod 0770 autogen.sh || die
 	./autogen.sh || die
