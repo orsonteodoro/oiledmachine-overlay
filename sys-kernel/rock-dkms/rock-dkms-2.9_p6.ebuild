@@ -34,6 +34,7 @@ DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${MY_RPR}"
 DC_VER="3.2.48"
 AMDGPU_VERSION="5.0.82"
+KV_NOT_SUPPORTED="5.3"
 
 # patches based on https://aur.archlinux.org/cgit/aur.git/tree/?h=amdgpu-dkms
 # patches try to make it linux kernel 5.1+ compatible but still missing 5.3 compatibility.
