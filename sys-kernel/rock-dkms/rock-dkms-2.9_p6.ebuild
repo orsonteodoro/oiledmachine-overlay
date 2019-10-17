@@ -14,7 +14,7 @@ FN="rock-dkms_${MY_RPR}_all.deb"
 BASE_URL="http://repo.radeon.com/rocm/apt/debian"
 FOLDER="pool/main/r/rock-dkms"
 SRC_URI="http://repo.radeon.com/rocm/apt/debian/pool/main/r/rock-dkms/${FN}"
-SLOT="0"
+SLOT="0/${PV}"
 IUSE="+build +check-mmu-notifier +check-pcie +check-gpu firmware"
 RDEPEND="firmware? ( sys-firmware/rock-firmware )
 	 sys-kernel/dkms
