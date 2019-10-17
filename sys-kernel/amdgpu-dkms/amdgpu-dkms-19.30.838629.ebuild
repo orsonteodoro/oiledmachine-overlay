@@ -22,7 +22,7 @@ PKG_VER_STRING_DIR=${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 SLOT="0/${PV}"
-IUSE="+build +check-mmu-notifier +check-pcie +check-gpu firmware"
+IUSE="+build +check-mmu-notifier check-pcie check-gpu firmware rock"
 RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
 	 sys-kernel/dkms"
 # drm_format_info_plane_cpp got removed in 5.3 and this module uses it
@@ -175,7 +175,7 @@ check_hardware() {
 	local is_pci_slots_supported=1
 	if use check-pcie ; then
 		if ! ( dmidecode -t slot | grep "PCI Express 3" > /dev/null ); then
-			ewarn "Your PCIe slots are not supported."
+			ewarn "Your PCIe slots are not supported for ROCk support."
 			is_pci_slots_supported=0
 		fi
 	fi
@@ -188,30 +188,30 @@ check_hardware() {
 		device_ids=$(lspci -nn | grep VGA | grep -P -o -e "[0-9a-f]{4}:[0-9a-f]{4}" | cut -f2 -d ":" | tr "[:lower:]" "[:upper:]")
 		for device_id in ${device_ids} ; do
 			if [[ -z "${device_id}" ]] ; then
-				ewarn "Your APU/GPU is not supported for device_id=${device_id}"
+				ewarn "Your APU/GPU is not supported for ROCk support when device_id=${device_id}"
 				continue
 			fi
 			# the format is asicname_needspciatomics
-			local asics="kaveri_0 carrizo_0 raven_1 hawaii_1 tonga_1 fiji_1 fijivf_0 polaris10_1 polaris10vf_0 polaris11_1 polaris12_1 vegam_1 vega10_0 vega10vf_0 vega12_0 vega20_0 arcturus_0 navi10_0"
-			local found_asic=$(grep -i "${device_id}" "${FILESDIR}/kfd_device.c_v2.8" | grep -P -o -e "/\* [ a-zA-Z0-9]+\*/" | sed -e "s|[ /*]||g" | tr "[:upper:]" "[:lower:]")
+			local asics="kaveri_0 carrizo_0 raven_1 hawaii_1 tonga_1 fiji_1 fijivf_0 polaris10_1 polaris10vf_0 polaris11_1 polaris12_1 vegam_1 vega10_0 vega10vf_0 vega12_0 vega20_0 navi10_0"
+			local found_asic=$(grep -i "${device_id}" "${FILESDIR}/kfd_device.c_v${PV}" | grep -P -o -e "/\* [ a-zA-Z0-9]+\*/" | sed -e "s|[ /*]||g" | tr "[:upper:]" "[:lower:]")
 			x_atomic_f=$(echo "${asics}" | grep -P -o -e "${found_asic}_[01]" | sed -e "s|${found_asic}_||g")
 			atomic_f=$(( ${atomic_f} | ${x_atomic_f} ))
 			if [[ "${x_atomic_f}" == "1" ]] ; then
-				ewarn "Your APU/GPU requires PCIe atomics support for device_id=${device_id}"
+				ewarn "Your APU/GPU requires PCIe atomics support for ROCk support when device_id=${device_id}"
 			else
 				atomic_not_required=1
-				einfo "Your APU/GPU is supported for device_id=${device_id}"
+				einfo "Your APU/GPU is supported for ROCk when device_id=${device_id}"
 			fi
 		done
 	fi
 
 	if use check-pcie && use check-gpu ; then
 		if (( ${#device_ids} == 1 )) && [[ "${atomic_f}" == "1" && "${is_pci_slots_supported}" != "1" ]] ; then
-			die "Your APU/GPU and PCIe combo is not supported.  You may disable check-pcie or check-gpu to continue."
+			die "Your APU/GPU and PCIe combo is not supported in ROCk.  You may disable check-pcie or check-gpu to continue."
 		elif (( ${#device_ids} > 1 )) && [[ "${atomic_f}" == "1" && "${is_pci_slots_supported}" != "1" && "${atomic_not_required}" == "0" ]] ; then
-			die "You APU/GPU and PCIe combo is not supported for your multiple GPU setup.  You may disable check-pcie or check-gpu to continue."
+			die "You APU/GPU and PCIe combo is not supported for your multiple GPU setup in ROCk.  You may disable check-pcie or check-gpu to continue."
 		elif (( ${#device_ids} > 1 )) && [[ "${atomic_f}" == "1" && "${is_pci_slots_supported}" != "1" && "${atomic_not_required}" == "1" ]] ; then
-			ewarn "You APU/GPU and PCIe combo may not supported for some of your GPUs."
+			ewarn "You APU/GPU and PCIe combo may not supported for some of your GPUs in ROCk."
 		fi
 	fi
 }
