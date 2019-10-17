@@ -255,7 +255,7 @@ check_kernel() {
 		die "Reference to the source code is missing.  Expected /usr/src/linux-${kv}."
 	fi
 	KERNEL_DIR="/usr/src/linux-${kv}"
-	if use build ; then
+	if use build || [[ "${EBUILD_PHASE_FUNC}" == "pkg_config" ]]; then
 		pkg_setup_error
 	else
 		pkg_setup_warn
