@@ -112,6 +112,20 @@ pkg_setup_warn() {
 	CONFIG_CHECK+=" ~MMU_NOTIFIER"
 	WARNING_MMU_NOTIFIER=" CONFIG_MMU_NOTIFIER must be set to =y in the kernel or it will fail in the link stage."
 
+	check_extra_config
+
+	unset CONFIG_CHECK
+
+	CONFIG_CHECK+=" ~DRM_AMD_ACP"
+	WARNING_MFD_CORE=" CONFIG_DRM_AMD_ACP (Enable ACP IP support) must be set to =y in the kernel or it will fail in the link stage."
+
+	check_extra_config
+
+	unset CONFIG_CHECK
+
+	CONFIG_CHECK+=" ~MFD_CORE"
+	WARNING_MFD_CORE=" CONFIG_MFD_CORE must be set to =y or =m in the kernel or it will fail in the link stage."
+
 	linux-info_pkg_setup
 
 	if ! linux_chkconfig_module "DRM_AMDGPU" ; then
@@ -141,6 +155,20 @@ pkg_setup_error() {
 
 	CONFIG_CHECK+=" MMU_NOTIFIER"
 	ERROR_MMU_NOTIFIER=" CONFIG_MMU_NOTIFIER must be set to =y in the kernel or it will fail in the link stage."
+
+	check_extra_config
+
+	unset CONFIG_CHECK
+
+	CONFIG_CHECK+=" ~DRM_AMD_ACP"
+	WARNING_MFD_CORE=" CONFIG_DRM_AMD_ACP (Enable ACP IP support) must be set to =y in the kernel or it will fail in the link stage."
+
+	check_extra_config
+
+	unset CONFIG_CHECK
+
+	CONFIG_CHECK+=" ~MFD_CORE"
+	WARNING_MFD_CORE=" CONFIG_MFD_CORE must be set to =y or =m in the kernel or it will fail in the link stage."
 
 	linux-info_pkg_setup
 
