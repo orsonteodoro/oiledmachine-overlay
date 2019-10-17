@@ -8,9 +8,9 @@ DESCRIPTION+=" the .NET platform."
 HOMEPAGE="http://sourceforge.net/projects/taoframework/"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
-USE_DOTNET="net45"
+USE_DOTNET="net20 net40 net45"
 IUSE="${USE_DOTNET} gac"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net45 )"
+REQUIRED_USE="^^ ( ${USE_DOTNET} ) gac? ( || ( net40 net45 ) )"
 RDEPEND="media-libs/openal
 	 media-libs/libsdl
 	 virtual/opengl"
@@ -39,23 +39,33 @@ src_prepare() {
 -e "s|SYSTEM_LIBS =|SYSTEM_LIBS = /usr/share/nunit-2/nunit.framework.dll |g" \
 		tests/Sdl/Makefile.am || die
 	sed -i -e "s|gmcs|mcs|g" configure.ac || die
-	eapply "${FILESDIR}/taoframework-2.1.0-use-mono-4.5.patch"
+	if use net40 ; then
+		eapply "${FILESDIR}/taoframework-2.1.0-use-mono-4.0.patch"
+	elif use net45 ; then
+		eapply "${FILESDIR}/taoframework-2.1.0-use-mono-4.5.patch"
+	fi
 	eautoreconf || die
 }
 
 _doins() {
 	local module_name="$1"
-	gacinstall src/Tao.${module_name}/Tao.${module_name}.dll
+	if use net40 || use net45 ; then
+		gacinstall src/Tao.${module_name}/Tao.${module_name}.dll
+	fi
 	if use developer ; then
 		if [ -e "src/Tao.${module_name}/Tao.${module_name}.xml" ] ; then
 			doins src/Tao.${module_name}/Tao.${module_name}.xml
-			dotnet_distribute_file_matching_dll_in_gac
+			if use net40 || use net45 ; then
+				dotnet_distribute_file_matching_dll_in_gac
 				"src/Tao.${module_name}/Tao.${module_name}.dll"
 				"src/Tao.${module_name}/Tao.${module_name}.xml"
+			fi
 		fi
-		dotnet_distribute_file_matching_dll_in_gac
+		if use net40 || use net45 ; then
+			dotnet_distribute_file_matching_dll_in_gac
 			"src/Tao.${module_name}/Tao.${module_name}.dll"
 			"src/Tao.${module_name}/Tao.${module_name}.dll.config"
+		fi
 	fi
 	doins src/Tao.${module_name}/Tao.${module_name}.dll.config
 	doins src/Tao.${module_name}/Tao.${module_name}.dll
