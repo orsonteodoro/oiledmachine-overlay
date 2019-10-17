@@ -25,7 +25,14 @@ SLOT="0/${PV}"
 IUSE="+build +check-mmu-notifier check-pcie check-gpu firmware rock"
 REQUIRED_USE="rock? ( check-pcie check-gpu )"
 RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
-	 sys-kernel/dkms"
+	 sys-kernel/dkms
+	 || ( <sys-kernel/ck-sources-5.3
+	      <sys-kernel/gentoo-sources-5.3
+	      <sys-kernel/git-sources-5.3
+	      <sys-kernel/ot-sources-5.3
+	      <sys-kernel/pf-sources-5.3
+	      <sys-kernel/vanilla-sources-5.3
+	      <sys-kernel/zen-sources-5.3 )"
 DEPEND="${RDEPEND}
 	check-pcie? ( sys-apps/dmidecode )
 	check-gpu? ( sys-apps/pciutils )"
