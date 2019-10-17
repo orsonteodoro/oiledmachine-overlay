@@ -1,0 +1,17 @@
+--- a/amd/amdgpu/dce_v8_0.c.orig	2019-10-16 23:15:04.234308682 -0700
++++ b/amd/amdgpu/dce_v8_0.c	2019-10-16 23:17:01.130865295 -0700
+@@ -1619,10 +1619,12 @@ static void dce_v8_0_afmt_setmode(struct
+ 	dce_v8_0_audio_write_sad_regs(encoder);
+ 	dce_v8_0_audio_write_latency_fields(encoder, mode);
+ 
+-#if DRM_VERSION_CODE < DRM_VERSION(4, 14, 0) && \
++#if DRM_VERSION_CODE >= DRM_VERSION(5, 1, 0)
++	err = drm_hdmi_avi_infoframe_from_display_mode(&frame, connector, mode);
++#elif DRM_VERSION_CODE < DRM_VERSION(4, 14, 0) && \
+ 	!defined(OS_NAME_SUSE_15) && !defined(OS_NAME_SUSE_15_1)
+ 	err = drm_hdmi_avi_infoframe_from_display_mode(&frame, mode);
+-#else
++#elif DRM_VERSION_CODE < DRM_VERSION(5, 1, 0)
+ 	err = drm_hdmi_avi_infoframe_from_display_mode(&frame, mode, false);
+ #endif
+ 	if (err < 0) {

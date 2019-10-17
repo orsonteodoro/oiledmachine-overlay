@@ -1,0 +1,12 @@
+--- a/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c.orig	2019-10-03 15:29:01.124862992 -0700
++++ b/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c	2019-10-03 16:10:08.425529010 -0700
+@@ -25,6 +25,9 @@
+ 
+ #include <linux/version.h>
+ #include <drm/drm_atomic_helper.h>
++#if DRM_VERSION_CODE >= DRM_VERSION(5, 1, 0)
++#include <drm/drm_probe_helper.h>
++#endif
+ #include "dm_services.h"
+ #include "amdgpu.h"
+ #include "amdgpu_dm.h"

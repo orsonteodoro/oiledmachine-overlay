@@ -1,0 +1,28 @@
+--- a/m4/kernel.m4.orig	2019-09-18 14:41:09.000000000 -0700
++++ b/m4/kernel.m4	2019-10-03 02:11:15.811592684 -0700
+@@ -339,8 +339,10 @@ AC_DEFUN([AC_KERNEL_COMPILE_IFELSE], [
+ 	kbuild_src_flag=''
+ 	test "x$enable_linux_builtin" = xyes && modpost_flag='modpost=true' # fake modpost stage
+ 	test "x$enable_linux_builtin" = xyes && kbuild_src_flag='KBUILD_SRC=' # override KBUILD_SRC
++	cp conftest.c conftest.h build
++	AC_TRY_COMMAND(make [$2] -C $LINUX_OBJ EXTRA_CFLAGS="-Werror -Wno-error=uninitialized -Wno-error=unused-variable" M=$PWD/build $modpost_flag $kbuild_src_flag >/dev/null)
+ 	AS_IF(
+-		[AC_TRY_COMMAND(cp conftest.c conftest.h build && make [$2] -C $LINUX_OBJ EXTRA_CFLAGS="-Werror -Wno-error=uninitialized -Wno-error=unused-variable" M=$PWD/build $modpost_flag $kbuild_src_flag) >/dev/null && AC_TRY_COMMAND([$3])],
++		[AC_TRY_COMMAND([$3])],
+ 		[$4],
+ 		[_AC_MSG_LOG_CONFTEST m4_ifvaln([$5],[$5])]
+ 	)
+--- a/amd/dkms/m4/kernel.m4.orig	2019-09-18 14:41:09.000000000 -0700
++++ b/amd/dkms/m4/kernel.m4	2019-10-03 02:11:15.811592684 -0700
+@@ -339,8 +339,10 @@ AC_DEFUN([AC_KERNEL_COMPILE_IFELSE], [
+ 	kbuild_src_flag=''
+ 	test "x$enable_linux_builtin" = xyes && modpost_flag='modpost=true' # fake modpost stage
+ 	test "x$enable_linux_builtin" = xyes && kbuild_src_flag='KBUILD_SRC=' # override KBUILD_SRC
++	cp conftest.c conftest.h build
++	AC_TRY_COMMAND(make [$2] -C $LINUX_OBJ EXTRA_CFLAGS="-Werror -Wno-error=uninitialized -Wno-error=unused-variable" M=$PWD/build $modpost_flag $kbuild_src_flag >/dev/null)
+ 	AS_IF(
+-		[AC_TRY_COMMAND(cp conftest.c conftest.h build && make [$2] -C $LINUX_OBJ EXTRA_CFLAGS="-Werror -Wno-error=uninitialized -Wno-error=unused-variable" M=$PWD/build $modpost_flag $kbuild_src_flag) >/dev/null && AC_TRY_COMMAND([$3])],
++		[AC_TRY_COMMAND([$3])],
+ 		[$4],
+ 		[_AC_MSG_LOG_CONFTEST m4_ifvaln([$5],[$5])]
+ 	)
