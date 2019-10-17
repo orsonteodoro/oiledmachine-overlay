@@ -2,9 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-DESCRIPTION="Radeon™ Software for Linux® 19.30 for Radeon RX 5700 Series"
+DESCRIPTION="Radeon™ Software for Linux®"
 HOMEPAGE=\
-"https://www.amd.com/zh-hant/support/kb/release-notes/rn-amdgpu-unified-navi-linux"
+"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux"
 LICENSE="AMD GPL-2 QPL-1.0"
 KEYWORDS="~amd64 ~x86"
 MULTILIB_COMPAT=( abi_x86_{32,64} )
