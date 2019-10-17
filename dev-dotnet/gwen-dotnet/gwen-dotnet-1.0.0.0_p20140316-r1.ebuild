@@ -13,7 +13,7 @@ IUSE="${USE_DOTNET} debug +gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 )"
 RDEPEND="dev-dotnet/opentk
          dev-dotnet/sfmldotnet
-         dev-dotnet/tao-framework"
+         dev-dotnet/taoframework"
 DEPEND="${RDEPEND}"
 inherit dotnet eutils
 SRC_URI="https://storage.googleapis.com/google-code-archive-source/v2/code.google.com/gwen-dotnet/source-archive.zip \
