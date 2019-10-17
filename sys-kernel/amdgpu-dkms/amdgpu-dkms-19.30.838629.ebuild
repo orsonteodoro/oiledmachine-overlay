@@ -26,7 +26,7 @@ IUSE="+build +check-mmu-notifier check-pcie check-gpu firmware rock"
 REQUIRED_USE="rock? ( check-pcie check-gpu )"
 RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
 	 sys-kernel/dkms"
-# drm_format_info_plane_cpp got removed in 5.3 and this module uses it
+# drm_format_plane_cpp in amd/amdgpu/amdgpu_fb.c got removed in 5.3 and this module uses it
 DEPEND="${RDEPEND}
 	|| ( <sys-kernel/ck-sources-5.3
 	     <sys-kernel/gentoo-sources-5.3
