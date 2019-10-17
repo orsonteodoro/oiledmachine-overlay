@@ -2,14 +2,14 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-
-MULTILIB_COMPAT=( abi_x86_{32,64} )
-inherit linux-info multilib-build unpacker
-
-DESCRIPTION="New generation AMD closed-source drivers for Southern Islands (HD7730 Series) and newer chipsets"
-HOMEPAGE="https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-20-unified"
+DESCRIPTION="New generation AMD closed-source drivers for Southern Islands"
+DESCRIPTION+=" (HD7730 Series) and newer chipsets"
+HOMEPAGE=\
+"https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-20-unified"
 LICENSE="AMD GPL-2 QPL-1.0"
 KEYWORDS="~amd64 ~x86"
+MULTILIB_COMPAT=( abi_x86_{32,64} )
+inherit linux-info multilib-build unpacker
 PKG_VER=${PV:0:5}
 PKG_VER_MAJ=${PV:0:2}
 PKG_REV=${PV:6:6}
@@ -34,10 +34,12 @@ PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.0.1" # about the same as the mesa version
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="+amf +egl +gles2 freesync hsa +opencl +opengl openmax orca pal +vaapi +vdpau +vulkan wayland"
+IUSE="+amf dkms +egl +gles2 freesync hsa +opencl +opengl openmax orca pal"
+IUSE+=" +vaapi +vdpau +vulkan wayland"
 SLOT="1"
 
-# The x11-base/xorg-server-<ver> must match this drivers version or this error will be produced:
+# The x11-base/xorg-server-<ver> must match this drivers version or this error
+# will be produced:
 # modules abi version 23 doesn't match the server version 24
 #
 # For more info on VIDEODRV see https://www.x.org/wiki/XorgModuleABIVersions/
@@ -78,7 +80,8 @@ RDEPEND="app-eselect/eselect-opencl
 	 x11-libs/libXext[${MULTILIB_USEDEP}]
 	 x11-libs/libXinerama[${MULTILIB_USEDEP}]
 	 x11-libs/libXrandr[${MULTILIB_USEDEP}]
-	 x11-libs/libXrender[${MULTILIB_USEDEP}]"
+	 x11-libs/libXrender[${MULTILIB_USEDEP}]
+	 dkms? ( sys-kernel/amdgpu-dkms sys-kernel/rock-dkms )"
 # hsakmt requires libnuma.so.1
 # kmstest requires libkms
 # amdgpu_dri.so requires wayland?
