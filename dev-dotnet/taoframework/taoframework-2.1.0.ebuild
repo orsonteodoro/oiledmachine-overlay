@@ -9,8 +9,8 @@ HOMEPAGE="http://sourceforge.net/projects/taoframework/"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 USE_DOTNET="net45"
-IUSE="${USE_DOTNET}"
-REQUIRED_USE="|| ( ${USE_DOTNET} )"
+IUSE="${USE_DOTNET} gac"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net45 )"
 RDEPEND="media-libs/openal
 	 media-libs/libsdl
 	 virtual/opengl"
