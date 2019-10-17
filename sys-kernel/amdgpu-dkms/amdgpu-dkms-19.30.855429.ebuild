@@ -6,12 +6,11 @@ EAPI=7
 inherit linux-info unpacker
 
 DESCRIPTION="AMDGPU DKMS kernel module"
-HOMEPAGE="https://www.amd.com/zh-hant/support/kb/release-notes/rn-amdgpu-unified-navi-linux"
+HOMEPAGE=\
+"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux"
 LICENSE="GPL-2 MIT"
 KEYWORDS="amd64"
 MY_RPR="${PV//_p/-}" # Remote PR
-BASE_URL="http://repo.radeon.com/rocm/apt/debian"
-FOLDER="pool/main/r/rock-dkms"
 PKG_VER=$(ver_cut 1-2 ${PV})
 PKG_VER_MAJ=$(ver_cut 1 ${PV})
 PKG_REV=$(ver_cut 3)
