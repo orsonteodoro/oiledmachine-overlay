@@ -22,7 +22,7 @@ RDEPEND="addin? (
 	   dev-dotnet/opentk
            dev-dotnet/pvrtexlibnet[${MULTILIB_USEDEP}]
 	   dev-dotnet/sharpfont
-	   dev-dotnet/tao-framework
+	   dev-dotnet/taoframework
 	   dev-dotnet/xwt
 	 >=dev-util/nant-0.93_pre20151114
 	 >=dev-util/nunit-3.0.1:3
