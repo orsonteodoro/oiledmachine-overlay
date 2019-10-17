@@ -39,9 +39,9 @@ S="${WORKDIR}"
 RESTRICT="fetch"
 DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${MY_RPR}"
-DC_VER="3.2.35"
+DC_VER="3.2.42"
 AMDGPU_VERSION="5.0.73"
-ROCK_VER="2.8.0" # See changes in kfd keywords and tag ;  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/commits/roc-2.8.0/drivers/gpu/drm/amd/amdkfd
+ROCK_VER="2.7.0_p20190627" # See changes in kfd keywords and tag ;  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/commits/master?path[]=drivers&path[]=gpu&path[]=drm&path[]=amd&path[]=amdkfd
 KV_NOT_SUPPORTED="5.3"
 
 # patches based on https://aur.archlinux.org/cgit/aur.git/tree/?h=amdgpu-dkms
