@@ -254,7 +254,7 @@ check_kernel() {
 
 pkg_setup() {
 	if [[ -z "${ROCK_DKMS_KERNELS}" ]] ; then
-		eerror "You must define a per-package env or add to /etc/portage/make.conf a environmental variable ROCK_DKMS_KERNELS"
+		eerror "You must define a per-package env or add to /etc/portage/make.conf an environmental variable named ROCK_DKMS_KERNELS"
 		eerror "containing a space delimited <kernvel_ver>-<extra_version>."
 		eerror
 		eerror "It should look like ROCK_DKMS_KERNELS=\"5.2.17-pf 5.2.17-gentoo\""
