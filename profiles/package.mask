@@ -347,6 +347,7 @@ dev-util/geeks-diary
 =sys-kernel/ot-sources-5.3
 =sys-kernel/ot-sources-5.3.1
 =sys-kernel/ot-sources-5.3.4
+=sys-kernel/ot-sources-5.3.7
 
 # untested
 games-engines/enigma
