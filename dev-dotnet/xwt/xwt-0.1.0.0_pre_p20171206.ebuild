@@ -41,6 +41,7 @@ src_compile() {
 src_install() {
 	local mydebug=$(usex debug "Debug" "Release")
 	install_impl() {
+		dotnet_install_loc
                 egacinstall "Xwt.Gtk/bin/${mydebug}/Xwt.dll"
                 egacinstall "Xwt.Gtk/bin/${mydebug}/Xwt.Gtk3.dll"
 		doins Xwt.Gtk/bin/${mydebug}/Xwt.dll
