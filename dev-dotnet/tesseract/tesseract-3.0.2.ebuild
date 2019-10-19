@@ -6,11 +6,12 @@ DESCRIPTION="A .Net wrapper for tesseract-ocr"
 HOMEPAGE="https://github.com/charlesw/tesseract"
 LICENSE="Apache-2.0"
 KEYWORDS="~amd64 ~x86"
-SLOT="0"
+SLOT="0/${PV}"
 USE_DOTNET="net45"
 IUSE="${USE_DOTNET} debug +gac"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac gac? ( net45 )"
-RDEPEND="=app-text/tesseract-3.0.2*
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net45 )"
+RDEPEND=">=app-text/tesseract-3.0.2
+	 <app-text/tesseract-3.1
          =media-libs/leptonica-1.72*"
 DEPEND="${RDEPEND}"
 inherit dotnet eutils mono
@@ -20,44 +21,44 @@ S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 
 src_prepare() {
+	default
 	eapply "${FILESDIR}/tesseract-3.0.2-refs.patch"
-
-	eapply_user
+	dotnet_copy_sources
+	prepare_impl() {
+		cd src
+		cp "AssemblyVersionInfo.template.cs" "AssemblyVersionInfo.cs" \
+			|| die
+		sed -i -r -e "s|[\$]\(Version\)|${PV}|g" AssemblyVersionInfo.cs\
+			|| die
+	}
+	dotnet_foreach_impl prepare_impl
 }
 
 src_compile() {
-	cd "${S}/src"
-
-	cp "AssemblyVersionInfo.template.cs" "AssemblyVersionInfo.cs" || die
-	sed -i -r -e "s|[\$]\(Version\)|${PV}|g" AssemblyVersionInfo.cs || die
-
-        einfo "Building solution"
-        exbuild /p:Configuration=$(usex debug "Debug45" "Release45") ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" "Tesseract.sln" || die
+	compile_impl() {
+		cd src
+	        exbuild /p:Configuration=$(usex debug "Debug45" "Release45") \
+		${STRONG_ARGS_NETFX}"$(pwd)/${PN^}.snk" "${PN^}.sln" || die
+	}
+	dotnet_foreach_impl compile_impl
 }
 
 src_install() {
-	mydebug="Release45"
-	if use debug; then
-		mydebug="Debug45"
-	fi
-
-        ebegin "Installing dlls into the GAC"
-
-	for x in ${USE_DOTNET} ; do
-		FW_UPPER=${x:3:1}
-		FW_LOWER=${x:4:1}
-		egacinstall src/Tesseract/bin/${mydebug}/Net${EBF}/Tesseract.dll
+	local mydebug=$(usex debug "Debug45" "Release45")
+	install_impl() {
+		local p="src/${PN^}/bin/${mydebug}/Net${EBF}"
+		egacinstall ${p}/${PN^}.dll
+		doins ${p}/${PN^}.dll
 		if use developer; then
-			doins src/Tesseract/bin/${mydebug}/Net${EBF}/{Tesseract.dll.mdb,Tesseract.xml}
+			doins ${p}/{${PN^}.dll.mdb,${PN^}.xml}
+			dotnet_distribute_file_matching_dll_in_gac \
+				"${p}/${PN^}.dll" \
+				"${p}/${PN^}.dll.mdb"
+			dotnet_distribute_file_matching_dll_in_gac \
+				"${p}/${PN^}.dll" \
+				"${p}/${PN^}.xml"
 		fi
-	done
-
-	eend
-
-	if use developer ; then
-		insinto "/usr/$(get_libdir)/mono/${PN}"
-		doins "src/Tesseract.snk"
-	fi
-
+	}
+	dotnet_foreach_impl install_impl
 	dotnet_multilib_comply
 }
