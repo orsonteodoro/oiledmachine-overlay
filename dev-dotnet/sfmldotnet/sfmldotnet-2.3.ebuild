@@ -87,13 +87,12 @@ src_install() {
 			die "ABI is not supported"
 		fi
 		dll_install_impl() {
+			dotnet_install_loc
 	                egacinstall lib/${myarch}/sfmlnet-audio-2.dll
 	                egacinstall lib/${myarch}/sfmlnet-graphics-2.dll
 	                egacinstall lib/${myarch}/sfmlnet-system-2.dll
 	                egacinstall lib/${myarch}/sfmlnet-window-2.dll
 			if use developer ; then
-				mkdir -p /usr/$(get_libdir)/mono/sfmldotnet/
-				insinto /usr/$(get_libdir)/mono/sfmldotnet/
 				doins lib/${myarch}/sfmlnet-audio-2.dll.mdb
 				doins lib/${myarch}/sfmlnet-graphics-2.dll.mdb
 				doins lib/${myarch}/sfmlnet-system-2.dll.mdb
