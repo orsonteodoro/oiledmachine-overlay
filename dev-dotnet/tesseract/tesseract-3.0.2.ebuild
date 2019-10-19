@@ -46,6 +46,7 @@ src_compile() {
 src_install() {
 	local mydebug=$(usex debug "Debug45" "Release45")
 	install_impl() {
+		dotnet_install_loc
 		local p="src/${PN^}/bin/${mydebug}/Net${EBF}"
 		egacinstall ${p}/${PN^}.dll
 		doins ${p}/${PN^}.dll
