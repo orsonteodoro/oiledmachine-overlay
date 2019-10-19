@@ -151,6 +151,8 @@ function generate_rock_patches() {
 		ot-kernel-rock_generate_rock_patches_pre
 	fi
 
+	# We dedupe by git subject because the body is the same but different commit hash.
+	# It happens when they are backporting or migrating the commit to another repo.
 if false; then
 	einfo "Generating hash tables"
 	unset vk_commits
@@ -214,6 +216,7 @@ fi
 
 	einfo "Doing commit -> .patch conversion for rock-patches set:"
 	for c in $C ; do
+if false; then
 		if [[ -n "${vk_commits[${c}]}" ]] ; then
 			#einfo "Already added ${c} via vanilla kernel sources.  Skipping..."
 			continue
@@ -221,13 +224,14 @@ fi
 			#einfo "Already added ${c} via amd-staging-drm-next.  Skipping..."
 			continue
 		fi
+fi
 
 		local ct=$(git -P show -s --format=%ct ${c})
-		OIFS="${IFS}"
-		IFS=$'\n'
+#		OIFS="${IFS}"
+#		IFS=$'\n'
 		local s=$(git -P show -s --format=%s ${c})
-		local h_summary=$(echo "${s}" | sha1sum | cut -f1 -d" ")
-		IFS="${OIFS}"
+#		local h_summary=$(echo "${s}" | sha1sum | cut -f1 -d" ")
+#		IFS="${OIFS}"
 
 		if echo "${s}" | grep -q -P -e "(drm/amd|amdgpu|amd/powerplay|amdkfd|gpu: amdgpu:|amdgpu_dm)" ; then
 			# whitelist all amd drm driver updates

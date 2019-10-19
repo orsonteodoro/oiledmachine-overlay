@@ -108,6 +108,8 @@ function generate_amd_staging_drm_next_patches() {
 		drivers/gpu/drm include/drm drivers/dma-buf include/linux include/uapi/drm \
 		| echo -e "\n$(cat -)" | tac)
 
+	# We dedupe by git subject because the body is the same but different commit hash.
+	# It happens when they are backporting.
 if false; then
 	# vk is vanilla kernel
 	einfo "Generating hash tables"
@@ -136,17 +138,19 @@ fi
 
 	einfo "Doing commit -> .patch conversion for amd-staging-drm-next set:"
 	for c in $C ; do
+if false; then
 		if [[ -n "${vk_commits[${c}]}" ]] ; then
 			#einfo "Skipping old commit ${c} :  Already added via vanilla kernel sources."
 			continue
 		fi
+fi
 
 		local ct=$(git -P show -s --format=%ct ${c})
-		OIFS="${IFS}"
-		IFS=$'\n'
+#		OIFS="${IFS}"
+#		IFS=$'\n'
 		local s=$(git -P show -s --format=%s ${c})
-		local h_summary=$(echo "${s}" | sha1sum | cut -f1 -d" ")
-		IFS="${OIFS}"
+#		local h_summary=$(echo "${s}" | sha1sum | cut -f1 -d" ")
+#		IFS="${OIFS}"
 
 		if echo "${s}" | grep -q -P -e "(drm/amd|amdgpu|amd/powerplay|amdkfd|gpu: amdgpu:|amdgpu_dm)" ; then
 			# whitelist all amd drm driver updates
