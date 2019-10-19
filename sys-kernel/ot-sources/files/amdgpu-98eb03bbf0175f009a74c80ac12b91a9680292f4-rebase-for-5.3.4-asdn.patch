@@ -1,0 +1,12 @@
+--- a/drivers/gpu/drm/amd/powerplay/navi10_ppt.c.orig	2019-10-10 02:43:15.200576570 -0700
++++ b/drivers/gpu/drm/amd/powerplay/navi10_ppt.c	2019-10-10 02:44:07.115568212 -0700
+@@ -1616,9 +1616,7 @@ static const struct pptable_funcs navi10
+ 	.set_watermarks_table = navi10_set_watermarks_table,
+ 	.read_sensor = navi10_read_sensor,
+ 	.get_uclk_dpm_states = navi10_get_uclk_dpm_states,
+-	.get_ppfeature_status = navi10_get_ppfeature_status,
+ 	.set_performance_level = navi10_set_performance_level,
+-	.set_ppfeature_status = navi10_set_ppfeature_status,
+ 	.get_thermal_temperature_range = navi10_get_thermal_temperature_range,
+ 	.set_performance_level = navi10_set_performance_level,
+ 	.get_thermal_temperature_range = navi10_get_thermal_temperature_range,

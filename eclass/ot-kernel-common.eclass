@@ -56,8 +56,10 @@ inherit ot-kernel-cve
 inherit ot-kernel-asdn
 inherit ot-kernel-rock
 
-DEPEND+=" dev-util/patchutils
+DEPEND+=" >=dev-util/patchutils-0.3.4_p20190902
 	  sys-apps/grep[pcre]"
+
+SRC_URI+=" https://github.com/torvalds/linux/commit/52791eeec1d9f4a7e7fe08aaba0b1553149d93bc.patch -> linux--dma-buf-rename-reservation_object-to-dma_resv.patch"
 
 gen_kernel_seq()
 {
@@ -122,6 +124,8 @@ KERNEL_PATCH_0_TO_1_URL="https://cdn.kernel.org/pub/linux/kernel/v${K_PATCH_XV}/
 
 LINUX_REPO_URL="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 
+LINUX_COMMITS_AMDGPU_RANGE_FN="${LINUX_COMMITS_AMDGPU_RANGE_FN:=linux.commits.amdgpu_range.${K_MAJOR_MINOR}}"
+
 if [[ -n "${KERNEL_NO_POINT_RELEASE}" && "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; then
 	KERNEL_PATCH_URLS=()
 elif [[ -n "${KERNEL_0_TO_1_ONLY}" && "${KERNEL_0_TO_1_ONLY}" == "1" ]] ; then
@@ -151,7 +155,7 @@ UNIPATCH_LIST=""
 
 UNIPATCH_STRICTORDER="yes"
 
-PATCH_OPS="-p1 -F 100"
+PATCH_OPS="-p1 -F 500"
 
 # @FUNCTION: _dpatch
 # @DESCRIPTION:
@@ -180,7 +184,7 @@ function _tpatch() {
 	local patchops="$1"
 	local path="$2"
 	einfo "Applying ${path}"
-	patch ${patchops} -i ${path} > /dev/null || true
+	patch ${patchops} -i ${path} || true
 }
 
 # @FUNCTION: apply_uksm
@@ -236,7 +240,7 @@ function apply_genpatch_base() {
 			cd "${T}"
 			unpack "$a.xz"
 			cd "${S}"
-			patch --dry-run ${PATCH_OPS} -N "${f}" | grep -F "FAILED at"
+			patch --dry-run ${PATCH_OPS} -N "${f}" | grep -F -e "FAILED at"
 			if [[ "$?" == "1" ]] ; then
 				# already patched or good
 				_tpatch "${PATCH_OPS} -N" "${f}"
@@ -398,15 +402,6 @@ function fetch_zentune() {
 # @DESCRIPTION:
 # Fetches a local copy of the linux kernel repo.
 function fetch_linux_sources() {
-	if use amd-staging-drm-next-snapshot || use amd-staging-drm-next-milestone ; then
-		if [[ -e "${FILESDIR}/${LINUX_COMMITS_ASDN_RANGE_FN}" ]] ; then
-			# we have a copy commit cache
-			return
-		fi
-	else
-		ewarn "It is recommended to use the amd-staging-drm-next-snapshot or amd-staging-drm-next-milestone USE flag or you need to fetch vanilla sources to regen the commit cache list."
-	fi
-
 	einfo "Fetching the vanilla Linux kernel sources.  It may take hours."
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	cd "${DISTDIR}"
@@ -417,7 +412,7 @@ function fetch_linux_sources() {
 
 	if [[ -d "${d}" ]] ; then
 		pushd "${d}" || die
-		if ! ( git remote -v | grep -F "${LINUX_REPO_URL}" ) > /dev/null ; then
+		if ! ( git remote -v | grep -F -e "${LINUX_REPO_URL}" ) > /dev/null ; then
 			einfo "Removing ${d}"
 			rm -rf "${d}" || die
 		fi
@@ -471,18 +466,63 @@ function get_patch_index() {
 	echo ${idx}
 }
 
+# @FUNCTION: get_linux_commit_list_for_amdgpu_range
+# @DESCRIPTION:
+# Gets the list of commits between oldest timestamp from between min timestamp of AMD_STAGING_INTERSECTS_5_X (2019) and ROCK_BASE (2014) to K_MAJOR_MINOR
+function get_linux_commit_list_for_amdgpu_range() {
+	if use amd-staging-drm-next-snapshot || use amd-staging-drm-next-milestone || use rock-snapshot || use rock-milestone ; then
+		if [[ -e "${FILESDIR}/${LINUX_COMMITS_AMDGPU_RANGE_FN}" ]] ; then
+			cp -a "${FILESDIR}/${LINUX_COMMITS_AMDGPU_RANGE_FN}" "${T}"
+			return
+		fi
+	fi
+
+	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	d="${distdir}/ot-sources-src/linux"
+	cd "${d}" || die
+	einfo "Grabbing list of already merged amdgpu commits in v${K_MAJOR_MINOR} vanilla sources."
+	git -P log ${ROCK_BASE}..v${K_MAJOR_MINOR} --oneline --pretty=format:"%H" -- \
+		drivers/gpu/drm include/drm drivers/dma-buf include/linux include/uapi/drm \
+		| echo -e "\n$(cat -)" \
+		| tac > "${T}/${LINUX_COMMITS_AMDGPU_RANGE_FN}"
+}
+
 # @FUNCTION: apply_amdgpu
 # @DESCRIPTION:
-# Applies intervention patches, or patches for mispatches, for amd-staging-drm-next.
+# Applies amd-staging-drm-next and ROCk.
 #
-# ot-kernel-common_amdgpu_amd_staging_drm_next_fixes - optional callback for amd-staging-drm-next fixes
+# ot-kernel-common_amdgpu_merge_and_apply_patches - optional callback that merges amd-staging-drm-next and ROCk fixes
 #
 function apply_amdgpu() {
-	fetch_amd_staging_drm_next
-	fetch_rock_main
+	if use amd-staging-drm-next-snapshot || use amd-staging-drm-next-milestone || use rock-snapshot || use rock-milestone ; then
+		if [[ ! -e "${FILESDIR}/${LINUX_COMMITS_AMDGPU_RANGE_FN}" ]] ; then
+			fetch_linux_sources
+		fi
+	else
+		ewarn "It is recommended to use the rock-snapshot or rock-milestone USE flag or you need to fetch vanilla sources to regen the commit cache list."
+		fetch_linux_sources
+	fi
 
-	if declare -f ot-kernel-common_amdgpu_amd_staging_drm_next_fixes > /dev/null ; then
-		ot-kernel-common_amdgpu_amd_staging_drm_next_fixes
+	#AMDGPU_BASE="${AMD_STAGING_INTERSECTS_ROCK}"
+
+	get_linux_commit_list_for_amdgpu_range
+
+	fetch_amd_staging_drm_next
+	fetch_rock
+
+	if declare -f ot-kernel-common_amdgpu_merge_and_apply_patches > /dev/null ; then
+		ot-kernel-common_amdgpu_merge_and_apply_patches
+	fi
+}
+
+# @FUNCTION: _check_filterdiff
+# @DESCRIPTION:
+# Checks if filterdiff can preserve renamed files
+function _check_filterdiff() {
+	cp -a "${DISTDIR}/linux--dma-buf-rename-reservation_object-to-dma_resv.patch" "${T}"
+	filterdiff -i "*/drivers/dma-buf/dma-resv.c" "${T}/linux--dma-buf-rename-reservation_object-to-dma_resv.patch" > "${T}/linux--dma-buf-rename-reservation_object-to-dma_resv.patch.result"
+	if ! grep -q -F -e "--- a/drivers/dma-buf/reservation.c" "${T}/linux--dma-buf-rename-reservation_object-to-dma_resv.patch.result" ; then
+		die "Your filterdiff is broken from the patchutils package which cannot handle renamed files correctly.  Use the one from the oiledmachine-overlay or a live version of the package."
 	fi
 }
 
@@ -490,6 +530,7 @@ function apply_amdgpu() {
 # @DESCRIPTION:
 # Applies patch sets in order.  It calls kernel-2_src_unpack.
 function ot-kernel-common_src_unpack() {
+	_check_filterdiff
 	#if use zentune ; then
 	#	UNIPATCH_LIST+=" ${DISTDIR}/${ZENTUNE_FN}"
 	#fi

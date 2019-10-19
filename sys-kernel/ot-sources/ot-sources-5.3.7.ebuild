@@ -3,8 +3,9 @@
 
 EAPI="6"
 
-K_GENPATCHES_VER="17"
-PATCH_BMQ_VER="099"
+K_GENPATCHES_VER="9"
+PATCH_BMQ_VER="5.3.1"
+BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
 
 function ot-kernel-common_apply_genpatch_base_patchset() {
 	_tpatch "${PATCH_OPS} -N" "$d/1500_XATTR_USER_PREFIX.patch"
@@ -14,13 +15,17 @@ function ot-kernel-common_apply_genpatch_base_patchset() {
 	_tpatch "${PATCH_OPS} -N" "$d/2600_enable-key-swapping-for-apple-mac.patch"
 }
 
-inherit ot-kernel-v5.2
+inherit ot-kernel-v5.3
 
 KEYWORDS="~amd64 ~x86"
 
 pkg_setup() {
         kernel-2_pkg_setup
 	ot-kernel-common_pkg_setup
+}
+
+pkg_pretend() {
+	ot-kernel-common_pkg_pretend
 }
 
 src_unpack() {
@@ -37,6 +42,7 @@ src_install() {
 }
 
 pkg_postinst() {
+	unset K_SECURITY_UNSUPPORTED
 	kernel-2_pkg_postinst
 	ot-kernel-common_pkg_postinst
 }

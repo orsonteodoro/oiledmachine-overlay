@@ -1,0 +1,25 @@
+See https://lkml.org/lkml/2019/8/6/1331
+It is a variant of:: drm/amdgpu: switch driver from bo->resv to bo->base.resv
+# Also applies 5f680625d9765a2f936707465659acac8e44f514
+----
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c.orig	2019-10-16 06:32:29.517182422 -0700
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c	2019-10-16 12:31:02.767182149 -0700
+@@ -1307,15 +1307,15 @@ void amdgpu_bo_release_notify(struct ttm
+ 	    !(abo->flags & AMDGPU_GEM_CREATE_VRAM_WIPE_ON_RELEASE))
+ 		return;
+ 
+-	reservation_object_lock(bo->resv, NULL);
++	dma_resv_lock(bo->base.resv, NULL);
+ 
+-	r = amdgpu_fill_buffer(abo, AMDGPU_POISON, bo->resv, &fence);
++	r = amdgpu_fill_buffer(abo, AMDGPU_POISON, bo->base.resv, &fence);
+ 	if (!WARN_ON(r)) {
+ 		amdgpu_bo_fence(abo, fence, false);
+ 		dma_fence_put(fence);
+ 	}
+ 
+-	reservation_object_unlock(bo->resv);
++	dma_resv_unlock(bo->base.resv);
+ }
+ 
+ /**

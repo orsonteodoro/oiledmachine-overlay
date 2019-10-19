@@ -3,7 +3,7 @@
 
 EAPI="6"
 
-K_GENPATCHES_VER="17"
+K_GENPATCHES_VER="20"
 PATCH_BMQ_VER="099"
 
 function ot-kernel-common_apply_genpatch_base_patchset() {
@@ -37,6 +37,7 @@ src_install() {
 }
 
 pkg_postinst() {
+	unset K_SECURITY_UNSUPPORTED
 	kernel-2_pkg_postinst
 	ot-kernel-common_pkg_postinst
 }

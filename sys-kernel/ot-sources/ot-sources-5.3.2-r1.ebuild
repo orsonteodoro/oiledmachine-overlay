@@ -45,4 +45,3 @@ pkg_postinst() {
 	kernel-2_pkg_postinst
 	ot-kernel-common_pkg_postinst
 }
-
