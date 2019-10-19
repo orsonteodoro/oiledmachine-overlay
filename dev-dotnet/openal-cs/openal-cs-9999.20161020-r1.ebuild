@@ -9,12 +9,14 @@ KEYWORDS="~amd64 ~x86"
 PROJECT_NAME="OpenAL-CS"
 USE_DOTNET="net40"
 IUSE="${USE_DOTNET} debug +gac"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac gac? ( net40 )"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 )"
 RDEPEND="media-libs/openal"
 DEPEND="${RDEPEND}"
-inherit dotnet eutils mono
+inherit dotnet eutils
 EGIT_COMMIT="16b00102f4dbd0b3a0f2ce31f7fa6f5d1eb0d1ed"
-SRC_URI="https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
+SRC_URI=\
+"https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${EGIT_COMMIT}.tar.gz \
+	-> ${P}.tar.gz"
 inherit gac
 SLOT="0/${PV}"
 S="${WORKDIR}/${PROJECT_NAME}-${EGIT_COMMIT}"
@@ -27,7 +29,9 @@ src_prepare() {
 
 src_compile() {
 	compile_impl() {
-	        exbuild /p:Configuration=$(usex debug "debug" "release") ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" ${PROJECT_NAME}.sln || die
+	        exbuild /p:Configuration=$(usex debug "debug" "release") \
+			${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" \
+			${PROJECT_NAME}.sln || die
 	}
 	dotnet_foreach_impl compile_impl
 }
@@ -35,20 +39,21 @@ src_compile() {
 src_install() {
 	local mydebug=$(usex dotnet "Debug" "Release")
 	install_impl() {
-		local d
-		if [[ "${EDOTNET}" =~ netstandard ]] ; then
-			d=$(dotnet_netcore_install_loc ${EDOTNET})
-		elif dotnet_is_netfx "${EDOTNET}" ; then
-			d=$(dotnet_netfx_install_loc ${EDOTNET})
-		fi
-		insinto "${d}"
+		dotnet_install_loc
 		if [[ "${EDOTNET}" =~ net40 ]] ; then
 	                egacinstall "bin/${mydebug}/${PROJECT_NAME}.dll"
 		fi
+		doins bin/${mydebug}/${PROJECT_NAME}.dll
 		if use developer ; then
-			doins bin/Release/OpenAL-CS.dll.mdb
+			doins bin/${mydebug}/${PROJECT_NAME}.dll.mdb
+			dotnet_distribute_file_matching_dll_in_gac \
+				"bin/${mydebug}/${PROJECT_NAME}.dll"
+				"bin/Release/OpenAL-CS.dll.mdb"
 		fi
-		doins "bin/${mydebug}/OpenAL-CS.dll.config"
+		doins bin/${mydebug}/${PROJECT_NAME}.dll.config
+		dotnet_distribute_file_matching_dll_in_gac \
+			"bin/${mydebug}/${PROJECT_NAME}.dll"
+			"bin/${mydebug}/${PROJECT_NAME}.dll.config"
 	}
 	dotnet_foreach_impl install_impl
 	dotnet_multilib_comply
