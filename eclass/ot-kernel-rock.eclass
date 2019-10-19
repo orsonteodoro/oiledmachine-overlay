@@ -151,6 +151,7 @@ function generate_rock_patches() {
 		ot-kernel-rock_generate_rock_patches_pre
 	fi
 
+if false; then
 	einfo "Generating hash tables"
 	unset vk_commits
 	declare -A vk_commits
@@ -209,6 +210,7 @@ function generate_rock_patches() {
 	done
 	IFS="${OIFS}"
 	popd
+fi
 
 	einfo "Doing commit -> .patch conversion for rock-patches set:"
 	for c in $C ; do
@@ -240,6 +242,7 @@ function generate_rock_patches() {
 			fi
 		fi
 
+if false; then
 		if [[ -n "${vk_summaries[${h_summary}]}" ]] ; then
 			einfo "Already added ${c} via vanilla kernel sources (with same subject match).  Skipping..."
 			continue
@@ -253,6 +256,7 @@ function generate_rock_patches() {
 		if [[ "${c}" == "31ad0be4ebf7327591fbca1b96e209f591a19849" ]] ; then
 			die "Summary detection failed.  Should not pass."
 		fi
+fi
 
 		DC_VER=$(git -P show ${c}:drivers/gpu/drm/amd/display/dc/dc.h | grep -e "#define DC_VER" | grep -o -P -e "\"[0-9.]+\"" | sed -e "s|\"||g")
 

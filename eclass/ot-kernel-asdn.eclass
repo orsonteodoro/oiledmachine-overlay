@@ -108,6 +108,7 @@ function generate_amd_staging_drm_next_patches() {
 		drivers/gpu/drm include/drm drivers/dma-buf include/linux include/uapi/drm \
 		| echo -e "\n$(cat -)" | tac)
 
+if false; then
 	# vk is vanilla kernel
 	einfo "Generating hash tables"
 	unset vk_commits
@@ -131,6 +132,7 @@ function generate_amd_staging_drm_next_patches() {
 		fi
 	done
 	IFS="${OIFS}"
+fi
 
 	einfo "Doing commit -> .patch conversion for amd-staging-drm-next set:"
 	for c in $C ; do
@@ -189,10 +191,12 @@ function generate_amd_staging_drm_next_patches() {
 			fi
 		fi
 
+if false; then
 		if [[ -n "${vk_summaries[${h_summary}]}" ]] ; then
 			einfo "Already added ${c} via vanilla kernel sources (with same subject match).  Skipping..."
 			continue
 		fi
+fi
 
 		DC_VER=$(git -P show ${c}:drivers/gpu/drm/amd/display/dc/dc.h | grep -e "#define DC_VER" | grep -o -P -e "\"[0-9.]+\"" | sed -e "s|\"||g")
 
