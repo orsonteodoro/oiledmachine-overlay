@@ -109,7 +109,7 @@ function generate_amd_staging_drm_next_patches() {
 		| echo -e "\n$(cat -)" | tac)
 
 	# vk is vanilla kernel
-	einfo "Generating hash table"
+	einfo "Generating hash tables"
 	unset vk_commits
 	declare -A vk_commits
 	while read -r h ; do
@@ -122,7 +122,8 @@ function generate_amd_staging_drm_next_patches() {
 	declare -A vk_summaries
 	OIFS="${IFS}"
 	IFS=$'\n'
-	L=$(git -P log ${ROCK_BASE}..${target} --pretty=format:"%s")
+	L=$(git -P log ${ROCK_BASE}..${target} --pretty=format:"%s" -- \
+		drivers/gpu/drm include/drm drivers/dma-buf include/linux include/uapi/drm )
 	for l in ${L} ; do
 		local h=$(echo -e "${l}" | sha1sum | cut -f1 -d" ")
 		if [[ -n "${h}" && "${h}" != " " ]] ; then

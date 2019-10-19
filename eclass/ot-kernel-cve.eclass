@@ -23,7 +23,7 @@ LICENSE+=" cve_hotfix? ( GPL-2 )"
 inherit ot-kernel-cve-en
 
 # based on my last edit in unix timestamp (date -u +%Y%m%d_%I%M_%p_%Z)
-LATEST_CVE_KERNEL_INDEX="20191009_0624_AM_UTC"
+LATEST_CVE_KERNEL_INDEX="20191019_0338_AM_UTC"
 LATEST_CVE_KERNEL_INDEX="${LATEST_CVE_KERNEL_INDEX,,}"
 
 # this will trigger a kernel re-install based on use flag timestamp

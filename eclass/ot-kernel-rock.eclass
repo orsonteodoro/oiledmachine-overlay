@@ -199,7 +199,8 @@ function generate_rock_patches() {
 	declare -A asdn_summaries
 	OIFS="${IFS}"
 	IFS=$'\n'
-	L=$(git -P log ${asdn_base}..${asdn_target} --pretty=format:"%s")
+	L=$(git -P log ${asdn_base}..${asdn_target} --pretty=format:"%s" -- \
+		drivers/gpu/drm include/drm drivers/dma-buf include/linux include/uapi/drm )
 	for l in ${L} ; do
 		local h=$(echo "${l}" | sha1sum | cut -f1 -d" ")
 		if [[ -n "${h}" && "${h}" != " " ]] ; then
