@@ -148,6 +148,22 @@ CVE_2019_17351_PM="https://github.com/torvalds/linux/commit/6ef36ab967c71690ebe7
 CVE_2019_17351_SUMMARY_LANG="CVE_2019_17351_SUMMARY_${CVE_LANG}"
 CVE_2019_17351_SUMMARY="${!CVE_2019_17351_SUMMARY_LANG}"
 
+CVE_2019_17666_FIX_SRC_URI="https://lkml.org/lkml/diff/2019/10/16/1226/1"
+CVE_2019_17666_FN="CVE-2019-17666-fix--linux-drivers-net-wireless-realtek-rtlwifi-Fix-potential-overflow-on-P2P-code.patch"
+CVE_2019_17666_SEVERITY_LANG="CVE_2019_17666_SEVERITY_${CVE_LANG}"
+CVE_2019_17666_SEVERITY="${!CVE_2019_17666_SEVERITY_LANG}"
+CVE_2019_17666_PM="https://lkml.org/lkml/2019/10/16/1226"
+CVE_2019_17666_SUMMARY_LANG="CVE_2019_17666_SUMMARY_${CVE_LANG}"
+CVE_2019_17666_SUMMARY="${!CVE_2019_17666_SUMMARY_LANG}"
+
+CVE_2019_18198_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=ca7a03c4175366a92cee0ccc4fec0038c3266e26"
+CVE_2019_18198_FN="CVE-2019-18198-fix--linux-net-ipv6-do-not-free-rt-if-FIB_LOOKUP_NOREF-is-set-on-suppress-rule.patch"
+CVE_2019_18198_SEVERITY_LANG="CVE_2019_18198_SEVERITY_${CVE_LANG}"
+CVE_2019_18198_SEVERITY="${!CVE_2019_18198_SEVERITY_LANG}"
+CVE_2019_18198_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ca7a03c4175366a92cee0ccc4fec0038c3266e26"
+CVE_2019_18198_SUMMARY_LANG="CVE_2019_18198_SUMMARY_${CVE_LANG}"
+CVE_2019_18198_SUMMARY="${!CVE_2019_18198_SUMMARY_LANG}"
+
 SRC_URI+=" cve_hotfix? ( ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 			 ${CVE_2019_14814_FIX_SRC_URI} -> ${CVE_2019_14814_FN}
 			 ${CVE_2019_14821_FIX_SRC_URI} -> ${CVE_2019_14821_FN}
@@ -164,7 +180,11 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 			 ${CVE_2019_17075_FIX_SRC_URI} -> ${CVE_2019_17075_FN}
 			 ${CVE_2019_17133_FIX_SRC_URI} -> ${CVE_2019_17133_FN}
 			 ${CVE_2019_17351_FIX_SRC_URI} -> ${CVE_2019_17351_FN}
+
+			 ${CVE_2019_17666_FIX_SRC_URI} -> ${CVE_2019_17666_FN}
+			 ${CVE_2019_18198_FIX_SRC_URI} -> ${CVE_2019_18198_FN}
 		       )"
+
 
 # @FUNCTION: _fetch_cve_boilerplate_msg
 # @DESCRIPTION:
@@ -383,6 +403,32 @@ function fetch_cve_2019_17133_hotfix() {
 function fetch_cve_2019_17351_hotfix() {
 	local CVE_ID="CVE-2019-17351"
 	if grep -F -e "balloon_stats.max_retry_count = 4;" "${S}/drivers/xen/balloon.c" >/dev/null ; then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_17666_hotfix
+# @DESCRIPTION:
+# Checks for the CVE-2019-17666 patch
+function fetch_cve_2019_17666_hotfix() {
+	local CVE_ID="CVE-2019-17666"
+	if grep -F -e "if (noa_num > P2P_MAX_NOA_NUM) {" "${S}/drivers/net/wireless/realtek/rtlwifi/ps.c" >/dev/null ; then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_18198_hotfix
+# @DESCRIPTION:
+# Checks for the CVE-2019-18198 patch
+function fetch_cve_2019_18198_hotfix() {
+	local CVE_ID="CVE-2019-18198"
+	if grep -F -e "if (!(arg->flags & FIB_LOOKUP_NOREF))" "${S}/net/ipv6/fib6_rules.c" >/dev/null ; then
 		einfo "${CVE_ID} already patched."
 		return
 	fi
@@ -619,6 +665,37 @@ function apply_cve_2019_17351_hotfix() {
 	_resolve_hotfix_default
 }
 
+
+# @FUNCTION: apply_cve_2019_17666_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_17666 patch if it needs to
+function apply_cve_2019_17666_hotfix() {
+	local CVE_ID="CVE-2019-17666"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e "if (noa_num > P2P_MAX_NOA_NUM) {" "${S}/drivers/net/wireless/realtek/rtlwifi/ps.c" >/dev/null ; then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_18198_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_18198 patch if it needs to
+function apply_cve_2019_18198_hotfix() {
+	local CVE_ID="CVE-2019-18198"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e "if (!(arg->flags & FIB_LOOKUP_NOREF))" "${S}/net/ipv6/fib6_rules.c" >/dev/null ; then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
 # @FUNCTION: fetch_cve_hotfixes
 # @DESCRIPTION:
 # Fetches all the CVE kernel patches
@@ -641,6 +718,8 @@ function fetch_cve_hotfixes() {
 		fetch_cve_2019_17075_hotfix
 		fetch_cve_2019_17133_hotfix
 		fetch_cve_2019_17351_hotfix
+		fetch_cve_2019_17666_hotfix
+		fetch_cve_2019_18198_hotfix
 		local cve_copyright1="CVE_COPYRIGHT1_${CVE_LANG}"
 		local cve_copyright2="CVE_COPYRIGHT2_${CVE_LANG}"
 		einfo
@@ -675,5 +754,7 @@ function apply_cve_hotfixes() {
 		apply_cve_2019_17075_hotfix
 		apply_cve_2019_17133_hotfix
 		apply_cve_2019_17351_hotfix
+		apply_cve_2019_17666_hotfix
+		apply_cve_2019_18198_hotfix
 	fi
 }
