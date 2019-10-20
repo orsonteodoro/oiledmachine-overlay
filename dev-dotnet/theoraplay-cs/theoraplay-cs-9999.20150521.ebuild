@@ -8,46 +8,53 @@ LICENSE="zlib"
 KEYWORDS="~amd64 ~x86"
 USE_DOTNET="net45"
 IUSE="${USE_DOTNET} debug +gac"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net45 )"
 RDEPEND="media-libs/theoraplay"
 DEPEND="${RDEPEND}"
-SLOT="0"
-inherit dotnet eutils mono gac
+SLOT="0/${PV}"
+inherit dotnet eutils mono
 PROJECT_NAME="TheoraPlay-CS"
 EGIT_COMMIT="d5bae691e56d0a4b7334206d6b92b4ff3cb2cd04"
-SRC_URI="https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
+SRC_URI=\
+"https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${EGIT_COMMIT}.tar.gz \
+	-> ${P}.tar.gz"
+inherit gac
 S="${WORKDIR}/${PROJECT_NAME}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
+src_prepare() {
+	default
+	dotnet_copy_sources
+}
+
 src_compile() {
-	cd "${S}"
-        exbuild /p:Configuration=$(usex debug "debug" "release") ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" ${PROJECT_NAME}.sln || die
+	compile_impl() {
+	        exbuild /p:Configuration=$(usex debug "debug" "release") \
+			${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" \
+			${PROJECT_NAME}.sln \
+			|| die
+	}
+	dotnet_foreach_impl compile_impl
 }
 
 src_install() {
-	mydebug="Release"
-	if use debug; then
-		mydebug="Debug"
-	fi
-
-        ebegin "Installing dlls into the GAC"
-
-	for x in ${USE_DOTNET} ; do
-		FW_UPPER=${x:3:1}
-		FW_LOWER=${x:4:1}
-		egacinstall "${S}/bin/${mydebug}/${PROJECT_NAME}.dll"
-        done
-
-	eend
-
-	if use developer ; then
-		insinto "/usr/$(get_libdir)/mono/${PN}"
-		doins bin/Release/TheoraPlay-CS.dll.mdb
-	fi
-
-	insinto "/usr/$(get_libdir)/mono/${PN}"
-	doins bin/Release/TheoraPlay-CS.dll.config
-
+	local mydebug=$(usex debug "Debug" "Release")
+	install_impl() {
+		dotnet_install_loc
+		egacinstall "bin/${mydebug}/${PROJECT_NAME}.dll"
+		doins bin/${mydebug}/${PROJECT_NAME}.dll
+		if use developer ; then
+			doins bin/${mydebug}/${PROJECT_NAME}.dll.mdb
+			dotnet_distribute_file_matching_dll_in_gac \
+				"bin/${mydebug}/${PROJECT_NAME}.dll"
+				"bin/${mydebug}/${PROJECT_NAME}.dll.mdb"
+		fi
+		doins bin/Release/${PROJECT_NAME}.dll.config
+		dotnet_distribute_file_matching_dll_in_gac \
+			"bin/${mydebug}/${PROJECT_NAME}.dll"
+			"bin/${mydebug}/${PROJECT_NAME}.dll.config"
+	}
+	dotnet_foreach_impl install_impl
 	dotnet_multilib_comply
 }
 
