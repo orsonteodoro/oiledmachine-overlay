@@ -12,7 +12,7 @@ REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net45 )"
 RDEPEND="media-libs/theoraplay"
 DEPEND="${RDEPEND}"
 SLOT="0/${PV}"
-inherit dotnet eutils mono
+inherit dotnet eutils
 PROJECT_NAME="TheoraPlay-CS"
 EGIT_COMMIT="d5bae691e56d0a4b7334206d6b92b4ff3cb2cd04"
 SRC_URI=\
