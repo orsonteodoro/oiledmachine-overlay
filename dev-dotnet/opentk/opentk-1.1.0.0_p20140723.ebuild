@@ -49,6 +49,7 @@ src_compile() {
 src_install() {
 	local mydebug=$(usex debug "Debug" "Release")
 	install_impl() {
+		dotnet_install_loc
 		local p
 		p="Binaries/OpenTK/${mydebug}/"
 		if [[ "${EDOTNET}" == "net45" ]] ; then
