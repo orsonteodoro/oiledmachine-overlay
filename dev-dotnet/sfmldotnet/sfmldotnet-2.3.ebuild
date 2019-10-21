@@ -72,7 +72,7 @@ src_compile() {
 		}
 		dotnet_foreach_impl dll_compile_impl
 	}
-	multilib_foreach_impl ml_compile_impl
+	multilib_foreach_abi ml_compile_impl
 }
 
 src_install() {
