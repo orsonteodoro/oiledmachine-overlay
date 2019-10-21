@@ -29,124 +29,185 @@ pkg_setup() {
 	fi
 }
 
+# todo convert into patch file
 src_prepare() {
 	default
-	mydebug=$(usex debug "debug" "release")
+	local mydebug=$(usex debug "debug" "release")
 
-	eapply "${FILESDIR}/cppsharp-9999.20160115-llvm-9999-smallstring.patch"
-	#eapply "${FILESDIR}/cppsharp-9999.20160115-llvm-9999-toolchain.patch"
+	multilib_copy_sources
 
-	eapply "${FILESDIR}"/cppsharp-9999.20161221-stdarg-search-path.patch
-	sed -i -e "s|/usr/lib/clang/3.9.1/include|/usr/lib/clang/$(clang-fullversion)/include|g" src/Generator.Tests/GeneratorTest.cs || die p14
+	ml_prepare1() {
+		dotnet_copy_sources
+	}
+	multilib_foreach_impl ml_prepare1
 
-	cd "${S}"/build || die
-	#echo "c1316b6adfbb17b961a3bee357e728ca0d4d1c96" > LLVM-commit
-	sed -i -e 's|path.join(LLVMRootDirDebug, "include"),|path.join("/usr/lib/clang/3.9.0/include/"),path.join("/usr/include/llvm"),path.join("/usr/include/clang"),path.join(LLVMRootDirDebug, "include"),|g' LLVM.lua || die p1
-	sed -i -e 's|path.join(LLVMRootDirRelease, "include"),|path.join("/usr/lib/clang/3.9.0/include/"),path.join("/usr/include/llvm"),path.join("/usr/include/clang"),path.join(LLVMRootDirRelease, "include"),|g' LLVM.lua || die p2
-	sed -i -e 's|path.join(LLVMRootDir, "include"),|path.join("/usr/lib/clang/3.9.0/include/"),path.join("/usr/include/llvm"),path.join("/usr/include/clang"),path.join(LLVMRootDir, "include"),|g' LLVM.lua || die p3
-	sed -i -e 's|error("Error finding an LLVM build")|--error("Error finding an LLVM build")|g' LLVM.lua || die p4
+	ml_prepare2() {
+		netfx_prepare2() {
+			eapply \
+		"${FILESDIR}/cppsharp-9999.20160115-llvm-9999-smallstring.patch"
+#			eapply \
+#		"${FILESDIR}/cppsharp-9999.20160115-llvm-9999-toolchain.patch"
 
-	sed -i -r -e ':a' -e 'N' -e '$!ba' -e "s|require \"..\/Helpers\"|require \"..\/Helpers\"\nlocal basedir = os.getcwd\(\) .. \"\/..\"|g" scripts/LLVM.lua || die p5
-	#premake5 --file=scripts/LLVM.lua download_llvm || "premake5 download_llvm failed" || die p6
-	#ln -s "${S}"/build/scripts/llvm-*-linux-Release  "${S}"/deps/llvm || die p7
-	premake5 --file=premake5.lua gmake || "premake5 gmake failed" || die p8
+			eapply \
+		"${FILESDIR}"/cppsharp-9999.20161221-stdarg-search-path.patch
+			sed -i \
+-e "s|/usr/lib/clang/3.9.1/include|/usr/lib/clang/$(clang-fullversion)/include|g" \
+				src/Generator.Tests/GeneratorTest.cs || die
 
-	sed -i -r -e ':a' -e 'N' -e '$!ba' -e 's|ALL_CXXFLAGS \+= \$\(CXXFLAGS\) \$\(ALL_CFLAGS\) -fno-rtti|ALL_CXXFLAGS += \$(CXXFLAGS) \$(ALL_CFLAGS) -fno-rtti -fPIC|g' gmake/projects/CppSharp.CppParser.make || die p9
-	#sed -i -r -e ':a' -e 'N' -e '$!ba' -e 's|ALL_LDFLAGS \+= \$\(LDFLAGS\) -L\/usr\/lib64 -L..\/..\/..\/deps\/llvm\/build\/lib -m64 -shared|ALL_LDFLAGS += \$(LDFLAGS) -L\/usr\/lib64 -L..\/..\/..\/deps\/llvm\/build\/lib -m64 -shared -fPIC|g' gmake/projects/CppSharp.CppParser.make || die p10
-	#sed -i -r -e ':a' -e 'N' -e '$!ba' -e 's|ALL_LDFLAGS \+= \$\(LDFLAGS\) -L\/usr\/lib32 -L..\/..\/..\/deps\/llvm\/build\/lib -m32 -shared|ALL_LDFLAGS += \$(LDFLAGS) -L\/usr\/lib32 -L..\/..\/..\/deps\/llvm\/build\/lib -m32 -shared -fPIC|g' gmake/projects/CppSharp.CppParser.make || die p11
+			pushd build || die
+				#echo "c1316b6adfbb17b961a3bee357e728ca0d4d1c96" > LLVM-commit
+				sed -i \
+-e 's|path.join(LLVMRootDirDebug, "include"),|path.join("/usr/lib/clang/3.9.0/include/"),path.join("/usr/include/llvm"),path.join("/usr/include/clang"),path.join(LLVMRootDirDebug, "include"),|g' \
+	LLVM.lua || die
+				sed -i \
+-e 's|path.join(LLVMRootDirRelease, "include"),|path.join("/usr/lib/clang/3.9.0/include/"),path.join("/usr/include/llvm"),path.join("/usr/include/clang"),path.join(LLVMRootDirRelease, "include"),|g' \
+	LLVM.lua || die
+				sed -i \
+-e 's|path.join(LLVMRootDir, "include"),|path.join("/usr/lib/clang/3.9.0/include/"),path.join("/usr/include/llvm"),path.join("/usr/include/clang"),path.join(LLVMRootDir, "include"),|g' \
+	LLVM.lua || die
+				sed -i \
+-e 's|error("Error finding an LLVM build")|--error("Error finding an LLVM build")|g' \
+	LLVM.lua || die
 
-	cd "${S}"
-	sed -i -r -e ':a' -e 'N' -e '$!ba' -e "s|options.addIncludeDirs\(path\);|options.addIncludeDirs(path);options.addSystemIncludeDirs(\"\/usr\/lib\/clang\/$(ls /usr/lib/clang/)\/include\/\");|g" src/Generator.Tests/GeneratorTest.cs || die p12
+				sed -i -r -e ':a' -e 'N' -e '$!ba' \
+-e "s|require \"..\/Helpers\"|require \"..\/Helpers\"\nlocal basedir = os.getcwd\(\) .. \"\/..\"|g" \
+	scripts/LLVM.lua || die p5
+#				premake5 --file=scripts/LLVM.lua download_llvm \
+#					|| "premake5 download_llvm failed" \
+#					|| die
+#				ln -s "${S}"/build/scripts/llvm-*-linux-Release \
+#					deps/llvm || die
+				premake5 --file=premake5.lua gmake \
+					|| die "premake5 gmake failed"
 
-	sed -i -e "s|-I/usr/lib/clang/3.9.0/include|-I/usr/lib/clang/$(clang-fullversion)/include|g" ./build/gmake/projects/CppSharp.CppParser.make || die p13
+				sed -i -r -e ':a' -e 'N' -e '$!ba' \
+-e 's|ALL_CXXFLAGS \+= \$\(CXXFLAGS\) \$\(ALL_CFLAGS\) -fno-rtti|ALL_CXXFLAGS += \$(CXXFLAGS) \$(ALL_CFLAGS) -fno-rtti -fPIC|g' \
+	gmake/projects/CppSharp.CppParser.make || die
+#				sed -i -r -e ':a' -e 'N' -e '$!ba' \
+# -e 's|ALL_LDFLAGS \+= \$\(LDFLAGS\) -L\/usr\/lib64 -L..\/..\/..\/deps\/llvm\/build\/lib -m64 -shared|ALL_LDFLAGS += \$(LDFLAGS) -L\/usr\/lib64 -L..\/..\/..\/deps\/llvm\/build\/lib -m64 -shared -fPIC|g' \
+# gmake/projects/CppSharp.CppParser.make || die
+#				sed -i -r -e ':a' -e 'N' -e '$!ba' \
+# -e 's|ALL_LDFLAGS \+= \$\(LDFLAGS\) -L\/usr\/lib32 -L..\/..\/..\/deps\/llvm\/build\/lib -m32 -shared|ALL_LDFLAGS += \$(LDFLAGS) -L\/usr\/lib32 -L..\/..\/..\/deps\/llvm\/build\/lib -m32 -shared -fPIC|g' \
+# gmake/projects/CppSharp.CppParser.make || die
+			popd
 
-	#inject strong name and force net version
-	FILES=$(grep -l -r -e "FLAGS = /unsafe" ./)
-	for f in $FILES
-	do
-		einfo "Patching $f..."
-		sed -i -r -e "s|FLAGS = /unsafe|FLAGS = -sdk:${EBF} -keyfile:\"${DISTDIR}/mono.snk\" /unsafe|g" "$f" || die
-	done
+			sed -i -r -e ':a' -e 'N' -e '$!ba' \
+-e "s|options.addIncludeDirs\(path\);|options.addIncludeDirs(path);options.addSystemIncludeDirs(\"\/usr\/lib\/clang\/$(ls /usr/lib/clang/)\/include\/\");|g" \
+			src/Generator.Tests/GeneratorTest.cs || die
+			sed -i \
+-e "s|-I/usr/lib/clang/3.9.0/include|-I/usr/lib/clang/$(clang-fullversion)/include|g" \
+			build/gmake/projects/CppSharp.CppParser.make || die
 
-	#inject strong name and force net version
-	FILES=$(grep -l -r -e "/nologo" ./)
-	for f in $FILES
-	do
-		einfo "Patching $f..."
-		sed -i -r -e "s|/nologo|-sdk:${EBF} -keyfile:\"${DISTDIR}/mono.snk\" /nologo|g" "$f" || die
-	done
+			#inject strong name and force net version
+			FILES=$(grep -l -r -e "FLAGS = /unsafe" ./)
+			for f in $FILES
+			do
+				einfo "Patching $f..."
+				sed -i -r \
+-e "s|FLAGS = /unsafe|FLAGS = -sdk:${EBF} -keyfile:\"${DISTDIR}/mono.snk\" /unsafe|g" \
+					"$f" || die
+			done
 
-	#inject public key into assembly
-        public_key=$(sn -tp "${DISTDIR}/mono.snk" | tail -n 7 | head -n 5 | tr -d '\n')
-        echo "pk is: ${public_key}"
-	FILES=$(grep -l -r -e "InternalsVisibleTo" ./)
-	for f in $FILES
-	do
-		einfo "Attempting to inject public key into $f..."
-		sed -i -r -e "s|\[assembly\:InternalsVisibleTo\(\"CppSharp.Parser\"\)\]|\[assembly:InternalsVisibleTo(\"CppSharp.Parser, PublicKey=${public_key}\")\]|" "$f"
-		sed -i -r -e "s|\[assembly\:InternalsVisibleTo\(\"CppSharp.Parser.CSharp\"\)\]|\[assembly:InternalsVisibleTo(\"CppSharp.Parser.CSharp, PublicKey=${public_key}\")\]|" "$f"
-	done
+			#inject strong name and force net version
+			FILES=$(grep -l -r -e "/nologo" ./)
+			for f in $FILES
+			do
+				einfo "Patching $f..."
+				sed -i -r \
+-e "s|/nologo|-sdk:${EBF} -keyfile:\"${DISTDIR}/mono.snk\" /nologo|g" \
+					"$f" || die
+			done
 
-	#this needs testing
-	#also the key needs to be fixed but we generate new keys per emerge because users can inject their own patches
-	sed -i -r -e "s|\[assembly\:InternalsVisibleTo\(\\\\\"CppSharp.Parser\\\\\"\)\]|\[assembly:InternalsVisibleTo(\\\\\"CppSharp.Parser, PublicKey=${public_key}\\\\\")\]|" ./src/CppParser/ParserGen/ParserGen.cs || die
-	sed -i -r -e "s|\[assembly\:InternalsVisibleTo\(\\\\\"\{library\}\\\\\"\)\]|\[assembly:InternalsVisibleTo(\\\\\"\{library\}, PublicKey=${public_key}\\\\\")\]|" ./src/Generator/Generators/CSharp/CSharpSources.cs || die
-	sed -i -r -e "s|\[assembly\:InternalsVisibleTo\(\\\\\"NamespacesDerived.CSharp\\\\\"\)\]|\[assembly:InternalsVisibleTo(\\\\\"NamespacesDerived.CSharp, PublicKey=${public_key}\\\\\")\]|" ./tests/NamespacesDerived/NamespacesDerived.cs || die
+			#inject public key into assembly
+		        public_key=$(sn -tp "${DISTDIR}/mono.snk" | tail -n 7 | head -n 5 | tr -d '\n')
+		        echo "pk is: ${public_key}"
+			FILES=$(grep -l -r -e "InternalsVisibleTo" ./)
+			for f in $FILES
+			do
+				einfo "Attempting to inject public key into $f..."
+				sed -i -r \
+-e "s|\[assembly\:InternalsVisibleTo\(\"CppSharp.Parser\"\)\]|\[assembly:InternalsVisibleTo(\"CppSharp.Parser, PublicKey=${public_key}\")\]|" \
+					"$f"
+				sed -i -r \
+-e "s|\[assembly\:InternalsVisibleTo\(\"CppSharp.Parser.CSharp\"\)\]|\[assembly:InternalsVisibleTo(\"CppSharp.Parser.CSharp, PublicKey=${public_key}\")\]|" \
+					"$f"
+			done
+
+			# this needs testing
+			# also the key needs to be fixed but we generate new
+			# keys per emerge because users can inject their own
+			# patches
+			sed -i -r \
+-e "s|\[assembly\:InternalsVisibleTo\(\\\\\"CppSharp.Parser\\\\\"\)\]|\[assembly:InternalsVisibleTo(\\\\\"CppSharp.Parser, PublicKey=${public_key}\\\\\")\]|" \
+				src/CppParser/ParserGen/ParserGen.cs || die
+			sed -i -r \
+-e "s|\[assembly\:InternalsVisibleTo\(\\\\\"\{library\}\\\\\"\)\]|\[assembly:InternalsVisibleTo(\\\\\"\{library\}, PublicKey=${public_key}\\\\\")\]|" \
+			src/Generator/Generators/CSharp/CSharpSources.cs || die
+			sed -i -r \
+-e "s|\[assembly\:InternalsVisibleTo\(\\\\\"NamespacesDerived.CSharp\\\\\"\)\]|\[assembly:InternalsVisibleTo(\\\\\"NamespacesDerived.CSharp, PublicKey=${public_key}\\\\\")\]|" \
+			tests/NamespacesDerived/NamespacesDerived.cs || die
+		}
+		dotnet_foreach_impl netfx_prepare2
+	}
+	multilib_foreach_impl ml_prepare2
 }
 
 src_compile() {
-	mydebug=$(usex debug "debug" "release")
-	cd "${S}"/build/gmake
+	local mydebug=$(usex debug "debug" "release")
+	ml_compile() {
+		netfx_compile_impl() {
+			cd build/gmake
+			local myabi
+			if [[ "${ABI}" == "amd64" ]] ; then
+				myabi="x64"
+			elif [[ "${ABI}" == "x86" ]] ; then
+				myabi="x32"
+			fi
 
-	myabi="x64"
-	if use abi_x86_32; then
-		myabi="x32"
-	elif use abi_x86_64; then
-		myabi="x64"
-	fi
-
-	C=clang CXX=clang++ \
-	make config=${mydebug}_${myabi} all verbose=1 || die "emake failed"
+			C=clang CXX=clang++ \
+			make config=${mydebug}_${myabi} all verbose=1 \
+				|| die "emake failed"
+		}
+	}
+	dotnet_foreach_impl netfx_compile_impl
+	multilib_foreach_impl ml_compile_impl
 }
 
 src_install() {
-	mydebug=$(usex debug "Debug" "Release")
+	local mydebug=$(usex debug "Debug" "Release")
+	ml_install_impl() {
+		netfx_install_impl() {
+			dotnet_install_loc
+			local myabi
+			if [[ "${ABI}" == "amd64" ]] ; then
+				myabi="x64"
+			elif [[ "${ABI}" == "x86" ]] ; then
+				myabi="x32"
+			else
+				die "ABI is not supported"
+			fi
 
-	myabi="x64"
-	if use abi_x86_32; then
-		myabi="x32"
-	elif use abi_x86_64; then
-		myabi="x64"
-	fi
+			# huh?
+			# cp "${S}"/src/Generator/Passes/verbs.txt \
+				"${S}/build/gmake/lib/${mydebug}_${myabi}/"
 
-        ebegin "Installing dlls into the GAC"
-
-	cp "${S}"/src/Generator/Passes/verbs.txt "${S}/build/gmake/lib/${mydebug}_${myabi}/"
-
-	cd "${S}/build/gmake/lib/${mydebug}_${myabi}/"
-	for FILE in $(ls *.dll)
-	do
-		for x in ${USE_DOTNET} ; do
-			FW_UPPER=${x:3:1}
-			FW_LOWER=${x:4:1}
-			egacinstall "${S}/build/gmake/lib/${mydebug}_${myabi}/${FILE}"
-			insinto "/usr/$(get_libdir)/mono/${PN}"
-			use developer && doins "${S}/build/gmake/lib/${mydebug}_${myabi}/${FILE}.mdb"
-		done
-	done
-
-	eend
-
-	cd "${S}/build/gmake/lib/${mydebug}_${myabi}/"
-	mkdir -p "${D}/usr/$(get_libdir)/mono/CppSharp/"
-	for FILE in $(ls *.exe)
-	do
-		cp "${FILE}" "${D}/usr/$(get_libdir)/mono/CppSharp/"
-		use developer && cp "${FILE}.mdb" "${D}/usr/$(get_libdir)/mono/CppSharp/"
-	done
-
-	cd "${S}"
-	dodoc docs/* LICENSE README.md
-
+			pushd build/gmake/lib/${mydebug}_${myabi} || die
+				# todo dlls
+				egacinstall *.dll
+				doins *.dll
+				if use developer ; then
+					doins *.mdb
+				fi
+				doexe *.exe
+				if use developer ; then
+					doins *.mdb
+					# todo distribute in gac
+				fi
+			popd
+			dodoc docs/* LICENSE README.md
+		}
+		dotnet_foreach_impl netfx_install_impl
+	}
+	multilib_foreach_impl ml_install_impl
 	dotnet_multilib_comply
 }
