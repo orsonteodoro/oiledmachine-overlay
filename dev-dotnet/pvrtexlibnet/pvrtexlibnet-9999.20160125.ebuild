@@ -32,7 +32,7 @@ src_prepare() {
 	ml_prepare_impl() {
 		dotnet_copy_sources
 	}
-	multilib_foreach_impl ml_prepare_impl
+	multilib_foreach_abi ml_prepare_impl
 }
 
 _get_abi() {
@@ -70,7 +70,7 @@ src_compile() {
 		}
 		dotnet_foreach_impl dll_compile_impl
 	}
-	multilib_foreach_impl ml_compile_impl
+	multilib_foreach_abi ml_compile_impl
 }
 
 src_install() {
@@ -105,6 +105,6 @@ ${SO_NAME}/PVRTexTool/Library/Linux_x86_${myabi_so}/Dynamic/libPVRTexLib.so
 		}
 		dotnet_foreach_impl dll_install_impl
 	}
-	multilib_foreach_impl ml_install_impl
+	multilib_foreach_abi ml_install_impl
 	dotnet_multilib_comply
 }
