@@ -39,7 +39,7 @@ src_install() {
 	local mydebug=$(usex debug "Debug" "Release")
 	install_impl() {
 		dotnet_install_loc
-		egacinstall "${S}/bin/${mydebug}/${PROJECT_NAME}.dll"
+		egacinstall "bin/${mydebug}/${PROJECT_NAME}.dll"
 		doins bin/${mydebug}/${PROJECT_NAME}.dll
 		if use developer ; then
 			doins bin/${mydebug}/${PROJECT_NAME}.dll.mdb
