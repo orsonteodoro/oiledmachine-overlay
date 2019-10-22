@@ -8,7 +8,7 @@ LICENSE="zlib"
 KEYWORDS="~amd64 ~x86"
 EGIT_COMMIT="eb65cf7d4881dd3ca0bfd71e8ec2c54c71ffe4d2"
 PROJECT_NAME="Theorafile"
-SLOT="0"
+SLOT="0/${PV}"
 USE_DOTNET="net45"
 IUSE="${USE_DOTNET} debug +gac static"
 REQUIRED_USE="gac? ( net45 )"
@@ -17,8 +17,10 @@ RDEPEND="media-libs/libogg[${MULTILIB_USEDEP}]
 	 media-libs/libtheora[${MULTILIB_USEDEP}]
          media-libs/libvorbis[${MULTILIB_USEDEP}]"
 DEPEND="${RDEPEND}"
-inherit eutils dotnet mono
-SRC_URI="https://github.com/FNA-XNA/${PROJECT_NAME}/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
+inherit eutils dotnet
+SRC_URI=\
+"https://github.com/FNA-XNA/${PROJECT_NAME}/archive/${EGIT_COMMIT}.tar.gz \
+	-> ${P}.tar.gz"
 inherit gac
 RESTRICT="mirror"
 S="${WORKDIR}/${PROJECT_NAME}-${EGIT_COMMIT}"
@@ -26,39 +28,47 @@ S="${WORKDIR}/${PROJECT_NAME}-${EGIT_COMMIT}"
 src_prepare() {
 	default
 	multilib_copy_sources
+	ml_prepare() {
+		dotnet_copy_sources
+	}
+	multilib_foreach_abi ml_prepare
 }
 
-multilib_src_compile() {
-	# Build native library
-	emake || die
-
-	# Build C# wrapper
-	cd csharp
-	exbuild /p:Configuration=$(usex debug "Debug" "Release") ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" Theorafile-CS.sln || die
+src_compile() {
+	ml_compile() {
+		emake || die
+		dll_compile() {
+			# Build C# wrapper
+			cd csharp || die
+			exbuild ${STRONG_ARGS_NETFX}"${DISTDIR}/mono.snk" \
+				Theorafile-CS.sln || die
+		}
+		dotnet_foreach_impl dll_compile
+	}
+	multilib_foreach_abi ml_compile
 }
 
-multilib_src_install() {
+src_install() {
 	local mydebug=$(usex debug "Debug" "Release")
-
-	ebegin "Installing dlls into the GAC"
-
-	for x in ${USE_DOTNET} ; do
-		FW_UPPER=${x:3:1}
-		FW_LOWER=${x:4:1}
-		egacinstall "csharp/bin/${mydebug}/Theorafile-CS.dll"
-        done
-
-	eend
-
-	if use developer ; then
-		insinto "/usr/$(get_libdir)/mono/${PN}"
-		doins csharp/bin/${mydebug}/Theorafile-CS.dll.mdb
-	fi
-
-	insinto "/usr/$(get_libdir)/mono/${PN}"
-	doins csharp/bin/${mydebug}/Theorafile-CS.dll.config
-
-	dolib.so libtheorafile.so
-
+	ml_install() {
+		dolib.so libtheorafile.so
+		dll_install() {
+			dotnet_install_loc
+			egacinstall "csharp/bin/${mydebug}/Theorafile-CS.dll"
+			doins csharp/bin/${mydebug}/Theorafile-CS.dll
+			if use developer ; then
+			  doins csharp/bin/${mydebug}/Theorafile-CS.dll.mdb
+			  dotnet_distribute_file_matching_dll_in_gac \
+			    "csharp/bin/${mydebug}/Theorafile-CS.dll" \
+			    "csharp/bin/${mydebug}/Theorafile-CS.dll.mdb"
+			fi
+			doins csharp/bin/${mydebug}/Theorafile-CS.dll.config
+			dotnet_distribute_file_matching_dll_in_gac \
+				"csharp/bin/${mydebug}/Theorafile-CS.dll" \
+				"csharp/bin/${mydebug}/Theorafile-CS.dll.config"
+		}
+		dotnet_foreach_impl dll_install
+	}
+	multilib_foreach_abi ml_install
 	dotnet_multilib_comply
 }
