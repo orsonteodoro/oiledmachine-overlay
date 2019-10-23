@@ -27,7 +27,7 @@ DEPEND="${COMMON_DEPENDENCIES}
 	dev-dotnet/msbuildtasks
 	sys-apps/sed"
 RDEPEND="${COMMON_DEPENDENCIES}	"
-SLOT="0/${PV}"
+SLOT="0"
 NAME="mono-packaging-tools"
 REPOSITORY_URL="https://github.com/ArsenShnurkov/${NAME}"
 LICENSE_URL=\
