@@ -11,8 +11,8 @@
     you can compile this package against 4.20.x, 5.0.x, 5.1.x, 5.2.x kernel versions.
     The amdgpu-dkms package has more GPU features like IPC related features (Memory sharing API, Signal sharing API); increasing 
     GPU system memory limits from 3/8 of system memory to 29/32 of system memory; RDMA (aka Remote Device Programming or ROCmRDMA)
-    to allow other PCIe kernel modules and devices DMA access to GPU memory, KFD (Kernel Fusion Driver) features like
-    DGMA (Direct Graphic Memory Access).  ROCk is also a core componenet of the ROCm platform.  It also adds compatibility for 
+    to allow other PCIe kernel modules and devices DMA access to GPU memory, KFD (Kernel Fusion Driver) features, and
+    DGMA (Direct Graphic Memory Access) support.  ROCk is also a core componenet of the ROCm platform.  It also adds compatibility for 
     newer hardware if the kernel is old.
   </longdescription>
   <upstream>
