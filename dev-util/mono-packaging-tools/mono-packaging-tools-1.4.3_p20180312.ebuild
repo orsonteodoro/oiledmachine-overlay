@@ -19,7 +19,7 @@ USE_DOTNET="net45"
 # pkg-config = register in pkg-config database
 IUSE="+${USE_DOTNET} debug +developer test +aot doc"
 TOOLS_VERSION=14.0
-COMMON_DEPENDENCIES="|| ( >=dev-lang/mono-4.2 <dev-lang/mono-9999 )
+COMMON_DEPENDENCIES="
 	dev-dotnet/mono-options[gac]
 	>=dev-dotnet/slntools-1.1.3_p201508170-r1[gac]
 	>=dev-dotnet/eto-parse-1.4.0[gac]"
