@@ -28,15 +28,14 @@ DEPEND="${COMMON_DEPENDENCIES}
 	sys-apps/sed"
 RDEPEND="${COMMON_DEPENDENCIES}	"
 SLOT="0"
-NAME="mono-packaging-tools"
-REPOSITORY_URL="https://github.com/ArsenShnurkov/${NAME}"
+REPOSITORY_URL="https://github.com/ArsenShnurkov/${PN}"
 LICENSE_URL=\
 "https://raw.githubusercontent.com/ArsenShnurkov/mono-packaging-tools/master/LICENSE"
 NUSPEC_VERSION=${PV%_p*}
 ASSEMBLY_VERSION=${PV%_p*}
-SLN_FILE="mono-packaging-tools.sln"
+SLN_FILE="${PN}.sln"
 METAFILETOBUILD="${S}/${SLN_FILE}"
-NUSPEC_ID="${NAME}"
+NUSPEC_ID="${PN}"
 COMMIT_DATE="$(ver_cut 5 ${PV})"
 NUSPEC_FILENAME="${PN}.nuspec"
 #ICON_FILENAME="${PN}.png"
@@ -46,7 +45,7 @@ inherit dotnet nupkg
 EGIT_COMMIT="2b56244890554778a78c82f685610f31e5ee760f"
 SRC_URI="${REPOSITORY_URL}/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${PVR}.tar.gz"
 inherit gac
-S="${WORKDIR}/${NAME}-${EGIT_COMMIT}"
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 
 install_tool() {
 	DIR=$(usex debug "Debug" "Release")
