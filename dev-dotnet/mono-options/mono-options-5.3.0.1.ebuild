@@ -38,11 +38,9 @@ src_compile() {
 }
 
 src_install() {
-	insinto "$(get_dlldir)/slot-${SLOT}"
+	dotnet_install_loc
 	doins "Mono.Options.dll"
 	egacinstall Mono.Options.dll
-	dosym "slot-${SLOT}/Mono.Options.dll" \
-		"/usr/$(get_libdir)/mono/mono-options/Mono.Options.dll"
 	einstall_pc_file ${PN} ${ASSEMBLY_VERSION} Mono.Options
 	enupkg "${WORKDIR}/Mono.Options.${NUSPEC_VERSION}.nupkg"
 	dotnet_multilib_comply
