@@ -12,7 +12,7 @@
     The ROCk package has more GPU features like IPC related features (Memory sharing API, Signal sharing API); increasing 
     GPU system memory limits from 3/8 of system memory to 29/32 of system memory; RDMA (aka Remote Device Programming or ROCmRDMA)
     to allow other PCIe kernel modules and devices DMA access to GPU memory, KFD (Kernel Fusion Driver) features, and 
-    DGMA (Direct Graphic Memory Access) support.  ROCk is also a core componenet of the ROCm platform.
+    DirectGMA (Direct Graphic Memory Access) support.  ROCk is also a core componenet of the ROCm platform.
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver</bugs-to>
