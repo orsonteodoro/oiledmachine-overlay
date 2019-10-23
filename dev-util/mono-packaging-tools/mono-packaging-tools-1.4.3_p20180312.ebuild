@@ -1,143 +1,55 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6 # >=portage-2.2.25
+EAPI=7
+DESCRIPTION="Command line utilities for packaging mono assemblies with portage"
+HOMEPAGE="http://arsenshnurkov.github.io/mono-packaging-tools"
+LICENSE="GPL-3"
 KEYWORDS="~x86 ~amd64"
 RESTRICT="mirror"
-
 USE_DOTNET="net45"
 # debug = debug configuration (symbols and defines for debugging)
 # test = allow NUnit tests to run
-# developer = generate symbols information (to view line numbers in stack traces, either in debug or release configuration)
-# aot = compile to machine code and store to disk during install, to save time later during startups
+# developer = generate symbols information (to view line numbers in stack traces,
+#		either in debug or release configuration)
+# aot = compile to machine code and store to disk during install, to save time later
+#		during startups
 # nupkg = create .nupkg file from .nuspec
 # gac = install into gac
 # pkg-config = register in pkg-config database
 IUSE="+${USE_DOTNET} debug +developer test +aot doc"
-
 TOOLS_VERSION=14.0
-
-inherit dotnet gac nupkg
-
-get_revision()
-{
-	git rev-list --count $2..$1
-}
-
-get_dlldir() {
-	echo /usr/lib64/mono/${PN}
-}
-
-NAME="mono-packaging-tools"
-HOMEPAGE="http://arsenshnurkov.github.io/mono-packaging-tools"
-
-REPOSITORY_URL="https://github.com/ArsenShnurkov/${NAME}"
-
-EGIT_COMMIT="2b56244890554778a78c82f685610f31e5ee760f"
-SRC_URI="${REPOSITORY_URL}/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${PVR}.tar.gz
-	 https://github.com/gentoo/dotnet/raw/master/eclass/mono.snk"
-S="${WORKDIR}/${NAME}-${EGIT_COMMIT}"
-
-SLOT="0"
-
-DESCRIPTION="Command line utilities for packaging mono assemblies with portage"
-LICENSE="GPL-3"
-LICENSE_URL="https://raw.githubusercontent.com/ArsenShnurkov/mono-packaging-tools/master/LICENSE"
-
 COMMON_DEPENDENCIES="|| ( >=dev-lang/mono-4.2 <dev-lang/mono-9999 )
 	dev-dotnet/mono-options[gac]
 	>=dev-dotnet/slntools-1.1.3_p201508170-r1[gac]
-	>=dev-dotnet/eto-parse-1.4.0[gac]
-	"
+	>=dev-dotnet/eto-parse-1.4.0[gac]"
 DEPEND="${COMMON_DEPENDENCIES}
 	dev-dotnet/msbuildtasks
 	sys-apps/sed"
-RDEPEND="${COMMON_DEPENDENCIES}
-	"
-
+RDEPEND="${COMMON_DEPENDENCIES}	"
+SLOT="0/${PV}"
+NAME="mono-packaging-tools"
+REPOSITORY_URL="https://github.com/ArsenShnurkov/${NAME}"
+LICENSE_URL=\
+"https://raw.githubusercontent.com/ArsenShnurkov/mono-packaging-tools/master/LICENSE"
 NUSPEC_VERSION=${PV%_p*}
 ASSEMBLY_VERSION=${PV%_p*}
-
 SLN_FILE="mono-packaging-tools.sln"
 METAFILETOBUILD="${S}/${SLN_FILE}"
 NUSPEC_ID="${NAME}"
-COMMIT_DATE_INDEX="$(get_version_component_count ${PV} )"
-COMMIT_DATE="$(get_version_component_range $COMMIT_DATE_INDEX ${PV} )"
+COMMIT_DATE="$(ver_cut 5 ${PV})"
 NUSPEC_FILENAME="${PN}.nuspec"
 #ICON_FILENAME="${PN}.png"
 #ICON_FINALNAME="${NUSPEC_ID}.${NUSPEC_VERSION}.png"
 #ICON_PATH="$(get_nuget_trusted_icons_location)/${ICON_FINALNAME}"
-SNK_FILENAME="${S}/mono.snk"
-
-src_prepare() {
-	#change version in .nuspec
-	# PV = Package version (excluding revision, if any), for example 6.3.
-	# It should reflect the upstream versioning scheme
-	sed "s/@VERSION@/${NUSPEC_VERSION}/g" "${FILESDIR}/${NUSPEC_ID}.nuspec" >"${S}/${NUSPEC_ID}.nuspec" || die
-
-	# restoring is not necessary after switching to GAC references
-	# enuget_restore "${METAFILETOBUILD}"
-	default
-
-	cp "${DISTDIR}/mono.snk" "${SNK_FILENAME}" || die
-	sed -i -r -e "s|using System.Runtime.CompilerServices;|using System.Runtime.CompilerServices;\n[assembly:AssemblyKeyFileAttribute(\"${SNK_FILENAME}\")]|" AssemblyInfo.cs || die
-}
-
-src_compile() {
-	exbuild /p:VersionNumber="${ASSEMBLY_VERSION}" "${METAFILETOBUILD}"
-	enuspec "${NUSPEC_ID}.nuspec"
-}
-
-src_install() {
-	# install dlls
-	insinto "$(get_dlldir)/slot-${SLOT}"
-	if use debug; then
-		DIR="Debug"
-	else
-		DIR="Release"
-	fi
-
-	doins mpt-core/bin/${DIR}/mpt-core.dll
-	dosym slot-${SLOT}/mpt-core.dll $(get_dlldir)/mpt-core.dll
-	einstall_pc_file ${PN} ${ASSEMBLY_VERSION} mpt-core
-
-	insinto "/usr/share/${PN}/slot-${SLOT}"
-	install_tool mpt-gitmodules
-	install_tool mpt-sln
-	install_tool mpt-csproj
-	install_tool mpt-machine
-	install_tool mpt-nuget
-
-	enupkg "${WORKDIR}/${NUSPEC_ID}.${NUSPEC_VERSION}.nupkg"
-
-	if use doc; then
-		dodoc README.md
-	fi
-}
-
-pkg_prerm() {
-	if use gac; then
-		# TODO determine version for uninstall from slot-N dir
-		einfo "removing from GAC"
-		gacutil -u mpt-core
-		# don't die, it there is no such assembly in GAC
-	fi
-}
-
-pkg_postinst() {
-	if use gac; then
-		einfo "adding to GAC"
-		gacutil -i "$(get_dlldir)/slot-${SLOT}/mpt-core.dll" || die
-	fi
-}
+inherit dotnet nupkg
+EGIT_COMMIT="2b56244890554778a78c82f685610f31e5ee760f"
+SRC_URI="${REPOSITORY_URL}/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${PVR}.tar.gz"
+inherit gac
+S="${WORKDIR}/${NAME}-${EGIT_COMMIT}"
 
 install_tool() {
-	if use debug; then
-		DIR="Debug"
-	else
-		DIR="Release"
-	fi
-
+	DIR=$(usex debug "Debug" "Release")
 	# installs .exe, .exe.config (if any), .mdb (if exists)
 	doins "$1"/bin/${DIR}/*.exe
 	if [ -f "$1"/bin/${DIR}/*.exe.config ]; then
@@ -146,12 +58,43 @@ install_tool() {
 	if use developer; then
 		doins "$1"/bin/${DIR}/*.pdb
 	fi
+	local debug_arg=$(usex debug "--debug" "")
+	make_wrapper "$1" \
+	  "/usr/bin/mono ${debug_arg} /usr/share/${PN}/slot-${SLOT}/$1.exe"
+}
 
-	MONO=/usr/bin/mono
+src_prepare() {
+	#change version in .nuspec
+	# PV = Package version (excluding revision, if any), for example 6.3.
+	# It should reflect the upstream versioning scheme
+	sed "s/@VERSION@/${NUSPEC_VERSION}/g" \
+		"${FILESDIR}/${NUSPEC_ID}.nuspec" >"${S}/${NUSPEC_ID}.nuspec" || die
+	# restoring is not necessary after switching to GAC references
+	# enuget_restore "${METAFILETOBUILD}"
+	default
+	estrong_assembly_info "using System.Runtime.CompilerServices;" \
+		"${DISTDIR}/mono.snk" "AssemblyInfo.cs"
+}
 
-	if use debug; then
-		make_wrapper "$1" "${MONO} --debug /usr/share/${PN}/slot-${SLOT}/$1.exe"
-	else
-		make_wrapper "$1" "${MONO} /usr/share/${PN}/slot-${SLOT}/$1.exe"
-	fi;
+src_compile() {
+	exbuild /p:VersionNumber="${ASSEMBLY_VERSION}" "${METAFILETOBUILD}"
+	enuspec "${NUSPEC_ID}.nuspec"
+}
+
+src_install() {
+	local p="/usr/$(get_libdir)/mono/${PN}"
+	insinto "${p}/slot-${SLOT}"
+	DIR=$(usex debug "Debug" "Release")
+	doins mpt-core/bin/${DIR}/mpt-core.dll
+	dosym slot-${SLOT}/mpt-core.dll ${p}/mpt-core.dll
+	einstall_pc_file ${PN} ${ASSEMBLY_VERSION} mpt-core
+	insinto "/usr/share/${PN}/slot-${SLOT}"
+	install_tool mpt-gitmodules
+	install_tool mpt-sln
+	install_tool mpt-csproj
+	install_tool mpt-machine
+	install_tool mpt-nuget
+	enupkg "${WORKDIR}/${NUSPEC_ID}.${NUSPEC_VERSION}.nupkg"
+	use doc && dodoc README.md
+	egacinstall "mpt-core/bin/${DIR}/mpt-core.dll"
 }
