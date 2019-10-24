@@ -23,7 +23,7 @@ DEPEND="${RDEPEND}
 	    =dev-dotnet/dotnetcore-sdk-bin-2.1.105 )"
 inherit dotnet eutils
 SRC_URI=\
-"https://github.com/OmniSharp/omnisharp-roslyn/archive/v1.34.2.tar.gz \
+"https://github.com/OmniSharp/${PN}/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${PV}"
