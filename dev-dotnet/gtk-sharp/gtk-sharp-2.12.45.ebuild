@@ -2,32 +2,31 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-DESCRIPTION="Gtk# is a Mono/.NET binding to the cross platform Gtk+ GUI toolkit and the foundation of most GUI apps built with Mono"
+DESCRIPTION="Gtk# is a Mono/.NET binding to the cross platform Gtk+ GUI toolkit"
+DESCRIPTION+=" and the foundation of most GUI apps built with Mono"
 HOMEPAGE="http://www.mono-project.com/GtkSharp"
 LICENSE="LGPL-2 MIT"
 KEYWORDS="~amd64 ~x86 ~ppc"
-RDEPEND="
-	>=dev-lang/mono-3.0
-	x11-libs/pango
-	>=dev-libs/glib-2.31
-	dev-libs/atk
-	x11-libs/gtk+:2
-	gnome-base/libglade
-	dev-perl/XML-LibXML
-	!dev-dotnet/gtk-sharp-gapi
-	!dev-dotnet/gtk-sharp-docs
-	!dev-dotnet/gtk-dotnet-sharp
-	!dev-dotnet/gdk-sharp
-	!dev-dotnet/glib-sharp
-	!dev-dotnet/glade-sharp
-	!dev-dotnet/pango-sharp
-	!dev-dotnet/atk-sharp"
-DEPEND="${RDEPEND}
-	virtual/pkgconfig
-	sys-devel/automake:1.11"
 USE_DOTNET="net45"
 IUSE="${USE_DOTNET} debug"
-REQUIRED_USE="|| ( ${USE_DOTNET} )"
+REQUIRED_USE="^^ ( ${USE_DOTNET} )"
+RDEPEND="!dev-dotnet/atk-sharp
+	 !dev-dotnet/gdk-sharp
+	 !dev-dotnet/glade-sharp
+	 !dev-dotnet/glib-sharp
+	 !dev-dotnet/gtk-dotnet-sharp
+	 !dev-dotnet/gtk-sharp-docs
+	 !dev-dotnet/gtk-sharp-gapi
+	 !dev-dotnet/pango-sharp
+	  dev-libs/atk
+	>=dev-libs/glib-2.31
+	  dev-perl/XML-LibXML
+	  gnome-base/libglade
+	  x11-libs/gtk+:2
+	  x11-libs/pango"
+DEPEND="${RDEPEND}
+	sys-devel/automake:1.11
+	virtual/pkgconfig"
 inherit autotools dotnet
 SLOT="2"
 SRC_URI="http://download.mono-project.com/sources/gtk-sharp212/${P}.tar.gz"
@@ -37,7 +36,6 @@ src_prepare() {
 	default
 	eautoreconf
 	elibtoolize
-	eapply_user
 }
 
 src_configure() {
