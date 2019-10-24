@@ -36,25 +36,20 @@ src_unpack() {
 src_prepare() {
 	default
 	ewarn "This ebuild is still in development and may not even compile at all."
-	sed -i -e "s|\
-\"Microsoft.NETCore.App\": \"1.0.1\"|\
-\"Microsoft.NETCore.App\": {\"version\":\"1.0.1\"}|g" \
-		src/OmniSharp/project.json || die
 	dotnet_copy_sources
 }
 
 src_compile() {
-	local mydebug=$(usex debug "Debug" "Release")
 	compile_impl() {
 		# sandbox erases it between phases
 		erestore
 		cd "src/OmniSharp"
 		if [[ "${EDOTNET}" =~ netcoreapp \
 			|| "${EDOTNET}" =~ netstandard ]] ; then
-			exbuild --configuration ${mydebug} --runtime ${DIST}
+			exbuild --runtime ${DIST}
 		fi
 		if [[ "${EDOTNET}" == "net46" ]] ; then
-			exbuild --configuration ${mydebug} --runtime ${DIST}
+			exbuild --runtime ${DIST}
 		fi
 	}
 	dotnet_foreach_impl compile_impl
