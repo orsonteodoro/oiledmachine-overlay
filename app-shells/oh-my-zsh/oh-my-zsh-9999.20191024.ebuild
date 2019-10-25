@@ -358,6 +358,7 @@ src_unpack() {
 }
 
 src_prepare() {
+	default
 	local i
 	for i in "${S}"/tools/*install* "${S}"/tools/*upgrade*
 	do
@@ -413,8 +414,6 @@ src_prepare() {
 
 	rm -rf themes.trash
 	rm -rf plugins.trash
-
-	eapply_user
 }
 
 src_install() {
