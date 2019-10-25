@@ -230,7 +230,8 @@ RDEPEND="app-shells/zsh
 	 xz? ( app-arch/xz-utils )
 	 7zip? ( app-arch/p7zip )"
 DEPEND="${RDEPEND}
-	net-misc/wget"
+	net-misc/wget
+	sys-apps/grep[pcre]"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 REQUIRED_USE="branding? ( themes_gentoo )
 	      themes_agnoster? ( powerline )
