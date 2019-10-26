@@ -23,10 +23,16 @@
   <doc lang="en">https://dwm.suckless.org/tutorial/</doc>
 </upstream>
 <use>
-  <flag name="mod_fibonacci">Allows for rearranging windows in a spiral like snail shell.  Use ALT-SHIFT-s or ALT-SHIFT-d .</flag>
-  <flag name="mod_rotatestack">Allows for rotating windows clockwise or counter clockwise.  Use ALT-SHIFT-j or ALT-SHIFT-k .</flag>
+  <flag name="mod_fibonacci">Allows for rearranging windows in a spiral like 
+    snail shell.  Use ALT-SHIFT-s or ALT-SHIFT-d .</flag>
+  <flag name="mod_rotatestack">Allows for rotating windows clockwise or 
+    counter-clockwise.  Use ALT-SHIFT-j or ALT-SHIFT-k .</flag>
   <flag name="mod_sizehintsoff">Eliminates space between windows.</flag>
   <flag name="xinerama">For multiple monitor support.</flag>
+  <flag name="savedconfig">Allows user to use custom config.def.h to set 
+    hotkeys or add header patch hunks.  The file be named ${PN}-${PVR} and 
+    stored in /etc/portage/savedconfig/${CATEGORY}/ .  
+    See https://git.suckless.org/dwm/file/config.def.h.html .</flag>
 </use>
 </pkgmetadata>
 
