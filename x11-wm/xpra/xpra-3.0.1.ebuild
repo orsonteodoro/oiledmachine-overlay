@@ -26,7 +26,7 @@ REQUIRED_USE="  gtk3? ( !gtk2 ) \
 		python_targets_python3_5 ( gtk3 !gtk2 ) \
 		python_targets_python3_6 ( gtk3 !gtk2 ) \
 		python_targets_python3_7 ( gtk3 !gtk2 )"
-SLOT="0"
+SLOT="0/${PV}"
 MY_PV="$(ver_cut 1-4)"
 inherit distutils-r1
 REQUIRED_USE="${PYTHON_REQUIRED_USE}

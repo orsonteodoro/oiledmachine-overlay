@@ -2,23 +2,29 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-DESCRIPTION="X Persistent Remote Apps (xpra) and Partitioning WM (parti) based on wimpiggy"
-HOMEPAGE="http://xpra.org/ http://xpra.org/src/"
+DESCRIPTION="X Persistent Remote Apps (xpra) and Partitioning WM (parti) based \
+on wimpiggy"
+HOMEPAGE="http://xpra.org/ \
+	  http://xpra.org/src/"
 LICENSE="GPL-2 BSD"
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
 # PyCObject_Check and PyCObject_AsVoidPtr vanished with python 3.3
 PYTHON_COMPAT=( python2_7 python3_5 python3_6 python3_7 )
-IUSE="+client +clipboard csc cups dbus dec_avcodec2 enc_ffmpeg enc_x264"
-IUSE+=" enc_x265 gtk2 gtk3 jpeg libav +lz4 lzo opengl +notifications pillow"
-IUSE+=" pulseaudio server sound test vpx webcam webp"
-REQUIRED_USE="gtk3? ( !gtk2 ) gtk2? ( !gtk3 ) ^^ ( python_targets_python2_7"
-REQUIRED_USE+=" python_targets_python3_5 python_targets_python3_6"
-REQUIRED_USE+=" python_targets_python3_7 ) ^^ ( gtk2 gtk3 )"
-REQUIRED_USE+=" python_targets_python2_7? ( !gtk3 gtk2 )"
-REQUIRED_USE+=" python_targets_python3_5 ( gtk3 !gtk2 )"
-REQUIRED_USE+=" python_targets_python3_6 ( gtk3 !gtk2 )"
-REQUIRED_USE+=" python_targets_python3_7 ( gtk3 !gtk2 )"
-SLOT="0"
+IUSE="  +client +clipboard csc cups dbus dec_avcodec2 enc_ffmpeg enc_x264 \
+	enc_x265 gtk2 gtk3 jpeg libav +lz4 lzo opengl +notifications pillow \
+	pulseaudio server sound test vpx webcam webp"
+REQUIRED_USE="  gtk3? ( !gtk2 ) \
+		gtk2? ( !gtk3 ) \
+		^^ ( python_targets_python2_7 \
+			python_targets_python3_5 \
+			python_targets_python3_6 \
+			python_targets_python3_7 ) \
+		^^ ( gtk2 gtk3 ) \
+		python_targets_python2_7? ( !gtk3 gtk2 ) \
+		python_targets_python3_5 ( gtk3 !gtk2 ) \
+		python_targets_python3_6 ( gtk3 !gtk2 ) \
+		python_targets_python3_7 ( gtk3 !gtk2 )"
+SLOT="0/${PV}"
 MY_PV="$(ver_cut 1-3)"
 S="${WORKDIR}/xpra-${MY_PV}"
 inherit distutils-r1
@@ -103,14 +109,17 @@ python_prepare_all() {
 		xpra/platform{/xposix,}/paths.py xpra/scripts/server.py
 
 	if use opengl ; then
-		echo 'xvfb=Xorg -noreset -nolisten tcp +extension GLX +extension RANDR +extension RENDER -config xorg.dummy.conf' >> "${S}"/etc/xpra/xpra.conf.in || die
+		echo \
+'xvfb=Xorg -noreset -nolisten tcp +extension GLX +extension RANDR +extension RENDER -config xorg.dummy.conf' \
+			>> "${S}"/etc/xpra/xpra.conf.in || die
 	fi
 
 	distutils-r1_python_prepare_all
 }
 
 python_configure_all() {
-	sed -e "/'pulseaudio'/s:DEFAULT_PULSEAUDIO:$(usex pulseaudio True False):" \
+	sed \
+	-e "/'pulseaudio'/s:DEFAULT_PULSEAUDIO:$(usex pulseaudio True False):" \
 		-i setup.py || die
 
 	mydistutilsargs=(
@@ -170,18 +179,19 @@ python_install_all() {
 pkg_postinst() {
 	einfo "You need to add yourself to the xpra, tty, dialout groups."
 	if use opengl ; then
-		einfo "If you are using the amdgpu-pro driver, make sure you are"
-		einfo "using the xorg-x11 driver and update your"
-		einfo "/etc/X11/xorg.conf.d/20opengl.conf so that it has"
-		einfo "/usr/$(get_libdir)/xorg/modules/drivers at the top as follows:"
-		einfo ""
-		einfo "Section \"Files\""
-		einfo "        ModulePath \"/usr/$(get_libdir)/xorg/modules/drivers\""
-		einfo "        ModulePath \"/usr/$(get_libdir)/xorg/modules\""
-		einfo "EndSection"
-		einfo ""
+	  einfo "If you are using the amdgpu-pro driver, make sure you are"
+	  einfo "using the xorg-x11 driver and update your"
+	  einfo "/etc/X11/xorg.conf.d/20opengl.conf so that it has"
+	  einfo "/usr/$(get_libdir)/xorg/modules/drivers at the top as follows:"
+	  einfo ""
+	  einfo "Section \"Files\""
+	  einfo "        ModulePath \"/usr/$(get_libdir)/xorg/modules/drivers\""
+	  einfo "        ModulePath \"/usr/$(get_libdir)/xorg/modules\""
+	  einfo "EndSection"
+	  einfo ""
 	fi
 	if use pillow ; then
-		einfo "Manually add jpeg or webp optional USE flags to pillow package to enable support for them."
+		einfo "Manually add jpeg or webp optional USE flags to pillow"
+		einfo "package to enable support for them."
 	fi
 }
