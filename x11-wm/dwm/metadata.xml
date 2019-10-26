@@ -30,8 +30,8 @@
   <flag name="mod_sizehintsoff">Eliminates space between windows.</flag>
   <flag name="xinerama">For multiple monitor support.</flag>
   <flag name="savedconfig">Allows user to use custom config.def.h to set 
-    hotkeys or add header patch hunks.  The file be named ${PN}-${PVR} and 
-    stored in /etc/portage/savedconfig/${CATEGORY}/ .  
+    hotkeys or add header patch hunks.  The file must be named 
+    ${PN}-${PVR} and stored in /etc/portage/savedconfig/${CATEGORY}/ .  
     See https://git.suckless.org/dwm/file/config.def.h.html .</flag>
 </use>
 </pkgmetadata>
