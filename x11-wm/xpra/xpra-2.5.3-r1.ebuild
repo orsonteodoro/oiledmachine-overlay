@@ -15,7 +15,7 @@ IUSE="  +client +clipboard csc cups dbus dec_avcodec2 enc_ffmpeg enc_x264 \
 	pulseaudio server sound test vpx webcam webp"
 REQUIRED_USE="  gtk3? ( !gtk2 ) \
 		gtk2? ( !gtk3 ) \
-		^^ ( python_targets_python2_7 \
+		^^ (    python_targets_python2_7 \
 			python_targets_python3_5 \
 			python_targets_python3_6 \
 			python_targets_python3_7 ) \
