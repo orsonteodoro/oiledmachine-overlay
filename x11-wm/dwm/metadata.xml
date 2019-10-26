@@ -1,12 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
+<!-- for this forked ebuild version only on oiledmachine-overlay -->
+<maintainer type="person" status="active">
+  <email>orsonteodoro@hotmail.com</email>
+  <name>Orson Teodoro</name>
+</maintainer>
+<!-- originator -->
 <maintainer type="project">
-	<email>desktop-misc@gentoo.org</email>
+  <email>desktop-misc@gentoo.org</email>
 </maintainer>
 <longdescription>
-dwm is a dynamic window manager for X. It manages windows in tiling and
-floating modes. Either mode can be applied dynamically, optimizing the
-environment for the application in use and the task performed.
+  dwm is a dynamic window manager for X. It manages windows in tiling and
+  floating modes. Either mode can be applied dynamically, optimizing the
+  environment for the application in use and the task performed.
 </longdescription>
+<upstream>
+  <bugs-to>https://suckless.org/community/</bugs-to>
+  <maintainer>
+    <email>dev@suckless.org</email>
+  </maintainer>
+  <doc lang="en">https://dwm.suckless.org/tutorial/</doc>
+</upstream>
+<use>
+  <flag name="mod_fibonacci">Allows for rearranging windows in a spiral like snail shell.  Use ALT-SHIFT-s or ALT-SHIFT-d .</flag>
+  <flag name="mod_rotatestack">Allows for rotating windows clockwise or counter clockwise.  Use ALT-SHIFT-j or ALT-SHIFT-k .</flag>
+  <flag name="mod_sizehintsoff">Eliminates space between windows.</flag>
+  <flag name="xinerama">For multiple monitor support.</flag>
+</use>
 </pkgmetadata>
+
