@@ -5,8 +5,9 @@ EAPI=7
 DESCRIPTION="Library for using System.Drawing with mono"
 HOMEPAGE="http://www.mono-project.com"
 LICENSE="MIT"
-KEYWORDS="amd64 ~arm ppc ppc64 x86 ~amd64-fbsd ~x86-freebsd ~amd64-linux ~x86-linux ~x86-solaris"
-SLOT="0"
+KEYWORDS="amd64 ~arm ppc ppc64 x86 ~amd64-fbsd ~x86-freebsd ~amd64-linux \
+~x86-linux ~x86-solaris"
+SLOT="0/${PV}"
 IUSE="cairo"
 RDEPEND=" !cairo? ( >=x11-libs/pango-1.20 )
 	 >=dev-libs/glib-2.16:2
@@ -25,7 +26,8 @@ DEPEND="${RDEPEND}"
 PATCHES=( "${FILESDIR}/${P}-gold.patch"
 	  "${FILESDIR}/${PN}-2.10.1-libpng15.patch"
 	  "${FILESDIR}/${PN}-2.10.9-freetype251.patch" )
-SRC_URI="http://download.mono-project.com/sources/${PN}/${P}.tar.bz2"
+SRC_URI="http://download.mono-project.com/sources/${PN}/${P}.tar.bz2 \
+	-> ${P}.tar.bz2"
 inherit dotnet eutils mono flag-o-matic
 RESTRICT="mirror test"
 
@@ -49,11 +51,6 @@ src_install () {
 	do
 		[[ -e "${docfile}" ]] && dodoc "${docfile}"
 	done
-	if [[ "${DOCS[@]}" ]]
-	then
-		dodoc "${DOCS[@]}"
-	fi
 	prune_libtool_files
-
 	mono_multilib_comply
 }
