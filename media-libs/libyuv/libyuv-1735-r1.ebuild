@@ -10,13 +10,13 @@ HOMEPAGE="https://chromium.googlesource.com/libyuv/libyuv/"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
 inherit multilib-minimal
+IUSE="static system-gflags test"
 RDEPEND="virtual/jpeg"
 DEPEND="${RDEPEND}
 	test? ( dev-cpp/gtest
 		dev-cpp/gflags )
 	dev-util/cmake"
 SLOT="0/${PV}"
-IUSE="static system-gflags test"
 inherit cmake-utils git-r3
 EGIT_COMMIT="43d37c05e5468855e412946dc6369d60a7849998"
 EGIT_REPO_URI="https://chromium.googlesource.com/libyuv/libyuv"
