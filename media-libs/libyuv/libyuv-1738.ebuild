@@ -18,7 +18,7 @@ DEPEND="${RDEPEND}
 SLOT="0/${PV}"
 IUSE="static system-gflags test"
 inherit cmake-utils git-r3
-EGIT_COMMIT="98a4882de5b949d4f7f344718af5da5ff18bc0b5"
+EGIT_COMMIT="53b529e362cc09560c89840fd02ddb68ae3b11aa"
 EGIT_REPO_URI="https://chromium.googlesource.com/libyuv/libyuv"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="fetch"

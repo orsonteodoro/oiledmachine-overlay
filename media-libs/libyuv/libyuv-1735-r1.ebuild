@@ -1,15 +1,15 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# See README.chromium or include/libyuv/version.h for lib version
+
 EAPI=7
-
-inherit cmake-utils git-r3 multilib-build multilib-minimal
-
-DESCRIPTION="libyuv is an open source project that includes YUV scaling and conversion functionality."
+DESCRIPTION="libyuv is an open source project that includes YUV scaling and \
+conversion functionality."
 HOMEPAGE="https://chromium.googlesource.com/libyuv/libyuv/"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
-RESTRICT="fetch"
+inherit multilib-minimal
 RDEPEND="virtual/jpeg"
 DEPEND="${RDEPEND}
 	test? ( dev-cpp/gtest
@@ -17,10 +17,12 @@ DEPEND="${RDEPEND}
 	dev-util/cmake"
 SLOT="0/${PV}"
 IUSE="static system-gflags test"
-S="${WORKDIR}/${PN}-${PV}"
-DOCS=( AUTHORS LICENSE PATENTS README.chromium README.md )
+inherit cmake-utils git-r3
 EGIT_COMMIT="43d37c05e5468855e412946dc6369d60a7849998"
 EGIT_REPO_URI="https://chromium.googlesource.com/libyuv/libyuv"
+S="${WORKDIR}/${PN}-${PV}"
+RESTRICT="fetch"
+DOCS=( AUTHORS LICENSE PATENTS README.chromium README.md )
 
 src_unpack() {
 	git-r3_fetch
@@ -28,6 +30,7 @@ src_unpack() {
 }
 
 src_prepare() {
+	default
 	cmake-utils_src_prepare
 	multilib_copy_sources
 }
