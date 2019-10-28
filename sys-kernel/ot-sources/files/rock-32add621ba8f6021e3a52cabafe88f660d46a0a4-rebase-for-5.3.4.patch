@@ -1,0 +1,27 @@
+--- a/drivers/gpu/drm/amd/display/dc/dc.h.orig	2019-10-23 16:16:31.056788945 -0700
++++ b/drivers/gpu/drm/amd/display/dc/dc.h	2019-10-23 16:19:03.114649605 -0700
+@@ -523,6 +523,11 @@ struct dc_init_data {
+ 	struct dc_bios *vbios_override;
+ 	enum dce_environment dce_environment;
+ 
++#ifdef CONFIG_DRM_AMD_DC_DMUB
++	struct dmub_offload_funcs *dmub_if;
++	struct dc_reg_helper_state *dmub_offload;
++#endif
++
+ 	struct dc_config flags;
+ 	uint32_t log_mask;
+ #ifdef CONFIG_DRM_AMD_DC_DCN2_0
+@@ -535,6 +540,12 @@ struct dc_init_data {
+ };
+ 
+ struct dc_callback_init {
++
++#ifdef CONFIG_DRM_AMD_DC_DMUB
++	struct dmub_offload_funcs *dmub_if;
++	struct dc_reg_helper_state *dmub_offload;
++#endif
++
+ 	uint8_t reserved;
+ };
+ 

@@ -89,6 +89,7 @@
     <flag name="cfs">Assumes the IO scheduler will be the stock CFS CPU scheduler.</flag>
     <flag name="disable_debug">Installs scripts to disable debugging, tracing, verbose output or related code paths.</flag>
     <flag name="graysky2">Patches the kernel for more CPU microarchitecutures</flag>
+    <flag name="directgma">Toggles the merging or removal of commits related to FirePro DirectGMA.  Disabling it may reduces the code size a bit; make it less problematic to update the amdgpu-driver/amd-staging-drm-next part of ROCk.</flag>
     <flag name="muqss">Patches the kernel with Con Kolivas patchset and includes his skiplist based MuQSS CPU scheduler.</flag>
     <flag name="o3">Patches the kernel to allow for more aggressive O3 compiler optimizations.</flag>
     <flag name="pds">Patches the kernel with an alternative skiplist based scheduler.</flag>

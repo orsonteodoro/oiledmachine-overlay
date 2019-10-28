@@ -1,0 +1,343 @@
+diff -urNp a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c	2019-10-22 00:09:39.192337207 -0700
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd.c	2019-10-22 00:17:46.773278602 -0700
+@@ -20,9 +20,12 @@
+  * OTHER DEALINGS IN THE SOFTWARE.
+  */
+ 
++#undef pr_fmt
++#define pr_fmt(fmt) "kfd2kgd: " fmt
++
+ #include "amdgpu_amdkfd.h"
+ #include "amd_shared.h"
+-
++#include <linux/dma-buf.h>
+ #include "amdgpu.h"
+ #include "amdgpu_gfx.h"
+ #include "amdgpu_dma_buf.h"
+@@ -30,13 +33,15 @@
+ #include <linux/dma-buf.h>
+ #include "amdgpu_xgmi.h"
+ 
+-static const unsigned int compute_vmid_bitmap = 0xFF00;
++static unsigned int compute_vmid_bitmap = 0xFF00;
+ 
+ /* Total memory size in system memory and all GPU VRAM. Used to
+  * estimate worst case amount of memory to reserve for page tables
+  */
+ uint64_t amdgpu_amdkfd_total_mem_size;
+ 
++extern bool pcie_p2p;
++
+ int amdgpu_amdkfd_init(void)
+ {
+ 	struct sysinfo si;
+diff -urNp a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v9.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v9.c
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v9.c	2019-10-22 00:09:39.197337401 -0700
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gfx_v9.c	2019-10-22 00:57:31.776930469 -0700
+@@ -854,6 +854,25 @@ static int invalidate_tlbs_vmid(struct k
+ 
+ static int kgd_address_watch_disable(struct kgd_dev *kgd)
+ {
++	struct amdgpu_device *adev = get_amdgpu_device(kgd);
++	union TCP_WATCH_CNTL_BITS cntl;
++	unsigned int i;
++	uint32_t watch_base_addr;
++
++	cntl.u32All = 0;
++
++	cntl.bitfields.valid = 0;
++	cntl.bitfields.mask = ADDRESS_WATCH_REG_CNTL_DEFAULT_MASK;
++	cntl.bitfields.atc = 1;
++
++	watch_base_addr = get_watch_base_addr(adev);
++	/* Turning off this address until we set all the registers */
++	for (i = 0; i < MAX_WATCH_ADDRESSES; i++)
++		WREG32(watch_base_addr +
++				watchRegs[i * ADDRESS_WATCH_REG_MAX +
++						ADDRESS_WATCH_REG_CNTL],
++			cntl.u32All);
++
+ 	return 0;
+ }
+ 
+diff -urNp a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.h b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.h
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.h	2019-09-15 14:19:32.000000000 -0700
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.h	2019-10-22 01:11:24.643281548 -0700
+@@ -193,6 +193,7 @@ struct device_queue_manager {
+ 	struct kfd_mem_obj	*fence_mem;
+ 	bool			active_runlist;
+ 	int			sched_policy;
++	uint32_t		trap_debug_vmid;
+ 
+ 	/* hw exception  */
+ 	bool			is_hws_hang;
+@@ -219,6 +220,14 @@ unsigned int get_queues_per_pipe(struct
+ unsigned int get_pipes_per_mec(struct device_queue_manager *dqm);
+ unsigned int get_num_sdma_queues(struct device_queue_manager *dqm);
+ unsigned int get_num_xgmi_sdma_queues(struct device_queue_manager *dqm);
++bool check_if_queues_active(struct device_queue_manager *dqm,
++		struct qcm_process_device *qpd);
++int reserve_debug_trap_vmid(struct device_queue_manager *dqm);
++int release_debug_trap_vmid(struct device_queue_manager *dqm);
++int suspend_queues(struct device_queue_manager *dqm,
++				struct kfd_process *p,
++				uint32_t flags);
++int resume_queues(struct device_queue_manager *dqm, struct kfd_process *p);
+ 
+ static inline unsigned int get_sh_mem_bases_32(struct kfd_process_device *pdd)
+ {
+diff -urNp a/drivers/gpu/drm/amd/amdkfd/kfd_kernel_queue.c b/drivers/gpu/drm/amd/amdkfd/kfd_kernel_queue.c
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_kernel_queue.c	2019-09-15 14:19:32.000000000 -0700
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_kernel_queue.c	2019-10-22 01:19:04.651147058 -0700
+@@ -268,6 +268,39 @@ err_no_space:
+ 	return -ENOMEM;
+ }
+ 
++static int acquire_inline_ib(struct kernel_queue *kq,
++			     size_t size_in_dwords,
++			     unsigned int **buffer_ptr,
++			     uint64_t *gpu_addr)
++{
++	int ret;
++	unsigned int *buf;
++	union PM4_MES_TYPE_3_HEADER nop;
++
++	if (size_in_dwords >= (1 << 14))
++		return -EINVAL;
++
++	/* Allocate size_in_dwords on the ring, plus an extra dword
++	 * for a NOP packet header
++	 */
++	ret = acquire_packet_buffer(kq, size_in_dwords + 1,  &buf);
++	if (ret)
++		return ret;
++
++	/* Build a NOP packet that contains the IB as "payload". */
++	nop.u32all = 0;
++	nop.opcode = IT_NOP;
++	nop.count = size_in_dwords - 1;
++	nop.type = PM4_TYPE_3;
++
++	*buf = nop.u32all;
++	*buffer_ptr = buf + 1;
++	*gpu_addr = kq->pq_gpu_addr + ((unsigned long)*buffer_ptr -
++				       (unsigned long)kq->pq_kernel_addr);
++
++	return 0;
++}
++
+ static void submit_packet(struct kernel_queue *kq)
+ {
+ #ifdef DEBUG
+@@ -307,6 +340,7 @@ struct kernel_queue *kernel_queue_init(s
+ 	kq->ops.initialize = initialize;
+ 	kq->ops.uninitialize = uninitialize;
+ 	kq->ops.acquire_packet_buffer = acquire_packet_buffer;
++	kq->ops.acquire_inline_ib = acquire_inline_ib;
+ 	kq->ops.submit_packet = submit_packet;
+ 	kq->ops.rollback_packet = rollback_packet;
+ 
+diff -urNp a/drivers/gpu/drm/amd/amdkfd/kfd_module.c b/drivers/gpu/drm/amd/amdkfd/kfd_module.c
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_module.c	2019-10-22 00:09:39.215338101 -0700
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_module.c	2019-10-22 00:33:01.669782180 -0700
+@@ -52,6 +52,10 @@ static int kfd_init(void)
+ 	if (err < 0)
+ 		goto err_topology;
+ 
++	err = kfd_ipc_init();
++	if (err < 0)
++		goto err_ipc;
++
+ 	err = kfd_process_create_wq();
+ 	if (err < 0)
+ 		goto err_create_wq;
+@@ -61,11 +65,14 @@ static int kfd_init(void)
+ 	 */
+ 	kfd_procfs_init();
+ 
++	kfd_init_peer_direct();
++
+ 	kfd_debugfs_init();
+ 
+ 	return 0;
+ 
+ err_create_wq:
++err_ipc:
+ 	kfd_topology_shutdown();
+ err_topology:
+ 	kfd_chardev_exit();
+diff -urNp a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_cik.c b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_cik.c
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_cik.c	2019-10-22 00:09:39.217338178 -0700
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_cik.c	2019-10-22 00:42:25.214677403 -0700
+@@ -434,6 +434,7 @@ struct mqd_manager *mqd_manager_init_cik
+ 		mqd->update_mqd = update_mqd;
+ 		mqd->destroy_mqd = destroy_mqd;
+ 		mqd->is_occupied = is_occupied;
++		mqd->check_queue_active = check_queue_active;
+ 		mqd->mqd_size = sizeof(struct cik_mqd);
+ #if defined(CONFIG_DEBUG_FS)
+ 		mqd->debugfs_show_mqd = debugfs_show_mqd;
+@@ -447,6 +448,7 @@ struct mqd_manager *mqd_manager_init_cik
+ 		mqd->update_mqd = update_mqd_hiq;
+ 		mqd->destroy_mqd = destroy_mqd;
+ 		mqd->is_occupied = is_occupied;
++		mqd->check_queue_active = check_queue_active;
+ 		mqd->mqd_size = sizeof(struct cik_mqd);
+ #if defined(CONFIG_DEBUG_FS)
+ 		mqd->debugfs_show_mqd = debugfs_show_mqd;
+@@ -461,6 +463,7 @@ struct mqd_manager *mqd_manager_init_cik
+ 		mqd->update_mqd = update_mqd_hiq;
+ 		mqd->destroy_mqd = destroy_mqd;
+ 		mqd->is_occupied = is_occupied;
++		mqd->check_queue_active = check_queue_active;
+ 		mqd->mqd_size = sizeof(struct cik_mqd);
+ #if defined(CONFIG_DEBUG_FS)
+ 		mqd->debugfs_show_mqd = debugfs_show_mqd;
+@@ -474,6 +477,7 @@ struct mqd_manager *mqd_manager_init_cik
+ 		mqd->update_mqd = update_mqd_sdma;
+ 		mqd->destroy_mqd = destroy_mqd_sdma;
+ 		mqd->is_occupied = is_occupied_sdma;
++		mqd->check_queue_active = check_sdma_queue_active;
+ 		mqd->mqd_size = sizeof(struct cik_sdma_rlc_registers);
+ #if defined(CONFIG_DEBUG_FS)
+ 		mqd->debugfs_show_mqd = debugfs_show_mqd_sdma;
+diff -urNp a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.h b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.h
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.h	2019-09-15 14:19:32.000000000 -0700
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager.h	2019-10-22 00:22:35.760498100 -0700
+@@ -96,6 +96,8 @@ struct mqd_manager {
+ 				  u32 *ctl_stack_used_size,
+ 				  u32 *save_area_used_size);
+ 
++	bool	(*check_queue_active)(struct queue *q);
++
+ #if defined(CONFIG_DEBUG_FS)
+ 	int	(*debugfs_show_mqd)(struct seq_file *m, void *data);
+ #endif
+diff -urNp a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v9.c b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v9.c
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v9.c	2019-10-22 00:09:39.218338217 -0700
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_v9.c	2019-10-22 00:28:05.323287084 -0700
+@@ -488,6 +488,7 @@ struct mqd_manager *mqd_manager_init_v9(
+ 		mqd->destroy_mqd = destroy_mqd;
+ 		mqd->is_occupied = is_occupied;
+ 		mqd->get_wave_state = get_wave_state;
++		mqd->check_queue_active = check_queue_active;
+ 		mqd->mqd_size = sizeof(struct v9_mqd);
+ #if defined(CONFIG_DEBUG_FS)
+ 		mqd->debugfs_show_mqd = debugfs_show_mqd;
+@@ -501,6 +502,7 @@ struct mqd_manager *mqd_manager_init_v9(
+ 		mqd->update_mqd = update_mqd_hiq;
+ 		mqd->destroy_mqd = destroy_mqd;
+ 		mqd->is_occupied = is_occupied;
++		mqd->check_queue_active = check_queue_active;
+ 		mqd->mqd_size = sizeof(struct v9_mqd);
+ #if defined(CONFIG_DEBUG_FS)
+ 		mqd->debugfs_show_mqd = debugfs_show_mqd;
+@@ -514,6 +516,7 @@ struct mqd_manager *mqd_manager_init_v9(
+ 		mqd->update_mqd = update_mqd_hiq;
+ 		mqd->destroy_mqd = destroy_mqd;
+ 		mqd->is_occupied = is_occupied;
++		mqd->check_queue_active = check_queue_active;
+ 		mqd->mqd_size = sizeof(struct v9_mqd);
+ #if defined(CONFIG_DEBUG_FS)
+ 		mqd->debugfs_show_mqd = debugfs_show_mqd;
+@@ -527,6 +530,7 @@ struct mqd_manager *mqd_manager_init_v9(
+ 		mqd->update_mqd = update_mqd_sdma;
+ 		mqd->destroy_mqd = destroy_mqd_sdma;
+ 		mqd->is_occupied = is_occupied_sdma;
++		mqd->check_queue_active = check_sdma_queue_active;
+ 		mqd->mqd_size = sizeof(struct v9_sdma_mqd);
+ #if defined(CONFIG_DEBUG_FS)
+ 		mqd->debugfs_show_mqd = debugfs_show_mqd_sdma;
+diff -urNp a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_vi.c b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_vi.c
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_vi.c	2019-09-15 14:19:32.000000000 -0700
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_mqd_manager_vi.c	2019-10-22 00:50:47.574227490 -0700
+@@ -44,6 +44,45 @@ static inline struct vi_sdma_mqd *get_sd
+ 	return (struct vi_sdma_mqd *)mqd;
+ }
+ 
++static bool check_sdma_queue_active(struct queue *q)
++{
++	uint32_t rptr, wptr;
++	struct vi_sdma_mqd *m = get_sdma_mqd(q->mqd);
++
++	rptr = m->sdmax_rlcx_rb_rptr;
++	wptr = m->sdmax_rlcx_rb_wptr;
++	pr_debug("rptr=%d, wptr=%d\n", rptr, wptr);
++
++	return (rptr != wptr);
++}
++
++static bool check_queue_active(struct queue *q)
++{
++	uint32_t rptr, wptr;
++	uint32_t cntl_stack_offset, cntl_stack_size;
++	struct vi_mqd *m = get_mqd(q->mqd);
++
++	rptr = m->cp_hqd_pq_rptr;
++	wptr = m->cp_hqd_pq_wptr;
++	cntl_stack_offset = m->cp_hqd_cntl_stack_offset;
++	cntl_stack_size = m->cp_hqd_cntl_stack_size;
++
++	pr_debug("rptr=%d, wptr=%d\n", rptr, wptr);
++	pr_debug("m->cp_hqd_cntl_stack_offset=0x%08x\n", cntl_stack_offset);
++	pr_debug("m->cp_hqd_cntl_stack_size=0x%08x\n", cntl_stack_size);
++
++	if ((rptr == 0 && wptr == 0) ||
++		cntl_stack_offset == 0xffffffff ||
++		cntl_stack_size > 0x5000)
++		return false;
++
++	/* Process is idle if both conditions are meet:
++	 * queue's rptr equals to wptr
++	 * control stack is empty, cntl_stack_offset = cntl_stack_size
++	 */
++	return (rptr != wptr || cntl_stack_offset != cntl_stack_size);
++}
++
+ static void update_cu_mask(struct mqd_manager *mm, void *mqd,
+ 			struct queue_properties *q)
+ {
+@@ -224,7 +263,9 @@ static void __update_mqd(struct mqd_mana
+ 		m->cp_hqd_pq_control |= CP_HQD_PQ_CONTROL__NO_UPDATE_RPTR_MASK |
+ 				2 << CP_HQD_PQ_CONTROL__SLOT_BASED_WPTR__SHIFT;
+ 	}
+-
++	if (priv_cp_queues)
++		m->cp_hqd_pq_control |=
++			1 << CP_HQD_PQ_CONTROL__PRIV_STATE__SHIFT;
+ 	if (mm->dev->cwsr_enabled && q->ctx_save_restore_area_address)
+ 		m->cp_hqd_ctx_save_control =
+ 			atc_bit << CP_HQD_CTX_SAVE_CONTROL__ATC__SHIFT |
+@@ -434,6 +475,7 @@ struct mqd_manager *mqd_manager_init_vi(
+ 		mqd->destroy_mqd = destroy_mqd;
+ 		mqd->is_occupied = is_occupied;
+ 		mqd->get_wave_state = get_wave_state;
++		mqd->check_queue_active = check_queue_active;
+ 		mqd->mqd_size = sizeof(struct vi_mqd);
+ #if defined(CONFIG_DEBUG_FS)
+ 		mqd->debugfs_show_mqd = debugfs_show_mqd;
+@@ -447,6 +489,7 @@ struct mqd_manager *mqd_manager_init_vi(
+ 		mqd->update_mqd = update_mqd_hiq;
+ 		mqd->destroy_mqd = destroy_mqd;
+ 		mqd->is_occupied = is_occupied;
++		mqd->check_queue_active = check_queue_active;
+ 		mqd->mqd_size = sizeof(struct vi_mqd);
+ #if defined(CONFIG_DEBUG_FS)
+ 		mqd->debugfs_show_mqd = debugfs_show_mqd;
+@@ -460,6 +503,7 @@ struct mqd_manager *mqd_manager_init_vi(
+ 		mqd->update_mqd = update_mqd_hiq;
+ 		mqd->destroy_mqd = destroy_mqd;
+ 		mqd->is_occupied = is_occupied;
++		mqd->check_queue_active = check_queue_active;
+ 		mqd->mqd_size = sizeof(struct vi_mqd);
+ #if defined(CONFIG_DEBUG_FS)
+ 		mqd->debugfs_show_mqd = debugfs_show_mqd;
+@@ -473,6 +517,7 @@ struct mqd_manager *mqd_manager_init_vi(
+ 		mqd->update_mqd = update_mqd_sdma;
+ 		mqd->destroy_mqd = destroy_mqd_sdma;
+ 		mqd->is_occupied = is_occupied_sdma;
++		mqd->check_queue_active = check_sdma_queue_active;
+ 		mqd->mqd_size = sizeof(struct vi_sdma_mqd);
+ #if defined(CONFIG_DEBUG_FS)
+ 		mqd->debugfs_show_mqd = debugfs_show_mqd_sdma;
