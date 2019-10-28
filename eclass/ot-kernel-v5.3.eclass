@@ -1,3 +1,4 @@
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
 # Copyright 2019 Orson Teodoro
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
@@ -10,7 +11,8 @@
 # @SUPPORTED_EAPIS: 2 3 4 5 6
 # @BLURB: Eclass for patching the 5.3.x kernel
 # @DESCRIPTION:
-# The ot-kernel-v5.3 eclass defines specific applicable patching for the 5.3.x linux kernel.
+# The ot-kernel-v5.3 eclass defines specific applicable patching for the 5.3.x
+# linux kernel.
 
 ETYPE="sources"
 
@@ -36,33 +38,54 @@ PATCH_BMQ_VER="${PATCH_BMQ_VER:=100}"
 PATCH_BMQ_MAJOR_MINOR="5.3"
 DISABLE_DEBUG_V="1.1"
 
-# When the Kernel version is >5.3, the AMD_STAGING_DRM_NEXT variables should be no longer updated, otherwise it may exhibit runtime errors.  This is based on experience.
+# When the Kernel version is >5.3, the AMD_STAGING_DRM_NEXT variables should be
+# no longer updated, otherwise it may exhibit runtime errors.  This is based on
+# experience.
 
-CURRENT_DC_VER="03.02.054" # found in drivers/gpu/drm/amd/display/dc/dc.h for ${PV}
+CURRENT_DC_VER="03.02.054" # in ${PV}'s drivers/gpu/drm/amd/display/dc/dc.h
 
 AMD_STAGING_DRM_NEXT_LATEST="amd-staging-drm-next"
 AMD_STAGING_DRM_NEXT_DIR="amd-staging-drm-next"
 
-AMD_STAGING_DRM_NEXT_SNAPSHOT="e025c334b6c7aa66c0fc67548643bd52c4a39eef" # latest commit I tested which should be ideally head
+AMD_STAGING_DRM_NEXT_SNAPSHOT="e025c334b6c7aa66c0fc67548643bd52c4a39eef" \
+# latest commit I tested which should be ideally head
 # 2019-10-04 drm/amdgpu: remove redundant variable r and redundant return statement
 
-AMD_STAGING_DRM_NEXT_MILESTONE="a35d69a03b08e868ad222b1faa6ae5cc2c39113e" # corresponds to the tagged commit:: 2019-09-17 drm/amd/display: 3.2.51.1
+AMD_STAGING_DRM_NEXT_MILESTONE="a35d69a03b08e868ad222b1faa6ae5cc2c39113e"
+# corresponds to the tagged commit:: 2019-09-17 drm/amd/display: 3.2.51.1
 
-#AMD_STAGING_INTERSECTS_ROCK="9c5ab937b15f87523dd057ba05b9869331283286" # DC_VER=3.2.35
+#AMD_STAGING_INTERSECTS_ROCK="9c5ab937b15f87523dd057ba05b9869331283286"
+# DC_VER=3.2.35
 
-# KV is kernel version, for the variable below means a commit hash "around a major.minor release."
+# KV is kernel version, for the variable below means a commit hash
+# "around a major.minor release."
 
-# AMD_STAGING_INTERSECTS_KV starts from DC_VER of 5_x (major.minor kernel release milestones) and goes backwards with respect to DC_VER to the beginning of the mispatch/missing commit cluster(s).
-# Mispatch/missing commit cluster can be caused by backports of DRM updates from future major.minor kernel releases.
+# AMD_STAGING_INTERSECTS_KV starts from DC_VER of 5_x (major.minor kernel
+# release milestones) and goes backwards with respect to DC_VER to the
+# beginning of the mispatch/missing commit cluster(s).
 
-#AMD_STAGING_INTERSECTS_KV="70bcf2bc5203e358e5e2ac30718caea53204dfe9" # corresponds to drm/amd/display: 3.2.35 (tested) same as 5.x kernel release
-AMD_STAGING_INTERSECTS_KV="5408887141baac0ad1a5e6cf514ceadf33090114" # corresponds to drm/amd/display: 3.2.30 (testing); needs to go back x.x.-1 point release assuming that 3.2.31 is botched.
-# 3.2.31 is pattern of missing commits in ot-kernel-common_fetch_amd_staging_drm_next_commits_post
+# Mispatch/missing commit cluster can be caused by backports of DRM updates
+# from future major.minor kernel releases.
+
+#AMD_STAGING_INTERSECTS_KV="70bcf2bc5203e358e5e2ac30718caea53204dfe9"
+# corresponds to drm/amd/display: 3.2.35 (tested) same as 5.x kernel release
+
+AMD_STAGING_INTERSECTS_KV="5408887141baac0ad1a5e6cf514ceadf33090114"
+# corresponds to drm/amd/display: 3.2.30 (testing); needs to go back x.x.-1
+#   point release assuming that 3.2.31 is botched.
+# 3.2.31 is pattern of missing commits in
+#   ot-kernel-common_fetch_amd_staging_drm_next_commits_post
 
 # obtained by:  git -P show -s --format=%ct v5.3 | tail -n 1
 LINUX_TIMESTAMP=1568582372
 
-IUSE="bfq bmq bmq-quick-fix amd-staging-drm-next-latest amd-staging-drm-next-snapshot amd-staging-drm-next-milestone +cfs disable_debug +graysky2 muqss +o3 pds uksm tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs -zentune"
+IUSE="  bfq bmq bmq-quick-fix \
+	amd-staging-drm-next-latest \
+	amd-staging-drm-next-snapshot \
+	amd-staging-drm-next-milestone \
+	+cfs disable_debug +graysky2 muqss +o3 pds uksm \
+	tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs \
+	-zentune"
 REQUIRED_USE="^^ ( muqss pds cfs bmq )
 	     tresor_sysfs? ( || ( tresor_i686 tresor_x86_64 tresor_aesni ) )
 	     tresor? ( ^^ ( tresor_i686 tresor_x86_64 tresor_aesni ) )
@@ -95,7 +118,9 @@ DEPEND="amd-staging-drm-next-snapshot? ( dev-vcs/git )
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="Orson Teodoro's patchset containing UKSM, zen-tune, GraySky's GCC Patches, MUQSS CPU Scheduler, PDS CPU Scheduler, BMQ CPU Scheduler, Genpatches, BFQ updates, amd-staging-drm-next, TRESOR"
+DESCRIPTION="Orson Teodoro's patchset containing UKSM, zen-tune, GraySky's GCC \
+Patches, MUQSS CPU Scheduler, PDS CPU Scheduler, BMQ CPU Scheduler, \
+Genpatches, BFQ updates, amd-staging-drm-next, TRESOR"
 
 AMDREPO_URL="git://people.freedesktop.org/~agd5f/linux"
 AMD_PATCH_FN="${AMD_STAGING_DRM_NEXT_DIR}.patch"
@@ -133,8 +158,23 @@ SRC_URI+=" ${KERNEL_URI}
 	   ${KERNEL_PATCH_URLS[@]}
 	   "
 
-SRC_URI+="https://github.com/torvalds/linux/commit/4b3e30ed3ec7864e798403a63ff2e96bd0c19ab0.patch
-	  https://github.com/torvalds/linux/commit/d1836f3813ee0742a2067d5f4d78e811d2b76d9d.patch"
+SRC_URI+=\
+"https://github.com/torvalds/linux/commit/4b3e30ed3ec7864e798403a63ff2e96bd0c19ab0.patch \
+	-> torvalds-linux-kernel-4b3e30ed3ec7864e798403a63ff2e96bd0c19ab0.patch
+https://github.com/torvalds/linux/commit/d1836f3813ee0742a2067d5f4d78e811d2b76d9d.patch \
+	-> torvalds-linux-kernel-d1836f3813ee0742a2067d5f4d78e811d2b76d9d.patch
+https://github.com/torvalds/linux/commit/04ed8459f3348f95c119569338e39294a8e02349.patch \
+	-> torvalds-linux-kernel-04ed8459f3348f95c119569338e39294a8e02349.patch
+https://github.com/torvalds/linux/commit/695af5f9a51914030eb2d9e3ba923d38180a8199.patch \
+	-> torvalds-linux-kernel-695af5f9a51914030eb2d9e3ba923d38180a8199.patch"
+
+# 4b Revert "drm/amdkfd: New IOCTL to allocate queue GWS"
+# d1 drm/amd/amdgpu/vcn_v2_0: Move VCN 2.0 specific dec ring test to vcn_v2_0
+# 04 drm/amdgpu: remove chash
+# 2d drm/amdkfd: Fix gfx8 MEM_VIOL exception handler
+# 1b drm/amdkfd: Introduce XGMI SDMA queue type
+# d3 drm/amdkfd: Refactor create_queue_nocpsch
+# 5b drm/amdkfd: fix cp hang in eviction
 
 _set_check_reqs_requirements() {
 	# for 3.1 kernel
@@ -154,22 +194,27 @@ _set_check_reqs_requirements() {
 # Does pre-emerge checks and warnings
 function ot-kernel-common_pkg_setup_cb() {
 	if use zentune || use muqss ; then
-		ewarn "The zen-tune patch or muqss might cause lock up or slow io under heavy load like npm.  These use flags are not recommended."
+		ewarn \
+"The zen-tune patch or muqss might cause lock up or slow io under heavy load" \
+"like npm.  These use flags are not recommended."
 	fi
 
 	if use tresor ; then
-		ewarn "TRESOR is broken for ${PV}.  Use 4.9.x series.  For ebuild devs only."
+		ewarn \
+"TRESOR is broken for ${PV}.  Use 4.9.x series.  For ebuild devs only."
 	fi
 
 	if is_rock ; then
 		ewarn "Patching with ROCk is broken.  For ebuild devs only."
 
-		einfo ""
-		einfo "You need PCIe 3.0 or a GPU that doesn't require PCIe atomics to use ROCK."
-		einfo "See needs_pci_atomics field for your GPU family in"
-		einfo "https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/master/drivers/gpu/drm/amd/amdkfd/kfd_device.c"
-		einfo "for the exception.  For supported CPUs see"
-		einfo "https://rocm.github.io/hardware.html"
+		einfo
+		einfo \
+"You need PCIe 3.0 or a GPU that doesn't require PCIe atomics to use ROCk. \n \
+See needs_pci_atomics field for your GPU family in \n \
+  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/master/drivers/gpu/drm/amd/amdkfd/kfd_device.c \n \
+for the exception.  For supported CPUs see \n \
+  https://rocm.github.io/hardware.html"
+		einfo
 	fi
 
 	if ( is_rock || is_amd_staging_drm_next ) ; then
@@ -221,157 +266,473 @@ function ot-kernel-common_apply_genpatch_extras_patchset() {
 # Apply fixes to O3
 function ot-kernel-common_apply_o3_fixes() {
 	einfo "Applying fix for ${O3_CO_FN}"
-	_dpatch "${PATCH_OPS}" "${FILESDIR}/O3-config-option-a56a17374772a48a60057447dc4f1b4ec62697fb-fix-for-5.1.patch"
+	_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/O3-config-option-a56a17374772a48a60057447dc4f1b4ec62697fb-fix-for-5.1.patch"
 }
 
-function ot-kernel-common_amdgpu_merge_and_apply_patches_asdn() {
-	if is_amd_staging_drm_next && ! is_rock ; then
-		# already patched
-		rm "${mpd}"/*b48935b3bfc1350737e759fef5e92db14a2e2fbb*
-		rm "${mpd}"/*4d7fd9e20b0784b07777728316da5bcc13f9f2ab*
-		rm "${mpd}"/*ebecc6c48f39b3c549bee1e4ecb9be01bf341a0f*
-		rm "${mpd}"/*ebf8fc31cbcedc9d6a81642082661c82eae284fb*
-		rm "${mpd}"/*a6f30079b8562b659e1d06f7cb1bc30951869bbc*
-		rm "${mpd}"/*bf2bf52383a09256e11278e7bcb67dcd912078c7*
+function ot-kernel-asdn_rm() {
+	# already patched
+	asdn_rm b48935b3bfc1350737e759fef5e92db14a2e2fbb
+	asdn_rm 4d7fd9e20b0784b07777728316da5bcc13f9f2ab
+	asdn_rm ebecc6c48f39b3c549bee1e4ecb9be01bf341a0f
+	asdn_rm ebf8fc31cbcedc9d6a81642082661c82eae284fb
+	asdn_rm a6f30079b8562b659e1d06f7cb1bc30951869bbc
+	asdn_rm bf2bf52383a09256e11278e7bcb67dcd912078c7
 
-		# obsolete
-		rm "${mpd}"/*5fa790f6c936c4705dea5883fa12da9e017ceb4f*
-		rm "${mpd}"/*3f61fd41f38328f0a585eaba2d72d339fe9aecda*
+	# already applied in torvalds kernel for 5.4 but not 5.3
+	# asdn_rm 1faa3b805473d7f4197b943419781d9fd21e4352
 
-		cd "${S}"
-		L=$(ls -1 "${mpd}" | sort)
-		for l in $L ; do
-			echo $(patch --dry-run ${PATCH_OPS} -i "${mpd}/${l}") | grep -F -e "FAILED at"
-			if [[ "$?" == "1" ]] ; then
-				case "${l}" in
-					*ab2f7a5c18b5c17cc94aaab7ae2e7d1fa08993d6*)
-						# fails enter in else branch so move up here
-						# modifies to ab2f commit
-						_dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amdgpu-e7f7287bf5f746d29f3607178851246a005dd398-partial-rebase-for-5.3.4-asdn.patch"
-						;;
-					*)
-						_tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-						# already has been applied or partially patched already or success
-						;;
-				esac
-			else
-				case "${l}" in
-					*c74dbe44eacf00a5ccc229b5cc340a9b7f6851a0*)
-						# revert then apply
-						_dpatch "${PATCH_OPS} -R" "${DISTDIR}/d1836f3813ee0742a2067d5f4d78e811d2b76d9d.patch"
-						_dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-						;;
-					*cfb7c11bb7a590c7e9c3d241d85388db108ceeb7*)
-						# revert then apply
-						_dpatch "${PATCH_OPS} -R" "${DISTDIR}/4b3e30ed3ec7864e798403a63ff2e96bd0c19ab0.patch"
-						_dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-						;;
-					*22a8f442866bf539c7a659923155d9afa03d77bb*)
-						# Backport.  Final state doesn't exist in 5.3 but does in 5.4
-						_tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amdgpu-22a8f442866bf539c7a659923155d9afa03d77bb-rebase-for-5.3.4-asdn.patch"
-						;;
-					*fcd90fee8ac22da3bce1c6652cf36bc24e7a0749*)
-						# fcd90 is DC_VER 3.2.42 :							 1564547001-000283
-						# conflicting commit f0ced3f61b4d2a21a3e0f0aa79fb5ad6c6717c31 is DC_VER 3.2.42 : 1564759838-000402
-						# Backport.  Final state doesn't exist in 5.3 but does in 5.4
-						# f0ced3f already applied in v5.3 kernel so breaks
-						_tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amdgpu-fcd90fee8ac22da3bce1c6652cf36bc24e7a0749-rebase-for-5.3.4-asdn.patch"
-						;;
-					*98eb03bbf0175f009a74c80ac12b91a9680292f4*)
-						# Backport.  Final state doesn't exist in 5.3 but does in 5.4
-						_tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amdgpu-98eb03bbf0175f009a74c80ac12b91a9680292f4-rebase-for-5.3.4-asdn.patch"
-						;;
-					*)
-						eerror "Patch failure ${mpd}/${l} .  Did not find the intervention patch."
-						die
-						;;
-				esac
-			fi
+	# obsolete (hunks that doesn't appear in the final image (aka head) in
+	#   amd-staging-drm-next repo ; replaced by newer
+	#   design / architecture / version)
+	asdn_rm 5fa790f6c936c4705dea5883fa12da9e017ceb4f
+	asdn_rm 3f61fd41f38328f0a585eaba2d72d339fe9aecda
 
-		done
-	fi
-}
-
-function ot-kernel-common_amdgpu_merge_and_apply_patches_rock() {
 	if is_amd_staging_drm_next && is_rock ; then
-		# already patched
-		rm "${mpd}"/*b48935b3bfc1350737e759fef5e92db14a2e2fbb*
-		rm "${mpd}"/*4d7fd9e20b0784b07777728316da5bcc13f9f2ab*
-		rm "${mpd}"/*ebecc6c48f39b3c549bee1e4ecb9be01bf341a0f*
-		rm "${mpd}"/*ebf8fc31cbcedc9d6a81642082661c82eae284fb*
-		rm "${mpd}"/*a6f30079b8562b659e1d06f7cb1bc30951869bbc*
-		rm "${mpd}"/*bf2bf52383a09256e11278e7bcb67dcd912078c7*
-		#
-		rm "${mpd}"/*f761e8303bb1608622fb993531ba95244335c847*
-		#rm "${mpd}"/**
-		rm "${mpd}"/*87076c8829465b8ae71225f7e639e0e28ab4b4a2*
-		rm "${mpd}"/*3605d1c0a0d8becfbaef64e5e166b50b21f1520e*
-
-		# obsolete
-		rm "${mpd}"/*5fa790f6c936c4705dea5883fa12da9e017ceb4f*
-		rm "${mpd}"/*3f61fd41f38328f0a585eaba2d72d339fe9aecda*
-		rm "${mpd}"/*31ad0be4ebf7327591fbca1b96e209f591a19849*
-
-		cd "${S}"
-		L=$(ls -1 "${mpd}" | sort)
-		for l in $L ; do
-			echo $(patch --dry-run ${PATCH_OPS} -i "${mpd}/${l}") | grep -F -e "FAILED at"
-			if [[ "$?" == "1" ]] ; then
-				case "${l}" in
-					*ab2f7a5c18b5c17cc94aaab7ae2e7d1fa08993d6*)
-						# fails enter in else branch so move up here
-						# modifies to ab2f commit
-						_dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amdgpu-e7f7287bf5f746d29f3607178851246a005dd398-partial-rebase-for-5.3.4-asdn.patch"
-						;;
-					*)
-						_tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-						# already has been applied or partially patched already or success
-						;;
-				esac
-			else
-				case "${l}" in
-					*c74dbe44eacf00a5ccc229b5cc340a9b7f6851a0*)
-						# revert then apply
-						_dpatch "${PATCH_OPS} -R" "${DISTDIR}/d1836f3813ee0742a2067d5f4d78e811d2b76d9d.patch"
-						_dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-						;;
-					*cfb7c11bb7a590c7e9c3d241d85388db108ceeb7*)
-						# revert then apply
-						_dpatch "${PATCH_OPS} -R" "${DISTDIR}/4b3e30ed3ec7864e798403a63ff2e96bd0c19ab0.patch"
-						_dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-						;;
-					*22a8f442866bf539c7a659923155d9afa03d77bb*)
-						# Backport.  Final state doesn't exist in 5.3 but does in 5.4
-						_tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amdgpu-22a8f442866bf539c7a659923155d9afa03d77bb-rebase-for-5.3.4-asdn.patch"
-						;;
-					*fcd90fee8ac22da3bce1c6652cf36bc24e7a0749*)
-						# fcd90 is DC_VER 3.2.42 :							 1564547001-000283
-						# conflicting commit f0ced3f61b4d2a21a3e0f0aa79fb5ad6c6717c31 is DC_VER 3.2.42 : 1564759838-000402
-						# Backport.  Final state doesn't exist in 5.3 but does in 5.4
-						# f0ced3f already applied in v5.3 kernel so breaks
-						_tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amdgpu-fcd90fee8ac22da3bce1c6652cf36bc24e7a0749-rebase-for-5.3.4-asdn.patch"
-						;;
-					*98eb03bbf0175f009a74c80ac12b91a9680292f4*)
-						# Backport.  Final state doesn't exist in 5.3 but does in 5.4
-						_tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-						_dpatch "${PATCH_OPS}" "${FILESDIR}/amdgpu-98eb03bbf0175f009a74c80ac12b91a9680292f4-rebase-for-5.3.4-asdn.patch"
-						;;
-					*)
-						eerror "Patch failure ${mpd}/${l} .  Did not find the intervention patch."
-						die
-						;;
-				esac
-			fi
-
-		done
+		# use rock version instead
+		asdn_rm	d0ba51b1cacd27bdc1acfe70cb55699f3329b2b1
 	fi
+}
+
+# merge conflict resolver
+function ot-kernel-common_amdgpu_merge_and_apply_patches_asdn() {
+  if is_amd_staging_drm_next && ! is_rock ; then
+    cd "${S}"
+    L=$(ls -1 "${mpd}" | sort)
+    for l in $L ; do
+      #
+      # Each section is marked easy or hard to indicate difficulty of conflict
+      # resolution which connnects to confidence/reliability/quality of the fix.
+      #
+      # easy = trivial and straightforward
+      # medium = takes time to resolve
+      # hard = not so straightforward, unofficial custom code to fix, higher
+      #   chance of runtime/compile-time failure
+      #
+      echo $(patch --dry-run ${PATCH_OPS} -i "${mpd}/${l}") | grep -F -e "FAILED at"
+      if [[ "$?" == "1" ]] ; then
+        case "${l}" in
+          *ab2f7a5c18b5c17cc94aaab7ae2e7d1fa08993d6*)
+            # Fails enter in else branch so move up here
+            # modifies ab2f commit
+            _dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/amdgpu-e7f7287bf5f746d29f3607178851246a005dd398-partial-rebase-for-5.3.4-asdn.patch"
+            ;;
+          *)
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            # Already has been applied or partially patched already or success
+            ;;
+        esac
+      else
+        case "${l}" in
+          *c74dbe44eacf00a5ccc229b5cc340a9b7f6851a0*)
+            # Revert then apply
+            _dpatch "${PATCH_OPS} -R" \
+"${DISTDIR}/torvalds-linux-kernel-d1836f3813ee0742a2067d5f4d78e811d2b76d9d.patch"
+            _dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            ;;
+          *cfb7c11bb7a590c7e9c3d241d85388db108ceeb7*)
+            # Revert then apply
+            _dpatch "${PATCH_OPS} -R" \
+"${DISTDIR}/torvalds-linux-kernel-4b3e30ed3ec7864e798403a63ff2e96bd0c19ab0.patch"
+            _dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            ;;
+          *22a8f442866bf539c7a659923155d9afa03d77bb*)
+            # Backport.
+            # Final state doesn't exist in 5.3 but does in 5.4 ; easy
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/amdgpu-22a8f442866bf539c7a659923155d9afa03d77bb-rebase-for-5.3.4-asdn.patch"
+            ;;
+          *fcd90fee8ac22da3bce1c6652cf36bc24e7a0749*)
+            # Backport.
+            # Easy
+            # fcd90 is DC_VER 3.2.42
+            # Conflicting commit f0ced3f61b4d2a21a3e0f0aa79fb5ad6c6717c31
+            #   is DC_VER 3.2.42
+            # Final state doesn't exist in 5.3 but does in 5.4
+            # f0ced3f already applied in v5.3 kernel so breaks
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/amdgpu-fcd90fee8ac22da3bce1c6652cf36bc24e7a0749-rebase-for-5.3.4-asdn.patch"
+            ;;
+          *98eb03bbf0175f009a74c80ac12b91a9680292f4*)
+            # Backport.  Final state doesn't exist in 5.3 but does in 5.4 ; easy
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/amdgpu-98eb03bbf0175f009a74c80ac12b91a9680292f4-rebase-for-5.3.4-asdn.patch"
+            ;;
+          *)
+            die "Patch failure ${mpd}/${l} .  Did not find the intervention patch."
+            ;;
+        esac
+      fi
+    done
+  fi
+}
+
+function ot-kernel-rock_rm() {
+	# already patched
+	rock_rm f761e8303bb1608622fb993531ba95244335c847
+# function deleted; the rest already merged in other commits
+	rock_rm 973c795c16c872efb874df6e0788fcb5b6f17e20
+# vanilla is version 2
+	rock_rm 7746b504b45df9f7e6e4dedb0f18dd2a854f1a75
+# vanilla is version 3
+	rock_rm 4d8288cf6bd58b3770f60704647b4966ed0d7cb4
+	rock_rm db2c1587e1178bfc1cc161f76b54cf40f4167168
+# integrated in torvalds kernel 992af942a6cfb32f4b5a9fc29545f101074fa250 under
+#   another subject
+	rock_rm 5d31c3c0d5f2b753ed8a3170a152b9954a1aa20b
+	rock_rm c7d05e309a2f781a42aa7ecefef1c79224859a37
+	rock_rm bf34bf33eed4296642cf51acd91c2e8942ca5fef
+	rock_rm 0bc07fd0aab17d7ecc85a9eb1fea668cbb0f0162
+# same as 1faa3b805473d7f4197b943419781d9fd21e4352 in torvalds kernel v5.4 and
+#   asdn
+	rock_rm 220883377e9c2434fcafaab24e215597752a2d84
+# applied in 14328aa58ce523a59996c5a82681c43ec048cc33
+	rock_rm 2d2f62874426b347d47eeac492709c3ad0c1b92a
+
+	# obsolete (hunks that doesn't appear in the final image (aka head) in
+	#  amd-staging-drm-next/ROCK-Kernel-Driver repo ; replaced by newer
+	#  design/architecture/version)
+	rock_rm 31ad0be4ebf7327591fbca1b96e209f591a19849
+	rock_rm ad3bf1a3b5d15041e18a7a6c62c731b63db51447
+# vanilla is version 2
+	rock_rm 7eb512d4585f9d746ffacd40be5b8f95ef87d795
+# testing removal ; the revert of the revert is already merged in vanilla and
+#   in amd-staging-drm-next ; Revert "drm/amd/display: Rework DC plane filling
+#   and surface updates"
+	rock_rm 8234806160c533f85b98953f76a1b13455232ffb
+# testing removal ; the revert of the revert is already merged in vanilla and
+#   in amd-staging-drm-next ; Revert "drm/amd/display: Recalculate pitch when
+#   buffers change"
+	rock_rm 8a67db18390d686b9d14ff9e554e5165c1814590
+	rock_rm e26e00469e4341d470eb4d56db5b5f517338d096
+# testing removal ; the revert of the revert is already merged in vanilla and
+#   in amd-staging-drm-next ; Revert "drm/amd/display: Rework DC plane filling
+#   and surface updates"
+	rock_rm 456fc4538e9d5dbace83acb03e0fbef346d654e6
+# testing removal ; the revert of the revert is already merged in vanilla and
+#   in amd-staging-drm-next ; Revert "drm/amd/display: Recalculate pitch when
+#   buffers change"
+	rock_rm 61e96f3cdff3fe103bf675509225747a3ecec57e
+# testing removal ; the revert of the revert is already merged in vanilla and
+#   in amd-staging-drm-next ; Revert "drm/amdkfd: Separate mqd allocation and
+#   initialization"
+	rock_rm ea1d0c448f085ccb4463b42fe78a0064ed07c7dc
+# vanilla is version 2
+	rock_rm 1013dec3ee8dce5348a85ffadfed52b68346b9fc
+	rock_rm 2e5e1c3fed36d74806f2d805601b130605c3efd0
+# vanilla is version 4, rock is version 3
+	rock_rm 209e519c2caef76407eabfff4ae5061bef320d19
+# vanilla is version 3, rock is version 2
+	rock_rm 5b4e3b79a1ad5702fbb2e54ee4b74b805ea2b4d2
+# already applied in torvald kernel 14328aa58ce523a59996c5a82681c43ec048cc33
+	rock_rm 8d4c550acf01c77a00c620b49c91fab8ea9c31c4
+# removed at 292a0a4884733bb7292c72f90c05ea35f3138529 in ROCK-Kernel-Driver to
+#   keep in sync with 14328aa58ce523a59996c5a82681c43ec048cc33 in vanilla
+	rock_rm 5f26b8eebe2f4517e9ca5c471c9cc13efa5b30ce
+# vanilla is version 2
+	rock_rm c42436ec04f3d49a7cf3627411e1ddbb5b347953
+# amd-staging-drm-next is version 3
+	rock_rm 96003fe3ea48157dd7fefc12160a1ea5f0b6f223
+# ROCk is version v2 (logic fix), amd-staging-drm-next is version 3
+#   (logic simplification)
+	rock_rm 3e9f4c949eb5862c9bbee4b862ed604f39861f8e
+
+	# applied later in 8d4c550acf01c77a00c620b49c91fab8ea9c31c4 with same name
+# Revert "drm/amdkfd: Added cwsr trap handler for gfx10"
+	rock_rm 68e69efdd4d72f1e9fd01eb82ee9951da793d466
+# drm/amdkfd: Added cwsr trap handler for gfx10
+	rock_rm 86d16a26763d6a86803f524025279d1e40c93b4c
+
+	# applied later in 2d2f62874426b347d47eeac492709c3ad0c1b92a with same name
+# Revert "drm/amdkfd: Moved gfx10 cwsr binary to cwsr_trap_handler.h"
+	rock_rm b38921cb275c5030004e0759f2b08fee8c4ce578
+# drm/amdkfd: Moved gfx10 cwsr binary to cwsr_trap_handler.h
+	rock_rm ae7e6022c353fed62fc81c4baa024f10fb7b2e07
+
+	# applied later in 5526bb8d854202aba28b20809e1af0ef8e1c714b with same name
+# Revert "drm/amdkfd: Introduce DIQ type mqd manager for gfx10"
+	rock_rm 7d0e12f600ec3fdd0f29d83cc51b20a868fc143f
+# drm/amdkfd: Introduce DIQ type mqd manager for gfx10
+	rock_rm e0d8fd23132af4bd65e8b1db74ac5750698b72f4
+
+	# applied later in a6b8b58d4001def5fb1b619d31b686fcef0f991e with same name
+# Revert "drm/amdkfd: Add mqd size in mqd manager struct for gfx10"
+	rock_rm 19b4facdabeb52d56093f774257d5f450cb462da
+# drm/amdkfd: Add mqd size in mqd manager struct for gfx10
+	rock_rm 745e8a141d8f9b4aa473ab15fdfca504ac55bf7f
+
+	# applied later in 5f26b8eebe2f4517e9ca5c471c9cc13efa5b30ce with same name
+# Revert "drm/amdkfd: Allocate hiq and sdma mqd from mqd trunk for gfx10"
+	rock_rm b1827a0577fa3abcd0c44ae153f2b05a54094a2c
+# drm/amdkfd: Allocate hiq and sdma mqd from mqd trunk for gfx10
+	rock_rm 8979cc19b3864a259f3833c17efcafb09bbb81cc
+
+	# applied later in 292a0a4884733bb7292c72f90c05ea35f3138529 with same name
+# Revert "drm/amdkfd: update gfx10 support for latest kfd changes"
+	rock_rm e7a487ffe6dfa11278095adb81e3b142c6e905c2
+# drm/amdkfd: update gfx10 support for latest kfd changes
+	rock_rm 26e8ff97cd56eacfc02703149f7c87a4b37c2564
+
+	if ! use directgma ; then
+		# the amdgpu_vm_bo_split_mapping should resemble asdn version
+		# disabiling directgma should be result in less problematic
+		# merge conflict resolution
+		rock_rm f331d74dad4358369a6dfb182ff0a5607a8e7b04
+		rock_rm 80f3db1de8277cb3c0a817c92795bdf6f5b8818d
+		rock_rm 8098a2f9c3ba6fba0055aa88d3830bbec585268b
+		rock_rm 4eff2c42f996e8d70ec874186d3c35a8f64a8235
+		rock_rm 388c85610cd4782467bae4f44d7b7c8cacebfaae
+	fi
+
+	# reject dkms/kcl
+	rock_rm 7bf2fb137fabacdf3457b70d205f1378057d7130
+	rock_rm 77843fb3174f0903bf48141cdb7ad0e545364194
+	rock_rm a1d58b7bf915e956f14984fcf1a3d8431657d351
+# used in 178d1118dbee5cff09badab7208525b287fa849f
+	rock_rm 5b734f8c1205ff65ef2af7484932078bb655f41c
+	rocm_rm 509649b8d929b5981e57c6f1b8d50756af56e033
+
+	# reject cosmetic
+	rock_rm 6b719b24a48e31ff2b37b97cce552e4615c7d277
+}
+
+# merge conflict resolver
+function ot-kernel-common_amdgpu_merge_and_apply_patches_rock() {
+  if is_amd_staging_drm_next && is_rock ; then
+    cd "${S}"
+    L=$(ls -1 "${mpd}" | sort)
+    for l in $L ; do
+      #
+      # Each section is marked easy or hard to indicate difficulty of conflict
+      # resolution which connnects to confidence/reliability/quality of the fix
+      #
+      # Easy = trivial and straightforward
+      # Medium = takes time to resolve
+      # Hard = not so straightforward, unofficial custom code to fix, higher
+      #   chance of runtime/compile-time failure
+      #
+      if [[ "${l}" =~ 6ab2f507957f676d2bbdccaaaec570a3d1901fc7 ]] ; then
+        einfo "Patching the path of ${l}"
+        # in vanilla kernel 5.3 amdgpu_prime.c got renamed
+        sed -i -e "s|\
+drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c|\
+drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
+		"${mpd}/${l}" || die
+      fi
+
+      echo $(patch --dry-run ${PATCH_OPS} -i "${mpd}/${l}") | grep -F -e "FAILED at"
+      if [[ "$?" == "1" ]] ; then
+        case "${l}" in
+          *db6a49d958db4725a1003d208d6890c55a8a811c*asdn*)
+            # Easy
+            # Mispatch caused by missing
+            #  struct kfd2kgd_calls *amdgpu_amdkfd_gfx_10_0_get_functions(void);
+            # caused by maybe a revert
+            _dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/amdgpu-db6a49d958db4725a1003d208d6890c55a8a811c-fix-mispatch-for-5.3.4-rasdn.patch"
+            ;;
+          *d732ef0efc3beed8b8c30433aa11d5b6895cb457*rock*)
+            # drm/amdkcl: add dkms support ; remove?
+            # ROCk addition
+            # Revert then apply.  On ROCK-Kernel-Driver and on
+            #   amd-staging-drm-next, repo 04ed8 still exists but not applied.
+            _dpatch "${PATCH_OPS} -R" \
+"${DISTDIR}/torvalds-linux-kernel-04ed8459f3348f95c119569338e39294a8e02349.patch"
+            ;;
+          *ab2f7a5c18b5c17cc94aaab7ae2e7d1fa08993d6*asdn*)
+            # fails enter in else branch so move up here
+            # modifies to ab2f commit
+            # easy
+            _dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/amdgpu-e7f7287bf5f746d29f3607178851246a005dd398-partial-rebase-for-5.3.4-asdn.patch"
+            ;;
+          *)
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            # already has been applied or partially patched already or success
+            ;;
+        esac
+      else
+        case "${l}" in
+          *fc39d903eb805588cba3696748728627aedfd1bd*)
+            # Easy
+            # ignore missing search hunk... it's just refactoring patch
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+           ;;
+          *4e3f4a15707d534ce1dd5b23b008469474b80010*asdn*)
+            # Easy
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/amdgpu-4e3f4a15707d534ce1dd5b23b008469474b80010-rebase-for-5.3.4-rasdn-no_dgma.patch"
+            ;;
+          *60b6a348ac071a6eaa5cc412d15580672fcd2c80*asdn*)
+            # Easy-Medium
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/amdgpu-60b6a348ac071a6eaa5cc412d15580672fcd2c80-rebase-for-5.3.4-rasdn-no_dgma.patch"
+            ;;
+          *e4a525b586f6321aef0691db7365c0c08cd5dec8*asdn*)
+            # Ignore %d to %x%x conversion output.  it may break those that parse the info.
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            ;;
+          *1c70d3d9c4a6d4e4b4425d78e0a919cfaa3cf8db*asdn*)
+            # Easy
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/amdgpu-1c70d3d9c4a6d4e4b4425d78e0a919cfaa3cf8db-rebase-for-5.3.4-rasdn.patch"
+            ;;
+          *47930de4aa7068188e64475cdc0f2c8f4e1ff194*asdn*)
+            # Easy
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/amdgpu-47930de4aa7068188e64475cdc0f2c8f4e1ff194-rebase-for-5.3.4-rasdn.patch"
+            ;;
+          *691bac9d093b13abf39f95bd82db0430a152246c*asdn*)
+            # Easy
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/amdgpu-691bac9d093b13abf39f95bd82db0430a152246c-rebase-for-5.3.4-rasdn.patch"
+            ;;
+          *64f55e629237e4752db18df4d6969a69e3f4835a*asdn*)
+            # Easy
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/amdgpu-64f55e629237e4752db18df4d6969a69e3f4835a-rebase-for-5.3.4-rasdn.patch"
+            ;;
+          *3e205a0849a760166578b4d95b17e904f23d962e*asdn*)
+            # Using asdn version of:
+            #   'drm/amdkfd: Implement kfd2kgd_calls for Arcturus'
+            #   (3e205a0849a760166578b4d95b17e904f23d962e)`
+            # then apply additional deletes by
+            #   3f1e5c3eeec3a5aff5ddbd46ff07fe580e4bee58 (rock version) with
+            # Same commit subject
+            # Easy-Medium
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/amdgpu-3e205a0849a760166578b4d95b17e904f23d962e-rebase-for-5.3.4-rasdn.patch"
+            ;;
+          *f6a44ea23e7dab4d58110cd418c733e165e466ae*rock*)
+            # Easy
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/rock-f6a44ea23e7dab4d58110cd418c733e165e466ae-rebase-for-5.3.4.patch"
+            ;;
+          *c1d7be9699189e1c762c9249b3deaf827e1743f9*rock*)
+            # Easy
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/rock-c1d7be9699189e1c762c9249b3deaf827e1743f9-rebase-for-5.3.4.patch"
+            ;;
+          *8098a2f9c3ba6fba0055aa88d3830bbec585268b*rock*)
+            # drm/amdgpu: Add bo mapping through PCIE
+            # parts already applied
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            ;;
+          *32add621ba8f6021e3a52cabafe88f660d46a0a4*rock*)
+            # Easy
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/rock-32add621ba8f6021e3a52cabafe88f660d46a0a4-rebase-for-5.3.4.patch"
+            ;;
+          *bcb1219a6b88068584ccc25fe333d10c2422877a*rock*)
+            # Easy
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/rock-bcb1219a6b88068584ccc25fe333d10c2422877a-rebase-for-5.3.4.patch"
+            ;;
+          *f331d74dad4358369a6dfb182ff0a5607a8e7b04*rock*)
+            # Medium
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/rock-f331d74dad4358369a6dfb182ff0a5607a8e7b04-rebase-for-5.3.4.patch"
+            ;;
+          *c4e16b22d0bfa1d9979a219c34931622693b9cb2*rock*)
+            # drm/amdkfd: Revert codes of creating SDMA queue on specific engine
+            # drivers/gpu/drm/amd/amdkfd/kfd_chardev.c edits required in final
+            #   image
+            # drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c edits not
+            #   necessary and obsolete
+            # include/uapi/linux/kfd_ioctl.h edits already applied
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            ;;
+          *4766d6eb3c11d7dffc9e8e34350c5658267b0281*rock*)
+            # Contains mispatch
+            # Medium-Hard
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/rock-4766d6eb3c11d7dffc9e8e34350c5658267b0281-rebase-for-5.3.4.patch"
+            ;;
+          *1254b5fe6aaabb58300a5929b6bb290bf1c49f63*rock*)
+            # Hard
+            # If backporting revisit this commit's
+            # include/uapi/linux/kfd_ioctl.h and
+            # c4e16b22d0bfa1d9979a219c34931622693b9cb2
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/rock-1254b5fe6aaabb58300a5929b6bb290bf1c49f63-rebase-for-5.3.4.patch"
+            ;;
+          *c74dbe44eacf00a5ccc229b5cc340a9b7f6851a0*asdn*)
+            # Revert then apply
+            _dpatch "${PATCH_OPS} -R" \
+"${DISTDIR}/torvalds-linux-kernel-d1836f3813ee0742a2067d5f4d78e811d2b76d9d.patch"
+            _dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            ;;
+          *cfb7c11bb7a590c7e9c3d241d85388db108ceeb7*asdn*)
+            # Revert then apply
+            # IOCTLs must be ABI compatible explained in
+            #   8439cd353b4e1abca8420e71274b018a07fe2e12
+            # IOCTLs introduced by ROCk's
+            #   1254b5fe6aaabb58300a5929b6bb290bf1c49f63 cause this split.
+            _tpatch "${PATCH_OPS} -R" \
+"${DISTDIR}/torvalds-linux-kernel-4b3e30ed3ec7864e798403a63ff2e96bd0c19ab0.patch"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/torvalds-kernel-4b3e30ed3ec7864e798403a63ff2e96bd0c19ab0-rebase-for-5.3.4-rasdn.patch"
+            _dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            ;;
+          *22a8f442866bf539c7a659923155d9afa03d77bb*asdn*)
+            # Backport
+	    # Easy
+            # Final state doesn't exist in 5.3 but does in 5.4
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/amdgpu-22a8f442866bf539c7a659923155d9afa03d77bb-rebase-for-5.3.4-asdn.patch"
+            ;;
+          *fcd90fee8ac22da3bce1c6652cf36bc24e7a0749*asdn*)
+            # Backport
+            # Easy
+            # fcd90 is DC_VER 3.2.42
+            # conflicting commit f0ced3f61b4d2a21a3e0f0aa79fb5ad6c6717c31 is
+            #   DC_VER 3.2.42
+            # Final state doesn't exist in 5.3 but does in 5.4
+            # f0ced3f already applied in v5.3 kernel so breaks
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/amdgpu-fcd90fee8ac22da3bce1c6652cf36bc24e7a0749-rebase-for-5.3.4-asdn.patch"
+            ;;
+          *98eb03bbf0175f009a74c80ac12b91a9680292f4*asdn*)
+            # Backport
+            # Easy
+            # Final state doesn't exist in 5.3 but does in 5.4
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/amdgpu-98eb03bbf0175f009a74c80ac12b91a9680292f4-rebase-for-5.3.4-asdn.patch"
+            ;;
+          *)
+            die "Patch failure ${mpd}/${l} .  Did not find the intervention patch."
+            ;;
+        esac
+      fi
+    done
+
+    # The last pass will scan source code or the rock patchset for
+    # dkms/kcl macro defines and replace them with DRM_VERSION
+    # checks.
+  fi
 }
 
 # @FUNCTION: ot-kernel-common_amdgpu_merge_and_apply_patches
@@ -390,117 +751,9 @@ function ot-kernel-common_amdgpu_merge_and_apply_patches() {
 	fi
 
 	ot-kernel-common_amdgpu_merge_and_apply_patches_rock
-	# This is split to isolate amd_staging_drm_next versus amd_staging_drm_next with rock.  It is more difficult to update rock.
+	# This is split to isolate amd_staging_drm_next versus
+	# amd_staging_drm_next with rock.  It is more difficult to update rock.
 	ot-kernel-common_amdgpu_merge_and_apply_patches_asdn
-}
-
-_amdgpu_common_filter_patches_trashB() {
-	local patchset="${1}"
-	if [[ "${patchset}" == "amd-staging-drm-next-patches" ]] ; then
-		p=$(ls "${T}/amd-staging-drm-next-patches"/*5f680625d9765a2f936707465659acac8e44f514*)
-		if [ -e "${p}" ] ; then
-			einfo "Filtering ${p}"
-			filterdiff \
-				-i "*/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c" \
-				-i "*/drivers/gpu/drm/i915/gem/i915_gem_object.c" \
-				-i "*/drivers/gpu/drm/i915/gt/intel_engine_pool.c" \
-				"${p}" > "${p}.t" || die
-			mv "${p}.t" "${p}" || die
-		fi
-	fi
-}
-
-
-# @FUNCTION: _amdgpu_common_filter_patches
-# @DESCRIPTION:
-# Selects parts of the patch to be merged
-_amdgpu_common_filter_patches_trashA() {
-	local patchset="${1}"
-	einfo "Stripping modules for drivers/gpu/drm/{amd,ttm,scheduler,radeon}"
-	local REQUIRED_MODULES="amd ttm scheduler"
-	local MISC="lib ttm selftests"
-	local OTHER_VENDORS="arc arm armada aspeed ast atmel-hlcdc bochs bridge cirrus etnaviv exynos fsl-dcu gma500 hisilicon i2c i810 i915 imx ingenic lima mcde mediatek meson mga mgag200 msm mxsfb nouveau omapdrm panel panfrost pl111 qxl r128 radeon rcar-du rockchip savage shmobile sis sti stm sun4i tdfx tegra tilcdc tinydrm tve200 udl v3d vboxvideo vc4 vgem via virtio vkms vmwgfx xen zte"
-	F=$(find "${T}/${patchset}" | tail -n +2 | sort | sed -r \
-		-e "s/\S+(0424fdaf883a689d5185c0d0665b265373945898|e4fa8457b2197118538a1400b75c898f9faaf164|b5031e86a9afd9f01104178faa24b3096bded907|d3bc25f3bff30881051012bf949dc89f8cfcfd1f|b82a6fd04ec371e1100984aabf7b93d28502649e|2550416ccf19cf882f2f8c06b6aa97fa732c552f|40e546c5f9ca0054087ce5ee04de96a4f28e9a97|8c6555d4a6fb18eb05a78173becc90e00333e6c6|c5be0ddd500dd6201d168b4fdd1ffa90846cb437|bf6f1fa62e76f93d1030a9e22923881cebc770b3|3baeeb21983a5ecc16955cc3f1d986bee88939f2|4bcc9543ad4ccbe88e2cfc2c432eec62da605064|d229c592d12d1cf1c288adb03fe6f087c6b206e6|4fdfffc8f31830aef2016bb3c2de050056f975a2|78fc89063f0c73aed9b9d35c84c81277b7115c6c|a23916462848873018e2300a54dc195899223548|baa78332a7ca01f72390d8fe7ade9b278ab7f5d4|b392cb98dfff242d4edb6e045e52f155c12bcd8b|f59bcca620e84a9e7a21779d9acfeca373b41731|cf64beca45f9dec6e87a2820a49a2872a846925a|03988e4fa15689da0ab954457c8578773c6e05b6|b8764eaf8ad85615245e6039b7d2ca8a92940014|52de698543c94807c753bdf40d9addbcff3dc2d8|cb822cab0537a8b65d68f2750534fd199e2ef84e|8a015561479639b8a7a2c3214bd24dbb055d8d39|aada617da7b657e625aa3bca4dab8830cd5c6401|f30dec2f82402c21b6ddf81b8f8350e72d49c90e|42169858d75c08558e288921c3d21d5fa1995072|634cdf7fd91a44f52a4d56fb9a94c376c322f82a|31070a871fdcb16dd209e6bc0e6ca16be7cfb938|0ccf52badd40efd3d5c8df91845df4d65e7caab9|0dbd555a011c2d096a7b7e40c83c5776a7df367c|0e580c6d7d2f2d490add0fcf70c5b7ec2300e636|e0828d54c81cb111ead1a7c47a5ef1b319610a1d|ce77038fdae385f947757a37573d90f2e83f0271|c105de2828e13931cd218e8b801cd6762b618992|f8659be8addd731480037eb44ecb521084ae1d11|1e053b10ba60eae6a3f9de64cbc74bdf6cb0e715|b96f3e7c8069b749a40ca3a33c97835d57dd45d2|2e3c9ec4d151c04d75546dfdc2f85a84ad546eb0|e532a135d7044b5477c1c56169fa131d77c57f75|336ac942f115dd076bd7287c7cf03f37c710895c|4922f55294bbc48d670bb57c025904b4d4878d1b|5a5011a72489545343a1599362e9ec126d7bd297|27c44acebd3fab5448aa3cffdc1996c897965a4a|5c69f132a2660435ec30d8531d77515b7ba4148e|7a4db29660a9d16024fd843b720fb7449ebc2538|e7f0141a217fa28049d7a3bbc09bee9642c47687|4c2488cfaa997e396aeb9d6496db94c25b97c671|67c97fb79a7f8621d4514275691d75f5ff158c46|dd7a7d1ff2f199a8a80ee233480922d4f17adc6d|52791eeec1d9f4a7e7fe08aaba0b1553149d93bc|f2cb60e9a3881e679465f84140754bc9d29956ea)\S+/ /g")
-
-	# commit list obtained from using the vanilla kernel:
-	# range is FROM Drop drm_gem_prime_export/import (jun 14) TO Store the timestamp in the same union as the cb_list (aug 17)
-	# git log b40d73784ffc33f3c6431e7ceec3b20fffcd95c3..f2cb60e9a3881e679465f84140754bc9d29956ea --oneline --pretty=format:"%H %s" \
-	# | grep -F \
-	#	-e "reservation_object_fences" \
-	#	-e "from bo->resv to bo->base.resv" \
-	#	-e "drop ttm_buffer_object->resv" \
-	#	-e "set both resv and base.resv pointers" \
-	#	-e "use gem vma_node" \
-	#	-e "use gem reservation object" \
-	#	-e "use embedded gem object" \
-	#	-e "add more reservation object locking wrappers" \
-	#	-e "stop using seqcount for fence pruning" \
-	#	-e "Set GEM object functions for PRIME" \
-	#	-e "Don't export driver callback functions for PRIME" \
-	#	-e "Drop drm_gem_prime_export/import" \
-	#	-e "rename reservation_object to dma_resv" \
-	#	-e "Actually remove DRIVER_PRIME everywhere" \
-	#	-e "Store the timestamp in the same union as the cb_list" \
-	#	-e "Align gem_prime_export with obj_funcs.export" \
-	# | cut -f1 -d " " | tac | tr "\n" "|"
-
-	for f in ${F} ; do
-		if [ ! -e "${f}" ] ; then
-			ewarn "${f} does not exist to filter"
-			continue
-		fi
-
-		# We are only interested in ${REQUIRED_MODULES} and modified headers below but some of the patches that refer to them reside in non conforming subject tags.
-		# In the DKMS module, it will only distribute the drivers/gpu/drm/${REQUIRED_MODULES} yet still compile fine against compatible MAJOR.MINOR kernel version.
-
-		# DKMS will have a KCL (kernel compatibility layer) module that will add functions, macros, constants without tampering with the DRM .h or .c files.
-		# We need to carefully add those parts without side effects that would alter the behavior of other vendor drm drivers.
-
-		if grep -q -F -e "rename to" "${f}" > /dev/null ; then
-			local paths=$(grep -e "rename to" "${f}" | sed -E -e "s|rename to (.*)|\1|g")
-			ewarn "Detected rename for ${paths} .  This may filter out very important hunks."
-		fi
-
-		local B=()
-		for v in ${OTHER_VENDORS[@]} ; do
-			if grep -q -F -e "drivers/gpu/drm/${v}" "${f}" > /dev/null ; then
-				B+=( ${v} )
-			fi
-		done
-
-		if (( ${#B[@]} > 1 )) ; then
-			local c=$(basename "${f}" | cut -f4 -d '-')
-			ewarn "Detected ${#B[@]} vendor edits.  ${c} may break other drivers if changes do not to apply to all DRM drivers.  ${B[@]} drivers could all break."
-			die "Add exclusion to proceed"
-		fi
-
-		# If the struct changes, then we may need to allow all drm drivers update.  So no filter.
-		# This was an abandoned because it doesn't handle function name changes and we already don't filter many drm drivers edits case.
-		#
-		# if grep -q -o -P -e "([+-]{3}) \S*include/\S+.h" "${f}"  ; then
-		# else
-		# fi
-
-		einfo "Filtering ${f}"
-		filterdiff -i "*/drivers/gpu/drm/amd/*" \
-			-i "*/drivers/gpu/drm/radeon/cik_reg.h" \
-			-i "*/drivers/gpu/drm/ttm/*" \
-			-i "*/drm/gpu/drm/scheduler/*" \
-			-i "*/include/drm/amd_asic_type.h" \
-			-i "*/include/drm/gpu_scheduler.h" \
-			-i "*/include/drm/gpu_scheduler_trace.h" \
-			-i "*/include/drm/spsc_queue.h" \
-			-i "*/include/drm/ttm/*" \
-			-i "*/include/uapi/drm/amdgpu_drm.h" \
-			-i "*/include/uapi/linux/kfd_ioctl.h" \
-			-i "*/drivers/dma-buf/*" \
-			-i "*/include/linux/reservation.h" \
-			-i "*/include/linux/dma-resv.h" \
-			"${f}" > "${f}.t"
-		mv "${f}.t" "${f}"
-	done
-	rm "${T}/${patchset}/"*.t > /dev/null
 }
 
 # @FUNCTION: ot-kernel-asdn-generate_amd_staging_drm_next_patches_post
@@ -522,14 +775,24 @@ ot-kernel-rock_generate_rock_patches_post() {
 # Show messages and avoid collision triggering
 function ot-kernel-common_pkg_postinst_cb() {
 	if use muqss ; then
-		ewarn "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL and"
-		ewarn "Idle dynticks system (tickless idle) CONFIG_NO_HZ_IDLE may cause the system to lock up."
-		ewarn "You must choose Periodic timer ticks (constant rate, no dynticks) CONFIG_HZ_PERIODIC for it not to lock up."
-		ewarn "The MuQSS scheduler may have random system hard pauses for few seconds to around a minute when resource usage is high."
+		ewarn \
+"Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL and\n"
+"Idle dynticks system (tickless idle) CONFIG_NO_HZ_IDLE may cause the system\n"
+"  to lock up."
+"You must choose Periodic timer ticks (constant rate, no dynticks)\n"
+"  CONFIG_HZ_PERIODIC for it not to lock up."
+"The MuQSS scheduler may have random system hard pauses for few seconds to"
+"  around a minute when resource usage is high."
 	fi
 
 	if use bmq ; then
-		ewarn "Using bmq with lots of resources may leave zombie processes, or high CPU processes/threads with little processing."
-		ewarn "This might result in a denial of service that may require rebooting."
+		ewarn \
+"Using bmq with lots of resources may leave zombie processes, or high CPU \n \
+   processes/threads with little processing. \n \
+This might result in a denial of service that may require rebooting."
+	fi
+
+	if is_rock ; then
+		rock_postinst_msg
 	fi
 }
