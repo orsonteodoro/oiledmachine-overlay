@@ -1,3 +1,4 @@
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
 # Copyright 2019 Orson Teodoro
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
@@ -10,7 +11,8 @@
 # @SUPPORTED_EAPIS: 2 3 4 5 6
 # @BLURB: Eclass for patching the 5.2.x kernel
 # @DESCRIPTION:
-# The ot-kernel-v5.2 eclass defines specific applicable patching for the 5.2.x linux kernel.
+# The ot-kernel-v5.2 eclass defines specific applicable patching for the 5.2.x
+# linux kernel.
 
 case ${EAPI:-0} in
 	7) die "this eclass doesn't support EAPI ${EAPI}" ;;
@@ -60,7 +62,9 @@ DEPEND="dev-util/patchutils"
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="Orson Teodoro's patchset containing UKSM, zen-tune, GraySky's GCC Patches, MUQSS CPU Scheduler, PDS CPU Scheduler, BMQ CPU Scheduler, Genpatches, BFQ updates"
+DESCRIPTION="Orson Teodoro's patchset containing UKSM, zen-tune, GraySky's \
+GCC Patches, MUQSS CPU Scheduler, PDS CPU Scheduler, BMQ CPU Scheduler, \
+Genpatches, BFQ updates"
 
 AMDREPO_URL="git://people.freedesktop.org/~agd5f/linux"
 AMD_PATCH_FN="${AMD_STAGING_DRM_NEXT_DIR}.patch"
@@ -72,7 +76,8 @@ CK_SRC_URL="${CK_URL_BASE}${CK_FN}"
 inherit ot-kernel-common
 
 BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.diff"
-BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
+BMQ_SRC_URL+=\
+" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
 
 SRC_URI+=" ${CK_SRC_URL}
 	   ${KERNEL_URI}
@@ -95,15 +100,19 @@ SRC_URI+=" ${CK_SRC_URL}
 # Does pre-emerge checks and warnings
 function ot-kernel-common_pkg_setup_cb() {
 	if ver_test "${PV}" -eq 5.2.16 ; then
-		ewarn "You may experience a unresponsive system after hours of idle use."
+		ewarn \
+	  "You may experience a unresponsive system after hours of idle use."
 	fi
 	if ver_test "${PV}" -lt 5.2.16 ; then
 		# happens when compiling aspnetcore or dev-dotnet/cli-tools
-		ewarn "You may experience kernel freeze/crash when resource usage is high."
+		ewarn \
+	  "You may experience kernel freeze/crash when resource usage is high."
 	fi
 
 	if use zentune || use muqss ; then
-		ewarn "The zen-tune patch or muqss might cause lock up or slow io under heavy load like npm.  These use flags are not recommended."
+		ewarn \
+"The zen-tune patch or muqss might cause lock up or slow io under heavy \n \
+  load like npm.  These use flags are not recommended."
 	fi
 }
 
@@ -120,7 +129,8 @@ function ot-kernel-common_apply_genpatch_extras_patchset() {
 # Apply fixes to O3
 function ot-kernel-common_apply_o3_fixes() {
 	einfo "Applying fix for ${O3_CO_FN}"
-	_dpatch "${PATCH_OPS}" "${FILESDIR}/O3-config-option-a56a17374772a48a60057447dc4f1b4ec62697fb-fix-for-5.1.patch"
+	_dpatch "${PATCH_OPS}" "${FILESDIR}/\
+O3-config-option-a56a17374772a48a60057447dc4f1b4ec62697fb-fix-for-5.1.patch"
 }
 
 # @FUNCTION: ot-kernel-common_pkg_postinst_cb
@@ -128,14 +138,20 @@ function ot-kernel-common_apply_o3_fixes() {
 # Show messages and avoid collision triggering
 function ot-kernel-common_pkg_postinst_cb() {
 	if use muqss ; then
-		ewarn "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL and"
-		ewarn "Idle dynticks system (tickless idle) CONFIG_NO_HZ_IDLE may cause the system to lock up."
-		ewarn "You must choose Periodic timer ticks (constant rate, no dynticks) CONFIG_HZ_PERIODIC for it not to lock up."
-		ewarn "The MuQSS scheduler may have random system hard pauses for few seconds to around a minute when resource usage is high."
+		ewarn \
+"Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL and \n \
+  Idle dynticks system (tickless idle) CONFIG_NO_HZ_IDLE may cause the \n \
+  system to lock up.\n \
+You must choose Periodic timer ticks (constant rate, no dynticks) \n \
+  CONFIG_HZ_PERIODIC for it not to lock up. \n \
+The MuQSS scheduler may have random system hard pauses for few seconds to \n \
+  around a minute when resource usage is high."
 	fi
 
 	if use bmq ; then
-		ewarn "Using bmq with lots of resources may leave zombie processes, or high CPU processes/threads with little processing."
-		ewarn "This might result in a denial of service that may require rebooting."
+		ewarn \
+"Using bmq with lots of resources may leave zombie processes, or high CPU
+  processes/threads with little processing. \n \
+This might result in a denial of service that may require rebooting."
 	fi
 }
