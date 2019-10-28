@@ -13,16 +13,23 @@
 # @DESCRIPTION:
 # The ot-kernel-v4.14 eclass defines specific applicable patching for the 4.14.x linux kernel.
 
-
-# UKSM:                         https://github.com/dolohow/uksm
-# zen-tune:                     https://github.com/torvalds/linux/compare/v5.0...zen-kernel:5.0/zen-tune
-# O3 (Optimize Harder):         https://github.com/torvalds/linux/commit/a56a17374772a48a60057447dc4f1b4ec62697fb
-#                               https://github.com/torvalds/linux/commit/93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9
-# GraySky2 GCC Patches:         https://github.com/graysky2/kernel_gcc_patch
-# MUQSS CPU Scheduler:          http://ck.kolivas.org/patches/5.0/5.0/5.0-ck1/
-# genpatches:                   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
-# BFQ updates:                  https://github.com/torvalds/linux/compare/v5.0...zen-kernel:5.0/bfq-backports
-# TRESOR:			http://www1.informatik.uni-erlangen.de/tresor
+# UKSM:
+#   https://github.com/dolohow/uksm
+# zen-tune:
+#  https://github.com/torvalds/linux/compare/v5.0...zen-kernel:5.0/zen-tune
+# O3 (Optimize Harder):
+#   https://github.com/torvalds/linux/commit/a56a17374772a48a60057447dc4f1b4ec62697fb
+#   https://github.com/torvalds/linux/commit/93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9
+# GraySky2 GCC Patches:
+#   https://github.com/graysky2/kernel_gcc_patch
+# MUQSS CPU Scheduler:
+#   http://ck.kolivas.org/patches/5.0/5.0/5.0-ck1/
+# genpatches:
+#   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
+# BFQ updates:
+#   https://github.com/torvalds/linux/compare/v5.0...zen-kernel:5.0/bfq-backports
+# TRESOR:
+#   http://www1.informatik.uni-erlangen.de/tresor
 
 # TRESOR is maybe broken.  It requires additional coding for skcipher.
 # See aesni-intel_glue.c chacha20_glue.c tresor_glue.c aesni-intel_asm.S aesni-intel_asm.S in arch/x86/crypto
@@ -30,9 +37,11 @@
 # CBC uses CRYPTO_ALG_TYPE_SKCIPHER
 # ECB uses CRYPTO_ALG_TYPE_BLKCIPHER
 
-# This one exist to debug tresor.  It is likely not working properly due to the two commits below.  See the 4.9.x ebuild instead.
+# This one exist to debug tresor.  It is likely not working properly due to
+# the two commits below.  See the 4.9.x ebuild instead.
 
-# tresor passes cipher but not skcipher in self test (/proc/crypto); there is a error in dmesg
+# tresor passes cipher but not skcipher in self test (/proc/crypto); there is
+# a error in dmesg
 
 #[    4.036411] alg: skcipher: setkey failed on test 2 for ecb(tresor-driver): flags=200000
 #[    4.038166] alg: skcipher: Failed to load transform for ecb(tresor): -2
@@ -63,7 +72,9 @@ PATCH_BFQ_VER="4.14"
 PATCH_TRESOR_VER="3.18.5"
 DISABLE_DEBUG_V="1.1"
 
-IUSE="bfq +cfs disable_debug +graysky2 muqss +o3 uksm tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs -zentune"
+IUSE="bfq +cfs disable_debug +graysky2 muqss +o3 uksm \
+	tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs \
+	-zentune"
 REQUIRED_USE="^^ ( muqss cfs )
 	      tresor_sysfs? ( || ( tresor_i686 tresor_x86_64 tresor_aesni ) )
 	      tresor? ( ^^ ( tresor_i686 tresor_x86_64 tresor_aesni ) )
@@ -90,7 +101,8 @@ DEPEND="
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="Orson Teodoro's patchset containing UKSM, zen-tune, GraySky's GCC Patches, MUQSS CPU Scheduler, Genpatches, BFQ updates, TRESOR"
+DESCRIPTION="Orson Teodoro's patchset containing UKSM, zen-tune, GraySky's GCC \
+Patches, MUQSS CPU Scheduler, Genpatches, BFQ updates, TRESOR"
 
 CK_URL_BASE="http://ck.kolivas.org/patches/${PATCH_CK_MAJOR}/${PATCH_CK_MAJOR_MINOR}/${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}/"
 CK_FN="${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}-broken-out.tar.xz"
@@ -121,21 +133,28 @@ SRC_URI+=" ${KERNEL_URI}
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel-common_pkg_setup_cb() {
-	# tresor for x86_64 generic was known to pass crypto testmgr on this version.
-	ewarn "This ot-sources ${PV} release is only for research purposes or to access tresor devices.  This 4.14.x series is EOL for this repo but not for upstream."
+	# tresor for x86_64 generic was known to pass crypto testmgr on this
+	# version.
+	ewarn \
+"This ot-sources ${PV} release is only for research purposes or to access \n\
+tresor devices.  This 4.14.x series is EOL for this repo but not for upstream."
 
 	if use zentune || use muqss ; then
-		ewarn "The zen-tune patch or muqss might cause lock up or slow io under heavy load like npm.  These use flags are not recommended."
+		ewarn \
+"The zen-tune patch or muqss might cause lock up or slow io under heavy load\n \
+like npm.  These use flags are not recommended."
 	fi
 
 	GCC_V=$(gcc-version)
 	version_compare ${GCC_V} 8.0
 	if (( $? >= 3 )) ; then
-		ewarn "You must switch your gcc to <8.0 to compile this version of ot-sources"
+		ewarn \
+	"You must switch your gcc to <8.0 to compile this version of ot-sources"
 	fi
 
 	if use tresor ; then
-		ewarn "TRESOR is broken for ${PV}.  Use 4.9.x series.  For ebuild devs only."
+		ewarn \
+	"TRESOR is broken for ${PV}.  Use 4.9.x series.  For ebuild devs only."
 	fi
 }
 
@@ -152,12 +171,14 @@ function ot-kernel-common_apply_genpatch_extras_patchset() {
 # @DESCRIPTION:
 # Applies specific TRESOR fixes for this kernel major version
 function ot-kernel-common_apply_tresor_fixes() {
-	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-testmgr-ciphers-update-for-linux-4.14.patch"
+	_dpatch "${PATCH_OPS}" \
+		"${FILESDIR}/tresor-testmgr-ciphers-update-for-linux-4.14.patch"
 
 	if use tresor_x86_64 ; then
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_asm_64.patch"
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_key_64.patch"
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-fix-addressing-mode-64-bit-index.patch"
+		_dpatch "${PATCH_OPS}" \
+		  "${FILESDIR}/tresor-fix-addressing-mode-64-bit-index.patch"
 	fi
 
 	#if ! use tresor_sysfs ; then
@@ -174,7 +195,10 @@ function ot-kernel-common_apply_tresor_fixes() {
 # Show messages and avoid collision triggering
 function ot-kernel-common_pkg_postinst_cb() {
 	if use muqss ; then
-		ewarn "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL will cause a kernel panic on boot."
-		ewarn "The MuQSS scheduler may have random system hard pauses for few seconds to around a minute when resource usage is high."
+		ewarn \
+"Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL will \n \
+  cause a kernel panic on boot.\n
+The MuQSS scheduler may have random system hard pauses for few seconds to \n \
+  around a minute when resource usage is high."
 	fi
 }
