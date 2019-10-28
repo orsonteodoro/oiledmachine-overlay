@@ -869,7 +869,7 @@ function fetch_cve_hotfixes() {
 		einfo "--------------------------------------------------"
 		einfo
 		einfo \
-"You may set CVE_SUBSCRIBE_KERNEL_HOTFIXES=1 in your make.conf to get CVE\n"
+"You may set CVE_SUBSCRIBE_KERNEL_HOTFIXES=1 in your make.conf to get CVE\n"\
 "hotfix updates."
 		einfo
 		[[ "${CVE_DELAY}" == "1" ]] && sleep 10s
