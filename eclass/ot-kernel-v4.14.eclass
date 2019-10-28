@@ -1,3 +1,4 @@
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
 # Copyright 2019 Orson Teodoro
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
