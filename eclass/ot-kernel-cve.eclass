@@ -34,7 +34,8 @@ LATEST_CVE_KERNEL_INDEX="${LATEST_CVE_KERNEL_INDEX,,}"
 # this will trigger a kernel re-install based on use flag timestamp
 # there is no need to set this flag but tricks the emerge system to re-emerge.
 if [[ -n "${CVE_SUBSCRIBE_KERNEL_HOTFIXES}" \
-	&& "${CVE_SUBSCRIBE_KERNEL_HOTFIXES}" == "1" ]] ; then
+	&& "${CVE_SUBSCRIBE_KERNEL_HOTFIXES}" == "1" ]] ; \
+then
 	IUSE+=" cve_update_${LATEST_CVE_KERNEL_INDEX}"
 fi
 
@@ -188,8 +189,7 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 			 ${CVE_2019_17351_FIX_SRC_URI} -> ${CVE_2019_17351_FN}
 
 			 ${CVE_2019_17666_FIX_SRC_URI} -> ${CVE_2019_17666_FN}
-			 ${CVE_2019_18198_FIX_SRC_URI} -> ${CVE_2019_18198_FN}
-		       )"
+			 ${CVE_2019_18198_FIX_SRC_URI} -> ${CVE_2019_18198_FN} )"
 
 # @FUNCTION: _fetch_cve_boilerplate_msg
 # @DESCRIPTION:
@@ -204,13 +204,14 @@ function _fetch_cve_boilerplate_msg() {
 	local pm="${CVE_ID_}PM"
 	PS="${!PS}"
 	ewarn
-	ewarn "${CVE_ID}"
-	ewarn "Severity: ${!cve_severity}"
-	ewarn "Synopsis: ${!summary}"
-	ewarn "NIST NVD URI: ${NIST_NVD_CVE_M}"
-	ewarn "MITRE URI: ${MITRE_M}"
-	ewarn "Patch download: ${PS}"
-	ewarn "Patch message: ${!pm}"
+	ewarn \
+"${CVE_ID}\n\
+Severity: ${!cve_severity}\n\
+Synopsis: ${!summary}\n\
+NIST NVD URI: ${NIST_NVD_CVE_M}\n\
+MITRE URI: ${MITRE_M}\n\
+Patch download: ${PS}\n\
+Patch message: ${!pm}"
 	ewarn
 }
 
@@ -222,14 +223,14 @@ function _fetch_cve_boilerplate_msg_footer() {
 	local cve_fn="${CVE_ID_}FN"
 	if ! test -n "${!cve_fn}" ; then
 		einfo \
-"No de-facto patch exists or the patch is undergoing code review.  No patch\n"
-"will be applied.  This fix is still being worked on."
+"No de-facto patch exists or the patch is undergoing code review.  No patch\n\
+will be applied.  This fix is still being worked on."
 	elif use cve_hotfix && test -n "${!cve_fn}"; then
 		einfo "A ${CVE_ID} fix will be applied."
 	else
 		ewarn \
-"Re-enable the cve_hotfix USE flag to fix this, or you may ignore this and\n"
-"wait for an official fix in later kernel point releases."
+"Re-enable the cve_hotfix USE flag to fix this, or you may ignore this and\n\
+wait for an official fix in later kernel point releases."
 		ewarn
 		echo -e "\07" # ring the bell
 		[[ "${CVE_DELAY}" == "1" ]] && sleep 30s
@@ -561,7 +562,7 @@ function apply_cve_2019_14814_hotfix() {
 		"if (le16_to_cpu(ie->ie_length) + vs_ie->len + 2 >" \
 		"${S}/drivers/net/wireless/marvell/mwifiex/ie.c" \
 		>/dev/null ; \
-		then
+	then
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
@@ -638,7 +639,7 @@ function apply_cve_2019_16995_hotfix() {
 		"goto err_add_port;" \
 		"${S}/net/hsr/hsr_device.c" \
 		>/dev/null ; \
-		then
+	then
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
@@ -676,7 +677,7 @@ function apply_cve_2019_17053_hotfix() {
 		"if (!capable(CAP_NET_RAW))" \
 		"${S}/net/ieee802154/socket.c" \
 		>/dev/null ; \
-		then
+	then
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
@@ -862,16 +863,16 @@ function fetch_cve_hotfixes() {
 		fetch_cve_2019_18198_hotfix
 		local cve_copyright1="CVE_COPYRIGHT1_${CVE_LANG}"
 		local cve_copyright2="CVE_COPYRIGHT2_${CVE_LANG}"
-		einfo
-		einfo "${!cve_copyright1}"
-		einfo "${!cve_copyright2}"
-		einfo
-		einfo "--------------------------------------------------"
-		einfo
 		einfo \
-"You may set CVE_SUBSCRIBE_KERNEL_HOTFIXES=1 in your make.conf to get CVE\n"\
-"hotfix updates."
-		einfo
+"\n\
+${!cve_copyright1}\n\
+${!cve_copyright2}\n\
+\n\
+--------------------------------------------------\n\
+\n\
+You may set CVE_SUBSCRIBE_KERNEL_HOTFIXES=1 in your make.conf to get CVE\n\
+hotfix updates.\n\
+\n"
 		[[ "${CVE_DELAY}" == "1" ]] && sleep 10s
 	fi
 }

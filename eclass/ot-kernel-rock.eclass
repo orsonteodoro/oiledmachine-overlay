@@ -272,7 +272,7 @@ function generate_rock_patches() {
 -e "${T}/${LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ROCK_FN}${suffix_rock}" ]] ; \
 	then
 		einfo \
-"Saving only the ROCk commits for commit-by-commit evaluation.  This will \
+"Saving only the ROCk commits for commit-by-commit evaluation.  This will\n\
 take longer than expected."
 		C=$(git -P log ${ROCK_BASE}..${target} --oneline \
 			--pretty=format:"%H" -- \
@@ -288,7 +288,8 @@ take longer than expected."
 		# It happens when they are backporting or migrating the commit
 		#   to another repo.
 		if [[ -e "${T}/${LINUX_HASHTABLE_COMMITS_VK_FN}" && \
-			-e "${T}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}" ]] ; then
+			-e "${T}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}" ]] ; \
+		then
 			# It's more faster just to store/restore the final
 			# round of commits after filtering per use flag for all
 			# possibilities of amd-staging-drm-next- and rock- USE
@@ -317,14 +318,16 @@ take longer than expected."
 "${LINUX_HASHTABLE_COMMITS_ASDN_FN}${suffix_asdn}"
 			local ht_asdns_fn=\
 "${LINUX_HASHTABLE_SUMMARIES_ASDN_FN}${suffix_asdn}"
-			if [[ -e "${FILESDIR}/${ht_asdn_fn}" && \
-				-e "${FILESDIR}/${ht_asdns_fn}" ]] ; then
+			if [[   -e "${FILESDIR}/${ht_asdn_fn}" && \
+				-e "${FILESDIR}/${ht_asdns_fn}" ]] ; \
+			then
 				cp -a "${FILESDIR}/${ht_asdn_fn}" "${T}"
 				cp -a "${FILESDIR}/${ht_asdns_fn}" "${T}"
 			fi
 
-			if [[ ! -e "${T}/${ht_asdn_fn}" \
-				|| ! -e "${T}/${ht_asdns_fn}" ]] ; then
+			if [[      ! -e "${T}/${ht_asdn_fn}" \
+				|| ! -e "${T}/${ht_asdns_fn}" ]] ; \
+			then
 				einfo \
 			"Generating hash tables for amd-staging-drm-next"
 				for f in \
@@ -516,7 +519,7 @@ take longer than expected."
 				:;
 			elif [[ -n "${vk_summaries[${h_summary}]}" ]] ; then
 				einfo \
-"Already added ${c} via vanilla kernel sources (with same subject match). \
+"Already added ${c} via vanilla kernel sources (with same subject match).\n\
 Skipping..."
 				continue
 			fi
@@ -526,7 +529,7 @@ Skipping..."
 					:;
 				elif [[ -n "${asdn_summaries[${h_summary}]}" ]] ; then
 					einfo \
-"Already added ${c} via amd-staging-drm-next kernel sources (with same subject \
+"Already added ${c} via amd-staging-drm-next kernel sources (with same subject\n\
 match).  Skipping..."
 					continue
 				fi

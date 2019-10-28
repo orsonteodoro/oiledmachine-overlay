@@ -203,7 +203,7 @@ SRC_URI+=" ${KERNEL_URI}
 function ot-kernel-common_pkg_setup_cb() {
 	# tresor for x86_64 generic was known to pass crypto testmgr on this version.
 	ewarn \
-"This ot-sources ${PV} release is only for research purposes or to access \n\
+"This ot-sources ${PV} release is only for research purposes or to access\n\
 tresor devices.  This 4.9.x series EOL for this repo but not for upstream."
 
 	if use zentune || use muqss ; then
@@ -275,9 +275,9 @@ function ot-kernel-common_apply_genpatch_extras_patchset() {
 function ot-kernel-common_pkg_postinst_cb() {
 	if use muqss ; then
 		ewarn \
-"Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL will \n\
-  cause a kernel panic on boot.\n \
-The MuQSS scheduler may have random system hard pauses for few seconds to\n \
+"Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL will\n\
+  cause a kernel panic on boot.\n\
+The MuQSS scheduler may have random system hard pauses for few seconds to\n\
   around a minute when resource usage is high."
 	fi
 }

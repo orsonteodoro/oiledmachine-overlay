@@ -141,7 +141,7 @@ tresor devices.  This 4.14.x series is EOL for this repo but not for upstream."
 
 	if use zentune || use muqss ; then
 		ewarn \
-"The zen-tune patch or muqss might cause lock up or slow io under heavy load\n \
+"The zen-tune patch or muqss might cause lock up or slow io under heavy load\n\
 like npm.  These use flags are not recommended."
 	fi
 
@@ -196,9 +196,9 @@ function ot-kernel-common_apply_tresor_fixes() {
 function ot-kernel-common_pkg_postinst_cb() {
 	if use muqss ; then
 		ewarn \
-"Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL will \n \
-  cause a kernel panic on boot.\n
-The MuQSS scheduler may have random system hard pauses for few seconds to \n \
+"Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL will\n\
+  cause a kernel panic on boot.\n\
+The MuQSS scheduler may have random system hard pauses for few seconds to\n\
   around a minute when resource usage is high."
 	fi
 }

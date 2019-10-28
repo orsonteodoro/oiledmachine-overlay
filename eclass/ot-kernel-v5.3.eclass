@@ -195,8 +195,8 @@ _set_check_reqs_requirements() {
 function ot-kernel-common_pkg_setup_cb() {
 	if use zentune || use muqss ; then
 		ewarn \
-"The zen-tune patch or muqss might cause lock up or slow io under heavy load" \
-"like npm.  These use flags are not recommended."
+"The zen-tune patch or muqss might cause lock up or slow io under heavy load\n\
+like npm.  These use flags are not recommended."
 	fi
 
 	if use tresor ; then
@@ -209,10 +209,10 @@ function ot-kernel-common_pkg_setup_cb() {
 
 		einfo
 		einfo \
-"You need PCIe 3.0 or a GPU that doesn't require PCIe atomics to use ROCk. \n \
-See needs_pci_atomics field for your GPU family in \n \
-  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/master/drivers/gpu/drm/amd/amdkfd/kfd_device.c \n \
-for the exception.  For supported CPUs see \n \
+"You need PCIe 3.0 or a GPU that doesn't require PCIe atomics to use ROCk.\n\
+See needs_pci_atomics field for your GPU family in\n\
+  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/master/drivers/gpu/drm/amd/amdkfd/kfd_device.c\n\
+for the exception.  For supported CPUs see\n\
   https://rocm.github.io/hardware.html"
 		einfo
 	fi
@@ -776,19 +776,19 @@ ot-kernel-rock_generate_rock_patches_post() {
 function ot-kernel-common_pkg_postinst_cb() {
 	if use muqss ; then
 		ewarn \
-"Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL and\n"
-"Idle dynticks system (tickless idle) CONFIG_NO_HZ_IDLE may cause the system\n"
-"  to lock up."
-"You must choose Periodic timer ticks (constant rate, no dynticks)\n"
-"  CONFIG_HZ_PERIODIC for it not to lock up."
-"The MuQSS scheduler may have random system hard pauses for few seconds to"
-"  around a minute when resource usage is high."
+"Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL and\n\
+Idle dynticks system (tickless idle) CONFIG_NO_HZ_IDLE may cause the system\n\
+  to lock up.\n\
+You must choose Periodic timer ticks (constant rate, no dynticks)\n\
+  CONFIG_HZ_PERIODIC for it not to lock up.\n\
+The MuQSS scheduler may have random system hard pauses for few seconds to\n\
+  around a minute when resource usage is high."
 	fi
 
 	if use bmq ; then
 		ewarn \
-"Using bmq with lots of resources may leave zombie processes, or high CPU \n \
-   processes/threads with little processing. \n \
+"Using bmq with lots of resources may leave zombie processes, or high CPU\n\
+  processes/threads with little processing.\n\
 This might result in a denial of service that may require rebooting."
 	fi
 

@@ -3,7 +3,7 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: ot-kernel-asdm.eclass
+# @ECLASS: ot-kernel-asdn.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
@@ -161,7 +161,7 @@ function generate_amd_staging_drm_next_patches() {
 	local C
 	if [[ ! -e "${T}/${ht_asdn_fn}" ]] ; then
 		einfo \
-"Saving only the amd-staging-drm-next commits for commit-by-commit evaluation.\n \
+"Saving only the amd-staging-drm-next commits for commit-by-commit evaluation.\n\
 Doing commit -> .patch conversion for amd-staging-drm-next-patches set:"
 		C=$(git -P log ${base}..${target} --oneline \
 			--pretty=format:"%H" -- \
@@ -261,7 +261,7 @@ Doing commit -> .patch conversion for amd-staging-drm-next-patches set:"
 				:;
 			elif [[ -n "${vk_summaries[${h_summary}]}" ]] ; then
 				einfo \
-"Already added ${c} via vanilla kernel sources (with same subject match).\n \
+"Already added ${c} via vanilla kernel sources (with same subject match).\n\
 Skipping..."
 				continue
 			fi

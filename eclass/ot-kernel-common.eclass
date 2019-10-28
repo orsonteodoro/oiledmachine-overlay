@@ -543,8 +543,8 @@ function get_linux_commit_list_for_amdgpu_range() {
 	d="${distdir}/ot-sources-src/linux"
 	cd "${d}" || die
 	einfo \
-"Grabbing list of already merged amdgpu commits in v${K_MAJOR_MINOR} vanilla\n"
-"sources."
+"Grabbing list of already merged amdgpu commits in v${K_MAJOR_MINOR} vanilla\n\
+sources."
 	OIFS="${IFS}"
 	IFS=$'\n'
 	git -P log ${ROCK_BASE}..v${K_MAJOR_MINOR} --oneline \
@@ -601,7 +601,7 @@ function apply_amdgpu() {
 		fi
 	else
 		ewarn \
-"It is recommended to use the rock-snapshot or rock-milestone USE flag or you \
+"It is recommended to use the rock-snapshot or rock-milestone USE flag or you\n\
 need to fetch vanilla sources to regen the commit cache list."
 		fetch_linux_sources
 	fi
@@ -620,33 +620,10 @@ need to fetch vanilla sources to regen the commit cache list."
 	fi
 }
 
-# @FUNCTION: _check_filterdiff
-# @DESCRIPTION:
-# Checks if filterdiff can preserve renamed files
-function _check_filterdiff() {
-	cp -a \
-	"${DISTDIR}/linux--dma-buf-rename-reservation_object-to-dma_resv.patch" \
-		"${T}"
-	filterdiff -i \
-		"*/drivers/dma-buf/dma-resv.c" \
-"${T}/linux--dma-buf-rename-reservation_object-to-dma_resv.patch" \
-> "${T}/linux--dma-buf-rename-reservation_object-to-dma_resv.patch.result"
-	if ! grep -q -F -e \
-		"--- a/drivers/dma-buf/reservation.c" \
-"${T}/linux--dma-buf-rename-reservation_object-to-dma_resv.patch.result" ; \
-	then
-		die \
-"Your filterdiff is broken from the patchutils package which cannot handle\n"
-"renamed files correctly.  Use the one from the oiledmachine-overlay or a"
-"live version of the package."
-	fi
-}
-
 # @FUNCTION: ot-kernel-common_src_unpack
 # @DESCRIPTION:
 # Applies patch sets in order.  It calls kernel-2_src_unpack.
 function ot-kernel-common_src_unpack() {
-	_check_filterdiff
 	#if use zentune ; then
 	#	UNIPATCH_LIST+=" ${DISTDIR}/${ZENTUNE_FN}"
 	#fi

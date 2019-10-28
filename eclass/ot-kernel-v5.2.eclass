@@ -111,7 +111,7 @@ function ot-kernel-common_pkg_setup_cb() {
 
 	if use zentune || use muqss ; then
 		ewarn \
-"The zen-tune patch or muqss might cause lock up or slow io under heavy \n \
+"The zen-tune patch or muqss might cause lock up or slow io under heavy\n\
   load like npm.  These use flags are not recommended."
 	fi
 }
@@ -139,19 +139,19 @@ O3-config-option-a56a17374772a48a60057447dc4f1b4ec62697fb-fix-for-5.1.patch"
 function ot-kernel-common_pkg_postinst_cb() {
 	if use muqss ; then
 		ewarn \
-"Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL and \n \
-  Idle dynticks system (tickless idle) CONFIG_NO_HZ_IDLE may cause the \n \
-  system to lock up.\n \
-You must choose Periodic timer ticks (constant rate, no dynticks) \n \
-  CONFIG_HZ_PERIODIC for it not to lock up. \n \
-The MuQSS scheduler may have random system hard pauses for few seconds to \n \
+"Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL and\n\
+  Idle dynticks system (tickless idle) CONFIG_NO_HZ_IDLE may cause the\n\
+  system to lock up.\n\
+You must choose Periodic timer ticks (constant rate, no dynticks)\n\
+  CONFIG_HZ_PERIODIC for it not to lock up.\n\
+The MuQSS scheduler may have random system hard pauses for few seconds to\n\
   around a minute when resource usage is high."
 	fi
 
 	if use bmq ; then
 		ewarn \
-"Using bmq with lots of resources may leave zombie processes, or high CPU
-  processes/threads with little processing. \n \
+"Using bmq with lots of resources may leave zombie processes, or high CPU\n\
+  processes/threads with little processing.\n\
 This might result in a denial of service that may require rebooting."
 	fi
 }
