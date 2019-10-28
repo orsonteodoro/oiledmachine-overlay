@@ -1,3 +1,4 @@
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
 # Copyright 2019 Orson Teodoro
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
@@ -10,18 +11,29 @@
 # @SUPPORTED_EAPIS: 2 3 4 5 6
 # @BLURB: Eclass for patching the kernel with the amd-staging-drm-next
 # @DESCRIPTION:
-# The ot-kernel-asdm eclass defines functions to merge amd-staging-drm-next into vanilla
+# The ot-kernel-asdm eclass defines functions to merge amd-staging-drm-next
+# into vanilla
 
-# amd-staging-drm-next:         https://cgit.freedesktop.org/~agd5f/linux/log/?h=amd-staging-drm-next
+# amd-staging-drm-next:
+#   https://cgit.freedesktop.org/~agd5f/linux/log/?h=amd-staging-drm-next
 
-HOMEPAGE+=" https://cgit.freedesktop.org/~agd5f/linux/log/?h=amd-staging-drm-next"
+HOMEPAGE+=\
+"https://cgit.freedesktop.org/~agd5f/linux/log/?h=amd-staging-drm-next"
 
-IUSE+=" amd-staging-drm-next-snapshot amd-staging-drm-next-milestone amd-staging-drm-next-latest"
-IUSE+=" rock-latest rock-snapshot rock-milestone"
+IUSE+=" amd-staging-drm-next-snapshot \
+	amd-staging-drm-next-milestone \
+	amd-staging-drm-next-latest \
+	rock-latest \
+	rock-snapshot \
+	rock-milestone \
+	directgma"
 
-REQUIRED_USE+=" amd-staging-drm-next-snapshot? ( !amd-staging-drm-next-latest !amd-staging-drm-next-milestone )
-	        amd-staging-drm-next-latest? ( !amd-staging-drm-next-snapshot !amd-staging-drm-next-milestone )
-	        amd-staging-drm-next-milestone? ( !amd-staging-drm-next-snapshot !amd-staging-drm-next-latest )"
+REQUIRED_USE+=" amd-staging-drm-next-snapshot? \
+	( !amd-staging-drm-next-latest !amd-staging-drm-next-milestone ) \
+amd-staging-drm-next-latest? \
+	( !amd-staging-drm-next-snapshot !amd-staging-drm-next-milestone ) \
+amd-staging-drm-next-milestone? \
+	( !amd-staging-drm-next-snapshot !amd-staging-drm-next-latest )"
 
 # @FUNCTION: fetch_amd_staging_drm_next
 # @DESCRIPTION:
@@ -34,14 +46,21 @@ function fetch_amd_staging_drm_next() {
 
 # @FUNCTION: fetch_amd_staging_drm_next_local_copy
 # @DESCRIPTION:
-# Clones or updates the amd-staging-drm-next patchset for recent fixes or GPU compatibility updates.
+# Clones or updates the amd-staging-drm-next patchset for recent fixes or GPU
+# compatibility updates.
 function fetch_amd_staging_drm_next_local_copy() {
-	# I would like to store/cache the converted commits to .patch files in ${FILESDIR}/amd-staging-drm-next/5.3 but unfortunately
-	# I cannot do it because of licensing problems.  It would require to prepend each patch with the license or extract the
-	# license header from the source code and store it in a single LICENSE file, or creative license fingerprinting and IDing
-	# the headers.  It is practically impossible or too time consuming to do it for 1100+ commits which refer to several files each.
+	# I would like to store/cache the converted commits to .patch files in
+	# ${FILESDIR}/amd-staging-drm-next/5.3 but unfortunately I cannot do it
+	# because of licensing problems.  So you need to download a local copy
+	# of git repo instead.  It would require to prepend each patch with
+	# the license or extract the license header from the source code and
+	# store it in a single LICENSE file, or creative license
+	# fingerprinting and IDing
+	# the headers.  It is practically impossible or too time consuming to
+	# do it for 1100+ commits which refer to several files each.
 
-	einfo "Fetching the amd-staging-drm-next project please wait.  It may take hours."
+	einfo "Fetching the amd-staging-drm-next project please wait."
+	einfo "It may take hours."
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	cd "${DISTDIR}"
 	d="${distdir}/ot-sources-src/linux-${AMD_STAGING_DRM_NEXT_DIR}"
@@ -54,11 +73,13 @@ function fetch_amd_staging_drm_next_local_copy() {
 		git clone "${AMDREPO_URL}" "${d}"
 		cd "${d}" || die
 		git checkout master
-		git checkout -b amd-staging-drm-next remotes/origin/amd-staging-drm-next
+		git checkout -b amd-staging-drm-next \
+			remotes/origin/amd-staging-drm-next
 	else
 		local G=$(find "${d}" -group "root")
 		if (( ${#G} > 0 )) ; then
-			die "You must manually \`chown -R portage:portage ${d}\`.  Re-emerge again."
+			die \
+"You must manually: \`chown -R portage:portage ${d}\`.  Re-emerge again."
 		fi
 		einfo "Updating the amd-staging-drm-next project"
 		cd "${d}" || die
@@ -68,10 +89,17 @@ function fetch_amd_staging_drm_next_local_copy() {
 		git checkout master
 		git pull
 		git branch -D amd-staging-drm-next
-		git checkout -b amd-staging-drm-next remotes/origin/amd-staging-drm-next
+		git checkout -b amd-staging-drm-next \
+			remotes/origin/amd-staging-drm-next
 		git pull
 	fi
 	cd "${d}" || die
+}
+
+function asdn_rm() {
+	local c="${1}"
+	unset asdn_commit_cache[${c}]
+	rm "${T}"/amd-staging-drm-next-patches/*${c}*
 }
 
 # @FUNCTION: generate_amd_staging_drm_next_patches
@@ -79,8 +107,8 @@ function fetch_amd_staging_drm_next_local_copy() {
 # Produces all the commits as .patch files to be individually evaluated.  It
 # also pulls required missing commits to smooth out the patching process.
 #
-# ot-kernel-asdn-generate_amd_staging_drm_next_patches_post - callback to apply additonal patches
-#   for fixes to patches before the patching proces
+# ot-kernel-asdn-generate_amd_staging_drm_next_patches_post - callback to apply
+#   additonal patches for fixes to patches before the patching proces
 #
 function generate_amd_staging_drm_next_patches() {
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
@@ -90,75 +118,96 @@ function generate_amd_staging_drm_next_patches() {
 	local target
 	local base
 
+	local suffix_asdn
+	local suffix_rock_dgma
+	if is_rock ; then
+		if use directgma ; then
+			suffix_rock_dgma=".rock_with_dgma"
+		else
+			suffix_rock_dgma=".rock_without_dgma"
+		fi
+	else
+		suffix_rock_dgma=".no_rock"
+	fi
 	if use amd-staging-drm-next-snapshot ; then
 		target="${AMD_STAGING_DRM_NEXT_SNAPSHOT}"
+		suffix_asdn="..${target}${suffix_rock_dgma}"
 	elif use amd-staging-drm-next-latest ; then
 		target="${AMD_STAGING_DRM_NEXT_LATEST}"
+		suffix_asdn="..$(git rev-parse ${target})${suffix_rock_dgma}"
 	elif use amd-staging-drm-next-milestone ; then
 		target="${AMD_STAGING_DRM_NEXT_MILESTONE}"
+		suffix_asdn="..${target}${suffix_rock_dgma}"
 	fi
 	base="${AMD_STAGING_INTERSECTS_KV}"
 
 	mkdir -p "${T}/amd-staging-drm-next-patches"
 	n="1"
 
-	einfo "Saving only the amd-staging-drm-next commits for commit-by-commit evaluation."
-	einfo "Doing commit -> .patch conversion for amd-staging-drm-next-patches set:"
-	C=$(git -P log ${base}..${target} --oneline --pretty=format:"%H" -- \
-		drivers/gpu/drm include/drm drivers/dma-buf include/linux include/uapi/drm \
-		| echo -e "\n$(cat -)" | tac)
-
-	# We dedupe by git subject because the body is the same but different commit hash.
-	# It happens when they are backporting.
-if false; then
-	# vk is vanilla kernel
-	einfo "Generating hash tables"
 	unset vk_commits
-	declare -A vk_commits
-	while read -r h ; do
-		if [[ -n "${h}" && "${h}" != " " ]] ; then
-			vk_commits[${h}]=1
-		fi
-	done < "${T}/${LINUX_COMMITS_AMDGPU_RANGE_FN}"
-
 	unset vk_summaries
+	unset asdn_commit_cache
+	declare -A vk_commits
 	declare -A vk_summaries
-	OIFS="${IFS}"
-	IFS=$'\n'
-	L=$(git -P log ${ROCK_BASE}..${target} --pretty=format:"%s" -- \
-		drivers/gpu/drm include/drm drivers/dma-buf include/linux include/uapi/drm )
-	for l in ${L} ; do
-		local h=$(echo -e "${l}" | sha1sum | cut -f1 -d" ")
-		if [[ -n "${h}" && "${h}" != " " ]] ; then
-			vk_summaries[${h}]=1
+	declare -A asdn_commit_cache
+
+	local ht_asdn_fn=\
+"${LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ASDN_FN}${suffix_asdn}"
+	if [[ -e "${FILESDIR}/${ht_asdn_fn}" ]] ; then
+		cp -a "${FILESDIR}/${ht_asdn_fn}" "${T}"
+	fi
+
+	local using_asdn_commit_cache="0"
+	local C
+	if [[ ! -e "${T}/${ht_asdn_fn}" ]] ; then
+		einfo \
+"Saving only the amd-staging-drm-next commits for commit-by-commit evaluation.\n \
+Doing commit -> .patch conversion for amd-staging-drm-next-patches set:"
+		C=$(git -P log ${base}..${target} --oneline \
+			--pretty=format:"%H" -- \
+			drivers/gpu/drm include/drm drivers/dma-buf \
+			include/linux include/uapi/drm \
+			| echo -e "\n$(cat -)" | tac)
+
+		# We dedupe by git subject because the body is the same but
+		# different commit hash.
+		# It happens when they are backporting.
+		# vk is vanilla kernel
+		if [[ -e "${T}/${LINUX_HASHTABLE_COMMITS_VK_FN}" && \
+			-e "${T}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}" ]] ; then
+			einfo "Using cached hash tables for vanilla kernel"
+			source "${T}/${LINUX_HASHTABLE_COMMITS_VK_FN}"
+			source "${T}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}"
 		fi
-	done
-	IFS="${OIFS}"
-fi
+	else
+		# The cache file shaves off expensive "git show" and 
+		# "git log" operations, which are I/O bounded.
+		# We reduce it to a single "git diff" operation.
+		einfo "Using cached final commits"
+		source "${T}/${ht_asdn_fn}"
+		using_asdn_commit_cache="1"
+		C=${!asdn_commit_cache[@]}
+	fi
+
+#	typeset -p C
 
 	einfo "Doing commit -> .patch conversion for amd-staging-drm-next set:"
 	for c in $C ; do
-if false; then
-		if [[ -n "${vk_commits[${c}]}" ]] ; then
-			#einfo "Skipping old commit ${c} :  Already added via vanilla kernel sources."
-			continue
-		fi
-fi
+		local fn
+		if [[ "${using_asdn_commit_cache}" != "1" ]] ; then
+			if [[ -n "${vk_commits[${c}]}" ]] ; then
+#				einfo \
+#"Skipping old commit ${c} :  Already added via vanilla kernel sources."
+				continue
+			fi
 
-		local ct=$(git -P show -s --format=%ct ${c})
-#		OIFS="${IFS}"
-#		IFS=$'\n'
-		local s=$(git -P show -s --format=%s ${c})
-#		local h_summary=$(echo "${s}" | sha1sum | cut -f1 -d" ")
-#		IFS="${OIFS}"
+			local ct=$(git -P show -s --format=%ct ${c})
+			local s=$(git -P show -s --format=%s ${c})
+			local h_summary=$(echo "${s}" | sha1sum | cut -f1 -d ' ')
 
-		if echo "${s}" | grep -q -P -e "(drm/amd|amdgpu|amd/powerplay|amdkfd|gpu: amdgpu:|amdgpu_dm)" ; then
-			# whitelist all amd drm driver updates
-			:;
-		elif echo "${s}" | grep -q -P -e "(bo->resv to bo->base.resv|use embedded gem object|Fill out gem_object->resv)" ; then
-			# whitelist by subject keywords
-			:;
-		elif [[ "${c}" =~ 0dbd555a011c2d096a7b7e40c83c5776a7df367c || \
+			local whitelisted=0
+			if [[ \
+			"${c}" =~ 0dbd555a011c2d096a7b7e40c83c5776a7df367c || \
 			"${c}" =~ 1e053b10ba60eae6a3f9de64cbc74bdf6cb0e715 || \
 			"${c}" =~ e532a135d7044b5477c1c56169fa131d77c57f75 || \
 			"${c}" =~ 52791eeec1d9f4a7e7fe08aaba0b1553149d93bc || \
@@ -185,91 +234,96 @@ fi
 			"${c}" =~ 354e6e14ef947f07055d3570b4bd7a33196b57f6 || \
 			"${c}" =~ 562836a269e363cdb74b551e3be7021c9d228378 || \
 			"${c}" =~ e7f0141a217fa28049d7a3bbc09bee9642c47687 || \
-			"${c}" =~ 2e3c9ec4d151c04d75546dfdc2f85a84ad546eb0 ]] ; then
-			# whitelist specific commits which includes 5.4-rc* commits
-			:;
-		else
-			if (( ${ct} <= ${LINUX_TIMESTAMP} )) ; then
-				#einfo "Skipping old commit ${c} : Old timestamp"
+			"${c}" =~ 2e3c9ec4d151c04d75546dfdc2f85a84ad546eb0 || \
+			"${c}" =~ c74dbe44eacf00a5ccc229b5cc340a9b7f6851a0 || \
+			"${c}" =~ 97797a93ffb905304df11dc42e1daab9aa7faa9b \
+				]] ; then
+				# whitelist specific commits which includes \
+				# 5.4-rc* commits
+				whitelisted=1
+			elif echo "${s}" | grep -q -P \
+-e "(drm/amd|amdgpu|amd/powerplay|amdkfd|gpu: amdgpu:|amdgpu_dm)" ; then
+				# whitelist all amd drm driver updates for
+				# evaluation
+				:;
+			elif echo "${s}" | grep -q -P \
+-e "(bo->resv to bo->base.resv|use embedded gem object|Fill out gem_object->resv)" ; then
+				# whitelist by subject keywords
+				whitelisted=1
+			else
+				if (( ${ct} <= ${LINUX_TIMESTAMP} )) ; then
+					#einfo "Skipping old commit ${c} : Old timestamp"
+					continue
+				fi
+			fi
+
+			if [[ "${whitelisted}" == "1" ]] ; then
+				:;
+			elif [[ -n "${vk_summaries[${h_summary}]}" ]] ; then
+				einfo \
+"Already added ${c} via vanilla kernel sources (with same subject match).\n \
+Skipping..."
 				continue
 			fi
-		fi
 
-if false; then
-		if [[ -n "${vk_summaries[${h_summary}]}" ]] ; then
-			einfo "Already added ${c} via vanilla kernel sources (with same subject match).  Skipping..."
-			continue
-		fi
-fi
+			DC_VER=$(git -P \
+				show ${c}:drivers/gpu/drm/amd/display/dc/dc.h \
+				| grep -e "#define DC_VER" \
+				| grep -o -P -e "\"[0-9.]+\"" \
+				| sed -e "s|\"||g")
 
-		DC_VER=$(git -P show ${c}:drivers/gpu/drm/amd/display/dc/dc.h | grep -e "#define DC_VER" | grep -o -P -e "\"[0-9.]+\"" | sed -e "s|\"||g")
+			# repad DC_VER
+			DC_VER_MAJOR=$(printf "%02d" $(echo "$DC_VER" | cut -f1 -d '.'))
+			DC_VER_MINOR=$(printf "%02d" $(echo "$DC_VER" | cut -f2 -d '.'))
+			DC_VER_PATCH=$(printf "%03d" $(echo "$DC_VER" | cut -f3 -d '.'))
+			DC_VER="${DC_VER_MAJOR}.${DC_VER_MINOR}.${DC_VER_PATCH}"
 
-		# repad DC_VER
-		DC_VER_MAJOR=$(printf "%02d" $(echo "$DC_VER" | cut -f1 -d "."))
-		DC_VER_MINOR=$(printf "%02d" $(echo "$DC_VER" | cut -f2 -d "."))
-		DC_VER_PATCH=$(printf "%03d" $(echo "$DC_VER" | cut -f3 -d "."))
-		DC_VER="${DC_VER_MAJOR}.${DC_VER_MINOR}.${DC_VER_PATCH}"
-
-		printf -v pn "%06d" ${n}
-		local fn="${DC_VER}-${ct}-${pn}-${c}-asdn.patch"
-	        #git format-patch --stdout -1 $c > "${T}"/amd-staging-drm-next-patches/${fn} # broken but fastest
-		if git -P diff $c^..$c > "${T}"/amd-staging-drm-next-patches/${fn} ; then # reliable
-		        :; #einfo "Added ${fn}"
+			printf -v pn "%06d" ${n}
+			fn="${DC_VER}-${ct}-${pn}-${c}-asdn.patch"
 		else
-			die "Failed to add ${fn}"
+			fn="${asdn_commit_cache[${c}]}"
+		fi
+
+		if git -P diff $c^..$c \
+			> "${T}"/amd-staging-drm-next-patches/${fn} ; then
+		        :; #einfo "Added ${fn}"
+			if [[ "${using_asdn_commit_cache}" != "1" ]] ; then
+				asdn_commit_cache[${c}]="${fn}"
+			fi
+		else
+			die "Failed to add ${c} ${fn}"
 		fi
 	        n=$((n+1))
 	done
 	unset vk_commits
 	unset vk_summaries
 
-	if declare -f ot-kernel-asdn-generate_amd_staging_drm_next_patches_post > /dev/null ; then
+	if declare \
+		-f ot-kernel-asdn-generate_amd_staging_drm_next_patches_post \
+		> /dev/null ; then
 		ot-kernel-asdn-generate_amd_staging_drm_next_patches_post
 	fi
-}
 
-__asdn_trash() {
-	# sept 15 2019 was the merge of 5.3
-	einfo "Removing old merges"
-	# asdn is linux v5.3-rc3 so throw away the older merges
-	L=$(git -P log ${base}..${target} --pretty=format:"%H%x07%s" | grep -P -e "((branch|tag).*5\.(1|2)(-rc[0-9]*)?|2019-(01|02|03|04|05|06|07|08|09)-([0-9]+)|2019(01|02|03|04|05|06|07|08|09))")
-	OIFS="${IFS}"
-	IFS=$'\n'
-	for l in $L ; do
-		local c=$(echo "${l}" | cut -f1 -d$'\007')
-		if [ -e "${T}/amd-staging-drm-next-patches"/*${c}* ] ; then
-			#local s=$(git -P log --oneline --pretty=format:"%H %s" -1 ${c})
-			einfo "Removing ${l}"
-			rm "${T}/amd-staging-drm-next-patches"/*${c}*
+	if [[ "${using_asdn_commit_cache}" != "1" ]] ; then
+		if declare -f ot-kernel-asdn_rm > /dev/null ; then
+			# per version removal
+			ot-kernel-asdn_rm
 		fi
-	done
-	IFS="${OIFS}"
 
-	einfo "Removing older other vendor driver commits"
-	local OTHER_VENDORS="arc arm armada aspeed ast atmel-hlcdc bochs bridge cirrus etnaviv exynos fsl-dcu gma500 hisilicon i2c i810 i915 imx ingenic lima mcde mediatek meson mga mgag200 msm mxsfb nouveau omapdrm panel panfrost pl111 qxl r128 radeon rcar-du rockchip savage shmobile sis sti stm sun4i tdfx tegra tilcdc tinydrm tve200 udl v3d vboxvideo vc4 vgem via virtio vkms vmwgfx xen zte"
-	for f in $(find "${T}/amd-staging-drm-next-patches" | tail -n +2 | sort) ; do
-		local c=$(basename "${f}" | cut -f4 -d "-")
-		local ct=$(git -P show -s --format=%ct ${c})
-		local s=$(git -P show -s --format=%s ${c})
-		for v in ${OTHER_VENDORS[@]} ; do
-			if [ -e "${f}" ] ; then
-				if grep -q -F -e "drivers/gpu/drm/${v}" "${f}" > /dev/null ; then
-					if (( ${ct} <= ${LINUX_TIMESTAMP} )) ; then
-						einfo "Removing ${c} ${s}"
-						rm "${T}/amd-staging-drm-next-patches"/*${c}*
-					fi
-				fi
-			fi
-		done
-	done
+		typeset -p asdn_commit_cache > "${T}/${ht_asdn_fn}"
+		sed -i -r -e "s|^declare -A ||" "${T}/${ht_asdn_fn}"
+	fi
 }
 
 # @FUNCTION: is_amd_staging_drm_next
 # @DESCRIPTION:
 # Check if user wanted amd-staging-drm-next
-# @RETURN: zero - user wants amd-staging-drm-next; non-zero user doesn't want amd-staging-drm-next
+# @RETURN: zero - user wants amd-staging-drm-next; non-zero user doesn't want
+#   amd-staging-drm-next
 function is_amd_staging_drm_next() {
-	if use amd-staging-drm-next-snapshot || use amd-staging-drm-next-latest || use amd-staging-drm-next-milestone ; then
+	if use amd-staging-drm-next-snapshot \
+		|| use amd-staging-drm-next-latest \
+		|| use amd-staging-drm-next-milestone ; then
 		return 0
 	else
 		return 1
