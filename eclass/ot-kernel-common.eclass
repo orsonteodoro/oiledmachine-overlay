@@ -801,8 +801,8 @@ function ot-kernel-common_src_install() {
 function ot-kernel-common_pkg_postinst() {
 	if use disable_debug ; then
 		einfo \
-"The disable debug scripts have been placed in your /usr/src folder.\n"
-"They disable debug paths, logging, output for a performance gain.\n"
+"The disable debug scripts have been placed in your /usr/src folder.\n"\
+"They disable debug paths, logging, output for a performance gain.\n"\
 "You should run it like \`/usr/src/disable_debug x86_64 /usr/src/.config\`\n"
 		cp "${FILESDIR}/_disable_debug_v${DISABLE_DEBUG_V}" \
 			"${EROOT}/usr/src/_disable_debug" || die
