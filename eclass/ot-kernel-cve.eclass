@@ -1,3 +1,4 @@
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
 # Copyright 2019 Orson Teodoro
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
@@ -10,11 +11,15 @@
 # @SUPPORTED_EAPIS: 2 3 4 5 6
 # @BLURB: Eclass for CVE patching the kernel
 # @DESCRIPTION:
-# The ot-kernel-cve eclass resolves CVE vulnerabilities for any linux kernel version, preferably latest stable.
+# The ot-kernel-cve eclass resolves CVE vulnerabilities for any linux kernel
+# version, preferably latest stable.
 
-# WARNING: The patch tests assume the whole commit or patch is used.  Do not try to manually apply a custom patch to attempt to rig the result as pass.
+# WARNING: The patch tests assume the whole commit or patch is used.  Do not
+# try to manually apply a custom patch to attempt to rig the result as pass.
 
-# These are not enabled by default because of licensing, government interest, no crypto applied (as in PGP/GPG signed emails) to messages to authenticate or verify them.
+# These are not enabled by default because of licensing, government interest,
+# no crypto applied (as in PGP/GPG signed emails) to messages to authenticate
+# or verify them.
 IUSE+=" cve_hotfix"
 LICENSE+=" cve_hotfix? ( GPL-2 )"
 
@@ -28,7 +33,8 @@ LATEST_CVE_KERNEL_INDEX="${LATEST_CVE_KERNEL_INDEX,,}"
 
 # this will trigger a kernel re-install based on use flag timestamp
 # there is no need to set this flag but tricks the emerge system to re-emerge.
-if [[ -n "${CVE_SUBSCRIBE_KERNEL_HOTFIXES}" && "${CVE_SUBSCRIBE_KERNEL_HOTFIXES}" == "1" ]] ; then
+if [[ -n "${CVE_SUBSCRIBE_KERNEL_HOTFIXES}" \
+	&& "${CVE_SUBSCRIBE_KERNEL_HOTFIXES}" == "1" ]] ; then
 	IUSE+=" cve_update_${LATEST_CVE_KERNEL_INDEX}"
 fi
 
@@ -185,7 +191,6 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 			 ${CVE_2019_18198_FIX_SRC_URI} -> ${CVE_2019_18198_FN}
 		       )"
 
-
 # @FUNCTION: _fetch_cve_boilerplate_msg
 # @DESCRIPTION:
 # Message to report the important items to user about the CVE.
@@ -216,11 +221,15 @@ function _fetch_cve_boilerplate_msg_footer() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_fn="${CVE_ID_}FN"
 	if ! test -n "${!cve_fn}" ; then
-		einfo "No de-facto patch exists or the patch is undergoing code review.  No patch will be applied.  This fix is still being worked on."
+		einfo \
+"No de-facto patch exists or the patch is undergoing code review.  No patch\n"
+"will be applied.  This fix is still being worked on."
 	elif use cve_hotfix && test -n "${!cve_fn}"; then
 		einfo "A ${CVE_ID} fix will be applied."
 	else
-		ewarn "Re-enable the cve_hotfix USE flag to fix this, or you may ignore this and wait for an official fix in later kernel point releases."
+		ewarn \
+"Re-enable the cve_hotfix USE flag to fix this, or you may ignore this and\n"
+"wait for an official fix in later kernel point releases."
 		ewarn
 		echo -e "\07" # ring the bell
 		[[ "${CVE_DELAY}" == "1" ]] && sleep 30s
@@ -232,7 +241,11 @@ function _fetch_cve_boilerplate_msg_footer() {
 # Checks for the CVE_2019_16746 patch
 function fetch_cve_2019_16746_hotfix() {
 	local CVE_ID="CVE-2019-16746"
-	if grep -F -e "validate_beacon_head" "${S}/net/wireless/nl80211.c" >/dev/null ; then
+	if grep -F -e \
+		"validate_beacon_head" \
+		"${S}/net/wireless/nl80211.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} already patched."
 		return
 	fi
@@ -245,7 +258,11 @@ function fetch_cve_2019_16746_hotfix() {
 # Checks for the CVE-2019-14814 patch
 function fetch_cve_2019_14814_hotfix() {
 	local CVE_ID="CVE-2019-14814"
-	if grep -F -e "if (le16_to_cpu(ie->ie_length) + vs_ie->len + 2 >" "${S}/drivers/net/wireless/marvell/mwifiex/ie.c" >/dev/null ; then
+	if grep -F -e \
+		"if (le16_to_cpu(ie->ie_length) + vs_ie->len + 2 >" \
+		"${S}/drivers/net/wireless/marvell/mwifiex/ie.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} already patched."
 		return
 	fi
@@ -258,7 +275,11 @@ function fetch_cve_2019_14814_hotfix() {
 # Checks for the CVE-2019-14821 patch
 function fetch_cve_2019_14821_hotfix() {
 	local CVE_ID="CVE-2019-14821"
-	if grep -F -e "if (!coalesced_mmio_has_room(dev, insert) ||" "${S}/virt/kvm/coalesced_mmio.c" >/dev/null ; then
+	if grep -F -e \
+		"if (!coalesced_mmio_has_room(dev, insert) ||" \
+		"${S}/virt/kvm/coalesced_mmio.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} already patched."
 		return
 	fi
@@ -271,7 +292,11 @@ function fetch_cve_2019_14821_hotfix() {
 # Checks for the CVE-2019-16921 patch
 function fetch_cve_2019_16921_hotfix() {
 	local CVE_ID="CVE-2019-16921"
-	if grep -F -e "struct hns_roce_ib_alloc_ucontext_resp resp = {};" "${S}/drivers/infiniband/hw/hns/hns_roce_main.c" >/dev/null ; then
+	if grep -F -e \
+		"struct hns_roce_ib_alloc_ucontext_resp resp = {};" \
+		"${S}/drivers/infiniband/hw/hns/hns_roce_main.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} already patched."
 		return
 	fi
@@ -285,7 +310,11 @@ function fetch_cve_2019_16921_hotfix() {
 # Checks for the CVE-2019-16994 patch
 function fetch_cve_2019_16994_hotfix() {
 	local CVE_ID="CVE-2019-16994"
-	if grep -F -e "free_netdev(sitn->fb_tunnel_dev);" "${S}/net/ipv6/sit.c" >/dev/null ; then
+	if grep -F -e \
+		"free_netdev(sitn->fb_tunnel_dev);" \
+		"${S}/net/ipv6/sit.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} already patched."
 		return
 	fi
@@ -298,7 +327,11 @@ function fetch_cve_2019_16994_hotfix() {
 # Checks for the CVE-2019-16995 patch
 function fetch_cve_2019_16995_hotfix() {
 	local CVE_ID="CVE-2019-16995"
-	if grep -F -e "goto err_add_port;" "${S}/net/hsr/hsr_device.c" >/dev/null ; then
+	if grep -F -e \
+		"goto err_add_port;" \
+		"${S}/net/hsr/hsr_device.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} already patched."
 		return
 	fi
@@ -311,7 +344,11 @@ function fetch_cve_2019_16995_hotfix() {
 # Checks for the CVE-2019-17052 patch
 function fetch_cve_2019_17052_hotfix() {
 	local CVE_ID="CVE-2019-17052"
-	if grep -F -e "if (!capable(CAP_NET_RAW))" "${S}/net/ax25/af_ax25.c" >/dev/null ; then
+	if grep -F -e \
+		"if (!capable(CAP_NET_RAW))" \
+		"${S}/net/ax25/af_ax25.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} already patched."
 		return
 	fi
@@ -324,7 +361,11 @@ function fetch_cve_2019_17052_hotfix() {
 # Checks for the CVE-2019-17053 patch
 function fetch_cve_2019_17053_hotfix() {
 	local CVE_ID="CVE-2019-17053"
-	if grep -F -e "if (!capable(CAP_NET_RAW))" "${S}/net/ieee802154/socket.c" >/dev/null ; then
+	if grep -F -e \
+		"if (!capable(CAP_NET_RAW))" \
+		"${S}/net/ieee802154/socket.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} already patched."
 		return
 	fi
@@ -337,7 +378,11 @@ function fetch_cve_2019_17053_hotfix() {
 # Checks for the CVE-2019-17054 patch
 function fetch_cve_2019_17054_hotfix() {
 	local CVE_ID="CVE-2019-17054"
-	if grep -F -e "if (sock->type == SOCK_RAW && !kern && !capable(CAP_NET_RAW))" "${S}/net/appletalk/ddp.c" >/dev/null ; then
+	if grep -F -e \
+		"if (sock->type == SOCK_RAW && !kern && !capable(CAP_NET_RAW))" \
+		"${S}/net/appletalk/ddp.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} already patched."
 		return
 	fi
@@ -350,7 +395,11 @@ function fetch_cve_2019_17054_hotfix() {
 # Checks for the CVE-2019-17055 patch
 function fetch_cve_2019_17055_hotfix() {
 	local CVE_ID="CVE-2019-17055"
-	if grep -F -e "if (!capable(CAP_NET_RAW))" "${S}/drivers/isdn/mISDN/socket.c" >/dev/null ; then
+	if grep -F -e \
+		"if (!capable(CAP_NET_RAW))" \
+		"${S}/drivers/isdn/mISDN/socket.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} already patched."
 		return
 	fi
@@ -363,7 +412,11 @@ function fetch_cve_2019_17055_hotfix() {
 # Checks for the CVE-2019-17056 patch
 function fetch_cve_2019_17056_hotfix() {
 	local CVE_ID="CVE-2019-17056"
-	if grep -F -e "if (!capable(CAP_NET_RAW))" "${S}/net/nfc/llcp_sock.c" >/dev/null ; then
+	if grep -F -e \
+		"if (!capable(CAP_NET_RAW))" \
+		"${S}/net/nfc/llcp_sock.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} already patched."
 		return
 	fi
@@ -376,7 +429,11 @@ function fetch_cve_2019_17056_hotfix() {
 # Checks for the CVE-2019-17075 patch
 function fetch_cve_2019_17075_hotfix() {
 	local CVE_ID="CVE-2019-17075"
-	if grep -F -e "tpt->valid_to_pdid = cpu_to_be32(FW_RI_TPTE_VALID_F |" "${S}/drivers/infiniband/hw/cxgb4/mem.c" >/dev/null ; then
+	if grep -F -e \
+		"tpt->valid_to_pdid = cpu_to_be32(FW_RI_TPTE_VALID_F |" \
+		"${S}/drivers/infiniband/hw/cxgb4/mem.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} already patched."
 		return
 	fi
@@ -389,7 +446,11 @@ function fetch_cve_2019_17075_hotfix() {
 # Checks for the CVE-2019-17133 patch
 function fetch_cve_2019_17133_hotfix() {
 	local CVE_ID="CVE-2019-17133"
-	if grep -F -e "if (data->length > IW_ESSID_MAX_SIZE)" "${S}/net/wireless/wext-sme.c" >/dev/null ; then
+	if grep -F -e \
+		"if (data->length > IW_ESSID_MAX_SIZE)" \
+		"${S}/net/wireless/wext-sme.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} already patched."
 		return
 	fi
@@ -402,7 +463,11 @@ function fetch_cve_2019_17133_hotfix() {
 # Checks for the CVE-2019-17351 patch
 function fetch_cve_2019_17351_hotfix() {
 	local CVE_ID="CVE-2019-17351"
-	if grep -F -e "balloon_stats.max_retry_count = 4;" "${S}/drivers/xen/balloon.c" >/dev/null ; then
+	if grep -F -e \
+		"balloon_stats.max_retry_count = 4;" \
+		"${S}/drivers/xen/balloon.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} already patched."
 		return
 	fi
@@ -415,7 +480,11 @@ function fetch_cve_2019_17351_hotfix() {
 # Checks for the CVE-2019-17666 patch
 function fetch_cve_2019_17666_hotfix() {
 	local CVE_ID="CVE-2019-17666"
-	if grep -F -e "if (noa_num > P2P_MAX_NOA_NUM) {" "${S}/drivers/net/wireless/realtek/rtlwifi/ps.c" >/dev/null ; then
+	if grep -F -e \
+		"if (noa_num > P2P_MAX_NOA_NUM) {" \
+		"${S}/drivers/net/wireless/realtek/rtlwifi/ps.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} already patched."
 		return
 	fi
@@ -428,7 +497,11 @@ function fetch_cve_2019_17666_hotfix() {
 # Checks for the CVE-2019-18198 patch
 function fetch_cve_2019_18198_hotfix() {
 	local CVE_ID="CVE-2019-18198"
-	if grep -F -e "if (!(arg->flags & FIB_LOOKUP_NOREF))" "${S}/net/ipv6/fib6_rules.c" >/dev/null ; then
+	if grep -F -e \
+		"if (!(arg->flags & FIB_LOOKUP_NOREF))" \
+		"${S}/net/ipv6/fib6_rules.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} already patched."
 		return
 	fi
@@ -443,13 +516,16 @@ function fetch_cve_2019_18198_hotfix() {
 function _resolve_hotfix_default() {
 	if use cve_hotfix ; then
 		if [ -e "${DISTDIR}/${!cve_fn}" ] ; then
-			einfo "Resolving ${CVE_ID}.  ${!cve_fn} may break in different kernel versions."
+			einfo \
+"Resolving ${CVE_ID}.  ${!cve_fn} may break in different kernel versions."
 			_dpatch "${PATCH_OPS}" "${DISTDIR}/${!cve_fn}"
 		else
-			ewarn "No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
+			ewarn \
+"No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
 		fi
 	else
-		ewarn "No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
+		ewarn \
+"No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
 	fi
 }
 
@@ -462,7 +538,11 @@ function apply_cve_2019_16746_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e "validate_beacon_head" "${S}/net/wireless/nl80211.c" >/dev/null ; then
+	if grep -F -e \
+		"validate_beacon_head" \
+		"${S}/net/wireless/nl80211.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
@@ -477,7 +557,11 @@ function apply_cve_2019_14814_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e "if (le16_to_cpu(ie->ie_length) + vs_ie->len + 2 >" "${S}/drivers/net/wireless/marvell/mwifiex/ie.c" >/dev/null ; then
+	if grep -F -e \
+		"if (le16_to_cpu(ie->ie_length) + vs_ie->len + 2 >" \
+		"${S}/drivers/net/wireless/marvell/mwifiex/ie.c" \
+		>/dev/null ; \
+		then
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
@@ -492,7 +576,11 @@ function apply_cve_2019_14821_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e "if (!coalesced_mmio_has_room(dev, insert) ||" "${S}/virt/kvm/coalesced_mmio.c" >/dev/null ; then
+	if grep -F -e \
+		"if (!coalesced_mmio_has_room(dev, insert) ||" \
+		"${S}/virt/kvm/coalesced_mmio.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
@@ -507,7 +595,11 @@ function apply_cve_2019_16921_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e "struct hns_roce_ib_alloc_ucontext_resp resp = {};" "${S}/drivers/infiniband/hw/hns/hns_roce_main.c" >/dev/null ; then
+	if grep -F -e \
+		"struct hns_roce_ib_alloc_ucontext_resp resp = {};" \
+		"${S}/drivers/infiniband/hw/hns/hns_roce_main.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
@@ -522,7 +614,11 @@ function apply_cve_2019_16994_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e "free_netdev(sitn->fb_tunnel_dev);" "${S}/net/ipv6/sit.c" >/dev/null ; then
+	if grep -F -e \
+		"free_netdev(sitn->fb_tunnel_dev);" \
+		"${S}/net/ipv6/sit.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
@@ -538,7 +634,11 @@ function apply_cve_2019_16995_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e "goto err_add_port;" "${S}/net/hsr/hsr_device.c" >/dev/null ; then
+	if grep -F -e \
+		"goto err_add_port;" \
+		"${S}/net/hsr/hsr_device.c" \
+		>/dev/null ; \
+		then
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
@@ -553,7 +653,11 @@ function apply_cve_2019_17052_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e "if (!capable(CAP_NET_RAW))" "${S}/net/ax25/af_ax25.c" >/dev/null ; then
+	if grep -F -e \
+		"if (!capable(CAP_NET_RAW))" \
+		"${S}/net/ax25/af_ax25.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
@@ -568,7 +672,11 @@ function apply_cve_2019_17053_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e "if (!capable(CAP_NET_RAW))" "${S}/net/ieee802154/socket.c" >/dev/null ; then
+	if grep -F -e \
+		"if (!capable(CAP_NET_RAW))" \
+		"${S}/net/ieee802154/socket.c" \
+		>/dev/null ; \
+		then
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
@@ -583,7 +691,11 @@ function apply_cve_2019_17054_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e "if (sock->type == SOCK_RAW && !kern && !capable(CAP_NET_RAW))" "${S}/net/appletalk/ddp.c" >/dev/null ; then
+	if grep -F -e \
+		"if (sock->type == SOCK_RAW && !kern && !capable(CAP_NET_RAW))"\
+		"${S}/net/appletalk/ddp.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
@@ -598,7 +710,11 @@ function apply_cve_2019_17055_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e "if (!capable(CAP_NET_RAW))" "${S}/drivers/isdn/mISDN/socket.c" >/dev/null ; then
+	if grep -F -e \
+		"if (!capable(CAP_NET_RAW))" \
+		"${S}/drivers/isdn/mISDN/socket.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
@@ -613,7 +729,11 @@ function apply_cve_2019_17056_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e "if (!capable(CAP_NET_RAW))" "${S}/net/nfc/llcp_sock.c" >/dev/null ; then
+	if grep -F -e \
+		"if (!capable(CAP_NET_RAW))" \
+		"${S}/net/nfc/llcp_sock.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
@@ -628,7 +748,11 @@ function apply_cve_2019_17075_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e "tpt->valid_to_pdid = cpu_to_be32(FW_RI_TPTE_VALID_F |" "${S}/drivers/infiniband/hw/cxgb4/mem.c" >/dev/null ; then
+	if grep -F -e \
+		"tpt->valid_to_pdid = cpu_to_be32(FW_RI_TPTE_VALID_F |" \
+		"${S}/drivers/infiniband/hw/cxgb4/mem.c" \
+		>/dev/null ; \
+		then
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
@@ -643,7 +767,11 @@ function apply_cve_2019_17133_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e "if (data->length > IW_ESSID_MAX_SIZE)" "${S}/net/wireless/wext-sme.c" >/dev/null ; then
+	if grep -F -e \
+		"if (data->length > IW_ESSID_MAX_SIZE)" \
+		"${S}/net/wireless/wext-sme.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
@@ -658,7 +786,11 @@ function apply_cve_2019_17351_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e "balloon_stats.max_retry_count = 4;" "${S}/drivers/xen/balloon.c" >/dev/null ; then
+	if grep -F -e \
+		"balloon_stats.max_retry_count = 4;" \
+		"${S}/drivers/xen/balloon.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
@@ -674,7 +806,11 @@ function apply_cve_2019_17666_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e "if (noa_num > P2P_MAX_NOA_NUM) {" "${S}/drivers/net/wireless/realtek/rtlwifi/ps.c" >/dev/null ; then
+	if grep -F -e \
+		"if (noa_num > P2P_MAX_NOA_NUM) {" \
+		"${S}/drivers/net/wireless/realtek/rtlwifi/ps.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
@@ -689,7 +825,11 @@ function apply_cve_2019_18198_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e "if (!(arg->flags & FIB_LOOKUP_NOREF))" "${S}/net/ipv6/fib6_rules.c" >/dev/null ; then
+	if grep -F -e \
+		"if (!(arg->flags & FIB_LOOKUP_NOREF))" \
+		"${S}/net/ipv6/fib6_rules.c" \
+		>/dev/null ; \
+	then
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
@@ -728,7 +868,9 @@ function fetch_cve_hotfixes() {
 		einfo
 		einfo "--------------------------------------------------"
 		einfo
-		einfo "You may set CVE_SUBSCRIBE_KERNEL_HOTFIXES=1 in your make.conf to get CVE hotfix updates."
+		einfo \
+"You may set CVE_SUBSCRIBE_KERNEL_HOTFIXES=1 in your make.conf to get CVE\n"
+"hotfix updates."
 		einfo
 		[[ "${CVE_DELAY}" == "1" ]] && sleep 10s
 	fi
