@@ -1,3 +1,4 @@
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
 # Copyright 2019 Orson Teodoro
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
@@ -10,24 +11,37 @@
 # @SUPPORTED_EAPIS: 2 3 4 5 6
 # @BLURB: Eclass for patching the kernel
 # @DESCRIPTION:
-# The ot-kernel-common eclass defines common patching steps for any linux kernel version.
+# The ot-kernel-common eclass defines common patching steps for any linux
+# kernel version.
 
-# UKSM:                         https://github.com/dolohow/uksm
-# zen-tune:                     https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/zen-tune
-# O3 (Optimize Harder):         https://github.com/torvalds/linux/commit/a56a17374772a48a60057447dc4f1b4ec62697fb
-#                               https://github.com/torvalds/linux/commit/93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9
-# GraySky2 GCC Patches:         https://github.com/graysky2/kernel_gcc_patch
-# MUQSS CPU Scheduler:          http://ck.kolivas.org/patches/5.0/5.2/5.2-ck1/
-# PDS CPU Scheduler:            http://cchalpha.blogspot.com/search/label/PDS
-# BMQ CPU Scheduler:		https://cchalpha.blogspot.com/search/label/BMQ
-# genpatches:                   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
-# BFQ updates:                  https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/bfq-backports
-# TRESOR:			http://www1.informatik.uni-erlangen.de/tresor
+# UKSM:
+#   https://github.com/dolohow/uksm
+# zen-tune:
+#   https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/zen-tune
+# O3 (Optimize Harder):
+#   https://github.com/torvalds/linux/commit/a56a17374772a48a60057447dc4f1b4ec62697fb
+#   https://github.com/torvalds/linux/commit/93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9
+# GraySky2 GCC Patches:
+#   https://github.com/graysky2/kernel_gcc_patch
+# MUQSS CPU Scheduler:
+#   http://ck.kolivas.org/patches/5.0/5.2/5.2-ck1/
+# PDS CPU Scheduler:
+#   http://cchalpha.blogspot.com/search/label/PDS
+# BMQ CPU Scheduler:
+#   https://cchalpha.blogspot.com/search/label/BMQ
+# genpatches:
+#   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
+# BFQ updates:
+#   https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/bfq-backports
+# TRESOR:
+#   http://www1.informatik.uni-erlangen.de/tresor
 
 # TRESOR is maybe broken.  It requires additional coding for skcipher.
 # Use the 4.9 series if you want to use TRESOR.
-# See aesni-intel_glue.c chacha20_glue.c tresor_glue.c aesni-intel_asm.S aesni-intel_asm.S in arch/x86/crypto
-# It needs to fill out the skcipher_alg structure and provide callbacks that use the skcipher_request structure.
+# See aesni-intel_glue.c chacha20_glue.c tresor_glue.c aesni-intel_asm.S
+#   aesni-intel_asm.S in arch/x86/crypto
+# It needs to fill out the skcipher_alg structure and provide callbacks that
+#   use the skcipher_request structure.
 # CBC uses CRYPTO_ALG_TYPE_SKCIPHER
 # ECB uses CRYPTO_ALG_TYPE_BLKCIPHER
 
@@ -59,7 +73,9 @@ inherit ot-kernel-rock
 DEPEND+=" >=dev-util/patchutils-0.3.4_p20190902
 	  sys-apps/grep[pcre]"
 
-SRC_URI+=" https://github.com/torvalds/linux/commit/52791eeec1d9f4a7e7fe08aaba0b1553149d93bc.patch -> linux--dma-buf-rename-reservation_object-to-dma_resv.patch"
+SRC_URI+=\
+" https://github.com/torvalds/linux/commit/52791eeec1d9f4a7e7fe08aaba0b1553149d93bc.patch \
+	-> linux--dma-buf-rename-reservation_object-to-dma_resv.patch"
 
 gen_kernel_seq()
 {
@@ -126,6 +142,16 @@ LINUX_REPO_URL="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
 
 LINUX_COMMITS_AMDGPU_RANGE_FN="${LINUX_COMMITS_AMDGPU_RANGE_FN:=linux.commits.amdgpu_range.${K_MAJOR_MINOR}}"
 
+# intermediate cache files
+LINUX_HASHTABLE_COMMITS_VK_FN="${LINUX_HASHTABLE_COMMITS_VK_FN:=linux.hashtable.commits.vk.${K_MAJOR_MINOR}}"
+LINUX_HASHTABLE_SUMMARIES_VK_FN="${LINUX_HASHTABLE_SUMMARIES_VK_FN:=linux.hashtable.summaries.vk.${K_MAJOR_MINOR}}"
+LINUX_HASHTABLE_COMMITS_ASDN_FN="${LINUX_HASHTABLE_COMMITS_ASDN_FN:=linux.hashtable.commits.asdn.${K_MAJOR_MINOR}}"
+LINUX_HASHTABLE_SUMMARIES_ASDN_FN="${LINUX_HASHTABLE_SUMMARIES_ASDN_FN:=linux.hashtable.summaries.asdn.${K_MAJOR_MINOR}}"
+
+# the final commit set
+LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ROCK_FN="${LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ROCK_FN:=linux.hashtable.commits.final.rock.${K_MAJOR_MINOR}}"
+LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ASDN_FN="${LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ASDN_FN:=linux.hashtable.commits.final.asdn.${K_MAJOR_MINOR}}"
+
 if [[ -n "${KERNEL_NO_POINT_RELEASE}" && "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; then
 	KERNEL_PATCH_URLS=()
 elif [[ -n "${KERNEL_0_TO_1_ONLY}" && "${KERNEL_0_TO_1_ONLY}" == "1" ]] ; then
@@ -168,13 +194,18 @@ PATCH_OPS="-p1 -F 500"
 function _dpatch() {
 	local patchops="$1"
 	local path="$2"
-	einfo "Applying ${path}"
+	if [[ "${patchops}" =~ "-R" ]] ; then
+		einfo "Reverting ${path}"
+	else
+		einfo "Applying ${path}"
+	fi
 	patch ${patchops} -i ${path} || die
 }
 
 # @FUNCTION: _tpatch
 # @DESCRIPTION:
-# Patch without die check, which may be followed by intervention corrective action, implied true as in normal operation.
+# Patch without die check, which may be followed by intervention corrective
+# action, implied true as in normal operation.
 # @CODE
 # Parameters:
 # $1 - patch options
@@ -183,7 +214,11 @@ function _dpatch() {
 function _tpatch() {
 	local patchops="$1"
 	local path="$2"
-	einfo "Applying ${path}"
+	if [[ "${patchops}" =~ "-R" ]] ; then
+		einfo "Reverting ${path}"
+	else
+		einfo "Applying ${path}"
+	fi
 	patch ${patchops} -i ${path} || true
 }
 
@@ -219,7 +254,8 @@ function apply_zentune() {
 # @DESCRIPTION:
 # Apply the base genpatches patchset.
 #
-# ot-kernel-common_apply_genpatch_base_patchset - callback to apply individual patches
+# ot-kernel-common_apply_genpatch_base_patchset - callback to apply individual
+#   patches
 #
 function apply_genpatch_base() {
 	einfo "Applying the genpatch base"
@@ -229,9 +265,13 @@ function apply_genpatch_base() {
 	cd "$d"
 	unpack "${GENPATCHES_BASE_FN}"
 
-	sed -r -i -e "s|EXTRAVERSION = ${EXTRAVERSION}|EXTRAVERSION =|" "${S}"/Makefile || die
+	sed -r -i -e "s|EXTRAVERSION = ${EXTRAVERSION}|EXTRAVERSION =|" \
+		"${S}"/Makefile \
+		|| die
 
-	if [[ -n "${KERNEL_NO_POINT_RELEASE}" && "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; then
+	if [[ -n "${KERNEL_NO_POINT_RELEASE}" \
+		&& "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; \
+		then
 		true
 	else
 		# genpatches places kernel incremental patches starting at 1000
@@ -240,7 +280,8 @@ function apply_genpatch_base() {
 			cd "${T}"
 			unpack "$a.xz"
 			cd "${S}"
-			patch --dry-run ${PATCH_OPS} -N "${f}" | grep -F -e "FAILED at"
+			patch --dry-run ${PATCH_OPS} -N "${f}" \
+				| grep -F -e "FAILED at"
 			if [[ "$?" == "1" ]] ; then
 				# already patched or good
 				_tpatch "${PATCH_OPS} -N" "${f}"
@@ -251,11 +292,15 @@ function apply_genpatch_base() {
 		done
 	fi
 
-	sed -r -i -e "s|EXTRAVERSION =|EXTRAVERSION = ${EXTRAVERSION}|" "${S}"/Makefile || die
+	sed -r -i -e "s|EXTRAVERSION =|EXTRAVERSION = ${EXTRAVERSION}|" \
+		"${S}"/Makefile \
+		|| die
 
 	cd "${S}"
 
-	if declare -f ot-kernel-common_apply_genpatch_base_patchset > /dev/null ; then
+	if declare -f ot-kernel-common_apply_genpatch_base_patchset \
+		> /dev/null ; \
+	then
 		ot-kernel-common_apply_genpatch_base_patchset
 	fi
 }
@@ -264,7 +309,8 @@ function apply_genpatch_base() {
 # @DESCRIPTION:
 # Apply the experimental genpatches patchset.
 #
-# ot-kernel-common_apply_genpatch_experimental_patchset - callback to apply individual patches
+# ot-kernel-common_apply_genpatch_experimental_patchset - callback to apply
+#   individual patches
 #
 function apply_genpatch_experimental() {
 	einfo "Applying genpatch experimental"
@@ -278,7 +324,9 @@ function apply_genpatch_experimental() {
 	cd "${S}"
 
 	# don't need since we apply upstream
-	if declare -f ot-kernel-common_apply_genpatch_experimental_patchset > /dev/null ; then
+	if declare -f ot-kernel-common_apply_genpatch_experimental_patchset \
+		> /dev/null ; \
+	then
 		ot-kernel-common_apply_genpatch_experimental_patchset
 	fi
 }
@@ -287,7 +335,8 @@ function apply_genpatch_experimental() {
 # @DESCRIPTION:
 # Apply the extra genpatches patchset.
 #
-# ot-kernel-common_apply_genpatch_extras_patchset - callback to apply individual patches
+# ot-kernel-common_apply_genpatch_extras_patchset - callback to apply \
+#   individual patches
 #
 function apply_genpatch_extras() {
 	einfo "Applying genpatch extras"
@@ -300,7 +349,9 @@ function apply_genpatch_extras() {
 
 	cd "${S}"
 
-	if declare -f ot-kernel-common_apply_genpatch_extras_patchset > /dev/null ; then
+	if declare -f ot-kernel-common_apply_genpatch_extras_patchset \
+		> /dev/null ; \
+	then
 		ot-kernel-common_apply_genpatch_extras_patchset
 	fi
 }
@@ -315,17 +366,21 @@ function apply_o3() {
 	cd "${S}"
 
 	# fix patch
-	sed -r -e "s|-1028,6 +1028,13|-1076,6 +1076,13|" "${DISTDIR}"/${O3_CO_FN} > "${T}"/${O3_CO_FN} || die
+	sed -r -e "s|-1028,6 +1028,13|-1076,6 +1076,13|" \
+		"${DISTDIR}"/${O3_CO_FN} \
+		> "${T}"/${O3_CO_FN} || die
 
 	einfo "Applying O3"
-	ewarn "Some patches have hunk(s) failed but still good or may be fixed ASAP."
+	ewarn \
+"Some patches have hunk(s) failed but still good or may be fixed ASAP."
 
 	einfo "Applying ${O3_CO_FN}"
 	_tpatch "${PATCH_OPS}" "${T}/${O3_CO_FN}"
 
 	einfo "Applying ${O3_RO_FN}"
 	mkdir -p drivers/gpu/drm/amd/display/dc/basics/
-	touch drivers/gpu/drm/amd/display/dc/basics/logger.c # trick patch for unattended patching
+	# trick patch for unattended patching
+	touch drivers/gpu/drm/amd/display/dc/basics/logger.c
 	_tpatch "-p1 -N" "${DISTDIR}/${O3_RO_FN}"
 
 	if declare -f ot-kernel-common_apply_o3_fixes > /dev/null ; then
@@ -367,7 +422,8 @@ function apply_bmq() {
 function apply_tresor() {
 	cd "${S}"
 	einfo "Applying tresor"
-	ewarn "Some patches have hunk(s) failed but still good or may be fixed ASAP."
+	ewarn \
+"Some patches have hunk(s) failed but still good or may be fixed ASAP."
 	local platform
 	if use tresor_aesni ; then
 		platform="aesni"
@@ -376,7 +432,8 @@ function apply_tresor() {
 		platform="i686"
 	fi
 
-	_tpatch "${PATCH_OPS}" "${DISTDIR}/tresor-patch-${PATCH_TRESOR_VER}_${platform}"
+	_tpatch "${PATCH_OPS}" \
+		"${DISTDIR}/tresor-patch-${PATCH_TRESOR_VER}_${platform}"
 	if declare -f ot-kernel-common_apply_tresor_fixes > /dev/null ; then
 		ot-kernel-common_apply_tresor_fixes
 	fi
@@ -412,7 +469,9 @@ function fetch_linux_sources() {
 
 	if [[ -d "${d}" ]] ; then
 		pushd "${d}" || die
-		if ! ( git remote -v | grep -F -e "${LINUX_REPO_URL}" ) > /dev/null ; then
+		if ! ( git remote -v | grep -F -e "${LINUX_REPO_URL}" ) \
+			> /dev/null ; \
+		then
 			einfo "Removing ${d}"
 			rm -rf "${d}" || die
 		fi
@@ -431,7 +490,8 @@ function fetch_linux_sources() {
 	else
 		local G=$(find "${d}" -group "root")
 		if (( ${#G} > 0 )) ; then
-			die "You must manually \`chown -R portage:portage ${d}\`.  Re-emerge again."
+			die \
+"You must manually \`chown -R portage:portage ${d}\`.  Re-emerge again."
 		fi
 		einfo "Updating the vanilla Linux kernel project"
 		cd "${d}" || die
@@ -462,44 +522,87 @@ function get_patch_index() {
 	local idx
 	local f
 	f=$(basename $(ls "${d}"/*${commit}*))
-	idx=$(echo ${f} | cut -f1 -d'-' | sed 's/^0*//' | sed 's|[a-zA-Z]||g')
+	idx=$(echo ${f} | cut -f1 -d '-' | sed 's/^0*//' | sed 's|[a-zA-Z]||g')
 	echo ${idx}
 }
 
 # @FUNCTION: get_linux_commit_list_for_amdgpu_range
 # @DESCRIPTION:
-# Gets the list of commits between oldest timestamp from between min timestamp of AMD_STAGING_INTERSECTS_5_X (2019) and ROCK_BASE (2014) to K_MAJOR_MINOR
+# Gets the list of commits between oldest timestamp from between min timestamp"
+# of AMD_STAGING_INTERSECTS_KV (2019) and ROCK_BASE (2014) to K_MAJOR_MINOR
 function get_linux_commit_list_for_amdgpu_range() {
-	if use amd-staging-drm-next-snapshot || use amd-staging-drm-next-milestone || use rock-snapshot || use rock-milestone ; then
-		if [[ -e "${FILESDIR}/${LINUX_COMMITS_AMDGPU_RANGE_FN}" ]] ; then
-			cp -a "${FILESDIR}/${LINUX_COMMITS_AMDGPU_RANGE_FN}" "${T}"
-			return
-		fi
+	if [[ -e "${FILESDIR}/${LINUX_HASHTABLE_COMMITS_VK_FN}" \
+		&& -e "${FILESDIR}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}" ]] ; \
+	then
+		cp -a "${FILESDIR}/${LINUX_HASHTABLE_COMMITS_VK_FN}" "${T}"
+		cp -a "${FILESDIR}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}" "${T}"
+		return
 	fi
 
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	d="${distdir}/ot-sources-src/linux"
 	cd "${d}" || die
-	einfo "Grabbing list of already merged amdgpu commits in v${K_MAJOR_MINOR} vanilla sources."
-	git -P log ${ROCK_BASE}..v${K_MAJOR_MINOR} --oneline --pretty=format:"%H" -- \
-		drivers/gpu/drm include/drm drivers/dma-buf include/linux include/uapi/drm \
+	einfo \
+"Grabbing list of already merged amdgpu commits in v${K_MAJOR_MINOR} vanilla\n"
+"sources."
+	OIFS="${IFS}"
+	IFS=$'\n'
+	git -P log ${ROCK_BASE}..v${K_MAJOR_MINOR} --oneline \
+		--pretty=format:"%H%x07%s" -- \
+		drivers/gpu/drm \
+		include/drm \
+		drivers/dma-buf \
+		include/linux \
+		include/uapi/drm \
 		| echo -e "\n$(cat -)" \
 		| tac > "${T}/${LINUX_COMMITS_AMDGPU_RANGE_FN}"
+
+	einfo "Generating hash tables for vanilla kernel"
+	unset vk_commits
+	unset vk_summaries
+	declare -A vk_commits
+	declare -A vk_summaries
+	while read -r l ; do
+		local h
+		h=$(echo "${l}" | cut -f1 -d $'\007')
+		if [[ -n "${h}" && "${h}" != " " ]] ; then
+			vk_commits[${h}]=1
+		fi
+		local s=$(echo "${l}" | cut -f2 -d $'\007')
+		h=$(echo -e "${s}" | sha1sum | cut -f1 -d ' ')
+		if [[ -n "${h}" && "${h}" != " " ]] ; then
+			vk_summaries[${h}]=1
+		fi
+	done < "${T}/${LINUX_COMMITS_AMDGPU_RANGE_FN}"
+	IFS="${OIFS}"
+	typeset -p vk_commits > "${T}/${LINUX_HASHTABLE_COMMITS_VK_FN}"
+	typeset -p vk_summaries > "${T}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}"
+	sed -i -r -e "s|^declare -A ||" "${T}/${LINUX_HASHTABLE_COMMITS_VK_FN}"
+	sed -i -r -e "s|^declare -A ||" "${T}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}"
 }
 
 # @FUNCTION: apply_amdgpu
 # @DESCRIPTION:
 # Applies amd-staging-drm-next and ROCk.
 #
-# ot-kernel-common_amdgpu_merge_and_apply_patches - optional callback that merges amd-staging-drm-next and ROCk fixes
+# ot-kernel-common_amdgpu_merge_and_apply_patches - optional callback that
+#   merges amd-staging-drm-next and ROCk fixes
 #
 function apply_amdgpu() {
-	if use amd-staging-drm-next-snapshot || use amd-staging-drm-next-milestone || use rock-snapshot || use rock-milestone ; then
-		if [[ ! -e "${FILESDIR}/${LINUX_COMMITS_AMDGPU_RANGE_FN}" ]] ; then
+	if use amd-staging-drm-next-snapshot \
+		|| use amd-staging-drm-next-milestone \
+		|| use rock-snapshot \
+		|| use rock-milestone ; \
+	then
+		if [[ ! -e "${FILESDIR}/${LINUX_HASHTABLE_COMMITS_VK_FN}" \
+		|| ! -e "${FILESDIR}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}" ]] ; \
+		then
 			fetch_linux_sources
 		fi
 	else
-		ewarn "It is recommended to use the rock-snapshot or rock-milestone USE flag or you need to fetch vanilla sources to regen the commit cache list."
+		ewarn \
+"It is recommended to use the rock-snapshot or rock-milestone USE flag or you \
+need to fetch vanilla sources to regen the commit cache list."
 		fetch_linux_sources
 	fi
 
@@ -510,7 +613,9 @@ function apply_amdgpu() {
 	fetch_amd_staging_drm_next
 	fetch_rock
 
-	if declare -f ot-kernel-common_amdgpu_merge_and_apply_patches > /dev/null ; then
+	if declare -f ot-kernel-common_amdgpu_merge_and_apply_patches \
+		> /dev/null ; \
+	then
 		ot-kernel-common_amdgpu_merge_and_apply_patches
 	fi
 }
@@ -519,10 +624,21 @@ function apply_amdgpu() {
 # @DESCRIPTION:
 # Checks if filterdiff can preserve renamed files
 function _check_filterdiff() {
-	cp -a "${DISTDIR}/linux--dma-buf-rename-reservation_object-to-dma_resv.patch" "${T}"
-	filterdiff -i "*/drivers/dma-buf/dma-resv.c" "${T}/linux--dma-buf-rename-reservation_object-to-dma_resv.patch" > "${T}/linux--dma-buf-rename-reservation_object-to-dma_resv.patch.result"
-	if ! grep -q -F -e "--- a/drivers/dma-buf/reservation.c" "${T}/linux--dma-buf-rename-reservation_object-to-dma_resv.patch.result" ; then
-		die "Your filterdiff is broken from the patchutils package which cannot handle renamed files correctly.  Use the one from the oiledmachine-overlay or a live version of the package."
+	cp -a \
+	"${DISTDIR}/linux--dma-buf-rename-reservation_object-to-dma_resv.patch" \
+		"${T}"
+	filterdiff -i \
+		"*/drivers/dma-buf/dma-resv.c" \
+"${T}/linux--dma-buf-rename-reservation_object-to-dma_resv.patch" \
+> "${T}/linux--dma-buf-rename-reservation_object-to-dma_resv.patch.result"
+	if ! grep -q -F -e \
+		"--- a/drivers/dma-buf/reservation.c" \
+"${T}/linux--dma-buf-rename-reservation_object-to-dma_resv.patch.result" ; \
+	then
+		die \
+"Your filterdiff is broken from the patchutils package which cannot handle\n"
+"renamed files correctly.  Use the one from the oiledmachine-overlay or a"
+"live version of the package."
 	fi
 }
 
@@ -541,10 +657,14 @@ function ot-kernel-common_src_unpack() {
 		UNIPATCH_LIST+=" ${DISTDIR}/${CK_FN}"
 	fi
 	if use graysky2 ; then
-		if $(ver_test $(gcc-version) -ge 9.1) && test -f "${DISTDIR}/${GRAYSKY_DL_9_1_FN}" ; then
+		if $(ver_test $(gcc-version) -ge 9.1) \
+			&& test -f "${DISTDIR}/${GRAYSKY_DL_9_1_FN}" ; \
+		then
 			einfo "GCC patch is 9.1"
 			UNIPATCH_LIST+=" ${DISTDIR}/${GRAYSKY_DL_9_1_FN}"
-		elif $(ver_test $(gcc-version) -ge 8.1) && test -f "${DISTDIR}/${GRAYSKY_DL_8_1_FN}" ; then
+		elif $(ver_test $(gcc-version) -ge 8.1) \
+			&& test -f "${DISTDIR}/${GRAYSKY_DL_8_1_FN}" ; \
+		then
 			einfo "GCC patch is 8.1"
 			UNIPATCH_LIST+=" ${DISTDIR}/${GRAYSKY_DL_8_1_FN}"
 		elif test -f "${DISTDIR}/${GRAYSKY_DL_4_9_FN}" ; then
@@ -597,10 +717,14 @@ function ot-kernel-common_src_unpack() {
 	apply_genpatch_experimental
 	apply_genpatch_extras
 
-	# should be done after all the kernel point releases contained in apply_genpatch_base
+	# should be done after all the kernel point releases contained in
+	# apply_genpatch_base
 	fetch_cve_hotfixes
 
-	if has amd-staging-drm-next-snapshot ${IUSE_EFFECTIVE} || has amd-staging-drm-next-latest ${IUSE_EFFECTIVE} || has amd-staging-drm-next-milestone ${IUSE_EFFECTIVE} ; then
+	if has amd-staging-drm-next-snapshot ${IUSE_EFFECTIVE} \
+		|| has amd-staging-drm-next-latest ${IUSE_EFFECTIVE} \
+		|| has amd-staging-drm-next-milestone ${IUSE_EFFECTIVE} ; \
+	then
 		apply_amdgpu
 	fi
 
@@ -639,7 +763,8 @@ function ot-kernel-common_pkg_pretend() {
 
 # @FUNCTION: ot-kernel-common_src_compile
 # @DESCRIPTION:
-# Compiles the userland programs especially the post-boot TRESOR AES post boot program.
+# Compiles the userland programs especially the post-boot TRESOR AES post boot
+# program.
 function ot-kernel-common_src_compile() {
 	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
 		if use tresor_sysfs ; then
@@ -655,7 +780,8 @@ function ot-kernel-common_src_compile() {
 # @DESCRIPTION:
 # Removes patch cruft.
 function ot-kernel-common_src_install() {
-	find "${S}" -name "*.orig" -print0 -o -name "*.rej" -print0 | xargs -0 rm
+	find "${S}" -name "*.orig" -print0 -o -name "*.rej" -print0 \
+		| xargs -0 rm
 
 	if has tresor ${IUSE_EFFECTIVE} ; then
 		if use tresor ; then
@@ -674,11 +800,14 @@ function ot-kernel-common_src_install() {
 #
 function ot-kernel-common_pkg_postinst() {
 	if use disable_debug ; then
-		einfo "The disable debug scripts have been placed in your /usr/src folder."
-		einfo "They disable debug paths, logging, output for a performance gain."
-		einfo "You should run it like \`/usr/src/disable_debug x86_64 /usr/src/.config\`"
-		cp "${FILESDIR}/_disable_debug_v${DISABLE_DEBUG_V}" "${EROOT}/usr/src/_disable_debug" || die
-		cp "${FILESDIR}/disable_debug_v${DISABLE_DEBUG_V}" "${EROOT}/usr/src/disable_debug" || die
+		einfo \
+"The disable debug scripts have been placed in your /usr/src folder.\n"
+"They disable debug paths, logging, output for a performance gain.\n"
+"You should run it like \`/usr/src/disable_debug x86_64 /usr/src/.config\`\n"
+		cp "${FILESDIR}/_disable_debug_v${DISABLE_DEBUG_V}" \
+			"${EROOT}/usr/src/_disable_debug" || die
+		cp "${FILESDIR}/disable_debug_v${DISABLE_DEBUG_V}" \
+			"${EROOT}/usr/src/disable_debug" || die
 		chmod 700 "${EROOT}"/usr/src/_disable_debug || die
 		chmod 700 "${EROOT}"/usr/src/disable_debug || die
 	fi
@@ -690,7 +819,8 @@ function ot-kernel-common_pkg_postinst() {
 			mv tresor_sysfs "${EROOT}/usr/bin" || die
 			chmod 700 "${EROOT}"/usr/bin/tresor_sysfs || die
 			# same hash for 5.1 and 5.0.13 for tresor_sysfs
-			einfo "/usr/bin/tresor_sysfs is provided to set your TRESOR key"
+			einfo \
+"/usr/bin/tresor_sysfs is provided to set your TRESOR key"
 		fi
 	fi
 
