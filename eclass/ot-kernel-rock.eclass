@@ -158,10 +158,10 @@ per-package env containing either: latest, head, snapshot,\n"
 				m+=", 2_9_0, 2_8_0, 2_7_0"
 			elif ver_test ${K_MAJOR_MINOR} -ge 4.15 \
 				&& ver_test ${K_MAJOR_MINOR} -lt 5.0 ; then
-				m+=", 1.9.2"
+				m+=", 1_9_2"
 			elif ver_test ${K_MAJOR_MINOR} -ge 4.13 \
 				&& ver_test ${K_MAJOR_MINOR} -lt 4.15 ; then
-				m+=", 1.8.3"
+				m+=", 1_8_3"
 			else
 				ewarn \
 "Your kernel version may not be supported by rock."
