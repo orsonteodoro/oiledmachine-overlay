@@ -236,10 +236,10 @@ function generate_rock_patches() {
 		target="${ROCK_SNAPSHOT}"
 		suffix_rock="..${target}${suffix_rock_dgma}"
 	elif [[ "${ROCK_BUMP_REQUEST}" =~ head ]] ; then
-		target="${ROCK_LATEST}"
+		target="${ROCK_HEAD}"
 		suffix_rock="..$(git rev-parse ${target})${suffix_rock_dgma}"
 	elif [[ "${ROCK_BUMP_REQUEST}" =~ latest ]] ; then
-		target="${ROCK_MILESTONE}"
+		target="${ROCK_LATEST}"
 		suffix_rock="..${target}${suffix_rock_dgma}"
 	elif [[ "${ROCK_BUMP_REQUEST}" =~ 2_9_0 ]] ; then
 		target="${ROCK_2_9_0}"
@@ -269,6 +269,7 @@ function generate_rock_patches() {
 	# It takes a long time to filter through thousands of patches because
 	#   it goes back since 2014
 	# It's not so problematic with just amd-staging-drm-next use flag alone.
+	# It takes 159m (or 2 hours ~40 min) to merge without caches.
 
 	unset vk_commits
 	unset vk_summaries

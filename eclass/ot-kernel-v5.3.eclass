@@ -149,14 +149,6 @@ https://github.com/torvalds/linux/commit/04ed8459f3348f95c119569338e39294a8e0234
 https://github.com/torvalds/linux/commit/695af5f9a51914030eb2d9e3ba923d38180a8199.patch \
 	-> torvalds-linux-kernel-695af5f9a51914030eb2d9e3ba923d38180a8199.patch"
 
-# 4b Revert "drm/amdkfd: New IOCTL to allocate queue GWS"
-# d1 drm/amd/amdgpu/vcn_v2_0: Move VCN 2.0 specific dec ring test to vcn_v2_0
-# 04 drm/amdgpu: remove chash
-# 2d drm/amdkfd: Fix gfx8 MEM_VIOL exception handler
-# 1b drm/amdkfd: Introduce XGMI SDMA queue type
-# d3 drm/amdkfd: Refactor create_queue_nocpsch
-# 5b drm/amdkfd: fix cp hang in eviction
-
 _set_check_reqs_requirements() {
 	# for 3.1 kernel
 	# source merge alone: 986.2 MiB
@@ -477,7 +469,7 @@ function ot-kernel-rock_rm() {
 	rock_rm a1d58b7bf915e956f14984fcf1a3d8431657d351
 # used in 178d1118dbee5cff09badab7208525b287fa849f
 	rock_rm 5b734f8c1205ff65ef2af7484932078bb655f41c
-	rocm_rm 509649b8d929b5981e57c6f1b8d50756af56e033
+	rock_rm 509649b8d929b5981e57c6f1b8d50756af56e033
 
 	# reject cosmetic
 	rock_rm 6b719b24a48e31ff2b37b97cce552e4615c7d277
@@ -738,15 +730,17 @@ function ot-kernel-common_amdgpu_merge_and_apply_patches() {
 # @FUNCTION: ot-kernel-asdn-generate_amd_staging_drm_next_patches_post
 # @DESCRIPTION:
 # Removes unnecessary hunks
-ot-kernel-asdn-generate_amd_staging_drm_next_patches_post() {
-	_amdgpu_common_filter_patches "amd-staging-drm-next-patches"
+function ot-kernel-asdn-generate_amd_staging_drm_next_patches_post() {
+	#_amdgpu_common_filter_patches "amd-staging-drm-next-patches"
+	:;
 }
 
 # @FUNCTION: ot-kernel-rock_generate_rock_patches_post
 # @DESCRIPTION:
 # Removes unnecessary hunks
-ot-kernel-rock_generate_rock_patches_post() {
-	_amdgpu_common_filter_patches "rock-patches"
+function ot-kernel-rock_generate_rock_patches_post() {
+	#_amdgpu_common_filter_patches "rock-patches"
+	:;
 }
 
 # @FUNCTION: ot-kernel-common_pkg_postinst_cb

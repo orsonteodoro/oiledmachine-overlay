@@ -870,7 +870,7 @@ function ot-kernel-common_amdgpu_get_suffix_asdn() {
 "..${AMD_STAGING_DRM_NEXT_DC_VER_C}${suffix_rock_dgma}"
 	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ head ]] ; then
 		suffix_asdn=\
-"..$(git rev-parse HEAD)${suffix_rock_dgma}"
+"..$(git rev-parse ${AMD_STAGING_DRM_NEXT_HEAD_C})${suffix_rock_dgma}"
 	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ snapshot ]] ; then
 		suffix_asdn=\
 "..${AMD_STAGING_DRM_NEXT_SNAPSHOT_C}${suffix_rock_dgma}"
