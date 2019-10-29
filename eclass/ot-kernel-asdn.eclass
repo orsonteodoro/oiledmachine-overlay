@@ -38,7 +38,7 @@ dc_ver, amdgpu_version"
 				m+=", amdgpu_18_40"
 			else
 				ewarn \
-"Your kernel version may not be supported by amd-staging-drm-next."
+	     "Your kernel version may not be supported by amd-staging-drm-next."
 			fi
 			die "${m}"
 		fi
@@ -48,7 +48,9 @@ dc_ver, amdgpu_version"
 			amdgpu_19_10|amdgpu_18_40)
 				;;
 			*)
-				die "Invalid AMD_STAGING_DRM_NEXT_BUMP_REQUEST value"
+				die \
+			       "Invalid AMD_STAGING_DRM_NEXT_BUMP_REQUEST value"
+				;;
 		esac
 	fi
 }
