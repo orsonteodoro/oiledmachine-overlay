@@ -62,25 +62,22 @@ LINUX_TIMESTAMP=1568582372
 
 IUSE="  bfq bmq bmq-quick-fix \
 	amd-staging-drm-next \
+	directgma
 	rock \
 	+cfs disable_debug +graysky2 muqss +o3 pds uksm \
 	tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs \
 	-zentune"
-REQUIRED_USE="^^ ( muqss pds cfs bmq )
-	     tresor_sysfs? ( || ( tresor_i686 tresor_x86_64 tresor_aesni ) )
-	     tresor? ( ^^ ( tresor_i686 tresor_x86_64 tresor_aesni ) )
-	     tresor_i686? ( tresor )
-	     tresor_x86_64? ( tresor )
-	     tresor_aesni? ( tresor )"
-
-IUSE+=" amd-staging-drm-next \
-	rock \
-	directgma"
-REQUIRED_USE+=" directgma? ( rock ) rock? ( amd-staging-drm-next )"
-
-DEPEND+=" amd-staging-drm-next? ( dev-vcs/git ) \
+DEPEND=" amd-staging-drm-next? ( dev-vcs/git ) \
 	  rock? ( dev-vcs/git ) \
 	  dev-util/patchutils"
+REQUIRED_USE="^^ ( muqss pds cfs bmq )
+	     directgma? ( rock )
+	     rock? ( amd-staging-drm-next )
+	     tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
+	     tresor_aesni? ( tresor )
+	     tresor_i686? ( tresor )
+	     tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
+	     tresor_x86_64? ( tresor )"
 
 # no released patch yet
 REQUIRED_USE+=" !pds !bmq-quick-fix !muqss"
@@ -99,8 +96,8 @@ inherit python-any-r1 kernel-2 toolchain-funcs
 detect_version
 detect_arch
 
-#DEPEND="deblob? ( ${PYTHON_DEPS} )"
-DEPEND="dev-util/patchutils"
+#DEPEND+=" deblob? ( ${PYTHON_DEPS} )"
+DEPEND+= "dev-util/patchutils"
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
@@ -141,8 +138,7 @@ SRC_URI+=" ${KERNEL_URI}
 	   ${TRESOR_README_DL_URL}
 	   ${TRESOR_SRC_URL}
 	   ${UKSM_SRC_URL}
-	   ${KERNEL_PATCH_URLS[@]}
-	   "
+	   ${KERNEL_PATCH_URLS[@]}"
 
 SRC_URI+=\
 "https://github.com/torvalds/linux/commit/4b3e30ed3ec7864e798403a63ff2e96bd0c19ab0.patch \
