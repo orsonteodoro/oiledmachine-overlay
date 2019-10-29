@@ -152,8 +152,8 @@ function rock_setup() {
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 			local m=\
 "You must define a ROCK_BUMP_REQUEST environmental variable in make.conf or\n\
-per-package env containing either: latest, head, snapshot,\n\"
-			if ver_test ${K_MAJOR_MINOR} -ge 5.0 && \
+per-package env containing either: latest, head, snapshot,\n"
+			if ver_test ${K_MAJOR_MINOR} -ge 5.0 \
 				&& ver_test ${K_MAJOR_MINOR} -le 5.3 ; then
 				m+=", 2_9_0, 2_8_0, 2_7_0"
 			elif ver_test ${K_MAJOR_MINOR} -ge 4.15 \

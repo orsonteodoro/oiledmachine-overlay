@@ -95,7 +95,11 @@
       latest AMD GPU hardware, PowerPlay updates.  You need to define a
       AMD_STAGING_DRM_NEXT_BUMP_REQUEST version subscription environmental 
       variable with either head, snapshot, dc_ver, amdgpu_version, 
-      amdgpu_19_30.</flag>
+      amdgpu_19_30.  head uses the latest commit updated a couple times a
+      week.  snapshot is tested instance of head. dc_ver is updated weekly or 
+      monthly.  amdgpu_version is updated several times a year.
+      amdgpu_19_30 is a snapshot of the tag, and corresponds to 19.30
+      amdgpu-pro dkms driver but without ROCk enhancements.</flag>
     <flag name="bfq">Patches the kernel with BFQ fixes and updates from the
       Liquorix kernel project.</flag>
     <flag name="bmq">Patches the kernel to use BMQ CPU scheduler, a more
@@ -128,7 +132,11 @@
       latest version of ROCk to unlock the fullest potential of the ROCm
       API and the hardware.  You need to define a ROCK_BUMP_REQUEST 
       version subscription environmental variable with either: latest, 
-      head, snapshot, 2_9_0.</flag>
+      head, snapshot, 2_9_0.  head is latest commit and updated a
+      couple times a week.  snapshot is a tested instance of head.
+      2_9_0 is a tag release of ROCk.  latest is the newest tag release
+      updated a couple of months.
+      </flag>
     <flag name="symlink">Updates the the /usr/src/linux symlink for every
       newer release.</flag>
     <flag name="tresor">Controls application of TRESOR.  AES keys are
