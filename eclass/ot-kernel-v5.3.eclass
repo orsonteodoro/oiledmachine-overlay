@@ -38,25 +38,6 @@ PATCH_BMQ_VER="${PATCH_BMQ_VER:=100}"
 PATCH_BMQ_MAJOR_MINOR="5.3"
 DISABLE_DEBUG_V="1.1"
 
-# When the Kernel version is >5.3, the AMD_STAGING_DRM_NEXT variables should be
-# no longer updated, otherwise it may exhibit runtime errors.  This is based on
-# experience.
-
-CURRENT_DC_VER="03.02.054" # in ${PV}'s drivers/gpu/drm/amd/display/dc/dc.h
-
-AMD_STAGING_DRM_NEXT_LATEST="amd-staging-drm-next"
-AMD_STAGING_DRM_NEXT_DIR="amd-staging-drm-next"
-
-AMD_STAGING_DRM_NEXT_SNAPSHOT="e025c334b6c7aa66c0fc67548643bd52c4a39eef" \
-# latest commit I tested which should be ideally head
-# 2019-10-04 drm/amdgpu: remove redundant variable r and redundant return statement
-
-AMD_STAGING_DRM_NEXT_MILESTONE="a35d69a03b08e868ad222b1faa6ae5cc2c39113e"
-# corresponds to the tagged commit:: 2019-09-17 drm/amd/display: 3.2.51.1
-
-#AMD_STAGING_INTERSECTS_ROCK="9c5ab937b15f87523dd057ba05b9869331283286"
-# DC_VER=3.2.35
-
 # KV is kernel version, for the variable below means a commit hash
 # "around a major.minor release."
 
@@ -80,9 +61,8 @@ AMD_STAGING_INTERSECTS_KV="5408887141baac0ad1a5e6cf514ceadf33090114"
 LINUX_TIMESTAMP=1568582372
 
 IUSE="  bfq bmq bmq-quick-fix \
-	amd-staging-drm-next-latest \
-	amd-staging-drm-next-snapshot \
-	amd-staging-drm-next-milestone \
+	amd-staging-drm-next \
+	rock \
 	+cfs disable_debug +graysky2 muqss +o3 pds uksm \
 	tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs \
 	-zentune"
@@ -111,10 +91,7 @@ detect_version
 detect_arch
 
 #DEPEND="deblob? ( ${PYTHON_DEPS} )"
-DEPEND="amd-staging-drm-next-snapshot? ( dev-vcs/git )
-	amd-staging-drm-next-latest? ( dev-vcs/git )
-	amd-staging-drm-next-milestone? ( dev-vcs/git )
-	dev-util/patchutils"
+DEPEND="dev-util/patchutils"
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
@@ -180,11 +157,11 @@ _set_check_reqs_requirements() {
 	# for 3.1 kernel
 	# source merge alone: 986.2 MiB
 	# linux-amd-staging-drm-next local repo: 2002.72 MiB
-	if is_rock && is_amd_staging_drm_next ; then
+	if use rock && use amd-staging-drm-next ; then
 		CHECKREQS_DISK_USR="5470M"
-	elif is_rock ; then
+	elif use rock ; then
 		CHECKREQS_DISK_USR="3467M"
-	elif is_amd_staging_drm_next ; then
+	elif use amd-staging-drm-next ; then
 		CHECKREQS_DISK_USR="2990M"
 	fi
 }
@@ -204,7 +181,7 @@ like npm.  These use flags are not recommended."
 "TRESOR is broken for ${PV}.  Use 4.9.x series.  For ebuild devs only."
 	fi
 
-	if is_rock ; then
+	if use rock ; then
 		ewarn "Patching with ROCk is broken.  For ebuild devs only."
 
 		einfo
@@ -217,7 +194,7 @@ for the exception.  For supported CPUs see\n\
 		einfo
 	fi
 
-	if ( is_rock || is_amd_staging_drm_next ) ; then
+	if ( use rock || use amd-staging-drm-next ) ; then
 		_set_check_reqs_requirements
 		check-reqs_pkg_setup
 	fi
@@ -227,7 +204,7 @@ for the exception.  For supported CPUs see\n\
 # @DESCRIPTION:
 # Does checks and warnings
 function ot-kernel-common_pkg_pretend_cb() {
-	if ( is_rock || is_amd_staging_drm_next ) ; then
+	if ( use rock || use amd-staging-drm-next ) ; then
 		_set_check_reqs_requirements
 		check-reqs_pkg_pretend
 	fi
@@ -288,7 +265,7 @@ function ot-kernel-asdn_rm() {
 	asdn_rm 5fa790f6c936c4705dea5883fa12da9e017ceb4f
 	asdn_rm 3f61fd41f38328f0a585eaba2d72d339fe9aecda
 
-	if is_amd_staging_drm_next && is_rock ; then
+	if use amd-staging-drm-next && use rock ; then
 		# use rock version instead
 		asdn_rm	d0ba51b1cacd27bdc1acfe70cb55699f3329b2b1
 	fi
@@ -296,7 +273,7 @@ function ot-kernel-asdn_rm() {
 
 # merge conflict resolver
 function ot-kernel-common_amdgpu_merge_and_apply_patches_asdn() {
-  if is_amd_staging_drm_next && ! is_rock ; then
+  if use amd-staging-drm-next && ! use rock ; then
     cd "${S}"
     L=$(ls -1 "${mpd}" | sort)
     for l in $L ; do
@@ -487,6 +464,7 @@ function ot-kernel-rock_rm() {
 		rock_rm 8098a2f9c3ba6fba0055aa88d3830bbec585268b
 		rock_rm 4eff2c42f996e8d70ec874186d3c35a8f64a8235
 		rock_rm 388c85610cd4782467bae4f44d7b7c8cacebfaae
+		rock_rm bb02f27489fe4469cf3460549dd0bf45e1cc1746 # ssg
 	fi
 
 	# reject dkms/kcl
@@ -503,7 +481,7 @@ function ot-kernel-rock_rm() {
 
 # merge conflict resolver
 function ot-kernel-common_amdgpu_merge_and_apply_patches_rock() {
-  if is_amd_staging_drm_next && is_rock ; then
+  if use amd-staging-drm-next && use rock ; then
     cd "${S}"
     L=$(ls -1 "${mpd}" | sort)
     for l in $L ; do
@@ -528,14 +506,11 @@ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
       echo $(patch --dry-run ${PATCH_OPS} -i "${mpd}/${l}") | grep -F -e "FAILED at"
       if [[ "$?" == "1" ]] ; then
         case "${l}" in
-          *db6a49d958db4725a1003d208d6890c55a8a811c*asdn*)
-            # Easy
-            # Mispatch caused by missing
-            #  struct kfd2kgd_calls *amdgpu_amdkfd_gfx_10_0_get_functions(void);
-            # caused by maybe a revert
-            _dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+          *bb02f27489fe4469cf3460549dd0bf45e1cc1746*)
+            # remove kcl header macro reference
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
             _dpatch "${PATCH_OPS}" \
-"${FILESDIR}/amdgpu-db6a49d958db4725a1003d208d6890c55a8a811c-fix-mispatch-for-5.3.4-rasdn.patch"
+"${FILESDIR}/rock-bb02f27489fe4469cf3460549dd0bf45e1cc1746-skip-drm-ver-check-for-5.3.4.patch"
             ;;
           *d732ef0efc3beed8b8c30433aa11d5b6895cb457*rock*)
             # drm/amdkcl: add dkms support ; remove?
@@ -741,11 +716,11 @@ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
 function ot-kernel-common_amdgpu_merge_and_apply_patches() {
 	local mpd="${T}/amdgpu-merged-patches"
 	mkdir -p "${mpd}"
-	if is_amd_staging_drm_next ; then
+	if use amd-staging-drm-next ; then
 		generate_amd_staging_drm_next_patches
 		mv "${T}/amd-staging-drm-next-patches"/* "${mpd}"
 	fi
-	if is_rock ; then
+	if use rock ; then
 		generate_rock_patches
 		mv "${T}/rock-patches"/* "${mpd}"
 	fi
@@ -792,7 +767,7 @@ The MuQSS scheduler may have random system hard pauses for few seconds to\n\
 This might result in a denial of service that may require rebooting."
 	fi
 
-	if is_rock ; then
+	if use rock ; then
 		rock_postinst_msg
 	fi
 }

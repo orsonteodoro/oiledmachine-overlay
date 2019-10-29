@@ -16,7 +16,7 @@
 # UKSM:
 #   https://github.com/dolohow/uksm
 # zen-tune:
-#  https://github.com/torvalds/linux/compare/v5.0...zen-kernel:5.0/zen-tune
+#   https://github.com/torvalds/linux/compare/v5.0...zen-kernel:5.0/zen-tune
 # O3 (Optimize Harder):
 #   https://github.com/torvalds/linux/commit/a56a17374772a48a60057447dc4f1b4ec62697fb
 #   https://github.com/torvalds/linux/commit/93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9
