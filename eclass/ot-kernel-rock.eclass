@@ -167,6 +167,14 @@ per-package env containing either: latest, head, snapshot,\n"
 "Your kernel version may not be supported by rock."
 			fi
 			die "${m}"
+			case ${ROCK_BUMP_REQUEST} in
+				head|snapshot|latest|2_9_0|2_8_0|2_7_0|1_9_2|\
+				1_8_3)
+					;;
+				*)
+					die "Invalid ROCK_BUMP_REQUEST value"
+					;;
+			esac
 		fi
 	fi
 }

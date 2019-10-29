@@ -23,7 +23,6 @@ HOMEPAGE+=\
 function amd_staging_drm_next_setup() {
 	if use amd-staging-drm-next ; then
 		if [[ -z "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" ]] ; then
-#1234567890123456789012345678901234567890123456789012345678901234567890123456789
 			local m=\
 "You must define a AMD_STAGING_DRM_NEXT_BUMP_REQUEST environmental variable\n\
 in your make.conf or per-package env containing either: head, snapshot,\n\
@@ -43,13 +42,15 @@ dc_ver, amdgpu_version"
 			fi
 			die "${m}"
 		fi
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
+		case ${AMD_STAGING_DRM_NEXT_BUMP_REQUEST} in
+			head|snapshot|dc_ver|amdgpu_version|amdgpu_19_30|\
+			amdgpu_19_10|amdgpu_18_40)
+				;;
+			*)
+				die "Invalid AMD_STAGING_DRM_NEXT_BUMP_REQUEST value"
+		esac
 	fi
-	case ${AMD_STAGING_DRM_NEXT_BUMP_REQUEST} in
-		head|snapshot|dc_ver|amdgpu_version|amdgpu_)
-			;;
-		*)
-			die "Invalid AMD_STAGING_DRM_NEXT_BUMP_REQUEST value"
-	esac
 }
 
 # @FUNCTION: fetch_amd_staging_drm_next
