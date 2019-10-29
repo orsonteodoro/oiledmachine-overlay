@@ -6,19 +6,26 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    ot-sources is a kernel experimental patchset containing performance patches and encryption.
+    ot-sources is a kernel experimental patchset containing performance patches
+    and encryption.
+
     Power users can choose either the BMQ, PDS, MuQSS CPU schedulers.
-    The TRESOR patch provides increased mitigation from cold boot resistant attacks (only in the 4.14.x series).
+
+    The TRESOR patch provides increased mitigation from cold boot resistant
+    attacks (only in the 4.14.x series).
     Compiler based optimizations are provided by GraySky patch and O3 patch.
 
     Currently not updated:
-    The amd-staging-drm-next patches provide increase compatibility and better support for with new hardware
-    and features.
-    The ROCk kernel driver will install the driver needed for the ROCm platform.  ROCm requires PCIe 2.0.
+    The amd-staging-drm-next patches provide increase compatibility and better
+    support for with new hardware and features.
+    The ROCk kernel driver will install the driver needed for the ROCm platform.
+    ROCm requires PCIe 3.0.
   </longdescription>
   <upstream>
     <!-- for this patchset -->
-    <bugs-to>https://github.com/orsonteodoro/oiledmachine-overlay/issues</bugs-to>
+    <bugs-to>
+      https://github.com/orsonteodoro/oiledmachine-overlay/issues
+    </bugs-to>
     <maintainer status="active" type="person">
       <!-- for bmq and pds -->
       <email>cchalpha@gmail.com</email>
@@ -78,31 +85,59 @@
     </maintainer>
   </upstream>
   <use>
-    <flag name="amd-staging-drm-next-latest">Patches the kernel with latest AMD GPU compatibility and fixes.  May break compile time anytime.</flag>
-    <flag name="amd-staging-drm-next-milestone">Patches the kernel with the stable milestone release of AMD GPU compatibility and fixes.</flag>
-    <flag name="amd-staging-drm-next-snapshot">Patches the kernel with the tested latest AMD GPU compatibility and fixes.</flag>
-    <flag name="bfq">Patches the kernel with BFQ fixes and updates from the Liquorix kernel project.</flag>
-    <flag name="bmq">Patches the kernel to use BMQ CPU scheduler, a more simple scheduler.</flag>
+    <flag name="amd-staging-drm-next">Patches the amdgpu DRM kernel driver with
+      latest AMD GPU hardware, PowerPlay updates.  You need to define a
+      AMD_STAGING_DRM_NEXT_BUMP_REQUEST version subscription environmental 
+      variable with either head, snapshot, dc_ver, amdgpu_version, 
+      amdgpu_19_30.</flag>
+    <flag name="bfq">Patches the kernel with BFQ fixes and updates from the
+      Liquorix kernel project.</flag>
+    <flag name="bmq">Patches the kernel to use BMQ CPU scheduler, a more
+      simple scheduler.</flag>
     <flag name="bmq-quick-fix">Patches the kernel with fixes to BMQ.</flag>
     <flag name="build">Builds the kernel.</flag>
-    <flag name="cve_hotfix">Applies patches to resolve CVEs (Common Vulnerabilities and Exposures).</flag>
-    <flag name="cfs">Assumes the IO scheduler will be the stock CFS CPU scheduler.</flag>
-    <flag name="disable_debug">Installs scripts to disable debugging, tracing, verbose output or related code paths.</flag>
-    <flag name="graysky2">Patches the kernel for more CPU microarchitecutures</flag>
-    <flag name="directgma">Toggles the merging or removal of commits related to FirePro DirectGMA support.  Disabling it may reduces the code size a bit; make it less problematic to update the amdgpu-driver/amd-staging-drm-next part of ROCk.</flag>
-    <flag name="muqss">Patches the kernel with Con Kolivas patchset and includes his skiplist based MuQSS CPU scheduler.</flag>
-    <flag name="o3">Patches the kernel to allow for more aggressive O3 compiler optimizations.</flag>
-    <flag name="pds">Patches the kernel with an alternative skiplist based scheduler.</flag>
-    <flag name="rock-latest">Patches the kernel with additional Multi GPU enhancements with the latest version of ROCk.  May break compile time anytime.</flag>
-    <flag name="rock-milestone">Patches the kernel with additional Multi GPU enhancements with the latest version of ROCk.</flag>
-    <flag name="rock-snapshot">Patches the kernel with additional Multi GPU enhancements with the tested latest version of ROCk.</flag>
-    <flag name="symlink">Updates the the /usr/src/linux symlink for every newer release.</flag>
-    <flag name="tresor">Controls application of TRESOR.  AES keys are stored in registers instead of RAM.</flag>
-    <flag name="tresor_aesni">Patches the kernel with cold boot resistant AES hardware accelerated AES-NI support.</flag>
-    <flag name="tresor_i686">Patches the kernel with cold boot resistant AES using SSE for 32 bit systems.</flag>
+    <flag name="cve_hotfix">Applies patches to resolve CVEs (Common 
+      Vulnerabilities and Exposures).</flag>
+    <flag name="cfs">Assumes the IO scheduler will be the stock CFS CPU
+      scheduler.</flag>
+    <flag name="disable_debug">Installs scripts to disable debugging, tracing,
+      verbose output or related code paths.</flag>
+    <flag name="graysky2">Patches the kernel for more CPU
+      microarchitecutures</flag>
+    <flag name="directgma">Toggles the merging or removal of commits related
+      to FirePro DirectGMA support.  Disabling it may reduces the code size
+      a bit; make it less problematic to update the
+      amdgpu-driver / amd-staging-drm-next part of ROCk.  For enhanced 
+      SSG (Solid State Graphics) support, you will need to enable this
+      USE flag.
+      </flag>
+    <flag name="muqss">Patches the kernel with Con Kolivas patchset and
+      includes his skiplist based MuQSS CPU scheduler.</flag>
+    <flag name="o3">Patches the kernel to allow for more aggressive O3
+      compiler optimizations.</flag>
+    <flag name="pds">Patches the kernel with an alternative skiplist
+      based scheduler.</flag>
+    <flag name="rock">Patches the kernel with additional Multi GPU
+      enhancements and enthusiast grade AMD GPU hardware support with the 
+      latest version of ROCk to unlock the fullest potential of the ROCm
+      API and the hardware.  You need to define a ROCK_BUMP_REQUEST 
+      version subscription environmental variable with either: latest, 
+      head, snapshot, 2_9_0.</flag>
+    <flag name="symlink">Updates the the /usr/src/linux symlink for every
+      newer release.</flag>
+    <flag name="tresor">Controls application of TRESOR.  AES keys are
+      stored in registers instead of RAM.</flag>
+    <flag name="tresor_aesni">Patches the kernel with cold boot resistant
+      AES hardware accelerated AES-NI support.</flag>
+    <flag name="tresor_i686">Patches the kernel with cold boot resistant
+      AES using SSE for 32 bit systems.</flag>
     <flag name="tresor_sysfs">Builds the external key setting program.</flag>
-    <flag name="tresor_x86_64">Patches the kernel with cold boot resistant AES using SSE for 64 bit systems.</flag>
-    <flag name="uksm">Patches the kernel with the Ultra Kernel Samepage Merging, a type of page deduper algorithm.  Using it may be insecure.</flag>
-    <flag name="zentune">Patches the kernel with Zen Interactive Tuning.</flag>
+    <flag name="tresor_x86_64">Patches the kernel with cold boot
+     resistant AES using SSE for 64 bit systems.</flag>
+    <flag name="uksm">Patches the kernel with the Ultra Kernel Samepage
+     Merging, a type of page deduper algorithm.  Using it may be
+     insecure.</flag>
+    <flag name="zentune">Patches the kernel with Zen Interactive
+     Tuning.</flag>
   </use>
 </pkgmetadata>
