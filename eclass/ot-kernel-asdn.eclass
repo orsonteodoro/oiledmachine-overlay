@@ -21,7 +21,7 @@ HOMEPAGE+=\
 "https://cgit.freedesktop.org/~agd5f/linux/log/?h=amd-staging-drm-next"
 
 function amd_staging_drm_next_setup() {
-	if use amd_staging_drm_next ; then
+	if use amd-staging-drm-next ; then
 		if [[ -z "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" ]] ; then
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 			local m=\
@@ -55,7 +55,7 @@ dc_ver, amdgpu_version"
 # @DESCRIPTION:
 # Generalization of steps for fetching and generating commit list.
 function fetch_amd_staging_drm_next() {
-	if use amd_staging_drm_next ; then
+	if use amd-staging-drm-next ; then
 		fetch_amd_staging_drm_next_local_copy
 	fi
 }
