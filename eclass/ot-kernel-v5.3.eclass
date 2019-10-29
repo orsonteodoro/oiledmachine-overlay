@@ -62,7 +62,7 @@ LINUX_TIMESTAMP=1568582372
 
 IUSE="  bfq bmq bmq-quick-fix \
 	amd-staging-drm-next \
-	directgma
+	directgma \
 	rock \
 	+cfs disable_debug +graysky2 muqss +o3 pds uksm \
 	tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs \
@@ -97,7 +97,6 @@ detect_version
 detect_arch
 
 #DEPEND+=" deblob? ( ${PYTHON_DEPS} )"
-DEPEND+= "dev-util/patchutils"
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
