@@ -92,11 +92,11 @@ ROCK_BASE="e28740ece34d314002b1ddfa14e8fb7c7b909489"
 
 ROCK_SNAPSHOT="217c2b3894e783d7e1751e4caa9dabc25977c27d"
 ROCK_LATEST="217c2b3894e783d7e1751e4caa9dabc25977c27d"
-ROCK_2_9_0="217c2b3894e783d7e1751e4caa9dabc25977c27d"
-ROCK_2_8_0="89baa3f89c8cb0d76e999c01bf304301e35abc9b"
-ROCK_2_7_0="38d5546b8cd23bc4e265c4ec430f019de620eaf7"
-ROCK_1_9_2="348f05754dda33523a8e5168f7df2fc9eee125b0"
-ROCK_1_8_3="ca2a6a781973e82ca2c7be8e4fdf7c880f60cb8d"
+ROCK_2_9_0="217c2b3894e783d7e1751e4caa9dabc25977c27d" # KV is 5.0-rc1
+ROCK_2_8_0="89baa3f89c8cb0d76e999c01bf304301e35abc9b" # KV is 5.0-rc1
+ROCK_2_7_0="38d5546b8cd23bc4e265c4ec430f019de620eaf7" # KV is 5.0-rc1
+ROCK_1_9_2="348f05754dda33523a8e5168f7df2fc9eee125b0" # KV is 4.15
+ROCK_1_8_3="ca2a6a781973e82ca2c7be8e4fdf7c880f60cb8d" # KV is 4.13
 ROCK_HEAD="master"
 
 # The intersection is defined to be the newer commit of rock_xxxx that
@@ -150,10 +150,23 @@ function rock_setup() {
 	if use rock ; then
 		if [[ -z "${ROCK_BUMP_REQUEST}" ]] ; then
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-			die \
+			local m=\
 "You must define a ROCK_BUMP_REQUEST environmental variable in make.conf or\n\
-per-package env containing either: latest, head, snapshot, 2_9_0, 2_8_0,\n\
-2_7_0, 1_9_2, 1_8_3."
+per-package env containing either: latest, head, snapshot,\n\"
+			if ver_test ${K_MAJOR_MINOR} -ge 5.0 && \
+				&& ver_test ${K_MAJOR_MINOR} -le 5.3 ; then
+				m+=", 2_9_0, 2_8_0, 2_7_0"
+			elif ver_test ${K_MAJOR_MINOR} -ge 4.15 \
+				&& ver_test ${K_MAJOR_MINOR} -lt 5.0 ; then
+				m+=", 1.9.2"
+			elif ver_test ${K_MAJOR_MINOR} -ge 4.13 \
+				&& ver_test ${K_MAJOR_MINOR} -lt 4.15 ; then
+				m+=", 1.8.3"
+			else
+				ewarn \
+"Your kernel version may not be supported by rock."
+			fi
+			die ${m}
 		fi
 	fi
 }

@@ -38,7 +38,8 @@ dc_ver, amdgpu_version"
 				&& ver_test ${K_MAJOR_MINOR} -lt 4.18 ; then
 				m+=", amdgpu_18_40"
 			else
-				eerror "Kernel version may not be supported."
+				ewarn \
+"Your kernel version may not be supported by amd-staging-drm-next."
 			fi
 			die ${m}
 		fi
