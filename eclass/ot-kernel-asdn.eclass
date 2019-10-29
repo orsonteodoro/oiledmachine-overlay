@@ -29,13 +29,13 @@ function amd_staging_drm_next_setup() {
 in your make.conf or per-package env containing either: head, snapshot,\n\
 dc_ver, amdgpu_version"
 			if ver_test ${K_MAJOR_MINOR} -ge 5.0 \
-				&& ver_test ${K_MAJOR_MINOR} -le 5.3 ]] ; then
+				&& ver_test ${K_MAJOR_MINOR} -le 5.3 ; then
 				m+=", amdgpu_19_30"
 			elif ver_test ${K_MAJOR_MINOR} -ge 4.18 \
-				&& ver_text ${K_MAJOR_MINOR} -lt 5.0 ; then
+				&& ver_test ${K_MAJOR_MINOR} -lt 5.0 ; then
 				m+=", amdgpu_19_10"
 			elif ver_test ${K_MAJOR_MINOR} -ge 4.15 \
-				&& ver_text ${K_MAJOR_MINOR} -lt 4.18 ; then
+				&& ver_test ${K_MAJOR_MINOR} -lt 4.18 ; then
 				m+=", amdgpu_18_40"
 			else
 				eerror "Kernel version may not be supported."
