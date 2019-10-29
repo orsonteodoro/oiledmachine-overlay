@@ -13,12 +13,17 @@
 
     The TRESOR patch provides increased mitigation from cold boot resistant
     attacks (only in the 4.14.x series).
+
     Compiler based optimizations are provided by GraySky patch and O3 patch.
 
-    Currently not updated:
     The amd-staging-drm-next patches provide increase compatibility and better
-    support for with new hardware and features.
-    The ROCk kernel driver will install the driver needed for the ROCm platform.
+    support for new hardware and features like FreeSync, PowerPlay updates.
+
+    The ROCk kernel driver will install the driver needed for the ROCm platform
+    and better support for AMD GPU enthusiast level hardware.  This package
+    pick mostly enhancement commits and drop the compatibility layer provided
+    by KCL.
+
     ROCm requires PCIe 3.0.
   </longdescription>
   <upstream>
