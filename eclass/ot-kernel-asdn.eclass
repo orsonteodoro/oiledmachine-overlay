@@ -43,7 +43,6 @@ dc_ver, amdgpu_version"
 				m+=", amdgpu_19_10"
 			elif ver_test ${K_MAJOR_MINOR} -ge 4.15 \
 				&& ver_text ${K_MAJOR_MINOR} -lt 4.18 ; then
-				; then
 				m+=", amdgpu_18_40"
 			else
 				eerror "Kernel version may not be supported."
