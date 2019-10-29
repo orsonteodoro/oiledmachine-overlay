@@ -65,13 +65,14 @@
       <email>graysky AT archlinux DOT us</email>
       <name>graysky</name>
     <maintainer status="active" type="person">
-      <!-- for tag releasing ROCk -->
-      <name>Kent Russell</name>
+      <!-- for latest version bumps of amdgpu_version -->
+      <email>rui.teng@amd.com</email>
+      <name>Rui Teng</name>
     </maintainer>
     <maintainer status="active" type="person">
-      <!-- for latest tag releases of amd-staging-drm-next -->
-      <email>Anthony.Koo@amd.com</email>
-      <name>Anthony Koo</name>
+      <!-- for latest version bumps of amdgpu (display core [dc]) dc_ver -->
+      <email>aric.cyr@amd.com</email>
+      <name>Aric Cyr</name>
     </maintainer>
     <maintainer status="active" type="person">
       <!-- for tresor aes-ni and i386, 2010-->
