@@ -20,13 +20,6 @@
 HOMEPAGE+=\
 "https://cgit.freedesktop.org/~agd5f/linux/log/?h=amd-staging-drm-next"
 
-IUSE+=" amd-staging-drm-next \
-	rock \
-	directgma"
-REQUIRED_USE+=" directgma? ( rock ) rock? ( amd-staging-drm-next )"
-
-DEPEND+=" amd-staging-drm-next? ( dev-vcs/git )"
-
 function amd_staging_drm_next_setup() {
 	if use amd_staging_drm_next ; then
 		if [[ -z "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" ]] ; then

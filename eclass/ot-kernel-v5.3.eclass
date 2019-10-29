@@ -73,6 +73,15 @@ REQUIRED_USE="^^ ( muqss pds cfs bmq )
 	     tresor_x86_64? ( tresor )
 	     tresor_aesni? ( tresor )"
 
+IUSE+=" amd-staging-drm-next \
+	rock \
+	directgma"
+REQUIRED_USE+=" directgma? ( rock ) rock? ( amd-staging-drm-next )"
+
+DEPEND+=" amd-staging-drm-next? ( dev-vcs/git ) \
+	  rock? ( dev-vcs/git ) \
+	  dev-util/patchutils"
+
 # no released patch yet
 REQUIRED_USE+=" !pds !bmq-quick-fix !muqss"
 

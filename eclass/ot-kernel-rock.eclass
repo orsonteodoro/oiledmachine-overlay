@@ -17,13 +17,6 @@
 #   https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/
 
 HOMEPAGE+=" https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver"
-IUSE+="	amd-staging-drm-next
-	+directgma \
-	rock "
-
-DEPEND+=" rock? ( dev-vcs/git )
-	  dev-util/patchutils"
-REQUIRED_USE+=" directgma? ( rock ) rock? ( amd-staging-drm-next )"
 
 # The amdgpu-19_30 USE flag will simulate the production of the same source as
 # amdgpu-dkms without dkms matching the same DC_VER and last rock commit found

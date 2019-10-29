@@ -753,6 +753,12 @@ function ot-kernel-common_pkg_setup() {
 	if declare -f ot-kernel-common_pkg_setup_cb > /dev/null ; then
 		ot-kernel-common_pkg_setup_cb
 	fi
+	if has amd-staging-drm-next ${IUSE_EFFECTIVE} ; then
+		amd_staging_drm_next_setup
+	fi
+	if has rock ${IUSE_EFFECTIVE} ; then
+		rock_setup
+	fi
 }
 
 # @FUNCTION: ot-kernel-common_pkg_pretend_cb
