@@ -20,26 +20,50 @@
 HOMEPAGE+=\
 "https://cgit.freedesktop.org/~agd5f/linux/log/?h=amd-staging-drm-next"
 
-IUSE+=" amd-staging-drm-next-snapshot \
-	amd-staging-drm-next-milestone \
-	amd-staging-drm-next-latest \
-	rock-latest \
-	rock-snapshot \
-	rock-milestone \
+IUSE+=" amd-staging-drm-next \
+	rock \
 	directgma"
+REQUIRED_USE+=" directgma? ( rock ) rock? ( amd-staging-drm-next )"
 
-REQUIRED_USE+=" amd-staging-drm-next-snapshot? \
-	( !amd-staging-drm-next-latest !amd-staging-drm-next-milestone ) \
-amd-staging-drm-next-latest? \
-	( !amd-staging-drm-next-snapshot !amd-staging-drm-next-milestone ) \
-amd-staging-drm-next-milestone? \
-	( !amd-staging-drm-next-snapshot !amd-staging-drm-next-latest )"
+DEPEND+=" amd-staging-drm-next? ( dev-vcs/git )"
+
+function amd_staging_drm_next_setup() {
+	if use amd_staging_drm_next ; then
+		if [[ -z "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" ]] ; then
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
+			local m=\
+"You must define a AMD_STAGING_DRM_NEXT_BUMP_REQUEST environmental variable\n\
+in your make.conf or per-package env containing either: head, snapshot,\n\
+dc_ver, amdgpu_version"
+			if ver_test ${K_MAJOR_MINOR} -ge 5.0 \
+				&& ver_test ${K_MAJOR_MINOR} -le 5.3 ]] ; then
+				m+=", amdgpu_19_30"
+			elif ver_test ${K_MAJOR_MINOR} -ge 4.18 \
+				&& ver_text ${K_MAJOR_MINOR} -lt 5.0 ; then
+				m+=", amdgpu_19_10"
+			elif ver_test ${K_MAJOR_MINOR} -ge 4.15 \
+				&& ver_text ${K_MAJOR_MINOR} -lt 4.18 ; then
+				; then
+				m+=", amdgpu_18_40"
+			else
+				eerror "Kernel version may not be supported."
+			fi
+			die ${m}
+		fi
+	fi
+	case ${AMD_STAGING_DRM_NEXT_BUMP_REQUEST} in
+		head|snapshot|dc_ver|amdgpu_version|amdgpu_)
+			;;
+		*)
+			die "Invalid AMD_STAGING_DRM_NEXT_BUMP_REQUEST value"
+	esac
+}
 
 # @FUNCTION: fetch_amd_staging_drm_next
 # @DESCRIPTION:
 # Generalization of steps for fetching and generating commit list.
 function fetch_amd_staging_drm_next() {
-	if is_amd_staging_drm_next ; then
+	if use amd_staging_drm_next ; then
 		fetch_amd_staging_drm_next_local_copy
 	fi
 }
@@ -102,6 +126,29 @@ function asdn_rm() {
 	rm "${T}"/amd-staging-drm-next-patches/*${c}*
 }
 
+# @FUNCTION: amd_staging_drm_next_set_target
+# @DESCRIPTION:
+# Obtains the commit hash based on AMD_STAGING_DRM_NEXT_BUMP_REQUEST.
+function amd_staging_drm_next_set_target() {
+	local target
+	if [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ amdgpu_version ]] ; then
+		target="${AMD_STAGING_DRM_NEXT_AMDGPU_VERSION_C}"
+	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ dc_ver ]] ; then
+		target="${AMD_STAGING_DRM_NEXT_DC_VER_C}"
+	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ head ]] ; then
+		target="${AMD_STAGING_DRM_NEXT_HEAD_C}"
+	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ snapshot ]] ; then
+		target="${AMD_STAGING_DRM_NEXT_SNAPSHOT_C}"
+	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ amdgpu_19_30 ]] ; then
+		target="${AMD_STAGING_DRM_NEXT_AMDGPU_19_30_C}"
+	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ amdgpu_19_10 ]] ; then
+		target="${AMD_STAGING_DRM_NEXT_AMDGPU_19_10_C}"
+	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ amdgpu_18_40 ]] ; then
+		target="${AMD_STAGING_DRM_NEXT_AMDGPU_18_40_C}"
+	fi
+	echo "${target}"
+}
+
 # @FUNCTION: generate_amd_staging_drm_next_patches
 # @DESCRIPTION:
 # Produces all the commits as .patch files to be individually evaluated.  It
@@ -119,26 +166,8 @@ function generate_amd_staging_drm_next_patches() {
 	local base
 
 	local suffix_asdn
-	local suffix_rock_dgma
-	if is_rock ; then
-		if use directgma ; then
-			suffix_rock_dgma=".rock_with_dgma"
-		else
-			suffix_rock_dgma=".rock_without_dgma"
-		fi
-	else
-		suffix_rock_dgma=".no_rock"
-	fi
-	if use amd-staging-drm-next-snapshot ; then
-		target="${AMD_STAGING_DRM_NEXT_SNAPSHOT}"
-		suffix_asdn="..${target}${suffix_rock_dgma}"
-	elif use amd-staging-drm-next-latest ; then
-		target="${AMD_STAGING_DRM_NEXT_LATEST}"
-		suffix_asdn="..$(git rev-parse ${target})${suffix_rock_dgma}"
-	elif use amd-staging-drm-next-milestone ; then
-		target="${AMD_STAGING_DRM_NEXT_MILESTONE}"
-		suffix_asdn="..${target}${suffix_rock_dgma}"
-	fi
+	target=$(amd_staging_drm_next_set_target)
+	suffix_asdn=$(ot-kernel-common_amdgpu_get_suffix_asdn)
 	base="${AMD_STAGING_INTERSECTS_KV}"
 
 	mkdir -p "${T}/amd-staging-drm-next-patches"
@@ -312,20 +341,5 @@ Skipping..."
 
 		typeset -p asdn_commit_cache > "${T}/${ht_asdn_fn}"
 		sed -i -r -e "s|^declare -A ||" "${T}/${ht_asdn_fn}"
-	fi
-}
-
-# @FUNCTION: is_amd_staging_drm_next
-# @DESCRIPTION:
-# Check if user wanted amd-staging-drm-next
-# @RETURN: zero - user wants amd-staging-drm-next; non-zero user doesn't want
-#   amd-staging-drm-next
-function is_amd_staging_drm_next() {
-	if use amd-staging-drm-next-snapshot \
-		|| use amd-staging-drm-next-latest \
-		|| use amd-staging-drm-next-milestone ; then
-		return 0
-	else
-		return 1
 	fi
 }
