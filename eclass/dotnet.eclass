@@ -51,7 +51,8 @@ TOOLS_VERSION="${TOOLS_VERSION:=4.0}"
 DOTNET_ACTIVE_FRAMEWORK="" # can be netfx or netcoreapp or netstandard
 
 # @ECLASS-VARIABLE: _NETCORE_TOOLS_DEPS
-# @DESCRIPTION: (Private) Defines compatible dotnet packages for DEPEND, RDEPEND, REQUIRED_USE
+# @DESCRIPTION: (Private) Defines compatible dotnet packages for DEPEND,
+# RDEPEND, REQUIRED_USE
 _NETCORE_TOOLS_DEPS="|| ( dev-dotnet/cli-tools dev-dotnet/dotnetcore-sdk-bin )"
 
 # SET default use flags according on DOTNET_TARGETS
@@ -59,159 +60,172 @@ for x in ${USE_DOTNET}; do
 	case ${x} in
 		netstandard20)
 			if [[ ${DOTNET_TARGETS} == *netstandard20* ]]; then
-				IUSE+=" +netstandard20";
+				IUSE+=" +netstandard20"
 			else
-				IUSE+=" netstandard20";
+				IUSE+=" netstandard20"
 			fi
 			_CDEPEND=" netstandard20? ( >=dev-lang/mono-5.2 )"
-			DEPEND+=" ${_CDEPEND} netstandard20? ( ${_NETCORE_TOOLS_DEPS} )"
-			RDEPEND+=" ${_CDEPEND}";
+			DEPEND+=" ${_CDEPEND}"
+			DEPEND+=" netstandard20? ( ${_NETCORE_TOOLS_DEPS} )"
+			RDEPEND+=" ${_CDEPEND}"
 			;;
 		netstandard16)
 			if [[ ${DOTNET_TARGETS} == *netstandard16* ]]; then
-				IUSE+=" +netstandard16";
+				IUSE+=" +netstandard16"
 			else
-				IUSE+=" netstandard16";
+				IUSE+=" netstandard16"
 			fi
 			_CDEPEND=" netstandard16? ( >=dev-lang/mono-4.6 )"
-			DEPEND+=" ${_CDEPEND} netstandard16? ( ${_NETCORE_TOOLS_DEPS} )"
-			RDEPEND+=" ${_CDEPEND}";
+			DEPEND+=" ${_CDEPEND}"
+			DEPEND+=" netstandard16? ( ${_NETCORE_TOOLS_DEPS} )"
+			RDEPEND+=" ${_CDEPEND}"
 			;;
 		netstandard15)
 			if [[ ${DOTNET_TARGETS} == *netstandard15* ]]; then
-				IUSE+=" +netstandard15";
+				IUSE+=" +netstandard15"
 			else
-				IUSE+=" netstandard15";
+				IUSE+=" netstandard15"
 			fi
 			_CDEPEND=" netstandard15? ( >=dev-lang/mono-4.6 )"
-			DEPEND+=" ${_CDEPEND} netstandard15? ( ${_NETCORE_TOOLS_DEPS} )"
-			RDEPEND+=" ${_CDEPEND}";
+			DEPEND+=" ${_CDEPEND}"
+			DEPEND+=" netstandard15? ( ${_NETCORE_TOOLS_DEPS} )"
+			RDEPEND+=" ${_CDEPEND}"
 			;;
 		netstandard14)
 			if [[ ${DOTNET_TARGETS} == *netstandard14* ]]; then
-				IUSE+=" +netstandard14";
+				IUSE+=" +netstandard14"
 			else
-				IUSE+=" netstandard14";
+				IUSE+=" netstandard14"
 			fi
 			_CDEPEND=" netstandard14? ( >=dev-lang/mono-4.6 )"
-			DEPEND+=" ${_CDEPEND} netstandard14? ( ${_NETCORE_TOOLS_DEPS} )"
-			RDEPEND+=" ${_CDEPEND}";
+			DEPEND+=" ${_CDEPEND}"
+			DEPEND+=" netstandard14? ( ${_NETCORE_TOOLS_DEPS} )"
+			RDEPEND+=" ${_CDEPEND}"
 			;;
 		netstandard13)
 			if [[ ${DOTNET_TARGETS} == *netstandard13* ]]; then
-				IUSE+=" +netstandard13";
+				IUSE+=" +netstandard13"
 			else
-				IUSE+=" netstandard13";
+				IUSE+=" netstandard13"
 			fi
 			_CDEPEND=" netstandard13? ( >=dev-lang/mono-4.6 )"
-			DEPEND+=" ${_CDEPEND} netstandard13? ( ${_NETCORE_TOOLS_DEPS} )"
-			RDEPEND+=" ${_CDEPEND}";
+			DEPEND+=" ${_CDEPEND}"
+			DEPEND+=" netstandard13? ( ${_NETCORE_TOOLS_DEPS} )"
+			RDEPEND+=" ${_CDEPEND}"
 			;;
 		netstandard12)
 			if [[ ${DOTNET_TARGETS} == *netstandard12* ]]; then
-				IUSE+=" +netstandard12";
+				IUSE+=" +netstandard12"
 			else
-				IUSE+=" netstandard12";
+				IUSE+=" netstandard12"
 			fi
 			_CDEPEND=" netstandard12? ( >=dev-lang/mono-4.6 )"
-			DEPEND+=" ${_CDEPEND} netstandard12? ( ${_NETCORE_TOOLS_DEPS} )"
-			RDEPEND+=" ${_CDEPEND}";
+			DEPEND+=" ${_CDEPEND}"
+			DEPEND+=" netstandard12? ( ${_NETCORE_TOOLS_DEPS} )"
+			RDEPEND+=" ${_CDEPEND}"
 			;;
 		netstandard11)
 			if [[ ${DOTNET_TARGETS} == *netstandard11* ]]; then
-				IUSE+=" +netstandard11";
+				IUSE+=" +netstandard11"
 			else
-				IUSE+=" netstandard11";
+				IUSE+=" netstandard11"
 			fi
 			_CDEPEND=" netstandard11? ( >=dev-lang/mono-4.6 )"
-			DEPEND+=" ${_CDEPEND} netstandard11? ( ${_NETCORE_TOOLS_DEPS} )"
-			RDEPEND+=" ${_CDEPEND}";
+			DEPEND+=" ${_CDEPEND}"
+			DEPEND+=" netstandard11? ( ${_NETCORE_TOOLS_DEPS} )"
+			RDEPEND+=" ${_CDEPEND}"
 			;;
 		netstandard10)
 			if [[ ${DOTNET_TARGETS} == *netstandard10* ]]; then
-				IUSE+=" +netstandard10";
+				IUSE+=" +netstandard10"
 			else
-				IUSE+=" netstandard10";
+				IUSE+=" netstandard10"
 			fi
 			_CDEPEND=" netstandard10? ( >=dev-lang/mono-4.6 )"
-			DEPEND+=" ${_CDEPEND} netstandard10? ( ${_NETCORE_TOOLS_DEPS} )"
-			RDEPEND+=" ${_CDEPEND}";
+			DEPEND+=" ${_CDEPEND}"
+			DEPEND+=" netstandard10? ( ${_NETCORE_TOOLS_DEPS} )"
+			RDEPEND+=" ${_CDEPEND}"
 			;;
 		netcoreapp22)
 			if [[ ${DOTNET_TARGETS} == *netcoreapp22* ]]; then
-				IUSE+=" +netcoreapp22";
+				IUSE+=" +netcoreapp22"
 			else
-				IUSE+=" netcoreapp22";
+				IUSE+=" netcoreapp22"
 			fi
 			_CDEPEND=" netcoreapp22? ( >=dev-lang/mono-5.4 )"
-			DEPEND+=" ${_CDEPEND} netcoreapp22? ( ${_NETCORE_TOOLS_DEPS} )"
-			RDEPEND+=" ${_CDEPEND}";
+			DEPEND+=" ${_CDEPEND}"
+			DPENED+=" netcoreapp22? ( ${_NETCORE_TOOLS_DEPS} )"
+			RDEPEND+=" ${_CDEPEND}"
 			;;
 		netcoreapp21)
 			if [[ ${DOTNET_TARGETS} == *netcoreapp21* ]]; then
-				IUSE+=" +netcoreapp21";
+				IUSE+=" +netcoreapp21"
 			else
-				IUSE+=" netcoreapp21";
+				IUSE+=" netcoreapp21"
 			fi
 			_CDEPEND=" netcoreapp21? ( >=dev-lang/mono-5.4 )"
-			DEPEND+=" ${_CDEPEND} netcoreapp21? ( ${_NETCORE_TOOLS_DEPS} )"
-			RDEPEND+=" ${_CDEPEND}";
+			DEPEND+=" ${_CDEPEND}"
+			DEPEND+=" netcoreapp21? ( ${_NETCORE_TOOLS_DEPS} )"
+			RDEPEND+=" ${_CDEPEND}"
 			;;
 		netcoreapp20)
 			if [[ ${DOTNET_TARGETS} == *netcoreapp20* ]]; then
-				IUSE+=" +netcoreapp20";
+				IUSE+=" +netcoreapp20"
 			else
-				IUSE+=" netcoreapp20";
+				IUSE+=" netcoreapp20"
 			fi
 			_CDEPEND=" netcoreapp20? ( >=dev-lang/mono-5.4 )"
-			DEPEND+=" ${_CDEPEND} netcoreapp20? ( ${_NETCORE_TOOLS_DEPS} )"
-			RDEPEND+=" ${_CDEPEND}";
+			DEPEND+=" ${_CDEPEND}"
+			DEPEND+=" netcoreapp20? ( ${_NETCORE_TOOLS_DEPS} )"
+			RDEPEND+=" ${_CDEPEND}"
 			;;
 		netcoreapp11)
 			if [[ ${DOTNET_TARGETS} == *netcoreapp11* ]]; then
-				IUSE+=" +netcoreapp11";
+				IUSE+=" +netcoreapp11"
 			else
-				IUSE+=" netcoreapp11";
+				IUSE+=" netcoreapp11"
 			fi
 			_CDEPEND=" netcoreapp11? ( >=dev-lang/mono-5.4 )"
-			DEPEND+=" ${_CDEPEND} netcoreapp11? ( ${_NETCORE_TOOLS_DEPS} )"
-			RDEPEND+=" ${_CDEPEND}";
+			DEPEND+=" ${_CDEPEND}"
+			DEPEND+=" netcoreapp11? ( ${_NETCORE_TOOLS_DEPS} )"
+			RDEPEND+=" ${_CDEPEND}"
 			;;
 		netcoreapp10)
 			if [[ ${DOTNET_TARGETS} == *netcoreapp10* ]]; then
-				IUSE+=" +netcoreapp10";
+				IUSE+=" +netcoreapp10"
 			else
-				IUSE+=" netcoreapp10";
+				IUSE+=" netcoreapp10"
 			fi
 			_CDEPEND=" netcoreapp10? ( >=dev-lang/mono-5.4 )"
-			DEPEND+=" ${_CDEPEND} netcoreapp10? ( ${_NETCORE_TOOLS_DEPS} )"
-			RDEPEND+=" ${_CDEPEND}";
+			DEPEND+=" ${_CDEPEND}"
+			DEPEND+=" netcoreapp10? ( ${_NETCORE_TOOLS_DEPS} )"
+			RDEPEND+=" ${_CDEPEND}"
 			;;
 		net472)
 			if [[ ${DOTNET_TARGETS} == *net472* ]];	then
-				IUSE+=" +net472";
+				IUSE+=" +net472"
 			else
-				IUSE+=" net472";
+				IUSE+=" net472"
 			fi
 			_CDEPEND=" net472? ( >=dev-lang/mono-5.18 )"
 			DEPEND+="${_CDEPEND}"
-			RDEPEND+="${_CDEPEND}";
+			RDEPEND+="${_CDEPEND}"
 			;;
 		net471)
 			if [[ ${DOTNET_TARGETS} == *net471* ]]; then
-				IUSE+=" +net471";
+				IUSE+=" +net471"
 			else
-				IUSE+=" net471";
+				IUSE+=" net471"
 			fi
 			_CDEPEND=" net471? ( >=dev-lang/mono-5.10 )"
 			DEPEND+="${_CDEPEND}"
-			RDEPEND+="${_CDEPEND}";
+			RDEPEND+="${_CDEPEND}"
 			;;
 		net47)
 			if [[ ${DOTNET_TARGETS} == *net47* ]]; then
-				IUSE+=" +net47";
+				IUSE+=" +net47"
 			else
-				IUSE+=" net47";
+				IUSE+=" net47"
 			fi
 			_CDEPEND=" net47? ( >=dev-lang/mono-5.2 )"
 			DEPEND+="${_CDEPEND}"
@@ -219,106 +233,110 @@ for x in ${USE_DOTNET}; do
 			;;
 		net462)
 			if [[ ${DOTNET_TARGETS} == *net462* ]];	then
-				IUSE+=" +net462";
+				IUSE+=" +net462"
 			else
-				IUSE+=" net462";
+				IUSE+=" net462"
 			fi
 			_CDEPEND=" net462? ( >=dev-lang/mono-4.6 )"
 			DEPEND+="${_CDEPEND}"
-			RDEPEND+="${_CDEPEND}";
+			RDEPEND+="${_CDEPEND}"
 			;;
 		net461)
 			if [[ ${DOTNET_TARGETS} == *net461* ]]; then
-				IUSE+=" +net461";
+				IUSE+=" +net461"
 			else
-				IUSE+=" net461";
+				IUSE+=" net461"
 			fi
 			_CDEPEND=" net461? ( >=dev-lang/mono-4.6 )"
 			DEPEND+="${_CDEPEND}"
-			RDEPEND+="${_CDEPEND}";
+			RDEPEND+="${_CDEPEND}"
 			;;
 		net46)
 			if [[ ${DOTNET_TARGETS} == *net46* ]]; then
-				IUSE+=" +net46";
+				IUSE+=" +net46"
 			else
-				IUSE+=" net46";
+				IUSE+=" net46"
 			fi
 			_CDEPEND=" net46? ( >=dev-lang/mono-4.6 )"
 			DEPEND+="${_CDEPEND}"
-			RDEPEND+="${_CDEPEND}";
+			RDEPEND+="${_CDEPEND}"
 			;;
 		net452)
 			if [[ ${DOTNET_TARGETS} == *net452* ]]; then
-				IUSE+=" +net452";
+				IUSE+=" +net452"
 			else
-				IUSE+=" net452";
+				IUSE+=" net452"
 			fi
 			_CDEPEND=" net452? ( >=dev-lang/mono-4.6 )"
 			DEPEND+="${_CDEPEND}"
-			RDEPEND+="${_CDEPEND}";
+			RDEPEND+="${_CDEPEND}"
 			;;
 		net451)
 			if [[ ${DOTNET_TARGETS} == *net451* ]];	then
-				IUSE+=" +net451";
+				IUSE+=" +net451"
 			else
-				IUSE+=" net451";
+				IUSE+=" net451"
 			fi
 			_CDEPEND=" net451? ( >=dev-lang/mono-4.6 )"
 			DEPEND+="${_CDEPEND}"
-			RDEPEND+="${_CDEPEND}";
+			RDEPEND+="${_CDEPEND}"
 			;;
 		net45)
 			if [[ ${DOTNET_TARGETS} == *net45* ]]; then
-				IUSE+=" +net45";
+				IUSE+=" +net45"
 			else
-				IUSE+=" net45";
+				IUSE+=" net45"
 			fi
 			_CDEPEND=" net45? ( >=dev-lang/mono-4.0 )"
 			DEPEND+="${_CDEPEND}"
-			RDEPEND+="${_CDEPEND}";
+			RDEPEND+="${_CDEPEND}"
 			;;
 		net40)
 			if [[ ${DOTNET_TARGETS} == *net40* ]]; then
-				IUSE+=" +net40";
+				IUSE+=" +net40"
 			else
-				IUSE+=" net40";
+				IUSE+=" net40"
 			fi
 			_CDEPEND=" net40? ( <dev-lang/mono-4.0 )"
 			DEPEND+="${_CDEPEND}"
-			RDEPEND+="${_CDEPEND}";
+			RDEPEND+="${_CDEPEND}"
 			;;
 		net35)
 			if [[ ${DOTNET_TARGETS} == *net35* ]]; then
-				IUSE+=" +net35";
+				IUSE+=" +net35"
 			else
-				IUSE+=" net35";
+				IUSE+=" net35"
 			fi
 			_CDEPEND=" net35? ( <dev-lang/mono-4.0 )"
 			DEPEND+="${_CDEPEND}"
-			RDEPEND+="${_CDEPEND}";
+			RDEPEND+="${_CDEPEND}"
 			;;
 		net20)
 			if [[ ${DOTNET_TARGETS} == *net20* ]]; then
-				IUSE+=" +net20";
+				IUSE+=" +net20"
 			else
-				IUSE+=" net20";
+				IUSE+=" net20"
 			fi
 			_CDEPEND=" net20? ( <dev-lang/mono-4.0 )"
 			DEPEND+="${_CDEPEND}"
-			RDEPEND+="${_CDEPEND}";
+			RDEPEND+="${_CDEPEND}"
 			;;
 	esac
 done
 
 _dotnet_sandbox_disabled_check() {
 	if has sandbox $FEATURES || has usersandbox $FEATURES ; then
-		die "${PN} require sandbox and usersandbox to be disabled in FEATURES on a per-package basis."
+		die \
+"${PN} require sandbox and usersandbox to be disabled in FEATURES on a \
+per-package basis."
 	fi
 }
 
 _dotnet_sandbox_network_disabled_check() {
 	if has network-sandbox $FEATURES ; then
-		die "${PN} require network-sandbox to be disabled in FEATURES on a per-package basis."
+		die \
+"${PN} require network-sandbox to be disabled in FEATURES on a per-package \
+basis."
 	fi
 }
 
@@ -328,20 +346,74 @@ _dotnet_sandbox_network_disabled_check() {
 dotnet_pkg_pretend() {
 	for x in ${USE_DOTNET} ; do
 		case ${x} in
-			netstandard20) if use netstandard20; then DOTNET_ACTIVE_FRAMEWORK="netstandard"; fi;;
-			netstandard16) if use netstandard16; then DOTNET_ACTIVE_FRAMEWORK="netstandard"; fi;;
-			netstandard15) if use netstandard15; then DOTNET_ACTIVE_FRAMEWORK="netstandard"; fi;;
-			netstandard14) if use netstandard14; then DOTNET_ACTIVE_FRAMEWORK="netstandard"; fi;;
-			netstandard13) if use netstandard13; then DOTNET_ACTIVE_FRAMEWORK="netstandard"; fi;;
-			netstandard12) if use netstandard12; then DOTNET_ACTIVE_FRAMEWORK="netstandard"; fi;;
-			netstandard11) if use netstandard11; then DOTNET_ACTIVE_FRAMEWORK="netstandard"; fi;;
-			netstandard10) if use netstandard10; then DOTNET_ACTIVE_FRAMEWORK="netstandard"; fi;;
-			netcoreapp22) if use netcoreapp22; then DOTNET_ACTIVE_FRAMEWORK="netcoreapp"; fi;;
-			netcoreapp21) if use netcoreapp21; then DOTNET_ACTIVE_FRAMEWORK="netcoreapp"; fi;;
-			netcoreapp20) if use netcoreapp20; then DOTNET_ACTIVE_FRAMEWORK="netcoreapp"; fi;;
-			netcoreapp11) if use netcoreapp11; then DOTNET_ACTIVE_FRAMEWORK="netcoreapp"; fi;;
-			netcoreapp10) if use netcoreapp10; then DOTNET_ACTIVE_FRAMEWORK="netcoreapp"; fi;;
-			*) DOTNET_ACTIVE_FRAMEWORK="netfx" ;;
+			netstandard20)
+				if use netstandard20 ; then
+					DOTNET_ACTIVE_FRAMEWORK="netstandard"
+				fi
+				;;
+			netstandard16)
+				if use netstandard16 ; then
+					DOTNET_ACTIVE_FRAMEWORK="netstandard"
+				fi
+				;;
+			netstandard15)
+				if use netstandard15 ; then
+					DOTNET_ACTIVE_FRAMEWORK="netstandard"
+				fi
+				;;
+			netstandard14)
+				if use netstandard14 ; then
+					DOTNET_ACTIVE_FRAMEWORK="netstandard"
+				fi
+				;;
+			netstandard13)
+				if use netstandard13 ; then
+					DOTNET_ACTIVE_FRAMEWORK="netstandard"
+				fi
+				;;
+			netstandard12)
+				if use netstandard12 ; then
+					DOTNET_ACTIVE_FRAMEWORK="netstandard"
+				fi
+				;;
+			netstandard11)
+				if use netstandard11 ; then
+					DOTNET_ACTIVE_FRAMEWORK="netstandard"
+				fi
+				;;
+			netstandard10)
+				if use netstandard10 ; then
+					DOTNET_ACTIVE_FRAMEWORK="netstandard"
+				fi
+				;;
+			netcoreapp22)
+				if use netcoreapp22 ; then
+					DOTNET_ACTIVE_FRAMEWORK="netcoreapp"
+				fi
+				;;
+			netcoreapp21)
+				if use netcoreapp21 ; then
+					DOTNET_ACTIVE_FRAMEWORK="netcoreapp"
+				fi
+				;;
+			netcoreapp20)
+				if use netcoreapp20 ; then
+					DOTNET_ACTIVE_FRAMEWORK="netcoreapp"
+				fi
+				;;
+			netcoreapp11)
+				if use netcoreapp11 ; then
+					DOTNET_ACTIVE_FRAMEWORK="netcoreapp"
+				fi
+				;;
+			netcoreapp10)
+				if use netcoreapp10 ; then
+					DOTNET_ACTIVE_FRAMEWORK="netcoreapp"
+				fi
+				;;
+			*)
+				DOTNET_ACTIVE_FRAMEWORK="netfx"
+				;;
 		esac
 
 		if [[      "${DOTNET_ACTIVE_FRAMEWORK}" == "netstandard" \
@@ -371,29 +443,139 @@ use. The install phase is broken."
 	mono-env_pkg_setup
 	for x in ${USE_DOTNET} ; do
 		case ${x} in
-			netstandard20) EBF="200.0"; if use netstandard20; then F="${EBF}";fi;;
-			netstandard16) EBF="160.0"; if use netstandard16; then F="${EBF}";fi;;
-			netstandard15) EBF="150.0"; if use netstandard15; then F="${EBF}";fi;;
-			netstandard14) EBF="140.0"; if use netstandard14; then F="${EBF}";fi;;
-			netstandard13) EBF="130.0"; if use netstandard13; then F="${EBF}";fi;;
-			netstandard12) EBF="120.0"; if use netstandard12; then F="${EBF}";fi;;
-			netstandard11) EBF="110.0"; if use netstandard11; then F="${EBF}";fi;;
-			netstandard10) EBF="100.0"; if use netstandard10; then F="${EBF}";fi;;
-			netcoreapp22) EBF="22.0"; if use netcoreapp22; then F="${EBF}";fi;;
-			netcoreapp21) EBF="21.0"; if use netcoreapp21; then F="${EBF}";fi;;
-			netcoreapp20) EBF="20.0"; if use netcoreapp20; then F="${EBF}";fi;;
-			netcoreapp11) EBF="11.0"; if use netcoreapp11; then F="${EBF}";fi;;
-			netcoreapp10) EBF="10.0"; if use netcoreapp10; then F="${EBF}";fi;;
-			net472) EBF="4.72"; if use net472; then F="${EBF}";fi;;
-			net471) EBF="4.71"; if use net471; then F="${EBF}";fi;;
-			net47) EBF="4.7"; if use net47; then F="${EBF}";fi;;
-			net462) EBF="4.62"; if use net462; then F="${EBF}";fi;;
-			net461) EBF="4.61"; if use net461; then F="${EBF}";fi;;
-			net46) EBF="4.6"; if use net46; then F="${EBF}";fi;;
-			net45) EBF="4.5"; if use net45; then F="${EBF}";fi;;
-			net40) EBF="4.0"; if use net40; then F="${EBF}";fi;;
-			net35) EBF="3.5"; if use net35; then F="${EBF}";fi;;
-			net20) EBF="2.0"; if use net20; then F="${EBF}";fi;;
+			netstandard20)
+				EBF="200.0"
+				if use netstandard20 ; then
+					F="${EBF}";
+				fi
+				;;
+			netstandard16)
+				EBF="160.0"
+				if use netstandard16 ; then
+					F="${EBF}";
+				fi
+				;;
+			netstandard15)
+				EBF="150.0";
+				if use netstandard15 ; then
+					F="${EBF}"
+				fi
+				;;
+			netstandard14)
+				EBF="140.0"
+				if use netstandard14 ; then
+					F="${EBF}";
+				fi
+				;;
+			netstandard13)
+				EBF="130.0"
+				if use netstandard13 ; then
+					F="${EBF}"
+				fi
+				;;
+			netstandard12)
+				EBF="120.0"
+				if use netstandard12 ; then
+					F="${EBF}"
+				fi
+				;;
+			netstandard11)
+				EBF="110.0"
+				if use netstandard11 ; then
+					F="${EBF}"
+				fi
+				;;
+			netstandard10)
+				EBF="100.0"
+				if use netstandard10 ; then
+					F="${EBF}"
+				fi
+				;;
+			netcoreapp22)
+				EBF="22.0"
+				if use netcoreapp22 ; then
+					F="${EBF}"
+				fi
+				;;
+			netcoreapp21)
+				EBF="21.0"
+				if use netcoreapp21 ; then
+					F="${EBF}"
+				fi
+				;;
+			netcoreapp20)
+				EBF="20.0"
+				if use netcoreapp20 ; then
+					F="${EBF}"
+				fi
+				;;
+			netcoreapp11)
+				EBF="11.0"
+				if use netcoreapp11 ; then
+					F="${EBF}"
+				fi
+				;;
+			netcoreapp10)
+				EBF="10.0"
+				if use netcoreapp10 ; then
+					F="${EBF}"
+				fi
+				;;
+			net472)
+				EBF="4.72"
+				if use net472 ; then
+					F="${EBF}"
+				fi
+				;;
+			net471)
+				EBF="4.71"
+				if use net471 ; then
+					F="${EBF}"
+				fi
+				;;
+			net47)
+				EBF="4.7" ;
+				if use net47 ; then
+					F="${EBF}"
+				fi
+				;;
+			net462)
+				EBF="4.62"
+				if use net462 ; then
+					F="${EBF}"
+				fi
+				;;
+			net461)
+				EBF="4.61"
+				if use net461 ; then
+					F="${EBF}"
+				fi
+				;;
+			net46) EBF="4.6"
+				if use net46 ; then
+					F="${EBF}"
+				fi
+				;;
+			net45) EBF="4.5"
+				if use net45 ; then
+					F="${EBF}"
+				fi
+				;;
+			net40) EBF="4.0"
+				if use net40 ; then
+					F="${EBF}"
+				fi
+				;;
+			net35) EBF="3.5" ;
+				if use net35 ; then
+					F="${EBF}"
+				fi
+				;;
+			net20) EBF="2.0"
+				if use net20 ; then
+					F="${EBF}"
+				fi
+				;;
 		esac
 		if [[ -z ${FRAMEWORK} ]]; then
 			if [[ -n ${F} ]]; then
@@ -418,8 +600,8 @@ use. The install phase is broken."
 		else
 			FRAMEWORK="${EBUILD_FRAMEWORK}"
 			elog \
-"User did not set any netNN use-flags in make.conf or profile, .ebuild demands"\
-" USE_DOTNET=""${USE_DOTNET}"""
+"User did not set any netNN use-flags in make.conf or profile, .ebuild demands \
+USE_DOTNET=""${USE_DOTNET}"""
 		fi
 	fi
 
@@ -441,17 +623,20 @@ use. The install phase is broken."
 	# EBUILD_FRAMEWORK is the highest suppored by ebuild?
 	if ver_test "${EBUILD_FRAMEWORK}" -gt "100" ; then
 		DOTNET_ACTIVE_FRAMEWORK_EF="netstandard"
-		EBUILD_FRAMEWORK=$(echo "scale=1 ; ${EBUILD_FRAMEWORK}/100" | bc)
+		EBUILD_FRAMEWORK=$(echo "scale=1 ; ${EBUILD_FRAMEWORK}/100" \
+			| bc)
 	elif ver_test "${EBUILD_FRAMEWORK}" -gt "10" ; then
 		DOTNET_ACTIVE_FRAMEWORK_EF="netcoreapp"
-		EBUILD_FRAMEWORK=$(echo "scale=1 ; ${EBUILD_FRAMEWORK}/10" | bc)
+		EBUILD_FRAMEWORK=$(echo "scale=1 ; ${EBUILD_FRAMEWORK}/10" \
+			| bc)
 	else
 		DOTNET_ACTIVE_FRAMEWORK_EF="netfx"
 	fi
 }
 
-# >=mono-0.92 versions using mcs -pkg:foo-sharp require shared memory, so we set the
-# shared dir to ${T} so that ${T}/.wapi can be used during the install process.
+# >=mono-0.92 versions using mcs -pkg:foo-sharp require shared memory, so we
+# set the shared dir to ${T} so that ${T}/.wapi can be used during the install
+# process.
 export MONO_SHARED_DIR="${T}"
 
 # Building mono, nant and many other dotnet packages is known to fail if LC_ALL
@@ -459,8 +644,8 @@ export MONO_SHARED_DIR="${T}"
 # build with LC_ALL=C (see bugs #146424, #149817)
 export LC_ALL=C
 
-# Monodevelop-using applications need this to be set or they will try to create config
-# files in the user's ~ dir.
+# Monodevelop-using applications need this to be set or they will try to create
+# config files in the user's ~ dir.
 
 export XDG_CONFIG_HOME="${T}"
 
@@ -613,30 +798,39 @@ dotnet_multilib_comply() {
 	then
 		if ! [[ -d "${ED}"/usr/"$(get_libdir)" ]]
 		then
-			mkdir "${ED}"/usr/"$(get_libdir)" || die "Couldn't mkdir ${ED}/usr/$(get_libdir)"
+			mkdir "${ED}"/usr/"$(get_libdir)" \
+				|| die "Couldn't mkdir ${ED}/usr/$(get_libdir)"
 		fi
-		${mv_command} "${ED}"/usr/lib/* "${ED}"/usr/"$(get_libdir)"/ || die "Moving files into correct libdir failed"
+		${mv_command} "${ED}"/usr/lib/* "${ED}"/usr/"$(get_libdir)"/ \
+			|| die "Moving files into correct libdir failed"
 		rm -rf "${ED}"/usr/lib
-		for dir in "${ED}"/usr/"$(get_libdir)"/pkgconfig "${ED}"/usr/share/pkgconfig
+		for dir in "${ED}"/usr/"$(get_libdir)"/pkgconfig \
+			"${ED}"/usr/share/pkgconfig
 		do
 
-			if [[ -d "${dir}" && "$(find "${dir}" -name '*.pc')" != "" ]]
+			if [[ -d "${dir}" \
+				&& "$(find "${dir}" -name '*.pc')" != "" ]]
 			then
 				pushd "${dir}" &> /dev/null
-				sed  -i -r -e 's:/(lib)([^a-zA-Z0-9]|$):/'"$(get_libdir)"'\2:g' \
+				sed  -i -r \
+			-e 's:/(lib)([^a-zA-Z0-9]|$):/'"$(get_libdir)"'\2:g' \
 					*.pc \
-					|| die "Sedding some sense into pkgconfig files failed."
+			|| die "Sedding some sense into pkgconfig files failed."
 				popd "${dir}" &> /dev/null
 			fi
 		done
+# fixme
 		if [[ -d "${ED}/usr/bin" ]]
 		then
 			for exe in "${ED}/usr/bin"/*
 			do
-				if [[ "$(file "${exe}")" == *"shell script text"* ]]
+				if [[ \
+				"$(file "${exe}")" == *"shell script text"* ]]
 				then
-					sed -r -i -e ":/lib(/|$): s:/lib(/|$):/$(get_libdir)\1:" \
-						"${exe}" || die "Sedding some sense into ${exe} failed"
+					sed -r -i \
+				-e ":/lib(/|$): s:/lib(/|$):/$(get_libdir)\1:"\
+						"${exe}" \
+				|| die "Sedding some sense into ${exe} failed"
 				fi
 			done
 		fi
@@ -668,7 +862,8 @@ estrong_assembly_info() {
 }
 
 # @FUNCTION: estrong_assembly_info2
-# @DESCRIPTION:  This will inject the key in AssemblyInfo.cs if InternalsVisibleTo exists
+# @DESCRIPTION:  This will inject the key in AssemblyInfo.cs if
+# InternalsVisibleTo exists
 # @CODE
 # Parameters:
 # $1 - Assembly name
@@ -711,9 +906,10 @@ _NETCORE_VERS=( 10 11 20 21 22 )
 _NETSTANDARD_VERS=( 10 11 12 13 14 15 16 20 )
 
 # @ECLASS-VARIABLE: _IMPLS
-# @DESCRIPTION: (Private) Generates a list of implementations for the dotnet-multibuild context
-_IMPLS=\
-"${_NETFX_VERS[@]/#/net} ${_NETCORE_VERS[@]/#/netcoreapp} ${_NETSTANDARD_VERS[@]/#/netstandard}"
+# @DESCRIPTION: (Private) Generates a list of implementations for the
+# dotnet-multibuild context
+_IMPLS="${_NETFX_VERS[@]/#/net} ${_NETCORE_VERS[@]/#/netcoreapp}"
+_IMPLS+=" ${_NETSTANDARD_VERS[@]/#/netstandard}"
 
 # @FUNCTION: _python_multibuild_wrapper
 # @DESCRIPTION: Initialize the environment for this implementation
@@ -815,7 +1011,8 @@ dotnet_netcore_install_loc() {
 		framework=$(dotnet_use_flag_moniker_to_ms_moniker ${EDOTNET})
 	fi
 
-	echo "/opt/${_dotnet}/sdk/NuGetFallbackFolder/${PN,,}/${pv}/ref/${framework}"
+	echo \
+"/opt/${_dotnet}/sdk/NuGetFallbackFolder/${PN,,}/${pv}/ref/${framework}"
 }
 
 # @FUNCTION: dotnet_netfx_slot
@@ -846,20 +1043,21 @@ dotnet_netfx_install_loc() {
 	local libdir=$(get_libdir)
 
 	local pn="${PN}$(dotnet_netfx_slot)"
+	local d="/usr/${libdir}/mono/${pn}"
 
 	case ${moniker} in
-		net472) echo "/usr/${libdir}/mono/${pn}/net472" ;;
-		net471) echo "/usr/${libdir}/mono/${pn}/net471" ;;
-		net47) echo "/usr/${libdir}/mono/${pn}/net47" ;;
-		net462) echo "/usr/${libdir}/mono/${pn}/net462" ;;
-		net461) echo "/usr/${libdir}/mono/${pn}/net461" ;;
-		net46) echo "/usr/${libdir}/mono/${pn}/net46" ;;
-		net452) echo "/usr/${libdir}/mono/${pn}/net452" ;;
-		net451) echo "/usr/${libdir}/mono/${pn}/net451" ;;
-		net45) echo "/usr/${libdir}/mono/${pn}/net45" ;;
-		net40) echo "/usr/${libdir}/mono/${pn}/net40" ;;
-		net35) echo "/usr/${libdir}/mono/${pn}/net35" ;;
-		net20) echo "/usr/${libdir}/mono/${pn}/net20" ;;
+		net472) echo "${d}/net472" ;;
+		net471) echo "${d}/net471" ;;
+		net47) echo "${d}/net47" ;;
+		net462) echo "${d}/net462" ;;
+		net461) echo "${d}/net461" ;;
+		net46) echo "${d}/net46" ;;
+		net452) echo "${d}/net452" ;;
+		net451) echo "${d}/net451" ;;
+		net45) echo "${d}/net45" ;;
+		net40) echo "${d}/net40" ;;
+		net35) echo "${d}/net35" ;;
+		net20) echo "${d}/net20" ;;
 	esac
 }
 
@@ -1116,4 +1314,3 @@ dotnet_fill_tools_version_by_file() {
 }
 
 EXPORT_FUNCTIONS pkg_setup pkg_pretend
-
