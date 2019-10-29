@@ -66,6 +66,41 @@ HOMEPAGE+="
 	  https://rocm.github.io/
           "
 
+AMD_STAGING_DRM_NEXT_HEAD_C="amd-staging-drm-next"
+
+AMD_STAGING_DRM_NEXT_DIR="amd-staging-drm-next"
+
+# This should be pinned to KV or it may exhibit runtime errors
+# The latest commit I tested which should be ideally head at that time
+AMD_STAGING_DRM_NEXT_SNAPSHOT_S="2019-10-28" # commit time
+AMD_STAGING_DRM_NEXT_SNAPSHOT_C="8799b4cfde6229d2b9bc3d983cc831ccb893b30c"
+# 2019-10-04 drm/amdgpu: remove redundant variable r and redundant return statement
+
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
+# Faster update ; atomic micro update weeks to months
+# Based on DC_VER in drivers/gpu/drm/amd/display/dc/dc.h
+# Suffix: S=string C=commit
+AMD_STAGING_DRM_NEXT_DC_VER_S="3.2.56"
+AMD_STAGING_DRM_NEXT_DC_VER_C="bc3ec6547da4cb8f3293aa3286d5815f8438bc79"
+
+# Slower update ; major updates / releases
+# Based on AMDGPU_VERSION in drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+# Suffix: S=string C=commit
+AMD_STAGING_DRM_NEXT_AMDGPU_VERSION_S="5.0.82"
+AMD_STAGING_DRM_NEXT_AMDGPU_VERSION_C="fdf4947d93b84a0ec722cbccb040ff1d22b85281"
+
+# for KV 4.15
+AMD_STAGING_DRM_NEXT_AMDGPU_18_40_S="18.40.2.15_p20181205"
+AMD_STAGING_DRM_NEXT_AMDGPU_18_40_C="747b3e15d097e78be349b385e9971e46681ab375"
+
+# for KV 4.18
+AMD_STAGING_DRM_NEXT_AMDGPU_19_10_S="19.10.9.418_p20180821"
+AMD_STAGING_DRM_NEXT_AMDGPU_19_10_C="5243d576a3bba97121d5671260d67de785d150b7"
+
+# for KV 5.0-rc1
+AMD_STAGING_DRM_NEXT_AMDGPU_19_30_S="5.0.73.19.30_p20191025"
+AMD_STAGING_DRM_NEXT_AMDGPU_19_30_C="d41983e6d9e448edd2b6eda0c147e3f7a55e2352"
+
 inherit ot-kernel-cve
 inherit ot-kernel-asdn
 inherit ot-kernel-rock
@@ -589,11 +624,7 @@ sources."
 #   merges amd-staging-drm-next and ROCk fixes
 #
 function apply_amdgpu() {
-	if use amd-staging-drm-next-snapshot \
-		|| use amd-staging-drm-next-milestone \
-		|| use rock-snapshot \
-		|| use rock-milestone ; \
-	then
+	if use amd-staging-drm-next || use rock ; then
 		if [[ ! -e "${FILESDIR}/${LINUX_HASHTABLE_COMMITS_VK_FN}" \
 		|| ! -e "${FILESDIR}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}" ]] ; \
 		then
@@ -601,12 +632,10 @@ function apply_amdgpu() {
 		fi
 	else
 		ewarn \
-"It is recommended to use the rock-snapshot or rock-milestone USE flag or you\n\
+"It is recommended to use the rock-snapshot or rock-latest USE flag or you\n\
 need to fetch vanilla sources to regen the commit cache list."
 		fetch_linux_sources
 	fi
-
-	#AMDGPU_BASE="${AMD_STAGING_INTERSECTS_ROCK}"
 
 	get_linux_commit_list_for_amdgpu_range
 
@@ -698,10 +727,7 @@ function ot-kernel-common_src_unpack() {
 	# apply_genpatch_base
 	fetch_cve_hotfixes
 
-	if has amd-staging-drm-next-snapshot ${IUSE_EFFECTIVE} \
-		|| has amd-staging-drm-next-latest ${IUSE_EFFECTIVE} \
-		|| has amd-staging-drm-next-milestone ${IUSE_EFFECTIVE} ; \
-	then
+	if has amd-staging-drm-next ${IUSE_EFFECTIVE} ; then
 		apply_amdgpu
 	fi
 
@@ -805,4 +831,52 @@ function ot-kernel-common_pkg_postinst() {
 		ot-kernel-common_pkg_postinst_cb
 	fi
 
+}
+
+# @FUNCTION: ot-kernel-common_amdgpu_get_rock_dgma_suffix
+# @DESCRIPTION:
+# Generates a suffix based on the directgma USE flag.
+function ot-kernel-common_amdgpu_get_rock_dgma_suffix() {
+	local suffix_rock_dgma
+	if use rock ; then
+		if use directgma ; then
+			suffix_rock_dgma=".rock_with_dgma"
+		else
+			suffix_rock_dgma=".rock_without_dgma"
+		fi
+	else
+		suffix_rock_dgma=".no_rock"
+	fi
+	echo "${suffix_rock_dgma}"
+}
+
+# @FUNCTION: ot-kernel-common_amdgpu_get_suffix_asdn
+# @DESCRIPTION:
+# Generates a suffix for asdn cache file.
+function ot-kernel-common_amdgpu_get_suffix_asdn() {
+	local suffix_rock_dgma=$(ot-kernel-common_amdgpu_get_rock_dgma_suffix)
+	local suffix_asdn
+	if [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ amdgpu_version ]] ; then
+		suffix_asdn=\
+"..${AMD_STAGING_DRM_NEXT_AMDGPU_VERSION_C}${suffix_rock_dgma}"
+	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ dc_ver ]] ; then
+		suffix_asdn=\
+"..${AMD_STAGING_DRM_NEXT_DC_VER_C}${suffix_rock_dgma}"
+	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ head ]] ; then
+		suffix_asdn=\
+"..$(git rev-parse HEAD)${suffix_rock_dgma}"
+	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ snapshot ]] ; then
+		suffix_asdn=\
+"..${AMD_STAGING_DRM_NEXT_SNAPSHOT_C}${suffix_rock_dgma}"
+	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ amdgpu_19_30 ]] ; then
+		suffix_asdn=\
+"..${AMD_STAGING_DRM_NEXT_AMDGPU_19_30_C}${suffix_rock_dgma}"
+	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ amdgpu_19_10 ]] ; then
+		suffix_asdn=\
+"..${AMD_STAGING_DRM_NEXT_AMDGPU_19_10_C}${suffix_rock_dgma}"
+	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ amdgpu_18_40 ]] ; then
+		suffix_asdn=\
+"..${AMD_STAGING_DRM_NEXT_AMDGPU_18_40_C}${suffix_rock_dgma}"
+	fi
+	echo "${suffix_asdn}"
 }
