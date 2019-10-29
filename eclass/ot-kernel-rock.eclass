@@ -1,3 +1,4 @@
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
 # Copyright 2019 Orson Teodoro
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
@@ -16,13 +17,13 @@
 #   https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/
 
 HOMEPAGE+=" https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver"
-IUSE+=" rock-latest \
-	rock-snapshot \
-	rock-milestone \
+IUSE+="	amd-staging-drm-next
 	+directgma \
-	amd-staging-drm-next-snapshot \
-	amd-staging-drm-next-milestone \
-	amd-staging-drm-next-latest"
+	rock "
+
+DEPEND+=" rock? ( dev-vcs/git )
+	  dev-util/patchutils"
+REQUIRED_USE+=" directgma? ( rock ) rock? ( amd-staging-drm-next )"
 
 # The amdgpu-19_30 USE flag will simulate the production of the same source as
 # amdgpu-dkms without dkms matching the same DC_VER and last rock commit found
@@ -30,8 +31,8 @@ IUSE+=" rock-latest \
 # Clarifications about the sources
 # The amdgpu-dkms driver is basically
 #     https://cgit.freedesktop.org/~agd5f/linux/log/?h=amd-19.30
-#   It is a bit older than the ROCk-kernel-driver.  ROCk for this version is
-#   around 2.7.0 + newer commits
+#   It is a bit older than the ROCk-kernel-driver.  ROCk for 19.30 is
+#   around ROCk 2.7.0 + newer commits
 # The ROCk kernel driver is the rock-dkms package found in
 #   http://repo.radeon.com/rocm/apt/debian/pool/main/r/
 #     and explained in
@@ -96,12 +97,14 @@ ROCK_DIR="ROCK-Kernel-Driver"
 
 ROCK_BASE="e28740ece34d314002b1ddfa14e8fb7c7b909489"
 
-# before .program_vline_interrupt = optc1_program_vline_interrupt,
-ROCK_SNAPSHOT="38d5546b8cd23bc4e265c4ec430f019de620eaf7"
-  # corresponds to master snapshot at 2019-07-26 drm/amd/dkms: Disable DC_DCN2_0
-ROCK_MILESTONE="38d5546b8cd23bc4e265c4ec430f019de620eaf7"
-  # corresponds to snapshot of roc-2.7.0
-ROCK_LATEST="master"
+ROCK_SNAPSHOT="217c2b3894e783d7e1751e4caa9dabc25977c27d"
+ROCK_LATEST="217c2b3894e783d7e1751e4caa9dabc25977c27d"
+ROCK_2_9_0="217c2b3894e783d7e1751e4caa9dabc25977c27d"
+ROCK_2_8_0="89baa3f89c8cb0d76e999c01bf304301e35abc9b"
+ROCK_2_7_0="38d5546b8cd23bc4e265c4ec430f019de620eaf7"
+ROCK_1_9_2="348f05754dda33523a8e5168f7df2fc9eee125b0"
+ROCK_1_8_3="ca2a6a781973e82ca2c7be8e4fdf7c880f60cb8d"
+ROCK_HEAD="master"
 
 # The intersection is defined to be the newer commit of rock_xxxx that
 # intersects amd-staging-drm-next
@@ -124,7 +127,7 @@ ROCK_LATEST="master"
 # starting from ROCK-Kernel-Driver's
 # "drm/amd/display: 3.2.35" [same as min common DC_VER for
 #   amd-staging-drm-next (3.2.51.1)
-#   [corresponding to AMD_STAGING_DRM_NEXT_MILESTONE]
+#   [corresponding to AMD_STAGING_DRM_NEXT_LATEST]
 #     and
 #   ROCK-Kernel-Driver (3.2.35)
 #   [corresponding to DC_VER]]
@@ -149,24 +152,18 @@ ROCK_LATEST="master"
 # The rock- USE flag will try to simulate a copy and feature set of
 # amdgpu-dkms driver
 
-REQUIRED_USE+="
-     rock-latest? ( !rock-snapshot !rock-milestone \
-	^^ (    amd-staging-drm-next-snapshot \
-		amd-staging-drm-next-latest \
-		amd-staging-drm-next-milestone ) )
-     rock-snapshot? ( !rock-latest !rock-milestone \
-	^^ (    amd-staging-drm-next-snapshot \
-		amd-staging-drm-next-latest \
-		amd-staging-drm-next-milestone ) )
-     rock-milestone? ( !rock-latest !rock-snapshot \
-	^^ (    amd-staging-drm-next-snapshot \
-		amd-staging-drm-next-latest \
-		amd-staging-drm-next-milestone ) )"
 
-DEPEND+=" rock-latest? ( dev-vcs/git )
-	  rock-snapshot? ( dev-vcs/git )
-	  rock-milestone? ( dev-vcs/git )
-	  dev-util/patchutils"
+function rock_setup() {
+	if use rock ; then
+		if [[ -z "${ROCK_BUMP_REQUEST}" ]] ; then
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
+			die \
+"You must define a ROCK_BUMP_REQUEST environmental variable in make.conf or\n\
+per-package env containing either: latest, head, snapshot, 2_9_0, 2_8_0,\n\
+2_7_0, 1_9_2, 1_8_3."
+		fi
+	fi
+}
 
 # @FUNCTION: fetch_rock_local_copy
 # @DESCRIPTION:
@@ -219,21 +216,34 @@ function generate_rock_patches() {
 	cd "${d}"
 
 	local suffix_rock
-	local suffix_rock_dgma
+	local suffix_rock_dgma=$(ot-kernel-common_amdgpu_get_rock_dgma_suffix)
 	local target
-	if use directgma ; then
-		suffix_rock_dgma=".rock_with_dgma"
-	else
-		suffix_rock_dgma=".rock_without_dgma"
-	fi
-	if use rock-snapshot ; then
+	if [[ "${ROCK_BUMP_REQUEST}" =~ snapshot ]] ; then
 		target="${ROCK_SNAPSHOT}"
 		suffix_rock="..${target}${suffix_rock_dgma}"
-	elif use rock-latest ; then
+	elif [[ "${ROCK_BUMP_REQUEST}" =~ head ]] ; then
 		target="${ROCK_LATEST}"
 		suffix_rock="..$(git rev-parse ${target})${suffix_rock_dgma}"
-	else
+	elif [[ "${ROCK_BUMP_REQUEST}" =~ latest ]] ; then
 		target="${ROCK_MILESTONE}"
+		suffix_rock="..${target}${suffix_rock_dgma}"
+	elif [[ "${ROCK_BUMP_REQUEST}" =~ 2_9_0 ]] ; then
+		target="${ROCK_2_9_0}"
+		suffix_rock="..${target}${suffix_rock_dgma}"
+	elif [[ "${ROCK_BUMP_REQUEST}" =~ 2_8_0 ]] ; then
+		target="${ROCK_2_8_0}"
+		suffix_rock="..${target}${suffix_rock_dgma}"
+	elif [[ "${ROCK_BUMP_REQUEST}" =~ 2_7_0 ]] ; then
+		# KV is 5.0-rc1
+		target="${ROCK_2_7_0}"
+		suffix_rock="..${target}${suffix_rock_dgma}"
+	elif [[ "${ROCK_BUMP_REQUEST}" =~ 1_9_2 ]] ; then
+		# KV is 4.15
+		target="${ROCK_1_9_2}"
+		suffix_rock="..${target}${suffix_rock_dgma}"
+	elif [[ "${ROCK_BUMP_REQUEST}" =~ 1_8_3 ]] ; then
+		# KV is 4.13
+		target="${ROCK_1_8_3}"
 		suffix_rock="..${target}${suffix_rock_dgma}"
 	fi
 
@@ -302,18 +312,8 @@ take longer than expected."
 		# amd-staging-drm-next-stable is currently not used, may be
 		# changed to only 5.3 only without 5.4 commits.
 		local suffix_asdn
-		if is_amd_staging_drm_next ; then
-			if use amd-staging-drm-next-milestone ; then
-				suffix_asdn=\
-".${AMD_STAGING_DRM_NEXT_MILESTONE}${suffix_rock_dgma}"
-			elif use amd-staging-drm-next-snapshot ; then
-				suffix_asdn=\
-".${AMD_STAGING_DRM_NEXT_SNAPSHOT}${suffix_rock_dgma}"
-			elif use amd-staging-drm-next-latest ; then
-				suffix_asdn=\
-".$(git rev-parse HEAD)${suffix_rock_dgma}"
-			fi
-
+		if use amd-staging-drm-next ; then
+			suffix_asdn=$(ot-kernel-common_amdgpu_get_suffix_asdn)
 			local ht_asdn_fn=\
 "${LINUX_HASHTABLE_COMMITS_ASDN_FN}${suffix_asdn}"
 			local ht_asdns_fn=\
@@ -448,6 +448,16 @@ take longer than expected."
 			then
 				# obsolete ; vanilla is version 3, rock is version 2
 				continue
+			elif echo "${s}" | grep -q -F \
+-e "drm/amdgpu: Add navi10 kfd support for amdgpu" ; \
+			then
+				# already added by vanilla
+				continue
+			elif echo "${s}" | grep -q -F \
+-e "drm/amdgpu: Move KFD parameters to amdgpu" ; \
+			then
+				# already added by vanilla
+				continue
 			fi
 
 			local ct=$(git -P show -s --format=%ct ${c})
@@ -524,7 +534,7 @@ Skipping..."
 				continue
 			fi
 
-			if is_amd_staging_drm_next ; then
+			if use amd-staging-drm-next ; then
 				if [[ "${whitelisted}" == "1" ]] ; then
 					:;
 				elif [[ -n "${asdn_summaries[${h_summary}]}" ]] ; then
@@ -574,6 +584,9 @@ match).  Skipping..."
 		ot-kernel-rock_generate_rock_patches_post
 	fi
 
+	# ${T}/rock.summaries.final contains the set of commit hashes ( and
+	# summaries) not in VK and not in ASDN.  Useful for analysis of the
+	# value added commits.
 	if [[ "${using_rock_commit_cache}" != "1" ]] ; then
 		if declare -f ot-kernel-rock_rm > /dev/null ; then
 			# per version removal
@@ -593,23 +606,11 @@ match).  Skipping..."
 	fi
 }
 
-# @FUNCTION: is_rock
-# @DESCRIPTION:
-# Check if user wanted rock
-# @RETURN: zero - user wants rock; non-zero user doesn't want rock
-function is_rock() {
-	if use rock-snapshot || use rock-latest || use rock-milestone ; then
-		return 0
-	else
-		return 1
-	fi
-}
-
 # @FUNCTION: fetch_rock
 # @DESCRIPTION:
 # Manages getting a local copy of ROCk project
 function fetch_rock() {
-	if is_rock ; then
+	if use rock ; then
 		fetch_rock_local_copy
 	fi
 }
@@ -644,5 +645,17 @@ function rock_postinst_msg() {
 	einfo "CONFIG_TRIM_UNUSED_KSYMS=n or unset"
 	einfo "CONFIG_DRM_AMD_ACP=y/m"
 	einfo "CONFIG_MFD_CORE=y/m"
+	einfo
+	einfo
+	einfo "The following are required for SSG (Solid State Graphics)"
+	einfo "enhanced feature support (e.g. direct data transfer SSG VRAM"
+	einfo "and DISK bypassing system DRAM):"
+	einfo
+	einfo "The directgma USE flag"
+	einfo "CONFIG_ZONE_DEVICE=y"
+	einfo "CONFIG_MEMORY_HOTPLUG=y"
+	einfo "CONFIG_MEMORY_HOTREMOVE=y"
+	einfo "CONFIG_SPARSEMEM_VMEMMAP=y"
+	einfo "CONFIG_ARCH_HAS_PTE_DEVMAP=y"
 	einfo
 }
