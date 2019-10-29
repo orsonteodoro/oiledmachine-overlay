@@ -166,7 +166,7 @@ per-package env containing either: latest, head, snapshot,\n\"
 				ewarn \
 "Your kernel version may not be supported by rock."
 			fi
-			die ${m}
+			die "${m}"
 		fi
 	fi
 }

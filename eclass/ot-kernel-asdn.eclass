@@ -41,7 +41,7 @@ dc_ver, amdgpu_version"
 				ewarn \
 "Your kernel version may not be supported by amd-staging-drm-next."
 			fi
-			die ${m}
+			die "${m}"
 		fi
 	fi
 	case ${AMD_STAGING_DRM_NEXT_BUMP_REQUEST} in
