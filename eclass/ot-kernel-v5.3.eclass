@@ -137,7 +137,7 @@ SRC_URI+=" ${KERNEL_URI}
 	   ${TRESOR_README_DL_URL}
 	   ${TRESOR_SRC_URL}
 	   ${UKSM_SRC_URL}
-	   ${KERNEL_PATCH_URLS[@]}"
+	   ${KERNEL_PATCH_URLS[@]} "
 
 SRC_URI+=\
 "https://github.com/torvalds/linux/commit/4b3e30ed3ec7864e798403a63ff2e96bd0c19ab0.patch \
