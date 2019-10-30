@@ -285,6 +285,9 @@ function ot-kernel-common_amdgpu_merge_and_apply_patches_asdn() {
       echo $(patch --dry-run ${PATCH_OPS} -i "${mpd}/${l}") | grep -F -e "FAILED at"
       if [[ "$?" == "1" ]] ; then
         case "${l}" in
+          *002c9880d73c434a824e6a27b803cc097af8d828*)
+            die "fixme ${mpd}/${l}"
+            ;;
           *ab2f7a5c18b5c17cc94aaab7ae2e7d1fa08993d6*)
             # Fails enter in else branch so move up here
             # modifies ab2f commit
@@ -507,6 +510,9 @@ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
             _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
             _dpatch "${PATCH_OPS}" \
 "${FILESDIR}/rock-bb02f27489fe4469cf3460549dd0bf45e1cc1746-skip-drm-ver-check-for-5.3.4.patch"
+            # apply patch without kcl macro check
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/rock-bb02f27489fe4469cf3460549dd0bf45e1cc1746-rebase-for-5.3.4.patch"
             ;;
           *d732ef0efc3beed8b8c30433aa11d5b6895cb457*rock*)
             # drm/amdkcl: add dkms support ; remove?
@@ -713,11 +719,28 @@ function ot-kernel-common_amdgpu_merge_and_apply_patches() {
 	local mpd="${T}/amdgpu-merged-patches"
 	mkdir -p "${mpd}"
 	if use amd-staging-drm-next ; then
-		generate_amd_staging_drm_next_patches
+		local suffix_asdn=$(ot-kernel-common_amdgpu_get_suffix_asdn)
+		if [[ \
+	  -d "${FILESDIR}/amd-staging-drm-next/${K_MAJOR_MINOR}${suffix_asdn}" ]]
+		then
+			cp -a \
+	    "${FILESDIR}/amd-staging-drm-next/${K_MAJOR_MINOR}${suffix_asdn}"/* \
+	    "${T}/amd-staging-drm-next-patches" || die
+		else
+			generate_amd_staging_drm_next_patches
+		fi
 		mv "${T}/amd-staging-drm-next-patches"/* "${mpd}"
 	fi
 	if use rock ; then
-		generate_rock_patches
+		local suffix_rock=$(ot-kernel-common_amdgpu_get_suffix_rock)
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
+		if [[ -d "${FILESDIR}/rock/${K_MAJOR_MINOR}${suffix_rock}" ]]
+		then
+			cp -a "${FILESDIR}/rock/${K_MAJOR_MINOR}${suffix_rock}"/*
+				"${T}/rock-patches" || die
+		else
+			generate_rock_patches
+		fi
 		mv "${T}/rock-patches"/* "${mpd}"
 	fi
 

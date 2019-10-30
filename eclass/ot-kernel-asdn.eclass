@@ -55,12 +55,22 @@ dc_ver, amdgpu_version"
 	fi
 }
 
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
 # @FUNCTION: fetch_amd_staging_drm_next
 # @DESCRIPTION:
 # Generalization of steps for fetching and generating commit list.
 function fetch_amd_staging_drm_next() {
 	if use amd-staging-drm-next ; then
-		fetch_amd_staging_drm_next_local_copy
+		local suffix_asdn=$(ot-kernel-common_amdgpu_get_suffix_asdn)
+		if [[ \
+       ! -d "${FILESDIR}/amd-staging-drm-next/${K_MAJOR_MINOR}${suffix_asdn}" ]]
+		then
+			# ebuild maintainer only
+			einfo \
+"Dump amd-staging-drm-next patches to \
+${FILESDIR}/amd-staging-drm-next/${K_MAJOR_MINOR}${suffix_asdn}"
+			fetch_amd_staging_drm_next_local_copy
+		fi
 	fi
 }
 
@@ -69,16 +79,6 @@ function fetch_amd_staging_drm_next() {
 # Clones or updates the amd-staging-drm-next patchset for recent fixes or GPU
 # compatibility updates.
 function fetch_amd_staging_drm_next_local_copy() {
-	# I would like to store/cache the converted commits to .patch files in
-	# ${FILESDIR}/amd-staging-drm-next/5.3 but unfortunately I cannot do it
-	# because of licensing problems.  So you need to download a local copy
-	# of git repo instead.  It would require to prepend each patch with
-	# the license or extract the license header from the source code and
-	# store it in a single LICENSE file, or creative license
-	# fingerprinting and IDing
-	# the headers.  It is practically impossible or too time consuming to
-	# do it for 1100+ commits which refer to several files each.
-
 	einfo "Fetching the amd-staging-drm-next project please wait."
 	einfo "It may take hours."
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
@@ -286,7 +286,7 @@ Doing commit -> .patch conversion for amd-staging-drm-next-patches set:"
 				:;
 			elif [[ -n "${vk_summaries[${h_summary}]}" ]] ; then
 				einfo \
-"Already added ${c} via vanilla kernel sources (with same subject match).\n\
+"Already added ${c} via vanilla kernel sources (with same subject match). \
 Skipping..."
 				continue
 			fi
@@ -311,7 +311,12 @@ Skipping..."
 
 		if git -P diff $c^..$c \
 			> "${T}"/amd-staging-drm-next-patches/${fn} ; then
-		        :; #einfo "Added ${fn}"
+		        #einfo "Added ${fn}"
+			# attach missing commit subject for possible patch tarball
+			local b=$(cat "${T}/amd-staging-drm-next-patches/${fn}")
+			local s_pretty=$(git -P show -s --pretty=email ${c})
+			echo -e "${s_pretty}\n${b}" > "${T}/amd-staging-drm-next-patches/${fn}.t" || die
+			mv "${T}"/amd-staging-drm-next-patches/${fn}{.t,} || die
 			if [[ "${using_asdn_commit_cache}" != "1" ]] ; then
 				asdn_commit_cache[${c}]="${fn}"
 			fi

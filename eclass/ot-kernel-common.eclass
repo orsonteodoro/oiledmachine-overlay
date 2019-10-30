@@ -858,7 +858,7 @@ function ot-kernel-common_amdgpu_get_rock_dgma_suffix() {
 
 # @FUNCTION: ot-kernel-common_amdgpu_get_suffix_asdn
 # @DESCRIPTION:
-# Generates a suffix for asdn cache file.
+# Generates a suffix for asdn cache file or stored commits in filesdir.
 function ot-kernel-common_amdgpu_get_suffix_asdn() {
 	local suffix_rock_dgma=$(ot-kernel-common_amdgpu_get_rock_dgma_suffix)
 	local suffix_asdn
@@ -885,4 +885,33 @@ function ot-kernel-common_amdgpu_get_suffix_asdn() {
 "..${AMD_STAGING_DRM_NEXT_AMDGPU_18_40_C}${suffix_rock_dgma}"
 	fi
 	echo "${suffix_asdn}"
+}
+
+# @FUNCTION: ot-kernel-common_amdgpu_get_suffix_rock
+# @DESCRIPTION:
+# Generates a suffix for rock cache file or stored commits in filesdir.
+function ot-kernel-common_amdgpu_get_suffix_rock() {
+	local suffix_rock_dgma=$(ot-kernel-common_amdgpu_get_rock_dgma_suffix)
+	local suffix_rock
+	if [[ "${ROCK_BUMP_REQUEST}" =~ snapshot ]] ; then
+		suffix_rock="..${ROCK_SNAPSHOT}${suffix_rock_dgma}"
+	elif [[ "${ROCK_BUMP_REQUEST}" =~ head ]] ; then
+		suffix_rock="..$(git rev-parse ${ROCK_HEAD})${suffix_rock_dgma}"
+	elif [[ "${ROCK_BUMP_REQUEST}" =~ latest ]] ; then
+		suffix_rock="..${ROCK_LATEST}${suffix_rock_dgma}"
+	elif [[ "${ROCK_BUMP_REQUEST}" =~ 2_9_0 ]] ; then
+		suffix_rock="..${ROCK_2_9_0}${suffix_rock_dgma}"
+	elif [[ "${ROCK_BUMP_REQUEST}" =~ 2_8_0 ]] ; then
+		suffix_rock="..${ROCK_2_8_0}${suffix_rock_dgma}"
+	elif [[ "${ROCK_BUMP_REQUEST}" =~ 2_7_0 ]] ; then
+		# KV is 5.0-rc1
+		suffix_rock="..${ROCK_2_7_0}${suffix_rock_dgma}"
+	elif [[ "${ROCK_BUMP_REQUEST}" =~ 1_9_2 ]] ; then
+		# KV is 4.15
+		suffix_rock="..${ROCK_1_9_2}${suffix_rock_dgma}"
+	elif [[ "${ROCK_BUMP_REQUEST}" =~ 1_8_3 ]] ; then
+		# KV is 4.13
+		suffix_rock="..${ROCK_1_8_3}${suffix_rock_dgma}"
+	fi
+	echo "${suffix_rock}"
 }

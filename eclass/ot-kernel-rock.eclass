@@ -220,6 +220,34 @@ function rock_rm() {
 	rm "${T}"/rock-patches/*${c}*
 }
 
+
+# @FUNCTION: rock_set_target
+# @DESCRIPTION:
+# Obtains the commit hash based on ROCK_BUMP_REQUEST.
+function rock_set_target() {
+	local target
+	if [[ "${ROCK_BUMP_REQUEST}" =~ snapshot ]] ; then
+		target="${ROCK_SNAPSHOT}"
+	elif [[ "${ROCK_BUMP_REQUEST}" =~ head ]] ; then
+		target="${ROCK_HEAD}"
+	elif [[ "${ROCK_BUMP_REQUEST}" =~ latest ]] ; then
+		target="${ROCK_LATEST}"
+	elif [[ "${ROCK_BUMP_REQUEST}" =~ 2_9_0 ]] ; then
+		target="${ROCK_2_9_0}"
+	elif [[ "${ROCK_BUMP_REQUEST}" =~ 2_8_0 ]] ; then
+		target="${ROCK_2_8_0}"
+	elif [[ "${ROCK_BUMP_REQUEST}" =~ 2_7_0 ]] ; then
+		# KV is 5.0-rc1
+		target="${ROCK_2_7_0}"
+	elif [[ "${ROCK_BUMP_REQUEST}" =~ 1_9_2 ]] ; then
+		# KV is 4.15
+		target="${ROCK_1_9_2}"
+	elif [[ "${ROCK_BUMP_REQUEST}" =~ 1_8_3 ]] ; then
+		# KV is 4.13
+		target="${ROCK_1_8_3}"
+	fi
+}
+
 # @FUNCTION: generate_rock_patches
 # @DESCRIPTION:
 # Grabs all the commits and generates .patch files for individual evaluation.
@@ -228,37 +256,8 @@ function generate_rock_patches() {
 	d="${distdir}/ot-sources-src/linux-${ROCK_DIR}"
 	cd "${d}"
 
-	local suffix_rock
-	local suffix_rock_dgma=$(ot-kernel-common_amdgpu_get_rock_dgma_suffix)
-	local target
-	if [[ "${ROCK_BUMP_REQUEST}" =~ snapshot ]] ; then
-		target="${ROCK_SNAPSHOT}"
-		suffix_rock="..${target}${suffix_rock_dgma}"
-	elif [[ "${ROCK_BUMP_REQUEST}" =~ head ]] ; then
-		target="${ROCK_HEAD}"
-		suffix_rock="..$(git rev-parse ${target})${suffix_rock_dgma}"
-	elif [[ "${ROCK_BUMP_REQUEST}" =~ latest ]] ; then
-		target="${ROCK_LATEST}"
-		suffix_rock="..${target}${suffix_rock_dgma}"
-	elif [[ "${ROCK_BUMP_REQUEST}" =~ 2_9_0 ]] ; then
-		target="${ROCK_2_9_0}"
-		suffix_rock="..${target}${suffix_rock_dgma}"
-	elif [[ "${ROCK_BUMP_REQUEST}" =~ 2_8_0 ]] ; then
-		target="${ROCK_2_8_0}"
-		suffix_rock="..${target}${suffix_rock_dgma}"
-	elif [[ "${ROCK_BUMP_REQUEST}" =~ 2_7_0 ]] ; then
-		# KV is 5.0-rc1
-		target="${ROCK_2_7_0}"
-		suffix_rock="..${target}${suffix_rock_dgma}"
-	elif [[ "${ROCK_BUMP_REQUEST}" =~ 1_9_2 ]] ; then
-		# KV is 4.15
-		target="${ROCK_1_9_2}"
-		suffix_rock="..${target}${suffix_rock_dgma}"
-	elif [[ "${ROCK_BUMP_REQUEST}" =~ 1_8_3 ]] ; then
-		# KV is 4.13
-		target="${ROCK_1_8_3}"
-		suffix_rock="..${target}${suffix_rock_dgma}"
-	fi
+	local suffix_rock=$(ot-kernel-common_amdgpu_get_suffix_rock)
+	local target=$(rock_set_target)
 
 	git checkout ${target} . || die
 
@@ -543,7 +542,7 @@ take longer than expected."
 				:;
 			elif [[ -n "${vk_summaries[${h_summary}]}" ]] ; then
 				einfo \
-"Already added ${c} via vanilla kernel sources (with same subject match).\n\
+"Already added ${c} via vanilla kernel sources (with same subject match).  \
 Skipping..."
 				continue
 			fi
@@ -553,7 +552,7 @@ Skipping..."
 					:;
 				elif [[ -n "${asdn_summaries[${h_summary}]}" ]] ; then
 					einfo \
-"Already added ${c} via amd-staging-drm-next kernel sources (with same subject\n\
+"Already added ${c} via amd-staging-drm-next kernel sources (with same subject \
 match).  Skipping..."
 					continue
 				fi
@@ -578,7 +577,12 @@ match).  Skipping..."
 		fi
 
 		if git -P diff $c^..$c > "${T}"/rock-patches/${fn} ; then
-			:; #einfo "Added ${fn}"
+			#einfo "Added ${fn}"
+			# attach missing commit subject for possible patch tarball
+			local b=$(cat "${T}/rock-patches/${fn}")
+			local s_pretty=$(git -P show -s --pretty=email ${c}^..${c})
+			echo -e "${s_pretty}\n${b}" > "${T}/rock-patches/${fn}.t" || die
+			mv "${T}/rock-patches/${fn}"{.t,} || die
 			if [[ "${using_rock_commit_cache}" != "1" ]] ; then
 				rock_commit_cache[${c}]="${fn}"
 				rock_commit_cache_summaries[${c}]="${s}"
@@ -625,7 +629,14 @@ match).  Skipping..."
 # Manages getting a local copy of ROCk project
 function fetch_rock() {
 	if use rock ; then
-		fetch_rock_local_copy
+		local suffix_rock=$(ot-kernel-common_amdgpu_get_suffix_rock)
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
+		if [[ ! -d "${FILESDIR}/rock/${K_MAJOR_MINOR}${suffix_rock}" ]] ; then
+			einfo \
+"Dump ROCk patches to ${FILESDIR}/rock/${K_MAJOR_MINOR}${suffix_rock}"
+			# ebuild maintainer only
+			fetch_rock_local_copy
+		fi
 	fi
 }
 
