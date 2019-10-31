@@ -31,6 +31,7 @@
     <flag name="profile_arb1">Build support for the ARB1 profile.</flag>
     <flag name="profile_arb1_nv">Build support for the ARB1_NV1 profile.</flag>
     <flag name="profile_metal">Build support for the Metal profile.</flag>
+    <flag name="versioning">Generates versioned headers.</flag>
     <flag name="xna_vertextexture">Build with XNA vertex texturing behavior.</flag>
   </use>
 </pkgmetadata>

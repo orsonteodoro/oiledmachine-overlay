@@ -2,26 +2,55 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-inherit cmake-utils eutils
-
-DESCRIPTION="MojoShader is a library to work with Direct3D shaders on alternate 3D APIs and non-Windows platforms."
+DESCRIPTION="MojoShader is a library to work with Direct3D shaders on alternate\
+ 3D APIs and non-Windows platforms."
 HOMEPAGE="https://icculus.org/mojoshader/"
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~x86"
-COMMIT="5887634ea695"
-SRC_URI="https://hg.icculus.org/icculus/${PN}/archive/${COMMIT}.tar.bz2 -> ${P}.tar.bz2"
-IUSE="-compiler_support debug -depth_clipping +profile_arb1 +profile_arb1_nv +profile_bytecode +profile_d3d +profile_glsl120 +profile_glsl +profile_metal +effect_support -flip_viewport static -xna_vertextexture"
+inherit cmake-utils eutils mercurial
+EHG_REVISION_C="9d725de6c61c"
+EHG_REVISION="1216"
+EHG_REPO_URI="https://hg.icculus.org/icculus/mojoshader/"
+# Wrong CMakeLists.txt ; use mercurial
+#SRC_URI=\
+#"https://hg.icculus.org/icculus/${PN}/archive/${EGH_REVISION}.tar.bz2 -> ${P}.tar.bz2"
+IUSE="-compiler_support debug -depth_clipping +profile_arb1 +profile_arb1_nv \
++profile_bytecode +profile_d3d +profile_glsl120 +profile_glsl +profile_metal \
++effect_support -flip_viewport static -xna_vertextexture"
 REQUIRED_USE=""
-SLOT="9999"
+SLOT="0/${PV}"
 RDEPEND="dev-util/re2c
 	 media-libs/libsdl2"
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-2.6
-"
-S="${WORKDIR}/${PN}-${COMMIT}"
+	dev-vcs/mercurial"
+RESTRICT="mirror"
+S="${WORKDIR}/${PN}-"
+
+src_unpack() {
+	mercurial_src_unpack
+}
 
 src_prepare() {
 	default
+	# Bugged CMakeLists.txt always points to tip but not static values as
+	# expected.
+	sed -i -e "s|\
+MOJOSHADER_VERSION -1|\
+MOJOSHADER_VERSION ${EHG_REVISION}|" \
+		CMakeLists.txt || die
+	sed -i -e "s|\
+MOJOSHADER_CHANGESET \"[?][?][?]\"|\
+MOJOSHADER_CHANGESET \"hg-${EHG_REVISION}:${EHG_REVISION_C}\"|" \
+		CMakeLists.txt || die
+	sed -i -e "s|\
+hg tip --template {rev}|\
+hg tip --template ${EHG_REVISION}|" \
+		CMakeLists.txt || die
+	sed -i -e "s;\
+hg tip --template hg-{rev}:{node|short};\
+hg tip --template hg-${EHG_REVISION}:{node|short};" \
+		CMakeLists.txt || die
 	cmake-utils_src_prepare
 }
 
