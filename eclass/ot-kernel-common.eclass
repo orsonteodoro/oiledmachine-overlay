@@ -291,8 +291,8 @@ function apply_zentune() {
 # @DESCRIPTION:
 # Apply the base genpatches patchset.
 #
-# ot-kernel-common_apply_genpatch_base_patchset - callback to apply individual
-#   patches
+# ot-kernel-common_apply_genpatch_base_post - callback to apply individual
+#   fixes
 #
 function apply_genpatch_base() {
 	einfo "Applying the genpatch base"
@@ -335,10 +335,10 @@ function apply_genpatch_base() {
 
 	cd "${S}"
 
-	if declare -f ot-kernel-common_apply_genpatch_base_patchset \
+	if declare -f ot-kernel-common_apply_genpatch_base_post \
 		> /dev/null ; \
 	then
-		ot-kernel-common_apply_genpatch_base_patchset
+		ot-kernel-common_apply_genpatch_base_post
 	fi
 }
 
