@@ -730,7 +730,9 @@ function ot-kernel-common_src_unpack() {
 	fetch_cve_hotfixes
 
 	if has amd-staging-drm-next ${IUSE_EFFECTIVE} ; then
-		apply_amdgpu
+		if use amd-staging-drm-next ; then
+			apply_amdgpu
+		fi
 	fi
 
 	if use o3 ; then

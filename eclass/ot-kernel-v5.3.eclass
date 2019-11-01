@@ -80,7 +80,7 @@ REQUIRED_USE="^^ ( muqss pds cfs bmq )
 	     tresor_x86_64? ( tresor )"
 
 # no released patch yet
-REQUIRED_USE+=" !pds !bmq-quick-fix !muqss"
+REQUIRED_USE+=" !pds !bmq-quick-fix"
 
 if [[ -z "${OT_SOURCES_DEVELOPER}" ]] || [[ "${OT_SOURCES_DEVELOPER}" != "1" ]] ; then
 # disabled because it doesn't work
@@ -116,8 +116,7 @@ inherit check-reqs ot-kernel-common
 BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.diff"
 BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
 
-# no release yet
-#SRC_URI+=" ${CK_SRC_URL}"
+SRC_URI+=" ${CK_SRC_URL}"
 
 SRC_URI+=" ${KERNEL_URI}
 	   ${GENPATCHES_URI}
