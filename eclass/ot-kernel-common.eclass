@@ -72,8 +72,10 @@ AMD_STAGING_DRM_NEXT_DIR="amd-staging-drm-next"
 
 # This should be pinned to KV or it may exhibit runtime errors
 # The latest commit I tested which should be ideally head at that time
+if [[ "${K_MAJOR_MINOR}" == "5.3" ]] ; then
 AMD_STAGING_DRM_NEXT_SNAPSHOT_S="2019-10-28" # commit time
 AMD_STAGING_DRM_NEXT_SNAPSHOT_C="8799b4cfde6229d2b9bc3d983cc831ccb893b30c"
+fi
 # 2019-10-04 drm/amdgpu: remove redundant variable r and redundant return statement
 
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
@@ -872,8 +874,15 @@ function ot-kernel-common_amdgpu_get_suffix_asdn() {
 		suffix_asdn=\
 "..$(git rev-parse ${AMD_STAGING_DRM_NEXT_HEAD_C})${suffix_rock_dgma}"
 	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ snapshot ]] ; then
-		suffix_asdn=\
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
+		if [[ "${K_MAJOR_MINOR}" == "5.3" ]] ; then
+			suffix_asdn=\
 "..${AMD_STAGING_DRM_NEXT_SNAPSHOT_C}${suffix_rock_dgma}"
+		else
+			die \
+"snapshot is not supported for AMD_STAGING_DRM_NEXT_BUMP_REQUEST for your \
+kernel version."
+		fi
 	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ amdgpu_19_30 ]] ; then
 		suffix_asdn=\
 "..${AMD_STAGING_DRM_NEXT_AMDGPU_19_30_C}${suffix_rock_dgma}"

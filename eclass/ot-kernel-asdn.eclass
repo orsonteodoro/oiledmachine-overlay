@@ -25,8 +25,11 @@ function amd_staging_drm_next_setup() {
 		if [[ -z "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" ]] ; then
 			local m=\
 "You must define a AMD_STAGING_DRM_NEXT_BUMP_REQUEST environmental variable\n\
-in your make.conf or per-package env containing either: head, snapshot,\n\
+in your make.conf or per-package env containing either: head, \n\
 dc_ver, amdgpu_version"
+			if [[ "${K_MAJOR_MINOR}" == "5.3" ]] ; then
+				m+=", snapshot"
+			fi
 			if ver_test ${K_MAJOR_MINOR} -ge 5.0 \
 				&& ver_test ${K_MAJOR_MINOR} -le 5.3 ; then
 				m+=", amdgpu_19_30"
@@ -122,6 +125,12 @@ function asdn_rm() {
 	rm "${T}"/amd-staging-drm-next-patches/*${c}*
 }
 
+function asdn_rm_list() {
+	for l in $@ ; do
+		asdn_rm ${l}
+	done
+}
+
 # @FUNCTION: amd_staging_drm_next_set_target
 # @DESCRIPTION:
 # Obtains the commit hash based on AMD_STAGING_DRM_NEXT_BUMP_REQUEST.
@@ -134,7 +143,13 @@ function amd_staging_drm_next_set_target() {
 	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ head ]] ; then
 		target="${AMD_STAGING_DRM_NEXT_HEAD_C}"
 	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ snapshot ]] ; then
-		target="${AMD_STAGING_DRM_NEXT_SNAPSHOT_C}"
+		if [[ ${K_MAJOR_MINOR} == 5.3 ]] ; then
+			target="${AMD_STAGING_DRM_NEXT_SNAPSHOT_C}"
+		else
+			die \
+"snapshot is not supported for AMD_STAGING_DRM_NEXT_BUMP_REQUEST your kernel \
+version."
+		fi
 	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ amdgpu_19_30 ]] ; then
 		target="${AMD_STAGING_DRM_NEXT_AMDGPU_19_30_C}"
 	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ amdgpu_19_10 ]] ; then
@@ -261,7 +276,8 @@ Doing commit -> .patch conversion for amd-staging-drm-next-patches set:"
 			"${c}" =~ e7f0141a217fa28049d7a3bbc09bee9642c47687 || \
 			"${c}" =~ 2e3c9ec4d151c04d75546dfdc2f85a84ad546eb0 || \
 			"${c}" =~ c74dbe44eacf00a5ccc229b5cc340a9b7f6851a0 || \
-			"${c}" =~ 97797a93ffb905304df11dc42e1daab9aa7faa9b \
+			"${c}" =~ 97797a93ffb905304df11dc42e1daab9aa7faa9b || \
+			"${c}" =~ 2a1e00c3c0d37f65241236d7731ef6bb92f0d07f \
 				]] ; then
 				# whitelist specific commits which includes \
 				# 5.4-rc* commits
@@ -313,9 +329,8 @@ Skipping..."
 			> "${T}"/amd-staging-drm-next-patches/${fn} ; then
 		        #einfo "Added ${fn}"
 			# attach missing commit subject for possible patch tarball
-			local b=$(cat "${T}/amd-staging-drm-next-patches/${fn}")
-			local s_pretty=$(git -P show -s --pretty=email ${c})
-			echo -e "${s_pretty}\n${b}" > "${T}/amd-staging-drm-next-patches/${fn}.t" || die
+			git -P show -s --pretty=email ${c} > "${T}/amd-staging-drm-next-patches/${fn}.t" || die
+			cat "${T}/amd-staging-drm-next-patches/${fn}" >> "${T}/amd-staging-drm-next-patches/${fn}.t" || die
 			mv "${T}"/amd-staging-drm-next-patches/${fn}{.t,} || die
 			if [[ "${using_asdn_commit_cache}" != "1" ]] ; then
 				asdn_commit_cache[${c}]="${fn}"

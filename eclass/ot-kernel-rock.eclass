@@ -90,7 +90,9 @@ ROCK_DIR="ROCK-Kernel-Driver"
 
 ROCK_BASE="e28740ece34d314002b1ddfa14e8fb7c7b909489"
 
+if [[ "${K_MAJOR_MINOR}" == "5.3" ]] ; then
 ROCK_SNAPSHOT="217c2b3894e783d7e1751e4caa9dabc25977c27d"
+fi
 ROCK_LATEST="217c2b3894e783d7e1751e4caa9dabc25977c27d"
 ROCK_2_9_0="217c2b3894e783d7e1751e4caa9dabc25977c27d" # KV is 5.0-rc1
 ROCK_2_8_0="89baa3f89c8cb0d76e999c01bf304301e35abc9b" # KV is 5.0-rc1
@@ -151,7 +153,11 @@ function rock_setup() {
 		if [[ -z "${ROCK_BUMP_REQUEST}" ]] ; then
 			local m=\
 "You must define a ROCK_BUMP_REQUEST environmental variable in make.conf or\n\
-per-package env containing either: latest, head, snapshot,\n"
+per-package env containing either: latest, head, snapshot\n"
+			if [[ "${K_MAJOR_MINOR}" == "5.3" ]] ; then
+				m+=", snapshot"
+			fi
+
 			if ver_test ${K_MAJOR_MINOR} -ge 5.0 \
 				&& ver_test ${K_MAJOR_MINOR} -le 5.3 ; then
 				m+=", 2_9_0, 2_8_0, 2_7_0"
@@ -220,6 +226,11 @@ function rock_rm() {
 	rm "${T}"/rock-patches/*${c}*
 }
 
+function rock_rm_list() {
+	for l in $@ ; do
+		rock_rm ${l}
+	done
+}
 
 # @FUNCTION: rock_set_target
 # @DESCRIPTION:
@@ -508,7 +519,8 @@ take longer than expected."
 			"${c}" =~ e7f0141a217fa28049d7a3bbc09bee9642c47687 || \
 			"${c}" =~ 2e3c9ec4d151c04d75546dfdc2f85a84ad546eb0 || \
 			"${c}" =~ c74dbe44eacf00a5ccc229b5cc340a9b7f6851a0 || \
-			"${c}" =~ 97797a93ffb905304df11dc42e1daab9aa7faa9b \
+			"${c}" =~ 97797a93ffb905304df11dc42e1daab9aa7faa9b || \
+			"${c}" =~ 2a1e00c3c0d37f65241236d7731ef6bb92f0d07f \
 				]] ; then
 				# ASDN set (already included)
 				continue
@@ -579,9 +591,8 @@ match).  Skipping..."
 		if git -P diff $c^..$c > "${T}"/rock-patches/${fn} ; then
 			#einfo "Added ${fn}"
 			# attach missing commit subject for possible patch tarball
-			local b=$(cat "${T}/rock-patches/${fn}")
-			local s_pretty=$(git -P show -s --pretty=email ${c}^..${c})
-			echo -e "${s_pretty}\n${b}" > "${T}/rock-patches/${fn}.t" || die
+			git -P show -s --pretty=email ${c} > "${T}/rock-patches/${fn}.t" || die
+			cat "${T}/rock-patches/${fn}" >> "${T}/rock-patches/${fn}.t" || die
 			mv "${T}/rock-patches/${fn}"{.t,} || die
 			if [[ "${using_rock_commit_cache}" != "1" ]] ; then
 				rock_commit_cache[${c}]="${fn}"

@@ -244,13 +244,15 @@ function ot-kernel-common_apply_o3_fixes() {
 }
 
 function ot-kernel-asdn_rm() {
+	local l
 	# already patched
-	asdn_rm b48935b3bfc1350737e759fef5e92db14a2e2fbb
-	asdn_rm 4d7fd9e20b0784b07777728316da5bcc13f9f2ab
-	asdn_rm ebecc6c48f39b3c549bee1e4ecb9be01bf341a0f
-	asdn_rm ebf8fc31cbcedc9d6a81642082661c82eae284fb
-	asdn_rm a6f30079b8562b659e1d06f7cb1bc30951869bbc
-	asdn_rm bf2bf52383a09256e11278e7bcb67dcd912078c7
+	l=(
+	b48935b3bfc1350737e759fef5e92db14a2e2fbb
+	4d7fd9e20b0784b07777728316da5bcc13f9f2ab
+	ebecc6c48f39b3c549bee1e4ecb9be01bf341a0f
+	ebf8fc31cbcedc9d6a81642082661c82eae284fb
+	a6f30079b8562b659e1d06f7cb1bc30951869bbc
+	bf2bf52383a09256e11278e7bcb67dcd912078c7 )
 
 	# already applied in torvalds kernel for 5.4 but not 5.3
 	# asdn_rm 1faa3b805473d7f4197b943419781d9fd21e4352
@@ -258,13 +260,16 @@ function ot-kernel-asdn_rm() {
 	# obsolete (hunks that doesn't appear in the final image (aka head) in
 	#   amd-staging-drm-next repo ; replaced by newer
 	#   design / architecture / version)
-	asdn_rm 5fa790f6c936c4705dea5883fa12da9e017ceb4f
-	asdn_rm 3f61fd41f38328f0a585eaba2d72d339fe9aecda
+	l+=(
+	5fa790f6c936c4705dea5883fa12da9e017ceb4f
+	3f61fd41f38328f0a585eaba2d72d339fe9aecda )
 
 	if use amd-staging-drm-next && use rock ; then
 		# use rock version instead
-		asdn_rm	d0ba51b1cacd27bdc1acfe70cb55699f3329b2b1
+		l+=( d0ba51b1cacd27bdc1acfe70cb55699f3329b2b1 )
 	fi
+
+	asdn_rm_list ${l[@]}
 }
 
 # merge conflict resolver
@@ -285,9 +290,6 @@ function ot-kernel-common_amdgpu_merge_and_apply_patches_asdn() {
       echo $(patch --dry-run ${PATCH_OPS} -i "${mpd}/${l}") | grep -F -e "FAILED at"
       if [[ "$?" == "1" ]] ; then
         case "${l}" in
-          *002c9880d73c434a824e6a27b803cc097af8d828*)
-            die "fixme ${mpd}/${l}"
-            ;;
           *ab2f7a5c18b5c17cc94aaab7ae2e7d1fa08993d6*)
             # Fails enter in else branch so move up here
             # modifies ab2f commit
@@ -349,133 +351,139 @@ function ot-kernel-common_amdgpu_merge_and_apply_patches_asdn() {
 }
 
 function ot-kernel-rock_rm() {
+	local l
 	# already patched
-	rock_rm f761e8303bb1608622fb993531ba95244335c847
+	l+=(
+	f761e8303bb1608622fb993531ba95244335c847
 # function deleted; the rest already merged in other commits
-	rock_rm 973c795c16c872efb874df6e0788fcb5b6f17e20
+	973c795c16c872efb874df6e0788fcb5b6f17e20
 # vanilla is version 2
-	rock_rm 7746b504b45df9f7e6e4dedb0f18dd2a854f1a75
+	7746b504b45df9f7e6e4dedb0f18dd2a854f1a75
 # vanilla is version 3
-	rock_rm 4d8288cf6bd58b3770f60704647b4966ed0d7cb4
-	rock_rm db2c1587e1178bfc1cc161f76b54cf40f4167168
+	4d8288cf6bd58b3770f60704647b4966ed0d7cb4
+	db2c1587e1178bfc1cc161f76b54cf40f4167168
 # integrated in torvalds kernel 992af942a6cfb32f4b5a9fc29545f101074fa250 under
 #   another subject
-	rock_rm 5d31c3c0d5f2b753ed8a3170a152b9954a1aa20b
-	rock_rm c7d05e309a2f781a42aa7ecefef1c79224859a37
-	rock_rm bf34bf33eed4296642cf51acd91c2e8942ca5fef
-	rock_rm 0bc07fd0aab17d7ecc85a9eb1fea668cbb0f0162
+	5d31c3c0d5f2b753ed8a3170a152b9954a1aa20b
+	c7d05e309a2f781a42aa7ecefef1c79224859a37
+	bf34bf33eed4296642cf51acd91c2e8942ca5fef
+	0bc07fd0aab17d7ecc85a9eb1fea668cbb0f0162
 # same as 1faa3b805473d7f4197b943419781d9fd21e4352 in torvalds kernel v5.4 and
 #   asdn
-	rock_rm 220883377e9c2434fcafaab24e215597752a2d84
+	220883377e9c2434fcafaab24e215597752a2d84
 # applied in 14328aa58ce523a59996c5a82681c43ec048cc33
-	rock_rm 2d2f62874426b347d47eeac492709c3ad0c1b92a
+	2d2f62874426b347d47eeac492709c3ad0c1b92a
 
 	# obsolete (hunks that doesn't appear in the final image (aka head) in
 	#  amd-staging-drm-next/ROCK-Kernel-Driver repo ; replaced by newer
 	#  design/architecture/version)
-	rock_rm 31ad0be4ebf7327591fbca1b96e209f591a19849
-	rock_rm ad3bf1a3b5d15041e18a7a6c62c731b63db51447
+	31ad0be4ebf7327591fbca1b96e209f591a19849
+	ad3bf1a3b5d15041e18a7a6c62c731b63db51447
 # vanilla is version 2
-	rock_rm 7eb512d4585f9d746ffacd40be5b8f95ef87d795
+	7eb512d4585f9d746ffacd40be5b8f95ef87d795
 # testing removal ; the revert of the revert is already merged in vanilla and
 #   in amd-staging-drm-next ; Revert "drm/amd/display: Rework DC plane filling
 #   and surface updates"
-	rock_rm 8234806160c533f85b98953f76a1b13455232ffb
+	8234806160c533f85b98953f76a1b13455232ffb
 # testing removal ; the revert of the revert is already merged in vanilla and
 #   in amd-staging-drm-next ; Revert "drm/amd/display: Recalculate pitch when
 #   buffers change"
-	rock_rm 8a67db18390d686b9d14ff9e554e5165c1814590
-	rock_rm e26e00469e4341d470eb4d56db5b5f517338d096
+	8a67db18390d686b9d14ff9e554e5165c1814590
+	e26e00469e4341d470eb4d56db5b5f517338d096
 # testing removal ; the revert of the revert is already merged in vanilla and
 #   in amd-staging-drm-next ; Revert "drm/amd/display: Rework DC plane filling
 #   and surface updates"
-	rock_rm 456fc4538e9d5dbace83acb03e0fbef346d654e6
+	456fc4538e9d5dbace83acb03e0fbef346d654e6
 # testing removal ; the revert of the revert is already merged in vanilla and
 #   in amd-staging-drm-next ; Revert "drm/amd/display: Recalculate pitch when
 #   buffers change"
-	rock_rm 61e96f3cdff3fe103bf675509225747a3ecec57e
+	61e96f3cdff3fe103bf675509225747a3ecec57e
 # testing removal ; the revert of the revert is already merged in vanilla and
 #   in amd-staging-drm-next ; Revert "drm/amdkfd: Separate mqd allocation and
 #   initialization"
-	rock_rm ea1d0c448f085ccb4463b42fe78a0064ed07c7dc
+	ea1d0c448f085ccb4463b42fe78a0064ed07c7dc
 # vanilla is version 2
-	rock_rm 1013dec3ee8dce5348a85ffadfed52b68346b9fc
-	rock_rm 2e5e1c3fed36d74806f2d805601b130605c3efd0
+	1013dec3ee8dce5348a85ffadfed52b68346b9fc
+	2e5e1c3fed36d74806f2d805601b130605c3efd0
 # vanilla is version 4, rock is version 3
-	rock_rm 209e519c2caef76407eabfff4ae5061bef320d19
+	209e519c2caef76407eabfff4ae5061bef320d19
 # vanilla is version 3, rock is version 2
-	rock_rm 5b4e3b79a1ad5702fbb2e54ee4b74b805ea2b4d2
+	5b4e3b79a1ad5702fbb2e54ee4b74b805ea2b4d2
 # already applied in torvald kernel 14328aa58ce523a59996c5a82681c43ec048cc33
-	rock_rm 8d4c550acf01c77a00c620b49c91fab8ea9c31c4
+	8d4c550acf01c77a00c620b49c91fab8ea9c31c4
 # removed at 292a0a4884733bb7292c72f90c05ea35f3138529 in ROCK-Kernel-Driver to
 #   keep in sync with 14328aa58ce523a59996c5a82681c43ec048cc33 in vanilla
-	rock_rm 5f26b8eebe2f4517e9ca5c471c9cc13efa5b30ce
+	5f26b8eebe2f4517e9ca5c471c9cc13efa5b30ce
 # vanilla is version 2
-	rock_rm c42436ec04f3d49a7cf3627411e1ddbb5b347953
+	c42436ec04f3d49a7cf3627411e1ddbb5b347953
 # amd-staging-drm-next is version 3
-	rock_rm 96003fe3ea48157dd7fefc12160a1ea5f0b6f223
+	96003fe3ea48157dd7fefc12160a1ea5f0b6f223
 # ROCk is version v2 (logic fix), amd-staging-drm-next is version 3
 #   (logic simplification)
-	rock_rm 3e9f4c949eb5862c9bbee4b862ed604f39861f8e
+	3e9f4c949eb5862c9bbee4b862ed604f39861f8e
 
 	# applied later in 8d4c550acf01c77a00c620b49c91fab8ea9c31c4 with same name
 # Revert "drm/amdkfd: Added cwsr trap handler for gfx10"
-	rock_rm 68e69efdd4d72f1e9fd01eb82ee9951da793d466
+	68e69efdd4d72f1e9fd01eb82ee9951da793d466
 # drm/amdkfd: Added cwsr trap handler for gfx10
-	rock_rm 86d16a26763d6a86803f524025279d1e40c93b4c
+	86d16a26763d6a86803f524025279d1e40c93b4c
 
 	# applied later in 2d2f62874426b347d47eeac492709c3ad0c1b92a with same name
 # Revert "drm/amdkfd: Moved gfx10 cwsr binary to cwsr_trap_handler.h"
-	rock_rm b38921cb275c5030004e0759f2b08fee8c4ce578
+	b38921cb275c5030004e0759f2b08fee8c4ce578
 # drm/amdkfd: Moved gfx10 cwsr binary to cwsr_trap_handler.h
-	rock_rm ae7e6022c353fed62fc81c4baa024f10fb7b2e07
+	ae7e6022c353fed62fc81c4baa024f10fb7b2e07
 
 	# applied later in 5526bb8d854202aba28b20809e1af0ef8e1c714b with same name
 # Revert "drm/amdkfd: Introduce DIQ type mqd manager for gfx10"
-	rock_rm 7d0e12f600ec3fdd0f29d83cc51b20a868fc143f
+	7d0e12f600ec3fdd0f29d83cc51b20a868fc143f
 # drm/amdkfd: Introduce DIQ type mqd manager for gfx10
-	rock_rm e0d8fd23132af4bd65e8b1db74ac5750698b72f4
+	e0d8fd23132af4bd65e8b1db74ac5750698b72f4
 
 	# applied later in a6b8b58d4001def5fb1b619d31b686fcef0f991e with same name
 # Revert "drm/amdkfd: Add mqd size in mqd manager struct for gfx10"
-	rock_rm 19b4facdabeb52d56093f774257d5f450cb462da
+	19b4facdabeb52d56093f774257d5f450cb462da
 # drm/amdkfd: Add mqd size in mqd manager struct for gfx10
-	rock_rm 745e8a141d8f9b4aa473ab15fdfca504ac55bf7f
+	745e8a141d8f9b4aa473ab15fdfca504ac55bf7f
 
 	# applied later in 5f26b8eebe2f4517e9ca5c471c9cc13efa5b30ce with same name
 # Revert "drm/amdkfd: Allocate hiq and sdma mqd from mqd trunk for gfx10"
-	rock_rm b1827a0577fa3abcd0c44ae153f2b05a54094a2c
+	b1827a0577fa3abcd0c44ae153f2b05a54094a2c
 # drm/amdkfd: Allocate hiq and sdma mqd from mqd trunk for gfx10
-	rock_rm 8979cc19b3864a259f3833c17efcafb09bbb81cc
+	8979cc19b3864a259f3833c17efcafb09bbb81cc
 
 	# applied later in 292a0a4884733bb7292c72f90c05ea35f3138529 with same name
 # Revert "drm/amdkfd: update gfx10 support for latest kfd changes"
-	rock_rm e7a487ffe6dfa11278095adb81e3b142c6e905c2
+	e7a487ffe6dfa11278095adb81e3b142c6e905c2
 # drm/amdkfd: update gfx10 support for latest kfd changes
-	rock_rm 26e8ff97cd56eacfc02703149f7c87a4b37c2564
+	26e8ff97cd56eacfc02703149f7c87a4b37c2564 )
 
 	if ! use directgma ; then
 		# the amdgpu_vm_bo_split_mapping should resemble asdn version
 		# disabiling directgma should be result in less problematic
 		# merge conflict resolution
-		rock_rm f331d74dad4358369a6dfb182ff0a5607a8e7b04
-		rock_rm 80f3db1de8277cb3c0a817c92795bdf6f5b8818d
-		rock_rm 8098a2f9c3ba6fba0055aa88d3830bbec585268b
-		rock_rm 4eff2c42f996e8d70ec874186d3c35a8f64a8235
-		rock_rm 388c85610cd4782467bae4f44d7b7c8cacebfaae
-		rock_rm bb02f27489fe4469cf3460549dd0bf45e1cc1746 # ssg
+		l+=(
+		f331d74dad4358369a6dfb182ff0a5607a8e7b04
+		80f3db1de8277cb3c0a817c92795bdf6f5b8818d
+		8098a2f9c3ba6fba0055aa88d3830bbec585268b
+		4eff2c42f996e8d70ec874186d3c35a8f64a8235
+		388c85610cd4782467bae4f44d7b7c8cacebfaae
+		bb02f27489fe4469cf3460549dd0bf45e1cc1746 ) # ssg
 	fi
 
 	# reject dkms/kcl
-	rock_rm 7bf2fb137fabacdf3457b70d205f1378057d7130
-	rock_rm 77843fb3174f0903bf48141cdb7ad0e545364194
-	rock_rm a1d58b7bf915e956f14984fcf1a3d8431657d351
+	l+=(
+	7bf2fb137fabacdf3457b70d205f1378057d7130
+	77843fb3174f0903bf48141cdb7ad0e545364194
+	a1d58b7bf915e956f14984fcf1a3d8431657d351
 # used in 178d1118dbee5cff09badab7208525b287fa849f
-	rock_rm 5b734f8c1205ff65ef2af7484932078bb655f41c
-	rock_rm 509649b8d929b5981e57c6f1b8d50756af56e033
+	5b734f8c1205ff65ef2af7484932078bb655f41c
+	509649b8d929b5981e57c6f1b8d50756af56e033
 
 	# reject cosmetic
-	rock_rm 6b719b24a48e31ff2b37b97cce552e4615c7d277
+	6b719b24a48e31ff2b37b97cce552e4615c7d277 )
+
+	rock_rm_list ${l[@]}
 }
 
 # merge conflict resolver
@@ -505,15 +513,6 @@ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
       echo $(patch --dry-run ${PATCH_OPS} -i "${mpd}/${l}") | grep -F -e "FAILED at"
       if [[ "$?" == "1" ]] ; then
         case "${l}" in
-          *bb02f27489fe4469cf3460549dd0bf45e1cc1746*)
-            # remove kcl header macro reference
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
-"${FILESDIR}/rock-bb02f27489fe4469cf3460549dd0bf45e1cc1746-skip-drm-ver-check-for-5.3.4.patch"
-            # apply patch without kcl macro check
-            _dpatch "${PATCH_OPS}" \
-"${FILESDIR}/rock-bb02f27489fe4469cf3460549dd0bf45e1cc1746-rebase-for-5.3.4.patch"
-            ;;
           *d732ef0efc3beed8b8c30433aa11d5b6895cb457*rock*)
             # drm/amdkcl: add dkms support ; remove?
             # ROCk addition
@@ -537,6 +536,20 @@ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
         esac
       else
         case "${l}" in
+          *95c59fee52c9aee3f99a5a39a3ba8f0fa10c263e*)
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/rock-95c59fee52c9aee3f99a5a39a3ba8f0fa10c263e-rebase-for-5.3.4.patch"
+            ;;
+          *bb02f27489fe4469cf3460549dd0bf45e1cc1746*)
+            # remove kcl header macro reference
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/rock-bb02f27489fe4469cf3460549dd0bf45e1cc1746-skip-drm-ver-check-for-5.3.4.patch"
+            # apply patch without kcl macro check
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/rock-bb02f27489fe4469cf3460549dd0bf45e1cc1746-rebase-for-5.3.4.patch"
+            ;;
           *fc39d903eb805588cba3696748728627aedfd1bd*)
             # Easy
             # ignore missing search hunk... it's just refactoring patch
