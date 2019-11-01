@@ -14,7 +14,7 @@ DEPEND="
 "
 RDEPEND="${DEPEND}"
 IUSE="static debug"
-SRC_URI="https://github.com/recastnavigation/recastnavigation/archive/1.5.1.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/recastnavigation/recastnavigation/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 S="${WORKDIR}/${PN}-${PV}"
 
