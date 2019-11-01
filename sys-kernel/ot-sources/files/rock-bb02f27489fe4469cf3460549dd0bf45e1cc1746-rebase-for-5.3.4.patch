@@ -1,0 +1,11 @@
+--- a/drivers/gpu/drm/ttm/ttm_bo_vm.c.orig	2019-10-29 20:45:56.078876579 -0700
++++ b/drivers/gpu/drm/ttm/ttm_bo_vm.c	2019-10-29 20:49:22.525880833 -0700
+@@ -274,7 +274,7 @@ static vm_fault_t ttm_bo_vm_fault(struct
+ 
+ 		if (vma->vm_flags & VM_MIXEDMAP)
+ 			ret = vmf_insert_mixed(&cvma, address,
+-					__pfn_to_pfn_t(pfn, PFN_DEV));
++					__pfn_to_pfn_t(pfn, PFN_DEV | (bo->ssg_can_map ? PFN_MAP : 0)));
+ 		else
+ 			ret = vmf_insert_pfn(&cvma, address, pfn);
+ 
