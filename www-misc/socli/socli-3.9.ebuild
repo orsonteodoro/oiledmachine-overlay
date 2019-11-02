@@ -18,6 +18,7 @@ DEPEND="dev-python/py-stackexchange[${PYTHON_USEDEP}]
         dev-python/urwid[${PYTHON_USEDEP}]
         dev-python/beautifulsoup:4[${PYTHON_USEDEP}]"
 RDEPEND="${DEPEND}"
+RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${PV}"
 
 python_install_all() {
