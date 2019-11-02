@@ -2,20 +2,18 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-
-PYTHON_COMPAT=( python{3_4,3_5,3_6,3_7} )
-
-inherit eutils python-single-r1 python-utils-r1
-
 DESCRIPTION="DuckDuckGo from the terminal"
 HOMEPAGE="https://github.com/jarun/ddgr"
 LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+PYTHON_COMPAT=( python{3_4,3_5,3_6,3_7} )
+inherit eutils python-single-r1 python-utils-r1
 SRC_URI="https://github.com/jarun/ddgr/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 SLOT="0"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 RDEPEND="${PYTHON_DEPS}"
 DEPEND="${RDEPEND}"
+RESTRICT="mirror"
 S="${WORKDIR}/${P}"
 
 pkg_setup() {
@@ -26,8 +24,6 @@ src_install() {
 	SITEDIR="/usr/$(get_libdir)/${EPYTHON}/site-packages"
 	python_scriptinto "${SITEDIR}/${PN}"
 	python_doexe ddgr
-
 	dosym "/usr/lib/python-exec/${EPYTHON}/ddgr" "/usr/bin/ddgr"
-
 	doman ddgr.1
 }
