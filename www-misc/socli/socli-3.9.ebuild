@@ -1,22 +1,17 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-
-PYTHON_COMPAT=( python{2_7,3_6,3_7} )
-
-inherit distutils-r1 eutils
-
-DESCRIPTION="Stack overflow command line client. Search and browse stack overflow without leaving the terminal"
+EAPI=7
+DESCRIPTION="Stack overflow command line client. Search and browse stack \
+overflow without leaving the terminal"
 HOMEPAGE="https://github.com/gautamkrishnar/socli"
-SRC_URI="https://github.com/gautamkrishnar/socli/archive/${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/gautamkrishnar/socli/archive/${PV}.tar.gz \
+	-> ${P}.tar.gz"
 LICENSE="BSD"
-
-SLOT="0"
 KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
-
-IUSE=""
-
+PYTHON_COMPAT=( python{2_7,3_6,3_7} )
+inherit distutils-r1 eutils
+SLOT="0"
 DEPEND="dev-python/py-stackexchange[${PYTHON_USEDEP}]
         dev-python/requests[${PYTHON_USEDEP}]
         dev-python/colorama[${PYTHON_USEDEP}]
@@ -31,7 +26,11 @@ python_install_all() {
 }
 
 pkg_postinst() {
-	einfo "You may need to enter your StackOverflow API key with \`socli --api\` for this program to work."
-	einfo "See ${HOMEPAGE} for details on additional information in configuring ${PN}."
-	einfo "API keys can be obtained from http://stackapps.com/apps/oauth/register ."
+	einfo \
+"You may need to enter your StackOverflow API key with \`socli --api\` for\n\
+this program to work.  See\n\
+  ${HOMEPAGE}\n\n
+for details on additional information in configuring ${PN}.  API keys can\n\
+be obtained from\n\
+  http://stackapps.com/apps/oauth/register"
 }
