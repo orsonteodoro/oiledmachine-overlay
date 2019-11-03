@@ -8,8 +8,8 @@ HOMEPAGE="https://icculus.org/mojoshader/"
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~x86"
 inherit cmake-utils eutils mercurial
-EHG_REVISION_C="5887634ea695"
-EHG_REVISION="1214"
+EHG_REVISION_C="9d725de6c61c"
+EHG_REVISION="1216"
 EHG_REPO_URI="https://hg.icculus.org/icculus/mojoshader/"
 # Wrong CMakeLists.txt ; use mercurial
 #SRC_URI=\
@@ -33,6 +33,8 @@ src_unpack() {
 
 src_prepare() {
 	default
+	eapply "${FILESDIR}/mojoshader-1214-cmake-fixes.patch"
+	eapply "${FILESDIR}/mojoshader-1214-cmake-build-both-static-and-shared.patch"
 	# Bugged CMakeLists.txt always points to tip but not static values as
 	# expected.
 	sed -i -e "s|\
@@ -64,6 +66,7 @@ src_configure() {
 	PREFIX="${D}"
 
         local mycmakeargs=(
+		-DCMAKE_INSTALL_LIBDIR="${EPREFIX}"/usr/$(get_libdir)
                 -DCOMPILER_SUPPORT=$(usex compiler_support)
                 -DDEPTH_CLIPPING=$(usex depth_clipping)
                 -DEFFECT_SUPPORT=$(usex effect_support)
@@ -76,7 +79,8 @@ src_configure() {
                 -DPROFILE_GLSL=$(usex profile_glsl)
                 -DPROFILE_METAL=$(usex profile_metal)
                 -DXNA4_VERTEXTEXTURE=$(usex xna_vertextexture)
-		-DBUILD_SHARED=$(usex static "OFF" "ON")
+		-DBUILD_SHARED="ON"
+		-DBUILD_STATIC=$(usex static "ON" "OFF")
 		-DCMAKE_SKIP_RPATH=ON
         )
 
@@ -88,13 +92,5 @@ src_compile() {
 }
 
 src_install() {
-	cd "${WORKDIR}/${PN}-${PV}_build" || die
-	dolib.so libmojoshader.so
-	exeinto /usr/$(get_libdir)/${PN}
-	doexe availableprofiles bestprofile glcaps testoutput testparse
-
-	cd "${S}" || die
-	insinto /usr/include/MojoShader
-	doins mojoshader_internal.h mojoshader.h mojoshader_effects.h
-	dodoc README.txt
+	cmake-utils_src_install
 }
