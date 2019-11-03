@@ -19,6 +19,8 @@ DEPEND="${RDEPEND}"
 RESTRICT="mirror"
 S=${WORKDIR}/"${PN}-${EGIT_COMMIT}"
 
+PATCHES=( "${FILESDIR}/libcaesium-0.4.3_p20191102-cmake-fixes.patch" )
+
 src_prepare() {
 	sed -i -e "s|/opt/mozjpeg/include|/usr/include/libmozjpeg|" \
 		CMakeLists.txt || die
@@ -34,6 +36,9 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	local mycmakeargs=(
+		-DCMAKE_INSTALL_LIBDIR="${EPREFIX}"/usr/$(get_libdir)
+	)
 	cmake-utils_src_configure
 }
 
