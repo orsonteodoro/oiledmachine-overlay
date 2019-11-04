@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    cpupower-gui is a python frontend for CPU frequency scaling.
+
+    It may require a sudo to change settings.
+  </longdescription>
+  <upstream>
+    <bugs-to>https://github.com/vagnum08/cpupower-gui/issues</bugs-to>
+    <maintainer status="active" type="person">
+      <name>vagnum08</name>
+    </maintainer>
+    <remote-id type="github">vagnum08/cpupower-gui</remote-id>
+  </upstream>
+</pkgmetadata>
