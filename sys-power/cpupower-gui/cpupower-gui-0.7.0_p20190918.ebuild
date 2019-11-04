@@ -1,40 +1,33 @@
-# Copyright 1999-2019 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-PYTHON_COMPAT=( python{3_3,3_4,3_5,3_6} )
-
-inherit eutils autotools distutils-r1
-
-DESCRIPTION="This program is designed to allow you to change the frequency limits of your cpu and its governor. The application is similar in functionality to cpupower."
+# See configure.ac for versioning
+EAPI=7
+DESCRIPTION="This program is designed to allow you to change the frequency \
+limits of your cpu and its governor. The application is similar in \
+functionality to cpupower."
 HOMEPAGE="https://github.com/vagnum08/cpupower-gui"
-SRC_URI="https://github.com/vagnum08/cpupower-gui/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-
 LICENSE="GPL-3+"
-SLOT="0"
 KEYWORDS="~amd64 ~x86"
-
-S="${WORKDIR}/${PN}-${PV}"
-DOCS=""
-
+PYTHON_COMPAT=( python{3_3,3_4,3_5,3_6,3_7} )
+EGIT_COMMIT="4d739105fcb8ae20417804d74936a2e8fb81bf65"
+SRC_URI=\
+"https://github.com/vagnum08/cpupower-gui/archive/${EGIT_COMMIT}.tar.gz \
+	-> ${P}.tar.gz"
+SLOT="0"
 RDEPEND="dev-libs/glib
 	 dev-python/pygobject
 	 x11-libs/gtk+:3
 	 sys-auth/polkit"
-
 DEPEND="${RDEPEND}"
+RESTRICT="mirror"
+inherit autotools distutils-r1 eutils
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 
 src_prepare() {
-	eapply_user
+	default
 	eautoreconf
-
 	python_copy_sources
-
-
-	python_prepare_patches() {
-		#sed -i -e "s|python3.6|${EPYTHON}|g" ${S}/bin/cpupower-gui-pkexec.in || die
-		true
-	}
 	python_foreach_impl python_prepare_patches
 }
 
@@ -45,16 +38,14 @@ src_configure() {
 	python_foreach_impl python_configure
 }
 
-src_compile()
-{
+src_compile() {
 	python_compile() {
 		emake
 	}
 	python_foreach_impl python_compile
 }
 
-src_install()
-{
+src_install() {
 	python_install() {
 		emake DESTDIR="${D}" install
 	}
