@@ -6,7 +6,7 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    cpupower-gui is a python frontend for CPU frequency scaling.
+    cpupower-gui is a Python GTK+ 3 frontend for CPU frequency scaling.
 
     It may require a sudo to change settings.
   </longdescription>
