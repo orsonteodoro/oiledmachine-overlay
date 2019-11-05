@@ -9,7 +9,7 @@ LICENSE="OFL-1.1"
 KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
 PYTHON_COMPAT=( python{2_7,3_4,3_5,3_6,3_7} )
 SLOT="0"
-IUSE="black-smiling-emoji optipng +zopflipng" # black smiling emoji breaks utr#51
+IUSE="optipng +zopflipng"
 inherit python-single-r1
 REQUIRED_USE="^^ ( optipng zopflipng ) \
 	      ^^ ( $(python_gen_useflags 'python*') )"
@@ -47,10 +47,6 @@ pkg_setup() {
 
 src_unpack() {
 	unpack ${A}
-	if use black-smiling-emoji ; then
-		cp "${FILESDIR}/emoji_u263b.svg" "${S}/svg/" || die
-		cp "${FILESDIR}/emoji_u263b.png" "${S}/png/128/" || die
-	fi
 }
 
 src_prepare() {

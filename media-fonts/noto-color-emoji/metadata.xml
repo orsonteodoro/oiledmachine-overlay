@@ -19,9 +19,6 @@
     </maintainer>
   </upstream>
   <use>
-    <flag name="black-smiling-emoji">This will replace the textual
-    representation of the black smiling emoji with a pictoral, breaking
-    standards.</flag>
     <flag name="optipng">Compresses emoji images with optipng.
     </flag>
     <flag name="zopflipng">Compresses emoji images with zoptlipng.  Better
