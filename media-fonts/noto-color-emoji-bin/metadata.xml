@@ -15,6 +15,7 @@
     <bugs-to>
       https://github.com/googlefonts/noto-emoji/issues
     </bugs-to>
+    <doc lang="en">https://www.google.com/get/noto/help/emoji/</doc>
     <maintainer status="active" type="project">
       <name>Google</name>
     </maintainer>
