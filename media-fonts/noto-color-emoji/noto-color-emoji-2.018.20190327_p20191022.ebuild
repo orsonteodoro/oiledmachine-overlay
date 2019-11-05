@@ -1,15 +1,13 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# See NotoColorEmoji.tmpl.ttx.tmpl for versoning
+# See NotoColorEmoji.tmpl.ttx.tmpl for versioning
 EAPI=6
 DESCRIPTION="NotoColorEmoji is colored emojis"
 HOMEPAGE="https://www.google.com/get/noto/#emoji-qaae-color"
 LICENSE="OFL-1.1"
 KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
 PYTHON_COMPAT=( python{2_7,3_4,3_5,3_6,3_7} )
-# renamed from upstream's unversioned NotoColorEmoji-unhinted.zip
-# version number based on the timestamp of most recently updated file in the zip
 SLOT="0"
 IUSE="black-smiling-emoji optipng +zopflipng" # black smiling emoji breaks utr#51
 inherit python-single-r1
