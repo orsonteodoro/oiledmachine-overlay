@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    Noto Color Emoji 2.x is the rounder Oreo style with the latest Emoji 12.0
+    ready.
+
+    Noto Color Emoji 1.33 is the Jelly Bean emoji set and Emoji 4.0 ready font.
+  </longdescription>
+  <upstream>
+    <bugs-to>
+      https://github.com/googlefonts/noto-emoji/issues
+    </bugs-to>
+    <maintainer status="active" type="project">
+      <name>Google</name>
+    </maintainer>
+  </upstream>
+</pkgmetadata>
