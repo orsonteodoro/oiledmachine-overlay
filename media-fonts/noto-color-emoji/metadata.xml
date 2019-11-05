@@ -6,8 +6,11 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    Noto Emoji (noto-color-emoji) is a Emoji 12.0 ready font.
+    Noto Color Emoji 2.x is the rounder Oreo styled Emoji 12.0 ready set.
 
+    Noto Color Emoji 1.x is Jelly Bean styled emoji which is Emoji 4.0
+    ready.
+    
     This package is used to build the font from sources.
   </longdescription>
   <upstream>

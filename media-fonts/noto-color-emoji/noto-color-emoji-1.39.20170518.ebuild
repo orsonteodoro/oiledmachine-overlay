@@ -8,7 +8,7 @@ DESCRIPTION="NotoColorEmoji is colored emojis"
 HOMEPAGE="https://www.google.com/get/noto/#emoji-qaae-color"
 LICENSE="OFL-1.1"
 KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
-PYTHON_COMPAT=( python{2_7,3_4,3_5,3_6,3_7} )
+PYTHON_COMPAT=( python2_7 )
 SLOT="0/${PV}"
 IUSE="optipng +zopflipng"
 inherit python-single-r1
@@ -29,9 +29,9 @@ DEPEND="${RDEPEND}
 	zopflipng? ( app-arch/zopfli )"
 FONT_SUFFIX="ttf"
 FONT_CONF=( )
-NOTO_EMOJI_COMMIT="018aa149d622a4fea11f01c61a7207079da301bc"
-NOTO_TOOLS_COMMIT="cae92ce958bee37748bf0602f5d7d97bb6db98ca"
-NOTO_TOOLS_PVR="0.2.0_p20191019" # see setup.py for versioning
+NOTO_EMOJI_COMMIT="ca22132c45adb022c1a6c6bed96df76cf0c4fb18"
+NOTO_TOOLS_COMMIT="bcd0721306473ac2c638e44a518836fe4830f704"
+NOTO_TOOLS_PVR="0.0.1_p20170518" # see setup.py for versioning
 SRC_URI=\
 "https://github.com/googlei18n/noto-emoji/archive/${NOTO_EMOJI_COMMIT}.tar.gz \
 	-> noto-emoji-${PVR}.tar.gz
