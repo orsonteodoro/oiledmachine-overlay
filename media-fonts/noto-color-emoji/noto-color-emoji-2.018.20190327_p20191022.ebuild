@@ -70,9 +70,6 @@ emoji: \$(EMOJI_FILES)|\
 MISSING_ZOPFLI = fail\nundefine MISSING_OPTIPNG\nemoji: \$(EMOJI_FILES)|g' \
 			Makefile || die
 	fi
-
-	cd "${WORKDIR}/noto-emoji-${NOTO_EMOJI_COMMIT}" || die
-
 	# Allow output
 	sed -i -e "s|@(\$(PNGQUANT)|(\$(PNGQUANT)|g" Makefile || die
 	sed -i -e "s|@convert|convert|g" Makefile || die
@@ -91,7 +88,6 @@ src_compile() {
 	else
 		export OPTIPNG=
 	fi
-
 	export PYTHONPATH=\
 "${WORKDIR}/nototools-${NOTO_TOOLS_COMMIT}:${PYTHONPATH}"
 	export PATH=\
