@@ -30,11 +30,12 @@ FONT_SUFFIX="ttf"
 FONT_CONF=( )
 NOTO_EMOJI_COMMIT="018aa149d622a4fea11f01c61a7207079da301bc"
 NOTO_TOOLS_COMMIT="cae92ce958bee37748bf0602f5d7d97bb6db98ca"
+NOTO_TOOLS_PVR="0.2.0_p20191019" # see setup.py for versioning
 SRC_URI=\
 "https://github.com/googlei18n/noto-emoji/archive/${NOTO_EMOJI_COMMIT}.tar.gz \
-	-> noto-emoji-${NOTO_EMOJI_COMMIT}.tar.gz
+	-> noto-emoji-${PVR}.tar.gz
 https://github.com/googlei18n/nototools/archive/${NOTO_TOOLS_COMMIT}.tar.gz \
-	-> noto-tools-${NOTO_TOOLS_COMMIT}.tar.gz"
+	-> noto-tools-${NOTO_TOOLS_PVR}.tar.gz"
 inherit eutils font
 RESTRICT="mirror"
 S="${WORKDIR}/noto-emoji-${NOTO_EMOJI_COMMIT}"
