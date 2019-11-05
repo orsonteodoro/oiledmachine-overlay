@@ -18,7 +18,7 @@ RDEPEND=" !media-fonts/noto-color-emoji
 DEPEND="dev-python/fonttools
         ${RDEPEND}"
 SRC_URI=\
-"https://noto-website-2.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip \
+"https://noto-website.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip \
 	-> ${PN}-${PVR}.zip"
 RESTRICT="mirror"
 S="${WORKDIR}"
