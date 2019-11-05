@@ -11,7 +11,7 @@ PYTHON_COMPAT=( python{2_7,3_4,3_5,3_6,3_7} )
 # renamed from upstream's unversioned NotoColorEmoji-unhinted.zip
 # version number based on the timestamp of most recently updated file in the zip
 SLOT="0"
-IUSE="black-smiling-emoji optipng zopflipng" # black smiling emoji breaks utr#51
+IUSE="black-smiling-emoji optipng +zopflipng" # black smiling emoji breaks utr#51
 inherit python-single-r1
 REQUIRED_USE="^^ ( optipng zopflipng ) \
 	      ^^ ( $(python_gen_useflags 'python*') )"

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    Noto Emoji (noto-color-emoji) is Emoji 12.0 ready font.
+
+    This package is used to build the font from sources.
+  </longdescription>
+  <upstream>
+    <bugs-to>
+      https://github.com/googlefonts/noto-emoji/issues
+    </bugs-to>
+    <maintainer status="active" type="project">
+      <name>Google</name>
+    </maintainer>
+  </upstream>
+  <use>
+    <flag name="black-smiling-emoji">This will replace the textual
+    representation of the black smiling emoji with a pictoral, breaking
+    standards.</flag>
+    <flag name="optipng">Compresses emoji images with optipng.
+    </flag>
+    <flag name="zopflipng">Compresses emoji images with zoptlipng.  Better
+    compression results at around 5-10% compared to zlib deflate but slower.
+    (default)</flag>
+  </use>
+</pkgmetadata>
