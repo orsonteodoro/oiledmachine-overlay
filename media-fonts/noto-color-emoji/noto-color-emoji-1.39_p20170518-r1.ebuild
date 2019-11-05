@@ -48,20 +48,15 @@ pkg_setup() {
 
 src_prepare() {
 	default
-	sed -i -e "s|\
-from fontTools.misc.py23 import unichr|\
-from six import unichr|" \
-	"${WORKDIR}/nototools-${NOTO_TOOLS_COMMIT}/nototools/unicode_data.py" \
-		|| die
 	if use zopflipng ; then
-		sed -i -e 's|\
+		sed -i -e "s|\
 emoji: \$(EMOJI_FILES)|\
-MISSING_OPTIPNG = fail\nundefine MISSING_ZOPFLI\nemoji: \$(EMOJI_FILES)|g' \
+MISSING_OPTIPNG = fail\nundefine MISSING_ZOPFLI\nemoji: \$(EMOJI_FILES)|g" \
 			Makefile || die
 	else
-		sed -i -e 's|\
+		sed -i -e "s|\
 emoji: \$(EMOJI_FILES)|\
-MISSING_ZOPFLI = fail\nundefine MISSING_OPTIPNG\nemoji: \$(EMOJI_FILES)|g' \
+MISSING_ZOPFLI = fail\nundefine MISSING_OPTIPNG\nemoji: \$(EMOJI_FILES)|g" \
 			Makefile || die
 	fi
 	# Allow output

@@ -8,8 +8,11 @@
   <longdescription>
     Noto Color Emoji 2.x is the rounder Oreo styled Emoji 12.0 ready set.
 
-    Noto Color Emoji 1.x is Jelly Bean styled emoji which is Emoji 4.0
-    ready.
+    Noto Color Emoji 1.3x is the chubby Jelly Bean styled emoji which supported
+    some Emoji 4.0 and skin tones.
+
+    Noto Color Emoji 1.2x is the skinny Jelly Bean styled emoji which supported
+    some Emoji 4.0 with ZWJ used with multiple emojis to represent one emoji.
     
     This package is used to build the font from sources.
   </longdescription>
