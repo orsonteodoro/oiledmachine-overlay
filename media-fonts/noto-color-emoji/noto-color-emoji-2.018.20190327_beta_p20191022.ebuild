@@ -46,10 +46,6 @@ pkg_setup() {
 	einfo "PYTHON=${PYTHON}"
 }
 
-src_unpack() {
-	unpack ${A}
-}
-
 src_prepare() {
 	default
 	sed -i -e "s|\
