@@ -148,6 +148,9 @@ ROCK_HEAD="master"
 # amdgpu-dkms driver
 
 
+# @FUNCTION: rock_setup
+# @DESCRIPTION:
+# Does pre-emerge checks
 function rock_setup() {
 	if use rock ; then
 		if [[ -z "${ROCK_BUMP_REQUEST}" ]] ; then
@@ -191,16 +194,16 @@ per-package env containing either: latest, head, snapshot\n"
 function fetch_rock_local_copy() {
 	einfo "Fetching the ROCk project please wait.  It may take hours."
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	cd "${DISTDIR}"
+	cd "${DISTDIR}" || die
 	d="${distdir}/ot-sources-src/linux-${ROCK_DIR}"
 	b="${distdir}/ot-sources-src"
 	addwrite "${b}"
-	cd "${b}"
+	cd "${b}" || die
 	if [[ ! -d "${d}" ]] ; then
 		mkdir -p "${d}"
 		einfo "Cloning the ROCk project"
 		git clone "${ROCKREPO_URL}" "${d}"
-		cd "${d}"
+		cd "${d}" || die
 		git checkout master
 	else
 		local G=$(find "${d}" -group "root")
@@ -209,23 +212,27 @@ function fetch_rock_local_copy() {
 	"You must manually \`chown -R portage:portage ${d}\`.  Re-emerge again."
 		fi
 		einfo "Updating the ROCk project"
-		cd "${d}"
+		cd "${d}" || die
 		git clean -fdx
 		git reset --hard master
 		git reset --hard origin/master
 		git checkout master
 		git pull
 	fi
-	cd "${d}"
+	cd "${d}" || die
 }
 
+# @FUNCTION: rock_rm_cached
+# @DESCRIPTION:
+# Removes a commit from the patch folder
 function rock_rm() {
 	local c="${1}"
-	unset rock_commit_cache[${c}]
-	unset rock_commit_cache_summaries[${c}]
 	rm "${T}"/rock-patches/*${c}*
 }
 
+# @FUNCTION: rock_rm_list
+# @DESCRIPTION:
+# Removes a list of commits
 function rock_rm_list() {
 	for l in $@ ; do
 		rock_rm ${l}
@@ -259,15 +266,387 @@ function rock_set_target() {
 	fi
 }
 
+# @FUNCTION: rock_save_all_commits
+# @DESCRIPTION:
+# Saves all rock commits as patch files
+function rock_save_all_commits() {
+	cd_rock
+	for c in $C ; do
+		local fn=""
+		local s=$(git -P show -s --format=%s ${c})
+		local ct=$(git -P show -s --format=%ct ${c})
+		local h_summary
+		h_summary=$(echo "${s}" | sha1sum | cut -f1 -d ' ')
+
+		DC_VER=$(git -P show \
+			${c}:drivers/gpu/drm/amd/display/dc/dc.h \
+			| grep -e "#define DC_VER" \
+			| grep -o -P -e "\"[0-9.]+\"" \
+			| sed -e "s|\"||g")
+
+		# repad DC_VER
+		DC_VER_MAJOR=$(printf "%02d" $(echo "$DC_VER" | cut -f1 -d '.'))
+		DC_VER_MINOR=$(printf "%02d" $(echo "$DC_VER" | cut -f2 -d '.'))
+		DC_VER_PATCH=$(printf "%03d" $(echo "$DC_VER" | cut -f3 -d '.'))
+		DC_VER="${DC_VER_MAJOR}.${DC_VER_MINOR}.${DC_VER_PATCH}"
+
+		printf -v pn "%06d" ${n}
+		fn="${DC_VER}-${ct}-${pn}-${c}-rock.patch"
+
+		if git -P diff $c^..$c > "${T}"/rock-patches/${fn} ; then
+			#einfo "Added ${fn}"
+			# attach missing commit subject for possible patch tarball
+			git -P show -s --pretty=email ${c} > "${T}/rock-patches/${fn}.t" || die
+			cat "${T}/rock-patches/${fn}" >> "${T}/rock-patches/${fn}.t" || die
+			mv "${T}/rock-patches/${fn}"{.t,} || die
+		else
+			die "Failed to add ${fn}"
+		fi
+		n=$((n+1))
+	done
+
+	einfo "Attaching licenses to rock patches"
+	"${HOME}/patachie" -p "${T}"/rock-patches \
+		-s "${S}" \
+		-of "${T}/rock-licenses" \
+		-od "${T}/rock-processed"
+	mv "$(pwd)/attachied" "$(pwd)/rock-attachied" || die
+	einfo \
+"Maintainer:  $(pwd)/rock-attachied contains patches with attached licenses\n\
+and ${T}/rock-attachied contains all the licenses in one file."
+}
+
+# @FUNCTION: __remove_rock_patch
+# @DESCRIPTION:
+# (PRIVATE) Removes a rock .patch file
+function __remove_rock_patch() {
+	rm "${T}"/rock-patches/*${c}*rock* > /dev/null
+}
+
+# @FUNCTION: rock_filter_by_git_commit_metadata
+# @DESCRIPTION:
+# Removes patches before merging
+function rock_filter_by_git_commit_metadata() {
+	for c in $C ; do
+		local fn=""
+		if [[ -n "${vk_commits[${c}]}" ]] ; then
+#			einfo \
+#"Already added ${c} via vanilla kernel sources.  Skipping..."
+			__remove_rock_patch
+			continue
+		elif [[ -n "${asdn_commits[${c}]}" ]] ; then
+#			einfo \
+#"Already added ${c} via amd-staging-drm-next.  Skipping..."
+			__remove_rock_patch
+			continue
+		fi
+
+		local s="${rock_summary_raw[${c}]}"
+
+		if echo "${s}" | grep -q -P \
+-e "(drm/admkcl|drm/amdkcl|dkms|autoconf)" ; then
+			# reject compatibility layer and dkms
+			# only interested in enhancement commits
+			__remove_rock_patch
+			continue
+		fi
+
+		# remove some reversions or commits found in vanilla or
+		#   those with .*\(v[0-9]\) subject pattern.
+		# some reverts are required if their anti is not found
+		#   in torvald's kernel
+		if echo "${s}" | grep -q -F \
+-e "drm/amd/display: Rework DC plane filling and surface updates" ; \
+		then
+			# rework already applied in vanilla
+			__remove_rock_patch
+			continue
+		elif echo "${s}" | grep -q -F \
+-e "drm/amd/display: Recalculate pitch when buffers change" ; \
+		then
+			# same content different location
+			__remove_rock_patch
+			continue
+		elif echo "${s}" | grep -q -F \
+-e "drm/amdkfd: Separate mqd allocation and initialization" ; \
+		then
+			# fixed by
+			#   06b89b38f3cc518a761164f9f958a9607bbb3587
+			__remove_rock_patch
+			continue
+		elif echo "${s}" | grep -q -F \
+-e "drm/amdkfd: Refactor create_queue_nocpsch" ; \
+		then
+			# fixed by
+			#   06b89b38f3cc518a761164f9f958a9607bbb3587
+			__remove_rock_patch
+			continue
+		elif echo "${s}" | grep -q -F \
+-e "drm/amdkfd: Only load sdma mqd when queue is active" ; \
+		then
+			# same content pre and post revert
+			__remove_rock_patch
+			continue
+		elif echo "${s}" | grep -q -F \
+-e "drm/amd/display: fix issue with eDP not detected on driver load" ; \
+		then
+			# same content pre and post revert
+			__remove_rock_patch
+			continue
+		elif echo "${s}" | grep -q -F \
+-e "drm/amdgpu: re-enable retry faults" ; \
+		then
+			# obsolete
+			__remove_rock_patch
+			continue
+		elif echo "${s}" | grep -q -F \
+-e "drm/amdkfd: Add navi10 support to amdkfd" ; \
+		then
+			# obsolete ; vanilla is version 3, rock is version 2
+			__remove_rock_patch
+			continue
+		elif echo "${s}" | grep -q -F \
+-e "drm/amdgpu: Add navi10 kfd support for amdgpu" ; \
+		then
+			# already added by vanilla
+			__remove_rock_patch
+			continue
+		elif echo "${s}" | grep -q -F \
+-e "drm/amdgpu: Move KFD parameters to amdgpu" ; \
+		then
+			# already added by vanilla
+			__remove_rock_patch
+			continue
+		fi
+
+		local h_summary="${rock_summary_hash[${c}]}"
+
+		local whitelisted=0
+		if [[ \
+		"${c}" =~ 0dbd555a011c2d096a7b7e40c83c5776a7df367c || \
+		"${c}" =~ 1e053b10ba60eae6a3f9de64cbc74bdf6cb0e715 || \
+		"${c}" =~ e532a135d7044b5477c1c56169fa131d77c57f75 || \
+		"${c}" =~ 52791eeec1d9f4a7e7fe08aaba0b1553149d93bc || \
+		"${c}" =~ bd630a86be381992fac99f9ab82c5c5b43a5ee3b || \
+		"${c}" =~ 67c97fb79a7f8621d4514275691d75f5ff158c46 || \
+		"${c}" =~ 4c2488cfaa997e396aeb9d6496db94c25b97c671 || \
+		"${c}" =~ dd7a7d1ff2f199a8a80ee233480922d4f17adc6d || \
+		"${c}" =~ 31070a871fdcb16dd209e6bc0e6ca16be7cfb938 || \
+		"${c}" =~ 96e95496b02dbf1b19a2d4ce238810572e149606 || \
+		"${c}" =~ 94eb1e10a34d3c7fc42208faaa4954fe482ac091 || \
+		"${c}" =~ 8735f16803f00f5efca7738afe3b9a304b539181 || \
+		"${c}" =~ 5d344f58da760b226562e7d5199fb73294eb93fa || \
+		"${c}" =~ 93505ee7d05e836fd18894019e93c3875198fcc5 || \
+		"${c}" =~ 0e1d8083bddb38b7169f6240905422f95d3c31b9 || \
+		"${c}" =~ 4f5368b5541a902f6596558b05f5c21a9770dd32 || \
+		"${c}" =~ b016cd6ed4b772759804e0d6082bd1f5ca63b8ee || \
+		"${c}" =~ 51c98747113e93b6229f12d1a744a51fd59eff3a || \
+		"${c}" =~ 8eb8833e7ed362977c021116d2f34451a7009ca3 || \
+		"${c}" =~ 100163df420305b78153e6f5ec10c90d755acee3 || \
+		"${c}" =~ e1a29c6c59553d80a8e17d63494c65a13fb8e241 || \
+		"${c}" =~ d8f4981e2e8a968411105db568f3d48256b2ebbc || \
+		"${c}" =~ 274840e544225657fbca4f12efa1ee55474bb800 || \
+		"${c}" =~ c01b6a1d38675652199d12b898c1c23b96b5055f || \
+		"${c}" =~ 354e6e14ef947f07055d3570b4bd7a33196b57f6 || \
+		"${c}" =~ 562836a269e363cdb74b551e3be7021c9d228378 || \
+		"${c}" =~ e7f0141a217fa28049d7a3bbc09bee9642c47687 || \
+		"${c}" =~ 2e3c9ec4d151c04d75546dfdc2f85a84ad546eb0 || \
+		"${c}" =~ c74dbe44eacf00a5ccc229b5cc340a9b7f6851a0 || \
+		"${c}" =~ 97797a93ffb905304df11dc42e1daab9aa7faa9b || \
+		"${c}" =~ 2a1e00c3c0d37f65241236d7731ef6bb92f0d07f \
+			]] ; then
+			# ASDN set (already included)
+			__remove_rock_patch
+			continue
+		elif [[	\
+		"${c}" =~ 4766d6eb3c11d7dffc9e8e34350c5658267b0281 || \
+		"${c}" =~ add4edf21054c25915bf43096d5a6dd046df3f1d || \
+		"${c}" =~ 3f1e5c3eeec3a5aff5ddbd46ff07fe580e4bee58 || \
+		"${c}" =~ 4b59cd9a98043f3b6e2ccf4d1270b7219aa437c9 \
+			]] ; then
+			# ROCk whitelist
+			# whitelist specific commits which includes
+			#   5.4-rc* commits
+			whitelisted=1
+		elif echo "${s}" | grep -q -P \
+-e "(drm/amd|amdgpu|amd/powerplay|amdkfd|gpu: amdgpu:|amdgpu_dm)" ; then
+			# whitelist all amd drm driver updates for
+			#   evaluation
+			# the ROCk kernel modifications don't explicitly
+			#   say ROCk addition but get mixed with these
+			#   subject tags
+			:;
+		elif echo "${s}" | grep -q -P \
+-e "(bo->resv to bo->base.resv|use embedded gem object|Fill out gem_object->resv)" ; \
+		then
+			# ASDN set (already included)
+			continue
+		else
+			local ct="${rock_commit_time[${c}]}"
+			if (( ${ct} <= ${LINUX_TIMESTAMP} )) ; then
+				#einfo "Skipping old commit ${c} : Old timestamp"
+				__remove_rock_patch
+				continue
+			fi
+		fi
+
+		if [[ "${whitelisted}" == "1" ]] ; then
+			:;
+		elif [[ -n "${vk_summaries[${h_summary}]}" ]] ; then
+			einfo \
+"Already added ${c} via vanilla kernel sources (with same subject match).  \
+Skipping..."
+			__remove_rock_patch
+			continue
+		fi
+
+		if use amd-staging-drm-next ; then
+			if [[ "${whitelisted}" == "1" ]] ; then
+				:;
+			elif [[ -n "${asdn_summaries[${h_summary}]}" ]] ; then
+				einfo \
+"Already added ${c} via amd-staging-drm-next kernel sources (with same subject \
+match).  Skipping..."
+				__remove_rock_patch
+				continue
+			fi
+		fi
+	done
+}
+
+# @FUNCTION: rock_generate_commit_list
+# @DESCRIPTION:
+# Fills a variable named C containing all rock commits
+function rock_generate_commit_list() {
+	cd_rock
+	einfo \
+"Saving only the ROCk commits for commit-by-commit evaluation.  This will\n\
+take longer than expected."
+	C=$(git -P log ${ROCK_BASE}..${target} --oneline \
+		--pretty=format:"%H" -- \
+		drivers/gpu/drm \
+		include/drm \
+		drivers/dma-buf \
+		include/linux \
+		include/uapi/drm \
+		| echo -e "\n$(cat -)" | tac)
+
+	# amd-staging-drm-next-stable is currently not used, may be
+	# changed to only 5.3 only without 5.4 commits.
+
+	C+=$'\n'"add4edf21054c25915bf43096d5a6dd046df3f1d"
+	pickle_string "C" "${T}/rock_commit_list.${K_MAJOR_MINOR}${SUFFIX_ASDN}"
+}
+
+# @FUNCTION: cd_rock
+# @DESCRIPTION:
+# Changes directory to ROCk repo
+function cd_rock() {
+	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	local d="${distdir}/ot-sources-src/linux-${ROCK_DIR}"
+	cd "${d}" || die
+}
+
+# @FUNCTION: rock_generate_database
+# @DESCRIPTION:
+# Generates database files so that dependence on git will
+# be removed.
+#
+# Preconditions: rock_summary_raw, rock_summary_hash,
+# rock_commit_time must be declared associative
+# arrays first
+function rock_generate_database() {
+	cd_rock
+	for c in $C ; do
+		local s=$(git -P show -s --format=%s ${c})
+		local ct=$(git -P show -s --format=%ct ${c})
+		local h_summary=$(\
+			echo "${s}" | sha1sum | cut -f1 -d ' ')
+		rock_summary_raw[${c}]="${s}"
+		rock_summary_hash[${c}]="${h_summary}"
+		rock_commit_time[${c}]=${ct}
+	done
+	pickle_associative_array "rock_summary_raw" \
+		"${T}/${ROCK_DB_SUMMARY_RAW_FN}"
+	pickle_associative_array "rock_summary_hash" \
+		"${T}/${ROCK_DB_SUMMARY_HASH_FN}"
+	pickle_associative_array "rock_commit_time" \
+		"${T}/${ROCK_DB_COMMIT_TIME_FN}"
+}
+
+# @FUNCTION: has_rock_database
+# @DESCRIPTION:
+# Checks for the existance of the ROCk databases
+function has_rock_database() {
+	if [[ -e "${FILESDIR}/${ROCK_DB_SUMMARY_RAW_FN}" \
+		&& -e "${T}/${ROCK_DB_SUMMARY_HASH_FN}" \
+		&& -e "${T}/${ROCK_DB_COMMIT_TIME_FN}" ]]
+	then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: rock_use_commit_list
+# @DESCRIPTION:
+# Generates or uses a ROCk commit list
+function rock_use_commit_list() {
+	unset rock_summary_raw
+	unset rock_summary_hash
+	unset rock_commit_time
+	declare -Ax rock_summary_raw
+	declare -Ax rock_summary_hash
+	declare -Ax rock_commit_time
+	if has_amd_staging_drm_next_database ; then
+		einfo "Using the rock commit list"
+		source "${T}/rock_commit_list.${K_MAJOR_MINOR}${SUFFIX_ROCK}"
+	else
+		einfo "Generating rock commit list"
+		rock_generate_commit_list
+	fi
+}
+
+# @FUNCTION: rock_use_database
+# @DESCRIPTION:
+# Loads the ROCk databases
+function rock_use_database() {
+	if has_rock_database ; then
+		einfo "Using the rock database"
+		cp -a "${FILESDIR}/${ROCK_DB_SUMMARY_RAW_FN}" \
+			"${T}" || die
+		cp -a "${FILESDIR}/${ROCK_DB_SUMMARY_HASH_FN}" \
+			"${T}" || die
+		cp -a "${FILESDIR}/${ROCK_DB_COMMIT_TIME_FN}" \
+			"${T}" || die
+	else
+		einfo "Generating the rock database"
+		rock_generate_database
+	fi
+	source "${T}/${ROCK_DB_SUMMARY_RAW_FN}"
+	source "${T}/${ROCK_DB_SUMMARY_HASH_FN}"
+	source "${T}/${ROCK_DB_COMMIT_TIME_FN}"
+}
+
+function rock_use_commits() {
+	if [[ \
+	  -d "${FILESDIR}/rock/${K_MAJOR_MINOR}" ]]
+	then
+		# we don't distribute this because it is 1G+
+		cp -a "${FILESDIR}/rock"/* \
+			"${T}"/rock/ \
+			|| die
+	else
+		rock_save_all_commits
+	fi
+}
+
 # @FUNCTION: generate_rock_patches
 # @DESCRIPTION:
 # Grabs all the commits and generates .patch files for individual evaluation.
 function generate_rock_patches() {
-	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	d="${distdir}/ot-sources-src/linux-${ROCK_DIR}"
-	cd "${d}"
+	cd_rock
 
-	local suffix_rock=$(ot-kernel-common_amdgpu_get_suffix_rock)
 	local target=$(rock_set_target)
 
 	git checkout ${target} . || die
@@ -282,356 +661,29 @@ function generate_rock_patches() {
 
 	unset vk_commits
 	unset vk_summaries
-	unset asdn_commits
-	unset asdn_summaries
-	unset rock_commit_cache
 	declare -A vk_commits
 	declare -A vk_summaries
-	declare -A asdn_commits
-	declare -A asdn_summaries
-	declare -A rock_commit_cache
-	declare -A rock_commit_cache_summaries
 
-	if [[ \
--e "${FILESDIR}/${LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ROCK_FN}${suffix_rock}" ]] ; \
-	then
-		cp -a \
-"${FILESDIR}/${LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ROCK_FN}${suffix_rock}" \
-			"${T}"
-	fi
+	amd_staging_drm_next_hash_use_hash_tables
 
-	local using_rock_commit_cache=0
 	local C
-	if [[ ! \
--e "${T}/${LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ROCK_FN}${suffix_rock}" ]] ; \
-	then
-		einfo \
-"Saving only the ROCk commits for commit-by-commit evaluation.  This will\n\
-take longer than expected."
-		C=$(git -P log ${ROCK_BASE}..${target} --oneline \
-			--pretty=format:"%H" -- \
-			drivers/gpu/drm \
-			include/drm \
-			drivers/dma-buf \
-			include/linux \
-			include/uapi/drm \
-			| echo -e "\n$(cat -)" | tac)
-
-		# We dedupe by git subject because the body is the same but
-		#   different commit hash.
-		# It happens when they are backporting or migrating the commit
-		#   to another repo.
-		if [[ -e "${T}/${LINUX_HASHTABLE_COMMITS_VK_FN}" && \
-			-e "${T}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}" ]] ; \
-		then
-			# It's more faster just to store/restore the final
-			# round of commits after filtering per use flag for all
-			# possibilities of amd-staging-drm-next- and rock- USE
-			# flags.
-			einfo "Using cached hash tables for vanilla kernel"
-			source "${T}/${LINUX_HASHTABLE_COMMITS_VK_FN}"
-			source "${T}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}"
-		fi
-
-		# amd-staging-drm-next-stable is currently not used, may be
-		# changed to only 5.3 only without 5.4 commits.
-		local suffix_asdn
-		if use amd-staging-drm-next ; then
-			suffix_asdn=$(ot-kernel-common_amdgpu_get_suffix_asdn)
-			local ht_asdn_fn=\
-"${LINUX_HASHTABLE_COMMITS_ASDN_FN}${suffix_asdn}"
-			local ht_asdns_fn=\
-"${LINUX_HASHTABLE_SUMMARIES_ASDN_FN}${suffix_asdn}"
-			if [[   -e "${FILESDIR}/${ht_asdn_fn}" && \
-				-e "${FILESDIR}/${ht_asdns_fn}" ]] ; \
-			then
-				cp -a "${FILESDIR}/${ht_asdn_fn}" "${T}"
-				cp -a "${FILESDIR}/${ht_asdns_fn}" "${T}"
-			fi
-
-			if [[      ! -e "${T}/${ht_asdn_fn}" \
-				|| ! -e "${T}/${ht_asdns_fn}" ]] ; \
-			then
-				einfo \
-			"Generating hash tables for amd-staging-drm-next"
-				for f in \
-			$(find "${T}"/amdgpu-merged-patches/ -name "*asdn*") ; \
-				do
-				  local c
-				  c=$(basename $f | cut -f4 -d '-')
-				  if [[ -n "${c}" && "${c}" != " " ]] ; then
-				    asdn_commits[${c}]=1
-				    pushd \
-		"${distdir}/ot-sources-src/linux-${AMD_STAGING_DRM_NEXT_DIR}" \
-				      > /dev/null || die
-				    local s=$(git -P show -s --format=%s ${c})
-				    local h=$(echo "${s}" | sha1sum \
-				      | cut -f1 -d ' ')
-				    if [[ -n "${h}" && "${h}" != " " ]] ; then
-				      asdn_summaries[${h}]=1
-				    fi
-				    popd > /dev/null
-				  fi
-				done
-				typeset -p asdn_commits > "${T}/${ht_asdn_fn}"
-				typeset -p asdn_summaries > "${T}/${ht_asdns_fn}"
-				sed -i -r -e "s|^declare -A ||" "${T}/${ht_asdn_fn}"
-				sed -i -r -e "s|^declare -A ||" "${T}/${ht_asdns_fn}"
-			else
-				einfo \
-			"Using cached hash tables for amd-staging-drm-next"
-				source "${T}/${ht_asdn_fn}"
-				source "${T}/${ht_asdns_fn}"
-			fi
-		fi
-	else
-		# The cache file shaves off expensive "git show" and "git log"
-		#   operations, which are I/O bounded.
-		# We reduce it to a single "git diff" operation.
-		einfo "Using cached final commits"
-		source \
-	"${T}/${LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ROCK_FN}${suffix_rock}"
-		using_rock_commit_cache=1
-		C=${!rock_commit_cache[@]}
-	fi
-
-	if declare -f ot-kernel-rock_generate_rock_patches_pre \
-		> /dev/null ; \
-	then
-		ot-kernel-rock_generate_rock_patches_pre
-	fi
-
-	C+=$'\n'"add4edf21054c25915bf43096d5a6dd046df3f1d"
-
-	einfo "Doing commit -> .patch conversion for rock-patches set:"
-	for c in $C ; do
-		local fn=""
-		if [[ "${using_rock_commit_cache}" != "1" ]] ; then
-			if [[ -n "${vk_commits[${c}]}" ]] ; then
-#				einfo \
-#"Already added ${c} via vanilla kernel sources.  Skipping..."
-				continue
-			elif [[ -n "${asdn_commits[${c}]}" ]] ; then
-#				einfo \
-#"Already added ${c} via amd-staging-drm-next.  Skipping..."
-				continue
-			fi
-
-			local s=$(git -P show -s --format=%s ${c})
-
-			if echo "${s}" | grep -q -P \
--e "(drm/admkcl|drm/amdkcl|dkms|autoconf)" ; then
-				# reject compatibility layer and dkms
-				# only interested in enhancement commits
-				continue
-			fi
-
-			# remove some reversions or commits found in vanilla or
-			#   those with .*\(v[0-9]\) subject pattern.
-			# some reverts are required if their anti is not found
-			#   in torvald's kernel
-			if echo "${s}" | grep -q -F \
--e "drm/amd/display: Rework DC plane filling and surface updates" ; \
-			then
-				# rework already applied in vanilla
-				continue
-			elif echo "${s}" | grep -q -F \
--e "drm/amd/display: Recalculate pitch when buffers change" ; \
-			then
-				# same content different location
-				continue
-			elif echo "${s}" | grep -q -F \
--e "drm/amdkfd: Separate mqd allocation and initialization" ; \
-			then
-				# fixed by
-				#   06b89b38f3cc518a761164f9f958a9607bbb3587
-				continue
-			elif echo "${s}" | grep -q -F \
--e "drm/amdkfd: Refactor create_queue_nocpsch" ; \
-			then
-				# fixed by
-				#   06b89b38f3cc518a761164f9f958a9607bbb3587
-				continue
-			elif echo "${s}" | grep -q -F \
--e "drm/amdkfd: Only load sdma mqd when queue is active" ; \
-			then
-				# same content pre and post revert
-				continue
-			elif echo "${s}" | grep -q -F \
--e "drm/amd/display: fix issue with eDP not detected on driver load" ; \
-			then
-				# same content pre and post revert
-				continue
-			elif echo "${s}" | grep -q -F \
--e "drm/amdgpu: re-enable retry faults" ; \
-			then
-				# obsolete
-				continue
-			elif echo "${s}" | grep -q -F \
--e "drm/amdkfd: Add navi10 support to amdkfd" ; \
-			then
-				# obsolete ; vanilla is version 3, rock is version 2
-				continue
-			elif echo "${s}" | grep -q -F \
--e "drm/amdgpu: Add navi10 kfd support for amdgpu" ; \
-			then
-				# already added by vanilla
-				continue
-			elif echo "${s}" | grep -q -F \
--e "drm/amdgpu: Move KFD parameters to amdgpu" ; \
-			then
-				# already added by vanilla
-				continue
-			fi
-
-			local ct=$(git -P show -s --format=%ct ${c})
-			local h_summary=$(\
-				echo "${s}" | sha1sum | cut -f1 -d ' ')
-
-			local whitelisted=0
-			if [[ \
-			"${c}" =~ 0dbd555a011c2d096a7b7e40c83c5776a7df367c || \
-			"${c}" =~ 1e053b10ba60eae6a3f9de64cbc74bdf6cb0e715 || \
-			"${c}" =~ e532a135d7044b5477c1c56169fa131d77c57f75 || \
-			"${c}" =~ 52791eeec1d9f4a7e7fe08aaba0b1553149d93bc || \
-			"${c}" =~ bd630a86be381992fac99f9ab82c5c5b43a5ee3b || \
-			"${c}" =~ 67c97fb79a7f8621d4514275691d75f5ff158c46 || \
-			"${c}" =~ 4c2488cfaa997e396aeb9d6496db94c25b97c671 || \
-			"${c}" =~ dd7a7d1ff2f199a8a80ee233480922d4f17adc6d || \
-			"${c}" =~ 31070a871fdcb16dd209e6bc0e6ca16be7cfb938 || \
-			"${c}" =~ 96e95496b02dbf1b19a2d4ce238810572e149606 || \
-			"${c}" =~ 94eb1e10a34d3c7fc42208faaa4954fe482ac091 || \
-			"${c}" =~ 8735f16803f00f5efca7738afe3b9a304b539181 || \
-			"${c}" =~ 5d344f58da760b226562e7d5199fb73294eb93fa || \
-			"${c}" =~ 93505ee7d05e836fd18894019e93c3875198fcc5 || \
-			"${c}" =~ 0e1d8083bddb38b7169f6240905422f95d3c31b9 || \
-			"${c}" =~ 4f5368b5541a902f6596558b05f5c21a9770dd32 || \
-			"${c}" =~ b016cd6ed4b772759804e0d6082bd1f5ca63b8ee || \
-			"${c}" =~ 51c98747113e93b6229f12d1a744a51fd59eff3a || \
-			"${c}" =~ 8eb8833e7ed362977c021116d2f34451a7009ca3 || \
-			"${c}" =~ 100163df420305b78153e6f5ec10c90d755acee3 || \
-			"${c}" =~ e1a29c6c59553d80a8e17d63494c65a13fb8e241 || \
-			"${c}" =~ d8f4981e2e8a968411105db568f3d48256b2ebbc || \
-			"${c}" =~ 274840e544225657fbca4f12efa1ee55474bb800 || \
-			"${c}" =~ c01b6a1d38675652199d12b898c1c23b96b5055f || \
-			"${c}" =~ 354e6e14ef947f07055d3570b4bd7a33196b57f6 || \
-			"${c}" =~ 562836a269e363cdb74b551e3be7021c9d228378 || \
-			"${c}" =~ e7f0141a217fa28049d7a3bbc09bee9642c47687 || \
-			"${c}" =~ 2e3c9ec4d151c04d75546dfdc2f85a84ad546eb0 || \
-			"${c}" =~ c74dbe44eacf00a5ccc229b5cc340a9b7f6851a0 || \
-			"${c}" =~ 97797a93ffb905304df11dc42e1daab9aa7faa9b || \
-			"${c}" =~ 2a1e00c3c0d37f65241236d7731ef6bb92f0d07f \
-				]] ; then
-				# ASDN set (already included)
-				continue
-			elif [[	"${c}" =~ 4766d6eb3c11d7dffc9e8e34350c5658267b0281 ||
-				"${c}" =~ add4edf21054c25915bf43096d5a6dd046df3f1d ]] ; then
-				# ROCk whitelist
-				# whitelist specific commits which includes
-				#   5.4-rc* commits
-				whitelisted=1
-			elif echo "${s}" | grep -q -P \
--e "(drm/amd|amdgpu|amd/powerplay|amdkfd|gpu: amdgpu:|amdgpu_dm)" ; then
-				# whitelist all amd drm driver updates for
-				#   evaluation
-				# the ROCk kernel modifications don't explicitly
-				#   say ROCk addition but get mixed with these
-				#   subject tags
-				:;
-			elif echo "${s}" | grep -q -P \
--e "(bo->resv to bo->base.resv|use embedded gem object|Fill out gem_object->resv)" ; \
-			then
-				# ASDN set (already included)
-				continue
-			else
-				if (( ${ct} <= ${LINUX_TIMESTAMP} )) ; then
-					#einfo "Skipping old commit ${c} : Old timestamp"
-					continue
-				fi
-			fi
-
-			if [[ "${whitelisted}" == "1" ]] ; then
-				:;
-			elif [[ -n "${vk_summaries[${h_summary}]}" ]] ; then
-				einfo \
-"Already added ${c} via vanilla kernel sources (with same subject match).  \
-Skipping..."
-				continue
-			fi
-
-			if use amd-staging-drm-next ; then
-				if [[ "${whitelisted}" == "1" ]] ; then
-					:;
-				elif [[ -n "${asdn_summaries[${h_summary}]}" ]] ; then
-					einfo \
-"Already added ${c} via amd-staging-drm-next kernel sources (with same subject \
-match).  Skipping..."
-					continue
-				fi
-			fi
-
-			DC_VER=$(git -P show \
-				${c}:drivers/gpu/drm/amd/display/dc/dc.h \
-				| grep -e "#define DC_VER" \
-				| grep -o -P -e "\"[0-9.]+\"" \
-				| sed -e "s|\"||g")
-
-			# repad DC_VER
-			DC_VER_MAJOR=$(printf "%02d" $(echo "$DC_VER" | cut -f1 -d '.'))
-			DC_VER_MINOR=$(printf "%02d" $(echo "$DC_VER" | cut -f2 -d '.'))
-			DC_VER_PATCH=$(printf "%03d" $(echo "$DC_VER" | cut -f3 -d '.'))
-			DC_VER="${DC_VER_MAJOR}.${DC_VER_MINOR}.${DC_VER_PATCH}"
-
-			printf -v pn "%06d" ${n}
-			fn="${DC_VER}-${ct}-${pn}-${c}-rock.patch"
-		else
-			fn="${rock_commit_cache[${c}]}"
-		fi
-
-		if git -P diff $c^..$c > "${T}"/rock-patches/${fn} ; then
-			#einfo "Added ${fn}"
-			# attach missing commit subject for possible patch tarball
-			git -P show -s --pretty=email ${c} > "${T}/rock-patches/${fn}.t" || die
-			cat "${T}/rock-patches/${fn}" >> "${T}/rock-patches/${fn}.t" || die
-			mv "${T}/rock-patches/${fn}"{.t,} || die
-			if [[ "${using_rock_commit_cache}" != "1" ]] ; then
-				rock_commit_cache[${c}]="${fn}"
-				rock_commit_cache_summaries[${c}]="${s}"
-			fi
-		else
-			die "Failed to add ${fn}"
-		fi
-		n=$((n+1))
-	done
-	unset vk_commits
-	unset vk_summaries
-	unset asdn_commits
-	unset asdn_summaries
+	einfo "Querying rock commit list"
+	rock_use_commit_list
+	einfo "Querying the rock database"
+	rock_use_database
+	einfo "Saving all rock commits"
+	rock_use_commits
+	einfo "Filtering rock commits by git commit metadata"
+	rock_filter_by_git_commit_metadata
 
 	if declare -f ot-kernel-rock_generate_rock_patches_post \
 		> /dev/null ; then
 		ot-kernel-rock_generate_rock_patches_post
 	fi
 
-	# ${T}/rock.summaries.final contains the set of commit hashes ( and
-	# summaries) not in VK and not in ASDN.  Useful for analysis of the
-	# value added commits.
-	if [[ "${using_rock_commit_cache}" != "1" ]] ; then
-		if declare -f ot-kernel-rock_rm > /dev/null ; then
-			# per version removal
-			ot-kernel-rock_rm
-			C=${!rock_commit_cache_summaries[@]}
-			for c in $C ; do
-				echo \
-				  "${c} ${rock_commit_cache_summaries[${c}]}" \
-				  >> "${T}/rock.summaries.final"
-			done
-		fi
-
-		typeset -p rock_commit_cache \
-	> "${T}/${LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ROCK_FN}${suffix_rock}"
-		sed -i -r -e "s|^declare -A ||" \
-	  "${T}/${LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ROCK_FN}${suffix_rock}"
+	if declare -f ot-kernel-rock_rm > /dev/null ; then
+		# per version removal
+		ot-kernel-rock_rm
 	fi
 }
 
@@ -640,11 +692,9 @@ match).  Skipping..."
 # Manages getting a local copy of ROCk project
 function fetch_rock() {
 	if use rock ; then
-		local suffix_rock=$(ot-kernel-common_amdgpu_get_suffix_rock)
-#1234567890123456789012345678901234567890123456789012345678901234567890123456789
-		if [[ ! -d "${FILESDIR}/rock/${K_MAJOR_MINOR}${suffix_rock}" ]] ; then
+		if [[ ! -d "${FILESDIR}/rock/${K_MAJOR_MINOR}" ]] ; then
 			einfo \
-"Dump ROCk patches to ${FILESDIR}/rock/${K_MAJOR_MINOR}${suffix_rock}"
+"Dump ROCk patches to ${FILESDIR}/rock/${K_MAJOR_MINOR}"
 			# ebuild maintainer only
 			fetch_rock_local_copy
 		fi

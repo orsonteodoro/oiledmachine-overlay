@@ -128,7 +128,8 @@ BMQ_FN="${BMQ_FN:=v${PATCH_BMQ_MAJOR_MINOR}_bmq${PATCH_BMQ_VER}.patch}"
 BMQ_BASE_URL="https://gitlab.com/alfredchen/bmq/raw/master/${PATCH_BMQ_MAJOR_MINOR}/"
 BMQ_SRC_URL="${BMQ_BASE_URL}${BMQ_FN}"
 
-ZENTUNE_URL_BASE="https://github.com/torvalds/linux/compare/v${PATCH_ZENTUNE_VER}...zen-kernel:${PATCH_ZENTUNE_VER}/"
+ZENTUNE_URL_BASE=\
+"https://github.com/torvalds/linux/compare/v${PATCH_ZENTUNE_VER}...zen-kernel:${PATCH_ZENTUNE_VER}/"
 ZENTUNE_REPO="zen-tune"
 ZENTUNE_FN="${ZENTUNE_REPO}-${PATCH_ZENTUNE_VER}.diff"
 ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_REPO}.diff"
@@ -146,10 +147,14 @@ O3_RO_DL_FN="${PATCH_O3_RO_COMMIT}.diff"
 O3_CO_SRC_URL="${O3_SRC_URL}${O3_CO_DL_FN} -> ${O3_CO_FN}"
 O3_RO_SRC_URL="${O3_SRC_URL}${O3_RO_DL_FN} -> ${O3_RO_FN}"
 
-GRAYSKY_DL_4_9_FN="${GRAYSKY_DL_4_9_FN:=enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B.patch}"
-GRAYSKY_DL_8_1_FN="enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B.patch"
-GRAYSKY_DL_9_1_FN="enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v4.13%2B.patch"
-GRAYSKY_URL_BASE="https://raw.githubusercontent.com/graysky2/kernel_gcc_patch/master/"
+GRAYSKY_DL_4_9_FN=\
+"${GRAYSKY_DL_4_9_FN:=enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B.patch}"
+GRAYSKY_DL_8_1_FN=\
+"enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B.patch"
+GRAYSKY_DL_9_1_FN=\
+"enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v4.13%2B.patch"
+GRAYSKY_URL_BASE=\
+"https://raw.githubusercontent.com/graysky2/kernel_gcc_patch/master/"
 GRAYSKY_SRC_4_9_URL="${GRAYSKY_URL_BASE}${GRAYSKY_DL_4_9_FN}"
 GRAYSKY_SRC_8_1_URL="${GRAYSKY_URL_BASE}${GRAYSKY_DL_8_1_FN}"
 GRAYSKY_SRC_9_1_URL="${GRAYSKY_URL_BASE}${GRAYSKY_DL_9_1_FN}"
@@ -177,17 +182,21 @@ KERNEL_PATCH_0_TO_1_URL="https://cdn.kernel.org/pub/linux/kernel/v${K_PATCH_XV}/
 
 LINUX_REPO_URL="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 
-LINUX_COMMITS_AMDGPU_RANGE_FN="${LINUX_COMMITS_AMDGPU_RANGE_FN:=linux.commits.amdgpu_range.${K_MAJOR_MINOR}}"
-
 # intermediate cache files
-LINUX_HASHTABLE_COMMITS_VK_FN="${LINUX_HASHTABLE_COMMITS_VK_FN:=linux.hashtable.commits.vk.${K_MAJOR_MINOR}}"
-LINUX_HASHTABLE_SUMMARIES_VK_FN="${LINUX_HASHTABLE_SUMMARIES_VK_FN:=linux.hashtable.summaries.vk.${K_MAJOR_MINOR}}"
-LINUX_HASHTABLE_COMMITS_ASDN_FN="${LINUX_HASHTABLE_COMMITS_ASDN_FN:=linux.hashtable.commits.asdn.${K_MAJOR_MINOR}}"
-LINUX_HASHTABLE_SUMMARIES_ASDN_FN="${LINUX_HASHTABLE_SUMMARIES_ASDN_FN:=linux.hashtable.summaries.asdn.${K_MAJOR_MINOR}}"
+LINUX_HASHTABLE_COMMITS_VK_FN=\
+"${LINUX_HASHTABLE_COMMITS_VK_FN:=linux.hashtable.vk.${K_MAJOR_MINOR}}.commits"
+LINUX_HASHTABLE_SUMMARIES_VK_FN=\
+"${LINUX_HASHTABLE_SUMMARIES_VK_FN:=linux.hashtable.vk.${K_MAJOR_MINOR}}.summaries"
+LINUX_HASHTABLE_COMMITS_ASDN_FN=\
+"${LINUX_HASHTABLE_COMMITS_ASDN_FN:=linux.hashtable.asdn.${K_MAJOR_MINOR}}.commits"
+LINUX_HASHTABLE_SUMMARIES_ASDN_FN=\
+"${LINUX_HASHTABLE_SUMMARIES_ASDN_FN:=linux.hashtable.asdn.${K_MAJOR_MINOR}}.summaries"
 
 # the final commit set
-LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ROCK_FN="${LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ROCK_FN:=linux.hashtable.commits.final.rock.${K_MAJOR_MINOR}}"
-LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ASDN_FN="${LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ASDN_FN:=linux.hashtable.commits.final.asdn.${K_MAJOR_MINOR}}"
+LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ROCK_FN=\
+"${LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ROCK_FN:=linux.hashtable.rock.${K_MAJOR_MINOR}}.commits.final"
+LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ASDN_FN=\
+"${LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ASDN_FN:=linux.hashtable.asdn.${K_MAJOR_MINOR}}.commits.final"
 
 if [[ -n "${KERNEL_NO_POINT_RELEASE}" && "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; then
 	KERNEL_PATCH_URLS=()
@@ -198,20 +207,27 @@ elif [[ -n "${KERNEL_0_TO_1_ONLY}" && "${KERNEL_0_TO_1_ONLY}" == "1" ]] ; then
 else
 	KERNEL_PATCH_TO_FROM=($(gen_kernel_seq $(ver_cut 3 ${PV})))
 	KERNEL_PATCH_FNS_EXT=(${KERNEL_PATCH_TO_FROM[@]/%/.xz})
-	KERNEL_PATCH_FNS_EXT=(${KERNEL_PATCH_FNS_EXT[@]/#/patch-${K_MAJOR_MINOR}.})
-	KERNEL_PATCH_FNS_NOEXT=(${KERNEL_PATCH_TO_FROM[@]/#/patch-${K_MAJOR_MINOR}.})
-	KERNEL_PATCH_URLS=(${KERNEL_PATCH_0_TO_1_URL} ${KERNEL_PATCH_FNS_EXT[@]/#/${KERNEL_INC_BASEURL}})
-	KERNEL_PATCH_FNS_EXT=(patch-${K_MAJOR_MINOR}.1.xz ${KERNEL_PATCH_FNS_EXT[@]/#/patch-${K_MAJOR_MINOR}.})
-	KERNEL_PATCH_FNS_NOEXT=(patch-${K_MAJOR_MINOR}.1 ${KERNEL_PATCH_TO_FROM[@]/#/patch-${K_MAJOR_MINOR}.})
+	KERNEL_PATCH_FNS_EXT=\
+(${KERNEL_PATCH_FNS_EXT[@]/#/patch-${K_MAJOR_MINOR}.})
+	KERNEL_PATCH_FNS_NOEXT=\
+(${KERNEL_PATCH_TO_FROM[@]/#/patch-${K_MAJOR_MINOR}.})
+	KERNEL_PATCH_URLS=\
+(${KERNEL_PATCH_0_TO_1_URL} ${KERNEL_PATCH_FNS_EXT[@]/#/${KERNEL_INC_BASEURL}})
+	KERNEL_PATCH_FNS_EXT=\
+(patch-${K_MAJOR_MINOR}.1.xz ${KERNEL_PATCH_FNS_EXT[@]/#/patch-${K_MAJOR_MINOR}.})
+	KERNEL_PATCH_FNS_NOEXT=\
+(patch-${K_MAJOR_MINOR}.1 ${KERNEL_PATCH_TO_FROM[@]/#/patch-${K_MAJOR_MINOR}.})
 fi
 
-PDS_URL_BASE="https://gitlab.com/alfredchen/PDS-mq/raw/master/${PATCH_PDS_MAJOR_MINOR}/"
+PDS_URL_BASE=\
+"https://gitlab.com/alfredchen/PDS-mq/raw/master/${PATCH_PDS_MAJOR_MINOR}/"
 PDS_FN="v${PATCH_PDS_MAJOR_MINOR}_pds${PATCH_PDS_VER}.patch"
 PDS_SRC_URL="${PDS_URL_BASE}${PDS_FN}"
 
 BFQ_FN="bfq-${PATCH_BFQ_VER}.diff"
 BFQ_REPO="bfq-backports"
-BFQ_DL_URL="https://github.com/torvalds/linux/compare/v${PATCH_BFQ_VER}...zen-kernel:${PATCH_BFQ_VER}/${BFQ_REPO}.diff"
+BFQ_DL_URL=\
+"https://github.com/torvalds/linux/compare/v${PATCH_BFQ_VER}...zen-kernel:${PATCH_BFQ_VER}/${BFQ_REPO}.diff"
 BFQ_SRC_URL="${BFQ_DL_URL} -> ${BFQ_FN}"
 
 UNIPATCH_LIST=""
@@ -299,7 +315,7 @@ function apply_genpatch_base() {
 	local d
 	d="${T}/${GENPATCHES_BASE_FN%.tar.xz}"
 	mkdir "$d"
-	cd "$d"
+	cd "$d" || die
 	unpack "${GENPATCHES_BASE_FN}"
 
 	sed -r -i -e "s|EXTRAVERSION = ${EXTRAVERSION}|EXTRAVERSION =|" \
@@ -314,9 +330,9 @@ function apply_genpatch_base() {
 		# genpatches places kernel incremental patches starting at 1000
 		for a in ${KERNEL_PATCH_FNS_NOEXT[@]} ; do
 			local f="${T}/${a}"
-			cd "${T}"
+			cd "${T}" || die
 			unpack "$a.xz"
-			cd "${S}"
+			cd "${S}" || die
 			patch --dry-run ${PATCH_OPS} -N "${f}" \
 				| grep -F -e "FAILED at"
 			if [[ "$?" == "1" ]] ; then
@@ -333,7 +349,7 @@ function apply_genpatch_base() {
 		"${S}"/Makefile \
 		|| die
 
-	cd "${S}"
+	cd "${S}" || die
 
 	if declare -f ot-kernel-common_apply_genpatch_base_post \
 		> /dev/null ; \
@@ -355,10 +371,10 @@ function apply_genpatch_experimental() {
 	local d
 	d="${T}/${GENPATCHES_EXPERIMENTAL_FN%.tar.xz}"
 	mkdir "$d"
-	cd "$d"
+	cd "$d" || die
 	unpack "${GENPATCHES_EXPERIMENTAL_FN}"
 
-	cd "${S}"
+	cd "${S}" || die
 
 	# don't need since we apply upstream
 	if declare -f ot-kernel-common_apply_genpatch_experimental_patchset \
@@ -381,10 +397,10 @@ function apply_genpatch_extras() {
 	local d
 	d="${T}/${GENPATCHES_EXTRAS_FN%.tar.xz}"
 	mkdir "$d"
-	cd "$d"
+	cd "$d" || die
 	unpack "${GENPATCHES_EXTRAS_FN}"
 
-	cd "${S}"
+	cd "${S}" || die
 
 	if declare -f ot-kernel-common_apply_genpatch_extras_patchset \
 		> /dev/null ; \
@@ -400,7 +416,7 @@ function apply_genpatch_extras() {
 # ot-kernel-common_apply_o3_fixes - callback for fix to O3 patches
 #
 function apply_o3() {
-	cd "${S}"
+	cd "${S}" || die
 
 	# fix patch
 	sed -r -e "s|-1028,6 +1028,13|-1076,6 +1076,13|" \
@@ -429,7 +445,7 @@ function apply_o3() {
 # @DESCRIPTION:
 # Apply the PDS CPU scheduler patchset.
 function apply_pds() {
-	cd "${S}"
+	cd "${S}" || die
 	einfo "Applying pds"
 	_dpatch "${PATCH_OPS}" "${DISTDIR}/${PDS_FN}"
 }
@@ -441,7 +457,7 @@ function apply_pds() {
 # ot-kernel-common_apply_bmq_quickfixes - callback to apply quick fixes
 #
 function apply_bmq() {
-	cd "${S}"
+	cd "${S}" || die
 	einfo "Applying bmq"
 	_dpatch "${PATCH_OPS}" "${DISTDIR}/${BMQ_FN}"
 
@@ -457,7 +473,7 @@ function apply_bmq() {
 # ot-kernel-common_apply_tresor_fixes - callback to apply tresor fixes
 #
 function apply_tresor() {
-	cd "${S}"
+	cd "${S}" || die
 	einfo "Applying tresor"
 	ewarn \
 "Some patches have hunk(s) failed but still good or may be fixed ASAP."
@@ -498,11 +514,11 @@ function fetch_zentune() {
 function fetch_linux_sources() {
 	einfo "Fetching the vanilla Linux kernel sources.  It may take hours."
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	cd "${DISTDIR}"
+	cd "${DISTDIR}" || die
 	d="${distdir}/ot-sources-src/linux"
 	b="${distdir}/ot-sources-src"
 	addwrite "${b}"
-	cd "${b}"
+	cd "${b}" || die
 
 	if [[ -d "${d}" ]] ; then
 		pushd "${d}" || die
@@ -563,22 +579,23 @@ function get_patch_index() {
 	echo ${idx}
 }
 
-# @FUNCTION: get_linux_commit_list_for_amdgpu_range
+# @FUNCTION: cd_vk
+# @DESCRIPTION:
+# Changes directory into vanilla kernel repo
+function cd_vk() {
+	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	local d="${distdir}/ot-sources-src/linux"
+	cd "${d}" || die
+}
+
+# @FUNCTION: generate_vk_hash_tables
 # @DESCRIPTION:
 # Gets the list of commits between oldest timestamp from between min timestamp"
 # of AMD_STAGING_INTERSECTS_KV (2019) and ROCK_BASE (2014) to K_MAJOR_MINOR
-function get_linux_commit_list_for_amdgpu_range() {
-	if [[ -e "${FILESDIR}/${LINUX_HASHTABLE_COMMITS_VK_FN}" \
-		&& -e "${FILESDIR}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}" ]] ; \
-	then
-		cp -a "${FILESDIR}/${LINUX_HASHTABLE_COMMITS_VK_FN}" "${T}"
-		cp -a "${FILESDIR}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}" "${T}"
-		return
-	fi
-
-	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	d="${distdir}/ot-sources-src/linux"
-	cd "${d}" || die
+function generate_vk_hash_tables() {
+	cd_vk
+	local LINUX_COMMITS_AMDGPU_RANGE_FN=\
+"${LINUX_COMMITS_AMDGPU_RANGE_FN:=linux.commits.amdgpu_range.${K_MAJOR_MINOR}}"
 	einfo \
 "Grabbing list of already merged amdgpu commits in v${K_MAJOR_MINOR} vanilla\n\
 sources."
@@ -595,10 +612,6 @@ sources."
 		| tac > "${T}/${LINUX_COMMITS_AMDGPU_RANGE_FN}"
 
 	einfo "Generating hash tables for vanilla kernel"
-	unset vk_commits
-	unset vk_summaries
-	declare -A vk_commits
-	declare -A vk_summaries
 	while read -r l ; do
 		local h
 		h=$(echo "${l}" | cut -f1 -d $'\007')
@@ -612,10 +625,55 @@ sources."
 		fi
 	done < "${T}/${LINUX_COMMITS_AMDGPU_RANGE_FN}"
 	IFS="${OIFS}"
-	typeset -p vk_commits > "${T}/${LINUX_HASHTABLE_COMMITS_VK_FN}"
-	typeset -p vk_summaries > "${T}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}"
-	sed -i -r -e "s|^declare -A ||" "${T}/${LINUX_HASHTABLE_COMMITS_VK_FN}"
-	sed -i -r -e "s|^declare -A ||" "${T}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}"
+	pickle_associative_array "vk_commits" \
+		"${T}/${LINUX_HASHTABLE_COMMITS_VK_FN}"
+	pickle_associative_array "vk_summaries" \
+		"${T}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}"
+}
+
+# @FUNCTION: is_asdn_patchset_exist
+# @DESCRIPTION:
+# Checks the existance of the amd-staging-drm-next patchset
+function is_asdn_patchset_exist() {
+	if [[ \
+	  -d "${FILESDIR}/amd-staging-drm-next/${K_MAJOR_MINOR}" ]]
+	then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: is_rock_patchset_exist
+# @DESCRIPTION:
+# Checks the existance of the rock patchset
+function is_rock_patchset_exist() {
+	if [[ -d "${FILESDIR}/rock/${K_MAJOR_MINOR}" ]]
+	then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: amdgpu_load_vk_hash_tables
+# @DESCRIPTION:
+# Generates or uses vanilla kernel hash tables
+function amdgpu_load_vk_hash_tables() {
+	unset vk_commits
+	unset vk_summaries
+	declare -Ax vk_commits
+	declare -Ax vk_summaries
+	if [[ -e "${FILESDIR}/${LINUX_HASHTABLE_COMMITS_VK_FN}" \
+	   || -e "${FILESDIR}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}" ]] ; \
+	then
+		cp -a "${FILESDIR}/${LINUX_HASHTABLE_COMMITS_VK_FN}" "${T}"
+		cp -a "${FILESDIR}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}" "${T}"
+		amdgpu_use_vk_hash_tables
+	else
+		fetch_linux_sources
+		generate_vk_hash_tables
+	fi
 }
 
 # @FUNCTION: apply_amdgpu
@@ -626,21 +684,7 @@ sources."
 #   merges amd-staging-drm-next and ROCk fixes
 #
 function apply_amdgpu() {
-	if use amd-staging-drm-next || use rock ; then
-		if [[ ! -e "${FILESDIR}/${LINUX_HASHTABLE_COMMITS_VK_FN}" \
-		|| ! -e "${FILESDIR}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}" ]] ; \
-		then
-			fetch_linux_sources
-		fi
-	else
-		ewarn \
-"It is recommended to use the rock-snapshot or rock-latest USE flag or you\n\
-need to fetch vanilla sources to regen the commit cache list."
-		fetch_linux_sources
-	fi
-
-	get_linux_commit_list_for_amdgpu_range
-
+	amdgpu_load_vk_hash_tables
 	fetch_amd_staging_drm_next
 	fetch_rock
 
@@ -688,7 +732,7 @@ function ot-kernel-common_src_unpack() {
 
 	kernel-2_src_unpack
 
-	cd "${S}"
+	cd "${S}" || die
 
 	if use zentune ; then
 		fetch_zentune
@@ -731,6 +775,7 @@ function ot-kernel-common_src_unpack() {
 
 	if has amd-staging-drm-next ${IUSE_EFFECTIVE} ; then
 		if use amd-staging-drm-next ; then
+			copy_patachie
 			apply_amdgpu
 		fi
 	fi
@@ -750,15 +795,54 @@ function ot-kernel-common_src_unpack() {
 	#_dpatch "${PATCH_OPS}" "${FILESDIR}/linux-4.20-kconfig-ioscheds.patch"
 }
 
+# @FUNCTION: amdgpu_setup
+# @DESCRIPTION:
+# Initalizes globals for the amdgpu module
+function amdgpu_setup() {
+	export SUFFIX_ASDN=$(ot-kernel-common_amdgpu_get_suffix_asdn)
+	export ASDN_DB_SUMMARY_RAW_FN=\
+"asdn.db.summary_raw.${K_MAJOR_MINOR}..${SUFFIX_ASDN}"
+	export ASDN_DB_SUMMARY_HASH_FN=\
+"asdn.db.summary_hash.${K_MAJOR_MINOR}..${SUFFIX_ASDN}"
+	export ASDN_DB_COMMIT_TIME_FN=\
+"asdn.db.commit_time.${K_MAJOR_MINOR}..${SUFFIX_ASDN}"
+	export HT_ASDN_FN=\
+"${LINUX_HASHTABLE_COMMITS_ASDN_FN}${SUFFIX_ASDN}"
+	export HT_ASDNS_FN=\
+"${LINUX_HASHTABLE_SUMMARIES_ASDN_FN}${SUFFIX_ASDN}"
+	export SUFFIX_ROCK=$(ot-kernel-common_amdgpu_get_suffix_rock)
+	export ROCK_DB_SUMMARY_RAW_FN=\
+"rock.db.summary_raw.${K_MAJOR_MINOR}..${SUFFIX_ROCK}"
+	export ROCK_DB_SUMMARY_HASH_FN=\
+"rock.db.summary_hash.${K_MAJOR_MINOR}..${SUFFIX_ROCK}"
+	export ROCK_DB_COMMIT_TIME_FN=\
+"rock.db.commit_time.${K_MAJOR_MINOR}..${SUFFIX_ROCK}"
+}
+
+# @FUNCTION: copy_patachie
+# @DESCRIPTION:
+# Copies patachie to the sandbox
+function copy_patachie() {
+	einfo "Copying patachie for attaching licenses to patches"
+	cp -a "${FILESDIR}/patachie" "${HOME}" || die
+	cp -a "${FILESDIR}/all-rights-reserved" "${HOME}" || die
+	chmod +x "${HOME}/patachie" || die
+}
+
 # @FUNCTION: ot-kernel-common_pkg_setup_cb
 # @DESCRIPTION:
-# Perform checks and warnings before emerging
+# Perform checks, warnings, and initialization before emerging
 function ot-kernel-common_pkg_setup() {
 	if declare -f ot-kernel-common_pkg_setup_cb > /dev/null ; then
 		ot-kernel-common_pkg_setup_cb
 	fi
+	if has amd-staging-drm-next ${IUSE_EFFECTIVE} || \
+		has rock ${IUSE_EFFECTIVE} ; then
+		amdgpu_setup
+	fi
 	if has amd-staging-drm-next ${IUSE_EFFECTIVE} ; then
 		amd_staging_drm_next_setup
+
 	fi
 	if has rock ${IUSE_EFFECTIVE} ; then
 		rock_setup
@@ -782,7 +866,7 @@ function ot-kernel-common_src_compile() {
 	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
 		if use tresor_sysfs ; then
 			cp -a "${DISTDIR}/tresor_sysfs.c" "${T}"
-			cd "${T}"
+			cd "${T}" || die
 			einfo "$(tc-getCC) ${CFLAGS}"
 			$(tc-getCC) ${CFLAGS} tresor_sysfs.c -o tresor_sysfs || die
 		fi
@@ -828,7 +912,7 @@ function ot-kernel-common_pkg_postinst() {
 	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
 		if use tresor_sysfs ; then
 			# prevent merge conflicts
-			cd "${T}"
+			cd "${T}" || die
 			mv tresor_sysfs "${EROOT}/usr/bin" || die
 			chmod 700 "${EROOT}"/usr/bin/tresor_sysfs || die
 			# same hash for 5.1 and 5.0.13 for tresor_sysfs
@@ -925,4 +1009,40 @@ function ot-kernel-common_amdgpu_get_suffix_rock() {
 		suffix_rock="..${ROCK_1_8_3}${suffix_rock_dgma}"
 	fi
 	echo "${suffix_rock}"
+}
+
+# @FUNCTION: amdgpu_use_vk_hash_tables
+# @DESCRIPTION:
+# Initializes the vanilla kernel hash tables for deduping
+function amdgpu_use_vk_hash_tables() {
+	# We dedupe by git subject because the body is the same but
+	# different commit hash.
+	# It happens when they are backporting.
+	# vk is vanilla kernel
+	if [[ -e "${T}/${LINUX_HASHTABLE_COMMITS_VK_FN}" && \
+	      -e "${T}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}" ]] ; then
+		einfo "Using cached hash tables for vanilla kernel"
+		source "${T}/${LINUX_HASHTABLE_COMMITS_VK_FN}"
+		source "${T}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}"
+	fi
+}
+
+# @FUNCTION: pickle_associative_array
+# @DESCRIPTION:
+# Dumps an associative array to a file
+function pickle_associative_array() {
+	local name="${1}"
+	local file="${2}"
+	typeset -p ${name} > "${file}"
+	sed -i -r -e "s|^declare -A(x)? ||" "${file}"
+}
+
+# @FUNCTION: pickle_string
+# @DESCRIPTION:
+# Dumps a string to a file
+function pickle_string() {
+	local name="${1}"
+	local file="${2}"
+	typeset -p ${name} > "${file}"
+	sed -i -r -e "s|^declare -- ||" "${file}"
 }

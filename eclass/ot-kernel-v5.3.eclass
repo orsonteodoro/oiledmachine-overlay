@@ -107,7 +107,8 @@ Genpatches, BFQ updates, amd-staging-drm-next, TRESOR"
 AMDREPO_URL="git://people.freedesktop.org/~agd5f/linux"
 AMD_PATCH_FN="${AMD_STAGING_DRM_NEXT_DIR}.patch"
 
-CK_URL_BASE="http://ck.kolivas.org/patches/${PATCH_CK_MAJOR}/${PATCH_CK_MAJOR_MINOR}/${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}/"
+CK_URL_BASE=\
+"http://ck.kolivas.org/patches/${PATCH_CK_MAJOR}/${PATCH_CK_MAJOR_MINOR}/${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}/"
 CK_FN="${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}-broken-out.tar.xz"
 CK_SRC_URL="${CK_URL_BASE}${CK_FN}"
 
@@ -260,6 +261,10 @@ function ot-kernel-asdn_rm() {
 	a6f30079b8562b659e1d06f7cb1bc30951869bbc
 	bf2bf52383a09256e11278e7bcb67dcd912078c7 )
 
+	if ver_test ${PV} -ge 5.3.5 ; then
+		l+=( e40837afb9b011757e17e9f71d97853ca574bcff )
+	fi
+
 	# already applied in torvalds kernel for 5.4 but not 5.3
 	# asdn_rm 1faa3b805473d7f4197b943419781d9fd21e4352
 
@@ -272,7 +277,10 @@ function ot-kernel-asdn_rm() {
 
 	if use amd-staging-drm-next && use rock ; then
 		# use rock version instead
-		l+=( d0ba51b1cacd27bdc1acfe70cb55699f3329b2b1 )
+		l+=( d0ba51b1cacd27bdc1acfe70cb55699f3329b2b1
+		3e205a0849a760166578b4d95b17e904f23d962e
+		876923fb92a9e298625067284977917d4741ee2e
+		)
 	fi
 
 	asdn_rm_list ${l[@]}
@@ -474,7 +482,8 @@ function ot-kernel-rock_rm() {
 		8098a2f9c3ba6fba0055aa88d3830bbec585268b
 		4eff2c42f996e8d70ec874186d3c35a8f64a8235
 		388c85610cd4782467bae4f44d7b7c8cacebfaae
-		bb02f27489fe4469cf3460549dd0bf45e1cc1746 ) # ssg
+		bb02f27489fe4469cf3460549dd0bf45e1cc1746 # ssg
+		716c8a9c52f87831094e6617e088f382a569b13c )
 	fi
 
 	# reject dkms/kcl
@@ -485,6 +494,8 @@ function ot-kernel-rock_rm() {
 # used in 178d1118dbee5cff09badab7208525b287fa849f
 	5b734f8c1205ff65ef2af7484932078bb655f41c
 	509649b8d929b5981e57c6f1b8d50756af56e033
+	8e162714eeea8bb1539c45d06f845c12c3ea39a6
+	ca4dec1752263e90c489874e984714c42787deb5
 
 	# reject cosmetic
 	6b719b24a48e31ff2b37b97cce552e4615c7d277 )
@@ -542,12 +553,35 @@ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
         esac
       else
         case "${l}" in
-          *95c59fee52c9aee3f99a5a39a3ba8f0fa10c263e*)
+          *876923fb92a9e298625067284977917d4741ee2e*asdn*)
+            die "fixme ${mpd}/${l}"
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            ;;
+          *0b4822828a8d5e99074718a3368d96743dd9fad2*rock*)
+            if ver_test ${PV} -ge 5.3.6 ; then
+              _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+              _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/rock-0b4822828a8d5e99074718a3368d96743dd9fad2-rebase-for-5.3.6.patch"
+            else
+              _dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            fi
+            ;;
+          *3f1e5c3eeec3a5aff5ddbd46ff07fe580e4bee58*rock*)
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/rock-3f1e5c3eeec3a5aff5ddbd46ff07fe580e4bee58-rebase-for-5.3.4.patch"
+            ;;
+          *b2ea22af7f5793d351ea65ff2fd2f3d7ba6ec1b6*rock*)
+            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _dpatch "${PATCH_OPS}" \
+"${FILESDIR}/rock-b2ea22af7f5793d351ea65ff2fd2f3d7ba6ec1b6-rebase-for-5.3.4.patch"
+            ;;
+          *95c59fee52c9aee3f99a5a39a3ba8f0fa10c263e*rock*)
             _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
             _dpatch "${PATCH_OPS}" \
 "${FILESDIR}/rock-95c59fee52c9aee3f99a5a39a3ba8f0fa10c263e-rebase-for-5.3.4.patch"
             ;;
-          *bb02f27489fe4469cf3460549dd0bf45e1cc1746*)
+          *bb02f27489fe4469cf3460549dd0bf45e1cc1746*rock*)
             # remove kcl header macro reference
             _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
             _dpatch "${PATCH_OPS}" \
@@ -556,7 +590,7 @@ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
             _dpatch "${PATCH_OPS}" \
 "${FILESDIR}/rock-bb02f27489fe4469cf3460549dd0bf45e1cc1746-rebase-for-5.3.4.patch"
             ;;
-          *fc39d903eb805588cba3696748728627aedfd1bd*)
+          *fc39d903eb805588cba3696748728627aedfd1bd*asdn*)
             # Easy
             # ignore missing search hunk... it's just refactoring patch
             _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
@@ -601,7 +635,7 @@ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
             _dpatch "${PATCH_OPS}" \
 "${FILESDIR}/amdgpu-64f55e629237e4752db18df4d6969a69e3f4835a-rebase-for-5.3.4-rasdn.patch"
             ;;
-          *3e205a0849a760166578b4d95b17e904f23d962e*asdn*)
+#          *3e205a0849a760166578b4d95b17e904f23d962e*asdn*)
             # Using asdn version of:
             #   'drm/amdkfd: Implement kfd2kgd_calls for Arcturus'
             #   (3e205a0849a760166578b4d95b17e904f23d962e)`
@@ -609,10 +643,11 @@ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
             #   3f1e5c3eeec3a5aff5ddbd46ff07fe580e4bee58 (rock version) with
             # Same commit subject
             # Easy-Medium
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
-"${FILESDIR}/amdgpu-3e205a0849a760166578b4d95b17e904f23d962e-rebase-for-5.3.4-rasdn.patch"
-            ;;
+#            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+#            die
+#            _dpatch "${PATCH_OPS}" \
+#"${FILESDIR}/amdgpu-3e205a0849a760166578b4d95b17e904f23d962e-rebase-for-5.3.4-rasdn.patch"
+#            ;;
           *f6a44ea23e7dab4d58110cd418c733e165e466ae*rock*)
             # Easy
             _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
@@ -738,28 +773,11 @@ function ot-kernel-common_amdgpu_merge_and_apply_patches() {
 	local mpd="${T}/amdgpu-merged-patches"
 	mkdir -p "${mpd}"
 	if use amd-staging-drm-next ; then
-		local suffix_asdn=$(ot-kernel-common_amdgpu_get_suffix_asdn)
-		if [[ \
-	  -d "${FILESDIR}/amd-staging-drm-next/${K_MAJOR_MINOR}${suffix_asdn}" ]]
-		then
-			cp -a \
-	    "${FILESDIR}/amd-staging-drm-next/${K_MAJOR_MINOR}${suffix_asdn}"/* \
-	    "${T}/amd-staging-drm-next-patches" || die
-		else
-			generate_amd_staging_drm_next_patches
-		fi
+		generate_amd_staging_drm_next_patches
 		mv "${T}/amd-staging-drm-next-patches"/* "${mpd}"
 	fi
 	if use rock ; then
-		local suffix_rock=$(ot-kernel-common_amdgpu_get_suffix_rock)
-#1234567890123456789012345678901234567890123456789012345678901234567890123456789
-		if [[ -d "${FILESDIR}/rock/${K_MAJOR_MINOR}${suffix_rock}" ]]
-		then
-			cp -a "${FILESDIR}/rock/${K_MAJOR_MINOR}${suffix_rock}"/*
-				"${T}/rock-patches" || die
-		else
-			generate_rock_patches
-		fi
+		generate_rock_patches
 		mv "${T}/rock-patches"/* "${mpd}"
 	fi
 
