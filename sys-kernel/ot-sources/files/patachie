@@ -1,0 +1,396 @@
+#!/bin/bash
+# License: MIT or GPL2+
+# Adding the license to the top/bottom of the patch should have been encorporated in git, gnu patch
+# Many projects, distros, organizations could be legally compromised by the letter of the law.
+declare -A license_fingerprints
+declare -A license_fingerprint_to_editedfile_path_buckets
+declare -A license_fingerprint_to_patchfile_path_buckets
+#mkdir -p licenses
+#G_SRC="/var/tmp/portage/sys-kernel/ot-sources-5.3.4/work/linux-5.3.4-ot"
+#G_PATCH="/var/tmp/portage/sys-kernel/ot-sources-5.3.4/temp/amdgpu-merged-patches"
+#G_LICENSE_FILE_OUT="./license_file"
+
+# Changelog
+# 1.0 - 20191106 - initial release
+
+DIR=$(dirname "$0")
+echo "DIR=${DIR}"
+
+ARGS=($@)
+
+H_INFO="
+$(basename $BASH_SOURCE) v1.0
+Copyright 2019 Orson Teodoro
+License: Dual licensed under MIT or GPL2
+"
+H_HELP="
+$(basename $BASH_SOURCE) <args>
+
+Attaches licenses and git summaries to patch/diff files and stores them in a directory named attachied.
+
+args:
+	-s, --source			specifies the source code dir or file
+	-p, --patch			specifies the patch dir containing patches or an individual patch file
+	-of, --output-file		specifies a license file containing all licenses discovered, same folder will contain patches
+	-od, --output-patch-dir		specifies a folder to dump the patches
+	-d, --dir			processes folders instead of single patches
+	-f, --file			processes an individual .patch / .diff file
+	-h, --help			prints all the supported commands
+	--attach-git-log		attaches the git log of the commit
+	-c, --commit			uses commit
+	-cl, --commit-list		uses a commit list in bash associative array format (declare -Ax) [aka hash table] produced with \`typeset -p\` and removed declare and array named C.  Key must be basename path of the file, with value as the commit.
+	-ver, --version			version info
+	-v, --verbose			prints more messages
+	--debug				prints debug messages
+"
+
+# See
+# /usr/include/asm-generic/errno.h
+# /usr/include/asm-generic/errno-base.h
+EOK=0
+ENOENT=1
+
+G_ARR="${DIR}/all-rights-reserved"
+G_OUTDIR="${DIR}/attachied"
+G_VERBOSE=""
+G_DEBUG=""
+G_MODE="dir"
+G_SRC=""
+G_GIT_LOG=""
+G_COMMIT_LIST=""
+
+function search_end_of_license_cstyle() {
+	local file="${1}"
+	local i_last
+	local found_terminator="0"
+	for i in $(seq 2 200) ; do
+		if cat "${file}" | head -n ${i} | grep -e '^ \*/' -e '\*/$' >/dev/null ; then
+			found_terminator="1"
+		fi
+		if cat "${file}" | head -n ${i} | tail -n +${i} | grep -e '^$' -e '^\#' >/dev/null && [[ $found_terminator == "1" ]] ; then
+			# testcases are:
+			# drivers/gpu/drm/i915/i915_drv.h
+			# drivers/gpu/drm/amd/include/asic_reg/nbio/nbio_7_0_sh_mask.h
+			i_last=$((${i}-1))
+			break
+		fi
+	done
+	if [[ -z "${i_last}" ]] ; then
+		echo "0"
+	else
+		echo "${i_last}"
+	fi
+}
+
+function search_end_of_license_bashstyle() {
+	local file="${1}"
+	local i_last
+	for i in $(seq 2 200) ; do
+		if cat "${file}" | head -n ${i} | tail -n +${i} | grep -e '^\#' >/dev/null ; then
+			:;
+		else
+			i_last=${i}
+			break
+		fi
+	done
+	if [[ -z "${i_last}" ]] ; then
+		echo "0"
+	else
+		echo "${i_last}"
+	fi
+}
+
+function search_end_of_license_cxxstyle() {
+	local file="${1}"
+	local i_last
+	for i in $(seq 2 200) ; do
+		if cat "${file}" | head -n ${i} | tail -n +${i} | grep -e '^\/\/' >/dev/null ; then
+			:;
+		else
+			i_last=${i}
+			break
+		fi
+	done
+	if [[ -z "${i_last}" ]] ; then
+		echo "0"
+	else
+		echo "${i_last}"
+	fi
+}
+
+function vecho() {
+	if [[ "${G_VERBOSE}" == "1" ]] ; then
+		echo -e "$*"
+	fi
+}
+
+function decho() {
+	if [[ "${G_DEBUG}" == "1" ]] ; then
+		echo -e "$*"
+	fi
+}
+
+function process_licenses() {
+	P=$(ls -1 "${G_OUTDIR}")
+	for p_patch in $P ; do
+		decho "Processing ${p_patch}"
+		local p="${G_OUTDIR}/${p_patch}"
+		F=$(grep -P -e '(---|\+\+\+)' "${p}" | cut -c 5- | sed -e "s|^b/||g" -e "s|^a/||g")
+		for f in $F ; do
+			if [[ ! -e "${G_SRC}/${f}" ]] ; then
+				continue
+			fi
+			local p_code="${G_SRC}/${f}"
+			decho "Processing ${p_code}"
+			local license
+			local i_last
+			local header_style
+			if cat "${p_code}" | head -n 1 | grep -e '^/\*.*\*/$' >/dev/null; then
+				i_last=1
+				header_style="cstyle-inline"
+			elif cat "${p_code}" | head -n 1 | grep -e '^\/\/' >/dev/null; then
+				i_last=$(search_end_of_license_cxxstyle "${p_code}")
+				header_style="cxxstyle"
+			elif cat "${p_code}" | head -n 1 | grep -e '^/\*' >/dev/null; then
+				i_last=$(search_end_of_license_cstyle "${p_code}")
+				header_style="cstyle-block"
+			elif cat "${p_code}" | head -n 1 | grep -e '#if' >/dev/null; then
+				i_last=1
+				header_style="cstyle-inline"
+			elif cat "${p_code}" | head -n 1 | grep -e '^\#' >/dev/null; then
+				i_last=$(search_end_of_license_bashstyle "${p_code}")
+				header_style="bashstyle"
+			else
+				i_last=0
+				echo "${p_code} is not c file | wtf (fixme ${p_code})"
+				header_style="all-rights-reserved"
+			fi
+
+			echo "p_code=${p_code} i_last=${i_last}"
+			license=$(cat "${p_code}" | head -n ${i_last})
+			if [[ "${header_style}" == "all-rights-reserved" ]] ; then
+				# add banned false positives
+				license=$(cat "${G_ARR}")
+			fi
+
+			local license_hash
+			license_hash=$(echo "${license}" | sha1sum | cut -f1 -d " ")
+
+			if [[ -z "${license_fingerprints[${license_hash}]}" ]] ; then
+				vecho "Found new license"
+				license_fingerprints[${license_hash}]="${license}"
+				vecho "license_hash=${license_hash}"
+				vecho
+				vecho "license:"
+				vecho "${license}"
+				vecho
+				vecho "header_style=${header_style}"
+				vecho
+				vecho "--------------------------------------------------------------------------------"
+				vecho
+				vecho "#1234567890123456789012345678901234567890123456789012345678901234567890123456789"
+			else
+				:;
+				vecho "Already processed license"
+				vecho "license_hash=${license_hash}"
+			fi
+			license_fingerprint_to_editedfile_path_buckets[${license_hash}]=$(echo -e "${license_fingerprint_to_editedfile_path_buckets[${license_hash}]}\n${f}" | sort | uniq)
+			license_fingerprint_to_patchfile_path_buckets[${license_hash}]=$(echo -e "${license_fingerprint_to_patchfile_path_buckets[${license_hash}]}\n$(basename ${p_patch})" | sort | uniq)
+		done
+	done
+
+	echo "Generating license file for patches for licensing nightmare :D..."
+	echo "Substantial portions require license :D"
+	cat /dev/null > "${G_LICENSE_FILE_OUT}"
+	for h in ${!license_fingerprints[@]} ; do
+		local m
+		m=\
+"Patch files:\n\
+${license_fingerprint_to_patchfile_path_buckets[${h}]}\n\
+\n\
+Referenced these edited files:\n\
+${license_fingerprint_to_editedfile_path_buckets[${h}]}\n\
+\n\
+are licensed under the following license:\n\
+\n\
+${license_fingerprints[${h}]}\n\
+\n\
+license_hash= ${h}\n\
+\n\
+--------------------------------------------------------------------------------\n\
+\n"
+		echo -e "${m}"
+		echo -e "${m}" >> "${G_LICENSE_FILE_OUT}"
+
+		for f in ${license_fingerprint_to_patchfile_path_buckets[${h}]} ; do
+			local p="${G_OUTDIR}/${f}"
+			local found_files=""
+			for f_edited in ${license_fingerprint_to_editedfile_path_buckets[${h}]} ; do
+				local p
+				if grep -e "${f_edited}" "${p}" > /dev/null ; then
+					found_files+="\n${f_edited}"
+				fi
+			done
+			found_files=$(echo -e "${found_files}" | sort | uniq)
+
+			m=\
+"The referenced edited files:\n\
+${found_files}\n\
+\n\
+are licensed under the following license:\n\
+\n\
+${license_fingerprints[${h}]}\n\
+\n\
+--------------------------------------------------------------------------------\n\
+\n"
+
+			echo -e "${m}\n" > "${p}.t"
+			cat "${p}" >> "${p}.t"
+			mv "${p}"{.t,}
+		done
+	done
+}
+
+# untested
+function process_git_file() {
+	P=$(ls -1 "${G_OUTDIR}")
+	for p_patch in $P ; do
+		local p
+		pushd "${G_SRC}" > /dev/null
+			local p="${G_OUTDIR}/${f}"
+			git -P show --format=email ${G_COMMIT} > "${p}.t"
+			cat "${p}" >> "${p}.t"
+			mv "${p}"{.t,}
+		popd
+	done
+}
+
+# untested
+function process_git_dir() {
+	unset C
+	declare -A C
+	source "${G_COMMIT_LIST}"
+	P=$(ls -1 "${G_OUTDIR}")
+	for p_patch in $P ; do
+		local p
+		pushd "${G_SRC}" > /dev/null
+			local p="${G_OUTDIR}/${f}"
+			local commit=C[$(basename p)]
+			git -P show --format=email ${commit} > "${p}.t"
+			cat "${p}" >> "${p}.t"
+			mv "${p}"{.t,}
+		popd
+	done
+}
+
+function check_prereqs() {
+	if [[ ! -e "${G_ARR}" ]] ; then
+		echo "You are missing ${G_ARR}"
+		exit ${ENOENT}
+	fi
+}
+
+function main() {
+	echo "ARGS=${ARGS[@]}"
+	while (( ${#ARGS[@]} > 0 )) ; do
+		arg="${ARGS[0]}"
+		ARGS=("${ARGS[@]:1}")
+		case "$arg" in
+			-s|--source)
+				G_SRC="${ARGS[0]}"
+				ARGS=("${ARGS[@]:1}")
+				;;
+			-p|--patch)
+				G_PATCH="${ARGS[0]}"
+				ARGS=("${ARGS[@]:1}")
+				;;
+			-od|--output-patch-dir)
+				G_OUTDIR="${ARGS[0]}"
+				ARGS=("${ARGS[@]:1}")
+				;;
+			-of|--output-file)
+				G_LICENSE_FILE_OUT="${ARGS[0]}"
+				ARGS=("${ARGS[@]:1}")
+				;;
+			-d|--dir)
+				G_MODE="dir"
+				;;
+			-f|--file)
+				G_MODE="file"
+				;;
+			-cl|--commit-list)
+				G_COMMIT_LIST="${ARGS[0]}"
+				ARGS=("${ARGS[@]:1}")
+				;;
+			-c|--commit)
+				G_COMMIT="${ARGS[0]}"
+				ARGS=("${ARGS[@]:1}")
+				;;
+			--attach-git-log)
+				G_GIT_LOG=1
+				ARGS=("${ARGS[@]:1}")
+				;;
+			--version|-version|-ver)
+				echo "${H_INFO}"
+				exit ${EOK}
+				;;
+			--help|-help|-h)
+				echo "${H_HELP}"
+				exit ${EOK}
+				;;
+			--verbose|-verbose|-v)
+				G_VERBOSE="1"
+				;;
+			--debug|-debug)
+				G_DEBUG="1"
+				G_VERBOSE="1"
+				;;
+			*)
+				;;
+		esac
+	done
+
+	decho "G_OUTDIR=${G_OUTDIR}"
+	decho "G_SRC=${G_SRC}"
+	decho "G_PATCH=${G_PATCH}"
+	decho "G_LICENSE_FILE_OUT=${G_LICENSE_FILE_OUT}"
+	decho "G_MODE=${G_MODE}"
+
+	if [[ -z "${G_OUTDIR}" ]] ; then
+		echo "You must specify a output directory with -od ."
+		exit ${ENOENT}
+	elif [[ ! -e "${G_OUTDIR}" && ! -d "${G_OUTDIR}" ]] ; then
+		echo "Creating folder ${G_OUTDIR}"
+		mkdir -p "${G_OUTDIR}"
+	elif [[ -e "${G_OUTDIR}" && ! -d "${G_OUTDIR}" ]] ; then
+		echo "You need to move the file located at ${G_OUTDIR} before it gets clobbered."
+		exit ${ENOENT}
+	fi
+
+	if [[ -e "${G_SRC}" || -d "${G_SRC}" ]] ; then
+		:;
+	else
+		echo "G_SRC is empty"
+		exit ${ENOENT}
+	fi
+
+	if [[ "${G_MODE}" == "dir" ]] ; then
+		cp -a "${G_PATCH}"/* "${G_OUTDIR}" || die
+	else
+		cp -a "${G_PATCH}" "${G_OUTDIR}" || die
+	fi
+
+	if [[ "${G_GIT_LOG}" == "1" && -n "${G_COMMIT}" \
+		&& "${G_MODE}" == "file" && -d "${G_SRC}" ]] ; then
+		process_git_file
+	elif [[ "${G_GIT_LOG}" == "1" && -e "${G_COMMIT_LIST}" \
+		&& "${G_MODE}" == "dir" && -d "${G_SRC}" ]] ; then
+		process_git_dir
+	fi
+	process_licenses
+
+}
+
+main
+
+exit ${EOK}

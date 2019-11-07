@@ -1,0 +1,12 @@
+--- a/drivers/gpu/drm/radeon/radeon_drv.c.orig	2019-11-02 19:29:15.038197820 -0700
++++ b/drivers/gpu/drm/radeon/radeon_drv.c	2019-11-02 23:14:03.285423623 -0700
+@@ -354,6 +354,9 @@ static int radeon_pci_probe(struct pci_d
+ 		case CHIP_MULLINS:
+ 			dev_info(&pdev->dev,
+ 				 "CIK support disabled by module param\n");
++			dev_info(&pdev->dev,
++		"Use radeon.cik_support=1 amdgpu.cik_support=0 to override.\n"
++				);
+ 			return -ENODEV;
+ 		}
+ 	}
