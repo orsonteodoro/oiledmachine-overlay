@@ -28,7 +28,7 @@ LICENSE+=" cve_hotfix? ( GPL-2 )"
 inherit ot-kernel-cve-en
 
 # based on my last edit in unix timestamp (date -u +%Y%m%d_%I%M_%p_%Z)
-LATEST_CVE_KERNEL_INDEX="20191107_0320_AM_UTC"
+LATEST_CVE_KERNEL_INDEX="20191108_0444_AM_UTC"
 LATEST_CVE_KERNEL_INDEX="${LATEST_CVE_KERNEL_INDEX,,}"
 
 # this will trigger a kernel re-install based on use flag timestamp
@@ -43,11 +43,27 @@ CVE_DELAY="${CVE_DELAY:=1}"
 
 CVE_LANG="${CVE_LANG:=en}" # You can define this in your make.conf.  Currently en is only supported.
 
-CVE_2014_3180_FIX_SRC_URI=""
-CVE_2014_3180_FN="CVE-2014-3180-fix--linux.patch"
+CVE_2007_3732_FIX_SRC_URI=""
+CVE_2007_3732_FN="CVE-2007-3732-fix--linux.patch"
+CVE_2007_3732_SEVERITY_LANG="CVE_2007_3732_SEVERITY_${CVE_LANG}"
+CVE_2007_3732_SEVERITY="${!CVE_2007_3732_SEVERITY_LANG}"
+CVE_2007_3732_PM=""
+CVE_2007_3732_SUMMARY_LANG="CVE_2007_3732_SUMMARY_${CVE_LANG}"
+CVE_2007_3732_SUMMARY="${!CVE_2007_3732_SUMMARY_LANG}"
+
+CVE_2010_2243_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=ad6759fbf35d104dbf573cd6f4c6784ad6823f7e"
+CVE_2010_2243_FN="CVE-2010-2243-fix--linux-kernel-time-clocksource-timekeeping-Prevent-oops-when-GENERIC_TIME-is-n.patch"
+CVE_2010_2243_SEVERITY_LANG="CVE_2010_2243_SEVERITY_${CVE_LANG}"
+CVE_2010_2243_SEVERITY="${!CVE_2010_2243_SEVERITY_LANG}"
+CVE_2010_2243_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ad6759fbf35d104dbf573cd6f4c6784ad6823f7e"
+CVE_2010_2243_SUMMARY_LANG="CVE_2010_2243_SUMMARY_${CVE_LANG}"
+CVE_2010_2243_SUMMARY="${!CVE_2010_2243_SUMMARY_LANG}"
+
+CVE_2014_3180_FIX_SRC_URI="https://lkml.org/lkml/diff/2014/9/7/29/1"
+CVE_2014_3180_FN="CVE-2014-3180-fix--linux-kernel-compat-timer-updates-for-3.17.patch"
 CVE_2014_3180_SEVERITY_LANG="CVE_2014_3180_SEVERITY_${CVE_LANG}"
 CVE_2014_3180_SEVERITY="${!CVE_2014_3180_SEVERITY_LANG}"
-CVE_2014_3180_PM=""
+CVE_2014_3180_PM="https://lkml.org/lkml/2014/9/7/29"
 CVE_2014_3180_SUMMARY_LANG="CVE_2014_3180_SUMMARY_${CVE_LANG}"
 CVE_2014_3180_SUMMARY="${!CVE_2014_3180_SUMMARY_LANG}"
 
@@ -187,11 +203,11 @@ CVE_2019_18680_PM="https://github.com/torvalds/linux/commit/91573ae4aed0a49660ab
 CVE_2019_18680_SUMMARY_LANG="CVE_2019_18680_SUMMARY_${CVE_LANG}"
 CVE_2019_18680_SUMMARY="${!CVE_2019_18680_SUMMARY_LANG}"
 
-CVE_2019_18683_FIX_SRC_URI=""
-CVE_2019_18683_FN="CVE-2019-18683-fix--linux.patch"
+CVE_2019_18683_FIX_SRC_URI="https://lore.kernel.org/lkml/20191103221719.27118-1-alex.popov@linux.com/raw"
+CVE_2019_18683_FN="CVE-2019-18683-fix--linux-drivers-media-platform-vivid-Fix-wrong-locking-that-causes-race-conditions-on-streaming-stop.patch"
 CVE_2019_18683_SEVERITY_LANG="CVE_2019_18683_SEVERITY_${CVE_LANG}"
 CVE_2019_18683_SEVERITY="${!CVE_2019_18683_SEVERITY_LANG}"
-CVE_2019_18683_PM=""
+CVE_2019_18683_PM="https://lore.kernel.org/lkml/20191103221719.27118-1-alex.popov@linux.com/"
 CVE_2019_18683_SUMMARY_LANG="CVE_2019_18683_SUMMARY_${CVE_LANG}"
 CVE_2019_18683_SUMMARY="${!CVE_2019_18683_SUMMARY_LANG}"
 
@@ -203,12 +219,94 @@ CVE_2019_18786_PM="https://patchwork.linuxtv.org/patch/59542/"
 CVE_2019_18786_SUMMARY_LANG="CVE_2019_18786_SUMMARY_${CVE_LANG}"
 CVE_2019_18786_SUMMARY="${!CVE_2019_18786_SUMMARY_LANG}"
 
+CVE_2019_18805_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=19fad20d15a6494f47f85d869f00b11343ee5c78"
+CVE_2019_18805_FN="CVE-2019-18805-fix--linux-net-ipv4-sysctl_net_ipv4-set-the-tcp_min_rtt_wlen-range-from-0-to-one-day.patch"
+CVE_2019_18805_SEVERITY_LANG="CVE_2019_18805_SEVERITY_${CVE_LANG}"
+CVE_2019_18805_SEVERITY="${!CVE_2019_18805_SEVERITY_LANG}"
+CVE_2019_18805_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=19fad20d15a6494f47f85d869f00b11343ee5c78"
+CVE_2019_18805_SUMMARY_LANG="CVE_2019_18805_SUMMARY_${CVE_LANG}"
+CVE_2019_18805_SUMMARY="${!CVE_2019_18805_SUMMARY_LANG}"
 
-#			 ${CVE_2014_3180_FIX_SRC_URI} -> ${CVE_2014_3180_FN}
-#			 ${CVE_2019_18683_FIX_SRC_URI} -> ${CVE_2019_18683_FN}
+CVE_2019_18806_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=1acb8f2a7a9f10543868ddd737e37424d5c36cf4"
+CVE_2019_18806_FN="CVE-2019-18806-fix--linux-drivers-net-ethernet-qlogic-qla3xxx-Fixmemory-leak-in-ql_alloc_large_buffers.patch"
+CVE_2019_18806_SEVERITY_LANG="CVE_2019_18806_SEVERITY_${CVE_LANG}"
+CVE_2019_18806_SEVERITY="${!CVE_2019_18806_SEVERITY_LANG}"
+CVE_2019_18806_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=1acb8f2a7a9f10543868ddd737e37424d5c36cf4"
+CVE_2019_18806_SUMMARY_LANG="CVE_2019_18806_SUMMARY_${CVE_LANG}"
+CVE_2019_18806_SUMMARY="${!CVE_2019_18806_SUMMARY_LANG}"
+
+CVE_2019_18807_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=68501df92d116b760777a2cfda314789f926476f"
+CVE_2019_18807_FN="CVE-2019-18807-fix--linux-drivers-net-dsa-sja1105-sja1105_spi-Prevent-leaking-memory.patch"
+CVE_2019_18807_SEVERITY_LANG="CVE_2019_18807_SEVERITY_${CVE_LANG}"
+CVE_2019_18807_SEVERITY="${!CVE_2019_18807_SEVERITY_LANG}"
+CVE_2019_18807_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=68501df92d116b760777a2cfda314789f926476f"
+CVE_2019_18807_SUMMARY_LANG="CVE_2019_18807_SUMMARY_${CVE_LANG}"
+CVE_2019_18807_SUMMARY="${!CVE_2019_18807_SUMMARY_LANG}"
+
+CVE_2019_18808_FIX_SRC_URI="https://github.com/torvalds/linux/commit/128c66429247add5128c03dc1e144ca56f05a4e2.patch"
+CVE_2019_18808_FN="CVE-2019-18808-fix--linux.patch"
+CVE_2019_18808_SEVERITY_LANG="CVE_2019_18808_SEVERITY_${CVE_LANG}"
+CVE_2019_18808_SEVERITY="${!CVE_2019_18808_SEVERITY_LANG}"
+CVE_2019_18808_PM="https://github.com/torvalds/linux/commit/128c66429247add5128c03dc1e144ca56f05a4e2"
+CVE_2019_18808_SUMMARY_LANG="CVE_2019_18808_SUMMARY_${CVE_LANG}"
+CVE_2019_18808_SUMMARY="${!CVE_2019_18808_SUMMARY_LANG}"
+
+CVE_2019_18809_FIX_SRC_URI="https://github.com/torvalds/linux/commit/2289adbfa559050d2a38bcd9caac1c18b800e928.patch"
+CVE_2019_18809_FN="CVE-2019-18809-fix--linux-drivers-media-usb-dvb-usb-af9005-fix-memory-leak-in-af9005_identify_state.patch"
+CVE_2019_18809_SEVERITY_LANG="CVE_2019_18809_SEVERITY_${CVE_LANG}"
+CVE_2019_18809_SEVERITY="${!CVE_2019_18809_SEVERITY_LANG}"
+CVE_2019_18809_PM="https://github.com/torvalds/linux/commit/2289adbfa559050d2a38bcd9caac1c18b800e928"
+CVE_2019_18809_SUMMARY_LANG="CVE_2019_18809_SUMMARY_${CVE_LANG}"
+CVE_2019_18809_SUMMARY="${!CVE_2019_18809_SUMMARY_LANG}"
+
+CVE_2019_18810_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=a0ecd6fdbf5d648123a7315c695fb6850d702835"
+CVE_2019_18810_FN="CVE-2019-18810-fix--linux-drivers-gpu-drm-arm-display-komeda-komeda_wb_connector-prevent-memory-leak-in-komeda_wb_connector_add.patch"
+CVE_2019_18810_SEVERITY_LANG="CVE_2019_18810_SEVERITY_${CVE_LANG}"
+CVE_2019_18810_SEVERITY="${!CVE_2019_18810_SEVERITY_LANG}"
+CVE_2019_18810_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=a0ecd6fdbf5d648123a7315c695fb6850d702835"
+CVE_2019_18810_SUMMARY_LANG="CVE_2019_18810_SUMMARY_${CVE_LANG}"
+CVE_2019_18810_SUMMARY="${!CVE_2019_18810_SUMMARY_LANG}"
+
+CVE_2019_18811_FIX_SRC_URI="https://github.com/torvalds/linux/commit/45c1380358b12bf2d1db20a5874e9544f56b34ab.patch"
+CVE_2019_18811_FN="CVE-2019-18811-fix--linux-sound-soc-sof-ipc-Fix-memory-leak-in-sof_set_get_large_ctrl_data.patch"
+CVE_2019_18811_SEVERITY_LANG="CVE_2019_18811_SEVERITY_${CVE_LANG}"
+CVE_2019_18811_SEVERITY="${!CVE_2019_18811_SEVERITY_LANG}"
+CVE_2019_18811_PM="https://github.com/torvalds/linux/commit/45c1380358b12bf2d1db20a5874e9544f56b34ab"
+CVE_2019_18811_SUMMARY_LANG="CVE_2019_18811_SUMMARY_${CVE_LANG}"
+CVE_2019_18811_SUMMARY="${!CVE_2019_18811_SUMMARY_LANG}"
+
+CVE_2019_18812_FIX_SRC_URI="https://github.com/torvalds/linux/commit/c0a333d842ef67ac04adc72ff79dc1ccc3dca4ed.patch"
+CVE_2019_18812_FN="CVE-2019-18812-fix--linux-sound-soc-sof-debug-Fix-memory-leak-in-sof_dfsentry_write.patch"
+CVE_2019_18812_SEVERITY_LANG="CVE_2019_18812_SEVERITY_${CVE_LANG}"
+CVE_2019_18812_SEVERITY="${!CVE_2019_18812_SEVERITY_LANG}"
+CVE_2019_18812_PM="https://github.com/torvalds/linux/commit/c0a333d842ef67ac04adc72ff79dc1ccc3dca4ed"
+CVE_2019_18812_SUMMARY_LANG="CVE_2019_18812_SUMMARY_${CVE_LANG}"
+CVE_2019_18812_SUMMARY="${!CVE_2019_18812_SUMMARY_LANG}"
+
+CVE_2019_18813_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=9bbfceea12a8f145097a27d7c7267af25893c060"
+CVE_2019_18813_FN="CVE-2019-18813-fix--linux-drivers-usb-dwc3-dwc3-pci-prevent-memory-leak-in-dwc3_pci_probe.patch"
+CVE_2019_18813_SEVERITY_LANG="CVE_2019_18813_SEVERITY_${CVE_LANG}"
+CVE_2019_18813_SEVERITY="${!CVE_2019_18813_SEVERITY_LANG}"
+CVE_2019_18813_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=9bbfceea12a8f145097a27d7c7267af25893c060"
+CVE_2019_18813_SUMMARY_LANG="CVE_2019_18813_SUMMARY_${CVE_LANG}"
+CVE_2019_18813_SUMMARY="${!CVE_2019_18813_SUMMARY_LANG}"
+
+CVE_2019_18814_FIX_SRC_URI="https://lore.kernel.org/patchwork/patch/1142523/mbox/"
+CVE_2019_18814_FN="CVE-2019-18814-fix--linux-security-apparmor-audit-Fix-use-after-free-in-aa_audit_rule_init-v3.patch"
+CVE_2019_18814_SEVERITY_LANG="CVE_2019_18814_SEVERITY_${CVE_LANG}"
+CVE_2019_18814_SEVERITY="${!CVE_2019_18814_SEVERITY_LANG}"
+CVE_2019_18814_PM="https://lore.kernel.org/patchwork/patch/1142523/"
+CVE_2019_18814_SUMMARY_LANG="CVE_2019_18814_SUMMARY_${CVE_LANG}"
+CVE_2019_18814_SUMMARY="${!CVE_2019_18814_SUMMARY_LANG}"
 
 
-SRC_URI+=" cve_hotfix? ( ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
+#			 ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
+
+
+
+SRC_URI+=" cve_hotfix? ( ${CVE_2010_2243_FIX_SRC_URI} -> ${CVE_2010_2243_FN}
+			 ${CVE_2014_3180_FIX_SRC_URI} -> ${CVE_2014_3180_FN}
+			 ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 			 ${CVE_2019_14814_FIX_SRC_URI} -> ${CVE_2019_14814_FN}
 			 ${CVE_2019_14821_FIX_SRC_URI} -> ${CVE_2019_14821_FN}
 			 ${CVE_2019_16921_FIX_SRC_URI} -> ${CVE_2019_16921_FN}
@@ -229,7 +327,19 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 			 ${CVE_2019_18198_FIX_SRC_URI} -> ${CVE_2019_18198_FN}
 
 			 ${CVE_2019_18680_FIX_SRC_URI} -> ${CVE_2019_18680_FN}
+			 ${CVE_2019_18683_FIX_SRC_URI} -> ${CVE_2019_18683_FN}
 			 ${CVE_2019_18786_FIX_SRC_URI} -> ${CVE_2019_18786_FN}
+
+			 ${CVE_2019_18805_FIX_SRC_URI} -> ${CVE_2019_18805_FN}
+			 ${CVE_2019_18806_FIX_SRC_URI} -> ${CVE_2019_18806_FN}
+			 ${CVE_2019_18807_FIX_SRC_URI} -> ${CVE_2019_18807_FN}
+			 ${CVE_2019_18808_FIX_SRC_URI} -> ${CVE_2019_18808_FN}
+			 ${CVE_2019_18809_FIX_SRC_URI} -> ${CVE_2019_18809_FN}
+			 ${CVE_2019_18810_FIX_SRC_URI} -> ${CVE_2019_18810_FN}
+			 ${CVE_2019_18811_FIX_SRC_URI} -> ${CVE_2019_18811_FN}
+			 ${CVE_2019_18812_FIX_SRC_URI} -> ${CVE_2019_18812_FN}
+			 ${CVE_2019_18813_FIX_SRC_URI} -> ${CVE_2019_18813_FN}
+			 ${CVE_2019_18814_FIX_SRC_URI} -> ${CVE_2019_18814_FN}
 )"
 
 # @FUNCTION: _fetch_cve_boilerplate_msg
@@ -278,16 +388,59 @@ wait for an official fix in later kernel point releases."
 	fi
 }
 
+# @FUNCTION: fetch_cve_2007_3732_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2007_3732 patch
+function fetch_cve_2007_3732_hotfix() {
+	if ver_test ${PV} -ge 2.6.23 ; then
+		return 0
+	fi
+	# todo
+	return 0
+	local CVE_ID="CVE-2007-3732"
+	if grep -F -e \
+		"" \
+		"${S}/" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2010_2243_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2010_2243 patch
+function fetch_cve_2010_2243_hotfix() {
+	if ver_test ${PV} -ge 2.6.33 ; then
+		return 0
+	fi
+	local CVE_ID="CVE-2010-2243"
+	if grep -F -e \
+		"curr_clocksource = clocksource_default_clock();" \
+		"${S}/kernel/time/clocksource.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
 # @FUNCTION: fetch_cve_2014_3180_hotfix
 # @DESCRIPTION:
 # Checks for the CVE_2014_3180 patch
 function fetch_cve_2014_3180_hotfix() {
-	# todo
-	return 0
+	if ver_test ${PV} -ge 3.17 ; then
+		return 0
+	fi
 	local CVE_ID="CVE-2014-3180"
 	if grep -F -e \
-		"" \
-		"${S}/" \
+		"if (ret == -ERESTART_RESTARTBLOCK) {" \
+		"${S}/kernel/compat.c" \
 		>/dev/null ; \
 	then
 		einfo "${CVE_ID} already patched."
@@ -591,12 +744,10 @@ function fetch_cve_2019_18680_hotfix() {
 # @DESCRIPTION:
 # Checks for the CVE_2019_18683 patch
 function fetch_cve_2019_18683_hotfix() {
-	# todo
-	return 0
 	local CVE_ID="CVE-2019-18683"
 	if grep -F -e \
-		"" \
-		"${S}/" \
+		"schedule_timeout_uninterruptible(1);" \
+		"${S}/drivers/media/platform/vivid/vivid-sdr-cap.c" \
 		>/dev/null ; \
 	then
 		einfo "${CVE_ID} already patched."
@@ -614,6 +765,172 @@ function fetch_cve_2019_18786_hotfix() {
 	if grep -F -e \
 		"memset(f->fmt.sdr.reserved, 0, sizeof(f->fmt.sdr.reserved));" \
 		"${S}/drivers/media/platform/rcar_drif.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_18805_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_18805 patch
+function fetch_cve_2019_18805_hotfix() {
+	local CVE_ID="CVE-2019-18805"
+	if grep -F -e \
+		".extra2		= &one_day_secs" \
+		"${S}/net/ipv4/sysctl_net_ipv4.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_18806_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_18806 patch
+function fetch_cve_2019_18806_hotfix() {
+	local CVE_ID="CVE-2019-18806"
+	if grep -F -e \
+		"dev_kfree_skb_irq(skb);" \
+		"${S}/drivers/net/ethernet/qlogic/qla3xxx.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_18807_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_18807 patch
+function fetch_cve_2019_18807_hotfix() {
+	local CVE_ID="CVE-2019-18807"
+	if grep -F -e \
+		"rc = -ENXIO;" \
+		"${S}/drivers/net/dsa/sja1105/sja1105_spi.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_18808_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_18808 patch
+function fetch_cve_2019_18808_hotfix() {
+	local CVE_ID="CVE-2019-18808"
+	if pcregrep -M "kfree\(hmac_buf\);\n\t\t\tret = -EINVAL;" \
+		"${S}/drivers/crypto/ccp/ccp-ops.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_18809_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_18809 patch
+function fetch_cve_2019_18809_hotfix() {
+	local CVE_ID="CVE-2019-18809"
+	if pcregrep -M "if \(\!ret\)\n\t\tdeb_info\(\"Identify state cold = %d\\\\n\", \*cold\);" \
+		"${S}/drivers/media/usb/dvb-usb/af9005.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_18810_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_18810 patch
+function fetch_cve_2019_18810_hotfix() {
+	local CVE_ID="CVE-2019-18810"
+	if grep -F -e \
+		"if (err) {" \
+		"${S}/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_18811_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_18811 patch
+function fetch_cve_2019_18811_hotfix() {
+	local CVE_ID="CVE-2019-18811"
+	if pcregrep -M "if \(err < 0\) {\n\t\tkfree\(partdata\);" \
+		"${S}/sound/soc/sof/ipc.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_18812_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_18812 patch
+function fetch_cve_2019_18812_hotfix() {
+	local CVE_ID="CVE-2019-18812"
+	if grep -F -e \
+		"strcmp(dentry->d_name.name, "ipc_flood_duration_ms")) {" \
+		"${S}/sound/soc/sof/debug.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_18813_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_18813 patch
+function fetch_cve_2019_18813_hotfix() {
+	local CVE_ID="CVE-2019-18813"
+	if pcregrep -M "if \(ret < 0\)\n\t\tgoto err;" \
+		"${S}/drivers/usb/dwc3/dwc3-pci.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_18814_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_18814 patch
+function fetch_cve_2019_18814_hotfix() {
+	local CVE_ID="CVE-2019-18814"
+	if grep -F -e \
+		"int err = PTR_ERR(rule->label);" \
+		"${S}/security/apparmor/audit.c" \
 		>/dev/null ; \
 	then
 		einfo "${CVE_ID} already patched."
@@ -642,20 +959,70 @@ function _resolve_hotfix_default() {
 	fi
 }
 
-
-# @FUNCTION: apply_cve_2014_3180_hotfix
+# @FUNCTION: apply_cve_2007_3732_hotfix
 # @DESCRIPTION:
-# Applies the CVE_2014_3180 patch if it needs to
-function apply_cve_2014_3180_hotfix() {
+# Applies the CVE_2007_3732 patch if it needs to
+function apply_cve_2007_3732_hotfix() {
+	local CVE_ID="CVE-2007-3732"
+	if ver_test ${PV} -ge 2.6.23 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	# todo
 	return 0
-	local CVE_ID="CVE-2014-3180"
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
 	if grep -F -e \
 		"" \
 		"${S}/" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2010_2243_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2010_2243 patch if it needs to
+function apply_cve_2010_2243_hotfix() {
+	local CVE_ID="CVE-2010-2243"
+	if ver_test ${PV} -ge 2.6.33 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"curr_clocksource = clocksource_default_clock();" \
+		"${S}/kernel/time/clocksource.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+
+# @FUNCTION: apply_cve_2014_3180_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2014_3180 patch if it needs to
+function apply_cve_2014_3180_hotfix() {
+	local CVE_ID="CVE-2014-3180"
+	if ver_test ${PV} -ge 3.17 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"if (ret == -ERESTART_RESTARTBLOCK) {" \
+		"${S}/kernel/compat.c" \
 		>/dev/null ; \
 	then
 		einfo "${CVE_ID} is already patched."
@@ -989,19 +1356,17 @@ function apply_cve_2019_18680_hotfix() {
 	_resolve_hotfix_default
 }
 
-# @FUNCTION: apply_cve_2019_18783_hotfix
+# @FUNCTION: apply_cve_2019_18683_hotfix
 # @DESCRIPTION:
-# Applies the CVE_2019_18783 patch if it needs to
-function apply_cve_2019_18783_hotfix() {
-	# todo
-	return 0
-	local CVE_ID="CVE-2019-18783"
+# Applies the CVE_2019_18683 patch if it needs to
+function apply_cve_2019_18683_hotfix() {
+	local CVE_ID="CVE-2019-18683"
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
 	if grep -F -e \
-		"" \
-		"${S}/" \
+		"schedule_timeout_uninterruptible(1);" \
+		"${S}/drivers/media/platform/vivid/vivid-sdr-cap.c" \
 		>/dev/null ; \
 	then
 		einfo "${CVE_ID} is already patched."
@@ -1029,6 +1394,193 @@ function apply_cve_2019_18786_hotfix() {
 	_resolve_hotfix_default
 }
 
+# @FUNCTION: apply_cve_2019_18805_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_18805 patch if it needs to
+function apply_cve_2019_18805_hotfix() {
+	local CVE_ID="CVE-2019-18805"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		".extra2		= &one_day_secs" \
+		"${S}/net/ipv4/sysctl_net_ipv4.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_18806_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_18806 patch if it needs to
+function apply_cve_2019_18806_hotfix() {
+	local CVE_ID="CVE-2019-18806"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"dev_kfree_skb_irq(skb);" \
+		"${S}/drivers/net/ethernet/qlogic/qla3xxx.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_18807_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_18807 patch if it needs to
+function apply_cve_2019_18807_hotfix() {
+	local CVE_ID="CVE-2019-18807"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"rc = -ENXIO;" \
+		"${S}/drivers/net/dsa/sja1105/sja1105_spi.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_18808_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_18808 patch if it needs to
+function apply_cve_2019_18808_hotfix() {
+	local CVE_ID="CVE-2019-18808"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if pcregrep -M "kfree\(hmac_buf\);\n\t\t\tret = -EINVAL;" \
+		"${S}/drivers/crypto/ccp/ccp-ops.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_18809_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_18809 patch if it needs to
+function apply_cve_2019_18809_hotfix() {
+	local CVE_ID="CVE-2019-18809"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if pcregrep -M "if \(\!ret\)\n\t\tdeb_info\(\"Identify state cold = %d\\\\n\", \*cold\);" \
+		"${S}/drivers/media/usb/dvb-usb/af9005.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_18810_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_18810 patch if it needs to
+function apply_cve_2019_18810_hotfix() {
+	local CVE_ID="CVE-2019-18810"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"if (err) {" \
+		"${S}/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_18811_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_18811 patch if it needs to
+function apply_cve_2019_18811_hotfix() {
+	local CVE_ID="CVE-2019-18811"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if pcregrep -M "if \(err < 0\) {\n\t\tkfree\(partdata\);" \
+		"${S}/sound/soc/sof/ipc.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_18812_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_18812 patch if it needs to
+function apply_cve_2019_18812_hotfix() {
+	local CVE_ID="CVE-2019-18812"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"strcmp(dentry->d_name.name, "ipc_flood_duration_ms")) {" \
+		"${S}/sound/soc/sof/debug.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_18813_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_18813 patch if it needs to
+function apply_cve_2019_18813_hotfix() {
+	local CVE_ID="CVE-2019-18813"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if pcregrep -M "if \(ret < 0\)\n\t\tgoto err;" \
+		"${S}/drivers/usb/dwc3/dwc3-pci.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_18814_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_18814 patch if it needs to
+function apply_cve_2019_18814_hotfix() {
+	local CVE_ID="CVE-2019-18814"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"int err = PTR_ERR(rule->label);" \
+		"${S}/security/apparmor/audit.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+
 # @FUNCTION: fetch_cve_hotfixes
 # @DESCRIPTION:
 # Fetches all the CVE kernel patches
@@ -1037,7 +1589,12 @@ function fetch_cve_hotfixes() {
 		einfo
 		einfo "--------------------------------------------------"
 		einfo
-#		fetch_cve_2014_3180_hotfix
+
+		fetch_cve_2014_3180_hotfix
+
+#		fetch_cve_2007_3732_hotfix
+		fetch_cve_2010_2243_hotfix
+
 		fetch_cve_2019_16746_hotfix
 		fetch_cve_2019_14814_hotfix
 		fetch_cve_2019_14821_hotfix
@@ -1055,8 +1612,20 @@ function fetch_cve_hotfixes() {
 		fetch_cve_2019_17666_hotfix
 		fetch_cve_2019_18198_hotfix
 		fetch_cve_2019_18680_hotfix
-#		fetch_cve_2019_18683_hotfix
+		fetch_cve_2019_18683_hotfix
 		fetch_cve_2019_18786_hotfix
+
+		fetch_cve_2019_18805_hotfix
+		fetch_cve_2019_18806_hotfix
+		fetch_cve_2019_18807_hotfix
+		fetch_cve_2019_18808_hotfix
+		fetch_cve_2019_18809_hotfix
+		fetch_cve_2019_18810_hotfix
+		fetch_cve_2019_18811_hotfix
+		fetch_cve_2019_18812_hotfix
+		fetch_cve_2019_18813_hotfix
+		fetch_cve_2019_18814_hotfix
+
 		local cve_copyright1="CVE_COPYRIGHT1_${CVE_LANG}"
 		local cve_copyright2="CVE_COPYRIGHT2_${CVE_LANG}"
 		einfo \
@@ -1079,7 +1648,11 @@ hotfix updates.\n\
 function apply_cve_hotfixes() {
 	if has cve_hotfix ${IUSE_EFFECTIVE} ; then
 		einfo "Applying CVE hotfixes"
-#		apply_cve_2014_3180_hotfix
+		apply_cve_2014_3180_hotfix
+
+#		apply_cve_2007_3732_hotfix
+		apply_cve_2010_2243_hotfix
+
 		apply_cve_2019_16746_hotfix
 		apply_cve_2019_14814_hotfix
 		apply_cve_2019_14821_hotfix
@@ -1097,7 +1670,18 @@ function apply_cve_hotfixes() {
 		apply_cve_2019_17666_hotfix
 		apply_cve_2019_18198_hotfix
 		apply_cve_2019_18680_hotfix
-#		apply_cve_2019_18683_hotfix
+		apply_cve_2019_18683_hotfix
 		apply_cve_2019_18786_hotfix
+
+		apply_cve_2019_18805_hotfix
+		apply_cve_2019_18806_hotfix
+		apply_cve_2019_18807_hotfix
+		apply_cve_2019_18808_hotfix
+		apply_cve_2019_18809_hotfix
+		apply_cve_2019_18810_hotfix
+		apply_cve_2019_18811_hotfix
+		apply_cve_2019_18812_hotfix
+		apply_cve_2019_18813_hotfix
+		apply_cve_2019_18814_hotfix
 	fi
 }
