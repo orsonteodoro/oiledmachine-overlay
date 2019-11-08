@@ -23,6 +23,8 @@
 IUSE+=" cve_hotfix"
 LICENSE+=" cve_hotfix? ( GPL-2 )"
 
+DEPEND+=" dev-libs/libpcre"
+
 # _PM = patch message from person who fixed it, _FN = patch file name
 
 inherit ot-kernel-cve-en
