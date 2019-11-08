@@ -146,8 +146,7 @@ like npm.  These use flags are not recommended."
 	fi
 
 	GCC_V=$(gcc-version)
-	version_compare ${GCC_V} 8.0
-	if (( $? >= 3 )) ; then
+	if ver_test ${GCC_V} -ge 8.0; then
 		ewarn \
 	"You must switch your gcc to <8.0 to compile this version of ot-sources"
 	fi
