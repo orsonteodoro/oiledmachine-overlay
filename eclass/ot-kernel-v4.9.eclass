@@ -303,4 +303,9 @@ function ot-kernel-common_pkg_postinst_cb() {
 The MuQSS scheduler may have random system hard pauses for few seconds to\n\
   around a minute when resource usage is high."
 	fi
+	if use tresor ; then
+		einfo \
+"It's recommented to disable many early printk driver messsages in the kernel\n\
+config to see the tresor prompt on boot, or it will scroll off the screen."
+	fi
 }
