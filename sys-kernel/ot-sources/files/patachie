@@ -12,6 +12,8 @@ declare -A license_fingerprint_to_patchfile_path_buckets
 
 # Changelog
 # 1.0 - 20191106 - initial release
+# 1.0 - 20191107 - fix grammar
+#                  prevent p_code as directory
 
 DIR=$(dirname "$0")
 echo "DIR=${DIR}"
@@ -133,15 +135,18 @@ function decho() {
 function process_licenses() {
 	P=$(ls -1 "${G_OUTDIR}")
 	for p_patch in $P ; do
-		decho "Processing ${p_patch}"
 		local p="${G_OUTDIR}/${p_patch}"
+		decho "Processing patch: ${p}"
 		F=$(grep -P -e '(---|\+\+\+)' "${p}" | cut -c 5- | sed -e "s|^b/||g" -e "s|^a/||g")
 		for f in $F ; do
 			if [[ ! -e "${G_SRC}/${f}" ]] ; then
 				continue
 			fi
+			if [[ -d "${G_SRC}/${f}" ]] ; then
+				continue
+			fi
 			local p_code="${G_SRC}/${f}"
-			decho "Processing ${p_code}"
+			decho "Processing hunk's source: ${p_code}"
 			local license
 			local i_last
 			local header_style
@@ -162,11 +167,11 @@ function process_licenses() {
 				header_style="bashstyle"
 			else
 				i_last=0
-				echo "${p_code} is not c file | wtf (fixme ${p_code})"
+				echo "${p_code} is not a c file | wtf (fixme ${p_code})"
 				header_style="all-rights-reserved"
 			fi
 
-			echo "p_code=${p_code} i_last=${i_last}"
+			decho "p_code=${p_code} i_last=${i_last}"
 			license=$(cat "${p_code}" | head -n ${i_last})
 			if [[ "${header_style}" == "all-rights-reserved" ]] ; then
 				# add banned false positives
