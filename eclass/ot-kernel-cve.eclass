@@ -395,6 +395,9 @@ function fetch_cve_2007_3732_hotfix() {
 	if ver_test ${PV} -ge 2.6.23 ; then
 		return 0
 	fi
+	if ver_test ${PV} -lt 2.6 ; then
+		return 0
+	fi
 	# todo
 	return 0
 	local CVE_ID="CVE-2007-3732"
@@ -966,6 +969,9 @@ function apply_cve_2007_3732_hotfix() {
 	local CVE_ID="CVE-2007-3732"
 	if ver_test ${PV} -ge 2.6.23 ; then
 		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	if ver_test ${PV} -lt 2.6 ; then
 		return 0
 	fi
 	# todo
