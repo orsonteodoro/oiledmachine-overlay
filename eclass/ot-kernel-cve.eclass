@@ -87,6 +87,7 @@ CVE_2019_14814_SUMMARY="${!CVE_2019_14814_SUMMARY_LANG}"
 
 CVE_2019_14821_FIX_SRC_URI="https://github.com/torvalds/linux/commit/b60fe990c6b07ef6d4df67bc0530c7c90a62623a.patch"
 CVE_2019_14821_FN="CVE-2019-14821-fix--linux-virt-kvm-coalesced-mmio-add-bounds-checking.patch"
+CVE_2019_14821_FN_4_9="CVE-2019-14821-fix--linux-virt-kvm-coalesced-mmio-add-bounds-checking-for-4.9.182.patch"
 CVE_2019_14821_SEVERITY_LANG="CVE_2019_14821_SEVERITY_${CVE_LANG}"
 CVE_2019_14821_SEVERITY="${!CVE_2019_14821_SEVERITY_LANG}"
 CVE_2019_14821_PM="https://github.com/torvalds/linux/commit/b60fe990c6b07ef6d4df67bc0530c7c90a62623a"
@@ -159,6 +160,7 @@ CVE_2019_17056_SUMMARY="${!CVE_2019_17056_SUMMARY_LANG}"
 
 CVE_2019_17075_FIX_SRC_URI="https://lore.kernel.org/lkml/20191001165611.GA3542072@kroah.com/raw"
 CVE_2019_17075_FN="CVE-2019-17075-fix--linux-drivers-infiniband-PATCH-v2-cxgb4-do-not-dma-memory-off-of-the-stack.patch"
+CVE_2019_17075_FN_4_9="CVE-2019-17075-fix--linux-drivers-infiniband-PATCH-v2-cxgb4-do-not-dma-memory-off-of-the-stack-for-4.9.182.patch"
 CVE_2019_17075_SEVERITY_LANG="CVE_2019_17075_SEVERITY_${CVE_LANG}"
 CVE_2019_17075_SEVERITY="${!CVE_2019_17075_SEVERITY_LANG}"
 CVE_2019_17075_PM="https://lore.kernel.org/lkml/20191001165611.GA3542072@kroah.com/"
@@ -1122,6 +1124,11 @@ function apply_cve_2019_14821_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
+
+	if ver_test ${PV} -le 4.20 ; then
+		cve_fn="${CVE_ID_}FN_4_9"
+	fi
+
 	if grep -F -e \
 		"if (!coalesced_mmio_has_room(dev, insert) ||" \
 		"${S}/virt/kvm/coalesced_mmio.c" \
@@ -1294,6 +1301,12 @@ function apply_cve_2019_17075_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
+	if ver_test ${PV} -le 4.9.197 ; then
+		cve_fn="${CVE_ID_}FN_4_9"
+	fi
+	if ver_test ${PV} -e 4.14.150 ; then
+		ewarn "todo testing ${cve_fn}"
+	fi
 	if grep -F -e \
 		"tpt->valid_to_pdid = cpu_to_be32(FW_RI_TPTE_VALID_F |" \
 		"${S}/drivers/infiniband/hw/cxgb4/mem.c" \
