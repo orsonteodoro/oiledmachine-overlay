@@ -160,7 +160,10 @@ CVE_2019_17056_SUMMARY="${!CVE_2019_17056_SUMMARY_LANG}"
 
 CVE_2019_17075_FIX_SRC_URI="https://lore.kernel.org/lkml/20191001165611.GA3542072@kroah.com/raw"
 CVE_2019_17075_FN="CVE-2019-17075-fix--linux-drivers-infiniband-PATCH-v2-cxgb4-do-not-dma-memory-off-of-the-stack.patch"
-CVE_2019_17075_FN_4_9="CVE-2019-17075-fix--linux-drivers-infiniband-PATCH-v2-cxgb4-do-not-dma-memory-off-of-the-stack-for-4.9.182.patch"
+CVE_2019_17075_FN_4_9="CVE-2019-17075-fix--linux-drivers-infiniband-PATCH-v2-cxgb4-do-not-dma-memory-off-of-the-stack-for-4.9.x.patch"
+CVE_2019_17075_FN_4_14="CVE-2019-17075-fix--linux-drivers-infiniband-PATCH-v2-cxgb4-do-not-dma-memory-off-of-the-stack-for-4.14.x.patch"
+CVE_2019_17075_FIX_SRC_URI_4_9="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/patch/?id=84f5b67df81a9f333afa81855f6fa3fdcd954463"
+CVE_2019_17075_FIX_SRC_URI_4_14="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/patch/?id=1db19d6805d9dc5c79f8a19dddde324dbf0a33f9"
 CVE_2019_17075_SEVERITY_LANG="CVE_2019_17075_SEVERITY_${CVE_LANG}"
 CVE_2019_17075_SEVERITY="${!CVE_2019_17075_SEVERITY_LANG}"
 CVE_2019_17075_PM="https://lore.kernel.org/lkml/20191001165611.GA3542072@kroah.com/"
@@ -325,6 +328,10 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2010_2243_FIX_SRC_URI} -> ${CVE_2010_2243_FN}
 			 ${CVE_2019_17056_FIX_SRC_URI} -> ${CVE_2019_17056_FN}
 
 			 ${CVE_2019_17075_FIX_SRC_URI} -> ${CVE_2019_17075_FN}
+
+			 ${CVE_2019_17075_FIX_SRC_URI_4_9} -> ${CVE_2019_17075_FN_4_9}
+			 ${CVE_2019_17075_FIX_SRC_URI_4_14} -> ${CVE_2019_17075_FN_4_14}
+
 			 ${CVE_2019_17133_FIX_SRC_URI} -> ${CVE_2019_17133_FN}
 			 ${CVE_2019_17351_FIX_SRC_URI} -> ${CVE_2019_17351_FN}
 
@@ -1301,11 +1308,13 @@ function apply_cve_2019_17075_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
-	if ver_test ${PV} -le 4.9.197 ; then
+	if ver_test ${PV} -le 4.9.0 \
+	&& ver_test ${PV} -le 4.9.197 ; then
 		cve_fn="${CVE_ID_}FN_4_9"
 	fi
-	if ver_test ${PV} -e 4.14.150 ; then
-		ewarn "todo testing ${cve_fn}"
+	if ver_test ${PV} -ge 4.14.0 \
+	&& ver_test ${PV} -le 4.14.150 ; then
+		cve_fn="${CVE_ID_}FN_4_14"
 	fi
 	if grep -F -e \
 		"tpt->valid_to_pdid = cpu_to_be32(FW_RI_TPTE_VALID_F |" \
