@@ -246,7 +246,7 @@ CVE_2019_18807_SUMMARY_LANG="CVE_2019_18807_SUMMARY_${CVE_LANG}"
 CVE_2019_18807_SUMMARY="${!CVE_2019_18807_SUMMARY_LANG}"
 
 CVE_2019_18808_FIX_SRC_URI="https://github.com/torvalds/linux/commit/128c66429247add5128c03dc1e144ca56f05a4e2.patch"
-CVE_2019_18808_FN="CVE-2019-18808-fix--linux.patch"
+CVE_2019_18808_FN="CVE-2019-18808-fix--linux-drivers-crypto-ccp-Release-all-allocated-memory-if-sha-type-is-invalid.patch"
 CVE_2019_18808_SEVERITY_LANG="CVE_2019_18808_SEVERITY_${CVE_LANG}"
 CVE_2019_18808_SEVERITY="${!CVE_2019_18808_SEVERITY_LANG}"
 CVE_2019_18808_PM="https://github.com/torvalds/linux/commit/128c66429247add5128c03dc1e144ca56f05a4e2"
@@ -279,6 +279,7 @@ CVE_2019_18811_SUMMARY="${!CVE_2019_18811_SUMMARY_LANG}"
 
 CVE_2019_18812_FIX_SRC_URI="https://github.com/torvalds/linux/commit/c0a333d842ef67ac04adc72ff79dc1ccc3dca4ed.patch"
 CVE_2019_18812_FN="CVE-2019-18812-fix--linux-sound-soc-sof-debug-Fix-memory-leak-in-sof_dfsentry_write.patch"
+CVE_2019_18812_FN_FILESDIR="CVE-2019-18812-fix--linux-sound-soc-sof-debug-Fix-memory-leak-in-sof_dfsentry_write-for-5.3.4.patch"
 CVE_2019_18812_SEVERITY_LANG="CVE_2019_18812_SEVERITY_${CVE_LANG}"
 CVE_2019_18812_SEVERITY="${!CVE_2019_18812_SEVERITY_LANG}"
 CVE_2019_18812_PM="https://github.com/torvalds/linux/commit/c0a333d842ef67ac04adc72ff79dc1ccc3dca4ed"
@@ -733,6 +734,15 @@ function fetch_cve_2019_18198_hotfix() {
 # Checks for the CVE_2019_18680 patch
 function fetch_cve_2019_18680_hotfix() {
 	local CVE_ID="CVE-2019-18680"
+
+	if ! grep -F -e \
+		"sk->sk_prot->disconnect(sk, 0);" \
+		"${S}/net/rds/tcp.c" \
+		>/dev/null ; \
+	then
+		return 0
+	fi
+
 	if grep -F -e \
 		"if (tc->t_sock) {" \
 		"${S}/net/rds/tcp.c" \
@@ -901,7 +911,15 @@ function fetch_cve_2019_18811_hotfix() {
 function fetch_cve_2019_18812_hotfix() {
 	local CVE_ID="CVE-2019-18812"
 	if grep -F -e \
-		"strcmp(dentry->d_name.name, "ipc_flood_duration_ms")) {" \
+		'strcmp(dentry->d_name.name, "ipc_flood_duration_ms")) {' \
+		"${S}/sound/soc/sof/debug.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	if grep -F -e \
+		'strcmp(dfse->dfsentry->d_name.name, "ipc_flood_duration_ms")) {' \
 		"${S}/sound/soc/sof/debug.c" \
 		>/dev/null ; \
 	then
@@ -954,6 +972,25 @@ function _resolve_hotfix_default() {
 			einfo \
 "Resolving ${CVE_ID}.  ${!cve_fn} may break in different kernel versions."
 			_dpatch "${PATCH_OPS}" "${DISTDIR}/${!cve_fn}"
+		else
+			ewarn \
+"No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
+		fi
+	else
+		ewarn \
+"No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
+	fi
+}
+
+# @FUNCTION: _resolve_hotfix_default_filesdir
+# @DESCRIPTION:
+# Applies the fix or warns if not applied
+function _resolve_hotfix_default_filesdir() {
+	if use cve_hotfix ; then
+		if [ -e "${FILESDIR}/${!cve_fn_filesdir}" ] ; then
+			einfo \
+"Resolving ${CVE_ID}.  ${!cve_fn} may break in different kernel versions."
+			_dpatch "${PATCH_OPS}" "${FILESDIR}/${!cve_fn_filesdir}"
 		else
 			ewarn \
 "No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
@@ -1361,6 +1398,15 @@ function apply_cve_2019_18680_hotfix() {
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
+	if ! grep -F -e \
+		"sk->sk_prot->disconnect(sk, 0);" \
+		"${S}/net/rds/tcp.c" \
+		>/dev/null ; \
+	then
+		einfo \
+"Did not find ${CVE_ID} flaw.  Skipping"
+		return 0
+	fi
 	_resolve_hotfix_default
 }
 
@@ -1540,15 +1586,36 @@ function apply_cve_2019_18812_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
+	local cve_fn_filesdir="${CVE_ID_}FN_FILESDIR"
+
 	if grep -F -e \
-		"strcmp(dentry->d_name.name, "ipc_flood_duration_ms")) {" \
+		'strcmp(dentry->d_name.name, "ipc_flood_duration_ms"))' \
 		"${S}/sound/soc/sof/debug.c" \
 		>/dev/null ; \
 	then
-		einfo "${CVE_ID} is already patched."
+		_resolve_hotfix_default
 		return
 	fi
-	_resolve_hotfix_default
+
+	if grep -F -e \
+		'strcmp(dfse->dfsentry->d_name.name, "ipc_flood_duration_ms"))' \
+		"${S}/sound/soc/sof/debug.c" \
+		>/dev/null ; \
+	then
+		_resolve_hotfix_default_filesdir
+		return
+	fi
+
+	if use cve_hotfix ; then
+		if [[ ! -e "${DISTDIR}/${!cve_fn}"  ||
+		      ! -e "${FILESDIR}/${!cve_fn_filesdir}" ]] ; then
+			ewarn \
+"No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
+		fi
+	else
+		ewarn \
+"No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
+	fi
 }
 
 # @FUNCTION: apply_cve_2019_18813_hotfix
