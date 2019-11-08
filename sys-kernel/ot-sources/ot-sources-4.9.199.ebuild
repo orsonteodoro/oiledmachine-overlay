@@ -3,7 +3,7 @@
 
 EAPI="6"
 
-K_GENPATCHES_VER="187"
+K_GENPATCHES_VER="204"
 
 function ot-kernel-common_apply_genpatch_base_patchset() {
 	_tpatch "${PATCH_OPS} -N" "$d/1500_XATTR_USER_PREFIX.patch"

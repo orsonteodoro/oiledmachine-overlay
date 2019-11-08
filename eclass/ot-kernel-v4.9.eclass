@@ -98,6 +98,7 @@
 
 # results from cryptsetup
 
+# Results for 4.9.182
 # cryptsetup benchmark -c tresor-ecb -s 128
 # Tests are approximate using memory only (no storage IO).
 # Algorithm |       Key |      Encryption |      Decryption
@@ -117,6 +118,29 @@
 # Tests are approximate using memory only (no storage IO).
 # Algorithm |       Key |      Encryption |      Decryption
 #    aes-ecb        128b        90.5 MiB/s        90.5 MiB/s
+
+
+# Results for 4.9.199
+# cryptsetup benchmark -c tresor-ecb -s 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+# tresor-ecb        128b        26.0 MiB/s        19.0 MiB/s
+
+# cryptsetup benchmark -c tresor-cbc -s 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+# tresor-cbc        128b        25.4 MiB/s        18.8 MiB/s
+
+# cryptsetup benchmark -c aes-cbc -s 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+#    aes-cbc        128b       130.6 MiB/s       157.8 MiB/s
+
+# cryptsetup benchmark -c aes-ecb -s 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+#    aes-ecb        128b       158.5 MiB/s       177.5 MiB/s
+
 
 ETYPE="sources"
 
