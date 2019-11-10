@@ -11,7 +11,8 @@
 # @SUPPORTED_EAPIS: 2 3 4 5 6
 # @BLURB: Eclass for patching the 4.14.x kernel
 # @DESCRIPTION:
-# The ot-kernel-v4.14 eclass defines specific applicable patching for the 4.14.x linux kernel.
+# The ot-kernel-v4.14 eclass defines specific applicable patching for the
+# 4.14.x linux kernel.
 
 # UKSM:
 #   https://github.com/dolohow/uksm
@@ -33,7 +34,9 @@
 
 # TRESOR is broken >= 4.17.  It requires additional coding for skcipher with cbc/ecb.
 
-# Compare these commit list and find the ones with convert to skcipher interface to hint how to fix
+# Compare these commit list and find the ones with convert to skcipher
+# interface to hint how to fix.  TRESOR with 4.16.18 works. TRESOR with 4.17
+# fails to run cryptsetup benchmark.
 # https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/log/arch/x86/crypto?h=v4.16.18
 # https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/log/arch/x86/crypto?h=v4.17
 
@@ -53,8 +56,8 @@
 
 
 
-# some of these wont appear unless you use them in userspace with crypsetup benchmark
-# results for /proc/crypto in 4.9
+# some of these wont appear unless you use them in userspace with crypsetup
+# benchmark results for /proc/crypto in 4.9
 
 # name         : cbc(tresor)
 # driver       : cbc(tresor-driver)
@@ -208,7 +211,8 @@ K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 DESCRIPTION="Orson Teodoro's patchset containing UKSM, zen-tune, GraySky's GCC \
 Patches, MUQSS CPU Scheduler, Genpatches, BFQ updates, TRESOR"
 
-CK_URL_BASE="http://ck.kolivas.org/patches/${PATCH_CK_MAJOR}/${PATCH_CK_MAJOR_MINOR}/${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}/"
+CK_URL_BASE=\
+"http://ck.kolivas.org/patches/${PATCH_CK_MAJOR}/${PATCH_CK_MAJOR_MINOR}/${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}/"
 CK_FN="${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}-broken-out.tar.xz"
 CK_SRC_URL="${CK_URL_BASE}${CK_FN}"
 
