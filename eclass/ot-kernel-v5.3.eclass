@@ -33,7 +33,6 @@ PATCH_GRAYSKY_COMMIT="0ebe06178ea25923b33397ff04e9d701356825a0"
 PATCH_PDS_MAJOR_MINOR="5.0"
 PATCH_PDS_VER="${PATCH_PDS_VER:=099o}"
 PATCH_BFQ_VER="5.3"
-PATCH_TRESOR_VER="3.18.5"
 PATCH_BMQ_VER="${PATCH_BMQ_VER:=100}"
 PATCH_BMQ_MAJOR_MINOR="5.3"
 DISABLE_DEBUG_V="1.1"
@@ -65,27 +64,16 @@ IUSE="  bfq bmq bmq-quick-fix \
 	directgma \
 	rock \
 	+cfs disable_debug +graysky2 muqss +o3 pds uksm \
-	tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs \
 	-zentune"
 DEPEND=" amd-staging-drm-next? ( dev-vcs/git ) \
 	  rock? ( dev-vcs/git ) \
 	  dev-util/patchutils"
 REQUIRED_USE="^^ ( muqss pds cfs bmq )
 	     directgma? ( rock )
-	     rock? ( amd-staging-drm-next )
-	     tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
-	     tresor_aesni? ( tresor )
-	     tresor_i686? ( tresor )
-	     tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
-	     tresor_x86_64? ( tresor )"
+	     rock? ( amd-staging-drm-next )"
 
 # no released patch yet
 REQUIRED_USE+=" !pds !bmq-quick-fix"
-
-if [[ -z "${OT_SOURCES_DEVELOPER}" ]] || [[ "${OT_SOURCES_DEVELOPER}" != "1" ]] ; then
-# disabled because it doesn't work
-REQUIRED_USE+=" !tresor !tresor_i686 !tresor_x86_64 !tresor_aesni"
-fi
 
 #K_WANT_GENPATCHES="base extras experimental"
 K_SECURITY_UNSUPPORTED="1"
@@ -102,7 +90,7 @@ K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
 DESCRIPTION="Orson Teodoro's patchset containing UKSM, zen-tune, GraySky's GCC \
 Patches, MUQSS CPU Scheduler, PDS CPU Scheduler, BMQ CPU Scheduler, \
-Genpatches, BFQ updates, amd-staging-drm-next, TRESOR"
+Genpatches, BFQ updates, amd-staging-drm-next"
 
 AMDREPO_URL="git://people.freedesktop.org/~agd5f/linux"
 AMD_PATCH_FN="${AMD_STAGING_DRM_NEXT_DIR}.patch"
@@ -131,11 +119,6 @@ SRC_URI+=" ${KERNEL_URI}
 	   ${GENPATCHES_BASE_SRC_URL}
 	   ${GENPATCHES_EXPERIMENTAL_SRC_URL}
 	   ${GENPATCHES_EXTRAS_SRC_URL}
-	   ${TRESOR_AESNI_DL_URL}
-	   ${TRESOR_I686_DL_URL}
-	   ${TRESOR_SYSFS_DL_URL}
-	   ${TRESOR_README_DL_URL}
-	   ${TRESOR_SRC_URL}
 	   ${UKSM_SRC_URL}
 	   ${KERNEL_PATCH_URLS[@]} "
 
@@ -172,11 +155,6 @@ function ot-kernel-common_pkg_setup_cb() {
 like npm.  These use flags are not recommended."
 	fi
 
-	if use tresor ; then
-		ewarn \
-"TRESOR is broken for ${PV}.  Use 4.9.x series.  For ebuild devs only."
-	fi
-
 	if use rock ; then
 		ewarn "Patching with ROCk is broken.  For ebuild devs only."
 
@@ -204,27 +182,6 @@ function ot-kernel-common_pkg_pretend_cb() {
 		_set_check_reqs_requirements
 		check-reqs_pkg_pretend
 	fi
-}
-
-# @FUNCTION: ot-kernel-common_apply_tresor_fixes
-# @DESCRIPTION:
-# Applies specific TRESOR fixes for this kernel major version
-function ot-kernel-common_apply_tresor_fixes() {
-	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-testmgr-ciphers-update.patch"
-
-	if use tresor_x86_64 ; then
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_asm_64.patch"
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_key_64.patch"
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-fix-addressing-mode-64-bit-index.patch"
-	fi
-
-	#if ! use tresor_sysfs ; then
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/wait.patch"
-	#fi
-
-	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
-	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-testmgr-linux-5.1.patch"
-        _dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-get_ds-to-kernel_ds.patch"
 }
 
 # @FUNCTION: ot-kernel-common_apply_genpatch_base_post

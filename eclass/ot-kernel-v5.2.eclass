@@ -42,7 +42,9 @@ PATCH_BMQ_VER="${PATCH_BMQ_VER:=099}"
 PATCH_BMQ_MAJOR_MINOR="5.2"
 DISABLE_DEBUG_V="1.1"
 
-IUSE="bfq bmq bmq-quick-fix +cfs disable_debug +graysky2 muqss +o3 pds uksm -zentune"
+IUSE="bfq bmq bmq-quick-fix +cfs disable_debug +graysky2 muqss +o3 pds \
+uksm -zentune"
+
 REQUIRED_USE="^^ ( muqss pds cfs bmq )"
 
 # no released patch yet

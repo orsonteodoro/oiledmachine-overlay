@@ -3,15 +3,15 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: ot-kernel-v4.9.eclass
+# @ECLASS: ot-kernel-v4.14.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 2 3 4 5 6
-# @BLURB: Eclass for patching the 4.9.x kernel
+# @BLURB: Eclass for patching the 4.14.x kernel
 # @DESCRIPTION:
-# The ot-kernel-v4.9 eclass defines specific applicable patching for the 4.9.x linux kernel.
+# The ot-kernel-v4.14 eclass defines specific applicable patching for the 4.14.x linux kernel.
 
 # UKSM:
 #   https://github.com/dolohow/uksm
@@ -31,16 +31,30 @@
 # TRESOR:
 #   http://www1.informatik.uni-erlangen.de/tresor
 
-# This ebuild exists because less patching required for tresor.  It is mostly
-# working.
+# TRESOR is broken >= 4.17.  It requires additional coding for skcipher with cbc/ecb.
 
-# errors from dmesg
+# Compare these commit list and find the ones with convert to skcipher interface to hint how to fix
+# https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/log/arch/x86/crypto?h=v4.16.18
+# https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/log/arch/x86/crypto?h=v4.17
+
+# tresor passes cipher but not skcipher in self test (/proc/crypto); there is
+# a error in dmesg
+
+# [    4.036411] alg: skcipher: setkey failed on test 2 for ecb(tresor-driver): flags=200000
+# [    4.038166] alg: skcipher: Failed to load transform for ecb(tresor): -2
+# [    4.042266] alg: skcipher: setkey failed on test 3 for cbc(tresor-driver): flags=200000
+# [    4.043783] alg: skcipher: Failed to load transform for cbc(tresor): -2
+
+# errors from dmesg in 4.9
 
 # [    3.355692] alg: skcipher: setkey failed on test 2 for ecb(tresor-driver): flags=200000
 # [    3.357297] alg: skcipher: Failed to load transform for ecb(tresor): -2
 # [    3.361164] alg: skcipher: setkey failed on test 3 for cbc(tresor-driver): flags=200000
 
-# results for /proc/crypto
+
+
+# some of these wont appear unless you use them in userspace with crypsetup benchmark
+# results for /proc/crypto in 4.9
 
 # name         : cbc(tresor)
 # driver       : cbc(tresor-driver)
@@ -144,21 +158,21 @@
 
 ETYPE="sources"
 
-K_MAJOR_MINOR="4.9"
+K_MAJOR_MINOR="4.14"
 K_PATCH_XV="4.x"
 EXTRAVERSION="-ot"
-PATCH_UKSM_VER="4.9"
+PATCH_UKSM_VER="4.14"
 PATCH_UKSM_MVER="4"
-PATCH_ZENTUNE_VER="4.9"
+PATCH_ZENTUNE_VER="4.14"
 PATCH_O3_CO_COMMIT="a56a17374772a48a60057447dc4f1b4ec62697fb"
 PATCH_O3_RO_COMMIT="93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9"
 PATCH_CK_MAJOR="4.0"
-PATCH_CK_MAJOR_MINOR="4.9"
+PATCH_CK_MAJOR_MINOR="4.14"
 PATCH_CK_REVISION="1"
-K_GENPATCHES_VER="${K_GENPATCHES_VER:?187}"
-PATCH_GP_MAJOR_MINOR_REVISION="4.9-${K_GENPATCHES_VER}"
+K_GENPATCHES_VER="${K_GENPATCHES_VER:?135}"
+PATCH_GP_MAJOR_MINOR_REVISION="4.14-${K_GENPATCHES_VER}"
 PATCH_GRAYSKY_COMMIT="87168bfa27b782e1c9435ba28ebe3987ddea8d30"
-PATCH_BFQ_VER="4.9"
+PATCH_BFQ_VER="4.14"
 PATCH_TRESOR_VER="3.18.5"
 DISABLE_DEBUG_V="1.1"
 
@@ -198,9 +212,6 @@ CK_URL_BASE="http://ck.kolivas.org/patches/${PATCH_CK_MAJOR}/${PATCH_CK_MAJOR_MI
 CK_FN="${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}-broken-out.tar.xz"
 CK_SRC_URL="${CK_URL_BASE}${CK_FN}"
 
-GRAYSKY_DL_4_9_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v3.15%2B.patch"
-
 inherit ot-kernel-common
 
 SRC_URI+=" ${KERNEL_URI}
@@ -210,6 +221,7 @@ SRC_URI+=" ${KERNEL_URI}
 	   ${O3_CO_SRC_URL}
 	   ${O3_RO_SRC_URL}
 	   ${GRAYSKY_SRC_4_9_URL}
+	   ${GRAYSKY_SRC_8_1_URL}
 	   ${CK_SRC_URL}
 	   ${GENPATCHES_BASE_SRC_URL}
 	   ${GENPATCHES_EXPERIMENTAL_SRC_URL}
@@ -225,10 +237,11 @@ SRC_URI+=" ${KERNEL_URI}
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel-common_pkg_setup_cb() {
-	# tresor for x86_64 generic was known to pass crypto testmgr on this version.
+	# tresor for x86_64 generic was known to pass crypto testmgr on this
+	# version.
 	ewarn \
-"This ot-sources ${PV} release is only for research purposes or to access\n\
-tresor devices.  This 4.9.x series EOL for this repo but not for upstream."
+"This ot-sources ${PV} release is only for research purposes or to access \n\
+tresor devices.  This 4.14.x series is EOL for this repo but not for upstream."
 
 	if use zentune || use muqss ; then
 		ewarn \
@@ -237,50 +250,15 @@ like npm.  These use flags are not recommended."
 	fi
 
 	GCC_V=$(gcc-version)
-	if ver_test ${GCC_V} -ge 8.0 ; then
+	if ver_test ${GCC_V} -ge 8.0; then
 		ewarn \
 	"You must switch your gcc to <8.0 to compile this version of ot-sources"
 	fi
-}
 
-# @FUNCTION: ot-kernel-common_apply_tresor_fixes
-# @DESCRIPTION:
-# Applies specific TRESOR fixes for this kernel major version
-function ot-kernel-common_apply_tresor_fixes() {
-#	_dpatch "${PATCH_OPS}" \
-#		"${FILESDIR}/tresor-testmgr-ciphers-update-for-linux-4.14.patch"
-
-	if use tresor_x86_64 ; then
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_asm_64.patch"
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_key_64.patch"
-		_dpatch "${PATCH_OPS}" \
-		  "${FILESDIR}/tresor-fix-addressing-mode-64-bit-index.patch"
+	if use tresor ; then
+		ewarn \
+	"TRESOR is broken for ${PV}.  Use 4.9.x series.  For ebuild devs only."
 	fi
-
-	#if ! use tresor_sysfs ; then
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/wait-for-linux-4.9.182.patch"
-	#fi
-
-	#_dpatch "${PATCH_OPS}" \
-		"${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
-        _dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-testmgr-linux-4.14.127.patch"
-        #_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-get_ds-to-kernel_ds.patch"
-}
-
-# @FUNCTION: ot-kernel-common_apply_genpatch_experimental_patchset
-# @DESCRIPTION:
-# Applies specific genpatches for this kernel major version
-function ot-kernel-common_apply_genpatch_experimental_patchset() {
-	_tpatch "${PATCH_OPS} -N" \
-"$d/5001_block-cgroups-kconfig-build-bits-for-BFQ-v7r11-4.9.patch"
-	_tpatch "${PATCH_OPS} -N" \
-"$d/5002_block-introduce-the-BFQ-v7r11-I-O-sched-for-4.9.patch1"
-	_tpatch "${PATCH_OPS} -N" \
-"$d/5003_block-bfq-add-Early-Queue-Merge-EQM-to-BFQ-v7r11-for-4.9.patch"
-	_tpatch "${PATCH_OPS} -N" \
-"$d/5004_Turn-BFQ-v7r11-into-BFQ-v8r7-for-4.9.0.patch1"
-	_tpatch "${PATCH_OPS} -N" \
-"$d/5010_enable-additional-cpu-optimizations-for-gcc.patch"
 }
 
 # @FUNCTION: ot-kernel-common_apply_genpatch_extras_patchset
@@ -290,6 +268,34 @@ function ot-kernel-common_apply_genpatch_extras_patchset() {
 	_tpatch "${PATCH_OPS} -N" "$d/4200_fbcondecor.patch"
 	_tpatch "${PATCH_OPS} -N" "$d/4400_alpha-sysctl-uac.patch"
 	_tpatch "${PATCH_OPS} -N" "$d/4567_distro-Gentoo-Kconfig.patch"
+}
+
+# @FUNCTION: ot-kernel-common_apply_tresor_fixes
+# @DESCRIPTION:
+# Applies specific TRESOR fixes for this kernel major version
+function ot-kernel-common_apply_tresor_fixes() {
+	# for 4.20 series and 5.x use tresor-testmgr-ciphers-update.patch instead
+	_dpatch "${PATCH_OPS}" \
+		"${FILESDIR}/tresor-testmgr-ciphers-update-for-linux-4.14.patch"
+
+	if use tresor_x86_64 ; then
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_asm_64.patch"
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_key_64.patch"
+		_dpatch "${PATCH_OPS}" \
+		  "${FILESDIR}/tresor-fix-addressing-mode-64-bit-index.patch"
+	fi
+
+	#if ! use tresor_sysfs ; then
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/wait.patch"
+	#fi
+
+	# for 5.x series uncomment below
+	#_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
+
+	# for 5.x series and 4.20 use tresor-testmgr-linux-x.y.patch
+        _dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-testmgr-linux-4.14.127.patch"
+
+        #_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-get_ds-to-kernel_ds.patch"
 }
 
 # @FUNCTION: ot-kernel-common_pkg_postinst_cb
@@ -303,6 +309,7 @@ function ot-kernel-common_pkg_postinst_cb() {
 The MuQSS scheduler may have random system hard pauses for few seconds to\n\
   around a minute when resource usage is high."
 	fi
+
 	if use tresor ; then
 		einfo \
 "It's recommented to disable many early printk driver messsages in the kernel\n\
