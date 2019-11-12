@@ -169,6 +169,7 @@ for the exception.  For supported CPUs see\n\
 	fi
 
 	if ( use rock || use amd-staging-drm-next ) ; then
+		ewarn "Patching with amd-staging-drm-next is currently broken."
 		_set_check_reqs_requirements
 		check-reqs_pkg_setup
 	fi
