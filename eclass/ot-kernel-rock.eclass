@@ -305,15 +305,17 @@ function rock_save_all_commits() {
 		n=$((n+1))
 	done
 
-	einfo "Attaching licenses to rock patches"
-	"${HOME}/patachie" -p "${T}"/rock-patches \
-		-s "${S}" \
-		-of "${T}/rock-licenses" \
-		-od "${T}/rock-processed"
-	mv "$(pwd)/attachied" "$(pwd)/rock-attachied" || die
-	einfo \
+	if [[ -n "${USE_PATACHIE}" && "${USE_PATACHIE}" == "1" ]] ; then
+		einfo "Attaching licenses to rock patches"
+		"${HOME}/patachie" -p "${T}"/rock-patches \
+			-s "${S}" \
+			-of "${T}/rock-licenses" \
+			-od "${T}/rock-processed"
+		mv "$(pwd)/attachied" "$(pwd)/rock-attachied" || die
+		einfo \
 "Maintainer:  $(pwd)/rock-attachied contains patches with attached licenses\n\
 and ${T}/rock-attachied contains all the licenses in one file."
+	fi
 }
 
 # @FUNCTION: __remove_rock_patch

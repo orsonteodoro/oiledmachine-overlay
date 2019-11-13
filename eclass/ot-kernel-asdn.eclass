@@ -239,15 +239,17 @@ function amd_staging_drm_next_save_all_commits() {
 	        n=$((n+1))
 	done
 
-	einfo "Attaching licenses to amd-staging-drm-next patches"
-	"${HOME}/patachie" -p "${T}"/amd-staging-drm-next-patches \
-		-s "${S}" \
-		-of "${T}/asdn-licenses" \
-		-od "${T}/asdn-processed"
-	mv "$(pwd)/attachied" "$(pwd)/asdn-attachied" || die
-	einfo \
+	if [[ -n "${USE_PATACHIE}" && "${USE_PATACHIE}" == "1" ]] ; then
+		einfo "Attaching licenses to amd-staging-drm-next patches"
+		"${HOME}/patachie" -p "${T}"/amd-staging-drm-next-patches \
+			-s "${S}" \
+			-of "${T}/asdn-licenses" \
+			-od "${T}/asdn-processed"
+		mv "$(pwd)/attachied" "$(pwd)/asdn-attachied" || die
+		einfo \
 "Maintainer:  $(pwd)/asdn-attachied contains patches with attached licenses\n\
 and ${T}/asdn-licenses contains all the licenses in one file."
+	fi
 }
 
 # @FUNCTION: __remove_asdn_patch

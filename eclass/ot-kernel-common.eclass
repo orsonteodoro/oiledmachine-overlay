@@ -48,6 +48,8 @@
 # Parts that still need to be developed:
 # TRESOR - incomplete API
 
+USE_PATACHIE=${USE_PATACHIE:=0}
+
 case ${EAPI:-0} in
 	7) die "this eclass doesn't support EAPI ${EAPI}" ;;
 	*) ;;
@@ -775,7 +777,9 @@ function ot-kernel-common_src_unpack() {
 
 	if has amd-staging-drm-next ${IUSE_EFFECTIVE} ; then
 		if use amd-staging-drm-next ; then
-			copy_patachie
+			if [[ -n "${USE_PATACHIE}" && "${USE_PATACHIE}" == "1" ]] ; then
+				copy_patachie
+			fi
 			apply_amdgpu
 		fi
 	fi
