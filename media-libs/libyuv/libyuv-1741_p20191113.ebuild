@@ -17,20 +17,25 @@ DEPEND="${RDEPEND}
 		dev-cpp/gflags )
 	dev-util/cmake"
 SLOT="0/${PV}"
-inherit cmake-utils git-r3
-EGIT_COMMIT="53b529e362cc09560c89840fd02ddb68ae3b11aa"
+inherit cmake-utils
+EGIT_COMMIT="d82f4baf5fcc19f21b5decd7c4af63f120653e0b"
 EGIT_REPO_URI="https://chromium.googlesource.com/libyuv/libyuv"
-S="${WORKDIR}/${PN}-${PV}"
-RESTRICT="fetch"
+SRC_URI=\
+"https://chromium.googlesource.com/libyuv/libyuv/+archive/${EGIT_COMMIT}.tar.gz\
+	 -> ${P}.tar.gz"
+S="${WORKDIR}/${P}"
+RESTRICT="mirror"
 DOCS=( AUTHORS LICENSE PATENTS README.chromium README.md )
 
 src_unpack() {
-	git-r3_fetch
-	git-r3_checkout
+	mkdir -p "${S}"
+	cd "${S}"
+	unpack ${A}
 }
 
 src_prepare() {
 	default
+	eapply "${FILESDIR}/${PN}-1741-cmake-libdir.patch"
 	cmake-utils_src_prepare
 	multilib_copy_sources
 }
@@ -49,11 +54,6 @@ multilib_src_compile() {
 
 multilib_src_install() {
 	cmake-utils_src_install
-	dodir /usr/$(get_libdir)
-	mv "${D}/usr/lib/libyuv."* "${D}/usr/$(get_libdir)" || die
-	if ! use static ; then
-		rm "${D}/usr/$(get_libdir)/libyuv.a" || die
-	fi
 	insinto /usr/$(get_libdir)/pkgconfig
 	cat "${FILESDIR}/${PN}.pc.in" | \
 	sed -e "s|@prefix@|/usr|" \
