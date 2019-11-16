@@ -30,7 +30,7 @@ DEPEND+=" dev-libs/libpcre"
 inherit ot-kernel-cve-en
 
 # based on my last edit in unix timestamp (date -u +%Y%m%d_%I%M_%p_%Z)
-LATEST_CVE_KERNEL_INDEX="20191108_0444_AM_UTC"
+LATEST_CVE_KERNEL_INDEX="20191116_0656_PM_UTC"
 LATEST_CVE_KERNEL_INDEX="${LATEST_CVE_KERNEL_INDEX,,}"
 
 # this will trigger a kernel re-install based on use flag timestamp
@@ -45,11 +45,11 @@ CVE_DELAY="${CVE_DELAY:=1}"
 
 CVE_LANG="${CVE_LANG:=en}" # You can define this in your make.conf.  Currently en is only supported.
 
-CVE_2007_3732_FIX_SRC_URI=""
-CVE_2007_3732_FN="CVE-2007-3732-fix--linux.patch"
+CVE_2007_3732_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=a10d9a71bafd3a283da240d2868e71346d2aef6f"
+CVE_2007_3732_FN="CVE-2007-3732-fix--linux-arch-i386-fixup-TRACE_IRQ-breakage.patch"
 CVE_2007_3732_SEVERITY_LANG="CVE_2007_3732_SEVERITY_${CVE_LANG}"
 CVE_2007_3732_SEVERITY="${!CVE_2007_3732_SEVERITY_LANG}"
-CVE_2007_3732_PM=""
+CVE_2007_3732_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=a10d9a71bafd3a283da240d2868e71346d2aef6f"
 CVE_2007_3732_SUMMARY_LANG="CVE_2007_3732_SUMMARY_${CVE_LANG}"
 CVE_2007_3732_SUMMARY="${!CVE_2007_3732_SUMMARY_LANG}"
 
@@ -60,6 +60,14 @@ CVE_2010_2243_SEVERITY="${!CVE_2010_2243_SEVERITY_LANG}"
 CVE_2010_2243_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ad6759fbf35d104dbf573cd6f4c6784ad6823f7e"
 CVE_2010_2243_SUMMARY_LANG="CVE_2010_2243_SUMMARY_${CVE_LANG}"
 CVE_2010_2243_SUMMARY="${!CVE_2010_2243_SUMMARY_LANG}"
+
+CVE_2010_4661_FIX_SRC_URI=""
+CVE_2010_4661_FN="CVE-2010-4661-fix--linux-.patch"
+CVE_2010_4661_SEVERITY_LANG="CVE_2010_4661_SEVERITY_${CVE_LANG}"
+CVE_2010_4661_SEVERITY="${!CVE_2010_4661_SEVERITY_LANG}"
+CVE_2010_4661_PM=""
+CVE_2010_4661_SUMMARY_LANG="CVE_2010_4661_SUMMARY_${CVE_LANG}"
+CVE_2010_4661_SUMMARY="${!CVE_2010_4661_SUMMARY_LANG}"
 
 CVE_2014_3180_FIX_SRC_URI="https://lkml.org/lkml/diff/2014/9/7/29/1"
 CVE_2014_3180_FN="CVE-2014-3180-fix--linux-kernel-compat-timer-updates-for-3.17.patch"
@@ -307,12 +315,18 @@ CVE_2019_18814_PM="https://lore.kernel.org/patchwork/patch/1142523/"
 CVE_2019_18814_SUMMARY_LANG="CVE_2019_18814_SUMMARY_${CVE_LANG}"
 CVE_2019_18814_SUMMARY="${!CVE_2019_18814_SUMMARY_LANG}"
 
+CVE_2019_18885_FIX_SRC_URI="https://github.com/torvalds/linux/commit/09ba3bc9dd150457c506e4661380a6183af651c1.patch"
+CVE_2019_18885_FN="CVE-2019-18885-fix--linux-fs-btrfs-merge-btrfs_find_device-and-find_device.patch"
+CVE_2019_18885_SEVERITY_LANG="CVE_2019_18885_SEVERITY_${CVE_LANG}"
+CVE_2019_18885_SEVERITY="${!CVE_2019_18885_SEVERITY_LANG}"
+CVE_2019_18885_PM="https://github.com/torvalds/linux/commit/09ba3bc9dd150457c506e4661380a6183af651c1"
+CVE_2019_18885_SUMMARY_LANG="CVE_2019_18885_SUMMARY_${CVE_LANG}"
+CVE_2019_18885_SUMMARY="${!CVE_2019_18885_SUMMARY_LANG}"
 
-#			 ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
+#			 ${CVE_2010_4661_FIX_SRC_URI} -> ${CVE_2010_4661_FN}
 
-
-
-SRC_URI+=" cve_hotfix? ( ${CVE_2010_2243_FIX_SRC_URI} -> ${CVE_2010_2243_FN}
+SRC_URI+=" cve_hotfix? ( ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
+			 ${CVE_2010_2243_FIX_SRC_URI} -> ${CVE_2010_2243_FN}
 			 ${CVE_2014_3180_FIX_SRC_URI} -> ${CVE_2014_3180_FN}
 			 ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 			 ${CVE_2019_14814_FIX_SRC_URI} -> ${CVE_2019_14814_FN}
@@ -352,7 +366,11 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2010_2243_FIX_SRC_URI} -> ${CVE_2010_2243_FN}
 			 ${CVE_2019_18812_FIX_SRC_URI} -> ${CVE_2019_18812_FN}
 			 ${CVE_2019_18813_FIX_SRC_URI} -> ${CVE_2019_18813_FN}
 			 ${CVE_2019_18814_FIX_SRC_URI} -> ${CVE_2019_18814_FN}
+
+			 ${CVE_2019_18885_FIX_SRC_URI} -> ${CVE_2019_18885_FN}
 )"
+
+
 
 # @FUNCTION: _fetch_cve_boilerplate_msg
 # @DESCRIPTION:
@@ -410,12 +428,10 @@ function fetch_cve_2007_3732_hotfix() {
 	if ver_test ${PV} -lt 2.6 ; then
 		return 0
 	fi
-	# todo
-	return 0
 	local CVE_ID="CVE-2007-3732"
 	if grep -F -e \
-		"" \
-		"${S}/" \
+		"#define DO_ERROR_INFO(trapnr, signr, str, name, sicode, siaddr, irq)" \
+		"${S}/arch/i386/kernel/traps.c" \
 		>/dev/null ; \
 	then
 		einfo "${CVE_ID} already patched."
@@ -436,6 +452,25 @@ function fetch_cve_2010_2243_hotfix() {
 	if grep -F -e \
 		"curr_clocksource = clocksource_default_clock();" \
 		"${S}/kernel/time/clocksource.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2010_4661_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2010_4661 patch
+function fetch_cve_2010_4661_hotfix() {
+	# fixme
+	return 0
+	local CVE_ID="CVE-2010-4661"
+	if grep -F -e \
+		"" \
+		"${S}/" \
 		>/dev/null ; \
 	then
 		einfo "${CVE_ID} already patched."
@@ -972,6 +1007,23 @@ function fetch_cve_2019_18814_hotfix() {
 	_fetch_cve_boilerplate_msg_footer
 }
 
+# @FUNCTION: fetch_cve_2019_18885_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_18885 patch
+function fetch_cve_2019_18885_hotfix() {
+	local CVE_ID="CVE-2019-18885"
+	if grep -F -e \
+		"u64 devid, u8 *uuid, u8 *fsid, bool seed);" \
+		"${S}/fs/btrfs/volumes.h" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
 # @FUNCTION: _resolve_hotfix_default
 # @DESCRIPTION:
 # Applies the fix or warns if not applied
@@ -1022,14 +1074,12 @@ function apply_cve_2007_3732_hotfix() {
 	if ver_test ${PV} -lt 2.6 ; then
 		return 0
 	fi
-	# todo
-	return 0
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
 	if grep -F -e \
-		"" \
-		"${S}/" \
+		"#define DO_ERROR_INFO(trapnr, signr, str, name, sicode, siaddr, irq)" \
+		"${S}/arch/i386/kernel/traps.c" \
 		>/dev/null ; \
 	then
 		einfo "${CVE_ID} is already patched."
@@ -1053,6 +1103,27 @@ function apply_cve_2010_2243_hotfix() {
 	if grep -F -e \
 		"curr_clocksource = clocksource_default_clock();" \
 		"${S}/kernel/time/clocksource.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2010_4661_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2010_4661 patch if it needs to
+function apply_cve_2010_4661_hotfix() {
+	# fixme
+	return 0
+	local CVE_ID="CVE-2010-4661"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"" \
+		"${S}/" \
 		>/dev/null ; \
 	then
 		einfo "${CVE_ID} is already patched."
@@ -1677,6 +1748,29 @@ function apply_cve_2019_18814_hotfix() {
 	_resolve_hotfix_default
 }
 
+# @FUNCTION: apply_cve_2019_18885_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_18885 patch if it needs to
+function apply_cve_2019_18885_hotfix() {
+	local CVE_ID="CVE-2019-18885"
+	if ver_test ${PV} -ge 5.1.0 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"u64 devid, u8 *uuid, u8 *fsid, bool seed);" \
+		"${S}/fs/btrfs/volumes.h" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
 
 # @FUNCTION: fetch_cve_hotfixes
 # @DESCRIPTION:
@@ -1689,8 +1783,9 @@ function fetch_cve_hotfixes() {
 
 		fetch_cve_2014_3180_hotfix
 
-#		fetch_cve_2007_3732_hotfix
+		fetch_cve_2007_3732_hotfix
 		fetch_cve_2010_2243_hotfix
+#		fetch_cve_2010_4661_hotfix
 
 		fetch_cve_2019_16746_hotfix
 		fetch_cve_2019_14814_hotfix
@@ -1722,6 +1817,7 @@ function fetch_cve_hotfixes() {
 		fetch_cve_2019_18812_hotfix
 		fetch_cve_2019_18813_hotfix
 		fetch_cve_2019_18814_hotfix
+		fetch_cve_2019_18885_hotfix
 
 		local cve_copyright1="CVE_COPYRIGHT1_${CVE_LANG}"
 		local cve_copyright2="CVE_COPYRIGHT2_${CVE_LANG}"
@@ -1747,8 +1843,9 @@ function apply_cve_hotfixes() {
 		einfo "Applying CVE hotfixes"
 		apply_cve_2014_3180_hotfix
 
-#		apply_cve_2007_3732_hotfix
+		apply_cve_2007_3732_hotfix
 		apply_cve_2010_2243_hotfix
+#		apply_cve_2010_4661_hotfix
 
 		apply_cve_2019_16746_hotfix
 		apply_cve_2019_14814_hotfix
@@ -1780,5 +1877,6 @@ function apply_cve_hotfixes() {
 		apply_cve_2019_18812_hotfix
 		apply_cve_2019_18813_hotfix
 		apply_cve_2019_18814_hotfix
+		apply_cve_2019_18885_hotfix
 	fi
 }
