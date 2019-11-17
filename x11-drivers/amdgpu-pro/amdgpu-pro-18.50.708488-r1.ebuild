@@ -10,9 +10,9 @@ LICENSE="AMD GPL-2 QPL-1.0"
 KEYWORDS="~amd64 ~x86"
 MULTILIB_COMPAT=( abi_x86_{32,64} )
 inherit linux-info multilib-build unpacker
-PKG_VER=${PV:0:5}
-PKG_VER_MAJ=${PV:0:2}
-PKG_REV=${PV:6:6}
+PKG_VER=$(ver_cut 1-2)
+PKG_VER_MAJ=$(ver_cut 1)
+PKG_REV=$(ver_cut 3)
 PKG_ARCH="ubuntu"
 PKG_ARCH_VER="18.04"
 PKG_VER_AMF="1.4.11"
