@@ -89,19 +89,6 @@ RDEPEND="app-eselect/eselect-opencl
 	 x11-libs/libXinerama[${MULTILIB_USEDEP}]
 	 x11-libs/libXrandr[${MULTILIB_USEDEP}]
 	 x11-libs/libXrender[${MULTILIB_USEDEP}]
-	 navi? ( || (
-		  sys-kernel/amdgpu-dkms
-		>=sys-kernel/aufs-sources-5.3
-		>=sys-kernel/ck-sources-5.3
-		>=sys-kernel/gentoo-sources-5.3
-		>=sys-kernel/git-sources-5.3
-		>=sys-kernel/hardened-sources-5.3
-		>=sys-kernel/pf-sources-5.3
-		  sys-kernel/rock-dkms
-		>=sys-kernel/rt-sources-5.3
-		>=sys-kernel/vanilla-sources-5.3
-		>=sys-kernel/xbox-sources-5.3
-		>=sys-kernel/zen-sources-5.3 ) )
 	 dkms? ( sys-kernel/amdgpu-dkms sys-kernel/rock-dkms )"
 # hsakmt requires libnuma.so.1
 # kmstest requires libkms
