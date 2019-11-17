@@ -2,8 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-DESCRIPTION="New generation AMD closed-source drivers for Southern Islands"
-DESCRIPTION+=" (HD7730 Series) and newer chipsets"
+DESCRIPTION="New generation AMD closed-source drivers for Southern Islands \
+(HD7730 Series) and newer chipsets"
 HOMEPAGE=\
 "https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-10-unified"
 LICENSE="AMD GPL-2 QPL-1.0"
@@ -34,8 +34,8 @@ PKG_VER_XORG_VIDEO_AMDGPU_DRV="18.1.99" # about the same as the mesa version
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="+amf dkms +egl +gles2 freesync hsa +opencl +opengl openmax orca pal"
-IUSE+=" +vaapi +vdpau +vulkan wayland"
+IUSE="+amf dkms +egl +gles2 freesync hsa +opencl +opengl openmax orca pal \
++vaapi +vdpau +vulkan wayland"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -122,16 +122,22 @@ pkg_setup() {
 
 	CONFIG_CHECK="~DRM_AMDGPU"
 
-	WARNING_DRM_AMDGPU="The CONFIG_DRM_AMDGPU kernel option is required for FreeSync or AMDGPU-PRO driver to work"
+	WARNING_DRM_AMDGPU=\
+"The CONFIG_DRM_AMDGPU kernel option is required for FreeSync or AMDGPU-PRO \
+driver to work"
 
 	linux-info_pkg_setup
 
 	if use pal ; then
-		einfo "OpenCL PAL (Portable Abstraction Layer) being used.  It is only supported by GCN 5.x (Vega).  It is still in development."
+		einfo \
+"OpenCL PAL (Portable Abstraction Layer) being used.  It is only supported by \
+GCN 5.x (Vega).  It is still in development."
 	fi
 
 	if use orca ; then
-		einfo "OpenCL orca is being used. You are enabling the older legacy OpenCL driver implementation used by older fglrx."
+		einfo \
+"OpenCL orca is being used. You are enabling the older legacy OpenCL driver \
+implementation used by older fglrx."
 	fi
 
 	if use hsa ; then
@@ -143,188 +149,206 @@ pkg_setup() {
 src_unpack() {
 	default
 
-	unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgl1-amdgpu-pro-appprofiles_${PKG_VER_STRING}_all.deb"
+	local d="amdgpu-pro-${PKG_VER_STRING_DIR}"
+
+	unpack_deb "${d}/libgl1-amdgpu-pro-appprofiles_${PKG_VER_STRING}_all.deb"
 
 	if use abi_x86_64 ; then
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libdrm-amdgpu-utils_${PKG_VER_LIBDRM}-${PKG_REV}_amd64.deb"
+		unpack_deb "${d}/libdrm-amdgpu-utils_${PKG_VER_LIBDRM}-${PKG_REV}_amd64.deb"
 
 		if use opencl ; then
 			# Install clinfo
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/clinfo-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
+			unpack_deb "${d}/clinfo-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
 
 			# Install OpenCL components
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libopencl1-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
+			unpack_deb "${d}/libopencl1-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
 			if use pal ; then
-				unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/opencl-amdgpu-pro-icd_${PKG_VER_STRING}_amd64.deb"
+				unpack_deb "${d}/opencl-amdgpu-pro-icd_${PKG_VER_STRING}_amd64.deb"
 			fi
 
 			if use orca ; then
-				unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/opencl-orca-amdgpu-pro-icd_${PKG_VER_STRING}_amd64.deb"
+				unpack_deb "${d}/opencl-orca-amdgpu-pro-icd_${PKG_VER_STRING}_amd64.deb"
 			fi
 
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/roct-amdgpu-pro_${PKG_VER_ROCT}-${PKG_REV}_amd64.deb"
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/roct-amdgpu-pro-dev_${PKG_VER_ROCT}-${PKG_REV}_amd64.deb"
+			unpack_deb "${d}/roct-amdgpu-pro_${PKG_VER_ROCT}-${PKG_REV}_amd64.deb"
+			unpack_deb "${d}/roct-amdgpu-pro-dev_${PKG_VER_ROCT}-${PKG_REV}_amd64.deb"
 		fi
 
 		if use opengl ; then
 			# Install OpenGL
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgl1-amdgpu-pro-glx_${PKG_VER_STRING}_amd64.deb"
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgl1-amdgpu-pro-ext_${PKG_VER_STRING}_amd64.deb"
-			mv opt/amdgpu-pro/lib/xorg/modules/extensions/libglx.so opt/amdgpu-pro/lib/xorg/modules/extensions/libglx64.so || die
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgl1-amdgpu-pro-dri_${PKG_VER_STRING}_amd64.deb"
+			unpack_deb "${d}/libgl1-amdgpu-pro-glx_${PKG_VER_STRING}_amd64.deb"
+			unpack_deb "${d}/libgl1-amdgpu-pro-ext_${PKG_VER_STRING}_amd64.deb"
+			mv opt/amdgpu-pro/lib/xorg/modules/extensions/libglx.so \
+				opt/amdgpu-pro/lib/xorg/modules/extensions/libglx64.so \
+				|| die
+			unpack_deb "${d}/libgl1-amdgpu-pro-dri_${PKG_VER_STRING}_amd64.deb"
 
 			# Install GBM
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgbm1-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
+			unpack_deb "${d}/libgbm1-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
 
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libglapi1-amdgpu-pro_${PKG_VER}-${PKG_REV}_amd64.deb"
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libglapi-amdgpu-mesa_${PKG_VER_MESA}-${PKG_REV}_amd64.deb"
+			unpack_deb "${d}/libglapi1-amdgpu-pro_${PKG_VER}-${PKG_REV}_amd64.deb"
+			unpack_deb "${d}/libglapi-amdgpu-mesa_${PKG_VER_MESA}-${PKG_REV}_amd64.deb"
 		fi
 
 		if use gles2 ; then
 			# Install GLES2
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgles2-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
+			unpack_deb "${d}/libgles2-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
 		fi
 
 		if use egl ; then
 			# Install EGL libs
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libegl1-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
+			unpack_deb "${d}/libegl1-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
 		fi
 
 		if use vulkan ; then
 			# Install Vulkan driver
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/vulkan-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
+			unpack_deb "${d}/vulkan-amdgpu-pro_${PKG_VER_STRING}_amd64.deb"
 		fi
 
 		if use openmax ; then
 			# Install gstreamer OpenMAX plugin
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/gst-omx-amdgpu_${PKG_VER_GST_OMX}-${PKG_REV}_amd64.deb"
+			unpack_deb "${d}/gst-omx-amdgpu_${PKG_VER_GST_OMX}-${PKG_REV}_amd64.deb"
 		fi
 
 		if use vdpau ; then
 			# Install VDPAU
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/mesa-amdgpu-vdpau-drivers_${PKG_VER_MESA}-${PKG_REV}_amd64.deb"
+			unpack_deb "${d}/mesa-amdgpu-vdpau-drivers_${PKG_VER_MESA}-${PKG_REV}_amd64.deb"
 		fi
 
 		if use vaapi ; then
 			# Install Mesa VA-API video acceleration drivers
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/mesa-amdgpu-va-drivers_${PKG_VER_MESA}-${PKG_REV}_amd64.deb"
+			unpack_deb "${d}/mesa-amdgpu-va-drivers_${PKG_VER_MESA}-${PKG_REV}_amd64.deb"
 		fi
 
 		if use amf ; then
 			# Install AMDGPU Pro Advanced Multimedia Framework
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/amf-amdgpu-pro_${PKG_VER_AMF}-${PKG_REV}_amd64.deb"
+			unpack_deb "${d}/amf-amdgpu-pro_${PKG_VER_AMF}-${PKG_REV}_amd64.deb"
 		fi
 
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libdrm-amdgpu-amdgpu1_${PKG_VER_LIBDRM}-${PKG_REV}_amd64.deb"
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libdrm-amdgpu-radeon1_${PKG_VER_LIBDRM}-${PKG_REV}_amd64.deb"
+		unpack_deb "${d}/libdrm-amdgpu-amdgpu1_${PKG_VER_LIBDRM}-${PKG_REV}_amd64.deb"
+		unpack_deb "${d}/libdrm-amdgpu-radeon1_${PKG_VER_LIBDRM}-${PKG_REV}_amd64.deb"
 
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/glamor-amdgpu_${PKG_VER_GLAMOR}-${PKG_REV}_amd64.deb"
-		mv opt/amdgpu/lib/xorg/modules/libglamoregl.so opt/amdgpu/lib/xorg/modules/libglamoregl64.so || die
+		unpack_deb "${d}/glamor-amdgpu_${PKG_VER_GLAMOR}-${PKG_REV}_amd64.deb"
+		mv opt/amdgpu/lib/xorg/modules/libglamoregl.so \
+			opt/amdgpu/lib/xorg/modules/libglamoregl64.so \
+			|| die
 
 		# Install xorg drivers
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/xserver-xorg-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}_amd64.deb"
-		mv opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv64.so || die
+		unpack_deb "${d}/xserver-xorg-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}_amd64.deb"
+		mv opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so \
+			opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv64.so \
+			|| die
 
-		# Internal LLVM7 required since Gentoo is missing the shared libLLVM-7.so .  Gentoo only use split llvm libraries but the driver components use the shared.
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libllvm${PKG_VER_LLVM}-amdgpu_${PKG_VER_LLVM}-${PKG_REV}_amd64.deb"
-		#unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/llvm-amdgpu-${PKG_VER_LLVM}_${PKG_VER_LLVM}-${PKG_REV}_amd64.deb"
-		#unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/llvm-amdgpu-${PKG_VER_LLVM}-runtime_${PKG_VER_LLVM}-${PKG_REV}_amd64.deb"
+		# Internal LLVM7 required since Gentoo is missing the shared
+		# libLLVM-7.so .  Gentoo only use split llvm libraries but the
+		# driver components use the shared.
+		unpack_deb "${d}/libllvm${PKG_VER_LLVM}-amdgpu_${PKG_VER_LLVM}-${PKG_REV}_amd64.deb"
+		#unpack_deb "${d}/llvm-amdgpu-${PKG_VER_LLVM}_${PKG_VER_LLVM}-${PKG_REV}_amd64.deb"
+		#unpack_deb "${d}/llvm-amdgpu-${PKG_VER_LLVM}-runtime_${PKG_VER_LLVM}-${PKG_REV}_amd64.deb"
 
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libwayland-amdgpu-client0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_amd64.deb"
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libwayland-amdgpu-egl1_${PKG_VER_LIBWAYLAND}-${PKG_REV}_amd64.deb"
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libwayland-amdgpu-server0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_amd64.deb"
-		#unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libwayland-amdgpu-cursor0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_amd64.deb"
-		#unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libwayland-amdgpu-dev_${PKG_VER_LIBWAYLAND}-${PKG_REV}_amd64.deb"
+		unpack_deb "${d}/libwayland-amdgpu-client0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_amd64.deb"
+		unpack_deb "${d}/libwayland-amdgpu-egl1_${PKG_VER_LIBWAYLAND}-${PKG_REV}_amd64.deb"
+		unpack_deb "${d}/libwayland-amdgpu-server0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_amd64.deb"
+		#unpack_deb "${d}/libwayland-amdgpu-cursor0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_amd64.deb"
+		#unpack_deb "${d}/libwayland-amdgpu-dev_${PKG_VER_LIBWAYLAND}-${PKG_REV}_amd64.deb"
 	fi
 
 	if use abi_x86_32 ; then
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libdrm-amdgpu-utils_${PKG_VER_LIBDRM}-${PKG_REV}_i386.deb"
+		unpack_deb "${d}/libdrm-amdgpu-utils_${PKG_VER_LIBDRM}-${PKG_REV}_i386.deb"
 
 		if use opencl ; then
 			# Install OpenCL components
 			if use orca ; then
-				unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/opencl-orca-amdgpu-pro-icd_${PKG_VER_STRING}_i386.deb"
+				unpack_deb "${d}/opencl-orca-amdgpu-pro-icd_${PKG_VER_STRING}_i386.deb"
 			fi
 
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libopencl1-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
-			#unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/opencl-amdgpu-pro-icd_${PKG_VER_STRING}_i386.deb" fixme
+			unpack_deb "${d}/libopencl1-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
+			#unpack_deb "${d}/opencl-amdgpu-pro-icd_${PKG_VER_STRING}_i386.deb" fixme
 		fi
 
 		if use opengl ; then
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgl1-amdgpu-pro-glx_${PKG_VER_STRING}_i386.deb"
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgl1-amdgpu-pro-ext_${PKG_VER_STRING}_i386.deb"
-			mv opt/amdgpu-pro/lib/xorg/modules/extensions/libglx.so opt/amdgpu-pro/lib/xorg/modules/extensions/libglx32.so || die
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgl1-amdgpu-pro-dri_${PKG_VER_STRING}_i386.deb"
+			unpack_deb "${d}/libgl1-amdgpu-pro-glx_${PKG_VER_STRING}_i386.deb"
+			unpack_deb "${d}/libgl1-amdgpu-pro-ext_${PKG_VER_STRING}_i386.deb"
+			mv opt/amdgpu-pro/lib/xorg/modules/extensions/libglx.so \
+				opt/amdgpu-pro/lib/xorg/modules/extensions/libglx32.so \
+				|| die
+			unpack_deb "${d}/libgl1-amdgpu-pro-dri_${PKG_VER_STRING}_i386.deb"
 
 			# Install GBM
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgbm1-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
+			unpack_deb "${d}/libgbm1-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
 
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libglapi1-amdgpu-pro_${PKG_VER}-${PKG_REV}_i386.deb"
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libglapi-amdgpu-mesa_${PKG_VER_MESA}-${PKG_REV}_i386.deb"
+			unpack_deb "${d}/libglapi1-amdgpu-pro_${PKG_VER}-${PKG_REV}_i386.deb"
+			unpack_deb "${d}/libglapi-amdgpu-mesa_${PKG_VER_MESA}-${PKG_REV}_i386.deb"
 		fi
 
 		if use gles2 ; then
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgles2-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
+			unpack_deb "${d}/libgles2-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
 		fi
 
 		if use egl ; then
 			# Install EGL libs
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libegl1-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
+			unpack_deb "${d}/libegl1-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
 		fi
 
 		if use vulkan ; then
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/vulkan-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
+			unpack_deb "${d}/vulkan-amdgpu-pro_${PKG_VER_STRING}_i386.deb"
 		fi
 
 		if use openmax ; then
 			# Install gstreamer OpenMAX plugin
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/gst-omx-amdgpu_${PKG_VER_GST_OMX}-${PKG_REV}_i386.deb"
+			unpack_deb "${d}/gst-omx-amdgpu_${PKG_VER_GST_OMX}-${PKG_REV}_i386.deb"
 		fi
 
 		if use vdpau ; then
 			# Install VDPAU
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/mesa-amdgpu-vdpau-drivers_${PKG_VER_MESA}-${PKG_REV}_i386.deb"
+			unpack_deb "${d}/mesa-amdgpu-vdpau-drivers_${PKG_VER_MESA}-${PKG_REV}_i386.deb"
 		fi
 
 		if use vaapi ; then
 			# Install Mesa VA-API video acceleration drivers
-			unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/mesa-amdgpu-va-drivers_${PKG_VER_MESA}-${PKG_REV}_i386.deb"
+			unpack_deb "${d}/mesa-amdgpu-va-drivers_${PKG_VER_MESA}-${PKG_REV}_i386.deb"
 		fi
 
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libdrm-amdgpu-amdgpu1_${PKG_VER_LIBDRM}-${PKG_REV}_i386.deb"
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libdrm-amdgpu-radeon1_${PKG_VER_LIBDRM}-${PKG_REV}_i386.deb"
+		unpack_deb "${d}/libdrm-amdgpu-amdgpu1_${PKG_VER_LIBDRM}-${PKG_REV}_i386.deb"
+		unpack_deb "${d}/libdrm-amdgpu-radeon1_${PKG_VER_LIBDRM}-${PKG_REV}_i386.deb"
 
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/glamor-amdgpu_${PKG_VER_GLAMOR}-${PKG_REV}_i386.deb"
-		mv opt/amdgpu/lib/xorg/modules/libglamoregl.so opt/amdgpu/lib/xorg/modules/libglamoregl32.so || die
+		unpack_deb "${d}/glamor-amdgpu_${PKG_VER_GLAMOR}-${PKG_REV}_i386.deb"
+		mv opt/amdgpu/lib/xorg/modules/libglamoregl.so \
+			opt/amdgpu/lib/xorg/modules/libglamoregl32.so \
+			|| die
 
 		# Install xorg drivers
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/xserver-xorg-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}_i386.deb"
-		mv opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv32.so || die
+		unpack_deb "${d}/xserver-xorg-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}_i386.deb"
+		mv opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so \
+			opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv32.so \
+			|| die
 
-		# Internal LLVM7 required since Gentoo is missing the shared libLLVM-7.so .  Gentoo only use split llvm libraries but the driver components use the shared.
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libllvm${PKG_VER_LLVM}-amdgpu_${PKG_VER_LLVM}-${PKG_REV}_i386.deb"
-		##unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/llvm-amdgpu-${PKG_VER_LLVM}-runtime_${PKG_VER_LLVM}-${PKG_REV}_i386.deb"
-		##unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/llvm-amdgpu_${PKG_VER_LLVM}-${PKG_REV}_i386.deb"
-		#unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/llvm-amdgpu-runtime_${PKG_VER_LLVM}-${PKG_REV}_i386.deb"
+		# Internal LLVM7 required since Gentoo is missing the shared
+		# libLLVM-7.so .  Gentoo only use split llvm libraries but
+		# the driver components use the shared.
+		unpack_deb "${d}/libllvm${PKG_VER_LLVM}-amdgpu_${PKG_VER_LLVM}-${PKG_REV}_i386.deb"
+		##unpack_deb "${d}/llvm-amdgpu-${PKG_VER_LLVM}-runtime_${PKG_VER_LLVM}-${PKG_REV}_i386.deb"
+		##unpack_deb "${d}/llvm-amdgpu_${PKG_VER_LLVM}-${PKG_REV}_i386.deb"
+		#unpack_deb "${d}/llvm-amdgpu-runtime_${PKG_VER_LLVM}-${PKG_REV}_i386.deb"
 
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libwayland-amdgpu-client0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_i386.deb"
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libwayland-amdgpu-egl1_${PKG_VER_LIBWAYLAND}-${PKG_REV}_i386.deb"
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libwayland-amdgpu-server0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_i386.deb"
-		#unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libwayland-amdgpu-cursor0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_i386.deb"
-		#unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libwayland-amdgpu-dev_${PKG_VER_LIBWAYLAND}-${PKG_REV}_i386.deb"
+		unpack_deb "${d}/libwayland-amdgpu-client0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_i386.deb"
+		unpack_deb "${d}/libwayland-amdgpu-egl1_${PKG_VER_LIBWAYLAND}-${PKG_REV}_i386.deb"
+		unpack_deb "${d}/libwayland-amdgpu-server0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_i386.deb"
+		#unpack_deb "${d}/libwayland-amdgpu-cursor0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_i386.deb"
+		#unpack_deb "${d}/libwayland-amdgpu-dev_${PKG_VER_LIBWAYLAND}-${PKG_REV}_i386.deb"
 	fi
 
 	if use opengl ; then
-		unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libgbm1-amdgpu-pro-base_${PKG_VER_STRING}_all.deb"
+		unpack_deb "${d}/libgbm1-amdgpu-pro-base_${PKG_VER_STRING}_all.deb"
 	fi
 
 	# Pin version (contains version requirements)
-	unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/amdgpu-pro-pin_${PKG_VER}-${PKG_REV}_all.deb"
+	unpack_deb "${d}/amdgpu-pro-pin_${PKG_VER}-${PKG_REV}_all.deb"
 
-	unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libdrm-amdgpu-common_${PKG_VER_ID}-${PKG_REV}_all.deb"
+	unpack_deb "${d}/libdrm-amdgpu-common_${PKG_VER_ID}-${PKG_REV}_all.deb"
 
-	#unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libwayland-amdgpu-doc_${PKG_VER_LIBWAYLAND}-${PKG_REV}_all.deb"
-	#unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/wayland-protocols-amdgpu_${PKG_VER_WAYLAND_PROTO}-${PKG_REV}_all.deb"
+	#unpack_deb "${d}/libwayland-amdgpu-doc_${PKG_VER_LIBWAYLAND}-${PKG_REV}_all.deb"
+	#unpack_deb "${d}/wayland-protocols-amdgpu_${PKG_VER_WAYLAND_PROTO}-${PKG_REV}_all.deb"
 }
 
 src_prepare() {
