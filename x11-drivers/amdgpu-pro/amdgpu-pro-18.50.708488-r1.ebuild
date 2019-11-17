@@ -53,10 +53,19 @@ RDEPEND="app-eselect/eselect-opencl
 	 >=app-eselect/eselect-opengl-1.0.7
 	 dev-util/cunit
 	 dev-libs/libedit
-	 freesync? ( || ( >=sys-kernel/gentoo-sources-5.0
-			  >=sys-kernel/git-sources-5.0_rc1
-			    sys-kernel/ot-sources
-			  >=sys-kernel/vanilla-sources-5.0 ) )
+	 freesync? ( || (
+		  sys-kernel/amdgpu-dkms
+		>=sys-kernel/aufs-sources-5.0
+		>=sys-kernel/ck-sources-5.0
+		>=sys-kernel/git-sources-5.0
+		>=sys-kernel/gentoo-sources-5.0
+		>=sys-kernel/hardened-sources-5.0
+		>=sys-kernel/pf-sources-5.0
+		  sys-kernel/rock-dkms
+		>=sys-kernel/rt-sources-5.0
+		>=sys-kernel/vanilla-sources-5.0
+		>=sys-kernel/xbox-sources-5.0
+		>=sys-kernel/zen-sources-5.0 ) )
 	 hsa? ( !dev-libs/roct-thunk-interface
 		 sys-process/numactl )
 	 media-libs/libomxil-bellagio
@@ -72,14 +81,27 @@ RDEPEND="app-eselect/eselect-opencl
 		     media-libs/vulkan-loader )
 	 >=x11-base/xorg-drivers-1.19
 	 <x11-base/xorg-drivers-1.20
+	 x11-base/xorg-proto
 	 >=x11-base/xorg-server-1.19[glamor]
 	 >=x11-libs/libdrm-${PKG_VER_LIBDRM}[libkms]
-	 x11-base/xorg-proto
 	 x11-libs/libX11[${MULTILIB_USEDEP}]
 	 x11-libs/libXext[${MULTILIB_USEDEP}]
 	 x11-libs/libXinerama[${MULTILIB_USEDEP}]
 	 x11-libs/libXrandr[${MULTILIB_USEDEP}]
 	 x11-libs/libXrender[${MULTILIB_USEDEP}]
+	 navi? ( || (
+		  sys-kernel/amdgpu-dkms
+		>=sys-kernel/aufs-sources-5.3
+		>=sys-kernel/ck-sources-5.3
+		>=sys-kernel/gentoo-sources-5.3
+		>=sys-kernel/git-sources-5.3
+		>=sys-kernel/hardened-sources-5.3
+		>=sys-kernel/pf-sources-5.3
+		  sys-kernel/rock-dkms
+		>=sys-kernel/rt-sources-5.3
+		>=sys-kernel/vanilla-sources-5.3
+		>=sys-kernel/xbox-sources-5.3
+		>=sys-kernel/zen-sources-5.3 ) )
 	 dkms? ( sys-kernel/amdgpu-dkms sys-kernel/rock-dkms )"
 # hsakmt requires libnuma.so.1
 # kmstest requires libkms
