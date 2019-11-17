@@ -337,40 +337,6 @@ src_unpack() {
 
 	#unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/libwayland-amdgpu-doc_${PKG_VER_LIBWAYLAND}-${PKG_REV}_all.deb"
 	#unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/wayland-protocols-amdgpu_${PKG_VER_WAYLAND_PROTO}-${PKG_REV}_all.deb"
-
-	# todo dev use flag
-echo << EOF > /dev/null
-./glamor-amdgpu-dev_1.19.0-708488_i386.deb : glamor-amdgpu-dev
-./glamor-amdgpu-dev_1.19.0-708488_amd64.deb : glamor-amdgpu-dev
-./libdrm-amdgpu-dev_2.4.95-708488_i386.deb  : libdrm-amdgpu-dev
-./libdrm-amdgpu-dev_2.4.95-708488_amd64.deb : libdrm-amdgpu-dev
-./libegl1-amdgpu-mesa-dev_18.2.0-708488_amd64.deb : libegl1-amdgpu-mesa-dev
-./libegl1-amdgpu-mesa-dev_18.2.0-708488_i386.deb : libegl1-amdgpu-mesa-dev
-./libgbm-amdgpu-dev_18.2.0-708488_i386.deb : libgbm-amdgpu-dev
-./libgbm-amdgpu-dev_18.2.0-708488_amd64.deb : libgbm-amdgpu-dev
-./libgbm1-amdgpu-pro-dev_18.50-708488_amd64.deb : libgbm1-amdgpu-pro-dev
-./libgbm1-amdgpu-pro-dev_18.50-708488_i386.deb : libgbm1-amdgpu-pro-dev
-./libgl1-amdgpu-mesa-dev_18.2.0-708488_amd64.deb : libgl1-amdgpu-mesa-dev
-./libgl1-amdgpu-mesa-dev_18.2.0-708488_i386.deb : libgl1-amdgpu-mesa-dev
-./libgles1-amdgpu-mesa-dev_18.2.0-708488_amd64.deb : libgles1-amdgpu-mesa-dev
-./libgles1-amdgpu-mesa-dev_18.2.0-708488_i386.deb : libgles1-amdgpu-mesa-dev
-./libgles2-amdgpu-mesa-dev_18.2.0-708488_amd64.deb : libgles2-amdgpu-mesa-dev
-./libgles2-amdgpu-mesa-dev_18.2.0-708488_i386.deb : libgles2-amdgpu-mesa-dev
-./libosmesa6-amdgpu-dev_18.2.0-708488_amd64.deb : libosmesa6-amdgpu-dev
-./libosmesa6-amdgpu-dev_18.2.0-708488_i386.deb : libosmesa6-amdgpu-dev
-./libwayland-amdgpu-dev_1.15.0-708488_amd64.deb : libwayland-amdgpu-dev
-./libwayland-amdgpu-dev_1.15.0-708488_i386.deb : libwayland-amdgpu-dev
-./libxatracker-amdgpu-dev_18.2.0-708488_amd64.deb : libxatracker-amdgpu-dev
-./libxatracker-amdgpu-dev_18.2.0-708488_i386.deb : libxatracker-amdgpu-dev
-./llvm-amdgpu-7.0-dev_7.0-708488_i386.deb : llvm-amdgpu-7.0-dev
-./llvm-amdgpu-7.0-dev_7.0-708488_amd64.deb : llvm-amdgpu-7.0-dev
-./llvm-amdgpu-dev_7.0-708488_amd64.deb : llvm-amdgpu-dev
-./llvm-amdgpu-dev_7.0-708488_i386.deb : llvm-amdgpu-dev
-./mesa-amdgpu-common-dev_18.2.0-708488_i386.deb : mesa-amdgpu-common-dev
-./mesa-amdgpu-common-dev_18.2.0-708488_amd64.deb : mesa-amdgpu-common-dev
-./opencl-amdgpu-pro-dev_18.50-708488_amd64.deb : opencl-amdgpu-pro-dev
-./roct-amdgpu-pro-dev_1.0.9-708488_amd64.deb : roct-amdgpu-pro-dev
-EOF
 }
 
 src_prepare() {
