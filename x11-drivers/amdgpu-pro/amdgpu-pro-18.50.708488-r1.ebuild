@@ -811,7 +811,9 @@ src_install() {
 	# Install xorg drivers
 	if use abi_x86_64 ; then
 		exeinto /usr/lib64/opengl/amdgpu/modules/drivers/
-		mv opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv64.so opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so || die
+		mv opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv64.so \
+			opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so \
+			|| die
 		doexe opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so
 	fi
 	if use abi_x86_32 ; then
@@ -820,7 +822,9 @@ src_install() {
 		else
 			# currently bugged when both are installed on amd64
 			exeinto /usr/lib32/opengl/amdgpu/modules/drivers/
-			mv opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv32.so opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so || die
+			mv opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv32.so \
+				opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so \
+				|| die
 			doexe opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so
 		fi
 	fi
