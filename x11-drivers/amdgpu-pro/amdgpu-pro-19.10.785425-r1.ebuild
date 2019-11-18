@@ -77,7 +77,7 @@ RDEPEND="  app-eselect/eselect-opencl
 	   vdpau? (  >=media-libs/mesa-${PKG_VER_MESA}[-vdpau] )
 	  !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
 	   vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
-		     media-libs/vulkan-loader )
+		       media-libs/vulkan-loader )
 	 >=x11-base/xorg-drivers-1.19
 	  <x11-base/xorg-drivers-1.20
 	   x11-base/xorg-proto
@@ -87,12 +87,15 @@ RDEPEND="  app-eselect/eselect-opencl
 	   x11-libs/libXext[${MULTILIB_USEDEP}]
 	   x11-libs/libXinerama[${MULTILIB_USEDEP}]
 	   x11-libs/libXrandr[${MULTILIB_USEDEP}]
-	   x11-libs/libXrender[${MULTILIB_USEDEP}]"
+	   x11-libs/libXrender[${MULTILIB_USEDEP}]
+	|| ( >=sys-kernel/linux-firmware-20161205
+	     >=sys-firmware/amdgpu-firmware-${PKG_VER}
+	       sys-firmware/rock-firmware )"
+# todo: update sys-kernel/linux-firmware if necessary
 # hsakmt requires libnuma.so.1
 # kmstest requires libkms
 # amdgpu_dri.so requires wayland?
 # vdpau requires llvm7
-DEPEND=">=sys-kernel/linux-firmware-20161205"
 S="${WORKDIR}"
 REQUIRED_USE="|| ( opencl_pal opencl_orca ) \
 	roct? ( dkms )"
