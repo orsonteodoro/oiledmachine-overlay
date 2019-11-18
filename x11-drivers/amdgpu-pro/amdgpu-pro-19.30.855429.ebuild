@@ -80,7 +80,6 @@ RDEPEND="  app-eselect/eselect-opencl
 		|| ( >=sys-firmware/amdgpu-firmware-${PKG_VER}
 	               sys-firmware/rock-firmware
 		     >=sys-kernel/linux-firmware-20190923 ) )
-	   media-libs/libomxil-bellagio
 	 >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
 	 >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
 	 opencl? (  >=sys-devel/gcc-5.2.0 )
