@@ -691,7 +691,8 @@ src_install() {
 				dosym libamfrt${b}.so.${PKG_VER} \
 					${d_amdgpu}/libamfrt${b}.so
 				dosym libamfrt${b}.so.${PKG_VER} \
-					${d_amdgpu}/libamfrt${b}.so.1 # from Gentoo QA notice when installing
+					${d_amdgpu}/libamfrt${b}.so.1
+					# from Gentoo QA notice when installing
 			fi
 		fi
 
@@ -799,6 +800,21 @@ src_install() {
 	}
 
 	multilib_foreach_abi install_abi
+
+	pushd "${S}"/usr/share/doc || die
+		L=$(find . -name "copyright" -print0 |  xargs -0 dirname {} | sed -r -e "s|.[\/]?||" | tail -n +2)
+		for d in $L ; do
+			docinto /usr/share/${PN}/licenses/${d}
+			dodoc ${d}/copyright
+			docinto /usr/share/${PN}/changelogs/${d}
+			dodoc ${d}/changelog.Debian.gz
+		done
+	popd
+	docinto /usr/share/${PN}/licenses
+	local d_insdoc="${S}/amdgpu-pro-${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}/doc"
+	dodoc "${d_insdoc}"/copyright
+	docinto /usr/share/${PN}/changelogs
+	dodoc "${d_insdoc}"/changelog.Debian.gz
 }
 
 pkg_prerm() {
