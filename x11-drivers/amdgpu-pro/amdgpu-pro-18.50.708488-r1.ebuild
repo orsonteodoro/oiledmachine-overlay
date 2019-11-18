@@ -288,11 +288,13 @@ src_unpack() {
 		#unpack_deb "${d}/llvm-amdgpu-${PKG_VER_LLVM}_${PKG_VER_LLVM}-${PKG_REV}_${arch}.deb"
 		#unpack_deb "${d}/llvm-amdgpu-${PKG_VER_LLVM}-runtime_${PKG_VER_LLVM}-${PKG_REV}_${arch}.deb"
 
-		unpack_deb "${d}/libwayland-amdgpu-client0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
-		unpack_deb "${d}/libwayland-amdgpu-egl1_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
-		unpack_deb "${d}/libwayland-amdgpu-server0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
-		#unpack_deb "${d}/libwayland-amdgpu-cursor0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
-		#unpack_deb "${d}/libwayland-amdgpu-dev_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
+		#if use wayland ; then
+			unpack_deb "${d}/libwayland-amdgpu-client0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
+			unpack_deb "${d}/libwayland-amdgpu-egl1_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
+			unpack_deb "${d}/libwayland-amdgpu-server0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
+			#unpack_deb "${d}/libwayland-amdgpu-cursor0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
+			#unpack_deb "${d}/libwayland-amdgpu-dev_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
+		#fi
 	}
 	multilib_foreach_abi unpack_abi
 
@@ -305,8 +307,10 @@ src_unpack() {
 
 	unpack_deb "${d}/libdrm-amdgpu-common_${PKG_VER_ID}-${PKG_REV}_all.deb"
 
-	#unpack_deb "${d}/libwayland-amdgpu-doc_${PKG_VER_LIBWAYLAND}-${PKG_REV}_all.deb"
-	#unpack_deb "${d}/wayland-protocols-amdgpu_${PKG_VER_WAYLAND_PROTO}-${PKG_REV}_all.deb"
+	#if use wayland ; then
+		#unpack_deb "${d}/libwayland-amdgpu-doc_${PKG_VER_LIBWAYLAND}-${PKG_REV}_all.deb"
+		#unpack_deb "${d}/wayland-protocols-amdgpu_${PKG_VER_WAYLAND_PROTO}-${PKG_REV}_all.deb"
+	#fi
 }
 
 src_prepare() {

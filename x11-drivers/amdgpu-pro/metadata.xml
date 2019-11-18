@@ -26,6 +26,7 @@
       driver for GCN 5.x GPUs (e.g. Vega) or newer.</flag>
     <flag name="opengl">Install OpenGL support.</flag>
     <flag name="openmax">Install OpenMAX support.</flag>
+    <flag name="picasso">Checks firmware for proper Picasso APU support.</flag>
     <flag name="vaapi">Install VAAPI (Video Acceleration API)
       acceleration.</flag>
     <flag name="vdpau">Install VDPAU (Video Decode and Presentation API for
