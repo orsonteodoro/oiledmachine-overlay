@@ -18,7 +18,6 @@ PKG_ARCH_VER="18.04"
 PKG_VER_AMF="1.4.12"
 PKG_VER_GLAMOR="1.19.0"
 PKG_VER_GST_OMX="1.0.0.1"
-PKG_VER_HSA="1.1.6"
 PKG_VER_ID="1.0.0"
 PKG_VER_LIBDRM="2.4.97"
 PKG_VER_LIBWAYLAND="1.15.0"
@@ -34,8 +33,8 @@ PKG_VER_XORG_VIDEO_AMDGPU_DRV="18.1.99" # about the same as the mesa version
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="+amf dkms +egl +gles2 freesync hsa +opencl +opengl openmax orca pal \
-+vaapi +vdpau +vulkan wayland"
+IUSE="+amf dkms +egl +gles2 freesync +opencl +opengl openmax opencl_orca \
+opencl_pal roct +vaapi +vdpau +vulkan wayland"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -67,7 +66,7 @@ RDEPEND="app-eselect/eselect-opencl
 		>=sys-kernel/vanilla-sources-5.0
 		>=sys-kernel/xbox-sources-5.0
 		>=sys-kernel/zen-sources-5.0 ) )
-	 hsa? ( !dev-libs/roct-thunk-interface
+	 roct? ( !dev-libs/roct-thunk-interface
 		 sys-process/numactl )
 	 media-libs/libomxil-bellagio
 	 >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
@@ -97,8 +96,8 @@ RDEPEND="app-eselect/eselect-opencl
 # vdpau requires llvm7
 DEPEND=">=sys-kernel/linux-firmware-20161205"
 S="${WORKDIR}"
-REQUIRED_USE="|| ( pal orca )" # incomplete
-# !hsa
+REQUIRED_USE="|| ( opencl_pal opencl_orca ) \
+	roct? ( dkms )"
 
 _set_check_reqs_requirements() {
 	if use abi_x86_32 && use abi_x86_64 ; then
@@ -144,21 +143,23 @@ driver to work"
 
 	linux-info_pkg_setup
 
-	if use pal ; then
+	if use opencl_pal ; then
 		einfo \
 "OpenCL PAL (Portable Abstraction Layer) being used.  It is only supported\n\
 by GCN 5.x (Vega).  It is still in development."
 	fi
 
-	if use orca ; then
+	if use opencl_orca ; then
 		einfo \
 "OpenCL orca is being used. You are enabling the older legacy OpenCL driver\n\
 implementation used by older fglrx."
 	fi
 
-	if use hsa ; then
-		# remove if it works and been tested on hsa hardware
-		eerror "hsa not supported and not tested"
+	if use roct ; then
+		ewarn "ROCt has not been tested"
+		ewarn \
+"It's recommended to use the dev-libs/roct-thunk-interface package instead of\n\
+the roct USE flag."
 	fi
 
 	_set_check_reqs_requirements
@@ -196,16 +197,18 @@ src_unpack() {
 
 			# Install OpenCL components
 			unpack_deb "${d}/libopencl1-amdgpu-pro_${PKG_VER_STRING}_${arch}.deb"
-			if use pal ; then
+			if use opencl_pal ; then
 				if [[ "${ABI}" == "amd64" ]] ; then
 					unpack_deb "${d}/opencl-amdgpu-pro-icd_${PKG_VER_STRING}_${arch}.deb"
 				fi
 			fi
 
-			if use orca ; then
+			if use opencl_orca ; then
 				unpack_deb "${d}/opencl-orca-amdgpu-pro-icd_${PKG_VER_STRING}_${arch}.deb"
 			fi
+		fi
 
+		if use roct ; then
 			if [[ "${ABI}" == "amd64" ]] ; then
 				unpack_deb "${d}/roct-amdgpu-pro_${PKG_VER_ROCT}-${PKG_REV}_${arch}.deb"
 				unpack_deb "${d}/roct-amdgpu-pro-dev_${PKG_VER_ROCT}-${PKG_REV}_${arch}.deb"
@@ -495,14 +498,14 @@ src_install() {
 
 			# Install OpenCL components
 			insinto /etc/OpenCL/vendors/
-			if use pal ; then
+			if use opencl_pal ; then
 				if [[ "${ABI}" == "amd64" ]] ; then
 					doins etc/OpenCL/vendors/amdocl${b}.icd
 				fi
 			fi
 
 			local dd_opencl="/usr/$(get_libdir)/OpenCL/vendors/amdgpu"
-			if use orca ; then
+			if use opencl_orca ; then
 				doins etc/OpenCL/vendors/amdocl-orca${b}.icd
 
 				exeinto ${dd_opencl}/
@@ -516,7 +519,7 @@ src_install() {
 				${dd_opencl}/libOpenCL.so
 		fi
 
-		if use hsa ; then
+		if use roct ; then
 			if [[ "${ABI}" == "amd64" ]] ; then
 				exeinto ${d_amdgpu}/
 				doexe ${sd_amdgpupro}/libhsakmt.so.1.0.0

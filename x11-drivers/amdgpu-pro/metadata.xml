@@ -21,11 +21,11 @@
     <flag name="navi">Checks for DRM (Direct Rendering Manager) kernel level
       driver support for NAVI.</flag>
     <flag name="opencl">Install OpenCL support.</flag>
+    <flag name="opencl_orca">Install the outdated legacy OpenCL Orca driver.</flag>
+    <flag name="opencl_pal">Install the OpenCL PAL (Platform Abstraction Layer)
+      driver for GCN 5.x GPUs (e.g. Vega) or newer.</flag>
     <flag name="opengl">Install OpenGL support.</flag>
     <flag name="openmax">Install OpenMAX support.</flag>
-    <flag name="orca">Install the outdated legacy OpenCL Orca driver.</flag>
-    <flag name="pal">Install the OpenCL PAL (Platform Abstraction Layer)
-      driver for GCN 5.x GPUs (e.g. Vega) or newer.</flag>
     <flag name="vaapi">Install VAAPI (Video Acceleration API)
       acceleration.</flag>
     <flag name="vdpau">Install VDPAU (Video Decode and Presentation API for
