@@ -10,8 +10,7 @@ MY_RPR="${PV//_p/-}" # Remote PR
 FN="rock-dkms_${MY_RPR}_all.deb"
 BASE_URL="http://repo.radeon.com/rocm/apt/debian"
 FOLDER="pool/main/r/rock-dkms"
-RDEPEND="!sys-kernel/linux-firmware
-	 !sys-firmware/amdgpu-firmware"
+RDEPEND="!sys-firmware/amdgpu-firmware"
 RESTRICT="fetch"
 SLOT="0/${PV}"
 inherit unpacker
@@ -24,6 +23,23 @@ pkg_nofetch() {
         einfo "  - ${FN}"
         einfo "from ${BASE_URL} in the ${FOLDER} folder and place them in"
 	einfo "${distdir}"
+}
+
+pkg_setup() {
+	if [[ -d /lib/firmware/amdgpu ]] ; then
+		die \
+"/lib/firmware/amdgpu folder must not be present.  Make sure that the\n\
+savedconfig USE flag is set and you removed the firmware there.\n\n
+For details, see\n\
+  https://wiki.gentoo.org/wiki/Linux_firmware#Savedconfig"
+	fi
+	if [[ -d /lib/firmware/radeon ]] ; then
+		die \
+"/lib/firmware/radeon folder must not be present.  Make sure that the\n\
+savedconfig USE flag is set and you removed the firmware there.\n\n
+For details, see\n\
+  https://wiki.gentoo.org/wiki/Linux_firmware#Savedconfig"
+	fi
 }
 
 src_unpack() {
