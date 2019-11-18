@@ -670,22 +670,18 @@ src_install() {
 		fi
 
 		# Install glamor
-		if use abi_x86_64 ; then
-			exeinto ${dd_opengl}/
-			mv opt/amdgpu/lib/xorg/modules/libglamoregl${b}.so \
-				opt/amdgpu/lib/xorg/modules/libglamoregl.so \
-				|| die
-			doexe opt/amdgpu/lib/xorg/modules/libglamoregl.so
-		fi
+		exeinto ${dd_opengl}/
+		mv opt/amdgpu/lib/xorg/modules/libglamoregl${b}.so \
+			opt/amdgpu/lib/xorg/modules/libglamoregl.so \
+			|| die
+		doexe opt/amdgpu/lib/xorg/modules/libglamoregl.so
 
 		# Install libglapi
-		if use abi_x86_64 ; then
-			exeinto ${d_amdgpu}/
-			doexe ${sd_amdgpupro}/libglapi.so.1
-			dosym libglapi.so.1 ${d_amdgpu}/libglapi.so
-			doexe ${sd_amdgpu}/libglapi.so.0.0.0
-			dosym libglapi.so.0.0.0 ${d_amdgpu}/libglapi.so.0
-		fi
+		exeinto ${d_amdgpu}/
+		doexe ${sd_amdgpupro}/libglapi.so.1
+		dosym libglapi.so.1 ${d_amdgpu}/libglapi.so
+		doexe ${sd_amdgpu}/libglapi.so.0.0.0
+		dosym libglapi.so.0.0.0 ${d_amdgpu}/libglapi.so.0
 
 		# Install the shared LLVM libraries that Gentoo doesn't produce
 		exeinto ${d_amdgpu}/llvm-${PKG_VER_LLVM}/lib/

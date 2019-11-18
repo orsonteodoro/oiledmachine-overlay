@@ -11,19 +11,25 @@
   </upstream>
   <use>
     <flag name="amf">Install the Accelerated Media Framework support.</flag>
-    <flag name="dkms">Installs the enhanced amdgpu kernel driver with ROCm API support and updated DRM driver.</flag>
+    <flag name="dkms">Installs the enhanced amdgpu kernel driver with ROCm API
+      support and updated DRM driver.</flag>
     <flag name="egl">Install EGL support.</flag>
     <flag name="freesync">Enable the Freesync checks.</flag>
     <flag name="gles2">Install GLESv2 support.</flag>
-    <flag name="hsa">Install the HSA (Heterogeneous System Architecture) development libraries.</flag>
-    <flag name="navi">Checks for DRM (Direct Rendering Manager) kernel level driver support for NAVI.</flag>
+    <flag name="hsa">Install the HSA (Heterogeneous System Architecture)
+      development libraries.</flag>
+    <flag name="navi">Checks for DRM (Direct Rendering Manager) kernel level
+      driver support for NAVI.</flag>
     <flag name="opencl">Install OpenCL support.</flag>
     <flag name="opengl">Install OpenGL support.</flag>
     <flag name="openmax">Install OpenMAX support.</flag>
     <flag name="orca">Install the outdated legacy OpenCL Orca driver.</flag>
-    <flag name="pal">Install the OpenCL PAL (Platform Abstraction Layer) driver for GCN 5.x GPUs (e.g. Vega) or newer.</flag>
-    <flag name="vaapi">Install VAAPI (Video Acceleration API) acceleration.</flag>
-    <flag name="vdpau">Install VDPAU (Video Decode and Presentation API for Unix) acceleration.</flag>
+    <flag name="pal">Install the OpenCL PAL (Platform Abstraction Layer)
+      driver for GCN 5.x GPUs (e.g. Vega) or newer.</flag>
+    <flag name="vaapi">Install VAAPI (Video Acceleration API)
+      acceleration.</flag>
+    <flag name="vdpau">Install VDPAU (Video Decode and Presentation API for
+      Unix) acceleration.</flag>
     <flag name="vulkan">Install the vulkan ICD.</flag>
     <flag name="wayland">Install wayland support.</flag>
   </use>
