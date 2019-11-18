@@ -772,17 +772,13 @@ src_install() {
 	pushd "${S}"/usr/share/doc || die
 		L=$(find . -name "copyright" -print0 |  xargs -0 dirname {} | sed -r -e "s|.[\/]?||" | tail -n +2)
 		for d in $L ; do
-			docinto /usr/share/${PN}/licenses/${d}
+			docinto licenses/${d}
 			dodoc ${d}/copyright
-			docinto /usr/share/${PN}/changelogs/${d}
-			dodoc ${d}/changelog.Debian.gz
 		done
 	popd
-	docinto /usr/share/${PN}/licenses
+	docinto licenses
 	local d_insdoc="${S}/amdgpu-pro-${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}/doc"
 	dodoc "${d_insdoc}"/copyright
-	docinto /usr/share/${PN}/changelogs
-	dodoc "${d_insdoc}"/changelog.Debian.gz
 }
 
 pkg_prerm() {
