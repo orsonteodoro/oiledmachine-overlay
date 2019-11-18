@@ -563,7 +563,7 @@ src_install() {
 			# Install Vulkan driver
 			insinto /etc/vulkan/icd.d/
 			doins "${T}/amd_icd${b}.json"
-			exeinto /usr/lib${b}/vulkan/vendors/amdgpu/
+			exeinto /usr/$(get_libdir)/vulkan/vendors/amdgpu/
 			doexe ${sd_amdgpupro}/amdvlk${b}.so
 		fi
 
