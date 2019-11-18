@@ -46,10 +46,11 @@ SLOT="1"
 #	>=sys-devel/lld-7.0.0
 #	>=sys-devel/llvm-7.0.0
 # libglapi.so.0 needs libselinux
-RDEPEND="app-eselect/eselect-opencl
+RDEPEND="  app-eselect/eselect-opencl
 	 >=app-eselect/eselect-opengl-1.0.7
 	 dev-util/cunit
 	 dev-libs/libedit
+	 dkms? ( sys-kernel/amdgpu-dkms sys-kernel/rock-dkms )
 	 freesync? ( || (
 		  sys-kernel/amdgpu-dkms
 		>=sys-kernel/aufs-sources-5.0
@@ -63,29 +64,6 @@ RDEPEND="app-eselect/eselect-opencl
 		>=sys-kernel/vanilla-sources-5.0
 		>=sys-kernel/xbox-sources-5.0
 		>=sys-kernel/zen-sources-5.0 ) )
-	 roct? ( !dev-libs/roct-thunk-interface
-		 sys-process/numactl )
-	 media-libs/libomxil-bellagio
-	 >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
-	 >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
-	 opencl? ( >=sys-devel/gcc-5.2.0 )
-	 openmax? ( >=media-libs/mesa-${PKG_VER_MESA}[openmax] )
-	 >=sys-libs/libselinux-1.32
-	 sys-libs/ncurses[tinfo]
-	 vdpau? ( >=media-libs/mesa-${PKG_VER_MESA}[-vdpau] )
-	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
-	 vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
-		     media-libs/vulkan-loader )
-	 >=x11-base/xorg-drivers-1.19
-	 <x11-base/xorg-drivers-1.20
-	 >=x11-base/xorg-server-1.19[glamor]
-	 >=x11-libs/libdrm-${PKG_VER_LIBDRM}[libkms]
-	 x11-libs/libX11[${MULTILIB_USEDEP}]
-	 x11-libs/libXext[${MULTILIB_USEDEP}]
-	 x11-libs/libXinerama[${MULTILIB_USEDEP}]
-	 x11-libs/libXrandr[${MULTILIB_USEDEP}]
-	 x11-libs/libXrender[${MULTILIB_USEDEP}]
-	 x11-base/xorg-proto
 	 navi? ( || (
 		  sys-kernel/amdgpu-dkms
 		>=sys-kernel/aufs-sources-5.3
@@ -99,7 +77,29 @@ RDEPEND="app-eselect/eselect-opencl
 		>=sys-kernel/vanilla-sources-5.3
 		>=sys-kernel/xbox-sources-5.3
 		>=sys-kernel/zen-sources-5.3 ) )
-	 dkms? ( sys-kernel/amdgpu-dkms sys-kernel/rock-dkms )"
+	   media-libs/libomxil-bellagio
+	 >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
+	 >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
+	 opencl? (  >=sys-devel/gcc-5.2.0 )
+	 openmax? ( >=media-libs/mesa-${PKG_VER_MESA}[openmax] )
+	 roct? ( !dev-libs/roct-thunk-interface
+		  sys-process/numactl )
+	 >=sys-libs/libselinux-1.32
+	   sys-libs/ncurses[tinfo]
+	  vdpau? (  >=media-libs/mesa-${PKG_VER_MESA}[-vdpau] )
+	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
+	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
+		      media-libs/vulkan-loader )
+	 >=x11-base/xorg-drivers-1.19
+	  <x11-base/xorg-drivers-1.20
+	   x11-base/xorg-proto
+	 >=x11-base/xorg-server-1.19[glamor]
+	 >=x11-libs/libdrm-${PKG_VER_LIBDRM}[libkms]
+	   x11-libs/libX11[${MULTILIB_USEDEP}]
+	   x11-libs/libXext[${MULTILIB_USEDEP}]
+	   x11-libs/libXinerama[${MULTILIB_USEDEP}]
+	   x11-libs/libXrandr[${MULTILIB_USEDEP}]
+	   x11-libs/libXrender[${MULTILIB_USEDEP}]"
 # hsakmt requires libnuma.so.1
 # kmstest requires libkms
 # amdgpu_dri.so requires wayland?
