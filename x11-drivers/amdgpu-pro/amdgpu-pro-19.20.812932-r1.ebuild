@@ -88,7 +88,7 @@ RDEPEND="  app-eselect/eselect-opencl
 	   x11-libs/libXinerama[${MULTILIB_USEDEP}]
 	   x11-libs/libXrandr[${MULTILIB_USEDEP}]
 	   x11-libs/libXrender[${MULTILIB_USEDEP}]
-	|| ( >=sys-kernel/linux-firmware-20161205
+	|| ( sys-kernel/linux-firmware
 	     >=sys-firmware/amdgpu-firmware-${PKG_VER}
 	       sys-firmware/rock-firmware )"
 # todo: update sys-kernel/linux-firmware if necessary
