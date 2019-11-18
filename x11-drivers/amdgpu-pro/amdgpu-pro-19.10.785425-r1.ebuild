@@ -500,7 +500,7 @@ src_install() {
 	doins etc/amd/amdapfxx.blb
 
 	into /usr/
-	cd opt/amdgpu/bin/
+	pushd opt/amdgpu/bin/ || die
 	dobin amdgpu_test
 	dobin kms-steal-crtc
 	dobin kmstest
@@ -509,7 +509,10 @@ src_install() {
 	dobin modetest
 	dobin proptest
 	dobin vbltest
-	cd ../../..
+	popd
+
+	local d_lib32="opt/amdgpu-pro/lib/i386-linux-gnu"
+	local d_lib64="opt/amdgpu-pro/lib/x86_64-linux-gnu"
 
 	if use opencl ; then
 		if use abi_x86_64 ; then
@@ -529,12 +532,12 @@ src_install() {
 				doins etc/OpenCL/vendors/amdocl-orca64.icd
 
 				exeinto /usr/lib64/OpenCL/vendors/amdgpu/
-				doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libamdocl12cl64.so
-				doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libamdocl-orca64.so
+				doexe ${d_lib64}/libamdocl12cl64.so
+				doexe ${d_lib64}/libamdocl-orca64.so
 			fi
 
 			exeinto /usr/lib64/OpenCL/vendors/amdgpu/
-			doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libOpenCL.so.1
+			doexe ${d_lib64}/libOpenCL.so.1
 			dosym libOpenCL.so.1 /usr/lib64/OpenCL/vendors/amdgpu/libOpenCL.so
 		fi
 		if use abi_x86_32 ; then
@@ -548,12 +551,12 @@ src_install() {
 				doins etc/OpenCL/vendors/amdocl-orca32.icd
 
 				exeinto /usr/lib32/OpenCL/vendors/amdgpu/
-				doexe opt/amdgpu-pro/lib/i386-linux-gnu/libamdocl12cl32.so
-				doexe opt/amdgpu-pro/lib/i386-linux-gnu/libamdocl-orca32.so
+				doexe ${d_lib32}/libamdocl12cl32.so
+				doexe ${d_lib32}/libamdocl-orca32.so
 			fi
 
 			exeinto /usr/lib32/OpenCL/vendors/amdgpu/
-			doexe opt/amdgpu-pro/lib/i386-linux-gnu/libOpenCL.so.1
+			doexe ${d_lib32}/libOpenCL.so.1
 			dosym libOpenCL.so.1 /usr/lib32/OpenCL/vendors/amdgpu/libOpenCL.so
 		fi
 	fi
@@ -561,7 +564,7 @@ src_install() {
 	if use hsa ; then
 		if use abi_x86_64 ; then
 			exeinto /usr/lib64/opengl/amdgpu/lib/
-			doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libhsakmt.so.1.0.0
+			doexe ${d_lib64}/libhsakmt.so.1.0.0
 			dosym libhsakmt.so.1.0.0 /usr/lib64/opengl/amdgpu/lib/libhsakmt.so.1.0
 			dosym libhsakmt.so.1.0.0 /usr/lib64/opengl/amdgpu/lib/libhsakmt.so.1
 			dosym libhsakmt.so.1.0.0 /usr/lib64/opengl/amdgpu/lib/libhsakmt.so
@@ -574,10 +577,10 @@ src_install() {
 			doins opt/amdgpu-pro/include/linux/kfd_ioctl.h
 
 			insinto /usr/lib64/pkgconfig/
-			sed -i -e "s|/opt/rocm||g" opt/amdgpu-pro/lib/x86_64-linux-gnu/pkgconfig/libhsakmt.pc
-			sed -i -e "s|//opt/amdgpu-pro/lib/x86_64-linux-gnu|/usr/lib64/opengl/amdgpu/lib/|g" opt/amdgpu-pro/lib/x86_64-linux-gnu/pkgconfig/libhsakmt.pc
-			sed -i -e "s|/include|/usr/include/libhsakmt/|g" opt/amdgpu-pro/lib/x86_64-linux-gnu/pkgconfig/libhsakmt.pc
-			doins opt/amdgpu-pro/lib/x86_64-linux-gnu/pkgconfig/libhsakmt.pc
+			sed -i -e "s|/opt/rocm||g" ${d_lib64}/pkgconfig/libhsakmt.pc
+			sed -i -e "s|//${d_lib64}|/usr/lib64/opengl/amdgpu/lib/|g" ${d_lib64}/pkgconfig/libhsakmt.pc
+			sed -i -e "s|/include|/usr/include/libhsakmt/|g" ${d_lib64}/pkgconfig/libhsakmt.pc
+			doins ${d_lib64}/pkgconfig/libhsakmt.pc
 		fi
 		# no x86 abi
 	fi
@@ -588,12 +591,12 @@ src_install() {
 		if use abi_x86_64 ; then
 			doins "${T}/amd_icd64.json"
 			exeinto /usr/lib64/vulkan/vendors/amdgpu/
-			doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/amdvlk64.so
+			doexe ${d_lib64}/amdvlk64.so
 		fi
 		if use abi_x86_32 ; then
 			doins "${T}/amd_icd32.json"
 			exeinto /usr/lib32/vulkan/vendors/amdgpu/
-			doexe opt/amdgpu-pro/lib/i386-linux-gnu/amdvlk32.so
+			doexe ${d_lib32}/amdvlk32.so
 		fi
 	fi
 
@@ -604,7 +607,7 @@ src_install() {
 			doexe opt/amdgpu/lib/x86_64-linux-gnu/libdrm_amdgpu.so.1.0.0
 			dosym libdrm_amdgpu.so.1.0.0 /usr/lib64/opengl/amdgpu/lib/libdrm_amdgpu.so.1
 			dosym libdrm_amdgpu.so.1.0.0 /usr/lib64/opengl/amdgpu/lib/libdrm_amdgpu.so
-			doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libGL.so.1.2
+			doexe ${d_lib64}/libGL.so.1.2
 			dosym libGL.so.1.2 /usr/lib64/opengl/amdgpu/lib/libGL.so.1
 			dosym libGL.so.1.2 /usr/lib64/opengl/amdgpu/lib/libGL.so
 			exeinto /usr/lib64/opengl/radeon/lib/
@@ -621,11 +624,11 @@ src_install() {
 
 			# Install GBM
 			exeinto /usr/lib64/opengl/amdgpu/lib/
-			doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libgbm.so.1.0.0
+			doexe ${d_lib64}/libgbm.so.1.0.0
 			dosym libgbm.so.1.0.0 /usr/lib64/opengl/amdgpu/lib/libgbm.so.1
 			dosym libgbm.so.1.0.0 /usr/lib64/opengl/amdgpu/lib/libgbm.so
 			exeinto /usr/lib64/opengl/amdgpu/gbm/
-			doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/gbm/gbm_amdgpu.so
+			doexe ${d_lib64}/gbm/gbm_amdgpu.so
 			dosym gbm_amdgpu.so /usr/lib64/opengl/amdgpu/gbm/libdummy.so
 			dosym opengl/amdgpu/gbm /usr/lib64/gbm
 		fi
@@ -636,7 +639,7 @@ src_install() {
 			doexe opt/amdgpu/lib/i386-linux-gnu/libdrm_amdgpu.so.1.0.0
 			dosym libdrm_amdgpu.so.1.0.0 /usr/lib32/opengl/amdgpu/lib/libdrm_amdgpu.so.1
 			dosym libdrm_amdgpu.so.1.0.0 /usr/lib32/opengl/amdgpu/lib/libdrm_amdgpu.so
-			doexe opt/amdgpu-pro/lib/i386-linux-gnu/libGL.so.1.2
+			doexe ${d_lib32}/libGL.so.1.2
 			dosym libGL.so.1.2 /usr/lib32/opengl/amdgpu/lib/libGL.so.1
 			dosym libGL.so.1.2 /usr/lib32/opengl/amdgpu/lib/libGL.so
 			exeinto /usr/lib32/opengl/radeon/lib/
@@ -653,11 +656,11 @@ src_install() {
 
 			# Install GBM
 			exeinto /usr/lib32/opengl/amdgpu/lib
-			doexe opt/amdgpu-pro/lib/i386-linux-gnu/libgbm.so.1.0.0
+			doexe ${d_lib32}/libgbm.so.1.0.0
 			dosym libgbm.so.1.0.0 /usr/lib32/opengl/amdgpu/lib/libgbm.so.1
 			dosym libgbm.so.1.0.0 /usr/lib32/opengl/amdgpu/lib/libgbm.so
 			exeinto /usr/lib32/opengl/amdgpu/gbm/
-			doexe opt/amdgpu-pro/lib/i386-linux-gnu/gbm/gbm_amdgpu.so
+			doexe ${d_lib32}/gbm/gbm_amdgpu.so
 			dosym gbm_amdgpu.so /usr/lib32/opengl/amdgpu/gbm/libdummy.so
 			dosym opengl/amdgpu/gbm /usr/lib32/gbm
 		fi
@@ -673,12 +676,12 @@ src_install() {
 		# Install GLES2
 		if use abi_x86_64 ; then
 			exeinto /usr/lib64/opengl/amdgpu/lib/
-			doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libGLESv2.so.2
+			doexe ${d_lib64}/libGLESv2.so.2
 			dosym libGLESv2.so.2 /usr/lib64/opengl/amdgpu/lib/libGLESv2.so
 		fi
 		if use abi_x86_32 ; then
 			exeinto /usr/lib32/opengl/amdgpu/lib/
-			doexe opt/amdgpu-pro/lib/i386-linux-gnu/libGLESv2.so.2
+			doexe ${d_lib32}/libGLESv2.so.2
 			dosym libGLESv2.so.2 /usr/lib32/opengl/amdgpu/lib/libGLESv2.so
 		fi
 	fi
@@ -687,12 +690,12 @@ src_install() {
 		# Install EGL libs
 		if use abi_x86_64 ; then
 			exeinto /usr/lib64/opengl/amdgpu/lib/
-			doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libEGL.so.1
+			doexe ${d_lib64}/libEGL.so.1
 			dosym libEGL.so.1 /usr/lib64/opengl/amdgpu/lib/libEGL.so
 		fi
 		if use abi_x86_32 ; then
 			exeinto /usr/lib32/opengl/amdgpu/lib/
-			doexe opt/amdgpu-pro/lib/i386-linux-gnu/libEGL.so.1
+			doexe ${d_lib32}/libEGL.so.1
 			dosym libEGL.so.1 /usr/lib32/opengl/amdgpu/lib/libEGL.so
 		fi
 	fi
@@ -754,7 +757,7 @@ src_install() {
 	if use amf ; then
 		if use abi_x86_64 ; then
 			exeinto /usr/lib64/opengl/amdgpu/lib
-			doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libamfrt64.so.${PKG_VER}
+			doexe ${d_lib64}/libamfrt64.so.${PKG_VER}
 			dosym libamfrt64.so.${PKG_VER} /usr/lib64/opengl/amdgpu/lib/libamfrt64.so.${PKG_VER_MAJ}
 			dosym libamfrt64.so.${PKG_VER} /usr/lib64/opengl/amdgpu/lib/libamfrt64.so
 			dosym libamfrt64.so.${PKG_VER} /usr/lib64/opengl/amdgpu/lib/libamfrt64.so.1 # from Gentoo QA notice when installing
@@ -776,14 +779,14 @@ src_install() {
 	# Install libglapi
 	if use abi_x86_64 ; then
 		exeinto /usr/lib64/opengl/amdgpu/lib/
-		doexe opt/amdgpu-pro/lib/x86_64-linux-gnu/libglapi.so.1
+		doexe ${d_lib64}/libglapi.so.1
 		dosym libglapi.so.1 /usr/lib64/opengl/amdgpu/lib/libglapi.so
 		doexe opt/amdgpu/lib/x86_64-linux-gnu/libglapi.so.0.0.0
 		dosym libglapi.so.0.0.0 /usr/lib64/opengl/amdgpu/lib/libglapi.so.0
 	fi
 	if use abi_x86_32 ; then
 		exeinto /usr/lib32/opengl/amdgpu/lib/
-		doexe opt/amdgpu-pro/lib/i386-linux-gnu/libglapi.so.1
+		doexe ${d_lib32}/libglapi.so.1
 		dosym libglapi.so.1 /usr/lib32/opengl/amdgpu/lib/libglapi.so
 		doexe opt/amdgpu/lib/i386-linux-gnu/libglapi.so.0.0.0
 		dosym libglapi.so.0.0.0 /usr/lib32/opengl/amdgpu/lib/libglapi.so.0
