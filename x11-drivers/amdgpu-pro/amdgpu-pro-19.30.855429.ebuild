@@ -77,9 +77,9 @@ RDEPEND="  app-eselect/eselect-opencl
 		>=sys-kernel/vanilla-sources-5.3
 		>=sys-kernel/xbox-sources-5.3
 		>=sys-kernel/zen-sources-5.3 )
-		|| ( >=sys-kernel/linux-firmware-20190923
-		     >=sys-firmware/amdgpu-firmware-${PKG_VER}
-	               sys-firmware/rock-firmware ) )
+		|| ( >=sys-firmware/amdgpu-firmware-${PKG_VER}
+	               sys-firmware/rock-firmware
+		     >=sys-kernel/linux-firmware-20190923 ) )
 	   media-libs/libomxil-bellagio
 	 >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
 	 >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
@@ -103,9 +103,9 @@ RDEPEND="  app-eselect/eselect-opencl
 	   x11-libs/libXinerama[${MULTILIB_USEDEP}]
 	   x11-libs/libXrandr[${MULTILIB_USEDEP}]
 	   x11-libs/libXrender[${MULTILIB_USEDEP}]
-	 || (  sys-kernel/linux-firmware
-	     >=sys-firmware/amdgpu-firmware-${PKG_VER}
-	       sys-firmware/rock-firmware )"
+	 || ( >=sys-firmware/amdgpu-firmware-${PKG_VER}
+	        sys-firmware/rock-firmware
+	        sys-kernel/linux-firmware )"
 # hsakmt requires libnuma.so.1
 # kmstest requires libkms
 # amdgpu_dri.so requires wayland?
