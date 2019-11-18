@@ -32,8 +32,8 @@ PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.0.1" # about the same as the mesa version
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="+amf dkms +egl +gles2 freesync +navi +opencl +opengl openmax \
-opencl_orca opencl_pal roct +vaapi +vdpau +vulkan wayland"
+IUSE="+amf dkms +egl +gles2 freesync +navi +opencl opencl_orca opencl_pal \
++opengl openmax roct +vaapi +vdpau +vulkan wayland"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -42,8 +42,6 @@ SLOT="1"
 #
 # For more info on VIDEODRV see https://www.x.org/wiki/XorgModuleABIVersions/
 # sys-libs/ncurses[tinfo] required by llvm in this package
-
-# roct-thunk-interface (aka hsa) is outdated
 
 #	>=sys-devel/lld-7.0.0
 #	>=sys-devel/llvm-7.0.0
