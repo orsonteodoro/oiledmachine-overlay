@@ -16,6 +16,11 @@ LICENSE="MIT SURF
 KEYWORDS="~alpha amd64 ~amd64-fbsd ~amd64-linux ~arm arm64 ~ia64 ~ppc ~ppc64 \
 ~sparc x86 ~x86-linux ~x86-macos"
 SLOT="0"
+IUSE="mod_adblock mod_autoopen mod_link_hints mod_searchengines \
+mod_simple_bookmarking_redux update_adblock"
+REQUIRED_USE="mod_searchengines? ( savedconfig )
+	      mod_simple_bookmarking_redux? ( savedconfig )
+	      update_adblock? ( mod_adblock )"
 inherit multilib-minimal
 COMMON_DEPEND=" app-crypt/gcr[gtk]
 		dev-libs/glib:2[${MULTILIB_USEDEP}]
@@ -30,19 +35,14 @@ RDEPEND="${COMMON_DEPEND}
 			   x11-apps/xprop
 			   x11-terms/st )
 	 !sci-chemistry/surf"
-IUSE="mod_adblock mod_autoopen mod_link_hints mod_searchengines \
-mod_simple_bookmarking_redux update_adblock"
-REQUIRED_USE="mod_searchengines? ( savedconfig )
-	      mod_simple_bookmarking_redux? ( savedconfig )
-	      update_adblock? ( mod_adblock )"
 EGIT_BRANCH="surf-webkit2"
 EGIT_COMMIT="d068a3878b6b9f2841a49cd7948cdf9d62b55585"
 EGIT_REPO_URI="https://git.suckless.org/surf"
 AUTOOPEN_FN="surf-0.3-autoopen.diff"
 LINK_HINTS_FN="surf-9999-link-hints.diff"
 SEARCHENGINES_FN="surf-git-20170323-webkit2-searchengines.diff"
-SRC_URI="mod_link_hints? ( ${LINK_HINTS_FN} )
-	 mod_autoopen? ( ${AUTOOPEN_FN} )
+SRC_URI="mod_autoopen? ( ${AUTOOPEN_FN} )
+	 mod_link_hints? ( ${LINK_HINTS_FN} )
 	 mod_searchengines? ( ${SEARCHENGINES_FN} )"
 inherit git-r3 savedconfig toolchain-funcs
 RESTRICT="fetch"
