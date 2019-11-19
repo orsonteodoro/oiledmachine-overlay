@@ -167,12 +167,14 @@ multilib_src_install() {
 
 	if use mod_adblock ; then
 		insinto /etc/surf/scripts
-		doins -r "${FILESDIR}/events" "${FILESDIR}/adblock"
-		fperms 0750 /etc/surf/scripts/adblock/update.sh
+		doins -r \
+			"${FILESDIR}/adblock" \
+			"${FILESDIR}/events"
 		fperms 0750 /etc/surf/scripts/adblock/adblock.py
 		fperms 0750 /etc/surf/scripts/adblock/blocklists.py
 		fperms 0750 /etc/surf/scripts/adblock/blocksrv.py
 		fperms 0750 /etc/surf/scripts/adblock/convert.py
+		fperms 0750 /etc/surf/scripts/adblock/update.sh
 	fi
 
 	if use mod_link_hints ; then
