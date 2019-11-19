@@ -121,9 +121,8 @@ pkg_setup() {
 "The default config.h assumes you have\n\
   net-misc/curl\n\
   x11-terms/st\n\
-installed to support the download function.\n\
-Without those, downloads will fail (gracefully).\n\
-You can fix this by:\n\
+installed to support the download function.  Without those, downloads will\n\
+fail (gracefully).  You can fix this by:\n\
 1) Installing these packages, or\n\
 2) Setting USE=savedconfig and changing config.h accordingly."
 	fi
