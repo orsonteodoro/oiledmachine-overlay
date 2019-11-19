@@ -9,9 +9,9 @@ LICENSE="MIT SURF
 	 mod_adblock? ( CC-BY-NA-SA-3.0 CC-BY-SA-3.0 CC-BY-SA-4.0 GPL-3+ MIT
 			SURF-MOD_ADBLOCKER SURF-MOD_ADBLOCKER-EASYLIST
 			SURF-MOD_ADBLOCKER-SPAM404 )
+	 mod_autoopen? ( all-rights-reserved )
 	 mod_link_hints? ( all-rights-reserved )
 	 mod_searchengines? ( all-rights-reserved )
-	 mod_autoopen? ( all-rights-reserved )
 	 mod_simple_bookmarking_redux? ( all-rights-reserved )"
 KEYWORDS="~alpha amd64 ~amd64-fbsd ~amd64-linux ~arm arm64 ~ia64 ~ppc ~ppc64 \
 ~sparc x86 ~x86-linux ~x86-macos"
