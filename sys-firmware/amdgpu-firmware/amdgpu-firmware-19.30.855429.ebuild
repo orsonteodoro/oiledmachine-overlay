@@ -33,14 +33,14 @@ pkg_setup() {
 	if [[ -d /lib/firmware/amdgpu ]] ; then
 		die \
 "/lib/firmware/amdgpu folder must not be present.  Make sure that the\n\
-savedconfig USE flag is set and you removed the firmware there.\n\n
+savedconfig USE flag is set and you removed the firmware there.\n\
 For details, see\n\
   https://wiki.gentoo.org/wiki/Linux_firmware#Savedconfig"
 	fi
 	if [[ -d /lib/firmware/radeon ]] ; then
 		die \
 "/lib/firmware/radeon folder must not be present.  Make sure that the\n\
-savedconfig USE flag is set and you removed the firmware there.\n\n
+savedconfig USE flag is set and you removed the firmware there.\n\
 For details, see\n\
   https://wiki.gentoo.org/wiki/Linux_firmware#Savedconfig"
 	fi
