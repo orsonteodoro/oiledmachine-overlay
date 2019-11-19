@@ -31,12 +31,12 @@ pkg_nofetch() {
 }
 
 pkg_setup() {
-	if [[ -d /lib/firmware/amdgpu || -d /lib/firmware/radeon ]] ; then
+	if [[ -d /lib/firmware/amdgpu ]] ; then
 		die \
-"/lib/firmware/{amdgpu,radeon} folders must not be present.  Make sure that\n\
+"/lib/firmware/amdgpu folders must not be present.  Make sure that\n\
 the savedconfig USE flag is set in the linux-firmware package and you\n\
 removed the firmware there.  Do something like\n\
-  \`sed -i -e \"s|^amdgpu|#amdgpu|g\" -e \"s|^radeon|#radeon|g\" \
+  \`sed -i -e \"s|^amdgpu|#amdgpu|g\" \
 /etc/portage/savedconfig/sys-kernel/linux-firmware-20191108\`\n\
 For futher details, see\n\
   https://wiki.gentoo.org/wiki/Linux_firmware#Savedconfig"
