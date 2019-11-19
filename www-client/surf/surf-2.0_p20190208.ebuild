@@ -30,9 +30,9 @@ COMMON_DEPEND=" app-crypt/gcr[gtk]
 DEPEND="${COMMON_DEPEND}
 	virtual/pkgconfig[${MULTILIB_USEDEP}]"
 RDEPEND="${COMMON_DEPEND}
-	 !savedconfig? ( >=x11-misc/dmenu-4.7
-			   net-misc/curl
+	 !savedconfig? (   net-misc/curl
 			   x11-apps/xprop
+			 >=x11-misc/dmenu-4.7
 			   x11-terms/st )
 	 !sci-chemistry/surf"
 EGIT_BRANCH="surf-webkit2"
