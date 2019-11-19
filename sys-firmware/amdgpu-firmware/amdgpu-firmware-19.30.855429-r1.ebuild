@@ -5,7 +5,7 @@ EAPI=7
 DESCRIPTION="AMDGPU firmware"
 HOMEPAGE=\
 "https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux"
-LICENSE="LICENSE.ucode"
+LICENSE="LICENSE.amdgpu"
 # See the rock-firmware package for details.
 KEYWORDS="~amd64"
 PKG_VER=$(ver_cut 1-2 ${PV})
@@ -74,5 +74,5 @@ src_install() {
 	docinto licenses
 	local d_insdoc="${WORKDIR}/amdgpu-pro-${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}/doc"
 	dodoc "${d_insdoc}"/copyright
-	dodoc "${FILESDIR}"/{LICENSE.amdgpu,LICENSE.amd-ucode}
+	dodoc "${FILESDIR}"/LICENSE.amdgpu
 }
