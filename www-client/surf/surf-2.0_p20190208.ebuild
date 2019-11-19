@@ -13,8 +13,8 @@ LICENSE="MIT SURF
 	 mod_searchengines? ( all-rights-reserved )
 	 mod_autoopen? ( all-rights-reserved )
 	 mod_simple_bookmarking_redux? ( all-rights-reserved )"
-KEYWORDS="~alpha amd64 ~arm arm64 ~ia64 ~ppc ~ppc64 ~sparc x86 ~amd64-fbsd \
-~amd64-linux ~x86-linux ~x86-macos"
+KEYWORDS="~alpha amd64 ~amd64-fbsd ~amd64-linux ~arm arm64 ~ia64 ~ppc ~ppc64 \
+~sparc x86 ~x86-linux ~x86-macos"
 SLOT="0"
 inherit multilib-minimal
 COMMON_DEPEND=" app-crypt/gcr[gtk]
