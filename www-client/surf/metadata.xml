@@ -17,8 +17,11 @@
   <upstream>
     <doc lang="en">https://git.suckless.org/surf/file/README.html</doc>
     <!-- for keybindings -->
-    <doc lang="en">https://git.suckless.org/surf/file/config.def.h.html#l131</doc>
-    <!-- see https://git.suckless.org/surf/file/LICENSE.html for a full list of maintainers -->
+    <doc lang="en">
+      https://git.suckless.org/surf/file/config.def.h.html#l131
+    </doc>
+    <!-- see https://git.suckless.org/surf/file/LICENSE.html for a full list
+    of maintainers -->
     <maintainer type="person" status="active">
       <email>quinq@fifth.space</email>
       <name>Quentin Rameau</name>
@@ -28,8 +31,11 @@
     <flag name="mod_adblock">Adds adblocking support.</flag>
     <flag name="mod_autoopen">Adds xdg open support.</flag>
     <flag name="mod_link_hints">Adds link hinting support.</flag>
-    <flag name="mod_searchengines">Adds custom search engine keyword searching support.</flag>
+    <flag name="mod_searchengines">Adds custom search engine keyword searching
+      support.</flag>
     <flag name="mod_simple_bookmarking_redux">Adds bookmarking support.</flag>
-    <flag name="savedconfig">Without a saved config.h, this package depends on <pkg>net-misc/curl</pkg> and <pkg>x11-terms/st</pkg> for a default download mechanism</flag>
+    <flag name="savedconfig">Without a saved config.h, this package depends on
+      <pkg>net-misc/curl</pkg> and <pkg>x11-terms/st</pkg> for a default
+      download mechanism</flag>
   </use>
 </pkgmetadata>
