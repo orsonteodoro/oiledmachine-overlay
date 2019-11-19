@@ -190,12 +190,6 @@ _update_adblock() {
 }
 
 pkg_postinst() {
-	if [[ ${REPLACING_VERSIONS} ]] && [[ ${REPLACING_VERSIONS} < 0.4.1-r1 ]]; then
-		ewarn \
-"Please correct the permissions of your \$HOME/.surf/ directory and its\n\
-contents to no longer be world readable (see bug #404983)"
-	fi
-
 	if use mod_link_hints ; then
 		einfo \
 "If you want link hinting support copy /usr/share/${PN}/{script.js,style.css}\n\
