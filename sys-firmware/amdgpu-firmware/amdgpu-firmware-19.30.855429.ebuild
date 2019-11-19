@@ -6,6 +6,7 @@ DESCRIPTION="AMDGPU firmware"
 HOMEPAGE=\
 "https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux"
 LICENSE="LICENSE.ucode"
+# See the rock-firmware package for details.
 KEYWORDS="~amd64"
 PKG_VER=$(ver_cut 1-2 ${PV})
 PKG_VER_MAJ=$(ver_cut 1 ${PV})
@@ -30,18 +31,14 @@ pkg_nofetch() {
 }
 
 pkg_setup() {
-	if [[ -d /lib/firmware/amdgpu ]] ; then
+	if [[ -d /lib/firmware/amdgpu || -d /lib/firmware/radeon ]] ; then
 		die \
-"/lib/firmware/amdgpu folder must not be present.  Make sure that the\n\
-savedconfig USE flag is set and you removed the firmware there.\n\
-For details, see\n\
-  https://wiki.gentoo.org/wiki/Linux_firmware#Savedconfig"
-	fi
-	if [[ -d /lib/firmware/radeon ]] ; then
-		die \
-"/lib/firmware/radeon folder must not be present.  Make sure that the\n\
-savedconfig USE flag is set and you removed the firmware there.\n\
-For details, see\n\
+"/lib/firmware/{amdgpu,radeon} folders must not be present.  Make sure that\n\
+the savedconfig USE flag is set in the linux-firmware package and you\n\
+removed the firmware there.  Do something like\n\
+  \`sed -i -e \"s|^amdgpu|#amdgpu|g\" -e \"s|^radeon|#radeon|g\" \
+/etc/portage/savedconfig/sys-kernel/linux-firmware-20191108\`\n\
+For futher details, see\n\
   https://wiki.gentoo.org/wiki/Linux_firmware#Savedconfig"
 	fi
 }
@@ -67,4 +64,15 @@ src_compile() {
 src_install() {
 	insinto /lib/firmware
 	doins -r firmware/amdgpu
+	pushd "${WORKDIR}"/usr/share/doc || die
+		L=$(find . -name "copyright" -print0 |  xargs -0 dirname {} | sed -r -e "s|.[\/]?||" | tail -n +2)
+		for d in $L ; do
+			docinto licenses/${d}
+			dodoc ${d}/copyright
+		done
+	popd
+	docinto licenses
+	local d_insdoc="${WORKDIR}/amdgpu-pro-${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}/doc"
+	dodoc "${d_insdoc}"/copyright
+	dodoc "${FILESDIR}"/{LICENSE.amdgpu,LICENSE.amd-ucode}
 }
