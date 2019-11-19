@@ -10,7 +10,7 @@ LICENSE="LICENSE.ucode" # mentioned at
 # https://github.com/HSAFoundation/HSA-Drivers-Linux-AMD/blob/master/LICENSE.ucode
 # Same as:
 # https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/LICENSE.amdgpu
-# The documentation may be outdated and the following license may apply:
+# The documentation may be outdated and the following licenses may apply:
 # https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/LICENSE.amd-ucode
 # https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/LICENSE.radeon
 # See also mentioning the difference in firmware
