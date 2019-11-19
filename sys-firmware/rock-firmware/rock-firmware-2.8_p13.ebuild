@@ -12,6 +12,7 @@ LICENSE="LICENSE.ucode" # mentioned at
 # https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/LICENSE.amdgpu
 # The documentation may be outdated and the following license may apply:
 # https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/LICENSE.amd-ucode
+# https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/LICENSE.radeon
 # See also mentioning the difference in firmware
 # https://github.com/RadeonOpenCompute/ROCm#rocm-support-in-upstream-linux-kernels
 KEYWORDS="~amd64"
@@ -59,6 +60,6 @@ src_install() {
 	insinto /lib/firmware
 	doins -r usr/src/amdgpu-${MY_RPR}/firmware/{radeon,amdgpu}
 	docinto licenses
-	dodoc "${FILESDIR}"/{LICENSE.amd-ucode,LICENSE.amdgpu}
+	dodoc "${FILESDIR}"/{LICENSE.amd-ucode,LICENSE.amdgpu,LICENSE.radeon}
 	# The archives should contain license files but don't.
 }
