@@ -12,7 +12,7 @@ SLOT="0/${PV}"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~arm-linux ~x86-linux"
 
 IUSE_SERVERS="dmx kdrive wayland xephyr xnest xorg xvfb"
-IUSE="${IUSE_SERVERS} debug +glamor ipv6 libressl minimal selinux +suid systemd tslib +udev unwind xcsecurity"
+IUSE="${IUSE_SERVERS} debug ipv6 libressl minimal selinux +suid systemd tslib +udev unwind xcsecurity"
 
 CDEPEND=">=app-eselect/eselect-opengl-1.3.0
 	!libressl? ( dev-libs/openssl:0= )
@@ -45,11 +45,6 @@ CDEPEND=">=app-eselect/eselect-opengl-1.3.0
 		>=x11-libs/libXres-1.0.3
 		>=x11-libs/libXtst-1.0.99.2
 	)
-	glamor? (
-		media-libs/libepoxy[X]
-		>=media-libs/mesa-10.3.4-r1[egl,gbm]
-		!x11-libs/glamor
-	)
 	kdrive? (
 		>=x11-libs/libXext-1.0.5
 		x11-libs/libXv
@@ -65,7 +60,9 @@ CDEPEND=">=app-eselect/eselect-opengl-1.3.0
 	!minimal? (
 		>=x11-libs/libX11-1.1.5
 		>=x11-libs/libXext-1.0.5
-		>=media-libs/mesa-10.3.4-r1
+		>=media-libs/mesa-10.3.4-r1[X(+),egl,gbm]
+		media-libs/libepoxy[X,egl(+)]
+		!x11-libs/glamor
 	)
 	tslib? ( >=x11-libs/tslib-1.0 )
 	udev? ( >=virtual/udev-150 )
@@ -100,7 +97,8 @@ RDEPEND="${CDEPEND}
 "
 
 PDEPEND="
-	xorg? ( >=x11-base/xorg-drivers-$(get_version_component_range 1-2) )"
+	xorg? ( >=x11-base/xorg-drivers-$(get_version_component_range 1-2)
+		 <x11-base/xorg-drivers-1.20 )"
 
 REQUIRED_USE="!minimal? (
 		|| ( ${IUSE_SERVERS} )
@@ -126,9 +124,10 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-	if use wayland && ! use glamor; then
+	if use wayland && use minimal; then
 		ewarn "glamor is necessary for acceleration under Xwayland."
 		ewarn "Performance may be unacceptable without it."
+		ewarn "Build with USE=-minimal to enable glamor."
 	fi
 }
 
@@ -142,7 +141,6 @@ src_configure() {
 		$(use_enable ipv6)
 		$(use_enable debug)
 		$(use_enable dmx)
-		$(use_enable glamor)
 		$(use_enable kdrive)
 		$(use_enable kdrive kdrive-kbd)
 		$(use_enable kdrive kdrive-mouse)
@@ -155,6 +153,7 @@ src_configure() {
 		$(use_enable !minimal xfree86-utils)
 		$(use_enable !minimal dri)
 		$(use_enable !minimal dri2)
+		$(use_enable !minimal glamor)
 		$(use_enable !minimal glx)
 		$(use_enable xcsecurity)
 		$(use_enable xephyr)
