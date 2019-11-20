@@ -136,7 +136,7 @@ PDEPEND="
 	video_cards_nvidia?        ( x11-drivers/nvidia-drivers )
 	video_cards_fglrx?         ( x11-drivers/ati-drivers )
 	video_cards_r128?          ( x11-drivers/xf86-video-r128 )
-	video_cards_radeon?        ( x11-drivers/xf86-video-ati )
+	video_cards_radeon?        ( x11-drivers/xf86-video-ati[glamor(+)] )
 	video_cards_radeonsi?      ( x11-drivers/xf86-video-ati[glamor(+)] )
 	video_cards_rendition?     ( x11-drivers/xf86-video-rendition )
 	video_cards_s3?            ( x11-drivers/xf86-video-s3 )
