@@ -2,10 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-DESCRIPTION="New generation AMD closed-source drivers for Southern Islands \
-(HD7730 Series) and newer chipsets"
+DESCRIPTION="Radeon™ Software for Linux®"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-20-unified"
+"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux"
 LICENSE="AMD GPL-2 QPL-1.0"
 KEYWORDS="~amd64 ~x86"
 MULTILIB_COMPAT=( abi_x86_{32,64} )
@@ -19,12 +18,12 @@ PKG_VER_AMF="1.4.12"
 PKG_VER_GLAMOR="1.19.0"
 PKG_VER_GST_OMX="1.0.0.1"
 PKG_VER_ID="1.0.0"
-PKG_VER_LIBDRM="2.4.97"
+PKG_VER_LIBDRM="2.4.98"
 PKG_VER_LIBWAYLAND="1.15.0"
-PKG_VER_LLVM_TRIPLE="7.1.0"
+PKG_VER_LLVM_TRIPLE="9.0.0"
 PKG_VER_LLVM=$(ver_cut 1-2 ${PKG_VER_LLVM_TRIPLE})
 PKG_VER_LLVM_MAJ=$(ver_cut 1 ${PKG_VER_LLVM_TRIPLE})
-PKG_VER_MESA="18.3.0"
+PKG_VER_MESA="19.2.0"
 PKG_VER_ROCT="1.0.9"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
 PKG_VER_STRING_DIR=${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}
@@ -33,8 +32,8 @@ PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.0.1" # about the same as the mesa version
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="+amf dkms +egl +gles2 freesync +opencl opencl_orca \
-opencl_pal +opengl openmax roct +vaapi +vdpau +vulkan wayland"
+IUSE="+amf dkms +egl +gles2 freesync +navi +opencl opencl_orca opencl_pal \
++opengl openmax picasso roct +vaapi +vdpau +vulkan wayland"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -65,22 +64,41 @@ RDEPEND="  app-eselect/eselect-opencl
 		>=sys-kernel/vanilla-sources-5.0
 		>=sys-kernel/xbox-sources-5.0
 		>=sys-kernel/zen-sources-5.0 ) )
+	 navi? ( || (
+		  sys-kernel/amdgpu-dkms
+		>=sys-kernel/aufs-sources-5.3
+		>=sys-kernel/ck-sources-5.3
+		>=sys-kernel/gentoo-sources-5.3
+		>=sys-kernel/git-sources-5.3
+		>=sys-kernel/hardened-sources-5.3
+		>=sys-kernel/pf-sources-5.3
+		  sys-kernel/rock-dkms
+		>=sys-kernel/rt-sources-5.3
+		>=sys-kernel/vanilla-sources-5.3
+		>=sys-kernel/xbox-sources-5.3
+		>=sys-kernel/zen-sources-5.3 )
+		|| ( >=sys-firmware/amdgpu-firmware-${PKG_VER}
+	               sys-firmware/rock-firmware
+		     >=sys-kernel/linux-firmware-20190923 ) )
 	 >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
 	 >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
 	 opencl? (  >=sys-devel/gcc-5.2.0 )
 	 openmax? ( >=media-libs/mesa-${PKG_VER_MESA}[openmax] )
+	 picasso? ( || ( >=sys-firmware/amdgpu-firmware-${PKG_VER}
+			   sys-firmware/rock-firmware
+			 >=sys-kernel/linux-firmware-20190926 ) )
 	 roct? ( !dev-libs/roct-thunk-interface
 		  sys-process/numactl )
 	 >=sys-libs/libselinux-1.32
 	   sys-libs/ncurses[tinfo]
-	   vdpau? (  >=media-libs/mesa-${PKG_VER_MESA}[-vdpau] )
-	  !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
-	   vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
-		       media-libs/vulkan-loader )
+	  vdpau? (  >=media-libs/mesa-${PKG_VER_MESA}[-vdpau] )
+	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
+	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
+		      media-libs/vulkan-loader )
 	 >=x11-base/xorg-drivers-1.19
 	  <x11-base/xorg-drivers-1.20
 	   x11-base/xorg-proto
-	 >=x11-base/xorg-server-1.19[glamor]
+	 >=x11-base/xorg-server-1.19[-minimal,glamor(+)]
 	 >=x11-libs/libdrm-${PKG_VER_LIBDRM}[libkms]
 	   x11-libs/libX11[${MULTILIB_USEDEP}]
 	   x11-libs/libXext[${MULTILIB_USEDEP}]
@@ -88,8 +106,8 @@ RDEPEND="  app-eselect/eselect-opencl
 	   x11-libs/libXrandr[${MULTILIB_USEDEP}]
 	   x11-libs/libXrender[${MULTILIB_USEDEP}]
 	 || ( >=sys-firmware/amdgpu-firmware-${PKG_VER}
-	        sys-firmware/rock-firmware
-	        sys-kernel/linux-firmware )"
+		sys-firmware/rock-firmware
+		sys-kernel/linux-firmware )"
 # hsakmt requires libnuma.so.1
 # kmstest requires libkms
 # amdgpu_dri.so requires wayland?
@@ -100,11 +118,11 @@ REQUIRED_USE="|| ( opencl_pal opencl_orca ) \
 
 _set_check_reqs_requirements() {
 	if use abi_x86_32 && use abi_x86_64 ; then
-		CHECKREQS_DISK_BUILD="811M"
-		CHECKREQS_DISK_USR="510M"
+		CHECKREQS_DISK_BUILD="906M"
+		CHECKREQS_DISK_USR="583M"
 	else
-		CHECKREQS_DISK_BUILD="578M"
-		CHECKREQS_DISK_USR="258M"
+		CHECKREQS_DISK_BUILD="644M"
+		CHECKREQS_DISK_USR="296M"
 	fi
 }
 
@@ -155,7 +173,6 @@ implementation used by older fglrx."
 	fi
 
 	if use roct ; then
-		# remove if it works and been tested on hsa hardware
 		ewarn "ROCt has not been tested"
 		ewarn \
 "It's recommended to use the dev-libs/roct-thunk-interface package instead of\n\
@@ -571,10 +588,8 @@ src_install() {
 			dosym libdrm_amdgpu.so.1.0.0 \
 				${d_amdgpu}/libdrm_amdgpu.so
 			doexe ${sd_amdgpupro}/libGL.so.1.2
-			dosym libGL.so.1.2 \
-				${d_amdgpu}/libGL.so.1
-			dosym libGL.so.1.2 \
-				${d_amdgpu}/libGL.so
+			dosym libGL.so.1.2 ${d_amdgpu}/libGL.so.1
+			dosym libGL.so.1.2 ${d_amdgpu}/libGL.so
 			exeinto ${d_radeon}/
 			doexe ${sd_amdgpu}/libdrm_radeon.so.1.0.1
 			dosym libdrm_radeon.so.1.0.1 \
@@ -602,7 +617,8 @@ src_install() {
 			doexe ${sd_amdgpupro}/gbm/gbm_amdgpu.so
 			dosym gbm_amdgpu.so \
 				${dd_opengl}/gbm/libdummy.so
-			dosym opengl/amdgpu/gbm /usr/$(get_libdir)/gbm
+			dosym opengl/amdgpu/gbm \
+				/usr/$(get_libdir)/gbm
 
 			insinto /etc/amd/
 			doins etc/amd/amdrc
@@ -697,28 +713,41 @@ src_install() {
 		# Install the shared LLVM libraries that Gentoo doesn't produce
 		exeinto ${d_amdgpu}/llvm-${PKG_VER_LLVM}/lib/
 		local sd_llvm="${sd_amdgpu}/llvm-${PKG_VER_LLVM}/lib"
-		doexe ${sd_llvm}/BugpointPasses.so
-		doexe ${sd_llvm}/libLLVM-${PKG_VER_LLVM}.so
-		doexe ${sd_llvm}/libLTO.so.${PKG_VER_LLVM_TRIPLE}
-		doexe ${sd_llvm}/LLVMHello.so
-		doexe ${sd_llvm}/TestPlugin.so
+		#doexe ${sd_llvm}/BugpointPasses.so
+		doexe ${sd_llvm}/libRemarks.so.${PKG_VER_LLVM_MAJ}
+		doexe ${sd_llvm}/libLLVM-${PKG_VER_LLVM_MAJ}.so
+		doexe ${sd_llvm}/libLTO.so.${PKG_VER_LLVM_MAJ}
+		#doexe ${sd_llvm}/LLVMHello.so
+		#doexe ${sd_llvm}/TestPlugin.so
 		exeinto ${d_amdgpu}/
 		local d="${EPREFIX}${d_amdgpu}"
 		local s="${d_amdgpu}/llvm-${PKG_VER_LLVM}/lib"
-		dosym "${s}"/libLTO.so.${PKG_VER_LLVM_TRIPLE} \
-			"${d}"/libLTO.so.${PKG_VER_LLVM_TRIPLE}
-		dosym "${s}"/libLTO.so.${PKG_VER_LLVM_TRIPLE} \
+		dosym "${s}"/libLTO.so.${PKG_VER_LLVM_MAJ} \
+			"${d}"/libLTO.so.${PKG_VER_LLVM_MAJ}
+		dosym "${s}"/libLTO.so.${PKG_VER_LLVM_MAJ} \
 			"${s}"/libLTO.so.${PKG_VER_LLVM}
-		dosym "${s}"/BugpointPasses.so \
-			"${d}"/BugpointPasses.so
-		dosym "${s}"/libLTO.so.${PKG_VER_LLVM_TRIPLE} \
-			"${d}"/libLTO.so.${PKG_VER_LLVM_TRIPLE}
+		#dosym "${s}"/BugpointPasses.so \
+		#	"${d}"/BugpointPasses.so
+		dosym "${s}"/libRemarks.so.${PKG_VER_LLVM_MAJ} \
+			"${d}"/libRemarks.so.${PKG_VER_LLVM_MAJ}
+		dosym "${s}"/libRemarks.so.${PKG_VER_LLVM_MAJ} \
+			"${s}"/libRemarks.so
+		dosym "${s}"/libRemarks.so.${PKG_VER_LLVM_MAJ} \
+			"${d}"/libRemarks.so
+		dosym "${s}"/libLTO.so.${PKG_VER_LLVM_MAJ} \
+			"${d}"/libLTO.so.${PKG_VER_LLVM_MAJ}
 		dosym "${s}"/libLTO.so.${PKG_VER_LLVM} \
 			"${d}"/libLTO.so.${PKG_VER_LLVM}
+		dosym "${s}"/libLLVM-${PKG_VER_LLVM_MAJ}.so \
+			"${d}"/libLLVM-${PKG_VER_LLVM_MAJ}.so
+		dosym "${s}"/libLLVM-${PKG_VER_LLVM_MAJ}.so \
+			"${s}"/libLLVM-${PKG_VER_LLVM}.so
 		dosym "${s}"/libLLVM-${PKG_VER_LLVM}.so \
 			"${d}"/libLLVM-${PKG_VER_LLVM}.so
-		dosym "${s}"/LLVMHello.so "${d}"/LLVMHello.so
-		dosym "${s}"/TestPlugin.so "${d}"/TestPlugin.so
+		#dosym "${s}"/LLVMHello.so \
+		#	"${d}"/LLVMHello.so
+		#dosym "${s}"/TestPlugin.so \
+		#	"${d}"/TestPlugin.so
 
 		# Install xorg drivers
 		if [[ "${ABI}" == "amd64" ]] ; then
@@ -745,8 +774,8 @@ src_install() {
 			# Install gstreamer OpenMAX plugin
 			insinto /etc/xdg/
 			doins etc/xdg/gstomx.conf
-				exeinto /usr/$(get_libdir)/gstreamer-1.0/
-				doexe ${sd_amdgpu}/gstreamer-1.0/libgstomx.so
+			exeinto /usr/$(get_libdir)/gstreamer-1.0/
+			doexe ${sd_amdgpu}/gstreamer-1.0/libgstomx.so
 		fi
 
 		# Install wayland libraries.  Installing these are required.
