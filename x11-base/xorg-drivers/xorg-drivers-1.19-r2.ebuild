@@ -117,13 +117,13 @@ PDEPEND="
 	video_cards_cirrus?        ( x11-drivers/xf86-video-cirrus )
 	video_cards_dummy?         ( x11-drivers/xf86-video-dummy )
 	video_cards_fbdev?         ( x11-drivers/xf86-video-fbdev )
-	video_cards_freedreno?     ( >=x11-base/xorg-server-${PV}[glamor] )
+	video_cards_freedreno?     ( >=x11-base/xorg-server-${PV}[-minimal,glamor(+)] )
 	video_cards_geode?         ( x11-drivers/xf86-video-geode )
 	video_cards_glint?         ( x11-drivers/xf86-video-glint )
 	video_cards_i128?          ( x11-drivers/xf86-video-i128 )
 	video_cards_i740?          ( x11-drivers/xf86-video-i740 )
 	video_cards_i915?          ( x11-drivers/xf86-video-intel )
-	video_cards_i965?          ( >=x11-base/xorg-server-${PV}[glamor] )
+	video_cards_i965?          ( >=x11-base/xorg-server-${PV}[-minimal,glamor(+)] )
 	video_cards_intel?         ( !video_cards_i965? ( x11-drivers/xf86-video-intel ) )
 	video_cards_mach64?        ( x11-drivers/xf86-video-mach64 )
 	video_cards_mga?           ( x11-drivers/xf86-video-mga )
@@ -137,7 +137,7 @@ PDEPEND="
 	video_cards_fglrx?         ( x11-drivers/ati-drivers )
 	video_cards_r128?          ( x11-drivers/xf86-video-r128 )
 	video_cards_radeon?        ( x11-drivers/xf86-video-ati )
-	video_cards_radeonsi?      ( x11-drivers/xf86-video-ati[glamor] )
+	video_cards_radeonsi?      ( x11-drivers/xf86-video-ati[glamor(+)] )
 	video_cards_rendition?     ( x11-drivers/xf86-video-rendition )
 	video_cards_s3?            ( x11-drivers/xf86-video-s3 )
 	video_cards_s3virge?       ( x11-drivers/xf86-video-s3virge )
@@ -152,11 +152,11 @@ PDEPEND="
 	video_cards_sunleo?        ( x11-drivers/xf86-video-sunleo )
 	video_cards_suntcx?        ( x11-drivers/xf86-video-suntcx )
 	video_cards_tdfx?          ( x11-drivers/xf86-video-tdfx )
-	video_cards_tegra?         ( >=x11-base/xorg-server-${PV}[glamor] )
+	video_cards_tegra?         ( >=x11-base/xorg-server-${PV}[-minimal,glamor(+)] )
 	video_cards_tga?           ( x11-drivers/xf86-video-tga )
 	video_cards_trident?       ( x11-drivers/xf86-video-trident )
 	video_cards_tseng?         ( x11-drivers/xf86-video-tseng )
-	video_cards_vc4?           ( >=x11-base/xorg-server-${PV}[glamor] )
+	video_cards_vc4?           ( >=x11-base/xorg-server-${PV}[-minimal,glamor(+)] )
 	video_cards_vesa?          ( x11-drivers/xf86-video-vesa )
 	video_cards_via?           ( x11-drivers/xf86-video-openchrome )
 	video_cards_virtualbox?    ( x11-drivers/xf86-video-virtualbox )
@@ -197,4 +197,16 @@ PDEPEND="
 	!<x11-drivers/xf86-video-trident-1.3.8
 	!<x11-drivers/xf86-video-virtualbox-5.1.14
 	!<x11-drivers/xf86-video-vmware-13.2.1
+"
+
+# Mask inherit xorg-3
+
+PDEPEND+="
+	!>=x11-drivers/xf86-input-elographics-1.4.2
+	!>=x11-drivers/xf86-input-libinput-0.29.0
+	!>=x11-drivers/xf86-video-amdgpu-19.0.1
+	!>=x11-drivers/xf86-video-ati-19.0.1
+	!>=x11-drivers/xf86-video-geode-2.11.20
+	!>=x11-drivers/xf86-video-intel-2.99.917_p20190301
+	!>=x11-base/xorg-server-1.20
 "
