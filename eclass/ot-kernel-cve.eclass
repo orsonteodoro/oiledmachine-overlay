@@ -1573,7 +1573,7 @@ function fetch_cve_2019_19047_hotfix() {
 # Checks for the CVE_2019_19048 patch
 function fetch_cve_2019_19048_hotfix() {
 	local CVE_ID="CVE-2019-19048"
-	pcregrep -M "if \(\!bounce_buf\)\n\t\treturn -ENOMEM;\n\n\t\*bounce_buf_ret = bounce_buf;" \
+	if pcregrep -M "if \(\!bounce_buf\)\n\t\treturn -ENOMEM;\n\n\t\*bounce_buf_ret = bounce_buf;" \
 		"${S}/drivers/virt/vboxguest/vboxguest_utils.c" \
 		>/dev/null ; \
 	then
@@ -3111,7 +3111,7 @@ function apply_cve_2019_19048_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
-	pcregrep -M "if \(\!bounce_buf\)\n\t\treturn -ENOMEM;\n\n\t\*bounce_buf_ret = bounce_buf;" \
+	if pcregrep -M "if \(\!bounce_buf\)\n\t\treturn -ENOMEM;\n\n\t\*bounce_buf_ret = bounce_buf;" \
 		"${S}/drivers/virt/vboxguest/vboxguest_utils.c" \
 		>/dev/null ; \
 	then
