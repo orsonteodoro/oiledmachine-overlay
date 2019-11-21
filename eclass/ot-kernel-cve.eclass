@@ -62,7 +62,6 @@ CVE_2010_2243_SUMMARY_LANG="CVE_2010_2243_SUMMARY_${CVE_LANG}"
 CVE_2010_2243_SUMMARY="${!CVE_2010_2243_SUMMARY_LANG}"
 
 CVE_2010_4661_FIX_SRC_URI=""
-CVE_2010_4661_FN="CVE-2010-4661-fix--linux-.patch"
 CVE_2010_4661_SEVERITY_LANG="CVE_2010_4661_SEVERITY_${CVE_LANG}"
 CVE_2010_4661_SEVERITY="${!CVE_2010_4661_SEVERITY_LANG}"
 CVE_2010_4661_PM=""
@@ -817,11 +816,13 @@ Patch message: ${!pm}"
 function _fetch_cve_boilerplate_msg_footer() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_fn="${CVE_ID_}FN"
-	if ! test -n "${!cve_fn}" ; then
-		einfo \
-"No de-facto patch exists or the patch is undergoing code review.  No patch\n\
+	local pm="${CVE_ID_}PM"
+
+	if [[ -z "${!cve_fn}" || -z "${!pm}" ]] ; then
+		eerror \
+"No de-facto patch exists for ${CVE_ID} or the patch is undergoing code review.  No patch\n\
 will be applied.  This fix is still being worked on."
-	elif use cve_hotfix && test -n "${!cve_fn}"; then
+	elif use cve_hotfix ; then
 		einfo "A ${CVE_ID} fix will be applied."
 	else
 		ewarn \
