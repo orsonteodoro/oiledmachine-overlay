@@ -880,8 +880,7 @@ function fetch_cve_2010_2243_hotfix() {
 # @DESCRIPTION:
 # Checks for the CVE_2010_4661 patch
 function fetch_cve_2010_4661_hotfix() {
-	# fixme
-	return 0
+	# fixme unpatched
 	local CVE_ID="CVE-2010-4661"
 	if grep -F -e \
 		"" \
@@ -1445,8 +1444,7 @@ function fetch_cve_2019_18885_hotfix() {
 # @DESCRIPTION:
 # Checks for the CVE_2019_19036 patch
 function fetch_cve_2019_19036_hotfix() {
-	# todo
-	return 0
+	# fixme unpatched
 	local CVE_ID="CVE-2019-19036"
 	if grep -F -e \
 		"" \
@@ -1464,8 +1462,7 @@ function fetch_cve_2019_19036_hotfix() {
 # @DESCRIPTION:
 # Checks for the CVE_2019_19037 patch
 function fetch_cve_2019_19037_hotfix() {
-	# todo
-	return 0
+	# fixme unpatched
 	local CVE_ID="CVE-2019-19037"
 	if grep -F -e \
 		"" \
@@ -1483,8 +1480,7 @@ function fetch_cve_2019_19037_hotfix() {
 # @DESCRIPTION:
 # Checks for the CVE_2019_19039 patch
 function fetch_cve_2019_19039_hotfix() {
-	# todo
-	return 0
+	# fixme unpatched
 	local CVE_ID="CVE-2019-19039"
 	if grep -F -e \
 		"" \
