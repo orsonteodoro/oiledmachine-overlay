@@ -30,7 +30,7 @@ DEPEND+=" dev-libs/libpcre"
 inherit ot-kernel-cve-en
 
 # based on my last edit in unix timestamp (date -u +%Y%m%d_%I%M_%p_%Z)
-LATEST_CVE_KERNEL_INDEX="20191121_0631_AM_UTC"
+LATEST_CVE_KERNEL_INDEX="20191121_0650_AM_UTC"
 LATEST_CVE_KERNEL_INDEX="${LATEST_CVE_KERNEL_INDEX,,}"
 
 # this will trigger a kernel re-install based on use flag timestamp
@@ -1500,6 +1500,22 @@ function fetch_cve_2019_19039_hotfix() {
 
 
 #---
+
+# @FUNCTION: fetch_cve_2019_19043_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19043 patch
+function fetch_cve_2019_19043_hotfix() {
+	local CVE_ID="CVE-2019-19043"
+	if pcregrep -M "ret = -EINVAL;\n\t\t\tkfree\(ch\);" \
+		"${S}/drivers/net/ethernet/intel/i40e/i40e_main.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
 
 # @FUNCTION: fetch_cve_2019_19044_hotfix
 # @DESCRIPTION:
@@ -3011,6 +3027,25 @@ function apply_cve_2019_19039_hotfix() {
 
 
 #---
+
+# @FUNCTION: apply_cve_2019_19043_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19043 patch if it needs to
+function apply_cve_2019_19043_hotfix() {
+	local CVE_ID="CVE-2019-19043"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if pcregrep -M "ret = -EINVAL;\n\t\t\tkfree\(ch\);" \
+		"${S}/drivers/net/ethernet/intel/i40e/i40e_main.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
 
 # @FUNCTION: apply_cve_2019_19044_hotfix
 # @DESCRIPTION:
