@@ -16,6 +16,7 @@
     <flag name="egl">Install EGL support.</flag>
     <flag name="freesync">Enable the Freesync checks.</flag>
     <flag name="gles2">Install GLESv2 support.</flag>
+    <flag name="hip-clang">Install the HIP-CLANG runtime</flag>
     <flag name="hsa">Install the HSA (Heterogeneous System Architecture)
       development libraries.</flag>
     <flag name="navi">Checks for DRM (Direct Rendering Manager) kernel level

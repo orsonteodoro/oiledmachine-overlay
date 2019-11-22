@@ -26,14 +26,14 @@ PKG_VER_LLVM_MAJ=$(ver_cut 1 ${PKG_VER_LLVM_TRIPLE})
 PKG_VER_MESA="19.2.0"
 PKG_VER_ROCT="1.0.9"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
-PKG_VER_STRING_DIR=${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}
+PKG_VER_STRING_DIR=${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}
 PKG_VER_WAYLAND_PROTO="1.17"
 PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.0.1" # about the same as the mesa version
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="+amf dkms +egl +gles2 freesync +navi +opencl opencl_orca opencl_pal \
-+opengl openmax picasso roct +vaapi +vdpau +vulkan wayland"
+IUSE="+amf dkms +egl +gles2 freesync hip-clang +navi +opencl opencl_orca opencl_pal \
++opengl openmax +picasso roct +vaapi +vdpau +vulkan wayland"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -90,7 +90,8 @@ RDEPEND="  app-eselect/eselect-opencl
 	 roct? ( !dev-libs/roct-thunk-interface
 		  sys-process/numactl )
 	 >=sys-libs/libselinux-1.32
-	   sys-libs/ncurses[tinfo]
+	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
+	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}]
 	  vdpau? (  >=media-libs/mesa-${PKG_VER_MESA}[-vdpau] )
 	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
 	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
@@ -217,6 +218,7 @@ src_unpack() {
 			if use opencl_pal ; then
 				if [[ "${ABI}" == "amd64" ]] ; then
 					unpack_deb "${d}/opencl-amdgpu-pro-icd_${PKG_VER_STRING}_${arch}.deb"
+					unpack_deb "${d}/opencl-amdgpu-pro-comgr_${PKG_VER_STRING}_${arch}.deb"
 				fi
 			fi
 
@@ -244,7 +246,7 @@ src_unpack() {
 			# Install GBM
 			unpack_deb "${d}/libgbm1-amdgpu-pro_${PKG_VER_STRING}_${arch}.deb"
 
-			unpack_deb "${d}/libglapi1-amdgpu-pro_${PKG_VER}-${PKG_REV}_${arch}.deb"
+			unpack_deb "${d}/libglapi1-amdgpu-pro_${PKG_VER_STRING}_${arch}.deb"
 			unpack_deb "${d}/libglapi-amdgpu-mesa_${PKG_VER_MESA}-${PKG_REV}_${arch}.deb"
 		fi
 
@@ -285,6 +287,12 @@ src_unpack() {
 			fi
 		fi
 
+		if use hip-clang ; then
+			if [[ "${ABI}" == "amd64" ]] ; then
+				unpack_deb "${d}/hip-amdgpu-pro_${PKG_VER_STRING}_${arch}.deb"
+			fi
+		fi
+
 		unpack_deb "${d}/libdrm-amdgpu-amdgpu1_${PKG_VER_LIBDRM}-${PKG_REV}_${arch}.deb"
 		unpack_deb "${d}/libdrm-amdgpu-radeon1_${PKG_VER_LIBDRM}-${PKG_REV}_${arch}.deb"
 
@@ -321,7 +329,7 @@ src_unpack() {
 	fi
 
 	# Pin version (contains version requirements)
-	unpack_deb "${d}/amdgpu-pro-pin_${PKG_VER}-${PKG_REV}_all.deb"
+	unpack_deb "${d}/amdgpu-pro-pin_${PKG_VER_STRING}_all.deb"
 
 	unpack_deb "${d}/libdrm-amdgpu-common_${PKG_VER_ID}-${PKG_REV}_all.deb"
 
@@ -507,8 +515,7 @@ src_install() {
 		local dd_opengl="/usr/$(get_libdir)/opengl/amdgpu"
 		local sd_amdgpupro="opt/amdgpu-pro/lib/${arch}-linux-gnu"
 		local sd_amdgpu="opt/amdgpu/lib/${arch}-linux-gnu"
-		local d_amdgpu="${dd_opengl}/lib"
-		local d_radeon="/usr/$(get_libdir)/opengl/radeon/lib"
+		local dd_amdgpu="${dd_opengl}/lib"
 
 		if use opencl ; then
 			if [[ "${ABI}" == "amd64" ]] ; then
@@ -522,9 +529,12 @@ src_install() {
 			if use opencl_pal ; then
 				if [[ "${ABI}" == "amd64" ]] ; then
 					doins etc/OpenCL/vendors/amdocl${b}.icd
+					exeinto ${dd_amdgpu}/
+					doexe ${sd_amdgpupro}/libamdcomgr${b}.so
 				fi
 			fi
 
+			insinto /etc/OpenCL/vendors/
 			local dd_opencl="/usr/$(get_libdir)/OpenCL/vendors/amdgpu"
 			if use opencl_orca ; then
 				doins etc/OpenCL/vendors/amdocl-orca${b}.icd
@@ -542,14 +552,14 @@ src_install() {
 
 		if use roct ; then
 			if [[ "${ABI}" == "amd64" ]] ; then
-				exeinto ${d_amdgpu}/
+				exeinto ${dd_amdgpu}/
 				doexe ${sd_amdgpupro}/libhsakmt.so.1.0.0
 				dosym libhsakmt.so.1.0.0 \
-					${d_amdgpu}/libhsakmt.so.1.0
+					${dd_amdgpu}/libhsakmt.so.1.0
 				dosym libhsakmt.so.1.0.0 \
-					${d_amdgpu}/libhsakmt.so.1
+					${dd_amdgpu}/libhsakmt.so.1
 				dosym libhsakmt.so.1.0.0 \
-					${d_amdgpu}/libhsakmt.so
+					${dd_amdgpu}/libhsakmt.so
 
 				local sd_include="opt/amdgpu-pro/include"
 				insinto /usr/include/libhsakmt/
@@ -581,21 +591,21 @@ src_install() {
 
 		if use opengl ; then
 			# Install OpenGL
-			exeinto ${d_amdgpu}/
+			exeinto ${dd_amdgpu}/
 			doexe ${sd_amdgpu}/libdrm_amdgpu.so.1.0.0
 			dosym libdrm_amdgpu.so.1.0.0 \
-				${d_amdgpu}/libdrm_amdgpu.so.1
+				${dd_amdgpu}/libdrm_amdgpu.so.1
 			dosym libdrm_amdgpu.so.1.0.0 \
-				${d_amdgpu}/libdrm_amdgpu.so
+				${dd_amdgpu}/libdrm_amdgpu.so
 			doexe ${sd_amdgpupro}/libGL.so.1.2
-			dosym libGL.so.1.2 ${d_amdgpu}/libGL.so.1
-			dosym libGL.so.1.2 ${d_amdgpu}/libGL.so
-			exeinto ${d_radeon}/
+			dosym libGL.so.1.2 ${dd_amdgpu}/libGL.so.1
+			dosym libGL.so.1.2 ${dd_amdgpu}/libGL.so
+			exeinto ${dd_amdgpu}/
 			doexe ${sd_amdgpu}/libdrm_radeon.so.1.0.1
 			dosym libdrm_radeon.so.1.0.1 \
-				${d_radeon}/libdrm_radeon.so.1
+				${dd_amdgpu}/libdrm_radeon.so.1
 			dosym libdrm_radeon.so.1.0.1 \
-				${d_radeon}/libdrm_radeon.so
+				${dd_amdgpu}/libdrm_radeon.so
 			exeinto ${dd_opengl}/extensions/
 			mv opt/amdgpu-pro/lib/xorg/modules/extensions/libglx${b}.so \
 				opt/amdgpu-pro/lib/xorg/modules/extensions/libglx.so \
@@ -609,10 +619,10 @@ src_install() {
 				/usr/$(get_libdir)/${arch}-linux-gnu/dri/amdgpu_dri.so
 
 			# Install GBM
-			exeinto ${d_amdgpu}/
+			exeinto ${dd_amdgpu}/
 			doexe ${sd_amdgpupro}/libgbm.so.1.0.0
-			dosym libgbm.so.1.0.0 ${d_amdgpu}/libgbm.so.1
-			dosym libgbm.so.1.0.0 ${d_amdgpu}/libgbm.so
+			dosym libgbm.so.1.0.0 ${dd_amdgpu}/libgbm.so.1
+			dosym libgbm.so.1.0.0 ${dd_amdgpu}/libgbm.so
 			exeinto ${dd_opengl}/gbm/
 			doexe ${sd_amdgpupro}/gbm/gbm_amdgpu.so
 			dosym gbm_amdgpu.so \
@@ -629,16 +639,16 @@ src_install() {
 
 		if use gles2 ; then
 			# Install GLES2
-			exeinto ${d_amdgpu}/
+			exeinto ${dd_amdgpu}/
 			doexe ${sd_amdgpupro}/libGLESv2.so.2
-			dosym libGLESv2.so.2 ${d_amdgpu}/libGLESv2.so
+			dosym libGLESv2.so.2 ${dd_amdgpu}/libGLESv2.so
 		fi
 
 		if use egl ; then
 			# Install EGL libs
-			exeinto ${d_amdgpu}/
+			exeinto ${dd_amdgpu}/
 			doexe ${sd_amdgpupro}/libEGL.so.1
-			dosym libEGL.so.1 ${d_amdgpu}/libEGL.so
+			dosym libEGL.so.1 ${dd_amdgpu}/libEGL.so
 		fi
 
 		if use vdpau ; then
@@ -684,14 +694,14 @@ src_install() {
 		# Install amf libraries
 		if use amf ; then
 			if [[ "${ABI}" == "amd64" ]] ; then
-				exeinto ${d_amdgpu}
+				exeinto ${dd_amdgpu}
 				doexe ${sd_amdgpupro}/libamfrt${b}.so.${PKG_VER}
 				dosym libamfrt${b}.so.${PKG_VER} \
-					${d_amdgpu}/libamfrt${b}.so.${PKG_VER_MAJ}
+					${dd_amdgpu}/libamfrt${b}.so.${PKG_VER_MAJ}
 				dosym libamfrt${b}.so.${PKG_VER} \
-					${d_amdgpu}/libamfrt${b}.so
+					${dd_amdgpu}/libamfrt${b}.so
 				dosym libamfrt${b}.so.${PKG_VER} \
-					${d_amdgpu}/libamfrt${b}.so.1
+					${dd_amdgpu}/libamfrt${b}.so.1
 					# from Gentoo QA notice when installing
 			fi
 		fi
@@ -704,14 +714,14 @@ src_install() {
 		doexe opt/amdgpu/lib/xorg/modules/libglamoregl.so
 
 		# Install libglapi
-		exeinto ${d_amdgpu}/
+		exeinto ${dd_amdgpu}/
 		doexe ${sd_amdgpupro}/libglapi.so.1
-		dosym libglapi.so.1 ${d_amdgpu}/libglapi.so
-		doexe ${sd_amdgpu}/libglapi.so.0.0.0
-		dosym libglapi.so.0.0.0 ${d_amdgpu}/libglapi.so.0
+		dosym libglapi.so.1 ${dd_amdgpu}/libglapi.so
+		doexe ${sd_amdgpu}/libglapi.so.0.0.0 # mesa
+		dosym libglapi.so.0.0.0 ${dd_amdgpu}/libglapi.so.0 # mesa
 
 		# Install the shared LLVM libraries that Gentoo doesn't produce
-		exeinto ${d_amdgpu}/llvm-${PKG_VER_LLVM}/lib/
+		exeinto ${dd_amdgpu}/llvm-${PKG_VER_LLVM}/lib/
 		local sd_llvm="${sd_amdgpu}/llvm-${PKG_VER_LLVM}/lib"
 		#doexe ${sd_llvm}/BugpointPasses.so
 		doexe ${sd_llvm}/libRemarks.so.${PKG_VER_LLVM_MAJ}
@@ -719,9 +729,9 @@ src_install() {
 		doexe ${sd_llvm}/libLTO.so.${PKG_VER_LLVM_MAJ}
 		#doexe ${sd_llvm}/LLVMHello.so
 		#doexe ${sd_llvm}/TestPlugin.so
-		exeinto ${d_amdgpu}/
-		local d="${EPREFIX}${d_amdgpu}"
-		local s="${d_amdgpu}/llvm-${PKG_VER_LLVM}/lib"
+		exeinto ${dd_amdgpu}/
+		local d="${EPREFIX}${dd_amdgpu}"
+		local s="${dd_amdgpu}/llvm-${PKG_VER_LLVM}/lib"
 		dosym "${s}"/libLTO.so.${PKG_VER_LLVM_MAJ} \
 			"${d}"/libLTO.so.${PKG_VER_LLVM_MAJ}
 		dosym "${s}"/libLTO.so.${PKG_VER_LLVM_MAJ} \
@@ -778,18 +788,26 @@ src_install() {
 			doexe ${sd_amdgpu}/gstreamer-1.0/libgstomx.so
 		fi
 
+		if use hip-clang ; then
+			if [[ "${ABI}" == "amd64" ]] ; then
+				exeinto ${dd_amdgpu}/
+				doexe ${sd_amdgpupro}/libamdhip64.so
+				doexe ${sd_amdgpupro}/libhip_hcc.so
+			fi
+		fi
+
 		# Install wayland libraries.  Installing these are required.
 		# if use wayland ; then
-			exeinto ${d_amdgpu}/
+			exeinto ${dd_amdgpu}/
 			doexe ${sd_amdgpu}/libwayland-client.so.0.3.0
 			dosym libwayland-client.so.0.3.0 \
-				${d_amdgpu}/libwayland-client.so.0
+				${dd_amdgpu}/libwayland-client.so.0
 			doexe ${sd_amdgpu}/libwayland-server.so.0.1.0
 			dosym libwayland-server.so.0.1.0 \
-				${d_amdgpu}/libwayland-server.so.0
+				${dd_amdgpu}/libwayland-server.so.0
 			doexe ${sd_amdgpu}/libwayland-egl.so.1.0.0
 			dosym libwayland-egl.so.1.0.0 \
-				${d_amdgpu}/libwayland-egl.so.1
+				${dd_amdgpu}/libwayland-egl.so.1
 		# fi
 
 		# TODO: install dev libraries if any
@@ -801,15 +819,26 @@ src_install() {
 
 	multilib_foreach_abi install_abi
 
+	if use vdpau ; then
+		cat <<-EOF > "${T}"/50${P}-vdpau
+			LDPATH=\
+"/usr/lib64/vdpau:
+/usr/lib32/vdpau"
+		EOF
+		doenvd "${T}"/50${P}-vdpau
+	fi
+
 	pushd "${S}"/usr/share/doc || die
-		L=$(find . -name "copyright" -print0 |  xargs -0 dirname {} | sed -r -e "s|.[\/]?||" | tail -n +2)
+		L=$(find . -name "copyright" -print0 |  xargs -0 dirname {} \
+			| sed -r -e "s|.[\/]?||" | tail -n +2)
 		for d in $L ; do
 			docinto licenses/${d}
 			dodoc ${d}/copyright
 		done
 	popd
 	docinto licenses
-	local d_insdoc="${S}/amdgpu-pro-${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}/doc"
+	local d_insdoc=\
+"${S}/amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}/doc"
 	dodoc "${d_insdoc}"/copyright
 }
 
@@ -819,7 +848,9 @@ pkg_prerm() {
 	fi
 
 	if use opencl ; then
-		"${ROOT}"/usr/bin/eselect opencl set --use-old mesa
+		if "${ROOT}"/usr/bin/eselect opencl list | grep mesa ; then
+			"${ROOT}"/usr/bin/eselect opencl set --use-old mesa
+		fi
 	fi
 }
 
@@ -848,3 +879,5 @@ that either amdgpu-dkms or rock-dkms is installed"
 	# remove generated by eselect-opengl
 	# rm "${ROOT}"/etc/X11/xorg.conf.d/20opengl.conf > /dev/null
 }
+
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
