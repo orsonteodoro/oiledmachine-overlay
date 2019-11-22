@@ -114,7 +114,9 @@ RDEPEND="  app-eselect/eselect-opencl
 # amdgpu_dri.so requires wayland?
 # vdpau requires llvm7
 S="${WORKDIR}"
-REQUIRED_USE="|| ( opencl_pal opencl_orca ) \
+REQUIRED_USE="opencl? ( || ( opencl_pal opencl_orca ) ) \
+	opencl_pal? ( opencl ) \
+	opencl_orca? ( opencl )
 	roct? ( dkms )"
 
 _set_check_reqs_requirements() {
