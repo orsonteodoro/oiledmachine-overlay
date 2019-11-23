@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <!-- only in this forked ebuild only -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    The roct-thunk-interfaces is the userland interfaces to interact with the
+    ROCk driver associated with he AMD GPU dkms packages.
+  </longdescription>
+  <upstream>
+    <bugs-to>https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface/issues</bugs-to>
+  </upstream>
+</pkgmetadata>
