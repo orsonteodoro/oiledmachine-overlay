@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="Radeon Open Compute Thunk Interface"
 HOMEPAGE="https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface"
-LICENSE="MIT"
+LICENSE="MIT BSD-2"
 SLOT="0/$(ver_cut 1-2)"
 inherit cmake-utils linux-info
 if [[ ${PV} == *9999 ]] ; then
