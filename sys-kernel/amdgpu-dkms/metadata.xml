@@ -6,14 +6,19 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    The amdgpu-dkms a package containing both the ROCK-Kernel-Driver and the latest firmware (which is not installed in this package).
-    This package will build the kernel modules using the DKMS framework allowing for version agnostic compatibility meaning that
-    you can compile this package against 4.20.x, 5.0.x, 5.1.x, 5.2.x kernel versions.
-    The amdgpu-dkms package has more GPU features like IPC related features (Memory sharing API, Signal sharing API); increasing 
-    GPU system memory limits from 3/8 of system memory to 29/32 of system memory; RDMA (aka Remote Device Programming or ROCmRDMA)
-    to allow other PCIe kernel modules and devices DMA access to GPU memory, KFD (Kernel Fusion Driver) features, and
-    DirectGMA (Direct Graphic Memory Access) support.  ROCk is also a core componenet of the ROCm platform.  It also adds compatibility for 
-    newer hardware if the kernel is old.
+    The amdgpu-dkms a package containing both the ROCK-Kernel-Driver and
+    firmware (which is not installed in this package).  This package
+    will build the kernel modules using the DKMS framework allowing for
+    version agnostic compatibility meaning that you can compile this package
+    against 4.20.x, 5.0.x, 5.1.x, 5.2.x kernel versions.  The amdgpu-dkms
+    package has more GPU features like IPC related features (Memory sharing
+    API, Signal sharing API); increasing GPU system memory limits from 3/8 of
+    system memory to 29/32 of system memory; RDMA (aka Remote Device
+    Programming or ROCmRDMA) to allow other PCIe kernel modules and devices
+    DMA access to GPU memory, KFD (Kernel Fusion Driver) features, and
+    DirectGMA (Direct Graphic Memory Access) support.  ROCk is also a core
+    componenet of the ROCm platform.  It also adds compatibility for newer
+    hardware if the kernel is old.
   </longdescription>
   <upstream>
     <bugs-to>https://www.amd.com/report</bugs-to>
@@ -21,9 +26,15 @@
   <use>
     <flag name="build">Builds the kernel module.</flag>
     <flag name="check-gpu">Checks if the GPU(s) are supported.</flag>
-    <flag name="check-mmu-notifier">Checks if the MMU_NOTIFIER is enabled.</flag>
+    <flag name="check-mmu-notifier">Checks if the MMU_NOTIFIER is enabled.
+      </flag>
     <flag name="check-pcie">Checks if the PCIe slots are supported.</flag>
-    <flag name="firmware">Pulls in the firmware package containing the latest firmware version. (optional)</flag>
-    <flag name="rock">Checks if the hardware is compatible with the ROCk kernel driver. (optional)</flag>
+    <flag name="directgma">Checks kernel config for DirectGMA support.</flag>
+    <flag name="firmware">Pulls in the firmware package containing the latest
+      firmware version. (optional)</flag>
+    <flag name="rock">Checks if the hardware is compatible with the ROCk
+     kernel driver. (optional)</flag>
+    <flag name="ssg">Checks kernel config for SSG (Solid State Graphics)
+      support.</flag>
   </use>
 </pkgmetadata>

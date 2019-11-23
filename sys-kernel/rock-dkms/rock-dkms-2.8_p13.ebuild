@@ -15,7 +15,7 @@ BASE_URL="http://repo.radeon.com/rocm/apt/debian"
 FOLDER="pool/main/r/rock-dkms"
 SRC_URI="http://repo.radeon.com/rocm/apt/debian/pool/main/r/rock-dkms/${FN}"
 SLOT="0/${PV}"
-IUSE="+build +check-mmu-notifier +check-pcie +check-gpu firmware"
+IUSE="+build +check-mmu-notifier +check-pcie +check-gpu directgma firmware ssg"
 RDEPEND="firmware? ( sys-firmware/rock-firmware )
 	 sys-kernel/dkms
 	 || ( <sys-kernel/ck-sources-5.3
@@ -135,6 +135,17 @@ pkg_setup_warn() {
 
 	check_extra_config
 
+	if use directgma || use ssg ; then
+		# needs at least ZONE_DEVICE, rest are dependencies for it
+		CONFIG_CHECK=" ~ZONE_DEVICE ~MEMORY_HOTPLUG ~MEMORY_HOTREMOVE ~SPARSEMEM_VMEMMAP ~ARCH_HAS_PTE_DEVMAP"
+		WARNING_CONFIG_ZONE_DEVICE=" CONFIG_ZONE_DEVICE must be set to =y in the kernel .config."
+		WARNING_CONFIG_MEMORY_HOTPLUG=" CONFIG_MEMORY_HOTPLUG must be set to =y in the kernel .config."
+		WARNING_CONFIG_MEMORY_HOTREMOVE=" CONFIG_MEMORY_HOTREMOVE must be set to =y in the kernel .config."
+		WARNING_CONFIG_SPARSEMEM_VMEMMAP=" CONFIG_SPARSEMEM_VMEMMAP must be set to =y in the kernel .config."
+		WARNING_CONFIG_ARCH_HAS_PTE_DEVMAP=" CONFIG_ARCH_HAS_PTE_DEVMAP must be set to =y in the kernel .config."
+		check_extra_config
+	fi
+
 	if ! linux_chkconfig_module "DRM_AMDGPU" ; then
 		ewarn "CONFIG_DRM_AMDGPU (Graphics support > AMD GPU) must be compiled as a module (=m)."
 	fi
@@ -178,6 +189,17 @@ pkg_setup_error() {
 	ERROR_MFD_CORE=" CONFIG_MFD_CORE must be set to =y or =m in the kernel or it will fail in the link stage."
 
 	check_extra_config
+
+	if use directgma || use ssg ; then
+		# needs at least ZONE_DEVICE, rest are dependencies for it
+		CONFIG_CHECK=" ~ZONE_DEVICE ~MEMORY_HOTPLUG ~MEMORY_HOTREMOVE ~SPARSEMEM_VMEMMAP ~ARCH_HAS_PTE_DEVMAP"
+		ERROR_CONFIG_ZONE_DEVICE=" CONFIG_ZONE_DEVICE must be set to =y in the kernel .config."
+		ERROR_CONFIG_MEMORY_HOTPLUG=" CONFIG_MEMORY_HOTPLUG must be set to =y in the kernel .config."
+		ERROR_CONFIG_MEMORY_HOTREMOVE=" CONFIG_MEMORY_HOTREMOVE must be set to =y in the kernel .config."
+		ERROR_CONFIG_SPARSEMEM_VMEMMAP=" CONFIG_SPARSEMEM_VMEMMAP must be set to =y in the kernel .config."
+		ERROR_CONFIG_ARCH_HAS_PTE_DEVMAP=" CONFIG_ARCH_HAS_PTE_DEVMAP must be set to =y in the kernel .config."
+		check_extra_config
+	fi
 
 	if ! linux_chkconfig_module DRM_AMDGPU ; then
 		die "CONFIG_DRM_AMDGPU (Graphics support > AMD GPU) must be compiled as a module (=m)."
