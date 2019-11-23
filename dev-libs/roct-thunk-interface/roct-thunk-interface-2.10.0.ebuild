@@ -7,17 +7,11 @@ HOMEPAGE="https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface"
 LICENSE="MIT BSD-2"
 SLOT="0/$(ver_cut 1-2)"
 inherit cmake-utils linux-info
-if [[ ${PV} == *9999 ]] ; then
-	EGIT_REPO_URI=\
-"https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface/"
-	inherit git-r3
-else
-	SRC_URI=\
+SRC_URI=\
 "https://github.com/RadeonOpenCompute/ROCT-Thunk-Interface/archive/roc-${PV}.tar.gz \
 	-> ${P}.tar.gz"
-	S="${WORKDIR}/ROCT-Thunk-Interface-roc-${PV}"
-	KEYWORDS="~amd64"
-fi
+S="${WORKDIR}/ROCT-Thunk-Interface-roc-${PV}"
+KEYWORDS="~amd64"
 RDEPEND="sys-apps/pciutils
 	 sys-process/numactl
 	 x11-drivers/amdgpu-pro[-roct]
