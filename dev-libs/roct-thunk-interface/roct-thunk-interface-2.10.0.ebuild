@@ -23,7 +23,6 @@ RDEPEND="sys-apps/pciutils
 	 x11-drivers/amdgpu-pro[-roct]
 	 || ( sys-kernel/amdgpu-dkms sys-kernel/rock-dkms )"
 DEPEND="${RDEPEND}"
-PATCHES=( "${FILESDIR}/${PN}-2.0.0-correctly-install.patch" )
 CONFIG_CHECK="~HSA_AMD"
 
 src_prepare() {
