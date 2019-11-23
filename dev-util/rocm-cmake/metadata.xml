@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <!-- for the forked version only in the oiledmachine-overlay -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!-- original maintainer -->
+  <maintainer type="person">
+    <email>candrews@gentoo.org</email>
+    <name>Craig Andrews</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/RadeonOpenCompute/rocm-cmake/issues</bugs-to>
+    <remote-id type="github">RadeonOpenCompute/rocm-cmake</remote-id>
+  </upstream>
+  <longdescription lang="en">
+    Radeon Open Compute CMake Modules
+  </longdescription>
+</pkgmetadata>
