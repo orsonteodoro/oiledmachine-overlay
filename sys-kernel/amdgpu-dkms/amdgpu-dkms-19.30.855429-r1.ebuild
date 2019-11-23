@@ -282,15 +282,15 @@ check_kernel() {
 }
 
 pkg_setup() {
-	if [[ -z "${ROCK_DKMS_KERNELS}" ]] ; then
-		eerror "You must define a per-package env or add to /etc/portage/make.conf an environmental variable named ROCK_DKMS_KERNELS"
+	if [[ -z "${AMDGPU_DKMS_KERNELS}" ]] ; then
+		eerror "You must define a per-package env or add to /etc/portage/make.conf an environmental variable named AMDGPU_DKMS_KERNELS"
 		eerror "containing a space delimited <kernvel_ver>-<extra_version>."
 		eerror
-		eerror "It should look like ROCK_DKMS_KERNELS=\"5.2.17-pf 5.2.17-gentoo\""
+		eerror "It should look like AMDGPU_DKMS_KERNELS=\"5.2.17-pf 5.2.17-gentoo\""
 		die
 	fi
 
-	for k in ${ROCK_DKMS_KERNELS} ; do
+	for k in ${AMDGPU_DKMS_KERNELS} ; do
 		check_kernel "${k}"
 	done
 }
@@ -339,7 +339,7 @@ src_install() {
 pkg_postinst() {
 	dkms add ${DKMS_PKG_NAME}/${DKMS_PKG_VER}
 	if use build ; then
-		for k in ${ROCK_DKMS_KERNELS} ; do
+		for k in ${AMDGPU_DKMS_KERNELS} ; do
 			einfo "Running: \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH}\`"
 			dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} || die
 			einfo "Running: \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH}\`"
