@@ -14,7 +14,6 @@ SRC_URI=\
 	-> ${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 
-01234567890123456789012345678901234567890123456789012345678901234567890123456789
 src_prepare() {
 	sed -e "s:set(ROCM_INSTALL_LIBDIR lib):set(ROCM_INSTALL_LIBDIR $(get_libdir)):" \
 		-i "${S}/share/rocm/cmake/ROCMInstallTargets.cmake" || die
