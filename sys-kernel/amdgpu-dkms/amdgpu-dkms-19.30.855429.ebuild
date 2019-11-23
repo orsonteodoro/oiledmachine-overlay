@@ -201,7 +201,7 @@ pkg_setup_error() {
 
 	if use directgma || use ssg ; then
 		# needs at least ZONE_DEVICE, rest are dependencies for it
-		CONFIG_CHECK=" ~ZONE_DEVICE ~MEMORY_HOTPLUG ~MEMORY_HOTREMOVE ~SPARSEMEM_VMEMMAP ~ARCH_HAS_PTE_DEVMAP"
+		CONFIG_CHECK=" ZONE_DEVICE MEMORY_HOTPLUG MEMORY_HOTREMOVE SPARSEMEM_VMEMMAP ARCH_HAS_PTE_DEVMAP"
 		ERROR_CONFIG_ZONE_DEVICE=" CONFIG_ZONE_DEVICE must be set to =y in the kernel .config."
 		ERROR_CONFIG_MEMORY_HOTPLUG=" CONFIG_MEMORY_HOTPLUG must be set to =y in the kernel .config."
 		ERROR_CONFIG_MEMORY_HOTREMOVE=" CONFIG_MEMORY_HOTREMOVE must be set to =y in the kernel .config."
