@@ -23,10 +23,26 @@ RDEPEND="sys-apps/pciutils
 	 x11-drivers/amdgpu-pro[-roct]
 	 || ( sys-kernel/amdgpu-dkms sys-kernel/rock-dkms )"
 DEPEND="${RDEPEND}"
-CONFIG_CHECK="~HSA_AMD"
+CONFIG_CHECK="~NUMA ~HSA_AMD ~HMM_MIRROR ~ZONE_DEVICE ~DRM_AMDGPU ~DRM_AMDGPU_USERPTR"
+
+src_configure() {
+	local mycmakeargs=(
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/"
+		-DCPACK_PACKAGING_INSTALL_PREFIX="${EPREFIX}/usr"
+	)
+	cmake-utils_src_configure
+}
 
 src_prepare() {
 	sed -i -e "s:get_version ( \"1.0.0\" ):get_version ( \"${PV}\" ):" \
 		CMakeLists.txt || die
 	cmake-utils_src_prepare
+}
+
+src_compile() {
+	cmake-utils_src_compile build-dev
+}
+
+src_install() {
+	cmake-utils_src_install install-dev
 }
