@@ -290,7 +290,9 @@ check_hardware() {
 
 	if use check-pcie && use check-gpu ; then
 		einfo "ROCm hardware support results:"
-		if (( ${#device_ids} == 1 )) && [[ "${atomic_not_required}" == "1" ]] ; then
+		if (( ${#device_ids} >= 1 )) && [[ "${is_pci_slots_supported}" == "1" && "${blacklisted_gpu}" == "0" ]] ; then
+			einfo "Your setup is supported."
+		elif (( ${#device_ids} == 1 )) && [[ "${atomic_not_required}" == "1" && "${blacklisted_gpu}" == "0" ]] ; then
 			einfo "Your setup is supported."
 		elif (( ${#device_ids} == 1 )) && [[ "${atomic_f}" == "1" && "${is_pci_slots_supported}" != "1" ]] ; then
 			die "Your APU/GPU and PCIe combo is not supported.  You may disable check-pcie or check-gpu to continue."
