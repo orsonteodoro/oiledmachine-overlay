@@ -264,6 +264,7 @@ check_hardware() {
 	local atomic_f=0
 	local atomic_not_required=0
 	local device_ids
+	local blacklisted_gpu=0
 	if use check-gpu ; then
 		device_ids=$(lspci -nn | grep VGA | grep -P -o -e "[0-9a-f]{4}:[0-9a-f]{4}" | cut -f2 -d ":" | tr "[:lower:]" "[:upper:]")
 		for device_id in ${device_ids} ; do
@@ -279,6 +280,7 @@ check_hardware() {
 			atomic_f=$(( ${atomic_f} | ${x_atomic_f} ))
 			if [[ "${no_support}" =~ "${found_asic}" ]] ; then
 				ewarn "Your ${found_asic} GPU is not supported."
+				blacklisted_gpu=1
 			elif [[ "${x_atomic_f}" == "1" ]] ; then
 				ewarn "Your APU/GPU requires PCIe atomics support for device_id=${device_id}"
 			else
