@@ -256,7 +256,7 @@ check_hardware() {
 	einfo "Testing hardware for ROCm API compatibility"
 	if use check-pcie ; then
 		if ! ( dmidecode -t slot | grep "PCI Express 3" > /dev/null ); then
-			ewarn "Your PCIe slots are not supported for ROCk support, but it depends on if the GPU doesn't require them."
+			ewarn "Your PCIe slots are not supported for ROCm support, but it depends on if the GPU doesn't require them."
 			is_pci_slots_supported=0
 		fi
 	fi
@@ -298,7 +298,7 @@ check_hardware() {
 		elif (( ${#device_ids} > 1 )) && [[ "${atomic_f}" == "1" && "${is_pci_slots_supported}" != "1" && "${atomic_not_required}" == "0" ]] ; then
 			die "You APU/GPU and PCIe combo is not supported for your multiple GPU setup.  You may disable check-pcie or check-gpu to continue."
 		elif (( ${#device_ids} > 1 )) && [[ "${atomic_f}" == "1" && "${is_pci_slots_supported}" != "1" && "${atomic_not_required}" == "1" ]] ; then
-			ewarn "You APU/GPU and PCIe combo may not supported for some of your GPUs."
+			ewarn "You APU/GPU and PCIe combo may not be supported for some of your GPUs."
 		fi
 	fi
 }

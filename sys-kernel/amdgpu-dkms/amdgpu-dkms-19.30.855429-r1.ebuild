@@ -265,7 +265,7 @@ check_hardware() {
 	einfo "Testing hardware for ROCm API compatibility"
 	if use check-pcie ; then
 		if ! ( dmidecode -t slot | grep "PCI Express 3" > /dev/null ); then
-			ewarn "Your PCIe slots are not supported for ROCk support, but it depends on if the GPU doesn't require them."
+			ewarn "Your PCIe slots are not supported for ROCm support, but it depends on if the GPU doesn't require them."
 			is_pci_slots_supported=0
 		fi
 	fi
@@ -278,7 +278,7 @@ check_hardware() {
 		device_ids=$(lspci -nn | grep VGA | grep -P -o -e "[0-9a-f]{4}:[0-9a-f]{4}" | cut -f2 -d ":" | tr "[:lower:]" "[:upper:]")
 		for device_id in ${device_ids} ; do
 			if [[ -z "${device_id}" ]] ; then
-				ewarn "Your APU/GPU is not supported for ROCk support when device_id=${device_id}"
+				ewarn "Your APU/GPU is not supported for ROCm support when device_id=${device_id}"
 				continue
 			fi
 			# the format is asicname_needspciatomics
@@ -290,10 +290,10 @@ check_hardware() {
 			if [[ "${no_support}" =~ "${found_asic}" ]] ; then
 				ewarn "Your ${found_asic} GPU is not supported."
 			elif [[ "${x_atomic_f}" == "1" ]] ; then
-				ewarn "Your APU/GPU requires PCIe atomics support for ROCk support when device_id=${device_id}"
+				ewarn "Your APU/GPU requires PCIe atomics support for ROCm support when device_id=${device_id}"
 			else
 				atomic_not_required=1
-				einfo "Your APU/GPU is supported for ROCk when device_id=${device_id}"
+				einfo "Your APU/GPU is supported for ROCm when device_id=${device_id}"
 			fi
 		done
 	fi
@@ -303,11 +303,11 @@ check_hardware() {
 		if (( ${#device_ids} == 1 )) && [[ "${atomic_not_required}" == "1" ]] ; then
 			einfo "Your setup is supported."
 		elif (( ${#device_ids} == 1 )) && [[ "${atomic_f}" == "1" && "${is_pci_slots_supported}" != "1" ]] ; then
-			die "Your APU/GPU and PCIe combo is not supported in ROCk.  You may disable check-pcie or check-gpu to continue."
+			die "Your APU/GPU and PCIe combo is not supported in ROCm.  You may disable check-pcie or check-gpu to continue."
 		elif (( ${#device_ids} > 1 )) && [[ "${atomic_f}" == "1" && "${is_pci_slots_supported}" != "1" && "${atomic_not_required}" == "0" ]] ; then
-			die "You APU/GPU and PCIe combo is not supported for your multiple GPU setup in ROCk.  You may disable check-pcie or check-gpu to continue."
+			die "You APU/GPU and PCIe combo is not supported for your multiple GPU setup in ROCm.  You may disable check-pcie or check-gpu to continue."
 		elif (( ${#device_ids} > 1 )) && [[ "${atomic_f}" == "1" && "${is_pci_slots_supported}" != "1" && "${atomic_not_required}" == "1" ]] ; then
-			ewarn "You APU/GPU and PCIe combo may not supported for some of your GPUs in ROCk."
+			ewarn "You APU/GPU and PCIe combo may not be supported for some of your GPUs in ROCm."
 		fi
 	fi
 }
