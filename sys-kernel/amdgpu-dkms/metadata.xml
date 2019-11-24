@@ -31,8 +31,8 @@
     <flag name="check-pcie">Checks if the PCIe slots are supported for ROCk.
       </flag>
     <flag name="directgma">Checks kernel config for DirectGMA support.</flag>
-    <flag name="firmware">Pulls in the firmware package containing the latest
-      firmware version. (optional)</flag>
+    <flag name="firmware">Pulls in the firmware packaged with the same
+      driver. (optional if using linux-firmware instead)</flag>
     <flag name="rock">Checks if the hardware is compatible with the ROCk
      kernel driver. (optional)</flag>
     <flag name="ssg">Checks kernel config for SSG (Solid State Graphics)

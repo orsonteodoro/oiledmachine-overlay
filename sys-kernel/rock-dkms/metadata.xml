@@ -40,7 +40,7 @@
     <flag name="check-pcie">Checks if the PCIe slots are supported.</flag>
     <flag name="directgma">Checks kernel config for DirectGMA support.</flag>
     <flag name="firmware">Pulls in the firmware package containing the latest
-      firmware version. (optional)</flag>
+      firmware version.</flag>
     <flag name="ssg">Checks kernel config for SSG (Solid State Graphics)
       support.</flag>
     <flag name="numa">Fills the IO-LINKS' sysfs interface at
