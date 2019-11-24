@@ -15,7 +15,8 @@ BASE_URL="http://repo.radeon.com/rocm/apt/debian"
 FOLDER="pool/main/r/rock-dkms"
 SRC_URI="http://repo.radeon.com/rocm/apt/debian/pool/main/r/rock-dkms/${FN}"
 SLOT="0/${PV}"
-IUSE="+build +check-mmu-notifier +check-pcie +check-gpu directgma firmware numa ssg"
+IUSE="acpi +build +check-mmu-notifier +check-pcie +check-gpu directgma firmware hybrid-graphics numa ssg"
+REQUIRED_USE="hybrid-graphics? ( acpi )"
 RDEPEND="firmware? ( sys-firmware/rock-firmware )
 	 sys-kernel/dkms
 	 || ( <sys-kernel/ck-sources-5.3
@@ -149,6 +150,20 @@ pkg_setup_warn() {
 	if use numa ; then
 		CONFIG_CHECK=" ~NUMA"
 		WARNING_NUMA=" CONFIG_NUMA must be set to =y in the kernel .config."
+		check_extra_config
+	fi
+
+	if use acpi ; then
+		CONFIG_CHECK=" ~ACPI"
+		WARNING_ACPI=" CONFIG_ACPI must be set to =y in the kernel .config."
+		check_extra_config
+	fi
+
+	if use hybrid-graphics ; then
+		CONFIG_CHECK=" ~ACPI ~VGA_SWITCHEROO"
+		WARNING_ACPI=" CONFIG_ACPI must be set to =y in the kernel .config."
+		WARNING_VGA_SWITCHEROO=" CONFIG_VGA_SWITCHEROO must be set to =y in the kernel .config."
+		check_extra_config
 	fi
 
 	if ! linux_chkconfig_module "DRM_AMDGPU" ; then
@@ -209,6 +224,20 @@ pkg_setup_error() {
 	if use numa ; then
 		CONFIG_CHECK=" NUMA"
 		ERROR_NUMA=" CONFIG_NUMA must be set to =y in the kernel .config."
+		check_extra_config
+	fi
+
+	if use acpi ; then
+		CONFIG_CHECK=" ACPI"
+		ERROR_ACPI=" CONFIG_ACPI must be set to =y in the kernel .config."
+		check_extra_config
+	fi
+
+	if use hybrid-graphics ; then
+		CONFIG_CHECK=" ACPI VGA_SWITCHEROO"
+		ERROR_ACPI=" CONFIG_ACPI must be set to =y in the kernel .config."
+		ERROR_VGA_SWITCHEROO=" CONFIG_VGA_SWITCHEROO must be set to =y in the kernel .config."
+		check_extra_config
 	fi
 
 	if ! linux_chkconfig_module DRM_AMDGPU ; then

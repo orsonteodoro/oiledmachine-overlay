@@ -24,6 +24,11 @@
     <bugs-to>https://www.amd.com/report</bugs-to>
   </upstream>
   <use>
+    <flag name="acpi">Checks if ACPI support is enabled in the kernel.
+      Enabling ACPI may enhance multigpu detection with PowerXpress (multigpu
+      laptops), provide more sysfs info, access to ACPI events for laptops,
+      dynamic PCI-e tuning.
+      </flag>
     <flag name="build">Builds the kernel module.</flag>
     <flag name="check-gpu">Checks if the GPU(s) are supported for ROCk.</flag>
     <flag name="check-mmu-notifier">Checks if the MMU_NOTIFIER is enabled.
@@ -33,6 +38,9 @@
     <flag name="directgma">Checks kernel config for DirectGMA support.</flag>
     <flag name="firmware">Pulls in the firmware packaged with the same
       driver. (optional if using linux-firmware instead)</flag>
+    <flag name="hybrid-graphics">Checks if kernel config for proper support
+      for PowerXpress, Hybrid Graphics (i.e. IGP and dGPU on laptop).
+      </flag>
     <flag name="rock">Checks if the hardware is compatible with the ROCk
      kernel driver. (optional)</flag>
     <flag name="ssg">Checks kernel config for SSG (Solid State Graphics)
