@@ -21,7 +21,7 @@ PKG_VER_STRING_DIR=${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 SLOT="0/${PV}"
-IUSE="+build +check-mmu-notifier check-pcie check-gpu directgma firmware rock ssg"
+IUSE="+build +check-mmu-notifier check-pcie check-gpu directgma firmware numa rock ssg"
 REQUIRED_USE="rock? ( check-pcie check-gpu )"
 RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
 	 sys-kernel/dkms
@@ -79,7 +79,7 @@ PATCHES=( "${FILESDIR}/rock-dkms-2.8_p13-makefile-recognize-gentoo.patch"
 	  "${FILESDIR}/rock-dkms-2.8_p13-mmu_notifier_range_blockable-for-5_2.patch"
 	  "${FILESDIR}/rock-dkms-2.8_p13-vm_fault_t-is-__bitwise-unsigned-int-for-5_1.patch"
 	  "${FILESDIR}/rock-dkms-2.8_p13-drm_atomic_private_obj_init-adev-ddev-arg-for-5_1.patch"
-	  "${FILESDIR}/amdgpu-dkms-19.30.838629-no-firmware-install.patch"
+	  "${FILESDIR}/amdgpu-dkms-19.30.855429-no-firmware-install.patch"
 #	  "${FILESDIR}/rock-dkms-2.8_p13-no-update-initramfs.patch"
 
 	  # drm_crtc_force_disable_all was not marked error
@@ -156,6 +156,11 @@ pkg_setup_warn() {
 		check_extra_config
 	fi
 
+	if use numa ; then
+		CONFIG_CHECK=" ~NUMA"
+		WARNING_NUMA=" CONFIG_NUMA must be set to =y in the kernel .config."
+	fi
+
 	if ! linux_chkconfig_module "DRM_AMDGPU" ; then
 		ewarn "CONFIG_DRM_AMDGPU (Graphics support > AMD GPU) must be compiled as a module (=m)."
 	fi
@@ -208,6 +213,11 @@ pkg_setup_error() {
 		ERROR_SPARSEMEM_VMEMMAP=" CONFIG_SPARSEMEM_VMEMMAP must be set to =y in the kernel .config."
 		ERROR_ARCH_HAS_PTE_DEVMAP=" CONFIG_ARCH_HAS_PTE_DEVMAP must be set to =y in the kernel .config."
 		check_extra_config
+	fi
+
+	if use numa ; then
+		CONFIG_CHECK=" NUMA"
+		ERROR_NUMA=" CONFIG_NUMA must be set to =y in the kernel .config."
 	fi
 
 	if ! linux_chkconfig_module DRM_AMDGPU ; then
@@ -313,7 +323,7 @@ src_prepare() {
 	default
 	einfo "DC_VER=${DC_VER}"
 	einfo "AMDGPU_VERSION=${AMDGPU_VERSION}"
-	einfo "ROCK_VER=${ROCK_VER}"
+	einfo "ROCK_VER≈${ROCK_VER}"
 	check_hardware
 }
 

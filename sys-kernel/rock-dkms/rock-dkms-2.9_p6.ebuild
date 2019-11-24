@@ -15,7 +15,7 @@ BASE_URL="http://repo.radeon.com/rocm/apt/debian"
 FOLDER="pool/main/r/rock-dkms"
 SRC_URI="http://repo.radeon.com/rocm/apt/debian/pool/main/r/rock-dkms/${FN}"
 SLOT="0/${PV}"
-IUSE="+build +check-mmu-notifier +check-pcie +check-gpu directgma firmware ssg"
+IUSE="+build +check-mmu-notifier +check-pcie +check-gpu directgma firmware numa ssg"
 RDEPEND="firmware? ( sys-firmware/rock-firmware )
 	 sys-kernel/dkms
 	 || ( <sys-kernel/ck-sources-5.3
@@ -147,6 +147,11 @@ pkg_setup_warn() {
 		check_extra_config
 	fi
 
+	if use numa ; then
+		CONFIG_CHECK=" ~NUMA"
+		WARNING_NUMA=" CONFIG_NUMA must be set to =y in the kernel .config."
+	fi
+
 	if ! linux_chkconfig_module "DRM_AMDGPU" ; then
 		ewarn "CONFIG_DRM_AMDGPU (Graphics support > AMD GPU) must be compiled as a module (=m)."
 	fi
@@ -198,6 +203,11 @@ pkg_setup_error() {
 		ERROR_SPARSEMEM_VMEMMAP=" CONFIG_SPARSEMEM_VMEMMAP must be set to =y in the kernel .config."
 		ERROR_ARCH_HAS_PTE_DEVMAP=" CONFIG_ARCH_HAS_PTE_DEVMAP must be set to =y in the kernel .config."
 		check_extra_config
+	fi
+
+	if use numa ; then
+		CONFIG_CHECK=" NUMA"
+		ERROR_NUMA=" CONFIG_NUMA must be set to =y in the kernel .config."
 	fi
 
 	if ! linux_chkconfig_module DRM_AMDGPU ; then
