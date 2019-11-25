@@ -260,8 +260,10 @@ like npm.  These use flags are not recommended."
 	fi
 
 	if use tresor ; then
-		ewarn \
-	"TRESOR is broken for ${PV}.  Use 4.9.x series.  For ebuild devs only."
+		if ver_test ${PV} -ge 4.17 ; then
+			ewarn \
+	"TRESOR is broken for ${PV}.  Use 4.14.x series.  For ebuild devs only."
+		fi
 	fi
 }
 
