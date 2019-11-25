@@ -30,7 +30,7 @@ DEPEND+=" dev-libs/libpcre"
 inherit ot-kernel-cve-en
 
 # based on my last edit in unix timestamp (date -u +%Y%m%d_%I%M_%p_%Z)
-LATEST_CVE_KERNEL_INDEX="20191121_0741_AM_UTC"
+LATEST_CVE_KERNEL_INDEX="20191125_0305_AM_UTC"
 LATEST_CVE_KERNEL_INDEX="${LATEST_CVE_KERNEL_INDEX,,}"
 
 # this will trigger a kernel re-install based on use flag timestamp
@@ -682,6 +682,14 @@ CVE_2019_19083_PM="https://github.com/torvalds/linux/commit/055e547478a11a6360c7
 CVE_2019_19083_SUMMARY_LANG="CVE_2019_19083_SUMMARY_${CVE_LANG}"
 CVE_2019_19083_SUMMARY="${!CVE_2019_19083_SUMMARY_LANG}"
 
+CVE_2019_19227_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=9804501fa1228048857910a6bf23e085aade37cc"
+CVE_2019_19227_FN="CVE-2019-19227-fix--linux-net-appletalk-Fix-potential-NULL-pointer-dereference-in-unregister_snap_client.patch"
+CVE_2019_19227_SEVERITY_LANG="CVE_2019_19227_SEVERITY_${CVE_LANG}"
+CVE_2019_19227_SEVERITY="${!CVE_2019_19227_SEVERITY_LANG}"
+CVE_2019_19227_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=9804501fa1228048857910a6bf23e085aade37cc"
+CVE_2019_19227_SUMMARY_LANG="CVE_2019_19227_SUMMARY_${CVE_LANG}"
+CVE_2019_19227_SUMMARY="${!CVE_2019_19227_SUMMARY_LANG}"
+
 
 
 #			 ${CVE_2010_4661_FIX_SRC_URI} -> ${CVE_2010_4661_FN}
@@ -689,6 +697,7 @@ CVE_2019_19083_SUMMARY="${!CVE_2019_19083_SUMMARY_LANG}"
 #			 ${CVE_2019_19036_FIX_SRC_URI} -> ${CVE_2019_19036_FN}
 #			 ${CVE_2019_19037_FIX_SRC_URI} -> ${CVE_2019_19037_FN}
 #			 ${CVE_2019_19039_FIX_SRC_URI} -> ${CVE_2019_19039_FN}
+
 
 SRC_URI+=" cve_hotfix? ( ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
 			 ${CVE_2010_2243_FIX_SRC_URI} -> ${CVE_2010_2243_FN}
@@ -782,6 +791,8 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
 			 ${CVE_2019_19081_FIX_SRC_URI} -> ${CVE_2019_19081_FN}
 			 ${CVE_2019_19082_FIX_SRC_URI} -> ${CVE_2019_19082_FN}
 			 ${CVE_2019_19083_FIX_SRC_URI} -> ${CVE_2019_19083_FN}
+
+			 ${CVE_2019_19227_FIX_SRC_URI} -> ${CVE_2019_19227_FN}
 )"
 
 
@@ -2171,6 +2182,23 @@ function fetch_cve_2019_19083_hotfix() {
 	if grep -F -e \
 		"kfree(clk_src);" \
 		"${S}/drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c" \
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_19227_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19227 patch
+function fetch_cve_2019_19227_hotfix() {
+	local CVE_ID="CVE-2019-19227"
+	if grep -F -e \
+		'pr_crit("Unable to register DDP with SNAP.\n");' \
+		"${S}/net/appletalk/ddp.c"
 		>/dev/null ; \
 	then
 		einfo "${CVE_ID} already patched."
@@ -3879,6 +3907,29 @@ function apply_cve_2019_19083_hotfix() {
 	_resolve_hotfix_default
 }
 
+# @FUNCTION: apply_cve_2019_19227_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19227 patch if it needs to
+function apply_cve_2019_19227_hotfix() {
+	local CVE_ID="CVE-2019-19227"
+	if ver_test ${PV} -ge 5.1.0 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		'pr_crit("Unable to register DDP with SNAP.\n");' \
+		"${S}/net/appletalk/ddp.c"
+		>/dev/null ; \
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
 # @FUNCTION: fetch_cve_hotfixes
 # @DESCRIPTION:
 # Fetches all the CVE kernel patches
@@ -3977,6 +4028,8 @@ function fetch_cve_hotfixes() {
 		fetch_cve_2019_19081_hotfix
 		fetch_cve_2019_19082_hotfix
 		fetch_cve_2019_19083_hotfix
+
+		fetch_cve_2019_19227_hotfix
 
 		local cve_copyright1="CVE_COPYRIGHT1_${CVE_LANG}"
 		local cve_copyright2="CVE_COPYRIGHT2_${CVE_LANG}"
@@ -4089,5 +4142,7 @@ function apply_cve_hotfixes() {
 		apply_cve_2019_19081_hotfix
 		apply_cve_2019_19082_hotfix
 		apply_cve_2019_19083_hotfix
+
+		apply_cve_2019_19227_hotfix
 	fi
 }
