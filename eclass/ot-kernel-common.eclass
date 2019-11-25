@@ -305,6 +305,59 @@ function apply_zentune() {
 	_dpatch "${PATCH_OPS} -N" "${T}/${ZENTUNE_FN}"
 }
 
+# @FUNCTION: _filter_genpatches
+# @DESCRIPTION:
+# Applies a genpatch if not blacklisted.
+#
+# Define GENPATCHES_BLACKLIST as a space seperated string in make.conf or
+# as a per-package env
+#
+# example:
+# GENPATCHES_BLACKLIST="2500 2600"
+function _filter_genpatches() {
+	# already applied
+	# 5010-5012 GCC graysky2 patches
+	P_GENPATCHES_BLACKLIST=" 5010 5011 5012"
+	pushd "${d}" || die
+		for f in $(ls -1) ; do
+			einfo "Processing ${f}"
+			if [[ "${f}" =~ \.patch$ ]] ; then
+				local l=$(echo "${f}" | cut -f1 -d"_")
+				if (( ${l} < 1500 )) ; then
+					# vanilla kernel inc patches
+					# already applied
+					continue
+				fi
+				local is_blacklist
+				is_blacklist=0
+				for x in ${P_GENPATCHES_BLACKLIST} ; do
+					if [[ "${l}" == "${x}" ]] ; then
+						is_blacklist=1
+					fi
+				done
+				if [[ "${is_blacklist}" == "1" ]] ; then
+					continue
+				fi
+
+				is_blacklist=0
+				for x in ${GENPATCHES_BLACKLIST} ; do
+					if [[ "${l}" == "${x}" ]] ; then
+						is_blacklist=1
+					fi
+				done
+				if [[ "${is_blacklist}" == "1" ]] ; then
+					einfo "Skipping genpatches ${l}"
+					continue
+				fi
+
+				pushd "${S}" || die
+					_tpatch "${PATCH_OPS} -N" "${d}/${f}"
+				popd
+			fi
+		done
+	popd
+}
+
 # @FUNCTION: apply_genpatch_base
 # @DESCRIPTION:
 # Apply the base genpatches patchset.
@@ -353,11 +406,7 @@ function apply_genpatch_base() {
 
 	cd "${S}" || die
 
-	if declare -f ot-kernel-common_apply_genpatch_base_post \
-		> /dev/null ; \
-	then
-		ot-kernel-common_apply_genpatch_base_post
-	fi
+	_filter_genpatches
 }
 
 # @FUNCTION: apply_genpatch_experimental
@@ -378,12 +427,7 @@ function apply_genpatch_experimental() {
 
 	cd "${S}" || die
 
-	# don't need since we apply upstream
-	if declare -f ot-kernel-common_apply_genpatch_experimental_patchset \
-		> /dev/null ; \
-	then
-		ot-kernel-common_apply_genpatch_experimental_patchset
-	fi
+	_filter_genpatches
 }
 
 # @FUNCTION: apply_genpatch_extras
@@ -404,11 +448,7 @@ function apply_genpatch_extras() {
 
 	cd "${S}" || die
 
-	if declare -f ot-kernel-common_apply_genpatch_extras_patchset \
-		> /dev/null ; \
-	then
-		ot-kernel-common_apply_genpatch_extras_patchset
-	fi
+	_filter_genpatches
 }
 
 # @FUNCTION: apply_o3
@@ -768,8 +808,8 @@ function ot-kernel-common_src_unpack() {
 	fi
 
 	apply_genpatch_base
-	apply_genpatch_experimental
 	apply_genpatch_extras
+	apply_genpatch_experimental
 
 	# should be done after all the kernel point releases contained in
 	# apply_genpatch_base

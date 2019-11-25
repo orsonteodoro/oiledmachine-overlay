@@ -7,14 +7,6 @@ K_GENPATCHES_VER="13"
 PATCH_BMQ_VER="5.3-r2"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
 
-function ot-kernel-common_apply_genpatch_base_patchset() {
-	_tpatch "${PATCH_OPS} -N" "$d/1500_XATTR_USER_PREFIX.patch"
-	_tpatch "${PATCH_OPS} -N" "$d/1510_fs-enable-link-security-restrictions-by-default.patch"
-	_tpatch "${PATCH_OPS} -N" "$d/2000_BT-Check-key-sizes-only-if-Secure-Simple-Pairing-enabled.patch"
-	_tpatch "${PATCH_OPS} -N" "$d/2500_usb-storage-Disable-UAS-on-JMicron-SATA-enclosure.patch"
-	_tpatch "${PATCH_OPS} -N" "$d/2600_enable-key-swapping-for-apple-mac.patch"
-}
-
 inherit ot-kernel-v5.3
 
 KEYWORDS="~amd64 ~x86"

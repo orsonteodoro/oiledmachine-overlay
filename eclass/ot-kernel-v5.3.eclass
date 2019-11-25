@@ -185,20 +185,6 @@ function ot-kernel-common_pkg_pretend_cb() {
 	fi
 }
 
-# @FUNCTION: ot-kernel-common_apply_genpatch_base_post
-# @DESCRIPTION:
-# Apply genpatches base patches fixes
-function ot-kernel-common_apply_genpatch_base_post(){
-	_tpatch "${PATCH_OPS} -N" "${FILESDIR}/torvalds-kernel-f73b3cc39c84220e6dccd463b5c8279b03514646-rebase-for-5.3.4.patch"
-}
-
-# @FUNCTION: ot-kernel-common_apply_genpatch_extras_patchset
-# @DESCRIPTION:
-# Apply genpatches extra patches
-function ot-kernel-common_apply_genpatch_extras_patchset() {
-	_tpatch "${PATCH_OPS} -N" "$d/4567_distro-Gentoo-Kconfig.patch"
-}
-
 # @FUNCTION: ot-kernel-common_apply_o3_fixes
 # @DESCRIPTION:
 # Apply fixes to O3

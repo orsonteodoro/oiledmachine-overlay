@@ -267,15 +267,6 @@ like npm.  These use flags are not recommended."
 	fi
 }
 
-# @FUNCTION: ot-kernel-common_apply_genpatch_extras_patchset
-# @DESCRIPTION:
-# Apply genpatches extra patches
-function ot-kernel-common_apply_genpatch_extras_patchset() {
-	_tpatch "${PATCH_OPS} -N" "$d/4200_fbcondecor.patch"
-	_tpatch "${PATCH_OPS} -N" "$d/4400_alpha-sysctl-uac.patch"
-	_tpatch "${PATCH_OPS} -N" "$d/4567_distro-Gentoo-Kconfig.patch"
-}
-
 # @FUNCTION: ot-kernel-common_apply_tresor_fixes
 # @DESCRIPTION:
 # Applies specific TRESOR fixes for this kernel major version
