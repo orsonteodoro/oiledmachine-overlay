@@ -297,8 +297,8 @@ function rock_prepend_licenses_in_patches() {
 			-od "${T}/rock-processed"
 		mv "$(pwd)/attachied" "$(pwd)/rock-attachied" || die
 		einfo \
-"Maintainer:  $(pwd)/rock-attachied contains patches with attached licenses\n\
-and ${T}/rock-attachied contains all the licenses in one file."
+"Maintainer:  $(pwd)/rock-processed contains patches with attached licenses\n\
+and ${T}/rock-licenses contains all the licenses in one file."
 	fi
 }
 

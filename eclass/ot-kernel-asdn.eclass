@@ -257,7 +257,7 @@ amd_staging_drm_next_prepend_licenses_in_patches() {
 			-od "${T}/asdn-processed"
 		mv "$(pwd)/attachied" "$(pwd)/asdn-attachied" || die
 		einfo \
-"Maintainer:  $(pwd)/asdn-attachied contains patches with attached licenses\n\
+"Maintainer:  $(pwd)/asdn-processed contains patches with attached licenses\n\
 and ${T}/asdn-licenses contains all the licenses in one file."
 	fi
 }
