@@ -636,8 +636,9 @@ function cd_vk() {
 # of AMD_STAGING_INTERSECTS_KV (2019) and ROCK_BASE (2014) to K_MAJOR_MINOR
 function generate_vk_hash_tables() {
 	cd_vk
+	# LINUX_COMMITS_AMDGPU_RANGE_FN is discardable
 	local LINUX_COMMITS_AMDGPU_RANGE_FN=\
-"${LINUX_COMMITS_AMDGPU_RANGE_FN:=linux.commits.amdgpu_range.${K_MAJOR_MINOR}}"
+"${LINUX_COMMITS_AMDGPU_RANGE_FN:=linux.commits.amdgpu_range.${K_MAJOR_MINOR}}.discardable"
 	einfo \
 "Grabbing list of already merged amdgpu commits in v${K_MAJOR_MINOR} vanilla\n\
 sources."
@@ -702,10 +703,6 @@ function is_rock_patchset_exist() {
 # @DESCRIPTION:
 # Generates or uses vanilla kernel hash tables
 function amdgpu_load_vk_hash_tables() {
-	unset vk_commits
-	unset vk_summaries
-	declare -Ax vk_commits
-	declare -Ax vk_summaries
 	if [[ -e "${FILESDIR}/${LINUX_HASHTABLE_COMMITS_VK_FN}" \
 	   || -e "${FILESDIR}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}" ]] ; \
 	then
@@ -726,6 +723,11 @@ function amdgpu_load_vk_hash_tables() {
 #   merges amd-staging-drm-next and ROCk fixes
 #
 function apply_amdgpu() {
+	unset vk_commits
+	unset vk_summaries
+	declare -Ax vk_commits
+	declare -Ax vk_summaries
+
 	amdgpu_load_vk_hash_tables
 	fetch_amd_staging_drm_next
 	fetch_rock
@@ -850,6 +852,10 @@ function amdgpu_setup() {
 "asdn.db.summary_hash.${K_MAJOR_MINOR}..${SUFFIX_ASDN}"
 	export ASDN_DB_COMMIT_TIME_FN=\
 "asdn.db.commit_time.${K_MAJOR_MINOR}..${SUFFIX_ASDN}"
+	export ASDN_DB_DC_VER_FN=\
+"asdn.db.dc_ver.${K_MAJOR_MINOR}..${SUFFIX_ASDN}"
+	export ASDN_DB_PN_FN=\
+"asdn.db.pn.${K_MAJOR_MINOR}..${SUFFIX_ASDN}"
 	export HT_ASDN_FN=\
 "${LINUX_HASHTABLE_COMMITS_ASDN_FN}${SUFFIX_ASDN}"
 	export HT_ASDNS_FN=\
@@ -861,6 +867,10 @@ function amdgpu_setup() {
 "rock.db.summary_hash.${K_MAJOR_MINOR}..${SUFFIX_ROCK}"
 	export ROCK_DB_COMMIT_TIME_FN=\
 "rock.db.commit_time.${K_MAJOR_MINOR}..${SUFFIX_ROCK}"
+	export ROCK_DB_DC_VER_FN=\
+"rock.db.dc_ver.${K_MAJOR_MINOR}..${SUFFIX_ROCK}"
+	export ROCK_DB_PN_FN=\
+"rock.db.pn.${K_MAJOR_MINOR}..${SUFFIX_ROCK}"
 }
 
 # @FUNCTION: copy_patachie

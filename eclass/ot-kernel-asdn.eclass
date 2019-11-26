@@ -72,7 +72,7 @@ function fetch_amd_staging_drm_next() {
 	if use amd-staging-drm-next ; then
 		local suffix_asdn=$(ot-kernel-common_amdgpu_get_suffix_asdn)
 		if [[ \
-       ! -d "${FILESDIR}/amd-staging-drm-next/${K_MAJOR_MINOR}" ]]
+       ! -d "${FILESDIR}/amd-staging-drm-next" ]]
 		then
 			# ebuild maintainer only
 			einfo \
@@ -173,18 +173,44 @@ version."
 
 # @FUNCTION: amd_staging_drm_next_use_commits
 # @DESCRIPTION:
-# This will select either FILESDIR or amd-staging-drm-next set
+# This will generate or reuse pre-generate patch files from commit hash
 function amd_staging_drm_next_use_commits() {
 	if [[ \
-	  -d "${FILESDIR}/amd-staging-drm-next/" ]]
+	  -d "${FILESDIR}/amd-staging-drm-next" ]]
 	then
 		# we don't distribute this because it is 1G+
+		mkdir -p "${T}/amd-staging-drm-next-patches"
 		cp -a "${FILESDIR}/amd-staging-drm-next"/* \
 			"${T}"/amd-staging-drm-next-patches/ \
 			|| die
 	else
 		amd_staging_drm_next_save_all_commits
+		amd_staging_drm_next_prepend_licenses_in_patches
+		if [[ -n "${OT_KERNEL_MAINTAINER}" \
+			&& "${OT_KERNEL_MAINTAINER}" == "1" ]] ; then
+			einfo \
+"Copying asdn patches to ${T}/amd-staging-drm-next-patches.bak before they\n\
+get filtered.  They should be placed in \${FILESDIR}/amd-staging-drm-next ."
+			cp -a "${T}"/amd-staging-drm-next-patches \
+				"${T}"/amd-staging-drm-next-patches.bak
+		fi
 	fi
+}
+
+# @FUNCTION: amd_staging_drm_next_rename_commits
+# @DESCRIPTION:
+# This will rename ${c}.patch to fn="${DC_VER}-${ct}-${pn}-${c}-rock.patch" .
+# We use ${c}.patch minimize wiping entire set and reloading it on repo server.
+# We rename to latter for easy merging between rock and asdn and to separate
+# merge ordering (pn aka padded n) if it changed.
+function amd_staging_drm_next_rename_commits() {
+	for c in $C ; do
+		local DC_VER="${asdn_dc_ver[${c}]}"
+		local ct=${asdn_commit_time[${c}]}
+		local pn=${asdn_pn[${c}]}
+		mv "${T}/amd-staging-drm-next-patches/${c}.patch" \
+			"${T}/amd-staging-drm-next-patches/${DC_VER}-${ct}-${pn}-${c}-asdn.patch"
+	done
 }
 
 # @FUNCTION: cd_asdn
@@ -202,27 +228,7 @@ cd_asdn() {
 function amd_staging_drm_next_save_all_commits() {
 	cd_asdn
 	for c in $C ; do
-		local fn
-		local ct=$(git -P show -s --format=%ct ${c})
-		local s=$(git -P show -s --format=%s ${c})
-		local h_summary
-		h_summary=$(echo "${s}" | sha1sum | cut -f1 -d ' ')
-
-		DC_VER=$(git -P \
-			show ${c}:drivers/gpu/drm/amd/display/dc/dc.h \
-			| grep -e "#define DC_VER" \
-			| grep -o -P -e "\"[0-9.]+\"" \
-			| sed -e "s|\"||g")
-
-		# repad DC_VER
-		DC_VER_MAJOR=$(printf "%02d" $(echo "$DC_VER" | cut -f1 -d '.'))
-		DC_VER_MINOR=$(printf "%02d" $(echo "$DC_VER" | cut -f2 -d '.'))
-		DC_VER_PATCH=$(printf "%03d" $(echo "$DC_VER" | cut -f3 -d '.'))
-		DC_VER="${DC_VER_MAJOR}.${DC_VER_MINOR}.${DC_VER_PATCH}"
-
-		printf -v pn "%06d" ${n}
-		fn="${DC_VER}-${ct}-${pn}-${c}-asdn.patch"
-
+		local fn="${c}.patch"
 		if git -P diff $c^..$c \
 			> "${T}"/amd-staging-drm-next-patches/${fn} ; then
 		        #einfo "Added ${fn}"
@@ -236,9 +242,13 @@ function amd_staging_drm_next_save_all_commits() {
 		else
 			die "Failed to add ${c} ${fn}"
 		fi
-	        n=$((n+1))
 	done
+}
 
+# @FUNCTION: amd_staging_drm_next_prepend_licenses_in_patches
+# @DESCRIPTION:
+# Adds licenses to top of patches.
+amd_staging_drm_next_prepend_licenses_in_patches() {
 	if [[ -n "${USE_PATACHIE}" && "${USE_PATACHIE}" == "1" ]] ; then
 		einfo "Attaching licenses to amd-staging-drm-next patches"
 		"${HOME}/patachie" -p "${T}"/amd-staging-drm-next-patches \
@@ -266,6 +276,7 @@ function amd_staging_drm_next_filter_by_git_commit_metadata() {
 	cd_asdn
 	local whitelisted
 	for c in $C ; do
+		#einfo "Processing ${c}"
 		local fn
 		if [[ -n "${vk_commits[${c}]}" ]] ; then
 #			einfo \
@@ -274,8 +285,8 @@ function amd_staging_drm_next_filter_by_git_commit_metadata() {
 			continue
 		fi
 
-		local s=$(git -P show -s --format=%s ${c})
-		local h_summary=$(echo "${s}" | sha1sum | cut -f1 -d ' ')
+		local s="${asdn_summary_raw[${c}]}"
+		local h_summary="${asdn_summary_hash[${c}]}"
 
 		local whitelisted=0
 		if [[ \
@@ -324,7 +335,7 @@ function amd_staging_drm_next_filter_by_git_commit_metadata() {
 			# whitelist by subject keywords
 			whitelisted=1
 		else
-			local ct=$(git -P show -s --format=%ct ${c})
+			local ct="${asdn_commit_time[${c}]}"
 			if (( ${ct} <= ${LINUX_TIMESTAMP} )) ; then
 				#einfo "Skipping old commit ${c} : Old timestamp"
 				__remove_asdn_patch
@@ -334,9 +345,9 @@ function amd_staging_drm_next_filter_by_git_commit_metadata() {
 		if [[ "${whitelisted}" == "1" ]] ; then
 			:;
 		elif [[ -n "${vk_summaries[${h_summary}]}" ]] ; then
-			einfo \
-"Already added ${c} via vanilla kernel sources (with same subject match). \
-Skipping..."
+#			einfo \
+#"Already added ${c} via vanilla kernel sources (with same subject match). \
+#Skipping..."
 			__remove_asdn_patch
 			continue
 		fi
@@ -346,6 +357,11 @@ Skipping..."
 # @FUNCTION: generate_amd_staging_drm_next_commit_list
 # @DESCRIPTION:
 # Fills a variable named C with list of commits
+#
+# The commit list, C, is used by:
+# amd_staging_drm_next_filter_by_git_commit_metadata
+# amd_staging_drm_next_generate_database
+# amd_staging_drm_next_save_all_commits
 function generate_amd_staging_drm_next_commit_list() {
 	cd_asdn
 	einfo \
@@ -366,7 +382,7 @@ function amd_staging_drm_next_use_commit_list() {
 	if has_amd_staging_drm_next_database ; then
 		local suffix_asdn=$(ot-kernel-common_amdgpu_get_suffix_asdn)
 		einfo "Using the amd-staging-drm-next commit list"
-		source "${T}/asdn_commit_list.${K_MAJOR_MINOR}${suffix_asdn}"
+		source "${FILESDIR}/asdn_commit_list.${K_MAJOR_MINOR}${suffix_asdn}"
 	else
 		einfo "Generating amd-staging-drm-next commit list"
 		generate_amd_staging_drm_next_commit_list
@@ -383,13 +399,32 @@ function amd_staging_drm_next_use_commit_list() {
 # arrays first
 function amd_staging_drm_next_generate_database() {
 	cd_asdn
+	local n="1"
 	for c in $C ; do
 		local s=$(git -P show -s --format=%s ${c})
 		local ct=$(git -P show -s --format=%ct ${c})
 		local h_summary=$(echo "${s}" | sha1sum | cut -f1 -d ' ')
+
+		DC_VER=$(git -P \
+			show ${c}:drivers/gpu/drm/amd/display/dc/dc.h \
+			| grep -e "#define DC_VER" \
+			| grep -o -P -e "\"[0-9.]+\"" \
+			| sed -e "s|\"||g")
+
+		# repad DC_VER
+		DC_VER_MAJOR=$(printf "%02d" $(echo "$DC_VER" | cut -f1 -d '.'))
+		DC_VER_MINOR=$(printf "%02d" $(echo "$DC_VER" | cut -f2 -d '.'))
+		DC_VER_PATCH=$(printf "%03d" $(echo "$DC_VER" | cut -f3 -d '.'))
+		DC_VER="${DC_VER_MAJOR}.${DC_VER_MINOR}.${DC_VER_PATCH}"
+
+		printf -v pn "%06d" ${n}
+
 		asdn_summary_raw[${c}]="${s}"
 		asdn_summary_hash[${c}]="${h_summary}"
 		asdn_commit_time[${c}]=${ct}
+		asdn_dc_ver[${c}]="${DC_VER}"
+		asdn_pn[${c}]=${pn}
+	        n=$((n+1))
 	done
 	pickle_associative_array "asdn_summary_raw" \
 		"${T}/${ASDN_DB_SUMMARY_RAW_FN}"
@@ -397,6 +432,10 @@ function amd_staging_drm_next_generate_database() {
 		"${T}/${ASDN_DB_SUMMARY_HASH_FN}"
 	pickle_associative_array "asdn_commit_time" \
 		"${T}/${ASDN_DB_COMMIT_TIME_FN}"
+	pickle_associative_array "asdn_dc_ver" \
+		"${T}/${ASDN_DB_DC_VER_FN}"
+	pickle_associative_array "asdn_pn" \
+		"${T}/${ASDN_DB_PN_FN}"
 }
 
 # @FUNCTION: has_amd_staging_drm_next_database
@@ -404,8 +443,10 @@ function amd_staging_drm_next_generate_database() {
 # Checks for the existance of the amd-staging-drm-next databases
 function has_amd_staging_drm_next_database() {
 	if [[ -e "${FILESDIR}/${ASDN_DB_SUMMARY_RAW_FN}" \
-		&& -e "${T}/${ASDN_DB_SUMMARY_HASH_FN}" \
-		&& -e "${T}/${ASDN_DB_COMMIT_TIME_FN}" ]]
+		&& -e "${FILESDIR}/${ASDN_DB_SUMMARY_HASH_FN}" \
+		&& -e "${FILESDIR}/${ASDN_DB_COMMIT_TIME_FN}" \
+		&& -e "${FILESDIR}/${ASDN_DB_DC_VER_FN}" \
+		&& -e "${FILESDIR}/${ASDN_DB_PN_FN}" ]]
 	then
 		return 0
 	else
@@ -417,12 +458,6 @@ function has_amd_staging_drm_next_database() {
 # @DESCRIPTION:
 # Loads the amd-staging-drm-next databases
 function amd_staging_drm_next_use_database() {
-	unset asdn_summary_raw
-	unset asdn_summary_hash
-	unset asdn_commit_time
-	declare -Ax asdn_summary_raw
-	declare -Ax asdn_summary_hash
-	declare -Ax asdn_commit_time
 	if has_amd_staging_drm_next_database ; then
 		einfo "Using the amd-staging-drm-next database"
 		cp -a "${FILESDIR}/${ASDN_DB_SUMMARY_RAW_FN}" \
@@ -431,6 +466,10 @@ function amd_staging_drm_next_use_database() {
 			"${T}" || die
 		cp -a "${FILESDIR}/${ASDN_DB_COMMIT_TIME_FN}" \
 			"${T}" || die
+		cp -a "${FILESDIR}/${ASDN_DB_DC_VER_FN}" \
+			"${T}" || die
+		cp -a "${FILESDIR}/${ASDN_DB_PN_FN}" \
+			"${T}" || die
 	else
 		einfo "Generating the amd-staging-drm-next database"
 		amd_staging_drm_next_generate_database
@@ -438,6 +477,8 @@ function amd_staging_drm_next_use_database() {
 	source "${T}/${ASDN_DB_SUMMARY_RAW_FN}"
 	source "${T}/${ASDN_DB_SUMMARY_HASH_FN}"
 	source "${T}/${ASDN_DB_COMMIT_TIME_FN}"
+	source "${T}/${ASDN_DB_DC_VER_FN}"
+	source "${T}/${ASDN_DB_PN_FN}"
 }
 
 
@@ -458,20 +499,27 @@ function generate_amd_staging_drm_next_patches() {
 	local base="${AMD_STAGING_INTERSECTS_KV}"
 
 	mkdir -p "${T}/amd-staging-drm-next-patches"
-	n="1"
 
-	unset vk_commits
-	unset vk_summaries
-	declare -A vk_commits
-	declare -A vk_summaries
+	unset asdn_summary_raw
+	unset asdn_summary_hash
+	unset asdn_commit_time
+	unset asdn_dc_ver
+	unset asdn_pn
+	declare -Ax asdn_summary_raw
+	declare -Ax asdn_summary_hash
+	declare -Ax asdn_commit_time
+	declare -Ax asdn_dc_ver
+	declare -Ax asdn_pn
 
 	local C
-	einfo "Querying amd-staging-drm-next commit list"
+	einfo "Finding the amd-staging-drm-next commit list"
 	amd_staging_drm_next_use_commit_list
-	einfo "Querying the amd-staging-drm-next database"
+	einfo "Finding the amd-staging-drm-next database"
 	amd_staging_drm_next_use_database
-	einfo "Saving all amd-staging-drm-next commits"
+	einfo "Finding all amd-staging-drm-next commits"
 	amd_staging_drm_next_use_commits
+	einfo "Renaming all amd-staging-drm-next patch files"
+	amd_staging_drm_next_rename_commits
 	einfo "Filtering amd-staging-drm-next commits by git commit metadata"
 	amd_staging_drm_next_filter_by_git_commit_metadata
 

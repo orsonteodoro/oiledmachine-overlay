@@ -272,27 +272,7 @@ function rock_set_target() {
 function rock_save_all_commits() {
 	cd_rock
 	for c in $C ; do
-		local fn=""
-		local s=$(git -P show -s --format=%s ${c})
-		local ct=$(git -P show -s --format=%ct ${c})
-		local h_summary
-		h_summary=$(echo "${s}" | sha1sum | cut -f1 -d ' ')
-
-		DC_VER=$(git -P show \
-			${c}:drivers/gpu/drm/amd/display/dc/dc.h \
-			| grep -e "#define DC_VER" \
-			| grep -o -P -e "\"[0-9.]+\"" \
-			| sed -e "s|\"||g")
-
-		# repad DC_VER
-		DC_VER_MAJOR=$(printf "%02d" $(echo "$DC_VER" | cut -f1 -d '.'))
-		DC_VER_MINOR=$(printf "%02d" $(echo "$DC_VER" | cut -f2 -d '.'))
-		DC_VER_PATCH=$(printf "%03d" $(echo "$DC_VER" | cut -f3 -d '.'))
-		DC_VER="${DC_VER_MAJOR}.${DC_VER_MINOR}.${DC_VER_PATCH}"
-
-		printf -v pn "%06d" ${n}
-		fn="${DC_VER}-${ct}-${pn}-${c}-rock.patch"
-
+		local fn="${c}.patch"
 		if git -P diff $c^..$c > "${T}"/rock-patches/${fn} ; then
 			#einfo "Added ${fn}"
 			# attach missing commit subject for possible patch tarball
@@ -302,9 +282,13 @@ function rock_save_all_commits() {
 		else
 			die "Failed to add ${fn}"
 		fi
-		n=$((n+1))
 	done
+}
 
+# @FUNCTION: rock_prepend_licenses_in_patches
+# @DESCRIPTION:
+# Adds licenses to top of patches.
+function rock_prepend_licenses_in_patches() {
 	if [[ -n "${USE_PATACHIE}" && "${USE_PATACHIE}" == "1" ]] ; then
 		einfo "Attaching licenses to rock patches"
 		"${HOME}/patachie" -p "${T}"/rock-patches \
@@ -495,9 +479,9 @@ function rock_filter_by_git_commit_metadata() {
 		if [[ "${whitelisted}" == "1" ]] ; then
 			:;
 		elif [[ -n "${vk_summaries[${h_summary}]}" ]] ; then
-			einfo \
-"Already added ${c} via vanilla kernel sources (with same subject match).  \
-Skipping..."
+#			einfo \
+#"Already added ${c} via vanilla kernel sources (with same subject match).  \
+#Skipping..."
 			__remove_rock_patch
 			continue
 		fi
@@ -507,8 +491,8 @@ Skipping..."
 				:;
 			elif [[ -n "${asdn_summaries[${h_summary}]}" ]] ; then
 				einfo \
-"Already added ${c} via amd-staging-drm-next kernel sources (with same subject \
-match).  Skipping..."
+#"Already added ${c} via amd-staging-drm-next kernel sources (with same subject \
+#match).  Skipping..."
 				__remove_rock_patch
 				continue
 			fi
@@ -519,6 +503,11 @@ match).  Skipping..."
 # @FUNCTION: rock_generate_commit_list
 # @DESCRIPTION:
 # Fills a variable named C containing all rock commits
+#
+# C, the rock commit list, is consumed by:
+# rock_generate_database
+# rock_save_all_commits
+# rock_filter_by_git_commit_metadata
 function rock_generate_commit_list() {
 	cd_rock
 	einfo \
@@ -559,14 +548,33 @@ function cd_rock() {
 # arrays first
 function rock_generate_database() {
 	cd_rock
+	local n="1"
 	for c in $C ; do
 		local s=$(git -P show -s --format=%s ${c})
 		local ct=$(git -P show -s --format=%ct ${c})
 		local h_summary=$(\
 			echo "${s}" | sha1sum | cut -f1 -d ' ')
+
+		DC_VER=$(git -P show \
+			${c}:drivers/gpu/drm/amd/display/dc/dc.h \
+			| grep -e "#define DC_VER" \
+			| grep -o -P -e "\"[0-9.]+\"" \
+			| sed -e "s|\"||g")
+
+		# repad DC_VER
+		DC_VER_MAJOR=$(printf "%02d" $(echo "$DC_VER" | cut -f1 -d '.'))
+		DC_VER_MINOR=$(printf "%02d" $(echo "$DC_VER" | cut -f2 -d '.'))
+		DC_VER_PATCH=$(printf "%03d" $(echo "$DC_VER" | cut -f3 -d '.'))
+		DC_VER="${DC_VER_MAJOR}.${DC_VER_MINOR}.${DC_VER_PATCH}"
+
+		printf -v pn "%06d" ${n}
+
 		rock_summary_raw[${c}]="${s}"
 		rock_summary_hash[${c}]="${h_summary}"
 		rock_commit_time[${c}]=${ct}
+		rock_dc_ver[${c}]="${DC_VER}"
+		rock_pn[${c}]=${pn}
+		n=$((n+1))
 	done
 	pickle_associative_array "rock_summary_raw" \
 		"${T}/${ROCK_DB_SUMMARY_RAW_FN}"
@@ -574,6 +582,10 @@ function rock_generate_database() {
 		"${T}/${ROCK_DB_SUMMARY_HASH_FN}"
 	pickle_associative_array "rock_commit_time" \
 		"${T}/${ROCK_DB_COMMIT_TIME_FN}"
+	pickle_associative_array "rock_dc_ver" \
+		"${T}/${ROCK_DB_DC_VER_FN}"
+	pickle_associative_array "rock_pn" \
+		"${T}/${ROCK_DB_PN_FN}"
 }
 
 # @FUNCTION: has_rock_database
@@ -581,8 +593,10 @@ function rock_generate_database() {
 # Checks for the existance of the ROCk databases
 function has_rock_database() {
 	if [[ -e "${FILESDIR}/${ROCK_DB_SUMMARY_RAW_FN}" \
-		&& -e "${T}/${ROCK_DB_SUMMARY_HASH_FN}" \
-		&& -e "${T}/${ROCK_DB_COMMIT_TIME_FN}" ]]
+		&& -e "${FILESDIR}/${ROCK_DB_SUMMARY_HASH_FN}" \
+		&& -e "${FILESDIR}/${ROCK_DB_COMMIT_TIME_FN}" \
+		&& -e "${FILESDIR}/${ROCK_DB_DC_VER_FN}" \
+		&& -e "${FILESDIR}/${ROCK_DB_PN_FN}"  ]]
 	then
 		return 0
 	else
@@ -594,15 +608,9 @@ function has_rock_database() {
 # @DESCRIPTION:
 # Generates or uses a ROCk commit list
 function rock_use_commit_list() {
-	unset rock_summary_raw
-	unset rock_summary_hash
-	unset rock_commit_time
-	declare -Ax rock_summary_raw
-	declare -Ax rock_summary_hash
-	declare -Ax rock_commit_time
 	if has_amd_staging_drm_next_database ; then
 		einfo "Using the rock commit list"
-		source "${T}/rock_commit_list.${K_MAJOR_MINOR}${SUFFIX_ROCK}"
+		source "${FILESDIR}/rock_commit_list.${K_MAJOR_MINOR}${SUFFIX_ROCK}"
 	else
 		einfo "Generating rock commit list"
 		rock_generate_commit_list
@@ -621,6 +629,10 @@ function rock_use_database() {
 			"${T}" || die
 		cp -a "${FILESDIR}/${ROCK_DB_COMMIT_TIME_FN}" \
 			"${T}" || die
+		cp -a "${FILESDIR}/${ROCK_DB_DC_VER_FN}" \
+			"${T}" || die
+		cp -a "${FILESDIR}/${ROCK_DB_PN_FN}" \
+			"${T}" || die
 	else
 		einfo "Generating the rock database"
 		rock_generate_database
@@ -628,19 +640,50 @@ function rock_use_database() {
 	source "${T}/${ROCK_DB_SUMMARY_RAW_FN}"
 	source "${T}/${ROCK_DB_SUMMARY_HASH_FN}"
 	source "${T}/${ROCK_DB_COMMIT_TIME_FN}"
+	source "${T}/${ROCK_DB_DC_VER_FN}"
+	source "${T}/${ROCK_DB_PN_FN}"
 }
 
+# @FUNCTION: rock_use_commits
+# @DESCRIPTION:
+# This will generate or reuse pre-generate patch files from commit hash
 function rock_use_commits() {
 	if [[ \
-	  -d "${FILESDIR}/rock/${K_MAJOR_MINOR}" ]]
+	  -d "${FILESDIR}/rock" ]]
 	then
 		# we don't distribute this because it is 1G+
+		mkdir -p "${T}/rock-patches"
 		cp -a "${FILESDIR}/rock"/* \
-			"${T}"/rock/ \
+			"${T}"/rock-patches/ \
 			|| die
 	else
 		rock_save_all_commits
+		rock_prepend_licenses_in_patches
+		if [[ -n "${OT_KERNEL_MAINTAINER}" \
+			&& "${OT_KERNEL_MAINTAINER}" == "1" ]] ; then
+			einfo \
+"Copying rock patches to ${T}/rock-patches.bak before they get filtered.\n\
+They should be placed in \${FILESDIR}/rock ."
+			cp -a "${T}"/rock-patches \
+				"${T}"/rock-patches.bak
+		fi
 	fi
+}
+
+# @FUNCTION: rock_rename_commits
+# @DESCRIPTION:
+# This will rename ${c}.patch to fn="${DC_VER}-${ct}-${pn}-${c}-rock.patch" .
+# We use ${c}.patch minimize wiping entire set and reloading it on repo server.
+# We rename to latter for easy merging between rock and asdn and to separate
+# merge ordering (pn aka padded n) if it changed.
+function rock_rename_commits() {
+	for c in $C ; do
+		local DC_VER="${rock_dc_ver[${c}]}"
+		local ct=${rock_commit_time[${c}]}
+		local pn=${rock_pn[${c}]}
+		mv "${T}/rock-patches/${c}.patch" \
+			"${T}/rock-patches/${DC_VER}-${ct}-${pn}-${c}-rock.patch"
+	done
 }
 
 # @FUNCTION: generate_rock_patches
@@ -654,27 +697,34 @@ function generate_rock_patches() {
 	git checkout ${target} . || die
 
 	mkdir -p "${T}/rock-patches"
-	n="1"
 
 	# It takes a long time to filter through thousands of patches because
 	#   it goes back since 2014
 	# It's not so problematic with just amd-staging-drm-next use flag alone.
 	# It takes 159m (or 2 hours ~40 min) to merge without caches.
 
-	unset vk_commits
-	unset vk_summaries
-	declare -A vk_commits
-	declare -A vk_summaries
+	unset rock_summary_raw
+	unset rock_summary_hash
+	unset rock_commit_time
+	unset rock_dc_ver
+	unset rock_pn
+	declare -Ax rock_summary_raw
+	declare -Ax rock_summary_hash
+	declare -Ax rock_commit_time
+	declare -Ax rock_dc_ver
+	declare -Ax rock_pn
 
 	amd_staging_drm_next_hash_use_hash_tables
 
 	local C
-	einfo "Querying rock commit list"
+	einfo "Finding the rock commit list"
 	rock_use_commit_list
-	einfo "Querying the rock database"
+	einfo "Finding the rock database"
 	rock_use_database
-	einfo "Saving all rock commits"
+	einfo "Finding all rock commits"
 	rock_use_commits
+	einfo "Renaming all rock patch files"
+	rock_rename_commits
 	einfo "Filtering rock commits by git commit metadata"
 	rock_filter_by_git_commit_metadata
 
@@ -696,7 +746,7 @@ function fetch_rock() {
 	if use rock ; then
 		if [[ ! -d "${FILESDIR}/rock/${K_MAJOR_MINOR}" ]] ; then
 			einfo \
-"Dump ROCk patches to ${FILESDIR}/rock/${K_MAJOR_MINOR}"
+"Dump ROCk patches to ${FILESDIR}/rock"
 			# ebuild maintainer only
 			fetch_rock_local_copy
 		fi
