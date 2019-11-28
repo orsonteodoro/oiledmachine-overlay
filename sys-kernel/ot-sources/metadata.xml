@@ -163,9 +163,11 @@
      Tuning.</flag>
     <flag name="zenmisc">Patches the kernel with selected Zen kernel
      commits.  You will need to define a ZENMISC_WHITELIST_5_3 env
-     variable containing a string of space separated commits.  Commits
+     variable containing a string of space separated commit IDs.  Commits
      must be oldest-left to newest-right and in topological order 
      with the first commit first and the final commit last if using
-     the same timestamp or split commit.</flag>
+     the same timestamp or split commit. For a full list of commits see
+     https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/misc
+     </flag>
   </use>
 </pkgmetadata>
