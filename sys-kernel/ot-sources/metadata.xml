@@ -32,7 +32,7 @@
     for a full list.  This integrated patch will try to remove the
     compatibility layer and merge features of the ROCk driver / ROCm API.
 
-    Older point releases are removed to eliminate many of the previously
+    Older point releases are removed to eliminate some of the previously
     announced 0-day exploits.
   </longdescription>
   <upstream>
