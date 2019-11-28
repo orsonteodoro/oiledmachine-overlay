@@ -3,15 +3,21 @@
 
 EAPI="6"
 
-K_GENPATCHES_VER="163"
+K_GENPATCHES_VER="15"
+PATCH_BMQ_VER="5.3-r2"
+BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
 
-inherit ot-kernel-v4.14
+inherit ot-kernel-v5.3
 
 KEYWORDS="~amd64 ~x86"
 
 pkg_setup() {
         kernel-2_pkg_setup
 	ot-kernel-common_pkg_setup
+}
+
+pkg_pretend() {
+	ot-kernel-common_pkg_pretend
 }
 
 src_unpack() {
