@@ -64,6 +64,7 @@ IUSE="  bfq bmq bmq-quick-fix \
 	directgma \
 	rock \
 	+cfs disable_debug +graysky2 muqss +o3 pds uksm \
+	futex-wait-multiple \
 	zenmisc \
 	-zentune"
 DEPEND=" amd-staging-drm-next? ( dev-vcs/git ) \

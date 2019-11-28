@@ -20,6 +20,10 @@
 #   https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/zen-tune
 # zen-kernel 5.3/misc:
 #   https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/misc
+# zen-kernel 5.3/futex-backports
+#   https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/futex-backports
+#   The original patch:
+#     https://lwn.net/Articles/794969/
 # O3 (Optimize Harder):
 #   https://github.com/torvalds/linux/commit/e80b5baf29ce0fceb04ee4d05455c1e3a1871732
 #   https://github.com/torvalds/linux/commit/360c6833e07cc9fdef5746f6bc45bdbc7212288d
@@ -140,6 +144,11 @@ ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_REPO}.diff"
 ZENTUNE_SRC_URL="${ZENTUNE_DL_URL} -> ${ZENTUNE_FN}"
 
 ZENMISC_URL_BASE="https://github.com/torvalds/linux/commit/"
+
+FUTEX_WAIT_MULTIPLE_BASE="https://github.com/torvalds/linux/compare/v5.3...zen-kernel:${PATCH_ZENTUNE_VER}/"
+FUTEX_WAIT_MULTIPLE_REPO="futex-backports"
+FUTEX_WAIT_MULTIPLE_FN="${FUTEX_WAIT_MULTIPLE_REPO}-${K_MAJOR_MINOR}.diff"
+FUTEX_WAIT_MULTIPLE_DL_URL="${FUTEX_WAIT_MULTIPLE_BASE}${FUTEX_WAIT_MULTIPLE_REPO}.diff"
 
 UKSM_BASE="https://raw.githubusercontent.com/dolohow/uksm/master/v${PATCH_UKSM_MVER}.x/"
 UKSM_FN="uksm-${PATCH_UKSM_VER}.patch"
@@ -325,6 +334,14 @@ function apply_zenmisc() {
 		fi
 		_tpatch "${PATCH_OPS} -N" "${T}/zen-misc/${c}.patch"
 	done
+}
+
+# @FUNCTION: apply_futex_wait_multiple
+# @DESCRIPTION:
+# Adds a new syscall operation FUTEX_WAIT_MULTIPLE to the futex
+# syscall.  It may shave of <5% CPU usage.
+function apply_futex_wait_multiple() {
+	_dpatch "${PATCH_OPS} -N" "${T}/${FUTEX_WAIT_MULTIPLE_FN}"
 }
 
 # @FUNCTION: _filter_genpatches
@@ -606,6 +623,14 @@ function fetch_zentune() {
 	wget -O "${T}/${ZENTUNE_FN}" "${ZENTUNE_DL_URL}" || die
 }
 
+# @FUNCTION: fetch_futex_wait_multiple
+# @DESCRIPTION:
+# Fetches the FUTEX_WAIT_MULTIPLE patchset.
+function fetch_futex_wait_multiple() {
+	einfo "Fetching the futex-wait-multiple patch from a live source..."
+	wget -O "${T}/${FUTEX_WAIT_MULTIPLE_FN}" "${FUTEX_WAIT_MULTIPLE_DL_URL}" || die
+}
+
 # @FUNCTION: fetch_linux_sources
 # @DESCRIPTION:
 # Fetches a local copy of the linux kernel repo.
@@ -848,6 +873,13 @@ function ot-kernel-common_src_unpack() {
 		fi
 	fi
 
+	if has futex-wait-multiple ${IUSE_EFFECTIVE} ; then
+		if use futex-wait-multiple ; then
+			fetch_futex_wait_multiple
+			apply_futex_wait_multiple
+		fi
+	fi
+
 	if use uksm ; then
 		apply_uksm
 	fi
@@ -1006,6 +1038,11 @@ function ot-kernel-common_pkg_setup() {
 		fi
 	fi
 	if has bfq ${IUSE_EFFECTIVE} ; then
+		if use bfq ; then
+			_check_network_sandbox
+		fi
+	fi
+	if has futex-wait-multiple ${IUSE_EFFECTIVE} ; then
 		if use bfq ; then
 			_check_network_sandbox
 		fi

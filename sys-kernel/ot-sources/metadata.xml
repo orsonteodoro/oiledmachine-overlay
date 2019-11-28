@@ -89,6 +89,11 @@
       <email>johannes@jgoetzfried.de</email>
       <name>Johannes Goetzfried</name>
     </maintainer>
+    <maintainer status="active" type="person">
+      <!-- for FUTEX_WAIT_MULTIPLE -->
+      <email>krisman-AT-collabora.com</email>
+      <name>Gabriel Krisman Bertazi</name>
+    </maintainer>
   </upstream>
   <use>
     <flag name="amd-staging-drm-next">Patches the amdgpu DRM kernel driver with
@@ -121,6 +126,9 @@
       SSG (Solid State Graphics) support, you will need to enable this
       USE flag.
       </flag>
+    <flag name="futex-wait-multiple">Patches ther kernel with FUTEX_WAIT_MULTIPLE
+     futex syscall option which may be used in the wine-proton package and
+     in Steam Play.  It may reduce CPU usage by less than 5%.</flag>
     <flag name="muqss">Patches the kernel with Con Kolivas patchset and
       includes his skiplist based MuQSS CPU scheduler.</flag>
     <flag name="o3">Patches the kernel to allow for more aggressive O3
@@ -153,5 +161,11 @@
      insecure.</flag>
     <flag name="zentune">Patches the kernel with Zen Interactive
      Tuning.</flag>
+    <flag name="zenmisc">Patches the kernel with selected Zen kernel
+     commits.  You will need to define a ZENMISC_WHITELIST_5_3 env
+     variable containing a string of space separated commits.  Commits
+     must be oldest-left to newest-right and in topological order 
+     with the first commit first and the final commit last if using
+     the same timestamp or split commit.</flag>
   </use>
 </pkgmetadata>
