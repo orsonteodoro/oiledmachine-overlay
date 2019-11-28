@@ -30,7 +30,7 @@ DEPEND+=" dev-libs/libpcre"
 inherit ot-kernel-cve-en
 
 # based on my last edit in unix timestamp (date -u +%Y%m%d_%I%M_%p_%Z)
-LATEST_CVE_KERNEL_INDEX="20191125_0305_AM_UTC"
+LATEST_CVE_KERNEL_INDEX="20191128_1123_PM_UTC"
 LATEST_CVE_KERNEL_INDEX="${LATEST_CVE_KERNEL_INDEX,,}"
 
 # this will trigger a kernel re-install based on use flag timestamp
@@ -100,6 +100,14 @@ CVE_2019_14821_SEVERITY="${!CVE_2019_14821_SEVERITY_LANG}"
 CVE_2019_14821_PM="https://github.com/torvalds/linux/commit/b60fe990c6b07ef6d4df67bc0530c7c90a62623a"
 CVE_2019_14821_SUMMARY_LANG="CVE_2019_14821_SUMMARY_${CVE_LANG}"
 CVE_2019_14821_SUMMARY="${!CVE_2019_14821_SUMMARY_LANG}"
+
+CVE_2019_16089_FIX_SRC_URI="https://lore.kernel.org/patchwork/patch/1126650/mbox/"
+CVE_2019_16089_FN="CVE-2019-16089-fix--linux-drivers-block-nbd-v3-nbd_genl_status-null-check-for-nla_nest_start.patch"
+CVE_2019_16089_SEVERITY_LANG="CVE_2019_16089_SEVERITY_${CVE_LANG}"
+CVE_2019_16089_SEVERITY="${!CVE_2019_16089_SEVERITY_LANG}"
+CVE_2019_16089_PM="https://lore.kernel.org/patchwork/patch/1106884/"
+CVE_2019_16089_SUMMARY_LANG="CVE_2019_16089_SUMMARY_${CVE_LANG}"
+CVE_2019_16089_SUMMARY="${!CVE_2019_16089_SUMMARY_LANG}"
 
 CVE_2019_16921_FIX_SRC_URI="https://github.com/torvalds/linux/commit/df7e40425813c50cd252e6f5e348a81ef1acae56.patch"
 CVE_2019_16921_FN="CVE-2019-16921-fix--linux-drivers-infiniband-rdma-hns-fix-init-resp-when-alloc-ucontext.patch"
@@ -771,6 +779,9 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
 			 ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 			 ${CVE_2019_14814_FIX_SRC_URI} -> ${CVE_2019_14814_FN}
 			 ${CVE_2019_14821_FIX_SRC_URI} -> ${CVE_2019_14821_FN}
+
+			 ${CVE_2019_16089_FIX_SRC_URI} -> ${CVE_2019_16089_FN}
+
 			 ${CVE_2019_16921_FIX_SRC_URI} -> ${CVE_2019_16921_FN}
 			 ${CVE_2019_16994_FIX_SRC_URI} -> ${CVE_2019_16994_FN}
 			 ${CVE_2019_16995_FIX_SRC_URI} -> ${CVE_2019_16995_FN}
@@ -1034,6 +1045,23 @@ function fetch_cve_2019_14821_hotfix() {
 	if grep -F -e \
 		"if (!coalesced_mmio_has_room(dev, insert) ||" \
 		"${S}/virt/kvm/coalesced_mmio.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_16089_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_16089 patch
+function fetch_cve_2019_16089_hotfix() {
+	local CVE_ID="CVE-2019-16089"
+	if grep -F -e \
+		"ret = -EMSGSIZE;" \
+		"${S}/drivers/block/nbd.c" \
 		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
@@ -2677,25 +2705,6 @@ function apply_cve_2014_3180_hotfix() {
 	_resolve_hotfix_default
 }
 
-# @FUNCTION: apply_cve_2019_16746_hotfix
-# @DESCRIPTION:
-# Applies the CVE_2019_16746 patch if it needs to
-function apply_cve_2019_16746_hotfix() {
-	local CVE_ID="CVE-2019-16746"
-	local CVE_ID_="${CVE_ID//-/_}_"
-	local cve_severity="${CVE_ID_}SEVERITY"
-	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e \
-		"validate_beacon_head" \
-		"${S}/net/wireless/nl80211.c" \
-		>/dev/null
-	then
-		einfo "${CVE_ID} is already patched."
-		return
-	fi
-	_resolve_hotfix_default
-}
-
 # @FUNCTION: apply_cve_2019_14814_hotfix
 # @DESCRIPTION:
 # Applies the CVE_2019_14814 patch if it needs to
@@ -2735,6 +2744,44 @@ function apply_cve_2019_14821_hotfix() {
 	if grep -F -e \
 		"if (!coalesced_mmio_has_room(dev, insert) ||" \
 		"${S}/virt/kvm/coalesced_mmio.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_16089_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_16089 patch if it needs to
+function apply_cve_2019_16089_hotfix() {
+	local CVE_ID="CVE-2019-16089"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"ret = -EMSGSIZE;" \
+		"${S}/drivers/block/nbd.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_16746_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_16746 patch if it needs to
+function apply_cve_2019_16746_hotfix() {
+	local CVE_ID="CVE-2019-16746"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"validate_beacon_head" \
+		"${S}/net/wireless/nl80211.c" \
 		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
@@ -4445,6 +4492,9 @@ function fetch_cve_hotfixes() {
 
 		fetch_cve_2019_14814_hotfix
 		fetch_cve_2019_14821_hotfix
+
+		fetch_cve_2019_16089_hotfix
+
 		fetch_cve_2019_16746_hotfix
 		fetch_cve_2019_16921_hotfix
 		fetch_cve_2019_16994_hotfix
@@ -4568,6 +4618,9 @@ function apply_cve_hotfixes() {
 
 		apply_cve_2019_14814_hotfix
 		apply_cve_2019_14821_hotfix
+
+		apply_cve_2019_16089_hotfix
+
 		apply_cve_2019_16746_hotfix
 		apply_cve_2019_16921_hotfix
 		apply_cve_2019_16994_hotfix
