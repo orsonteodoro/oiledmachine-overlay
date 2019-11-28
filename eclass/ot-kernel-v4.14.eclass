@@ -170,6 +170,8 @@ PATCH_ZENTUNE_VER="4.19"
 PATCH_O3_CO_COMMIT="7d0295dc49233d9ddff5d63d5bdc24f1e80da722" # 4.19 # O3 config option
 PATCH_O3_RO_COMMIT="562a14babcd56efc2f51c772cb2327973d8f90ad" # O3 read overflow fix
 PATCH_GRAYSKY2_GCC_COMMIT="c53ae690ee282d129fae7e6e10a4c00e5030d588" # zen gcc graysky2
+PATCH_PDS_MAJOR_MINOR="4.14"
+PATCH_PDS_VER="${PATCH_PDS_VER:=098i}"
 PATCH_CK_MAJOR="4.0"
 PATCH_CK_MAJOR_MINOR="4.14"
 PATCH_CK_REVISION="1"
@@ -181,9 +183,9 @@ PATCH_TRESOR_VER="3.18.5"
 DISABLE_DEBUG_V="1.1"
 BFQ_BRANCH="bfq"
 
-IUSE="+cfs disable_debug +graysky2 muqss +o3 uksm \
+IUSE="+cfs disable_debug +graysky2 muqss pds +o3 uksm \
 	tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs"
-REQUIRED_USE="^^ ( muqss cfs )
+REQUIRED_USE="^^ ( muqss pds cfs )
 	      tresor_sysfs? ( || ( tresor_i686 tresor_x86_64 tresor_aesni ) )
 	      tresor? ( ^^ ( tresor_i686 tresor_x86_64 tresor_aesni ) )
 	      tresor_i686? ( tresor )
@@ -208,7 +210,7 @@ DEPEND="
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
 DESCRIPTION="Orson Teodoro's patchset containing UKSM, GraySky's GCC \
-Patches, MUQSS CPU Scheduler, Genpatches, TRESOR"
+Patches, MUQSS CPU Scheduler, PDS CPU Scheduler, Genpatches, TRESOR"
 
 CK_URL_BASE=\
 "http://ck.kolivas.org/patches/${PATCH_CK_MAJOR}/${PATCH_CK_MAJOR_MINOR}/${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}/"
@@ -234,7 +236,8 @@ SRC_URI+=" ${KERNEL_URI}
 	   ${TRESOR_SYSFS_DL_URL}
 	   ${TRESOR_README_DL_URL}
 	   ${TRESOR_SRC_URL}
-	   ${KERNEL_PATCH_URLS[@]}"
+	   ${KERNEL_PATCH_URLS[@]}
+	   ${PDS_SRC_URL}"
 
 # @FUNCTION: ot-kernel-common_pkg_setup_cb
 # @DESCRIPTION:

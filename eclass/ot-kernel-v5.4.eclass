@@ -28,8 +28,6 @@ PATCH_CK_REVISION="1"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?10}"
 PATCH_GP_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
 PATCH_GRAYSKY_COMMIT="0ebe06178ea25923b33397ff04e9d701356825a0"
-PATCH_PDS_MAJOR_MINOR="5.0"
-PATCH_PDS_VER="${PATCH_PDS_VER:=099o}"
 PATCH_BFQ_VER="5.4"
 PATCH_BMQ_MAJOR_MINOR="5.4"
 DISABLE_DEBUG_V="1.1"
@@ -61,19 +59,19 @@ IUSE="  bfq bmq bmq-quick-fix \
 	amd-staging-drm-next \
 	directgma \
 	rock \
-	+cfs disable_debug +graysky2 muqss pds uksm \
+	+cfs disable_debug +graysky2 muqss uksm \
 	futex-wait-multiple \
 	zenmisc \
 	-zentune"
 DEPEND=" amd-staging-drm-next? ( dev-vcs/git ) \
 	  rock? ( dev-vcs/git ) \
 	  dev-util/patchutils"
-REQUIRED_USE="^^ ( muqss pds cfs bmq )
+REQUIRED_USE="^^ ( muqss cfs bmq )
 	     directgma? ( rock )
 	     rock? ( amd-staging-drm-next )"
 
 # no released patch yet
-REQUIRED_USE+=" !bfq !uksm !pds !bmq-quick-fix"
+REQUIRED_USE+=" !bfq !uksm !bmq-quick-fix"
 
 #K_WANT_GENPATCHES="base extras experimental"
 K_SECURITY_UNSUPPORTED="1"
@@ -89,7 +87,7 @@ detect_arch
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
 DESCRIPTION="Orson Teodoro's patchset containing UKSM, zen-tune, GraySky's GCC \
-Patches, MUQSS CPU Scheduler, PDS CPU Scheduler, BMQ CPU Scheduler, \
+Patches, MUQSS CPU Scheduler, BMQ CPU Scheduler, \
 Genpatches, BFQ updates, amd-staging-drm-next"
 
 AMDREPO_URL="git://people.freedesktop.org/~agd5f/linux"
