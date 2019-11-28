@@ -18,13 +18,22 @@
 
     The amd-staging-drm-next patches provide increase compatibility and better
     support for new hardware and features like FreeSync, PowerPlay updates.
+    This USE flag is unstable.
 
     The ROCk kernel driver will install the driver needed for the ROCm platform
     and better support for AMD GPU enthusiast level hardware.  This package
     pick mostly enhancement commits and drop the compatibility layer provided
     by KCL.
+    This USE flag is most of the time is broken.
 
-    ROCm requires PCIe 3.0.
+    ROCm requires PCIe 3.0 for some older cards except current newer generation
+    cards like VEGA 10 and Vega 7nm.  See
+    https://rocm-documentation.readthedocs.io/en/latest/Installation_Guide/Installation-Guide.html#supported-gpus
+    for a full list.  This integrated patch will try to remove the
+    compatibility layer and merge features of the ROCk driver / ROCm API.
+
+    Older point releases are removed to eliminate many of the previously
+    announced 0-day exploits.
   </longdescription>
   <upstream>
     <!-- for this patchset -->
@@ -166,8 +175,11 @@
      variable containing a string of space separated commit IDs.  Commits
      must be oldest-left to newest-right and in topological order 
      with the first commit first and the final commit last if using
-     the same timestamp or split commit. For a full list of commits see
+     the same timestamp or split commit. For a full list of commits
+     for 5.3 see:
      https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/misc
+     for 5.4 (possibly provisional) see:
+     https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
      </flag>
   </use>
 </pkgmetadata>

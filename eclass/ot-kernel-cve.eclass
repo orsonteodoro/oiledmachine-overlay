@@ -1010,7 +1010,7 @@ function fetch_cve_2014_3180_hotfix() {
 # Checks for the CVE-2019-14814 patch
 function fetch_cve_2019_14814_hotfix() {
 	local CVE_ID="CVE-2019-14814"
-	if ver_test ${PV} -ge 5.3.0 ; then
+	if ver_test ${PV} -ge 5.3 ; then
 		einfo "Skipping obsolete ${CVE_ID}"
 		return 0
 	fi
@@ -1065,7 +1065,7 @@ function fetch_cve_2019_16746_hotfix() {
 # Checks for the CVE-2019-16921 patch
 function fetch_cve_2019_16921_hotfix() {
 	local CVE_ID="CVE-2019-16921"
-	if ver_test ${PV} -ge 4.17.0 ; then
+	if ver_test ${PV} -ge 4.17 ; then
 		einfo "Skipping obsolete ${CVE_ID}"
 		return 0
 	fi
@@ -1483,6 +1483,10 @@ function fetch_cve_2019_18811_hotfix() {
 # Checks for the CVE_2019_18812 patch
 function fetch_cve_2019_18812_hotfix() {
 	local CVE_ID="CVE-2019-18812"
+	if ver_test ${PV} -ge 5.4 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if grep -F -e \
 		'strcmp(dentry->d_name.name, "ipc_flood_duration_ms")) {' \
 		"${S}/sound/soc/sof/debug.c" \
@@ -1541,7 +1545,7 @@ function fetch_cve_2019_18814_hotfix() {
 # Checks for the CVE_2019_18885 patch
 function fetch_cve_2019_18885_hotfix() {
 	local CVE_ID="CVE-2019-18885"
-	if ver_test ${PV} -ge 5.1.0 ; then
+	if ver_test ${PV} -ge 5.1 ; then
 		einfo "Skipping obsolete ${CVE_ID}"
 		return 0
 	fi
@@ -2274,7 +2278,7 @@ function fetch_cve_2019_19078_hotfix() {
 # Checks for the CVE_2019_19079 patch
 function fetch_cve_2019_19079_hotfix() {
 	local CVE_ID="CVE-2019-19079"
-	if ver_test ${PV} -ge 5.3.0 ; then
+	if ver_test ${PV} -ge 5.3 ; then
 		einfo "Skipping obsolete ${CVE_ID}"
 		return 0
 	fi
@@ -2375,7 +2379,7 @@ function fetch_cve_2019_19083_hotfix() {
 # Checks for the CVE_2019_19227 patch
 function fetch_cve_2019_19227_hotfix() {
 	local CVE_ID="CVE-2019-19227"
-	if ver_test ${PV} -ge 5.1.0 ; then
+	if ver_test ${PV} -ge 5.1 ; then
 		einfo "Skipping obsolete ${CVE_ID}"
 		return 0
 	fi
@@ -2697,7 +2701,7 @@ function apply_cve_2019_16746_hotfix() {
 # Applies the CVE_2019_14814 patch if it needs to
 function apply_cve_2019_14814_hotfix() {
 	local CVE_ID="CVE-2019-14814"
-	if ver_test ${PV} -ge 5.3.0 ; then
+	if ver_test ${PV} -ge 5.3 ; then
 		einfo "Skipping obsolete ${CVE_ID}"
 		return 0
 	fi
@@ -2744,7 +2748,7 @@ function apply_cve_2019_14821_hotfix() {
 # Applies the CVE_2019_16921 patch if it needs to
 function apply_cve_2019_16921_hotfix() {
 	local CVE_ID="CVE-2019-16921"
-	if ver_test ${PV} -ge 4.17.0 ; then
+	if ver_test ${PV} -ge 4.17 ; then
 		einfo "Skipping obsolete ${CVE_ID}"
 		return 0
 	fi
@@ -2908,11 +2912,11 @@ function apply_cve_2019_17075_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
-	if ver_test ${PV} -le 4.9.0 \
+	if ver_test ${PV} -le 4.9 \
 	&& ver_test ${PV} -le 4.9.197 ; then
 		cve_fn="${CVE_ID_}FN_4_9"
 	fi
-	if ver_test ${PV} -ge 4.14.0 \
+	if ver_test ${PV} -ge 4.14 \
 	&& ver_test ${PV} -le 4.14.150 ; then
 		cve_fn="${CVE_ID_}FN_4_14"
 	fi
@@ -3228,6 +3232,10 @@ function apply_cve_2019_18811_hotfix() {
 # Applies the CVE_2019_18812 patch if it needs to
 function apply_cve_2019_18812_hotfix() {
 	local CVE_ID="CVE-2019-18812"
+	if ver_test ${PV} -ge 5.4 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
@@ -3305,7 +3313,7 @@ function apply_cve_2019_18814_hotfix() {
 # Applies the CVE_2019_18885 patch if it needs to
 function apply_cve_2019_18885_hotfix() {
 	local CVE_ID="CVE-2019-18885"
-	if ver_test ${PV} -ge 5.1.0 ; then
+	if ver_test ${PV} -ge 5.1 ; then
 		einfo "Skipping obsolete ${CVE_ID}"
 		return 0
 	fi
@@ -4123,7 +4131,7 @@ function apply_cve_2019_19078_hotfix() {
 # Applies the CVE_2019_19079 patch if it needs to
 function apply_cve_2019_19079_hotfix() {
 	local CVE_ID="CVE-2019-19079"
-	if ver_test ${PV} -ge 5.3.0 ; then
+	if ver_test ${PV} -ge 5.3 ; then
 		einfo "Skipping obsolete ${CVE_ID}"
 		return 0
 	fi
@@ -4234,7 +4242,7 @@ function apply_cve_2019_19083_hotfix() {
 # Applies the CVE_2019_19227 patch if it needs to
 function apply_cve_2019_19227_hotfix() {
 	local CVE_ID="CVE-2019-19227"
-	if ver_test ${PV} -ge 5.1.0 ; then
+	if ver_test ${PV} -ge 5.1 ; then
 		einfo "Skipping obsolete ${CVE_ID}"
 		return 0
 	fi

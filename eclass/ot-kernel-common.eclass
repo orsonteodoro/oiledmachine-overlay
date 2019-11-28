@@ -18,8 +18,10 @@
 #   https://github.com/dolohow/uksm
 # zen-tune:
 #   https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/zen-tune
+#   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce commit 3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0
 # zen-kernel 5.3/misc:
 #   https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/misc
+#   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
 # zen-kernel 5.3/futex-backports
 #   https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/futex-backports
 #   The original patch:
@@ -136,29 +138,34 @@ BMQ_FN="${BMQ_FN:=v${PATCH_BMQ_MAJOR_MINOR}_bmq${PATCH_BMQ_VER}.patch}"
 BMQ_BASE_URL="https://gitlab.com/alfredchen/bmq/raw/master/${PATCH_BMQ_MAJOR_MINOR}/"
 BMQ_SRC_URL="${BMQ_BASE_URL}${BMQ_FN}"
 
+ZENTUNE_PROJ="zen-tune"
+ZENTUNE_FN="${ZENTUNE_PROJ}-${PATCH_ZENTUNE_VER}.patch"
+if [[ "${K_MAJOR_MINOR}" == "5.4" ]] ; then
+ZENTUNE_URL_BASE="https://github.com/torvalds/linux/commit/"
+ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_5_4_COMMIT}.patch"
+else
 ZENTUNE_URL_BASE=\
 "https://github.com/torvalds/linux/compare/v${PATCH_ZENTUNE_VER}...zen-kernel:${PATCH_ZENTUNE_VER}/"
-ZENTUNE_REPO="zen-tune"
-ZENTUNE_FN="${ZENTUNE_REPO}-${PATCH_ZENTUNE_VER}.diff"
-ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_REPO}.diff"
+ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_PROJ}.patch"
+fi
 ZENTUNE_SRC_URL="${ZENTUNE_DL_URL} -> ${ZENTUNE_FN}"
 
 ZENMISC_URL_BASE="https://github.com/torvalds/linux/commit/"
 
 FUTEX_WAIT_MULTIPLE_BASE="https://github.com/torvalds/linux/compare/v5.3...zen-kernel:${PATCH_ZENTUNE_VER}/"
-FUTEX_WAIT_MULTIPLE_REPO="futex-backports"
-FUTEX_WAIT_MULTIPLE_FN="${FUTEX_WAIT_MULTIPLE_REPO}-${K_MAJOR_MINOR}.diff"
-FUTEX_WAIT_MULTIPLE_DL_URL="${FUTEX_WAIT_MULTIPLE_BASE}${FUTEX_WAIT_MULTIPLE_REPO}.diff"
+FUTEX_WAIT_MULTIPLE_PROJ="futex-backports"
+FUTEX_WAIT_MULTIPLE_FN="${FUTEX_WAIT_MULTIPLE_PROJ}-${K_MAJOR_MINOR}.patch"
+FUTEX_WAIT_MULTIPLE_DL_URL="${FUTEX_WAIT_MULTIPLE_BASE}${FUTEX_WAIT_MULTIPLE_FN}"
 
 UKSM_BASE="https://raw.githubusercontent.com/dolohow/uksm/master/v${PATCH_UKSM_MVER}.x/"
 UKSM_FN="uksm-${PATCH_UKSM_VER}.patch"
 UKSM_SRC_URL="${UKSM_BASE}${UKSM_FN}"
 
 O3_SRC_URL="https://github.com/torvalds/linux/commit/"
-O3_CO_FN="O3-config-option-${PATCH_O3_CO_COMMIT}.diff"
-O3_RO_FN="O3-fix-readoverflow-${PATCH_O3_RO_COMMIT}.diff"
-O3_CO_DL_FN="${PATCH_O3_CO_COMMIT}.diff"
-O3_RO_DL_FN="${PATCH_O3_RO_COMMIT}.diff"
+O3_CO_FN="O3-config-option-${PATCH_O3_CO_COMMIT}.patch"
+O3_RO_FN="O3-fix-readoverflow-${PATCH_O3_RO_COMMIT}.patch"
+O3_CO_DL_FN="${PATCH_O3_CO_COMMIT}.patch"
+O3_RO_DL_FN="${PATCH_O3_RO_COMMIT}.patch"
 O3_CO_SRC_URL="${O3_SRC_URL}${O3_CO_DL_FN} -> ${O3_CO_FN}"
 O3_RO_SRC_URL="${O3_SRC_URL}${O3_RO_DL_FN} -> ${O3_RO_FN}"
 
@@ -239,10 +246,10 @@ PDS_URL_BASE=\
 PDS_FN="v${PATCH_PDS_MAJOR_MINOR}_pds${PATCH_PDS_VER}.patch"
 PDS_SRC_URL="${PDS_URL_BASE}${PDS_FN}"
 
-BFQ_FN="bfq-${PATCH_BFQ_VER}.diff"
+BFQ_FN="bfq-${PATCH_BFQ_VER}.patch"
 BFQ_BRANCH="${BFQ_BRANCH:=bfq-backports}"
 BFQ_DL_URL=\
-"https://github.com/torvalds/linux/compare/v${PATCH_BFQ_VER}...zen-kernel:${PATCH_BFQ_VER}/${BFQ_BRANCH}.diff"
+"https://github.com/torvalds/linux/compare/v${PATCH_BFQ_VER}...zen-kernel:${PATCH_BFQ_VER}/${BFQ_BRANCH}.patch"
 BFQ_SRC_URL="${BFQ_DL_URL} -> ${BFQ_FN}"
 
 UNIPATCH_LIST=""
@@ -324,13 +331,19 @@ function apply_zentune() {
 function apply_zenmisc() {
 	local ZM="ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_}"
 	for c in ${!ZM} ; do
-		if [[ "${c}" == "${PATCH_O3_CO_COMMIT}" \
-			|| "${c}" == "${PATCH_O3_RO_COMMIT}" \
-			|| "${c}" == "19805a0a8a6897e4c4865051cfd652d833a792d5" ]]
-		then
-			# already applied
-			# 19805a0 is graysky2 gcc patch
-			continue
+		if ver_test -ge 5.4 ; then
+			if [[ "${c}" == "${ZENTUNE_5_4_COMMIT}" \
+				|| "${c}" == "${PATCH_GRAYSKY2_GCC_COMMIT}" ]]
+			then
+				continue
+			fi
+		else
+			if [[ "${c}" == "${PATCH_O3_CO_COMMIT}" \
+				|| "${c}" == "${PATCH_O3_RO_COMMIT}" \
+				|| "${c}" == "${PATCH_GRAYSKY2_GCC_COMMIT}" ]]
+			then
+				continue
+			fi
 		fi
 		_tpatch "${PATCH_OPS} -N" "${T}/zen-misc/${c}.patch"
 	done
@@ -925,8 +938,10 @@ function ot-kernel-common_src_unpack() {
 		fi
 	fi
 
-	if use o3 ; then
-		apply_o3
+	if has o3 ${IUSE_EFFECTIVE} ; then
+		if use o3 ; then
+			apply_o3
+		fi
 	fi
 
 	if has tresor ${IUSE_EFFECTIVE} ; then
@@ -989,14 +1004,23 @@ function zenmisc_setup() {
 	if use zenmisc ; then
 		local ZM="ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_}"
 		if [[ -z "${!ZM}" ]] ; then
+			local zenmisc_url
+			if ver_test ${PV} -ge 5.4 ; then
+				zenmisc_url=\
+"https://github.com/torvalds/linux/compare/v${K_MAJOR_MINOR}...zen-kernel:${K_MAJOR_MINOR}/zen-sauce"
+			else
+				zenmisc_url=\
+"https://github.com/torvalds/linux/compare/v${K_MAJOR_MINOR}...zen-kernel:${K_MAJOR_MINOR}/misc"
+			fi
+
 			eerror \
 "You must define ZENMISC_WHITELIST_${K_MAJOR_MINOR} in /etc/make.conf\n\
 or as a per-package env containing commits to accepted from\n\
-  https://github.com/torvalds/linux/compare/v${K_MAJOR_MINOR}...zen-kernel:${K_MAJOR_MINOR}/misc\n\
+  ${zenmisc_url}\n\
 \n\
 For example:\n\
 \n\
-  ZENMISC_WHITELIST_5_3=\"214d031dbeef940efe1dbba274caf5ccc4ff2774 83d7f482c60b6dfda030325394ec07baac7f5a30\"\n\
+  ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_}=\"214d031dbeef940efe1dbba274caf5ccc4ff2774 83d7f482c60b6dfda030325394ec07baac7f5a30\"\n\
 \n\
 This must be in chronological and topological order (if the timestamp is the\n\
 same) from oldest-left to newest-right."
@@ -1053,7 +1077,9 @@ function ot-kernel-common_pkg_setup() {
 	fi
 	if has amd-staging-drm-next ${IUSE_EFFECTIVE} || \
 		has rock ${IUSE_EFFECTIVE} ; then
-		amdgpu_setup
+		if use rock || use amd-staging-drm-next ; then
+			amdgpu_setup
+		fi
 	fi
 	if has amd-staging-drm-next ${IUSE_EFFECTIVE} ; then
 		amd_staging_drm_next_setup

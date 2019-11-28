@@ -3,40 +3,37 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: ot-kernel-v5.3.eclass
+# @ECLASS: ot-kernel-v5.4.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 2 3 4 5 6
-# @BLURB: Eclass for patching the 5.3.x kernel
+# @BLURB: Eclass for patching the 5.4.x kernel
 # @DESCRIPTION:
-# The ot-kernel-v5.3 eclass defines specific applicable patching for the 5.3.x
+# The ot-kernel-v5.4 eclass defines specific applicable patching for the 5.4.x
 # linux kernel.
 
 ETYPE="sources"
 
-K_MAJOR_MINOR="5.3"
+K_MAJOR_MINOR="5.4"
 K_PATCH_XV="5.x"
 EXTRAVERSION="-ot"
-PATCH_UKSM_VER="5.3"
+PATCH_UKSM_VER="5.4"
 PATCH_UKSM_MVER="5"
-PATCH_ZENTUNE_VER="5.3"
-PATCH_O3_CO_COMMIT="e80b5baf29ce0fceb04ee4d05455c1e3a1871732" # O3 config option
-PATCH_O3_RO_COMMIT="360c6833e07cc9fdef5746f6bc45bdbc7212288d" # O3 read overflow fix
-PATCH_GRAYSKY2_GCC_COMMIT="19805a0a8a6897e4c4865051cfd652d833a792d5" # zen gcc graysky2
+PATCH_ZENTUNE_VER="5.4"
 PATCH_CK_MAJOR="5.0"
-PATCH_CK_MAJOR_MINOR="5.3"
+PATCH_CK_MAJOR_MINOR="5.4"
 PATCH_CK_REVISION="1"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?10}"
 PATCH_GP_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
 PATCH_GRAYSKY_COMMIT="0ebe06178ea25923b33397ff04e9d701356825a0"
 PATCH_PDS_MAJOR_MINOR="5.0"
 PATCH_PDS_VER="${PATCH_PDS_VER:=099o}"
-PATCH_BFQ_VER="5.3"
-PATCH_BMQ_VER="${PATCH_BMQ_VER:=100}"
-PATCH_BMQ_MAJOR_MINOR="5.3"
+PATCH_BFQ_VER="5.4"
+PATCH_BMQ_MAJOR_MINOR="5.4"
 DISABLE_DEBUG_V="1.1"
+ZENTUNE_5_4_COMMIT="3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0"
 
 # KV is kernel version, for the variable below means a commit hash
 # "around a major.minor release."
@@ -57,14 +54,14 @@ AMD_STAGING_INTERSECTS_KV="5408887141baac0ad1a5e6cf514ceadf33090114"
 # 3.2.31 is pattern of missing commits in
 #   ot-kernel-common_fetch_amd_staging_drm_next_commits_post
 
-# obtained by:  git -P show -s --format=%ct v5.3 | tail -n 1
-LINUX_TIMESTAMP=1568582372
+# obtained by:  git -P show -s --format=%ct v5.4 | tail -n 1
+LINUX_TIMESTAMP=1574641921
 
 IUSE="  bfq bmq bmq-quick-fix \
 	amd-staging-drm-next \
 	directgma \
 	rock \
-	+cfs disable_debug +graysky2 muqss +o3 pds uksm \
+	+cfs disable_debug +graysky2 muqss pds uksm \
 	futex-wait-multiple \
 	zenmisc \
 	-zentune"
@@ -76,7 +73,7 @@ REQUIRED_USE="^^ ( muqss pds cfs bmq )
 	     rock? ( amd-staging-drm-next )"
 
 # no released patch yet
-REQUIRED_USE+=" !pds !bmq-quick-fix"
+REQUIRED_USE+=" !bfq !uksm !pds !bmq-quick-fix"
 
 #K_WANT_GENPATCHES="base extras experimental"
 K_SECURITY_UNSUPPORTED="1"
@@ -113,8 +110,6 @@ SRC_URI+=" ${CK_SRC_URL}"
 SRC_URI+=" ${KERNEL_URI}
 	   ${GENPATCHES_URI}
 	   ${ARCH_URI}
-	   ${O3_CO_SRC_URL}
-	   ${O3_RO_SRC_URL}
 	   ${GRAYSKY_SRC_4_9_URL}
 	   ${GRAYSKY_SRC_8_1_URL}
 	   ${GRAYSKY_SRC_9_1_URL}
@@ -122,8 +117,8 @@ SRC_URI+=" ${KERNEL_URI}
 	   ${GENPATCHES_BASE_SRC_URL}
 	   ${GENPATCHES_EXPERIMENTAL_SRC_URL}
 	   ${GENPATCHES_EXTRAS_SRC_URL}
-	   ${UKSM_SRC_URL}
 	   ${KERNEL_PATCH_URLS[@]} "
+#	   ${UKSM_SRC_URL}
 
 SRC_URI+=\
 "https://github.com/torvalds/linux/commit/4b3e30ed3ec7864e798403a63ff2e96bd0c19ab0.patch \
