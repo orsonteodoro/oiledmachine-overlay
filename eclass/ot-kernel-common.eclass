@@ -316,7 +316,7 @@ function apply_zenmisc() {
 	local ZM="ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_}"
 	for c in ${!ZM} ; do
 		if [[ "${c}" == "e80b5baf29ce0fceb04ee4d05455c1e3a1871732" \
-			&& "${c}" == "19805a0a8a6897e4c4865051cfd652d833a792d5" ]] ; then
+			|| "${c}" == "19805a0a8a6897e4c4865051cfd652d833a792d5" ]] ; then
 			# already applied
 			continue
 		fi
