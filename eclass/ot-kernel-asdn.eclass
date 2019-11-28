@@ -18,7 +18,7 @@
 #   https://cgit.freedesktop.org/~agd5f/linux/log/?h=amd-staging-drm-next
 
 HOMEPAGE+=\
-"https://cgit.freedesktop.org/~agd5f/linux/log/?h=amd-staging-drm-next"
+" https://cgit.freedesktop.org/~agd5f/linux/log/?h=amd-staging-drm-next"
 
 # @FUNCTION: amd_staging_drm_next_setup
 # @DESCRIPTION:
