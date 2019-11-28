@@ -152,7 +152,7 @@
       head, snapshot, 2_9_0.  head is latest commit and updated a
       couple times a week.  snapshot is a tested instance of head.
       2_9_0 is a tag release of ROCk.  latest is the newest tag release
-      updated a couple of months.
+      updated a couple times a month to months.
       </flag>
     <flag name="symlink">Updates the the /usr/src/linux symlink for every
       newer release.</flag>
