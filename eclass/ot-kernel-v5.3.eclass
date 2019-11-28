@@ -64,6 +64,7 @@ IUSE="  bfq bmq bmq-quick-fix \
 	directgma \
 	rock \
 	+cfs disable_debug +graysky2 muqss +o3 pds uksm \
+	zenmisc \
 	-zentune"
 DEPEND=" amd-staging-drm-next? ( dev-vcs/git ) \
 	  rock? ( dev-vcs/git ) \

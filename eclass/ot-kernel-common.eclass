@@ -18,6 +18,8 @@
 #   https://github.com/dolohow/uksm
 # zen-tune:
 #   https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/zen-tune
+# zen-kernel 5.3/misc:
+#   https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/misc
 # O3 (Optimize Harder):
 #   https://github.com/torvalds/linux/commit/a56a17374772a48a60057447dc4f1b4ec62697fb
 #   https://github.com/torvalds/linux/commit/93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9
@@ -136,6 +138,8 @@ ZENTUNE_REPO="zen-tune"
 ZENTUNE_FN="${ZENTUNE_REPO}-${PATCH_ZENTUNE_VER}.diff"
 ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_REPO}.diff"
 ZENTUNE_SRC_URL="${ZENTUNE_DL_URL} -> ${ZENTUNE_FN}"
+
+ZENMISC_URL_BASE="https://github.com/torvalds/linux/commit/"
 
 UKSM_BASE="https://raw.githubusercontent.com/dolohow/uksm/master/v${PATCH_UKSM_MVER}.x/"
 UKSM_FN="uksm-${PATCH_UKSM_VER}.patch"
@@ -305,6 +309,22 @@ function apply_zentune() {
 	_dpatch "${PATCH_OPS} -N" "${T}/${ZENTUNE_FN}"
 }
 
+# @FUNCTION: apply_zenmisc
+# @DESCRIPTION:
+# Applies whitelisted Zen misc patches.
+function apply_zenmisc() {
+	local ZM="ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_}"
+	for c in ${!ZM} ; do
+		if [[ "${c}" == "e80b5baf29ce0fceb04ee4d05455c1e3a1871732" \
+			&& "${c}" == "19805a0a8a6897e4c4865051cfd652d833a792d5" ]] ; then
+			# already applied
+			continue
+		fi
+
+		_tpatch "${PATCH_OPS} -N" "${T}/zen-misc/${c}.patch"
+	done
+}
+
 # @FUNCTION: _filter_genpatches
 # @DESCRIPTION:
 # Applies a genpatch if not blacklisted.
@@ -312,7 +332,7 @@ function apply_zentune() {
 # Define GENPATCHES_BLACKLIST as a space seperated string in make.conf or
 # as a per-package env
 #
-# example:
+# For example,
 # GENPATCHES_BLACKLIST="2500 2600"
 function _filter_genpatches() {
 	# already applied
@@ -540,6 +560,40 @@ function apply_tresor() {
 function fetch_bfq() {
 	einfo "Fetching the BFQ patch from a live source..."
 	wget -O "${T}/${BFQ_FN}" "${BFQ_DL_URL}" || die
+}
+
+# @FUNCTION: fetch_zenmisc
+# @DESCRIPTION:
+# Fetches select commits from zen-misc @
+# https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/misc
+#
+# Commits must be in correct topological order (i.e. A->B->C->D), where
+# A is first merge, B is second, C is third, D is fourth and final merge if
+# same commit and has the same timestamp.  If has different timestamp
+# older-left from newer-right.
+#
+# The site above you append them from bottom to up in ZENMISC_WHITELIST_5_3
+# where 5_3 is the kernel MAJOR_MINOR which is stored in /etc/make.conf
+# or as a per-package environmental variable.
+#
+# It's your responsibility to vet each commit yourself.
+# Adding any code from any source may introduce additional attack vectors, legal
+# problems, memory leaks, etc.
+#
+# For example,
+# ZENMISC_WHITELIST_5_3="214d031dbeef940efe1dbba274caf5ccc4ff2774 83d7f482c60b6dfda030325394ec07baac7f5a30"
+#
+# 214d0  ZEN: Add Thinkpad SMAPI driver
+# 83d7f  x86/umip: Add emulation (spoofing) for UMIP covered instructions in
+#          64-bit processes as well
+function fetch_zenmisc() {
+	einfo "Fetching select zen-misc commits from a live source..."
+	mkdir -p "${T}/zen-misc" || die
+	local ZM="ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_}"
+	for c in ${!ZM} ; do
+		wget -O "${T}/zen-misc/${c}.patch" \
+		"${ZENMISC_URL_BASE}${c}.patch" || die
+	done
 }
 
 # @FUNCTION: fetch_zentune
@@ -783,6 +837,11 @@ function ot-kernel-common_src_unpack() {
 		apply_zentune
 	fi
 
+	if use zenmisc ; then
+		fetch_zenmisc
+		apply_zenmisc
+	fi
+
 	if use uksm ; then
 		apply_uksm
 	fi
@@ -883,10 +942,53 @@ function copy_patachie() {
 	chmod +x "${HOME}/patachie" || die
 }
 
+# @FUNCTION: zenmisc_setup
+# @DESCRIPTION:
+# Checks the existance for the ZENMISC_WHITELIST_5_3 variable
+function zenmisc_setup() {
+	if use zenmisc ; then
+		local ZM="ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_}"
+		if [[ -z "${!ZM}" ]] ; then
+			eerror \
+"You must define ZENMISC_WHITELIST_${K_MAJOR_MINOR} in /etc/make.conf\n\
+or as a per-package env containing commits to accepted from\n\
+  https://github.com/torvalds/linux/compare/v${K_MAJOR_MINOR}...zen-kernel:${K_MAJOR_MINOR}/misc\n\
+\n\
+For example:\n\
+\n\
+  ZENMISC_WHITELIST_5_3=\"214d031dbeef940efe1dbba274caf5ccc4ff2774 83d7f482c60b6dfda030325394ec07baac7f5a30\"\n\
+\n\
+This must be in chronological and topological order (if the timestamp is the\n\
+same) from oldest-left to newest-right."
+			die
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel-common_pkg_setup_cb
 # @DESCRIPTION:
 # Perform checks, warnings, and initialization before emerging
 function ot-kernel-common_pkg_setup() {
+	if has zenmisc ${IUSE_EFFECTIVE} \
+		|| has zentune ${IUSE_EFFECTIVE} \
+		|| has bfq ${IUSE_EFFECTIVE} ]]
+	then
+		if use zenmisc || use zentune || use bfq ; then
+			# justifications
+			# bfq - no way to compare against "branch with commit"
+			#   (i.e. v${K_MAJOR_MINOR}...zen-kernel:${K_MAJOR_MINOR}/misc/${c})
+			# zenmisc - random choice of commits by user, mimimize
+			#   downloading unnecessary commits, less manifest
+			#   entries
+			# zentune - no way to version as explained in bfq
+			if has network-sandbox $FEATURES ; then
+				die \
+"FEATURES=\"-network-sandbox\" must be added per-package env to be able to use\n\
+live patches."
+			fi
+		fi
+	fi
+
 	if declare -f ot-kernel-common_pkg_setup_cb > /dev/null ; then
 		ot-kernel-common_pkg_setup_cb
 	fi
@@ -900,6 +1002,9 @@ function ot-kernel-common_pkg_setup() {
 	fi
 	if has rock ${IUSE_EFFECTIVE} ; then
 		rock_setup
+	fi
+	if has zenmisc ${IUSE_EFFECTIVE} ; then
+		zenmisc_setup
 	fi
 }
 
