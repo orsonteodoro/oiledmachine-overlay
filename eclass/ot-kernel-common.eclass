@@ -316,11 +316,14 @@ function apply_zenmisc() {
 	local ZM="ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_}"
 	for c in ${!ZM} ; do
 		if [[ "${c}" == "e80b5baf29ce0fceb04ee4d05455c1e3a1871732" \
-			|| "${c}" == "19805a0a8a6897e4c4865051cfd652d833a792d5" ]] ; then
+			|| "${c}" == "19805a0a8a6897e4c4865051cfd652d833a792d5" \
+			|| "${c}" == "360c6833e07cc9fdef5746f6bc45bdbc7212288d" ]] ; then
 			# already applied
+			# e80b5ba is o3 optimize harder
+			# 360c683 is drivers/infiniband: Fix __read_overflow2 error with -O3 inlining
+			# 19805a0 is graysky2 gcc patch
 			continue
 		fi
-
 		_tpatch "${PATCH_OPS} -N" "${T}/zen-misc/${c}.patch"
 	done
 }
