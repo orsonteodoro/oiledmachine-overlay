@@ -17,18 +17,18 @@
 # UKSM:
 #   https://github.com/dolohow/uksm
 # zen-tune:
-#   https://github.com/torvalds/linux/compare/v5.0...zen-kernel:5.0/zen-tune
+#   https://github.com/torvalds/linux/compare/v4.20...zen-kernel:4.20/zen-tune
 # O3 (Optimize Harder):
-#   https://github.com/torvalds/linux/commit/a56a17374772a48a60057447dc4f1b4ec62697fb
-#   https://github.com/torvalds/linux/commit/93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9
+#   https://github.com/torvalds/linux/commit/f2e14a9f974f708dba1135fb27de58d11712dbf6
+#   https://github.com/torvalds/linux/commit/29fdc1b6057bf5480e09320a6d5af125e1e089b8
 # GraySky2 GCC Patches:
 #   https://github.com/graysky2/kernel_gcc_patch
 # MUQSS CPU Scheduler:
-#   http://ck.kolivas.org/patches/5.0/5.0/5.0-ck1/
+#   http://ck.kolivas.org/patches/4.0/4.14/4.14-ck1/
 # genpatches:
 #   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
 # BFQ updates:
-#   https://github.com/torvalds/linux/compare/v5.0...zen-kernel:5.0/bfq-backports
+#   https://github.com/torvalds/linux/compare/v4.20...zen-kernel:4.20/bfq-backports
 # TRESOR:
 #   http://www1.informatik.uni-erlangen.de/tresor
 
@@ -166,16 +166,16 @@ K_PATCH_XV="4.x"
 EXTRAVERSION="-ot"
 PATCH_UKSM_VER="4.14"
 PATCH_UKSM_MVER="4"
-PATCH_ZENTUNE_VER="4.14"
-PATCH_O3_CO_COMMIT="a56a17374772a48a60057447dc4f1b4ec62697fb"
-PATCH_O3_RO_COMMIT="93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9"
+PATCH_ZENTUNE_VER="4.20"
+PATCH_O3_CO_COMMIT="f2e14a9f974f708dba1135fb27de58d11712dbf6" # 4.20 # O3 config option
+PATCH_O3_RO_COMMIT="29fdc1b6057bf5480e09320a6d5af125e1e089b8" # O3 read overflow fix
 PATCH_CK_MAJOR="4.0"
 PATCH_CK_MAJOR_MINOR="4.14"
 PATCH_CK_REVISION="1"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?135}"
 PATCH_GP_MAJOR_MINOR_REVISION="4.14-${K_GENPATCHES_VER}"
 PATCH_GRAYSKY_COMMIT="87168bfa27b782e1c9435ba28ebe3987ddea8d30"
-PATCH_BFQ_VER="4.14"
+PATCH_BFQ_VER="4.20"
 PATCH_TRESOR_VER="3.18.5"
 DISABLE_DEBUG_V="1.1"
 

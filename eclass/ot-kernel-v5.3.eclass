@@ -22,8 +22,8 @@ EXTRAVERSION="-ot"
 PATCH_UKSM_VER="5.3"
 PATCH_UKSM_MVER="5"
 PATCH_ZENTUNE_VER="5.3"
-PATCH_O3_CO_COMMIT="a56a17374772a48a60057447dc4f1b4ec62697fb"
-PATCH_O3_RO_COMMIT="93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9"
+PATCH_O3_CO_COMMIT="e80b5baf29ce0fceb04ee4d05455c1e3a1871732" # O3 config option
+PATCH_O3_RO_COMMIT="360c6833e07cc9fdef5746f6bc45bdbc7212288d" # O3 read overflow fix
 PATCH_CK_MAJOR="5.0"
 PATCH_CK_MAJOR_MINOR="5.3"
 PATCH_CK_REVISION="1"
@@ -184,15 +184,6 @@ function ot-kernel-common_pkg_pretend_cb() {
 		_set_check_reqs_requirements
 		check-reqs_pkg_pretend
 	fi
-}
-
-# @FUNCTION: ot-kernel-common_apply_o3_fixes
-# @DESCRIPTION:
-# Apply fixes to O3
-function ot-kernel-common_apply_o3_fixes() {
-	einfo "Applying fix for ${O3_CO_FN}"
-	_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/O3-config-option-a56a17374772a48a60057447dc4f1b4ec62697fb-fix-for-5.1.patch"
 }
 
 function ot-kernel-asdn_rm() {

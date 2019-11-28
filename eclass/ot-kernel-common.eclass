@@ -21,12 +21,12 @@
 # zen-kernel 5.3/misc:
 #   https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/misc
 # O3 (Optimize Harder):
-#   https://github.com/torvalds/linux/commit/a56a17374772a48a60057447dc4f1b4ec62697fb
-#   https://github.com/torvalds/linux/commit/93d7ee1036fc9ae0f868d59aec6eabd5bdb4a2c9
+#   https://github.com/torvalds/linux/commit/e80b5baf29ce0fceb04ee4d05455c1e3a1871732
+#   https://github.com/torvalds/linux/commit/360c6833e07cc9fdef5746f6bc45bdbc7212288d
 # GraySky2 GCC Patches:
 #   https://github.com/graysky2/kernel_gcc_patch
 # MUQSS CPU Scheduler:
-#   http://ck.kolivas.org/patches/5.0/5.2/5.2-ck1/
+#   http://ck.kolivas.org/patches/5.0/5.3/5.3-ck1/
 # PDS CPU Scheduler:
 #   http://cchalpha.blogspot.com/search/label/PDS
 # BMQ CPU Scheduler:
