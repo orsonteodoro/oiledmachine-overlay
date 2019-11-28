@@ -690,6 +690,72 @@ CVE_2019_19227_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linu
 CVE_2019_19227_SUMMARY_LANG="CVE_2019_19227_SUMMARY_${CVE_LANG}"
 CVE_2019_19227_SUMMARY="${!CVE_2019_19227_SUMMARY_LANG}"
 
+#---
+
+CVE_2019_10207_FIX_SRC_URI=""
+CVE_2019_10207_FN="CVE-2019-10207-fix--linux"
+CVE_2019_10207_SEVERITY_LANG="CVE_2019_10207_SEVERITY_${CVE_LANG}"
+CVE_2019_10207_SEVERITY="${!CVE_2019_10207_SEVERITY_LANG}"
+CVE_2019_10207_PM=""
+CVE_2019_10207_SUMMARY_LANG="CVE_2019_10207_SUMMARY_${CVE_LANG}"
+CVE_2019_10207_SUMMARY="${!CVE_2019_10207_SUMMARY_LANG}"
+
+CVE_2019_18675_FIX_SRC_URI=""
+CVE_2019_18675_FN="CVE-2019-18675-fix--linux"
+CVE_2019_18675_SEVERITY_LANG="CVE_2019_18675_SEVERITY_${CVE_LANG}"
+CVE_2019_18675_SEVERITY="${!CVE_2019_18675_SEVERITY_LANG}"
+CVE_2019_18675_PM=""
+CVE_2019_18675_SUMMARY_LANG="CVE_2019_18675_SUMMARY_${CVE_LANG}"
+CVE_2019_18675_SUMMARY="${!CVE_2019_18675_SUMMARY_LANG}"
+
+CVE_2019_19252_FIX_SRC_URI=""
+CVE_2019_19252_FN="CVE-2019-19252-fix--linux"
+CVE_2019_19252_SEVERITY_LANG="CVE_2019_19252_SEVERITY_${CVE_LANG}"
+CVE_2019_19252_SEVERITY="${!CVE_2019_19252_SEVERITY_LANG}"
+CVE_2019_19252_PM=""
+CVE_2019_19252_SUMMARY_LANG="CVE_2019_19252_SUMMARY_${CVE_LANG}"
+CVE_2019_19252_SUMMARY="${!CVE_2019_19252_SUMMARY_LANG}"
+
+CVE_2019_14896_FIX_SRC_URI=""
+CVE_2019_14896_FN="CVE-2019-14896-fix--linux"
+CVE_2019_14896_SEVERITY_LANG="CVE_2019_14896_SEVERITY_${CVE_LANG}"
+CVE_2019_14896_SEVERITY="${!CVE_2019_14896_SEVERITY_LANG}"
+CVE_2019_14896_PM=""
+CVE_2019_14896_SUMMARY_LANG="CVE_2019_14896_SUMMARY_${CVE_LANG}"
+CVE_2019_14896_SUMMARY="${!CVE_2019_14896_SUMMARY_LANG}"
+
+CVE_2019_10220_FIX_SRC_URI=""
+CVE_2019_10220_FN="CVE-2019-10220-fix--linux"
+CVE_2019_10220_SEVERITY_LANG="CVE_2019_10220_SEVERITY_${CVE_LANG}"
+CVE_2019_10220_SEVERITY="${!CVE_2019_10220_SEVERITY_LANG}"
+CVE_2019_10220_PM=""
+CVE_2019_10220_SUMMARY_LANG="CVE_2019_10220_SUMMARY_${CVE_LANG}"
+CVE_2019_10220_SUMMARY="${!CVE_2019_10220_SUMMARY_LANG}"
+
+# delayed doesn't patch smoothly
+CVE_2019_18660_FIX_SRC_URI=""
+CVE_2019_18660_FN="CVE-2019-18660-fix--linux-arch-powerpc-book3s64-Fix-link-stack-flush-on-context-switch.patch"
+CVE_2019_18660_SEVERITY_LANG="CVE_2019_18660_SEVERITY_${CVE_LANG}"
+CVE_2019_18660_SEVERITY="${!CVE_2019_18660_SEVERITY_LANG}"
+CVE_2019_18660_PM=""
+CVE_2019_18660_SUMMARY_LANG="CVE_2019_18660_SUMMARY_${CVE_LANG}"
+CVE_2019_18660_SUMMARY="${!CVE_2019_18660_SUMMARY_LANG}"
+
+CVE_2019_19319_FIX_SRC_URI=""
+CVE_2019_19319_FN="CVE-2019-19319-fix--linux"
+CVE_2019_19319_SEVERITY_LANG="CVE_2019_19319_SEVERITY_${CVE_LANG}"
+CVE_2019_19319_SEVERITY="${!CVE_2019_19319_SEVERITY_LANG}"
+CVE_2019_19319_PM=""
+CVE_2019_19319_SUMMARY_LANG="CVE_2019_19319_SUMMARY_${CVE_LANG}"
+CVE_2019_19319_SUMMARY="${!CVE_2019_19319_SUMMARY_LANG}"
+
+CVE_2019_19318_FIX_SRC_URI=""
+CVE_2019_19318_FN="CVE-2019-19318-fix--linux"
+CVE_2019_19318_SEVERITY_LANG="CVE_2019_19318_SEVERITY_${CVE_LANG}"
+CVE_2019_19318_SEVERITY="${!CVE_2019_19318_SEVERITY_LANG}"
+CVE_2019_19318_PM=""
+CVE_2019_19318_SUMMARY_LANG="CVE_2019_19318_SUMMARY_${CVE_LANG}"
+CVE_2019_19318_SUMMARY="${!CVE_2019_19318_SUMMARY_LANG}"
 
 
 #			 ${CVE_2010_4661_FIX_SRC_URI} -> ${CVE_2010_4661_FN}
@@ -793,8 +859,17 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
 			 ${CVE_2019_19083_FIX_SRC_URI} -> ${CVE_2019_19083_FN}
 
 			 ${CVE_2019_19227_FIX_SRC_URI} -> ${CVE_2019_19227_FN}
+
 )"
 
+#			 ${CVE_2019_18660_FIX_SRC_URI} -> ${CVE_2019_18660_FN}
+#			 ${CVE_2019_10207_FIX_SRC_URI} -> ${CVE_2019_10207_FN}
+#			 ${CVE_2019_18675_FIX_SRC_URI} -> ${CVE_2019_18675_FN}
+#			 ${CVE_2019_19252_FIX_SRC_URI} -> ${CVE_2019_19252_FN}
+#			 ${CVE_2019_14896_FIX_SRC_URI} -> ${CVE_2019_14896_FN}
+#			 ${CVE_2019_10220_FIX_SRC_URI} -> ${CVE_2019_10220_FN}
+#			 ${CVE_2019_19319_FIX_SRC_URI} -> ${CVE_2019_19319_FN}
+#			 ${CVE_2019_19318_FIX_SRC_URI} -> ${CVE_2019_19318_FN}
 
 
 # @FUNCTION: _fetch_cve_boilerplate_msg
@@ -859,7 +934,7 @@ function fetch_cve_2007_3732_hotfix() {
 	if grep -F -e \
 		"#define DO_ERROR_INFO(trapnr, signr, str, name, sicode, siaddr, irq)" \
 		"${S}/arch/i386/kernel/traps.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -879,7 +954,7 @@ function fetch_cve_2010_2243_hotfix() {
 	if grep -F -e \
 		"curr_clocksource = clocksource_default_clock();" \
 		"${S}/kernel/time/clocksource.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -897,7 +972,7 @@ function fetch_cve_2010_4661_hotfix() {
 	if grep -F -e \
 		"" \
 		"${S}/" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -917,7 +992,7 @@ function fetch_cve_2014_3180_hotfix() {
 	if grep -F -e \
 		"if (ret == -ERESTART_RESTARTBLOCK) {" \
 		"${S}/kernel/compat.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -934,7 +1009,7 @@ function fetch_cve_2019_16746_hotfix() {
 	if grep -F -e \
 		"validate_beacon_head" \
 		"${S}/net/wireless/nl80211.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -951,7 +1026,7 @@ function fetch_cve_2019_14814_hotfix() {
 	if grep -F -e \
 		"if (le16_to_cpu(ie->ie_length) + vs_ie->len + 2 >" \
 		"${S}/drivers/net/wireless/marvell/mwifiex/ie.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -968,7 +1043,7 @@ function fetch_cve_2019_14821_hotfix() {
 	if grep -F -e \
 		"if (!coalesced_mmio_has_room(dev, insert) ||" \
 		"${S}/virt/kvm/coalesced_mmio.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -985,7 +1060,7 @@ function fetch_cve_2019_16921_hotfix() {
 	if grep -F -e \
 		"struct hns_roce_ib_alloc_ucontext_resp resp = {};" \
 		"${S}/drivers/infiniband/hw/hns/hns_roce_main.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1003,7 +1078,7 @@ function fetch_cve_2019_16994_hotfix() {
 	if grep -F -e \
 		"free_netdev(sitn->fb_tunnel_dev);" \
 		"${S}/net/ipv6/sit.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1020,7 +1095,7 @@ function fetch_cve_2019_16995_hotfix() {
 	if grep -F -e \
 		"goto err_add_port;" \
 		"${S}/net/hsr/hsr_device.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1037,7 +1112,7 @@ function fetch_cve_2019_17052_hotfix() {
 	if grep -F -e \
 		"if (!capable(CAP_NET_RAW))" \
 		"${S}/net/ax25/af_ax25.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1054,7 +1129,7 @@ function fetch_cve_2019_17053_hotfix() {
 	if grep -F -e \
 		"if (!capable(CAP_NET_RAW))" \
 		"${S}/net/ieee802154/socket.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1071,7 +1146,7 @@ function fetch_cve_2019_17054_hotfix() {
 	if grep -F -e \
 		"if (sock->type == SOCK_RAW && !kern && !capable(CAP_NET_RAW))" \
 		"${S}/net/appletalk/ddp.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1088,7 +1163,7 @@ function fetch_cve_2019_17055_hotfix() {
 	if grep -F -e \
 		"if (!capable(CAP_NET_RAW))" \
 		"${S}/drivers/isdn/mISDN/socket.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1105,7 +1180,7 @@ function fetch_cve_2019_17056_hotfix() {
 	if grep -F -e \
 		"if (!capable(CAP_NET_RAW))" \
 		"${S}/net/nfc/llcp_sock.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1122,7 +1197,7 @@ function fetch_cve_2019_17075_hotfix() {
 	if grep -F -e \
 		"tpt->valid_to_pdid = cpu_to_be32(FW_RI_TPTE_VALID_F |" \
 		"${S}/drivers/infiniband/hw/cxgb4/mem.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1139,7 +1214,7 @@ function fetch_cve_2019_17133_hotfix() {
 	if grep -F -e \
 		"if (data->length > IW_ESSID_MAX_SIZE)" \
 		"${S}/net/wireless/wext-sme.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1156,7 +1231,7 @@ function fetch_cve_2019_17351_hotfix() {
 	if grep -F -e \
 		"balloon_stats.max_retry_count = 4;" \
 		"${S}/drivers/xen/balloon.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1173,7 +1248,7 @@ function fetch_cve_2019_17666_hotfix() {
 	if grep -F -e \
 		"if (noa_num > P2P_MAX_NOA_NUM) {" \
 		"${S}/drivers/net/wireless/realtek/rtlwifi/ps.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1190,7 +1265,7 @@ function fetch_cve_2019_18198_hotfix() {
 	if grep -F -e \
 		"if (!(arg->flags & FIB_LOOKUP_NOREF))" \
 		"${S}/net/ipv6/fib6_rules.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1208,7 +1283,7 @@ function fetch_cve_2019_18680_hotfix() {
 	if ! grep -F -e \
 		"sk->sk_prot->disconnect(sk, 0);" \
 		"${S}/net/rds/tcp.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		return 0
 	fi
@@ -1216,7 +1291,7 @@ function fetch_cve_2019_18680_hotfix() {
 	if grep -F -e \
 		"if (tc->t_sock) {" \
 		"${S}/net/rds/tcp.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1233,7 +1308,7 @@ function fetch_cve_2019_18683_hotfix() {
 	if grep -F -e \
 		"schedule_timeout_uninterruptible(1);" \
 		"${S}/drivers/media/platform/vivid/vivid-sdr-cap.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1250,7 +1325,7 @@ function fetch_cve_2019_18786_hotfix() {
 	if grep -F -e \
 		"memset(f->fmt.sdr.reserved, 0, sizeof(f->fmt.sdr.reserved));" \
 		"${S}/drivers/media/platform/rcar_drif.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1267,7 +1342,7 @@ function fetch_cve_2019_18805_hotfix() {
 	if grep -F -e \
 		".extra2		= &one_day_secs" \
 		"${S}/net/ipv4/sysctl_net_ipv4.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1284,7 +1359,7 @@ function fetch_cve_2019_18806_hotfix() {
 	if grep -F -e \
 		"dev_kfree_skb_irq(skb);" \
 		"${S}/drivers/net/ethernet/qlogic/qla3xxx.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1301,7 +1376,7 @@ function fetch_cve_2019_18807_hotfix() {
 	if grep -F -e \
 		"rc = -ENXIO;" \
 		"${S}/drivers/net/dsa/sja1105/sja1105_spi.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1317,7 +1392,7 @@ function fetch_cve_2019_18808_hotfix() {
 	local CVE_ID="CVE-2019-18808"
 	if pcregrep -M "kfree\(hmac_buf\);\n\t\t\tret = -EINVAL;" \
 		"${S}/drivers/crypto/ccp/ccp-ops.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1333,7 +1408,7 @@ function fetch_cve_2019_18809_hotfix() {
 	local CVE_ID="CVE-2019-18809"
 	if pcregrep -M "if \(\!ret\)\n\t\tdeb_info\(\"Identify state cold = %d\\\\n\", \*cold\);" \
 		"${S}/drivers/media/usb/dvb-usb/af9005.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1350,7 +1425,7 @@ function fetch_cve_2019_18810_hotfix() {
 	if grep -F -e \
 		"if (err) {" \
 		"${S}/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1366,7 +1441,7 @@ function fetch_cve_2019_18811_hotfix() {
 	local CVE_ID="CVE-2019-18811"
 	if pcregrep -M "if \(err < 0\) {\n\t\tkfree\(partdata\);" \
 		"${S}/sound/soc/sof/ipc.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1383,7 +1458,7 @@ function fetch_cve_2019_18812_hotfix() {
 	if grep -F -e \
 		'strcmp(dentry->d_name.name, "ipc_flood_duration_ms")) {' \
 		"${S}/sound/soc/sof/debug.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1391,7 +1466,7 @@ function fetch_cve_2019_18812_hotfix() {
 	if grep -F -e \
 		'strcmp(dfse->dfsentry->d_name.name, "ipc_flood_duration_ms")) {' \
 		"${S}/sound/soc/sof/debug.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1407,7 +1482,7 @@ function fetch_cve_2019_18813_hotfix() {
 	local CVE_ID="CVE-2019-18813"
 	if pcregrep -M "if \(ret < 0\)\n\t\tgoto err;" \
 		"${S}/drivers/usb/dwc3/dwc3-pci.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1424,7 +1499,7 @@ function fetch_cve_2019_18814_hotfix() {
 	if grep -F -e \
 		"int err = PTR_ERR(rule->label);" \
 		"${S}/security/apparmor/audit.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1441,7 +1516,7 @@ function fetch_cve_2019_18885_hotfix() {
 	if grep -F -e \
 		"u64 devid, u8 *uuid, u8 *fsid, bool seed);" \
 		"${S}/fs/btrfs/volumes.h" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1461,7 +1536,7 @@ function fetch_cve_2019_19036_hotfix() {
 	if grep -F -e \
 		"" \
 		"${S}/" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1479,7 +1554,7 @@ function fetch_cve_2019_19037_hotfix() {
 	if grep -F -e \
 		"" \
 		"${S}/" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1497,7 +1572,7 @@ function fetch_cve_2019_19039_hotfix() {
 	if grep -F -e \
 		"" \
 		"${S}/" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1516,7 +1591,7 @@ function fetch_cve_2019_19043_hotfix() {
 	local CVE_ID="CVE-2019-19043"
 	if pcregrep -M "ret = -EINVAL;\n\t\t\tkfree\(ch\);" \
 		"${S}/drivers/net/ethernet/intel/i40e/i40e_main.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1533,7 +1608,7 @@ function fetch_cve_2019_19044_hotfix() {
 	if grep -F -e \
 		"if (!bin) {" \
 		"${S}/drivers/gpu/drm/v3d/v3d_gem.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1550,7 +1625,7 @@ function fetch_cve_2019_19045_hotfix() {
 	if pcregrep -M \
 		"err = mlx5_vector2eqn\(mdev, smp_processor_id\(\), &eqn, &irqn\);\n\tif \(err\) {\n\t\tkvfree\(in\);" \
 		"${S}/drivers/net/ethernet/mellanox/mlx5/core/fpga/conn.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1567,7 +1642,7 @@ function fetch_cve_2019_19046_hotfix() {
 	if grep -F -e \
 		"if (rv < 0) {" \
 		"${S}/drivers/char/ipmi/ipmi_msghandler.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1583,7 +1658,7 @@ function fetch_cve_2019_19047_hotfix() {
 	local CVE_ID="CVE-2019-19047"
 	if pcregrep -M "err = mlx5_crdump_collect\(dev, cr_data\);\n\t\if \(err\)\n\t\tgoto free_data;" \
 		"${S}/drivers/net/ethernet/mellanox/mlx5/core/health.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1599,7 +1674,7 @@ function fetch_cve_2019_19048_hotfix() {
 	local CVE_ID="CVE-2019-19048"
 	if pcregrep -M "if \(\!bounce_buf\)\n\t\treturn -ENOMEM;\n\n\t\*bounce_buf_ret = bounce_buf;" \
 		"${S}/drivers/virt/vboxguest/vboxguest_utils.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1616,7 +1691,7 @@ function fetch_cve_2019_19049_hotfix() {
 	if grep -F -e \
 		"kfree(unittest_data);" \
 		"${S}/drivers/of/unittest.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1635,7 +1710,7 @@ function fetch_cve_2019_19050_hotfix() {
 	if grep -F -e \
 		"kfree_skb(skb);" \
 		"${S}/crypto/crypto_user_stat.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1651,7 +1726,7 @@ function fetch_cve_2019_19051_hotfix() {
 	local CVE_ID="CVE-2019-19051"
 	if pcregrep -M "d_fnend\(4, dev, \"\(wimax_dev %p state %d\) = %d\\\\n\",\n\t\twimax_dev, state, result\);\n\tkfree\(cmd\);" \
 		"${S}/drivers/net/wimax/i2400m/op-rfkill.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1667,7 +1742,7 @@ function fetch_cve_2019_19052_hotfix() {
 	local CVE_ID="CVE-2019-19052"
 	if pcregrep -M "usb_unanchor_urb\(urb\);\n\t\t\t\tusb_free_urb\(urb\);" \
 		"${S}/drivers/net/can/usb/gs_usb.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1684,7 +1759,7 @@ function fetch_cve_2019_19053_hotfix() {
 	if grep -F -e \
 		"if (!copy_from_iter_full(kbuf, len, from)) {" \
 		"${S}/drivers/rpmsg/rpmsg_char.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1700,7 +1775,7 @@ function fetch_cve_2019_19054_hotfix() {
 	local CVE_ID="CVE-2019-19054"
 	if pcregrep -M "if \(kfifo_alloc\(\&state->rx_kfifo, CX23888_IR_RX_KFIFO_SIZE,\n\t\t\tGFP_KERNEL\)\) {\n\t\tkfree\(state\);" \
 		"${S}/drivers/media/pci/cx23885/cx23888-ir.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1716,7 +1791,7 @@ function fetch_cve_2019_19055_hotfix() {
 	local CVE_ID="CVE-2019-19055"
 	if pcregrep -M "\t\t\t     NL80211_CMD_GET_FTM_RESPONDER_STATS\);\n\tif \(\!hdr\)\n\t\tgoto nla_put_failure;" \
 		"${S}/net/wireless/nl80211.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1732,7 +1807,7 @@ function fetch_cve_2019_19056_hotfix() {
 	local CVE_ID="CVE-2019-19056"
 	if pcregrep -M "if \(mwifiex_map_pci_memory\(adapter, skb, MWIFIEX_UPLD_SIZE,\n\t\t\t\t   PCI_DMA_FROMDEVICE\)\) {\n\t\tkfree_skb\(skb\);" \
 		"${S}/drivers/net/wireless/marvell/mwifiex/pcie.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1748,7 +1823,7 @@ function fetch_cve_2019_19057_hotfix() {
 	local CVE_ID="CVE-2019-19057"
 	if pcregrep -M "kfree_skb\(skb\);\n\t\t\tkfree\(card->evtbd_ring_vbase\);" \
 		"${S}/drivers/net/wireless/marvell/mwifiex/pcie.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1765,7 +1840,7 @@ function fetch_cve_2019_19058_hotfix() {
 	if grep -F -e \
 		"kfree(table);" \
 		"${S}/drivers/net/wireless/intel/iwlwifi/fw/dbg.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1782,7 +1857,7 @@ function fetch_cve_2019_19059_hotfix() {
 	if grep -F -e \
 		"err_free_prph_info:" \
 		"${S}/drivers/net/wireless/intel/iwlwifi/pcie/ctxt-info-gen3.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1800,7 +1875,7 @@ function fetch_cve_2019_19060_hotfix() {
 	local CVE_ID="CVE-2019-19060"
 	if pcregrep -M "adis->buffer = kcalloc\(indio_dev->scan_bytes, 2, GFP_KERNEL\);\n\tif \(\!adis->buffer\) {\n\t\tkfree\(adis->xfer\);" \
 		"${S}/drivers/iio/imu/adis_buffer.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1816,7 +1891,7 @@ function fetch_cve_2019_19061_hotfix() {
 	local CVE_ID="CVE-2019-19061"
 	if pcregrep -M "adis->buffer = kzalloc\(burst_length \+ sizeof\(u16\), GFP_KERNEL\);\n\tif \(\!adis->buffer\) {\n\t\tkfree\(adis->xfer\);" \
 		"${S}/drivers/iio/imu/adis_buffer.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1832,7 +1907,7 @@ function fetch_cve_2019_19062_hotfix() {
 	local CVE_ID="CVE-2019-19062"
 	if pcregrep -M "if \(err\) {\n\t\tkfree_skb\(skb\);" \
 		"${S}/crypto/crypto_user_base.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1849,7 +1924,7 @@ function fetch_cve_2019_19063_hotfix() {
 	if grep -F -e \
 		"if (!rtlpriv->usb_data) {" \
 		"${S}/drivers/net/wireless/realtek/rtlwifi/usb.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1865,7 +1940,7 @@ function fetch_cve_2019_19064_hotfix() {
 	local CVE_ID="CVE-2019-19064"
 	if pcregrep -M "dev_err\(fsl_lpspi->dev, \"failed to enable clock\\\\n\"\);\n\t\tgoto out_controller_put;" \
 		"${S}/drivers/spi/spi-fsl-lpspi.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1882,7 +1957,7 @@ function fetch_cve_2019_19065_hotfix() {
 	if grep -F -e \
 		"kfree(tmp_sdma_rht);" \
 		"${S}/drivers/infiniband/hw/hfi1/sdma.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1899,7 +1974,7 @@ function fetch_cve_2019_19066_hotfix() {
 	if grep -F -e \
 		"if (rc != BFA_STATUS_OK) {" \
 		"${S}/drivers/scsi/bfa/bfad_attr.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1916,7 +1991,7 @@ function fetch_cve_2019_19067_hotfix() {
 	if grep -F -e \
 		"failure:" \
 		"${S}/drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1932,7 +2007,7 @@ function fetch_cve_2019_19068_hotfix() {
 	local CVE_ID="CVE-2019-19068"
 	if pcregrep -M "usb_free_urb\(urb\);\n\t\tgoto error;" \
 		"${S}/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1948,7 +2023,7 @@ function fetch_cve_2019_19069_hotfix() {
 	local CVE_ID="CVE-2019-19069"
 	if pcregrep -M "dev_err\(buffer->dev, \"failed to get scatterlist from DMA API\\\\n\"\);\n\t\tkfree\(a\);" \
 		"${S}/drivers/misc/fastrpc.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1967,7 +2042,7 @@ function fetch_cve_2019_19070_hotfix() {
 	if grep -F -e \
 		"spi_master_put(master);" \
 		"${S}/drivers/spi/spi-gpio.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -1983,7 +2058,7 @@ function fetch_cve_2019_19071_hotfix() {
 	local CVE_ID="CVE-2019-19071"
 	if pcregrep -M "rsi_dbg\(ERR_ZONE, \"Failed to prepare beacon\\\\n\"\);\n\t\tdev_kfree_skb\(skb\);" \
 		"${S}/drivers/net/wireless/rsi/rsi_91x_mgmt.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -2000,7 +2075,7 @@ function fetch_cve_2019_19072_hotfix() {
 	if grep -F -e \
 		"if (top - op_stack > nr_parens) {" \
 		"${S}/kernel/trace/trace_events_filter.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -2016,7 +2091,7 @@ function fetch_cve_2019_19073_hotfix() {
 	local CVE_ID="CVE-2019-19073"
 	if pcregrep -M "dev_err\(target->dev, \"HTC credit config timeout\\\\n\"\);\n\t\tkfree_skb\(skb\);" \
 		"${S}/drivers/net/wireless/ath/ath9k/htc_hst.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -2032,7 +2107,7 @@ function fetch_cve_2019_19074_hotfix() {
 	local CVE_ID="CVE-2019-19074"
 	if pcregrep -M "wmi_cmd_to_name\(cmd_id\)\);\n\t\tmutex_unlock\(\&wmi->op_mutex\);\n\t\tkfree_skb\(skb\);" \
 		"${S}/drivers/net/wireless/ath/ath9k/wmi.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -2048,7 +2123,7 @@ function fetch_cve_2019_19075_hotfix() {
 	local CVE_ID="CVE-2019-19075"
 	if pcregrep -M "priv->spi->dev.platform_data = pdata;\n\tret = ca8210_get_platform_data\(priv->spi, pdata\);" \
 		"${S}/drivers/net/ieee802154/ca8210.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -2065,7 +2140,7 @@ function fetch_cve_2019_19076_hotfix() {
 	if grep -F -e \
 		"return err;" \
 		"${S}/drivers/net/ethernet/netronome/nfp/abm/cls.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -2081,7 +2156,7 @@ function fetch_cve_2019_19077_hotfix() {
 	local CVE_ID="CVE-2019-19077"
 	if pcregrep -M "bnxt_qplib_destroy_srq\(\&rdev->qplib_res,\n\t\t\t\t\t       \&srq->qplib_srq\);\n\t\t\tgoto fail;" \
 		"${S}/drivers/infiniband/hw/bnxt_re/ib_verbs.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -2097,7 +2172,7 @@ function fetch_cve_2019_19078_hotfix() {
 	local CVE_ID="CVE-2019-19078"
 	if pcregrep -M "usb_unanchor_urb\(urb\);\n\t\t\tusb_free_urb\(urb\);\n\t\t\tret = -EINVAL;" \
 		"${S}/drivers/net/wireless/ath/ath10k/usb.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -2114,7 +2189,7 @@ function fetch_cve_2019_19079_hotfix() {
 	if grep -F -e \
 		"kfree(kbuf);" \
 		"${S}/net/qrtr/tun.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -2132,7 +2207,7 @@ function fetch_cve_2019_19080_hotfix() {
 	local CVE_ID="CVE-2019-19080"
 	if pcregrep -M "cmsg_port_id, port, priv->nn->dp.netdev\);\n\t\tif \(err\) {\n\t\t\tkfree\(repr_priv\);" \
 		"${S}/drivers/net/ethernet/netronome/nfp/flower/main.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -2148,7 +2223,7 @@ function fetch_cve_2019_19081_hotfix() {
 	local CVE_ID="CVE-2019-19081"
 	if pcregrep -M "port_id, port, priv->nn->dp.netdev\);\n\t\tif \(err\) {\n\t\t\tkfree\(repr_priv\);" \
 		"${S}/drivers/net/ethernet/netronome/nfp/flower/main.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -2165,7 +2240,7 @@ function fetch_cve_2019_19082_hotfix() {
 	if grep -F -e \
 		"kfree(pool);" \
 		"${S}/drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -2182,7 +2257,7 @@ function fetch_cve_2019_19083_hotfix() {
 	if grep -F -e \
 		"kfree(clk_src);" \
 		"${S}/drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -2198,8 +2273,146 @@ function fetch_cve_2019_19227_hotfix() {
 	local CVE_ID="CVE-2019-19227"
 	if grep -F -e \
 		'pr_crit("Unable to register DDP with SNAP.\n");' \
-		"${S}/net/appletalk/ddp.c"
-		>/dev/null ; \
+		"${S}/net/appletalk/ddp.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+#---
+
+# @FUNCTION: fetch_cve_2019_10207_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_10207 patch
+function fetch_cve_2019_10207_hotfix() {
+	local CVE_ID="CVE-2019-10207"
+	if grep -F -e \
+		"" \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_18675_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_18675 patch
+function fetch_cve_2019_18675_hotfix() {
+	local CVE_ID="CVE-2019-18675"
+	if grep -F -e \
+		"" \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_19252_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19252 patch
+function fetch_cve_2019_19252_hotfix() {
+	local CVE_ID="CVE-2019-19252"
+	if grep -F -e \
+		"" \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_14896_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_14896 patch
+function fetch_cve_2019_14896_hotfix() {
+	local CVE_ID="CVE-2019-14896"
+	if grep -F -e \
+		"" \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_10220_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_10220 patch
+function fetch_cve_2019_10220_hotfix() {
+	local CVE_ID="CVE-2019-10220"
+	if grep -F -e \
+		"" \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_18660_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_18660 patch
+function fetch_cve_2019_18660_hotfix() {
+	local CVE_ID="CVE-2019-18660"
+	if grep -F -e \
+		'#define SEC_FTR_FLUSH_LINK_STACK' \
+		"${S}/arch/powerpc/include/asm/security_features.h" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_19319_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19319 patch
+function fetch_cve_2019_19319_hotfix() {
+	local CVE_ID="CVE-2019-19319"
+	if grep -F -e \
+		"" \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_19318_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19318 patch
+function fetch_cve_2019_19318_hotfix() {
+	local CVE_ID="CVE-2019-19318"
+	if grep -F -e \
+		"" \
+		"${S}/" \
+		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
 		return
@@ -2275,7 +2488,7 @@ function apply_cve_2007_3732_hotfix() {
 	if grep -F -e \
 		"#define DO_ERROR_INFO(trapnr, signr, str, name, sicode, siaddr, irq)" \
 		"${S}/arch/i386/kernel/traps.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2298,7 +2511,7 @@ function apply_cve_2010_2243_hotfix() {
 	if grep -F -e \
 		"curr_clocksource = clocksource_default_clock();" \
 		"${S}/kernel/time/clocksource.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2319,7 +2532,7 @@ function apply_cve_2010_4661_hotfix() {
 	if grep -F -e \
 		"" \
 		"${S}/" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2343,7 +2556,7 @@ function apply_cve_2014_3180_hotfix() {
 	if grep -F -e \
 		"if (ret == -ERESTART_RESTARTBLOCK) {" \
 		"${S}/kernel/compat.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2362,7 +2575,7 @@ function apply_cve_2019_16746_hotfix() {
 	if grep -F -e \
 		"validate_beacon_head" \
 		"${S}/net/wireless/nl80211.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2385,7 +2598,7 @@ function apply_cve_2019_14814_hotfix() {
 	if grep -F -e \
 		"if (le16_to_cpu(ie->ie_length) + vs_ie->len + 2 >" \
 		"${S}/drivers/net/wireless/marvell/mwifiex/ie.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2409,7 +2622,7 @@ function apply_cve_2019_14821_hotfix() {
 	if grep -F -e \
 		"if (!coalesced_mmio_has_room(dev, insert) ||" \
 		"${S}/virt/kvm/coalesced_mmio.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2432,7 +2645,7 @@ function apply_cve_2019_16921_hotfix() {
 	if grep -F -e \
 		"struct hns_roce_ib_alloc_ucontext_resp resp = {};" \
 		"${S}/drivers/infiniband/hw/hns/hns_roce_main.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2455,7 +2668,7 @@ function apply_cve_2019_16994_hotfix() {
 	if grep -F -e \
 		"free_netdev(sitn->fb_tunnel_dev);" \
 		"${S}/net/ipv6/sit.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2475,7 +2688,7 @@ function apply_cve_2019_16995_hotfix() {
 	if grep -F -e \
 		"goto err_add_port;" \
 		"${S}/net/hsr/hsr_device.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2494,7 +2707,7 @@ function apply_cve_2019_17052_hotfix() {
 	if grep -F -e \
 		"if (!capable(CAP_NET_RAW))" \
 		"${S}/net/ax25/af_ax25.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2513,7 +2726,7 @@ function apply_cve_2019_17053_hotfix() {
 	if grep -F -e \
 		"if (!capable(CAP_NET_RAW))" \
 		"${S}/net/ieee802154/socket.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2532,7 +2745,7 @@ function apply_cve_2019_17054_hotfix() {
 	if grep -F -e \
 		"if (sock->type == SOCK_RAW && !kern && !capable(CAP_NET_RAW))"\
 		"${S}/net/appletalk/ddp.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2551,7 +2764,7 @@ function apply_cve_2019_17055_hotfix() {
 	if grep -F -e \
 		"if (!capable(CAP_NET_RAW))" \
 		"${S}/drivers/isdn/mISDN/socket.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2570,7 +2783,7 @@ function apply_cve_2019_17056_hotfix() {
 	if grep -F -e \
 		"if (!capable(CAP_NET_RAW))" \
 		"${S}/net/nfc/llcp_sock.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2597,8 +2810,8 @@ function apply_cve_2019_17075_hotfix() {
 	if grep -F -e \
 		"tpt->valid_to_pdid = cpu_to_be32(FW_RI_TPTE_VALID_F |" \
 		"${S}/drivers/infiniband/hw/cxgb4/mem.c" \
-		>/dev/null ; \
-		then
+		>/dev/null
+	then
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
@@ -2616,7 +2829,7 @@ function apply_cve_2019_17133_hotfix() {
 	if grep -F -e \
 		"if (data->length > IW_ESSID_MAX_SIZE)" \
 		"${S}/net/wireless/wext-sme.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2635,7 +2848,7 @@ function apply_cve_2019_17351_hotfix() {
 	if grep -F -e \
 		"balloon_stats.max_retry_count = 4;" \
 		"${S}/drivers/xen/balloon.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2655,7 +2868,7 @@ function apply_cve_2019_17666_hotfix() {
 	if grep -F -e \
 		"if (noa_num > P2P_MAX_NOA_NUM) {" \
 		"${S}/drivers/net/wireless/realtek/rtlwifi/ps.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2685,7 +2898,7 @@ function apply_cve_2019_18198_hotfix() {
 	if grep -F -e \
 		"if (!(arg->flags & FIB_LOOKUP_NOREF))" \
 		"${S}/net/ipv6/fib6_rules.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2704,7 +2917,7 @@ function apply_cve_2019_18680_hotfix() {
 	if grep -F -e \
 		"if (tc->t_sock) {" \
 		"${S}/net/rds/tcp.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2712,7 +2925,7 @@ function apply_cve_2019_18680_hotfix() {
 	if ! grep -F -e \
 		"sk->sk_prot->disconnect(sk, 0);" \
 		"${S}/net/rds/tcp.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo \
 "Did not find ${CVE_ID} flaw.  Skipping"
@@ -2732,7 +2945,7 @@ function apply_cve_2019_18683_hotfix() {
 	if grep -F -e \
 		"schedule_timeout_uninterruptible(1);" \
 		"${S}/drivers/media/platform/vivid/vivid-sdr-cap.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2751,7 +2964,7 @@ function apply_cve_2019_18786_hotfix() {
 	if grep -F -e \
 		"memset(f->fmt.sdr.reserved, 0, sizeof(f->fmt.sdr.reserved));" \
 		"${S}/drivers/media/platform/rcar_drif.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2770,7 +2983,7 @@ function apply_cve_2019_18805_hotfix() {
 	if grep -F -e \
 		".extra2		= &one_day_secs" \
 		"${S}/net/ipv4/sysctl_net_ipv4.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2793,7 +3006,7 @@ function apply_cve_2019_18806_hotfix() {
 	if grep -F -e \
 		"dev_kfree_skb_irq(skb);" \
 		"${S}/drivers/net/ethernet/qlogic/qla3xxx.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2816,7 +3029,7 @@ function apply_cve_2019_18807_hotfix() {
 	if grep -F -e \
 		"rc = -ENXIO;" \
 		"${S}/drivers/net/dsa/sja1105/sja1105_spi.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2834,7 +3047,7 @@ function apply_cve_2019_18808_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "kfree\(hmac_buf\);\n\t\t\tret = -EINVAL;" \
 		"${S}/drivers/crypto/ccp/ccp-ops.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2852,7 +3065,7 @@ function apply_cve_2019_18809_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "if \(\!ret\)\n\t\tdeb_info\(\"Identify state cold = %d\\\\n\", \*cold\);" \
 		"${S}/drivers/media/usb/dvb-usb/af9005.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2875,7 +3088,7 @@ function apply_cve_2019_18810_hotfix() {
 	if grep -F -e \
 		"if (err) {" \
 		"${S}/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2893,7 +3106,7 @@ function apply_cve_2019_18811_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "if \(err < 0\) {\n\t\tkfree\(partdata\);" \
 		"${S}/sound/soc/sof/ipc.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2914,7 +3127,7 @@ function apply_cve_2019_18812_hotfix() {
 	if grep -F -e \
 		'strcmp(dentry->d_name.name, "ipc_flood_duration_ms"))' \
 		"${S}/sound/soc/sof/debug.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		_resolve_hotfix_default
 		return
@@ -2923,7 +3136,7 @@ function apply_cve_2019_18812_hotfix() {
 	if grep -F -e \
 		'strcmp(dfse->dfsentry->d_name.name, "ipc_flood_duration_ms"))' \
 		"${S}/sound/soc/sof/debug.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		_resolve_hotfix_default_filesdir
 		return
@@ -2951,7 +3164,7 @@ function apply_cve_2019_18813_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "if \(ret < 0\)\n\t\tgoto err;" \
 		"${S}/drivers/usb/dwc3/dwc3-pci.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2970,7 +3183,7 @@ function apply_cve_2019_18814_hotfix() {
 	if grep -F -e \
 		"int err = PTR_ERR(rule->label);" \
 		"${S}/security/apparmor/audit.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -2993,7 +3206,7 @@ function apply_cve_2019_18885_hotfix() {
 	if grep -F -e \
 		"u64 devid, u8 *uuid, u8 *fsid, bool seed);" \
 		"${S}/fs/btrfs/volumes.h" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3017,7 +3230,7 @@ function apply_cve_2019_19036_hotfix() {
 	if grep -F -e \
 		"" \
 		"${S}/" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3038,7 +3251,7 @@ function apply_cve_2019_19037_hotfix() {
 	if grep -F -e \
 		"" \
 		"${S}/" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3059,7 +3272,7 @@ function apply_cve_2019_19039_hotfix() {
 	if grep -F -e \
 		"" \
 		"${S}/" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3080,7 +3293,7 @@ function apply_cve_2019_19043_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "ret = -EINVAL;\n\t\t\tkfree\(ch\);" \
 		"${S}/drivers/net/ethernet/intel/i40e/i40e_main.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3104,7 +3317,7 @@ function apply_cve_2019_19044_hotfix() {
 	if grep -F -e \
 		"if (!bin) {" \
 		"${S}/drivers/gpu/drm/v3d/v3d_gem.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3127,7 +3340,7 @@ function apply_cve_2019_19045_hotfix() {
 	if pcregrep -M \
 		"err = mlx5_vector2eqn\(mdev, smp_processor_id\(\), &eqn, &irqn\);\n\tif \(err\) {\n\t\tkvfree\(in\);" \
 		"${S}/drivers/net/ethernet/mellanox/mlx5/core/fpga/conn.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3146,7 +3359,7 @@ function apply_cve_2019_19046_hotfix() {
 	if grep -F -e \
 		"if (rv < 0) {" \
 		"${S}/drivers/char/ipmi/ipmi_msghandler.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3168,7 +3381,7 @@ function apply_cve_2019_19047_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "err = mlx5_crdump_collect\(dev, cr_data\);\n\t\if \(err\)\n\t\tgoto free_data;" \
 		"${S}/drivers/net/ethernet/mellanox/mlx5/core/health.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3190,7 +3403,7 @@ function apply_cve_2019_19048_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "if \(\!bounce_buf\)\n\t\treturn -ENOMEM;\n\n\t\*bounce_buf_ret = bounce_buf;" \
 		"${S}/drivers/virt/vboxguest/vboxguest_utils.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3213,7 +3426,7 @@ function apply_cve_2019_19049_hotfix() {
 	if grep -F -e \
 		"kfree(unittest_data);" \
 		"${S}/drivers/of/unittest.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3234,7 +3447,7 @@ function apply_cve_2019_19050_hotfix() {
 	if grep -F -e \
 		"kfree_skb(skb);" \
 		"${S}/crypto/crypto_user_stat.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3256,7 +3469,7 @@ function apply_cve_2019_19051_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "d_fnend\(4, dev, \"\(wimax_dev %p state %d\) = %d\\\\n\",\n\t\twimax_dev, state, result\);\n\tkfree\(cmd\);" \
 		"${S}/drivers/net/wimax/i2400m/op-rfkill.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3278,7 +3491,7 @@ function apply_cve_2019_19052_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "usb_unanchor_urb\(urb\);\n\t\t\t\tusb_free_urb\(urb\);" \
 		"${S}/drivers/net/can/usb/gs_usb.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3297,7 +3510,7 @@ function apply_cve_2019_19053_hotfix() {
 	if grep -F -e \
 		"if (!copy_from_iter_full(kbuf, len, from)) {" \
 		"${S}/drivers/rpmsg/rpmsg_char.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3315,7 +3528,7 @@ function apply_cve_2019_19054_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "if \(kfifo_alloc\(\&state->rx_kfifo, CX23888_IR_RX_KFIFO_SIZE,\n\t\t\tGFP_KERNEL\)\) {\n\t\tkfree\(state\);" \
 		"${S}/drivers/media/pci/cx23885/cx23888-ir.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3333,7 +3546,7 @@ function apply_cve_2019_19055_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "\t\t\t     NL80211_CMD_GET_FTM_RESPONDER_STATS\);\n\tif \(\!hdr\)\n\t\tgoto nla_put_failure;" \
 		"${S}/net/wireless/nl80211.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3351,7 +3564,7 @@ function apply_cve_2019_19056_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "if \(mwifiex_map_pci_memory\(adapter, skb, MWIFIEX_UPLD_SIZE,\n\t\t\t\t   PCI_DMA_FROMDEVICE\)\) {\n\t\tkfree_skb\(skb\);" \
 		"${S}/drivers/net/wireless/marvell/mwifiex/pcie.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3369,7 +3582,7 @@ function apply_cve_2019_19057_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "kfree_skb\(skb\);\n\t\t\tkfree\(card->evtbd_ring_vbase\);" \
 		"${S}/drivers/net/wireless/marvell/mwifiex/pcie.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3388,7 +3601,7 @@ function apply_cve_2019_19058_hotfix() {
 	if grep -F -e \
 		"kfree(table);" \
 		"${S}/drivers/net/wireless/intel/iwlwifi/fw/dbg.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3407,7 +3620,7 @@ function apply_cve_2019_19059_hotfix() {
 	if grep -F -e \
 		"err_free_prph_info:" \
 		"${S}/drivers/net/wireless/intel/iwlwifi/pcie/ctxt-info-gen3.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3431,7 +3644,7 @@ function apply_cve_2019_19060_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "adis->buffer = kcalloc\(indio_dev->scan_bytes, 2, GFP_KERNEL\);\n\tif \(\!adis->buffer\) {\n\t\tkfree\(adis->xfer\);" \
 		"${S}/drivers/iio/imu/adis_buffer.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3453,7 +3666,7 @@ function apply_cve_2019_19061_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "adis->buffer = kzalloc\(burst_length \+ sizeof\(u16\), GFP_KERNEL\);\n\tif \(\!adis->buffer\) {\n\t\tkfree\(adis->xfer\);" \
 		"${S}/drivers/iio/imu/adis_buffer.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3471,7 +3684,7 @@ function apply_cve_2019_19062_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "if \(err\) {\n\t\tkfree_skb\(skb\);" \
 		"${S}/crypto/crypto_user_base.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3490,7 +3703,7 @@ function apply_cve_2019_19063_hotfix() {
 	if grep -F -e \
 		"if (!rtlpriv->usb_data) {" \
 		"${S}/drivers/net/wireless/realtek/rtlwifi/usb.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3508,7 +3721,7 @@ function apply_cve_2019_19064_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "dev_err\(fsl_lpspi->dev, \"failed to enable clock\\\\n\"\);\n\t\tgoto out_controller_put;" \
 		"${S}/drivers/spi/spi-fsl-lpspi.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3531,7 +3744,7 @@ function apply_cve_2019_19065_hotfix() {
 	if grep -F -e \
 		"kfree(tmp_sdma_rht);" \
 		"${S}/drivers/infiniband/hw/hfi1/sdma.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3550,7 +3763,7 @@ function apply_cve_2019_19066_hotfix() {
 	if grep -F -e \
 		"if (rc != BFA_STATUS_OK) {" \
 		"${S}/drivers/scsi/bfa/bfad_attr.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3573,7 +3786,7 @@ function apply_cve_2019_19067_hotfix() {
 	if grep -F -e \
 		"failure:" \
 		"${S}/drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3591,7 +3804,7 @@ function apply_cve_2019_19068_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "usb_free_urb\(urb\);\n\t\tgoto error;" \
 		"${S}/drivers/net/wireless/realtek/rtl8xxxu/rtl8xxxu_core.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3613,7 +3826,7 @@ function apply_cve_2019_19069_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "dev_err\(buffer->dev, \"failed to get scatterlist from DMA API\\\\n\"\);\n\t\tkfree\(a\);" \
 		"${S}/drivers/misc/fastrpc.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3634,7 +3847,7 @@ function apply_cve_2019_19070_hotfix() {
 	if grep -F -e \
 		"spi_master_put(master);" \
 		"${S}/drivers/spi/spi-gpio.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3652,7 +3865,7 @@ function apply_cve_2019_19071_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "rsi_dbg\(ERR_ZONE, \"Failed to prepare beacon\\\\n\"\);\n\t\tdev_kfree_skb\(skb\);" \
 		"${S}/drivers/net/wireless/rsi/rsi_91x_mgmt.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3671,7 +3884,7 @@ function apply_cve_2019_19072_hotfix() {
 	if grep -F -e \
 		"if (top - op_stack > nr_parens) {" \
 		"${S}/kernel/trace/trace_events_filter.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3689,7 +3902,7 @@ function apply_cve_2019_19073_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "dev_err\(target->dev, \"HTC credit config timeout\\\\n\"\);\n\t\tkfree_skb\(skb\);" \
 		"${S}/drivers/net/wireless/ath/ath9k/htc_hst.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3707,7 +3920,7 @@ function apply_cve_2019_19074_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "wmi_cmd_to_name\(cmd_id\)\);\n\t\tmutex_unlock\(\&wmi->op_mutex\);\n\t\tkfree_skb\(skb\);" \
 		"${S}/drivers/net/wireless/ath/ath9k/wmi.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3729,7 +3942,7 @@ function apply_cve_2019_19075_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "priv->spi->dev.platform_data = pdata;\n\tret = ca8210_get_platform_data\(priv->spi, pdata\);" \
 		"${S}/drivers/net/ieee802154/ca8210.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3752,7 +3965,7 @@ function apply_cve_2019_19076_hotfix() {
 	if grep -F -e \
 		"return err;" \
 		"${S}/drivers/net/ethernet/netronome/nfp/abm/cls.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3770,7 +3983,7 @@ function apply_cve_2019_19077_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "bnxt_qplib_destroy_srq\(\&rdev->qplib_res,\n\t\t\t\t\t       \&srq->qplib_srq\);\n\t\t\tgoto fail;" \
 		"${S}/drivers/infiniband/hw/bnxt_re/ib_verbs.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3788,7 +4001,7 @@ function apply_cve_2019_19078_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "usb_unanchor_urb\(urb\);\n\t\t\tusb_free_urb\(urb\);\n\t\t\tret = -EINVAL;" \
 		"${S}/drivers/net/wireless/ath/ath10k/usb.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3811,7 +4024,7 @@ function apply_cve_2019_19079_hotfix() {
 	if grep -F -e \
 		"kfree(kbuf);" \
 		"${S}/net/qrtr/tun.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3835,7 +4048,7 @@ function apply_cve_2019_19080_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "cmsg_port_id, port, priv->nn->dp.netdev\);\n\t\tif \(err\) {\n\t\t\tkfree\(repr_priv\);" \
 		"${S}/drivers/net/ethernet/netronome/nfp/flower/main.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3857,7 +4070,7 @@ function apply_cve_2019_19081_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if pcregrep -M "port_id, port, priv->nn->dp.netdev\);\n\t\tif \(err\) {\n\t\t\tkfree\(repr_priv\);" \
 		"${S}/drivers/net/ethernet/netronome/nfp/flower/main.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3876,7 +4089,7 @@ function apply_cve_2019_19082_hotfix() {
 	if grep -F -e \
 		"kfree(pool);" \
 		"${S}/drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3899,7 +4112,7 @@ function apply_cve_2019_19083_hotfix() {
 	if grep -F -e \
 		"kfree(clk_src);" \
 		"${S}/drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c" \
-		>/dev/null ; \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -3921,8 +4134,176 @@ function apply_cve_2019_19227_hotfix() {
 	local cve_fn="${CVE_ID_}FN"
 	if grep -F -e \
 		'pr_crit("Unable to register DDP with SNAP.\n");' \
-		"${S}/net/appletalk/ddp.c"
-		>/dev/null ; \
+		"${S}/net/appletalk/ddp.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+#---
+
+# @FUNCTION: apply_cve_2019_10207_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_10207 patch if it needs to
+function apply_cve_2019_10207_hotfix() {
+	#fixme
+	return 0
+	local CVE_ID="CVE-2019-10207"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"" \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_18675_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_18675 patch if it needs to
+function apply_cve_2019_18675_hotfix() {
+	#fixme
+	return 0
+	local CVE_ID="CVE-2019-18675"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"" \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_19252_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19252 patch if it needs to
+function apply_cve_2019_19252_hotfix() {
+	#fixme
+	return 0
+	local CVE_ID="CVE-2019-19252"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"" \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_14896_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_14896 patch if it needs to
+function apply_cve_2019_14896_hotfix() {
+	#fixme
+	return 0
+	local CVE_ID="CVE-2019-14896"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"" \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_10220_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_10220 patch if it needs to
+function apply_cve_2019_10220_hotfix() {
+	#fixme
+	return 0
+	local CVE_ID="CVE-2019-10220"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"" \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_18660_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_18660 patch if it needs to
+function apply_cve_2019_18660_hotfix() {
+	local CVE_ID="CVE-2019-18660"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		'#define SEC_FTR_FLUSH_LINK_STACK' \
+		"${S}/arch/powerpc/include/asm/security_features.h" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_19319_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19319 patch if it needs to
+function apply_cve_2019_19319_hotfix() {
+	#fixme
+	return 0
+	local CVE_ID="CVE-2019-19319"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"" \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_19318_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19318 patch if it needs to
+function apply_cve_2019_19318_hotfix() {
+	#fixme
+	return 0
+	local CVE_ID="CVE-2019-19318"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"" \
+		"${S}/" \
+		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
 		return
@@ -4030,6 +4411,15 @@ function fetch_cve_hotfixes() {
 		fetch_cve_2019_19083_hotfix
 
 		fetch_cve_2019_19227_hotfix
+
+		fetch_cve_2019_10207_hotfix
+		fetch_cve_2019_18675_hotfix
+		fetch_cve_2019_19252_hotfix
+		fetch_cve_2019_14896_hotfix
+		fetch_cve_2019_10220_hotfix
+		fetch_cve_2019_18660_hotfix
+		fetch_cve_2019_19319_hotfix
+		fetch_cve_2019_19318_hotfix
 
 		local cve_copyright1="CVE_COPYRIGHT1_${CVE_LANG}"
 		local cve_copyright2="CVE_COPYRIGHT2_${CVE_LANG}"
@@ -4144,5 +4534,17 @@ function apply_cve_hotfixes() {
 		apply_cve_2019_19083_hotfix
 
 		apply_cve_2019_19227_hotfix
+
+
+		apply_cve_2019_10207_hotfix
+		apply_cve_2019_18675_hotfix
+		apply_cve_2019_19252_hotfix
+		apply_cve_2019_14896_hotfix
+		apply_cve_2019_10220_hotfix
+		apply_cve_2019_18660_hotfix
+		apply_cve_2019_19319_hotfix
+		apply_cve_2019_19318_hotfix
+
+
 	fi
 }
