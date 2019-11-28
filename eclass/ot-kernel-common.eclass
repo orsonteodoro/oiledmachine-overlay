@@ -342,7 +342,7 @@ function _filter_genpatches() {
 	P_GENPATCHES_BLACKLIST=" 5010 5011 5012"
 	pushd "${d}" || die
 		for f in $(ls -1) ; do
-			einfo "Processing ${f}"
+			#einfo "Processing ${f}"
 			if [[ "${f}" =~ \.patch$ ]] ; then
 				local l=$(echo "${f}" | cut -f1 -d"_")
 				if (( ${l} < 1500 )) ; then
