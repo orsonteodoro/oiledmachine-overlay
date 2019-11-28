@@ -231,9 +231,9 @@ PDS_FN="v${PATCH_PDS_MAJOR_MINOR}_pds${PATCH_PDS_VER}.patch"
 PDS_SRC_URL="${PDS_URL_BASE}${PDS_FN}"
 
 BFQ_FN="bfq-${PATCH_BFQ_VER}.diff"
-BFQ_REPO="bfq-backports"
+BFQ_BRANCH="${BFQ_BRANCH:=bfq-backports}"
 BFQ_DL_URL=\
-"https://github.com/torvalds/linux/compare/v${PATCH_BFQ_VER}...zen-kernel:${PATCH_BFQ_VER}/${BFQ_REPO}.diff"
+"https://github.com/torvalds/linux/compare/v${PATCH_BFQ_VER}...zen-kernel:${PATCH_BFQ_VER}/${BFQ_BRANCH}.diff"
 BFQ_SRC_URL="${BFQ_DL_URL} -> ${BFQ_FN}"
 
 UNIPATCH_LIST=""
@@ -835,23 +835,29 @@ function ot-kernel-common_src_unpack() {
 
 	cd "${S}" || die
 
-	if use zentune ; then
-		fetch_zentune
-		apply_zentune
+	if has zentune ${IUSE_EFFECTIVE} ; then
+		if use zentune ; then
+			fetch_zentune
+			apply_zentune
+		fi
 	fi
 
-	if use zenmisc ; then
-		fetch_zenmisc
-		apply_zenmisc
+	if has zenmisc ${IUSE_EFFECTIVE} ; then
+		if use zenmisc ; then
+			fetch_zenmisc
+			apply_zenmisc
+		fi
 	fi
 
 	if use uksm ; then
 		apply_uksm
 	fi
 
-	if use bfq ; then
-		fetch_bfq
-		apply_bfq
+	if has bfq ${IUSE_EFFECTIVE} ; then
+		if use bfq ; then
+			fetch_bfq
+			apply_bfq
+		fi
 	fi
 
 	if use muqss ; then
@@ -968,27 +974,41 @@ same) from oldest-left to newest-right."
 	fi
 }
 
+# @FUNCTION: _check_network_sandbox
+# @DESCRIPTION:
+# Check if sandbox is more lax when downloading in unpack phase
+function _check_network_sandbox() {
+	# justifications
+	# bfq - no way to compare against "branch with commit"
+	#   (i.e. v${K_MAJOR_MINOR}...zen-kernel:${K_MAJOR_MINOR}/misc/${c})
+	# zenmisc - random choice of commits by user, mimimize
+	#   downloading unnecessary commits, less manifest
+	#   entries
+	# zentune - no way to version as explained in bfq
+	if has network-sandbox $FEATURES ; then
+		die \
+"FEATURES=\"-network-sandbox\" must be added per-package env to be able to use\n\
+live patches."
+	fi
+}
+
 # @FUNCTION: ot-kernel-common_pkg_setup_cb
 # @DESCRIPTION:
 # Perform checks, warnings, and initialization before emerging
 function ot-kernel-common_pkg_setup() {
-	if has zenmisc ${IUSE_EFFECTIVE} \
-		|| has zentune ${IUSE_EFFECTIVE} \
-		|| has bfq ${IUSE_EFFECTIVE} ]]
-	then
-		if use zenmisc || use zentune || use bfq ; then
-			# justifications
-			# bfq - no way to compare against "branch with commit"
-			#   (i.e. v${K_MAJOR_MINOR}...zen-kernel:${K_MAJOR_MINOR}/misc/${c})
-			# zenmisc - random choice of commits by user, mimimize
-			#   downloading unnecessary commits, less manifest
-			#   entries
-			# zentune - no way to version as explained in bfq
-			if has network-sandbox $FEATURES ; then
-				die \
-"FEATURES=\"-network-sandbox\" must be added per-package env to be able to use\n\
-live patches."
-			fi
+	if has zenmisc ${IUSE_EFFECTIVE} ; then
+		if use zenmisc ; then
+			_check_network_sandbox
+		fi
+	fi
+	if has zentune ${IUSE_EFFECTIVE} ; then
+		if use zentune ; then
+			_check_network_sandbox
+		fi
+	fi
+	if has bfq ${IUSE_EFFECTIVE} ; then
+		if use bfq ; then
+			_check_network_sandbox
 		fi
 	fi
 
