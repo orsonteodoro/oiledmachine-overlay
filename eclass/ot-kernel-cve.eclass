@@ -924,13 +924,15 @@ wait for an official fix in later kernel point releases."
 # @DESCRIPTION:
 # Checks for the CVE_2007_3732 patch
 function fetch_cve_2007_3732_hotfix() {
+	local CVE_ID="CVE-2007-3732"
 	if ver_test ${PV} -ge 2.6.23 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
 		return 0
 	fi
 	if ver_test ${PV} -lt 2.6 ; then
+		einfo "Skipping versions below not in advisory ${CVE_ID}"
 		return 0
 	fi
-	local CVE_ID="CVE-2007-3732"
 	if grep -F -e \
 		"#define DO_ERROR_INFO(trapnr, signr, str, name, sicode, siaddr, irq)" \
 		"${S}/arch/i386/kernel/traps.c" \
@@ -947,10 +949,11 @@ function fetch_cve_2007_3732_hotfix() {
 # @DESCRIPTION:
 # Checks for the CVE_2010_2243 patch
 function fetch_cve_2010_2243_hotfix() {
+	local CVE_ID="CVE-2010-2243"
 	if ver_test ${PV} -ge 2.6.33 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
 		return 0
 	fi
-	local CVE_ID="CVE-2010-2243"
 	if grep -F -e \
 		"curr_clocksource = clocksource_default_clock();" \
 		"${S}/kernel/time/clocksource.c" \
@@ -985,30 +988,14 @@ function fetch_cve_2010_4661_hotfix() {
 # @DESCRIPTION:
 # Checks for the CVE_2014_3180 patch
 function fetch_cve_2014_3180_hotfix() {
+	local CVE_ID="CVE-2014-3180"
 	if ver_test ${PV} -ge 3.17 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
 		return 0
 	fi
-	local CVE_ID="CVE-2014-3180"
 	if grep -F -e \
 		"if (ret == -ERESTART_RESTARTBLOCK) {" \
 		"${S}/kernel/compat.c" \
-		>/dev/null
-	then
-		einfo "${CVE_ID} already patched."
-		return
-	fi
-	_fetch_cve_boilerplate_msg
-	_fetch_cve_boilerplate_msg_footer
-}
-
-# @FUNCTION: fetch_cve_2019_16746_hotfix
-# @DESCRIPTION:
-# Checks for the CVE_2019_16746 patch
-function fetch_cve_2019_16746_hotfix() {
-	local CVE_ID="CVE-2019-16746"
-	if grep -F -e \
-		"validate_beacon_head" \
-		"${S}/net/wireless/nl80211.c" \
 		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
@@ -1023,6 +1010,10 @@ function fetch_cve_2019_16746_hotfix() {
 # Checks for the CVE-2019-14814 patch
 function fetch_cve_2019_14814_hotfix() {
 	local CVE_ID="CVE-2019-14814"
+	if ver_test ${PV} -ge 5.3.0 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if grep -F -e \
 		"if (le16_to_cpu(ie->ie_length) + vs_ie->len + 2 >" \
 		"${S}/drivers/net/wireless/marvell/mwifiex/ie.c" \
@@ -1052,11 +1043,32 @@ function fetch_cve_2019_14821_hotfix() {
 	_fetch_cve_boilerplate_msg_footer
 }
 
+# @FUNCTION: fetch_cve_2019_16746_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_16746 patch
+function fetch_cve_2019_16746_hotfix() {
+	local CVE_ID="CVE-2019-16746"
+	if grep -F -e \
+		"validate_beacon_head" \
+		"${S}/net/wireless/nl80211.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
 # @FUNCTION: fetch_cve_2019_16921_hotfix
 # @DESCRIPTION:
 # Checks for the CVE-2019-16921 patch
 function fetch_cve_2019_16921_hotfix() {
 	local CVE_ID="CVE-2019-16921"
+	if ver_test ${PV} -ge 4.17.0 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if grep -F -e \
 		"struct hns_roce_ib_alloc_ucontext_resp resp = {};" \
 		"${S}/drivers/infiniband/hw/hns/hns_roce_main.c" \
@@ -1075,6 +1087,10 @@ function fetch_cve_2019_16921_hotfix() {
 # Checks for the CVE-2019-16994 patch
 function fetch_cve_2019_16994_hotfix() {
 	local CVE_ID="CVE-2019-16994"
+	if ver_test ${PV} -ge 5.0.3 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if grep -F -e \
 		"free_netdev(sitn->fb_tunnel_dev);" \
 		"${S}/net/ipv6/sit.c" \
@@ -1356,6 +1372,10 @@ function fetch_cve_2019_18805_hotfix() {
 # Checks for the CVE_2019_18806 patch
 function fetch_cve_2019_18806_hotfix() {
 	local CVE_ID="CVE-2019-18806"
+	if ver_test ${PV} -ge 5.3.5 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if grep -F -e \
 		"dev_kfree_skb_irq(skb);" \
 		"${S}/drivers/net/ethernet/qlogic/qla3xxx.c" \
@@ -1373,6 +1393,10 @@ function fetch_cve_2019_18806_hotfix() {
 # Checks for the CVE_2019_18807 patch
 function fetch_cve_2019_18807_hotfix() {
 	local CVE_ID="CVE-2019-18807"
+	if ver_test ${PV} -ge 5.3.5 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if grep -F -e \
 		"rc = -ENXIO;" \
 		"${S}/drivers/net/dsa/sja1105/sja1105_spi.c" \
@@ -1422,6 +1446,10 @@ function fetch_cve_2019_18809_hotfix() {
 # Checks for the CVE_2019_18810 patch
 function fetch_cve_2019_18810_hotfix() {
 	local CVE_ID="CVE-2019-18810"
+	if ver_test ${PV} -ge 5.3.8 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if grep -F -e \
 		"if (err) {" \
 		"${S}/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c" \
@@ -1513,6 +1541,10 @@ function fetch_cve_2019_18814_hotfix() {
 # Checks for the CVE_2019_18885 patch
 function fetch_cve_2019_18885_hotfix() {
 	local CVE_ID="CVE-2019-18885"
+	if ver_test ${PV} -ge 5.1.0 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if grep -F -e \
 		"u64 devid, u8 *uuid, u8 *fsid, bool seed);" \
 		"${S}/fs/btrfs/volumes.h" \
@@ -1605,6 +1637,10 @@ function fetch_cve_2019_19043_hotfix() {
 # Checks for the CVE_2019_19044 patch
 function fetch_cve_2019_19044_hotfix() {
 	local CVE_ID="CVE-2019-19044"
+	if ver_test ${PV} -ge 5.3.11 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if grep -F -e \
 		"if (!bin) {" \
 		"${S}/drivers/gpu/drm/v3d/v3d_gem.c" \
@@ -1622,6 +1658,10 @@ function fetch_cve_2019_19044_hotfix() {
 # Checks for the CVE_2019_19045 patch
 function fetch_cve_2019_19045_hotfix() {
 	local CVE_ID="CVE-2019-19045"
+	if ver_test ${PV} -ge 5.3.11 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if pcregrep -M \
 		"err = mlx5_vector2eqn\(mdev, smp_processor_id\(\), &eqn, &irqn\);\n\tif \(err\) {\n\t\tkvfree\(in\);" \
 		"${S}/drivers/net/ethernet/mellanox/mlx5/core/fpga/conn.c" \
@@ -1656,6 +1696,10 @@ function fetch_cve_2019_19046_hotfix() {
 # Checks for the CVE_2019_19047 patch
 function fetch_cve_2019_19047_hotfix() {
 	local CVE_ID="CVE-2019-19047"
+	if ver_test ${PV} -ge 5.3.11 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if pcregrep -M "err = mlx5_crdump_collect\(dev, cr_data\);\n\t\if \(err\)\n\t\tgoto free_data;" \
 		"${S}/drivers/net/ethernet/mellanox/mlx5/core/health.c" \
 		>/dev/null
@@ -1672,6 +1716,10 @@ function fetch_cve_2019_19047_hotfix() {
 # Checks for the CVE_2019_19048 patch
 function fetch_cve_2019_19048_hotfix() {
 	local CVE_ID="CVE-2019-19048"
+	if ver_test ${PV} -ge 5.3.9 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if pcregrep -M "if \(\!bounce_buf\)\n\t\treturn -ENOMEM;\n\n\t\*bounce_buf_ret = bounce_buf;" \
 		"${S}/drivers/virt/vboxguest/vboxguest_utils.c" \
 		>/dev/null
@@ -1688,6 +1736,10 @@ function fetch_cve_2019_19048_hotfix() {
 # Checks for the CVE_2019_19049 patch
 function fetch_cve_2019_19049_hotfix() {
 	local CVE_ID="CVE-2019-19049"
+	if ver_test ${PV} -ge 5.3.10 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if grep -F -e \
 		"kfree(unittest_data);" \
 		"${S}/drivers/of/unittest.c" \
@@ -1724,6 +1776,10 @@ function fetch_cve_2019_19050_hotfix() {
 # Checks for the CVE_2019_19051 patch
 function fetch_cve_2019_19051_hotfix() {
 	local CVE_ID="CVE-2019-19051"
+	if ver_test ${PV} -ge 5.3.11 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if pcregrep -M "d_fnend\(4, dev, \"\(wimax_dev %p state %d\) = %d\\\\n\",\n\t\twimax_dev, state, result\);\n\tkfree\(cmd\);" \
 		"${S}/drivers/net/wimax/i2400m/op-rfkill.c" \
 		>/dev/null
@@ -1740,6 +1796,10 @@ function fetch_cve_2019_19051_hotfix() {
 # Checks for the CVE_2019_19052 patch
 function fetch_cve_2019_19052_hotfix() {
 	local CVE_ID="CVE-2019-19052"
+	if ver_test ${PV} -ge 5.3.11 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if pcregrep -M "usb_unanchor_urb\(urb\);\n\t\t\t\tusb_free_urb\(urb\);" \
 		"${S}/drivers/net/can/usb/gs_usb.c" \
 		>/dev/null
@@ -1873,6 +1933,10 @@ function fetch_cve_2019_19059_hotfix() {
 # Checks for the CVE_2019_19060 patch
 function fetch_cve_2019_19060_hotfix() {
 	local CVE_ID="CVE-2019-19060"
+	if ver_test ${PV} -ge 5.3.9 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if pcregrep -M "adis->buffer = kcalloc\(indio_dev->scan_bytes, 2, GFP_KERNEL\);\n\tif \(\!adis->buffer\) {\n\t\tkfree\(adis->xfer\);" \
 		"${S}/drivers/iio/imu/adis_buffer.c" \
 		>/dev/null
@@ -1889,6 +1953,10 @@ function fetch_cve_2019_19060_hotfix() {
 # Checks for the CVE_2019_19061 patch
 function fetch_cve_2019_19061_hotfix() {
 	local CVE_ID="CVE-2019-19061"
+	if ver_test ${PV} -ge 5.3.9 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if pcregrep -M "adis->buffer = kzalloc\(burst_length \+ sizeof\(u16\), GFP_KERNEL\);\n\tif \(\!adis->buffer\) {\n\t\tkfree\(adis->xfer\);" \
 		"${S}/drivers/iio/imu/adis_buffer.c" \
 		>/dev/null
@@ -1954,6 +2022,10 @@ function fetch_cve_2019_19064_hotfix() {
 # Checks for the CVE_2019_19065 patch
 function fetch_cve_2019_19065_hotfix() {
 	local CVE_ID="CVE-2019-19065"
+	if ver_test ${PV} -ge 5.3.9 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if grep -F -e \
 		"kfree(tmp_sdma_rht);" \
 		"${S}/drivers/infiniband/hw/hfi1/sdma.c" \
@@ -1988,6 +2060,10 @@ function fetch_cve_2019_19066_hotfix() {
 # Checks for the CVE_2019_19067 patch
 function fetch_cve_2019_19067_hotfix() {
 	local CVE_ID="CVE-2019-19067"
+	if ver_test ${PV} -ge 5.3.8 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if grep -F -e \
 		"failure:" \
 		"${S}/drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c" \
@@ -2021,6 +2097,10 @@ function fetch_cve_2019_19068_hotfix() {
 # Checks for the CVE_2019_19069 patch
 function fetch_cve_2019_19069_hotfix() {
 	local CVE_ID="CVE-2019-19069"
+	if ver_test ${PV} -ge 5.3.9 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if pcregrep -M "dev_err\(buffer->dev, \"failed to get scatterlist from DMA API\\\\n\"\);\n\t\tkfree\(a\);" \
 		"${S}/drivers/misc/fastrpc.c" \
 		>/dev/null
@@ -2121,6 +2201,10 @@ function fetch_cve_2019_19074_hotfix() {
 # Checks for the CVE_2019_19075 patch
 function fetch_cve_2019_19075_hotfix() {
 	local CVE_ID="CVE-2019-19075"
+	if ver_test ${PV} -ge 5.3.8 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if pcregrep -M "priv->spi->dev.platform_data = pdata;\n\tret = ca8210_get_platform_data\(priv->spi, pdata\);" \
 		"${S}/drivers/net/ieee802154/ca8210.c" \
 		>/dev/null
@@ -2137,6 +2221,10 @@ function fetch_cve_2019_19075_hotfix() {
 # Checks for the CVE_2019_19076 patch
 function fetch_cve_2019_19076_hotfix() {
 	local CVE_ID="CVE-2019-19076"
+	if ver_test ${PV} -ge 5.3.6 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if grep -F -e \
 		"return err;" \
 		"${S}/drivers/net/ethernet/netronome/nfp/abm/cls.c" \
@@ -2186,6 +2274,10 @@ function fetch_cve_2019_19078_hotfix() {
 # Checks for the CVE_2019_19079 patch
 function fetch_cve_2019_19079_hotfix() {
 	local CVE_ID="CVE-2019-19079"
+	if ver_test ${PV} -ge 5.3.0 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if grep -F -e \
 		"kfree(kbuf);" \
 		"${S}/net/qrtr/tun.c" \
@@ -2205,6 +2297,10 @@ function fetch_cve_2019_19079_hotfix() {
 # Checks for the CVE_2019_19080 patch
 function fetch_cve_2019_19080_hotfix() {
 	local CVE_ID="CVE-2019-19080"
+	if ver_test ${PV} -ge 5.3.4 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if pcregrep -M "cmsg_port_id, port, priv->nn->dp.netdev\);\n\t\tif \(err\) {\n\t\t\tkfree\(repr_priv\);" \
 		"${S}/drivers/net/ethernet/netronome/nfp/flower/main.c" \
 		>/dev/null
@@ -2221,6 +2317,10 @@ function fetch_cve_2019_19080_hotfix() {
 # Checks for the CVE_2019_19081 patch
 function fetch_cve_2019_19081_hotfix() {
 	local CVE_ID="CVE-2019-19081"
+	if ver_test ${PV} -ge 5.3.4 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if pcregrep -M "port_id, port, priv->nn->dp.netdev\);\n\t\tif \(err\) {\n\t\t\tkfree\(repr_priv\);" \
 		"${S}/drivers/net/ethernet/netronome/nfp/flower/main.c" \
 		>/dev/null
@@ -2254,6 +2354,10 @@ function fetch_cve_2019_19082_hotfix() {
 # Checks for the CVE_2019_19083 patch
 function fetch_cve_2019_19083_hotfix() {
 	local CVE_ID="CVE-2019-19083"
+	if ver_test ${PV} -ge 5.3.8 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if grep -F -e \
 		"kfree(clk_src);" \
 		"${S}/drivers/gpu/drm/amd/display/dc/dce100/dce100_resource.c" \
@@ -2271,6 +2375,10 @@ function fetch_cve_2019_19083_hotfix() {
 # Checks for the CVE_2019_19227 patch
 function fetch_cve_2019_19227_hotfix() {
 	local CVE_ID="CVE-2019-19227"
+	if ver_test ${PV} -ge 5.1.0 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if grep -F -e \
 		'pr_crit("Unable to register DDP with SNAP.\n");' \
 		"${S}/net/appletalk/ddp.c" \
@@ -2480,6 +2588,7 @@ function apply_cve_2007_3732_hotfix() {
 		return 0
 	fi
 	if ver_test ${PV} -lt 2.6 ; then
+		einfo "Skipping versions below not in advisory ${CVE_ID}"
 		return 0
 	fi
 	local CVE_ID_="${CVE_ID//-/_}_"
@@ -4324,11 +4433,11 @@ function fetch_cve_hotfixes() {
 
 		fetch_cve_2007_3732_hotfix
 		fetch_cve_2010_2243_hotfix
-#		fetch_cve_2010_4661_hotfix
+		fetch_cve_2010_4661_hotfix
 
-		fetch_cve_2019_16746_hotfix
 		fetch_cve_2019_14814_hotfix
 		fetch_cve_2019_14821_hotfix
+		fetch_cve_2019_16746_hotfix
 		fetch_cve_2019_16921_hotfix
 		fetch_cve_2019_16994_hotfix
 		fetch_cve_2019_16995_hotfix
@@ -4447,11 +4556,11 @@ function apply_cve_hotfixes() {
 
 		apply_cve_2007_3732_hotfix
 		apply_cve_2010_2243_hotfix
-#		apply_cve_2010_4661_hotfix
+		apply_cve_2010_4661_hotfix
 
-		apply_cve_2019_16746_hotfix
 		apply_cve_2019_14814_hotfix
 		apply_cve_2019_14821_hotfix
+		apply_cve_2019_16746_hotfix
 		apply_cve_2019_16921_hotfix
 		apply_cve_2019_16994_hotfix
 		apply_cve_2019_16995_hotfix
