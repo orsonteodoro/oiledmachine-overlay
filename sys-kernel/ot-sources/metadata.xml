@@ -164,30 +164,30 @@
       AES using SSE for 32 bit systems.</flag>
     <flag name="tresor_sysfs">Builds the external key setting program.</flag>
     <flag name="tresor_x86_64">Patches the kernel with cold boot
-     resistant AES using SSE for 64 bit systems.</flag>
+      resistant AES using SSE for 64 bit systems.</flag>
     <flag name="uksm">Patches the kernel with the Ultra Kernel Samepage
-     Merging, a type of page deduper algorithm.  Using it may be
-     insecure.</flag>
+      Merging, a type of page deduper algorithm.  Using it may be
+      insecure.</flag>
     <flag name="zentune">Patches the kernel with Zen Interactive
-     Tuning.</flag>
+      Tuning.</flag>
     <flag name="zenmisc">Patches the kernel with selected Zen kernel
-     commits.  You will need to define a ZENMISC_WHITELIST_5_3 env
-     variable containing a string of space separated commit IDs.  Commits
-     must be oldest-left to newest-right and in topological order 
-     with the first commit first and the final commit last if using
-     the same timestamp or split commit. For a full list of commits
+      commits.  You will need to define a ZENMISC_WHITELIST_5_3 env
+      variable containing a string of space separated commit IDs.  Commits
+      must be oldest-left to newest-right and in topological order 
+      with the first commit first and the final commit last if using
+      the same timestamp or split commit. For a full list of commits
 
-     The zenmisc set contains patches that add drivers or functionality
-     related to gaming, laptops, optimizations, etc.
+      The zenmisc set contains patches that add drivers or functionality
+      related to gaming, laptops, optimizations, etc.
 
-     for 5.3 see:
-     https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/misc
+      for 5.3 see:
+      https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/misc
 
-     for 5.4 (possibly provisional) see:
-     https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
+      for 5.4 (possibly provisional) see:
+      https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
 
-     Use the o3, zenmisc, graysky2 USE flags instead of passing their commit
-     IDs.
+      Use the o3, zenmisc, graysky2 USE flags instead of passing their commit
+      IDs.
      </flag>
   </use>
 </pkgmetadata>
