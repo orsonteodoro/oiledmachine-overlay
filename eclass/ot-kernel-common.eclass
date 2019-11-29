@@ -335,8 +335,9 @@ function apply_zenmisc() {
 	local ZM="ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_}"
 	for c in ${!ZM} ; do
 		if ver_test -ge 5.4 ; then
-			if [[ "${c}" == "${ZENTUNE_5_4_COMMIT}" \
-				|| "${c}" == "${PATCH_GRAYSKY2_GCC_COMMIT}" ]]
+			if [[ "${c}" == "${PATCH_ALLOW_O3_COMMIT}" \
+				|| "${c}" == "${PATCH_GRAYSKY2_GCC_COMMIT}" \
+				|| "${c}" == "${ZENTUNE_5_4_COMMIT}" ]]
 			then
 				continue
 			fi
