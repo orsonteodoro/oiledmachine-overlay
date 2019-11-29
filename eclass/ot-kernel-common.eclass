@@ -152,7 +152,7 @@ ZENTUNE_SRC_URL="${ZENTUNE_DL_URL} -> ${ZENTUNE_FN}"
 
 ZENMISC_URL_BASE="https://github.com/torvalds/linux/commit/"
 
-FUTEX_WAIT_MULTIPLE_BASE="https://github.com/torvalds/linux/compare/v5.3...zen-kernel:${PATCH_ZENTUNE_VER}/"
+FUTEX_WAIT_MULTIPLE_BASE="https://github.com/torvalds/linux/compare/v${PATCH_ZENTUNE_VER}...zen-kernel:${PATCH_ZENTUNE_VER}/"
 FUTEX_WAIT_MULTIPLE_PROJ="futex-backports"
 FUTEX_WAIT_MULTIPLE_FN="${FUTEX_WAIT_MULTIPLE_PROJ}-${K_MAJOR_MINOR}.patch"
 FUTEX_WAIT_MULTIPLE_DL_URL="${FUTEX_WAIT_MULTIPLE_BASE}${FUTEX_WAIT_MULTIPLE_FN}"
