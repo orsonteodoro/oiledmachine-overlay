@@ -155,7 +155,7 @@ ZENMISC_URL_BASE="https://github.com/torvalds/linux/commit/"
 FUTEX_WAIT_MULTIPLE_BASE="https://github.com/torvalds/linux/compare/v${PATCH_ZENTUNE_VER}...zen-kernel:${PATCH_ZENTUNE_VER}/"
 FUTEX_WAIT_MULTIPLE_PROJ="futex-backports"
 FUTEX_WAIT_MULTIPLE_FN="${FUTEX_WAIT_MULTIPLE_PROJ}-${K_MAJOR_MINOR}.patch"
-FUTEX_WAIT_MULTIPLE_DL_URL="${FUTEX_WAIT_MULTIPLE_BASE}${FUTEX_WAIT_MULTIPLE_FN}"
+FUTEX_WAIT_MULTIPLE_DL_URL="${FUTEX_WAIT_MULTIPLE_BASE}${FUTEX_WAIT_MULTIPLE_PROJ}.patch"
 
 UKSM_BASE="https://raw.githubusercontent.com/dolohow/uksm/master/v${PATCH_UKSM_MVER}.x/"
 UKSM_FN="uksm-${PATCH_UKSM_VER}.patch"
