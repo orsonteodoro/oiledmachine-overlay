@@ -14,7 +14,8 @@
     The TRESOR patch provides increased mitigation from cold boot resistant
     attacks (only in the 4.14.x series).
 
-    Compiler based optimizations are provided by GraySky patch and O3 patch.
+    Compiler based optimizations are provided by GraySky2's GCC patch and the
+    O3 patch.
 
     The amd-staging-drm-next patches provide increase compatibility and better
     support for new hardware and features like FreeSync, PowerPlay updates.
@@ -65,11 +66,7 @@
       <!-- for the linux kernel -->
       <name>Linus Torvalds</name>
     </maintainer>
-    <maintainer status="active" type="person">
-      <!-- for the linux kernel -->
-      <name>Linus Torvalds</name>
-    </maintainer>
-    <maintainer type="project">
+    <maintainer status="active" type="project">
       <!-- for genpatches -->
       <email>kernel@gentoo.org</email>
       <name>Gentoo Kernel Project</name>
@@ -89,12 +86,12 @@
       <name>Aric Cyr</name>
     </maintainer>
     <maintainer status="active" type="person">
-      <!-- for tresor aes-ni and i386, 2010-->
+      <!-- for tresor aes-ni and i386, 2010 -->
       <email>tilo.mueller@informatik.uni-erlangen.de</email>
       <name>Tilo Mueller</name>
     </maintainer>
     <maintainer status="active" type="person">
-      <!-- for tresor (aes-128) i386, 2012-->
+      <!-- for tresor (aes-128) i386, 2012 -->
       <email>johannes@jgoetzfried.de</email>
       <name>Johannes Goetzfried</name>
     </maintainer>
@@ -135,9 +132,10 @@
       SSG (Solid State Graphics) support, you will need to enable this
       USE flag.
       </flag>
-    <flag name="futex-wait-multiple">Patches ther kernel with FUTEX_WAIT_MULTIPLE
-     futex syscall option which may be used in the wine-proton package and
-     in Steam Play.  It may reduce CPU usage by less than 5%.</flag>
+    <flag name="futex-wait-multiple">Patches ther kernel with
+      FUTEX_WAIT_MULTIPLE futex syscall option which may be used in the
+      wine-proton package and in Steam Play (based on Proton).  It may reduce 
+      CPU usage by less than 5%.</flag>
     <flag name="muqss">Patches the kernel with Con Kolivas patchset and
       includes his skiplist based MuQSS CPU scheduler.</flag>
     <flag name="o3">Patches the kernel to allow for more aggressive O3
