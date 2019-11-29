@@ -169,6 +169,9 @@ O3_RO_DL_FN="${PATCH_O3_RO_COMMIT}.patch"
 O3_CO_SRC_URL="${O3_SRC_URL}${O3_CO_DL_FN} -> ${O3_CO_FN}"
 O3_RO_SRC_URL="${O3_SRC_URL}${O3_RO_DL_FN} -> ${O3_RO_FN}"
 
+O3_ALLOW_FN="O3-allow-unrestricted-${PATCH_ALLOW_O3_COMMIT}.patch"
+O3_ALLOW_SRC_URL="${O3_SRC_URL}${PATCH_ALLOW_O3_COMMIT}.patch -> ${O3_ALLOW_FN}"
+
 GRAYSKY_DL_4_9_FN=\
 "${GRAYSKY_DL_4_9_FN:=enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B.patch}"
 GRAYSKY_DL_8_1_FN=\
@@ -512,23 +515,28 @@ function apply_genpatch_extras() {
 function apply_o3() {
 	cd "${S}" || die
 
-	# fix patch
-	sed -r -e "s|-1028,6 +1028,13|-1076,6 +1076,13|" \
-		"${DISTDIR}"/${O3_CO_FN} \
-		> "${T}"/${O3_CO_FN} || die
+	if ver_test "${K_MAJOR_MINOR}" -ge 5.4 ; then
+		einfo "Allow O3 unrestricted"
+		_tpatch "${PATCH_OPS}" "${DISTDIR}/${O3_ALLOW_FN}"
+	elif ver_test "${K_MAJOR_MINOR}" -lt 5.4 ; then
+		# fix patch
+		sed -r -e "s|-1028,6 +1028,13|-1076,6 +1076,13|" \
+			"${DISTDIR}"/${O3_CO_FN} \
+			> "${T}"/${O3_CO_FN} || die
 
-	einfo "Applying O3"
-	ewarn \
+		einfo "Applying O3"
+		ewarn \
 "Some patches have hunk(s) failed but still good or may be fixed ASAP."
 
-	einfo "Applying ${O3_CO_FN}"
-	_tpatch "${PATCH_OPS}" "${T}/${O3_CO_FN}"
+		einfo "Applying ${O3_CO_FN}"
+		_tpatch "${PATCH_OPS}" "${T}/${O3_CO_FN}"
 
-	einfo "Applying ${O3_RO_FN}"
-	mkdir -p drivers/gpu/drm/amd/display/dc/basics/
-	# trick patch for unattended patching
-	touch drivers/gpu/drm/amd/display/dc/basics/logger.c
-	_tpatch "-p1 -N" "${DISTDIR}/${O3_RO_FN}"
+		einfo "Applying ${O3_RO_FN}"
+		mkdir -p drivers/gpu/drm/amd/display/dc/basics/
+		# trick patch for unattended patching
+		touch drivers/gpu/drm/amd/display/dc/basics/logger.c
+		_tpatch "-p1 -N" "${DISTDIR}/${O3_RO_FN}"
+	fi
 
 	if declare -f ot-kernel-common_apply_o3_fixes > /dev/null ; then
 		ot-kernel-common_apply_o3_fixes

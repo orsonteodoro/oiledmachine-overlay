@@ -103,8 +103,8 @@ CK_SRC_URL="${CK_URL_BASE}${CK_FN}"
 
 inherit check-reqs ot-kernel-common
 
-BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.patch"
-BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
+#BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.patch"
+#BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
 
 SRC_URI+=" ${CK_SRC_URL}"
 

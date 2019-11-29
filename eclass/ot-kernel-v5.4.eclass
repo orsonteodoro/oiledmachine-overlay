@@ -22,6 +22,7 @@ EXTRAVERSION="-ot"
 PATCH_UKSM_VER="5.4"
 PATCH_UKSM_MVER="5"
 PATCH_ZENTUNE_VER="5.4"
+PATCH_ALLOW_O3_COMMIT="4edc8050a41d333e156d2ae1ed3ab91d0db92c7e"
 PATCH_CK_MAJOR="5.0"
 PATCH_CK_MAJOR_MINOR="5.4"
 PATCH_CK_REVISION="1"
@@ -59,7 +60,7 @@ IUSE="  bfq bmq bmq-quick-fix \
 	amd-staging-drm-next \
 	directgma \
 	rock \
-	+cfs disable_debug +graysky2 muqss uksm \
+	+cfs disable_debug +graysky2 muqss +o3 uksm \
 	futex-wait-multiple \
 	zenmisc \
 	-zentune"
@@ -100,14 +101,15 @@ CK_SRC_URL="${CK_URL_BASE}${CK_FN}"
 
 inherit check-reqs ot-kernel-common
 
-BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.patch"
-BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
+#BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.patch"
+#BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
 
 SRC_URI+=" ${CK_SRC_URL}"
 
 SRC_URI+=" ${KERNEL_URI}
 	   ${GENPATCHES_URI}
 	   ${ARCH_URI}
+	   ${O3_ALLOW_SRC_URL}
 	   ${GRAYSKY_SRC_4_9_URL}
 	   ${GRAYSKY_SRC_8_1_URL}
 	   ${GRAYSKY_SRC_9_1_URL}
