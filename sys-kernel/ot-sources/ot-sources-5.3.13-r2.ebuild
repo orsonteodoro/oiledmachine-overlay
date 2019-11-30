@@ -7,6 +7,9 @@ K_GENPATCHES_VER="15"
 PATCH_BMQ_VER="5.3-r2"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
 
+# Not supported by the Gentoo crew
+K_SECURITY_UNSUPPORTED="1"
+
 inherit ot-kernel-v5.3
 
 KEYWORDS="~amd64 ~x86"
@@ -34,7 +37,6 @@ src_install() {
 }
 
 pkg_postinst() {
-	unset K_SECURITY_UNSUPPORTED
 	kernel-2_pkg_postinst
 	ot-kernel-common_pkg_postinst
 }

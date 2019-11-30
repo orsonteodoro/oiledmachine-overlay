@@ -5,6 +5,9 @@ EAPI="6"
 
 K_GENPATCHES_VER="165"
 
+# Not supported by the Gentoo crew
+K_SECURITY_UNSUPPORTED="1"
+
 inherit ot-kernel-v4.14
 
 KEYWORDS="~amd64 ~x86"
