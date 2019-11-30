@@ -107,6 +107,15 @@ CVE_2019_14814_PM="https://github.com/torvalds/linux/commit/7caac62ed598a196d6dd
 CVE_2019_14814_SUMMARY_LANG="CVE_2019_14814_SUMMARY_${CVE_LANG}"
 CVE_2019_14814_SUMMARY="${!CVE_2019_14814_SUMMARY_LANG}"
 
+# CVE_2019_14816 solution same as a CVE_2019_14814
+CVE_2019_14816_FIX_SRC_URI="https://github.com/torvalds/linux/commit/7caac62ed598a196d6ddf8d9c121e12e082cac3a.patch"
+CVE_2019_14816_FN="CVE-2019-14816-fix--linux-drivers-net-wireless-marvell-mwifiex-Fix-three-heap-overflow-at-parsing-element-in-cfg80211_ap_settings.patch"
+CVE_2019_14816_SEVERITY_LANG="CVE_2019_14816_SEVERITY_${CVE_LANG}"
+CVE_2019_14816_SEVERITY="${!CVE_2019_14816_SEVERITY_LANG}"
+CVE_2019_14816_PM="https://github.com/torvalds/linux/commit/7caac62ed598a196d6ddf8d9c121e12e082cac3a"
+CVE_2019_14816_SUMMARY_LANG="CVE_2019_14816_SUMMARY_${CVE_LANG}"
+CVE_2019_14816_SUMMARY="${!CVE_2019_14816_SUMMARY_LANG}"
+CVE_2019_14816_DUPE_FIX_CVE="CVE-2019-14814"
 
 CVE_2019_14821_FIX_SRC_URI="https://github.com/torvalds/linux/commit/b60fe990c6b07ef6d4df67bc0530c7c90a62623a.patch"
 CVE_2019_14821_FN="CVE-2019-14821-fix--linux-virt-kvm-coalesced-mmio-add-bounds-checking.patch"
@@ -158,11 +167,22 @@ CVE_2019_14901_SUMMARY="${!CVE_2019_14901_SUMMARY_LANG}"
 
 CVE_2019_16089_FIX_SRC_URI="https://lore.kernel.org/patchwork/patch/1126650/mbox/"
 CVE_2019_16089_FN="CVE-2019-16089-fix--linux-drivers-block-nbd-v3-nbd_genl_status-null-check-for-nla_nest_start.patch"
+CVE_2019_16089_FN_FILESDIR="CVE-2019-16089-fix--linux-drivers-block-nbd-v3-nbd_genl_status-null-check-for-nla_nest_start-for-4.14.x.patch"
 CVE_2019_16089_SEVERITY_LANG="CVE_2019_16089_SEVERITY_${CVE_LANG}"
 CVE_2019_16089_SEVERITY="${!CVE_2019_16089_SEVERITY_LANG}"
 CVE_2019_16089_PM="https://lore.kernel.org/patchwork/patch/1106884/"
 CVE_2019_16089_SUMMARY_LANG="CVE_2019_16089_SUMMARY_${CVE_LANG}"
 CVE_2019_16089_SUMMARY="${!CVE_2019_16089_SUMMARY_LANG}"
+
+
+CVE_2019_16714_FIX_SRC_URI="https://github.com/torvalds/linux/commit/7d0a06586b2686ba80c4a2da5f91cb10ffbea736.patch"
+CVE_2019_16714_FN="CVE-2019-16714-fix--linux-net-rds-recv-Fix-info-leak-in-rds6_inc_info_copy.patch"
+CVE_2019_16714_FN_FILESDIR="CVE-2019-16714-fix--linux-net-rds-recv-Fix-info-leak-in-rds6_inc_info_copy-for-4.14.x.patch"
+CVE_2019_16714_SEVERITY_LANG="CVE_2019_16714_SEVERITY_${CVE_LANG}"
+CVE_2019_16714_SEVERITY="${!CVE_2019_16714_SEVERITY_LANG}"
+CVE_2019_16714_PM="https://github.com/torvalds/linux/commit/7d0a06586b2686ba80c4a2da5f91cb10ffbea736"
+CVE_2019_16714_SUMMARY_LANG="CVE_2019_16714_SUMMARY_${CVE_LANG}"
+CVE_2019_16714_SUMMARY="${!CVE_2019_16714_SUMMARY_LANG}"
 
 
 CVE_2019_16746_FIX_SRC_URI="https://marc.info/?l=linux-wireless&m=156901391225058&q=mbox"
@@ -861,6 +881,8 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
 
 			 ${CVE_2014_3180_FIX_SRC_URI} -> ${CVE_2014_3180_FN}
 
+			 ${CVE_2019_16714_FIX_SRC_URI} -> ${CVE_2019_16714_FN}
+
 			 ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 
 			 ${CVE_2019_14814_FIX_SRC_URI} -> ${CVE_2019_14814_FN}
@@ -1009,8 +1031,12 @@ function _fetch_cve_boilerplate_msg_footer() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_fn="${CVE_ID_}FN"
 	local pm="${CVE_ID_}PM"
+	local cve_dupe="${CVE_ID_}DUPE_FIX_CVE"
 
-	if [[ -z "${!cve_fn}" || -z "${!pm}" ]] ; then
+	if [[ -n "${!cve_dupe}" ]] ; then
+		einfo \
+"Dupe fix found in ${!cve_dupe}.  Skipping..."
+	elif [[ -z "${!cve_fn}" || -z "${!pm}" ]] ; then
 		eerror \
 "No de-facto patch exists for ${CVE_ID} or the patch is undergoing code review.  No patch\n\
 will be applied.  This fix is still being worked on."
@@ -1168,6 +1194,27 @@ function fetch_cve_2019_14814_hotfix() {
 	_fetch_cve_boilerplate_msg_footer
 }
 
+# @FUNCTION: fetch_cve_2019_14816_hotfix
+# @DESCRIPTION:
+# Checks for the CVE-2019-14816 patch
+function fetch_cve_2019_14816_hotfix() {
+	local CVE_ID="CVE-2019-14816"
+	if ver_test ${PV} -ge 5.3 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	if grep -F -e \
+		"if (le16_to_cpu(ie->ie_length) + vs_ie->len + 2 >" \
+		"${S}/drivers/net/wireless/marvell/mwifiex/ie.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
 # @FUNCTION: fetch_cve_2019_14821_hotfix
 # @DESCRIPTION:
 # Checks for the CVE-2019-14821 patch
@@ -1272,6 +1319,27 @@ function fetch_cve_2019_16089_hotfix() {
 	if grep -F -e \
 		"ret = -EMSGSIZE;" \
 		"${S}/drivers/block/nbd.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_16714_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_16714 patch
+function fetch_cve_2019_16714_hotfix() {
+	local CVE_ID="CVE-2019-16714"
+	if ver_test ${PV} -ge 5.2.14 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	if grep -F -e \
+		"minfo6.flags = 0;" \
+		"${S}/net/rds/recv.c" \
 		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
@@ -2783,6 +2851,7 @@ function fetch_cve_2019_19462_hotfix() {
 # $1 - overrides patch of copy patch, intended to fix patches (optional)
 # @CODE
 function _resolve_hotfix_default() {
+	local cve_dupe="${CVE_ID_}DUPE_FIX_CVE"
 	local fn
 	if [[ -z "${1}" ]] ; then
 		fn="${DISTDIR}/${!cve_fn}"
@@ -2790,7 +2859,10 @@ function _resolve_hotfix_default() {
 		fn="${1}"
 	fi
 	if use cve_hotfix ; then
-		if [ -e "${fn}" ] ; then
+		if [[ -n "${!cve_dupe}" ]] ; then
+			einfo \
+"Fix applied in ${!cve_dupe}.  Skipping..."
+		elif [ -e "${fn}" ] ; then
 			einfo \
 "Resolving ${CVE_ID}.  ${!cve_fn} may break in different kernel versions."
 			_dpatch "${PATCH_OPS}" "${fn}"
@@ -2983,6 +3055,29 @@ function apply_cve_2019_14814_hotfix() {
 	_resolve_hotfix_default
 }
 
+# @FUNCTION: apply_cve_2019_14816_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_14816 patch if it needs to
+function apply_cve_2019_14816_hotfix() {
+	local CVE_ID="CVE-2019-14816"
+	if ver_test ${PV} -ge 5.3 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"if (le16_to_cpu(ie->ie_length) + vs_ie->len + 2 >" \
+		"${S}/drivers/net/wireless/marvell/mwifiex/ie.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
 # @FUNCTION: apply_cve_2019_14821_hotfix
 # @DESCRIPTION:
 # Applies the CVE_2019_14821 patch if it needs to
@@ -3105,6 +3200,7 @@ function apply_cve_2019_16089_hotfix() {
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
+	local cve_fn_filesdir="${CVE_ID_}FN_FILESDIR"
 	if grep -F -e \
 		"ret = -EMSGSIZE;" \
 		"${S}/drivers/block/nbd.c" \
@@ -3113,6 +3209,59 @@ function apply_cve_2019_16089_hotfix() {
 		einfo "${CVE_ID} is already patched."
 		return
 	fi
+
+	if grep -F -e \
+		"nla_nest_start_noflag(" \
+		"${S}/drivers/block/nbd.c" \
+		>/dev/null
+	then
+		_resolve_hotfix_default
+		return
+	fi
+
+	if grep -F -e \
+		"nla_nest_start(" \
+		"${S}/drivers/block/nbd.c" \
+		>/dev/null
+	then
+		_resolve_hotfix_default_filesdir
+		return
+	fi
+
+	if use cve_hotfix ; then
+		if [[ ! -e "${DISTDIR}/${!cve_fn}"  ||
+		      ! -e "${FILESDIR}/${!cve_fn_filesdir}" ]] ; then
+			ewarn \
+"No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
+		fi
+	else
+		ewarn \
+"No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
+	fi
+
+}
+
+# @FUNCTION: apply_cve_2019_16714_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_16714 patch if it needs to
+function apply_cve_2019_16714_hotfix() {
+	local CVE_ID="CVE-2019-16714"
+	if ver_test ${PV} -ge 5.2.14 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"minfo6.flags = 0;" \
+		"${S}/net/rds/recv.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+
 	_resolve_hotfix_default
 }
 
@@ -4840,12 +4989,15 @@ function fetch_cve_hotfixes() {
 		fetch_cve_2019_10220_hotfix
 
 		fetch_cve_2019_14814_hotfix
+		fetch_cve_2019_14816_hotfix
 
 		fetch_cve_2019_14821_hotfix
 
 		fetch_cve_2019_14896_hotfix
 
 		fetch_cve_2019_16089_hotfix
+
+		fetch_cve_2019_16714_hotfix
 
 		fetch_cve_2019_16746_hotfix
 
@@ -4994,6 +5146,7 @@ function apply_cve_hotfixes() {
 		apply_cve_2019_10220_hotfix
 
 		apply_cve_2019_14814_hotfix
+		apply_cve_2019_14816_hotfix
 
 		apply_cve_2019_14821_hotfix
 
@@ -5004,6 +5157,8 @@ function apply_cve_hotfixes() {
 		apply_cve_2019_18660_hotfix
 
 		apply_cve_2019_18675_hotfix
+
+		apply_cve_2019_16714_hotfix
 
 		apply_cve_2019_16746_hotfix
 
