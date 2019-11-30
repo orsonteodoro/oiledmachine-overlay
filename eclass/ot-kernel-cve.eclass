@@ -45,6 +45,7 @@ CVE_DELAY="${CVE_DELAY:=1}"
 
 CVE_LANG="${CVE_LANG:=en}" # You can define this in your make.conf.  Currently en is only supported.
 
+
 CVE_2007_3732_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=a10d9a71bafd3a283da240d2868e71346d2aef6f"
 CVE_2007_3732_FN="CVE-2007-3732-fix--linux-arch-i386-fixup-TRACE_IRQ-breakage.patch"
 CVE_2007_3732_SEVERITY_LANG="CVE_2007_3732_SEVERITY_${CVE_LANG}"
@@ -52,6 +53,7 @@ CVE_2007_3732_SEVERITY="${!CVE_2007_3732_SEVERITY_LANG}"
 CVE_2007_3732_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=a10d9a71bafd3a283da240d2868e71346d2aef6f"
 CVE_2007_3732_SUMMARY_LANG="CVE_2007_3732_SUMMARY_${CVE_LANG}"
 CVE_2007_3732_SUMMARY="${!CVE_2007_3732_SUMMARY_LANG}"
+
 
 CVE_2010_2243_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=ad6759fbf35d104dbf573cd6f4c6784ad6823f7e"
 CVE_2010_2243_FN="CVE-2010-2243-fix--linux-kernel-time-clocksource-timekeeping-Prevent-oops-when-GENERIC_TIME-is-n.patch"
@@ -61,12 +63,14 @@ CVE_2010_2243_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux
 CVE_2010_2243_SUMMARY_LANG="CVE_2010_2243_SUMMARY_${CVE_LANG}"
 CVE_2010_2243_SUMMARY="${!CVE_2010_2243_SUMMARY_LANG}"
 
+
 CVE_2010_4661_FIX_SRC_URI=""
 CVE_2010_4661_SEVERITY_LANG="CVE_2010_4661_SEVERITY_${CVE_LANG}"
 CVE_2010_4661_SEVERITY="${!CVE_2010_4661_SEVERITY_LANG}"
 CVE_2010_4661_PM=""
 CVE_2010_4661_SUMMARY_LANG="CVE_2010_4661_SUMMARY_${CVE_LANG}"
 CVE_2010_4661_SUMMARY="${!CVE_2010_4661_SUMMARY_LANG}"
+
 
 CVE_2014_3180_FIX_SRC_URI="https://lkml.org/lkml/diff/2014/9/7/29/1"
 CVE_2014_3180_FN="CVE-2014-3180-fix--linux-kernel-compat-timer-updates-for-3.17.patch"
@@ -76,13 +80,24 @@ CVE_2014_3180_PM="https://lkml.org/lkml/2014/9/7/29"
 CVE_2014_3180_SUMMARY_LANG="CVE_2014_3180_SUMMARY_${CVE_LANG}"
 CVE_2014_3180_SUMMARY="${!CVE_2014_3180_SUMMARY_LANG}"
 
-CVE_2019_16746_FIX_SRC_URI="https://marc.info/?l=linux-wireless&m=156901391225058&q=mbox"
-CVE_2019_16746_FN="CVE-2019-16746-fix--linux-net-wireless-nl80211-validate-beacon-head.patch"
-CVE_2019_16746_SEVERITY_LANG="CVE_2019_16746_SEVERITY_${CVE_LANG}"
-CVE_2019_16746_SEVERITY="${!CVE_2019_16746_SEVERITY_LANG}"
-CVE_2019_16746_PM="https://marc.info/?l=linux-wireless&m=156901391225058&w=2"
-CVE_2019_16746_SUMMARY_LANG="CVE_2019_16746_SUMMARY_${CVE_LANG}"
-CVE_2019_16746_SUMMARY="${!CVE_2019_16746_SUMMARY_LANG}"
+
+CVE_2019_10207_FIX_SRC_URI=""
+CVE_2019_10207_FN="CVE-2019-10207-fix--linux"
+CVE_2019_10207_SEVERITY_LANG="CVE_2019_10207_SEVERITY_${CVE_LANG}"
+CVE_2019_10207_SEVERITY="${!CVE_2019_10207_SEVERITY_LANG}"
+CVE_2019_10207_PM=""
+CVE_2019_10207_SUMMARY_LANG="CVE_2019_10207_SUMMARY_${CVE_LANG}"
+CVE_2019_10207_SUMMARY="${!CVE_2019_10207_SUMMARY_LANG}"
+
+
+CVE_2019_10220_FIX_SRC_URI=""
+CVE_2019_10220_FN="CVE-2019-10220-fix--linux"
+CVE_2019_10220_SEVERITY_LANG="CVE_2019_10220_SEVERITY_${CVE_LANG}"
+CVE_2019_10220_SEVERITY="${!CVE_2019_10220_SEVERITY_LANG}"
+CVE_2019_10220_PM=""
+CVE_2019_10220_SUMMARY_LANG="CVE_2019_10220_SUMMARY_${CVE_LANG}"
+CVE_2019_10220_SUMMARY="${!CVE_2019_10220_SUMMARY_LANG}"
+
 
 CVE_2019_14814_FIX_SRC_URI="https://github.com/torvalds/linux/commit/7caac62ed598a196d6ddf8d9c121e12e082cac3a.patch"
 CVE_2019_14814_FN="CVE-2019-14814-fix--linux-drivers-net-wireless-marvel-mwifiex-fix-three-heap-overflow-at-parsing-element-in-cfg80211_ap_settings.patch"
@@ -91,6 +106,7 @@ CVE_2019_14814_SEVERITY="${!CVE_2019_14814_SEVERITY_LANG}"
 CVE_2019_14814_PM="https://github.com/torvalds/linux/commit/7caac62ed598a196d6ddf8d9c121e12e082cac3a"
 CVE_2019_14814_SUMMARY_LANG="CVE_2019_14814_SUMMARY_${CVE_LANG}"
 CVE_2019_14814_SUMMARY="${!CVE_2019_14814_SUMMARY_LANG}"
+
 
 CVE_2019_14821_FIX_SRC_URI="https://github.com/torvalds/linux/commit/b60fe990c6b07ef6d4df67bc0530c7c90a62623a.patch"
 CVE_2019_14821_FN="CVE-2019-14821-fix--linux-virt-kvm-coalesced-mmio-add-bounds-checking.patch"
@@ -101,6 +117,16 @@ CVE_2019_14821_PM="https://github.com/torvalds/linux/commit/b60fe990c6b07ef6d4df
 CVE_2019_14821_SUMMARY_LANG="CVE_2019_14821_SUMMARY_${CVE_LANG}"
 CVE_2019_14821_SUMMARY="${!CVE_2019_14821_SUMMARY_LANG}"
 
+
+CVE_2019_14896_FIX_SRC_URI=""
+CVE_2019_14896_FN="CVE-2019-14896-fix--linux"
+CVE_2019_14896_SEVERITY_LANG="CVE_2019_14896_SEVERITY_${CVE_LANG}"
+CVE_2019_14896_SEVERITY="${!CVE_2019_14896_SEVERITY_LANG}"
+CVE_2019_14896_PM=""
+CVE_2019_14896_SUMMARY_LANG="CVE_2019_14896_SUMMARY_${CVE_LANG}"
+CVE_2019_14896_SUMMARY="${!CVE_2019_14896_SUMMARY_LANG}"
+
+
 CVE_2019_16089_FIX_SRC_URI="https://lore.kernel.org/patchwork/patch/1126650/mbox/"
 CVE_2019_16089_FN="CVE-2019-16089-fix--linux-drivers-block-nbd-v3-nbd_genl_status-null-check-for-nla_nest_start.patch"
 CVE_2019_16089_SEVERITY_LANG="CVE_2019_16089_SEVERITY_${CVE_LANG}"
@@ -109,6 +135,16 @@ CVE_2019_16089_PM="https://lore.kernel.org/patchwork/patch/1106884/"
 CVE_2019_16089_SUMMARY_LANG="CVE_2019_16089_SUMMARY_${CVE_LANG}"
 CVE_2019_16089_SUMMARY="${!CVE_2019_16089_SUMMARY_LANG}"
 
+
+CVE_2019_16746_FIX_SRC_URI="https://marc.info/?l=linux-wireless&m=156901391225058&q=mbox"
+CVE_2019_16746_FN="CVE-2019-16746-fix--linux-net-wireless-nl80211-validate-beacon-head.patch"
+CVE_2019_16746_SEVERITY_LANG="CVE_2019_16746_SEVERITY_${CVE_LANG}"
+CVE_2019_16746_SEVERITY="${!CVE_2019_16746_SEVERITY_LANG}"
+CVE_2019_16746_PM="https://marc.info/?l=linux-wireless&m=156901391225058&w=2"
+CVE_2019_16746_SUMMARY_LANG="CVE_2019_16746_SUMMARY_${CVE_LANG}"
+CVE_2019_16746_SUMMARY="${!CVE_2019_16746_SUMMARY_LANG}"
+
+
 CVE_2019_16921_FIX_SRC_URI="https://github.com/torvalds/linux/commit/df7e40425813c50cd252e6f5e348a81ef1acae56.patch"
 CVE_2019_16921_FN="CVE-2019-16921-fix--linux-drivers-infiniband-rdma-hns-fix-init-resp-when-alloc-ucontext.patch"
 CVE_2019_16921_SEVERITY_LANG="CVE_2019_16921_SEVERITY_${CVE_LANG}"
@@ -116,6 +152,7 @@ CVE_2019_16921_SEVERITY="${!CVE_2019_16921_SEVERITY_LANG}"
 CVE_2019_16921_PM="https://github.com/torvalds/linux/commit/df7e40425813c50cd252e6f5e348a81ef1acae56"
 CVE_2019_16921_SUMMARY_LANG="CVE_2019_16921_SUMMARY_${CVE_LANG}"
 CVE_2019_16921_SUMMARY="${!CVE_2019_16921_SUMMARY_LANG}"
+
 
 CVE_2019_16994_FIX_SRC_URI="https://github.com/torvalds/linux/commit/07f12b26e21ab359261bf75cfcb424fdc7daeb6d.patch"
 CVE_2019_16994_FN="CVE-2019-16994-fix--linux-net-sit-fix-memory-leak-in-sit_init_net.patch"
@@ -132,6 +169,7 @@ CVE_2019_16995_SEVERITY="${!CVE_2019_16995_SEVERITY_LANG}"
 CVE_2019_16995_PM="https://github.com/torvalds/linux/commit/6caabe7f197d3466d238f70915d65301f1716626"
 CVE_2019_16995_SUMMARY_LANG="CVE_2019_16995_SUMMARY_${CVE_LANG}"
 CVE_2019_16995_SUMMARY="${!CVE_2019_16995_SUMMARY_LANG}"
+
 
 CVE_2019_17052_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=0614e2b73768b502fc32a75349823356d98aae2c"
 CVE_2019_17052_FN="CVE-2019-17052-fix--linux-net-ax25-enforce-CAP_NET_RAW-for-raw-sockets.patch"
@@ -173,6 +211,7 @@ CVE_2019_17056_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linu
 CVE_2019_17056_SUMMARY_LANG="CVE_2019_17056_SUMMARY_${CVE_LANG}"
 CVE_2019_17056_SUMMARY="${!CVE_2019_17056_SUMMARY_LANG}"
 
+
 CVE_2019_17075_FIX_SRC_URI="https://lore.kernel.org/lkml/20191001165611.GA3542072@kroah.com/raw"
 CVE_2019_17075_FN="CVE-2019-17075-fix--linux-drivers-infiniband-PATCH-v2-cxgb4-do-not-dma-memory-off-of-the-stack.patch"
 CVE_2019_17075_FN_4_9="CVE-2019-17075-fix--linux-drivers-infiniband-PATCH-v2-cxgb4-do-not-dma-memory-off-of-the-stack-for-4.9.x.patch"
@@ -185,6 +224,7 @@ CVE_2019_17075_PM="https://lore.kernel.org/lkml/20191001165611.GA3542072@kroah.c
 CVE_2019_17075_SUMMARY_LANG="CVE_2019_17075_SUMMARY_${CVE_LANG}"
 CVE_2019_17075_SUMMARY="${!CVE_2019_17075_SUMMARY_LANG}"
 
+
 CVE_2019_17133_FIX_SRC_URI="https://marc.info/?l=linux-wireless&m=157018270915487&q=mbox"
 CVE_2019_17133_FN="CVE-2019-17133-fix--linux-net-wireless-wext-sme-cfg80211-wext-Reject-malformed-SSID-elements.patch"
 CVE_2019_17133_SEVERITY_LANG="CVE_2019_17133_SEVERITY_${CVE_LANG}"
@@ -192,6 +232,7 @@ CVE_2019_17133_SEVERITY="${!CVE_2019_17133_SEVERITY_LANG}"
 CVE_2019_17133_PM="https://marc.info/?l=linux-wireless&m=157018270915487&w=2"
 CVE_2019_17133_SUMMARY_LANG="CVE_2019_17133_SUMMARY_${CVE_LANG}"
 CVE_2019_17133_SUMMARY="${!CVE_2019_17133_SUMMARY_LANG}"
+
 
 CVE_2019_17351_FIX_SRC_URI="https://github.com/torvalds/linux/commit/6ef36ab967c71690ebe7e5ef997a8be4da3bc844.patch"
 CVE_2019_17351_FN="CVE-2019-17351-fix--linux-drivers-xen-let-alloc_xenballooned_pages-fail-if-not-enough-memory-free.patch"
@@ -201,6 +242,7 @@ CVE_2019_17351_PM="https://github.com/torvalds/linux/commit/6ef36ab967c71690ebe7
 CVE_2019_17351_SUMMARY_LANG="CVE_2019_17351_SUMMARY_${CVE_LANG}"
 CVE_2019_17351_SUMMARY="${!CVE_2019_17351_SUMMARY_LANG}"
 
+
 CVE_2019_17666_FIX_SRC_URI="https://lkml.org/lkml/diff/2019/10/16/1226/1"
 CVE_2019_17666_FN="CVE-2019-17666-fix--linux-drivers-net-wireless-realtek-rtlwifi-Fix-potential-overflow-on-P2P-code.patch"
 CVE_2019_17666_SEVERITY_LANG="CVE_2019_17666_SEVERITY_${CVE_LANG}"
@@ -208,6 +250,7 @@ CVE_2019_17666_SEVERITY="${!CVE_2019_17666_SEVERITY_LANG}"
 CVE_2019_17666_PM="https://lkml.org/lkml/2019/10/16/1226"
 CVE_2019_17666_SUMMARY_LANG="CVE_2019_17666_SUMMARY_${CVE_LANG}"
 CVE_2019_17666_SUMMARY="${!CVE_2019_17666_SUMMARY_LANG}"
+
 
 CVE_2019_18198_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=ca7a03c4175366a92cee0ccc4fec0038c3266e26"
 CVE_2019_18198_FN="CVE-2019-18198-fix--linux-net-ipv6-do-not-free-rt-if-FIB_LOOKUP_NOREF-is-set-on-suppress-rule.patch"
@@ -217,6 +260,26 @@ CVE_2019_18198_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linu
 CVE_2019_18198_SUMMARY_LANG="CVE_2019_18198_SUMMARY_${CVE_LANG}"
 CVE_2019_18198_SUMMARY="${!CVE_2019_18198_SUMMARY_LANG}"
 
+
+# delayed doesn't patch smoothly
+CVE_2019_18660_FIX_SRC_URI=""
+CVE_2019_18660_FN="CVE-2019-18660-fix--linux-arch-powerpc-book3s64-Fix-link-stack-flush-on-context-switch.patch"
+CVE_2019_18660_SEVERITY_LANG="CVE_2019_18660_SEVERITY_${CVE_LANG}"
+CVE_2019_18660_SEVERITY="${!CVE_2019_18660_SEVERITY_LANG}"
+CVE_2019_18660_PM=""
+CVE_2019_18660_SUMMARY_LANG="CVE_2019_18660_SUMMARY_${CVE_LANG}"
+CVE_2019_18660_SUMMARY="${!CVE_2019_18660_SUMMARY_LANG}"
+
+
+CVE_2019_18675_FIX_SRC_URI=""
+CVE_2019_18675_FN="CVE-2019-18675-fix--linux"
+CVE_2019_18675_SEVERITY_LANG="CVE_2019_18675_SEVERITY_${CVE_LANG}"
+CVE_2019_18675_SEVERITY="${!CVE_2019_18675_SEVERITY_LANG}"
+CVE_2019_18675_PM=""
+CVE_2019_18675_SUMMARY_LANG="CVE_2019_18675_SUMMARY_${CVE_LANG}"
+CVE_2019_18675_SUMMARY="${!CVE_2019_18675_SUMMARY_LANG}"
+
+
 CVE_2019_18680_FIX_SRC_URI="https://github.com/torvalds/linux/commit/91573ae4aed0a49660abdad4d42f2a0db995ee5e.patch"
 CVE_2019_18680_FN="CVE-2019-18680-fix--linux-net-rds-tcp-Fix-NULL-ptr-use-in-rds_tcp_kill_sock.patch"
 CVE_2019_18680_SEVERITY_LANG="CVE_2019_18680_SEVERITY_${CVE_LANG}"
@@ -224,6 +287,7 @@ CVE_2019_18680_SEVERITY="${!CVE_2019_18680_SEVERITY_LANG}"
 CVE_2019_18680_PM="https://github.com/torvalds/linux/commit/91573ae4aed0a49660abdad4d42f2a0db995ee5e"
 CVE_2019_18680_SUMMARY_LANG="CVE_2019_18680_SUMMARY_${CVE_LANG}"
 CVE_2019_18680_SUMMARY="${!CVE_2019_18680_SUMMARY_LANG}"
+
 
 CVE_2019_18683_FIX_SRC_URI="https://lore.kernel.org/lkml/20191103221719.27118-1-alex.popov@linux.com/raw"
 CVE_2019_18683_FN="CVE-2019-18683-fix--linux-drivers-media-platform-vivid-Fix-wrong-locking-that-causes-race-conditions-on-streaming-stop.patch"
@@ -233,6 +297,7 @@ CVE_2019_18683_PM="https://lore.kernel.org/lkml/20191103221719.27118-1-alex.popo
 CVE_2019_18683_SUMMARY_LANG="CVE_2019_18683_SUMMARY_${CVE_LANG}"
 CVE_2019_18683_SUMMARY="${!CVE_2019_18683_SUMMARY_LANG}"
 
+
 CVE_2019_18786_FIX_SRC_URI="https://patchwork.linuxtv.org/patch/59542/mbox/"
 CVE_2019_18786_FN="CVE-2019-18786-fix--linux-drivers-media-platform-rcar_drif-media-rcar_drif-fix-a-memory-disclosure.patch"
 CVE_2019_18786_SEVERITY_LANG="CVE_2019_18786_SEVERITY_${CVE_LANG}"
@@ -240,6 +305,7 @@ CVE_2019_18786_SEVERITY="${!CVE_2019_18786_SEVERITY_LANG}"
 CVE_2019_18786_PM="https://patchwork.linuxtv.org/patch/59542/"
 CVE_2019_18786_SUMMARY_LANG="CVE_2019_18786_SUMMARY_${CVE_LANG}"
 CVE_2019_18786_SUMMARY="${!CVE_2019_18786_SUMMARY_LANG}"
+
 
 CVE_2019_18805_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=19fad20d15a6494f47f85d869f00b11343ee5c78"
 CVE_2019_18805_FN="CVE-2019-18805-fix--linux-net-ipv4-sysctl_net_ipv4-set-the-tcp_min_rtt_wlen-range-from-0-to-one-day.patch"
@@ -280,6 +346,7 @@ CVE_2019_18809_SEVERITY="${!CVE_2019_18809_SEVERITY_LANG}"
 CVE_2019_18809_PM="https://github.com/torvalds/linux/commit/2289adbfa559050d2a38bcd9caac1c18b800e928"
 CVE_2019_18809_SUMMARY_LANG="CVE_2019_18809_SUMMARY_${CVE_LANG}"
 CVE_2019_18809_SUMMARY="${!CVE_2019_18809_SUMMARY_LANG}"
+
 
 CVE_2019_18810_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=a0ecd6fdbf5d648123a7315c695fb6850d702835"
 CVE_2019_18810_FN="CVE-2019-18810-fix--linux-drivers-gpu-drm-arm-display-komeda-komeda_wb_connector-prevent-memory-leak-in-komeda_wb_connector_add.patch"
@@ -322,6 +389,7 @@ CVE_2019_18814_PM="https://lore.kernel.org/patchwork/patch/1142523/"
 CVE_2019_18814_SUMMARY_LANG="CVE_2019_18814_SUMMARY_${CVE_LANG}"
 CVE_2019_18814_SUMMARY="${!CVE_2019_18814_SUMMARY_LANG}"
 
+
 CVE_2019_18885_FIX_SRC_URI="https://github.com/torvalds/linux/commit/09ba3bc9dd150457c506e4661380a6183af651c1.patch"
 CVE_2019_18885_FN="CVE-2019-18885-fix--linux-fs-btrfs-merge-btrfs_find_device-and-find_device.patch"
 CVE_2019_18885_SEVERITY_LANG="CVE_2019_18885_SEVERITY_${CVE_LANG}"
@@ -329,7 +397,6 @@ CVE_2019_18885_SEVERITY="${!CVE_2019_18885_SEVERITY_LANG}"
 CVE_2019_18885_PM="https://github.com/torvalds/linux/commit/09ba3bc9dd150457c506e4661380a6183af651c1"
 CVE_2019_18885_SUMMARY_LANG="CVE_2019_18885_SUMMARY_${CVE_LANG}"
 CVE_2019_18885_SUMMARY="${!CVE_2019_18885_SUMMARY_LANG}"
-
 
 
 CVE_2019_19036_FIX_SRC_URI=""
@@ -355,7 +422,6 @@ CVE_2019_19039_SEVERITY="${!CVE_2019_19039_SEVERITY_LANG}"
 CVE_2019_19039_PM=""
 CVE_2019_19039_SUMMARY_LANG="CVE_2019_19039_SUMMARY_${CVE_LANG}"
 CVE_2019_19039_SUMMARY="${!CVE_2019_19039_SUMMARY_LANG}"
-
 
 
 CVE_2019_19043_FIX_SRC_URI="https://github.com/torvalds/linux/commit/27d461333459d282ffa4a2bdb6b215a59d493a8f.patch"
@@ -690,6 +756,7 @@ CVE_2019_19083_PM="https://github.com/torvalds/linux/commit/055e547478a11a6360c7
 CVE_2019_19083_SUMMARY_LANG="CVE_2019_19083_SUMMARY_${CVE_LANG}"
 CVE_2019_19083_SUMMARY="${!CVE_2019_19083_SUMMARY_LANG}"
 
+
 CVE_2019_19227_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=9804501fa1228048857910a6bf23e085aade37cc"
 CVE_2019_19227_FN="CVE-2019-19227-fix--linux-net-appletalk-Fix-potential-NULL-pointer-dereference-in-unregister_snap_client.patch"
 CVE_2019_19227_SEVERITY_LANG="CVE_2019_19227_SEVERITY_${CVE_LANG}"
@@ -698,23 +765,6 @@ CVE_2019_19227_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linu
 CVE_2019_19227_SUMMARY_LANG="CVE_2019_19227_SUMMARY_${CVE_LANG}"
 CVE_2019_19227_SUMMARY="${!CVE_2019_19227_SUMMARY_LANG}"
 
-#---
-
-CVE_2019_10207_FIX_SRC_URI=""
-CVE_2019_10207_FN="CVE-2019-10207-fix--linux"
-CVE_2019_10207_SEVERITY_LANG="CVE_2019_10207_SEVERITY_${CVE_LANG}"
-CVE_2019_10207_SEVERITY="${!CVE_2019_10207_SEVERITY_LANG}"
-CVE_2019_10207_PM=""
-CVE_2019_10207_SUMMARY_LANG="CVE_2019_10207_SUMMARY_${CVE_LANG}"
-CVE_2019_10207_SUMMARY="${!CVE_2019_10207_SUMMARY_LANG}"
-
-CVE_2019_18675_FIX_SRC_URI=""
-CVE_2019_18675_FN="CVE-2019-18675-fix--linux"
-CVE_2019_18675_SEVERITY_LANG="CVE_2019_18675_SEVERITY_${CVE_LANG}"
-CVE_2019_18675_SEVERITY="${!CVE_2019_18675_SEVERITY_LANG}"
-CVE_2019_18675_PM=""
-CVE_2019_18675_SUMMARY_LANG="CVE_2019_18675_SUMMARY_${CVE_LANG}"
-CVE_2019_18675_SUMMARY="${!CVE_2019_18675_SUMMARY_LANG}"
 
 CVE_2019_19252_FIX_SRC_URI=""
 CVE_2019_19252_FN="CVE-2019-19252-fix--linux"
@@ -724,38 +774,6 @@ CVE_2019_19252_PM=""
 CVE_2019_19252_SUMMARY_LANG="CVE_2019_19252_SUMMARY_${CVE_LANG}"
 CVE_2019_19252_SUMMARY="${!CVE_2019_19252_SUMMARY_LANG}"
 
-CVE_2019_14896_FIX_SRC_URI=""
-CVE_2019_14896_FN="CVE-2019-14896-fix--linux"
-CVE_2019_14896_SEVERITY_LANG="CVE_2019_14896_SEVERITY_${CVE_LANG}"
-CVE_2019_14896_SEVERITY="${!CVE_2019_14896_SEVERITY_LANG}"
-CVE_2019_14896_PM=""
-CVE_2019_14896_SUMMARY_LANG="CVE_2019_14896_SUMMARY_${CVE_LANG}"
-CVE_2019_14896_SUMMARY="${!CVE_2019_14896_SUMMARY_LANG}"
-
-CVE_2019_10220_FIX_SRC_URI=""
-CVE_2019_10220_FN="CVE-2019-10220-fix--linux"
-CVE_2019_10220_SEVERITY_LANG="CVE_2019_10220_SEVERITY_${CVE_LANG}"
-CVE_2019_10220_SEVERITY="${!CVE_2019_10220_SEVERITY_LANG}"
-CVE_2019_10220_PM=""
-CVE_2019_10220_SUMMARY_LANG="CVE_2019_10220_SUMMARY_${CVE_LANG}"
-CVE_2019_10220_SUMMARY="${!CVE_2019_10220_SUMMARY_LANG}"
-
-# delayed doesn't patch smoothly
-CVE_2019_18660_FIX_SRC_URI=""
-CVE_2019_18660_FN="CVE-2019-18660-fix--linux-arch-powerpc-book3s64-Fix-link-stack-flush-on-context-switch.patch"
-CVE_2019_18660_SEVERITY_LANG="CVE_2019_18660_SEVERITY_${CVE_LANG}"
-CVE_2019_18660_SEVERITY="${!CVE_2019_18660_SEVERITY_LANG}"
-CVE_2019_18660_PM=""
-CVE_2019_18660_SUMMARY_LANG="CVE_2019_18660_SUMMARY_${CVE_LANG}"
-CVE_2019_18660_SUMMARY="${!CVE_2019_18660_SUMMARY_LANG}"
-
-CVE_2019_19319_FIX_SRC_URI=""
-CVE_2019_19319_FN="CVE-2019-19319-fix--linux"
-CVE_2019_19319_SEVERITY_LANG="CVE_2019_19319_SEVERITY_${CVE_LANG}"
-CVE_2019_19319_SEVERITY="${!CVE_2019_19319_SEVERITY_LANG}"
-CVE_2019_19319_PM=""
-CVE_2019_19319_SUMMARY_LANG="CVE_2019_19319_SUMMARY_${CVE_LANG}"
-CVE_2019_19319_SUMMARY="${!CVE_2019_19319_SUMMARY_LANG}"
 
 CVE_2019_19318_FIX_SRC_URI=""
 CVE_2019_19318_FN="CVE-2019-19318-fix--linux"
@@ -765,24 +783,38 @@ CVE_2019_19318_PM=""
 CVE_2019_19318_SUMMARY_LANG="CVE_2019_19318_SUMMARY_${CVE_LANG}"
 CVE_2019_19318_SUMMARY="${!CVE_2019_19318_SUMMARY_LANG}"
 
+CVE_2019_19319_FIX_SRC_URI=""
+CVE_2019_19319_FN="CVE-2019-19319-fix--linux"
+CVE_2019_19319_SEVERITY_LANG="CVE_2019_19319_SEVERITY_${CVE_LANG}"
+CVE_2019_19319_SEVERITY="${!CVE_2019_19319_SEVERITY_LANG}"
+CVE_2019_19319_PM=""
+CVE_2019_19319_SUMMARY_LANG="CVE_2019_19319_SUMMARY_${CVE_LANG}"
+CVE_2019_19319_SUMMARY="${!CVE_2019_19319_SUMMARY_LANG}"
+
+#---
+
 
 #			 ${CVE_2010_4661_FIX_SRC_URI} -> ${CVE_2010_4661_FN}
-
-#			 ${CVE_2019_19036_FIX_SRC_URI} -> ${CVE_2019_19036_FN}
-#			 ${CVE_2019_19037_FIX_SRC_URI} -> ${CVE_2019_19037_FN}
-#			 ${CVE_2019_19039_FIX_SRC_URI} -> ${CVE_2019_19039_FN}
-
+#			 ${CVE_2019_10207_FIX_SRC_URI} -> ${CVE_2019_10207_FN}
+#			 ${CVE_2019_10220_FIX_SRC_URI} -> ${CVE_2019_10220_FN}
+#			 ${CVE_2019_14896_FIX_SRC_URI} -> ${CVE_2019_14896_FN}
 
 SRC_URI+=" cve_hotfix? ( ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
+
 			 ${CVE_2010_2243_FIX_SRC_URI} -> ${CVE_2010_2243_FN}
+
 			 ${CVE_2014_3180_FIX_SRC_URI} -> ${CVE_2014_3180_FN}
+
 			 ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
+
 			 ${CVE_2019_14814_FIX_SRC_URI} -> ${CVE_2019_14814_FN}
+
 			 ${CVE_2019_14821_FIX_SRC_URI} -> ${CVE_2019_14821_FN}
 
 			 ${CVE_2019_16089_FIX_SRC_URI} -> ${CVE_2019_16089_FN}
 
 			 ${CVE_2019_16921_FIX_SRC_URI} -> ${CVE_2019_16921_FN}
+
 			 ${CVE_2019_16994_FIX_SRC_URI} -> ${CVE_2019_16994_FN}
 			 ${CVE_2019_16995_FIX_SRC_URI} -> ${CVE_2019_16995_FN}
 
@@ -793,18 +825,20 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
 			 ${CVE_2019_17056_FIX_SRC_URI} -> ${CVE_2019_17056_FN}
 
 			 ${CVE_2019_17075_FIX_SRC_URI} -> ${CVE_2019_17075_FN}
-
 			 ${CVE_2019_17075_FIX_SRC_URI_4_9} -> ${CVE_2019_17075_FN_4_9}
 			 ${CVE_2019_17075_FIX_SRC_URI_4_14} -> ${CVE_2019_17075_FN_4_14}
 
 			 ${CVE_2019_17133_FIX_SRC_URI} -> ${CVE_2019_17133_FN}
+
 			 ${CVE_2019_17351_FIX_SRC_URI} -> ${CVE_2019_17351_FN}
 
 			 ${CVE_2019_17666_FIX_SRC_URI} -> ${CVE_2019_17666_FN}
+
 			 ${CVE_2019_18198_FIX_SRC_URI} -> ${CVE_2019_18198_FN}
 
 			 ${CVE_2019_18680_FIX_SRC_URI} -> ${CVE_2019_18680_FN}
 			 ${CVE_2019_18683_FIX_SRC_URI} -> ${CVE_2019_18683_FN}
+
 			 ${CVE_2019_18786_FIX_SRC_URI} -> ${CVE_2019_18786_FN}
 
 			 ${CVE_2019_18805_FIX_SRC_URI} -> ${CVE_2019_18805_FN}
@@ -812,6 +846,7 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
 			 ${CVE_2019_18807_FIX_SRC_URI} -> ${CVE_2019_18807_FN}
 			 ${CVE_2019_18808_FIX_SRC_URI} -> ${CVE_2019_18808_FN}
 			 ${CVE_2019_18809_FIX_SRC_URI} -> ${CVE_2019_18809_FN}
+
 			 ${CVE_2019_18810_FIX_SRC_URI} -> ${CVE_2019_18810_FN}
 			 ${CVE_2019_18811_FIX_SRC_URI} -> ${CVE_2019_18811_FN}
 			 ${CVE_2019_18812_FIX_SRC_URI} -> ${CVE_2019_18812_FN}
@@ -819,9 +854,6 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
 			 ${CVE_2019_18814_FIX_SRC_URI} -> ${CVE_2019_18814_FN}
 
 			 ${CVE_2019_18885_FIX_SRC_URI} -> ${CVE_2019_18885_FN}
-
-
-
 
 			 ${CVE_2019_19043_FIX_SRC_URI} -> ${CVE_2019_19043_FN}
 			 ${CVE_2019_19044_FIX_SRC_URI} -> ${CVE_2019_19044_FN}
@@ -870,17 +902,17 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
 			 ${CVE_2019_19083_FIX_SRC_URI} -> ${CVE_2019_19083_FN}
 
 			 ${CVE_2019_19227_FIX_SRC_URI} -> ${CVE_2019_19227_FN}
-
 )"
 
 #			 ${CVE_2019_18660_FIX_SRC_URI} -> ${CVE_2019_18660_FN}
-#			 ${CVE_2019_10207_FIX_SRC_URI} -> ${CVE_2019_10207_FN}
 #			 ${CVE_2019_18675_FIX_SRC_URI} -> ${CVE_2019_18675_FN}
+#			 ${CVE_2019_19036_FIX_SRC_URI} -> ${CVE_2019_19036_FN}
+#			 ${CVE_2019_19037_FIX_SRC_URI} -> ${CVE_2019_19037_FN}
+#			 ${CVE_2019_19039_FIX_SRC_URI} -> ${CVE_2019_19039_FN}
 #			 ${CVE_2019_19252_FIX_SRC_URI} -> ${CVE_2019_19252_FN}
-#			 ${CVE_2019_14896_FIX_SRC_URI} -> ${CVE_2019_14896_FN}
-#			 ${CVE_2019_10220_FIX_SRC_URI} -> ${CVE_2019_10220_FN}
-#			 ${CVE_2019_19319_FIX_SRC_URI} -> ${CVE_2019_19319_FN}
 #			 ${CVE_2019_19318_FIX_SRC_URI} -> ${CVE_2019_19318_FN}
+#			 ${CVE_2019_19319_FIX_SRC_URI} -> ${CVE_2019_19319_FN}
+
 
 
 # @FUNCTION: _fetch_cve_boilerplate_msg
@@ -1016,6 +1048,42 @@ function fetch_cve_2014_3180_hotfix() {
 	_fetch_cve_boilerplate_msg_footer
 }
 
+# @FUNCTION: fetch_cve_2019_10207_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_10207 patch
+function fetch_cve_2019_10207_hotfix() {
+	#fixme
+	local CVE_ID="CVE-2019-10207"
+	if grep -F -e \
+		"" \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_10220_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_10220 patch
+function fetch_cve_2019_10220_hotfix() {
+	#fixme
+	local CVE_ID="CVE-2019-10220"
+	if grep -F -e \
+		"" \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
 # @FUNCTION: fetch_cve_2019_14814_hotfix
 # @DESCRIPTION:
 # Checks for the CVE-2019-14814 patch
@@ -1045,6 +1113,24 @@ function fetch_cve_2019_14821_hotfix() {
 	if grep -F -e \
 		"if (!coalesced_mmio_has_room(dev, insert) ||" \
 		"${S}/virt/kvm/coalesced_mmio.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_14896_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_14896 patch
+function fetch_cve_2019_14896_hotfix() {
+	#fixme
+	local CVE_ID="CVE-2019-14896"
+	if grep -F -e \
+		"" \
+		"${S}/" \
 		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
@@ -1309,6 +1395,41 @@ function fetch_cve_2019_18198_hotfix() {
 	if grep -F -e \
 		"if (!(arg->flags & FIB_LOOKUP_NOREF))" \
 		"${S}/net/ipv6/fib6_rules.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_18660_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_18660 patch
+function fetch_cve_2019_18660_hotfix() {
+	local CVE_ID="CVE-2019-18660"
+	if grep -F -e \
+		'#define SEC_FTR_FLUSH_LINK_STACK' \
+		"${S}/arch/powerpc/include/asm/security_features.h" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_18675_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_18675 patch
+function fetch_cve_2019_18675_hotfix() {
+	#fixme
+	local CVE_ID="CVE-2019-18675"
+	if grep -F -e \
+		"" \
+		"${S}/" \
 		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
@@ -2423,115 +2544,12 @@ function fetch_cve_2019_19227_hotfix() {
 	_fetch_cve_boilerplate_msg_footer
 }
 
-#---
-
-# @FUNCTION: fetch_cve_2019_10207_hotfix
-# @DESCRIPTION:
-# Checks for the CVE_2019_10207 patch
-function fetch_cve_2019_10207_hotfix() {
-	local CVE_ID="CVE-2019-10207"
-	if grep -F -e \
-		"" \
-		"${S}/" \
-		>/dev/null
-	then
-		einfo "${CVE_ID} already patched."
-		return
-	fi
-	_fetch_cve_boilerplate_msg
-	_fetch_cve_boilerplate_msg_footer
-}
-
-# @FUNCTION: fetch_cve_2019_18675_hotfix
-# @DESCRIPTION:
-# Checks for the CVE_2019_18675 patch
-function fetch_cve_2019_18675_hotfix() {
-	local CVE_ID="CVE-2019-18675"
-	if grep -F -e \
-		"" \
-		"${S}/" \
-		>/dev/null
-	then
-		einfo "${CVE_ID} already patched."
-		return
-	fi
-	_fetch_cve_boilerplate_msg
-	_fetch_cve_boilerplate_msg_footer
-}
-
 # @FUNCTION: fetch_cve_2019_19252_hotfix
 # @DESCRIPTION:
 # Checks for the CVE_2019_19252 patch
 function fetch_cve_2019_19252_hotfix() {
+	#fixme
 	local CVE_ID="CVE-2019-19252"
-	if grep -F -e \
-		"" \
-		"${S}/" \
-		>/dev/null
-	then
-		einfo "${CVE_ID} already patched."
-		return
-	fi
-	_fetch_cve_boilerplate_msg
-	_fetch_cve_boilerplate_msg_footer
-}
-
-# @FUNCTION: fetch_cve_2019_14896_hotfix
-# @DESCRIPTION:
-# Checks for the CVE_2019_14896 patch
-function fetch_cve_2019_14896_hotfix() {
-	local CVE_ID="CVE-2019-14896"
-	if grep -F -e \
-		"" \
-		"${S}/" \
-		>/dev/null
-	then
-		einfo "${CVE_ID} already patched."
-		return
-	fi
-	_fetch_cve_boilerplate_msg
-	_fetch_cve_boilerplate_msg_footer
-}
-
-# @FUNCTION: fetch_cve_2019_10220_hotfix
-# @DESCRIPTION:
-# Checks for the CVE_2019_10220 patch
-function fetch_cve_2019_10220_hotfix() {
-	local CVE_ID="CVE-2019-10220"
-	if grep -F -e \
-		"" \
-		"${S}/" \
-		>/dev/null
-	then
-		einfo "${CVE_ID} already patched."
-		return
-	fi
-	_fetch_cve_boilerplate_msg
-	_fetch_cve_boilerplate_msg_footer
-}
-
-# @FUNCTION: fetch_cve_2019_18660_hotfix
-# @DESCRIPTION:
-# Checks for the CVE_2019_18660 patch
-function fetch_cve_2019_18660_hotfix() {
-	local CVE_ID="CVE-2019-18660"
-	if grep -F -e \
-		'#define SEC_FTR_FLUSH_LINK_STACK' \
-		"${S}/arch/powerpc/include/asm/security_features.h" \
-		>/dev/null
-	then
-		einfo "${CVE_ID} already patched."
-		return
-	fi
-	_fetch_cve_boilerplate_msg
-	_fetch_cve_boilerplate_msg_footer
-}
-
-# @FUNCTION: fetch_cve_2019_19319_hotfix
-# @DESCRIPTION:
-# Checks for the CVE_2019_19319 patch
-function fetch_cve_2019_19319_hotfix() {
-	local CVE_ID="CVE-2019-19319"
 	if grep -F -e \
 		"" \
 		"${S}/" \
@@ -2548,7 +2566,26 @@ function fetch_cve_2019_19319_hotfix() {
 # @DESCRIPTION:
 # Checks for the CVE_2019_19318 patch
 function fetch_cve_2019_19318_hotfix() {
+	#fixme
 	local CVE_ID="CVE-2019-19318"
+	if grep -F -e \
+		"" \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+}
+
+# @FUNCTION: fetch_cve_2019_19319_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19319 patch
+function fetch_cve_2019_19319_hotfix() {
+	#fixme
+	local CVE_ID="CVE-2019-19319"
 	if grep -F -e \
 		"" \
 		"${S}/" \
@@ -2705,6 +2742,48 @@ function apply_cve_2014_3180_hotfix() {
 	_resolve_hotfix_default
 }
 
+# @FUNCTION: apply_cve_2019_10207_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_10207 patch if it needs to
+function apply_cve_2019_10207_hotfix() {
+	#fixme
+	return 0
+	local CVE_ID="CVE-2019-10207"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"" \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_10220_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_10220 patch if it needs to
+function apply_cve_2019_10220_hotfix() {
+	#fixme
+	return 0
+	local CVE_ID="CVE-2019-10220"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"" \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
 # @FUNCTION: apply_cve_2019_14814_hotfix
 # @DESCRIPTION:
 # Applies the CVE_2019_14814 patch if it needs to
@@ -2744,6 +2823,27 @@ function apply_cve_2019_14821_hotfix() {
 	if grep -F -e \
 		"if (!coalesced_mmio_has_room(dev, insert) ||" \
 		"${S}/virt/kvm/coalesced_mmio.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_14896_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_14896 patch if it needs to
+function apply_cve_2019_14896_hotfix() {
+	#fixme
+	return 0
+	local CVE_ID="CVE-2019-14896"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"" \
+		"${S}/" \
 		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
@@ -3058,6 +3158,46 @@ function apply_cve_2019_18198_hotfix() {
 	if grep -F -e \
 		"if (!(arg->flags & FIB_LOOKUP_NOREF))" \
 		"${S}/net/ipv6/fib6_rules.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_18660_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_18660 patch if it needs to
+function apply_cve_2019_18660_hotfix() {
+	local CVE_ID="CVE-2019-18660"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		'#define SEC_FTR_FLUSH_LINK_STACK' \
+		"${S}/arch/powerpc/include/asm/security_features.h" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+# @FUNCTION: apply_cve_2019_18675_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_18675 patch if it needs to
+function apply_cve_2019_18675_hotfix() {
+	#fixme
+	return 0
+	local CVE_ID="CVE-2019-18675"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"" \
+		"${S}/" \
 		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
@@ -4284,73 +4424,6 @@ function apply_cve_2019_19083_hotfix() {
 	_resolve_hotfix_default
 }
 
-# @FUNCTION: apply_cve_2019_19227_hotfix
-# @DESCRIPTION:
-# Applies the CVE_2019_19227 patch if it needs to
-function apply_cve_2019_19227_hotfix() {
-	local CVE_ID="CVE-2019-19227"
-	if ver_test ${PV} -ge 5.1 ; then
-		einfo "Skipping obsolete ${CVE_ID}"
-		return 0
-	fi
-	local CVE_ID_="${CVE_ID//-/_}_"
-	local cve_severity="${CVE_ID_}SEVERITY"
-	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e \
-		'pr_crit("Unable to register DDP with SNAP.\n");' \
-		"${S}/net/appletalk/ddp.c" \
-		>/dev/null
-	then
-		einfo "${CVE_ID} is already patched."
-		return
-	fi
-	_resolve_hotfix_default
-}
-
-#---
-
-# @FUNCTION: apply_cve_2019_10207_hotfix
-# @DESCRIPTION:
-# Applies the CVE_2019_10207 patch if it needs to
-function apply_cve_2019_10207_hotfix() {
-	#fixme
-	return 0
-	local CVE_ID="CVE-2019-10207"
-	local CVE_ID_="${CVE_ID//-/_}_"
-	local cve_severity="${CVE_ID_}SEVERITY"
-	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e \
-		"" \
-		"${S}/" \
-		>/dev/null
-	then
-		einfo "${CVE_ID} is already patched."
-		return
-	fi
-	_resolve_hotfix_default
-}
-
-# @FUNCTION: apply_cve_2019_18675_hotfix
-# @DESCRIPTION:
-# Applies the CVE_2019_18675 patch if it needs to
-function apply_cve_2019_18675_hotfix() {
-	#fixme
-	return 0
-	local CVE_ID="CVE-2019-18675"
-	local CVE_ID_="${CVE_ID//-/_}_"
-	local cve_severity="${CVE_ID_}SEVERITY"
-	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e \
-		"" \
-		"${S}/" \
-		>/dev/null
-	then
-		einfo "${CVE_ID} is already patched."
-		return
-	fi
-	_resolve_hotfix_default
-}
-
 # @FUNCTION: apply_cve_2019_19252_hotfix
 # @DESCRIPTION:
 # Applies the CVE_2019_19252 patch if it needs to
@@ -4372,80 +4445,21 @@ function apply_cve_2019_19252_hotfix() {
 	_resolve_hotfix_default
 }
 
-# @FUNCTION: apply_cve_2019_14896_hotfix
+# @FUNCTION: apply_cve_2019_19227_hotfix
 # @DESCRIPTION:
-# Applies the CVE_2019_14896 patch if it needs to
-function apply_cve_2019_14896_hotfix() {
-	#fixme
-	return 0
-	local CVE_ID="CVE-2019-14896"
-	local CVE_ID_="${CVE_ID//-/_}_"
-	local cve_severity="${CVE_ID_}SEVERITY"
-	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e \
-		"" \
-		"${S}/" \
-		>/dev/null
-	then
-		einfo "${CVE_ID} is already patched."
-		return
+# Applies the CVE_2019_19227 patch if it needs to
+function apply_cve_2019_19227_hotfix() {
+	local CVE_ID="CVE-2019-19227"
+	if ver_test ${PV} -ge 5.1 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
 	fi
-	_resolve_hotfix_default
-}
-
-# @FUNCTION: apply_cve_2019_10220_hotfix
-# @DESCRIPTION:
-# Applies the CVE_2019_10220 patch if it needs to
-function apply_cve_2019_10220_hotfix() {
-	#fixme
-	return 0
-	local CVE_ID="CVE-2019-10220"
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
 	if grep -F -e \
-		"" \
-		"${S}/" \
-		>/dev/null
-	then
-		einfo "${CVE_ID} is already patched."
-		return
-	fi
-	_resolve_hotfix_default
-}
-
-# @FUNCTION: apply_cve_2019_18660_hotfix
-# @DESCRIPTION:
-# Applies the CVE_2019_18660 patch if it needs to
-function apply_cve_2019_18660_hotfix() {
-	local CVE_ID="CVE-2019-18660"
-	local CVE_ID_="${CVE_ID//-/_}_"
-	local cve_severity="${CVE_ID_}SEVERITY"
-	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e \
-		'#define SEC_FTR_FLUSH_LINK_STACK' \
-		"${S}/arch/powerpc/include/asm/security_features.h" \
-		>/dev/null
-	then
-		einfo "${CVE_ID} is already patched."
-		return
-	fi
-	_resolve_hotfix_default
-}
-
-# @FUNCTION: apply_cve_2019_19319_hotfix
-# @DESCRIPTION:
-# Applies the CVE_2019_19319 patch if it needs to
-function apply_cve_2019_19319_hotfix() {
-	#fixme
-	return 0
-	local CVE_ID="CVE-2019-19319"
-	local CVE_ID_="${CVE_ID//-/_}_"
-	local cve_severity="${CVE_ID_}SEVERITY"
-	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e \
-		"" \
-		"${S}/" \
+		'pr_crit("Unable to register DDP with SNAP.\n");' \
+		"${S}/net/appletalk/ddp.c" \
 		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
@@ -4475,6 +4489,29 @@ function apply_cve_2019_19318_hotfix() {
 	_resolve_hotfix_default
 }
 
+# @FUNCTION: apply_cve_2019_19319_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19319 patch if it needs to
+function apply_cve_2019_19319_hotfix() {
+	#fixme
+	return 0
+	local CVE_ID="CVE-2019-19319"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"" \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return
+	fi
+	_resolve_hotfix_default
+}
+
+#---
+
 # @FUNCTION: fetch_cve_hotfixes
 # @DESCRIPTION:
 # Fetches all the CVE kernel patches
@@ -4487,28 +4524,50 @@ function fetch_cve_hotfixes() {
 		fetch_cve_2014_3180_hotfix
 
 		fetch_cve_2007_3732_hotfix
+
 		fetch_cve_2010_2243_hotfix
+
 		fetch_cve_2010_4661_hotfix
 
+		fetch_cve_2019_10207_hotfix
+
+		fetch_cve_2019_10220_hotfix
+
 		fetch_cve_2019_14814_hotfix
+
 		fetch_cve_2019_14821_hotfix
+
+		fetch_cve_2019_14896_hotfix
 
 		fetch_cve_2019_16089_hotfix
 
 		fetch_cve_2019_16746_hotfix
+
 		fetch_cve_2019_16921_hotfix
+
 		fetch_cve_2019_16994_hotfix
 		fetch_cve_2019_16995_hotfix
+
 		fetch_cve_2019_17052_hotfix
 		fetch_cve_2019_17053_hotfix
 		fetch_cve_2019_17054_hotfix
 		fetch_cve_2019_17055_hotfix
 		fetch_cve_2019_17056_hotfix
+
 		fetch_cve_2019_17075_hotfix
+
 		fetch_cve_2019_17133_hotfix
+
 		fetch_cve_2019_17351_hotfix
+
 		fetch_cve_2019_17666_hotfix
+
 		fetch_cve_2019_18198_hotfix
+
+		fetch_cve_2019_18660_hotfix
+
+		fetch_cve_2019_18675_hotfix
+
 		fetch_cve_2019_18680_hotfix
 		fetch_cve_2019_18683_hotfix
 		fetch_cve_2019_18786_hotfix
@@ -4518,18 +4577,18 @@ function fetch_cve_hotfixes() {
 		fetch_cve_2019_18807_hotfix
 		fetch_cve_2019_18808_hotfix
 		fetch_cve_2019_18809_hotfix
+
 		fetch_cve_2019_18810_hotfix
 		fetch_cve_2019_18811_hotfix
 		fetch_cve_2019_18812_hotfix
 		fetch_cve_2019_18813_hotfix
 		fetch_cve_2019_18814_hotfix
-		fetch_cve_2019_18885_hotfix
 
+		fetch_cve_2019_18885_hotfix
 
 		fetch_cve_2019_19036_hotfix
 		fetch_cve_2019_19037_hotfix
 		fetch_cve_2019_19039_hotfix
-
 
 		fetch_cve_2019_19043_hotfix
 		fetch_cve_2019_19044_hotfix
@@ -4579,14 +4638,10 @@ function fetch_cve_hotfixes() {
 
 		fetch_cve_2019_19227_hotfix
 
-		fetch_cve_2019_10207_hotfix
-		fetch_cve_2019_18675_hotfix
 		fetch_cve_2019_19252_hotfix
-		fetch_cve_2019_14896_hotfix
-		fetch_cve_2019_10220_hotfix
-		fetch_cve_2019_18660_hotfix
-		fetch_cve_2019_19319_hotfix
+
 		fetch_cve_2019_19318_hotfix
+		fetch_cve_2019_19319_hotfix
 
 		local cve_copyright1="CVE_COPYRIGHT1_${CVE_LANG}"
 		local cve_copyright2="CVE_COPYRIGHT2_${CVE_LANG}"
@@ -4610,33 +4665,55 @@ hotfix updates.\n\
 function apply_cve_hotfixes() {
 	if has cve_hotfix ${IUSE_EFFECTIVE} ; then
 		einfo "Applying CVE hotfixes"
+
 		apply_cve_2014_3180_hotfix
 
 		apply_cve_2007_3732_hotfix
+
 		apply_cve_2010_2243_hotfix
+
 		apply_cve_2010_4661_hotfix
 
+		apply_cve_2019_10207_hotfix
+
+		apply_cve_2019_10220_hotfix
+
 		apply_cve_2019_14814_hotfix
+
 		apply_cve_2019_14821_hotfix
+
+		apply_cve_2019_14896_hotfix
 
 		apply_cve_2019_16089_hotfix
 
+		apply_cve_2019_18660_hotfix
+
+		apply_cve_2019_18675_hotfix
+
 		apply_cve_2019_16746_hotfix
+
 		apply_cve_2019_16921_hotfix
 		apply_cve_2019_16994_hotfix
 		apply_cve_2019_16995_hotfix
+
 		apply_cve_2019_17052_hotfix
 		apply_cve_2019_17053_hotfix
 		apply_cve_2019_17054_hotfix
 		apply_cve_2019_17055_hotfix
 		apply_cve_2019_17056_hotfix
 		apply_cve_2019_17075_hotfix
+
 		apply_cve_2019_17133_hotfix
+
 		apply_cve_2019_17351_hotfix
+
 		apply_cve_2019_17666_hotfix
+
 		apply_cve_2019_18198_hotfix
+
 		apply_cve_2019_18680_hotfix
 		apply_cve_2019_18683_hotfix
+
 		apply_cve_2019_18786_hotfix
 
 		apply_cve_2019_18805_hotfix
@@ -4649,13 +4726,12 @@ function apply_cve_hotfixes() {
 		apply_cve_2019_18812_hotfix
 		apply_cve_2019_18813_hotfix
 		apply_cve_2019_18814_hotfix
-		apply_cve_2019_18885_hotfix
 
+		apply_cve_2019_18885_hotfix
 
 		apply_cve_2019_19036_hotfix
 		apply_cve_2019_19037_hotfix
 		apply_cve_2019_19039_hotfix
-
 
 		apply_cve_2019_19043_hotfix
 		apply_cve_2019_19044_hotfix
@@ -4705,16 +4781,9 @@ function apply_cve_hotfixes() {
 
 		apply_cve_2019_19227_hotfix
 
-
-		apply_cve_2019_10207_hotfix
-		apply_cve_2019_18675_hotfix
 		apply_cve_2019_19252_hotfix
-		apply_cve_2019_14896_hotfix
-		apply_cve_2019_10220_hotfix
-		apply_cve_2019_18660_hotfix
-		apply_cve_2019_19319_hotfix
+
 		apply_cve_2019_19318_hotfix
-
-
+		apply_cve_2019_19319_hotfix
 	fi
 }
