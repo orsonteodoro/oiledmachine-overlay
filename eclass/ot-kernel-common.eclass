@@ -223,6 +223,13 @@ LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ROCK_FN=\
 LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ASDN_FN=\
 "${LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ASDN_FN:=linux.hashtable.asdn.${K_MAJOR_MINOR}}.commits.final"
 
+if ver_test ${PV} -eq ${K_MAJOR_MINOR} ; then
+KERNEL_NO_POINT_RELEASE="1"
+elif ver_test ${PV} -eq ${K_MAJOR_MINOR}.0 ; then
+KERNEL_0_TO_1_ONLY="1"
+fi
+
+
 if [[ -n "${KERNEL_NO_POINT_RELEASE}" && "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; then
 	KERNEL_PATCH_URLS=()
 elif [[ -n "${KERNEL_0_TO_1_ONLY}" && "${KERNEL_0_TO_1_ONLY}" == "1" ]] ; then
