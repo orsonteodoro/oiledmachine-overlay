@@ -1601,6 +1601,14 @@ function fetch_cve_2019_18198_hotfix() {
 # Checks for the CVE_2019_18660 patch
 function fetch_cve_2019_18660_hotfix() {
 	local CVE_ID="CVE-2019-18660"
+	if ver_test ${PV} -ge 5.4.1 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	elif ver_test ${K_MAJOR_MINOR} -eq 5.3 && \
+		ver_test ${PV} -ge 5.3.14 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	if grep -F -e \
 		'#define SEC_FTR_FLUSH_LINK_STACK' \
 		"${S}/arch/powerpc/include/asm/security_features.h" \
@@ -3565,6 +3573,14 @@ function apply_cve_2019_18198_hotfix() {
 # Applies the CVE_2019_18660 patch if it needs to
 function apply_cve_2019_18660_hotfix() {
 	local CVE_ID="CVE-2019-18660"
+	if ver_test ${PV} -ge 5.4.1 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	elif ver_test ${K_MAJOR_MINOR} -eq 5.3 && \
+		ver_test ${PV} -ge 5.3.14 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
