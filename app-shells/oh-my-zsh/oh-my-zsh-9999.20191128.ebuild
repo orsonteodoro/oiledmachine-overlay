@@ -34,7 +34,7 @@ USE_RUBY="ruby24 ruby25 ruby26"
 RUBY_OPTIONAL=1
 EMOJI_LANG_DEFAULT=${EMOJI_LANG_DEFAULT:=en}
 inherit eutils python-r1 ruby-ng
-EGIT_COMMIT="9d790ea60ce1d3af265dfc05b77d77bd94b801d7"
+EGIT_COMMIT="903a3e9daa110944a9edc37a5952b4a9ff630b39"
 FN="${EGIT_COMMIT}.zip"
 A_URL="https://github.com/robbyrussell/oh-my-zsh/archive/${FN}"
 SRC_URI="${A_URL} -> ${P}.zip"
@@ -108,10 +108,14 @@ PLUGINS_DEPEND="
 	 plugins_celery? ( dev-python/celery )
 	 plugins_chucknorris? ( games-misc/fortune-mod )
 	 plugins_colorize? ( dev-python/pygments )
+	 plugins_colored-man-pages? ( sys-apps/groff )
+	 plugins_composer? ( dev-lang/php dev-php/composer )
+	 plugins_cpanm? ( dev-perl/App-cpanminus )
 	 plugins_django? ( dev-python/django )
 	 plugins_docker-machine? ( app-emulation/docker-machine )
 	 plugins_doctl? ( app-admin/doctl )
 	 plugins_drush? ( app-admin/drush )
+	 plugins_eecms? ( dev-lang/php )
 	 plugins_emacs? ( >=app-editors/emacs-24.0 )
 	 plugins_emoji? ( dev-lang/perl dev-perl/Path-Class )
 	 plugins_fbterm? ( app-i18n/fbterm )
@@ -121,6 +125,7 @@ PLUGINS_DEPEND="
 	 plugins_fzf? ( app-shells/fzf )
 	 plugins_gb? ( dev-go/gb )
 	 plugins_gcloud? ( app-misc/google-cloud-sdk )
+	 plugins_geeknote? ( app-misc/geeknote )
 	 plugins_go? ( dev-lang/go )
 	 plugins_golang? ( dev-lang/go )
 	 plugins_gradle? ( virtual/gradle )
@@ -128,6 +133,7 @@ PLUGINS_DEPEND="
 	 plugins_heroku? ( dev-util/heroku-cli )
 	 plugins_jira? ( dev-python/jira )
 	 plugins_kate? ( kde-apps/kate )
+	 plugins_keychain? ( net-misc/keychain )
 	 plugins_knife_ssh? ( virtual/ssh )
 	 plugins_kops? ( sys-cluster/kops )
 	 plugins_kubectl? ( sys-cluster/kubectl )
@@ -136,11 +142,16 @@ PLUGINS_DEPEND="
 	 plugins_laravel5? ( dev-lang/php )
 	 plugins_man? ( virtual/man )
 	 plugins_minikube? ( sys-cluster/minikube )
+	 plugins_mix? ( dev-lang/elixir )
 	 plugins_mvn? ( dev-java/maven-bin )
+	 plugins_nanoc? ( www-apps/nanoc )
 	 plugins_nmap? ( net-analyzer/nmap )
 	 plugins_nomad? ( sys-cluster/nomad )
 	 plugins_npm? ( net-libs/nodejs[npm] )
 	 plugins_otp? ( sys-auth/oath-toolkit )
+	 plugins_oc? ( || ( app-emulation/openshift-cli \
+		sys-cluster/openshift-client-bin \
+		app-admin/openshift-client-tools ) )
 	 plugins_paver? ( dev-python/paver )
 	 plugins_percol? ( app-shells/percol )
 	 plugins_pep8? ( dev-python/pep8 )
@@ -153,12 +164,17 @@ PLUGINS_DEPEND="
 	 plugins_rails? ( || ( dev-ruby/rails dev-lang/ruby dev-ruby/rake ) )
 	 plugins_rake-fast? ( dev-ruby/rake )
 	 plugins_rand-quote? ( net-misc/curl )
+	 plugins_rebar? ( dev-util/rebar3 )
 	 plugins_repo? ( dev-util/repo )
+	 plugins_ripgrep? ( sys-apps/ripgrep )
 	 plugins_ros? ( dev-lisp/roswell )
 	 plugins_rsync? ( net-misc/rsync )
 	 plugins_ruby? ( dev-lang/ruby dev-ruby/rubygems )
 	 plugins_salt? ( dev-lang/python:2.7 )
+	 plugins_sbt? ( || ( dev-java/sbt dev-java/sbt-bin ) )
 	 plugins_scala? ( dev-lang/scala )
+	 plugins_screen? ( app-misc/screen )
+	 plugins_scw? ( app-admin/scaleway-cli )
 	 plugins_sfffe? ( sys-apps/ack )
 	 plugins_stack? ( dev-haskell/stack )
 	 plugins_sublime? ( app-editors/sublime-text )
@@ -166,6 +182,7 @@ PLUGINS_DEPEND="
 	 plugins_systemd? ( sys-apps/systemd )
 	 plugins_symfony? ( dev-lang/php dev-php/symfony-console )
 	 plugins_symfony2? ( dev-lang/php dev-php/symfony-console )
+	 plugins_taskwarrior? ( app-misc/task )
 	 plugins_terraform? ( app-admin/terraform )
 	 plugins_thefuck? ( app-shells/thefuck )
 	 plugins_thor? ( dev-ruby/thor )
@@ -194,7 +211,7 @@ PLUGINS_DEPEND="
 THEMES_DEPEND="
 	 themes_adben? ( games-misc/fortune-mod )
 	 "
-RDEPEND="app-shells/zsh
+RDEPEND=">=app-shells/zsh-4.3.9
 	 bzr? ( dev-vcs/bzr )
 	 clipboard? ( || ( x11-misc/xclip x11-misc/xsel ) )
 	 emojis? ( || ( media-fonts/noto-color-emoji
@@ -237,8 +254,13 @@ REQUIRED_USE="branding? ( themes_gentoo )
 	      themes_agnoster? ( powerline )
 	      themes_emotty? ( powerline )
 	      themes_amuse? ( powerline )
+	      plugins_coffee? ( clipboard )
+	      plugins_copybuffer? ( clipboard )
+	      plugins_copydir? ( clipboard )
+	      plugins_copyfile? ( clipboard )
 	      plugins_emoji-clock? ( emojis )
 	      plugins_emoji? ( emojis )
+	      plugins_emotty? ( emojis plugins_emoji !update-emoji-data )
 	      plugins_git? ( git )
 	      plugins_github? ( git )
 	      plugins_git-auto-fetch? ( git )
