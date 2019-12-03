@@ -1172,6 +1172,7 @@ function approve_cve_fix() {
 # @FUNCTION: approve_cve_filesdir
 # @DESCRIPTION:
 # Checks if CVE_ALLOW_EBUILD_MAINTAINER_FILESDIR backports are accepted by admin
+# @RETURNS: 0-approved, 1-not approved
 function approve_cve_filesdir() {
 	local cve_trust="${CVE_ID_}TRUST"
 	if (( (${!cve_trust} & ${CVE_ALLOW_EBUILD_MAINTAINER_FILESDIR}) \
@@ -1185,6 +1186,7 @@ function approve_cve_filesdir() {
 # @FUNCTION: approve_cve_filesdir
 # @DESCRIPTION:
 # Checks if CVE_ALLOW_EBUILD_MAINTAINER_ADDENDUM_CLASS_A are accepted by admin
+# @RETURNS: 0-approved, 1-not approved
 function approve_cve_addendum() {
 	local cve_trust="${CVE_ID_}TRUST"
 	if (( (${!cve_trust} & ${CVE_ALLOW_EBUILD_MAINTAINER_ADDENDUM_CLASS_A}) \
