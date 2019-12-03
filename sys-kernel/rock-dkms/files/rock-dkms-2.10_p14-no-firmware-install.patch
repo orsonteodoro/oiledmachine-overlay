@@ -1,0 +1,27 @@
+--- a/pre-build.sh.orig	2019-11-19 13:18:38.000000000 -0800
++++ b/pre-build.sh	2019-12-03 00:46:12.458077964 -0800
+@@ -44,7 +44,7 @@ find scheduler -name '*.c' -exec grep EX
+ export KERNELVER
+ ./configure
+ 
+-FW_DIR="/lib/firmware/$KERNELVER"
+-mkdir -p $FW_DIR
+-cp -ar /usr/src/amdgpu-2.10-14/firmware/radeon $FW_DIR
+-cp -ar /usr/src/amdgpu-2.10-14/firmware/amdgpu $FW_DIR
++#FW_DIR="/lib/firmware/$KERNELVER"
++#mkdir -p $FW_DIR
++#cp -ar /usr/src/amdgpu-2.10-14/firmware/radeon $FW_DIR
++#cp -ar /usr/src/amdgpu-2.10-14/firmware/amdgpu $FW_DIR
+--- a/post-remove.sh.orig	2019-12-03 00:46:30.188764123 -0800
++++ b/post-remove.sh	2019-12-03 00:44:52.564986336 -0800
+@@ -1,6 +1,6 @@
+ #!/bin/bash
+ 
+-FW_DIR="/lib/firmware/$1"
+-rm -rf $FW_DIR/radeon
+-rm -rf $FW_DIR/amdgpu
+-[[ ! $(ls -A $FW_DIR) ]] && rm -rf $FW_DIR
++#FW_DIR="/lib/firmware/$1"
++#rm -rf $FW_DIR/radeon
++#rm -rf $FW_DIR/amdgpu
++#[[ ! $(ls -A $FW_DIR) ]] && rm -rf $FW_DIR
