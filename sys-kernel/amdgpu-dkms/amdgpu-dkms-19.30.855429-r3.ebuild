@@ -24,15 +24,16 @@ SLOT="0/${PV}"
 IUSE="acpi +build +check-mmu-notifier check-pcie check-gpu directgma firmware hybrid-graphics numa rock ssg"
 REQUIRED_USE="rock? ( check-pcie check-gpu )
 	      hybrid-graphics? ( acpi )"
+KV_NOT_SUPPORTED="5.3"
 RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
 	 sys-kernel/dkms
-	 || ( <sys-kernel/ck-sources-5.3
-	      <sys-kernel/gentoo-sources-5.3
-	      <sys-kernel/git-sources-5.3
-	      <sys-kernel/ot-sources-5.3
-	      <sys-kernel/pf-sources-5.3
-	      <sys-kernel/vanilla-sources-5.3
-	      <sys-kernel/zen-sources-5.3 )"
+	 || ( <sys-kernel/ck-sources-${KV_NOT_SUPPORTED}
+	      <sys-kernel/gentoo-sources-${KV_NOT_SUPPORTED}
+	      <sys-kernel/git-sources-${KV_NOT_SUPPORTED}
+	      <sys-kernel/ot-sources-${KV_NOT_SUPPORTED}
+	      <sys-kernel/pf-sources-${KV_NOT_SUPPORTED}
+	      <sys-kernel/vanilla-sources-${KV_NOT_SUPPORTED}
+	      <sys-kernel/zen-sources-${KV_NOT_SUPPORTED} )"
 DEPEND="${RDEPEND}
 	check-pcie? ( sys-apps/dmidecode )
 	check-gpu? ( sys-apps/pciutils )"
@@ -43,7 +44,6 @@ DKMS_PKG_VER="${MY_RPR}"
 DC_VER="3.2.42"
 AMDGPU_VERSION="5.0.73"
 ROCK_VER="2.7.0_p20190627" # See changes in kfd keywords and tag ;  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/commits/master?path[]=drivers&path[]=gpu&path[]=drm&path[]=amd&path[]=amdkfd
-KV_NOT_SUPPORTED="5.3"
 
 # patches based on https://aur.archlinux.org/cgit/aur.git/tree/?h=amdgpu-dkms
 # patches try to make it linux kernel 5.1+ compatible but still missing 5.3 compatibility.
