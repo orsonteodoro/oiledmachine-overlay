@@ -35,7 +35,11 @@ inherit ot-kernel-cve-en
 CVE_ALLOW_KERNEL_DOT_ORG_REPO=0x00000001
 CVE_ALLOW_GITHUB_TORVALDS=0x00000002
 CVE_ALLOW_RESERVED=0x00000004
-CVE_ALLOW_MODULE_MAINTAINER=0x00000008
+CVE_ALLOW_MODULE_MAINTAINER=0x00000008 # as in submitted by maintainer
+
+# as in code reviewed by module maintainer
+CVE_ALLOW_MODULE_MAINTAINER_REVIEWED=0x00000008
+
 CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH=0x00010000 # immediate links only
 
 # Same patch fix author but newer version v2->v3 where v3 is chosen
