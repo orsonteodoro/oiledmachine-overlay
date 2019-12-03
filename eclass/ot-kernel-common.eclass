@@ -66,7 +66,7 @@ esac
 HOMEPAGE+="
           https://github.com/dolohow/uksm
           https://liquorix.net/
-          https://github.com/graysky2/kernel_gcc_dpatch
+          https://github.com/graysky2/kernel_gcc_patch
 	  http://ck-hack.blogspot.com/
           https://dev.gentoo.org/~mpagano/genpatches/
           http://algo.ing.unimo.it/people/paolo/disk_sched/
