@@ -17,15 +17,16 @@ SRC_URI="http://repo.radeon.com/rocm/apt/debian/pool/main/r/rock-dkms/${FN}"
 SLOT="0/${PV}"
 IUSE="acpi +build +check-mmu-notifier +check-pcie +check-gpu directgma firmware hybrid-graphics numa ssg"
 REQUIRED_USE="hybrid-graphics? ( acpi )"
+KV_NOT_SUPPORTED="5.3"
 RDEPEND="firmware? ( sys-firmware/rock-firmware )
 	 sys-kernel/dkms
-	 || ( <sys-kernel/ck-sources-5.3
-	      <sys-kernel/gentoo-sources-5.3
-	      <sys-kernel/git-sources-5.3
-	      <sys-kernel/ot-sources-5.3
-	      <sys-kernel/pf-sources-5.3
-	      <sys-kernel/vanilla-sources-5.3
-	      <sys-kernel/zen-sources-5.3 )"
+	 || ( <sys-kernel/ck-sources-${KV_NOT_SUPPORTED}
+	      <sys-kernel/gentoo-sources-${KV_NOT_SUPPORTED}
+	      <sys-kernel/git-sources-${KV_NOT_SUPPORTED}
+	      <sys-kernel/ot-sources-${KV_NOT_SUPPORTED}
+	      <sys-kernel/pf-sources-${KV_NOT_SUPPORTED}
+	      <sys-kernel/vanilla-sources-${KV_NOT_SUPPORTED}
+	      <sys-kernel/zen-sources-${KV_NOT_SUPPORTED} )"
 DEPEND="${RDEPEND}
 	check-pcie? ( sys-apps/dmidecode )
 	check-gpu? ( sys-apps/pciutils )"
@@ -35,7 +36,6 @@ DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${MY_RPR}"
 DC_VER="3.2.46"
 AMDGPU_VERSION="5.0.79"
-KV_NOT_SUPPORTED="5.3"
 
 # patches based on https://aur.archlinux.org/cgit/aur.git/tree/?h=amdgpu-dkms
 # patches try to make it linux kernel 5.1+ compatible but still missing 5.3 compatibility.

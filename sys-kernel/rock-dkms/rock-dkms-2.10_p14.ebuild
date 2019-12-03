@@ -17,15 +17,16 @@ SRC_URI="http://repo.radeon.com/rocm/apt/debian/pool/main/r/rock-dkms/${FN}"
 SLOT="0/${PV}"
 IUSE="acpi +build +check-mmu-notifier +check-pcie +check-gpu directgma firmware hybrid-graphics numa ssg"
 REQUIRED_USE="hybrid-graphics? ( acpi )"
+KV_NOT_SUPPORTED="5.3"
 RDEPEND="firmware? ( sys-firmware/rock-firmware )
 	 sys-kernel/dkms
-	 || ( <sys-kernel/ck-sources-5.3
-	      <sys-kernel/gentoo-sources-5.3
-	      <sys-kernel/git-sources-5.3
-	      <sys-kernel/ot-sources-5.3
-	      <sys-kernel/pf-sources-5.3
-	      <sys-kernel/vanilla-sources-5.3
-	      <sys-kernel/zen-sources-5.3 )"
+	 || ( <sys-kernel/ck-sources-${KV_NOT_SUPPORTED}
+	      <sys-kernel/gentoo-sources-${KV_NOT_SUPPORTED}
+	      <sys-kernel/git-sources-${KV_NOT_SUPPORTED}
+	      <sys-kernel/ot-sources-${KV_NOT_SUPPORTED}
+	      <sys-kernel/pf-sources-${KV_NOT_SUPPORTED}
+	      <sys-kernel/vanilla-sources-${KV_NOT_SUPPORTED}
+	      <sys-kernel/zen-sources-${KV_NOT_SUPPORTED} )"
 DEPEND="${RDEPEND}
 	check-pcie? ( sys-apps/dmidecode )
 	check-gpu? ( sys-apps/pciutils )"
@@ -35,7 +36,6 @@ DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${MY_RPR}"
 DC_VER="3.2.48"
 AMDGPU_VERSION="5.0.82"
-KV_NOT_SUPPORTED="5.3"
 # amd/amdgpu/amdgpu_ttm.c requires altmap_valid (from struct dev_pagemap in include/linux/memremap.h) only found in <=5.2
 # it also requires include/linux/reservation.h not found in 5.4
 
