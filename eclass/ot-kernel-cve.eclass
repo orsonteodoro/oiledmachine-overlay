@@ -3335,6 +3335,7 @@ function _resolve_hotfix_default() {
 		einfo \
 "${CVE_ID} fix rejected by user.  A fix will not be applied.\n\
 This is a ${!cve_severity} risk vulnerability."
+		return 0
 	fi
 	if use cve_hotfix ; then
 		if [[ -n "${!cve_dupe}" ]] ; then
@@ -3365,6 +3366,7 @@ function _resolve_hotfix_default_filesdir() {
 		einfo \
 "${CVE_ID} fix rejected by user.  A fix will not be applied.\n\
 This is a ${!cve_severity} risk vulnerability."
+		return 0
 	fi
 	if use cve_hotfix ; then
 		if [ -e "${FILESDIR}/${!cve_fn_filesdir}" ] ; then
