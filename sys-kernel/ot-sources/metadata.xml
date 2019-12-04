@@ -138,11 +138,17 @@
                   entry in the report.
       CVE_FIX_REJECT_DISPUTED - is set to 0 to not reject (default), 1 to reject
                                 to applying cve fix marked as disputed.
+      CVE_ALLOW_RISKY_BACKPORTS - is set to 0 (default) to not apply, 1 to apply
+                                  risky backport.  Risky backports are untested
+                                  and may lead to data loss or data corruption,
+                                  non functioning driver/device, or irreversible
+                                  damage.
 
       Examples:
       CVE_FIX_TRUST_LEVEL=$((0x00010000 | 0x00040000))
       CVE_BLACKLIST_FIXES="CVE-2019-14814 CVE-2019-14895"
       CVE_DELAY=0
+      CVE_ALLOW_RISKY_BACKPORTS=1
       </flag>
     <flag name="cfs">Assumes the IO scheduler will be the stock CFS CPU
       scheduler.</flag>

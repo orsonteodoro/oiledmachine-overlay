@@ -51,15 +51,16 @@ CVE_ALLOW_MAJOR_DISTRO_TEAM_SUGGESTION=0x04000000
 
 # Used typically for backports which may be sourced from *any* source that seem
 # like credible fixes
-CVE_ALLOW_EBUILD_MAINTAINER_FILESDIR=0x10000000
+CVE_ALLOW_EBUILD_MAINTAINER_FILESDIR=0x01000000
 
 # Additional commits not mentioned in NVD CVE report but added by vendor
 # of the same type.  NVD DB will report 1 memory leak then not mention several ones
 # following applied by driver maintainer.  Associated commits should likely
 # be added to CVE/NVD report but are not.
-CVE_ALLOW_EBUILD_MAINTAINER_ADDENDUM_CLASS_A=0x20000000
+CVE_ALLOW_EBUILD_MAINTAINER_ADDENDUM_CLASS_A=0x01000000
 
-CVE_ALLOW_OPEN_SOURCE_CONTRIBUTOR=0x10000000 # has authored a project
+CVE_ALLOW_FOSS_CONTRIBUTOR=0x01000000 # has authored a project and released under a FOSS license
+CVE_ALLOW_OPEN_SOURCE_CONTRIBUTOR=0x10000000 # has authored a project but not explicitly under a FOSS license
 CVE_ALLOW_PATRON=0x80000000 # non oss contributor but may use product
 
 # todo, you as a user, maybe xml encoded savedconfig.  it is intended to apply
@@ -78,15 +79,21 @@ CVE_FIX_TRUST_DEFAULT=$(( \
 	| ${CVE_ALLOW_MAJOR_DISTRO_REVIEWED} \
 	| ${CVE_ALLOW_MAJOR_DISTRO_TEAM_SUGGESTION} \
 	| ${CVE_ALLOW_EBUILD_MAINTAINER_FILESDIR} \
-	| ${CVE_ALLOW_EBUILD_MAINTAINER_ADDENDUM_CLASS_A} ))
+	| ${CVE_ALLOW_EBUILD_MAINTAINER_ADDENDUM_CLASS_A} \
+	| ${CVE_ALLOW_FOSS_CONTRIBUTOR} ))
 
 CVE_FIX_TRUST_LEVEL=${CVE_FIX_TRUST_LEVEL:=${CVE_FIX_TRUST_DEFAULT}}
 
 # rejects applying cve fixes for all CVEs marked with disputed flag
 CVE_FIX_REJECT_DISPUTED=${CVE_FIX_REJECT_DISPUTED:=0}
 
+# only applies to dangerous non trivial backports which might result
+# in data loss or data corruption, non functioning driver/device, or
+# irreversible damage.
+CVE_ALLOW_RISKY_BACKPORTS=${CVE_ALLOW_RISKY_BACKPORTS:=0}
+
 # based on my last edit in unix timestamp (date -u +%Y%m%d_%I%M_%p_%Z)
-LATEST_CVE_KERNEL_INDEX="20191204_0616_AM_UTC"
+LATEST_CVE_KERNEL_INDEX="20191204_1010_PM_UTC"
 LATEST_CVE_KERNEL_INDEX="${LATEST_CVE_KERNEL_INDEX,,}"
 
 # this will trigger a kernel re-install based on use flag timestamp
@@ -242,6 +249,56 @@ CVE_2019_16089_PM="https://lore.kernel.org/patchwork/patch/1106884/"
 CVE_2019_16089_SUMMARY_LANG="CVE_2019_16089_SUMMARY_${CVE_LANG}"
 CVE_2019_16089_SUMMARY="${!CVE_2019_16089_SUMMARY_LANG}"
 CVE_2019_16089_TRUST=$((${CVE_ALLOW_NVD_INDIRECT_LINKED_PATCH} | ${CVE_ALLOW_EBUILD_MAINTAINER_FILESDIR}))
+
+
+# part of the rapport / cred of patch originator is in https://lgtm.com/security/
+# for 16229-16233
+CVE_2019_16229_FIX_SRC_URI="https://lkml.org/lkml/diff/2019/9/9/487/1"
+CVE_2019_16229_FN="CVE-2019-16229-fix---Multiple-NULL-deref-on-alloc_workqueue.patch"
+CVE_2019_16229_SEVERITY_LANG="CVE_2019_16229_SEVERITY_${CVE_LANG}"
+CVE_2019_16229_SEVERITY="${!CVE_2019_16229_SEVERITY_LANG}"
+CVE_2019_16229_PM="https://lkml.org/lkml/2019/9/9/487"
+CVE_2019_16229_SUMMARY_LANG="CVE_2019_16229_SUMMARY_${CVE_LANG}"
+CVE_2019_16229_SUMMARY="${!CVE_2019_16229_SUMMARY_LANG}"
+CVE_2019_16229_TRUST=$((${CVE_ALLOW_OPEN_SOURCE_CONTRIBUTOR} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+CVE_2019_16229_DISPUTED=1
+
+
+CVE_2019_16230_FIX_SRC_URI="https://lkml.org/lkml/diff/2019/9/9/487/1"
+CVE_2019_16230_FN="CVE-2019-16229-fix---Multiple-NULL-deref-on-alloc_workqueue.patch"
+CVE_2019_16230_SEVERITY_LANG="CVE_2019_16230_SEVERITY_${CVE_LANG}"
+CVE_2019_16230_SEVERITY="${!CVE_2019_16230_SEVERITY_LANG}"
+CVE_2019_16230_PM="https://lkml.org/lkml/2019/9/9/487"
+CVE_2019_16230_SUMMARY_LANG="CVE_2019_16230_SUMMARY_${CVE_LANG}"
+CVE_2019_16230_SUMMARY="${!CVE_2019_16230_SUMMARY_LANG}"
+CVE_2019_16230_TRUST=$((${CVE_ALLOW_OPEN_SOURCE_CONTRIBUTOR} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
+CVE_2019_16231_FIX_SRC_URI="https://lkml.org/lkml/diff/2019/9/9/487/1"
+CVE_2019_16231_FN="CVE-2019-16229-fix---Multiple-NULL-deref-on-alloc_workqueue.patch"
+CVE_2019_16231_SEVERITY_LANG="CVE_2019_16231_SEVERITY_${CVE_LANG}"
+CVE_2019_16231_SEVERITY="${!CVE_2019_16231_SEVERITY_LANG}"
+CVE_2019_16231_PM="https://lkml.org/lkml/2019/9/9/487"
+CVE_2019_16231_SUMMARY_LANG="CVE_2019_16231_SUMMARY_${CVE_LANG}"
+CVE_2019_16231_SUMMARY="${!CVE_2019_16231_SUMMARY_LANG}"
+CVE_2019_16231_TRUST=$((${CVE_ALLOW_OPEN_SOURCE_CONTRIBUTOR} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
+CVE_2019_16232_FIX_SRC_URI="https://lkml.org/lkml/diff/2019/9/9/487/1"
+CVE_2019_16232_FN="CVE-2019-16229-fix---Multiple-NULL-deref-on-alloc_workqueue.patch"
+CVE_2019_16232_SEVERITY_LANG="CVE_2019_16232_SEVERITY_${CVE_LANG}"
+CVE_2019_16232_SEVERITY="${!CVE_2019_16232_SEVERITY_LANG}"
+CVE_2019_16232_PM="https://lkml.org/lkml/2019/9/9/487"
+CVE_2019_16232_SUMMARY_LANG="CVE_2019_16232_SUMMARY_${CVE_LANG}"
+CVE_2019_16232_SUMMARY="${!CVE_2019_16232_SUMMARY_LANG}"
+CVE_2019_16232_TRUST=$((${CVE_ALLOW_OPEN_SOURCE_CONTRIBUTOR} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
+CVE_2019_16233_FIX_SRC_URI="https://lkml.org/lkml/diff/2019/9/9/487/1"
+CVE_2019_16233_FN="CVE-2019-16229-fix---Multiple-NULL-deref-on-alloc_workqueue.patch"
+CVE_2019_16233_SEVERITY_LANG="CVE_2019_16233_SEVERITY_${CVE_LANG}"
+CVE_2019_16233_SEVERITY="${!CVE_2019_16233_SEVERITY_LANG}"
+CVE_2019_16233_PM="https://lkml.org/lkml/2019/9/9/487"
+CVE_2019_16233_SUMMARY_LANG="CVE_2019_16233_SUMMARY_${CVE_LANG}"
+CVE_2019_16233_SUMMARY="${!CVE_2019_16233_SUMMARY_LANG}"
+CVE_2019_16233_TRUST=$((${CVE_ALLOW_OPEN_SOURCE_CONTRIBUTOR} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
 
 
 CVE_2019_16714_FIX_SRC_URI="https://github.com/torvalds/linux/commit/7d0a06586b2686ba80c4a2da5f91cb10ffbea736.patch"
@@ -551,6 +608,7 @@ CVE_2019_18885_PM="https://github.com/torvalds/linux/commit/09ba3bc9dd150457c506
 CVE_2019_18885_SUMMARY_LANG="CVE_2019_18885_SUMMARY_${CVE_LANG}"
 CVE_2019_18885_SUMMARY="${!CVE_2019_18885_SUMMARY_LANG}"
 CVE_2019_18885_TRUST=$((${CVE_ALLOW_GITHUB_TORVALDS} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH} | ${CVE_ALLOW_EBUILD_MAINTAINER_FILESDIR}))
+CVE_2019_18885_RISKY_BACKPORT=1 # only applies to CVE_2019_18885_FN_FILESDIR
 # kernel.org patch exist
 
 
@@ -1197,16 +1255,21 @@ CVE_2019_19543_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMED
 #			 ${CVE_2019_14897_FIX_SRC_URI} -> ${CVE_2019_14897_FN}
 #			 ${CVE_2019_14901_FIX_SRC_URI} -> ${CVE_2019_14901_FN}
 
+			 #same as 16229
+#			 ${CVE_2019_16230_FIX_SRC_URI} -> ${CVE_2019_16230_FN}
+#			 ${CVE_2019_16231_FIX_SRC_URI} -> ${CVE_2019_16231_FN}
+#			 ${CVE_2019_16232_FIX_SRC_URI} -> ${CVE_2019_16232_FN}
+#			 ${CVE_2019_16233_FIX_SRC_URI} -> ${CVE_2019_16233_FN}
+
+#			 ${CVE_2019_18660_FIX_SRC_URI} -> ${CVE_2019_18660_FN}
+
+#			 ${CVE_2019_18675_FIX_SRC_URI} -> ${CVE_2019_18675_FN}
 
 SRC_URI+=" cve_hotfix? ( ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
 
 			 ${CVE_2010_2243_FIX_SRC_URI} -> ${CVE_2010_2243_FN}
 
 			 ${CVE_2014_3180_FIX_SRC_URI} -> ${CVE_2014_3180_FN}
-
-			 ${CVE_2019_16714_FIX_SRC_URI} -> ${CVE_2019_16714_FN}
-
-			 ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 
 			 ${CVE_2019_14814_FIX_SRC_URI} -> ${CVE_2019_14814_FN}
 
@@ -1215,6 +1278,13 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
 			 ${CVE_2019_14895_FIX_SRC_URI} -> ${CVE_2019_14895_FN}
 
 			 ${CVE_2019_16089_FIX_SRC_URI} -> ${CVE_2019_16089_FN}
+
+			 ${CVE_2019_16229_FIX_SRC_URI} -> ${CVE_2019_16229_FN}
+
+
+			 ${CVE_2019_16714_FIX_SRC_URI} -> ${CVE_2019_16714_FN}
+
+			 ${CVE_2019_16746_FIX_SRC_URI} -> ${CVE_2019_16746_FN}
 
 			 ${CVE_2019_16921_FIX_SRC_URI} -> ${CVE_2019_16921_FN}
 
@@ -1257,6 +1327,7 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
 			 ${CVE_2019_18814_FIX_SRC_URI} -> ${CVE_2019_18814_FN}
 
 			 ${CVE_2019_18885_FIX_SRC_URI} -> ${CVE_2019_18885_FN}
+
 
 			 ${CVE_2019_19043_FIX_SRC_URI} -> ${CVE_2019_19043_FN}
 			 ${CVE_2019_19044_FIX_SRC_URI} -> ${CVE_2019_19044_FN}
@@ -1332,20 +1403,16 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
 			 ${CVE_2019_19537_FIX_SRC_URI} -> ${CVE_2019_19537_FN}
 
 			 ${CVE_2019_19543_FIX_SRC_URI} -> ${CVE_2019_19543_FN}
-
 )"
 
-#			 ${CVE_2019_18660_FIX_SRC_URI} -> ${CVE_2019_18660_FN}
-#			 ${CVE_2019_18675_FIX_SRC_URI} -> ${CVE_2019_18675_FN}
 #			 ${CVE_2019_19036_FIX_SRC_URI} -> ${CVE_2019_19036_FN}
 #			 ${CVE_2019_19037_FIX_SRC_URI} -> ${CVE_2019_19037_FN}
 #			 ${CVE_2019_19039_FIX_SRC_URI} -> ${CVE_2019_19039_FN}
+
 #			 ${CVE_2019_19318_FIX_SRC_URI} -> ${CVE_2019_19318_FN}
 #			 ${CVE_2019_19319_FIX_SRC_URI} -> ${CVE_2019_19319_FN}
 #			 ${CVE_2019_19377_FIX_SRC_URI} -> ${CVE_2019_19377_FN}
 #			 ${CVE_2019_19378_FIX_SRC_URI} -> ${CVE_2019_19378_FN}
-
-
 
 # @FUNCTION: approve_cve_fix
 # @DESCRIPTION:
@@ -1793,6 +1860,98 @@ function fetch_cve_2019_16089_hotfix() {
 	_fetch_cve_boilerplate_msg_footer
 	return 0
 }
+
+
+# @FUNCTION: fetch_cve_2019_16229_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_16229 patch
+function fetch_cve_2019_16229_hotfix() {
+	local CVE_ID="CVE-2019-16229"
+	if grep -F -e \
+		'dev_err(kfd_chardev(), "Failed to allocate KFD IH workqueue\n");' \
+		"${S}/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_16230_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_16230 patch
+function fetch_cve_2019_16230_hotfix() {
+	local CVE_ID="CVE-2019-16230"
+	if grep -F -e \
+		"if( !radeon_crtc->flip_queue) {" \
+		"${S}/drivers/gpu/drm/radeon/radeon_display.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_16231_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_16231 patch
+function fetch_cve_2019_16231_hotfix() {
+	local CVE_ID="CVE-2019-16231"
+	if grep -F -e \
+		"if(!adapter->txrx_wq) {" \
+		"${S}/drivers/net/fjes/fjes_main.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_16232_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_16232 patch
+function fetch_cve_2019_16232_hotfix() {
+	local CVE_ID="CVE-2019-16232"
+	if grep -F -e \
+		"free_before_queue:" \
+		"${S}/drivers/net/wireless/marvell/libertas/if_sdio.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_16233_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_16233 patch
+function fetch_cve_2019_16233_hotfix() {
+	local CVE_ID="CVE-2019-16233"
+	if grep -F -e \
+		"if(!ha->wq) {" \
+		"${S}/drivers/scsi/qla2xxx/qla_os.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
 
 # @FUNCTION: fetch_cve_2019_16714_hotfix
 # @DESCRIPTION:
@@ -4340,6 +4499,164 @@ function apply_cve_2019_16089_hotfix() {
 	return 0
 }
 
+
+# @FUNCTION: apply_cve_2019_16229_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_16229 patch if it needs to
+function apply_cve_2019_16229_hotfix() {
+	local CVE_ID="CVE-2019-16229"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		'dev_err(kfd_chardev(), "Failed to allocate KFD IH workqueue\n");' \
+		"${S}/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	local cve_fn2="${!cve_fn}"
+	cve_fn2="${cve_fn2//CVE-2019-16229/${CVE_ID}}"
+	cp -a "${DISTDIR}/${!cve_fn}" \
+		"${T}/${cve_fn2}" \
+		|| die
+	einfo "Adjusting patch path"
+	sed -i -e "s|b/b/|b/|g" "${T}/${cve_fn2}" || die
+	einfo "Splitting patch to address summary in ${CVE_ID}"
+	filterdiff -i '*/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c' \
+		> "${T}/${cve_fn2}.t" || die
+	mv "${T}/${cve_fn2}"{.t,} || die
+	_resolve_hotfix_default "${T}/${cve_fn2}"
+	return $?
+}
+
+# @FUNCTION: apply_cve_2019_16230_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_16230 patch if it needs to
+function apply_cve_2019_16230_hotfix() {
+	local CVE_ID="CVE-2019-16230"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"if( !radeon_crtc->flip_queue) {" \
+		"${S}/drivers/gpu/drm/radeon/radeon_display.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	local cve_fn2="${!cve_fn}"
+	cve_fn2="${cve_fn2//CVE-2019-16229/${CVE_ID}}"
+	cp -a "${DISTDIR}/${!cve_fn}" \
+		"${T}/${cve_fn2}" \
+		|| die
+	einfo "Adjusting patch path"
+	sed -i -e "s|b/b/|b/|g" "${T}/${cve_fn2}" || die
+	einfo "Splitting patch to address summary in ${CVE_ID}"
+	filterdiff -i '*/drivers/gpu/drm/radeon/radeon_display.c' \
+		> "${T}/${cve_fn2}.t" || die
+	mv "${T}/${cve_fn2}"{.t,} || die
+	_resolve_hotfix_default "${T}/${cve_fn2}"
+	return $?
+}
+
+# @FUNCTION: apply_cve_2019_16231_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_16231 patch if it needs to
+function apply_cve_2019_16231_hotfix() {
+	local CVE_ID="CVE-2019-16231"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"if(!adapter->txrx_wq) {" \
+		"${S}/drivers/net/fjes/fjes_main.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	local cve_fn2="${!cve_fn}"
+	cve_fn2="${cve_fn2//CVE-2019-16229/${CVE_ID}}"
+	cp -a "${DISTDIR}/${!cve_fn}" \
+		"${T}/${cve_fn2}" \
+		|| die
+	einfo "Adjusting patch path"
+	sed -i -e "s|b/b/|b/|g" "${T}/${cve_fn2}" || die
+	einfo "Splitting patch to address summary in ${CVE_ID}"
+	filterdiff -i '*/drivers/net/fjes/fjes_main.c' \
+		> "${T}/${cve_fn2}.t" || die
+	mv "${T}/${cve_fn2}"{.t,} || die
+	_resolve_hotfix_default "${T}/${cve_fn2}"
+	return $?
+}
+
+# @FUNCTION: apply_cve_2019_16232_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_16232 patch if it needs to
+function apply_cve_2019_16232_hotfix() {
+	local CVE_ID="CVE-2019-16232"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"free_before_queue:" \
+		"${S}/drivers/net/wireless/marvell/libertas/if_sdio.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	local cve_fn2="${!cve_fn}"
+	cve_fn2="${cve_fn2//CVE-2019-16229/${CVE_ID}}"
+	cp -a "${DISTDIR}/${!cve_fn}" \
+		"${T}/${cve_fn2}" \
+		|| die
+	einfo "Adjusting patch path"
+	sed -i -e "s|b/b/|b/|g" "${T}/${cve_fn2}" || die
+	einfo "Splitting patch to address summary in ${CVE_ID}"
+	filterdiff -i '*/drivers/net/wireless/marvell/libertas/if_sdio.c' \
+		> "${T}/${cve_fn2}.t" || die
+	mv "${T}/${cve_fn2}"{.t,} || die
+	_resolve_hotfix_default "${T}/${cve_fn2}"
+	return $?
+}
+
+# @FUNCTION: apply_cve_2019_16233_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_16233 patch if it needs to
+function apply_cve_2019_16233_hotfix() {
+	local CVE_ID="CVE-2019-16233"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"if(!ha->wq) {" \
+		"${S}/drivers/scsi/qla2xxx/qla_os.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	local cve_fn2="${!cve_fn}"
+	cve_fn2="${cve_fn2//CVE-2019-16229/${CVE_ID}}"
+	cp -a "${DISTDIR}/${!cve_fn}" \
+		"${T}/${cve_fn2}" \
+		|| die
+	einfo "Adjusting patch path"
+	sed -i -e "s|b/b/|b/|g" "${T}/${cve_fn2}" || die
+	einfo "Splitting patch to address summary in ${CVE_ID}"
+	filterdiff -i '*/drivers/scsi/qla2xxx/qla_os.c' \
+		> "${T}/${cve_fn2}.t" || die
+	mv "${T}/${cve_fn2}"{.t,} || die
+	_resolve_hotfix_default "${T}/${cve_fn2}"
+	return $?
+}
+
+
+
 # @FUNCTION: apply_cve_2019_16714_hotfix
 # @DESCRIPTION:
 # Applies the CVE_2019_16714 patch if it needs to
@@ -5077,6 +5394,7 @@ function apply_cve_2019_18885_hotfix() {
 	local cve_fn_filesdir="${CVE_ID_}FN_FILESDIR"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
+	local cve_risky_backport="${CVE_ID_}RISKY_BACKPORT"
 	if grep -F -e \
 		"u8 *uuid, u8 *fsid, bool seed);" \
 		"${S}/fs/btrfs/volumes.h" \
@@ -5100,8 +5418,16 @@ function apply_cve_2019_18885_hotfix() {
 		"${S}/fs/btrfs/volumes.c" \
 		>/dev/null
 	then
-		_resolve_hotfix_default_filesdir
-		return $?
+		if [[ "${CVE_ALLOW_RISKY_BACKPORTS}" == "0" \
+			&& "${!cve_risky_backport}" == "1" ]] ; then
+			ewarn \
+"Skipping risky backport for ${CVE_ID}.  Set CVE_ALLOW_RISKY_BACKPORTS=1 in\n\
+make.conf or per-package env to permit risky patch.  No upstream backport\n\
+exists."
+		else
+			_resolve_hotfix_default_filesdir
+			return $?
+		fi
 	fi
 
 	if use cve_hotfix ; then
@@ -6792,6 +7118,13 @@ function fetch_cve_hotfixes() {
 
 		fetch_cve_2019_16089_hotfix
 
+		fetch_cve_2019_16229_hotfix
+
+		fetch_cve_2019_16230_hotfix
+		fetch_cve_2019_16231_hotfix
+		fetch_cve_2019_16232_hotfix
+		fetch_cve_2019_16233_hotfix
+
 		fetch_cve_2019_16714_hotfix
 
 		fetch_cve_2019_16746_hotfix
@@ -6971,6 +7304,13 @@ function apply_cve_hotfixes() {
 		apply_cve_2019_18660_hotfix || exit $?
 
 		apply_cve_2019_18675_hotfix || exit $?
+
+		apply_cve_2019_16229_hotfix || exit $?
+
+		apply_cve_2019_16230_hotfix || exit $?
+		apply_cve_2019_16231_hotfix || exit $?
+		apply_cve_2019_16232_hotfix || exit $?
+		apply_cve_2019_16233_hotfix || exit $?
 
 		apply_cve_2019_16714_hotfix || exit $?
 
