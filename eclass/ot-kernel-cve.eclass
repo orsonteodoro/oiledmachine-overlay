@@ -93,7 +93,7 @@ CVE_FIX_REJECT_DISPUTED=${CVE_FIX_REJECT_DISPUTED:=0}
 CVE_ALLOW_RISKY_BACKPORTS=${CVE_ALLOW_RISKY_BACKPORTS:=0}
 
 # based on my last edit in unix timestamp (date -u +%Y%m%d_%I%M_%p_%Z)
-LATEST_CVE_KERNEL_INDEX="20191204_1010_PM_UTC"
+LATEST_CVE_KERNEL_INDEX="20191204_1050_PM_UTC"
 LATEST_CVE_KERNEL_INDEX="${LATEST_CVE_KERNEL_INDEX,,}"
 
 # this will trigger a kernel re-install based on use flag timestamp
@@ -4522,10 +4522,12 @@ function apply_cve_2019_16229_hotfix() {
 		"${T}/${cve_fn2}" \
 		|| die
 	einfo "Adjusting patch path"
-	sed -i -e "s|b/b/|b/|g" "${T}/${cve_fn2}" || die
+	sed -i -e 's|b/b/|b/|g' \
+		-e 's|a/linux/|a/|g' \
+		"${T}/${cve_fn2}" || die
 	einfo "Splitting patch to address summary in ${CVE_ID}"
 	filterdiff -i '*/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c' \
-		> "${T}/${cve_fn2}.t" || die
+		"${T}/${cve_fn2}" > "${T}/${cve_fn2}.t" || die
 	mv "${T}/${cve_fn2}"{.t,} || die
 	_resolve_hotfix_default "${T}/${cve_fn2}"
 	return $?
@@ -4553,10 +4555,12 @@ function apply_cve_2019_16230_hotfix() {
 		"${T}/${cve_fn2}" \
 		|| die
 	einfo "Adjusting patch path"
-	sed -i -e "s|b/b/|b/|g" "${T}/${cve_fn2}" || die
+	sed -i -e 's|b/b/|b/|g' \
+		-e 's|a/linux/|a/|g' \
+		"${T}/${cve_fn2}" || die
 	einfo "Splitting patch to address summary in ${CVE_ID}"
 	filterdiff -i '*/drivers/gpu/drm/radeon/radeon_display.c' \
-		> "${T}/${cve_fn2}.t" || die
+		"${T}/${cve_fn2}" > "${T}/${cve_fn2}.t" || die
 	mv "${T}/${cve_fn2}"{.t,} || die
 	_resolve_hotfix_default "${T}/${cve_fn2}"
 	return $?
@@ -4584,10 +4588,12 @@ function apply_cve_2019_16231_hotfix() {
 		"${T}/${cve_fn2}" \
 		|| die
 	einfo "Adjusting patch path"
-	sed -i -e "s|b/b/|b/|g" "${T}/${cve_fn2}" || die
+	sed -i -e 's|b/b/|b/|g' \
+		-e 's|a/linux/|a/|g' \
+		"${T}/${cve_fn2}" || die
 	einfo "Splitting patch to address summary in ${CVE_ID}"
 	filterdiff -i '*/drivers/net/fjes/fjes_main.c' \
-		> "${T}/${cve_fn2}.t" || die
+		"${T}/${cve_fn2}" > "${T}/${cve_fn2}.t" || die
 	mv "${T}/${cve_fn2}"{.t,} || die
 	_resolve_hotfix_default "${T}/${cve_fn2}"
 	return $?
@@ -4615,10 +4621,12 @@ function apply_cve_2019_16232_hotfix() {
 		"${T}/${cve_fn2}" \
 		|| die
 	einfo "Adjusting patch path"
-	sed -i -e "s|b/b/|b/|g" "${T}/${cve_fn2}" || die
+	sed -i -e 's|b/b/|b/|g' \
+		-e 's|a/linux/|a/|g' \
+		"${T}/${cve_fn2}" || die
 	einfo "Splitting patch to address summary in ${CVE_ID}"
 	filterdiff -i '*/drivers/net/wireless/marvell/libertas/if_sdio.c' \
-		> "${T}/${cve_fn2}.t" || die
+		"${T}/${cve_fn2}" > "${T}/${cve_fn2}.t" || die
 	mv "${T}/${cve_fn2}"{.t,} || die
 	_resolve_hotfix_default "${T}/${cve_fn2}"
 	return $?
@@ -4646,10 +4654,12 @@ function apply_cve_2019_16233_hotfix() {
 		"${T}/${cve_fn2}" \
 		|| die
 	einfo "Adjusting patch path"
-	sed -i -e "s|b/b/|b/|g" "${T}/${cve_fn2}" || die
+	sed -i -e 's|b/b/|b/|g' \
+		-e 's|a/linux/|a/|g' \
+		"${T}/${cve_fn2}" || die
 	einfo "Splitting patch to address summary in ${CVE_ID}"
 	filterdiff -i '*/drivers/scsi/qla2xxx/qla_os.c' \
-		> "${T}/${cve_fn2}.t" || die
+		"${T}/${cve_fn2}" > "${T}/${cve_fn2}.t" || die
 	mv "${T}/${cve_fn2}"{.t,} || die
 	_resolve_hotfix_default "${T}/${cve_fn2}"
 	return $?
