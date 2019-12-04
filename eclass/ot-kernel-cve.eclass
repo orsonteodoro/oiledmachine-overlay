@@ -1867,6 +1867,14 @@ function fetch_cve_2019_16089_hotfix() {
 # Checks for the CVE_2019_16229 patch
 function fetch_cve_2019_16229_hotfix() {
 	local CVE_ID="CVE-2019-16229"
+	if ! grep -F -e \
+		"struct kfifo ih_fifo;" \
+		"${S}/drivers/gpu/drm/amd/amdkfd/kfd_priv.h" \
+		>/dev/null
+	then
+		einfo "Skipping ${CVE_ID}.  Irrelevant."
+		return 0
+	fi
 	if grep -F -e \
 		'dev_err(kfd_chardev(), "Failed to allocate KFD IH workqueue\n");' \
 		"${S}/drivers/gpu/drm/amd/amdkfd/kfd_interrupt.c" \
@@ -4505,6 +4513,14 @@ function apply_cve_2019_16089_hotfix() {
 # Applies the CVE_2019_16229 patch if it needs to
 function apply_cve_2019_16229_hotfix() {
 	local CVE_ID="CVE-2019-16229"
+	if ! grep -F -e \
+		"struct kfifo ih_fifo;" \
+		"${S}/drivers/gpu/drm/amd/amdkfd/kfd_priv.h" \
+		>/dev/null
+	then
+		einfo "Skipping ${CVE_ID}.  Irrelevant."
+		return 0
+	fi
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
