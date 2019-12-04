@@ -82,8 +82,11 @@ CVE_FIX_TRUST_DEFAULT=$(( \
 
 CVE_FIX_TRUST_LEVEL=${CVE_FIX_TRUST_LEVEL:=${CVE_FIX_TRUST_DEFAULT}}
 
+# rejects applying cve fixes for all CVEs marked with disputed flag
+CVE_FIX_REJECT_DISPUTED=${CVE_FIX_REJECT_DISPUTED:=0}
+
 # based on my last edit in unix timestamp (date -u +%Y%m%d_%I%M_%p_%Z)
-LATEST_CVE_KERNEL_INDEX="20191130_0547_AM_UTC"
+LATEST_CVE_KERNEL_INDEX="20191204_0616_AM_UTC"
 LATEST_CVE_KERNEL_INDEX="${LATEST_CVE_KERNEL_INDEX,,}"
 
 # this will trigger a kernel re-install based on use flag timestamp
@@ -117,14 +120,6 @@ CVE_2010_2243_SUMMARY_LANG="CVE_2010_2243_SUMMARY_${CVE_LANG}"
 CVE_2010_2243_SUMMARY="${!CVE_2010_2243_SUMMARY_LANG}"
 CVE_2010_2243_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
 
-CVE_2010_4661_FIX_SRC_URI=""
-CVE_2010_4661_SEVERITY_LANG="CVE_2010_4661_SEVERITY_${CVE_LANG}"
-CVE_2010_4661_SEVERITY="${!CVE_2010_4661_SEVERITY_LANG}"
-CVE_2010_4661_PM=""
-CVE_2010_4661_SUMMARY_LANG="CVE_2010_4661_SUMMARY_${CVE_LANG}"
-CVE_2010_4661_SUMMARY="${!CVE_2010_4661_SUMMARY_LANG}"
-CVE_2010_4661_TRUST=${CVE_DISALLOW_INCOMPLETE}
-
 
 CVE_2014_3180_FIX_SRC_URI="https://lkml.org/lkml/diff/2014/9/7/29/1"
 CVE_2014_3180_FN="CVE-2014-3180-fix--linux-kernel-compat-timer-updates-for-3.17.patch"
@@ -134,8 +129,12 @@ CVE_2014_3180_PM="https://lkml.org/lkml/2014/9/7/29"
 CVE_2014_3180_SUMMARY_LANG="CVE_2014_3180_SUMMARY_${CVE_LANG}"
 CVE_2014_3180_SUMMARY="${!CVE_2014_3180_SUMMARY_LANG}"
 CVE_2014_3180_TRUST=$((${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+CVE_2014_3180_DISPUTED=1
 
 
+# on hold
+# recommended by person with unknown apparent reputation
+# https://lore.kernel.org/linux-bluetooth/20190725120909.31235-1-vdronov@redhat.com/T/#u
 CVE_2019_10207_FIX_SRC_URI=""
 CVE_2019_10207_FN="CVE-2019-10207-fix--linux"
 CVE_2019_10207_SEVERITY_LANG="CVE_2019_10207_SEVERITY_${CVE_LANG}"
@@ -145,7 +144,9 @@ CVE_2019_10207_SUMMARY_LANG="CVE_2019_10207_SUMMARY_${CVE_LANG}"
 CVE_2019_10207_SUMMARY="${!CVE_2019_10207_SUMMARY_LANG}"
 CVE_2019_10207_TRUST=${CVE_DISALLOW_INCOMPLETE}
 
-
+# on hold
+# recommended by person with unknown apparent reputation
+# https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/fs?id=4f11918ab93bc113ec0831ed2ab7b88847d44dd7
 CVE_2019_10220_FIX_SRC_URI=""
 CVE_2019_10220_FN="CVE-2019-10220-fix--linux"
 CVE_2019_10220_SEVERITY_LANG="CVE_2019_10220_SEVERITY_${CVE_LANG}"
@@ -196,6 +197,8 @@ CVE_2019_14895_SUMMARY_LANG="CVE_2019_14895_SUMMARY_${CVE_LANG}"
 CVE_2019_14895_SUMMARY="${!CVE_2019_14895_SUMMARY_LANG}"
 CVE_2019_14895_TRUST=$((${CVE_ALLOW_CORPORATE_REVIEWED} | ${CVE_ALLOW_MODULE_MAINTAINER} | ${CVE_ALLOW_KERNEL_DOT_ORG_REPO}))
 
+# on hold
+# unknown apparent repuatations
 # not accepted yet
 # https://patchwork.kernel.org/patch/11257187/
 CVE_2019_14896_FIX_SRC_URI=""
@@ -218,6 +221,7 @@ CVE_2019_14897_SUMMARY="${!CVE_2019_14897_SUMMARY_LANG}"
 CVE_2019_14897_TRUST=${CVE_DISALLOW_INCOMPLETE}
 
 # not accepted yet
+# recommend on redhat link and unknown apparent repuatations by fix author and patch recommender
 # https://patchwork.kernel.org/patch/11257535/
 CVE_2019_14901_FIX_SRC_URI=""
 CVE_2019_14901_FN="CVE-2019-14901-fix--linux"
@@ -395,6 +399,7 @@ CVE_2019_18198_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMED
 
 
 # delayed doesn't patch smoothly
+#CVE_2019_18660_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=39e72bf96f5847ba87cc5bd7a3ce0fed813dc9ad"
 CVE_2019_18660_FIX_SRC_URI=""
 CVE_2019_18660_FN="CVE-2019-18660-fix--linux-arch-powerpc-book3s64-Fix-link-stack-flush-on-context-switch.patch"
 CVE_2019_18660_SEVERITY_LANG="CVE_2019_18660_SEVERITY_${CVE_LANG}"
@@ -612,6 +617,7 @@ CVE_2019_19046_PM="https://github.com/torvalds/linux/commit/4aa7afb0ee20a97fbf0c
 CVE_2019_19046_SUMMARY_LANG="CVE_2019_19046_SUMMARY_${CVE_LANG}"
 CVE_2019_19046_SUMMARY="${!CVE_2019_19046_SUMMARY_LANG}"
 CVE_2019_19046_TRUST=$((${CVE_ALLOW_GITHUB_TORVALDS} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+CVE_2019_19046_DISPUTED=1
 
 CVE_2019_19047_FIX_SRC_URI="https://github.com/torvalds/linux/commit/c7ed6d0183d5ea9bc31bcaeeba4070bd62546471.patch"
 CVE_2019_19047_FN="CVE-2019-19047-fix--linux-drivers-net-ethernet-mellanox-mlx5-core-health-fix-memory-leak-in-mlx5_fw_fatal_reporter_dump.patch"
@@ -639,6 +645,7 @@ CVE_2019_19049_PM="https://github.com/torvalds/linux/commit/e13de8fe0d6a51341671
 CVE_2019_19049_SUMMARY_LANG="CVE_2019_19049_SUMMARY_${CVE_LANG}"
 CVE_2019_19049_SUMMARY="${!CVE_2019_19049_SUMMARY_LANG}"
 CVE_2019_19049_TRUST=$((${CVE_ALLOW_GITHUB_TORVALDS} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+CVE_2019_19049_DISPUTED=1
 
 
 CVE_2019_19050_FIX_SRC_URI="https://github.com/torvalds/linux/commit/c03b04dcdba1da39903e23cc4d072abf8f68f2dd.patch"
@@ -782,6 +789,7 @@ CVE_2019_19064_PM="https://github.com/torvalds/linux/commit/057b8945f78f76d0b04e
 CVE_2019_19064_SUMMARY_LANG="CVE_2019_19064_SUMMARY_${CVE_LANG}"
 CVE_2019_19064_SUMMARY="${!CVE_2019_19064_SUMMARY_LANG}"
 CVE_2019_19064_TRUST=$((${CVE_ALLOW_GITHUB_TORVALDS} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+CVE_2019_19064_DISPUTED=1
 
 CVE_2019_19065_FIX_SRC_URI="https://github.com/torvalds/linux/commit/34b3be18a04ecdc610aae4c48e5d1b799d8689f6.patch"
 CVE_2019_19065_FN="CVE-2019-19065-fix--linux-drivers-infiniband-hw-hfi1-sdma-RDMA-hfi1-Prevent-memory-leak-in-sdma_init.patch"
@@ -809,6 +817,7 @@ CVE_2019_19067_PM="https://github.com/torvalds/linux/commit/57be09c6e8747bf48704
 CVE_2019_19067_SUMMARY_LANG="CVE_2019_19067_SUMMARY_${CVE_LANG}"
 CVE_2019_19067_SUMMARY="${!CVE_2019_19067_SUMMARY_LANG}"
 CVE_2019_19067_TRUST=$((${CVE_ALLOW_GITHUB_TORVALDS} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+CVE_2019_19067_DISPUTED=1
 
 CVE_2019_19068_FIX_SRC_URI="https://github.com/torvalds/linux/commit/a2cdd07488e666aa93a49a3fc9c9b1299e27ef3c.patch"
 CVE_2019_19068_FN="CVE-2019-19068-fix--linux-drivers-net-wireless-realtek-rtl8xxxu-rtl8xxxu_core-prevent-leaking-urb.patch"
@@ -837,6 +846,7 @@ CVE_2019_19070_PM="https://github.com/torvalds/linux/commit/d3b0ffa1d75d5305ebe3
 CVE_2019_19070_SUMMARY_LANG="CVE_2019_19070_SUMMARY_${CVE_LANG}"
 CVE_2019_19070_SUMMARY="${!CVE_2019_19070_SUMMARY_LANG}"
 CVE_2019_19070_TRUST=$((${CVE_ALLOW_GITHUB_TORVALDS} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+CVE_2019_19070_DISPUTED=1
 
 CVE_2019_19071_FIX_SRC_URI="https://github.com/torvalds/linux/commit/d563131ef23cbc756026f839a82598c8445bc45f.patch"
 CVE_2019_19071_FN="CVE-2019-19071-fix--linux-drivers-net-wireless-rsi-rsi_91x_mgmt-release-skb-if-rsi_prepare_beacon-fails.patch"
@@ -1015,18 +1025,172 @@ CVE_2019_19378_SUMMARY="${!CVE_2019_19378_SUMMARY_LANG}"
 CVE_2019_19378_TRUST=${CVE_DISALLOW_INCOMPLETE}
 
 # patch is still in review
-CVE_2019_19462_FIX_SRC_URI=""
-CVE_2019_19462_FN="CVE-2019-19462-fix--linux"
+CVE_2019_19462_FIX_SRC_URI="https://lore.kernel.org/lkml/20191129013745.7168-1-dja@axtens.net/raw"
+CVE_2019_19462_FN="CVE-2019-19462-fix--linux-kernel-relay-handle-alloc_percpu-returning-NULL-in-relay_open.patch"
 CVE_2019_19462_SEVERITY_LANG="CVE_2019_19462_SEVERITY_${CVE_LANG}"
 CVE_2019_19462_SEVERITY="${!CVE_2019_19462_SEVERITY_LANG}"
-CVE_2019_19462_PM=""
+CVE_2019_19462_PM="https://lore.kernel.org/lkml/20191129013745.7168-1-dja@axtens.net/"
 CVE_2019_19462_SUMMARY_LANG="CVE_2019_19462_SUMMARY_${CVE_LANG}"
 CVE_2019_19462_SUMMARY="${!CVE_2019_19462_SUMMARY_LANG}"
-CVE_2019_19462_TRUST=${CVE_DISALLOW_INCOMPLETE}
+CVE_2019_19462_TRUST=$((${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH} | ${CVE_ALLOW_OPEN_SOURCE_CONTRIBUTOR}))
 
 #---
 
-#			 ${CVE_2010_4661_FIX_SRC_URI} -> ${CVE_2010_4661_FN}
+CVE_2019_19523_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=44efc269db7929f6275a1fa927ef082e533ecde0"
+CVE_2019_19523_FN="CVE-2019-19523-fix--linux-drivers-usb-misc-adutux-fix-use-after-free-on-disconnect.patch"
+CVE_2019_19523_SEVERITY_LANG="CVE_2019_19523_SEVERITY_${CVE_LANG}"
+CVE_2019_19523_SEVERITY="${!CVE_2019_19523_SEVERITY_LANG}"
+CVE_2019_19523_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=44efc269db7929f6275a1fa927ef082e533ecde0"
+CVE_2019_19523_SUMMARY_LANG="CVE_2019_19523_SUMMARY_${CVE_LANG}"
+CVE_2019_19523_SUMMARY="${!CVE_2019_19523_SUMMARY_LANG}"
+CVE_2019_19523_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
+CVE_2019_19524_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=fa3a5a1880c91bb92594ad42dfe9eedad7996b86"
+CVE_2019_19524_FN="CVE-2019-19524-fix--linux-drivers-input--ff-memless-kill-timer-in-destroy-function.patch"
+CVE_2019_19524_SEVERITY_LANG="CVE_2019_19524_SEVERITY_${CVE_LANG}"
+CVE_2019_19524_SEVERITY="${!CVE_2019_19524_SEVERITY_LANG}"
+CVE_2019_19524_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=fa3a5a1880c91bb92594ad42dfe9eedad7996b86"
+CVE_2019_19524_SUMMARY_LANG="CVE_2019_19524_SUMMARY_${CVE_LANG}"
+CVE_2019_19524_SUMMARY="${!CVE_2019_19524_SUMMARY_LANG}"
+CVE_2019_19524_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
+CVE_2019_19525_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=7fd25e6fc035f4b04b75bca6d7e8daa069603a76"
+CVE_2019_19525_FN="CVE-2019-19525-fix--linux-drivers-net-ieee802154-atusb-fix-use-after-free-at-disconnect.patch"
+CVE_2019_19525_SEVERITY_LANG="CVE_2019_19525_SEVERITY_${CVE_LANG}"
+CVE_2019_19525_SEVERITY="${!CVE_2019_19525_SEVERITY_LANG}"
+CVE_2019_19525_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=7fd25e6fc035f4b04b75bca6d7e8daa069603a76"
+CVE_2019_19525_SUMMARY_LANG="CVE_2019_19525_SUMMARY_${CVE_LANG}"
+CVE_2019_19525_SUMMARY="${!CVE_2019_19525_SUMMARY_LANG}"
+CVE_2019_19525_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
+CVE_2019_19526_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=6af3aa57a0984e061f61308fe181a9a12359fecc"
+CVE_2019_19526_FN="CVE-2019-19526-fix--linux-drivers-nfc-pn533-usb-fix-use-after-free-and-memleaks.patch"
+CVE_2019_19526_SEVERITY_LANG="CVE_2019_19526_SEVERITY_${CVE_LANG}"
+CVE_2019_19526_SEVERITY="${!CVE_2019_19526_SEVERITY_LANG}"
+CVE_2019_19526_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=6af3aa57a0984e061f61308fe181a9a12359fecc"
+CVE_2019_19526_SUMMARY_LANG="CVE_2019_19526_SUMMARY_${CVE_LANG}"
+CVE_2019_19526_SUMMARY="${!CVE_2019_19526_SUMMARY_LANG}"
+CVE_2019_19526_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
+CVE_2019_19527_FIX_SRC_URI_PART1="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=6d4472d7bec39917b54e4e80245784ea5d60ce49"
+CVE_2019_19527_FIX_SRC_URI_PART2="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=9c09b214f30e3c11f9b0b03f89442df03643794d"
+CVE_2019_19527_FN_PART1="CVE-2019-19527-fix--linux-drivers-hid-usbhid-hiddev-do-cleanup-in-failure-of-opening-a-device.patch"
+CVE_2019_19527_FN_PART2="CVE-2019-19527-fix--linux-drivers-hid-usbhid-hiddev-avoid-opening-a-disconnected-device.patch"
+CVE_2019_19527_PARTS=2
+CVE_2019_19527_SEVERITY_LANG="CVE_2019_19527_SEVERITY_${CVE_LANG}"
+CVE_2019_19527_SEVERITY="${!CVE_2019_19527_SEVERITY_LANG}"
+CVE_2019_19527_PM_PART1="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=6d4472d7bec39917b54e4e80245784ea5d60ce49"
+CVE_2019_19527_PM_PART2="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=9c09b214f30e3c11f9b0b03f89442df03643794d"
+CVE_2019_19527_SUMMARY_LANG="CVE_2019_19527_SUMMARY_${CVE_LANG}"
+CVE_2019_19527_SUMMARY="${!CVE_2019_19527_SUMMARY_LANG}"
+CVE_2019_19527_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
+CVE_2019_19528_FIX_SRC_URI_PART1="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=c468a8aa790e0dfe0a7f8a39db282d39c2c00b46"
+CVE_2019_19528_FIX_SRC_URI_PART2="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=edc4746f253d907d048de680a621e121517f484b"
+CVE_2019_19528_FN_PART1="CVE-2019-19528-fix--linux-drivers-usb-misc-iowarrior-fix-deadlock-on-disconnect.patch"
+CVE_2019_19528_FN_PART2="CVE-2019-19528-fix--linux-drivers-usb-misc-iowarrior-fix-use-after-free-on-disconnect.patch"
+CVE_2019_19528_PARTS=2
+CVE_2019_19528_SEVERITY_LANG="CVE_2019_19528_SEVERITY_${CVE_LANG}"
+CVE_2019_19528_SEVERITY="${!CVE_2019_19528_SEVERITY_LANG}"
+CVE_2019_19528_PM_PART1="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c468a8aa790e0dfe0a7f8a39db282d39c2c00b46"
+CVE_2019_19528_PM_PART2="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=edc4746f253d907d048de680a621e121517f484b"
+CVE_2019_19528_SUMMARY_LANG="CVE_2019_19528_SUMMARY_${CVE_LANG}"
+CVE_2019_19528_SUMMARY="${!CVE_2019_19528_SUMMARY_LANG}"
+CVE_2019_19528_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
+CVE_2019_19529_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=4d6636498c41891d0482a914dd570343a838ad79"
+CVE_2019_19529_FN="CVE-2019-19529-fix--linux-drivers-net-can-usb-mcba_usb-fix-use-after-free-on-disconnect.patch"
+CVE_2019_19529_SEVERITY_LANG="CVE_2019_19529_SEVERITY_${CVE_LANG}"
+CVE_2019_19529_SEVERITY="${!CVE_2019_19529_SEVERITY_LANG}"
+CVE_2019_19529_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=4d6636498c41891d0482a914dd570343a838ad79"
+CVE_2019_19529_SUMMARY_LANG="CVE_2019_19529_SUMMARY_${CVE_LANG}"
+CVE_2019_19529_SUMMARY="${!CVE_2019_19529_SUMMARY_LANG}"
+CVE_2019_19529_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
+CVE_2019_19530_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=c52873e5a1ef72f845526d9f6a50704433f9c625"
+CVE_2019_19530_FN="CVE-2019-19530-fix--linux-drivers-usb-class--cdc-acm--make-sure-a-refcount-is-taken-early-enough.patch"
+CVE_2019_19530_SEVERITY_LANG="CVE_2019_19530_SEVERITY_${CVE_LANG}"
+CVE_2019_19530_SEVERITY="${!CVE_2019_19530_SEVERITY_LANG}"
+CVE_2019_19530_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c52873e5a1ef72f845526d9f6a50704433f9c625"
+CVE_2019_19530_SUMMARY_LANG="CVE_2019_19530_SUMMARY_${CVE_LANG}"
+CVE_2019_19530_SUMMARY="${!CVE_2019_19530_SUMMARY_LANG}"
+CVE_2019_19530_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
+CVE_2019_19531_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=fc05481b2fcabaaeccf63e32ac1baab54e5b6963"
+CVE_2019_19531_FN="CVE-2019-19531-fix--linux-drivers-usb-misc-yurex-Fix-use-after-free-in-yurex_delete.patch"
+CVE_2019_19531_SEVERITY_LANG="CVE_2019_19531_SEVERITY_${CVE_LANG}"
+CVE_2019_19531_SEVERITY="${!CVE_2019_19531_SEVERITY_LANG}"
+CVE_2019_19531_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=fc05481b2fcabaaeccf63e32ac1baab54e5b6963"
+CVE_2019_19531_SUMMARY_LANG="CVE_2019_19531_SUMMARY_${CVE_LANG}"
+CVE_2019_19531_SUMMARY="${!CVE_2019_19531_SUMMARY_LANG}"
+CVE_2019_19531_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
+CVE_2019_19532_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=d9d4b1e46d9543a82c23f6df03f4ad697dab361b"
+CVE_2019_19532_FN="CVE-2019-19532-fix--linux-drivers-hid-Fix-assumption-that-devices-have-inputs.patch"
+CVE_2019_19532_SEVERITY_LANG="CVE_2019_19532_SEVERITY_${CVE_LANG}"
+CVE_2019_19532_SEVERITY="${!CVE_2019_19532_SEVERITY_LANG}"
+CVE_2019_19532_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=d9d4b1e46d9543a82c23f6df03f4ad697dab361b"
+CVE_2019_19532_SUMMARY_LANG="CVE_2019_19532_SUMMARY_${CVE_LANG}"
+CVE_2019_19532_SUMMARY="${!CVE_2019_19532_SUMMARY_LANG}"
+CVE_2019_19532_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
+CVE_2019_19533_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=a10feaf8c464c3f9cfdd3a8a7ce17e1c0d498da1"
+CVE_2019_19533_FN="CVE-2019-19533-fix--linux-drivers-media-usb--ttusb-dec--ttusb_dec-Fix-info-leak-in-ttusb_dec_send_command-function.patch"
+CVE_2019_19533_SEVERITY_LANG="CVE_2019_19533_SEVERITY_${CVE_LANG}"
+CVE_2019_19533_SEVERITY="${!CVE_2019_19533_SEVERITY_LANG}"
+CVE_2019_19533_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=a10feaf8c464c3f9cfdd3a8a7ce17e1c0d498da1"
+CVE_2019_19533_SUMMARY_LANG="CVE_2019_19533_SUMMARY_${CVE_LANG}"
+CVE_2019_19533_SUMMARY="${!CVE_2019_19533_SUMMARY_LANG}"
+CVE_2019_19533_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
+CVE_2019_19534_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=f7a1337f0d29b98733c8824e165fca3371d7d4fd"
+CVE_2019_19534_FN="CVE-2019-19534-fix--linux-drivers-net-can-usb-peak_usb-pcan_usb_core-fix-slab-info-leak.patch"
+CVE_2019_19534_SEVERITY_LANG="CVE_2019_19534_SEVERITY_${CVE_LANG}"
+CVE_2019_19534_SEVERITY="${!CVE_2019_19534_SEVERITY_LANG}"
+CVE_2019_19534_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f7a1337f0d29b98733c8824e165fca3371d7d4fd"
+CVE_2019_19534_SUMMARY_LANG="CVE_2019_19534_SUMMARY_${CVE_LANG}"
+CVE_2019_19534_SUMMARY="${!CVE_2019_19534_SUMMARY_LANG}"
+CVE_2019_19534_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
+CVE_2019_19535_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=30a8beeb3042f49d0537b7050fd21b490166a3d9"
+CVE_2019_19535_FN="CVE-2019-19535-fix--linux-drivers-net-can-usb-peak_usb-pcan_usb_fd-Fix-info-leaks-to-USB-devices.patch"
+CVE_2019_19535_SEVERITY_LANG="CVE_2019_19535_SEVERITY_${CVE_LANG}"
+CVE_2019_19535_SEVERITY="${!CVE_2019_19535_SEVERITY_LANG}"
+CVE_2019_19535_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=30a8beeb3042f49d0537b7050fd21b490166a3d9"
+CVE_2019_19535_SUMMARY_LANG="CVE_2019_19535_SUMMARY_${CVE_LANG}"
+CVE_2019_19535_SUMMARY="${!CVE_2019_19535_SUMMARY_LANG}"
+CVE_2019_19535_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
+CVE_2019_19536_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=ead16e53c2f0ed946d82d4037c630e2f60f4ab69"
+CVE_2019_19536_FN="CVE-2019-19536-fix--linux-drivers-net-can-usb-peak_usb-pcan_usb_pro-Fix-info-leaks-to-USB-devices.patch"
+CVE_2019_19536_SEVERITY_LANG="CVE_2019_19536_SEVERITY_${CVE_LANG}"
+CVE_2019_19536_SEVERITY="${!CVE_2019_19536_SEVERITY_LANG}"
+CVE_2019_19536_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ead16e53c2f0ed946d82d4037c630e2f60f4ab69"
+CVE_2019_19536_SUMMARY_LANG="CVE_2019_19536_SUMMARY_${CVE_LANG}"
+CVE_2019_19536_SUMMARY="${!CVE_2019_19536_SUMMARY_LANG}"
+CVE_2019_19536_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
+CVE_2019_19537_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=303911cfc5b95d33687d9046133ff184cf5043ff"
+CVE_2019_19537_FN="CVE-2019-19537-fix--linux-drivers-usb-core-file-Fix-races-in-character-device-registration-and-deregistraion.patch"
+CVE_2019_19537_SEVERITY_LANG="CVE_2019_19537_SEVERITY_${CVE_LANG}"
+CVE_2019_19537_SEVERITY="${!CVE_2019_19537_SEVERITY_LANG}"
+CVE_2019_19537_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=303911cfc5b95d33687d9046133ff184cf5043ff"
+CVE_2019_19537_SUMMARY_LANG="CVE_2019_19537_SUMMARY_${CVE_LANG}"
+CVE_2019_19537_SUMMARY="${!CVE_2019_19537_SUMMARY_LANG}"
+CVE_2019_19537_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
+CVE_2019_19543_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=56cd26b618855c9af48c8301aa6754ced8dd0beb"
+CVE_2019_19543_FN="CVE-2019-19543-fix--linux-drivers-media-rc-serial_ir-Fix-use-after-free-in-serial_ir_init_module.patch"
+CVE_2019_19543_SEVERITY_LANG="CVE_2019_19543_SEVERITY_${CVE_LANG}"
+CVE_2019_19543_SEVERITY="${!CVE_2019_19543_SEVERITY_LANG}"
+CVE_2019_19543_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=56cd26b618855c9af48c8301aa6754ced8dd0beb"
+CVE_2019_19543_SUMMARY_LANG="CVE_2019_19543_SUMMARY_${CVE_LANG}"
+CVE_2019_19543_SUMMARY="${!CVE_2019_19543_SUMMARY_LANG}"
+CVE_2019_19543_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
+
+#---
+
 #			 ${CVE_2019_10207_FIX_SRC_URI} -> ${CVE_2019_10207_FN}
 #			 ${CVE_2019_10220_FIX_SRC_URI} -> ${CVE_2019_10220_FN}
 #			 ${CVE_2019_14896_FIX_SRC_URI} -> ${CVE_2019_14896_FN}
@@ -1146,6 +1310,29 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
 
 			 ${CVE_2019_19227_FIX_SRC_URI} -> ${CVE_2019_19227_FN}
 
+			 ${CVE_2019_19462_FIX_SRC_URI} -> ${CVE_2019_19462_FN}
+
+			 ${CVE_2019_19523_FIX_SRC_URI} -> ${CVE_2019_19523_FN}
+			 ${CVE_2019_19524_FIX_SRC_URI} -> ${CVE_2019_19524_FN}
+			 ${CVE_2019_19525_FIX_SRC_URI} -> ${CVE_2019_19525_FN}
+			 ${CVE_2019_19526_FIX_SRC_URI} -> ${CVE_2019_19526_FN}
+			 ${CVE_2019_19527_FIX_SRC_URI_PART1} -> ${CVE_2019_19527_FN_PART1}
+			 ${CVE_2019_19527_FIX_SRC_URI_PART2} -> ${CVE_2019_19527_FN_PART2}
+			 ${CVE_2019_19528_FIX_SRC_URI_PART1} -> ${CVE_2019_19528_FN_PART1}
+			 ${CVE_2019_19528_FIX_SRC_URI_PART2} -> ${CVE_2019_19528_FN_PART2}
+			 ${CVE_2019_19529_FIX_SRC_URI} -> ${CVE_2019_19529_FN}
+
+			 ${CVE_2019_19530_FIX_SRC_URI} -> ${CVE_2019_19530_FN}
+			 ${CVE_2019_19531_FIX_SRC_URI} -> ${CVE_2019_19531_FN}
+			 ${CVE_2019_19532_FIX_SRC_URI} -> ${CVE_2019_19532_FN}
+			 ${CVE_2019_19533_FIX_SRC_URI} -> ${CVE_2019_19533_FN}
+			 ${CVE_2019_19534_FIX_SRC_URI} -> ${CVE_2019_19534_FN}
+			 ${CVE_2019_19535_FIX_SRC_URI} -> ${CVE_2019_19535_FN}
+			 ${CVE_2019_19536_FIX_SRC_URI} -> ${CVE_2019_19536_FN}
+			 ${CVE_2019_19537_FIX_SRC_URI} -> ${CVE_2019_19537_FN}
+
+			 ${CVE_2019_19543_FIX_SRC_URI} -> ${CVE_2019_19543_FN}
+
 )"
 
 #			 ${CVE_2019_18660_FIX_SRC_URI} -> ${CVE_2019_18660_FN}
@@ -1157,7 +1344,7 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
 #			 ${CVE_2019_19319_FIX_SRC_URI} -> ${CVE_2019_19319_FN}
 #			 ${CVE_2019_19377_FIX_SRC_URI} -> ${CVE_2019_19377_FN}
 #			 ${CVE_2019_19378_FIX_SRC_URI} -> ${CVE_2019_19378_FN}
-#			 ${CVE_2019_19462_FIX_SRC_URI} -> ${CVE_2019_19462_FN}
+
 
 
 # @FUNCTION: approve_cve_fix
@@ -1187,7 +1374,7 @@ function approve_cve_filesdir() {
 	return 1
 }
 
-# @FUNCTION: approve_cve_filesdir
+# @FUNCTION: approve_cve_addendum
 # @DESCRIPTION:
 # Checks if CVE_ALLOW_EBUILD_MAINTAINER_ADDENDUM_CLASS_A are accepted by admin
 # @RETURNS: 0-approved, 1-not approved
@@ -1199,6 +1386,23 @@ function approve_cve_addendum() {
 		return 0
 	fi
 	return 1
+}
+
+# @FUNCTION: approve_cve_accept_disputed
+# @DESCRIPTION:
+# Checks if CVE_FIX_REJECT_DISPUTED is set to 1 and rejects fixes
+# @RETURNS: 0-approved so fix it, 1-unapproved so reject
+function approve_cve_accept_disputed() {
+	local cve_disputed="${CVE_ID_}DISPUTED"
+	if [[ -z "${!cve_disputed}" ]] ; then
+		return 0
+	elif [[ -n "${!cve_disputed}" \
+		&& "${!cve_disputed}" == "1" \
+		&& "${CVE_FIX_REJECT_DISPUTED}" == "0" ]] ; then
+		return 0
+	else
+		return 1
+	fi
 }
 
 # @FUNCTION: black_cve_fix
@@ -1233,18 +1437,39 @@ function _fetch_cve_boilerplate_msg() {
 	local NIST_NVD_CVE_M="https://nvd.nist.gov/vuln/detail/${CVE_ID}"
 	local MITRE_M="https://cve.mitre.org/cgi-bin/cvename.cgi?name=${CVE_ID}"
 	local summary="${CVE_ID_}SUMMARY"
-	local pm="${CVE_ID_}PM"
-	PS="${!PS}"
-	ewarn
-	ewarn \
+	local parts="${CVE_ID_}PARTS"
+	if [[ -z "${!parts}" ]] ; then
+		local pm="${CVE_ID_}PM"
+		ewarn
+		ewarn \
 "${CVE_ID}\n\
 Severity: ${!cve_severity}\n\
 Synopsis: ${!summary}\n\
 NIST NVD URI: ${NIST_NVD_CVE_M}\n\
 MITRE URI: ${MITRE_M}\n\
-Patch download: ${PS}\n\
+Patch download: ${!PS}\n\
 Patch message: ${!pm}"
-	ewarn
+		ewarn
+	else
+		local downloads=""
+		local messages=""
+		for i in $(seq 1 ${!parts}) ; do
+			local download="${CVE_ID_}FIX_SRC_URI_PART${i}"
+			local message="${CVE_ID_}PM_PART${i}"
+			downloads+="${!download} "
+			messages+="${!message} "
+		done
+		ewarn
+		ewarn \
+"${CVE_ID}\n\
+Severity: ${!cve_severity}\n\
+Synopsis: ${!summary}\n\
+NIST NVD URI: ${NIST_NVD_CVE_M}\n\
+MITRE URI: ${MITRE_M}\n\
+Patch downloads: ${downloads}\n\
+Patch messages: ${messages}"
+		ewarn
+	fi
 }
 
 # @FUNCTION: _fetch_cve_boilerplate_msg_footer
@@ -1255,11 +1480,14 @@ function _fetch_cve_boilerplate_msg_footer() {
 	local cve_fn="${CVE_ID_}FN"
 	local pm="${CVE_ID_}PM"
 	local cve_dupe="${CVE_ID_}DUPE_FIX_CVE"
+	local mpm1="${CVE_ID_}PM_PART1"
 
 	if [[ -n "${!cve_dupe}" ]] ; then
 		einfo \
 "Dupe fix found in ${!cve_dupe}.  Skipping..."
-	elif [[ -z "${!cve_fn}" || -z "${!pm}" ]] ; then
+	elif [[ -z "${!cve_fn}" ]] \
+		|| [[ -z "${!parts}" && -z "${!pm}" ]] \
+		|| [[ -n "${!parts}" && -z "${!mpm1}" ]] ; then
 		eerror \
 "No de-facto patch exists for ${CVE_ID} or the patch is undergoing code review.  No patch\n\
 will be applied.  This fix is still being worked on."
@@ -3299,11 +3527,366 @@ function fetch_cve_2019_19378_hotfix() {
 # @DESCRIPTION:
 # Checks for the CVE_2019_19462 patch
 function fetch_cve_2019_19462_hotfix() {
-	#fixme
 	local CVE_ID="CVE-2019-19462"
 	if grep -F -e \
-		"" \
-		"${S}/" \
+		"chan->buf = alloc_percpu_gfp(struct rchan_buf *," \
+		"${S}/kernel/relay.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+#---
+
+# @FUNCTION: fetch_cve_2019_19523_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19523 patch
+function fetch_cve_2019_19523_hotfix() {
+	local CVE_ID="CVE-2019-19523"
+	if ver_test ${PV} -ge 5.3.7 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	if pcregrep -M "mutex_unlock\(\&dev->mtx\)\;\n\n\t\/\* if the device is not opened, then we clean up right now \*\/" \
+		"${S}/drivers/usb/misc/adutux.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_19524_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19524 patch
+function fetch_cve_2019_19524_hotfix() {
+	local CVE_ID="CVE-2019-19524"
+	if ver_test ${PV} -ge 5.3.12 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	if grep -F -e \
+		"del_timer_sync(&ml->timer);" \
+		"${S}/drivers/input/ff-memless.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_19525_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19525 patch
+function fetch_cve_2019_19525_hotfix() {
+	local CVE_ID="CVE-2019-19525"
+	if ver_test ${PV} -ge 5.3.6 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	if pcregrep -M "ieee802154_unregister_hw\(atusb->hw\)\;\n\n\tusb_put_dev\(atusb->usb_dev\)\;" \
+		"${S}/drivers/net/ieee802154/atusb.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_19526_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19526 patch
+function fetch_cve_2019_19526_hotfix() {
+	local CVE_ID="CVE-2019-19526"
+	if ver_test ${PV} -ge 5.3.9 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	if grep -F -e \
+		"goto err_deregister;" \
+		"${S}/drivers/nfc/pn533/usb.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_19527_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19527 patch
+function fetch_cve_2019_19527_hotfix() {
+	local CVE_ID="CVE-2019-19527"
+	if ver_test ${PV} -ge 5.2.10 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	if pcregrep -M "spin_unlock_irq\(\&list->hiddev->list_lock\);\nbail:" \
+		"${S}/drivers/hid/usbhid/hiddev.c" \
+		>/dev/null \
+	&& grep -F -e \
+		"* recheck exist with existance lock held to" \
+		"${S}/drivers/hid/usbhid/hiddev.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_19528_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19528 patch
+function fetch_cve_2019_19528_hotfix() {
+	local CVE_ID="CVE-2019-19528"
+	if ver_test ${PV} -ge 5.3.7 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	if grep -F -e \
+		"/* prevent device read, write and ioctl */" \
+		"${S}/drivers/usb/misc/iowarrior.c" \
+		>/dev/null \
+	&& pcregrep -M "\/\* no process is using the device, cleanup now \*\/\n\t\tmutex_unlock\(\&dev->mutex\)\;" \
+		"${S}/drivers/usb/misc/iowarrior.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_19529_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19529 patch
+function fetch_cve_2019_19529_hotfix() {
+	local CVE_ID="CVE-2019-19529"
+	if ver_test ${PV} -ge 5.3.11 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	if pcregrep -M "mcba_urb_unlink\(priv\);\n\tfree_candev\(priv->netdev\);" \
+		"${S}/drivers/net/can/usb/mcba_usb.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_19530_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19530 patch
+function fetch_cve_2019_19530_hotfix() {
+	local CVE_ID="CVE-2019-19530"
+	if ver_test ${PV} -ge 5.2.10 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	if grep -F -e \
+		"usb_get_intf(acm->control); /* undone in destruct() */" \
+		"${S}/drivers/usb/class/cdc-acm.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_19531_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19531 patch
+function fetch_cve_2019_19531_hotfix() {
+	local CVE_ID="CVE-2019-19531"
+	if ver_test ${PV} -ge 5.2.9 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	if pcregrep -M "usb_put_dev\(dev->udev\);\n\tkfree\(dev\);" \
+		"${S}/drivers/usb/misc/yurex.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_19532_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19532 patch
+function fetch_cve_2019_19532_hotfix() {
+	local CVE_ID="CVE-2019-19532"
+	if ver_test ${PV} -ge 5.3.9 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	if grep -F -e \
+		"dev = hidinput->input;" \
+		"${S}/drivers/hid/hid-axff.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_19533_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19533 patch
+function fetch_cve_2019_19533_hotfix() {
+	local CVE_ID="CVE-2019-19533"
+	if ver_test ${PV} -ge 5.3.4 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	if grep -F -e \
+		"b = kzalloc(COMMAND_PACKET_SIZE + 4, GFP_KERNEL);" \
+		"${S}/drivers/media/usb/ttusb-dec/ttusb_dec.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_19534_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19534 patch
+function fetch_cve_2019_19534_hotfix() {
+	local CVE_ID="CVE-2019-19534"
+	if ver_test ${PV} -ge 5.3.11 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	if grep -F -e \
+		"dev->cmd_buf = kzalloc(PCAN_USB_MAX_CMD_LEN, GFP_KERNEL);" \
+		"${S}/drivers/net/can/usb/peak_usb/pcan_usb_core.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_19535_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19535 patch
+function fetch_cve_2019_19535_hotfix() {
+	local CVE_ID="CVE-2019-19535"
+	if ver_test ${PV} -ge 5.2.9 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	if grep -F -e \
+		"pdev->cmd_buffer_addr = kzalloc(PCAN_UFD_CMD_BUFFER_SIZE," \
+		"${S}/drivers/net/can/usb/peak_usb/pcan_usb_fd.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_19536_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19536 patch
+function fetch_cve_2019_19536_hotfix() {
+	local CVE_ID="CVE-2019-19536"
+	if ver_test ${PV} -ge 5.2.9 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	if grep -F -e \
+		"buffer = kzalloc(PCAN_USBPRO_FCT_DRVLD_REQ_LEN, GFP_KERNEL);" \
+		"${S}/drivers/net/can/usb/peak_usb/pcan_usb_pro.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_19537_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19537 patch
+function fetch_cve_2019_19537_hotfix() {
+	local CVE_ID="CVE-2019-19537"
+	if ver_test ${PV} -ge 5.2.10 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	if grep -F -e \
+		"device_destroy(usb_class->class, MKDEV(USB_MAJOR, intf->minor));" \
+		"${S}/drivers/usb/core/file.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_19543_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19543 patch
+function fetch_cve_2019_19543_hotfix() {
+	local CVE_ID="CVE-2019-19543"
+	if ver_test ${PV} -ge 5.1.6 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	if grep -F -e \
+		"return serial_ir_init();" \
+		"${S}/drivers/media/rc/serial_ir.c" \
 		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
@@ -3324,14 +3907,16 @@ function fetch_cve_2019_19462_hotfix() {
 # @CODE
 function _resolve_hotfix_default() {
 	local cve_dupe="${CVE_ID_}DUPE_FIX_CVE"
+	local parts="${CVE_ID_}PARTS"
 	local fn
 	if [[ -z "${1}" ]] ; then
 		fn="${DISTDIR}/${!cve_fn}"
 	else
 		fn="${1}"
 	fi
-	if ! approve_cve_fix || \
-		blacklist_cve_fix ; then
+	if ! approve_cve_fix \
+		|| blacklist_cve_fix \
+		|| ! approve_cve_accept_disputed ; then
 		einfo \
 "${CVE_ID} fix rejected by user.  A fix will not be applied.\n\
 This is a ${!cve_severity} risk vulnerability."
@@ -3344,8 +3929,18 @@ This is a ${!cve_severity} risk vulnerability."
 		elif [ -e "${fn}" ] ; then
 			einfo \
 "Resolving ${CVE_ID}.  ${!cve_fn} may break in different kernel versions."
-			_dpatch "${PATCH_OPS}" "${fn}"
-			return $?
+			if [[ -z "${!parts}" ]] ; then
+				_dpatch "${PATCH_OPS}" "${fn}"
+				return $?
+			else
+				local ret=0
+				for i in $(seq 1 ${!parts}) ; do
+					fn="${CVE_ID_}FN_PART${i}"
+					_dpatch "${PATCH_OPS}" "${!fn}"
+					ret=$((ret | $?))
+				done
+				return ${ret}
+			fi
 		else
 			ewarn \
 "No ${CVE_ID} fixes applied.  This is a ${!cve_severity} risk vulnerability."
@@ -3362,7 +3957,8 @@ This is a ${!cve_severity} risk vulnerability."
 # Applies the fix or warns if not applied
 function _resolve_hotfix_default_filesdir() {
 	if ! approve_cve_filesdir \
-		|| blacklist_cve_fix ; then
+		|| blacklist_cve_fix \
+		|| ! approve_cve_accept_disputed ; then
 		einfo \
 "${CVE_ID} fix rejected by user.  A fix will not be applied.\n\
 This is a ${!cve_severity} risk vulnerability."
@@ -5755,15 +6351,402 @@ function apply_cve_2019_19378_hotfix() {
 # @DESCRIPTION:
 # Applies the CVE_2019_19462 patch if it needs to
 function apply_cve_2019_19462_hotfix() {
-	#fixme
-	return 0
 	local CVE_ID="CVE-2019-19462"
 	local CVE_ID_="${CVE_ID//-/_}_"
 	local cve_severity="${CVE_ID_}SEVERITY"
 	local cve_fn="${CVE_ID_}FN"
 	if grep -F -e \
-		"" \
-		"${S}/" \
+		"chan->buf = alloc_percpu_gfp(struct rchan_buf *," \
+		"${S}/kernel/relay.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	_resolve_hotfix_default
+	return $?
+}
+
+#---
+
+# @FUNCTION: apply_cve_2019_19523_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19523 patch if it needs to
+function apply_cve_2019_19523_hotfix() {
+	local CVE_ID="CVE-2019-19523"
+	if ver_test ${PV} -ge 5.3.7 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if pcregrep -M "mutex_unlock\(\&dev->mtx\)\;\n\n\t\/\* if the device is not opened, then we clean up right now \*\/" \
+		"${S}/drivers/usb/misc/adutux.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	_resolve_hotfix_default
+	return $?
+}
+
+# @FUNCTION: apply_cve_2019_19524_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19524 patch if it needs to
+function apply_cve_2019_19524_hotfix() {
+	local CVE_ID="CVE-2019-19524"
+	if ver_test ${PV} -ge 5.3.12 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"del_timer_sync(&ml->timer);" \
+		"${S}/drivers/input/ff-memless.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	_resolve_hotfix_default
+	return $?
+}
+
+# @FUNCTION: apply_cve_2019_19525_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19525 patch if it needs to
+function apply_cve_2019_19525_hotfix() {
+	local CVE_ID="CVE-2019-19525"
+	if ver_test ${PV} -ge 5.3.6 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if pcregrep -M "ieee802154_unregister_hw\(atusb->hw\)\;\n\n\tusb_put_dev\(atusb->usb_dev\)\;" \
+		"${S}/drivers/net/ieee802154/atusb.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	_resolve_hotfix_default
+	return $?
+}
+
+# @FUNCTION: apply_cve_2019_19526_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19526 patch if it needs to
+function apply_cve_2019_19526_hotfix() {
+	local CVE_ID="CVE-2019-19526"
+	if ver_test ${PV} -ge 5.3.9 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"goto err_deregister;" \
+		"${S}/drivers/nfc/pn533/usb.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	_resolve_hotfix_default
+	return $?
+}
+
+# @FUNCTION: apply_cve_2019_19527_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19527 patch if it needs to
+function apply_cve_2019_19527_hotfix() {
+	local CVE_ID="CVE-2019-19527"
+	if ver_test ${PV} -ge 5.2.10 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if pcregrep -M "spin_unlock_irq\(\&list->hiddev->list_lock\);\nbail:" \
+		"${S}/drivers/hid/usbhid/hiddev.c" \
+		>/dev/null \
+	&& grep -F -e \
+		"* recheck exist with existance lock held to" \
+		"${S}/drivers/hid/usbhid/hiddev.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	_resolve_hotfix_default
+	return $?
+}
+
+# @FUNCTION: apply_cve_2019_19528_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19528 patch if it needs to
+function apply_cve_2019_19528_hotfix() {
+	local CVE_ID="CVE-2019-19528"
+	if ver_test ${PV} -ge 5.3.7 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"/* prevent device read, write and ioctl */" \
+		"${S}/drivers/usb/misc/iowarrior.c" \
+		>/dev/null \
+	&& pcregrep -M "\/\* no process is using the device, cleanup now \*\/\n\t\tmutex_unlock\(\&dev->mutex\)\;" \
+		"${S}/drivers/usb/misc/iowarrior.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	_resolve_hotfix_default
+	return $?
+}
+
+# @FUNCTION: apply_cve_2019_19529_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19529 patch if it needs to
+function apply_cve_2019_19529_hotfix() {
+	local CVE_ID="CVE-2019-19529"
+	if ver_test ${PV} -ge 5.3.11 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if pcregrep -M "mcba_urb_unlink\(priv\);\n\tfree_candev\(priv->netdev\);" \
+		"${S}/drivers/net/can/usb/mcba_usb.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	_resolve_hotfix_default
+	return $?
+}
+
+
+# @FUNCTION: apply_cve_2019_19530_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19530 patch if it needs to
+function apply_cve_2019_19530_hotfix() {
+	local CVE_ID="CVE-2019-19530"
+	if ver_test ${PV} -ge 5.2.10 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"usb_get_intf(acm->control); /* undone in destruct() */" \
+		"${S}/drivers/usb/class/cdc-acm.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	_resolve_hotfix_default
+	return $?
+}
+
+# @FUNCTION: apply_cve_2019_19531_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19531 patch if it needs to
+function apply_cve_2019_19531_hotfix() {
+	local CVE_ID="CVE-2019-19531"
+	if ver_test ${PV} -ge 5.2.9 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if pcregrep -M "usb_put_dev\(dev->udev\);\n\tkfree\(dev\);" \
+		"${S}/drivers/usb/misc/yurex.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	_resolve_hotfix_default
+	return $?
+}
+
+# @FUNCTION: apply_cve_2019_19532_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19532 patch if it needs to
+function apply_cve_2019_19532_hotfix() {
+	local CVE_ID="CVE-2019-19532"
+	if ver_test ${PV} -ge 5.3.9 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"dev = hidinput->input;" \
+		"${S}/drivers/hid/hid-axff.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	_resolve_hotfix_default
+	return $?
+}
+
+# @FUNCTION: apply_cve_2019_19533_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19533 patch if it needs to
+function apply_cve_2019_19533_hotfix() {
+	local CVE_ID="CVE-2019-19533"
+	if ver_test ${PV} -ge 5.3.4 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"b = kzalloc(COMMAND_PACKET_SIZE + 4, GFP_KERNEL);" \
+		"${S}/drivers/media/usb/ttusb-dec/ttusb_dec.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	_resolve_hotfix_default
+	return $?
+}
+
+# @FUNCTION: apply_cve_2019_19534_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19534 patch if it needs to
+function apply_cve_2019_19534_hotfix() {
+	local CVE_ID="CVE-2019-19534"
+	if ver_test ${PV} -ge 5.3.11 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"dev->cmd_buf = kzalloc(PCAN_USB_MAX_CMD_LEN, GFP_KERNEL);" \
+		"${S}/drivers/net/can/usb/peak_usb/pcan_usb_core.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	_resolve_hotfix_default
+	return $?
+}
+
+# @FUNCTION: apply_cve_2019_19535_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19535 patch if it needs to
+function apply_cve_2019_19535_hotfix() {
+	local CVE_ID="CVE-2019-19535"
+	if ver_test ${PV} -ge 5.2.9 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"pdev->cmd_buffer_addr = kzalloc(PCAN_UFD_CMD_BUFFER_SIZE," \
+		"${S}/drivers/net/can/usb/peak_usb/pcan_usb_fd.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	_resolve_hotfix_default
+	return $?
+}
+
+# @FUNCTION: apply_cve_2019_19536_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19536 patch if it needs to
+function apply_cve_2019_19536_hotfix() {
+	local CVE_ID="CVE-2019-19536"
+	if ver_test ${PV} -ge 5.2.9 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"buffer = kzalloc(PCAN_USBPRO_FCT_DRVLD_REQ_LEN, GFP_KERNEL);" \
+		"${S}/drivers/net/can/usb/peak_usb/pcan_usb_pro.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	_resolve_hotfix_default
+	return $?
+}
+
+# @FUNCTION: apply_cve_2019_19537_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19537 patch if it needs to
+function apply_cve_2019_19537_hotfix() {
+	local CVE_ID="CVE-2019-19537"
+	if ver_test ${PV} -ge 5.2.10 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"device_destroy(usb_class->class, MKDEV(USB_MAJOR, intf->minor));" \
+		"${S}/drivers/usb/core/file.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	_resolve_hotfix_default
+	return $?
+}
+
+# @FUNCTION: apply_cve_2019_19543_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19543 patch if it needs to
+function apply_cve_2019_19543_hotfix() {
+	local CVE_ID="CVE-2019-19543"
+	if ver_test ${PV} -ge 5.1.6 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		"return serial_ir_init();" \
+		"${S}/drivers/media/rc/serial_ir.c" \
 		>/dev/null
 	then
 		einfo "${CVE_ID} is already patched."
@@ -5801,7 +6784,11 @@ function fetch_cve_hotfixes() {
 
 		fetch_cve_2019_14821_hotfix
 
+		fetch_cve_2019_14895_hotfix
 		fetch_cve_2019_14896_hotfix
+		fetch_cve_2019_14897_hotfix
+
+		fetch_cve_2019_14901_hotfix
 
 		fetch_cve_2019_16089_hotfix
 
@@ -5909,14 +6896,29 @@ function fetch_cve_hotfixes() {
 		fetch_cve_2019_19318_hotfix
 		fetch_cve_2019_19319_hotfix
 
+		fetch_cve_2019_19377_hotfix
+		fetch_cve_2019_19378_hotfix
 
 		fetch_cve_2019_19462_hotfix
-		fetch_cve_2019_19378_hotfix
-		fetch_cve_2019_19377_hotfix
-		fetch_cve_2019_14901_hotfix
-		fetch_cve_2019_14897_hotfix
-		fetch_cve_2019_14895_hotfix
 
+		fetch_cve_2019_19523_hotfix
+		fetch_cve_2019_19524_hotfix
+		fetch_cve_2019_19525_hotfix
+		fetch_cve_2019_19526_hotfix
+		fetch_cve_2019_19527_hotfix
+		fetch_cve_2019_19528_hotfix
+		fetch_cve_2019_19529_hotfix
+
+		fetch_cve_2019_19530_hotfix
+		fetch_cve_2019_19531_hotfix
+		fetch_cve_2019_19532_hotfix
+		fetch_cve_2019_19533_hotfix
+		fetch_cve_2019_19534_hotfix
+		fetch_cve_2019_19535_hotfix
+		fetch_cve_2019_19536_hotfix
+		fetch_cve_2019_19537_hotfix
+
+		fetch_cve_2019_19543_hotfix
 
 		local cve_copyright1="CVE_COPYRIGHT1_${CVE_LANG}"
 		local cve_copyright2="CVE_COPYRIGHT2_${CVE_LANG}"
@@ -5958,7 +6960,11 @@ function apply_cve_hotfixes() {
 
 		apply_cve_2019_14821_hotfix || exit $?
 
+		apply_cve_2019_14895_hotfix || exit $?
 		apply_cve_2019_14896_hotfix || exit $?
+		apply_cve_2019_14897_hotfix || exit $?
+
+		apply_cve_2019_14901_hotfix || exit $?
 
 		apply_cve_2019_16089_hotfix || exit $?
 
@@ -6064,12 +7070,28 @@ function apply_cve_hotfixes() {
 		apply_cve_2019_19318_hotfix || exit $?
 		apply_cve_2019_19319_hotfix || exit $?
 
+		apply_cve_2019_19377_hotfix || exit $?
+		apply_cve_2019_19378_hotfix || exit $?
 
 		apply_cve_2019_19462_hotfix || exit $?
-		apply_cve_2019_19378_hotfix || exit $?
-		apply_cve_2019_19377_hotfix || exit $?
-		apply_cve_2019_14901_hotfix || exit $?
-		apply_cve_2019_14897_hotfix || exit $?
-		apply_cve_2019_14895_hotfix || exit $?
+
+		apply_cve_2019_19523_hotfix || exit $?
+		apply_cve_2019_19524_hotfix || exit $?
+		apply_cve_2019_19525_hotfix || exit $?
+		apply_cve_2019_19526_hotfix || exit $?
+		apply_cve_2019_19527_hotfix || exit $?
+		apply_cve_2019_19528_hotfix || exit $?
+		apply_cve_2019_19529_hotfix || exit $?
+
+		apply_cve_2019_19530_hotfix || exit $?
+		apply_cve_2019_19531_hotfix || exit $?
+		apply_cve_2019_19532_hotfix || exit $?
+		apply_cve_2019_19533_hotfix || exit $?
+		apply_cve_2019_19534_hotfix || exit $?
+		apply_cve_2019_19535_hotfix || exit $?
+		apply_cve_2019_19536_hotfix || exit $?
+		apply_cve_2019_19537_hotfix || exit $?
+
+		apply_cve_2019_19543_hotfix || exit $?
 	fi
 }

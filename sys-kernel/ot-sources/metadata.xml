@@ -120,26 +120,29 @@
     <flag name="cve_hotfix">Applies patches to resolve CVEs (Common 
       Vulnerabilities and Exposures).
 
-      This use flag currently doesn't check ALL the CVEs but up to Sept 18, 2019.
-      More distant past CVE may be added based on severity and if time available.
+      This use flag currently doesn't check ALL the CVEs but up to
+      Sept 18, 2019.  More distant past CVEs may be added based on severity and
+      if time available.
 
       Several global env vars can be used to control this flag that
       you set in your make.conf or per-package env:
       CVE_FIX_TRUST_LEVEL - a "inclusive or" bit mask that controls classes of 
                             cve hotfixes to accept.  See ot-kernel-cve.eclass
                             for acceptable values.  You will need to use the
-                            hex value equivalent since these identifier constants
-                            are not initialized in the make.conf/per-package env.
+                            hex value equivalent since these identifier
+                            constants are not initialized in the
+                            make.conf/per-package env.
       CVE_BLACKLIST_FIXES - is a string of CVE ids to reject fixes indended if
                             runtime or compile time failure occurs.
       CVE_DELAY - is set to 1 to enable or 0 to disable the 30 second delay per
                   entry in the report.
+      CVE_FIX_REJECT_DISPUTED - is set to 0 to not reject (default), 1 to reject
+                                to applying cve fix marked as disputed.
 
       Examples:
       CVE_FIX_TRUST_LEVEL=$((0x00010000 | 0x00040000))
       CVE_BLACKLIST_FIXES="CVE-2019-14814 CVE-2019-14895"
       CVE_DELAY=0
-      
       </flag>
     <flag name="cfs">Assumes the IO scheduler will be the stock CFS CPU
       scheduler.</flag>
