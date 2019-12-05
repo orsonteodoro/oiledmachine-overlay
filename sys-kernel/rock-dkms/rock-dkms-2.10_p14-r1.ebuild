@@ -86,6 +86,7 @@ PATCHES=( "${FILESDIR}/rock-dkms-2.8_p13-makefile-recognize-gentoo.patch"
 	  "${FILESDIR}/rock-dkms-2.8_p13-use-drm_need_swiotlb-for-5_2-part-3.patch"
 	  "${FILESDIR}/rock-dkms-2.8_p13-use-drm_need_swiotlb-for-5_2-part-4.patch"
 
+	  "${FILESDIR}/CVE-2019-16229-fix---Multiple-NULL-deref-on-alloc_workqueue.patch"
 	  "${FILESDIR}/CVE-2019-19067-fix--drm-amdgpu-fix-multiple-memory-leaks-in-acp_hw_init.patch"
           "${FILESDIR}/CVE-2019-19082-fix--linux-drivers-gpu-drm-amd-display-dc-dce100-dce100_resource-prevent-memory-leak.patch"
           "${FILESDIR}/CVE-2019-19083-fix--linux-drivers-gpu-drm-amd-display-dc-dce100-dce100_resource-memory-leak.patch" )
