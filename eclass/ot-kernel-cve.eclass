@@ -1619,25 +1619,6 @@ function fetch_cve_2010_2243_hotfix() {
 	return 0
 }
 
-# @FUNCTION: fetch_cve_2010_4661_hotfix
-# @DESCRIPTION:
-# Checks for the CVE_2010_4661 patch
-function fetch_cve_2010_4661_hotfix() {
-	# fixme unpatched
-	local CVE_ID="CVE-2010-4661"
-	if grep -F -e \
-		"" \
-		"${S}/" \
-		>/dev/null
-	then
-		einfo "${CVE_ID} already patched."
-		return 0
-	fi
-	_fetch_cve_boilerplate_msg
-	_fetch_cve_boilerplate_msg_footer
-	return 0
-}
-
 # @FUNCTION: fetch_cve_2014_3180_hotfix
 # @DESCRIPTION:
 # Checks for the CVE_2014_3180 patch
@@ -4199,29 +4180,6 @@ function apply_cve_2010_2243_hotfix() {
 	_resolve_hotfix_default
 	return $?
 }
-
-# @FUNCTION: apply_cve_2010_4661_hotfix
-# @DESCRIPTION:
-# Applies the CVE_2010_4661 patch if it needs to
-function apply_cve_2010_4661_hotfix() {
-	# fixme
-	return 0
-	local CVE_ID="CVE-2010-4661"
-	local CVE_ID_="${CVE_ID//-/_}_"
-	local cve_severity="${CVE_ID_}SEVERITY"
-	local cve_fn="${CVE_ID_}FN"
-	if grep -F -e \
-		"" \
-		"${S}/" \
-		>/dev/null
-	then
-		einfo "${CVE_ID} is already patched."
-		return 0
-	fi
-	_resolve_hotfix_default
-	return $?
-}
-
 
 # @FUNCTION: apply_cve_2014_3180_hotfix
 # @DESCRIPTION:
@@ -7125,8 +7083,6 @@ function fetch_cve_hotfixes() {
 
 		fetch_cve_2010_2243_hotfix
 
-		fetch_cve_2010_4661_hotfix
-
 		fetch_cve_2019_10207_hotfix
 
 		fetch_cve_2019_10220_hotfix
@@ -7307,8 +7263,6 @@ function apply_cve_hotfixes() {
 		apply_cve_2007_3732_hotfix || exit $?
 
 		apply_cve_2010_2243_hotfix || exit $?
-
-		apply_cve_2010_4661_hotfix || exit $?
 
 		apply_cve_2019_10207_hotfix || exit $?
 
