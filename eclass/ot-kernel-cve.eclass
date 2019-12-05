@@ -1867,11 +1867,6 @@ function fetch_cve_2019_16089_hotfix() {
 # Checks for the CVE_2019_16229 patch
 function fetch_cve_2019_16229_hotfix() {
 	local CVE_ID="CVE-2019-16229"
-	if ver_test ${K_MAJOR_MINOR} -le 4.14 ; then
-		# todo dealloc interrupt_ring in kfd_interrupt_init.  memory leak? did not spot its anti kfree
-		einfo "${CVE_ID} relevance still applies.  Needs backport."
-		return 0
-	fi
 	if ! grep -F -e \
 		"struct kfifo ih_fifo;" \
 		"${S}/drivers/gpu/drm/amd/amdkfd/kfd_priv.h" \
@@ -4518,11 +4513,6 @@ function apply_cve_2019_16089_hotfix() {
 # Applies the CVE_2019_16229 patch if it needs to
 function apply_cve_2019_16229_hotfix() {
 	local CVE_ID="CVE-2019-16229"
-	if ver_test ${K_MAJOR_MINOR} -le 4.14 ; then
-		# todo dealloc interrupt_ring in kfd_interrupt_init.  memory leak? did not spot its anti kfree
-		einfo "${CVE_ID} relevance still applies.  Needs backport."
-		return 0
-	fi
 	if ! grep -F -e \
 		"struct kfifo ih_fifo;" \
 		"${S}/drivers/gpu/drm/amd/amdkfd/kfd_priv.h" \
