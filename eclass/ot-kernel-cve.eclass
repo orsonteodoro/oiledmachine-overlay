@@ -93,7 +93,7 @@ CVE_FIX_REJECT_DISPUTED=${CVE_FIX_REJECT_DISPUTED:=0}
 CVE_ALLOW_RISKY_BACKPORTS=${CVE_ALLOW_RISKY_BACKPORTS:=0}
 
 # based on my last edit in unix timestamp (date -u +%Y%m%d_%I%M_%p_%Z)
-LATEST_CVE_KERNEL_INDEX="20191204_1050_PM_UTC"
+LATEST_CVE_KERNEL_INDEX="20191205_0847_PM_UTC"
 LATEST_CVE_KERNEL_INDEX="${LATEST_CVE_KERNEL_INDEX,,}"
 
 # this will trigger a kernel re-install based on use flag timestamp
@@ -1246,6 +1246,15 @@ CVE_2019_19543_SUMMARY_LANG="CVE_2019_19543_SUMMARY_${CVE_LANG}"
 CVE_2019_19543_SUMMARY="${!CVE_2019_19543_SUMMARY_LANG}"
 CVE_2019_19543_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
 
+CVE_2019_19602_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=59c4bd853abcea95eccc167a7d7fd5f1a5f47b98"
+CVE_2019_19602_FN="CVE-2019-19602-fix--arch-x86-include-asm-fpu-internal-Dont-cache-access-to-fpu_fpregs_owner_ctx.patch"
+CVE_2019_19602_SEVERITY_LANG="CVE_2019_19602_SEVERITY_${CVE_LANG}"
+CVE_2019_19602_SEVERITY="${!CVE_2019_19602_SEVERITY_LANG}"
+CVE_2019_19602_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=59c4bd853abcea95eccc167a7d7fd5f1a5f47b98"
+CVE_2019_19602_SUMMARY_LANG="CVE_2019_19602_SUMMARY_${CVE_LANG}"
+CVE_2019_19602_SUMMARY="${!CVE_2019_19602_SUMMARY_LANG}"
+CVE_2019_19602_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
 
 #---
 
@@ -1403,6 +1412,8 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
 			 ${CVE_2019_19537_FIX_SRC_URI} -> ${CVE_2019_19537_FN}
 
 			 ${CVE_2019_19543_FIX_SRC_URI} -> ${CVE_2019_19543_FN}
+
+			 ${CVE_2019_19602_FIX_SRC_URI} -> ${CVE_2019_19602_FN}
 )"
 
 #			 ${CVE_2019_19036_FIX_SRC_URI} -> ${CVE_2019_19036_FN}
@@ -4035,6 +4046,28 @@ function fetch_cve_2019_19543_hotfix() {
 	if grep -F -e \
 		"return serial_ir_init();" \
 		"${S}/drivers/media/rc/serial_ir.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_19602_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19602 patch
+function fetch_cve_2019_19602_hotfix() {
+	local CVE_ID="CVE-2019-19602"
+	if ver_test ${PV} -ge 5.4.2 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	if grep -F -e \
+		'return fpu == this_cpu_read(fpu_fpregs_owner_ctx) && cpu == fpu->last_cpu;' \
+		"${S}/arch/x86/include/asm/fpu/internal.h" \
 		>/dev/null
 	then
 		einfo "${CVE_ID} already patched."
@@ -7066,6 +7099,30 @@ function apply_cve_2019_19543_hotfix() {
 	return $?
 }
 
+# @FUNCTION: apply_cve_2019_19602_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19602 patch if it needs to
+function apply_cve_2019_19602_hotfix() {
+	local CVE_ID="CVE-2019-19602"
+	if ver_test ${PV} -ge 5.4.2 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		'return fpu == this_cpu_read(fpu_fpregs_owner_ctx) && cpu == fpu->last_cpu;' \
+		"${S}/arch/x86/include/asm/fpu/internal.h" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	_resolve_hotfix_default
+	return $?
+}
+
 #---
 
 # @FUNCTION: fetch_cve_hotfixes
@@ -7234,6 +7291,8 @@ function fetch_cve_hotfixes() {
 		fetch_cve_2019_19537_hotfix
 
 		fetch_cve_2019_19543_hotfix
+
+		fetch_cve_2019_19602_hotfix
 
 		local cve_copyright1="CVE_COPYRIGHT1_${CVE_LANG}"
 		local cve_copyright2="CVE_COPYRIGHT2_${CVE_LANG}"
@@ -7413,5 +7472,7 @@ function apply_cve_hotfixes() {
 		apply_cve_2019_19537_hotfix || exit $?
 
 		apply_cve_2019_19543_hotfix || exit $?
+
+		apply_cve_2019_19602_hotfix || exit $?
 	fi
 }
