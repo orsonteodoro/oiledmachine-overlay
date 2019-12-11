@@ -3,7 +3,8 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python{3_5,3_6,3_7} )
+CMAKE_REMOVE_MODULES_LIST=( FindFreetype )
+PYTHON_COMPAT=( python3_{5,6,7} )
 
 inherit cmake-utils python-single-r1 xdg-utils
 
@@ -21,8 +22,8 @@ HOMEPAGE="https://obsproject.com"
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="+alsa fdk imagemagick jack luajit nvenc pulseaudio python speex truetype v4l"
-IUSE+=" vaapi video_cards_intel video_cards_radeonsi"
+IUSE="+alsa fdk imagemagick jack luajit nvenc pulseaudio python speex +ssl truetype v4l vlc"
+IUSE+=" vaapi video_cards_intel video_cards_nouveau video_cards_r600 video_cards_radeonsi"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 BDEPEND="
@@ -39,7 +40,6 @@ DEPEND="
 	dev-qt/qtquickcontrols:5
 	dev-qt/qtsql:5
 	dev-qt/qtsvg:5
-	dev-qt/qttest:5
 	dev-qt/qtwidgets:5
 	dev-qt/qtx11extras:5
 	media-video/ffmpeg:=[x264]
@@ -61,28 +61,38 @@ DEPEND="
 	pulseaudio? ( media-sound/pulseaudio )
 	python? ( ${PYTHON_DEPS} )
 	speex? ( media-libs/speexdsp )
+	ssl? ( net-libs/mbedtls )
 	truetype? (
 		media-libs/fontconfig
 		media-libs/freetype
 	)
 	v4l? ( media-libs/libv4l )
-	vaapi? ( media-video/ffmpeg[vaapi,x264]
-	         >=media-libs/mesa-17.3.0[vaapi]
-                 || ( video_cards_intel? ( media-libs/mesa[video_cards_intel]
-					   x11-base/xorg-drivers[video_cards_intel] )
-		      video_cards_radeonsi? ( media-libs/mesa[video_cards_radeonsi]
-					      x11-base/xorg-drivers[video_cards_radeonsi] )
-                 )
-	)
+	vlc? ( media-video/vlc:= )
 "
+# For vaapi source code see: https://github.com/obsproject/obs-studio/pull/1482/commits/2dc67f140d8156d9000db57786e53a4c1597c097
+DEPEND+="vaapi? ( media-video/ffmpeg[vaapi,x264]
+		  >=media-libs/mesa-17.3.0[vaapi]
+		  x11-libs/libva
+		  || ( video_cards_intel? ( media-libs/mesa[video_cards_intel]
+					   x11-base/xorg-drivers[video_cards_intel] )
+		       video_cards_nouveau? ( media-libs/mesa[video_cards_nouveau]
+					      x11-base/xorg-drivers[video_cards_nouveau] )
+		       video_cards_r600? ( media-libs/mesa[video_cards_r600]
+					      x11-base/xorg-drivers[video_cards_r600] )
+		       video_cards_radeonsi? ( media-libs/mesa[video_cards_radeonsi]
+					      x11-base/xorg-drivers[video_cards_radeonsi] )
+		)
+	)"
 RDEPEND="${DEPEND}"
-
-PATCHES="${FILESDIR}/${PN}-23.2.1-use-correct-libdir.patch"
-
-CMAKE_REMOVE_MODULES_LIST=( FindFreetype )
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
+	if use vaapi ; then
+		local found=0
+		if ! ls /dev/dri/renderD1* ; then
+			die "Missing a /dev/dri/renderD1* for vaapi support"
+		fi
+	fi
 }
 
 src_configure() {
@@ -95,10 +105,12 @@ src_configure() {
 		-DDISABLE_PULSEAUDIO=$(usex !pulseaudio)
 		-DDISABLE_SPEEXDSP=$(usex !speex)
 		-DDISABLE_V4L2=$(usex !v4l)
+		-DDISABLE_VLC=$(usex !vlc)
 		-DLIBOBS_PREFER_IMAGEMAGICK=$(usex imagemagick)
 		-DOBS_MULTIARCH_SUFFIX=${libdir#lib}
 		-DOBS_VERSION_OVERRIDE=${PV}
 		-DUNIX_STRUCTURE=1
+		-DWITH_RTMPS=$(usex ssl)
 	)
 
 	if use luajit || use python; then
@@ -133,12 +145,6 @@ pkg_postinst() {
 		elog "'xdg-screensaver reset' is used instead"
 		elog "(if 'x11-misc/xdg-utils' is installed)."
 		elog
-	fi
-
-	# todo: test amdgpu-pro only vaapi to relax restrictions
-	# these were upstream (h264 vaapi patch) dev environment
-	if use vaapi ; then
-		elog "You must switch to the mesa driver to use the hardware accelerated vaapi h264 encoding."
 	fi
 }
 
