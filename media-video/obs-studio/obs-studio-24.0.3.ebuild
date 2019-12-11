@@ -81,7 +81,7 @@ DEPEND+="vaapi? ( media-video/ffmpeg[vaapi,x264]
 					      x11-base/xorg-drivers[video_cards_r600] )
 		       video_cards_radeonsi? ( media-libs/mesa[video_cards_radeonsi]
 					      x11-base/xorg-drivers[video_cards_radeonsi] )
-		)
+		  )
 	)"
 RDEPEND="${DEPEND}"
 
