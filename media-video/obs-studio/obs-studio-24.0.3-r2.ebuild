@@ -23,7 +23,7 @@ HOMEPAGE="https://obsproject.com"
 LICENSE="GPL-2"
 SLOT="0"
 IUSE="+alsa fdk imagemagick jack luajit nvenc pulseaudio python speex +ssl truetype v4l vlc"
-IUSE+=" vaapi video_cards_intel video_cards_nouveau video_cards_r600 video_cards_radeonsi"
+IUSE+=" vaapi video_cards_amdgpu video_cards_intel video_cards_i965 video_cards_r600 video_cards_radeonsi"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 BDEPEND="
@@ -69,18 +69,16 @@ DEPEND="
 	v4l? ( media-libs/libv4l )
 	vlc? ( media-video/vlc:= )
 "
-# For vaapi source code see: https://github.com/obsproject/obs-studio/pull/1482/commits/2dc67f140d8156d9000db57786e53a4c1597c097
+# For vaapi support, see source code at https://github.com/obsproject/obs-studio/pull/1482/commits/2dc67f140d8156d9000db57786e53a4c1597c097
 DEPEND+="vaapi? ( media-video/ffmpeg[vaapi,x264]
-		  >=media-libs/mesa-17.3.0[vaapi]
 		  x11-libs/libva
-		  || ( video_cards_intel? ( media-libs/mesa[video_cards_intel]
-					   x11-base/xorg-drivers[video_cards_intel] )
-		       video_cards_nouveau? ( media-libs/mesa[video_cards_nouveau]
-					      x11-base/xorg-drivers[video_cards_nouveau] )
-		       video_cards_r600? ( media-libs/mesa[video_cards_r600]
-					      x11-base/xorg-drivers[video_cards_r600] )
-		       video_cards_radeonsi? ( media-libs/mesa[video_cards_radeonsi]
-					      x11-base/xorg-drivers[video_cards_radeonsi] )
+		  || ( video_cards_amdgpu? ( || ( media-libs/mesa[gallium,vaapi,video_cards_radeonsi]
+						  media-libs/mesa[gallium,vaapi,video_cards_r600]
+						  x11-drivers/amdgpu-pro[vaapi] ) )
+		       video_cards_intel? ( x11-libs/libva[video_cards_intel] )
+		       video_cards_i965? ( x11-libs/libva[video_cards_i965] )
+		       video_cards_r600? ( media-libs/mesa[gallium,vaapi,video_cards_r600] )
+		       video_cards_radeonsi? ( media-libs/mesa[gallium,vaapi,video_cards_radeonsi] )
 		  )
 	)"
 RDEPEND="${DEPEND}"
@@ -91,6 +89,12 @@ pkg_setup() {
 		local found=0
 		if ! ls /dev/dri/renderD1* ; then
 			die "Missing a /dev/dri/renderD1* for vaapi support"
+		fi
+		if use video_cards_intel || use video_cards_i965 ; then
+			einfo "Sandy Bridge (Gen6) or newer is required for hardware accelerated H.264 VA-API encode."
+		fi
+		if use video_cards_r600 || use video_cards_radeonsi || use video_cards_amdgpu ; then
+			einfo "You need VCE or VCN support for hardware accelerated H.264 VA-API encode."
 		fi
 	fi
 }

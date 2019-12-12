@@ -21,6 +21,7 @@
       <pkg>media-libs/speexdsp</pkg>.</flag>
     <flag name="ssl">Build support for TLS/SSL connections (RTMPS) via
       <pkg>net-libs/mbedtls</pkg>.</flag>
+    <flag name="vaapi">Enable hardware H264 encoding via vaapi.</flag>
     <flag name="vlc">Build support for using <pkg>media-video/vlc</pkg> as a media source.</flag>
   </use>
   <upstream>
