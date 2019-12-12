@@ -90,12 +90,6 @@ pkg_setup() {
 		if ! ls /dev/dri/renderD1* ; then
 			die "Missing a /dev/dri/renderD1* for vaapi support"
 		fi
-		if use video_cards_intel || use video_cards_i965 ; then
-			einfo "Sandy Bridge (Gen6) or newer is required for hardware accelerated H.264 VA-API encode."
-		fi
-		if use video_cards_r600 || use video_cards_radeonsi || use video_cards_amdgpu ; then
-			einfo "You need VCE or VCN support for hardware accelerated H.264 VA-API encode."
-		fi
 	fi
 }
 
@@ -149,6 +143,18 @@ pkg_postinst() {
 		elog "'xdg-screensaver reset' is used instead"
 		elog "(if 'x11-misc/xdg-utils' is installed)."
 		elog
+	fi
+
+	if use vaapi ; then
+		if use video_cards_intel || use video_cards_i965 ; then
+			einfo "Intel Quick Sync Video, or Sandy Bridge (Gen2+) is required for hardware accelerated H.264 VA-API encode."
+			einfo "For details see https://github.com/intel/intel-vaapi-driver/blob/master/NEWS"
+			einfo "See the AVC row at https://en.wikipedia.org/wiki/Intel_Quick_Sync_Video#Hardware_decoding_and_encoding"
+		fi
+		if use video_cards_r600 || use video_cards_radeonsi || use video_cards_amdgpu ; then
+			einfo "You need VCE (Video Code Engine) or VCN (Video Core Next) for hardware accelerated H.264 VA-API encode."
+			einfo "For details see https://en.wikipedia.org/wiki/Video_Coding_Engine#Feature_overview"
+		fi
 	fi
 }
 
