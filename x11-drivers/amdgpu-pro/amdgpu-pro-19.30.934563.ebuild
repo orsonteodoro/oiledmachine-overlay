@@ -33,8 +33,9 @@ VULKAN_SDK_VER="1.1.109.0"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="+amf dkms +egl +gles2 freesync hip-clang +navi +opencl opencl_orca opencl_pal \
-+opengl openmax +picasso roct +vaapi +vdpau +vulkan wayland"
+IUSE="+amf dkms +egl +gles2 freesync hip-clang +navi10 +navi14 +opencl \
+opencl_orca opencl_pal +opengl openmax +picasso roct +vaapi +vdpau +vulkan \
+wayland"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -65,7 +66,7 @@ RDEPEND="  app-eselect/eselect-opencl
 		>=sys-kernel/vanilla-sources-5.0
 		>=sys-kernel/xbox-sources-5.0
 		>=sys-kernel/zen-sources-5.0 ) )
-	 navi? ( || (
+	 navi10? ( || (
 		  sys-kernel/amdgpu-dkms
 		>=sys-kernel/aufs-sources-5.3
 		>=sys-kernel/ck-sources-5.3
@@ -81,6 +82,22 @@ RDEPEND="  app-eselect/eselect-opencl
 		|| ( >=sys-firmware/amdgpu-firmware-${PKG_VER}
 	               sys-firmware/rock-firmware
 		     >=sys-kernel/linux-firmware-20190923 ) )
+	 navi14? ( || (
+		  sys-kernel/amdgpu-dkms
+		>=sys-kernel/aufs-sources-5.4
+		>=sys-kernel/ck-sources-5.4
+		>=sys-kernel/gentoo-sources-5.4
+		>=sys-kernel/git-sources-5.4
+		>=sys-kernel/hardened-sources-5.4
+		>=sys-kernel/pf-sources-5.4
+		  sys-kernel/rock-dkms
+		>=sys-kernel/rt-sources-5.4
+		>=sys-kernel/vanilla-sources-5.4
+		>=sys-kernel/xbox-sources-5.4
+		>=sys-kernel/zen-sources-5.4 )
+		|| ( >=sys-firmware/amdgpu-firmware-${PKG_VER}
+	               sys-firmware/rock-firmware
+		     >=sys-kernel/linux-firmware-20191008 ) )
 	 >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
 	 >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
 	 opencl? (  >=sys-devel/gcc-5.2.0 )

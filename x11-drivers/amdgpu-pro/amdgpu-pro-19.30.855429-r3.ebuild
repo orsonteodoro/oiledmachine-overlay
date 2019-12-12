@@ -33,8 +33,8 @@ VULKAN_SDK_VER="1.1.106.0"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="+amf dkms +egl +gles2 freesync hip-clang +navi +opencl opencl_orca opencl_pal \
-+opengl openmax +picasso roct +vaapi +vdpau +vulkan wayland"
+IUSE="+amf dkms +egl +gles2 freesync hip-clang +navi10 +opencl opencl_orca \
+opencl_pal +opengl openmax +picasso roct +vaapi +vdpau +vulkan wayland"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -65,7 +65,7 @@ RDEPEND="  app-eselect/eselect-opencl
 		>=sys-kernel/vanilla-sources-5.0
 		>=sys-kernel/xbox-sources-5.0
 		>=sys-kernel/zen-sources-5.0 ) )
-	 navi? ( || (
+	 navi10? ( || (
 		  sys-kernel/amdgpu-dkms
 		>=sys-kernel/aufs-sources-5.3
 		>=sys-kernel/ck-sources-5.3
