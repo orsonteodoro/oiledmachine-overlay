@@ -92,6 +92,7 @@ RDEPEND="  app-eselect/eselect-opencl
 	 >=sys-libs/libselinux-1.32
 	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
 	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}]
+	  vaapi? (  >=media-libs/mesa-${PKG_VER_MESA}[-vaapi] )
 	  vdpau? (  >=media-libs/mesa-${PKG_VER_MESA}[-vdpau] )
 	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
 	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
@@ -620,7 +621,7 @@ src_install() {
 		fi
 
 		if use vaapi ; then
-			exeinto ${dd_opengl}/dri/
+			exeinto /usr/$(get_libdir)/va/drivers/
 			doexe ${sd_amdgpu}/dri/radeonsi_drv_video.so
 			doexe ${sd_amdgpu}/dri/r600_drv_video.so
 		fi
