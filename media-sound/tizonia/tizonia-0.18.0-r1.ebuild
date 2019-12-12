@@ -66,7 +66,7 @@ RDEPEND="alsa? ( media-libs/alsa-lib[${MULTILIB_USEDEP}] )
 	 sdl? ( media-libs/libsdl[${MULTILIB_USEDEP}] )
 	 soundcloud? ( dev-python/soundcloud-python[${PYTHON_USEDEP}] )
 	 spotify? ( >=dev-libs/libspotify-12.1.51[${MULTILIB_USEDEP}] )
-	 >=sys-apps/util-linux-2.19.0
+	 >=sys-apps/util-linux-2.19.0[${MULTILIB_USEDEP}]
 	 test? ( dev-db/sqlite:3[${MULTILIB_USEDEP}] )
 	 vorbis? ( media-libs/libfishsound[${MULTILIB_USEDEP}] )
 	 vpx? ( media-libs/libvpx[${MULTILIB_USEDEP}] )
