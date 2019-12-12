@@ -66,7 +66,7 @@ RDEPEND="  app-eselect/eselect-opencl
 		>=sys-kernel/xbox-sources-5.0
 		>=sys-kernel/zen-sources-5.0 ) )
 	 navi10? ( || (
-		  sys-kernel/amdgpu-dkms
+		>=sys-kernel/amdgpu-dkms-19.30.855429
 		>=sys-kernel/aufs-sources-5.3
 		>=sys-kernel/ck-sources-5.3
 		>=sys-kernel/gentoo-sources-5.3
