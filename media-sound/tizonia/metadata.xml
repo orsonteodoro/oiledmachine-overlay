@@ -37,7 +37,7 @@
     <flag name="lame">Enables LAME MP3 encoding.</flag>
     <flag name="libsndfile">Enables support for WAV, PCM, AU files.</flag>
     <flag name="mad">Enables MAD MP3 decoding.</flag>
-    <flag name="mp3-metadata-eraser">Enables building the</flag>
+    <flag name="mp3-metadata-eraser">Enables building the icecast-server plugin to erase metadata before reaching clients.</flag>
     <flag name="mp2">Enables building MP2 support.</flag>
     <flag name="mpg123">Enables dependency use of mpg123.</flag>
     <flag name="player">Enables the CLI player.</flag>
