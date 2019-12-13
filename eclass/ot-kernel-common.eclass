@@ -83,8 +83,15 @@ AMD_STAGING_DRM_NEXT_DIR="amd-staging-drm-next"
 # This should be pinned to KV or it may exhibit runtime errors
 # The latest commit I tested which should be ideally head at that time
 if [[ "${K_MAJOR_MINOR}" == "5.3" ]] ; then
-AMD_STAGING_DRM_NEXT_SNAPSHOT_S="2019-10-28" # commit time
-AMD_STAGING_DRM_NEXT_SNAPSHOT_C="8799b4cfde6229d2b9bc3d983cc831ccb893b30c"
+AMD_STAGING_DRM_NEXT_SNAPSHOT_S="2019-10-04" # commit time
+AMD_STAGING_DRM_NEXT_SNAPSHOT_C="e025c334b6c7aa66c0fc67548643bd52c4a39eef" # merge without problems
+#AMD_STAGING_DRM_NEXT_SNAPSHOT_S="2019-10-28" # commit time
+#AMD_STAGING_DRM_NEXT_SNAPSHOT_C="8799b4cfde6229d2b9bc3d983cc831ccb893b30c" # not working
+#AMD_STAGING_DRM_NEXT_SNAPSHOT_S="2019-12-05" # commit time
+#AMD_STAGING_DRM_NEXT_SNAPSHOT_C="3bbca1bf0dc64ecf50abc312737ee8a62a97d0a9" # not working
+elif [[ "${K_MAJOR_MINOR}" == "5.4" ]] ; then
+AMD_STAGING_DRM_NEXT_SNAPSHOT_S="2019-12-02" # commit time
+AMD_STAGING_DRM_NEXT_SNAPSHOT_C="54e90c3db30c4514a941556cd0896688af88303f"
 fi
 # 2019-10-04 drm/amdgpu: remove redundant variable r and redundant return statement
 
@@ -229,6 +236,13 @@ elif ver_test ${PV} -eq ${K_MAJOR_MINOR}.0 ; then
 KERNEL_0_TO_1_ONLY="1"
 fi
 
+ASDN_LOCAL_CACHE="${FILESDIR}/amd-staging-drm-next"
+ASDN_T_CACHE="${T}/amd-staging-drm-next-patches"
+
+ROCK_LOCAL_CACHE="${FILESDIR}/rock"
+ROCK_T_CACHE="${T}/rock-patches"
+
+AMDGPU_MERGED_CACHE="${T}/amdgpu-merged-patches"
 
 if [[ -n "${KERNEL_NO_POINT_RELEASE}" && "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; then
 	KERNEL_PATCH_URLS=()
@@ -755,7 +769,7 @@ sources."
 	OIFS="${IFS}"
 	IFS=$'\n'
 	git -P log ${ROCK_BASE}..v${K_MAJOR_MINOR} --oneline \
-		--pretty=format:"%H%x07%s" -- \
+		--pretty=format:"%H" -- \
 		drivers/gpu/drm \
 		include/drm \
 		drivers/dma-buf \
@@ -765,16 +779,15 @@ sources."
 		| tac > "${T}/${LINUX_COMMITS_AMDGPU_RANGE_FN}"
 
 	einfo "Generating hash tables for vanilla kernel"
-	while read -r l ; do
+	while read -r c ; do
 		local h
-		h=$(echo "${l}" | cut -f1 -d $'\007')
-		if [[ -n "${h}" && "${h}" != " " ]] ; then
-			vk_commits[${h}]=1
-		fi
-		local s=$(echo "${l}" | cut -f2 -d $'\007')
-		h=$(echo -e "${s}" | sha1sum | cut -f1 -d ' ')
-		if [[ -n "${h}" && "${h}" != " " ]] ; then
-			vk_summaries[${h}]=1
+		if [[ -n "${c}" && "${c}" != " " ]] ; then
+			vk_commits[${c}]=1
+
+			h=$(git -P show -s --format="%s" ${c} | sha1sum | cut -f1 -d ' ')
+			if [[ -n "${h}" && "${h}" != " " ]] ; then
+				vk_summaries[${h}]=1
+			fi
 		fi
 	done < "${T}/${LINUX_COMMITS_AMDGPU_RANGE_FN}"
 	IFS="${OIFS}"
@@ -789,7 +802,7 @@ sources."
 # Checks the existance of the amd-staging-drm-next patchset
 function is_asdn_patchset_exist() {
 	if [[ \
-	  -d "${FILESDIR}/amd-staging-drm-next/${K_MAJOR_MINOR}" ]]
+	  -d "${ASDN_LOCAL_CACHE}" ]]
 	then
 		return 0
 	else
@@ -799,9 +812,9 @@ function is_asdn_patchset_exist() {
 
 # @FUNCTION: is_rock_patchset_exist
 # @DESCRIPTION:
-# Checks the existance of the rock patchset
+# Checks the existance of the ROCk patchset
 function is_rock_patchset_exist() {
-	if [[ -d "${FILESDIR}/rock/${K_MAJOR_MINOR}" ]]
+	if [[ -d "${ROCK_LOCAL_CACHE}" ]]
 	then
 		return 0
 	else
@@ -1001,6 +1014,14 @@ function amdgpu_setup() {
 "rock.db.dc_ver.${K_MAJOR_MINOR}..${SUFFIX_ROCK}"
 	export ROCK_DB_PN_FN=\
 "rock.db.pn.${K_MAJOR_MINOR}..${SUFFIX_ROCK}"
+
+	einfo "ASDN_LOCAL_CACHE=${ASDN_LOCAL_CACHE}"
+	einfo "ROCK_LOCAL_CACHE=${ROCK_LOCAL_CACHE}"
+
+	einfo "ASDN_T_CACHE=${ASDN_T_CACHE}"
+	einfo "ROCK_T_CACHE=${ROCK_T_CACHE}"
+
+	einfo "AMDGPU_MERGED_CACHE=${AMDGPU_MERGED_CACHE}"
 }
 
 # @FUNCTION: copy_patachie
@@ -1206,7 +1227,7 @@ function ot-kernel-common_amdgpu_get_rock_dgma_suffix() {
 
 # @FUNCTION: ot-kernel-common_amdgpu_get_suffix_asdn
 # @DESCRIPTION:
-# Generates a suffix for asdn cache file or stored commits in filesdir.
+# Generates a suffix for ASDN cache file or stored commits in filesdir.
 function ot-kernel-common_amdgpu_get_suffix_asdn() {
 	local suffix_rock_dgma=$(ot-kernel-common_amdgpu_get_rock_dgma_suffix)
 	local suffix_asdn
@@ -1221,7 +1242,8 @@ function ot-kernel-common_amdgpu_get_suffix_asdn() {
 "..$(git rev-parse ${AMD_STAGING_DRM_NEXT_HEAD_C})${suffix_rock_dgma}"
 	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ snapshot ]] ; then
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-		if [[ "${K_MAJOR_MINOR}" == "5.3" ]] ; then
+		if [[ "${K_MAJOR_MINOR}" == "5.3" \
+			|| "${K_MAJOR_MINOR}" == "5.4" ]] ; then
 			suffix_asdn=\
 "..${AMD_STAGING_DRM_NEXT_SNAPSHOT_C}${suffix_rock_dgma}"
 		else
@@ -1244,7 +1266,7 @@ kernel version."
 
 # @FUNCTION: ot-kernel-common_amdgpu_get_suffix_rock
 # @DESCRIPTION:
-# Generates a suffix for rock cache file or stored commits in filesdir.
+# Generates a suffix for ROCk cache file or stored commits in filesdir.
 function ot-kernel-common_amdgpu_get_suffix_rock() {
 	local suffix_rock_dgma=$(ot-kernel-common_amdgpu_get_rock_dgma_suffix)
 	local suffix_rock

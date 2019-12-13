@@ -93,7 +93,7 @@ CVE_FIX_REJECT_DISPUTED=${CVE_FIX_REJECT_DISPUTED:=0}
 CVE_ALLOW_RISKY_BACKPORTS=${CVE_ALLOW_RISKY_BACKPORTS:=0}
 
 # based on my last edit in unix timestamp (date -u +%Y%m%d_%I%M_%p_%Z)
-LATEST_CVE_KERNEL_INDEX="20191205_0847_PM_UTC"
+LATEST_CVE_KERNEL_INDEX="20191212_1126_PM_UTC"
 LATEST_CVE_KERNEL_INDEX="${LATEST_CVE_KERNEL_INDEX,,}"
 
 # this will trigger a kernel re-install based on use flag timestamp
@@ -143,7 +143,7 @@ CVE_2014_3180_DISPUTED=1
 # recommended by person with unknown apparent reputation
 # https://lore.kernel.org/linux-bluetooth/20190725120909.31235-1-vdronov@redhat.com/T/#u
 CVE_2019_10207_FIX_SRC_URI=""
-CVE_2019_10207_FN="CVE-2019-10207-fix--linux"
+CVE_2019_10207_FN="CVE-2019-10207-fix--linux-.patch"
 CVE_2019_10207_SEVERITY_LANG="CVE_2019_10207_SEVERITY_${CVE_LANG}"
 CVE_2019_10207_SEVERITY="${!CVE_2019_10207_SEVERITY_LANG}"
 CVE_2019_10207_PM=""
@@ -155,7 +155,7 @@ CVE_2019_10207_TRUST=${CVE_DISALLOW_INCOMPLETE}
 # recommended by person with unknown apparent reputation
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/fs?id=4f11918ab93bc113ec0831ed2ab7b88847d44dd7
 CVE_2019_10220_FIX_SRC_URI=""
-CVE_2019_10220_FN="CVE-2019-10220-fix--linux"
+CVE_2019_10220_FN="CVE-2019-10220-fix--linux-.patch"
 CVE_2019_10220_SEVERITY_LANG="CVE_2019_10220_SEVERITY_${CVE_LANG}"
 CVE_2019_10220_SEVERITY="${!CVE_2019_10220_SEVERITY_LANG}"
 CVE_2019_10220_PM=""
@@ -209,7 +209,7 @@ CVE_2019_14895_TRUST=$((${CVE_ALLOW_CORPORATE_REVIEWED} | ${CVE_ALLOW_MODULE_MAI
 # not accepted yet
 # https://patchwork.kernel.org/patch/11257187/
 CVE_2019_14896_FIX_SRC_URI=""
-CVE_2019_14896_FN="CVE-2019-14896-fix--linux"
+CVE_2019_14896_FN="CVE-2019-14896-fix--linux-.patch"
 CVE_2019_14896_SEVERITY_LANG="CVE_2019_14896_SEVERITY_${CVE_LANG}"
 CVE_2019_14896_SEVERITY="${!CVE_2019_14896_SEVERITY_LANG}"
 CVE_2019_14896_PM=""
@@ -219,7 +219,7 @@ CVE_2019_14896_TRUST=${CVE_DISALLOW_INCOMPLETE}
 
 # patch is in cve above
 CVE_2019_14897_FIX_SRC_URI=""
-CVE_2019_14897_FN="CVE-2019-14897-fix--linux"
+CVE_2019_14897_FN="CVE-2019-14897-fix--linux-.patch"
 CVE_2019_14897_SEVERITY_LANG="CVE_2019_14897_SEVERITY_${CVE_LANG}"
 CVE_2019_14897_SEVERITY="${!CVE_2019_14897_SEVERITY_LANG}"
 CVE_2019_14897_PM=""
@@ -231,7 +231,7 @@ CVE_2019_14897_TRUST=${CVE_DISALLOW_INCOMPLETE}
 # recommend on redhat link and unknown apparent repuatations by fix author and patch recommender
 # https://patchwork.kernel.org/patch/11257535/
 CVE_2019_14901_FIX_SRC_URI=""
-CVE_2019_14901_FN="CVE-2019-14901-fix--linux"
+CVE_2019_14901_FN="CVE-2019-14901-fix--linux-.patch"
 CVE_2019_14901_SEVERITY_LANG="CVE_2019_14901_SEVERITY_${CVE_LANG}"
 CVE_2019_14901_SEVERITY="${!CVE_2019_14901_SEVERITY_LANG}"
 CVE_2019_14901_PM=""
@@ -254,7 +254,7 @@ CVE_2019_16089_TRUST=$((${CVE_ALLOW_NVD_INDIRECT_LINKED_PATCH} | ${CVE_ALLOW_EBU
 # part of the rapport / cred of patch originator is in https://lgtm.com/security/
 # for 16229-16233
 CVE_2019_16229_FIX_SRC_URI="https://lkml.org/lkml/diff/2019/9/9/487/1"
-CVE_2019_16229_FN="CVE-2019-16229-fix---Multiple-NULL-deref-on-alloc_workqueue.patch"
+CVE_2019_16229_FN="CVE-2019-16229-fix--linux-Multiple-NULL-deref-on-alloc_workqueue.patch"
 CVE_2019_16229_SEVERITY_LANG="CVE_2019_16229_SEVERITY_${CVE_LANG}"
 CVE_2019_16229_SEVERITY="${!CVE_2019_16229_SEVERITY_LANG}"
 CVE_2019_16229_PM="https://lkml.org/lkml/2019/9/9/487"
@@ -265,7 +265,7 @@ CVE_2019_16229_DISPUTED=1
 
 
 CVE_2019_16230_FIX_SRC_URI="https://lkml.org/lkml/diff/2019/9/9/487/1"
-CVE_2019_16230_FN="CVE-2019-16229-fix---Multiple-NULL-deref-on-alloc_workqueue.patch"
+CVE_2019_16230_FN="CVE-2019-16229-fix--linux-Multiple-NULL-deref-on-alloc_workqueue.patch"
 CVE_2019_16230_SEVERITY_LANG="CVE_2019_16230_SEVERITY_${CVE_LANG}"
 CVE_2019_16230_SEVERITY="${!CVE_2019_16230_SEVERITY_LANG}"
 CVE_2019_16230_PM="https://lkml.org/lkml/2019/9/9/487"
@@ -274,7 +274,7 @@ CVE_2019_16230_SUMMARY="${!CVE_2019_16230_SUMMARY_LANG}"
 CVE_2019_16230_TRUST=$((${CVE_ALLOW_OPEN_SOURCE_CONTRIBUTOR} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
 
 CVE_2019_16231_FIX_SRC_URI="https://lkml.org/lkml/diff/2019/9/9/487/1"
-CVE_2019_16231_FN="CVE-2019-16229-fix---Multiple-NULL-deref-on-alloc_workqueue.patch"
+CVE_2019_16231_FN="CVE-2019-16229-fix--linux-Multiple-NULL-deref-on-alloc_workqueue.patch"
 CVE_2019_16231_SEVERITY_LANG="CVE_2019_16231_SEVERITY_${CVE_LANG}"
 CVE_2019_16231_SEVERITY="${!CVE_2019_16231_SEVERITY_LANG}"
 CVE_2019_16231_PM="https://lkml.org/lkml/2019/9/9/487"
@@ -283,7 +283,7 @@ CVE_2019_16231_SUMMARY="${!CVE_2019_16231_SUMMARY_LANG}"
 CVE_2019_16231_TRUST=$((${CVE_ALLOW_OPEN_SOURCE_CONTRIBUTOR} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
 
 CVE_2019_16232_FIX_SRC_URI="https://lkml.org/lkml/diff/2019/9/9/487/1"
-CVE_2019_16232_FN="CVE-2019-16229-fix---Multiple-NULL-deref-on-alloc_workqueue.patch"
+CVE_2019_16232_FN="CVE-2019-16229-fix--linux-Multiple-NULL-deref-on-alloc_workqueue.patch"
 CVE_2019_16232_SEVERITY_LANG="CVE_2019_16232_SEVERITY_${CVE_LANG}"
 CVE_2019_16232_SEVERITY="${!CVE_2019_16232_SEVERITY_LANG}"
 CVE_2019_16232_PM="https://lkml.org/lkml/2019/9/9/487"
@@ -292,7 +292,7 @@ CVE_2019_16232_SUMMARY="${!CVE_2019_16232_SUMMARY_LANG}"
 CVE_2019_16232_TRUST=$((${CVE_ALLOW_OPEN_SOURCE_CONTRIBUTOR} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
 
 CVE_2019_16233_FIX_SRC_URI="https://lkml.org/lkml/diff/2019/9/9/487/1"
-CVE_2019_16233_FN="CVE-2019-16229-fix---Multiple-NULL-deref-on-alloc_workqueue.patch"
+CVE_2019_16233_FN="CVE-2019-16229-fix--linux-Multiple-NULL-deref-on-alloc_workqueue.patch"
 CVE_2019_16233_SEVERITY_LANG="CVE_2019_16233_SEVERITY_${CVE_LANG}"
 CVE_2019_16233_SEVERITY="${!CVE_2019_16233_SEVERITY_LANG}"
 CVE_2019_16233_PM="https://lkml.org/lkml/2019/9/9/487"
@@ -1046,7 +1046,7 @@ CVE_2019_19252_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMED
 
 
 CVE_2019_19318_FIX_SRC_URI=""
-CVE_2019_19318_FN="CVE-2019-19318-fix--linux"
+CVE_2019_19318_FN="CVE-2019-19318-fix--linux-.patch"
 CVE_2019_19318_SEVERITY_LANG="CVE_2019_19318_SEVERITY_${CVE_LANG}"
 CVE_2019_19318_SEVERITY="${!CVE_2019_19318_SEVERITY_LANG}"
 CVE_2019_19318_PM=""
@@ -1055,7 +1055,7 @@ CVE_2019_19318_SUMMARY="${!CVE_2019_19318_SUMMARY_LANG}"
 CVE_2019_19318_TRUST=${CVE_DISALLOW_INCOMPLETE}
 
 CVE_2019_19319_FIX_SRC_URI=""
-CVE_2019_19319_FN="CVE-2019-19319-fix--linux"
+CVE_2019_19319_FN="CVE-2019-19319-fix--linux-.patch"
 CVE_2019_19319_SEVERITY_LANG="CVE_2019_19319_SEVERITY_${CVE_LANG}"
 CVE_2019_19319_SEVERITY="${!CVE_2019_19319_SEVERITY_LANG}"
 CVE_2019_19319_PM=""
@@ -1065,7 +1065,7 @@ CVE_2019_19319_TRUST=${CVE_DISALLOW_INCOMPLETE}
 
 
 CVE_2019_19377_FIX_SRC_URI=""
-CVE_2019_19377_FN="CVE-2019-19377-fix--linux"
+CVE_2019_19377_FN="CVE-2019-19377-fix--linux-.patch"
 CVE_2019_19377_SEVERITY_LANG="CVE_2019_19377_SEVERITY_${CVE_LANG}"
 CVE_2019_19377_SEVERITY="${!CVE_2019_19377_SEVERITY_LANG}"
 CVE_2019_19377_PM=""
@@ -1074,7 +1074,7 @@ CVE_2019_19377_SUMMARY="${!CVE_2019_19377_SUMMARY_LANG}"
 CVE_2019_19377_TRUST=${CVE_DISALLOW_INCOMPLETE}
 
 CVE_2019_19378_FIX_SRC_URI=""
-CVE_2019_19378_FN="CVE-2019-19378-fix--linux"
+CVE_2019_19378_FN="CVE-2019-19378-fix--linux-.patch"
 CVE_2019_19378_SEVERITY_LANG="CVE_2019_19378_SEVERITY_${CVE_LANG}"
 CVE_2019_19378_SEVERITY="${!CVE_2019_19378_SEVERITY_LANG}"
 CVE_2019_19378_PM=""
@@ -1084,7 +1084,7 @@ CVE_2019_19378_TRUST=${CVE_DISALLOW_INCOMPLETE}
 
 
 CVE_2019_19447_FIX_SRC_URI=""
-CVE_2019_19447_FN="CVE-2019-19447-fix--linux-kernel-"
+CVE_2019_19447_FN="CVE-2019-19447-fix--linux-.patch"
 CVE_2019_19447_SEVERITY_LANG="CVE_2019_19447_SEVERITY_${CVE_LANG}"
 CVE_2019_19447_SEVERITY="${!CVE_2019_19447_SEVERITY_LANG}"
 CVE_2019_19447_PM=""
@@ -1093,7 +1093,7 @@ CVE_2019_19447_SUMMARY="${!CVE_2019_19447_SUMMARY_LANG}"
 CVE_2019_19447_TRUST=${CVE_DISALLOW_INCOMPLETE}
 
 CVE_2019_19448_FIX_SRC_URI=""
-CVE_2019_19448_FN="CVE-2019-19448-fix--linux-kernel-"
+CVE_2019_19448_FN="CVE-2019-19448-fix--linux-.patch"
 CVE_2019_19448_SEVERITY_LANG="CVE_2019_19448_SEVERITY_${CVE_LANG}"
 CVE_2019_19448_SEVERITY="${!CVE_2019_19448_SEVERITY_LANG}"
 CVE_2019_19448_PM=""
@@ -1102,7 +1102,7 @@ CVE_2019_19448_SUMMARY="${!CVE_2019_19448_SUMMARY_LANG}"
 CVE_2019_19448_TRUST=${CVE_DISALLOW_INCOMPLETE}
 
 CVE_2019_19449_FIX_SRC_URI=""
-CVE_2019_19449_FN="CVE-2019-19449-fix--linux-kernel-"
+CVE_2019_19449_FN="CVE-2019-19449-fix--linux-.patch"
 CVE_2019_19449_SEVERITY_LANG="CVE_2019_19449_SEVERITY_${CVE_LANG}"
 CVE_2019_19449_SEVERITY="${!CVE_2019_19449_SEVERITY_LANG}"
 CVE_2019_19449_PM=""
@@ -1276,13 +1276,50 @@ CVE_2019_19543_SUMMARY="${!CVE_2019_19543_SUMMARY_LANG}"
 CVE_2019_19543_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
 
 CVE_2019_19602_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=59c4bd853abcea95eccc167a7d7fd5f1a5f47b98"
-CVE_2019_19602_FN="CVE-2019-19602-fix--arch-x86-include-asm-fpu-internal-Dont-cache-access-to-fpu_fpregs_owner_ctx.patch"
+CVE_2019_19602_FN="CVE-2019-19602-fix--linux-arch-x86-include-asm-fpu-internal-Dont-cache-access-to-fpu_fpregs_owner_ctx.patch"
 CVE_2019_19602_SEVERITY_LANG="CVE_2019_19602_SEVERITY_${CVE_LANG}"
 CVE_2019_19602_SEVERITY="${!CVE_2019_19602_SEVERITY_LANG}"
 CVE_2019_19602_PM="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=59c4bd853abcea95eccc167a7d7fd5f1a5f47b98"
 CVE_2019_19602_SUMMARY_LANG="CVE_2019_19602_SUMMARY_${CVE_LANG}"
 CVE_2019_19602_SUMMARY="${!CVE_2019_19602_SUMMARY_LANG}"
 CVE_2019_19602_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
+
+CVE_2019_19767_FIX_SRC_URI="https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/patch/?id=4ea99936a1630f51fc3a2d61a58ec4a1c4b7d55a"
+CVE_2019_19767_FN="CVE-2019-19767-fix--linux-fs-ext4-add-more-paranoia-checking-in-ext4_expand_extra_isize-handling.patch"
+CVE_2019_19767_SEVERITY_LANG="CVE_2019_19767_SEVERITY_${CVE_LANG}"
+CVE_2019_19767_SEVERITY="${!CVE_2019_19767_SEVERITY_LANG}"
+CVE_2019_19767_PM="https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=4ea99936a1630f51fc3a2d61a58ec4a1c4b7d55a"
+CVE_2019_19767_SUMMARY_LANG="CVE_2019_19767_SUMMARY_${CVE_LANG}"
+CVE_2019_19767_SUMMARY="${!CVE_2019_19767_SUMMARY_LANG}"
+CVE_2019_19767_TRUST=$((${CVE_ALLOW_KERNEL_DOT_ORG_REPO} | ${CVE_ALLOW_NVD_IMMEDIATE_LINKED_PATCH}))
+
+CVE_2019_19768_FIX_SRC_URI=""
+CVE_2019_19768_FN="CVE-2019-19768-fix--linux.patch"
+CVE_2019_19768_SEVERITY_LANG="CVE_2019_19768_SEVERITY_${CVE_LANG}"
+CVE_2019_19768_SEVERITY="${!CVE_2019_19768_SEVERITY_LANG}"
+CVE_2019_19768_PM=""
+CVE_2019_19768_SUMMARY_LANG="CVE_2019_19768_SUMMARY_${CVE_LANG}"
+CVE_2019_19768_SUMMARY="${!CVE_2019_19768_SUMMARY_LANG}"
+CVE_2019_19768_TRUST=${CVE_DISALLOW_INCOMPLETE}
+
+CVE_2019_19769_FIX_SRC_URI=""
+CVE_2019_19769_FN="CVE-2019-19769-fix--linux.patch"
+CVE_2019_19769_SEVERITY_LANG="CVE_2019_19769_SEVERITY_${CVE_LANG}"
+CVE_2019_19769_SEVERITY="${!CVE_2019_19769_SEVERITY_LANG}"
+CVE_2019_19769_PM=""
+CVE_2019_19769_SUMMARY_LANG="CVE_2019_19769_SUMMARY_${CVE_LANG}"
+CVE_2019_19769_SUMMARY="${!CVE_2019_19769_SUMMARY_LANG}"
+CVE_2019_19769_TRUST=${CVE_DISALLOW_INCOMPLETE}
+
+CVE_2019_19770_FIX_SRC_URI=""
+CVE_2019_19770_FN="CVE-2019-19770-fix--linux.patch"
+CVE_2019_19770_SEVERITY_LANG="CVE_2019_19770_SEVERITY_${CVE_LANG}"
+CVE_2019_19770_SEVERITY="${!CVE_2019_19770_SEVERITY_LANG}"
+CVE_2019_19770_PM=""
+CVE_2019_19770_SUMMARY_LANG="CVE_2019_19770_SUMMARY_${CVE_LANG}"
+CVE_2019_19770_SUMMARY="${!CVE_2019_19770_SUMMARY_LANG}"
+CVE_2019_19770_TRUST=${CVE_DISALLOW_INCOMPLETE}
 
 
 #---
@@ -1443,6 +1480,8 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
 			 ${CVE_2019_19543_FIX_SRC_URI} -> ${CVE_2019_19543_FN}
 
 			 ${CVE_2019_19602_FIX_SRC_URI} -> ${CVE_2019_19602_FN}
+
+			 ${CVE_2019_19767_FIX_SRC_URI} -> ${CVE_2019_19767_FN}
 )"
 
 #			 ${CVE_2019_19036_FIX_SRC_URI} -> ${CVE_2019_19036_FN}
@@ -1457,6 +1496,11 @@ SRC_URI+=" cve_hotfix? ( ${CVE_2007_3732_FIX_SRC_URI} -> ${CVE_2007_3732_FN}
 #			 ${CVE_2019_19447_FIX_SRC_URI} -> ${CVE_2019_19447_FN}
 #			 ${CVE_2019_19448_FIX_SRC_URI} -> ${CVE_2019_19448_FN}
 #			 ${CVE_2019_19449_FIX_SRC_URI} -> ${CVE_2019_19449_FN}
+
+#			 ${CVE_2019_19768_FIX_SRC_URI} -> ${CVE_2019_19768_FN}
+#			 ${CVE_2019_19769_FIX_SRC_URI} -> ${CVE_2019_19769_FN}
+
+#			 ${CVE_2019_19770_FIX_SRC_URI} -> ${CVE_2019_19770_FN}
 
 # @FUNCTION: approve_cve_fix
 # @DESCRIPTION:
@@ -1560,7 +1604,6 @@ NIST NVD URI: ${NIST_NVD_CVE_M}\n\
 MITRE URI: ${MITRE_M}\n\
 Patch download: ${!PS}\n\
 Patch message: ${!pm}"
-		ewarn
 	else
 		local downloads=""
 		local messages=""
@@ -1579,7 +1622,6 @@ NIST NVD URI: ${NIST_NVD_CVE_M}\n\
 MITRE URI: ${MITRE_M}\n\
 Patch downloads: ${downloads}\n\
 Patch messages: ${messages}"
-		ewarn
 	fi
 }
 
@@ -4167,9 +4209,83 @@ function fetch_cve_2019_19602_hotfix() {
 	return 0
 }
 
-#---
+
+# @FUNCTION: fetch_cve_2019_19767_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19767 patch
+function fetch_cve_2019_19767_hotfix() {
+	local CVE_ID="CVE-2019-19767"
+	if ver_test ${PV} -ge 5.4.2 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	if grep -F -e \
+		'if ((EXT4_GOOD_OLD_INODE_SIZE + ei->i_extra_isize > inode_size) ||' \
+		"${S}/fs/ext4/inode.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_19768_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19768 patch
+function fetch_cve_2019_19768_hotfix() {
+	local CVE_ID="CVE-2019-19768"
+	if grep -F -e \
+		'' \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
+
+# @FUNCTION: fetch_cve_2019_19769_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19769 patch
+function fetch_cve_2019_19769_hotfix() {
+	local CVE_ID="CVE-2019-19769"
+	if grep -F -e \
+		'' \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
 
 
+# @FUNCTION: fetch_cve_2019_19770_hotfix
+# @DESCRIPTION:
+# Checks for the CVE_2019_19770 patch
+function fetch_cve_2019_19770_hotfix() {
+	local CVE_ID="CVE-2019-19770"
+	if grep -F -e \
+		'' \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} already patched."
+		return 0
+	fi
+	_fetch_cve_boilerplate_msg
+	_fetch_cve_boilerplate_msg_footer
+	return 0
+}
 
 
 #---
@@ -7285,6 +7401,98 @@ function apply_cve_2019_19602_hotfix() {
 	return $?
 }
 
+
+# @FUNCTION: apply_cve_2019_19767_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19767 patch if it needs to
+function apply_cve_2019_19767_hotfix() {
+	local CVE_ID="CVE-2019-19767"
+	if ver_test ${PV} -ge 5.4.2 ; then
+		einfo "Skipping obsolete ${CVE_ID}"
+		return 0
+	fi
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		'if ((EXT4_GOOD_OLD_INODE_SIZE + ei->i_extra_isize > inode_size) ||' \
+		"${S}/fs/ext4/inode.c" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	_resolve_hotfix_default
+	return $?
+}
+
+# @FUNCTION: apply_cve_2019_19768_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19768 patch if it needs to
+function apply_cve_2019_19768_hotfix() {
+	# fixme
+	return 0
+	local CVE_ID="CVE-2019-19768"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		'' \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	_resolve_hotfix_default
+	return $?
+}
+
+# @FUNCTION: apply_cve_2019_19769_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19769 patch if it needs to
+function apply_cve_2019_19769_hotfix() {
+	# fixme
+	return 0
+	local CVE_ID="CVE-2019-19769"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		'' \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	_resolve_hotfix_default
+	return $?
+}
+
+
+# @FUNCTION: apply_cve_2019_19770_hotfix
+# @DESCRIPTION:
+# Applies the CVE_2019_19770 patch if it needs to
+function apply_cve_2019_19770_hotfix() {
+	# fixme
+	return 0
+	local CVE_ID="CVE-2019-19770"
+	local CVE_ID_="${CVE_ID//-/_}_"
+	local cve_severity="${CVE_ID_}SEVERITY"
+	local cve_fn="${CVE_ID_}FN"
+	if grep -F -e \
+		'' \
+		"${S}/" \
+		>/dev/null
+	then
+		einfo "${CVE_ID} is already patched."
+		return 0
+	fi
+	_resolve_hotfix_default
+	return $?
+}
+
 #---
 
 # @FUNCTION: fetch_cve_hotfixes
@@ -7459,6 +7667,12 @@ function fetch_cve_hotfixes() {
 		fetch_cve_2019_19543_hotfix
 
 		fetch_cve_2019_19602_hotfix
+
+		fetch_cve_2019_19767_hotfix
+		fetch_cve_2019_19768_hotfix
+		fetch_cve_2019_19769_hotfix
+
+		fetch_cve_2019_19770_hotfix
 
 		local cve_copyright1="CVE_COPYRIGHT1_${CVE_LANG}"
 		local cve_copyright2="CVE_COPYRIGHT2_${CVE_LANG}"
@@ -7644,5 +7858,11 @@ function apply_cve_hotfixes() {
 		apply_cve_2019_19543_hotfix || exit $?
 
 		apply_cve_2019_19602_hotfix || exit $?
+
+		apply_cve_2019_19767_hotfix || exit $?
+		apply_cve_2019_19768_hotfix || exit $?
+		apply_cve_2019_19769_hotfix || exit $?
+
+		apply_cve_2019_19770_hotfix || exit $?
 	fi
 }

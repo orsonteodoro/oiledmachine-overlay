@@ -44,14 +44,20 @@ ZENTUNE_5_4_COMMIT="3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0"
 # Mispatch/missing commit cluster can be caused by backports of DRM updates
 # from future major.minor kernel releases.
 
-#AMD_STAGING_INTERSECTS_KV="70bcf2bc5203e358e5e2ac30718caea53204dfe9"
-# corresponds to drm/amd/display: 3.2.35 (tested) same as 5.x kernel release
+#AMD_STAGING_INTERSECTS_KV="b4d857ded1c50fb2bd1168d6f80ae81397ae468b"
+# corresponds to drm/amd/display: 3.2.48 (tested) same as 5.4 kernel release
 
-AMD_STAGING_INTERSECTS_KV="5408887141baac0ad1a5e6cf514ceadf33090114"
-# corresponds to drm/amd/display: 3.2.30 (testing); needs to go back x.x.-1
-#   point release assuming that 3.2.31 is botched.
-# 3.2.31 is pattern of missing commits in
-#   ot-kernel-common_fetch_amd_staging_drm_next_commits_post
+# b4d857 uses DC_VER 3.2.48 which depends on
+# 9d6f4484e81c0005f019c8e9b43629ead0d0d355 which is contained in DC_VER 3.2.35
+
+# The base should be $commit-1 to pull $commit.  If not, then $commit will
+# excluded in the commit list range.
+
+# KV is K_MAJOR_MINOR
+AMD_STAGING_INTERSECTS_KV="0d44494af174c316422c4d4897f8bcf654b44505"
+# corresponds to commit contained in drm/amd/display: 3.2.33. the DC_VER
+# released with 5.4 needs to go back x.x.-1 or more point releases assuming
+# that 3.2.34 is a partial merge or not completely atomic.
 
 # obtained by:  git -P show -s --format=%ct v5.4 | tail -n 1
 LINUX_TIMESTAMP=1574641921
@@ -128,7 +134,10 @@ https://github.com/torvalds/linux/commit/d1836f3813ee0742a2067d5f4d78e811d2b76d9
 https://github.com/torvalds/linux/commit/04ed8459f3348f95c119569338e39294a8e02349.patch \
 	-> torvalds-linux-kernel-04ed8459f3348f95c119569338e39294a8e02349.patch
 https://github.com/torvalds/linux/commit/695af5f9a51914030eb2d9e3ba923d38180a8199.patch \
-	-> torvalds-linux-kernel-695af5f9a51914030eb2d9e3ba923d38180a8199.patch"
+	-> torvalds-linux-kernel-695af5f9a51914030eb2d9e3ba923d38180a8199.patch \
+\
+https://github.com/torvalds/linux/commit/ec3e5c0f0c2b716e768c0eee0fec30d572939ef5.patch \
+	-> torvalds-linux-kernel-ec3e5c0f0c2b716e768c0eee0fec30d572939ef5.patch"
 
 _set_check_reqs_requirements() {
 	# for 3.1 kernel
@@ -186,16 +195,22 @@ function ot-kernel-common_pkg_pretend_cb() {
 function ot-kernel-asdn_rm() {
 	local l
 	# already patched
-	l=(
-	b48935b3bfc1350737e759fef5e92db14a2e2fbb
-	4d7fd9e20b0784b07777728316da5bcc13f9f2ab
-	ebecc6c48f39b3c549bee1e4ecb9be01bf341a0f
-	ebf8fc31cbcedc9d6a81642082661c82eae284fb
-	a6f30079b8562b659e1d06f7cb1bc30951869bbc
-	bf2bf52383a09256e11278e7bcb67dcd912078c7 )
+	l=()
+#	l+=(
+#	b48935b3bfc1350737e759fef5e92db14a2e2fbb
+#	4d7fd9e20b0784b07777728316da5bcc13f9f2ab
+#	ebecc6c48f39b3c549bee1e4ecb9be01bf341a0f
+#	ebf8fc31cbcedc9d6a81642082661c82eae284fb
+#	a6f30079b8562b659e1d06f7cb1bc30951869bbc
+#	bf2bf52383a09256e11278e7bcb67dcd912078c7 )
 
-	if ver_test ${PV} -ge 5.3.5 ; then
-		l+=( e40837afb9b011757e17e9f71d97853ca574bcff )
+#	if ver_test ${PV} -ge 5.3.5 ; then
+#		l+=( e40837afb9b011757e17e9f71d97853ca574bcff )
+#	fi
+
+	if ver_test ${PV} -ge 5.4 ; then
+		l+=( 684cd480fd4e6d5678e3f480d48a9809d9d119ea
+		bbaa343a88799ed8f58f3ea891e20e7767f123a7 )
 	fi
 
 	# already applied in torvalds kernel for 5.4 but not 5.3
@@ -204,12 +219,12 @@ function ot-kernel-asdn_rm() {
 	# obsolete (hunks that doesn't appear in the final image (aka head) in
 	#   amd-staging-drm-next repo ; replaced by newer
 	#   design / architecture / version)
-	l+=(
-	5fa790f6c936c4705dea5883fa12da9e017ceb4f
-	3f61fd41f38328f0a585eaba2d72d339fe9aecda )
+#	l+=(
+#	5fa790f6c936c4705dea5883fa12da9e017ceb4f
+#	3f61fd41f38328f0a585eaba2d72d339fe9aecda )
 
 	if use amd-staging-drm-next && use rock ; then
-		# use rock version instead
+		# use ROCk version instead
 		l+=( d0ba51b1cacd27bdc1acfe70cb55699f3329b2b1
 		3e205a0849a760166578b4d95b17e904f23d962e
 		876923fb92a9e298625067284977917d4741ee2e
@@ -288,6 +303,15 @@ function ot-kernel-common_amdgpu_merge_and_apply_patches_asdn() {
             _dpatch "${PATCH_OPS}" \
 "${FILESDIR}/amdgpu-98eb03bbf0175f009a74c80ac12b91a9680292f4-rebase-for-5.3.4-asdn.patch"
             ;;
+
+          # 5.4 addendums
+          *1c70d3d9c4a6d4e4b4425d78e0a919cfaa3cf8db*)
+            # Easy
+            # Revert part of dependency then merge
+            _dpatch "${PATCH_OPS} -R" \
+"${DISTDIR}/torvalds-linux-kernel-ec3e5c0f0c2b716e768c0eee0fec30d572939ef5.patch"
+            _dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            ;;
           *)
             die "Patch failure ${mpd}/${l} .  Did not find the intervention patch."
             ;;
@@ -316,7 +340,7 @@ function ot-kernel-rock_rm() {
 	bf34bf33eed4296642cf51acd91c2e8942ca5fef
 	0bc07fd0aab17d7ecc85a9eb1fea668cbb0f0162
 # same as 1faa3b805473d7f4197b943419781d9fd21e4352 in torvalds kernel v5.4 and
-#   asdn
+#   ASDN
 	220883377e9c2434fcafaab24e215597752a2d84
 # applied in 14328aa58ce523a59996c5a82681c43ec048cc33
 	2d2f62874426b347d47eeac492709c3ad0c1b92a
@@ -352,9 +376,9 @@ function ot-kernel-rock_rm() {
 # vanilla is version 2
 	1013dec3ee8dce5348a85ffadfed52b68346b9fc
 	2e5e1c3fed36d74806f2d805601b130605c3efd0
-# vanilla is version 4, rock is version 3
+# vanilla is version 4, ROCk is version 3
 	209e519c2caef76407eabfff4ae5061bef320d19
-# vanilla is version 3, rock is version 2
+# vanilla is version 3, ROCk is version 2
 	5b4e3b79a1ad5702fbb2e54ee4b74b805ea2b4d2
 # already applied in torvald kernel 14328aa58ce523a59996c5a82681c43ec048cc33
 	8d4c550acf01c77a00c620b49c91fab8ea9c31c4
@@ -403,10 +427,17 @@ function ot-kernel-rock_rm() {
 # Revert "drm/amdkfd: update gfx10 support for latest kfd changes"
 	e7a487ffe6dfa11278095adb81e3b142c6e905c2
 # drm/amdkfd: update gfx10 support for latest kfd changes
-	26e8ff97cd56eacfc02703149f7c87a4b37c2564 )
+	26e8ff97cd56eacfc02703149f7c87a4b37c2564
+
+	# applied later in 64d6e02eb61dd2e84b4a890fd7d78aa63d379bba
+# Revert "drm/amd/powerplay: honor hw limit on fetching metrics data for navi10"
+	9e322549ad1187feff042e9a696f68af21d6118d
+# drm/amd/powerplay: honor hw limit on fetching metrics data for navi10 too
+#   frequently to update mertrics table will cause smu internal error.
+	3cc2abc46e519cd630fd558c9b0dbd37441360e0 )
 
 	if ! use directgma ; then
-		# the amdgpu_vm_bo_split_mapping should resemble asdn version
+		# the amdgpu_vm_bo_split_mapping should resemble ASDN version
 		# disabiling directgma should be result in less problematic
 		# merge conflict resolution
 		l+=(
@@ -569,7 +600,7 @@ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
 "${FILESDIR}/amdgpu-64f55e629237e4752db18df4d6969a69e3f4835a-rebase-for-5.3.4-rasdn.patch"
             ;;
 #          *3e205a0849a760166578b4d95b17e904f23d962e*asdn*)
-            # Using asdn version of:
+            # Using ASDN version of:
             #   'drm/amdkfd: Implement kfd2kgd_calls for Arcturus'
             #   (3e205a0849a760166578b4d95b17e904f23d962e)`
             # then apply additional deletes by
@@ -693,7 +724,7 @@ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
       fi
     done
 
-    # The last pass will scan source code or the rock patchset for
+    # The last pass will scan source code or the ROCk patchset for
     # dkms/kcl macro defines and replace them with DRM_VERSION
     # checks.
   fi
@@ -703,16 +734,20 @@ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
 # @DESCRIPTION:
 # Apply amd-staging-drm-next and ROCk commits at the same time.
 function ot-kernel-common_amdgpu_merge_and_apply_patches() {
-	local mpd="${T}/amdgpu-merged-patches"
+	local mpd="${AMDGPU_MERGED_CACHE}"
 	mkdir -p "${mpd}"
 	if use amd-staging-drm-next ; then
 		generate_amd_staging_drm_next_patches
-		mv "${T}/amd-staging-drm-next-patches"/* "${mpd}"
+		einfo "Merging amd-staging-drm-next patches into ${mpd}"
+		mv "${ASDN_T_CACHE}"/*asdn* "${mpd}"
 	fi
 	if use rock ; then
 		generate_rock_patches
-		mv "${T}/rock-patches"/* "${mpd}"
+		einfo "Merging ROCk patches into ${mpd}"
+		mv "${ROCK_T_CACHE}"/*rock* "${mpd}"
 	fi
+	# The remaining .patch files are future commits not contained in the
+	# current commit_list
 
 	ot-kernel-common_amdgpu_merge_and_apply_patches_rock
 	# This is split to isolate amd_staging_drm_next versus

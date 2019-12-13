@@ -30,7 +30,8 @@ function amd_staging_drm_next_setup() {
 "You must define a AMD_STAGING_DRM_NEXT_BUMP_REQUEST environmental variable\n\
 in your make.conf or per-package env containing either: head, \n\
 dc_ver, amdgpu_version"
-			if [[ "${K_MAJOR_MINOR}" == "5.3" ]] ; then
+			if [[ "${K_MAJOR_MINOR}" == "5.3" \
+				|| "${K_MAJOR_MINOR}" == "5.4" ]] ; then
 				m+=", snapshot"
 			fi
 			if ver_test ${K_MAJOR_MINOR} -ge 5.0 \
@@ -59,7 +60,7 @@ dc_ver, amdgpu_version"
 				;;
 		esac
 		cd_asdn
-		git config merge.renamelimit 1999
+		git config diff.renamelimit 1704 # recommended by output
 		chown portage:portage .git/config || die
 	fi
 }
@@ -71,13 +72,11 @@ dc_ver, amdgpu_version"
 function fetch_amd_staging_drm_next() {
 	if use amd-staging-drm-next ; then
 		local suffix_asdn=$(ot-kernel-common_amdgpu_get_suffix_asdn)
-		if [[ \
-       ! -d "${FILESDIR}/amd-staging-drm-next" ]]
-		then
+		if ! amd_staging_drm_next_is_cache_usable ; then
 			# ebuild maintainer only
 			einfo \
-"Dump amd-staging-drm-next patches to \
-${FILESDIR}/amd-staging-drm-next/${K_MAJOR_MINOR}"
+"Dump amd-staging-drm-next .patch files to \
+${ASDN_LOCAL_CACHE}"
 			fetch_amd_staging_drm_next_local_copy
 		fi
 	fi
@@ -130,7 +129,7 @@ function fetch_amd_staging_drm_next_local_copy() {
 # Removes a commit from the patch folder
 function asdn_rm() {
 	local c="${1}"
-	rm "${T}"/amd-staging-drm-next-patches/*${c}*
+	rm "${ASDN_T_CACHE}"/*${c}*
 }
 
 # @FUNCTION: asdn_rm_list
@@ -154,7 +153,8 @@ function amd_staging_drm_next_set_target() {
 	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ head ]] ; then
 		target="${AMD_STAGING_DRM_NEXT_HEAD_C}"
 	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ snapshot ]] ; then
-		if [[ ${K_MAJOR_MINOR} == 5.3 ]] ; then
+		if [[ "${K_MAJOR_MINOR}" == "5.3" \
+			|| "${K_MAJOR_MINOR}" == "5.4" ]] ; then
 			target="${AMD_STAGING_DRM_NEXT_SNAPSHOT_C}"
 		else
 			die \
@@ -175,13 +175,12 @@ version."
 # @DESCRIPTION:
 # This will generate or reuse pre-generate patch files from commit hash
 function amd_staging_drm_next_use_commits() {
-	if [[ \
-	  -d "${FILESDIR}/amd-staging-drm-next" ]]
-	then
+	if amd_staging_drm_next_is_cache_usable ; then
+		einfo "Use cached copy in ${ASDN_LOCAL_CACHE}"
 		# we don't distribute this because it is 1G+
-		mkdir -p "${T}/amd-staging-drm-next-patches"
-		cp -a "${FILESDIR}/amd-staging-drm-next"/* \
-			"${T}"/amd-staging-drm-next-patches/ \
+		mkdir -p "${ASDN_T_CACHE}"
+		cp -a "${ASDN_LOCAL_CACHE}"/* \
+			"${ASDN_T_CACHE}"/ \
 			|| die
 	else
 		amd_staging_drm_next_save_all_commits
@@ -189,10 +188,10 @@ function amd_staging_drm_next_use_commits() {
 		if [[ -n "${OT_KERNEL_MAINTAINER}" \
 			&& "${OT_KERNEL_MAINTAINER}" == "1" ]] ; then
 			einfo \
-"Copying asdn patches to ${T}/amd-staging-drm-next-patches.bak before they\n\
-get filtered.  They should be placed in \${FILESDIR}/amd-staging-drm-next ."
-			cp -a "${T}"/amd-staging-drm-next-patches \
-				"${T}"/amd-staging-drm-next-patches.bak
+"Copying ASDN patches to ${ASDN_T_CACHE}.bak before they\n\
+get filtered.  They should be placed in ${ASDN_LOCAL_CACHE} ."
+			cp -a "${ASDN_T_CACHE}" \
+				"${ASDN_T_CACHE}".bak
 		fi
 	fi
 }
@@ -201,21 +200,21 @@ get filtered.  They should be placed in \${FILESDIR}/amd-staging-drm-next ."
 # @DESCRIPTION:
 # This will rename ${c}.patch to fn="${DC_VER}-${ct}-${pn}-${c}-rock.patch" .
 # We use ${c}.patch minimize wiping entire set and reloading it on repo server.
-# We rename to latter for easy merging between rock and asdn and to separate
+# We rename to latter for easy merging between ROCk and ASDN and to separate
 # merge ordering (pn aka padded n) if it changed.
 function amd_staging_drm_next_rename_commits() {
 	for c in $C ; do
 		local DC_VER="${asdn_dc_ver[${c}]}"
 		local ct=${asdn_commit_time[${c}]}
 		local pn=${asdn_pn[${c}]}
-		mv "${T}/amd-staging-drm-next-patches/${c}.patch" \
-			"${T}/amd-staging-drm-next-patches/${DC_VER}-${ct}-${pn}-${c}-asdn.patch"
+		mv "${ASDN_T_CACHE}/${c}.patch" \
+			"${ASDN_T_CACHE}/${DC_VER}-${ct}-${pn}-${c}-asdn.patch"
 	done
 }
 
 # @FUNCTION: cd_asdn
 # @DESCRIPTION:
-# Change directory to asdn
+# Change directory to ASDN's local repo.
 cd_asdn() {
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	local d="${distdir}/ot-sources-src/linux-${AMD_STAGING_DRM_NEXT_DIR}"
@@ -226,18 +225,19 @@ cd_asdn() {
 # @DESCRIPTION:
 # Saves all amd-staging-drm-next commits as patch files
 function amd_staging_drm_next_save_all_commits() {
+	einfo "Saving all amd-staging-drm-next commits as patches from scratch"
 	cd_asdn
 	for c in $C ; do
 		local fn="${c}.patch"
 		if git -P diff $c^..$c \
-			> "${T}"/amd-staging-drm-next-patches/${fn} ; then
+			> "${ASDN_T_CACHE}"/${fn} ; then
 		        #einfo "Added ${fn}"
 			# attach missing commit subject for possible patch tarball
 			git -P show -s --pretty=email ${c} \
-			  > "${T}/amd-staging-drm-next-patches/${fn}.t" || die
-			cat "${T}/amd-staging-drm-next-patches/${fn}" \
-			  >> "${T}/amd-staging-drm-next-patches/${fn}.t" || die
-			mv "${T}"/amd-staging-drm-next-patches/${fn}{.t,} \
+			  > "${ASDN_T_CACHE}/${fn}.t" || die
+			cat "${ASDN_T_CACHE}/${fn}" \
+			  >> "${ASDN_T_CACHE}/${fn}.t" || die
+			mv "${ASDN_T_CACHE}"/${fn}{.t,} \
 			  || die
 		else
 			die "Failed to add ${c} ${fn}"
@@ -251,7 +251,7 @@ function amd_staging_drm_next_save_all_commits() {
 amd_staging_drm_next_prepend_licenses_in_patches() {
 	if [[ -n "${USE_PATACHIE}" && "${USE_PATACHIE}" == "1" ]] ; then
 		einfo "Attaching licenses to amd-staging-drm-next patches"
-		"${HOME}/patachie" -p "${T}"/amd-staging-drm-next-patches \
+		"${HOME}/patachie" -p "${ASDN_T_CACHE}" \
 			-s "${S}" \
 			-of "${T}/asdn-licenses" \
 			-od "${T}/asdn-processed"
@@ -266,7 +266,7 @@ and ${T}/asdn-licenses contains all the licenses in one file."
 # @DESCRIPTION:
 # (PRIVATE) Removes an amd-staging-drm-next .patch file
 function __remove_asdn_patch() {
-	rm "${T}"/amd-staging-drm-next-patches/*${c}*asdn* > /dev/null
+	rm "${ASDN_T_CACHE}"/*${c}* > /dev/null
 }
 
 # @FUNCTION: amd_staging_drm_next_filter_by_git_commit_metadata
@@ -275,11 +275,22 @@ function __remove_asdn_patch() {
 function amd_staging_drm_next_filter_by_git_commit_metadata() {
 	cd_asdn
 	local whitelisted
+	local finished=0
 	for c in $C ; do
 		#einfo "Processing ${c}"
 		local fn
+		if [[ "${finished}" == "1" ]] ; then
+			#einfo \
+#"Deleting the rest of commits."
+			__remove_asdn_patch
+			continue
+		fi
+		if [[ ${c} == "${target}" ]] ; then
+			#einfo "Last commit ${c} encountered"
+			finished=1
+		fi
 		if [[ -n "${vk_commits[${c}]}" ]] ; then
-#			einfo \
+			#einfo \
 #"Skipping old commit ${c} :  Already added via vanilla kernel sources."
 			__remove_asdn_patch
 			continue
@@ -290,7 +301,8 @@ function amd_staging_drm_next_filter_by_git_commit_metadata() {
 
 		local whitelisted=0
 		if [[ \
-		"${c}" =~ 0dbd555a011c2d096a7b7e40c83c5776a7df367c || \
+		( "${K_MAJOR_MINOR}" == "5.3" && \
+		 ( "${c}" =~ 0dbd555a011c2d096a7b7e40c83c5776a7df367c || \
 		"${c}" =~ 1e053b10ba60eae6a3f9de64cbc74bdf6cb0e715 || \
 		"${c}" =~ e532a135d7044b5477c1c56169fa131d77c57f75 || \
 		"${c}" =~ 52791eeec1d9f4a7e7fe08aaba0b1553149d93bc || \
@@ -319,9 +331,18 @@ function amd_staging_drm_next_filter_by_git_commit_metadata() {
 		"${c}" =~ e7f0141a217fa28049d7a3bbc09bee9642c47687 || \
 		"${c}" =~ 2e3c9ec4d151c04d75546dfdc2f85a84ad546eb0 || \
 		"${c}" =~ c74dbe44eacf00a5ccc229b5cc340a9b7f6851a0 || \
-		"${c}" =~ 97797a93ffb905304df11dc42e1daab9aa7faa9b || \
-		"${c}" =~ 2a1e00c3c0d37f65241236d7731ef6bb92f0d07f \
-			]] ; then
+		"${c}" =~ 2a1e00c3c0d37f65241236d7731ef6bb92f0d07f || \
+		"${c}" =~ 97797a93ffb905304df11dc42e1daab9aa7faa9b ) ) || \
+		( "${K_MAJOR_MINOR}" == "5.4" && \
+		 ( "${c}" =~ 9d6f4484e81c0005f019c8e9b43629ead0d0d355 || \
+		   "${c}" =~ 64f55e629237e4752db18df4d6969a69e3f4835a || \
+                   "${c}" =~ 38750f03030a40976524295b8a8facfda2a5f393 ) ) ]]
+		then
+			# 97797a9 2019-08-30 drm/amdgpu: Add RAS EEPROM table.
+			#  is DC_VER 3.2.48 in amd-staging-drm-next repo
+			# 64f55e6 2019-08-27 drm/amdgpu: Add RAS EEPROM table.
+			#  is DC_VER 3.2.48 in amd-staging-drm-next repo
+
 			# whitelist specific commits which includes \
 			# 5.4-rc* commits
 			whitelisted=1
@@ -337,7 +358,7 @@ function amd_staging_drm_next_filter_by_git_commit_metadata() {
 		else
 			local ct="${asdn_commit_time[${c}]}"
 			if (( ${ct} <= ${LINUX_TIMESTAMP} )) ; then
-				#einfo "Skipping old commit ${c} : Old timestamp"
+				#einfo "Skipping old commit ${c} :  Old timestamp"
 				__remove_asdn_patch
 				continue
 			fi
@@ -345,7 +366,7 @@ function amd_staging_drm_next_filter_by_git_commit_metadata() {
 		if [[ "${whitelisted}" == "1" ]] ; then
 			:;
 		elif [[ -n "${vk_summaries[${h_summary}]}" ]] ; then
-#			einfo \
+			#einfo \
 #"Already added ${c} via vanilla kernel sources (with same subject match). \
 #Skipping..."
 			__remove_asdn_patch
@@ -401,21 +422,25 @@ function amd_staging_drm_next_generate_database() {
 	cd_asdn
 	local n="1"
 	for c in $C ; do
-		local s=$(git -P show -s --format=%s ${c})
-		local ct=$(git -P show -s --format=%ct ${c})
+		local s=$(git -P show -s --format="%s" ${c})
+		local ct=$(git -P show -s --format="%ct" ${c})
 		local h_summary=$(echo "${s}" | sha1sum | cut -f1 -d ' ')
 
-		DC_VER=$(git -P \
-			show ${c}:drivers/gpu/drm/amd/display/dc/dc.h \
-			| grep -e "#define DC_VER" \
-			| grep -o -P -e "\"[0-9.]+\"" \
-			| sed -e "s|\"||g")
+		if (( ${ct} >= 1506464219 )) ; then
+			DC_VER=$(git -P \
+				show ${c}:drivers/gpu/drm/amd/display/dc/dc.h 2>/dev/null \
+				| grep -F -e "#define DC_VER" \
+				| grep -o -P -e "\"[0-9.]+\"" \
+				| sed -e "s|\"||g")
 
-		# repad DC_VER
-		DC_VER_MAJOR=$(printf "%02d" $(echo "$DC_VER" | cut -f1 -d '.'))
-		DC_VER_MINOR=$(printf "%02d" $(echo "$DC_VER" | cut -f2 -d '.'))
-		DC_VER_PATCH=$(printf "%03d" $(echo "$DC_VER" | cut -f3 -d '.'))
-		DC_VER="${DC_VER_MAJOR}.${DC_VER_MINOR}.${DC_VER_PATCH}"
+			# repad DC_VER
+			DC_VER_MAJOR=$(printf "%02d" $(echo "$DC_VER" | cut -f1 -d '.'))
+			DC_VER_MINOR=$(printf "%02d" $(echo "$DC_VER" | cut -f2 -d '.'))
+			DC_VER_PATCH=$(printf "%03d" $(echo "$DC_VER" | cut -f3 -d '.' | sed -e "s|^0*||"))
+			DC_VER="${DC_VER_MAJOR}.${DC_VER_MINOR}.${DC_VER_PATCH}"
+		else
+			DC_VER="00.00.000"
+		fi
 
 		printf -v pn "%06d" ${n}
 
@@ -498,13 +523,22 @@ function generate_amd_staging_drm_next_patches() {
 	suffix_asdn=$(ot-kernel-common_amdgpu_get_suffix_asdn)
 	local base="${AMD_STAGING_INTERSECTS_KV}"
 
-	mkdir -p "${T}/amd-staging-drm-next-patches"
+	mkdir -p "${ASDN_T_CACHE}"
 
 	unset asdn_summary_raw
 	unset asdn_summary_hash
 	unset asdn_commit_time
 	unset asdn_dc_ver
 	unset asdn_pn
+
+	# If you see:
+
+	# environment: line 7788: 90489ce18c3a504c781c8cfcec013258c3459328:
+	# value too great for base (error token is
+	# "90489ce18c3a504c781c8cfcec013258c3459328"),
+
+	# it may be caused by associative array not being declared like below.
+
 	declare -Ax asdn_summary_raw
 	declare -Ax asdn_summary_hash
 	declare -Ax asdn_commit_time
@@ -544,7 +578,7 @@ function generate_amd_staging_drm_next_hash_tables() {
 	einfo \
 		"Generating hash tables for amd-staging-drm-next"
 	for f in \
-		$(find "${T}"/amdgpu-merged-patches/ -name "*asdn*") ; \
+		$(find "${AMDGPU_MERGED_CACHE}"/ -name "*asdn*") ; \
 	do
 	  local c
 	  c=$(basename $f | cut -f4 -d '-')
@@ -581,4 +615,29 @@ function amd_staging_drm_next_hash_use_hash_tables() {
 		source "${T}/${HT_ASDN_FN}"
 		source "${T}/${HT_ASDNS_FN}"
 	fi
+}
+
+# @FUNCTION: amd_staging_drm_next_is_cache_usable
+# @DESCRIPTION:
+# Checks if we can use the cache
+# @RETURNS: 0 - yes we can, 1 - no we can't
+function amd_staging_drm_next_is_cache_usable() {
+	if [[ ! -d "${ASDN_LOCAL_CACHE}" ]] ; then
+		return 1
+	fi
+	case ${AMD_STAGING_DRM_NEXT_BUMP_REQUEST} in
+		head)
+			return 1
+			;;
+		snapshot)
+			local target=$(amd_staging_drm_next_set_target)
+			if [[ ! -e "${ASDN_LOCAL_CACHE}/${target}.patch" ]] ; then
+				einfo "Could not find ${ASDN_LOCAL_CACHE}/${target}.patch"
+				return 1
+			fi
+			;;
+		*)
+			;;
+	esac
+	return 0
 }
