@@ -431,10 +431,11 @@ function ot-kernel-rock_rm() {
 
 	# applied later in 64d6e02eb61dd2e84b4a890fd7d78aa63d379bba
 # Revert "drm/amd/powerplay: honor hw limit on fetching metrics data for navi10"
-	9e322549ad1187feff042e9a696f68af21d6118d
+#	9e322549ad1187feff042e9a696f68af21d6118d
 # drm/amd/powerplay: honor hw limit on fetching metrics data for navi10 too
 #   frequently to update mertrics table will cause smu internal error.
-	3cc2abc46e519cd630fd558c9b0dbd37441360e0 )
+#	3cc2abc46e519cd630fd558c9b0dbd37441360e0
+	)
 
 	if ! use directgma ; then
 		# the amdgpu_vm_bo_split_mapping should resemble ASDN version

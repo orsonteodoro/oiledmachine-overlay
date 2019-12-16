@@ -274,21 +274,11 @@ function __remove_asdn_patch() {
 # Removes commits before merging
 function amd_staging_drm_next_filter_by_git_commit_metadata() {
 	cd_asdn
-	local whitelisted
 	local finished=0
 	for c in $C ; do
 		#einfo "Processing ${c}"
+
 		local fn
-		if [[ "${finished}" == "1" ]] ; then
-			#einfo \
-#"Deleting the rest of commits."
-			__remove_asdn_patch
-			continue
-		fi
-		if [[ ${c} == "${target}" ]] ; then
-			#einfo "Last commit ${c} encountered"
-			finished=1
-		fi
 		if [[ -n "${vk_commits[${c}]}" ]] ; then
 			#einfo \
 #"Skipping old commit ${c} :  Already added via vanilla kernel sources."
@@ -299,7 +289,6 @@ function amd_staging_drm_next_filter_by_git_commit_metadata() {
 		local s="${asdn_summary_raw[${c}]}"
 		local h_summary="${asdn_summary_hash[${c}]}"
 
-		local whitelisted=0
 		if [[ \
 		( "${K_MAJOR_MINOR}" == "5.3" && \
 		 ( "${c}" =~ 0dbd555a011c2d096a7b7e40c83c5776a7df367c || \
@@ -345,17 +334,19 @@ function amd_staging_drm_next_filter_by_git_commit_metadata() {
 
 			# whitelist specific commits which includes \
 			# 5.4-rc* commits
-			whitelisted=1
+			continue
 		elif echo "${s}" | grep -q -P \
 -e "(drm/amd|amdgpu|amd/powerplay|amdkfd|gpu: amdgpu:|amdgpu_dm)" ; then
 			# whitelist all amd drm driver updates for
 			# evaluation
-			:;
+			:; # still filter it though
 		elif echo "${s}" | grep -q -P \
 -e "(bo->resv to bo->base.resv|use embedded gem object|Fill out gem_object->resv)" ; then
 			# whitelist by subject keywords
-			whitelisted=1
+			continue
 		else
+			# don't filter ASDN by timestamp because upstream may
+			# not accept all commits
 			local ct="${asdn_commit_time[${c}]}"
 			if (( ${ct} <= ${LINUX_TIMESTAMP} )) ; then
 				#einfo "Skipping old commit ${c} :  Old timestamp"
@@ -363,14 +354,24 @@ function amd_staging_drm_next_filter_by_git_commit_metadata() {
 				continue
 			fi
 		fi
-		if [[ "${whitelisted}" == "1" ]] ; then
-			:;
-		elif [[ -n "${vk_summaries[${h_summary}]}" ]] ; then
+
+		if [[ -n "${vk_summaries[${h_summary}]}" ]] ; then
 			#einfo \
 #"Already added ${c} via vanilla kernel sources (with same subject match). \
 #Skipping..."
 			__remove_asdn_patch
 			continue
+		fi
+
+		# deferred to the end to check whitelist
+		if [[ "${finished}" == "1" ]] ; then
+			#einfo \
+#"Deleting the rest of commits."
+			__remove_asdn_patch
+			continue
+		elif [[ ${c} == "${target}" ]] ; then
+			#einfo "Last commit ${c} encountered"
+			finished=1
 		fi
 	done
 }
@@ -387,7 +388,7 @@ function generate_amd_staging_drm_next_commit_list() {
 	cd_asdn
 	einfo \
 "Saving only the amd-staging-drm-next commits for commit-by-commit evaluation.\n\
-Doing commit -> .patch conversion for amd-staging-drm-next-patches set:"
+Doing commit -> .patch conversion for amd-staging-drm-next-patches set"
 	C=$(git -P log ${base}..${target} --oneline \
 		--pretty=format:"%H" -- \
 		drivers/gpu/drm include/drm drivers/dma-buf \

@@ -325,17 +325,9 @@ function __remove_rock_patch() {
 function rock_filter_by_git_commit_metadata() {
 	local finished=0
 	for c in $C ; do
+		#einfo "Processing ${c}"
+
 		local fn=""
-		if [[ "${finished}" == "1" ]] ; then
-			#einfo \
-#"Deleting the rest of commits."
-			__remove_rock_patch
-			continue
-		fi
-		if [[ ${c} == "${target}" ]] ; then
-			#einfo "Last commit ${c} encountered"
-			finished=1
-		fi
 		if [[ -n "${vk_commits[${c}]}" ]] ; then
 			#einfo \
 #"Already added ${c} via vanilla kernel sources.  Skipping..."
@@ -428,7 +420,6 @@ function rock_filter_by_git_commit_metadata() {
 
 		local h_summary="${rock_summary_hash[${c}]}"
 
-		local whitelisted=0
 		if [[ \
 		"${c}" =~ 0dbd555a011c2d096a7b7e40c83c5776a7df367c || \
 		"${c}" =~ 1e053b10ba60eae6a3f9de64cbc74bdf6cb0e715 || \
@@ -474,7 +465,7 @@ function rock_filter_by_git_commit_metadata() {
 			# ROCk whitelist
 			# whitelist specific commits which includes
 			#   5.4-rc* commits
-			whitelisted=1
+			continue
 		elif echo "${s}" | grep -q -P \
 -e "(drm/amd|amdgpu|amd/powerplay|amdkfd|gpu: amdgpu:|amdgpu_dm)" ; then
 			# whitelist all amd drm driver updates for
@@ -482,13 +473,17 @@ function rock_filter_by_git_commit_metadata() {
 			# the ROCk kernel modifications don't explicitly
 			#   say ROCk addition but get mixed with these
 			#   subject tags
-			:;
+			:; # still filter it though
 		elif echo "${s}" | grep -q -P \
 -e "(bo->resv to bo->base.resv|use embedded gem object|Fill out gem_object->resv)" ; \
 		then
 			# ASDN set (already included)
 			continue
 		else
+			# don't filter ROCk by timestamp because it dates back
+			#   since 2014
+			# don't filter ASDN by timestamp because upstream may
+			#   not accept all commits
 			local ct="${rock_commit_time[${c}]}"
 			if (( ${ct} <= ${LINUX_TIMESTAMP} )) ; then
 				#einfo "Skipping old commit ${c} :  Old timestamp"
@@ -497,9 +492,7 @@ function rock_filter_by_git_commit_metadata() {
 			fi
 		fi
 
-		if [[ "${whitelisted}" == "1" ]] ; then
-			:;
-		elif [[ -n "${vk_summaries[${h_summary}]}" ]] ; then
+		if [[ -n "${vk_summaries[${h_summary}]}" ]] ; then
 			#einfo \
 #"Already added ${c} via vanilla kernel sources (with same subject match).  \
 #Skipping..."
@@ -508,15 +501,24 @@ function rock_filter_by_git_commit_metadata() {
 		fi
 
 		if use amd-staging-drm-next ; then
-			if [[ "${whitelisted}" == "1" ]] ; then
-				:;
-			elif [[ -n "${asdn_summaries[${h_summary}]}" ]] ; then
+			if [[ -n "${asdn_summaries[${h_summary}]}" ]] ; then
 				#einfo \
 #"Already added ${c} via amd-staging-drm-next kernel sources (with same subject \
 #match).  Skipping..."
 				__remove_rock_patch
 				continue
 			fi
+		fi
+
+		# deferred to the end to check whitelist
+		if [[ "${finished}" == "1" ]] ; then
+			#einfo \
+#"Deleting the rest of commits."
+			__remove_rock_patch
+			continue
+		elif [[ ${c} == "${target}" ]] ; then
+			#einfo "Last commit ${c} encountered"
+			finished=1
 		fi
 	done
 }
