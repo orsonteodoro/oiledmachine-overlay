@@ -78,7 +78,7 @@ REQUIRED_USE="^^ ( muqss cfs bmq )
 	     rock? ( amd-staging-drm-next )"
 
 # no released patch yet
-REQUIRED_USE+=" !bfq !uksm !bmq-quick-fix"
+REQUIRED_USE+=" !bfq !bmq-quick-fix"
 
 #K_WANT_GENPATCHES="base extras experimental"
 K_SECURITY_UNSUPPORTED="1"
@@ -123,8 +123,8 @@ SRC_URI+=" ${KERNEL_URI}
 	   ${GENPATCHES_BASE_SRC_URL}
 	   ${GENPATCHES_EXPERIMENTAL_SRC_URL}
 	   ${GENPATCHES_EXTRAS_SRC_URL}
-	   ${KERNEL_PATCH_URLS[@]} "
-#	   ${UKSM_SRC_URL}
+	   ${KERNEL_PATCH_URLS[@]}
+	   ${UKSM_SRC_URL} "
 
 SRC_URI+=\
 "https://github.com/torvalds/linux/commit/4b3e30ed3ec7864e798403a63ff2e96bd0c19ab0.patch \
