@@ -4,11 +4,12 @@
 EAPI=7
 DESCRIPTION="Google from the terminal"
 HOMEPAGE="https://github.com/jarun/googler"
+MY_PV="$(ver_cut 1-2 ${PV})"
 SRC_URI="https://github.com/jarun/${PN}/archive/v${MY_PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="GPL-3"
-PYTHON_COMPAT=( python{3_4,3_5,3_6} )
+KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
+PYTHON_COMPAT=( python{3_5,3_6,3_7,3_8} )
 inherit eutils
-MY_PV="3.8"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
 RDEPEND="${DEPEND}"
@@ -24,4 +25,3 @@ src_prepare() {
 	sed -i -e "s|gzip|#gzip|" \
 		-e "s|googler.1.gz|googler.1|g" Makefile || die
 }
-
