@@ -466,6 +466,7 @@
     <flag name="unzip">Adds unzip support for the extract plugin.</flag>
     <flag name="rar">Adds rar support for the extract plugin.</flag>
     <flag name="xz">Adds xz support for the extract plugin.</flag>
+    <flag name="zstd">Adds zstd support for the extract plugin.</flag>
     <flag name="python_targets_python2_7">Checks for Python 2.7 support.</flag>
     <flag name="python_targets_python3_5">Checks for Python 3.x support.</flag>
     <flag name="python_targets_python3_6">Checks for Python 3.x support.</flag>
