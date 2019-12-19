@@ -152,6 +152,11 @@ _set_check_reqs_requirements() {
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel-common_pkg_setup_cb() {
+	einfo \
+"${K_MAJOR_MINOR} series is EOL (End-of-Life).  It will be removed without\n\
+notice after tresor/rock USE flag is fixed for 5.4.x.  The ebuild is left in\n\
+place for debugging."
+
 	if use zentune || use muqss ; then
 		ewarn \
 "The zen-tune patch or muqss might cause lock up or slow io under heavy load\n\
