@@ -462,6 +462,7 @@
     <flag name="7zip">Adds 7zip support for the extract plugin.</flag>
     <flag name="bzip2">Adds bzip2 support for the extract plugin.</flag>
     <flag name="gzip">Adds gzip support for the extract plugin.</flag>
+    <flag name="lzip">Adds lzip support for the extract plugin.</flag>
     <flag name="lzma">Adds lzma support for the extract plugin.</flag>
     <flag name="unzip">Adds unzip support for the extract plugin.</flag>
     <flag name="rar">Adds rar support for the extract plugin.</flag>
