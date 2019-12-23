@@ -34,7 +34,7 @@ USE_RUBY="ruby24 ruby25 ruby26"
 RUBY_OPTIONAL=1
 EMOJI_LANG_DEFAULT=${EMOJI_LANG_DEFAULT:=en}
 inherit eutils python-r1 ruby-ng
-EGIT_COMMIT="76d6b0256398ad1becbc304a78f51bbacfee50e5"
+EGIT_COMMIT="38929084f98684b9267d7f0cfe3e7f9aa5f861d2"
 FN="${EGIT_COMMIT}.zip"
 A_URL="https://github.com/robbyrussell/oh-my-zsh/archive/${FN}"
 SRC_URI="${A_URL} -> ${P}.zip"
@@ -44,7 +44,7 @@ RESTRICT="fetch"
 SLOT="0"
 IUSE="branding bzr clipboard curl emojis update-emoji-data java git gpg"
 IUSE+=" mercurial nodejs powerline python ruby rust subversion sudo wget"
-IUSE+=" 7zip bzip2 gzip lzma unzip rar xz"
+IUSE+=" 7zip bzip2 gzip lzip lzma unzip rar xz zstd"
 OMZSH_THEMES=( 3den adben af-magic afowler agnoster alanpeabody amuse apple \
 arrow aussiegeek avit awesomepanda bira blinks bureau candy-kingdom candy \
 clean cloud crcandy crunch cypher dallas darkblood daveverwer dieter dogenpunk \
@@ -211,7 +211,8 @@ PLUGINS_DEPEND="
 THEMES_DEPEND="
 	 themes_adben? ( games-misc/fortune-mod )
 	 "
-RDEPEND=">=app-shells/zsh-4.3.9
+RDEPEND="7zip? ( app-arch/p7zip )
+	 >=app-shells/zsh-4.3.9
 	 bzr? ( dev-vcs/bzr )
 	 clipboard? ( || ( x11-misc/xclip x11-misc/xsel ) )
 	 emojis? ( || ( media-fonts/noto-color-emoji
@@ -223,20 +224,21 @@ RDEPEND=">=app-shells/zsh-4.3.9
 	 git? ( dev-vcs/git )
 	 gpg? ( app-crypt/gnupg )
 	 java? ( virtual/jre )
-         powerline? ( media-fonts/powerline-symbols )
-	 python? ( ${PYTHON_DEPS} )
-	 rust? ( virtual/rust )
-	 sudo? ( app-admin/sudo )
 	 bzip2? ( app-arch/bzip2 )
 	 gzip? ( app-arch/pigz )
+	 lzip? ( app-arch/lzip )
 	 lzma? ( app-arch/xz-utils )
 	 mercurial? ( dev-vcs/mercurial )
 	 nodejs? ( net-libs/nodejs )
 	 ${PLUGINS_DEPEND}
+         powerline? ( media-fonts/powerline-symbols )
 	 ${PYTHON_DEPS}
+	 python? ( ${PYTHON_DEPS} )
 	 rar? ( app-arch/unrar )
 	 ruby? ( $(ruby_implementations_depend) )
+	 rust? ( virtual/rust )
 	 subversion? ( dev-vcs/subversion )
+	 sudo? ( app-admin/sudo )
 	 ${THEMES_DEPEND}
 	 update-emoji-data? ( dev-perl/XML-LibXML
 			      dev-perl/Text-Unaccent )
@@ -245,7 +247,7 @@ RDEPEND=">=app-shells/zsh-4.3.9
 	 wget? ( net-misc/wget )
 	 x11-misc/xdg-utils
 	 xz? ( app-arch/xz-utils )
-	 7zip? ( app-arch/p7zip )"
+	 zstd? ( app-arch/zstd )"
 DEPEND="${RDEPEND}
 	net-misc/wget
 	sys-apps/grep[pcre]"
@@ -300,7 +302,7 @@ REQUIRED_USE="branding? ( themes_gentoo )
 	      plugins_gpg-agent? ( gpg )
 	      plugins_otp? ( gpg )
 	      plugins_pass? ( gpg )
-	      plugins_extract? ( || ( 7zip bzip2 gzip lzma unzip rar xz ) )
+	      plugins_extract? ( || ( 7zip bzip2 gzip lzip lzma unzip rar xz zstd ) )
 	      plugins_archlinux? ( curl )
 	      plugins_composer? ( curl )
 	      plugins_gitfast? ( curl )
