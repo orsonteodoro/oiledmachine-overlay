@@ -29,6 +29,7 @@ src_prepare() {
 	default
 	multilib_copy_sources
 	ml_prepare() {
+		cd "${BUILD_DIR}"
 		dotnet_copy_sources
 	}
 	multilib_foreach_abi ml_prepare
@@ -36,6 +37,7 @@ src_prepare() {
 
 src_compile() {
 	ml_compile() {
+		cd "${BUILD_DIR}"
 		emake || die
 		dll_compile() {
 			# Build C# wrapper
@@ -51,6 +53,7 @@ src_compile() {
 src_install() {
 	local mydebug=$(usex debug "Debug" "Release")
 	ml_install() {
+		cd "${BUILD_DIR}"
 		dolib.so libtheorafile.so
 		dll_install() {
 			dotnet_install_loc
