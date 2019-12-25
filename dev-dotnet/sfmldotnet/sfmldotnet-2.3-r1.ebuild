@@ -47,6 +47,7 @@ src_prepare() {
 	done
 	multilib_copy_sources
 	ml_prepare_impl() {
+		cd "${BUILD_DIR}"
 		dotnet_copy_sources
 	}
 	multlib_foreach_abi ml_prepare_impl
@@ -55,6 +56,7 @@ src_prepare() {
 src_compile() {
 	local mydebug=$(usex debug "debug" "release")
 	ml_compile_impl() {
+		cd "${BUILD_DIR}"
 		local myarch
 		if [[ "${ABI}" == "amd64" ]] ; then
 			myarch="x64"
@@ -78,6 +80,7 @@ src_compile() {
 src_install() {
 	local mydebug=$(usex debug "Debug" "Release")
 	ml_install_impl() {
+		cd "${BUILD_DIR}"
 		local myarch
 		if [[ "${ABI}" == "amd64" ]] ; then
 			myarch="x64"
