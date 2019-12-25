@@ -78,7 +78,7 @@ RDEPEND="  app-eselect/eselect-opencl
 		>=sys-kernel/vanilla-sources-5.3
 		>=sys-kernel/xbox-sources-5.3
 		>=sys-kernel/zen-sources-5.3 )
-		|| ( >=sys-firmware/amdgpu-firmware-${PKG_VER}
+		|| ( >=sys-firmware/amdgpu-firmware-19.30.855429
 	               sys-firmware/rock-firmware
 		     >=sys-kernel/linux-firmware-20190923 ) )
 	 >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
