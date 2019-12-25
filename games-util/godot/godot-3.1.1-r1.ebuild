@@ -125,7 +125,7 @@ pkg_pretend() {
 			die "mono support requires network-sandbox, sandbox, usersandbox to be disabled in FEATURES on a per-package level."
 		fi
 		if [[ -z "${XAUTHORITY}" ]] ; then
-			ewarn "The build may require you emerge in an X session."
+			ewarn "The build may require you emerge in a X session."
 		fi
 	fi
 
@@ -134,6 +134,8 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+	ewarn "Ebuild is still Work In Progress (WIP) or development and may not work."
+	ewarn "I can't remember but building C# or gdnative bindings for server build will not work and result in a build time failure."
 	_set_check_req
 	check-reqs_pkg_setup
 	python_setup
@@ -166,6 +168,7 @@ src_prepare() {
 	multilib_copy_sources
 
 	multilib_prepare_impl1() {
+		cd "${BUILD_DIR}"
 		S="${BUILD_DIR}" \
 		godot_copy_sources
 	}
@@ -173,6 +176,7 @@ src_prepare() {
 	multilib_foreach_abi multilib_prepare_impl1
 
 	multilib_prepare_impl2() {
+		cd "${BUILD_DIR}"
 		godot_prepare_impl2() {
 			pushd godot-cpp || die
 				rm -rf godot_headers
@@ -276,6 +280,7 @@ _use_flag_to_platform() {
 
 src_compile() {
 	multilib_compile_impl() {
+		cd "${BUILD_DIR}"
 		godot_compile_impl() {
 			local myoptions=()
 
@@ -422,6 +427,7 @@ _copy_impl() {
 
 src_install() {
 	multilib_install_impl() {
+		cd "${BUILD_DIR}"
 		godot_install_impl() {
 			local bitness=$(_get_bitness)
 			local target=$(usex debug "" ".opt")

@@ -107,6 +107,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+	ewarn "Ebuild is still Work In Progress (WIP) or in development and may not work."
 	_set_check_req
 	check-reqs_pkg_setup
 	python_setup
@@ -124,6 +125,7 @@ src_prepare() {
 	multilib_copy_sources
 
 	multilib_prepare_impl() {
+		cd "${BUILD_DIR}"
 		S="${BUILD_DIR}" \
 		godot_copy_sources
 	}
@@ -147,6 +149,7 @@ _use_flag_to_platform() {
 
 src_compile() {
 	multilib_compile_impl() {
+		cd "${BUILD_DIR}"
 		godot_compile_impl() {
 			local myoptions=()
 
@@ -253,6 +256,7 @@ _copy_impl() {
 
 src_install() {
 	multilib_install_impl() {
+		cd "${BUILD_DIR}"
 		godot_install_impl() {
 			local bitness=$(_get_bitness)
 			local target=$(usex debug "" ".opt")
