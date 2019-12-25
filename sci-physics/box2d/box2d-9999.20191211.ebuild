@@ -10,8 +10,7 @@ EGIT_COMMIT="5ae818e95ddd09622bad4fd295311ca4706ad2b2"
 SLOT="0/${PV}"
 IUSE="debug doc examples static"
 inherit multilib-minimal
-RDEPEND="
-dev-util/premake:5
+RDEPEND="dev-util/premake:5
 	 media-libs/glew[${MULTILIB_USEDEP}]
 	 media-libs/glfw[${MULTILIB_USEDEP}]"
 DEPEND="${RDEPEND}
@@ -26,6 +25,7 @@ src_prepare() {
 	default
 	multilib_copy_sources
 	prepare_abi() {
+		cd "${BUILD_DIR}"
 		if ! use static; then
 			sed -i -e "s|StaticLib|SharedLib|g" \
 				premake5.lua || die
@@ -53,6 +53,7 @@ src_configure() {
 src_compile() {
 	local abi=""
 	compile_abi() {
+		cd "${BUILD_DIR}"
 		if [[ "${ABI}" == "amd64" ]] ; then
 			abi="x86_64"
 		else
@@ -76,6 +77,7 @@ src_install() {
 	fi
 	local mydebug=$(usex debug "Debug" "Release")
 	install_abi() {
+		cd "${BUILD_DIR}"
 		pushd "Build/bin/${abi}/${mydebug}"
 		if use static ; then
 			dolib.a libBox2D.a

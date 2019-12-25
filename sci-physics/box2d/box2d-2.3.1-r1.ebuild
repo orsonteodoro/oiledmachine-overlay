@@ -25,7 +25,7 @@ src_prepare() {
 	default
 	multilib_copy_sources
 	prepare_abi() {
-		cd Box2D
+		cd "${BUILD_DIR}"
 		if ! use static; then
 			sed -i -e "s|StaticLib|SharedLib|g" \
 				premake4.lua || die
@@ -57,6 +57,7 @@ src_configure() {
 
 src_compile() {
 	compile_abi() {
+		cd "${BUILD_DIR}"
 		local mydebug=$(usex debug "debug" "release")
 		pushd Box2D/Build/gmake || die
 			LDDEPS="-lglfw -lGLEW" \
@@ -69,6 +70,7 @@ src_compile() {
 src_install() {
 	local mydebug=$(usex debug "Debug" "Release")
 	install_abi() {
+		cd "${BUILD_DIR}"
 		pushd "Box2D/Build/gmake/bin/${mydebug}" || die
 		if use static; then
 			dolib.a libBox2D.a libGLUI.a
