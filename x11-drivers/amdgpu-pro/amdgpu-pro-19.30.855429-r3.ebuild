@@ -51,7 +51,7 @@ RDEPEND="  app-eselect/eselect-opencl
 	 >=app-eselect/eselect-opengl-1.0.7
 	 dev-util/cunit
 	 dev-libs/libedit
-	 dkms? ( sys-kernel/amdgpu-dkms sys-kernel/rock-dkms )
+	 dkms? ( || ( sys-kernel/amdgpu-dkms sys-kernel/rock-dkms ) )
 	 freesync? ( || (
 		  sys-kernel/amdgpu-dkms
 		>=sys-kernel/aufs-sources-5.0
