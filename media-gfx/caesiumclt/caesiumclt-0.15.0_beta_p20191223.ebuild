@@ -7,7 +7,7 @@ DESCRIPTION="Caesium Command Line Tools - Lossy/lossless image compression tool\
  using mozjpeg and zopflipng"
 HOMEPAGE="http://saerasoft.com/caesium/clt"
 LICENSE="Apache-2.0"
-EGIT_COMMIT="76fdfba51037a604f953290c8a544305432d93d8"
+EGIT_COMMIT="5a0e77e9acb4bfe456d9e2c16827bfb25864b97c"
 SRC_URI=\
 "https://github.com/Lymphatus/CaesiumCLT/archive/${EGIT_COMMIT}.tar.gz \
 	-> caesiumctl-${EGIT_COMMIT}.tar.gz"
@@ -15,8 +15,7 @@ inherit eutils cmake-utils
 SLOT="0/${PV}"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
-RDEPEND="media-libs/libcaesium
-	 media-libs/libjpeg-turbo"
+RDEPEND="media-libs/libcaesium"
 DEPEND="${RDEPEND}"
 RESTRICT="mirror"
 S="${WORKDIR}/caesium-clt-${EGIT_COMMIT}"
