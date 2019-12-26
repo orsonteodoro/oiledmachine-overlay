@@ -53,7 +53,6 @@ src_configure() {
 src_compile() {
 	compile_abi() {
 		cd "${BUILD_DIR}"
-		einfo "in compile"
 		cmake-utils_src_compile
 	}
 	multilib_foreach_abi compile_abi
