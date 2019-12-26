@@ -42,28 +42,28 @@ multilib_src_install() {
 	if multilib_is_native_abi ; then
 		_newbin cjpeg
 		_newbin djpeg
+		_newbin jpegtran
 		_newbin rdjpgcom
 		_newbin tjbench
-		_newbin jpegtran
 		_newbin wrjpgcom
 
 		dodoc README.md README-mozilla.txt usage.txt wizard.txt
 
 		# remove / resolve conflicts between libjpeg-turbo
-		rm "${D}"/usr/share/man/man1/{wrjpgcom,cjpeg,djpeg}.1 || die
-		rm "${D}"/usr/share/man/man1/{jpegtran,rdjpgcom}.1 || die
+		rm "${D}"/usr/share/man/man1/{cjpeg,djpeg,jpegtran}.1 || die
+		rm "${D}"/usr/share/man/man1/{jpegtran,rdjpgcom,wrjpgcom}.1 || die
 		mkdir -p "${D}/usr/include/libmozjpeg" || die
 		mv "${D}"/usr/include/*.h "${D}"/usr/include/libmozjpeg || die
 	fi
 
 	# remove / resolve conflicts between libjpeg-turbo
+	rm "${D}"/usr/$(get_libdir)/libjpeg.so{,.${JPEGLIB_V}} || die
 	rm "${D}"/usr/$(get_libdir)/libturbojpeg* || die
 	rm "${D}"/usr/$(get_libdir)/pkgconfig/libturbojpeg.pc || die
-	rm "${D}"/usr/$(get_libdir)/libjpeg.so{,.${JPEGLIB_V}} || die
-	mv "${D}"/usr/$(get_libdir)/pkgconfig/lib{,moz}jpeg.pc || die
-	mv "${D}"/usr/$(get_libdir)/lib{,moz}jpeg.so.${JPEGLIB_V_TRIPLE} || die
 	mv "${D}"/usr/$(get_libdir)/lib{,moz}jpeg.a || die
 	mv "${D}"/usr/$(get_libdir)/lib{,moz}jpeg.la || die
+	mv "${D}"/usr/$(get_libdir)/lib{,moz}jpeg.so.${JPEGLIB_V_TRIPLE} || die
+	mv "${D}"/usr/$(get_libdir)/pkgconfig/lib{,moz}jpeg.pc || die
 
 	sed -i -e "s|\${prefix}/include|\${prefix}/include/libmozjpeg|" \
 		"${D}"/usr/$(get_libdir)/pkgconfig/libmozjpeg.pc || die
