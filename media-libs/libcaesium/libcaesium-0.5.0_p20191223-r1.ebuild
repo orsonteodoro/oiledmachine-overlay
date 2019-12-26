@@ -13,7 +13,7 @@ SRC_URI=\
 "https://github.com/Lymphatus/libcaesium/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
 SLOT="0/${PV}"
-RDEPEND=">=media-libs/mozjpeg-3.3.1[${MULTILIB_USEDEP}]
+RDEPEND=">=media-libs/mozjpeg-4.0.0[${MULTILIB_USEDEP}]
 	 >=app-arch/zopfli-1.0.2[${MULTILIB_USEDEP}]"
 DEPEND="${RDEPEND}"
 RESTRICT="mirror"
