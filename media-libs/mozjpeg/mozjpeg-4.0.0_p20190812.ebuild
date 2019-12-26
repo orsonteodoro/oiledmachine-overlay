@@ -21,10 +21,10 @@ https://github.com/mozilla/mozjpeg/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${PN}-${PVR}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
-JPEGLIB_V_TRIPLE="62.3.0" # jpeg6b ABI, default
-JPEGLIB_V=$(ver_cut 1 ${JPEGLIB_V_TRIPLE})
-JPEGLIB_V_MAJOR=$(ver_cut 2 ${JPEGLIB_V_TRIPLE})
-JPEGLIB_V_MINOR=$(ver_cut 3 ${JPEGLIB_V_TRIPLE})
+SO_AGE="3"
+SO_MAJOR="62"
+SO_MINOR="0"
+SO_VERSION="${SO_MAJOR}.${SO_AGE}.${SO_MINOR}" # jpeg6b ABI, default
 DOC=( README.md README-mozilla.txt usage.txt wizard.txt )
 CMAKE_BUILD_TYPE=Release
 
@@ -85,22 +85,22 @@ src_install() {
 			mv "${D}"/usr/include/*.h "${D}"/usr/include/libmozjpeg || die
 		fi
 		# remove / resolve conflicts between libjpeg-turbo
-		rm "${D}"/usr/$(get_libdir)/libjpeg.so{,.${JPEGLIB_V}} \
+		rm "${D}"/usr/$(get_libdir)/libjpeg.so{,.${SO_MAJOR}} \
 			"${D}"/usr/$(get_libdir)/libturbojpeg* \
 			"${D}"/usr/$(get_libdir)/pkgconfig/libturbojpeg.pc || die
 		if use static-libs ; then
 			mv "${D}"/usr/$(get_libdir)/lib{,moz}jpeg.a || die
 			mv "${D}"/usr/$(get_libdir)/lib{,moz}jpeg.la || die
 		fi
-		mv "${D}"/usr/$(get_libdir)/lib{,moz}jpeg.so.${JPEGLIB_V_TRIPLE} || die
+		mv "${D}"/usr/$(get_libdir)/lib{,moz}jpeg.so.${SO_VERSION} || die
 		mv "${D}"/usr/$(get_libdir)/pkgconfig/lib{,moz}jpeg.pc || die
 		sed -i -e "s|\${prefix}/include|\${prefix}/include/libmozjpeg|" \
 			"${D}"/usr/$(get_libdir)/pkgconfig/libmozjpeg.pc || die
 		sed -i -e "s|-ljpeg|-lmozjpeg|" \
 			"${D}"/usr/$(get_libdir)/pkgconfig/libmozjpeg.pc || die
 		cd "${D}"/usr/$(get_libdir)/
-		ln -s libmozjpeg.so.${JPEGLIB_V_TRIPLE} libmozjpeg.so.${JPEGLIB_V}
-		ln -s libmozjpeg.so.${JPEGLIB_V_TRIPLE} libmozjpeg.so
+		ln -s libmozjpeg.so.${SO_VERSION} libmozjpeg.so.${SO_MAJOR}
+		ln -s libmozjpeg.so.${SO_VERSION} libmozjpeg.so
 	}
 	multilib_foreach_abi install_abi
 }
