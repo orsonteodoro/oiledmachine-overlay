@@ -10,7 +10,7 @@ SLOT="0/${PV}"
 IUSE=""
 RDEPEND="sys-libs/zlib"
 DEPEND="${RDEPEND}"
-inherit eutils autotools multilib-minimal multilib-build
+inherit eutils autotools multilib-minimal
 SRC_URI="\
 https://github.com/mozilla/mozjpeg/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
