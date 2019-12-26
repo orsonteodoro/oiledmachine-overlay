@@ -6,7 +6,10 @@ EAPI=7
 DESCRIPTION="Caesium Command Line Tools - Lossy/lossless image compression tool\
  using mozjpeg and zopflipng"
 HOMEPAGE="http://saerasoft.com/caesium/clt"
-LICENSE="Apache-2.0"
+LICENSE="Apache-2.0 Unlicense BSD-2"
+# The licenses are for internal dependencies
+# optparse - Unlicense
+# tinydir - BSD-2
 EGIT_COMMIT="5a0e77e9acb4bfe456d9e2c16827bfb25864b97c"
 SRC_URI=\
 "https://github.com/Lymphatus/CaesiumCLT/archive/${EGIT_COMMIT}.tar.gz \
