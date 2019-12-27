@@ -127,11 +127,10 @@ RDEPEND="
 	video_cards_i915? ( ${LIBDRM_DEPSTRING}[video_cards_intel] )
 	vulkan-overlay? ( dev-util/glslang:0=[${MULTILIB_USEDEP}] )
 "
-# fixme readd [${MULTILIB_USEDEP}] to tizonia
 RDEPEND+="
 	openmax? (
 		omx-bellagio? ( >=media-libs/libomxil-bellagio-0.9.3:=[${MULTILIB_USEDEP}] )
-		omx-tizonia? ( >=media-sound/tizonia-0.10.0:= )
+		omx-tizonia? ( >=media-sound/tizonia-0.10.0:=[${MULTILIB_USEDEP}] )
 		x11-misc/xdg-utils
 	)
 "
