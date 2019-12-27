@@ -7,7 +7,7 @@ Spotify, Google Play Music, YouTube, SoundCloud, Dirble Internet Radio, Plex \
 servers and Chromecast devices."
 HOMEPAGE="http://tizonia.org"
 LICENSE="LGPL-3.0+"
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~x86"
 PYTHON_COMPAT=( python2_7 python3_{4,5,6,7} )
 inherit autotools distutils-r1 eutils flag-o-matic multilib-minimal
 SLOT="0"
@@ -17,6 +17,27 @@ IUSE="+aac +alsa +bash-completion blocking-etb-ftb blocking-sendcommand
  +player +pulseaudio +sdl +icecast-client +icecast-server
  -test +vorbis +vpx +webm +zsh-completion openrc systemd
  +chromecast +dirble +google-music +plex +soundcloud +spotify +youtube"
+REQUIRED_USE="chromecast? ( player boost curl dbus google-music )
+	      dbus? ( || ( openrc systemd ) )
+	      dirble? ( player boost curl )
+	      google-music? ( player boost fuzzywuzzy curl )
+	      icecast-client? ( player curl )
+	      icecast-server? ( player )
+	      mp2? ( mpg123 )
+	      mp3-metadata-eraser? ( mpg123 )
+	      ogg? ( curl )
+	      openrc? ( dbus )
+	      player? ( boost )
+	      plex? ( player boost fuzzywuzzy curl )
+	      soundcloud? ( player boost fuzzywuzzy curl )
+	      spotify? ( player boost fuzzywuzzy )
+	      systemd? ( dbus )
+	      youtube? ( player boost fuzzywuzzy curl )
+	      ^^ ( python_targets_python2_7
+		   python_targets_python3_5
+		   python_targets_python3_6
+		   python_targets_python3_7 )"
+# ^^ ( ${_MULTILIB_FLAGS[@]%:*} ) is for dependencies without multilib
 # 3rd party repos may be required and add to package.unmask.  use layman -a
 # =media-sound/tizonia-0.18.0::oiledmachine-overlay
 # =dev-libs/libspotify-12.1.51::palmer
@@ -75,29 +96,12 @@ RDEPEND="alsa? ( media-libs/alsa-lib[${MULTILIB_USEDEP}] )
 	 webm? ( media-libs/nestegg[${MULTILIB_USEDEP}] )
 	 zsh-completion? ( app-shells/zsh )
 	 ${PYTHON_DEPS}"
+# todo multlibify media-libs/libmp4v2, media-libs/libfishsound,
+# media-libs/opusfile, media-libs/liboggz, dev-libs/libspotify, dev-libs/log4c
+
 DEPEND="${RDEPEND}
 	>=dev-libs/check-0.9.4[${MULTILIB_USEDEP}]
 	>=dev-libs/log4c-1.2.1[${MULTILIB_USEDEP}]"
-REQUIRED_USE="chromecast? ( player boost curl dbus google-music )
-	      dbus? ( || ( openrc systemd ) )
-	      dirble? ( player boost curl )
-	      google-music? ( player boost fuzzywuzzy curl )
-	      icecast-client? ( player curl )
-	      icecast-server? ( player )
-	      mp2? ( mpg123 )
-	      mp3-metadata-eraser? ( mpg123 )
-	      ogg? ( curl )
-	      openrc? ( dbus )
-	      player? ( boost )
-	      plex? ( player boost fuzzywuzzy curl )
-	      soundcloud? ( player boost fuzzywuzzy curl )
-	      spotify? ( player boost fuzzywuzzy )
-	      systemd? ( dbus )
-	      youtube? ( player boost fuzzywuzzy curl )
-	      ^^ ( python_targets_python2_7
-		   python_targets_python3_5
-		   python_targets_python3_6
-		   python_targets_python3_7 )"
 SRC_URI=\
 "https://github.com/tizonia/tizonia-openmax-il/archive/v${PV}.tar.gz \
 	-> ${PN}-${PV}.tar.gz"
