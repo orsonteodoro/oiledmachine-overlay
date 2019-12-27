@@ -227,7 +227,6 @@ dev-dotnet/tiledsharp
 media-gfx/fim
 media-gfx/nvidia-texture-tools
 media-libs/freeimage
-media-libs/libcaca
 media-libs/libjpeg-turbo
 media-libs/libomxil-bellagio
 media-libs/theorafile
@@ -380,6 +379,7 @@ media-libs/amd-radeon-prorender-sdk
 #media-fonts/noto-color-emoji-config
 #media-gfx/caesiumclt
 #media-libs/libcaesium
+#media-libs/libcaca
 #media-libs/mesa
 #media-libs/mozjpeg
 #media-sound/puddletag
