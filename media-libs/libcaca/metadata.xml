@@ -1,7 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-<maintainer type="project">
-<email>media-video@gentoo.org</email>
-</maintainer>
+  <!-- fork only in the oiledmachine overlay -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!-- original -->
+  <maintainer type="project">
+    <email>media-video@gentoo.org</email>
+  </maintainer>
+  <longdescription>
+    libyuv performs YUV scaling and conversion.
+  </longdescription>
+  <upstream>
+    <maintainer status="active">
+      <name>Sam Hocevar</name>
+    </maintainer>
+  </upstream>
+  <use>
+    <flag name="256-colors-ncurses">ncurses 256 colors support (experimental)</flag>
+    <flag name="cxx">Generates C++ bindings</flag>
+    <flag name="doc">Builds documentation</flag>
+    <flag name="imlib">Imlib2 graphics support for access to additional API calls</flag>
+    <flag name="java">Generates Java bindings to code with Java</flag>
+    <flag name="mono">Generates C# bindings to code with C#</flag>
+    <flag name="ncurses">ncurses support</flag>
+    <flag name="opengl">OpenGL support for video display</flag>
+    <flag name="python">Generates Python bindings to code with Python</flag>
+    <flag name="ruby">Generates Ruby bindings to code with Ruby</flag>
+    <flag name="slang">Slang graphics support</flag>
+    <flag name="static-libs">Generates static libraries</flag>
+    <flag name="test">Performs testing</flag>
+    <flag name="truetype">Adds gftl that might be required by the opengl USE flag</flag>
+    <flag name="X">X11 support</flag>
+  </use>
 </pkgmetadata>

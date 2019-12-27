@@ -1,9 +1,9 @@
 Hack it a bit differently so that it works with texlive 2013, see http://bugs.gentoo.org/480862
 Turns out this patch is required also for texlive 2012, see http://bugs.gentoo.org/517474
 
---- doc/Makefile.am
-+++ doc/Makefile.am
-@@ -29,7 +29,7 @@ if BUILD_DOCUMENTATION
+--- a/doc/Makefile.am.orig	2019-01-01 06:04:05.000000000 -0800
++++ b/doc/Makefile.am	2019-12-26 17:16:09.906305936 -0800
+@@ -31,7 +31,7 @@ if BUILD_DOCUMENTATION
  if USE_LATEX
  	rm -f latex/libcaca.tex latex/libcaca.pdf
  	mv latex/refman.tex latex/libcaca.tex
