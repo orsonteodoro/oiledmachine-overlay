@@ -26,6 +26,7 @@
     <flag name="java">Generates Java bindings to code with Java</flag>
     <flag name="mono">Generates C# bindings to code with C#</flag>
     <flag name="ncurses">ncurses support</flag>
+    <flag name="network">Network support</flag>
     <flag name="opengl">OpenGL support for video display</flag>
     <flag name="python">Generates Python bindings to code with Python</flag>
     <flag name="ruby">Generates Ruby bindings to code with Ruby</flag>

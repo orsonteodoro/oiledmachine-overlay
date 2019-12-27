@@ -10,8 +10,8 @@ PYTHON_COMPAT=( python2_7 )
 RUBY_OPTIONAL=yes
 USE_RUBY="ruby24 ruby25 ruby26"
 EGIT_COMMIT="813baea7a7bc28986e474541dd1080898fac14d7"
-IUSE="cxx doc imlib java mono ncurses opengl python ruby slang static-libs
- test truetype X"
+IUSE="cxx doc imlib java mono ncurses network opengl python ruby slang
+ static-libs test truetype X"
 inherit ruby-ng
 IUSE+=" 256-colors-ncurses"
 SLOT="0/${PV}"
@@ -109,6 +109,7 @@ multilib_src_configure() {
 	econf   $(use_enable static-libs static) \
 		$(use_enable slang) \
 		$(use_enable ncurses) \
+		$(use_enable network) \
 		$(use_enable X x11) \
 		$(use_with X x) \
 		--x-libraries=/usr/$(get_libdir) \
