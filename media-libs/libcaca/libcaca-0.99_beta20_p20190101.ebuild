@@ -40,7 +40,8 @@ DEPEND="${COMMON_DEPEND}
 		  dev-texlive/texlive-latexrecommended
 		  virtual/latex-base )
 	java? ( >=virtual/jdk-1.5 )
-	test? ( dev-util/cppunit )
+	test? ( dev-util/cppunit
+		app-forensics/zzuf )
 	virtual/pkgconfig"
 SRC_URI=\
 "https://github.com/cacalabs/libcaca/archive/${EGIT_COMMIT}.tar.gz \
@@ -105,8 +106,7 @@ multilib_src_configure() {
 			export RUBY=$(ruby_implementation_command ${USE_RUBY})
 	fi
 	ECONF_SOURCE="${S}" \
-	econf \
-		$(use_enable static-libs static) \
+	econf   $(use_enable static-libs static) \
 		$(use_enable slang) \
 		$(use_enable ncurses) \
 		$(use_enable X x11) \
@@ -116,6 +116,7 @@ multilib_src_configure() {
 		$(use_enable cxx) \
 		$(use_enable imlib imlib2) \
 		$(use_enable test cppunit) \
+		$(use_enable test zzuf) \
 		$(multilib_native_use_enable java) \
 		$(multilib_native_use_enable ruby) \
 		$(multilib_native_use_enable python) \
