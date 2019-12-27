@@ -72,11 +72,11 @@ RDEPEND="alsa? ( media-libs/alsa-lib[${MULTILIB_USEDEP}] )
 	 google-music? ( dev-python/gmusicapi[${PYTHON_USEDEP}] )
 	 inproc-io? ( >=net-libs/zeromq-4.0.4[${MULTILIB_USEDEP}] )
 	 lame? ( media-sound/lame[${MULTILIB_USEDEP}] )
-	 ogg? ( >=media-libs/liboggz-1.1.1[${MULTILIB_USEDEP}] )
-	 opus? ( >=media-libs/opusfile-0.5[${MULTILIB_USEDEP}] )
+	 ogg? ( >=media-libs/liboggz-1.1.1 )
+	 opus? ( >=media-libs/opusfile-0.5 )
 	 dbus? ( sys-apps/dbus[${MULTILIB_USEDEP}] )
 	 libsndfile? ( >=media-libs/libsndfile-1.0.25[${MULTILIB_USEDEP}] )
-	 mp4? ( media-libs/libmp4v2[${MULTILIB_USEDEP}] )
+	 mp4? ( media-libs/libmp4v2 )
 	 mad? ( media-libs/libmad[${MULTILIB_USEDEP}] )
 	 mpg123? ( >=media-sound/mpg123-1.16.0[${MULTILIB_USEDEP}] )
 	 opus? ( >=media-libs/opus-1.1[${MULTILIB_USEDEP}] )
@@ -86,10 +86,10 @@ RDEPEND="alsa? ( media-libs/alsa-lib[${MULTILIB_USEDEP}] )
 	 pulseaudio? ( >=media-sound/pulseaudio-1.1[${MULTILIB_USEDEP}] )
 	 sdl? ( media-libs/libsdl[${MULTILIB_USEDEP}] )
 	 soundcloud? ( dev-python/soundcloud-python[${PYTHON_USEDEP}] )
-	 spotify? ( >=dev-libs/libspotify-12.1.51[${MULTILIB_USEDEP}] )
+	 spotify? ( >=dev-libs/libspotify-12.1.51 )
 	 >=sys-apps/util-linux-2.19.0[${MULTILIB_USEDEP}]
 	 test? ( dev-db/sqlite:3[${MULTILIB_USEDEP}] )
-	 vorbis? ( media-libs/libfishsound[${MULTILIB_USEDEP}] )
+	 vorbis? ( media-libs/libfishsound )
 	 vpx? ( media-libs/libvpx[${MULTILIB_USEDEP}] )
 	 youtube? ( dev-python/pafy[${PYTHON_USEDEP}]
 		    net-misc/youtube-dl[${PYTHON_USEDEP}] )
@@ -101,7 +101,7 @@ RDEPEND="alsa? ( media-libs/alsa-lib[${MULTILIB_USEDEP}] )
 
 DEPEND="${RDEPEND}
 	>=dev-libs/check-0.9.4[${MULTILIB_USEDEP}]
-	>=dev-libs/log4c-1.2.1[${MULTILIB_USEDEP}]"
+	>=dev-libs/log4c-1.2.1"
 SRC_URI=\
 "https://github.com/tizonia/tizonia-openmax-il/archive/v${PV}.tar.gz \
 	-> ${PN}-${PV}.tar.gz"
