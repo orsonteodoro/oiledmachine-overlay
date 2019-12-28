@@ -131,9 +131,16 @@ SRC_URI+=\
 " https://github.com/torvalds/linux/commit/52791eeec1d9f4a7e7fe08aaba0b1553149d93bc.patch \
 	-> linux--dma-buf-rename-reservation_object-to-dma_resv.patch"
 
+# @FUNCTION: gen_kernel_seq
+# @DESCRIPTION:
+# Generates a sequence for point releases
+# @CODE
+# Parameters:
+# $1 - x >= 2
+# @CODE
 gen_kernel_seq()
 {
-	# 1-2 2-3 3-4
+	# 1-2 2-3 3-4, $1 >= 2
 	local s=""
 	for ((to=2 ; to <= $1 ; to+=1)) ; do
 		s=" $s $((${to}-1))-${to}"
@@ -236,10 +243,10 @@ elif ver_test ${PV} -eq ${K_MAJOR_MINOR}.0 ; then
 KERNEL_0_TO_1_ONLY="1"
 fi
 
-ASDN_LOCAL_CACHE="${FILESDIR}/amd-staging-drm-next"
+ASDN_LOCAL_CACHE="/var/cache/ot-sources/amd-staging-drm-next"
 ASDN_T_CACHE="${T}/amd-staging-drm-next-patches"
 
-ROCK_LOCAL_CACHE="${FILESDIR}/rock"
+ROCK_LOCAL_CACHE="/var/cache/ot-sources/rock"
 ROCK_T_CACHE="${T}/rock-patches"
 
 AMDGPU_MERGED_CACHE="${T}/amdgpu-merged-patches"
@@ -956,7 +963,17 @@ function ot-kernel-common_src_unpack() {
 
 	# should be done after all the kernel point releases contained in
 	# apply_genpatch_base
-	fetch_cve_hotfixes
+	if has cve_hotfix ${IUSE_EFFECTIVE} ; then
+		# may need to be put as the end of this subroutine
+		if use cve_hotfix ; then
+			fetch_tuxparoni
+			unpack_tuxparoni
+			fetch_cve_hotfixes
+			get_cve_report
+			test_cve_hotfixes
+			apply_cve_hotfixes
+		fi
+	fi
 
 	if has amd-staging-drm-next ${IUSE_EFFECTIVE} ; then
 		if use amd-staging-drm-next ; then
@@ -979,7 +996,6 @@ function ot-kernel-common_src_unpack() {
 		fi
 	fi
 
-	apply_cve_hotfixes
 
 	#_dpatch "${PATCH_OPS}" "${FILESDIR}/linux-4.20-kconfig-ioscheds.patch"
 }
@@ -1127,6 +1143,11 @@ function ot-kernel-common_pkg_setup() {
 	fi
 	if has zenmisc ${IUSE_EFFECTIVE} ; then
 		zenmisc_setup
+	fi
+	if has cve_hotfix ${IUSE_EFFECTIVE} ; then
+		if use cve_hotfix ; then
+			_check_network_sandbox
+		fi
 	fi
 }
 

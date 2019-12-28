@@ -23,11 +23,14 @@
 IUSE+=" cve_hotfix"
 LICENSE+=" cve_hotfix? ( GPL-2 )"
 
-DEPEND+=" dev-libs/libpcre"
+DEPEND+=" cve_hotfix? ( app-arch/gzip
+			app-misc/jq
+			app-text/html2text
+			dev-libs/libpcre
+			dev-util/patchutils
+			sys-apps/grep[pcre] )"
 
 # _PM = patch message from person who fixed it, _FN = patch file name
-
-inherit ot-kernel-cve-en
 
 # These contants deal with levels of trust with patches.
 # Low values imply official fix, higher quality, less buggy.
@@ -108,9 +111,38 @@ CVE_DELAY="${CVE_DELAY:=1}"
 
 CVE_LANG="${CVE_LANG:=en}" # You can define this in your make.conf.  Currently en is only supported.
 
-EGIT_COMMIT_TUXPARONI="00478ff7b717cf69bd3b9e42790e86a0f9baae6f"
-SRC_URI+=" cve_hotfix? ( https://github.com/orsonteodoro/tuxparoni/archive/${EGIT_COMMIT_TUXPARONI}.tar.gz )"
+TUXPARONI_A_FN="tuxparoni.tar.gz"
+TUXPARONI_DL_URL="https://github.com/orsonteodoro/tuxparoni/archive/master.tar.gz"
 
-ot-kernel-cve-src_unpack() {
-	unpack "${EGIT_COMMIT_TUXPARONI}.tar.gz"
+SRC_URI+=" "
+
+fetch_tuxparoni() {
+	einfo "Fetching tuxparoni from a live source..."
+	wget -O "${T}/${TUXPARONI_A_FN}" "${TUXPARONI_DL_URL}" || die
+}
+
+unpack_tuxparoni() {
+	cd "${WORKDIR}"
+	unpack "${T}/${TUXPARONI_A_FN}"
+}
+
+fetch_cve_hotfixes() {
+	addwrite /var/cache
+	addwrite /var/cache/tuxparoni
+	pushd "${WORKDIR}/tuxparoni-master"
+	chmod +x tuxparoni
+	./tuxparoni -h
+	popd
+}
+
+test_cve_hotfixes() {
+	true
+}
+
+get_cve_report() {
+	true
+}
+
+apply_cve_hotfixes() {
+	true
 }
