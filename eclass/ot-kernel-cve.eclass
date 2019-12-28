@@ -127,22 +127,39 @@ unpack_tuxparoni() {
 }
 
 fetch_cve_hotfixes() {
-	addwrite /var/cache
-	addwrite /var/cache/tuxparoni
-	pushd "${WORKDIR}/tuxparoni-master"
-	chmod +x tuxparoni
-	./tuxparoni -h
+	pushd "${WORKDIR}/tuxparoni-master" || die
+		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+		local b="${distdir}/ot-sources-src"
+		local d="${b}/tuxparoni"
+		addwrite "${b}"
+		mkdir -p "${d}"
+		chmod +x tuxparoni
+		sed -i -e "s|root:root|portage:portage|" tuxparoni || die
+		einfo "Fetching NVD JSONs"
+		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-jsons || die
+		einfo "Fetching patches"
+		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-patches || die
 	popd
 }
 
 test_cve_hotfixes() {
-	true
+	pushd "${WORKDIR}/tuxparoni-master" || die
+		einfo "Dry testing"
+		./tuxparoni -u -c "${d}" -s "${S}" --cmd-dry-test
+	popd
 }
 
 get_cve_report() {
-	true
+	pushd "${WORKDIR}/tuxparoni-master" || die
+		einfo "Generating Report"
+		./tuxparoni -u -c "${d}" -s "${S}" --cmd-report || die
+	popd
 }
 
 apply_cve_hotfixes() {
-	true
+	pushd "${WORKDIR}/tuxparoni-master" || die
+		einfo "Applying cve hotfixes"
+		# not done yet
+		#./tuxparoni -u -c "${d}" -s "${S}" --cmd-apply || die
+	popd
 }
