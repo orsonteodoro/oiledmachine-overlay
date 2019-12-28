@@ -25,7 +25,8 @@ SLOT="0"
 IUSE="+alsa fdk imagemagick jack luajit nvenc pulseaudio python speex +ssl truetype v4l vlc"
 IUSE+=" vaapi video_cards_amdgpu video_cards_amdgpu-pro video_cards_intel video_cards_i965 video_cards_r600 video_cards_radeonsi"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )
-	      video_cards_amdgpu? ( !video_cards_amdgpu-pro )"
+	      video_cards_amdgpu? ( !video_cards_amdgpu-pro )
+	      video_cards_amdgpu-pro? ( !video_cards_amdgpu )"
 
 BDEPEND="
 	luajit? ( dev-lang/swig )
