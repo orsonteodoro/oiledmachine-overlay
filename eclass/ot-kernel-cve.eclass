@@ -136,7 +136,8 @@ fetch_cve_hotfixes() {
 		chmod +x tuxparoni
 		sed -i -e "s|root:root|portage:portage|" tuxparoni || die
 		einfo "Fetching NVD JSONs"
-		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-jsons || die
+		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-jsons \
+			|| die "You may need to manually remove ${d}/{feeds,jsons} folders"
 		einfo "Fetching patches"
 		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-patches || die
 	popd
