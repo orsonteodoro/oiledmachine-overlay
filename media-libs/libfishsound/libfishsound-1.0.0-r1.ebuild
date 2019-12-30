@@ -20,7 +20,7 @@ RDEPEND="
 	flac? ( media-libs/flac[${MULTILIB_USEDEP}] )
 	speex? ( media-libs/speex[${MULTILIB_USEDEP}] )"
 DEPEND="${RDEPEND}
-	virtual/pkgconfig"
+	virtual/pkgconfig[${MULTILIB_USEDEP}]"
 
 # bug #395153
 RESTRICT="test"
