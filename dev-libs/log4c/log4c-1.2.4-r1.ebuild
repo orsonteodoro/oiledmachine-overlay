@@ -2,21 +2,13 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-
-inherit autotools multilib-minimal
-
 DESCRIPTION="Logging FrameWork for C, as Log4j or Log4Cpp"
 HOMEPAGE="http://log4c.sourceforge.net/"
-SRC_URI="http://prdownloads.sourceforge.net/log4c/log4c-1.2.4.tar.gz"
-
-LICENSE=""
-SLOT="0"
+LICENSE="LGPL-2.1"
 KEYWORDS="~amd64 ~x86"
-IUSE=""
-
-DEPEND=""
-RDEPEND="${DEPEND}"
-BDEPEND=""
+SLOT="0/${PV}"
+SRC_URI="http://prdownloads.sourceforge.net/log4c/log4c-1.2.4.tar.gz"
+inherit multilib-minimal
 
 src_prepare() {
 	default
