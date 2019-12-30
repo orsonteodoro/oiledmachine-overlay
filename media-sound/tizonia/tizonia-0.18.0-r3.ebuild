@@ -58,7 +58,8 @@ REQUIRED_USE="chromecast? ( player boost curl dbus google-music )
 #
 # >=dev-python/dnspython-1.16.0 added to avoid merge conflict between pycrypto
 # and pycryptodome.  It should not be here but resolved in dnspython.
-RDEPEND="alsa? ( media-libs/alsa-lib[${MULTILIB_USEDEP}] )
+RDEPEND="aac? (  media-libs/faad2[${MULTILIB_USEDEP}] )
+	 alsa? ( media-libs/alsa-lib[${MULTILIB_USEDEP}] )
 	 bash-completion? ( app-shells/bash )
 	 boost? ( >=dev-libs/boost-1.54[${MULTILIB_USEDEP},python,${PYTHON_USEDEP}] )
 	 chromecast? ( || ( dev-python/PyChromecast[${PYTHON_USEDEP}]
