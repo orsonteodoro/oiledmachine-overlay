@@ -47,7 +47,7 @@ multilib_src_install() {
 	default
 	# fix the header conflict by putting the define in the pc file
 	local off_t=$(grep -e "PRI_OGGZ_OFF_T" include/oggz/oggz_off_t_generated.h | sed -r -e "s|#define PRI_OGGZ_OFF_T \"([l]+)\"|\1|")
-	sed -i -e "s|Cflags: -I\${includedir}|Cflags: -I\${includedir} -DPRI_OGGZ_OFF_T=\"${off_t}\"|" "${D}/usr/$(get_libdir)/pkgconfig/oggz.pc" || die
+	sed -i -e "s|Cflags: -I\${includedir}|Cflags: -I\${includedir} -DPRI_OGGZ_OFF_T=\\\\\"${off_t}\\\\\"|" "${D}/usr/$(get_libdir)/pkgconfig/oggz.pc" || die
 	sed -i -r -e "/#define PRI_OGGZ_OFF_T \"([l]+)\"/d" "${D}/usr/include/oggz/oggz_off_t_generated.h" || die
 	find "${D}" -name '*.la' -delete || die "Pruning failed"
 }
