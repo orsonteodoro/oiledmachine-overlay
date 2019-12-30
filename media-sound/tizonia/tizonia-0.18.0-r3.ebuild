@@ -39,7 +39,6 @@ REQUIRED_USE="chromecast? ( player boost curl dbus google-music )
 		   python_targets_python3_7 )"
 # 3rd party repos may be required and add to package.unmask.  use layman -a
 # =media-sound/tizonia-0.18.0::oiledmachine-overlay
-# =dev-libs/libspotify-12.1.51::palmer
 # =dev-python/casttube-0.2.0::HomeAssistantRepository
 # =dev-python/fuzzywuzzy-0.12.0::gentoo
 # =dev-python/gmusicapi-12.1.1::palmer
@@ -51,6 +50,22 @@ REQUIRED_USE="chromecast? ( player boost curl dbus google-music )
 # =dev-python/soundcloud-python-9999.20151015::oiledmachine-overlay
 # =dev-python/validictory-1.1.2::palmer
 # =media-libs/nestegg-9999.20190603::oiledmachine-overlay
+
+# keywords/unmask if using multilib with 32 bit
+# dev-libs/libspotify::oiledmachine-overlay
+# dev-libs/log4c::oiledmachine-overlay
+# media-libs/liboggz::oiledmachine-overlay
+# media-libs/opusfile::oiledmachine-overlay
+# media-libs/libmp4v2::oiledmachine-overlay
+# media-libs/libfishsound::oiledmachine-overlay
+
+# masks if using multilib with 32 bit
+# dev-libs/libspotify::gentoo
+# media-libs/liboggz::gentoo
+# media-libs/opusfile::gentoo
+# media-libs/libmp4v2::gentoo
+# media-libs/libfishsound::gentoo
+
 #
 # ogg_muxer requires curl, oggmuxsnkprc.c is work in progress.  ogg should
 # work without curl for just strictly local playback only (as in non streaming
