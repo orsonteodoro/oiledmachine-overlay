@@ -14,20 +14,10 @@ SRC_URI="arm? ( armv6hf? ( https://github.com/mopidy/libspotify-archive/raw/mast
 S="${WORKDIR}"
 
 _fill_arch() {
-	if [[ "${ABI}" == "amd64" ]] ; then
-		arch="x86_64"
-	elif [[ "${ABI}" == "x86" ]] ; then
-		arch="i686"
-	elif [[ "${CTARGET}" =~ armv5 ]] ; then
-		arch="armv5"
-	elif [[ "${CTARGET}" =~ armv6 ]] ; then
-		arch="armv6"
-	elif [[ "${CTARGET}" =~ armv7  ]] ; then
-		arch="armv7"
-	elif [[ "${CTARGET}" =~ armv6 && "${CTARGET}" =~ hf ]] ; then
+	if [[ "${CTARGET}" =~ armv6 && "${CTARGET}" =~ hf ]] ; then
 		arch="armv6-bcm2708hardfp"
 	else
-		arch="${ARCH}"
+		die "ARCH/ABI not supported"
 	fi
 	echo "${arch}"
 }

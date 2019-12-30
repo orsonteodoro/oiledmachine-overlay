@@ -28,10 +28,8 @@ _fill_arch() {
 		arch="armv6"
 	elif [[ "${CTARGET}" =~ armv7  ]] ; then
 		arch="armv7"
-	elif [[ "${CTARGET}" =~ armv6 && "${CTARGET}" =~ hf ]] ; then
-		arch="armv6-bcm2708hardfp"
 	else
-		arch="${ARCH}"
+		die "ARCH/ABI not supported"
 	fi
 	echo "${arch}"
 }
