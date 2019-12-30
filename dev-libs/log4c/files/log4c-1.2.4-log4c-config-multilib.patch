@@ -1,0 +1,19 @@
+--- a/log4c-config.in.orig	2013-03-24 15:07:34.000000000 -0700
++++ b/log4c-config.in	2019-12-30 04:29:50.663362926 -0800
+@@ -2,7 +2,16 @@
+ 
+ prefix=@prefix@
+ exec_prefix=$prefix
++if [ "${CHOST}" = x86_64-pc-linux-gnu ] ; then
++libdir=@prefix@/lib64
++elif [ "${CHOST}" = i686-pc-linux-gnu ] ; then
++libdir=@prefix@/lib32
++elif [ "${CHOST}" = x86_64-pc-linux-gnux32 ] ; then
++libdir=@prefix@/libx32
++else
++# This is good only for non multilib.  todo: add more multilib archs/abis
+ libdir=@libdir@
++fi
+ libexecdir=@libexecdir@
+ includedir=@includedir@
+ 
