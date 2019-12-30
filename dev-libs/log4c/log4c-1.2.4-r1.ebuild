@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit autotools
+inherit autotools multilib-minimal
 
 DESCRIPTION="Logging FrameWork for C, as Log4j or Log4Cpp"
 HOMEPAGE="http://log4c.sourceforge.net/"
@@ -17,3 +17,8 @@ IUSE=""
 DEPEND=""
 RDEPEND="${DEPEND}"
 BDEPEND=""
+
+src_prepare() {
+	default
+	multilib_copy_sources
+}
