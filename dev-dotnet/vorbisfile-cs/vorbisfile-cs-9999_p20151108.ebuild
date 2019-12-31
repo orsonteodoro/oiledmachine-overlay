@@ -20,6 +20,7 @@ SRC_URI=\
 inherit gac
 SLOT="0/${PV}"
 S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
+RESTRICT="mirror"
 
 src_prepare() {
 	default

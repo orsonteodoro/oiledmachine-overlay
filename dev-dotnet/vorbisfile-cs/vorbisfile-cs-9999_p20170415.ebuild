@@ -13,13 +13,14 @@ RDEPEND="media-libs/libvorbis"
 DEPEND="${RDEPEND}"
 inherit dotnet eutils
 PROJECT_NAME="Vorbisfile-CS"
-COMMIT="b929dedf3dab9ef85a3e6080f44227643f970710"
+COMMIT="24e9ece0239da6b03890d47f6118df85d52cf179"
 SRC_URI=\
 "https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
 inherit gac
 SLOT="0/${PV}"
 S="${WORKDIR}/${PROJECT_NAME}-${COMMIT}"
+RESTRICT="mirror"
 
 src_prepare() {
 	default
