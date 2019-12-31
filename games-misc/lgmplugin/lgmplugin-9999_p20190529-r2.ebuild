@@ -29,7 +29,8 @@ S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 src_prepare() {
 	default
 	sed -i -e \
-"s|JC = ecj -1.6 -nowarn -cp .|\
+"s|\
+JC = ecj -1.6 -nowarn -cp .|\
 JC = $(ls /usr/bin/ecj-${ECJ_V}*) -${JAVA_V} -nowarn -cp .|" \
 		Makefile || die
 	sed -i -e \
