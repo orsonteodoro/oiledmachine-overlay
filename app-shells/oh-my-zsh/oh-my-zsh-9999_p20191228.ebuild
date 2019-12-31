@@ -34,7 +34,7 @@ USE_RUBY="ruby24 ruby25 ruby26"
 RUBY_OPTIONAL=1
 EMOJI_LANG_DEFAULT=${EMOJI_LANG_DEFAULT:=en}
 inherit eutils python-r1 ruby-ng
-EGIT_COMMIT="3d6be08e71219e75405ef0d535cc9c3defbb3367"
+EGIT_COMMIT="d9e64344aa151f9b8e13a4f8054509a5d78bb718"
 FN="${EGIT_COMMIT}.zip"
 A_URL="https://github.com/robbyrussell/oh-my-zsh/archive/${FN}"
 SRC_URI="${A_URL} -> ${P}.zip"
@@ -44,7 +44,7 @@ RESTRICT="fetch"
 SLOT="0"
 IUSE="branding bzr clipboard curl emojis update-emoji-data java git gpg"
 IUSE+=" mercurial nodejs powerline python ruby rust subversion sudo wget"
-IUSE+=" 7zip bzip2 gzip lzip lzma unzip rar xz zstd"
+IUSE+=" 7zip bzip2 gzip lrzip lzip lzma unzip rar xz zstd"
 OMZSH_THEMES=( 3den adben af-magic afowler agnoster alanpeabody amuse apple \
 arrow aussiegeek avit awesomepanda bira blinks bureau candy-kingdom candy \
 clean cloud crcandy crunch cypher dallas darkblood daveverwer dieter dogenpunk \
@@ -68,7 +68,8 @@ boot2docker bower branch brew bundler cabal cake cakephp3 capistrano cargo \
 cask catimg celery chruby chucknorris cloudapp cloudfoundry codeclimate coffee \
 colemak colored-man-pages colorize command-not-found common-aliases compleat \
 composer copybuffer copydir copyfile cp cpanm dash debian dircycle dirhistory \
-dirpersist django dnf dnote docker docker-compose docker-machine doctl dotenv \
+dirpersist django dnf dnote docker docker-compose docker-machine doctl dotnet \
+dotenv \
 droplr drush eecms emacs ember-cli emoji emoji-clock emotty encode64 extract \
 fabric fancy-ctrl-z fasd fastfile fbterm fd fedora firewalld flutter forklift \
 fossil frontend-search fzf gas gatsby gb gcloud geeknote gem git \
@@ -114,6 +115,7 @@ PLUGINS_DEPEND="
 	 plugins_django? ( dev-python/django )
 	 plugins_docker-machine? ( app-emulation/docker-machine )
 	 plugins_doctl? ( app-admin/doctl )
+	 plugins_dotnet? ( || ( dev-dotnet/cli-tools dev-dotnet/dotnetcore-sdk-bin ) )
 	 plugins_drush? ( app-admin/drush )
 	 plugins_eecms? ( dev-lang/php )
 	 plugins_emacs? ( >=app-editors/emacs-24.0 )
@@ -226,6 +228,7 @@ RDEPEND="7zip? ( app-arch/p7zip )
 	 java? ( virtual/jre )
 	 bzip2? ( app-arch/bzip2 )
 	 gzip? ( app-arch/pigz )
+	 lrzip? ( app-arch/lrzip )
 	 lzip? ( app-arch/lzip )
 	 lzma? ( app-arch/xz-utils )
 	 mercurial? ( dev-vcs/mercurial )
@@ -302,7 +305,7 @@ REQUIRED_USE="branding? ( themes_gentoo )
 	      plugins_gpg-agent? ( gpg )
 	      plugins_otp? ( gpg )
 	      plugins_pass? ( gpg )
-	      plugins_extract? ( || ( 7zip bzip2 gzip lzip lzma unzip rar xz zstd ) )
+	      plugins_extract? ( || ( 7zip bzip2 gzip lrzip lzip lzma unzip rar xz zstd ) )
 	      plugins_archlinux? ( curl )
 	      plugins_composer? ( curl )
 	      plugins_gitfast? ( curl )
