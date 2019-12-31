@@ -6,21 +6,22 @@ DESCRIPTION="SDL2-CS is a C# wrapper for SDL2"
 HOMEPAGE="https://github.com/flibitijibibo/SDL2-CS"
 LICENSE="zlib"
 KEYWORDS="~amd64 ~x86"
+SLOT="0/${PV}"
 USE_DOTNET="net461 netstandard20"
+IUSE="${USE_DOTNET} debug gac"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net461 )"
 RDEPEND=">=media-libs/libsdl2-2.0.7
          media-libs/sdl2-ttf
          media-libs/sdl2-mixer"
 DEPEND="${RDEPEND}"
-IUSE="${USE_DOTNET} debug gac"
-REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net461 )"
 inherit dotnet eutils mono
-PROJECT_NAME="SDL2-CS"
-EGIT_COMMIT="ed4838b75dadbdfcef4c23edb0c607c38d7237a2"
+PROJECT_NAME="${PN^^}"
+EGIT_COMMIT="499ad108b93f28c7a8aa2f357206ddc98980614e"
 SRC_URI="\
 https://github.com/flibitijibibo/${PROJECT_NAME}/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
 inherit gac
-SLOT="0/${PV}"
+RESTRICT="mirror"
 S="${WORKDIR}/${PROJECT_NAME}-${EGIT_COMMIT}"
 
 src_prepare() {
