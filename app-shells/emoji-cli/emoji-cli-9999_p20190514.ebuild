@@ -26,7 +26,7 @@ DOCS=( README.md )
 
 src_prepare() {
 	default
-	sed -i 's|\^s|^\||g' emoji-cli.zsh
+	sed -i 's|\^s|^\||g' emoji-cli.zsh || die
 }
 
 src_install() {
