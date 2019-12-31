@@ -10,9 +10,10 @@ SLOT="0"
 IUSE="doc"
 RDEPEND="app-shells/bash"
 DEPEND="${RDEPEND}"
-SRC_URI="https://github.com/mrowa44/emojify/archive/${PV}.tar.gz -> ${P}.tar.gz"
+EGIT_COMMIT="ef38887b227d377308e309102910d98dd41a1127"
+SRC_URI="https://github.com/mrowa44/emojify/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
 inherit eutils
-S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 DOC=( README.md )
 
