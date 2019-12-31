@@ -33,19 +33,21 @@ src_prepare() {
 JC = $(ls /usr/bin/ecj-${ECJ_V}*) -${JAVA_V} -nowarn -cp .|" \
 		Makefile || die
 	sed -i -e \
-"s|../plugins/shared/jna.jar\
-:../lgm16b4.jar\
-:/usr/share/java/eclipse-ecj.jar\
-:/usr/share/java/ecj.jar\
+"s|\
+../plugins/shared/jna.jar:\
+../lgm16b4.jar:\
+/usr/share/java/eclipse-ecj.jar:\
+/usr/share/java/ecj.jar\
 |\
-/usr/share/jna/lib/jna.jar\
-:/usr/$(get_libdir)/enigma/lateralgm.jar\
-:/usr/share/eclipse-ecj-${ECJ_V}/lib/ecj.jar|" \
+/usr/share/jna/lib/jna.jar:\
+/usr/$(get_libdir)/enigma/lateralgm.jar:\
+/usr/share/eclipse-ecj-${ECJ_V}/lib/ecj.jar|" \
 		Makefile || die
 	sed -i -e "s|../plugins/enigma.jar|enigma.jar|" Makefile || die
 	sed -i -e "s|        |\t|" Makefile || die
 	sed -i -e \
-"s|../lateralgm.jar \
+"s|\
+../lateralgm.jar \
 shared/svnkit.jar \
 shared/jna.jar\
 |\
