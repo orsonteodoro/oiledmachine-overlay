@@ -117,7 +117,7 @@ TUXPARONI_DL_URL="https://github.com/orsonteodoro/tuxparoni/archive/master.tar.g
 SRC_URI+=" "
 
 fetch_tuxparoni() {
-	ewarn "This module and dependecy is undergoing development and currently does not fix anything"
+	ewarn "The cve_hotfix USE flag and its dependecy tuxparoni is undergoing development and currently does not fix anything."
 	einfo "Fetching tuxparoni from a live source..."
 	wget -O "${T}/${TUXPARONI_A_FN}" "${TUXPARONI_DL_URL}" || die
 }
