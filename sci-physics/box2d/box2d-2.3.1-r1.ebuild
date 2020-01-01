@@ -10,10 +10,7 @@ SLOT="0/${PV}"
 IUSE="debug doc examples static"
 inherit multilib-minimal
 RDEPEND=">=dev-util/premake-4.4
-	 <dev-util/premake-5.0
-	 media-libs/glew[${MULTILIB_USEDEP}]
-	 media-libs/glfw[${MULTILIB_USEDEP}]
-"
+	 <dev-util/premake-5.0"
 DEPEND="${RDEPEND}
 	doc? ( app-doc/doxygen )"
 inherit eutils
@@ -41,6 +38,10 @@ src_prepare() {
 		sed -i -e "s|StaticLib|SharedLib|g" \
 			premake4.lua || die
 	fi
+	local arch=""
+	local platform=""
+	_get_abi_settings
+	premake4 --platform=${platform} gmake
 	multilib_copy_sources
 }
 

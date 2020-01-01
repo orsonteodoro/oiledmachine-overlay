@@ -11,8 +11,7 @@ SLOT="0/${PV}"
 IUSE="debug doc examples static"
 CMAKE_MAKEFILE_GENERATOR="emake"
 inherit cmake-multilib
-RDEPEND="media-libs/glew[${MULTILIB_USEDEP}]
-	 media-libs/glfw[${MULTILIB_USEDEP}]"
+RDEPEND="media-libs/glew[${MULTILIB_USEDEP}]"
 DEPEND="${RDEPEND}
 	doc? ( app-doc/doxygen )"
 inherit eutils
@@ -28,8 +27,20 @@ src_prepare() {
 		sed -i -e "s|STATIC|SHARED|" extern/glad/CMakeLists.txt || die
 		sed -i -e "s|STATIC|SHARED|" extern/imgui/CMakeLists.txt || die
 	fi
+	export CMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 	cmake-utils_src_prepare
 	multilib_copy_sources
+}
+
+src_configure() {
+	configure_abi() {
+		local mycmakeargs=(
+			-DBUILD_TESTS=$(usex tests)
+			-DBUILD_SAMPLES=$(usex examples)
+		)
+		cmake-utils_src_compile
+	}
+	multilib_foreach_abi configure_abi
 }
 
 src_install() {
