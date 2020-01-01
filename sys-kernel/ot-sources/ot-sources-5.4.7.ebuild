@@ -3,7 +3,7 @@
 
 EAPI="6"
 
-K_GENPATCHES_VER="6"
+K_GENPATCHES_VER="7"
 PATCH_BMQ_VER="5.4-r1"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
 

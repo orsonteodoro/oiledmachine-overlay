@@ -6,8 +6,8 @@ DESCRIPTION="Box2D is a 2D physics engine for games"
 HOMEPAGE="http://box2d.org/"
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~x86"
-EGIT_COMMIT="5ae818e95ddd09622bad4fd295311ca4706ad2b2"
-SLOT="0/${PV}"
+EGIT_COMMIT="37e2dc25f8da158abda10324d75cb4d1db009adf"
+SLOT="0/${PVR}"
 IUSE="debug doc examples static"
 inherit multilib-minimal
 RDEPEND="dev-util/premake:5

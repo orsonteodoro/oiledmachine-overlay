@@ -3,7 +3,7 @@
 
 EAPI="6"
 
-K_GENPATCHES_VER="168"
+K_GENPATCHES_VER="168" # 169 still not on server
 
 # Not supported by the Gentoo crew
 K_SECURITY_UNSUPPORTED="1"
