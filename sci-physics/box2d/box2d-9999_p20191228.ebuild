@@ -11,7 +11,9 @@ SLOT="0/${PV}"
 IUSE="debug doc examples static"
 CMAKE_MAKEFILE_GENERATOR="emake"
 inherit cmake-multilib
-RDEPEND="media-libs/glew[${MULTILIB_USEDEP}]"
+# todo remove internal dependencies
+RDEPEND="media-libs/glew[${MULTILIB_USEDEP}]
+	 media-libs/glfw[${MULTILIB_USEDEP}]"
 DEPEND="${RDEPEND}
 	doc? ( app-doc/doxygen )"
 inherit eutils

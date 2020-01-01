@@ -10,7 +10,10 @@ SLOT="0/${PV}"
 IUSE="debug doc examples static"
 inherit multilib-minimal
 RDEPEND=">=dev-util/premake-4.4
-	 <dev-util/premake-5.0"
+	 <dev-util/premake-5.0
+	 media-libs/glew[${MULTILIB_USEDEP}]
+	 media-libs/glfw[${MULTILIB_USEDEP}]
+	 media-libs/freeglut[${MULTILIB_USEDEP}]"
 DEPEND="${RDEPEND}
 	doc? ( app-doc/doxygen )"
 inherit eutils
@@ -31,6 +34,12 @@ _get_abi_settings() {
 	fi
 }
 
+_set_global_flags() {
+	export ARCH="${arch}"
+	export LDFLAGS="-L/usr/$(get_libdir)"
+	export LDDEPS="-lglfw -lGLEW"
+}
+
 src_prepare() {
 	default
 	cd "Box2D"
@@ -41,6 +50,7 @@ src_prepare() {
 	local arch=""
 	local platform=""
 	_get_abi_settings
+	_set_global_flags
 	premake4 --platform=${platform} gmake
 	multilib_copy_sources
 }
@@ -51,15 +61,14 @@ src_configure() {
 
 src_compile() {
 	compile_abi() {
+		cd "${BUILD_DIR}"
 		local arch=""
 		local platform=""
 		_get_abi_settings
-		cd "${BUILD_DIR}"
+		_set_global_flags
 		local mydebug=$(usex debug "debug" "release")
 		pushd Box2D/Build/gmake || die
-			ARCH="${arch}" \
-			LDDEPS="-lglfw -lGLEW" \
-			emake config="${mydebug}" || die
+			emake config="${mydebug}" verbose=1 || die
 		popd
 	}
 	multilib_foreach_abi compile_abi
