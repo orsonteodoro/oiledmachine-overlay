@@ -117,6 +117,7 @@ TUXPARONI_DL_URL="https://github.com/orsonteodoro/tuxparoni/archive/master.tar.g
 SRC_URI+=" "
 
 fetch_tuxparoni() {
+	ewarn "This module and dependecy is undergoing development and currently does not fix anything"
 	einfo "Fetching tuxparoni from a live source..."
 	wget -O "${T}/${TUXPARONI_A_FN}" "${TUXPARONI_DL_URL}" || die
 }
@@ -124,6 +125,10 @@ fetch_tuxparoni() {
 unpack_tuxparoni() {
 	cd "${WORKDIR}"
 	unpack "${T}/${TUXPARONI_A_FN}"
+
+	# debug code
+	#mkdir -p "${WORKDIR}/tuxparoni-master"
+	#cp "${FILESDIR}"/tuxparoni* "${WORKDIR}/tuxparoni-master"
 }
 
 fetch_cve_hotfixes() {
@@ -136,31 +141,40 @@ fetch_cve_hotfixes() {
 		chmod +x tuxparoni
 		sed -i -e "s|root:root|portage:portage|" tuxparoni || die
 		einfo "Fetching NVD JSONs"
-		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-jsons \
+		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-jsons -t "${T}" \
 			|| die "You may need to manually remove ${d}/{feeds,jsons} folders"
 		einfo "Fetching patches"
-		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-patches || die
+		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-patches -t "${T}" || die
 	popd
 }
 
 test_cve_hotfixes() {
 	pushd "${WORKDIR}/tuxparoni-master" || die
+		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+		local b="${distdir}/ot-sources-src"
+		local d="${b}/tuxparoni"
 		einfo "Dry testing"
-		./tuxparoni -u -c "${d}" -s "${S}" --cmd-dry-test
+		./tuxparoni -u -c "${d}" -s "${S}" --cmd-dry-test -t "${T}"
 	popd
 }
 
 get_cve_report() {
 	pushd "${WORKDIR}/tuxparoni-master" || die
+		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+		local b="${distdir}/ot-sources-src"
+		local d="${b}/tuxparoni"
 		einfo "Generating Report"
-		./tuxparoni -u -c "${d}" -s "${S}" --cmd-report || die
+		./tuxparoni -u -c "${d}" -s "${S}" --cmd-report -t "${T}" || die
 	popd
 }
 
 apply_cve_hotfixes() {
 	pushd "${WORKDIR}/tuxparoni-master" || die
+		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+		local b="${distdir}/ot-sources-src"
+		local d="${b}/tuxparoni"
 		einfo "Applying cve hotfixes"
 		# not done yet
-		#./tuxparoni -u -c "${d}" -s "${S}" --cmd-apply || die
+		#./tuxparoni -u -c "${d}" -s "${S}" --cmd-apply -t "${T}" || die
 	popd
 }
