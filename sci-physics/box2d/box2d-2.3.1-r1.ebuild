@@ -12,7 +12,8 @@ inherit multilib-minimal
 RDEPEND=">=dev-util/premake-4.4
 	 <dev-util/premake-5.0
 	 media-libs/glew[${MULTILIB_USEDEP}]
-	 media-libs/glfw[${MULTILIB_USEDEP}]"
+	 media-libs/glfw[${MULTILIB_USEDEP}]
+"
 DEPEND="${RDEPEND}
 	doc? ( app-doc/doxygen )"
 inherit eutils
@@ -21,34 +22,26 @@ SRC_URI=\
 	-> ${P}.tar.gz"
 S="${WORKDIR}/Box2D-${PV}"
 
+_get_abi_settings() {
+	if [[ "${ABI}" == "amd64" ]] ; then
+		platform="x64"
+		arch="-m64"
+	elif [[ "${ABI}" == "x86" ]] ; then
+		platform="x32"
+		arch="-m32"
+	else
+		die "Platform is not supported.  Contact ebuild maintainer."
+	fi
+}
+
 src_prepare() {
 	default
+	cd "Box2D"
+	if ! use static; then
+		sed -i -e "s|StaticLib|SharedLib|g" \
+			premake4.lua || die
+	fi
 	multilib_copy_sources
-	prepare_abi() {
-		cd "${BUILD_DIR}"
-		if ! use static; then
-			sed -i -e "s|StaticLib|SharedLib|g" \
-				premake4.lua || die
-		fi
-		premake4 gmake
-		sed -i -e "s|\$(ALL_CPPFLAGS) \$(ARCH)|\$(ALL_CPPFLAGS)|" \
-			Build/gmake/Box2D.make || die
-		sed -i -e "s|\$(ALL_CPPFLAGS) \$(ARCH)|\$(ALL_CPPFLAGS)|" \
-			-e "s|\$(RESOURCES) \$(ARCH)|\$(RESOURCES)|" \
-			Build/gmake/Box2D.make || die
-		sed -i -e "s|\$(ALL_CPPFLAGS) \$(ARCH)|\$(ALL_CPPFLAGS)|" \
-			-e "s|\$(RESOURCES) \$(ARCH)|\$(RESOURCES)|" \
-			Build/gmake/GLUI.make || die
-		sed -i -e "s|\$(ALL_CPPFLAGS) \$(ARCH)|\$(ALL_CPPFLAGS)|" \
-			-e "s|\$(RESOURCES) \$(ARCH)|\$(RESOURCES)|" \
-			Build/gmake/HelloWorld.make || die
-		sed -i -e "s|\$(ALL_CPPFLAGS) \$(ARCH)|\$(ALL_CPPFLAGS)|" \
-			-e "s|\$(RESOURCES) \$(ARCH)|\$(RESOURCES)|" \
-			Build/gmake/Testbed.make || die
-		sed -i -e "s|\$(ALL_CPPFLAGS) \$(ARCH)|\$(ALL_CPPFLAGS)|" \
-			Build/gmake/GLUI.make || die
-	}
-	multilib_foreach_abi prepare_abi
 }
 
 src_configure() {
@@ -57,9 +50,13 @@ src_configure() {
 
 src_compile() {
 	compile_abi() {
+		local arch=""
+		local platform=""
+		_get_abi_settings
 		cd "${BUILD_DIR}"
 		local mydebug=$(usex debug "debug" "release")
 		pushd Box2D/Build/gmake || die
+			ARCH="${arch}" \
 			LDDEPS="-lglfw -lGLEW" \
 			emake config="${mydebug}" || die
 		popd
