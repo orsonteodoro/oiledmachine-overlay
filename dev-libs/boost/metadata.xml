@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
+	<!--only in the fork on oiledmachine-overlay for knet compatibility-->
+	<maintainer type="project">
+		<email>orsonteodoro@hotmail.com</email>
+		<name>Orson Teodoro</name>
+	</maintainer>
+	<!--original-->
 	<maintainer type="project">
 		<email>cpp@gentoo.org</email>
 		<name>Gentoo C++ Project</name>
@@ -17,6 +23,7 @@
 		<flag name="threads">Build multi-thread-compatible libraries instead of single-threaded only.</flag>
 		<flag name="nls">Build libboost_locale. This library requires compatible C library interfaces, which might not be provided by uClibc or other embedded libraries.</flag>
 		<flag name="doc">Install the full API documentation documentation. This takes over 200MB of extra disk space.</flag>
+		<flag name="knet">Apply knet compatibility patch.</knet>
 	</use>
 	<upstream>
 		<remote-id type="sourceforge">boost</remote-id>
