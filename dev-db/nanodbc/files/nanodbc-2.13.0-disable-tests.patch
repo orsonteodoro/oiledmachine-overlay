@@ -1,0 +1,29 @@
+--- a/CMakeLists.txt.orig	2020-01-03 21:03:43.985035141 -0800
++++ b/CMakeLists.txt	2020-01-03 21:05:15.608586764 -0800
+@@ -272,16 +272,16 @@ message(STATUS "nanodbc build: Disable i
+ ########################################
+ ## tests targets
+ ########################################
+-if(NOT NANODBC_DISABLE_TESTS)
+-  enable_testing()
+-  add_subdirectory(test)
+-  if(NOT CMAKE_GENERATOR MATCHES "^Visual Studio")
+-    add_custom_target(check
+-      COMMAND ${CMAKE_CTEST_COMMAND} --force-new-ctest-process --output-on-failure
+-      DEPENDS tests)
+-  endif()
+-endif()
+-message(STATUS "nanodbc build: Disable tests target - ${NANODBC_DISABLE_TESTS}")
++#if(NOT NANODBC_DISABLE_TESTS)
++#  enable_testing()
++#  add_subdirectory(test)
++#  if(NOT CMAKE_GENERATOR MATCHES "^Visual Studio")
++#    add_custom_target(check
++#      COMMAND ${CMAKE_CTEST_COMMAND} --force-new-ctest-process --output-on-failure
++#      DEPENDS tests)
++#  endif()
++#endif()
++#message(STATUS "nanodbc build: Disable tests target - ${NANODBC_DISABLE_TESTS}")
+ 
+ ########################################
+ ## examples targets
