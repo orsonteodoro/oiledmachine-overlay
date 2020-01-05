@@ -13,6 +13,7 @@
       <name>Veselin Georgiev</name>
     </maintainer>
     <bugs-to>https://github.com/anrieff/libcpuid/issues</bugs-to>
+    <doc lang="en">http://libcpuid.sourceforge.net/documentation.html</doc>
     <remote-id type="github">anrieff/libcpuid</remote-id>
   </upstream>
   <use>
