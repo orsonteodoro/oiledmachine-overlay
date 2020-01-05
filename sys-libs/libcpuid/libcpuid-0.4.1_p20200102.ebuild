@@ -44,7 +44,8 @@ multilib_src_test() {
 	if use test ; then
 		./cpuid_tool/cpuid_tool
 		${EPYTHON} tests/create_test.py raw.txt report.txt > mfg.test
-		${EPYTHON} tests/run_tests.py ./cpuid_tool/cpuid_tool mfg.test 2>&1 > result.txt
+		${EPYTHON} tests/run_tests.py ./cpuid_tool/cpuid_tool \
+			mfg.test 2>&1 > result.txt
 		grep -F -e "All successfull!" result.txt
 	fi
 }
