@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    a small C library for x86 CPU detection and feature extraction
+  </longdescription>
+  <upstream>
+    <maintainer status="active">
+      <name>Veselin Georgiev</name>
+    </maintainer>
+    <bugs-to>https://github.com/anrieff/libcpuid/issues</bugs-to>
+    <remote-id type="github">anrieff/libcpuid</remote-id>
+  </upstream>
+  <use>
+    <flag name="doc">Generates documentation</flag>
+    <flag name="python">Check for python support to run test scripts</flag>
+    <flag name="test">Performs testing</flag>
+  </use>
+</pkgmetadata>
