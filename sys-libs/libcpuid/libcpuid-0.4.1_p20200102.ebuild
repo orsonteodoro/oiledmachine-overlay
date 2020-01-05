@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-DESCRIPTION="libcpuid"
+DESCRIPTION="a small C library for x86 CPU detection and feature extraction"
 HOMEPAGE="http://libcpuid.sourceforge.net/"
 LICENSE="BSD-2"
 KEYWORDS="~amd64 ~x86"
