@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -17,7 +17,11 @@ SRC_URI="http://repo.radeon.com/rocm/apt/debian/pool/main/r/rock-dkms/${FN}"
 SLOT="0/${PV}"
 IUSE="acpi +build +check-mmu-notifier +check-pcie +check-gpu directgma firmware hybrid-graphics numa ssg"
 REQUIRED_USE="hybrid-graphics? ( acpi )"
-KV_NOT_SUPPORTED="5.3"
+if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
+KV_NOT_SUPPORTED="99999"
+else
+KV_NOT_SUPPORTED="5.0"
+fi
 RDEPEND="firmware? ( sys-firmware/rock-firmware )
 	 sys-kernel/dkms
 	 || ( <sys-kernel/ck-sources-${KV_NOT_SUPPORTED}
@@ -37,57 +41,17 @@ DKMS_PKG_VER="${MY_RPR}"
 DC_VER="3.2.48"
 AMDGPU_VERSION="5.0.82"
 
-# patches based on https://aur.archlinux.org/cgit/aur.git/tree/?h=amdgpu-dkms
-# patches try to make it linux kernel 5.1+ compatible but still missing 5.3 compatibility.
-
-# the use-drm_need_swiotlb and use-drm_helper_force_disable_all patches do not flag errors.  i don't know how these are sourced.
-
 PATCHES=( "${FILESDIR}/rock-dkms-2.8_p13-makefile-recognize-gentoo.patch"
 	  "${FILESDIR}/rock-dkms-2.8_p13-fix-ac_kernel_compile_ifelse.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-drm_probe_helper-for-5_1-part-1.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-drm_probe_helper-for-5_1-part-2.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-drm_probe_helper-for-5_1-part-3.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-drm_probe_helper-for-5_1-part-4.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-drm_probe_helper-for-5_1-part-5.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-drm_probe_helper-for-5_1-part-6.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-drm_probe_helper-for-5_1-part-7.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-drm_probe_helper-for-5_1-part-8.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-drm_probe_helper-for-5_1-part-9.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-drm_probe_helper-for-5_1-part-10.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-drm_probe_helper-for-5_1-part-11.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-add-signal_h-for-signal_pending.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-add-drm_probe_helper_h-for-drm_helper_probe_single_connector_modes.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-either-drm_fb_helper_fill_var-or-drm_fb_helper_fill_info.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-ditched-driver_irq_shared.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-drm_fb_helper_fill_fix-doesnt-apply-for-kernel-ver-5_2-and-above.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-drm_helper_force_disable_all-only-for-before-kernel-ver-5_1.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-drm_hdmi_avi_infoframe_from_display_mode-for-5_1-part-1.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-drm_hdmi_avi_infoframe_from_display_mode-for-5_1-part-2.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-drm_hdmi_avi_infoframe_from_display_mode-for-5_1-part-3.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-drm_hdmi_avi_infoframe_from_display_mode-for-5_1-part-4.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-drm_format_plane_cpp-ditched-in-5_3.patch"
-	  "${FILESDIR}/rock-dkms-2.9_p6-use-ktime_get_boottime_ns-for-5_3.patch"
 	  "${FILESDIR}/rock-dkms-2.8_p13-enable-mmu_notifier.patch"
 	  "${FILESDIR}/rock-dkms-2.8_p13-fix-configure-test-invalidate_range_start-wants-2-args-requires-config-mmu-notifier.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-mmu_notifier_range_blockable-for-5_2.patch"
-	  "${FILESDIR}/rock-dkms-2.9_p6-vm_fault_t-is-__bitwise-unsigned-int-for-5_1.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-drm_atomic_private_obj_init-adev-ddev-arg-for-5_1.patch"
-	  "${FILESDIR}/rock-dkms-2.9_p6-no-firmware-install.patch"
+	  "${FILESDIR}/rock-dkms-2.10_p14-no-firmware-install.patch"
 	  "${FILESDIR}/rock-dkms-2.8_p13-no-update-initramfs.patch"
 
-	  # drm_crtc_force_disable_all was not marked error
-	  "${FILESDIR}/rock-dkms-2.8_p13-use-drm_helper_force_disable_all-for-5_1.patch"
-
-	  # adev->need_swiotlb = drm_get_max_iomem() > ((u64)1 << dma_bits); was not marked error
-	  "${FILESDIR}/rock-dkms-2.8_p13-use-drm_need_swiotlb-for-5_2-part-1.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-use-drm_need_swiotlb-for-5_2-part-2.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-use-drm_need_swiotlb-for-5_2-part-3.patch"
-	  "${FILESDIR}/rock-dkms-2.8_p13-use-drm_need_swiotlb-for-5_2-part-4.patch"
-
-	  "${FILESDIR}/CVE-2019-16229-fix---Multiple-NULL-deref-on-alloc_workqueue.patch"
-	  "${FILESDIR}/CVE-2019-19067-fix--drm-amdgpu-fix-multiple-memory-leaks-in-acp_hw_init.patch"
-          "${FILESDIR}/CVE-2019-19082-fix--linux-drivers-gpu-drm-amd-display-dc-dce100-dce100_resource-prevent-memory-leak.patch"
-          "${FILESDIR}/CVE-2019-19083-fix--linux-drivers-gpu-drm-amd-display-dc-dce100-dce100_resource-memory-leak.patch" )
+	  "${FILESDIR}/amdgpu-dkms-drm-amdkfd-fix-a-potential-NULL-pointer-dereference-v2.patch"
+	  "${FILESDIR}/amdgpu-drm-amdgpu-fix-multiple-memory-leaks-in-acp_hw_init.patch"
+	  "${FILESDIR}/amdgpu-drm-amd-display-memory-leak.patch"
+	  "${FILESDIR}/amdgpu-drm-amd-display-prevent-memory-leak.patch" )
 
 pkg_nofetch() {
         local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
@@ -97,6 +61,8 @@ pkg_nofetch() {
 }
 
 pkg_pretend() {
+	ewarn "Long Term Support (LTS) kernels 4.19.x, 4.14.x kernels are only supported."
+	# version compatibility at >=5.1 looks sloppy
 	ewarn "This package version is undergoing development.  It may not work."
 	if use check-pcie ; then
 		if has sandbox $FEATURES ; then
@@ -335,9 +301,11 @@ pkg_setup() {
 		die
 	fi
 
+if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" != "1" ]] ; then
 	for k in ${ROCK_DKMS_KERNELS} ; do
 		check_kernel "${k}"
 	done
+fi
 }
 
 src_unpack() {
@@ -350,7 +318,9 @@ src_prepare() {
 	einfo "DC_VER=${DC_VER}"
 	einfo "AMDGPU_VERSION=${AMDGPU_VERSION}"
 	einfo "ROCK_VER=$(ver_cut 1-2)"
+if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" != "1" ]] ; then
 	check_hardware
+fi
 	chmod 0770 autogen.sh || die
 	./autogen.sh || die
 	pushd amd/dkms || die
