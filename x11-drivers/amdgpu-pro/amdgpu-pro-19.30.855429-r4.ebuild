@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -17,6 +17,7 @@ PKG_ARCH_VER="18.04"
 PKG_VER_AMF="1.4.12"
 PKG_VER_GLAMOR="1.19.0"
 PKG_VER_GST_OMX="1.0.0.1"
+PKG_VER_HSAKMT="1.0.6"
 PKG_VER_ID="1.0.0"
 PKG_VER_LIBDRM="2.4.98"
 PKG_VER_LIBWAYLAND="1.15.0"
@@ -489,12 +490,12 @@ src_install() {
 		if use roct ; then
 			if [[ "${ABI}" == "amd64" ]] ; then
 				exeinto ${dd_amdgpu}/
-				doexe ${sd_amdgpupro}/libhsakmt.so.1.0.0
-				dosym libhsakmt.so.1.0.0 \
-					${dd_amdgpu}/libhsakmt.so.1.0
-				dosym libhsakmt.so.1.0.0 \
-					${dd_amdgpu}/libhsakmt.so.1
-				dosym libhsakmt.so.1.0.0 \
+				doexe ${sd_amdgpupro}/libhsakmt.so.${PKG_VER_HSAKMT}
+				dosym libhsakmt.so.${PKG_VER_HSAKMT} \
+					${dd_amdgpu}/libhsakmt.so.$(ver_cut 1-2 ${PKG_VER_HSAKMT})
+				dosym libhsakmt.so.${PKG_VER_HSAKMT} \
+					${dd_amdgpu}/libhsakmt.so.$(ver_cut 1 ${PKG_VER_HSAKMT})
+				dosym libhsakmt.so.${PKG_VER_HSAKMT} \
 					${dd_amdgpu}/libhsakmt.so
 
 				local sd_include="opt/amdgpu-pro/include"
