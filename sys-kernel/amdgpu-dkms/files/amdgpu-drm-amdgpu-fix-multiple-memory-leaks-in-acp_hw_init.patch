@@ -1,6 +1,3 @@
-# See https://nvd.nist.gov/vuln/detail/CVE-2019-19067
-# Changed drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c to amd/amdgpu/amdgpu_acp.c
-
 From 57be09c6e8747bf48704136d9e3f92bfb93f5725 Mon Sep 17 00:00:00 2001
 From: Navid Emamdoost <navid.emamdoost@gmail.com>
 Date: Tue, 1 Oct 2019 22:46:07 -0500
@@ -22,10 +19,10 @@ Reviewed-by: Christian König <christian.koenig@amd.com>
 Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c | 34 ++++++++++++++++---------
+ amd/amdgpu/amdgpu_acp.c | 34 ++++++++++++++++---------
  1 file changed, 22 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_acp.c
+diff --git a/amd/amdgpu/amdgpu_acp.c b/amd/amdgpu/amdgpu_acp.c
 index eba42c752bca3..82155ac3288a0 100644
 --- a/amd/amdgpu/amdgpu_acp.c
 +++ b/amd/amdgpu/amdgpu_acp.c
