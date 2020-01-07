@@ -52,6 +52,10 @@ src_unpack() {
 	unpack_deb ${A}
 }
 
+src_configure() {
+	:;
+}
+
 src_compile() {
 	:;
 }
