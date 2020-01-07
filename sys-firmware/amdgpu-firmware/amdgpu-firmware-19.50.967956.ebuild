@@ -57,6 +57,10 @@ src_unpack() {
 	export S="${WORKDIR}/usr/src/amdgpu-${PKG_VER}-${PKG_REV}"
 }
 
+src_configure() {
+	:;
+}
+
 src_compile() {
 	:;
 }

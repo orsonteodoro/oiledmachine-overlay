@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="AMDGPU firmware"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux"
+"https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-30-unified"
 LICENSE="LICENSE.amdgpu"
 # See the rock-firmware package for details.
 KEYWORDS="~amd64"
@@ -55,6 +55,10 @@ src_unpack() {
 	unpack_deb \
 "amdgpu-pro-${PKG_VER_STRING_DIR}/amdgpu-dkms_${PKG_VER}-${PKG_REV}_all.deb"
 	export S="${WORKDIR}/usr/src/amdgpu-${PKG_VER}-${PKG_REV}"
+}
+
+src_configure() {
+	:;
 }
 
 src_compile() {
