@@ -24,7 +24,11 @@ SLOT="0/${PV}"
 IUSE="acpi +build +check-mmu-notifier check-pcie check-gpu directgma firmware hybrid-graphics numa rock ssg"
 REQUIRED_USE="rock? ( check-pcie check-gpu )
 	      hybrid-graphics? ( acpi )"
+if [[ "${AMDGPU_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
+KV_NOT_SUPPORTED="99999"
+else
 KV_NOT_SUPPORTED="5.0"
+fi
 RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
 	 sys-kernel/dkms
 	 || ( <sys-kernel/ck-sources-${KV_NOT_SUPPORTED}
@@ -301,9 +305,11 @@ pkg_setup() {
 		die
 	fi
 
+if [[ "${AMDGPU_DKMS_EBUILD_MAINTAINER}" != "1" ]] ; then
 	for k in ${AMDGPU_DKMS_KERNELS} ; do
 		check_kernel "${k}"
 	done
+fi
 }
 
 unpack_deb() {
@@ -325,7 +331,9 @@ src_prepare() {
 	einfo "DC_VER=${DC_VER}"
 	einfo "AMDGPU_VERSION=${AMDGPU_VERSION}"
 	einfo "ROCK_VER≈${ROCK_VER}"
+if [[ "${AMDGPU_DKMS_EBUILD_MAINTAINER}" != "1" ]] ; then
 	check_hardware
+fi
 }
 
 src_configure() {
