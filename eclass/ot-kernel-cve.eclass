@@ -115,7 +115,6 @@ fetch_tuxparoni() {
 unpack_tuxparoni() {
 	cd "${WORKDIR}"
 	unpack "${T}/${TUXPARONI_A_FN}"
-
 	cp -a "${FILESDIR}/tuxparoni-conflict-resolver" "${WORKDIR}/tuxparoni-master" || die
 
 #	# debug code
@@ -133,6 +132,7 @@ fetch_cve_hotfixes() {
 		chmod +x tuxparoni
 		sed -i -e "s|root:root|portage:portage|" tuxparoni || die
 
+		einfo "If the CVE fixer fails, do:  rm -rf ${d}"
 		einfo "Fetching NVD JSONs"
 		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-jsons -t "${T}" \
 			|| die "You may need to manually remove ${d}/{feeds,jsons} folders"
