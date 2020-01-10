@@ -1,5 +1,4 @@
-#1234567890123456789012345678901234567890123456789012345678901234567890123456789
-# Copyright 2019 Orson Teodoro
+# Copyright 2019-2020 Orson Teodoro
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -62,8 +61,12 @@ CVE_ALLOW_EBUILD_MAINTAINER_FILESDIR=0x01000000
 # be added to CVE/NVD report but are not.
 CVE_ALLOW_EBUILD_MAINTAINER_ADDENDUM_CLASS_A=0x01000000
 
-CVE_ALLOW_FOSS_CONTRIBUTOR=0x01000000 # has authored a project and released under a FOSS license
-CVE_ALLOW_OPEN_SOURCE_CONTRIBUTOR=0x10000000 # has authored a project but not explicitly under a FOSS license
+# has authored a project and released under a FOSS license
+CVE_ALLOW_FOSS_CONTRIBUTOR=0x01000000
+
+# has authored a project but not explicitly under a FOSS license
+CVE_ALLOW_OPEN_SOURCE_CONTRIBUTOR=0x10000000
+
 CVE_ALLOW_PATRON=0x80000000 # non oss contributor but may use product
 
 # todo, you as a user, maybe xml encoded savedconfig.  it is intended to apply
@@ -95,29 +98,16 @@ CVE_FIX_REJECT_DISPUTED=${CVE_FIX_REJECT_DISPUTED:=0}
 # irreversible damage.
 CVE_ALLOW_RISKY_BACKPORTS=${CVE_ALLOW_RISKY_BACKPORTS:=0}
 
-# based on my last edit in unix timestamp (date -u +%Y%m%d_%I%M_%p_%Z)
-LATEST_CVE_KERNEL_INDEX="20191212_1126_PM_UTC"
-LATEST_CVE_KERNEL_INDEX="${LATEST_CVE_KERNEL_INDEX,,}"
-
-# this will trigger a kernel re-install based on use flag timestamp
-# there is no need to set this flag but tricks the emerge system to re-emerge.
-if [[ -n "${CVE_SUBSCRIBE_KERNEL_HOTFIXES}" \
-	&& "${CVE_SUBSCRIBE_KERNEL_HOTFIXES}" == "1" ]] ; \
-then
-	IUSE+=" cve_update_${LATEST_CVE_KERNEL_INDEX}"
-fi
-
 CVE_DELAY="${CVE_DELAY:=1}"
 
-CVE_LANG="${CVE_LANG:=en}" # You can define this in your make.conf.  Currently en is only supported.
+CVE_LANG="${CVE_LANG:=en}"	# You can define this in your make.conf.
+				# Currently en is only supported.
 
 TUXPARONI_A_FN="tuxparoni.tar.gz"
-TUXPARONI_DL_URL="https://github.com/orsonteodoro/tuxparoni/archive/master.tar.gz"
-
-SRC_URI+=" "
+TUXPARONI_DL_URL="\
+https://github.com/orsonteodoro/tuxparoni/archive/master.tar.gz"
 
 fetch_tuxparoni() {
-	ewarn "The cve_hotfix USE flag and its dependecy tuxparoni is undergoing development and currently does not fix anything."
 	einfo "Fetching tuxparoni from a live source..."
 	wget -O "${T}/${TUXPARONI_A_FN}" "${TUXPARONI_DL_URL}" || die
 }
@@ -126,9 +116,9 @@ unpack_tuxparoni() {
 	cd "${WORKDIR}"
 	unpack "${T}/${TUXPARONI_A_FN}"
 
-	# debug code
-	#mkdir -p "${WORKDIR}/tuxparoni-master"
-	#cp "${FILESDIR}"/tuxparoni* "${WORKDIR}/tuxparoni-master"
+#	# debug code
+#	mkdir -p "${WORKDIR}/tuxparoni-master"
+#	cp "${FILESDIR}"/tuxparoni* "${WORKDIR}/tuxparoni-master"
 }
 
 fetch_cve_hotfixes() {
@@ -144,7 +134,10 @@ fetch_cve_hotfixes() {
 		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-jsons -t "${T}" \
 			|| die "You may need to manually remove ${d}/{feeds,jsons} folders"
 		einfo "Fetching patches"
-		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-patches -t "${T}" || die
+		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-patches -t "${T}" -au -acp || die
+
+		# copy custom backport patches
+		cp "${FILESDIR}"/CVE* "${d}/custom_patches"
 	popd
 }
 
@@ -154,7 +147,7 @@ test_cve_hotfixes() {
 		local b="${distdir}/ot-sources-src"
 		local d="${b}/tuxparoni"
 		einfo "Dry testing"
-		./tuxparoni -u -c "${d}" -s "${S}" --cmd-dry-test -t "${T}"
+		./tuxparoni -u -c "${d}" -s "${S}" --cmd-dry-test -t "${T}" -au -acp
 	popd
 }
 
@@ -164,7 +157,7 @@ get_cve_report() {
 		local b="${distdir}/ot-sources-src"
 		local d="${b}/tuxparoni"
 		einfo "Generating Report"
-		./tuxparoni -u -c "${d}" -s "${S}" --cmd-report -t "${T}" || die
+		./tuxparoni -u -c "${d}" -s "${S}" --cmd-report -t "${T}" -au -acp
 	popd
 }
 
@@ -174,7 +167,6 @@ apply_cve_hotfixes() {
 		local b="${distdir}/ot-sources-src"
 		local d="${b}/tuxparoni"
 		einfo "Applying cve hotfixes"
-		# not done yet
-		#./tuxparoni -u -c "${d}" -s "${S}" --cmd-apply -t "${T}" || die
+		./tuxparoni -u -c "${d}" -s "${S}" --cmd-apply -t "${T}" -au -acp || die
 	popd
 }
