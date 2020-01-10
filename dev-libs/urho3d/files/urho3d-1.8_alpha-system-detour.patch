@@ -1,0 +1,80 @@
+diff -urp a/Source/Urho3D/Navigation/CrowdManager.cpp b/Source/Urho3D/Navigation/CrowdManager.cpp
+--- a/Source/Urho3D/Navigation/CrowdManager.cpp	2019-10-05 21:46:51.000000000 -0700
++++ b/Source/Urho3D/Navigation/CrowdManager.cpp	2020-01-08 10:50:14.205307741 -0800
+@@ -83,10 +83,13 @@ CrowdManager::CrowdManager(Context* cont
+     numAreas_.Reserve(DT_CROWD_MAX_QUERY_FILTER_TYPE);
+     for (unsigned i = 0; i < DT_CROWD_MAX_QUERY_FILTER_TYPE; ++i)
+         numAreas_.Push(0);
++
++    agents_ = (dtCrowdAgent**)dtAlloc(sizeof(dtCrowdAgent*)*DEFAULT_MAX_AGENTS, DT_ALLOC_PERM);
+ }
+ 
+ CrowdManager::~CrowdManager()
+ {
++    dtFree(agents_);
+     dtFreeCrowd(crowd_);
+     crowd_ = nullptr;
+ }
+@@ -127,7 +130,7 @@ void CrowdManager::ApplyAttributes()
+     navigationMeshId_ = navigationMesh_ ? navigationMesh_->GetID() : 0;
+ 
+     // If the Detour crowd initialization parameters have changed then recreate it
+-    if (crowd_ && (navMeshChange || crowd_->getAgentCount() != maxAgents_ || crowd_->getMaxAgentRadius() != maxAgentRadius_))
++    if (crowd_ && (navMeshChange || crowd_->getAgentCount() != maxAgents_ ))
+         CreateCrowd();
+ }
+ 
+@@ -584,7 +587,7 @@ bool CrowdManager::CreateCrowd()
+     // Initialize the crowd
+     if (maxAgentRadius_ == 0.f)
+         maxAgentRadius_ = navigationMesh_->GetAgentRadius();
+-    if (!crowd_->init(maxAgents_, maxAgentRadius_, navigationMesh_->navMesh_, CrowdAgentUpdateCallback))
++    if (!crowd_->init(maxAgents_, maxAgentRadius_, navigationMesh_->navMesh_))
+     {
+         URHO3D_LOGERROR("Could not initialize DetourCrowd");
+         return false;
+@@ -679,6 +682,12 @@ void CrowdManager::Update(float delta)
+ {
+     assert(crowd_ && navigationMesh_);
+     URHO3D_PROFILE(UpdateCrowd);
++    int nagents;
++    nagents = crowd_->getActiveAgents(agents_, maxAgents_);
++    for (int i = 0; i < nagents; i++) {
++        dtCrowdAgent* ag = agents_[i];
++        CrowdAgentUpdateCallback(ag, delta);
++    }
+     crowd_->update(delta, nullptr);
+ }
+ 
+diff -urp a/Source/Urho3D/Navigation/CrowdManager.h b/Source/Urho3D/Navigation/CrowdManager.h
+--- a/Source/Urho3D/Navigation/CrowdManager.h	2019-10-05 21:46:51.000000000 -0700
++++ b/Source/Urho3D/Navigation/CrowdManager.h	2020-01-08 10:50:19.835523394 -0800
+@@ -195,6 +195,7 @@ private:
+     PODVector<unsigned> numAreas_;
+     /// Number of obstacle avoidance types configured in the crowd. Limit to DT_CROWD_MAX_OBSTAVOIDANCE_PARAMS.
+     unsigned numObstacleAvoidanceTypes_{};
++    dtCrowdAgent** agents_;
+ };
+ 
+ }
+diff -urp a/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp b/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp
+--- a/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp	2019-10-05 21:46:51.000000000 -0700
++++ b/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp	2020-01-08 10:47:52.999899730 -0800
+@@ -1086,7 +1086,7 @@ void DynamicNavigationMesh::AddObstacle(
+ 
+         // Because dtTileCache doesn't process obstacle requests while updating tiles
+         // it's necessary update until sufficient request space is available
+-        while (tileCache_->isObstacleQueueFull())
++        for(int i=0;i<128;i++)
+             tileCache_->update(1, navMesh_);
+ 
+         if (dtStatusFailed(tileCache_->addObstacle(pos, obstacle->GetRadius(), obstacle->GetHeight(), &refHolder)))
+@@ -1126,7 +1126,7 @@ void DynamicNavigationMesh::RemoveObstac
+     {
+         // Because dtTileCache doesn't process obstacle requests while updating tiles
+         // it's necessary update until sufficient request space is available
+-        while (tileCache_->isObstacleQueueFull())
++        for(int i=0;i<128;i++)
+             tileCache_->update(1, navMesh_);
+ 
+         if (dtStatusFailed(tileCache_->removeObstacle(obstacle->obstacleId_)))

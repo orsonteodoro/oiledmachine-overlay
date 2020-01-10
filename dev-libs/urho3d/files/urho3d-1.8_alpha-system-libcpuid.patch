@@ -1,0 +1,12 @@
+diff -urp a/Source/Urho3D/Core/ProcessUtils.cpp b/Source/Urho3D/Core/ProcessUtils.cpp
+--- a/Source/Urho3D/Core/ProcessUtils.cpp	2019-10-05 21:46:51.000000000 -0700
++++ b/Source/Urho3D/Core/ProcessUtils.cpp	2020-01-08 11:13:01.717966342 -0800
+@@ -38,7 +38,7 @@
+ #elif defined(TVOS)
+ extern "C" unsigned SDL_TVOS_GetActiveProcessorCount();
+ #elif !defined(__linux__) && !defined(__EMSCRIPTEN__)
+-#include <LibCpuId/libcpuid.h>
++#include <libcpuid/libcpuid.h>
+ #endif
+ 
+ #if defined(_WIN32)

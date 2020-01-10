@@ -1,0 +1,51 @@
+diff -urp a/Source/Urho3D/Core/ProcessUtils.cpp b/Source/Urho3D/Core/ProcessUtils.cpp
+--- a/Source/Urho3D/Core/ProcessUtils.cpp	2019-10-05 21:46:51.000000000 -0700
++++ b/Source/Urho3D/Core/ProcessUtils.cpp	2020-01-09 12:17:08.102332909 -0800
+@@ -335,7 +335,7 @@ const Vector<String>& GetArguments()
+ String GetConsoleInput()
+ {
+     String ret;
+-#ifdef URHO3D_TESTING
++#if URHO3D_TESTING
+     // When we are running automated tests, reading the console may block. Just return empty in that case
+     return ret;
+ #else
+diff -urp a/Source/Urho3D/Engine/Engine.cpp b/Source/Urho3D/Engine/Engine.cpp
+--- a/Source/Urho3D/Engine/Engine.cpp	2019-10-05 21:46:51.000000000 -0700
++++ b/Source/Urho3D/Engine/Engine.cpp	2020-01-09 12:17:08.112333291 -0800
+@@ -106,7 +106,7 @@ Engine::Engine(Context* context) :
+     maxInactiveFps_(60),
+     pauseMinimized_(false),
+ #endif
+-#ifdef URHO3D_TESTING
++#if URHO3D_TESTING
+     timeOut_(0),
+ #endif
+     autoExit_(true),
+@@ -299,7 +299,7 @@ bool Engine::Initialize(const VariantMap
+         GetSubsystem<Network>()->SetPackageCacheDir(GetParameter(parameters, EP_PACKAGE_CACHE_DIR).GetString());
+ #endif
+ 
+-#ifdef URHO3D_TESTING
++#if URHO3D_TESTING
+     if (HasParameter(parameters, EP_TIME_OUT))
+         timeOut_ = GetParameter(parameters, EP_TIME_OUT, 0).GetInt() * 1000000LL;
+ #endif
+@@ -762,7 +762,7 @@ void Engine::ApplyFrameLimit()
+ #endif
+ 
+     elapsed = frameTimer_.GetUSec(true);
+-#ifdef URHO3D_TESTING
++#if URHO3D_TESTING
+     if (timeOut_ > 0)
+     {
+         timeOut_ -= elapsed;
+@@ -946,7 +946,7 @@ VariantMap Engine::ParseParameters(const
+             }
+             else if (argument == "touch")
+                 ret[EP_TOUCH_EMULATION] = true;
+-#ifdef URHO3D_TESTING
++#if URHO3D_TESTING
+             else if (argument == "timeout" && !value.Empty())
+             {
+                 ret[EP_TIME_OUT] = ToInt(value);

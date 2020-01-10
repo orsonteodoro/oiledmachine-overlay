@@ -1,0 +1,11 @@
+diff -urp a/Source/Urho3D/Urho2D/RigidBody2D.h b/Source/Urho3D/Urho2D/RigidBody2D.h
+--- a/Source/Urho3D/Urho2D/RigidBody2D.h	2019-10-05 21:46:51.000000000 -0700
++++ b/Source/Urho3D/Urho2D/RigidBody2D.h	2020-01-08 10:32:30.094584565 -0800
+@@ -177,6 +177,7 @@ private:
+     bool useFixtureMass_;
+     /// Box2D body.
+     b2Body* body_;
++    bool m_useFixtureMass = true;
+     /// Collision shapes.
+     Vector<WeakPtr<CollisionShape2D> > collisionShapes_;
+     /// Constraints.

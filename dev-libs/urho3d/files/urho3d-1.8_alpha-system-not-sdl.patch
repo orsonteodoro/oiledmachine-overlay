@@ -1,0 +1,14 @@
+diff -urp a/Source/ThirdParty/SDL/src/video/SDL_blit_A.c b/Source/ThirdParty/SDL/src/video/SDL_blit_A.c
+--- a/Source/ThirdParty/SDL/src/video/SDL_blit_A.c	2019-10-05 21:46:51.000000000 -0700
++++ b/Source/ThirdParty/SDL/src/video/SDL_blit_A.c	2020-01-09 12:20:39.820433236 -0800
+@@ -537,8 +537,8 @@ BlitRGBtoRGBPixelAlphaMMX3DNOW(SDL_BlitI
+         DUFFS_LOOP4({
+         Uint32 alpha;
+ 
+-        _m_prefetch(srcp + 16);
+-        _m_prefetch(dstp + 16);
++        __builtin_prefetch(srcp + 16);
++        __builtin_prefetch(dstp + 16);
+ 
+         alpha = *srcp & amask;
+         if (alpha == 0) {

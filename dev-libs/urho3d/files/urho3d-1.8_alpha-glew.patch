@@ -1,0 +1,12 @@
+diff -urp a/Source/Urho3D/Graphics/OpenGL/OGLGraphicsImpl.h b/Source/Urho3D/Graphics/OpenGL/OGLGraphicsImpl.h
+--- a/Source/Urho3D/Graphics/OpenGL/OGLGraphicsImpl.h	2019-10-05 21:46:51.000000000 -0700
++++ b/Source/Urho3D/Graphics/OpenGL/OGLGraphicsImpl.h	2020-01-08 11:08:33.937526822 -0800
+@@ -36,7 +36,7 @@
+ #include <GLES2/gl2.h>
+ #include <GLES2/gl2ext.h>
+ #else
+-#include <GLEW/glew.h>
++#include <GL/glew.h>
+ #endif
+ 
+ #ifndef GL_COMPRESSED_RGBA_S3TC_DXT1_EXT

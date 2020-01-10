@@ -1,0 +1,26 @@
+diff -urp a/Source/Tools/PackageTool/PackageTool.cpp b/Source/Tools/PackageTool/PackageTool.cpp
+--- a/Source/Tools/PackageTool/PackageTool.cpp	2019-10-05 21:46:51.000000000 -0700
++++ b/Source/Tools/PackageTool/PackageTool.cpp	2020-01-09 11:46:02.840923907 -0800
+@@ -31,8 +31,8 @@
+ #include <windows.h>
+ #endif
+ 
+-#include <LZ4/lz4.h>
+-#include <LZ4/lz4hc.h>
++#include <lz4.h>
++#include <lz4hc.h>
+ 
+ #include <Urho3D/DebugNew.h>
+ 
+diff -urp a/Source/Urho3D/IO/File.cpp b/Source/Urho3D/IO/File.cpp
+--- a/Source/Urho3D/IO/File.cpp	2019-10-05 21:46:51.000000000 -0700
++++ b/Source/Urho3D/IO/File.cpp	2020-01-09 11:46:02.840923907 -0800
+@@ -34,7 +34,7 @@
+ #endif
+ 
+ #include <cstdio>
+-#include <LZ4/lz4.h>
++#include <lz4.h>
+ 
+ #include "../DebugNew.h"
+ 

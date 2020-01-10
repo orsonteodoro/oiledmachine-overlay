@@ -1,0 +1,14 @@
+diff -urp a/Source/Urho3D/Physics/RaycastVehicle.cpp b/Source/Urho3D/Physics/RaycastVehicle.cpp
+--- a/Source/Urho3D/Physics/RaycastVehicle.cpp	2019-10-05 21:46:51.000000000 -0700
++++ b/Source/Urho3D/Physics/RaycastVehicle.cpp	2020-01-08 10:35:27.911384259 -0800
+@@ -28,8 +28,8 @@
+ #include "../IO/Log.h"
+ #include "../Physics/RaycastVehicle.h"
+ 
+-#include <Bullet/BulletDynamics/Vehicle/btRaycastVehicle.h>
+-#include <Bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
++#include <bullet/BulletDynamics/Vehicle/btRaycastVehicle.h>
++#include <bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
+ 
+ namespace Urho3D
+ {

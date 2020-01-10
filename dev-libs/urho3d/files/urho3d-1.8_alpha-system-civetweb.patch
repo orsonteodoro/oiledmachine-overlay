@@ -1,0 +1,12 @@
+diff -urp a/Source/Urho3D/Network/HttpRequest.cpp b/Source/Urho3D/Network/HttpRequest.cpp
+--- a/Source/Urho3D/Network/HttpRequest.cpp	2019-10-05 21:46:51.000000000 -0700
++++ b/Source/Urho3D/Network/HttpRequest.cpp	2020-01-09 11:29:09.592004819 -0800
+@@ -26,7 +26,7 @@
+ #include "../IO/Log.h"
+ #include "../Network/HttpRequest.h"
+ 
+-#include <Civetweb/civetweb.h>
++#include <civetweb/civetweb.h>
+ 
+ #include "../DebugNew.h"
+ 
