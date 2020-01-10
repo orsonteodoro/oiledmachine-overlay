@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <!-- only this ebuild in the oiledmachine-overlay -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    Recast is state of the art navigation mesh construction toolset for games.
+
+    Detour is a path-finding and spatial reasoning toolkit.
+  </longdescription>
+  <upstream>
+    <maintainer status="active">
+      <name>Jakob Botsch Nielsen</name>
+      <email>Jakob.botsch.nielsen@gmail.com</email>
+    </maintainer>
+    <maintainer status="inactive">
+      <name>Mikko Mononen</name>
+      <email>memon@inside.org</email>
+    </maintainer>
+    <bugs-to>
+      https://github.com/recastnavigation/recastnavigation/issues
+    </bugs-to>
+    <remote-id type="github">recastnavigation/recastnavigation</remote-id>
+  </upstream>
+  <use>
+    <flag name="demo">Builds the demo</flag>
+    <flag name="examples">Builds examples</flag>
+    <flag name="static">Builds static libraries</flag>
+    <flag name="test">Performs testing</flag>
+  </use>
+</pkgmetadata>
