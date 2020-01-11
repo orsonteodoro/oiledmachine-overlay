@@ -55,12 +55,6 @@ CVE_ALLOW_MAJOR_DISTRO_TEAM_SUGGESTION=0x04000000
 # like credible fixes
 CVE_ALLOW_EBUILD_MAINTAINER_FILESDIR=0x01000000
 
-# Additional commits not mentioned in NVD CVE report but added by vendor
-# of the same type.  NVD DB will report 1 memory leak then not mention several ones
-# following applied by driver maintainer.  Associated commits should likely
-# be added to CVE/NVD report but are not.
-CVE_ALLOW_EBUILD_MAINTAINER_ADDENDUM_CLASS_A=0x01000000
-
 # has authored a project and released under a FOSS license
 CVE_ALLOW_FOSS_CONTRIBUTOR=0x01000000
 
@@ -103,6 +97,20 @@ CVE_DELAY="${CVE_DELAY:=1}"
 CVE_LANG="${CVE_LANG:=en}"	# You can define this in your make.conf.
 				# Currently en is only supported.
 
+MAX_BULK_CONNECTIONS=${MAX_BULK_CONNECTIONS:=5}
+MAX_PATCH_CONNECTIONS=${MAX_PATCH_CONNECTIONS:=100}
+
+# Additional commits not mentioned in NVD CVE report but added by vendor
+# of the same type.  NVD DB will report 1 memory leak then not mention several ones
+# following applied by driver maintainer.  Associated commits should likely
+# be added to CVE/NVD report but are not.
+CVE_ALLOW_CRASH_PREVENTION=${CVE_ALLOW_CRASH_PREVENTION:=1}
+
+# This will perform heuristic keyword analysis on the commit itself
+# for fix suitability and to avoid re-introducing flaws by security
+# researchers fully disclosing commits good or bad.
+CVE_ALLOW_UNTAGGED_PATCHES=${CVE_ALLOW_UNTAGGED_PATCHES:=1}
+
 TUXPARONI_A_FN="tuxparoni.tar.gz"
 TUXPARONI_DL_URL="\
 https://github.com/orsonteodoro/tuxparoni/archive/master.tar.gz"
@@ -115,7 +123,8 @@ fetch_tuxparoni() {
 unpack_tuxparoni() {
 	cd "${WORKDIR}"
 	unpack "${T}/${TUXPARONI_A_FN}"
-	cp -a "${FILESDIR}/tuxparoni-conflict-resolver" "${WORKDIR}/tuxparoni-master" || die
+	cp -a "${FILESDIR}/tuxparoni-conflict-resolver" \
+		"${WORKDIR}/tuxparoni-master" || die
 
 #	# debug code
 #	mkdir -p "${WORKDIR}/tuxparoni-master"
@@ -123,7 +132,16 @@ unpack_tuxparoni() {
 }
 
 fetch_cve_hotfixes() {
-	ewarn "The cve_hotfix USE flag is still experimental and unstable and may not work at random times."
+	local allow_crash_prevention=""
+	[[ "${CVE_ALLOW_CRASH_PREVENTION}" ]] \
+		&& allow_crash_prevention="-acp"
+	local allow_crash_untagged=""
+	[[ "${CVE_ALLOW_UNTAGGED_PATCHES}" ]] \
+		&& allow_crash_untagged_patches="-au"
+
+	ewarn \
+"The cve_hotfix USE flag is still experimental and unstable and may not work \
+at random times."
 	pushd "${WORKDIR}/tuxparoni-master" || die
 		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 		local b="${distdir}/ot-sources-src"
@@ -135,10 +153,14 @@ fetch_cve_hotfixes() {
 
 		einfo "If the CVE fixer fails, do:  rm -rf ${d}"
 		einfo "Fetching NVD JSONs"
-		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-jsons -t "${T}" \
-			|| die "You may need to manually remove ${d}/{feeds,jsons} folders"
+		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-jsons \
+			-t "${T}" -mbc ${MAX_BULK_CONNECTIONS} || die
+		"You may need to manually remove ${d}/{feeds,jsons} folders"
 		einfo "Fetching patches"
-		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-patches -t "${T}" -au -acp || die
+		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-patches \
+			-t "${T}" -au -mpc ${MAX_PATCH_CONNECTIONS} \
+			${allow_crash_prevention} \
+			${allow_crash_untagged_patches} || die
 
 		# copy custom backport patches
 		cp "${FILESDIR}"/CVE* "${d}/custom_patches"
@@ -151,7 +173,8 @@ test_cve_hotfixes() {
 		local b="${distdir}/ot-sources-src"
 		local d="${b}/tuxparoni"
 		einfo "Dry testing"
-		./tuxparoni -u -c "${d}" -s "${S}" --cmd-dry-test -t "${T}" -au -acp
+		./tuxparoni -u -c "${d}" -s "${S}" --cmd-dry-test -t "${T}" \
+			|| true
 	popd
 }
 
@@ -161,7 +184,8 @@ get_cve_report() {
 		local b="${distdir}/ot-sources-src"
 		local d="${b}/tuxparoni"
 		einfo "Generating Report"
-		./tuxparoni -u -c "${d}" -s "${S}" --cmd-report -t "${T}" -au -acp
+		./tuxparoni -u -c "${d}" -s "${S}" --cmd-report -t "${T}" \
+			|| true
 	popd
 }
 
@@ -171,6 +195,6 @@ apply_cve_hotfixes() {
 		local b="${distdir}/ot-sources-src"
 		local d="${b}/tuxparoni"
 		einfo "Applying cve hotfixes"
-		./tuxparoni -u -c "${d}" -s "${S}" --cmd-apply -t "${T}" -au -acp || die
+		./tuxparoni -u -c "${d}" -s "${S}" --cmd-apply -t "${T}" || die
 	popd
 }
