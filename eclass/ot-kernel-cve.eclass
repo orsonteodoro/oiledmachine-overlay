@@ -123,6 +123,7 @@ unpack_tuxparoni() {
 }
 
 fetch_cve_hotfixes() {
+	ewarn "The cve_hotfix USE flag is still experimental and unstable and may not work at random times."
 	pushd "${WORKDIR}/tuxparoni-master" || die
 		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 		local b="${distdir}/ot-sources-src"
