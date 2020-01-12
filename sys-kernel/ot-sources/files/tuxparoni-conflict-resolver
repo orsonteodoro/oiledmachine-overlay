@@ -25,10 +25,9 @@ conflict_resolver() {
 	local patch_path="${2}" # original patch which can be used to revert or
 				# partially apply it
 	local patch_meta_path=$(echo "${patch_path}" | sed -r -e "s|\.patch$|.meta|g")
-	local original_url=$(cat "${patch_meta_path}" | grep -r -e "original_url:" | cut -f2 -d $' ')
-	local download_url=$(cat "${patch_meta_path}" | grep -r -e "last_url:" | cut -f2 -d $' ')
-	local patch_hash=$(sha256sum "${patch_path}" | cut -f1 -d " ")
-	local alterative_patch=""
+	local original_url=$(grep -r -e "original_url:" "${patch_meta_path}" | cut -f2 -d $' ')
+	local download_url=$(grep -r -e "last_url:" "${patch_meta_path}" | cut -f2 -d $' ')
+	#local patch_hash=$(sha256sum "${patch_path}" | cut -f1 -d " ") # disabled for performance
 	if [[ "${download_url}" == "https://lore.kernel.org/patchwork/patch/1126650/mbox/" ]] ; then
 		# for CVE-2019-16089
                 # not a official backport
