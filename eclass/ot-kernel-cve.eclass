@@ -110,6 +110,9 @@ CVE_ALLOW_CRASH_PREVENTION=${CVE_ALLOW_CRASH_PREVENTION:=1}
 # researchers fully disclosing commits good or bad.
 CVE_ALLOW_UNTAGGED_PATCHES=${CVE_ALLOW_UNTAGGED_PATCHES:=1}
 
+# controls how much is downloaded and patch starting point
+CVE_MIN_YEAR=${CVE_MIN_YEAR:=1999}
+
 TUXPARONI_A_FN="tuxparoni.tar.gz"
 TUXPARONI_DL_URL="\
 https://github.com/orsonteodoro/tuxparoni/archive/master.tar.gz"
@@ -125,7 +128,7 @@ unpack_tuxparoni() {
 	cp -a "${FILESDIR}/tuxparoni-conflict-resolver" \
 		"${WORKDIR}/tuxparoni-master" || die
 
-#	# debug code
+#	# for debugging or developing tuxparoni
 #	mkdir -p "${WORKDIR}/tuxparoni-master"
 #	cp "${FILESDIR}"/tuxparoni* "${WORKDIR}/tuxparoni-master"
 }
@@ -137,6 +140,9 @@ fetch_cve_hotfixes() {
 	local allow_crash_untagged=""
 	[[ "${CVE_ALLOW_UNTAGGED_PATCHES}" ]] \
 		&& allow_crash_untagged_patches="-au"
+	local min_year=""
+	[[ "${CVE_MIN_YEAR}" ]] \
+		&& min_year="-mn ${CVE_MIN_YEAR}"
 
 	ewarn \
 "The cve_hotfix USE flag is still experimental and unstable and may not work \
@@ -153,13 +159,16 @@ at random times."
 		einfo "If the CVE fixer fails, do:  rm -rf ${d}"
 		einfo "Fetching NVD JSONs"
 		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-jsons \
-			-t "${T}" -mbc ${MAX_BULK_CONNECTIONS} || die
+			-t "${T}" -mbc ${MAX_BULK_CONNECTIONS} \
+			${min_year} || die \
 		"You may need to manually remove ${d}/{feeds,jsons} folders"
 		einfo "Fetching patches"
 		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-patches \
 			-t "${T}" -au -mpc ${MAX_PATCH_CONNECTIONS} \
 			${allow_crash_prevention} \
-			${allow_crash_untagged_patches} || die
+			${allow_crash_untagged_patches} \
+			${min_year} || die \
+		"You may need to manually remove ${d}/{feeds,jsons} folders"
 
 		# copy custom backport patches
 		cp "${FILESDIR}"/CVE* "${d}/custom_patches"
@@ -167,33 +176,43 @@ at random times."
 }
 
 test_cve_hotfixes() {
+	local min_year=""
+	[[ "${CVE_MIN_YEAR}" ]] \
+		&& min_year="-mn ${CVE_MIN_YEAR}"
 	pushd "${WORKDIR}/tuxparoni-master" || die
 		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 		local b="${distdir}/ot-sources-src"
 		local d="${b}/tuxparoni"
 		einfo "Dry testing"
 		./tuxparoni -u -c "${d}" -s "${S}" --cmd-dry-test -t "${T}" \
-			|| true
+			${min_year} || true
 	popd
 }
 
 get_cve_report() {
+	local min_year=""
+	[[ "${CVE_MIN_YEAR}" ]] \
+		&& min_year="-mn ${CVE_MIN_YEAR}"
 	pushd "${WORKDIR}/tuxparoni-master" || die
 		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 		local b="${distdir}/ot-sources-src"
 		local d="${b}/tuxparoni"
 		einfo "Generating Report"
 		./tuxparoni -u -c "${d}" -s "${S}" --cmd-report -t "${T}" \
-			|| true
+			${min_year} || true
 	popd
 }
 
 apply_cve_hotfixes() {
+	local min_year=""
+	[[ "${CVE_MIN_YEAR}" ]] \
+		&& min_year="-mn ${CVE_MIN_YEAR}"
 	pushd "${WORKDIR}/tuxparoni-master" || die
 		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 		local b="${distdir}/ot-sources-src"
 		local d="${b}/tuxparoni"
 		einfo "Applying cve hotfixes"
-		./tuxparoni -u -c "${d}" -s "${S}" --cmd-apply -t "${T}" || die
+		./tuxparoni -u -c "${d}" -s "${S}" --cmd-apply -t "${T}" \
+			${min_year} || die
 	popd
 }
