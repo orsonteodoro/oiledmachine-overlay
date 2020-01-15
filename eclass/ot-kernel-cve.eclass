@@ -96,12 +96,12 @@ CVE_DELAY="${CVE_DELAY:=1}"
 CVE_LANG="${CVE_LANG:=en}"	# You can define this in your make.conf.
 				# Currently en is only supported.
 
-MAX_BULK_CONNECTIONS=${MAX_BULK_CONNECTIONS:=5}
-MAX_PATCH_CONNECTIONS=${MAX_PATCH_CONNECTIONS:=100}
+CVE_MAX_BULK_CONNECTIONS=${CVE_MAX_BULK_CONNECTIONS:=5}
+CVE_MAX_PATCH_CONNECTIONS=${CVE_MAX_PATCH_CONNECTIONS:=100}
 
 # Additional commits not mentioned in NVD CVE report but added by vendor
-# of the same type.  NVD DB will report 1 memory leak then not mention several ones
-# following applied by driver maintainer.  Associated commits should likely
+# of the same type.  NVD DB will report 1 memory leak then not mention several
+# ones following applied by driver maintainer.  Associated commits should likely
 # be added to CVE/NVD report but are not.
 CVE_ALLOW_CRASH_PREVENTION=${CVE_ALLOW_CRASH_PREVENTION:=1}
 
@@ -159,12 +159,12 @@ at random times."
 		einfo "If the CVE fixer fails, do:  rm -rf ${d}"
 		einfo "Fetching NVD JSONs"
 		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-jsons \
-			-t "${T}" -mbc ${MAX_BULK_CONNECTIONS} \
+			-t "${T}" -mbc ${CVE_MAX_BULK_CONNECTIONS} \
 			${min_year} || die \
 		"You may need to manually remove ${d}/{feeds,jsons} folders"
 		einfo "Fetching patches"
 		./tuxparoni -u -c "${d}" -s "${S}" --cmd-fetch-patches \
-			-t "${T}" -au -mpc ${MAX_PATCH_CONNECTIONS} \
+			-t "${T}" -au -mpc ${CVE_MAX_PATCH_CONNECTIONS} \
 			${allow_crash_prevention} \
 			${allow_crash_untagged_patches} \
 			${min_year} || die \

@@ -143,6 +143,19 @@
                                   and may lead to data loss or data corruption,
                                   non functioning driver/device, or irreversible
                                   damage.
+      CVE_ALLOW_UNTAGGED_PATCHES - is set to 0 to not accept, 1 to accept
+                                   (default).  This is used to inspect patches
+                                   or commits for viable official fix from 
+                                   kernel.org or github.com/torvals if a url is
+                                   not marked Patch or Vendor Advisory.
+      CVE_ALLOW_CRASH_PREVENTION - is set to 1 to accept (default), 0 to reject
+                                   if to apply commits that prevent crashes,
+                                   memory leaks, overflows, validations
+                                   surrounding a fix for a CVE.
+      CVE_MAX_BULK_CONNECTIONS - maximum large downloads at a time, 5 is default
+      CVE_MAX_PATCH_CONNECTIONS - maximum patch downloads at a time,
+                                  100 is default
+      CVE_MIN_YEAR - starting patching-download-drytest year, default is 1999.
 
       Examples:
       CVE_FIX_TRUST_LEVEL=$((0x00010000 | 0x00040000))
