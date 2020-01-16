@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # See README.chromium or include/libyuv/version.h for lib version
@@ -18,7 +18,7 @@ DEPEND="${RDEPEND}
 	dev-util/cmake"
 SLOT="0/${PV}"
 inherit cmake-utils
-EGIT_COMMIT="d82f4baf5fcc19f21b5decd7c4af63f120653e0b"
+EGIT_COMMIT="1cea4235af9a424023f439a412e77303680acbd6"
 EGIT_REPO_URI="https://chromium.googlesource.com/libyuv/libyuv"
 SRC_URI=\
 "https://chromium.googlesource.com/libyuv/libyuv/+archive/${EGIT_COMMIT}.tar.gz\
