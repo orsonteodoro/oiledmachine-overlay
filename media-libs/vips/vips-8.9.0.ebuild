@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python3_{3,7,8} )
 
 inherit autotools eutils multilib-minimal python-single-r1
 
@@ -51,7 +51,7 @@ REQUIRED_USE="imagequant? ( png )
 	      python? ( ${PYTHON_REQUIRED_USE} )
 	      svg? ( cairo )"
 RESTRICT="mirror"
-SLOT="1"
+SLOT="1/${PV}"
 S="${WORKDIR}/libvips-${PV}"
 DOCS=( ChangeLog NEWS README.md THANKS TODO )
 
