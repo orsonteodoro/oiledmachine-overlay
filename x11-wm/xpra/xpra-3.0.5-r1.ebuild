@@ -9,23 +9,19 @@ HOMEPAGE="http://xpra.org/ \
 LICENSE="GPL-2 BSD html5? ( MPL-2.0 )"
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
 # PyCObject_Check and PyCObject_AsVoidPtr vanished with python 3.3
-PYTHON_COMPAT=( python3_4 python3_5 python3_6 python3_7 )
+PYTHON_COMPAT=( python3_{6,7,8} )
 IUSE="  avahi +client +clipboard csc_swscale csc_libyuv cuda cuda_rebuild cups \
-	dbus dec_avcodec2 enc_ffmpeg enc_x264 enc_x265 gtk2 gtk3 html5 \
+	dbus dec_avcodec2 enc_ffmpeg enc_x264 enc_x265 gtk3 html5 \
 	html5_gzip html5_brotli jpeg libav +lz4 lzo opengl minify \
 	+notifications nvenc nvfbc pam pillow pulseaudio sd_listen ssl server \
 	sound systemd test vpx vsock v4l2 webcam webp websockets xdg"
-REQUIRED_USE="  gtk3? ( !gtk2 ) \
-		gtk2? ( !gtk3 ) \
-		^^ (    python_targets_python3_4 \
-			python_targets_python3_5 \
-			python_targets_python3_6 \
-			python_targets_python3_7 ) \
-		^^ ( gtk2 gtk3 ) \
-		python_targets_python3_4? ( gtk3 !gtk2 ) \
-		python_targets_python3_5 ( gtk3 !gtk2 ) \
-		python_targets_python3_6 ( gtk3 !gtk2 ) \
-		python_targets_python3_7 ( gtk3 !gtk2 )"
+REQUIRED_USE="  ^^ (	python_targets_python3_6 \
+			python_targets_python3_7 \
+			python_targets_python3_8 ) \
+		^^ ( gtk3 ) \
+		python_targets_python3_6 ( gtk3 ) \
+		python_targets_python3_7 ( gtk3 )
+		python_targets_python3_8 ( gtk3 )"
 SLOT="0/${PV}"
 MY_PV="$(ver_cut 1-4)"
 inherit distutils-r1
@@ -34,7 +30,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	client? ( enc_x264? ( dec_avcodec2 )
 		  enc_x265? ( dec_avcodec2 ) )
 	clipboard? ( || ( client server )
-		     || ( gtk2 gtk3 ) )
+		     || ( gtk3 ) )
 	cups? ( dbus )
 	opengl? ( client )
 	sd_listen? ( systemd )
@@ -43,8 +39,6 @@ inherit multilib-build
 COMMON_DEPEND="${PYTHON_DEPS}
 	dev-lang/python[ssl?]
 	dev-python/pygtk:2[python_targets_python2_7]
-	gtk2? (	dev-python/pygobject:2[${PYTHON_USEDEP}]
-		x11-libs/gtk+:2 )
 	gtk3? (	dev-python/pygobject:3[${PYTHON_USEDEP}]
 		dev-libs/gobject-introspection
 		x11-libs/gtk+:3 )
@@ -205,8 +199,6 @@ python_configure_all() {
 
 	if use gtk3 ; then
 		mydistutilsargs+=( --without-gtk2 --with-gtk3 )
-	elif use gtk2 ; then
-		mydistutilsargs+=( --with-gtk2 --without-gtk3 )
 	else
 		mydistutilsargs+=( --without-gtk2 --without-gtk3 )
 	fi
