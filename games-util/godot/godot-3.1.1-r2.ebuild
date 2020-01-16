@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{4,5,6,7} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 
 inherit check-reqs desktop eutils godot multilib-build python-r1 scons-utils
 
@@ -32,6 +32,7 @@ IUSE+=" -gamepad +touch" # for input
 IUSE+=" +cvtt +freetype +pcre2 +pulseaudio" # for libraries
 IUSE+=" system-bullet system-enet system-freetype system-libogg system-libpng system-libtheora system-libvorbis system-libvpx system-libwebsockets system-mbedtls system-miniupnpc system-opus system-pcre2 system-recast system-speex system-squish system-xatlas system-zlib system-zstd"
 IUSE+=" android"
+IUSE+=" doxygen rst"
 # media-libs/xatlas is a placeholder
 RDEPEND="android? ( dev-util/android-sdk-update-manager )
 	 app-arch/bzip2[${MULTILIB_USEDEP}]
@@ -92,11 +93,13 @@ RDEPEND="android? ( dev-util/android-sdk-update-manager )
 	 x11-libs/libxshmfence[${MULTILIB_USEDEP}]"
 DEPEND="${RDEPEND}
 	 clang? ( sys-devel/clang[${MULTILIB_USEDEP}] )
+	 doxygen? ( app-doc/doxygen )
          dev-util/scons
          virtual/pkgconfig[${MULTILIB_USEDEP}]"
 S="${WORKDIR}/godot-${PV}-stable"
 RESTRICT="mirror"
-REQUIRED_USE="docs? ( python_targets_python2_7 || ( $(python_gen_useflags 'python3*') ) )
+REQUIRED_USE="docs? ( || ( doxygen rst ) )
+	      rst? ( || ( $(python_gen_useflags 'python3*') ) )
 	      examples-live? ( !examples-snapshot !examples-stable )
 	      examples-snapshot? ( !examples-live !examples-stable )
 	      examples-stable? ( !examples-live !examples-snapshot )
@@ -269,6 +272,17 @@ _build() {
 
 	einfo "Building final ${p1} with or without mono"
 	scons platform=${p1} ${myoptions[@]} "CFLAGS=${CFLAGS}" "CCFLAGS=${CXXFLAGS}" "LINKFLAGS=${LDFLAGS}" || die
+
+	if use docs ; then
+		einfo "Building docs"
+		cd "${S}/docs" || die
+		if use doxygen ; then
+			emake doxygen
+		fi
+		if use rst ; then
+			emake rst
+		fi
+	fi
 }
 
 _use_flag_to_platform() {

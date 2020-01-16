@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python3_{6,7,8} )
 
 inherit check-reqs desktop eutils godot multilib-build python-single-r1 scons-utils toolchain-funcs
 
@@ -27,6 +27,8 @@ IUSE+=" +openssl" # for connections
 IUSE+=" -gamepad +touch" # for input
 IUSE+=" +freetype +pcre2 +opensimplex +pulseaudio" # for libraries
 IUSE+=" system-freetype system-glew system-libmpcdec system-libogg system-libpng system-libtheora system-libvorbis system-libvpx system-openssl system-opus system-pcre2 system-recast system-speex system-squish system-zlib"
+IUSE+=" android"
+IUSE+=" doxygen"
 RDEPEND="android? ( dev-util/android-sdk-update-manager )
 	 cpp? ( dev-util/scons
 		|| ( sys-devel/clang[${MULTILIB_USEDEP}]
@@ -76,13 +78,16 @@ RDEPEND="android? ( dev-util/android-sdk-update-manager )
 DEPEND="${RDEPEND}
 	 clang? ( sys-devel/clang[${MULTILIB_USEDEP}] )
          dev-util/scons
+	 doxygen? ( app-doc/doxygen )
 	 sanitizer? ( sys-devel/clang[${MULTILIB_USEDEP}] )
 	 || ( sys-devel/clang[${MULTILIB_USEDEP}]
 	     <sys-devel/gcc-6.0 )
          virtual/pkgconfig[${MULTILIB_USEDEP}]"
 S="${WORKDIR}/godot-${PV}-stable"
 RESTRICT="mirror"
-REQUIRED_USE="examples-snapshot? ( !examples-stable )
+REQUIRED_USE="doxygen? ( docs )
+	      docs? ( doxygen )
+	      examples-snapshot? ( !examples-stable )
 	      examples-stable? ( !examples-snapshot )
 	      portable? ( !system-freetype !system-glew !system-libmpcdec !system-libogg !system-libpng !system-libtheora !system-libvorbis !system-libvpx !system-openssl !system-opus !system-pcre2 !system-recast !system-speex !system-squish !system-zlib )
 	      ${PYTHON_REQUIRED_USE}
@@ -230,6 +235,13 @@ src_compile() {
 	}
 	multilib_foreach_abi multilib_compile_impl
 
+	if use docs ; then
+		einfo "Building docs"
+		cd "${S}/docs" || die
+		if use doxygen ; then
+			emake doxygen
+		fi
+	fi
 }
 
 _get_bitness() {
