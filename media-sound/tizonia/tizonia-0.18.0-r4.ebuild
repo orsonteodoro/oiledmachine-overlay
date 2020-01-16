@@ -8,9 +8,9 @@ servers and Chromecast devices."
 HOMEPAGE="http://tizonia.org"
 LICENSE="LGPL-3.0+"
 KEYWORDS="~amd64 ~x86"
-PYTHON_COMPAT=( python2_7 python3_{4,5,6,7} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 inherit autotools distutils-r1 eutils flag-o-matic multilib-minimal
-SLOT="0"
+SLOT="0/${PV}"
 IUSE="+aac +alsa +bash-completion blocking-etb-ftb blocking-sendcommand
  +boost +curl +dbus +file-io +flac +fuzzywuzzy +inproc-io
  mp4 +ogg +opus +lame +libsndfile +mad +mp3-metadata-eraser +mp2 +mpg123
@@ -33,10 +33,9 @@ REQUIRED_USE="chromecast? ( player boost curl dbus google-music )
 	      spotify? ( player boost fuzzywuzzy )
 	      systemd? ( dbus )
 	      youtube? ( player boost fuzzywuzzy curl )
-	      ^^ ( python_targets_python2_7
-		   python_targets_python3_5
-		   python_targets_python3_6
-		   python_targets_python3_7 )"
+	      ^^ ( python_targets_python3_6
+		   python_targets_python3_7
+		   python_targets_python3_8 )"
 # 3rd party repos may be required and add to package.unmask.  use layman -a
 # =media-sound/tizonia-0.18.0::oiledmachine-overlay
 # =dev-python/casttube-0.2.0::HomeAssistantRepository
