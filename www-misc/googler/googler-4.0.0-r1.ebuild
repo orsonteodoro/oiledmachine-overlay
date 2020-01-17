@@ -1,19 +1,20 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 DESCRIPTION="Google from the terminal"
 HOMEPAGE="https://github.com/jarun/googler"
-MY_PV="$(ver_cut 1-2 ${PV})"
-SRC_URI="https://github.com/jarun/${PN}/archive/v${MY_PV}.tar.gz -> ${P}.tar.gz"
-LICENSE="GPL-3"
-KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
-PYTHON_COMPAT=( python{3_5,3_6,3_7,3_8} )
-inherit eutils
+LICENSE="GPL-3+"
+KEYWORDS="~amd64 ~arm ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
-RDEPEND="${DEPEND}"
+MY_PV="$(ver_cut 1-2 ${PV})"
+PYTHON_COMPAT=( python{3_6,3_7,3_8} )
+inherit python-single-r1
 RESTRICT="mirror"
+SRC_URI=\
+"https://github.com/jarun/${PN}/archive/v${MY_PV}.tar.gz \
+	-> ${P}.tar.gz"
+inherit eutils
 S="${WORKDIR}/${PN}-${MY_PV}"
 
 src_prepare() {
