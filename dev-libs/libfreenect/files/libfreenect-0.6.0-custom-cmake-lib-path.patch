@@ -1,0 +1,11 @@
+--- a/cmake_modules/SetupDirectories.cmake.orig	2019-06-03 20:01:08.000000000 -0700
++++ b/cmake_modules/SetupDirectories.cmake	2020-01-16 21:48:21.874643760 -0800
+@@ -8,7 +8,7 @@ ENDIF (PROJECT_OS_WIN)
+ STRING (TOLOWER ${PROJECT_NAME} projectNameLower)
+ SET (PROJECT_INCLUDE_INSTALL_DIR "include/${projectNameLower}")
+ SET (PROJECT_MANPAGE_INSTALL_DIR "share/man")
+-SET (PROJECT_LIBRARY_INSTALL_DIR "lib")
++SET (PROJECT_LIBRARY_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}")
+ 
+ MESSAGE (STATUS "${PROJECT_NAME} will be installed to ${CMAKE_INSTALL_PREFIX}")
+ MESSAGE (STATUS "Headers will be installed to ${CMAKE_INSTALL_PREFIX}/${PROJECT_INCLUDE_INSTALL_DIR}")
