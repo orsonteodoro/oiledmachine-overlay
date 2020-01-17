@@ -79,11 +79,9 @@
     <flag name="portable">Configures build to maximize distribution.  Disables system dependencies.</flag>
     <flag name="pulseaudio">Enables PulseAudio support.</flag>
     <flag name="pvrtc">Enables PowerVR texture compression.</flag>
-    <flag name="python_targets_python2_7">For running install scripts.</flag>
-    <flag name="python_targets_python3_4">For generating docs and translations.</flag>
-    <flag name="python_targets_python3_5">For generating docs and translations.</flag>
     <flag name="python_targets_python3_6">For generating docs and translations.</flag>
     <flag name="python_targets_python3_7">For generating docs and translations.</flag>
+    <flag name="python_targets_python3_8">For generating docs and translations.</flag>
     <flag name="recast">Enable mesh generation for 3D games.</flag>
     <flag name="s3tc">Enables DXT compression.</flag>
     <flag name="sanitizer">Compile with sanitizers.  This option enables address (ASAN) and leak (LSAN) sanitizers, and for 3.1 undefined behavior sanitizer (UBSAN).</flag>
