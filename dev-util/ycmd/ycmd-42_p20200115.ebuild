@@ -9,7 +9,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 PYTHON_COMPAT=( python{3_6,3_7,3_8} )
 SLOT="0/${PV}"
 USE_DOTNET="net472 netcoreapp21"
-IUSE="c cxx clangd csharp debug go java javascript lsp objc objcxx \
+IUSE="c cxx clangd csharp debug go java javascript libclang lsp objc objcxx \
 python regex rust system-bottle system-boost system-libclang system-clangd \
 system-go system-jedi system-lsp system-mrab-regex system-requests \
 system-omnisharp-roslyn system-rls system-tern system-typescript \
@@ -119,6 +119,10 @@ src_prepare() {
 
 	# Required for deterministic build.
 	eapply "${FILESDIR}/ycmd-42_p20200108-skip-thirdparty-check.patch"
+
+	if use clangd ; then
+		ewarn "Clangd is experimental and not recommended at this time."
+	fi
 
 	if use system-libclang ; then
 		eapply "${FILESDIR}/${PN}-9999.20170107-force-python-libs-path.patch"
@@ -262,7 +266,8 @@ src_compile() {
 		if use c || use cxx || use objc || use objcxx ; then
 			if use clangd ; then
 				myargs+=" --clangd-completer"
-			else
+			fi
+			if use libclang ; then
 				myargs+=" --clang-completer"
 			fi
 		fi
