@@ -28,7 +28,7 @@ REQUIRED_USE="
 	system-jedi? ( python )
 	system-libclang? ( || ( c cxx objc objcxx ) libclang )
 	system-mrab-regex? ( regex )
-	system-omnisharp-roslyn? ( csharp || ( ${USE_DOTNET} ) )
+	system-omnisharp-roslyn? ( csharp )
 	system-rls? ( rust )
 	system-tern? ( javascript )"
 # Versions must match
