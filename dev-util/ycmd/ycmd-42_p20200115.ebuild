@@ -10,9 +10,11 @@ PYTHON_COMPAT=( python{3_6,3_7,3_8} )
 SLOT="0/${PV}"
 USE_DOTNET="net472 netcoreapp21"
 IUSE="c c++ csharp debug go javascript lsp objc objc++ \
-python rust system-boost system-clang system-go \
-system-jedi system-mrab-regex system-omnisharp-roslyn \
-system-tern system-typescript test typescript"
+python rust system-bottle system-boost system-clang system-go \
+system-jedi system-lsp system-mrab-regex system-requests \
+system-omnisharp-roslyn system-tern system-typescript system-waitress test \
+typescript"
+
 CLANG_V="9.0"
 inherit python-r1 dotnet
 REQUIRED_USE="
@@ -25,13 +27,11 @@ CDEPEND="${PYTHON_DEPS}
 	system-clang? ( >=sys-devel/clang-${CLANG_V} )"
 # gopls is 0.1.7
 RDEPEND="${CDEPEND}
-	>=dev-python/bottle-0.12.13[${PYTHON_USEDEP}]
 	>=dev-python/future-0.15.2_p20150911[${PYTHON_USEDEP}]
-	>=dev-python/requests-2.20.1_p20181108[${PYTHON_USEDEP}]
-	>=dev-python/waitress-1.1.0_p20171010[${PYTHON_USEDEP}]
 	go? ( dev-go/go-tools )
 	javascript? ( net-libs/nodejs[npm] )
 	rust? ( >=dev-lang/rust-1.35.0[rls] )
+	system-bottle? ( >=dev-python/bottle-0.12.13[${PYTHON_USEDEP}] )
 	system-clang? (
 		c? ( >=sys-devel/clang-${CLANG_V} )
 		c++? ( >=sys-devel/clang-${CLANG_V} )
@@ -42,8 +42,10 @@ RDEPEND="${CDEPEND}
 			>=dev-python/parso-0.5.0_p20190620 )
 	system-mrab-regex? ( >=dev-python/mrab-regex-2019.06.08_p20190725 )
 	system-omnisharp-roslyn? ( >=dev-dotnet/omnisharp-roslyn-1.34.2[net472?,netcoreapp21?] )
+	system-requests? ( >=dev-python/requests-2.20.1_p20181108[${PYTHON_USEDEP}] )
 	system-tern? ( >=dev-nodejs/tern-0.21.0 )
-	system-typescript? ( >=dev-lang/typescript-3.7.2 )"
+	system-typescript? ( >=dev-lang/typescript-3.7.2 )
+	system-waitress? ( >=dev-python/waitress-1.1.0_p20171010[${PYTHON_USEDEP}] )"
 DEPEND="${CDEPEND}
 	lsp? ( net-libs/nodejs[npm] )
 	test? ( >=dev-python/codecov-2.0.5[${PYTHON_USEDEP}]
@@ -295,8 +297,7 @@ src_install() {
 		if use system-omnisharp-roslyn ; then
 			cp -a omnisharp.sh "ycmd/completers/cs/"
 		fi
-		rm -rf "ycmd/tests" \
-			"ycmd/completers/general/tests" || die
+		rm -rf "ycmd/tests" || die
 		python_domodule ycmd
 		if use system-omnisharp-roslyn ; then
 			fperms 755 \
@@ -304,6 +305,43 @@ src_install() {
 		fi
 		insinto "$(python_get_sitedir)"
 		doins -r clang_includes cpp libclang.so.$(ver_cut 1 ${CLANG_V})*
+
+		insinto "$(python_get_sitedir)/third_party"
+		if ! use system-bottle ; then
+			doins -r third_party/bottle
+		fi
+
+		if ! use system-clang ; then
+			doins -r third_party/clang
+		fi
+
+		if ! use system-mrab-regex ; then
+			doins -r third_party/cregex
+		fi
+
+		if ! use system-lsp ; then
+			doins -r third_party/generic_server
+		fi
+
+		if ! use system-go ; then
+			doins -r third_party/go
+		fi
+
+		if ! use system-jedi ; then
+			doins -r third_party/jedi_deps
+		fi
+
+		if ! use system-requests ; then
+			doins -r third_party/requests_deps
+		fi
+
+		if ! use system-tern ; then
+			doins -r third_party/turn_runtime
+		fi
+
+		if ! use system-waitress ; then
+			doins -r third_party/waitress
+		fi
 	}
 	python_foreach_impl python_install_all
 }
