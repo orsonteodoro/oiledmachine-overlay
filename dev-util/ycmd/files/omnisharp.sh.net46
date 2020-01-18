@@ -1,2 +1,0 @@
-#!/bin/bash
-mono GENTOO_OMNISHARP_ROSLYN_NET46_PATH/OmniSharp.exe $@

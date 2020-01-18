@@ -1,0 +1,13 @@
+diff -urp a/ycmd/completers/cs/cs_completer.py b/ycmd/completers/cs/cs_completer.py
+--- a/ycmd/completers/cs/cs_completer.py	2020-01-08 05:10:45.000000000 -0800
++++ b/ycmd/completers/cs/cs_completer.py	2020-01-11 22:41:43.574961108 -0800
+@@ -49,8 +49,7 @@ PATH_TO_ROSLYN_OMNISHARP = os.path.join(
+   os.path.abspath( os.path.dirname( __file__ ) ),
+   '..', '..', '..', 'third_party', 'omnisharp-roslyn'
+ )
+-PATH_TO_ROSLYN_OMNISHARP_BINARY = os.path.join(
+-  PATH_TO_ROSLYN_OMNISHARP, 'Omnisharp.exe' )
++PATH_TO_ROSLYN_OMNISHARP_BINARY = "GENTOO_OMNISHARP_BIN"
+ if ( not os.path.isfile( PATH_TO_ROSLYN_OMNISHARP_BINARY )
+      and os.path.isfile( os.path.join( PATH_TO_ROSLYN_OMNISHARP, 'run' ) ) ):
+   PATH_TO_ROSLYN_OMNISHARP_BINARY = (
