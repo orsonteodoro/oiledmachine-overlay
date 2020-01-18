@@ -9,19 +9,23 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 PYTHON_COMPAT=( python{3_6,3_7,3_8} )
 SLOT="0/${PV}"
 USE_DOTNET="net472 netcoreapp21"
-IUSE="c cxx clangd csharp debug go java javascript libclang lsp objc objcxx \
-python regex rust system-bottle system-boost system-libclang system-clangd \
-system-go system-jedi system-lsp system-mrab-regex system-requests \
+IUSE="c clangd csharp cxx debug go java javascript libclang lsp objc objcxx \
+python regex rust system-bottle system-boost system-clangd system-go \
+system-jedi system-libclang system-lsp system-mrab-regex system-requests \
 system-omnisharp-roslyn system-rls system-tern system-typescript \
 system-waitress test typescript"
 
 CLANG_V="9.0"
 inherit python-r1 dotnet
 REQUIRED_USE="
-	system-clangd? ( || ( c cxx objc objcxx ) )
+	c? ( || ( clangd libclang ) )
+	cxx? ( || ( clangd libclang ) )
+	objc? ( || ( clangd libclang ) )
+	objcxx? ( || ( clangd libclang ) )
+	system-clangd? ( || ( c cxx objc objcxx ) clangd )
 	system-go? ( go )
 	system-jedi? ( python )
-	system-libclang? ( || ( c cxx objc objcxx ) )
+	system-libclang? ( || ( c cxx objc objcxx ) libclang )
 	system-mrab-regex? ( regex )
 	system-omnisharp-roslyn? ( csharp || ( ${USE_DOTNET} ) )
 	system-rls? ( rust )
