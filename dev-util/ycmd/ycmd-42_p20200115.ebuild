@@ -264,22 +264,25 @@ src_compile() {
 				myargs+=" --clang-completer"
 			fi
 		fi
-		if use csharp; then
+		if use csharp \
+			&& ! use system-omnisharp-roslyn ; then
 			myargs+=" --cs-completer"
 		fi
 		if use debug ; then
 			myargs+=" --enable-debug"
 		fi
-		if use go; then
+		if use go \
+			&& ! use system-go ; then
 			myargs+=" --go-completer"
 		fi
-		if use java; then
+		if use java ; then
 			myargs+=" --java-completer"
 		fi
-		if ! use regex; then
+		if ! use regex ; then
 			myargs+=" --no-regex"
 		fi
-		if use rust; then
+		if use rust \
+			&& ! use system-rls ; then
 			myargs+=" --rust-completer"
 		fi
 		if use system-boost ; then
@@ -288,7 +291,8 @@ src_compile() {
 		if use system-libclang ; then
 			myargs+=" --system-libclang"
 		fi
-		if use typescript; then
+		if use typescript \
+			&& ! use system-tern ; then
 			myargs+=" --ts-completer"
 		fi
 		if \
