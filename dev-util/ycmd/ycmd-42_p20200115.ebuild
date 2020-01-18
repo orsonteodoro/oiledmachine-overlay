@@ -177,12 +177,6 @@ of the rust micropackages those built with them."
 
 	if use system-tern ; then
 		eapply "${FILESDIR}/${PN}-42_p20200108-system-tern.path"
-		sed -i -e "s|lib64|$(get_libdir)|g" \
-			ycmd/completers/javascript/tern_completer.py || die
-		sed -i -e "s|\
-0.20.0|\
-$(ls /usr/$(get_libdir)/node/tern/ | tail -n 1)|g" \
-			ycmd/completers/javascript/tern_completer.py || die
 		sed -i -e "s|GENTOO_TERN_BIN|/usr/bin/tern|g" \
 			ycmd/completers/javascript/tern_completer.py || die
 	fi
