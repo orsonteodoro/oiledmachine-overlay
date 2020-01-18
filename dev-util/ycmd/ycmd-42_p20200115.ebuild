@@ -9,40 +9,44 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 PYTHON_COMPAT=( python{3_6,3_7,3_8} )
 SLOT="0/${PV}"
 USE_DOTNET="net472 netcoreapp21"
-IUSE="c c++ csharp debug go javascript lsp objc objc++ \
-python rust system-bottle system-boost system-clang system-go \
-system-jedi system-lsp system-mrab-regex system-requests \
-system-omnisharp-roslyn system-tern system-typescript system-waitress test \
-typescript"
+IUSE="c cxx clangd csharp debug go java javascript lsp objc objcxx \
+python regex rust system-bottle system-boost system-libclang system-clangd \
+system-go system-jedi system-lsp system-mrab-regex system-requests \
+system-omnisharp-roslyn system-rls system-tern system-typescript \
+system-waitress test typescript"
 
 CLANG_V="9.0"
 inherit python-r1 dotnet
 REQUIRED_USE="
-	system-clang? ( || ( c c++ objc objc++ ) )
-	system-omnisharp-roslyn? ( || ( ${USE_DOTNET} ) )"
+	system-clangd? ( || ( c cxx objc objcxx ) )
+	system-go? ( go )
+	system-jedi? ( python )
+	system-libclang? ( || ( c cxx objc objcxx ) )
+	system-mrab-regex? ( regex )
+	system-omnisharp-roslyn? ( csharp || ( ${USE_DOTNET} ) )
+	system-rls? ( rust )
+	system-tern? ( javascript )"
 # Versions must match
 # https://github.com/ycm-core/ycmd/blob/master/cpp/BoostParts/boost/version.hpp
 CDEPEND="${PYTHON_DEPS}
 	system-boost? ( >=dev-libs/boost-1.70.1[python,threads,${PYTHON_USEDEP}] )
-	system-clang? ( >=sys-devel/clang-${CLANG_V} )"
+	system-libclang? ( >=sys-devel/clang-${CLANG_V} )
+	system-clangd? ( >=sys-devel/clang-${CLANG_V} )"
 # gopls is 0.1.7
 RDEPEND="${CDEPEND}
 	>=dev-python/future-0.15.2_p20150911[${PYTHON_USEDEP}]
 	go? ( dev-go/go-tools )
+	java? ( virtual/jre:1.8 )
 	javascript? ( net-libs/nodejs[npm] )
-	rust? ( >=dev-lang/rust-1.35.0[rls] )
+	rust? ( >=dev-lang/rust-1.35.0 )
 	system-bottle? ( >=dev-python/bottle-0.12.13[${PYTHON_USEDEP}] )
-	system-clang? (
-		c? ( >=sys-devel/clang-${CLANG_V} )
-		c++? ( >=sys-devel/clang-${CLANG_V} )
-		objc? ( >=sys-devel/clang-${CLANG_V} )
-		objc++? ( >=sys-devel/clang-${CLANG_V} ) )
 	system-jedi? ( >=dev-python/jedi-0.15.0_p20190811
 			>=dev-python/numpydoc-0.9.0_p20190408
 			>=dev-python/parso-0.5.0_p20190620 )
 	system-mrab-regex? ( >=dev-python/mrab-regex-2019.06.08_p20190725 )
 	system-omnisharp-roslyn? ( >=dev-dotnet/omnisharp-roslyn-1.34.2[net472?,netcoreapp21?] )
 	system-requests? ( >=dev-python/requests-2.20.1_p20181108[${PYTHON_USEDEP}] )
+	system-rls? ( >=dev-lang/rust-1.35.0[rls] )
 	system-tern? ( >=dev-nodejs/tern-0.21.0 )
 	system-typescript? ( >=dev-lang/typescript-3.7.2 )
 	system-waitress? ( >=dev-python/waitress-1.1.0_p20171010[${PYTHON_USEDEP}] )"
@@ -89,10 +93,12 @@ RESTRICT="mirror"
 pkg_setup() {
 	if \
 	! use system-boost \
-	|| ! use system-clang \
+	|| ! use system-clangd \
 	|| ! use system-go \
 	|| ! use system-jedi \
+	|| ! use system-libclang \
 	|| ! use system-omnisharp-roslyn \
+	|| ! use system-rls \
 	|| ! use system-tern \
 	|| ! use system-typescript ; then
 		if has network-sandbox $FEATURES ; then
@@ -112,7 +118,7 @@ src_prepare() {
 	# Required for deterministic build.
 	eapply "${FILESDIR}/ycmd-42_p20200108-skip-thirdparty-check.patch"
 
-	if use system-clang ; then
+	if use system-libclang ; then
 		eapply "${FILESDIR}/${PN}-9999.20170107-force-python-libs-path.patch"
 		LIBCLANG_PATH=$(\
 			ls /usr/lib/llvm/*/$(get_libdir)/libclang.so* | head -1)
@@ -203,7 +209,7 @@ GENTOO_PYTHON_LIBRARY_PATH|\
 HFJ1aRMhtCX/DMYWYkUl9g==|\
 $(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64)|g" \
 			ycmd/default_settings.json
-		sed -i -e "s|/usr/bin/python3.4|/usr/bin/${EPYTHON}|g" \
+		sed -i -e "s|/usr/bin/python3.6|/usr/bin/${EPYTHON}|g" \
 			ycmd/default_settings.json
 	}
 	python_foreach_impl python_prepare_all
@@ -223,7 +229,7 @@ src_configure() {
 			-DUSE_CLANG_COMPLETER=$(usex system-boost)
 			-DUSE_DEV_FLAGS=$(usex debug)
 			-DUSE_SYSTEM_BOOST=$(usex system-boost)
-			-DUSE_SYSTEM_LIBCLANG=$(usex system-clang)
+			-DUSE_SYSTEM_LIBCLANG=$(usex system-libclang)
 			-DCMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 		)
 		local pyv=$(echo "${EPYTHON}" | sed -e "s|python||")
@@ -238,7 +244,7 @@ src_configure() {
 			mycmakeargs+=\
 ( -DPYTHON_INCLUDE_DIR=/usr/include/python${pyv} )
 		fi
-		if use c || use c++ || use objc || use objc++ ; then
+		if use c || use cxx || use objc || use objcxx ; then
 			mycmakeargs+=( -DUSE_CLANG_COMPLETER=ON )
 		fi
 		CMAKE_USE_DIR="${BUILD_DIR}/cpp" \
@@ -251,28 +257,54 @@ src_compile() {
 	python_compile_all() {
 		cd "${BUILD_DIR}"
 		local myargs=""
-		if use system-boost ; then
-			myargs+=" --system-boost"
+		if use c || use cxx || use objc || use objcxx ; then
+			if use clangd ; then
+				myargs+=" --clangd-completer"
+			else
+				myargs+=" --clang-completer"
+			fi
 		fi
-		if use system-clang ; then
-			myargs+=" --system-libclang"
-		fi
-		if use c || use c++ || use objc || use objc++ ; then
-			myargs+=" --clang-completer"
+		if use csharp; then
+			myargs+=" --cs-completer"
 		fi
 		if use debug ; then
 			myargs+=" --enable-debug"
 		fi
+		if use go; then
+			myargs+=" --go-completer"
+		fi
+		if use java; then
+			myargs+=" --java-completer"
+		fi
+		if ! use regex; then
+			myargs+=" --no-regex"
+		fi
+		if use rust; then
+			myargs+=" --rust-completer"
+		fi
+		if use system-boost ; then
+			myargs+=" --system-boost"
+		fi
+		if use system-libclang ; then
+			myargs+=" --system-libclang"
+		fi
+		if use typescript; then
+			myargs+=" --ts-completer"
+		fi
 		if \
 			! use system-boost \
-			|| ! use system-clang \
+			|| ! use system-clangd \
 			|| ! use system-go \
 			|| ! use system-jedi \
+			|| ! use system-libclang \
 			|| ! use system-omnisharp-roslyn \
+			|| ! use system-rls \
 			|| ! use system-tern \
 			|| ! use system-typescript ; then
+			einfo "Path A: Running build.py"
 			${EPYTHON} build.py ${myargs}
-		elif use system-clang ; then
+		elif use system-libclang ; then
+			einfo "Path B: Running cmake-utils_src_compile"
 			cmake-utils_src_compile
 		fi
 	}
@@ -294,12 +326,14 @@ src_install() {
 		doins ycm_core.so
 		insinto "$(python_get_sitedir)/ycmd"
 		doins CORE_VERSION cpp/ycm/.ycm_extra_conf.py
-		if use system-omnisharp-roslyn ; then
+		if use system-omnisharp-roslyn \
+			&& use csharp ; then
 			cp -a omnisharp.sh "ycmd/completers/cs/"
 		fi
 		rm -rf "ycmd/tests" || die
 		python_domodule ycmd
-		if use system-omnisharp-roslyn ; then
+		if use system-omnisharp-roslyn \
+			&& use csharp ; then
 			fperms 755 \
 			"$(python_get_sitedir)/ycmd/completers/cs/omnisharp.sh"
 		fi
@@ -311,31 +345,52 @@ src_install() {
 			doins -r third_party/bottle
 		fi
 
-		if ! use system-clang ; then
-			doins -r third_party/clang
+		if ! use system-clangd \
+			&& ( use c || use cxx || use objc || use objcxx ) ; then
+			doins -r third_party/clangd
 		fi
 
-		if ! use system-mrab-regex ; then
+		if ! use system-mrab-regex \
+			&& use regex ; then
 			doins -r third_party/cregex
 		fi
 
-		if ! use system-lsp ; then
+		if ! use system-libclang \
+			&& ( use c || use cxx || use objc || use objcxx ) ; then
+			doins -r third_party/clang
+		fi
+
+		if ! use system-lsp \
+			&& use lsp ; then
 			doins -r third_party/generic_server
 		fi
 
-		if ! use system-go ; then
+		if ! use system-go \
+			&& use go ; then
 			doins -r third_party/go
 		fi
 
-		if ! use system-jedi ; then
+		if ! use system-jedi \
+			&& use python ; then
 			doins -r third_party/jedi_deps
+		fi
+
+		if ! use system-omnisharp-roslyn \
+			&& use csharp ; then
+			doins -r third_party/omnisharp-roslyn
 		fi
 
 		if ! use system-requests ; then
 			doins -r third_party/requests_deps
 		fi
 
-		if ! use system-tern ; then
+		if ! use system-rls \
+			&& use rust ; then
+			doins -r third_party/rls
+		fi
+
+		if ! use system-tern \
+			&& use javascript ; then
 			doins -r third_party/turn_runtime
 		fi
 
@@ -353,7 +408,7 @@ version:\n\
 \n\
 /usr/$(get_libdir)/python*/site-packages/ycmd/default_settings.json\n"
 
-	if use c || use c++ || use objc || use objc++ ; then
+	if use c || use cxx || use objc || use objcxx ; then
 		m+="\
 \n\
 You need to edit the global_ycm_extra_conf property in your .json file per\n\
