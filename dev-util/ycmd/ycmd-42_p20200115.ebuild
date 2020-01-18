@@ -37,7 +37,7 @@ RDEPEND="${CDEPEND}
 	>=dev-python/future-0.15.2_p20150911[${PYTHON_USEDEP}]
 	go? ( dev-go/go-tools )
 	java? ( virtual/jre:1.8 )
-	javascript? ( net-libs/nodejs[npm] )
+	javascript? ( net-libs/nodejs )
 	rust? ( >=dev-lang/rust-1.35.0 )
 	system-bottle? ( >=dev-python/bottle-0.12.13[${PYTHON_USEDEP}] )
 	system-jedi? ( >=dev-python/jedi-0.15.0_p20190811
@@ -51,6 +51,8 @@ RDEPEND="${CDEPEND}
 	system-typescript? ( >=dev-lang/typescript-3.7.2 )
 	system-waitress? ( >=dev-python/waitress-1.1.0_p20171010[${PYTHON_USEDEP}] )"
 DEPEND="${CDEPEND}
+	javascript? ( net-libs/nodejs[npm] )
+	typescript? ( net-libs/nodejs[npm] )
 	lsp? ( net-libs/nodejs[npm] )
 	test? ( >=dev-python/codecov-2.0.5[${PYTHON_USEDEP}]
 		>=dev-python/coverage-4.2[${PYTHON_USEDEP}]
@@ -291,8 +293,7 @@ src_compile() {
 		if use system-libclang ; then
 			myargs+=" --system-libclang"
 		fi
-		if use typescript \
-			&& ! use system-tern ; then
+		if use typescript ; then
 			myargs+=" --ts-completer"
 		fi
 		if \
