@@ -19,6 +19,7 @@ CLANG_V="9.0"
 inherit python-r1 dotnet
 REQUIRED_USE="
 	c? ( || ( clangd libclang ) )
+	csharp ( || ( ${USE_DOTNET} ) )
 	cxx? ( || ( clangd libclang ) )
 	objc? ( || ( clangd libclang ) )
 	objcxx? ( || ( clangd libclang ) )
