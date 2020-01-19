@@ -381,6 +381,7 @@ _shrink_install() {
 			-o ${arg_legal} \) \
 		-exec rm -f "{}" +
 	rm -rf third_party/jedi_deps/jedi/scripts || die
+	rm -rf third_party/bottle/plugins || die
 	if use csharp \
 		&& ! use system-omnisharp-roslyn ; then
 		einfo "Cleaning omnisharp-roslyn"
@@ -494,6 +495,7 @@ src_install() {
 			&& use csharp ; then
 			cp -a omnisharp.sh "ycmd/completers/cs/"
 		fi
+		die
 		if use minimal ; then
 			_shrink_install
 		fi
