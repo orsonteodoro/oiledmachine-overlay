@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    YCMD is a code-completion & code-comprehension server.
+
+    YCMD supports C, C#, C++, CUDA C, Java, JavaScript, ObjC, ObjC++, Python,
+    Rust, TypeScript programming languages.
+
+    YCMD is used to obtain API documentation from libraries; auto 
+    complete code and identifiers, automatically fix trivial errors.
+
+    It acts as frontend for several backend completers.  It uses a client and
+    server model.  Messages are packaged as JSON objects and exchanged with
+    HTTP.
+
+    The simple protocol makes it easy to add these commericial text editor IDE 
+    features in any free and open source text editor.
+  </longdescription>
+  <upstream>
+    <maintainer type="person">
+      <name>Val Markovic</name>
+    </maintainer>
+    <maintainer type="person" status="active">
+      <name>Ben Jackson</name>
+    </maintainer>
+    <remote-id type="sourceforge">ycm-core/ycmd</remote-id>
+    <bugs-to>https://github.com/ycm-core/ycmd/issues</bugs-to>
+  </upstream>
+  <use>
+    <flag name="c">Adds the C language completer.</flag>
+    <flag name="clangd">Uses clangd lsp server for C/C++/ObjC/ObjC++ completion.
+      This USE flag is experimental.</flag>
+    <flag name="csharp">Adds the C# language completer.</flag>
+    <flag name="cuda">Adds the CUDA C completer.</flag>
+    <flag name="cxx">Adds the C++ language completer.</flag>
+    <flag name="docs">Installs doc files.</flag>
+    <flag name="debug">Compiles with debug symbols for the debugger.</flag>
+    <flag name="examples">Installs examples.</flag>
+    <flag name="go">Adds the Go language completer</flag>
+    <flag name="java">Adds the Java language completer.</flag>
+    <flag name="javascript">Adds the JavaScript completer.</flag>
+    <flag name="libclang">Uses libclang for C/C++/ObjC/ObjC++ completion.</flag>
+    <flag name="lsp">Adds support for the Language Server Protocol.</flag>
+    <flag name="minimal">Shrinks installation.  Enabling it may break
+      functionality.</flag>
+    <flag name="objc">Adds the Objective C completer.</flag>
+    <flag name="objcxx">Adds the Objective C++ completer.</flag>
+    <flag name="python">Adds the Python completer.</flag>
+    <flag name="regex">Compiles regular expression support.</flag>
+    <flag name="rust">Adds the Rust programming language completer.</flag>
+    <flag name="system-bottle">Use the system's bottle package instead of the
+      internal package.</flag>
+    <flag name="system-boost">Use the system's boost library instead of the
+      internal package.</flag>
+    <flag name="system-clangd">Uses the system's clangd instead of the internal
+      clangd package.</flag>
+    <flag name="system-go-tools">Use the system's Go Tools package instead of
+      the internal package.</flag>
+    <flag name="system-jedi">Uses the system's Jedi package instead of the
+      internal.</flag>
+    <flag name="system-libclang">Uses the system's libclang instead of the
+      internal package.</flag>
+    <flag name="system-lsp">Uses the system's lsp-sample-server package
+      instead of the internal package.  This is used for testing.</flag>
+    <flag name="system-mrab-regex">Uses the system's mrab-regex library instead
+      of the internal package.</flag>
+    <flag name="system-requests">Uses the system's Python request package
+      instead of the internal package.</flag>
+    <flag name="system-omnisharp-roslyn">Uses the system's OmniSharp-Roslyn
+      package instead of the internal package.</flag>
+    <flag name="system-rls">Uses the system's Rust Language Server instead of
+      the internal package.</flag>
+    <flag name="system-tern">Uses the system's Tern package instead of the
+      internal package.</flag>
+    <flag name="system-typescript">Uses the system's typescript server
+      instead of the internal package.</flag>
+    <flag name="system-waitress">Uses the system's waitress package instead of
+      the internal package.</flag>
+    <flag name="test">Runs tests on the package.</flag>
+    <flag name="typescript">Adds the Typescript completer.</flag>
+    <flag name="vim">Add UltiSnips suppport for Vim.</flag>
+  </use>
+</pkgmetadata>

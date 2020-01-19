@@ -1,0 +1,25 @@
+--- a/ycmd/completers/general/general_completer_store.py.orig	2020-01-18 19:06:40.680166010 -0800
++++ b/ycmd/completers/general/general_completer_store.py	2020-01-18 19:24:54.121966518 -0800
+@@ -18,7 +18,6 @@
+ from ycmd.completers.completer import Completer
+ from ycmd.completers.all.identifier_completer import IdentifierCompleter
+ from ycmd.completers.general.filename_completer import FilenameCompleter
+-from ycmd.completers.general.ultisnips_completer import UltiSnipsCompleter
+ 
+ 
+ class GeneralCompleterStore( Completer ):
+@@ -33,13 +32,9 @@ class GeneralCompleterStore( Completer )
+     super().__init__( user_options )
+     self._identifier_completer = IdentifierCompleter( user_options )
+     self._filename_completer = FilenameCompleter( user_options )
+-    self._ultisnips_completer = UltiSnipsCompleter( user_options )
+     self._non_filename_completers = [ self._identifier_completer ]
+-    if user_options.get( 'use_ultisnips_completer', True ):
+-      self._non_filename_completers.append( self._ultisnips_completer )
+     self._all_completers = [ self._identifier_completer,
+-                             self._filename_completer,
+-                             self._ultisnips_completer ]
++                             self._filename_completer]
+ 
+ 
+   def SupportedFiletypes( self ):
