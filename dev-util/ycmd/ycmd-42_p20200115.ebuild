@@ -495,7 +495,6 @@ src_install() {
 			&& use csharp ; then
 			cp -a omnisharp.sh "ycmd/completers/cs/"
 		fi
-		die
 		if use minimal ; then
 			_shrink_install
 		fi
