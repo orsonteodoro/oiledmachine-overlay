@@ -596,7 +596,7 @@ or\n\
 https://github.com/ycm-core/ycmd/blob/master/.ycm_extra_conf.py
 \n\
 Consider emerging ycm-generator to properly generate a .ycm_extra_conf.py\n\
-which is mandatory for c/c++/objc/objc++.\n\
+which is mandatory for the c/c++/objc/objc++ completer.\n\
 \n\
 After generating it, it may need to be slightly modified.\n"
 	fi
