@@ -345,6 +345,7 @@ src_compile() {
 
 src_test() {
 	python_test_all() {
+		cd "${BUILD_DIR}"
 		${EPYTHON} run_tests.py || die
 	}
 	python_foreach_impl python_test_all
