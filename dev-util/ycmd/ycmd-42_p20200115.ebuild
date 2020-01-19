@@ -419,9 +419,9 @@ _shrink_install() {
 		\) \
 		-exec rm -rf "{}" +
 
-#	einfo "Cleaning out installer files"
-#	find . \( -name "setup.py" \) \
-#		-exec rm -rf "{}" +
+	einfo "Cleaning out installer files"
+	find . \( -name "setup.py" \) \
+		-exec rm -rf "{}" +
 
 	einfo "Cleaning out completers"
 	pushd ycmd/completers || die
