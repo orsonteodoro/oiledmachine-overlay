@@ -50,10 +50,10 @@ RDEPEND="${CDEPEND}
 	javascript? ( net-libs/nodejs )
 	rust? ( >=dev-lang/rust-1.35.0 )
 	system-bottle? ( >=dev-python/bottle-0.12.13[${PYTHON_USEDEP}] )
-	system-jedi? ( >=dev-python/jedi-0.15.0_p20190811
-			>=dev-python/numpydoc-0.9.0_p20190408
-			>=dev-python/parso-0.5.0_p20190620 )
-	system-mrab-regex? ( >=dev-python/mrab-regex-2019.06.08_p20190725 )
+	system-jedi? ( >=dev-python/jedi-0.15.0_p20190811[${PYTHON_USEDEP}]
+			>=dev-python/numpydoc-0.9.0_p20190408[${PYTHON_USEDEP}]
+			>=dev-python/parso-0.5.0_p20190620[${PYTHON_USEDEP}] )
+	system-mrab-regex? ( >=dev-python/mrab-regex-2019.06.08_p20190725[${PYTHON_USEDEP}] )
 	system-omnisharp-roslyn? ( >=dev-dotnet/omnisharp-roslyn-1.34.2[net472?,netcoreapp21?] )
 	system-requests? ( >=dev-python/requests-2.20.1_p20181108[${PYTHON_USEDEP}] )
 	system-rls? ( >=dev-lang/rust-1.35.0[rls] )
@@ -77,7 +77,8 @@ DEPEND="${CDEPEND}
 		!=dev-python/psutil-5.0.1[${PYTHON_USEDEP}]
 		>=dev-python/psutil-3.3.0[${PYTHON_USEDEP}]
 		>=dev-python/pyhamcrest-1.8.5[${PYTHON_USEDEP}]
-		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}] )"
+		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}] )
+		net-libs/nodejs[npm]"
 EGIT_COMMIT="38bb02f369d21207c3e7512d005287ff07e143ae"
 EGIT_REPO_URI="https://github.com/ycm-core/ycmd.git"
 
@@ -112,7 +113,8 @@ pkg_setup() {
 	|| ! use system-omnisharp-roslyn \
 	|| ! use system-rls \
 	|| ! use system-tern \
-	|| ! use system-typescript ; then
+	|| ! use system-typescript \
+	|| use test ; then
 		if has network-sandbox $FEATURES ; then
 			die \
 "FEATURES=\"-network-sandbox\" must be added per-package env to be able to download\n\
