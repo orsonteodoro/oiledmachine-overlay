@@ -162,7 +162,7 @@ __missing_requires_manual_intervention_message() {
 
 __replace_package_lock() {
 	rm package-lock.json || die
-	npm i --package-lock-only
+	npm i --package-lock-only &> "${audit_file}"
 	if [ ! -e package-lock.json ] ; then
 		if [[ "${NPM_UTILS_ALLOW_I_PACKAGE_LOCK}" == "1" ]] ; then
 			ewarn "Could not safely restore package-lock.json with --package-lock-only.  Forcing 'npm i --package-lock' which may pull vulnerabilities.  dir=$(pwd)"
