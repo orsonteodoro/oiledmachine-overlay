@@ -668,7 +668,7 @@ electron-app_store_package_jsons() {
 	local td="${T}/package_jsons/"
 	for f in $F; do
 		d=$(dirname $f)
-		rd=$(dirname ${f//${ROOTDIR}/})
+		rd=$(dirname $(echo "${f}" | sed -e "s|${ROOTDIR}||"))
 		mkdir -p "${td}/${rd}"
 		einfo "Copying $f to ${td}/${rd}"
 		cp -a "${f}" "${td}/${rd}" || die
