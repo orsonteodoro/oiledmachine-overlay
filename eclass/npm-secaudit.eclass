@@ -1,5 +1,5 @@
-# Copyright 1999-2019 Gentoo Authors
-# Copyright 2019 Orson Teodoro
+# Copyright 2019-2020 Orson Teodoro
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: npm-secaudit.eclass
@@ -21,14 +21,14 @@ case "${EAPI:-0}" in
         0|1|2|3)
                 die "Unsupported EAPI=${EAPI:-0} (too old) for ${ECLASS}"
                 ;;
-        4|5|6)
+        4|5|6|7)
                 ;;
         *)
                 die "Unsupported EAPI=${EAPI} (unknown) for ${ECLASS}"
                 ;;
 esac
 
-inherit eutils
+inherit eutils npm-utils
 
 EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postrm pkg_postinst
 
@@ -36,11 +36,13 @@ DEPEND+=" app-portage/npm-secaudit"
 IUSE+=" debug"
 
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
-NPM_SECAUDIT_REG_PATH=""
+NPM_SECAUDIT_REG_PATH=${NPM_SECAUDIT_REG_PATH:=""}
 NPM_SECAUDIT_PRUNE=${NPM_SECAUDIT_PRUNE:="1"}
-NPM_SECAUDIT_AUDIT_FIX=${NPM_SECAUDIT_AUDIT_FIX:="1"}
 NPM_MAXSOCKETS=${NPM_MAXSOCKETS:="1"} # Set this in your make.conf to control number of HTTP requests.  50 is npm default but it is too high.
-_NPM_CACHE_LOCK=/run/lock/npm_cache
+NPM_SECAUDIT_ALLOW_DEDUPE=${NPM_SECAUDIT_ALLOW_DEDUPE:="1"}
+NPM_SECAUDIT_ALLOW_AUDIT=${NPM_SECAUDIT_ALLOW_AUDIT:="1"}
+NPM_SECAUDIT_ALLOW_AUDIT_FIX=${NPM_SECAUDIT_ALLOW_AUDIT_FIX:="1"}
+NPM_SECAUDIT_NO_DIE_ON_AUDIT=${NPM_SECAUDIT_NO_DIE_ON_AUDIT:="0"}
 
 # @FUNCTION: _npm-secaudit_fix_locks
 # @DESCRIPTION:
@@ -103,10 +105,18 @@ _npm-secaudit_fix_cacache_access() {
 	if [ -d "${dt}" ] ; then
 		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
 		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
-		# too slow to reset
-		# todo mutex lock?  possible to run two emerges and then one instance deletes and the other uses it
-		einfo "Removing ${dt}"
-		rm -rf "${dt}"
+		while true ; do
+			if mkdir -p "${d}/mutex-removing-cacache" ; then
+				# time to fix cache permissions is more expensive than just removing it all
+				einfo "Removing ${dt}"
+				rm -rf "${dt}"
+				rm -rf "${d}/mutex-removing-cacache"
+				break
+			else
+				einfo "Waiting to free mutex lock.  If it takes too long (15 min) close all emerge instances and remove ${d}/mutex-removing-cache."
+			fi
+			sleep 30
+		done
 	fi
 	einfo "Restoring portage ownership on ${dt}"
 	addwrite "${d}"
@@ -119,6 +129,12 @@ _npm-secaudit_fix_cacache_access() {
 # Initializes globals
 npm-secaudit_pkg_setup() {
         debug-print-function ${FUNCNAME} "${@}"
+
+	if has network-sandbox $FEATURES ; then
+		die \
+"FEATURES=\"-network-sandbox\" must be added per-package env to be able to\n\
+download micropackages."
+	fi
 
 	export NPM_STORE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
 	export npm_config_cache="${NPM_STORE_DIR}"
@@ -137,11 +153,10 @@ npm-secaudit_pkg_setup() {
 # MUST be called after default unpack AND patching.
 npm-secaudit_fetch_deps() {
 	pushd "${S}" || die
+		_npm-secaudit_fix_locks
+		_npm-secaudit_yarn_access
 
-	_npm-secaudit_fix_locks
-	_npm-secaudit_yarn_access
-
-	npm install --maxsockets=${NPM_MAXSOCKETS} || die
+		npm install --maxsockets=${NPM_MAXSOCKETS} || die
 	popd
 }
 
@@ -178,7 +193,6 @@ npm-secaudit_src_unpack() {
 	fi
 
 	npm-secaudit_dedupe_npm
-	# post dedupe hook?
 
 	# audit before possibly bundling a vulnerable package
 	npm-secaudit_audit_dev
@@ -254,62 +268,87 @@ npm-secaudit_src_compile_default() {
 # Adds the package to the electron database
 # This function MUST be called in post_inst.
 npm-secaudit-register() {
-	local rel_path=${1:-""}
-	local check_path="/usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_path}"
-	# format:
-	# ${CATEGORY}/${P}	path_to_package
-	addwrite "${NPM_PACKAGE_DB}"
+	local d="${NPM_STORE_DIR}"
+	while true ; do
+		if mkdir "${d}/mutex-editing-pkg_db" ; then
+			local rel_path=${1:-""}
+			local check_path="/usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_path}"
+			# format:
+			# ${CATEGORY}/${P}	path_to_package
+			addwrite "${NPM_PACKAGE_DB}"
 
-	# remove existing entry
-	touch "${NPM_PACKAGE_DB}"
-	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
+			# remove existing entry
+			touch "${NPM_PACKAGE_DB}"
+			sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
 
-	echo -e "${CATEGORY}/${PN}:${SLOT}\t${check_path}" >> "${NPM_PACKAGE_DB}"
+			echo -e "${CATEGORY}/${PN}:${SLOT}\t${check_path}" >> "${NPM_PACKAGE_DB}"
 
-	# remove blank lines
-	sed -i '/^$/d' "${NPM_PACKAGE_DB}"
+			# remove blank lines
+			sed -i '/^$/d' "${NPM_PACKAGE_DB}"
+			rm -rf "${d}/mutex-editing-pkg_db"
+			break
+		else
+			einfo "Waiting for mutex to be released for npm-secaudit's pkg_db.  If it takes too long (15 min), cancel all emerges and remove ${d}/mutex-editing-pkg_db"
+			sleep 15
+		fi
+	done
 }
 
 # @FUNCTION: npm-secaudit_dedupe_npm
 # @DESCRIPTION:
 # Replaces duplicate packages into a single package.
 npm-secaudit_dedupe_npm() {
+	if [[ -n "${NPM_SECAUDIT_ALLOW_DEDUPE}" && "${NPM_SECAUDIT_ALLOW_DEDUPE}" == "1" ]] ; then
+		:;
+	else
+		return
+	fi
+
 	einfo "Deduping packages"
 	npm dedupe || die
+	npm_update_package_locks_recursive ./
 }
 
 # @FUNCTION: _npm-secaudit_audit_fix
 # @DESCRIPTION:
 # Removes vulnerable packages.  It will audit every folder containing a package-lock.json
 npm-secaudit_audit_fix() {
-	if [[ "${NPM_SECAUDIT_AUDIT_FIX}" == "1" ||
-		"${NPM_SECAUDIT_AUDIT_FIX,,}" == "true" ]] ; then
-
-		einfo "Performing recursive package-lock.json audit fix"
-		L=$(find . -name "package-lock.json")
-		for l in $L; do
-			pushd $(dirname $l) || die
-			rm package-lock.json || die
-			einfo "Running \`npm i --package-lock-only\`"
-			npm i --package-lock-only || die
-			einfo "Running \`npm audit fix --force\`"
-			npm audit fix --force --maxsockets=${NPM_MAXSOCKETS} || die "location: $l"
-			popd
-		done
-		einfo "Audit fix done"
+	if [[ -n "${NPM_SECAUDIT_ALLOW_AUDIT_FIX}" && "${NPM_SECAUDIT_ALLOW_AUDIT_FIX}" == "1" ]] ; then
+		:;
+	else
+		return
 	fi
+
+	einfo "Performing recursive package-lock.json audit fix"
+	npm_update_package_locks_recursive ./ # calls npm_pre_audit
+	einfo "Audit fix done"
 }
 
 # @FUNCTION: npm-secaudit_audit_dev
 # @DESCRIPTION:
 # This will preform an recursive audit in place without adding packages.
+# @CODE
+# Parameters:
+# $1 - if set to 1 will not die (optional).  It should ONLY be be used for debugging.
+# @CODE
 npm-secaudit_audit_dev() {
+	if [[ -n "${NPM_SECAUDIT_ALLOW_AUDIT}" && "${NPM_SECAUDIT_ALLOW_AUDIT}" == "1" ]] ; then
+		:;
+	else
+		return
+	fi
+
+	local nodie="${1}"
 	[ ! -e package-lock.json ] && die "Missing package-lock.json in implied root $(pwd)"
 
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
 		pushd $(dirname $l) || die
-		npm audit || die
+			if [[ -n "${nodie}" && "${NPM_SECAUDIT_NO_DIE_ON_AUDIT}" == "1" ]] ; then
+				npm audit
+			else
+				npm audit || die
+			fi
 		popd
 	done
 }
@@ -318,23 +357,29 @@ npm-secaudit_audit_dev() {
 # @DESCRIPTION:
 # This will preform an recursive audit for production in place without adding packages ignoring pruned packages.
 npm-secaudit_audit_prod() {
+	if [[ -n "${NPM_SECAUDIT_ALLOW_AUDIT}" && "${NPM_SECAUDIT_ALLOW_AUDIT}" == "1" ]] ; then
+		:;
+	else
+		return
+	fi
+
 	[ ! -e package-lock.json ] && die "Missing package-lock.json in implied root $(pwd)"
 
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
 		pushd $(dirname $l) || die
-		[ -e "${T}"/npm-secaudit-result ] && rm "${T}"/npm-secaudit-result
-		npm audit &> "${T}"/npm-secaudit-result
-		cat "${T}"/npm-secaudit-result | grep "ELOCKVERIFY" >/dev/null
-		if [[ "$?" != "0" ]] ; then
-			cat "${T}"/npm-secaudit-result | grep "require manual review" >/dev/null
-			local result_found1="$?"
-			cat "${T}"/npm-secaudit-result | grep "npm audit fix" >/dev/null
-			local result_found2="$?"
-			if [[ "${result_found1}" == "0" || "${result_found2}" == "0" ]] ; then
-				die "package is still vulnerable at $(pwd)$l"
+			local audit_file="${T}"/npm-secaudit-result
+			npm audit &> "${audit_file}"
+			cat "${audit_file}" | grep "ELOCKVERIFY" >/dev/null
+			if [[ "$?" != "0" ]] ; then
+				cat "${audit_file}" | grep "require manual review" >/dev/null
+				local result_found1="$?"
+				cat "${audit_file}" | grep "npm audit fix" >/dev/null
+				local result_found2="$?"
+				if [[ "${result_found1}" == "0" || "${result_found2}" == "0" ]] ; then
+					die "package is still vulnerable at $(pwd)$l"
+				fi
 			fi
-		fi
 		popd
 	done
 }
@@ -350,19 +395,26 @@ npm-secaudit_src_preinst_default() {
 # @DESCRIPTION:
 # Preforms dedupe and pruning
 npm-secaudit_dedupe_and_prune() {
+	if [[ -n "${NPM_SECAUDIT_ALLOW_DEDUPE}" && "${NPM_SECAUDIT_ALLOW_DEDUPE}" == "1" ]] ; then
+		:;
+	else
+		return
+	fi
+
 	einfo "Deduping and pruning"
 
 	cd "${S}"
 
-	npm-secaudit_dedupe_npm
+	if [[ "${NPM_ALLOW_DEDUPE}" == "1" ]] ; then
+		npm-secaudit_dedupe_npm
+	fi
 
 	npm-secaudit_store_package_jsons "${S}"
 
 	cd "${S}"
 
 	if ! use debug ; then
-		if [[ "${NPM_SECAUDIT_PRUNE}" == "1" ||
-			"${NPM_SECAUDIT_PRUNE,,}" == "true" ]] ; then
+		if [[ "${NPM_SECAUDIT_PRUNE}" == "1" ]] ; then
 			einfo "Running \`npm prune --production\`"
 			npm prune --production
 		fi
@@ -401,6 +453,11 @@ npm-secaudit_install() {
 # scan for vulnerabilities.
 npm-secaudit_pkg_postinst() {
         debug-print-function ${FUNCNAME} "${@}"
+
+	if [[ -z "${NPM_SECAUDIT_REG_PATH}" ]] ; then
+		ewarn "Dev QA: NPM_SECAUDIT_REG_PATH is not set."
+	fi
+
 	npm-secaudit-register "${NPM_SECAUDIT_REG_PATH}"
 }
 

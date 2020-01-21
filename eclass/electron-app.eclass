@@ -1,5 +1,5 @@
-# Copyright 1999-2019 Gentoo Authors
-# Copyright 2019 Orson Teodoro
+# Copyright 2019-2020 Orson Teodoro
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: electron-app.eclass
@@ -18,14 +18,14 @@ case "${EAPI:-0}" in
         0|1|2|3)
                 die "Unsupported EAPI=${EAPI:-0} (too old) for ${ECLASS}"
                 ;;
-        4|5|6)
+        4|5|6|7)
                 ;;
         *)
                 die "Unsupported EAPI=${EAPI} (unknown) for ${ECLASS}"
                 ;;
 esac
 
-inherit desktop eutils
+inherit desktop eutils npm-utils
 
 EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postinst pkg_postrm
 
@@ -34,13 +34,15 @@ IUSE+=" debug"
 
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
 YARN_PACKAGE_DB="/var/lib/portage/yarn-packages"
-ELECTRON_APP_REG_PATH=""
+ELECTRON_APP_REG_PATH=${ELECTRON_APP_REG_PATH:=""}
 
 ELECTRON_APP_MODE=${ELECTRON_APP_MODE:="npm"} # can be npm, yarn
 ELECTRON_APP_PRUNE=${ELECTRON_APP_PRUNE:="1"}
-ELECTRON_APP_AUDIT_FIX=${ELECTRON_APP_AUDIT_FIX:="1"}
 ELECTRON_APP_MAXSOCKETS=${ELECTRON_APP_MAXSOCKETS:="1"} # Set this in your make.conf to control number of HTTP requests.  50 is npm default but it is too high.
-_NPM_CACHE_LOCK=/run/lock/npm_cache
+ELECTRON_APP_ALLOW_DEDUPE=${ELECTRON_APP_ALLOW_DEDUPE:="1"}
+ELECTRON_APP_ALLOW_AUDIT=${ELECTRON_APP_ALLOW_AUDIT:="1"}
+ELECTRON_APP_ALLOW_AUDIT_FIX=${ELECTRON_APP_ALLOW_AUDIT_FIX:="1"}
+ELECTRON_APP_NO_DIE_ON_AUDIT=${ELECTRON_APP_NO_DIE_ON_AUDIT:="0"}
 
 # @FUNCTION: _electron-app_fix_locks
 # @DESCRIPTION:
@@ -103,10 +105,18 @@ _electron-app_fix_cacache_access() {
 	if [ -d "${dt}" ] ; then
 		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
 		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
-		# too slow to reset
-		# todo mutex lock?  possible to run two emerges and then one instance deletes and the other uses it
-		einfo "Removing ${dt}"
-		rm -rf "${dt}"
+		while true ; do
+			if mkdir "${d}/mutex-removing-cacache" ; then
+				# time to fix cache permissions is more expensive than just removing it all
+				einfo "Removing ${dt}"
+				rm -rf "${dt}"
+				rm -rf "${d}/mutex-removing-cacache"
+				break
+			else
+				einfo "Waiting to free mutex lock.  If it takes too long (15 min) close all emerge instances and remove ${d}/mutex-removing-cache."
+				sleep 15
+			fi
+		done
 	fi
 	einfo "Restoring portage ownership on ${dt}"
 	addwrite "${d}"
@@ -136,12 +146,12 @@ _electron-app_fix_index-v5_access() {
 # Warns user that download or building can fail randomly
 _electron-app-flakey-check() {
 	local l=$(find "${S}" -name "package.json")
-	grep -r -e "electron-builder" $l >/dev/null
+	grep -e "electron-builder" $l >/dev/null
 	if [[ "$?" == "0" ]] ; then
 		ewarn "This ebuild may fail when building with electron-builder.  Re-emerge if it fails."
 	fi
 
-	grep -r -e "\"electron\":" $l >/dev/null
+	grep -e "\"electron\":" $l >/dev/null
 	if [[ "$?" == "0" ]] ; then
 		ewarn "This ebuild may fail when downloading Electron as a dependency.  Re-emerge if it fails."
 	fi
@@ -151,36 +161,42 @@ _electron-app-flakey-check() {
 # @DESCRIPTION:
 # Replaces duplicate packages into a single package.
 electron-app_dedupe_npm() {
+	if [[ -n "${ELECTRON_APP_ALLOW_DEDUPE}" && "${ELECTRON_APP_ALLOW_DEDUPE}" == "1" ]] ; then
+		:;
+	else
+		return
+	fi
+
 	einfo "Deduping packages"
 	npm dedupe || die
+	npm_update_package_locks_recursive ./
 }
 
 # @FUNCTION: electron-app_audit_fix_npm
 # @DESCRIPTION:
 # Removes vulnerable packages.  It will audit every folder containing a package-lock.json
 electron-app_audit_fix_npm() {
-	if [[ "${ELECTRON_APP_AUDIT_FIX}" == "1" ||
-		"${ELECTRON_APP_AUDIT_FIX,,}" == "true" ]] ; then
-
-		einfo "Performing recursive package-lock.json audit fix"
-		L=$(find . -name "package-lock.json")
-		for l in $L; do
-			pushd $(dirname $l) || die
-			rm package-lock.json || die
-			einfo "Running \`npm i --package-lock-only\`"
-			npm i --package-lock-only || die
-			einfo "Running \`npm audit fix --force\`"
-			npm audit fix --force --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die "location: $l"
-			popd
-		done
-		einfo "Audit fix done"
+	if [[ -n "${ELECTRON_APP_ALLOW_AUDIT_FIX}" && "${ELECTRON_APP_ALLOW_AUDIT_FIX}" == "1" ]] ; then
+		:;
+	else
+		return
 	fi
+
+	einfo "Performing recursive package-lock.json audit fix"
+	npm_update_package_locks_recursive ./ # calls npm_pre_audit
+	einfo "Audit fix done"
 }
 
 # @FUNCTION: electron-app_audit_fix
 # @DESCRIPTION:
 # Removes vulnerable packages based on the packaging system.
 electron-app_audit_fix() {
+	if [[ -n "${ELECTRON_APP_ALLOW_AUDIT_FIX}" && "${ELECTRON_APP_ALLOW_AUDIT_FIX}" == "1" ]] ; then
+		:;
+	else
+		return
+	fi
+
 	case "$ELECTRON_APP_MODE" in
 		npm)
 			electron-app_audit_fix_npm
@@ -200,6 +216,12 @@ electron-app_audit_fix() {
 # Initializes globals
 electron-app_pkg_setup() {
         debug-print-function ${FUNCNAME} "${@}"
+
+	if has network-sandbox $FEATURES ; then
+		die \
+"FEATURES=\"-network-sandbox\" must be added per-package env to be able to\n\
+download micropackages."
+	fi
 
 	export ELECTRON_VER=$(strings /usr/bin/electron | grep "%s Electron/" | sed -e "s|[%s A-Za-z/]||g")
 	export NPM_STORE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
@@ -250,7 +272,7 @@ electron-app_fetch_deps_npm() {
 	_electron-app-flakey-check
 
 	pushd "${S}" || die
-	npm install --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
+		npm install --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
 	popd
 }
 
@@ -338,7 +360,6 @@ electron-app_src_unpack() {
 	fi
 
 	electron-app_dedupe_npm
-	# post dedupe hook?
 
 	# audit before possibly bundling a vulnerable package
 	electron-app_audit_dev
@@ -429,13 +450,28 @@ electron-app_src_compile_default() {
 # @FUNCTION: electron-app_audit_dev
 # @DESCRIPTION:
 # This will preform an recursive audit in place without adding packages.
+# @CODE
+# Parameters:
+# $1 - if set to 1 will not die (optional).  It should ONLY be be used for debugging.
+# @CODE
 electron-app_audit_dev() {
+	if [[ -n "${ELECTRON_APP_ALLOW_AUDIT}" && "${ELECTRON_APP_ALLOW_AUDIT}" == "1" ]] ; then
+		:;
+	else
+		return
+	fi
+
+	local nodie="${1}"
 	[ ! -e package-lock.json ] && die "Missing package-lock.json in implied root $(pwd)"
 
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
 		pushd $(dirname $l) || die
-		npm audit || die
+			if [[ -n "${nodie}" && "${ELECTRON_APP_NO_DIE_ON_AUDIT}" == "1" ]] ; then
+				npm audit
+			else
+				npm audit || die
+			fi
 		popd
 	done
 }
@@ -445,18 +481,24 @@ electron-app_audit_dev() {
 # @DESCRIPTION:
 # This will preform an recursive audit for production in place without adding packages ignoring pruned packages.
 electron-app_audit_prod() {
+	if [[ -n "${ELECTRON_APP_ALLOW_AUDIT}" && "${ELECTRON_APP_ALLOW_AUDIT}" == "1" ]] ; then
+		:;
+	else
+		return
+	fi
+
 	[ ! -e package-lock.json ] && die "Missing package-lock.json in implied root $(pwd)"
 
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
 		pushd $(dirname $l) || die
-		[ -e "${T}"/npm-secaudit-result ] && rm "${T}"/npm-secaudit-result
-		npm audit &> "${T}"/npm-secaudit-result
-		cat "${T}"/npm-secaudit-result | grep "ELOCKVERIFY" >/dev/null
+		local audit_file="${T}"/npm-secaudit-result
+		npm audit &> "${audit_file}"
+		cat "${audit_file}" | grep "ELOCKVERIFY" >/dev/null
 		if [[ "$?" != "0" ]] ; then
-			cat "${T}"/npm-secaudit-result | grep "require manual review" >/dev/null
+			cat "${audit_file}" | grep "require manual review" >/dev/null
 			local result_found1="$?"
-			cat "${T}"/npm-secaudit-result | grep "npm audit fix" >/dev/null
+			cat "${audit_file}" | grep "npm audit fix" >/dev/null
 			local result_found2="$?"
 			if [[ "${result_found1}" == "0" || "${result_found2}" == "0" ]] ; then
 				die "package is still vulnerable at $(pwd)$l"
@@ -477,6 +519,12 @@ electron-app_src_preinst_default() {
 # @DESCRIPTION:
 # Preforms dedupe and pruning
 electron-app_dedupe_and_prune() {
+	if [[ -n "${ELECTRON_APP_ALLOW_DEDUPE}" && "${ELECTRON_APP_ALLOW_DEDUPE}" == "1" ]] ; then
+		:;
+	else
+		return
+	fi
+
 	einfo "Deduping and pruning"
 
 	cd "${S}"
@@ -488,8 +536,7 @@ electron-app_dedupe_and_prune() {
 			electron-app_store_package_jsons "${S}"
 
 			if ! use debug ; then
-				if [[ "${ELECTRON_APP_PRUNE}" == "1" ||
-					"${ELECTRON_APP_PRUNE,,}" == "true" ]] ; then
+				if [[ "${ELECTRON_APP_PRUNE}" == "1" ]] ; then
 					einfo "Running \`npm prune --production\`"
 					npm prune --production
 				fi
@@ -505,8 +552,7 @@ electron-app_dedupe_and_prune() {
 			electron-app_store_package_jsons "${S}"
 
 			if ! use debug ; then
-				if [[ "${ELECTRON_APP_PRUNE}" == "1" ||
-					"${ELECTRON_APP_PRUNE,,}" == "true" ]] ; then
+				if [[ "${ELECTRON_APP_PRUNE}" == "1" ]] ; then
 					einfo "Running \`yarn install --production --ignore-scripts --prefer-offline\`"
 					yarn install --production --ignore-scripts --prefer-offline
 				fi
@@ -584,21 +630,31 @@ electron-app_desktop_install() {
 # Adds the package to the electron database
 # This function MUST be called in pkg_postinst.
 electron-app-register-x() {
-	local pkg_db="${1}"
-	local rel_path=${2:-""}
-	local check_path="/usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_path}"
-	# format:
-	# ${CATEGORY}/${P}	path_to_package
-	addwrite "${pkg_db}"
+	local d="${NPM_STORE_DIR}"
+	while true ; do
+		if mkdir "${d}/mutex-editing-pkg_db" ; then
+			local pkg_db="${1}"
+			local rel_path=${2:-""}
+			local check_path="/usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_path}"
+			# format:
+			# ${CATEGORY}/${P}	path_to_package
+			addwrite "${pkg_db}"
 
-	# remove existing entry
-	touch "${pkg_db}"
-	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${pkg_db}"
+			# remove existing entry
+			touch "${pkg_db}"
+			sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${pkg_db}"
 
-	echo -e "${CATEGORY}/${PN}:${SLOT}\t${check_path}" >> "${pkg_db}"
+			echo -e "${CATEGORY}/${PN}:${SLOT}\t${check_path}" >> "${pkg_db}"
 
-	# remove blank lines
-	sed -i '/^$/d' "${pkg_db}"
+			# remove blank lines
+			sed -i '/^$/d' "${pkg_db}"
+			rm -rf "${d}/mutex-editing-pkg_db"
+			break
+		else
+			einfo "Waiting for mutex to be released for electron-app's pkg_db.  If it takes too long (15 min), cancel all emerges and remove ${d}/mutex-editing-pkg_db"
+			sleep 15
+		fi
+	done
 }
 
 # @FUNCTION: electron-app-register-npm
@@ -626,6 +682,11 @@ electron-app-register-yarn() {
 # scan for vulnerabilities containing node_modules.
 electron-app_pkg_postinst() {
         debug-print-function ${FUNCNAME} "${@}"
+
+	if [[ -z "${ELECTRON_APP_REG_PATH}" ]] ; then
+		ewarn "Dev QA: ELECTRON_APP_REG_PATH is not set."
+	fi
+
 	case "$ELECTRON_APP_MODE" in
 		npm)
 			electron-app-register-npm "${ELECTRON_APP_REG_PATH}"
@@ -645,14 +706,34 @@ electron-app_pkg_postinst() {
 electron-app_pkg_postrm() {
         debug-print-function ${FUNCNAME} "${@}"
 
-	case "$ELECTRON_APP_MODE" in
+	case "${ELECTRON_APP_MODE}" in
 		npm)
-			sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
-			sed -i '/^$/d' "${NPM_PACKAGE_DB}"
+			local d="${NPM_STORE_DIR}"
+			while true ; do
+				if mkdir "${d}/mutex-editing-pkg_db" ; then
+					sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
+					sed -i '/^$/d' "${NPM_PACKAGE_DB}"
+					rm -rf "${d}/mutex-editing-pkg_db"
+					break
+				else
+					einfo "Waiting for mutex to be released for electron-app's pkg_db for npm.  If it takes too long (15 min), cancel all emerges and remove ${d}/mutex-editing-pkg_db"
+					sleep 15
+				fi
+			done
 			;;
 		yarn)
-			sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${YARN_PACKAGE_DB}"
-			sed -i '/^$/d' "${YARN_PACKAGE_DB}"
+			local d="${YARN_PACKAGE_DB}"
+			while true ; do
+				if mkdir "${d}/mutex-editing-pkg_db" ; then
+					sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${YARN_PACKAGE_DB}"
+					sed -i '/^$/d' "${YARN_PACKAGE_DB}"
+					rm -rf "${d}/mutex-editing-pkg_db"
+					break
+				else
+					einfo "Waiting for mutex to be released for electron-app's pkg_db for yarn.  If it takes too long (15 min), cancel all emerges and remove ${d}/mutex-editing-pkg_db"
+					sleep 15
+				fi
+			done
 			;;
 		*)
 			die "Unsupported package system"
