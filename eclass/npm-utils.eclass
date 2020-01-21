@@ -112,33 +112,30 @@ __check_vulnerable() {
 		return
 	fi
 
+	local is_trivial=0
+	local is_auto_fix=0
+	local is_manual_review=0
 	npm audit &> "${audit_file}"
-	cat "${audit_file}" | grep -F "npm audit fix" >/dev/null
-	local result_found2="$?"
-	if [[ "${result_found2}" == "0" ]] ; then
-		einfo "Found trivial fixes... running \`npm audit fix --force\`."
-		npm audit fix --force || die
-	fi
-
-	npm audit &> "${audit_file}"
-	cat "${audit_file}" | grep -F "# Run" >/dev/null
-	local result_found3="$?"
-	if [[ "${result_found3}" == "0" ]] ; then
-		L=$(cat "${audit_file}" | grep -P -e "to resolve [0-9]+ vulnerabilit(y|ies)" | sed -r -e "s|# Run  ||" -e "s#  to resolve [0-9]+ vulnerabilit(y|ies)##g")
-		while read -r line ; do
-			einfo "Auto running fix: ${line}"
-			eval "${line}"
-		done <<< ${L}
-	fi
-
-	npm audit &> "${audit_file}"
-	cat "${audit_file}" | grep -F "require manual review" >/dev/null
-	local result_found1="$?"
-	if [[ "${result_found1}" == "0" ]] ; then
-		cat "${audit_file}"
-		ewarn "You still have a vulnerable package.  It requires manual review.  Fix immediately."
-		ewarn "Reported from: $(pwd)"
-		# assumes that fixing operations occur immediately
+	local result_found="$?"
+	cat "${audit_file}" | grep -F "npm audit fix" >/dev/null && is_trivial=1
+	cat "${audit_file}" | grep -F "# Run" >/dev/null && is_auto_fix=1
+	cat "${audit_file}" | grep -F "require manual review" >/dev/null && is_manual_review=1
+	if [[ "${result_found}" == "0" ]] ; then
+		if [[ "${is_trivial}" == "1" ]] ; then
+			einfo "Found trivial fixes... running \`npm audit fix --force\`."
+			npm audit fix --force || die
+		elif [[ "${is_auto_fix}" == "1" ]] ; then
+			L=$(cat "${audit_file}" | grep -P -e "to resolve [0-9]+ vulnerabilit(y|ies)" | sed -r -e "s|# Run  ||" -e "s#  to resolve [0-9]+ vulnerabilit(y|ies)##g")
+			while read -r line ; do
+				einfo "Auto running fix: ${line}"
+				eval "${line}"
+			done <<< ${L}
+		elif [[ "${is_manual_review}" == "1" ]] ; then
+			cat "${audit_file}"
+			ewarn "You still have a vulnerable package.  It requires manual review.  Fix immediately."
+			ewarn "Reported from: $(pwd)"
+			# assumes that fixing operations occur immediately
+		fi
 	fi
 }
 
@@ -146,7 +143,6 @@ __check_vulnerable() {
 # @DESCRIPTION:
 # Handles the Missing: package dependency in audit's report.
 __post_audit_missing() {
-	npm audit &> "${audit_file}"
 	if grep -e "Missing:" "${audit_file}" >/dev/null ; then
 		cat "${audit_file}"
 		ewarn "Install missing packages.  Do a \`npm ls <package_name>\` of each of the above packages.  Add them if they are missing"
@@ -182,24 +178,21 @@ npm_pre_audit() {
 			if [ ! -e package-lock.json ] ; then
 				npm i --package-lock # warning: can pull vulnerability
 			fi
-		fi
-		if grep -e "Missing:" "${audit_file}" >/dev/null ; then
+		elif grep -e "Missing:" "${audit_file}" >/dev/null ; then
 			# package-lock.json may be broken.  try to fix before doing audit
 			rm package-lock.json || die
-			npm i --package-lock-only
+			npm i --package-lock-only &> "${audit_file}"
 			if [ ! -e package-lock.json ] ; then
-				npm i --package-lock # warning: can pull vulnerability
+				npm i --package-lock &> "${audit_file}" # warning: can pull vulnerability
 			fi
 			__post_audit_missing
-		fi
-		if grep -e "does not satisfy" "${audit_file}" >/dev/null ; then
+		elif grep -e "does not satisfy" "${audit_file}" >/dev/null ; then
 			rm package-lock.json || die
 			npm i --package-lock-only
 			if [ ! -e package-lock.json ] ; then
 				npm i --package-lock # warning: can pull vulnerability
 			fi
-		fi
-		if [ ! -e package-lock.json ] ; then
+		elif [ ! -e package-lock.json ] ; then
 			die "Missing package-lock.json required for audit"
 		fi
 	else
