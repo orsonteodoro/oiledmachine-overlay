@@ -14,6 +14,7 @@
 
 NPM_UTILS_ALLOW_AUDIT_FIX=${NPM_UTILS_ALLOW_AUDIT_FIX:="1"}
 NPM_UTILS_ALLOW_AUDIT=${NPM_UTILS_ALLOW_AUDIT:="1"}
+NPM_UTILS_ALLOW_I_PACKAGE_LOCK=${NPM_UTILS_ALLOW_I_PACKAGE_LOCK:="0"}
 
 # @FUNCTION: npm_install_sub
 # @DESCRIPTION:
@@ -102,10 +103,11 @@ npm_package_lock_update() {
 	popd
 }
 
-# @FUNCTION: __check_vulnerable
+# @FUNCTION: npm_auto_fix
 # @DESCRIPTION:
 # Inspects if vulnerable.  It will fix trivial vulnerabilities.
-__check_vulnerable() {
+# @RETURNS: 0 no audit fix, 1 for audit fix, 2 on error
+npm_auto_fix() {
 	if [[ -n "${NPM_UTILS_ALLOW_AUDIT_FIX}" && "${NPM_UTILS_ALLOW_AUDIT_FIX}" == "1" ]] ; then
 		:;
 	else
@@ -124,25 +126,29 @@ __check_vulnerable() {
 		if [[ "${is_trivial}" == "1" ]] ; then
 			einfo "Found trivial fixes... running \`npm audit fix --force\`."
 			npm audit fix --force || die
+			return 1
 		elif [[ "${is_auto_fix}" == "1" ]] ; then
 			L=$(cat "${audit_file}" | grep -P -e "to resolve [0-9]+ vulnerabilit(y|ies)" | sed -r -e "s|# Run  ||" -e "s#  to resolve [0-9]+ vulnerabilit(y|ies)##g")
 			while read -r line ; do
 				einfo "Auto running fix: ${line}"
 				eval "${line}"
 			done <<< ${L}
+			return 1
 		elif [[ "${is_manual_review}" == "1" ]] ; then
 			cat "${audit_file}"
 			ewarn "You still have a vulnerable package.  It requires manual review.  Fix immediately."
 			ewarn "Reported from: $(pwd)"
 			# assumes that fixing operations occur immediately
+			return 1
 		fi
 	fi
+	return 0
 }
 
-# @FUNCTION: __post_audit_missing
+# @FUNCTION: __missing_requires_manual_intervention_message
 # @DESCRIPTION:
 # Handles the Missing: package dependency in audit's report.
-__post_audit_missing() {
+__missing_requires_manual_intervention_message() {
 	if grep -e "Missing:" "${audit_file}" >/dev/null ; then
 		cat "${audit_file}"
 		ewarn "Install missing packages.  Do a \`npm ls <package_name>\` of each of the above packages.  Add them if they are missing"
@@ -151,6 +157,17 @@ __post_audit_missing() {
 		ewarn "The package.json: ${dir}/package.json"
 		ewarn "The package-lock.json: ${dir}/package-lock.json"
 		# assumes that fixing operations occur immediately
+	fi
+}
+
+__replace_package_lock() {
+	rm package-lock.json || die
+	npm i --package-lock-only
+	if [ ! -e package-lock.json ] ; then
+		if [[ "${NPM_UTILS_ALLOW_I_PACKAGE_LOCK}" == "1" ]] ; then
+			ewarn "Could not safely restore package-lock.json with --package-lock-only.  Forcing 'npm i --package-lock' which may pull vulnerabilities.  dir=$(pwd)"
+			npm i --package-lock &> "${audit_file}"  # warning: can pull vulnerability
+		fi
 	fi
 }
 
@@ -173,27 +190,15 @@ npm_pre_audit() {
 
 		if grep -e "Manual Review" "${audit_file}" >/dev/null || grep -e "npm audit security report" "${audit_file}" >/dev/null ; then
 			# false positive cases when project-lock.json is old caused by deduping
-			rm package-lock.json || die
-			npm i --package-lock-only
-			if [ ! -e package-lock.json ] ; then
-				npm i --package-lock # warning: can pull vulnerability
-			fi
+			__replace_package_lock
 		elif grep -e "Missing:" "${audit_file}" >/dev/null ; then
 			# package-lock.json may be broken.  try to fix before doing audit
-			rm package-lock.json || die
-			npm i --package-lock-only &> "${audit_file}"
-			if [ ! -e package-lock.json ] ; then
-				npm i --package-lock &> "${audit_file}" # warning: can pull vulnerability
-			fi
-			__post_audit_missing
+			__replace_package_lock
+			__missing_requires_manual_intervention_message
 		elif grep -e "does not satisfy" "${audit_file}" >/dev/null ; then
-			rm package-lock.json || die
-			npm i --package-lock-only
-			if [ ! -e package-lock.json ] ; then
-				npm i --package-lock # warning: can pull vulnerability
-			fi
+			__replace_package_lock
 		elif [ ! -e package-lock.json ] ; then
-			die "Missing package-lock.json required for audit"
+			die "Missing package-lock.json required for audit.  Fixme:  unknown case."
 		fi
 	else
 		die "Using npm_pre_audit requires a package-lock.json"
@@ -201,7 +206,7 @@ npm_pre_audit() {
 
 	if [ -e package-lock.json ] ; then
 		# fix trivial vulnerabilities
-		__check_vulnerable
+		npm_auto_fix
 	else
 		die "npm_pre_audit didn't create a package-lock.json"
 	fi
@@ -229,8 +234,7 @@ npm_audit_fix() {
 	local dir="${1}"
 	einfo "npm_audit_fix: dir=$(pwd)/${dir}"
 	pushd "${dir}" || die
-		npm_pre_audit
-		npm audit fix --force
+		npm_pre_audit # calls npm audit fix --force if trivial
 	popd
 }
 
@@ -285,13 +289,7 @@ npm_update_package_locks_recursive() {
 				pushd "$(dirname ${l})" || die
 					npm audit &> "${audit_file}"
 					if grep -e "Missing:" "${audit_file}" >/dev/null ; then
-						ewarn "__check_vulnerable: Found Missing:"
-						if [ -e package-lock.json ] ; then
-							einfo "__check_vulnerable:  Fixing package lock."
-							rm package-lock.json
-							npm i --package-lock-only
-							__check_vulnerable
-						fi
+						npm_pre_audit
 						current_broken_lock_count=$((${current_broken_lock_count}+1))
 					fi
 				popd
@@ -328,25 +326,4 @@ npm_update_package_locks_recursive() {
 	done
 
 	einfo "npm_update_package_locks_recursive: done"
-}
-
-# @FUNCTION: npm_dedupe_cycle
-# @DESCRIPTION:
-# Removes circular chain
-# It happens when fixing package-locks with missing packages.
-# @CODE
-# Parameters:
-# $1 - base directory of project root
-# @CODE
-npm_dedupe_cycle() {
-	local B="${1}"
-	local P=$(pwd | sed -e "s|${B}||")
-	L1=$(echo "${P}" | sed -e "s|node_modules/||g" | tr "/" "\n" | wc -l)
-	L2=$(echo "${P}" | sed -e "s|node_modules/||g" | tr "/" "\n" | uniq | wc -l)
-	if [[ "${L1}" != "${L2}" ]] ; then
-		einfo "Circular chain detected"
-		pushd "${B}" || die
-			npm dedupe
-		popd
-	fi
 }

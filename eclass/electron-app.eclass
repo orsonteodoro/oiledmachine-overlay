@@ -35,11 +35,8 @@ IUSE+=" debug"
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
 YARN_PACKAGE_DB="/var/lib/portage/yarn-packages"
 ELECTRON_APP_REG_PATH=${ELECTRON_APP_REG_PATH:=""}
-
 ELECTRON_APP_MODE=${ELECTRON_APP_MODE:="npm"} # can be npm, yarn
-ELECTRON_APP_PRUNE=${ELECTRON_APP_PRUNE:="1"}
 ELECTRON_APP_MAXSOCKETS=${ELECTRON_APP_MAXSOCKETS:="1"} # Set this in your make.conf to control number of HTTP requests.  50 is npm default but it is too high.
-ELECTRON_APP_ALLOW_DEDUPE=${ELECTRON_APP_ALLOW_DEDUPE:="1"}
 ELECTRON_APP_ALLOW_AUDIT=${ELECTRON_APP_ALLOW_AUDIT:="1"}
 ELECTRON_APP_ALLOW_AUDIT_FIX=${ELECTRON_APP_ALLOW_AUDIT_FIX:="1"}
 ELECTRON_APP_NO_DIE_ON_AUDIT=${ELECTRON_APP_NO_DIE_ON_AUDIT:="0"}
@@ -155,21 +152,6 @@ _electron-app-flakey-check() {
 	if [[ "$?" == "0" ]] ; then
 		ewarn "This ebuild may fail when downloading Electron as a dependency.  Re-emerge if it fails."
 	fi
-}
-
-# @FUNCTION: electron-app_dedupe_npm
-# @DESCRIPTION:
-# Replaces duplicate packages into a single package.
-electron-app_dedupe_npm() {
-	if [[ -n "${ELECTRON_APP_ALLOW_DEDUPE}" && "${ELECTRON_APP_ALLOW_DEDUPE}" == "1" ]] ; then
-		:;
-	else
-		return
-	fi
-
-	einfo "Deduping packages"
-	npm dedupe || die
-	npm_update_package_locks_recursive ./
 }
 
 # @FUNCTION: electron-app_audit_fix_npm
@@ -359,8 +341,6 @@ electron-app_src_unpack() {
 		electron-app_src_postprepare
 	fi
 
-	electron-app_dedupe_npm
-
 	# audit before possibly bundling a vulnerable package
 	electron-app_audit_dev
 
@@ -382,9 +362,6 @@ electron-app_src_unpack() {
 	else
 		electron-app_src_preinst_default
 	fi
-
-	cd "${S}"
-	electron-app_dedupe_and_prune
 }
 
 # @FUNCTION: electron-app_src_prepare_default
@@ -479,7 +456,7 @@ electron-app_audit_dev() {
 
 # @FUNCTION: electron-app_audit_prod
 # @DESCRIPTION:
-# This will preform an recursive audit for production in place without adding packages ignoring pruned packages.
+# This will preform an recursive audit for production in place without adding packages.
 electron-app_audit_prod() {
 	if [[ -n "${ELECTRON_APP_ALLOW_AUDIT}" && "${ELECTRON_APP_ALLOW_AUDIT}" == "1" ]] ; then
 		:;
@@ -506,71 +483,6 @@ electron-app_audit_prod() {
 		fi
 		popd
 	done
-}
-
-# @FUNCTION: electron-app_src_preinst_default
-# @DESCRIPTION:
-# Dummy function
-electron-app_src_preinst_default() {
-	true
-}
-
-# @FUNCTION: electron-app_dedupe_and_prune
-# @DESCRIPTION:
-# Preforms dedupe and pruning
-electron-app_dedupe_and_prune() {
-	if [[ -n "${ELECTRON_APP_ALLOW_DEDUPE}" && "${ELECTRON_APP_ALLOW_DEDUPE}" == "1" ]] ; then
-		:;
-	else
-		return
-	fi
-
-	einfo "Deduping and pruning"
-
-	cd "${S}"
-
-	case "$ELECTRON_APP_MODE" in
-		npm)
-			electron-app_dedupe_npm
-
-			electron-app_store_package_jsons "${S}"
-
-			if ! use debug ; then
-				if [[ "${ELECTRON_APP_PRUNE}" == "1" ]] ; then
-					einfo "Running \`npm prune --production\`"
-					npm prune --production
-				fi
-			fi
-
-			#electron-app_audit_prod
-			electron-app_audit_dev
-
-			electron-app_restore_package_jsons "${S}"
-
-			;;
-		yarn)
-			electron-app_store_package_jsons "${S}"
-
-			if ! use debug ; then
-				if [[ "${ELECTRON_APP_PRUNE}" == "1" ]] ; then
-					einfo "Running \`yarn install --production --ignore-scripts --prefer-offline\`"
-					yarn install --production --ignore-scripts --prefer-offline
-				fi
-			fi
-
-			cp "${S}"/.yarnrc{,.orig}
-			echo "global-folder \"/usr/$(get_libdir)/node/${PN}/${SLOT}/.yarn\"" >> "${S}/.yarnrc" || die
-			echo "prefix \"/usr/$(get_libdir)/node/${PN}/${SLOT}/.yarn\"" >> "${S}/.yarnrc" || die
-
-			# todo final audit fix
-
-			electron-app_restore_package_jsons "${S}"
-
-			;;
-		*)
-			die "Unsupported package system"
-			;;
-	esac
 }
 
 # @FUNCTION: electron-app_desktop_install

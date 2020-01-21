@@ -37,9 +37,7 @@ IUSE+=" debug"
 
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
 NPM_SECAUDIT_REG_PATH=${NPM_SECAUDIT_REG_PATH:=""}
-NPM_SECAUDIT_PRUNE=${NPM_SECAUDIT_PRUNE:="1"}
 NPM_MAXSOCKETS=${NPM_MAXSOCKETS:="1"} # Set this in your make.conf to control number of HTTP requests.  50 is npm default but it is too high.
-NPM_SECAUDIT_ALLOW_DEDUPE=${NPM_SECAUDIT_ALLOW_DEDUPE:="1"}
 NPM_SECAUDIT_ALLOW_AUDIT=${NPM_SECAUDIT_ALLOW_AUDIT:="1"}
 NPM_SECAUDIT_ALLOW_AUDIT_FIX=${NPM_SECAUDIT_ALLOW_AUDIT_FIX:="1"}
 NPM_SECAUDIT_NO_DIE_ON_AUDIT=${NPM_SECAUDIT_NO_DIE_ON_AUDIT:="0"}
@@ -192,8 +190,6 @@ npm-secaudit_src_unpack() {
 		npm-secaudit_src_postprepare
 	fi
 
-	npm-secaudit_dedupe_npm
-
 	# audit before possibly bundling a vulnerable package
 	npm-secaudit_audit_dev
 
@@ -215,9 +211,6 @@ npm-secaudit_src_unpack() {
 	else
 		npm-secaudit_src_preinst_default
 	fi
-
-	cd "${S}"
-	npm-secaudit_dedupe_and_prune
 }
 
 # @FUNCTION: npm-secaudit_src_prepare_default
@@ -294,21 +287,6 @@ npm-secaudit-register() {
 	done
 }
 
-# @FUNCTION: npm-secaudit_dedupe_npm
-# @DESCRIPTION:
-# Replaces duplicate packages into a single package.
-npm-secaudit_dedupe_npm() {
-	if [[ -n "${NPM_SECAUDIT_ALLOW_DEDUPE}" && "${NPM_SECAUDIT_ALLOW_DEDUPE}" == "1" ]] ; then
-		:;
-	else
-		return
-	fi
-
-	einfo "Deduping packages"
-	npm dedupe || die
-	npm_update_package_locks_recursive ./
-}
-
 # @FUNCTION: _npm-secaudit_audit_fix
 # @DESCRIPTION:
 # Removes vulnerable packages.  It will audit every folder containing a package-lock.json
@@ -355,7 +333,7 @@ npm-secaudit_audit_dev() {
 
 # @FUNCTION: npm-secaudit_audit_prod
 # @DESCRIPTION:
-# This will preform an recursive audit for production in place without adding packages ignoring pruned packages.
+# This will preform an recursive audit for production in place without adding packages.
 npm-secaudit_audit_prod() {
 	if [[ -n "${NPM_SECAUDIT_ALLOW_AUDIT}" && "${NPM_SECAUDIT_ALLOW_AUDIT}" == "1" ]] ; then
 		:;
@@ -389,41 +367,6 @@ npm-secaudit_audit_prod() {
 # Dummy function
 npm-secaudit_src_preinst_default() {
 	true
-}
-
-# @FUNCTION: npm-secaudit_dedupe_and_prune
-# @DESCRIPTION:
-# Preforms dedupe and pruning
-npm-secaudit_dedupe_and_prune() {
-	if [[ -n "${NPM_SECAUDIT_ALLOW_DEDUPE}" && "${NPM_SECAUDIT_ALLOW_DEDUPE}" == "1" ]] ; then
-		:;
-	else
-		return
-	fi
-
-	einfo "Deduping and pruning"
-
-	cd "${S}"
-
-	if [[ "${NPM_ALLOW_DEDUPE}" == "1" ]] ; then
-		npm-secaudit_dedupe_npm
-	fi
-
-	npm-secaudit_store_package_jsons "${S}"
-
-	cd "${S}"
-
-	if ! use debug ; then
-		if [[ "${NPM_SECAUDIT_PRUNE}" == "1" ]] ; then
-			einfo "Running \`npm prune --production\`"
-			npm prune --production
-		fi
-	fi
-
-	#npm-secaudit_audit_prod
-	npm-secaudit_audit_dev
-
-	npm-secaudit_restore_package_jsons "${S}"
 }
 
 # @FUNCTION: npm-secaudit_install
