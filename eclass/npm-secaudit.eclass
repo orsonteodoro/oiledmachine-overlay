@@ -397,10 +397,6 @@ npm-secaudit_install() {
 npm-secaudit_pkg_postinst() {
         debug-print-function ${FUNCNAME} "${@}"
 
-	if [[ -z "${NPM_SECAUDIT_REG_PATH}" ]] ; then
-		ewarn "Dev QA: NPM_SECAUDIT_REG_PATH is not set."
-	fi
-
 	npm-secaudit-register "${NPM_SECAUDIT_REG_PATH}"
 }
 

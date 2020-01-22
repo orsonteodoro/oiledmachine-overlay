@@ -595,10 +595,6 @@ electron-app-register-yarn() {
 electron-app_pkg_postinst() {
         debug-print-function ${FUNCNAME} "${@}"
 
-	if [[ -z "${ELECTRON_APP_REG_PATH}" ]] ; then
-		ewarn "Dev QA: ELECTRON_APP_REG_PATH is not set."
-	fi
-
 	case "$ELECTRON_APP_MODE" in
 		npm)
 			electron-app-register-npm "${ELECTRON_APP_REG_PATH}"
