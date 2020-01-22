@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -7,7 +7,7 @@ HOMEPAGE="http://box2d.org/"
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-IUSE="debug doc examples static"
+IUSE="debug doc examples"
 inherit multilib-minimal
 RDEPEND=">=dev-util/premake-4.4
 	 <dev-util/premake-5.0
@@ -16,7 +16,7 @@ RDEPEND=">=dev-util/premake-4.4
 	 media-libs/freeglut[${MULTILIB_USEDEP}]"
 DEPEND="${RDEPEND}
 	doc? ( app-doc/doxygen )"
-inherit eutils
+inherit box2d eutils
 SRC_URI=\
 "https://github.com/erincatto/Box2D/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
@@ -42,17 +42,26 @@ _set_global_flags() {
 
 src_prepare() {
 	default
-	cd "Box2D"
-	if ! use static; then
-		sed -i -e "s|StaticLib|SharedLib|g" \
-			premake4.lua || die
-	fi
-	local arch=""
-	local platform=""
-	_get_abi_settings
-	_set_global_flags
-	premake4 --platform=${platform} gmake
+	prepare_abi() {
+		cd "${BUILD_DIR}" || die
+		box2d_prepare_static_shared() {
+			cd "${BUILD_DIR}" || die
+			cd "Box2D" || die
+			if [[ "${EBOX2D}" == "shared" ]] ; then
+				sed -i -e "s|StaticLib|SharedLib|g" \
+					premake4.lua || die
+			fi
+			local arch=""
+			local platform=""
+			_get_abi_settings
+			_set_global_flags
+			premake4 --platform=${platform} gmake
+		}
+		box2d_copy_sources
+		box2d_foreach_impl box2d_prepare_static_shared
+	}
 	multilib_copy_sources
+	multilib_foreach_abi prepare_abi
 }
 
 src_configure() {
@@ -60,16 +69,20 @@ src_configure() {
 }
 
 src_compile() {
+	local mydebug=$(usex debug "debug" "release")
 	compile_abi() {
-		cd "${BUILD_DIR}"
-		local arch=""
-		local platform=""
-		_get_abi_settings
-		_set_global_flags
-		local mydebug=$(usex debug "debug" "release")
-		pushd Box2D/Build/gmake || die
-			emake config="${mydebug}" verbose=1 || die
-		popd
+		cd "${BUILD_DIR}" || die
+		box2d_compile_static_shared() {
+			cd "${BUILD_DIR}" || die
+			local arch=""
+			local platform=""
+			_get_abi_settings
+			_set_global_flags
+			pushd Box2D/Build/gmake || die
+				emake config="${mydebug}" verbose=1 || die
+			popd
+		}
+		box2d_foreach_impl box2d_compile_static_shared
 	}
 	multilib_foreach_abi compile_abi
 }
@@ -77,14 +90,18 @@ src_compile() {
 src_install() {
 	local mydebug=$(usex debug "Debug" "Release")
 	install_abi() {
-		cd "${BUILD_DIR}"
-		pushd "Box2D/Build/gmake/bin/${mydebug}" || die
-		if use static; then
-			dolib.a libBox2D.a libGLUI.a
-		else
-			dolib.so libBox2D.so libGLUI.so
-		fi
-		popd
+		cd "${BUILD_DIR}" || die
+		box2d_install_static_shared() {
+			cd "${BUILD_DIR}" || die
+			pushd "Box2D/Build/gmake/bin/${mydebug}" || die
+			if [[ "${EBOX2D}" == "shared" ]] ; then
+				dolib.so libBox2D.so libGLUI.so
+			else
+				dolib.a libBox2D.a libGLUI.a
+			fi
+			popd
+		}
+		box2d_foreach_impl box2d_install_static_shared
 	}
 	multilib_foreach_abi install_abi
 
