@@ -20,8 +20,6 @@ SRC_URI=\
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 MY_PN="IG:dm"
-REQUEST_PROMISE_VER="^4.2.4"
-DEBUG_V="^2.6.9"
 
 electron-app_src_postprepare() {
 	ewarn \
