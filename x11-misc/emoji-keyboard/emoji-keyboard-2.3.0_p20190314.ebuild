@@ -24,7 +24,9 @@ RDEPEND="dev-libs/gobject-introspection[${PYTHON_USEDEP}]
 	wayland? ( sys-apps/systemd )"
 DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
 # gobject-introspection complains about multiple implementations
-inherit eutils linux-info user
+CHECKREQS_DISK_BUILD="1024M"
+CHECKREQS_DISK_USR="75M"
+inherit check-reqs eutils linux-info user
 EMOJITWO_COMMIT="b851e2070faf5c707d2e74988d425d4956c17187"
 NOTOEMOJI_COMMIT="09d8fd121a6d35081fdc31a540735c4a2f924356"
 TWEMOJI_COMMIT="2f786b03d0bc0944eb3b66850a805dcadd5f853d"
@@ -40,6 +42,10 @@ https://github.com/twitter/twemoji/archive/${TWEMOJI_COMMIT}.tar.gz \
 	-> emoji-keyboard-deps-twemoji-2.4.0_p20171208.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
+
+pkg_pretend() {
+	check-reqs_pkg_pretend
+}
 
 pkg_setup() {
 	linux-info_pkg_setup
@@ -60,6 +66,7 @@ pkg_setup() {
 		fi
 	fi
 	python_setup
+	check-reqs_pkg_setup
 }
 
 src_unpack() {
