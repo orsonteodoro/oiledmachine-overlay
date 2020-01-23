@@ -5,7 +5,7 @@
 EAPI=7
 DESCRIPTION="Portage Systemwide PGO"
 HOMEPAGE="https://github.com/orsonteodoro/oiledmachine-overlay"
-LICENSE="GPL-2 MIT"
+LICENSE="|| ( GPL-2 MIT )"
 SLOT="0"
 IUSE="llvm"
 KEYWORDS="~alpha ~amd64 ~amd64-linux ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc \
