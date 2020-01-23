@@ -35,7 +35,7 @@ multilib_src_compile() {
 	local mycflags="-O0"
 	local arch_cflags="CFLAGS_${ABI}"
 	sed -i \
--e "s|libnxjson.so|libnxjson.so.${LIBRARY_SUFFIX}|" \
+		-e "s|libnxjson.so|libnxjson.so.${LIBRARY_SUFFIX}|" \
 		Makefile ||die
 	sed -i -e "s|gcc|$(tc-getCC) ${!arch_cflags}|" Makefile || die
 	sed -i -e "s|-shared|-shared -Wl,-soname,${SO_NAME}|" Makefile || die
