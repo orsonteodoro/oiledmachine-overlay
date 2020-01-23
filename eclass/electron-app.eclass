@@ -125,10 +125,12 @@ download micropackages."
 
 			addwrite "${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 			mkdir -p "${NPM_STORE_DIR}/offline"
+			chown -R portage:portage "${NPM_STORE_DIR}"
 
 			# Some npm package.json use yarn.
 			addwrite ${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 			mkdir -p ${YARN_STORE_DIR}/offline
+			chown -R portage:portage "${YARN_STORE_DIR}"
 			export YARN_CACHE_FOLDER=${YARN_CACHE_FOLDER:=${YARN_STORE_DIR}}
 			;;
 		yarn)
@@ -137,6 +139,7 @@ download micropackages."
 			# Some npm package.json use yarn.
 			addwrite ${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 			mkdir -p ${YARN_STORE_DIR}/offline
+			chown -R portage:portage "${YARN_STORE_DIR}"
 			export YARN_CACHE_FOLDER=${YARN_CACHE_FOLDER:=${YARN_STORE_DIR}}
 			;;
 		*)

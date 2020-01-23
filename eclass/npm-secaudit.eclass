@@ -58,6 +58,7 @@ download micropackages."
 	export NPM_STORE_DIR="${HOME}/npm"
 	export npm_config_cache="${NPM_STORE_DIR}"
 	mkdir -p "${NPM_STORE_DIR}/offline"
+	chown -R portage:portage "${NPM_STORE_DIR}"
 
 	addwrite "${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 
