@@ -42,86 +42,6 @@ NPM_SECAUDIT_ALLOW_AUDIT=${NPM_SECAUDIT_ALLOW_AUDIT:="1"}
 NPM_SECAUDIT_ALLOW_AUDIT_FIX=${NPM_SECAUDIT_ALLOW_AUDIT_FIX:="1"}
 NPM_SECAUDIT_NO_DIE_ON_AUDIT=${NPM_SECAUDIT_NO_DIE_ON_AUDIT:="0"}
 
-# @FUNCTION: _npm-secaudit_fix_locks
-# @DESCRIPTION:
-# Restores ownership change caused by yarn
-_npm-secaudit_fix_locks() {
-	local d="${NPM_STORE_DIR}"
-	local f="_locks"
-	local dt="${d}/${f}"
-	if [ -d "${dt}" ] ; then
-		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
-		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
-		if [[ "$u" == "root" && "$g" == "root" ]] ; then
-			einfo "Restoring portage ownership on ${dt}"
-			chown portage:portage -R "${dt}"
-		fi
-	fi
-}
-
-# @FUNCTION: _npm-secaudit_fix_logs
-# @DESCRIPTION:
-# Restores ownership change to logs
-_npm-secaudit_fix_logs() {
-	local d="${NPM_STORE_DIR}"
-	local f="_logs"
-	local dt="${d}/${f}"
-	if [ -d "${dt}" ] ; then
-		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
-		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
-		if [[ "$u" == "root" && "$g" == "root" ]] ; then
-			einfo "Restoring portage ownership on ${dt}"
-			chown portage:portage -R "${dt}"
-		fi
-	fi
-}
-
-# @FUNCTION: _npm-secaudit_yarn_access
-# @DESCRIPTION:
-# Restores ownership change caused by yarn
-_npm-secaudit_yarn_access() {
-	local d="${HOME}"
-	local f=".config"
-	local dt="${d}/${f}"
-	if [ -d "${dt}" ] ; then
-		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
-		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
-		if [[ "$u" == "root" && "$g" == "root" ]] ; then
-			einfo "Restoring portage ownership on ${dt}"
-			chown portage:portage -R "${dt}"
-		fi
-	fi
-}
-
-# @FUNCTION: _npm-secaudit_fix_cacache_access
-# @DESCRIPTION:
-# Restores ownership change on cacache
-_npm-secaudit_fix_cacache_access() {
-	local d="${NPM_STORE_DIR}"
-	local f="_cacache"
-	local dt="${d}/${f}"
-	if [ -d "${dt}" ] ; then
-		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
-		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
-		while true ; do
-			if mkdir -p "${d}/mutex-removing-cacache" ; then
-				# time to fix cache permissions is more expensive than just removing it all
-				einfo "Removing ${dt}"
-				rm -rf "${dt}"
-				rm -rf "${d}/mutex-removing-cacache"
-				break
-			else
-				einfo "Waiting to free mutex lock.  If it takes too long (15 min) close all emerge instances and remove ${d}/mutex-removing-cache."
-			fi
-			sleep 30
-		done
-	fi
-	einfo "Restoring portage ownership on ${dt}"
-	addwrite "${d}"
-	mkdir -p "${dt}"
-	chown portage:portage -R "${dt}"
-}
-
 # @FUNCTION: npm_pkg_setup
 # @DESCRIPTION:
 # Initializes globals
@@ -134,15 +54,11 @@ npm-secaudit_pkg_setup() {
 download micropackages."
 	fi
 
-	export NPM_STORE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
+	export NPM_STORE_DIR="${HOME}/npm"
 	export npm_config_cache="${NPM_STORE_DIR}"
 	mkdir -p "${NPM_STORE_DIR}/offline"
 
 	addwrite "${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-
-	_npm-secaudit_fix_locks
-	_npm-secaudit_fix_logs
-	_npm-secaudit_fix_cacache_access
 }
 
 # @FUNCTION: npm-secaudit_fetch_deps
@@ -151,9 +67,6 @@ download micropackages."
 # MUST be called after default unpack AND patching.
 npm-secaudit_fetch_deps() {
 	pushd "${S}" || die
-		_npm-secaudit_fix_locks
-		_npm-secaudit_yarn_access
-
 		npm install --maxsockets=${NPM_MAXSOCKETS} || die
 	popd
 }

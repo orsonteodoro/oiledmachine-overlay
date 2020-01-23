@@ -41,103 +41,6 @@ ELECTRON_APP_ALLOW_AUDIT=${ELECTRON_APP_ALLOW_AUDIT:="1"}
 ELECTRON_APP_ALLOW_AUDIT_FIX=${ELECTRON_APP_ALLOW_AUDIT_FIX:="1"}
 ELECTRON_APP_NO_DIE_ON_AUDIT=${ELECTRON_APP_NO_DIE_ON_AUDIT:="0"}
 
-# @FUNCTION: _electron-app_fix_locks
-# @DESCRIPTION:
-# Restores ownership change caused by yarn
-_electron-app_fix_locks() {
-	local d="${NPM_STORE_DIR}"
-	local f="_locks"
-	local dt="${d}/${f}"
-	if [ -d "${dt}" ] ; then
-		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
-		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
-		if [[ "$u" == "root" && "$g" == "root" ]] ; then
-			einfo "Restoring portage ownership on ${dt}"
-			chown portage:portage -R "${dt}"
-		fi
-	fi
-}
-
-# @FUNCTION: _electron-app_fix_logs
-# @DESCRIPTION:
-# Restores ownership change to logs
-_electron-app_fix_logs() {
-	local d="${NPM_STORE_DIR}"
-	local f="_logs"
-	local dt="${d}/${f}"
-	if [ -d "${dt}" ] ; then
-		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
-		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
-		if [[ "$u" == "root" && "$g" == "root" ]] ; then
-			einfo "Restoring portage ownership on ${dt}"
-			chown portage:portage -R "${dt}"
-		fi
-	fi
-}
-
-# @FUNCTION: _electron-app_fix_yarn_access
-# @DESCRIPTION:
-# Restores ownership change caused by yarn
-_electron-app_fix_yarn_access() {
-	local d="${HOME}"
-	local f=".config"
-	local dt="${d}/${f}"
-	if [ -d "${dt}" ] ; then
-		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
-		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
-		if [[ "$u" == "root" && "$g" == "root" ]] ; then
-			einfo "Restoring portage ownership on ${dt}"
-			chown portage:portage -R "${dt}"
-		fi
-	fi
-}
-
-# @FUNCTION: _electron-app_fix_cacache_access
-# @DESCRIPTION:
-# Restores ownership change on cacache
-_electron-app_fix_cacache_access() {
-	local d="${NPM_STORE_DIR}"
-	local f="_cacache"
-	local dt="${d}/${f}"
-	if [ -d "${dt}" ] ; then
-		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
-		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
-		while true ; do
-			if mkdir "${d}/mutex-removing-cacache" ; then
-				# time to fix cache permissions is more expensive than just removing it all
-				einfo "Removing ${dt}"
-				rm -rf "${dt}"
-				rm -rf "${d}/mutex-removing-cacache"
-				break
-			else
-				einfo "Waiting to free mutex lock.  If it takes too long (15 min) close all emerge instances and remove ${d}/mutex-removing-cache."
-				sleep 15
-			fi
-		done
-	fi
-	einfo "Restoring portage ownership on ${dt}"
-	addwrite "${d}"
-	mkdir -p "${dt}"
-	chown portage:portage -R "${dt}"
-}
-
-# @FUNCTION: _electron-app_fix_index-v5_access
-# @DESCRIPTION:
-# Restores ownership change on cacache
-_electron-app_fix_index-v5_access() {
-	local d="${NPM_STORE_DIR}"
-	local f="index-v5"
-	local dt="${d}/${f}"
-	if [ -d "${dt}" ] ; then
-		local u=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 5 -d ' ')
-		local g=$(ls -l "${d}" | grep "${f}" | column -t | cut -f 7 -d ' ')
-		if [[ "$u" == "root" && "$g" == "root" ]] ; then
-			einfo "Restoring portage ownership on ${dt}"
-			chown portage:portage -R "${dt}"
-		fi
-	fi
-}
-
 # @FUNCTION: _electron-app-flakey-check
 # @DESCRIPTION:
 # Warns user that download or building can fail randomly
@@ -206,8 +109,8 @@ download micropackages."
 	fi
 
 	export ELECTRON_VER=$(strings /usr/bin/electron | grep "%s Electron/" | sed -e "s|[%s A-Za-z/]||g")
-	export NPM_STORE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/npm"
-	export YARN_STORE_DIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}/yarn"
+	export NPM_STORE_DIR="${HOME}/npm"
+	export YARN_STORE_DIR="${HOME}/yarn"
 
 	case "$ELECTRON_APP_MODE" in
 		npm)
@@ -226,11 +129,6 @@ download micropackages."
 			addwrite ${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 			mkdir -p ${YARN_STORE_DIR}/offline
 			export YARN_CACHE_FOLDER=${YARN_CACHE_FOLDER:=${YARN_STORE_DIR}}
-
-			_electron-app_fix_locks
-			_electron-app_fix_logs
-			_electron-app_fix_cacache_access
-			_electron-app_fix_index-v5_access
 			;;
 		yarn)
 			ewarn "Using yarn mode which has no audit fix yet."
@@ -290,14 +188,9 @@ electron-app_fetch_deps_yarn() {
 electron-app_fetch_deps() {
 	cd "${S}"
 
-	_electron-app_fix_yarn_access
-
-	cd "${S}"
-
 	# todo handle yarn
 	case "$ELECTRON_APP_MODE" in
 		npm)
-			_electron-app_fix_locks
 			electron-app_fetch_deps_npm
 			;;
 		yarn)
