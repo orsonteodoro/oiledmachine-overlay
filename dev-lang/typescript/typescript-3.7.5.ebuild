@@ -20,6 +20,7 @@ SRC_URI=\
 "https://github.com/Microsoft/${MY_PN}/archive/v${PV}.tar.gz \
 	-> ${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${MY_PN}-${PV}"
+RESTRICT="mirror"
 
 npm-secaudit_src_postprepare() {
 	npm_package_lock_update ./
