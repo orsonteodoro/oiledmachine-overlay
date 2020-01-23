@@ -134,14 +134,14 @@ function raudit() {
 	echo -e "\n>>> Checking ${p}"
 	dinfo "Performing recursive package-lock.json audit"
 	L=$(find . -name "package-lock.json")
-	for l in $L; do
+	for l in ${L}; do
 		if [[ "${LONG_SCAN}" != "1" && "${result}" == "1" ]] ; then
 			dinfo "Skipping long scan"
 			break
 		elif [[ "${LONG_SCAN}" == "1" ]] ; then
 			dinfo "Continuing long scan"
 		fi
-		pushd $(dirname $l) >/dev/null
+		pushd $(dirname ${l}) >/dev/null
 		dinfo "Path: ${path}/${l}"
 		[ -e /tmp/npm-secaudit-result ] && rm /tmp/npm-secaudit-result
 		if [[ "${G_VERBOSE}" == "1" ]]; then
@@ -248,7 +248,7 @@ function summary() {
 	local fsz=$(wc -c ${G_INSECURE_SET_FP} | cut -f1 -d' ')
 	dinfo "n_insecure=$n_insecure"
 	dinfo "fsz=$fsz"
-	if (( $n_insecure > 0 && $fsz > 1 )); then
+	if (( ${n_insecure} > 0 && ${fsz} > 1 )); then
 		D=$(cd "$(dirname "$0")" ; pwd -P)
 		einfo \
 "npm-secaudit found ${n_insecure} insecure apps.  Please update immediately\n\
@@ -280,7 +280,7 @@ function main() {
 "Multiple instances of npm-secaudit detected.  Close all instances of them\n\
 and remove the ${G_PACKAGE_LOCK_DIR}/mutex-insecure-set directory or wait till they\n\
 are done."
-			sleep 15.
+			sleep 15
 		fi
 	done
 }
