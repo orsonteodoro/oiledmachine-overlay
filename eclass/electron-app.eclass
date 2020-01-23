@@ -452,6 +452,7 @@ electron-app_desktop_install() {
 electron-app-register-x() {
 	while true ; do
 		if mkdir "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db" ; then
+			trap "rm -rf \"${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db\"" EXIT
 			local pkg_db="${1}"
 			local rel_path=${2:-""}
 			local check_path="/usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_path}"
@@ -525,6 +526,7 @@ electron-app_pkg_postrm() {
 		npm)
 			while true ; do
 				if mkdir "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db" ; then
+					trap "rm -rf \"${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db\"" EXIT
 					sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
 					sed -i '/^$/d' "${NPM_PACKAGE_DB}"
 					rm -rf "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
@@ -538,6 +540,7 @@ electron-app_pkg_postrm() {
 		yarn)
 			while true ; do
 				if mkdir "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db" ; then
+					trap "rm -rf \"${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db\"" EXIT
 					sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${YARN_PACKAGE_DB}"
 					sed -i '/^$/d' "${YARN_PACKAGE_DB}"
 					rm -rf "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
