@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # See NotoColorEmoji.tmpl.ttx.tmpl for versioning at
@@ -6,8 +6,11 @@
 EAPI=6
 DESCRIPTION="NotoColorEmoji is colored emojis"
 HOMEPAGE="https://www.google.com/get/noto/#emoji-qaae-color"
-LICENSE="OFL-1.1"
-KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
+LICENSE="Apache-2.0 OFL-1.1"
+# Font files are OFL-1.1
+# Artwork is Apache-2.0 and flags are public domain
+KEYWORDS="~alpha ~amd64 ~amd64-linux ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 \
+~s390 ~sh ~sparc ~sparc-solaris ~x64-solaris ~x86 ~x86-linux ~x86-solaris"
 PYTHON_COMPAT=( python2_7 )
 SLOT="0/${PV}"
 IUSE="optipng +zopflipng"
@@ -31,12 +34,12 @@ FONT_SUFFIX="ttf"
 FONT_CONF=( )
 NOTO_EMOJI_COMMIT="7c0d24f2f2f3c44aa04c78df55bab5bc7deeb5c4"
 NOTO_TOOLS_COMMIT="541e8b7c0e17fdf1fd92c1a2d2fa34d17c0aed9b"
-NOTO_TOOLS_PVR="0.0.1_p20160427" # see setup.py for versioning
+NOTO_TOOLS_PV="0.0.1_p20160427" # see setup.py for versioning
 SRC_URI=\
 "https://github.com/googlei18n/noto-emoji/archive/${NOTO_EMOJI_COMMIT}.tar.gz \
-	-> noto-emoji-${PVR}.tar.gz
+	-> noto-emoji-${PV}.tar.gz
 https://github.com/googlefonts/nototools/archive/${NOTO_TOOLS_COMMIT}.tar.gz \
-	-> noto-tools-${NOTO_TOOLS_PVR}.tar.gz"
+	-> noto-tools-${NOTO_TOOLS_PV}.tar.gz"
 inherit eutils font
 RESTRICT="mirror"
 S="${WORKDIR}/noto-emoji-${NOTO_EMOJI_COMMIT}"
