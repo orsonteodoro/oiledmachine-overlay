@@ -485,6 +485,13 @@ electron-app_audit_prod() {
 	done
 }
 
+# @FUNCTION: electron-app_src_preinst_default
+# @DESCRIPTION:
+# Dummy function
+electron-app_src_preinst_default() {
+	true
+}
+
 # @FUNCTION: electron-app_desktop_install
 # @DESCRIPTION:
 # Installs a desktop app with wrapper and desktop menu entry.
