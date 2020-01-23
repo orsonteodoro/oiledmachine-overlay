@@ -4,9 +4,9 @@
 EAPI=7
 DESCRIPTION="Virtual keyboard-like emoji picker for Linux"
 HOMEPAGE="https://github.com/OzymandiasTheGreat/emoji-keyboard"
-LICENSE="GPL-3+ CC-BY-SA-4.0 CC-BY-4.0 SIL Apache-2.0"
+LICENSE="GPL-3+ CC-BY-SA-4.0 CC-BY-4.0 OFL-1.1 Apache-2.0"
 # Emojitwo is CC-BY-SA-4.0
-# NotoColorEmoji is SIL and Apache 2.0
+# NotoColorEmoji is OFL-1.1 and Apache 2.0
 # Twitter Emoji is CC-BY-4.0
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0"
