@@ -27,7 +27,7 @@ LICENSE="MIT
 	 plugins_zsh-navigation-tools? ( MIT GPL-3 )
 	 plugins_kube-ps1? ( Apache-2.0 )
 	 plugins_sfdx? ( Apache-2.0 )
-	 Unicode-DFS-2016"
+	 Unicode-DFS"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 PYTHON_COMPAT=( python{2_7,3_4,3_5,3_6,3_7} )
 USE_RUBY="ruby24 ruby25 ruby26"
