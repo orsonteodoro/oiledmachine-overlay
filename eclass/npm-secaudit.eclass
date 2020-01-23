@@ -181,7 +181,7 @@ npm-secaudit_src_compile_default() {
 # This function MUST be called in post_inst.
 npm-secaudit-register() {
 	while true ; do
-		if mkdir "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db" ; then
+		if mkdir "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db" 2>/dev/null ; then
 			trap "rm -rf \"${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db\"" EXIT
 			local rel_path=${1:-""}
 			local check_path="/usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_path}"
