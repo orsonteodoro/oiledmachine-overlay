@@ -40,6 +40,7 @@ ELECTRON_APP_MAXSOCKETS=${ELECTRON_APP_MAXSOCKETS:="1"} # Set this in your make.
 ELECTRON_APP_ALLOW_AUDIT=${ELECTRON_APP_ALLOW_AUDIT:="1"}
 ELECTRON_APP_ALLOW_AUDIT_FIX=${ELECTRON_APP_ALLOW_AUDIT_FIX:="1"}
 ELECTRON_APP_NO_DIE_ON_AUDIT=${ELECTRON_APP_NO_DIE_ON_AUDIT:="0"}
+ELECTRON_APP_LOCKS_DIR="/dev/shm"
 
 # @FUNCTION: _electron-app-flakey-check
 # @DESCRIPTION:
@@ -142,6 +143,10 @@ download micropackages."
 			die "Unsupported package system"
 			;;
 	esac
+
+	if [[ ! -d "/dev/shm" ]] ; then
+		die "Missing /dev/shm.  Check the kernel config?"
+	fi
 }
 
 # @FUNCTION: electron-app_fetch_deps_npm
@@ -428,10 +433,10 @@ electron-app_desktop_install() {
 	esac
 
 	# Create wrapper
-	mkdir -p "${D}/usr/bin"
-	echo "#!/bin/bash" > "${D}/usr/bin/${PN}"
-	echo "${cmd}" >> "${D}/usr/bin/${PN}"
-	chmod +x "${D}"/usr/bin/${PN}
+	exeinto "/usr/bin"
+	echo "#!/bin/bash" > "${T}/${PN}"
+	echo "${cmd}" >> "${T}/${PN}"
+	doexe "${T}/${PN}"
 
 	newicon "${rel_icon_path}" "${PN}.png"
 	make_desktop_entry ${PN} "${pkg_name}" ${PN} "${category}"
@@ -442,9 +447,8 @@ electron-app_desktop_install() {
 # Adds the package to the electron database
 # This function MUST be called in pkg_postinst.
 electron-app-register-x() {
-	local d="${NPM_STORE_DIR}"
 	while true ; do
-		if mkdir "${d}/mutex-editing-pkg_db" ; then
+		if mkdir "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db" ; then
 			local pkg_db="${1}"
 			local rel_path=${2:-""}
 			local check_path="/usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_path}"
@@ -460,10 +464,10 @@ electron-app-register-x() {
 
 			# remove blank lines
 			sed -i '/^$/d' "${pkg_db}"
-			rm -rf "${d}/mutex-editing-pkg_db"
+			rm -rf "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
 			break
 		else
-			einfo "Waiting for mutex to be released for electron-app's pkg_db.  If it takes too long (15 min), cancel all emerges and remove ${d}/mutex-editing-pkg_db"
+			einfo "Waiting for mutex to be released for electron-app's pkg_db.  If it takes too long (15 min), cancel all emerges and remove ${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
 			sleep 15
 		fi
 	done
@@ -516,29 +520,27 @@ electron-app_pkg_postrm() {
 
 	case "${ELECTRON_APP_MODE}" in
 		npm)
-			local d="${NPM_STORE_DIR}"
 			while true ; do
-				if mkdir "${d}/mutex-editing-pkg_db" ; then
+				if mkdir "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db" ; then
 					sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
 					sed -i '/^$/d' "${NPM_PACKAGE_DB}"
-					rm -rf "${d}/mutex-editing-pkg_db"
+					rm -rf "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
 					break
 				else
-					einfo "Waiting for mutex to be released for electron-app's pkg_db for npm.  If it takes too long (15 min), cancel all emerges and remove ${d}/mutex-editing-pkg_db"
+					einfo "Waiting for mutex to be released for electron-app's pkg_db for npm.  If it takes too long (15 min), cancel all emerges and remove ${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
 					sleep 15
 				fi
 			done
 			;;
 		yarn)
-			local d="${YARN_PACKAGE_DB}"
 			while true ; do
-				if mkdir "${d}/mutex-editing-pkg_db" ; then
+				if mkdir "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db" ; then
 					sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${YARN_PACKAGE_DB}"
 					sed -i '/^$/d' "${YARN_PACKAGE_DB}"
-					rm -rf "${d}/mutex-editing-pkg_db"
+					rm -rf "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
 					break
 				else
-					einfo "Waiting for mutex to be released for electron-app's pkg_db for yarn.  If it takes too long (15 min), cancel all emerges and remove ${d}/mutex-editing-pkg_db"
+					einfo "Waiting for mutex to be released for electron-app's pkg_db for yarn.  If it takes too long (15 min), cancel all emerges and remove ${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
 					sleep 15
 				fi
 			done

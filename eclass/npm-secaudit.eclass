@@ -41,6 +41,7 @@ NPM_MAXSOCKETS=${NPM_MAXSOCKETS:="1"} # Set this in your make.conf to control nu
 NPM_SECAUDIT_ALLOW_AUDIT=${NPM_SECAUDIT_ALLOW_AUDIT:="1"}
 NPM_SECAUDIT_ALLOW_AUDIT_FIX=${NPM_SECAUDIT_ALLOW_AUDIT_FIX:="1"}
 NPM_SECAUDIT_NO_DIE_ON_AUDIT=${NPM_SECAUDIT_NO_DIE_ON_AUDIT:="0"}
+NPM_SECAUDIT_LOCKS_DIR="/dev/shm"
 
 # @FUNCTION: npm_pkg_setup
 # @DESCRIPTION:
@@ -59,6 +60,10 @@ download micropackages."
 	mkdir -p "${NPM_STORE_DIR}/offline"
 
 	addwrite "${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+
+	if [[ ! -d "/dev/shm" ]] ; then
+		die "Missing /dev/shm.  Check the kernel config?"
+	fi
 }
 
 # @FUNCTION: npm-secaudit_fetch_deps
@@ -174,9 +179,8 @@ npm-secaudit_src_compile_default() {
 # Adds the package to the electron database
 # This function MUST be called in post_inst.
 npm-secaudit-register() {
-	local d="${NPM_STORE_DIR}"
 	while true ; do
-		if mkdir "${d}/mutex-editing-pkg_db" ; then
+		if mkdir "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db" ; then
 			local rel_path=${1:-""}
 			local check_path="/usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_path}"
 			# format:
@@ -191,10 +195,10 @@ npm-secaudit-register() {
 
 			# remove blank lines
 			sed -i '/^$/d' "${NPM_PACKAGE_DB}"
-			rm -rf "${d}/mutex-editing-pkg_db"
+			rm -rf "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
 			break
 		else
-			einfo "Waiting for mutex to be released for npm-secaudit's pkg_db.  If it takes too long (15 min), cancel all emerges and remove ${d}/mutex-editing-pkg_db"
+			einfo "Waiting for mutex to be released for npm-secaudit's pkg_db.  If it takes too long (15 min), cancel all emerges and remove ${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
 			sleep 15
 		fi
 	done
