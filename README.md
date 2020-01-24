@@ -56,7 +56,7 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | app-emacs/auto-complete | For omnisharp-emacs. |
 | app-emacs/company-mode | This is for code completion for Emacs. |
 | app-emacs/dash | For emacs-ycmd, flycheck, omnisharp-emacs, omnisharp-emacs-roslyn |
-| app-emacs/deferred | |
+| app-emacs/deferred | TBA |
 | app-emacs/eldoc | TBA |
 | app-emacs/emacs-ycmd | TBA |
 | app-emacs/flycheck | This is a syntax checker for Emacs. |
@@ -196,7 +196,7 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | media-libs/libcaca | This library contains an experimental special 256 color patch from Ben Wiley Sittler.  I don't know if the patch actually works from emperical tests.  Maybe it is just me or I forward patched it wrong.  I use the experimental 256 color for facy to render Facebook photos, animated GIFs, and Facebook videos to try to better render skin color.  I still think Termpic colors rendering is better. |
 | media-libs/libcaesium | For caesium image compression. |
 | media-libs/libfishsound | For multilib tizonia. |
-| media-libs/embree | For amd-radeon-prorender plugin. |
+| media-libs/embree | For amd-radeon-prorender-blender plugin. |
 | media-libs/libmp4v2 | For multilib tizonia |
 | media-libs/liboggz | For multilib tizonia |
 | media-libs/libomxil-bellagio | This package is one of the backends required for `mesa[openmax]` support.
@@ -275,4 +275,3 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | x11-misc/emoji-keyboard | This is an emoji keyboard for Linux. |
 | x11-wm/dwm | This ebuild fixes the emoji titlebar crash and has integrated Fibonacci layout patch applied. |
 | x11-wm/xpra | This is an alternative VNC like client.  It's kept around for Firejail.
-
