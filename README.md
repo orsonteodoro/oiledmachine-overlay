@@ -119,7 +119,7 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-dotnet/taoframework | TBA |
 | dev-dotnet/tesseract | This is a C# binding to the Tesseract OCR (Optical Character Recognition) software which will allow your program to read material produced by typewriters and from books. |
 | dev-dotnet/tiledsharp | This library is a map loader in C# for the Tiled Map Editor. |
-| dev-dotnet/xwt |
+| dev-dotnet/xwt | TBA |
 | dev-embedded/avr-studio | This ebuild that helps install avr-studio using wine which is unsupported.  You need to run /usr/share/avr-studio/install.sh because it uses winetricks.  The sources of winetricks I don't really trust so you can only use the script on a limited user.  Only the 4.19 is offered since it can only do unattended install and it is rated gold on winedb.  To get the pretty icon use the `ico` USE flag.  I didn't really test it fully but the GCC plugin needs to be configured to use the GCC.  I am considering creating a new overlay just for wine apps recipies. |
 | dev-embedded/diligent-adept2-runtime | This ebuild helps install it on Gentoo systems.  The original installer did not recognize the 4.x kernels and did not install udev rules in the recommended place in /lib/udev/rules.d.  The Gentoo Wiki doesn't have an explicit proper fix for 4.x kernels if you don't think. |
 | dev-embedded/diligent-plugin-xilinx | This ebuild helps install it on Gentoo systems.  It requires dev-embedded/xilinx-ise-webpack and dev-embedded/diligent-adept2-runtime.  The ebuilds will automatically check for dependencies. |
