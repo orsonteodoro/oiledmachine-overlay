@@ -144,13 +144,11 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-libs/libdnet | TBA |
 | dev-libs/libev | TBA |
 | dev-libs/libfreenect | TBA |
-| dev-libs/libmpq | TBA |
 | dev-libs/libspotify | TBA |
 | dev-libs/log4c | TBA |
 | dev-libs/nxjson | TBA |
 | dev-libs/pugixml | TBA |
 | dev-libs/rapidjson | TBA |
-| dev-libs/re2 | TBA |
 | dev-libs/recastnavigation | TBA |
 | dev-libs/rocr-runtime | TBA |
 | dev-libs/roct-thunk-interface | TBA |
