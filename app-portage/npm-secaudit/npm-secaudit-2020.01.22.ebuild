@@ -18,3 +18,10 @@ src_install() {
 	cat "${FILESDIR}/${PN}-v${PV}" > "${T}/${PN}"
 	doexe "${T}/${PN}"
 }
+
+pkg_postinst() {
+	elog \
+"If emerge complains about a missing npm package and @npm-security-update\n\
+emerge set, you can edit and remove the problematic package from\n\
+/etc/portage/sets/npm-security-update."
+}
