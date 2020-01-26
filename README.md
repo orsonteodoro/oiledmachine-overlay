@@ -38,6 +38,8 @@ The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overla
 
 Currently many of the npm ebuilds are undergoing development.  There are currently a lot of vulnerabilties that need to be triaged due to an eclass update that exposed many of them.  I am considering deleting npm packages due to the large amount of time consumed and plenty of vulnerabilities.
 
+If it complains about "emerge: there are no ebuilds to satisfy" and refers to @npm-security-update.  You can remove the deleted package by editing /etc/portage/sets/npm-security-update.
+
 ### .NET stack
 
 The dotnet packages are mostly outdated and being updated.  Many will maybe be deleted due to the lack of programs that use them.  The top priority right now (in 2019 quarters 1-3) is to fix the dotcore-sdk non binary packages first then monodevelop.
