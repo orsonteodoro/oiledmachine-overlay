@@ -82,7 +82,7 @@ EGIT_COMMIT="monodevelop-${PV}" # the head of this tag
 EGIT_REPO_URI="https://github.com/mono/monodevelop.git"
 EGIT_SUBMODULES=( '*' ) # TODO: Replace certain submodules with system packages.
 # The himestamp is incremented by 1 min to make sure we don't exclude commit.
-LAST_COMMIT_TIMESTAMP="Sun 05 Oct 2018 09:11:00 AM PDT"
+LAST_COMMIT_TIMESTAMP="Fri 05 Oct 2018 09:11:00 AM PDT"
 # For deterministic build, we force using specific working commits instead of head.
 EGIT_OVERRIDE_COMMIT_DATE_MONO_MONODEVELOP="${LAST_COMMIT_TIMESTAMP}"
 EGIT_OVERRIDE_COMMIT_DATE_MONO_DEBUGGER_LIBS="${LAST_COMMIT_TIMESTAMP}"
