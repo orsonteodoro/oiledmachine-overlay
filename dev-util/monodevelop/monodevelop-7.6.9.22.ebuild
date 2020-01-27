@@ -52,7 +52,7 @@ COMMON_DEPEND="
 	net-libs/libssh2
 	|| ( dev-dotnet/cli-tools
 		dev-dotnet/dotnetcore-sdk-bin )"
-PV_MONODEV="${PV//9999./}"
+PV_MONODEV="${PV}"
 RDEPEND="${COMMON_DEPEND}
 	app-text/xmlstarlet
 	app-arch/unzip
