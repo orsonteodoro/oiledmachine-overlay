@@ -80,8 +80,8 @@ MAKEOPTS="${MAKEOPTS} -j1"
 S="${WORKDIR}/${PN}-${PV}"
 EGIT_COMMIT="monodevelop-${PV}" # the head of this tag
 EGIT_REPO_URI="https://github.com/mono/monodevelop.git"
-EGIT_SUBMODULES=( '*' ) # todo: replace certain submodules with system packages
-# incremented by 1 min to make sure we don't exclude commit
+EGIT_SUBMODULES=( '*' ) # TODO: Replace certain submodules with system packages.
+# The himestamp is incremented by 1 min to make sure we don't exclude commit.
 LAST_COMMIT_TIMESTAMP="Sun 28 Oct 2018 09:11:00 AM PDT"
 # For deterministic build, we force using specific working commits instead of head.
 EGIT_OVERRIDE_COMMIT_DATE_MONO_MONODEVELOP="${LAST_COMMIT_TIMESTAMP}"
@@ -110,7 +110,7 @@ _git_checkout_submodule() {
 }
 
 pkg_pretend() {
-	# the sandbox won't allow us to download (or restore dependencies aka
+	# The sandbox won't allow us to download (or restore dependencies aka
 	# fetch from nuget) beyond src_unpack.
 	if has network-sandbox $FEATURES ; then
 		die "${PN} require network-sandbox to be disabled in FEATURES."
@@ -143,8 +143,7 @@ src_unpack() {
 	git-r3_fetch
 	git-r3_checkout
 	nuget restore "${S}"
-
-	# LibGit2Sharp is now portage dependency
+	# LibGit2Sharp is now a system dependency.
 	rm -rf "${S}/main/external/libgit2" || die
 	rm -rf "${S}/main/external/libgit2sharp" || die
 }
@@ -155,17 +154,17 @@ src_prepare() {
 	sed -i '/<Exec.*rev-parse/ d' \
 		"${S}/main/src/core/MonoDevelop.Core/MonoDevelop.Core.csproj" \
 		|| die
-	# Set specific_version to prevent binding problem
-	# when gtk#-3 is installed alongside gtk#-2
+	# Set specific_version to prevent binding problem when gtk# 3 is
+	# installed alongside gtk# 2.
 	find "${S}" -name '*.csproj' -exec \
 		sed -i 's#\
 <SpecificVersion>.*</SpecificVersion>#\
 <SpecificVersion>True</SpecificVersion>#' {} + || die
 
-	# bundled nuget is missing => use system nuget.
+	# Bundled nuget is missing instead use the system NuGet.
 	sed -i 's|mono .nuget/NuGet.exe|nuget|g' ./main/Makefile* || die
 
-	# fix for https://github.com/gentoo/dotnet/issues/42
+	# A fix for https://github.com/gentoo/dotnet/issues/42
 	eapply \
 	"${FILESDIR}/monodevelop-7.6.9.22-aspnet-template-references-fix.patch"
 	use qtcurve && eapply \
@@ -176,7 +175,7 @@ src_prepare() {
 	sed -i "s|all: update_submodules all-recursive|all: all-recursive|g" \
 		Makefile || die
 
-	# use the system cecil
+	# Using the system Cecil.
 	L=$(find . -name "*.csproj" -print0 \
 		| grep -r -e "Mono.Cecil.csproj" \
 		| grep ProjectReference \
@@ -199,7 +198,7 @@ src_prepare() {
 			${f}.1 > ${f} || die
 	done
 
-	# use the system LibGit2Sharp
+	# Using the system LibGit2Sharp.
 	L=$(find . -name "*.csproj" -print0 \
 		| grep -r -e "LibGit2Sharp.csproj" \
 		| grep ProjectReference \
@@ -221,10 +220,12 @@ src_prepare() {
 			${f}.1 > ${f} || die
 	done
 
-	# don't build libgit2
-	local f=\
-"main/src/addins/VersionControl/MonoDevelop.VersionControl.Git/MonoDevelop.VersionControl.Git.csproj"
-	sed -i 's|xmlns="http://schemas.microsoft.com/developer/msbuild/2003"||g' ${f} || die
+	# Don't build libgit2.
+	local bd="main/src/addins/VersionControl/MonoDevelop.VersionControl.Git"
+	local f="${bd}/MonoDevelop.VersionControl.Git.csproj"
+	sed -i \
+	's|xmlns="http://schemas.microsoft.com/developer/msbuild/2003"||g' \
+		${f} || die
 	xml ed -d "//Target[contains(@Name,'BeforeBuild')]" ${f} > ${f}.1
 	xml ed -i "/Project" -t attr -n "xmlns" \
 		-v "http://schemas.microsoft.com/developer/msbuild/2003" \
@@ -259,7 +260,6 @@ src_prepare() {
 disable_sln_project() {
 	local project_name="$1"
 	local sln_path="$2"
-
 	local uuid=$(grep -r \
 		-e "\"FSharpBinding\", \"FSharpBinding\"" "${sln_path}" \
 		| head -n 1 \
@@ -285,7 +285,7 @@ src_configure() {
         MCS=/usr/bin/dmcs CSC=/usr/bin/dmcs GMCS=/usr/bin/dmcs \
 		./configure --prefix=/usr --profile=stable
 	cd main
-	# env vars are added as the fix for
+	# Environmental vars are added as the fix for
 	# https://github.com/gentoo/dotnet/issues/29
 	MCS=/usr/bin/dmcs CSC=/usr/bin/dmcs GMCS=/usr/bin/dmcs econf \
 		--disable-update-mimedb \
@@ -296,7 +296,7 @@ src_configure() {
 		$(use_enable git)
 
 	# Main.sln file is created on the fly during the previous econf call
-	# that is why file is patched in src_configure instead of src_prepare
+	# that is why file is patched in src_configure instead of src_prepare.
 
 	sed -i '/TextStylePolicy/d' "${S}/main/Main.sln" || die
 	sed -i '/XmlFormattingPolicy/d' "${S}/main/Main.sln" || die
