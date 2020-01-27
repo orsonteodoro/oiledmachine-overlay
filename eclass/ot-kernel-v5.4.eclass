@@ -84,8 +84,7 @@ REQUIRED_USE+=" !bfq !bmq-quick-fix"
 K_SECURITY_UNSUPPORTED="1"
 K_DEBLOB_AVAILABLE="0"
 
-PYTHON_COMPAT=( python2_7 )
-inherit python-any-r1 kernel-2 toolchain-funcs
+inherit kernel-2 toolchain-funcs
 detect_version
 detect_arch
 
@@ -234,12 +233,55 @@ function ot-kernel-asdn_rm() {
 	asdn_rm_list ${l[@]}
 }
 
+function _asdn_tpatch() {
+	#patch ${1} -i ${2} 2>&1 > /dev/null || true
+	patch ${1} -i ${2} || true
+	if [[ "${1}" =~ "-R" ]] ; then
+		echo -e "\e[43m\e[30m  Reverted \e[0m ${c}"
+	elif [[ "${2}" =~ "${FILESDIR}" ]] ; then
+		echo -e "\e[44m\e[30m  Resolved \e[0m ${c}"
+	else
+		echo -e "\e[43m\e[30m  Triaging \e[0m ${c}"
+	fi
+}
+
+function _asdn_dpatch() {
+	patch ${1} -i ${2} 2>&1 > /dev/null || die
+	if [[ "${1}" =~ "-R" ]] ; then
+		echo -e "\e[43m\e[30m  Reverted \e[0m ${c}"
+	elif [[ "${2}" =~ "${FILESDIR}" ]] ; then
+		echo -e "\e[44m\e[30m  Resolved \e[0m ${c}"
+	else
+		echo -e "\e[42m\e[30m  Applied  \e[0m ${c}"
+	fi
+}
+
+function get_patch_path() {
+      if [[ "${virtual_filename}" =~ asdn ]] ; then
+        if amd_staging_drm_next_is_cache_usable ; then
+          patch_path="${ASDN_LOCAL_CACHE}/${c}.patch"
+        else
+          patch_path="${ASDN_T_CACHE}.bak/${c}.patch"
+        fi
+      else
+        if rock_is_cache_usable ; then
+          patch_path="${ROCK_LOCAL_CACHE}/${c}.patch"
+        else
+          patch_path="${ROCK_T_CACHE}.bak/${c}.patch"
+        fi
+      fi
+}
+
 # merge conflict resolver
 function ot-kernel-common_amdgpu_merge_and_apply_patches_asdn() {
   if use amd-staging-drm-next && ! use rock ; then
     cd "${S}"
-    L=$(ls -1 "${mpd}" | sort)
-    for l in $L ; do
+    L=$(cat "${BPS}/ot-sources/aliases/merged_filenames")
+    for virtual_filename in $L ; do
+      local c=$(echo "${virtual_filename}" | cut -f 4 -d "-")
+      local patch_path=""
+      get_patch_path
+
       #
       # Each section is marked easy or hard to indicate difficulty of conflict
       # resolution which connnects to confidence/reliability/quality of the fix.
@@ -249,40 +291,70 @@ function ot-kernel-common_amdgpu_merge_and_apply_patches_asdn() {
       # hard = not so straightforward, unofficial custom code to fix, higher
       #   chance of runtime/compile-time failure
       #
-      echo $(patch --dry-run ${PATCH_OPS} -i "${mpd}/${l}") | grep -F -e "FAILED at"
-      if [[ "$?" == "1" ]] ; then
+      local is_failed_at=0
+      local is_file_to_patch=0
+      local is_malformed=0
+      local is_previously_applied=0
+      local is_error_free=0
+      local is_succeeded_at=0
+      local is_file_missing=0
+      local is_garbage=0
+
+      local log=$(patch --dry-run ${PATCH_OPS} -i "${patch_path}" 2>&1)
+      is_error_free="$?"
+      echo -e "${log}" | grep -q -s -F -e "succeeded at" && is_succeeded_at=1
+      echo -e "${log}" | grep -q -s -F -e "FAILED at" && is_failed_at=1
+      echo -e "${log}" | grep -q -s -F -e "can't find file" && is_file_missing=1
+      echo -e "${log}" | grep -q -s -F -e "File to patch:" && is_file_to_patch=1
+      echo -e "${log}" | grep -q -s -F -e "malformed" && is_malformed=1
+      echo -e "${log}" | grep -q -s -F -e "Reversed (or previously applied)" && is_previously_applied=1
+      echo -e "${log}" | grep -q -s -F -e "Only garbage was found in the patch input." && is_garbage=1
+
+      if [[ "${is_malformed}" == "1" ]] ; then
+        die "Fix me: malformed bad patch for ${l}"
+      fi
+
+      if [[ "${is_error_free}" == "0" \
+        && "${is_failed_at}" != "1" \
+        && "${is_previously_applied}" != "1" ]] ; then
+        #trivial
+        _asdn_dpatch "${PATCH_OPS}" "${patch_path}"
+      elif [[ "${is_previously_applied}" == "1" ]] ; then
+        # Try to avoid duplicate hunk problem
+        echo -e "\e[41m\e[30m  Rejected \e[0m (avoid dupe hunk problem) ${c}"
+      elif [[ "${is_failed_at}" == "0" ]] ; then
         case "${l}" in
           *ab2f7a5c18b5c17cc94aaab7ae2e7d1fa08993d6*)
             # Fails enter in else branch so move up here
             # modifies ab2f commit
-            _dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_dpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/amdgpu-e7f7287bf5f746d29f3607178851246a005dd398-partial-rebase-for-5.3.4-asdn.patch"
             ;;
           *)
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            # Already has been applied or partially patched already or success
+            die "fixme ${l}"
+            #_asdn_dpatch "${PATCH_OPS}" "${patch_path}"
             ;;
         esac
       else
         case "${l}" in
           *c74dbe44eacf00a5ccc229b5cc340a9b7f6851a0*)
             # Revert then apply
-            _dpatch "${PATCH_OPS} -R" \
+            _asdn_dpatch "${PATCH_OPS} -R" \
 "${DISTDIR}/torvalds-linux-kernel-d1836f3813ee0742a2067d5f4d78e811d2b76d9d.patch"
-            _dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _asdn_dpatch "${PATCH_OPS} -N" "${patch_path}"
             ;;
           *cfb7c11bb7a590c7e9c3d241d85388db108ceeb7*)
             # Revert then apply
-            _dpatch "${PATCH_OPS} -R" \
+            _asdn_dpatch "${PATCH_OPS} -R" \
 "${DISTDIR}/torvalds-linux-kernel-4b3e30ed3ec7864e798403a63ff2e96bd0c19ab0.patch"
-            _dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _asdn_dpatch "${PATCH_OPS} -N" "${patch_path}"
             ;;
           *22a8f442866bf539c7a659923155d9afa03d77bb*)
             # Backport.
             # Final state doesn't exist in 5.3 but does in 5.4 ; easy
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/amdgpu-22a8f442866bf539c7a659923155d9afa03d77bb-rebase-for-5.3.4-asdn.patch"
             ;;
           *fcd90fee8ac22da3bce1c6652cf36bc24e7a0749*)
@@ -293,14 +365,14 @@ function ot-kernel-common_amdgpu_merge_and_apply_patches_asdn() {
             #   is DC_VER 3.2.42
             # Final state doesn't exist in 5.3 but does in 5.4
             # f0ced3f already applied in v5.3 kernel so breaks
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/amdgpu-fcd90fee8ac22da3bce1c6652cf36bc24e7a0749-rebase-for-5.3.4-asdn.patch"
             ;;
           *98eb03bbf0175f009a74c80ac12b91a9680292f4*)
             # Backport.  Final state doesn't exist in 5.3 but does in 5.4 ; easy
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/amdgpu-98eb03bbf0175f009a74c80ac12b91a9680292f4-rebase-for-5.3.4-asdn.patch"
             ;;
 
@@ -308,12 +380,12 @@ function ot-kernel-common_amdgpu_merge_and_apply_patches_asdn() {
           *1c70d3d9c4a6d4e4b4425d78e0a919cfaa3cf8db*)
             # Easy
             # Revert part of dependency then merge
-            _dpatch "${PATCH_OPS} -R" \
+            _asdn_dpatch "${PATCH_OPS} -R" \
 "${DISTDIR}/torvalds-linux-kernel-ec3e5c0f0c2b716e768c0eee0fec30d572939ef5.patch"
-            _dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _asdn_dpatch "${PATCH_OPS} -N" "${patch_path}"
             ;;
           *)
-            die "Patch failure ${mpd}/${l} .  Did not find the intervention patch."
+            die "Patch failure ${patch_path} .  Did not find the intervention patch."
             ;;
         esac
       fi
@@ -468,12 +540,25 @@ function ot-kernel-rock_rm() {
 	rock_rm_list ${l[@]}
 }
 
+function ot-kernel-common_amdgpu_is_previously_applied_exclusion_rock() {
+	if [[ "${c}" =~ 4766d6eb3c11d7dffc9e8e34350c5658267b0281 \
+		|| "${c}" =~ 70809c182094de161cc1e6f7a4d59d8dc9575dc7 ]] ; then
+		echo -e  "\e[43m\e[30m Excluded \e[0m ${c}"
+		return 1
+	fi
+	return 0
+}
+
 # merge conflict resolver
 function ot-kernel-common_amdgpu_merge_and_apply_patches_rock() {
   if use amd-staging-drm-next && use rock ; then
     cd "${S}"
-    L=$(ls -1 "${mpd}" | sort)
-    for l in $L ; do
+    L=$(cat "${BPS}/ot-sources/aliases/merged_filenames")
+    for virtual_filename in $L ; do
+      local c=$(echo "${virtual_filename}" | cut -f 4 -d "-")
+      local patch_path=""
+      get_patch_path
+
       #
       # Each section is marked easy or hard to indicate difficulty of conflict
       # resolution which connnects to confidence/reliability/quality of the fix
@@ -489,115 +574,146 @@ function ot-kernel-common_amdgpu_merge_and_apply_patches_rock() {
         sed -i -e "s|\
 drivers/gpu/drm/amd/amdgpu/amdgpu_prime.c|\
 drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
-		"${mpd}/${l}" || die
+		"${patch_path}" || die
       fi
 
-      echo $(patch --dry-run ${PATCH_OPS} -i "${mpd}/${l}") | grep -F -e "FAILED at"
-      if [[ "$?" == "1" ]] ; then
+      local is_failed_at=0
+      local is_file_to_patch=0
+      local is_malformed=0
+      local is_previously_applied=0
+      local is_error_free=0
+      local is_succeeded_at=0
+      local is_file_missing=0
+      local is_garbage=0
+
+      local log=$(patch --dry-run ${PATCH_OPS} -i "${patch_path}" 2>&1)
+      is_error_free="$?"
+      echo -e "${log}" | grep -q -s -F -e "succeeded at" && is_succeeded_at=1
+      echo -e "${log}" | grep -q -s -F -e "FAILED at" && is_failed_at=1
+      echo -e "${log}" | grep -q -s -F -e "can't find file" && is_file_missing=1
+      echo -e "${log}" | grep -q -s -F -e "File to patch:" && is_file_to_patch=1
+      echo -e "${log}" | grep -q -s -F -e "malformed" && is_malformed=1
+      echo -e "${log}" | grep -q -s -F -e "Reversed (or previously applied)" && is_previously_applied=1
+      echo -e "${log}" | grep -q -s -F -e "Only garbage was found in the patch input." && is_garbage=1
+
+      if [[ "${is_malformed}" == "1" ]] ; then
+        die "Fix me: malformed bad patch for ${l}"
+      fi
+
+      if [[ "${is_error_free}" == "0" \
+        && "${is_failed_at}" != "1" \
+        && "${is_previously_applied}" != "1" ]] ; then
+        #trivial
+        _asdn_dpatch "${PATCH_OPS}" "${patch_path}"
+      elif [[ "${is_previously_applied}" == "1" ]] \
+	&& ot-kernel-common_amdgpu_is_previously_applied_exclusion_rock ; then
+        # Try to avoid duplicate hunk problem
+        echo -e "\e[41m\e[30m  Rejected \e[0m (avoid dupe hunk problem) ${c}"
+      elif [[ "${is_failed_at}" == "0" ]] ; then
         case "${l}" in
           *d732ef0efc3beed8b8c30433aa11d5b6895cb457*rock*)
             # drm/amdkcl: add dkms support ; remove?
             # ROCk addition
             # Revert then apply.  On ROCK-Kernel-Driver and on
             #   amd-staging-drm-next, repo 04ed8 still exists but not applied.
-            _dpatch "${PATCH_OPS} -R" \
+            _asdn_dpatch "${PATCH_OPS} -R" \
 "${DISTDIR}/torvalds-linux-kernel-04ed8459f3348f95c119569338e39294a8e02349.patch"
             ;;
           *ab2f7a5c18b5c17cc94aaab7ae2e7d1fa08993d6*asdn*)
             # fails enter in else branch so move up here
             # modifies to ab2f commit
             # easy
-            _dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_dpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/amdgpu-e7f7287bf5f746d29f3607178851246a005dd398-partial-rebase-for-5.3.4-asdn.patch"
             ;;
           *)
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            # already has been applied or partially patched already or success
+            die "fixme ${l}"
+            #_asdn_dpatch "${PATCH_OPS}" "${patch_path}"
             ;;
         esac
       else
         case "${l}" in
           *876923fb92a9e298625067284977917d4741ee2e*asdn*)
-            die "fixme ${mpd}/${l}"
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            die "fixme ${patch_path}"
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
             ;;
           *0b4822828a8d5e99074718a3368d96743dd9fad2*rock*)
             if ver_test ${PV} -ge 5.3.6 ; then
-              _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-              _dpatch "${PATCH_OPS}" \
+              _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+              _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/rock-0b4822828a8d5e99074718a3368d96743dd9fad2-rebase-for-5.3.6.patch"
             else
-              _dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+              _asdn_dpatch "${PATCH_OPS} -N" "${patch_path}"
             fi
             ;;
           *3f1e5c3eeec3a5aff5ddbd46ff07fe580e4bee58*rock*)
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/rock-3f1e5c3eeec3a5aff5ddbd46ff07fe580e4bee58-rebase-for-5.3.4.patch"
             ;;
           *b2ea22af7f5793d351ea65ff2fd2f3d7ba6ec1b6*rock*)
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/rock-b2ea22af7f5793d351ea65ff2fd2f3d7ba6ec1b6-rebase-for-5.3.4.patch"
             ;;
           *95c59fee52c9aee3f99a5a39a3ba8f0fa10c263e*rock*)
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/rock-95c59fee52c9aee3f99a5a39a3ba8f0fa10c263e-rebase-for-5.3.4.patch"
             ;;
           *bb02f27489fe4469cf3460549dd0bf45e1cc1746*rock*)
             # remove kcl header macro reference
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/rock-bb02f27489fe4469cf3460549dd0bf45e1cc1746-skip-drm-ver-check-for-5.3.4.patch"
             # apply patch without kcl macro check
-            _dpatch "${PATCH_OPS}" \
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/rock-bb02f27489fe4469cf3460549dd0bf45e1cc1746-rebase-for-5.3.4.patch"
             ;;
           *fc39d903eb805588cba3696748728627aedfd1bd*asdn*)
             # Easy
             # ignore missing search hunk... it's just refactoring patch
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
            ;;
           *4e3f4a15707d534ce1dd5b23b008469474b80010*asdn*)
             # Easy
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/amdgpu-4e3f4a15707d534ce1dd5b23b008469474b80010-rebase-for-5.3.4-rasdn-no_dgma.patch"
             ;;
           *60b6a348ac071a6eaa5cc412d15580672fcd2c80*asdn*)
             # Easy-Medium
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/amdgpu-60b6a348ac071a6eaa5cc412d15580672fcd2c80-rebase-for-5.3.4-rasdn-no_dgma.patch"
             ;;
           *e4a525b586f6321aef0691db7365c0c08cd5dec8*asdn*)
             # Ignore %d to %x%x conversion output.  it may break those that parse the info.
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
             ;;
           *1c70d3d9c4a6d4e4b4425d78e0a919cfaa3cf8db*asdn*)
             # Easy
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/amdgpu-1c70d3d9c4a6d4e4b4425d78e0a919cfaa3cf8db-rebase-for-5.3.4-rasdn.patch"
             ;;
           *47930de4aa7068188e64475cdc0f2c8f4e1ff194*asdn*)
             # Easy
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/amdgpu-47930de4aa7068188e64475cdc0f2c8f4e1ff194-rebase-for-5.3.4-rasdn.patch"
             ;;
           *691bac9d093b13abf39f95bd82db0430a152246c*asdn*)
             # Easy
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/amdgpu-691bac9d093b13abf39f95bd82db0430a152246c-rebase-for-5.3.4-rasdn.patch"
             ;;
           *64f55e629237e4752db18df4d6969a69e3f4835a*asdn*)
             # Easy
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/amdgpu-64f55e629237e4752db18df4d6969a69e3f4835a-rebase-for-5.3.4-rasdn.patch"
             ;;
 #          *3e205a0849a760166578b4d95b17e904f23d962e*asdn*)
@@ -608,43 +724,43 @@ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
             #   3f1e5c3eeec3a5aff5ddbd46ff07fe580e4bee58 (rock version) with
             # Same commit subject
             # Easy-Medium
-#            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+#            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
 #            die
-#            _dpatch "${PATCH_OPS}" \
+#            _asdn_dpatch "${PATCH_OPS}" \
 #"${FILESDIR}/amdgpu-3e205a0849a760166578b4d95b17e904f23d962e-rebase-for-5.3.4-rasdn.patch"
 #            ;;
           *f6a44ea23e7dab4d58110cd418c733e165e466ae*rock*)
             # Easy
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/rock-f6a44ea23e7dab4d58110cd418c733e165e466ae-rebase-for-5.3.4.patch"
             ;;
           *c1d7be9699189e1c762c9249b3deaf827e1743f9*rock*)
             # Easy
-            _dpatch "${PATCH_OPS}" \
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/rock-c1d7be9699189e1c762c9249b3deaf827e1743f9-rebase-for-5.3.4.patch"
             ;;
           *8098a2f9c3ba6fba0055aa88d3830bbec585268b*rock*)
             # drm/amdgpu: Add bo mapping through PCIE
             # parts already applied
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
             ;;
           *32add621ba8f6021e3a52cabafe88f660d46a0a4*rock*)
             # Easy
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/rock-32add621ba8f6021e3a52cabafe88f660d46a0a4-rebase-for-5.3.4.patch"
             ;;
           *bcb1219a6b88068584ccc25fe333d10c2422877a*rock*)
             # Easy
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/rock-bcb1219a6b88068584ccc25fe333d10c2422877a-rebase-for-5.3.4.patch"
             ;;
           *f331d74dad4358369a6dfb182ff0a5607a8e7b04*rock*)
             # Medium
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/rock-f331d74dad4358369a6dfb182ff0a5607a8e7b04-rebase-for-5.3.4.patch"
             ;;
           *c4e16b22d0bfa1d9979a219c34931622693b9cb2*rock*)
@@ -654,13 +770,13 @@ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
             # drivers/gpu/drm/amd/amdkfd/kfd_device_queue_manager.c edits not
             #   necessary and obsolete
             # include/uapi/linux/kfd_ioctl.h edits already applied
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
             ;;
           *4766d6eb3c11d7dffc9e8e34350c5658267b0281*rock*)
             # Contains mispatch
             # Medium-Hard
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/rock-4766d6eb3c11d7dffc9e8e34350c5658267b0281-rebase-for-5.3.4.patch"
             ;;
           *1254b5fe6aaabb58300a5929b6bb290bf1c49f63*rock*)
@@ -668,15 +784,15 @@ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
             # If backporting revisit this commit's
             # include/uapi/linux/kfd_ioctl.h and
             # c4e16b22d0bfa1d9979a219c34931622693b9cb2
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/rock-1254b5fe6aaabb58300a5929b6bb290bf1c49f63-rebase-for-5.3.4.patch"
             ;;
           *c74dbe44eacf00a5ccc229b5cc340a9b7f6851a0*asdn*)
             # Revert then apply
-            _dpatch "${PATCH_OPS} -R" \
+            _asdn_dpatch "${PATCH_OPS} -R" \
 "${DISTDIR}/torvalds-linux-kernel-d1836f3813ee0742a2067d5f4d78e811d2b76d9d.patch"
-            _dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _asdn_dpatch "${PATCH_OPS} -N" "${patch_path}"
             ;;
           *cfb7c11bb7a590c7e9c3d241d85388db108ceeb7*asdn*)
             # Revert then apply
@@ -684,18 +800,18 @@ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
             #   8439cd353b4e1abca8420e71274b018a07fe2e12
             # IOCTLs introduced by ROCk's
             #   1254b5fe6aaabb58300a5929b6bb290bf1c49f63 cause this split.
-            _tpatch "${PATCH_OPS} -R" \
+            _asdn_tpatch "${PATCH_OPS} -R" \
 "${DISTDIR}/torvalds-linux-kernel-4b3e30ed3ec7864e798403a63ff2e96bd0c19ab0.patch"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/torvalds-kernel-4b3e30ed3ec7864e798403a63ff2e96bd0c19ab0-rebase-for-5.3.4-rasdn.patch"
-            _dpatch "${PATCH_OPS} -N" "${mpd}/${l}"
+            _asdn_dpatch "${PATCH_OPS} -N" "${patch_path}"
             ;;
           *22a8f442866bf539c7a659923155d9afa03d77bb*asdn*)
             # Backport
 	    # Easy
             # Final state doesn't exist in 5.3 but does in 5.4
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/amdgpu-22a8f442866bf539c7a659923155d9afa03d77bb-rebase-for-5.3.4-asdn.patch"
             ;;
           *fcd90fee8ac22da3bce1c6652cf36bc24e7a0749*asdn*)
@@ -706,20 +822,20 @@ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
             #   DC_VER 3.2.42
             # Final state doesn't exist in 5.3 but does in 5.4
             # f0ced3f already applied in v5.3 kernel so breaks
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/amdgpu-fcd90fee8ac22da3bce1c6652cf36bc24e7a0749-rebase-for-5.3.4-asdn.patch"
             ;;
           *98eb03bbf0175f009a74c80ac12b91a9680292f4*asdn*)
             # Backport
             # Easy
             # Final state doesn't exist in 5.3 but does in 5.4
-            _tpatch "${PATCH_OPS} -N" "${mpd}/${l}"
-            _dpatch "${PATCH_OPS}" \
+            _asdn_tpatch "${PATCH_OPS} -N" "${patch_path}"
+            _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/amdgpu-98eb03bbf0175f009a74c80ac12b91a9680292f4-rebase-for-5.3.4-asdn.patch"
             ;;
           *)
-            die "Patch failure ${mpd}/${l} .  Did not find the intervention patch."
+            die "Patch failure ${patch_path} .  Did not find the intervention patch."
             ;;
         esac
       fi
@@ -735,18 +851,24 @@ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
 # @DESCRIPTION:
 # Apply amd-staging-drm-next and ROCk commits at the same time.
 function ot-kernel-common_amdgpu_merge_and_apply_patches() {
-	local mpd="${AMDGPU_MERGED_CACHE}"
-	mkdir -p "${mpd}"
 	if use amd-staging-drm-next ; then
 		generate_amd_staging_drm_next_patches
-		einfo "Merging amd-staging-drm-next patches into ${mpd}"
-		mv "${ASDN_T_CACHE}"/*asdn* "${mpd}"
+		einfo "Merging amd-staging-drm-next patches"
+		cat "${BPS}/ot-sources/aliases/asdn_filenames" \
+			> "${BPS}/ot-sources/aliases/merged_filenames" || die
 	fi
 	if use rock ; then
 		generate_rock_patches
-		einfo "Merging ROCk patches into ${mpd}"
-		mv "${ROCK_T_CACHE}"/*rock* "${mpd}"
+		einfo "Merging ROCk patches"
+		cat "${BPS}/ot-sources/aliases/rock_filenames" \
+			> "${BPS}/ot-sources/aliases/merged_filenames" || die
 	fi
+
+	cat "${BPS}/ot-sources/aliases/merged_filenames" | sort | uniq \
+		> "${BPS}/ot-sources/aliases/merged_filenames.t" || die
+	mv "${BPS}/ot-sources/aliases/merged_filenames.t" \
+		"${BPS}/ot-sources/aliases/merged_filenames" || die
+
 	# The remaining .patch files are future commits not contained in the
 	# current commit_list
 

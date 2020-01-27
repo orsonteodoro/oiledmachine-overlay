@@ -249,8 +249,6 @@ ASDN_T_CACHE="${T}/amd-staging-drm-next-patches"
 ROCK_LOCAL_CACHE="/var/cache/ot-sources/rock"
 ROCK_T_CACHE="${T}/rock-patches"
 
-AMDGPU_MERGED_CACHE="${T}/amdgpu-merged-patches"
-
 if [[ -n "${KERNEL_NO_POINT_RELEASE}" && "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; then
 	KERNEL_PATCH_URLS=()
 elif [[ -n "${KERNEL_0_TO_1_ONLY}" && "${KERNEL_0_TO_1_ONLY}" == "1" ]] ; then
@@ -288,6 +286,9 @@ UNIPATCH_LIST=""
 UNIPATCH_STRICTORDER="yes"
 
 PATCH_OPS="-p1 -F 500"
+N_CPU_CORES="1"
+BPS="/dev/shm"	# preferred background processes storage
+		# for mutex or data exchanges
 
 # @FUNCTION: _dpatch
 # @DESCRIPTION:
@@ -786,17 +787,64 @@ sources."
 		| tac > "${T}/${LINUX_COMMITS_AMDGPU_RANGE_FN}"
 
 	einfo "Generating hash tables for vanilla kernel"
-	while read -r c ; do
+	store_single_vk_hash_table_entry() {
+		local n="${1}"
+		local c="${2}"
 		local h
 		if [[ -n "${c}" && "${c}" != " " ]] ; then
-			vk_commits[${c}]=1
-
+			# multicore this especially the sha1sum
 			h=$(git -P show -s --format="%s" ${c} | sha1sum | cut -f1 -d ' ')
+
+			touch "${BPS}/ot-sources/data/c/${c}"
 			if [[ -n "${h}" && "${h}" != " " ]] ; then
-				vk_summaries[${h}]=1
+				touch "${BPS}/ot-sources/data/h/${h}"
 			fi
 		fi
-	done < "${T}/${LINUX_COMMITS_AMDGPU_RANGE_FN}"
+		rm -rf "${BPS}/ot-sources/locks/sem${n}"
+	}
+
+	rm -rf "${BPS}/ot-sources"/{data,locks} 2>/dev/null
+	mkdir -p "${BPS}/ot-sources/data"/{c,h}
+	mkdir -p "${BPS}/ot-sources/locks"
+	trap cleanup_shared EXIT
+
+	readarray -t C <<< $(cat "${T}/${LINUX_COMMITS_AMDGPU_RANGE_FN}")
+	local N_C="${#C[@]}"
+
+	echo ""
+	local n_processed=0
+	etf_init ${N_C} 42 1
+	while (( ${n_processed} < ${N_C} )) ; do
+		for n in $(seq 0 $((${N_CPU_CORES}-1))) ; do
+			if (( ${n_processed} >= ${N_C} )) ; then
+				break
+			fi
+			if mkdir "${BPS}/ot-sources/locks/sem${n}" 2>/dev/null ; then
+				store_single_vk_hash_table_entry "${n}" "${C[${n_processed}]}" &
+				n_processed=$((${n_processed}+1))
+				progress_bar_ex ${n_processed} ${N_C}
+			fi
+		done
+	done
+
+	local remaining=1
+	while (( ${remaining} > 0 )) ; do
+		remaining=0
+		for n in $(seq 0 ${N_CPU_CORES}) ; do
+			if [[ -d "${BPS}/ot-sources/locks/sem${n}" ]] ; then
+				remaining=$((remaining+1))
+			fi
+		done
+	done
+	echo ""
+
+	for c in $(ls "${BPS}/ot-sources/data/c") ; do
+		vk_commits[${c}]="1"
+	done
+	for h in $(ls "${BPS}/ot-sources/data/h") ; do
+		vk_summaries[${h}]="1"
+	done
+
 	IFS="${OIFS}"
 	pickle_associative_array "vk_commits" \
 		"${T}/${LINUX_HASHTABLE_COMMITS_VK_FN}"
@@ -858,6 +906,9 @@ function apply_amdgpu() {
 	declare -Ax vk_commits
 	declare -Ax vk_summaries
 
+	rm -rf "${BPS}"/ot-sources 2>/dev/null
+	mkdir -p "${BPS}"/ot-sources/aliases
+
 	amdgpu_load_vk_hash_tables
 	fetch_amd_staging_drm_next
 	fetch_rock
@@ -867,6 +918,8 @@ function apply_amdgpu() {
 	then
 		ot-kernel-common_amdgpu_merge_and_apply_patches
 	fi
+
+	rm -rf "${BPS}"/ot-sources
 }
 
 # @FUNCTION: ot-kernel-common_src_unpack
@@ -1034,10 +1087,37 @@ function amdgpu_setup() {
 	einfo "ASDN_LOCAL_CACHE=${ASDN_LOCAL_CACHE}"
 	einfo "ROCK_LOCAL_CACHE=${ROCK_LOCAL_CACHE}"
 
+	export N_CPU_CORES=$(grep -F -e "processor" /proc/cpuinfo | wc -l)
+
+	# we use ${BPS} (virtual memory) for mutex and data exchange when run
+	# as background process
+	local shm_size=$(df --output="avail" /dev/shm | tail -n 1 \
+		| sed -r -e "s/[ ]+//")
+	if [[ ! -d /dev/shm ]] || (( ${shm_size} < 1000000 )) ; then
+		ewarn \
+"Using slower disk (${T}) for interprocess data exchange and locking.  \
+Increase /dev/shm size with at least 1.0G available for orders of magnitude \
+speed up."
+		export BPS="${T}"
+	else
+		einfo \
+"Using faster RAM + disk (/dev/shm) for interprocess data exchange and locking."
+		export BPS="/dev/shm"
+	fi
+
+	local G=$(find "${BPS}/ot-sources" -group "root" 2>/dev/null)
+	if (( ${#G} > 0 )) ; then
+		if [[ "${BPS}" == "/dev/shm" ]] ; then
+			die \
+"You must manually: \`chown -R portage:portage ${BPS}/ot-sources\` or remove ${BPS}/ot-sources.  Re-emerge again."
+		fi
+	fi
+
+	ASDN_T_CACHE="${T}/amd-staging-drm-next-patches"
+	ROCK_T_CACHE="${T}/rock-patches"
+
 	einfo "ASDN_T_CACHE=${ASDN_T_CACHE}"
 	einfo "ROCK_T_CACHE=${ROCK_T_CACHE}"
-
-	einfo "AMDGPU_MERGED_CACHE=${AMDGPU_MERGED_CACHE}"
 }
 
 # @FUNCTION: copy_patachie
@@ -1336,8 +1416,8 @@ function amdgpu_use_vk_hash_tables() {
 function pickle_associative_array() {
 	local name="${1}"
 	local file="${2}"
-	typeset -p ${name} > "${file}"
-	sed -i -r -e "s|^declare -A(x)? ||" "${file}"
+	typeset -p ${name} > "${file}" || die
+	sed -i -r -e "s|^declare -A(x)? ||" "${file}" || die
 }
 
 # @FUNCTION: pickle_string
@@ -1346,6 +1426,178 @@ function pickle_associative_array() {
 function pickle_string() {
 	local name="${1}"
 	local file="${2}"
-	typeset -p ${name} > "${file}"
-	sed -i -r -e "s|^declare -- ||" "${file}"
+	typeset -p ${name} > "${file}" || die
+	sed -i -r -e "s|^declare -- ||" "${file}" || die
 }
+
+G_ETF_START_TIMESTAMP=0 # seconds
+G_ETF_HITS_SOFAR=0
+G_ETF_HITS_PER_SECOND=1 # avoid division by zero
+G_ETF_TOTAL_HITS_EXPECTED=0
+G_ETF_BAR_UPDATE_PERIOD=42 # in hits, this is to distribute timeslices to data
+		       # processing than to waste it on updating the UI
+G_ETF_PRINT_ETF=0
+
+# ETF = expected time to finish
+function etf_update_total_hits_remaining() {
+	G_ETF_TOTAL_HITS_EXPECTED=${1}
+}
+
+function etf_register_hit() {
+	G_ETF_HITS_SOFAR=$((${G_ETF_HITS_SOFAR}+1))
+}
+
+function etf_print() {
+	local elapsed_time=$((${SECONDS}-${G_ETF_START_TIMESTAMP}))
+	if (( ${elapsed_time} == 0 )) ; then
+		elapsed_time=1 # avoid divide by zero
+	fi
+	G_ETF_HITS_PER_SECOND=$(awk "BEGIN{ printf(\"%0.8f\n\",${G_ETF_HITS_SOFAR}/${elapsed_time}); }")
+	local etf_seconds_total=$(awk "BEGIN{ printf(\"%0.8f\n\",${G_ETF_TOTAL_HITS_EXPECTED}/${G_ETF_HITS_PER_SECOND}+0.00000001); }")
+	local etf_hours=$(awk "BEGIN{ print(int(${etf_seconds_total}/3600)); }")
+	local etf_minutes=$(awk "BEGIN{ print(int(${etf_seconds_total}/60%60)); }")
+	local etf_seconds=$(awk "BEGIN{ print(int(${etf_seconds_total}%60)); }")
+	echo "ETF is ${etf_hours} hours, ${etf_minutes} minutes, ${etf_seconds} seconds"
+}
+
+function etf_init() {
+	G_ETF_START_TIMESTAMP=${SECONDS}
+	G_ETF_TOTAL_HITS_EXPECTED=${1} # int
+	if [[ -n "${2}" ]] ; then
+		G_ETF_BAR_UPDATE_PERIOD="${2}" # in seconds
+	fi
+	if [[ -n "${3}" ]] ; then
+		G_ETF_PRINT_ETF="${3}" # can be 1 or 0
+	fi
+}
+
+function progress_bar() {
+	local nth_object="${1}"
+	local max_objects="${2}"
+
+	local percent=$(awk "BEGIN{ printf(\"%0.8f\n\",${nth_object}/${max_objects}+0.00000001); }")
+	local percent_disp=$(awk "BEGIN{ printf(\"%0.2f\n\",${percent}*100); }")
+	local screen_width=80
+	local max_size=$((${screen_width}-2)) # without [ and ] edge characters
+	local bar_len=$(awk "BEGIN{ printf(\"%1.0f\n\",${percent}*${max_size}); }")
+	local bar_padding=$((${screen_width}-2-${bar_len}))
+	echo -n -e "\r"
+	echo -n "["
+	for i in $(seq 1 ${bar_len}) ; do
+		echo -n "#"
+	done
+	for i in $(seq 1 ${bar_padding}) ; do
+		echo -n " "
+	done
+	echo -n "]"
+	if [[ "${G_ETF_PRINT_ETF}" == "1" ]] ; then
+		echo -n " ${percent_disp}% (${nth_object} / ${max_objects}) $(etf_print)"
+	fi
+}
+
+function progress_bar_ex() {
+	local nth_object="${1}"
+	local max_objects="${2}"
+	etf_register_hit
+	if (( ${nth_object} % ${G_ETF_BAR_UPDATE_PERIOD} == 0 )) ; then
+		progress_bar "${nth_object}" "${max_objects}"
+	fi
+	etf_update_total_hits_remaining $((${max_objects} - ${nth_object}))
+}
+
+function cleanup_shared() {
+	einfo "Removing shared resources"
+	rm -rf "${BPS}/ot-sources" 2>/dev/null
+}
+
+G_PROGRESS_PIPE="${T}/progress"
+G_PROGRESS_FD=
+G_PROGRESS_TIMEOUT="0.002"
+
+function message_progress() {
+	local msg="${1}"
+	echo "${msg}" > "${G_PROGRESS_PIPE}" 2>/dev/null
+}
+
+function report_progress() {
+	local max_objects="${1}"
+
+	for x in $(seq 3 254) ; do
+		if [[ ! -e /proc/$$/fd/${x} ]] ; then
+			G_PROGRESS_FD=${x}
+			break
+		fi
+	done
+
+	if [[ -z "${G_PROGRESS_FD}" ]] ; then
+		die "No available file descriptor found."
+	fi
+
+	cleanup() {
+		einfo "Cleanup report_progress"
+		eval "exec ${G_PROGRESS_FD}>&-"
+	}
+
+	trap cleanup EXIT
+
+	G_PROGRESS_PIPE="${T}/progress"
+	mkfifo "${G_PROGRESS_PIPE}" 2>/dev/null
+	eval "exec ${G_PROGRESS_FD}<>\"${G_PROGRESS_PIPE}\""
+
+	etf_init ${max_objects} 42 1
+	local n_processed=0
+	while [[ -p "${G_PROGRESS_PIPE}" ]] ; do
+		IFS= read -t ${G_PROGRESS_TIMEOUT} -r event < "${G_PROGRESS_PIPE}" 2>/dev/null
+		event="${event//[^\.D]/}" # sanitize
+		if [[ "${event}" == "." ]] ; then
+			n_processed=$((${n_processed}+1))
+			progress_bar_ex ${n_processed} ${max_objects}
+		elif [[ "${event}" == "D" ]] ; then
+			rm "${G_PROGRESS_PIPE}" 2>/dev/null
+		fi
+	done
+	eval "exec ${G_PROGRESS_FD}>&-"
+	rm "${G_PROGRESS_PIPE}" 2>/dev/null
+}
+
+function report_progress_by_git_commit_metadata() {
+	for x in $(seq 3 254) ; do
+		if [[ ! -e /proc/$$/fd/${x} ]] ; then
+			G_PROGRESS_FD=${x}
+			break
+		fi
+	done
+
+	if [[ -z "${G_PROGRESS_FD}" ]] ; then
+		die "No available file descriptor found."
+	fi
+
+	cleanup() {
+		einfo "Cleanup report_progress"
+		eval "exec ${G_PROGRESS_FD}>&-"
+	}
+
+	trap cleanup EXIT
+
+	G_PROGRESS_PIPE="${T}/progress"
+	mkfifo "${G_PROGRESS_PIPE}" 2>/dev/null
+	eval "exec ${G_PROGRESS_FD}<>\"${G_PROGRESS_PIPE}\""
+
+	while [[ -p "${G_PROGRESS_PIPE}" ]] ; do
+		IFS= read -t ${G_PROGRESS_TIMEOUT} -r event < "${G_PROGRESS_PIPE}" 2>/dev/null
+		event=$(echo "${event}" | grep -P -o -e "(A|R|D)( [a-f0-9]{40})?") # try to sanitize
+		local msg=$(echo "${event}" | cut -f 1 -d " ")
+		local c=$(echo "${event}" | cut -f 2 -d " ")
+		if [[ "${msg}" == "A" ]] ; then
+			echo -e "\e[42m\e[30m Accepted \e[0m ${c}"
+		elif [[ "${msg}" == "R" ]] ; then
+		        echo -e "\e[41m\e[30m Rejected \e[0m ${c}"
+		elif [[ "${msg}" == "D" ]] ; then
+			rm "${G_PROGRESS_PIPE}" 2>/dev/null
+		fi
+	done
+	eval "exec ${G_PROGRESS_FD}>&-"
+	rm "${G_PROGRESS_PIPE}" 2>/dev/null
+}
+
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
