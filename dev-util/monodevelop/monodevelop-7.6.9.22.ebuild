@@ -104,11 +104,6 @@ EGIT_OVERRIDE_COMMIT_DATE_MONO_REFACTORINGESSENTIALS="${LAST_COMMIT_TIMESTAMP}"
 EGIT_OVERRIDE_COMMIT_DATE_MONO_SHARPSVN_BINARY="${LAST_COMMIT_TIMESTAMP}"
 EGIT_OVERRIDE_COMMIT_DATE_MONO_XWT="${LAST_COMMIT_TIMESTAMP}"
 
-_git_checkout_submodule() {
-	cd "${S}/$1"
-	git checkout $2
-}
-
 pkg_pretend() {
 	# The sandbox won't allow us to download (or restore dependencies aka
 	# fetch from nuget) beyond src_unpack.
