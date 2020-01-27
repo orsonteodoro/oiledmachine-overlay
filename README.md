@@ -85,7 +85,6 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-dotnet/atitextureconverter | You don't need the actual proprietary library to compile MonoGame.  The wrapper alone will do fine in order to use MonoGame.  You need to manually install the proprietary library if you have the hardware.  Instructions are provided in the library to obtain and place it. |
 | dev-dotnet/beatdetectorforgames | This is a FMOD based beat detector which may be useful for rhythm games.  It has support for both C++ and C#.  The C# is a wrapper around the FMOD library.  The author said there wasn't Linux support but it could happen because there is a FMOD library in the main Gentoo overlay.  It still needs testing. |
 | dev-dotnet/BulletSharpPInvoke | This is a C# wrapper for libbulletc used for realistic physics in games. |
-| dev-dotnet/clangsharp | TBA |
 | dev-dotnet/cli-tools | For dotnetcore-sdk.  Frontend and and command line tools for .NET Core. |
 | dev-dotnet/core | For dotnetcore-sdk.  Just documentation and examples. |
 | dev-dotnet/coreclr | For dotnetcore-sdk.  Libraries for .NET Core runtime. |
@@ -100,7 +99,6 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-dotnet/libgdiplus | TBA |
 | dev-dotnet/libgit2sharp | TBA |
 | dev-dotnet/lidgren-network-gen3 | For monogame multiplayer support |
-| dev-dotnet/mojoshader-cs | TBA |
 | dev-dotnet/mono-addins | TBA |
 | dev-dotnet/monogame | This is probably the only portage overlay that has it.  If you use the add-in for MonoGame 3.5.1, it could only work for MonoDevelop 5.x series.  MonoGame 3.6 add-in should work for MonoDevelop 6.x series.  This one requires that mono, monodevelop, nvidia-texture-tools from this overlay.  I disabled NUnit on those and split it off into its own ebuild.  The latest LLVM is required for CppSharp.   You also need to set LIBGL_DRIVERS_PATH environmental variable in your MonoDevelop or wrapper script to /usr/lib/dri before running the app. <br /><br /> The package still needs testing.  I striped out lidgren and made an ebuild for it and use lidgren-network-gen3.  The OpenTK and Tao Framework were binary only and I used a compiled version from my ebuilds for the GamePad library.  SDL 1 is required for the GamepadConfig since Tao Framework uses SDL1.  The SDL2 is also required for the OpenTK library.  <br /><br />  If you create a new solution in MonoGame, you should answer no to override the Tao.Sdl.dll.config and OpenTK.dll.config File Conflicts Dialog Box.  The one provided has absolute paths to the required libraries and Linux support.  <br /><br />  If you get a red x dot in MonoDevelop complaining about an assembly (nvorbis for example) for MonoGame, the game will compile and run still.  <br /><br />  The ebuild uses dev-dotnet/managed-pvrtc without USE flag.  Please read the dev-dotnet/managed-pvrtc below before distributing or using  it.  <br /><br />  Again, I need people who have used this library to test this ebuild and the tools (mgcb, pipeline).  <br /><br />  Also, this is a Linux only ebuild which means it will only build games for Linux.  You cannot use it to port to other platforms (Android, Apple TV, iOS) because Xamarin Studio is not in Linux which required to port to mobile. |
 | dev-dotnet/monogame-extended |  This contains several common modules found in game engines like a particle engine, based on Mercury Particle Engine, and a tiled map loader for maps created by the Tiled Map Editor.  Currently a vanilla build of MonoGame stable doesn't support shaders on Linux so some features will not work for this assembly. |
@@ -108,22 +106,18 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-dotnet/ndesk-options | TBA |
 | dev-dotnet/nuget | TBA |
 | dev-dotnet/nvorbis | TBA |
-| dev-dotnet/openal-cs | TBA |
 | dev-dotnet/opentk | TBA |
 | dev-dotnet/omnisharp-roslyn | This is the newer OmniSharp.  ycmd can use this but with a special patch. |
 | dev-dotnet/omnisharp-server | This is an older OmniSharp that ycmd still depends on.  This allows for IntelliSense for open source editors. |
 | dev-dotnet/protobuild-bin | This uses Protobuild.exe to generate the solution/project(s) then these are fed into Mono to generate again Protobuild.exe.   We do not know if the first encountered Protobuild.exe is safe to use.  This is required to generate MonoGame project files.  MonoGame comes with binary protobuild.exe, but we are gentoo.  We compile everything from the source code. |
 | dev-dotnet/pvrtexlibnet | You should stay away from this one but it may be required for compiling MonoGame which I didn't take the time to turn off.  Basically pvrtexlibnet is another C# wrapper around the propretary PVRTexLib library blob from Imagination Technlogies.  You need to download the library there.  The binary library blob uses the PVRTC compression (https://en.wikipedia.org/wiki/PVRTC) which is patented.  The license in those libraries are restricted.  There is a bindist flag for this one.  Using the bindist will not install the propretary library and proprietary documentation just the wrapper.  Delete the PVRTexLib from that this ebuild uses and use the one from Imagination Technlogies. |
-| dev-dotnet/sdl2-cs | TBA |
 | dev-dotnet/sfmldotnet | TBA |
 | dev-dotnet/sharpfont | TBA |
 | dev-dotnet/sharpnav | This library is a AI pathfinding library in C# useful for games. |
 | dev-dotnet/slntools | TBA |
 | dev-dotnet/taoframework | TBA |
 | dev-dotnet/tesseract | This is a C# binding to the Tesseract OCR (Optical Character Recognition) software which will allow your program to read material produced by typewriters and from books. |
-| dev-dotnet/theoraplay-cs | TBA |
 | dev-dotnet/tiledsharp | This library is a map loader in C# for the Tiled Map Editor. |
-| dev-dotnet/vorbisfile-cs | TBA |
 | dev-dotnet/xwt | TBA |
 | dev-embedded/avr-studio | This ebuild that helps install avr-studio using wine which is unsupported.  You need to run /usr/share/avr-studio/install.sh because it uses winetricks.  The sources of winetricks I don't really trust so you can only use the script on a limited user.  Only the 4.19 is offered since it can only do unattended install and it is rated gold on winedb.  To get the pretty icon use the `ico` USE flag.  I didn't really test it fully but the GCC plugin needs to be configured to use the GCC.  I am considering creating a new overlay just for wine apps recipies. |
 | dev-embedded/diligent-adept2-runtime | This ebuild helps install it on Gentoo systems.  The original installer did not recognize the 4.x kernels and did not install udev rules in the recommended place in /lib/udev/rules.d.  The Gentoo Wiki doesn't have an explicit proper fix for 4.x kernels if you don't think. |
