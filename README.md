@@ -175,7 +175,6 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-util/lldb | TBA |
 | dev-util/lepton | This is a programmer reusable code snipplet manager based on Electron and able to sync with Gist.
 | dev-util/monodevelop | This contains frozen versions and commit hashes for the dependencies that the package eventually checks and pulls in instead of following head for dependencies. |
-| dev-util/mono-packaging-tools | This ebuild from this overlay has the working mpt-sln.  Upstream is bugged [but now is fixed].  It is used to delete the fsharp projects from the MonoDevelop ebuild. |
 | dev-util/msbuild | TBA |
 | dev-util/nant | TBA |
 | dev-util/nunit | TBA |
