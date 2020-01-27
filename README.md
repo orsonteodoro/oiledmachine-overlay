@@ -70,9 +70,7 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | app-emacs/request-deferred | TBA |
 | app-emacs/seq | TBA |
 | app-emacs/shut-up | TBA |
-| app-eselect/eselect-opencl | TBA |
 | app-eselect/eselect-typescript | TBA |
-| app-eselect/eselect-opencl | This package provides eselect switch support between SDK libraries and driver OpenCL implementation.  For example, you will need to add icd profiles in /etc/OpenCL/profiles that match the format /etc/OpenCL/profiles/${VENDOR}/${VENDOR}ocl{32,64}.icd.  The eselect module will map one of those OpenCL profiles to /etc/OpenCL/vendors/ocl{32,64}.icd so you can switch between the SDK or driver.  Your OpenCL app will recognize the OpenCL library version. |
 | app-portage/npm-secaudit | A simple postsync script to check npm and Electron apps for security updates.
 | app-portage/systemwide-pgo | This package installs Profile Guided Optimization management scripts for portage.  Everyone keeps building a per package PGO ebuild with a USE flag, but this package provides more better integration and ease of the process by forcing Portage do the work.  It still needs more testing and is considered in development.  It has @pgo-update set support.  It requires GCC or LLVM/Clang >=3.7 support since <3.7 breaks library profiling and has an annoying set environmental variable feature before profiling.  We use --profile-generate instead on LLVM/Clang.  Users need to be added to the wheel group to simulate the program.  You should disable all PGO USE flags and allow the scripts use it properly.  The package uses a whitelist and phase file to manage it.  Instructions are given at the end of the ebuild. |
 | app-shells/emoji-cli | This is an emoji autocompletion plugin for Zsh.  You might want to combine it with emojify. |
