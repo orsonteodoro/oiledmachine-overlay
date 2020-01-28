@@ -182,6 +182,9 @@ PATCH_TRESOR_VER="3.18.5"
 DISABLE_DEBUG_V="1.1"
 BFQ_BRANCH="bfq"
 
+# date -d "2017-11-12 10:46:13 -0800" +%s
+LINUX_TIMESTAMP=1510512373
+
 IUSE="+cfs disable_debug +graysky2 muqss pds +o3 uksm \
 	tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs"
 REQUIRED_USE="^^ ( muqss pds cfs )

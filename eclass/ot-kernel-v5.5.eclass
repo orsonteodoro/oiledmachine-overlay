@@ -58,8 +58,8 @@ AMD_STAGING_INTERSECTS_KV="0d44494af174c316422c4d4897f8bcf654b44505"
 # released with 5.5 needs to go back x.x.-1 or more point releases assuming
 # that 3.2.34 is a partial merge or not completely atomic.
 
-# obtained by:  git -P show -s --format=%ct v5.5 | tail -n 1
-LINUX_TIMESTAMP=1574641921
+# date -d "2020-01-26 16:23:03 -0800" +%s
+LINUX_TIMESTAMP=1580084583
 
 IUSE="  bfq bmq bmq-quick-fix \
 	amd-staging-drm-next \
