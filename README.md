@@ -179,7 +179,6 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-util/nant | TBA |
 | dev-util/nunit | TBA |
 | dev-util/objconv | TBA |
-| dev-util/patchutils | Fixes to filtering git patches.  To be removed once gentoo's version is up to date. |
 | dev-util/premake | Kept for latest versions. |
 | dev-util/pullp | This is an Electron based pull request monitoring program.
 | dev-util/rocm-cmake | Kept for latest versions. |
