@@ -56,7 +56,7 @@ AMD_STAGING_INTERSECTS_KV="5408887141baac0ad1a5e6cf514ceadf33090114"
 # 3.2.31 is pattern of missing commits in
 #   https://github.com/orsonteodoro/oiledmachine-overlay/blob/9d34760049d00a57e7f49c709c11b4be75f7ee98/eclass/ot-kernel-v5.3.eclass#L276
 
-date -d "2019-09-15 14:19:32 -0700" +%s
+# Obtained from:  date -d "2019-09-15 14:19:32 -0700" +%s
 LINUX_TIMESTAMP=1568582372
 
 IUSE="  bfq bmq bmq-quick-fix \

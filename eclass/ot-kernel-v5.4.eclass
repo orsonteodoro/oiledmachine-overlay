@@ -58,7 +58,7 @@ AMD_STAGING_INTERSECTS_KV="0d44494af174c316422c4d4897f8bcf654b44505"
 # released with 5.4 needs to go back x.x.-1 or more point releases assuming
 # that 3.2.34 is a partial merge or not completely atomic.
 
-# date -d "2019-11-24 16:32:01 -0800" +%s
+# Obtained from:  date -d "2019-11-24 16:32:01 -0800" +%s
 LINUX_TIMESTAMP=1574641921
 
 IUSE="  bfq bmq bmq-quick-fix \
