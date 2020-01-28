@@ -28,7 +28,6 @@ PATCH_CK_MAJOR_MINOR="5.4"
 PATCH_CK_REVISION="1"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?10}"
 PATCH_GP_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
-PATCH_GRAYSKY_COMMIT="0ebe06178ea25923b33397ff04e9d701356825a0"
 PATCH_BFQ_VER="5.4"
 PATCH_BMQ_MAJOR_MINOR="5.4"
 DISABLE_DEBUG_V="1.1"
@@ -81,18 +80,15 @@ REQUIRED_USE="^^ ( muqss cfs bmq )
 REQUIRED_USE+=" !bfq !bmq-quick-fix"
 
 #K_WANT_GENPATCHES="base extras experimental"
-K_SECURITY_UNSUPPORTED="1"
-K_DEBLOB_AVAILABLE="0"
+K_SECURITY_UNSUPPORTED=${K_SECURITY_UNSUPPORTED:="1"}
 
 inherit kernel-2 toolchain-funcs
 detect_version
 detect_arch
 
-#DEPEND+=" deblob? ( ${PYTHON_DEPS} )"
-
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="Orson Teodoro's patchset containing UKSM, zen-tune, GraySky's GCC \
+DESCRIPTION="Orson Teodoro's patchset containing UKSM, zen-kernel patchset, GraySky's GCC \
 Patches, MUQSS CPU Scheduler, BMQ CPU Scheduler, \
 Genpatches, BFQ updates, amd-staging-drm-next"
 

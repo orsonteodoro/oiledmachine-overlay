@@ -154,7 +154,12 @@ BMQ_SRC_URL="${BMQ_BASE_URL}${BMQ_FN}"
 
 ZENTUNE_PROJ="zen-tune"
 ZENTUNE_FN="${ZENTUNE_PROJ}-${PATCH_ZENTUNE_VER}.patch"
-if [[ "${K_MAJOR_MINOR}" == "5.4" ]] ; then
+if [[ "${K_MAJOR_MINOR}" == "5.5" ]] ; then
+ZENTUNE_URL_BASE="https://github.com/zen-kernel/zen-kernel/compare/"
+ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_5_5_COMMIT}.patch"
+ZENTUNE_DL_DEP_FN="ZEN-Add-CONFIG-to-rename-the-mq-deadline-scheduler.patch"
+ZENTUNE_DL_DEP_URL="https://github.com/torvalds/linux/commit/98d9dc7ec5a6df16372ccdd7e18e64bfc6d5990f.patch"
+elif [[ "${K_MAJOR_MINOR}" == "5.4" ]] ; then
 ZENTUNE_URL_BASE="https://github.com/torvalds/linux/commit/"
 ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_5_4_COMMIT}.patch"
 else
@@ -162,7 +167,6 @@ ZENTUNE_URL_BASE=\
 "https://github.com/torvalds/linux/compare/v${PATCH_ZENTUNE_VER}...zen-kernel:${PATCH_ZENTUNE_VER}/"
 ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_PROJ}.patch"
 fi
-ZENTUNE_SRC_URL="${ZENTUNE_DL_URL} -> ${ZENTUNE_FN}"
 
 ZENMISC_URL_BASE="https://github.com/torvalds/linux/commit/"
 
@@ -190,8 +194,13 @@ GRAYSKY_DL_4_9_FN=\
 "${GRAYSKY_DL_4_9_FN:=enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B.patch}"
 GRAYSKY_DL_8_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B.patch"
+if ver_test ${K_MAJOR_MINOR} -ge 5.5 ; then
+GRAYSKY_DL_9_1_FN=\
+"enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v5.5%2B.patch"
+elif ver_test ${K_MAJOR_MINOR} -ge 4.13 ; then
 GRAYSKY_DL_9_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v4.13%2B.patch"
+fi
 GRAYSKY_URL_BASE=\
 "https://raw.githubusercontent.com/graysky2/kernel_gcc_patch/master/"
 GRAYSKY_SRC_4_9_URL="${GRAYSKY_URL_BASE}${GRAYSKY_DL_4_9_FN}"
@@ -354,6 +363,9 @@ function apply_bfq() {
 # @DESCRIPTION:
 # Apply the ZenTune patches.
 function apply_zentune() {
+	if ver_test "${K_MAJOR_MINOR}" -eq 5.5 ; then
+		_dpatch "${PATCH_OPS} -N" "${T}/${ZENTUNE_DL_DEP_FN}"
+	fi
 	_dpatch "${PATCH_OPS} -N" "${T}/${ZENTUNE_FN}"
 }
 
@@ -671,6 +683,9 @@ function fetch_zenmisc() {
 # Fetches the zentune patchset.
 function fetch_zentune() {
 	einfo "Fetching the zen-tune patch from a live source..."
+	if ver_test "${K_MAJOR_MINOR}" -eq 5.5 ; then
+		wget -O "${T}/${ZENTUNE_DL_DEP_FN}" "${ZENTUNE_DL_DEP_URL}" || die
+	fi
 	wget -O "${T}/${ZENTUNE_FN}" "${ZENTUNE_DL_URL}" || die
 }
 

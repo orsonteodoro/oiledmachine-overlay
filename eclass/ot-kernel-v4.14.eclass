@@ -177,7 +177,6 @@ PATCH_CK_MAJOR_MINOR="4.14"
 PATCH_CK_REVISION="1"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?135}"
 PATCH_GP_MAJOR_MINOR_REVISION="4.14-${K_GENPATCHES_VER}"
-PATCH_GRAYSKY_COMMIT="87168bfa27b782e1c9435ba28ebe3987ddea8d30"
 PATCH_BFQ_VER="4.19"
 PATCH_TRESOR_VER="3.18.5"
 DISABLE_DEBUG_V="1.1"
@@ -193,14 +192,12 @@ REQUIRED_USE="^^ ( muqss pds cfs )
 	      tresor_aesni? ( tresor )"
 
 #K_WANT_GENPATCHES="base extras experimental"
-K_SECURITY_UNSUPPORTED="1"
-K_DEBLOB_AVAILABLE="0"
+K_SECURITY_UNSUPPORTED=${K_SECURITY_UNSUPPORTED:="1"}
 
 inherit kernel-2 toolchain-funcs
 detect_version
 detect_arch
 
-#DEPEND="deblob? ( ${PYTHON_DEPS} )"
 DEPEND="
 	dev-util/patchutils
 	<sys-devel/gcc-8.0

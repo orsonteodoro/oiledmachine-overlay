@@ -3,37 +3,35 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: ot-kernel-v5.3.eclass
+# @ECLASS: ot-kernel-v5.5.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 2 3 4 5 6
-# @BLURB: Eclass for patching the 5.3.x kernel
+# @BLURB: Eclass for patching the 5.5.x kernel
 # @DESCRIPTION:
-# The ot-kernel-v5.3 eclass defines specific applicable patching for the 5.3.x
+# The ot-kernel-v5.5 eclass defines specific applicable patching for the 5.5.x
 # linux kernel.
 
 ETYPE="sources"
 
-K_MAJOR_MINOR="5.3"
+K_MAJOR_MINOR="5.5"
 K_PATCH_XV="5.x"
 EXTRAVERSION="-ot"
-PATCH_UKSM_VER="5.3"
+PATCH_UKSM_VER="5.5"
 PATCH_UKSM_MVER="5"
-PATCH_ZENTUNE_VER="5.3"
-PATCH_O3_CO_COMMIT="e80b5baf29ce0fceb04ee4d05455c1e3a1871732" # O3 config option
-PATCH_O3_RO_COMMIT="360c6833e07cc9fdef5746f6bc45bdbc7212288d" # O3 read overflow fix
-PATCH_GRAYSKY2_GCC_COMMIT="19805a0a8a6897e4c4865051cfd652d833a792d5" # zen gcc graysky2
+PATCH_ZENTUNE_VER="5.5"
+PATCH_ALLOW_O3_COMMIT="8e4c45742cfca87c0cc44e7969ab8826be9139be"
 PATCH_CK_MAJOR="5.0"
-PATCH_CK_MAJOR_MINOR="5.3"
+PATCH_CK_MAJOR_MINOR="5.5"
 PATCH_CK_REVISION="1"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?10}"
 PATCH_GP_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
-PATCH_BFQ_VER="5.3"
-PATCH_BMQ_VER="${PATCH_BMQ_VER:=100}"
-PATCH_BMQ_MAJOR_MINOR="5.3"
+PATCH_BFQ_VER="5.5"
+PATCH_BMQ_MAJOR_MINOR="5.5"
 DISABLE_DEBUG_V="1.1"
+ZENTUNE_5_5_COMMIT="e9a38f81725b3024defed48f6f3efbbd622c2746..070b844e9e5485b8c14c85ae48747157893df148"
 
 # KV is kernel version, for the variable below means a commit hash
 # "around a major.minor release."
@@ -45,19 +43,23 @@ DISABLE_DEBUG_V="1.1"
 # Mispatch/missing commit cluster can be caused by backports of DRM updates
 # from future major.minor kernel releases.
 
-#AMD_STAGING_INTERSECTS_KV="70bcf2bc5203e358e5e2ac30718caea53204dfe9"
-# corresponds to drm/amd/display: 3.2.35 (tested) same as 5.3 kernel release
+#AMD_STAGING_INTERSECTS_KV="b4d857ded1c50fb2bd1168d6f80ae81397ae468b"
+# corresponds to drm/amd/display: 3.2.48 (tested) same as 5.5 kernel release
+
+# b4d857 uses DC_VER 3.2.48 which depends on
+# 9d6f4484e81c0005f019c8e9b43629ead0d0d355 which is contained in DC_VER 3.2.35
+
+# The base should be $commit-1 to pull $commit.  If not, then $commit will
+# excluded in the commit list range.
 
 # KV is K_MAJOR_MINOR
-AMD_STAGING_INTERSECTS_KV="5408887141baac0ad1a5e6cf514ceadf33090114"
-# corresponds to drm/amd/display: 3.2.30 (testing); needs to go back x.x.-1
-#   or more point releases assuming that 3.2.31 is a partial merge or not
-#   completely atomic.
-# 3.2.31 is pattern of missing commits in
-#   https://github.com/orsonteodoro/oiledmachine-overlay/blob/9d34760049d00a57e7f49c709c11b4be75f7ee98/eclass/ot-kernel-v5.3.eclass#L276
+AMD_STAGING_INTERSECTS_KV="0d44494af174c316422c4d4897f8bcf654b44505"
+# corresponds to commit contained in drm/amd/display: 3.2.33. the DC_VER
+# released with 5.5 needs to go back x.x.-1 or more point releases assuming
+# that 3.2.34 is a partial merge or not completely atomic.
 
-# obtained by:  git -P show -s --format=%ct v5.3 | tail -n 1
-LINUX_TIMESTAMP=1568582372
+# obtained by:  git -P show -s --format=%ct v5.5 | tail -n 1
+LINUX_TIMESTAMP=1574641921
 
 IUSE="  bfq bmq bmq-quick-fix \
 	amd-staging-drm-next \
@@ -75,7 +77,7 @@ REQUIRED_USE="^^ ( muqss cfs bmq )
 	     rock? ( amd-staging-drm-next )"
 
 # no released patch yet
-REQUIRED_USE+=" !bmq-quick-fix"
+REQUIRED_USE+=" !bfq !bmq-quick-fix !muqss !uksm !futex-wait-multiple"
 
 #K_WANT_GENPATCHES="base extras experimental"
 K_SECURITY_UNSUPPORTED=${K_SECURITY_UNSUPPORTED:="1"}
@@ -103,13 +105,12 @@ inherit check-reqs ot-kernel-common
 #BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.patch"
 #BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
 
-SRC_URI+=" ${CK_SRC_URL}"
+#SRC_URI+=" ${CK_SRC_URL}"
 
 SRC_URI+=" ${KERNEL_URI}
 	   ${GENPATCHES_URI}
 	   ${ARCH_URI}
-	   ${O3_CO_SRC_URL}
-	   ${O3_RO_SRC_URL}
+	   ${O3_ALLOW_SRC_URL}
 	   ${GRAYSKY_SRC_4_9_URL}
 	   ${GRAYSKY_SRC_8_1_URL}
 	   ${GRAYSKY_SRC_9_1_URL}
@@ -117,8 +118,9 @@ SRC_URI+=" ${KERNEL_URI}
 	   ${GENPATCHES_BASE_SRC_URL}
 	   ${GENPATCHES_EXPERIMENTAL_SRC_URL}
 	   ${GENPATCHES_EXTRAS_SRC_URL}
-	   ${UKSM_SRC_URL}
-	   ${KERNEL_PATCH_URLS[@]} "
+	   ${KERNEL_PATCH_URLS[@]}
+"
+#SRC_URI+=" ${UKSM_SRC_URL}"
 
 SRC_URI+=\
 "https://github.com/torvalds/linux/commit/4b3e30ed3ec7864e798403a63ff2e96bd0c19ab0.patch \
@@ -128,7 +130,10 @@ https://github.com/torvalds/linux/commit/d1836f3813ee0742a2067d5f4d78e811d2b76d9
 https://github.com/torvalds/linux/commit/04ed8459f3348f95c119569338e39294a8e02349.patch \
 	-> torvalds-linux-kernel-04ed8459f3348f95c119569338e39294a8e02349.patch
 https://github.com/torvalds/linux/commit/695af5f9a51914030eb2d9e3ba923d38180a8199.patch \
-	-> torvalds-linux-kernel-695af5f9a51914030eb2d9e3ba923d38180a8199.patch"
+	-> torvalds-linux-kernel-695af5f9a51914030eb2d9e3ba923d38180a8199.patch \
+\
+https://github.com/torvalds/linux/commit/ec3e5c0f0c2b716e768c0eee0fec30d572939ef5.patch \
+	-> torvalds-linux-kernel-ec3e5c0f0c2b716e768c0eee0fec30d572939ef5.patch"
 
 _set_check_reqs_requirements() {
 	# for 3.1 kernel
@@ -147,11 +152,6 @@ _set_check_reqs_requirements() {
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel-common_pkg_setup_cb() {
-	einfo \
-"${K_MAJOR_MINOR} series is EOL (End-of-Life).  It will be removed without\n\
-notice after tresor/rock USE flag is fixed for 5.4.x.  The ebuild is left in\n\
-place for debugging."
-
 	if use zentune || use muqss ; then
 		ewarn \
 "The zen-tune patch or muqss might cause lock up or slow io under heavy load\n\
@@ -200,8 +200,13 @@ function ot-kernel-asdn_rm() {
 #	a6f30079b8562b659e1d06f7cb1bc30951869bbc
 #	bf2bf52383a09256e11278e7bcb67dcd912078c7 )
 
-	if ver_test ${PV} -ge 5.3.5 ; then
-		l+=( e40837afb9b011757e17e9f71d97853ca574bcff )
+#	if ver_test ${PV} -ge 5.3.5 ; then
+#		l+=( e40837afb9b011757e17e9f71d97853ca574bcff )
+#	fi
+
+	if ver_test ${PV} -ge 5.4 ; then
+		l+=( 684cd480fd4e6d5678e3f480d48a9809d9d119ea
+		bbaa343a88799ed8f58f3ea891e20e7767f123a7 )
 	fi
 
 	# already applied in torvalds kernel for 5.4 but not 5.3
@@ -226,8 +231,7 @@ function ot-kernel-asdn_rm() {
 }
 
 function _asdn_tpatch() {
-	echo -e "Applying ${2}"
-	#patch ${1} -i ${2} 2>&1 >/dev/null || true
+	#patch ${1} -i ${2} 2>&1 > /dev/null || true
 	patch ${1} -i ${2} || true
 	if [[ "${1}" =~ "-R" ]] ; then
 		echo -e "\e[43m\e[30m  Reverted \e[0m ${c}"
@@ -310,15 +314,12 @@ function ot-kernel-common_amdgpu_merge_and_apply_patches_asdn() {
       if [[ "${is_error_free}" == "0" \
         && "${is_failed_at}" != "1" \
         && "${is_previously_applied}" != "1" ]] ; then
-        #einfo "error free"
         #trivial
         _asdn_dpatch "${PATCH_OPS}" "${patch_path}"
       elif [[ "${is_previously_applied}" == "1" ]] ; then
-        #einfo "previously applied"
         # Try to avoid duplicate hunk problem
         echo -e "\e[41m\e[30m  Rejected \e[0m (avoid dupe hunk problem) ${c}"
       elif [[ "${is_failed_at}" == "0" ]] ; then
-        #einfo "failed at"
         case "${l}" in
           *ab2f7a5c18b5c17cc94aaab7ae2e7d1fa08993d6*)
             # Fails enter in else branch so move up here
@@ -333,7 +334,6 @@ function ot-kernel-common_amdgpu_merge_and_apply_patches_asdn() {
             ;;
         esac
       else
-        #einfo "other case"
         case "${l}" in
           *c74dbe44eacf00a5ccc229b5cc340a9b7f6851a0*)
             # Revert then apply
@@ -372,6 +372,15 @@ function ot-kernel-common_amdgpu_merge_and_apply_patches_asdn() {
             _asdn_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/amdgpu-98eb03bbf0175f009a74c80ac12b91a9680292f4-rebase-for-5.3.4-asdn.patch"
             ;;
+
+          # 5.4 addendums
+          *1c70d3d9c4a6d4e4b4425d78e0a919cfaa3cf8db*)
+            # Easy
+            # Revert part of dependency then merge
+            _asdn_dpatch "${PATCH_OPS} -R" \
+"${DISTDIR}/torvalds-linux-kernel-ec3e5c0f0c2b716e768c0eee0fec30d572939ef5.patch"
+            _asdn_dpatch "${PATCH_OPS} -N" "${patch_path}"
+            ;;
           *)
             die "Patch failure ${patch_path} .  Did not find the intervention patch."
             ;;
@@ -385,7 +394,7 @@ function ot-kernel-rock_rm() {
 	local l
 	# already patched
 	l+=(
-#	f761e8303bb1608622fb993531ba95244335c847
+	f761e8303bb1608622fb993531ba95244335c847
 # function deleted; the rest already merged in other commits
 	973c795c16c872efb874df6e0788fcb5b6f17e20
 # vanilla is version 2
@@ -401,38 +410,38 @@ function ot-kernel-rock_rm() {
 	0bc07fd0aab17d7ecc85a9eb1fea668cbb0f0162
 # same as 1faa3b805473d7f4197b943419781d9fd21e4352 in torvalds kernel v5.4 and
 #   ASDN
-#	220883377e9c2434fcafaab24e215597752a2d84
+	220883377e9c2434fcafaab24e215597752a2d84
 # applied in 14328aa58ce523a59996c5a82681c43ec048cc33
 	2d2f62874426b347d47eeac492709c3ad0c1b92a
 
 	# obsolete (hunks that doesn't appear in the final image (aka head) in
 	#  amd-staging-drm-next/ROCK-Kernel-Driver repo ; replaced by newer
 	#  design/architecture/version)
-#	31ad0be4ebf7327591fbca1b96e209f591a19849
+	31ad0be4ebf7327591fbca1b96e209f591a19849
 	ad3bf1a3b5d15041e18a7a6c62c731b63db51447
 # vanilla is version 2
 	7eb512d4585f9d746ffacd40be5b8f95ef87d795
 # testing removal ; the revert of the revert is already merged in vanilla and
 #   in amd-staging-drm-next ; Revert "drm/amd/display: Rework DC plane filling
 #   and surface updates"
-#	8234806160c533f85b98953f76a1b13455232ffb
+	8234806160c533f85b98953f76a1b13455232ffb
 # testing removal ; the revert of the revert is already merged in vanilla and
 #   in amd-staging-drm-next ; Revert "drm/amd/display: Recalculate pitch when
 #   buffers change"
-#	8a67db18390d686b9d14ff9e554e5165c1814590
+	8a67db18390d686b9d14ff9e554e5165c1814590
 	e26e00469e4341d470eb4d56db5b5f517338d096
 # testing removal ; the revert of the revert is already merged in vanilla and
 #   in amd-staging-drm-next ; Revert "drm/amd/display: Rework DC plane filling
 #   and surface updates"
-#	456fc4538e9d5dbace83acb03e0fbef346d654e6
+	456fc4538e9d5dbace83acb03e0fbef346d654e6
 # testing removal ; the revert of the revert is already merged in vanilla and
 #   in amd-staging-drm-next ; Revert "drm/amd/display: Recalculate pitch when
 #   buffers change"
-#	61e96f3cdff3fe103bf675509225747a3ecec57e
+	61e96f3cdff3fe103bf675509225747a3ecec57e
 # testing removal ; the revert of the revert is already merged in vanilla and
 #   in amd-staging-drm-next ; Revert "drm/amdkfd: Separate mqd allocation and
 #   initialization"
-#	ea1d0c448f085ccb4463b42fe78a0064ed07c7dc
+	ea1d0c448f085ccb4463b42fe78a0064ed07c7dc
 # vanilla is version 2
 	1013dec3ee8dce5348a85ffadfed52b68346b9fc
 	2e5e1c3fed36d74806f2d805601b130605c3efd0
@@ -492,7 +501,8 @@ function ot-kernel-rock_rm() {
 	# applied later in 64d6e02eb61dd2e84b4a890fd7d78aa63d379bba
 # Revert "drm/amd/powerplay: honor hw limit on fetching metrics data for navi10"
 #	9e322549ad1187feff042e9a696f68af21d6118d
-# drm/amd/powerplay: honor hw limit on fetching metrics data for navi10 too frequently to update mertrics table will cause smu internal error.
+# drm/amd/powerplay: honor hw limit on fetching metrics data for navi10 too
+#   frequently to update mertrics table will cause smu internal error.
 #	3cc2abc46e519cd630fd558c9b0dbd37441360e0
 	)
 
@@ -590,16 +600,13 @@ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
       if [[ "${is_error_free}" == "0" \
         && "${is_failed_at}" != "1" \
         && "${is_previously_applied}" != "1" ]] ; then
-        einfo "error free"
         #trivial
         _asdn_dpatch "${PATCH_OPS}" "${patch_path}"
       elif [[ "${is_previously_applied}" == "1" ]] \
-	 ; then
-        einfo "previously applied"
+	&& ot-kernel-common_amdgpu_is_previously_applied_exclusion_rock ; then
         # Try to avoid duplicate hunk problem
         echo -e "\e[41m\e[30m  Rejected \e[0m (avoid dupe hunk problem) ${c}"
       elif [[ "${is_failed_at}" == "0" ]] ; then
-        einfo "failed at"
         case "${l}" in
           *d732ef0efc3beed8b8c30433aa11d5b6895cb457*rock*)
             # drm/amdkcl: add dkms support ; remove?
@@ -623,7 +630,6 @@ drivers/gpu/drm/amd/amdgpu/amdgpu_dma_buf.c|g" \
             ;;
         esac
       else
-        einfo "other"
         case "${l}" in
           *876923fb92a9e298625067284977917d4741ee2e*asdn*)
             die "fixme ${patch_path}"
