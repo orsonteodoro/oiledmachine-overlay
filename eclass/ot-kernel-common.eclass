@@ -124,7 +124,7 @@ inherit ot-kernel-cve
 inherit ot-kernel-asdn
 inherit ot-kernel-rock
 
-DEPEND+=" >=dev-util/patchutils-0.3.4_p20190902
+DEPEND+=" dev-util/patchutils
 	  sys-apps/grep[pcre]"
 
 SRC_URI+=\
