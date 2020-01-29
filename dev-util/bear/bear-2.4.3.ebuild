@@ -5,8 +5,8 @@ EAPI=7
 DESCRIPTION="Bear is a tool that generates a compilation database for clang \
 tooling."
 HOMEPAGE="https://github.com/rizsotto/Bear"
-KEYWORDS="~amd64 ~x86"
 LICENSE="GPL-3+"
+KEYWORDS="~amd64 ~x86"
 MY_PN="${PN/b/B}"
 SLOT="0"
 PYTHON_COMPAT=( python3_{6,7,8} )
