@@ -9,7 +9,7 @@ KEYWORDS="~amd64 ~x86"
 LICENSE="GPL-3+"
 MY_PN="${PN/b/B}"
 SLOT="0"
-PYTHON_COMPAT=( python{3_6,3_7,3_8} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 inherit python-single-r1
 RDEPEND=">=dev-libs/libconfig-1.4"
 DEPEND="${RDEPEND}
@@ -20,8 +20,3 @@ SRC_URI=\
 inherit multilib cmake-utils
 S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
-
-src_configure()
-{
-	cmake-utils_src_configure
-}
