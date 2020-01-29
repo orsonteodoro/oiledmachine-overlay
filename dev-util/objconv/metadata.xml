@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <!-- only for this ebuild for in the oiledmachine-overlay repo -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!-- originator -->
+  <maintainer type="person">
+    <email>slyfox@gentoo.org</email>
+    <name>Sergei Trofimovich</name>
+  </maintainer>
+  <upstream>
+    <maintainer status="active">
+      <name>Agner Fog</name>
+      <email>agner@agner.org</email>
+    </maintainer>
+    <doc lang="en">https://www.agner.org/optimize/objconv-instructions.pdf</doc>
+  </upstream>
+</pkgmetadata>
