@@ -9,14 +9,15 @@ LICENSE="GPL-3"
 KEYWORDS="~alpha ~amd64 ~amd64-fbsd ~amd64-linux ~arm ~ia64 ~mips ~ppc ~ppc64 \
 ~sparc ~ia64-linux ~x86 ~x86-fbsd ~x86-freebsd ~x86-linux ~x86-macos"
 SLOT="0"
-inherit autotools eutils flag-o-matic multilib-minimal unpacker
+IUSE="doc"
 DEPEND="dev-lang/nasm
 	>=dev-util/objconv-2.51"
 SRC_URI=\
 "http://www.agner.org/optimize/asmlib.zip -> ${P}.zip"
+inherit autotools eutils flag-o-matic multilib-minimal unpacker
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
-DOCS=( asmlib-instructions.pdf license.txt )
+DOCS=( asmlib-instructions.pdf )
 
 src_unpack() {
 	mkdir -p "${S}" || die
@@ -82,4 +83,5 @@ multilib_src_install() {
 	insinto "/usr/include"
 	doins asmlib.h
 	doins asmlibran.h
+	dodoc license.txt
 }
