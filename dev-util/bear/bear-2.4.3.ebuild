@@ -2,7 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-DESCRIPTION="Bear is a tool that generates a compilation database for clang tooling."
+DESCRIPTION="Bear is a tool that generates a compilation database for clang \
+tooling."
 HOMEPAGE="https://github.com/rizsotto/Bear"
 KEYWORDS="~amd64 ~x86"
 LICENSE="GPL-3+"
