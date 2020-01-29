@@ -7,9 +7,9 @@ HOMEPAGE="https://github.com/sindresorhus/caprine"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0"
-RDEPEND=">=dev-lang/typescript-3.2.4"
 DEPEND="${RDEPEND}
-        >=net-libs/nodejs-10[npm]"
+	>=dev-lang/typescript-3.7.5
+        >=net-libs/nodejs-12[npm]"
 inherit desktop electron-app eutils
 SRC_URI=\
 "https://github.com/sindresorhus/caprine/archive/v${PV}.tar.gz \
