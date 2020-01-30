@@ -28,4 +28,24 @@
     </maintainer>
     <remote-id type="github">enigma-dev/enigma-dev</remote-id>
   </upstream>
+  <use>
+    <flag name="android">Adds android support.</flag>
+    <flag name="curl">Adds curl support.</flag>
+    <flag name="doc">Installs documents.</flag>
+    <flag name="gles">Installs and adds gles1 support.</flag>
+    <flag name="gles2">Installs and adds gles2 support.</flag>
+    <flag name="gles3">Installs and adds gles3 support.</flag>
+    <flag name="gtk2">Makes gtk2 the default widget system.</flag>
+    <flag name="minimal">Shrinks installation.</flag>
+    <flag name="openal">Installs and makes openal the default audio system.</flag>
+    <flag name="opengl"></flag>
+    <flag name="opengl3"></flag>
+    <flag name="sdl"></flag>
+    <flag name="sfml"></flag>
+    <flag name="test"></flag>
+    <flag name="X">Makes x</flag>
+    <flag name=""></flag>
+  </use>
 </pkgmetadata>
+android curl doc gles gles2 gles3 gtk2 minimal +openal +opengl opengl3 \
+sdl2 sfml test +X
