@@ -51,8 +51,8 @@ src_install() {
 
 pkg_postinst() {
 	elog \
-"If you are using dwm or non-parenting window manager or just get grey\n\
-windows, you need to:\n\
+"If you are using dwm or non-parenting window manager or a non-responsive\n\
+title bar menus, you need to:\n\
   emerge wmname\n\
   wmname LG3D\n\
 Run 'wmname LG3D' before you run 'lateralgm'"
