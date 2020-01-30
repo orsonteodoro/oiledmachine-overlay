@@ -48,3 +48,12 @@ src_install() {
 	make_desktop_entry "/usr/bin/lateralgm" "LateralGM" \
 		"/usr/share/lateralgm/lgm-logo.ico" "Development;IDE"
 }
+
+pkg_postinst() {
+	elog \
+"If you are using dwm or non-parenting window manager or just get grey\n\
+windows, you need to:\n\
+  emerge wmname\n\
+  wmname LG3D\n\
+Run 'wmname LG3D' before you run 'lateralgm'"
+}
