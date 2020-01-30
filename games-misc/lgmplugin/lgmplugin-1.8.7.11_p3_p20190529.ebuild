@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -7,31 +7,32 @@ ENIGMA."
 HOMEPAGE="https://github.com/enigma-dev/lgmplugin"
 LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
-SLOT="0/${PVR}"
+SLOT="0/${PV}"
+ECJ_V="4.4"
+JAVA_V="1.7"
+RDEPEND="games-util/lateralgm
+	 virtual/jre"
+DEPEND="|| ( dev-java/icedtea
+	     dev-java/icedtea-bin )
+	dev-java/jna[nio-buffers]
+	games-util/lateralgm"
+BDEPEND="dev-java/eclipse-ecj:${ECJ_V}
+	 virtual/jdk"
 EGIT_COMMIT="2bd2060f19114f81d3f808ed7ce2661986cadb75"
 SRC_URI=\
 "https://github.com/enigma-dev/lgmplugin/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
 inherit eutils
-RESTRICT="mirror"
-ECJ_V="4.4"
-JAVA_V="1.7"
-
-RDEPEND="virtual/jre
-	 dev-java/eclipse-ecj:${ECJ_V}
-	 dev-java/jna[nio-buffers]
-	 games-util/lateralgm
-	 || ( dev-java/icedtea dev-java/icedtea-bin )"
-DEPEND="${RDEPEND}"
-
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+RESTRICT="mirror"
 
 src_prepare() {
 	default
+	which /usr/bin/ecj-4.4 || die
 	sed -i -e \
 "s|\
 JC = ecj -1.6 -nowarn -cp .|\
-JC = $(ls /usr/bin/ecj-${ECJ_V}*) -${JAVA_V} -nowarn -cp .|" \
+JC = /usr/bin/ecj-${ECJ_V} -${JAVA_V} -nowarn -cp .|" \
 		Makefile || die
 	sed -i -e \
 "s|\
