@@ -86,9 +86,8 @@ src_install() {
 		doins src/main/java/${PN}.jar
 	fi
 	exeinto /usr/bin
-	cat "${FILESDIR}/${PN}" > "${T}/${PN}-${SLOT}" || die
-	doexe "${T}/${PN}-${SLOT}"
-	sed -i -e "s|${PN}-0|${PN}-${SLOT}|" "${D}/usr/bin/${PN}-${SLOT}" || die
-	make_desktop_entry "/usr/bin/${PN}-${SLOT}" "${PROJECT_NAME} (${SLOT})" "" \
+	doexe "${FILESDIR}/${PN}"
+	sed -i -e "s|${PN}-0|${PN}-${SLOT}|" "${D}/usr/bin/${PN}" || die
+	make_desktop_entry "/usr/bin/${PN}" "${PROJECT_NAME}" "" \
 		"Utility;TextEditor"
 }
