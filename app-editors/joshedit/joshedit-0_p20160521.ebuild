@@ -6,14 +6,12 @@ DESCRIPTION="A lightweight code editor for use in Java applications."
 HOMEPAGE="https://github.com/JoshDreamland/JoshEdit"
 LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
-IUSE="lateralgm maven"
+IUSE="lateralgm"
 SLOT="$(ver_cut 1 ${PV})"
 RDEPEND="virtual/jdk"
-DEPEND="${RDEPEND}
-	maven? ( app-arch/zip \
-		dev-java/maven-bin )"
+DEPEND="${RDEPEND}"
 PROJECT_NAME="JoshEdit"
-EGIT_COMMIT="1eb8e3af94ed24e4508e922629c39c3b16e93ec1"
+EGIT_COMMIT="101a599f6c936775216faf56db4399567eabbfad"
 SRC_URI=\
 "https://github.com/JoshDreamland/${PROJECT_NAME}/archive/${EGIT_COMMIT}.tar.gz\
 	-> ${P}.tar.gz"
@@ -21,45 +19,9 @@ inherit desktop eutils
 S="${WORKDIR}/${PROJECT_NAME}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
-pkg_setup() {
-	if use maven ; then
-		if has network-sandbox $FEATURES ; then
-			die \
-"FEATURES=\"-network-sandbox\" must be added per-package env to be able to\n\
-download micropackages."
-		fi
-	fi
-}
-
 src_compile() {
-	if use maven ; then
-		src_compile_maven
-	else
-		src_compile_direct
-	fi
-}
-
-src_compile_maven() {
-	mkdir "${S}"/src/main/java/META-INF || die
-	mvn package || die
-	mkdir t || die
-	local archive_name="${PROJECT_NAME}-$(ver_cut 1 ${PV}).jar"
-	cp target/${archive_name} t || die
-	pushd t || die
-		unzip ${archive_name}
-		echo "Main-Class: org.lateralgm.${PN}.Runner" \
-			> META-INF/MANIFEST.MF || die
-		rm ${archive_name} || die
-		zip -r ${archive_name} LICENSE META-INF org README.md || die
-	popd
-	cp -a t/${archive_name} target || die
-}
-
-src_compile_direct() {
-	cd "${S}"/src/main/java/org/lateralgm/${PN} || die
+	cd "${S}"/org/lateralgm/${PN} || die
 	javac $(find . -name "*.java") || die
-	cd "${S}"/src/main/java/ || die
-	cp -a "${S}"/src/main/resources/* ./ || die
 	mkdir META-INF || die
 	echo "Main-Class: org.lateralgm.${PN}.Runner" > META-INF/MANIFEST.MF \
 		|| die
@@ -75,16 +37,10 @@ src_compile_direct() {
 src_install() {
 	if use lateralgm ; then
 		insinto /usr/share/${PN}-${SLOT}/source
-		doins -r src/main/java/org src/main/java/META-INF eclipse
+		doins -r org org/lateralgm/joshedit/META-INF eclipse
 	fi
 	insinto /usr/share/${PN}-${SLOT}/lib/
-	if use maven ; then
-		mv target/${PROJECT_NAME}-$(ver_cut 1 ${PV}).jar \
-			target/${PN}.jar || die
-		doins target/${PN}.jar
-	else
-		doins src/main/java/${PN}.jar
-	fi
+	doins org/lateralgm/joshedit/${PN}.jar
 	exeinto /usr/bin
 	cat "${FILESDIR}/${PN}" > "${T}/${PN}-${SLOT}" || die
 	doexe "${T}/${PN}-${SLOT}"
