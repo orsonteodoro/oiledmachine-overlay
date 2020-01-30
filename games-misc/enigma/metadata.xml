@@ -6,10 +6,11 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    This ENIGMA package is both the backend and engine to the LateralGM frontend GUI.
-    ENIGMA is a developer environment/toolchain used to compile Game Maker games, 
-    GML (Game Maker Language) scripts, and EDL (Enigma Development Language)
-    scripts that have syntax between GML and C++.
+    This ENIGMA package is both the backend and engine to the LateralGM frontend
+    GUI.  ENIGMA is a developer environment/toolchain used to compile Game Maker
+    games, GML (Game Maker Language) scripts, and EDL (Enigma Development
+    Language) scripts that have syntax between GML and C++.
+
     The ENIGMA engine is the API and the game state mangement offerings and
     management.
   </longdescription>
@@ -29,23 +30,31 @@
     <remote-id type="github">enigma-dev/enigma-dev</remote-id>
   </upstream>
   <use>
-    <flag name="android">Adds android support.</flag>
-    <flag name="curl">Adds curl support.</flag>
+    <flag name="android">Adds support to port games to Android.</flag>
+    <flag name="curl">Adds cURL support for multiplayer support.</flag>
     <flag name="doc">Installs documents.</flag>
-    <flag name="gles">Installs and adds gles1 support.</flag>
-    <flag name="gles2">Installs and adds gles2 support.</flag>
-    <flag name="gles3">Installs and adds gles3 support.</flag>
-    <flag name="gtk2">Makes gtk2 the default widget system.</flag>
-    <flag name="minimal">Shrinks installation.</flag>
-    <flag name="openal">Installs and makes openal the default audio system.</flag>
-    <flag name="opengl"></flag>
-    <flag name="opengl3"></flag>
-    <flag name="sdl"></flag>
-    <flag name="sfml"></flag>
-    <flag name="test"></flag>
-    <flag name="X">Makes x</flag>
-    <flag name=""></flag>
+    <flag name="gles">Installs and adds general OpenGL ES support.</flag>
+    <flag name="gles1">Installs and adds OpenGL ES 1.x support.</flag>
+    <flag name="gles2">Installs and adds OpenGL ES 2.x support.</flag>
+    <flag name="gles3">Installs and adds OpenGL ES 3.x support.</flag>
+    <flag name="gnome">Uses Zenity as the default widget engine if not using
+      KDE for alerts, user prompts, file dialogs, color picker.</flag>
+    <flag name="gtk2">Makes GTK+2 the default widget system for file dialogs,
+      input dialogs, and color picker.</flag>
+    <flag name="kde">Uses KDialog as the default widget engine if running
+      KDE for alerts, user prompts, file dialogs, color picker.</flag>
+    <flag name="minimal">Shrinks installation.  It will break support
+      for porting games to Wine or Windows.</flag>
+    <flag name="openal">Installs and makes OpenAL the default audio
+      system.</flag>
+    <flag name="opengl">Enables general OpenGL support.</flag>
+    <flag name="opengl1">Installs OpenGL 1.x support.</flag>
+    <flag name="opengl3">Installs OpenGL 3.x support.</flag>
+    <flag name="sdl2">Adds window creation and input support via SDL2 in a
+      platform independent way.</flag>
+    <flag name="sfml">Adds sound support via SFML.</flag>
+    <flag name="test">Tests the code.</flag>
+    <flag name="X">Add window and input support through X11 in a platform
+      dependent way.</flag>
   </use>
 </pkgmetadata>
-android curl doc gles gles2 gles3 gtk2 minimal +openal +opengl opengl3 \
-sdl2 sfml test +X
