@@ -8,10 +8,10 @@ LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 IUSE="lateralgm maven"
 SLOT="$(ver_cut 1 ${PV})"
-RDEPEND="virtual/jdk"
-DEPEND="${RDEPEND}
-	maven? ( app-arch/zip \
-		dev-java/maven-bin )"
+RDEPEND="virtual/jre"
+DEPEND="maven? ( app-arch/zip \
+		dev-java/maven-bin )
+	virtual/jdk"
 PROJECT_NAME="JoshEdit"
 EGIT_COMMIT="1eb8e3af94ed24e4508e922629c39c3b16e93ec1"
 SRC_URI=\
