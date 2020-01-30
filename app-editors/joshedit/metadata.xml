@@ -17,7 +17,8 @@
   </upstream>
   <use>
     <flag name="lateralgm">Install sources for lateralgm</flag>
-    <flag name="maven">Build using Maven.  May be unreliable due to flaky servers.</flag>
+    <flag name="maven">Build using Maven.  Requires you to add a per-package
+      FEATURES="-network-sandbox".</flag>
     <flag name="ecj">Build using ECJ.</flag>
   </use>
 </pkgmetadata>
