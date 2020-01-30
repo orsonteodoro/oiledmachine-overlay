@@ -3,7 +3,7 @@
 
 EAPI=7
 DESCRIPTION="ENIGMA, the Extensible Non-Interpreted Game Maker Augmentation, \
-is an open source cross-platform game development environment based on \
+is an open source cross-platform game development environment influenced by \
 the popular software Game Maker."
 HOMEPAGE="http://enigma-dev.org"
 LICENSE="GPL-3+"
