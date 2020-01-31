@@ -35,6 +35,8 @@ RDEPEND="android? ( dev-util/android-ndk
 	 sdl2? ( media-libs/libsdl2[${MULTILIB_USEDEP}] )
 	 sfml? ( media-libs/libsfml[${MULTILIB_USEDEP}] )
 	 sys-libs/zlib[${MULTILIB_USEDEP}]
+	 wine? ( sys-devel/crossdev
+		 virtual/wine )
 	 X? ( x11-libs/libX11[${MULTILIB_USEDEP}]
 	      sys-libs/zlib[${MULTILIB_USEDEP}] )
 "
@@ -156,18 +158,34 @@ src_compile() {
 
 shrink_install() {
 	rm -rf Compilers/{MacOSX,Windows} || die
-	rm -rf Compilers/Linux/{AppleCross64.ey,MinGW32.ey,MinGW64.ey} || die
-	rm -rf ENIGMAsystem/SHELL/Audio_Systems/{DirectSound,FMODAudio,\
-iOSOpenAL,XAudio2} || die
+	rm -rf Compilers/Linux/AppleCross64.ey || die
+	rm -rf ENIGMAsystem/SHELL/Audio_Systems/{FMODAudio,iOSOpenAL} \
+		|| die
 	rm -rf ENIGMAsystem/SHELL/Bridges/{Cocoa-OpenGL,Cocoa-OpenGL1,\
 Cocoa-OpenGL3,iPhone-OpenGLES,SDL-Direct3D,SDL-Direct3D11,SDL-Direct3D9,\
-SDL-Win32,Win32,Win32-Direct3D11,Win32-Direct3D9,Win32-OpenGL,Win32-OpenGL1,\
-Win32-OpenGL3} || die
-	rm -rf ENIGMAsystem/SHELL/Graphics_Systems/{Direct3D11,Direct3D9} || die
+SDL-Win32} || die
 	rm -rf ENIGMAsystem/SHELL/Makefiles/MacOSX || die
-	rm -rf ENIGMAsystem/SHELL/Networking_Systems/DirectPlay || die
-	rm -rf ENIGMAsystem/SHELL/Platforms/{Cocoa,iPhone,Win32} || die
-	rm -rf ENIGMAsystem/SHELL/Widget_Systems/{Cocoa,Win32} || die
+	rm -rf ENIGMAsystem/SHELL/Platforms/{Cocoa,iPhone} || die
+	rm -rf ENIGMAsystem/SHELL/Widget_Systems/Cocoa || die
+
+	if [[ "${EENIGMA}" == "wine" ]] ; then
+		:;
+	else
+		if ! use wine ; then
+			rm -rf Compilers/Linux/{MinGW32.ey,MinGW64.ey} || die
+			rm -rf ENIGMAsystem/SHELL/Audio_Systems/\
+{DirectSound,XAudio2} || die
+			rm -rf ENIGMAsystem/SHELL/Bridges/{Win32,\
+Win32-Direct3D11,Win32-Direct3D9,Win32-OpenGL,Win32-OpenGL1,Win32-OpenGL3} \
+|| die
+			rm -rf ENIGMAsystem/SHELL/Graphics_Systems/\
+{Direct3D11,Direct3D9} || die
+			rm -rf ENIGMAsystem/SHELL/Networking_Systems/\
+DirectPlay || die
+			rm -rf ENIGMAsystem/SHELL/Platforms/Win32 || die
+			rm -rf ENIGMAsystem/SHELL/Widget_Systems/Win32 || die
+		fi
+	fi
 
 	if [[ "${EENIGMA}" == "linux" ]] ; then
 		if [[ "${ABI}" == amd64 ]] ; then
@@ -180,7 +198,7 @@ Win32-OpenGL3} || die
 		rm -rf Compilers/Linux/{clang.ey,gcc.ey} || die
 	fi
 
-	if [[ "${EENIGMA}" == "vanilla" || "${EENIGMA}" == "android" ]] ; then
+	if [[ "${EENIGMA}" == "android" ]] ; then
 		:;
 	else
 		if ! use android ; then
