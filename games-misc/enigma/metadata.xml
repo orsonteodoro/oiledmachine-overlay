@@ -56,8 +56,6 @@
     <flag name="opengl3">Installs OpenGL 3.x support.</flag>
     <flag name="sdl2">Adds window creation and input support via SDL2 in a
       platform independent way.</flag>
-    <flag name="split-platform">Builds split platform to cut down the cost
-      to rebuild the libraries and rebuilding the compiler.</flag>
     <flag name="sfml">Adds sound support via SFML.</flag>
     <flag name="test">Tests the code.</flag>
     <flag name="vanilla">Adds the default fits all toolchain.  The
