@@ -175,6 +175,9 @@ Win32-OpenGL3} || die
 		elif [[ "${ABI}" == x86 ]] ; then
 			rm -rf Compilers/Linux/{clang.ey,gcc.ey} || die
 		fi
+	elif [[ "${EENIGMA}" == "android" ]] ; then
+		rm -rf Compilers/Linux/{clang32.ey,gcc32.ey} || die
+		rm -rf Compilers/Linux/{clang.ey,gcc.ey} || die
 	fi
 
 	if [[ "${EENIGMA}" == "vanilla" || "${EENIGMA}" == "android" ]] ; then
