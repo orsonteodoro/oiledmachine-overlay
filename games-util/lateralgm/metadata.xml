@@ -22,6 +22,11 @@
     <remote-id type="github">IsmAvatar/LateralGM</remote-id>
   </upstream>
   <use>
-    <flag name="libmaker">Adds an action library maker to extend LateralGM's drag-and-drop interface.</flag>
+    <flag name="android">Installs the jar in ENIGMA's Android only
+      platform.</flag>
+    <flag name="libmaker">Adds an action library maker to extend LateralGM's
+      drag-and-drop interface.</flag>
+    <flag name="linux">Installs the jar in ENIGMA's Linux only platform.</flag>
+    <flag name="vanilla">Installs the jar in ENIGMA's all platform.</flag>
   </use>
 </pkgmetadata>
