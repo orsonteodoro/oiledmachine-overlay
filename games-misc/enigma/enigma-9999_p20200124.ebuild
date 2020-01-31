@@ -169,18 +169,22 @@ Win32-OpenGL3} || die
 	rm -rf ENIGMAsystem/SHELL/Platforms/{Cocoa,iPhone,Win32} || die
 	rm -rf ENIGMAsystem/SHELL/Widget_Systems/{Cocoa,Win32} || die
 
-	if [[ "${ABI}" == amd64 ]] ; then
-		rm -rf Compilers/Linux/{clang32.ey,gcc32.ey} || die
-	elif [[ "${ABI}" == x86 ]] ; then
-		rm -rf Compilers/Linux/{clang.ey,gcc.ey} || die
+	if [[ "${EENIGMA}" == "linux" ]] ; then
+		if [[ "${ABI}" == amd64 ]] ; then
+			rm -rf Compilers/Linux/{clang32.ey,gcc32.ey} || die
+		elif [[ "${ABI}" == x86 ]] ; then
+			rm -rf Compilers/Linux/{clang.ey,gcc.ey} || die
+		fi
 	fi
 
 	if [[ "${EENIGMA}" == "vanilla" || "${EENIGMA}" == "android" ]] ; then
 		:;
 	else
-		rm -rf Compilers/Linux/{Android.ey,AndroidSym.ey} || die
-		rm -rf ENIGMAsystem/SHELL/Audio_Systems/androidAudio || die
-		rm -rf ENIGMAsystem/SHELL/Platforms/Android || die
+		if ! use android ; then
+			rm -rf Compilers/Linux/{Android.ey,AndroidSym.ey} || die
+			rm -rf ENIGMAsystem/SHELL/Audio_Systems/androidAudio || die
+			rm -rf ENIGMAsystem/SHELL/Platforms/Android || die
+		fi
 	fi
 
 	if ! use gles ; then
