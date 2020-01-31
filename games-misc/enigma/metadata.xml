@@ -30,7 +30,9 @@
     <remote-id type="github">enigma-dev/enigma-dev</remote-id>
   </upstream>
   <use>
-    <flag name="android">Adds support to port games to Android.</flag>
+    <flag name="android">Adds support to porting games to Android, 
+      Adds the android only toolchain.  Bypasses
+      rebuilding the toolchain when building the game.</flag>
     <flag name="curl">Adds cURL support for multiplayer support.</flag>
     <flag name="doc">Installs documents.</flag>
     <flag name="gles">Installs and adds general OpenGL ES support.</flag>
@@ -43,6 +45,8 @@
       input dialogs, and color picker.</flag>
     <flag name="kde">Uses KDialog as the default widget engine if running
       KDE for alerts, user prompts, file dialogs, color picker.</flag>
+    <flag name="linux">Adds the linux only toolchain.  Bypasses
+      rebuilding the toolchain when building the game.</flag>
     <flag name="minimal">Shrinks installation.  It will break support
       for porting games to Wine or Windows.</flag>
     <flag name="openal">Installs and makes OpenAL the default audio
@@ -52,8 +56,13 @@
     <flag name="opengl3">Installs OpenGL 3.x support.</flag>
     <flag name="sdl2">Adds window creation and input support via SDL2 in a
       platform independent way.</flag>
+    <flag name="split-platform">Builds split platform to cut down the cost
+      to rebuild the libraries and rebuilding the compiler.</flag>
     <flag name="sfml">Adds sound support via SFML.</flag>
     <flag name="test">Tests the code.</flag>
+    <flag name="vanilla">Adds the default fits all toolchain.  The
+      entire toolchain needs to rebuild everytime you build the
+      game or change platforms and ABI.</flag>
     <flag name="X">Add window and input support through X11 in a platform
       dependent way.</flag>
   </use>

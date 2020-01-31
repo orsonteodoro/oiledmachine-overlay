@@ -9,8 +9,8 @@ HOMEPAGE="http://enigma-dev.org"
 LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-IUSE="android curl doc gles gles2 gles3 gnome gtk2 kde minimal +openal \
-+opengl opengl1 opengl3 sdl2 sfml test +X"
+IUSE="android curl doc gles gles2 gles3 gnome gtk2 kde linux minimal \
++openal +opengl opengl1 opengl3 sdl2 sfml test +vanilla +X"
 inherit multilib-minimal
 RDEPEND="android? ( dev-util/android-ndk
 		    dev-util/android-sdk-update-manager )
@@ -19,7 +19,7 @@ RDEPEND="android? ( dev-util/android-ndk
 	 dev-libs/boost[${MULTILIB_USEDEP}]
 	 dev-libs/protobuf[${MULTILIB_USEDEP}]
 	 games-misc/lgmplugin
-	 games-util/lateralgm
+	 games-util/lateralgm[android?,linux?,vanilla?,${MULTILIB_USEDEP}]
 	 gles? ( media-libs/mesa[${MULTILIB_USEDEP}] )
 	 gnome? ( gnome-extra/zenity )
 	 gtk2? ( x11-libs/gtk+[${MULTILIB_USEDEP}] )
@@ -39,6 +39,7 @@ RDEPEND="android? ( dev-util/android-ndk
 	      sys-libs/zlib[${MULTILIB_USEDEP}] )
 "
 REQUIRED_USE="
+	!android
 	gles2? ( gles opengl )
 	gles3? ( gles opengl )
 	opengl1? ( opengl )
@@ -51,7 +52,7 @@ EGIT_COMMIT="670a3e228ee00d5e76bd61577b1ae9f257d863ca"
 SRC_URI=\
 "https://github.com/enigma-dev/enigma-dev/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
-inherit desktop eutils toolchain-funcs
+inherit desktop enigma eutils toolchain-funcs
 S="${WORKDIR}/enigma-dev-${EGIT_COMMIT}"
 RESTRICT="mirror"
 DOCS=( Readme.md )
@@ -64,53 +65,84 @@ src_prepare() {
 		einfo "Editing $f"
 		sed -i -e "s|-Wl,-rpath,./||g" "${f}" || die
 	done
-	multilib_copy_sources
+	enigma_copy_sources
+	platform_prepare() {
+		cd "${BUILD_DIR}" || die
+		multilib_copy_sources
+	}
+	enigma_foreach_impl platform_prepare
 }
 
-multilib_src_configure() {
-	if use sfml ; then
-		sed -i -e "s|AUDIO \?= OpenAL|AUDIO ?= SFML|" \
-			ENIGMAsystem/SHELL/Makefile || die
-	elif use openal ; then
-		sed -i -e "s|AUDIO \?= OpenAL|AUDIO ?= OpenAL|" \
-			ENIGMAsystem/SHELL/Makefile || die
-	elif use android ; then
-		sed -i -e "s|AUDIO \?= OpenAL|AUDIO ?= androidAudio|" \
-			ENIGMAsystem/SHELL/Makefile || die
-	fi
+src_configure() {
+	platform_configure() {
+		cd "${BUILD_DIR}" || die
+		ml_configure_abi() {
+			cd "${BUILD_DIR}" || die
+			if [[ "${EENIGMA}" == "android" ]] ; then
+				sed -i -e "s|AUDIO \?= OpenAL|AUDIO ?= androidAudio|" \
+					ENIGMAsystem/SHELL/Makefile || die
+				sed -i -e "s|PLATFORM := xlib|PLATFORM ?= Android|" \
+					ENIGMAsystem/SHELL/Makefile || die
+				# todo see Compilers/MacOSX/Android.ey
+				# depends on if we are using autotools or ndk-build?
+				#sed -i -e "s|make: make|make: |g" \
+				#	Compilers/Linux/Android.ey
+				#sed -i -e "s|make: make|make: |g" \
+				#	Compilers/Linux/AndroidSym.ey
+			fi
 
-	if use curl ; then
-		sed -i -e "s|NETWORKING \?= None|NETWORKING ?= BerkeleySockets|" \
-			ENIGMAsystem/SHELL/Makefile || die
-	fi
+			if use sfml ; then
+				sed -i -e "s|AUDIO \?= OpenAL|AUDIO ?= SFML|" \
+					ENIGMAsystem/SHELL/Makefile || die
+			elif use openal ; then
+				sed -i -e "s|AUDIO \?= OpenAL|AUDIO ?= OpenAL|" \
+					ENIGMAsystem/SHELL/Makefile || die
+			fi
 
-	if use sdl2 ; then
-		sed -i -e "s|PLATFORM := xlib|PLATFORM ?= SDL|" \
-			ENIGMAsystem/SHELL/Makefile || die
-	elif use X ; then
-		sed -i -e "s|PLATFORM := xlib|PLATFORM ?= xlib|" \
-			ENIGMAsystem/SHELL/Makefile || die
-	elif use android ; then
-		sed -i -e "s|PLATFORM := xlib|PLATFORM ?= Android|" \
-			ENIGMAsystem/SHELL/Makefile || die
-	fi
+			if use curl ; then
+				sed -i -e "s|NETWORKING \?= None|NETWORKING ?= BerkeleySockets|" \
+					ENIGMAsystem/SHELL/Makefile || die
+			fi
 
-	if use gtk2 ; then
-		sed -i -e "s|WIDGETS \?= None|WIDGETS ?= GTK+|" \
-			ENIGMAsystem/SHELL/Makefile || die
-	elif use kde || use gnome ; then
-		sed -i -e "s|WIDGETS \?= None|WIDGETS ?= xlib|" \
-			ENIGMAsystem/SHELL/Makefile || die
-	fi
+			if use sdl2 ; then
+				sed -i -e "s|PLATFORM := xlib|PLATFORM ?= SDL|" \
+					ENIGMAsystem/SHELL/Makefile || die
+			elif use X ; then
+				sed -i -e "s|PLATFORM := xlib|PLATFORM ?= xlib|" \
+					ENIGMAsystem/SHELL/Makefile || die
+			fi
+
+			if use gtk2 ; then
+				sed -i -e "s|WIDGETS \?= None|WIDGETS ?= GTK+|" \
+					ENIGMAsystem/SHELL/Makefile || die
+			elif use kde || use gnome ; then
+				sed -i -e "s|WIDGETS \?= None|WIDGETS ?= xlib|" \
+					ENIGMAsystem/SHELL/Makefile || die
+			fi
+		}
+		multilib_foreach_abi ml_configure_abi
+	}
+	enigma_foreach_impl platform_configure
 }
 
-multilib_src_compile() {
-	local targets=( libpng-util libProtocols libEGM ENIGMA emake )
-	if use test ; then
-		targets+=( emake-tests test-runner )
-	fi
-	targets+=( .FORCE )
-	emake ${targets[@]}
+src_compile() {
+	platform_compile () {
+		cd "${BUILD_DIR}" || die
+		ml_compile_abi() {
+			if [[ "${EENIGMA}" == "vanilla" ]] ; then
+				return
+			fi
+			cd "${BUILD_DIR}" || die
+			local targets=( libpng-util libProtocols libEGM ENIGMA emake )
+			if use test ; then
+				targets+=( emake-tests test-runner )
+			fi
+			targets+=( .FORCE )
+			emake ${targets[@]}
+		}
+		multilib_foreach_abi ml_compile_abi
+	}
+	enigma_foreach_impl platform_compile
 }
 
 shrink_install() {
@@ -134,7 +166,9 @@ Win32-OpenGL3} || die
 		rm -rf Compilers/Linux/{clang.ey,gcc.ey} || die
 	fi
 
-	if ! use android ; then
+	if [[ "${EENIGMA}" == "vanilla" || "${EENIGMA}" == "android" ]] ; then
+		:;
+	else
 		rm -rf Compilers/Linux/{Android.ey,AndroidSym.ey} || die
 		rm -rf ENIGMAsystem/SHELL/Audio_Systems/androidAudio || die
 		rm -rf ENIGMAsystem/SHELL/Platforms/Android || die
@@ -230,44 +264,62 @@ OpenGL-Desktop} || die
 	fi
 }
 
-multilib_src_install() {
-	local b
-	if [[ "${ABI}" == amd64 ]] ; then
-		b=64
-	elif [[ "${ABI}" == x86 ]] ; then
-		b=32
-	fi
-	if use minimal ; then
-		shrink_install
-	fi
-	insinto /usr/$(get_libdir)/enigma/
-	doins -r ENIGMAsystem Compilers settings.ey events.res
-	exeinto /usr/bin
-	cp "${FILESDIR}/enigma" "${FILESDIR}/enigma-cli" "${T}"
-	sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|g" "${T}"/enigma || die
-	sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|g" "${T}"/enigma-cli || die
-	mv "${T}/enigma"{,-${b}}
-	mv "${T}/enigma-cli"{,-${b}}
-	doexe "${T}/enigma-${b}" "${T}/enigma-cli-${b}"
-	sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|g" \
-		"${D}/usr/bin/enigma-${b}" || die
-	sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|g" \
-		"${D}/usr/bin/enigma-cli-${b}" || die
-	insinto "/usr/$(get_libdir)/enigma/"
-	doins Makefile
-	exeinto "/usr/$(get_libdir)/enigma/"
-	doexe libcompileEGMf.so libEGM.so libProtocols.so emake
-	# new line replace
-	NLR=( -e ':a;N;$!ba' )
-	sed -i ${NLR[@]} -e 's|.PHONY: ENIGMA||g' \
-		"${D}/usr/$(get_libdir)/enigma/Makefile" || die
-	sed -i ${NLR[@]} -e 's|ENIGMA:\n\t\$(MAKE) -j 3 -C CompilerSource||g' \
-		"${D}/usr/$(get_libdir)/enigma/Makefile" || die
-	sed -i ${NLR[@]} -e 's|clean:\n\t\$(MAKE) -C CompilerSource clean||g' \
-		"${D}/usr/$(get_libdir)/enigma/Makefile" || die
-	newicon Resources/logo.png enigma.png
-	make_desktop_entry "/usr/bin/enigma-${b}" "ENIGMA (${b}-bit)" \
-		"/usr/share/pixmaps/enigma.png" "Development;IDE"
+src_install() {
+	platform_install() {
+		cd "${BUILD_DIR}" || die
+		ml_install_abi() {
+			if [[ "${EENIGMA}" == "vanilla" ]] && ! multilib_is_native_abi; then
+				return
+			fi
+
+			cd "${BUILD_DIR}" || die
+			local suffix=""
+			local descriptor_suffix=""
+			if [[ "${EENIGMA}" == "linux" ]] ; then
+				suffix="-${ABI}"
+				descriptor_suffix=" (${ABI})"
+			fi
+			insinto "/usr/$(get_libdir)/enigma/${EENIGMA}${suffix}"
+			exeinto "/usr/$(get_libdir)/enigma/${EENIGMA}${suffix}"
+			if [[ "${EENIGMA}" == "vanilla" ]] ; then
+				doins -r CompilerSource CommandLine shared
+			else
+				if use minimal ; then
+					shrink_install
+				fi
+				eapply "${FILESDIR}/enigma-9999_p20200124-makefile-stripped-for-production.patch"
+			fi
+			if [[ "${EENIGMA}" == "vanilla" ]] ; then
+				:;
+			else
+				doexe emake
+			fi
+			doins -r ENIGMAsystem Compilers settings.ey events.res Makefile
+			exeinto /usr/bin
+			cp "${FILESDIR}/enigma" "${FILESDIR}/enigma-cli" "${T}"
+			sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|g" "${T}"/enigma || die
+			sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|g" "${T}"/enigma-cli || die
+			sed -i -e "s|PLATFORM|${EENIGMA}${suffix}|g" "${T}"/enigma || die
+			sed -i -e "s|PLATFORM|${EENIGMA}${suffix}|g" "${T}"/enigma-cli || die
+			mv "${T}/enigma"{,-${EENIGMA}${suffix}}
+			mv "${T}/enigma-cli"{,-${EENIGMA}${suffix}}
+			doexe "${T}/enigma-${EENIGMA}${suffix}" "${T}/enigma-cli-${EENIGMA}${suffix}"
+			sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|g" \
+				"${D}/usr/bin/enigma-${EENIGMA}${suffix}" || die
+			sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|g" \
+				"${D}/usr/bin/enigma-cli-${EENIGMA}${suffix}" || die
+			if [[ "${EENIGMA}" == "vanilla" ]] ; then
+				:;
+			else
+				dolib.so libcompileEGMf.so libEGM.so libProtocols.so
+			fi
+			newicon Resources/logo.png enigma.png
+			make_desktop_entry "/usr/bin/enigma-${EENIGMA}${suffix}" "ENIGMA${descriptor_suffix}" \
+				"/usr/share/pixmaps/enigma.png" "Development;IDE"
+		}
+		multilib_foreach_abi ml_install_abi
+	}
+	enigma_foreach_impl platform_install
 }
 
 pkg_postinst()
@@ -277,4 +329,7 @@ pkg_postinst()
 /usr/$(get_libdir)/ENIGMAsystem/SHELL files.  What this means is that the\n\
 Run, Debug, and Compile buttons on LateralGM will not be available until\n\
 ENIGMA is done.  You need to wait."
+	if use android ; then
+		einfo "You need to modify /usr/$(get_libdir)/Compilers/Android.ey manually"
+	fi
 }
