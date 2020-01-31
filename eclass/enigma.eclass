@@ -12,7 +12,7 @@ inherit multibuild
 
 # @ECLASS-VARIABLE: _IMPLS
 # @DESCRIPTION: (Private) Generates a list of implementations for the enigma-multibuild context
-_IMPLS="vanilla android linux"
+_IMPLS="vanilla android linux wine"
 IUSE+=" ${_IMPLS}"
 REQUIRED_USE="|| ( ${_IMPLS} )"
 
