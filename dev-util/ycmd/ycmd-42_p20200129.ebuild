@@ -480,7 +480,7 @@ _shrink_install() {
 			rm -rf typescript typescriptreact || die
 		fi
 		if ! use vim ; then
-			rm -rf completers/general/ultisnips_completer.py || die
+			rm -rf general/ultisnips_completer.py || die
 		fi
 	popd
 
