@@ -14,7 +14,7 @@ RDEPEND="sys-devel/clang
 	autotools? ( sys-devel/make )
 	cmake? ( dev-util/cmake )
 	qt5? ( dev-qt/qtcore:5 )"
-BDEPEND="dev-python/future"
+DEPEND="dev-python/future"
 EGIT_COMMIT="7c0f5701130f4178cb63d10da88578b9b705fbb1"
 SRC_URI="\
 https://github.com/rdnetto/YCM-Generator/archive/${EGIT_COMMIT}.tar.gz \
