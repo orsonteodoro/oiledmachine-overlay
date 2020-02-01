@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <!-- only in the oiledmachine-overlay for this fork -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    YCM-Generator a script which generates a list of compiler flags from a
+    project with an arbitrary build system to produce a .ycm_extra_conf.py
+    or .color_coded file.
+  </longdescription>
+  <upstream>
+    <maintainer status="active">
+      <name>Renee D'Netto</name>
+    </maintainer>
+    <bugs-to>https://github.com/rdnetto/YCM-Generator/issues</bugs-to>
+    <remote-id type="github">rdnetto/YCM-Generator</remote-id>
+  </upstream>
+  <use>
+    <flag name="autotools">Checks for autotools' make.</flag>
+    <flag name="cmake">Checks for cmake.</flag>
+    <flag name="qt5">Checks for support for qt5 qmake.</flag>
+  </use>
+</pkgmetadata>
