@@ -45,11 +45,10 @@ CDEPEND="${PYTHON_DEPS}
 # gopls is 0.1.7
 RDEPEND="${CDEPEND}
 	>=dev-python/future-0.15.2_p20150911[${PYTHON_USEDEP}]
-	go? ( dev-go/go-tools )
 	java? ( virtual/jre:1.8 )
 	javascript? ( net-libs/nodejs )
-	rust? ( >=dev-lang/rust-1.35.0 )
 	system-bottle? ( >=dev-python/bottle-0.12.13[${PYTHON_USEDEP}] )
+	system-go-tools? ( dev-go/go-tools )
 	system-jedi? ( >=dev-python/jedi-0.15.0_p20190811[${PYTHON_USEDEP}]
 			>=dev-python/numpydoc-0.9.0_p20190408[${PYTHON_USEDEP}]
 			>=dev-python/parso-0.5.0_p20190620[${PYTHON_USEDEP}] )
@@ -79,7 +78,7 @@ DEPEND="${CDEPEND}
 		>=dev-python/pyhamcrest-1.8.5[${PYTHON_USEDEP}]
 		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}] )
 		net-libs/nodejs[npm]"
-EGIT_COMMIT="38bb02f369d21207c3e7512d005287ff07e143ae"
+EGIT_COMMIT="d3378ca3a3103535c14b104cb916dcbcdaf93eeb"
 EGIT_REPO_URI="https://github.com/ycm-core/ycmd.git"
 
 # lock down for a deterministic build
@@ -125,12 +124,15 @@ the internal dependencies."
 
 src_prepare() {
 	default
-	ewarn "This ebuild is a Work in Progress and may not work at all."
-
 	# Apply all patches
 
 	# Required for deterministic build.
 	eapply "${FILESDIR}/ycmd-42_p20200108-skip-thirdparty-check.patch"
+
+	ewarn "This ebuild is a Work in Progress and may not work at all."
+	if use go && ! use system-go-tools ; then
+		ewarn "flaky go servers may prevent gopls from installing or existing.  Try again."
+	fi
 
 	if use clangd ; then
 		ewarn "Clangd is experimental and not recommended at this time."
@@ -306,6 +308,10 @@ src_compile() {
 		if use java ; then
 			myargs+=" --java-completer"
 		fi
+		if use javascript \
+			&& ! use system-tern ; then
+			myargs+=" --tern-completer"
+		fi
 		if ! use regex ; then
 			myargs+=" --no-regex"
 		fi
@@ -420,8 +426,13 @@ _shrink_install() {
 	find . \( -name ".git*" \
 			-o -name "azure" \
 			-o -name "azure-pipelines.yml" \
+			-o -name "_travis" \
 		\) \
 		-exec rm -rf "{}" +
+	if use rust \
+		&& ! use system-rls ; then
+		rm -rf "third_party/rls/lib/rustlib/src/rust/src/stdarch/ci" || die
+	fi
 
 	einfo "Cleaning out installer files"
 	find . \( -name "setup.py" \) \
@@ -477,10 +488,21 @@ _shrink_install() {
 	find . \( -name "conftest.py" \
 			-o -name "test.py" \) \
 		-delete
+	if use javascript \
+		&& ! use system-tern ; then
+		rm -rf "third_party/tern_runtime/node_modules/tern/bin/test" \
+			"third_party/tern_runtime/node_modules/errno/build.js" || die
+	fi
+	rm -rf third_party/requests_deps/urllib3/dummyserver || die
 
 	einfo "Cleaning out test folders"
 	find {third_party,ycmd} -path "*/*test*/*" \
 		-exec rm -rf "{}" +
+
+	einfo "Cleaning out unused platforms"
+	if use java ; then
+		rm -rf third_party/eclipse.jdt.ls/target/repository/config_{mac,win} || die
+	fi
 
 	find . -empty -type f -delete
 	find . -empty -type d -delete
@@ -489,87 +511,136 @@ _shrink_install() {
 src_install() {
 	python_install_all() {
 		cd "${BUILD_DIR}" || die
-		dodir "$(python_get_sitedir)/ycmd"
-		insinto "$(python_get_sitedir)"
-		doins ycm_core.so
-		insinto "$(python_get_sitedir)"
-		doins CORE_VERSION
+		local bd="$(python_get_sitedir)/ycmd"
+		python_moduleinto ycmd
+		python_domodule CORE_VERSION
+		exeinto "${bd}"
+		doexe ycm_core.so
 		if use system-omnisharp-roslyn \
 			&& use csharp ; then
-			cp -a omnisharp.sh "ycmd/completers/cs/"
+			exeinto "${bd}/ycmd/completers/cs/"
+			doexe omnisharp.sh
 		fi
 		if use minimal ; then
 			_shrink_install
 		fi
 		python_domodule ycmd
-		if use system-omnisharp-roslyn \
-			&& use csharp ; then
-			fperms 755 \
-			"$(python_get_sitedir)/ycmd/completers/cs/omnisharp.sh"
-		fi
 		insinto "/usr/share/${PN}"
 		if use examples ; then
 			doins -r examples
 		fi
 
-		insinto "$(python_get_sitedir)/third_party"
+		python_moduleinto "ycmd/third_party"
+		if use java ; then
+			python_domodule third_party/eclipse.jdt.ls
+		fi
+
 		if ! use system-bottle ; then
-			doins -r third_party/bottle
+			python_domodule third_party/bottle
 		fi
 
 		if ! use system-clangd \
 			&& ( use c || use cxx || use objc || use objcxx ) \
 			&& use clangd ; then
-			doins -r third_party/clangd
+			python_domodule third_party/clangd
 		fi
 
 		if ! use system-mrab-regex \
 			&& use regex ; then
-			doins -r third_party/cregex
+			python_domodule third_party/cregex
 		fi
 
 		if ! use system-libclang \
 			&& ( use c || use cxx || use objc || use objcxx ) \
 			&& use libclang ; then
-			doins -r third_party/clang
+			python_domodule third_party/clang
+			fperms 755 "${bd}/third_party/clang/lib/libclang.so.8"
 		fi
 
 		if ! use system-lsp \
 			&& use lsp ; then
-			doins -r third_party/generic_server
+			python_domodule third_party/generic_server
 		fi
 
 		if ! use system-go-tools \
 			&& use go ; then
-			doins -r third_party/go
+			python_domodule third_party/go
+			fperms 755 \
+		"${bd}/third_party/go/src/golang.org/x/tools/cmd/gopls/gopls"
 		fi
 
 		if ! use system-jedi \
 			&& use python ; then
-			doins -r third_party/jedi_deps
+			python_domodule third_party/jedi_deps
 		fi
 
 		if ! use system-omnisharp-roslyn \
 			&& use csharp ; then
-			doins -r third_party/omnisharp-roslyn
+			python_domodule third_party/omnisharp-roslyn
 		fi
 
 		if ! use system-requests ; then
-			doins -r third_party/requests_deps
+			python_domodule third_party/requests_deps
 		fi
 
 		if ! use system-rls \
 			&& use rust ; then
-			doins -r third_party/rls
+			python_domodule third_party/rls
+
+			local arch=""
+			if [[ "${ABI}" == x86 ]] ; then
+				arch="i686"
+			elif [[ "${ABI}" == amd64 ]] ; then
+				arch="x86_64"
+			else
+				die \
+"This ABI (${ABI}) is currently not supported as an internal Rust\
+dependency.  Contact the ebuild maintainer or use the system-rls USE flag."
+			fi
+
+			fperms 755 \
+			"${bd}/third_party/rls/lib/rustlib/src/rust/src/libcore/unicode/printable.py" \
+			"${bd}/third_party/rls/lib/rustlib/src/rust/src/libcore/unicode/unicode.py" \
+			"${bd}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/codegen-backends/librustc_codegen_llvm-emscripten.so" \
+			"${bd}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/codegen-backends/librustc_codegen_llvm-llvm.so" \
+			"${bd}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/lib/librustc_driver-859926a7780138cb.so" \
+			"${bd}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/lib/librustc_macros-1ea7012aad3f78b4.so" \
+			"${bd}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/lib/libstd-763271b142020d6a.so" \
+			"${bd}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/lib/libtest-73f108977db97b26.so" \
+			"${bd}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/bin/rust-lld" \
+			"${bd}/third_party/rls/bin/cargo-clippy" \
+			"${bd}/third_party/rls/bin/rustfmt" \
+			"${bd}/third_party/rls/bin/rls" \
+			"${bd}/third_party/rls/bin/rust-gdb" \
+			"${bd}/third_party/rls/bin/rustdoc" \
+			"${bd}/third_party/rls/bin/rustc" \
+			"${bd}/third_party/rls/bin/clippy-driver" \
+			"${bd}/third_party/rls/bin/rust-gdbgui" \
+			"${bd}/third_party/rls/bin/rust-lldb" \
+			"${bd}/third_party/rls/bin/cargo-fmt" \
+			"${bd}/third_party/rls/bin/cargo"
 		fi
 
 		if ! use system-tern \
 			&& use javascript ; then
-			doins -r third_party/turn_runtime
+			python_domodule third_party/tern_runtime
+			fperms 755 \
+			"${bd}/third_party/tern_runtime/node_modules/errno/cli.js" \
+			"${bd}/third_party/tern_runtime/node_modules/acorn/bin/acorn" \
+			"${bd}/third_party/tern_runtime/node_modules/tern/bin/condense" \
+			"${bd}/third_party/tern_runtime/node_modules/tern/bin/tern"
+		fi
+
+		if ! use system-typescript \
+			&& use typescript ; then
+			python_domodule third_party/tsserver
+			fperms 755 \
+			"${bd}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsc" \
+			"${bd}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserver"
 		fi
 
 		if ! use system-waitress ; then
-			doins -r third_party/waitress
+			python_domodule third_party/waitress
 		fi
 		python_optimize
 	}
