@@ -6,8 +6,12 @@ DESCRIPTION="A code-completion & code-comprehension server"
 HOMEPAGE="https://ycm-core.github.io/ycmd/"
 LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-PYTHON_COMPAT=( python{3_6,3_7,3_8} )
-SLOT="0/${PV}"
+PYTHON_COMPAT=( python3_{6,7,8} )
+# slot 0 old hmac calculation, new one is
+#	 426833360adec8db72ed6cef9d7aa7f037e6a5b8 of (ycmd/hmac_plugin.py)
+# slot 1 racerd, gocode, godef
+# slot 2 (racerd) -> (rls) ; (gocode, godef) -> (gopls)
+SLOT="2"
 USE_DOTNET="net472 netcoreapp21"
 IUSE="c clangd csharp cuda cxx docs debug examples go java javascript libclang \
 lsp minimal objc objcxx python regex rust system-bottle system-boost system-clangd \
@@ -80,23 +84,6 @@ DEPEND="${CDEPEND}
 		net-libs/nodejs[npm]"
 EGIT_COMMIT="d3378ca3a3103535c14b104cb916dcbcdaf93eeb"
 EGIT_REPO_URI="https://github.com/ycm-core/ycmd.git"
-
-# lock down for a deterministic build
-#EGIT_OVERRIDE_COMMIT_YCM_CORE_YCMD="38bb02f369d21207c3e7512d005287ff07e143ae"
-EGIT_OVERRIDE_COMMIT_DEFNULL_BOTTLE="7423aa0f64e381507d1e06a6bcab48888baf9a7b"
-EGIT_OVERRIDE_COMMIT_PYLONS_WAITRESS="7bb27bb66322fc564e14005d29cb6fddd76a0ab6"
-EGIT_OVERRIDE_COMMIT_REQUESTS_REQUESTS="6cfbe1aedd56f8c2f9ff8b968efe65b22669795b"
-EGIT_OVERRIDE_COMMIT_DAVIDHALTER_JEDI="35e5cf2c2aa7c2f2c8ea08d74ef64f681582e49e"
-EGIT_OVERRIDE_COMMIT_DAVIDHALTER_TYPESHED="3319cadf85012328f8a12b15da4eecc8de0cf305"
-EGIT_OVERRIDE_COMMIT_NUMPY_NUMPYDOC="c8513c5db6088a305711851519f944b33f7e1b25"
-EGIT_OVERRIDE_COMMIT_SCIPY_SCIPY_SPHINX_THEME="bc3b4b8383d4cd676fe75b7ca8c3e11d6afa8d97"
-EGIT_OVERRIDE_COMMIT_DAVIDHALTER_PARSO="59df3fab4358d5889556c2450c2d1deb36facdb7"
-EGIT_OVERRIDE_COMMIT_YCM_CORE_REGEX="cc538bb6d0fcf0a6411537a5522d13cc9b86789d"
-EGIT_OVERRIDE_COMMIT_URLLIB3_URLLIB3="a6ec68a5c5c5743c59fe5c62c635c929586c429b"
-EGIT_OVERRIDE_COMMIT_CHARDET_CHARDET="9b8c5c2fb118d76c6beeab9affd01c332732a530"
-EGIT_OVERRIDE_COMMIT_CERTIFI_PYTHON_CERTIFI="5b9e05c06e69fe5c7835052cfc3ae1c899dfc8b1"
-EGIT_OVERRIDE_COMMIT_KJD_IDNA="0f50bdcea71e6602bf4cd22897970d71fc4074d9"
-EGIT_OVERRIDE_COMMIT_GOLANG_TOOLS="58d531046acdc757f177387bc1725bfa79895d69"
 
 inherit cmake-utils eutils flag-o-matic git-r3
 S="${WORKDIR}/${PN}-${PV}"
@@ -511,7 +498,7 @@ _shrink_install() {
 src_install() {
 	python_install_all() {
 		cd "${BUILD_DIR}" || die
-		local bd="$(python_get_sitedir)/ycmd"
+		local bd="$(python_get_sitedir)/ycmd/${SLOT}"
 		python_moduleinto ycmd
 		python_domodule CORE_VERSION
 		exeinto "${bd}"
@@ -524,13 +511,13 @@ src_install() {
 		if use minimal ; then
 			_shrink_install
 		fi
-		python_domodule ycmd
+		python_domodule ycmd/${SLOT}
 		insinto "/usr/share/${PN}"
 		if use examples ; then
 			doins -r examples
 		fi
 
-		python_moduleinto "ycmd/third_party"
+		python_moduleinto "ycmd/${SLOT}/third_party"
 		if use java ; then
 			python_domodule third_party/eclipse.jdt.ls
 		fi
