@@ -11,7 +11,7 @@
   "max_num_identifier_candidates": 10,
   "max_num_candidates": 50,
   "extra_conf_globlist": [],
-  "global_ycm_extra_conf": "/tmp/.ycm_extra_conf.py",
+  "global_ycm_extra_conf": "___GLOBAL_YCM_EXTRA_CONF___",
   "confirm_extra_conf": 1,
   "max_diagnostics_to_display": 30,
   "filepath_blacklist": {
@@ -23,18 +23,16 @@
   "auto_stop_csharp_server": 1,
   "use_ultisnips_completer": 1,
   "csharp_server_port": 0,
-  "hmac_secret": "HFJ1aRMhtCX/DMYWYkUl9g==",
+  "hmac_secret": "___HMAC_SECRET___",
   "server_keep_logfiles": 0,
-  "python_binary_path": "/usr/bin/python3.6"
+  "python_binary_path": "___PYTHON_BIN_PATH___",
   "language_server": [],
   "java_jdtls_use_clean_workspace": 1,
-  "java_jdtls_workspace_root_path": "",
+  "java_jdtls_workspace_root_path": "___JAVA_JDTLS_WORKSPACE_ROOT_PATH___",
   "java_jdtls_extension_path": [],
   "use_clangd": 1,
-  "clangd_binary_path": "/usr/lib/llvm/8/bin/clangd",
+  "clangd_binary_path": "___CLANGD_BIN_PATH___",
   "clangd_args": [],
   "clangd_uses_ycmd_caching": 1,
-  "disable_signature_help": 0,
-  "rust_src_path": "/usr/share/rust/src",
-  "racerd_binary_path": "/usr/bin/racerd"
+  "disable_signature_help": 0
 }

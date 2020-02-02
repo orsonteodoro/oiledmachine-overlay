@@ -9,13 +9,14 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 PYTHON_COMPAT=( python3_{6,7,8} )
 # slot 0 old hmac calculation, new one is
 #	 426833360adec8db72ed6cef9d7aa7f037e6a5b8 of (ycmd/hmac_plugin.py)
-# slot 1 racerd, gocode, godef
-# slot 2 (racerd) -> (rls) ; (gocode, godef) -> (gopls)
+# slot 1 racerd, (gocode, godef); python 2.x or 3.x ; compatible with current
+#        (20200201) emacs-ycmd, nano-ycmd, gycm
+# slot 2 (racerd) -> (rls) ; (gocode, godef) -> (gopls) ; python 3 only
 SLOT="2"
 USE_DOTNET="net472 netcoreapp21"
 IUSE="c clangd csharp cuda cxx docs debug examples go java javascript libclang \
-lsp minimal objc objcxx python regex rust system-bottle system-boost system-clangd \
-system-go-tools system-jedi system-libclang system-lsp system-mrab-regex \
+minimal objc objcxx python regex rust system-bottle system-boost system-clangd \
+system-go-tools system-jedi system-libclang system-mrab-regex \
 system-requests system-omnisharp-roslyn system-rls system-tern \
 system-typescript system-waitress test typescript vim"
 DOCS=( COPYING.txt JAVA_SUPPORT.md README.md )
@@ -24,14 +25,10 @@ CLANG_V="9.0"
 inherit python-r1 dotnet
 REQUIRED_USE="
 	c? ( || ( clangd libclang ) )
-	clangd? ( lsp )
 	csharp? ( || ( ${USE_DOTNET} ) )
 	cxx? ( || ( clangd libclang ) )
-	go? ( lsp )
-	java? ( lsp )
 	objc? ( || ( clangd libclang ) )
 	objcxx? ( || ( clangd libclang ) )
-	rust? ( lsp )
 	system-clangd? ( || ( c cxx objc objcxx ) clangd )
 	system-go-tools? ( go )
 	system-jedi? ( python )
@@ -66,9 +63,9 @@ RDEPEND="${CDEPEND}
 DEPEND="${CDEPEND}
 	javascript? ( net-libs/nodejs[npm] )
 	typescript? ( net-libs/nodejs[npm] )
-	lsp? ( net-libs/nodejs[npm] )
 	test? ( >=dev-python/codecov-2.0.5[${PYTHON_USEDEP}]
 		>=dev-python/coverage-4.2[${PYTHON_USEDEP}]
+		<dev-python/coverage-4.4[${PYTHON_USEDEP}]
 		>=dev-python/flake8-3.0[${PYTHON_USEDEP}]
 		=dev-python/flake8-comprehensions-1.4.1[${PYTHON_USEDEP}]
 		>=dev-python/flake8-ycm-0.1.0[${PYTHON_USEDEP}]
@@ -80,6 +77,7 @@ DEPEND="${CDEPEND}
 		!=dev-python/psutil-5.0.1[${PYTHON_USEDEP}]
 		>=dev-python/psutil-3.3.0[${PYTHON_USEDEP}]
 		>=dev-python/pyhamcrest-1.8.5[${PYTHON_USEDEP}]
+		>=dev-python/unittest2-1.1.0[${PYTHON_USEDEP}]
 		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}] )
 		net-libs/nodejs[npm]"
 EGIT_COMMIT="d3378ca3a3103535c14b104cb916dcbcdaf93eeb"
@@ -125,6 +123,9 @@ src_prepare() {
 		ewarn "Clangd is experimental and not recommended at this time."
 	fi
 
+	cat "${FILESDIR}/default_settings.json.42_p20200108" \
+		> ycmd/default_settings.json || die
+
 	if use system-libclang ; then
 		eapply "${FILESDIR}/${PN}-9999.20170107-force-python-libs-path.patch"
 		LIBCLANG_PATH=$(\
@@ -141,8 +142,8 @@ EXTERNAL_LIBCLANG_PATH \"${LIBCLANG_PATH}\"|g" \
 		ewarn \
 "The system-go-tools USE flag is untested for this version.  It's\n\
 recommended to use the internal instead."
-		eapply "${FILESDIR}/${PN}-42_p20200108-system-go.path"
-		sed -i -e "s|GENTOO_GOPLS_BIN|/usr/bin/gopls|g" \
+		eapply "${FILESDIR}/${PN}-42_p20200108-system-go.patch"
+		sed -i -e "s|___GOPLS_BIN_PATH___|/usr/bin/gopls|g" \
 			ycmd/completers/go/go_completer.py || die
 	fi
 
@@ -151,53 +152,71 @@ recommended to use the internal instead."
 "The system-omnisharp-roslyn USE flag is untested for this version.  It's\n\
 recommended to use the internal instead."
 
-		eapply "${FILESDIR}/${PN}-42_p20200108-system-omnisharp-roslyn.path"
-		eapply "${FILESDIR}/${PN}-42_p20200108-no-prepend-mono.patch"
+		eapply "${FILESDIR}/${PN}-42_p20200108-system-omnisharp-roslyn.patch"
 
 		if use net472 ; then
+			# todo
 			cp -a "${FILESDIR}/omnisharp.sh.netfx" \
 				omnisharp.sh
 			FRAMEWORK_FOLDER="net472"
 			sed -i -e "s|\
-GENTOO_OMNISHARP_ROSLYN_NETFX_PATH|\
+___OMNISHARP_DIR_PATH___|\
 /usr/$(get_libdir)/mono/omnisharp-roslyn/${FRAMEWORK_FOLDER}|g" \
-				omnisharp.sh
+				omnisharp.sh || die
 		elif use netcoreapp21 ; then
+			ewarn "netcoreapp21 location is tentative."
+			local _dotnet
+			if [ -d /opt/dotnet ] ; then
+				# built from source code: dev-dotnet/cli-tools
+				_dotnet="dotnet"
+			else
+				# precompiled: dev-dotnet/dotnetcore-sdk-bin
+				_dotnet="dotnet_core"
+			fi
+
 			cp -a "${FILESDIR}/omnisharp.sh.netcoreapp" \
 				omnisharp.sh
 			NETCORE_VERSION="2.1.0"
 			FRAMEWORK_FOLDER="netcoreapp2.1"
 			sed -i -e "s|\
-GENTOO_DOTNET_CLI_NETCOREAPP_PATH|\
-/opt/dotnet_cli/shared/Microsoft.NETCore.App/${NETCORE_VERSION}|g" \
-				omnisharp.sh
+___NETCOREAPP_LIB_PATH___|\
+/opt/${_dotnet}/shared/Microsoft.NETCore.App/${NETCORE_VERSION}|g" \
+				omnisharp.sh || die
 			sed -i -e "s|\
-GENTOO_OMNISHARP_ROSLYN_NETCOREAPP_PATH|\
-/usr/$(get_libdir)/mono/omnisharp-roslyn/${FRAMEWORK_FOLDER}|g" \
-				omnisharp.sh
+___OMNISHARP_DIR_PATH___|\
+$(realpath /opt/${_dotnet}/sdk/NuGetFallbackFolder/omnisharp-roslyn/*/ref/${FRAMEWORK_FOLDER} | sort | tail -n 1)
+|g" \
+				omnisharp.sh || die
 		fi
+		sed -i -e "s|\
+___OMNISHARP_DIR_PATH___|\
+/usr/$(get_libdir)/mono/omnisharp-roslyn/${FRAMEWORK_FOLDER}|g" \
+			ycmd/completers/cs/cs_completer.py || die
+		sed -i -e "s|\
+___OMNISHARP_BIN_ABSPATH___|\
+/usr/$(get_libdir)/${EPYTHON}/site-packages/ycmd/${SLOT}/ycmd/completers/cs/omnisharp.sh|g" \
+			ycmd/completers/cs/cs_completer.py || die
 	fi
 
-	if use rust ; then
-		eapply "${FILESDIR}/${PN}-42_p20200108-system-rust.path"
-		sed -i -e "s|GENTOO_RUST_BIN|/usr/bin/rustc|g" \
+	if use system-rls ; then
+		eapply "${FILESDIR}/${PN}-42_p20200108-system-rust.patch"
+		sed -i -e "s|___RUSTC_BIN_PATH___|/usr/bin/rustc|g" \
 			ycmd/completers/rust/rust_completer.py || die
-		sed -i -e "s|GENTOO_RLS_BIN|/usr/bin/rls|g" \
+		sed -i -e "s|___RLS_BIN_PATH___|/usr/bin/rls|g" \
 			ycmd/completers/rust/rust_completer.py || die
+		sed -i -e "s|___RUST_SRC_PATH___|/usr/share/rust/src|g" \
+			ycmd/default_settings.json || die
 	else
 		ewarn \
 "Using the internal rust.  You are responsible for maintaining the security\n\
-of the rust micropackages those built with them."
+of internal rust and associated packages."
 	fi
 
 	if use system-tern ; then
-		eapply "${FILESDIR}/${PN}-42_p20200108-system-tern.path"
-		sed -i -e "s|GENTOO_TERN_BIN|/usr/bin/tern|g" \
+		eapply "${FILESDIR}/${PN}-42_p20200108-system-tern.patch"
+		sed -i -e "s|___TERN_BIN_PATH___|/usr/bin/tern|g" \
 			ycmd/completers/javascript/tern_completer.py || die
 	fi
-
-	cp "${FILESDIR}/default_settings.json" \
-		ycmd/default_settings.json || die
 
 	if ! use vim ; then
 		eapply "${FILESDIR}/${PN}-42_p20200108-remove-ultisnips.patch"
@@ -205,27 +224,30 @@ of the rust micropackages those built with them."
 			ycmd/default_settings.json || die
 	fi
 
-	python_copy_sources
-	python_prepare_all() {
-		cd "${BUILD_DIR}" || die
-		if use system-omnisharp-roslyn ; then
-			sed -i -e "s|\
-GENTOO_OMNISHARP_BIN|\
-/usr/$(get_libdir)/${EPYTHON}/site-packages/ycmd/completers/cs/omnisharp.sh|g" \
-				ycmd/completers/cs/cs_completer.py || die
-		fi
-		sed -i -e "s|\
-GENTOO_PYTHON_LIBRARY_PATH|\
-/usr/$(get_libdir)/lib${EPYTHON}.so|g" \
-			build.py
-		sed -i -e "s|\
-HFJ1aRMhtCX/DMYWYkUl9g==|\
+	# todo
+	sed -i -e "s|___JAVA_JDTLS_WORKSPACE_ROOT_PATH___||g" \
+		ycmd/default_settings.json || die
+	if use system-clangd ; then
+		sed -i -e "s|___CLANGD_BIN_PATH___|/usr/lib/llvm/8/bin/clangd|g" \
+			ycmd/default_settings.json || die
+	fi
+	sed -i -e "s|___GLOBAL_YCM_EXTRA_CONF___|/tmp/.ycm_extra_conf.py|g" \
+		ycmd/default_settings.json || die
+
+	sed -i -e "s|\
+___HMAC_SECRET___|\
 $(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64)|g" \
-			ycmd/default_settings.json
-		sed -i -e "s|/usr/bin/python3.6|/usr/bin/${EPYTHON}|g" \
-			ycmd/default_settings.json
-	}
-	python_foreach_impl python_prepare_all
+		ycmd/default_settings.json
+
+	sed -i -e "s|___PYTHON_BIN_PATH___|/usr/bin/${EPYTHON}|g" \
+		ycmd/default_settings.json
+
+	sed -i -e "s|\
+___PYTHON_LIB_PATH___|\
+/usr/$(get_libdir)/lib${EPYTHON}.so|g" \
+		build.py
+
+	python_copy_sources
 }
 
 
@@ -403,12 +425,17 @@ _shrink_install() {
 				-o ${arg_legal} \) \
 			-exec rm -f "{}" +
 	fi
-	if use system-go-tools ; then
-		einfo "Cleaning go-tools"
-		find cpp ! \(	-executeable \
-				-o ${arg_legal} \) \
+
+	einfo "Cleaning out cpp build time files"
+	rm -rf cpp
+
+	if use go ; then
+		einfo "Cleaning out go folders"
+		find go ! \( -executable \
+			-o ${arg_legal} \) \
 			-exec rm "{}" +
 	fi
+
 	einfo "Cleaning out VCS, CI, testing"
 	find . \( -name ".git*" \
 			-o -name "azure" \
@@ -448,9 +475,6 @@ _shrink_install() {
 		if ! use javascript ; then
 			rm -rf javascript || die
 		fi
-		if ! use lsp ; then
-			rm -rf language_server || die
-		fi
 		if ! use objc ; then
 			rm -rf objc || die
 		fi
@@ -481,6 +505,7 @@ _shrink_install() {
 			"third_party/tern_runtime/node_modules/errno/build.js" || die
 	fi
 	rm -rf third_party/requests_deps/urllib3/dummyserver || die
+	rm -rf third_party/generic_server
 
 	einfo "Cleaning out test folders"
 	find {third_party,ycmd} -path "*/*test*/*" \
@@ -499,7 +524,7 @@ src_install() {
 	python_install_all() {
 		cd "${BUILD_DIR}" || die
 		local bd="$(python_get_sitedir)/ycmd/${SLOT}"
-		python_moduleinto ycmd
+		python_moduleinto "ycmd/${SLOT}"
 		python_domodule CORE_VERSION
 		exeinto "${bd}"
 		doexe ycm_core.so
@@ -511,8 +536,8 @@ src_install() {
 		if use minimal ; then
 			_shrink_install
 		fi
-		python_domodule ycmd/${SLOT}
-		insinto "/usr/share/${PN}"
+		python_domodule ycmd
+		insinto "/usr/share/${PN}-$(ver_cut 1 ${PV})"
 		if use examples ; then
 			doins -r examples
 		fi
@@ -542,11 +567,6 @@ src_install() {
 			&& use libclang ; then
 			python_domodule third_party/clang
 			fperms 755 "${bd}/third_party/clang/lib/libclang.so.8"
-		fi
-
-		if ! use system-lsp \
-			&& use lsp ; then
-			python_domodule third_party/generic_server
 		fi
 
 		if ! use system-go-tools \
@@ -581,7 +601,7 @@ src_install() {
 				arch="x86_64"
 			else
 				die \
-"This ABI (${ABI}) is currently not supported as an internal Rust\
+"This ${ABI} ABI is currently not supported as an internal Rust\n\
 dependency.  Contact the ebuild maintainer or use the system-rls USE flag."
 			fi
 
@@ -639,7 +659,7 @@ pkg_postinst() {
 "Examples of the .json files can be found at targeting particular python\n\
 version:\n\
 \n\
-/usr/$(get_libdir)/python*/site-packages/ycmd/default_settings.json\n"
+/usr/$(get_libdir)/python*/site-packages/ycmd/${SLOT}/ycmd/default_settings.json\n"
 
 	if use c || use cxx || use objc || use objcxx ; then
 		m+="\
@@ -650,7 +670,7 @@ project to the full path of the .ycm_extra_conf.py.\n\
 Examples of the .ycm_extra_conf.py which should be defined per project can be\n\
 found at:\n\
 \n\
-/usr/share/${PN}/examples/.ycm_extra_conf.py\n\
+/usr/share/${PN}-$(ver_cut 1 ${PV})/examples/.ycm_extra_conf.py\n\
 \n\
 or\n\
 \n\

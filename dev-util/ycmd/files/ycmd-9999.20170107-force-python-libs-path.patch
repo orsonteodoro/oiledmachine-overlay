@@ -5,7 +5,7 @@ diff -urp ycmd-c9a47452dafaf81b65db93f77d0fe23c7f539aa1.orig/build.py ycmd-c9a47
    use_python2 = 'ON' if PY_MAJOR == 2 else 'OFF'
    cmake_args.append( '-DUSE_PYTHON2=' + use_python2 )
  
-+  cmake_args.append( '-DPYTHON_LIBRARIES=GENTOO_PYTHON_LIBRARY_PATH' )
++  cmake_args.append( '-DPYTHON_LIBRARIES=___PYTHON_LIB_PATH___' )
 +
    extra_cmake_args = os.environ.get( 'EXTRA_CMAKE_ARGS', '' )
    # We use shlex split to properly parse quoted CMake arguments.

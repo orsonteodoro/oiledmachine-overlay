@@ -7,8 +7,8 @@ diff -urp a/ycmd/completers/rust/rust_completer.py b/ycmd/completers/rust/rust_c
                  'rls', 'bin' ) )
 -RUSTC_EXECUTABLE = utils.FindExecutable( os.path.join( RLS_BIN_DIR, 'rustc' ) )
 -RLS_EXECUTABLE = utils.FindExecutable( os.path.join( RLS_BIN_DIR, 'rls' ) )
-+RUSTC_EXECUTABLE = "GENTOO_RUST_BIN"
-+RLS_EXECUTABLE = "GENTOO_RLS_BIN"
++RUSTC_EXECUTABLE = "___RUSTC_BIN_PATH___"
++RLS_EXECUTABLE = "___RLS_BIN_PATH___"
  RLS_VERSION_REGEX = re.compile( r'^rls (?P<version>.*)$' )
  
  

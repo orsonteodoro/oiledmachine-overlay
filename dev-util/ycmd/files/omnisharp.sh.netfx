@@ -1,2 +1,2 @@
 #!/bin/bash
-mono GENTOO_OMNISHARP_ROSLYN_NETFX_PATH/OmniSharp.exe $@
+mono ___OMNISHARP_DIR_PATH___/OmniSharp.exe $@

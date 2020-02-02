@@ -17,7 +17,7 @@ diff -urp a/ycmd/completers/javascript/tern_completer.py b/ycmd/completers/javas
 -    'tern',
 -    'bin',
 -    'tern' ) )
-+PATH_TO_TERN_BINARY = "GENTOO_TERN_BIN"
++PATH_TO_TERN_BINARY = "___TERN_BIN_PATH___"
  
  PATH_TO_NODE = utils.FindExecutable( 'node' )
  
