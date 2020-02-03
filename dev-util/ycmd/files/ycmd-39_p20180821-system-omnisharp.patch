@@ -8,7 +8,7 @@
 -  os.path.join( os.path.dirname( __file__ ), '..', '..', '..',
 -                'third_party', 'OmniSharpServer', 'OmniSharp',
 -                'bin', 'Release', 'OmniSharp.exe' ) )
-+PATH_TO_OMNISHARP_BINARY = ___OMNISHARP_BIN_ABSPATH___
++PATH_TO_OMNISHARP_BINARY = "___OMNISHARP_BIN_ABSPATH___"
  LOGFILE_FORMAT = 'omnisharp_{port}_{sln}_{std}_'
  
  

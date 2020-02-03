@@ -12,60 +12,60 @@ PYTHON_COMPAT=( python3_{6,7,8} )
 # slot 1 racerd, (gocode, godef); python 2.x or 3.x ; compatible with current
 #        (20200201) emacs-ycmd, nano-ycmd, gycm
 # slot 2 (racerd) -> (rls) ; (gocode, godef) -> (gopls) ; python 3 only
-SLOT="2"
-USE_DOTNET="net472 netcoreapp21"
-IUSE="c clangd csharp cuda cxx docs debug examples go java javascript libclang \
-minimal objc objcxx python regex rust system-bottle system-boost system-clangd \
-system-go-tools system-jedi system-libclang system-mrab-regex \
-system-requests system-omnisharp-roslyn system-rls system-tern \
-system-typescript system-waitress test typescript vim"
-DOCS=( COPYING.txt JAVA_SUPPORT.md README.md )
-
-CLANG_V="9.0"
+SLOT="1"
+USE_DOTNET="net40"
+IUSE="c csharp cuda cxx docs debug examples go java javascript libclang \
+minimal objc objcxx python regex rust system-bottle system-boost \
+system-frozendict system-future system-gocode system-godef system-jedi \
+system-libclang system-mrab-regex system-requests system-omnisharp \
+system-racerd system-rust system-tern system-typescript system-waitress test \
+typescript vim"
+CLANG_V="6.0"
+CLANG_V_MAJ=$(ver_cut 1 ${CLANG_V})
+PV_MAJ=$(ver_cut 1 ${PV})
 inherit python-r1 dotnet
 REQUIRED_USE="
-	c? ( || ( clangd libclang ) )
+	c? ( libclang )
 	csharp? ( || ( ${USE_DOTNET} ) )
-	cxx? ( || ( clangd libclang ) )
-	objc? ( || ( clangd libclang ) )
-	objcxx? ( || ( clangd libclang ) )
-	system-clangd? ( || ( c cxx objc objcxx ) clangd )
-	system-go-tools? ( go )
+	cxx? ( libclang )
+	objc? ( libclang )
+	objcxx? ( libclang )
+	system-gocode? ( go system-godef )
+	system-godef? ( go system-gocode )
 	system-jedi? ( python )
 	system-libclang? ( || ( c cxx objc objcxx ) libclang )
 	system-mrab-regex? ( regex )
-	system-omnisharp-roslyn? ( csharp )
-	system-rls? ( rust )
-	system-tern? ( javascript )"
+	system-omnisharp? ( csharp )
+	system-racerd? ( rust )
+	system-tern? ( javascript )
+	typescript? ( system-typescript )"
 # Versions must match
 # https://github.com/ycm-core/ycmd/blob/master/cpp/BoostParts/boost/version.hpp
 CDEPEND="${PYTHON_DEPS}
-	system-boost? ( >=dev-libs/boost-1.70.1:=[python,threads,${PYTHON_USEDEP}] )
-	system-libclang? ( >=sys-devel/clang-${CLANG_V} )
-	system-clangd? ( >=sys-devel/clang-${CLANG_V} )"
-# gopls is 0.1.7
+	system-boost? ( >=dev-libs/boost-1.68.0:=[python,threads,${PYTHON_USEDEP}] )
+	system-libclang? ( sys-devel/clang:${CLANG_V_MAJ} )"
 RDEPEND="${CDEPEND}
-	>=dev-python/future-0.15.2_p20150911[${PYTHON_USEDEP}]
 	java? ( virtual/jre:1.8 )
 	javascript? ( net-libs/nodejs )
 	system-bottle? ( >=dev-python/bottle-0.12.13[${PYTHON_USEDEP}] )
-	system-go-tools? ( dev-go/go-tools )
-	system-jedi? ( >=dev-python/jedi-0.15.0_p20190811[${PYTHON_USEDEP}]
+	system-frozendict? ( >=dev-python/frozendict-0.3 )
+	system-future? ( >=dev-python/future-0.15.2_p20150911[${PYTHON_USEDEP}] )
+	system-gocode? ( >=dev-go/gocode-9999_p20170425 )
+	system-godef? ( >=dev-go/godef-9999_p20160205 )
+	system-jedi? ( >=dev-python/jedi-0.12.0_p20180620[${PYTHON_USEDEP}]
 			>=dev-python/numpydoc-0.9.0_p20190408[${PYTHON_USEDEP}]
-			>=dev-python/parso-0.5.0_p20190620[${PYTHON_USEDEP}] )
-	system-mrab-regex? ( >=dev-python/mrab-regex-2019.06.08_p20190725[${PYTHON_USEDEP}] )
-	system-omnisharp-roslyn? ( >=dev-dotnet/omnisharp-roslyn-1.34.2[net472?,netcoreapp21?] )
-	system-requests? ( >=dev-python/requests-2.20.1_p20181108[${PYTHON_USEDEP}] )
-	system-rls? ( >=dev-lang/rust-1.35.0[rls] )
+			>=dev-python/parso-0.2.1[${PYTHON_USEDEP}] )
+	system-mrab-regex? ( >=dev-python/mrab-regex-2018.06.06[${PYTHON_USEDEP}] )
+	system-omnisharp? ( >=dev-dotnet/omnisharp-1.0.0.0_p20150829[net40] )
+	system-requests? ( >=dev-python/requests-2.9.1[${PYTHON_USEDEP}] )
+	system-racerd? ( >=dev-rust/racerd-2.1.0 )
 	system-tern? ( >=dev-nodejs/tern-0.21.0 )
-	system-typescript? ( >=dev-lang/typescript-3.7.2 )
+	system-typescript? ( >=dev-lang/typescript-1.5 )
 	system-waitress? ( >=dev-python/waitress-1.1.0_p20171010[${PYTHON_USEDEP}] )"
 DEPEND="${CDEPEND}
 	javascript? ( net-libs/nodejs[npm] )
 	typescript? ( net-libs/nodejs[npm] )
-	test? ( >=dev-python/codecov-2.0.5[${PYTHON_USEDEP}]
-		>=dev-python/coverage-4.2[${PYTHON_USEDEP}]
-		<dev-python/coverage-4.4[${PYTHON_USEDEP}]
+	test? ( >=dev-python/coverage-4.2[${PYTHON_USEDEP}]
 		>=dev-python/flake8-3.0[${PYTHON_USEDEP}]
 		=dev-python/flake8-comprehensions-1.4.1[${PYTHON_USEDEP}]
 		>=dev-python/flake8-ycm-0.1.0[${PYTHON_USEDEP}]
@@ -80,51 +80,51 @@ DEPEND="${CDEPEND}
 		>=dev-python/unittest2-1.1.0[${PYTHON_USEDEP}]
 		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}] )
 		net-libs/nodejs[npm]"
-EGIT_COMMIT="d3378ca3a3103535c14b104cb916dcbcdaf93eeb"
+EGIT_COMMIT="386915288616fddcc60a46b49e6c6e71a118542b"
 EGIT_REPO_URI="https://github.com/ycm-core/ycmd.git"
 
 inherit cmake-utils eutils flag-o-matic git-r3
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
+DOCS=( COPYING.txt JAVA_SUPPORT.md README.md )
 
 pkg_setup() {
+	if ! use system-boost ; then
+		ewarn "Using internal boost my have vulnerabilities."
+	fi
 	if \
 	! use system-boost \
-	|| ! use system-clangd \
-	|| ! use system-go-tools \
+	|| ! use system-gocode \
+	|| ! use system-godef \
 	|| ! use system-jedi \
 	|| ! use system-libclang \
-	|| ! use system-omnisharp-roslyn \
-	|| ! use system-rls \
+	|| ! use system-omnisharp \
+	|| ! use system-racerd \
 	|| ! use system-tern \
 	|| ! use system-typescript \
 	|| use test ; then
 		if has network-sandbox $FEATURES ; then
 			die \
-"FEATURES=\"-network-sandbox\" must be added per-package env to be able to download\n\
-the internal dependencies."
+"FEATURES=\"-network-sandbox\" must be added per-package env to be able to\n\
+download the internal dependencies."
 		fi
 	fi
+
+	ewarn \
+"This version of ycmd is near EOL on this repo.  It will be removed once all\n\
+clients are updated to be compatible with the latest."
+	python_setup
 }
 
 src_prepare() {
 	default
-	# Apply all patches
+	local sitedir="$(python_get_sitedir)"
+	local ycmd_sitedir="${sitedir}/ycmd/"
 
 	# Required for deterministic build.
-	eapply "${FILESDIR}/ycmd-42_p20200108-skip-thirdparty-check.patch"
+	eapply "${FILESDIR}/${PN}-42_p20200108-skip-thirdparty-check.patch"
 
 	ewarn "This ebuild is a Work in Progress and may not work at all."
-	if use go && ! use system-go-tools ; then
-		ewarn "flaky go servers may prevent gopls from installing or existing.  Try again."
-	fi
-
-	if use clangd ; then
-		ewarn "Clangd is experimental and not recommended at this time."
-	fi
-
-	cat "${FILESDIR}/default_settings.json.42_p20200108" \
-		> ycmd/default_settings.json || die
 
 	if use system-libclang ; then
 		eapply "${FILESDIR}/${PN}-9999.20170107-force-python-libs-path.patch"
@@ -135,117 +135,120 @@ EXTERNAL_LIBCLANG_PATH \${TEMP}|\
 EXTERNAL_LIBCLANG_PATH \"${LIBCLANG_PATH}\"|g" \
 			cpp/ycm/CMakeLists.txt || die
 	fi
+
 	CMAKE_USE_DIR="${S}/cpp" \
 	cmake-utils_src_prepare
 
-	if use system-go-tools ; then
+	cat "${FILESDIR}/default_settings.json.39_p20180821" \
+		> ycmd/default_settings.json || die
+
+	sed -i -e "s|___GLOBAL_YCM_EXTRA_CONF___|/tmp/.ycm_extra_conf.py|g" \
+		ycmd/default_settings.json || die
+
+	if use system-godef && use system-gocode ; then
 		ewarn \
-"The system-go-tools USE flag is untested for this version.  It's\n\
-recommended to use the internal instead."
-		eapply "${FILESDIR}/${PN}-42_p20200108-system-go.patch"
-		sed -i -e "s|___GOPLS_BIN_PATH___|/usr/bin/gopls|g" \
-			ycmd/completers/go/go_completer.py || die
+"The system-godef and system-gocode USE flag is untested for this version.\n\
+It's recommended to use the internal instead."
+		eapply "${FILESDIR}/${PN}-39_p20180821-system-go.patch"
 	fi
 
-	if use system-omnisharp-roslyn ; then
+	if use system-gocode ; then
+		sed -i -e "s|___GOCODE_BIN_PATH___|/usr/bin/gocode|g" \
+			ycmd/default_settings.json || die
+	else
+		sed -i -e "s|\
+___GOCODE_BIN_PATH___|\
+${ycmd_sitedir}/${SLOT}/third_party/gocode/gocode|g" \
+			ycmd/default_settings.json || die
+	fi
+
+	if use system-godef ; then
+		sed -i -e "s|___GODEF_BIN_PATH___|/usr/bin/godef|g" \
+			ycmd/default_settings.json || die
+	else
+		sed -i -e "s|\
+___GODEF_BIN_PATH___|\
+${ycmd_sitedir}/${SLOT}/third_party/godef/godef|g" \
+			ycmd/default_settings.json || die
+	fi
+
+	if use system-omnisharp ; then
 		ewarn \
-"The system-omnisharp-roslyn USE flag is untested for this version.  It's\n\
+"The system-omnisharp USE flag is untested for this version.  It's\n\
 recommended to use the internal instead."
 
-		eapply "${FILESDIR}/${PN}-42_p20200108-system-omnisharp-roslyn.patch"
+		eapply "${FILESDIR}/${PN}-39_p20180821-system-omnisharp.patch"
 
-		if use net472 ; then
-			# todo
+		if use net40 ; then
 			cp -a "${FILESDIR}/omnisharp.sh.netfx" \
-				omnisharp.sh
+				omnisharp.sh || die
 			FRAMEWORK_FOLDER="net472"
 			sed -i -e "s|\
 ___OMNISHARP_DIR_PATH___|\
 /usr/$(get_libdir)/mono/omnisharp-roslyn/${FRAMEWORK_FOLDER}|g" \
 				omnisharp.sh || die
-		elif use netcoreapp21 ; then
-			ewarn "netcoreapp21 location is tentative."
-			local _dotnet
-			if [ -d /opt/dotnet ] ; then
-				# built from source code: dev-dotnet/cli-tools
-				_dotnet="dotnet"
-			else
-				# precompiled: dev-dotnet/dotnetcore-sdk-bin
-				_dotnet="dotnet_core"
-			fi
 
-			cp -a "${FILESDIR}/omnisharp.sh.netcoreapp" \
-				omnisharp.sh
-			NETCORE_VERSION="2.1.0"
-			FRAMEWORK_FOLDER="netcoreapp2.1"
-			sed -i -e "s|\
-___NETCOREAPP_LIB_PATH___|\
-/opt/${_dotnet}/shared/Microsoft.NETCore.App/${NETCORE_VERSION}|g" \
-				omnisharp.sh || die
-			sed -i -e "s|\
-___OMNISHARP_DIR_PATH___|\
-$(realpath /opt/${_dotnet}/sdk/NuGetFallbackFolder/omnisharp-roslyn/*/ref/${FRAMEWORK_FOLDER} | sort | tail -n 1)
-|g" \
-				omnisharp.sh || die
 		fi
 		sed -i -e "s|\
-___OMNISHARP_DIR_PATH___|\
-/usr/$(get_libdir)/mono/omnisharp-roslyn/${FRAMEWORK_FOLDER}|g" \
-			ycmd/completers/cs/cs_completer.py || die
-		sed -i -e "s|\
 ___OMNISHARP_BIN_ABSPATH___|\
-/usr/$(get_libdir)/${EPYTHON}/site-packages/ycmd/${SLOT}/ycmd/completers/cs/omnisharp.sh|g" \
+${ycmd_sitedir}/${SLOT}/ycmd/completers/cs/omnisharp.sh|g" \
 			ycmd/completers/cs/cs_completer.py || die
 	fi
 
-	if use system-rls ; then
-		eapply "${FILESDIR}/${PN}-42_p20200108-system-rust.patch"
-		sed -i -e "s|___RUSTC_BIN_PATH___|/usr/bin/rustc|g" \
+	if use system-racerd ; then
+		eapply "${FILESDIR}/${PN}-39_p20180821-system-rust.patch"
+		sed -i -e "s|___RACERD_BIN_ABSPATH___|/usr/bin/racerd|g" \
 			ycmd/completers/rust/rust_completer.py || die
-		sed -i -e "s|___RLS_BIN_PATH___|/usr/bin/rls|g" \
-			ycmd/completers/rust/rust_completer.py || die
-		sed -i -e "s|___RUST_SRC_PATH___|/usr/share/rust/src|g" \
-			ycmd/default_settings.json || die
 	else
 		ewarn \
 "Using the internal rust.  You are responsible for maintaining the security\n\
 of internal rust and associated packages."
 	fi
+	sed -i -e "s|___RUST_SRC_PATH___|/usr/share/rust/src|g" \
+		ycmd/default_settings.json || die
 
 	if use system-tern ; then
 		eapply "${FILESDIR}/${PN}-42_p20200108-system-tern.patch"
 		sed -i -e "s|___TERN_BIN_PATH___|/usr/bin/tern|g" \
 			ycmd/completers/javascript/tern_completer.py || die
+	else
+		sed -i -e "s|\
+___TERN_BIN_PATH___|\
+${ycmd_sitedir}/${SLOT}/third_party/tern_runtime/tern|g" \
+			ycmd/completers/javascript/tern_completer.py || die
+	fi
+
+	if use system-racerd ; then
+		sed -i -e "s|___RACERD_BIN_PATH___|/usr/bin/racerd|g" \
+			ycmd/default_settings.json || die
+	else
+		sed -i -e "s|\
+___RACERD_BIN_PATH___|\
+${ycmd_sitedir}/${SLOT}/third_party/racerd/racerd|g" \
+			ycmd/default_settings.json || die
 	fi
 
 	if ! use vim ; then
-		eapply "${FILESDIR}/${PN}-42_p20200108-remove-ultisnips.patch"
+		eapply "${FILESDIR}/${PN}-39_p20180821-remove-ultisnips.patch"
 		sed -i -e 's|"use_ultisnips_completer": 1,||g' \
 			ycmd/default_settings.json || die
 	fi
 
-	# todo
-	sed -i -e "s|___JAVA_JDTLS_WORKSPACE_ROOT_PATH___||g" \
-		ycmd/default_settings.json || die
-	if use system-clangd ; then
-		sed -i -e "s|___CLANGD_BIN_PATH___|/usr/lib/llvm/8/bin/clangd|g" \
-			ycmd/default_settings.json || die
-	fi
-	sed -i -e "s|___GLOBAL_YCM_EXTRA_CONF___|/tmp/.ycm_extra_conf.py|g" \
-		ycmd/default_settings.json || die
-
 	sed -i -e "s|\
 ___HMAC_SECRET___|\
 $(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64)|g" \
-		ycmd/default_settings.json
+		ycmd/default_settings.json || die
 
 	sed -i -e "s|___PYTHON_BIN_PATH___|/usr/bin/${EPYTHON}|g" \
-		ycmd/default_settings.json
+		ycmd/default_settings.json || die
 
 	sed -i -e "s|\
 ___PYTHON_LIB_PATH___|\
 /usr/$(get_libdir)/lib${EPYTHON}.so|g" \
-		build.py
+		build.py || die
+
+	sed -i -e "s|___GLOBAL_YCMD_EXTRA_CONF___|/tmp/.ycm_extra_conf.py|" \
+		ycmd/default_settings.json || die
 
 	python_copy_sources
 }
@@ -296,22 +299,21 @@ src_compile() {
 		cd "${BUILD_DIR}"
 		local myargs=""
 		if use c || use cxx || use objc || use objcxx ; then
-			if use clangd ; then
-				myargs+=" --clangd-completer"
-			fi
 			if use libclang ; then
 				myargs+=" --clang-completer"
 			fi
 		fi
 		if use csharp \
-			&& ! use system-omnisharp-roslyn ; then
+			&& ! use system-omnisharp ; then
 			myargs+=" --cs-completer"
 		fi
 		if use debug ; then
 			myargs+=" --enable-debug"
 		fi
 		if use go \
-			&& ! use system-go-tools ; then
+			&& ! use system-gocode \
+			&& ! use system-godef \
+			 ; then
 			myargs+=" --go-completer"
 		fi
 		if use java ; then
@@ -325,7 +327,7 @@ src_compile() {
 			myargs+=" --no-regex"
 		fi
 		if use rust \
-			&& ! use system-rls ; then
+			&& ! use system-racerd ; then
 			myargs+=" --rust-completer"
 		fi
 		if use system-boost ; then
@@ -340,12 +342,12 @@ src_compile() {
 		fi
 		if \
 			! use system-boost \
-			|| ! use system-clangd \
-			|| ! use system-go-tools \
+			|| ! use system-gocode \
+			|| ! use system-godef \
 			|| ! use system-jedi \
 			|| ! use system-libclang \
-			|| ! use system-omnisharp-roslyn \
-			|| ! use system-rls \
+			|| ! use system-omnisharp \
+			|| ! use system-rust \
 			|| ! use system-tern \
 			|| ! use system-typescript ; then
 			einfo "Path A: Running build.py"
@@ -386,7 +388,9 @@ _shrink_install() {
 	arg_legal+=' -o -iname "*PATENTS*"'
 	arg_legal+=' -o -iname "*README*"'
 	einfo "Cleaning third_party"
-	find {third_party/bottle,third_party/jedi_deps,third_party/requests_deps,third_party/waitress,ycmd} \
+	find {third_party/bottle,third_party/frozendict,third_party/jedi,\
+third_party/parso,third_party/python-future,third_party/requests,\
+third_party/waitress,ycmd} \
 		! \( -name "*.py" \
 			-o -name "*.pyc" \
 			-o -name "*.pyi" \
@@ -398,12 +402,12 @@ _shrink_install() {
 			-o ${arg_developer} \
 			-o ${arg_legal} \) \
 		-exec rm -f "{}" +
-	rm -rf third_party/jedi_deps/jedi/scripts || die
+	rm -rf third_party/jedi/scripts || die
 	rm -rf third_party/bottle/plugins || die
 	if use csharp \
-		&& ! use system-omnisharp-roslyn ; then
-		einfo "Cleaning omnisharp-roslyn"
-		find third_party/omnisharp-roslyn \
+		&& ! use system-omnisharp ; then
+		einfo "Cleaning OmniSharp"
+		find third_party/OmniSharpServer \
 			! \(	-name "*.dll" \
 				-o -name "*.so" \
 				-o -name "*.config" \
@@ -431,7 +435,7 @@ _shrink_install() {
 
 	if use go ; then
 		einfo "Cleaning out go folders"
-		find go ! \( -executable \
+		find gocode godef ! \(	-executable \
 			-o ${arg_legal} \) \
 			-exec rm "{}" +
 	fi
@@ -443,10 +447,6 @@ _shrink_install() {
 			-o -name "_travis" \
 		\) \
 		-exec rm -rf "{}" +
-	if use rust \
-		&& ! use system-rls ; then
-		rm -rf "third_party/rls/lib/rustlib/src/rust/src/stdarch/ci" || die
-	fi
 
 	einfo "Cleaning out installer files"
 	find . \( -name "setup.py" \) \
@@ -502,10 +502,10 @@ _shrink_install() {
 	if use javascript \
 		&& ! use system-tern ; then
 		rm -rf "third_party/tern_runtime/node_modules/tern/bin/test" \
-			"third_party/tern_runtime/node_modules/errno/build.js" || die
+			"third_party/tern_runtime/node_modules/errno/build.js" \
+			|| die
 	fi
-	rm -rf third_party/requests_deps/urllib3/dummyserver || die
-	rm -rf third_party/generic_server
+	rm -rf third_party/requests/urllib3/dummyserver || die
 
 	einfo "Cleaning out test folders"
 	find {third_party,ycmd} -path "*/*test*/*" \
@@ -513,7 +513,8 @@ _shrink_install() {
 
 	einfo "Cleaning out unused platforms"
 	if use java ; then
-		rm -rf third_party/eclipse.jdt.ls/target/repository/config_{mac,win} || die
+		rm -rf \
+	third_party/eclipse.jdt.ls/target/repository/config_{mac,win} || die
 	fi
 
 	find . -empty -type f -delete
@@ -528,7 +529,7 @@ src_install() {
 		python_domodule CORE_VERSION
 		exeinto "${bd}"
 		doexe ycm_core.so
-		if use system-omnisharp-roslyn \
+		if use system-omnisharp \
 			&& use csharp ; then
 			exeinto "${bd}/ycmd/completers/cs/"
 			doexe omnisharp.sh
@@ -537,12 +538,27 @@ src_install() {
 			_shrink_install
 		fi
 		python_domodule ycmd
-		insinto "/usr/share/${PN}-$(ver_cut 1 ${PV})"
+		insinto "/usr/share/${PN}-${PV_MAJ}"
 		if use examples ; then
 			doins -r examples
 		fi
 
+		python_moduleinto "ycmd/${SLOT}"
+
+		if ! use system-libclang \
+			&& ( use c || use cxx || use objc || use objcxx ) \
+			&& use libclang ; then
+			python_domodule lib
+			fperms 755 "${bd}/lib/libclang.so.${CLANG_V}"
+		fi
+
 		python_moduleinto "ycmd/${SLOT}/third_party"
+		if ! use system-frozendict ; then
+			python_domodule third_party/frozendict
+		fi
+		if ! use system-future ; then
+			python_domodule third_party/python-future
+		fi
 		if use java ; then
 			python_domodule third_party/eclipse.jdt.ls
 		fi
@@ -551,47 +567,43 @@ src_install() {
 			python_domodule third_party/bottle
 		fi
 
-		if ! use system-clangd \
-			&& ( use c || use cxx || use objc || use objcxx ) \
-			&& use clangd ; then
-			python_domodule third_party/clangd
-		fi
-
 		if ! use system-mrab-regex \
 			&& use regex ; then
 			python_domodule third_party/cregex
 		fi
 
-		if ! use system-libclang \
-			&& ( use c || use cxx || use objc || use objcxx ) \
-			&& use libclang ; then
-			python_domodule third_party/clang
-			fperms 755 "${bd}/third_party/clang/lib/libclang.so.8"
+		if ! use system-gocode \
+			&& use go ; then
+			python_domodule third_party/gocode
+			fperms 755 \
+		"${bd}/third_party/gocode/gocode"
 		fi
 
-		if ! use system-go-tools \
+		if ! use system-godef \
 			&& use go ; then
-			python_domodule third_party/go
+			python_domodule third_party/godef
 			fperms 755 \
-		"${bd}/third_party/go/src/golang.org/x/tools/cmd/gopls/gopls"
+		"${bd}/third_party/godef/godef"
 		fi
 
 		if ! use system-jedi \
 			&& use python ; then
-			python_domodule third_party/jedi_deps
+			python_domodule third_party/jedi \
+				third_party/parso
 		fi
 
-		if ! use system-omnisharp-roslyn \
+		if ! use system-omnisharp \
 			&& use csharp ; then
-			python_domodule third_party/omnisharp-roslyn
+			python_domodule third_party/OmniSharpServer
 		fi
 
 		if ! use system-requests ; then
-			python_domodule third_party/requests_deps
+			python_domodule third_party/requests
 		fi
 
-		if ! use system-rls \
+		if ! use system-rust \
 			&& use rust ; then
+			# fixme
 			python_domodule third_party/rls
 
 			local arch=""
@@ -602,48 +614,29 @@ src_install() {
 			else
 				die \
 "This ${ABI} ABI is currently not supported as an internal Rust\n\
-dependency.  Contact the ebuild maintainer or use the system-rls USE flag."
+dependency.  Contact the ebuild maintainer or use the system-rust USE flag."
 			fi
 
-			fperms 755 \
-			"${bd}/third_party/rls/lib/rustlib/src/rust/src/libcore/unicode/printable.py" \
-			"${bd}/third_party/rls/lib/rustlib/src/rust/src/libcore/unicode/unicode.py" \
-			"${bd}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/codegen-backends/librustc_codegen_llvm-emscripten.so" \
-			"${bd}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/codegen-backends/librustc_codegen_llvm-llvm.so" \
-			"${bd}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/lib/librustc_driver-859926a7780138cb.so" \
-			"${bd}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/lib/librustc_macros-1ea7012aad3f78b4.so" \
-			"${bd}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/lib/libstd-763271b142020d6a.so" \
-			"${bd}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/lib/libtest-73f108977db97b26.so" \
-			"${bd}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/bin/rust-lld" \
-			"${bd}/third_party/rls/bin/cargo-clippy" \
-			"${bd}/third_party/rls/bin/rustfmt" \
-			"${bd}/third_party/rls/bin/rls" \
-			"${bd}/third_party/rls/bin/rust-gdb" \
-			"${bd}/third_party/rls/bin/rustdoc" \
-			"${bd}/third_party/rls/bin/rustc" \
-			"${bd}/third_party/rls/bin/clippy-driver" \
-			"${bd}/third_party/rls/bin/rust-gdbgui" \
-			"${bd}/third_party/rls/bin/rust-lldb" \
-			"${bd}/third_party/rls/bin/cargo-fmt" \
-			"${bd}/third_party/rls/bin/cargo"
+			# todo
+#			fperms 755 \
 		fi
 
 		if ! use system-tern \
 			&& use javascript ; then
 			python_domodule third_party/tern_runtime
 			fperms 755 \
-			"${bd}/third_party/tern_runtime/node_modules/errno/cli.js" \
-			"${bd}/third_party/tern_runtime/node_modules/acorn/bin/acorn" \
-			"${bd}/third_party/tern_runtime/node_modules/tern/bin/condense" \
-			"${bd}/third_party/tern_runtime/node_modules/tern/bin/tern"
+	"${bd}/third_party/tern_runtime/node_modules/errno/cli.js" \
+	"${bd}/third_party/tern_runtime/node_modules/acorn/bin/acorn" \
+	"${bd}/third_party/tern_runtime/node_modules/tern/bin/condense" \
+	"${bd}/third_party/tern_runtime/node_modules/tern/bin/tern"
 		fi
 
 		if ! use system-typescript \
 			&& use typescript ; then
 			python_domodule third_party/tsserver
 			fperms 755 \
-			"${bd}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsc" \
-			"${bd}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserver"
+"${bd}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsc" \
+"${bd}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserver"
 		fi
 
 		if ! use system-waitress ; then
@@ -670,11 +663,11 @@ project to the full path of the .ycm_extra_conf.py.\n\
 Examples of the .ycm_extra_conf.py which should be defined per project can be\n\
 found at:\n\
 \n\
-/usr/share/${PN}-$(ver_cut 1 ${PV})/examples/.ycm_extra_conf.py\n\
+/usr/share/${PN}-${PV_MAJ}/examples/.ycm_extra_conf.py\n\
 \n\
 or\n\
 \n\
-https://github.com/ycm-core/ycmd/blob/master/.ycm_extra_conf.py
+https://github.com/ycm-core/ycmd/blob/master/.ycm_extra_conf.py\n\
 \n\
 Consider emerging ycm-generator to properly generate a .ycm_extra_conf.py\n\
 which is mandatory for the c/c++/objc/objc++ completer.\n\

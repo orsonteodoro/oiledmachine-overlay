@@ -10,8 +10,8 @@
 -  'godef': os.path.join( DIR_OF_THIRD_PARTY,
 -                         'godef',
 -                         ExecutableName( 'godef' ) )
-+  'gocode': ___GOCODE_BIN_PATH___,
-+  'godef': ___GODEF_BIN_PATH___
++  'gocode': "___GOCODE_BIN_PATH___",
++  'godef': "___GODEF_BIN_PATH___"
  } )
  
  LOGFILE_FORMAT = 'gocode_{port}_{std}_'
