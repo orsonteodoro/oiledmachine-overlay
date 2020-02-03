@@ -12,7 +12,7 @@ inherit python-single-r1
 IUSE="builtin-completion +company-mode debug eldoc +flycheck next-error \
 system-gocode system-godef system-racerd"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
-YCMD_SLOT="2"
+YCMD_SLOT="1"
 RDEPEND="${PYTHON_DEPS}
         dev-util/ycmd:${YCMD_SLOT}[${PYTHON_USEDEP}]"
 DEPEND="${RDEPEND}"
