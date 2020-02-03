@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    A Geany plugin to support the ycmd code completion server.
+  </longdescription>
+  <upstream>
+    <maintainer type="person">
+      <name>Jake Bott</name>
+      <email>jake.anq\100gmail.com</email>
+    </maintainer>
+    <remote-id type="github">jakeanq/gycm</remote-id>
+    <bugs-to>https://github.com/jakeanq/gycm/issues</bugs-to>
+  </upstream>
+  <use>
+    <flag name="system-clangd">Configure the plugin to use the system's
+      clangd instead of ycmd internal clangd.</flag>
+    <flag name="system-libclang">Configure the plugin to use the system's
+      libclang instead of ycmd internal libclang.</flag>
+    <flag name="system-gocode">Configure the plugin to use the system's gocode
+      instead of ycmd internal gocode.</flag>
+    <flag name="system-godef">Configure the plugin to use the system's godef
+      instead of ycmd internal godef.</flag>
+    <flag name="system-racerd">Configure the plugin to use the system's racerd
+      instead of ycmd internal racerd.</flag>
+    <flag name="ycmd-slot-1">Use ycmd:1 for plugin compatibility reasons.</flag>
+    <flag name="ycmd-slot-2">Use ycmd:2 for latest features.</flag>
+  </use>
+</pkgmetadata>
