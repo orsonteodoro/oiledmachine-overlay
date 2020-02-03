@@ -144,9 +144,6 @@ EXTERNAL_LIBCLANG_PATH \"${LIBCLANG_PATH}\"|g" \
 	cat "${FILESDIR}/default_settings.json.39_p20180821" \
 		> ycmd/default_settings.json || die
 
-	sed -i -e "s|___GLOBAL_YCM_EXTRA_CONF___|/tmp/.ycm_extra_conf.py|g" \
-		ycmd/default_settings.json || die
-
 	if use system-godef && use system-gocode ; then
 		ewarn \
 "The system-godef and system-gocode USE flag is untested for this version.\n\
@@ -608,7 +605,7 @@ src_install() {
 			python_domodule third_party/rls
 
 			local arch="${CHOST%%-*}"
-			local arch2="${CHOST##*-}"
+			local abi="${CHOST##*-}"
 
 			# todo
 #			fperms 755 \

@@ -11,7 +11,7 @@
   "max_num_identifier_candidates": 10,
   "max_num_candidates": 50,
   "extra_conf_globlist": [],
-  "global_ycm_extra_conf": "___GLOBAL_YCM_EXTRA_CONF___",
+  "global_ycm_extra_conf": "___GLOBAL_YCMD_EXTRA_CONF___",
   "confirm_extra_conf": 1,
   "max_diagnostics_to_display": 30,
   "filepath_blacklist": {

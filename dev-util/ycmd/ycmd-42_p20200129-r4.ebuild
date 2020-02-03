@@ -315,9 +315,6 @@ ${sitedir}/waitress|g" \
 			ycmd/server_utils.py || die
 	fi
 
-	sed -i -e "s|___GLOBAL_YCM_EXTRA_CONF___|/tmp/.ycm_extra_conf.py|g" \
-		ycmd/default_settings.json || die
-
 	sed -i -e "s|\
 ___HMAC_SECRET___|\
 $(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64)|g" \
@@ -697,24 +694,24 @@ src_install() {
 			python_domodule third_party/rls
 
 			local arch="${CHOST%%-*}"
-			local arch2="${CHOST##*-}"
+			local abi="${CHOST##*-}"
 
 			fperms 755 \
 "${BD_ABS}/third_party/rls/lib/rustlib/src/rust/src/libcore/unicode/printable.py" \
 "${BD_ABS}/third_party/rls/lib/rustlib/src/rust/src/libcore/unicode/unicode.py" \
-"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-${arch2}/codegen-backends/\
+"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-${abi}/codegen-backends/\
 librustc_codegen_llvm-emscripten.so" \
-"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-${arch2}/codegen-backends/\
+"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-${abi}/codegen-backends/\
 librustc_codegen_llvm-llvm.so" \
-"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-${arch2}/lib/\
+"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-${abi}/lib/\
 librustc_driver-859926a7780138cb.so" \
-"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-${arch2}/lib/\
+"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-${abi}/lib/\
 librustc_macros-1ea7012aad3f78b4.so" \
-"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-${arch2}/lib/\
+"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-${abi}/lib/\
 libstd-763271b142020d6a.so" \
-"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-${arch2}/lib/\
+"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-${abi}/lib/\
 libtest-73f108977db97b26.so" \
-"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-${arch2}/bin/rust-lld" \
+"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-${abi}/bin/rust-lld" \
 "${BD_ABS}/third_party/rls/bin/cargo-clippy" \
 "${BD_ABS}/third_party/rls/bin/rustfmt" \
 "${BD_ABS}/third_party/rls/bin/rls" \
