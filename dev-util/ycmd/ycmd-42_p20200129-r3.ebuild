@@ -87,6 +87,8 @@ inherit cmake-utils eutils flag-o-matic git-r3
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 DOCS=( COPYING.txt JAVA_SUPPORT.md README.md )
+BD_REL="ycmd/${SLOT}"
+BD_ABS=""
 
 pkg_setup() {
 	if \
@@ -107,12 +109,12 @@ download the internal dependencies."
 		fi
 	fi
 	python_setup
+	BD_ABS="$(python_get_sitedir)/${BD_REL}"
 }
 
 src_prepare() {
 	default
 	local sitedir="$(python_get_sitedir)"
-	local ycmd_sitedir="${sitedir}/ycmd/"
 
 	# Required for deterministic build.
 	eapply "${FILESDIR}/${PN}-42_p20200108-skip-thirdparty-check.patch"
@@ -165,12 +167,12 @@ ${sitedir}/bottle|g" \
 	if use system-clangd ; then
 		sed -i -e "s|\
 ___CLANGD_BIN_PATH___|\
-/usr/lib/llvm/8/bin/clangd|g" \
+/usr/lib/llvm/${CLANG_V_MAJ}/bin/clangd|g" \
 			ycmd/default_settings.json || die
 	else
 		sed -i -e "s|\
 ___CLANGD_BIN_PATH___|\
-${ycmd_sitedir}/${SLOT}/third_party/clangd/output/bin/clangd|g" \
+${BD_ABS}/third_party/clangd/output/bin/clangd|g" \
 			ycmd/default_settings.json || die
 	fi
 
@@ -256,7 +258,7 @@ ___OMNISHARP_DIR_PATH___|\
 			ycmd/completers/cs/cs_completer.py || die
 		sed -i -e "s|\
 ___OMNISHARP_BIN_ABSPATH___|\
-${ycmd_sitedir}/${SLOT}/ycmd/completers/cs/omnisharp.sh|g" \
+${BD_ABS}/ycmd/completers/cs/omnisharp.sh|g" \
 			ycmd/completers/cs/cs_completer.py || die
 	fi
 
@@ -620,14 +622,13 @@ third_party/requests_deps,third_party/waitress,ycmd} \
 src_install() {
 	python_install_all() {
 		cd "${BUILD_DIR}" || die
-		local bd="$(python_get_sitedir)/ycmd/${SLOT}"
-		python_moduleinto "ycmd/${SLOT}"
+		python_moduleinto "${BD_REL}"
 		python_domodule CORE_VERSION
-		exeinto "${bd}"
+		exeinto "${BD_ABS}"
 		doexe ycm_core.so
 		if use system-omnisharp-roslyn \
 			&& use csharp ; then
-			exeinto "${bd}/ycmd/completers/cs/"
+			exeinto "${BD_ABS}/ycmd/completers/cs/"
 			doexe omnisharp.sh
 		fi
 		if use minimal ; then
@@ -639,19 +640,19 @@ src_install() {
 			doins -r examples
 		fi
 
-		python_moduleinto "ycmd/${SLOT}"
+		python_moduleinto "${BD_REL}"
 
 		if ! use system-libclang \
 			&& ( use c || use cxx || use objc || use objcxx ) \
 			&& use libclang ; then
 			python_domodule lib
-			fperms 755 "${bd}/lib/libclang.so.${CLANG_V_MAJ}"
-			python_moduleinto "ycmd/${SLOT}/third_party"
+			fperms 755 "${BD_ABS}/lib/libclang.so.${CLANG_V_MAJ}"
+			python_moduleinto "${BD_REL}/third_party"
 			python_domodule third_party/clang
-			fperms 755 "${bd}/third_party/clang/lib/libclang.so.${CLANG_V_MAJ}"
+			fperms 755 "${BD_ABS}/third_party/clang/lib/libclang.so.${CLANG_V_MAJ}"
 		fi
 
-		python_moduleinto "ycmd/${SLOT}/third_party"
+		python_moduleinto "${BD_REL}/third_party"
 		if use java ; then
 			python_domodule third_party/eclipse.jdt.ls
 		fi
@@ -675,7 +676,7 @@ src_install() {
 			&& use go ; then
 			python_domodule third_party/go
 			fperms 755 \
-		"${bd}/third_party/go/src/golang.org/x/tools/cmd/gopls/gopls"
+		"${BD_ABS}/third_party/go/src/golang.org/x/tools/cmd/gopls/gopls"
 		fi
 
 		if ! use system-jedi \
@@ -708,50 +709,50 @@ dependency.  Contact the ebuild maintainer or use the system-rls USE flag."
 			fi
 
 			fperms 755 \
-"${bd}/third_party/rls/lib/rustlib/src/rust/src/libcore/unicode/printable.py" \
-"${bd}/third_party/rls/lib/rustlib/src/rust/src/libcore/unicode/unicode.py" \
-"${bd}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/codegen-backends/\
+"${BD_ABS}/third_party/rls/lib/rustlib/src/rust/src/libcore/unicode/printable.py" \
+"${BD_ABS}/third_party/rls/lib/rustlib/src/rust/src/libcore/unicode/unicode.py" \
+"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/codegen-backends/\
 librustc_codegen_llvm-emscripten.so" \
-"${bd}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/codegen-backends/\
+"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/codegen-backends/\
 librustc_codegen_llvm-llvm.so" \
-"${bd}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/lib/\
+"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/lib/\
 librustc_driver-859926a7780138cb.so" \
-"${bd}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/lib/\
+"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/lib/\
 librustc_macros-1ea7012aad3f78b4.so" \
-"${bd}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/lib/\
+"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/lib/\
 libstd-763271b142020d6a.so" \
-"${bd}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/lib/\
+"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/lib/\
 libtest-73f108977db97b26.so" \
-"${bd}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/bin/rust-lld" \
-"${bd}/third_party/rls/bin/cargo-clippy" \
-"${bd}/third_party/rls/bin/rustfmt" \
-"${bd}/third_party/rls/bin/rls" \
-"${bd}/third_party/rls/bin/rust-gdb" \
-"${bd}/third_party/rls/bin/rustdoc" \
-"${bd}/third_party/rls/bin/rustc" \
-"${bd}/third_party/rls/bin/clippy-driver" \
-"${bd}/third_party/rls/bin/rust-gdbgui" \
-"${bd}/third_party/rls/bin/rust-lldb" \
-"${bd}/third_party/rls/bin/cargo-fmt" \
-"${bd}/third_party/rls/bin/cargo"
+"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/bin/rust-lld" \
+"${BD_ABS}/third_party/rls/bin/cargo-clippy" \
+"${BD_ABS}/third_party/rls/bin/rustfmt" \
+"${BD_ABS}/third_party/rls/bin/rls" \
+"${BD_ABS}/third_party/rls/bin/rust-gdb" \
+"${BD_ABS}/third_party/rls/bin/rustdoc" \
+"${BD_ABS}/third_party/rls/bin/rustc" \
+"${BD_ABS}/third_party/rls/bin/clippy-driver" \
+"${BD_ABS}/third_party/rls/bin/rust-gdbgui" \
+"${BD_ABS}/third_party/rls/bin/rust-lldb" \
+"${BD_ABS}/third_party/rls/bin/cargo-fmt" \
+"${BD_ABS}/third_party/rls/bin/cargo"
 		fi
 
 		if ! use system-tern \
 			&& use javascript ; then
 			python_domodule third_party/tern_runtime
 			fperms 755 \
-	"${bd}/third_party/tern_runtime/node_modules/errno/cli.js" \
-	"${bd}/third_party/tern_runtime/node_modules/acorn/bin/acorn" \
-	"${bd}/third_party/tern_runtime/node_modules/tern/bin/condense" \
-	"${bd}/third_party/tern_runtime/node_modules/tern/bin/tern"
+	"${BD_ABS}/third_party/tern_runtime/node_modules/errno/cli.js" \
+	"${BD_ABS}/third_party/tern_runtime/node_modules/acorn/bin/acorn" \
+	"${BD_ABS}/third_party/tern_runtime/node_modules/tern/bin/condense" \
+	"${BD_ABS}/third_party/tern_runtime/node_modules/tern/bin/tern"
 		fi
 
 		if ! use system-typescript \
 			&& use typescript ; then
 			python_domodule third_party/tsserver
 			fperms 755 \
-"${bd}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsc" \
-"${bd}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserver"
+"${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsc" \
+"${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserver"
 		fi
 
 		if ! use system-waitress ; then
@@ -767,7 +768,7 @@ pkg_postinst() {
 "Examples of the .json files can be found at targeting particular python\n\
 version:\n\
 \n\
-/usr/$(get_libdir)/python*/site-packages/ycmd/${SLOT}/ycmd/default_settings.json\n"
+/usr/$(get_libdir)/python*/site-packages/${BD_REL}/ycmd/default_settings.json\n"
 
 	if use c || use cxx || use objc || use objcxx ; then
 		m+="\

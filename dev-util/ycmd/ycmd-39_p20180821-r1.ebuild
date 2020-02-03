@@ -87,6 +87,8 @@ inherit cmake-utils eutils flag-o-matic git-r3
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 DOCS=( COPYING.txt JAVA_SUPPORT.md README.md )
+BD_REL="ycmd/${SLOT}"
+BD_ABS=""
 
 pkg_setup() {
 	if ! use system-boost ; then
@@ -114,6 +116,7 @@ download the internal dependencies."
 "This version of ycmd is near EOL on this repo.  It will be removed once all\n\
 clients are updated to be compatible with the latest."
 	python_setup
+	BD_ABS="$(python_get_sitedir)/${BD_REL}"
 }
 
 src_prepare() {
@@ -524,14 +527,13 @@ third_party/waitress,ycmd} \
 src_install() {
 	python_install_all() {
 		cd "${BUILD_DIR}" || die
-		local bd="$(python_get_sitedir)/ycmd/${SLOT}"
-		python_moduleinto "ycmd/${SLOT}"
+		python_moduleinto "${BD_REL}"
 		python_domodule CORE_VERSION
-		exeinto "${bd}"
+		exeinto "${BD_ABS}"
 		doexe ycm_core.so
 		if use system-omnisharp \
 			&& use csharp ; then
-			exeinto "${bd}/ycmd/completers/cs/"
+			exeinto "${BD_ABS}/ycmd/completers/cs/"
 			doexe omnisharp.sh
 		fi
 		if use minimal ; then
@@ -543,16 +545,16 @@ src_install() {
 			doins -r examples
 		fi
 
-		python_moduleinto "ycmd/${SLOT}"
+		python_moduleinto "${BD_REL}"
 
 		if ! use system-libclang \
 			&& ( use c || use cxx || use objc || use objcxx ) \
 			&& use libclang ; then
 			python_domodule lib clang_includes
-			fperms 755 "${bd}/lib/libclang.so.${CLANG_V}"
+			fperms 755 "${BD_ABS}/lib/libclang.so.${CLANG_V}"
 		fi
 
-		python_moduleinto "ycmd/${SLOT}/third_party"
+		python_moduleinto "${BD_REL}/third_party"
 		if ! use system-frozendict ; then
 			python_domodule third_party/frozendict
 		fi
@@ -576,14 +578,14 @@ src_install() {
 			&& use go ; then
 			python_domodule third_party/gocode
 			fperms 755 \
-		"${bd}/third_party/gocode/gocode"
+		"${BD_ABS}/third_party/gocode/gocode"
 		fi
 
 		if ! use system-godef \
 			&& use go ; then
 			python_domodule third_party/godef
 			fperms 755 \
-		"${bd}/third_party/godef/godef"
+		"${BD_ABS}/third_party/godef/godef"
 		fi
 
 		if ! use system-jedi \
@@ -625,18 +627,18 @@ dependency.  Contact the ebuild maintainer or use the system-rust USE flag."
 			&& use javascript ; then
 			python_domodule third_party/tern_runtime
 			fperms 755 \
-	"${bd}/third_party/tern_runtime/node_modules/errno/cli.js" \
-	"${bd}/third_party/tern_runtime/node_modules/acorn/bin/acorn" \
-	"${bd}/third_party/tern_runtime/node_modules/tern/bin/condense" \
-	"${bd}/third_party/tern_runtime/node_modules/tern/bin/tern"
+	"${BD_ABS}/third_party/tern_runtime/node_modules/errno/cli.js" \
+	"${BD_ABS}/third_party/tern_runtime/node_modules/acorn/bin/acorn" \
+	"${BD_ABS}/third_party/tern_runtime/node_modules/tern/bin/condense" \
+	"${BD_ABS}/third_party/tern_runtime/node_modules/tern/bin/tern"
 		fi
 
 		if ! use system-typescript \
 			&& use typescript ; then
 			python_domodule third_party/tsserver
 			fperms 755 \
-"${bd}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsc" \
-"${bd}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserver"
+"${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsc" \
+"${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserver"
 		fi
 
 		if ! use system-waitress ; then
@@ -652,7 +654,7 @@ pkg_postinst() {
 "Examples of the .json files can be found at targeting particular python\n\
 version:\n\
 \n\
-/usr/$(get_libdir)/python*/site-packages/ycmd/${SLOT}/ycmd/default_settings.json\n"
+/usr/$(get_libdir)/python*/site-packages/${BD_REL}/ycmd/default_settings.json\n"
 
 	if use c || use cxx || use objc || use objcxx ; then
 		m+="\
