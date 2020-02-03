@@ -28,7 +28,10 @@
     <maintainer type="person" status="active">
       <name>Ben Jackson</name>
     </maintainer>
-    <remote-id type="sourceforge">ycm-core/ycmd</remote-id>
+    <maintainer type="person" status="active">
+      <name>Boris Staletic</name>
+    </maintainer>
+    <remote-id type="github">ycm-core/ycmd</remote-id>
     <bugs-to>https://github.com/ycm-core/ycmd/issues</bugs-to>
   </upstream>
   <use>
@@ -59,6 +62,9 @@
       internal package.</flag>
     <flag name="system-clangd">Uses the system's clangd instead of the internal
       clangd package.</flag>
+    <flag name="system-frozendict">Uses the system's frozendict instead of the
+      internal package.
+    </flag>
     <flag name="system-go-tools">Use the system's Go Tools package instead of
       the internal package.</flag>
     <flag name="system-jedi">Uses the system's Jedi package instead of the
