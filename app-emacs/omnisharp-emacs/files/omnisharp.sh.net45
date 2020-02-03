@@ -1,2 +1,0 @@
-#!/bin/bash
-mono GENTOO_OMNISHARP_SERVER_PATH/OmniSharp.exe $@
