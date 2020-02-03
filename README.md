@@ -55,21 +55,7 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | app-editors/noty | This is an Electron based sticky pad notetaker with autosave.
 | app-editors/preserver | This is a sticky notes app created with Electron.
 | app-editors/stickynotes | This is an Electron based note taker that resembles a sticky pad. |
-| app-emacs/auto-complete | For omnisharp-emacs. |
-| app-emacs/company-mode | This is for code completion for Emacs. |
-| app-emacs/dash | For emacs-ycmd, flycheck, omnisharp-emacs, omnisharp-emacs-roslyn |
-| app-emacs/deferred | TBA |
-| app-emacs/eldoc | TBA |
 | app-emacs/emacs-ycmd | TBA |
-| app-emacs/flycheck | This is a syntax checker for Emacs. |
-| app-emacs/let-alist | TBA |
-| app-emacs/omnisharp-emacs | This one depends on omnisharp-server.  It allows Emacs to use C# with IntelliSense. |
-| app-emacs/omnisharp-emacs-roslyn | This one doesn't work.  It is still in the repo for testing and for developers to fix.  It is basically omnisharp-emacs but using the roslyn branch. |
-| app-emacs/popup-el | TBA |
-| app-emacs/request | TBA |
-| app-emacs/request-deferred | TBA |
-| app-emacs/seq | TBA |
-| app-emacs/shut-up | TBA |
 | app-eselect/eselect-typescript | TBA |
 | app-portage/npm-secaudit | A simple postsync script to check npm and Electron apps for security updates.
 | app-portage/systemwide-pgo | This package installs Profile Guided Optimization management scripts for portage.  Everyone keeps building a per package PGO ebuild with a USE flag, but this package provides more better integration and ease of the process by forcing Portage do the work.  It still needs more testing and is considered in development.  It has @pgo-update set support.  It requires GCC or LLVM/Clang >=3.7 support since <3.7 breaks library profiling and has an annoying set environmental variable feature before profiling.  We use --profile-generate instead on LLVM/Clang.  Users need to be added to the wheel group to simulate the program.  You should disable all PGO USE flags and allow the scripts use it properly.  The package uses a whitelist and phase file to manage it.  Instructions are given at the end of the ebuild. |
