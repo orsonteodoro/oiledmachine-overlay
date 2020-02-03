@@ -82,7 +82,6 @@ DEPEND="${CDEPEND}
 		net-libs/nodejs[npm]"
 EGIT_COMMIT="386915288616fddcc60a46b49e6c6e71a118542b"
 EGIT_REPO_URI="https://github.com/ycm-core/ycmd.git"
-
 inherit cmake-utils eutils flag-o-matic git-r3
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
@@ -608,16 +607,8 @@ src_install() {
 			# fixme
 			python_domodule third_party/rls
 
-			local arch=""
-			if [[ "${ABI}" == x86 ]] ; then
-				arch="i686"
-			elif [[ "${ABI}" == amd64 ]] ; then
-				arch="x86_64"
-			else
-				die \
-"This ${ABI} ABI is currently not supported as an internal Rust\n\
-dependency.  Contact the ebuild maintainer or use the system-rust USE flag."
-			fi
+			local arch="${CHOST%%-*}"
+			local arch2="${CHOST##*-}"
 
 			# todo
 #			fperms 755 \

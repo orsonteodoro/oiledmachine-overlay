@@ -82,7 +82,6 @@ DEPEND="${CDEPEND}
 		net-libs/nodejs[npm]"
 EGIT_COMMIT="d3378ca3a3103535c14b104cb916dcbcdaf93eeb"
 EGIT_REPO_URI="https://github.com/ycm-core/ycmd.git"
-
 inherit cmake-utils eutils flag-o-matic git-r3
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
@@ -697,33 +696,25 @@ src_install() {
 			&& use rust ; then
 			python_domodule third_party/rls
 
-			local arch=""
-			if [[ "${ABI}" == x86 ]] ; then
-				arch="i686"
-			elif [[ "${ABI}" == amd64 ]] ; then
-				arch="x86_64"
-			else
-				die \
-"This ${ABI} ABI is currently not supported as an internal Rust\n\
-dependency.  Contact the ebuild maintainer or use the system-rls USE flag."
-			fi
+			local arch="${CHOST%%-*}"
+			local arch2="${CHOST##*-}"
 
 			fperms 755 \
 "${BD_ABS}/third_party/rls/lib/rustlib/src/rust/src/libcore/unicode/printable.py" \
 "${BD_ABS}/third_party/rls/lib/rustlib/src/rust/src/libcore/unicode/unicode.py" \
-"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/codegen-backends/\
+"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-${arch2}/codegen-backends/\
 librustc_codegen_llvm-emscripten.so" \
-"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/codegen-backends/\
+"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-${arch2}/codegen-backends/\
 librustc_codegen_llvm-llvm.so" \
-"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/lib/\
+"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-${arch2}/lib/\
 librustc_driver-859926a7780138cb.so" \
-"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/lib/\
+"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-${arch2}/lib/\
 librustc_macros-1ea7012aad3f78b4.so" \
-"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/lib/\
+"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-${arch2}/lib/\
 libstd-763271b142020d6a.so" \
-"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/lib/\
+"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-${arch2}/lib/\
 libtest-73f108977db97b26.so" \
-"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-gnu/bin/rust-lld" \
+"${BD_ABS}/third_party/rls/lib/rustlib/${arch}-unknown-linux-${arch2}/bin/rust-lld" \
 "${BD_ABS}/third_party/rls/bin/cargo-clippy" \
 "${BD_ABS}/third_party/rls/bin/rustfmt" \
 "${BD_ABS}/third_party/rls/bin/rls" \
