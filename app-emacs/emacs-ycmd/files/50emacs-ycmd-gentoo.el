@@ -1,26 +1,29 @@
+(let ((default-directory  "@SITELISP@/.cask/"))
+  (normal-top-level-add-subdirs-to-load-path))
+
 (add-to-list 'load-path "@SITELISP@")
 
-GENTOO_DEBUG
+___YCMD-EMACS_DEBUG___
 
-GENTOO_NEXT_ERROR
+___YCMD-EMACS_NEXT_ERROR___
 
-(set-variable 'ycmd-server-command '("python3.4" "/usr/lib64/python3.4/site-packages/ycmd"))
-(set-variable 'ycmd-global-config "/tmp/.ycm_extra_conf.py")
-(set-variable 'ycmd-gocode-binary-path "/usr/bin/gocode")
-(set-variable 'ycmd-godef-binary-path "/usr/bin/godef")
-(set-variable 'ycmd-rust-src-path "/usr/share/rust/src")
-(set-variable 'ycmd-racerd-binary-path "/usr/bin/racerd")
-(set-variable 'ycmd-python-binary-path "/usr/bin/python3.4")
+(set-variable 'ycmd-server-command '("python3.4" "___YCMD-EMACS-YCMD-DIR___"))
+(set-variable 'ycmd-global-config "___YCMD-EMACS_GLOBAL_CONFIG_ABSPATH___")
+(set-variable 'ycmd-gocode-binary-path "___YCMD-EMACS_GOCODE_ABSPATH___")
+(set-variable 'ycmd-godef-binary-path "___YCMD-EMACS_GODEF_ABSPATH___")
+(set-variable 'ycmd-rust-src-path "___YCMD-EMACS_RUST_ABSPATH___")
+(set-variable 'ycmd-racerd-binary-path "___YCMD-EMACS_RACERD_ABSPATH___")
+(set-variable 'ycmd-python-binary-path "___YCMD-EMACS_PYTHON_ABSPATH___")
 
 (require 'ycmd)
 (add-hook 'after-init-hook #'global-ycmd-mode)
 
 
-GENTOO_BUILTIN
+___YCMD-EMACS_BUILTIN_COMPLETION___
 
-GENTOO_COMPANY_MODE
+___YCMD-EMACS_COMPANY_MODE___
 
-GENTOO_FLYCHECK
+___YCMD-EMACS_FLYCHECK___
 
-GENTOO_ELDOC
+___YCMD-EMACS_ELDOC___
 

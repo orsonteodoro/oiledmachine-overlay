@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    emacs-ycmd is a client for ycmd, the code completion system.
+
+    For (C-c Y <cmd>) key bindings see,
+    https://github.com/abingham/emacs-ycmd/blob/master/ycmd.el#L610
+  </longdescription>
+  <upstream>
+    <maintainer type="person">
+      <name>Austin Bingham</name>
+    </maintainer>
+    <remote-id type="github">abingham/emacs-ycmd</remote-id>
+    <bugs-to>https://github.com/abingham/emacs-ycmd/issues</bugs-to>
+  </upstream>
+  <use>
+    <flag name="builtin-completion">Adds basic support for in-place completion.</flag>
+    <flag name="company-mode">Adds support for company-mode.</flag>
+    <flag name="debug">Enables enhanced debug reporting.</flag>
+    <flag name="eldoc">Adds eldoc support.</flag>
+    <flag name="flycheck">Integrates flycheck syntax checking.</flag>
+    <flag name="next-error">Adds next-error integration.</flag>
+    <flag name="system-gocode">Configures emacs-ycmd to use the system gocode;
+      otherwise, it falls back to the internal ycmd gocode.</flag>
+    <flag name="system-godef">Configures emacs-ycmd to use the system godef;
+      otherwise, it falls back to the internal ycmd godef.</flag>
+    <flag name="system-racerd">Configures emacs-ycmd to use the system racerd;
+      otherwise, it falls back to the internal ycmd racerd.</flag>
+  </use>
+</pkgmetadata>
