@@ -11,8 +11,8 @@ KEYWORDS="~amd64 ~x86"
 EGIT_COMMIT="1963a9f6b51a3aff7c44780dcb13d056a8659b21"
 PYTHON_COMPAT=( python3_{6,7,8} )
 SLOT="0"
-IUSE="ycmd-slot-1 ycmd-slot-2 system-clangd system-libclang system-gocode \
-system-godef system-racerd"
+IUSE="debug system-clangd system-gocode system-godef \
+system-libclang system-racerd ycmd-slot-1 ycmd-slot-2"
 inherit python-single-r1
 YCMD_SLOT_1_LLVM_V=6.0
 YCMD_SLOT_1_LLVM_V_MAJ=$(ver_cut 1 ${YCMD_SLOT_1_LLVM_V})
@@ -37,7 +37,9 @@ S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
 src_prepare() {
-	ewarn "This ebuild is a Work In Progress (WIP)"
+	ewarn \
+"This ebuild is currently undergoing maintenance and is a Work In Progress.\n\
+It will not work."
 	cmake-utils_src_prepare
 
 	eapply "${FILESDIR}/${PN}-9999.20141216-missing-iostream.patch"
@@ -47,6 +49,15 @@ src_prepare() {
 	sed -i -e "s|\
 \"/usr/bin/python\"|\
 \"/usr/bin/${EPYTHON}\"|g" config.cpp || die
+
+	eapply "${FILESDIR}/${PN}-0.1_p20170119-python-unbuffered-io.patch"
+
+	if use debug ; then
+		eapply "${FILESDIR}/${PN}-9999-20141216-enable-debug-spew.patch"
+		eapply "${FILESDIR}/${PN}-9999.20141216-enable-debug-spew-2.patch"
+		eapply "${FILESDIR}/${PN}-9999.20141216-null-exception-check.patch"
+		eapply "${FILESDIR}/${PN}-9999-20141216-debug-keep-log-files.patch"
+	fi
 
 	if use ycmd-slot-1 ; then
 		src_prepare_ycmd-slot-1
@@ -59,6 +70,8 @@ src_prepare_ycmd-slot-1() {
 	local sitedir=$(python_get_sitedir)
 	local ycmd_slot=1
 	local ycmd_dir="${sitedir}/ycmd/${ycmd_slot}"
+	eapply \
+"${FILESDIR}/gycm-0.1_p20170119-init-struct-for-ycmd-core-version-39.patch"
 	if use system-libclang ; then
 		sed -i -e "s|\
 ../llvm/tools/clang/include|\
@@ -118,6 +131,8 @@ src_prepare_ycmd-slot-2() {
 	local sitedir=$(python_get_sitedir)
 	local ycmd_slot=2
 	local ycmd_dir="${sitedir}/ycmd/${ycmd_slot}"
+	eapply \
+"${FILESDIR}/gycm-0.1_p20170119-init-struct-for-ycmd-core-version-42.patch"
 	if use system-libclang ; then
 		sed -i -e "s|\
 ../llvm/tools/clang/include|\
@@ -191,7 +206,4 @@ Do: openssl rand -base64 16\n\
 or\n\
 \n\
 Do: cat < /dev/urandom | tr -dc _A-Z-a-z-0-9 | head -c 16 | base64"
-	ewarn \
-"This plugin is very unstable and may crash and lead to data loss of unsaved
-work."
 }

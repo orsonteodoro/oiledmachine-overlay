@@ -1,0 +1,15 @@
+--- a/ycmd.cpp.orig	2020-02-03 11:16:40.756301555 -0800
++++ b/ycmd.cpp	2020-02-03 11:17:14.917627500 -0800
+@@ -106,7 +106,11 @@ bool Ycmd::startServer(){
+ 	gchar py[] = "/usr/bin/python3.6";
+ 	gchar iss[] = "--idle_suicide_seconds=10800";
+ 	gchar u[] = "-u";
+-	gchar * args[7] = { py, u, NULL, NULL, NULL, iss, NULL }; /* python; ycmd path; port, config; iss */ // TODO: Add log-level option
++	gchar so[] = "--stdout";
++	gchar so_arg[] = "/tmp/gycm-stdout";
++	gchar si[] = "--stderr";
++	gchar si_arg[] = "/tmp/gycm-stderr";
++	gchar * args[11] = { py, u, NULL, NULL, NULL, iss, so, so_arg, si, si_arg, NULL }; /* python; ycmd path; port, config; iss */ // TODO: Add log-level option
+ 	// ycmd path
+ 	char * expanded_path = realpath(ycmdsettings["ycmd_path"].asString().c_str(),NULL);
+ 	if(!expanded_path){

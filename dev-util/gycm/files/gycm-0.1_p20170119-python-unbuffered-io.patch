@@ -1,0 +1,47 @@
+--- a/ycmd.cpp.orig	2020-02-03 11:11:22.633953265 -0800
++++ b/ycmd.cpp	2020-02-03 11:13:22.698613848 -0800
+@@ -105,7 +105,8 @@ bool Ycmd::startServer(){
+ 	gchar* cwd = g_get_current_dir();
+ 	gchar py[] = "/usr/bin/python3.6";
+ 	gchar iss[] = "--idle_suicide_seconds=10800";
+-	gchar * args[6] = { py, NULL, NULL, NULL, iss, NULL }; /* python; ycmd path; port, config; iss */ // TODO: Add log-level option
++	gchar u[] = "-u";
++	gchar * args[7] = { py, u, NULL, NULL, NULL, iss, NULL }; /* python; ycmd path; port, config; iss */ // TODO: Add log-level option
+ 	// ycmd path
+ 	char * expanded_path = realpath(ycmdsettings["ycmd_path"].asString().c_str(),NULL);
+ 	if(!expanded_path){
+@@ -113,27 +114,27 @@ bool Ycmd::startServer(){
+ 		free(expanded_path);
+ 		return false;
+ 	}
+-	args[1] = g_build_filename(expanded_path,"ycmd",NULL);
++	args[2] = g_build_filename(expanded_path,"ycmd",NULL);
+ 	free(expanded_path);
+ 	
+ 	// Port:
+ 	std::stringstream _port; _port << "--port=" << port;
+-	args[2] = new char[_port.str().length()];
+-	strcpy(args[2],_port.str().c_str());
++	args[3] = new char[_port.str().length()];
++	strcpy(args[3],_port.str().c_str());
+ 	
+ 	// Options
+ 	std::string optf = "--options_file=" + std::string(tmpfname);
+-	args[3] = new char[optf.length()];
+-	strcpy(args[3],optf.c_str());
++	args[4] = new char[optf.length()];
++	strcpy(args[4],optf.c_str());
+ 	
+ 	GError * err = NULL;
+ 	bool ret = g_spawn_async_with_pipes(cwd,args,NULL,G_SPAWN_SEARCH_PATH,NULL,NULL,&pid,NULL,&ycmd_stdout_fd, &ycmd_stderr_fd,&err);
+ 	
+ 	fclose(temp);
+-	delete[] args[2];
+ 	delete[] args[3];
++	delete[] args[4];
+ 	free(cwd);
+-	g_free(args[1]);
++	g_free(args[2]);
+ 	
+ 	if(!ret){
+ 		g_assert(err != NULL);

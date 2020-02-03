@@ -1,0 +1,98 @@
+--- a/config.cpp.orig	2020-02-03 11:41:45.745009945 -0800
++++ b/config.cpp	2020-02-03 11:50:09.814764205 -0800
+@@ -3,52 +3,69 @@
+ Json::Value defaultConfig(){
+ 	Json::Value v;
+ 	
+-	v["filepath_completion_use_working_dir"] = false;
+-	v["auto_trigger"] = true;
++	v["filepath_completion_use_working_dir"] = 0;
++	v["auto_trigger"] = 1;
+ 	v["min_num_of_chars_for_completion"] = 2;
+ 	v["min_num_identifier_candidate_chars"] = 0;
+ 	v["semantic_triggers"] = Json::Value(Json::objectValue);
+ 
+ 	Json::Value ft_dis(Json::objectValue);
+-	ft_dis["gitcommit"] = true;
++	ft_dis["gitcommit"] = 1;
+ 
+ 	v["filetype_specific_completion_to_disable"] = ft_dis;
+ 
+-	v["seed_identifiers_with_syntax"] = false;
+-	v["collect_identifiers_from_comments_and_strings"] = false;
+-	v["collect_identifiers_from_tags_files"] = false;
++	v["seed_identifiers_with_syntax"] = 0;
++	v["collect_identifiers_from_comments_and_strings"] = 0;
++	v["collect_identifiers_from_tags_files"] = 0;
++	v["max_num_identifier_candidates"] = 10;
++	v["max_num_candidates"] = 50;
+ 	v["extra_conf_globlist"] = Json::Value(Json::arrayValue);
+ 	v["global_ycm_extra_conf"] = "";
+-	v["confirm_extra_conf"] = true;
+-	v["complete_in_comments"] = false;
+-	v["complete_in_strings"] = true;
++	v["confirm_extra_conf"] = 1;
++	v["complete_in_comments"] = 0;
++	v["complete_in_strings"] = 1;
+ 	v["max_diagnostics_to_display"] = 30;
+ 
+ 	Json::Value ft_w(Json::objectValue);
+-	ft_w["*"] = true;
++	ft_w["*"] = 1;
+ 
+ 	v["filetype_whitelist"] = ft_w;
+ 
+ 	Json::Value ft_b(Json::objectValue);
+-	ft_b["tagbar"] = true;
+-	ft_b["qf"] = true;
+-	ft_b["notes"] = true;
+-	ft_b["markdown"] = true;
+-	ft_b["unite"] = true;
+-	ft_b["text"] = true;
+-	ft_b["vimwiki"] = true;
+-	ft_b["pandoc"] = true;
+-	ft_b["infolog"] = true;
+-	ft_b["mail"] = true;
++	ft_b["tagbar"] = 1;
++	ft_b["qf"] = 1;
++	ft_b["notes"] = 1;
++	ft_b["markdown"] = 1;
++	ft_b["netrw"] = 1;
++	ft_b["unite"] = 1;
++	ft_b["text"] = 1;
++	ft_b["vimwiki"] = 1;
++	ft_b["pandoc"] = 1;
++	ft_b["infolog"] = 1;
++	ft_b["mail"] = 1;
+ 
+ 	v["filetype_blacklist"] = ft_b;
+ 
+-	v["auto_start_csharp_server"] = true;
+-	v["auto_stop_csharp_server"] = true;
+-	v["use_ultisnips_completer"] = true;
++	Json::Value fp_b(Json::objectValue);
++	fp_b["html"] = 1;
++	fp_b["jsx"] = 1;
++	fp_b["xml"] = 1;
++
++	v["filepath_blacklist"] = fp_b;
++
++	v["auto_start_csharp_server"] = 1;
++	v["auto_stop_csharp_server"] = 1;
++	v["use_ultisnips_completer"] = 1;
+ 	v["csharp_server_port"] = 2000;
+-	v["server_keep_logfiles"] = false;
++	v["hmac_secret"] = "VG1xbVp4YWE3TUZtOXFNNw==";
++	v["server_keep_logfiles"] = 0;
++	v["gocode_binary_path"] = "";
++	v["godef_binary_path"] = "";
++	v["rust_src_path"] = "";
++	v["racerd_binary_path"] = "";
++	v["python_binary_path"] = "";
++	v["java_jdtls_use_clean_workspace"] = 1;
+ 	v["ycmd_path"] = "";
+ 
+ 	return v;
+-}
+\ No newline at end of file
++}

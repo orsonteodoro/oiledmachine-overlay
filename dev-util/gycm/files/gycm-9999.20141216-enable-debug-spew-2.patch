@@ -1,0 +1,16 @@
+diff -urp gycm-1963a9f6b51a3aff7c44780dcb13d056a8659b21.orig/ycmd.cpp gycm-1963a9f6b51a3aff7c44780dcb13d056a8659b21/ycmd.cpp
+--- gycm-1963a9f6b51a3aff7c44780dcb13d056a8659b21.orig/ycmd.cpp	2014-12-16 23:08:20.000000000 -0800
++++ gycm-1963a9f6b51a3aff7c44780dcb13d056a8659b21/ycmd.cpp	2017-01-16 10:28:21.423134242 -0800
+@@ -288,10 +288,10 @@ void Ycmd::send(Json::Value& _json, std:
+ 	std::string json = Json::FastWriter().write(_json);
+ 	
+ 	gchar * digest_enc = b64HexHMAC(json);
+-	//printf("HMAC: %s\n", digest_enc);
++	printf("HMAC: %s\n", digest_enc);
+ 	ne_add_request_header(req,"X-Ycm-Hmac",digest_enc);
+ 	g_free(digest_enc);
+-	//std::ofstream s("temp.file"); s << json; s.close();
++	std::ofstream s("temp.file"); s << json; s.close();
+ 	ne_set_request_body_buffer(req,json.c_str(),json.length());
+ 	ne_add_response_body_reader(req,ne_accept_always,block_reader,this);
+ 	if(ne_request_dispatch(req)){

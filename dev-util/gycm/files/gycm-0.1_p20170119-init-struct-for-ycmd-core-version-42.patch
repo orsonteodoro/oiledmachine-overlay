@@ -1,0 +1,85 @@
+--- a/config.cpp.orig	2014-12-16 23:08:20.000000000 -0800
++++ b/config.cpp	2020-02-03 11:57:50.732814274 -0800
+@@ -3,52 +3,48 @@
+ Json::Value defaultConfig(){
+ 	Json::Value v;
+ 	
+-	v["filepath_completion_use_working_dir"] = false;
+-	v["auto_trigger"] = true;
++	v["filepath_completion_use_working_dir"] = 0;
++	v["auto_trigger"] = 1;
+ 	v["min_num_of_chars_for_completion"] = 2;
+ 	v["min_num_identifier_candidate_chars"] = 0;
+ 	v["semantic_triggers"] = Json::Value(Json::objectValue);
+ 
+ 	Json::Value ft_dis(Json::objectValue);
+-	ft_dis["gitcommit"] = true;
++	ft_dis["gitcommit"] = 1;
+ 
+ 	v["filetype_specific_completion_to_disable"] = ft_dis;
+ 
+-	v["seed_identifiers_with_syntax"] = false;
+ 	v["collect_identifiers_from_comments_and_strings"] = false;
+-	v["collect_identifiers_from_tags_files"] = false;
++	v["max_num_identifier_candidates"] = 10;
++	v["max_num_candidates"] = 50;
+ 	v["extra_conf_globlist"] = Json::Value(Json::arrayValue);
+ 	v["global_ycm_extra_conf"] = "";
+-	v["confirm_extra_conf"] = true;
+-	v["complete_in_comments"] = false;
+-	v["complete_in_strings"] = true;
++	v["confirm_extra_conf"] = 1;
+ 	v["max_diagnostics_to_display"] = 30;
+ 
+-	Json::Value ft_w(Json::objectValue);
+-	ft_w["*"] = true;
+-
+-	v["filetype_whitelist"] = ft_w;
+-
+-	Json::Value ft_b(Json::objectValue);
+-	ft_b["tagbar"] = true;
+-	ft_b["qf"] = true;
+-	ft_b["notes"] = true;
+-	ft_b["markdown"] = true;
+-	ft_b["unite"] = true;
+-	ft_b["text"] = true;
+-	ft_b["vimwiki"] = true;
+-	ft_b["pandoc"] = true;
+-	ft_b["infolog"] = true;
+-	ft_b["mail"] = true;
+-
+-	v["filetype_blacklist"] = ft_b;
+-
+-	v["auto_start_csharp_server"] = true;
+-	v["auto_stop_csharp_server"] = true;
+-	v["use_ultisnips_completer"] = true;
+-	v["csharp_server_port"] = 2000;
+-	v["server_keep_logfiles"] = false;
++	Json::Value fp_blacklist(Json::objectValue);
++	fp_blacklist["html"] = 1;
++	fp_blacklist["jsx"] = 1;
++	fp_blacklist["xml"] = 1;
++	v["filepath_blacklist"] = fp_blacklist;
++
++	v["auto_start_csharp_server"] = 1;
++	v["auto_stop_csharp_server"] = 1;
++	v["use_ultisnips_completer"] = 1;
++	v["csharp_server_port"] = 0;
++	v["hmac_secret"] = "VG1xbVp4YWE3TUZtOXFNNw==";
++	v["server_keep_logfiles"] = 0;
++	v["python_binary_path"] = "";
++	v["language_server"] = Json::Value(Json::objectValue);
++	v["java_jdtls_use_clean_workspace"] = 1;
++	v["java_jdtls_workspace_root_path"] = "";
++	v["java_jdtls_extension_path"] = Json::Value(Json::arrayValue);
++	v["use_clangd"] = 1;
++	v["clangd_binary_path"] = "";
++	v["clangd_args"] = Json::Value(Json::arrayValue);
++	v["clangd_uses_ycmd_caching"] = 1;
++	v["disable_signature_help"] = 1;
+ 	v["ycmd_path"] = "";
+ 
+ 	return v;
+-}
+\ No newline at end of file
++}
