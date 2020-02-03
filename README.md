@@ -52,7 +52,7 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | app-editors/epic-journal | This is an Electron based encrypted journal.
 | app-editors/joshedit | Kept around for LateralGM |
 | app-editors/nano-ycmd | This is a modified GNU nano that uses ycmd.  It is still experimental. |
-| app-editors/noty | This is an Electron based sticky pad notetaker with autosave.
+| app-editors/noty | Removed.  Notes are stored in /home/username/.config/Noty/config.json .
 | app-editors/preserver | This is a sticky notes app created with Electron.
 | app-editors/stickynotes | This is an Electron based note taker that resembles a sticky pad. |
 | app-emacs/emacs-ycmd | TBA |
