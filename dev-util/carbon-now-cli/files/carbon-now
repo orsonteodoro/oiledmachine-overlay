@@ -1,0 +1,2 @@
+#!/bin/bash
+/usr/bin/node /usr/lib64/node/carbon-now-cli/0/cli.js -h $@
