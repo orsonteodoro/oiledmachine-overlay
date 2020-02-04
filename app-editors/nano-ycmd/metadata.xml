@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <!-- for this fork on the oiledmachine-overlay -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!-- originator -->
+  <maintainer type="person">
+    <email>polynomial-c@gentoo.org</email>
+    <name>Lars Wendler</name>
+  </maintainer>
+  <longdescription>
+    nano-ycmd is the nano text editor with YCMD support, with IDE
+    enhancements.
+
+    nano-ycmd adds support for fixing common stupid programmer mistakes, 
+    pulling documentation on a on a function, code completions and support
+    for C/C++/ObjC/ObjC++, C#, Go, JavaScript, Python, Rust, TypeScript.
+
+    You need to choose a crypto library (either Libgcrypt, Nettle, or OpenSSL)
+    for communicating with ycmd and mitigate against remote code execution.
+
+    The executable will be called ynano.
+
+    For hotkeys see,
+https://github.com/orsonteodoro/nano-ycmd/blob/ymcd-code-completion/src/global.c#L1389
+
+    ----
+
+    GNU nano - an enhanced clone of the Pico text editor.
+
+    The nano project was started because of a few "problems" with the
+    wonderfully easy-to-use and friendly Pico text editor.
+
+    First and foremost is its license: the Pine suite does not use the
+    GPL or a GPL-friendly license, and has unclear restrictions on
+    redistribution.  Because of this, Pine and Pico are not included with
+    many GNU/Linux distributions.  Also, other features (like goto line
+    number or search and replace) were unavailable until recently or
+    require a command line flag.  Yuck.
+
+    nano aims to solve these problems by emulating the functionality of
+    Pico as closely as possible while addressing the problems above and
+    perhaps providing other extra functionality.
+  </longdescription>
+  <upstream>
+    <!-- for ycmd support -->
+    <maintainer type="person">
+      <name>Orson Teodoro</name>
+      <email>orsonteodoro@hotmail.com</email>
+    </maintainer>
+    <!-- for nano -->
+    <maintainer type="person">
+      <name>Benno Schulenberg</name>
+    </maintainer>
+    <remote-id type="github">orsonteodoro/nano-ycmd</remote-id>
+    <bugs-to>https://github.com/orsonteodoro/nano-ycmd/issues</bugs-to>
+  </upstream>
+  <use>
+    <flag name="debug">Enable debug messages and assert warnings.  Note that
+      these will all be sent straight to stderr rather than some logging
+      facility.
+    </flag>
+    <flag name="justify">Enable justify/unjustify functions for text
+      formatting.</flag>
+    <flag name="libgcrypt">Uses Libgcrypt for HMAC computation.</flag>
+    <flag name="magic">Add magic file support (sys-apps/file) to automatically
+      detect appropriate syntax highlighting
+    </flag>
+    <flag name="minimal">Disable all fancy features, including ones that
+      otherwise have a dedicated USE flag (such as spelling).
+    </flag>
+    <flag name="ncurses">Uses ncurses for better key combo support.</flag>
+    <flag name="nettle">Uses Nettle for HMAC computation.</flag>
+    <flag name="nls">Enable command language translations.</flag>
+    <flag name="slang">Uses slang for better key combo support.</flag>
+    <flag name="spell">Enables spell checking.</flag>
+    <flag name="static">Builds as a monolithic binary with little to no
+      shared library dependencies.</flag>
+    <flag name="openmp">Enables multicore support.</flag>
+    <flag name="openssl">Uses OpenSSL for HMAC computation.</flag>
+    <flag name="system-gnulib">Uses the system's Gnulib to compile
+      nano-ycmd</flag>
+    <flag name="system-gocode">Configures ycmd to use the system's gocode
+      instead of ycmd internal dependency.</flag>
+    <flag name="system-godef">Configures ycmd to use the system's godef
+      instead of ycmd internal dependency.</flag>
+    <flag name="system-racerd">Configures ycmd to use the system's racerd
+      instead of ycmd internal dependency.</flag>
+    <flag name="unicode">Enables UTF-8 support.</flag>
+  </use>
+</pkgmetadata>
