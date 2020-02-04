@@ -21,7 +21,7 @@
     TypeScript.
 
     You need to choose a crypto library (either Libgcrypt, Nettle, or OpenSSL)
-    for communicating with ycmd and mitigate against remote code execution.
+    for communicating with ycmd and mitigating against remote code execution.
 
     The executable will be called ynano so that it can be installed
     alongside with the vanilla nano.
