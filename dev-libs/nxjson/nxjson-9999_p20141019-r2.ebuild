@@ -38,7 +38,7 @@ multilib_src_compile() {
 		-e "s|libnxjson.so|libnxjson.so.${LIBRARY_SUFFIX}|" \
 		Makefile ||die
 	sed -i -e "s|gcc|$(tc-getCC) ${!arch_cflags}|" Makefile || die
-	sed -i -e "s|-shared|-shared -Wl,-soname,${SO_NAME}|" Makefile || die
+	#sed -i -e "s|-shared|-shared -Wl,-soname,${SO_NAME}|" Makefile || die
 	emake || die
 }
 
@@ -50,12 +50,14 @@ multilib_src_test() {
 
 multilib_src_install() {
 	dolib.so libnxjson.so.${LIBRARY_SUFFIX}
-	dosym libnxjson.so.${LIBRARY_SUFFIX} \
-		/usr/$(get_libdir)/libnxjson.so
-	dosym libnxjson.so.${LIBRARY_SUFFIX} \
-		/usr/$(get_libdir)/libnxjson.so.${SO_SUFFIX}
-	dosym libnxjson.so.${LIBRARY_SUFFIX} \
-		/usr/$(get_libdir)/libnxjson.so.${SO_SUFFIX}.${LIBRARY_AGE}
+	pushd "${D}"/usr/$(get_libdir)/
+		ln -s libnxjson.so.${LIBRARY_SUFFIX} \
+			libnxjson.so || die
+		ln -s libnxjson.so.${LIBRARY_SUFFIX} \
+			libnxjson.so.${SO_SUFFIX} || die
+		ln -s libnxjson.so.${LIBRARY_SUFFIX} \
+			libnxjson.so.${SO_SUFFIX}.${LIBRARY_AGE} || die
+	popd
 	if use static ; then
 		dolib.a libnxjson.a
 	fi
