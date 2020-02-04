@@ -8,7 +8,7 @@ DESCRIPTION="GNU GPL'd Pico clone with more functionality with ycmd support"
 HOMEPAGE="https://www.nano-editor.org/ \
 https://wiki.gentoo.org/wiki/Nano/Basics_Guide
 https://github.com/orsonteodoro/nano-ycmd"
-LICENSE="GPL-3 LGPL-2+"
+LICENSE="GPL-3+ LGPL-2+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
 IUSE="debug justify libgcrypt +magic minimal ncurses nls slang +spell static \
