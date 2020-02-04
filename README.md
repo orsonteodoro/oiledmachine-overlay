@@ -256,7 +256,6 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | www-misc/nativefier | Offline till upstream replaces dependencies with vulnerabilities. |
 | www-misc/rtv | This is a command line Reddit client which has been updated. |
 | www-misc/socli | This is a Stack Overflow command line client. |
-| www-misc/stockifier | TBA |
 | www-servers/civetweb | Kept around for urho3d. |
 | x11-base/xorg-drivers | Kept around for amdgpu-pro requirement for older xorg-server ABI. |
 | x11-base/xorg-server | Kept around for amdgpu-pro requirement for older xorg-server ABI.  |
