@@ -12,17 +12,19 @@
     <name>Lars Wendler</name>
   </maintainer>
   <longdescription>
-    nano-ycmd is the nano text editor with YCMD support, with IDE
+    nano-ycmd is the nano text editor with YCMD support, providing IDE
     enhancements.
 
     nano-ycmd adds support for fixing common stupid programmer mistakes, 
-    pulling documentation on a on a function, code completions and support
-    for C/C++/ObjC/ObjC++, C#, Go, JavaScript, Python, Rust, TypeScript.
+    pulling documentation on a function, providing code completions hints 
+    and support for C/C++/ObjC/ObjC++, C#, Go, JavaScript, Python, Rust,
+    TypeScript.
 
     You need to choose a crypto library (either Libgcrypt, Nettle, or OpenSSL)
     for communicating with ycmd and mitigate against remote code execution.
 
-    The executable will be called ynano.
+    The executable will be called ynano so that it can be installed
+    alongside with the vanilla nano.
 
     For hotkeys see,
 https://github.com/orsonteodoro/nano-ycmd/blob/ymcd-code-completion/src/global.c#L1389
