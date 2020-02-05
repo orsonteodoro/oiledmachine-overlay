@@ -204,7 +204,7 @@ or\n\
 \n\
 Do: cat < /dev/urandom | tr -dc _A-Z-a-z-0-9 | head -c 16 | base64\n\
 \n\
-It may also crash Geany on startup if there is an declared variable.  Fix\n\
+It may also crash Geany on startup if there is an undeclared variable.  Fix\n\
 the errors first.\n\
 \n\
 Geany may need to be restarted in order for completion to work after enabling\n\
