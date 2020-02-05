@@ -8,7 +8,7 @@ DESCRIPTION="A Geany plugin to support the ycmd code completion server"
 LICENSE="GPL-3"
 HOMEPAGE="https://github.com/jakeanq/gycm"
 KEYWORDS="~amd64 ~x86"
-EGIT_COMMIT="1963a9f6b51a3aff7c44780dcb13d056a8659b21"
+EGIT_COMMIT="3abe1419d22ad19acbd96f66864ec00a0a256689"
 PYTHON_COMPAT=( python3_{6,7,8} )
 SLOT="0"
 IUSE="debug system-clangd system-gocode system-godef \
@@ -37,9 +37,6 @@ S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
 src_prepare() {
-	ewarn \
-"This ebuild is currently undergoing maintenance and is a Work In Progress.\n\
-It will not work."
 	cmake-utils_src_prepare
 
 	eapply "${FILESDIR}/${PN}-9999.20141216-missing-iostream.patch"
@@ -54,7 +51,7 @@ It will not work."
 
 	if use debug ; then
 		eapply "${FILESDIR}/${PN}-9999-20141216-enable-debug-spew.patch"
-		eapply "${FILESDIR}/${PN}-9999.20141216-enable-debug-spew-2.patch"
+		eapply "${FILESDIR}/${PN}-0.1_p20170119-enable-debug-spew-2.patch"
 		eapply "${FILESDIR}/${PN}-9999.20141216-null-exception-check.patch"
 		eapply "${FILESDIR}/${PN}-9999-20141216-debug-keep-log-files.patch"
 	fi
@@ -205,5 +202,11 @@ Do: openssl rand -base64 16\n\
 \n\
 or\n\
 \n\
-Do: cat < /dev/urandom | tr -dc _A-Z-a-z-0-9 | head -c 16 | base64"
+Do: cat < /dev/urandom | tr -dc _A-Z-a-z-0-9 | head -c 16 | base64\n\
+\n\
+It may also crash Geany on startup if there is an declared variable.  Fix\n\
+the errors first.\n\
+\n\
+Geany may need to be restarted in order for completion to work after enabling\n\
+the plugin."
 }

@@ -1,0 +1,15 @@
+--- a/ycmd.cpp.orig	2020-02-04 17:47:35.033554228 -0800
++++ b/ycmd.cpp	2020-02-04 17:48:26.705594837 -0800
+@@ -283,10 +283,10 @@ void Ycmd::send(Json::Value& _json, std:
+ 
+         gchar * digest_enc = g_base64_encode(digest_join, HMAC_LENGTH);
+ 
+-	//printf("HMAC: %s\n", digest_enc);
++	printf("HMAC: %s\n", digest_enc);
+ 	ne_add_request_header(req,"X-Ycm-Hmac",digest_enc);
+ 	g_free(digest_enc);
+-	//std::ofstream s("temp.file"); s << json; s.close();
++	std::ofstream s("temp.file"); s << json; s.close();
+ 	ne_set_request_body_buffer(req,json.c_str(),json.length());
+ 	ne_add_response_body_reader(req,ne_accept_always,block_reader,this);
+ 	if(ne_request_dispatch(req)){
