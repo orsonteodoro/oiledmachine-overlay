@@ -83,10 +83,6 @@ ${ycmd_dir}/clang_includes/include|g" \
 	fi
 	local json_config="${S}/ycmd.json"
 	cat "${FILESDIR}/default_settings.json.39_p20180821" > "${json_config}"
-	sed -i -e "s|\
-___HMAC_SECRET___|\
-$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64)|g" \
-		"${json_config}" || die
 	sed -i -e "s|___PYTHON_BIN_PATH___|/usr/bin/${EPYTHON}|g" \
 		"${json_config}" || die
 	sed -i -e "s|___GLOBAL_YCMD_EXTRA_CONF___|/tmp/.ycm_extra_conf.py|g" \
@@ -144,10 +140,6 @@ ${ycmd_dir}/third_party/clang/lib/clang/9.0.0/include|g" \
 	fi
 	local json_config="${S}/ycmd.json"
 	cat "${FILESDIR}/default_settings.json.42_p20200108" > "${json_config}"
-	sed -i -e "s|\
-___HMAC_SECRET___|\
-$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64)|g" \
-		"${json_config}" || die
 	sed -i -e "s|___PYTHON_BIN_PATH___|/usr/bin/${EPYTHON}|g" \
 		"${json_config}" || die
 	sed -i -e "s|___GLOBAL_YCMD_EXTRA_CONF___|/tmp/.ycm_extra_conf.py|g" \
@@ -194,15 +186,6 @@ project's .ycm_extra_conf.py.\n\
 \n\
 Consider emerging ycm-generator to generate a .ycm_extra_conf.py for your\n\
 project.  This generated .ycm_extra_conf.py may need to be sligtly modified.\n\
-\n\
-You must generate a 16 byte HMAC secret wrapped in base64 for the\n\
-hmac_secret property of your .json file.\n\
-\n\
-Do: openssl rand -base64 16\n\
-\n\
-or\n\
-\n\
-Do: cat < /dev/urandom | tr -dc _A-Z-a-z-0-9 | head -c 16 | base64\n\
 \n\
 It may also crash Geany on startup if there is an undeclared variable.  Fix\n\
 the errors first.\n\

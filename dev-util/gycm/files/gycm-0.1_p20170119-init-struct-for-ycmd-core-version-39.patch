@@ -82,7 +82,7 @@
 +	v["use_ultisnips_completer"] = 1;
  	v["csharp_server_port"] = 2000;
 -	v["server_keep_logfiles"] = false;
-+	v["hmac_secret"] = "VG1xbVp4YWE3TUZtOXFNNw==";
++	v["hmac_secret"] = "";
 +	v["server_keep_logfiles"] = 0;
 +	v["gocode_binary_path"] = "";
 +	v["godef_binary_path"] = "";
