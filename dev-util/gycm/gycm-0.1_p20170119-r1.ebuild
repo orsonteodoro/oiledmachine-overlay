@@ -24,11 +24,11 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 DEPEND="${PYTHON_DEPS}
         dev-libs/jsoncpp
         dev-libs/openssl
-	ycmd-slot-1? ( dev-util/ycmd:1[${PYTHON_USEDEP}] )
-	ycmd-slot-2? ( dev-util/ycmd:2[${PYTHON_USEDEP}] )
 	dev-util/geany
         net-libs/libssh
-        net-libs/neon"
+        net-libs/neon
+	ycmd-slot-1? ( dev-util/ycmd:1[${PYTHON_USEDEP}] )
+	ycmd-slot-2? ( dev-util/ycmd:2[${PYTHON_USEDEP}] )"
 RDEPEND="${DEPEND}"
 SRC_URI=\
 "https://github.com/jakeanq/gycm/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
