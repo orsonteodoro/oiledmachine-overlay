@@ -44,7 +44,7 @@ be exported to XML, PostScript®, CSV, or plain text.
 <flag name="mergecap">Install mergecap, to merge two or more capture files into one</flag>
 <flag name="minizip">Build with zip file compression support</flag>
 <flag name="netlink">Use <pkg>dev-libs/libnl</pkg></flag>
-<flag name="mtp">Adds USB PTP / MTP (Picture Transfer Protocol / Media Transfer Protocol) support.</flag>
+<flag name="mtp">Adds support for the USB PTP / MTP (Picture Transfer Protocol / Media Transfer Protocol) EPAN (Enhanced Packet ANalyzer) dissector.</flag>
 <flag name="pcap">Use <pkg>net-libs/libpcap</pkg> for network packet capturing (build dumpcap, rawshark)</flag>
 <flag name="plugin-ifdemo">Install plugin interface demo</flag>
 <flag name="plugins">Install plugins</flag>

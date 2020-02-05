@@ -2,6 +2,7 @@ Forum: https://nikonhacker.com/viewtopic.php?f=8&t=708
 Sources: https://github.com/simeonpilgrim/nikon-firmware-tools/tree/master/USB/wireshark/release
 Bugzilla: https://bugs.wireshark.org/bugzilla/show_bug.cgi?id=8431
 PCAP (for testing): https://bugs.wireshark.org/bugzilla/show_bug.cgi?id=8431#c5
+Adds MTPz fields.
 ----
 diff -urpN wireshark-3.2.1.orig/epan/dissectors/CMakeLists.txt wireshark-3.2.1/epan/dissectors/CMakeLists.txt
 --- wireshark-3.2.1.orig/epan/dissectors/CMakeLists.txt	2020-02-04 22:50:44.483318119 -0800
