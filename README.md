@@ -72,9 +72,7 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-dotnet/cli-tools | For dotnetcore-sdk.  Frontend and and command line tools for .NET Core. |
 | dev-dotnet/core | For dotnetcore-sdk.  Just documentation and examples. |
 | dev-dotnet/coreclr | For dotnetcore-sdk.  Libraries for .NET Core runtime. |
-| dev-dotnet/cppnet | TBA |
 | dev-dotnet/dotnetcore-sdk | Essentially a meta package for .NET Core |
-| dev-dotnet/dotnetzip-semverd | TBA |
 | dev-dotnet/farseer-physics-engine | This is a physics engine based on Box2D and is a C# library.  This one also has support for MonoGame. |
 | dev-dotnet/fna | This is an XNA4 ebuild which just produces a C# assembly.  This project sadly doesn't have a MonoDevelop add-in.  This ebuild is provided for others to fix and expand. |
 | dev-dotnet/freeimagenet | This is for loading textures in C# for games or multimedia apps. |
@@ -86,7 +84,6 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-dotnet/mono-addins | TBA |
 | dev-dotnet/monogame | This is probably the only portage overlay that has it.  If you use the add-in for MonoGame 3.5.1, it could only work for MonoDevelop 5.x series.  MonoGame 3.6 add-in should work for MonoDevelop 6.x series.  This one requires that mono, monodevelop, nvidia-texture-tools from this overlay.  I disabled NUnit on those and split it off into its own ebuild.  The latest LLVM is required for CppSharp.   You also need to set LIBGL_DRIVERS_PATH environmental variable in your MonoDevelop or wrapper script to /usr/lib/dri before running the app. <br /><br /> The package still needs testing.  I striped out lidgren and made an ebuild for it and use lidgren-network-gen3.  The OpenTK and Tao Framework were binary only and I used a compiled version from my ebuilds for the GamePad library.  SDL 1 is required for the GamepadConfig since Tao Framework uses SDL1.  The SDL2 is also required for the OpenTK library.  <br /><br />  If you create a new solution in MonoGame, you should answer no to override the Tao.Sdl.dll.config and OpenTK.dll.config File Conflicts Dialog Box.  The one provided has absolute paths to the required libraries and Linux support.  <br /><br />  If you get a red x dot in MonoDevelop complaining about an assembly (nvorbis for example) for MonoGame, the game will compile and run still.  <br /><br />  The ebuild uses dev-dotnet/managed-pvrtc without USE flag.  Please read the dev-dotnet/managed-pvrtc below before distributing or using  it.  <br /><br />  Again, I need people who have used this library to test this ebuild and the tools (mgcb, pipeline).  <br /><br />  Also, this is a Linux only ebuild which means it will only build games for Linux.  You cannot use it to port to other platforms (Android, Apple TV, iOS) because Xamarin Studio is not in Linux which required to port to mobile. |
 | dev-dotnet/monogame-extended |  This contains several common modules found in game engines like a particle engine, based on Mercury Particle Engine, and a tiled map loader for maps created by the Tiled Map Editor.  Currently a vanilla build of MonoGame stable doesn't support shaders on Linux so some features will not work for this assembly. |
-| dev-dotnet/msbuildtasks | TBA |
 | dev-dotnet/ndesk-options | TBA |
 | dev-dotnet/nuget | TBA |
 | dev-dotnet/nvorbis | TBA |
