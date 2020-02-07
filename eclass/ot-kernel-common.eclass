@@ -171,7 +171,13 @@ fi
 ZENMISC_URL_BASE="https://github.com/torvalds/linux/commit/"
 
 FUTEX_WAIT_MULTIPLE_BASE="https://github.com/torvalds/linux/compare/v${PATCH_ZENTUNE_VER}...zen-kernel:${PATCH_ZENTUNE_VER}/"
+if [[ "${K_MAJOR_MINOR}" == "5.4" \
+|| "${K_MAJOR_MINOR}" == "5.3" \
+|| "${K_MAJOR_MINOR}" == "5.2" ]] ; then
 FUTEX_WAIT_MULTIPLE_PROJ="futex-backports"
+elif [[ "${K_MAJOR_MINOR}" == "5.5" ]] ; then
+FUTEX_WAIT_MULTIPLE_PROJ="futex"
+fi
 FUTEX_WAIT_MULTIPLE_FN="${FUTEX_WAIT_MULTIPLE_PROJ}-${K_MAJOR_MINOR}.patch"
 FUTEX_WAIT_MULTIPLE_DL_URL="${FUTEX_WAIT_MULTIPLE_BASE}${FUTEX_WAIT_MULTIPLE_PROJ}.patch"
 

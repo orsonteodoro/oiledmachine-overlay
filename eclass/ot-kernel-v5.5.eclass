@@ -77,7 +77,7 @@ REQUIRED_USE="^^ ( muqss cfs bmq )
 	     rock? ( amd-staging-drm-next )"
 
 # no released patch yet
-REQUIRED_USE+=" !bfq !bmq-quick-fix !muqss !uksm !futex-wait-multiple"
+REQUIRED_USE+=" !bfq !bmq-quick-fix !uksm"
 
 #K_WANT_GENPATCHES="base extras experimental"
 K_SECURITY_UNSUPPORTED=${K_SECURITY_UNSUPPORTED:="1"}
@@ -105,7 +105,7 @@ inherit check-reqs ot-kernel-common
 #BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.patch"
 #BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
 
-#SRC_URI+=" ${CK_SRC_URL}"
+SRC_URI+=" ${CK_SRC_URL}"
 
 SRC_URI+=" ${KERNEL_URI}
 	   ${GENPATCHES_URI}
