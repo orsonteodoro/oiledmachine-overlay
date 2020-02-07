@@ -28,9 +28,11 @@ LICENSE="MIT
 	 plugins_kube-ps1? ( Apache-2.0 )
 	 plugins_sfdx? ( Apache-2.0 )
 	 Unicode-DFS"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
-PYTHON_COMPAT=( python{2_7,3_4,3_5,3_6,3_7} )
-USE_RUBY="ruby24 ruby25 ruby26"
+KEYWORDS="~alpha ~amd64 ~amd64-linux ~arm ~arm64 ~hppa ~ia64 ~m68k ~m68k-mint \
+~mips ~ppc ~ppc-macos ~ppc64 ~s390 ~sh ~sparc ~sparc-solaris ~sparc64-solaris \
+~x64-macos ~x64-solaris ~x86 ~x86-linux ~x86-macos ~x86-solaris"
+PYTHON_COMPAT=( python3_{6,7,8} )
+USE_RUBY="ruby24 ruby25 ruby26 ruby27"
 RUBY_OPTIONAL=1
 EMOJI_LANG_DEFAULT=${EMOJI_LANG_DEFAULT:=en}
 inherit eutils python-r1 ruby-ng
@@ -173,7 +175,7 @@ PLUGINS_DEPEND="
 	 plugins_ros? ( dev-lisp/roswell )
 	 plugins_rsync? ( net-misc/rsync )
 	 plugins_ruby? ( dev-lang/ruby dev-ruby/rubygems )
-	 plugins_salt? ( dev-lang/python:2.7 )
+	 plugins_salt? ( app-admin/salt dev-lang/python )
 	 plugins_sbt? ( || ( dev-java/sbt dev-java/sbt-bin ) )
 	 plugins_scala? ( dev-lang/scala )
 	 plugins_screen? ( app-misc/screen )
@@ -319,6 +321,7 @@ REQUIRED_USE="branding? ( themes_gentoo )
 	      plugins_perl? ( curl )
 	      plugins_pip? ( curl )
 	      plugins_rand-quote? ( curl )
+	      plugins_salt? ( python )
 	      plugins_singlechar? ( curl )
 	      plugins_sprunge? ( curl )
 	      plugins_systemadmin? ( curl )
@@ -339,7 +342,6 @@ REQUIRED_USE="branding? ( themes_gentoo )
 		plugins_sprunge
 		plugins_systemadmin
 		plugins_transfer ) )
-	      plugins_salt? ( python_targets_python2_7 )
 	      plugins_cloudapp? ( ruby )
 	      plugins_rbenv? ( ruby )
 	      plugins_rust? ( rust )
@@ -348,7 +350,8 @@ REQUIRED_USE="branding? ( themes_gentoo )
 		plugins_n98-magerun
 	      ) )
 	      themes_adben? ( wget )
-	      update-emoji-data? ( plugins_emoji )"
+	      update-emoji-data? ( plugins_emoji )
+"
 ZSH_DEST="/usr/share/zsh/site-contrib/${PN}"
 ZSH_EDEST="${EPREFIX}${ZSH_DEST}"
 ZSH_TEMPLATE="templates/zshrc.zsh-template"
@@ -419,6 +422,10 @@ src_prepare() {
 		sed -i \
 -e 's!ZSH_THEME="robbyrussell"![[ -z "${ZSH_THEME}" ]] \&\& ZSH_THEME="robbyrussell"!g' \
 		  "${S}/${ZSH_TEMPLATE}" || die
+	fi
+
+	if use plugins_salt ; then
+		sed -i -e "s|python2|python3|" "${S}/plugins/salt/_salt" || die
 	fi
 
 	REQ_THEMES=$(echo "$USE" | grep -o -P "themes_[^ ]+")
