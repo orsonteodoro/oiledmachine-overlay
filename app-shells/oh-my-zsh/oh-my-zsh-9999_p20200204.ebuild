@@ -96,7 +96,6 @@ tmuxinator torrent transfer tugboat ubuntu ufw urltools vagrant \
 vagrant-prompt vault vim-interaction vi-mode virtualenv virtualenvwrapper \
 vscode vundle wakeonlan wd web-search wp-cli xcode yarn yii yii2 yum z \
 zeus zsh-navigation-tools zsh_reload )
-#1234567890123456789012345678901234567890123456789012345678901234567890123456789
 IUSE+=" ${OMZSH_PLUGINS[@]/#/-plugins_}"
 PLUGINS_DEPEND="
 	 plugins_adb? ( dev-util/android-tools )
@@ -118,7 +117,8 @@ PLUGINS_DEPEND="
 	 plugins_django? ( dev-python/django )
 	 plugins_docker-machine? ( app-emulation/docker-machine )
 	 plugins_doctl? ( app-admin/doctl )
-	 plugins_dotnet? ( || ( dev-dotnet/cli-tools dev-dotnet/dotnetcore-sdk-bin ) )
+	 plugins_dotnet? ( || ( dev-dotnet/cli-tools
+				dev-dotnet/dotnetcore-sdk-bin ) )
 	 plugins_drush? ( app-admin/drush )
 	 plugins_eecms? ( dev-lang/php )
 	 plugins_emacs? ( >=app-editors/emacs-24.0 )
@@ -166,7 +166,9 @@ PLUGINS_DEPEND="
 	 plugins_pipenv? ( dev-python/pipenv )
 	 plugins_postgres? ( dev-db/postgresql )
 	 plugins_pylint? ( dev-python/pylint )
-	 plugins_rails? ( || ( dev-ruby/rails dev-lang/ruby dev-ruby/rake ) )
+	 plugins_rails? ( || ( dev-ruby/rails
+				dev-lang/ruby
+				dev-ruby/rake ) )
 	 plugins_rake-fast? ( dev-ruby/rake )
 	 plugins_rand-quote? ( net-misc/curl )
 	 plugins_rebar? ( dev-util/rebar3 )
@@ -309,7 +311,8 @@ REQUIRED_USE="branding? ( themes_gentoo )
 	      plugins_gpg-agent? ( gpg )
 	      plugins_otp? ( gpg )
 	      plugins_pass? ( gpg )
-	      plugins_extract? ( || ( 7zip bzip2 gzip lrzip lz4 lzip lzma unzip rar xz zstd ) )
+	      plugins_extract? ( || ( 7zip bzip2 gzip lrzip lz4 lzip lzma unzip
+					rar xz zstd ) )
 	      plugins_archlinux? ( curl )
 	      plugins_composer? ( curl )
 	      plugins_gitfast? ( curl )
@@ -333,6 +336,7 @@ REQUIRED_USE="branding? ( themes_gentoo )
 		plugins_gitfast
 		plugins_github
 		plugins_gitignore
+		plugins_hitokoto
 		plugins_lol
 		plugins_osx
 		plugins_perl
@@ -368,18 +372,23 @@ basis in order to update emoji data."
 
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-	einfo ""
-	einfo "You must also read and agree to the licenses:"
-	einfo "  https://www.unicode.org/license.html"
-	einfo "  http://www.unicode.org/copyright.html"
-	einfo ""
-	einfo "Before downloading ${P}"
-	einfo ""
-	einfo "If you agree, you may download"
-	einfo "  - ${FN}"
-	einfo "from ${A_URL} and rename it to ${P}.zip and place them in ${distdir}"
-	einfo "or you can \`wget -O ${distdir}/${P}.zip ${A_URL}\`"
-	einfo ""
+	einfo \
+"\n\
+You must also read and agree to the licenses:\n\
+  https://www.unicode.org/license.html\n\
+  http://www.unicode.org/copyright.html\n\
+\n\
+Before downloading ${P}\n\
+\n\
+If you agree, you may download\n\
+  - ${FN}\n\
+from oh-my-zsh's GitHub page which the URL should be\n\
+\n\
+${A_URL}\n\
+\n\
+and rename it to ${P}.zip and place them in ${distdir}\n\
+or you can \`wget -O ${distdir}/${P}.zip ${A_URL}\`\n\
+\n"
 }
 
 src_unpack() {
@@ -416,11 +425,15 @@ src_prepare() {
 
 	if use branding ; then
 		sed -i \
--e 's!ZSH_THEME="robbyrussell"![[ -z "${ZSH_THEME}" ]] \&\& ZSH_THEME="gentoo"!g' \
+-e 's!\
+ZSH_THEME="robbyrussell"!\
+[[ -z "${ZSH_THEME}" ]] \&\& ZSH_THEME="gentoo"!g' \
 		  "${S}/${ZSH_TEMPLATE}" || die
 	else
 		sed -i \
--e 's!ZSH_THEME="robbyrussell"![[ -z "${ZSH_THEME}" ]] \&\& ZSH_THEME="robbyrussell"!g' \
+-e 's!\
+ZSH_THEME="robbyrussell"!\
+[[ -z "${ZSH_THEME}" ]] \&\& ZSH_THEME="robbyrussell"!g' \
 		  "${S}/${ZSH_TEMPLATE}" || die
 	fi
 
