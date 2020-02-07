@@ -36,6 +36,7 @@ DEPEND+=" app-portage/npm-secaudit"
 IUSE+=" debug"
 
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
+NPM_PACKAGE_SETS_DB="/etc/portage/sets/npm-security-update"
 NPM_SECAUDIT_REG_PATH=${NPM_SECAUDIT_REG_PATH:=""}
 NPM_MAXSOCKETS=${NPM_MAXSOCKETS:="1"} # Set this in your make.conf to control number of HTTP requests.  50 is npm default but it is too high.
 NPM_SECAUDIT_ALLOW_AUDIT=${NPM_SECAUDIT_ALLOW_AUDIT:="1"}
@@ -325,8 +326,29 @@ npm-secaudit_pkg_postinst() {
 npm-secaudit_pkg_postrm() {
         debug-print-function ${FUNCNAME} "${@}"
 
-	sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
-	sed -i '/^$/d' "${NPM_PACKAGE_DB}"
+	while true ; do
+		if mkdir "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db" 2>/dev/null ; then
+			trap "rm -rf \"${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db\"" EXIT
+			sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
+			sed -i '/^$/d' "${NPM_PACKAGE_DB}"
+			rm -rf "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
+		else
+			einfo "Waiting for mutex to be released for npm-secaudit's pkg_db.  If it takes too long (15 min), cancel all emerges and remove ${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
+			sleep 15
+		fi
+	done
+
+	while true ; do
+		if mkdir "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db" 2>/dev/null ; then
+			trap "rm -rf \"${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db\"" EXIT
+			sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_SETS_DB}"
+			sed -i '/^$/d' "${NPM_PACKAGE_SETS_DB}"
+			rm -rf "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
+		else
+			einfo "Waiting for mutex to be released for npm-secaudit's emerge-sets-db.  If it takes too long (15 min), cancel all emerges and remove ${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
+			sleep 15
+		fi
+	done
 }
 
 # @FUNCTION: npm-secaudit_store_package_jsons

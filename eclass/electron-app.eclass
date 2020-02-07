@@ -33,6 +33,7 @@ DEPEND+=" app-portage/npm-secaudit"
 IUSE+=" debug"
 
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
+NPM_PACKAGE_SETS_DB="/etc/portage/sets/npm-security-update"
 YARN_PACKAGE_DB="/var/lib/portage/yarn-packages"
 ELECTRON_APP_REG_PATH=${ELECTRON_APP_REG_PATH:=""}
 ELECTRON_APP_MODE=${ELECTRON_APP_MODE:="npm"} # can be npm, yarn
@@ -536,6 +537,18 @@ electron-app_pkg_postrm() {
 					sleep 15
 				fi
 			done
+
+			while true ; do
+				if mkdir "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db" 2>/dev/null ; then
+					trap "rm -rf \"${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db\"" EXIT
+					sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_SETS_DB}"
+					sed -i '/^$/d' "${NPM_PACKAGE_SETS_DB}"
+					rm -rf "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
+				else
+					einfo "Waiting for mutex to be released for npm-secaudit's emerge-sets-db.  If it takes too long (15 min), cancel all emerges and remove ${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
+					sleep 15
+				fi
+			done
 			;;
 		yarn)
 			while true ; do
@@ -550,6 +563,8 @@ electron-app_pkg_postrm() {
 					sleep 15
 				fi
 			done
+
+
 			;;
 		*)
 			die "Unsupported package system"
