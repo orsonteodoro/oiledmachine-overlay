@@ -18,7 +18,7 @@
     You can only choose one ABI 64 or 32.
   <longdescription>
   <upstream>
-    <bugs-to>https://bugzilla.mozilla.org/home</bugs-to>
+    <bugs-to>https://developer.mozilla.org/en-US/docs/Mozilla/QA/Bug_writing_guidelines</bugs-to>
   </upstream>
   <use>
     <flag name="bindist">Disable official Firefox branding (icons, name) which 
