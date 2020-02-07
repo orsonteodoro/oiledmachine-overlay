@@ -282,6 +282,7 @@
     <flag name="plugins_hanami">Installs the hanami plugin.</flag>
     <flag name="plugins_helm">Installs the helm plugin.</flag>
     <flag name="plugins_heroku">Installs the heroku plugin.</flag>
+    <flag name="plugins_hitokoto">Installs the hitokoto plugin.</flag>
     <flag name="plugins_history">Installs the history plugin.</flag>
     <flag name="plugins_history-substring-search">Installs the history-substring-search plugin.</flag>
     <flag name="plugins_homestead">Installs the homestead plugin.</flag>

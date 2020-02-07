@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -34,9 +34,9 @@ USE_RUBY="ruby24 ruby25 ruby26"
 RUBY_OPTIONAL=1
 EMOJI_LANG_DEFAULT=${EMOJI_LANG_DEFAULT:=en}
 inherit eutils python-r1 ruby-ng
-EGIT_COMMIT="d9e64344aa151f9b8e13a4f8054509a5d78bb718"
+EGIT_COMMIT="77aa1795d2f05583d4fc63a63abb0144beb5ecff"
 FN="${EGIT_COMMIT}.zip"
-A_URL="https://github.com/robbyrussell/oh-my-zsh/archive/${FN}"
+A_URL="https://github.com/ohmyzsh/ohmyzsh/archive/${FN}"
 SRC_URI="${A_URL} -> ${P}.zip"
 # Probably needs to be done because the archive contains the UNICODE data file.
 # It should be addressed upstream to get rid of emoji-data.txt.
@@ -44,7 +44,7 @@ RESTRICT="fetch"
 SLOT="0"
 IUSE="branding bzr clipboard curl emojis update-emoji-data java git gpg"
 IUSE+=" mercurial nodejs powerline python ruby rust subversion sudo wget"
-IUSE+=" 7zip bzip2 gzip lrzip lzip lzma unzip rar xz zstd"
+IUSE+=" 7zip bzip2 gzip lrzip lz4 lzip lzma unzip rar xz zstd"
 OMZSH_THEMES=( 3den adben af-magic afowler agnoster alanpeabody amuse apple \
 arrow aussiegeek avit awesomepanda bira blinks bureau candy-kingdom candy \
 clean cloud crcandy crunch cypher dallas darkblood daveverwer dieter dogenpunk \
@@ -76,6 +76,7 @@ fossil frontend-search fzf gas gatsby gb gcloud geeknote gem git \
 git-auto-fetch git-escape-magic git-extras gitfast git-flow git-flow-avh \
 github git-hubflow gitignore git-prompt git-remote-branch glassfish globalias \
 gnu-utils go golang gpg-agent gradle grails grunt gulp hanami helm heroku \
+hitokoto \
 history history-substring-search homestead httpie iterm2 jake-node jenv \
 jhbuild jira jruby jsontools jump kate keychain kitchen knife knife_ssh kops \
 kubectl kube-ps1 laravel laravel4 laravel5 last-working-dir lein lighthouse \
@@ -229,6 +230,7 @@ RDEPEND="7zip? ( app-arch/p7zip )
 	 bzip2? ( app-arch/bzip2 )
 	 gzip? ( app-arch/pigz )
 	 lrzip? ( app-arch/lrzip )
+	 lz4? ( app-arch/lz4 )
 	 lzip? ( app-arch/lzip )
 	 lzma? ( app-arch/xz-utils )
 	 mercurial? ( dev-vcs/mercurial )
@@ -254,7 +256,7 @@ RDEPEND="7zip? ( app-arch/p7zip )
 DEPEND="${RDEPEND}
 	net-misc/wget
 	sys-apps/grep[pcre]"
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+S="${WORKDIR}/${PN//-/}-${EGIT_COMMIT}"
 REQUIRED_USE="branding? ( themes_gentoo )
 	      themes_agnoster? ( powerline )
 	      themes_emotty? ( powerline )
@@ -305,12 +307,13 @@ REQUIRED_USE="branding? ( themes_gentoo )
 	      plugins_gpg-agent? ( gpg )
 	      plugins_otp? ( gpg )
 	      plugins_pass? ( gpg )
-	      plugins_extract? ( || ( 7zip bzip2 gzip lrzip lzip lzma unzip rar xz zstd ) )
+	      plugins_extract? ( || ( 7zip bzip2 gzip lrzip lz4 lzip lzma unzip rar xz zstd ) )
 	      plugins_archlinux? ( curl )
 	      plugins_composer? ( curl )
 	      plugins_gitfast? ( curl )
 	      plugins_github? ( curl )
 	      plugins_gitignore? ( curl )
+	      plugins_hitokoto? ( curl )
 	      plugins_lol? ( curl )
 	      plugins_osx? ( curl )
 	      plugins_perl? ( curl )
@@ -349,6 +352,16 @@ REQUIRED_USE="branding? ( themes_gentoo )
 ZSH_DEST="/usr/share/zsh/site-contrib/${PN}"
 ZSH_EDEST="${EPREFIX}${ZSH_DEST}"
 ZSH_TEMPLATE="templates/zshrc.zsh-template"
+
+pkg_setup() {
+	if use update-emoji-data ; then
+		if has network-sandbox $FEATURES ; then
+			die \
+"${PN} require network-sandbox to be disabled in FEATURES on a per-package \
+basis in order to update emoji data."
+		fi
+	fi
+}
 
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
@@ -448,8 +461,8 @@ src_install() {
 	insinto "${ZSH_DEST}"
 	doins -r *
 	if use plugins_emoji ; then
-		cp -a "${FILESDIR}/Unicode-DFS-2016" \
-		  "${D}/${ZSH_DEST}"/plugins/emoji/Unicode-DFS-2016-license.html \
+		cp -a "${FILESDIR}/Unicode-DFS" \
+		  "${D}/${ZSH_DEST}"/plugins/emoji/Unicode-DFS \
 		  || die
 	fi
 }
