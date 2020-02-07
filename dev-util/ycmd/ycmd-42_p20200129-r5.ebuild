@@ -693,8 +693,9 @@ src_install() {
 			&& use rust ; then
 			python_domodule third_party/rls
 
-			local arch="${CHOST%%-*}"
-			local abi="${CHOST##*-}"
+			local chost=$(get_abi_CHOST ${ABI})
+			local arch="${chost%%-*}"
+			local abi="${chost##*-}"
 
 			fperms 755 \
 "${BD_ABS}/third_party/rls/lib/rustlib/src/rust/src/libcore/unicode/printable.py" \

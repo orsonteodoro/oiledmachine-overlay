@@ -604,8 +604,9 @@ src_install() {
 			# fixme
 			python_domodule third_party/rls
 
-			local arch="${CHOST%%-*}"
-			local abi="${CHOST##*-}"
+			local chost=$(get_abi_CHOST ${ABI})
+			local arch="${chost%%-*}"
+			local abi="${chost##*-}"
 
 			# todo
 #			fperms 755 \
