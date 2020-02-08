@@ -25,7 +25,7 @@ RESTRICT="mirror"
 
 src_prepare() {
 	default
-	futurize --stage2 -v -w "${S}" || die
+	futurize -0 -v -w "${S}" || die
 	sed -i -e "s|#!/usr/bin/env python2|#!/usr/bin/env python|" \
 		config_gen.py || die
 	python_copy_sources
