@@ -48,7 +48,6 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 
 | package | description |
 | --- | --- |
-| app-accessibility/speech-dispatcher | Kept for multilib and 32-bit port of chromium. |
 | app-editors/epic-journal | This is an Electron based encrypted journal.
 | app-editors/joshedit | Kept around for LateralGM |
 | app-editors/nano-ycmd | This is a modified GNU nano that uses ycmd.  It is still experimental. |
