@@ -1,16 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<herd>chromium</herd>
-	<longdescription>Chromium is the open-source web browser project behind Google Chrome</longdescription>
-	<use>
-		<flag name="gtk3">Use gtk3 instead of gtk2</flag>
-		<flag name="hidpi">Enable support for high-resolution screens (high dots per inch)</flag>
-		<flag name="hotwording">Enable voice-recognition support (Ok Google)</flag>
-		<flag name="pic">Disable optimized assembly code that is not PIC friendly</flag>
-		<flag name="proprietary-codecs">Enable proprietary codecs like H.264, MP3</flag>
-		<flag name="system-ffmpeg">Use system ffmpeg instead of the bundled one</flag>
-		<flag name="tcmalloc">Use bundled tcmalloc instead of system malloc</flag>
-		<flag name="widevine">Unsupported closed-source DRM capability (required by Netflix VOD)</flag>
-	</use>
+  <!-- only in this ebuild fork on the oiledmachine-overlay -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!-- originator -->
+  <maintainer type="project">
+    <email>chromium@gentoo.org</email>
+    <name>Chromium in Gentoo Project</name>
+  </maintainer>
+  <longdescription>
+    Chromium is the open-source web browser project behind Google Chrome
+
+    For this ebuild fork, you can build 32 bit Chromium on 64 bit, but you
+    can only choose one ABI.
+  </longdescription>
+  <upstream>
+    <bugs-to>https://www.chromium.org/for-testers/bug-reporting-guidelines</bugs-to>
+  </upstream>
+  <use>
+    <flag name="closure-compile">Enable closure type-checking for Chrome's web
+      technology-based UI. Requires Java.</flag>
+    <flag name="component-build">Split build into more shared libraries to
+      speed up linking. Mostly intended for debugging and development, NOT
+      RECOMMENDED for general use.</flag>
+    <flag name="hangouts">Enable support for Google Hangouts features such as
+      screen sharing</flag>
+    <flag name="pic">Disable optimized assembly code that is not PIC
+      friendly</flag>
+    <flag name="proprietary-codecs">Enable proprietary codecs like H.264,
+      MP3</flag>
+    <flag name="suid">Build the SUID sandbox, which is only needed on
+      CONFIG_USER_NS=n kernels</flag>
+    <flag name="system-ffmpeg">Use system ffmpeg instead of the bundled
+      one</flag>
+    <flag name="system-icu">Use system icu instead of the bundled
+      one</flag>
+    <flag name="system-libvpx">Use system libvpx instead of the bundled
+      one</flag>
+    <flag name="tcmalloc">Use bundled tcmalloc instead of system malloc for
+      faster allocations and more memory savings.  For this ebuild fork, 
+      it is not recommended to enable this flag for stability
+      reasons.</flag>
+    <flag name="widevine">Unsupported closed-source DRM capability
+      (required by Netflix VOD)</flag>
+  </use>
 </pkgmetadata>
