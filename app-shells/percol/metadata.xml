@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    percol allows you to pick individual items from a newline seperated list
+    through a pipe using arrow keys which can be fed as the argument to another
+    program.
+
+    It also acts as an interactive grep tool, meaning that it can filter a
+    list through an input prompt which the result can be pick using arrow
+    keys.
+
+    See it in action at
+    https://github.com/mooz/percol#whats-this
+  </longdescription>
+  <upstream>
+    <maintainer>
+      <email>stillpedant@gmail.com</email>
+      <name>Masafumi Oyamada</name>
+    </maintainer>
+    <remote-id type="github">mooz/percol</remote-id>
+  </upstream>
+</pkgmetadata>
