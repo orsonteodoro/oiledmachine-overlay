@@ -467,6 +467,12 @@ third_party/waitress,ycmd} \
 	einfo "Cleaning out installer files"
 	find . \( -name "setup.py" \) \
 		-exec rm -rf "{}" +
+	if use rust \
+		&& ! use system-racerd ; then
+		einfo "Cleaning racerd"
+		rm -rf "third_party/racerd/"{appveyor.yml,Cargo.lock,Cargo.toml}
+		rm -rf "third_party/racerd/"{scripts,src,tests}
+	fi
 
 	einfo "Cleaning out completers"
 	pushd ycmd/completers || die
