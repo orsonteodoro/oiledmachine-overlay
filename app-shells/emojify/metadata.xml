@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    emojify substitutes emoji aliases (:scream: for example) that many services
+    (like GitHub) use for emoji raw characters.
+
+    For a list of aliases you can use, see
+    https://github.com/mrowa44/emojify/blob/master/emojify#L28
+
+    or at
+
+    https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md
+  </longdescription>
+  <upstream>
+    <maintainer status="active">
+      <name>Justyna Rachowicz</name>
+      <email>mrowa44@gmail.com</email>
+    </maintainer>
+    <remote-id type="github"> mrowa44/emojify</remote-id>
+  </upstream>
+  <use>
+    <flag name="doc">Installs documentation</flag>
+  </use>
+</pkgmetadata>
