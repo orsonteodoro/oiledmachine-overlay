@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    emoji-cli provides input completion for emoji on the command line with an
+    interactive filter.
+  </longdescription>
+  <upstream>
+    <maintainer status="active">
+      <name>Masaki ISHIYAMA</name>
+    </maintainer>
+    <remote-id type="github">b4b4r07/emoji-cli</remote-id>
+  </upstream>
+  <use>
+    <flag name="doc">Installs documentation</flag>
+  </use>
+</pkgmetadata>

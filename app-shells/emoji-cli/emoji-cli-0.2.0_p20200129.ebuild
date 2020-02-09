@@ -1,11 +1,11 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 DESCRIPTION="Emoji completion on the command line"
 HOMEPAGE="https://github.com/b4b4r07/emoji-cli"
 LICENSE="MIT"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86"
 SLOT="0"
 IUSE="doc fzf peco percol"
 REQUIRED_USE="^^ ( fzf peco percol )"
@@ -14,7 +14,6 @@ RDEPEND="app-misc/jq
 	 || ( fzf? ( app-shells/fzf[zsh-completion,tmux] )
 	      peco? ( app-shells/peco )
 	      percol? ( app-shells/percol ) )"
-DEPEND="${RDEPEND}"
 EGIT_COMMIT="26e2d67d566bfcc741891c8e063a00e0674abc92"
 SRC_URI="\
 https://github.com/b4b4r07/emoji-cli/archive/${EGIT_COMMIT}.tar.gz \
@@ -22,7 +21,7 @@ https://github.com/b4b4r07/emoji-cli/archive/${EGIT_COMMIT}.tar.gz \
 inherit eutils
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
-DOCS=( README.md )
+DOCS=( CHANGELOG.md README.md )
 
 src_prepare() {
 	default
