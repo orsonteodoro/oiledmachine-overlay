@@ -11,7 +11,7 @@ IUSE="libmaker +vanilla"
 SLOT_JOSHEDIT="1"
 inherit multilib-build
 RDEPEND="dev-java/joshedit:${SLOT_JOSHEDIT}[lateralgm]
-	 libmaker? ( dev-java/libmaker )
+	 libmaker? ( games-util/libmaker )
 	 virtual/jre"
 DEPEND="${RDEPEND}
 	 virtual/jdk"
