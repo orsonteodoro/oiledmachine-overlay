@@ -20,11 +20,12 @@ DEPEND="download-tracks? ( app-shells/zsh
 	glistfm? ( net-misc/curl )
 	grab-lastfm-userpic? ( net-misc/wget )
 	lastfmpost? ( net-misc/wget )
-	mplayerfm? ( dev-python/hauzer-scrobbler
+	mplayerfm? ( media-sound/scrobbler
 		     media-libs/mutagen )
 	mpv? ( dev-lang/lua
 		dev-python/hauzer-scrobbler
 		media-video/mpv[lua] )"
+# use media-sound/scrobbler from booboo overlay
 EGIT_COMMIT="77265c0e94cc86d705fdc5ec47beffcea899a933"
 FN_PREFIX="w3crapcli-last.fm-${EGIT_COMMIT}-"
 BASE_URL=\
