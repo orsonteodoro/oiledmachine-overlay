@@ -23,7 +23,7 @@ DEPEND="download-tracks? ( app-shells/zsh
 	mplayerfm? ( media-sound/scrobbler
 		     media-libs/mutagen )
 	mpv? ( dev-lang/lua
-		dev-python/hauzer-scrobbler
+		media-sound/scrobbler
 		media-video/mpv[lua] )"
 # use media-sound/scrobbler from booboo overlay
 EGIT_COMMIT="77265c0e94cc86d705fdc5ec47beffcea899a933"
