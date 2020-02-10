@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    w3crapcli is command line set of scripts that allow you to
+    make use web 2.0 services on the command line.  This ebuild
+    only provides the last.fm set of scripts.
+
+    Usage:
+    download-tracks 'ARTIST NAME'
+    gettracks.hs username
+    glistfm.sh username
+    grab-lastfm-userpic url
+    lastfmpost artist track album length tracknumber [time]
+    mplayer http://|file | mplayerfm
+
+    For the mpv script, just run mpv as usual.
+  </longdescription>
+  <upstream>
+    <maintainer>
+      <name>Sergey Alirzaev</name>
+      <email>zl29ah@gmail.com</email>
+    </maintainer>
+    <remote-id type="github">l29ah/w3crapcli</remote-id>
+    <bugs-to>https://github.com/l29ah/w3crapcli/issues</bugs-to>
+  </upstream>
+  <use>
+    <flag name="download-tracks">Downloads a list of tracks for an artist from
+      most to least popular.</flag>
+    <flag name="gettracks">Gets list of tracks for a particular user</flag>
+    <flag name="glistfm">Gets recent tracks played for a user</flag>
+    <flag name="grab-lastfm-userpic">Gets user picture</flag>
+    <flag name="lastfmpost">Posts a scrobble using the 1.2.x last.fm
+      API.</flag>
+    <flag name="mpv">Adds mpv support</flag>
+    <flag name="mplayerfm">Scrobbles piped output from mplayer2.</flag>
+    <flag name="savedconfig">Uses savedconfig for install.</flag>
+  </use>
+</pkgmetadata>
