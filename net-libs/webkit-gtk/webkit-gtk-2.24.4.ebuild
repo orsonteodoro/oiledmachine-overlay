@@ -15,7 +15,8 @@ HOMEPAGE="https://www.webkitgtk.org"
 SRC_URI="https://www.webkitgtk.org/releases/${MY_P}.tar.xz"
 
 LICENSE="LGPL-2+ BSD Unicode-DFS"
-SLOT_MAJOR="4"
+API_VERSION="4.0"
+SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 SLOT="${SLOT_MAJOR}/37" # soname version of libwebkit2gtk-4.0
 KEYWORDS="~alpha ~arm arm64 ~ppc ~amd64-linux ~x86-linux ~x86-macos"
 
@@ -318,15 +319,15 @@ multilib_src_compile() {
 multilib_src_test() {
 	# Prevents test failures on PaX systems
 	pax-mark m $(list-paxables Programs/*[Tt]ests/*) # Programs/unittests/.libs/test*
-
 	cmake-utils_src_test
 }
 
 multilib_src_install() {
 	cmake-utils_src_install
-
 	# Prevents crashes on PaX systems, bug #522808
-	pax-mark m "${ED}usr/$(get_libdir)/misc/webkit2gtk-${SLOT_MAJOR}.0/jsc" "${ED}usr/$(get_libdir)/misc/webkit2gtk-${SLOT_MAJOR}.0/WebKitWebProcess"
-	pax-mark m "${ED}usr/$(get_libdir)/misc/webkit2gtk-${SLOT_MAJOR}.0/WebKitPluginProcess"
-	use nsplugin && pax-mark m "${ED}usr/usr/$(get_libdir)/misc/webkit2gtk-${SLOT_MAJOR}.0/WebKitPluginProcess"2
+	local d="${ED}usr/$(get_libdir)/misc/webkit2gtk-${API_VERSION}"
+	pax-mark m "${d}/jsc" \
+		"${d}/WebKitWebProcess"
+	pax-mark m "${d}/WebKitPluginProcess"
+	use nsplugin && pax-mark m "${d}/WebKitPluginProcess"2
 }
