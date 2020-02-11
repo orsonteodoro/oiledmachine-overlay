@@ -1,20 +1,20 @@
-# Copyright 1999-2018 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-inherit autotools flag-o-matic versionator
+EAPI=7
+inherit autotools flag-o-matic
 inherit multilib-minimal
 
 MY_P="${PN}-${PV/_beta/b}"
 
 DESCRIPTION="Hunspell spell checker - an improved replacement for myspell in OOo"
-SRC_URI="https://github.com/${PN}/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/hunspell/hunspell/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 HOMEPAGE="https://github.com/hunspell"
 
-SLOT="0/$(get_version_component_range 1-2)"
+SLOT="0/$(ver_cut 1-2)"
 LICENSE="MPL-1.1 GPL-2 LGPL-2.1"
 IUSE="ncurses nls readline static-libs"
-KEYWORDS="alpha amd64 arm ~arm64 hppa ia64 ~mips ppc ppc64 ~sh sparc x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~x64-solaris ~x86-solaris"
+KEYWORDS="~alpha amd64 arm arm64 hppa ia64 ~mips ppc ppc64 ~sh sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~x64-solaris ~x86-solaris"
 
 RDEPEND="
 	ncurses? ( sys-libs/ncurses:0=[${MULTILIB_USEDEP}] )
@@ -43,15 +43,17 @@ unset dict lang LANGS
 S="${WORKDIR}/${MY_P}"
 
 DOCS=(
-	AUTHORS ChangeLog NEWS README THANKS TODO license.hunspell
-	AUTHORS.myspell README.myspell license.myspell README.md
+	AUTHORS ChangeLog NEWS THANKS license.hunspell
+	license.myspell README.md
 )
 
 PATCHES=(
 	# Upstream package creates some executables which names are too generic
 	# to be placed in /usr/bin - this patch prefixes them with 'hunspell-'.
 	# It modifies a Makefile.am file, hence eautoreconf.
-	"${FILESDIR}/${PN}-1.6.2-renameexes.patch"
+	"${FILESDIR}/${PN}-1.7.0-renameexes.patch"
+
+	"${FILESDIR}/${PN}-1.7.0-tinfo.patch" #692614
 )
 
 src_prepare() {
@@ -79,10 +81,10 @@ multilib_src_configure() {
 multilib_src_install() {
 	default
 	einstalldocs
-	find "${D}" -name '*.la' -delete || die
+	find "${ED}" -type f -name '*.la' -delete || die
 
 	#342449
-	pushd "${ED%/}"/usr/$(get_libdir)/ >/dev/null
-	ln -s lib${PN}{-$(get_major_version).$(get_version_component_range 2).so.0.0.1,.so}
+	pushd "${ED}"/usr/$(get_libdir)/ >/dev/null
+	ln -s lib${PN}{-$(ver_cut 1).$(ver_cut 2).so.0.0.1,.so}
 	popd >/dev/null
 }
