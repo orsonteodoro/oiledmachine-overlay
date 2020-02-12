@@ -36,7 +36,6 @@ REQUIRED_USE="
 	|| ( aqua wayland X )
 "
 REQUIRED_USE+="
-	accelerated-2d-canvas? ( webgl !gles2 )
 	hardened? ( !jit )
 	!introspection
 	!geolocation
