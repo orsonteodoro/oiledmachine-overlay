@@ -3,14 +3,19 @@
 <pkgmetadata>
   <!-- only in this ebuild fork on the oiledmachine overlay -->
   <maintainer type="project">
-    <email>gnome@gentoo.org</email>
-    <name>Gentoo GNOME Desktop</name>
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
   </maintainer>
   <!-- originator -->
   <maintainer type="project">
     <email>gnome@gentoo.org</email>
     <name>Gentoo GNOME Desktop</name>
   </maintainer>
+  <longdescription>
+    WebKitGTK is a HTML5 engine.
+
+    This ebuild fork will allow you to build a multilib webkit.
+  </longdescription>
   <use>
     <flag name="accelerated-2d-canvas">Use hardware acceleration for
       some 2D drawing operations.</flag>
@@ -32,6 +37,7 @@
       significantly faster code execution.</flag>
     <flag name="jumbo-build">Combine source files to speed up build
       process</flag>
+    <flag name="minibrowser">Enables building the minibrowser.</flag>
     <flag name="nsplugin">Enable full nsplugin support (GTK2 plugins)</flag>
     <flag name="webgl">Build support for the WebGL HTML API using
       <pkg>virtual/opengl</pkg></flag>

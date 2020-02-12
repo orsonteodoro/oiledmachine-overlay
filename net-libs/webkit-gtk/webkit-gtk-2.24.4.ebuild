@@ -296,7 +296,7 @@ multilib_src_configure() {
 #		-DENABLE_DFG_JIT=$(usex jit)
 #		-DENABLE_FTL_JIT=$(usex ftl-jit)
 #		-DENABLE_JIT=$(usex jit)
-		-DENABLE_DEVELOPER_MODE=$(usex minibrowser)
+		-DENABLE_MINIBROWSER=$(usex minibrowser "ON" "OFF")
 		-DUSE_SYSTEM_MALLOC=$(usex bmalloc "OFF" "ON")
 	)
 
