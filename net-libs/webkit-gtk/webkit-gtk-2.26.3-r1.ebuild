@@ -37,8 +37,6 @@ REQUIRED_USE+="
 	hardened? ( !jit )
 	webgl? ( gstreamer
 		|| ( gles2-only opengl ) )
-	!introspection
-	!geolocation
 "
 
 # cannot use introspection for 32 webkit on 64 bit because it requires 32 bit libs/build for python
@@ -79,7 +77,7 @@ RDEPEND="
 	>=dev-libs/libxslt-1.1.7[${MULTILIB_USEDEP}]
 	media-libs/woff2[${MULTILIB_USEDEP}]
 	gnome-keyring? ( app-crypt/libsecret[${MULTILIB_USEDEP}] )
-	introspection? ( >=dev-libs/gobject-introspection-1.32.0:=[${MULTILIB_USEDEP}] )
+	introspection? ( >=dev-libs/gobject-introspection-1.32.0:= )
 	dev-libs/libtasn1:=[${MULTILIB_USEDEP}]
 	spell? ( >=app-text/enchant-0.22:2[${MULTILIB_USEDEP}] )
 	gstreamer? (
@@ -278,12 +276,12 @@ multilib_src_configure() {
 		-DENABLE_QUARTZ_TARGET=$(usex aqua)
 		-DENABLE_API_TESTS=$(usex test)
 		-DENABLE_GTKDOC=$(usex gtk-doc)
-		-DENABLE_GEOLOCATION=$(usex geolocation) # Runtime optional (talks over dbus service)
+		-DENABLE_GEOLOCATION=$(multilib_native_usex geolocation "ON" "OFF") # Runtime optional (talks over dbus service)
 		$(cmake-utils_use_find_package gles2-only OpenGLES2)
 		-DENABLE_GLES2=$(usex gles2-only)
 		-DENABLE_VIDEO=$(usex gstreamer)
 		-DENABLE_WEB_AUDIO=$(usex gstreamer)
-		-DENABLE_INTROSPECTION=$(usex introspection)
+		-DENABLE_INTROSPECTION=$(multilib_native_usex introspection "ON" "OFF")
 		-DUSE_LIBNOTIFY=$(usex libnotify)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENJPEG=$(usex jpeg2k)
