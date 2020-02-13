@@ -205,6 +205,7 @@ multilib_src_compile() {
 }
 
 multilib_src_install() {
+	PKG_CONFIG="/usr/bin/$(get_abi_CHOST ${ABI})-pkg-config" \
 	default
 
 	save_config config.h
