@@ -1,0 +1,8 @@
+/* Change this to your surf scripts directory. */
+#define SCRIPTS_DIR "/etc/surf/scripts/"
+
+/* Page load "handlers". */
+#define PAGE_LOAD_COMMITTED(c) const Arg a = { .v = (char *[]){ "/bin/sh", "-c", \
+       SCRIPTS_DIR "events/page_load_committed.sh \"$0\" \"$1\" \"$2\"", winid, geturi(c), c->title, NULL }}; spawn(NULL, &a)
+#define PAGE_LOAD_FINISHED(c) const Arg b = { .v = (char *[]){ "/bin/sh", "-c", \
+       SCRIPTS_DIR "events/page_load_finished.sh \"$0\" \"$1\" \"$2\"", winid, geturi(c), c->title, NULL }}; spawn(NULL, &b)

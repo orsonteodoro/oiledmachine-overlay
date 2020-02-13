@@ -22,7 +22,7 @@ REQUIRED_USE="mod_searchengines? ( savedconfig )
 	      mod_simple_bookmarking_redux? ( savedconfig )
 	      update_adblock? ( mod_adblock )"
 inherit multilib-minimal
-COMMON_DEPEND=" app-crypt/gcr[gtk]
+COMMON_DEPEND=" app-crypt/gcr[gtk,${MULTILIB_USEDEP}]
 		dev-libs/glib:2[${MULTILIB_USEDEP}]
 		net-libs/webkit-gtk:4[${MULTILIB_USEDEP}]
 		x11-libs/gtk+:3[${MULTILIB_USEDEP}]
@@ -30,7 +30,7 @@ COMMON_DEPEND=" app-crypt/gcr[gtk]
 DEPEND="${COMMON_DEPEND}
 	virtual/pkgconfig[${MULTILIB_USEDEP}]"
 RDEPEND="${COMMON_DEPEND}
-	 !savedconfig? (   net-misc/curl
+	 !savedconfig? (   net-misc/curl[${MULTILIB_USEDEP}]
 			   x11-apps/xprop
 			 >=x11-misc/dmenu-4.7
 			   x11-terms/st )
@@ -45,7 +45,6 @@ SRC_URI="mod_autoopen? ( ${AUTOOPEN_FN} )
 	 mod_link_hints? ( ${LINK_HINTS_FN} )
 	 mod_searchengines? ( ${SEARCHENGINES_FN} )"
 inherit git-r3 savedconfig toolchain-funcs
-RESTRICT="fetch"
 PATCHES=( "${FILESDIR}"/${PN}-9999-gentoo.patch )
 
 _boilerplate_dl() {
@@ -74,47 +73,6 @@ If copied correctly, the sha1sum should be ${hash} .\n\
 \n"
 }
 
-pkg_nofetch() {
-	ewarn "This ebuild is still in development"
-	if use mod_link_hints ; then
-		_boilerplate_dl_link_hints "${LINK_HINTS_FN}" \
-			"https://surf.suckless.org/files/link_hints/" \
-			"Copy and paste the Code section into a file" \
-			"9527d1240cd4a2c3cde077ae2b287d2f1a5ae758"
-	fi
-	if use mod_autoopen ; then
-		_boilerplate_dl "${AUTOOPEN_FN}" "${AUTOOPEN_FN}" \
-			"https://surf.suckless.org/patches/autoopen/"
-	fi
-	if use mod_simple_bookmarking_redux ; then
-		if [ ! -e /etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR} ] ; then
-			eerror \
-"Please copy ${FILESDIR}/config.h.9999 or your provided edited version as \
-/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR} ."
-		fi
-		if ! grep -r -e "define BM_PICK" \
-			/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR} ; \
-		then
-			eerror \
-"Missing define BM_PICK and/or keybindings.  Copy the define/keybindings into \
-your savedconfig file.  See \
-https://surf.suckless.org/files/simple_bookmarking_redux/ for details."
-		fi
-		if ! grep -r -e "define BM_ADD" \
-			/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR} ; \
-		then
-			eerror \
-"Missing define BM_ADD and/or keybindings.  Copy the define/keybindings into \
-your savedconfig file.  See \
-https://surf.suckless.org/files/simple_bookmarking_redux/ for details."
-		fi
-	fi
-	if use mod_searchengines ; then
-		_boilerplate_dl "${SEARCHENGINES_FN}" "${SEARCHENGINES_FN}" \
-			"https://surf.suckless.org/patches/searchengines/"
-	fi
-}
-
 pkg_setup() {
 	if ! use savedconfig; then
 		einfo \
@@ -126,6 +84,20 @@ fail (gracefully).  You can fix this by:\n\
 1) Installing these packages, or\n\
 2) Setting USE=savedconfig and changing config.h accordingly."
 	fi
+	if use mod_link_hints ; then
+		_boilerplate_dl_link_hints "${LINK_HINTS_FN}" \
+			"https://surf.suckless.org/files/link_hints/" \
+			"Copy and paste the Code section into a file" \
+			"9527d1240cd4a2c3cde077ae2b287d2f1a5ae758"
+	fi
+	if use mod_autoopen ; then
+		_boilerplate_dl "${AUTOOPEN_FN}" "${AUTOOPEN_FN}" \
+			"https://surf.suckless.org/patches/autoopen/"
+	fi
+	if use mod_searchengines ; then
+		_boilerplate_dl "${SEARCHENGINES_FN}" "${SEARCHENGINES_FN}" \
+			"https://surf.suckless.org/patches/searchengines/"
+	fi
 }
 
 src_prepare() {
@@ -133,8 +105,48 @@ src_prepare() {
 
 	cd "${S}"
 
+	if use mod_simple_bookmarking_redux ; then
+		if [ ! -e /etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR} ] ; then
+			eerror \
+"Please run\n\
+\n\
+mkdir -p \"/etc/portage/savedconfig/www-client\" ; cp \"${S}/config.def.h\" \"/etc/portage/savedconfig/www-client/surf-${PV}\"
+\n\
+or provide your edited config.h saved as\n\
+\n\
+/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}"
+			die
+		fi
+		if ! grep -F -q -e "define BM_PICK" \
+			"/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}" ; \
+		then
+			die \
+"Missing define BM_PICK and/or keybindings.  Copy the define/keybindings into \
+your savedconfig file (/etc/portage/savedconfig/www-client/surf-${PV}) .  See \
+https://surf.suckless.org/files/simple_bookmarking_redux/ for details."
+		fi
+		if ! grep -q -F -e "define BM_ADD" \
+			"/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}" ; \
+		then
+			die \
+"Missing define BM_ADD and/or keybindings.  Copy the define/keybindings into \
+your savedconfig file (/etc/portage/savedconfig/www-client/surf-${PV}).  See \
+https://surf.suckless.org/files/simple_bookmarking_redux/ for details."
+		fi
+	fi
+
 	if use mod_adblock ; then
 		eapply "${FILESDIR}"/${PN}-9999-adblock.patch
+		if ! grep -q -F -e "PAGE_LOAD_COMMITTED" \
+			"/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}" ; then
+			eerror \
+"Please copy the following mod_adblock code fragment to your savedconfig\n\
+(/etc/portage/savedconfig/www-client/surf-${PV}):"
+			eerror "---------- cut below ----------"
+			cat "${FILESDIR}/surf-9999-adblock-header-notes.txt" || die
+			eerror "---------- cut above ----------"
+			die
+		fi
 	fi
 
 	if use mod_searchengines ; then
@@ -142,20 +154,54 @@ src_prepare() {
 		"${SEARCHENGINES_FN} patch may break.  Will triage immediately."
 		patch -p1 -i "${DISTDIR}/${SEARCHENGINES_FN}"
 		eapply "${FILESDIR}/surf-9999-webkit2-searchengines-compat.patch"
+
+		if ! grep -q -F -e "static SearchEngine searchengines[]" \
+			"/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}" ; then
+			eerror \
+"You are missing a searchengines array in your savedconfig\n\
+(/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}).  For details see\n\
+https://surf.suckless.org/patches/searchengines/"
+			die
+		fi
+		if ! grep -q -F -e "BM_PICK }," \
+			"/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}" ; then
+			eerror \
+"Please copy the following mod_searchengine code fragment to your savedconfig hotkeys array\n\
+(static Key keys[] in /etc/portage/savedconfig/www-client/surf-${PV}):"
+			eerror "---------- cut below ----------"
+			cat "${FILESDIR}/surf-9999-search-engine-notes.txt" || die
+			eerror "---------- cut above ----------"
+			die
+		fi
 	fi
 
 	restore_config config.h
 
-	tc-export CC PKG_CONFIG
+	tc-export CC
 
 	touch NEWS AUTHORS ChangeLog
 
 	multilib_copy_sources
 
+	prepare_abi() {
+		cd "${BUILD_DIR}" || die
+		sed -i -e "s|\
+LIBPREFIX = \$(PREFIX)/lib|\
+LIBPREFIX = \$(PREFIX)/$(get_libdir)|g" \
+			config.mk || die
+	}
+
+	multilib_foreach_abi prepare_abi
+
 	local num_abis=$(multilib_get_enabled_abi_pairs | wc -l)
 	if [[ "${num_abis}" != "1" ]] ; then
 		die "You can only install for one abi"
 	fi
+}
+
+multilib_src_compile() {
+	PKG_CONFIG="/usr/bin/$(get_abi_CHOST ${ABI})-pkg-config" \
+	emake
 }
 
 multilib_src_install() {

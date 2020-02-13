@@ -1,0 +1,2 @@
+        { MODKEY,                GDK_KEY_b,      spawn,      BM_PICK },
+        { MODKEY|GDK_SHIFT_MASK, GDK_KEY_b,      spawn,      BM_ADD },
