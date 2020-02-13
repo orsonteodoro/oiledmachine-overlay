@@ -21,13 +21,15 @@ mod_simple_bookmarking_redux update_adblock"
 REQUIRED_USE="mod_searchengines? ( savedconfig )
 	      mod_simple_bookmarking_redux? ( savedconfig )
 	      update_adblock? ( mod_adblock )"
-inherit multilib-minimal
+PYTHON_COMPAT=( python3_{6,7,8} )
+inherit multilib-minimal python-single-r1
 COMMON_DEPEND=" app-crypt/gcr[gtk,${MULTILIB_USEDEP}]
 		dev-libs/glib:2[${MULTILIB_USEDEP}]
 		net-libs/webkit-gtk:4[${MULTILIB_USEDEP}]
 		x11-libs/gtk+:3[${MULTILIB_USEDEP}]
 		x11-libs/libX11[${MULTILIB_USEDEP}]"
 DEPEND="${COMMON_DEPEND}
+	mod_adblock? ( dev-python/future[${PYTHON_USEDEP}] )
 	virtual/pkgconfig[${MULTILIB_USEDEP}]"
 RDEPEND="${COMMON_DEPEND}
 	 !savedconfig? (   net-misc/curl[${MULTILIB_USEDEP}]
