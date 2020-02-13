@@ -1,12 +1,14 @@
 #!/usr/bin/env python
+from future import standard_library
+standard_library.install_aliases()
 import sys
 import os
 import time
 from sys import argv
-from urlparse import urlparse
+from urllib.parse import urlparse
 import re
 #import re2 as re
-from string_matching import *
+#from string_matching import *
 import json
 import time
 from multiprocessing import *
@@ -28,7 +30,7 @@ def coldfilldata():
 	mode = None
 	capture = False
 	mode = 'unknown'
-	for l in lines: 
+	for l in lines:
 		l = l.strip()
 		if l.find("exceptions") != -1:
 			mode = 'exceptions'

@@ -21,7 +21,7 @@ LC_ALL=C
 
 for list in $lists; do
 	wget --no-cache -q -O - $list
-done | python2 convert.py > "$blockfile"
+done | python3 convert.py > "$blockfile"
 
 #cat "$blockfile" > /tmp/adblock
 cat "$blockfile" "$customblockfile" > /tmp/adblock
@@ -30,4 +30,7 @@ cp /tmp/adblock $blockfile
 rm block1.dat
 rm block2.dat
 
-python2 ./blocklists.py
+python3 ./blocklists.py
+
+rm block1.dat
+rm block2.dat

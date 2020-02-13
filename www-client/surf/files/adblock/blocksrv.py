@@ -1,12 +1,16 @@
 #!/usr/bin/env python
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
 import sys
 import os
 import time
 from sys import argv
-from urlparse import urlparse
+from urllib.parse import urlparse
 import re
 #import re2 as re
-from string_matching import *
+#from string_matching import *
 import json
 import time
 from multiprocessing import *
@@ -104,7 +108,7 @@ def prefilldata():
 		c = f.read()
 		f.close()
 		dg = json.loads(c)
-		print 'fast load'
+		print('fast load')
 		return True
 	return True
 
@@ -233,8 +237,8 @@ def permit(url, urlmp): #url is the element, urlmp is the main page that holds t
 				#r = re.search(s1, url, re.I) #0m0.457s #google re2
 				#r = string_matching_rabin_karp(url, s) #0m2.001s
 			except:
-				print 'err'
-				print sys.exc_info()
+				print('err')
+				print(sys.exc_info())
 				continue
 
 			#if r: #for python re
@@ -286,8 +290,8 @@ def permit(url, urlmp): #url is the element, urlmp is the main page that holds t
 					#r = re.search(s1, url, re.I) #0m0.457s #google re2
 					#r = string_matching_rabin_karp(url, s) #0m2.001s
 				except:
-					print 'err'
-					print sys.exc_info()
+					print('err')
+					print(sys.exc_info())
 					continue
 
 				#if r: #for python re
@@ -312,13 +316,13 @@ def permit(url, urlmp): #url is the element, urlmp is the main page that holds t
 	if allow == -1:
 		allow = 1
 
-	print "allow="+str(allow)
+	print("allow="+str(allow))
 	print("--- %s seconds ---" % (time.time() - st))
 	return allow
 
 
 def sighup(signum, frame):
-	print 'hanging up'
+	print('hanging up')
 	alive = False
 	conn.close()
 	listener.close()
@@ -357,9 +361,9 @@ if __name__ == '__main__':
 		try:
 			fcntl.lockf(f, fcntl.LOCK_EX | fcntl.LOCK_NB)
 		except:
-			print 'already running'
+			print('already running')
 			sys.exit(-1)
-		print 'starting server'
+		print('starting server')
 		signal.signal(signal.SIGHUP, sighup)
 		signal.signal(signal.SIGINT, sighup)
 		address = ('localhost', 6000)

@@ -1,10 +1,13 @@
 #!/usr/bin/env python
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
 import sys
 import os
 import time
 import tempfile
 from sys import argv
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 """
 def xdghome(key, default):
@@ -18,13 +21,11 @@ def xdghome(key, default):
 	return os.path.join(os.environ['HOME'], default)
 """
 
-
 # Blockfile location.
 BLOCKFILE = os.path.dirname(argv[0]) + "/adblock"
 # Whitelist location
 WHITELISTFILE = os.path.dirname(argv[0]) + "/whitelist"
 
- 
 def get_domain(url):
 	'''Return domain segment of url.'''
 	try:
@@ -76,14 +77,14 @@ def adblock(url, winid):
 			if exclude == False:
 				rules.append(l.strip())
 			else:
-				print "exclude"+l.strip()+"\n"
+				print("exclude"+l.strip()+"\n")
 				rulesexclude.append(l.strip())
 	erulestr = ','.join(rulesexclude)
 	rulestr = ','.join(rules)
 
 	js = "(function() { var toblock = '"+ rulestr+"'; var toexclude = '"+ erulestr +"'; var style1 = document.createElement('style'); style1.innerHTML = toblock+' { display: none !important ; }'; document.head.appendChild(style1); var style2 = document.createElement('style'); style2.innerHTML = toexclude+' { display: default !important ; color: red; }'; document.head.appendChild(style2); })();\n"
 
-        fd, filename = tempfile.mkstemp(prefix="surf_",dir="/tmp",text=True)
+	fd, filename = tempfile.mkstemp(prefix="surf_",dir="/tmp",text=True)
 	fh = open(filename, "w")
 	fh.write(js)
 	fh.close()
@@ -98,7 +99,7 @@ def adblock(url, winid):
 
 if __name__ == '__main__':
 	if argv[2] is None:
-		print "is none"
+		print("is none")
 	#print "running adblock"
 	#print "a"+str(len(argv[2]))
 	#print "b"+str(len(argv[1]))

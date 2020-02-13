@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # Converts adblock lists to a format usable for surfAdblock
 
+from __future__ import print_function
 import re
 import sys
 
@@ -61,7 +62,7 @@ for line in lines:
 			for site in sites:
 				site = site.strip()
 				#site = re.sub('^~', '', site)
-				if not allitems.has_key(site):
+				if site not in allitems:
 					allitems[site] = []
 				allitems[site].append(selector)
 	elif line.startswith('@@') == True:
