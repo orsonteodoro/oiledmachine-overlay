@@ -107,7 +107,7 @@ src_prepare() {
 
 	cd "${S}"
 
-	if use mod_simple_bookmarking_redux ; then
+	if use savedconfig ; then
 		if [ ! -e /etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR} ] ; then
 			eerror \
 "Please run\n\
@@ -119,6 +119,9 @@ or provide your edited config.h saved as\n\
 /etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}"
 			die
 		fi
+	fi
+
+	if use mod_simple_bookmarking_redux ; then
 		if ! grep -F -q -e "define BM_PICK" \
 			"/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}" ; \
 		then
@@ -237,7 +240,7 @@ multilib_src_install() {
 
 _update_adblock() {
 	einfo "Updating adblock rules"
-	cd /etc/surf/scripts/adblock
+	cd /etc/surf/scripts/adblock || die
 	./update.sh
 	einfo "Done updating adblock rules"
 }
