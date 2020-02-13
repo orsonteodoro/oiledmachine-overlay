@@ -252,13 +252,13 @@ to your /home/<USER>/.surf directory."
 "You must update the adblock filters manually at /etc/surf/adblock/update.sh.\n\
 Make sure the current working directory is /etc/surf/adblock/ before running\n\
 it."
-	fi
-
-	if use mod_adblock ; then
 		einfo \
 "You may run \`emerge --config ${CATEGORY}/${PN}\` to update the adblock."
 		if use update_adblock ; then
 			_update_adblock
+		fi
+		if ! use update_adblock ; then
+			einfo "No adblock rules will be installed."
 		fi
 	fi
 }
