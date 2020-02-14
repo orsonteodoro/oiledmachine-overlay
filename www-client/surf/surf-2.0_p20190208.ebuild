@@ -30,9 +30,10 @@ COMMON_DEPEND=" app-crypt/gcr[gtk,${MULTILIB_USEDEP}]
 		x11-libs/gtk+:3[${MULTILIB_USEDEP}]
 		x11-libs/libX11[${MULTILIB_USEDEP}]"
 DEPEND="${COMMON_DEPEND}
-	mod_adblock? ( dev-python/future[${PYTHON_USEDEP}] )
 	virtual/pkgconfig[${MULTILIB_USEDEP}]"
 RDEPEND="${COMMON_DEPEND}
+	 mod_adblock? ( dev-python/future[${PYTHON_USEDEP}]
+			x11-apps/xprop )
 	 !savedconfig? (   net-misc/curl[${MULTILIB_USEDEP}]
 			   x11-apps/xprop
 			 >=x11-misc/dmenu-4.7
