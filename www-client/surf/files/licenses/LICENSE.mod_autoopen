@@ -1,0 +1,5 @@
+Name: mimehandler; originally called auto open downloads
+From: http://surf.suckless.org/patches/autoopen
+Contributors: Matthew Bauer <mjbauer95@gmail.com>
+Notes: Handles downloads and xdg
+License: Unknown

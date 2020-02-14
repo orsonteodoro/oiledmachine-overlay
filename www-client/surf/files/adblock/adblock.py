@@ -9,18 +9,6 @@ import tempfile
 from sys import argv
 from urllib.parse import urlparse
 
-"""
-def xdghome(key, default):
-	'''Attempts to use the environ XDG_*_HOME paths if they exist otherwise
-	use $HOME and the default path.'''
-
-	xdgkey = "XDG_%s_HOME" % key
-	if xdgkey in os.environ.keys() and os.environ[xdgkey]:
-		return os.environ[xdgkey]
-
-	return os.path.join(os.environ['HOME'], default)
-"""
-
 # Blockfile location.
 BLOCKFILE = os.path.dirname(argv[0]) + "/adblock"
 # Whitelist location
@@ -35,7 +23,7 @@ def get_domain(url):
 		if loc.startswith('www.'):
 			loc = loc[4:]
 	except:
-		loc=None
+		loc = None
 	return loc
 
 def adblock(url, winid):
@@ -47,18 +35,17 @@ def adblock(url, winid):
 	lines2 = [line for line in fh]
 	fh.close()
 
-
 	url = get_domain(url)
 	rules = []
 	rulesexclude = []
 	exclude = False
 	capture = False
-	c=0
+	c = 0
 	for l in lines2:
 		if url.find(l.strip()) > -1:
 			sys.exit()
 	for l in lines:
-		c=c+1
+		c = c + 1
 		if l[0] != '\t' and len(l.strip()) > 0:
 			d = None
 			if l.strip().startswith('~'):
@@ -77,7 +64,6 @@ def adblock(url, winid):
 			if exclude == False:
 				rules.append(l.strip())
 			else:
-				print("exclude"+l.strip()+"\n")
 				rulesexclude.append(l.strip())
 	erulestr = ','.join(rulesexclude)
 	rulestr = ','.join(rules)
@@ -100,7 +86,4 @@ def adblock(url, winid):
 if __name__ == '__main__':
 	if argv[2] is None:
 		print("is none")
-	#print "running adblock"
-	#print "a"+str(len(argv[2]))
-	#print "b"+str(len(argv[1]))
 	adblock(get_domain(argv[2]), argv[1])

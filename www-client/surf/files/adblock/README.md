@@ -1,0 +1,76 @@
+# Design and limitations:
+
+Ad blocking is based on CSS header injection.  CSS filtering is the fastest
+method for adblocking.
+
+# State chart:
+
+start->1->2->3->4->5->end
+                |
+                V
+               end
+
+1: update.sh: This script downloads the blocking rule files.
+2: convert.py: Converts the rule file to CSS selectors per domain and
+	saves to the adblock file.
+3: A user goes on the WWW and triggers page finished and content
+	arrive events which fork and call adblock.py.
+4: adblock.py: Adblock will skip adblocking if domain matches a 
+	domain on the whitelist.
+4: adblock.py: Adblock will generate a large selector rule containing
+	general and the current domain sets and generate a Javascript
+	fragment that remove those elements matching the selector
+	rule list and passes the generated JavaScript fragment to the
+	current window via IPC Xlib Atom then the script completes
+	execution.
+5: Surf loads the JavaScript fragment and passes it to WebKitGtk to run
+	in the currently viewed web page.
+
+Currently WebKit2GTK is also lacking in lower level socket based blocking
+via soup.  WebKit2GTK won't allow you low level access unlike WebKitGTK+
+original.
+
+# Adblocker file list and information
+
+All scripts should run with Python version 2 or 3
+
+adblock - first tier ad block lists
+adblock.py - new algorithm
+convert.py - currently active conversion script to convert the remote block
+		lists into adblock.py
+customrules - custom rules for blocking
+update.sh - adblock updater
+whitelist - domains to ignore filtering one per line
+
+# Dependencies:
+
+bash
+python
+python-future
+wget
+
+# The customrules file format
+
+The customrules file format is in tab indented css selectors without 
+_1 ... _N suffix as follows:
+
+domain_1
+	css selector
+	css selector
+
+domain_2
+	css selector
+	css selector
+	css selector
+	css selector
+
+...
+
+domain_3
+	css selector
+	css selector
+	css selector
+
+For details about CSS selectors see:
+https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Selectors
+https://www.w3.org/TR/selectors-3/

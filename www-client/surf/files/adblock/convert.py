@@ -8,12 +8,6 @@ import sys
 socketblock = []
 exceptions = []
 allitems = {}
-#if len(sys.argv) <= 1:
-#	print('%s <filename>' % (sys.argv[0]))
-#	exit(1)
-
-#filename = sys.argv[1]
-#lines = file(filename, 'r').readlines()
 
 lines = sys.stdin.readlines()
 
@@ -28,11 +22,7 @@ for line in lines:
 	if line.find('[Adblock') > -1:
 		continue
 
-	#line     = re.sub('^@@', '', line)
-	#line     = re.sub('^\|\|', '', line)
-	#line     = re.sub('^[Adblock.*]', '', line)
-
-	line     = line.replace("\\", "\\\\").strip()
+	line = line.replace("\\", "\\\\").strip()
 
 	exception = False
 	if line.find('#@#') > -1:
@@ -57,11 +47,9 @@ for line in lines:
 			if len(selector) <= 4:
 				continue;
 			selector = "img[src*='%s'],iframe[src*='%s']" % (selector, selector)
-			#selector = "[src*='%s'],[href*='%s']" % (selector, selector)
 		if selector:
 			for site in sites:
 				site = site.strip()
-				#site = re.sub('^~', '', site)
 				if site not in allitems:
 					allitems[site] = []
 				allitems[site].append(selector)

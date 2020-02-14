@@ -1,14 +1,13 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 DESCRIPTION="a simple web browser based on WebKit/GTK+"
 HOMEPAGE="https://surf.suckless.org/"
-# The GPL-3+ on the adblock comes from EasyList blocklist
 LICENSE="MIT SURF
-	 mod_adblock? ( CC-BY-NA-SA-3.0 CC-BY-SA-3.0 CC-BY-SA-4.0 GPL-3+ MIT
-			SURF-MOD_ADBLOCKER SURF-MOD_ADBLOCKER-EASYLIST
-			SURF-MOD_ADBLOCKER-SPAM404 )
+	 mod_adblock? ( CC-BY-NA-SA-3.0 MIT SURF-MOD_ADBLOCKER )
+         mod_adblock_easylist? ( CC-BY-SA-3.0 GPL-3+ SURF-MOD_ADBLOCKER-EASYLIST )
+         mod_adblock_spam404? ( CC-BY-SA-4.0 SURF-MOD_ADBLOCKER-SPAM404 )
 	 mod_autoopen? ( all-rights-reserved )
 	 mod_link_hints? ( all-rights-reserved )
 	 mod_searchengines? ( all-rights-reserved )
@@ -16,9 +15,11 @@ LICENSE="MIT SURF
 KEYWORDS="~alpha amd64 ~amd64-fbsd ~amd64-linux ~arm arm64 ~ia64 ~ppc ~ppc64 \
 ~sparc x86 ~x86-linux ~x86-macos"
 SLOT="0"
-IUSE="mod_adblock mod_autoopen mod_link_hints mod_searchengines \
-mod_simple_bookmarking_redux update_adblock"
-REQUIRED_USE="mod_searchengines? ( savedconfig )
+IUSE="doc mod_adblock mod_adblock_spam404 mod_adblock_easylist mod_autoopen \
+mod_link_hints mod_searchengines mod_simple_bookmarking_redux update_adblock"
+REQUIRED_USE="mod_adblock_easylist? ( mod_adblock )
+	      mod_adblock_spam404? ( mod_adblock )
+	      mod_searchengines? ( savedconfig )
 	      mod_simple_bookmarking_redux? ( savedconfig )
 	      update_adblock? ( mod_adblock )"
 PYTHON_COMPAT=( python3_{6,7,8} )
@@ -48,6 +49,7 @@ SRC_URI="mod_autoopen? ( ${AUTOOPEN_FN} )
 	 mod_searchengines? ( ${SEARCHENGINES_FN} )"
 inherit git-r3 savedconfig toolchain-funcs
 PATCHES=( "${FILESDIR}"/${PN}-9999-gentoo.patch )
+DOCS=( README )
 
 _boilerplate_dl() {
 	local fn_s="${1}"
@@ -178,6 +180,14 @@ https://surf.suckless.org/patches/searchengines/"
 			eerror "---------- cut above ----------"
 			die
 		fi
+	else
+		if test -f "/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}" \
+			&& grep -q -F -e "static SearchEngine searchengines[]" \
+			"/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}" ; then
+			ewarn \
+"Detected static SearchEngine searchengines[].  Comment or remove the array out from your
+savedconfig (/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}) or it will not build."
+		fi
 	fi
 
 	restore_config config.h
@@ -215,27 +225,63 @@ multilib_src_install() {
 
 	save_config config.h
 
-	dodoc "${FILESDIR}/LICENSES"
+	dodoc LICENSE
 
 	if use mod_adblock ; then
+		cat "${FILESDIR}/adblock/README.md" \
+			> "${T}/adblock-README.md"
+		dodoc "${T}/adblock-README.md"
 		insinto /etc/surf/scripts
 		doins -r \
 			"${FILESDIR}/adblock" \
 			"${FILESDIR}/events"
 		fperms 0755 /etc/surf/scripts/adblock/adblock.py
-		fperms 0755 /etc/surf/scripts/adblock/blocklists.py
-		fperms 0755 /etc/surf/scripts/adblock/blocksrv.py
 		fperms 0755 /etc/surf/scripts/adblock/convert.py
 		fperms 0755 /etc/surf/scripts/adblock/update.sh
 		fperms 0755 /etc/surf/scripts/events/page_load_committed.sh
 		fperms 0755 /etc/surf/scripts/events/page_load_finished.sh
+
+		dodoc "${FILESDIR}/licenses/LICENSE.mod_adblock"
+		if use mod_adblock_easylist ; then
+			dodoc "${FILESDIR}/licenses/LICENSE.EasyList"
+		else
+			rm "${D}/etc/surf/scripts/adblock/LICENSE.EasyList" || die
+			sed -i \
+-e 's|https://raw.githubusercontent.com/Spam404/lists/master/adblock-list.txt||' \
+			"${D}/etc/surf/scripts/adblock/update.sh" || die
+		fi
+                if use mod_adblock_spam404 ; then
+                        dodoc "${FILESDIR}/licenses/LICENSE.Spam404"
+		else
+			rm "${D}/etc/surf/scripts/adblock/LICENSE.Spam404" || die
+			sed -i \
+-e 's|https://easylist-downloads.adblockplus.org/easylist.txt||' \
+			"${D}/etc/surf/scripts/adblock/update.sh" || die
+			sed -i \
+-e 's|https://easylist-downloads.adblockplus.org/malwaredomains_full.txt||' \
+			"${D}/etc/surf/scripts/adblock/update.sh" || die
+                fi
+	fi
+
+	if use mod_simple_bookmarking_redux ; then
+		dodoc "${FILESDIR}/licenses/LICENSE.mod_simple_bookmarking_redux"
+	fi
+
+	if use mod_autoopen ; then
+		dodoc "${FILESDIR}/licenses/LICENSE.mod_autoopen"
+	fi
+
+	if use mod_searchengines ; then
+		dodoc "${FILESDIR}/licenses/LICENSE.mod_searchengines"
 	fi
 
 	if use mod_link_hints ; then
 		cp -a "${DISTDIR}/surf-9999-link-hints.diff" "${T}/script.js"
 		insinto /usr/share/${PN}
 		doins "${T}/script.js"
+		dodoc "${FILESDIR}/licenses/LICENSE.mod_link_hints"
 	fi
+
 }
 
 _update_adblock() {
@@ -254,8 +300,8 @@ to your /home/<USER>/.surf directory."
 
 	if use mod_adblock ; then
 		einfo \
-"You must update the adblock filters manually at /etc/surf/adblock/update.sh.\n\
-Make sure the current working directory is /etc/surf/adblock/ before running\n\
+"You must update the adblock filters manually at /etc/surf/scripts/adblock/update.sh.\n\
+Make sure the current working directory is /etc/surf/scripts/adblock/ before running\n\
 it."
 		einfo \
 "You may run \`emerge --config ${CATEGORY}/${PN}\` to update the adblock."

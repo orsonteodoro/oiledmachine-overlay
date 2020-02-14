@@ -29,6 +29,8 @@
   </upstream>
   <use>
     <flag name="mod_adblock">Adds adblocking support.</flag>
+    <flag name="mod_adblock_spam404">Adds adblocking with Spam404 lists.</flag>
+    <flag name="mod_adblock_easylist">Adds adblocking with EasyList lists.</flag>
     <flag name="mod_autoopen">Adds xdg open support.</flag>
     <flag name="mod_link_hints">Adds link hinting support.</flag>
     <flag name="mod_searchengines">Adds custom search engine keyword searching
