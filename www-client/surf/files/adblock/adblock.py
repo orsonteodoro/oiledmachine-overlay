@@ -9,10 +9,8 @@ import tempfile
 from sys import argv
 from urllib.parse import urlparse
 
-# Blockfile location.
-BLOCKFILE = os.path.dirname(argv[0]) + "/adblock"
-# Whitelist location
-WHITELISTFILE = os.path.dirname(argv[0]) + "/whitelist"
+BLOCKFILEPATH = os.path.dirname(argv[0]) + "/adblock"
+WHITELISTFILEPATH = os.path.dirname(argv[0]) + "/whitelist"
 
 def get_domain(url):
 	'''Return domain segment of url.'''
@@ -27,11 +25,11 @@ def get_domain(url):
 	return loc
 
 def adblock(url, winid):
-	fh = open(BLOCKFILE, 'r')
+	fh = open(BLOCKFILEPATH, 'r')
 	lines = [line for line in fh]
 	fh.close()
 
-	fh = open(WHITELISTFILE, 'r')
+	fh = open(WHITELISTFILEPATH, 'r')
 	lines2 = [line for line in fh]
 	fh.close()
 
@@ -68,7 +66,18 @@ def adblock(url, winid):
 	erulestr = ','.join(rulesexclude)
 	rulestr = ','.join(rules)
 
-	js = "(function() { var toblock = '"+ rulestr+"'; var toexclude = '"+ erulestr +"'; var style1 = document.createElement('style'); style1.innerHTML = toblock+' { display: none !important ; }'; document.head.appendChild(style1); var style2 = document.createElement('style'); style2.innerHTML = toexclude+' { display: default !important ; color: red; }'; document.head.appendChild(style2); })();\n"
+	js = '''
+(function() {
+	var toblock = '%s';
+	var toexclude = '%s';
+	var style1 = document.createElement('style');
+	style1.innerHTML = toblock+' { display: none !important ; }';
+	document.head.appendChild(style1);
+	var style2 = document.createElement('style');
+	style2.innerHTML = toexclude+' { display: default !important ; color: red; }';
+	document.head.appendChild(style2);
+})();
+''' % (rulestr, erulestr)
 
 	fd, filename = tempfile.mkstemp(prefix="surf_",dir="/tmp",text=True)
 	fh = open(filename, "w")
@@ -84,6 +93,4 @@ def adblock(url, winid):
 	os.unlink(filename)
 
 if __name__ == '__main__':
-	if argv[2] is None:
-		print("is none")
 	adblock(get_domain(argv[2]), argv[1])

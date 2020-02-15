@@ -21,8 +21,7 @@ REQUIRED_USE="mod_adblock_easylist? ( mod_adblock )
 	      mod_adblock_spam404? ( mod_adblock )
 	      mod_searchengines? ( savedconfig )
 	      mod_simple_bookmarking_redux? ( savedconfig )
-	      update_adblock? ( mod_adblock )
-	      !mod_adblock" # disable adblock... it works but crashes.
+	      update_adblock? ( mod_adblock )"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit multilib-minimal python-single-r1
 COMMON_DEPEND=" app-crypt/gcr[gtk,${MULTILIB_USEDEP}]
@@ -123,6 +122,11 @@ or provide your edited config.h saved as\n\
 /etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}"
 			die
 		fi
+	else
+		einfo "Disabling accelerated canvas"
+		sed -i -e "s#\
+\[AcceleratedCanvas\]   =       { { .i = 1 },#\
+\[AcceleratedCanvas\]   =       { { .i = 0 },#" "config.def.h" || die
 	fi
 
 	if use mod_simple_bookmarking_redux ; then
@@ -193,6 +197,18 @@ savedconfig (/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}) or it will not b
 	fi
 
 	restore_config config.h
+
+	local config_file="config.def.h"
+	if use savedconfig ; then
+		config_file="config.h"
+	fi
+
+	if grep -q -F -e '[AcceleratedCanvas]   =       { { .i = 1 },' "${config_file}" ; then
+		ewarn \
+"Using AcceleratedCanvas = 1 may likely crash WebKitGtk / surf when using\n\
+adblocker.  Disable it in your savedconfig\n\
+(/etc/portage/savedconfig/www-client/surf-${PV})"
+	fi
 
 	tc-export CC
 
