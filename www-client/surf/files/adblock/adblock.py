@@ -105,19 +105,19 @@ def generate_javascript_adblocker(url, winid):
 })();
 ''' % (include_rule_string, exclude_rule_string)
 
-	fd, filename = tempfile.mkstemp(prefix="surf_", dir="/tmp", text=True)
-	file_handle = open(filename, "w")
+	os_file_handle, script_path = tempfile.mkstemp(prefix="surf_", dir="/tmp", text=True)
+	file_handle = open(script_path, "w")
 	file_handle.write(js)
 	file_handle.close()
 
 	atom_name = "_SURF_SCRIPT"
 	command = "xprop -id %s -f %s 8s -set %s \"%s\"" \
-		% (winid, atom_name, atom_name, filename)
+		% (winid, atom_name, atom_name, script_path)
 	os.system(command)
 	# Give some time to execute the script.
 	time.sleep(2)
 	# Cleanup by removing the script.
-	os.unlink(filename)
+	os.unlink(script_path)
 
 if __name__ == '__main__':
 	generate_javascript_adblocker(get_domain(argv[2]), argv[1])
