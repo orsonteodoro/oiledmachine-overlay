@@ -21,7 +21,8 @@ REQUIRED_USE="mod_adblock_easylist? ( mod_adblock )
 	      mod_adblock_spam404? ( mod_adblock )
 	      mod_searchengines? ( savedconfig )
 	      mod_simple_bookmarking_redux? ( savedconfig )
-	      update_adblock? ( mod_adblock )"
+	      update_adblock? ( mod_adblock )
+	      !mod_adblock" # disable adblock... it works but crashes.
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit multilib-minimal python-single-r1
 COMMON_DEPEND=" app-crypt/gcr[gtk,${MULTILIB_USEDEP}]
