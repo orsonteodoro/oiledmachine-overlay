@@ -10,6 +10,7 @@ def convert_blocklist(lines):
 	Prepares the block lists to be used by the ad blocker.
 
 	It outputs to stdout the ruleset without the _1 ... _N suffixes in
+	the following format:
 
 	domain_1
 		css selector

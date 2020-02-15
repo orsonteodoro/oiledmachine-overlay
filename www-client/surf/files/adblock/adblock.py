@@ -24,7 +24,7 @@ def get_domain(url):
 	Returns
 	-------
 	str
-		The domain name without WWW.
+		The domain name without the www. prefix.
 	'''
 	try:
 		if not url.startswith('http'):
