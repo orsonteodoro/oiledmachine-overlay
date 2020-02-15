@@ -110,6 +110,11 @@ src_prepare() {
 
 	cd "${S}"
 
+	einfo "Disabling accelerated canvas in config.def.h"
+	sed -i -e "s#\
+\[AcceleratedCanvas\]   =       { { .i = 1 },#\
+\[AcceleratedCanvas\]   =       { { .i = 0 },#" "config.def.h" || die
+
 	if use savedconfig ; then
 		if [ ! -e /etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR} ] ; then
 			eerror \
@@ -122,11 +127,6 @@ or provide your edited config.h saved as\n\
 /etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}"
 			die
 		fi
-	else
-		einfo "Disabling accelerated canvas"
-		sed -i -e "s#\
-\[AcceleratedCanvas\]   =       { { .i = 1 },#\
-\[AcceleratedCanvas\]   =       { { .i = 0 },#" "config.def.h" || die
 	fi
 
 	if use mod_simple_bookmarking_redux ; then
