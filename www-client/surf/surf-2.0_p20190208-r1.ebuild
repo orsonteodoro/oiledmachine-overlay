@@ -51,7 +51,7 @@ SRC_URI="mod_autoopen? ( ${AUTOOPEN_FN} )
 inherit git-r3 savedconfig toolchain-funcs
 PATCHES=( "${FILESDIR}"/${PN}-9999-gentoo.patch )
 DOCS=( README )
-SAVEDCONFIG_PATH="/etc/portage/savedconfig/${CATEGORY}/${PF}"
+SAVEDCONFIG_PATH="${PORTAGE_CONFIGROOT%/}/etc/portage/savedconfig/${CATEGORY}/${PF}"
 
 _boilerplate_dl() {
 	local fn_s="${1}"
@@ -80,16 +80,6 @@ If copied correctly, the sha1sum should be ${hash} .\n\
 }
 
 pkg_setup() {
-	if ! use savedconfig; then
-		einfo \
-"The default config.h assumes you have\n\
-  net-misc/curl\n\
-  x11-terms/st\n\
-installed to support the download function.  Without those, downloads will\n\
-fail (gracefully).  You can fix this by:\n\
-1) Installing these packages, or\n\
-2) Setting USE=savedconfig and changing config.h and saving it to ${SAVEDCONFIG_PATH}."
-	fi
 	if use mod_link_hints ; then
 		_boilerplate_dl_link_hints "${LINK_HINTS_FN}" \
 			"https://surf.suckless.org/files/link_hints/" \
@@ -128,6 +118,16 @@ or provide your edited config.h saved as\n\
 ${SAVEDCONFIG_PATH}"
 			die
 		fi
+	else
+		einfo \
+"The default config.h assumes you have\n\
+  net-misc/curl\n\
+  x11-terms/st\n\
+installed to support the download function.  Without those, downloads will\n\
+fail (gracefully).  You can fix this by:\n\
+1) Installing these packages, or\n\
+2) Setting USE=savedconfig and running\n\
+\`cp ${S}/config.def.h ${SAVEDCONFIG_PATH}\` and changing it accordingly."
 	fi
 
 	if use mod_simple_bookmarking_redux ; then
