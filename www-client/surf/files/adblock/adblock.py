@@ -9,11 +9,23 @@ import tempfile
 from sys import argv
 from urllib.parse import urlparse
 
-BLOCKFILEPATH = os.path.dirname(argv[0]) + "/adblock"
-WHITELISTFILEPATH = os.path.dirname(argv[0]) + "/whitelist"
+BLACKLIST_PATH = os.path.dirname(argv[0]) + "/adblock"
+WHITELIST_PATH = os.path.dirname(argv[0]) + "/whitelist"
 
 def get_domain(url):
-	'''Return domain segment of url.'''
+	'''
+	Return the domain segment of the URL.
+
+	Parameters
+	----------
+	url : str
+		A raw url.
+
+	Returns
+	-------
+	str
+		The domain name without WWW.
+	'''
 	try:
 		if not url.startswith('http'):
 			url = "http://%s" % url
@@ -24,73 +36,88 @@ def get_domain(url):
 		loc = None
 	return loc
 
-def adblock(url, winid):
-	fh = open(BLOCKFILEPATH, 'r')
-	lines = [line for line in fh]
-	fh.close()
+def generate_javascript_adblocker(url, winid):
+	'''
+	Generates JavaScript to remove ad elements.
 
-	fh = open(WHITELISTFILEPATH, 'r')
-	lines2 = [line for line in fh]
-	fh.close()
+	Parameters
+	----------
+	url : str
+		The URL of the webpage.
+	winid : src
+		The window ID to send back the JavaScript code fragment.
+
+	Returns
+	-------
+		None
+	'''
+	file_handle = open(BLACKLIST_PATH, 'r')
+	lines_blockfile = [line for line in file_handle]
+	file_handle.close()
+
+	file_handle = open(WHITELIST_PATH, 'r')
+	lines_whitelist = [line for line in file_handle]
+	file_handle.close()
 
 	url = get_domain(url)
-	rules = []
-	rulesexclude = []
+	rules_include = []
+	rules_exclude = []
 	exclude = False
 	capture = False
-	c = 0
-	for l in lines2:
-		if url.find(l.strip()) > -1:
+	for line in lines_whitelist:
+		if url.find(line.strip()) > -1:
 			sys.exit()
-	for l in lines:
-		c = c + 1
-		if l[0] != '\t' and len(l.strip()) > 0:
-			d = None
-			if l.strip().startswith('~'):
+	for line in lines_blockfile:
+		if line[0] != '\t' and len(line.strip()) > 0:
+			domain = None
+			if line.strip().startswith('~'):
 				exclude = True
-				d = get_domain(l.strip()[1:])
-				if d == url:
+				domain = get_domain(line.strip()[1:])
+				if domain == url:
 					capture = True
-			if get_domain(l.strip()) == url or l.strip() == "global":
+			if get_domain(line.strip()) == url \
+				or line.strip() == "global":
 				capture = True
-		elif not l.strip():
+		elif not line.strip():
 			capture = False
 			exclude = False
 		elif capture:
-			l = l.strip()
-			l = l.replace("'", "\\'")
+			line = line.strip()
+			line = line.replace("'", "\\'")
 			if exclude == False:
-				rules.append(l.strip())
+				rules_include.append(line.strip())
 			else:
-				rulesexclude.append(l.strip())
-	erulestr = ','.join(rulesexclude)
-	rulestr = ','.join(rules)
+				rules_exclude.append(line.strip())
+	exclude_rule_string = ','.join(rules_exclude)
+	include_rule_string = ','.join(rules_include)
 
 	js = '''
 (function() {
-	var toblock = '%s';
-	var toexclude = '%s';
-	var style1 = document.createElement('style');
-	style1.innerHTML = toblock+' { display: none !important ; }';
-	document.head.appendChild(style1);
-	var style2 = document.createElement('style');
-	style2.innerHTML = toexclude+' { display: default !important ; color: red; }';
-	document.head.appendChild(style2);
+	var toBlock = '%s';
+	var toExclude = '%s';
+	var styleBlock = document.createElement('style');
+	styleBlock.innerHTML = toBlock + ' { display: none !important ; }';
+	document.head.appendChild(styleBlock);
+	var styleExclude = document.createElement('style');
+	styleExclude.innerHTML = toExclude;
+	styleExclude.innerHTML += ' { display: default !important ; color: red; }';
+	document.head.appendChild(styleExclude);
 })();
-''' % (rulestr, erulestr)
+''' % (include_rule_string, exclude_rule_string)
 
-	fd, filename = tempfile.mkstemp(prefix="surf_",dir="/tmp",text=True)
-	fh = open(filename, "w")
-	fh.write(js)
-	fh.close()
+	fd, filename = tempfile.mkstemp(prefix="surf_", dir="/tmp", text=True)
+	file_handle = open(filename, "w")
+	file_handle.write(js)
+	file_handle.close()
 
-	prop = "_SURF_SCRIPT"
-	cmd = "xprop -id %s -f %s 8s -set %s \"%s\"" % (winid, prop, prop, filename)
-	os.system(cmd)
-	# Give some time to execute javascripts.
+	atom_name = "_SURF_SCRIPT"
+	command = "xprop -id %s -f %s 8s -set %s \"%s\"" \
+		% (winid, atom_name, atom_name, filename)
+	os.system(command)
+	# Give some time to execute the script.
 	time.sleep(2)
-	# Remove script / cleanup.
+	# Cleanup by removing the script.
 	os.unlink(filename)
 
 if __name__ == '__main__':
-	adblock(get_domain(argv[2]), argv[1])
+	generate_javascript_adblocker(get_domain(argv[2]), argv[1])
