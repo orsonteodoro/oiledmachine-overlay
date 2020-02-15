@@ -18,7 +18,7 @@
   </longdescription>
   <use>
     <flag name="accelerated-2d-canvas">Use hardware acceleration for
-      some 2D drawing operations.</flag>
+      some 2D drawing operations.  This flag may be unstable.</flag>
     <flag name="bmalloc">Uses a mmap based page allocator to improve
       overall performance.  For this ebuild fork, it is not recommended
       to turn it on for stability purposes.</flag>

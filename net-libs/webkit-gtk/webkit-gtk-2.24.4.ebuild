@@ -306,6 +306,10 @@ multilib_src_configure() {
 #		mycmakeargs+=( -DUSE_LD_GOLD=OFF )
 #	fi
 
+	if use accelerated-2d-canvas ; then
+		ewarn "The accelerated-2d-canvas USE flag is unstable and not recommended."
+	fi
+
 	cmake-utils_src_configure
 }
 
