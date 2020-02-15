@@ -99,8 +99,8 @@ def generate_javascript_adblocker(url, winid):
 	styleBlock.innerHTML = toBlock + ' { display: none !important ; }';
 	document.head.appendChild(styleBlock);
 	var styleExclude = document.createElement('style');
-	styleExclude.innerHTML = toExclude;
-	styleExclude.innerHTML += ' { display: default !important ; color: red; }';
+	styleExclude.innerHTML = toExclude
+		+ ' { display: default !important ; color: red; }';
 	document.head.appendChild(styleExclude);
 })();
 ''' % (include_rule_string, exclude_rule_string)
