@@ -51,6 +51,7 @@ SRC_URI="mod_autoopen? ( ${AUTOOPEN_FN} )
 inherit git-r3 savedconfig toolchain-funcs
 PATCHES=( "${FILESDIR}"/${PN}-9999-gentoo.patch )
 DOCS=( README )
+SAVEDCONFIG_PATH="/etc/portage/savedconfig/${CATEGORY}/${PF}"
 
 _boilerplate_dl() {
 	local fn_s="${1}"
@@ -87,7 +88,7 @@ pkg_setup() {
 installed to support the download function.  Without those, downloads will\n\
 fail (gracefully).  You can fix this by:\n\
 1) Installing these packages, or\n\
-2) Setting USE=savedconfig and changing config.h accordingly."
+2) Setting USE=savedconfig and changing config.h and saving it to ${SAVEDCONFIG_PATH}."
 	fi
 	if use mod_link_hints ; then
 		_boilerplate_dl_link_hints "${LINK_HINTS_FN}" \
@@ -116,34 +117,34 @@ src_prepare() {
 \[AcceleratedCanvas\]   =       { { .i = 0 },#" "config.def.h" || die
 
 	if use savedconfig ; then
-		if [ ! -e /etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR} ] ; then
+		if [ ! -e "${SAVEDCONFIG_PATH}" ] ; then
 			eerror \
 "Please run\n\
 \n\
-mkdir -p \"/etc/portage/savedconfig/www-client\" ; cp \"${S}/config.def.h\" \"/etc/portage/savedconfig/www-client/surf-${PV}\"
+mkdir -p \"/etc/portage/savedconfig/www-client\" ; cp \"${S}/config.def.h\" \"${SAVEDCONFIG_PATH}\"
 \n\
 or provide your edited config.h saved as\n\
 \n\
-/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}"
+${SAVEDCONFIG_PATH}"
 			die
 		fi
 	fi
 
 	if use mod_simple_bookmarking_redux ; then
 		if ! grep -F -q -e "define BM_PICK" \
-			"/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}" ; \
+			"${SAVEDCONFIG_PATH}" ; \
 		then
 			die \
 "Missing define BM_PICK and/or keybindings.  Copy the define/keybindings into \
-your savedconfig file (/etc/portage/savedconfig/www-client/surf-${PV}) .  See \
+your savedconfig file (${SAVEDCONFIG_PATH}) .  See \
 https://surf.suckless.org/files/simple_bookmarking_redux/ for details."
 		fi
 		if ! grep -q -F -e "define BM_ADD" \
-			"/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}" ; \
+			"${SAVEDCONFIG_PATH}" ; \
 		then
 			die \
 "Missing define BM_ADD and/or keybindings.  Copy the define/keybindings into \
-your savedconfig file (/etc/portage/savedconfig/www-client/surf-${PV}).  See \
+your savedconfig file (${SAVEDCONFIG_PATH}).  See \
 https://surf.suckless.org/files/simple_bookmarking_redux/ for details."
 		fi
 	fi
@@ -151,10 +152,10 @@ https://surf.suckless.org/files/simple_bookmarking_redux/ for details."
 	if use mod_adblock ; then
 		eapply "${FILESDIR}"/${PN}-9999-adblock.patch
 		if ! grep -q -F -e "PAGE_LOAD_COMMITTED" \
-			"/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}" ; then
+			"${SAVEDCONFIG_PATH}" ; then
 			eerror \
 "Please copy the following mod_adblock code fragment to your savedconfig\n\
-(/etc/portage/savedconfig/www-client/surf-${PV}):"
+(${SAVEDCONFIG_PATH}):"
 			eerror "---------- cut below ----------"
 			cat "${FILESDIR}/surf-9999-adblock-header-notes.txt" || die
 			eerror "---------- cut above ----------"
@@ -169,30 +170,30 @@ https://surf.suckless.org/files/simple_bookmarking_redux/ for details."
 		eapply "${FILESDIR}/surf-9999-webkit2-searchengines-compat.patch"
 
 		if ! grep -q -F -e "static SearchEngine searchengines[]" \
-			"/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}" ; then
+			"${SAVEDCONFIG_PATH}" ; then
 			eerror \
 "You are missing a searchengines array in your savedconfig\n\
-(/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}).  For details see\n\
+(${SAVEDCONFIG_PATH}).  For details see\n\
 https://surf.suckless.org/patches/searchengines/"
 			die
 		fi
 		if ! grep -q -F -e "BM_PICK }," \
-			"/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}" ; then
+			"${SAVEDCONFIG_PATH}" ; then
 			eerror \
 "Please copy the following mod_searchengine code fragment to your savedconfig hotkeys array\n\
-(static Key keys[] in /etc/portage/savedconfig/www-client/surf-${PV}):"
+(static Key keys[] in ${SAVEDCONFIG_PATH}):"
 			eerror "---------- cut below ----------"
 			cat "${FILESDIR}/surf-9999-search-engine-notes.txt" || die
 			eerror "---------- cut above ----------"
 			die
 		fi
 	else
-		if test -f "/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}" \
+		if test -f "${SAVEDCONFIG_PATH}" \
 			&& grep -q -F -e "static SearchEngine searchengines[]" \
-			"/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}" ; then
+			"${SAVEDCONFIG_PATH}" ; then
 			ewarn \
 "Detected static SearchEngine searchengines[].  Comment or remove the array out from your
-savedconfig (/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}) or it will not build."
+savedconfig (${SAVEDCONFIG_PATH}) or it will not build."
 		fi
 	fi
 
@@ -207,7 +208,7 @@ savedconfig (/etc/portage/savedconfig/${CATEGORY}/${PN}-${PVR}) or it will not b
 		ewarn \
 "Using AcceleratedCanvas = 1 may likely crash WebKitGtk / surf when using\n\
 adblocker.  Disable it in your savedconfig\n\
-(/etc/portage/savedconfig/www-client/surf-${PV})"
+(${SAVEDCONFIG_PATH})"
 	fi
 
 	tc-export CC
