@@ -1,6 +1,6 @@
-diff -urNp a/surf.c b/surf.c
---- a/surf.c	2020-02-14 16:15:43.718607554 -0800
-+++ b/surf.c	2020-02-14 16:17:01.571676719 -0800
+diff -urp surf-2.0_p20190208.orig/surf.c surf-2.0_p20190208/surf.c
+--- surf-2.0_p20190208.orig/surf.c	2020-02-15 04:40:04.622575866 -0800
++++ surf-2.0_p20190208/surf.c	2020-02-15 11:10:13.598500752 -0800
 @@ -35,7 +35,7 @@
  #define LENGTH(x)               (sizeof(x) / sizeof(x[0]))
  #define CLEANMASK(mask)         (mask & (MODKEY|GDK_SHIFT_MASK))
@@ -44,18 +44,20 @@ diff -urNp a/surf.c b/surf.c
  {
  	gchar *script;
  	gsize l;
-@@ -1316,6 +1318,10 @@ processx(GdkXEvent *e, GdkEvent *event,
+@@ -1316,6 +1318,12 @@ processx(GdkXEvent *e, GdkEvent *event,
  				loaduri(c, &a);
  
  				return GDK_FILTER_REMOVE;
 +			} else if(ev->atom == atoms[AtomScriptFile]) {
-+				a.v = getatom(c, AtomScriptFile);
-+				runscript(c, a.v);
++				gchar *scriptpath;
++				scriptpath = getatom(c, AtomScriptFile);
++				runscript(c, scriptpath);
++				g_unlink(scriptpath);
 +				return GDK_FILTER_REMOVE;
  			}
  		}
  	}
-@@ -1404,6 +1410,7 @@ showview(WebKitWebView *v, Client *c)
+@@ -1404,6 +1412,7 @@ showview(WebKitWebView *v, Client *c)
  
  	setatom(c, AtomFind, "");
  	setatom(c, AtomUri, "about:blank");
@@ -63,7 +65,7 @@ diff -urNp a/surf.c b/surf.c
  }
  
  GtkWidget *
-@@ -1516,6 +1523,7 @@ loadchanged(WebKitWebView *v, WebKitLoad
+@@ -1516,6 +1525,7 @@ loadchanged(WebKitWebView *v, WebKitLoad
  		seturiparameters(c, uri, loadcommitted);
  		c->https = webkit_web_view_get_tls_info(c->view, &c->cert,
  		                                        &c->tlserr);
@@ -71,13 +73,12 @@ diff -urNp a/surf.c b/surf.c
  		break;
  	case WEBKIT_LOAD_FINISHED:
  		seturiparameters(c, uri, loadfinished);
-@@ -1524,7 +1532,8 @@ loadchanged(WebKitWebView *v, WebKitLoad
+@@ -1524,7 +1534,7 @@ loadchanged(WebKitWebView *v, WebKitLoad
  		evalscript(c, "document.documentElement.style.overflow = '%s'",
  		    enablescrollbars ? "auto" : "hidden");
  		*/
 -		runscript(c);
 +		runscript(c, scriptfile);
-+		PAGE_LOAD_FINISHED(c);
  		break;
  	}
  	updatetitle(c);

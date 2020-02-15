@@ -272,7 +272,6 @@ multilib_src_install() {
 		fperms 0755 /etc/surf/scripts/adblock/convert.py
 		fperms 0755 /etc/surf/scripts/adblock/update.sh
 		fperms 0755 /etc/surf/scripts/events/page_load_committed.sh
-		fperms 0755 /etc/surf/scripts/events/page_load_finished.sh
 		dodoc "${FILESDIR}/licenses/LICENSE.mod_adblock"
 		if use mod_adblock_easylist ; then
 			dodoc "${FILESDIR}/licenses/LICENSE.EasyList"
