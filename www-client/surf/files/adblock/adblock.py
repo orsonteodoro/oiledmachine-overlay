@@ -105,7 +105,8 @@ def generate_javascript_adblocker(url, winid):
 })();
 ''' % (include_rule_string, exclude_rule_string)
 
-	os_file_handle, script_path = tempfile.mkstemp(prefix="surf_", dir="/tmp", text=True)
+	os_file_handle, \
+	script_path = tempfile.mkstemp(prefix="surf_", dir="/tmp", text=True)
 	file_handle = open(script_path, "w")
 	file_handle.write(js)
 	file_handle.close()
