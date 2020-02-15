@@ -80,15 +80,15 @@ If copied correctly, the sha1sum should be ${hash} .\n\
 }
 
 pkg_setup() {
+	if use mod_autoopen ; then
+		_boilerplate_dl "${AUTOOPEN_FN}" "${AUTOOPEN_FN}" \
+			"https://surf.suckless.org/patches/autoopen/"
+	fi
 	if use mod_link_hints ; then
 		_boilerplate_dl_link_hints "${LINK_HINTS_FN}" \
 			"https://surf.suckless.org/files/link_hints/" \
 			"Copy and paste the Code section into a file" \
 			"9527d1240cd4a2c3cde077ae2b287d2f1a5ae758"
-	fi
-	if use mod_autoopen ; then
-		_boilerplate_dl "${AUTOOPEN_FN}" "${AUTOOPEN_FN}" \
-			"https://surf.suckless.org/patches/autoopen/"
 	fi
 	if use mod_searchengines ; then
 		_boilerplate_dl "${SEARCHENGINES_FN}" "${SEARCHENGINES_FN}" \
@@ -99,7 +99,7 @@ pkg_setup() {
 src_prepare() {
 	default
 
-	cd "${S}"
+	cd "${S}" || die
 
 	einfo "Disabling accelerated canvas in config.def.h"
 	sed -i -e "s#\
@@ -176,6 +176,10 @@ https://surf.suckless.org/files/simple_bookmarking_redux/ for details."
 (${SAVEDCONFIG_PATH}).  For details see\n\
 https://surf.suckless.org/patches/searchengines/"
 			die
+		else
+			ewarn \
+"If you commented out \"static SearchEngine searchengines[]\", uncommented it out\n\
+in your savedconfig to fix build."
 		fi
 		if ! grep -q -F -e "BM_PICK }," \
 			"${SAVEDCONFIG_PATH}" ; then
@@ -209,6 +213,16 @@ savedconfig (${SAVEDCONFIG_PATH}) or it will not build."
 "Using AcceleratedCanvas = 1 may likely crash WebKitGtk / surf when using\n\
 adblocker.  Disable it in your savedconfig\n\
 (${SAVEDCONFIG_PATH})"
+	else
+		if [[ ! -f "config.h" ]] ; then
+			if use mod_adblock ; then
+				ewarn \
+"If you compiled webkit-gtk with accelerated-2d-canvas on by default, it will likely\n\
+crash surf.  Either recompile webkit-gtk without accelerated-2d-canvas USE flag or\n\
+do \`cp ${S}/config.def.h ${SAVEDCONFIG_PATH}\` and change to:\n\
+[AcceleratedCanvas]   =       { { .i = 0 },     },"
+			fi
+		fi
 	fi
 
 	tc-export CC
@@ -259,7 +273,6 @@ multilib_src_install() {
 		fperms 0755 /etc/surf/scripts/adblock/update.sh
 		fperms 0755 /etc/surf/scripts/events/page_load_committed.sh
 		fperms 0755 /etc/surf/scripts/events/page_load_finished.sh
-
 		dodoc "${FILESDIR}/licenses/LICENSE.mod_adblock"
 		if use mod_adblock_easylist ; then
 			dodoc "${FILESDIR}/licenses/LICENSE.EasyList"
@@ -282,25 +295,25 @@ multilib_src_install() {
                 fi
 	fi
 
-	if use mod_simple_bookmarking_redux ; then
-		dodoc "${FILESDIR}/licenses/LICENSE.mod_simple_bookmarking_redux"
-	fi
-
 	if use mod_autoopen ; then
 		dodoc "${FILESDIR}/licenses/LICENSE.mod_autoopen"
 	fi
 
-	if use mod_searchengines ; then
-		dodoc "${FILESDIR}/licenses/LICENSE.mod_searchengines"
-	fi
-
 	if use mod_link_hints ; then
-		cp -a "${DISTDIR}/surf-9999-link-hints.diff" "${T}/script.js"
+		cp -a "${DISTDIR}/surf-9999-link-hints.diff" "${T}/script.js" \
+			|| die
 		insinto /usr/share/${PN}
 		doins "${T}/script.js"
 		dodoc "${FILESDIR}/licenses/LICENSE.mod_link_hints"
 	fi
 
+	if use mod_simple_bookmarking_redux ; then
+		dodoc "${FILESDIR}/licenses/LICENSE.mod_simple_bookmarking_redux"
+	fi
+
+	if use mod_searchengines ; then
+		dodoc "${FILESDIR}/licenses/LICENSE.mod_searchengines"
+	fi
 }
 
 _update_adblock() {
@@ -326,8 +339,7 @@ it."
 "You may run \`emerge --config ${CATEGORY}/${PN}\` to update the adblock."
 		if use update_adblock ; then
 			_update_adblock
-		fi
-		if ! use update_adblock ; then
+		else
 			einfo "No adblock rules will be installed."
 		fi
 	fi
