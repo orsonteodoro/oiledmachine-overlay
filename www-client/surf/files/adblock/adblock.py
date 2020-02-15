@@ -44,7 +44,7 @@ def generate_javascript_adblocker(url, winid):
 	----------
 	url : str
 		The URL of the webpage.
-	winid : src
+	winid : str
 		The window ID to send back the JavaScript code fragment.
 
 	Returns
