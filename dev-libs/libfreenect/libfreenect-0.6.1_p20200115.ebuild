@@ -32,6 +32,7 @@ inherit cmake-multilib
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 PATCHES=( "${FILESDIR}/libfreenect-0.6.0-custom-cmake-lib-path.patch" )
+DOCS=( README.md )
 
 pkg_setup() {
 	if ! use bindist ; then
@@ -62,12 +63,9 @@ src_configure() {
 src_install() {
 	cmake-multilib_src_install
 
-	# udev rules
 	insinto /lib/udev/rules.d/
 	doins "${S}"/platform/linux/udev/51-kinect.rules
 
-	# documentation
-	dodoc README.md
 	if use doc; then
 		cd doc
 		doxygen || ewarn "doxygen failed"
