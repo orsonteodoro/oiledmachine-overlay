@@ -69,7 +69,7 @@ src_install() {
 	if use doc; then
 		cd doc
 		doxygen || die
-		dodoc -r html || die
+		dodoc -r html
 	fi
 }
 
