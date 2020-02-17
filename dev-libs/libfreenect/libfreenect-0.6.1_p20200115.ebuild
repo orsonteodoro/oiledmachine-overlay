@@ -67,7 +67,7 @@ src_install() {
 	doins "${S}"/platform/linux/udev/51-kinect.rules
 
 	if use doc; then
-		cd doc
+		cd doc || die
 		doxygen || die
 		dodoc -r html
 	fi
