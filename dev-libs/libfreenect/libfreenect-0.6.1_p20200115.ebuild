@@ -68,8 +68,8 @@ src_install() {
 
 	if use doc; then
 		cd doc
-		doxygen || ewarn "doxygen failed"
-		odoc -r html || ewarn "dodoc failed"
+		doxygen || die
+		dodoc -r html || die
 	fi
 }
 
