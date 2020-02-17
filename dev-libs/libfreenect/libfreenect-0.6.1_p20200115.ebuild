@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-DESCRIPTION="Core library for accessing the Microsoft Kinect."
+DESCRIPTION="Drivers and libraries for the Xbox Kinect device"
 HOMEPAGE="https://github.com/OpenKinect/${PN}"
 LICENSE="Apache-2.0 GPL-2 !bindist? ( all-rights-reserved )"
 # The all-rights-reserved applies to the firmware.
@@ -11,7 +11,7 @@ SLOT="0/${PV}"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit multilib-minimal python-r1
 IUSE="+bindist +c_sync +cxx doc +examples fakenect +opencv openni2 python"
-EGIT_COMMIT="7cb0d3c3c43c9cc25a39492668858fd554c46e99"
+EGIT_COMMIT="48a5c66d98505dd187e6352c2b9aca88985486c0"
 PYTHON_DEPEND="!bindist? 2"
 CDEPEND="examples? ( media-libs/freeglut[${MULTILIB_USEDEP}]
 			virtual/opengl[${MULTILIB_USEDEP}]
@@ -19,7 +19,7 @@ CDEPEND="examples? ( media-libs/freeglut[${MULTILIB_USEDEP}]
 			x11-libs/libXmu[${MULTILIB_USEDEP}] )
 	opencv? ( media-libs/opencv[${MULTILIB_USEDEP}] )
 	python? ( dev-python/numpy[${PYTHON_USEDEP}] )
-	virtual/libusb:1"
+	virtual/libusb:1[${MULTILIB_USEDEP}]"
 RDEPEND="${CDEPEND}"
 DEPEND="${CDEPEND}
 	doc? ( app-doc/doxygen )
