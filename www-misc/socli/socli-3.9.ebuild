@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -9,7 +9,7 @@ SRC_URI="https://github.com/gautamkrishnar/socli/archive/${PV}.tar.gz \
 	-> ${P}.tar.gz"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
-PYTHON_COMPAT=( python{2_7,3_6,3_7} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 inherit distutils-r1 eutils
 SLOT="0"
 DEPEND="dev-python/py-stackexchange[${PYTHON_USEDEP}]
