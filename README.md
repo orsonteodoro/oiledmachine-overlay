@@ -136,13 +136,11 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-ruby/escape | TBA |
 | dev-ruby/koala | TBA |
 | dev-ruby/rmagick | TBA |
-| dev-python/arrow | This library is for time creation and manipulation for Python. |
 | dev-python/mrab-regex | TBA |
 | dev-python/pocket | This is the Pocket API for Python. |
 | dev-python/py-stackexchange | TBA |
 | dev-python/python-plexapi | TBA |
 | dev-python/soundcloud-python | TBA |
-| dev-python/twitter | This is a Twitter command line client and library with fixed search and patched ANSI output. |
 | dev-python/waitress | TBA |
 | dev-util/bear | TBA |
 | dev-util/carbon-now-cli | This is a command line Node.js app that will create prettified code screenshots to share using the https://carbon.now.sh/ service.
