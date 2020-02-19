@@ -139,7 +139,6 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-python/arrow | This library is for time creation and manipulation for Python. |
 | dev-python/mrab-regex | TBA |
 | dev-python/pocket | This is the Pocket API for Python. |
-| dev-python/pyfiglet | This is a Python library for ASCII art used by rainbowstream used to draw ASCII art in command line. |
 | dev-python/py-stackexchange | TBA |
 | dev-python/python-plexapi | TBA |
 | dev-python/soundcloud-python | TBA |
