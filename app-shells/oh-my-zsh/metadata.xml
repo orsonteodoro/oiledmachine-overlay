@@ -440,6 +440,7 @@
     <flag name="plugins_yum">Installs the yum plugin.</flag>
     <flag name="plugins_z">Installs the z plugin.</flag>
     <flag name="plugins_zeus">Installs the zeus plugin.</flag>
+    <flag name="plugins_zsh-interactive-cd">Installs the zsh-interactive-cd plugin.</flag>
     <flag name="plugins_zsh-navigation-tools">Installs the zsh-navigation-tools plugin.</flag>
     <flag name="plugins_zsh_reload">Installs the zsh_reload plugin.</flag>
     <flag name="branding">Enables gentoo branding.</flag>
