@@ -18,6 +18,8 @@ RDEPEND="android? ( dev-util/android-ndk
 	 dev-cpp/yaml-cpp[${MULTILIB_USEDEP}]
 	 dev-libs/boost[${MULTILIB_USEDEP}]
 	 dev-libs/protobuf[${MULTILIB_USEDEP}]
+	 dev-libs/pugixml[${MULTILIB_USEDEP}]
+	 dev-libs/rapidjson[${MULTILIB_USEDEP}]
 	 games-misc/lgmplugin
 	 games-util/lateralgm[android?,linux?,vanilla?,${MULTILIB_USEDEP}]
 	 gles? ( media-libs/mesa[${MULTILIB_USEDEP}] )
@@ -50,7 +52,7 @@ DEPEND="${RDEPEND}
 	test? ( dev-cpp/gtest[${MULTILIB_USEDEP}]
 		dev-libs/boost[${MULTILIB_USEDEP}]
 		x11-libs/libX11[${MULTILIB_USEDEP}] )"
-EGIT_COMMIT="670a3e228ee00d5e76bd61577b1ae9f257d863ca"
+EGIT_COMMIT="8e8da8e1ef162e96698dd0df3beb3b0779d07b93"
 SRC_URI=\
 "https://github.com/enigma-dev/enigma-dev/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
