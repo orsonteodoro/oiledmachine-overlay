@@ -17,7 +17,7 @@ SRC_URI="https://commondatastorage.googleapis.com/chromium-browser-official/${P}
 
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~x86"
+KEYWORDS="amd64 ~arm64 ~x86"
 IUSE="+closure-compile component-build cups cpu_flags_arm_neon gnome-keyring +hangouts kerberos pic +proprietary-codecs pulseaudio selinux +suid +system-ffmpeg +system-icu +system-libvpx tcmalloc widevine"
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE+=" ${_ABIS}"
@@ -28,7 +28,7 @@ REQUIRED_USE+=" ^^ ( ${_ABIS} )"
 COMMON_DEPEND="
 	>=app-accessibility/at-spi2-atk-2.26:2[${MULTILIB_USEDEP}]
 	app-arch/bzip2:=[${MULTILIB_USEDEP}]
-	cups? ( >=net-print/cups-1.3.11:=[${MULTILIB_USEDEP}] )
+	cups? ( >=net-print/cups-1.3.11:= )
 	>=dev-libs/atk-2.26[${MULTILIB_USEDEP}]
 	dev-libs/expat:=[${MULTILIB_USEDEP}]
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
@@ -54,7 +54,6 @@ COMMON_DEPEND="
 			media-video/ffmpeg[-samba,${MULTILIB_USEDEP}]
 			>=net-fs/samba-4.5.10-r1[-debug(-),${MULTILIB_USEDEP}]
 		)
-		!=net-fs/samba-4.5.12-r0[${MULTILIB_USEDEP}]
 		>=media-libs/opus-1.3.1:=[${MULTILIB_USEDEP}]
 	)
 	sys-apps/dbus:=[${MULTILIB_USEDEP}]
@@ -83,7 +82,6 @@ COMMON_DEPEND="
 "
 # For nvidia-drivers blocker, see bug #413637 .
 RDEPEND="${COMMON_DEPEND}
-	!<www-plugins/chrome-binary-plugins-57
 	x11-misc/xdg-utils
 	virtual/opengl[${MULTILIB_USEDEP}]
 	virtual/ttf-fonts
@@ -144,16 +142,19 @@ For native file dialogs in KDE, install kde-apps/kdialog.
 "
 
 PATCHES=(
-	"${FILESDIR}/chromium-compiler-r11.patch"
+	"${FILESDIR}/chromium-compiler-r10.patch"
 	"${FILESDIR}/chromium-fix-char_traits.patch"
+	"${FILESDIR}/chromium-unbundle-zlib-r1.patch"
+	"${FILESDIR}/chromium-77-system-icu.patch"
 	"${FILESDIR}/chromium-78-protobuf-export.patch"
 	"${FILESDIR}/chromium-79-gcc-alignas.patch"
+	"${FILESDIR}/chromium-80-unbundle-libxml.patch"
+	"${FILESDIR}/chromium-80-include.patch"
 	"${FILESDIR}/chromium-80-gcc-quiche.patch"
+	"${FILESDIR}/chromium-80-gcc-permissive.patch"
 	"${FILESDIR}/chromium-80-gcc-blink.patch"
-	"${FILESDIR}/chromium-81-gcc-noexcept.patch"
-	"${FILESDIR}/chromium-81-gcc-constexpr.patch"
-	"${FILESDIR}/chromium-81-mojom.patch"
-	"${FILESDIR}/chromium-81-fix-browser-frame.patch"
+	"${FILESDIR}/chromium-80-gcc-abstract.patch"
+	"${FILESDIR}/chromium-80-gcc-incomplete-type.patch"
 )
 
 pre_build_checks() {
@@ -231,7 +232,6 @@ src_prepare() {
 		third_party/angle/src/third_party/compiler
 		third_party/angle/src/third_party/libXNVCtrl
 		third_party/angle/src/third_party/trace_event
-		third_party/angle/src/third_party/volk
 		third_party/angle/third_party/glslang
 		third_party/angle/third_party/spirv-headers
 		third_party/angle/third_party/spirv-tools
@@ -275,8 +275,6 @@ src_prepare() {
 		third_party/depot_tools
 		third_party/devscripts
 		third_party/devtools-frontend
-		third_party/devtools-frontend/src/front_end/third_party/fabricjs
-		third_party/devtools-frontend/src/front_end/third_party/wasmparser
 		third_party/devtools-frontend/src/third_party
 		third_party/dom_distiller_js
 		third_party/emoji-segmenter
@@ -345,6 +343,7 @@ src_prepare() {
 		third_party/qcms
 		third_party/rnnoise
 		third_party/s2cellid
+		third_party/sfntly
 		third_party/simplejson
 		third_party/skia
 		third_party/skia/include/third_party/skcms
@@ -629,9 +628,6 @@ multilib_src_configure() {
 		chromium/scripts/generate_gn.py || die
 		popd > /dev/null || die
 	fi
-
-	# Chromium relies on this, but was disabled in >=clang-10, crbug.com/1042470
-	append-cxxflags $(test-flags-CXX -flax-vector-conversions=all)
 
 	# Explicitly disable ICU data file support for system-icu builds.
 	if use system-icu; then
