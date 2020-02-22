@@ -22,7 +22,7 @@ SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 SLOT="${SLOT_MAJOR}/37" # soname version of libwebkit2gtk-4.0
 KEYWORDS="~amd64 ~ia64 ~ppc64 ~sparc ~x86"
 
-IUSE="aqua coverage +egl geolocation gles2-only gnome-keyring +gstreamer gtk-doc +introspection +jpeg2k +jumbo-build libnotify +opengl seccomp spell wayland +X"
+IUSE="aqua coverage +egl +geolocation gles2-only gnome-keyring +gstreamer gtk-doc +introspection +jpeg2k +jumbo-build libnotify +opengl seccomp spell wayland +X"
 IUSE+=" accelerated-2d-canvas bmalloc ftl-jit hardened +jit minibrowser +webgl"
 
 # gstreamer with opengl/gles2 needs egl
@@ -37,8 +37,10 @@ REQUIRED_USE+="
 	hardened? ( !jit )
 	webgl? ( gstreamer
 		|| ( gles2-only opengl ) )
+	!accelerated-2d-canvas
 "
 
+# accelerated-2d-canvas disabled because it may be unstable
 # cannot use introspection for 32 webkit on 64 bit because it requires 32 bit libs/build for python
 # from gobject-introspection pyport.h:686:2: error: #error "LONG_BIT definition appears wrong for platform (bad gcc/glibc config?)."
 # this means also you cannot use the geolocation feature
@@ -203,9 +205,7 @@ pkg_setup() {
 src_prepare() {
 	eapply "${FILESDIR}/${PN}-2.24.4-eglmesaext-include.patch" # bug 699054 # https://bugs.webkit.org/show_bug.cgi?id=204108
 	eapply "${FILESDIR}"/2.26.2-fix-arm-non-unified-build.patch # bug 704194
-	eapply "${FILESDIR}"/${PV}-fix-gtk-doc.patch # bug 704550 - retest without it once we can depend on >=gtk-doc-1.32
-	eapply "${FILESDIR}"/${PV}-fix-noGL-wayland-build.patch
-	eapply "${FILESDIR}/${PN}-2.24.4-fix-ftbfs-x86.patch"
+	eapply "${FILESDIR}"/2.26.3-fix-gtk-doc.patch # bug 704550 - retest without it once we can depend on >=gtk-doc-1.32
 	cmake-utils_src_prepare
 	gnome2_src_prepare
 	multilib_copy_sources
@@ -338,11 +338,13 @@ multilib_src_compile() {
 multilib_src_test() {
 	# Prevents test failures on PaX systems
 	pax-mark m $(list-paxables Programs/*[Tt]ests/*) # Programs/unittests/.libs/test*
+
 	cmake-utils_src_test
 }
 
 multilib_src_install() {
 	cmake-utils_src_install
+
 	# Prevents crashes on PaX systems, bug #522808
 	local d="${ED}usr/$(get_libdir)/misc/webkit2gtk-${API_VERSION}"
 	pax-mark m "${d}/jsc" \

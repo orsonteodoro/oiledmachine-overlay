@@ -27,7 +27,7 @@ if [[ ${MOZ_ESR} == 1 ]] ; then
 fi
 
 # Patch version
-PATCH="${PN}-72.0-patches-02"
+PATCH="${PN}-73.0-patches-04"
 
 MOZ_HTTP_URI="https://archive.mozilla.org/pub/${PN}/releases"
 MOZ_SRC_URI="${MOZ_HTTP_URI}/${MOZ_PV}/source/firefox-${MOZ_PV}.source.tar.xz"
@@ -52,12 +52,11 @@ KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 
 SLOT="0"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
-# Remove system-harfbuzz until new working patch is generated
 IUSE="bindist clang cpu_flags_x86_avx2 debug eme-free geckodriver
 	+gmp-autoupdate hardened hwaccel jack lto cpu_flags_arm_neon pgo
 	pulseaudio +screenshot selinux startup-notification +system-av1
-	+system-icu +system-jpeg +system-libevent  +system-sqlite +system-libvpx
-	+system-webp test wayland wifi"
+	+system-harfbuzz +system-icu +system-jpeg +system-libevent  +system-sqlite
+	 +system-libvpx +system-webp test wayland wifi"
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE+=" ${_ABIS}"
 IUSE+=" +jemalloc"
@@ -73,10 +72,8 @@ SRC_URI="${SRC_URI}
 	${MOZ_SRC_URI}
 	${PATCH_URIS[@]}"
 
-# remove harfbuzz graphite dep until new working patch is generated for system libs
-#	system-harfbuzz? ( >=media-libs/harfbuzz-2.5.3:0= >=media-gfx/graphite2-1.3.13 )
 CDEPEND="
-	>=dev-libs/nss-3.48[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.49.2[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.24[${MULTILIB_USEDEP}]
 	dev-libs/atk[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
@@ -111,6 +108,7 @@ CDEPEND="
 		>=media-libs/dav1d-0.3.0:=[${MULTILIB_USEDEP}]
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
 	)
+	system-harfbuzz? ( >=media-libs/harfbuzz-2.6.4:0=[${MULTILIB_USEDEP}] >=media-gfx/graphite2-1.3.13[${MULTILIB_USEDEP}] )
 	system-icu? ( >=dev-libs/icu-64.1:=[${MULTILIB_USEDEP}] )
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1[${MULTILIB_USEDEP}] )
 	system-libevent? ( >=dev-libs/libevent-2.0:0=[threads,${MULTILIB_USEDEP}] )
@@ -134,7 +132,7 @@ RDEPEND="${CDEPEND}
 DEPEND="${CDEPEND}
 	app-arch/zip
 	app-arch/unzip
-	>=dev-util/cbindgen-0.10.1
+	>=dev-util/cbindgen-0.12.0
 	>=net-libs/nodejs-8.11.0
 	>=sys-devel/binutils-2.30
 	sys-apps/findutils
@@ -168,7 +166,7 @@ DEPEND="${CDEPEND}
 		)
 	)
 	pulseaudio? ( media-sound/pulseaudio[${MULTILIB_USEDEP}] )
-	>=dev-lang/rust-1.36.0[${MULTILIB_USEDEP}]
+	>=dev-lang/rust-1.39.0[${MULTILIB_USEDEP}]
 	!dev-lang/rust-bin
 	wayland? ( >=x11-libs/gtk+-3.11:3[wayland,${MULTILIB_USEDEP}] )
 	abi_x86_64? ( >=dev-lang/yasm-1.1 virtual/opengl[${MULTILIB_USEDEP}] )
@@ -269,8 +267,9 @@ src_unpack() {
 src_prepare() {
 	use !wayland && rm -f "${WORKDIR}/firefox/2019_mozilla-bug1539471.patch"
 	eapply "${WORKDIR}/firefox"
-	eapply "${FILESDIR}/${PN}-69.0-lto-gcc-fix.patch"
-	eapply "${FILESDIR}/mozilla-bug1601707-gcc-fixup-72.patch"
+
+	eapply "${FILESDIR}/${PN}-73.0_fix_lto_pgo_builds.patch"
+	eapply "${FILESDIR}/${PN}-73.0_fix_llvm9.patch"
 	eapply "${FILESDIR}/${PN}-68.4.2-dont-check-rustc-host.patch"
 	eapply "${FILESDIR}/${PN}-68.4.2-force-cross-compile.patch"
 
@@ -552,8 +551,8 @@ multilib_src_configure() {
 	mozconfig_use_enable startup-notification
 	mozconfig_use_enable system-sqlite
 	mozconfig_use_with system-av1
-	#mozconfig_use_with system-harfbuzz
-	#mozconfig_use_with system-harfbuzz system-graphite2
+	mozconfig_use_with system-harfbuzz
+	mozconfig_use_with system-harfbuzz system-graphite2
 	mozconfig_use_with system-icu
 	mozconfig_use_with system-jpeg
 	mozconfig_use_with system-libvpx
@@ -663,10 +662,10 @@ multilib_src_install() {
 		>>"${BUILD_OBJ_DIR}/dist/bin/browser/defaults/preferences/all-gentoo.js" || die
 
 	# force the graphite pref if system-harfbuzz is enabled, since the pref cant disable it
-	#if use system-harfbuzz ; then
-	#	echo "sticky_pref(\"gfx.font_rendering.graphite.enabled\",true);" \
-	#		>>"${BUILD_OBJ_DIR}/dist/bin/browser/defaults/preferences/all-gentoo.js" || die
-	#fi
+	if use system-harfbuzz ; then
+		echo "sticky_pref(\"gfx.font_rendering.graphite.enabled\",true);" \
+			>>"${BUILD_OBJ_DIR}/dist/bin/browser/defaults/preferences/all-gentoo.js" || die
+	fi
 
 	# force cairo as the canvas renderer on platforms without skia support
 	if [[ $(tc-endian) == "big" ]] ; then
