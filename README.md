@@ -141,7 +141,6 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-python/py-stackexchange | TBA |
 | dev-python/python-plexapi | TBA |
 | dev-python/soundcloud-python | TBA |
-| dev-python/waitress | TBA |
 | dev-util/bear | TBA |
 | dev-util/carbon-now-cli | This is a command line Node.js app that will create prettified code screenshots to share using the https://carbon.now.sh/ service.
 | dev-util/depot_tools | This package contains development tools for Google projects.  It's useful for checking out v8, the JavaScript engine behind Chromium. |
@@ -211,7 +210,7 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | net-im/caprine | This package is an Electron based Facebook Messenger.
 | net-im/igdm | This is an Instagram direct messenger based on Electron.
 | net-im/igdm-cli | This is a command line Instagram direct messenger based on Node.js.
-| net-libs/webkit-gtk | This ebuild helps build 32-bit only builds on a multilib machine.  See important above for details to properly set flags. |
+| net-libs/webkit-gtk | This ebuild helps build 32-bit only builds on a multilib machine.  See important above or in ${OVERLAY_DIR}/profiles/package.use.force for details to properly set flags. |
 | net-misc/boinc-bfgminer-cpu | This is a modified BFGMiner with BOINC support for CPUs.  It requires the BOINC wrapper sample app.  It contains ebuild level support for Profile Guided Optimizations (PGO).  It still may be buggy. |
 | net-misc/boinc-bfgminer-gpu | This is a modified BFGMiner with BOINC support for GPUs.  It requires the BOINC wrapper sample app.  See sci-misc/boinc-server-project-eligius ebuild on in how to use it.  The reason why I have BOINC support so we can have the BOINC client manage project switching or CPU/GPU resources based on user activity (e.g. mouse move).  It still may be buggy. |
 | net-misc/googler | This is a Google command line client. |
@@ -239,8 +238,8 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | sys-process/psdoom-ng | This is a process killer based on Chocolate Doom 2.2.1 with man file and simple wrapper. |
 | virtual/setiathome | This is a virtual meta package to handle emerging setiathome and astropulse ebuilds.  You should just add this to the world file and let emerge pull the proper packages.  Do not emerge individual setiathome/astropulse and dependencies. |
 | www-client/casperjs | It looks like it works with PhantomJS 2.1.1. |
-| www-client/chromium | This ebuild helps build 32-bit only Firefox on a multilib machine.  See important above for details to properly set flags |
-| www-client/firefox | This ebuild helps build 32-bit only Firefox on a multilib machine.  See important above for details to properly set flags.  It also contains the recent large emoji fix and emoji selection bug fix for 52.x.|
+| www-client/chromium | This ebuild helps build 32-bit only Firefox on a multilib machine.  See important above or in ${OVERLAY_DIR}/profiles/package.use.force for details to properly set flags |
+| www-client/firefox | This ebuild helps build 32-bit only Firefox on a multilib machine.  See important above or in ${OVERLAY_DIR}/profiles/package.use.force for details to properly set flags.  It also contains the recent large emoji fix and emoji selection bug fix for 52.x.|
 | www-client/phantomjs | It should fix the rendering on some sites like Facebook.  It contains a fixed QTWebKit emoji crash bug. |
 | www-client/surf | **WARNING!!! If you emerge this, it may delete your saved config located in /etc/portage/savedconfig/www-client/{surf-2.0,surf-0.6-r2}.  Backup it up.** surf is a WebkitGTK based browser.  This package contains added built-in ad-blocking support even in SSL.  Fixes were added to support for Facebook.  Support was added for GTK3 smooth scrolling.  Additional added support for external apps for desktop environment MIME to program association, external Flash video for some sites [helper scripts may require updating], and link highlighting.  <br /><br />The 0.6-r2 in this overlay has new window fixes.  It also doesn't create a new instances of itself.  It uses WebKit2 to handle that.  When it creates windows, it uses only one surf instance and new windows act like tabs.  The one by czarkoff and kaihendry and the original surf both create new windows and new WebKitWebProcesses per each new window.  So, my version has a lower memory footprint.  <br /><br />Read the licenses/SURF-community before emerging it.  <br /><br />To update the surf adblocker you need to go to /etc/surf/scripts/adblock and run the update.sh script. <br /><br /> In the 2.0 ebuild, I removed the patches to GTK3 but it most likely doesn't use the custom GTK3 patches in 0.6-r2.  |
 | www-misc/ddgr | This is a command line DuckDuckGo similiar to googler. |
