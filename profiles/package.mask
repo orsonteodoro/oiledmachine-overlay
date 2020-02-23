@@ -11,7 +11,44 @@ dev-util/monodevelop
 games-utils/godot
 
 # undergoing rennovation with the dotnet.eclass
-dev-dotnet/*
+dev-dotnet/aforgedotnet
+dev-dotnet/aspnetcore
+dev-dotnet/assimp-net
+dev-dotnet/atitextureconverter
+dev-dotnet/beatdetectorforgames
+dev-dotnet/BulletSharpPInvoke
+dev-dotnet/cli-tools
+dev-dotnet/core
+dev-dotnet/coreclr
+dev-dotnet/corefx
+dev-dotnet/dotnetcore-sdk
+dev-dotnet/farseer-physics-engine
+dev-dotnet/fna
+dev-dotnet/freeimagenet
+dev-dotnet/gnome-sharp
+dev-dotnet/gtk-sharp
+dev-dotnet/gwen-dotnet
+dev-dotnet/libfreenect
+dev-dotnet/libgdiplus
+dev-dotnet/libgit2sharp
+dev-dotnet/lidgren-network-gen3
+dev-dotnet/mono-addins
+dev-dotnet/monogame
+dev-dotnet/monogame-extended
+dev-dotnet/ndesk-options
+dev-dotnet/nuget
+dev-dotnet/nvorbis
+dev-dotnet/opentk
+dev-dotnet/protobuild-bin
+dev-dotnet/pvrtexlibnet
+dev-dotnet/sfmldotnet
+dev-dotnet/sharpfont
+dev-dotnet/sharpnav
+dev-dotnet/slntools
+dev-dotnet/taoframework
+dev-dotnet/tesseract
+dev-dotnet/tiledsharp
+dev-dotnet/xwt
 
 # new / planned, but may be removed
 media-libs/amd-radeon-image-filter-library
