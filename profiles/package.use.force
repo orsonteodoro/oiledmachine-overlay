@@ -1,12 +1,6 @@
 # Copy the lines you need below to your /etc/portage/profile/package.use.force
 # It will not work from the overlay directory.
 
-# Required dependencies
-sci-misc/setiathome-gpu opencl classic fftw
-sci-misc/setiathome-cpu classic fftw
-sci-misc/astropulse-gpu opencl astropulse fftw
-sci-misc/astropulse-cpu astropulse fftw
-
 # Allows to disable the 64 ABI
 www-client/firefox -abi_x86_64 -abi_mips_n64 -abi_ppc_64 -abi_s390_64
 www-client/surf -abi_x86_64 -abi_mips_n64 -abi_ppc_64 -abi_s390_64
