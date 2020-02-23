@@ -59,6 +59,9 @@ media-libs/amd-radeon-rays-sdk
 =net-libs/webkit-gtk-2.26.4-r1
 
 
+
+
+
 # Masked for security reasons
 #--------------------------------------------------------------------------------------------------
 
@@ -79,6 +82,7 @@ dev-embedded/diligent-plugin-xilinx
 dev-embedded/modelsim
 dev-embedded/xilinx-ise-webpack
 dev-lang/lua
+dev-libs/urho3d-web
 dev-lua/luafilesystem
 dev-lua/luasqlite3
 dev-lua/luaxml
@@ -128,12 +132,12 @@ x11-drivers/xf86-video-ati
 
 
 
+
 # Masked for ebuild quality control reasons
 #--------------------------------------------------------------------------------------------------
 
 # untested completely
 app-crypt/gcr
-app-portage/systemwide-pgo
 app-text/enchant
 app-text/hunspell
 dev-db/nanodbc
@@ -151,8 +155,6 @@ dev-libs/rapidjson
 dev-libs/rocr-runtime
 dev-libs/roct-thunk-interface
 dev-libs/recastnavigation
-dev-libs/urho3d
-dev-libs/urho3d-web
 dev-python/mrab-regex
 dev-python/pocket
 dev-python/py-stackexchange
@@ -178,6 +180,8 @@ media-libs/woff2
 media-plugins/gst-plugins-omx
 
 # worked in the past but untested today
+app-portage/systemwide-pgo
+dev-libs/urho3d
 dev-util/bear
 dev-util/compdb
 dev-util/devhub
