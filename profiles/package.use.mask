@@ -1,4 +1,4 @@
-sci-misc/setiathome-cpu opencl astropulse opencl cuda
-sci-misc/astropulse-cpu opencl classic opencl cuda
-sci-misc/setiathome-gpu astropulse
-sci-misc/astropulse-gpu classic
+# USE flags in development
+sys-kernel/ot-sources -amd-staging-drm-next
+sys-kernel/ot-sources -rock
+sys-kernel/ot-sources -directgma
