@@ -21,6 +21,7 @@ SRC_URI=\
 "https://github.com/erincatto/Box2D/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
 S="${WORKDIR}/Box2D-${PV}"
+RESTRICT="mirror"
 
 _get_abi_settings() {
 	if [[ "${ABI}" == "amd64" ]] ; then

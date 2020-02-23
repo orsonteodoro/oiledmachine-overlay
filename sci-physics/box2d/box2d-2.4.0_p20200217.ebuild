@@ -20,6 +20,7 @@ SRC_URI=\
 "https://github.com/erincatto/Box2D/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
 S="${WORKDIR}/box2d-${EGIT_COMMIT}"
+RESTRICT="mirror"
 
 src_prepare() {
 	default

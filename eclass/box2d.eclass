@@ -14,6 +14,7 @@ inherit multibuild
 # @DESCRIPTION: (Private) Generates a list of implementations for the box2d-multibuild context
 _IMPLS="static shared"
 IUSE+=" ${_IMPLS}"
+REQUIRED_USE+=" || ( static shared )"
 
 # @FUNCTION: _python_multibuild_wrapper
 # @DESCRIPTION: Initialize the environment for this implementation
