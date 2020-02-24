@@ -87,8 +87,6 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-dotnet/nuget | TBA |
 | dev-dotnet/nvorbis | TBA |
 | dev-dotnet/opentk | TBA |
-| dev-dotnet/omnisharp-roslyn | This is the newer OmniSharp.  ycmd can use this but with a special patch. |
-| dev-dotnet/omnisharp-server | This is an older OmniSharp that ycmd still depends on.  This allows for IntelliSense for open source editors. |
 | dev-dotnet/protobuild-bin | This uses Protobuild.exe to generate the solution/project(s) then these are fed into Mono to generate again Protobuild.exe.   We do not know if the first encountered Protobuild.exe is safe to use.  This is required to generate MonoGame project files.  MonoGame comes with binary protobuild.exe, but we are gentoo.  We compile everything from the source code. |
 | dev-dotnet/pvrtexlibnet | You should stay away from this one but it may be required for compiling MonoGame which I didn't take the time to turn off.  Basically pvrtexlibnet is another C# wrapper around the propretary PVRTexLib library blob from Imagination Technlogies.  You need to download the library there.  The binary library blob uses the PVRTC compression (https://en.wikipedia.org/wiki/PVRTC) which is patented.  The license in those libraries are restricted.  There is a bindist flag for this one.  Using the bindist will not install the propretary library and proprietary documentation just the wrapper.  Delete the PVRTexLib from that this ebuild uses and use the one from Imagination Technlogies. |
 | dev-dotnet/sfmldotnet | TBA |
