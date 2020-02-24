@@ -168,14 +168,12 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | games-util/godot | Godot is an open source alternative to the Unity Game Engine.  This one is the 2.0 beta.  It also installs the demos in /usr/share/godot.  I recommend the platformer demo to test the sound and hardware accelerated OpenGL. |
 | games-util/lateralgm | LateralGM for the ENIGMA development environment.  It was written in Java.  This is basically the level editor. |
 | games-util/libmaker | This is the Library editor for ENIGMA and GameMaker to customize and add button actions for the drag and drop scripting.  It was written in Java.  More information can be found at https://enigma-dev.org/docs/Wiki/Library_Maker. |
-| media-gfx/caesiumclt | This is a command line image compressor for PNG and JPEG files. |
-| media-gfx/nvidia-texture-tools | This one builds the C# language binding and nvtt native library required for MonoGame.  You need to install this one from the repository for MonoGame to compile correctly.  This ebuild generates Nvidia.TextureTools.dll per each vc{10,8,9,12,monogame} because upstream don't delete one of them so a consumer may depend on the old one.  You need to enable the `monogame` USE flag to generate the proper older Nvidia.TextureTools.dll. |
 | media-fonts/noto-color-emoji | This currently supports Emoji 5.0.  This one you can use to compile noto color emoji.  The benefit is that you can get updated emojis.  This one also contains a black smiling face emoji to replace the text presentation unlike the -bin.  `emerge noto-color-emoji-config` to apply emojis as default. |
 | media-fonts/noto-color-emoji-bin | This one has been precompiled and from the Google website, but with older jelly bean emojis and not with recent emojis.  `emerge noto-color-emoji-config` to apply emojis as default. |
 | media-fonts/noto-color-emoji-config | This package will apply fontconfig fixes to firefox, google chrome, etc systemwide.  You can use Gentoo's noto-emoji package instead of the one on this overlay.
-| media-gfx/caesiumclt | A command line image compressor. |
+| media-gfx/caesiumclt | This is a command line image compressor for PNG and JPEG files. |
 | media-gfx/mojoshader | For urho3d shader support. |
-| media-gfx/nvidia-texture-tools | TBA |
+| media-gfx/nvidia-texture-tools | This one builds the C# language binding and nvtt native library required for MonoGame.  You need to install this one from the repository for MonoGame to compile correctly.  This ebuild generates Nvidia.TextureTools.dll per each vc{10,8,9,12,monogame} because upstream don't delete one of them so a consumer may depend on the old one.  You need to enable the `monogame` USE flag to generate the proper older Nvidia.TextureTools.dll. |
 | media-libs/amd-radeon-image-filter-library | TBA |
 | media-libs/amd-radeon-prorender-sdk | TBA |
 | media-libs/amd-radeon-rays-sdk | TBA |
