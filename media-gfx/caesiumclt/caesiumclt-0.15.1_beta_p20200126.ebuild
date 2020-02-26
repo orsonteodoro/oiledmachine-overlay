@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # See CMakeLists.txt for versioning
@@ -22,7 +22,7 @@ inherit eutils cmake-utils
 SLOT="0/${PV}"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
-RDEPEND="media-libs/libcaesium"
+RDEPEND="media-libs/libcaesium:0/$(ver_cut 1-3 ${PV})"
 DEPEND="${RDEPEND}"
 RESTRICT="fetch mirror"
 S="${WORKDIR}/caesium-clt-${EGIT_COMMIT}"
