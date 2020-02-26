@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer type="person">
-		<email>harald.weiner@jku.at</email>
-		<name>Harald Weiner</name>
-	</maintainer>
+  <!-- only this ebuild fork on the oiledmachine-overlay -->
+  <maintainer type="person">
+    <email>harald.weiner@jku.at</email>
+    <name>Harald Weiner</name>
+  </maintainer>
+  <!-- ebuild obtained from the science overlay -->
+  <!-- originator -->
+  <maintainer type="person">
+    <email>harald.weiner@jku.at</email>
+    <name>Harald Weiner</name>
+  </maintainer>
 </pkgmetadata>
