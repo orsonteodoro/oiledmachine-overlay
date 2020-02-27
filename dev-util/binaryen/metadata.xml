@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <!-- only for this fork on the oiledmachine-overlay -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!-- ebuild originator: -->
+  <!-- the reagentoo overlay -->
+  <upstream>
+    <maintainer status="active">
+      <name>WebAssembly Community Group</name>
+    </maintainer>
+    <bugs-to>https://github.com/WebAssembly/binaryen/issues</bugs-to>
+    <remote-id type="github">WebAssembly/binaryen</remote-id>
+  </upstream>
+</pkgmetadata>
