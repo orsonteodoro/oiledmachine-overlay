@@ -7,7 +7,7 @@
 EAPI=7
 DESCRIPTION="Emscripten LLVM backend - Fastcomp is the default compiler core for Emscripten"
 HOMEPAGE="http://emscripten.org/"
-LICENSE="UoI-NCSA BSD BSD-2 emscripten-fastcomp-md5 GPL-2+ GPL-3+ LLVM-Grant MIT rc"
+LICENSE="UoI-NCSA BSD BSD-2 emscripten-fastcomp-md5 GPL-2+ LLVM-Grant MIT rc"
 # for emscripten-fastcomp:
 #   ARM contributions (lib/Target/ARM) - LLVM-Grant
 #   cmake/config.guess - GPL-2+
@@ -18,7 +18,7 @@ LICENSE="UoI-NCSA BSD BSD-2 emscripten-fastcomp-md5 GPL-2+ GPL-3+ LLVM-Grant MIT
 #   md5 contributions (lib/Support/MD5.cpp) - public domain + emscripten-fastcomp-md5 (no warranty)
 #   pyyaml tests (test/YAMLParser) - MIT
 #   OpenBSD regex (lib/Support/reg*) - BSD rc
-#   tools/gold (uses system's plugin-api.h) - GPL-3+
+#   tools/gold (for lto, not installed, uses system's plugin-api.h) - GPL-3+ if built
 #
 # for emscripten-fastcomp-clang:
 #   ClangFormat, clang-format-vs - UoI-NCSA
@@ -80,5 +80,20 @@ src_configure() {
 
 src_install() {
 	cmake-utils_src_install
-	dodoc 
+	cat "${WORKDIR}/${PN}-${PV}/lib/Support/xxhash.cpp" \
+		| head -n 33 > "${T}/LICENSE.xxhash" || die
+	dodoc "${T}/LICENSE.xxhash"
+	cat "${WORKDIR}/${PN}-${PV}/lib/Support/MD5.cpp" \
+		| head -n 38 > "${T}/LICENSE.MD5" || die
+	dodoc "${T}/LICENSE.MD5"
+	dodoc "${WORKDIR}/${PN}-${PV}/LICENSE.TXT"
+	cat "${WORKDIR}/${PN}-${PV}/include/llvm/Support/LICENSE.TXT" \
+		> "${T}/LICENSE.LLVM_System_Interface_Library.TXT" || die
+	dodoc "${T}/LICENSE.LLVM_System_Interface_Library.TXT"
+	cat "${WORKDIR}/${PN}-${PV}/CODE_OWNERS.TXT" \
+		> "${T}/CODE_OWNERS.LLVM.TXT"
+	dodoc "${T}/CODE_OWNERS.LLVM.TXT"
+	cat "${WORKDIR}/${PN}-clang-${PV}/CODE_OWNERS.TXT" \
+		> "${T}/CODE_OWNERS.Clang.TXT"
+	dodoc "${T}/CODE_OWNERS.Clang.TXT"
 }
