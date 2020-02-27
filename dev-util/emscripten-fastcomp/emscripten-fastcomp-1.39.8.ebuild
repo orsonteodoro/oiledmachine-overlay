@@ -7,14 +7,21 @@
 EAPI=7
 DESCRIPTION="Emscripten LLVM backend - Fastcomp is the default compiler core for Emscripten"
 HOMEPAGE="http://emscripten.org/"
-LICENSE="UoI-NCSA BSD LLVM-Grant MIT rc scanlogd"
-# Packages (emscripten-fastcomp, emscripten-fastcomp-clang),
-#   LLVM System Interface Library, ClangFormat - UoI-NCSA
-# googlemock, Google Test - BSD
-# OpenBSD regex - BSD rc
-# pyyaml tests - MIT
-# ARM contributions - LLVM-Grant
-# md5 contributions - public domain + scanlogd (no warranty)
+LICENSE="UoI-NCSA BSD BSD-2 emscripten-fastcomp-md5 GPL-2+ GPL-3+ LLVM-Grant MIT rc"
+# for emscripten-fastcomp:
+#   ARM contributions (lib/Target/ARM) - LLVM-Grant
+#   cmake/config.guess - GPL-2+
+#   googlemock (utils/unittest/googlemock) - BSD
+#   Google Test (utils/unittest/googletest) - BSD
+#   LLVM System Interface Library (include/llvm/Support) - UoI-NCSA
+#   lib/Support/xxhash.cpp - BSD-2
+#   md5 contributions (lib/Support/MD5.cpp) - public domain + emscripten-fastcomp-md5 (no warranty)
+#   pyyaml tests (test/YAMLParser) - MIT
+#   OpenBSD regex (lib/Support/reg*) - BSD rc
+#   tools/gold (uses system's plugin-api.h) - GPL-3+
+#
+# for emscripten-fastcomp-clang:
+#   ClangFormat, clang-format-vs - UoI-NCSA
 KEYWORDS="~amd64 ~x86"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit python-single-r1
@@ -69,4 +76,9 @@ src_configure() {
 		-DLLVM_INCLUDE_TESTS=OFF
 	)
 	cmake-utils_src_configure
+}
+
+src_install() {
+	cmake-utils_src_install
+	dodoc 
 }
