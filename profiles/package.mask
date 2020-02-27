@@ -58,9 +58,6 @@ media-libs/amd-radeon-rays-sdk
 # build time failures
 =net-libs/webkit-gtk-2.26.4-r1
 
-# needs license install QA check
-dev-util/emscripten-fastcomp
-
 # Masked for security reasons
 #--------------------------------------------------------------------------------------------------
 
