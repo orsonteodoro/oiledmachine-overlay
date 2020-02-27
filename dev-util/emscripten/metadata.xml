@@ -1,8 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer type="person">
-		<email>harald.weiner@jku.at</email>
-		<name>Harald Weiner</name>
-	</maintainer>
+  <!-- only on the oiledmachine-overlay -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!-- obtained from the science overlay -->
+  <!-- originator -->
+  <maintainer type="person">
+    <email>harald.weiner@jku.at</email>
+    <name>Harald Weiner</name>
+  </maintainer>
+  <upstream>
+    <maintainer>
+      <!-- for a full list see 
+           https://github.com/emscripten-core/emscripten/blob/master/AUTHORS -->
+      <name>The Emscripten Authors</name>
+    </maintainer>
+    <bugs-to>https://github.com/emscripten-core/emscripten/issues</bugs-to>
+    <remote-id type="github">emscripten-core/emscripten</remote-id>
+  </upstream>
 </pkgmetadata>
