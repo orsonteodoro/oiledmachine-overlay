@@ -30,6 +30,8 @@ src_prepare() {
 	sed -i -e "s|-source 1.7|-source ${JAVA_V}|g" \
 		-e "s|-target 1.7|-target ${JAVA_V}|g" Makefile || die
 	eapply -R "${DISTDIR}/${PN}-${PV}-revert-casts.patch"
+	# no need to call enigma_copy_sources
+	# it will complain about cd (change directory) failure in src_install phase
 }
 
 src_compile() {
@@ -40,6 +42,7 @@ src_compile() {
 src_install() {
 	platform_install() {
 		ml_install_abi() {
+			# use same .jars but distribute based on lateral-EENIGMA
 			local suffix=""
 			local descriptor_suffix=""
 			if [[ "${EENIGMA}" == "linux" ]] ; then
