@@ -5,6 +5,8 @@ EAPI=7
 DESCRIPTION="Compiler infrastructure and toolchain library for WebAssembly"
 HOMEPAGE="https://github.com/WebAssembly/binaryen"
 LICENSE="Apache-2.0 Apache-2.0-with-LLVM-exceptions"
+# root directory contains Apache-2.0 but third_party/llvm-project
+# contains Apache-2.0-with-LLVM-exceptions
 KEYWORDS="~amd64 ~x86"
 SLOT="0/$(ver_cut 1 ${PV})"
 IUSE="doc"
