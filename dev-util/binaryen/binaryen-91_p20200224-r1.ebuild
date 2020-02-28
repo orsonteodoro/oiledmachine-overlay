@@ -7,9 +7,10 @@ HOMEPAGE="https://github.com/WebAssembly/binaryen"
 LICENSE="Apache-2.0"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/$(ver_cut 1 ${PV})"
+IUSE="doc"
 RDEPEND="${PYTHON_DEPS}"
 DEPEND="${RDEPEND}"
-CMAKE_MIN_VERSION="2.8.7"
+CMAKE_MIN_VERSION="3.1.3"
 CMAKE_BUILD_TYPE="Release"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit cmake-utils python-any-r1
@@ -19,6 +20,7 @@ https://github.com/WebAssembly/binaryen/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
+DOCS=( CHANGELOG.md README.md )
 
 src_prepare() {
 	sed -r -i \
@@ -43,4 +45,12 @@ src_install() {
 		insinto "/usr/include/${PN}/${hdir}"
 		doins "${S}/src/${hdir}/"*.h
 	done
+	dodoc LICENSE
+	cat third_party/llvm-project/include/llvm/Support/LICENSE.TXT \
+		> "${T}/LICENSE.LLVM_System_Interface_Library.TXT"
+	dodoc "${T}/LICENSE.LLVM_System_Interface_Library.TXT"
+	cat third_party/llvm-project/include/llvm/LICENSE.TXT \
+		> "${T}/LICENSE.llvm-project.TXT"
+	dodoc "${T}/LICENSE.llvm-project.TXT"
+
 }
