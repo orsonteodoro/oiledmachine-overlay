@@ -7,7 +7,8 @@
 EAPI=7
 DESCRIPTION="LLVM-to-JavaScript Compiler"
 HOMEPAGE="http://emscripten.org/"
-LICENSE="all-rights-reserved UoI-NCSA Apache-2.0 BSD BSD-2 CC-BY-SA-3.0 \
+LICENSE="all-rights-reserved UoI-NCSA Apache-2.0 Apache-2.0-with-LLVM-exceptions \
+BSD BSD-2 CC-BY-SA-3.0 \
 || ( FTL GPL-2 ) GPL-2+ LGPL-2.1 LGPL-3 MIT MPL-2.0 OFL-1.1 PSF-2.3 Unlicense \
 ZLIB"
 LICENSE_NOTES="
@@ -51,7 +52,7 @@ Tests
 Package
   Package - UoI-NCSA MIT
     all-rights-reserved (in source)
-  compiler-rt - Apache-2.0 MIT UoI-NCSA
+  compiler-rt - Apache-2.0-with-LLVM-exceptions MIT UoI-NCSA
   sdl - ZLIB
   musl - all-rights-reserved MIT
   libcxx, libcxxabi, libunwind - MIT UoI-NCSA
