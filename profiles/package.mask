@@ -132,8 +132,6 @@ x11-drivers/xf86-video-ati
 
 # untested completely
 app-crypt/gcr
-app-text/enchant
-app-text/hunspell
 dev-db/nanodbc
 dev-java/netbeans-alice
 dev-libs/asmlib
