@@ -4,7 +4,8 @@
 EAPI=7
 DESCRIPTION="TypeScript is a superset of JavaScript that compiles to clean JavaScript output"
 HOMEPAGE="https://www.typescriptlang.org/"
-LICENSE="Apache-2.0 CC-BY-4.0 MIT Unicode-DFS W3C W3C-CLA"
+LICENSE="Apache-2.0 BSD BSD-2 CC0-1.0 CC-BY-3.0 CC-BY-4.0 CC-BY-SA-4.0 MIT \
+Unicode-DFS W3C W3C-CLA WTFPL"
 # Apache-2.0 is the main
 # Rest of the licenses are third party licenses
 KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
