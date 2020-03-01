@@ -2,7 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-DESCRIPTION="TypeScript is a superset of JavaScript that compiles to clean JavaScript output"
+DESCRIPTION="TypeScript is a superset of JavaScript that compiles to clean \
+JavaScript output"
 HOMEPAGE="https://www.typescriptlang.org/"
 LICENSE="Apache-2.0 BSD BSD-2 CC0-1.0 CC-BY-3.0 CC-BY-4.0 CC-BY-SA-4.0 MIT \
 Unicode-DFS W3C W3C-CLA WTFPL"
