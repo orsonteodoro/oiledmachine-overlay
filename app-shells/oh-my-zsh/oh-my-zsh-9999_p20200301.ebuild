@@ -36,7 +36,7 @@ USE_RUBY="ruby24 ruby25 ruby26 ruby27"
 RUBY_OPTIONAL=1
 EMOJI_LANG_DEFAULT=${EMOJI_LANG_DEFAULT:=en}
 inherit eutils python-r1 ruby-ng
-EGIT_COMMIT="77aa1795d2f05583d4fc63a63abb0144beb5ecff"
+EGIT_COMMIT="9ce7de9f16ba894423bc5105c7e959894ca2e751"
 FN="${EGIT_COMMIT}.zip"
 A_URL="https://github.com/ohmyzsh/ohmyzsh/archive/${FN}"
 SRC_URI="${A_URL} -> ${P}.zip"
@@ -80,7 +80,8 @@ github git-hubflow gitignore git-prompt git-remote-branch glassfish globalias \
 gnu-utils go golang gpg-agent gradle grails grunt gulp hanami helm heroku \
 hitokoto \
 history history-substring-search homestead httpie iterm2 jake-node jenv \
-jhbuild jira jruby jsontools jump kate keychain kitchen knife knife_ssh kops \
+jfrog jhbuild jira jruby jsontools jump kate keychain kitchen knife knife_ssh \
+kops \
 kubectl kube-ps1 laravel laravel4 laravel5 last-working-dir lein lighthouse \
 lol macports magic-enter man marked2 mercurial meteor minikube mix mix-fast \
 mosh mvn mysql-macports n98-magerun nanoc ng nmap node nomad npm npx nvm \
@@ -95,7 +96,7 @@ terraform textastic textmate thefuck themes thor tig timer tmux tmux-cssh \
 tmuxinator torrent transfer tugboat ubuntu ufw urltools vagrant \
 vagrant-prompt vault vim-interaction vi-mode virtualenv virtualenvwrapper \
 vscode vundle wakeonlan wd web-search wp-cli xcode yarn yii yii2 yum z \
-zeus zsh-navigation-tools zsh_reload )
+zeus zsh-interactive-cd zsh-navigation-tools zsh_reload )
 IUSE+=" ${OMZSH_PLUGINS[@]/#/-plugins_}"
 PLUGINS_DEPEND="
 	 plugins_adb? ( dev-util/android-tools )
@@ -137,6 +138,7 @@ PLUGINS_DEPEND="
 	 plugins_helm? ( app-admin/helm )
 	 plugins_heroku? ( dev-util/heroku-cli )
 	 plugins_jira? ( dev-python/jira )
+	 plugins_jfrog? ( dev-util/jfrog-cli )
 	 plugins_kate? ( kde-apps/kate )
 	 plugins_keychain? ( net-misc/keychain )
 	 plugins_knife_ssh? ( virtual/ssh )
@@ -206,7 +208,8 @@ PLUGINS_DEPEND="
 	 plugins_vundle? ( app-editors/vim )
 	 plugins_wakeonlan? ( net-misc/wakeonlan )
 	 plugins_yarn? ( sys-apps/yarn )
-	 plugins_wp-cli? ( app-admin/wp-cli )"
+	 plugins_wp-cli? ( app-admin/wp-cli )
+	 plugins_zsh-interactive-cd? ( app-shells/fzf )"
 #	 plugins_urltools? ( || ( dev-lang/perl
 #				  net-libs/nodejs
 #				  dev-lang/php
@@ -221,7 +224,7 @@ THEMES_DEPEND="
 RDEPEND="7zip? ( app-arch/p7zip )
 	 >=app-shells/zsh-4.3.9
 	 bzr? ( dev-vcs/bzr )
-	 clipboard? ( || ( x11-misc/xclip x11-misc/xsel ) )
+	 clipboard? ( || ( x11-misc/xclip x11-misc/xsel app-misc/tmux ) )
 	 emojis? ( || ( media-fonts/noto-color-emoji
 			media-fonts/noto-color-emoji-bin
 			media-fonts/emojione-color-font

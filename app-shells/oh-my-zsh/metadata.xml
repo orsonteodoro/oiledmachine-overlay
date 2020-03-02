@@ -290,6 +290,7 @@
     <flag name="plugins_iterm2">Installs the iterm2 plugin.</flag>
     <flag name="plugins_jake-node">Installs the jake-node plugin.</flag>
     <flag name="plugins_jenv">Installs the jenv plugin.</flag>
+    <flag name="plugins_jfrog">Installs the jfrog plugin.</flag>
     <flag name="plugins_jhbuild">Installs the jhbuild plugin.</flag>
     <flag name="plugins_jira">Installs the jira plugin.</flag>
     <flag name="plugins_jruby">Installs the jruby plugin.</flag>
