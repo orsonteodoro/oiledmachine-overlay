@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -53,7 +53,9 @@ PATCHES=( "${FILESDIR}/rock-dkms-2.8_p13-makefile-recognize-gentoo.patch"
 #	  "${FILESDIR}/rock-dkms-2.8_p13-fix-ac_kernel_compile_ifelse.patch"
 	  "${FILESDIR}/amdgpu-dkms-19.50.967956-enable-mmu_notifier.patch"
 #	  "${FILESDIR}/rock-dkms-2.8_p13-fix-configure-test-invalidate_range_start-wants-2-args-requires-config-mmu-notifier.patch"
-	  "${FILESDIR}/amdgpu-dkms-19.50.967956-no-firmware-install.patch" )
+	  "${FILESDIR}/amdgpu-dkms-19.50.967956-no-firmware-install.patch"
+	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
+	  "${FILESDIR}/amdgpu-dkms-19.50.967956-add-header-to-kcl_mn_c.patch" )
 
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
@@ -65,7 +67,6 @@ pkg_nofetch() {
 pkg_pretend() {
 	ewarn "Long Term Support (LTS) kernels 4.4.x, 4.9.x, 4.14.x, 4.19.x are only supported."
 	# version compatibility at >=5.1 looks sloppy
-	ewarn "This package version is undergoing development.  It may not work."
 	if use check-pcie ; then
 		if has sandbox $FEATURES ; then
 			die "${PN} require sandbox to be disabled in FEATURES when testing hardware with check-pcie USE flag."
@@ -348,7 +349,7 @@ src_install() {
 	dodir usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}
 	insinto usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}
 	doins -r "${S}"/*
-	fperms 0770 /usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/{post-remove.sh,pre-build.sh,amd/dkms/pre-build.sh}
+	fperms 0770 /usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/{post-remove.sh,pre-build.sh,amd/dkms/pre-build.sh,configure}
 	insinto /etc/modprobe.d
 	doins "${WORKDIR}/etc/modprobe.d/blacklist-radeon.conf"
 	insinto /lib/udev/rules.d
