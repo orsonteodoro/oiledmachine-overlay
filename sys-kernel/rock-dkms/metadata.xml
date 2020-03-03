@@ -16,7 +16,7 @@
     memory to 29/32 of system memory; RDMA (aka Remote Device Programming or 
     ROCmRDMA) to allow other PCIe kernel modules and devices DMA access to GPU
     memory, KFD (Kernel Fusion Driver) features, and DirectGMA (Direct 
-    Graphic Memory Access) support.  ROCk is also a core componenet of the
+    Graphic Memory Access) support.  ROCk is also a core component of the
     ROCm platform.
   </longdescription>
   <upstream>
@@ -36,7 +36,7 @@
     <flag name="acpi">Checks if ACPI support is enabled in the kernel.
       Enabling ACPI may enhance multigpu detection with PowerXpress (multigpu
       laptops), provide more sysfs info, access to ACPI events for laptops,
-      dynamic PCI-e tuning.
+      dynamic PCI-e frequency tuning.
       </flag>
     <flag name="build">Builds the kernel module.</flag>
     <flag name="check-gpu">Checks if the GPU(s) are supported.</flag>
