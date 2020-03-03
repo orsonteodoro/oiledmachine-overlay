@@ -376,7 +376,7 @@ pkg_postinst() {
 	fi
 	einfo
 	einfo "For fully utilizing ROCmRDMA, it is recommend to set iommu off or in passthough mode."
-	einfo "Do `dmesg | grep -i iommu` to see if Intel or AMD."
+	einfo "Do \`dmesg | grep -i iommu\` to see if Intel or AMD."
 	einfo "If AMD IOMMU, add to kernel parameters either amd_iommu=off or iommu=pt"
 	einfo "If Intel IOMMU, add to kernel parameters either intel_iommu=off or iommu=pt"
 	einfo "For more information, See https://rocm-documentation.readthedocs.io/en/latest/Remote_Device_Programming/Remote-Device-Programming.html#rocmrdma ."
