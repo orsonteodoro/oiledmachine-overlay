@@ -20,7 +20,7 @@ REQUIRED_USE="hybrid-graphics? ( acpi )"
 if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
 KV_NOT_SUPPORTED="99999"
 else
-KV_NOT_SUPPORTED="5.0"
+KV_NOT_SUPPORTED="5.5"
 fi
 RDEPEND="firmware? ( sys-firmware/rock-firmware )
 	 sys-kernel/dkms
