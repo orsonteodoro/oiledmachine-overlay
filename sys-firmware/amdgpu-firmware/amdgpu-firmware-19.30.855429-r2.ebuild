@@ -31,17 +31,16 @@ pkg_nofetch() {
 }
 
 pkg_setup() {
-	if [[ -d /lib/firmware/amdgpu ]] ; then
-		local last_cfg=$(ls \
-			/etc/portage/savedconfig/sys-kernel/linux-firmware* \
-			| sort | tail -n 1)
+	local last_cfg=$(ls \
+		/etc/portage/savedconfig/sys-kernel/linux-firmware* \
+		| sort | tail -n 1)
 
-		if [[ ! -f /etc/portage/savedconfig/sys-kernel/${last_cfg} ]]
-		then
-			last_cfg="linux-firmware-20200122"
-		fi
+	if [[ ! -f /etc/portage/savedconfig/sys-kernel/${last_cfg} ]]
+	then
+		last_cfg="linux-firmware-20200122"
+	fi
 
-		die \
+	ewarn \
 "/lib/firmware/amdgpu folders must not be present.  Make sure that\n\
 the savedconfig USE flag is set in the linux-firmware package.\n\
   Do something like\n\
@@ -51,7 +50,6 @@ Then, remerge linux-firmware again.  If you emerged rock-firmware or\n\
 amdgpu-firmware, unemerge them completely.
 For futher details, see\n\
   https://wiki.gentoo.org/wiki/Linux_firmware#Savedconfig"
-	fi
 }
 
 unpack_deb() {
