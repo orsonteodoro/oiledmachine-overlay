@@ -56,7 +56,7 @@ pkg_nofetch() {
 }
 
 pkg_pretend() {
-	ewarn "Long Term Support (LTS) kernels 4.4.x, 4.9.x, 4.14.x, 4.19.x are only supported."
+	ewarn "Long Term Support (LTS) kernels 4.4.x, 4.9.x, 4.14.x, 4.19.x, 5.4.x are only supported."
 	# version compatibility at >=5.1 looks sloppy
 	if use check-pcie ; then
 		if has sandbox $FEATURES ; then
