@@ -49,13 +49,14 @@
     <flag name="hybrid-graphics">Checks if kernel config for proper support
       for PowerXpress, Hybrid Graphics (i.e. IGP and dGPU on laptop).
       </flag>
-    <flag name="ssg">Checks kernel config for SSG (Solid State Graphics)
-      support.</flag>
     <flag name="numa">Fills the IO-LINKS' sysfs interface at
       /sys/class/kfd/topology/nodes/N/io_links/X/node_to
       using the NUMA data structure.  For more info see
       https://rocm-documentation.readthedocs.io/en/latest/ROCm_System_Managment/topo3.html#sysfsclasskfdtopologynodes0iolinks01
       https://rocm-documentation.readthedocs.io/en/latest/ROCm_System_Managment/ROCm-System-Managment.html#io-links
       </flag>
+    <flag name="sign-modules">Signs the modules if necessary.</flag>
+    <flag name="ssg">Checks kernel config for SSG (Solid State Graphics)
+      support.</flag>
   </use>
 </pkgmetadata>
