@@ -362,6 +362,12 @@ src_install() {
 	doins "${WORKDIR}/etc/udev/rules.d/70-amdgpu.rules"
 }
 
+sign_module() {
+	local module_path="${1}"
+	einfo "Signing $(basename ${module_path})"
+	/usr/src/linux-${k}/scripts/sign-file "${module_sig_hash}" "${key_path}" "${cert_path}" "${module_path}" || die
+}
+
 signing_modules() {
 	local k="${1}"
 	if linux_chkconfig_builtin "MODULE_SIG" && use sign-modules ; then
