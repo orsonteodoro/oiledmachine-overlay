@@ -80,26 +80,28 @@ pkg_setup_warn() {
 	WARNING_TRIM_UNUSED_KSYMS="CONFIG_TRIM_UNUSED_KSYMS should not be set and the kernel recompiled without it."
 	check_extra_config
 
-	if use check-mmu-notifier ; then
-		CONFIG_CHECK=" ~HSA_AMD"
-		WARNING_CONFIG_HSA_AMD=" CONFIG_HSA_AMD must be set to =y in the kernel .config."
-	fi
-
+	CONFIG_CHECK=" ~AMD_IOMMU_V2"
+	WARNING_MMU_NOTIFIER=" CONFIG_AMD_IOMMU_V2 must be set to =y in the kernel or CONFIG_HSA_AMD will be inaccessible in \`make menuconfig\`."
 	check_extra_config
+
+	if use check-mmu-notifier ; then
+		if ! linux_chkconfig_module "HSA_AMD" ; then
+			if ! linux_chkconfig_builtin "HSA_AMD" ; then
+				ewarn "CONFIG_HSA_AMD must be set to =y or =m in the kernel .config."
+			fi
+		fi
+	fi
 
 	CONFIG_CHECK=" ~MMU_NOTIFIER"
 	WARNING_MMU_NOTIFIER=" CONFIG_MMU_NOTIFIER must be set to =y in the kernel or it will fail in the link stage."
-
 	check_extra_config
 
 	CONFIG_CHECK=" ~DRM_AMD_ACP"
 	WARNING_MFD_CORE=" CONFIG_DRM_AMD_ACP (Enable ACP IP support) must be set to =y in the kernel or it will fail in the link stage."
-
 	check_extra_config
 
 	CONFIG_CHECK=" ~MFD_CORE"
 	WARNING_MFD_CORE=" CONFIG_MFD_CORE must be set to =y or =m in the kernel or it will fail in the link stage."
-
 	check_extra_config
 
 	if use directgma || use ssg ; then
@@ -152,26 +154,28 @@ pkg_setup_error() {
 	ERROR_TRIM_UNUSED_KSYMS="CONFIG_TRIM_UNUSED_KSYMS should not be set and the kernel recompiled without it."
 	check_extra_config
 
-	if use check-mmu-notifier ; then
-		CONFIG_CHECK+=" HSA_AMD"
-		ERROR_CONFIG_HSA_AMD=" CONFIG_HSA_AMD must be set to =y in the kernel .config."
-	fi
-
+	CONFIG_CHECK=" AMD_IOMMU_V2"
+	ERROR_MMU_NOTIFIER=" CONFIG_AMD_IOMMU_V2 must be set to =y in the kernel or CONFIG_HSA_AMD will be inaccessible in \`make menuconfig\`."
 	check_extra_config
+
+	if use check-mmu-notifier ; then
+		if ! linux_chkconfig_module "HSA_AMD" ; then
+			if ! linux_chkconfig_builtin "HSA_AMD" ; then
+				die "CONFIG_HSA_AMD must be set to =y or =m in the kernel .config."
+			fi
+		fi
+	fi
 
 	CONFIG_CHECK=" MMU_NOTIFIER"
 	ERROR_MMU_NOTIFIER=" CONFIG_MMU_NOTIFIER must be set to =y in the kernel or it will fail in the link stage."
-
 	check_extra_config
 
 	CONFIG_CHECK=" DRM_AMD_ACP"
 	ERROR_MFD_CORE=" CONFIG_DRM_AMD_ACP (Enable ACP IP support) must be set to =y in the kernel or it will fail in the link stage."
-
 	check_extra_config
 
 	CONFIG_CHECK=" MFD_CORE"
 	ERROR_MFD_CORE=" CONFIG_MFD_CORE must be set to =y or =m in the kernel or it will fail in the link stage."
-
 	check_extra_config
 
 	if use directgma || use ssg ; then
