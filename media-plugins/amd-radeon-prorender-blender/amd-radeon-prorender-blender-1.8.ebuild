@@ -3,7 +3,8 @@
 
 EAPI=6
 
-PYTHON_COMPAT=( python{3_5,3_6,3_7} )
+PYTHON_COMPAT=( python3_6 )
+# for blender's python-single-r1
 
 inherit unpacker python-single-r1
 
@@ -26,7 +27,7 @@ IUSE="+checker denoiser embree +materials system-cffi test video_cards_radeonsi 
 NV_DRIVER_VERSION="368.39"
 RDEPEND="${PYTHON_DEPS}
 	dev-lang/python[xml]
-	>=media-gfx/blender-2.79[${PYTHON_USEDEP},opensubdiv]
+	>=media-gfx/blender-2.79[${PYTHON_SINGLE_USEDEP},opensubdiv]
 	media-libs/opensubdiv[opencl]
 	video_cards_amdgpu? ( media-libs/mesa )
 	|| (
@@ -49,10 +50,10 @@ RDEPEND="${PYTHON_DEPS}
 	x11-libs/libXfixes
 	x11-libs/libxshmfence
 	x11-libs/libXxf86vm
-	dev-python/numpy[${PYTHON_USEDEP}]
-	system-cffi? ( dev-python/cffi[${PYTHON_USEDEP}] )
-	test? ( dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/imageio[${PYTHON_USEDEP}] )
+	$(python_gen_cond_dep 'dev-python/numpy[${PYTHON_MULTI_USEDEP}]')
+	system-cffi? ( $(python_gen_cond_dep 'dev-python/cffi[${PYTHON_MULTI_USEDEP}]') )
+	test? ( $(python_gen_cond_dep 'dev-python/pytest[${PYTHON_MULTI_USEDEP}]')
+		$(python_gen_cond_dep 'dev-python/imageio[${PYTHON_MULTI_USEDEP}]') )
 	"
 DEPEND="${RDEPEND}
 	dev-libs/openssl"
