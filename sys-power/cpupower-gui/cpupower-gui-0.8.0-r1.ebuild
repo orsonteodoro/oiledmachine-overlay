@@ -11,18 +11,18 @@ LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~x86"
 PYTHON_COMPAT=( python3_{6,7,8} )
 SLOT="0"
-DISTUTILS_SINGLE_IMPL="1"
-inherit distutils-r1
+inherit python-r1
 LANGS=(el_GR en en_GB hu zh_CN)
 IUSE="${LANGS[@]/#/l10n_} +l10n_en"
-RDEPEND="dev-libs/glib
+RDEPEND="${PYTHON_DEPS}
+	 dev-libs/glib
 	 dev-python/dbus-python[${PYTHON_USEDEP}]
 	 >=dev-python/pygobject-3.30[${PYTHON_USEDEP}]
 	 x11-libs/gtk+:3
 	 sys-auth/polkit"
 DEPEND="${RDEPEND}"
 RESTRICT="mirror"
-inherit distutils-r1 eutils meson
+inherit eutils meson xdg-utils
 SRC_URI=\
 "https://github.com/vagnum08/cpupower-gui/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
@@ -30,7 +30,7 @@ S="${WORKDIR}/${PN}-${PV}"
 
 src_prepare() {
 	default
-	python-single-r1_pkg_setup
+	python_setup
 }
 
 src_configure() {
@@ -55,4 +55,8 @@ src_install() {
 		sed -i -e "s|#!${T}/${EPYTHON}/bin/python3|#!/usr/bin/${EPYTHON}|g" \
 			"${f}" || die
 	done
+}
+
+pkg_postinst() {
+	xdg_icon_cache_update
 }
