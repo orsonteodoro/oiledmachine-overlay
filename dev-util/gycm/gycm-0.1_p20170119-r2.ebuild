@@ -27,8 +27,8 @@ DEPEND="${PYTHON_DEPS}
 	dev-util/geany
         net-libs/libssh
         net-libs/neon
-	ycmd-slot-1? ( dev-util/ycmd:1[${PYTHON_USEDEP}] )
-	ycmd-slot-2? ( dev-util/ycmd:2[${PYTHON_USEDEP}] )"
+	ycmd-slot-1? ( $(python_gen_cond_dep 'dev-util/ycmd:1[${PYTHON_MULTI_USEDEP}]') )
+	ycmd-slot-2? ( $(python_gen_cond_dep 'dev-util/ycmd:2[${PYTHON_MULTI_USEDEP}]') )"
 RDEPEND="${DEPEND}"
 SRC_URI=\
 "https://github.com/jakeanq/gycm/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
