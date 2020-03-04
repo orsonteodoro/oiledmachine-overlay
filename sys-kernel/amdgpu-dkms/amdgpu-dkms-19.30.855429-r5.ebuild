@@ -21,7 +21,7 @@ PKG_VER_STRING_DIR=${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 SLOT="0/${PV}"
-IUSE="acpi +build +check-mmu-notifier check-pcie check-gpu directgma firmware hybrid-graphics numa rock ssg"
+IUSE="acpi +build +check-mmu-notifier check-pcie check-gpu directgma firmware hybrid-graphics numa rock +sign-modules ssg"
 REQUIRED_USE="rock? ( check-pcie check-gpu )
 	      hybrid-graphics? ( acpi )"
 if [[ "${AMDGPU_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
@@ -363,15 +363,50 @@ src_install() {
 	doins "${WORKDIR}/etc/udev/rules.d/70-amdgpu.rules"
 }
 
+signing_modules() {
+	local k="${1}"
+	if linux_chkconfig_builtin "MODULE_SIG" && use sign-modules ; then
+		local kd="/usr/src/linux-${k}"
+		local md="/lib/modules/${k}"
+		local module_sig_hash="$(grep -Po '(?<=CONFIG_MODULE_SIG_HASH=").*(?=")' ${kd}/.config)"
+		local module_sig_key="$(grep -Po '(?<=CONFIG_MODULE_SIG_KEY=").*(?=")' ${kd}/.config)"
+		module_sig_key="${module_sig_key:-certs/signing_key.pem}"
+		if [[ "${module_sig_key#pkcs11:}" == "${module_sig_key}" && "${module_sig_key#/}" == "${module_sig_key}" ]]; then
+			local key_path="${kd}/${module_sig_key}"
+		else
+			local key_path="${module_sig_key}"
+		fi
+		local cert_path="${kd}/certs/signing_key.x509"
+		sign_module "${md}/updates/amd-sched.ko" || die
+		sign_module "${md}/updates/amdttm.ko" || die
+		sign_module "${md}/updates/amdkcl.ko" || die
+		sign_module "${md}/updates/amdgpu.ko" || die
+	fi
+}
+
+remove_vanilla_driver() {
+	local b="${1}"
+	if [[ -f "${b}/kernel/drivers/gpu/drm/amd/amdgpu/amdgpu.ko" ]] ; then
+		einfo "Removing vanilla amdgpu.ko"
+		rm "${b}/kernel/drivers/gpu/drm/amd/amdgpu/amdgpu.ko"
+	fi
+}
+
+dkms_build() {
+	einfo "Running: \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH}\`"
+	dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} || die
+	einfo "Running: \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH}\`"
+	dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} || die
+	einfo "The modules where installed in /lib/modules/${k}/updates"
+	signing_modules ${k}
+	remove_vanilla_driver "/lib/modules/${k}"
+}
+
 pkg_postinst() {
 	dkms add ${DKMS_PKG_NAME}/${DKMS_PKG_VER}
 	if use build ; then
 		for k in ${AMDGPU_DKMS_KERNELS} ; do
-			einfo "Running: \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH}\`"
-			dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} || die
-			einfo "Running: \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH}\`"
-			dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} || die
-			einfo "The modules where installed in /lib/modules/${kernel_ver}-${kernel_extraversion}/updates"
+			dkms_build
 		done
 	else
 		einfo
@@ -401,10 +436,6 @@ pkg_config() {
 	read kernel_ver
 	einfo "What is your kernel extraversion? (gentoo, pf, git, ...)"
 	read kernel_extraversion
-	check_kernel "${kernel_ver}-${kernel_extraversion}"
-	einfo "Running: \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${kernel_ver}-${kernel_extraversion}/${ARCH}\`"
-	dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${kernel_ver}-${kernel_extraversion}/${ARCH} || die "Your module build failed."
-	einfo "Running: \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${kernel_ver}-${kernel_extraversion}/${ARCH}\`"
-	dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${kernel_ver}-${kernel_extraversion}/${ARCH} || die "Your module install failed."
-	einfo "The modules where installed in /lib/modules/${kernel_ver}-${kernel_extraversion}/updates"
+	local k="${kernel_ver}-${kernel_extraversion}"
+	dkms_build
 }
