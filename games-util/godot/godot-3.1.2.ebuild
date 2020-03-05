@@ -10,13 +10,18 @@ inherit check-reqs desktop eutils godot multilib-build python-r1 scons-utils
 DESCRIPTION="Godot Engine - Multi-platform 2D and 3D game engine"
 HOMEPAGE="http://godotengine.org"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
-LICENSE="Apache-2.0 BitstreamVera BSD CC-BY-3.0 FTL ISC LGPL-2.1 MIT MPL-2.0 OFL-1.1 openssl Unlicense ZLIB"
+LICENSE="Apache-2.0 all-rights-reserved BitstreamVera BSD CC-BY-3.0 FTL ISC LGPL-2.1 MIT MPL-2.0 OFL-1.1 openssl Unlicense ZLIB"
+# Third party packages source code assert all-rights-reserved
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 PND="${PN}-demo-projects"
 EGIT_COMMIT_3_DEMOS_SNAPSHOT="e113915c80ff1cb73942dc0294ee9290e6f566f4" # tag 3 deterministic / static snapshot
 EGIT_COMMIT_3_DEMOS_STABLE="d69cc10a0b8a0ed402b377ba99725af85eff48d5" # latest release
 EGIT_COMMIT_GODOT_CPP_SNAPSHOT="c2ec46f64a24de9a46b06c3e987c306f549ccadb" # 20190805
-SRC_URI="https://github.com/godotengine/godot/archive/${PV}-stable.tar.gz -> ${P}.tar.gz
+FN_SRC="${PV}-stable.tar.gz"
+FN_DEST="${P}.tar.gz"
+A_URL="https://github.com/godotengine/godot/releases"
+A_URL2="https://github.com/godotengine/godot/archive/${PV}-stable.tar.gz"
+SRC_URI="https://github.com/godotengine/godot/archive/${FN_SRC} -> ${FN_DEST}
 	 examples-snapshot? ( https://github.com/godotengine/godot-demo-projects/archive/${EGIT_COMMIT_3_DEMOS_SNAPSHOT}.tar.gz -> ${PND}-${EGIT_COMMIT_3_DEMOS_SNAPSHOT}.tar.gz )
 	 examples-stable? ( https://github.com/godotengine/godot-demo-projects/archive/${EGIT_COMMIT_3_DEMOS_STABLE}.tar.gz -> ${PND}-${EGIT_COMMIT_3_DEMOS_STABLE}.tar.gz )
 	 gdnative? ( https://github.com/GodotNativeTools/godot-cpp/archive/${EGIT_COMMIT_GODOT_CPP_SNAPSHOT}.tar.gz -> godot-cpp-${EGIT_COMMIT_GODOT_CPP_SNAPSHOT}.tar.gz
@@ -24,7 +29,7 @@ SRC_URI="https://github.com/godotengine/godot/archive/${PV}-stable.tar.gz -> ${P
 		     https://github.com/godotengine/godot/commit/2da83a278b80a59076186cd46898d2baa597a1d2.patch -> godot-mono-add-missing-godottools-sln.patch )"
 SLOT="3"
 IUSE="+3d +advanced-gui clang debug docs examples-snapshot examples-stable examples-live lto +optimize-speed optimize-size portable sanitizer server +X"
-IUSE+=" +bmp +etc +exr +hdr +jpeg +minizip +ogg +pvrtc +svg +s3tc +theora +tga +vorbis +webm +webp" # formats formats
+IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +ogg +pvrtc +svg +s3tc +theora +tga +vorbis +webm +webp" # formats formats
 IUSE+=" +cpp +gdnative +gdscript -mono +visual-script" # for scripting languages
 IUSE+=" +bullet +csg +gridmap +mobile-vr +recast +xatlas" # for 3d
 IUSE+=" +enet +mbedtls +upnp +websocket" # for connections
@@ -97,7 +102,7 @@ DEPEND="${RDEPEND}
          dev-util/scons
          virtual/pkgconfig[${MULTILIB_USEDEP}]"
 S="${WORKDIR}/godot-${PV}-stable"
-RESTRICT="mirror"
+RESTRICT="fetch mirror"
 REQUIRED_USE="docs? ( || ( doxygen rst ) )
 	      rst? ( || ( $(python_gen_useflags 'python3*') ) )
 	      examples-live? ( !examples-snapshot !examples-stable )
@@ -142,6 +147,27 @@ pkg_setup() {
 	_set_check_req
 	check-reqs_pkg_setup
 	python_setup
+}
+
+pkg_nofetch() {
+	# fetch restriction is on third party packages with all-rights-reserved in code
+	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+	einfo \
+"\n\
+This package contains an all-rights-reserved for several third-party packages\n\
+and fetch restricted because the font doesn't come from the\n\
+originator's site.  Please read:\n\
+https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses/all-rights-reserved\n\
+\n\
+If you agree, you may download\n\
+  - ${FN_SRC}\n\
+from ${PN}'s GitHub page which the URL should be\n\
+\n\
+${A_URL}\n\
+\n\
+at the green download button and rename it to ${FN_DEST} and place them in\n\
+${distdir} or you can \`wget -O ${distdir}/${FN_DEST} ${A_URL2}\`\n\
+\n"
 }
 
 src_unpack() {
@@ -342,7 +368,7 @@ src_compile() {
 				module_bullet_enabled=$(usex bullet "yes" "no") \
 				module_csg_enabled=$(usex csg "yes" "no") \
 				module_cvtt_enabled=$(usex cvtt "yes" "no") \
-				module_etc_enabled=$(usex etc "yes" "no") \
+				module_etc_enabled=$(usex etc1 "yes" "no") \
 				module_enet_enabled=$(usex enet "yes" "no") \
 				module_freetype_enabled=$(usex freetype "yes" "no") \
 				module_gdnative_enabled=$(usex gdnative "yes" "no") \
@@ -408,8 +434,7 @@ _copy_impl() {
 	local fd="${type2}${SLOT}${selected_platform}${target}${tools}${bitness}${llvm}${mono}${sanitizer}"
 	cp bin/${fs} bin/${fd} || die
 	doexe bin/${fd}
-	dosym "${d_base}/${fd}" /usr/bin/${type2}${SLOT}
-	dosym "${d_base}/${fd}" /usr/bin/${type2}${SLOT}
+	dosym "${d_base}/${fd}" /usr/bin/${type2}${SLOT}-${ABI}
 	if use mono ; then
 		into "${d_base}/bin"
 		dolib.so bin/libmonosgen-2.0.so
@@ -473,6 +498,7 @@ src_install() {
 					doins -r "${S}"/platform/server
 				fi
 			fi
+			make_desktop_entry "/usr/bin/godot${SLOT}-${ABI}" "Godot${SLOT} (${ABI})" "/usr/share/pixmaps/godot${SLOT}.png" "Development;IDE"
 		}
 
 		godot_foreach_impl godot_install_impl
@@ -485,6 +511,5 @@ src_install() {
 		doins -r "${S_DEMOS}"/*
 	fi
 
-	newicon icon.png godot3.png
-	make_desktop_entry "/usr/bin/godot${SLOT}" "Godot${SLOT}" "/usr/share/pixmaps/godot3.png" "Development;IDE"
+	newicon icon.png godot${SLOT}.png
 }
