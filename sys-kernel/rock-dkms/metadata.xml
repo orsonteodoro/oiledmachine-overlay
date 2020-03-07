@@ -18,6 +18,10 @@
     memory, KFD (Kernel Fusion Driver) features, and DirectGMA (Direct 
     Graphic Memory Access) support.  ROCk is also a core component of the
     ROCm platform.
+
+    This amdgpu module contains extra kernel parameters compared to the
+    vanilla amdgpu module that can be used to tune ROCk, SSG, power savings,
+    memory usage.  For details, do `modinfo amdgpu`.
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver</bugs-to>
