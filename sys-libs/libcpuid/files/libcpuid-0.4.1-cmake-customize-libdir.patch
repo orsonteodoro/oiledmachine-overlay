@@ -1,0 +1,29 @@
+--- a/libcpuid/CMakeLists.txt.orig	2020-02-11 14:11:27.000000000 -0800
++++ b/libcpuid/CMakeLists.txt	2020-03-06 20:40:49.926880498 -0800
+@@ -45,7 +45,7 @@ endif ()
+ 
+ #Configuration
+ set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
+-set(config_install_dir "lib/cmake/${PROJECT_NAME}")
++set(config_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
+ set(version_config "${generated_dir}/${PROJECT_NAME}ConfigVersion.cmake")
+ set(project_config "${generated_dir}/${PROJECT_NAME}Config.cmake")
+ set(TARGETS_EXPORT_NAME "${PROJECT_NAME}Targets")
+@@ -72,8 +72,8 @@ configure_package_config_file(
+ #Installation
+ install(TARGETS cpuid
+         EXPORT "${TARGETS_EXPORT_NAME}"
+-        LIBRARY DESTINATION "lib"
+-        ARCHIVE DESTINATION "lib"
++        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+         RUNTIME DESTINATION "bin"
+         INCLUDES DESTINATION "include")
+ 
+@@ -83,4 +83,4 @@ install(FILES "${project_config}" "${ver
+ install(EXPORT "${TARGETS_EXPORT_NAME}"
+         NAMESPACE "${namespace}"
+         DESTINATION "${config_install_dir}"
+-        )
+\ No newline at end of file
++        )
