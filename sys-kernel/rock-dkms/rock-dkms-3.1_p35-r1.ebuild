@@ -141,6 +141,10 @@ pkg_setup_warn() {
 	if [ ! -e "${ROOT}/usr/src/linux-${k}/Module.symvers" ] ; then
 		ewarn "Your kernel sources must have a Module.symvers in the root of the linux sources folder produced from a successful kernel compile beforehand in order to build this driver."
 	fi
+
+	CONFIG_CHECK=" !CC_OPTIMIZE_HARDER"
+	WARNING_NUMA=" CONFIG_CC_OPTIMIZE_HARDER must be not be set in the kernel .config or it may cause a runtime crash on load."
+	check_extra_config
 }
 
 pkg_setup_error() {
@@ -216,6 +220,9 @@ pkg_setup_error() {
 		die "Your kernel sources must have a Module.symvers in the root folder produced from a successful kernel compile beforehand in order to build this driver."
 	fi
 
+	CONFIG_CHECK=" !CC_OPTIMIZE_HARDER"
+	ERROR_NUMA=" CONFIG_CC_OPTIMIZE_HARDER must be not be set in the kernel .config or it may cause a runtime crash on load."
+	check_extra_config
 }
 
 # The sandbox/ebuild doesn't allow to check in setup phase
