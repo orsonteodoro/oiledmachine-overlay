@@ -143,7 +143,7 @@ pkg_setup_warn() {
 	fi
 
 	CONFIG_CHECK=" !CC_OPTIMIZE_HARDER"
-	WARNING_NUMA=" CONFIG_CC_OPTIMIZE_HARDER must be not be set in the kernel .config or it may cause a runtime crash on load."
+	WARNING_CC_OPTIMIZE_HARDER=" CONFIG_CC_OPTIMIZE_HARDER must be not be set in the kernel .config or it may cause a runtime crash on load."
 	check_extra_config
 }
 
@@ -221,7 +221,7 @@ pkg_setup_error() {
 	fi
 
 	CONFIG_CHECK=" !CC_OPTIMIZE_HARDER"
-	ERROR_NUMA=" CONFIG_CC_OPTIMIZE_HARDER must be not be set in the kernel .config or it may cause a runtime crash on load."
+	ERROR_CC_OPTIMIZE_HARDER=" CONFIG_CC_OPTIMIZE_HARDER must be not be set in the kernel .config or it may cause a runtime crash on load."
 	check_extra_config
 }
 
