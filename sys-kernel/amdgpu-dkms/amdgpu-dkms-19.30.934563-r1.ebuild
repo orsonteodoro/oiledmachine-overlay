@@ -391,10 +391,16 @@ signing_modules() {
 
 remove_vanilla_driver() {
 	local b="${1}"
-	if [[ -f "${b}/kernel/drivers/gpu/drm/amd/amdgpu/amdgpu.ko" ]] ; then
-		einfo "Removing vanilla amdgpu.ko"
-		rm "${b}/kernel/drivers/gpu/drm/amd/amdgpu/amdgpu.ko"
+	local path="${b}/${2}"
+	if [[ -f "${path}" ]] ; then
+		einfo "Removing vanilla $(basename ${path})"
+		rm "${path}" || die
 	fi
+}
+
+remove_vanilla_drivers() {
+	remove_vanilla_driver "${1}" "kernel/drivers/gpu/drm/amd/amdgpu/amdgpu.ko"
+	remove_vanilla_driver "${1}" "kernel/drivers/gpu/drm/amd/amdkfd/amdkfd.ko"
 }
 
 dkms_build() {
@@ -404,7 +410,15 @@ dkms_build() {
 	dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} || die
 	einfo "The modules where installed in /lib/modules/${k}/updates"
 	signing_modules ${k}
-	remove_vanilla_driver "/lib/modules/${k}"
+	remove_vanilla_drivers "/lib/modules/${k}"
+}
+
+check_modprobe_conf() {
+	if grep -r -e "options amdgpu virtual_display" /etc/modprobe.d/ ; then
+		local files=$(grep -l -r -e "options amdgpu virtual_display" /etc/modprobe.d/)
+		ewarn "Detected ${files} containing options amdgpu virtual_display."
+		ewarn "You may get a blank screen when loading module.  Add # to the front of that line."
+	fi
 }
 
 pkg_postinst() {
@@ -430,6 +444,7 @@ pkg_postinst() {
 	einfo
 	einfo "Only <${KV_NOT_SUPPORTED} kernels are supported for these kernel modules."
 	einfo
+	check_modprobe_conf
 }
 
 pkg_prerm() {
@@ -437,10 +452,30 @@ pkg_prerm() {
 }
 
 pkg_config() {
-	einfo "What is your kernel version? (5.2.17)"
-	read kernel_ver
-	einfo "What is your kernel extraversion? (gentoo, pf, git, ...)"
-	read kernel_extraversion
-	local k="${kernel_ver}-${kernel_extraversion}"
+	local k
+	local v=$(cat /proc/version | cut -f 3 -d " ")
+	einfo "Found ${v}.  Use this (yes/no/quit)?  Choosing no will allow to pick the version & extraversion."
+	read choice
+	choice="${choice,,}"
+	case ${choice} in
+		yes|y)
+			k="${v}"
+			;;
+		no|n)
+			einfo "What is your kernel version? (5.2.17)"
+			read kernel_ver
+			einfo "What is your kernel extraversion? (gentoo, pf, git, ...)"
+			read kernel_extraversion
+			local k="${kernel_ver}-${kernel_extraversion}"
+			;;
+		quit|q)
+			return
+			;;
+		*)
+			einfo "Try again"
+			return
+			;;
+	esac
 	dkms_build
+	check_modprobe_conf
 }
