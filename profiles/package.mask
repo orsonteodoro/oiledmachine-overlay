@@ -58,10 +58,6 @@ media-libs/amd-radeon-rays-sdk
 # build time failures
 =net-libs/webkit-gtk-2.26.4-r1
 
-# fixing black screen load module problem
-sys-kernel/amdgpu-dkms
-sys-kernel/rock-dkms
-
 # Masked for security reasons
 #--------------------------------------------------------------------------------------------------
 
