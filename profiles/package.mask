@@ -187,3 +187,6 @@ sci-physics/box2d
 sci-physics/bullet
 www-misc/rtv
 www-misc/rainbowstream
+
+# runtime Xorg freeze problem, works okay outside of X
+=sys-kernel/rock-dkms-3.1_p35-r1
