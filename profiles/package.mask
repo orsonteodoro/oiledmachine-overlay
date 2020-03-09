@@ -190,3 +190,4 @@ www-misc/rainbowstream
 
 # runtime Xorg freeze problem, works okay outside of X
 =sys-kernel/rock-dkms-3.1_p35-r1
+=sys-kernel/amdgpu-dkms-19.50.967956
