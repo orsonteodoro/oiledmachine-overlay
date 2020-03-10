@@ -18,19 +18,29 @@ SLOT="0/${PV}"
 IUSE="acpi +build +check-mmu-notifier +check-pcie +check-gpu directgma firmware hybrid-graphics numa +sign-modules ssg"
 REQUIRED_USE="hybrid-graphics? ( acpi )"
 if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
-KV_NOT_SUPPORTED="99999"
+KV_NOT_SUPPORTED_MAX="99999"
+KV_SUPPORTED_MIN="5.0"
 else
-KV_NOT_SUPPORTED="5.5"
+KV_NOT_SUPPORTED_MAX="5.5"
+KV_SUPPORTED_MIN="5.5"
 fi
 RDEPEND="firmware? ( sys-firmware/rock-firmware )
 	 sys-kernel/dkms
-	 || ( <sys-kernel/ck-sources-${KV_NOT_SUPPORTED}
-	      <sys-kernel/gentoo-sources-${KV_NOT_SUPPORTED}
-	      <sys-kernel/git-sources-${KV_NOT_SUPPORTED}
-	      <sys-kernel/ot-sources-${KV_NOT_SUPPORTED}
-	      <sys-kernel/pf-sources-${KV_NOT_SUPPORTED}
-	      <sys-kernel/vanilla-sources-${KV_NOT_SUPPORTED}
-	      <sys-kernel/zen-sources-${KV_NOT_SUPPORTED} )"
+	 || ( <sys-kernel/ck-sources-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/gentoo-sources-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/git-sources-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/ot-sources-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/pf-sources-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/vanilla-sources-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/zen-sources-${KV_NOT_SUPPORTED_MAX} )
+	 || ( >=sys-kernel/ck-sources-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/gentoo-sources-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/git-sources-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/ot-sources-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/pf-sources-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/vanilla-sources-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/zen-sources-${KV_SUPPORTED_MIN} )
+"
 DEPEND="${RDEPEND}
 	check-pcie? ( sys-apps/dmidecode )
 	check-gpu? ( sys-apps/pciutils )"
@@ -56,7 +66,7 @@ pkg_nofetch() {
 }
 
 pkg_pretend() {
-	ewarn "Long Term Support (LTS) kernels 4.4.x, 4.9.x, 4.14.x, 4.19.x, 5.4.x are only supported."
+	ewarn "Long Term Support (LTS) kernels 5.4.x are only supported."
 	# version compatibility at >=5.1 looks sloppy
 	if use check-pcie ; then
 		if has sandbox $FEATURES ; then
@@ -285,7 +295,10 @@ check_hardware() {
 check_kernel() {
 	local k="$1"
 	local kv=$(echo "${k}" | cut -f1 -d'-')
-		if ver_test ${kv} -ge ${KV_NOT_SUPPORTED} ; then
+	if ver_test ${kv} -ge ${KV_NOT_SUPPORTED_MAX} ; then
+		die "Kernel version ${kv} is not supported."
+	fi
+	if ver_test ${kv} -lt ${KV_SUPPORTED_MIN} ; then
 		die "Kernel version ${kv} is not supported."
 	fi
 	KERNEL_DIR="/usr/src/linux-${k}"
