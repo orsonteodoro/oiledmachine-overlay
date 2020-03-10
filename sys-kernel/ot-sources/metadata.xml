@@ -22,9 +22,8 @@
     This USE flag is unstable.
 
     The ROCk kernel driver will install the driver needed for the ROCm platform
-    and better support for AMD GPU enthusiast level hardware.  This package
-    pick mostly enhancement commits and drop the compatibility layer provided
-    by KCL.
+    for workstation level GPUs (Radeon Pro) and GPU farms.  This package
+    picks mostly enhancement commits and drop the kernel compatibility layer (KCL).
     This USE flag is most of the time is broken.
 
     ROCm requires PCIe 3.0 for some older cards except current newer generation
