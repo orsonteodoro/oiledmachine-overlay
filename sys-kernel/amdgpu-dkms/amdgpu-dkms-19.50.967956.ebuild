@@ -61,9 +61,7 @@ AMDGPU_VERSION="5.2.0.19.50"
 ROCK_VER="2.9.0" # See changes in kfd keywords and tag ;  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/commits/master?path[]=drivers&path[]=gpu&path[]=drm&path[]=amd&path[]=amdkfd
 
 PATCHES=( "${FILESDIR}/rock-dkms-2.8_p13-makefile-recognize-gentoo.patch"
-#	  "${FILESDIR}/rock-dkms-2.8_p13-fix-ac_kernel_compile_ifelse.patch"
 	  "${FILESDIR}/amdgpu-dkms-19.50.967956-enable-mmu_notifier.patch"
-#	  "${FILESDIR}/rock-dkms-2.8_p13-fix-configure-test-invalidate_range_start-wants-2-args-requires-config-mmu-notifier.patch"
 	  "${FILESDIR}/amdgpu-dkms-19.50.967956-no-firmware-install.patch"
 	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
 	  "${FILESDIR}/amdgpu-dkms-19.50.967956-add-header-to-kcl_mn_c.patch" )
