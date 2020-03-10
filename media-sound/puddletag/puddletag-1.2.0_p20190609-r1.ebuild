@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python3_{6,7,8} )
 
 inherit distutils-r1 fdo-mime
 
@@ -23,6 +23,7 @@ RDEPEND="acoustid? ( >=media-libs/chromaprint-0.6 )
 	 >=dev-python/configobj-4.7.2-r1[${PYTHON_USEDEP}]
 	 >=dev-python/lxml-3.0.1[${PYTHON_USEDEP}]
 	 >=dev-python/pyparsing-1.5.1[${PYTHON_USEDEP}]
+	 dev-python/python-levenshtein[${PYTHON_USEDEP}]
 	 >=dev-python/sip-4.14.2-r1:0[${PYTHON_USEDEP}]
 	 >=media-libs/mutagen-1.21[${PYTHON_USEDEP}]
 	 musicbrainz? ( >=dev-python/python-musicbrainz-0.7.4-r1[${PYTHON_USEDEP}] )
@@ -30,6 +31,11 @@ RDEPEND="acoustid? ( >=media-libs/chromaprint-0.6 )
 DEPEND="${RDEPEND}"
 
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}/source"
+
+src_prepare() {
+	default
+	futurize -w -v -0 "${S}" || die
+}
 
 pkg_postinst() {
 	einfo "The package saves autosaves metadata, but the file commands to explicitly save are disabled."
