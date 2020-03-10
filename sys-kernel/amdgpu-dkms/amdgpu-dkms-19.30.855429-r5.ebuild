@@ -298,7 +298,7 @@ check_kernel() {
 	local k="$1"
 	local kv=$(echo "${k}" | cut -f1 -d'-')
 	if ver_test ${kv} -ge ${KV_NOT_SUPPORTED} ; then
-		die "Kernel version ${kv} is not supported."
+		die "Kernel version ${kv} is not supported.  Update your AMDGPU_DKMS_KERNELS environmental variable."
 	fi
 	KERNEL_DIR="/usr/src/linux-${k}"
 	get_version || die
