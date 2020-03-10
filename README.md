@@ -250,6 +250,5 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | x11-drivers/xf86-input-libinput | Kept around for amdgpu-pro requirement for older xorg-server ABI. |
 | x11-drivers/xf86-video-amdgpu | Kept around for amdgpu-pro requirement for older xorg-server ABI. |
 | x11-drivers/xf86-video-ati | Kept around for amdgpu-pro requirement for older xorg-server ABI. |
-| x11-misc/emoji-keyboard | This is an emoji keyboard for Linux. |
 | x11-wm/dwm | This ebuild fixes the emoji titlebar crash and has integrated Fibonacci layout patch applied. |
 | x11-wm/xpra | This is an alternative VNC like client.  It's kept around for Firejail.
