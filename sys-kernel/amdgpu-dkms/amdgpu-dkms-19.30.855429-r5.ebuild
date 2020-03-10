@@ -299,7 +299,7 @@ check_hardware() {
 check_kernel() {
 	local k="$1"
 	local kv=$(echo "${k}" | cut -f1 -d'-')
-		if ver_test ${kv} -ge ${KV_NOT_SUPPORTED} ; then
+	if ver_test ${kv} -ge ${KV_NOT_SUPPORTED} ; then
 		die "Kernel version ${kv} is not supported."
 	fi
 	KERNEL_DIR="/usr/src/linux-${k}"

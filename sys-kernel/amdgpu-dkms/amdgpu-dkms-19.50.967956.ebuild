@@ -25,19 +25,30 @@ IUSE="acpi +build +check-mmu-notifier check-pcie check-gpu directgma firmware hy
 REQUIRED_USE="rock? ( check-pcie check-gpu )
 	      hybrid-graphics? ( acpi )"
 if [[ "${AMDGPU_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
-KV_NOT_SUPPORTED="99999"
+KV_NOT_SUPPORTED_MAX="99999"
+KV_SUPPORTED_MIN="5.0"
 else
-KV_NOT_SUPPORTED="5.0"
+# See https://cgit.freedesktop.org/~agd5f/linux/tree/Makefile?h=amd-19.50
+KV_NOT_SUPPORTED_MAX="5.2"
+KV_SUPPORTED_MIN="5.0"
 fi
 RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
 	 sys-kernel/dkms
-	 || ( <sys-kernel/ck-sources-${KV_NOT_SUPPORTED}
-	      <sys-kernel/gentoo-sources-${KV_NOT_SUPPORTED}
-	      <sys-kernel/git-sources-${KV_NOT_SUPPORTED}
-	      <sys-kernel/ot-sources-${KV_NOT_SUPPORTED}
-	      <sys-kernel/pf-sources-${KV_NOT_SUPPORTED}
-	      <sys-kernel/vanilla-sources-${KV_NOT_SUPPORTED}
-	      <sys-kernel/zen-sources-${KV_NOT_SUPPORTED} )"
+	 || ( <sys-kernel/ck-sources-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/gentoo-sources-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/git-sources-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/ot-sources-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/pf-sources-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/vanilla-sources-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/zen-sources-${KV_NOT_SUPPORTED_MAX} )
+	 || ( >=sys-kernel/ck-sources-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/gentoo-sources-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/git-sources-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/ot-sources-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/pf-sources-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/vanilla-sources-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/zen-sources-${KV_SUPPORTED_MIN} )
+"
 DEPEND="${RDEPEND}
 	check-pcie? ( sys-apps/dmidecode )
 	check-gpu? ( sys-apps/pciutils )"
@@ -65,8 +76,8 @@ pkg_nofetch() {
 }
 
 pkg_pretend() {
-	ewarn "Long Term Support (LTS) kernels 4.4.x, 4.9.x, 4.14.x, 4.19.x are only supported."
-	# version compatibility at >=5.1 looks sloppy
+	ewarn "Kernels 5.0.x <= x <= 5.2.x are only supported.  It looks like no LTS kernel support for this release."
+	ewarn "It's recommend to use rock-dkms instead for 5.4.x Long Term Support (LTS)."
 	if use check-pcie ; then
 		if has sandbox $FEATURES ; then
 			die "${PN} require sandbox to be disabled in FEATURES when testing hardware with check-pcie USE flag."
@@ -294,7 +305,10 @@ check_hardware() {
 check_kernel() {
 	local k="$1"
 	local kv=$(echo "${k}" | cut -f1 -d'-')
-		if ver_test ${kv} -ge ${KV_NOT_SUPPORTED} ; then
+	if ver_test ${kv} -ge ${KV_NOT_SUPPORTED_MAX} ; then
+		die "Kernel version ${kv} is not supported."
+	fi
+	if ver_test ${kv} -lt ${KV_SUPPORTED_MIN} ; then
 		die "Kernel version ${kv} is not supported."
 	fi
 	KERNEL_DIR="/usr/src/linux-${k}"
