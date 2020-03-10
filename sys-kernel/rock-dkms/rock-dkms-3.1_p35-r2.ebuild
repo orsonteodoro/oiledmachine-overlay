@@ -22,7 +22,7 @@ KV_NOT_SUPPORTED_MAX="99999"
 KV_SUPPORTED_MIN="5.0"
 else
 KV_NOT_SUPPORTED_MAX="5.5"
-KV_SUPPORTED_MIN="5.5"
+KV_SUPPORTED_MIN="5.0"
 fi
 RDEPEND="firmware? ( sys-firmware/rock-firmware )
 	 sys-kernel/dkms
