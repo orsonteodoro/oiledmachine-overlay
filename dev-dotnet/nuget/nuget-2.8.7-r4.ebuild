@@ -7,8 +7,7 @@ HOMEPAGE="http://nuget.codeplex.com"
 LICENSE="Apache-2.0"
 KEYWORDS="~amd64 ~x86"
 USE_DOTNET="net40"
-IUSE="|| ( ${USE_DOTNET} )"
-REQUIRED_USE="gac? ( net40 )"
+REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 )"
 SLOT="0/${PV}"
 DEPEND="<=dev-dotnet/xdt-for-monodevelop-2.8.2[gac]
 	 !dev-dotnet/nuget-codeplex
