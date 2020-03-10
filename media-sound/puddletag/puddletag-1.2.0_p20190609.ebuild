@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python2_7 )
 
 inherit distutils-r1 fdo-mime
 
@@ -31,11 +31,6 @@ RDEPEND="acoustid? ( >=media-libs/chromaprint-0.6 )
 DEPEND="${RDEPEND}"
 
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}/source"
-
-src_prepare() {
-	default
-	futurize -w -v -0 "${S}" || die
-}
 
 pkg_postinst() {
 	einfo "The package saves autosaves metadata, but the file commands to explicitly save are disabled."
