@@ -52,9 +52,7 @@ DC_VER="3.2.68"
 AMDGPU_VERSION="5.4.4"
 
 PATCHES=( "${FILESDIR}/rock-dkms-2.8_p13-makefile-recognize-gentoo.patch"
-#	  "${FILESDIR}/rock-dkms-2.8_p13-fix-ac_kernel_compile_ifelse.patch"
 	  "${FILESDIR}/rock-dkms-3.0_p6-enable-mmu_notifier.patch"
-#	  "${FILESDIR}/rock-dkms-2.8_p13-fix-configure-test-invalidate_range_start-wants-2-args-requires-config-mmu-notifier.patch"
 	  "${FILESDIR}/rock-dkms-3.1_p35-no-firmware-install.patch"
 	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch" )
 
