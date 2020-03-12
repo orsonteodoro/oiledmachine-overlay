@@ -3,7 +3,7 @@
 
 EAPI="6"
 
-K_GENPATCHES_VER="182"
+K_GENPATCHES_VER="183"
 
 # Not supported by the Gentoo crew
 K_SECURITY_UNSUPPORTED="1"
