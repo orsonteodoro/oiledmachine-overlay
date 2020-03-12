@@ -460,15 +460,13 @@ pkg_postinst() {
 	einfo "Only <${KV_NOT_SUPPORTED} kernels are supported for these kernel modules."
 	einfo
 
-	if use directgma || use ssg ; then
-		einfo "DirectGMA/SSG is disabled by default.  You need to explicitly enable it in your bootloader config."
-		einfo "You need to add to your kernel parameters:"
-		einfo
-		einfo "  amdgpu.ssg=1 amdgpu.direct_gma_size=X"
-		einfo
-		einfo "where X is in MB with max limit of 96"
-		einfo "For details see:  https://www.amd.com/en/support/kb/release-notes/rn-radeonprossg-linux"
-	fi
+	einfo "DirectGMA / SSG is disabled by default.  You need to explicitly enable it in your bootloader config."
+	einfo "You need to add to your kernel parameters:"
+	einfo
+	einfo "  amdgpu.ssg=1 amdgpu.direct_gma_size=X"
+	einfo
+	einfo "where X is in MB with max limit of 96"
+	einfo "For details see:  https://www.amd.com/en/support/kb/release-notes/rn-radeonprossg-linux"
 
 	check_modprobe_conf
 }
