@@ -19,7 +19,7 @@ if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
 else
 	SRC_URI="https://mesa.freedesktop.org/archive/${MY_P}.tar.xz"
-	KEYWORDS="~alpha amd64 arm arm64 hppa ia64 ~mips ppc ppc64 ~s390 ~sh sparc x86 ~amd64-linux ~x86-linux ~sparc-solaris ~x64-solaris ~x86-solaris"
+	KEYWORDS="~alpha amd64 arm arm64 ~hppa ia64 ~mips ppc ppc64 ~s390 ~sh sparc x86 ~amd64-linux ~x86-linux ~sparc-solaris ~x64-solaris ~x86-solaris"
 fi
 
 LICENSE="MIT"
@@ -35,7 +35,7 @@ for card in ${VIDEO_CARDS}; do
 done
 
 IUSE="${IUSE_VIDEO_CARDS}
-	+classic d3d9 debug +dri3 +egl +gallium +gbm gles1 +gles2 libglvnd +llvm
+	+classic d3d9 debug +dri3 +egl +gallium +gbm gles1 +gles2 +libglvnd +llvm
 	lm-sensors opencl osmesa pax_kernel selinux test unwind vaapi valgrind
 	vdpau vulkan vulkan-overlay wayland +X xa xvmc"
 IUSE+=" openmax omx-bellagio omx-tizonia"
@@ -71,15 +71,14 @@ REQUIRED_USE="
 	xa? ( X )
 	xvmc? ( X )
 "
-REQUIRED_USE+=" openmax? ( egl gallium || ( video_cards_r600 video_cards_radeonsi video_cards_nouveau ) || ( omx-bellagio omx-tizonia ) )"
 
-LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.99"
+LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.100"
 RDEPEND="
 	!app-eselect/eselect-mesa
 	>=dev-libs/expat-2.1.0-r3:=[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.8[${MULTILIB_USEDEP}]
 	libglvnd? (
-		>=media-libs/libglvnd-1.2.0-r1[${MULTILIB_USEDEP}]
+		>=media-libs/libglvnd-1.2.0-r1[X?,${MULTILIB_USEDEP}]
 		!app-eselect/eselect-opengl
 	)
 	!libglvnd? (
@@ -116,7 +115,6 @@ RDEPEND="
 		>=dev-libs/wayland-protocols-1.8
 	)
 	${LIBDRM_DEPSTRING}[video_cards_freedreno?,video_cards_nouveau?,video_cards_vc4?,video_cards_vivante?,video_cards_vmware?,${MULTILIB_USEDEP}]
-
 	video_cards_intel? (
 		!video_cards_i965? ( ${LIBDRM_DEPSTRING}[video_cards_intel] )
 	)
@@ -156,13 +154,11 @@ RDEPEND="${RDEPEND}
 # 1. List all the working slots (with min versions) in ||, newest first.
 # 2. Update the := to specify *max* version, e.g. < 10.
 # 3. Specify LLVM_MAX_SLOT, e.g. 9.
-LLVM_MAX_SLOT="10"
+LLVM_MAX_SLOT="9"
 LLVM_DEPSTR="
 	|| (
-		sys-devel/llvm:10[${MULTILIB_USEDEP}]
 		sys-devel/llvm:9[${MULTILIB_USEDEP}]
 		sys-devel/llvm:8[${MULTILIB_USEDEP}]
-		sys-devel/llvm:7[${MULTILIB_USEDEP}]
 	)
 	sys-devel/llvm:=[${MULTILIB_USEDEP}]
 "
@@ -170,51 +166,53 @@ LLVM_DEPSTR_AMDGPU=${LLVM_DEPSTR//]/,llvm_targets_AMDGPU(-)]}
 CLANG_DEPSTR=${LLVM_DEPSTR//llvm/clang}
 CLANG_DEPSTR_AMDGPU=${CLANG_DEPSTR//]/,llvm_targets_AMDGPU(-)]}
 RDEPEND="${RDEPEND}
-	llvm? (
-		opencl? (
-			video_cards_r600? (
-				${CLANG_DEPSTR_AMDGPU}
-			)
-			!video_cards_r600? (
-				video_cards_radeonsi? (
+	gallium? (
+		llvm? (
+			opencl? (
+				video_cards_r600? (
 					${CLANG_DEPSTR_AMDGPU}
 				)
-			)
-			!video_cards_r600? (
-				!video_cards_radeonsi? (
-					video_cards_radeon? (
+				!video_cards_r600? (
+					video_cards_radeonsi? (
 						${CLANG_DEPSTR_AMDGPU}
 					)
 				)
-			)
-			!video_cards_r600? (
-				!video_cards_radeon? (
+				!video_cards_r600? (
 					!video_cards_radeonsi? (
-						${CLANG_DEPSTR}
+						video_cards_radeon? (
+							${CLANG_DEPSTR_AMDGPU}
+						)
+					)
+				)
+				!video_cards_r600? (
+					!video_cards_radeon? (
+						!video_cards_radeonsi? (
+							${CLANG_DEPSTR}
+						)
 					)
 				)
 			)
-		)
-		!opencl? (
-			video_cards_r600? (
-				${LLVM_DEPSTR_AMDGPU}
-			)
-			!video_cards_r600? (
-				video_cards_radeonsi? (
+			!opencl? (
+				video_cards_r600? (
 					${LLVM_DEPSTR_AMDGPU}
 				)
-			)
-			!video_cards_r600? (
-				!video_cards_radeonsi? (
-					video_cards_radeon? (
+				!video_cards_r600? (
+					video_cards_radeonsi? (
 						${LLVM_DEPSTR_AMDGPU}
 					)
 				)
-			)
-			!video_cards_r600? (
-				!video_cards_radeon? (
+				!video_cards_r600? (
 					!video_cards_radeonsi? (
-						${LLVM_DEPSTR}
+						video_cards_radeon? (
+							${LLVM_DEPSTR_AMDGPU}
+						)
+					)
+				)
+				!video_cards_r600? (
+					!video_cards_radeon? (
+						!video_cards_radeonsi? (
+							${LLVM_DEPSTR}
+						)
 					)
 				)
 			)
@@ -365,7 +363,7 @@ multilib_src_configure() {
 		fi
 	fi
 
-	emesonargs+=( -Dplatforms=surfaceless$(use X && echo ",x11")$(use wayland && echo ",wayland")$(use gbm && echo ",drm") )
+	emesonargs+=( -Dplatforms=$(use X && echo "x11,")$(use wayland && echo "wayland,")$(use gbm && echo "drm,")surfaceless )
 
 	if use gallium; then
 		emesonargs+=(
