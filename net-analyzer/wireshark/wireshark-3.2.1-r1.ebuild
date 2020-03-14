@@ -7,7 +7,8 @@ inherit fcaps flag-o-matic multilib python-any-r1 qmake-utils user xdg-utils cma
 
 DESCRIPTION="A network protocol analyzer formerly known as ethereal"
 HOMEPAGE="https://www.wireshark.org/"
-SRC_URI="https://www.wireshark.org/download/src/all-versions/${P/_/}.tar.xz"
+SRC_URI="https://www.wireshark.org/download/src/all-versions/${P/_/}.tar.xz
+https://code.wireshark.org/review/gitweb?p=wireshark.git;a=patch;h=086003c9d616906e08bbeeab9c17b3aa4c6ff850;hp=3a86df5bbe2476ae1069198f21739c34fc687bfd -> ${PN}-${PV}-CVE-2020-9431.patch"
 LICENSE="GPL-2"
 
 SLOT="0/${PV}"
@@ -91,6 +92,7 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-99999999-androiddump-wsutil.patch
 	"${FILESDIR}"/${PN}-99999999-qtsvg.patch
 	"${FILESDIR}"/${PN}-99999999-ui-needs-wiretap.patch
+	"${DISTDIR}"/${PN}-${PV}-CVE-2020-9431.patch
 )
 
 pkg_setup() {
