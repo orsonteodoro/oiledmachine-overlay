@@ -53,7 +53,7 @@ AMDGPU_VERSION="5.4.4"
 
 PATCHES=( "${FILESDIR}/rock-dkms-2.8_p13-makefile-recognize-gentoo.patch"
 	  "${FILESDIR}/rock-dkms-3.0_p6-enable-mmu_notifier.patch"
-	  "${FILESDIR}/rock-dkms-3.1_p35-no-firmware-install.patch"
+	  "${FILESDIR}/rock-dkms-3.1_p44-no-firmware-install.patch"
 	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch" )
 
 pkg_nofetch() {

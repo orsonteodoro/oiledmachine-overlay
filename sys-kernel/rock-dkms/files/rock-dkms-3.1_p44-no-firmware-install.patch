@@ -19,9 +19,9 @@
  
 -FW_DIR="/lib/firmware/$KERNELVER"
 -mkdir -p $FW_DIR
--cp -ar /usr/src/amdgpu-3.1-35/firmware/radeon $FW_DIR
--cp -ar /usr/src/amdgpu-3.1-35/firmware/amdgpu $FW_DIR
+-cp -ar /usr/src/amdgpu-3.1-44/firmware/radeon $FW_DIR
+-cp -ar /usr/src/amdgpu-3.1-44/firmware/amdgpu $FW_DIR
 +#FW_DIR="/lib/firmware/$KERNELVER"
 +#mkdir -p $FW_DIR
-+#cp -ar /usr/src/amdgpu-3.1-35/firmware/radeon $FW_DIR
-+#cp -ar /usr/src/amdgpu-3.1-35/firmware/amdgpu $FW_DIR
++#cp -ar /usr/src/amdgpu-3.1-44/firmware/radeon $FW_DIR
++#cp -ar /usr/src/amdgpu-3.1-44/firmware/amdgpu $FW_DIR
