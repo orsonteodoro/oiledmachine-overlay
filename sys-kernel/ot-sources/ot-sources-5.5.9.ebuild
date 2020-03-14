@@ -3,8 +3,8 @@
 
 EAPI="6"
 
-K_GENPATCHES_VER="10"
-PATCH_BMQ_VER="5.5-r2"
+K_GENPATCHES_VER="11"
+PATCH_BMQ_VER="5.5-r3"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
 
 # Not supported by the Gentoo crew
