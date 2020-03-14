@@ -171,9 +171,6 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | media-gfx/caesiumclt | This is a command line image compressor for PNG and JPEG files. |
 | media-gfx/mojoshader | For urho3d shader support. |
 | media-gfx/nvidia-texture-tools | This one builds the C# language binding and nvtt native library required for MonoGame.  You need to install this one from the repository for MonoGame to compile correctly.  This ebuild generates Nvidia.TextureTools.dll per each vc{10,8,9,12,monogame} because upstream don't delete one of them so a consumer may depend on the old one.  You need to enable the `monogame` USE flag to generate the proper older Nvidia.TextureTools.dll. |
-| media-libs/amd-radeon-image-filter-library | TBA |
-| media-libs/amd-radeon-prorender-sdk | TBA |
-| media-libs/amd-radeon-rays-sdk | TBA |
 | media-libs/glfw | TBA |
 | media-libs/libcaca | This library contains an experimental special 256 color patch from Ben Wiley Sittler.  I don't know if the patch actually works from emperical tests.  Maybe it is just me or I forward patched it wrong.  I use the experimental 256 color for facy to render Facebook photos, animated GIFs, and Facebook videos to try to better render skin color.  I still think Termpic colors rendering is better. |
 | media-libs/libcaesium | For caesium image compression. |

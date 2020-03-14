@@ -50,11 +50,6 @@ dev-dotnet/tesseract
 dev-dotnet/tiledsharp
 dev-dotnet/xwt
 
-# new / planned, but may be removed
-media-libs/amd-radeon-image-filter-library
-media-libs/amd-radeon-prorender-sdk
-media-libs/amd-radeon-rays-sdk
-
 # build time failures
 =net-libs/webkit-gtk-2.26.4-r1
 
