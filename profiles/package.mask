@@ -104,8 +104,6 @@ sys-fs/jmtpfs
 sys-fs/mtpfs
 sys-process/psdoom-ng
 virtual/setiathome
-www-client/casperjs
-www-client/phantomjs
 www-misc/facy
 www-servers/civetweb
 
