@@ -65,7 +65,6 @@ pkg_nofetch() {
 
 pkg_pretend() {
 	ewarn "Long Term Support (LTS) kernels 5.4.x are only supported."
-	# version compatibility at >=5.1 looks sloppy
 	if use check-pcie ; then
 		if has sandbox $FEATURES ; then
 			die "${PN} require sandbox to be disabled in FEATURES when testing hardware with check-pcie USE flag."
