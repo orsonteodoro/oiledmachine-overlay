@@ -52,7 +52,6 @@ dev-dotnet/xwt
 
 # build time failures
 =net-libs/webkit-gtk-2.26.4-r1
-=sys-kernel/rock-dkms-3.1_p44
 
 # Masked for security reasons
 #--------------------------------------------------------------------------------------------------
