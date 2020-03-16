@@ -52,7 +52,7 @@ DEPEND="${RDEPEND}
 	test? ( dev-cpp/gtest[${MULTILIB_USEDEP}]
 		dev-libs/boost[${MULTILIB_USEDEP}]
 		x11-libs/libX11[${MULTILIB_USEDEP}] )"
-EGIT_COMMIT="35456bba42c159606877b56f97999a1ff27a3937"
+EGIT_COMMIT="9bdb4528e7e3ee76e93ed798b35f0b7847493315"
 SRC_URI=\
 "https://github.com/enigma-dev/enigma-dev/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
@@ -369,6 +369,10 @@ src_install() {
 		multilib_foreach_abi ml_install_abi
 	}
 	enigma_foreach_impl platform_install
+
+	cat ENIGMAsystem/SHELL/Universal_System/random.cpp | head -n 86 \
+		> "${T}/license.random_cpp" || die
+	dodoc "${T}/license.random_cpp"
 }
 
 pkg_postinst()
