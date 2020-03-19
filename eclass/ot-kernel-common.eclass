@@ -375,6 +375,11 @@ function apply_zentune() {
 	_dpatch "${PATCH_OPS} -N" "${T}/${ZENTUNE_FN}"
 }
 
+function apply_zentune_revert_5_5() {
+	einfo "Applying zentune revert(s) for ${K_MAJOR_MINOR}"
+	_dpatch "${PATCH_OPS} -N" "${DISTDIR}/${ZENTUNE_5_5_ADDENDIUM_DEST_FN}"
+}
+
 # @FUNCTION: apply_zenmisc
 # @DESCRIPTION:
 # Applies whitelisted Zen misc patches.
@@ -986,6 +991,9 @@ function ot-kernel-common_src_unpack() {
 		if use zentune ; then
 			fetch_zentune
 			apply_zentune
+			if ver_test ${K_MAJOR_MINOR} -eq 5.5 ; then
+				apply_zentune_revert_5_5
+			fi
 		fi
 	fi
 

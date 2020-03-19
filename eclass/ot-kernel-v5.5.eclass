@@ -32,6 +32,9 @@ PATCH_BFQ_VER="5.5"
 PATCH_BMQ_MAJOR_MINOR="5.5"
 DISABLE_DEBUG_V="1.1"
 ZENTUNE_5_5_COMMIT="e9a38f81725b3024defed48f6f3efbbd622c2746..070b844e9e5485b8c14c85ae48747157893df148"
+ZENTUNE_5_5_ADDENDIUM_SRC_FN="99a750246b733bf1f9178458c5b8193ad4626de0.patch"
+ZENTUNE_5_5_ADDENDIUM_DEST_FN="zentune-99a750246b733bf1f9178458c5b8193ad4626de0.patch"
+ZENTUNE_5_5_ADDENDIUM_URI="https://github.com/torvalds/linux/commit/${ZENTUNE_5_5_ADDENDIUM_SRC_FN} -> ${ZENTUNE_5_5_ADDENDIUM_DEST_FN}"
 
 # KV is kernel version, for the variable below means a commit hash
 # "around a major.minor release."
@@ -121,6 +124,7 @@ SRC_URI+=" ${KERNEL_URI}
 	   ${KERNEL_PATCH_URLS[@]}
 "
 SRC_URI+=" ${UKSM_SRC_URL}"
+SRC_URI+=" ${ZENTUNE_5_5_ADDENDIUM_URI} "
 
 SRC_URI+=\
 "https://github.com/torvalds/linux/commit/4b3e30ed3ec7864e798403a63ff2e96bd0c19ab0.patch \
