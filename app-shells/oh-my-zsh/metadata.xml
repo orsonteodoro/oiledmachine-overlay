@@ -218,6 +218,7 @@
     <flag name="plugins_dash">Installs the dash plugin.</flag>
     <flag name="plugins_debian">Installs the debian plugin.</flag>
     <flag name="plugins_dircycle">Installs the dircycle plugin.</flag>
+    <flag name="plugins_direnv">Installs the direnv plugin.</flag>
     <flag name="plugins_dirhistory">Installs the dirhistory plugin.</flag>
     <flag name="plugins_dirpersist">Installs the dirpersist plugin.</flag>
     <flag name="plugins_django">Installs the django plugin.</flag>
