@@ -7,8 +7,7 @@ EAPI=7
 DESCRIPTION="libyuv is an open source project that includes YUV scaling and \
 conversion functionality."
 HOMEPAGE="https://chromium.googlesource.com/libyuv/libyuv/"
-LICENSE="BSD all-rights-reserved"
-# The source code asserts all-rights-reserved
+LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
 inherit multilib-minimal
 IUSE="static system-gflags test"
@@ -19,7 +18,7 @@ DEPEND="${RDEPEND}
 	dev-util/cmake"
 SLOT="0/${PV}"
 inherit cmake-utils
-EGIT_COMMIT="3db22ebc4b6fa3c63bb930f2123446764334fe9a"
+EGIT_COMMIT="b5e223ac4c8ccfbc6bef874fb5e0781809570170"
 EGIT_REPO_URI="https://chromium.googlesource.com/libyuv/libyuv"
 FN_DEST="${P}.tar.gz"
 FN_SRC="${EGIT_COMMIT}.tar.gz"
@@ -27,35 +26,9 @@ SRC_URI=\
 "https://chromium.googlesource.com/libyuv/libyuv/+archive/${FN_SRC}\
 	 -> ${P}.tar.gz"
 S="${WORKDIR}/${P}"
-RESTRICT="fetch mirror"
+RESTRICT="mirror"
 DOCS=( AUTHORS LICENSE PATENTS README.chromium README.md )
 REPO_DL_PAGE="https://chromium.googlesource.com/libyuv/libyuv/+/${EGIT_COMMIT}"
-
-pkg_nofetch() {
-	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-	local homepage="${REPO_DL_PAGE}"
-	einfo \
-"This package asserts all rights reserved in the source code.  Please read:\n\
-\n\
-  https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses/all-rights-reserved\n\
-\n\
-If you agree, please download\n\
-\n\
-  ${FN_SRC}\n\
-\n\
-from\n\
-\n\
-  ${homepage}\n\
-\n\
-via the tgz link and rename it to ${FN_DEST} place it in\n\
-\n\
-  ${distdir}\n\
-\n\
-Or, do:\n\
-\n\
-  wget -O ${distdir}/${FN_DEST} https://chromium.googlesource.com/libyuv/libyuv/+archive/${EGIT_COMMIT}.tar.gz\n\
-\n"
-}
 
 src_unpack() {
 	mkdir -p "${S}"
