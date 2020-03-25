@@ -22,17 +22,25 @@
 # zen-kernel 5.3/misc:
 #   https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/misc
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
+#   https://github.com/torvalds/linux/compare/v5.5...zen-kernel:5.5/zen-sauce
 # zen-kernel 5.3/futex-backports
 #   https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/futex-backports
 #   The original patch:
 #     https://lwn.net/Articles/794969/
+# zen-kernel 5.4/futex-backports
+#   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/futex-backports
+# zen-kernel 5.5/futex-multiple-wait-v3
+#   https://github.com/torvalds/linux/compare/v5.5...zen-kernel:5.5/futex-multiple-wait-v3
 # O3 (Optimize Harder):
 #   https://github.com/torvalds/linux/commit/e80b5baf29ce0fceb04ee4d05455c1e3a1871732
 #   https://github.com/torvalds/linux/commit/360c6833e07cc9fdef5746f6bc45bdbc7212288d
 # GraySky2 GCC Patches:
 #   https://github.com/graysky2/kernel_gcc_patch
 # MUQSS CPU Scheduler:
+#   http://ck.kolivas.org/patches/muqss/4.0/4.14/
 #   http://ck.kolivas.org/patches/5.0/5.3/5.3-ck1/
+#   http://ck.kolivas.org/patches/5.0/5.4/5.4-ck1/
+#   http://ck.kolivas.org/patches/5.0/5.5/5.5-ck1/
 # PDS CPU Scheduler:
 #   http://cchalpha.blogspot.com/search/label/PDS
 # BMQ CPU Scheduler:
@@ -41,6 +49,8 @@
 #   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
 # BFQ updates:
 #   https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/bfq-backports
+#   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/bfq-backports
+#   https://github.com/torvalds/linux/compare/v5.5...zen-kernel:5.5/bfq-backports
 # TRESOR:
 #   http://www1.informatik.uni-erlangen.de/tresor
 
@@ -55,8 +65,6 @@
 
 # Parts that still need to be developed:
 # TRESOR - incomplete API
-
-USE_PATACHIE=${USE_PATACHIE:=0}
 
 case ${EAPI:-0} in
 	7) die "this eclass doesn't support EAPI ${EAPI}" ;;
@@ -73,56 +81,9 @@ HOMEPAGE+="
 	  http://cchalpha.blogspot.com/search/label/PDS
 	  https://cchalpha.blogspot.com/search/label/BMQ
 	  http://www1.informatik.uni-erlangen.de/tresor
-	  https://rocm.github.io/
           "
 
-AMD_STAGING_DRM_NEXT_HEAD_C="amd-staging-drm-next"
-
-AMD_STAGING_DRM_NEXT_DIR="amd-staging-drm-next"
-
-# This should be pinned to KV or it may exhibit runtime errors
-# The latest commit I tested which should be ideally head at that time
-if [[ "${K_MAJOR_MINOR}" == "5.3" ]] ; then
-AMD_STAGING_DRM_NEXT_SNAPSHOT_S="2019-10-04" # commit time
-AMD_STAGING_DRM_NEXT_SNAPSHOT_C="e025c334b6c7aa66c0fc67548643bd52c4a39eef" # merge without problems
-#AMD_STAGING_DRM_NEXT_SNAPSHOT_S="2019-10-28" # commit time
-#AMD_STAGING_DRM_NEXT_SNAPSHOT_C="8799b4cfde6229d2b9bc3d983cc831ccb893b30c" # not working
-#AMD_STAGING_DRM_NEXT_SNAPSHOT_S="2019-12-05" # commit time
-#AMD_STAGING_DRM_NEXT_SNAPSHOT_C="3bbca1bf0dc64ecf50abc312737ee8a62a97d0a9" # not working
-elif [[ "${K_MAJOR_MINOR}" == "5.4" ]] ; then
-AMD_STAGING_DRM_NEXT_SNAPSHOT_S="2019-12-02" # commit time
-AMD_STAGING_DRM_NEXT_SNAPSHOT_C="54e90c3db30c4514a941556cd0896688af88303f"
-fi
-# 2019-10-04 drm/amdgpu: remove redundant variable r and redundant return statement
-
-#1234567890123456789012345678901234567890123456789012345678901234567890123456789
-# Faster update ; atomic micro update weeks to months
-# Based on DC_VER in drivers/gpu/drm/amd/display/dc/dc.h
-# Suffix: S=string C=commit
-AMD_STAGING_DRM_NEXT_DC_VER_S="3.2.56"
-AMD_STAGING_DRM_NEXT_DC_VER_C="bc3ec6547da4cb8f3293aa3286d5815f8438bc79"
-
-# Slower update ; major updates / releases
-# Based on AMDGPU_VERSION in drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
-# Suffix: S=string C=commit
-AMD_STAGING_DRM_NEXT_AMDGPU_VERSION_S="5.0.82"
-AMD_STAGING_DRM_NEXT_AMDGPU_VERSION_C="fdf4947d93b84a0ec722cbccb040ff1d22b85281"
-
-# for KV 4.15
-AMD_STAGING_DRM_NEXT_AMDGPU_18_40_S="18.40.2.15_p20181205"
-AMD_STAGING_DRM_NEXT_AMDGPU_18_40_C="747b3e15d097e78be349b385e9971e46681ab375"
-
-# for KV 4.18
-AMD_STAGING_DRM_NEXT_AMDGPU_19_10_S="19.10.9.418_p20180821"
-AMD_STAGING_DRM_NEXT_AMDGPU_19_10_C="5243d576a3bba97121d5671260d67de785d150b7"
-
-# for KV 5.0-rc1
-AMD_STAGING_DRM_NEXT_AMDGPU_19_30_S="5.0.73.19.30_p20191025"
-AMD_STAGING_DRM_NEXT_AMDGPU_19_30_C="d41983e6d9e448edd2b6eda0c147e3f7a55e2352"
-
 inherit ot-kernel-cve
-inherit ot-kernel-asdn
-inherit ot-kernel-rock
 
 DEPEND+=" dev-util/patchutils
 	  sys-apps/grep[pcre]"
@@ -236,33 +197,11 @@ KERNEL_PATCH_0_TO_1_URL="https://cdn.kernel.org/pub/linux/kernel/v${K_PATCH_XV}/
 
 LINUX_REPO_URL="https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git"
 
-# intermediate cache files
-LINUX_HASHTABLE_COMMITS_VK_FN=\
-"${LINUX_HASHTABLE_COMMITS_VK_FN:=linux.hashtable.vk.${K_MAJOR_MINOR}}.commits"
-LINUX_HASHTABLE_SUMMARIES_VK_FN=\
-"${LINUX_HASHTABLE_SUMMARIES_VK_FN:=linux.hashtable.vk.${K_MAJOR_MINOR}}.summaries"
-LINUX_HASHTABLE_COMMITS_ASDN_FN=\
-"${LINUX_HASHTABLE_COMMITS_ASDN_FN:=linux.hashtable.asdn.${K_MAJOR_MINOR}}.commits"
-LINUX_HASHTABLE_SUMMARIES_ASDN_FN=\
-"${LINUX_HASHTABLE_SUMMARIES_ASDN_FN:=linux.hashtable.asdn.${K_MAJOR_MINOR}}.summaries"
-
-# the final commit set
-LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ROCK_FN=\
-"${LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ROCK_FN:=linux.hashtable.rock.${K_MAJOR_MINOR}}.commits.final"
-LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ASDN_FN=\
-"${LINUX_HASHTABLE_COMMITS_FINAL_BASENAME_ASDN_FN:=linux.hashtable.asdn.${K_MAJOR_MINOR}}.commits.final"
-
 if ver_test ${PV} -eq ${K_MAJOR_MINOR} ; then
 KERNEL_NO_POINT_RELEASE="1"
 elif ver_test ${PV} -eq ${K_MAJOR_MINOR}.0 ; then
 KERNEL_0_TO_1_ONLY="1"
 fi
-
-ASDN_LOCAL_CACHE="/var/cache/ot-sources/amd-staging-drm-next"
-ASDN_T_CACHE="${T}/amd-staging-drm-next-patches"
-
-ROCK_LOCAL_CACHE="/var/cache/ot-sources/rock"
-ROCK_T_CACHE="${T}/rock-patches"
 
 if [[ -n "${KERNEL_NO_POINT_RELEASE}" && "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; then
 	KERNEL_PATCH_URLS=()
@@ -779,175 +718,6 @@ function get_patch_index() {
 	echo ${idx}
 }
 
-# @FUNCTION: cd_vk
-# @DESCRIPTION:
-# Changes directory into vanilla kernel repo
-function cd_vk() {
-	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	local d="${distdir}/ot-sources-src/linux"
-	cd "${d}" || die
-}
-
-# @FUNCTION: generate_vk_hash_tables
-# @DESCRIPTION:
-# Gets the list of commits between oldest timestamp from between min timestamp"
-# of AMD_STAGING_INTERSECTS_KV (2019) and ROCK_BASE (2014) to K_MAJOR_MINOR
-function generate_vk_hash_tables() {
-	cd_vk
-	# LINUX_COMMITS_AMDGPU_RANGE_FN is discardable
-	local LINUX_COMMITS_AMDGPU_RANGE_FN=\
-"${LINUX_COMMITS_AMDGPU_RANGE_FN:=linux.commits.amdgpu_range.${K_MAJOR_MINOR}}.discardable"
-	einfo \
-"Grabbing list of already merged amdgpu commits in v${K_MAJOR_MINOR} vanilla\n\
-sources."
-	OIFS="${IFS}"
-	IFS=$'\n'
-	git -P log ${ROCK_BASE}..v${K_MAJOR_MINOR} --oneline \
-		--pretty=format:"%H" -- \
-		drivers/gpu/drm \
-		include/drm \
-		drivers/dma-buf \
-		include/linux \
-		include/uapi/drm \
-		| echo -e "\n$(cat -)" \
-		| tac > "${T}/${LINUX_COMMITS_AMDGPU_RANGE_FN}"
-
-	einfo "Generating hash tables for vanilla kernel"
-	store_single_vk_hash_table_entry() {
-		local n="${1}"
-		local c="${2}"
-		local h
-		if [[ -n "${c}" && "${c}" != " " ]] ; then
-			# multicore this especially the sha1sum
-			h=$(git -P show -s --format="%s" ${c} | sha1sum | cut -f1 -d ' ')
-
-			touch "${BPS}/ot-sources/data/c/${c}"
-			if [[ -n "${h}" && "${h}" != " " ]] ; then
-				touch "${BPS}/ot-sources/data/h/${h}"
-			fi
-		fi
-		rm -rf "${BPS}/ot-sources/locks/sem${n}"
-	}
-
-	rm -rf "${BPS}/ot-sources"/{data,locks} 2>/dev/null
-	mkdir -p "${BPS}/ot-sources/data"/{c,h}
-	mkdir -p "${BPS}/ot-sources/locks"
-	trap cleanup_shared EXIT
-
-	readarray -t C <<< $(cat "${T}/${LINUX_COMMITS_AMDGPU_RANGE_FN}")
-	local N_C="${#C[@]}"
-
-	echo ""
-	local n_processed=0
-	etf_init ${N_C} 42 1
-	while (( ${n_processed} < ${N_C} )) ; do
-		for n in $(seq 0 $((${N_CPU_CORES}-1))) ; do
-			if (( ${n_processed} >= ${N_C} )) ; then
-				break
-			fi
-			if mkdir "${BPS}/ot-sources/locks/sem${n}" 2>/dev/null ; then
-				store_single_vk_hash_table_entry "${n}" "${C[${n_processed}]}" &
-				n_processed=$((${n_processed}+1))
-				progress_bar_ex ${n_processed} ${N_C}
-			fi
-		done
-	done
-
-	local remaining=1
-	while (( ${remaining} > 0 )) ; do
-		remaining=0
-		for n in $(seq 0 ${N_CPU_CORES}) ; do
-			if [[ -d "${BPS}/ot-sources/locks/sem${n}" ]] ; then
-				remaining=$((remaining+1))
-			fi
-		done
-	done
-	echo ""
-
-	for c in $(ls "${BPS}/ot-sources/data/c") ; do
-		vk_commits[${c}]="1"
-	done
-	for h in $(ls "${BPS}/ot-sources/data/h") ; do
-		vk_summaries[${h}]="1"
-	done
-
-	IFS="${OIFS}"
-	pickle_associative_array "vk_commits" \
-		"${T}/${LINUX_HASHTABLE_COMMITS_VK_FN}"
-	pickle_associative_array "vk_summaries" \
-		"${T}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}"
-}
-
-# @FUNCTION: is_asdn_patchset_exist
-# @DESCRIPTION:
-# Checks the existance of the amd-staging-drm-next patchset
-function is_asdn_patchset_exist() {
-	if [[ \
-	  -d "${ASDN_LOCAL_CACHE}" ]]
-	then
-		return 0
-	else
-		return 1
-	fi
-}
-
-# @FUNCTION: is_rock_patchset_exist
-# @DESCRIPTION:
-# Checks the existance of the ROCk patchset
-function is_rock_patchset_exist() {
-	if [[ -d "${ROCK_LOCAL_CACHE}" ]]
-	then
-		return 0
-	else
-		return 1
-	fi
-}
-
-# @FUNCTION: amdgpu_load_vk_hash_tables
-# @DESCRIPTION:
-# Generates or uses vanilla kernel hash tables
-function amdgpu_load_vk_hash_tables() {
-	if [[ -e "${FILESDIR}/${LINUX_HASHTABLE_COMMITS_VK_FN}" \
-	   || -e "${FILESDIR}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}" ]] ; \
-	then
-		cp -a "${FILESDIR}/${LINUX_HASHTABLE_COMMITS_VK_FN}" "${T}"
-		cp -a "${FILESDIR}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}" "${T}"
-		amdgpu_use_vk_hash_tables
-	else
-		fetch_linux_sources
-		generate_vk_hash_tables
-	fi
-}
-
-# @FUNCTION: apply_amdgpu
-# @DESCRIPTION:
-# Applies amd-staging-drm-next and ROCk.
-#
-# ot-kernel-common_amdgpu_merge_and_apply_patches - optional callback that
-#   merges amd-staging-drm-next and ROCk fixes
-#
-function apply_amdgpu() {
-	unset vk_commits
-	unset vk_summaries
-	declare -Ax vk_commits
-	declare -Ax vk_summaries
-
-	rm -rf "${BPS}"/ot-sources 2>/dev/null
-	mkdir -p "${BPS}"/ot-sources/aliases
-
-	amdgpu_load_vk_hash_tables
-	fetch_amd_staging_drm_next
-	fetch_rock
-
-	if declare -f ot-kernel-common_amdgpu_merge_and_apply_patches \
-		> /dev/null ; \
-	then
-		ot-kernel-common_amdgpu_merge_and_apply_patches
-	fi
-
-	rm -rf "${BPS}"/ot-sources
-}
-
 # @FUNCTION: ot-kernel-common_src_unpack
 # @DESCRIPTION:
 # Applies patch sets in order.  It calls kernel-2_src_unpack.
@@ -1057,15 +827,6 @@ function ot-kernel-common_src_unpack() {
 		fi
 	fi
 
-	if has amd-staging-drm-next ${IUSE_EFFECTIVE} ; then
-		if use amd-staging-drm-next ; then
-			if [[ -n "${USE_PATACHIE}" && "${USE_PATACHIE}" == "1" ]] ; then
-				copy_patachie
-			fi
-			apply_amdgpu
-		fi
-	fi
-
 	if has o3 ${IUSE_EFFECTIVE} ; then
 		if use o3 ; then
 			apply_o3
@@ -1080,83 +841,6 @@ function ot-kernel-common_src_unpack() {
 
 
 	#_dpatch "${PATCH_OPS}" "${FILESDIR}/linux-4.20-kconfig-ioscheds.patch"
-}
-
-# @FUNCTION: amdgpu_setup
-# @DESCRIPTION:
-# Initalizes globals for the amdgpu module
-function amdgpu_setup() {
-	export SUFFIX_ASDN=$(ot-kernel-common_amdgpu_get_suffix_asdn)
-	export ASDN_DB_SUMMARY_RAW_FN=\
-"asdn.db.summary_raw.${K_MAJOR_MINOR}..${SUFFIX_ASDN}"
-	export ASDN_DB_SUMMARY_HASH_FN=\
-"asdn.db.summary_hash.${K_MAJOR_MINOR}..${SUFFIX_ASDN}"
-	export ASDN_DB_COMMIT_TIME_FN=\
-"asdn.db.commit_time.${K_MAJOR_MINOR}..${SUFFIX_ASDN}"
-	export ASDN_DB_DC_VER_FN=\
-"asdn.db.dc_ver.${K_MAJOR_MINOR}..${SUFFIX_ASDN}"
-	export ASDN_DB_PN_FN=\
-"asdn.db.pn.${K_MAJOR_MINOR}..${SUFFIX_ASDN}"
-	export HT_ASDN_FN=\
-"${LINUX_HASHTABLE_COMMITS_ASDN_FN}${SUFFIX_ASDN}"
-	export HT_ASDNS_FN=\
-"${LINUX_HASHTABLE_SUMMARIES_ASDN_FN}${SUFFIX_ASDN}"
-	export SUFFIX_ROCK=$(ot-kernel-common_amdgpu_get_suffix_rock)
-	export ROCK_DB_SUMMARY_RAW_FN=\
-"rock.db.summary_raw.${K_MAJOR_MINOR}..${SUFFIX_ROCK}"
-	export ROCK_DB_SUMMARY_HASH_FN=\
-"rock.db.summary_hash.${K_MAJOR_MINOR}..${SUFFIX_ROCK}"
-	export ROCK_DB_COMMIT_TIME_FN=\
-"rock.db.commit_time.${K_MAJOR_MINOR}..${SUFFIX_ROCK}"
-	export ROCK_DB_DC_VER_FN=\
-"rock.db.dc_ver.${K_MAJOR_MINOR}..${SUFFIX_ROCK}"
-	export ROCK_DB_PN_FN=\
-"rock.db.pn.${K_MAJOR_MINOR}..${SUFFIX_ROCK}"
-
-	einfo "ASDN_LOCAL_CACHE=${ASDN_LOCAL_CACHE}"
-	einfo "ROCK_LOCAL_CACHE=${ROCK_LOCAL_CACHE}"
-
-	export N_CPU_CORES=$(grep -F -e "processor" /proc/cpuinfo | wc -l)
-
-	# we use ${BPS} (virtual memory) for mutex and data exchange when run
-	# as background process
-	local shm_size=$(df --output="avail" /dev/shm | tail -n 1 \
-		| sed -r -e "s/[ ]+//")
-	if [[ ! -d /dev/shm ]] || (( ${shm_size} < 1000000 )) ; then
-		ewarn \
-"Using slower disk (${T}) for interprocess data exchange and locking.  \
-Increase /dev/shm size with at least 1.0G available for orders of magnitude \
-speed up."
-		export BPS="${T}"
-	else
-		einfo \
-"Using faster RAM + disk (/dev/shm) for interprocess data exchange and locking."
-		export BPS="/dev/shm"
-	fi
-
-	local G=$(find "${BPS}/ot-sources" -group "root" 2>/dev/null)
-	if (( ${#G} > 0 )) ; then
-		if [[ "${BPS}" == "/dev/shm" ]] ; then
-			die \
-"You must manually: \`chown -R portage:portage ${BPS}/ot-sources\` or remove ${BPS}/ot-sources.  Re-emerge again."
-		fi
-	fi
-
-	ASDN_T_CACHE="${T}/amd-staging-drm-next-patches"
-	ROCK_T_CACHE="${T}/rock-patches"
-
-	einfo "ASDN_T_CACHE=${ASDN_T_CACHE}"
-	einfo "ROCK_T_CACHE=${ROCK_T_CACHE}"
-}
-
-# @FUNCTION: copy_patachie
-# @DESCRIPTION:
-# Copies patachie to the sandbox
-function copy_patachie() {
-	einfo "Copying patachie for attaching licenses to patches"
-	cp -a "${FILESDIR}/patachie" "${HOME}" || die
-	cp -a "${FILESDIR}/all-rights-reserved" "${HOME}" || die
-	chmod +x "${HOME}/patachie" || die
 }
 
 # @FUNCTION: zenmisc_setup
@@ -1236,19 +920,6 @@ function ot-kernel-common_pkg_setup() {
 
 	if declare -f ot-kernel-common_pkg_setup_cb > /dev/null ; then
 		ot-kernel-common_pkg_setup_cb
-	fi
-	if has amd-staging-drm-next ${IUSE_EFFECTIVE} || \
-		has rock ${IUSE_EFFECTIVE} ; then
-		if use rock || use amd-staging-drm-next ; then
-			amdgpu_setup
-		fi
-	fi
-	if has amd-staging-drm-next ${IUSE_EFFECTIVE} ; then
-		amd_staging_drm_next_setup
-
-	fi
-	if has rock ${IUSE_EFFECTIVE} ; then
-		rock_setup
 	fi
 	if has zenmisc ${IUSE_EFFECTIVE} ; then
 		zenmisc_setup
@@ -1337,296 +1008,3 @@ function ot-kernel-common_pkg_postinst() {
 	fi
 
 }
-
-# @FUNCTION: ot-kernel-common_amdgpu_get_rock_dgma_suffix
-# @DESCRIPTION:
-# Generates a suffix based on the directgma USE flag.
-function ot-kernel-common_amdgpu_get_rock_dgma_suffix() {
-	local suffix_rock_dgma
-	if use rock ; then
-		if use directgma ; then
-			suffix_rock_dgma=".rock_with_dgma"
-		else
-			suffix_rock_dgma=".rock_without_dgma"
-		fi
-	else
-		suffix_rock_dgma=".no_rock"
-	fi
-	echo "${suffix_rock_dgma}"
-}
-
-# @FUNCTION: ot-kernel-common_amdgpu_get_suffix_asdn
-# @DESCRIPTION:
-# Generates a suffix for ASDN cache file or stored commits in filesdir.
-function ot-kernel-common_amdgpu_get_suffix_asdn() {
-	local suffix_rock_dgma=$(ot-kernel-common_amdgpu_get_rock_dgma_suffix)
-	local suffix_asdn
-	if [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ amdgpu_version ]] ; then
-		suffix_asdn=\
-"..${AMD_STAGING_DRM_NEXT_AMDGPU_VERSION_C}${suffix_rock_dgma}"
-	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ dc_ver ]] ; then
-		suffix_asdn=\
-"..${AMD_STAGING_DRM_NEXT_DC_VER_C}${suffix_rock_dgma}"
-	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ head ]] ; then
-		suffix_asdn=\
-"..$(git rev-parse ${AMD_STAGING_DRM_NEXT_HEAD_C})${suffix_rock_dgma}"
-	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ snapshot ]] ; then
-#1234567890123456789012345678901234567890123456789012345678901234567890123456789
-		if [[ "${K_MAJOR_MINOR}" == "5.3" \
-			|| "${K_MAJOR_MINOR}" == "5.4" ]] ; then
-			suffix_asdn=\
-"..${AMD_STAGING_DRM_NEXT_SNAPSHOT_C}${suffix_rock_dgma}"
-		else
-			die \
-"snapshot is not supported for AMD_STAGING_DRM_NEXT_BUMP_REQUEST for your \
-kernel version."
-		fi
-	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ amdgpu_19_30 ]] ; then
-		suffix_asdn=\
-"..${AMD_STAGING_DRM_NEXT_AMDGPU_19_30_C}${suffix_rock_dgma}"
-	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ amdgpu_19_10 ]] ; then
-		suffix_asdn=\
-"..${AMD_STAGING_DRM_NEXT_AMDGPU_19_10_C}${suffix_rock_dgma}"
-	elif [[ "${AMD_STAGING_DRM_NEXT_BUMP_REQUEST}" =~ amdgpu_18_40 ]] ; then
-		suffix_asdn=\
-"..${AMD_STAGING_DRM_NEXT_AMDGPU_18_40_C}${suffix_rock_dgma}"
-	fi
-	echo "${suffix_asdn}"
-}
-
-# @FUNCTION: ot-kernel-common_amdgpu_get_suffix_rock
-# @DESCRIPTION:
-# Generates a suffix for ROCk cache file or stored commits in filesdir.
-function ot-kernel-common_amdgpu_get_suffix_rock() {
-	local suffix_rock_dgma=$(ot-kernel-common_amdgpu_get_rock_dgma_suffix)
-	local suffix_rock
-	if [[ "${ROCK_BUMP_REQUEST}" =~ snapshot ]] ; then
-		suffix_rock="..${ROCK_SNAPSHOT}${suffix_rock_dgma}"
-	elif [[ "${ROCK_BUMP_REQUEST}" =~ head ]] ; then
-		suffix_rock="..$(git rev-parse ${ROCK_HEAD})${suffix_rock_dgma}"
-	elif [[ "${ROCK_BUMP_REQUEST}" =~ latest ]] ; then
-		suffix_rock="..${ROCK_LATEST}${suffix_rock_dgma}"
-	elif [[ "${ROCK_BUMP_REQUEST}" =~ 2_9_0 ]] ; then
-		suffix_rock="..${ROCK_2_9_0}${suffix_rock_dgma}"
-	elif [[ "${ROCK_BUMP_REQUEST}" =~ 2_8_0 ]] ; then
-		suffix_rock="..${ROCK_2_8_0}${suffix_rock_dgma}"
-	elif [[ "${ROCK_BUMP_REQUEST}" =~ 2_7_0 ]] ; then
-		# KV is 5.0-rc1
-		suffix_rock="..${ROCK_2_7_0}${suffix_rock_dgma}"
-	elif [[ "${ROCK_BUMP_REQUEST}" =~ 1_9_2 ]] ; then
-		# KV is 4.15
-		suffix_rock="..${ROCK_1_9_2}${suffix_rock_dgma}"
-	elif [[ "${ROCK_BUMP_REQUEST}" =~ 1_8_3 ]] ; then
-		# KV is 4.13
-		suffix_rock="..${ROCK_1_8_3}${suffix_rock_dgma}"
-	fi
-	echo "${suffix_rock}"
-}
-
-# @FUNCTION: amdgpu_use_vk_hash_tables
-# @DESCRIPTION:
-# Initializes the vanilla kernel hash tables for deduping
-function amdgpu_use_vk_hash_tables() {
-	# We dedupe by git subject because the body is the same but
-	# different commit hash.
-	# It happens when they are backporting.
-	# vk is vanilla kernel
-	if [[ -e "${T}/${LINUX_HASHTABLE_COMMITS_VK_FN}" && \
-	      -e "${T}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}" ]] ; then
-		einfo "Using cached hash tables for vanilla kernel"
-		source "${T}/${LINUX_HASHTABLE_COMMITS_VK_FN}"
-		source "${T}/${LINUX_HASHTABLE_SUMMARIES_VK_FN}"
-	fi
-}
-
-# @FUNCTION: pickle_associative_array
-# @DESCRIPTION:
-# Dumps an associative array to a file
-function pickle_associative_array() {
-	local name="${1}"
-	local file="${2}"
-	typeset -p ${name} > "${file}" || die
-	sed -i -r -e "s|^declare -A(x)? ||" "${file}" || die
-}
-
-# @FUNCTION: pickle_string
-# @DESCRIPTION:
-# Dumps a string to a file
-function pickle_string() {
-	local name="${1}"
-	local file="${2}"
-	typeset -p ${name} > "${file}" || die
-	sed -i -r -e "s|^declare -- ||" "${file}" || die
-}
-
-G_ETF_START_TIMESTAMP=0 # seconds
-G_ETF_HITS_SOFAR=0
-G_ETF_HITS_PER_SECOND=1 # avoid division by zero
-G_ETF_TOTAL_HITS_EXPECTED=0
-G_ETF_BAR_UPDATE_PERIOD=42 # in hits, this is to distribute timeslices to data
-		       # processing than to waste it on updating the UI
-G_ETF_PRINT_ETF=0
-
-# ETF = expected time to finish
-function etf_update_total_hits_remaining() {
-	G_ETF_TOTAL_HITS_EXPECTED=${1}
-}
-
-function etf_register_hit() {
-	G_ETF_HITS_SOFAR=$((${G_ETF_HITS_SOFAR}+1))
-}
-
-function etf_print() {
-	local elapsed_time=$((${SECONDS}-${G_ETF_START_TIMESTAMP}))
-	if (( ${elapsed_time} == 0 )) ; then
-		elapsed_time=1 # avoid divide by zero
-	fi
-	G_ETF_HITS_PER_SECOND=$(awk "BEGIN{ printf(\"%0.8f\n\",${G_ETF_HITS_SOFAR}/${elapsed_time}); }")
-	local etf_seconds_total=$(awk "BEGIN{ printf(\"%0.8f\n\",${G_ETF_TOTAL_HITS_EXPECTED}/${G_ETF_HITS_PER_SECOND}+0.00000001); }")
-	local etf_hours=$(awk "BEGIN{ print(int(${etf_seconds_total}/3600)); }")
-	local etf_minutes=$(awk "BEGIN{ print(int(${etf_seconds_total}/60%60)); }")
-	local etf_seconds=$(awk "BEGIN{ print(int(${etf_seconds_total}%60)); }")
-	echo "ETF is ${etf_hours} hours, ${etf_minutes} minutes, ${etf_seconds} seconds"
-}
-
-function etf_init() {
-	G_ETF_START_TIMESTAMP=${SECONDS}
-	G_ETF_TOTAL_HITS_EXPECTED=${1} # int
-	if [[ -n "${2}" ]] ; then
-		G_ETF_BAR_UPDATE_PERIOD="${2}" # in seconds
-	fi
-	if [[ -n "${3}" ]] ; then
-		G_ETF_PRINT_ETF="${3}" # can be 1 or 0
-	fi
-}
-
-function progress_bar() {
-	local nth_object="${1}"
-	local max_objects="${2}"
-
-	local percent=$(awk "BEGIN{ printf(\"%0.8f\n\",${nth_object}/${max_objects}+0.00000001); }")
-	local percent_disp=$(awk "BEGIN{ printf(\"%0.2f\n\",${percent}*100); }")
-	local screen_width=80
-	local max_size=$((${screen_width}-2)) # without [ and ] edge characters
-	local bar_len=$(awk "BEGIN{ printf(\"%1.0f\n\",${percent}*${max_size}); }")
-	local bar_padding=$((${screen_width}-2-${bar_len}))
-	echo -n -e "\r"
-	echo -n "["
-	for i in $(seq 1 ${bar_len}) ; do
-		echo -n "#"
-	done
-	for i in $(seq 1 ${bar_padding}) ; do
-		echo -n " "
-	done
-	echo -n "]"
-	if [[ "${G_ETF_PRINT_ETF}" == "1" ]] ; then
-		echo -n " ${percent_disp}% (${nth_object} / ${max_objects}) $(etf_print)"
-	fi
-}
-
-function progress_bar_ex() {
-	local nth_object="${1}"
-	local max_objects="${2}"
-	etf_register_hit
-	if (( ${nth_object} % ${G_ETF_BAR_UPDATE_PERIOD} == 0 )) ; then
-		progress_bar "${nth_object}" "${max_objects}"
-	fi
-	etf_update_total_hits_remaining $((${max_objects} - ${nth_object}))
-}
-
-function cleanup_shared() {
-	einfo "Removing shared resources"
-	rm -rf "${BPS}/ot-sources" 2>/dev/null
-}
-
-G_PROGRESS_PIPE="${T}/progress"
-G_PROGRESS_FD=
-G_PROGRESS_TIMEOUT="0.002"
-
-function message_progress() {
-	local msg="${1}"
-	echo "${msg}" > "${G_PROGRESS_PIPE}" 2>/dev/null
-}
-
-function report_progress() {
-	local max_objects="${1}"
-
-	for x in $(seq 3 254) ; do
-		if [[ ! -e /proc/$$/fd/${x} ]] ; then
-			G_PROGRESS_FD=${x}
-			break
-		fi
-	done
-
-	if [[ -z "${G_PROGRESS_FD}" ]] ; then
-		die "No available file descriptor found."
-	fi
-
-	cleanup() {
-		einfo "Cleanup report_progress"
-		eval "exec ${G_PROGRESS_FD}>&-"
-	}
-
-	trap cleanup EXIT
-
-	G_PROGRESS_PIPE="${T}/progress"
-	mkfifo "${G_PROGRESS_PIPE}" 2>/dev/null
-	eval "exec ${G_PROGRESS_FD}<>\"${G_PROGRESS_PIPE}\""
-
-	etf_init ${max_objects} 42 1
-	local n_processed=0
-	while [[ -p "${G_PROGRESS_PIPE}" ]] ; do
-		IFS= read -t ${G_PROGRESS_TIMEOUT} -r event < "${G_PROGRESS_PIPE}" 2>/dev/null
-		event="${event//[^\.D]/}" # sanitize
-		if [[ "${event}" == "." ]] ; then
-			n_processed=$((${n_processed}+1))
-			progress_bar_ex ${n_processed} ${max_objects}
-		elif [[ "${event}" == "D" ]] ; then
-			rm "${G_PROGRESS_PIPE}" 2>/dev/null
-		fi
-	done
-	eval "exec ${G_PROGRESS_FD}>&-"
-	rm "${G_PROGRESS_PIPE}" 2>/dev/null
-}
-
-function report_progress_by_git_commit_metadata() {
-	for x in $(seq 3 254) ; do
-		if [[ ! -e /proc/$$/fd/${x} ]] ; then
-			G_PROGRESS_FD=${x}
-			break
-		fi
-	done
-
-	if [[ -z "${G_PROGRESS_FD}" ]] ; then
-		die "No available file descriptor found."
-	fi
-
-	cleanup() {
-		einfo "Cleanup report_progress"
-		eval "exec ${G_PROGRESS_FD}>&-"
-	}
-
-	trap cleanup EXIT
-
-	G_PROGRESS_PIPE="${T}/progress"
-	mkfifo "${G_PROGRESS_PIPE}" 2>/dev/null
-	eval "exec ${G_PROGRESS_FD}<>\"${G_PROGRESS_PIPE}\""
-
-	while [[ -p "${G_PROGRESS_PIPE}" ]] ; do
-		IFS= read -t ${G_PROGRESS_TIMEOUT} -r event < "${G_PROGRESS_PIPE}" 2>/dev/null
-		event=$(echo "${event}" | grep -P -o -e "(A|R|D)( [a-f0-9]{40})?") # try to sanitize
-		local msg=$(echo "${event}" | cut -f 1 -d " ")
-		local c=$(echo "${event}" | cut -f 2 -d " ")
-		if [[ "${msg}" == "A" ]] ; then
-			echo -e "\e[42m\e[30m Accepted \e[0m ${c}"
-		elif [[ "${msg}" == "R" ]] ; then
-		        echo -e "\e[41m\e[30m Rejected \e[0m ${c}"
-		elif [[ "${msg}" == "D" ]] ; then
-			rm "${G_PROGRESS_PIPE}" 2>/dev/null
-		fi
-	done
-	eval "exec ${G_PROGRESS_FD}>&-"
-	rm "${G_PROGRESS_PIPE}" 2>/dev/null
-}
-
-#1234567890123456789012345678901234567890123456789012345678901234567890123456789

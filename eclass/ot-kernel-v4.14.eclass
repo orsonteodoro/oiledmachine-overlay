@@ -201,14 +201,11 @@ inherit kernel-2 toolchain-funcs
 detect_version
 detect_arch
 
-DEPEND="
-	dev-util/patchutils
-	<sys-devel/gcc-8.0
-	"
+DEPEND="<sys-devel/gcc-8.0"
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="Orson Teodoro's patchset containing UKSM, GraySky's GCC \
+DESCRIPTION="A customizeable kernel package containing UKSM, GraySky's GCC \
 Patches, MUQSS CPU Scheduler, PDS CPU Scheduler, Genpatches, TRESOR"
 
 CK_URL_BASE=\
