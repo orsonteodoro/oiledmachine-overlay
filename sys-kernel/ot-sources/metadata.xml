@@ -6,8 +6,8 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    ot-sources is a kernel experimental patchset containing performance patches
-    and encryption.
+    ot-sources is a customizable package that applies patches for
+    performance, encryption, and security.
 
     Power users can choose either the BMQ, PDS, MuQSS CPU schedulers.
 
