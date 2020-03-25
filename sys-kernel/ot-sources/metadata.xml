@@ -6,7 +6,7 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    ot-sources is a customizable package that applies patches for
+    ot-sources is a customizable kernel package that applies patches for
     performance, encryption, and security.
 
     Power users can choose either the BMQ, PDS, MuQSS CPU schedulers.
