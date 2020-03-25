@@ -17,21 +17,6 @@
     Compiler based optimizations are provided by GraySky2's GCC patch and the
     O3 patch.
 
-    The amd-staging-drm-next patches provide increase compatibility and better
-    support for new hardware and features like FreeSync, PowerPlay updates.
-    This USE flag is unstable.
-
-    The ROCk kernel driver will install the driver needed for the ROCm platform
-    for workstation level GPUs (FirePro and Radeon Pro SSG) and GPU farms.
-    This package picks mostly enhancement commits and drop the kernel
-    compatibility layer (KCL).  This USE flag is most of the time is broken.
-
-    ROCm requires PCIe 3.0 for some older cards except current newer generation
-    cards like VEGA 10 and Vega 7nm.  See
-    https://rocm-documentation.readthedocs.io/en/latest/Installation_Guide/Installation-Guide.html#supported-gpus
-    for a full list.  This integrated patch will try to remove the
-    compatibility layer and merge features of the ROCk driver / ROCm API.
-
     Older point releases are removed to eliminate some of the previously
     announced 0-day exploits.
   </longdescription>
@@ -75,16 +60,6 @@
       <email>graysky AT archlinux DOT us</email>
       <name>graysky</name>
     <maintainer status="active" type="person">
-      <!-- for latest version bumps of amdgpu_version -->
-      <email>rui.teng@amd.com</email>
-      <name>Rui Teng</name>
-    </maintainer>
-    <maintainer status="active" type="person">
-      <!-- for latest version bumps of amdgpu (display core [dc]) dc_ver -->
-      <email>aric.cyr@amd.com</email>
-      <name>Aric Cyr</name>
-    </maintainer>
-    <maintainer status="active" type="person">
       <!-- for tresor aes-ni and i386, 2010 -->
       <email>tilo.mueller@informatik.uni-erlangen.de</email>
       <name>Tilo Mueller</name>
@@ -101,15 +76,6 @@
     </maintainer>
   </upstream>
   <use>
-    <flag name="amd-staging-drm-next">Patches the amdgpu DRM kernel driver with
-      latest AMD GPU hardware, PowerPlay updates.  You need to define a
-      AMD_STAGING_DRM_NEXT_BUMP_REQUEST version subscription environmental 
-      variable with either head, snapshot, dc_ver, amdgpu_version, 
-      amdgpu_19_30.  head uses the latest commit updated a couple times a
-      week.  snapshot is tested instance of head. dc_ver is updated weekly or 
-      monthly.  amdgpu_version is updated several times a year.
-      amdgpu_19_30 is a snapshot of the tag, and corresponds to 19.30
-      amdgpu-pro dkms driver but without ROCk enhancements.</flag>
     <flag name="bfq">Patches the kernel with BFQ fixes and updates from the
       Liquorix kernel project.</flag>
     <flag name="bmq">Patches the kernel to use BMQ CPU scheduler, a more
@@ -168,13 +134,6 @@
       verbose output or related code paths.</flag>
     <flag name="graysky2">Patches the kernel for more CPU
       microarchitecutures</flag>
-    <flag name="directgma">Toggles the merging or removal of commits related
-      to FirePro DirectGMA support.  Disabling it may reduces the code size
-      a bit; make it less problematic to update the
-      amdgpu-driver / amd-staging-drm-next part of ROCk.  For enhanced 
-      SSG (Solid State Graphics) support, you will need to enable this
-      USE flag.
-      </flag>
     <flag name="futex-wait-multiple">Patches ther kernel with
       FUTEX_WAIT_MULTIPLE futex syscall option which may be used in the
       wine-proton package and in Steam Play (based on Proton).  It may reduce 
@@ -185,16 +144,6 @@
       compiler optimizations.</flag>
     <flag name="pds">Patches the kernel with an alternative skiplist
       based scheduler.</flag>
-    <flag name="rock">Patches the kernel with additional Multi GPU
-      enhancements and enthusiast grade AMD GPU hardware support with the 
-      latest version of ROCk to unlock the fullest potential of the ROCm
-      API and the hardware.  You need to define a ROCK_BUMP_REQUEST 
-      version subscription environmental variable with either: latest, 
-      head, snapshot, 2_9_0.  head is latest commit and updated a
-      couple times a week.  snapshot is a tested instance of head.
-      2_9_0 is a tag release of ROCk.  latest is the newest tag release
-      updated a couple times a month to months.
-      </flag>
     <flag name="symlink">Updates the the /usr/src/linux symlink for every
       newer release.</flag>
     <flag name="tresor">Controls application of TRESOR.  AES keys are
@@ -224,8 +173,11 @@
       for 5.3 see:
       https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/misc
 
-      for 5.4 (possibly provisional) see:
+      for 5.4 see:
       https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
+
+      for 5.5 see:
+      https://github.com/torvalds/linux/compare/v5.5...zen-kernel:5.5/zen-sauce
 
       Use the o3, zenmisc, graysky2 USE flags instead of passing their commit
       IDs.
