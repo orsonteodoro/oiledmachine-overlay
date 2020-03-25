@@ -137,7 +137,7 @@
     <flag name="disable_debug">Installs scripts to disable debugging, tracing,
       verbose output or related code paths.</flag>
     <flag name="graysky2">Patches the kernel for more CPU
-      microarchitecutures</flag>
+      microarchitectures</flag>
     <flag name="futex-wait-multiple">Patches ther kernel with
       FUTEX_WAIT_MULTIPLE futex syscall option which may be used in the
       wine-proton package and in Steam Play (based on Proton).  It may reduce 
@@ -160,7 +160,7 @@
     <flag name="tresor_x86_64">Patches the kernel with cold boot
       resistant AES using SSE for 64 bit systems.</flag>
     <flag name="uksm">Patches the kernel with the Ultra Kernel Samepage
-      Merging, a type of page deduper algorithm.  Using it may be
+      Merging, a type of memory page deduper algorithm.  Using it may be
       insecure.</flag>
     <flag name="zentune">Patches the kernel with Zen Interactive
       Tuning.</flag>
