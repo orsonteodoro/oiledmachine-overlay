@@ -83,11 +83,15 @@
     <flag name="bmq-quick-fix">Patches the kernel with fixes to BMQ.</flag>
     <flag name="build">Builds the kernel.</flag>
     <flag name="cve_hotfix">Applies patches to resolve CVEs (Common 
-      Vulnerabilities and Exposures).
+      Vulnerabilities and Exposures).  Not enabled by default.
 
-      This use flag currently doesn't check ALL the CVEs but up to
-      Sept 18, 2019.  More distant past CVEs may be added based on severity and
-      if time available.
+      Currently, not all patch fixes under code review, custom kernel vendors
+      from mobile hardware manufacturers, or major distro advisories,
+      get applied.
+
+      Newer CVE fixes should be automatically added and applied per emerge.
+
+      It uses an external script from https://github.com/orsonteodoro/tuxparoni
 
       Several global env vars can be used to control this flag that
       you set in your make.conf or per-package env:
