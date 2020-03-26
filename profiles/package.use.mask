@@ -1,4 +1,0 @@
-# USE flags in development
-sys-kernel/ot-sources -amd-staging-drm-next
-sys-kernel/ot-sources -rock
-sys-kernel/ot-sources -directgma
