@@ -240,9 +240,6 @@ UNIPATCH_LIST=""
 UNIPATCH_STRICTORDER="yes"
 
 PATCH_OPS="-p1 -F 500"
-N_CPU_CORES="1"
-BPS="/dev/shm"	# preferred background processes storage
-		# for mutex or data exchanges
 
 # @FUNCTION: _dpatch
 # @DESCRIPTION:
@@ -697,25 +694,6 @@ function fetch_linux_sources() {
 		git pull
 	fi
 	cd "${d}" || die
-}
-
-# @FUNCTION: get_patch_index
-# @DESCRIPTION:
-# Returns the index of a commit.
-# @CODE
-# Parameters:
-# $1 - the patchset (the repo folder name containing the commit)
-# $2 - commit
-# @CODE
-function get_patch_index() {
-	local patchset_name="${1}"
-	local commit="${2}"
-	d="${T}/${patchset_name}"
-	local idx
-	local f
-	f=$(basename $(ls "${d}"/*${commit}*))
-	idx=$(echo ${f} | cut -f1 -d '-' | sed 's/^0*//' | sed 's|[a-zA-Z]||g')
-	echo ${idx}
 }
 
 # @FUNCTION: ot-kernel-common_src_unpack
