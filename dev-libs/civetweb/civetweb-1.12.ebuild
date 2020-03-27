@@ -12,9 +12,8 @@ LUA_VER="5.2"
 inherit multilib-minimal
 RDEPEND="dev-db/sqlite:3[${MULTILIB_USEDEP}]
 	 dev-lang/lua:${LUA_VER}[static=,civetweb]
-	 dev-lua/luafilesystem[lua5_2]
-	 dev-lua/luasqlite3[lua5_2]
-	 dev-lua/luaxml[lua5_2]"
+	 dev-lua/luafilesystem
+	 dev-lua/luasqlite3"
 DEPEND="${RDEPEND}"
 SRC_URI="\
 https://github.com/civetweb/civetweb/archive/v${PV}.tar.gz \
