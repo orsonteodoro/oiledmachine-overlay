@@ -28,6 +28,7 @@ src_prepare() {
 	default
 	multilib_copy_sources
 	prepare_abi() {
+		civetweb_copy_sources
 		cd "${BUILD_DIR}" || die
 		prepare_impl() {
 			cd "${BUILD_DIR}" || die
@@ -40,7 +41,20 @@ src_prepare() {
 }
 
 src_configure() {
-	:;
+	configure_abi() {
+		civetweb_copy_sources
+		cd "${BUILD_DIR}" || die
+		configure_impl() {
+			cd "${BUILD_DIR}" || die
+			if use ssl ; then
+				sed -i \
+			-e "s|__LIBSSL__|$(pkg-config --libs openssl)|g" \
+					Makefile || die
+			fi
+		}
+		civetweb_foreach_impl configure_impl
+	}
+	multilib_foreach_abi configure_abi
 }
 
 src_compile() {
@@ -48,27 +62,32 @@ src_compile() {
 		cd "${BUILD_DIR}" || die
 		compile_impl() {
 			cd "${BUILD_DIR}" || die
-			local myuse=""
+			local myuse=()
 			local mycopt=""
 			local mystatic=""
-			myuse+=" "$(usex static "WITH_LUA=1" \
-				"WITH_LUA_SHARED=1")
-			myuse+=" "$(usex debug "WITH_DEBUG=1" \
-				"WITH_DEBUG=0")
-			myuse+=" "$(usex ipv6 "WITH_IPV6=1" \
-				"WITH_IPV6=0")
-			myuse+=" "$(usex cpp "WITH_CPP=1" \
-				"WITH_CPP=0")
-			mycopt=" "$(usex debug "-DNDEBUG" \
-				"-DDEBUG")
-			mycopt=" "$(usex cgi "" "-DNO_CGI")
-			mycopt=" "$(usex ssl "-DNO_SSL_DL" "-DNO_SSL")
+			myuse+=( $(usex ssl "SSL_LIB=libssl" "") )
+			myuse+=( $(usex cpp "WITH_CPP=1" \
+				"WITH_CPP=0") )
+			myuse+=( $(usex debug "WITH_DEBUG=1" \
+				"WITH_DEBUG=0") )
+			myuse+=( $(usex ipv6 "WITH_IPV6=1" \
+				"WITH_IPV6=0") )
+			myuse+=( $(usex static "WITH_LUA=1" \
+				"WITH_LUA_SHARED=1") )
+			myuse+=( "WITH_LUA_VERSION=502" )
+			mycopt+=$(usex debug "-DDEBUG" \
+				"-DNDEBUG")" "
+			mycopt+=$(usex cgi "" "-DNO_CGI")" "
+			mycopt+=$(usex ssl "-DNO_SSL_DL" "-DNO_SSL")" "
 			if [[ "${ABI}" == "amd64" ]] ; then
-				append-cflag -fPIC
+				append-cflags -fPIC
 			fi
-			mystatic="slib"
-			mystatic=" "$(usex static "lib" "slib")
-			emake build ${mystatic} ${myuse} COPT="${mycopt}"
+			if [[ "${ECIVETWEB}" == "static" ]] ; then
+				mystatic="lib"
+			else
+				mystatic="slib"
+			fi
+			make build ${mystatic} ${myuse[@]} COPT="${mycopt}"
 		}
 		civetweb_foreach_impl compile_impl
 	}
@@ -77,14 +96,16 @@ src_compile() {
 
 src_install() {
 	install_abi() {
-		cd "${BUILD_DIR}"
+		cd "${BUILD_DIR}" || die
 		install_impl() {
 			cd "${BUILD_DIR}" || die
-			emake PREFIX="${D}" install
-			dolib.so libcivetweb.so.${PV}.0
-			cd "${D}/usr/$(get_libdir)" || die
-			if ! use static; then
-				ln -s libcivetweb.so.1.7.0 \
+			emake PREFIX="${D}/usr" install
+			if [[ "${ECIVETWEB}" == "static" ]] ; then
+				dolib.a libcivetweb.a
+			else
+				dolib.so libcivetweb.so.${PV}.0
+				cd "${D}/usr/$(get_libdir)" || die
+				ln -s libcivetweb.so.${PV}.0 \
 					libcivetweb.so.1 || die
 				ln -s libcivetweb.so.1 \
 					libcivetweb.so || die
