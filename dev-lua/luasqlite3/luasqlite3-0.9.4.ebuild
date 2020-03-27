@@ -21,8 +21,9 @@ src_configure() {
 }
 
 src_compile() {
-	$(tc-getCC ${ABI}) -DLSQLITE_VERSION=\"${PV}\" -fPIC -Wall -c lsqlite3.c || die
-	$(tc-getCC ${ABI}) -shared -Wl,-soname,lsqlite3.so.0 \
+	CC=$(tc-getCC ${ABI})
+	${CC} -DLSQLITE_VERSION=\"${PV}\" -fPIC -Wall -c lsqlite3.c || die
+	${CC} -shared -Wl,-soname,lsqlite3.so.0 \
 		-o lsqlite3.so lsqlite3.o -lsqlite3 || die
 }
 
