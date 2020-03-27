@@ -125,7 +125,6 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-libs/roct-thunk-interface | TBA |
 | dev-libs/urho3d | Urho3D is another game engine.  Android support is incomplete.  Raspberry PI is untested.  It is a split ebuild meaning that it many of the internal dependencies are now ebuilds like the Gentoo way.  Most of the demos work as expected.  There may be quirks.  If you see any that bother you, then use the internal dependency instead.  Enable box2d for 2d-physics.  Enable bullet for 3d-physics.  Enable recast for 3D pathfinding. |
 | dev-libs/urho3d-web | This is the Emscripten compiled ebuild.  It still requires Urho3D for the include headers. |
-| dev-lua/luafilesystem | TBA |
 | dev-lua/luasqlite3 | TBA |
 | dev-lua/luaxml | TBA |
 | dev-lua/tolua | tolua is another Lua-C++ bindings generator.  It is not used by Urho3D. |
