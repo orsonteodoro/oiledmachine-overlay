@@ -150,7 +150,6 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-util/objconv | TBA |
 | dev-util/premake | Kept for latest versions. |
 | dev-util/pullp | This is an Electron based pull request monitoring program.
-| dev-util/rocm-cmake | Kept for latest versions. |
 | dev-util/rocminfo | Kept for more comprehensive dependency checks. |
 | dev-util/snippetstore | This is a program to save reusable code templates in Electron.
 | dev-util/ycm-generator | You need this if you want c/c++/objc/objc++ support with your ycmd client.  It is mandatory for those languages. |
