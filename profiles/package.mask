@@ -137,8 +137,6 @@ dev-libs/libspotify
 dev-libs/log4c
 dev-libs/pugixml
 dev-libs/rapidjson
-dev-libs/rocr-runtime
-dev-libs/roct-thunk-interface
 dev-libs/recastnavigation
 dev-python/mrab-regex
 dev-python/pocket
