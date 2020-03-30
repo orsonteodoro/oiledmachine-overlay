@@ -1,0 +1,17 @@
+diff -urp twitter-9999.orig/twitter/cmdline.py twitter-9999/twitter/cmdline.py
+--- twitter-9999.orig/twitter/cmdline.py	2016-10-04 05:11:31.037718924 -0700
++++ twitter-9999/twitter/cmdline.py	2016-10-04 05:13:38.964716876 -0700
+@@ -339,10 +339,10 @@ class AnsiSearchFormatter(object):
+         self._colourMap = ansi.ColourMap()
+ 
+     def __call__(self, result, options):
+-        colour = self._colourMap.colourFor(result['from_user'])
++        colour = self._colourMap.colourFor(result['user']['screen_name'])
+         return ("%s%s%s%s %s" % (
+-            get_time_string(result, options, "%a, %d %b %Y %H:%M:%S +0000"),
+-            ansiFormatter.cmdColour(colour), result['from_user'],
++            get_time_string(result, options, "%a %b %d %H:%M:%S +0000 %Y"),
++            ansiFormatter.cmdColour(colour), result['user']['screen_name'],
+             ansiFormatter.cmdReset(), result['text']))
+ 
+ _term_encoding = None
