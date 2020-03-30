@@ -4,9 +4,10 @@
 EAPI=7
 DESCRIPTION="A code-completion & code-comprehension server"
 HOMEPAGE="https://ycm-core.github.io/ycmd/"
+# The vanilla MIT license doesn't contain all rights reserved but it is stated in the source code
 LICENSE="GPL-3+ BSD
 	clangd? ( !system-clangd ( Apache-2.0-with-LLVM-exceptions MIT UoI-NCSA ) )
-	csharp? ( !system-omnisharp-roslyn? ( MIT ) )
+	csharp? ( !system-omnisharp-roslyn? ( all-rights-reserved MIT ) )
 	examples? ( Apache-2.0 )
 	go? ( !system-go-tools? ( BSD ) )
 	java? ( Apache-1.1 Apache-2.0 BSD BSD-2 BSD-4 CPL-1.0 dom4j EPL-2.0 icu MPL-1.1 Unicode-DFS W3C W3C-document )
@@ -32,7 +33,7 @@ USE_DOTNET="net472 netcoreapp21"
 IUSE="c clangd csharp cuda cxx docs debug examples go java javascript libclang \
 minimal objc objcxx python regex rust system-bottle system-boost system-clangd \
 system-go-tools system-jedi system-libclang system-mrab-regex \
-system-requests system-omnisharp-roslyn system-rls system-tern \
+system-requests system-omnisharp-roslyn system-rls system-rust system-tern \
 system-typescript system-waitress test typescript vim"
 CLANG_V="9.0"
 CLANG_V_MAJ=$(ver_cut 1 ${CLANG_V})
@@ -356,7 +357,7 @@ src_configure() {
 	fi
 	python_configure_all()
 	{
-		strip-flags -O0 -O1 -O3 -O4
+		filter-flags -O0 -O1 -O3 -O4
 		append-cxxflags -O2
 		append-cflags -O2
 		# We need to do this ourselves instead of rely on the build

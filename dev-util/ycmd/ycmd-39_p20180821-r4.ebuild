@@ -4,8 +4,9 @@
 EAPI=7
 DESCRIPTION="A code-completion & code-comprehension server"
 HOMEPAGE="https://ycm-core.github.io/ycmd/"
+# The Ms-PL license doesn't contain all rights reserved but it is stated in the source code
 LICENSE="GPL-3+ BSD
-	csharp? ( !system-omnisharp? ( MIT Ms-PL ) )
+	csharp? ( !system-omnisharp? ( all-rights-reserved MIT Ms-PL ) )
 	examples? ( Apache-2.0 )
 	go? ( !system-gocode? ( MIT ) )
 	go? ( !system-godef? ( BSD ) )
@@ -276,7 +277,7 @@ src_configure() {
 	fi
 	python_configure_all()
 	{
-		strip-flags -O0 -O1 -O3 -O4
+		filter-flags -O0 -O1 -O3 -O4
 		append-cxxflags -O2
 		append-cflags -O2
 		# We need to do this ourselves instead of rely on the build
