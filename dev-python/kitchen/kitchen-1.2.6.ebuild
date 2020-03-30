@@ -6,7 +6,7 @@
 EAPI=7
 DESCRIPTION="A cornucopia of useful code"
 HOMEPAGE="https://pypi.org/project/kitchen/"
-LICENSE="LGPL-2+"
+LICENSE="LGPL-2+ PSF-2.4"
 KEYWORDS="~amd64 ~x86"
 PYTHON_COMPAT=( python3_6 ) # setup.py says up to 3.4
 inherit distutils-r1
