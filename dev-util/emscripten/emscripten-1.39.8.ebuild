@@ -9,7 +9,7 @@ DESCRIPTION="LLVM-to-JavaScript Compiler"
 HOMEPAGE="http://emscripten.org/"
 LICENSE="all-rights-reserved UoI-NCSA Apache-2.0 Apache-2.0-with-LLVM-exceptions \
 BSD BSD-2 CC-BY-SA-3.0 \
-|| ( FTL GPL-2 ) GPL-2+ LGPL-2.1 LGPL-3 MIT MPL-2.0 OFL-1.1 PSF-2.3 Unlicense \
+|| ( FTL GPL-2 ) GPL-2+ LGPL-2.1 LGPL-3 MIT MPL-2.0 OFL-1.1 PSF-2.4 Unlicense \
 ZLIB"
 LICENSE_NOTES="
 Third-party
@@ -44,7 +44,7 @@ Tests
   freetype - || (FTL GPL-2) MIT ZLIB
     LiberationSansBold - OFL-1.1
   openjpeg - BSD-2
-  tests/python - PSF-2.3
+  tests/python - PSF-2.4
   tests/sounds - cc-by-sa-3.0
   poppler - GPL-2
   poppler/cmake - BSD
