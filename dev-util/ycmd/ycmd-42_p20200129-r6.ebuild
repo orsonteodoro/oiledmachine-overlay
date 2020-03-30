@@ -4,10 +4,11 @@
 EAPI=7
 DESCRIPTION="A code-completion & code-comprehension server"
 HOMEPAGE="https://ycm-core.github.io/ycmd/"
-# The vanilla MIT license doesn't contain all rights reserved but it is stated in the source code
+# The vanilla MIT license doesn't contain all rights reserved but it is stated in the .target(s), .prop files.
+# Additional licenses on internal omnisharp-rosyln refer to .target(s), .rsp, .config files
 LICENSE="GPL-3+ BSD
 	clangd? ( !system-clangd ( Apache-2.0-with-LLVM-exceptions MIT UoI-NCSA ) )
-	csharp? ( !system-omnisharp-roslyn? ( all-rights-reserved MIT ) )
+	csharp? ( !system-omnisharp-roslyn? ( all-rights-reserved MIT Apache-2.0 ) )
 	examples? ( Apache-2.0 )
 	go? ( !system-go-tools? ( BSD ) )
 	java? ( Apache-1.1 Apache-2.0 BSD BSD-2 BSD-4 CPL-1.0 dom4j EPL-2.0 icu MPL-1.1 Unicode-DFS W3C W3C-document )
