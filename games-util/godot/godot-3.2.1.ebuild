@@ -10,7 +10,7 @@ inherit check-reqs desktop eutils godot multilib-build python-r1 scons-utils
 DESCRIPTION="Godot Engine - Multi-platform 2D and 3D game engine"
 HOMEPAGE="http://godotengine.org"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
-LICENSE="all-rights-reserved Apache-2.0 BitstreamVera Boost-1.0 BSD CC-BY-3.0 FTL ISC LGPL-2.1 MIT MPL-2.0 OFL-1.1 openssl Unlicense ZLIB"
+LICENSE="all-rights-reserved Apache-2.0 BitstreamVera Boost-1.0 BSD BSD-2 CC-BY-3.0 FTL ISC LGPL-2.1 MIT MPL-2.0 OFL-1.1 openssl Unlicense ZLIB"
 # thirdparty/misc/curl_hostcheck.c - all-rights-reserved MIT # The MIT license does not have all rights reserved but the source does
 # thirdparty/bullet/BulletCollision - zlib all-rights-reserved
 # thirdparty/bullet/BulletDynamics - all-rights-reserved || ( LGPL-2.1 BSD )
