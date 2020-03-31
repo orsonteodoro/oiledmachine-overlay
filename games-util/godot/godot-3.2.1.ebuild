@@ -56,8 +56,8 @@ RDEPEND="android? ( dev-util/android-sdk-update-manager )
 	 media-libs/libsndfile[${MULTILIB_USEDEP}]
 	 media-libs/libvorbis[${MULTILIB_USEDEP}]
          media-sound/pulseaudio[${MULTILIB_USEDEP}]
-	 mono? ( dev-dotnet/nuget[${MULTILIB_USEDEP}]
-		 dev-util/msbuild[${MULTILIB_USEDEP}]
+	 mono? ( dev-dotnet/nuget
+		 dev-util/msbuild
 		 >=dev-lang/mono-5.2[${MULTILIB_USEDEP}] )
 	 net-libs/libasyncns[${MULTILIB_USEDEP}]
 	 ${PYTHON_DEPS}
