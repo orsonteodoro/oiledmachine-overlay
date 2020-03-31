@@ -11,7 +11,7 @@ DESCRIPTION="Godot Engine - Multi-platform 2D and 3D game engine"
 HOMEPAGE="http://godotengine.org"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
 LICENSE="all-rights-reserved Apache-2.0 BitstreamVera BSD CC-BY-3.0 FTL ISC LGPL-2.1 MIT MPL-2.0 OFL-1.1 openssl Unlicense ZLIB"
-# curl - all-rights-reserved MIT # The MIT license does not have all rights reserved but the source does
+# thirdparty/curl - all-rights-reserved MIT # The MIT license does not have all rights reserved but the source does
 # thirdparty/bullet/BulletCollision - zlib all-rights-reserved
 # thirdparty/bullet/BulletDynamics - all-rights-reserved || ( LGPL-2.1 BSD )
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # libpng license does not contain all rights reserved, but this source does
