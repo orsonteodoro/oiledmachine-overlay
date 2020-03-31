@@ -11,7 +11,7 @@ DESCRIPTION="Godot Engine - Multi-platform 2D and 3D game engine"
 HOMEPAGE="http://godotengine.org"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
 LICENSE="all-rights-reserved Apache-2.0 BSD CC-BY-3.0 FTL ISC MIT MPL-2.0 OFL-1.1 openssl RSA Unlicense ZLIB"
-# thirdparty/curl - all-rights-reserved MIT # The MIT license does not have all rights reserved but the source does
+# thirdparty/misc/curl_hostcheck.c - all-rights-reserved MIT # The MIT license does not have all rights reserved but the source does
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # libpng license does not contain all rights reserved, but this source does
 # thirdparty/fonts - Apache-2.0 all-rights-reserved OFL-1.1
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
