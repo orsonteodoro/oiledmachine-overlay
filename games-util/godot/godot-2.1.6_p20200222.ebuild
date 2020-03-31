@@ -10,8 +10,10 @@ inherit check-reqs desktop eutils godot multilib-build python-single-r1 scons-ut
 DESCRIPTION="Godot Engine - Multi-platform 2D and 3D game engine"
 HOMEPAGE="http://godotengine.org"
 # Many licenses because of assets (e.g. artwork, fonts) and third party libraries
-LICENSE="Apache-2.0 all-rights-reserved BSD CC-BY-3.0 FTL ISC MIT MPL-2.0 OFL-1.1 openssl Unlicense ZLIB"
-# all-rights-reserved comes from the thirdparty font and packages
+LICENSE="all-rights-reserved Apache-2.0 BSD CC-BY-3.0 FTL ISC MIT MPL-2.0 OFL-1.1 openssl RSA Unlicense ZLIB"
+# curl - all-rights-reserved MIT # The MIT license does not have all rights reserved but the source does
+# thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # libpng license does not contain all rights reserved, but this source does
+# thirdparty/fonts - Apache-2.0 all-rights-reserved OFL-1.1
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 PND="${PN}-demo-projects"
 EGIT_COMMIT_2_1_DEMOS_SNAPSHOT="9587296412a985b9f9d09ba934cec6655b87b498" # tag 2.1 deterministic / static snapshot
