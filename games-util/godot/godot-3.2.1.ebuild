@@ -15,7 +15,6 @@ LICENSE="all-rights-reserved Apache-2.0 BitstreamVera Boost-1.0 BSD BSD-2 CC-BY-
 # thirdparty/bullet/BulletCollision - zlib all-rights-reserved # The ZLIB license does not have all rights reserved but the source does
 # thirdparty/bullet/BulletDynamics - all-rights-reserved || ( LGPL-2.1 BSD )
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # libpng license does not contain all rights reserved, but this source does
-# thirdparty/fonts/all-rights-reserved OFL-1.1
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 PND="${PN}-demo-projects"
 EGIT_COMMIT_3_DEMOS_SNAPSHOT="e113915c80ff1cb73942dc0294ee9290e6f566f4" # tag 3 deterministic / static snapshot
