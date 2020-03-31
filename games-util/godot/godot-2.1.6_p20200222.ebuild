@@ -13,7 +13,8 @@ HOMEPAGE="http://godotengine.org"
 LICENSE="all-rights-reserved Apache-2.0 BSD BSD-2 CC-BY-3.0 FTL ISC MIT MPL-2.0 OFL-1.1 openssl RSA Unlicense ZLIB"
 # thirdparty/misc/curl_hostcheck.c - all-rights-reserved MIT # The MIT license does not have all rights reserved but the source does
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # libpng license does not contain all rights reserved, but this source does
-# thirdparty/fonts - Apache-2.0 all-rights-reserved OFL-1.1
+# thirdparty/fonts/DroidSans*.ttf - Apache-2.0
+# thirdparty/fonts/source_code_pro.otf - all-rights-reserved OFL-1.1 # The original OFL-1.1 does not contain all rights reserved but stated in LICENSE.SourceCodePro.txt
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 PND="${PN}-demo-projects"
 EGIT_COMMIT_2_1_DEMOS_SNAPSHOT="9587296412a985b9f9d09ba934cec6655b87b498" # tag 2.1 deterministic / static snapshot
