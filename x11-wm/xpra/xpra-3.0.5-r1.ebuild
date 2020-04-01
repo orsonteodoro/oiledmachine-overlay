@@ -106,8 +106,7 @@ RDEPEND="${COMMON_DEPEND}
 	virtual/ssh
 	webcam? ( dev-python/numpy[${PYTHON_USEDEP}]
 		  dev-python/pyinotify[${PYTHON_USEDEP}]
-		>=media-libs/opencv-2.0[python] )
-	x11-apps/xmodmap"
+		>=media-libs/opencv-2.0[python] )"
 DEPEND="${COMMON_DEPEND}
 	cuda? ( dev-util/nvidia-cuda-sdk )
 	>=dev-python/cython-0.16[${PYTHON_USEDEP}]
