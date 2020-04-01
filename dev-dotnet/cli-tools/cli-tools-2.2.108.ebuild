@@ -51,7 +51,11 @@ DOTNET_CLI_REPO_URL="https://github.com/dotnet/cli.git"
 pkg_pretend() {
 	# If FEATURES="-sandbox -usersandbox" are not set dotnet will hang while compiling.
 	if has sandbox $FEATURES || has usersandbox $FEATURES ; then
-		die ".NET core command-line (CLI) tools require sandbox and usersandbox to be disabled in FEATURES."
+		die "${PN} require sandbox and usersandbox to be disabled in FEATURES."
+	fi
+
+	if has network-sandbox $FEATURES ; then
+		die "${PN} require network-sandbox to be disabled in FEATURES."
 	fi
 }
 
@@ -141,6 +145,7 @@ _src_prepare() {
 		sed -i -e 's|-sSL|-L|g' -e 's|wget -q |wget |g' "$f" || die
 	done
 
+	# comment out code block temporary and re-emerge to update ${SDK_V}
 	local p
 	p="${CLI_S}/.dotnet_stage0/${myarch}"
 	mkdir -p "${p}" || die

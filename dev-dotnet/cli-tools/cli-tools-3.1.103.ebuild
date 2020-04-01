@@ -12,9 +12,9 @@ KEYWORDS="~amd64"
 VERSION_SUFFIX=''
 DropSuffix="true" # true=official latest release, false=dev for live ebuilds
 IUSE="tests debug"
-SDK_V="2.1.403"
-FXR_V="2.2.6"
-DOTNET_CLI_COMMIT="b22023123404f34941febc63f200b3a11c4da908" # exactly ${PV}
+SDK_V="3.1.100"
+FXR_V="3.3.1"
+DOTNET_CLI_COMMIT="f6250b79a00848f18e6e7b076b561d0a794983d3" # exactly ${PV}
 SRC_URI="https://github.com/dotnet/cli/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
 	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )"
 #	 arm64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
