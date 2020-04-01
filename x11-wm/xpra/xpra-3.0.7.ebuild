@@ -14,7 +14,7 @@ IUSE="  avahi +client +clipboard csc_swscale csc_libyuv cuda cuda_rebuild cups \
 	dbus dec_avcodec2 enc_ffmpeg enc_x264 enc_x265 gtk3 html5 \
 	html5_gzip html5_brotli jpeg libav +lz4 lzo opengl minify \
 	+notifications nvenc nvfbc pam pillow pulseaudio sd_listen ssl server \
-	sound systemd test vpx vsock v4l2 webcam webp websockets xdg"
+	sound systemd test vpx vsock v4l2 webcam webp websockets X xdg"
 REQUIRED_USE="  ^^ (	python_targets_python3_6 \
 			python_targets_python3_7 \
 			python_targets_python3_8 ) \
@@ -26,6 +26,7 @@ SLOT="0/${PV}"
 MY_PV="$(ver_cut 1-4)"
 inherit distutils-r1
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
+	|| ( client server )
 	avahi? ( dbus )
 	client? ( enc_x264? ( dec_avcodec2 )
 		  enc_x265? ( dec_avcodec2 ) )
@@ -34,7 +35,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	cups? ( dbus )
 	opengl? ( client )
 	sd_listen? ( systemd )
-	|| ( client server )"
+	X? ( gtk3 )"
 inherit multilib-build
 COMMON_DEPEND="${PYTHON_DEPS}
 	dev-lang/python[ssl?]
@@ -82,13 +83,14 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	vsock? ( sys-kernel/linux-headers )
 	webp? ( >=media-libs/libwebp-0.5[opengl?] )
 	websockets? ( dev-python/websockify[${PYTHON_USEDEP}] )
-	x11-libs/libX11
-	x11-libs/libXcomposite
-	x11-libs/libXdamage
-	x11-libs/libXfixes
-	x11-libs/libXrandr
-	x11-libs/libXtst
-	x11-libs/libxkbfile
+	X? ( x11-libs/libX11
+	     x11-libs/libXcomposite
+	     x11-libs/libXdamage
+	     x11-libs/libXfixes
+	     x11-libs/libXi
+	     x11-libs/libXrandr
+	     x11-libs/libXtst
+	     x11-libs/libxkbfile )
 	xdg? ( x11-misc/xdg-utils )"
 RDEPEND="${COMMON_DEPEND}
 	cups? ( dev-python/pycups[${PYTHON_USEDEP}] )
@@ -193,7 +195,7 @@ python_configure_all() {
 		$(use_with webcam)
 		$(use_with webp)
 		$(use_with xdg xdg_open)
-		--with-x11
+		$(use_with X x11)
 		--without-Xdummy
 	)
 
