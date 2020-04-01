@@ -20,24 +20,27 @@ SRC_URI="https://github.com/dotnet/cli/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.
 #	 arm64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
 #	 arm? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )"
 SLOT="${PV}"
+# see scripts/docker/ubuntu.16.10/Dockerfile for dependencies
 RDEPEND="
-	>=sys-devel/llvm-4.0:*
-	>=dev-util/lldb-4.0
-	>=sys-libs/libunwind-1.1-r1
-	>=dev-libs/icu-57.1
-	>=dev-util/lttng-ust-2.8.1
-	>=dev-libs/openssl-1.0.2h-r2
-	>=net-misc/curl-7.49.0
-	>=sys-libs/zlib-1.2.8-r1"
+	>=dev-libs/icu-57
+	>=dev-libs/openssl-1.0.2g
+	>=dev-util/lttng-ust-2.7.1
+	>=app-crypt/mit-krb5-1.13.2
+	>=sys-apps/util-linux-2.27.1
+	>=sys-devel/llvm-3.5
+	>=sys-libs/libunwind-1.1
+	>=sys-libs/zlib-1.2.8"
 DEPEND="${RDEPEND}
-	dev-vcs/git
-	>=dev-util/cmake-3.3.1-r1
-	>=sys-devel/make-4.1-r1
-	>=sys-devel/clang-3.7.1-r100
-	>=sys-devel/gettext-0.19.7
+	!dev-dotnet/dotnetcore-aspnet-bin
 	!dev-dotnet/dotnetcore-runtime-bin
 	!dev-dotnet/dotnetcore-sdk-bin
-	!dev-dotnet/dotnetcore-aspnet-bin"
+	app-arch/unzip
+	dev-util/cmake
+	>=dev-util/lldb-3.5
+	dev-vcs/git
+	net-misc/curl
+	>=sys-devel/clang-3.5
+	sys-devel/gettext"
 _PATCHES=( "${FILESDIR}/dotnet-cli-2.1.505-null-LastWriteTimeUtc-minval.patch" )
 RESTRICT="mirror"
 S="${WORKDIR}"
@@ -226,16 +229,17 @@ src_install() {
 	# using the unpacked binary distribution
 
 	dodir "${dest_sdk}"
-	cp -a "${CLI_S}/bin/2/linux-${myarch}/dotnet/sdk/${PV}${VERSION_SUFFIX}"/* "${ddest_sdk}/" || die
-	cp -a "${CLI_S}/bin/2/linux-${myarch}/dotnet/dotnet" "${ddest}/" || die
-	cp -a "${CLI_S}/bin/2/linux-x64/dotnet/host/" "${ddest}/" || die
-	cp -a "${CLI_S}/bin/2/linux-x64/dotnet/shared/" "${ddest}/" || die
+	local d_dotnet="${CLI_S}/bin/2/linux-${myarch}/dotnet"
+	cp -a "${d_dotnet}/sdk/${PV}${VERSION_SUFFIX}"/* "${ddest_sdk}/" || die
+	cp -a "${d_dotnet}/dotnet" "${ddest}/" || die
+	cp -a "${d_dotnet}/host/" "${ddest}/" || die
+	cp -a "${d_dotnet}/shared/" "${ddest}/" || die
 
 	# prevent collision with coreclr ebuild
 	rm -rf "${ddest}"/shared/Microsoft.NETCore.App/${FXR_V} || die
 
 	dodir /usr/share/licenses/cli-tools-${PV}
-	cp -a "${CLI_S}/bin/2/linux-${myarch}/dotnet"/{LICENSE.txt,ThirdPartyNotices.txt} "${D}/usr/share/licenses/cli-tools-${PV}" || die
+	cp -a "${d_dotnet}"/{LICENSE.txt,ThirdPartyNotices.txt} "${D}/usr/share/licenses/cli-tools-${PV}" || die
 
 	# for monodevelop.  15.0 is toolsversion
 	cd "${ddest_sdk}" || die
