@@ -88,10 +88,6 @@ inherit ot-kernel-cve
 DEPEND+=" dev-util/patchutils
 	  sys-apps/grep[pcre]"
 
-SRC_URI+=\
-" https://github.com/torvalds/linux/commit/52791eeec1d9f4a7e7fe08aaba0b1553149d93bc.patch \
-	-> linux--dma-buf-rename-reservation_object-to-dma_resv.patch"
-
 # @FUNCTION: gen_kernel_seq
 # @DESCRIPTION:
 # Generates a sequence for point releases
@@ -115,10 +111,15 @@ BMQ_SRC_URL="${BMQ_BASE_URL}${BMQ_FN}"
 
 ZENTUNE_PROJ="zen-tune"
 ZENTUNE_FN="${ZENTUNE_PROJ}-${PATCH_ZENTUNE_VER}.patch"
-if [[ "${K_MAJOR_MINOR}" == "5.5" ]] ; then
+if [[ "${K_MAJOR_MINOR}" == "5.6" ]] ; then
+ZENTUNE_URL_BASE="https://github.com/zen-kernel/zen-kernel/compare/"
+ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_5_6_COMMIT}.patch"
+ZENTUNE_DL_DEP_FN="ZEN-Add-CONFIG-to-rename-the-mq-deadline-scheduler-for-5_6.patch"
+ZENTUNE_DL_DEP_URL="https://github.com/torvalds/linux/commit/857aae4518fe08752f004fe6c5c8295da63c5a7e.patch"
+elif [[ "${K_MAJOR_MINOR}" == "5.5" ]] ; then
 ZENTUNE_URL_BASE="https://github.com/zen-kernel/zen-kernel/compare/"
 ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_5_5_COMMIT}.patch"
-ZENTUNE_DL_DEP_FN="ZEN-Add-CONFIG-to-rename-the-mq-deadline-scheduler.patch"
+ZENTUNE_DL_DEP_FN="ZEN-Add-CONFIG-to-rename-the-mq-deadline-scheduler-for-5_5.patch"
 ZENTUNE_DL_DEP_URL="https://github.com/torvalds/linux/commit/98d9dc7ec5a6df16372ccdd7e18e64bfc6d5990f.patch"
 elif [[ "${K_MAJOR_MINOR}" == "5.4" ]] ; then
 ZENTUNE_URL_BASE="https://github.com/torvalds/linux/commit/"
@@ -136,7 +137,8 @@ if [[ "${K_MAJOR_MINOR}" == "5.4" \
 || "${K_MAJOR_MINOR}" == "5.3" \
 || "${K_MAJOR_MINOR}" == "5.2" ]] ; then
 FUTEX_WAIT_MULTIPLE_PROJ="futex-backports"
-elif [[ "${K_MAJOR_MINOR}" == "5.5" ]] ; then
+elif [[ "${K_MAJOR_MINOR}" == "5.5" \
+	|| "${K_MAJOR_MINOR}" == "5.6" ]] ; then
 FUTEX_WAIT_MULTIPLE_PROJ="futex-multiple-wait-v3"
 fi
 FUTEX_WAIT_MULTIPLE_FN="${FUTEX_WAIT_MULTIPLE_PROJ}-${K_MAJOR_MINOR}.patch"
