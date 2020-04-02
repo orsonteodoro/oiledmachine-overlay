@@ -15,7 +15,7 @@ IUSE="samples docs"
 RESTRICT="fetch"
 SLOT="0"
 # split due to flaky servers
-CORE_V=2.1.17
+CORE_V=2.1.16
 RDEPEND="=dev-dotnet/core-${CORE_V}[samples?,docs?]
 	 =dev-dotnet/coreclr-${CORE_V}
 	 =dev-dotnet/corefx-${CORE_V}
