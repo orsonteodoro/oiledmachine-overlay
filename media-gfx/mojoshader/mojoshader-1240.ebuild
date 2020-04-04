@@ -6,7 +6,7 @@ DESCRIPTION="MojoShader is a library to work with Direct3D shaders on alternate\
  3D APIs and non-Windows platforms."
 HOMEPAGE="https://icculus.org/mojoshader/"
 LICENSE="ZLIB"
-KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~x86 ~x64-macos"
 inherit cmake-utils eutils mercurial
 EHG_REVISION_C="ebb2b1e436f2"
 EHG_REVISION="${PV}"
