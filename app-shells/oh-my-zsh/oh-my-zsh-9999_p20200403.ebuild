@@ -36,7 +36,7 @@ USE_RUBY="ruby24 ruby25 ruby26 ruby27"
 RUBY_OPTIONAL=1
 EMOJI_LANG_DEFAULT=${EMOJI_LANG_DEFAULT:=en}
 inherit eutils python-r1 ruby-ng
-EGIT_COMMIT="e1a8d7c9772db760a77b83cf945fcd8b1fc08129"
+EGIT_COMMIT="6ad6fea52a7c59c12f95db974514891d2c111075"
 FN="${EGIT_COMMIT}.zip"
 A_URL="https://github.com/ohmyzsh/ohmyzsh/archive/${FN}"
 SRC_URI="${A_URL} -> ${P}.zip"
@@ -69,8 +69,9 @@ archlinux asdf autoenv autojump autopep8 aws battery bbedit bgnotify \
 boot2docker bower branch brew bundler cabal cake cakephp3 capistrano cargo \
 cask catimg celery chruby chucknorris cloudapp cloudfoundry codeclimate coffee \
 colemak colored-man-pages colorize command-not-found common-aliases compleat \
-composer copybuffer copydir copyfile cp cpanm dash debian dircycle dirhistory \
-dirpersist django dnf dnote docker docker-compose docker-machine doctl dotnet \
+composer copybuffer copydir copyfile cp cpanm dash debian dircycle direnv \
+dirhistory dirpersist django dnf dnote docker docker-compose docker-machine \
+doctl dotnet \
 dotenv \
 droplr drush eecms emacs ember-cli emoji emoji-clock emotty encode64 extract \
 fabric fancy-ctrl-z fasd fastfile fbterm fd fedora firewalld flutter forklift \
@@ -115,6 +116,7 @@ PLUGINS_DEPEND="
 	 plugins_colored-man-pages? ( sys-apps/groff )
 	 plugins_composer? ( dev-lang/php dev-php/composer )
 	 plugins_cpanm? ( dev-perl/App-cpanminus )
+	 plugins_direnv? ( dev-util/direnv )
 	 plugins_django? ( dev-python/django )
 	 plugins_docker-machine? ( app-emulation/docker-machine )
 	 plugins_doctl? ( app-admin/doctl )
