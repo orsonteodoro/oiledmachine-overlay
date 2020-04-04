@@ -1,30 +1,24 @@
---- a/CMakeLists.txt.orig	2019-11-02 22:20:18.954072652 -0700
-+++ b/CMakeLists.txt	2019-11-02 22:24:05.171070279 -0700
+--- a/CMakeLists.txt.orig2	2020-04-03 23:00:33.287088025 -0700
++++ b/CMakeLists.txt	2020-04-03 23:10:17.439579475 -0700
 @@ -2,6 +2,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
  PROJECT(MojoShader)
  
- OPTION(BUILD_SHARED "Build MojoShader as a shared library" OFF)
-+OPTION(BUILD_STATIC "Build MojoShader as a static library" OFF)
+ OPTION(BUILD_SHARED_LIBS "Build MojoShader as a shared library" OFF)
++OPTION(BUILD_STATIC_LIBS "Build MojoShader as a static library" OFF)
  OPTION(PROFILE_D3D "Build MojoShader with support for the D3D profile" ON)
  OPTION(PROFILE_BYTECODE "Build MojoShader with support for the BYTECODE profile" ON)
  OPTION(PROFILE_GLSL120 "Build MojoShader with support for the GLSL120 profile" ON)
-@@ -144,13 +145,7 @@ IF(XNA4_VERTEXTEXTURE)
+@@ -154,7 +155,7 @@ IF(XNA4_VERTEXTEXTURE)
      ADD_DEFINITIONS(-DMOJOSHADER_XNA4_VERTEX_TEXTURES)
  ENDIF(XNA4_VERTEXTEXTURE)
  
--IF(BUILD_SHARED)
--    SET(LIBRARY_FORMAT SHARED)
--ELSE(BUILD_SHARED)
--    SET(LIBRARY_FORMAT STATIC)
--ENDIF(BUILD_SHARED)
--
--ADD_LIBRARY(mojoshader ${LIBRARY_FORMAT}
+-ADD_LIBRARY(mojoshader
 +SET(mojoshader-libsrc
      mojoshader.c
      mojoshader_common.c
      mojoshader_opengl.c
-@@ -161,23 +156,53 @@ ADD_LIBRARY(mojoshader ${LIBRARY_FORMAT}
-     profiles/mojoshader_profile_metal.c
+@@ -167,23 +168,53 @@ ADD_LIBRARY(mojoshader
+     profiles/mojoshader_profile_spirv.c
      profiles/mojoshader_profile_common.c
  )
 -IF(EFFECT_SUPPORT)
@@ -44,23 +38,24 @@
 +ADD_LIBRARY(mojoshader-libobj OBJECT ${mojoshader-libsrc})
 +SET_PROPERTY(TARGET mojoshader-libobj PROPERTY POSITION_INDEPENDENT_CODE 1)
 +
-+IF(BUILD_SHARED)
++IF(BUILD_SHARED_LIBS)
 +    ADD_LIBRARY(mojoshader SHARED $<TARGET_OBJECTS:mojoshader-libobj>)
 +    IF(EFFECT_SUPPORT)
 +        TARGET_SOURCES(mojoshader PRIVATE
 +            mojoshader_effects.c
 +        )
 +    ENDIF(EFFECT_SUPPORT)
-+        IF(COMPILER_SUPPORT)
-+            TARGET_SOURCES(mojoshader PRIVATE
-+                mojoshader_compiler.c
-+                mojoshader_preprocessor.c
-+                mojoshader_lexer.c
-+                mojoshader_assembler.c
-+            )
-+    ENDIF(BUILD_SHARED)
++    IF(COMPILER_SUPPORT)
++        TARGET_SOURCES(mojoshader PRIVATE
++            mojoshader_compiler.c
++            mojoshader_preprocessor.c
++            mojoshader_lexer.c
++            mojoshader_assembler.c
++        )
 +    ENDIF(COMPILER_SUPPORT)
-+IF(BUILD_STATIC)
++ENDIF(BUILD_SHARED_LIBS)
++
++IF(BUILD_STATIC_LIBS)
 +    ADD_LIBRARY(mojoshader-static STATIC $<TARGET_OBJECTS:mojoshader-libobj>)
 +    IF(EFFECT_SUPPORT)
 +        TARGET_SOURCES(mojoshader-static PRIVATE
@@ -75,18 +70,17 @@
 +            mojoshader_assembler.c
 +        )
 +    ENDIF(COMPILER_SUPPORT)
-+ENDIF(BUILD_STATIC)
++ENDIF(BUILD_STATIC_LIBS)
 +
- IF(BUILD_SHARED)
-     TARGET_LINK_LIBRARIES(mojoshader ${LIBM} ${CARBON_FRAMEWORK})
+ IF(BUILD_SHARED_LIBS)
+     TARGET_LINK_LIBRARIES(mojoshader ${LIBM} ${LOBJC} ${CARBON_FRAMEWORK})
      INSTALL(TARGETS mojoshader LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
- ENDIF(BUILD_SHARED)
-+IF(BUILD_STATIC)
-+    TARGET_LINK_LIBRARIES(mojoshader-static ${LIBM} ${CARBON_FRAMEWORK})
-+    INSTALL(TARGETS mojoshader-static ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+ ENDIF(BUILD_SHARED_LIBS)
++IF(BUILD_STATIC_LIBS)
++    TARGET_LINK_LIBRARIES(mojoshader-static ${LIBM} ${LOBJC} ${CARBON_FRAMEWORK})
++    INSTALL(TARGETS mojoshader-static LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 +    SET_TARGET_PROPERTIES(mojoshader-static PROPERTIES OUTPUT_NAME "mojoshader")
-+ENDIF(BUILD_STATIC)
-+
++ENDIF(BUILD_STATIC_LIBS)
  
  SET_SOURCE_FILES_PROPERTIES(
      mojoshader_compiler.c

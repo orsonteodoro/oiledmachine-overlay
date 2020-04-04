@@ -8,7 +8,7 @@ HOMEPAGE="https://icculus.org/mojoshader/"
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~x86"
 inherit cmake-utils eutils mercurial
-EHG_REVISION_C="5887634ea695"
+EHG_REVISION_C="ebb2b1e436f2"
 EHG_REVISION="${PV}"
 EHG_REPO_URI="https://hg.icculus.org/icculus/mojoshader/"
 # Wrong CMakeLists.txt ; use mercurial
@@ -20,7 +20,8 @@ IUSE="-compiler_support debug -depth_clipping +profile_arb1 +profile_arb1_nv \
 REQUIRED_USE=""
 SLOT="0/${PV}"
 RDEPEND="dev-util/re2c
-	 media-libs/libsdl2"
+	 media-libs/libsdl2
+	 profile_metal? ( sys-devel/gcc[objc] )"
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-2.6
 	dev-vcs/mercurial"
@@ -33,8 +34,8 @@ src_unpack() {
 
 src_prepare() {
 	default
-	eapply "${FILESDIR}/mojoshader-1214-cmake-fixes.patch"
-	eapply "${FILESDIR}/mojoshader-1214-cmake-build-both-static-and-shared.patch"
+	eapply "${FILESDIR}/mojoshader-1240-cmake-fixes.patch"
+	eapply "${FILESDIR}/mojoshader-1240-cmake-build-both-static-and-shared.patch"
 	# Bugged CMakeLists.txt always points to tip but not static values as
 	# expected.
 	sed -i -e "s|\
@@ -79,15 +80,17 @@ src_configure() {
                 -DPROFILE_GLSL=$(usex profile_glsl)
                 -DPROFILE_METAL=$(usex profile_metal)
                 -DXNA4_VERTEXTEXTURE=$(usex xna_vertextexture)
-		-DBUILD_SHARED="ON"
-		-DBUILD_STATIC=$(usex static "ON" "OFF")
+		-DBUILD_SHARED_LIBS="ON"
+		-DBUILD_STATIC_LIBS=$(usex static "ON" "OFF")
 		-DCMAKE_SKIP_RPATH=ON
         )
 
+	MAKEOPTS="-j1" \
 	cmake-utils_src_configure
 }
 
 src_compile() {
+	MAKEOPTS="-j1" \
 	cmake-utils_src_compile
 }
 
