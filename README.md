@@ -125,7 +125,6 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-lua/luasqlite3 | TBA |
 | dev-lua/tolua | tolua is another Lua-C++ bindings generator.  It is not used by Urho3D. |
 | dev-lua/tolua++ | tolua++ is a Lua-C++ bindings generator more improved than tolua.  I recommend the `urho3d` USE flag to enable some bugfixes.  This one is used by Urho3D. |
-| dev-ruby/escape | TBA |
 | dev-ruby/koala | TBA |
 | dev-python/mrab-regex | TBA |
 | dev-python/pocket | This is the Pocket API for Python. |

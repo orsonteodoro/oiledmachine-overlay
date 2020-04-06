@@ -79,7 +79,6 @@ dev-lua/luasqlite3
 dev-lua/luaxml
 dev-lua/tolua
 dev-lua/tolua++
-dev-ruby/escape
 dev-ruby/koala
 dev-util/depot_tools
 dev-util/msbuild
