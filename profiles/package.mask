@@ -81,7 +81,6 @@ dev-lua/tolua
 dev-lua/tolua++
 dev-ruby/escape
 dev-ruby/koala
-dev-ruby/rmagick
 dev-util/depot_tools
 dev-util/msbuild
 media-gfx/nvidia-texture-tools

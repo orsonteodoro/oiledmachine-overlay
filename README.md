@@ -127,7 +127,6 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-lua/tolua++ | tolua++ is a Lua-C++ bindings generator more improved than tolua.  I recommend the `urho3d` USE flag to enable some bugfixes.  This one is used by Urho3D. |
 | dev-ruby/escape | TBA |
 | dev-ruby/koala | TBA |
-| dev-ruby/rmagick | TBA |
 | dev-python/mrab-regex | TBA |
 | dev-python/pocket | This is the Pocket API for Python. |
 | dev-python/py-stackexchange | TBA |
@@ -150,7 +149,6 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-util/objconv | TBA |
 | dev-util/premake | Kept for latest versions. |
 | dev-util/pullp | This is an Electron based pull request monitoring program.
-| dev-util/rocminfo | Kept for more comprehensive dependency checks. |
 | dev-util/snippetstore | This is a program to save reusable code templates in Electron.
 | dev-util/ycm-generator | You need this if you want c/c++/objc/objc++ support with your ycmd client.  It is mandatory for those languages. |
 | dev-util/ycmd | This is a YouCompleteMe server.  Just add your ycmd client to your text editor then you have code completion support.  The 2014 ebuild is for older clients.  The 2017 ebuilds require clients use the new HMAC header calculation.  It supports C#, C, C++, Objective C, Objective C++, rust, go, javascript, typescript, python.  If you use the `javascript` or `typescript` USE flag, then you need to add the jm-overlay to pull in the dev-nodejs packages. |
