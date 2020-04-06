@@ -98,8 +98,6 @@ sci-misc/setiathome-boincdir
 sci-misc/setiathome-cpu
 sci-misc/setiathome-gpu
 sci-misc/setiathome-updater
-sys-fs/jmtpfs
-sys-fs/mtpfs
 sys-process/psdoom-ng
 virtual/setiathome
 www-misc/facy
