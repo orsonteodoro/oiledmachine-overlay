@@ -1,0 +1,75 @@
+--- b/libtizplatform/src/tizomxutils.c	2020-03-08 14:18:54.000000000 -0700
++++ a/libtizplatform/src/tizomxutils.c	2020-04-08 17:57:39.093170289 -0700
+@@ -615,50 +615,72 @@ static const tiz_idx_str_t tiz_idx_to_st
+   {OMX_IndexVendorStartUnused, (const OMX_STRING) "OMX_IndexVendorStartUnused"},
+   {OMX_TizoniaIndexParamBufferPreAnnouncementsMode,
+    (const OMX_STRING) "OMX_TizoniaIndexParamBufferPreAnnouncementsMode"},
++#ifdef WITH_ICECAST_SERVER
+   {OMX_TizoniaIndexParamHttpServer,
+    (const OMX_STRING) "OMX_TizoniaIndexParamHttpServer"},
+   {OMX_TizoniaIndexParamIcecastMountpoint,
+    (const OMX_STRING) "OMX_TizoniaIndexParamIcecastMountpoint"},
+   {OMX_TizoniaIndexConfigIcecastMetadata,
+    (const OMX_STRING) "OMX_TizoniaIndexConfigIcecastMetadata"},
++#endif
++#ifdef HAVE_OPUS
+   {OMX_TizoniaIndexParamAudioOpus,
+    (const OMX_STRING) "OMX_TizoniaIndexParamAudioOpus"},
++#endif
++#ifdef HAVE_FLAC
+   {OMX_TizoniaIndexParamAudioFlac,
+    (const OMX_STRING) "OMX_TizoniaIndexParamAudioFlac"},
++#endif
++#ifdef HAVE_MP2
+   {OMX_TizoniaIndexParamAudioMp2,
+    (const OMX_STRING) "OMX_TizoniaIndexParamAudioMp2"},
++#endif
++#ifdef HAVE_SPOTIFY
+   {OMX_TizoniaIndexParamAudioSpotifySession,
+    (const OMX_STRING) "OMX_TizoniaIndexParamAudioSpotifySession"},
+   {OMX_TizoniaIndexParamAudioSpotifyPlaylist,
+    (const OMX_STRING) "OMX_TizoniaIndexParamAudioSpotifyPlaylist"},
++#endif
++#ifdef HAVE_GMUSIC
+   {OMX_TizoniaIndexParamAudioGmusicSession,
+    (const OMX_STRING) "OMX_TizoniaIndexParamAudioGmusicSession"},
+   {OMX_TizoniaIndexParamAudioGmusicPlaylist,
+    (const OMX_STRING) "OMX_TizoniaIndexParamAudioGmusicPlaylist"},
++#endif
+   {OMX_TizoniaIndexConfigPlaylistSkip,
+    (const OMX_STRING) "OMX_TizoniaIndexConfigPlaylistSkip"},
++#ifdef HAVE_SOUNDCLOUD
+   {OMX_TizoniaIndexParamAudioSoundCloudSession,
+    (const OMX_STRING) "OMX_TizoniaIndexParamAudioSoundCloudSession"},
+   {OMX_TizoniaIndexParamAudioSoundCloudPlaylist,
+    (const OMX_STRING) "OMX_TizoniaIndexParamAudioSoundCloudPlaylist"},
++#endif
++#ifdef HAVE_TUNEIN
+   {OMX_TizoniaIndexParamAudioTuneinSession,
+    (const OMX_STRING) "OMX_TizoniaIndexParamAudioTuneinSession"},
+   {OMX_TizoniaIndexParamAudioTuneinPlaylist,
+    (const OMX_STRING) "OMX_TizoniaIndexParamAudioTuneinPlaylist"},
++#endif
++#ifdef HAVE_YOUTUBE
+   {OMX_TizoniaIndexParamAudioYoutubeSession,
+    (const OMX_STRING) "OMX_TizoniaIndexParamAudioYoutubeSession"},
+   {OMX_TizoniaIndexParamAudioYoutubePlaylist,
+    (const OMX_STRING) "OMX_TizoniaIndexParamAudioYoutubePlaylist"},
++#endif
+   {OMX_TizoniaIndexParamAudioDeezerSession,
+    (const OMX_STRING) "OMX_TizoniaIndexParamAudioDeezerSession"},
+   {OMX_TizoniaIndexParamAudioDeezerPlaylist,
+    (const OMX_STRING) "OMX_TizoniaIndexParamAudioDeezerPlaylist"},
++#ifdef HAVE_CHROMECAST
+   {OMX_TizoniaIndexParamChromecastSession,
+    (const OMX_STRING) "OMX_TizoniaIndexParamChromecastSession"},
++#endif
++#ifdef HAVE_PLEX
+   {OMX_TizoniaIndexParamAudioPlexSession,
+    (const OMX_STRING) "OMX_TizoniaIndexParamAudioPlexSession"},
+   {OMX_TizoniaIndexParamAudioPlexPlaylist,
+    (const OMX_STRING) "OMX_TizoniaIndexParamAudioPlexPlaylist"},
++#endif
+   {OMX_IndexKhronosExtensions, (const OMX_STRING) "OMX_IndexKhronosExtensions"},
+   {OMX_IndexVendorStartUnused, (const OMX_STRING) "OMX_IndexVendorStartUnused"},
+   {OMX_IndexMax, (const OMX_STRING) "OMX_IndexMax"}};

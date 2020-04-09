@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 DESCRIPTION="Command-line cloud music player for Linux with support for \
-Spotify, Google Play Music, YouTube, SoundCloud, Dirble Internet Radio, Plex \
+Spotify, Google Play Music, YouTube, SoundCloud, TuneIn, Plex \
 servers and Chromecast devices."
 HOMEPAGE="http://tizonia.org"
 LICENSE="LGPL-3.0+"
@@ -14,13 +14,12 @@ SLOT="0/${PV}"
 IUSE="+aac +alsa +bash-completion blocking-etb-ftb blocking-sendcommand
  +boost +curl +dbus +file-io +flac +fuzzywuzzy +inproc-io
  mp4 +ogg +opus +lame +libsndfile +mad +mp3-metadata-eraser +mp2 +mpg123
- +player +pulseaudio +sdl +icecast-client +icecast-server
+ +player +pulseaudio +python +sdl +icecast-client +icecast-server
  -test +vorbis +vpx +webm +zsh-completion openrc systemd
- +chromecast +dirble +google-music +plex +soundcloud +spotify +youtube"
-REQUIRED_USE="chromecast? ( player boost curl dbus google-music )
+ +chromecast +google-music +plex +soundcloud +spotify +tunein +youtube"
+REQUIRED_USE="chromecast? ( player python boost curl dbus google-music )
 	      dbus? ( || ( openrc systemd ) )
-	      dirble? ( player boost curl )
-	      google-music? ( player boost fuzzywuzzy curl )
+	      google-music? ( player python boost fuzzywuzzy curl )
 	      icecast-client? ( player curl )
 	      icecast-server? ( player )
 	      mp2? ( mpg123 )
@@ -28,11 +27,16 @@ REQUIRED_USE="chromecast? ( player boost curl dbus google-music )
 	      ogg? ( curl )
 	      openrc? ( dbus )
 	      player? ( boost )
-	      plex? ( player boost fuzzywuzzy curl )
-	      soundcloud? ( player boost fuzzywuzzy curl )
-	      spotify? ( player boost fuzzywuzzy )
+	      plex? ( player python boost fuzzywuzzy curl )
+	      python? ( || ( chromecast google-music plex soundcloud spotify
+			tunein youtube ) )
+	      !python? ( !chromecast !google-music !plex !soundcloud !spotify
+			!tunein !youtube )
+	      soundcloud? ( player python boost fuzzywuzzy curl )
+	      spotify? ( player python boost fuzzywuzzy )
+	      tunein? ( player python boost fuzzywuzzy curl )
 	      systemd? ( dbus )
-	      youtube? ( player boost fuzzywuzzy curl )
+	      youtube? ( player python boost fuzzywuzzy curl )
 	      ^^ ( python_targets_python3_6
 		   python_targets_python3_7
 		   python_targets_python3_8 )"
@@ -79,8 +83,6 @@ RDEPEND="aac? (  media-libs/faad2[${MULTILIB_USEDEP}] )
 	 chromecast? ( || ( dev-python/PyChromecast[${PYTHON_USEDEP}]
 			    dev-python/pychromecast[${PYTHON_USEDEP}] ) )
 	 curl? ( >=net-misc/curl-7.18.0[${MULTILIB_USEDEP}] )
-	 dirble? ( >=dev-python/dnspython-1.16.0[${PYTHON_USEDEP}]
-		   dev-python/eventlet[${PYTHON_USEDEP}] )
 	 flac? ( >=media-libs/flac-1.3.0[${MULTILIB_USEDEP}] )
 	 fuzzywuzzy? ( dev-python/fuzzywuzzy[${PYTHON_USEDEP}] )
 	 google-music? ( dev-python/gmusicapi[${PYTHON_USEDEP}] )
@@ -98,6 +100,7 @@ RDEPEND="aac? (  media-libs/faad2[${MULTILIB_USEDEP}] )
 		   >=media-libs/taglib-1.7.0[${MULTILIB_USEDEP}] )
 	 plex? ( dev-python/python-plexapi[${PYTHON_USEDEP}] )
 	 pulseaudio? ( >=media-sound/pulseaudio-1.1[${MULTILIB_USEDEP}] )
+	 python? ( ${PYTHON_DEPS} )
 	 sdl? ( media-libs/libsdl[${MULTILIB_USEDEP}] )
 	 soundcloud? ( dev-python/soundcloud-python[${PYTHON_USEDEP}] )
 	 spotify? ( >=dev-libs/libspotify-12.1.51[${MULTILIB_USEDEP}] )
@@ -108,8 +111,7 @@ RDEPEND="aac? (  media-libs/faad2[${MULTILIB_USEDEP}] )
 	 youtube? ( dev-python/pafy[${PYTHON_USEDEP}]
 		    net-misc/youtube-dl[${PYTHON_USEDEP}] )
 	 webm? ( media-libs/nestegg[${MULTILIB_USEDEP}] )
-	 zsh-completion? ( app-shells/zsh )
-	 ${PYTHON_DEPS}"
+	 zsh-completion? ( app-shells/zsh )"
 
 DEPEND="${RDEPEND}
 	>=dev-libs/check-0.9.4[${MULTILIB_USEDEP}]
@@ -122,33 +124,40 @@ S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
 _PATCHES=(
 	"${FILESDIR}/tizonia-0.18.0-modular-1.patch"
-	"${FILESDIR}/tizonia-0.18.0-modular-2.patch"
-	"${FILESDIR}/tizonia-0.18.0-modular-3.patch"
-	"${FILESDIR}/tizonia-0.19.0-modular-4.patch"
+	"${FILESDIR}/tizonia-0.21.0-modular-2.patch"
+	"${FILESDIR}/tizonia-0.21.0-modular-3.patch"
+	"${FILESDIR}/tizonia-0.21.0-modular-4.patch"
 	"${FILESDIR}/tizonia-0.18.0-modular-5.patch"
 	"${FILESDIR}/tizonia-0.18.0-modular-6.patch"
 	"${FILESDIR}/tizonia-0.18.0-modular-7.patch"
 	"${FILESDIR}/tizonia-0.18.0-modular-8.patch"
-	"${FILESDIR}/tizonia-0.18.0-modular-9.patch"
+	"${FILESDIR}/tizonia-0.21.0-modular-9.patch"
 	"${FILESDIR}/tizonia-0.18.0-modular-10.patch"
 	"${FILESDIR}/tizonia-0.18.0-modular-11.patch"
-	"${FILESDIR}/tizonia-0.19.0-modular-12.patch"
+	"${FILESDIR}/tizonia-0.21.0-modular-12.patch"
 	"${FILESDIR}/tizonia-0.18.0-modular-13.patch"
 	"${FILESDIR}/tizonia-0.18.0-modular-14.patch"
 	"${FILESDIR}/tizonia-0.18.0-modular-15.patch"
 	"${FILESDIR}/tizonia-0.18.0-modular-16.patch"
 	"${FILESDIR}/tizonia-0.18.0-modular-17.patch"
-	"${FILESDIR}/tizonia-0.19.0-modular-18.patch"
-	"${FILESDIR}/tizonia-0.19.0-modular-19.patch"
+	"${FILESDIR}/tizonia-0.21.0-modular-18.patch"
+	"${FILESDIR}/tizonia-0.21.0-modular-19.patch"
 	"${FILESDIR}/tizonia-0.18.0-modular-20.patch"
 	"${FILESDIR}/tizonia-0.18.0-modular-21.patch"
 	"${FILESDIR}/tizonia-0.18.0-modular-22.patch"
 	"${FILESDIR}/tizonia-0.18.0-modular-23.patch"
 	"${FILESDIR}/tizonia-0.18.0-modular-24.patch"
 	"${FILESDIR}/tizonia-0.18.0-modular-25.patch"
+	"${FILESDIR}/tizonia-0.21.0-modular-26.patch"
+	"${FILESDIR}/tizonia-0.21.0-modular-27.patch"
+	"${FILESDIR}/tizonia-0.21.0-modular-28.patch"
+	"${FILESDIR}/tizonia-0.21.0-modular-29.patch"
+	"${FILESDIR}/tizonia-0.21.0-modular-30.patch"
 )
 
 src_prepare() {
+	ewarn \
+"You may need to completely uninstall ${PN} before building this package."
 	default
 	eapply ${_PATCHES[@]}
 	eautoreconf
@@ -177,12 +186,16 @@ python_configure_all() {
 	else
 		myconf+=" --without-zshcompletiondir"
 	fi
-	if use dirble || use icecast-client || use google-music || use plex \
-		|| use soundcloud || use youtube ; then
+	if use icecast-client || use google-music || use plex \
+		|| use soundcloud || use tunein || use youtube ; then
 		myconf+=" --with-http-source"
 	else
 		myconf+=" --without-http-source"
 	fi
+
+	PYTHON_LIBS="-L/usr/$(get_libdir) -l${EPYTHON}m" \
+	PYTHON_SITE_PKG="/usr/$(get_libdir)/${EPYTHON}/site-packages" \
+	PKG_CONFIG="/usr/bin/$(get_abi_CHOST ${ABI})-pkg-config" \
 	econf \
 		$(use_with aac) \
 		$(use_with alsa) \
@@ -190,13 +203,12 @@ python_configure_all() {
 		$(use_enable blocking-sendcommand) \
 		$(use_enable blocking-etb-ftb) \
 		$(use_with boost) \
-		$(use_with chromecast) \
+		$(multilib_native_use_with chromecast) \
 		$(use_with curl) \
 		$(use_with dbus) \
-		$(use_with dirble) \
 		$(use_with file-io) \
 		$(use_with flac) \
-		$(use_with google-music gmusic) \
+		$(multilib_native_use_with google-music gmusic) \
 		$(use_with icecast-client) \
 		$(use_with icecast-server) \
 		$(use_with inproc-io) \
@@ -207,20 +219,21 @@ python_configure_all() {
 		$(use_with ogg) \
 		$(use_with openrc) \
 		$(use_with opus) \
-		$(use_enable player) \
+		$(multilib_native_use_with player) \
 		$(use_with mad) \
 		$(use_with mp2) \
-		$(use_with plex) \
+		$(multilib_native_use_with plex) \
 		$(use_with pulseaudio) \
 		$(use_with sdl) \
-		$(use_with soundcloud) \
-		$(use_with spotify) \
+		$(multilib_native_use_with soundcloud) \
+		$(multilib_native_use_with spotify) \
+		$(multilib_native_use_with tunein) \
 		$(use_with systemd) \
 		$(use_enable test) \
 		$(use_with vorbis) \
 		$(use_with vpx vp8) \
 		$(use_with webm) \
-		$(use_with youtube) \
+		$(multilib_native_use_with youtube) \
 		$(use_with zsh-completion) \
 		${myconf} || die
 }
