@@ -3,14 +3,14 @@
 
 EAPI="6"
 
-K_GENPATCHES_VER="3"
-PATCH_BMQ_VER="5.6-r0"
+K_GENPATCHES_VER="18"
+PATCH_BMQ_VER="5.5-r3"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
 
 # Not supported by the Gentoo crew
 K_SECURITY_UNSUPPORTED="1"
 
-inherit ot-kernel-v5.6
+inherit ot-kernel-v5.5
 
 KEYWORDS="~amd64 ~x86"
 
