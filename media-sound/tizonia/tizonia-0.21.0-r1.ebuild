@@ -153,6 +153,9 @@ _PATCHES=(
 	"${FILESDIR}/tizonia-0.21.0-modular-28.patch"
 	"${FILESDIR}/tizonia-0.21.0-modular-29.patch"
 	"${FILESDIR}/tizonia-0.21.0-modular-30.patch"
+	"${FILESDIR}/tizonia-0.21.0-modular-31.patch"
+	"${FILESDIR}/tizonia-0.21.0-modular-32.patch"
+	"${FILESDIR}/tizonia-0.21.0-modular-33.patch"
 )
 
 src_prepare() {
@@ -160,8 +163,14 @@ src_prepare() {
 "You may need to completely uninstall ${PN} before building this package."
 	default
 	eapply ${_PATCHES[@]}
-	eautoreconf
 	multilib_copy_sources
+	prepare_abi() {
+		cd "${BUILD_DIR}" || die
+		sed -i -e "s|/lib\"|/$(get_libdir)\"|g" \
+			rm/tizrmd/m4/ax_lib_sqlite3.m4 || die
+		eautoreconf
+	}
+	multilib_foreach_abi prepare_abi
 }
 
 multilib_src_configure() {
@@ -170,10 +179,17 @@ multilib_src_configure() {
 
 python_configure_all() {
 	cd "${WORKDIR}/${MY_PN}-${PV}-${MULTILIB_ABI_FLAG}.${ABI}" || die
-	L=$(grep -l -r -e "boost_python" ./)
+	L=$(find . -name "Makefile.am")
 	for l in $L ; do
-		einfo "Patching $l -lboost_python to -lboost_${EPYTHON//python/python-}"
-		sed -i "s|-lboost_python|-lboost_${EPYTHON//python/python-}|g" $l || die
+		einfo "Patching $l for -lboost_python to -lboost_${EPYTHON//./}"
+		sed -i "s|-lboost_python36|-lboost_${EPYTHON//./}|g" $l || die
+	done
+	L=$(find . -name "*.pc.in")
+	for l in $L ; do
+		einfo "Patching $l for -lpython3.6m to -l${EPYTHON}m"
+		sed -i "s|-lpython3.6m|-l${EPYTHON}m|g" $l || die
+		einfo "Patching $l for -lboost_python36 to -lboost_${EPYTHON//./}"
+		sed -i "s|-lboost_python36|-lboost_${EPYTHON//./}|g" $l || die
 	done
 	local myconf
 	if use bash-completion ; then
@@ -219,7 +235,7 @@ python_configure_all() {
 		$(use_with ogg) \
 		$(use_with openrc) \
 		$(use_with opus) \
-		$(multilib_native_use_with player) \
+		$(multilib_native_use_enable player) \
 		$(use_with mad) \
 		$(use_with mp2) \
 		$(multilib_native_use_with plex) \
