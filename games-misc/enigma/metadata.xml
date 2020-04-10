@@ -54,6 +54,7 @@
     <flag name="opengl">Enables general OpenGL support.</flag>
     <flag name="opengl1">Installs OpenGL 1.x support.</flag>
     <flag name="opengl3">Installs OpenGL 3.x support.</flag>
+    <flag name="radialgm">Adds RadialGM support.</flag>
     <flag name="sdl2">Adds window creation and input support via SDL2 in a
       platform independent way.</flag>
     <flag name="sfml">Adds sound support via SFML.</flag>
