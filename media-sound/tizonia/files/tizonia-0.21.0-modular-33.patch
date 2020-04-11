@@ -92,7 +92,7 @@ diff -urp tizonia-openmax-il-0.21.0.orig/plugins/http_source/src/tuneinprc_decls
  #include <tizprc_decls.h>
  
  #include <tizplatform.h>
-+#if WITH_TUNEIN
++#ifdef HAVE_TUNEIN
  #include <tiztunein_c.h>
 +#endif
  

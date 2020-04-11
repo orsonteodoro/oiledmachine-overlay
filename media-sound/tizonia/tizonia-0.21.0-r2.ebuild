@@ -156,6 +156,8 @@ _PATCHES=(
 	"${FILESDIR}/tizonia-0.21.0-modular-31.patch"
 	"${FILESDIR}/tizonia-0.21.0-modular-32.patch"
 	"${FILESDIR}/tizonia-0.21.0-modular-33.patch"
+	"${FILESDIR}/tizonia-0.21.0-modular-34.patch"
+	"${FILESDIR}/tizonia-0.21.0-modular-35.patch"
 )
 
 src_prepare() {
@@ -282,6 +284,50 @@ multilib_src_install() {
 
 python_install_all() {
 	emake DESTDIR="${D}" install
+	# fixes header mismatch
+	if ! multilib_is_native_abi ; then
+		insinto /usr/include/tizonia/
+		if use chromecast ; then
+			pushd clients/chromecast/libtizchromecast/src || die
+			doins tizchromecastctxtypes.h \
+				tizchromecastctx_c.h \
+				tizchromecast_c.h \
+				tizchromecastctx.hpp \
+				tizchromecast.hpp \
+				tizchromecasttypes.h
+			popd
+		fi
+		if use google-music ; then
+			pushd clients/gmusic/libtizgmusic/src || die
+			doins tizgmusic.hpp tizgmusic_c.h
+			popd
+		fi
+		if use plex ; then
+			pushd clients/plex/libtizplex/src || die
+			doins tizplex.hpp tizplex_c.h
+			popd
+		fi
+		if use soundcloud ; then
+			pushd clients/soundcloud/libtizsoundcloud/src || die
+			doins tizsoundcloud.hpp tizsoundcloud_c.h
+			popd
+		fi
+		if use spotify ; then
+			pushd clients/spotify/libtizspotify/src || die
+			doins tizspotify.hpp tizspotify_c.h
+			popd
+		fi
+		if use tunein ; then
+			pushd clients/tunein/libtiztunein/src || die
+			doins tiztunein.hpp tiztunein_c.h
+			popd
+		fi
+		if use youtube ; then
+			pushd clients/youtube/libtizyoutube/src || die
+			doins tizyoutube.hpp tizyoutube_c.h
+			popd
+		fi
+	fi
 }
 
 multilib_src_install_all() {
