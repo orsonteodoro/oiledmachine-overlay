@@ -7,4 +7,4 @@ if [[ "$R_DWM" == "0" && "$R_WMNAME" == "0" ]] ; then
   wmname LG3D &
 fi
 cd /usr/lib64/enigma/PLATFORM
-java -jar /usr/lib64/enigma/PLATFORM/lateralgm.jar $*
+LD_LIBRARY_PATH="/usr/lib64/enigma/PLATFORM:${LD_LIBRARY_PATH}" java -jar /usr/lib64/enigma/PLATFORM/lateralgm.jar $*
