@@ -149,9 +149,6 @@ src_compile() {
 	platform_compile () {
 		cd "${BUILD_DIR}" || die
 		ml_compile_abi() {
-			if [[ "${EENIGMA}" == "vanilla" ]] ; then
-				return
-			fi
 			cd "${BUILD_DIR}" || die
 			local targets=( libProtocols libEGM ENIGMA \
 					emake )
@@ -338,11 +335,10 @@ src_install() {
 				eapply \
 "${FILESDIR}/enigma-9999_p20200330-makefile-stripped-for-production.patch"
 			fi
-			if [[ "${EENIGMA}" == "vanilla" ]] ; then
-				:;
-			else
+			if use radialgm ; then
 				doexe emake
 			fi
+			dolib.so libcompileEGMf.so libEGM.so libENIGMAShared.so libProtocols.so
 			doins -r ENIGMAsystem Compilers settings.ey events.res \
 				Makefile
 			exeinto /usr/bin
@@ -364,12 +360,6 @@ src_install() {
 			sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|g" \
 				"${D}/usr/bin/enigma-cli-${EENIGMA}${suffix}" \
 				|| die
-			if [[ "${EENIGMA}" == "vanilla" ]] ; then
-				:;
-			else
-				dolib.so libcompileEGMf.so libEGM.so \
-					libProtocols.so
-			fi
 			newicon Resources/logo.png enigma.png
 			make_desktop_entry \
 				"/usr/bin/enigma-${EENIGMA}${suffix}" \
