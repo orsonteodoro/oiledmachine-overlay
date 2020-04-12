@@ -7,6 +7,7 @@ HOMEPAGE="https://github.com/enigma-dev/RadialGM"
 LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
+IUSE="doc"
 ENIGMA_V="9999_p20200409"
 RDEPEND="dev-cpp/yaml-cpp
 	 dev-libs/double-conversion
@@ -48,7 +49,6 @@ src_prepare() {
 
 src_configure() {
 	DIRS=$(find /usr/lib/gcc/ -name "libstdc++fs.a" -print0 | xargs -0 dirname | tr "\n" ":")
-
 	local mycmakeargs=(
 		-DEGM_BUILD_EMAKE=OFF
 		-DCMAKE_INSTALL_PREFIX=/usr/$(get_libdir)/${MY_PN}
