@@ -1,5 +1,5 @@
 #!/bin/bash
 export PATH="/usr/lib64/RadialGM:${PATH}"
 pushd "/usr/lib64/RadialGM"
-	LD_LIBRARY_PATH="/usr/lib64/RadialGM:${LD_LIBRARY_PATH}" ./RadialGM
+	LD_LIBRARY_PATH="/usr/lib64/RadialGM:${LD_LIBRARY_PATH}" ./RadialGM $*
 popd
