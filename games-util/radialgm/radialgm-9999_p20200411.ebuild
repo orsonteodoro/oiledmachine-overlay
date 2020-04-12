@@ -28,7 +28,6 @@ RDEPEND="dev-cpp/yaml-cpp
 	 >=sys-devel/gcc-7.4.0
 	 x11-libs/qscintilla
 	 virtual/jpeg"
-EGIT_COMMIT_ENIGMA="3fa4e21ab49e07370481cd1c35714d611bf1f9f6"
 EGIT_COMMIT="356b0edeaba4bbb426407c16c3d4663e4b04f9dc"
 SRC_URI=\
 "https://github.com/enigma-dev/RadialGM/archive/${EGIT_COMMIT}.tar.gz \
