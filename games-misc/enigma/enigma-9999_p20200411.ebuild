@@ -60,7 +60,7 @@ DEPEND="${RDEPEND}
 	test? ( dev-cpp/gtest[${MULTILIB_USEDEP}]
 		dev-libs/boost[${MULTILIB_USEDEP}]
 		x11-libs/libX11[${MULTILIB_USEDEP}] )"
-EGIT_COMMIT="0a5d253feaf87651e348e8ce1257e9a0cfd7a937"
+EGIT_COMMIT="f612dccc0b46d22b56913599b0cdbd84080bcf86"
 SRC_URI=\
 "https://github.com/enigma-dev/enigma-dev/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
@@ -159,10 +159,9 @@ src_compile() {
 				targets+=( emake-tests test-runner )
 			fi
 			targets+=( .FORCE )
+			emake ${targets[@]}
 			if use radialgm ; then
-				CLI_ENABLE_SERVER=TRUE emake ${targets[@]}
-			else
-				emake ${targets[@]}
+				emake ${targets[@]} emake CLI_ENABLE_SERVER=TRUE
 			fi
 		}
 		multilib_foreach_abi ml_compile_abi
