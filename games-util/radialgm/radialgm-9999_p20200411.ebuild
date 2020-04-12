@@ -8,7 +8,6 @@ LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 ENIGMA_V="9999_p20200409"
-GCC_V="9.2.0"
 RDEPEND="dev-cpp/yaml-cpp
 	 dev-libs/double-conversion
 	 dev-libs/libpcre2[pcre16]
@@ -26,7 +25,7 @@ RDEPEND="dev-cpp/yaml-cpp
 	 media-libs/harfbuzz
 	 net-dns/c-ares
 	 net-libs/grpc
-	 sys-devel/gcc
+	 >=sys-devel/gcc-7.4.0
 	 x11-libs/qscintilla
 	 virtual/jpeg"
 EGIT_COMMIT_ENIGMA="3fa4e21ab49e07370481cd1c35714d611bf1f9f6"
