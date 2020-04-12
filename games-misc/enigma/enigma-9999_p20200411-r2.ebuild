@@ -338,9 +338,13 @@ src_install() {
 			if use radialgm ; then
 				doexe emake
 			fi
-			dolib.so libcompileEGMf.so libEGM.so libENIGMAShared.so libProtocols.so
+			doexe libcompileEGMf.so libEGM.so libENIGMAShared.so libProtocols.so
 			doins -r ENIGMAsystem Compilers settings.ey events.res \
 				Makefile
+			if use radialgm ; then
+				insinto "/usr/$(get_libdir)/enigma/${EENIGMA}${suffix}/CommandLine"
+				doins -r CommandLine/libEGM
+			fi
 			exeinto /usr/bin
 			cp "${FILESDIR}/enigma" "${FILESDIR}/enigma-cli" "${T}"
 			sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|g" \
