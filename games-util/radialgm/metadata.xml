@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    RadialGM is a cross platform Game Maker editor and IDE.  It allows game
+    designers to rearrange the scene and levels.
+  </longdescription>
+  <upstream>
+    <doc lang="en">https://enigma-dev.org/docs/Wiki/RadialGM</doc>
+    <bugs-to>https://github.com/enigma-dev/RadialGM/issues</bugs-to>
+    <maintainer status="active">
+      <name>Robert B. Colton</name>
+    </maintainer>
+    <maintainer status="active">
+      <name>Greg Williamson</name>
+    </maintainer>
+    <remote-id type="github">enigma-dev/RadialGM</remote-id>
+  </upstream>
+</pkgmetadata>
