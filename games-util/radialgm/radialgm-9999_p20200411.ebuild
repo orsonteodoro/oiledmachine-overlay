@@ -73,8 +73,3 @@ src_install() {
 	make_desktop_entry /usr/$(get_libdir)/${MY_PN} "Development;IDE"
 	dosym /usr/$(get_libdir)/enigma/vanilla /usr/$(get_libdir)/${MY_PN}/enigma-dev
 }
-
-pkg_postinst()
-{
-	:;
-}
