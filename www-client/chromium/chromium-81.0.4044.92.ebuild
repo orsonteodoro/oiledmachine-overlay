@@ -12,13 +12,13 @@ inherit check-reqs chromium-2 desktop flag-o-matic multilib ninja-utils pax-util
 inherit multilib-minimal
 
 DESCRIPTION="Open-source version of Google Chrome web browser"
-HOMEPAGE="http://chromium.org/"
+HOMEPAGE="https://chromium.org/"
 SRC_URI="https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz"
 
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~x86"
-IUSE="+closure-compile component-build cups cpu_flags_arm_neon gnome-keyring +hangouts kerberos pic +proprietary-codecs pulseaudio selinux +suid +system-ffmpeg +system-icu +system-libvpx tcmalloc widevine"
+KEYWORDS="amd64 ~arm64 ~x86"
+IUSE="+closure-compile component-build cups cpu_flags_arm_neon +hangouts kerberos pic +proprietary-codecs pulseaudio selinux +suid +system-ffmpeg +system-icu +system-libvpx tcmalloc widevine"
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE+=" ${_ABIS}"
 RESTRICT="!system-ffmpeg? ( proprietary-codecs? ( bindist ) )"
@@ -38,7 +38,6 @@ COMMON_DEPEND="
 	dev-libs/nspr:=[${MULTILIB_USEDEP}]
 	>=dev-libs/nss-3.26:=[${MULTILIB_USEDEP}]
 	>=dev-libs/re2-0.2019.08.01:=[${MULTILIB_USEDEP}]
-	gnome-keyring? ( >=gnome-base/libgnome-keyring-3.12:=[${MULTILIB_USEDEP}] )
 	>=media-libs/alsa-lib-1.0.19:=[${MULTILIB_USEDEP}]
 	media-libs/fontconfig:=[${MULTILIB_USEDEP}]
 	media-libs/freetype:=[${MULTILIB_USEDEP}]
@@ -98,7 +97,7 @@ BDEPEND="
 		dev-lang/yasm
 	)
 	dev-lang/perl
-	>=dev-util/gn-0.1726
+	dev-util/gn
 	dev-vcs/git
 	>=dev-util/gperf-3.0.3
 	>=dev-util/ninja-1.7.2
@@ -113,7 +112,7 @@ BDEPEND="
 : ${CHROMIUM_FORCE_CLANG=no}
 
 if [[ ${CHROMIUM_FORCE_CLANG} == yes ]]; then
-	BDEPEND+=" >=sys-devel/clang-9"
+	BDEPEND+=" >=sys-devel/clang-7"
 fi
 
 if ! has chromium_pkg_die ${EBUILD_DEATH_HOOKS}; then
@@ -139,21 +138,25 @@ theme that covers the appropriate MIME types, and configure this as your
 GTK+ icon theme.
 
 For native file dialogs in KDE, install kde-apps/kdialog.
+
+To make password storage work with your desktop environment you may
+have install one of the supported credentials management applications:
+- app-crypt/libsecret (GNOME)
+- kde-frameworks/kwallet (KDE)
+If you have one of above packages installed, but don't want to use
+them in Chromium, then add --password-store=basic to CHROMIUM_FLAGS
+in /etc/chromium/default.
 "
 
 PATCHES=(
-	"${FILESDIR}/chromium-compiler-r12.patch"
+	"${FILESDIR}/chromium-compiler-r11.patch"
 	"${FILESDIR}/chromium-fix-char_traits.patch"
-	"${FILESDIR}/chromium-blink-style_format.patch"
 	"${FILESDIR}/chromium-78-protobuf-export.patch"
 	"${FILESDIR}/chromium-79-gcc-alignas.patch"
 	"${FILESDIR}/chromium-80-gcc-quiche.patch"
-	"${FILESDIR}/chromium-82-gcc-constexpr.patch"
-	"${FILESDIR}/chromium-82-gcc-noexcept.patch"
-	"${FILESDIR}/chromium-82-gcc-incomplete-type.patch"
-	"${FILESDIR}/chromium-82-gcc-template.patch"
-	"${FILESDIR}/chromium-82-gcc-iterator.patch"
-	"${FILESDIR}/chromium-82-clang-std.patch"
+	"${FILESDIR}/chromium-80-gcc-blink.patch"
+	"${FILESDIR}/chromium-81-gcc-noexcept.patch"
+	"${FILESDIR}/chromium-81-gcc-constexpr.patch"
 )
 
 pre_build_checks() {
@@ -276,7 +279,6 @@ src_prepare() {
 		third_party/devscripts
 		third_party/devtools-frontend
 		third_party/devtools-frontend/src/front_end/third_party/fabricjs
-		third_party/devtools-frontend/src/front_end/third_party/lighthouse
 		third_party/devtools-frontend/src/front_end/third_party/wasmparser
 		third_party/devtools-frontend/src/third_party
 		third_party/dom_distiller_js
@@ -289,7 +291,6 @@ src_prepare() {
 		third_party/google_input_tools/third_party/closure_library
 		third_party/google_input_tools/third_party/closure_library/third_party/closure
 		third_party/googletest
-		third_party/harfbuzz-ng/utils
 		third_party/hunspell
 		third_party/iccjpeg
 		third_party/inspector_protocol
@@ -315,7 +316,6 @@ src_prepare() {
 		third_party/llvm
 		third_party/lss
 		third_party/lzma_sdk
-		third_party/mako
 		third_party/markupsafe
 		third_party/mesa
 		third_party/metrics_proto
@@ -359,7 +359,6 @@ src_prepare() {
 		third_party/SPIRV-Tools
 		third_party/sqlite
 		third_party/swiftshader
-		third_party/swiftshader/third_party/astc-encoder
 		third_party/swiftshader/third_party/llvm-7.0
 		third_party/swiftshader/third_party/llvm-subzero
 		third_party/swiftshader/third_party/marl
@@ -503,12 +502,14 @@ multilib_src_configure() {
 	# See dependency logic in third_party/BUILD.gn
 	myconf_gn+=" use_system_harfbuzz=true"
 
+	# Disable deprecated libgnome-keyring dependency, bug #713012
+	myconf_gn+=" use_gnome_keyring=false"
+
 	# Optional dependencies.
 	myconf_gn+=" closure_compile=$(usex closure-compile true false)"
 	myconf_gn+=" enable_hangout_services_extension=$(usex hangouts true false)"
 	myconf_gn+=" enable_widevine=$(usex widevine true false)"
 	myconf_gn+=" use_cups=$(usex cups true false)"
-	myconf_gn+=" use_gnome_keyring=$(usex gnome-keyring true false)"
 	myconf_gn+=" use_kerberos=$(usex kerberos true false)"
 	myconf_gn+=" use_pulseaudio=$(usex pulseaudio true false)"
 
