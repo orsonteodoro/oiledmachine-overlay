@@ -9,7 +9,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86"
 SLOT="0"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit distutils-r1
-EGIT_COMMIT="1bb3cd901f6814d63abf2bd35718634dc808aeaa"
+EGIT_COMMIT="0e6d22d6fb2c54f5eb37028da1414279e2d1a625"
 IUSE="jpeg"
 DEPEND="dev-python/arrow[${PYTHON_USEDEP}]
 	dev-python/pillow[jpeg?,${PYTHON_USEDEP}]
@@ -26,8 +26,7 @@ https://github.com/orakaro/rainbowstream/archive/${EGIT_COMMIT}.tar.gz \
 inherit eutils
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
-PATCHES=( "${FILESDIR}"/${PN}-1.3.7-no-user-env.patch
-	"${FILESDIR}"/${PN}-1.3.5-requests-relax-version.patch )
+PATCHES=( "${FILESDIR}"/${PN}-1.3.7-no-user-env.patch )
 
 python_compile() {
 	distutils-r1_python_compile
