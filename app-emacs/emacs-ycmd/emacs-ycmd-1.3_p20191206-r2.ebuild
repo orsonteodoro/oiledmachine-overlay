@@ -14,7 +14,7 @@ system-gocode system-godef system-racerd"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 YCMD_SLOT="1"
 RDEPEND="${PYTHON_DEPS}
-        dev-util/ycmd:${YCMD_SLOT}[${PYTHON_USEDEP}]"
+	$(python_gen_cond_dep 'dev-util/ycmd:'${YCMD_SLOT}'[${PYTHON_USEDEP}]' python3_{6,7,8} )"
 DEPEND="${RDEPEND}"
 BDEPEND="net-misc/curl"
 inherit eutils elisp
@@ -54,6 +54,9 @@ src_configure() {
 	cp "${FILESDIR}/${SITEFILE}" "${WORKDIR}"
 	local sitefile_path="${WORKDIR}/${SITEFILE}"
 	local python_sitedir="$(python_get_sitedir)"
+
+	sed -i -e "s|__EPYTHON__|${EPYTHON}|g" \
+		"${sitefile_path}"  || die
 
 	if use debug ; then
 		sed -i -e "s|___YCMD-EMACS_DEBUG___|(setq debug-on-error t)|g" \

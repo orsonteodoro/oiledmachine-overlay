@@ -7,7 +7,7 @@ ___YCMD-EMACS_DEBUG___
 
 ___YCMD-EMACS_NEXT_ERROR___
 
-(set-variable 'ycmd-server-command '("python3.4" "___YCMD-EMACS-YCMD-DIR___"))
+(set-variable 'ycmd-server-command '("__EPYTHON__" "___YCMD-EMACS-YCMD-DIR___"))
 (set-variable 'ycmd-global-config "___YCMD-EMACS_GLOBAL_CONFIG_ABSPATH___")
 (set-variable 'ycmd-gocode-binary-path "___YCMD-EMACS_GOCODE_ABSPATH___")
 (set-variable 'ycmd-godef-binary-path "___YCMD-EMACS_GODEF_ABSPATH___")
