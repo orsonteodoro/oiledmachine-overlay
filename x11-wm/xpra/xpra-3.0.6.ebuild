@@ -67,8 +67,7 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	nvfbc? ( dev-python/numpy[${PYTHON_USEDEP}]
 		 dev-python/pycuda[${PYTHON_USEDEP}]
 	       >=x11-drivers/nvidia-drivers-410.66 )
-	opengl? (  dev-python/numpy[${PYTHON_USEDEP}]
-		   dev-python/pygtkglext )
+	opengl? (  dev-python/numpy[${PYTHON_USEDEP}] )
 	pam? ( sys-libs/pam )
 	pillow? ( dev-python/pillow[${PYTHON_USEDEP}] )
 	pulseaudio? ( media-sound/pulseaudio )
