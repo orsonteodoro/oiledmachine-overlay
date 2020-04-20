@@ -27,7 +27,7 @@ if [[ ${MOZ_ESR} == 1 ]] ; then
 fi
 
 # Patch version
-PATCH="${PN}-74.0-patches-06"
+PATCH="${PN}-75.0-patches-5"
 
 MOZ_HTTP_URI="https://archive.mozilla.org/pub/${PN}/releases"
 MOZ_SRC_URI="${MOZ_HTTP_URI}/${MOZ_PV}/source/firefox-${MOZ_PV}.source.tar.xz"
@@ -41,8 +41,9 @@ fi
 LLVM_MAX_SLOT=10
 
 inherit check-reqs eapi7-ver flag-o-matic toolchain-funcs eutils \
-		gnome2-utils llvm mozcoreconf-v6 pax-utils xdg-utils \
-		autotools mozlinguas-v2 virtualx eapi7-ver
+		gnome2-utils llvm mozcoreconf-v6 multiprocessing \
+		pax-utils xdg-utils autotools mozlinguas-v2 virtualx \
+		eapi7-ver
 inherit multilib-minimal
 
 DESCRIPTION="Firefox Web Browser"
@@ -55,8 +56,8 @@ LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
 IUSE="bindist clang cpu_flags_x86_avx2 debug eme-free geckodriver
 	+gmp-autoupdate hardened hwaccel jack lto cpu_flags_arm_neon pgo
 	pulseaudio +screenshot selinux startup-notification +system-av1
-	+system-harfbuzz +system-icu +system-jpeg +system-libevent  +system-sqlite
-	 +system-libvpx +system-webp test wayland wifi"
+	+system-harfbuzz +system-icu +system-jpeg +system-libevent +system-libvpx
+	+system-webp test wayland wifi"
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE+=" ${_ABIS}"
 IUSE+=" +jemalloc"
@@ -73,7 +74,7 @@ SRC_URI="${SRC_URI}
 	${PATCH_URIS[@]}"
 
 CDEPEND="
-	>=dev-libs/nss-3.50[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.51[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.25[${MULTILIB_USEDEP}]
 	dev-libs/atk[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
@@ -90,7 +91,7 @@ CDEPEND="
 	virtual/freedesktop-icon-theme
 	sys-apps/dbus[${MULTILIB_USEDEP}]
 	dev-libs/dbus-glib[${MULTILIB_USEDEP}]
-	startup-notification? ( >=x11-libs/startup-notification-0.8 )
+	startup-notification? ( >=x11-libs/startup-notification-0.8[${MULTILIB_USEDEP}] )
 	>=x11-libs/pixman-0.19.2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.26:2[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.3[${MULTILIB_USEDEP}]
@@ -113,7 +114,6 @@ CDEPEND="
 	system-jpeg? ( >=media-libs/libjpeg-turbo-1.2.1[${MULTILIB_USEDEP}] )
 	system-libevent? ( >=dev-libs/libevent-2.0:0=[threads,${MULTILIB_USEDEP}] )
 	system-libvpx? ( >=media-libs/libvpx-1.8.2:0=[postproc,${MULTILIB_USEDEP}] )
-	system-sqlite? ( >=dev-db/sqlite-3.31.1:3[secure-delete,debug=,${MULTILIB_USEDEP}] )
 	system-webp? ( >=media-libs/libwebp-1.1.0:0=[${MULTILIB_USEDEP}] )
 	wifi? (
 		kernel_linux? (
@@ -137,7 +137,7 @@ DEPEND="${CDEPEND}
 	app-arch/zip
 	app-arch/unzip
 	>=dev-util/cbindgen-0.13.0
-	>=net-libs/nodejs-8.11.0
+	>=net-libs/nodejs-10.19.0
 	>=sys-devel/binutils-2.30
 	sys-apps/findutils
 	|| (
@@ -184,7 +184,7 @@ DEPEND="${CDEPEND}
 			>=media-sound/apulse-0.1.12-r4[sdk,${MULTILIB_USEDEP}]
 		)
 	)
-	>=dev-lang/rust-1.39.0[${MULTILIB_USEDEP}]
+	>=dev-lang/rust-1.41.0[${MULTILIB_USEDEP}]
 	!dev-lang/rust-bin
 	wayland? ( >=x11-libs/gtk+-3.11:3[wayland,${MULTILIB_USEDEP}] )
 	abi_x86_64? ( >=dev-lang/yasm-1.1 virtual/opengl[${MULTILIB_USEDEP}] )
@@ -203,6 +203,7 @@ QA_PRESTRIPPED="usr/lib*/${PN}/firefox"
 
 MOZILLA_FIVE_HOME=""
 BUILD_OBJ_DIR=""
+
 
 # allow GMP_PLUGIN_LIST to be set in an eclass or
 # overridden in the enviromnent (advanced hackers only)
@@ -325,17 +326,21 @@ src_unpack() {
 }
 
 src_prepare() {
-	use !wayland && rm -f "${WORKDIR}/firefox/2019_mozilla-bug1539471.patch"
 	eapply "${WORKDIR}/firefox"
-
-	eapply "${FILESDIR}/${PN}-73.0_fix_lto_pgo_builds.patch"
-	eapply "${FILESDIR}/${PN}-73.0_fix_llvm9.patch"
-	eapply "${FILESDIR}/${PN}-74.0-bug1607052-font-selection-regression.patch"
 	eapply "${FILESDIR}/${PN}-68.4.2-dont-check-rustc-host.patch"
 	eapply "${FILESDIR}/${PN}-68.4.2-force-cross-compile.patch"
 
+	# Make LTO respect MAKEOPTS
+	sed -i \
+		-e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
+		"${S}"/build/moz.configure/lto-pgo.configure \
+		|| die "sed failed to set num_cores"
+
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
+
+	einfo "Removing pre-built binaries ..."
+	find "${S}"/third_party -type f \( -name '*.so' -o -name '*.o' \) -print -delete || die
 
 	# Enable gnomebreakpad
 	if use debug ; then
@@ -607,7 +612,6 @@ multilib_src_configure() {
 	fi
 
 	mozconfig_use_enable startup-notification
-	mozconfig_use_enable system-sqlite
 	mozconfig_use_with system-av1
 	mozconfig_use_with system-harfbuzz
 	mozconfig_use_with system-harfbuzz system-graphite2
