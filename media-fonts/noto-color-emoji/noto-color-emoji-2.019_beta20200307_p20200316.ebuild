@@ -24,7 +24,7 @@ RDEPEND=">=media-libs/fontconfig-2.11.91
          >=x11-libs/cairo-1.16"
 DEPEND="${RDEPEND}
         ${PYTHON_DEPS}
-        >=dev-python/fonttools-3.15.1[${PYTHON_USEDEP}]
+        $(python_gen_cond_dep '>=dev-python/fonttools-3.15.1[${PYTHON_USEDEP}]' python3_{6,7,8})
 	  dev-python/six
         media-gfx/imagemagick
 	media-gfx/pngquant
@@ -32,9 +32,9 @@ DEPEND="${RDEPEND}
 	zopflipng? ( app-arch/zopfli )"
 FONT_SUFFIX="ttf"
 FONT_CONF=( )
-NOTO_EMOJI_COMMIT="018aa149d622a4fea11f01c61a7207079da301bc"
-NOTO_TOOLS_COMMIT="cae92ce958bee37748bf0602f5d7d97bb6db98ca"
-NOTO_TOOLS_PV="0.2.0_p20191019" # see setup.py for versioning
+NOTO_EMOJI_COMMIT="ac1703e9d7feebbf5443a986e08332b1e1c5afcf"
+NOTO_TOOLS_COMMIT="e0a39bad11ca47f924b432bb05c3cccd87e68571"
+NOTO_TOOLS_PV="0.2.0_p20200401" # see setup.py for versioning
 SRC_URI=\
 "https://github.com/googlei18n/noto-emoji/archive/${NOTO_EMOJI_COMMIT}.tar.gz \
 	-> noto-emoji-${PV}.tar.gz

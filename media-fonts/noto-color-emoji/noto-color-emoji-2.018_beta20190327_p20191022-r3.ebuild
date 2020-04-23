@@ -11,7 +11,7 @@ LICENSE="Apache-2.0 OFL-1.1"
 # Artwork is Apache-2.0 and flags are public domain
 KEYWORDS="~alpha ~amd64 ~amd64-linux ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 \
 ~s390 ~sh ~sparc ~sparc-solaris ~x64-solaris ~x86 ~x86-linux ~x86-solaris"
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python3_{6,7,8} )
 SLOT="0/${PV}"
 IUSE="optipng +zopflipng"
 inherit python-single-r1
@@ -24,7 +24,7 @@ RDEPEND=">=media-libs/fontconfig-2.11.91
          >=x11-libs/cairo-1.16"
 DEPEND="${RDEPEND}
         ${PYTHON_DEPS}
-        >=dev-python/fonttools-3.15.1[${PYTHON_USEDEP}]
+        $(python_gen_cond_dep '>=dev-python/fonttools-3.15.1[${PYTHON_USEDEP}]' python3_{6,7,8})
 	  dev-python/six
         media-gfx/imagemagick
 	media-gfx/pngquant
@@ -32,9 +32,9 @@ DEPEND="${RDEPEND}
 	zopflipng? ( app-arch/zopfli )"
 FONT_SUFFIX="ttf"
 FONT_CONF=( )
-NOTO_EMOJI_COMMIT="ca22132c45adb022c1a6c6bed96df76cf0c4fb18"
-NOTO_TOOLS_COMMIT="bcd0721306473ac2c638e44a518836fe4830f704"
-NOTO_TOOLS_PV="0.0.1_p20170518" # see setup.py for versioning
+NOTO_EMOJI_COMMIT="018aa149d622a4fea11f01c61a7207079da301bc"
+NOTO_TOOLS_COMMIT="cae92ce958bee37748bf0602f5d7d97bb6db98ca"
+NOTO_TOOLS_PV="0.2.0_p20191019" # see setup.py for versioning
 SRC_URI=\
 "https://github.com/googlei18n/noto-emoji/archive/${NOTO_EMOJI_COMMIT}.tar.gz \
 	-> noto-emoji-${PV}.tar.gz
@@ -51,6 +51,11 @@ pkg_setup() {
 
 src_prepare() {
 	default
+	sed -i -e "s|\
+from fontTools.misc.py23 import unichr|\
+from six import unichr|" \
+	"${WORKDIR}/nototools-${NOTO_TOOLS_COMMIT}/nototools/unicode_data.py" \
+		|| die
 	if use zopflipng ; then
 		sed -i -e "s|\
 emoji: \$(EMOJI_FILES)|\

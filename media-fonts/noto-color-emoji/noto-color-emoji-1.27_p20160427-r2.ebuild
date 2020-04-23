@@ -24,7 +24,7 @@ RDEPEND=">=media-libs/fontconfig-2.11.91
          >=x11-libs/cairo-1.16"
 DEPEND="${RDEPEND}
         ${PYTHON_DEPS}
-        >=dev-python/fonttools-3.15.1[${PYTHON_USEDEP}]
+        $(python_gen_cond_dep '>=dev-python/fonttools-3.15.1[${PYTHON_USEDEP}]' python2_7)
 	  dev-python/six
         media-gfx/imagemagick
 	media-gfx/pngquant
