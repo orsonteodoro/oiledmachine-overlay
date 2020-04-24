@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="AMDGPU firmware"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-10"
+"https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-30-unified"
 LICENSE="LICENSE.amdgpu"
 # See the rock-firmware package for details.
 KEYWORDS="~amd64"
@@ -16,7 +16,6 @@ PKG_ARCH_VER="18.04"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
 PKG_VER_STRING_DIR=${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
-FIRMWARE_VER="5.4.7.53-1048554"
 RESTRICT="fetch"
 RDEPEND="!sys-firmware/rock-firmware"
 SLOT="0/${PV}"
@@ -63,8 +62,8 @@ unpack_deb() {
 src_unpack() {
 	default
 	unpack_deb \
-"amdgpu-pro-${PKG_VER_STRING_DIR}/amdgpu-dkms-firmware_${FIRMWARE_VER}_all.deb"
-	export S="${WORKDIR}/usr/src/amdgpu-${FIRMWARE_VER}"
+"amdgpu-pro-${PKG_VER_STRING_DIR}/amdgpu-dkms_${PKG_VER}-${PKG_REV}_all.deb"
+	export S="${WORKDIR}/usr/src/amdgpu-${PKG_VER}-${PKG_REV}"
 }
 
 src_configure() {
