@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="Radeon™ Software for Linux®"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-10"
+"https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-30-unified"
 LICENSE="AMD GPL-2 QPL-1.0"
 KEYWORDS="~amd64 ~x86"
 MULTILIB_COMPAT=( abi_x86_{32,64} )
@@ -14,17 +14,17 @@ PKG_VER_MAJ=$(ver_cut 1)
 PKG_REV=$(ver_cut 3)
 PKG_ARCH="ubuntu"
 PKG_ARCH_VER="18.04"
-PKG_VER_AMF="1.4.16"
+PKG_VER_AMF="1.4.12"
 PKG_VER_GLAMOR="1.19.0"
 PKG_VER_GST_OMX="1.0.0.1"
 PKG_VER_HSAKMT="1.0.6"
 PKG_VER_ID="1.0.0"
-PKG_VER_LIBDRM="2.4.99"
+PKG_VER_LIBDRM="2.4.98"
 PKG_VER_LIBWAYLAND="1.15.0"
 PKG_VER_LLVM_TRIPLE="9.0.0"
 PKG_VER_LLVM=$(ver_cut 1-2 ${PKG_VER_LLVM_TRIPLE})
 PKG_VER_LLVM_MAJ=$(ver_cut 1 ${PKG_VER_LLVM_TRIPLE})
-PKG_VER_MESA="19.2.2"
+PKG_VER_MESA="19.2.0"
 PKG_VER_ROCT="1.0.9"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
 PKG_VER_STRING_DIR=${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}
@@ -69,20 +69,20 @@ RDEPEND="  app-eselect/eselect-opencl
 		>=sys-kernel/zen-sources-5.0 ) )
 	 || (
 		>=sys-kernel/amdgpu-dkms-${PV}
-		>=sys-kernel/aufs-sources-5.5
-		>=sys-kernel/ck-sources-5.5
-		>=sys-kernel/gentoo-sources-5.5
-		>=sys-kernel/git-sources-5.5
-		>=sys-kernel/hardened-sources-5.5
-		>=sys-kernel/pf-sources-5.5
+		>=sys-kernel/aufs-sources-5.4
+		>=sys-kernel/ck-sources-5.4
+		>=sys-kernel/gentoo-sources-5.4
+		>=sys-kernel/git-sources-5.4
+		>=sys-kernel/hardened-sources-5.4
+		>=sys-kernel/pf-sources-5.4
 		  sys-kernel/rock-dkms
-		>=sys-kernel/rt-sources-5.5
-		>=sys-kernel/vanilla-sources-5.5
-		>=sys-kernel/xbox-sources-5.5
-		>=sys-kernel/zen-sources-5.5 )
+		>=sys-kernel/rt-sources-5.4
+		>=sys-kernel/vanilla-sources-5.4
+		>=sys-kernel/xbox-sources-5.4
+		>=sys-kernel/zen-sources-5.4 )
 		|| ( >=sys-firmware/amdgpu-firmware-${PV}
 	               sys-firmware/rock-firmware
-		     >=sys-kernel/linux-firmware-20200309 )
+		     >=sys-kernel/linux-firmware-20191113 )
 	 >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
 	 >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
 	 opencl? (  >=sys-devel/gcc-5.2.0 )
@@ -232,8 +232,8 @@ src_unpack() {
 
 		if use roct ; then
 			if [[ "${ABI}" == "amd64" ]] ; then
-				unpack_deb "${d}/hsakmt-roct-amdgpu_${PKG_VER_ROCT}-${PKG_REV}_${arch}.deb"
-				unpack_deb "${d}/hsakmt-roct-amdgpu-dev_${PKG_VER_ROCT}-${PKG_REV}_${arch}.deb"
+				unpack_deb "${d}/roct-amdgpu-pro_${PKG_VER_ROCT}-${PKG_REV}_${arch}.deb"
+				unpack_deb "${d}/roct-amdgpu-pro-dev_${PKG_VER_ROCT}-${PKG_REV}_${arch}.deb"
 			fi
 		fi
 
@@ -247,7 +247,7 @@ src_unpack() {
 			unpack_deb "${d}/libgl1-amdgpu-pro-dri_${PKG_VER_STRING}_${arch}.deb"
 
 			# Install GBM
-			unpack_deb "${d}/libgbm1-amdgpu_${PKG_VER_MESA}-${PKG_REV}_${arch}.deb"
+			unpack_deb "${d}/libgbm1-amdgpu-pro_${PKG_VER_STRING}_${arch}.deb"
 
 			unpack_deb "${d}/libglapi1-amdgpu-pro_${PKG_VER_STRING}_${arch}.deb"
 			unpack_deb "${d}/libglapi-amdgpu-mesa_${PKG_VER_MESA}-${PKG_REV}_${arch}.deb"
@@ -286,7 +286,7 @@ src_unpack() {
 		if use amf ; then
 			if [[ "${ABI}" == "amd64" ]] ; then
 				# Install AMDGPU Pro Advanced Multimedia Framework
-				unpack_deb "${d}/amf-amdgpu-pro_${PKG_VER_STRING}_${arch}.deb"
+				unpack_deb "${d}/amf-amdgpu-pro_${PKG_VER_AMF}-${PKG_REV}_${arch}.deb"
 			fi
 		fi
 
@@ -327,10 +327,9 @@ src_unpack() {
 	}
 	multilib_foreach_abi unpack_abi
 
-	#if use opengl ; then
-	#	unpack_deb "${d}/libgbm1-amdgpu-pro-base_${PKG_VER_STRING}_all.deb"
-	#	libgbm-amdgpu-dev_19.2.2-967956_i386.deb
-	#fi
+	if use opengl ; then
+		unpack_deb "${d}/libgbm1-amdgpu-pro-base_${PKG_VER_STRING}_all.deb"
+	fi
 
 	# Pin version (contains version requirements)
 	unpack_deb "${d}/amdgpu-pro-pin_${PKG_VER_STRING}_all.deb"
@@ -466,7 +465,7 @@ src_install() {
 				if [[ "${ABI}" == "amd64" ]] ; then
 					doins etc/OpenCL/vendors/amdocl${b}.icd
 					exeinto ${dd_amdgpu}/
-					doexe ${sd_amdgpupro}/libamd_comgr.so
+					doexe ${sd_amdgpupro}/libamdcomgr${b}.so
 				fi
 			fi
 
@@ -489,7 +488,7 @@ src_install() {
 		if use roct ; then
 			if [[ "${ABI}" == "amd64" ]] ; then
 				exeinto ${dd_amdgpu}/
-				doexe ${sd_amdgpu}/libhsakmt.so.${PKG_VER_HSAKMT}
+				doexe ${sd_amdgpupro}/libhsakmt.so.${PKG_VER_HSAKMT}
 				dosym libhsakmt.so.${PKG_VER_HSAKMT} \
 					${dd_amdgpu}/libhsakmt.so.$(ver_cut 1-2 ${PKG_VER_HSAKMT})
 				dosym libhsakmt.so.${PKG_VER_HSAKMT} \
@@ -497,23 +496,22 @@ src_install() {
 				dosym libhsakmt.so.${PKG_VER_HSAKMT} \
 					${dd_amdgpu}/libhsakmt.so
 
-				local sd_amdgpu_include="opt/amdgpu/include"
+				local sd_include="opt/amdgpu-pro/include"
 				insinto /usr/include/libhsakmt/
-				doins ${sd_amdgpu_include}/hsakmttypes.h
-				doins ${sd_amdgpu_include}/hsakmt.h
+				doins ${sd_include}/hsakmttypes.h
+				doins ${sd_include}/hsakmt.h
 
-				#insinto /usr/include/libhsakmt/linux/
-				#doins ${sd_amdgpu_include}/linux/kfd_ioctl.h
+				insinto /usr/include/libhsakmt/linux/
+				doins ${sd_include}/linux/kfd_ioctl.h
 
-				local sd_amdgpu_share="opt/amdgpu/share"
 				insinto /usr/$(get_libdir)/pkgconfig/
 				sed -i -e "s|/opt/rocm||g" \
-					${sd_amdgpu_share}/pkgconfig/libhsakmt.pc
+					${sd_amdgpupro}/pkgconfig/libhsakmt.pc
 				sed -i -e "s|//${sd_amdgpupro}|${d_amdgpu}/|g" \
-					${sd_amdgpu_share}/pkgconfig/libhsakmt.pc
+					${sd_amdgpupro}/pkgconfig/libhsakmt.pc
 				sed -i -e "s|/include|/usr/include/libhsakmt/|g" \
-					${sd_amdgpu_share}/pkgconfig/libhsakmt.pc
-				doins ${sd_amdgpu_share}/pkgconfig/libhsakmt.pc
+					${sd_amdgpupro}/pkgconfig/libhsakmt.pc
+				doins ${sd_amdgpupro}/pkgconfig/libhsakmt.pc
 			fi
 			# no x86 abi
 		fi
@@ -557,21 +555,21 @@ src_install() {
 
 			# Install GBM
 			exeinto ${dd_amdgpu}/
-			doexe ${sd_amdgpu}/libgbm.so.1.0.0
+			doexe ${sd_amdgpupro}/libgbm.so.1.0.0
 			dosym libgbm.so.1.0.0 ${dd_amdgpu}/libgbm.so.1
 			dosym libgbm.so.1.0.0 ${dd_amdgpu}/libgbm.so
-			#exeinto ${dd_opengl}/gbm/
-			#doexe ${sd_amdgpu}/gbm/gbm_amdgpu.so
-			#dosym gbm_amdgpu.so \
-			#	${dd_opengl}/gbm/libdummy.so
-			#dosym opengl/amdgpu/gbm \
-			#	/usr/$(get_libdir)/gbm
+			exeinto ${dd_opengl}/gbm/
+			doexe ${sd_amdgpupro}/gbm/gbm_amdgpu.so
+			dosym gbm_amdgpu.so \
+				${dd_opengl}/gbm/libdummy.so
+			dosym opengl/amdgpu/gbm \
+				/usr/$(get_libdir)/gbm
 
 			insinto /etc/amd/
 			doins etc/amd/amdrc
 
-			#insinto /etc/gbm/
-			#doins etc/gbm/gbm.conf
+			insinto /etc/gbm/
+			doins etc/gbm/gbm.conf
 		fi
 
 		if use gles2 ; then
@@ -632,12 +630,12 @@ src_install() {
 		if use amf ; then
 			if [[ "${ABI}" == "amd64" ]] ; then
 				exeinto ${dd_amdgpu}
-				doexe ${sd_amdgpupro}/libamfrt${b}.so.${PKG_VER_AMF}
-				dosym libamfrt${b}.so.${PKG_VER_AMF} \
-					${dd_amdgpu}/libamfrt${b}.so.$(ver_cut 1 ${PKG_VER_AMF})
-				dosym libamfrt${b}.so.${PKG_VER_AMF} \
+				doexe ${sd_amdgpupro}/libamfrt${b}.so.${PKG_VER}
+				dosym libamfrt${b}.so.${PKG_VER} \
+					${dd_amdgpu}/libamfrt${b}.so.${PKG_VER_MAJ}
+				dosym libamfrt${b}.so.${PKG_VER} \
 					${dd_amdgpu}/libamfrt${b}.so
-				dosym libamfrt${b}.so.${PKG_VER_AMF} \
+				dosym libamfrt${b}.so.${PKG_VER} \
 					${dd_amdgpu}/libamfrt${b}.so.1
 					# from Gentoo QA notice when installing
 			fi

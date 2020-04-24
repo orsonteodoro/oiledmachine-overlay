@@ -19,17 +19,12 @@
     <flag name="hip-clang">Install the HIP-CLANG runtime</flag>
     <flag name="hsa">Install the HSA (Heterogeneous System Architecture)
       development libraries.</flag>
-    <flag name="navi10">Checks for DRM (Direct Rendering Manager) kernel level
-      driver support for NAVI10 (Radeon RX 5500).</flag>
-    <flag name="navi14">Checks for DRM (Direct Rendering Manager) kernel level
-      driver support for NAVI14 (Radeon RX 5700).</flag>
     <flag name="opencl">Install OpenCL support.</flag>
     <flag name="opencl_orca">Install the outdated legacy OpenCL Orca driver.</flag>
     <flag name="opencl_pal">Install the OpenCL PAL (Platform Abstraction Layer)
       driver for GCN 5.x GPUs (e.g. Vega) or newer.</flag>
     <flag name="opengl">Install OpenGL support.</flag>
     <flag name="openmax">Install OpenMAX support.</flag>
-    <flag name="picasso">Checks firmware for proper Picasso APU support.</flag>
     <flag name="vaapi">Install VAAPI (Video Acceleration API)
       acceleration driver.</flag>
     <flag name="vdpau">Install VDPAU (Video Decode and Presentation API for

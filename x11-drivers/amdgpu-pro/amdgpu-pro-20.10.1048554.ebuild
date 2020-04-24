@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="Radeon™ Software for Linux®"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-10"
+"https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-50-unified"
 LICENSE="AMD GPL-2 QPL-1.0"
 KEYWORDS="~amd64 ~x86"
 MULTILIB_COMPAT=( abi_x86_{32,64} )
@@ -19,22 +19,22 @@ PKG_VER_GLAMOR="1.19.0"
 PKG_VER_GST_OMX="1.0.0.1"
 PKG_VER_HSAKMT="1.0.6"
 PKG_VER_ID="1.0.0"
-PKG_VER_LIBDRM="2.4.99"
-PKG_VER_LIBWAYLAND="1.15.0"
+PKG_VER_LIBDRM="2.4.100"
+PKG_VER_LIBWAYLAND="1.16.0"
 PKG_VER_LLVM_TRIPLE="9.0.0"
 PKG_VER_LLVM=$(ver_cut 1-2 ${PKG_VER_LLVM_TRIPLE})
 PKG_VER_LLVM_MAJ=$(ver_cut 1 ${PKG_VER_LLVM_TRIPLE})
-PKG_VER_MESA="19.2.2"
+PKG_VER_MESA="19.3.4"
 PKG_VER_ROCT="1.0.9"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
 PKG_VER_STRING_DIR=${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}
 PKG_VER_WAYLAND_PROTO="1.17"
-PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.0.1" # about the same as the mesa version
+PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.1.0" # about the same as the mesa version
 VULKAN_SDK_VER="1.1.109.0"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="+amf dkms +egl +gles2 freesync hip-clang +navi10 +navi14 +opencl \
+IUSE="+amf dkms +egl +gles2 freesync hip-clang +navi10 +navi14 +navi14xtx +navi14xt +opencl \
 opencl_orca opencl_pal +opengl openmax +picasso roct +vaapi +vdpau +vulkan \
 wayland"
 SLOT="1"
@@ -69,20 +69,20 @@ RDEPEND="  app-eselect/eselect-opencl
 		>=sys-kernel/zen-sources-5.0 ) )
 	 || (
 		>=sys-kernel/amdgpu-dkms-${PV}
-		>=sys-kernel/aufs-sources-5.5
-		>=sys-kernel/ck-sources-5.5
-		>=sys-kernel/gentoo-sources-5.5
-		>=sys-kernel/git-sources-5.5
-		>=sys-kernel/hardened-sources-5.5
-		>=sys-kernel/pf-sources-5.5
+		>=sys-kernel/aufs-sources-5.7
+		>=sys-kernel/ck-sources-5.7
+		>=sys-kernel/gentoo-sources-5.7
+		>=sys-kernel/git-sources-5.7
+		>=sys-kernel/hardened-sources-5.7
+		>=sys-kernel/pf-sources-5.7
 		  sys-kernel/rock-dkms
-		>=sys-kernel/rt-sources-5.5
-		>=sys-kernel/vanilla-sources-5.5
-		>=sys-kernel/xbox-sources-5.5
-		>=sys-kernel/zen-sources-5.5 )
+		>=sys-kernel/rt-sources-5.7
+		>=sys-kernel/vanilla-sources-5.7
+		>=sys-kernel/xbox-sources-5.7
+		>=sys-kernel/zen-sources-5.7 )
 		|| ( >=sys-firmware/amdgpu-firmware-${PV}
 	               sys-firmware/rock-firmware
-		     >=sys-kernel/linux-firmware-20200309 )
+		     >=sys-kernel/linux-firmware-20200417 )
 	 >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
 	 >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
 	 opencl? (  >=sys-devel/gcc-5.2.0 )
@@ -97,6 +97,7 @@ RDEPEND="  app-eselect/eselect-opencl
 	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
 	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
 		    >=media-libs/vulkan-loader-${VULKAN_SDK_VER} )
+         wayland? ( >=dev-libs/wayland-${PKG_VER_LIBWAYLAND} )
 	 >=x11-base/xorg-drivers-1.19
 	  <x11-base/xorg-drivers-1.20
 	   x11-base/xorg-proto
@@ -318,9 +319,9 @@ src_unpack() {
 		#unpack_deb "${d}/llvm-amdgpu-${PKG_VER_LLVM}-runtime_${PKG_VER_LLVM}-${PKG_REV}_${arch}.deb"
 
 		#if use wayland ; then
-			unpack_deb "${d}/libwayland-amdgpu-client0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
-			unpack_deb "${d}/libwayland-amdgpu-egl1_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
-			unpack_deb "${d}/libwayland-amdgpu-server0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
+#			unpack_deb "${d}/libwayland-amdgpu-client0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
+#			unpack_deb "${d}/libwayland-amdgpu-egl1_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
+#			unpack_deb "${d}/libwayland-amdgpu-server0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
 			#unpack_deb "${d}/libwayland-amdgpu-cursor0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
 			#unpack_deb "${d}/libwayland-amdgpu-dev_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
 		#fi
@@ -735,16 +736,16 @@ src_install() {
 
 		# Install wayland libraries.  Installing these are required.
 		# if use wayland ; then
-			exeinto ${dd_amdgpu}/
-			doexe ${sd_amdgpu}/libwayland-client.so.0.3.0
-			dosym libwayland-client.so.0.3.0 \
-				${dd_amdgpu}/libwayland-client.so.0
-			doexe ${sd_amdgpu}/libwayland-server.so.0.1.0
-			dosym libwayland-server.so.0.1.0 \
-				${dd_amdgpu}/libwayland-server.so.0
-			doexe ${sd_amdgpu}/libwayland-egl.so.1.0.0
-			dosym libwayland-egl.so.1.0.0 \
-				${dd_amdgpu}/libwayland-egl.so.1
+#			exeinto ${dd_amdgpu}/
+#			doexe ${sd_amdgpu}/libwayland-client.so.0.3.0
+#			dosym libwayland-client.so.0.3.0 \
+#				${dd_amdgpu}/libwayland-client.so.0
+#			doexe ${sd_amdgpu}/libwayland-server.so.0.1.0
+#			dosym libwayland-server.so.0.1.0 \
+#				${dd_amdgpu}/libwayland-server.so.0
+#			doexe ${sd_amdgpu}/libwayland-egl.so.1.0.0
+#			dosym libwayland-egl.so.1.0.0 \
+#				${dd_amdgpu}/libwayland-egl.so.1
 		# fi
 
 		# TODO: install dev libraries if any
