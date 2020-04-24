@@ -47,7 +47,7 @@ DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${MY_RPR}"
 DC_VER="3.2.42"
 AMDGPU_VERSION="5.0.73.19.30"
-ROCK_VER="2.7.0_p20190627" # See changes in kfd keywords and tag ;  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/commits/master?path[]=drivers&path[]=gpu&path[]=drm&path[]=amd&path[]=amdkfd
+ROCK_VER="2.7.0_pre20190627" # See changes in kfd keywords and tag ;  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/commits/master?path[]=drivers&path[]=gpu&path[]=drm&path[]=amd&path[]=amdkfd
 
 PATCHES=( "${FILESDIR}/rock-dkms-2.8_p13-makefile-recognize-gentoo.patch"
 	  "${FILESDIR}/amdgpu-dkms-19.30.838629-enable-mmu_notifier.patch"
