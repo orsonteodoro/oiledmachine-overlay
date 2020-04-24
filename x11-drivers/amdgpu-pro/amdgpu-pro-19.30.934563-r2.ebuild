@@ -34,8 +34,8 @@ VULKAN_SDK_VER="1.1.109.0"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="+amf dkms +egl +gles2 freesync hip-clang +navi10 +navi14 +opencl \
-opencl_orca opencl_pal +opengl openmax +picasso roct +vaapi +vdpau +vulkan \
+IUSE="+amf dkms +egl +gles2 freesync hip-clang +opencl \
+opencl_orca opencl_pal +opengl openmax roct +vaapi +vdpau +vulkan \
 wayland"
 SLOT="1"
 
@@ -80,9 +80,9 @@ RDEPEND="  app-eselect/eselect-opencl
 		>=sys-kernel/vanilla-sources-5.4
 		>=sys-kernel/xbox-sources-5.4
 		>=sys-kernel/zen-sources-5.4 )
-		|| ( >=sys-firmware/amdgpu-firmware-${PV}
-	             >=sys-firmware/rock-firmware-2.8.0
-		     >=sys-kernel/linux-firmware-20191113 )
+	 || ( >=sys-firmware/amdgpu-firmware-${PV}
+	        >=sys-firmware/rock-firmware-2.8.0
+		>=sys-kernel/linux-firmware-20191113 )
 	 >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
 	 >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
 	 opencl? (  >=sys-devel/gcc-5.2.0 )
