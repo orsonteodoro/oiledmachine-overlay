@@ -55,14 +55,14 @@ RDEPEND="  app-eselect/eselect-opencl
 	 dev-libs/libedit
 	 dkms? ( || ( sys-kernel/amdgpu-dkms sys-kernel/rock-dkms ) )
 	 freesync? ( || (
-		  sys-kernel/amdgpu-dkms
+		>=sys-kernel/amdgpu-dkms-18.50
 		>=sys-kernel/aufs-sources-5.0
 		>=sys-kernel/ck-sources-5.0
 		>=sys-kernel/git-sources-5.0
 		>=sys-kernel/gentoo-sources-5.0
 		>=sys-kernel/hardened-sources-5.0
 		>=sys-kernel/pf-sources-5.0
-		  sys-kernel/rock-dkms
+		>=sys-kernel/rock-dkms-2.0.0
 		>=sys-kernel/rt-sources-5.0
 		>=sys-kernel/vanilla-sources-5.0
 		>=sys-kernel/xbox-sources-5.0
@@ -75,13 +75,13 @@ RDEPEND="  app-eselect/eselect-opencl
 		>=sys-kernel/git-sources-5.4
 		>=sys-kernel/hardened-sources-5.4
 		>=sys-kernel/pf-sources-5.4
-		  sys-kernel/rock-dkms
+		>=sys-kernel/rock-dkms-2.8.0
 		>=sys-kernel/rt-sources-5.4
 		>=sys-kernel/vanilla-sources-5.4
 		>=sys-kernel/xbox-sources-5.4
 		>=sys-kernel/zen-sources-5.4 )
 		|| ( >=sys-firmware/amdgpu-firmware-${PV}
-	               sys-firmware/rock-firmware
+	             >=sys-firmware/rock-firmware-2.8.0
 		     >=sys-kernel/linux-firmware-20191113 )
 	 >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
 	 >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
@@ -801,7 +801,7 @@ pkg_postinst() {
 	if use freesync ; then
 		einfo \
 "Refer to\n\
-  https://support.amd.com/en-us/kb-articles/pages/how-to-enable-amd-freesync-in-linux.aspx\n\
+  https://www.amd.com/en/support/kb/faq/gpu-754\n\
 to enable FreeSync per each DisplayPort and to view the software supported\n\
 by FreeSync.  You must have VSync on to use FreeSync.  Modify /etc/amd/amdrc\n\
 to turn on VSync."
