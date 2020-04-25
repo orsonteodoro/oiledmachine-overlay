@@ -726,9 +726,11 @@ src_install() {
 	fi
 
 	docinto doc
-	dodoc -r usr/share/doc/amdgpu-doc
+	dodoc -r usr/share/doc/* \
+		opt/amdgpu/share/doc/*
 	docinto licenses
-	dodoc -r usr/share/licenses/{amdgpu-doc,amdgpu-pro,amdgpu-pro-core}
+	dodoc -r usr/share/licenses/* \
+		opt/amdgpu-pro/share/licenses/*
 	doman usr/share/man/man7/amdgpu-doc.7.gz
 }
 
