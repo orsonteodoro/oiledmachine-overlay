@@ -8,7 +8,7 @@ HOMEPAGE=\
 LICENSE="AMD GPL-2 QPL-1.0"
 KEYWORDS="~amd64 ~x86"
 MULTILIB_COMPAT=( abi_x86_{32,64} )
-inherit check-reqs linux-info multilib-build unpacker rpm
+inherit check-reqs linux-info multilib-build unpacker
 PKG_VER=$(ver_cut 1-2)
 PKG_VER_MAJ=$(ver_cut 1)
 PKG_REV=$(ver_cut 3)
@@ -30,7 +30,7 @@ PKG_VER_STRING=${PKG_VER}-${PKG_REV}
 PKG_VER_STRING_DIR=${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}
 PKG_VER_WAYLAND_PROTO="1.17"
 PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.0.1" # about the same as the mesa version
-VULKAN_SDK_VER="1.1.109.0"
+VULKAN_SDK_VER="1.1.121.1"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
