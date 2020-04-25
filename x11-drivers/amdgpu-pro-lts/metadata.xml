@@ -10,14 +10,13 @@
     <bugs-to>https://www.amd.com/report</bugs-to>
   </upstream>
   <longdescription>
-    This package is unilib x86_64 only.  The dependencies are latest stable and
-    more secure with the latest xorg-server-1.20.x.
+    This package is for both x86 and x86_64 (multilib).  Dependencies are LTS
+    (in other distros) but less secure with the older xorg-server-1.19.x.
 
-    For multilib support and feature complete driver, see the amdgpu-pro-lts
-    package instead.
+    For unilib x86_64 only, see amdgpu-pro instead.
 
-    This package is preferred over the amdgpu-pro-lts package for security
-    reasons.
+    This package is not recommended for security reasons.  Consider using
+    amdgpu-pro package instead.
   </longdescription>
   <use>
     <flag name="amf">Install the Accelerated Media Framework support.</flag>

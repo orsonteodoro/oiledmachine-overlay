@@ -4,38 +4,41 @@
 EAPI=7
 DESCRIPTION="Radeon™ Software for Linux®"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-50-unified"
+"https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-30-unified"
 LICENSE="AMD GPL-2 QPL-1.0"
 KEYWORDS="~amd64 ~x86"
 MULTILIB_COMPAT=( abi_x86_{32,64} )
-inherit check-reqs linux-info multilib-build unpacker
+inherit check-reqs linux-info multilib-build unpacker rpm
 PKG_VER=$(ver_cut 1-2)
 PKG_VER_MAJ=$(ver_cut 1)
 PKG_REV=$(ver_cut 3)
-PKG_ARCH="ubuntu"
-PKG_ARCH_VER="18.04"
-PKG_VER_AMF="1.4.16"
-PKG_VER_GLAMOR="1.19.0"
+PKG_ARCH="rhel"
+PKG_ARCH_VER="8"
+PKG_ARCH_VER_MAJOR=$(ver_cut 1 ${PKG_ARCH_VER})
+PKG_ARCH_SUFFIX=".el${PKG_ARCH_VER_MAJOR}."
+PKG_VER_GCC="8.2.1"
 PKG_VER_GST_OMX="1.0.0.1"
 PKG_VER_HSAKMT="1.0.6"
+PKG_VER_HSAKMT_A="1.0.9"
 PKG_VER_ID="1.0.0"
-PKG_VER_LIBDRM="2.4.99"
+PKG_VER_LIBDRM="2.4.98"
+PKG_VER_LIBVA="1.8.3"
 PKG_VER_LIBWAYLAND="1.15.0"
 PKG_VER_LLVM_TRIPLE="9.0.0"
 PKG_VER_LLVM=$(ver_cut 1-2 ${PKG_VER_LLVM_TRIPLE})
 PKG_VER_LLVM_MAJ=$(ver_cut 1 ${PKG_VER_LLVM_TRIPLE})
-PKG_VER_MESA="19.2.2"
-PKG_VER_ROCT="1.0.9"
+PKG_VER_MESA="19.2.0"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
 PKG_VER_STRING_DIR=${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}
 PKG_VER_WAYLAND_PROTO="1.17"
+PKG_VER_WAYLAND="1.15.0"
 PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.0.1" # about the same as the mesa version
 VULKAN_SDK_VER="1.1.109.0"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="+amf dkms +egl +gles2 freesync hip-clang +opencl \
-opencl_orca opencl_pal +opengl openmax roct +vaapi +vdpau +vulkan \
+IUSE="dkms +egl +gles2 freesync hip-clang +opencl \
+opencl_orca opencl_pal +opengl roct +vdpau +vulkan \
 wayland"
 SLOT="1"
 
@@ -49,10 +52,12 @@ SLOT="1"
 #	>=sys-devel/lld-7.0.0
 #	>=sys-devel/llvm-7.0.0
 # libglapi.so.0 needs libselinux
-RDEPEND="  app-eselect/eselect-opencl
+# requires >=dkms-1.95
+RDEPEND="!x11-drivers/amdgpu-pro
+	  app-eselect/eselect-opencl
 	 >=app-eselect/eselect-opengl-1.0.7
-	 dev-util/cunit
-	 dev-libs/libedit
+	 >=dev-util/cunit-2.1_p3
+	 >=dev-libs/libedit-3.1
 	 dkms? ( || ( sys-kernel/amdgpu-dkms sys-kernel/rock-dkms ) )
 	 freesync? ( || (
 		>=sys-kernel/amdgpu-dkms-18.50
@@ -82,25 +87,25 @@ RDEPEND="  app-eselect/eselect-opencl
 		>=sys-kernel/zen-sources-5.5 )
 	 || ( >=sys-firmware/amdgpu-firmware-${PV}
 	        >=sys-firmware/rock-firmware-3.0.0
-	        >=sys-kernel/linux-firmware-20200309 )
-	 >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
-	 >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
-	 opencl? (  >=sys-devel/gcc-5.2.0 )
-	 openmax? ( >=media-libs/mesa-${PKG_VER_MESA}[openmax] )
+		>=sys-kernel/linux-firmware-20200309 )
+	 opencl? ( >=sys-devel/gcc-${PKG_VER_GCC} )
+	 opengl? ( >=sys-devel/gcc-${PKG_VER_GCC} )
 	 roct? ( !dev-libs/roct-thunk-interface
 		  sys-process/numactl )
-	 >=sys-libs/libselinux-1.32
+	 >=sys-libs/libselinux-2.8
 	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
 	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}]
-	  vaapi? (  >=media-libs/mesa-${PKG_VER_MESA}[-vaapi] )
-	  vdpau? (  >=media-libs/mesa-${PKG_VER_MESA}[-vdpau] )
+	  vdpau? (  >=media-libs/mesa-${PKG_VER_MESA}[-vdpau]
+		    >=sys-devel/gcc-${PKG_VER_GCC} )
 	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
 	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
-		    >=media-libs/vulkan-loader-${VULKAN_SDK_VER} )
-	 >=x11-base/xorg-drivers-1.19
-	  <x11-base/xorg-drivers-1.20
+		    >=media-libs/vulkan-loader-${VULKAN_SDK_VER}
+		    >=sys-devel/gcc-${PKG_VER_GCC} )
+         wayland? ( >=dev-libs/wayland-${PKG_VER_LIBWAYLAND} )
+	 >=x11-base/xorg-drivers-1.20
+	  <x11-base/xorg-drivers-1.21
 	   x11-base/xorg-proto
-	 >=x11-base/xorg-server-1.19[-minimal,glamor(+)]
+	 >=x11-base/xorg-server-1.20[-minimal,glamor(+)]
 	 >=x11-libs/libdrm-${PKG_VER_LIBDRM}[libkms]
 	   x11-libs/libX11[${MULTILIB_USEDEP}]
 	   x11-libs/libXext[${MULTILIB_USEDEP}]
@@ -110,6 +115,8 @@ RDEPEND="  app-eselect/eselect-opencl
 	 || ( >=sys-firmware/amdgpu-firmware-${PKG_VER}
 		sys-firmware/rock-firmware
 		sys-kernel/linux-firmware )"
+#	 >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
+#	 >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
 # hsakmt requires libnuma.so.1
 # kmstest requires libkms
 # amdgpu_dri.so requires wayland?
@@ -137,11 +144,11 @@ pkg_nofetch() {
 	einfo "from ${HOMEPAGE} and place them in ${distdir}"
 }
 
-unpack_deb() {
+unpack_rpm() {
 	echo ">>> Unpacking ${1##*/} to ${PWD}"
-	unpack $1
-	unpacker ./data.tar*
-	rm -f debian-binary {control,data}.tar*
+	rpm_unpack "${S}/${1}"
+	#unpacker ./data.tar*
+	#rm -f debian-binary {control,data}.tar*
 }
 
 pkg_pretend() {
@@ -190,16 +197,21 @@ the roct USE flag."
 src_unpack() {
 	default
 
-	local d="amdgpu-pro-${PKG_VER_STRING_DIR}"
+	local arch="noarch"
+	local d_noarch="amdgpu-pro-${PKG_VER_STRING_DIR}/RPMS/${arch}"
+	local d_rpms
 
-	unpack_deb "${d}/libgl1-amdgpu-pro-appprofiles_${PKG_VER_STRING}_all.deb"
+	unpack_rpm "${d_noarch}/libgl-amdgpu-pro-appprofiles-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	unpack_rpm "${d_noarch}/libdrm-amdgpu-common-${PKG_VER_ID}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	unpack_rpm "${d_noarch}/amdgpu-doc-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	unpack_rpm "${d_noarch}/wayland-amdgpu-doc-${PKG_VER_WAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 
 	unpack_abi() {
-		local arch
 		local b
 
 		if [[ "${ABI}" == "amd64" ]] ; then
-			arch="amd64"
+			arch="x86_64"
+			arch2="amd64"
 			b="64"
 		elif [[ "${ABI}" == "x86" ]] ; then
 			arch="i386"
@@ -208,138 +220,125 @@ src_unpack() {
 			die "arch not supported"
 		fi
 
-		unpack_deb "${d}/libdrm-amdgpu-utils_${PKG_VER_LIBDRM}-${PKG_REV}_${arch}.deb"
+		d_rpms="amdgpu-pro-${PKG_VER_STRING_DIR}/RPMS/${arch}"
+
+		unpack_rpm "${d_rpms}/amdgpu-pro-versionlist-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		unpack_rpm "${d_rpms}/drm-utils-amdgpu-${PKG_VER_LIBDRM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 
 		if use opencl ; then
 			if [[ "${ABI}" == "amd64" ]] ; then
 				# Install clinfo
-				unpack_deb "${d}/clinfo-amdgpu-pro_${PKG_VER_STRING}_${arch}.deb"
+				unpack_rpm "${d_rpms}/clinfo-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 			fi
 
 			# Install OpenCL components
-			unpack_deb "${d}/libopencl1-amdgpu-pro_${PKG_VER_STRING}_${arch}.deb"
+			unpack_rpm "${d_rpms}/libopencl-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 			if use opencl_pal ; then
 				if [[ "${ABI}" == "amd64" ]] ; then
-					unpack_deb "${d}/opencl-amdgpu-pro-icd_${PKG_VER_STRING}_${arch}.deb"
-					unpack_deb "${d}/opencl-amdgpu-pro-comgr_${PKG_VER_STRING}_${arch}.deb"
+					unpack_rpm "${d_rpms}/opencl-amdgpu-pro-icd-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+					unpack_rpm "${d_rpms}/opencl-amdgpu-pro-comgr-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 				fi
 			fi
 
 			if use opencl_orca ; then
-				unpack_deb "${d}/opencl-orca-amdgpu-pro-icd_${PKG_VER_STRING}_${arch}.deb"
+				unpack_rpm "${d_rpms}/opencl-orca-amdgpu-pro-icd-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 			fi
 		fi
 
 		if use roct ; then
 			if [[ "${ABI}" == "amd64" ]] ; then
-				unpack_deb "${d}/hsakmt-roct-amdgpu_${PKG_VER_ROCT}-${PKG_REV}_${arch}.deb"
-				unpack_deb "${d}/hsakmt-roct-amdgpu-dev_${PKG_VER_ROCT}-${PKG_REV}_${arch}.deb"
+				unpack_rpm "${d_rpms}/hsakmt-roct-amdgpu-${PKG_VER_HSAKMT_A}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+				unpack_rpm "${d_rpms}/hsakmt-roct-amdgpu-devel-${PKG_VER_HSAKMT_A}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 			fi
 		fi
 
 		if use opengl ; then
 			# Install OpenGL
-			unpack_deb "${d}/libgl1-amdgpu-pro-glx_${PKG_VER_STRING}_${arch}.deb"
-			unpack_deb "${d}/libgl1-amdgpu-pro-ext_${PKG_VER_STRING}_${arch}.deb"
-			mv opt/amdgpu-pro/lib/xorg/modules/extensions/libglx.so \
-				opt/amdgpu-pro/lib/xorg/modules/extensions/libglx${b}.so \
+			unpack_rpm "${d_rpms}/libgl-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+			unpack_rpm "${d_rpms}/libgl-amdgpu-pro-ext-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+			mv opt/amdgpu-pro/lib${b}/xorg/modules/extensions/libglx.so \
+				opt/amdgpu-pro/lib${b}/xorg/modules/extensions/libglx${b}.so \
 				|| die
-			unpack_deb "${d}/libgl1-amdgpu-pro-dri_${PKG_VER_STRING}_${arch}.deb"
+			unpack_rpm "${d_rpms}/libgl-amdgpu-pro-dri-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 
 			# Install GBM
-			unpack_deb "${d}/libgbm1-amdgpu_${PKG_VER_MESA}-${PKG_REV}_${arch}.deb"
+			unpack_rpm "${d_rpms}/mesa-amdgpu-libgbm-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 
-			unpack_deb "${d}/libglapi1-amdgpu-pro_${PKG_VER_STRING}_${arch}.deb"
-			unpack_deb "${d}/libglapi-amdgpu-mesa_${PKG_VER_MESA}-${PKG_REV}_${arch}.deb"
+			unpack_rpm "${d_rpms}/libglapi-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+			unpack_rpm "${d_rpms}/mesa-amdgpu-libglapi-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		fi
 
 		if use gles2 ; then
 			# Install GLES2
-			unpack_deb "${d}/libgles2-amdgpu-pro_${PKG_VER_STRING}_${arch}.deb"
+			unpack_rpm "${d_rpms}/libgles-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		fi
 
 		if use egl ; then
 			# Install EGL libs
-			unpack_deb "${d}/libegl1-amdgpu-pro_${PKG_VER_STRING}_${arch}.deb"
+			unpack_rpm "${d_rpms}/libegl-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		fi
 
 		if use vulkan ; then
 			# Install Vulkan driver
-			unpack_deb "${d}/vulkan-amdgpu-pro_${PKG_VER_STRING}_${arch}.deb"
-		fi
-
-		if use openmax ; then
-			# Install gstreamer OpenMAX plugin
-			unpack_deb "${d}/gst-omx-amdgpu_${PKG_VER_GST_OMX}-${PKG_REV}_${arch}.deb"
+			unpack_rpm "${d_rpms}/vulkan-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		fi
 
 		if use vdpau ; then
 			# Install VDPAU
-			unpack_deb "${d}/mesa-amdgpu-vdpau-drivers_${PKG_VER_MESA}-${PKG_REV}_${arch}.deb"
-		fi
-
-		if use vaapi ; then
-			# Install Mesa VA-API video acceleration drivers
-			unpack_deb "${d}/mesa-amdgpu-va-drivers_${PKG_VER_MESA}-${PKG_REV}_${arch}.deb"
-		fi
-
-		if use amf ; then
-			if [[ "${ABI}" == "amd64" ]] ; then
-				# Install AMDGPU Pro Advanced Multimedia Framework
-				unpack_deb "${d}/amf-amdgpu-pro_${PKG_VER_STRING}_${arch}.deb"
-			fi
+			unpack_rpm "${d_rpms}/mesa-amdgpu-vdpau-drivers-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		fi
 
 		if use hip-clang ; then
 			if [[ "${ABI}" == "amd64" ]] ; then
-				unpack_deb "${d}/hip-amdgpu-pro_${PKG_VER_STRING}_${arch}.deb"
+				unpack_rpm "${d_rpms}/hip-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 			fi
 		fi
 
-		unpack_deb "${d}/libdrm-amdgpu-amdgpu1_${PKG_VER_LIBDRM}-${PKG_REV}_${arch}.deb"
-		unpack_deb "${d}/libdrm-amdgpu-radeon1_${PKG_VER_LIBDRM}-${PKG_REV}_${arch}.deb"
-
-		unpack_deb "${d}/glamor-amdgpu_${PKG_VER_GLAMOR}-${PKG_REV}_${arch}.deb"
-		mv opt/amdgpu/lib/xorg/modules/libglamoregl.so \
-			opt/amdgpu/lib/xorg/modules/libglamoregl${b}.so \
-			|| die
+		unpack_rpm "${d_rpms}/libdrm-amdgpu-${PKG_VER_LIBDRM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		#unpack_rpm "${d_rpms}/libdrm-amdgpu-devel-${PKG_VER_LIBDRM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 
 		# Install xorg drivers
-		unpack_deb "${d}/xserver-xorg-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}_${arch}.deb"
-		mv opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so \
-			opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv${b}.so \
+		unpack_rpm "${d_rpms}/xorg-x11-amdgpu-drv-amdgpu-${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		mv opt/amdgpu/lib${b}/xorg/modules/drivers/amdgpu_drv.so \
+			opt/amdgpu/lib${b}/xorg/modules/drivers/amdgpu_drv${b}.so \
 			|| die
 
-		# Internal LLVM7 required since Gentoo is missing the shared
-		# libLLVM-7.so .  Gentoo only use split llvm libraries but the
+		# Internal LLVM9 required since Gentoo is missing the shared
+		# libLLVM-9.so .  Gentoo only use split llvm libraries but the
 		# driver components use the shared.
-		unpack_deb "${d}/libllvm${PKG_VER_LLVM}-amdgpu_${PKG_VER_LLVM}-${PKG_REV}_${arch}.deb"
-		#unpack_deb "${d}/llvm-amdgpu-${PKG_VER_LLVM}_${PKG_VER_LLVM}-${PKG_REV}_${arch}.deb"
-		#unpack_deb "${d}/llvm-amdgpu-${PKG_VER_LLVM}-runtime_${PKG_VER_LLVM}-${PKG_REV}_${arch}.deb"
+		unpack_rpm "${d_rpms}/llvm${PKG_VER_LLVM/\./}-amdgpu-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		#unpack_rpm "${d_rpms}/llvm${PKG_VER_LLVM/\./}-amdgpu-devel-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		unpack_rpm "${d_rpms}/llvm-amdgpu-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		unpack_rpm "${d_rpms}/llvm-amdgpu-libs-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		unpack_rpm "${d_rpms}/llvm-amdgpu-static-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		#unpack_rpm "${d_rpms}/llvm-amdgpu-devel-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 
 		#if use wayland ; then
-			unpack_deb "${d}/libwayland-amdgpu-client0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
-			unpack_deb "${d}/libwayland-amdgpu-egl1_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
-			unpack_deb "${d}/libwayland-amdgpu-server0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
-			#unpack_deb "${d}/libwayland-amdgpu-cursor0_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
-			#unpack_deb "${d}/libwayland-amdgpu-dev_${PKG_VER_LIBWAYLAND}-${PKG_REV}_${arch}.deb"
+			unpack_rpm "${d_rpms}/libwayland-amdgpu-client-${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+			unpack_rpm "${d_rpms}/libwayland-amdgpu-egl-${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+			unpack_rpm "${d_rpms}/libwayland-amdgpu-server-${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+			#unpack_rpm "${d_rpms}/libwayland-amdgpu-cursor-${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+			#unpack_rpm "${d_rpms}/libwayland-amdgpu-dev-${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		#fi
+
+		unpack_rpm "${d_rpms}/amdgpu-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		unpack_rpm "${d_rpms}/amdgpu-lib-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+
+		unpack_rpm "${d_rpms}/amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	}
 	multilib_foreach_abi unpack_abi
 
 	#if use opengl ; then
-	#	unpack_deb "${d}/libgbm1-amdgpu-pro-base_${PKG_VER_STRING}_all.deb"
-	#	libgbm-amdgpu-dev_19.2.2-967956_i386.deb
+	#	unpack_rpm "${d_rpms}/libgbm1-amdgpu-pro-base-${PKG_VER_STRING}_all.rpm"
+	#	libgbm-amdgpu-dev_19.2.2-967956_i386.rpm
 	#fi
 
 	# Pin version (contains version requirements)
-	unpack_deb "${d}/amdgpu-pro-pin_${PKG_VER_STRING}_all.deb"
-
-	unpack_deb "${d}/libdrm-amdgpu-common_${PKG_VER_ID}-${PKG_REV}_all.deb"
+	#unpack_rpm "${d_rpms}/amdgpu-pro-pin-${PKG_VER_STRING}_all.rpm"
 
 	#if use wayland ; then
-		#unpack_deb "${d}/libwayland-amdgpu-doc_${PKG_VER_LIBWAYLAND}-${PKG_REV}_all.deb"
-		#unpack_deb "${d}/wayland-protocols-amdgpu_${PKG_VER_WAYLAND_PROTO}-${PKG_REV}_all.deb"
+		#unpack_rpm "${d_rpms}/libwayland-amdgpu-doc-${PKG_VER_LIBWAYLAND}-${PKG_REV}_all.rpm"
+		#unpack_rpm "${d_rpms}/wayland-protocols-amdgpu-${PKG_VER_WAYLAND_PROTO}-${PKG_REV}_all.rpm"
 	#fi
 }
 
@@ -449,9 +448,9 @@ src_install() {
 		fi
 
 		local dd_opengl="/usr/$(get_libdir)/opengl/amdgpu"
-		local sd_amdgpupro="opt/amdgpu-pro/lib/${arch}-linux-gnu"
-		local sd_amdgpu="opt/amdgpu/lib/${arch}-linux-gnu"
-		local dd_amdgpu="${dd_opengl}/lib"
+		local sd_amdgpupro="opt/amdgpu-pro/lib${b}"
+		local sd_amdgpu="opt/amdgpu/lib${b}"
+		local dd_amdgpu="${dd_opengl}/lib${b}"
 
 		if use opencl ; then
 			if [[ "${ABI}" == "amd64" ]] ; then
@@ -466,7 +465,7 @@ src_install() {
 				if [[ "${ABI}" == "amd64" ]] ; then
 					doins etc/OpenCL/vendors/amdocl${b}.icd
 					exeinto ${dd_amdgpu}/
-					doexe ${sd_amdgpupro}/libamd_comgr.so
+					doexe ${sd_amdgpupro}/libamdcomgr${b}.so
 				fi
 			fi
 
@@ -544,16 +543,16 @@ src_install() {
 			dosym libdrm_radeon.so.1.0.1 \
 				${dd_amdgpu}/libdrm_radeon.so
 			exeinto ${dd_opengl}/extensions/
-			mv opt/amdgpu-pro/lib/xorg/modules/extensions/libglx${b}.so \
-				opt/amdgpu-pro/lib/xorg/modules/extensions/libglx.so \
+			mv opt/amdgpu-pro/lib${b}/xorg/modules/extensions/libglx${b}.so \
+				opt/amdgpu-pro/lib${b}/xorg/modules/extensions/libglx.so \
 				|| die
-			doexe opt/amdgpu-pro/lib/xorg/modules/extensions/libglx.so
+			doexe opt/amdgpu-pro/lib${b}/xorg/modules/extensions/libglx.so
 			exeinto ${dd_opengl}/dri/
-			doexe usr/lib/${arch}-linux-gnu/dri/amdgpu_dri.so
+			doexe usr/lib${b}/dri/amdgpu_dri.so
 			dosym ../opengl/amdgpu/dri/amdgpu_dri.so \
 				/usr/$(get_libdir)/dri/amdgpu_dri.so
-			dosym ../../opengl/amdgpu/dri/amdgpu_dri.so \
-				/usr/$(get_libdir)/${arch}-linux-gnu/dri/amdgpu_dri.so
+			#dosym ../../opengl/amdgpu/dri/amdgpu_dri.so \
+			#	/usr/$(get_libdir)/${arch}-linux-gnu/dri/amdgpu_dri.so
 
 			# Install GBM
 			exeinto ${dd_amdgpu}/
@@ -622,34 +621,6 @@ src_install() {
 				${dd_vdpau}/libvdpau_radeonsi.so
 		fi
 
-		if use vaapi ; then
-			exeinto /usr/$(get_libdir)/va/drivers/
-			doexe ${sd_amdgpu}/dri/radeonsi_drv_video.so
-			doexe ${sd_amdgpu}/dri/r600_drv_video.so
-		fi
-
-		# Install amf libraries
-		if use amf ; then
-			if [[ "${ABI}" == "amd64" ]] ; then
-				exeinto ${dd_amdgpu}
-				doexe ${sd_amdgpupro}/libamfrt${b}.so.${PKG_VER_AMF}
-				dosym libamfrt${b}.so.${PKG_VER_AMF} \
-					${dd_amdgpu}/libamfrt${b}.so.$(ver_cut 1 ${PKG_VER_AMF})
-				dosym libamfrt${b}.so.${PKG_VER_AMF} \
-					${dd_amdgpu}/libamfrt${b}.so
-				dosym libamfrt${b}.so.${PKG_VER_AMF} \
-					${dd_amdgpu}/libamfrt${b}.so.1
-					# from Gentoo QA notice when installing
-			fi
-		fi
-
-		# Install glamor
-		exeinto ${dd_opengl}/
-		mv opt/amdgpu/lib/xorg/modules/libglamoregl${b}.so \
-			opt/amdgpu/lib/xorg/modules/libglamoregl.so \
-			|| die
-		doexe opt/amdgpu/lib/xorg/modules/libglamoregl.so
-
 		# Install libglapi
 		exeinto ${dd_amdgpu}/
 		doexe ${sd_amdgpupro}/libglapi.so.1
@@ -699,10 +670,10 @@ src_install() {
 		# Install xorg drivers
 		if [[ "${ABI}" == "amd64" ]] ; then
 			exeinto ${dd_opengl}/modules/drivers/
-			mv opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv${b}.so \
-				opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so \
+			mv opt/amdgpu/lib${b}/xorg/modules/drivers/amdgpu_drv${b}.so \
+				opt/amdgpu/lib${b}/xorg/modules/drivers/amdgpu_drv.so \
 				|| die
-			doexe opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so
+			doexe opt/amdgpu/lib${b}/xorg/modules/drivers/amdgpu_drv.so
 		fi
 		if [[ "${ABI}" == "x86" ]] ; then
 			if use abi_x86_32 && use abi_x86_64 ; then
@@ -710,19 +681,11 @@ src_install() {
 			else
 				# currently bugged when both are installed on amd64
 				exeinto /usr/lib32/opengl/amdgpu/modules/drivers/
-				mv opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv32.so \
-					opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so \
+				mv opt/amdgpu/lib${b}/xorg/modules/drivers/amdgpu_drv32.so \
+					opt/amdgpu/lib${b}/xorg/modules/drivers/amdgpu_drv.so \
 					|| die
-				doexe opt/amdgpu/lib/xorg/modules/drivers/amdgpu_drv.so
+				doexe opt/amdgpu/lib${b}/xorg/modules/drivers/amdgpu_drv.so
 			fi
-		fi
-
-		if use openmax ; then
-			# Install gstreamer OpenMAX plugin
-			insinto /etc/xdg/
-			doins etc/xdg/gstomx.conf
-			exeinto /usr/$(get_libdir)/gstreamer-1.0/
-			doexe ${sd_amdgpu}/gstreamer-1.0/libgstomx.so
 		fi
 
 		if use hip-clang ; then
@@ -765,18 +728,13 @@ src_install() {
 		doenvd "${T}"/50${P}-vdpau
 	fi
 
-	pushd "${S}"/usr/share/doc || die
-		L=$(find . -name "copyright" -print0 |  xargs -0 dirname {} \
-			| sed -r -e "s|.[\/]?||" | tail -n +2)
-		for d in $L ; do
-			docinto licenses/${d}
-			dodoc ${d}/copyright
-		done
-	popd
+	docinto doc
+	dodoc -r usr/share/doc/* \
+		opt/amdgpu/share/doc/*
 	docinto licenses
-	local d_insdoc=\
-"${S}/amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}/doc"
-	dodoc "${d_insdoc}"/copyright
+	dodoc -r usr/share/licenses/* \
+		opt/amdgpu-pro/share/licenses/*
+	doman usr/share/man/man7/amdgpu-doc.7.gz
 }
 
 pkg_prerm() {

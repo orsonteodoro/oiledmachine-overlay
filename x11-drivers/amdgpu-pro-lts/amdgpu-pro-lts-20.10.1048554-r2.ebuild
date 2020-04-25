@@ -49,7 +49,8 @@ SLOT="1"
 #	>=sys-devel/lld-7.0.0
 #	>=sys-devel/llvm-7.0.0
 # libglapi.so.0 needs libselinux
-RDEPEND="  app-eselect/eselect-opencl
+RDEPEND="!x11-drivers/amdgpu-pro
+	  app-eselect/eselect-opencl
 	 >=app-eselect/eselect-opengl-1.0.7
 	 dev-util/cunit
 	 dev-libs/libedit
