@@ -29,7 +29,7 @@ KV_NOT_SUPPORTED_MAX="99999"
 KV_SUPPORTED_MIN="5.0"
 else
 # See https://cgit.freedesktop.org/~agd5f/linux/tree/Makefile?h=amd-19.50
-KV_NOT_SUPPORTED_MAX="5.2"
+KV_NOT_SUPPORTED_MAX="5.3"
 KV_SUPPORTED_MIN="5.0"
 fi
 RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
@@ -74,8 +74,7 @@ pkg_nofetch() {
 }
 
 pkg_pretend() {
-	ewarn "Kernels 5.0.x <= x <= 5.2.x are only supported.  It looks like no LTS kernel support for this release."
-	ewarn "It's recommend to use rock-dkms instead for 5.4.x Long Term Support (LTS)."
+	ewarn "Kernels 5.0.x <= x <= 5.2.x are only supported."
 	if use check-pcie ; then
 		if has sandbox $FEATURES ; then
 			die "${PN} require sandbox to be disabled in FEATURES when testing hardware with check-pcie USE flag."
