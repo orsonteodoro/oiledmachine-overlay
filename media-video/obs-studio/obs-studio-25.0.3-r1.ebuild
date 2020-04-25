@@ -83,7 +83,7 @@ DEPEND="
 # For vaapi support, see source code at https://github.com/obsproject/obs-studio/pull/1482/commits/2dc67f140d8156d9000db57786e53a4c1597c097
 DEPEND+="vaapi? ( media-video/ffmpeg[vaapi,x264]
 		  x11-libs/libva
-		  || ( video_cards_amdgpu-pro? ( x11-drivers/amdgpu-pro[vaapi] )
+		  || ( video_cards_amdgpu-pro? ( x11-drivers/amdgpu-pro-lts[vaapi] )
 		       video_cards_amdgpu? ( || ( media-libs/mesa[gallium,vaapi,video_cards_radeonsi]
 						  media-libs/mesa[gallium,vaapi,video_cards_r600] ) )
 		       video_cards_intel? ( x11-libs/libva[video_cards_intel] )
