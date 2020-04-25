@@ -23,11 +23,12 @@ HOMEPAGE="https://obsproject.com"
 LICENSE="GPL-2"
 SLOT="0"
 IUSE="+alsa fdk imagemagick jack luajit nvenc pulseaudio python speex +ssl truetype v4l vlc"
-IUSE+=" vaapi video_cards_amdgpu video_cards_amdgpu-pro video_cards_intel video_cards_i965 video_cards_r600 video_cards_radeonsi"
+IUSE+=" vaapi video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts video_cards_intel video_cards_i965 video_cards_r600 video_cards_radeonsi"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 REQUIRED_USE+="
-	video_cards_amdgpu? ( !video_cards_amdgpu-pro )
-	video_cards_amdgpu-pro? ( !video_cards_amdgpu )"
+	video_cards_amdgpu? ( !video_cards_amdgpu-pro-lts )
+	video_cards_amdgpu-pro? ( !video_cards_amdgpu-pro-lts )
+"
 
 BDEPEND="
 	luajit? ( dev-lang/swig )
@@ -83,9 +84,13 @@ DEPEND="
 # For vaapi support, see source code at https://github.com/obsproject/obs-studio/pull/1482/commits/2dc67f140d8156d9000db57786e53a4c1597c097
 DEPEND+="vaapi? ( media-video/ffmpeg[vaapi,x264]
 		  x11-libs/libva
-		  || ( video_cards_amdgpu-pro? ( x11-drivers/amdgpu-pro-lts[vaapi] )
-		       video_cards_amdgpu? ( || ( media-libs/mesa[gallium,vaapi,video_cards_radeonsi]
-						  media-libs/mesa[gallium,vaapi,video_cards_r600] ) )
+		  || ( video_cards_amdgpu-pro-lts? ( x11-drivers/amdgpu-pro-lts[vaapi] )
+		       video_cards_amdgpu-pro? (
+					|| ( media-libs/mesa[gallium,vaapi,video_cards_radeonsi]
+						media-libs/mesa[gallium,vaapi,video_cards_r600] ) )
+		       video_cards_amdgpu? (
+					|| ( media-libs/mesa[gallium,vaapi,video_cards_radeonsi]
+						media-libs/mesa[gallium,vaapi,video_cards_r600] ) )
 		       video_cards_intel? ( x11-libs/libva[video_cards_intel] )
 		       video_cards_i965? ( x11-libs/libva[video_cards_i965] )
 		       video_cards_r600? ( media-libs/mesa[gallium,vaapi,video_cards_r600] )
