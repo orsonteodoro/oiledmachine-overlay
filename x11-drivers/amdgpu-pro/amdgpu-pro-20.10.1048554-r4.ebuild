@@ -109,12 +109,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	   x11-libs/libXext[${MULTILIB_USEDEP}]
 	   x11-libs/libXinerama[${MULTILIB_USEDEP}]
 	   x11-libs/libXrandr[${MULTILIB_USEDEP}]
-	   x11-libs/libXrender[${MULTILIB_USEDEP}]
-	 || ( >=sys-firmware/amdgpu-firmware-${PKG_VER}
-		sys-firmware/rock-firmware
-		sys-kernel/linux-firmware )"
-#	 >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
-#	 >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
+	   x11-libs/libXrender[${MULTILIB_USEDEP}]"
 # hsakmt requires libnuma.so.1
 # kmstest requires libkms
 # amdgpu_dri.so requires wayland?
