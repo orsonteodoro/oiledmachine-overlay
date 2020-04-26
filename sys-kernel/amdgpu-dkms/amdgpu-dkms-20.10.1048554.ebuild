@@ -408,7 +408,7 @@ remove_vanilla_driver() {
 	local b="${1}"
 	local path="${b}/${2}"
 	if [[ -f "${path}" ]] ; then
-		einfo "Removing vanilla $(basepath ${path})"
+		einfo "Removing vanilla $(basename ${path})"
 		rm "${path}" || die
 	fi
 }
