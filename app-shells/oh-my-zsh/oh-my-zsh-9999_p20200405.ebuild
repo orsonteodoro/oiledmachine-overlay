@@ -39,6 +39,7 @@ inherit eutils python-r1 ruby-ng
 EGIT_COMMIT="d6474237b823448b3a1dd176a246ed73a30494f9"
 FN="${EGIT_COMMIT}.zip"
 A_URL="https://github.com/ohmyzsh/ohmyzsh/archive/${FN}"
+P_URL="https://github.com/ohmyzsh/ohmyzsh/tree/${EGIT_COMMIT}"
 SRC_URI="${A_URL} -> ${P}.zip"
 # Probably needs to be done because the archive contains the UNICODE data file.
 # It should be addressed upstream to get rid of emoji-data.txt.
@@ -387,7 +388,11 @@ Before downloading ${P}\n\
 \n\
 If you agree, you may download\n\
   - ${FN}\n\
-from oh-my-zsh's GitHub page which the URL should be\n\
+from oh-my-zsh's GitHub page\n\
+\n\
+${P_URL}\n\
+\n\
+which the URL should be\n\
 \n\
 ${A_URL}\n\
 \n\

@@ -36,7 +36,7 @@ USE_RUBY="ruby24 ruby25 ruby26 ruby27"
 RUBY_OPTIONAL=1
 EMOJI_LANG_DEFAULT=${EMOJI_LANG_DEFAULT:=en}
 inherit eutils python-r1 ruby-ng
-EGIT_COMMIT="6ad6fea52a7c59c12f95db974514891d2c111075"
+EGIT_COMMIT="c686aa3dbb30704b2f8f52bf1aae19a7e41c23c1"
 FN="${EGIT_COMMIT}.zip"
 A_URL="https://github.com/ohmyzsh/ohmyzsh/archive/${FN}"
 P_URL="https://github.com/ohmyzsh/ohmyzsh/tree/${EGIT_COMMIT}"
