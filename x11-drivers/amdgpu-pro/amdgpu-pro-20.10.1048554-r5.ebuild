@@ -50,7 +50,7 @@ SLOT="1"
 #	>=sys-devel/llvm-7.0.0
 # libglapi.so.0 needs libselinux
 # requires >=dkms-1.95
-ARDEPEND="!x11-drivers/amdgpu-pro
+RDEPEND="!x11-drivers/amdgpu-pro
 	  app-eselect/eselect-opencl
 	 >=app-eselect/eselect-opengl-1.0.7
 	 >=dev-util/cunit-2.1_p3
@@ -114,7 +114,7 @@ ARDEPEND="!x11-drivers/amdgpu-pro
 # kmstest requires libkms
 # vdpau requires llvm
 S="${WORKDIR}"
-AREQUIRED_USE="opencl? ( || ( opencl_pal opencl_orca ) )
+REQUIRED_USE="opencl? ( || ( opencl_pal opencl_orca ) )
 	opencl_pal? ( opencl )
 	opencl_orca? ( opencl )
 	roct? ( dkms )"
