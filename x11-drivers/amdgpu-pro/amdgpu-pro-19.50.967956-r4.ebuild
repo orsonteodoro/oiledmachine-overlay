@@ -37,9 +37,8 @@ VULKAN_SDK_VER="1.1.121.1"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="dkms +egl +gles2 freesync hip-clang +opencl \
-opencl_orca opencl_pal +open-stack +opengl +pro-stack roct +vaapi +vdpau \
-+vulkan wayland"
+IUSE="dkms +egl +gles2 freesync hip-clang +open-stack +opencl opencl_orca \
+opencl_pal +opengl +pro-stack roct +vaapi +vdpau +vulkan wayland"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
