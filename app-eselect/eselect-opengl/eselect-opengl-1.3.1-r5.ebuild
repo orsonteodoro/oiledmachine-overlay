@@ -59,7 +59,6 @@ src_prepare() {
 	if [[ ${CHOST} == *-darwin* ]] ; then
 		sed -i -e 's/libGL\.so/libGL.dylib/' opengl.eselect-${PV} || die
 	fi
-	cd "${S}" || die
 	epatch "${FILESDIR}/${PN}-1.3.1-amdgpu-pro-support.patch"
 }
 
