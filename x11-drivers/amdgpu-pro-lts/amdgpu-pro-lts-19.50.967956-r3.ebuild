@@ -569,8 +569,8 @@ src_install() {
 	if use vdpau ; then
 		cat <<-EOF > "${T}"/50${P}-vdpau
 			LDPATH=\
-"/opt/amdgpu-pro/lib64/vdpau:
-/opt/amdgpu-pro/lib32/vdpau"
+"/opt/amdgpu/lib/x86_64-linux-gnu/vdpau:
+/opt/amdgpu/lib/i386-linux-gnu/vdpau"
 		EOF
 		doenvd "${T}"/50${P}-vdpau
 	fi
