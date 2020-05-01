@@ -24,6 +24,7 @@ LICENSE="AMDGPUPROEULA
 		opencl_pal? ( AMDGPUPROEULA )
 		opencl_orca? ( AMDGPUPROEULA )
 		opengl? ( AMDGPUPROEULA	)
+		roct? ( MIT )
 		vulkan? ( AMDGPUPROEULA )
 	)"
 # llvm - Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD MIT
