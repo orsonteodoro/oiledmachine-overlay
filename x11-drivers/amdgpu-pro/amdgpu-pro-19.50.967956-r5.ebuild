@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="Radeon™ Software for Linux®"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-30-unified"
+"https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-50-unified"
 LICENSE="AMD GPL-2 QPL-1.0"
 KEYWORDS="~amd64 ~x86"
 MULTILIB_COMPAT=( abi_x86_{32,64} )
@@ -13,7 +13,7 @@ PKG_VER=$(ver_cut 1-2)
 PKG_VER_MAJ=$(ver_cut 1)
 PKG_REV=$(ver_cut 3)
 PKG_ARCH="rhel"
-PKG_ARCH_VER="8"
+PKG_ARCH_VER="8.1"
 PKG_ARCH_VER_MAJOR=$(ver_cut 1 ${PKG_ARCH_VER})
 PKG_ARCH_SUFFIX=".el${PKG_ARCH_VER_MAJOR}."
 PKG_VER_GCC="8.2.1"
@@ -21,23 +21,23 @@ PKG_VER_GST_OMX="1.0.0.1"
 PKG_VER_HSAKMT="1.0.6"
 PKG_VER_HSAKMT_A="1.0.9"
 PKG_VER_ID="1.0.0"
-PKG_VER_LIBDRM="2.4.98"
+PKG_VER_LIBDRM="2.4.99"
 PKG_VER_LIBWAYLAND="1.15.0"
 PKG_VER_LLVM_TRIPLE="9.0.0"
 PKG_VER_LLVM=$(ver_cut 1-2 ${PKG_VER_LLVM_TRIPLE})
 PKG_VER_LLVM_MAJ=$(ver_cut 1 ${PKG_VER_LLVM_TRIPLE})
-PKG_VER_MESA="19.2.0"
+PKG_VER_MESA="19.2.2"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
 PKG_VER_STRING_DIR=${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}
 PKG_VER_VA="1.8.3"
-PKG_VER_WAYLAND_PROTO="1.17"
+PKG_VER_WAYLAND_PROTO="1.18"
 PKG_VER_WAYLAND="1.15.0"
 PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.0.1" # about the same as the mesa version
-VULKAN_SDK_VER="1.1.109.0"
+VULKAN_SDK_VER="1.1.121.1"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="dkms +egl +gles2 freesync hip-clang lf +open-stack +opencl opencl_orca \
+IUSE="dkms +egl +gles2 freesync hip-clang +open-stack +opencl opencl_orca \
 opencl_pal +opengl +pro-stack roct +vaapi +vdpau +vulkan wayland"
 SLOT="1"
 
@@ -73,20 +73,20 @@ RDEPEND="!x11-drivers/amdgpu-pro
 		>=sys-kernel/zen-sources-5.0 ) )
 	 || (
 		>=sys-kernel/amdgpu-dkms-${PV}
-		>=sys-kernel/aufs-sources-5.4
-		>=sys-kernel/ck-sources-5.4
-		>=sys-kernel/gentoo-sources-5.4
-		>=sys-kernel/git-sources-5.4
-		>=sys-kernel/hardened-sources-5.4
-		>=sys-kernel/pf-sources-5.4
-		>=sys-kernel/rock-dkms-2.8.0
-		>=sys-kernel/rt-sources-5.4
-		>=sys-kernel/vanilla-sources-5.4
-		>=sys-kernel/xbox-sources-5.4
-		>=sys-kernel/zen-sources-5.4 )
+		>=sys-kernel/aufs-sources-5.5
+		>=sys-kernel/ck-sources-5.5
+		>=sys-kernel/gentoo-sources-5.5
+		>=sys-kernel/git-sources-5.5
+		>=sys-kernel/hardened-sources-5.5
+		>=sys-kernel/pf-sources-5.5
+		>=sys-kernel/rock-dkms-3.0.0
+		>=sys-kernel/rt-sources-5.5
+		>=sys-kernel/vanilla-sources-5.5
+		>=sys-kernel/xbox-sources-5.5
+		>=sys-kernel/zen-sources-5.5 )
 	 || ( >=sys-firmware/amdgpu-firmware-${PV}
-	        >=sys-firmware/rock-firmware-2.8.0
-		>=sys-kernel/linux-firmware-20191113 )
+	        >=sys-firmware/rock-firmware-3.0.0
+		>=sys-kernel/linux-firmware-20200309 )
 	 opencl? ( >=sys-devel/gcc-${PKG_VER_GCC} )
 	 opengl? ( >=sys-devel/gcc-${PKG_VER_GCC} )
 	 roct? ( !dev-libs/roct-thunk-interface
@@ -101,8 +101,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
 		    >=media-libs/vulkan-loader-${VULKAN_SDK_VER}
 		    >=sys-devel/gcc-${PKG_VER_GCC} )
-         wayland? ( >=dev-libs/wayland-${PKG_VER_LIBWAYLAND}
-		    dev-libs/libffi:0/6 )
+         wayland? ( >=dev-libs/wayland-${PKG_VER_LIBWAYLAND} )
 	 >=x11-base/xorg-drivers-1.20
 	  <x11-base/xorg-drivers-1.21
 	   x11-base/xorg-proto
@@ -153,6 +152,11 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+	if ! grep -q -e "Added amdgpu-pro, amdgpu-pro-lts support" \
+		"${EROOT}/usr/share/eselect/modules/opengl.eselect" ; then
+		die "You need eselect-opengl from the oiledmachine-overlay."
+	fi
+
 	if [ ! -L /lib64/libedit.so.2 ] ; then
 		einfo \
 "You need to do \`ln -s /lib64/libedit.so.0 /lib64/libedit.so.2\`"
@@ -170,6 +174,12 @@ pkg_setup() {
 driver to work"
 
 	linux-info_pkg_setup
+
+	if use opencl_pal ; then
+		einfo \
+"OpenCL PAL (Portable Abstraction Layer) being used.  It is only supported\n\
+by GCN 5.x (Vega).  It is still in development."
+	fi
 
 	if use opencl_orca ; then
 		einfo \
@@ -196,9 +206,6 @@ src_unpack_open_stack() {
 	unpack_rpm "${d_rpms}/libdrm-amdgpu-${PKG_VER_LIBDRM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	unpack_rpm "${d_noarch}/libdrm-amdgpu-common-${PKG_VER_ID}-${PKG_REV}${PKG_ARCH_SUFFIX}${noarch}.rpm"
 	unpack_rpm "${d_rpms}/libdrm-amdgpu-devel-${PKG_VER_LIBDRM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-
-	unpack_rpm "${d_rpms}/libgbm-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
-	unpack_rpm "${d_rpms}/libgbm-amdgpu-pro-devel-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 
 	# vdpau and mesa-amdgpu are consumers of llvm
 	# The Internal LLVM9 is required since Gentoo is missing the
@@ -253,7 +260,6 @@ src_unpack_open_stack() {
 	fi
 
 	unpack_rpm "${d_rpms}/xorg-x11-amdgpu-drv-amdgpu-${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-
 }
 
 src_unpack_pro_stack() {
@@ -302,11 +308,10 @@ src_unpack_pro_stack() {
 
 	if use roct ; then
 		if [[ "${ABI}" == "amd64" ]] ; then
-			unpack_rpm "${d_rpms}/roct-amdgpu-pro-${PKG_VER_HSAKMT_A}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-			unpack_rpm "${d_rpms}/roct-amdgpu-pro-devel-${PKG_VER_HSAKMT_A}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+			unpack_rpm "${d_rpms}/hsakmt-roct-amdgpu-${PKG_VER_HSAKMT_A}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+			unpack_rpm "${d_rpms}/hsakmt-roct-amdgpu-devel-${PKG_VER_HSAKMT_A}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		fi
 	fi
-
 
 	if use vulkan ; then
 		unpack_rpm "${d_rpms}/vulkan-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
@@ -434,16 +439,13 @@ src_install() {
 			fi
 			rm -rf "${ED}/${od_amdgpu}/lib" || die
 			dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so ${od_amdgpu}/lib${b}/dri/amdgpu_dri.so
-			dosym ../../../../${od_amdgpu}/lib${b} ${dd_amdgpu}/lib${b}
-			dosym ../../../../${od_amdgpu}/lib${b} ${dd_amdgpu}/lib
-			dosym libGL.so.1.2.0 ${dd_amdgpu}/lib${b}/libGL.so
+			dosym libGL.so.1.2.0 ${od_amdgpu}/lib${b}/libGL.so
 		fi
 
 		if use pro-stack ; then
 			chmod 0755 "${ED}/${od_amdgpupro}/bin/"* || die
 			chmod 0755 "${ED}/${od_amdgpupro}/lib${b}/"*.so* || die
 			chmod 0755 "${ED}/${od_amdgpupro}/lib${b}/xorg/modules/extensions/"*.so* || die
-			chmod 0755 "${ED}/${od_amdgpupro}/lib${b}/gbm/"*.so* || die
 			insinto /usr/lib64/dri
 			doins usr/lib64/dri/amdgpu_dri.so
 			chmod 0755 "${ED}/usr/lib64/dri/amdgpu_dri.so" || die
@@ -463,26 +465,14 @@ src_install() {
 #			cp -a "${ED}/${od_amdgpu}/lib${b}/"libRemarks.so* \
 #				"${ED}/${od_amdgpupro}/lib${b}" || die
 			dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so ${od_amdgpupro}/lib${b}/dri/amdgpu_dri.so
-			dosym ../../../../${od_amdgpupro}/lib${b} ${dd_amdgpupro}/lib${b}
-			dosym ../../../../${od_amdgpupro}/lib${b} ${dd_amdgpupro}/lib
-
-			if use roct ; then
-				if [[ "${ABI}" == "amd64" ]] ; then
-					sed -i -e "s|/opt/rocm|/${sd_amdgpupro}|g" \
-						"${ED}/${od_amdgpupro}/lib${b}/pkgconfig/libhsakmt.pc" || die
-					sed -i -e "s|//${sd_amdgpupro}/lib${b}|/lib${b}|g" \
-						"${ED}/${od_amdgpupro}/lib${b}/pkgconfig/libhsakmt.pc" || die
-				fi
-				# no x86 abi
-			fi
 		fi
 	}
+
+	multilib_foreach_abi install_abi
 
 	# Link for hardcoded path
 	dosym /usr/share/libdrm/amdgpu.ids \
 		/opt/amdgpu/share/libdrm/amdgpu.ids
-
-	multilib_foreach_abi install_abi
 
 	docinto docs
 	dodoc -r usr/share/doc/*
@@ -520,14 +510,6 @@ pkg_postinst() {
 		"${EROOT}"/usr/bin/eselect opencl set --use-old amdgpu
 	fi
 
-	cat << EOF > "${EROOT}/etc/X11/xorg.conf.d/20opengl.conf" || die
-Section "Files"
-        ModulePath "/opt/amdgpu-pro/lib64/xorg/modules"
-        ModulePath "/opt/amdgpu/lib64/xorg/modules"
-        ModulePath "/usr/lib64/xorg/modules"
-EndSection
-EOF
-
 	if use freesync ; then
 		einfo \
 "Refer to\n\
@@ -543,4 +525,3 @@ that either amdgpu-dkms or rock-dkms is installed"
 }
 
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-

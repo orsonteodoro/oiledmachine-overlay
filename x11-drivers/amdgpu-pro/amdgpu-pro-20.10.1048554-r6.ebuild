@@ -148,6 +148,11 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+	if ! grep -q -e "Added amdgpu-pro, amdgpu-pro-lts support" \
+		"${EROOT}/usr/share/eselect/modules/opengl.eselect" ; then
+		die "You need eselect-opengl from the oiledmachine-overlay."
+	fi
+
 	if [ ! -L /lib64/libedit.so.2 ] ; then
 		einfo \
 "You need to do \`ln -s /lib64/libedit.so.0 /lib64/libedit.so.2\`"
@@ -399,16 +404,9 @@ src_install() {
 			fi
 			chmod 0755 "${ED}/${od_amdgpu}/lib${b}/xorg/modules/drivers/"*.so* || die
 			chmod 0755 "${ED}/${od_amdgpu}/lib${b}/dri/"*.so* || die
-			if [[ -d "${ED}/${od_amdgpu}/lib" ]] ; then
-				cp -a "${ED}/${od_amdgpu}/lib/"* \
-					"${ED}/${od_amdgpu}/lib${b}" || die
-			fi
-			rm -rf "${ED}/${od_amdgpu}/lib" || die
 			dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so ${od_amdgpu}/lib${b}/dri/amdgpu_dri.so
 #			dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so ${dd_amdgpu}/dri/amdgpu_dri.so
-			dosym ../../../../${od_amdgpu}/lib${b} ${dd_amdgpu}/lib${b}
-			dosym ../../../../${od_amdgpu}/lib${b} ${dd_amdgpu}/lib
-			dosym libGL.so.1.2.0 ${dd_amdgpu}/lib${b}/libGL.so
+			dosym libGL.so.1.2.0 ${od_amdgpu}/lib${b}/libGL.so
 		fi
 
 		if use pro-stack ; then
@@ -418,11 +416,6 @@ src_install() {
 			insinto /usr/lib64/dri
 			doins usr/lib64/dri/amdgpu_dri.so
 			chmod 0755 "${ED}/usr/lib64/dri/amdgpu_dri.so" || die
-			if [[ -d "${ED}/${od_amdgpupro}/lib" ]] ; then
-				cp -a "${ED}/${od_amdgpupro}/lib/"* \
-					"${ED}/${od_amdgpupro}/lib${b}" || die
-			fi
-			rm -rf "${ED}/${od_amdgpupro}/lib" || die
 			cp -a "${ED}/${od_amdgpu}/lib${b}/"libgbm* \
 				"${ED}/${od_amdgpupro}/lib${b}" || die
 #			cp -a "${ED}/${od_amdgpu}/lib${b}/"llvm-${PKG_VER_LLVM} \
@@ -435,8 +428,6 @@ src_install() {
 #				"${ED}/${od_amdgpupro}/lib${b}" || die
 			dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so ${od_amdgpupro}/lib${b}/dri/amdgpu_dri.so
 #			dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so ${dd_amdgpupro}/dri/amdgpu_dri.so
-			dosym ../../../../${od_amdgpupro}/lib${b} ${dd_amdgpupro}/lib${b}
-			dosym ../../../../${od_amdgpupro}/lib${b} ${dd_amdgpupro}/lib
 		fi
 	}
 
@@ -481,14 +472,6 @@ pkg_postinst() {
 	if use opencl ; then
 		"${EROOT}"/usr/bin/eselect opencl set --use-old amdgpu
 	fi
-
-	cat << EOF > "${EROOT}/etc/X11/xorg.conf.d/20opengl.conf" || die
-Section "Files"
-        ModulePath "/opt/amdgpu-pro/lib64/xorg/modules"
-        ModulePath "/opt/amdgpu/lib64/xorg/modules"
-        ModulePath "/usr/lib64/xorg/modules"
-EndSection
-EOF
 
 	if use freesync ; then
 		einfo \

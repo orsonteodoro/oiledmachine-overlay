@@ -37,12 +37,12 @@
       development libraries.</flag>
     <flag name="lf">Install the LiquidFlash library.</flag>
     <flag name="mesa">Install mesa support.</flag>
+    <flag name="open-stack">Installs the open-stack containing Mesa OpenGL
+      for consumer products.</flag>
     <flag name="opencl">Install OpenCL support.</flag>
     <flag name="opencl_orca">Install the outdated legacy OpenCL Orca driver.</flag>
     <flag name="opencl_pal">Install the OpenCL PAL (Platform Abstraction Layer)
       driver for GCN 5.x GPUs (e.g. Vega) or newer.</flag>
-    <flag name="open-stack">Installs the open-stack containing Mesa OpenGL
-      for consumer products.</flag>
     <flag name="opengl">Install OpenGL support.</flag>
     <flag name="openmax">Install OpenMAX support.</flag>
     <flag name="pro-stack">Installs the pro-stack containing the Pro OpenGL
