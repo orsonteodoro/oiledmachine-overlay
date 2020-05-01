@@ -27,6 +27,8 @@
   </longdescription>
   <use>
     <flag name="amf">Install the Accelerated Media Framework support.</flag>
+    <flag name="developer">Install developer toolchain, libraries,
+      headers.</flag>
     <flag name="dkms">Installs the enhanced amdgpu kernel driver with ROCm API
       support and updated DRM driver.</flag>
     <flag name="egl">Install EGL support.</flag>

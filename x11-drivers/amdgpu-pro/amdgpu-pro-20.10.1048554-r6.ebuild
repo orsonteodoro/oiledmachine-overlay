@@ -34,8 +34,8 @@ VULKAN_SDK_VER="1.1.121.1"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="dkms +egl +gles2 freesync hip-clang +open-stack +opencl opencl_orca \
-opencl_pal +opengl +pro-stack roct +vaapi +vdpau +vulkan"
+IUSE="developer dkms +egl +gles2 freesync hip-clang +open-stack +opencl \
+opencl_orca opencl_pal +opengl +pro-stack roct +vaapi +vdpau +vulkan"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -194,6 +194,7 @@ src_unpack_open_stack() {
 
 	unpack_rpm "${d_rpms}/libdrm-amdgpu-${PKG_VER_LIBDRM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	unpack_rpm "${d_noarch}/libdrm-amdgpu-common-${PKG_VER_ID}-${PKG_REV}${PKG_ARCH_SUFFIX}${noarch}.rpm"
+	use developer && \
 	unpack_rpm "${d_rpms}/libdrm-amdgpu-devel-${PKG_VER_LIBDRM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 
 	# vdpau and mesa-amdgpu are consumers of llvm
@@ -202,26 +203,34 @@ src_unpack_open_stack() {
 	# enabled on >=llvm-10.  Gentoo only use split llvm libraries
 	# but the driver components use the shared.
 	unpack_rpm "${d_rpms}/llvm${PKG_VER_LLVM/\./}-amdgpu-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	use developer && \
 	unpack_rpm "${d_rpms}/llvm${PKG_VER_LLVM/\./}-amdgpu-devel-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	unpack_rpm "${d_rpms}/llvm-amdgpu-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	unpack_rpm "${d_rpms}/llvm-amdgpu-libs-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	unpack_rpm "${d_rpms}/llvm-amdgpu-static-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	use developer && \
 	unpack_rpm "${d_rpms}/llvm-amdgpu-devel-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 
 	if use opengl ; then
 		unpack_rpm "${d_rpms}/mesa-amdgpu-dri-drivers-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libEGL-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		use developer && \
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libEGL-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libGL-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		use developer && \
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libGL-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libGLES-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		use developer && \
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libGLES-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libOSMesa-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		use developer && \
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libOSMesa-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libgbm-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		use developer && \
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libgbm-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libglapi-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libxatracker-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		use developer && \
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libxatracker-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	fi
 
@@ -271,6 +280,7 @@ src_unpack_pro_stack() {
 		if use opencl_orca ; then
 			unpack_rpm "${d_rpms}/opencl-orca-amdgpu-pro-icd-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		fi
+		use developer && \
 		unpack_rpm "${d_rpms}/opencl-amdgpu-pro-devel-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	fi
 
