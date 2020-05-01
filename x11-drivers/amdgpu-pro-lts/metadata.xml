@@ -25,6 +25,8 @@
     To switch to the open-stack (Mesa OpenGL) do:
     eselect opengl set amdgpu
 
+    If hwe USE flag is disabled, the following are required:
+
     Temporary masks required:
     <![CDATA[
     >x11-base/xorg-drivers-1.19
@@ -62,7 +64,8 @@
     <flag name="hip-clang">Install the HIP-CLANG runtime</flag>
     <flag name="hsa">Install the HSA (Heterogeneous System Architecture)
       development libraries.</flag>
-    <flag name="hwe">Install the HWE (HardWare Enablement libraries)</flag>
+    <flag name="hwe">Install the HWE (HardWare Enablement libraries) to
+      allow the driver to use the 1.20.x xserver.</flag>
     <flag name="open-stack">Installs the open-stack containing Mesa OpenGL
       for consumer products.</flag>
     <flag name="opencl">Install OpenCL support.</flag>

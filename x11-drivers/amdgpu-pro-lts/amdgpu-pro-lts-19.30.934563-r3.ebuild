@@ -37,7 +37,7 @@ VULKAN_SDK_VER="1.1.109.0"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="+amf dkms +egl +gles2 freesync glamor hip-clang hwe +open-stack +opencl \
+IUSE="+amf dkms +egl +gles2 freesync glamor hip-clang +hwe +open-stack +opencl \
 opencl_orca opencl_pal +opengl openmax +pro-stack roct +vaapi +vdpau +vulkan \
 wayland"
 SLOT="1"
