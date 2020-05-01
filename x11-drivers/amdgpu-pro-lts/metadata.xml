@@ -56,6 +56,8 @@
   </longdescription>
   <use>
     <flag name="amf">Install the Accelerated Media Framework support.</flag>
+    <flag name="developer">Install developer toolchain, libraries,
+      headers.</flag>
     <flag name="dkms">Installs the enhanced amdgpu kernel driver with ROCm API
       support and updated DRM driver.</flag>
     <flag name="egl">Install EGL support.</flag>
@@ -68,7 +70,8 @@
     <flag name="open-stack">Installs the open-stack containing Mesa OpenGL
       for consumer products.</flag>
     <flag name="opencl">Install OpenCL support.</flag>
-    <flag name="opencl_orca">Install the outdated legacy OpenCL Orca driver.</flag>
+    <flag name="opencl_orca">Install the outdated legacy OpenCL Orca
+      driver.</flag>
     <flag name="opencl_pal">Install the OpenCL PAL (Platform Abstraction Layer)
       driver for GCN 5.x GPUs (e.g. Vega) or newer.</flag>
     <flag name="opengl">Install OpenGL support.</flag>
