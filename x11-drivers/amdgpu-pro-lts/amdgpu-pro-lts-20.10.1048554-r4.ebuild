@@ -79,7 +79,7 @@ SLOT="1"
 #	>=sys-devel/lld-7.0.0
 #	>=sys-devel/llvm-7.0.0
 # libglapi.so.0 needs libselinux
-ARDEPEND="!x11-drivers/amdgpu-pro
+RDEPEND="!x11-drivers/amdgpu-pro
 	  app-eselect/eselect-opencl
 	 >=app-eselect/eselect-opengl-1.0.7
 	 dev-util/cunit
@@ -144,7 +144,7 @@ ARDEPEND="!x11-drivers/amdgpu-pro
 # amdgpu_dri.so requires wayland?
 # vdpau requires llvm7
 S="${WORKDIR}"
-AREQUIRED_USE="opencl? ( || ( opencl_pal opencl_orca ) )
+REQUIRED_USE="opencl? ( || ( opencl_pal opencl_orca ) )
 	opencl_pal? ( opencl )
 	opencl_orca? ( opencl )
 	roct? ( dkms )"
@@ -586,8 +586,10 @@ pkg_prerm() {
 }
 
 pkg_postinst() {
-	if use opengl ; then
+	if use pro-stack && use opengl ; then
 		"${EROOT}"/usr/bin/eselect opengl set amdgpu-pro
+	elif use open-stack && use opengl ; then
+		"${EROOT}"/usr/bin/eselect opengl set amdgpu
 	fi
 
 	if use opencl ; then

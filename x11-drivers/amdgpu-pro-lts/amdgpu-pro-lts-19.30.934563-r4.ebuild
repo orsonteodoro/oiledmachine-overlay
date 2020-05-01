@@ -613,8 +613,10 @@ pkg_prerm() {
 }
 
 pkg_postinst() {
-	if use opengl ; then
+	if use pro-stack && use opengl ; then
 		"${EROOT}"/usr/bin/eselect opengl set amdgpu-pro
+	elif use open-stack && use opengl ; then
+		"${EROOT}"/usr/bin/eselect opengl set amdgpu
 	fi
 
 	if use opencl ; then
