@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="Radeon™ Software for Linux®"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-10"
+"https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-30-unified"
 LICENSE="AMDGPUPROEULA
 	doc? ( AMDGPUPROEULA MIT BSD )
 	open-stack? (
@@ -14,6 +14,7 @@ LICENSE="AMDGPUPROEULA
 		opengl? ( MIT SGI-B-2.0 )
 		openmax? ( BSD GPL-2+-with-autoconf-exception LGPL-2.1 MIT )
 		vulkan? ( MIT )
+		wayland ( MIT )
 		Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD MIT
 	)
 	pro-stack? (
@@ -42,25 +43,25 @@ PKG_REV=$(ver_cut 3)
 PKG_ARCH="ubuntu"
 PKG_ARCH_VER="18.04"
 PKG_ARCH_SUFFIX="_"
-PKG_VER_AMF="1.4.17"
+PKG_VER_AMF="1.4.12"
 PKG_VER_GLAMOR="1.19.0"
 PKG_VER_GST_OMX="1.0.0.1"
 PKG_VER_GST=$(ver_cut 1-2 ${PKG_VER_GST_OMX})
 PKG_VER_HSAKMT="1.0.6"
 PKG_VER_HSAKMT_A="1.0.9"
 PKG_VER_ID="1.0.0"
-PKG_VER_LIBDRM="2.4.100"
-PKG_VER_LIBWAYLAND="1.16.0"
+PKG_VER_LIBDRM="2.4.98"
+PKG_VER_LIBWAYLAND="1.15.0"
 PKG_VER_LLVM_TRIPLE="9.0.0"
 PKG_VER_LLVM=$(ver_cut 1-2 ${PKG_VER_LLVM_TRIPLE})
 PKG_VER_LLVM_MAJ=$(ver_cut 1 ${PKG_VER_LLVM_TRIPLE})
-PKG_VER_MESA="19.3.4"
+PKG_VER_MESA="19.2.0"
 PKG_VER_ROCT="1.0.9"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
 PKG_VER_STRING_DIR=${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}
 PKG_VER_WAYLAND_PROTO="1.17"
-PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.1.0" # about the same as the mesa version
-VULKAN_SDK_VER="1.1.121.1"
+PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.0.1" # about the same as the mesa version
+VULKAN_SDK_VER="1.1.109.0"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
@@ -100,20 +101,20 @@ RDEPEND="!x11-drivers/amdgpu-pro
 		>=sys-kernel/zen-sources-5.0 ) )
 	 || (
 		>=sys-kernel/amdgpu-dkms-${PV}
-		>=sys-kernel/aufs-sources-5.7
-		>=sys-kernel/ck-sources-5.7
-		>=sys-kernel/gentoo-sources-5.7
-		>=sys-kernel/git-sources-5.7
-		>=sys-kernel/hardened-sources-5.7
-		>=sys-kernel/pf-sources-5.7
-		>=sys-kernel/rock-dkms-3.3.0
-		>=sys-kernel/rt-sources-5.7
-		>=sys-kernel/vanilla-sources-5.7
-		>=sys-kernel/xbox-sources-5.7
-		>=sys-kernel/zen-sources-5.7 )
+		>=sys-kernel/aufs-sources-5.4
+		>=sys-kernel/ck-sources-5.4
+		>=sys-kernel/gentoo-sources-5.4
+		>=sys-kernel/git-sources-5.4
+		>=sys-kernel/hardened-sources-5.4
+		>=sys-kernel/pf-sources-5.4
+		>=sys-kernel/rock-dkms-2.8.0
+		>=sys-kernel/rt-sources-5.4
+		>=sys-kernel/vanilla-sources-5.4
+		>=sys-kernel/xbox-sources-5.4
+		>=sys-kernel/zen-sources-5.4 )
 	 || ( >=sys-firmware/amdgpu-firmware-${PV}
-	        >=sys-firmware/rock-firmware-3.3.0
-		>=sys-kernel/linux-firmware-20200417 )
+	        >=sys-firmware/rock-firmware-2.8.0
+		>=sys-kernel/linux-firmware-20191113 )
 	 >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
 	 >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
 	 opencl? (  >=sys-devel/gcc-5.2.0 )
@@ -128,7 +129,6 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
 	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
 		    >=media-libs/vulkan-loader-${VULKAN_SDK_VER} )
-         wayland? ( >=dev-libs/wayland-${PKG_VER_LIBWAYLAND} )
 	 >=x11-base/xorg-drivers-1.19
 	  <x11-base/xorg-drivers-1.20
 	   x11-base/xorg-proto
@@ -151,11 +151,11 @@ REQUIRED_USE="opencl? ( || ( opencl_pal opencl_orca ) )
 
 _set_check_reqs_requirements() {
 	if use abi_x86_32 && use abi_x86_64 ; then
-		CHECKREQS_DISK_BUILD="1697M"
-		CHECKREQS_DISK_USR="1614M"
+		CHECKREQS_DISK_BUILD="1605M"
+		CHECKREQS_DISK_USR="1525M"
 	else
-		CHECKREQS_DISK_BUILD="1697M"
-		CHECKREQS_DISK_USR="1614M"
+		CHECKREQS_DISK_BUILD="1605M"
+		CHECKREQS_DISK_USR="1525M"
 	fi
 }
 
@@ -226,25 +226,22 @@ the roct USE flag."
 }
 
 src_unpack_common() {
-	if [[ "${ABI}" == "amd64" ]] ; then
-		unpack_deb "${d_debs}/xserver-xorg-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		use hwe && \
-		unpack_deb "${d_debs}/xserver-xorg-hwe-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-	fi
-	# no x86 ABI
+	unpack_deb "${d_debs}/xserver-xorg-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+	use hwe && \
+	unpack_deb "${d_debs}/xserver-xorg-hwe-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 }
 
 src_unpack_open_stack() {
+	unpack_deb "${d_debs}/amdgpu_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 	unpack_deb "${d_debs}/amdgpu-core_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${archall}.deb"
 	use doc && \
 	unpack_deb "${d_debs}/amdgpu-doc_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${archall}.deb"
 	if [[ "${ABI}" == "amd64" ]] ; then
-		unpack_deb "${d_debs}/amdgpu_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 		unpack_deb "${d_debs}/amdgpu-lib32_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
-		if use hwe ; then
-			unpack_deb "${d_debs}/amdgpu-hwe_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
-			unpack_deb "${d_debs}/amdgpu-lib-hwe_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
-		fi
+	fi
+	if use hwe ; then
+		unpack_deb "${d_debs}/amdgpu-hwe_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
+		unpack_deb "${d_debs}/amdgpu-lib-hwe_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 	fi
 
 	unpack_deb "${d_debs}/libdrm-amdgpu-amdgpu1_${PKG_VER_LIBDRM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
@@ -300,11 +297,9 @@ src_unpack_open_stack() {
 		use developer && \
 		unpack_deb "${d_debs}/libxatracker-amdgpu-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 		if use glamor ; then
-			if [[ "${ABI}" == "amd64" ]] ; then
-				unpack_deb "${d_debs}/glamor-amdgpu_${PKG_VER_GLAMOR}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-				use developer && \
-				unpack_deb "${d_debs}/glamor-amdgpu-dev_${PKG_VER_GLAMOR}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-			fi
+			unpack_deb "${d_debs}/glamor-amdgpu_${PKG_VER_GLAMOR}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+			use developer && \
+			unpack_deb "${d_debs}/glamor-amdgpu-dev_${PKG_VER_GLAMOR}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 		fi
 	fi
 
@@ -324,22 +319,34 @@ src_unpack_open_stack() {
 	if use vulkan ; then
 		unpack_deb "${d_debs}/vulkan-amdgpu_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 	fi
+
+	if use wayland && use egl ; then
+		unpack_deb "${d_debs}/libwayland-amdgpu-egl1_${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+	fi
+
+	if use wayland ; then
+		unpack_deb "${d_debs}/libwayland-amdgpu-client0_${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		unpack_deb "${d_debs}/libwayland-amdgpu-doc_${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${archall}.deb"
+		unpack_deb "${d_debs}/libwayland-amdgpu-server0_${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		unpack_deb "${d_debs}/libwayland-amdgpu-cursor0_${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		unpack_deb "${d_debs}/wayland-protocols-amdgpu_${PKG_VER_WAYLAND_PROTO}-${PKG_REV}${PKG_ARCH_SUFFIX}${archall}.deb"
+	fi
 }
 
 src_unpack_pro_stack() {
+	unpack_deb "${d_debs}/amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 	unpack_deb "${d_debs}/amdgpu-pro-core_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${archall}.deb"
 	if [[ "${ABI}" == "amd64" ]] ; then
-		unpack_deb "${d_debs}/amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 		unpack_deb "${d_debs}/amdgpu-pro-lib32_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
-		if use hwe ; then
-			unpack_deb "${d_debs}/amdgpu-pro-hwe_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
-		fi
+	fi
+	if use hwe ; then
+		unpack_deb "${d_debs}/amdgpu-pro-hwe_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 	fi
 	unpack_deb "${d_debs}/amdgpu-pro-pin_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${archall}.deb"
 
 	if use amf ; then
 		if [[ "${ABI}" == "amd64" ]] ; then
-			unpack_deb "${d_debs}/amf-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
+			unpack_deb "${d_debs}/amf-amdgpu-pro_${PKG_VER_AMF}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 		fi
 	fi
 
@@ -373,6 +380,9 @@ src_unpack_pro_stack() {
 		fi
 	fi
 
+	unpack_deb "${d_debs}/libgbm1-amdgpu-pro-base_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${archall}.deb"
+	unpack_deb "${d_debs}/libgbm1-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
+
 	if use opengl ; then
 		unpack_deb "${d_debs}/libgl1-amdgpu-pro-appprofiles_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${archall}.deb"
 		use hwe && \
@@ -382,6 +392,14 @@ src_unpack_pro_stack() {
 		unpack_deb "${d_debs}/libgl1-amdgpu-pro-glx_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 		unpack_deb "${d_debs}/libglapi1-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 		unpack_deb "${d_debs}/libgles2-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
+	fi
+
+	if use roct ; then
+		if [[ "${ABI}" == "amd64" ]] ; then
+			unpack_deb "${d_debs}/roct-amdgpu-pro_${PKG_VER_HSAKMT_A}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+			use developer && \
+			unpack_deb "${d_debs}/roct-amdgpu-pro-dev_${PKG_VER_HSAKMT_A}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		fi
 	fi
 
 	if use vulkan ; then
@@ -396,6 +414,7 @@ src_unpack() {
 	local d_debs="amdgpu-pro-${PKG_VER_STRING_DIR}"
 
 	unpack_abi() {
+		local arch
 		local b
 
 		if [[ "${ABI}" == "amd64" ]] ; then
@@ -508,7 +527,6 @@ src_install() {
 				chmod 0775 "${ED}/${od_amdgpu}/lib/${chost}/gstreamer-${PKG_VER_GST}/libgstomx.so" || die
 			fi
 			dosym ../../../../../usr/lib/${chost}/dri/amdgpu_dri.so ${od_amdgpu}/lib/${chost}/dri/amdgpu_dri.so
-#			dosym ../../../../../usr/lib/${chost}/dri/amdgpu_dri.so ${dd_amdgpu}/dri/amdgpu_dri.so
 			dosym libGL.so.1.2.0 ${od_amdgpu}/lib/${chost}/libGL.so
 		fi
 
@@ -516,6 +534,7 @@ src_install() {
 			chmod 0755 "${ED}/${od_amdgpupro}/bin/"* || die
 			chmod 0755 "${ED}/${od_amdgpupro}/lib/${chost}/"*.so* || die
 			chmod 0755 "${ED}/${od_amdgpupro}/lib/xorg/modules/extensions/"*.so* || die
+			chmod 0755 "${ED}/${od_amdgpupro}/lib/${chost}/gbm/"*.so* || die
 			insinto /usr/lib/${chost}/dri
 			doins usr/lib/${chost}/dri/amdgpu_dri.so
 			chmod 0755 "${ED}/usr/lib/${chost}/dri/amdgpu_dri.so" || die
@@ -530,7 +549,16 @@ src_install() {
 #			cp -a "${ED}/${od_amdgpu}/lib/${chost}/"libRemarks.so* \
 #				"${ED}/${od_amdgpupro}/lib/${chost}" || die
 			dosym ../../../../../usr/lib/${chost}/dri/amdgpu_dri.so ${od_amdgpupro}/lib/${chost}/dri/amdgpu_dri.so
-#			dosym ../../../../../usr/lib/${chost}/dri/amdgpu_dri.so ${dd_amdgpupro}/dri/amdgpu_dri.so
+
+			if use roct ; then
+				if [[ "${ABI}" == "amd64" ]] ; then
+					sed -i -e "s|/opt/rocm|/${sd_amdgpupro}|g" \
+						"${ED}/${od_amdgpupro}/lib/${chost}/pkgconfig/libhsakmt.pc" || die
+					sed -i -e "s|//${sd_amdgpupro}/lib/${chost}|/lib/${chost}|g" \
+						"${ED}/${od_amdgpupro}/lib/${chost}/pkgconfig/libhsakmt.pc" || die
+				fi
+				# no x86 abi
+			fi
 		fi
 	}
 
