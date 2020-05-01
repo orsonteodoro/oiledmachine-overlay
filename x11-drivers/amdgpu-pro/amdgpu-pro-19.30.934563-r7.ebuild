@@ -498,6 +498,14 @@ src_install() {
 #				"${ED}/${od_amdgpupro}/lib${b}" || die
 			dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so ${od_amdgpupro}/lib${b}/dri/amdgpu_dri.so
 
+			if use opencl ; then
+				dosym ../../../../../opt/amdgpu-pro/$(get_libdir)/libOpenCL.so.1 \
+					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/libOpenCL.so.1
+				dosym ../../../../../opt/amdgpu-pro/$(get_libdir)/libOpenCL.so \
+					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/libOpenCL.so
+				dosym ../../../../../../opt/amdgpu-pro/include/CL /usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/include/CL
+			fi
+
 			if use roct ; then
 				if [[ "${ABI}" == "amd64" ]] ; then
 					sed -i -e "s|/opt/rocm|/${sd_amdgpupro}|g" \
@@ -516,11 +524,13 @@ src_install() {
 	dosym /usr/share/libdrm/amdgpu.ids \
 		/opt/amdgpu/share/libdrm/amdgpu.ids
 
-	docinto docs
-	dodoc -r usr/share/doc/*
+	if use doc ; then
+		docinto docs
+		dodoc -r usr/share/doc/*
+		doman usr/share/man/man7/amdgpu-doc.7.gz
+	fi
 	docinto licenses
 	dodoc -r usr/share/licenses/*
-	doman usr/share/man/man7/amdgpu-doc.7.gz
 
 	if use vdpau ; then
 		cat <<-EOF > "${T}"/50${P}-vdpau
@@ -538,7 +548,9 @@ pkg_prerm() {
 
 	if use opencl ; then
 		if "${EROOT}"/usr/bin/eselect opencl list | grep mesa ; then
-			"${EROOT}"/usr/bin/eselect opencl set --use-old mesa
+			"${EROOT}"/usr/bin/eselect opencl set mesa
+		elif "${EROOT}"/usr/bin/eselect opencl list | grep ocl-icd ; then
+			"${EROOT}"/usr/bin/eselect opencl set ocl-icd
 		fi
 	fi
 }
@@ -549,7 +561,7 @@ pkg_postinst() {
 	fi
 
 	if use opencl ; then
-		"${EROOT}"/usr/bin/eselect opencl set --use-old amdgpu
+		"${EROOT}"/usr/bin/eselect opencl set amdgpu-pro
 	fi
 
 	if use freesync ; then
