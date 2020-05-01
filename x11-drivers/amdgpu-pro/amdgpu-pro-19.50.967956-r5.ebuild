@@ -8,7 +8,6 @@ HOMEPAGE=\
 LICENSE="AMDGPUPROEULA
 	doc? ( AMDGPUPROEULA MIT BSD )
 	open-stack? (
-		glamor ( MIT )
 		gles2? ( developer? ( Apache-2.0 MIT ) )
 		opengl? ( MIT SGI-B-2.0 )
 		vaapi? ( MIT )
