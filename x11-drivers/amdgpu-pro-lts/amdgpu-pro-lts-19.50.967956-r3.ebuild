@@ -37,7 +37,7 @@ VULKAN_SDK_VER="1.1.121.1"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="+amf dkms +egl +gles2 freesync glamor hip-clang +hwe +open-stack +opencl \
+IUSE="+amf dkms +egl +gles2 freesync glamor hip-clang hwe +open-stack +opencl \
 opencl_orca opencl_pal +opengl openmax +pro-stack roct +vaapi +vdpau +vulkan \
 wayland"
 SLOT="1"
@@ -52,7 +52,7 @@ SLOT="1"
 #	>=sys-devel/lld-7.0.0
 #	>=sys-devel/llvm-7.0.0
 # libglapi.so.0 needs libselinux
-ARDEPEND="!x11-drivers/amdgpu-pro
+RDEPEND="!x11-drivers/amdgpu-pro
 	  app-eselect/eselect-opencl
 	 >=app-eselect/eselect-opengl-1.0.7
 	 dev-util/cunit
@@ -116,7 +116,7 @@ ARDEPEND="!x11-drivers/amdgpu-pro
 # amdgpu_dri.so requires wayland?
 # vdpau requires llvm7
 S="${WORKDIR}"
-AREQUIRED_USE="opencl? ( || ( opencl_pal opencl_orca ) )
+REQUIRED_USE="opencl? ( || ( opencl_pal opencl_orca ) )
 	opencl_pal? ( opencl )
 	opencl_orca? ( opencl )
 	roct? ( dkms )"
@@ -160,6 +160,10 @@ pkg_setup() {
 		einfo \
 "You need to do \`ln -s /lib64/libedit.so.0 /lib64/libedit.so.2\`"
 		die
+	fi
+
+	if use open-stack ; then
+		ewarn "open-stack (with Mesa OpenGL) is still WIP"
 	fi
 
 	CONFIG_CHECK="~DRM_AMDGPU"
