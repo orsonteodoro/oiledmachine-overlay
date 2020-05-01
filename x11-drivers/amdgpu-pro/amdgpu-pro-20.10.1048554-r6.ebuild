@@ -5,7 +5,27 @@ EAPI=7
 DESCRIPTION="Radeon™ Software for Linux®"
 HOMEPAGE=\
 "https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-10"
-LICENSE="AMD GPL-2 QPL-1.0"
+LICENSE="AMDGPUPROEULA
+	doc? ( AMDGPUPROEULA MIT BSD )
+	open-stack? (
+		glamor ( MIT )
+		gles2? ( developer? ( Apache-2.0 MIT ) )
+		opengl? ( MIT SGI-B-2.0 )
+		vulkan? ( MIT )
+		Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD MIT
+	)
+	pro-stack? (
+		AMDGPUPROEULA
+		egl? ( AMDGPUPROEULA )
+		gles2? ( AMDGPUPROEULA )
+		hip-clang? ( AMDGPUPROEULA )
+		opencl? ( AMDGPUPROEULA )
+		opencl_pal? ( AMDGPUPROEULA )
+		opencl_orca? ( AMDGPUPROEULA )
+		opengl? ( AMDGPUPROEULA )
+		vulkan? ( AMDGPUPROEULA )
+	)"
+# llvm - Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD MIT
 KEYWORDS="~amd64 ~x86"
 MULTILIB_COMPAT=( abi_x86_{32,64} )
 inherit check-reqs linux-info multilib-build unpacker rpm
@@ -34,7 +54,7 @@ VULKAN_SDK_VER="1.1.121.1"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="developer dkms +egl +gles2 freesync hip-clang +open-stack +opencl \
+IUSE="developer dkms doc +egl +gles2 freesync hip-clang +open-stack +opencl \
 opencl_orca opencl_pal +opengl +pro-stack roct +vaapi +vdpau +vulkan"
 SLOT="1"
 
@@ -303,6 +323,7 @@ src_unpack() {
 	local noarch="noarch"
 	local d_noarch="amdgpu-pro-${PKG_VER_STRING_DIR}/RPMS/${noarch}"
 
+	use doc && \
 	unpack_rpm "${d_noarch}/amdgpu-doc-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${noarch}.rpm"
 
 	unpack_abi() {
