@@ -568,10 +568,11 @@ src_install() {
 	dosym /usr/share/libdrm/amdgpu.ids \
 		/opt/amdgpu/share/libdrm/amdgpu.ids
 
-	docinto docs
-	use doc && \
-	dodoc -r usr/share/doc/*
-	doman usr/share/man/man7/amdgpu-doc.7.gz
+	if use doc ; then
+		docinto docs
+		dodoc -r usr/share/doc/*
+		doman usr/share/man/man7/amdgpu-doc.7.gz
+	fi
 
 	insinto /usr/share/binfmts
 	doins usr/share/binfmts/llvm-amdgpu-9.0-runtime.binfmt
