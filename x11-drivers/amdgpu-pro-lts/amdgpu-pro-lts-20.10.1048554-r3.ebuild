@@ -8,12 +8,13 @@ HOMEPAGE=\
 LICENSE="AMDGPUPROEULA
 	doc? ( AMDGPUPROEULA MIT BSD )
 	open-stack? (
-		glamor ( MIT )
+		glamor? ( MIT )
+		gles2? ( developer? ( Apache-2.0 MIT ) )
 		hwe? ( MIT )
 		opengl? ( MIT SGI-B-2.0 )
 		openmax? ( BSD GPL-2+-with-autoconf-exception LGPL-2.1 MIT )
 		vulkan? ( MIT )
-		UoI-NCSA BSD MIT
+		Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD MIT
 	)
 	pro-stack? (
 		AMDGPUPROEULA
@@ -31,7 +32,7 @@ LICENSE="AMDGPUPROEULA
 		)
 		vulkan? ( AMDGPUPROEULA )
 	)"
-# llvm - UoI-NCSA BSD MIT
+# llvm - Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD MIT
 KEYWORDS="~amd64 ~x86"
 MULTILIB_COMPAT=( abi_x86_{32,64} )
 inherit check-reqs linux-info multilib-build unpacker
