@@ -5,7 +5,33 @@ EAPI=7
 DESCRIPTION="Radeon™ Software for Linux®"
 HOMEPAGE=\
 "https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-30-unified"
-LICENSE="AMD GPL-2 QPL-1.0"
+LICENSE="AMDGPUPROEULA
+	doc? ( AMDGPUPROEULA MIT BSD )
+	open-stack? (
+		glamor ( MIT )
+		hwe? ( MIT )
+		opengl? ( MIT SGI-B-2.0 )
+		openmax? ( BSD GPL-2+-with-autoconf-exception LGPL-2.1 MIT )
+		vulkan? ( MIT )
+		UoI-NCSA BSD MIT
+	)
+	pro-stack? (
+		AMDGPUPROEULA
+		amf? ( AMDGPUPROEULA )
+		egl? ( AMDGPUPROEULA )
+		gles2? ( AMDGPUPROEULA )
+		hip-clang? ( AMDGPUPROEULA )
+		hwe? ( AMDGPUPROEULA )
+		opencl? ( AMDGPUPROEULA )
+		opencl_pal? ( AMDGPUPROEULA )
+		opencl_orca? ( AMDGPUPROEULA )
+		opengl? (
+			AMDGPUPROEULA
+			hwe? ( AMDGPUPROEULA )
+		)
+		vulkan? ( AMDGPUPROEULA )
+	)"
+# llvm - UoI-NCSA BSD MIT
 KEYWORDS="~amd64 ~x86"
 MULTILIB_COMPAT=( abi_x86_{32,64} )
 inherit check-reqs linux-info multilib-build unpacker
@@ -37,7 +63,7 @@ VULKAN_SDK_VER="1.1.109.0"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="+amf developer dkms +egl +gles2 freesync glamor hip-clang hwe \
+IUSE="+amf developer dkms doc +egl +gles2 freesync glamor hip-clang hwe \
 +open-stack +opencl opencl_orca opencl_pal +opengl openmax +pro-stack roct \
 +vaapi +vdpau +vulkan wayland"
 SLOT="1"
@@ -267,9 +293,11 @@ src_unpack_open_stack() {
 		unpack_deb "${d_debs}/libxatracker2-amdgpu_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 		use developer && \
 		unpack_deb "${d_debs}/libxatracker-amdgpu-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		unpack_deb "${d_debs}/glamor-amdgpu_${PKG_VER_GLAMOR}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		use developer && \
-		unpack_deb "${d_debs}/glamor-amdgpu-dev_${PKG_VER_GLAMOR}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		if use glamor ; then
+			unpack_deb "${d_debs}/glamor-amdgpu_${PKG_VER_GLAMOR}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+			use developer && \
+			unpack_deb "${d_debs}/glamor-amdgpu-dev_${PKG_VER_GLAMOR}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		fi
 	fi
 
 	if use openmax ; then
