@@ -362,6 +362,7 @@ src_unpack() {
 	unpack_rpm "${d_noarch}/amdgpu-doc-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${noarch}.rpm"
 
 	unpack_abi() {
+		local arch
 		local b
 
 		if [[ "${ABI}" == "amd64" ]] ; then
