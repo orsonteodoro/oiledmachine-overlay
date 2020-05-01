@@ -49,7 +49,7 @@ SLOT="1"
 #	>=sys-devel/llvm-7.0.0
 # libglapi.so.0 needs libselinux
 # requires >=dkms-1.95
-RDEPEND="!x11-drivers/amdgpu-pro
+ARDEPEND="!x11-drivers/amdgpu-pro
 	  app-eselect/eselect-opencl
 	 >=app-eselect/eselect-opengl-1.0.7
 	 >=dev-util/cunit-2.1_p3
@@ -113,18 +113,18 @@ RDEPEND="!x11-drivers/amdgpu-pro
 # kmstest requires libkms
 # vdpau requires llvm
 S="${WORKDIR}"
-REQUIRED_USE="opencl? ( || ( opencl_pal opencl_orca ) )
+AREQUIRED_USE="opencl? ( || ( opencl_pal opencl_orca ) )
 	opencl_pal? ( opencl )
 	opencl_orca? ( opencl )
 	roct? ( dkms )"
 
 _set_check_reqs_requirements() {
 	if use abi_x86_32 && use abi_x86_64 ; then
-		CHECKREQS_DISK_BUILD="906M"
-		CHECKREQS_DISK_USR="583M"
+		CHECKREQS_DISK_BUILD="1071M"
+		CHECKREQS_DISK_USR="971M"
 	else
-		CHECKREQS_DISK_BUILD="644M"
-		CHECKREQS_DISK_USR="296M"
+		CHECKREQS_DISK_BUILD="1071M"
+		CHECKREQS_DISK_USR="971M"
 	fi
 }
 
@@ -209,6 +209,7 @@ src_unpack_open_stack() {
 	unpack_rpm "${d_rpms}/llvm-amdgpu-devel-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 
 	if use opengl ; then
+		unpack_rpm "${d_rpms}/mesa-amdgpu-dri-drivers-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libEGL-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libEGL-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libGL-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
@@ -224,10 +225,7 @@ src_unpack_open_stack() {
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libxatracker-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	fi
 
-	if use vaapi ; then
-		unpack_rpm "${d_rpms}/mesa-amdgpu-dri-drivers-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-		# The VA-API driver is in the dri package.
-	fi
+	# The VA-API driver is in the dri package.
 
 	if use vdpau ; then
 		unpack_rpm "${d_rpms}/mesa-amdgpu-vdpau-drivers-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
