@@ -569,6 +569,7 @@ src_install() {
 		/opt/amdgpu/share/libdrm/amdgpu.ids
 
 	docinto docs
+	use doc && \
 	dodoc -r usr/share/doc/*
 	doman usr/share/man/man7/amdgpu-doc.7.gz
 
