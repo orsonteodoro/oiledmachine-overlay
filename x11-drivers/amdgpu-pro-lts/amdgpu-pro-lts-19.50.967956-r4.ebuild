@@ -528,7 +528,8 @@ src_install() {
 				chmod 0755 "${ED}/${od_amdgpu}/lib/libomxil-bellagio0/"*.so* || die
 				chmod 0775 "${ED}/${od_amdgpu}/lib/${chost}/gstreamer-${PKG_VER_GST}/libgstomx.so" || die
 			fi
-			dosym ../../../../../usr/lib/${chost}/dri/amdgpu_dri.so ${od_amdgpu}/lib/${chost}/dri/amdgpu_dri.so
+			dosym ../../../../../usr/lib/${chost}/dri/amdgpu_dri.so \
+				${od_amdgpu}/lib/${chost}/dri/amdgpu_dri.so
 			dosym libGL.so.1.2.0 ${od_amdgpu}/lib/${chost}/libGL.so
 		fi
 
@@ -549,7 +550,17 @@ src_install() {
 #				"${ED}/${od_amdgpupro}/lib/${chost}" || die
 #			cp -a "${ED}/${od_amdgpu}/lib/${chost}/"libRemarks.so* \
 #				"${ED}/${od_amdgpupro}/lib/${chost}" || die
-			dosym ../../../../../usr/lib/${chost}/dri/amdgpu_dri.so ${od_amdgpupro}/lib/${chost}/dri/amdgpu_dri.so
+			dosym ../../../../../usr/lib/${chost}/dri/amdgpu_dri.so \
+				${od_amdgpupro}/lib/${chost}/dri/amdgpu_dri.so
+
+			if use opencl ; then
+				dosym ../../../../../opt/amdgpu-pro/lib/${opencl}/libOpenCL.so.1 \
+					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/libOpenCL.so.1
+				dosym ../../../../../opt/amdgpu-pro/lib/${opencl}/libOpenCL.so \
+					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/libOpenCL.so
+				dosym ../../../../../../opt/amdgpu-pro/include/CL \
+					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/include/CL
+			fi
 		fi
 	}
 
@@ -585,7 +596,9 @@ pkg_prerm() {
 
 	if use opencl ; then
 		if "${EROOT}"/usr/bin/eselect opencl list | grep mesa ; then
-			"${EROOT}"/usr/bin/eselect opencl set --use-old mesa
+			"${EROOT}"/usr/bin/eselect opencl set mesa
+		elif "${EROOT}"/usr/bin/eselect opencl list | grep ocl-icd ; then
+			"${EROOT}"/usr/bin/eselect opencl set ocl-icd
 		fi
 	fi
 }
@@ -596,7 +609,7 @@ pkg_postinst() {
 	fi
 
 	if use opencl ; then
-		"${EROOT}"/usr/bin/eselect opencl set --use-old amdgpu
+		"${EROOT}"/usr/bin/eselect opencl set amdgpu-pro
 	fi
 
 	if use freesync ; then

@@ -79,7 +79,7 @@ SLOT="1"
 #	>=sys-devel/lld-7.0.0
 #	>=sys-devel/llvm-7.0.0
 # libglapi.so.0 needs libselinux
-RDEPEND="!x11-drivers/amdgpu-pro
+ARDEPEND="!x11-drivers/amdgpu-pro
 	  app-eselect/eselect-opencl
 	 >=app-eselect/eselect-opengl-1.0.7
 	 dev-util/cunit
@@ -144,7 +144,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 # amdgpu_dri.so requires wayland?
 # vdpau requires llvm7
 S="${WORKDIR}"
-REQUIRED_USE="opencl? ( || ( opencl_pal opencl_orca ) )
+AREQUIRED_USE="opencl? ( || ( opencl_pal opencl_orca ) )
 	opencl_pal? ( opencl )
 	opencl_orca? ( opencl )
 	roct? ( dkms )"
@@ -530,8 +530,19 @@ src_install() {
 #				"${ED}/${od_amdgpupro}/lib/${chost}" || die
 #			cp -a "${ED}/${od_amdgpu}/lib/${chost}/"libRemarks.so* \
 #				"${ED}/${od_amdgpupro}/lib/${chost}" || die
-			dosym ../../../../../usr/lib/${chost}/dri/amdgpu_dri.so ${od_amdgpupro}/lib/${chost}/dri/amdgpu_dri.so
-#			dosym ../../../../../usr/lib/${chost}/dri/amdgpu_dri.so ${dd_amdgpupro}/dri/amdgpu_dri.so
+			dosym ../../../../../usr/lib/${chost}/dri/amdgpu_dri.so \
+				${od_amdgpupro}/lib/${chost}/dri/amdgpu_dri.so
+#			dosym ../../../../../usr/lib/${chost}/dri/amdgpu_dri.so \
+#				${dd_amdgpupro}/dri/amdgpu_dri.so
+
+			if use opencl ; then
+				dosym ../../../../../opt/amdgpu-pro/lib/${chost}/libOpenCL.so.1 \
+					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/libOpenCL.so.1
+				dosym ../../../../../opt/amdgpu-pro/lib/${chost}/libOpenCL.so \
+					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/libOpenCL.so
+				dosym ../../../../../../opt/amdgpu-pro/include/CL \
+					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/include/CL
+			fi
 		fi
 	}
 
@@ -567,7 +578,9 @@ pkg_prerm() {
 
 	if use opencl ; then
 		if "${EROOT}"/usr/bin/eselect opencl list | grep mesa ; then
-			"${EROOT}"/usr/bin/eselect opencl set --use-old mesa
+			"${EROOT}"/usr/bin/eselect opencl set mesa
+		elif "${EROOT}"/usr/bin/eselect opencl list | grep ocl-icd ; then
+			"${EROOT}"/usr/bin/eselect opencl set ocl-icd
 		fi
 	fi
 }
@@ -578,7 +591,7 @@ pkg_postinst() {
 	fi
 
 	if use opencl ; then
-		"${EROOT}"/usr/bin/eselect opencl set --use-old amdgpu
+		"${EROOT}"/usr/bin/eselect opencl set amdgpu-pro
 	fi
 
 	if use freesync ; then
