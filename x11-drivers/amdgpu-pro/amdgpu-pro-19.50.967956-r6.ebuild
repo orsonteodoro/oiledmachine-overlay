@@ -469,7 +469,8 @@ src_install() {
 			fi
 			chmod 0755 "${ED}/${od_amdgpu}/lib${b}/xorg/modules/drivers/"*.so* || die
 			chmod 0755 "${ED}/${od_amdgpu}/lib${b}/dri/"*.so* || die
-			dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so ${od_amdgpu}/lib${b}/dri/amdgpu_dri.so
+			dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so \
+				${od_amdgpu}/lib${b}/dri/amdgpu_dri.so
 			dosym libGL.so.1.2.0 ${od_amdgpu}/lib${b}/libGL.so
 		fi
 
@@ -490,14 +491,16 @@ src_install() {
 #				"${ED}/${od_amdgpupro}/lib${b}" || die
 #			cp -a "${ED}/${od_amdgpu}/lib${b}/"libRemarks.so* \
 #				"${ED}/${od_amdgpupro}/lib${b}" || die
-			dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so ${od_amdgpupro}/lib${b}/dri/amdgpu_dri.so
+			dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so \
+				${od_amdgpupro}/lib${b}/dri/amdgpu_dri.so
 
 			if use opencl ; then
 				dosym ../../../../../opt/amdgpu-pro/$(get_libdir)/libOpenCL.so.1 \
 					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/libOpenCL.so.1
 				dosym ../../../../../opt/amdgpu-pro/$(get_libdir)/libOpenCL.so \
 					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/libOpenCL.so
-				dosym ../../../../../../opt/amdgpu-pro/include/CL /usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/include/CL
+				dosym ../../../../../../opt/amdgpu-pro/include/CL \
+					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/include/CL
 			fi
 		fi
 	}
