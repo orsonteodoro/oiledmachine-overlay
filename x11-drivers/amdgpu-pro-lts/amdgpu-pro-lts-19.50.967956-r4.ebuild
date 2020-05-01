@@ -31,6 +31,7 @@ LICENSE="AMDGPUPROEULA
 			AMDGPUPROEULA
 			hwe? ( AMDGPUPROEULA )
 		)
+		roct? ( MIT )
 		vulkan? ( AMDGPUPROEULA )
 	)"
 # llvm - Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD MIT
