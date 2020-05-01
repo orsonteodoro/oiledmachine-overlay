@@ -11,12 +11,46 @@
   </upstream>
   <longdescription>
     This package is for both x86 and x86_64 (multilib).  Dependencies are LTS
-    (in other distros) but less secure with the older xorg-server-1.19.x.
+    (long term support in other distros) but less secure with the older
+    xorg-server-1.19.x.
 
     For unilib x86_64 only, see amdgpu-pro instead.
 
     This package is not recommended for security reasons.  Consider using
     amdgpu-pro package instead.
+
+    To switch to the pro-stack (Pro OpenGL, default) do:
+    eselect opengl set amdgpu-pro
+
+    To switch to the open-stack (Mesa OpenGL) do:
+    eselect opengl set amdgpu
+
+    Temporary masks required:
+    <![CDATA[
+    >x11-base/xorg-drivers-1.19
+    >x11-base/xorg-server-1.19
+    >=x11-drivers/xf86-video-ati-19.1.0
+    >=x11-drivers/xf86-video-amdgpu-19.1.0
+    >=x11-drivers/xf86-input-libinput-0.29.0
+    ]>
+
+    Required unmasked dependencies:
+    <![CDATA[
+    ~x11-base/xorg-server-1.19::oiledmachine-overlay
+    ~x11-base/xorg-drivers-1.19::oiledmachine-overlay
+    x11-drivers/xf86-video-ati::oiledmachine-overlay
+    x11-drivers/xf86-input-libinput::oiledmachine-overlay if used
+    x11-drivers/xf86-video-amdgpu::oiledmachine-overlay
+    ]>
+
+    Required keywords dependencies:
+    <![CDATA[
+    x11-base/xorg-server::oiledmachine-overlay
+    x11-base/xorg-drivers::oiledmachine-overlay
+    x11-drivers/xf86-input-libinput::oiledmachine-overlay if used
+    =x11-drivers/xf86-input-keyboard-1.9.0::gentoo if used
+    =x11-drivers/xf86-input-mouse-1.9.3::gentoo if used
+    ]>
   </longdescription>
   <use>
     <flag name="amf">Install the Accelerated Media Framework support.</flag>
@@ -28,12 +62,17 @@
     <flag name="hip-clang">Install the HIP-CLANG runtime</flag>
     <flag name="hsa">Install the HSA (Heterogeneous System Architecture)
       development libraries.</flag>
+    <flag name="hwe">Install the HWE (HardWare Enablement libraries)</flag>
+    <flag name="open-stack">Installs the open-stack containing Mesa OpenGL
+      for consumer products.</flag>
     <flag name="opencl">Install OpenCL support.</flag>
     <flag name="opencl_orca">Install the outdated legacy OpenCL Orca driver.</flag>
     <flag name="opencl_pal">Install the OpenCL PAL (Platform Abstraction Layer)
       driver for GCN 5.x GPUs (e.g. Vega) or newer.</flag>
     <flag name="opengl">Install OpenGL support.</flag>
     <flag name="openmax">Install OpenMAX support.</flag>
+    <flag name="pro-stack">Installs the pro-stack containing the Pro OpenGL
+      recommended for Radeon PRO products.</flag>
     <flag name="vaapi">Install VAAPI (Video Acceleration API)
       acceleration driver.</flag>
     <flag name="vdpau">Install VDPAU (Video Decode and Presentation API for
