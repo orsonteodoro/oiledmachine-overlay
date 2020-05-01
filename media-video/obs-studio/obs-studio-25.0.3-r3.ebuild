@@ -85,9 +85,7 @@ DEPEND="
 DEPEND+="vaapi? ( media-video/ffmpeg[vaapi,x264]
 		  x11-libs/libva
 		  || ( video_cards_amdgpu-pro-lts? ( x11-drivers/amdgpu-pro-lts[vaapi] )
-		       video_cards_amdgpu-pro? (
-					|| ( media-libs/mesa[gallium,vaapi,video_cards_radeonsi]
-						media-libs/mesa[gallium,vaapi,video_cards_r600] ) )
+		       video_cards_amdgpu-pro? ( x11-drivers/amdgpu-pro-lts[vaapi] )
 		       video_cards_amdgpu? (
 					|| ( media-libs/mesa[gallium,vaapi,video_cards_radeonsi]
 						media-libs/mesa[gallium,vaapi,video_cards_r600] ) )
