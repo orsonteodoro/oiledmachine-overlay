@@ -69,7 +69,7 @@ SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
 IUSE="developer dkms doc +egl +gles2 freesync hip-clang +open-stack +opencl \
 +opencl_orca +opencl_pal +opengl opengl_mesa +opengl_pro osmesa +pro-stack \
-roct +vaapi +vdpau +vulkan wayland X xa"
+roct +vaapi +vdpau +vulkan wayland +X xa"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
