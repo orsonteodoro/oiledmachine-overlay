@@ -7,7 +7,7 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <bugs-to>https://www.amd.com/report</bugs-to>
+    <bugs-to>https://www.amd.com/en/support/kb/faq/amdgpu-installation</bugs-to>
   </upstream>
   <longdescription>
     This package is unilib x86_64 only.  The dependencies are latest stable and
