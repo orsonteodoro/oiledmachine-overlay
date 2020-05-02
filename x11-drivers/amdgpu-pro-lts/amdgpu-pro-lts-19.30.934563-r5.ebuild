@@ -7,14 +7,19 @@ HOMEPAGE=\
 "https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-30-unified"
 LICENSE="AMDGPUPROEULA
 	doc? ( AMDGPUPROEULA MIT BSD )
+	dkms? ( GPL-2 LICENSE.amdgpu MIT )
 	open-stack? (
 		glamor? ( MIT )
-		gles2? ( developer? ( Apache-2.0 MIT ) )
+		gles2? ( MIT developer? ( Apache-2.0 MIT ) )
 		hwe? ( MIT )
 		opengl? ( MIT SGI-B-2.0 )
+		opengl_mesa ( MIT )
 		openmax? ( BSD GPL-2+-with-autoconf-exception LGPL-2.1 MIT )
+		osmesa? ( MIT )
+		vaapi? ( MIT )
 		vulkan? ( MIT )
 		wayland? ( MIT )
+		xa? ( MIT )
 		Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD MIT
 	)
 	pro-stack? (
@@ -31,10 +36,14 @@ LICENSE="AMDGPUPROEULA
 			AMDGPUPROEULA
 			hwe? ( AMDGPUPROEULA )
 		)
+		opengl_pro? ( AMDGPUPROEULA )
 		roct? ( MIT )
 		vulkan? ( AMDGPUPROEULA )
 	)"
+# gbm - MIT
+# libdrm - MIT
 # llvm - Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD MIT
+# xorg-x11-amdgpu-drv-amdgpu - MIT
 KEYWORDS="~amd64 ~x86"
 MULTILIB_COMPAT=( abi_x86_{32,64} )
 inherit check-reqs linux-info multilib-build unpacker
@@ -68,7 +77,7 @@ SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
 IUSE="+amf developer dkms doc +egl +gles2 freesync glamor hip-clang hwe \
 +open-stack +opencl +opencl_orca +opencl_pal +opengl +opengl_pro opengl_mesa \
-openmax osmesa +pro-stack roct +vaapi +vdpau +vulkan wayland xa"
+openmax osmesa +pro-stack roct +vaapi +vdpau +vulkan wayland X xa"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -147,7 +156,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 S="${WORKDIR}"
 REQUIRED_USE="
 	amf? ( pro-stack )
-	egl? ( || ( open-stack pro-stack ) )
+	egl? ( || ( open-stack pro-stack ) X )
 	glamor? ( open-stack opengl_mesa )
 	gles2? ( egl || ( open-stack pro-stack ) )
 	hip-clang? ( pro-stack )
@@ -155,8 +164,8 @@ REQUIRED_USE="
 	opencl_orca? ( opencl )
 	opencl_pal? ( opencl )
 	opengl? ( ^^ ( opengl_mesa opengl_pro ) )
-	opengl_mesa? ( open-stack )
-	opengl_pro? ( pro-stack )
+	opengl_mesa? ( open-stack X )
+	opengl_pro? ( pro-stack X )
 	osmesa? ( open-stack )
 	roct? ( dkms pro-stack )
 	vaapi? ( open-stack )
@@ -239,16 +248,18 @@ the roct USE flag."
 }
 
 src_unpack_common() {
-	unpack_deb "${d_debs}/libgl1-amdgpu-mesa-dri_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-	unpack_deb "${d_debs}/libgbm1-amdgpu_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-	unpack_deb "${d_debs}/libglapi-amdgpu-mesa_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+	use doc && \
+	unpack_deb "${d_debs}/amdgpu-doc_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${archall}.deb"
+	if use X ; then
+		unpack_deb "${d_debs}/libgl1-amdgpu-mesa-dri_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		unpack_deb "${d_debs}/libgbm1-amdgpu_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		unpack_deb "${d_debs}/libglapi-amdgpu-mesa_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+	fi
 }
 
 src_unpack_open_stack() {
 	unpack_deb "${d_debs}/amdgpu_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 	unpack_deb "${d_debs}/amdgpu-core_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${archall}.deb"
-	use doc && \
-	unpack_deb "${d_debs}/amdgpu-doc_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${archall}.deb"
 	if [[ "${ABI}" == "amd64" ]] ; then
 		unpack_deb "${d_debs}/amdgpu-lib32_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 	fi
@@ -348,9 +359,11 @@ src_unpack_open_stack() {
 		unpack_deb "${d_debs}/wayland-protocols-amdgpu_${PKG_VER_WAYLAND_PROTO}-${PKG_REV}${PKG_ARCH_SUFFIX}${archall}.deb"
 	fi
 
-	unpack_deb "${d_debs}/xserver-xorg-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-	use hwe && \
-	unpack_deb "${d_debs}/xserver-xorg-hwe-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+	if use X ; then
+		unpack_deb "${d_debs}/xserver-xorg-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		use hwe && \
+		unpack_deb "${d_debs}/xserver-xorg-hwe-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+	fi
 }
 
 src_unpack_pro_stack() {
@@ -364,7 +377,9 @@ src_unpack_pro_stack() {
 	fi
 	unpack_deb "${d_debs}/amdgpu-pro-pin_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${archall}.deb"
 
-	unpack_deb "${d_debs}/libglapi1-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
+	if use X ; then
+		unpack_deb "${d_debs}/libglapi1-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
+	fi
 
 	if use amf ; then
 		if [[ "${ABI}" == "amd64" ]] ; then
@@ -494,10 +509,12 @@ EOF
 }
 
 src_install() {
-	insinto /etc/X11/xorg.conf.d/
-	doins "${T}/10-screen.conf"
-	doins "${T}/10-monitor.conf"
-	doins "${T}/10-device.conf"
+	if use X ; then
+		insinto /etc/X11/xorg.conf.d/
+		doins "${T}/10-screen.conf"
+		doins "${T}/10-monitor.conf"
+		doins "${T}/10-device.conf"
+	fi
 
 	insinto /lib/udev/rules.d
 	[[ -e lib/udev/rules.d/91-amdgpu-pro-modeset.rules ]] && \
@@ -596,6 +613,7 @@ src_install() {
 	multilib_foreach_abi install_abi
 
 	# Link for hardcoded path
+	use open-stack && \
 	dosym /usr/share/libdrm/amdgpu.ids \
 		/opt/amdgpu/share/libdrm/amdgpu.ids
 
