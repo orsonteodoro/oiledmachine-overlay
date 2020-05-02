@@ -13,7 +13,7 @@ LICENSE="AMDGPUPROEULA
 		gles2? ( MIT developer? ( Apache-2.0 MIT ) )
 		hwe? ( MIT )
 		opengl? ( MIT SGI-B-2.0 )
-		opengl_mesa ( MIT )
+		opengl_mesa? ( MIT )
 		openmax? ( BSD GPL-2+-with-autoconf-exception LGPL-2.1 MIT )
 		osmesa? ( MIT )
 		vaapi? ( MIT )
