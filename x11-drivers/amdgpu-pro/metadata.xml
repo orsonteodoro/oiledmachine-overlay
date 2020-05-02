@@ -19,11 +19,10 @@
     This package is preferred over the amdgpu-pro-lts package for security
     reasons.
 
-    To switch to the pro-stack (Pro OpenGL, default) do:
-    eselect opengl set amdgpu-pro
+    Mesa OpenGL and Pro OpenGL are mutually exclusive.
 
-    To switch to the open-stack (Mesa OpenGL) do:
-    eselect opengl set amdgpu
+    The open-stack (with Mesa OpenGL) is recommended for consumer products.
+    The pro-stack (with Pro OpenGL) is recommended for Radeon Pro products.
   </longdescription>
   <use>
     <flag name="amf">Install the Accelerated Media Framework support.</flag>
@@ -46,6 +45,8 @@
     <flag name="opencl_pal">Install the OpenCL PAL (Platform Abstraction Layer)
       driver for GCN 5.x GPUs (e.g. Vega) or newer.</flag>
     <flag name="opengl">Install OpenGL support.</flag>
+    <flag name="opengl_mesa">Install and use Mesa OpenGL.</flag>
+    <flag name="opengl_pro">Install and use Pro OpenGL.</flag>
     <flag name="openmax">Install OpenMAX support.</flag>
     <flag name="pro-stack">Installs the pro-stack containing the Pro OpenGL
       recommended for Radeon PRO products.</flag>
