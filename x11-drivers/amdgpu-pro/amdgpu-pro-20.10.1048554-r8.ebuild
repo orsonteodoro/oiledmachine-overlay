@@ -11,7 +11,7 @@ LICENSE="AMDGPUPROEULA
 	open-stack? (
 		gles2? ( MIT developer? ( Apache-2.0 MIT ) )
 		opengl? ( MIT SGI-B-2.0 )
-		opengl_mesa ( MIT )
+		opengl_mesa? ( MIT )
 		osmesa? ( MIT )
 		vulkan? ( MIT )
 		xa? ( MIT )
