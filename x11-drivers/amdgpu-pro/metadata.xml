@@ -34,8 +34,8 @@
     <flag name="egl">Install EGL platform agnostic support for rendering
       surfaces for GL|ES.</flag>
     <flag name="freesync">Enable the Freesync checks.</flag>
-    <flag name="gles2">Install a subset of OpenGL (GL|ES) for embedded
-      devices support.</flag>
+    <flag name="gles2">Install support for a subset of OpenGL (GL|ES) for
+      embedded devices.</flag>
     <flag name="hip-clang">Install the HIP-CLANG runtime to convert
       CUDA code to common C++</flag>
     <flag name="lf">Install the LiquidFlash library.</flag>
