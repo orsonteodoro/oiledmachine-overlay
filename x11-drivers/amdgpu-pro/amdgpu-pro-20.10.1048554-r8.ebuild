@@ -463,9 +463,11 @@ src_install() {
 		local od_amdgpu="/opt/amdgpu"
 		local od_amdgpupro="/opt/amdgpu-pro"
 
-#		chmod 0755 "${ED}/${od_amdgpu}/lib${b}/dri/"*.so* || die
-#		dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so \
-#			${od_amdgpu}/lib${b}/dri/amdgpu_dri.so
+		if use X ; then
+			chmod 0755 "${ED}/${od_amdgpu}/lib${b}/dri/"*.so* || die
+			dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so \
+				${od_amdgpu}/lib${b}/dri/amdgpu_dri.so
+		fi
 
 		if use open-stack ; then
 			chmod 0755 "${ED}/${od_amdgpu}/bin/"* || die
@@ -481,7 +483,9 @@ src_install() {
 			if use open-stack ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/xorg/modules/drivers/"*.so* || die
 			fi
-#			dosym libGL.so.1.2.0 ${od_amdgpu}/lib${b}/libGL.so
+			if use X ; then
+				dosym libGL.so.1.2.0 ${od_amdgpu}/lib${b}/libGL.so
+			fi
 		fi
 
 		if use pro-stack ; then
@@ -493,10 +497,12 @@ src_install() {
 				doins usr/lib64/dri/amdgpu_dri.so
 				chmod 0755 "${ED}/usr/lib64/dri/amdgpu_dri.so" || die
 			fi
-#			cp -a "${ED}/${od_amdgpu}/lib${b}/"libgbm* \
-#				"${ED}/${od_amdgpupro}/lib${b}" || die
-#			dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so \
-#				${od_amdgpupro}/lib${b}/dri/amdgpu_dri.so
+			if use X ; then
+				cp -a "${ED}/${od_amdgpu}/lib${b}/"libgbm* \
+					"${ED}/${od_amdgpupro}/lib${b}" || die
+				dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so \
+					${od_amdgpupro}/lib${b}/dri/amdgpu_dri.so
+			fi
 
 			if use opencl ; then
 				dosym ../../../../../opt/amdgpu-pro/$(get_libdir)/libOpenCL.so.1 \
