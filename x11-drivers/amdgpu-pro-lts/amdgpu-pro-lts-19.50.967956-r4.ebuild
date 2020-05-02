@@ -67,8 +67,8 @@ FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
 IUSE="+amf developer dkms doc +egl +gles2 freesync glamor hip-clang hwe \
-+open-stack +opencl opencl_orca opencl_pal +opengl openmax +pro-stack roct \
-+vaapi +vdpau +vulkan wayland"
++open-stack +opencl +opencl_orca +opencl_pal +opengl +opengl_pro opengl_mesa \
+openmax osmesa +pro-stack roct +vaapi +vdpau +vulkan wayland xa"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -145,10 +145,26 @@ RDEPEND="!x11-drivers/amdgpu-pro
 # amdgpu_dri.so requires wayland?
 # vdpau requires llvm7
 S="${WORKDIR}"
-REQUIRED_USE="opencl? ( || ( opencl_pal opencl_orca ) )
-	opencl_pal? ( opencl )
+REQUIRED_USE="
+	amf? ( pro-stack )
+	egl? ( || ( open-stack pro-stack ) )
+	glamor? ( open-stack opengl_mesa )
+	gles2? ( egl || ( open-stack pro-stack ) )
+	hip-clang? ( pro-stack )
+	opencl? ( || ( opencl_orca opencl_pal ) pro-stack )
 	opencl_orca? ( opencl )
-	roct? ( dkms )"
+	opencl_pal? ( opencl )
+	opengl? ( ^^ ( opengl_mesa opengl_pro ) )
+	opengl_mesa? ( open-stack )
+	opengl_pro? ( pro-stack )
+	osmesa? ( open-stack )
+	roct? ( dkms pro-stack )
+	vaapi? ( open-stack )
+	vdpau? ( open-stack )
+	vulkan? ( || ( open-stack pro-stack ) )
+	wayland? ( open-stack )
+	xa? ( open-stack )
+"
 
 _set_check_reqs_requirements() {
 	if use abi_x86_32 && use abi_x86_64 ; then
@@ -191,10 +207,6 @@ pkg_setup() {
 		die
 	fi
 
-	if use open-stack ; then
-		ewarn "open-stack (with Mesa OpenGL) is still WIP"
-	fi
-
 	CONFIG_CHECK="~DRM_AMDGPU"
 
 	WARNING_DRM_AMDGPU=\
@@ -227,12 +239,9 @@ the roct USE flag."
 }
 
 src_unpack_common() {
-	if [[ "${ABI}" == "amd64" ]] ; then
-		unpack_deb "${d_debs}/xserver-xorg-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		use hwe && \
-		unpack_deb "${d_debs}/xserver-xorg-hwe-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-	fi
-	# no x86 ABI
+	unpack_deb "${d_debs}/libgl1-amdgpu-mesa-dri_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+	unpack_deb "${d_debs}/libgbm1-amdgpu_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+	unpack_deb "${d_debs}/libglapi-amdgpu-mesa_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 }
 
 src_unpack_open_stack() {
@@ -276,30 +285,23 @@ src_unpack_open_stack() {
 		use developer && \
 		unpack_deb "${d_debs}/libegl1-amdgpu-mesa-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 		unpack_deb "${d_debs}/libegl1-amdgpu-mesa-drivers_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		if use gles2 ; then
+			unpack_deb "${d_debs}/libgles1-amdgpu-mesa_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+			use developer && \
+			unpack_deb "${d_debs}/libgles1-amdgpu-mesa-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+			unpack_deb "${d_debs}/libgles2-amdgpu-mesa_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+			use developer && \
+			unpack_deb "${d_debs}/libgles2-amdgpu-mesa-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		fi
 	fi
 
 	use developer && \
 	unpack_deb "${d_debs}/libgbm-amdgpu-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-	unpack_deb "${d_debs}/libgbm1-amdgpu_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 
-	if use opengl ; then
-		unpack_deb "${d_debs}/libgl1-amdgpu-mesa-dri_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+	if use opengl_mesa ; then
 		unpack_deb "${d_debs}/libgl1-amdgpu-mesa-glx_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 		use developer && \
 		unpack_deb "${d_debs}/libgl1-amdgpu-mesa-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		unpack_deb "${d_debs}/libgles1-amdgpu-mesa_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		use developer && \
-		unpack_deb "${d_debs}/libgles1-amdgpu-mesa-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		unpack_deb "${d_debs}/libgles2-amdgpu-mesa_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		use developer && \
-		unpack_deb "${d_debs}/libgles2-amdgpu-mesa-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		unpack_deb "${d_debs}/libosmesa6-amdgpu_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		use developer && \
-		unpack_deb "${d_debs}/libosmesa6-amdgpu-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		unpack_deb "${d_debs}/libglapi-amdgpu-mesa_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		unpack_deb "${d_debs}/libxatracker2-amdgpu_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		use developer && \
-		unpack_deb "${d_debs}/libxatracker-amdgpu-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 		if use glamor ; then
 			if [[ "${ABI}" == "amd64" ]] ; then
 				unpack_deb "${d_debs}/glamor-amdgpu_${PKG_VER_GLAMOR}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
@@ -307,6 +309,18 @@ src_unpack_open_stack() {
 				unpack_deb "${d_debs}/glamor-amdgpu-dev_${PKG_VER_GLAMOR}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 			fi
 		fi
+	fi
+
+	if use osmesa ; then
+		unpack_deb "${d_debs}/libosmesa6-amdgpu_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		use developer && \
+		unpack_deb "${d_debs}/libosmesa6-amdgpu-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+	fi
+
+	if use xa ; then
+		unpack_deb "${d_debs}/libxatracker2-amdgpu_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		use developer && \
+		unpack_deb "${d_debs}/libxatracker-amdgpu-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 	fi
 
 	if use openmax ; then
@@ -326,17 +340,24 @@ src_unpack_open_stack() {
 		unpack_deb "${d_debs}/vulkan-amdgpu_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 	fi
 
-	if use wayland && use egl ; then
-		unpack_deb "${d_debs}/libwayland-amdgpu-egl1_${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-	fi
-
 	if use wayland ; then
 		unpack_deb "${d_debs}/libwayland-amdgpu-client0_${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 		unpack_deb "${d_debs}/libwayland-amdgpu-doc_${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${archall}.deb"
+		use egl && \
+		unpack_deb "${d_debs}/libwayland-amdgpu-egl1_${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 		unpack_deb "${d_debs}/libwayland-amdgpu-server0_${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 		unpack_deb "${d_debs}/libwayland-amdgpu-cursor0_${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 		unpack_deb "${d_debs}/wayland-protocols-amdgpu_${PKG_VER_WAYLAND_PROTO}-${PKG_REV}${PKG_ARCH_SUFFIX}${archall}.deb"
 	fi
+
+	if [[ "${ABI}" == "amd64" ]] ; then
+		if use hwe ; then
+			unpack_deb "${d_debs}/xserver-xorg-hwe-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		else
+			unpack_deb "${d_debs}/xserver-xorg-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		fi
+	fi
+	# no x86 ABI
 }
 
 src_unpack_pro_stack() {
@@ -350,6 +371,8 @@ src_unpack_pro_stack() {
 	fi
 	unpack_deb "${d_debs}/amdgpu-pro-pin_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${archall}.deb"
 
+	unpack_deb "${d_debs}/libglapi1-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
+
 	if use amf ; then
 		if [[ "${ABI}" == "amd64" ]] ; then
 			unpack_deb "${d_debs}/amf-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
@@ -358,10 +381,9 @@ src_unpack_pro_stack() {
 
 	if use egl ; then
 		unpack_deb "${d_debs}/libegl1-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
-	fi
-
-	if use gles2 ; then
-		unpack_deb "${d_debs}/libgles2-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
+		if use gles2 ; then
+			unpack_deb "${d_debs}/libgles2-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
+		fi
 	fi
 
 	if use hip-clang ; then
@@ -386,15 +408,13 @@ src_unpack_pro_stack() {
 		fi
 	fi
 
-	if use opengl ; then
+	if use opengl_pro ; then
 		unpack_deb "${d_debs}/libgl1-amdgpu-pro-appprofiles_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${archall}.deb"
 		use hwe && \
 		unpack_deb "${d_debs}/libgl1-amdgpu-pro-ext-hwe_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 		unpack_deb "${d_debs}/libgl1-amdgpu-pro-ext_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 		unpack_deb "${d_debs}/libgl1-amdgpu-pro-dri_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 		unpack_deb "${d_debs}/libgl1-amdgpu-pro-glx_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
-		unpack_deb "${d_debs}/libglapi1-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
-		unpack_deb "${d_debs}/libgles2-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 	fi
 
 	if use roct ; then
@@ -484,6 +504,7 @@ src_install() {
 	doins "${T}/10-device.conf"
 
 	insinto /lib/udev/rules.d
+	[[ -e lib/udev/rules.d/91-amdgpu-pro-modeset.rules ]] && \
 	doins lib/udev/rules.d/91-amdgpu-pro-modeset.rules
 
 	insinto /
@@ -512,6 +533,10 @@ src_install() {
 		local od_amdgpu="/opt/amdgpu"
 		local od_amdgpupro="/opt/amdgpu-pro"
 
+		chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/dri/"*.so* || die
+		dosym ../../../../../usr/lib/${chost}/dri/amdgpu_dri.so \
+			${od_amdgpu}/lib/${chost}/dri/amdgpu_dri.so
+
 		if use open-stack ; then
 			chmod 0755 "${ED}/${od_amdgpu}/bin/"* || die
 			chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/"*.so* || die
@@ -524,13 +549,10 @@ src_install() {
 			chmod 0755 "${ED}/${od_amdgpu}/lib/xorg/modules/drivers/"*.so* || die
 			use opengl && \
 			chmod 0755 "${ED}/${od_amdgpu}/lib/xorg/modules/"*.so* || die
-			chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/dri/"*.so* || die
 			if use openmax ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib/libomxil-bellagio0/"*.so* || die
 				chmod 0775 "${ED}/${od_amdgpu}/lib/${chost}/gstreamer-${PKG_VER_GST}/libgstomx.so" || die
 			fi
-			dosym ../../../../../usr/lib/${chost}/dri/amdgpu_dri.so \
-				${od_amdgpu}/lib/${chost}/dri/amdgpu_dri.so
 			dosym libGL.so.1.2.0 ${od_amdgpu}/lib/${chost}/libGL.so
 		fi
 
@@ -543,21 +565,13 @@ src_install() {
 			chmod 0755 "${ED}/usr/lib/${chost}/dri/amdgpu_dri.so" || die
 			cp -a "${ED}/${od_amdgpu}/lib/${chost}/"libgbm* \
 				"${ED}/${od_amdgpupro}/lib/${chost}" || die
-#			cp -a "${ED}/${od_amdgpu}/lib/${chost}/"llvm-${PKG_VER_LLVM} \
-#				"${ED}/${od_amdgpupro}/lib/${chost}" || die
-#			cp -a "${ED}/${od_amdgpu}/lib/${chost}/"libLLVM*.so* \
-#				"${ED}/${od_amdgpupro}/lib/${chost}" || die
-#			cp -a "${ED}/${od_amdgpu}/lib/${chost}/"libLTO.so* \
-#				"${ED}/${od_amdgpupro}/lib/${chost}" || die
-#			cp -a "${ED}/${od_amdgpu}/lib/${chost}/"libRemarks.so* \
-#				"${ED}/${od_amdgpupro}/lib/${chost}" || die
 			dosym ../../../../../usr/lib/${chost}/dri/amdgpu_dri.so \
 				${od_amdgpupro}/lib/${chost}/dri/amdgpu_dri.so
 
 			if use opencl ; then
-				dosym ../../../../../opt/amdgpu-pro/lib/${opencl}/libOpenCL.so.1 \
+				dosym ../../../../../opt/amdgpu-pro/lib/${chost}/libOpenCL.so.1 \
 					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/libOpenCL.so.1
-				dosym ../../../../../opt/amdgpu-pro/lib/${opencl}/libOpenCL.so \
+				dosym ../../../../../opt/amdgpu-pro/lib/${chost}/libOpenCL.so \
 					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/libOpenCL.so
 				dosym ../../../../../../opt/amdgpu-pro/include/CL \
 					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/include/CL
@@ -596,18 +610,18 @@ pkg_prerm() {
 	fi
 
 	if use opencl ; then
-		if "${EROOT}"/usr/bin/eselect opencl list | grep mesa ; then
+		if "${EROOT}"/usr/bin/eselect opencl list | grep -q -e "mesa" ; then
 			"${EROOT}"/usr/bin/eselect opencl set mesa
-		elif "${EROOT}"/usr/bin/eselect opencl list | grep ocl-icd ; then
+		elif "${EROOT}"/usr/bin/eselect opencl list | grep -q -e "ocl-icd" ; then
 			"${EROOT}"/usr/bin/eselect opencl set ocl-icd
 		fi
 	fi
 }
 
 pkg_postinst() {
-	if use pro-stack && use opengl ; then
+	if use opengl_pro ; then
 		"${EROOT}"/usr/bin/eselect opengl set amdgpu-pro
-	elif use open-stack && use opengl ; then
+	elif use opengl_mesa ; then
 		"${EROOT}"/usr/bin/eselect opengl set amdgpu
 	fi
 
