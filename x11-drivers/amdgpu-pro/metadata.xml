@@ -28,23 +28,27 @@
     <flag name="amf">Install the Accelerated Media Framework support.</flag>
     <flag name="developer">Install developer toolchain, libraries,
       headers.</flag>
-    <flag name="dkms">Installs the enhanced amdgpu kernel driver with ROCm API
-      support and updated DRM driver.</flag>
-    <flag name="egl">Install EGL support.</flag>
+    <flag name="dkms">Installs the enhanced AMDGPU kernel driver with 
+      additional ROCm API, Radeon Pro, DirectGMA/SSG support and kernel driver
+      updates.</flag>
+    <flag name="egl">Install EGL platform agnostic support for rendering
+      surfaces for GL|ES.</flag>
     <flag name="freesync">Enable the Freesync checks.</flag>
-    <flag name="gles2">Install GLESv2 support.</flag>
-    <flag name="hip-clang">Install the HIP-CLANG runtime</flag>
+    <flag name="gles2">Install a subset of OpenGL (GL|ES) for embedded
+      devices.</flag>
+    <flag name="hip-clang">Install the HIP-CLANG runtime to convert
+      CUDA code to common C++</flag>
     <flag name="lf">Install the LiquidFlash library.</flag>
     <flag name="open-stack">Installs the open-stack containing Mesa OpenGL
       for consumer products.</flag>
     <flag name="opencl">Install OpenCL support.</flag>
-    <flag name="opencl_orca">Install the outdated legacy OpenCL Orca driver.</flag>
-    <flag name="opencl_pal">Install the OpenCL PAL (Platform Abstraction Layer)
-      driver for GCN 5.x GPUs (e.g. Vega) or newer.</flag>
+    <flag name="opencl_orca">Install the OpenCL driver for pre Vega products.
+      </flag>
+    <flag name="opencl_pal">Install the OpenCL driver for Vega or newer
+     (GCN 5.x+) products.</flag>
     <flag name="opengl">Install OpenGL support.</flag>
     <flag name="opengl_mesa">Install and use Mesa OpenGL.</flag>
     <flag name="opengl_pro">Install and use Pro OpenGL.</flag>
-    <flag name="openmax">Install OpenMAX support.</flag>
     <flag name="osmesa">Install the Off Screen Mesa library for software
       rendering (or headless) via the CPU.</flag>
     <flag name="pro-stack">Installs the pro-stack containing the Pro OpenGL
@@ -52,11 +56,14 @@
     <flag name="roct">Install the hsakmt library needed for API calls to
       communicate with the ROCk kernel.</flag>
     <flag name="vaapi">Install VAAPI (Video Acceleration API)
-      acceleration driver.</flag>
+      acceleration driver for accelerated video playback (H.264) and video
+      post-processing.</flag>
     <flag name="vdpau">Install VDPAU (Video Decode and Presentation API for
-      Unix) acceleration driver.</flag>
-    <flag name="vulkan">Install the vulkan ICD.</flag>
-    <flag name="wayland">Install wayland support.</flag>
-    <flag name="xa">Install the XA state tracker for vmware products.</flag>
+      Unix) acceleration driver for accelerated video playback (H.264)
+      and video post-processing.</flag>
+    <flag name="vulkan">Install the Vulkan driver.</flag>
+    <flag name="wayland">Install Wayland support.</flag>
+    <flag name="xa">Install the XA state tracker for VMware products for
+      virtualized X acceleration.</flag>
   </use>
 </pkgmetadata>
