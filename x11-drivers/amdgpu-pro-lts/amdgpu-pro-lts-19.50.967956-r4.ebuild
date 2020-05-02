@@ -14,7 +14,7 @@ LICENSE="AMDGPUPROEULA
 		opengl? ( MIT SGI-B-2.0 )
 		openmax? ( BSD GPL-2+-with-autoconf-exception LGPL-2.1 MIT )
 		vulkan? ( MIT )
-		wayland ( MIT )
+		wayland? ( MIT )
 		Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD MIT
 	)
 	pro-stack? (
@@ -351,11 +351,9 @@ src_unpack_open_stack() {
 	fi
 
 	if [[ "${ABI}" == "amd64" ]] ; then
-		if use hwe ; then
-			unpack_deb "${d_debs}/xserver-xorg-hwe-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		else
-			unpack_deb "${d_debs}/xserver-xorg-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		fi
+		unpack_deb "${d_debs}/xserver-xorg-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		use hwe && \
+		unpack_deb "${d_debs}/xserver-xorg-hwe-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 	fi
 	# no x86 ABI
 }
@@ -540,15 +538,20 @@ src_install() {
 		if use open-stack ; then
 			chmod 0755 "${ED}/${od_amdgpu}/bin/"* || die
 			chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/"*.so* || die
-			chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/vdpau/"*.so* || die
+			if use vdpau ; then
+				chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/vdpau/"*.so* || die
+			fi
 			chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/llvm-9.0/lib/"*.so* || die
 			chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/llvm-9.0/bin/"* || die
 			if [[ -d "${ED}/${od_amdgpu}/lib/${chost}/llvm-9.0/share/opt-viewer" ]] ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/llvm-9.0/share/opt-viewer/"*.py || die
 			fi
-			chmod 0755 "${ED}/${od_amdgpu}/lib/xorg/modules/drivers/"*.so* || die
-			use opengl && \
-			chmod 0755 "${ED}/${od_amdgpu}/lib/xorg/modules/"*.so* || die
+			if use open-stack ; then
+				chmod 0755 "${ED}/${od_amdgpu}/lib/xorg/modules/drivers/"*.so* || die
+			fi
+			if use glamor ; then
+				chmod 0755 "${ED}/${od_amdgpu}/lib/xorg/modules/"*.so* || die
+			fi
 			if use openmax ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib/libomxil-bellagio0/"*.so* || die
 				chmod 0775 "${ED}/${od_amdgpu}/lib/${chost}/gstreamer-${PKG_VER_GST}/libgstomx.so" || die
@@ -559,10 +562,12 @@ src_install() {
 		if use pro-stack ; then
 			chmod 0755 "${ED}/${od_amdgpupro}/bin/"* || die
 			chmod 0755 "${ED}/${od_amdgpupro}/lib/${chost}/"*.so* || die
-			chmod 0755 "${ED}/${od_amdgpupro}/lib/xorg/modules/extensions/"*.so* || die
-			insinto /usr/lib/${chost}/dri
-			doins usr/lib/${chost}/dri/amdgpu_dri.so
-			chmod 0755 "${ED}/usr/lib/${chost}/dri/amdgpu_dri.so" || die
+			if use opengl_pro ; then
+				chmod 0755 "${ED}/${od_amdgpupro}/lib/xorg/modules/extensions/"*.so* || die
+				insinto /usr/lib/${chost}/dri
+				doins usr/lib/${chost}/dri/amdgpu_dri.so
+				chmod 0755 "${ED}/usr/lib/${chost}/dri/amdgpu_dri.so" || die
+			fi
 			cp -a "${ED}/${od_amdgpu}/lib/${chost}/"libgbm* \
 				"${ED}/${od_amdgpupro}/lib/${chost}" || die
 			dosym ../../../../../usr/lib/${chost}/dri/amdgpu_dri.so \
