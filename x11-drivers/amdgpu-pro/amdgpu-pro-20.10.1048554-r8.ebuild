@@ -7,10 +7,13 @@ HOMEPAGE=\
 "https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-10"
 LICENSE="AMDGPUPROEULA
 	doc? ( AMDGPUPROEULA MIT BSD )
+	dkms? ( GPL-2 LICENSE.amdgpu MIT )
 	open-stack? (
-		gles2? ( developer? ( Apache-2.0 MIT ) )
+		gles2? ( MIT developer? ( Apache-2.0 MIT ) )
 		opengl? ( MIT SGI-B-2.0 )
+		osmesa? ( MIT )
 		vulkan? ( MIT )
+		xa? ( MIT )
 		Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD MIT
 	)
 	pro-stack? (
@@ -21,10 +24,14 @@ LICENSE="AMDGPUPROEULA
 		opencl? ( AMDGPUPROEULA )
 		opencl_pal? ( AMDGPUPROEULA )
 		opencl_orca? ( AMDGPUPROEULA )
+		opengl_pro? ( AMDGPUPROEULA )
 		opengl? ( AMDGPUPROEULA )
 		vulkan? ( AMDGPUPROEULA )
 	)"
+# gbm - MIT
+# libdrm - MIT
 # llvm - Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD MIT
+# xorg-x11-amdgpu-drv-amdgpu - MIT
 KEYWORDS="~amd64 ~x86"
 MULTILIB_COMPAT=( abi_x86_{32,64} )
 inherit check-reqs linux-info multilib-build unpacker rpm
@@ -55,7 +62,7 @@ SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
 IUSE="developer dkms doc +egl +gles2 freesync hip-clang +open-stack +opencl \
 +opencl_orca +opencl_pal +opengl opengl_mesa +opengl_pro osmesa +pro-stack \
-roct +vaapi +vdpau +vulkan xa"
+roct +vaapi +vdpau +vulkan X xa"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -70,8 +77,6 @@ SLOT="1"
 # libglapi.so.0 needs libselinux
 # requires >=dkms-1.95
 RDEPEND="!x11-drivers/amdgpu-pro
-	  app-eselect/eselect-opencl
-	 >=app-eselect/eselect-opengl-1.0.7
 	 >=dev-util/cunit-2.1_p3
 	 >=dev-libs/libedit-3.1
 	 dkms? ( || ( sys-kernel/amdgpu-dkms sys-kernel/rock-dkms ) )
@@ -104,13 +109,15 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 || ( >=sys-firmware/amdgpu-firmware-${PV}
 	        >=sys-firmware/rock-firmware-3.3.0
 		>=sys-kernel/linux-firmware-20200417 )
-	 opencl? ( >=sys-devel/gcc-${PKG_VER_GCC} )
-	 opengl? ( >=sys-devel/gcc-${PKG_VER_GCC} )
+	 opencl? ( >=sys-devel/gcc-${PKG_VER_GCC}
+		   app-eselect/eselect-opencl )
+	 opengl? ( >=sys-devel/gcc-${PKG_VER_GCC}
+		   >=app-eselect/eselect-opengl-1.0.7 )
 	 roct? ( dev-libs/roct-thunk-interface
 		  sys-process/numactl )
-	 >=sys-libs/libselinux-2.8
+	 open-stack? (
 	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
-	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}]
+	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}] )
 	  vaapi? (  >=media-libs/mesa-${PKG_VER_MESA}[-vaapi]
 		    >=x11-libs/libva-${PKG_VER_VA} )
 	  vdpau? (  >=media-libs/mesa-${PKG_VER_MESA}[-vdpau]
@@ -119,6 +126,8 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
 		    >=media-libs/vulkan-loader-${VULKAN_SDK_VER}
 		    >=sys-devel/gcc-${PKG_VER_GCC} )
+	 X? (
+	 >=sys-libs/libselinux-2.8
 	 >=x11-base/xorg-drivers-1.20
 	  <x11-base/xorg-drivers-1.21
 	   x11-base/xorg-proto
@@ -128,21 +137,22 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	   x11-libs/libXext[${MULTILIB_USEDEP}]
 	   x11-libs/libXinerama[${MULTILIB_USEDEP}]
 	   x11-libs/libXrandr[${MULTILIB_USEDEP}]
-	   x11-libs/libXrender[${MULTILIB_USEDEP}]"
+	   x11-libs/libXrender[${MULTILIB_USEDEP}] )"
 # hsakmt requires libnuma.so.1
 # kmstest requires libkms
 # vdpau requires llvm
 S="${WORKDIR}"
 REQUIRED_USE="
-	egl? ( || ( open-stack pro-stack ) )
+	!abi_x86_32
+	egl? ( || ( open-stack pro-stack ) X )
 	gles2? ( egl || ( open-stack pro-stack ) )
 	hip-clang? ( pro-stack )
 	opencl? ( || ( opencl_orca opencl_pal ) pro-stack )
 	opencl_orca? ( opencl )
 	opencl_pal? ( opencl )
 	opengl? ( ^^ ( opengl_mesa opengl_pro ) )
-	opengl_mesa? ( open-stack )
-	opengl_pro? ( pro-stack )
+	opengl_mesa? ( open-stack X )
+	opengl_pro? ( pro-stack X )
 	roct? ( dkms pro-stack )
 	vaapi? ( open-stack )
 	vdpau? ( open-stack )
@@ -213,9 +223,11 @@ implementation used by older fglrx."
 }
 
 src_unpack_common() {
-	unpack_rpm "${d_rpms}/mesa-amdgpu-dri-drivers-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-	unpack_rpm "${d_rpms}/mesa-amdgpu-libgbm-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-	unpack_rpm "${d_rpms}/mesa-amdgpu-libglapi-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	if use X ; then
+		unpack_rpm "${d_rpms}/mesa-amdgpu-dri-drivers-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		unpack_rpm "${d_rpms}/mesa-amdgpu-libgbm-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		unpack_rpm "${d_rpms}/mesa-amdgpu-libglapi-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	fi
 }
 
 src_unpack_open_stack() {
@@ -282,7 +294,9 @@ src_unpack_open_stack() {
 		unpack_rpm "${d_rpms}/vulkan-amdgpu-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	fi
 
-	unpack_rpm "${d_rpms}/xorg-x11-amdgpu-drv-amdgpu-${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	if use X ; then
+		unpack_rpm "${d_rpms}/xorg-x11-amdgpu-drv-amdgpu-${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	fi
 }
 
 src_unpack_pro_stack() {
@@ -290,7 +304,9 @@ src_unpack_pro_stack() {
 	unpack_rpm "${d_noarch}/amdgpu-pro-core-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${noarch}.rpm"
 	unpack_rpm "${d_noarch}/amdgpu-pro-versionlist-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${noarch}.rpm"
 
-	unpack_rpm "${d_rpms}/libglapi-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	if use X ; then
+		unpack_rpm "${d_rpms}/libglapi-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	fi
 
 	if use egl ; then
 		unpack_rpm "${d_rpms}/libegl-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
@@ -409,10 +425,12 @@ EOF
 }
 
 src_install() {
-	insinto /etc/X11/xorg.conf.d/
-	doins "${T}/10-screen.conf"
-	doins "${T}/10-monitor.conf"
-	doins "${T}/10-device.conf"
+	if use X ; then
+		insinto /etc/X11/xorg.conf.d/
+		doins "${T}/10-screen.conf"
+		doins "${T}/10-monitor.conf"
+		doins "${T}/10-device.conf"
+	fi
 
 	insinto /lib/udev/rules.d
 	[[ -e lib/udev/rules.d/91-amdgpu-pro-modeset.rules ]] && \
@@ -443,9 +461,9 @@ src_install() {
 		local od_amdgpu="/opt/amdgpu"
 		local od_amdgpupro="/opt/amdgpu-pro"
 
-		chmod 0755 "${ED}/${od_amdgpu}/lib${b}/dri/"*.so* || die
-		dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so \
-			${od_amdgpu}/lib${b}/dri/amdgpu_dri.so
+#		chmod 0755 "${ED}/${od_amdgpu}/lib${b}/dri/"*.so* || die
+#		dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so \
+#			${od_amdgpu}/lib${b}/dri/amdgpu_dri.so
 
 		if use open-stack ; then
 			chmod 0755 "${ED}/${od_amdgpu}/bin/"* || die
@@ -461,7 +479,7 @@ src_install() {
 			if use open-stack ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/xorg/modules/drivers/"*.so* || die
 			fi
-			dosym libGL.so.1.2.0 ${od_amdgpu}/lib${b}/libGL.so
+#			dosym libGL.so.1.2.0 ${od_amdgpu}/lib${b}/libGL.so
 		fi
 
 		if use pro-stack ; then
@@ -473,10 +491,10 @@ src_install() {
 				doins usr/lib64/dri/amdgpu_dri.so
 				chmod 0755 "${ED}/usr/lib64/dri/amdgpu_dri.so" || die
 			fi
-			cp -a "${ED}/${od_amdgpu}/lib${b}/"libgbm* \
-				"${ED}/${od_amdgpupro}/lib${b}" || die
-			dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so \
-				${od_amdgpupro}/lib${b}/dri/amdgpu_dri.so
+#			cp -a "${ED}/${od_amdgpu}/lib${b}/"libgbm* \
+#				"${ED}/${od_amdgpupro}/lib${b}" || die
+#			dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so \
+#				${od_amdgpupro}/lib${b}/dri/amdgpu_dri.so
 
 			if use opencl ; then
 				dosym ../../../../../opt/amdgpu-pro/$(get_libdir)/libOpenCL.so.1 \
@@ -492,6 +510,7 @@ src_install() {
 	multilib_foreach_abi install_abi
 
 	# Link for hardcoded path
+	use open-stack && \
 	dosym /usr/share/libdrm/amdgpu.ids \
 		/opt/amdgpu/share/libdrm/amdgpu.ids
 
