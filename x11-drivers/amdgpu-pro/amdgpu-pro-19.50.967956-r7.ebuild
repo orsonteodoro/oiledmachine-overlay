@@ -242,6 +242,8 @@ the roct USE flag."
 }
 
 src_unpack_common() {
+	use doc && \
+	unpack_rpm "${d_noarch}/amdgpu-doc-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${noarch}.rpm"
 	if use X ; then
 		unpack_rpm "${d_rpms}/mesa-amdgpu-dri-drivers-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libgbm-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
@@ -399,9 +401,6 @@ src_unpack() {
 
 	local noarch="noarch"
 	local d_noarch="amdgpu-pro-${PKG_VER_STRING_DIR}/RPMS/${noarch}"
-
-	use doc && \
-	unpack_rpm "${d_noarch}/amdgpu-doc-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${noarch}.rpm"
 
 	unpack_abi() {
 		local arch
