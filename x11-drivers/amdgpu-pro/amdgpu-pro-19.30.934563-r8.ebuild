@@ -9,6 +9,7 @@ LICENSE="AMDGPUPROEULA
 	doc? ( AMDGPUPROEULA MIT BSD )
 	dkms? ( GPL-2 LICENSE.amdgpu MIT )
 	open-stack? (
+		egl? ( MIT )
 		gles2? ( MIT developer? ( Apache-2.0 MIT ) )
 		opengl? ( MIT SGI-B-2.0 )
 		opengl_mesa? ( MIT )
