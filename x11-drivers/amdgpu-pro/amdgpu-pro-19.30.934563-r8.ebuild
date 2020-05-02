@@ -507,12 +507,6 @@ src_install() {
 		local od_amdgpu="/opt/amdgpu"
 		local od_amdgpupro="/opt/amdgpu-pro"
 
-		if use X ; then
-			chmod 0755 "${ED}/${od_amdgpu}/lib${b}/dri/"*.so* || die
-			dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so \
-				${od_amdgpu}/lib${b}/dri/amdgpu_dri.so
-		fi
-
 		if use open-stack ; then
 			chmod 0755 "${ED}/${od_amdgpu}/bin/"* || die
 			chmod 0755 "${ED}/${od_amdgpu}/lib${b}/"*.so* || die
@@ -537,12 +531,13 @@ src_install() {
 			chmod 0755 "${ED}/${od_amdgpupro}/lib${b}/"*.so* || die
 			chmod 0755 "${ED}/${od_amdgpupro}/lib${b}/gbm/"*.so* || die
 			if use opengl_pro ; then
+				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/dri/"*.so* || die
+				dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so \
+					${od_amdgpu}/lib${b}/dri/amdgpu_dri.so
 				chmod 0755 "${ED}/${od_amdgpupro}/lib${b}/xorg/modules/extensions/"*.so* || die
 				insinto /usr/lib64/dri
 				doins usr/lib64/dri/amdgpu_dri.so
 				chmod 0755 "${ED}/usr/lib64/dri/amdgpu_dri.so" || die
-			fi
-			if use X ; then
 				cp -a "${ED}/${od_amdgpu}/lib${b}/"libgbm* \
 					"${ED}/${od_amdgpupro}/lib${b}" || die
 				dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so \
@@ -592,6 +587,14 @@ src_install() {
 "/opt/amdgpu-pro/lib64/vdpau"
 		EOF
 		doenvd "${T}"/50${P}-vdpau
+	fi
+
+	if use pro-stack ; then
+		cat <<-EOF > "${T}"/50${P}-gbm
+			LDPATH=\
+"/opt/amdgpu-pro/lib64/gbm"
+		EOF
+		doenvd "${T}"/50${P}-gbm
 	fi
 }
 

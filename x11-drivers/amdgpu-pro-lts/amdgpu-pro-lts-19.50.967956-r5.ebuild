@@ -77,7 +77,7 @@ SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
 IUSE="+amf developer dkms doc +egl +gles2 freesync glamor hip-clang hwe \
 +open-stack +opencl +opencl_orca +opencl_pal +opengl +opengl_pro opengl_mesa \
-openmax osmesa +pro-stack roct +vaapi +vdpau +vulkan wayland X xa"
+openmax osmesa +pro-stack roct +vaapi +vdpau +vulkan wayland +X xa"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -548,10 +548,6 @@ src_install() {
 		local od_amdgpu="/opt/amdgpu"
 		local od_amdgpupro="/opt/amdgpu-pro"
 
-		chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/dri/"*.so* || die
-		dosym ../../../../../usr/lib/${chost}/dri/amdgpu_dri.so \
-			${od_amdgpu}/lib/${chost}/dri/amdgpu_dri.so
-
 		if use open-stack ; then
 			chmod 0755 "${ED}/${od_amdgpu}/bin/"* || die
 			chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/"*.so* || die
@@ -573,22 +569,27 @@ src_install() {
 				chmod 0755 "${ED}/${od_amdgpu}/lib/libomxil-bellagio0/"*.so* || die
 				chmod 0775 "${ED}/${od_amdgpu}/lib/${chost}/gstreamer-${PKG_VER_GST}/libgstomx.so" || die
 			fi
-			dosym libGL.so.1.2.0 ${od_amdgpu}/lib/${chost}/libGL.so
+			if use opengl_mesa ; then
+				dosym libGL.so.1.2.0 ${od_amdgpu}/lib/${chost}/libGL.so
+			fi
 		fi
 
 		if use pro-stack ; then
 			chmod 0755 "${ED}/${od_amdgpupro}/bin/"* || die
 			chmod 0755 "${ED}/${od_amdgpupro}/lib/${chost}/"*.so* || die
 			if use opengl_pro ; then
+				chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/dri/"*.so* || die
+				dosym ../../../../../usr/lib/${chost}/dri/amdgpu_dri.so \
+					${od_amdgpu}/lib/${chost}/dri/amdgpu_dri.so
 				chmod 0755 "${ED}/${od_amdgpupro}/lib/xorg/modules/extensions/"*.so* || die
 				insinto /usr/lib/${chost}/dri
 				doins usr/lib/${chost}/dri/amdgpu_dri.so
 				chmod 0755 "${ED}/usr/lib/${chost}/dri/amdgpu_dri.so" || die
+				cp -a "${ED}/${od_amdgpu}/lib/${chost}/"libgbm* \
+					"${ED}/${od_amdgpupro}/lib/${chost}" || die
+				dosym ../../../../../usr/lib/${chost}/dri/amdgpu_dri.so \
+					${od_amdgpupro}/lib/${chost}/dri/amdgpu_dri.so
 			fi
-			cp -a "${ED}/${od_amdgpu}/lib/${chost}/"libgbm* \
-				"${ED}/${od_amdgpupro}/lib/${chost}" || die
-			dosym ../../../../../usr/lib/${chost}/dri/amdgpu_dri.so \
-				${od_amdgpupro}/lib/${chost}/dri/amdgpu_dri.so
 
 			if use opencl ; then
 				dosym ../../../../../opt/amdgpu-pro/lib/${chost}/libOpenCL.so.1 \
