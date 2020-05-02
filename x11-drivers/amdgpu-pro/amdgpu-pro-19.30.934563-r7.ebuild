@@ -60,8 +60,8 @@ FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
 IUSE="developer dkms doc +egl +gles2 freesync hip-clang lf +open-stack +opencl \
-+opencl_orca +opencl_pal +opengl opengl_mesa +opengl_pro +pro-stack roct +vaapi \
-+vdpau +vulkan wayland"
++opencl_orca +opencl_pal +opengl opengl_mesa +opengl_pro osmesa +pro-stack \
+roct +vaapi +vdpau +vulkan wayland xa"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -494,24 +494,30 @@ src_install() {
 		if use open-stack ; then
 			chmod 0755 "${ED}/${od_amdgpu}/bin/"* || die
 			chmod 0755 "${ED}/${od_amdgpu}/lib${b}/"*.so* || die
-			chmod 0755 "${ED}/${od_amdgpu}/lib${b}/vdpau/"*.so* || die
+			if use vdpau ; then
+				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/vdpau/"*.so* || die
+			fi
 			chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-9.0/lib/"*.so* || die
 			chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-9.0/bin/"* || die
 			if [[ -d "${ED}/${od_amdgpu}/lib${b}/llvm-9.0/share/opt-viewer" ]] ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-9.0/share/opt-viewer/"*.py || die
 			fi
-			chmod 0755 "${ED}/${od_amdgpu}/lib${b}/xorg/modules/drivers/"*.so* || die
+			if use open-stack ; then
+				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/xorg/modules/drivers/"*.so* || die
+			fi
 			dosym libGL.so.1.2.0 ${od_amdgpu}/lib${b}/libGL.so
 		fi
 
 		if use pro-stack ; then
 			chmod 0755 "${ED}/${od_amdgpupro}/bin/"* || die
 			chmod 0755 "${ED}/${od_amdgpupro}/lib${b}/"*.so* || die
-			chmod 0755 "${ED}/${od_amdgpupro}/lib${b}/xorg/modules/extensions/"*.so* || die
 			chmod 0755 "${ED}/${od_amdgpupro}/lib${b}/gbm/"*.so* || die
-			insinto /usr/lib64/dri
-			doins usr/lib64/dri/amdgpu_dri.so
-			chmod 0755 "${ED}/usr/lib64/dri/amdgpu_dri.so" || die
+			if use opengl_pro ; then
+				chmod 0755 "${ED}/${od_amdgpupro}/lib${b}/xorg/modules/extensions/"*.so* || die
+				insinto /usr/lib64/dri
+				doins usr/lib64/dri/amdgpu_dri.so
+				chmod 0755 "${ED}/usr/lib64/dri/amdgpu_dri.so" || die
+			fi
 			cp -a "${ED}/${od_amdgpu}/lib${b}/"libgbm* \
 				"${ED}/${od_amdgpupro}/lib${b}" || die
 			dosym ../../../../../usr/lib${b}/dri/amdgpu_dri.so \
@@ -568,9 +574,9 @@ pkg_prerm() {
 	fi
 
 	if use opencl ; then
-		if "${EROOT}"/usr/bin/eselect opencl list | grep mesa ; then
+		if "${EROOT}"/usr/bin/eselect opencl list | grep -q -e "mesa" ; then
 			"${EROOT}"/usr/bin/eselect opencl set mesa
-		elif "${EROOT}"/usr/bin/eselect opencl list | grep ocl-icd ; then
+		elif "${EROOT}"/usr/bin/eselect opencl list | grep -q -e "ocl-icd" ; then
 			"${EROOT}"/usr/bin/eselect opencl set ocl-icd
 		fi
 	fi
