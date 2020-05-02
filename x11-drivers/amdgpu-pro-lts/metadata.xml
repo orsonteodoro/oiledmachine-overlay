@@ -61,10 +61,10 @@
       additional ROCm API, Radeon Pro, DirectGMA/SSG support and kernel driver
       updates.</flag>
     <flag name="egl">Install EGL platform agnostic support for rendering
-      surfaces for GL|ES.</flag>
+      surfaces for OpenGL|ES.</flag>
     <flag name="freesync">Enable the Freesync checks.</flag>
     <flag name="glamor">Install the X.Org server glamor module.</flag>
-    <flag name="gles2">Install support for a subset of OpenGL (GL|ES) for
+    <flag name="gles2">Install support for a subset of OpenGL for
       embedded devices.</flag>
     <flag name="hip-clang">Install the HIP-CLANG runtime to convert
       CUDA code to common C++</flag>
