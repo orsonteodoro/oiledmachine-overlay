@@ -134,8 +134,8 @@ RDEPEND="!x11-drivers/amdgpu-pro
 # vdpau requires llvm
 S="${WORKDIR}"
 REQUIRED_USE="
-	egl? ( pro-stack )
-	gles2? ( || ( opengl_mesa pro-stack ) )
+	egl? ( || ( pro-stack open-stack? ( opengl_mesa ) ) )
+	gles2? ( || ( open-stack? ( opengl_mesa ) pro-stack ) )
 	hip-clang? ( pro-stack )
 	opencl? ( pro-stack || ( opencl_pal opencl_orca ) )
 	opencl_orca? ( opencl )
