@@ -34,8 +34,6 @@
     <flag name="freesync">Enable the Freesync checks.</flag>
     <flag name="gles2">Install GLESv2 support.</flag>
     <flag name="hip-clang">Install the HIP-CLANG runtime</flag>
-    <flag name="hsa">Install the HSA (Heterogeneous System Architecture)
-      development libraries.</flag>
     <flag name="lf">Install the LiquidFlash library.</flag>
     <flag name="mesa">Install mesa support.</flag>
     <flag name="open-stack">Installs the open-stack containing Mesa OpenGL
@@ -48,13 +46,18 @@
     <flag name="opengl_mesa">Install and use Mesa OpenGL.</flag>
     <flag name="opengl_pro">Install and use Pro OpenGL.</flag>
     <flag name="openmax">Install OpenMAX support.</flag>
+    <flag name="osmesa">Install the Off Screen Mesa library for software
+      rendering (or headless) via the CPU.</flag>
     <flag name="pro-stack">Installs the pro-stack containing the Pro OpenGL
       recommended for Radeon PRO products.</flag>
+    <flag name="roct">Install the hsakmt library needed for API calls to
+      communicate with the ROCk kernel.</flag>
     <flag name="vaapi">Install VAAPI (Video Acceleration API)
       acceleration driver.</flag>
     <flag name="vdpau">Install VDPAU (Video Decode and Presentation API for
       Unix) acceleration driver.</flag>
     <flag name="vulkan">Install the vulkan ICD.</flag>
     <flag name="wayland">Install wayland support.</flag>
+    <flag name="xa">Install the XA state tracker for vmware products.</flag>
   </use>
 </pkgmetadata>

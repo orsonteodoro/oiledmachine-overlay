@@ -54,7 +54,7 @@ FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
 IUSE="developer dkms doc +egl +gles2 freesync hip-clang +open-stack +opencl \
-opencl_orca opencl_pal +opengl opengl_mesa +opengl_pro +pro-stack roct +vaapi \
++opencl_orca +opencl_pal +opengl opengl_mesa +opengl_pro +pro-stack roct +vaapi \
 +vdpau +vulkan"
 SLOT="1"
 
@@ -134,8 +134,8 @@ RDEPEND="!x11-drivers/amdgpu-pro
 # vdpau requires llvm
 S="${WORKDIR}"
 REQUIRED_USE="
-	egl? ( || ( open-stack? ( opengl_mesa ) pro-stack ) )
-	gles2? ( || ( open-stack? ( opengl_mesa ) pro-stack ) )
+	egl? ( || ( open-stack pro-stack ) )
+	gles2? ( egl || ( open-stack pro-stack ) )
 	hip-clang? ( pro-stack )
 	opencl? ( || ( opencl_orca opencl_pal ) pro-stack )
 	opencl_orca? ( opencl )
@@ -215,6 +215,7 @@ implementation used by older fglrx."
 src_unpack_common() {
 	unpack_rpm "${d_rpms}/mesa-amdgpu-dri-drivers-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	unpack_rpm "${d_rpms}/mesa-amdgpu-libgbm-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	unpack_rpm "${d_rpms}/mesa-amdgpu-libglapi-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 }
 
 src_unpack_open_stack() {
@@ -240,26 +241,32 @@ src_unpack_open_stack() {
 	use developer && \
 	unpack_rpm "${d_rpms}/llvm-amdgpu-devel-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 
-	if use opengl_mesa ; then
-		if use egl ; then
-			unpack_rpm "${d_rpms}/mesa-amdgpu-libEGL-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-			use developer && \
-			unpack_rpm "${d_rpms}/mesa-amdgpu-libEGL-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-		fi
-		unpack_rpm "${d_rpms}/mesa-amdgpu-libGL-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	if use egl ; then
+		unpack_rpm "${d_rpms}/mesa-amdgpu-libEGL-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		use developer && \
-		unpack_rpm "${d_rpms}/mesa-amdgpu-libGL-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		unpack_rpm "${d_rpms}/mesa-amdgpu-libEGL-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		if use gles2 ; then
 			unpack_rpm "${d_rpms}/mesa-amdgpu-libGLES-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 			use developer && \
 			unpack_rpm "${d_rpms}/mesa-amdgpu-libGLES-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		fi
+	fi
+
+	if use opengl_mesa ; then
+		unpack_rpm "${d_rpms}/mesa-amdgpu-libGL-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		use developer && \
+		unpack_rpm "${d_rpms}/mesa-amdgpu-libGL-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		use developer && \
+		unpack_rpm "${d_rpms}/mesa-amdgpu-libgbm-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	fi
+
+	if use osmesa ; then
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libOSMesa-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		use developer && \
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libOSMesa-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-		use developer && \
-		unpack_rpm "${d_rpms}/mesa-amdgpu-libgbm-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-		unpack_rpm "${d_rpms}/mesa-amdgpu-libglapi-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	fi
+
+	if use xa ; then
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libxatracker-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		use developer && \
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libxatracker-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
@@ -283,12 +290,13 @@ src_unpack_pro_stack() {
 	unpack_rpm "${d_noarch}/amdgpu-pro-core-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${noarch}.rpm"
 	unpack_rpm "${d_noarch}/amdgpu-pro-versionlist-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${noarch}.rpm"
 
+	unpack_rpm "${d_rpms}/libglapi-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+
 	if use egl ; then
 		unpack_rpm "${d_rpms}/libegl-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
-	fi
-
-	if use gles2 ; then
-		unpack_rpm "${d_rpms}/libgles-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		if use gles2 ; then
+			unpack_rpm "${d_rpms}/libgles-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		fi
 	fi
 
 	if use hip-clang ; then
@@ -320,7 +328,6 @@ src_unpack_pro_stack() {
 		unpack_rpm "${d_noarch}/libgl-amdgpu-pro-appprofiles-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${noarch}.rpm"
 		unpack_rpm "${d_rpms}/libgl-amdgpu-pro-ext-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		unpack_rpm "${d_rpms}/libgl-amdgpu-pro-dri-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
-		unpack_rpm "${d_rpms}/libglapi-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	fi
 
 	if use vulkan ; then
@@ -411,7 +418,6 @@ src_install() {
 	[[ -e lib/udev/rules.d/91-amdgpu-pro-modeset.rules ]] && \
 	doins lib/udev/rules.d/91-amdgpu-pro-modeset.rules
 
-	#rm etc/ld.so.conf.d/10-amdgpu-pro-x86_64.conf || die
 	insinto /
 	doins -r etc
 	doins -r opt
