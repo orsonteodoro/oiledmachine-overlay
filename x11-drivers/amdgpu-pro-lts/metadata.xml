@@ -61,6 +61,7 @@
       support and updated DRM driver.</flag>
     <flag name="egl">Install EGL support.</flag>
     <flag name="freesync">Enable the Freesync checks.</flag>
+    <flag name="glamor">Install the X.Org server glamor module.</flag>
     <flag name="gles2">Install GLESv2 support.</flag>
     <flag name="hip-clang">Install the HIP-CLANG runtime</flag>
     <flag name="hwe">Install the HWE (HardWare Enablement libraries)</flag>
