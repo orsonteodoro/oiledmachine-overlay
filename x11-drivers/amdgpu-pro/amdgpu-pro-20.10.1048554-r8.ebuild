@@ -154,10 +154,12 @@ REQUIRED_USE="
 	opengl? ( ^^ ( opengl_mesa opengl_pro ) )
 	opengl_mesa? ( open-stack X )
 	opengl_pro? ( pro-stack X )
+	osmesa? ( open-stack )
 	roct? ( dkms pro-stack )
 	vaapi? ( open-stack )
 	vdpau? ( open-stack )
 	vulkan? ( || ( open-stack pro-stack ) )
+	xa? ( open-stack )
 "
 
 _set_check_reqs_requirements() {
