@@ -65,7 +65,7 @@
     <flag name="freesync">Enable the Freesync checks.</flag>
     <flag name="glamor">Install the X.Org server glamor module.</flag>
     <flag name="gles2">Install a subset of OpenGL (GL|ES) for embedded
-      devices.</flag>
+      devices support.</flag>
     <flag name="hip-clang">Install the HIP-CLANG runtime to convert
       CUDA code to common C++</flag>
     <flag name="hwe">Install the HWE (HardWare Enablement libraries)</flag>
