@@ -165,7 +165,7 @@ REQUIRED_USE="
 	opencl_pal? ( opencl )
 	opengl? ( ^^ ( opengl_mesa opengl_pro ) )
 	opengl_mesa? ( open-stack X )
-	opengl_pro? ( pro-stack X )
+	opengl_pro? ( egl pro-stack X )
 	osmesa? ( open-stack )
 	roct? ( dkms pro-stack )
 	vaapi? ( open-stack )
