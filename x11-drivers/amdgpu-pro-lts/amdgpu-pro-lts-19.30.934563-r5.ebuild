@@ -9,7 +9,7 @@ LICENSE="AMDGPUPROEULA
 	doc? ( AMDGPUPROEULA MIT BSD )
 	dkms? ( AMDGPU-FIRMWARE GPL-2 MIT )
 	open-stack? (
-		egl? ( MIT )
+		egl? ( developer? ( BSD MIT ) MIT )
 		glamor? ( MIT )
 		gles2? ( MIT developer? ( Apache-2.0 MIT ) )
 		hwe? ( MIT )
@@ -22,6 +22,9 @@ LICENSE="AMDGPUPROEULA
 		wayland? ( MIT )
 		xa? ( MIT )
 		Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD MIT
+		developer? ( Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD-2 ) UoI-NCSA
+		BSD
+		MIT
 	)
 	pro-stack? (
 		AMDGPUPROEULA
@@ -40,10 +43,15 @@ LICENSE="AMDGPUPROEULA
 		opengl_pro? ( AMDGPUPROEULA )
 		roct? ( MIT )
 		vulkan? ( AMDGPUPROEULA )
-	)"
+	)
+	X? ( MIT )"
 # gbm - MIT
 # libdrm - MIT
-# llvm - Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD MIT
+# libglapi-amdgpu - MIT
+# libglapi-amdgpu-pro - AMDGPUPROEULA
+# llvm - developer? ( Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD-2 ) UoI-NCSA
+#   xxhash.h - BSD-2
+# eglextchromium.h - BSD
 # xorg-x11-amdgpu-drv-amdgpu - MIT
 KEYWORDS="~amd64 ~x86"
 MULTILIB_COMPAT=( abi_x86_{32,64} )
