@@ -319,7 +319,21 @@ pkg_setup() {
 
 if [[ "${AMDGPU_DKMS_EBUILD_MAINTAINER}" != "1" ]] ; then
 	for k in ${AMDGPU_DKMS_KERNELS} ; do
-		check_kernel "${k}"
+		if [[ "${k}" =~ "*" ]] ; then
+			# pick all point releases: 5.2^-ot
+			V=$(find /usr/src/ -maxdepth 1 -name "linux-${k}" | sort | cut -f 4 -d "/" | sed -e "s|linux-||")
+			for v in ${V} ; do
+				k="${v}"
+				check_kernel "${k}"
+			done
+		elif [[ "${k}" =~ "^" ]] ; then
+			# pick highest version: 5.2*-ot
+			local pat="${k/^/*}"
+			k=$(find /usr/src/ -maxdepth 1 -name "linux-${pat}" | sort | head -n 1 | cut -f 4 -d "/" | sed -e "s|linux-||")
+			check_kernel "${k}"
+		else
+			check_kernel "${k}"
+		fi
 	done
 fi
 }
@@ -430,7 +444,21 @@ pkg_postinst() {
 	dkms add ${DKMS_PKG_NAME}/${DKMS_PKG_VER}
 	if use build ; then
 		for k in ${AMDGPU_DKMS_KERNELS} ; do
-			dkms_build
+			if [[ "${k}" =~ "*" ]] ; then
+				# pick all point releases: 5.2^-ot
+				V=$(find /usr/src/ -maxdepth 1 -name "linux-${k}" | sort | cut -f 4 -d "/" | sed -e "s|linux-||")
+				for v in ${V} ; do
+					k="${v}"
+					dkms_build
+				done
+			elif [[ "${k}" =~ "^" ]] ; then
+				# pick highest version: 5.2*-ot
+				local pat="${k/^/*}"
+				k=$(find /usr/src/ -maxdepth 1 -name "linux-${pat}" | sort | head -n 1 | cut -f 4 -d "/" | sed -e "s|linux-||")
+				dkms_build
+			else
+				dkms_build
+			fi
 		done
 	else
 		einfo
