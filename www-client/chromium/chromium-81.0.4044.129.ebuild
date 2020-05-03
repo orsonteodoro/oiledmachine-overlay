@@ -28,7 +28,7 @@ REQUIRED_USE+=" ^^ ( ${_ABIS} )"
 COMMON_DEPEND="
 	>=app-accessibility/at-spi2-atk-2.26:2[${MULTILIB_USEDEP}]
 	app-arch/bzip2:=[${MULTILIB_USEDEP}]
-	cups? ( >=net-print/cups-1.3.11:= )
+	cups? ( >=net-print/cups-1.3.11:=[${MULTILIB_USEDEP}] )
 	>=dev-libs/atk-2.26[${MULTILIB_USEDEP}]
 	dev-libs/expat:=[${MULTILIB_USEDEP}]
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
@@ -44,7 +44,7 @@ COMMON_DEPEND="
 	>=media-libs/harfbuzz-2.4.0:0=[icu(-),${MULTILIB_USEDEP}]
 	media-libs/libjpeg-turbo:=[${MULTILIB_USEDEP}]
 	media-libs/libpng:=[${MULTILIB_USEDEP}]
-	system-libvpx? ( media-libs/libvpx:=[postproc,svc,${MULTILIB_USEDEP}] )
+	system-libvpx? ( >=media-libs/libvpx-1.8.2:=[postproc,svc,${MULTILIB_USEDEP}] )
 	>=media-libs/openh264-1.6.0:=[${MULTILIB_USEDEP}]
 	pulseaudio? ( media-sound/pulseaudio:=[${MULTILIB_USEDEP}] )
 	system-ffmpeg? (
@@ -93,9 +93,6 @@ DEPEND="${COMMON_DEPEND}
 BDEPEND="
 	${PYTHON_DEPS}
 	>=app-arch/gzip-1.7
-	!arm? (
-		dev-lang/yasm
-	)
 	dev-lang/perl
 	dev-util/gn
 	dev-vcs/git
@@ -105,14 +102,18 @@ BDEPEND="
 	sys-apps/hwids[usb(+)]
 	>=sys-devel/bison-2.4.3
 	sys-devel/flex[${MULTILIB_USEDEP}]
-	closure-compile? ( virtual/jre )
 	virtual/pkgconfig[${MULTILIB_USEDEP}]
+	closure-compile? ( virtual/jre )
+	!system-libvpx? (
+		amd64? ( dev-lang/yasm )
+		x86? ( dev-lang/yasm )
+	)
 "
 
 : ${CHROMIUM_FORCE_CLANG=no}
 
 if [[ ${CHROMIUM_FORCE_CLANG} == yes ]]; then
-	BDEPEND+=" >=sys-devel/clang-7"
+	BDEPEND+=" >=sys-devel/clang-7[${MULTILIB_USEDEP}]"
 fi
 
 if ! has chromium_pkg_die ${EBUILD_DEATH_HOOKS}; then
@@ -407,6 +408,15 @@ src_prepare() {
 	if ! use system-libvpx; then
 		keeplibs+=( third_party/libvpx )
 		keeplibs+=( third_party/libvpx/source/libvpx/third_party/x86inc )
+
+		# we need to generate ppc64 stuff because upstream does not ship it yet
+		# it has to be done before unbundling.
+		if use ppc64; then
+			pushd third_party/libvpx >/dev/null || die
+			mkdir -p source/config/linux/ppc64 || die
+			./generate_gni.sh || die
+			popd >/dev/null || die
+		fi
 	fi
 	if use tcmalloc; then
 		keeplibs+=( third_party/tcmalloc )
@@ -574,6 +584,9 @@ multilib_src_configure() {
 	elif [[ $myarch = arm ]] ; then
 		myconf_gn+=" target_cpu=\"arm\""
 		ffmpeg_target_arch=$(usex cpu_flags_arm_neon arm-neon arm)
+	elif [[ $myarch = ppc64 ]] ; then
+		myconf_gn+=" target_cpu=\"ppc64\""
+		ffmpeg_target_arch=ppc64
 	else
 		die "Failed to determine target arch, got '$myarch'."
 	fi
