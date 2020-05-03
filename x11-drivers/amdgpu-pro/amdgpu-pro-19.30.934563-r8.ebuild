@@ -7,7 +7,7 @@ HOMEPAGE=\
 "https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-30-unified"
 LICENSE="AMDGPUPROEULA
 	doc? ( AMDGPUPROEULA MIT BSD )
-	dkms? ( GPL-2 LICENSE.amdgpu MIT )
+	dkms? ( AMDGPU-FIRMWARE GPL-2 MIT )
 	open-stack? (
 		egl? ( MIT )
 		gles2? ( MIT developer? ( Apache-2.0 MIT ) )
