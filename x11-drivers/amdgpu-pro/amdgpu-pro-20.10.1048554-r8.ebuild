@@ -496,9 +496,6 @@ src_install() {
 		fi
 
 		if use pro-stack ; then
-			if ls "${ED}/${od_amdgpupro}/bin/"* 2&>1 >/dev/null ; then
-				chmod 0755 "${ED}/${od_amdgpupro}/bin/"* || die
-			fi
 			chmod 0755 "${ED}/${od_amdgpupro}/lib${b}/"*.so* || die
 			if use opengl_pro ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/dri/"*.so* || die
@@ -515,6 +512,7 @@ src_install() {
 			fi
 
 			if use opencl ; then
+				chmod 0755 "${ED}/${od_amdgpupro}/bin/"* || die
 				dosym ../../../../../opt/amdgpu-pro/$(get_libdir)/libOpenCL.so.1 \
 					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/libOpenCL.so.1
 				dosym ../../../../../opt/amdgpu-pro/$(get_libdir)/libOpenCL.so \
