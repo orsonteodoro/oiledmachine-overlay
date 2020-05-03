@@ -561,6 +561,10 @@ src_install() {
 			if use opengl_mesa ; then
 				dosym libGL.so.1.2.0 ${od_amdgpu}/lib/${chost}/libGL.so
 			fi
+			if use vulkan ; then
+				insinto /etc/vulkan/icd.d
+				doins opt/amdgpu/etc/vulkan/icd.d/amd_icd${b}.json
+			fi
 		fi
 
 		if use pro-stack ; then
@@ -589,6 +593,11 @@ src_install() {
 					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/libOpenCL.so
 				dosym ../../../../../../opt/amdgpu-pro/include/CL \
 					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/include/CL
+			fi
+
+			if use vulkan ; then
+				insinto /etc/vulkan/icd.d
+				doins opt/amdgpu-pro/etc/vulkan/icd.d/amd_icd${b}.json
 			fi
 		fi
 	}

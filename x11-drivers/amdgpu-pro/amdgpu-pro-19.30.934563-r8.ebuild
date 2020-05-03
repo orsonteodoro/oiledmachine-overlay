@@ -532,6 +532,10 @@ src_install() {
 			if use opengl_mesa ; then
 				dosym libGL.so.1.2.0 ${od_amdgpu}/lib${b}/libGL.so
 			fi
+			if use vulkan ; then
+				insinto /etc/vulkan/icd.d
+				doins opt/amdgpu/etc/vulkan/icd.d/amd_icd${b}.json
+			fi
 		fi
 
 		if use pro-stack ; then
@@ -571,6 +575,11 @@ src_install() {
 						"${ED}/${od_amdgpupro}/lib${b}/pkgconfig/libhsakmt.pc" || die
 				fi
 				# no x86 abi
+			fi
+
+			if use vulkan ; then
+				insinto /etc/vulkan/icd.d
+				doins opt/amdgpu-pro/etc/vulkan/icd.d/amd_icd${b}.json
 			fi
 		fi
 	}
