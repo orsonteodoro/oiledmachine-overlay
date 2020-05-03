@@ -22,6 +22,18 @@
     This amdgpu module contains extra kernel parameters compared to the
     vanilla amdgpu module that can be used to tune ROCk, SSG, power savings,
     memory usage.  For details, do `modinfo amdgpu`.
+
+    It must look like:
+
+    ROCK_DKMS_KERNELS=\"5.2.17-pf 5.2.17-gentoo\""
+
+    Use:
+
+    * to build all point releases
+    Examples: 5.2*-ot 5.2.*-ot 5*-ot
+
+    ^ to build only the highest point release
+    Examples: 5.2^-ot 5.2.^-ot 5^-ot
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver</bugs-to>
