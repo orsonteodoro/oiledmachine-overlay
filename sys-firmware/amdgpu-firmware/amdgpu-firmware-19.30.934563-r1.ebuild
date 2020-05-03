@@ -5,7 +5,7 @@ EAPI=7
 DESCRIPTION="AMDGPU firmware"
 HOMEPAGE=\
 "https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-30-unified"
-LICENSE="LICENSE.amdgpu"
+LICENSE="AMDGPU-FIRMWARE"
 # See the rock-firmware package for details.
 KEYWORDS="~amd64"
 PKG_VER=$(ver_cut 1-2 ${PV})
