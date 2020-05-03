@@ -478,7 +478,7 @@ src_install() {
 			if use open-stack ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/xorg/modules/drivers/"*.so* || die
 			fi
-			if use X ; then
+			if use opengl_mesa ; then
 				dosym libGL.so.1.2.0 ${od_amdgpu}/lib${b}/libGL.so
 			fi
 		fi
