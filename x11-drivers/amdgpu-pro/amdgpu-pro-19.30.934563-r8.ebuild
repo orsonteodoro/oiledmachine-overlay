@@ -353,7 +353,7 @@ src_unpack_pro_stack() {
 		unpack_rpm "${d_rpms}/libglapi-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	fi
 
-	if use egl ; then
+	if use egl && ! use opengl_mesa ; then
 		unpack_rpm "${d_rpms}/libegl-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		if use gles2 ; then
 			unpack_rpm "${d_rpms}/libgles-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
@@ -535,7 +535,9 @@ src_install() {
 		fi
 
 		if use pro-stack ; then
-			chmod 0755 "${ED}/${od_amdgpupro}/bin/"* || die
+			if ls "${ED}/${od_amdgpupro}/bin/"* 2&>1 >/dev/null ; then
+				chmod 0755 "${ED}/${od_amdgpupro}/bin/"* || die
+			fi
 			chmod 0755 "${ED}/${od_amdgpupro}/lib${b}/"*.so* || die
 			chmod 0755 "${ED}/${od_amdgpupro}/lib${b}/gbm/"*.so* || die
 			if use opengl_pro ; then
