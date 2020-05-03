@@ -400,7 +400,7 @@ src_unpack_pro_stack() {
 		fi
 	fi
 
-	if use egl ; then
+	if use egl && ! use opengl_mesa ; then
 		unpack_deb "${d_debs}/libegl1-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 		if use gles2 ; then
 			unpack_deb "${d_debs}/libgles2-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
@@ -583,7 +583,9 @@ src_install() {
 		fi
 
 		if use pro-stack ; then
-			chmod 0755 "${ED}/${od_amdgpupro}/bin/"* || die
+			if ls "${ED}/${od_amdgpupro}/bin/"* 2&>1 >/dev/null ; then
+				chmod 0755 "${ED}/${od_amdgpupro}/bin/"* || die
+			fi
 			chmod 0755 "${ED}/${od_amdgpupro}/lib/${chost}/"*.so* || die
 			if use opengl_pro ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/dri/"*.so* || die
