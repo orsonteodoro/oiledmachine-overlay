@@ -321,7 +321,7 @@ if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" != "1" ]] ; then
 	for k in ${ROCK_DKMS_KERNELS} ; do
 		if [[ "${k}" =~ "*" ]] ; then
 			# pick all point releases: 5.2*-ot
-			V=$(find /usr/src/ -maxdepth 1 -name "linux-${k}" | sort | cut -f 4 -d "/" | sed -e "s|linux-||")
+			V=$(find /usr/src/ -maxdepth 1 -name "linux-${k}" | sort -r | cut -f 4 -d "/" | sed -e "s|linux-||")
 			for v in ${V} ; do
 				k="${v}"
 				check_kernel "${k}"
@@ -329,7 +329,7 @@ if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" != "1" ]] ; then
 		elif [[ "${k}" =~ "^" ]] ; then
 			# pick highest version: 5.2^-ot
 			local pat="${k/^/*}"
-			k=$(find /usr/src/ -maxdepth 1 -name "linux-${pat}" | sort | head -n 1 | cut -f 4 -d "/" | sed -e "s|linux-||")
+			k=$(find /usr/src/ -maxdepth 1 -name "linux-${pat}" | sort -r | head -n 1 | cut -f 4 -d "/" | sed -e "s|linux-||")
 			check_kernel "${k}"
 		else
 			check_kernel "${k}"
@@ -441,7 +441,7 @@ pkg_postinst() {
 		for k in ${ROCK_DKMS_KERNELS} ; do
 			if [[ "${k}" =~ "*" ]] ; then
 				# pick all point releases: 5.2*-ot
-				V=$(find /usr/src/ -maxdepth 1 -name "linux-${k}" | sort | cut -f 4 -d "/" | sed -e "s|linux-||")
+				V=$(find /usr/src/ -maxdepth 1 -name "linux-${k}" | sort -r | cut -f 4 -d "/" | sed -e "s|linux-||")
 				for v in ${V} ; do
 					k="${v}"
 					dkms_build
@@ -449,7 +449,7 @@ pkg_postinst() {
 			elif [[ "${k}" =~ "^" ]] ; then
 				# pick highest version: 5.2^-ot
 				local pat="${k/^/*}"
-				k=$(find /usr/src/ -maxdepth 1 -name "linux-${pat}" | sort | head -n 1 | cut -f 4 -d "/" | sed -e "s|linux-||")
+				k=$(find /usr/src/ -maxdepth 1 -name "linux-${pat}" | sort -r | head -n 1 | cut -f 4 -d "/" | sed -e "s|linux-||")
 				dkms_build
 			else
 				dkms_build
