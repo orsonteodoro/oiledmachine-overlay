@@ -37,10 +37,10 @@
     Use:
 
     * to build all point releases
-    Examples: 5.2*-ot 5.2.*-ot 5*-ot
+    Examples: 5.2.*-ot
 
     ^ to build only the highest point release
-    Examples: 5.2^-ot 5.2.^-ot 5^-ot
+    Examples: 5.2.^-ot
   </longdescription>
   <upstream>
     <bugs-to>https://www.amd.com/en/support/kb/faq/amdgpu-installation</bugs-to>

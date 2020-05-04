@@ -30,10 +30,10 @@
     Use:
 
     * to build all point releases
-    Examples: 5.2*-ot 5.2.*-ot 5*-ot
+    Examples: 5.2.*-ot
 
     ^ to build only the highest point release
-    Examples: 5.2^-ot 5.2.^-ot 5^-ot
+    Examples: 5.2.^-ot
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver</bugs-to>
