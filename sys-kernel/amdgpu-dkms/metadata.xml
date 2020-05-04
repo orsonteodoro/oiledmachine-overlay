@@ -43,7 +43,7 @@
     Examples: 5.2^-ot 5.2.^-ot 5^-ot
   </longdescription>
   <upstream>
-    <bugs-to>https://www.amd.com/report</bugs-to>
+    <bugs-to>https://www.amd.com/en/support/kb/faq/amdgpu-installation</bugs-to>
   </upstream>
   <use>
     <flag name="acpi">Checks if ACPI support is enabled in the kernel.
