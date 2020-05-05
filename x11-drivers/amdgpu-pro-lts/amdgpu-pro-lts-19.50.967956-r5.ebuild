@@ -99,8 +99,6 @@ SLOT="1"
 #	>=sys-devel/llvm-7.0.0
 # libglapi.so.0 needs libselinux
 RDEPEND="!x11-drivers/amdgpu-pro
-	  app-eselect/eselect-opencl
-	 >=app-eselect/eselect-opengl-1.0.7
 	 dev-util/cunit
 	 dev-libs/libedit
 	 dkms? ( || ( sys-kernel/amdgpu-dkms sys-kernel/rock-dkms ) )
@@ -135,7 +133,10 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	        >=sys-kernel/linux-firmware-20200309 )
 	 >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
 	 >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
-	 opencl? (  >=sys-devel/gcc-5.2.0 )
+	 opencl? (  >=sys-devel/gcc-5.2.0
+		    app-eselect/eselect-opencl )
+	 opengl? (  >=sys-devel/gcc-5.2.0
+		    >=app-eselect/eselect-opengl-1.0.7 )
 	 openmax? ( >=media-libs/mesa-${PKG_VER_MESA}[openmax] )
 	 roct? ( !dev-libs/roct-thunk-interface
 		  sys-process/numactl )
@@ -172,8 +173,8 @@ REQUIRED_USE="
 	opencl_orca? ( opencl )
 	opencl_pal? ( opencl )
 	opengl? ( ^^ ( opengl_mesa opengl_pro ) )
-	opengl_mesa? ( open-stack X )
-	opengl_pro? ( egl pro-stack X )
+	opengl_mesa? ( open-stack opengl X )
+	opengl_pro? ( egl pro-stack opengl X )
 	osmesa? ( open-stack )
 	roct? ( dkms pro-stack )
 	vaapi? ( open-stack )
