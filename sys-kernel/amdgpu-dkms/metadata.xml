@@ -10,9 +10,14 @@
     firmware (which is not installed in this package).  This package
     will build the kernel modules using the DKMS framework allowing for
     version agnostic compatibility meaning that you can compile this package
-    against the 4.4.x, 4.9.x, 4.14.x, 4.19.x kernel series only.  The
-    amdgpu-dkms package has more GPU features like IPC related features (Memory
-    sharing API, Signal sharing API); RDMA (aka Remote Device
+    against different kernel versions.  For example,
+
+    For 4.x kernels use the amdgpu-dkms-19.30.x package.
+    For 5.0.x to 5.2.x kernels use amdgpu-dkms-19.50.x package.
+    For 5.0.x to 5.5.x use amdgpu-dkms-19.50.x package.
+
+    The amdgpu-dkms package has more GPU features like IPC related features
+    (Memory sharing API, Signal sharing API); RDMA (aka Remote Device
     Programming or ROCmRDMA) to allow other PCIe kernel modules and devices
     DMA access to GPU memory, KFD (Kernel Fusion Driver) features, and
     DirectGMA (Direct Graphic Memory Access) support.  ROCk is also a core
@@ -22,10 +27,6 @@
     This amdgpu module contains extra kernel parameters compared to the
     vanilla amdgpu module that can be used to tune ROCk, SSG, power savings,
     memory usage.  For details, do `modinfo amdgpu`.
-
-    For 4.x kernels use the amdgpu-dkms-19.30.x package.
-    For 5.0.x to 5.2.x kernels use amdgpu-dkms-19.50.x package.
-    For 5.0.x to 5.5.x use amdgpu-dkms-19.50.x package.
 
     You must specify a AMDGPU_DKMS_KERNELS environmental variable in your
     /etc/portage/make.conf or as a per-package environmental variable.
@@ -41,6 +42,9 @@
 
     ^ to build only the highest point release
     Examples: 5.2.^-ot
+
+    For the bleeding edge counterpart to this package, see the rock-dkms
+    package instead.
   </longdescription>
   <upstream>
     <bugs-to>https://www.amd.com/en/support/kb/faq/amdgpu-installation</bugs-to>
