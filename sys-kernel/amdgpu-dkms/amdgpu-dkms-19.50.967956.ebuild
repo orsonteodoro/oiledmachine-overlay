@@ -8,7 +8,8 @@ inherit linux-info unpacker
 DESCRIPTION="AMDGPU DKMS kernel module"
 HOMEPAGE=\
 "https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-30-unified"
-LICENSE="GPL-2 MIT"
+LICENSE="GPL-2 MIT
+	firmware? ( AMDGPU-FIRMWARE )"
 KEYWORDS="amd64"
 MY_RPR="${PV//_p/-}" # Remote PR
 PKG_VER=$(ver_cut 1-2 ${PV})
