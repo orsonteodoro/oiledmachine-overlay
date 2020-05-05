@@ -10,8 +10,8 @@
     latest firmware (which is not installed in this package).  This package 
     will build the kernel modules using the DKMS framework allowing for
     version agnostic compatibility meaning that you can compile this package 
-    against the long-term support kernel 5.4.x kernel series only (for security
-    update reasons).  The ROCk
+    against the latest point release of the long-term support kernel 5.4.x
+    kernel series only (for security update reasons).  The ROCk
     package has more GPU features like IPC related features (Memory sharing API,
     Signal sharing API); increasing GPU system memory limits from 3/8 of system 
     memory to 29/32 of system memory; RDMA (aka Remote Device Programming or 
