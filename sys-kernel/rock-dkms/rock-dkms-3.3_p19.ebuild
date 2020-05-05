@@ -7,7 +7,8 @@ inherit linux-info unpacker
 
 DESCRIPTION="ROCk DKMS kernel module"
 HOMEPAGE="https://rocm-documentation.readthedocs.io/en/latest/Installation_Guide/ROCk-kernel.html"
-LICENSE="GPL-2 MIT"
+LICENSE="GPL-2 MIT
+	firmware? ( AMDGPU-FIRMWARE RADEON-FIRMWARE )"
 KEYWORDS="amd64"
 MY_RPR="${PV//_p/-}" # Remote PR
 FN="rock-dkms_${MY_RPR}_all.deb"
@@ -24,7 +25,7 @@ else
 KV_NOT_SUPPORTED_MAX="5.5"
 KV_SUPPORTED_MIN="5.0"
 fi
-RDEPEND="firmware? ( sys-firmware/rock-firmware )
+RDEPEND="firmware? ( sys-firmware/rock-firmware:${SLOT} )
 	 sys-kernel/dkms
 	 || ( <sys-kernel/ck-sources-${KV_NOT_SUPPORTED_MAX}
 	      <sys-kernel/gentoo-sources-${KV_NOT_SUPPORTED_MAX}
