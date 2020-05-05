@@ -38,7 +38,7 @@
 
     It must look like:
 
-    AMDGPU_DKMS_KERNELS=\"5.2.17-pf 5.2.17-gentoo\""
+    AMDGPU_DKMS_KERNELS="5.2.17-pf 5.2.17-gentoo"
 
     Use:
 
