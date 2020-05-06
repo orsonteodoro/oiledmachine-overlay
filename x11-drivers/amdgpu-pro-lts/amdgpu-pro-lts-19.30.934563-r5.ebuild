@@ -21,7 +21,6 @@ LICENSE="AMDGPUPROEULA
 		vulkan? ( MIT )
 		wayland? ( MIT )
 		xa? ( MIT )
-		Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD MIT
 		developer? ( Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD-2 ) UoI-NCSA
 		BSD
 		MIT
@@ -131,24 +130,25 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 || ( >=sys-firmware/amdgpu-firmware-${PV}
 	        >=sys-firmware/rock-firmware-2.8.0
 		>=sys-kernel/linux-firmware-20191113 )
-	 >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
-	 >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
-	 opencl? ( app-eselect/eselect-opencl )
-	 opengl? ( >=app-eselect/eselect-opengl-1.0.7 )
-	 openmax? ( >=media-libs/mesa-${PKG_VER_MESA}[openmax]
-		    media-libs/libomxil-bellagio )
+	 opencl? (    app-eselect/eselect-opencl )
+	 opengl? (  >=app-eselect/eselect-opengl-1.0.7 )
+	 openmax? ( >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
+		    >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
+		      media-libs/libomxil-bellagio
+		    >=media-libs/mesa-${PKG_VER_MESA}[openmax] )
 	 roct? ( !dev-libs/roct-thunk-interface
 		  sys-process/numactl )
 	 >=sys-devel/gcc-${PKG_VER_GCC}
-	 >=sys-libs/libselinux-1.32[${MULTILIB_USEDEP}]
+	 open-stack? (
 	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
-	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}]
+	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}] )
 	  vaapi? (  >=media-libs/mesa-${PKG_VER_MESA}[-vaapi] )
 	  vdpau? (  >=media-libs/mesa-${PKG_VER_MESA}[-vdpau] )
 	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
 	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
 		    >=media-libs/vulkan-loader-${VULKAN_SDK_VER} )
 	 X? (
+	 >=sys-libs/libselinux-1.32[${MULTILIB_USEDEP}]
 	 hwe? (
 		>=x11-base/xorg-drivers-1.20
 		<x11-base/xorg-drivers-1.21
@@ -172,7 +172,7 @@ S="${WORKDIR}"
 REQUIRED_USE="
 	amf? ( pro-stack )
 	egl? ( || ( open-stack pro-stack ) wayland X )
-	glamor? ( open-stack opengl_mesa )
+	glamor? ( open-stack opengl X )
 	gles2? ( egl || ( open-stack pro-stack ) )
 	hip-clang? ( pro-stack )
 	hwe
@@ -328,18 +328,21 @@ src_unpack_open_stack() {
 		fi
 	fi
 
-	use developer && \
+	use X && use developer && \
 	unpack_deb "${d_debs}/libgbm-amdgpu-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+
+	if use glamor ; then
+		unpack_deb "${d_debs}/glamor-amdgpu_${PKG_VER_GLAMOR}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		use developer && \
+		unpack_deb "${d_debs}/glamor-amdgpu-dev_${PKG_VER_GLAMOR}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+	fi
 
 	if use opengl_mesa ; then
 		unpack_deb "${d_debs}/libgl1-amdgpu-mesa-glx_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 		use developer && \
 		unpack_deb "${d_debs}/libgl1-amdgpu-mesa-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		if use glamor ; then
-			unpack_deb "${d_debs}/glamor-amdgpu_${PKG_VER_GLAMOR}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-			use developer && \
-			unpack_deb "${d_debs}/glamor-amdgpu-dev_${PKG_VER_GLAMOR}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		fi
+		use developer && \
+		unpack_deb "${d_debs}/mesa-amdgpu-common-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 	fi
 
 	if use osmesa ; then

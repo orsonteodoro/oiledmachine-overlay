@@ -95,7 +95,6 @@ SLOT="1"
 # sys-libs/ncurses[tinfo] required by llvm in this package
 
 RDEPEND="!x11-drivers/amdgpu-pro
-	 amf? ( >=sys-devel/gcc-${PKG_VER_GCC} )
 	 dev-util/cunit
 	 dev-libs/libedit:2[${MULTILIB_USEDEP}]
 	 dkms? ( || ( sys-kernel/amdgpu-dkms sys-kernel/rock-dkms ) )
@@ -129,31 +128,26 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 || ( >=sys-firmware/amdgpu-firmware-${PV}
 	        >=sys-firmware/rock-firmware-3.3.0
 		>=sys-kernel/linux-firmware-20200417 )
-	 >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
-	 >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
-	 open-stack? ( >=sys-devel/gcc-${PKG_VER_GCC} )
-	 opencl? (  >=sys-devel/gcc-${PKG_VER_GCC}
-		    app-eselect/eselect-opencl )
-	 opengl? ( >=app-eselect/eselect-opengl-1.0.7 )
-	 openmax? ( >=sys-devel/gcc-${PKG_VER_GCC}
-		    >=media-libs/mesa-${PKG_VER_MESA}[openmax]
-		    media-libs/libomxil-bellagio )
+	 opencl? (    app-eselect/eselect-opencl )
+	 opengl? (  >=app-eselect/eselect-opengl-1.0.7 )
+	 openmax? ( >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
+		    >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
+		      media-libs/libomxil-bellagio
+		    >=media-libs/mesa-${PKG_VER_MESA}[openmax] )
 	 roct? ( !dev-libs/roct-thunk-interface
 		  sys-process/numactl )
 	 >=sys-devel/gcc-${PKG_VER_GCC}
-	 >=sys-libs/libselinux-1.32[${MULTILIB_USEDEP}]
+	 open-stack? (
 	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
-	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}]
-	  vaapi? (  >=sys-devel/gcc-${PKG_VER_GCC}
-		    >=media-libs/mesa-${PKG_VER_MESA}[-vaapi] )
-	  vdpau? (  >=sys-devel/gcc-${PKG_VER_GCC}
-		    >=media-libs/mesa-${PKG_VER_MESA}[-vdpau] )
+	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}] )
+	  vaapi? (  >=media-libs/mesa-${PKG_VER_MESA}[-vaapi] )
+	  vdpau? (  >=media-libs/mesa-${PKG_VER_MESA}[-vdpau] )
 	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
-	  vulkan? ( >=sys-devel/gcc-${PKG_VER_GCC}
-		    >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
+	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
 		    >=media-libs/vulkan-loader-${VULKAN_SDK_VER} )
          wayland? ( >=dev-libs/wayland-${PKG_VER_LIBWAYLAND} )
 	 X? (
+	 >=sys-libs/libselinux-1.32[${MULTILIB_USEDEP}]
 	 hwe? (
 		>=x11-base/xorg-drivers-1.20
 		<x11-base/xorg-drivers-1.21
@@ -178,7 +172,7 @@ S="${WORKDIR}"
 REQUIRED_USE="
 	amf? ( pro-stack )
 	egl? ( || ( open-stack pro-stack ) wayland X )
-	glamor? ( open-stack opengl_mesa )
+	glamor? ( open-stack opengl X )
 	gles2? ( egl || ( open-stack pro-stack ) )
 	hip-clang? ( pro-stack )
 	hwe
@@ -283,7 +277,6 @@ src_unpack_common() {
 		unpack_deb "${d_debs}/libgbm1-amdgpu_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 		unpack_deb "${d_debs}/libglapi-amdgpu-mesa_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 	fi
-
 }
 
 src_unpack_open_stack() {
@@ -335,20 +328,23 @@ src_unpack_open_stack() {
 		fi
 	fi
 
-	use developer && \
+	use X && use developer && \
 	unpack_deb "${d_debs}/libgbm-amdgpu-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+
+	if use glamor ; then
+		if [[ "${ABI}" == "amd64" ]] ; then
+			unpack_deb "${d_debs}/glamor-amdgpu_${PKG_VER_GLAMOR}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+			use developer && \
+			unpack_deb "${d_debs}/glamor-amdgpu-dev_${PKG_VER_GLAMOR}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		fi
+	fi
 
 	if use opengl_mesa ; then
 		unpack_deb "${d_debs}/libgl1-amdgpu-mesa-glx_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 		use developer && \
 		unpack_deb "${d_debs}/libgl1-amdgpu-mesa-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		if use glamor ; then
-			if [[ "${ABI}" == "amd64" ]] ; then
-				unpack_deb "${d_debs}/glamor-amdgpu_${PKG_VER_GLAMOR}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-				use developer && \
-				unpack_deb "${d_debs}/glamor-amdgpu-dev_${PKG_VER_GLAMOR}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-			fi
-		fi
+		use developer && \
+		unpack_deb "${d_debs}/mesa-amdgpu-common-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 	fi
 
 	if use osmesa ; then
@@ -574,7 +570,7 @@ src_install() {
 			if [[ -d "${ED}/${od_amdgpu}/lib/${chost}/llvm-9.0/share/opt-viewer" ]] ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/llvm-9.0/share/opt-viewer/"*.py || die
 			fi
-			if use open-stack  && ( use X || use hwe ) ; then
+			if use open-stack && ( use X || use hwe ) ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib/xorg/modules/drivers/"*.so* || die
 			fi
 			if use glamor ; then
@@ -594,9 +590,6 @@ src_install() {
 		fi
 
 		if use pro-stack ; then
-			if ls "${ED}/${od_amdgpupro}/bin/"* 2&>1 >/dev/null ; then
-				chmod 0755 "${ED}/${od_amdgpupro}/bin/"* || die
-			fi
 			chmod 0755 "${ED}/${od_amdgpupro}/lib/${chost}/"*.so* || die
 			if use opengl_pro ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/dri/"*.so* || die
@@ -613,6 +606,7 @@ src_install() {
 			fi
 
 			if use opencl ; then
+				chmod 0755 "${ED}/${od_amdgpupro}/bin/"* || die
 				dosym ../../../../../opt/amdgpu-pro/lib/${chost}/libOpenCL.so.1 \
 					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/libOpenCL.so.1
 				dosym ../../../../../opt/amdgpu-pro/lib/${chost}/libOpenCL.so \
