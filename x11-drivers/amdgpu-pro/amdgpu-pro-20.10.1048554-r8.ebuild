@@ -166,6 +166,7 @@ REQUIRED_USE="
 	vdpau? ( open-stack )
 	vulkan? ( || ( open-stack pro-stack ) )
 	xa? ( open-stack )
+	X? ( open-stack )
 "
 
 _set_check_reqs_requirements() {

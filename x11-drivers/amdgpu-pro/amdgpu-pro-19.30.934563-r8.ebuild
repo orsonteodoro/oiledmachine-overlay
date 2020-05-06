@@ -174,6 +174,7 @@ REQUIRED_USE="
 	vulkan? ( || ( open-stack pro-stack ) )
 	wayland? ( open-stack )
 	xa? ( open-stack )
+	X? ( open-stack )
 "
 
 _set_check_reqs_requirements() {
