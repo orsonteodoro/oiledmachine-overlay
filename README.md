@@ -227,7 +227,7 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | www-misc/ddgr | This is a command line DuckDuckGo similiar to googler. |
 | www-misc/facy | This is a command line Facebook client.  Update with missing Facebook API calls.  Used CasperJS and PhantomJS to fill in the missing API calls.  This ebuild add enhancemences such as command line video support, YouTube support, and use of color emojis, better handling of shared Spotify playlists. |
 | www-misc/googler | Kept around for latest updates. |
-| www-misc/nativefier | Offline till upstream replaces dependencies with vulnerabilities. |
+| www-misc/nativefier | Offline till upstream replaces dependencies with vulnerabilities with non vulnerable ones. |
 | www-misc/rtv | This is a command line Reddit client which has been updated. |
 | www-misc/socli | This is a Stack Overflow command line client. |
 | www-servers/civetweb | Kept around for urho3d. |
