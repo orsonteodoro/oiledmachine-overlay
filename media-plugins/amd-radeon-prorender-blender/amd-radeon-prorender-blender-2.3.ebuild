@@ -140,7 +140,6 @@ src_install_matlib() {
 		einfo "Copying materials..."
 		dodir "${D_MATERIALS}"
 		cp -a "${S_MATLIB}"/matlib/feature_MaterialLibrary/* "${ED}/${D_MATERIALS}" || die
-		doenvd "${FILESDIR}"/99${PN}
 	fi
 }
 
@@ -254,7 +253,6 @@ src_install_per_user() {
 src_install() {
 	if use systemwide ; then
 		src_install_systemwide
-		DEV_ENVIRONMENT_VARIABLE
 		if use materials ; then
 			cat <<EOF > ${T}/50${P}-matlib
 DEV_ENVIRONMENT_VARIABLE="${D_MATERIALS}/Xml"
