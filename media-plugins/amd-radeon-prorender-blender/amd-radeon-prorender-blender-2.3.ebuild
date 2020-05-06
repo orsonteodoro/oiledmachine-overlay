@@ -95,17 +95,6 @@ pkg_setup() {
 			die
 		fi
 	fi
-
-	if use video_cards_amdgpu || use video_cards_radeonsi || use video_cards_r600 || use video_cards_fglrx ; then
-		true
-	elif use video_cards_nvidia ; then
-		true
-	else
-		ewarn "Your card may not be supported but may be limited to CPU rendering."
-		if ! use embree ; then
-			einfo "You may need to enable the embree USE flag for CPU rendering / raytracing."
-		fi
-	fi
 }
 
 
@@ -130,8 +119,6 @@ src_unpack() {
 	cd "${S_MATLIB}" || die
 
 	unpack_makeself ${D_FN2}
-
-	_pkg_setup
 }
 
 src_install_matlib() {
