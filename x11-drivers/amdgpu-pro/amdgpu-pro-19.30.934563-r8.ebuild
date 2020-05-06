@@ -124,22 +124,19 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 || ( >=sys-firmware/amdgpu-firmware-${PV}
 	        >=sys-firmware/rock-firmware-2.8.0
 		>=sys-kernel/linux-firmware-20191113 )
-	 opencl? ( >=sys-devel/gcc-${PKG_VER_GCC}
-		   app-eselect/eselect-opencl )
-	 opengl? ( >=sys-devel/gcc-${PKG_VER_GCC}
-		   >=app-eselect/eselect-opengl-1.0.7 )
-	 roct? ( !dev-libs/roct-thunk-interface
-		  sys-process/numactl )
+	 opencl? ( app-eselect/eselect-opencl )
+	 opengl? ( >=app-eselect/eselect-opengl-1.0.7 )
 	 open-stack? (
 	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
 	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}] )
+	 roct? ( !dev-libs/roct-thunk-interface
+		  sys-process/numactl )
+	 >=sys-devel/gcc-${PKG_VER_GCC}
 	  vaapi? (  >=media-libs/mesa-${PKG_VER_MESA}[-vaapi] )
-	  vdpau? (  >=media-libs/mesa-${PKG_VER_MESA}[-vdpau]
-		    >=sys-devel/gcc-${PKG_VER_GCC} )
+	  vdpau? (  >=media-libs/mesa-${PKG_VER_MESA}[-vdpau] )
 	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
 	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
-		    >=media-libs/vulkan-loader-${VULKAN_SDK_VER}
-		    >=sys-devel/gcc-${PKG_VER_GCC} )
+		    >=media-libs/vulkan-loader-${VULKAN_SDK_VER} )
          wayland? ( >=dev-libs/wayland-${PKG_VER_LIBWAYLAND}
 		    dev-libs/libffi:0/6 )
 	 X? (
@@ -526,7 +523,7 @@ src_install() {
 			if [[ -d "${ED}/${od_amdgpu}/lib${b}/llvm-9.0/share/opt-viewer" ]] ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-9.0/share/opt-viewer/"*.py || die
 			fi
-			if use open-stack ; then
+			if use open-stack && use X ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/xorg/modules/drivers/"*.so* || die
 			fi
 			if use opengl_mesa ; then
