@@ -246,10 +246,6 @@ driver to work"
 
 	linux-info_pkg_setup
 
-	if use hwe ; then
-		ewarn "The hwe USE flag is still broken."
-	fi
-
 	if use opengl_mesa ; then
 		ewarn "The opengl_mesa USE flag is still broken."
 	fi
