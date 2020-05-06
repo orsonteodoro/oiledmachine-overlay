@@ -188,6 +188,7 @@ REQUIRED_USE="
 	opencl? ( || ( opencl_orca opencl_pal ) pro-stack )
 	opencl_orca? ( opencl )
 	opencl_pal? ( opencl )
+	opengl? ( ^^ ( opengl_mesa opengl_pro ) )
 	opengl_mesa? ( open-stack X )
 	opengl_pro? ( egl pro-stack wayland X )
 	osmesa? ( open-stack )
@@ -199,7 +200,6 @@ REQUIRED_USE="
 	xa? ( open-stack )
 	X? ( wayland )
 "
-#	opengl? ( ^^ ( opengl_mesa opengl_pro ) )
 
 _set_check_reqs_requirements() {
 	if use abi_x86_32 && use abi_x86_64 ; then
