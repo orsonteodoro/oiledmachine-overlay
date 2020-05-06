@@ -82,10 +82,6 @@ SLOT="1"
 # For more info on VIDEODRV see https://www.x.org/wiki/XorgModuleABIVersions/
 # sys-libs/ncurses[tinfo] required by llvm in this package
 
-#	>=sys-devel/lld-7.0.0
-#	>=sys-devel/llvm-7.0.0
-# libglapi.so.0 needs libselinux
-# requires >=dkms-1.95
 RDEPEND="!x11-drivers/amdgpu-pro
 	 >=dev-util/cunit-2.1_p3
 	 >=dev-libs/libedit-3.1
@@ -145,9 +141,6 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	   x11-libs/libXinerama[${MULTILIB_USEDEP}]
 	   x11-libs/libXrandr[${MULTILIB_USEDEP}]
 	   x11-libs/libXrender[${MULTILIB_USEDEP}] )"
-# hsakmt requires libnuma.so.1
-# kmstest requires libkms
-# vdpau requires llvm
 S="${WORKDIR}"
 REQUIRED_USE="
 	!abi_x86_32
@@ -275,12 +268,13 @@ src_unpack_open_stack() {
 		fi
 	fi
 
+	use X && use developer && \
+	unpack_rpm "${d_rpms}/mesa-amdgpu-libgbm-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+
 	if use opengl_mesa ; then
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libGL-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		use developer && \
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libGL-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-		use developer && \
-		unpack_rpm "${d_rpms}/mesa-amdgpu-libgbm-devel-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	fi
 
 	if use osmesa ; then
