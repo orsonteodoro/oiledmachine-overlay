@@ -25,7 +25,7 @@ MAX_BLENDER_V="2.82"
 
 RESTRICT="fetch strip"
 
-IUSE="+checker denoiser embree +materials system-cffi system-tbb -systemwide test video_cards_radeonsi video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel video_cards_r600"
+IUSE="denoiser embree +materials system-cffi system-tbb -systemwide test video_cards_radeonsi video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel video_cards_r600"
 
 NV_DRIVER_VERSION="368.39"
 RDEPEND="${PYTHON_DEPS}
@@ -73,20 +73,6 @@ INTERNAL_PV="2.3.4"
 
 D_MATERIALS="/usr/share/${PN}/Radeon_ProRender/Blender/Material_Library"
 
-pkg_pretend() {
-	if use checker ; then
-		for DEVICE in $(ls /dev/*/card* /dev/dri/renderD128)
-		do
-		        cat /etc/sandbox.conf | grep -e "${DEVICE}"
-		        if [ $? == 1 ] ; then
-				if [ -e ${DEVICE} ] ; then
-			                die "SANDBOX_WRITE=\"${DEVICE}\" needs to be added to /etc/sandbox.conf"
-				fi
-		        fi
-		done
-	fi
-}
-
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	einfo "Please download"
@@ -98,7 +84,7 @@ pkg_nofetch() {
 	einfo "from ${HOMEPAGE_DL} and rename it to ${D_FN2} place it in ${distdir}"
 }
 
-_pkg_setup() {
+pkg_setup() {
 	ewarn "Package still in testing/development"
 	einfo "It may not work at all"
 
@@ -110,11 +96,6 @@ _pkg_setup() {
 		fi
 	fi
 
-	cd "${S_PLUGIN}" || die
-	BLENDER_VER=$(/usr/bin/blender --version | grep -e "Blender [0-9.]*" | tr "(" "_" | tr ")" "_" | tr " " "_" | sed "s|Blender||" | cut -c 2-)
-	BLENDER_BUILD_HASH="unknown" # from --version inspection but none found
-	APPVERSION="${BLENDER_VER}__${BLENDER_BUILD_HASH}"
-
 	if use video_cards_amdgpu || use video_cards_radeonsi || use video_cards_r600 || use video_cards_fglrx ; then
 		true
 	elif use video_cards_nvidia ; then
@@ -124,14 +105,6 @@ _pkg_setup() {
 		if ! use embree ; then
 			einfo "You may need to enable the embree USE flag for CPU rendering / raytracing."
 		fi
-	fi
-
-	if use checker ; then
-		# Checker needs OpenCL or it will crash
-		# The checker will check your hardware for compatibility and generate a registration url
-		yes | BLENDER_VERSION=${APPVERSION} ./addon/checker || die
-	else
-		ewarn "Disabling checker is experimental."
 	fi
 }
 
