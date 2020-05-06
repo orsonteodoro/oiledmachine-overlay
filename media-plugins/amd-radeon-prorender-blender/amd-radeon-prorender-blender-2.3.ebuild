@@ -35,6 +35,7 @@ NV_DRIVER_VERSION="368.39"
 RDEPEND="${PYTHON_DEPS}
 	dev-lang/python[xml]
 	>=media-gfx/blender-2.80[${PYTHON_SINGLE_USEDEP},opensubdiv]
+	<media-gfx/blender-2.83[${PYTHON_SINGLE_USEDEP},opensubdiv]
 	media-libs/opensubdiv[opencl]
 	video_cards_amdgpu? ( media-libs/mesa )
 	|| (
