@@ -200,7 +200,7 @@ REQUIRED_USE="
 	vulkan? ( || ( open-stack pro-stack ) wayland )
 	wayland? ( open-stack )
 	xa? ( open-stack )
-	X? ( open-stack wayland )
+	X? ( wayland )
 "
 
 _set_check_reqs_requirements() {
