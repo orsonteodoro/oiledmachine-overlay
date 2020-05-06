@@ -186,6 +186,7 @@ REQUIRED_USE="
 	gles2? ( egl || ( open-stack pro-stack ) )
 	hip-clang? ( pro-stack )
 	hwe
+	hwe? ( open-stack )
 	opencl? ( || ( opencl_orca opencl_pal ) pro-stack )
 	opencl_orca? ( opencl )
 	opencl_pal? ( opencl )
@@ -199,7 +200,7 @@ REQUIRED_USE="
 	vulkan? ( || ( open-stack pro-stack ) wayland )
 	wayland? ( open-stack )
 	xa? ( open-stack )
-	X? ( wayland )
+	X? ( open-stack wayland )
 "
 
 _set_check_reqs_requirements() {
