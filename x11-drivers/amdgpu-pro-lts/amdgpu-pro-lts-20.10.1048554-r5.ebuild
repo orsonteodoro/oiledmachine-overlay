@@ -174,10 +174,6 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	   x11-libs/libXinerama[${MULTILIB_USEDEP}]
 	   x11-libs/libXrandr[${MULTILIB_USEDEP}]
 	   x11-libs/libXrender[${MULTILIB_USEDEP}] )"
-# hsakmt requires libnuma.so.1
-# kmstest requires libkms
-# amdgpu_dri.so requires wayland?
-# vdpau requires llvm7
 S="${WORKDIR}"
 REQUIRED_USE="
 	amf? ( pro-stack )
