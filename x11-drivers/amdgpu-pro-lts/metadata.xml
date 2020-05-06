@@ -23,38 +23,6 @@
 
     The open-stack (with Mesa OpenGL) is recommended for comsumer products.
     The pro-stack (with Pro OpenGL) is recommend for Radeon Pro products.
-
-    The following are required for package.{accept_keywords,mask,unmask} if
-    hwe is disabled:
-
-    Temporary masks required:
-    <![CDATA[
-    >x11-base/xorg-drivers-1.19
-    >x11-base/xorg-server-1.19
-    >=x11-drivers/xf86-video-ati-19.1.0
-    >=x11-drivers/xf86-video-amdgpu-19.1.0
-    >=x11-drivers/xf86-input-libinput-0.29.0
-    ]>
-
-    Required unmasked dependencies:
-    <![CDATA[
-    ~x11-base/xorg-server-1.19::oiledmachine-overlay
-    ~x11-base/xorg-drivers-1.19::oiledmachine-overlay
-    x11-drivers/xf86-video-ati::oiledmachine-overlay
-    x11-drivers/xf86-input-libinput::oiledmachine-overlay if used
-    x11-drivers/xf86-video-amdgpu::oiledmachine-overlay
-    ]>
-
-    Required keywords dependencies:
-    <![CDATA[
-    x11-base/xorg-server::oiledmachine-overlay
-    x11-base/xorg-drivers::oiledmachine-overlay
-    x11-drivers/xf86-input-libinput::oiledmachine-overlay if used
-    =x11-drivers/xf86-input-keyboard-1.9.0::gentoo if used
-    =x11-drivers/xf86-input-mouse-1.9.3::gentoo if used
-    ]>
-
-    If the hwe USE flag is enabled, you may ignore the above 3 paragraphs.
   </longdescription>
   <use>
     <flag name="amf">Install the Accelerated Media Framework support.</flag>

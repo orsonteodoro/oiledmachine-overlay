@@ -185,6 +185,7 @@ REQUIRED_USE="
 	glamor? ( open-stack opengl_mesa )
 	gles2? ( egl || ( open-stack pro-stack ) )
 	hip-clang? ( pro-stack )
+	hwe
 	opencl? ( || ( opencl_orca opencl_pal ) pro-stack )
 	opencl_orca? ( opencl )
 	opencl_pal? ( opencl )
