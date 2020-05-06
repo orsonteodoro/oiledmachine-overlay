@@ -27,10 +27,6 @@ RESTRICT="fetch strip"
 
 IUSE="+checker denoiser embree +materials system-cffi system-tbb -systemwide test video_cards_radeonsi video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel video_cards_r600"
 
-# if amdgpu-pro is installed libgl-mesa-dev containing development headers and libs were pulled and noted in the Packages file:
-# amdgpu-pro 19.20.812932 -> libgl-mesa-dev 18.3.0-812932
-# amdgpu-pro 19.30.838629 -> libgl-mesa-dev 19.2.0-838629
-#
 NV_DRIVER_VERSION="368.39"
 RDEPEND="${PYTHON_DEPS}
 	dev-lang/python[xml]
@@ -42,7 +38,7 @@ RDEPEND="${PYTHON_DEPS}
 		virtual/opencl
 		video_cards_nvidia? ( >=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION} )
 		video_cards_fglrx? ( || ( x11-drivers/ati-drivers ) )
-		video_cards_amdgpu? ( || ( dev-util/amdapp x11-drivers/amdgpu-pro[opencl] ) )
+		video_cards_amdgpu? ( || ( x11-drivers/amdgpu-pro[developer,open-stack] x11-drivers/amdgpu-pro-lts[developer,open-stack] ) )
 	)
 	>=media-libs/freeimage-3.17.0
 	embree? ( media-libs/embree:2[tbb,raymask] )
