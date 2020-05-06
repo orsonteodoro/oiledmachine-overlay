@@ -230,11 +230,7 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | www-misc/rtv | This is a command line Reddit client which has been updated. |
 | www-misc/socli | This is a Stack Overflow command line client. |
 | www-servers/civetweb | Kept around for urho3d. |
-| x11-base/xorg-drivers | Kept around for amdgpu-pro requirement for older xorg-server ABI. |
-| x11-base/xorg-server | Kept around for amdgpu-pro requirement for older xorg-server ABI.  |
-| x11-drivers/amdgpu-pro | This package will assist on installing AMD driver on Gentoo.  You need to have mask `>=x11-base/xorg-server-1.20` and `>=x11-base/xorg-drivers-1.20` .  You need to also `emerge -C xorg-servers xorg-drivers xf86-video-ati xf86-video-amdgpu x11-drivers/xf86-input-keyboard x11-drivers/xf86-input-mouse x11-drivers/xf86-input-libinput` .  Then, you need to just `emerge -pvuDN world` .  Make sure that you already emerged xorg-x11 (or both the xorg-drivers and xorg-server) before you do that.  Use my sys-kernel/ot-sources if you want freesync support in the 4.x kernel series or use the recent 5.x git-sources kernel with freesync support.  The open source driver tends to be faster but a bit buggy, but the proprietary driver is more feature complete and less bugs encountered.  <br /><br />
-| x11-drivers/xf86-input-libinput | Kept around for amdgpu-pro requirement for older xorg-server ABI. |
-| x11-drivers/xf86-video-amdgpu | Kept around for amdgpu-pro requirement for older xorg-server ABI. |
-| x11-drivers/xf86-video-ati | Kept around for amdgpu-pro requirement for older xorg-server ABI. |
+| x11-drivers/amdgpu-pro | This is the unilib version of the AMDGPU-PRO driver.<br /><br />
+| x11-drivers/amdgpu-pro-lts | This is the semi multilib version of the AMDGPU-PRO driver that is more feature rich.<br /><br />
 | x11-wm/dwm | This ebuild fixes the emoji titlebar crash and has integrated Fibonacci layout patch applied. |
 | x11-wm/xpra | This is an alternative VNC like client.  It's kept around for Firejail.
