@@ -62,6 +62,7 @@ PKG_ARCH="ubuntu"
 PKG_ARCH_VER="18.04"
 PKG_ARCH_SUFFIX="_"
 PKG_VER_AMF="1.4.16"
+PKG_VER_GCC="5.2.0"
 PKG_VER_GLAMOR="1.19.0"
 PKG_VER_GST_OMX="1.0.0.1"
 PKG_VER_GST=$(ver_cut 1-2 ${PKG_VER_GST_OMX})
@@ -83,7 +84,7 @@ VULKAN_SDK_VER="1.1.121.1"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="+amf developer dkms doc +egl +gles2 freesync glamor hip-clang hwe \
+IUSE="+amf developer dkms doc +egl +gles2 freesync glamor hip-clang +hwe \
 +open-stack +opencl +opencl_orca +opencl_pal +opengl +opengl_pro opengl_mesa \
 openmax osmesa +pro-stack roct +vaapi +vdpau +vulkan wayland +X xa"
 SLOT="1"
@@ -95,13 +96,11 @@ SLOT="1"
 # For more info on VIDEODRV see https://www.x.org/wiki/XorgModuleABIVersions/
 # sys-libs/ncurses[tinfo] required by llvm in this package
 
-#	>=sys-devel/lld-7.0.0
-#	>=sys-devel/llvm-7.0.0
-# libglapi.so.0 needs libselinux
 RDEPEND="!x11-drivers/amdgpu-pro
 	 dev-util/cunit
-	 dev-libs/libedit
+	 dev-libs/libedit:2[${MULTILIB_USEDEP}]
 	 dkms? ( || ( sys-kernel/amdgpu-dkms sys-kernel/rock-dkms ) )
+	 dev-libs/libffi-compat[${MULTILIB_USEDEP}]
 	 freesync? ( || (
 		>=sys-kernel/amdgpu-dkms-18.50
 		>=sys-kernel/aufs-sources-5.0
@@ -135,12 +134,13 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
 	 opencl? (  >=sys-devel/gcc-5.2.0
 		    app-eselect/eselect-opencl )
-	 opengl? (  >=sys-devel/gcc-5.2.0
-		    >=app-eselect/eselect-opengl-1.0.7 )
-	 openmax? ( >=media-libs/mesa-${PKG_VER_MESA}[openmax] )
+	 opengl? ( >=app-eselect/eselect-opengl-1.0.7 )
+	 openmax? ( >=media-libs/mesa-${PKG_VER_MESA}[openmax]
+		    media-libs/libomxil-bellagio )
 	 roct? ( !dev-libs/roct-thunk-interface
 		  sys-process/numactl )
-	 >=sys-libs/libselinux-1.32
+	 >=sys-devel/gcc-${PKG_VER_GCC}
+	 >=sys-libs/libselinux-1.32[${MULTILIB_USEDEP}]
 	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
 	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}]
 	  vaapi? (  >=media-libs/mesa-${PKG_VER_MESA}[-vaapi] )
@@ -148,16 +148,26 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
 	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
 		    >=media-libs/vulkan-loader-${VULKAN_SDK_VER} )
-	 >=x11-base/xorg-drivers-1.19
-	  <x11-base/xorg-drivers-1.20
+	 X? (
+	 hwe? (
+		>=x11-base/xorg-drivers-1.20
+		<x11-base/xorg-drivers-1.21
+		>=x11-base/xorg-server-1.20[-minimal,glamor(+)]
+		<x11-base/xorg-server-1.21[-minimal,glamor(+)]
+	 )
+	 !hwe? (
+		>=x11-base/xorg-drivers-1.19
+		<x11-base/xorg-drivers-1.20
+		>=x11-base/xorg-server-1.19[-minimal,glamor(+)]
+		<x11-base/xorg-server-1.20[-minimal,glamor(+)]
+	 )
 	   x11-base/xorg-proto
-	 >=x11-base/xorg-server-1.19[-minimal,glamor(+)]
 	 >=x11-libs/libdrm-${PKG_VER_LIBDRM}[libkms]
 	   x11-libs/libX11[${MULTILIB_USEDEP}]
 	   x11-libs/libXext[${MULTILIB_USEDEP}]
 	   x11-libs/libXinerama[${MULTILIB_USEDEP}]
 	   x11-libs/libXrandr[${MULTILIB_USEDEP}]
-	   x11-libs/libXrender[${MULTILIB_USEDEP}]"
+	   x11-libs/libXrender[${MULTILIB_USEDEP}] )"
 # hsakmt requires libnuma.so.1
 # kmstest requires libkms
 # amdgpu_dri.so requires wayland?
@@ -165,7 +175,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 S="${WORKDIR}"
 REQUIRED_USE="
 	amf? ( pro-stack )
-	egl? ( || ( open-stack pro-stack ) X )
+	egl? ( || ( open-stack pro-stack ) wayland X )
 	glamor? ( open-stack opengl_mesa )
 	gles2? ( egl || ( open-stack pro-stack ) )
 	hip-clang? ( pro-stack )
@@ -174,14 +184,15 @@ REQUIRED_USE="
 	opencl_pal? ( opencl )
 	opengl? ( ^^ ( opengl_mesa opengl_pro ) )
 	opengl_mesa? ( open-stack opengl X )
-	opengl_pro? ( egl pro-stack opengl X )
+	opengl_pro? ( egl pro-stack opengl wayland X )
 	osmesa? ( open-stack )
 	roct? ( dkms pro-stack )
 	vaapi? ( open-stack )
 	vdpau? ( open-stack )
-	vulkan? ( || ( open-stack pro-stack ) )
+	vulkan? ( || ( open-stack pro-stack ) wayland )
 	wayland? ( open-stack )
 	xa? ( open-stack )
+	X? ( wayland )
 "
 
 _set_check_reqs_requirements() {
@@ -232,6 +243,14 @@ pkg_setup() {
 driver to work"
 
 	linux-info_pkg_setup
+
+	if use hwe ; then
+		ewarn "The hwe USE flag is still broken."
+	fi
+
+	if use opengl_mesa ; then
+		ewarn "The opengl_mesa USE flag is still broken."
+	fi
 
 	if use opencl_pal ; then
 		einfo \
@@ -372,9 +391,11 @@ src_unpack_open_stack() {
 
 	if use X ; then
 		if [[ "${ABI}" == "amd64" ]] ; then
-			unpack_deb "${d_debs}/xserver-xorg-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-			use hwe && \
-			unpack_deb "${d_debs}/xserver-xorg-hwe-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+			if use hwe ; then
+				unpack_deb "${d_debs}/xserver-xorg-hwe-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+			else
+				unpack_deb "${d_debs}/xserver-xorg-amdgpu-video-amdgpu_${PKG_VER_XORG_VIDEO_AMDGPU_DRV}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+			fi
 		fi
 		# no x86 ABI
 	fi
@@ -432,9 +453,11 @@ src_unpack_pro_stack() {
 
 	if use opengl_pro ; then
 		unpack_deb "${d_debs}/libgl1-amdgpu-pro-appprofiles_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${archall}.deb"
-		use hwe && \
-		unpack_deb "${d_debs}/libgl1-amdgpu-pro-ext-hwe_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
-		unpack_deb "${d_debs}/libgl1-amdgpu-pro-ext_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
+		if use hwe ; then
+			unpack_deb "${d_debs}/libgl1-amdgpu-pro-ext-hwe_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
+		else
+			unpack_deb "${d_debs}/libgl1-amdgpu-pro-ext_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
+		fi
 		unpack_deb "${d_debs}/libgl1-amdgpu-pro-dri_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 		unpack_deb "${d_debs}/libgl1-amdgpu-pro-glx_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 	fi
@@ -568,7 +591,7 @@ src_install() {
 			if [[ -d "${ED}/${od_amdgpu}/lib/${chost}/llvm-9.0/share/opt-viewer" ]] ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/llvm-9.0/share/opt-viewer/"*.py || die
 			fi
-			if use open-stack ; then
+			if use open-stack  && ( use X || use hwe ) ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib/xorg/modules/drivers/"*.so* || die
 			fi
 			if use glamor ; then
