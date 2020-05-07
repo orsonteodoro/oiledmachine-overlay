@@ -252,6 +252,8 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+	ewarn "This version may no longer work."
+
 	if ! grep -q -e "Added amdgpu-pro, amdgpu-pro-lts support" \
 		"${EROOT}/usr/share/eselect/modules/opengl.eselect" ; then
 		die "You need eselect-opengl from the oiledmachine-overlay."
