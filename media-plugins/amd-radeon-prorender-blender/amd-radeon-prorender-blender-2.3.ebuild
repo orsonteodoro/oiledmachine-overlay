@@ -3,48 +3,57 @@
 
 EAPI=6
 
-PYTHON_COMPAT=( python3_{7,8} ) # same as blender
-# for blender's python-single-r1
-
-inherit unpacker python-single-r1
-
-DESCRIPTION="An OpenCL accelerated scaleable raytracing rendering engine for Blender"
+DESCRIPTION="An OpenCL accelerated scaleable raytracing rendering engine for \
+Blender"
 HOMEPAGE="https://www.amd.com/en/technologies/radeon-prorender-blender"
-HOMEPAGE_DL="https://www.amd.com/en/support/kb/release-notes/rn-prorender-blender-v2-3-blender-2-80-2-81-2-82"
-
+HOMEPAGE_DL=\
+"https://www.amd.com/en/support/kb/release-notes/rn-prorender-blender-v2-3-blender-2-80-2-81-2-82"
+LICENSE="AMD-RADEON-PRORENDER-BLENDER-EULA \
+	AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES \
+	PSF-2 MIT BSD BSD-2 CC-BY"
+KEYWORDS="~amd64"
 PLUGIN_NAME="rprblender"
 S_FN1="radeonprorenderblender_ubuntu.zip"
 S_FN2="radeonprorendermateriallibraryinstaller.run"
 D_FN1="${P}-plugin.zip"
 D_FN2="${P}-matlib.run"
-SRC_URI="https://drivers.amd.com/other/ver_2.x/${S_FN1} -> ${D_FN1}
-	materials? ( https://drivers.amd.com/other/${S_FN2} -> ${D_FN2} )"
-
 MIN_BLENDER_V="2.80"
-MAX_BLENDER_V="2.82"
-
-RESTRICT="fetch strip"
-
-IUSE="denoiser embree +materials system-cffi system-tbb -systemwide test video_cards_radeonsi video_cards_nvidia video_cards_fglrx video_cards_amdgpu video_cards_intel video_cards_r600"
-
-NV_DRIVER_VERSION="368.39"
+MAX_BLENDER_V="2.83" # exclusive
+SLOT="0"
+IUSE="denoiser embree +materials opengl_mesa system-cffi system-tbb \
+-systemwide test video_cards_amdgpu video_cards_intel video_cards_nvidia \
+video_cards_r600 video_cards_radeonsi"
+NV_DRIVER_VERSION="368.39" # >= OpenCL 1.2
+PYTHON_COMPAT=( python3_{7,8} ) # same as blender
+inherit python-single-r1
 RDEPEND="${PYTHON_DEPS}
-	dev-lang/python[xml]
-	>=media-gfx/blender-2.80[${PYTHON_SINGLE_USEDEP},opensubdiv]
-	<media-gfx/blender-2.83[${PYTHON_SINGLE_USEDEP},opensubdiv]
-	media-libs/opensubdiv[opencl]
-	video_cards_amdgpu? ( media-libs/mesa )
 	|| (
+		video_cards_nvidia? (
+			>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION} )
+		video_cards_amdgpu? (
+			opengl_mesa? (
+				|| (
+		x11-drivers/amdgpu-pro[X,developer,open-stack,opengl_mesa,opencl]
+		x11-drivers/amdgpu-pro-lts[X,developer,open-stack,opengl_mesa,opencl]
+				) )
+			!opengl_mesa? ( || ( x11-drivers/amdgpu-pro[opencl] \
+					x11-drivers/amdgpu-pro-lts[opencl] ) )
+		)
 		virtual/opencl
-		video_cards_nvidia? ( >=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION} )
-		video_cards_fglrx? ( || ( x11-drivers/ati-drivers ) )
-		video_cards_amdgpu? ( || ( x11-drivers/amdgpu-pro[developer,open-stack] x11-drivers/amdgpu-pro-lts[developer,open-stack] ) )
 	)
-	>=media-libs/freeimage-3.17.0
-	embree? ( media-libs/embree:2[tbb,raymask] )
 	denoiser? ( >=media-libs/openimageio-1.2.3 )
-	sys-devel/gcc[openmp]
+	dev-lang/python[xml]
 	dev-libs/libbsd
+	$(python_gen_cond_dep 'dev-python/numpy[${PYTHON_MULTI_USEDEP}]')
+	embree? ( media-libs/embree:2[tbb,raymask] )
+	video_cards_amdgpu? ( media-libs/mesa )
+	>=media-gfx/blender-${MIN_BLENDER_V}[${PYTHON_SINGLE_USEDEP},opensubdiv]
+	 <media-gfx/blender-${MAX_BLENDER_V}[${PYTHON_SINGLE_USEDEP},opensubdiv]
+	>=media-libs/freeimage-3.17.0
+	  media-libs/opensubdiv[opencl]
+	sys-devel/gcc[openmp]
+	system-cffi? ( $(python_gen_cond_dep 'dev-python/cffi[${PYTHON_MULTI_USEDEP}]') )
+	system-tbb? ( dev-cpp/tbb )
 	x11-libs/libX11
 	x11-libs/libXau
 	x11-libs/libxcb
@@ -53,25 +62,18 @@ RDEPEND="${PYTHON_DEPS}
 	x11-libs/libXext
 	x11-libs/libXfixes
 	x11-libs/libxshmfence
-	x11-libs/libXxf86vm
-	$(python_gen_cond_dep 'dev-python/numpy[${PYTHON_MULTI_USEDEP}]')
-	system-cffi? ( $(python_gen_cond_dep 'dev-python/cffi[${PYTHON_MULTI_USEDEP}]') )
-	system-tbb? ( dev-cpp/tbb )
-	"
+	x11-libs/libXxf86vm"
 DEPEND="${RDEPEND}"
-REQUIRED_USE="${PYTHON_REQUIRED_USE}
-	     "
-
-LICENSE="AMD-RADEON-PRORENDER-BLENDER-EULA AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES PSF-2 MIT BSD BSD-2 CC-BY"
-KEYWORDS="~amd64"
-SLOT="0"
-
+REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+RESTRICT="fetch strip"
+inherit unpacker
+SRC_URI="https://drivers.amd.com/other/ver_2.x/${S_FN1} -> ${D_FN1}
+	materials? ( https://drivers.amd.com/other/${S_FN2} -> ${D_FN2} )"
+S="${WORKDIR}"
 S_PLUGIN="${WORKDIR}/${PN}-${PV}-plugin"
 S_MATLIB="${WORKDIR}/${PN}-${PV}-matlib"
-S="${WORKDIR}"
-INTERNAL_PV="2.3.4"
-
 D_MATERIALS="/usr/share/${PN}/Radeon_ProRender/Blender/Material_Library"
+INTERNAL_PV="2.3.4"
 
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
@@ -126,7 +128,8 @@ src_install_matlib() {
 		cd "${S_MATLIB}" || die
 		einfo "Copying materials..."
 		dodir "${D_MATERIALS}"
-		cp -a "${S_MATLIB}"/matlib/feature_MaterialLibrary/* "${ED}/${D_MATERIALS}" || die
+		cp -a "${S_MATLIB}"/matlib/feature_MaterialLibrary/* \
+			"${ED}/${D_MATERIALS}" || die
 	fi
 }
 
@@ -154,7 +157,7 @@ src_install_systemwide() {
 
 	for d_ver in ${DIRS} ; do
 		if ver_test ${MIN_BLENDER_V} -le ${d_ver} \
-			&& ver_test ${d_ver} -ge ${MAX_BLENDER_V}.999 ; then
+			&& ver_test ${d_ver} -lt ${MAX_BLENDER_V} ; then
 			einfo "Blender ${d_ver} is supported.  Installing..."
 			d_install="/usr/share/blender/${d_ver}/scripts/addons_contrib/${PLUGIN_NAME}"
 			ed_install="${ED}/${d_install}"
