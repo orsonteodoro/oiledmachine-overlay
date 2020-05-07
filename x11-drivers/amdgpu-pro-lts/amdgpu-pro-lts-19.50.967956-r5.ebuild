@@ -99,6 +99,34 @@ SLOT="1"
 RDEPEND="!x11-drivers/amdgpu-pro
 	 dev-util/cunit
 	 dev-libs/libedit:2[${MULTILIB_USEDEP}]
+	 developer? (
+		egl? (
+			x11-base/xorg-proto
+			x11-libs/libX11
+			x11-libs/libXdamage
+			x11-libs/libXext
+			x11-libs/libXfixes
+			x11-libs/libXxf86vm
+			x11-libs/libxcb
+			x11-libs/libxshmfence
+		)
+		opengl_mesa? (
+			x11-base/xorg-proto
+			x11-libs/libX11
+			x11-libs/libXdamage
+			x11-libs/libXext
+			x11-libs/libXfixes
+			x11-libs/libXxf86vm
+			x11-libs/libxcb
+			x11-libs/libxshmfence
+		)
+		open-stack? (
+			X? ( x11-libs/libX11 )
+			sys-libs/ncurses[tinfo]
+			virtual/libffi
+			virtual/libudev
+		)
+	 )
 	 dkms? ( || ( sys-kernel/amdgpu-dkms sys-kernel/rock-dkms ) )
 	 dev-libs/libffi-compat[${MULTILIB_USEDEP}]
 	 freesync? ( || (
@@ -171,6 +199,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 S="${WORKDIR}"
 REQUIRED_USE="
 	amf? ( pro-stack )
+	developer? ( opengl_mesa? ( X ) )
 	egl? ( || ( open-stack pro-stack ) wayland X )
 	glamor? ( open-stack opengl X )
 	gles2? ( egl || ( open-stack pro-stack ) )
@@ -182,8 +211,8 @@ REQUIRED_USE="
 	opencl_pal? ( opencl )
 	opengl? ( ^^ ( opengl_mesa opengl_pro ) )
 	opengl_mesa? ( open-stack opengl X )
-	opengl_pro? ( egl pro-stack opengl wayland X )
-	osmesa? ( open-stack )
+	opengl_pro? ( egl !glamor opengl pro-stack wayland X )
+	osmesa? ( developer? ( X ) open-stack )
 	roct? ( dkms pro-stack )
 	vaapi? ( open-stack )
 	vdpau? ( open-stack )
@@ -304,14 +333,14 @@ src_unpack_open_stack() {
 	# enabled on >=llvm-10.  Gentoo only use split llvm libraries
 	# but the driver components use the shared.
 	unpack_deb "${d_debs}/libllvm${PKG_VER_LLVM}-amdgpu_${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-	use developer && \
-	unpack_deb "${d_debs}/llvm-amdgpu-${PKG_VER_LLVM}-dev_${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-	unpack_deb "${d_debs}/llvm-amdgpu-${PKG_VER_LLVM}-runtime_${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-	unpack_deb "${d_debs}/llvm-amdgpu-${PKG_VER_LLVM}_${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-	use developer && \
-	unpack_deb "${d_debs}/llvm-amdgpu-dev_${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-	unpack_deb "${d_debs}/llvm-amdgpu-runtime_${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-	unpack_deb "${d_debs}/llvm-amdgpu_${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+	if use developer ; then
+		unpack_deb "${d_debs}/llvm-amdgpu-${PKG_VER_LLVM}-dev_${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		unpack_deb "${d_debs}/llvm-amdgpu-${PKG_VER_LLVM}-runtime_${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		unpack_deb "${d_debs}/llvm-amdgpu-${PKG_VER_LLVM}_${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		unpack_deb "${d_debs}/llvm-amdgpu-dev_${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		unpack_deb "${d_debs}/llvm-amdgpu-runtime_${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		unpack_deb "${d_debs}/llvm-amdgpu_${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+	fi
 
 	if use egl ; then
 		unpack_deb "${d_debs}/libegl1-amdgpu-mesa_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
@@ -339,12 +368,13 @@ src_unpack_open_stack() {
 		fi
 	fi
 
+	use X && use developer && \
+	unpack_deb "${d_debs}/mesa-amdgpu-common-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+
 	if use opengl_mesa ; then
 		unpack_deb "${d_debs}/libgl1-amdgpu-mesa-glx_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 		use developer && \
 		unpack_deb "${d_debs}/libgl1-amdgpu-mesa-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		use developer && \
-		unpack_deb "${d_debs}/mesa-amdgpu-common-dev_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 	fi
 
 	if use osmesa ; then
@@ -584,8 +614,8 @@ src_install() {
 				chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/vdpau/"*.so* || die
 			fi
 			chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/llvm-9.0/lib/"*.so* || die
-			chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/llvm-9.0/bin/"* || die
-			if [[ -d "${ED}/${od_amdgpu}/lib/${chost}/llvm-9.0/share/opt-viewer" ]] ; then
+			if use developer ; then
+				chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/llvm-9.0/bin/"* || die
 				chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/llvm-9.0/share/opt-viewer/"*.py || die
 			fi
 			if use open-stack && ( use X || use hwe ) ; then
@@ -653,8 +683,10 @@ src_install() {
 		doman usr/share/man/man7/amdgpu-doc.7.gz
 	fi
 
-	insinto /usr/share/binfmts
-	doins usr/share/binfmts/llvm-amdgpu-9.0-runtime.binfmt
+	if use open-stack && use developer ; then
+		insinto /usr/share/binfmts
+		doins usr/share/binfmts/llvm-amdgpu-9.0-runtime.binfmt
+	fi
 
 	if use vdpau ; then
 		cat <<-EOF > "${T}"/50${P}-vdpau
