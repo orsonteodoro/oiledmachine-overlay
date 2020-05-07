@@ -311,6 +311,7 @@ check_kernel() {
 	fi
 	KERNEL_DIR="/usr/src/linux-${k}"
 	get_version || die
+	linux_config_exists
 	if use build || [[ "${EBUILD_PHASE_FUNC}" == "pkg_config" ]]; then
 		pkg_setup_error
 	else
@@ -399,6 +400,9 @@ sign_module() {
 
 signing_modules() {
 	local k="${1}"
+	KERNEL_DIR="/usr/src/linux-${k}"
+	get_version
+	linux_config_exists
 	if linux_chkconfig_builtin "MODULE_SIG" && use sign-modules ; then
 		local kd="/usr/src/linux-${k}"
 		local md="/lib/modules/${k}"
