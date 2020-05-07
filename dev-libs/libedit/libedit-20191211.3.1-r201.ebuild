@@ -41,6 +41,9 @@ multilib_src_configure() {
 multilib_src_install() {
 	emake DESTDIR="${D}" install
 	gen_usr_ldscript -a edit
+	# file collsion with libedit
+	rm -rf "${ED}/usr/$(get_libdir)/pkgconfig" || die
+	rm -rf "${ED}/usr/$(get_libdir)/${PN}.so" || die
 }
 
 multilib_src_install_all() {
@@ -48,9 +51,6 @@ multilib_src_install_all() {
 	find "${D}" -name '*.la' -delete || die
 	# file collision with sys-libs/readline
 	rm "${ED}/usr/share/man/man3/history.3" || die
-	# file collsion with libedit
-	rm -rf "${ED}/usr/lib64/pkgconfig" || die
-	rm -rf "${ED}/usr/lib64/${PN}.so" || die
 	rm -rf "${ED}/usr/share" || die
 	rm -rf "${ED}/usr/include" || die
 }
