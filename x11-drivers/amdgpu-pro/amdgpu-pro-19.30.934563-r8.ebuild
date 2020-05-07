@@ -90,6 +90,34 @@ SLOT="1"
 RDEPEND="!x11-drivers/amdgpu-pro
 	 >=dev-util/cunit-2.1_p3
 	 >=dev-libs/libedit-3.1
+	 developer? (
+		egl? (
+			x11-base/xorg-proto
+			x11-libs/libX11
+			x11-libs/libXdamage
+			x11-libs/libXext
+			x11-libs/libXfixes
+			x11-libs/libXxf86vm
+			x11-libs/libxcb
+			x11-libs/libxshmfence
+		)
+		opengl_mesa? (
+			x11-base/xorg-proto
+			x11-libs/libX11
+			x11-libs/libXdamage
+			x11-libs/libXext
+			x11-libs/libXfixes
+			x11-libs/libXxf86vm
+			x11-libs/libxcb
+			x11-libs/libxshmfence
+		)
+		open-stack? (
+			X? ( x11-libs/libX11 )
+			sys-libs/ncurses[tinfo]
+			virtual/libffi
+			virtual/libudev
+		)
+	 )
 	 dkms? ( || ( sys-kernel/amdgpu-dkms sys-kernel/rock-dkms ) )
 	 freesync? ( || (
 		>=sys-kernel/amdgpu-dkms-18.50
@@ -159,7 +187,7 @@ REQUIRED_USE="
 	opengl? ( ^^ ( opengl_mesa opengl_pro ) )
 	opengl_mesa? ( open-stack opengl X )
 	opengl_pro? ( egl pro-stack opengl X )
-	osmesa? ( open-stack )
+	osmesa? ( developer? ( X ) open-stack )
 	roct? ( dkms pro-stack )
 	vaapi? ( open-stack )
 	vdpau? ( open-stack )
@@ -262,14 +290,14 @@ src_unpack_open_stack() {
 	# shared libLLVM-9.so with -DLLVM_BUILD_LLVM_DYLIB=ON that is
 	# enabled on >=llvm-10.  Gentoo only use split llvm libraries
 	# but the driver components use the shared.
-	unpack_rpm "${d_rpms}/llvm${PKG_VER_LLVM/\./}-amdgpu-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-	use developer && \
-	unpack_rpm "${d_rpms}/llvm${PKG_VER_LLVM/\./}-amdgpu-devel-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-	unpack_rpm "${d_rpms}/llvm-amdgpu-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	unpack_rpm "${d_rpms}/llvm-amdgpu-libs-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-	unpack_rpm "${d_rpms}/llvm-amdgpu-static-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-	use developer && \
-	unpack_rpm "${d_rpms}/llvm-amdgpu-devel-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	if use developer ; then
+		unpack_rpm "${d_rpms}/llvm${PKG_VER_LLVM/\./}-amdgpu-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		unpack_rpm "${d_rpms}/llvm${PKG_VER_LLVM/\./}-amdgpu-devel-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		unpack_rpm "${d_rpms}/llvm-amdgpu-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		unpack_rpm "${d_rpms}/llvm-amdgpu-static-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		unpack_rpm "${d_rpms}/llvm-amdgpu-devel-${PKG_VER_LLVM}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	fi
 
 	if use egl ; then
 		unpack_rpm "${d_rpms}/mesa-amdgpu-libEGL-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
@@ -511,9 +539,9 @@ src_install() {
 			if use vdpau ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/vdpau/"*.so* || die
 			fi
-			chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-9.0/lib/"*.so* || die
-			chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-9.0/bin/"* || die
-			if [[ -d "${ED}/${od_amdgpu}/lib${b}/llvm-9.0/share/opt-viewer" ]] ; then
+			if use developer ; then
+				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-9.0/lib/"*.so* || die
+				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-9.0/bin/"* || die
 				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-9.0/share/opt-viewer/"*.py || die
 			fi
 			if use open-stack && use X ; then
