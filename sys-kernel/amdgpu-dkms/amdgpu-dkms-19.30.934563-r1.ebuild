@@ -157,6 +157,10 @@ pkg_setup_warn() {
 	CONFIG_CHECK=" !CC_OPTIMIZE_HARDER"
 	WARNING_CC_OPTIMIZE_HARDER=" CONFIG_CC_OPTIMIZE_HARDER must be not be set in the kernel .config or it may cause a runtime crash on loading the module."
 	check_extra_config
+
+	CONFIG_CHECK=" !GCC_PLUGIN_STACKLEAK"
+	WARNING_GCC_PLUGIN_STACKLEAK=" CONFIG_GCC_PLUGIN_STACKLEAK must be not be set in the kernel .config or it may cause module loading failure."
+	check_extra_config
 }
 
 pkg_setup_error() {
@@ -234,6 +238,10 @@ pkg_setup_error() {
 
 	CONFIG_CHECK=" !CC_OPTIMIZE_HARDER"
 	ERROR_CC_OPTIMIZE_HARDER=" CONFIG_CC_OPTIMIZE_HARDER must be not be set in the kernel .config or it may cause a runtime crash on loading the module."
+	check_extra_config
+
+	CONFIG_CHECK=" !GCC_PLUGIN_STACKLEAK"
+	ERROR_GCC_PLUGIN_STACKLEAK=" CONFIG_GCC_PLUGIN_STACKLEAK must be not be set in the kernel .config or it may cause module loading failure."
 	check_extra_config
 }
 
@@ -413,20 +421,6 @@ signing_modules() {
 	fi
 }
 
-remove_vanilla_driver() {
-	local b="${1}"
-	local path="${b}/${2}"
-	if [[ -f "${path}" ]] ; then
-		einfo "Removing vanilla $(basename ${path})"
-		rm "${path}" || die
-	fi
-}
-
-remove_vanilla_drivers() {
-	remove_vanilla_driver "${1}" "kernel/drivers/gpu/drm/amd/amdgpu/amdgpu.ko"
-	remove_vanilla_driver "${1}" "kernel/drivers/gpu/drm/amd/amdkfd/amdkfd.ko"
-}
-
 dkms_build() {
 	einfo "Running: \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH}\`"
 	dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} || die
@@ -434,7 +428,6 @@ dkms_build() {
 	dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} || die
 	einfo "The modules where installed in /lib/modules/${k}/updates"
 	signing_modules ${k}
-	remove_vanilla_drivers "/lib/modules/${k}"
 }
 
 check_modprobe_conf() {

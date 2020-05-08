@@ -154,6 +154,10 @@ pkg_setup_warn() {
 	CONFIG_CHECK=" !CC_OPTIMIZE_HARDER"
 	WARNING_CC_OPTIMIZE_HARDER=" CONFIG_CC_OPTIMIZE_HARDER must be not be set in the kernel .config or it may cause a runtime crash on loading the module."
 	check_extra_config
+
+	CONFIG_CHECK=" !GCC_PLUGIN_STACKLEAK"
+	WARNING_GCC_PLUGIN_STACKLEAK=" CONFIG_GCC_PLUGIN_STACKLEAK must be not be set in the kernel .config or it may cause module loading failure."
+	check_extra_config
 }
 
 pkg_setup_error() {
@@ -231,6 +235,10 @@ pkg_setup_error() {
 
 	CONFIG_CHECK=" !CC_OPTIMIZE_HARDER"
 	ERROR_CC_OPTIMIZE_HARDER=" CONFIG_CC_OPTIMIZE_HARDER must be not be set in the kernel .config or it may cause a runtime crash on loading the module."
+	check_extra_config
+
+	CONFIG_CHECK=" !GCC_PLUGIN_STACKLEAK"
+	ERROR_GCC_PLUGIN_STACKLEAK=" CONFIG_GCC_PLUGIN_STACKLEAK must be not be set in the kernel .config or it may cause module loading failure."
 	check_extra_config
 }
 
