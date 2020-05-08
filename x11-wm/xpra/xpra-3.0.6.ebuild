@@ -224,6 +224,8 @@ python_install_all() {
 }
 
 pkg_postinst() {
+	xdg_desktop_database_update
+	xdg_mimeinfo_database_update
 	einfo "You need to add yourself to the xpra, tty, dialout groups."
 	if use opengl ; then
 	  einfo "If you are using the amdgpu-pro driver, make sure you are"
@@ -241,4 +243,9 @@ pkg_postinst() {
 		einfo "Manually add jpeg or webp optional USE flags to pillow"
 		einfo "package to enable support for them."
 	fi
+}
+
+pkg_postrm() {
+	xdg_desktop_database_update
+	xdg_mimeinfo_database_update
 }
