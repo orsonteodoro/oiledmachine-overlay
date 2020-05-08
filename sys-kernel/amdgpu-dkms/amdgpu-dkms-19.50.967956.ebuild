@@ -167,6 +167,22 @@ pkg_setup_warn() {
 	CONFIG_CHECK=" !GCC_PLUGIN_STACKLEAK"
 	WARNING_GCC_PLUGIN_STACKLEAK=" CONFIG_GCC_PLUGIN_STACKLEAK must be not be set in the kernel .config or it may cause module loading failure."
 	check_extra_config
+
+	CONFIG_CHECK=" !GCC_PLUGIN_RANDSTRUCT"
+	WARNING_GCC_PLUGIN_RANDSTRUCT=" CONFIG_GCC_PLUGIN_RANDSTRUCT must be not be set in the kernel .config or it may cause module loading failure."
+	check_extra_config
+
+	CONFIG_CHECK=" !PLUGIN_STRUCTLEAK_USER"
+	WARNING_PLUGIN_STRUCTLEAK_USER=" CONFIG_PLUGIN_STRUCTLEAK_USER must be not be set in the kernel .config or it may cause module loading failure."
+	check_extra_config
+
+	CONFIG_CHECK=" !GCC_PLUGIN_STRUCTLEAK_BYREF"
+	WARNING_GCC_PLUGIN_STRUCTLEAK_BYREF=" CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF must be not be set in the kernel .config or it may cause module loading failure."
+	check_extra_config
+
+	CONFIG_CHECK=" !GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
+	WARNING_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL=" CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL must be not be set in the kernel .config or it may cause module loading failure."
+	check_extra_config
 }
 
 pkg_setup_error() {
@@ -248,6 +264,22 @@ pkg_setup_error() {
 
 	CONFIG_CHECK=" !GCC_PLUGIN_STACKLEAK"
 	ERROR_GCC_PLUGIN_STACKLEAK=" CONFIG_GCC_PLUGIN_STACKLEAK must be not be set in the kernel .config or it may cause module loading failure."
+	check_extra_config
+
+	CONFIG_CHECK=" !GCC_PLUGIN_RANDSTRUCT"
+	ERROR_GCC_PLUGIN_RANDSTRUCT=" CONFIG_GCC_PLUGIN_RANDSTRUCT must be not be set in the kernel .config or it may cause module loading failure."
+	check_extra_config
+
+	CONFIG_CHECK=" !PLUGIN_STRUCTLEAK_USER"
+	ERROR_PLUGIN_STRUCTLEAK_USER=" CONFIG_PLUGIN_STRUCTLEAK_USER must be not be set in the kernel .config or it may cause module loading failure."
+	check_extra_config
+
+	CONFIG_CHECK=" !GCC_PLUGIN_STRUCTLEAK_BYREF"
+	ERROR_GCC_PLUGIN_STRUCTLEAK_BYREF=" CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF must be not be set in the kernel .config or it may cause module loading failure."
+	check_extra_config
+
+	CONFIG_CHECK=" !GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
+	ERROR_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL=" CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL must be not be set in the kernel .config or it may cause module loading failure."
 	check_extra_config
 }
 
