@@ -33,7 +33,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	clipboard? ( || ( client server )
 		     || ( gtk3 ) )
 	cups? ( dbus )
-	gtk3? ( server X )
+	gtk3? ( client server X )
 	opengl? ( client )
 	pulseaudio? ( dbus )
 	sd_listen? ( systemd )
@@ -200,9 +200,9 @@ python_configure_all() {
 	)
 
 	if use gtk3 ; then
-		mydistutilsargs+=( --without-gtk2 --with-gtk3 )
+		mydistutilsargs+=( --with-gtk_x11 --without-gtk2 --with-gtk3 )
 	else
-		mydistutilsargs+=( --without-gtk2 --without-gtk3 )
+		mydistutilsargs+=( --without-gtk_x11 --without-gtk2 --without-gtk3 )
 	fi
 
 	# see https://www.xpra.org/trac/ticket/1080
