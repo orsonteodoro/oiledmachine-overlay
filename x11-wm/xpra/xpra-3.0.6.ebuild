@@ -33,10 +33,11 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	clipboard? ( || ( client server )
 		     || ( gtk3 ) )
 	cups? ( dbus )
-	gtk3? ( X )
+	gtk3? ( server X )
 	opengl? ( client )
+	pulseaudio? ( dbus )
 	sd_listen? ( systemd )
-	X? ( gtk3 )"
+	X? ( gtk3 server )"
 inherit multilib-build
 COMMON_DEPEND="${PYTHON_DEPS}
 	dev-lang/python[ssl?]
@@ -71,7 +72,7 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	opengl? (  dev-python/numpy[${PYTHON_USEDEP}] )
 	pam? ( sys-libs/pam )
 	pillow? ( dev-python/pillow[${PYTHON_USEDEP}] )
-	pulseaudio? ( media-sound/pulseaudio )
+	pulseaudio? ( media-sound/pulseaudio[dbus] )
 	sound? ( dev-libs/gobject-introspection
 		 dev-python/gst-python:1.0[${PYTHON_USEDEP}]
 		 media-libs/gstreamer:1.0
