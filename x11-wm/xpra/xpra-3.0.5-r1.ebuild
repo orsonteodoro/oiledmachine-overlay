@@ -230,14 +230,13 @@ pkg_postinst() {
 	einfo "You need to add yourself to the xpra, tty, dialout groups."
 	if use opengl ; then
 	  einfo "If you are using the amdgpu-pro driver, make sure you are"
-	  einfo "using the xorg-x11 driver and update your"
-	  einfo "/etc/X11/xorg.conf.d/20opengl.conf so that it has"
-	  einfo "/usr/$(get_libdir)/xorg/modules/drivers at the top as follows:"
+	  einfo "using Mesa GL.  To switch to Mesa GL do:"
 	  einfo ""
-	  einfo "Section \"Files\""
-	  einfo "        ModulePath \"/usr/$(get_libdir)/xorg/modules/drivers\""
-	  einfo "        ModulePath \"/usr/$(get_libdir)/xorg/modules\""
-	  einfo "EndSection"
+	  einfo "  eselect opengl set xorg-x11"
+	  einfo ""
+	  einfo "or"
+	  einfo ""
+	  einfo "  eselect opengl set amdgpu"
 	  einfo ""
 	fi
 	if use pillow ; then
