@@ -33,6 +33,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	clipboard? ( || ( client server )
 		     || ( gtk3 ) )
 	cups? ( dbus )
+	gtk3? ( X )
 	opengl? ( client )
 	sd_listen? ( systemd )
 	X? ( gtk3 )"
