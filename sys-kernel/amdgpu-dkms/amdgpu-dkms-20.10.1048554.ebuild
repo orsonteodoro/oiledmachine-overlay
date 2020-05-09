@@ -160,30 +160,6 @@ pkg_setup_warn() {
 	if [ ! -e "${ROOT}/usr/src/linux-${k}/Module.symvers" ] ; then
 		ewarn "Your kernel sources must have a Module.symvers in the root of the linux sources folder produced from a successful kernel compile beforehand in order to build this driver."
 	fi
-
-	CONFIG_CHECK=" !CC_OPTIMIZE_HARDER"
-	WARNING_CC_OPTIMIZE_HARDER=" CONFIG_CC_OPTIMIZE_HARDER must be not be set in the kernel .config or it may cause a runtime crash on loading the module."
-	check_extra_config
-
-	CONFIG_CHECK=" !GCC_PLUGIN_STACKLEAK"
-	WARNING_GCC_PLUGIN_STACKLEAK=" CONFIG_GCC_PLUGIN_STACKLEAK must be not be set in the kernel .config or it may cause module loading failure."
-	check_extra_config
-
-	CONFIG_CHECK=" !GCC_PLUGIN_RANDSTRUCT"
-	WARNING_GCC_PLUGIN_RANDSTRUCT=" CONFIG_GCC_PLUGIN_RANDSTRUCT must be not be set in the kernel .config or it may cause module loading failure."
-	check_extra_config
-
-	CONFIG_CHECK=" !PLUGIN_STRUCTLEAK_USER"
-	WARNING_PLUGIN_STRUCTLEAK_USER=" CONFIG_PLUGIN_STRUCTLEAK_USER must be not be set in the kernel .config or it may cause module loading failure."
-	check_extra_config
-
-	CONFIG_CHECK=" !GCC_PLUGIN_STRUCTLEAK_BYREF"
-	WARNING_GCC_PLUGIN_STRUCTLEAK_BYREF=" CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF must be not be set in the kernel .config or it may cause module loading failure."
-	check_extra_config
-
-	CONFIG_CHECK=" !GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
-	WARNING_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL=" CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL must be not be set in the kernel .config or it may cause module loading failure."
-	check_extra_config
 }
 
 pkg_setup_error() {
@@ -258,30 +234,6 @@ pkg_setup_error() {
 	if [ ! -e "${ROOT}/usr/src/linux-${k}/Module.symvers" ] ; then
 		die "Your kernel sources must have a Module.symvers in the root folder produced from a successful kernel compile beforehand in order to build this driver."
 	fi
-
-	CONFIG_CHECK=" !CC_OPTIMIZE_HARDER"
-	ERROR_CC_OPTIMIZE_HARDER=" CONFIG_CC_OPTIMIZE_HARDER must be not be set in the kernel .config or it may cause a runtime crash on loading the module."
-	check_extra_config
-
-	CONFIG_CHECK=" !GCC_PLUGIN_STACKLEAK"
-	ERROR_GCC_PLUGIN_STACKLEAK=" CONFIG_GCC_PLUGIN_STACKLEAK must be not be set in the kernel .config or it may cause module loading failure."
-	check_extra_config
-
-	CONFIG_CHECK=" !GCC_PLUGIN_RANDSTRUCT"
-	ERROR_GCC_PLUGIN_RANDSTRUCT=" CONFIG_GCC_PLUGIN_RANDSTRUCT must be not be set in the kernel .config or it may cause module loading failure."
-	check_extra_config
-
-	CONFIG_CHECK=" !PLUGIN_STRUCTLEAK_USER"
-	ERROR_PLUGIN_STRUCTLEAK_USER=" CONFIG_PLUGIN_STRUCTLEAK_USER must be not be set in the kernel .config or it may cause module loading failure."
-	check_extra_config
-
-	CONFIG_CHECK=" !GCC_PLUGIN_STRUCTLEAK_BYREF"
-	ERROR_GCC_PLUGIN_STRUCTLEAK_BYREF=" CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF must be not be set in the kernel .config or it may cause module loading failure."
-	check_extra_config
-
-	CONFIG_CHECK=" !GCC_PLUGIN_STRUCTLEAK_BYREF_ALL"
-	ERROR_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL=" CONFIG_GCC_PLUGIN_STRUCTLEAK_BYREF_ALL must be not be set in the kernel .config or it may cause module loading failure."
-	check_extra_config
 }
 
 # The sandbox/ebuild doesn't allow to check in setup phase
@@ -466,8 +418,8 @@ signing_modules() {
 dkms_build() {
 	einfo "Running: \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH}\`"
 	dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} || die
-	einfo "Running: \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH}\`"
-	dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} || die
+	einfo "Running: \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} --force\`"
+	dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} --force || die
 	einfo "The modules where installed in /lib/modules/${k}/updates"
 	signing_modules ${k}
 }
