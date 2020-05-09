@@ -37,6 +37,7 @@
   <flag name="enc_ffmpeg">Enable advanced ffmpeg/libav encoder support.</flag>
   <flag name="enc_x264">Enable x264 encoder support.</flag>
   <flag name="enc_x265">Enable x265 encoder support.</flag>
+  <flag name="firejail">Checks for proper Firejail support.</flag>
   <flag name="gtk2">Uses GTK2 library to create the GUI.</flag>
   <flag name="gtk3">Uses GTK3 library to create the GUI.</flag>
   <flag name="html5">Enables the HTML5 client allowing to view a xpra session

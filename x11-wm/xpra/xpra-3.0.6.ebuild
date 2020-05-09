@@ -11,9 +11,9 @@ KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
 # PyCObject_Check and PyCObject_AsVoidPtr vanished with python 3.3
 PYTHON_COMPAT=( python3_{6,7,8} )
 IUSE="  avahi +client +clipboard csc_swscale csc_libyuv cuda cuda_rebuild cups \
-	dbus dec_avcodec2 enc_ffmpeg enc_x264 enc_x265 gtk3 html5 \
+	dbus dec_avcodec2 enc_ffmpeg enc_x264 enc_x265 firejail gtk3 html5 \
 	html5_gzip html5_brotli jpeg libav +lz4 lzo opengl minify \
-	+notifications nvenc nvfbc pam pillow pulseaudio sd_listen ssl server \
+	+notifications nvenc nvfbc pam pillow pulseaudio sd_listen ssl +server \
 	sound systemd test vpx vsock v4l2 webcam webp websockets X xdg"
 REQUIRED_USE="  ^^ (	python_targets_python3_6 \
 			python_targets_python3_7 \
@@ -33,12 +33,12 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	clipboard? ( || ( client server )
 		     || ( gtk3 ) )
 	cups? ( dbus )
-	gtk3? ( client server X )
+	firejail? ( client server )
+	gtk3? ( X )
 	opengl? ( client )
-	pulseaudio? ( dbus )
 	sd_listen? ( systemd )
-	X? ( gtk3 server )"
-inherit multilib-build
+	sound? ( pulseaudio )
+	X? ( gtk3 )"
 COMMON_DEPEND="${PYTHON_DEPS}
 	dev-lang/python[ssl?]
 	dev-python/pygtk:2[python_targets_python2_7]
@@ -72,11 +72,12 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	opengl? (  dev-python/numpy[${PYTHON_USEDEP}] )
 	pam? ( sys-libs/pam )
 	pillow? ( dev-python/pillow[${PYTHON_USEDEP}] )
-	pulseaudio? ( media-sound/pulseaudio[dbus] )
+	pulseaudio? ( media-sound/pulseaudio[dbus?] )
 	sound? ( dev-libs/gobject-introspection
 		 dev-python/gst-python:1.0[${PYTHON_USEDEP}]
 		 media-libs/gstreamer:1.0
-		 media-libs/gst-plugins-base:1.0 )
+		 media-libs/gst-plugins-base:1.0
+		 media-plugins/gst-plugins-meta:1.0[pulseaudio?] )
 	systemd? ( sys-apps/systemd )
 	v4l2? ( media-video/v4l2loopback
 		sys-kernel/linux-headers )
@@ -122,6 +123,10 @@ S="${WORKDIR}/xpra-${MY_PV//_/-}"
 RESTRICT="mirror"
 
 pkg_setup() {
+	use cuda && einfo "The cuda USE flag has not been tested.  Left for ebuild developers with that GPU to work on."
+	use nvenc && einfo "The nvenc USE flag has not been tested.  Left for ebuild developers with that GPU to work on."
+	use nvfbc && einfo "The nvfbc USE flag has not been tested.  Left for ebuild developers with that GPU to work on."
+
 	if use v4l2 ; then
 		CONFIG_CHECK="~VIDEO_V4L2"
 		WARNING_VIDEO_V4L2="You need CONFIG_VIDEO_V4L2 kernel config"
@@ -130,11 +135,8 @@ pkg_setup() {
 	fi
 }
 
-pkg_postinst() {
-	enewgroup ${PN}
-	tmpfiles_process /usr/lib/tmpfiles.d/xpra.conf
-
-	xdg_pkg_postinst
+src_prepare() {
+	distutils-r1_src_prepare
 }
 
 python_prepare_all() {
@@ -142,10 +144,16 @@ python_prepare_all() {
 	hprefixify tmpfiles.d/xpra.conf xpra/server/{server,socket}_util.py \
 		xpra/platform{/xposix,}/paths.py xpra/scripts/server.py
 
+	sed -i -e "s|opengl = probe|#opengl = probe|g" \
+		etc/xpra/conf.d/40_client.conf.in || die
 	if use opengl ; then
-		echo \
-'xvfb=Xorg -noreset -nolisten tcp +extension GLX +extension RANDR +extension RENDER -config xorg.dummy.conf' \
-			>> "${S}"/etc/xpra/xpra.conf.in || die
+		sed -i -e "s|#opengl = yes|opengl = yes|g" \
+			etc/xpra/conf.d/40_client.conf.in || die
+	else
+		sed -i -e "s|#opengl = no|opengl = no|g" \
+			etc/xpra/conf.d/40_client.conf.in || die
+		sed -i -e 's|"+extension", "GLX"|"-extension", "GLX"|g' \
+			xpra/scripts/config.py || die
 	fi
 
 	distutils-r1_python_prepare_all
@@ -225,27 +233,39 @@ python_install_all() {
 }
 
 pkg_postinst() {
-	xdg_desktop_database_update
-	xdg_mimeinfo_database_update
+	enewgroup ${PN}
+	tmpfiles_process /usr/lib/tmpfiles.d/xpra.conf
+	xdg_pkg_postinst
 	einfo "You need to add yourself to the xpra, tty, dialout groups."
 	if use opengl ; then
 	  einfo "If you are using the amdgpu-pro driver, make sure you are"
-	  einfo "using Mesa GL.  To switch to Mesa GL do:"
-	  einfo ""
-	  einfo "  eselect opengl set xorg-x11"
-	  einfo ""
-	  einfo "or"
+	  einfo "using Mesa GL.  To switch to open-stack Mesa GL do:"
 	  einfo ""
 	  einfo "  eselect opengl set amdgpu"
+	  einfo ""
+	  einfo "or if you're using the Gallium driver try:"
+	  einfo ""
+	  einfo "  eselect opengl set xorg-x11"
 	  einfo ""
 	fi
 	if use pillow ; then
 		einfo "Manually add jpeg or webp optional USE flags to pillow"
 		einfo "package to enable support for them."
 	fi
+	elog "You need to enable the xpra service for this to work."
+	if which rc-update 2>/dev/null 1>/dev/null ; then
+		elog "For OpenRC, do:"
+		elog "  rc-update add xpra"
+		elog "  /etc/init.d/xpra restart"
+	fi
+	if which systemctl 2>/dev/null 1>/dev/null ; then
+		elog "For systemd, do:"
+		elog "  systemctl stop xpra@username"
+		elog "  systemctl enable xpra@username"
+		elog "  systemctl start xpra@username"
+	fi
 }
 
 pkg_postrm() {
-	xdg_desktop_database_update
-	xdg_mimeinfo_database_update
+	xdg_pkg_postrm
 }
