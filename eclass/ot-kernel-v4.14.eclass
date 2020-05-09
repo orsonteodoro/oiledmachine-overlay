@@ -201,8 +201,6 @@ inherit kernel-2 toolchain-funcs
 detect_version
 detect_arch
 
-DEPEND="<sys-devel/gcc-8.0"
-
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
 DESCRIPTION="A customizeable kernel package containing UKSM, GraySky's GCC \
@@ -259,12 +257,6 @@ like npm.  These use flags are not recommended."
 		ewarn \
 "muqss might cause lock up or slow io under heavy load\n\
 like npm.  These use flags are not recommended."
-	fi
-
-	GCC_V=$(gcc-version)
-	if ver_test ${GCC_V} -ge 8.0; then
-		ewarn \
-	"You must switch your gcc to <8.0 to compile this version of ot-sources"
 	fi
 
 	if use tresor ; then
