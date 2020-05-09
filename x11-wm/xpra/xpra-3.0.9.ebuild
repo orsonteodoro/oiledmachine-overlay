@@ -155,13 +155,6 @@ python_prepare_all() {
 		sed -i -e 's|"+extension", "GLX"|"-extension", "GLX"|g' \
 			xpra/scripts/config.py || die
 	fi
-	if use firejail ; then
-		# fix skipping/studdering sound problem
-		sed -i "s|^#speaker = off|speaker = off|g" \
-			etc/xpra/conf.d/20_sound.conf.in || die
-		sed -i "s|^speaker = on|#speaker = on|g" \
-			etc/xpra/conf.d/20_sound.conf.in || die
-	fi
 
 	distutils-r1_python_prepare_all
 }
@@ -270,6 +263,12 @@ pkg_postinst() {
 		elog "  systemctl stop xpra@username"
 		elog "  systemctl enable xpra@username"
 		elog "  systemctl start xpra@username"
+	fi
+	if use sound ; then
+		einfo "If your sound skips, edit /etc/xpra/conf.d/20_sound.conf"
+		einfo "and set to speaker = off.  Changing to this may improve"
+		einfo "the quality but disable sound completely in apps like"
+		einfo "Firefox."
 	fi
 }
 
