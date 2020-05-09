@@ -155,6 +155,13 @@ python_prepare_all() {
 		sed -i -e 's|"+extension", "GLX"|"-extension", "GLX"|g' \
 			xpra/scripts/config.py || die
 	fi
+	if use firejail ; then
+		# fix skipping/studdering sound problem
+		sed -i "s|^#speaker = off|speaker = off|g" \
+			etc/xpra/conf.d/20_sound.conf.in || die
+		sed -i "s|^speaker = on|#speaker = on|g" \
+			etc/xpra/conf.d/20_sound.conf.in || die
+	fi
 
 	distutils-r1_python_prepare_all
 }
