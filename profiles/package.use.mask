@@ -1,0 +1,2 @@
+# Freezes or just shows black screen
+x11-drivers/amdgpu-pro-lts opengl_mesa
