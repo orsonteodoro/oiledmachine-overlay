@@ -264,12 +264,6 @@ pkg_postinst() {
 		elog "  systemctl enable xpra@username"
 		elog "  systemctl start xpra@username"
 	fi
-	if use sound ; then
-		einfo "If your sound skips, edit /etc/xpra/conf.d/20_sound.conf"
-		einfo "and set to speaker = off.  Changing to this may improve"
-		einfo "the quality but disable sound completely in apps like"
-		einfo "Firefox."
-	fi
 }
 
 pkg_postrm() {
