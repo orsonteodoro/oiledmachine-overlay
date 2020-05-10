@@ -11,7 +11,7 @@ inherit check-reqs cmake-utils xdg-utils flag-o-matic xdg-utils \
 DESCRIPTION="3D Creation/Animation/Publishing System"
 HOMEPAGE="https://www.blender.org"
 
-SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
+SRC_URI="https://download.blender.org/source/blender-${PV}.tar.gz"
 
 # Blender can have letters in the version string,
 # so strip off the letter if it exists.
@@ -37,10 +37,10 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 # build_files/build_environment/cmake/versions.cmake
 # doc/python_api/requirements.txt
 RDEPEND="${PYTHON_DEPS}
-	>=dev-libs/boost-1.70:=[nls?,threads(+)]
+	>=dev-libs/boost-1.68:=[nls?,threads(+)]
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.17.0[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/numpy-1.15.0[${PYTHON_MULTI_USEDEP}]
 		dev-python/requests[${PYTHON_MULTI_USEDEP}]
 	')
 	>=media-libs/freetype-2.9.1
@@ -76,14 +76,14 @@ RDEPEND="${PYTHON_DEPS}
 	opencl? ( virtual/opencl )
 	openimageio? ( >=media-libs/openimageio-1.8.13 )
 	openexr? (
-		>=media-libs/ilmbase-2.4.0:=
-		>=media-libs/openexr-2.4.0:=
+		>=media-libs/ilmbase-2.3.0:=
+		>=media-libs/openexr-2.3.0:=
 	)
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.0_rc2:=[cuda=,opencl=] )
 	openvdb? (
 		media-gfx/openvdb[${PYTHON_SINGLE_USEDEP},-abi3-compat(-),abi4-compat(+)]
-		>=dev-cpp/tbb-2019.9
-		>=dev-libs/c-blosc-1.5.0
+		>=dev-cpp/tbb-2018.5
+		>=dev-libs/c-blosc-1.14.4
 	)
 	osl? ( >=media-libs/osl-1.9.9:= )
 	sdl? ( media-libs/libsdl2[sound,joystick] )
@@ -122,7 +122,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-	ewarn "For testing purposes only."
+	ewarn "This ebuild is a Work In Progress (WIP) and all features may not work."
 	ewarn "To be removed ASAP once Gentoo portage ebuild are up to date."
 	ewarn "This ebuild may exhibit runtime failures."
 	blender_check_requirements

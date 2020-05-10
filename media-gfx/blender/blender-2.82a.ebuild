@@ -34,14 +34,17 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	osl? ( cycles llvm )
 	player? ( game-engine !headless )"
 
+# dependency version requirements see
+# build_files/build_environment/cmake/versions.cmake
+# doc/python_api/requirements.txt
 RDEPEND="${PYTHON_DEPS}
-	>=dev-libs/boost-1.62:=[nls?,threads(+)]
+	>=dev-libs/boost-1.70.0:=[nls?,threads(+)]
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.10.1[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/numpy-1.17.0[${PYTHON_MULTI_USEDEP}]
 		dev-python/requests[${PYTHON_MULTI_USEDEP}]
 	')
-	media-libs/freetype
+	>=media-libs/freetype-2.9.1
 	media-libs/glew:*
 	media-libs/libpng:0=
 	media-libs/libsamplerate
@@ -50,12 +53,12 @@ RDEPEND="${PYTHON_DEPS}
 	virtual/jpeg:0=
 	virtual/libintl
 	virtual/opengl
-	collada? ( >=media-libs/opencollada-1.6.18:= )
-	color-management? ( media-libs/opencolorio )
+	collada? ( >=media-libs/opencollada-1.6.86:= )
+	color-management? ( >=media-libs/opencolorio-1.1.0 )
 	cuda? ( dev-util/nvidia-cuda-toolkit:= )
 	cycles? ( >=media-libs/embree-3.2.4 )
-	ffmpeg? ( media-video/ffmpeg:=[x264,mp3,encode,theora,jpeg2k?] )
-	fftw? ( sci-libs/fftw:3.0= )
+	ffmpeg? ( >=media-video/ffmpeg-4.0.2:=[x264,mp3,encode,theora,jpeg2k?] )
+	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
 	!headless? (
 		x11-libs/libX11
 		x11-libs/libXi
@@ -64,37 +67,37 @@ RDEPEND="${PYTHON_DEPS}
 	jack? ( virtual/jack )
 	jemalloc? ( dev-libs/jemalloc:= )
 	jpeg2k? ( media-libs/openjpeg:0 )
-	llvm? ( sys-devel/llvm:= )
+	llvm? ( >=sys-devel/llvm-6.0.1:= )
 	ndof? (
 		app-misc/spacenavd
 		dev-libs/libspnav
 	)
 	nls? ( virtual/libiconv )
-	openal? ( media-libs/openal )
+	openal? ( >=media-libs/openal-1.18.2 )
 	opencl? ( virtual/opencl )
-	openimageio? ( >=media-libs/openimageio-1.7.0 )
+	openimageio? ( >=media-libs/openimageio-1.8.13 )
 	openexr? (
-		>=media-libs/ilmbase-2.2.0:=
-		>=media-libs/openexr-2.2.0:=
+		>=media-libs/ilmbase-2.4.0:=
+		>=media-libs/openexr-2.4.0:=
 	)
-	opensubdiv? ( >=media-libs/opensubdiv-3.3.0:=[cuda=,opencl=] )
+	opensubdiv? ( >=media-libs/opensubdiv-3.4.0_rc2:=[cuda=,opencl=] )
 	openvdb? (
 		media-gfx/openvdb[${PYTHON_SINGLE_USEDEP},-abi3-compat(-),abi4-compat(+)]
-		dev-cpp/tbb
-		>=dev-libs/c-blosc-1.5.2
+		>=dev-cpp/tbb-2019.9
+		>=dev-libs/c-blosc-1.5.0
 	)
-	osl? ( media-libs/osl:= )
+	osl? ( >=media-libs/osl-1.9.9:= )
 	sdl? ( media-libs/libsdl2[sound,joystick] )
 	sndfile? ( media-libs/libsndfile )
 	tiff? ( media-libs/tiff:0 )
 	valgrind? ( dev-util/valgrind )"
 
 DEPEND="${RDEPEND}
-	>=dev-cpp/eigen-3.2.8:3
+	>=dev-cpp/eigen-3.2.7:3
 	virtual/pkgconfig
 	doc? (
 		app-doc/doxygen[dot]
-		dev-python/sphinx[latex]
+		>=dev-python/sphinx-1.8.5[latex]
 		dev-texlive/texlive-bibtexextra
 		dev-texlive/texlive-fontsextra
 		dev-texlive/texlive-fontutils
@@ -121,7 +124,8 @@ pkg_pretend() {
 
 pkg_setup() {
 	ewarn "This ebuild is a Work In Progress (WIP) and all features may not work."
-	ewarn "It may exhibit runtime crashes."
+	ewarn "To be removed ASAP once Gentoo portage ebuild are up to date."
+	ewarn "This ebuild may exhibit runtime failures."
 	blender_check_requirements
 	python-single-r1_pkg_setup
 }
