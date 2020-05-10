@@ -1,4 +1,3 @@
-#opt/amdgpu-pro/lib64/amdvlk64.so.1 -> amdvlk64.so
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -15,7 +14,7 @@ LICENSE="AMDGPUPROEULA
 		opengl? ( MIT SGI-B-2.0 )
 		opengl_mesa? ( MIT )
 		osmesa? ( MIT )
-		vulkan? ( MIT )
+		vulkan_open? ( MIT )
 		xa? ( MIT )
 		developer? ( Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD-2 ) UoI-NCSA
 		BSD
@@ -31,7 +30,7 @@ LICENSE="AMDGPUPROEULA
 		opencl_orca? ( AMDGPUPROEULA )
 		opengl_pro? ( AMDGPUPROEULA )
 		opengl? ( AMDGPUPROEULA )
-		vulkan? ( AMDGPUPROEULA )
+		vulkan_pro? ( AMDGPUPROEULA )
 	)
 	X? ( MIT )"
 # gbm - MIT
@@ -72,7 +71,7 @@ SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
 IUSE="developer dkms doc +egl +gles2 freesync hip-clang +open-stack +opencl \
 +opencl_orca +opencl_pal +opengl opengl_mesa +opengl_pro osmesa +pro-stack \
-roct +vaapi +vdpau +vulkan +X xa"
+roct +vaapi +vdpau +vulkan vulkan_open vulkan_pro +X xa"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -84,7 +83,9 @@ SLOT="1"
 
 RDEPEND="!x11-drivers/amdgpu-pro
 	 >=dev-util/cunit-2.1_p3
+	 >=dev-libs/expat-2.2.5
 	 >=dev-libs/libedit-3.1
+	 >=dev-libs/libelf-0.174
 	 developer? (
 		egl? (
 			x11-base/xorg-proto
@@ -143,11 +144,11 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 || ( >=sys-firmware/amdgpu-firmware-${PV}
 	        >=sys-firmware/rock-firmware-3.3.0
 		>=sys-kernel/linux-firmware-20200417 )
-	 opencl? ( app-eselect/eselect-opencl )
-	 opengl? ( >=app-eselect/eselect-opengl-1.0.7 )
 	 open-stack? (
 	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
 	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}] )
+	 opencl? ( app-eselect/eselect-opencl )
+	 opengl? ( >=app-eselect/eselect-opengl-1.0.7 )
 	 roct? ( dev-libs/roct-thunk-interface
 		  sys-process/numactl )
 	 >=sys-devel/gcc-${PKG_VER_GCC}
@@ -159,6 +160,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 		    >=media-libs/vulkan-loader-${VULKAN_SDK_VER} )
 	 X? (
 	 >=sys-libs/libselinux-2.8
+	   virtual/libudev
 	 >=x11-base/xorg-drivers-1.20
 	  <x11-base/xorg-drivers-1.21
 	   x11-base/xorg-proto
@@ -185,7 +187,9 @@ REQUIRED_USE="
 	roct? ( dkms pro-stack )
 	vaapi? ( open-stack )
 	vdpau? ( open-stack )
-	vulkan? ( || ( open-stack pro-stack ) )
+	vulkan? ( || ( open-stack pro-stack ) || ( vulkan_open vulkan_pro ) )
+	vulkan_open? ( vulkan )
+	vulkan_pro? ( vulkan )
 	xa? ( open-stack )
 "
 
@@ -237,15 +241,11 @@ driver to work"
 	linux-info_pkg_setup
 
 	if use opencl_pal ; then
-		einfo \
-"OpenCL PAL (Portable Abstraction Layer) being used.  It is only supported\n\
-by GCN 5.x (Vega).  It is still in development."
+		einfo "opencl_pal for Vega or newer enabled"
 	fi
 
 	if use opencl_orca ; then
-		einfo \
-"OpenCL orca is being used. You are enabling the older legacy OpenCL driver\n\
-implementation used by older fglrx."
+		einfo "opencl_orca for pre-vega enabled"
 	fi
 
 	_set_check_reqs_requirements
@@ -323,7 +323,7 @@ src_unpack_open_stack() {
 		unpack_rpm "${d_rpms}/mesa-amdgpu-vdpau-drivers-${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	fi
 
-	if use vulkan ; then
+	if use vulkan_open ; then
 		unpack_rpm "${d_rpms}/vulkan-amdgpu-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	fi
 
@@ -379,7 +379,7 @@ src_unpack_pro_stack() {
 		unpack_rpm "${d_rpms}/libgl-amdgpu-pro-dri-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	fi
 
-	if use vulkan ; then
+	if use vulkan_pro ; then
 		unpack_rpm "${d_rpms}/vulkan-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 	fi
 }
@@ -508,7 +508,7 @@ src_install() {
 			if use opengl_mesa ; then
 				dosym libGL.so.1.2.0 ${od_amdgpu}/lib${b}/libGL.so
 			fi
-			if use vulkan ; then
+			if use vulkan_open ; then
 				insinto /etc/vulkan/icd.d
 				doins opt/amdgpu/etc/vulkan/icd.d/amd_icd${b}.json
 			fi
@@ -540,7 +540,7 @@ src_install() {
 					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/include/CL
 			fi
 
-			if use vulkan ; then
+			if use vulkan_pro ; then
 				insinto /etc/vulkan/icd.d
 				doins opt/amdgpu-pro/etc/vulkan/icd.d/amd_icd${b}.json
 			fi

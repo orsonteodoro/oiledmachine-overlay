@@ -18,7 +18,7 @@ LICENSE="AMDGPUPROEULA
 		openmax? ( BSD GPL-2+-with-autoconf-exception LGPL-2.1 MIT )
 		osmesa? ( MIT )
 		vaapi? ( MIT )
-		vulkan? ( MIT )
+		vulkan_open? ( MIT )
 		wayland? ( MIT )
 		xa? ( MIT )
 		developer? ( Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD-2 ) UoI-NCSA
@@ -41,7 +41,7 @@ LICENSE="AMDGPUPROEULA
 		)
 		opengl_pro? ( AMDGPUPROEULA )
 		roct? ( MIT )
-		vulkan? ( AMDGPUPROEULA )
+		vulkan_pro? ( AMDGPUPROEULA )
 	)
 	X? ( MIT )"
 # gbm - MIT
@@ -86,7 +86,7 @@ SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
 IUSE="+amf developer dkms doc +egl +gles2 freesync glamor hip-clang +hwe \
 +open-stack +opencl +opencl_orca +opencl_pal +opengl +opengl_pro opengl_mesa \
-openmax osmesa +pro-stack roct +vaapi +vdpau +vulkan wayland +X xa"
+openmax osmesa +pro-stack roct +vaapi +vdpau +vulkan vulkan_open vulkan_pro wayland +X xa"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -97,8 +97,11 @@ SLOT="1"
 # sys-libs/ncurses[tinfo] required by llvm in this package
 
 RDEPEND="!x11-drivers/amdgpu-pro
-	 dev-util/cunit
-	 dev-libs/libedit:2[${MULTILIB_USEDEP}]
+	 >=dev-util/cunit-2.1
+	 >=dev-libs/expat-2.01
+	   dev-libs/libedit:2[${MULTILIB_USEDEP}]
+	 >=dev-libs/libelf-0.142
+	 dev-libs/libffi-compat[${MULTILIB_USEDEP}]
 	 developer? (
 		egl? (
 			x11-base/xorg-proto
@@ -128,7 +131,6 @@ RDEPEND="!x11-drivers/amdgpu-pro
 		)
 	 )
 	 dkms? ( || ( sys-kernel/amdgpu-dkms sys-kernel/rock-dkms ) )
-	 dev-libs/libffi-compat[${MULTILIB_USEDEP}]
 	 freesync? ( || (
 		>=sys-kernel/amdgpu-dkms-18.50
 		>=sys-kernel/aufs-sources-5.0
@@ -158,6 +160,10 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 || ( >=sys-firmware/amdgpu-firmware-${PV}
 	        >=sys-firmware/rock-firmware-2.8.0
 		>=sys-kernel/linux-firmware-20191113 )
+	 glamor? ( media-libs/libepoxy )
+	 open-stack? (
+	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
+	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}] )
 	 opencl? (    app-eselect/eselect-opencl )
 	 opengl? (  >=app-eselect/eselect-opengl-1.0.7 )
 	 openmax? ( >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
@@ -167,16 +173,12 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 roct? ( !dev-libs/roct-thunk-interface
 		  sys-process/numactl )
 	 >=sys-devel/gcc-${PKG_VER_GCC}
-	 open-stack? (
-	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
-	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}] )
 	  vaapi? (  >=media-libs/mesa-${PKG_VER_MESA}[-vaapi] )
 	  vdpau? (  >=media-libs/mesa-${PKG_VER_MESA}[-vdpau] )
 	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
 	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
 		    >=media-libs/vulkan-loader-${VULKAN_SDK_VER} )
 	 X? (
-	 >=sys-libs/libselinux-1.32[${MULTILIB_USEDEP}]
 	 hwe? (
 		>=x11-base/xorg-drivers-1.20
 		<x11-base/xorg-drivers-1.21
@@ -189,6 +191,9 @@ RDEPEND="!x11-drivers/amdgpu-pro
 		>=x11-base/xorg-server-1.19[-minimal,glamor(+)]
 		<x11-base/xorg-server-1.20[-minimal,glamor(+)]
 	 )
+	 >=sys-fs/udev-183
+	 >=sys-libs/libselinux-1.32[${MULTILIB_USEDEP}]
+	   virtual/libudev
 	   x11-base/xorg-proto
 	 >=x11-libs/libdrm-${PKG_VER_LIBDRM}[libkms]
 	   x11-libs/libX11[${MULTILIB_USEDEP}]
@@ -198,7 +203,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	   x11-libs/libXrender[${MULTILIB_USEDEP}] )"
 S="${WORKDIR}"
 REQUIRED_USE="
-	amf? ( pro-stack )
+	amf? ( pro-stack opencl vulkan_pro )
 	developer? ( opengl_mesa? ( X ) )
 	egl? ( || ( open-stack pro-stack ) wayland X )
 	glamor? ( open-stack opengl X )
@@ -216,7 +221,9 @@ REQUIRED_USE="
 	roct? ( dkms pro-stack )
 	vaapi? ( open-stack )
 	vdpau? ( open-stack )
-	vulkan? ( || ( open-stack pro-stack ) wayland )
+	vulkan? ( || ( open-stack pro-stack ) || ( vulkan_open vulkan_pro ) wayland )
+	vulkan_open ( vulkan )
+	vulkan_pro ( vulkan )
 	wayland? ( open-stack )
 	xa? ( open-stack )
 	X? ( wayland )
@@ -278,15 +285,11 @@ driver to work"
 	fi
 
 	if use opencl_pal ; then
-		einfo \
-"OpenCL PAL (Portable Abstraction Layer) being used.  It is only supported\n\
-by GCN 5.x (Vega).  It is still in development."
+		einfo "opencl_pal for Vega or newer enabled"
 	fi
 
 	if use opencl_orca ; then
-		einfo \
-"OpenCL orca is being used. You are enabling the older legacy OpenCL driver\n\
-implementation used by older fglrx."
+		einfo "opencl_orca for pre-vega enabled"
 	fi
 
 	if use roct ; then
@@ -402,7 +405,7 @@ src_unpack_open_stack() {
 		unpack_deb "${d_debs}/mesa-amdgpu-vdpau-drivers_${PKG_VER_MESA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
 	fi
 
-	if use vulkan ; then
+	if use vulkan_open ; then
 		unpack_deb "${d_debs}/vulkan-amdgpu_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 	fi
 
@@ -497,7 +500,7 @@ src_unpack_pro_stack() {
 		fi
 	fi
 
-	if use vulkan ; then
+	if use vulkan_pro ; then
 		unpack_deb "${d_debs}/vulkan-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 	fi
 }
@@ -631,7 +634,7 @@ src_install() {
 			if use opengl_mesa ; then
 				dosym libGL.so.1.2.0 ${od_amdgpu}/lib/${chost}/libGL.so
 			fi
-			if use vulkan ; then
+			if use vulkan_open ; then
 				insinto /etc/vulkan/icd.d
 				doins opt/amdgpu/etc/vulkan/icd.d/amd_icd${b}.json
 			fi
@@ -674,7 +677,7 @@ src_install() {
 				# no x86 abi
 			fi
 
-			if use vulkan ; then
+			if use vulkan_pro ; then
 				insinto /etc/vulkan/icd.d
 				doins opt/amdgpu-pro/etc/vulkan/icd.d/amd_icd${b}.json
 			fi
