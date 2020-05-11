@@ -180,6 +180,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
 		    >=media-libs/vulkan-loader-${VULKAN_SDK_VER} )
 	 X? (
+	 || ( >=sys-fs/udev-183 virtual/libudev )
 	 hwe? (
 		>=x11-base/xorg-drivers-1.20
 		<x11-base/xorg-drivers-1.21
@@ -192,9 +193,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 		>=x11-base/xorg-server-1.19[-minimal,glamor(+)]
 		<x11-base/xorg-server-1.20[-minimal,glamor(+)]
 	 )
-	 >=sys-fs/udev-183
 	 >=sys-libs/libselinux-1.32[${MULTILIB_USEDEP}]
-	   virtual/libudev
 	   x11-base/xorg-proto
 	 >=x11-libs/libdrm-${PKG_VER_LIBDRM}[libkms]
 	   x11-libs/libX11[${MULTILIB_USEDEP}]
