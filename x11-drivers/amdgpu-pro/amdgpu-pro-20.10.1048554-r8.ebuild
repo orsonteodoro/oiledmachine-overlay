@@ -149,8 +149,9 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}] )
 	 opencl? ( app-eselect/eselect-opencl )
 	 opengl? ( >=app-eselect/eselect-opengl-1.0.7 )
-	 roct? ( dev-libs/roct-thunk-interface
-		  sys-process/numactl )
+	 roct? (   dev-libs/roct-thunk-interface
+		 >=sys-apps/pciutils-3.5.6
+		 >=sys-process/numactl-2.0.11 )
 	 >=sys-devel/gcc-${PKG_VER_GCC}
 	  vaapi? (  >=media-libs/mesa-${PKG_VER_MESA}[-vaapi]
 		    >=x11-libs/libva-${PKG_VER_VA} )
