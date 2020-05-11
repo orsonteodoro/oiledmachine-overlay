@@ -169,7 +169,8 @@ RDEPEND="!x11-drivers/amdgpu-pro
 		      media-libs/libomxil-bellagio
 		    >=media-libs/mesa-${PKG_VER_MESA}[openmax] )
 	 roct? ( !dev-libs/roct-thunk-interface
-		  sys-process/numactl )
+		  >=sys-apps/pciutils-3.5.2
+		  >=sys-process/numactl-2.0.11 )
 	 >=sys-devel/gcc-${PKG_VER_GCC}
 	  vaapi? (  >=media-libs/mesa-${PKG_VER_MESA}[-vaapi] )
 	  vdpau? (  >=media-libs/mesa-${PKG_VER_MESA}[-vdpau] )
