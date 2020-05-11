@@ -91,7 +91,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 >=dev-util/cunit-2.1_p3
 	 >=dev-libs/expat-2.2.5
 	 >=dev-libs/libedit-3.1
-	 >=dev-libs/libelf-0.174
+	 || ( virtual/libelf:0/1 >=dev-libs/libelf-0.174 )
 	 developer? (
 		egl? (
 			x11-base/xorg-proto
