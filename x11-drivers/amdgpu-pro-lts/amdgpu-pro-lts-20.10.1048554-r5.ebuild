@@ -98,7 +98,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 >=dev-util/cunit-2.1
 	 >=dev-libs/expat-2.01
 	   dev-libs/libedit:2[${MULTILIB_USEDEP}]
-	 >=dev-libs/libelf-0.142
+	 || ( >=dev-libs/libelf-0.142 virtual/libelf:0/1 )
 	 dev-libs/libffi-compat[${MULTILIB_USEDEP}]
 	 developer? (
 		egl? (
@@ -221,8 +221,8 @@ REQUIRED_USE="
 	vaapi? ( open-stack )
 	vdpau? ( open-stack )
 	vulkan? ( || ( vulkan_open vulkan_pro ) wayland )
-	vulkan_open ( open-stack vulkan )
-	vulkan_pro ( pro-stack vulkan )
+	vulkan_open? ( open-stack vulkan )
+	vulkan_pro? ( pro-stack vulkan )
 	wayland? ( open-stack )
 	xa? ( open-stack )
 	X? ( wayland )
