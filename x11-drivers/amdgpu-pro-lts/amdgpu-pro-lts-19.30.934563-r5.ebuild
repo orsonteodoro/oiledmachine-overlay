@@ -211,7 +211,7 @@ REQUIRED_USE="
 	hip-clang? ( pro-stack )
 	hwe
 	hwe? ( open-stack )
-	opencl? ( || ( opencl_orca opencl_pal ) pro-stack )
+	opencl? ( || ( opencl_orca opencl_pal ) open-stack pro-stack )
 	opencl_orca? ( opencl )
 	opencl_pal? ( opencl )
 	opengl? ( ^^ ( opengl_mesa opengl_pro ) )
@@ -469,8 +469,8 @@ src_unpack_pro_stack() {
 		fi
 		if [[ "${ABI}" == "amd64" ]] ; then
 			unpack_deb "${d_debs}/clinfo-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
-			unpack_deb "${d_debs}/opencl-amdgpu-pro-comgr_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 			if use opencl_pal ; then
+				unpack_deb "${d_debs}/opencl-amdgpu-pro-comgr_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 				unpack_deb "${d_debs}/opencl-amdgpu-pro-icd_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 			fi
 			use developer && \
