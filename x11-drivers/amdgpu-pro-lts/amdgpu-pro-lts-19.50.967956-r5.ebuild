@@ -18,6 +18,7 @@ LICENSE="AMDGPUPROEULA
 		openmax? ( BSD GPL-2+-with-autoconf-exception LGPL-2.1 MIT )
 		osmesa? ( MIT )
 		vaapi? ( MIT )
+		vdpau? ( MIT )
 		vulkan_open? ( MIT )
 		wayland? ( MIT )
 		xa? ( MIT )
@@ -28,6 +29,7 @@ LICENSE="AMDGPUPROEULA
 	pro-stack? (
 		AMDGPUPROEULA
 		amf? ( AMDGPUPROEULA )
+		clinfo? ( AMDGPUPROEULA )
 		egl? ( AMDGPUPROEULA )
 		gles2? ( AMDGPUPROEULA )
 		hip-clang? ( AMDGPUPROEULA )
@@ -84,7 +86,7 @@ VULKAN_SDK_VER="1.1.121.1"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="+amf clinfo developer dkms doc +egl +gles2 freesync glamor hip-clang +hwe \
+IUSE="+amf bindist clinfo developer dkms doc +egl +gles2 freesync glamor hip-clang +hwe \
 +open-stack +opencl +opencl_orca +opencl_pal +opengl +opengl_pro opengl_mesa \
 openmax osmesa +pro-stack roct +vaapi +vdpau +vulkan vulkan_open vulkan_pro wayland +X xa"
 SLOT="1"
@@ -204,6 +206,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 S="${WORKDIR}"
 REQUIRED_USE="
 	amf? ( pro-stack opencl vulkan_pro )
+	bindist? ( !pro-stack !doc )
 	clinfo? ( opencl pro-stack )
 	developer? ( opengl_mesa? ( X ) )
 	egl? ( || ( open-stack pro-stack ) wayland X )

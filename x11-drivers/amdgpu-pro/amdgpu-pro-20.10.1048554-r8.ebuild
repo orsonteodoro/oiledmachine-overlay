@@ -14,6 +14,7 @@ LICENSE="AMDGPUPROEULA
 		opengl? ( MIT SGI-B-2.0 )
 		opengl_mesa? ( MIT )
 		osmesa? ( MIT )
+		vdpau? ( MIT )
 		vulkan_open? ( MIT )
 		xa? ( MIT )
 		developer? ( Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD-2 ) UoI-NCSA
@@ -22,14 +23,15 @@ LICENSE="AMDGPUPROEULA
 	)
 	pro-stack? (
 		AMDGPUPROEULA
+		clinfo? ( AMDGPUPROEULA )
 		egl? ( AMDGPUPROEULA )
 		gles2? ( AMDGPUPROEULA )
 		hip-clang? ( AMDGPUPROEULA )
 		opencl? ( AMDGPUPROEULA )
 		opencl_pal? ( AMDGPUPROEULA )
 		opencl_orca? ( AMDGPUPROEULA )
-		opengl_pro? ( AMDGPUPROEULA )
 		opengl? ( AMDGPUPROEULA )
+		opengl_pro? ( AMDGPUPROEULA )
 		vulkan_pro? ( AMDGPUPROEULA )
 	)
 	X? ( MIT )"
@@ -69,9 +71,9 @@ VULKAN_SDK_VER="1.1.121.1"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="clinfo developer dkms doc +egl +gles2 freesync hip-clang +open-stack +opencl \
-+opencl_orca +opencl_pal +opengl opengl_mesa +opengl_pro osmesa +pro-stack \
-roct +vaapi +vdpau +vulkan vulkan_open vulkan_pro +X xa"
+IUSE="bindist clinfo developer dkms doc +egl +gles2 freesync hip-clang \
++open-stack +opencl +opencl_orca +opencl_pal +opengl opengl_mesa +opengl_pro \
+osmesa +pro-stack roct +vaapi +vdpau +vulkan vulkan_open vulkan_pro +X xa"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -175,6 +177,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 S="${WORKDIR}"
 REQUIRED_USE="
 	!abi_x86_32
+	bindist? ( !doc !pro-stack )
 	clinfo? ( opencl pro-stack )
 	egl? ( || ( open-stack pro-stack ) X )
 	gles2? ( egl || ( open-stack pro-stack ) )

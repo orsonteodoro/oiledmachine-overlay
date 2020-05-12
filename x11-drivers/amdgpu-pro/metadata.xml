@@ -26,6 +26,8 @@
   </longdescription>
   <use>
     <flag name="amf">Install the Accelerated Media Framework support.</flag>
+    <flag name="bindist">Disables pro-stack and doc which are not
+      redistributable.</flag>
     <flag name="clinfo">Installs clinfo used to get info about OpenCL
       drivers.</flag>
     <flag name="developer">Install developer toolchain, libraries,
