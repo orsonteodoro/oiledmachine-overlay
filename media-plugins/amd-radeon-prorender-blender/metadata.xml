@@ -34,8 +34,6 @@
   <use>
     <flag name="denoiser">Checks for dynamic libraries that may be
       required to use the denoiser.</flag>
-    <flag name="intel">Checks for OpenCL 1.2 support for Intel
-      CPUs/IGPs/GPUs.</flag>
     <flag name="materials">Installs the material library.</flag>
     <flag name="opengl_mesa">Pulls the required dependencies if Pro support in
       the AMDGPU-PRO driver has not been installed.</flag>
@@ -44,7 +42,11 @@
       Checks for OpenCL 1.2 support or Vulkan compatibility for AMDGPU-PRO
       drivers.
     <flag name="video_cards_i965">Checks for OpenCL 1.2 support or Vulkan
-      compatibility for Intel or IGPs/GPUs.  For Gen 7+ users.</flag>
+      compatibility for Intel or IGPs/GPUs.  For Gen 7+ (Ivy Bridge)
+      users.</flag>
+    <flag name="video_cards_iris">Checks for OpenCL 1.2 support or Vulkan
+      compatibility for Intel or IGPs/GPUs.  For Gen 8+ (Broadwell)
+      users.</flag>
     <flag name="video_cards_nvidia">Checks if the GPU driver is OpenCL 1.2
       or Vulkan compatibility.</flag>
     <flag name="video_cards_radeonsi">Checks if the GPU driver is OpenCL 1.2
