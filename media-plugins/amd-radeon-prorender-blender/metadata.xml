@@ -19,8 +19,8 @@
     to use this product.
     CPUs may require at least SSE2 support.
 
-    Using Full for Rendering Quality may be bugged.  It unfortunately was the
-    default and an experimental option.  Please use a lower setting.
+    Using Full setting may be bugged.  It unfortunately was the default and an
+    experimental option.  Please use a lower setting.
   </longdescription>
   <upstream>
     <bugs-to>https://community.amd.com/community/prorender/blender</bugs-to>
