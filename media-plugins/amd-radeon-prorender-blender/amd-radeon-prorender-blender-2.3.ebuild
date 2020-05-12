@@ -53,7 +53,6 @@ RDEPEND="${PYTHON_DEPS}
                 )
 		video_cards_nvidia? (
 			>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_OCL_1_2}
-			>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_OCL_1_2}
 		)
 		video_cards_radeonsi? (
 			dev-libs/amdgpu-pro-opencl
