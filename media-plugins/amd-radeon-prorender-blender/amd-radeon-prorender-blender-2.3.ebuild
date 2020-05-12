@@ -22,26 +22,36 @@ MAX_BLENDER_V="2.83" # exclusive
 SHA1SUM_PLUGIN="0e1bb299672dc111c6bb5ea4b52efa9dce8d55d6"
 SHA1SUM_MATLIB="a4b22ef16515eab431c682421e07ec5b2940319d"
 SLOT="0"
-IUSE="denoiser +materials opengl_mesa \
--systemwide test video_cards_amdgpu video_cards_intel video_cards_nvidia \
-video_cards_r600 video_cards_radeonsi vulkan"
+IUSE="intel denoiser +materials opengl_mesa \
+-systemwide test video_cards_amdgpu video_cards_i965 video_cards_intel \
+video_cards_nvidia vulkan"
 NV_DRIVER_VERSION="368.39" # >= OpenCL 1.2
 PYTHON_COMPAT=( python3_{7,8} ) # same as blender
 inherit python-single-r1
 RDEPEND="${PYTHON_DEPS}
 	|| (
-		video_cards_nvidia? (
-			>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION} )
+		intel? ( dev-util/intel-ocl-sdk )
 		video_cards_amdgpu? (
-			opengl_mesa? (
-				|| (
+			|| (
+				opengl_mesa? (
+					|| (
 			x11-drivers/amdgpu-pro[X,developer,open-stack,opengl_mesa,opencl]
 			x11-drivers/amdgpu-pro-lts[X,developer,open-stack,opengl_mesa,opencl]
-				) )
-			!opengl_mesa? ( || ( x11-drivers/amdgpu-pro[opencl] \
-					x11-drivers/amdgpu-pro-lts[opencl] ) )
+					)
+				)
+				!opengl_mesa? ( || (
+			x11-drivers/amdgpu-pro[opencl]
+			x11-drivers/amdgpu-pro-lts[opencl]
+						) )
+			dev-libs/amdgpu-pro-opencl
+			)
 		)
-		virtual/opencl
+		video_cards_i965? (
+			dev-libs/intel-neo
+                )
+		video_cards_nvidia? (
+			>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION}
+		)
 	)
 	denoiser? (
 		dev-cpp/tbb
