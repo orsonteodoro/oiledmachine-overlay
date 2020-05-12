@@ -117,7 +117,7 @@ pkg_setup() {
 		ewarn "${PN} may not be compatibile with media-libs/mesa[opencl] (Mesa Clover, OpenCL 1.1)"
 	fi
 
-	# We know because of embree and may be a statically linked.
+	# We know because of embree and may be statically linked.
 	if cat /proc/cpuinfo | grep sse2 ; then
 		einfo "CPU is compatible."
 	else
