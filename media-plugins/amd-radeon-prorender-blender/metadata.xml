@@ -34,6 +34,8 @@
   <use>
     <flag name="denoiser">Checks for dynamic libraries that may be
       required to use the denoiser.</flag>
+    <flag name="intel">Checks for OpenCL 1.2 support for Intel
+      CPUs.</flag>
     <flag name="materials">Installs the material library.</flag>
     <flag name="opengl_mesa">Pulls the required dependencies if Pro support in
       the AMDGPU-PRO driver has not been installed.</flag>
