@@ -237,7 +237,7 @@ src_install() {
 		src_install_systemwide
 		if use materials ; then
 			cat <<EOF > ${T}/50${P}-matlib
-DEV_ENVIRONMENT_VARIABLE="${D_MATERIALS}/Xml"
+RPR_MATERIAL_LIBRARY_PATH="${D_MATERIALS}/Xml"
 EOF
 			doenvd "${T}"/50${P}-matlib
 		fi
@@ -275,13 +275,13 @@ pkg_postinst() {
 			einfo
 			einfo "Addon location: /home/${u}/.local/share/${PLUGIN_NAME}/addon/addon.zip"
 			if use materials ; then
-				local d_matlib="/home/${u}/${D_USER_MATLIB}"
+				local d_matlib="/home/${u}/${D_USER_MATLIB}/Xml"
 				local blender_ver=$(ls "${EROOT}/usr/share/blender/")
 				einfo "Materials location: ${d_matlib}"
 				einfo "To tell ${PN} the location of the materials directory:"
 				einfo
 				einfo "  Add the following to /home/${u}/.bashrc"
-				einfo "  export DEV_ENVIRONMENT_VARIABLE=\"${d_matlib}\""
+				einfo "  export RPR_MATERIAL_LIBRARY_PATH=\"${d_matlib}\""
 				einfo "  Then, re-log."
 				einfo
 				einfo "or"
