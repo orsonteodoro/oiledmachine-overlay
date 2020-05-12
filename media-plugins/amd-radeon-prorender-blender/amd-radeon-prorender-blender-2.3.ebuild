@@ -1,7 +1,7 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 DESCRIPTION="An OpenCL accelerated scaleable raytracing rendering engine for \
 Blender"
@@ -13,6 +13,7 @@ LICENSE="AMD-RADEON-PRORENDER-BLENDER-EULA \
 	PSF-2 MIT BSD BSD-2 CC-BY"
 KEYWORDS="~amd64"
 PLUGIN_NAME="rprblender"
+MATLIB_NAME="rprmaterials"
 S_FN1="radeonprorenderblender_ubuntu.zip"
 S_FN2="radeonprorendermateriallibraryinstaller.run"
 D_FN1="${P}-plugin.zip"
@@ -23,7 +24,7 @@ SHA1SUM_PLUGIN="0e1bb299672dc111c6bb5ea4b52efa9dce8d55d6"
 SHA1SUM_MATLIB="a4b22ef16515eab431c682421e07ec5b2940319d"
 SLOT="0"
 IUSE="denoiser intel +materials opengl_mesa \
--systemwide test video_cards_amdgpu video_cards_i965 video_cards_intel \
+-systemwide test video_cards_amdgpu video_cards_i965 \
 video_cards_nvidia vulkan"
 NV_DRIVER_VERSION="368.39" # >= OpenCL 1.2
 PYTHON_COMPAT=( python3_{7,8} ) # same as blender
@@ -156,14 +157,12 @@ src_unpack() {
 	unpack_makeself ${D_FN2}
 }
 
-src_install_matlib() {
-	if use materials ; then
-		cd "${S_MATLIB}" || die
-		einfo "Copying materials..."
-		dodir "${D_MATERIALS}"
-		cp -a "${S_MATLIB}"/matlib/feature_MaterialLibrary/* \
-			"${ED}/${D_MATERIALS}" || die
-	fi
+src_install_systemwide_matlib() {
+	cd "${S_MATLIB}" || die
+	einfo "Copying materials..."
+	dodir "${D_MATERIALS}"
+	cp -a "${S_MATLIB}"/matlib/feature_MaterialLibrary/* \
+		"${ED}/${D_MATERIALS}" || die
 }
 
 generate_enable_plugin_script() {
@@ -180,7 +179,7 @@ generate_enable_plugin_script() {
 		> "${T}/install_blender_addon.py" || die
 }
 
-src_install_systemwide() {
+src_install_systemwide_plugin() {
 	cd "${S_PLUGIN}" || die
 	local d
 	DIRS=$(find /usr/share/blender/ -maxdepth 1 | tail -n +2)
@@ -189,19 +188,26 @@ src_install_systemwide() {
 	shopt -s dotglob # copy hidden files
 
 	for d_ver in ${DIRS} ; do
+		d_ver=$(basename ${d_ver})
 		if ver_test ${MIN_BLENDER_V} -le ${d_ver} \
 			&& ver_test ${d_ver} -lt ${MAX_BLENDER_V} ; then
 			einfo "Blender ${d_ver} is supported.  Installing..."
-			d_install="/usr/share/blender/${d_ver}/scripts/addons_contrib/${PLUGIN_NAME}"
+			d_addon_base="/usr/share/blender/${d_ver}/scripts/addons_contrib"
+			ed_addon_base="${ED}/${d_addon_base}"
+			d_install="${d_addon_base}/${PLUGIN_NAME}"
 			ed_install="${ED}/${d_install}"
+			d_matlib_meta="${d_addon_base}/${MATLIB_NAME}"
+			ed_matlib_meta="${ED}/${d_install}"
 			dodir "${d_install}"
 			chmod 775 "${ed_install}" || die
 			chown root:users "${ed_install}" || die
-			cp -a "${WORKDIR}/${PLUGIN_NAME}"/* "${ed_install}" || die
+			cp -a "${S_PLUGIN}/${PLUGIN_NAME}/"* "${ed_install}" || die
 			if use materials ; then
+				exeinto "${d_matlib_meta}"
+				doexe "${S_MATLIB}/uninstall.py"
+				echo "${D_MATERIALS}" > "${ed_matlib_meta}/.matlib_installed" || die
 				echo "${D_MATERIALS}" > "${ed_install}/.matlib_installed" || die
 			fi
-			K=$(echo "${REGISTRATION_HASH_SHA1}:${REGISTRATION_HASH_MD5}" | sha1sum | cut -c 1-40)
 			einfo "Attempting to mark installation as registered..."
 			touch "${ed_install}/.registered" || die
 			dodir "${d_install}/addon" || die
@@ -211,9 +217,8 @@ src_install_systemwide() {
 				"${d_install}/addon/addon.zip"
 			exeinto "${d_install}/addon"
 			doexe "${T}/install_blender_addon.py"
-
-			#exeinto ""
-			#doexe uninstall.py
+			exeinto "${d_install}"
+			doexe uninstall.py
 		else
 			einfo "Blender ${d_ver} not supported.  Skipping..."
 		fi
@@ -266,7 +271,8 @@ src_install_per_user() {
 
 src_install() {
 	if use systemwide ; then
-		src_install_systemwide
+		src_install_systemwide_plugin
+		src_install_systemwide_matlib
 		if use materials ; then
 			cat <<EOF > ${T}/50${P}-matlib
 RPR_MATERIAL_LIBRARY_PATH="${D_MATERIALS}/Xml"
@@ -276,7 +282,6 @@ EOF
 	else
 		src_install_per_user
 	fi
-	src_install_matlib
 	cd "${S_PLUGIN}" || die
 	dodoc eula.txt
 }
@@ -287,7 +292,7 @@ pkg_postinst() {
 
 	if use systemwide ; then
 		einfo
-		einfo "It is listed under: Edit > Preferences > Add-ons > Community > Render: Radeon ProRender"
+		einfo "It is listed under: Edit > Preferences > Add-ons > Testing > Render: Radeon ProRender"
 		if use materials ; then
 			einfo
 			einfo "The material library have been installed in:"
