@@ -11,7 +11,6 @@ SLOT="0/${PV}"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit multilib-minimal python-r1
 IUSE="+bindist +c_sync +cxx doc +examples fakenect +opencv openni2 python"
-EGIT_COMMIT="aa36dcee488b38ff8aec68425a9f596cb706da6d"
 PYTHON_DEPEND="!bindist? 2"
 CDEPEND="examples? ( media-libs/freeglut[${MULTILIB_USEDEP}]
 			virtual/opengl[${MULTILIB_USEDEP}]
@@ -25,11 +24,11 @@ DEPEND="${CDEPEND}
 	doc? ( app-doc/doxygen )
 	virtual/pkgconfig[${MULTILIB_USEDEP}]"
 SRC_URI=\
-"https://github.com/OpenKinect/libfreenect/archive/${EGIT_COMMIT}.tar.gz \
+"https://github.com/OpenKinect/libfreenect/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
 CMAKE_BUILD_TYPE=Release
 inherit cmake-multilib
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 PATCHES=( "${FILESDIR}/libfreenect-0.6.0-custom-cmake-lib-path.patch" )
 DOCS=( README.md )
