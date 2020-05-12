@@ -50,7 +50,7 @@ RDEPEND="${PYTHON_DEPS}
 		)
 		video_cards_i965? (
 			dev-libs/intel-neo
-                )
+		)
 		video_cards_iris? (
 			dev-libs/intel-neo
 		)
@@ -85,7 +85,7 @@ RDEPEND="${PYTHON_DEPS}
 			)
 			video_cards_iris? (
 		media-libs/mesa[vulkan]
-		)
+			)
 			video_cards_nvidia? (
 		>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_VULKAN}
 			)
