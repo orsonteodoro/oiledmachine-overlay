@@ -75,7 +75,7 @@ VULKAN_SDK_VER="1.1.109.0"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="developer dkms doc +egl +gles2 freesync hip-clang lf +open-stack +opencl \
+IUSE="clinfo developer dkms doc +egl +gles2 freesync hip-clang lf +open-stack +opencl \
 +opencl_orca +opencl_pal +opengl opengl_mesa +opengl_pro osmesa +pro-stack \
 roct +vaapi +vdpau +vulkan vulkan_open vulkan_pro wayland +X xa"
 SLOT="1"
@@ -182,6 +182,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 S="${WORKDIR}"
 REQUIRED_USE="
 	!abi_x86_32
+	clinfo? ( opencl pro-stack )
 	egl? ( || ( open-stack pro-stack ) X )
 	gles2? ( egl || ( open-stack pro-stack ) )
 	hip-clang? ( pro-stack )
@@ -394,6 +395,7 @@ src_unpack_pro_stack() {
 
 	if use opencl ; then
 		if [[ "${ABI}" == "amd64" ]] ; then
+			use clinfo && \
 			unpack_rpm "${d_rpms}/clinfo-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		fi
 		unpack_rpm "${d_rpms}/libopencl-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"

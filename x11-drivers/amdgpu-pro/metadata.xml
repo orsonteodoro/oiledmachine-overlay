@@ -26,6 +26,8 @@
   </longdescription>
   <use>
     <flag name="amf">Install the Accelerated Media Framework support.</flag>
+    <flag name="clinfo">Installs clinfo used to get info about OpenCL
+      drivers.</flag>
     <flag name="developer">Install developer toolchain, libraries,
       headers.</flag>
     <flag name="dkms">Installs the enhanced AMDGPU kernel driver with 

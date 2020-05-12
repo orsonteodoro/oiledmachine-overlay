@@ -84,7 +84,7 @@ VULKAN_SDK_VER="1.1.121.1"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="+amf developer dkms doc +egl +gles2 freesync glamor hip-clang +hwe \
+IUSE="+amf clinfo developer dkms doc +egl +gles2 freesync glamor hip-clang +hwe \
 +open-stack +opencl +opencl_orca +opencl_pal +opengl +opengl_pro opengl_mesa \
 openmax osmesa +pro-stack roct +vaapi +vdpau +vulkan vulkan_open vulkan_pro wayland +X xa"
 SLOT="1"
@@ -204,6 +204,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 S="${WORKDIR}"
 REQUIRED_USE="
 	amf? ( pro-stack opencl vulkan_pro )
+	clinfo? ( opencl pro-stack )
 	developer? ( opengl_mesa? ( X ) )
 	egl? ( || ( open-stack pro-stack ) wayland X )
 	glamor? ( open-stack opengl X )
@@ -471,6 +472,7 @@ src_unpack_pro_stack() {
 			unpack_deb "${d_debs}/opencl-orca-amdgpu-pro-icd_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 		fi
 		if [[ "${ABI}" == "amd64" ]] ; then
+			use clinfo && \
 			unpack_deb "${d_debs}/clinfo-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 			if use opencl_pal ; then
 				unpack_deb "${d_debs}/opencl-amdgpu-pro-comgr_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
