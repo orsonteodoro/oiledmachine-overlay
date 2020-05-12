@@ -81,7 +81,6 @@ S_PLUGIN="${WORKDIR}/${PN}-${PV}-plugin"
 S_MATLIB="${WORKDIR}/${PN}-${PV}-plugin"
 D_USER_MATLIB="Documents/Radeon ProRender/Blender/Material Library"
 D_MATERIALS="/usr/share/${PN}/${D_USER_MATLIB}"
-INTERNAL_PV="2.3.4"
 
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
@@ -124,8 +123,6 @@ src_unpack() {
 	cd "${S_PLUGIN}" || die
 
 	unpack_makeself ${D_FN1}
-
-#	unpack_makeself RadeonProRenderForBlender_${INTERNAL_PV}.run
 
 	if use systemwide ; then
 		unpack_zip addon/addon.zip
