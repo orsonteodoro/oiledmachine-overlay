@@ -47,7 +47,7 @@
       compatibility for Intel or IGPs/GPUs.  For Gen 7+ users.</flag>
     <flag name="video_cards_nvidia">Checks if the GPU driver is OpenCL 1.2
       or Vulkan compatibility.</flag>
-    <flag name="video_cards_r600">Checks if the GPU driver is OpenCL 1.2
+    <flag name="video_cards_radeonsi">Checks if the GPU driver is OpenCL 1.2
       or Vulkan compatibility for Mesa Gallium3D users.</flag>
     <flag name="vulkan">Installs dependencies for Vulkan support.  Vulkan
       is used for Full Spectrum Rendering (RPR).</flag>

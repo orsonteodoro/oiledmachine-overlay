@@ -25,7 +25,7 @@ SHA1SUM_MATLIB="a4b22ef16515eab431c682421e07ec5b2940319d"
 SLOT="0"
 IUSE="denoiser intel +materials opengl_mesa \
 -systemwide test video_cards_amdgpu video_cards_i965 \
-video_cards_nvidia video_cards_r600 vulkan"
+video_cards_nvidia video_cards_radeonsi vulkan"
 NV_DRIVER_VERSION_OCL_1_2="368.39" # >= OpenCL 1.2
 NV_DRIVER_VERSION_VULKAN="390.132"
 PYTHON_COMPAT=( python3_{7,8} ) # same as blender
@@ -55,7 +55,7 @@ RDEPEND="${PYTHON_DEPS}
 			>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_OCL_1_2}
 			>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_OCL_1_2}
 		)
-		video_cards_r600? (
+		video_cards_radeonsi? (
 			dev-libs/amdgpu-pro-opencl
 		)
 	)
@@ -84,7 +84,7 @@ RDEPEND="${PYTHON_DEPS}
 			video_cards_nvidia? (
 		>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_VULKAN}
 			)
-			video_cards_r600? (
+			video_cards_radeonsi? (
 		media-libs/mesa[vulkan]
 			)
 		)
