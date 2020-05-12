@@ -116,6 +116,13 @@ pkg_setup() {
 	if has_version "media-libs/mesa[opencl]" ; then
 		ewarn "${PN} may not be compatibile with media-libs/mesa[opencl] (Mesa Clover, OpenCL 1.1)"
 	fi
+
+	# We know because of embree and may be a statically linked.
+	if cat /proc/cpuinfo | grep sse2 ; then
+		einfo "CPU is compatible."
+	else
+		ewarn "CPU may not be compatible.  ${PN} requires SSE2."
+	fi
 }
 
 
