@@ -291,7 +291,7 @@ pkg_postinst() {
 			if use materials ; then
 				local d_matlib="/home/${u}/${D_USER_MATLIB}"
 				local blender_ver=$(ls "${EROOT}/usr/share/blender/")
-				einfo "Materials location: ${d_mats}"
+				einfo "Materials location: ${d_matlib}"
 				einfo "To tell ${PN} the location of the materials directory:"
 				einfo
 				einfo "  Add the following to /home/${u}/.bashrc"
