@@ -70,9 +70,11 @@ RDEPEND="${PYTHON_DEPS}
 		media-libs/vulkan-loader
 		|| (
 			video_cards_amdgpu? (
+				|| (
 		x11-drivers/amdgpu-pro[vulkan]
 		x11-drivers/amdgpu-pro-lts[vulkan]
 		media-libs/mesa[vulkan]
+				)
 			)
 			video_cards_i965? (
 		media-libs/mesa[vulkan]
