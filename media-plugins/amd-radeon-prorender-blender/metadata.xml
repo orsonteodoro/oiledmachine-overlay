@@ -19,6 +19,11 @@
     to use this product.
     CPUs may require at least SSE2 support.
 
+    Rendering may require Vulkan for Full Spectrum Rendering (FSR).  You need 
+    a Vulkan compatible device and Vulkan driver but will fall back to OpenCL if
+    it doesn't meet requirements.  For details see:
+    https://radeon-pro.github.io/RadeonProRenderDocs/plugins/blender/full_spectrum_rendering.html
+
     Using Full setting may be bugged.  It unfortunately was the default and an
     experimental option.  Please use a lower setting.
   </longdescription>

@@ -26,7 +26,8 @@ SLOT="0"
 IUSE="denoiser intel +materials opengl_mesa \
 -systemwide test video_cards_amdgpu video_cards_i965 \
 video_cards_nvidia vulkan"
-NV_DRIVER_VERSION="368.39" # >= OpenCL 1.2
+NV_DRIVER_VERSION_OCL_1_2="368.39" # >= OpenCL 1.2
+NV_DRIVER_VERSION_VULKAN="390.132"
 PYTHON_COMPAT=( python3_{7,8} ) # same as blender
 inherit python-single-r1
 RDEPEND="${PYTHON_DEPS}
@@ -36,13 +37,13 @@ RDEPEND="${PYTHON_DEPS}
 			|| (
 				opengl_mesa? (
 					|| (
-			x11-drivers/amdgpu-pro[X,developer,open-stack,opengl_mesa,opencl,vulkan?]
-			x11-drivers/amdgpu-pro-lts[X,developer,open-stack,opengl_mesa,opencl,vulkan?]
+			x11-drivers/amdgpu-pro[X,developer,open-stack,opengl_mesa,opencl]
+			x11-drivers/amdgpu-pro-lts[X,developer,open-stack,opengl_mesa,opencl]
 					)
 				)
 				!opengl_mesa? ( || (
-			x11-drivers/amdgpu-pro[opencl,vulkan?]
-			x11-drivers/amdgpu-pro-lts[opencl,vulkan?]
+			x11-drivers/amdgpu-pro[opencl]
+			x11-drivers/amdgpu-pro-lts[opencl]
 						) )
 			dev-libs/amdgpu-pro-opencl
 			)
@@ -51,7 +52,8 @@ RDEPEND="${PYTHON_DEPS}
 			dev-libs/intel-neo
                 )
 		video_cards_nvidia? (
-			>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION}
+			>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_OCL_1_2}
+			>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_OCL_1_2}
 		)
 	)
 	denoiser? (
@@ -64,7 +66,22 @@ RDEPEND="${PYTHON_DEPS}
 	>=media-gfx/blender-${MIN_BLENDER_V}[${PYTHON_SINGLE_USEDEP}]
 	 <media-gfx/blender-${MAX_BLENDER_V}[${PYTHON_SINGLE_USEDEP}]
 	>=media-libs/freeimage-3.17.0[jpeg,jpeg2k,openexr,png,raw,tiff,webp]
-	vulkan? ( media-libs/vulkan-loader )
+	vulkan? (
+		media-libs/vulkan-loader
+		|| (
+			video_cards_amdgpu? (
+		x11-drivers/amdgpu-pro[vulkan]
+		x11-drivers/amdgpu-pro-lts[vulkan]
+		media-libs/mesa[vulkan]
+			)
+			video_cards_i965? (
+		media-libs/mesa[vulkan]
+			)
+			video_cards_nvidia? (
+		>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_VULKAN}
+			)
+		)
+	)
 	sys-devel/gcc[openmp]
 	x11-libs/libX11
 	x11-libs/libXau
@@ -78,7 +95,7 @@ RDEPEND="${PYTHON_DEPS}
 DEPEND="${RDEPEND}"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 RESTRICT="fetch strip"
-inherit unpacker
+inherit check-reqs unpacker
 SRC_URI="https://drivers.amd.com/other/ver_2.x/${S_FN1} -> ${D_FN1}
 	materials? ( https://drivers.amd.com/other/${S_FN2} -> ${D_FN2} )"
 S="${WORKDIR}"
@@ -99,7 +116,20 @@ pkg_nofetch() {
 	einfo "from ${HOMEPAGE_DL} and rename it to ${D_FN2} place it in ${distdir}"
 }
 
+_set_check_reqs_requirements() {
+	CHECKREQS_DISK_BUILD="970M"
+	CHECKREQS_DISK_USR="739M"
+}
+
+pkg_pretend() {
+	_set_check_reqs_requirements
+	check-reqs_pkg_setup
+}
+
 pkg_setup() {
+	_set_check_reqs_requirements
+	check-reqs_pkg_setup
+
 	if ! use systemwide ; then
 		if [[ -z "${RPR_USERS}" ]] ; then
 			eerror "You must add RPR_USERS to your make.conf or per-package-wise"
