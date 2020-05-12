@@ -13,6 +13,9 @@
 
     To see if your GPU is supported see:
     https://www.amd.com/en/support/kb/release-notes/rn-prorender-blender-v2-3-blender-2-80-2-81-2-82
+    https://www.amd.com/en/technologies/radeon-prorender-blender#SYSTEM-REQUIREMENTS
+
+    You need both an OpenCL 1.2 device and OpenCL 1.2 driver to use this product.
   </longdescription>
   <upstream>
     <bugs-to>https://community.amd.com/community/prorender/blender</bugs-to>

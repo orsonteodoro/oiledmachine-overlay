@@ -7,22 +7,19 @@ DESCRIPTION="An OpenCL accelerated scaleable raytracing rendering engine for \
 Blender"
 HOMEPAGE="https://www.amd.com/en/technologies/radeon-prorender-blender"
 HOMEPAGE_DL=\
-"https://www.amd.com/en/support/kb/release-notes/rn-prorender-blender-v2-3-blender-2-80-2-81-2-82"
+"https://www.amd.com/en/support/kb/release-notes/rn-prorender-blender-v2-0-blender-2-8-2-81"
 LICENSE="AMD-RADEON-PRORENDER-BLENDER-EULA \
 	AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES \
 	PSF-2 MIT BSD BSD-2 CC-BY"
 KEYWORDS="~amd64"
 PLUGIN_NAME="rprblender"
-S_FN1="radeonprorenderblender_ubuntu.zip"
-S_FN2="radeonprorendermateriallibraryinstaller.run"
-D_FN1="${P}-plugin.zip"
-D_FN2="${P}-matlib.run"
+S_FN1="radeonprorenderforblender.run"
+D_FN1="${P}-plugin.run"
+SHA1SUM_PLUGIN="e7c07fa53c3f7daf398b1c912135409cf5dc32c7"
 MIN_BLENDER_V="2.80"
-MAX_BLENDER_V="2.83" # exclusive
-SHA1SUM_PLUGIN="0e1bb299672dc111c6bb5ea4b52efa9dce8d55d6"
-SHA1SUM_MATLIB="a4b22ef16515eab431c682421e07ec5b2940319d"
+MAX_BLENDER_V="2.82" # exclusive
 SLOT="0"
-IUSE="denoiser +materials opengl_mesa \
+IUSE="+materials opengl_mesa \
 -systemwide test video_cards_amdgpu video_cards_intel video_cards_nvidia \
 video_cards_r600 video_cards_radeonsi vulkan"
 NV_DRIVER_VERSION="368.39" # >= OpenCL 1.2
@@ -42,11 +39,6 @@ RDEPEND="${PYTHON_DEPS}
 					x11-drivers/amdgpu-pro-lts[opencl] ) )
 		)
 		virtual/opencl
-	)
-	denoiser? (
-		dev-cpp/tbb
-		dev-lang/vtune
-		sys-libs/libomp
 	)
 	dev-lang/python[xml]
 	$(python_gen_cond_dep 'dev-python/numpy[${PYTHON_MULTI_USEDEP}]')
@@ -68,12 +60,11 @@ DEPEND="${RDEPEND}"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 RESTRICT="fetch strip"
 inherit unpacker
-SRC_URI="https://drivers.amd.com/other/ver_2.x/${S_FN1} -> ${D_FN1}
-	materials? ( https://drivers.amd.com/other/${S_FN2} -> ${D_FN2} )"
+SRC_URI="https://drivers.amd.com/other/ver_2.x/${S_FN1} -> ${D_FN1}"
 S="${WORKDIR}"
 S_PLUGIN="${WORKDIR}/${PN}-${PV}-plugin"
-S_MATLIB="${WORKDIR}/${PN}-${PV}-matlib"
-D_USER_MATLIB="Documents/Radeon ProRender/Material Library"
+S_MATLIB="${WORKDIR}/${PN}-${PV}-plugin"
+D_USER_MATLIB="Documents/Radeon ProRender/Blender/Material Library"
 D_MATERIALS="/usr/share/${PN}/${D_USER_MATLIB}"
 INTERNAL_PV="2.3.4"
 
@@ -82,10 +73,6 @@ pkg_nofetch() {
 	einfo "Please download"
 	einfo "  - ${S_FN1} (sha1sum is ${SHA1SUM_PLUGIN})"
 	einfo "from ${HOMEPAGE_DL} and rename it to ${D_FN1} place it in ${distdir}"
-	einfo
-	einfo "Please download"
-	einfo "  - ${S_FN2} (sha1sum is ${SHA1SUM_MATLIB})"
-	einfo "from ${HOMEPAGE_DL} and rename it to ${D_FN2} place it in ${distdir}"
 }
 
 pkg_setup() {
@@ -97,15 +84,6 @@ pkg_setup() {
 			eerror "You must add RPR_USERS to your make.conf or per-package-wise"
 			eerror "Example RPR_USERS=\"johndoe janedoe\""
 			die
-		fi
-	fi
-	if use denoiser ; then
-		if [[ ! -f /usr/$(get_libdir)/libomp.so.5 ]] ; then
-			ewarn
-			ewarn "A libomp.so.5 symlink may be required for the denoiser.  Do:"
-			ewarn
-			ewarn "  ln -s /usr/lib64/libomp.so /usr/lib64/libiomp.so.5"
-			ewarn
 		fi
 	fi
 
@@ -123,23 +101,16 @@ src_unpack() {
 	default
 
 	mkdir -p "${S_PLUGIN}" || die
-	mkdir -p "${S_MATLIB}" || die
 
 	cd "${S_PLUGIN}" || die
 
-	unpack_zip ${D_FN1}
+	unpack_makeself ${D_FN1}
 
-	unpack_makeself RadeonProRenderForBlender_${INTERNAL_PV}.run
+#	unpack_makeself RadeonProRenderForBlender_${INTERNAL_PV}.run
 
 	if use systemwide ; then
 		unpack_zip addon/addon.zip
 	fi
-
-	rm *.run || die
-
-	cd "${S_MATLIB}" || die
-
-	unpack_makeself ${D_FN2}
 }
 
 src_install_matlib() {
@@ -156,7 +127,7 @@ generate_enable_plugin_script() {
 	einfo "Generating script"
 	local path="${1}"
 	local s_plugin="${2}"
-	head -n 311 "${S_PLUGIN}/install.py" \
+	head -n 313 "${S_PLUGIN}/install.py" \
 		| tail -n 6 \
 		| cut -c 10- \
 		| sed -e "s|\",$||g" \
@@ -217,8 +188,6 @@ src_install_per_user() {
 		einfo "Installing addon for user: ${u}"
 		local d_addon="/home/${u}/.local/share/${PLUGIN_NAME}"
 		local ed_addon="${ED}/${d_addon}"
-		local d_matlib_meta="/home/${u}/.local/share/rprmaterials"
-		local ed_matlib_meta="${ED}/${d_matlib_meta}"
 		local d_matlib="/home/${u}/${D_USER_MATLIB}"
 		local ed_matlib="${ED}/${d_matlib}"
 		cd "${S_PLUGIN}" || die
@@ -241,9 +210,6 @@ src_install_per_user() {
 			cd "${S_MATLIB}" || die
 			insinto "${d_matlib}"
 			doins -r matlib/feature_MaterialLibrary/*
-			exeinto "${d_matlib_meta}"
-			doexe uninstall.py
-			echo "${d_matlib}" > "${ed_matlib_meta}/.matlib_installed" || die
 			echo "${d_matlib}" > "${ed_addon}/.matlib_installed" || die
 			fowners -R ${u}:${u} "${d_matlib}"
 		fi
