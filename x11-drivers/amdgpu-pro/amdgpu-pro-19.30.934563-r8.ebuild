@@ -253,11 +253,11 @@ driver to work"
 	linux-info_pkg_setup
 
 	if use opencl_pal ; then
-		einfo "opencl_pal for Vega or newer enabled"
+		einfo "opencl_pal for Vega 10 or newer enabled"
 	fi
 
 	if use opencl_orca ; then
-		einfo "opencl_orca for pre-vega enabled"
+		einfo "opencl_orca for pre-Vega 10 enabled"
 	fi
 
 	if use roct ; then
@@ -580,6 +580,7 @@ src_install() {
 			fi
 
 			if use opencl ; then
+				use clinfo && \
 				chmod 0755 "${ED}/${od_amdgpupro}/bin/"* || die
 				dosym ../../../../../opt/amdgpu-pro/$(get_libdir)/libOpenCL.so.1 \
 					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/libOpenCL.so.1

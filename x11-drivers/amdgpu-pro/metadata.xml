@@ -44,9 +44,9 @@
     <flag name="open-stack">Installs the open-stack containing Mesa OpenGL
       for consumer products.</flag>
     <flag name="opencl">Install OpenCL support.</flag>
-    <flag name="opencl_orca">Install the OpenCL driver for pre Vega products.
+    <flag name="opencl_orca">Install the OpenCL driver for pre Vega 10 products.
       </flag>
-    <flag name="opencl_pal">Install the OpenCL driver for Vega or newer
+    <flag name="opencl_pal">Install the OpenCL driver for Vega 10 or newer
      (GCN 5.x+) products.</flag>
     <flag name="opengl">Install OpenGL support.</flag>
     <flag name="opengl_mesa">Install and use Mesa OpenGL.</flag>
