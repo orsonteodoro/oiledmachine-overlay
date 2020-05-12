@@ -19,7 +19,7 @@ SHA1SUM_PLUGIN="e7c07fa53c3f7daf398b1c912135409cf5dc32c7"
 MIN_BLENDER_V="2.80"
 MAX_BLENDER_V="2.82" # exclusive
 SLOT="0"
-IUSE="intel +materials opengl_mesa \
+IUSE="denoiser intel +materials opengl_mesa \
 -systemwide test video_cards_amdgpu video_cards_i965 \
 video_cards_nvidia vulkan"
 NV_DRIVER_VERSION="368.39" # >= OpenCL 1.2
@@ -32,13 +32,13 @@ RDEPEND="${PYTHON_DEPS}
 			|| (
 				opengl_mesa? (
 					|| (
-			x11-drivers/amdgpu-pro[X,developer,open-stack,opengl_mesa,opencl]
-			x11-drivers/amdgpu-pro-lts[X,developer,open-stack,opengl_mesa,opencl]
+			x11-drivers/amdgpu-pro[X,developer,open-stack,opencl,opengl_mesa,vulkan?]
+			x11-drivers/amdgpu-pro-lts[X,developer,open-stack,opencl,opengl_mesa,vulkan?]
 					)
 				)
 				!opengl_mesa? ( || (
-			x11-drivers/amdgpu-pro[opencl]
-			x11-drivers/amdgpu-pro-lts[opencl]
+			x11-drivers/amdgpu-pro[opencl,vulkan?]
+			x11-drivers/amdgpu-pro-lts[opencl,vulkan?]
 						) )
 			dev-libs/amdgpu-pro-opencl
 			)
@@ -91,9 +91,6 @@ pkg_nofetch() {
 }
 
 pkg_setup() {
-	ewarn "Package still in testing/development"
-	einfo "It may not work at all"
-
 	if ! use systemwide ; then
 		if [[ -z "${RPR_USERS}" ]] ; then
 			eerror "You must add RPR_USERS to your make.conf or per-package-wise"
@@ -111,7 +108,7 @@ pkg_setup() {
 	fi
 
 	# We know because of embree and may be statically linked.
-	if cat /proc/cpuinfo | grep sse2 ; then
+	if cat /proc/cpuinfo | grep sse2 2>/dev/null 1>/dev/null ; then
 		einfo "CPU is compatible."
 	else
 		ewarn "CPU may not be compatible.  ${PN} requires SSE2."
@@ -256,13 +253,17 @@ EOF
 }
 
 pkg_postinst() {
+	einfo
 	einfo "You must enable the addon manually."
 
 	if use systemwide ; then
+		einfo
 		einfo "It is listed under: Edit > Preferences > Add-ons > Community > Render: Radeon ProRender"
 		if use materials ; then
+			einfo
 			einfo "The material library have been installed in:"
 			einfo "${D_MATERIALS}"
+			einfo
 		fi
 	else
 		einfo "You must install this product manually through blender per user."
@@ -296,6 +297,20 @@ pkg_postinst() {
 		done
 	fi
 
+	einfo
 	einfo "For this version, you are opt-in in sending render statistics to AMD.  See link below to disable this feature."
 	einfo "https://radeon-pro.github.io/RadeonProRenderDocs/plugins/blender/debug.html"
+	einfo
+	einfo "You may need to clear the caches.  Run:"
+	einfo "rm -rf ~/.config/blender/*/cache/"
+	einfo
+	einfo "You need to switch to the new renderer:"
+	einfo "See https://radeon-pro.github.io/RadeonProRenderDocs/plugins/blender/switching.html"
+	einfo
+	einfo "Setting Quality > Render Quality > Full is likely bugged and will emit \"Error: Compiling CL to IR\"."
+	einfo "Lower settings work."
+	einfo
+	einfo "The Full Spectrum Rendering (FSR) modes Low, Medium, High require vulkan the USE flag.  For details, see"
+	einfo "https://radeon-pro.github.io/RadeonProRenderDocs/plugins/blender/full_spectrum_rendering.html"
+	einfo
 }

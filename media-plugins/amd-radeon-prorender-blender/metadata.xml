@@ -15,11 +15,16 @@
     https://www.amd.com/en/support/kb/release-notes/rn-prorender-blender-v2-3-blender-2-80-2-81-2-82
     https://www.amd.com/en/technologies/radeon-prorender-blender#SYSTEM-REQUIREMENTS
 
-    GPUs require both OpenCL 1.2 on hardware support and an OpenCL 1.2 driver to use this product.
-    CPU may require at least SSE2 support.
+    GPUs require both OpenCL 1.2 on hardware support and an OpenCL 1.2 driver
+    to use this product.
+    CPUs may require at least SSE2 support.
+
+    Using Full for Rendering Quality may be bugged.  It unfortunately was the
+    default and an experimental option.  Please use a lower setting.
   </longdescription>
   <upstream>
     <bugs-to>https://community.amd.com/community/prorender/blender</bugs-to>
+    <doc lang="en">https://radeon-pro.github.io/RadeonProRenderDocs/plugins/blender/about.html</doc>
   </upstream>
   <use>
     <flag name="denoiser">Checks for dynamic libraries that may be
@@ -36,7 +41,8 @@
       IGPs/GPUs.  For Gen 7+ users.</flag>
     <flag name="video_cards_nvidia">Checks if the GPU driver is OpenCL 1.2
       compatible.</flag>
-    <flag name="vulkan">Installs dependencies for Vulkan support.</flag>
+    <flag name="vulkan">Installs dependencies for Vulkan support.  Vulkan
+      is used for Full Spectrum Rendering (RPR).</flag>
     <flag name="test">Checks if hardware is supported.</flag>
   </use>
 </pkgmetadata>
