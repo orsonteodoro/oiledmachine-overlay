@@ -662,8 +662,9 @@ src_install() {
 			fi
 
 			if use opencl ; then
-				use clinfo && \
-				chmod 0755 "${ED}/${od_amdgpupro}/bin/"* || die
+				if use clinfo ; then
+					chmod 0755 "${ED}/${od_amdgpupro}/bin/"* || die
+				fi
 				dosym ../../../../../opt/amdgpu-pro/lib/${chost}/libOpenCL.so.1 \
 					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/libOpenCL.so.1
 				dosym ../../../../../opt/amdgpu-pro/lib/${chost}/libOpenCL.so \
