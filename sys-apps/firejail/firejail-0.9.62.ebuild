@@ -98,5 +98,9 @@ pkg_postinst() {
 		einfo "  xpra_speaker_off  # disables sound forwarding for xpra"
 		einfo "  xpra_speaker_on  # enables sound forwarding for xpra"
 		einfo
+		einfo
+		einfo "Use --x11=xephyr instead for Firefox to fix the sound"
+		einfo "skipping problem."
+		einfo
 	fi
 }
