@@ -121,7 +121,7 @@ pkg_postinst() {
 	einfo
 	echo -e "${PKG_POSTINST_LIST}"
 	einfo
-	einfo "Additional firmware in linux-firmware is required by rock-dkms for these codenames:"
+	einfo "Additional firmware in the sys-kernel/linux-firmware package that is required by rock-dkms for these codenames:"
 	einfo
 	echo -e "${PKG_RADEON_LIST}"
 	einfo
