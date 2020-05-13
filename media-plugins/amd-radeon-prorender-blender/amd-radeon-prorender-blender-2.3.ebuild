@@ -23,7 +23,7 @@ MAX_BLENDER_V="2.83" # exclusive
 SHA1SUM_PLUGIN="0e1bb299672dc111c6bb5ea4b52efa9dce8d55d6"
 SHA1SUM_MATLIB="a4b22ef16515eab431c682421e07ec5b2940319d"
 SLOT="0"
-IUSE="denoiser intel +materials opengl_mesa -systemwide test \
+IUSE="denoiser intel +materials +opencl opengl_mesa -systemwide test \
 video_cards_amdgpu video_cards_i965 video_cards_iris video_cards_nvidia \
 video_cards_radeonsi vulkan"
 NV_DRIVER_VERSION_OCL_1_2="368.39" # >= OpenCL 1.2
@@ -31,6 +31,7 @@ NV_DRIVER_VERSION_VULKAN="390.132"
 PYTHON_COMPAT=( python3_{7,8} ) # same as blender
 inherit python-single-r1
 RDEPEND="${PYTHON_DEPS}
+	opencl? (
 	intel? ( dev-util/intel-ocl-sdk )
 	|| (
 		video_cards_amdgpu? (
@@ -60,6 +61,7 @@ RDEPEND="${PYTHON_DEPS}
 		video_cards_radeonsi? (
 			dev-libs/amdgpu-pro-opencl
 		)
+	)
 	)
 	denoiser? (
 		dev-cpp/tbb
@@ -157,6 +159,10 @@ pkg_setup() {
 			ewarn "  ln -s /usr/lib64/libomp.so /usr/lib64/libiomp.so.5"
 			ewarn
 		fi
+	fi
+
+	if ! use opencl ; then
+		einfo "The OpenCL use flag is strongly recommended"
 	fi
 
 	if has_version "dev-libs/rocm-opencl-runtime" ; then
