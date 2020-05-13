@@ -74,6 +74,18 @@ src_compile() {
 	:;
 }
 
+PKG_POSTINST_LIST=""
+
+pkg_preinst() {
+	cd "${S}/firmware/amdgpu" || die
+	MA=$(ls * | cut -f1 -d"_" | uniq | tr "\n" " ")
+
+	for ma in ${MA} ; do
+		F=($(ls ${ma}*))
+		PKG_POSTINST_LIST+=" \e[1m\e[92m*\e[0m ${ma}:\t${F[@]/#/amdgpu/}\n"
+	done
+}
+
 src_install() {
 	insinto /lib/firmware
 	doins -r firmware/amdgpu
@@ -88,4 +100,12 @@ src_install() {
 	local d_insdoc="${WORKDIR}/amdgpu-pro-${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}/doc"
 	dodoc "${d_insdoc}"/copyright
 	dodoc "${FILESDIR}"/LICENSE.amdgpu
+}
+
+pkg_postinst() {
+	einfo "Please update your CONFIG_EXTRA_FIRMWARE of your kernel .config file with one the following:"
+	einfo
+	echo -e "${PKG_POSTINST_LIST}"
+	einfo
+	einfo "The firmware requirements may change if the amdgpu DKMS driver is updated."
 }

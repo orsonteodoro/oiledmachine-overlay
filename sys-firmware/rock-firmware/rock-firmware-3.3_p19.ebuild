@@ -69,10 +69,37 @@ src_compile() {
 	:;
 }
 
+PKG_POSTINST_LIST=""
+
+_gen_firmware_list() {
+	local module="${1}"
+	cd "${S}/usr/src/amdgpu-${MY_RPR}/firmware/${module}" || die
+	MA=$(ls * | cut -f1 -d"_" | uniq | tr "\n" " ")
+
+	for ma in ${MA} ; do
+		F=($(ls ${ma}*))
+		PKG_POSTINST_LIST+=" \e[1m\e[92m*\e[0m ${ma}:\t${F[@]/#/${module}/}\n"
+	done
+
+}
+
+pkg_preinst() {
+	_gen_firmware_list "amdgpu"
+	_gen_firmware_list "radeon"
+}
+
 src_install() {
 	insinto /lib/firmware
 	doins -r usr/src/amdgpu-${MY_RPR}/firmware/{radeon,amdgpu}
 	docinto licenses
 	dodoc "${FILESDIR}"/{LICENSE.amdgpu,LICENSE.radeon}
 	# The archives should contain license files but don't.
+}
+
+pkg_postinst() {
+	einfo "Please update your CONFIG_EXTRA_FIRMWARE of your kernel .config file with one the following:"
+	einfo
+	echo -e "${PKG_POSTINST_LIST}"
+	einfo
+	einfo "The firmware requirements may change if the ROCk DKMS driver is updated."
 }
