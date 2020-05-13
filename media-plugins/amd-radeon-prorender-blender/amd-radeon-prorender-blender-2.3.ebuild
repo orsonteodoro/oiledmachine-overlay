@@ -31,8 +31,8 @@ NV_DRIVER_VERSION_VULKAN="390.132"
 PYTHON_COMPAT=( python3_{7,8} ) # same as blender
 inherit python-single-r1
 RDEPEND="${PYTHON_DEPS}
+	intel? ( dev-util/intel-ocl-sdk )
 	|| (
-		intel? ( dev-util/intel-ocl-sdk )
 		video_cards_amdgpu? (
 			|| (
 				opengl_mesa? (
