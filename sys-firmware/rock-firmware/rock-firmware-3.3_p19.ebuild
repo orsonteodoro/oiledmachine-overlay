@@ -104,7 +104,9 @@ pkg_preinst() {
 	done
 
 	for cn in ${!L[@]} ; do
-		PKG_RADEON_LIST+=" \e[1m\e[92m*\e[0m ${cn}:\t${L[${cn}]}\n"
+		if [[ "${cn}" == "hainan" || "${cn}" == "tahiti" ]] ; then
+			PKG_RADEON_LIST+=" \e[1m\e[92m*\e[0m ${cn}:\t${L[${cn}]}\n"
+		fi
 	done
 }
 
