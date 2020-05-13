@@ -70,6 +70,7 @@ src_compile() {
 }
 
 PKG_POSTINST_LIST=""
+PKG_RADEON_LIST=""
 
 _gen_firmware_list() {
 	local module="${1}"
@@ -86,6 +87,25 @@ _gen_firmware_list() {
 pkg_preinst() {
 	_gen_firmware_list "amdgpu"
 	_gen_firmware_list "radeon"
+
+	#F=$(grep -r -e "radeon/" "${S}/usr/src/amdgpu-${MY_RPR}/amd/amdgpu/amdgpu_cgs.c" \
+	#	| sed -e "s|.*\"radeon|radeon|" -e "s|.bin.*|.bin|")
+	# typeset -p F # pickler if needed
+	# pickled / cached results from 3.1
+	declare -a F=([0]=$'radeon/tahiti_smc.bin\nradeon/pitcairn_k_smc.bin\nradeon/pitcairn_smc.bin\nradeon/verde_k_smc.bin\nradeon/verde_smc.bin\nradeon/oland_k_smc.bin\nradeon/oland_smc.bin\nradeon/hainan_k_smc.bin\nradeon/banks_k_2_smc.bin\nradeon/hainan_smc.bin' [1]="verde_k_smc.bin" [2]="verde_mc.bin" [3]="verde_me.bin" [4]="verde_pfp.bin" [5]="verde_rlc.bin" [6]="verde_smc.bin")
+	declare -A L
+	for f in ${F} ; do
+		cn=$(echo "${f}" | cut -f 2 -d "/" | cut -f 1 -d "_")
+		if [[ -v "L[${cn}]" ]] ; then
+			L[${cn}]+=" ${f}"
+		else
+			L[${cn}]="${f}"
+		fi
+	done
+
+	for cn in ${!L[@]} ; do
+		PKG_RADEON_LIST+=" \e[1m\e[92m*\e[0m ${cn}:\t${L[${cn}]}\n"
+	done
 }
 
 src_install() {
@@ -100,6 +120,10 @@ pkg_postinst() {
 	einfo "Please update your CONFIG_EXTRA_FIRMWARE of your kernel .config file with one the following:"
 	einfo
 	echo -e "${PKG_POSTINST_LIST}"
+	einfo
+	einfo "Additional firmware in linux-firmware is required by rock-dkms for these codenames:"
+	einfo
+	echo -e "${PKG_RADEON_LIST}"
 	einfo
 	einfo "The firmware requirements may change if the ROCk DKMS driver is updated."
 }

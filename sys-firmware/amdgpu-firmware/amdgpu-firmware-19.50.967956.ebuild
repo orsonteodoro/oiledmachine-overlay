@@ -75,6 +75,7 @@ src_compile() {
 }
 
 PKG_POSTINST_LIST=""
+PKG_RADEON_LIST=""
 
 pkg_preinst() {
 	cd "${S}/firmware/amdgpu" || die
@@ -83,6 +84,22 @@ pkg_preinst() {
 	for ma in ${MA} ; do
 		F=($(ls ${ma}*))
 		PKG_POSTINST_LIST+=" \e[1m\e[92m*\e[0m ${ma}:\t${F[@]/#/amdgpu/}\n"
+	done
+
+	F=$(grep -r -e "radeon/" "${S}/amd/amdgpu/amdgpu_cgs.c" | sed -e "s|.*\"radeon|radeon|" -e "s|.bin.*|.bin|")
+	#typeset -p F # pickler if needed
+	declare -A L
+	for f in ${F} ; do
+		cn=$(echo "${f}" | cut -f 2 -d "/" | cut -f 1 -d "_")
+		if [[ -v "L[${cn}]" ]] ; then
+			L[${cn}]+=" ${f}"
+		else
+			L[${cn}]="${f}"
+		fi
+	done
+
+	for cn in ${!L[@]} ; do
+		PKG_RADEON_LIST+=" \e[1m\e[92m*\e[0m ${cn}:\t${L[${cn}]}\n"
 	done
 }
 
@@ -106,6 +123,10 @@ pkg_postinst() {
 	einfo "Please update your CONFIG_EXTRA_FIRMWARE of your kernel .config file with one the following:"
 	einfo
 	echo -e "${PKG_POSTINST_LIST}"
+	einfo
+	einfo "Additional firmware in linux-firmware is required by amdgpu-dkms for these codenames:"
+	einfo
+	echo -e "${PKG_RADEON_LIST}"
 	einfo
 	einfo "The firmware requirements may change if the amdgpu DKMS driver is updated."
 }
