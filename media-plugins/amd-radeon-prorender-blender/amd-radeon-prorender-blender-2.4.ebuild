@@ -7,20 +7,21 @@ DESCRIPTION="An OpenCL accelerated scaleable raytracing rendering engine for \
 Blender"
 HOMEPAGE="https://www.amd.com/en/technologies/radeon-prorender-blender"
 HOMEPAGE_DL=\
-"https://www.amd.com/en/support/kb/release-notes/rn-prorender-blender-v2-3-blender-2-80-2-81-2-82"
+"https://www.amd.com/en/support/kb/release-notes/rn-prorender-blender-v2-4"
 LICENSE="AMD-RADEON-PRORENDER-BLENDER-EULA \
 	AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES \
+	Apache-2.0 \
 	PSF-2 MIT BSD BSD-2 CC-BY"
 KEYWORDS="~amd64"
-INTERNAL_PV="2.3.4"
+INTERNAL_PV="2.4.11"
 PLUGIN_NAME="rprblender"
 MATLIB_NAME="rprmaterials"
-S_FN1="radeonprorenderblender_ubuntu.zip"
+S_FN1="RadeonProRenderBlender_Ubuntu.zip"
 S_FN2="radeonprorendermateriallibraryinstaller.run"
 D_FN1="${P}-plugin.zip"
 MIN_BLENDER_V="2.80"
-MAX_BLENDER_V="2.83" # exclusive
-SHA1SUM_PLUGIN="0e1bb299672dc111c6bb5ea4b52efa9dce8d55d6"
+MAX_BLENDER_V="2.84" # exclusive
+SHA1SUM_PLUGIN="39d8e6631f480ba9d4070d9040007687bf041f1a"
 SHA1SUM_MATLIB="a4b22ef16515eab431c682421e07ec5b2940319d"
 D_FN2="${PN}-matlib-${SHA1SUM_MATLIB}.run"
 SLOT="0"
@@ -108,7 +109,7 @@ RDEPEND="${PYTHON_DEPS}
 	x11-libs/libxshmfence
 	x11-libs/libXxf86vm"
 DEPEND="${RDEPEND}"
-REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+REQUIRED_USE="${PYTHON_REQUIRED_USE} !systemwide"
 RESTRICT="fetch strip"
 inherit check-reqs unpacker
 SRC_URI="https://drivers.amd.com/other/ver_2.x/${S_FN1} -> ${D_FN1}
@@ -192,14 +193,6 @@ src_unpack() {
 
 	unpack_zip ${D_FN1}
 
-	unpack_makeself RadeonProRenderForBlender_${INTERNAL_PV}.run
-
-	if use systemwide ; then
-		unpack_zip addon/addon.zip
-	fi
-
-	rm *.run || die
-
 	cd "${S_MATLIB}" || die
 
 	unpack_makeself ${D_FN2}
@@ -211,20 +204,6 @@ src_install_systemwide_matlib() {
 	dodir "${D_MATERIALS}"
 	cp -a "${S_MATLIB}"/matlib/feature_MaterialLibrary/* \
 		"${ED}/${D_MATERIALS}" || die
-}
-
-generate_enable_plugin_script() {
-	einfo "Generating script"
-	local path="${1}"
-	local s_plugin="${2}"
-	head -n 311 "${S_PLUGIN}/install.py" \
-		| tail -n 6 \
-		| cut -c 10- \
-		| sed -e "s|\",$||g" \
-		| sed -e "4d" \
-		| sed -e "s|\" % str(||g" \
-		| sed -e "s|%s|${path}|g" \
-		> "${T}/install_blender_addon.py" || die
 }
 
 src_install_systemwide_plugin() {
@@ -254,17 +233,6 @@ src_install_systemwide_plugin() {
 				echo "${D_MATERIALS}" > "${ed_matlib_meta}/.matlib_installed" || die
 				echo "${D_MATERIALS}" > "${ed_install}/.matlib_installed" || die
 			fi
-			einfo "Attempting to mark installation as registered..."
-			touch "${ed_install}/.registered" || die
-			dodir "${d_install}/addon" || die
-			touch "${ed_install}/addon/.installed" || die
-			touch "${ed_install}/.files_installed" || die
-			generate_enable_plugin_script \
-				"${d_install}/addon/addon.zip"
-			exeinto "${d_install}/addon"
-			doexe "${T}/install_blender_addon.py"
-			exeinto "${d_install}"
-			doexe uninstall.py
 		else
 			einfo "Blender ${d_ver} not supported.  Skipping..."
 		fi
@@ -288,17 +256,8 @@ src_install_per_user() {
 		local ed_matlib="${ED}/${d_matlib}"
 		cd "${S_PLUGIN}" || die
 		insinto "${d_addon}/addon"
-		doins addon/addon.zip
-		exeinto "${d_addon}"
-		doexe uninstall.py
-		touch "${ed_addon}/.registered" || die
-		touch "${ed_addon}/.files_installed" || die
-		touch "${ed_addon}/.installed" || die
-
-		generate_enable_plugin_script \
-			"${d_addon}/addon/addon.zip"
-		exeinto "${d_addon}/addon"
-		doexe "${T}/install_blender_addon.py"
+		doins "${DISTDIR}/${D_FN1}"
+		mv "${ed_addon}/addon/${D_FN1}" "${ed_addon}/addon/addon.zip" || die
 
 		if use materials ; then
 			cd "${S_MATLIB}" || die
@@ -312,6 +271,7 @@ src_install_per_user() {
 			fowners -R ${u}:${u} "${d_matlib_meta}"
 		fi
 		fowners -R ${u}:${u} "${d_addon}"
+
 	done
 }
 
@@ -328,8 +288,8 @@ EOF
 	else
 		src_install_per_user
 	fi
-	cd "${S_PLUGIN}" || die
-	dodoc eula.txt
+	cd "${S_PLUGIN}/${PLUGIN_NAME}" || die
+	dodoc EULA.html
 }
 
 pkg_postinst() {
@@ -372,13 +332,7 @@ pkg_postinst() {
 				einfo "  export RPR_MATERIAL_LIBRARY_PATH=\"${d_matlib}\""
 				einfo "  Then, re-log."
 				einfo
-				einfo "or"
-				einfo
-				einfo "  After installing and enabling the plugin run:"
-				einfo "  sed -i -e 's|material_library_path = None|material_library_path = \"${d_matlib}\"|' /home/${u}/.config/blender/${blender_ver}/scripts/addons/${PLUGIN_NAME}/config.py"
-				einfo
 			fi
-			einfo
 		done
 	fi
 

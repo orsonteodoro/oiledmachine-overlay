@@ -41,6 +41,8 @@
     <flag name="opengl_mesa">Pulls the required dependencies if Pro support in
       the AMDGPU-PRO driver has not been installed.</flag>
     <flag name="materials">Installs the material library.</flag>
+    <flag name="systemwide">Installs the plugin systemwide.  Not recommened.
+      </flag>
     <flag name="video_cards_amdgpu">
       Checks for OpenCL 1.2 support or Vulkan compatibility for AMDGPU-PRO
       drivers.</flag>
