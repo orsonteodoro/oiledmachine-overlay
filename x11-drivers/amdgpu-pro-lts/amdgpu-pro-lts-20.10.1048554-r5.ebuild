@@ -165,9 +165,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 open-stack? (
 	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
 	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}] )
-	 opencl? ( || (
-		dev-libs/ocl-icd
-		x11-libs/amdgpu-pro-lts[opencl-icd-loader] ) )
+	 opencl? ( !opencl-icd-loader? ( >=virtual/opencl-3 ) )
 	 opengl? (  >=app-eselect/eselect-opengl-1.0.7 )
 	 openmax? ( >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
 		    >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]

@@ -46,7 +46,10 @@
     <flag name="open-stack">Installs the open-stack containing Mesa OpenGL
       for consumer products.</flag>
     <flag name="opencl">Install OpenCL support.</flag>
-    <flag name="opencl-icd-loader">Install the OpenCL ICD loader.</flag>
+    <flag name="opencl-icd-loader">Install the OpenCL ICD loader provided by
+      this driver.  An alternative ICD loader will be pulled if the opencl USE
+      flag is set.
+      </flag>
     <flag name="opencl_orca">Install the OpenCL driver for pre Vega 10 products.
       </flag>
     <flag name="opencl_pal">Install the OpenCL driver for Vega 10 or newer
