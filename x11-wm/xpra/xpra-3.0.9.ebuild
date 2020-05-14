@@ -138,7 +138,7 @@ pkg_setup() {
 src_prepare() {
 	distutils-r1_src_prepare
 	if use firejail ; then
-		eapply "${FILESDIR}"/${PN}-3.0.9-envar-sound-forwarding-on-start.patch
+		eapply "${FILESDIR}"/${PN}-3.0.9-envar-sound-override-on-start.patch
 	fi
 }
 

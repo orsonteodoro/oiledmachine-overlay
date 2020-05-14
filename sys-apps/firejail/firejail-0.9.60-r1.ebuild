@@ -28,7 +28,7 @@ src_prepare() {
 	default
 
 	if use xpra ; then
-		eapply "${FILESDIR}/${PN}-0.9.62-xpra-speaker-forwarding-support.patch"
+		eapply "${FILESDIR}/${PN}-0.9.62-xpra-speaker-override.patch"
 	fi
 
 	find ./contrib -type f -name '*.py' | xargs sed --in-place 's-#!/usr/bin/python3-#!/usr/bin/env python3-g' || die
@@ -74,7 +74,7 @@ pkg_postinst() {
 		einfo
 		einfo "A new custom args have been added to improve performance."
 		einfo "To lessen shuddering/skipping some apps may benefit by"
-		einfo "disabiling sound forwarding."
+		einfo "disabiling sound input and output forwarding on xpra."
 		einfo
 		einfo
 		einfo "New args (must be placed before --x11=xpra)"
