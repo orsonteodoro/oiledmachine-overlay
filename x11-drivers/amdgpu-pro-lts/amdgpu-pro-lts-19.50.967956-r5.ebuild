@@ -22,8 +22,7 @@ LICENSE="AMDGPUPROEULA
 		vulkan_open? ( MIT )
 		wayland? ( MIT )
 		xa? ( MIT )
-		developer? ( Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD-2 ) UoI-NCSA
-		BSD
+		developer? ( Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD-2 BSD ) UoI-NCSA
 		MIT
 	)
 	pro-stack? (
