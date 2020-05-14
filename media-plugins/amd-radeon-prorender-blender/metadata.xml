@@ -34,7 +34,7 @@
   <use>
     <flag name="denoiser">Checks for dynamic libraries that may be
       required to use the denoiser.</flag>
-    <flag name="intel">Checks for OpenCL 1.2 support for Intel
+    <flag name="intel-ocl">Checks for OpenCL 1.2 support for Intel
       CPUs that may be required.</flag>
     <flag name="materials">Installs the material library.</flag>
     <flag name="opencl">Checks for proper OpenCL support for GPUs.</flag>
