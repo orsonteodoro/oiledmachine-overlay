@@ -372,11 +372,6 @@ pkg_postinst() {
 				einfo "  export RPR_MATERIAL_LIBRARY_PATH=\"${d_matlib}\""
 				einfo "  Then, re-log."
 				einfo
-				einfo "or"
-				einfo
-				einfo "  After installing and enabling the plugin run:"
-				einfo "  sed -i -e 's|material_library_path = None|material_library_path = \"${d_matlib}\"|' /home/${u}/.config/blender/${blender_ver}/scripts/addons/${PLUGIN_NAME}/config.py"
-				einfo
 			fi
 			einfo
 		done
