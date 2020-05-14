@@ -41,14 +41,15 @@ RDEPEND="${PYTHON_DEPS}
 					|| (
 			x11-drivers/amdgpu-pro[X,developer,open-stack,opengl_mesa,opencl]
 			x11-drivers/amdgpu-pro-lts[X,developer,open-stack,opengl_mesa,opencl]
-					)
-				)
+					   )
+				             )
 				!opengl_mesa? ( || (
 			x11-drivers/amdgpu-pro[opencl]
 			x11-drivers/amdgpu-pro-lts[opencl]
-						) )
-			)
+					      )    )
 			dev-libs/amdgpu-pro-opencl
+			dev-libs/rocm-opencl-runtime
+			   )
 		)
 		video_cards_i965? (
 			dev-libs/intel-neo
@@ -170,7 +171,7 @@ pkg_setup() {
 	fi
 
 	if has_version "dev-libs/rocm-opencl-runtime" ; then
-		ewarn "${PN} may not be compatibile with dev-libs/rocm-opencl-runtime (ROCm OpenCL)"
+		ewarn "${PN} is untested with dev-libs/rocm-opencl-runtime (ROCm OpenCL) for Vega 10 or newer"
 	fi
 
 	if has_version "media-libs/mesa[opencl]" ; then
