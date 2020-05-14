@@ -35,6 +35,7 @@ LICENSE="AMDGPUPROEULA
 		hip-clang? ( AMDGPUPROEULA )
 		hwe? ( AMDGPUPROEULA )
 		opencl? ( AMDGPUPROEULA )
+		opencl-icd-loader? ( AMDGPUPROEULA )
 		opencl_pal? ( AMDGPUPROEULA )
 		opencl_orca? ( AMDGPUPROEULA )
 		opengl? (
@@ -86,9 +87,10 @@ VULKAN_SDK_VER="1.1.109.0"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="+amf bindist clinfo developer dkms doc +egl +gles2 freesync glamor hip-clang +hwe \
-+open-stack +opencl +opencl_orca +opencl_pal +opengl +opengl_pro opengl_mesa \
-openmax osmesa +pro-stack roct +vaapi +vdpau +vulkan vulkan_open vulkan_pro wayland +X xa"
+IUSE="+amf bindist clinfo developer dkms doc +egl +gles2 freesync glamor \
+hip-clang +hwe +open-stack +opencl opencl-icd-loader +opencl_orca +opencl_pal \
++opengl +opengl_pro opengl_mesa openmax osmesa +pro-stack roct +vaapi +vdpau \
++vulkan vulkan_open vulkan_pro wayland +X xa"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -166,7 +168,9 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 open-stack? (
 	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
 	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}] )
-	 opencl? (    app-eselect/eselect-opencl )
+	 opencl? ( || (
+		dev-libs/ocl-icd
+		x11-libs/amdgpu-pro[opencl-icd-loader] ) )
 	 opengl? (  >=app-eselect/eselect-opengl-1.0.7 )
 	 openmax? ( >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
 		    >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
@@ -215,7 +219,8 @@ REQUIRED_USE="
 	hip-clang? ( pro-stack )
 	hwe
 	hwe? ( open-stack )
-	opencl? ( || ( opencl_orca opencl_pal ) open-stack pro-stack )
+	opencl? ( || ( opencl_orca opencl_pal ) pro-stack )
+	opencl-icd-loader? ( open-stack )
 	opencl_orca? ( opencl )
 	opencl_pal? ( opencl )
 	opengl? ( ^^ ( opengl_mesa opengl_pro ) )
@@ -467,6 +472,7 @@ src_unpack_pro_stack() {
 	fi
 
 	if use opencl ; then
+		use opencl-icd-loader && \
 		unpack_deb "${d_debs}/libopencl1-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 		if use opencl_orca ; then
 			unpack_deb "${d_debs}/opencl-orca-amdgpu-pro-icd_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
@@ -666,12 +672,14 @@ src_install() {
 				if use clinfo ; then
 					chmod 0755 "${ED}/${od_amdgpupro}/bin/"* || die
 				fi
-				dosym ../../../../../opt/amdgpu-pro/lib/${chost}/libOpenCL.so.1 \
-					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/libOpenCL.so.1
-				dosym ../../../../../opt/amdgpu-pro/lib/${chost}/libOpenCL.so \
-					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/libOpenCL.so
-				dosym ../../../../../../opt/amdgpu-pro/include/CL \
-					/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/include/CL
+				if has_version 'app-eselect/eselect-opencl' ; then
+					dosym ../../../../../opt/amdgpu-pro/lib/${chost}/libOpenCL.so.1 \
+						/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/libOpenCL.so.1
+					dosym ../../../../../opt/amdgpu-pro/lib/${chost}/libOpenCL.so \
+						/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/libOpenCL.so
+					dosym ../../../../../../opt/amdgpu-pro/include/CL \
+						/usr/$(get_libdir)/OpenCL/vendors/amdgpu-pro/include/CL
+				fi
 			fi
 
 			if use roct ; then
@@ -734,10 +742,12 @@ pkg_prerm() {
 	fi
 
 	if use opencl ; then
-		if "${EROOT}"/usr/bin/eselect opencl list | grep -q -e "mesa" ; then
-			"${EROOT}"/usr/bin/eselect opencl set mesa
-		elif "${EROOT}"/usr/bin/eselect opencl list | grep -q -e "ocl-icd" ; then
-			"${EROOT}"/usr/bin/eselect opencl set ocl-icd
+		if has_version 'app-eselect/eselect-opencl' ; then
+			if "${EROOT}"/usr/bin/eselect opencl list | grep -q -e "mesa" ; then
+				"${EROOT}"/usr/bin/eselect opencl set mesa
+			elif "${EROOT}"/usr/bin/eselect opencl list | grep -q -e "ocl-icd" ; then
+				"${EROOT}"/usr/bin/eselect opencl set ocl-icd
+			fi
 		fi
 	fi
 }
@@ -750,7 +760,9 @@ pkg_postinst() {
 	fi
 
 	if use opencl ; then
-		"${EROOT}"/usr/bin/eselect opencl set amdgpu-pro
+		if has_version 'app-eselect/eselect-opencl' ; then
+			"${EROOT}"/usr/bin/eselect opencl set amdgpu-pro
+		fi
 	fi
 
 	if use freesync ; then
@@ -765,6 +777,12 @@ to turn on VSync."
 	einfo \
 "For DirectGMA, SSG, and ROCm API support re-emerge with dkms and make sure\n\
 that either amdgpu-dkms or rock-dkms is installed"
+
+	if has_version 'app-eselect/eselect-opencl' ; then
+		einfo \
+"Re-emerge this package with the opencl-icd-loader USE flag to fix the\n\
+libOpenCL.so symlink complaint by eselect-opencl"
+	fi
 }
 
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
