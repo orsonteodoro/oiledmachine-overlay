@@ -308,11 +308,6 @@ pkg_postinst() {
 		einfo "You must install this product manually through blender per user."
 		for u in ${RPR_USERS} ; do
 			einfo
-			einfo "To install and enable the plugin, tell ${u} to run:"
-			einfo "/usr/bin/blender --background --python /home/${u}/.local/share/${PLUGIN_NAME}/addon/install_blender_addon.py"
-			einfo
-			einfo "or"
-			einfo
 			einfo "Edit > Preferences > Add-ons > Install"
 			einfo
 			einfo "Addon location: /home/${u}/.local/share/${PLUGIN_NAME}/addon/addon.zip"
