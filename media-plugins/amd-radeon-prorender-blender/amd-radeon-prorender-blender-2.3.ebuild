@@ -26,7 +26,7 @@ D_FN2="${PN}-matlib-${SHA1SUM_MATLIB}.run"
 SLOT="0"
 IUSE="denoiser intel-ocl +materials +opencl opengl_mesa -systemwide test \
 video_cards_amdgpu video_cards_i965 video_cards_iris video_cards_nvidia \
-video_cards_radeonsi vulkan"
+video_cards_radeonsi +vulkan"
 NV_DRIVER_VERSION_OCL_1_2="368.39" # >= OpenCL 1.2
 NV_DRIVER_VERSION_VULKAN="390.132"
 PYTHON_COMPAT=( python3_{7,8} ) # same as blender
@@ -162,7 +162,11 @@ pkg_setup() {
 	fi
 
 	if ! use opencl ; then
-		einfo "The OpenCL use flag is strongly recommended"
+		einfo "The OpenCL USE flag is strongly recommended or else the GPU selection will not be available."
+	fi
+
+	if ! use vulkan ; then
+		einfo "The vulkan USE flag is strongly recommended or rendering at any quality setting for Hybrid rendering will fail."
 	fi
 
 	if has_version "dev-libs/rocm-opencl-runtime" ; then
