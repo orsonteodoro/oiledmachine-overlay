@@ -24,7 +24,8 @@ SHA1SUM_PLUGIN="0e1bb299672dc111c6bb5ea4b52efa9dce8d55d6"
 SHA1SUM_MATLIB="a4b22ef16515eab431c682421e07ec5b2940319d"
 D_FN2="${PN}-matlib-${SHA1SUM_MATLIB}.run"
 SLOT="0"
-IUSE="denoiser intel-ocl +materials +opencl opengl_mesa -systemwide test \
+IUSE="denoiser intel-ocl lts +materials +opencl opencl_rocm opencl_orca \
+opencl_pal opengl_mesa pro-drivers split-drivers -systemwide test \
 video_cards_amdgpu video_cards_i965 video_cards_iris video_cards_nvidia \
 video_cards_radeonsi +vulkan"
 NV_DRIVER_VERSION_OCL_1_2="368.39" # >= OpenCL 1.2
@@ -37,19 +38,21 @@ RDEPEND="${PYTHON_DEPS}
 	|| (
 		video_cards_amdgpu? (
 			|| (
-				opengl_mesa? (
-					|| (
-			x11-drivers/amdgpu-pro[X,developer,open-stack,opengl_mesa,opencl]
-			x11-drivers/amdgpu-pro-lts[X,developer,open-stack,opengl_mesa,opencl]
-					   )
-				             )
-				!opengl_mesa? ( || (
-			x11-drivers/amdgpu-pro[opencl]
-			x11-drivers/amdgpu-pro-lts[opencl]
-					      )    )
-			dev-libs/amdgpu-pro-opencl
-			dev-libs/rocm-opencl-runtime
-			   )
+				pro-drivers? (
+					opengl_mesa? (
+						!lts? ( x11-drivers/amdgpu-pro[X,developer,open-stack,opengl_mesa,opencl,opencl_pal?,opencl_orca?] )
+						lts? ( x11-drivers/amdgpu-pro-lts[X,developer,open-stack,opengl_mesa,opencl,opencl_pal?,opencl_orca?] )
+					)
+					!opengl_mesa? (
+						!lts? ( x11-drivers/amdgpu-pro[opencl,opencl_pal?,opencl_orca?] )
+						lts? ( x11-drivers/amdgpu-pro-lts[opencl,opencl_pal?,opencl_orca?] )
+					)
+				)
+				split-drivers? (
+					opencl_orca? ( dev-libs/amdgpu-pro-opencl )
+					opencl_rocm? ( dev-libs/rocm-opencl-runtime )
+				)
+			)
 		)
 		video_cards_i965? (
 			dev-libs/intel-neo
@@ -80,8 +83,8 @@ RDEPEND="${PYTHON_DEPS}
 		|| (
 			video_cards_amdgpu? (
 				|| (
-		x11-drivers/amdgpu-pro[vulkan]
-		x11-drivers/amdgpu-pro-lts[vulkan]
+		!lts? ( x11-drivers/amdgpu-pro[vulkan] )
+		lts? ( x11-drivers/amdgpu-pro-lts[vulkan] )
 				)
 			)
 			video_cards_i965? (
@@ -109,7 +112,25 @@ RDEPEND="${PYTHON_DEPS}
 	x11-libs/libxshmfence
 	x11-libs/libXxf86vm"
 DEPEND="${RDEPEND}"
-REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+REQUIRED_USE="${PYTHON_REQUIRED_USE}
+	pro-drivers? ( || ( opencl_orca opencl_pal opencl_rocm ) )
+	opencl_orca? (
+		|| ( split-drivers pro-drivers )
+		video_cards_amdgpu
+	)
+	opencl_pal? (
+		pro-drivers
+		video_cards_amdgpu
+	)
+	opencl_rocm? (
+		split-drivers
+		video_cards_amdgpu
+	)
+	split-drivers? ( || ( opencl_orca opencl_rocm ) )
+	video_cards_amdgpu? (
+		|| ( pro-drivers split-drivers )
+	)
+"
 RESTRICT="fetch strip"
 inherit check-reqs unpacker
 SRC_URI="https://drivers.amd.com/other/ver_2.x/${S_FN1} -> ${D_FN1}
@@ -168,10 +189,6 @@ pkg_setup() {
 
 	if ! use vulkan ; then
 		einfo "The vulkan USE flag is strongly recommended or rendering at any quality setting for Hybrid rendering will fail."
-	fi
-
-	if has_version "dev-libs/rocm-opencl-runtime" ; then
-		ewarn "${PN} is untested with dev-libs/rocm-opencl-runtime (ROCm OpenCL) for Vega 10 or newer"
 	fi
 
 	if has_version "media-libs/mesa[opencl]" ; then
