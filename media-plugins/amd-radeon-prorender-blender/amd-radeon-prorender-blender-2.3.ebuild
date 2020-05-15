@@ -212,17 +212,18 @@ show_notice_pcie3_atomics_required() {
 
 show_notice_pal_support() {
 	# Vega 10 is in the GFX_v9 set
+	# Navi 10 is GFX_v10
 	einfo
 	einfo "opencl_pal is only supported for GFX_v9 and the following:"
 	einfo "vega10"
 	einfo "vega12"
 	einfo "vega20"
-	einfo "arcturus"
+	einfo "renoir"
 	einfo "navi10"
-	einfo "navi12"
-	einfo "navi14"
 	einfo
-	einfo "If your device does not match one of the codenames above, use the opencl_orca USE flag instead."
+	einfo "If your device does not match one of the codenames above, use"
+	einfo "the opencl_rocm if CPU and Mobo both have PCIe 3.0 support;"
+	einfo "otherwise, try opencl_orca."
 	einfo
 	show_codename_docs
 }
