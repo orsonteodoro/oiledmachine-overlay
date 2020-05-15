@@ -271,7 +271,7 @@ pkg_setup() {
 		# No die checks for this kernel config in dev-libs/rocm-opencl-runtime.
 		CONFIG_CHECK="HSA_AMD"
 		ERROR_HSA_AMD=\
-"The CONFIG_HSA_AMD kernel option is required for opencl_rocm support."
+"Change CONFIG_HSA_AMD=y in kernel config.  It's required for opencl_rocm support."
 		linux-info_pkg_setup
 		if dmesg | grep kfd | grep "PCI rejects atomics" 2>/dev/null 1>/dev/null ; then
 			show_notice_pcie3_atomics_required
@@ -283,7 +283,7 @@ pkg_setup() {
 	if use opencl_pal ; then
 		CONFIG_CHECK="HSA_AMD"
 		ERROR_HSA_AMD=\
-"The CONFIG_HSA_AMD kernel option may be required for opencl_pal support for pre-Vega 10."
+"Change CONFIG_HSA_AMD=y kernel config.  It may be required for opencl_pal support for pre-Vega 10."
 		linux-info_pkg_setup
 		if dmesg | grep kfd | grep "PCI rejects atomics" 2>/dev/null 1>/dev/null ; then
 			show_notice_pal_support
