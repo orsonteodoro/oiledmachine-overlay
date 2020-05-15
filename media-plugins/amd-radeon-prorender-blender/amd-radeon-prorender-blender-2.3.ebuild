@@ -179,6 +179,7 @@ show_notice_pcie3_atomics_required() {
 	# See
 	# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/roc-3.3.0/drivers/gpu/drm/amd/amdkfd/kfd_device.c
 	# https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/blob/master/runtime/device/rocm/rocdevice.cpp
+	# Device should be supported end-to-end from kfd to runtime.
 	ewarn
 	ewarn "Detected no PCIe atomics."
 	ewarn
@@ -191,7 +192,7 @@ show_notice_pcie3_atomics_required() {
 	ewarn "polaris12"
 	ewarn "vegam"
 	einfo
-	einfo "If your device matches one of the codenames above, use the opencl_orca USE flag instead or upgrade CPU and Mobo combo with both PCIe 3.0 support."
+	einfo "If your device matches one of the codenames above, use the opencl_orca USE flag instead or upgrade CPU and Mobo combo with both PCIe 3.0 support, or upgrade to one of the GPUs in the list following immediately."
 	einfo "In addition, your kernel config must have CONFIG_HSA_AMD=y."
 	einfo
 	einfo
@@ -199,12 +200,8 @@ show_notice_pcie3_atomics_required() {
 	einfo "kaveri"
 	einfo "carrizo"
 	einfo "hawaii"
-	einfo "fiji_vf"
-	einfo "polaris10_vf"
 	einfo "vega10"
-	einfo "vega10_vf"
 	einfo "vega20"
-	einfo "arcturus" # not listed in ROCm-OpenCL-Runtime
 	einfo "renoir"
 	einfo "navi10"
 	einfo "navi12"
