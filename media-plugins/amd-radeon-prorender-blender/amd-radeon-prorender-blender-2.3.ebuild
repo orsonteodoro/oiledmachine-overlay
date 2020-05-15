@@ -166,21 +166,21 @@ show_codename_docs() {
 	einfo
 	einfo "Details about codenames can be found at"
 	einfo
-	einfo "Radeon Pro: https://en.wikipedia.org/wiki/Radeon_Pro"
+	einfo "Radeon Pro:  https://en.wikipedia.org/wiki/Radeon_Pro"
 	einfo "Radeon RX Vega:  https://en.wikipedia.org/wiki/Radeon_RX_Vega_series"
-	einfo "Radeon RX 4xx: https://en.wikipedia.org/wiki/Radeon_RX_400_series"
-	einfo "Radeon RX 5xx: https://en.wikipedia.org/wiki/Radeon_RX_500_series"
-	einfo "Radeon R5/R7/R9: https://en.wikipedia.org/wiki/Radeon_Rx_300_series"
-	einfo "APU: https://en.wikipedia.org/wiki/AMD_Accelerated_Processing_Unit"
+	einfo "Radeon RX 4xx:  https://en.wikipedia.org/wiki/Radeon_RX_400_series"
+	einfo "Radeon RX 5xx:  https://en.wikipedia.org/wiki/Radeon_RX_500_series"
+	einfo "Radeon R5/R7/R9:  https://en.wikipedia.org/wiki/Radeon_Rx_300_series"
+	einfo "APU:  https://en.wikipedia.org/wiki/AMD_Accelerated_Processing_Unit"
 	einfo
 }
 
 show_notice_pcie3_atomics_required() {
 	# See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/roc-3.3.0/drivers/gpu/drm/amd/amdkfd/kfd_device.c
 	ewarn
-	ewarn "Detected no atomics."
+	ewarn "Detected no PCIe atomics."
 	ewarn
-	ewarn "PCIe atomics are REQUIRED for the following:"
+	ewarn "ROCm OpenCL requires PCIe atomics for the following:"
 	ewarn "raven: yes"
 	ewarn "tonga: yes"
 	ewarn "fiji: yes"
@@ -222,7 +222,7 @@ show_notice_pal_support() {
 	einfo "navi12"
 	einfo "navi14"
 	einfo
-	einfo "If your device does not match one of the codenames above, use the opencl_orca USE flag instead or upgrade CPU and Mobo combo with both PCIe 3.0 support."
+	einfo "If your device does not match one of the codenames above, use the opencl_orca USE flag instead."
 	einfo
 	show_codename_docs
 }
@@ -283,7 +283,7 @@ pkg_setup() {
 	if use opencl_pal ; then
 		CONFIG_CHECK="HSA_AMD"
 		ERROR_HSA_AMD=\
-"The CONFIG_HSA_AMD kernel option may be required for opencl_pal support."
+"The CONFIG_HSA_AMD kernel option may be required for opencl_pal support for pre-Vega 10."
 		linux-info_pkg_setup
 		if dmesg | grep kfd | grep "PCI rejects atomics" 2>/dev/null 1>/dev/null ; then
 			show_notice_pal_support
