@@ -179,6 +179,7 @@ show_codename_docs() {
 
 show_notice_pcie3_atomics_required() {
 	# See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/roc-3.3.0/drivers/gpu/drm/amd/amdkfd/kfd_device.c
+	# https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/blob/master/runtime/device/rocm/rocdevice.cpp
 	ewarn
 	ewarn "Detected no PCIe atomics."
 	ewarn
@@ -203,7 +204,8 @@ show_notice_pcie3_atomics_required() {
 	einfo "polaris10_vf"
 	einfo "vega10"
 	einfo "vega10_vf"
-	einfo "arcturus"
+	einfo "vega20"
+	einfo "arcturus" # not listed in ROCm-OpenCL-Runtime
 	einfo "renoir"
 	einfo "navi10"
 	einfo "navi12"
