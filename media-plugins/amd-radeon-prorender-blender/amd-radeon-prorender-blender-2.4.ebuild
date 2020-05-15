@@ -134,7 +134,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	)
 "
 RESTRICT="fetch strip"
-inherit check-reqs unpacker
+inherit check-reqs linux-info unpacker
 SRC_URI="https://drivers.amd.com/other/ver_2.x/${S_FN1} -> ${D_FN1}
 	materials? ( https://drivers.amd.com/other/${S_FN2} -> ${D_FN2} )"
 S="${WORKDIR}"
@@ -162,6 +162,70 @@ _set_check_reqs_requirements() {
 pkg_pretend() {
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
+}
+
+show_codename_docs() {
+	einfo
+	einfo "Details about codenames can be found at"
+	einfo
+	einfo "Radeon Pro:  https://en.wikipedia.org/wiki/Radeon_Pro"
+	einfo "Radeon RX Vega:  https://en.wikipedia.org/wiki/Radeon_RX_Vega_series"
+	einfo "Radeon RX 5xx:  https://en.wikipedia.org/wiki/Radeon_RX_500_series"
+	einfo "Radeon RX 4xx:  https://en.wikipedia.org/wiki/Radeon_RX_400_series"
+	einfo "Radeon R5/R7/R9:  https://en.wikipedia.org/wiki/Radeon_Rx_300_series"
+	einfo "APU: https://en.wikipedia.org/wiki/AMD_Accelerated_Processing_Unit"
+	einfo
+}
+
+show_notice_pcie3_atomics_required() {
+	# See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/roc-3.3.0/drivers/gpu/drm/amd/amdkfd/kfd_device.c
+	ewarn
+	ewarn "Detected no atomics."
+	ewarn
+	ewarn "PCIe atomics are REQUIRED for the following:"
+	ewarn "raven: yes"
+	ewarn "tonga: yes"
+	ewarn "fiji: yes"
+	ewarn "polaris10: yes"
+	ewarn "polaris11: yes"
+	ewarn "polaris12: yes"
+	ewarn "vegam: yes"
+	einfo
+	einfo "If your device matches one of the codenames above, use the opencl_orca USE flag instead or upgrade CPU and Mobo combo with both PCIe 3.0 support."
+	einfo "In addition, your kernel config must have CONFIG_HSA_AMD=y."
+	einfo
+	einfo "You may ignore if your device is the following:"
+	einfo "kaveri: no"
+	einfo "carrizo: no"
+	einfo "hawaii: no"
+	einfo "fiji_vf: no"
+	einfo "polaris10_vf: no"
+	einfo "vega10: no"
+	einfo "vega10_vf: no"
+	einfo "arcturus: no"
+	einfo "renoir: no"
+	einfo "navi10: no"
+	einfo "navi12: no"
+	einfo "navi14: no"
+	einfo
+	show_codename_docs
+}
+
+show_notice_pal_support() {
+	# Vega 10 is in the GFX_v9 set
+	einfo
+	einfo "opencl_pal is only supported for GFX_v9 and the following:"
+	einfo "vega10"
+	einfo "vega12"
+	einfo "vega20"
+	einfo "arcturus"
+	einfo "navi10"
+	einfo "navi12"
+	einfo "navi14"
+	einfo
+	einfo "If your device does not match one of the codenames above, use the opencl_orca USE flag instead or upgrade CPU and Mobo combo with both PCIe 3.0 support."
+	einfo
+	show_codename_docs
 }
 
 pkg_setup() {
@@ -202,6 +266,31 @@ pkg_setup() {
 		einfo "CPU is compatible."
 	else
 		ewarn "CPU may not be compatible.  ${PN} requires SSE2."
+	fi
+
+	if use opencl_rocm ; then
+		# No die checks for this kernel config in dev-libs/rocm-opencl-runtime.
+		CONFIG_CHECK="HSA_AMD"
+		ERROR_HSA_AMD=\
+"The CONFIG_HSA_AMD kernel option is required for opencl_rocm support."
+		linux-info_pkg_setup
+		if dmesg | grep kfd | grep "PCI rejects atomics" 2>/dev/null 1>/dev/null ; then
+			show_notice_pcie3_atomics_required
+		elif dmesg | grep -e '\[drm\] PCIE atomic ops is not supported' 2>/dev/null 1>/dev/null ; then
+			show_notice_pcie3_atomics_required
+		fi
+	fi
+
+	if use opencl_pal ; then
+		CONFIG_CHECK="HSA_AMD"
+		ERROR_HSA_AMD=\
+"The CONFIG_HSA_AMD kernel option is required for opencl_pal support."
+		linux-info_pkg_setup
+		if dmesg | grep kfd | grep "PCI rejects atomics" 2>/dev/null 1>/dev/null ; then
+			show_notice_pal_support
+		elif dmesg | grep -e '\[drm\] PCIE atomic ops is not supported' 2>/dev/null 1>/dev/null ; then
+			show_notice_pal_support
+		fi
 	fi
 }
 
