@@ -174,6 +174,7 @@ show_codename_docs() {
 	einfo "Radeon RX 4xx:  https://en.wikipedia.org/wiki/Radeon_RX_400_series"
 	einfo "Radeon R5/R7/R9:  https://en.wikipedia.org/wiki/Radeon_Rx_300_series"
 	einfo "APU: https://en.wikipedia.org/wiki/AMD_Accelerated_Processing_Unit"
+	einfo "Device IDs <-> codename: https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/roc-3.3.0/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c#L777"
 	einfo
 }
 
@@ -186,14 +187,15 @@ show_notice_pcie3_atomics_required() {
 	ewarn
 	ewarn "ROCm OpenCL requires PCIe atomics for the following:"
 	ewarn "raven"
-	ewarn "tonga"
 	ewarn "fiji"
 	ewarn "polaris10"
 	ewarn "polaris11"
 	ewarn "polaris12"
-	ewarn "vegam"
 	einfo
-	einfo "If your device matches one of the codenames above, use the opencl_orca USE flag instead or upgrade CPU and Mobo combo with both PCIe 3.0 support, or upgrade to one of the GPUs in the list following immediately."
+	einfo "If your device matches one of the codenames above, use the"
+	einfo "opencl_orca USE flag instead or upgrade CPU and Mobo combo"
+	einfo "with both PCIe 3.0 support, or upgrade to one of the GPUs in"
+	einfo "the list following immediately."
 	einfo "In addition, your kernel config must have CONFIG_HSA_AMD=y."
 	einfo
 	einfo
@@ -207,6 +209,12 @@ show_notice_pcie3_atomics_required() {
 	einfo "navi10"
 	einfo "navi12"
 	einfo "navi14"
+	einfo
+	einfo "Not supported for ROCm:"
+	ewarn "tonga (PCIe atomics required, don't work)"
+	ewarn "vegam (PCIe atomics required, may work)"
+	ewarn "iceland"
+	ewarn "vega12 (no PCIE atomics required)"
 	einfo
 	show_codename_docs
 }
