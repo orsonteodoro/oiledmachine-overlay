@@ -212,12 +212,10 @@ show_notice_pcie3_atomics_required() {
 	einfo "navi14"
 	einfo
 	einfo "Not supported for ROCm:"
-	ewarn "tonga (PCIe atomics required, don't work)"
-	ewarn "vegam (PCIe atomics required, may work)"
-	ewarn "iceland"
-	ewarn "vega12 (no PCIE atomics required)"
-	einfo
-	einfo "Use to opencl_orca or openc_pal instead."
+	ewarn "tonga (try opencl_orca instead; PCIe atomics required, don't work on ROCm)"
+	ewarn "vegam (try opencl_orca instead; PCIe atomics required, may work on ROCm)"
+	ewarn "iceland (try opencl_orca instead)"
+	ewarn "vega12 (try opencl_pal instead; no PCIE atomics required)"
 	einfo
 	show_codename_docs
 }
