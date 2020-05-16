@@ -14,7 +14,7 @@ REQUIRED_USE="test? ( python )
 	      python? ( ${PYTHON_REQUIRED_USE} )"
 DEPEND="doc? ( app-doc/doxygen )
 	python? ( ${PYTHON_DEPS} )"
-EGIT_COMMIT="f2ab8b7ef2c286f619d96c3ce8902cb76b801bf0"
+EGIT_COMMIT="8db3b8d2d32d22437f063ce692a1b9bb15e42d18"
 SRC_URI=\
 "https://github.com/anrieff/${PN}/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
