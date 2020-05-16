@@ -193,11 +193,12 @@ show_notice_pcie3_atomics_required() {
 	ewarn "polaris12"
 	einfo
 	einfo "If your device matches one of the codenames above, use the"
-	einfo "opencl_orca USE flag instead or upgrade CPU and Mobo combo"
-	einfo "with both PCIe 3.0 support, or upgrade to one of the GPUs in"
-	einfo "the list following immediately."
-	einfo "In addition, your kernel config must have CONFIG_HSA_AMD=y."
+	einfo "opencl_orca (for polaris 10, polaris 11, polaris 12, fiji) or"
+	einfo "opencl_pal (for raven) USE flag instead or upgrade CPU and"
+	einfo "Mobo combo with both PCIe 3.0 support, or upgrade to one of"
+	einfo "the GPUs in the list following immediately."
 	einfo
+	einfo "In addition, your kernel config must have CONFIG_HSA_AMD=y."
 	einfo
 	einfo "You may ignore if your device is the following:"
 	einfo "kaveri"
@@ -216,6 +217,8 @@ show_notice_pcie3_atomics_required() {
 	ewarn "iceland"
 	ewarn "vega12 (no PCIE atomics required)"
 	einfo
+	einfo "Use to opencl_orca or openc_pal instead."
+	einfo
 	show_codename_docs
 }
 
@@ -229,6 +232,7 @@ show_notice_pal_support() {
 	einfo "vega20"
 	einfo "renoir"
 	einfo "navi10"
+	einfo "raven"
 	einfo
 	einfo "If your device does not match one of the codenames above, use"
 	einfo "the opencl_rocm if CPU and Mobo both have PCIe 3.0 support;"
@@ -292,7 +296,7 @@ pkg_setup() {
 
 	if use opencl_pal ; then
 		CONFIG_CHECK="HSA_AMD"
-		ERROR_HSA_AMD=\
+		WARNING_HSA_AMD=\
 "Change CONFIG_HSA_AMD=y kernel config.  It may be required for opencl_pal support for pre-Vega 10."
 		linux-info_pkg_setup
 		if dmesg | grep kfd | grep "PCI rejects atomics" 2>/dev/null 1>/dev/null ; then
