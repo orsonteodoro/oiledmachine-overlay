@@ -53,8 +53,14 @@ dev-dotnet/xwt
 # build time failures
 =net-libs/webkit-gtk-2.26.4-r1
 
+# install needs evaluation, strinker needs update
+=dev-util/ycmd-43_p20200516
+
 # Masked for security reasons
 #--------------------------------------------------------------------------------------------------
+
+# no dependencies, for removal, to replaced with 43
+=dev-util/ycmd-42_p20200129-r6
 
 # electron / nodejs apps; not updated; high vulnerably occurrence frequency
 app-editors/epic-journal

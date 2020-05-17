@@ -10,7 +10,7 @@ LICENSE="GPL-3+ BSD
 	examples? ( Apache-2.0 )
 	go? ( !system-gocode? ( MIT ) )
 	go? ( !system-godef? ( BSD ) )
-	java? ( Apache-1.1 Apache-2.0 BSD BSD-2 BSD-4 CPL-1.0 dom4j EPL-2.0 icu Unicode-DFS W3C W3C-document )
+	java? ( Apache-1.1 Apache-2.0 BSD BSD-2 BSD-4 CPL-1.0 dom4j EPL-2.0 icu MPL-1.1 NAIST-IPADIC unicode W3C W3C-document )
 	javascript? ( !system-tern? ( MIT ) )
 	libclang? ( !system-libclang? ( Apache-2.0-with-LLVM-exceptions MIT UoI-NCSA ) )
 	regex? ( system-mrab-regex? ( all-rights-reserved CNRI PSF-2 ) )

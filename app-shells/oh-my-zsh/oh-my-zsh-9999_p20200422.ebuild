@@ -27,7 +27,7 @@ LICENSE="MIT
 	 plugins_zsh-navigation-tools? ( MIT GPL-3 )
 	 plugins_kube-ps1? ( Apache-2.0 )
 	 plugins_sfdx? ( Apache-2.0 )
-	 Unicode-DFS"
+	 unicode"
 KEYWORDS="~alpha ~amd64 ~amd64-linux ~arm ~arm64 ~hppa ~ia64 ~m68k ~m68k-mint \
 ~mips ~ppc ~ppc-macos ~ppc64 ~s390 ~sh ~sparc ~sparc-solaris ~sparc64-solaris \
 ~x64-macos ~x64-solaris ~x86 ~x86-linux ~x86-macos ~x86-solaris"

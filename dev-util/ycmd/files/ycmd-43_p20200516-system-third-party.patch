@@ -1,0 +1,22 @@
+--- a/ycmd/server_utils.py	2020-05-16 12:49:04.012131191 -0700
++++ b/ycmd/server_utils.py	2020-05-16 12:53:02.741516562 -0700
+@@ -36,17 +36,12 @@ def SetUpPythonPath():
+   sys.path[ 0:0 ] = [ p.join( ROOT_DIR ),
+                       p.join( DIR_OF_THIRD_PARTY, 'bottle' ),
+                       p.join( DIR_OF_THIRD_PARTY, 'cregex', 'regex_3' ),
+-                      p.join( DIR_OF_THIRD_PARTY, 'frozendict' ),
+                       p.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'jedi' ),
+                       p.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'parso' ),
+                       p.join( DIR_OF_THIRD_PARTY, 'requests_deps', 'requests' ),
+                       p.join( DIR_OF_THIRD_PARTY, 'requests_deps', 'chardet' ),
+                       p.join( DIR_OF_THIRD_PARTY, 'requests_deps', 'certifi' ),
+                       p.join( DIR_OF_THIRD_PARTY, 'requests_deps', 'idna' ),
+-                      p.join( DIR_OF_THIRD_PARTY,
+-                              'requests_deps',
+-                              'urllib3',
+-                              'src' ),
+                       p.join( DIR_OF_WATCHDOG_DEPS,
+                               'watchdog',
+                               'build',
+Only in ycmd-43_p20200516/ycmd: server_utils.py.orig
+Only in ycmd-43_p20200516/ycmd: server_utils.py.rej

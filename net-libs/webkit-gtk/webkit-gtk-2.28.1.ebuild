@@ -16,7 +16,7 @@ HOMEPAGE="https://www.webkitgtk.org"
 FN="${MY_P}.tar.xz"
 SRC_URI="https://www.webkitgtk.org/releases/${FN}"
 
-LICENSE="LGPL-2+ BSD Unicode-DFS"
+LICENSE="LGPL-2+ BSD unicode"
 API_VERSION="4.0"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 SLOT="${SLOT_MAJOR}/37" # soname version of libwebkit2gtk-4.0
