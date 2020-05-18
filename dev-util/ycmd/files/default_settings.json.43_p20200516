@@ -28,7 +28,7 @@
   "python_binary_path": "___PYTHON_BIN_PATH___",
   "language_server": [],
   "java_jdtls_use_clean_workspace": 1,
-  "java_jdtls_workspace_root_path": "___JAVA_JDTLS_WORKSPACE_ROOT_PATH___",
+  "java_jdtls_workspace_root_path": "",
   "java_jdtls_extension_path": [],
   "use_clangd": 1,
   "clangd_binary_path": "___CLANGD_BIN_PATH___",
@@ -40,5 +40,5 @@
   "rls_binary_path": "___RLS_BIN_PATH___",
   "rustc_binary_path": "___RUSTC_BIN_PATH___",
   "tsserver_binary_path": "___TSSERVER_BIN_PATH___",
-  "roslyn_binary_path": "___ROSLYN_BIN_PATH___"
+  "roslyn_binary_path": "___OMNISHARP_BIN_ABSPATH___"
 }

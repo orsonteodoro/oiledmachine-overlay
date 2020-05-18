@@ -1,4 +1,3 @@
-# TODO: unfinished
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -8,7 +7,7 @@ HOMEPAGE="https://ycm-core.github.io/ycmd/"
 # The vanilla MIT license doesn't contain all rights reserved but it is stated in the .target(s), .prop files.
 # Additional licenses on internal omnisharp-rosyln refer to .target(s), .rsp, .config files
 LICENSE="GPL-3+ BSD
-	clangd? ( !system-clangd ( Apache-2.0-with-LLVM-exceptions MIT UoI-NCSA ) )
+	clangd? ( !system-clangd? ( Apache-2.0-with-LLVM-exceptions MIT UoI-NCSA ) )
 	csharp? ( !system-omnisharp-roslyn? ( all-rights-reserved MIT Apache-2.0 ) )
 	examples? ( Apache-2.0 )
 	go? ( !system-go-tools? ( BSD ) )
@@ -34,7 +33,7 @@ PYTHON_COMPAT=( python3_{6,7,8} )
 # slot 2 (racerd) -> (rls) ; (gocode, godef) -> (gopls) ; python 3 only
 SLOT="2"
 USE_DOTNET="net472 netcoreapp21"
-IUSE="c clangd csharp cuda cxx docs debug examples go java javascript libclang \
+IUSE="c clangd csharp cuda cxx doc debug examples go java javascript libclang \
 minimal objc objcxx python regex rust system-bottle system-boost system-clangd \
 system-go-tools system-jedi system-libclang system-mrab-regex \
 system-requests system-omnisharp-roslyn system-pathtools system-rls \
@@ -66,7 +65,7 @@ CDEPEND="${PYTHON_DEPS}
 	system-clangd? ( sys-devel/clang:${CLANG_V_MAJ} )"
 # gopls is 0.4.1
 RDEPEND="${CDEPEND}
-	>=dev-python/future-0.15.2_p20150911[${PYTHON_USEDEP}]
+	>=dev-python/future-0.15.2[${PYTHON_USEDEP}]
 	java? ( virtual/jre:1.8 )
 	javascript? ( net-libs/nodejs )
 	system-bottle? ( >=dev-python/bottle-0.13_pre20200411[${PYTHON_USEDEP}] )
@@ -103,7 +102,7 @@ EGIT_REPO_URI="https://github.com/ycm-core/ycmd.git"
 inherit cmake-utils eutils flag-o-matic git-r3
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
-DOCS=( COPYING.txt JAVA_SUPPORT.md README.md )
+DOCS=( JAVA_SUPPORT.md README.md )
 BD_REL="ycmd/${SLOT}"
 BD_ABS=""
 
@@ -151,10 +150,6 @@ src_prepare() {
 
 	cat "${FILESDIR}/default_settings.json.42_p20200108" \
 		> ycmd/default_settings.json || die
-
-	# todo
-	sed -i -e "s|___JAVA_JDTLS_WORKSPACE_ROOT_PATH___||g" \
-		ycmd/default_settings.json || die
 
 	if use system-libclang ; then
 		eapply \
@@ -221,10 +216,13 @@ ${sitedir}/parso|g" \
 	fi
 
 	if use system-mrab-regex ; then
+		ewarn "Using system-mrab-regex is WIP"
 		sed -i -e "s|\
 p.join\( DIR_OF_THIRD_PARTY, 'cregex', 'regex_3' \)|\
 ${sitedir}/regex|g" \
 			ycmd/server_utils.py || die
+		sed -i -e "s|  BuildRegexModule|  #BuildRegexModule|" \
+			build.py || die
 	fi
 
 	if use system-omnisharp-roslyn ; then
@@ -279,9 +277,17 @@ ___OMNISHARP_DIR_PATH___|\
 ___OMNISHARP_BIN_ABSPATH___|\
 ${BD_ABS}/ycmd/completers/cs/omnisharp.sh|g" \
 			ycmd/completers/cs/cs_completer.py || die
-		# fixme
-		sed -i -e "s|___ROSLYN_BIN_PATH___||g" \
+		sed -i -e "s|\
+___OMNISHARP_BIN_ABSPATH___|\
+${BD_ABS}/ycmd/completers/cs/omnisharp.sh|g" \
 			ycmd/default_settings.json || die
+	fi
+
+	if use system-pathtools ; then
+		sed -i -e "s|\
+p.join\( DIR_OF_THIRD_PARTY, 'pathtools' \)|\
+${sitedir}/pathtools|g" \
+			ycmd/server_utils.py || die
 	fi
 
 	if use system-requests ; then
@@ -336,8 +342,7 @@ of internal rust and associated packages."
 	fi
 
 	if use system-typescript ; then
-		# fixme
-		sed -i -e "s|___TSSERVER_BIN_PATH___||g" \
+		sed -i -e "s|___TSSERVER_BIN_PATH___|/usr/bin/tsc|g" \
 			ycmd/default_settings.json || die
 	fi
 
@@ -346,6 +351,16 @@ of internal rust and associated packages."
 p.join\( DIR_OF_THIRD_PARTY, 'waitress' \)|\
 ${sitedir}/waitress|g" \
 			ycmd/server_utils.py || die
+	fi
+
+	if use system-watchdog ; then
+		ewarn "Using system-watchdog is WIP"
+		sed -i -e "s|\
+p.join\( DIR_OF_THIRD_PARTY, 'watchdog', 'build', 'lib3' \)|\
+${sitedir}/watchdog|g" \
+			ycmd/server_utils.py || die
+		sed -i -e "s|  CompileWatchdog|  #CompileWatchdog|" \
+			build.py || die
 	fi
 
 	sed -i -e "s|\
@@ -545,15 +560,15 @@ third_party/requests_deps,third_party/waitress,ycmd} \
 	fi
 	if use system-watchdog ; then
 		einfo "Cleaning watchdog"
-		#todo
+		rm -rf third_party/watchdog_deps/watchdog || die
 	fi
 	if use system-pathtools ; then
 		einfo "Cleaning pathtools"
-		#todo
+		rm -rf third_party/watchdog_deps/pathtools || die
 	fi
 
 	einfo "Cleaning out cpp build time files"
-	rm -rf cpp
+	rm -rf cpp || die
 
 	if use go ; then
 		einfo "Cleaning out go folders"
@@ -648,7 +663,7 @@ third_party/requests_deps,third_party/waitress,ycmd} \
 
 	einfo "Cleaning out cached archives"
 	if use clangd \
-		&& ! system-clangd ; then
+		&& ! use system-clangd ; then
 		rm -rf third_party/clangd/cache
 	fi
 
@@ -713,7 +728,7 @@ src_install() {
 			&& use go ; then
 			python_domodule third_party/go
 			fperms 755 \
-		"${BD_ABS}/third_party/go/src/golang.org/x/tools/cmd/gopls/gopls"
+		"${BD_ABS}/third_party/go/bin/gopls"
 		fi
 
 		if ! use system-jedi \
@@ -800,6 +815,16 @@ libstd-0bccc96528cef91b.so" \
 			LDPATH="${BD_ABS}/lib"
 		EOF
 		doenvd "${T}"/50${P}-ycmd-${SLOT}
+	fi
+
+	if use doc ; then
+		einstalldocs
+	fi
+	docinto licenses
+	dodoc COPYING.txt
+	if use developer ; then
+		docinto developer
+		dodoc CODE_OF_CONDUCT.md CONTRIBUTING.md DEBUG.md TESTS.md
 	fi
 }
 
