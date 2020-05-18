@@ -111,7 +111,6 @@ pkg_setup() {
 	! use system-boost \
 	|| ! use system-clangd \
 	|| ! use system-go-tools \
-	|| ! use system-jedi \
 	|| ! use system-libclang \
 	|| ! use system-omnisharp-roslyn \
 	|| ! use system-rls \

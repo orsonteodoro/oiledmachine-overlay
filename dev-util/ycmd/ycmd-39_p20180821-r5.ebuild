@@ -114,7 +114,6 @@ pkg_setup() {
 	! use system-boost \
 	|| ! use system-gocode \
 	|| ! use system-godef \
-	|| ! use system-jedi \
 	|| ! use system-libclang \
 	|| ! use system-omnisharp \
 	|| ! use system-racerd \
