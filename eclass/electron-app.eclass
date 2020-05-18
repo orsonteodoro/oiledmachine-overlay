@@ -38,9 +38,9 @@ YARN_PACKAGE_DB="/var/lib/portage/yarn-packages"
 ELECTRON_APP_REG_PATH=${ELECTRON_APP_REG_PATH:=""}
 ELECTRON_APP_MODE=${ELECTRON_APP_MODE:="npm"} # can be npm, yarn
 ELECTRON_APP_MAXSOCKETS=${ELECTRON_APP_MAXSOCKETS:="1"} # Set this in your make.conf to control number of HTTP requests.  50 is npm default but it is too high.
-ELECTRON_APP_ALLOW_AUDIT=${ELECTRON_APP_ALLOW_AUDIT:="1"}
-ELECTRON_APP_ALLOW_AUDIT_FIX=${ELECTRON_APP_ALLOW_AUDIT_FIX:="1"}
-ELECTRON_APP_NO_DIE_ON_AUDIT=${ELECTRON_APP_NO_DIE_ON_AUDIT:="0"}
+ELECTRON_APP_ALLOW_AUDIT=${ELECTRON_APP_ALLOW_AUDIT:="1"} # You could define it as a per-package envar.  It not recommended in the ebuild.
+ELECTRON_APP_ALLOW_AUDIT_FIX=${ELECTRON_APP_ALLOW_AUDIT_FIX:="1"} # You could define it as a per-package envar.  It not recommended in the ebuild.
+ELECTRON_APP_NO_DIE_ON_AUDIT=${ELECTRON_APP_NO_DIE_ON_AUDIT:="0"} # You could define it as a per-package envar.  It not recommended in the ebuild.
 ELECTRON_APP_LOCKS_DIR="/dev/shm"
 
 # @FUNCTION: _electron-app-flakey-check
