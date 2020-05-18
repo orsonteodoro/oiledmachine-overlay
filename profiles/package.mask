@@ -83,7 +83,6 @@ dev-lua/luaxml
 dev-lua/tolua
 dev-lua/tolua++
 dev-ruby/koala
-dev-util/depot_tools
 dev-util/msbuild
 media-gfx/nvidia-texture-tools
 media-plugins/bitlbee-facebook
