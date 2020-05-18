@@ -43,7 +43,7 @@ CLANG_V="10.0"
 CLANG_V_MAJ=$(ver_cut 1 ${CLANG_V})
 PV_MAJ=$(ver_cut 1 ${PV})
 inherit python-r1 dotnet
-AREQUIRED_USE="
+REQUIRED_USE="
 	c? ( || ( clangd libclang ) )
 	csharp? ( || ( ${USE_DOTNET} ) )
 	cxx? ( || ( clangd libclang ) )
