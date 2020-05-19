@@ -7,7 +7,7 @@ LICENSE="dkms? ( GPL-2 MIT )
 	!dkms? ( GPL-2 MIT )
 	firmware? ( AMDGPU-FIRMWARE )"
 KEYWORDS="amd64 x86"
-IUSE="dkms amdgpu-dkms aufs-sources ck-sources custom-kernel firmware gentoo-sources \
+IUSE="dkms amdgpu-dkms aufs-sources ck-sources custom-kernel +firmware gentoo-sources \
 git-sources hardened-sources ot-sources pf-sources rt-sources rock-dkms \
 vanilla-sources xbox-sources zen-sources"
 AMDGPU_DKMS_PV="19.30.934563"
