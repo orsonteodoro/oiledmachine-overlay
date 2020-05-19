@@ -43,12 +43,12 @@ REQUIRED_USE="^^ ( amdgpu-dkms aufs-sources ck-sources custom-kernel gentoo-sour
 	vanilla-sources xbox-sources zen-sources )
 	dkms? ( ^^ ( amdgpu-dkms rock-dkms ) )"
 SLOT="0/${PV}" # based on DC_VER, rock-dkms will not be an exact fit
+inherit linux-info
 
 cve_notice() {
         KERNEL_DIR="/usr/src/linux"
-        get_version
-        linux_config_exists
-	if ver_test ${KV_MINOR}.${KV_MINOR}.${KV_PATCH} -le 5.2.14 ; then
+	linux-info_pkg_setup
+	if ver_test ${KV_MAJOR}.${KV_MINOR}.${KV_PATCH} -le 5.2.14 ; then
 		if use amdgpu-dkms || use rock-dkms ; then
 			# patch applied upstream
 			:;
@@ -61,7 +61,7 @@ cve_notice() {
 			einfo "It's recommended to use either amdgpu-dkms (>=19.50), rock-dkms (>=3.1), or LTS kernels >= 5.4.x."
 		fi
 	fi
-	if ver_test ${KV_MINOR}.${KV_MINOR}.${KV_PATCH} -le 5.3.8 ; then
+	if ver_test ${KV_MAJOR}.${KV_MINOR}.${KV_PATCH} -le 5.3.8 ; then
 		if use amdgpu-dkms || use rock-dkms ; then
 			# patch applied upstream
 			:;

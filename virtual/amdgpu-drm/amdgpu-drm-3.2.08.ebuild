@@ -47,9 +47,8 @@ inherit linux-info
 
 cve_notice() {
         KERNEL_DIR="/usr/src/linux"
-        get_version
-        linux_config_exists
-	if ver_test ${KV_MINOR}.${KV_MINOR}.${KV_PATCH} -le 5.2.14 ; then
+	linux-info_pkg_setup
+	if ver_test ${KV_MAJOR}.${KV_MINOR}.${KV_PATCH} -le 5.2.14 ; then
 		ewarn
 		ewarn "CVE advisory:"
 		ewarn
@@ -57,7 +56,7 @@ cve_notice() {
 		ewarn
 		einfo "It's recommended to use either amdgpu-dkms (>=19.50), rock-dkms (>=3.1), or LTS kernels >= 5.4.x."
 	fi
-	if ver_test ${KV_MINOR}.${KV_MINOR}.${KV_PATCH} -le 5.3.8 ; then
+	if ver_test ${KV_MAJOR}.${KV_MINOR}.${KV_PATCH} -le 5.3.8 ; then
 		ewarn
 		ewarn "CVE advisories:"
 		ewarn
