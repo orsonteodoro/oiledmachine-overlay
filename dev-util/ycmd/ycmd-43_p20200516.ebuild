@@ -499,7 +499,7 @@ src_test() {
 
 _shrink_install() {
 	local arg_docs="-false"
-	if use docs ; then
+	if use doc ; then
 		arg_docs=' -ipath "*/*doc*/*"'
 	fi
 	local arg_developer="-false"
