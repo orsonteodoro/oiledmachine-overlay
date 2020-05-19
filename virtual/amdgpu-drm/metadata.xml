@@ -13,33 +13,11 @@
   <use>
     <flag name="dkms">Prefer the DKMS drivers.</flag>
     <flag name="amdgpu-dkms">Selects amdgpu-dkms as the DRM driver</flag>
-    <flag name="aufs-sources">Selects aufs-sources which will containing the
-      DRM driver</flag>
-    <flag name="ck-sources">Selects ck-sources which will containing the DRM
-      driver</flag>
-    <flag name="custom-kernel">Selects your custom kernel sources which will
-      containing the DRM driver.  Your kernel must reside or be linked at
+    <flag name="in-kernel">Selects the in kernel sources which will
+      containing the amdgpu DRM driver.  Your kernel must reside or be linked at
       /usr/src/linux which the ebuild will scan
       /usr/src/linux/drivers/gpu/drm/amd/display/dc/dc.h</flag>
     <flag name="firmware">Pulls compatible firmware.</flag>
-    <flag name="gentoo-sources">Selects gentoo-sources which will containing
-      the DRM driver</flag>
-    <flag name="git-sources">Selects git-sources which will containing the
-      DRM driver</flag>
-    <flag name="hardened-sources">Selects hardened-sources which will
-      containing the DRM driver</flag>
-    <flag name="ot-sources">Selects ot-sources which will containing the
-      DRM driver</flag>
-    <flag name="pf-sources">Selects pf-sources which will containing the
-      DRM driver</flag>
-    <flag name="rt-sources">Selects rt-sources which will containing the
-      DRM driver</flag>
     <flag name="rock-dkms">Selects rock-dkms as the DRM driver</flag>
-    <flag name="vanilla-sources">Selects vanilla-sources which will containing
-      the DRM driver</flag>
-    <flag name="xbox-sources">Selects xbox-sources which will containing the
-      DRM driver</flag>
-    <flag name="zen-sources">Selects zen-sources which will containing the
-      DRM driver</flag>
   </use>
 </pkgmetadata>

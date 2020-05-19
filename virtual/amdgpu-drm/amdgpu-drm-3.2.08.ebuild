@@ -4,28 +4,14 @@
 EAPI=7
 DESCRIPTION="Virtual for the amdgpu DRM (Direct Rendering Manager) kernel module"
 KEYWORDS="amd64 x86"
-IUSE="dkms amdgpu-dkms aufs-sources ck-sources custom-kernel +firmware gentoo-sources \
-git-sources hardened-sources ot-sources pf-sources rt-sources rock-dkms \
-vanilla-sources xbox-sources zen-sources"
+IUSE="dkms amdgpu-dkms in-kernel +firmware rock-dkms"
 AMDGPU_DKMS_PV="18.50"
 ROCK_DKMS_PV="2.0"
 VANILLA_KERNEL_PV="5.0"
 LINUX_FIRMWARE_PV="20190312" # matches last commit/tag AMDGPU_DKMS_PV in linux-firmware git
 RDEPEND="|| (
-		!custom-kernel? (
-			dkms? ( amdgpu-dkms? ( >=sys-kernel/amdgpu-dkms-${AMDGPU_DKMS_PV} ) )
-			aufs-sources? ( >=sys-kernel/aufs-sources-${VANILLA_KERNEL_PV} )
-			ck-sources? ( >=sys-kernel/ck-sources-${VANILLA_KERNEL_PV} )
-			gentoo-sources? ( >=sys-kernel/gentoo-sources-${VANILLA_KERNEL_PV} )
-			git-sources? ( >=sys-kernel/git-sources-${VANILLA_KERNEL_PV} )
-			hardened-sources? ( >=sys-kernel/hardened-sources-${VANILLA_KERNEL_PV} )
-			ot-sources? ( >=sys-kernel/ot-sources-${VANILLA_KERNEL_PV} )
-			pf-sources? ( >=sys-kernel/pf-sources-${VANILLA_KERNEL_PV} )
-			dkms? ( rock-dkms? ( >=sys-kernel/rock-dkms-${ROCK_DKMS_PV} ) )
-			rt-sources? ( >=sys-kernel/rt-sources-${VANILLA_KERNEL_PV} )
-			vanilla-sources? ( >=sys-kernel/vanilla-sources-${VANILLA_KERNEL_PV} )
-			zen-sources? ( >=sys-kernel/zen-sources-${VANILLA_KERNEL_PV} )
-		)
+		amdgpu-dkms? ( >=sys-kernel/amdgpu-dkms-${AMDGPU_DKMS_PV} )
+		rock-dkms? ( >=sys-kernel/rock-dkms-${ROCK_DKMS_PV} )
 	 )
 	 firmware? (
 		|| (
@@ -38,9 +24,7 @@ RDEPEND="|| (
 			)
 		)
 	 )"
-REQUIRED_USE="^^ ( amdgpu-dkms aufs-sources ck-sources custom-kernel gentoo-sources \
-	git-sources hardened-sources ot-sources pf-sources rt-sources rock-dkms \
-	vanilla-sources xbox-sources zen-sources )
+REQUIRED_USE="^^ ( amdgpu-dkms in-kernel rock-dkms )
 	dkms? ( ^^ ( amdgpu-dkms rock-dkms ) )"
 SLOT="0/${PV}" # based on DC_VER, rock-dkms will not be an exact fit
 inherit linux-info
