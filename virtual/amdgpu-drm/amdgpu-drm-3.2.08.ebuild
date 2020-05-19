@@ -27,7 +27,6 @@ RDEPEND="|| (
 			dkms? ( rock-dkms? ( >=sys-kernel/rock-dkms-${ROCK_DKMS_PV} ) )
 			rt-sources? ( >=sys-kernel/rt-sources-${VANILLA_KERNEL_PV} )
 			vanilla-sources? ( >=sys-kernel/vanilla-sources-${VANILLA_KERNEL_PV} )
-			xbox-sources? ( >=sys-kernel/xbox-sources-${VANILLA_KERNEL_PV} )
 			zen-sources? ( >=sys-kernel/zen-sources-${VANILLA_KERNEL_PV} )
 		)
 	 )
