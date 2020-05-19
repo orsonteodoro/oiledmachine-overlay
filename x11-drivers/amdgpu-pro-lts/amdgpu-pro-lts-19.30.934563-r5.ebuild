@@ -133,36 +133,8 @@ RDEPEND="!x11-drivers/amdgpu-pro
 			virtual/libudev
 		)
 	 )
-	 dkms? ( || ( sys-kernel/amdgpu-dkms sys-kernel/rock-dkms ) )
-	 freesync? ( || (
-		>=sys-kernel/amdgpu-dkms-18.50
-		>=sys-kernel/aufs-sources-5.0
-		>=sys-kernel/ck-sources-5.0
-		>=sys-kernel/git-sources-5.0
-		>=sys-kernel/gentoo-sources-5.0
-		>=sys-kernel/hardened-sources-5.0
-		>=sys-kernel/pf-sources-5.0
-		>=sys-kernel/rock-dkms-2.0.0
-		>=sys-kernel/rt-sources-5.0
-		>=sys-kernel/vanilla-sources-5.0
-		>=sys-kernel/xbox-sources-5.0
-		>=sys-kernel/zen-sources-5.0 ) )
-	 || (
-		>=sys-kernel/amdgpu-dkms-${PV}
-		>=sys-kernel/aufs-sources-5.4
-		>=sys-kernel/ck-sources-5.4
-		>=sys-kernel/gentoo-sources-5.4
-		>=sys-kernel/git-sources-5.4
-		>=sys-kernel/hardened-sources-5.4
-		>=sys-kernel/pf-sources-5.4
-		>=sys-kernel/rock-dkms-2.8.0
-		>=sys-kernel/rt-sources-5.4
-		>=sys-kernel/vanilla-sources-5.4
-		>=sys-kernel/xbox-sources-5.4
-		>=sys-kernel/zen-sources-5.4 )
-	 || ( >=sys-firmware/amdgpu-firmware-${PV}
-	        >=sys-firmware/rock-firmware-2.8.0
-		>=sys-kernel/linux-firmware-20191113 )
+	 freesync? ( >=virtual/amdgpu-drm-3.2.08[dkms?] )
+	 >=virtual/amdgpu-drm-3.2.42[dkms?]
 	 glamor? ( media-libs/libepoxy )
 	 open-stack? (
 	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
