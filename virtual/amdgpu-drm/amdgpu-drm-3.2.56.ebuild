@@ -3,9 +3,6 @@
 
 EAPI=7
 DESCRIPTION="Virtual for the amdgpu DRM (Direct Rendering Manager) kernel module"
-LICENSE="dkms? ( GPL-2 MIT )
-	!dkms? ( GPL-2 MIT )
-	firmware? ( AMDGPU-FIRMWARE )"
 KEYWORDS="amd64 x86"
 IUSE="dkms amdgpu-dkms aufs-sources ck-sources custom-kernel +firmware gentoo-sources \
 git-sources hardened-sources ot-sources pf-sources rt-sources rock-dkms \
