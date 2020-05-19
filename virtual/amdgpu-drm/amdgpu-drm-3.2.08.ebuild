@@ -69,12 +69,16 @@ cve_notice() {
 }
 
 pkg_setup() {
-	if [[ ! -f "${EROOT}/usr/src/linux/drivers/gpu/drm/amd/display/dc/dc.h" ]] ; then
-		die "Cannot find /usr/src/linux/drivers/gpu/drm/amd/display/dc/dc.h"
-	fi
-	DC_VER=$(grep "DC_VER" "${EROOT}/usr/src/linux/drivers/gpu/drm/amd/display/dc/dc.h" | cut -f 3 -d " " | sed -e "s|\"||g")
-	if ver_test ${DC_VER} -lt ${PV} ; then
-		die "Your DC_VER is old.  Your kernel needs to be at least ${VANILLA_KERNEL_PV} or DC_VER needs to be ${PV}."
+	if use amdgpu-dkms || use rock-dkms ; then
+		:;
+	else
+		if [[ ! -f "${EROOT}/usr/src/linux/drivers/gpu/drm/amd/display/dc/dc.h" ]] ; then
+			die "Cannot find /usr/src/linux/drivers/gpu/drm/amd/display/dc/dc.h"
+		fi
+		DC_VER=$(grep "DC_VER" "${EROOT}/usr/src/linux/drivers/gpu/drm/amd/display/dc/dc.h" | cut -f 3 -d " " | sed -e "s|\"||g")
+		if ver_test ${DC_VER} -lt ${PV} ; then
+			die "Your DC_VER is old.  Your kernel needs to be at least ${VANILLA_KERNEL_PV} or DC_VER needs to be ${PV}."
+		fi
 	fi
 	cve_notice
 }
