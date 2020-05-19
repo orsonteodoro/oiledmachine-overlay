@@ -47,6 +47,39 @@ REQUIRED_USE="^^ ( amdgpu-dkms aufs-sources ck-sources custom-kernel gentoo-sour
 	dkms? ( ^^ ( amdgpu-dkms rock-dkms ) )"
 SLOT="0/${PV}" # based on DC_VER, rock-dkms will not be an exact fit
 
+cve_notice() {
+        KERNEL_DIR="/usr/src/linux"
+        get_version
+        linux_config_exists
+	if ver_test ${KV_MINOR}.${KV_MINOR}.${KV_PATCH} -le 5.2.14 ; then
+		if use amdgpu-dkms || use rock-dkms ; then
+			# patch applied on oiledmachine-overlay ebuilds
+			:;
+		else
+			ewarn
+			ewarn "CVE advisory:"
+			ewarn
+			ewarn "CVE-2019-16229 (CVSS 2.0 Medium) : https://nvd.nist.gov/vuln/detail/CVE-2019-16229"
+			ewarn
+			einfo "It's recommended to use either amdgpu-dkms (>=19.50), rock-dkms (>=3.1), or LTS kernels >= 5.4.x."
+		fi
+	fi
+	if ver_test ${KV_MINOR}.${KV_MINOR}.${KV_PATCH} -le 5.3.8 ; then
+		if use amdgpu-dkms || use rock-dkms ; then
+			# patch applied on oiledmachine-overlay ebuilds
+			:;
+		else
+			ewarn
+			ewarn "CVE advisories:"
+			ewarn
+			ewarn "CVE-2019-19067 (CVSS 2.0 Medium) : https://nvd.nist.gov/vuln/detail/CVE-2019-19067"
+			ewarn "CVE-2019-19083 (CVSS 2.0 Medium) : https://nvd.nist.gov/vuln/detail/CVE-2019-19083"
+			ewarn
+			einfo "It's recommended to use either amdgpu-dkms (>=19.50), rock-dkms (>=3.1), or LTS kernels >= 5.4.x."
+		fi
+	fi
+}
+
 pkg_setup() {
 	if [[ ! -f "${EROOT}/usr/src/linux/drivers/gpu/drm/amd/display/dc/dc.h" ]] ; then
 		die "Cannot find /usr/src/linux/drivers/gpu/drm/amd/display/dc/dc.h"
@@ -55,4 +88,5 @@ pkg_setup() {
 	if ver_test ${DC_VER} -lt ${PV} ; then
 		die "Your DC_VER is old.  Your kernel needs to be at least ${VANILLA_KERNEL_PV} or DC_VER needs to be ${PV}."
 	fi
+	cve_notice
 }
