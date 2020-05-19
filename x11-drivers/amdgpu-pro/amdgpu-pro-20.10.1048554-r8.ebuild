@@ -117,36 +117,8 @@ RDEPEND="!x11-drivers/amdgpu-pro
 			virtual/libudev
 		)
 	 )
-	 dkms? ( || ( sys-kernel/amdgpu-dkms sys-kernel/rock-dkms ) )
-	 freesync? ( || (
-		>=sys-kernel/amdgpu-dkms-18.50
-		>=sys-kernel/aufs-sources-5.0
-		>=sys-kernel/ck-sources-5.0
-		>=sys-kernel/git-sources-5.0
-		>=sys-kernel/gentoo-sources-5.0
-		>=sys-kernel/hardened-sources-5.0
-		>=sys-kernel/pf-sources-5.0
-		>=sys-kernel/rock-dkms-2.0.0
-		>=sys-kernel/rt-sources-5.0
-		>=sys-kernel/vanilla-sources-5.0
-		>=sys-kernel/xbox-sources-5.0
-		>=sys-kernel/zen-sources-5.0 ) )
-	 || (
-		>=sys-kernel/amdgpu-dkms-${PV}
-		>=sys-kernel/aufs-sources-5.7
-		>=sys-kernel/ck-sources-5.7
-		>=sys-kernel/gentoo-sources-5.7
-		>=sys-kernel/git-sources-5.7
-		>=sys-kernel/hardened-sources-5.7
-		>=sys-kernel/pf-sources-5.7
-		>=sys-kernel/rock-dkms-3.3.0
-		>=sys-kernel/rt-sources-5.7
-		>=sys-kernel/vanilla-sources-5.7
-		>=sys-kernel/xbox-sources-5.7
-		>=sys-kernel/zen-sources-5.7 )
-	 || ( >=sys-firmware/amdgpu-firmware-${PV}
-	        >=sys-firmware/rock-firmware-3.3.0
-		>=sys-kernel/linux-firmware-20200417 )
+	 freesync? ( >=virtual/amdgpu-drm-3.2.08[dkms?] )
+	 >=virtual/amdgpu-drm-3.2.72[dkms?]
 	 open-stack? (
 	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
 	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}] )
@@ -563,9 +535,9 @@ src_install() {
 	multilib_foreach_abi install_abi
 
 	# Link for hardcoded path
-	use open-stack && \
-	dosym /usr/share/libdrm/amdgpu.ids \
-		/opt/amdgpu/share/libdrm/amdgpu.ids
+#	use open-stack && \
+#	dosym /usr/share/libdrm/amdgpu.ids \
+#		/opt/amdgpu/share/libdrm/amdgpu.ids
 
 	if use doc ; then
 		docinto docs
