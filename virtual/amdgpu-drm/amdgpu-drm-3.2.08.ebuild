@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="Virtual for the amdgpu DRM (Direct Rendering Manager) kernel module"
 KEYWORDS="amd64 x86"
-IUSE="dkms amdgpu-dkms in-kernel +firmware rock-dkms"
+IUSE="dkms amdgpu-dkms kernel +firmware rock-dkms"
 AMDGPU_DKMS_PV="18.50"
 ROCK_DKMS_PV="2.0"
 VANILLA_KERNEL_PV="5.0"
@@ -22,7 +22,7 @@ RDEPEND="amdgpu-dkms? ( >=sys-kernel/amdgpu-dkms-${AMDGPU_DKMS_PV} )
 			)
 		)
 	 )"
-REQUIRED_USE="^^ ( amdgpu-dkms in-kernel rock-dkms )
+REQUIRED_USE="^^ ( amdgpu-dkms kernel rock-dkms )
 	amdgpu-dkms? ( dkms )
 	dkms? ( ^^ ( amdgpu-dkms rock-dkms ) )
 	rock-dkms? ( dkms )"

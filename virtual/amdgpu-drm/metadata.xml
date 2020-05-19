@@ -13,8 +13,8 @@
   <use>
     <flag name="dkms">Prefer the DKMS drivers.</flag>
     <flag name="amdgpu-dkms">Selects amdgpu-dkms as the DRM driver</flag>
-    <flag name="in-kernel">Selects the in kernel sources which will
-      containing the amdgpu DRM driver.  Your kernel must reside or be linked at
+    <flag name="kernel">Selects the in kernel sources which will
+      contain the amdgpu DRM driver.  Your kernel must reside or be linked at
       /usr/src/linux which the ebuild will scan
       /usr/src/linux/drivers/gpu/drm/amd/display/dc/dc.h</flag>
     <flag name="firmware">Pulls compatible firmware.</flag>
