@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="Virtual for the amdgpu DRM (Direct Rendering Manager) kernel module"
 KEYWORDS="amd64 x86"
-IUSE="dkms amdgpu-dkms kernel +firmware rock-dkms"
+IUSE="amdgpu-dkms dkms +firmware kernel rock-dkms"
 AMDGPU_DKMS_PV="19.50.967956"
 ROCK_DKMS_PV="3.0"
 VANILLA_KERNEL_PV="5.5"
