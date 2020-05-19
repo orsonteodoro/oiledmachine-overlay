@@ -25,7 +25,9 @@ RDEPEND="|| (
 		)
 	 )"
 REQUIRED_USE="^^ ( amdgpu-dkms in-kernel rock-dkms )
-	dkms? ( ^^ ( amdgpu-dkms rock-dkms ) )"
+	amdgpu-dkms? ( dkms )
+	dkms? ( ^^ ( amdgpu-dkms rock-dkms ) )
+	rock-dkms? ( dkms )"
 SLOT="0/${PV}" # based on DC_VER, rock-dkms will not be an exact fit
 
 pkg_setup() {
