@@ -33,7 +33,7 @@ RDEPEND="|| (
 	 )
 	 firmware? (
 		|| (
-			amdgpu-dkms? ( >=sys-firmware/amdgpu-firmware-${PV} )
+			amdgpu-dkms? ( >=sys-firmware/amdgpu-firmware-${AMDGPU_DKMS_PV} )
 			rock-dkms? ( >=sys-firmware/rock-firmware-${ROCK_DKMS_PV} )
 			!amdgpu-dkms? (
 				!rock-dkms? (
