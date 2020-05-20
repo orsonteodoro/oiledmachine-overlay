@@ -363,10 +363,10 @@ src_compile() {
 		if use system-libclang ; then
 			myargs+=" --system-libclang"
 		fi
-		if use typescript \
-			&& ! use system-typescript ; then
-			myargs+=" --ts-completer"
-		fi
+#		if use typescript \
+#			&& ! use system-typescript ; then
+#			myargs+=" --ts-completer"
+#		fi
 		if \
 			! use system-boost \
 			|| ! use system-gocode \

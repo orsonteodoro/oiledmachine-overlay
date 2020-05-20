@@ -541,6 +541,9 @@ third_party/requests_deps,third_party/waitress,ycmd} \
 				-o -name "*.config" \
 				-o -name "*.pdb" \
 				-o -name "*.exe" \
+				-o -name "config" \
+				-o -name "run" \
+				-o -name "machine.config" \
 				-o ${arg_docs} \
 				-o ${arg_developer} \
 				-o ${arg_legal} \) \
@@ -742,6 +745,13 @@ src_install() {
 		if ! use system-omnisharp-roslyn \
 			&& use csharp ; then
 			python_domodule third_party/omnisharp-roslyn
+			fperms 755 \
+		"${BD_ABS}/third_party/omnisharp-roslyn/bin/mono" \
+		"${BD_ABS}/third_party/omnisharp-roslyn/run"
+			fperms 755 \
+		"${BD_ABS}/third_party/omnisharp-roslyn/omnisharp/"*.dll
+			fperms 755 \
+		"${BD_ABS}/third_party/omnisharp-roslyn/omnisharp/"*.so
 		fi
 
 		if ! use system-requests ; then
