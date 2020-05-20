@@ -24,7 +24,7 @@ RDEPEND="amdgpu-dkms? ( >=sys-kernel/amdgpu-dkms-${AMDGPU_DKMS_PV} )
 	 )"
 REQUIRED_USE="^^ ( amdgpu-dkms kernel rock-dkms )
 	amdgpu-dkms? ( dkms )
-	dkms? ( ^^ ( amdgpu-dkms rock-dkms ) )
+	dkms? ( ^^ ( amdgpu-dkms rock-dkms ) !kernel )
 	rock-dkms? ( dkms )"
 SLOT="0/${PV}" # based on DC_VER, rock-dkms will not be an exact fit
 

@@ -716,11 +716,15 @@ src_install() {
 			&& ( use c || use cxx || use objc || use objcxx ) \
 			&& use clangd ; then
 			python_domodule third_party/clangd
+			fperms 755 \
+				"${BD_ABS}/third_party/clangd/output/bin/clangd"
 		fi
 
 		if ! use system-mrab-regex \
 			&& use regex ; then
 			python_domodule third_party/cregex
+			fperms 755 \
+				"${BD_ABS}/third_party/cregex/regex_3/_regex.so"
 		fi
 
 		if ! use system-go-tools \
