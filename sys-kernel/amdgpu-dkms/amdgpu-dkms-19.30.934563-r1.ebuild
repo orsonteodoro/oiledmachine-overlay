@@ -22,7 +22,7 @@ PKG_VER_STRING_DIR=${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 SLOT="0/${PV}"
-IUSE="acpi +build +check-mmu-notifier check-pcie check-gpu directgma firmware hybrid-graphics numa rock +sign-modules ssg"
+IUSE="acpi +build +check-mmu-notifier check-pcie check-gpu custom-kernel directgma firmware hybrid-graphics numa rock +sign-modules ssg"
 REQUIRED_USE="rock? ( check-pcie check-gpu )
 	      hybrid-graphics? ( acpi )"
 if [[ "${AMDGPU_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
@@ -32,13 +32,14 @@ KV_NOT_SUPPORTED="5.0"
 fi
 RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
 	 sys-kernel/dkms
+	 !custom-kernel? (
 	 || ( <sys-kernel/ck-sources-${KV_NOT_SUPPORTED}
 	      <sys-kernel/gentoo-sources-${KV_NOT_SUPPORTED}
 	      <sys-kernel/git-sources-${KV_NOT_SUPPORTED}
 	      <sys-kernel/ot-sources-${KV_NOT_SUPPORTED}
 	      <sys-kernel/pf-sources-${KV_NOT_SUPPORTED}
 	      <sys-kernel/vanilla-sources-${KV_NOT_SUPPORTED}
-	      <sys-kernel/zen-sources-${KV_NOT_SUPPORTED} )"
+	      <sys-kernel/zen-sources-${KV_NOT_SUPPORTED} ) )"
 DEPEND="${RDEPEND}
 	check-pcie? ( sys-apps/dmidecode )
 	check-gpu? ( sys-apps/pciutils )"

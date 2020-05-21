@@ -66,6 +66,7 @@
       </flag>
     <flag name="check-pcie">Checks if the PCIe slots are supported for ROCk.
       </flag>
+    <flag name="custom-kernel">Bypass RDEPENDs check for a kernel package.</flag>
     <flag name="directgma">Checks kernel config for DirectGMA support.</flag>
     <flag name="firmware">Pulls in the firmware packaged with the same
       driver. (optional if using linux-firmware instead)</flag>

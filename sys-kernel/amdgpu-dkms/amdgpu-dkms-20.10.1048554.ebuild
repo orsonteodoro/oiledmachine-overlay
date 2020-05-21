@@ -23,7 +23,7 @@ PKG_VER_DKMS="5.4.7.53-1048554"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 SLOT="0/${PV}"
-IUSE="acpi +build +check-mmu-notifier check-pcie check-gpu directgma firmware hybrid-graphics numa rock +sign-modules ssg"
+IUSE="acpi +build +check-mmu-notifier check-pcie check-gpu custom-kernel directgma firmware hybrid-graphics numa rock +sign-modules ssg"
 REQUIRED_USE="rock? ( check-pcie check-gpu )
 	      hybrid-graphics? ( acpi )"
 if [[ "${AMDGPU_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
@@ -36,6 +36,7 @@ KV_SUPPORTED_MIN="5.0"
 fi
 RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
 	 sys-kernel/dkms
+	 !custom-kernel? (
 	 || ( <sys-kernel/ck-sources-${KV_NOT_SUPPORTED_MAX}
 	      <sys-kernel/gentoo-sources-${KV_NOT_SUPPORTED_MAX}
 	      <sys-kernel/git-sources-${KV_NOT_SUPPORTED_MAX}
@@ -49,7 +50,7 @@ RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
 	      >=sys-kernel/ot-sources-${KV_SUPPORTED_MIN}
 	      >=sys-kernel/pf-sources-${KV_SUPPORTED_MIN}
 	      >=sys-kernel/vanilla-sources-${KV_SUPPORTED_MIN}
-	      >=sys-kernel/zen-sources-${KV_SUPPORTED_MIN} )
+	      >=sys-kernel/zen-sources-${KV_SUPPORTED_MIN} ) )
 "
 DEPEND="${RDEPEND}
 	check-pcie? ( sys-apps/dmidecode )
