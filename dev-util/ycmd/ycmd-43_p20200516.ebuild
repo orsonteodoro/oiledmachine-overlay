@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="A code-completion & code-comprehension server"
 HOMEPAGE="https://ycm-core.github.io/ycmd/"
-# The vanilla MIT license doesn't contain all rights reserved but it is stated in the .target(s), .prop files.
+# The vanilla MIT license doesn't contain all rights reserved but it is stated in the .target(s), .prop files., .dll files (System.ComponentModel.Composition)
 # Additional licenses on internal omnisharp-rosyln refer to .target(s), .rsp, .config files
 LICENSE="GPL-3+ BSD
 	clangd? ( !system-clangd? ( Apache-2.0-with-LLVM-exceptions MIT UoI-NCSA ) )
@@ -19,6 +19,7 @@ LICENSE="GPL-3+ BSD
 	rust? ( !system-rust? ( || ( MIT Apache-2.0 ) BSD-1 BSD-2 BSD-4 UoI-NCSA ) )
 	!system-bottle? ( MIT )
 	!system-libclang? ( Apache-2.0-with-LLVM-exceptions MIT UoI-NCSA )
+	!system-mono? ( all-rights-reserved MIT )
 	!system-pathtools? ( BSD MIT ZPL )
 	!system-requests? ( Apache-2.0 BSD LGPL-2.1+ MIT MPL-2.0 PSF-2 Unicode-DFS )
 	!system-waitress? ( ZPL )
@@ -35,7 +36,7 @@ SLOT="2"
 USE_DOTNET="net472 netcoreapp21"
 IUSE="c clangd csharp cuda cxx doc debug examples go java javascript libclang \
 minimal objc objcxx python regex rust system-bottle system-boost system-clangd \
-system-go-tools system-jedi system-libclang system-mrab-regex \
+system-go-tools system-jedi system-libclang system-mono system-mrab-regex \
 system-requests system-omnisharp-roslyn system-pathtools system-rls \
 system-rust system-tern system-typescript system-waitress system-watchdog test \
 typescript vim"
@@ -548,6 +549,11 @@ third_party/requests_deps,third_party/waitress,ycmd} \
 				-o ${arg_developer} \
 				-o ${arg_legal} \) \
 			-exec rm -f "{}" +
+		if ! use system-mono ; then
+			rm -rf third_party/omnisharp-roslyn/{bin,lib,etc} || die
+			# remove?
+			#rm -rf third_party/omnisharp-roslyn/omnisharp/.msbuild || die
+		fi
 	fi
 	if use regex \
 		&& ! use system-mrab-regex ; then
@@ -674,6 +680,8 @@ third_party/requests_deps,third_party/waitress,ycmd} \
 }
 
 src_install() {
+	local old_dotglob=$(shopt dotglob | cut -f 2)
+	shopt -s dotglob # copy hidden files
 	python_install_all() {
 		cd "${BUILD_DIR}" || die
 		python_moduleinto "${BD_REL}"
@@ -744,6 +752,9 @@ src_install() {
 
 		if ! use system-omnisharp-roslyn \
 			&& use csharp ; then
+			use system-mono && \
+			eapply \
+		"${FILESDIR}/${PN}-43_p20200516-omnisharp-use-system-omnisharp-run.patch"
 			python_domodule third_party/omnisharp-roslyn
 			fperms 755 \
 		"${BD_ABS}/third_party/omnisharp-roslyn/bin/mono" \
@@ -838,6 +849,11 @@ libstd-0bccc96528cef91b.so" \
 	if use developer ; then
 		docinto developer
 		dodoc CODE_OF_CONDUCT.md CONTRIBUTING.md DEBUG.md TESTS.md
+	fi
+	if [[ "${old_dotglob}" == "on" ]] ; then
+		shopt -s dotglob
+	else
+		shopt -u dotglob
 	fi
 }
 

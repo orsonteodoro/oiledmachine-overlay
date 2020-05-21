@@ -1,0 +1,29 @@
+--- a/third_party/omnisharp-roslyn/run.orig	2019-04-09 06:19:52.000000000 -0700
++++ b/third_party/omnisharp-roslyn/run	2020-05-20 17:02:26.045242886 -0700
+@@ -1,16 +1,14 @@
+ #!/usr/bin/env bash
+ 
+ base_dir="$(cd "$(dirname "$0")" && pwd -P)"
+-bin_dir=${base_dir}/bin
+-etc_dir=${base_dir}/etc
++bin_dir=/usr/bin
++etc_dir=/etc
+ omnisharp_dir=${base_dir}/omnisharp
+ 
+-mono_cmd=${bin_dir}/mono
++mono_cmd=/usr/bin/mono
+ omnisharp_cmd=${omnisharp_dir}/OmniSharp.exe
+ config_file=${etc_dir}/config
+ 
+-chmod 755 ${mono_cmd}
+-
+ no_omnisharp=false
+ 
+ if [ "$1" = "--no-omnisharp" ]; then
+@@ -25,4 +23,4 @@ if [ "$no_omnisharp" = true ]; then
+     "${mono_cmd}" "$@"
+ else
+     "${mono_cmd}" "${omnisharp_cmd}" "$@"
+-fi
+\ No newline at end of file
++fi

@@ -555,6 +555,8 @@ third_party/waitress,ycmd} \
 }
 
 src_install() {
+	local old_dotglob=$(shopt dotglob | cut -f 2)
+	shopt -s dotglob # copy hidden files
 	python_install_all() {
 		cd "${BUILD_DIR}" || die
 		python_moduleinto "${BD_REL}"
@@ -682,6 +684,11 @@ src_install() {
 	if use developer ; then
 		docinto developer
 		dodoc CODE_OF_CONDUCT.md CONTRIBUTING.md DEBUG.md TESTS.md
+	fi
+	if [[ "${old_dotglob}" == "on" ]] ; then
+		shopt -s dotglob
+	else
+		shopt -u dotglob
 	fi
 }
 

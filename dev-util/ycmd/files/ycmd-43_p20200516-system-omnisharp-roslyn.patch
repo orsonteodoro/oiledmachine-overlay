@@ -19,16 +19,3 @@
  LOGFILE_FORMAT = 'omnisharp_{port}_{sln}_{std}_'
  
  
-@@ -406,10 +398,6 @@ class CsharpSolutionCompleter( object ):
-                 '-s',
-                 str( self._solution_path ) ]
- 
--    if ( not utils.OnWindows()
--         and self._roslyn_path.endswith( '.exe' ) ):
--      command.insert( 0, 'mono' )
--
-     LOGGER.info( 'Starting OmniSharp server with: %s', command )
- 
-     solutionfile = os.path.basename( self._solution_path )
-Only in ycmd-43_p20200516/ycmd/completers/cs: cs_completer.py.orig
-Only in ycmd-43_p20200516/ycmd/completers/cs: cs_completer.py.rej
