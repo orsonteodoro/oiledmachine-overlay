@@ -85,12 +85,26 @@ https://github.com/orsonteodoro/nano-ycmd/blob/ymcd-code-completion/src/global.c
     <flag name="openssl">Uses OpenSSL for HMAC computation.</flag>
     <flag name="system-gnulib">Uses the system's Gnulib to compile
       nano-ycmd</flag>
+    <flag name="system-clangd">Configures ycmd to use the system's clangd
+      instead of ycmd internal dependency.</flag>
     <flag name="system-gocode">Configures ycmd to use the system's gocode
       instead of ycmd internal dependency.</flag>
     <flag name="system-godef">Configures ycmd to use the system's godef
       instead of ycmd internal dependency.</flag>
+    <flag name="system-gopls">Configures ycmd to use the system's gopls
+      instead of ycmd internal dependency.</flag>
     <flag name="system-racerd">Configures ycmd to use the system's racerd
       instead of ycmd internal dependency.</flag>
+    <flag name="system-rls">Configures ycmd to use the system's rls
+      instead of ycmd internal dependency.</flag>
+    <flag name="system-rustc">Configures ycmd to use the system's rustc
+      instead of ycmd internal dependency.</flag>
+    <flag name="system-omnisharp">Configures ycmd to use the system's omnisharp
+      instead of ycmd internal dependency.</flag>
+    <flag name="system-tsserver">Configures ycmd to use the system's tsserver
+      instead of ycmd internal dependency.</flag>
     <flag name="unicode">Enables UTF-8 support.</flag>
+    <flag name="ycmd-slot-1">Use ycmd core version 39.</flag>
+    <flag name="ycmd-slot-2">Use ycmd core version 43.</flag>
   </use>
 </pkgmetadata>

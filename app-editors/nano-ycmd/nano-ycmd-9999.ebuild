@@ -1,7 +1,7 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# This fork of nano is based on 2.9.3_p20180208
+# This fork of nano is based on HEAD (4.9.2 as of May 20, 2020)
 
 EAPI=7
 DESCRIPTION="GNU GPL'd Pico clone with more functionality with ycmd support"
@@ -18,7 +18,7 @@ PYTHON_COMPAT=( python3_{6,7,8} )
 inherit python-single-r1
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	      ^^ ( libgcrypt nettle openssl )"
-YCMD_SLOT="1"
+YCMD_SLOT="2"
 LIB_DEPEND="
 	magic? ( sys-apps/file[static-libs(+)] )
 	!ncurses? ( slang? ( sys-libs/slang[static-libs(+)] ) )
@@ -43,18 +43,25 @@ DEPEND="system-gnulib? ( >=dev-libs/gnulib-2018.01.23.08.42.00 )"
 BDEPEND="nls? ( sys-devel/gettext )
 	static? ( ${LIB_DEPEND} )
 	virtual/pkgconfig"
-inherit autotools eutils flag-o-matic
-EGIT_COMMIT="14e4255c52c9f64cabaa2af28354e9752d27ae65"
-GNULIB_COMMIT="4a236f16ce0ef97094ff2f6538d4dba90e72a523" # listed in ./autogen.sh
+#EGIT_COMMIT="HEAD"
+EGIT_BRANCH="ymcd-code-completion"
+EGIT_REPO_URI="https://github.com/orsonteodoro/nano-ycmd.git"
+inherit autotools eutils flag-o-matic git-r3
+#EGIT_COMMIT="14e4255c52c9f64cabaa2af28354e9752d27ae65"
+GNULIB_COMMIT="360979fd6fb84567e0ffc6839b0431fc00d6362f" # listed in ./autogen.sh
 GNULIB_COMMIT_SHORT="${GNULIB_COMMIT:0:7}"
+#SRC_URI=\
+#"https://github.com/orsonteodoro/nano-ycmd/archive/${EGIT_COMMIT}.tar.gz \
+#	-> ${P}.tar.gz"
 SRC_URI=\
-"https://github.com/orsonteodoro/nano-ycmd/archive/${EGIT_COMMIT}.tar.gz \
-	-> ${P}.tar.gz
-http://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=snapshot;h=${GNULIB_COMMIT};sf=tgz \
+"http://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=snapshot;h=${GNULIB_COMMIT};sf=tgz \
 	-> gnulib-${GNULIB_COMMIT_SHORT}.tar.gz"
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+S="${WORKDIR}/${PN}-${PV}"
 
 src_unpack() {
+	ewarn "This ebuild is for debugging and upstream development purposes.  Use non live version instead."
+	default
+	git-r3_src_unpack
 	unpack ${A}
 	mv gnulib-${GNULIB_COMMIT_SHORT} "${S}/gnulib" || die
 }
@@ -62,6 +69,7 @@ src_unpack() {
 src_prepare() {
 	default
 	eapply "${FILESDIR}/${PN}-9999.20180201-rename-as-ynano.patch"
+	eapply "${FILESDIR}"/testing.patch
 	if use system-gnulib ; then
 		eapply "${FILESDIR}/${PN}-9999.20180201-autogen-use-system-gnulib.patch"
 		./autogen.sh
@@ -72,11 +80,6 @@ src_prepare() {
 }
 
 src_configure() {
-        if use ycmd-slot-1 ; then
-                ycmd_slot=1
-        elif use ycmd-slot-2 ; then
-                ycmd_slot=2
-        fi
         BD_REL="ycmd/${ycmd_slot}"
         BD_ABS="$(python_get_sitedir)/${BD_REL}"
 	use static && append-ldflags -static
@@ -111,7 +114,7 @@ src_configure() {
 	NINJA_PATH="/usr/bin/ninja" \
 	RACERD_PATH="${racerd_path}" \
 	RUST_SRC_PATH="/usr/share/rust/src" \
-	YCMD_PATH="${BD_ABS}/ycmd" \
+	YCMD_PATH="${BD_ABS}/ycmd/${YCMD_SLOT}/ycmd" \
 	YCMD_PYTHON_PATH="/usr/bin/${EPYTHON}" \
         YCMG_PATH="/usr/bin/config_gen.py" \
 	YCMG_PYTHON_PATH="/usr/bin/${EPYTHON}" \
