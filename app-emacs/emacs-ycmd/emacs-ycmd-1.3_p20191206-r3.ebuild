@@ -87,7 +87,6 @@ src_configure() {
 	default
 	cp "${FILESDIR}/${SITEFILE}" "${WORKDIR}"
 	local sitefile_path="${WORKDIR}/${SITEFILE}"
-	local python_sitedir="$(python_get_sitedir)"
 
 	sed -i -e "s|__EPYTHON__|${EPYTHON}|g" \
 		"${sitefile_path}"  || die
