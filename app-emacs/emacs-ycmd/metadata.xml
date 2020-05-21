@@ -29,7 +29,15 @@
       otherwise, it falls back to the internal ycmd gocode.</flag>
     <flag name="system-godef">Configures emacs-ycmd to use the system godef;
       otherwise, it falls back to the internal ycmd godef.</flag>
+    <flag name="system-gopls">Configures emacs-ycmd to use the system gopls;
+      otherwise, it falls back to the internal ycmd gopls.</flag>
+    <flag name="system-omnisharp">Configures emacs-ycmd to use the system omnisharp;
+      otherwise, it falls back to the internal ycmd omnisharp.</flag>
     <flag name="system-racerd">Configures emacs-ycmd to use the system racerd;
       otherwise, it falls back to the internal ycmd racerd.</flag>
+    <flag name="system-rls">Configures emacs-ycmd to use the system rls;
+      otherwise, it falls back to the internal ycmd rls.</flag>
+    <flag name="ycmd-slot-1">Set up ycmd for core version 39</flag>
+    <flag name="ycmd-slot-2">Set up ycmd for core version 43</flag>
   </use>
 </pkgmetadata>

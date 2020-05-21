@@ -10,7 +10,8 @@ PYTHON_COMPAT=( python3_{6,7,8} )
 SLOT="0"
 inherit python-single-r1
 IUSE="builtin-completion +company-mode debug eldoc +flycheck next-error \
-system-gocode system-godef system-racerd"
+system-gocode system-godef system-gopls system-omnisharp system-racerd \
+system-rls system-rustc system-typescript ycmd-slot-1 ycmd-slot-2"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 YCMD_SLOT="1"
 RDEPEND="${PYTHON_DEPS}
@@ -18,12 +19,16 @@ RDEPEND="${PYTHON_DEPS}
 DEPEND="${RDEPEND}"
 BDEPEND="net-misc/curl"
 inherit eutils elisp
-EGIT_COMMIT="386f6101fec6975000ad724f117816c01ab55f16"
+EGIT_COMMIT="bc81b992f79100c98f56b7b83caf64cb8ea60477"
 SRC_URI=\
 "https://github.com/abingham/emacs-ycmd/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 SITEFILE="50emacs-ycmd-gentoo.el"
+REQUIRED_USE="^^ ( ycmd-slot-1 ycmd-slot-2 )"
+PATCHES=( "${FILESDIR}/${PN}-1.3_p20191206-support-core-version-43.patch" )
+BD_REL="ycmd/${SLOT}"
+BD_ABS=""
 
 pkg_setup() {
 	if has network-sandbox $FEATURES ; then
@@ -41,6 +46,14 @@ install_deps() {
 	export PATH="${HOME}/.cask/bin:$PATH"
 	cask install
 	cask build
+	local ycmd_slot
+	if use ycmd-slot-1 ; then
+		ycmd_slot=1
+	elif use ycmd-slot-2 ; then
+		ycmd_slot=2
+	fi
+	BD_REL="ycmd/${ycmd_slot}"
+	BD_ABS="$(python_get_sitedir)/${BD_REL}"
 }
 
 src_unpack() {
@@ -112,13 +125,23 @@ $(cat ${FILESDIR}/eldoc.frag | sed ':a;N;$!ba;s/\n/\\n/g')#g" \
 			"${sitefile_path}" || die
 	fi
 
+	if use system-gopls ; then
+		sed -i -e "s|___YCMD-EMACS_GOPLS_ABSPATH___|/usr/bin/gopls|g" \
+			"${sitefile_path}" || die
+	else
+		sed -i -e "s|\
+___YCMD-EMACS_GOPLS_ABSPATH___|\
+${BD_ABS}/third_party/go/bin/gopls|g" \
+			"${sitefile_path}" || die
+	fi
+
 	if use system-gocode ; then
 		sed -i -e "s|___YCMD-EMACS_GOCODE_ABSPATH___|/usr/bin/gocode|g" \
 			"${sitefile_path}" || die
 	else
 		sed -i -e "s|\
 ___YCMD-EMACS_GOCODE_ABSPATH___|\
-${python_sitedir}/ycmd/${YCMD_SLOT}/third_party/gocode/gocode|g" \
+${BD_ABS}/third_party/gocode/gocode|g" \
 			"${sitefile_path}" || die
 	fi
 
@@ -128,8 +151,29 @@ ${python_sitedir}/ycmd/${YCMD_SLOT}/third_party/gocode/gocode|g" \
 	else
 		sed -i -e "s|\
 ___YCMD-EMACS_GODEF_ABSPATH___|\
-${python_sitedir}/ycmd/${YCMD_SLOT}/third_party/godef/godef|g" \
+${BD_ABS}/third_party/godef/godef|g" \
 			"${sitefile_path}" || die
+	fi
+
+	if use system-omnisharp ; then
+		sed -i -e "s|\
+___YCMD-EMACS_ROSLYN_ABSPATH___|\
+${BD_ABS}/ycmd/completers/cs/omnisharp.sh|g" \
+			"${sitefile_path}" || die
+	else
+		if use ycmd-slot-1 ; then
+			sed -i -e "s|\
+___YCMD-EMACS_ROSLYN_ABSPATH___|\
+${BD_ABS}/third_party/OmniSharpServer/OmniSharp/bin/Release/OmniSharp.exe|g" \
+			"${sitefile_path}" || die
+		elif use ycmd-slot-2 ; then
+			sed -i -e "s|\
+___YCMD-EMACS_ROSLYN_ABSPATH___|\
+${BD_ABS}/third_party/omnisharp-roslyn/run|g" \
+			"${sitefile_path}" || die
+		else
+			die "ycmd-slot- not supported."
+		fi
 	fi
 
 	if use system-racerd ; then
@@ -138,14 +182,54 @@ ${python_sitedir}/ycmd/${YCMD_SLOT}/third_party/godef/godef|g" \
 	else
 		sed -i -e "s|\
 ___YCMD-EMACS_RACERD_ABSPATH___|\
-${python_sitedir}/ycmd/${YCMD_SLOT}/third_party/racerd/racerd|g" \
+${BD_ABS}/third_party/racerd/racerd|g" \
 			"${sitefile_path}" || die
+	fi
+
+	if use system-rls ; then
+		sed -i -e "s|___YCMD-EMACS_RLS_ABSPATH___|/usr/bin/rls|g" \
+			"${sitefile_path}" || die
+	else
+		sed -i -e "s|\
+___YCMD-EMACS_RLS_ABSPATH___|\
+${BD_ABS}/third_party/rls/bin/rls|g" \
+			"${sitefile_path}" || die
+	fi
+
+	if use system-rustc ; then
+		sed -i -e "s|___YCMD-EMACS_RUSTC_ABSPATH___|/usr/bin/rustc|g" \
+			"${sitefile_path}" || die
+	else
+		sed -i -e "s|\
+___YCMD-EMACS_RUSTC_ABSPATH___|\
+${BD_ABS}/third_party/rls/bin/rustc|g" \
+			"${sitefile_path}" || die
+	fi
+
+	if use system-typescript ; then
+		sed -i -e "s|___YCMD-EMACS_TSSERVER_ABSPATH___|/usr/bin/tsserver|g" \
+			"${sitefile_path}" || die
+	else
+		sed -i -e "s|\
+___YCMD-EMACS_TSSERVER_ABSPATH___|\
+${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserver|g" \
+			"${sitefile_path}" || die
+	fi
+
+	if use ycmd-slot-1 ; then
+		sed -i -e "s|___YCMD-EMACS_CORE_VERSION___|39|g" \
+			"${sitefile_path}" || die
+	elif use ycmd-slot-2 ; then
+		sed -i -e "s|___YCMD-EMACS_CORE_VERSION___|43|g" \
+			"${sitefile_path}" || die
+	else
+		die "Unsupported ycmd slot"
 	fi
 
 	sed -i -e "s|___YCMD-EMACS_RUST_ABSPATH___|/usr/share/rust/src|g" \
 		"${sitefile_path}" || die
 
-	sed -i -e "s|___YCMD-EMACS-YCMD-DIR___|${python_sitedir}/ycmd/${YCMD_SLOT}/ycmd|g" \
+	sed -i -e "s|___YCMD-EMACS-YCMD-DIR___|${BD_ABS}/ycmd|g" \
 		"${sitefile_path}" || die
 
 	sed -i -e "s|___YCMD-EMACS_PYTHON_ABSPATH___|/usr/bin/${EPYTHON}|g" \
