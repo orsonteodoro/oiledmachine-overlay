@@ -60,6 +60,7 @@
     <flag name="check-mmu-notifier">Checks if the MMU_NOTIFIER is enabled.
       </flag>
     <flag name="check-pcie">Checks if the PCIe slots are supported.</flag>
+    <flag name="custom-kernel">Bypass RDEPENDs check for a kernel package.</flag>
     <flag name="directgma">Checks kernel config for DirectGMA support.</flag>
     <flag name="firmware">Pulls in the firmware package containing the latest
       firmware version.</flag>
