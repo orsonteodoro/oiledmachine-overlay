@@ -35,7 +35,6 @@ RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
 	 !custom-kernel? (
 	 || ( <sys-kernel/ck-sources-${KV_NOT_SUPPORTED}
 	      <sys-kernel/gentoo-sources-${KV_NOT_SUPPORTED}
-	      <sys-kernel/git-sources-${KV_NOT_SUPPORTED}
 	      <sys-kernel/ot-sources-${KV_NOT_SUPPORTED}
 	      <sys-kernel/pf-sources-${KV_NOT_SUPPORTED}
 	      <sys-kernel/vanilla-sources-${KV_NOT_SUPPORTED}
