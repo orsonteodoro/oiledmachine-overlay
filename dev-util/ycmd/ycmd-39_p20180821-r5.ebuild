@@ -173,7 +173,7 @@ It's recommended to use the internal instead."
 	else
 		sed -i -e "s|\
 ___GOCODE_BIN_PATH___|\
-${ycmd_sitedir}/${SLOT}/third_party/gocode/gocode|g" \
+${BD_ABS}/third_party/gocode/gocode|g" \
 			ycmd/default_settings.json || die
 	fi
 
@@ -183,7 +183,7 @@ ${ycmd_sitedir}/${SLOT}/third_party/gocode/gocode|g" \
 	else
 		sed -i -e "s|\
 ___GODEF_BIN_PATH___|\
-${ycmd_sitedir}/${SLOT}/third_party/godef/godef|g" \
+${BD_ABS}/third_party/godef/godef|g" \
 			ycmd/default_settings.json || die
 	fi
 
@@ -218,7 +218,7 @@ ___OMNISHARP_DIR_PATH___|\
 		fi
 		sed -i -e "s|\
 ___OMNISHARP_BIN_ABSPATH___|\
-${ycmd_sitedir}/${SLOT}/ycmd/completers/cs/omnisharp.sh|g" \
+${BD_ABS}/ycmd/completers/cs/omnisharp.sh|g" \
 			ycmd/completers/cs/cs_completer.py || die
 	fi
 
@@ -241,7 +241,7 @@ of internal rust and associated packages."
 	else
 		sed -i -e "s|\
 ___TERN_BIN_PATH___|\
-${ycmd_sitedir}/${SLOT}/third_party/tern_runtime/tern|g" \
+${BD_ABS}/third_party/tern_runtime/tern|g" \
 			ycmd/completers/javascript/tern_completer.py || die
 	fi
 
@@ -251,7 +251,7 @@ ${ycmd_sitedir}/${SLOT}/third_party/tern_runtime/tern|g" \
 	else
 		sed -i -e "s|\
 ___RACERD_BIN_PATH___|\
-${ycmd_sitedir}/${SLOT}/third_party/racerd/racerd|g" \
+${BD_ABS}/third_party/racerd/racerd|g" \
 			ycmd/default_settings.json || die
 	fi
 

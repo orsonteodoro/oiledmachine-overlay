@@ -198,6 +198,11 @@ recommended to use the internal instead."
 			ycmd/completers/go/go_completer.py || die
 		sed -i -e "s|___GOPLS_BIN_PATH___|/usr/bin/gopls|g" \
 			ycmd/default_settings.json || die
+	else
+		sed -i -e "s|\
+___GOPLS_BIN_PATH___|\
+${BD_ABS}/third_party/go/bin/gopls|g" \
+			ycmd/default_settings.json || die
 	fi
 
 	if use system-jedi ; then
@@ -342,7 +347,12 @@ of internal rust and associated packages."
 	fi
 
 	if use system-typescript ; then
-		sed -i -e "s|___TSSERVER_BIN_PATH___|/usr/bin/tsc|g" \
+		sed -i -e "s|___TSSERVER_BIN_PATH___|/usr/bin/tsserver|g" \
+			ycmd/default_settings.json || die
+	else
+		sed -i -e "s|\
+___TSSERVER_BIN_PATH___|\
+${BD_ABS}/third_party/tsserver/lib64/node_modules/typescript/bin/tsserver|g" \
 			ycmd/default_settings.json || die
 	fi
 
