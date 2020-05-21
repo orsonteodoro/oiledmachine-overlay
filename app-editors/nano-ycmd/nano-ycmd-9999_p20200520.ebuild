@@ -205,7 +205,7 @@ src_configure() {
 		rustc_path="${BD_ABS}/third_party/rls/bin/rustc"
 	fi
 	if use system-omnisharp ; then
-		omnisharp_path="ycmd/completers/cs/omnisharp.sh"
+		omnisharp_path="${BD_ABS}/ycmd/completers/cs/omnisharp.sh"
 	else
 		if use ycmd-slot-2 ; then
 			omnisharp_path="${BD_ABS}/third_party/omnisharp-roslyn/run"
