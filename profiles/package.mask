@@ -53,9 +53,6 @@ dev-dotnet/xwt
 # build time failures
 =net-libs/webkit-gtk-2.26.4-r1
 
-# install needs evaluation, strinker needs update
-=dev-util/ycmd-43_p20200516
-
 # Masked for security reasons
 #--------------------------------------------------------------------------------------------------
 
@@ -112,14 +109,12 @@ x11-base/xorg-server
 x11-drivers/xf86-input-libinput
 x11-drivers/xf86-video-amdgpu
 x11-drivers/xf86-video-ati
-=sys-kernel/ot-sources-5.3.18
-
-
-
-
 
 # Masked for ebuild quality control reasons
 #--------------------------------------------------------------------------------------------------
+
+# for upstream development only
+=app-editors/nano-ycmd-9999
 
 # untested completely
 app-crypt/gcr
@@ -180,3 +175,4 @@ www-misc/rainbowstream
 # May no longer work but did in the past, tested
 <=x11-drivers/amdgpu-pro-19.30.934563-r8
 <=x11-drivers/amdgpu-pro-lts-19.30.934563-r5
+

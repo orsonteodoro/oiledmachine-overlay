@@ -14,7 +14,7 @@ SLOT="0"
 IUSE="debug justify libgcrypt +magic minimal ncurses nettle nls slang +spell \
 static openmp openssl system-clangd system-gnulib system-gocode system-godef \
 system-gopls system-omnisharp system-racerd system-rls system-rustc \
-system-tsserver unicode ycmd-slot-1 ycmd-slot-2"
+system-tsserver unicode ycmd-slot-1 +ycmd-slot-2"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit python-single-r1
 REQUIRED_USE="${PYTHON_REQUIRED_USE}

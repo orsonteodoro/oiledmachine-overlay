@@ -17,11 +17,11 @@ SLOT="0"
 inherit python-single-r1
 IUSE="builtin-completion +company-mode debug eldoc +flycheck +go-mode next-error \
 +rust-mode system-gocode system-godef system-gopls system-omnisharp system-racerd \
-system-rls system-rustc system-typescript +typescript-mode ycmd-slot-1 ycmd-slot-2"
+system-rls system-rustc system-typescript +typescript-mode ycmd-slot-1 +ycmd-slot-2"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
-YCMD_SLOT="1"
 RDEPEND="${PYTHON_DEPS}
-	$(python_gen_cond_dep 'dev-util/ycmd:'${YCMD_SLOT}'[${PYTHON_USEDEP}]' python3_{6,7,8} )"
+	ycmd-slot-1? ( $(python_gen_cond_dep 'dev-util/ycmd:1[${PYTHON_USEDEP}]' python3_{6,7,8} ) )
+	ycmd-slot-2? ( $(python_gen_cond_dep 'dev-util/ycmd:2[${PYTHON_USEDEP}]' python3_{6,7,8} ) )"
 DEPEND="${RDEPEND}"
 BDEPEND="net-misc/curl"
 inherit eutils elisp
