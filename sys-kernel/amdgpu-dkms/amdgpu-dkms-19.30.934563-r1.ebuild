@@ -34,9 +34,11 @@ RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
 	 sys-kernel/dkms
 	 !custom-kernel? (
 	 || ( <sys-kernel/ck-sources-${KV_NOT_SUPPORTED}
+	      <sys-kernel/bliss-kernel-bin-${KV_NOT_SUPPORTED}
 	      <sys-kernel/gentoo-sources-${KV_NOT_SUPPORTED}
 	      <sys-kernel/ot-sources-${KV_NOT_SUPPORTED}
 	      <sys-kernel/pf-sources-${KV_NOT_SUPPORTED}
+	      <sys-kernel/rt-sources-${KV_NOT_SUPPORTED}
 	      <sys-kernel/vanilla-sources-${KV_NOT_SUPPORTED}
 	      <sys-kernel/zen-sources-${KV_NOT_SUPPORTED} ) )"
 DEPEND="${RDEPEND}
