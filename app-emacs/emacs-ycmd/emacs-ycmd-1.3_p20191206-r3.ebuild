@@ -4,14 +4,20 @@
 EAPI=7
 DESCRIPTION="Emacs client for ycmd, the code completion system"
 HOMEPAGE="https://github.com/abingham/emacs-ycmd"
-LICENSE="BSD"
+LICENSE="MIT GPL-3+
+	company-mode? ( GPL-3+ )
+	flycheck? ( GPL-3+ )
+	go-mode? ( BSD )
+	rust-mode? ( MIT Apache-2.0 )
+	typescript-mode? ( GPL-3+ )"
+# The required dependencies are GPL-3+ but scripts or package alone itself is MIT.
 KEYWORDS="~amd64 ~x86"
 PYTHON_COMPAT=( python3_{6,7,8} )
 SLOT="0"
 inherit python-single-r1
-IUSE="builtin-completion +company-mode debug eldoc +flycheck next-error \
-system-gocode system-godef system-gopls system-omnisharp system-racerd \
-system-rls system-rustc system-typescript ycmd-slot-1 ycmd-slot-2"
+IUSE="builtin-completion +company-mode debug eldoc +flycheck +go-mode next-error \
++rust-mode system-gocode system-godef system-gopls system-omnisharp system-racerd \
+system-rls system-rustc system-typescript +typescript-mode ycmd-slot-1 ycmd-slot-2"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 YCMD_SLOT="1"
 RDEPEND="${PYTHON_DEPS}
@@ -44,6 +50,21 @@ install_deps() {
 	curl -fsSL https://raw.githubusercontent.com/cask/cask/master/go \
 		| python || die
 	export PATH="${HOME}/.cask/bin:$PATH"
+	if ! use flycheck ; then
+		sed -i -e 's|(depends-on "flycheck")||g' Cask || die
+	fi
+	if ! use company-mode ; then
+		sed -i -e 's|(depends-on "company")||g' Cask || die
+	fi
+	if ! use go-mode ; then
+		sed -i -e 's|(depends-on "go-mode")||g' Cask || die
+	fi
+	if ! use rust-mode ; then
+		sed -i -e 's|(depends-on "rust-mode")||g' Cask || die
+	fi
+	if ! use typescript-mode ; then
+		sed -i -e 's|(depends-on "typescript-mode")||g' Cask || die
+	fi
 	cask install
 	cask build
 	local ycmd_slot
@@ -246,12 +267,6 @@ src_compile() {
 
 src_install() {
 	local sitefile_path="${WORKDIR}/${SITEFILE}"
-	if ! use company-mode ; then
-		rm -rf .cask/$(elisp-emacs-version)/elpa/flycheck* || die
-	fi
-	if ! use flycheck ; then
-		rm -rf .cask/$(elisp-emacs-version)/elpa/company* || die
-	fi
 	elisp-install ${PN} -r *.el *elc .cask contrib || die
 	elisp-site-file-install "${sitefile_path}" || die
 }
