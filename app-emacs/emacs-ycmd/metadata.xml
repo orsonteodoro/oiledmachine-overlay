@@ -24,7 +24,9 @@
     <flag name="debug">Enables enhanced debug reporting.</flag>
     <flag name="eldoc">Adds eldoc support.</flag>
     <flag name="flycheck">Integrates flycheck syntax checking.</flag>
+    <flag name="go-mode">Adds support for go-mode.</flag>
     <flag name="next-error">Adds next-error integration.</flag>
+    <flag name="rust-mode">Adds support for rust-mode.</flag>
     <flag name="system-gocode">Configures emacs-ycmd to use the system gocode;
       otherwise, it falls back to the internal ycmd gocode.</flag>
     <flag name="system-godef">Configures emacs-ycmd to use the system godef;
@@ -37,6 +39,7 @@
       otherwise, it falls back to the internal ycmd racerd.</flag>
     <flag name="system-rls">Configures emacs-ycmd to use the system rls;
       otherwise, it falls back to the internal ycmd rls.</flag>
+    <flag name="typescript-mode">Adds support for typescript-mode.</flag>
     <flag name="ycmd-slot-1">Set up ycmd for core version 39</flag>
     <flag name="ycmd-slot-2">Set up ycmd for core version 43</flag>
   </use>
