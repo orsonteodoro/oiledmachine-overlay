@@ -36,14 +36,18 @@ fi
 RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
 	 sys-kernel/dkms
 	 !custom-kernel? (
-	 || ( <sys-kernel/ck-sources-${KV_NOT_SUPPORTED_MAX}
+	 || ( <sys-kernel/bliss-kernel-bin-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/ck-sources-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/gentoo-kernel-bin-${KV_NOT_SUPPORTED_MAX}
 	      <sys-kernel/gentoo-sources-${KV_NOT_SUPPORTED_MAX}
 	      <sys-kernel/ot-sources-${KV_NOT_SUPPORTED_MAX}
 	      <sys-kernel/pf-sources-${KV_NOT_SUPPORTED_MAX}
 	      <sys-kernel/rt-sources-${KV_NOT_SUPPORTED_MAX}
 	      <sys-kernel/vanilla-sources-${KV_NOT_SUPPORTED_MAX}
 	      <sys-kernel/zen-sources-${KV_NOT_SUPPORTED_MAX} )
-	 || ( >=sys-kernel/ck-sources-${KV_SUPPORTED_MIN}
+	 || ( >=sys-kernel/bliss-kernel-bin-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/ck-sources-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/gentoo-kernel-bin-${KV_SUPPORTED_MIN}
 	      >=sys-kernel/gentoo-sources-${KV_SUPPORTED_MIN}
 	      >=sys-kernel/ot-sources-${KV_SUPPORTED_MIN}
 	      >=sys-kernel/pf-sources-${KV_SUPPORTED_MIN}
