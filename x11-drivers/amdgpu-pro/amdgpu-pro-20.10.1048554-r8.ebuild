@@ -84,7 +84,7 @@ SLOT="1"
 # For more info on VIDEODRV see https://www.x.org/wiki/XorgModuleABIVersions/
 # sys-libs/ncurses[tinfo] required by llvm in this package
 
-RDEPEND="!x11-drivers/amdgpu-pro
+RDEPEND="!x11-drivers/amdgpu-pro-lts
 	 >=dev-util/cunit-2.1_p3
 	 >=dev-libs/expat-2.2.5
 	 >=dev-libs/libedit-3.1
