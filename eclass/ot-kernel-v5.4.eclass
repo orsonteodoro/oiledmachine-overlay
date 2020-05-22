@@ -41,7 +41,7 @@ IUSE="  bfq bmq bmq-quick-fix \
 REQUIRED_USE="^^ ( muqss cfs bmq )"
 
 # no released patch yet
-REQUIRED_USE+=" !bfq !bmq-quick-fix"
+REQUIRED_USE+=" !bmq-quick-fix"
 
 #K_WANT_GENPATCHES="base extras experimental"
 K_SECURITY_UNSUPPORTED=${K_SECURITY_UNSUPPORTED:="1"}
