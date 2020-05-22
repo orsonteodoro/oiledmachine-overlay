@@ -579,11 +579,6 @@ src_install() {
 
 	multilib_foreach_abi install_abi
 
-	# Link for hardcoded path
-	use open-stack && \
-	dosym /usr/share/libdrm/amdgpu.ids \
-		/opt/amdgpu/share/libdrm/amdgpu.ids
-
 	if use doc ; then
 		docinto docs
 		dodoc -r usr/share/doc/*
