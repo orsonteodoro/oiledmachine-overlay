@@ -28,10 +28,10 @@ LIB_DEPEND="
 RDEPEND="${PYTHON_DEPS}
 	>=app-shells/bash-4
 	dev-libs/nxjson
-	$(python_gen_cond_dep 'dev-util/bear[${PYTHON_USEDEP}]' python3_{6,7,8} )
+	dev-util/bear[${PYTHON_SINGLE_USEDEP}]
 	$(python_gen_cond_dep 'dev-util/compdb[${PYTHON_USEDEP}]' python3_{6,7,8} )
 	dev-util/ninja
-	$(python_gen_cond_dep 'dev-util/ycm-generator[${PYTHON_USEDEP}]' python3_{6,7,8} )
+	$(python_gen_cond_dep 'dev-util/ycm-generator[${PYTHON_USEDEP}]' python3_{6,7,8})
 	$(python_gen_cond_dep 'dev-util/ycmd:'${YCMD_SLOT}'[${PYTHON_USEDEP}]' python3_{6,7,8} )
 	libgcrypt? ( dev-libs/libgcrypt )
 	nettle? ( dev-libs/nettle )

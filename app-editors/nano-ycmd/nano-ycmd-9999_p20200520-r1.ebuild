@@ -30,12 +30,12 @@ LIB_DEPEND="
 RDEPEND="${PYTHON_DEPS}
 	>=app-shells/bash-4
 	dev-libs/nxjson
-	$(python_gen_cond_dep 'dev-util/bear[${PYTHON_USEDEP}]' python3_{6,7,8} )
-	$(python_gen_cond_dep 'dev-util/compdb[${PYTHON_USEDEP}]' python3_{6,7,8} )
+	dev-util/bear[${PYTHON_SINGLE_USEDEP}]
+	$(python_gen_cond_dep 'dev-util/compdb[${PYTHON_USEDEP}]' python3_{6,7,8})
 	dev-util/ninja
-	$(python_gen_cond_dep 'dev-util/ycm-generator[${PYTHON_USEDEP}]' python3_{6,7,8} )
-	ycmd-slot-1? ( $(python_gen_cond_dep 'dev-util/ycmd:1[${PYTHON_USEDEP}]' python3_{6,7,8} ) )
-	ycmd-slot-2? ( $(python_gen_cond_dep 'dev-util/ycmd:2[${PYTHON_USEDEP}]' python3_{6,7,8} ) )
+	$(python_gen_cond_dep 'dev-util/ycm-generator[${PYTHON_USEDEP}]' python3_{6,7,8})
+	ycmd-slot-1? ( $(python_gen_cond_dep 'dev-util/ycmd:1[${PYTHON_USEDEP}]' python3_{6,7,8}) )
+	ycmd-slot-2? ( $(python_gen_cond_dep 'dev-util/ycmd:2[${PYTHON_USEDEP}]' python3_{6,7,8}) )
 	libgcrypt? ( dev-libs/libgcrypt )
 	nettle? ( dev-libs/nettle )
 	net-libs/neon
