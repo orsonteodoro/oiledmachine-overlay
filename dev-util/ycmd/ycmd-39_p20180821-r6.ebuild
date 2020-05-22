@@ -38,10 +38,11 @@ system-frozendict system-future system-gocode system-godef system-jedi \
 system-libclang system-mrab-regex system-requests system-omnisharp \
 system-racerd system-rust system-tern system-typescript system-waitress test \
 typescript vim"
+IUSE+=" ${USE_DOTNET}"
 CLANG_V="6.0"
 CLANG_V_MAJ=$(ver_cut 1 ${CLANG_V})
 PV_MAJ=$(ver_cut 1 ${PV})
-inherit python-r1 dotnet
+inherit python-r1
 REQUIRED_USE="
 	c? ( libclang )
 	csharp? ( || ( ${USE_DOTNET} ) )

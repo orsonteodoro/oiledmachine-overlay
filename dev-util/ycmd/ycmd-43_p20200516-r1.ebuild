@@ -40,10 +40,11 @@ system-go-tools system-jedi system-libclang system-mono system-mrab-regex \
 system-requests system-omnisharp-roslyn system-pathtools system-rls \
 system-rust system-tern system-typescript system-waitress system-watchdog test \
 typescript vim"
+IUSE+=" ${USE_DOTNET}"
 CLANG_V="10.0"
 CLANG_V_MAJ=$(ver_cut 1 ${CLANG_V})
 PV_MAJ=$(ver_cut 1 ${PV})
-inherit python-r1 dotnet
+inherit python-r1
 REQUIRED_USE="
 	c? ( || ( clangd libclang ) )
 	csharp? ( || ( ${USE_DOTNET} ) )
