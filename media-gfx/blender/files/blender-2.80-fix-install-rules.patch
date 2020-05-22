@@ -1,0 +1,15 @@
+--- a/source/creator/CMakeLists.txt.orig	2019-07-24 00:41:39.000000000 -0700
++++ b/source/creator/CMakeLists.txt	2020-05-10 20:42:29.963688094 -0700
+@@ -351,12 +351,6 @@ endif()
+ # Install Targets (Generic, All Platforms)
+ 
+ 
+-# important to make a clean  install each time, else old scripts get loaded.
+-install(
+-  CODE
+-  "file(REMOVE_RECURSE ${TARGETDIR_VER})"
+-)
+-
+ if(WITH_PYTHON)
+   # install(CODE "message(\"copying blender scripts...\")")
+ 
