@@ -14,7 +14,7 @@ if [[ ${PV} == *9999 ]]; then
 	EGIT_SUBMODULES=()
 else
 	SRC_URI="https://github.com/obsproject/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
-	KEYWORDS="~amd64 ~x86"
+	KEYWORDS="~amd64 ~ppc64 ~x86"
 fi
 
 DESCRIPTION="Software for Recording and Streaming Live Video Content"
@@ -23,11 +23,19 @@ HOMEPAGE="https://obsproject.com"
 LICENSE="GPL-2"
 SLOT="0"
 IUSE="+alsa fdk imagemagick jack luajit nvenc pulseaudio python speex +ssl truetype v4l vlc"
-IUSE+=" vaapi video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts video_cards_intel video_cards_i965 video_cards_r600 video_cards_radeonsi"
+IUSE+=" vaapi video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts video_cards_intel video_cards_iris video_cards_i965 video_cards_nouveau video_cards_r600 video_cards_radeonsi"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 REQUIRED_USE+="
-	video_cards_amdgpu? ( !video_cards_amdgpu-pro-lts )
+	video_cards_amdgpu? (
+		!video_cards_amdgpu-pro
+		!video_cards_amdgpu-pro-lts
+		|| (
+			video_cards_r600
+			video_cards_radeonsi
+		)
+	)
 	video_cards_amdgpu-pro? ( !video_cards_amdgpu-pro-lts )
+	video_cards_amdgpu-pro-lts? ( !video_cards_amdgpu-pro )
 "
 
 BDEPEND="
@@ -84,18 +92,31 @@ DEPEND="
 # For vaapi support, see source code at https://github.com/obsproject/obs-studio/pull/1482/commits/2dc67f140d8156d9000db57786e53a4c1597c097
 DEPEND+="vaapi? ( media-video/ffmpeg[vaapi,x264]
 		  x11-libs/libva
-		  || ( video_cards_amdgpu-pro-lts? ( x11-drivers/amdgpu-pro-lts[vaapi] )
-		       video_cards_amdgpu-pro? ( x11-drivers/amdgpu-pro-lts[vaapi] )
-		       video_cards_amdgpu? (
-					|| ( media-libs/mesa[gallium,vaapi,video_cards_radeonsi]
-						media-libs/mesa[gallium,vaapi,video_cards_r600] ) )
-		       video_cards_intel? ( x11-libs/libva[video_cards_intel] )
+		  || ( video_cards_amdgpu? (
+					|| (
+						video_cards_radeonsi? ( media-libs/mesa[gallium,vaapi,video_cards_radeonsi] )
+						video_cards_r600? ( media-libs/mesa[gallium,vaapi,video_cards_r600] )
+					)
+		       )
+		       video_cards_amdgpu-pro? (
+				x11-drivers/amdgpu-pro[open-stack,vaapi]
+				media-libs/mesa[-vaapi]
+		       )
+		       video_cards_amdgpu-pro-lts? (
+				x11-drivers/amdgpu-pro-lts[open-stack,vaapi]
+				media-libs/mesa[-vaapi]
+		       )
 		       video_cards_i965? ( x11-libs/libva[video_cards_i965] )
+		       video_cards_intel? ( x11-libs/libva[video_cards_intel] )
+		       video_cards_iris? ( x11-libs/libva-intel-media-driver )
+		       video_cards_nouveau? ( media-libs/mesa[gallium,vaapi,video_cards_nouveau] )
 		       video_cards_r600? ( media-libs/mesa[gallium,vaapi,video_cards_r600] )
 		       video_cards_radeonsi? ( media-libs/mesa[gallium,vaapi,video_cards_radeonsi] )
 		  )
 	)"
 RDEPEND="${DEPEND}"
+
+PATCHES=( "${FILESDIR}/${PN}-25.0.8-gcc-10-build.patch" )
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
@@ -137,6 +158,13 @@ src_configure() {
 	cmake-utils_src_configure
 }
 
+src_install() {
+	cmake-utils_src_install
+	#external plugins may need some things not installed by default, install them here
+	insinto /usr/include/obs/UI/obs-frontend-api
+	doins UI/obs-frontend-api/obs-frontend-api.h
+}
+
 pkg_postinst() {
 	xdg_icon_cache_update
 
@@ -157,6 +185,10 @@ pkg_postinst() {
 		elog "(if 'x11-misc/xdg-utils' is installed)."
 		elog
 	fi
+}
+
+pkg_postrm() {
+	xdg_icon_cache_update
 
 	if use vaapi ; then
 		if use video_cards_intel || use video_cards_i965 ; then
@@ -164,13 +196,16 @@ pkg_postinst() {
 			einfo "For details see https://github.com/intel/intel-vaapi-driver/blob/master/NEWS"
 			einfo "See the AVC row at https://en.wikipedia.org/wiki/Intel_Quick_Sync_Video#Hardware_decoding_and_encoding"
 		fi
-		if use video_cards_r600 || use video_cards_radeonsi || use video_cards_amdgpu ; then
+		if use video_cards_iris ; then
+			einfo "Intel Broadwell or newer is required for hardware accelerated H.264 VA-API encode."
+			einfo "See https://github.com/intel/media-driver for details"
+		fi
+		if use video_cards_amdgpu || use video_cards_amdgpu-pro || use video_cards_amdgpu-pro-lts || use video_cards_r600 || use video_cards_radeonsi  ; then
 			einfo "You need VCE (Video Code Engine) or VCN (Video Core Next) for hardware accelerated H.264 VA-API encode."
 			einfo "For details see https://en.wikipedia.org/wiki/Video_Coding_Engine#Feature_overview"
 		fi
-	fi
-}
-
-pkg_postrm() {
-	xdg_icon_cache_update
+		if use video_cards_nouveau ; then
+			einfo "For Nouveau H.264 VA-API support, see https://nouveau.freedesktop.org/wiki/VideoAcceleration/"
+		fi
+       fi
 }

@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
+  <!-- only for this ebuild fork on the oiledmachine-overlay -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!-- ebuild originator -->
   <maintainer type="person">
     <email>chiitoo@gentoo.org</email>
     <name>Jimi Huotari</name>
@@ -10,6 +16,15 @@
     software originally designed for recording and streaming live video
     content, efficiently.  Aims to be multi-platform, and improved upon
     internally.
+
+    This is an ebuild fork with more detailed VA-API dependency requirement
+    checks.
+
+    For Nouveau VA-API details see
+    https://nouveau.freedesktop.org/wiki/VideoAcceleration/
+
+    The video_cards_amdgpu, video_cards_amdgpu-pro, video_cards_amdgpu-pro-lts
+    are mutually exclusive.  Choose one.
   </longdescription>
   <use>
     <flag name="fdk">Enable libfdk support for AAC encoding.</flag>
@@ -21,8 +36,17 @@
       <pkg>media-libs/speexdsp</pkg>.</flag>
     <flag name="ssl">Build support for TLS/SSL connections (RTMPS) via
       <pkg>net-libs/mbedtls</pkg>.</flag>
-    <flag name="vaapi">Enable hardware H264 encoding via vaapi.</flag>
+    <flag name="vaapi">Enable hardware H264 encoding via VA-API.</flag>
     <flag name="vlc">Build support for using <pkg>media-video/vlc</pkg> as a media source.</flag>
+    <flag name="video_cards_amdgpu">Prefer the Gallium Mesa VA-API driver</flag>
+    <flag name="video_cards_amdgpu-pro">Prefer the unilib AMDGPU-PRO VA-API driver</flag>
+    <flag name="video_cards_amdgpu-pro-lts">Prefer the multilib AMDGPU-PRO VA-API driver</flag>
+    <flag name="video_cards_i965">Prefer the Intel VA-API driver for pre-Broadwell</flag>
+    <flag name="video_cards_intel">Prefer the Intel VA-API driver for pre-Broadwell</flag>
+    <flag name="video_cards_iris">Prefer the Intel VA-API driver for Broadwell and newer</flag>
+    <flag name="video_cards_nouveau">Prefer the Nouveau Mesa VA-API driver</flag>
+    <flag name="video_cards_r600">Prefer the Gallium Mesa VA-API driver</flag>
+    <flag name="video_cards_radeonsi">Prefer the Gallium Mesa VA-API driver</flag>
   </use>
   <upstream>
     <remote-id type="github">obsproject/obs-studio</remote-id>
