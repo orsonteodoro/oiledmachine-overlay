@@ -57,6 +57,7 @@ REQUIRED_USE="
 	system-omnisharp? ( csharp )
 	system-racerd? ( rust )
 	system-tern? ( javascript )
+	test? ( csharp go rust typescript )
 	typescript? ( system-typescript )"
 # Versions must match
 # https://github.com/ycm-core/ycmd/blob/master/cpp/BoostParts/boost/version.hpp
@@ -97,8 +98,7 @@ DEPEND="${CDEPEND}
 		>=dev-python/psutil-3.3.0[${PYTHON_USEDEP}]
 		>=dev-python/pyhamcrest-1.8.5[${PYTHON_USEDEP}]
 		>=dev-python/unittest2-1.1.0[${PYTHON_USEDEP}]
-		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}] )
-		net-libs/nodejs[npm]"
+		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}] )"
 EGIT_COMMIT="386915288616fddcc60a46b49e6c6e71a118542b"
 EGIT_REPO_URI="https://github.com/ycm-core/ycmd.git"
 inherit cmake-utils eutils flag-o-matic git-r3

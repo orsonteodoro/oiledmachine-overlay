@@ -58,7 +58,8 @@ REQUIRED_USE="
 	system-mrab-regex? ( regex )
 	system-omnisharp-roslyn? ( csharp )
 	system-rls? ( rust )
-	system-tern? ( javascript )"
+	system-tern? ( javascript )
+	test? ( csharp go rust typescript )"
 # Versions must match
 # https://github.com/ycm-core/ycmd/blob/master/cpp/BoostParts/boost/version.hpp
 CDEPEND="${PYTHON_DEPS}
@@ -108,8 +109,7 @@ DEPEND="${CDEPEND}
 		>=dev-python/pyhamcrest-1.10.1[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
-		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}] )
-		net-libs/nodejs[npm]"
+		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}] )"
 #		<dev-python/coverage-4.4[${PYTHON_USEDEP}] # goes in test?
 EGIT_COMMIT="9893b4659cf6c0428fb1950ce7d82004d2425cb6"
 EGIT_REPO_URI="https://github.com/ycm-core/ycmd.git"
