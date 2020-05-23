@@ -140,6 +140,7 @@ RDEPEND="!x11-drivers/amdgpu-pro-lts
 		  >=sys-apps/pciutils-3.5.6
 		  >=sys-process/numactl-2.0.11 )
 	 >=sys-devel/gcc-${PKG_VER_GCC}
+	 vdpau? ( >=x11-libs/libvdpau-1.1.1 )
 	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
 	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
 		    >=media-libs/vulkan-loader-${VULKAN_SDK_VER} )
