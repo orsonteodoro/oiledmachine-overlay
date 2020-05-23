@@ -101,11 +101,9 @@ DEPEND+="vaapi? ( media-video/ffmpeg[vaapi,x264]
 		       )
 		       video_cards_amdgpu-pro? (
 				x11-drivers/amdgpu-pro[open-stack,vaapi]
-				media-libs/mesa[-vaapi]
 		       )
 		       video_cards_amdgpu-pro-lts? (
 				x11-drivers/amdgpu-pro-lts[open-stack,vaapi]
-				media-libs/mesa[-vaapi]
 		       )
 		       video_cards_i965? ( x11-libs/libva[video_cards_i965] )
 		       video_cards_intel? ( x11-libs/libva[video_cards_intel] )
