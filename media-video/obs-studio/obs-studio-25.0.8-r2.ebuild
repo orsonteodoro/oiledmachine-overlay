@@ -23,7 +23,7 @@ HOMEPAGE="https://obsproject.com"
 LICENSE="GPL-2"
 SLOT="0"
 IUSE="+alsa fdk imagemagick jack luajit nvenc pulseaudio python speex +ssl truetype v4l vlc"
-IUSE+=" vaapi video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts video_cards_intel video_cards_iris video_cards_i965 video_cards_nouveau video_cards_r600 video_cards_radeonsi"
+IUSE+=" vaapi video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts video_cards_intel video_cards_iris video_cards_i965 video_cards_r600 video_cards_radeonsi"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 REQUIRED_USE+="
 	video_cards_amdgpu? (
@@ -90,6 +90,7 @@ DEPEND="
 	vlc? ( media-video/vlc:= )
 "
 # For vaapi support, see source code at https://github.com/obsproject/obs-studio/pull/1482/commits/2dc67f140d8156d9000db57786e53a4c1597c097
+# No video_cards_nouveau x264 encode from inspection of the Mesa driver, but for decode yes.
 DEPEND+="vaapi? ( media-video/ffmpeg[vaapi,x264]
 		  x11-libs/libva
 		  || ( video_cards_amdgpu? (
@@ -109,7 +110,6 @@ DEPEND+="vaapi? ( media-video/ffmpeg[vaapi,x264]
 		       video_cards_i965? ( x11-libs/libva[video_cards_i965] )
 		       video_cards_intel? ( x11-libs/libva[video_cards_intel] )
 		       video_cards_iris? ( x11-libs/libva-intel-media-driver )
-		       video_cards_nouveau? ( media-libs/mesa[gallium,vaapi,video_cards_nouveau] )
 		       video_cards_r600? ( media-libs/mesa[gallium,vaapi,video_cards_r600] )
 		       video_cards_radeonsi? ( media-libs/mesa[gallium,vaapi,video_cards_radeonsi] )
 		  )
@@ -203,9 +203,6 @@ pkg_postrm() {
 		if use video_cards_amdgpu || use video_cards_amdgpu-pro || use video_cards_amdgpu-pro-lts || use video_cards_r600 || use video_cards_radeonsi  ; then
 			einfo "You need VCE (Video Code Engine) or VCN (Video Core Next) for hardware accelerated H.264 VA-API encode."
 			einfo "For details see https://en.wikipedia.org/wiki/Video_Coding_Engine#Feature_overview"
-		fi
-		if use video_cards_nouveau ; then
-			einfo "For Nouveau H.264 VA-API support, see https://nouveau.freedesktop.org/wiki/VideoAcceleration/"
 		fi
        fi
 }
