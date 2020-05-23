@@ -32,7 +32,7 @@ PYTHON_COMPAT=( python3_{6,7,8} )
 # slot 2 (racerd) -> (rls) ; (gocode, godef) -> (gopls) ; python 3 only
 SLOT="1"
 USE_DOTNET="net40"
-IUSE="c csharp cuda cxx debug doc examples go java javascript libclang \
+IUSE="c csharp cuda cxx debug developer doc examples go java javascript libclang \
 minimal objc objcxx python regex rust system-bottle system-boost \
 system-frozendict system-future system-gocode system-godef system-jedi \
 system-libclang system-mrab-regex system-requests system-omnisharp \
