@@ -79,8 +79,8 @@ SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
 IUSE="bindist clinfo developer dkms doc +egl +gles2 freesync hip-clang \
 +open-stack +opencl opencl-icd-loader +opencl_orca +opencl_pal +opengl \
-opengl_mesa +opengl_pro osmesa +pro-stack roct +vaapi +vdpau +vulkan \
-vulkan_open vulkan_pro wayland +X xa"
+opengl_mesa +opengl_pro osmesa +pro-stack roct system-libva +vaapi +vdpau \
++vulkan vulkan_open vulkan_pro wayland +X xa"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -140,6 +140,7 @@ RDEPEND="!x11-drivers/amdgpu-pro-lts
 		  >=sys-apps/pciutils-3.5.6
 		  >=sys-process/numactl-2.0.11 )
 	 >=sys-devel/gcc-${PKG_VER_GCC}
+	 system-libva? ( >=x11-libs/libva-2.1.0 )
 	 vdpau? ( >=x11-libs/libvdpau-1.1.1 )
 	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
 	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
@@ -317,9 +318,11 @@ src_unpack_open_stack() {
 	fi
 
 	if use vaapi ; then
-		unpack_rpm "${d_rpms}/libva-amdgpu-${PKG_VER_VA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
-		use developer && \
-		unpack_rpm "${d_rpms}/libva-amdgpu-devel-${PKG_VER_VA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		if use system-libva ; then
+			unpack_rpm "${d_rpms}/libva-amdgpu-${PKG_VER_VA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+			use developer && \
+			unpack_rpm "${d_rpms}/libva-amdgpu-devel-${PKG_VER_VA}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		fi
 		# The VA-API driver is in the dri package.
 	fi
 
