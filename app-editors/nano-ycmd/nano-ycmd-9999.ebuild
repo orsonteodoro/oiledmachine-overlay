@@ -1,7 +1,7 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# This fork of nano is based on HEAD (4.9.2 as of May 20, 2020)
+# This fork of nano is based on nano's master (4.9.3 as of May 24, 2020)
 
 EAPI=7
 DESCRIPTION="GNU GPL'd Pico clone with more functionality with ycmd support"
@@ -11,9 +11,9 @@ https://github.com/orsonteodoro/nano-ycmd"
 LICENSE="GPL-3+ LGPL-2+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
-IUSE="debug justify libgcrypt +magic minimal ncurses nettle nls slang +spell \
-static openmp openssl system-gnulib system-gocode system-godef system-racerd \
-unicode"
+IUSE="bear debug justify libgcrypt +magic minimal ncurses nettle ninja nls \
+slang +spell static openmp openssl system-gnulib system-gocode system-godef \
+system-racerd unicode ycm-generator"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit python-single-r1
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
@@ -28,10 +28,9 @@ LIB_DEPEND="
 RDEPEND="${PYTHON_DEPS}
 	>=app-shells/bash-4
 	dev-libs/nxjson
-	dev-util/bear[${PYTHON_SINGLE_USEDEP}]
-	$(python_gen_cond_dep 'dev-util/compdb[${PYTHON_USEDEP}]' python3_{6,7,8} )
-	dev-util/ninja
-	$(python_gen_cond_dep 'dev-util/ycm-generator[${PYTHON_USEDEP}]' python3_{6,7,8})
+	bear? ( dev-util/bear[${PYTHON_SINGLE_USEDEP}] )
+	ninja? ( dev-util/ninja )
+	ycm-generator? ( $(python_gen_cond_dep 'dev-util/ycm-generator[${PYTHON_USEDEP}]' python3_{6,7,8}) )
 	$(python_gen_cond_dep 'dev-util/ycmd:'${YCMD_SLOT}'[${PYTHON_USEDEP}]' python3_{6,7,8} )
 	libgcrypt? ( dev-libs/libgcrypt )
 	nettle? ( dev-libs/nettle )
@@ -69,7 +68,6 @@ src_unpack() {
 src_prepare() {
 	default
 	eapply "${FILESDIR}/${PN}-9999.20180201-rename-as-ynano.patch"
-	eapply "${FILESDIR}"/testing.patch
 	if use system-gnulib ; then
 		eapply "${FILESDIR}/${PN}-9999.20180201-autogen-use-system-gnulib.patch"
 		./autogen.sh
@@ -80,8 +78,8 @@ src_prepare() {
 }
 
 src_configure() {
-        BD_REL="ycmd/${ycmd_slot}"
-        BD_ABS="$(python_get_sitedir)/${BD_REL}"
+	BD_REL="ycmd/${ycmd_slot}"
+	BD_ABS="$(python_get_sitedir)/${BD_REL}"
 	use static && append-ldflags -static
 	local myconf=()
 	case ${CHOST} in
@@ -114,15 +112,15 @@ src_configure() {
 	NINJA_PATH="/usr/bin/ninja" \
 	RACERD_PATH="${racerd_path}" \
 	RUST_SRC_PATH="/usr/share/rust/src" \
-	YCMD_PATH="${BD_ABS}/ycmd/${YCMD_SLOT}/ycmd" \
+	YCMD_PATH="${BD_ABS}/ycmd" \
 	YCMD_PYTHON_PATH="/usr/bin/${EPYTHON}" \
-        YCMG_PATH="/usr/bin/config_gen.py" \
+	YCMG_PATH="/usr/bin/config_gen.py" \
 	YCMG_PYTHON_PATH="/usr/bin/${EPYTHON}" \
 	econf \
 		"${myconf[@]}" \
 		--bindir="${EPREFIX}"/bin \
 		--disable-wrapping-as-root \
-                --enable-ycmd \
+		--enable-ycmd \
 		--htmldir=/trash \
 		$(use_enable !minimal color) \
 		$(use_enable !minimal multibuffer) \
@@ -134,10 +132,13 @@ src_configure() {
 		$(use_enable nls) \
 		$(use_enable spell speller) \
 		$(use_enable unicode utf8) \
-                $(use_with libgcrypt) \
-                $(use_with nettle) \
+		$(use_with bear) \
+		$(use_with libgcrypt) \
+		$(use_with nettle) \
+		$(use_with ninja) \
 		$(use_with openmp) \
-                $(use_with openssl) \
+		$(use_with openssl) \
+		$(use_with ycm-generator) \
 		$(usex ncurses --without-slang $(use_with slang))
 }
 

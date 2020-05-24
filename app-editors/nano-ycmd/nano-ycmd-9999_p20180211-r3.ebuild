@@ -29,7 +29,6 @@ RDEPEND="${PYTHON_DEPS}
 	>=app-shells/bash-4
 	dev-libs/nxjson
 	dev-util/bear[${PYTHON_SINGLE_USEDEP}]
-	$(python_gen_cond_dep 'dev-util/compdb[${PYTHON_USEDEP}]' python3_{6,7,8} )
 	dev-util/ninja
 	$(python_gen_cond_dep 'dev-util/ycm-generator[${PYTHON_USEDEP}]' python3_{6,7,8})
 	$(python_gen_cond_dep 'dev-util/ycmd:'${YCMD_SLOT}'[${PYTHON_USEDEP}]' python3_{6,7,8} )
@@ -72,13 +71,13 @@ src_prepare() {
 }
 
 src_configure() {
-        if use ycmd-slot-1 ; then
-                ycmd_slot=1
-        elif use ycmd-slot-2 ; then
-                ycmd_slot=2
-        fi
-        BD_REL="ycmd/${ycmd_slot}"
-        BD_ABS="$(python_get_sitedir)/${BD_REL}"
+	if use ycmd-slot-1 ; then
+		ycmd_slot=1
+	elif use ycmd-slot-2 ; then
+		ycmd_slot=2
+	fi
+	BD_REL="ycmd/${ycmd_slot}"
+	BD_ABS="$(python_get_sitedir)/${BD_REL}"
 	use static && append-ldflags -static
 	local myconf=()
 	case ${CHOST} in
@@ -113,13 +112,13 @@ src_configure() {
 	RUST_SRC_PATH="/usr/share/rust/src" \
 	YCMD_PATH="${BD_ABS}/ycmd" \
 	YCMD_PYTHON_PATH="/usr/bin/${EPYTHON}" \
-        YCMG_PATH="/usr/bin/config_gen.py" \
+	YCMG_PATH="/usr/bin/config_gen.py" \
 	YCMG_PYTHON_PATH="/usr/bin/${EPYTHON}" \
 	econf \
 		"${myconf[@]}" \
 		--bindir="${EPREFIX}"/bin \
 		--disable-wrapping-as-root \
-                --enable-ycmd \
+		--enable-ycmd \
 		--htmldir=/trash \
 		$(use_enable !minimal color) \
 		$(use_enable !minimal multibuffer) \
@@ -131,10 +130,10 @@ src_configure() {
 		$(use_enable nls) \
 		$(use_enable spell speller) \
 		$(use_enable unicode utf8) \
-                $(use_with libgcrypt) \
-                $(use_with nettle) \
+		$(use_with libgcrypt) \
+		$(use_with nettle) \
 		$(use_with openmp) \
-                $(use_with openssl) \
+		$(use_with openssl) \
 		$(usex ncurses --without-slang $(use_with slang))
 }
 

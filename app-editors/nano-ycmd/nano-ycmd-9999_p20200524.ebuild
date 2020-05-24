@@ -1,7 +1,7 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# This fork of nano is based on 4.9.2_p20200520
+# This fork of nano is based on 4.9.3_p20200524
 
 EAPI=7
 DESCRIPTION="GNU GPL'd Pico clone with more functionality with ycmd support"
@@ -11,16 +11,15 @@ https://github.com/orsonteodoro/nano-ycmd"
 LICENSE="GPL-3+ LGPL-2+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
-IUSE="debug justify libgcrypt +magic minimal ncurses nettle nls slang +spell \
-static openmp openssl system-clangd system-gnulib system-gocode system-godef \
-system-gopls system-omnisharp system-racerd system-rls system-rustc \
-system-tsserver unicode ycmd-slot-1 +ycmd-slot-2"
+IUSE="bear debug justify libgcrypt +magic minimal ncurses nettle ninja nls \
+slang +spell static openmp openssl system-clangd system-gnulib system-gocode \
+system-godef system-gopls system-omnisharp system-racerd system-rls \
+system-rustc system-tsserver unicode ycmd-slot-1 +ycmd-slot-2 ycm-generator"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit python-single-r1
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	      ^^ ( libgcrypt nettle openssl )
 	      ^^ ( ycmd-slot-1 ycmd-slot-2 )"
-YCMD_SLOT="1"
 LIB_DEPEND="
 	magic? ( sys-apps/file[static-libs(+)] )
 	!ncurses? ( slang? ( sys-libs/slang[static-libs(+)] ) )
@@ -30,10 +29,9 @@ LIB_DEPEND="
 RDEPEND="${PYTHON_DEPS}
 	>=app-shells/bash-4
 	dev-libs/nxjson
-	dev-util/bear[${PYTHON_SINGLE_USEDEP}]
-	$(python_gen_cond_dep 'dev-util/compdb[${PYTHON_USEDEP}]' python3_{6,7,8})
-	dev-util/ninja
-	$(python_gen_cond_dep 'dev-util/ycm-generator[${PYTHON_USEDEP}]' python3_{6,7,8})
+	bear? ( dev-util/bear[${PYTHON_SINGLE_USEDEP}] )
+	ninja? ( dev-util/ninja )
+	ycm-generator? ( $(python_gen_cond_dep 'dev-util/ycm-generator[${PYTHON_USEDEP}]' python3_{6,7,8}) )
 	ycmd-slot-1? ( $(python_gen_cond_dep 'dev-util/ycmd:1[${PYTHON_USEDEP}]' python3_{6,7,8}) )
 	ycmd-slot-2? ( $(python_gen_cond_dep 'dev-util/ycmd:2[${PYTHON_USEDEP}]' python3_{6,7,8}) )
 	libgcrypt? ( dev-libs/libgcrypt )
@@ -47,7 +45,7 @@ BDEPEND="nls? ( sys-devel/gettext )
 	static? ( ${LIB_DEPEND} )
 	virtual/pkgconfig"
 inherit autotools eutils flag-o-matic
-EGIT_COMMIT="9a3df017276ebd95ed82b70cb60e5dfa6cd3c4eb"
+EGIT_COMMIT="0a4cdc53bf38bb6cb2827ce4f5c236ba23b41495"
 GNULIB_COMMIT="360979fd6fb84567e0ffc6839b0431fc00d6362f" # listed in ./autogen.sh
 GNULIB_COMMIT_SHORT="${GNULIB_COMMIT:0:7}"
 SRC_URI=\
@@ -86,13 +84,13 @@ econf_ycmd_slot_2() {
 	OMNISHARP_PATH="${omnisharp_path}" \
 	YCMD_PATH="${BD_ABS}/ycmd" \
 	YCMD_PYTHON_PATH="/usr/bin/${EPYTHON}" \
-        YCMG_PATH="/usr/bin/config_gen.py" \
+	YCMG_PATH="/usr/bin/config_gen.py" \
 	YCMG_PYTHON_PATH="/usr/bin/${EPYTHON}" \
 	econf \
 		"${myconf[@]}" \
 		--bindir="${EPREFIX}"/bin \
 		--disable-wrapping-as-root \
-                --enable-ycmd \
+		--enable-ycmd \
 		--htmldir=/trash \
 		$(use_enable !minimal color) \
 		$(use_enable !minimal multibuffer) \
@@ -104,10 +102,13 @@ econf_ycmd_slot_2() {
 		$(use_enable nls) \
 		$(use_enable spell speller) \
 		$(use_enable unicode utf8) \
-                $(use_with libgcrypt) \
-                $(use_with nettle) \
+		$(use_with bear) \
+		$(use_with libgcrypt) \
+		$(use_with nettle) \
+		$(use_with ninja) \
 		$(use_with openmp) \
-                $(use_with openssl) \
+		$(use_with openssl) \
+		$(use_with ycm-generator) \
 		$(usex ncurses --without-slang $(use_with slang))
 }
 
@@ -119,13 +120,13 @@ econf_ycmd_slot_1() {
 	RUST_SRC_PATH="/usr/share/rust/src" \
 	YCMD_PATH="${BD_ABS}/ycmd" \
 	YCMD_PYTHON_PATH="/usr/bin/${EPYTHON}" \
-        YCMG_PATH="/usr/bin/config_gen.py" \
+	YCMG_PATH="/usr/bin/config_gen.py" \
 	YCMG_PYTHON_PATH="/usr/bin/${EPYTHON}" \
 	econf \
 		"${myconf[@]}" \
 		--bindir="${EPREFIX}"/bin \
 		--disable-wrapping-as-root \
-                --enable-ycmd \
+		--enable-ycmd \
 		--htmldir=/trash \
 		$(use_enable !minimal color) \
 		$(use_enable !minimal multibuffer) \
@@ -137,21 +138,24 @@ econf_ycmd_slot_1() {
 		$(use_enable nls) \
 		$(use_enable spell speller) \
 		$(use_enable unicode utf8) \
-                $(use_with libgcrypt) \
-                $(use_with nettle) \
+		$(use_with bear) \
+		$(use_with libgcrypt) \
+		$(use_with nettle) \
+		$(use_with ninja) \
 		$(use_with openmp) \
-                $(use_with openssl) \
+		$(use_with openssl) \
+		$(use_with ycm-generator) \
 		$(usex ncurses --without-slang $(use_with slang))
 }
 
 src_configure() {
-        if use ycmd-slot-1 ; then
-                ycmd_slot=1
-        elif use ycmd-slot-2 ; then
-                ycmd_slot=2
-        fi
-        BD_REL="ycmd/${ycmd_slot}"
-        BD_ABS="$(python_get_sitedir)/${BD_REL}"
+	if use ycmd-slot-1 ; then
+		ycmd_slot=1
+	elif use ycmd-slot-2 ; then
+		ycmd_slot=2
+	fi
+	BD_REL="ycmd/${ycmd_slot}"
+	BD_ABS="$(python_get_sitedir)/${BD_REL}"
 	use static && append-ldflags -static
 	local myconf=()
 	case ${CHOST} in
@@ -222,10 +226,8 @@ src_configure() {
 	fi
 
 	if use ycmd-slot-1 ; then
-		YCMD_SLOT=1
 		econf_ycmd_slot_1
 	elif use ycmd-slot-2 ; then
-		YCMD_SLOT=2
 		econf_ycmd_slot_2
 	else
 		die "You must choose either ycmd-slot-1 or ycmd-slot-2"
