@@ -12,7 +12,7 @@ RDEPEND="${RDEPEND}
 	>=dev-qt/qtcore-${QT_MIN_PV}:5
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5"
 DEPEND="${RDEPEND}
-	>=kde-frameworks/extra-cmake-modules-5.48.0"
+	>=kde-frameworks/extra-cmake-modules-1.7.0"
 inherit eutils cmake-utils
 SRC_URI=\
 "https://github.com/hawaii-desktop/qtaccountsservice/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz"
