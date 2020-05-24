@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="Library for QtQuick apps with Material Design"
 HOMEPAGE="https://liri.io/docs/sdk/fluid/develop/"
-LICENSE="BSD"
+LICENSE="MPL-2.0 FDL-1.3+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 QT_MIN_PV=5.10
