@@ -7,7 +7,7 @@ HOMEPAGE="https://github.com/lirios/cmake-shared"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-RDEPEND="${RDEPEND}"
+RDEPEND=">=kde-frameworks/extra-cmake-modules-5.48.0"
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0"
 inherit eutils cmake-utils
