@@ -6,7 +6,7 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    YCMD is a code-completion & code-comprehension server.
+    YCMD is a code-completion &amp; code-comprehension server.
 
     YCMD supports C, C#, C++, CUDA C, Java, JavaScript, ObjC, ObjC++, Python,
     Rust, TypeScript programming languages.
