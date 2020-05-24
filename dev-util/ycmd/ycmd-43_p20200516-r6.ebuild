@@ -47,8 +47,10 @@ PV_MAJ=$(ver_cut 1 ${PV})
 inherit python-r1
 REQUIRED_USE="
 	c? ( || ( clangd libclang ) )
+	clangd? ( || ( c cxx objc objcxx ) )
 	csharp? ( || ( ${USE_DOTNET} ) )
 	cxx? ( || ( clangd libclang ) )
+	libclang? ( || ( c cxx objc objcxx ) )
 	objc? ( || ( clangd libclang ) )
 	objcxx? ( || ( clangd libclang ) )
 	system-clangd? ( || ( c cxx objc objcxx ) clangd )

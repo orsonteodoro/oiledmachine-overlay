@@ -47,6 +47,7 @@ REQUIRED_USE="
 	c? ( libclang )
 	csharp? ( || ( ${USE_DOTNET} ) )
 	cxx? ( libclang )
+	libclang? ( || ( c cxx objc objcxx ) )
 	objc? ( libclang )
 	objcxx? ( libclang )
 	system-gocode? ( go system-godef )
