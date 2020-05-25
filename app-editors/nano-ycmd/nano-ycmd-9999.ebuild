@@ -17,7 +17,10 @@ system-racerd unicode ycm-generator"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit python-single-r1
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
-	      ^^ ( libgcrypt nettle openssl )"
+	      ^^ ( libgcrypt nettle openssl )
+	      bear? ( ycm-generator )
+	      ninja? ( ycm-generator )
+	      ycm-generator? ( || ( ninja bear ) )"
 YCMD_SLOT="2"
 LIB_DEPEND="
 	magic? ( sys-apps/file[static-libs(+)] )

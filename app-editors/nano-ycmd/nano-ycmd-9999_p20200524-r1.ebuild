@@ -19,7 +19,10 @@ PYTHON_COMPAT=( python3_{6,7,8} )
 inherit python-single-r1
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	      ^^ ( libgcrypt nettle openssl )
-	      ^^ ( ycmd-slot-1 ycmd-slot-2 )"
+	      ^^ ( ycmd-slot-1 ycmd-slot-2 )
+	      bear? ( ycm-generator )
+	      ninja? ( ycm-generator )
+	      ycm-generator? ( || ( ninja bear ) )"
 LIB_DEPEND="
 	magic? ( sys-apps/file[static-libs(+)] )
 	!ncurses? ( slang? ( sys-libs/slang[static-libs(+)] ) )

@@ -61,6 +61,8 @@ https://github.com/orsonteodoro/nano-ycmd/blob/ymcd-code-completion/src/global.c
     <bugs-to>https://github.com/orsonteodoro/nano-ycmd/issues</bugs-to>
   </upstream>
   <use>
+    <flag name="bear">Adds GNU make, qmake, cmake project support for
+      the clang completer.</flag>
     <flag name="debug">Enable debug messages and assert warnings.  Note that
       these will all be sent straight to stderr rather than some logging
       facility.
@@ -74,6 +76,8 @@ https://github.com/orsonteodoro/nano-ycmd/blob/ymcd-code-completion/src/global.c
     <flag name="minimal">Disable all fancy features, including ones that
       otherwise have a dedicated USE flag (such as spelling).
     </flag>
+    <flag name="ninja">Adds ninja build system support for the
+      clang completer.</flag>
     <flag name="ncurses">Uses ncurses for better key combo support.</flag>
     <flag name="nettle">Uses Nettle for HMAC computation.</flag>
     <flag name="nls">Enable command language translations.</flag>
@@ -106,5 +110,7 @@ https://github.com/orsonteodoro/nano-ycmd/blob/ymcd-code-completion/src/global.c
     <flag name="unicode">Enables UTF-8 support.</flag>
     <flag name="ycmd-slot-1">Use ycmd core version 39.</flag>
     <flag name="ycmd-slot-2">Use ycmd core version 43.</flag>
+    <flag name="ycm-generator">Add C / C++ / ObjC / ObjC++ support for the
+      clang completer.</flag>
   </use>
 </pkgmetadata>
