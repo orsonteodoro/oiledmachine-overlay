@@ -29,7 +29,7 @@ PATCHES=( "${FILESDIR}/${PN}-1.3.0-change-QMapIterator-to-stl-style.patch" )
 
 src_configure() {
 	local mycmakeargs=(
-		-DINSTALL_LIBDIR=$(get_libdir)
+		-DINSTALL_LIBDIR=/usr/$(get_libdir)
 		-DBUILD_TESTING=$(usex test)
 	)
 	cmake-utils_src_configure
