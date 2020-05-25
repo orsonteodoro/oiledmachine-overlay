@@ -49,7 +49,7 @@ BDEPEND="nls? ( sys-devel/gettext )
 	static? ( ${LIB_DEPEND} )
 	virtual/pkgconfig"
 inherit autotools eutils flag-o-matic
-EGIT_COMMIT="0a4cdc53bf38bb6cb2827ce4f5c236ba23b41495"
+EGIT_COMMIT="d69e83799eab5a69f8e24e60d0b7c8690eb024f2"
 GNULIB_COMMIT="360979fd6fb84567e0ffc6839b0431fc00d6362f" # listed in ./autogen.sh
 GNULIB_COMMIT_SHORT="${GNULIB_COMMIT:0:7}"
 SRC_URI=\
