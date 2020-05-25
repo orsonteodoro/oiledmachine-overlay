@@ -159,7 +159,6 @@ media-plugins/gst-plugins-omx
 app-portage/systemwide-pgo
 dev-libs/urho3d
 dev-util/bear
-dev-util/compdb
 dev-util/devhub
 dev-util/geeks-diary
 dev-util/lepton
