@@ -20,7 +20,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	      ^^ ( libgcrypt nettle openssl )
 	      bear? ( ycm-generator )
 	      ninja? ( ycm-generator )
-	      ycm-generator? ( || ( ninja bear ) )"
+	      ycm-generator? ( || ( bear ninja ) )"
 YCMD_SLOT="2"
 LIB_DEPEND="
 	magic? ( sys-apps/file[static-libs(+)] )
