@@ -133,13 +133,10 @@ download the internal dependencies."
 "This version of ycmd is near EOL on this repo.  It will be removed once all\n\
 clients are updated to be compatible with the latest."
 	python_setup
-	BD_ABS="$(python_get_sitedir)/${BD_REL}"
 }
 
 src_prepare() {
 	default
-	local sitedir="$(python_get_sitedir)"
-	local ycmd_sitedir="${sitedir}/ycmd/"
 
 	# Required for deterministic build.
 	eapply "${FILESDIR}/${PN}-42_p20200108-skip-thirdparty-check.patch"
@@ -172,20 +169,10 @@ It's recommended to use the internal instead."
 	if use system-gocode ; then
 		sed -i -e "s|___GOCODE_BIN_PATH___|/usr/bin/gocode|g" \
 			ycmd/default_settings.json || die
-	else
-		sed -i -e "s|\
-___GOCODE_BIN_PATH___|\
-${BD_ABS}/third_party/gocode/gocode|g" \
-			ycmd/default_settings.json || die
 	fi
 
 	if use system-godef ; then
 		sed -i -e "s|___GODEF_BIN_PATH___|/usr/bin/godef|g" \
-			ycmd/default_settings.json || die
-	else
-		sed -i -e "s|\
-___GODEF_BIN_PATH___|\
-${BD_ABS}/third_party/godef/godef|g" \
 			ycmd/default_settings.json || die
 	fi
 
@@ -193,10 +180,6 @@ ${BD_ABS}/third_party/godef/godef|g" \
 		eapply "${FILESDIR}/${PN}-39_p20180821-flatten-regex-path.patch"
 
 		ewarn "Using system-mrab-regex is WIP"
-		sed -i -e "s|\
-p.join\( DIR_OF_CURRENT_SCRIPT, '..', 'third_party', 'cregex', 'regex_{}'.format\( sys.version_info\[ 0 \] \) \)|\
-${sitedir}/regex|g" \
-			ycmd/server_utils.py || die
 		sed -i -e "s|  BuildRegexModule|  #BuildRegexModule|" \
 			build.py || die
 	fi
@@ -216,12 +199,7 @@ recommended to use the internal instead."
 ___OMNISHARP_DIR_PATH___|\
 /usr/$(get_libdir)/mono/omnisharp-roslyn/${FRAMEWORK_FOLDER}|g" \
 				omnisharp.sh || die
-
 		fi
-		sed -i -e "s|\
-___OMNISHARP_BIN_ABSPATH___|\
-${BD_ABS}/ycmd/completers/cs/omnisharp.sh|g" \
-			ycmd/completers/cs/cs_completer.py || die
 	fi
 
 	if use system-racerd ; then
@@ -240,20 +218,10 @@ of internal rust and associated packages."
 		eapply "${FILESDIR}/${PN}-42_p20200108-system-tern.patch"
 		sed -i -e "s|___TERN_BIN_PATH___|/usr/bin/tern|g" \
 			ycmd/completers/javascript/tern_completer.py || die
-	else
-		sed -i -e "s|\
-___TERN_BIN_PATH___|\
-${BD_ABS}/third_party/tern_runtime/tern|g" \
-			ycmd/completers/javascript/tern_completer.py || die
 	fi
 
 	if use system-racerd ; then
 		sed -i -e "s|___RACERD_BIN_PATH___|/usr/bin/racerd|g" \
-			ycmd/default_settings.json || die
-	else
-		sed -i -e "s|\
-___RACERD_BIN_PATH___|\
-${BD_ABS}/third_party/racerd/racerd|g" \
 			ycmd/default_settings.json || die
 	fi
 
@@ -268,14 +236,6 @@ ___HMAC_SECRET___|\
 $(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64)|g" \
 		ycmd/default_settings.json || die
 
-	sed -i -e "s|___PYTHON_BIN_PATH___|/usr/bin/${EPYTHON}|g" \
-		ycmd/default_settings.json || die
-
-	sed -i -e "s|\
-___PYTHON_LIB_PATH___|\
-/usr/$(get_libdir)/lib${EPYTHON}.so|g" \
-		build.py || die
-
 	sed -i -e "s|___GLOBAL_YCMD_EXTRA_CONF___|/tmp/.ycm_extra_conf.py|" \
 		ycmd/default_settings.json || die
 
@@ -289,6 +249,63 @@ src_configure() {
 	fi
 	python_configure_all()
 	{
+		cd "${BUILD_DIR}" || die
+		local sitedir="$(python_get_sitedir)"
+		BD_ABS="$(python_get_sitedir)/${BD_REL}"
+
+		if ! use system-gocode ; then
+			sed -i -e "s|\
+___GOCODE_BIN_PATH___|\
+${BD_ABS}/third_party/gocode/gocode|g" \
+			ycmd/default_settings.json || die
+		fi
+
+		if ! use system-godef ; then
+			sed -i -e "s|\
+___GODEF_BIN_PATH___|\
+${BD_ABS}/third_party/godef/godef|g" \
+				ycmd/default_settings.json || die
+		fi
+
+		if use system-mrab-regex ; then
+			sed -i -e "s|\
+p.join\( DIR_OF_CURRENT_SCRIPT, '..', 'third_party', 'cregex', 'regex_{}'.format\( sys.version_info\[ 0 \] \) \)|\
+${sitedir}/regex|g" \
+			ycmd/server_utils.py || die
+		fi
+
+		if use system-omnisharp ; then
+			sed -i -e "s|\
+___OMNISHARP_BIN_ABSPATH___|\
+${BD_ABS}/ycmd/completers/cs/omnisharp.sh|g" \
+				ycmd/completers/cs/cs_completer.py || die
+		fi
+
+		if ! use system-tern ; then
+			sed -i -e "s|\
+___TERN_BIN_PATH___|\
+${BD_ABS}/third_party/tern_runtime/tern|g" \
+				ycmd/completers/javascript/tern_completer.py || die
+		fi
+
+		if ! use system-racerd ; then
+			sed -i -e "s|\
+___RACERD_BIN_PATH___|\
+${BD_ABS}/third_party/racerd/racerd|g" \
+				ycmd/default_settings.json || die
+
+		fi
+
+		sed -i -e "s|___PYTHON_BIN_PATH___|/usr/bin/${EPYTHON}|g" \
+			ycmd/default_settings.json || die
+
+		sed -i -e "s|\
+___PYTHON_LIB_PATH___|\
+/usr/$(get_libdir)/lib${EPYTHON}.so|g" \
+			build.py || die
+
+		# ---
+
 		filter-flags -O0 -O1 -O3 -O4
 		append-cxxflags -O2
 		append-cflags -O2
@@ -583,6 +600,7 @@ src_install() {
 	shopt -s dotglob # copy hidden files
 	python_install_all() {
 		cd "${BUILD_DIR}" || die
+		BD_ABS="$(python_get_sitedir)/${BD_REL}"
 		python_moduleinto "${BD_REL}"
 		python_domodule CORE_VERSION
 		exeinto "${BD_ABS}"
@@ -718,8 +736,7 @@ src_install() {
 
 pkg_postinst() {
 	local m=\
-"Examples of the .json files can be found at targeting particular python\n\
-version:\n\
+"Examples of the .json files can be found at:\n\
 \n\
 /usr/$(get_libdir)/python*/site-packages/${BD_REL}/ycmd/default_settings.json\n"
 

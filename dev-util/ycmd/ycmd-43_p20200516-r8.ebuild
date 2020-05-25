@@ -139,7 +139,6 @@ download the internal dependencies."
 		fi
 	fi
 	python_setup
-	BD_ABS="$(python_get_sitedir)/${BD_REL}"
 }
 
 src_prepare() {
@@ -184,22 +183,10 @@ __LIBCLANG_LIB_DIR__|\
 	CMAKE_USE_DIR="${S}/cpp" \
 	cmake-utils_src_prepare
 
-	if use system-bottle ; then
-		sed -i -e "s|\
-p.join\( DIR_OF_THIRD_PARTY, 'bottle' \)|\
-${sitedir}/bottle|g" \
-			ycmd/server_utils.py || die
-	fi
-
 	if use system-clangd ; then
 		sed -i -e "s|\
 ___CLANGD_BIN_PATH___|\
 /usr/lib/llvm/${CLANG_V_MAJ}/bin/clangd|g" \
-			ycmd/default_settings.json || die
-	else
-		sed -i -e "s|\
-___CLANGD_BIN_PATH___|\
-${BD_ABS}/third_party/clangd/output/bin/clangd|g" \
 			ycmd/default_settings.json || die
 	fi
 
@@ -212,34 +199,10 @@ recommended to use the internal instead."
 			ycmd/completers/go/go_completer.py || die
 		sed -i -e "s|___GOPLS_BIN_PATH___|/usr/bin/gopls|g" \
 			ycmd/default_settings.json || die
-	else
-		sed -i -e "s|\
-___GOPLS_BIN_PATH___|\
-${BD_ABS}/third_party/go/bin/gopls|g" \
-			ycmd/default_settings.json || die
-	fi
-
-	if use system-jedi ; then
-		sed -i -e "s|\
-p.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'jedi' )|\
-${sitedir}/jedi|g" \
-			ycmd/server_utils.py || die
-		sed -i -e "s|\
-p.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'numpydoc' )|\
-${sitedir}/numpydoc|g" \
-			ycmd/server_utils.py || die
-		sed -i -e "s|\
-p.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'parso' )|\
-${sitedir}/parso|g" \
-			ycmd/server_utils.py || die
 	fi
 
 	if use system-mrab-regex ; then
 		ewarn "Using system-mrab-regex is WIP"
-		sed -i -e "s|\
-p.join\( DIR_OF_THIRD_PARTY, 'cregex', 'regex_3' \)|\
-${sitedir}/regex|g" \
-			ycmd/server_utils.py || die
 		sed -i -e "s|  BuildRegexModule|  #BuildRegexModule|" \
 			build.py || die
 	fi
@@ -292,44 +255,6 @@ ${FRAMEWORK_FOLDER} \
 ___OMNISHARP_DIR_PATH___|\
 /usr/$(get_libdir)/mono/omnisharp-roslyn/${FRAMEWORK_FOLDER}|g" \
 			ycmd/completers/cs/cs_completer.py || die
-		sed -i -e "s|\
-___OMNISHARP_BIN_ABSPATH___|\
-${BD_ABS}/ycmd/completers/cs/omnisharp.sh|g" \
-			ycmd/completers/cs/cs_completer.py || die
-		sed -i -e "s|\
-___OMNISHARP_BIN_ABSPATH___|\
-${BD_ABS}/ycmd/completers/cs/omnisharp.sh|g" \
-			ycmd/default_settings.json || die
-	fi
-
-	if use system-pathtools ; then
-		sed -i -e "s|\
-p.join\( DIR_OF_THIRD_PARTY, 'pathtools' \)|\
-${sitedir}/pathtools|g" \
-			ycmd/server_utils.py || die
-	fi
-
-	if use system-requests ; then
-		sed -i -e "s|\
-p.join\( DIR_OF_THIRD_PARTY, 'requests_deps', 'requests' \)|\
-${sitedir}/requests|g" \
-			ycmd/server_utils.py || die
-		sed -i -e "s|\
-p.join\( DIR_OF_THIRD_PARTY, 'requests_deps', 'chardet' \)|\
-${sitedir}/chardet|g" \
-			ycmd/server_utils.py || die
-		sed -i -e "s|\
-p.join\( DIR_OF_THIRD_PARTY, 'requests_deps', 'certifi' \)|\
-${sitedir}/certifi|g" \
-			ycmd/server_utils.py || die
-		sed -i -e "s|\
-p.join\( DIR_OF_THIRD_PARTY, 'requests_deps', 'idna' \)|\
-${sitedir}/idna|g" \
-			ycmd/server_utils.py || die
-		sed -i -e "s|\
-p.join\( DIR_OF_THIRD_PARTY, 'requests_deps', 'urllib3', 'src' \)|\
-${sitedir}/urllib3|g" \
-			ycmd/server_utils.py || die
 	fi
 
 	if use system-rls ; then
@@ -363,26 +288,10 @@ of internal rust and associated packages."
 	if use system-typescript ; then
 		sed -i -e "s|___TSSERVER_BIN_PATH___|/usr/bin/tsserver|g" \
 			ycmd/default_settings.json || die
-	else
-		sed -i -e "s|\
-___TSSERVER_BIN_PATH___|\
-${BD_ABS}/third_party/tsserver/lib64/node_modules/typescript/bin/tsserver|g" \
-			ycmd/default_settings.json || die
-	fi
-
-	if use system-waitress ; then
-		sed -i -e "s|\
-p.join\( DIR_OF_THIRD_PARTY, 'waitress' \)|\
-${sitedir}/waitress|g" \
-			ycmd/server_utils.py || die
 	fi
 
 	if use system-watchdog ; then
 		ewarn "Using system-watchdog is WIP"
-		sed -i -e "s|\
-p.join\( DIR_OF_THIRD_PARTY, 'watchdog', 'build', 'lib3' \)|\
-${sitedir}/watchdog|g" \
-			ycmd/server_utils.py || die
 		sed -i -e "s|  CompileWatchdog|  #CompileWatchdog|" \
 			build.py || die
 	fi
@@ -391,14 +300,6 @@ ${sitedir}/watchdog|g" \
 ___HMAC_SECRET___|\
 $(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c16 | base64)|g" \
 		ycmd/default_settings.json || die
-
-	sed -i -e "s|___PYTHON_BIN_PATH___|/usr/bin/${EPYTHON}|g" \
-		ycmd/default_settings.json || die
-
-	sed -i -e "s|\
-___PYTHON_LIB_PATH___|\
-/usr/$(get_libdir)/lib${EPYTHON}.so|g" \
-		build.py || die
 
 	sed -i -e "s|___GLOBAL_YCMD_EXTRA_CONF___|/tmp/.ycm_extra_conf.py|" \
 		ycmd/default_settings.json || die
@@ -413,6 +314,125 @@ src_configure() {
 	fi
 	python_configure_all()
 	{
+		cd "${BUILD_DIR}" || die
+		local sitedir="$(python_get_sitedir)"
+		BD_ABS="$(python_get_sitedir)/${BD_REL}"
+
+		if use system-bottle ; then
+			sed -i -e "s|\
+p.join\( DIR_OF_THIRD_PARTY, 'bottle' \)|\
+${sitedir}/bottle|g" \
+				ycmd/server_utils.py || die
+		fi
+
+		if ! use system-clangd ; then
+			sed -i -e "s|\
+___CLANGD_BIN_PATH___|\
+${BD_ABS}/third_party/clangd/output/bin/clangd|g" \
+			ycmd/default_settings.json || die
+		fi
+
+		if ! use system-go-tools ; then
+			sed -i -e "s|\
+___GOPLS_BIN_PATH___|\
+${BD_ABS}/third_party/go/bin/gopls|g" \
+				ycmd/default_settings.json || die
+		fi
+
+		if use system-jedi ; then
+			sed -i -e "s|\
+p.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'jedi' )|\
+${sitedir}/jedi|g" \
+				ycmd/server_utils.py || die
+			sed -i -e "s|\
+p.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'numpydoc' )|\
+${sitedir}/numpydoc|g" \
+				ycmd/server_utils.py || die
+			sed -i -e "s|\
+p.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'parso' )|\
+${sitedir}/parso|g" \
+				ycmd/server_utils.py || die
+		fi
+
+		if use system-mrab-regex ; then
+			sed -i -e "s|\
+p.join\( DIR_OF_THIRD_PARTY, 'cregex', 'regex_3' \)|\
+${sitedir}/regex|g" \
+				ycmd/server_utils.py || die
+		fi
+
+		if use system-omnisharp-roslyn ; then
+			sed -i -e "s|\
+___OMNISHARP_BIN_ABSPATH___|\
+${BD_ABS}/ycmd/completers/cs/omnisharp.sh|g" \
+				ycmd/completers/cs/cs_completer.py || die
+			sed -i -e "s|\
+___OMNISHARP_BIN_ABSPATH___|\
+${BD_ABS}/ycmd/completers/cs/omnisharp.sh|g" \
+				ycmd/default_settings.json || die
+		fi
+
+		if use system-pathtools ; then
+			sed -i -e "s|\
+p.join\( DIR_OF_THIRD_PARTY, 'pathtools' \)|\
+${sitedir}/pathtools|g" \
+				ycmd/server_utils.py || die
+		fi
+
+		if use system-requests ; then
+			sed -i -e "s|\
+p.join\( DIR_OF_THIRD_PARTY, 'requests_deps', 'requests' \)|\
+${sitedir}/requests|g" \
+				ycmd/server_utils.py || die
+			sed -i -e "s|\
+p.join\( DIR_OF_THIRD_PARTY, 'requests_deps', 'chardet' \)|\
+${sitedir}/chardet|g" \
+				ycmd/server_utils.py || die
+			sed -i -e "s|\
+p.join\( DIR_OF_THIRD_PARTY, 'requests_deps', 'certifi' \)|\
+${sitedir}/certifi|g" \
+				ycmd/server_utils.py || die
+			sed -i -e "s|\
+p.join\( DIR_OF_THIRD_PARTY, 'requests_deps', 'idna' \)|\
+${sitedir}/idna|g" \
+				ycmd/server_utils.py || die
+			sed -i -e "s|\
+p.join\( DIR_OF_THIRD_PARTY, 'requests_deps', 'urllib3', 'src' \)|\
+${sitedir}/urllib3|g" \
+				ycmd/server_utils.py || die
+		fi
+
+		if ! use system-typescript ; then
+			sed -i -e "s|\
+___TSSERVER_BIN_PATH___|\
+${BD_ABS}/third_party/tsserver/lib64/node_modules/typescript/bin/tsserver|g" \
+				ycmd/default_settings.json || die
+		fi
+
+		if use system-waitress ; then
+			sed -i -e "s|\
+p.join\( DIR_OF_THIRD_PARTY, 'waitress' \)|\
+${sitedir}/waitress|g" \
+				ycmd/server_utils.py || die
+		fi
+
+		if use system-watchdog ; then
+			sed -i -e "s|\
+p.join\( DIR_OF_THIRD_PARTY, 'watchdog', 'build', 'lib3' \)|\
+${sitedir}/watchdog|g" \
+				ycmd/server_utils.py || die
+		fi
+
+		sed -i -e "s|___PYTHON_BIN_PATH___|/usr/bin/${EPYTHON}|g" \
+			ycmd/default_settings.json || die
+
+		sed -i -e "s|\
+___PYTHON_LIB_PATH___|\
+/usr/$(get_libdir)/lib${EPYTHON}.so|g" \
+			build.py || die
+
+		# ---
+
 		filter-flags -O0 -O1 -O3 -O4
 		append-cxxflags -O2
 		append-cflags -O2
@@ -724,6 +744,7 @@ src_install() {
 	shopt -s dotglob # copy hidden files
 	python_install_all() {
 		cd "${BUILD_DIR}" || die
+		BD_ABS="$(python_get_sitedir)/${BD_REL}"
 		python_moduleinto "${BD_REL}"
 		python_domodule CORE_VERSION
 		exeinto "${BD_ABS}"
@@ -752,6 +773,10 @@ src_install() {
 			python_moduleinto "${BD_REL}/third_party"
 			python_domodule third_party/clang
 			fperms 755 "${BD_ABS}/third_party/clang/lib/libclang.so.${CLANG_V_MAJ}"
+		else
+			# prevent throwing exception
+			sed -i -e "s|^CLANG_RESOURCE_DIR = GetClangResourceDir|#CLANG_RESOURCE_DIR = GetClangResourceDir|g" \
+				"${ED}/${BD_ABS}/ycmd/utils.py" || die
 		fi
 
 		python_moduleinto "${BD_REL}/third_party"
@@ -899,8 +924,7 @@ libstd-0bccc96528cef91b.so" \
 
 pkg_postinst() {
 	local m=\
-"Examples of the .json files can be found at targeting particular python\n\
-version:\n\
+"Examples of the .json files can be found at:\n\
 \n\
 /usr/$(get_libdir)/python*/site-packages/${BD_REL}/ycmd/default_settings.json\n"
 
