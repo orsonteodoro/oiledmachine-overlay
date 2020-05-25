@@ -12,7 +12,6 @@ QT_MIN_PV=5.8
 RDEPEND="${RDEPEND}
 	>=dev-qt/qtcore-${QT_MIN_PV}:5
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5
-	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5
 	>=dev-libs/glib-2.31.0"
 DEPEND="${RDEPEND}
 	>=kde-frameworks/extra-cmake-modules-1.7.0
