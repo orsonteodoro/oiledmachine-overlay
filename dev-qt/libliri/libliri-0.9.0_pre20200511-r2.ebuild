@@ -14,7 +14,6 @@ RDEPEND="${RDEPEND}
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5
 	>=dev-qt/qtgui-${QT_MIN_PV}:5
-	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5
 	>=dev-qt/qtxml-${QT_MIN_PV}:5"
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
@@ -29,7 +28,7 @@ RESTRICT="mirror"
 
 src_configure() {
 	local mycmakeargs=(
-		-DINSTALL_LIBDIR=$(get_libdir)
+		-DINSTALL_LIBDIR=/usr/$(get_libdir)
 		-DLIRI_BUILD_TESTING=$(usex test)
 	)
 	cmake-utils_src_configure
