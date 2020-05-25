@@ -40,6 +40,7 @@ RDEPEND="${PYTHON_DEPS}
 	libgcrypt? ( dev-libs/libgcrypt )
 	nettle? ( dev-libs/nettle )
 	net-libs/neon
+	openmp? ( sys-libs/libomp )
 	openssl? ( dev-libs/openssl
 		   dev-libs/glib )
 	!static? ( ${LIB_DEPEND//\[static-libs(+)]} )"
