@@ -8,7 +8,7 @@
   <longdescription>
   </longdescription>
   <upstream>
-    <remote-id type="github">hawaii-desktop/qtaccountsservice</remote-id>
-    <bugs-to>https://github.com/hawaii-desktop/qtaccountsservice/issues</bugs-to>
+    <remote-id type="github">lirios/qtaccountsservice</remote-id>
+    <bugs-to>https://github.com/lirios/qtaccountsservice/issues</bugs-to>
   </upstream>
 </pkgmetadata>
