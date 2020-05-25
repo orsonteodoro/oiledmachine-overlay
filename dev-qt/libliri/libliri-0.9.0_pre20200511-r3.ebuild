@@ -10,12 +10,14 @@ SLOT="0/${PV}"
 QT_MIN_PV=5.8
 IUSE="test"
 RDEPEND="${RDEPEND}
+	  dev-libs/libqtxdg
 	>=dev-qt/qtcore-${QT_MIN_PV}:5
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5
 	>=dev-qt/qtgui-${QT_MIN_PV}:5
 	>=dev-qt/qtxml-${QT_MIN_PV}:5"
 DEPEND="${RDEPEND}
+	>=dev-qt/linguist-tools-${QT_MIN_PV}:5
 	>=dev-util/cmake-3.10.0
 	>=dev-util/cmake-shared-1.0.0"
 inherit eutils cmake-utils
