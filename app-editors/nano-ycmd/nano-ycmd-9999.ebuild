@@ -81,7 +81,7 @@ src_prepare() {
 }
 
 src_configure() {
-	BD_REL="ycmd/${ycmd_slot}"
+	BD_REL="ycmd/${YCMD_SLOT}"
 	BD_ABS="$(python_get_sitedir)/${BD_REL}"
 	use static && append-ldflags -static
 	local myconf=()
