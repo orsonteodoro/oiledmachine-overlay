@@ -14,7 +14,6 @@ RDEPEND="${RDEPEND}
 	>=dev-libs/wayland-protocols-1.15
 	>=dev-qt/qtcore-${QT_MIN_PV}:5
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5
-	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5
 	>=dev-qt/qtgui-${QT_MIN_PV}:5
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5"
 DEPEND="${RDEPEND}
