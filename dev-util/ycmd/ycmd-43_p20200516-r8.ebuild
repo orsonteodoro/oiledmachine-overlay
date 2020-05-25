@@ -774,7 +774,7 @@ src_install() {
 			python_domodule third_party/clang
 			fperms 755 "${BD_ABS}/third_party/clang/lib/libclang.so.${CLANG_V_MAJ}"
 		else
-			# prevent throwing exception
+			# prevent from raising exception
 			sed -i -e "s|^CLANG_RESOURCE_DIR = GetClangResourceDir|#CLANG_RESOURCE_DIR = GetClangResourceDir|g" \
 				"${ED}/${BD_ABS}/ycmd/utils.py" || die
 		fi
