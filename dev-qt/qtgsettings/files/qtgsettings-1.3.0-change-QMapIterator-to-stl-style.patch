@@ -1,0 +1,39 @@
+diff -urp qtgsettings-1.3.0.orig/src/gsettings/qgvariantutils_p.cpp qtgsettings-1.3.0/src/gsettings/qgvariantutils_p.cpp
+--- qtgsettings-1.3.0.orig/src/gsettings/qgvariantutils_p.cpp	2019-04-22 03:14:21.000000000 -0700
++++ qtgsettings-1.3.0/src/gsettings/qgvariantutils_p.cpp	2020-05-24 20:40:50.516450066 -0700
+@@ -149,13 +149,13 @@ GVariant *toGVariant(const GVariantType
+             GVariantBuilder builder;
+             g_variant_builder_init(&builder, G_VARIANT_TYPE("a{ss}"));
+ 
+-            QMapIterator<QString, QVariant> it(variant.toMap());
+-            while (it.hasNext()) {
+-                it.next();
+-
++            QMap<QString, QVariant> q = variant.toMap();
++            QMap<QString, QVariant>::const_iterator it = q.constBegin();
++            while (it != q.constEnd()) {
+                 QByteArray key = it.key().toUtf8();
+                 QByteArray value = it.value().toByteArray();
+                 g_variant_builder_add(&builder, "{ss}", key.constData(), value.constData());
++                ++it;
+             }
+ 
+             return g_variant_builder_end(&builder);
+@@ -163,13 +163,13 @@ GVariant *toGVariant(const GVariantType
+             GVariantBuilder builder;
+             g_variant_builder_init(&builder, G_VARIANT_TYPE("a{si}"));
+ 
+-            QMapIterator<QString, QVariant> it(variant.toMap());
+-            while (it.hasNext()) {
+-                it.next();
+-
++            QMap<QString, QVariant> q = variant.toMap();
++            QMap<QString, QVariant>::const_iterator it = q.constBegin();
++            while (it != q.constEnd()) {
+                 QByteArray key = it.key().toUtf8();
+                 int value = it.value().toInt();
+                 g_variant_builder_add(&builder, "{si}", key.constData(), value);
++                ++it;
+             }
+ 
+             return g_variant_builder_end(&builder);
