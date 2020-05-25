@@ -10,7 +10,9 @@ SLOT="0/${PV}"
 QT_MIN_PV=5.0
 RDEPEND="${RDEPEND}
 	>=dev-qt/qtcore-${QT_MIN_PV}:5
-	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5"
+	>=dev-qt/qtdbus-${QT_MIN_PV}:5
+	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5
+	>=dev-qt/qtgui-${QT_MIN_PV}:5"
 DEPEND="${RDEPEND}
 	>=kde-frameworks/extra-cmake-modules-1.7.0"
 inherit eutils cmake-utils
