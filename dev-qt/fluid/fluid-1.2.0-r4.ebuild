@@ -23,8 +23,7 @@ RDEPEND="${RDEPEND}
 DEPEND="${RDEPEND}
 	>=kde-frameworks/extra-cmake-modules-1.7.0
 	>=dev-util/cmake-3.10.0
-	>=dev-util/cmake-shared-1.0.0
-	>=dev-qt/qttest-${QT_MIN_PV}:5"
+	>=dev-util/cmake-shared-1.0.0"
 inherit eutils cmake-utils
 SRC_URI=\
 "https://github.com/lirios/fluid/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz"
