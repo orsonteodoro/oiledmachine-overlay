@@ -10,7 +10,9 @@
   </longdescription>
   <use>
     <flag name="systemd">Adds systemd support</flag>
+    <flag name="files">Installs a file manager named Files</flag>
     <flag name="pulseaudio">Adds PulseAudio support</flag>
+    <flag name="terminal">Installs a terminal emulator named Terminal</flag>
     <flag name="xwayland">Adds XWayland support</flag>
   </use>
 </pkgmetadata>
