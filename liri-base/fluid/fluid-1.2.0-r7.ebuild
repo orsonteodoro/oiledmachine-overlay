@@ -22,6 +22,7 @@ RDEPEND="${RDEPEND}
 	  liri-base/qtaccountsservice"
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
+	  dev-util/pkgconfig
 	>=kde-frameworks/extra-cmake-modules-1.7.0
 	>=liri-base/cmake-shared-1.0.0"
 inherit cmake-utils eutils
@@ -29,6 +30,30 @@ SRC_URI=\
 "https://github.com/lirios/fluid/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
+
+pkg_setup() {
+	QTCORE_PV=$(pkg-config --modversion Qt5Core)
+	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
+	QTQML_PV=$(pkg-config --modversion Qt5Qml)
+	QTQUICKCONTROLS2_PV=$(pkg-config --modversion Qt5QuickControls2)
+	QTSVG_PV=$(pkg-config --modversion Qt5Svg)
+	QTWAYLANDCLIENT_PV=$(pkg-config --modversion Qt5WaylandClient)
+	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
+		die "Qt5Core is not the same version as Qt5Gui"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTQML_PV} ; then
+		die "Qt5Core is not the same version as Qt5Qml (qtdeclarative)"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTQUICKCONTROLS2_PV} ; then
+		die "Qt5Core is not the same version as Qt5QuickControls2"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTSVG_PV} ; then
+		die "Qt5Core is not the same version as Qt5Svg"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTWAYLANDCLIENT_PV} ; then
+		die "Qt5Core is not the same version as Qt5WaylandClient (qtwayland)"
+	fi
+}
 
 src_configure() {
 	local mycmakeargs=(
