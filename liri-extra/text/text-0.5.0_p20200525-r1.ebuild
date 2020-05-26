@@ -35,7 +35,6 @@ RESTRICT="mirror"
 pkg_setup() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
 	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
-	QTNETWORK_PV=$(pkg-config --modversion Qt5Network)
 	QTQML_PV=$(pkg-config --modversion Qt5Qml)
 	QTQUICKCONTROLS2_PV=$(pkg-config --modversion Qt5QuickControls2)
 	QTSQL_PV=$(pkg-config --modversion Qt5Sql)
@@ -43,9 +42,6 @@ pkg_setup() {
 	QTWIDGETS_PV=$(pkg-config --modversion Qt5Widgets)
 	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
 		die "Qt5Core is not the same version as Qt5Gui"
-	fi
-	if ver_test ${QTCORE_PV} -ne ${QTNETWORK_PV} ; then
-		die "Qt5Core is not the same version as Qt5Network"
 	fi
 	if ver_test ${QTCORE_PV} -ne ${QTQML_PV} ; then
 		die "Qt5Core is not the same version as Qt5Qml (qtdeclarative)"
