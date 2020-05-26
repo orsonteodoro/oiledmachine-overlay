@@ -16,14 +16,23 @@ RDEPEND="${RDEPEND}
 DEPEND="${RDEPEND}
 	>=kde-frameworks/extra-cmake-modules-1.7.0
 	>=dev-util/cmake-3.10.0
-	>=dev-util/cmake-shared-1.0.0"
-inherit eutils cmake-utils
+	  dev-util/pkgconfig
+	>=liri-base/cmake-shared-1.0.0"
+inherit cmake-utils eutils
 SRC_URI=\
 "https://github.com/lirios/qtgsettings/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 
 PATCHES=( "${FILESDIR}/${PN}-1.3.0-change-QMapIterator-to-stl-style.patch" )
+
+pkg_setup() {
+	QTCORE_PV=$(pkg-config --modversion Qt5Core)
+	QTQML_PV=$(pkg-config --modversion Qt5Qml)
+	if ver_test ${QTCORE_PV} -ne ${QTQML_PV} ; then
+		die "Qt5Core is not the same version as Qt5Qml (qtdeclarative)"
+	fi
+}
 
 src_configure() {
 	local mycmakeargs=(
