@@ -12,19 +12,19 @@ QT_MIN_PV=5.10
 RDEPEND="${RDEPEND}
 	>=dev-libs/wayland-1.15
 	>=dev-qt/qdoc-${QT_MIN_PV}:5
-	  dev-qt/qtaccountsservice
 	>=dev-qt/qtcore-${QT_MIN_PV}:5
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5
 	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5
 	>=dev-qt/qtgui-${QT_MIN_PV}:5
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5
-	>=dev-qt/qtwayland-${QT_MIN_PV}:5"
+	>=dev-qt/qtwayland-${QT_MIN_PV}:5
+	  liri-base/qtaccountsservice"
 DEPEND="${RDEPEND}
-	>=kde-frameworks/extra-cmake-modules-1.7.0
 	>=dev-util/cmake-3.10.0
-	>=dev-util/cmake-shared-1.0.0"
-inherit eutils cmake-utils
+	>=kde-frameworks/extra-cmake-modules-1.7.0
+	>=liri-base/cmake-shared-1.0.0"
+inherit cmake-utils eutils
 SRC_URI=\
 "https://github.com/lirios/fluid/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
