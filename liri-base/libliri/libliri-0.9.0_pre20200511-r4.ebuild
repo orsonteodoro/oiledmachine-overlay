@@ -19,8 +19,8 @@ RDEPEND="${RDEPEND}
 DEPEND="${RDEPEND}
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5
 	>=dev-util/cmake-3.10.0
-	>=dev-util/cmake-shared-1.0.0"
-inherit eutils cmake-utils
+	>=liri-base/cmake-shared-1.0.0"
+inherit cmake-utils eutils
 EGIT_COMMIT="0943d3be299f3c6d172d95c2e8ad358d2b3a1113"
 SRC_URI=\
 "https://github.com/lirios/libliri/archive/${EGIT_COMMIT}.tar.gz \
