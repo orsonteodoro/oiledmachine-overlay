@@ -22,6 +22,7 @@ RDEPEND="${RDEPEND}
 	  x11-libs/libxkbcommon"
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
+	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
 inherit cmake-utils eutils
 EGIT_COMMIT="54534b5f544dde7726ecffbf800cf8fc7e6e66d7"
@@ -30,6 +31,18 @@ SRC_URI=\
 	-> ${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
+
+pkg_setup() {
+	QTCORE_PV=$(pkg-config --modversion Qt5Core)
+	QTDBUS_PV=$(pkg-config --modversion Qt5DBus)
+	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
+	if ver_test ${QTCORE_PV} -ne ${QTDBUS_PV} ; then
+		die "Qt5Core is not the same version as Qt5DBus"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
+		die "Qt5Core is not the same version as Qt5Gui"
+	fi
+}
 
 src_configure() {
 	local mycmakeargs=(
