@@ -11,8 +11,9 @@ QT_MIN_PV=5.9
 IUSE=""
 RDEPEND="${RDEPEND}
 	  dev-libs/wayland
+	>=dev-qt/qtconcurrent-${QT_MIN_PV}:5
 	>=dev-qt/qtcore-${QT_MIN_PV}:5
-	>=dev-qt/qtgui-${QT_MIN_PV}:5[egl,udev]
+	>=dev-qt/qtgui-${QT_MIN_PV}:5
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5
 	  x11-libs/libXcursor
 	  x11-libs/xcb-util-cursor"
@@ -29,6 +30,7 @@ S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
 pkg_setup() {
+	QTCONCURRENT_PV=$(pkg-config --modversion Qt5Concurrent)
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
 	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
 	QTWAYLANDCLIENT_PV=$(pkg-config --modversion Qt5WaylandClient)
@@ -37,6 +39,9 @@ pkg_setup() {
 	fi
 	if ver_test ${QTCORE_PV} -ne ${QTWAYLANDCLIENT_PV} ; then
 		die "Qt5Core is not the same version as Qt5WaylandClient (qtwayland)"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTCONCURRENT_PV} ; then
+		die "Qt5Core is not the same version as Qt5Concurrent"
 	fi
 }
 
