@@ -19,7 +19,9 @@ RDEPEND="${RDEPEND}
 DEPEND="${RDEPEND}
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5
 	>=dev-util/cmake-3.10.0
-	>=liri-base/cmake-shared-1.0.0"
+	  dev-util/pkgconfig
+	>=liri-base/cmake-shared-1.0.0
+	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5 )"
 inherit cmake-utils eutils
 EGIT_COMMIT="0943d3be299f3c6d172d95c2e8ad358d2b3a1113"
 SRC_URI=\
@@ -27,6 +29,32 @@ SRC_URI=\
 	-> ${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
+
+pkg_setup() {
+	QTCORE_PV=$(pkg-config --modversion Qt5Core)
+	QTDBUS_PV=$(pkg-config --modversion Qt5DBus)
+	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
+	QTQML_PV=$(pkg-config --modversion Qt5Qml)
+	QTXML_PV=$(pkg-config --modversion Qt5Xml)
+	if ver_test ${QTCORE_PV} -ne ${QTDBUS_PV} ; then
+		die "Qt5Core is not the same version as Qt5DBus"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
+		die "Qt5Core is not the same version as Qt5Gui"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTQML_PV} ; then
+		die "Qt5Core is not the same version as Qt5Qml (qtdeclarative)"
+	fi
+	if use test ; then
+		QTXML_PV=$(pkg-config --modversion Qt5Test)
+		if ver_test ${QTCORE_PV} -ne ${QTTEST_PV} ; then
+			die "Qt5Core is not the same version as Qt5Test"
+		fi
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTXML_PV} ; then
+		die "Qt5Core is not the same version as Qt5Xml"
+	fi
+}
 
 src_configure() {
 	local mycmakeargs=(
