@@ -28,7 +28,7 @@ EGIT_COMMIT="54534b5f544dde7726ecffbf800cf8fc7e6e66d7"
 SRC_URI=\
 "https://github.com/lirios/eglfs/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${PN}-${PV}.tar.gz"
-S="${WORKDIR}/eglfs-${EGIT_COMMIT}"
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
 src_configure() {
