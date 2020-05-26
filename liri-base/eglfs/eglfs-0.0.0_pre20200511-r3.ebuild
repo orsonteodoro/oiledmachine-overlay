@@ -23,7 +23,8 @@ RDEPEND="${RDEPEND}
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
-	>=liri-base/cmake-shared-1.0.0"
+	>=liri-base/cmake-shared-1.0.0
+	sys-kernel/linux-headers"
 inherit cmake-utils eutils
 EGIT_COMMIT="54534b5f544dde7726ecffbf800cf8fc7e6e66d7"
 SRC_URI=\
