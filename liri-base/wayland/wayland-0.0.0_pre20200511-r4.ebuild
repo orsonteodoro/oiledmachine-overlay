@@ -18,14 +18,13 @@ RDEPEND="${RDEPEND}
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5"
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
-	>=dev-util/cmake-shared-1.1.0_p20200511
-	>=dev-qt/qttest-${QT_MIN_PV}:5"
-inherit eutils cmake-utils
+	>=liri-base/cmake-shared-1.1.0_p20200511"
+inherit cmake-utils eutils
 EGIT_COMMIT="d29a5e0b6cb47c0e60475f8d05e9e02a16ddd3f2"
 SRC_URI=\
 "https://github.com/lirios/wayland/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${PN}-${PV}.tar.gz"
-S="${WORKDIR}/wayland-${EGIT_COMMIT}"
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
 src_configure() {
