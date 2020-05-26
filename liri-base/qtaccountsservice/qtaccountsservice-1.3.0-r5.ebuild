@@ -7,7 +7,7 @@ HOMEPAGE="https://github.com/lirios/qtaccountsservice"
 LICENSE="LGPL-2.1+ FDL-1.3"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-IUSE="examples"
+IUSE="examples test"
 QT_MIN_PV=5.8
 RDEPEND="${RDEPEND}
 	>=dev-qt/qtcore-${QT_MIN_PV}:5
@@ -17,7 +17,8 @@ RDEPEND="${RDEPEND}
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
-	>=liri-base/cmake-shared-1.0.0"
+	>=liri-base/cmake-shared-1.0.0
+	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5 )"
 inherit cmake-utils eutils
 SRC_URI=\
 "https://github.com/lirios/qtaccountsservice/archive/v${PV}.tar.gz \
@@ -39,10 +40,17 @@ pkg_setup() {
 	if ver_test ${QTCORE_PV} -ne ${QTQML_PV} ; then
 		die "Qt5Core is not the same version as Qt5Qml (qtdeclarative)"
 	fi
+	if use test ; then
+		QTTEST_PV=$(pkg-config --modversion Qt5Test)
+		if ver_test ${QTCORE_PV} -ne ${QTTEST_PV} ; then
+			die "Qt5Core is not the same version as Qt5Test"
+		fi
+	fi
 }
 
 src_configure() {
 	local mycmakeargs=(
+		-DBUILD_TESTING=$(usex test)
 		-DINSTALL_LIBDIR=/usr/$(get_libdir)
 		-DQTACCOUNTSSERVICE_WITH_EXAMPLES:BOOL=$(usex examples)
 	)
