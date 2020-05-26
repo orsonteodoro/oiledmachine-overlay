@@ -16,7 +16,7 @@ DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
 	>=liri-base/cmake-shared-1.0.0
 	  dev-util/umockdev"
-inherit eutils cmake-utils
+inherit cmake-utils eutils
 SRC_URI=\
 "https://github.com/lirios/qtudev/archive/v${PV}.tar.gz \
 	-> ${PN}-${PV}.tar.gz"
