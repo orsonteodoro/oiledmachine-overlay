@@ -9,12 +9,14 @@
     This is a meta package for liri.
   </longdescription>
   <use>
+    <flag name="calculator">Installs a calculator program</flag>
     <flag name="systemd">Adds systemd support</flag>
     <flag name="files">Installs a file manager named Files</flag>
     <flag name="pulseaudio">Adds PulseAudio support</flag>
     <flag name="terminal">Installs a terminal emulator named Terminal</flag>
     <flag name="settings">Installs a program named Settings to configure the
       system</flag>
+    <flag name="text">Installs a text editor</flag>
     <flag name="xwayland">Adds XWayland support</flag>
   </use>
 </pkgmetadata>
