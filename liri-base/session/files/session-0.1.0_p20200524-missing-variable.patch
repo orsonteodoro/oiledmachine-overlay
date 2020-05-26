@@ -1,0 +1,10 @@
+--- a/src/daemon/main.cpp.orig	2020-05-25 19:45:15.275293199 -0700
++++ b/src/daemon/main.cpp	2020-05-25 19:44:02.262488535 -0700
+@@ -75,6 +75,7 @@ int main(int argc, char *argv[])
+     const QString module = parser.value(moduleOption).trimmed();
+     const bool systemdSupport = !module.isEmpty();
+ #else
++    const QString module;
+     const bool systemdSupport = false;
+ #endif
+ 
