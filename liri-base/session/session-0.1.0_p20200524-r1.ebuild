@@ -17,8 +17,9 @@ RDEPEND="${RDEPEND}
 	>=liri-base/qtgsettings-1.1.0
 	systemd? ( sys-apps/systemd )"
 DEPEND="${RDEPEND}
-	>=dev-util/cmake-3.10.0
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5
+	>=dev-util/cmake-3.10.0
+	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
 inherit eutils cmake-utils
 EGIT_COMMIT="1bd025961c2e368d1abe734fc3bc44cbdb01a39b"
@@ -29,6 +30,18 @@ S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
 PATCHES=( "${FILESDIR}/${PN}-0.1.0_p20200524-missing-variable.patch" )
+
+pkg_setup() {
+	QTCORE_PV=$(pkg-config --modversion Qt5Core)
+	QTDBUS_PV=$(pkg-config --modversion Qt5DBus)
+	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
+	if ver_test ${QTCORE_PV} -ne ${QTDBUS_PV} ; then
+		die "Qt5Core is not the same version as Qt5DBus"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
+		die "Qt5Core is not the same version as Qt5Gui"
+	fi
+}
 
 src_configure() {
 	local mycmakeargs=(
