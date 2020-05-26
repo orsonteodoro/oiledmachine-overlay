@@ -8,12 +8,10 @@ LICENSE="GPL-3+ LGPL-3+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
 QT_MIN_PV=5.7
-UNPACKAGED="dev-qt/greenisland
-	    dev-qt/vibe" # https://github.com/lirios/vibe
+UNPACKAGED="liri-base/greenisland
+	    liri-base/vibe" # https://github.com/lirios/vibe
 RDEPEND="${RDEPEND}
 	  dev-libs/libqtxdg
-	>=dev-qt/fluid-1.0.0
-	>=dev-qt/qtaccountsservice-1.3.0
 	>=dev-qt/qtcore-${QT_MIN_PV}:5
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5
@@ -23,18 +21,20 @@ RDEPEND="${RDEPEND}
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5
 	>=dev-qt/qttools-${QT_MIN_PV}:5
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5
+	>=liri-base/fluid-1.0.0
+	>=liri-base/qtaccountsservice-1.3.0
 	kde-frameworks/solid
 	sys-libs/pam
 	${UNPACKAGED}"
 DEPEND="${RDEPEND}
 	|| (
+		  sys-devel/clang
 		>=sys-devel/gcc-4.8
-		sys-devel/clang
 	)
 	>=dev-util/cmake-3.10.0
-	>=dev-util/cmake-shared-1.0.0
-	>=kde-frameworks/extra-cmake-modules-1.7.0"
-inherit eutils cmake-utils
+	>=kde-frameworks/extra-cmake-modules-1.7.0
+	>=liri-base/cmake-shared-1.0.0"
+inherit cmake-utils eutils
 SRC_URI=\
 "https://github.com/lirios/shell/archive/v${PV}.tar.gz
 	-> ${PN}-${PV}.tar.gz"

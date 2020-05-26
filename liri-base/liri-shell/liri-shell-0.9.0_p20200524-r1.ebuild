@@ -11,11 +11,6 @@ IUSE="systemd"
 QT_MIN_PV=5.12
 RDEPEND="${RDEPEND}
 	  kde-frameworks/solid
-	  dev-qt/fluid
-	  dev-qt/libliri
-	  dev-qt/liri-eglfs
-	  dev-qt/liri-wayland
-	>=dev-qt/qtaccountsservice-1.3.0
 	>=dev-qt/qtcore-${QT_MIN_PV}:5
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5
@@ -25,18 +20,23 @@ RDEPEND="${RDEPEND}
 	>=dev-qt/qtsql-${QT_MIN_PV}:5
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5
-	  sys-libs/pam
+	  liri-base/eglfs
+	  liri-base/fluid
+	  liri-base/libliri
+	  liri-base/wayland
+	>=liri-base/qtaccountsservice-1.3.0
 	  sys-auth/polkit-qt
+	  sys-libs/pam
 	systemd? ( sys-apps/systemd )"
 DEPEND="${RDEPEND}
 	|| (
+		  sys-devel/clang
 		>=sys-devel/gcc-4.8
-		sys-devel/clang
 	)
+	>=dev-qt/linguist-tools-${QT_MIN_PV}:5
 	>=dev-util/cmake-3.10.0
-	>=dev-util/cmake-shared-1.0.0
-	>=dev-qt/linguist-tools-${QT_MIN_PV}:5"
-inherit eutils cmake-utils
+	>=liri-base/cmake-shared-1.0.0"
+inherit cmake-utils eutils
 EGIT_COMMIT="143b9722b7d23e630d8c079fa9415b33b8b9234e"
 SRC_URI=\
 "https://github.com/lirios/shell/archive/${EGIT_COMMIT}.tar.gz
