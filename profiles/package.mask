@@ -1,6 +1,11 @@
 # Ebuilds currently in develpment
 #--------------------------------------------------------------------------------------------------
 
+# Does not go into desktop environment yet
+liri-base/liri-meta
+liri-base/shell
+liri-base/session
+
 # ebuild development stuck in build-patching stage to use system dependency packages
 dev-util/monodevelop
 
