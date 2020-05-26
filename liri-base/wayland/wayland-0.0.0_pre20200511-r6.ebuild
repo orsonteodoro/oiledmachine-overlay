@@ -18,6 +18,7 @@ RDEPEND="${RDEPEND}
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5"
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
+	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.1.0_p20200511"
 inherit cmake-utils eutils
 EGIT_COMMIT="d29a5e0b6cb47c0e60475f8d05e9e02a16ddd3f2"

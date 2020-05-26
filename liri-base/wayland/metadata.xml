@@ -8,7 +8,7 @@
   <longdescription>
   </longdescription>
   <upstream>
-    <remote-id type="github">lirios/fluid</remote-id>
-    <bugs-to>https://github.com/lirios/fluid/issues</bugs-to>
+    <remote-id type="github">lirios/wayland</remote-id>
+    <bugs-to>https://github.com/lirios/wayland/issues</bugs-to>
   </upstream>
 </pkgmetadata>
