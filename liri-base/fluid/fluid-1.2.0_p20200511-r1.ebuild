@@ -24,7 +24,8 @@ DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=kde-frameworks/extra-cmake-modules-1.7.0
-	>=liri-base/cmake-shared-1.0.0"
+	>=liri-base/cmake-shared-1.0.0
+	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5 )"
 inherit cmake-utils eutils
 EGIT_COMMIT="36f9cc04733df8fafbe129a8305040fb950ebdd7"
 SRC_URI=\
@@ -38,6 +39,7 @@ pkg_setup() {
 	QTQML_PV=$(pkg-config --modversion Qt5Qml)
 	QTQUICKCONTROLS2_PV=$(pkg-config --modversion Qt5QuickControls2)
 	QTSVG_PV=$(pkg-config --modversion Qt5Svg)
+	QTTEST_PV=$(pkg-config --modversion Qt5Test)
 	QTWAYLANDCLIENT_PV=$(pkg-config --modversion Qt5WaylandClient)
 	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
 		die "Qt5Core is not the same version as Qt5Gui"
@@ -50,6 +52,11 @@ pkg_setup() {
 	fi
 	if ver_test ${QTCORE_PV} -ne ${QTSVG_PV} ; then
 		die "Qt5Core is not the same version as Qt5Svg"
+	fi
+	if use test ; then
+		if ver_test ${QTCORE_PV} -ne ${QTTEST_PV} ; then
+			die "Qt5Core is not the same version as Qt5Test"
+		fi
 	fi
 	if ver_test ${QTCORE_PV} -ne ${QTWAYLANDCLIENT_PV} ; then
 		die "Qt5Core is not the same version as Qt5WaylandClient (qtwayland)"
