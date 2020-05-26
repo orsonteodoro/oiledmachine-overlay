@@ -16,6 +16,7 @@ RDEPEND="${RDEPEND}
 	>=dev-qt/qtgui-${QT_MIN_PV}:5"
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
+	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
 inherit cmake-utils eutils
 SRC_URI=\
