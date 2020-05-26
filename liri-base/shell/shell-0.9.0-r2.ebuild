@@ -6,7 +6,7 @@ DESCRIPTION="QtQuick and Wayland shell for convergence"
 HOMEPAGE="https://github.com/lirios/shell"
 LICENSE="GPL-3+ LGPL-3+"
 KEYWORDS="~amd64 ~x86"
-SLOT="0"
+SLOT="0/${PV}"
 QT_MIN_PV=5.7
 UNPACKAGED="liri-base/greenisland
 	    liri-base/vibe" # https://github.com/lirios/vibe
