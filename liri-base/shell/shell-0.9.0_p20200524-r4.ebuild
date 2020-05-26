@@ -54,3 +54,8 @@ src_configure() {
 	fi
 	cmake-utils_src_configure
 }
+
+pkg_postinst() {
+	# https://github.com/lirios/shell/issues/63
+	glib-compile-schemas /usr/share/glib-2.0/schemas
+}
