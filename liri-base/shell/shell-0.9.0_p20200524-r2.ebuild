@@ -7,11 +7,10 @@ HOMEPAGE="https://github.com/lirios/shell"
 LICENSE="GPL-3+ LGPL-3+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
-QT_MIN_PV=5.7
-UNPACKAGED="liri-base/greenisland
-	    liri-base/vibe" # https://github.com/lirios/vibe
+IUSE="systemd"
+QT_MIN_PV=5.12
 RDEPEND="${RDEPEND}
-	  dev-libs/libqtxdg
+	  kde-frameworks/solid
 	>=dev-qt/qtcore-${QT_MIN_PV}:5
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5
@@ -19,32 +18,39 @@ RDEPEND="${RDEPEND}
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5
 	>=dev-qt/qtsql-${QT_MIN_PV}:5
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5
-	>=dev-qt/qttools-${QT_MIN_PV}:5
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5
-	>=liri-base/fluid-1.0.0
+	  liri-base/eglfs
+	  liri-base/fluid
+	  liri-base/libliri
 	>=liri-base/qtaccountsservice-1.3.0
-	kde-frameworks/solid
-	sys-libs/pam
-	${UNPACKAGED}"
+	>=liri-base/qtgsettings-1.1.0
+	  liri-base/wayland
+	  sys-auth/polkit-qt
+	  sys-libs/pam
+	systemd? ( sys-apps/systemd )"
 DEPEND="${RDEPEND}
 	|| (
 		  sys-devel/clang
 		>=sys-devel/gcc-4.8
 	)
+	>=dev-qt/linguist-tools-${QT_MIN_PV}:5
 	>=dev-util/cmake-3.10.0
-	>=kde-frameworks/extra-cmake-modules-1.7.0
 	>=liri-base/cmake-shared-1.0.0"
 inherit cmake-utils eutils
+EGIT_COMMIT="143b9722b7d23e630d8c079fa9415b33b8b9234e"
 SRC_URI=\
-"https://github.com/lirios/shell/archive/v${PV}.tar.gz
+"https://github.com/lirios/shell/archive/${EGIT_COMMIT}.tar.gz
 	-> ${PN}-${PV}.tar.gz"
-S="${WORKDIR}/shell-${PV}"
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
 src_configure() {
-	ewarn "This ebuild is on hold because of deprecated dependencies.  Use the ${PN}-${PV}_pYYYYMMDD ebuilds instead."
 	local mycmakeargs=(
 		-DINSTALL_LIBDIR=/usr/$(get_libdir)
+		-DLIRI_ENABLE_SYSTEMD=$(usex systemd)
 	)
+	if use systemd ; then
+		mycmakeargs+=( -DINSTALL_SYSTEMDUSERUNITDIR=/usr/lib/systemd/user )
+	fi
 	cmake-utils_src_configure
 }
