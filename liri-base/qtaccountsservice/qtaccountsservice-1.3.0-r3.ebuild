@@ -24,6 +24,22 @@ SRC_URI=\
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 
+pkg_setup() {
+	QTCORE_PV=$(pkg-config --modversion Qt5Core)
+	QTDBUS_PV=$(pkg-config --modversion Qt5DBus)
+	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
+	QTQML_PV=$(pkg-config --modversion Qt5Qml)
+	if ver_test ${QTCORE_PV} -ne ${QTDBUS_PV} ; then
+		die "Qt5Core is not the same version as Qt5DBus"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
+		die "Qt5Core is not the same version as Qt5Gui"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTQML_PV} ; then
+		die "Qt5Core is not the same version as Qt5Qml (qtdeclarative)"
+	fi
+}
+
 src_configure() {
 	local mycmakeargs=(
 		-DINSTALL_LIBDIR=/usr/$(get_libdir)
