@@ -8,4 +8,9 @@
   <longdescription>
     This is a meta package for liri.
   </longdescription>
+  <use>
+    <flag name="systemd">Adds systemd support</flag>
+    <flag name="pulseaudio">Adds PulseAudio support</flag>
+    <flag name="xwayland">Adds XWayland support</flag>
+  </use>
 </pkgmetadata>
