@@ -16,8 +16,8 @@ RDEPEND="${RDEPEND}
 	>=dev-qt/qtgui-${QT_MIN_PV}:5"
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
-	>=dev-util/cmake-shared-1.0.0"
-inherit eutils cmake-utils
+	>=liri-base/cmake-shared-1.0.0"
+inherit cmake-utils eutils
 SRC_URI=\
 "https://github.com/lirios/qtaccountsservice/archive/v${PV}.tar.gz \
 	-> ${PN}-${PV}.tar.gz"
@@ -26,6 +26,7 @@ RESTRICT="mirror"
 
 src_configure() {
 	local mycmakeargs=(
+		-DINSTALL_LIBDIR=/usr/$(get_libdir)
 		-DQTACCOUNTSSERVICE_WITH_EXAMPLES:BOOL=$(usex examples)
 	)
 	cmake-utils_src_configure
