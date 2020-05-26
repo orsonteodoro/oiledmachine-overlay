@@ -14,7 +14,7 @@ RDEPEND="${RDEPEND}
 	  virtual/libudev"
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
-	>=dev-util/cmake-shared-1.0.0
+	>=liri-base/cmake-shared-1.0.0
 	  dev-util/umockdev"
 inherit eutils cmake-utils
 SRC_URI=\
