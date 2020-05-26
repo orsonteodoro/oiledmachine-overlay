@@ -16,10 +16,10 @@ RDEPEND="${RDEPEND}
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5
 	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5
+	>=dev-qt/qtgui-${QT_MIN_PV}:5
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5
 	>=dev-qt/qtsql-${QT_MIN_PV}:5
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5
-	>=dev-qt/qttools-${QT_MIN_PV}:5
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5
 	>=liri-base/fluid-1.0.0
 	>=liri-base/qtaccountsservice-1.3.0
@@ -32,6 +32,7 @@ DEPEND="${RDEPEND}
 		>=sys-devel/gcc-4.8
 	)
 	>=dev-util/cmake-3.10.0
+	  dev-util/pkgconfig
 	>=kde-frameworks/extra-cmake-modules-1.7.0
 	>=liri-base/cmake-shared-1.0.0"
 inherit cmake-utils eutils
@@ -40,6 +41,38 @@ SRC_URI=\
 	-> ${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
+
+pkg_setup() {
+	QTCORE_PV=$(pkg-config --modversion Qt5Core)
+	QTDBUS_PV=$(pkg-config --modversion Qt5DBus)
+	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
+	QTQML_PV=$(pkg-config --modversion Qt5Qml)
+	QTSQL_PV=$(pkg-config --modversion Qt5Sql)
+	QTSVG_PV=$(pkg-config --modversion Qt5Svg)
+	QTQUICKCONTROLS2_PV=$(pkg-config --modversion Qt5QuickControls2)
+	QTWAYLANDCLIENT_PV=$(pkg-config --modversion Qt5WaylandClient)
+	if ver_test ${QTCORE_PV} -ne ${QTDBUS_PV} ; then
+		die "Qt5Core is not the same version as Qt5DBus"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
+		die "Qt5Core is not the same version as Qt5Gui"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTQML_PV} ; then
+		die "Qt5Core is not the same version as Qt5Qml (qtdeclarative)"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTSQL_PV} ; then
+		die "Qt5Core is not the same version as Qt5Sql"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTSVG_PV} ; then
+		die "Qt5Core is not the same version as Qt5Svg"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTQUICKCONTROLS2_PV} ; then
+		die "Qt5Core is not the same version as Qt5QuickControls2"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTWAYLANDCLIENT_PV} ; then
+		die "Qt5Core is not the same version as Qt5WaylandClient (qtwayland)"
+	fi
+}
 
 src_configure() {
 	ewarn "This ebuild is on hold because of deprecated dependencies.  Use the ${PN}-${PV}_pYYYYMMDD ebuilds instead."
