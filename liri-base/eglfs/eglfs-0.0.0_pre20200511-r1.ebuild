@@ -11,19 +11,19 @@ QT_MIN_PV=5.9
 IUSE=""
 RDEPEND="${RDEPEND}
 	  dev-libs/libinput
-	  dev-qt/libliri
 	>=dev-qt/qtcore-${QT_MIN_PV}:5
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5
 	>=dev-qt/qtgui-${QT_MIN_PV}:5[egl,udev]
-	  dev-qt/qtudev
+	  liri-base/libliri
+	  liri-base/qtudev
 	  media-libs/fontconfig
 	  media-libs/mesa[egl,gbm]
 	  x11-libs/libdrm
 	  x11-libs/libxkbcommon"
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
-	>=dev-util/cmake-shared-1.0.0"
-inherit eutils cmake-utils
+	>=liri-base/cmake-shared-1.0.0"
+inherit cmake-utils eutils
 EGIT_COMMIT="54534b5f544dde7726ecffbf800cf8fc7e6e66d7"
 SRC_URI=\
 "https://github.com/lirios/eglfs/archive/${EGIT_COMMIT}.tar.gz \
