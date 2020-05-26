@@ -1,0 +1,42 @@
+# Copyright 1999-2020 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=7
+DESCRIPTION="PulseAudio support for Liri"
+HOMEPAGE="https://github.com/lirios/pulseaudio"
+LICENSE="GPL-3+ LGPL-2.1+"
+KEYWORDS="~amd64 ~x86"
+SLOT="0/${PV}"
+QT_MIN_PV=5.9
+IUSE=""
+RDEPEND="${RDEPEND}
+	>=dev-qt/qtcore-${QT_MIN_PV}:5
+	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5
+	>=liri-base/fluid-1.0.0
+	>=media-sound/pulseaudio-5.0"
+DEPEND="${RDEPEND}
+	>=dev-util/cmake-3.10.0
+	  dev-util/pkgconfig
+	>=liri-base/cmake-shared-1.0.0"
+inherit cmake-utils eutils
+EGIT_COMMIT="03a06a7c8c50d8962c6aa5bc425d85610cbcbb7a"
+SRC_URI=\
+"https://github.com/lirios/pulseaudio/archive/${EGIT_COMMIT}.tar.gz
+	-> ${PN}-${PV}.tar.gz"
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+RESTRICT="mirror"
+
+pkg_setup() {
+	QTCORE_PV=$(pkg-config --modversion Qt5Core)
+	QTQML_PV=$(pkg-config --modversion Qt5Qml)
+	if ver_test ${QTCORE_PV} -ne ${QTQML_PV} ; then
+		die "Qt5Core is not the same version as Qt5Qml (qtdeclarative)"
+	fi
+}
+
+src_configure() {
+	local mycmakeargs=(
+		-DINSTALL_LIBDIR=/usr/$(get_libdir)
+	)
+	cmake-utils_src_configure
+}
