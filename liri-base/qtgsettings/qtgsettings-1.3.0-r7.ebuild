@@ -17,7 +17,8 @@ DEPEND="${RDEPEND}
 	>=kde-frameworks/extra-cmake-modules-1.7.0
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
-	>=liri-base/cmake-shared-1.0.0"
+	>=liri-base/cmake-shared-1.0.0
+	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5 )"
 inherit cmake-utils eutils
 SRC_URI=\
 "https://github.com/lirios/qtgsettings/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz"
@@ -31,6 +32,12 @@ pkg_setup() {
 	QTQML_PV=$(pkg-config --modversion Qt5Qml)
 	if ver_test ${QTCORE_PV} -ne ${QTQML_PV} ; then
 		die "Qt5Core is not the same version as Qt5Qml (qtdeclarative)"
+	fi
+	if use test ; then
+		QTTEST_PV=$(pkg-config --modversion Qt5Test)
+		if ver_test ${QTCORE_PV} -ne ${QTTEST_PV} ; then
+			die "Qt5Core is not the same version as Qt5Test"
+		fi
 	fi
 }
 
