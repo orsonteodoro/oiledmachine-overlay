@@ -1,9 +1,6 @@
 # Ebuilds currently in develpment
 #--------------------------------------------------------------------------------------------------
 
-# still in development, GPU support not working for 2.79 but working for CPU; no blender 2.80 yet
-media-plugins/amd-radeon-prorender-blender
-
 # ebuild development stuck in build-patching stage to use system dependency packages
 dev-util/monodevelop
 
