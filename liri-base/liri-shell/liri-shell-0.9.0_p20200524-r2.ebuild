@@ -15,7 +15,6 @@ RDEPEND="${RDEPEND}
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5
 	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5
-	>=dev-qt/qtgsettings-1.1.0
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5
 	>=dev-qt/qtsql-${QT_MIN_PV}:5
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5
@@ -23,8 +22,9 @@ RDEPEND="${RDEPEND}
 	  liri-base/eglfs
 	  liri-base/fluid
 	  liri-base/libliri
-	  liri-base/wayland
 	>=liri-base/qtaccountsservice-1.3.0
+	>=liri-base/qtgsettings-1.1.0
+	  liri-base/wayland
 	  sys-auth/polkit-qt
 	  sys-libs/pam
 	systemd? ( sys-apps/systemd )"
