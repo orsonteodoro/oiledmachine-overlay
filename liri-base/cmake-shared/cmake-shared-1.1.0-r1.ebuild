@@ -10,7 +10,7 @@ SLOT="0/${PV}"
 RDEPEND=">=kde-frameworks/extra-cmake-modules-5.48.0"
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0"
-inherit eutils cmake-utils
+inherit cmake-utils eutils
 SRC_URI=\
 "https://github.com/lirios/cmake-shared/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
