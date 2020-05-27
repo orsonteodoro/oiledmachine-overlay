@@ -18,7 +18,7 @@ DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
-inherit cmake-utils eutils
+inherit cmake-utils eutils xdg
 EGIT_COMMIT="03a06a7c8c50d8962c6aa5bc425d85610cbcbb7a"
 SRC_URI=\
 "https://github.com/lirios/pulseaudio/archive/${EGIT_COMMIT}.tar.gz
@@ -32,6 +32,11 @@ pkg_setup() {
 	if ver_test ${QTCORE_PV} -ne ${QTQML_PV} ; then
 		die "Qt5Core is not the same version as Qt5Qml (qtdeclarative)"
 	fi
+}
+
+src_prepare() {
+	xdg_src_prepare
+	cmake-utils_src_prepare
 }
 
 src_configure() {
