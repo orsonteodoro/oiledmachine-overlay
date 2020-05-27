@@ -23,7 +23,7 @@ DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
-inherit cmake-utils eutils
+inherit cmake-utils eutils xdg
 EGIT_COMMIT="48a76e7e5165c9958b5b649d4fb3da28026006f6"
 SRC_URI=\
 "https://github.com/lirios/files/archive/${EGIT_COMMIT}.tar.gz \
