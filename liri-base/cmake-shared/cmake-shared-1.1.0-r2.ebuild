@@ -15,3 +15,4 @@ SRC_URI=\
 "https://github.com/lirios/cmake-shared/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
+PATCHES=( "${FILESDIR}/${PN}-1.1.0_p20200511-pkgconfig-lib-basename.patch" )

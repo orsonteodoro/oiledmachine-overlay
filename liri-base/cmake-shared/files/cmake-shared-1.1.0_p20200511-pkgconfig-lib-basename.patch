@@ -1,0 +1,20 @@
+diff -urp cmake-shared-11c53a19ae07bdd3aae4b96c553b4d0a3eec7869.orig/modules/LiriAddModule.cmake cmake-shared-11c53a19ae07bdd3aae4b96c553b4d0a3eec7869/modules/LiriAddModule.cmake
+--- cmake-shared-11c53a19ae07bdd3aae4b96c553b4d0a3eec7869.orig/modules/LiriAddModule.cmake	2020-05-27 01:20:54.499677957 -0700
++++ cmake-shared-11c53a19ae07bdd3aae4b96c553b4d0a3eec7869/modules/LiriAddModule.cmake	2020-05-27 01:21:13.000394507 -0700
+@@ -298,6 +298,7 @@ function(liri_add_module name)
+     if(NOT ${_arg_NO_PKGCONFIG})
+         get_target_property(_pkgconfig_public_defines "${target}" "PUBLIC_DEFINES")
+ 
++        get_filename_component(INSTALL_LIBDIR_BASENAME ${INSTALL_LIBDIR} NAME)
+         ecm_generate_pkgconfig_file(
+             BASE_NAME "${versioned_module_name}"
+             DESCRIPTION ${_arg_DESCRIPTION}
+@@ -305,7 +306,7 @@ function(liri_add_module name)
+             DEPS ${_arg_PKGCONFIG_DEPENDENCIES}
+             FILENAME_VAR _pkgconfig_filename
+             INCLUDE_INSTALL_DIR "${INSTALL_INCLUDEDIR}"
+-            LIB_INSTALL_DIR "${INSTALL_LIBDIR}"
++            LIB_INSTALL_DIR "${INSTALL_LIBDIR_BASENAME}"
+         )
+         install(FILES "${_pkgconfig_filename}"
+                 DESTINATION "${INSTALL_LIBDIR}/pkgconfig")
