@@ -6,9 +6,10 @@ DESCRIPTION="Meta package for liri"
 HOMEPAGE="https://liri.io/"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}" # based on liri-base/liri-shell
-IUSE="calculator +files networkmanager power-manager pulseaudio +settings \
-systemd +terminal text xwayland"
-RDEPEND="calculator? ( liri-extra/calculator )
+IUSE="browser calculator +files networkmanager power-manager pulseaudio \
++settings systemd +terminal text xwayland"
+RDEPEND="browser? ( liri-extra/browser )
+	 calculator? ( liri-extra/calculator )
 	 files? ( liri-base/files )
 	 >=liri-base/session-0.1.0_p20200524[systemd?]
 	   liri-base/shell:${SLOT}[systemd?]

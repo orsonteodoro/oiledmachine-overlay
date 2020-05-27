@@ -9,6 +9,7 @@
     This is a meta package for liri.
   </longdescription>
   <use>
+    <flag name="browser">Installs a qtwebengine based web browser.</flag>
     <flag name="calculator">Installs a calculator program</flag>
     <flag name="systemd">Adds systemd support</flag>
     <flag name="files">Installs a file manager named Files</flag>
