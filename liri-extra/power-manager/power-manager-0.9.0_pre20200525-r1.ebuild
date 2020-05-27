@@ -29,7 +29,7 @@ DEPEND="${RDEPEND}
 	  dev-util/pkgconfig
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5
 	>=liri-base/cmake-shared-1.0.0"
-inherit cmake-utils eutils
+inherit cmake-utils eutils xdg
 EGIT_COMMIT="dbc823fcaaf72bb9515a42ddc53fa0452d948e48"
 SRC_URI=\
 "https://github.com/lirios/power-manager/archive/${EGIT_COMMIT}.tar.gz
