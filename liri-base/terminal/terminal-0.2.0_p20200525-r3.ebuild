@@ -55,6 +55,11 @@ pkg_setup() {
 	fi
 }
 
+src_prepare() {
+	xdg_src_prepare
+	cmake-utils_src_prepare
+}
+
 src_configure() {
 	local mycmakeargs=(
 		-DINSTALL_LIBDIR=/usr/$(get_libdir)
