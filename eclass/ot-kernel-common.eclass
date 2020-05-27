@@ -159,27 +159,41 @@ O3_RO_SRC_URL="${O3_SRC_URL}${O3_RO_DL_FN} -> ${O3_RO_FN}"
 O3_ALLOW_FN="O3-allow-unrestricted-${PATCH_ALLOW_O3_COMMIT}.patch"
 O3_ALLOW_SRC_URL="${O3_SRC_URL}${PATCH_ALLOW_O3_COMMIT}.patch -> ${O3_ALLOW_FN}"
 
-GRAYSKY_DL_4_9_FN=\
-"${GRAYSKY_DL_4_9_FN:=enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B.patch}"
-GRAYSKY_DL_8_1_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B.patch"
 if ver_test ${K_MAJOR_MINOR} -ge 5.7 ; then
 GRAYSKY_DL_10_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v5.7%2B.patch"
 GRAYSKY_DL_9_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v5.7%2B.patch"
+elif ver_test ${K_MAJOR_MINOR} -ge 5.6 ; then
+GRAYSKY_DL_10_1_FN=\
+"enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v5.5-v5.6.patch"
 elif ver_test ${K_MAJOR_MINOR} -ge 5.5 ; then
+GRAYSKY_DL_10_1_FN=\
+"enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v5.5-v5.6.patch"
 GRAYSKY_DL_9_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v5.5%2B.patch"
 elif ver_test ${K_MAJOR_MINOR} -ge 4.13 ; then
 GRAYSKY_DL_9_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v4.13%2B.patch"
+GRAYSKY_DL_8_1_FN=\
+"enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B.patch"
+GRAYSKY_DL_4_9_FN=\
+"${GRAYSKY_DL_4_9_FN:=enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B.patch}"
 fi
 GRAYSKY_URL_BASE=\
 "https://raw.githubusercontent.com/graysky2/kernel_gcc_patch/master/"
+if [[ -n "${GRAYSKY_DL_4_9_FN}" ]] ; then
 GRAYSKY_SRC_4_9_URL="${GRAYSKY_URL_BASE}/outdated/${GRAYSKY_DL_4_9_FN}"
+fi
+if [[ -n "${GRAYSKY_DL_8_1_FN}" ]] ; then
 GRAYSKY_SRC_8_1_URL="${GRAYSKY_URL_BASE}${GRAYSKY_DL_8_1_FN}"
+fi
+if [[ -n "${GRAYSKY_DL_9_1_FN}" ]] ; then
 GRAYSKY_SRC_9_1_URL="${GRAYSKY_URL_BASE}${GRAYSKY_DL_9_1_FN}"
+fi
+if [[ -n "${GRAYSKY_DL_10_1_FN}" ]] ; then
+GRAYSKY_SRC_10_1_URL="${GRAYSKY_URL_BASE}${GRAYSKY_DL_10_1_FN}"
+fi
 
 GENPATCHES_URL_BASE="https://dev.gentoo.org/~mpagano/genpatches/tarballs/"
 GENPATCHES_BASE_FN="genpatches-${PATCH_GP_MAJOR_MINOR_REVISION}.base.tar.xz"
@@ -717,7 +731,12 @@ function ot-kernel-common_src_unpack() {
 		UNIPATCH_LIST+=" ${DISTDIR}/${CK_FN}"
 	fi
 	if use graysky2 ; then
-		if $(ver_test $(gcc-version) -ge 9.1) \
+		if $(ver_test $(gcc-version) -ge 10.1) \
+			&& test -f "${DISTDIR}/${GRAYSKY_DL_10_1_FN}" ; \
+		then
+			einfo "GCC patch is 10.1"
+			UNIPATCH_LIST+=" ${DISTDIR}/${GRAYSKY_DL_10_1_FN}"
+		elif $(ver_test $(gcc-version) -ge 9.1) \
 			&& test -f "${DISTDIR}/${GRAYSKY_DL_9_1_FN}" ; \
 		then
 			einfo "GCC patch is 9.1"
