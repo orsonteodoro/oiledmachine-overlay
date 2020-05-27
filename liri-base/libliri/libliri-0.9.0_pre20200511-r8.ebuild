@@ -7,7 +7,7 @@ HOMEPAGE="https://github.com/lirios/libliri"
 LICENSE="LGPL-3+ FDL-1.3"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-QT_MIN_PV=5.8
+QT_MIN_PV=5.10
 IUSE="test"
 RDEPEND="${RDEPEND}
 	  dev-libs/libqtxdg
