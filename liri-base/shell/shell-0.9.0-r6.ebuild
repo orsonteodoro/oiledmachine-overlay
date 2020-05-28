@@ -87,4 +87,5 @@ src_configure() {
 pkg_postinst() {
 	# https://github.com/lirios/shell/issues/63
 	glib-compile-schemas /usr/share/glib-2.0/schemas
+	xdg_pkg_postinst
 }

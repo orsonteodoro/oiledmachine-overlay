@@ -29,6 +29,7 @@ RDEPEND="${RDEPEND}
 	  liri-base/wayland
 	  sys-auth/polkit-qt
 	  sys-libs/pam
+	  sys-auth/pambase[consolekit]
 	systemd? ( sys-apps/systemd )"
 DEPEND="${RDEPEND}
 	|| (
@@ -99,4 +100,6 @@ src_configure() {
 pkg_postinst() {
 	# https://github.com/lirios/shell/issues/63
 	glib-compile-schemas /usr/share/glib-2.0/schemas
+	xdg_pkg_postinst
+	ewarn "If sys-auth/pambase[consolekit] was recently pulled.  Reboot the computer or else you will get the XDG_RUNTIME_DIR not set message."
 }
