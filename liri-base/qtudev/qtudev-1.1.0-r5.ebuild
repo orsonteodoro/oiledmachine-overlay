@@ -10,14 +10,14 @@ SLOT="0/${PV}"
 QT_MIN_PV=5.8
 IUSE="test"
 RDEPEND="${RDEPEND}
-	>=dev-qt/qtcore-${QT_MIN_PV}:5
+	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	  virtual/libudev"
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	  dev-util/umockdev
 	>=liri-base/cmake-shared-1.0.0
-	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5 )"
+	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
 inherit cmake-utils eutils
 SRC_URI=\
 "https://github.com/lirios/qtudev/archive/v${PV}.tar.gz \
