@@ -13,19 +13,19 @@ IUSE=""
 RDEPEND="${RDEPEND}
 	>=kde-frameworks/networkmanager-qt-${KDE_FRAMEWORKS_MIN_PV}:5
 	>=kde-frameworks/modemmanager-qt-${KDE_FRAMEWORKS_MIN_PV}:5
-	>=dev-qt/qtcore-${QT_MIN_PV}:5
-	>=dev-qt/qtdbus-${QT_MIN_PV}:5
-	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5
-	>=dev-qt/qtgui-${QT_MIN_PV}:5
-	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5
-	>=dev-qt/qtxml-${QT_MIN_PV}:5
+	>=dev-qt/qtcore-${QT_MIN_PV}:5=
+	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
+	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=
+	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
+	>=dev-qt/qtxml-${QT_MIN_PV}:5=
 	>=liri-base/fluid-1.0.0
 	  liri-base/libliri
 "
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
-	>=dev-qt/linguist-tools-${QT_MIN_PV}:5
+	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=liri-base/cmake-shared-1.0.0"
 inherit cmake-utils eutils xdg
 EGIT_COMMIT="ad0973cefbaeaf8b29daca820945fa3f40ce5b7b"
