@@ -59,6 +59,8 @@ pkg_setup() {
 src_configure() {
 	local mycmakeargs=(
 		-DINSTALL_LIBDIR=/usr/$(get_libdir)
+		-DINSTALL_PLUGINSDIR=/usr/$(get_libdir)/qt5/plugins
+		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml
 		-DLIRI_BUILD_TESTING=$(usex test)
 	)
 	cmake-utils_src_configure
