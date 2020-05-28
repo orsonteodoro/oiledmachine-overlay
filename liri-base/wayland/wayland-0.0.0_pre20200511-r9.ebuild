@@ -12,15 +12,15 @@ QT_MIN_PV=5.12
 RDEPEND="${RDEPEND}
 	>=dev-libs/wayland-1.15
 	>=dev-libs/wayland-protocols-1.15
-	>=dev-qt/qtcore-${QT_MIN_PV}:5
-	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5
-	>=dev-qt/qtgui-${QT_MIN_PV}:5
-	>=dev-qt/qtwayland-${QT_MIN_PV}:5"
+	>=dev-qt/qtcore-${QT_MIN_PV}:5=
+	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=
+	>=dev-qt/qtwayland-${QT_MIN_PV}:5="
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.1.0_p20200511
-	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5 )"
+	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
 inherit cmake-utils eutils
 EGIT_COMMIT="d29a5e0b6cb47c0e60475f8d05e9e02a16ddd3f2"
 SRC_URI=\
