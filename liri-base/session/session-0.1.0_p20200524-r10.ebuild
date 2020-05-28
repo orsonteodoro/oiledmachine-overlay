@@ -43,7 +43,7 @@ pkg_setup() {
 		die "Qt5Core is not the same version as Qt5Gui"
 	fi
 	einfo \
-"If you emerged ${PN} directly, please use the liri-meta package instead."
+"If you emerged ${PN} directly, please start from the liri-meta package instead."
 }
 
 src_prepare() {
