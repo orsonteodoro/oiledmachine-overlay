@@ -42,6 +42,8 @@ pkg_setup() {
 	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
 		die "Qt5Core is not the same version as Qt5Gui"
 	fi
+	einfo \
+"If you emerged ${PN} directly, please use the liri-meta package instead."
 }
 
 src_prepare() {
@@ -65,4 +67,25 @@ src_configure() {
 		)
 	fi
 	cmake-utils_src_configure
+}
+
+pkg_postinst() {
+	xdg_pkg_postinst
+	ewarn
+	ewarn \
+"If you have installed the Pro OpenGL drivers from the AMDGPU-PRO package, \n"\
+"please switch to the Mesa GL driver instead.\n"\
+"\n"\
+"Failure to do so can cause the following:\n"\
+"  -The cursor and wallpaper will not show properly if you ran\n"\
+"   \`liri-session -- -platform xcb\`.\n"\
+"  -The -platform eglfs mode may not work at all."
+	ewarn
+	einfo \
+"To run Liri in X run:\n"\
+"  liri-session -- -platform xcb\n"\
+"\n"\
+"To run Liri in KMS from a VT run:\n"\
+"  liri-session -- -platform eglfs\n"\
+"\n"
 }
