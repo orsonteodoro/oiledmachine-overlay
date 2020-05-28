@@ -19,7 +19,8 @@ RDEPEND="${RDEPEND}
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
-	>=liri-base/cmake-shared-1.1.0_p20200511"
+	>=liri-base/cmake-shared-1.1.0_p20200511
+	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5 )"
 inherit cmake-utils eutils
 EGIT_COMMIT="d29a5e0b6cb47c0e60475f8d05e9e02a16ddd3f2"
 SRC_URI=\
@@ -39,6 +40,12 @@ pkg_setup() {
 	if ver_test ${QTCORE_PV} -ne ${QTQML_PV} ; then
 		die "Qt5Core is not the same version as Qt5Qml (qtdeclarative)"
 	fi
+	if use test ; then
+		QTTEST_PV=$(pkg-config --modversion Qt5Test)
+		if ver_test ${QTCORE_PV} -ne ${QTTEST_PV} ; then
+			die "Qt5Core is not the same version as Qt5Test"
+		fi
+	fi
 	if ver_test ${QTCORE_PV} -ne ${QTWAYLANDCLIENT_PV} ; then
 		die "Qt5Core is not the same version as Qt5WaylandClient (qtwayland)"
 	fi
@@ -46,8 +53,11 @@ pkg_setup() {
 
 src_configure() {
 	local mycmakeargs=(
-		-DINSTALL_LIBDIR=/usr/$(get_libdir)
 		-DBUILD_TESTING=$(usex test)
+		-DINSTALL_LIBDIR=/usr/$(get_libdir)
+		-DINSTALL_PLUGINSDIR=/usr/$(get_libdir)/qt5/plugins
+		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml
+		-DLIB_INSTALL_DIR=$(get_libdir)
 	)
 	cmake-utils_src_configure
 }
