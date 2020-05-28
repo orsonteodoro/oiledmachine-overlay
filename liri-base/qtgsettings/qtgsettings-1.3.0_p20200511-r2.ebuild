@@ -26,8 +26,6 @@ SRC_URI=\
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
-PATCHES=( "${FILESDIR}/${PN}-1.3.0-change-QMapIterator-to-stl-style.patch" )
-
 pkg_setup() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
 	QTQML_PV=$(pkg-config --modversion Qt5Qml)
