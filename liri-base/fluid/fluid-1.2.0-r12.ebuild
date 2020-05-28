@@ -11,26 +11,25 @@ IUSE="doc test"
 QT_MIN_PV=5.10
 RDEPEND="${RDEPEND}
 	>=dev-libs/wayland-1.15
-	>=dev-qt/qdoc-${QT_MIN_PV}:5
-	>=dev-qt/qtcore-${QT_MIN_PV}:5
-	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5
-	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5
-	>=dev-qt/qtgui-${QT_MIN_PV}:5
-	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5
-	>=dev-qt/qtsvg-${QT_MIN_PV}:5
-	>=dev-qt/qtwayland-${QT_MIN_PV}:5
+	>=dev-qt/qdoc-${QT_MIN_PV}:5=
+	>=dev-qt/qtcore-${QT_MIN_PV}:5=
+	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
+	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5=
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=
+	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
+	>=dev-qt/qtsvg-${QT_MIN_PV}:5=
+	>=dev-qt/qtwayland-${QT_MIN_PV}:5=
 	  liri-base/qtaccountsservice"
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=kde-frameworks/extra-cmake-modules-1.7.0
 	>=liri-base/cmake-shared-1.0.0
-	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5 )"
+	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
 inherit cmake-utils eutils
-EGIT_COMMIT="36f9cc04733df8fafbe129a8305040fb950ebdd7"
 SRC_URI=\
-"https://github.com/lirios/fluid/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${PV}.tar.gz"
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+"https://github.com/lirios/fluid/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz"
+S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 
 pkg_setup() {
