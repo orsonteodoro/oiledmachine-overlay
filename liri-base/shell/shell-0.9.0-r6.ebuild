@@ -12,15 +12,15 @@ UNPACKAGED="liri-base/greenisland
 	    liri-base/vibe" # https://github.com/lirios/vibe
 RDEPEND="${RDEPEND}
 	  dev-libs/libqtxdg
-	>=dev-qt/qtcore-${QT_MIN_PV}:5
-	>=dev-qt/qtdbus-${QT_MIN_PV}:5
-	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5
-	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5
-	>=dev-qt/qtgui-${QT_MIN_PV}:5
-	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5
-	>=dev-qt/qtsql-${QT_MIN_PV}:5
-	>=dev-qt/qtsvg-${QT_MIN_PV}:5
-	>=dev-qt/qtwayland-${QT_MIN_PV}:5
+	>=dev-qt/qtcore-${QT_MIN_PV}:5=
+	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
+	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
+	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5=
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=
+	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
+	>=dev-qt/qtsql-${QT_MIN_PV}:5=
+	>=dev-qt/qtsvg-${QT_MIN_PV}:5=
+	>=dev-qt/qtwayland-${QT_MIN_PV}:5=
 	>=liri-base/fluid-1.0.0
 	>=liri-base/qtaccountsservice-1.3.0
 	kde-frameworks/solid

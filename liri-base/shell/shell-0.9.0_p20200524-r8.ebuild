@@ -11,16 +11,16 @@ IUSE="systemd"
 QT_MIN_PV=5.12
 RDEPEND="${RDEPEND}
 	  kde-frameworks/solid
-	>=dev-qt/qtconcurrent-${QT_MIN_PV}:5
-	>=dev-qt/qtcore-${QT_MIN_PV}:5
-	>=dev-qt/qtdbus-${QT_MIN_PV}:5
-	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5
-	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5
-	>=dev-qt/qtgui-${QT_MIN_PV}:5
-	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5
-	>=dev-qt/qtsql-${QT_MIN_PV}:5
-	>=dev-qt/qtsvg-${QT_MIN_PV}:5
-	>=dev-qt/qtwayland-${QT_MIN_PV}:5
+	>=dev-qt/qtconcurrent-${QT_MIN_PV}:5=
+	>=dev-qt/qtcore-${QT_MIN_PV}:5=
+	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
+	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
+	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5=
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=
+	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
+	>=dev-qt/qtsql-${QT_MIN_PV}:5=
+	>=dev-qt/qtsvg-${QT_MIN_PV}:5=
+	>=dev-qt/qtwayland-${QT_MIN_PV}:5=
 	  liri-base/eglfs
 	  liri-base/fluid
 	  liri-base/libliri
@@ -35,7 +35,7 @@ DEPEND="${RDEPEND}
 		  sys-devel/clang
 		>=sys-devel/gcc-4.8
 	)
-	>=dev-qt/linguist-tools-${QT_MIN_PV}:5
+	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
