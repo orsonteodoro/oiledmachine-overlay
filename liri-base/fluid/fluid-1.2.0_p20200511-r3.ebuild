@@ -68,7 +68,9 @@ src_configure() {
 		-DBUILD_TESTING=$(usex test)
 		-DFLUID_WITH_DOCUMENTATION=$(usex doc)
 		-DFLUID_WITH_DEMO=OFF
-		-DBUILD_TESTING=$(usex test)
+		-DINSTALL_LIBDIR=/usr/$(get_libdir)
+		-DINSTALL_PLUGINSDIR=/usr/$(get_libdir)/qt5/plugins
+		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml
 	)
 	cmake-utils_src_configure
 }
