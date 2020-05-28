@@ -1,10 +1,9 @@
 # Ebuilds currently in develpment
 #--------------------------------------------------------------------------------------------------
 
-# Does not go into desktop environment yet
-liri-base/liri-meta
-liri-base/shell
-liri-base/session
+# the official milestone dependencies are deprecated (vibe, greenisland), use latest instead
+<liri-base/liri-meta-0.9.0_p20200524
+<liri-base/shell-0.9.0_p20200524
 
 # ebuild development stuck in build-patching stage to use system dependency packages
 dev-util/monodevelop
