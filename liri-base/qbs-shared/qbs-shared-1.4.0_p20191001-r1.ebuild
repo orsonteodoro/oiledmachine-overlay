@@ -7,8 +7,9 @@ HOMEPAGE="https://github.com/lirios/qbs-shared"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-# qbs 1.15.0 chosen for different args profile: vs config:
-DEPEND=">=dev-util/qbs-1.15.0"
+# Upstream requires qbs 1.11 in README, but qbs file requires 1.10
+# If building qbs fails with 1.12, try with 1.15 which works.
+DEPEND=">=dev-util/qbs-1.11"
 inherit eutils
 EGIT_COMMIT="c176452261a562a8f319fe068bd635adbdce141b"
 SRC_URI=\
