@@ -11,10 +11,10 @@ QT_MIN_PV=5.9
 IUSE=""
 RDEPEND="${RDEPEND}
 	  dev-libs/wayland
-	>=dev-qt/qtconcurrent-${QT_MIN_PV}:5
-	>=dev-qt/qtcore-${QT_MIN_PV}:5
-	>=dev-qt/qtgui-${QT_MIN_PV}:5
-	>=dev-qt/qtwayland-${QT_MIN_PV}:5
+	>=dev-qt/qtconcurrent-${QT_MIN_PV}:5=
+	>=dev-qt/qtcore-${QT_MIN_PV}:5=
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=
+	>=dev-qt/qtwayland-${QT_MIN_PV}:5=
 	  x11-base/xorg-server[wayland]
 	  x11-libs/libXcursor
 	  x11-libs/xcb-util-cursor"
