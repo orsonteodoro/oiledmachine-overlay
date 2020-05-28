@@ -27,9 +27,10 @@ DEPEND="${RDEPEND}
 	>=liri-base/cmake-shared-1.0.0
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5 )"
 inherit cmake-utils eutils
+EGIT_COMMIT="36f9cc04733df8fafbe129a8305040fb950ebdd7"
 SRC_URI=\
-"https://github.com/lirios/fluid/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz"
-S="${WORKDIR}/${PN}-${PV}"
+"https://github.com/lirios/fluid/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${PV}.tar.gz"
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
 pkg_setup() {
@@ -38,7 +39,6 @@ pkg_setup() {
 	QTQML_PV=$(pkg-config --modversion Qt5Qml)
 	QTQUICKCONTROLS2_PV=$(pkg-config --modversion Qt5QuickControls2)
 	QTSVG_PV=$(pkg-config --modversion Qt5Svg)
-	QTTEST_PV=$(pkg-config --modversion Qt5Test)
 	QTWAYLANDCLIENT_PV=$(pkg-config --modversion Qt5WaylandClient)
 	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
 		die "Qt5Core is not the same version as Qt5Gui"
@@ -53,6 +53,7 @@ pkg_setup() {
 		die "Qt5Core is not the same version as Qt5Svg"
 	fi
 	if use test ; then
+		QTTEST_PV=$(pkg-config --modversion Qt5Test)
 		if ver_test ${QTCORE_PV} -ne ${QTTEST_PV} ; then
 			die "Qt5Core is not the same version as Qt5Test"
 		fi
@@ -64,6 +65,7 @@ pkg_setup() {
 
 src_configure() {
 	local mycmakeargs=(
+		-DBUILD_TESTING=$(usex test)
 		-DFLUID_WITH_DOCUMENTATION=$(usex doc)
 		-DFLUID_WITH_DEMO=OFF
 		-DBUILD_TESTING=$(usex test)
