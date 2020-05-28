@@ -9,16 +9,20 @@
     This is a meta package for liri.
   </longdescription>
   <use>
-    <flag name="browser">Installs a qtwebengine based web browser.</flag>
+    <flag name="browser">Installs a qtwebengine based web browser</flag>
     <flag name="calculator">Installs a calculator program</flag>
     <flag name="systemd">Adds systemd support</flag>
     <flag name="files">Installs a file manager named Files</flag>
+    <flag name="flatpak">Installs Flatpak support</flag>
     <flag name="networkmanager">Adds NetworkManager support</flag>
+    <flag name="platformtheme">Sets the default font and icon theme</flag>
     <flag name="power-manager">Adds power management support</flag>
     <flag name="pulseaudio">Adds PulseAudio support</flag>
     <flag name="terminal">Installs a terminal emulator named Terminal</flag>
     <flag name="settings">Installs a program named Settings to configure the
       system</flag>
+    <flag name="themes">Installs color schemes, boot loader themes,
+      a display manager theme</flag>
     <flag name="text">Installs a text editor</flag>
     <flag name="xwayland">Adds XWayland support</flag>
   </use>
