@@ -16,6 +16,7 @@
     <flag name="flatpak">Installs Flatpak support</flag>
     <flag name="networkmanager">Adds NetworkManager support</flag>
     <flag name="platformtheme">Sets the default font and icon theme</flag>
+    <flag name="player">Installs a media player</flag>
     <flag name="power-manager">Adds power management support</flag>
     <flag name="pulseaudio">Adds PulseAudio support</flag>
     <flag name="terminal">Installs a terminal emulator named Terminal</flag>

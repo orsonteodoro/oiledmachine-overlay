@@ -7,8 +7,8 @@ HOMEPAGE="https://liri.io/"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}" # based on liri-base/liri-shell
 IUSE="appcenter browser calculator +files flatpak networkmanager platformtheme \
-power-manager pulseaudio +settings systemd +terminal text themes wallpaper \
-xwayland"
+player power-manager pulseaudio +settings systemd +terminal text themes \
+wallpaper xwayland"
 RDEPEND="appcenter? ( liri-base/appcenter )
 	 browser? ( liri-extra/browser )
 	 calculator? ( liri-extra/calculator )
@@ -18,6 +18,7 @@ RDEPEND="appcenter? ( liri-base/appcenter )
 	   liri-base/shell:${SLOT}[systemd?]
 	 networkmanager? ( liri-extra/networkmanager )
 	 platformtheme? ( liri-base/platformtheme )
+	 player? ( liri-extra/player )
 	 power-manager? ( liri-extra/power-manager )
 	 pulseaudio? ( liri-base/pulseaudio )
 	 settings? ( liri-base/settings )
