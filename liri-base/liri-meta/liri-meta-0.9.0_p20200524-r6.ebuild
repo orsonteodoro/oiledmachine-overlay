@@ -26,3 +26,23 @@ RDEPEND="appcenter? ( liri-base/appcenter )
 	 themes? ( liri-base/themes )
 	 xwayland? ( liri-base/qml-xwayland )"
 RESTRICT="mirror"
+
+pkg_postinst() {
+	ewarn
+	ewarn \
+"If you have installed the Pro OpenGL drivers from the AMDGPU-PRO package, \n"\
+"please switch to the Mesa GL driver instead.\n"\
+"\n"\
+"Failure to do so can cause the following:\n"\
+"  -The cursor and wallpaper will not show properly if you ran\n"\
+"   \`liri-session -- -platform xcb\`.\n"\
+"  -The -platform eglfs mode may not work at all."
+	ewarn
+	einfo \
+"To run Liri in X run:\n"\
+"  liri-session -- -platform xcb\n"\
+"\n"\
+"To run Liri in KMS from a VT run:\n"\
+"  liri-session -- -platform eglfs\n"\
+"\n"
+}
