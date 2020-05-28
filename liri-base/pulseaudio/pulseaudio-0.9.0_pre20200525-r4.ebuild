@@ -10,8 +10,8 @@ SLOT="0/${PV}"
 QT_MIN_PV=5.10
 IUSE=""
 RDEPEND="${RDEPEND}
-	>=dev-qt/qtcore-${QT_MIN_PV}:5
-	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5
+	>=dev-qt/qtcore-${QT_MIN_PV}:5=
+	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=liri-base/fluid-1.0.0
 	>=media-sound/pulseaudio-5.0"
 DEPEND="${RDEPEND}
