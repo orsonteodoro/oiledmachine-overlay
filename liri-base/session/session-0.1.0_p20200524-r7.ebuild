@@ -30,7 +30,7 @@ S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 DESKTOP_DATABASE_DIR="/usr/share/wayland-sessions"
 
-PATCHES=( "${FILESDIR}/${PN}-0.1.0_p20200524-missing-variable.patch" )
+_PATCHES=( "${FILESDIR}/${PN}-0.1.0_p20200524-missing-variable.patch" )
 
 pkg_setup() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
@@ -45,8 +45,9 @@ pkg_setup() {
 }
 
 src_prepare() {
-	xdg_src_prepare
-	cmake-utils_src_prepare
+	xdg_src_prepare # patching deferred
+	cmake-utils_src_prepare # patching deferred
+	eapply_patch ${_PATCHES[@]}
 }
 
 src_configure() {
