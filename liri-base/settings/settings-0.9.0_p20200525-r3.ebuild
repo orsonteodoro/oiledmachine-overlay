@@ -9,14 +9,14 @@ KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 QT_MIN_PV=5.10
 RDEPEND="${RDEPEND}
-	>=dev-qt/qtconcurrent-${QT_MIN_PV}:5
-	>=dev-qt/qtcore-${QT_MIN_PV}:5
-	>=dev-qt/qtdbus-${QT_MIN_PV}:5
-	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5
-	>=dev-qt/qtgui-${QT_MIN_PV}:5
-	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5
-	>=dev-qt/qtwidgets-${QT_MIN_PV}:5
-	>=dev-qt/qtxml-${QT_MIN_PV}:5
+	>=dev-qt/qtconcurrent-${QT_MIN_PV}:5=
+	>=dev-qt/qtcore-${QT_MIN_PV}:5=
+	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
+	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=
+	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
+	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
+	>=dev-qt/qtxml-${QT_MIN_PV}:5=
 	>=liri-base/fluid-1.0.0
 	  liri-base/libliri
 	>=liri-base/qtaccountsservice-1.2.0
@@ -25,7 +25,7 @@ RDEPEND="${RDEPEND}
 	  sys-auth/polkit
 	  x11-misc/xkeyboard-config"
 DEPEND="${RDEPEND}
-	>=dev-qt/linguist-tools-${QT_MIN_PV}:5
+	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
