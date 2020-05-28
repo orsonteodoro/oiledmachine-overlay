@@ -57,7 +57,6 @@ src_configure() {
 		-DINSTALL_LIBDIR=/usr/$(get_libdir)
 		-DINSTALL_PLUGINSDIR=/usr/$(get_libdir)/qt5/plugins
 		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml
-		-DLIB_INSTALL_DIR=$(get_libdir)
 	)
 	cmake-utils_src_configure
 }
