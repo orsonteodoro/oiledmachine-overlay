@@ -10,15 +10,15 @@ SLOT="0/${PV}"
 IUSE="test"
 QT_MIN_PV=5.8
 RDEPEND="${RDEPEND}
-	>=dev-qt/qtcore-${QT_MIN_PV}:5
-	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5
+	>=dev-qt/qtcore-${QT_MIN_PV}:5=
+	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-libs/glib-2.31.0"
 DEPEND="${RDEPEND}
 	>=kde-frameworks/extra-cmake-modules-1.7.0
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0
-	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5 )"
+	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
 inherit cmake-utils eutils
 SRC_URI=\
 "https://github.com/lirios/qtgsettings/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz"
