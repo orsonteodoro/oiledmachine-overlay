@@ -72,6 +72,8 @@ pkg_setup() {
 	if ver_test ${QTCORE_PV} -ne ${QTWAYLANDCLIENT_PV} ; then
 		die "Qt5Core is not the same version as Qt5WaylandClient (qtwayland)"
 	fi
+	einfo \
+"If you emerged ${PN} directly, please start from the liri-meta package instead."
 }
 
 src_configure() {
@@ -88,4 +90,21 @@ pkg_postinst() {
 	# https://github.com/lirios/shell/issues/63
 	glib-compile-schemas /usr/share/glib-2.0/schemas
 	xdg_pkg_postinst
+	ewarn \
+"\n"\
+"If you have installed the Pro OpenGL drivers from the AMDGPU-PRO package, \n"\
+"please switch to the Mesa GL driver instead.\n"\
+"\n"\
+"Failure to do so can cause the following:\n"\
+"  -The cursor and wallpaper will not show properly if you ran\n"\
+"   \`liri-session -- -platform xcb\`.\n"\
+"  -The -platform eglfs mode may not work at all.\n"\
+"\n"
+	einfo \
+"To run Liri in X run:\n"\
+"  liri-session -- -platform xcb\n"\
+"\n"\
+"To run Liri in KMS from a VT run:\n"\
+"  liri-session -- -platform eglfs\n"\
+"\n"
 }
