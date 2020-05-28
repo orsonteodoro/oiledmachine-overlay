@@ -47,7 +47,7 @@ pkg_setup() {
 src_prepare() {
 	xdg_src_prepare # patching deferred
 	cmake-utils_src_prepare # patching deferred
-	eapply_patch ${_PATCHES[@]}
+	eapply ${_PATCHES[@]}
 }
 
 src_configure() {
