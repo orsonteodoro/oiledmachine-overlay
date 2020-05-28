@@ -11,15 +11,15 @@ QT_MIN_PV=5.10
 KDE_FRAMEWORK_MIN_PV=5.48
 IUSE=""
 RDEPEND="${RDEPEND}
-	>=dev-qt/qtcore-${QT_MIN_PV}:5
-	>=dev-qt/qtdbus-${QT_MIN_PV}:5
-	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5
-	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5
-	>=dev-qt/qtgui-${QT_MIN_PV}:5
-	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5
-	>=dev-qt/qtsql-${QT_MIN_PV}:5
-	>=dev-qt/qtsvg-${QT_MIN_PV}:5
-	>=dev-qt/qtwayland-${QT_MIN_PV}:5
+	>=dev-qt/qtcore-${QT_MIN_PV}:5=
+	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
+	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
+	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5=
+	>=dev-qt/qtgui-${QT_MIN_PV}:5=
+	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
+	>=dev-qt/qtsql-${QT_MIN_PV}:5=
+	>=dev-qt/qtsvg-${QT_MIN_PV}:5=
+	>=dev-qt/qtwayland-${QT_MIN_PV}:5=
 	>=kde-frameworks/solid-${KDE_FRAMEWORK_MIN_PV}
 	>=liri-base/fluid-1.0.0
 	  liri-base/libliri
@@ -27,7 +27,7 @@ RDEPEND="${RDEPEND}
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
-	>=dev-qt/linguist-tools-${QT_MIN_PV}:5
+	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=liri-base/cmake-shared-1.0.0"
 inherit cmake-utils eutils xdg
 EGIT_COMMIT="dbc823fcaaf72bb9515a42ddc53fa0452d948e48"
