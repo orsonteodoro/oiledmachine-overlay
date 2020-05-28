@@ -52,6 +52,8 @@ src_configure() {
 	local mycmakeargs=(
 		-DBUILD_TESTING=$(usex test)
 		-DINSTALL_LIBDIR=/usr/$(get_libdir)
+		-DINSTALL_PLUGINSDIR=/usr/$(get_libdir)/qt5/plugins
+		-DINSTALL_QMLDIR=/usr/$(get_libdir)/qt5/qml
 		-DQTACCOUNTSSERVICE_WITH_EXAMPLES:BOOL=$(usex examples)
 	)
 	cmake-utils_src_configure
