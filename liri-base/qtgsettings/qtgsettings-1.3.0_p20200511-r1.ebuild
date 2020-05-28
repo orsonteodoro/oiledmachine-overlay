@@ -23,7 +23,7 @@ inherit cmake-utils eutils
 EGIT_COMMIT="fdaa06f1005f1dbaf561ef4a1c714d48b8cbe23b"
 SRC_URI=\
 "https://github.com/lirios/qtgsettings/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${PV}.tar.gz"
-S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 
 PATCHES=( "${FILESDIR}/${PN}-1.3.0-change-QMapIterator-to-stl-style.patch" )
