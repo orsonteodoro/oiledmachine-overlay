@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="Themes for a uniform look and feel throughout Liri OS"
 HOMEPAGE="https://github.com/lirios/themes"
-LICENSE="GPL-3+ GPL-3-with-font-exception OFL-1.1"
+LICENSE="GPL-3+ grub? ( GPL-3-with-font-exception OFL-1.1 )"
 # Noto fonts is OFL-1.1
 # The KDE Oxygen font is || ( OFL-1.1 GPL-3-with-font-exception )
 KEYWORDS="~amd64 ~x86"
