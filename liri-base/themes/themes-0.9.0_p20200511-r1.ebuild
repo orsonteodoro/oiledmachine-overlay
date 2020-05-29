@@ -10,7 +10,9 @@ SLOT="0/${PV}"
 IUSE="grub plymouth sddm"
 QT_MIN_PV=5.10
 RDEPEND="${RDEPEND}
-	grub? ( sys-boot/grub )
+	grub? ( media-fonts/noto
+		media-fonts/oxygen-fonts
+		sys-boot/grub )
 	plymouth? ( sys-boot/plymouth )
 	sddm? ( liri-base/fluid
 		liri-base/shell
