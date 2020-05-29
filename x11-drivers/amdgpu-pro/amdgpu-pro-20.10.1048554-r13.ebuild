@@ -163,7 +163,7 @@ REQUIRED_USE="
 	opengl_pro? ( egl pro-stack opengl X )
 	osmesa? ( developer? ( X ) open-stack )
 	roct? ( dkms pro-stack )
-	vaapi? ( open-stack )
+	vaapi? ( open-stack X )
 	vdpau? ( open-stack )
 	vulkan? ( || ( vulkan_open vulkan_pro ) )
 	vulkan_open? ( open-stack vulkan )
@@ -449,6 +449,11 @@ src_install() {
 	insinto /
 	doins -r etc
 	doins -r opt
+
+	# LDPATHs already handled in eselect-opengl
+	if use opengl_pro ; then
+		rm -rf "${ED}/etc/ld.so.conf.d" || die
+	fi
 
 	install_abi() {
 		local arch
