@@ -12,13 +12,13 @@
  		done
  	done
  
-+	[[ -f /opt/amdgpu/lib64/libGL.so \
-+		|| -f /opt/amdgpu/lib/x86_64-linux-gnu/libGL.so \
-+		|| -f /opt/amdgpu/lib/i386-linux-gnu/libGL.so ]] \
++	[[ -f "${EROOT}/opt/amdgpu/lib64/libGL.so" \
++		|| -f "${EROOT}/opt/amdgpu/lib/x86_64-linux-gnu/libGL.so" \
++		|| -f "${EROOT}/opt/amdgpu/lib/i386-linux-gnu/libGL.so" ]] \
 +			&& ret+=( "amdgpu" )
-+	[[ -f /opt/amdgpu-pro/lib64/libGL.so \
-+		|| -f /opt/amdgpu-pro/lib/x86_64-linux-gnu/libGL.so \
-+		|| -f /opt/amdgpu-pro/lib/i386-linux-gnu/libGL.so ]] \
++	[[ -f "${EROOT}/opt/amdgpu-pro/lib64/libGL.so" \
++		|| -f "${EROOT}/opt/amdgpu-pro/lib/x86_64-linux-gnu/libGL.so" \
++		|| -f "${EROOT}/opt/amdgpu-pro/lib/i386-linux-gnu/libGL.so" ]] \
 +			&& ret+=( "amdgpu-pro" )
 +
  	has xorg-x11 "${ret[@]}" || ret+=( xorg-x11 )
