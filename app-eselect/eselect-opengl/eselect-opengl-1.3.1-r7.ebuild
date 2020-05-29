@@ -59,7 +59,7 @@ src_prepare() {
 	if [[ ${CHOST} == *-darwin* ]] ; then
 		sed -i -e 's/libGL\.so/libGL.dylib/' opengl.eselect-${PV} || die
 	fi
-	epatch "${FILESDIR}/${PN}-1.3.1-amdgpu-pro-support-v3.patch"
+	epatch "${FILESDIR}/${PN}-1.3.1-amdgpu-pro-support-v4.patch"
 }
 
 src_install() {
