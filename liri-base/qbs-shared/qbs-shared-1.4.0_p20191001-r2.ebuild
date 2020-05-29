@@ -31,7 +31,7 @@ src_compile() {
 		profile:qt5 \
 		project.prefix:/usr/share/qbs \
 		project.qbsModulesDir:/usr/share/qbs/modules \
-		project.qbsImportsDir:/usr/share/qbs/impoarts \
+		project.qbsImportsDir:/usr/share/qbs/imports \
 		|| die
 }
 
