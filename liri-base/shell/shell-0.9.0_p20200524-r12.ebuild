@@ -10,7 +10,6 @@ SLOT="0/${PV}"
 IUSE="systemd"
 QT_MIN_PV=5.12
 RDEPEND="${RDEPEND}
-	  kde-frameworks/solid
 	>=dev-qt/qtconcurrent-${QT_MIN_PV}:5=
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
@@ -21,15 +20,18 @@ RDEPEND="${RDEPEND}
 	>=dev-qt/qtsql-${QT_MIN_PV}:5=
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5=
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5=
+	  kde-frameworks/solid
 	  liri-base/eglfs
 	  liri-base/fluid
 	  liri-base/libliri
 	>=liri-base/qtaccountsservice-1.3.0
 	>=liri-base/qtgsettings-1.1.0
 	  liri-base/wayland
+	  media-fonts/droid
+	  media-fonts/noto
+	  sys-auth/pambase[consolekit]
 	  sys-auth/polkit-qt
 	  sys-libs/pam
-	  sys-auth/pambase[consolekit]
 	systemd? ( sys-apps/systemd )"
 DEPEND="${RDEPEND}
 	|| (

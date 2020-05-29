@@ -24,6 +24,7 @@ RDEPEND="${RDEPEND}
 	>=liri-base/fluid-1.0.0
 	>=liri-base/qtaccountsservice-1.3.0
 	kde-frameworks/solid
+	media-fonts/roboto
 	sys-libs/pam
 	${UNPACKAGED}"
 DEPEND="${RDEPEND}
