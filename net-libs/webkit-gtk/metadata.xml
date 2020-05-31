@@ -1,45 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-  <!-- only in this ebuild fork on the oiledmachine overlay -->
-  <maintainer type="project">
-    <email>orsonteodoro@hotmail.com</email>
-    <name>Orson Teodoro</name>
-  </maintainer>
-  <!-- originator -->
-  <maintainer type="project">
-    <email>gnome@gentoo.org</email>
-    <name>Gentoo GNOME Desktop</name>
-  </maintainer>
-  <longdescription>
-    WebKitGTK is a HTML5 engine.
-
-    This ebuild fork will allow you to build a multilib webkit.
-  </longdescription>
-  <use>
-    <flag name="accelerated-2d-canvas">Use hardware acceleration for
-      some 2D drawing operations.  This flag may be unstable.</flag>
-    <flag name="bmalloc">Uses a mmap based page allocator to improve
-      overall performance.  For this ebuild fork, it is not recommended
-      to turn it on for stability purposes.</flag>
-    <flag name="hardened">Ensures less problems with hardened build.</flag>
-    <flag name="coverage">Enable code coverage support</flag>
-    <flag name="egl">Enable EGL support</flag>
-    <flag name="ftl-jit">Builds an additional tier for JIT used for
-      JavaScript scripts with longer than expected execution time
-      with marginal benefits.</flag>
-    <flag name="geolocation">Enable geolocation support through
-      <pkg>app-misc/geoclue</pkg></flag>
-    <flag name="gles2">Enable GLESv2 support</flag>
-    <flag name="gles2-only">Use GLES 2.0 or later instead of full
-      OpenGL</flag>
-    <flag name="jit">Enables JIT support for JavaScriptCore for
-      significantly faster code execution.</flag>
-    <flag name="jumbo-build">Combine source files to speed up build
-      process</flag>
-    <flag name="minibrowser">Enables building the minibrowser.</flag>
-    <flag name="nsplugin">Enable full nsplugin support (GTK2 plugins)</flag>
-    <flag name="webgl">Build support for the WebGL HTML API using
-      <pkg>virtual/opengl</pkg></flag>
-  </use>
+<!-- only in this ebuild fork on the oiledmachine overlay -->
+<maintainer type="project">
+	<email>orsonteodoro@hotmail.com</email>
+	<name>Orson Teodoro</name>
+</maintainer>
+<!-- originator -->
+<maintainer type="project">
+	<email>gnome@gentoo.org</email>
+	<name>Gentoo GNOME Desktop</name>
+</maintainer>
+<use>
+	<flag name="accelerated-2d-canvas">Use hardware acceleration for
+		some 2D drawing operations.  This flag may be unstable.</flag>
+	<flag name="bmalloc">Uses a mmap based page allocator to improve
+		overall performance.  For this ebuild fork, it is not recommended
+		to turn it on for stability purposes.</flag>
+	<flag name="hardened">Ensures less problems with hardened build.</flag>
+	<flag name="coverage">Enable code coverage support</flag>
+	<flag name="egl">Enable EGL support</flag>
+	<flag name="ftl-jit">Builds an additional tier for JIT used for
+		JavaScript scripts with longer than expected execution time
+		with marginal benefits.</flag>
+	<flag name="geolocation">Enable geolocation support through <pkg>app-misc/geoclue</pkg></flag>
+	<flag name="gles2">Enable GLESv2 support</flag>
+	<flag name="jit">Enables JIT support for JavaScriptCore for
+		significantly faster code execution.</flag>
+	<flag name="jumbo-build">Combine source files to speed up build process</flag>
+	<flag name="nsplugin">Enable full nsplugin support (GTK2 plugins)</flag>
+	<flag name="webgl">Build support for the WebGL HTML API using <pkg>virtual/opengl</pkg></flag>
+</use>
 </pkgmetadata>

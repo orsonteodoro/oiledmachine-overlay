@@ -20,9 +20,9 @@ LICENSE="LGPL-2+ BSD unicode"
 API_VERSION="4.0"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 SLOT="${SLOT_MAJOR}/37" # soname version of libwebkit2gtk-4.0
-KEYWORDS="~amd64 ~ia64 ~ppc64 ~sparc ~x86"
+KEYWORDS="amd64 arm64 ~ppc64 ~sparc x86"
 
-IUSE="aqua coverage +egl +geolocation gles2-only gnome-keyring +gstreamer gtk-doc +introspection +jpeg2k +jumbo-build libnotify +opengl seccomp spell wayland +X"
+IUSE="aqua +egl +geolocation gles2-only gnome-keyring +gstreamer gtk-doc +introspection +jpeg2k +jumbo-build libnotify +opengl seccomp spell wayland +X"
 IUSE+=" accelerated-2d-canvas bmalloc ftl-jit hardened +jit minibrowser +webgl"
 
 # gstreamer with opengl/gles2 needs egl
@@ -58,6 +58,7 @@ wpe_depend="
 	>=gui-libs/libwpe-1.3.0:1.0[${MULTILIB_USEDEP}]
 	>=gui-libs/wpebackend-fdo-1.3.1:1.0[${MULTILIB_USEDEP}]
 "
+# TODO: gst-plugins-base[X] is only needed when build configuration ends up with GLX set, but that's a bit automagic too to fix
 RDEPEND="
 	>=x11-libs/cairo-1.16.0:=[X?,${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.13.0:1.0[${MULTILIB_USEDEP}]
@@ -84,7 +85,7 @@ RDEPEND="
 	spell? ( >=app-text/enchant-0.22:2[${MULTILIB_USEDEP}] )
 	gstreamer? (
 		>=media-libs/gstreamer-1.14:1.0[${MULTILIB_USEDEP}]
-		>=media-libs/gst-plugins-base-1.14:1.0[egl?,opengl?,${MULTILIB_USEDEP}]
+		>=media-libs/gst-plugins-base-1.14:1.0[egl?,opengl?,X?,${MULTILIB_USEDEP}]
 		gles2-only? ( media-libs/gst-plugins-base:1.0[gles2,${MULTILIB_USEDEP}] )
 		>=media-plugins/gst-plugins-opus-1.14.4-r1:1.0[${MULTILIB_USEDEP}]
 		>=media-libs/gst-plugins-bad-1.14:1.0[${MULTILIB_USEDEP}] )
@@ -104,6 +105,8 @@ RDEPEND="
 	gles2-only? ( media-libs/mesa[gles2,${MULTILIB_USEDEP}] )
 	opengl? ( virtual/opengl[${MULTILIB_USEDEP}] )
 	wayland? (
+		dev-libs/wayland[${MULTILIB_USEDEP}]
+		>=dev-libs/wayland-protocols-1.12[${MULTILIB_USEDEP}]
 		opengl? ( ${wpe_depend} )
 		gles2-only? ( ${wpe_depend} )
 	)
@@ -184,7 +187,7 @@ pkg_pretend() {
 
 	if ! use opengl && ! use gles2-only; then
 		ewarn
-		ewarn "You are disabling OpenGL usage (USE=opengl or USE=gles-only) completely."
+		ewarn "You are disabling OpenGL usage (USE=opengl or USE=gles2-only) completely."
 		ewarn "This is an unsupported configuration meant for very specific embedded"
 		ewarn "use cases, where there truly is no GL possible (and even that use case"
 		ewarn "is very unlikely to come by). If you have GL (even software-only), you"
@@ -204,8 +207,12 @@ pkg_setup() {
 
 src_prepare() {
 	eapply "${FILESDIR}/${PN}-2.24.4-eglmesaext-include.patch" # bug 699054 # https://bugs.webkit.org/show_bug.cgi?id=204108
-	eapply "${FILESDIR}"/2.26.2-fix-arm-non-unified-build.patch # bug 704194
 	eapply "${FILESDIR}"/2.26.3-fix-gtk-doc.patch # bug 704550 - retest without it once we can depend on >=gtk-doc-1.32
+	eapply "${FILESDIR}"/${PV}-fix-yelp-desktopless-build.patch
+	eapply "${FILESDIR}"/${PV}-use-gst-audiointerleave.patch
+	eapply "${FILESDIR}"/${PV}-fix-ppc64-JSC.patch
+	eapply "${FILESDIR}"/${PV}-opengl-without-X-fixes.patch
+	eapply "${FILESDIR}"/${PV}-non-jumbo-fix.patch
 	cmake-utils_src_prepare
 	gnome2_src_prepare
 	multilib_copy_sources
@@ -328,7 +335,7 @@ multilib_src_configure() {
 		ewarn "The accelerated-2d-canvas USE flag is unstable and not recommended."
 	fi
 
-	cmake-utils_src_configure
+	WK_USE_CCACHE=NO cmake-utils_src_configure
 }
 
 multilib_src_compile() {
@@ -347,7 +354,6 @@ multilib_src_install() {
 
 	# Prevents crashes on PaX systems, bug #522808
 	local d="${ED}usr/$(get_libdir)/misc/webkit2gtk-${API_VERSION}"
-	pax-mark m "${d}/jsc" \
-		"${d}/WebKitWebProcess"
+	pax-mark m "${d}/jsc" "${d}/WebKitWebProcess"
 	pax-mark m "${d}/WebKitPluginProcess"
 }
