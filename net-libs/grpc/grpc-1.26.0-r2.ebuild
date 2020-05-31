@@ -89,18 +89,20 @@ multilib_src_install() {
 
 	use static-libs || find "${ED}" -name '*.a' -delete
 
-	if use examples; then
-		find examples -name '.gitignore' -delete || die
-		dodoc -r examples
-		docompress -x /usr/share/doc/${PF}/examples
-	fi
+	if multilib_is_native_abi ; then
+		if use examples; then
+			find examples -name '.gitignore' -delete || die
+			dodoc -r examples
+			docompress -x /usr/share/doc/${PF}/examples
+		fi
 
-	if use doc; then
-		find doc -name '.gitignore' -delete || die
-		local DOCS=( AUTHORS CONCEPTS.md README.md TROUBLESHOOTING.md doc/. )
-	fi
+		if use doc; then
+			find doc -name '.gitignore' -delete || die
+			local DOCS=( AUTHORS CONCEPTS.md README.md TROUBLESHOOTING.md doc/. )
+		fi
 
-	einstalldocs
+		einstalldocs
+	fi
 }
 
 pkg_postinst() {
