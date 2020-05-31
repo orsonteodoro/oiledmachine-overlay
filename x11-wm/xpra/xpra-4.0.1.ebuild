@@ -110,11 +110,10 @@ RDEPEND="${COMMON_DEPEND}
 		  dev-python/pyinotify[${PYTHON_USEDEP}]
 		>=media-libs/opencv-2.0[python] )"
 DEPEND="${COMMON_DEPEND}
-	cuda? ( dev-util/nvidia-cuda-sdk )
+	cuda? ( >=dev-util/nvidia-cuda-sdk-7.5 )
 	>=dev-python/cython-0.16[${PYTHON_USEDEP}]
 	virtual/pkgconfig"
 PATCHES=( "${FILESDIR}"/${PN}-2.5.0_rc5-ignore-gentoo-no-compile.patch
-	  "${FILESDIR}"/${PN}-2.0-suid-warning.patch
 	  "${FILESDIR}"/${PN}-2.5.0_rc5-openrc-init-fix.patch
 	  "${FILESDIR}"/${PN}-3.0_rc1-ldconfig-skip.patch )
 inherit eutils flag-o-matic linux-info prefix user tmpfiles xdg
@@ -211,9 +210,9 @@ python_configure_all() {
 	)
 
 	if use gtk3 ; then
-		mydistutilsargs+=( --with-gtk_x11 --without-gtk2 --with-gtk3 )
+		mydistutilsargs+=( --with-gtk_x11 --with-gtk3 )
 	else
-		mydistutilsargs+=( --without-gtk_x11 --without-gtk2 --without-gtk3 )
+		mydistutilsargs+=( --without-gtk_x11 --without-gtk3 )
 	fi
 
 	# see https://www.xpra.org/trac/ticket/1080
