@@ -6,22 +6,22 @@ DESCRIPTION="a small C library for x86 CPU detection and feature extraction"
 HOMEPAGE="http://libcpuid.sourceforge.net/"
 LICENSE="BSD-2"
 KEYWORDS="~amd64 ~x86"
-SLOT="0/${PVR}"
+SLOT="0/${PV}"
 IUSE="doc python test"
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python3_{6,7,8} )
 inherit python-single-r1
 REQUIRED_USE="test? ( python )
 	      python? ( ${PYTHON_REQUIRED_USE} )"
 DEPEND="doc? ( app-doc/doxygen )
 	python? ( ${PYTHON_DEPS} )"
-EGIT_COMMIT="8db3b8d2d32d22437f063ce692a1b9bb15e42d18"
+EGIT_COMMIT="52c5f505cff57266b32aa8eb95eb7c7fc47db94b"
 SRC_URI=\
 "https://github.com/anrieff/${PN}/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
 inherit autotools cmake-utils eutils multilib-minimal
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
-PATCHES=( "${FILESDIR}/${PN}-0.4.1-cmake-customize-libdir.patch" )
+PATCHES=( "${FILESDIR}/${PN}-0.5.0-cmake-customize-libdir.patch" )
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup

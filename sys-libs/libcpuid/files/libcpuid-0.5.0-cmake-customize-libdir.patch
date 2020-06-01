@@ -1,0 +1,25 @@
+diff -urp libcpuid-0.5.0.orig/libcpuid/CMakeLists.txt libcpuid-0.5.0/libcpuid/CMakeLists.txt
+--- libcpuid-0.5.0.orig/libcpuid/CMakeLists.txt	2020-05-26 00:17:00.000000000 -0700
++++ libcpuid-0.5.0/libcpuid/CMakeLists.txt	2020-05-31 21:32:02.586653125 -0700
+@@ -55,7 +55,7 @@ endif()
+ 
+ # Configuration
+ set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
+-set(config_install_dir "lib/cmake/${PROJECT_NAME}")
++set(config_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
+ set(version_config "${generated_dir}/${PROJECT_NAME}ConfigVersion.cmake")
+ set(project_config "${generated_dir}/${PROJECT_NAME}Config.cmake")
+ set(TARGETS_EXPORT_NAME "${PROJECT_NAME}Targets")
+@@ -75,8 +75,8 @@ configure_package_config_file("${CMAKE_M
+ install(
+   TARGETS cpuid
+   EXPORT "${TARGETS_EXPORT_NAME}"
+-  LIBRARY DESTINATION "lib"
+-  ARCHIVE DESTINATION "lib"
++  LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++  ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+   RUNTIME DESTINATION "bin"
+   INCLUDES DESTINATION "include/libcpuid"
+   PUBLIC_HEADER DESTINATION "include/libcpuid")
+Only in libcpuid-0.5.0/libcpuid: CMakeLists.txt.orig
+Only in libcpuid-0.5.0/libcpuid: CMakeLists.txt.rej
