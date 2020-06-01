@@ -124,7 +124,6 @@ dev-java/netbeans-alice
 dev-libs/asmlib
 dev-libs/hyphen
 dev-libs/leveldb
-dev-libs/libdnet
 dev-libs/libev
 dev-libs/libfreenect
 dev-libs/libspotify

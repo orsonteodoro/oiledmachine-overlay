@@ -112,7 +112,6 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-libs/asmlib | TBA |
 | dev-libs/hyphen | TBA |
 | dev-libs/leveldb | TBA |
-| dev-libs/libdnet | TBA |
 | dev-libs/libfreenect | TBA |
 | dev-libs/libspotify | TBA |
 | dev-libs/log4c | TBA |
