@@ -1,12 +1,12 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=6
 inherit cmake-multilib
 
 DESCRIPTION="The Portable OpenGL FrameWork"
 HOMEPAGE="https://www.glfw.org/"
-SRC_URI="mirror://sourceforge/glfw/${P}.tar.bz2"
+SRC_URI="https://github.com/glfw/glfw/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="ZLIB"
 SLOT="0"
@@ -15,7 +15,6 @@ IUSE="examples wayland"
 
 RDEPEND="
 	x11-libs/libxkbcommon[${MULTILIB_USEDEP}]
-	media-libs/vulkan-loader[${MULTILIB_USEDEP}]
 	!wayland? (
 		virtual/opengl[${MULTILIB_USEDEP}]
 		x11-libs/libX11[${MULTILIB_USEDEP}]
