@@ -8,13 +8,13 @@ inherit eapi7-ver eutils fdo-mime gnome2-utils unpacker pax-utils
 DESCRIPTION="A 3D interface to the planet"
 HOMEPAGE="https://earth.google.com/"
 # See https://support.google.com/earth/answer/168344?hl=en for list of direct links
-EXPECTED_SHA256="db3f4b224426789ffb8d76a5f64126f8a2822bc42d30da162ac05d039047a152"
+EXPECTED_SHA256="57b6c970609dc2960e9255b08a7ddf3af2581cb7c06ff92d16820269d0b2530d"
 MY_PV=$(ver_cut 1-3 ${PV})
 SRC_FN_AMD64="google-earth-pro-stable_${MY_PV}_amd64.deb"
 DEST_FN_AMD64="GoogleEarthProLinux-${MY_PV}_${EXPECTED_SHA256}_amd64.deb"
 SRC_URI="amd64? ( https://dl.google.com/dl/linux/direct/${SRC_FN_AMD64}
 			-> ${DEST_FN_AMD64} )"
-LICENSE="googleearthpro-7.3.3
+LICENSE="googleearthpro-7.3.2
 	Apache-2.0
 	BSD
 	Boost-1.0
@@ -31,12 +31,12 @@ LICENSE="googleearthpro-7.3.3
 	!system-gdal? ( BSD Info-ZIP MIT Qhull HDF-EOS gdal-degrib-and-g2clib e_log.c )
 	!system-icu? ( BSD )
 	!system-openssl? ( openssl )
-	!system-qt5? ( BSD-2 BSD LGPL-2.1 googleearthpro-7.3.3 )
+	!system-qt5? ( BSD-2 BSD LGPL-2.1 googleearthpro-7.3.2 )
 	!system-spnav? ( BSD )
 	ZLIB"
 # libvpx is BSD.  libvpx is referenced in ffmpeg and possibly internally
 # Qt5WebKit BSD-2, BSD (ANGLE), LGPL-2.1 (for WebCore), plus possibly custom code
-# More custom licenses are located in googleearthpro-7.3.3
+# More custom licenses are located in googleearthpro-7.3.2
 SLOT="0"
 KEYWORDS="~amd64"
 RESTRICT="mirror splitdebug fetch" # fetch for more control and determinism
@@ -54,22 +54,30 @@ QA_PREBUILT="*"
 # Using system-openssl, system-icu USE flags requires custom slotting
 
 EXPAT_V="2.1"
-GDAL_V="2.3.2"
+GDAL_V="1.11.5"
 FFMPEG_V="3.2.4"
 ICU_V="54"
-OPENSSL_V="1.0.2t"
+OPENSSL_V="1.0.2o"
 QT_VERSION="5.5.1" # The version distributed with ${PN}
-INTERNAL_PV="7.3.3.7721"
+INTERNAL_PV="7.3.2.5815"
 
 RDEPEND="
+	>=app-arch/bzip2-1.0.6
 	>=dev-db/sqlite-3.8.2:3
+	>=dev-lang/orc-0.4
 	>=dev-libs/glib-2.0:2
+	>=dev-libs/libbsd-0.6.0
+	>=dev-libs/libffi-3.0.13
+	>=media-gfx/darktable-1.4
 	>=media-libs/fontconfig-2.11.0
 	>=media-libs/freetype-2.5.2
 	>=media-libs/glu-9.0
+	>=media-libs/libpng-1.6
 	>=media-plugins/gst-plugins-meta-1.2.3:1.0
 	>=net-libs/libproxy-0.4.11
-	>=sys-devel/gcc-4.9.4[cxx]
+	>=sys-apps/dbus-1.6.18
+	>=sys-apps/util-linux-2.20.1
+	>=sys-devel/gcc-4.8.5[cxx]
 	>=sys-libs/zlib-1.2.8
 	virtual/opengl
 	virtual/ttf-fonts
@@ -77,17 +85,21 @@ RDEPEND="
 	>=x11-libs/libSM-1.2.1
 	>=x11-libs/libX11-1.6.2
 	>=x11-libs/libXau-1.0.8
+	>=x11-libs/libXcomposite-0.4.4
 	>=x11-libs/libXdmcp-1.1.1
 	>=x11-libs/libXext-1.3.2
+	>=x11-libs/libXfixes-5.0.1
 	>=x11-libs/libXi-1.7.1
 	>=x11-libs/libXrender-0.9.8
+	>=x11-libs/libdrm-2.4.52
 	>=x11-libs/libxcb-1.10
+	>=x11-libs/libxshmfence-1.1
 	system-expat? ( >=dev-libs/expat-${EXPAT_V} )
 	system-ffmpeg? (
 		<media-video/ffmpeg-4
 		>=media-video/ffmpeg-${FFMPEG_V}
 	)
-	system-gdal? ( >=sci-libs/gdal-${GDAL_V}:2 )
+	system-gdal? ( >=sci-libs/gdal-${GDAL_V}:1 )
 	system-icu? ( dev-libs/icu:${ICU_V} )
 	system-openssl? ( >=dev-libs/openssl-${OPENSSL_V}:1.0 )
 	system-qt5? (
@@ -118,7 +130,7 @@ S=${WORKDIR}/opt/google/earth/pro
 
 pkg_setup() {
 	if use system-expat ; then
-		ewarn "Using system-expat has not not tested"
+		ewarn "Using system-expat has not been tested"
 	else
 		ewarn "The internal Expat ${EXPAT_V} library may contain CVE advisories.  For details see"
 		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=expat%202.1&search_type=all"
@@ -303,7 +315,7 @@ src_unpack() {
 	fi
 
 	if use system-qt5 ; then
-		einfo "Removing bundled libs"
+		einfo "Removing bundled qt5"
 		pushd opt/google/earth/pro || die
 		rm -v \
 		      libQt5Core.so.5 \
@@ -339,7 +351,7 @@ src_prepare() {
 	# We have no ld-lsb.so.3 symlink.
 	# Thanks to Nathan Phillip Brink <ohnobinki@ohnopublishing.net> for suggesting patchelf.
 	einfo "Running patchelf"
-#	patchelf --set-interpreter /lib/ld-linux$(usex amd64 "-x86-64" "").so.2 ${MY_PN}-bin || die "patchelf failed" #segfaults
+	#patchelf --set-interpreter /lib/ld-linux$(usex amd64 "-x86-64" "").so.2 ${MY_PN}-bin || die "patchelf failed" #segfaults
 
 	# Set RPATH for preserve-libs handling (bug #265372).
 	local x
@@ -385,6 +397,9 @@ src_install() {
 
 	insinto /opt/${PN}
 	doins -r *
+	# Missing from licenses.rcc file but mentioned in ${PN} 7.3.3
+	doins "${FILESDIR}/e_log.c.LICENSE"
+	doins "${FILESDIR}/HDF-EOS.LICENSE"
 
 	fperms +x /opt/${PN}/${MY_PN}{,-bin}
 	cd "${ED}" || die
