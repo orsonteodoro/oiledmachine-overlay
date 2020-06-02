@@ -54,6 +54,9 @@ dev-dotnet/xwt
 # build time failures
 =net-libs/webkit-gtk-2.26.4-r1
 
+# Load time problems
+=sci-geosciences/googleearthpro-7.3.3
+
 # Masked for security reasons
 #--------------------------------------------------------------------------------------------------
 
