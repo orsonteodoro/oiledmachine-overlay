@@ -68,13 +68,16 @@ RDEPEND="
 	>=dev-libs/glib-2.0:2
 	>=dev-libs/libbsd-0.6.0
 	>=dev-libs/libffi-3.0.13
+	>=dev-libs/libxml2-2.9.1
 	dev-libs/libpcre
+	>=media-libs/alsa-lib-1.0.27.2
 	>=media-libs/fontconfig-2.11.0
 	>=media-libs/freetype-2.5.2
 	>=media-libs/glu-9.0
 	>=media-libs/libpng-1.6
 	>=media-plugins/gst-plugins-meta-1.2.3:1.0
 	>=net-libs/libproxy-0.4.11
+	>=net-print/cups-1.7.2
 	>=sys-apps/dbus-1.6.18
 	>=sys-apps/util-linux-2.20.1
 	>=sys-devel/gcc-4.8.5[cxx]
@@ -402,9 +405,10 @@ src_install() {
 	doins "${FILESDIR}/e_log.c.LICENSE"
 	doins "${FILESDIR}/HDF-EOS.LICENSE"
 
-	fperms +x /opt/${PN}/${MY_PN}{,-bin}
+	fperms +x /opt/${PN}/${MY_PN}{,-bin} \
+		/opt/${PN}/{gpsbabel,repair_tool}
 	cd "${ED}" || die
-	find . -type f -name "*.so.*" -exec chmod +x '{}' +
+	find . -type f -name "*.so*" -exec chmod +x '{}' +
 
 	pax-mark -m "${ED%/}"/opt/${PN}/${MY_PN}-bin
 }

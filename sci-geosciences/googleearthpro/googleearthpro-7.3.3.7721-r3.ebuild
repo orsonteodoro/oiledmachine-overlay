@@ -39,7 +39,7 @@ LICENSE="googleearthpro-7.3.3
 # More custom licenses are located in googleearthpro-7.3.3
 SLOT="0"
 KEYWORDS="~amd64"
-RESTRICT="mirror splitdebug fetch" # fetch for more control and determinism
+RESTRICT="mirror splitdebug fetch strip" # fetch for more control and determinism
 IUSE="system-expat system-ffmpeg system-icu system-gdal system-openssl system-qt5 system-spnav"
 MY_PN="${PN//pro/}"
 
@@ -68,13 +68,16 @@ RDEPEND="
 	>=dev-libs/glib-2.0:2
 	>=dev-libs/libbsd-0.6.0
 	>=dev-libs/libffi-3.0.13
+	>=dev-libs/libxml2-2.9.1
 	dev-libs/libpcre
+	>=media-libs/alsa-lib-1.0.27.2
 	>=media-libs/fontconfig-2.11.0
 	>=media-libs/freetype-2.5.2
 	>=media-libs/glu-9.0
 	>=media-libs/libpng-1.6
 	>=media-plugins/gst-plugins-meta-1.2.3:1.0
 	>=net-libs/libproxy-0.4.11
+	>=net-print/cups-1.7.2
 	>=sys-apps/dbus-1.6.18
 	>=sys-apps/util-linux-2.20.1
 	>=sys-devel/gcc-4.9.4[cxx]
@@ -399,9 +402,10 @@ src_install() {
 	insinto /opt/${PN}
 	doins -r *
 
-	fperms +x /opt/${PN}/${MY_PN}{,-bin}
+	fperms +x /opt/${PN}/${MY_PN}{,-bin} \
+		/opt/${PN}/{gpsbabel,repair_tool}
 	cd "${ED}" || die
-	find . -type f -name "*.so.*" -exec chmod +x '{}' +
+	find . -type f -name "*.so*" -exec chmod +x '{}' +
 
 	pax-mark -m "${ED%/}"/opt/${PN}/${MY_PN}-bin
 }
