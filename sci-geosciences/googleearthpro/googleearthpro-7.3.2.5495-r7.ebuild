@@ -8,7 +8,7 @@ inherit eapi7-ver eutils fdo-mime gnome2-utils unpacker pax-utils
 DESCRIPTION="A 3D interface to the planet"
 HOMEPAGE="https://earth.google.com/"
 # See https://support.google.com/earth/answer/168344?hl=en for list of direct links
-EXPECTED_SHA256="57b6c970609dc2960e9255b08a7ddf3af2581cb7c06ff92d16820269d0b2530d"
+EXPECTED_SHA256="17fa9df4aa917a25d563d37620c925d5def9bde06fc578f7118d46318640986e"
 MY_PV=$(ver_cut 1-3 ${PV})
 SRC_FN_AMD64="google-earth-pro-stable_${MY_PV}_amd64.deb"
 DEST_FN_AMD64="GoogleEarthProLinux-${MY_PV}_${EXPECTED_SHA256}_amd64.deb"
@@ -59,23 +59,31 @@ FFMPEG_V="3.2.4"
 ICU_V="54"
 OPENSSL_V="1.0.2o"
 QT_VERSION="5.5.1" # The version distributed with ${PN}
-INTERNAL_PV="7.3.2.5815"
+INTERNAL_PV="7.3.2.5495"
 
 RDEPEND="
 	>=app-arch/bzip2-1.0.6
 	>=dev-db/sqlite-3.8.2:3
 	>=dev-lang/orc-0.4
 	>=dev-libs/glib-2.0:2
+	  dev-libs/double-conversion
+	>=dev-libs/gmp-5.1.3
 	>=dev-libs/libbsd-0.6.0
 	>=dev-libs/libffi-3.0.13
+	  dev-libs/libpcre
+	>=dev-libs/libtasn1-3.4
+	  dev-libs/libunistring
 	>=dev-libs/libxml2-2.9.1
-	dev-libs/libpcre
+	  dev-libs/nettle
 	>=media-libs/alsa-lib-1.0.27.2
 	>=media-libs/fontconfig-2.11.0
 	>=media-libs/freetype-2.5.2
 	>=media-libs/glu-9.0
+	>=media-libs/harfbuzz-0.9.27
 	>=media-libs/libpng-1.6
 	>=media-plugins/gst-plugins-meta-1.2.3:1.0
+	>=net-dns/libidn2-0.9
+	>=net-libs/gnutls-3.4.10
 	>=net-libs/libproxy-0.4.11
 	>=net-print/cups-1.7.2
 	>=sys-apps/dbus-1.6.18
@@ -260,7 +268,7 @@ pkg_nofetch() {
 	local dest_fn
 	if use amd64 ; then
 		src_fn="${SRC_FN_AMD64}"
-		dest_fn="GoogleEarthProLinux-${MY_PV}_\$(sha256sum ${SRC_FN_AMD64} | cut -f 1 -d " ")_amd64.deb"
+		dest_fn="GoogleEarthProLinux-${MY_PV}_\$(sha256sum ${SRC_FN_AMD64} | cut -f 1 -d ' ')_amd64.deb"
 	else
 		die "${ARCH} is not supported"
 	fi
