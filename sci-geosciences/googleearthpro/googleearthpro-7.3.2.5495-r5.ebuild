@@ -68,7 +68,6 @@ RDEPEND="
 	>=dev-libs/glib-2.0:2
 	>=dev-libs/libbsd-0.6.0
 	>=dev-libs/libffi-3.0.13
-	>=media-gfx/darktable-1.4
 	>=media-libs/fontconfig-2.11.0
 	>=media-libs/freetype-2.5.2
 	>=media-libs/glu-9.0
