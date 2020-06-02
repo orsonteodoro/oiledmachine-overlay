@@ -245,6 +245,8 @@ pkg_nofetch() {
 	if use amd64 ; then
 		src_fn="${SRC_FN_AMD64}"
 		dest_fn="GoogleEarthProLinux-${MY_PV}_\$(sha256sum ${SRC_FN_AMD64} | cut -f 1 -d " ")_amd64.deb"
+	else
+		die "${ARCH} is not supported"
 	fi
 
 	einfo "Please download"
