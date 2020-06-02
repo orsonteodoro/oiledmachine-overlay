@@ -55,7 +55,9 @@ dev-dotnet/xwt
 =net-libs/webkit-gtk-2.26.4-r1
 
 # Load time problems
-=sci-geosciences/googleearthpro-7.3.3
+# output:: Illegal instruction
+# dmesg::  traps: googleearth-bin[11657] trap invalid opcode ip:7fe48ce19124 sp:7ffd7854c690 error:0 in libsgutil.so[7fe48cd05000+161000]
+>=sci-geosciences/googleearthpro-7.3.3
 
 # Masked for security reasons
 #--------------------------------------------------------------------------------------------------
