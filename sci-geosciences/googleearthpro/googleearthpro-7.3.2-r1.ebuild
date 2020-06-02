@@ -23,6 +23,7 @@ LICENSE="googleearthpro-7.3.2
 	MS-RL
 	!system-expat? ( MIT )
 	!system-ffmpeg? ( LGPL-2.1 BSD )
+	!system-gdal? ( BSD Info-ZIP MIT )
 	!system-icu? ( BSD )
 	!system-openssl? ( openssl )
 	!system-qt5? ( BSD-2 BSD LGPL-2.1 googleearthpro-7.3.2 )
