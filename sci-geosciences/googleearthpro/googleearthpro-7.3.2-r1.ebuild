@@ -16,6 +16,7 @@ LICENSE="googleearthpro-7.3.2
 	Boost-1.0
 	FIPL-1.0
 	FTL
+	GEOTRANS
 	GPL-2
 	IJG
 	Info-ZIP
