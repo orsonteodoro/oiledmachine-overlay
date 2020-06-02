@@ -68,6 +68,7 @@ RDEPEND="
 	>=dev-libs/glib-2.0:2
 	>=dev-libs/libbsd-0.6.0
 	>=dev-libs/libffi-3.0.13
+	dev-libs/libpcre
 	>=media-libs/fontconfig-2.11.0
 	>=media-libs/freetype-2.5.2
 	>=media-libs/glu-9.0
@@ -90,6 +91,7 @@ RDEPEND="
 	>=x11-libs/libXfixes-5.0.1
 	>=x11-libs/libXi-1.7.1
 	>=x11-libs/libXrender-0.9.8
+	>=x11-libs/libXxf86vm-1.1.3
 	>=x11-libs/libdrm-2.4.52
 	>=x11-libs/libxcb-1.10
 	>=x11-libs/libxshmfence-1.1
@@ -102,7 +104,7 @@ RDEPEND="
 	system-icu? ( dev-libs/icu:${ICU_V} )
 	system-openssl? ( >=dev-libs/openssl-${OPENSSL_V}:1.0 )
 	system-qt5? (
-		=dev-qt/qtcore-${QT_VERSION}*:5
+		=dev-qt/qtcore-${QT_VERSION}*:5[icu]
 		=dev-qt/qtdbus-${QT_VERSION}*:5
 		=dev-qt/qtdeclarative-${QT_VERSION}*:5
 		=dev-qt/qtgui-${QT_VERSION}*:5[dbus,xcb,gif,jpeg]
