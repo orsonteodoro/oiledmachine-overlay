@@ -3,13 +3,17 @@
 
 EAPI=5
 
-inherit pax-utils eutils unpacker fdo-mime gnome2-utils
+inherit eapi7-ver eutils fdo-mime gnome2-utils unpacker pax-utils
 
 DESCRIPTION="A 3D interface to the planet"
 HOMEPAGE="https://earth.google.com/"
 # See https://support.google.com/earth/answer/168344?hl=en for list of direct links
-SRC_URI="amd64? ( https://dl.google.com/dl/linux/direct/google-earth-pro-stable_${PV}_amd64.deb
-			-> GoogleEarthProLinux-${PV}_amd64.deb )"
+EXPECTED_SHA256="17fa9df4aa917a25d563d37620c925d5def9bde06fc578f7118d46318640986e"
+MY_PV=$(ver_cut 1-3 ${PV})
+SRC_FN_AMD64="google-earth-pro-stable_${MY_PV}_amd64.deb"
+DEST_FN_AMD64="GoogleEarthProLinux-${MY_PV}_${EXPECTED_SHA256}_amd64.deb"
+SRC_URI="amd64? ( https://dl.google.com/dl/linux/direct/${SRC_FN_AMD64}
+			-> ${DEST_FN_AMD64} )"
 LICENSE="googleearthpro-7.3.2
 	Apache-2.0
 	BSD
@@ -24,7 +28,7 @@ LICENSE="googleearthpro-7.3.2
 	MS-RL
 	!system-expat? ( MIT )
 	!system-ffmpeg? ( LGPL-2.1 BSD )
-	!system-gdal? ( BSD Info-ZIP MIT Qhull HDF-EOS gdal-degrib-and-g2clib )
+	!system-gdal? ( BSD Info-ZIP MIT Qhull HDF-EOS gdal-degrib-and-g2clib e_log.c )
 	!system-icu? ( BSD )
 	!system-openssl? ( openssl )
 	!system-qt5? ( BSD-2 BSD LGPL-2.1 googleearthpro-7.3.2 )
@@ -35,7 +39,7 @@ LICENSE="googleearthpro-7.3.2
 # More custom licenses are located in googleearthpro-7.3.2
 SLOT="0"
 KEYWORDS="~amd64"
-RESTRICT="mirror splitdebug"
+RESTRICT="mirror splitdebug fetch" # fetch for more control and determinism
 IUSE="system-expat system-ffmpeg system-icu system-gdal system-openssl system-qt5 system-spnav"
 MY_PN="${PN//pro/}"
 
@@ -55,6 +59,7 @@ FFMPEG_V="3.2.4"
 ICU_V="54"
 OPENSSL_V="1.0.2o"
 QT_VERSION="5.5.1" # The version distributed with ${PN}
+INTERNAL_PV="7.3.2.5495"
 
 RDEPEND="
 	>=dev-db/sqlite-3.8.2:3
@@ -234,15 +239,38 @@ pkg_setup() {
 }
 
 pkg_nofetch() {
-	einfo "Wrong checksum or file size means that Google silently replaced the distfile with a newer version."
-	einfo "Note that Gentoo cannot mirror the distfiles due to license reasons, so we have to follow the bump."
-	einfo "Please file a version bump bug on https://bugs.gentoo.org (search existing bugs for googleearth first!)."
-	einfo "By redigesting the file yourself, you will install a different version than the ebuild says, untested!"
+	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+	local src_fn
+	local dest_fn
+	if use amd64 ; then
+		src_fn="${SRC_FN_AMD64}"
+		dest_fn="GoogleEarthProLinux-${MY_PV}_\$(sha256sum ${SRC_FN_AMD64} | cut -f 1 -d " ")_amd64.deb"
+	fi
+
+	einfo "Please download"
+	einfo "  ${src_fn}"
+	einfo "from ${HOMEPAGE} and place them in ${distdir} as ${dest_fn}"
+	einfo "The shell assumes bash."
 }
 
 src_unpack() {
+	local arch
+	if use amd64 ; then
+		arch="amd64"
+	elif use x86 ; then
+		arch="i386"
+	else
+		die "${ARCH} not supported"
+	fi
+	local FN=GoogleEarthProLinux-${MY_PV}_${EXPECTED_SHA256}_${arch}.deb
+
+	X_SHA256=$(sha256sum "${DISTDIR}/${FN}" | cut -f 1 -d " ")
+	if [[ "${X_SHA256}" != "${EXPECTED_SHA256}" ]] ; then
+		die "sha256sum X_SHA256=${X_SHA256} (download) is not EXPECTED_SHA256=${EXPECTED_SHA256} for INTERNAL_PV=${INTERNAL_PV}"
+	fi
+
 	# default src_unpack fails with deb2targz installed, also this unpacks the data.tar.lzma as well
-	unpack_deb GoogleEarthProLinux-${PV}_$(usex amd64 "amd64" "i386").deb
+	unpack_deb ${FN}
 
 	if use system-expat ; then
 		einfo "Removing bundled expat"
@@ -355,6 +383,9 @@ src_install() {
 
 	insinto /opt/${PN}
 	doins -r *
+	# Missing from licenses.rcc file but mentioned in ${PN} 7.3.3
+	cat "${FILESDIR}/e_log.c" > "${T}/e_log.c.LICENSE" || die
+	doins "${T}/e_log.c.LICENSE"
 
 	fperms +x /opt/${PN}/${MY_PN}{,-bin}
 	cd "${ED}" || die
@@ -368,20 +399,10 @@ pkg_preinst() {
 }
 
 pkg_postinst() {
-	elog "When you get a crash starting Google Earth, try changing the file ~/.config/Google/GoogleEarthPlus.conf"
+	elog "When you get a crash starting Google Earth, try changing the file ~/.config/Google/GoogleEarthPro.conf"
 	elog "with the following options:"
 	elog "lastTip=4"
 	elog "enableTips=false"
-	elog ""
-	elog "In addition, the use of free video drivers may cause problems associated with using the Mesa"
-	elog "library. In this case, Google Earth 7x likely only works with the Gallium3D variant."
-	elog "To select the 32bit graphic library use the command:"
-	elog "	eselect mesa list"
-	elog "For example, for Radeon R300 (x86):"
-	elog "	eselect mesa set r300 2"
-	elog "For Intel Q33 (amd64):"
-	elog "	eselect mesa set 32bit i965 2"
-	elog "You may need to restart X afterwards."
 	elog ""
 	elog "If it fails to load, you may need to \`killall googleearth-bin\`"
 
