@@ -19,11 +19,11 @@ RESTRICT="fetch"
 SLOT=$(ver_cut 1-2 ${PV})
 # split due to flaky servers
 CORE_V=3.1.4
-RDEPEND="=dev-dotnet/core-${CORE_V}[samples?,docs?]
-	 =dev-dotnet/coreclr-${CORE_V}
-	 =dev-dotnet/corefx-${CORE_V}
-	 =dev-dotnet/cli-tools-${PV}
-	 =dev-dotnet/aspnetcore-${CORE_V}"
+RDEPEND="=dev-dotnet/core-${CORE_V}*:${SLOT}[samples?,docs?]
+	 =dev-dotnet/coreclr-${CORE_V}*:${SLOT}
+	 =dev-dotnet/corefx-${CORE_V}*:${SLOT}
+	 =dev-dotnet/cli-tools-${PV}*:${PV}
+	 =dev-dotnet/aspnetcore-${CORE_V}*:${SLOT}"
 
 pkg_postinst() {
 	einfo "Core version is ${CORE_V}"
