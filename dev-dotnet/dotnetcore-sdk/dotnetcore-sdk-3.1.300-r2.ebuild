@@ -19,7 +19,11 @@ RESTRICT="fetch"
 SLOT=$(ver_cut 1-2 ${PV})
 # split due to flaky servers
 CORE_V=3.1.4
-RDEPEND="=dev-dotnet/core-${CORE_V}*:${SLOT}[samples?,docs?]
+
+# On hold ; missing tarball
+#=dev-dotnet/core-${CORE_V}*:${SLOT}[samples?,docs?]
+
+RDEPEND="
 	 =dev-dotnet/coreclr-${CORE_V}*:${SLOT}
 	 =dev-dotnet/corefx-${CORE_V}*:${SLOT}
 	 =dev-dotnet/cli-tools-${PV}*:${PV}
