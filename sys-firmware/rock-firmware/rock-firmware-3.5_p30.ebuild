@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="Radeon Open Compute (ROCk) firmware"
 HOMEPAGE="https://rocm.github.io/"
-LICENSE="AMDGPU-FIRMWARE RADEON-FIRMWARE"
+LICENSE="AMDGPU-FIRMWARE"
 # LICENSE.ucode mentioned at
 #   https://rocm-documentation.readthedocs.io/en/latest/Installation_Guide/ROCK-Kernel-Driver_readme.html
 # License found at:

@@ -8,7 +8,7 @@ inherit linux-info unpacker
 DESCRIPTION="ROCk DKMS kernel module"
 HOMEPAGE="https://rocm-documentation.readthedocs.io/en/latest/Installation_Guide/ROCk-kernel.html"
 LICENSE="GPL-2 MIT
-	firmware? ( AMDGPU-FIRMWARE RADEON-FIRMWARE )"
+	firmware? ( AMDGPU-FIRMWARE )"
 KEYWORDS="amd64"
 MY_RPR="${PV//_p/-}" # Remote PR
 FN="rock-dkms_${MY_RPR}_all.deb"
