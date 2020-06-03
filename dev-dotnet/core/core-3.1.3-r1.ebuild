@@ -11,7 +11,7 @@ CORE_V=${PV}
 SRC_URI="\
 https://github.com/dotnet/core/archive/v${CORE_V}.tar.gz \
 	-> core-${CORE_V}.tar.gz"
-SLOT="0"
+SLOT="${PV}"
 S="${WORKDIR}"
 CORE_S="${S}/core-${CORE_V}"
 RESTRICT="mirror"
@@ -21,7 +21,7 @@ src_unpack() {
 }
 
 src_install() {
-	local dest="/usr/share/dotnetcore-sdk"
+	local dest="/usr/share/dotnetcore-sdk/${SLOT}"
 	local ddest="${D}/${dest}"
 	local dest_core="${dest}/core"
 	local ddest_core="${ddest}/core"
@@ -39,5 +39,5 @@ src_install() {
 
 pkg_postinst() {
 	einfo \
-	"Samples and documents were installed in /usr/share/dotnetcore-sdk/core"
+	"Samples and documents were installed in /usr/share/dotnetcore-sdk/${SLOT}/core"
 }
