@@ -8,21 +8,23 @@ EAPI=7
 DESCRIPTION="This repo contains the .NET Core command-line (CLI) tools, used for building .NET Core apps and libraries through your development flow (compiling, NuGet package management, running, testing, ...)."
 HOMEPAGE="https://github.com/dotnet/cli"
 LICENSE="MIT"
-KEYWORDS="~amd64"
+KEYWORDS="~amd64" # also arm32, arm64 https://github.com/dotnet/core/blob/master/release-notes/3.1/3.1-supported-os.md
 VERSION_SUFFIX=''
 DropSuffix="true" # true=official latest release, false=dev for live ebuilds
 IUSE="tests debug"
-SDK_V="3.1.100"
-FXR_V="3.3.1"
+SDK_V="3.1.200-preview-014946" # from global.json ; it must match or it will redownload
+# urls constructed from: https://dot.net/v1/dotnet-install.sh
+
 DOTNET_CLI_COMMIT="f6250b79a00848f18e6e7b076b561d0a794983d3" # exactly ${PV}
 SRC_URI="https://github.com/dotnet/cli/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
 	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )"
 #	 arm64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
 #	 arm? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )"
 SLOT="${PV}"
-# see scripts/docker/ubuntu.16.10/Dockerfile for dependencies
+# see scripts/docker/ubuntu.16.04/Dockerfile for dependencies
+# todo check if it requires <openssl-1.1 only
 RDEPEND="
-	>=dev-libs/icu-57
+	>=dev-libs/icu-55.1
 	>=dev-libs/openssl-1.0.2g
 	>=dev-util/lttng-ust-2.7.1
 	>=app-crypt/mit-krb5-1.13.2
@@ -35,11 +37,12 @@ DEPEND="${RDEPEND}
 	!dev-dotnet/dotnetcore-runtime-bin
 	!dev-dotnet/dotnetcore-sdk-bin
 	app-arch/unzip
-	dev-util/cmake
-	>=dev-util/lldb-3.6
+	>=dev-util/cmake-3.5.1
+	>=dev-util/lldb-3.6.2
 	dev-vcs/git
-	net-misc/curl
+	>=net-misc/curl-7.47
 	>=sys-devel/clang-3.5
+	>=sys-devel/make-4.1
 	sys-devel/gettext"
 _PATCHES=( "${FILESDIR}/dotnet-cli-2.1.505-null-LastWriteTimeUtc-minval.patch" )
 RESTRICT="mirror"
@@ -108,7 +111,8 @@ _fetch_cli() {
 }
 
 src_unpack() {
-	ewarn "This ebuild is under development and may not work"
+	ewarn "This ebuild is a WIP does not work."
+	ewarn "https://github.com/dotnet/sdk/issues/11795"
 	if [[ "${DropSuffix}" == "false" ]] ; then
 		_fetch_cli # for dev
 	else
@@ -203,7 +207,7 @@ _src_compile() {
 #	fi
 
 	einfo "Building CLI"
-	cd "${CLI_S}"
+	cd "${CLI_S}" || die
 	./build.sh --configuration ${mydebug^} --architecture ${myarch} ${buildargs_corecli} || die
 }
 
@@ -240,6 +244,7 @@ src_install() {
 	rm -rf "${ddest}"/shared/Microsoft.NETCore.App/${FXR_V} || die
 
 	dodir /usr/share/licenses/cli-tools-${PV}
+	FXR_V=$(grep -r -e "MicrosoftNETCoreAppInternalPackageVersion" "${CLI_S}/Versions.props" | head -n 1 | cut -f 2 -d ">" | cut -f 1 -d "<")
 	cp -a "${d_dotnet}"/{LICENSE.txt,ThirdPartyNotices.txt} "${D}/usr/share/licenses/cli-tools-${PV}" || die
 
 	# for monodevelop.  15.0 is toolsversion.
