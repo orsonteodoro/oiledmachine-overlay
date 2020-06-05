@@ -1,0 +1,19 @@
+--- a/src/Native/Unix/CMakeLists.txt.orig	2020-02-20 19:47:08.000000000 -0800
++++ b/src/Native/Unix/CMakeLists.txt	2020-04-02 10:46:55.356025836 -0700
+@@ -18,6 +18,7 @@ add_compile_options(-Wno-empty-translati
+ add_compile_options(-Wno-cast-align)
+ add_compile_options(-Wno-typedef-redefinition)
+ add_compile_options(-Wno-c11-extensions)
++add_compile_options(-Wno-atomic-implicit-seq-cst)
+ add_compile_options(-fPIC)
+ add_compile_options(-I${CMAKE_CURRENT_SOURCE_DIR}/Common)
+ add_compile_options(-I${CMAKE_CURRENT_BINARY_DIR}/Common)
+@@ -26,7 +27,7 @@ if(CMAKE_C_COMPILER_ID STREQUAL Clang)
+     add_compile_options(-Wthread-safety)
+     add_compile_options(-Wno-thread-safety-analysis)
+ endif()
+-add_compile_options(-Werror)
++#add_compile_options(-Werror)
+ 
+ if(CMAKE_SYSTEM_NAME STREQUAL Emscripten)
+     set(CLR_CMAKE_PLATFORM_WASM 1)
