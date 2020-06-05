@@ -25,7 +25,6 @@ SRC_URI="https://github.com/dotnet/cli/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.
 SLOT="${PV}"
 # see scripts/docker/ubuntu.16.04/Dockerfile for dependencies
 # todo check if it requires <openssl-1.1 only
-#	>=dev-libs/openssl-1.0.2g
 RDEPEND="
 	>=dev-libs/icu-55.1
 	>=dev-libs/openssl-compat-1.0.2o:1.0

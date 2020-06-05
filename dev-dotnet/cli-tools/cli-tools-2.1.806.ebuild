@@ -23,8 +23,6 @@ SRC_URI="https://github.com/dotnet/cli/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.
 #	 arm? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )"
 SLOT="${PV}"
 # see scripts/docker/ubuntu.16.04/Dockerfile for dependencies
-#	>=dev-libs/openssl-1.0.2g
-#	<dev-libs/openssl-1.1
 RDEPEND="
 	>=dev-libs/icu-55.1
 	>=dev-libs/openssl-compat-1.0.2o:1.0
