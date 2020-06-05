@@ -22,8 +22,8 @@ KEYWORDS="~amd64"
 CORE_V=${PV}
 DropSuffix="false" # true=official latest release, false=dev for live ebuilds
 MY_PN="AspNetCore"
-IUSE="debug doc tests"
-REQUIRED_USE="!tests" # broken
+IUSE="debug doc test"
+REQUIRED_USE="!test" # broken
 NETCORE_V="3.1.3-servicing.20128.1" # todo?
 NETFX_V="4.7.2" # max .NETFramework requested
 SDK_V="3.1.103" # from global.json
@@ -321,7 +321,7 @@ _src_prepare() {
 		sed -i -e 's|-sSL|-L|g' -e 's|wget -q |wget |g' "$f" || die
 	done
 
-	if ! use tests ; then
+	if ! use test ; then
 	_D="${ASPNETCORE_S}/src/submodules/googletest/googletest/xcode/Config"
 		sed -i -e "s|-Werror||g" "${D}/General.xcconfig"
 	fi

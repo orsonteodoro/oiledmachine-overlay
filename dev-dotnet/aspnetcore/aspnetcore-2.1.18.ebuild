@@ -22,8 +22,8 @@ KEYWORDS="~amd64"
 CORE_V=${PV}
 DropSuffix="false" # true=official latest release, false=dev for live ebuilds
 MY_PN="AspNetCore"
-IUSE="debug doc signalr tests"
-REQUIRED_USE="!tests" # broken
+IUSE="debug doc signalr test"
+REQUIRED_USE="!test" # broken
 NETFX_V="4.7.2" # max .NETFramework requested
 SDK_V="2.1.512" # from $HOME/.dotnet/buildtools/korebuild/*/config/sdk.version
 ASPNETCORE_COMMIT="8d09403118ca5d3d972b599b50f942be359a9a49" # exactly ${PV}
@@ -317,7 +317,7 @@ _src_prepare() {
 		sed -i -e 's|-sSL|-L|g' -e 's|wget -q |wget |g' "$f" || die
 	done
 
-	if ! use tests ; then
+	if ! use test ; then
 	_D="${ASPNETCORE_S}/src/submodules/googletest/googletest/xcode/Config"
 		sed -i -e "s|-Werror||g" "${D}/General.xcconfig"
 	fi
@@ -384,7 +384,7 @@ _src_compile() {
 	# force 1 since it slows down the pc
 	local numproc="1"
 
-	if ! use tests ; then
+	if ! use test ; then
 		buildargs_coreasp+=" /p:SkipTests=true /p:CompileOnly=true"
 	else
 		buildargs_coreasp+=" /p:SkipTests=false /p:CompileOnly=false"

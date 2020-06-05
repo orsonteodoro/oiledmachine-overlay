@@ -11,6 +11,6 @@
 		<flag name="doc">Installs extra documentation</flag>
 		<flag name="signalr">Install dependencies for SignalR
 		support if SignalR was marked optional.</flag>
-		<flag name="tests">Runs tests</flag>
+		<flag name="test">Runs tests</flag>
 	</use>
 </pkgmetadata>

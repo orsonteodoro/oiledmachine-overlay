@@ -22,7 +22,7 @@ KEYWORDS="~amd64"
 # ~x86 ~arm64 ~arm
 CORE_V=${PV}
 DOTNETCLI_V=2.1.2 # from DotnetCLIVersion.txt
-IUSE="debug doc numa tests"
+IUSE="debug doc numa test"
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we have
 # to keep downloading it everytime the sandbox is wiped.
 DOTNETCLI_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}"
@@ -151,7 +151,7 @@ _src_compile() {
 	local numproc="1"
 	buildargs_coreclr+=" -numproc ${numproc}"
 
-	if ! use tests ; then
+	if ! use test ; then
 		buildargs_coreclr+=" -skiptests"
 	#else
 		#buildargs_coreclr+=" "
