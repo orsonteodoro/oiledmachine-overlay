@@ -4,9 +4,9 @@
 EAPI=7
 DESCRIPTION="Home repository for .NET Core"
 HOMEPAGE="https://github.com/dotnet/core"
-LICENSE="MIT"
+LICENSE="all-rights-reserved MIT" # The vanilla MIT license does not contain all rights reserved
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
-IUSE="samples docs"
+IUSE="doc samples"
 CORE_V=${PV}
 SRC_URI="\
 https://github.com/dotnet/core/archive/v${CORE_V}.tar.gz \
@@ -28,13 +28,15 @@ src_install() {
 	if use samples ; then
 		insinto "${dest}"
 		doins -r "${CORE_S}/"/samples
-	else
-		rm -rf "${CORE_S}/"/samples || die
 	fi
-	if use docs ; then
+	rm -rf "${CORE_S}/"/samples || die
+	if use doc ; then
 		insinto "${dest_core}"
 		doins -r "${CORE_S}/"/*
 	fi
+
+	docinto license
+	dodoc LICENSE.TXT
 }
 
 pkg_postinst() {
