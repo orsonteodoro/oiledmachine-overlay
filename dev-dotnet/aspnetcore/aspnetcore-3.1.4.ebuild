@@ -11,8 +11,8 @@ modern cloud-based web applications on Windows, Mac, or Linux."
 HOMEPAGE="https://github.com/aspnet/AspNetCore/"
 LICENSE="all-rights-reserved
 	 Apache-2.0
-	 BSD-2
 	 BSD
+	 BSD-2
 	 ISC
 	 MIT
 	 SIL-1.1
