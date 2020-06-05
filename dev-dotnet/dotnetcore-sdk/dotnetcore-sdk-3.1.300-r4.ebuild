@@ -13,19 +13,19 @@ DESCRIPTION="Core functionality needed to create .NET Core projects, that is \
 shared between Visual Studio and CLI"
 HOMEPAGE="https://github.com/dotnet/sdk"
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
-IUSE="aspnetcore docs samples"
+IUSE="aspnetcore doc samples"
 RESTRICT="fetch"
 SLOT=$(ver_cut 1-2 ${PV})
 # split due to flaky servers
 CORE_V=3.1.4
 
 # On hold ; missing tarball
-#=dev-dotnet/core-${CORE_V}*:${SLOT}[samples?,docs?]
+#=dev-dotnet/core-${CORE_V}*:${SLOT}[doc?,samples?]
 
-RDEPEND="aspnetcore? ( =dev-dotnet/aspnetcore-${CORE_V}*:${CORE_V} )
-	 =dev-dotnet/coreclr-${CORE_V}*:${CORE_V}
-	 =dev-dotnet/corefx-${CORE_V}*:${CORE_V}
-	 =dev-dotnet/cli-${PV}*:${PV}"
+RDEPEND="aspnetcore? ( =dev-dotnet/aspnetcore-${CORE_V}*:${CORE_V}[doc?] )
+	 =dev-dotnet/coreclr-${CORE_V}*:${CORE_V}[doc?]
+	 =dev-dotnet/corefx-${CORE_V}*:${CORE_V}[doc?]
+	 =dev-dotnet/cli-${PV}*:${PV}[doc?]"
 
 pkg_postinst() {
 	einfo "Core version is ${CORE_V}"

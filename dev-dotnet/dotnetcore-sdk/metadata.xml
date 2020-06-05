@@ -19,4 +19,9 @@
 
 		You may also choose the precompiled version found in the dotnet overlay.
 	<longdescription>
+	<use>
+		<flag name="aspnetcore">Installs ASP.NET Core</flag>
+		<flag name="doc">Installs documentation</flag>
+		<flag name="">Installs example projects.</flag>
+	</use>
 </pkgmetadata>
