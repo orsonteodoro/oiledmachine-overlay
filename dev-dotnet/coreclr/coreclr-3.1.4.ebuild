@@ -19,6 +19,7 @@ LICENSE="all-rights-reserved
 	ZLIB
 " # The vanilla MIT license doesn't come with all rights reserved
 KEYWORDS="~amd64"
+# ~x86 ~arm64 ~arm
 CORE_V=${PV}
 DOTNETCLI_V=3.1.100 # from global.json
 IUSE="debug doc numa tests"
@@ -34,7 +35,6 @@ https://github.com/dotnet/coreclr/archive/v${CORE_V}.tar.gz \
 # arm? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-arm.tar.gz )
 SLOT="${PV}"
 # based on init-tools.sh and dotnet-sdk-${DOTNETCLI_V}-linux-${myarch}.tar.gz
-# ~x86 ~arm64 ~arm
 # For dependencies see
 # https://github.com/dotnet/coreclr/blob/v3.1.4/Documentation/building/linux-instructions.md
 # Library requirements assumes Ubuntu 16.04 minimum.
