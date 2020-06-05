@@ -12,7 +12,7 @@
 		The subpackages of this meta package are
 
 		dev-dotnet/aspnetcore - Cross platform .NET framework for building cloud based apps
-		dev-dotnet/cli-tools - Build tools
+		dev-dotnet/cli - Build tools
 		dev-dotnet/core - Contains examples and documentation
 		dev-dotnet/coreclr - The runtime for .NET Core
 		dev-dotnet/corefx - Contains class libraries to handle collections (data structures), xml, json, System.* namespace

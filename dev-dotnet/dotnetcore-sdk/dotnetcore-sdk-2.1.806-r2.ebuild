@@ -21,7 +21,7 @@ CORE_V=2.1.18
 RDEPEND="=dev-dotnet/core-${CORE_V}*:${SLOT}[samples?,docs?]
 	 =dev-dotnet/coreclr-${CORE_V}*:${SLOT}
 	 =dev-dotnet/corefx-${CORE_V}*:${SLOT}
-	 =dev-dotnet/cli-tools-${PV}*:${PV}
+	 =dev-dotnet/cli-${PV}*:${PV}
 	 =dev-dotnet/aspnetcore-${CORE_V}*:${SLOT}"
 
 pkg_postinst() {
