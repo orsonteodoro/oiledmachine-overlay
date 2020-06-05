@@ -377,7 +377,7 @@ src_install() {
 	cp -a src/Identity/UI/src/{,Identity-UI-}THIRD-PARTY-NOTICES
 	dodoc src/Identity/UI/src/Identity-UI-THIRD-PARTY-NOTICES
 	cp -a src/SignalR/{,SignalR-}THIRD-PARTY-NOTICES
-	dodoc src/SignalR/SignalR-THIRD-PARTY-NOTICES.SignalR
+	dodoc src/SignalR/SignalR-THIRD-PARTY-NOTICES
 	cp -a src/Templating/src/{,Templating-}THIRD-PARTY-NOTICES
 	dodoc src/Templating/src/Templating-THIRD-PARTY-NOTICES
 
