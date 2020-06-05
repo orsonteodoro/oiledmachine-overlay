@@ -10,6 +10,6 @@
 		<flag name="debug">Builds with debug symbols</flag>
 		<flag name="doc">Installs extra documentation</flag>
 		<flag name="numa">Optional NUMA support</flag>
-		<flag name="tests">Runs tests</flag>
+		<flag name="test">Runs tests</flag>
 	</use>
 </pkgmetadata>
