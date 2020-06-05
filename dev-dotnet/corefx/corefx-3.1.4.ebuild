@@ -32,12 +32,14 @@ SLOT="${PV}"
 # Documentation/building/unix-instructions.md
 # cross/build-rootfs.sh
 # Based on Ubuntu 16.04 min requirements
-RDEPEND=">=dev-libs/icu-55.1
-	 >=dev-libs/openssl-1.0.2g
+# See also https://docs.microsoft.com/en-us/dotnet/core/install/dependencies?pivots=os-linux&tabs=netcore31
+RDEPEND=">=app-crypt/mit-krb5-1.13.2
+	 >=dev-libs/icu-55.1
+	 >=dev-libs/openssl-compat-1.0.2o:1.0
+	 >=dev-dotnet/libgdiplus-6.0.1
 	 >=dev-util/lldb-4.0
 	 >=dev-util/lttng-ust-2.7.1
 	 >=net-misc/curl-7.47
-	 >=app-crypt/mit-krb5-1.13.2
 	 >=sys-devel/llvm-3.9:*
 	 >=sys-libs/libunwind-1.1
 	 >=sys-libs/zlib-1.2.8"
