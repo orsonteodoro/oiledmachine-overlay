@@ -22,7 +22,7 @@ KEYWORDS="~amd64"
 # ~x86 ~arm64 ~arm
 CORE_V="${PV}"
 DOTNETCLI_V="3.1.100" # found in global.json
-IUSE="debug doc tests"
+IUSE="debug doc test"
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we
 # have to keep downloading it everytime the sandbox is wiped.
 DOTNETCLI_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}"
@@ -157,7 +157,7 @@ _src_compile() {
 	export ProcessorCount=${numproc}
 	#buildargs_corefx+=" --numproc ${numproc}"
 
-	if use tests ; then
+	if use test ; then
 		buildargs_corefx+=" --buildtests"
 	fi
 

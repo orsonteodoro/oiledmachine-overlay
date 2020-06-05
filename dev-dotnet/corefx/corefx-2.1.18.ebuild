@@ -22,7 +22,7 @@ KEYWORDS="~amd64"
 # ~x86 ~arm64 ~arm
 CORE_V="${PV}"
 DOTNETCLI_V="2.1.300-rc1-008673" # defined in DotnetCLIVersion.txt
-IUSE="debug doc heimdal tests"
+IUSE="debug doc heimdal test"
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we
 # have to keep downloading it everytime the sandbox is wiped.
 DOTNETCLI_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}"
@@ -161,7 +161,7 @@ _src_compile() {
 	export ProcessorCount=${numproc}
 	#buildargs_corefx+=" --numproc ${numproc}"
 
-	if ! use tests ; then
+	if ! use test ; then
 		buildargs_corefx+=" -SkipTests=true -BuildTests=false"
 	else
 		buildargs_corefx+=" -SkipTests=false -BuildTests=true"
@@ -175,7 +175,7 @@ _src_compile() {
 	./build.sh -buildArch -ArchGroup=${myarch} -${mydebug} \
 		${buildargs_corefx} || die
 
-	if use tests ; then
+	if use test ; then
 		einfo "Building CoreFX tests"
 		cd "${COREFX_S}" || die
 		./build-tests.sh -buildArch -ArchGroup=${myarch} \
