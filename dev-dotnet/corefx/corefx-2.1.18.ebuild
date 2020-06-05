@@ -1,38 +1,45 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# BASED ON https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=dotnet-cli
-#          https://git.archlinux.org/svntogit/community.git/tree/trunk/PKGBUILD?h=packages/dotnet-core
+# BASED ON
+# https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=dotnet-cli
+# https://git.archlinux.org/svntogit/community.git/tree/trunk/PKGBUILD?h=packages/dotnet-core
 
 EAPI=7
-DESCRIPTION="CoreFX is the foundational class libraries for .NET Core. It includes types for collections, file systems, console, JSON, XML, async and many others."
+DESCRIPTION="CoreFX is the foundational class libraries for .NET Core. It \
+includes types for collections, file systems, console, JSON, XML, async and \
+many others."
 HOMEPAGE="https://github.com/dotnet/corefx"
 LICENSE="all-rights-reserved
-	MIT
 	Apache-2.0
+	MIT
 	BSD
 	BSD-2
 	unicode
 	W3C
 	ZLIB" # The vanilla MIT license does not have all rights reserved
 KEYWORDS="~amd64"
+# ~x86 ~arm64 ~arm
 CORE_V="${PV}"
 DOTNETCLI_V="2.1.300-rc1-008673" # defined in DotnetCLIVersion.txt
 IUSE="debug doc heimdal tests"
-# We need to cache the dotnet-sdk tarball outside the sandbox otherwise we have to keep downloading it everytime the sandbox is wiped.
-SRC_URI="https://github.com/dotnet/corefx/archive/v${CORE_V}.tar.gz -> corefx-${CORE_V}.tar.gz
-	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-x64.tar.gz )"
-#	 x86? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-x86.tar.gz )
-#	 arm64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-arm64.tar.gz )
-#	 arm? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-arm.tar.gz )
+# We need to cache the dotnet-sdk tarball outside the sandbox otherwise we
+# have to keep downloading it everytime the sandbox is wiped.
+DOTNETCLI_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}"
+SRC_URI="\
+https://github.com/dotnet/corefx/archive/v${CORE_V}.tar.gz \
+  -> corefx-${CORE_V}.tar.gz
+  amd64? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-x64.tar.gz )"
+# x86? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-x86.tar.gz )
+# arm64? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-arm64.tar.gz )
+# arm? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-arm.tar.gz )
 SLOT="${PV}"
-# based on init-tools.sh and dotnet-sdk-${DOTNETCLI_V}-linux-${myarch}.tar.gz
-# ~x86 ~arm64 ~arm
-# For requirements, see
+# Requirements based on Ubuntu 16.04 minimum requirements.
+# Library requirements based on:
+# init-tools.sh
 # Documentation/building/unix-instructions.md
 # cross/build-rootfs.sh
-# Based on Ubuntu 16.04 min requirements
-# See also https://docs.microsoft.com/en-us/dotnet/core/install/dependencies?pivots=os-linux&tabs=netcore21
+# https://docs.microsoft.com/en-us/dotnet/core/install/dependencies?pivots=os-linux&tabs=netcore21
 RDEPEND=">=dev-libs/icu-55.1
 	 >=dev-libs/openssl-compat-1.0.2o:1.0
 	 >=dev-dotnet/libgdiplus-6.0.1
@@ -62,9 +69,12 @@ RESTRICT="mirror"
 # but this ebuild doesn't currently use that.
 
 pkg_pretend() {
-	# If FEATURES="-sandbox -usersandbox" are not set dotnet will hang while compiling.
+	# If FEATURES="-sandbox -usersandbox" are not set dotnet will hang while
+	# compiling.
 	if has sandbox $FEATURES || has usersandbox $FEATURES ; then
-		die ".NET core command-line (CLI) tools require sandbox and usersandbox to be disabled in FEATURES."
+		die \
+".NET core command-line (CLI) tools require sandbox and usersandbox to be \
+disabled in FEATURES."
 	fi
 }
 
@@ -77,10 +87,13 @@ src_unpack() {
 	if [[ ! -f DotnetCLIVersion.txt ]] ; then
 		die "Cannot find DotnetCLIVersion.txt"
 	elif [[ "${X_DOTNETCLI_V}" != "${DOTNETCLI_V}" ]] ; then
-		die "Cached dotnet-sdk in distfiles is not the same as requested.  Update ebuild's DOTNETCLI_V to ${X_DOTNETCLI_V}"
+		die \
+"Cached dotnet-sdk in distfiles is not the same as requested.  Update ebuild's \
+DOTNETCLI_V to ${X_DOTNETCLI_V}"
 	fi
 
-	# gentoo or the sandbox doesn't allow downloads in compile phase so move here
+	# gentoo or the sandbox doesn't allow downloads in compile phase
+	# so move here
 	_src_prepare
 	_src_compile
 }
@@ -90,10 +103,14 @@ _src_prepare() {
 	cd "${COREFX_S}" || die
 
 	# allow verbose output
-	local F=$(grep -l -r -e "__init_tools_log" $(find "${WORKDIR}" -name "*.sh"))
+	local F=\
+$(grep -l -r -e "__init_tools_log" $(find "${WORKDIR}" -name "*.sh"))
 	for f in $F ; do
 		echo "Patching $f"
-		sed -i -e 's|>> "$__init_tools_log" 2>&1|\|\& tee -a "$__init_tools_log"|g' -e 's|>> "$__init_tools_log"|\| tee -a "$__init_tools_log"|g' -e 's| > "$__init_tools_log"| \| tee "$__init_tools_log"|g' "$f" || die
+		sed -i \
+	-e 's|>> "$__init_tools_log" 2>&1|\|\& tee -a "$__init_tools_log"|g' \
+	-e 's|>> "$__init_tools_log"|\| tee -a "$__init_tools_log"|g' \
+	-e 's| > "$__init_tools_log"| \| tee "$__init_tools_log"|g' "$f" || die
 	done
 
 	# allow wget curl output
@@ -132,8 +149,8 @@ _src_compile() {
 	fi
 
 
-	# prevent: InvalidOperationException: The terminfo database is invalid dotnet
-	# cannot be xterm-256color
+	# prevent: InvalidOperationException: The terminfo database is invalid
+	# dotnet.  It cannot be xterm-256color.
 	export TERM=linux # pretend to be outside of X
 
 	# force 1 since it slows down the pc
@@ -150,13 +167,16 @@ _src_compile() {
 	einfo "Building CoreFX"
 	cd "${COREFX_S}" || die
 
-	DotNetBootstrapCliTarPath="${DISTDIR}/dotnet-sdk-${DOTNETCLI_V}-linux-${myarch}.tar.gz" \
-	./build.sh -buildArch -ArchGroup=${myarch} -${mydebug} ${buildargs_corefx} || die
+	DotNetBootstrapCliTarPath=\
+"${DISTDIR}/dotnet-sdk-${DOTNETCLI_V}-linux-${myarch}.tar.gz" \
+	./build.sh -buildArch -ArchGroup=${myarch} -${mydebug} \
+		${buildargs_corefx} || die
 
 	if use tests ; then
 		einfo "Building CoreFX tests"
 		cd "${COREFX_S}" || die
-		./build-tests.sh -buildArch -ArchGroup=${myarch} -${mydebug} || die
+		./build-tests.sh -buildArch -ArchGroup=${myarch} \
+			-${mydebug} || die
 	fi
 }
 
@@ -179,7 +199,8 @@ src_install() {
 
 	dodir "${dest_core}"
 
-	cp -a "${COREFX_S}/bin/Linux.${myarch}.Release/native"/* "${ddest_core}"/ || die
+	cp -a "${COREFX_S}/bin/Linux.${myarch}.Release/native"/* \
+		"${ddest_core}"/ || die
 
 	cd "${COREFX_S}" || die
 	docinto licenses
@@ -187,6 +208,7 @@ src_install() {
 
 	if use doc ; then
 		docinto docs
-		dodoc -r CODE_OF_CONDUCT.md CONTRIBUTING.md Documentation README.md
+		dodoc -r CODE_OF_CONDUCT.md CONTRIBUTING.md Documentation \
+			README.md
 	fi
 }
