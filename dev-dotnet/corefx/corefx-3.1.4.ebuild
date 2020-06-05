@@ -19,7 +19,7 @@ KEYWORDS="~amd64"
 CORE_V="${PV}"
 DOTNETCLI_V="3.1.100" # found in global.json
 IUSE="debug doc tests"
-# We need to cache dotnet-sdk tarball outside the sandbox otherwise we have to keep downloading it everytime the sandbox is wiped
+# We need to cache the dotnet-sdk tarball outside the sandbox otherwise we have to keep downloading it everytime the sandbox is wiped.
 SRC_URI="https://github.com/dotnet/corefx/archive/v${CORE_V}.tar.gz -> corefx-${CORE_V}.tar.gz
 	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-x64.tar.gz )"
 #	 x86? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-x86.tar.gz )
