@@ -135,6 +135,9 @@ _fetch_cli() {
 }
 
 src_unpack() {
+	einfo \
+"If you emerged this first, please use the meta package dotnetcore-sdk instead\
+ as the starting point."
 	if [[ "${DropSuffix}" == "false" ]] ; then
 		_fetch_cli # for dev
 	else

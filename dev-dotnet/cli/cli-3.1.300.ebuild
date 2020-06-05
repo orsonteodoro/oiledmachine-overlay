@@ -135,6 +135,9 @@ _fetch_cli() {
 }
 
 src_unpack() {
+	einfo \
+"If you emerged this first, please use the meta package dotnetcore-sdk instead\
+ as the starting point."
 	ewarn "This ebuild is a WIP does not work."
 	ewarn "https://github.com/dotnet/sdk/issues/11795"
 	if [[ "${DropSuffix}" == "false" ]] ; then
