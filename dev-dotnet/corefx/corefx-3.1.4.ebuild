@@ -7,7 +7,14 @@
 EAPI=7
 DESCRIPTION="CoreFX is the foundational class libraries for .NET Core. It includes types for collections, file systems, console, JSON, XML, async and many others."
 HOMEPAGE="https://github.com/dotnet/corefx"
-LICENSE="all-rights-reserved MIT" # The vanilla MIT license does not have all rights reserved
+LICENSE="all-rights-reserved
+	MIT
+	Apache-2.0
+	BSD
+	BSD-2
+	unicode
+	W3C
+	ZLIB" # The vanilla MIT license does not have all rights reserved
 KEYWORDS="~amd64"
 CORE_V="${PV}"
 DOTNETCLI_V="3.1.100" # found in global.json
