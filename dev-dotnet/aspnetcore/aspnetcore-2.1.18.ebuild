@@ -172,6 +172,9 @@ _fetch_asp() {
 }
 
 src_unpack() {
+	einfo \
+"If you emerged this first, please use the meta package dotnetcore-sdk instead\
+ as the starting point."
 	mkdir -p "${T}/korebuild" || die
 	pushd "${T}/korebuild" || die
 		unpack "${FN_KOREBUILD}"

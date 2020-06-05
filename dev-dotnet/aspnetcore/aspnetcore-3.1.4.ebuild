@@ -180,6 +180,9 @@ _fetch_asp() {
 }
 
 src_unpack() {
+	einfo \
+"If you emerged this first, please use the meta package dotnetcore-sdk instead\
+ as the starting point."
 	# need repo references
 	if [[ "${DropSuffix}" == "true" ]] ; then
 		_unpack_asp
