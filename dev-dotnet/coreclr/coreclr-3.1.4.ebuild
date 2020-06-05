@@ -19,6 +19,7 @@ KEYWORDS="~amd64"
 CORE_V=${PV}
 DOTNETCLI_V=3.1.100 # from global.json
 IUSE="debug doc numa tests"
+# We need to cache the dotnet-sdk tarball outside the sandbox otherwise we have to keep downloading it everytime the sandbox is wiped.
 SRC_URI="https://github.com/dotnet/coreclr/archive/v${CORE_V}.tar.gz -> coreclr-${CORE_V}.tar.gz
 	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-x64.tar.gz )"
 #	 x86? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-x86.tar.gz )
@@ -75,7 +76,7 @@ src_unpack() {
 	if [[ ! -f global.json ]] ; then
 		die "Cannot find global.json"
 	elif [[ "${X_DOTNETCLI_V}" != "${DOTNETCLI_V}" ]] ; then
-		die "Cached dotnet-sdk in distfiles is not the same as requested.  Update ebuild's DOTNETCLI_V to ${DOTNETCLI_V}"
+		die "Cached dotnet-sdk in distfiles is not the same as requested.  Update ebuild's DOTNETCLI_V to ${X_DOTNETCLI_V}"
 	fi
 
 	# gentoo or the sandbox doesn't allow downloads in compile phase so move here
