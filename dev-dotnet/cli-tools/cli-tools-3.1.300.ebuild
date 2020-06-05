@@ -25,9 +25,10 @@ SRC_URI="https://github.com/dotnet/cli/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.
 SLOT="${PV}"
 # see scripts/docker/ubuntu.16.04/Dockerfile for dependencies
 # todo check if it requires <openssl-1.1 only
+#	>=dev-libs/openssl-1.0.2g
 RDEPEND="
 	>=dev-libs/icu-55.1
-	>=dev-libs/openssl-1.0.2g
+	>=dev-libs/openssl-compat-1.0.2o:1.0
 	>=dev-util/lttng-ust-2.7.1
 	>=app-crypt/mit-krb5-1.13.2
 	>=sys-apps/util-linux-2.27.1
@@ -252,10 +253,10 @@ src_install() {
 	cp -a "${d_dotnet}/shared/" "${ddest}/" || die
 
 	# prevent collision with coreclr ebuild
+	FXR_V=$(grep -r -e "MicrosoftNETCoreAppInternalPackageVersion" "${CLI_S}/Versions.props" | head -n 1 | cut -f 2 -d ">" | cut -f 1 -d "<")
 	rm -rf "${ddest}"/shared/Microsoft.NETCore.App/${FXR_V} || die
 
 	dodir /usr/share/licenses/cli-tools-${PV}
-	FXR_V=$(grep -r -e "MicrosoftNETCoreAppInternalPackageVersion" "${CLI_S}/Versions.props" | head -n 1 | cut -f 2 -d ">" | cut -f 1 -d "<")
 	cp -a "${d_dotnet}"/{LICENSE.txt,ThirdPartyNotices.txt} "${D}/usr/share/licenses/cli-tools-${PV}" || die
 
 	# for monodevelop.  15.0 is toolsversion.
