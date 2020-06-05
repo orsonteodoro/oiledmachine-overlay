@@ -19,6 +19,7 @@ KEYWORDS="~amd64"
 CORE_V="${PV}"
 DOTNETCLI_V="3.1.100" # found in global.json
 IUSE="debug doc tests"
+# We need to cache dotnet-sdk tarball outside the sandbox otherwise we have to keep downloading it everytime the sandbox is wiped
 SRC_URI="https://github.com/dotnet/corefx/archive/v${CORE_V}.tar.gz -> corefx-${CORE_V}.tar.gz
 	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-x64.tar.gz )"
 #	 x86? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-x86.tar.gz )
@@ -77,7 +78,7 @@ src_unpack() {
 	if [[ ! -f global.json ]] ; then
 		die "Cannot find global.json"
 	elif [[ "${X_DOTNETCLI_V}" != "${DOTNETCLI_V}" ]] ; then
-		die "Cached dotnet-sdk in distfiles is not the same as requested.  Update ebuild's DOTNETCLI_V to ${DOTNETCLI_V}"
+		die "Cached dotnet-sdk in distfiles is not the same as requested.  Update ebuild's DOTNETCLI_V to ${X_DOTNETCLI_V}"
 	fi
 
 	# gentoo or the sandbox doesn't allow downloads in compile phase so move here
@@ -145,7 +146,7 @@ _src_compile() {
 	mkdir -p "${p}" || die
 	pushd "${p}" || die
 		tar -xvf "${DISTDIR}/dotnet-sdk-${DOTNETCLI_V}-linux-${myarch}.tar.gz" || die
-	popd
+	popd || die
 	[ ! -f "${COREFX_S}/.dotnet/dotnet" ] && die "dotnet not found"
 
 	# It has to be done manually if you don't let the installer get the tarballs.

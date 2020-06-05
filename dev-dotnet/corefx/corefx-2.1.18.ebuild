@@ -19,6 +19,7 @@ KEYWORDS="~amd64"
 CORE_V="${PV}"
 DOTNETCLI_V="2.1.300-rc1-008673" # defined in DotnetCLIVersion.txt
 IUSE="debug doc heimdal tests"
+# We need to cache dotnet-sdk tarball outside the sandbox otherwise we have to keep downloading it everytime the sandbox is wiped
 SRC_URI="https://github.com/dotnet/corefx/archive/v${CORE_V}.tar.gz -> corefx-${CORE_V}.tar.gz
 	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-x64.tar.gz )"
 #	 x86? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-x86.tar.gz )
@@ -75,7 +76,7 @@ src_unpack() {
 	if [[ ! -f DotnetCLIVersion.txt ]] ; then
 		die "Cannot find DotnetCLIVersion.txt"
 	elif [[ "${X_DOTNETCLI_V}" != "${DOTNETCLI_V}" ]] ; then
-		die "Cached dotnet-sdk in distfiles is not the same as requested.  Update ebuild's DOTNETCLI_V to ${DOTNETCLI_V}"
+		die "Cached dotnet-sdk in distfiles is not the same as requested.  Update ebuild's DOTNETCLI_V to ${X_DOTNETCLI_V}"
 	fi
 
 	# gentoo or the sandbox doesn't allow downloads in compile phase so move here
