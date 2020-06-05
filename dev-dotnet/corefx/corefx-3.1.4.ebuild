@@ -11,13 +11,13 @@ LICENSE="MIT"
 KEYWORDS="~amd64"
 CORE_V="${PV}"
 DOTNETCLI_V="3.1.100" # found in global.json
-IUSE="debug tests"
+IUSE="debug doc tests"
 SRC_URI="https://github.com/dotnet/corefx/archive/v${CORE_V}.tar.gz -> corefx-${CORE_V}.tar.gz
 	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-x64.tar.gz )"
 #	 x86? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-x86.tar.gz )
 #	 arm64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-arm64.tar.gz )
 #	 arm? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}/dotnet-sdk-${DOTNETCLI_V}-linux-arm.tar.gz )
-SLOT=$(ver_cut 1-2 ${PV})
+SLOT="${PV}"
 # based on init-tools.sh and dotnet-sdk-${DOTNETCLI_V}-linux-${myarch}.tar.gz
 # ~x86 ~arm64 ~arm
 # For requirements, see
@@ -165,6 +165,13 @@ src_install() {
 	dodir "${dest_core}"
 
 	cp -a "${COREFX_S}/bin/Linux.${myarch}.Release/native"/* "${ddest_core}"/ || die
+
+	cd "${COREFX_S}" || die
 	docinto licenses
-	dodoc PATENTS.TXT LICENSE.TXT THIRD-PARTY-NOTICES.TXT
+	dodoc LICENSE.TXT PATENTS.TXT THIRD-PARTY-NOTICES.TXT
+
+	if use doc ; then
+		docinto docs
+		dodoc -r CODE_OF_CONDUCT.md CONTRIBUTING.md Documentation README.md
+	fi
 }
