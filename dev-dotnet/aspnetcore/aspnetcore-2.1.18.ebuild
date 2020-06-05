@@ -1,18 +1,20 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# BASED ON https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=dotnet-cli
-#          https://git.archlinux.org/svntogit/community.git/tree/trunk/PKGBUILD?h=packages/dotnet-core
+# BASED ON
+# https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=dotnet-cli
+# https://git.archlinux.org/svntogit/community.git/tree/trunk/PKGBUILD?h=packages/dotnet-core
 
 EAPI=7
-DESCRIPTION="ASP.NET Core is a cross-platform .NET framework for building modern cloud-based web applications on Windows, Mac, or Linux."
+DESCRIPTION="ASP.NET Core is a cross-platform .NET framework for building \
+modern cloud-based web applications on Windows, Mac, or Linux."
 HOMEPAGE="https://github.com/aspnet/AspNetCore/"
 LICENSE="all-rights-reserved
-	 MIT
 	 Apache-2.0
 	 BSD-2
 	 BSD
 	 ISC
+	 MIT
 	 SIL-1.1
 	 ZLIB
 " # The vanilla MIT license does not have all rights reserved
@@ -32,7 +34,7 @@ SLOT="${PV}"
 # src/Installers/Debian/setup/build_setup.sh
 # docs/BuildFromSource.md
 # https://docs.microsoft.com/en-us/dotnet/core/install/dependencies?pivots=os-linux&tabs=netcore21
-# Assumes Ubuntu 16.04 lib versions minimal
+# (R)DEPENDs assumes Ubuntu 16.04 lib versions minimal.
 RDEPEND=">=app-crypt/mit-krb5-1.13.2
 	 >=dev-libs/icu-55.1
 	 >=dev-libs/openssl-compat-1.0.2o:1.0
@@ -58,27 +60,37 @@ DEPEND="${RDEPEND}
 	>=sys-devel/gcc-4.9
 	  sys-devel/libtool"
 # currently using only tarballs to avoid git is a problem at build time
+ASPNET_GITHUB_BASEURI="https://github.com/aspnet"
 if [[ "${DropSuffix}" == "true" ]] ; then
-SRC_URI_TGZ="https://github.com/aspnet/AspNetCore/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
-	     https://github.com/aspnet/EntityFrameworkCore/archive/${ENTITYFRAMEWORKCORE_COMMIT}.zip -> entityframeworkcore-${ENTITYFRAMEWORKCORE_COMMIT}.zip"
+SRC_URI_TGZ="\
+${ASPNET_GITHUB_BASEURI}/AspNetCore/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
+${ASPNET_GITHUB_BASEURI}/EntityFrameworkCore/archive/${ENTITYFRAMEWORKCORE_COMMIT}.zip \
+	-> entityframeworkcore-${ENTITYFRAMEWORKCORE_COMMIT}.zip"
 SRC_URI_TGZ=""
 fi
 KOREBUILD_V="2.1.7-build-20200221.1" # stored in korebuild-lock.txt
 FN_KOREBUILD="korebuild.${KOREBUILD_V}.zip"
-# We need to cache the dotnet-sdk tarball outside the sandbox otherwise we have to keep downloading it everytime the sandbox is wiped.
-# We need to pre fetch the korebuild tarball to obtain SDK_V.  It is not easily accessible.
+# We need to cache the dotnet-sdk tarball outside the sandbox otherwise we have
+# to keep downloading it everytime the sandbox is wiped.
+# We need to pre fetch the korebuild tarball to obtain SDK_V.  It is not easily
+# accessible without first going though build.sh.
+SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
+ASPNETCORE_HOST="https://aspnetcore.blob.core.windows.net"
+NETFX_BASEURI="${ASPNETCORE_HOST}/buildtools/netfx/${NETFX_V}"
+KOREBUILD_BASEURI=\
+"${ASPNETCORE_HOST}/buildtools/korebuild/artifacts/${KOREBUILD_V}"
 SRC_URI="${SRC_URI_TGZ}
-	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )
-	 https://aspnetcore.blob.core.windows.net/buildtools/netfx/${NETFX_V}/netfx.${NETFX_V}.tar.gz
-	 https://aspnetcore.blob.core.windows.net/buildtools/korebuild/artifacts/${KOREBUILD_V}/${FN_KOREBUILD}
+	 amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )
+	 ${NETFX_BASEURI}/netfx.${NETFX_V}.tar.gz
+	 ${KOREBUILD_BASEURI}/${FN_KOREBUILD}
 "
-#	 arm64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
-#	 arm? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )"
+#	 arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
+#	 arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )"
 S=${WORKDIR}
 RESTRICT="mirror"
-ASPNETCORE_REPO_URL="https://github.com/aspnet/AspNetCore.git"
-ASPNETCORE_S="${S}/AspNetCore-${ASPNETCORE_COMMIT}"
-#ASPNETCORE_S="${S}/AspNetCore-${CORE_V}"
+ASPNETCORE_REPO_URL="${ASPNET_GITHUB_BASEURI}/AspNetCore.git"
+ASPNETCORE_S="${WORKDIR}/AspNetCore-${ASPNETCORE_COMMIT}"
+#ASPNETCORE_S="${WORKDIR}/AspNetCore-${CORE_V}"
 
 # This currently isn't required but may be needed in later ebuilds
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
@@ -86,7 +98,8 @@ ASPNETCORE_S="${S}/AspNetCore-${ASPNETCORE_COMMIT}"
 
 pkg_setup() {
 	ewarn "This ebuild is a Work In Progress (WIP) and will not compile"
-	# If FEATURES="-sandbox -usersandbox" are not set dotnet will hang while compiling.
+	# If FEATURES="-sandbox -usersandbox" are not set dotnet will hang while
+	# compiling.
 	if has sandbox $FEATURES || has usersandbox $FEATURES ; then
 		die "${PN} require sandbox and usersandbox to be disabled in FEATURES."
 	fi
@@ -107,7 +120,8 @@ _unpack_asp() {
 	# See .gitmodules
 
 	pushd modules || die
-	mv "${WORKDIR}/EntityFrameworkCore-${ENTITYFRAMEWORKCORE_COMMIT}"/ "${WORKDIR}/EntityFrameworkCore" || die
+	mv "${WORKDIR}/EntityFrameworkCore-${ENTITYFRAMEWORKCORE_COMMIT}"/ \
+		"${WORKDIR}/EntityFrameworkCore" || die
 	mv "${WORKDIR}/EntityFrameworkCore" . || die
 	popd || die
 
@@ -115,7 +129,8 @@ _unpack_asp() {
 }
 
 _fetch_asp() {
-	# git is used to fetch dependencies and maybe versioning info especially for preview builds.
+	# git is used to fetch dependencies and maybe versioning info especially
+	# for preview builds.
 
 	einfo "Fetching AspNetCore"
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
@@ -142,7 +157,9 @@ _fetch_asp() {
 		local update=1
 	fi
 	cd "${d}" || die
-	#git checkout ${ASPNETCORE_COMMIT} . || die # uncomment to force deterministic build.  comment to follow tag and future added commits applied to tag.
+	#git checkout ${ASPNETCORE_COMMIT} . || die # uncomment to force
+	# deterministic build.  comment to follow tag and future added commits
+	# applied to tag.
 	if [[ "$update" == "1" ]] ; then
 		git submodule update --recursive || die
 	else
@@ -169,18 +186,24 @@ src_unpack() {
 
 	cd "${ASPNETCORE_S}" || die
 
-	X_NETFX_V=$(grep -r -e "\.SDK" scripts/VsRequirements/vs.json | cut -f 2 -d "\"" | sed  -r -e "s|.*([0-9]+.[0-9]+.[0-9]+).*|\1|g")
+	X_NETFX_V=$(grep -r -e "\.SDK" scripts/VsRequirements/vs.json \
+		| cut -f 2 -d "\"" \
+		| sed  -r -e "s|.*([0-9]+.[0-9]+.[0-9]+).*|\1|g")
 	if [[ ! -f scripts/VsRequirements/vs.json ]] ; then
 		die "Cannot find scripts/VsRequirements/vs.json"
 	elif [[ "${X_NETFX_V}" != "${NETFX_V}" ]] ; then
-		die "Cached dotnet-runtime in distfiles is not the same as requested.  Update ebuild's NETFX_V to ${X_NETFX_V}"
+		die \
+"Cached dotnet-runtime in distfiles is not the same as requested.  Update \
+ebuild's NETFX_V to ${X_NETFX_V}"
 	fi
 
 	X_SDK_V=$(cat "${T}/korebuild/config/sdk.version" | sed -r -e 's|\r||g')
 	if [[ ! -f "${T}/korebuild/config/sdk.version" ]] ; then
 		die "Cannot find sdk.version"
 	elif [[ "${X_SDK_V}" != "${SDK_V}" ]] ; then
-		die "Cached dotnet-sdk in distfiles is not the same as requested.  Update ebuild's SDK_V to ${X_SDK_V}"
+		die \
+"Cached dotnet-sdk in distfiles is not the same as requested.  Update ebuild's \
+SDK_V to ${X_SDK_V}"
 	fi
 
 	# gentoo or the sandbox doesn't allow downloads in compile phase so move here
@@ -191,7 +214,8 @@ src_unpack() {
 _use_native_netfx() {
 	# Use mono dlls instead of prebuilt targeting pack dlls
 	# Fix for:
-	# error MSB3644: The reference assemblies for framework ".NETFramework,Version=v4.6.1" were not found.
+	# error MSB3644: The reference assemblies for framework
+	# ".NETFramework,Version=v4.6.1" were not found.
 
 	# trick the scripts by creating the dummy dir to skip downloading
 	local p
@@ -202,8 +226,14 @@ _use_native_netfx() {
 	for f in $L ; do
 		cp "${FILESDIR}"/netfx.props "$(dirname $f)" || die
 		einfo "Editing $f"
-		sed -i -e "s|<Project>|<Project>\n  <Import Project=\"netfx.props\" />\n|g" "$f" || die
-		sed -i -e "s|<Project Sdk=\"Microsoft.NET.Sdk\">|<Project Sdk=\"Microsoft.NET.Sdk\">\n  <Import Project=\"netfx.props\" />\n|g" "$f" || die
+		sed -i -e "s|\
+<Project>|\
+<Project>\n  <Import Project=\"netfx.props\" />\n|g" \
+			"$f" || die
+		sed -i -e "s|\
+<Project Sdk=\"Microsoft.NET.Sdk\">|\
+<Project Sdk=\"Microsoft.NET.Sdk\">\n  <Import Project=\"netfx.props\" />\n|g" \
+			"$f" || die
 	done
 }
 
@@ -224,9 +254,13 @@ _use_native_sdk() {
 	p="${ASPNETCORE_S}/.dotnet/sdk/${SDK_V}"
 	mkdir -p "${p}" || die
 
-	# workaround for /opt/dotnet/dotnetinstall.lock: Permission denied
-	# we cannot use addwrite/addread with /opt/dotnetinstall.lock
-	# it would be better just to modify korebuild's dotnet-install.sh's dotnetinstall.lock location but can't do that because the file is not located in the tarballs before the build process but later in the middle of the build process of fetching dependency packages.
+	# This is a Workaround for /opt/dotnet/dotnetinstall.lock: Permission denied
+	# We cannot use addwrite/addread with /opt/dotnetinstall.lock.
+	#
+	# It would be better just to modify korebuild's dotnet-install.sh's \
+	# dotnetinstall.lock location but can't do that because the file is \
+	# not located in the tarballs before the build process but later in \
+	# the middle of the build process of fetching dependency packages.
 	cp -a /opt/dotnet/* "${p}" || die
 
 	# It has to be done manually if you don't let the installer get the tarballs.
@@ -267,7 +301,10 @@ _src_prepare() {
 	local F=$(grep -l -r -e "__init_tools_log" $(find "${WORKDIR}" -name "*.sh"))
 	for f in $F ; do
 		echo "Patching $f"
-		sed -i -e 's|>> "$__init_tools_log" 2>&1|\|\& tee -a "$__init_tools_log"|g' -e 's|>> "$__init_tools_log"|\| tee -a "$__init_tools_log"|g' -e 's| > "$__init_tools_log"| \| tee "$__init_tools_log"|g' "$f" || die
+		sed -i \
+	-e 's|>> "$__init_tools_log" 2>&1|\|\& tee -a "$__init_tools_log"|g' \
+	-e 's|>> "$__init_tools_log"|\| tee -a "$__init_tools_log"|g' \
+	-e 's| > "$__init_tools_log"| \| tee "$__init_tools_log"|g' "$f" || die
 	done
 
 	# allow wget curl output
@@ -278,15 +315,23 @@ _src_prepare() {
 	done
 
 	if ! use tests ; then
-		sed -i -e "s|-Werror||g" "${ASPNETCORE_S}"/src/submodules/googletest/googletest/xcode/Config/General.xcconfig
+	_D="${ASPNETCORE_S}/src/submodules/googletest/googletest/xcode/Config"
+		sed -i -e "s|-Werror||g" "${D}/General.xcconfig"
 	fi
 
 	cd "${ASPNETCORE_S}" || die
-	#eapply "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-1.patch" || die
-	#eapply "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-2.patch" || die
-	#eapply "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-3.patch" || die
+#	eapply \
+# "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-1.patch" \
+# || die
+#	eapply \
+# "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-2.patch" \
+# || die
+#	eapply \
+# "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-3.patch" \
+# || die
 	eapply "${FILESDIR}/aspnetcore-2.1.9-skip-tests-1.patch" || die
-	rm src/Razor/CodeAnalysis.Razor/src/TextChangeExtensions.cs || die # Missing TextChange
+	rm src/Razor/CodeAnalysis.Razor/src/TextChangeExtensions.cs \
+		|| die # Missing TextChange
 
 	mv src/SignalR "${T}" || die
 	mv src/Servers/Kestrel/shared/test "${T}"/test.1 || die
@@ -295,7 +340,8 @@ _src_prepare() {
 	mv modules/EntityFrameworkCore "${T}" || die
 	mv src/Templating/test "${T}"/test.3 || die
 	mv src/Http/Routing/test/UnitTests "${T}" || die
-	rm -rf $(find . -iname "test" -o -iname "tests" -o -iname "testassets" -o -iname "*.Tests" -o -iname "sample" -o -iname "samples" -type d)
+	rm -rf $(find . -iname "test" -o -iname "tests" -o -iname "testassets" \
+		-o -iname "*.Tests" -o -iname "sample" -o -iname "samples" -type d)
 	mv "${T}"/SignalR src || die
 	mv "${T}"/test.1 src/Servers/Kestrel/shared/test || die
 	mv "${T}"/test.2 src/DataProtection/shared/test || die
@@ -306,7 +352,8 @@ _src_prepare() {
 	mv "${T}"/UnitTests src/Http/Routing/test/ || die
 
 	# requires removed; FunctionalTests and TestServer are missing
-	#rm src/Servers/IIS/IIS/benchmarks/IIS.Performance/PlaintextBenchmark.cs || die
+	#rm src/Servers/IIS/IIS/benchmarks/IIS.Performance/PlaintextBenchmark.cs \
+	#	|| die
 
 	#_use_native_netfx
 	_use_ms_netfx
@@ -340,13 +387,15 @@ _src_compile() {
 		buildargs_coreasp+=" /p:SkipTests=false /p:CompileOnly=false"
 	fi
 
-	export DropSuffix="true" # to avoid problems for now as in directory name changes... kinda like a work around
+	export DropSuffix="true" # to avoid problems for now as in directory
+				# name changes... kinda like a work around
 
 	if [[ ${ARCH} =~ (amd64) ]]; then
 		einfo "Building AspNetCore"
 		cd "${ASPNETCORE_S}" || die
 		#-arch ${myarch} # in master
-		./build.sh /p:Configuration=${mydebug^} --verbose ${buildargs_coreasp} || die
+		./build.sh /p:Configuration=${mydebug^} \
+			--verbose ${buildargs_coreasp} || die
 	fi
 }
 
@@ -360,14 +409,20 @@ src_install() {
 	local ddest_aspnetcoreapp="${ddest}/shared/Microsoft.AspNetCore.App/${PV}/"
 	local myarch=$(_getarch)
 
-	# based on https://www.archlinux.org/packages/community/x86_64/aspnet-runtime/
+	# Based on https://www.archlinux.org/packages/community/x86_64/aspnet-runtime/
 	# i.e. unpacked binary distribution
 
 	dodir "${dest_aspnetcoreall}"
-	cp -a "${S}/AspNetCore-${CORE_V}/bin/fx/linux-${myarch}/Microsoft.AspNetCore.All/lib/netcoreapp"$(ver_cut 1-2 ${PV})/* "${ddest_aspnetcoreall}" || die
+	local d1=\
+"${ASPNETCORE_S}/bin/fx/linux-${myarch}/Microsoft.AspNetCore.All/lib"
+	cp -a "${d1}/netcoreapp"$(ver_cut 1-2 ${PV})/* \
+		"${ddest_aspnetcoreall}" || die
 
 	dodir "${dest_aspnetcoreapp}"
-	cp -a "${S}/AspNetCore-${CORE_V}/bin/fx/linux-${myarch}/Microsoft.AspNetCore.App/lib/netcoreapp"$(ver_cut 1-2 ${PV})/* "${ddest_aspnetcoreapp}" || die
+	local d2=\
+"${ASPNETCORE_S}/bin/fx/linux-${myarch}/Microsoft.AspNetCore.App/lib"
+	cp -a "${d2}/netcoreapp"$(ver_cut 1-2 ${PV})/* \
+		"${ddest_aspnetcoreapp}" || die
 
 
 	cd "${ASPNETCORE_S}" || die
