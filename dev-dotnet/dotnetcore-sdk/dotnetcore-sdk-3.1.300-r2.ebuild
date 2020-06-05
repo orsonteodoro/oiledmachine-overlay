@@ -1,7 +1,7 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# This package is like a virtual package
+# This package is like a meta/virtual package
 # The https://github.com/dotnet/cli is the ".NET Core SDK" package on the GitHub
 # release page not the https://github.com/dotnet/sdk
 
@@ -12,7 +12,6 @@ EAPI=7
 DESCRIPTION="Core functionality needed to create .NET Core projects, that is \
 shared between Visual Studio and CLI"
 HOMEPAGE="https://github.com/dotnet/sdk"
-LICENSE="MIT"
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 IUSE="samples docs"
 RESTRICT="fetch"
