@@ -13,13 +13,13 @@ DESCRIPTION="Core functionality needed to create .NET Core projects, that is \
 shared between Visual Studio and CLI"
 HOMEPAGE="https://github.com/dotnet/sdk"
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
-IUSE="aspnetcore doc samples"
+IUSE="aspnetcore doc examples"
 RESTRICT="fetch"
 SLOT=$(ver_cut 1-2 ${PV})
 # split due to flaky servers
 CORE_V=2.1.18
 RDEPEND="aspnetcore? ( =dev-dotnet/aspnetcore-${CORE_V}*:${CORE_V}[doc?] )
-	 =dev-dotnet/core-${CORE_V}*:${CORE_V}[doc?,samples?]
+	 =dev-dotnet/core-${CORE_V}*:${CORE_V}[doc?,examples?]
 	 =dev-dotnet/coreclr-${CORE_V}*:${CORE_V}[doc?]
 	 =dev-dotnet/corefx-${CORE_V}*:${CORE_V}[doc?]
 	 =dev-dotnet/cli-${PV}*:${PV}[doc?]"
