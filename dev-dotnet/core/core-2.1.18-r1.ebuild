@@ -4,7 +4,8 @@
 EAPI=7
 DESCRIPTION="Home repository for .NET Core"
 HOMEPAGE="https://github.com/dotnet/core"
-LICENSE="all-rights-reserved MIT" # The vanilla MIT license does not contain all rights reserved
+LICENSE="all-rights-reserved MIT"
+# The vanilla MIT license does not contain all rights reserved
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 IUSE="doc samples"
 CORE_V=${PV}
@@ -41,5 +42,5 @@ src_install() {
 
 pkg_postinst() {
 	einfo \
-	"Samples and documents were installed in /usr/share/dotnetcore-sdk/${SLOT}/core"
+"Samples and documents were installed in /usr/share/dotnetcore-sdk/${SLOT}/core"
 }
