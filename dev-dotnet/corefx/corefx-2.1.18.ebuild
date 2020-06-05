@@ -44,11 +44,6 @@ DEPEND="${RDEPEND}
 	 !dev-dotnet/dotnetcore-aspnet-bin
 	 !dev-dotnet/dotnetcore-runtime-bin
 	 !dev-dotnet/dotnetcore-sdk-bin"
-#_PATCHES=( "${FILESDIR}/corefx-2.1.9-werror.patch"
-#	   "${FILESDIR}/corefx-2.2.3-null-1.patch"
-#	   "${FILESDIR}/corefx-2.2.3-null-2.patch"
-#	   "${FILESDIR}/corefx-2.2.3-null-3.patch"
-#	   "${FILESDIR}/corefx-2.2.3-null-4.patch" )
 S="${WORKDIR}"
 COREFX_S="${S}/corefx-${CORE_V}"
 RESTRICT="mirror"
@@ -84,7 +79,6 @@ src_unpack() {
 _src_prepare() {
 #	default_src_prepare
 	cd "${COREFX_S}" || die
-#	eapply ${_PATCHES[@]}
 
 	# allow verbose output
 	local F=$(grep -l -r -e "__init_tools_log" $(find "${WORKDIR}" -name "*.sh"))
