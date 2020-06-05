@@ -7,7 +7,14 @@
 EAPI=7
 DESCRIPTION="CoreCLR is the runtime for .NET Core. It includes the garbage collector, JIT compiler, primitive data types and low-level classes."
 HOMEPAGE="https://github.com/dotnet/coreclr"
-LICENSE="all-rights-reserved MIT" # The vanilla MIT license doesn't come with all rights reserved
+LICENSE="all-rights-reserved
+	MIT
+	Apache-2.0
+	BSD
+	BSD-2
+	ISOC-rfc
+	ZLIB
+" # The vanilla MIT license doesn't come with all rights reserved
 KEYWORDS="~amd64"
 CORE_V=${PV}
 DOTNETCLI_V=3.1.100 # from global.json
