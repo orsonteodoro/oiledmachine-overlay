@@ -357,10 +357,10 @@ src_install() {
 	# i.e. unpacked binary distribution
 
 	dodir "${dest_aspnetcoreall}"
-	cp -a "${S}/AspNetCore-${CORE_V}/bin/fx/linux-${myarch}/Microsoft.AspNetCore.All/lib/netcoreapp2.2"/* "${ddest_aspnetcoreall}" || die
+	cp -a "${S}/AspNetCore-${CORE_V}/bin/fx/linux-${myarch}/Microsoft.AspNetCore.All/lib/netcoreapp"$(ver_cut 1-2 ${PV})/* "${ddest_aspnetcoreall}" || die
 
 	dodir "${dest_aspnetcoreapp}"
-	cp -a "${S}/AspNetCore-${CORE_V}/bin/fx/linux-${myarch}/Microsoft.AspNetCore.App/lib/netcoreapp2.2"/* "${ddest_aspnetcoreapp}" || die
+	cp -a "${S}/AspNetCore-${CORE_V}/bin/fx/linux-${myarch}/Microsoft.AspNetCore.App/lib/netcoreapp"$(ver_cut 1-2 ${PV})/* "${ddest_aspnetcoreapp}" || die
 
 	docinto licenses
 	dodoc LICENSE.txt THIRD-PARTY-NOTICES.txt
