@@ -7,7 +7,9 @@
 EAPI=7
 DESCRIPTION="This repo contains the .NET Core command-line (CLI) tools, used for building .NET Core apps and libraries through your development flow (compiling, NuGet package management, running, testing, ...)."
 HOMEPAGE="https://github.com/dotnet/cli"
-LICENSE="all-rights-reserved MIT"
+LICENSE="all-rights-reserved MIT
+	Apache-2.0
+	ISOC-rfc"
 KEYWORDS="~amd64" # also arm32 https://github.com/dotnet/core/blob/master/release-notes/2.1/2.1-supported-os.md
 VERSION_SUFFIX=''
 DropSuffix="true" # true=official latest release, false=dev for live ebuilds
