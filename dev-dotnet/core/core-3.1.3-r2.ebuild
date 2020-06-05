@@ -7,7 +7,7 @@ HOMEPAGE="https://github.com/dotnet/core"
 LICENSE="all-rights-reserved MIT"
 # The vanilla MIT license does not contain all rights reserved
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
-IUSE="doc samples"
+IUSE="doc examples"
 CORE_V=${PV}
 SRC_URI="\
 https://github.com/dotnet/core/archive/v${CORE_V}.tar.gz \
@@ -26,7 +26,7 @@ src_install() {
 	local ddest="${D}/${dest}"
 	local dest_core="${dest}/core"
 	local ddest_core="${ddest}/core"
-	if use samples ; then
+	if use examples ; then
 		insinto "${dest}"
 		doins -r "${CORE_S}/samples"
 	fi
