@@ -27,12 +27,12 @@ src_install() {
 	local ddest_core="${ddest}/core"
 	if use samples ; then
 		insinto "${dest}"
-		doins -r "${CORE_S}/"/samples
+		doins -r "${CORE_S}/samples"
 	fi
-	rm -rf "${CORE_S}/"/samples || die
+	rm -rf "${CORE_S}/samples" || die
 	if use doc ; then
 		insinto "${dest_core}"
-		doins -r "${CORE_S}/"/*
+		doins -r "${CORE_S}/"*
 	fi
 
 	docinto license
