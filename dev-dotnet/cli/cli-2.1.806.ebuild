@@ -18,7 +18,7 @@ KEYWORDS="~amd64" # also arm32 \
 # https://github.com/dotnet/core/blob/master/release-notes/2.1/2.1-supported-os.md
 VERSION_SUFFIX=''
 DropSuffix="true" # true=official latest release, false=dev for live ebuilds
-IUSE="debug doc tests"
+IUSE="debug doc test"
 SDK_V="2.1.403" # from run-build.sh ; line 168
 DOTNET_CLI_COMMIT="a8985a32df4279e4f22522a9d65d0551147e6f6e" # exactly ${PV}
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we have
@@ -223,7 +223,7 @@ _src_compile() {
 " /property:GitInfoCommitCount=0 /property:GitInfoCommitHash=${DOTNET_CLI_COMMIT}"
 	fi
 
-	if ! use tests ; then
+	if ! use test ; then
 		buildargs_corecli+=" /t:Compile"
 	fi
 

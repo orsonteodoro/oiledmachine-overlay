@@ -18,7 +18,7 @@ KEYWORDS="~amd64" # also arm32, arm64 \
 # https://github.com/dotnet/core/blob/master/release-notes/3.1/3.1-supported-os.md
 VERSION_SUFFIX=''
 DropSuffix="true" # true=official latest release, false=dev for live ebuilds
-IUSE="debug doc tests"
+IUSE="debug doc test"
 SDK_V="3.1.200-preview-014946" # from global.json
 # urls constructed from: https://dot.net/v1/dotnet-install.sh
 DOTNET_CLI_COMMIT="7e0c2e2beaf7f90c8bf86693076a21912784b22e" # exactly ${PV}
@@ -234,7 +234,7 @@ _src_compile() {
 " /property:GitInfoCommitCount=0 /property:GitInfoCommitHash=${DOTNET_CLI_COMMIT}"
 	fi
 
-#	if ! use tests ; then
+#	if ! use test ; then
 #		buildargs_corecli+=" /t:Compile"
 #	else
 #		buildargs_corecli+=" "
