@@ -16,6 +16,7 @@ DropSuffix="true" # true=official latest release, false=dev for live ebuilds
 IUSE="debug doc tests"
 SDK_V="2.1.403" # from run-build.sh ; line 168
 DOTNET_CLI_COMMIT="7407f7fd9dc06ff1dd2a85b35ee28d971d40ddd4" # exactly ${PV}
+# We need to cache the dotnet-sdk tarball outside the sandbox otherwise we have to keep downloading it everytime the sandbox is wiped.
 SRC_URI="https://github.com/dotnet/cli/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
 	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )"
 #	 arm64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
@@ -77,7 +78,7 @@ _unpack_cli() {
 	if [[ ! -f run-build.sh ]] ; then
 		die "Cannot find run-build.sh"
 	elif [[ "${X_SDK_V}" != "${SDK_V}" ]] ; then
-		die "Cached dotnet-sdk in distfiles is not the same as requested.  Update ebuild's SDK_V to ${SDK_V}"
+		die "Cached dotnet-sdk in distfiles is not the same as requested.  Update ebuild's SDK_V to ${X_SDK_V}"
 	fi
 }
 

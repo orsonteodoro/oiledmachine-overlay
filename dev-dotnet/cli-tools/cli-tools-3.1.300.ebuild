@@ -17,6 +17,7 @@ IUSE="debug doc tests"
 SDK_V="3.1.200-preview-014946" # from global.json ; it must match or it will redownload
 # urls constructed from: https://dot.net/v1/dotnet-install.sh
 DOTNET_CLI_COMMIT="f6250b79a00848f18e6e7b076b561d0a794983d3" # exactly ${PV}
+# We need to cache the dotnet-sdk tarball outside the sandbox otherwise we have to keep downloading it everytime the sandbox is wiped.
 SRC_URI="https://github.com/dotnet/cli/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
 	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )"
 #	 arm64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
@@ -77,7 +78,7 @@ _unpack_cli() {
 	if [[ ! -f global.json ]] ; then
 		die "Cannot find global.json"
 	elif [[ "${X_SDK_V}" != "${SDK_V}" ]] ; then
-		die "Cached dotnet-sdk in distfiles is not the same as requested.  Update ebuild's SDK_V to ${SDK_V}"
+		die "Cached dotnet-sdk in distfiles is not the same as requested.  Update ebuild's SDK_V to ${X_SDK_V}"
 	fi
 }
 
