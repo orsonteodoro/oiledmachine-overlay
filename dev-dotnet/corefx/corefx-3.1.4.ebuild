@@ -1,8 +1,9 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# BASED ON https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=dotnet-cli
-#          https://git.archlinux.org/svntogit/community.git/tree/trunk/PKGBUILD?h=packages/dotnet-core
+# BASED ON
+# https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=dotnet-cli
+# https://git.archlinux.org/svntogit/community.git/tree/trunk/PKGBUILD?h=packages/dotnet-core
 
 EAPI=7
 DESCRIPTION="CoreFX is the foundational class libraries for .NET Core. It \
@@ -81,6 +82,9 @@ pkg_pretend() {
 }
 
 src_unpack() {
+	einfo \
+"If you emerged this first, please use the meta package dotnetcore-sdk instead\
+ as the starting point."
 	ewarn "This ebuild is a Work in Progress (WIP) and may likely not work."
 	unpack "corefx-${CORE_V}.tar.gz"
 

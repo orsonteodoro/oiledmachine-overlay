@@ -79,6 +79,9 @@ disabled in FEATURES."
 }
 
 src_unpack() {
+	einfo \
+"If you emerged this first, please use the meta package dotnetcore-sdk instead\
+ as the starting point."
 	ewarn "This ebuild is a Work in Progress (WIP) and may likely not work."
 	unpack "corefx-${CORE_V}.tar.gz"
 
