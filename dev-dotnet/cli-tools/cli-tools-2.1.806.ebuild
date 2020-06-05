@@ -7,11 +7,11 @@
 EAPI=7
 DESCRIPTION="This repo contains the .NET Core command-line (CLI) tools, used for building .NET Core apps and libraries through your development flow (compiling, NuGet package management, running, testing, ...)."
 HOMEPAGE="https://github.com/dotnet/cli"
-LICENSE="MIT"
+LICENSE="all-rights-reserved MIT"
 KEYWORDS="~amd64" # also arm32 https://github.com/dotnet/core/blob/master/release-notes/2.1/2.1-supported-os.md
 VERSION_SUFFIX=''
 DropSuffix="true" # true=official latest release, false=dev for live ebuilds
-IUSE="tests debug"
+IUSE="debug doc tests"
 SDK_V="2.1.403" # from run-build.sh ; line 168
 DOTNET_CLI_COMMIT="7407f7fd9dc06ff1dd2a85b35ee28d971d40ddd4" # exactly ${PV}
 SRC_URI="https://github.com/dotnet/cli/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
@@ -63,9 +63,20 @@ pkg_pretend() {
 }
 
 _unpack_cli() {
+	ewarn "This ebuild is a Work In Progress (WIP) and may likely not work."
 	unpack ${PN}-${PV}.tar.gz
+
 	mv "${WORKDIR}/cli-${PV}" "${S}/dotnet-cli-${PV}"
 	export CLI_S="${S}/dotnet-cli-${PV}"
+
+	cd "${CLI_S}" || die
+
+	X_SDK_V=$(grep -r -e "--version" run-build.sh | cut -f 4 -d "\"")
+	if [[ ! -f run-build.sh ]] ; then
+		die "Cannot find run-build.sh"
+	elif [[ "${X_SDK_V}" != "${SDK_V}" ]] ; then
+		die "Cached dotnet-sdk in distfiles is not the same as requested.  Update ebuild's SDK_V to ${SDK_V}"
+	fi
 }
 
 _fetch_cli() {
@@ -99,7 +110,7 @@ _fetch_cli() {
 	cp -a "${d}" "${CLI_S}"
 	mv "${S}/dotnetcli-${DOTNET_CLI_COMMIT}/" "${S}/dotnet-cli-${PV}" || die
 	export CLI_S="${S}/dotnet-cli-${PV}"
-	cd "${CLI_S}"
+	cd "${CLI_S}" || die
 	local rev=$(printf "%06d" $(git rev-list --count v${PV}))
 	einfo "rev=${rev}"
 	if [[ "${DropSuffix}" != "true" ]] ; then
@@ -136,7 +147,7 @@ _src_prepare() {
 	local myarch=$(_getarch)
 
 #	default_src_prepare
-	cd "${CLI_S}"
+	cd "${CLI_S}" || die
 	eapply -p2 ${_PATCHES[@]}
 
 	# allow verbose output
@@ -224,7 +235,16 @@ src_install() {
 	cd "${ddest_sdk}" || die
 	ln -s Current 15.0 || die
 
-	mv "${D}"/opt/dotnet/dotnet "${D}"/opt/dotnet/dotnet-${PV}
+	mv "${D}"/opt/dotnet/dotnet "${D}"/opt/dotnet/dotnet-${PV} || die
+
+	cd "${CLI_S}" || die
+	docinto licenses
+	dodoc LICENSE THIRD-PARTY-NOTICES
+
+	if use doc ; then
+		docinto docs
+		dodoc -r CONTRIBUTING.md Documentation ISSUE_TEMPLATE PULL_REQUEST_TEMPLATE
+	fi
 }
 
 pkg_postinst() {

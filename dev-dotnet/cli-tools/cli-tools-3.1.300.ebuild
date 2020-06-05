@@ -7,14 +7,13 @@
 EAPI=7
 DESCRIPTION="This repo contains the .NET Core command-line (CLI) tools, used for building .NET Core apps and libraries through your development flow (compiling, NuGet package management, running, testing, ...)."
 HOMEPAGE="https://github.com/dotnet/cli"
-LICENSE="MIT"
+LICENSE="all-rights-reserved MIT"
 KEYWORDS="~amd64" # also arm32, arm64 https://github.com/dotnet/core/blob/master/release-notes/3.1/3.1-supported-os.md
 VERSION_SUFFIX=''
 DropSuffix="true" # true=official latest release, false=dev for live ebuilds
-IUSE="tests debug"
+IUSE="debug doc tests"
 SDK_V="3.1.200-preview-014946" # from global.json ; it must match or it will redownload
 # urls constructed from: https://dot.net/v1/dotnet-install.sh
-
 DOTNET_CLI_COMMIT="f6250b79a00848f18e6e7b076b561d0a794983d3" # exactly ${PV}
 SRC_URI="https://github.com/dotnet/cli/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
 	 amd64? ( https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )"
@@ -65,9 +64,19 @@ pkg_pretend() {
 }
 
 _unpack_cli() {
+	ewarn "This ebuild is a Work In Progress (WIP) and may likely not work."
 	unpack ${PN}-${PV}.tar.gz
 	mv "${WORKDIR}/cli-${PV}" "${S}/dotnet-cli-${PV}"
 	export CLI_S="${S}/dotnet-cli-${PV}"
+
+	cd "${CLI_S}" || die
+
+	X_SDK_V=$(grep -e "dotnet" global.json | head -n 1 | cut -f 4 -d "\"")
+	if [[ ! -f global.json ]] ; then
+		die "Cannot find global.json"
+	elif [[ "${X_SDK_V}" != "${SDK_V}" ]] ; then
+		die "Cached dotnet-sdk in distfiles is not the same as requested.  Update ebuild's SDK_V to ${SDK_V}"
+	fi
 }
 
 _fetch_cli() {
@@ -101,7 +110,7 @@ _fetch_cli() {
 	cp -a "${d}" "${CLI_S}"
 	mv "${S}/dotnetcli-${DOTNET_CLI_COMMIT}/" "${S}/dotnet-cli-${PV}" || die
 	export CLI_S="${S}/dotnet-cli-${PV}"
-	cd "${CLI_S}"
+	cd "${CLI_S}" || die
 	local rev=$(printf "%06d" $(git rev-list --count v${PV}))
 	einfo "rev=${rev}"
 	if [[ "${DropSuffix}" != "true" ]] ; then
@@ -135,7 +144,7 @@ _src_prepare() {
 	fi
 
 #	default_src_prepare
-	cd "${CLI_S}"
+	cd "${CLI_S}" || die
 	eapply -p2 ${_PATCHES[@]}
 
 	# allow verbose output
@@ -251,6 +260,15 @@ src_install() {
 	ln -s Current 15.0 || die
 
 	mv "${D}"/opt/dotnet/dotnet "${D}"/opt/dotnet/dotnet-${PV}
+
+	cd "${CLI_S}" || die
+	docinto licenses
+	dodoc LICENSE THIRD-PARTY-NOTICES
+
+	if use doc ; then
+		docinto docs
+		dodoc -r CONTRIBUTING.md Documentation ISSUE_TEMPLATE PULL_REQUEST_TEMPLATE
+	fi
 }
 
 pkg_postinst() {
