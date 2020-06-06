@@ -131,6 +131,11 @@ _src_prepare() {
 		echo "Patching $f"
 		sed -i -e 's|-sSL|-L|g' -e 's|wget -q |wget |g' "$f" || die
 	done
+
+	if [[ ${ARCH} =~ (arm64|arm) ]]; then
+		sed -i -e "s|${DOTNETCLI_V}|${DOTNETCLI_V_FALLBACK}|g" \
+			DotnetCLIVersion.txt || die
+	fi
 }
 
 _src_compile() {

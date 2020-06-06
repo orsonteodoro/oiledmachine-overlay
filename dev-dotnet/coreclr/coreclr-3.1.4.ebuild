@@ -132,6 +132,13 @@ $(grep -l -r -e "__init_tools_log" $(find "${WORKDIR}" -name "*.sh"))
 		echo "Patching $f"
 		sed -i -e 's|-sSL|-L|g' -e 's|wget -q |wget |g' "$f" || die
 	done
+
+	if [[ ${ARCH} =~ (arm64|arm) ]]; then
+		sed -i -e "s|\
+\"dotnet\": \"${DOTNETCLI_V}\"|\
+\"dotnet\": \"${DOTNETCLI_V_FALLBACK}\"|g" \
+			DotnetCLIVersion.txt || die
+	fi
 }
 
 _getarch() {
