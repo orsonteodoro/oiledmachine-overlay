@@ -14,7 +14,7 @@ LICENSE="all-rights-reserved
 	Apache-2.0
 	ISOC-rfc
 	MIT"
-KEYWORDS="~amd64" # also arm32, arm64 \
+KEYWORDS="~amd64 ~arm ~arm64"
 # https://github.com/dotnet/core/blob/master/release-notes/3.1/3.1-supported-os.md
 VERSION_SUFFIX=''
 DropSuffix="true" # true=official latest release, false=dev for live ebuilds
@@ -27,9 +27,9 @@ DOTNET_CLI_COMMIT="7e0c2e2beaf7f90c8bf86693076a21912784b22e" # exactly ${PV}
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
 SRC_URI="\
 https://github.com/dotnet/cli/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
-  amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )"
-# arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
-# arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )"
+  amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )
+  arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )
+  arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )"
 SLOT="${PV}"
 # see scripts/docker/ubuntu.16.04/Dockerfile for dependencies
 RDEPEND="
@@ -62,7 +62,7 @@ DOTNET_CLI_REPO_URL="https://github.com/dotnet/cli.git"
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
 # but this ebuild doesn't currently use that.
 
-pkg_pretend() {
+pkg_setup() {
 	# If FEATURES="-sandbox -usersandbox" are not set dotnet will hang while
 	# compiling.
 	if has sandbox $FEATURES || has usersandbox $FEATURES ; then
@@ -73,6 +73,14 @@ pkg_pretend() {
 	if has network-sandbox $FEATURES ; then
 		die "${PN} require network-sandbox to be disabled in FEATURES."
 	fi
+
+	einfo "CPU Architecture:"
+	case ${CHOST} in
+		armv7a*h*) einfo "  armv7a";;
+		x86_64*)  einfo "  x86_64";;
+		aarch64*) einfo "  aarch";;
+		*) die "Unsupported CPU architecture";;
+	esac
 }
 
 _unpack_cli() {
