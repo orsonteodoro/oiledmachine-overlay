@@ -12,7 +12,7 @@ EAPI=7
 DESCRIPTION="Core functionality needed to create .NET Core projects, that is \
 shared between Visual Studio and CLI"
 HOMEPAGE="https://github.com/dotnet/sdk"
-KEYWORDS="~amd64 ~arm ~arm64 ~x86"
+KEYWORDS="~amd64 ~arm"
 IUSE="aspnetcore doc examples"
 RESTRICT="fetch"
 SLOT=$(ver_cut 1-2 ${PV})
