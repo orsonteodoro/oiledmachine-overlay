@@ -20,16 +20,36 @@ VERSION_SUFFIX=''
 DropSuffix="true" # true=official latest release, false=dev for live ebuilds
 IUSE="debug doc test"
 SDK_V="3.1.200-preview-014946" # from global.json
-# urls constructed from: https://dot.net/v1/dotnet-install.sh
+# The URIs are constructed from: https://dot.net/v1/dotnet-install.sh
 DOTNET_CLI_COMMIT="7e0c2e2beaf7f90c8bf86693076a21912784b22e" # exactly ${PV}
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we have
 # to keep downloading it everytime the sandbox is wiped.
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
+RUNTIME_BASEURI="https://dotnetcli.azureedge.net/dotnet/Runtime"
+# Missing 1.1.2 of dotnet-runtime is EOL as well as all 1.1.x
+#    ${RUNTIME_BASEURI}/1.1.2/dotnet-runtime-1.1.2-linux-x64.tar.gz
+#    ${RUNTIME_BASEURI}/1.1.2/dotnet-runtime-1.1.2-linux-arm.tar.gz
+#    ${RUNTIME_BASEURI}/1.1.2/dotnet-runtime-1.1.2-linux-arm64.tar.gz
+# Missing:
+#    ${RUNTIME_BASEURI}/2.0.0/dotnet-runtime-2.0.0-linux-arm64.tar.gz
+# 3.1.4 based on MicrosoftNETCoreAppRuntimePackageVersion in eng/Versions.props
+# 2.0.0, 2.2.0, 1.1.2 referenced in eng/restore-toolset.sh
 SRC_URI="\
 https://github.com/dotnet/cli/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
-  amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )
-  arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )
-  arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )"
+  amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz
+    ${RUNTIME_BASEURI}/2.0.0/dotnet-runtime-2.0.0-linux-x64.tar.gz
+    ${RUNTIME_BASEURI}/2.2.0/dotnet-runtime-2.2.0-linux-x64.tar.gz
+    ${RUNTIME_BASEURI}/3.1.4/dotnet-runtime-3.1.4-linux-x64.tar.gz
+  )
+  arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz
+    ${RUNTIME_BASEURI}/2.0.0/dotnet-runtime-2.0.0-linux-arm.tar.gz
+    ${RUNTIME_BASEURI}/2.2.0/dotnet-runtime-2.2.0-linux-arm.tar.gz
+    ${RUNTIME_BASEURI}/3.1.4/dotnet-runtime-3.1.4-linux-arm.tar.gz
+  )
+  arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz
+    ${RUNTIME_BASEURI}/2.2.0/dotnet-runtime-2.2.0-linux-arm64.tar.gz
+    ${RUNTIME_BASEURI}/3.1.4/dotnet-runtime-3.1.4-linux-arm64.tar.gz
+  )"
 SLOT="${PV}"
 # see scripts/docker/ubuntu.16.04/Dockerfile for dependencies
 RDEPEND="
@@ -55,12 +75,19 @@ DEPEND="${RDEPEND}
 _PATCHES=( "${FILESDIR}/dotnet-cli-2.1.505-null-LastWriteTimeUtc-minval.patch" )
 RESTRICT="mirror"
 S="${WORKDIR}"
-CLI_S="${S}/dotnetcli-${DOTNET_CLI_COMMIT}"
 DOTNET_CLI_REPO_URL="https://github.com/dotnet/cli.git"
 
 # This currently isn't required but may be needed in later ebuilds
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
 # but this ebuild doesn't currently use that.
+
+_get_S() {
+	if [[ "${DropSuffix}" == "true" ]] ; then
+		echo "${S}/${PN}-${PV}"
+	else
+		echo "${S}/${PN}-${DOTNET_CLI_COMMIT}"
+	fi
+}
 
 pkg_setup() {
 	# If FEATURES="-sandbox -usersandbox" are not set dotnet will hang while
@@ -87,9 +114,8 @@ pkg_setup() {
 _unpack_cli() {
 	ewarn "This ebuild is a Work In Progress (WIP) and may likely not work."
 	unpack ${PN}-${PV}.tar.gz
-	mv "${WORKDIR}/cli-${PV}" "${S}/dotnet-cli-${PV}"
-	export CLI_S="${S}/dotnet-cli-${PV}"
 
+	export CLI_S=$(_get_S)
 	cd "${CLI_S}" || die
 
 	X_SDK_V=$(grep -e "dotnet" global.json | head -n 1 | cut -f 4 -d "\"")
@@ -102,14 +128,27 @@ SDK_V to ${X_SDK_V}"
 	fi
 }
 
+_unpack_runtime() {
+	local myarch=$(_getarch)
+	mkdir -p "${CLI_S}/.dotnet" || die
+	pushd "${CLI_S}/.dotnet" || die
+	# See eng/restore-toolset.sh for expected versions
+	if [[ ${ARCH} =~ (arm|amd64) ]] ; then
+		unpack "dotnet-runtime-2.0.0-linux-${myarch}.tar.gz"
+	fi
+	unpack "dotnet-runtime-2.2.0-linux-${myarch}.tar.gz"
+	unpack "dotnet-runtime-3.1.4-linux-${myarch}.tar.gz"
+	popd || die
+}
+
 _fetch_cli() {
 	# git is used because we need the git metadata because the scripts rely
 	# on it to pull versioning info for VERSION_SUFFIX iif DropSuffix=false
 
-	einfo "Fetching dotnet-cli"
+	einfo "Fetching ${PN}"
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	b="${distdir}/dotnet-sdk"
-	d="${b}/dotnet-cli"
+	d="${b}/${PN}"
 	addwrite "${b}"
 	if [[ ! -d "${d}" ]] ; then
 		mkdir -p "${d}"
@@ -133,8 +172,8 @@ _fetch_cli() {
 					# build.  comment to follow head of tag.
 	[ ! -e "README.md" ] && die "found nothing"
 	cp -a "${d}" "${CLI_S}"
-	mv "${S}/dotnetcli-${DOTNET_CLI_COMMIT}/" "${S}/dotnet-cli-${PV}" || die
-	export CLI_S="${S}/dotnet-cli-${PV}"
+	mv "${S}/${PN}-${DOTNET_CLI_COMMIT}/" "${S}/${PN}-${PV}" || die
+	export CLI_S=$(_get_S)
 	cd "${CLI_S}" || die
 	local rev=$(printf "%06d" $(git rev-list --count v${PV}))
 	einfo "rev=${rev}"
@@ -154,6 +193,8 @@ src_unpack() {
 	else
 		_unpack_cli # for official latest release (i.e. tarball)
 	fi
+
+	_unpack_runtime
 
 	# Gentoo or the sandbox doesn't allow downloads in compile phase so move
 	# here
@@ -179,9 +220,9 @@ _src_prepare() {
 
 #	default_src_prepare
 	cd "${CLI_S}" || die
-	eapply -p2 ${_PATCHES[@]}
+	eapply ${_PATCHES[@]}
 
-	# allow verbose output
+	# Allows verbose output
 	local F=$(grep -l -r -e "__init_tools_log" \
 			$(find "${WORKDIR}" -name "*.sh"))
 	for f in $F ; do
@@ -192,14 +233,14 @@ _src_prepare() {
 	-e 's| > "$__init_tools_log"| \| tee "$__init_tools_log"|g' "$f" || die
 	done
 
-	# allow wget curl output
+	# Allows wget curl output
 	local F=$(grep -l -r -e "-sSL" $(find "${WORKDIR}" -name "*.sh"))
 	for f in $F ; do
 		echo "Patching $f"
 		sed -i -e 's|-sSL|-L|g' -e 's|wget -q |wget |g' "$f" || die
 	done
 
-	# comment out code block temporary and re-emerge to update ${SDK_V}
+	# Comment out code block temporary and re-emerge to update ${SDK_V}
 	local p
 	p="${CLI_S}/.dotnet"
 	mkdir -p "${p}" || die
@@ -207,6 +248,21 @@ _src_prepare() {
 	tar -xvf "${DISTDIR}/dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz" || die
 	popd
 	[ ! -f "${CLI_S}/.dotnet/dotnet" ] && die "dotnet not found"
+
+	# Common problem in 3.1.x.  darc-int is a private package but it's not
+	# supposed to be there.
+	sed -i -e '/.*darc.*/d' NuGet.config || die
+	# Should be public packages not internal
+	sed -i -e "s|\
+MicrosoftNETCoreAppInternalPackageVersion|\
+MicrosoftNETCoreAppRuntimePackageVersion|g" \
+		global.json || die
+
+	# Prevent from stalling
+	sed -i -e "s|\
+InstallDotNetSharedFramework \"1.1.2\"|\
+#InstallDotNetSharedFramework \"1.1.2\"|" \
+		eng/restore-toolset.sh || die
 
 	# It has to be done manually if you don't let the installer get the
 	# tarballs.
@@ -218,7 +274,7 @@ _src_compile() {
 	local mydebug=$(usex debug "debug" "release")
 	local myarch=$(_getarch)
 
-	# prevent: InvalidOperationException: The terminfo database is invalid
+	# Prevent InvalidOperationException: The terminfo database is invalid
 	# dotnet.  It cannot be xterm-256color.
 	export TERM=linux # pretend to be outside of X
 
@@ -249,11 +305,10 @@ src_install() {
 	local ddest_sdk="${ddest}/sdk/${PV}/"
 	local myarch=$(_getarch)
 
-	# partly based on:
+	# Installed files partly based on
 # https://www.archlinux.org/packages/community/x86_64/dotnet-host/files/
-	# for dotnet binary and fxr
+	# For dotnet runtime libraries and FXR file list see
 # https://www.archlinux.org/packages/community/x86_64/dotnet-runtime/files/
-	# for shared dlls using the unpacked binary distribution
 
 	dodir "${dest_sdk}"
 	local d_dotnet="${CLI_S}/bin/2/linux-${myarch}/dotnet"
@@ -262,7 +317,7 @@ src_install() {
 	cp -a "${d_dotnet}/host/" "${ddest}/" || die
 	cp -a "${d_dotnet}/shared/" "${ddest}/" || die
 
-	# prevent collision with coreclr ebuild
+	# Prevents collision with CoreCLR ebuild
 	FXR_V=$(grep -r -e "MicrosoftNETCoreAppInternalPackageVersion" \
 		"${CLI_S}/Versions.props" \
 		| head -n 1 | cut -f 2 -d ">" | cut -f 1 -d "<")
@@ -272,11 +327,11 @@ src_install() {
 	cp -a "${d_dotnet}"/{LICENSE.txt,ThirdPartyNotices.txt} \
 		"${D}/usr/share/licenses/cli-tools-${PV}" || die
 
-	# for monodevelop.  15.0 is toolsversion.
+	# Symlink for MonoDevelop.  15.0 is the toolsversion.
 	cd "${ddest_sdk}" || die
 	ln -s Current 15.0 || die
 
-	mv "${D}"/opt/dotnet/dotnet "${D}"/opt/dotnet/dotnet-${PV}
+	mv "${D}"/opt/dotnet/dotnet "${D}"/opt/dotnet/dotnet-${PV} || die
 
 	cd "${CLI_S}" || die
 	docinto licenses
@@ -292,6 +347,6 @@ src_install() {
 pkg_postinst() {
 	einfo \
 "You may need to symlink from /opt/dotnet/dotnet-${PV} to /usr/bin/dotnet"
-	# clobbler the symlink anyway
+	# Clobbler the symlink anyway
 	ln -s /opt/dotnet/dotnet-${PV} /usr/bin/dotnet
 }
