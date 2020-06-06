@@ -6,7 +6,7 @@ DESCRIPTION="Home repository for .NET Core"
 HOMEPAGE="https://github.com/dotnet/core"
 LICENSE="all-rights-reserved MIT"
 # The vanilla MIT license does not contain all rights reserved
-KEYWORDS="~amd64 ~arm ~arm64 ~x86"
+KEYWORDS="~amd64 ~arm ~arm64"
 IUSE="doc examples"
 CORE_V=${PV}
 SRC_URI="\
