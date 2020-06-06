@@ -138,9 +138,6 @@ _src_compile() {
 	local mydebug="release"
 	local myarch=""
 
-	# for smoother multitasking (default 50) and to prevent IO starvation
-	export npm_config_maxsockets=5
-
 	if use debug ; then
 		mydebug="debug"
 	fi
