@@ -75,9 +75,9 @@ pkg_setup() {
 
 	einfo "CPU Architecture:"
 	case ${CHOST} in
+		aarch64*) einfo "  aarch";;
 		armv7a*h*) einfo "  armv7a";;
 		x86_64*)  einfo "  x86_64";;
-		aarch64*) einfo "  aarch";;
 		*) die "Unsupported CPU architecture";;
 	esac
 }
