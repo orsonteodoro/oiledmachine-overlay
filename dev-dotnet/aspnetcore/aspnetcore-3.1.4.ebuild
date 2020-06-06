@@ -18,7 +18,7 @@ LICENSE="all-rights-reserved
 	 SIL-1.1
 	 ZLIB
 " # The vanilla MIT license does not have all rights reserved
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~arm ~arm64"
 CORE_V=${PV}
 DropSuffix="false" # true=official latest release, false=dev for live ebuilds
 MY_PN="AspNetCore"
@@ -84,10 +84,10 @@ fi
 NETCORE_BASEURI="https://dotnetcli.azureedge.net/dotnet/Runtime/${NETCORE_V}"
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
 SRC_URI="${SRC_URI_TGZ}
-	 amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz
-	 ${NETCORE_BASEURI}/dotnet-runtime-${NETCORE_V}-linux-x64.tar.gz )"
-#	 arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
-#	 arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )"
+	 ${NETCORE_BASEURI}/dotnet-runtime-${NETCORE_V}-linux-x64.tar.gz
+	 amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )
+	 arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )
+	 arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )"
 S=${WORKDIR}
 RESTRICT="mirror"
 ASPNETCORE_REPO_URL="${ASPNET_GITHUB_BASEURI}/AspNetCore.git"
@@ -104,12 +104,21 @@ pkg_setup() {
 	# compiling.
 	if has sandbox $FEATURES || has usersandbox $FEATURES ; then
 		die \
-"${PN} require sandbox and usersandbox to be disabled in FEATURES."
+"${PN} requires sandbox and usersandbox to be disabled in FEATURES."
 	fi
 
 	if has network-sandbox $FEATURES ; then
-		die "${PN} require network-sandbox to be disabled in FEATURES."
+		die \
+"${PN} requires network-sandbox to be disabled in FEATURES."
 	fi
+
+	einfo "CPU Architecture:"
+	case ${CHOST} in
+		aarch64*) einfo "  aarch64";;
+		armv7a*h*) einfo "  armv7a-hf";;
+		x86_64*)  einfo "  x86_64";;
+		*) die "Unsupported CPU architecture";;
+	esac
 }
 
 _unpack_asp() {
