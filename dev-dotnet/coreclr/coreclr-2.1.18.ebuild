@@ -20,20 +20,20 @@ LICENSE="all-rights-reserved
 " # The vanilla MIT license doesn't come with all rights reserved
 KEYWORDS="~amd64 ~arm"
 CORE_V=${PV}
-DOTNETCLI_V=2.1.2 # from DotnetCLIVersion.txt
-DOTNETCLI_V_FALLBACK=2.1.403 # from dev-dotnet/cli-2.1*
+SDK_V=2.1.2 # from DotnetCLIVersion.txt
+SDK_V_FALLBACK=2.1.403 # from dev-dotnet/cli-2.1*
 # From the commit history, they say they keep DotnetCLIVersion.txt in sync with
 # other dotnet projects
 IUSE="debug doc numa test"
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we have
 # to keep downloading it everytime the sandbox is wiped.
-DOTNETCLI_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}"
+SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
 SRC_URI="\
 https://github.com/dotnet/coreclr/archive/v${CORE_V}.tar.gz \
 	-> coreclr-${CORE_V}.tar.gz
-  amd64? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-x64.tar.gz )
-  arm? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V_FALLBACK}-linux-arm.tar.gz )
-  arm64? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V_FALLBACK}-linux-arm64.tar.gz )"
+  amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )
+  arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V_FALLBACK}-linux-arm.tar.gz )
+  arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V_FALLBACK}-linux-arm64.tar.gz )"
 SLOT="${PV}"
 # Dependencies based on init-tools.sh
 # For more dependencies see
@@ -95,15 +95,15 @@ src_unpack() {
 	unpack "coreclr-${CORE_V}.tar.gz"
 
 	cd "${CORECLR_S}" || die
-	X_DOTNETCLI_V=$(cat DotnetCLIVersion.txt)
+	X_SDK_V=$(cat DotnetCLIVersion.txt)
 	if [[ ${ARCH} =~ (arm64|arm) ]] ; then
 		:;
 	elif [[ ! -f DotnetCLIVersion.txt ]] ; then
 		die "Cannot find DotnetCLIVersion.txt"
-	elif [[ "${X_DOTNETCLI_V}" != "${DOTNETCLI_V}" ]] ; then
+	elif [[ "${X_SDK_V}" != "${SDK_V}" ]] ; then
 		die \
 "Cached dotnet-sdk in distfiles is not the same as requested.  Update ebuild's \
-DOTNETCLI_V to ${X_DOTNETCLI_V}"
+SDK_V to ${X_SDK_V}"
 	fi
 
 	# Gentoo or the sandbox doesn't allow downloads in compile phase so move
@@ -133,7 +133,7 @@ _src_prepare() {
 	done
 
 	if [[ ${ARCH} =~ (arm64|arm) ]]; then
-		sed -i -e "s|${DOTNETCLI_V}|${DOTNETCLI_V_FALLBACK}|g" \
+		sed -i -e "s|${SDK_V}|${SDK_V_FALLBACK}|g" \
 			DotnetCLIVersion.txt || die
 	fi
 }
@@ -176,10 +176,10 @@ _src_compile() {
 
 	if [[ ${ARCH} =~ (arm64|arm) ]] ; then
 		fn=\
-"${DISTDIR}/dotnet-sdk-${DOTNETCLI_V_FALLBACK}-linux-${myarch}.tar.gz"
+"${DISTDIR}/dotnet-sdk-${SDK_V_FALLBACK}-linux-${myarch}.tar.gz"
 	else
 		fn=\
-"${DISTDIR}/dotnet-sdk-${DOTNETCLI_V}-linux-${myarch}.tar.gz"
+"${DISTDIR}/dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz"
 	fi
 	DotNetBootstrapCliTarPath="${DISTDIR}/${fn}" \
 	./build.sh -${myarch} -${mydebug} -verbose ${buildargs_coreclr} \
