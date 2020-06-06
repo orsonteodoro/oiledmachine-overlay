@@ -137,7 +137,7 @@ $(grep -l -r -e "__init_tools_log" $(find "${WORKDIR}" -name "*.sh"))
 		sed -i -e "s|\
 \"dotnet\": \"${DOTNETCLI_V}\"|\
 \"dotnet\": \"${DOTNETCLI_V_FALLBACK}\"|g" \
-			DotnetCLIVersion.txt || die
+			global.json || die
 	fi
 }
 
