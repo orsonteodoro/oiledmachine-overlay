@@ -232,7 +232,7 @@ _use_native_netfx() {
 	# trick the scripts by creating the dummy dir to skip downloading
 	local p
 	p="${ASPNETCORE_S}/.dotnet/buildtools/netfx/${NETFX_V}/"
-	mkdir -p "${p}"
+	mkdir -p "${p}" || die
 
 	L=$(find "${ASPNETCORE_S}"/modules/EntityFrameworkCore/ -name "*.csproj")
 	for f in $L ; do
@@ -441,11 +441,11 @@ src_install() {
 
 	docinto licenses
 	dodoc LICENSE.txt THIRD-PARTY-NOTICES.txt
-	cp -a src/Identity/UI/src/{,Identity-UI-}THIRD-PARTY-NOTICES
+	cp -a src/Identity/UI/src/{,Identity-UI-}THIRD-PARTY-NOTICES || die
 	dodoc src/Identity/UI/src/Identity-UI-THIRD-PARTY-NOTICES
-	cp -a src/SignalR/{,SignalR-}THIRD-PARTY-NOTICES
+	cp -a src/SignalR/{,SignalR-}THIRD-PARTY-NOTICES || die
 	dodoc src/SignalR/SignalR-THIRD-PARTY-NOTICES
-	cp -a src/Templating/src/{,Templating-}THIRD-PARTY-NOTICES
+	cp -a src/Templating/src/{,Templating-}THIRD-PARTY-NOTICES || die
 	dodoc src/Templating/src/Templating-THIRD-PARTY-NOTICES
 
 	if use doc ; then

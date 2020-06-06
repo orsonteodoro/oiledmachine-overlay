@@ -156,7 +156,7 @@ _fetch_asp() {
 	addwrite "${b}"
 	local update=0
 	if [[ ! -d "${d}" ]] ; then
-		mkdir -p "${d}"
+		mkdir -p "${d}" || die
 		einfo "Cloning project"
 		git clone --recursive ${ASPNETCORE_REPO_URL} "${d}" || die
 		cd "${d}" || die
@@ -431,24 +431,24 @@ src_install() {
 
 	docinto licenses
 	dodoc LICENSE.txt THIRD-PARTY-NOTICES.txt
-	cp -a src/SignalR/{,SignalR-}THIRD-PARTY-NOTICES
+	cp -a src/SignalR/{,SignalR-}THIRD-PARTY-NOTICES || die
 	dodoc src/SignalR/SignalR-THIRD-PARTY-NOTICES
 	cp -a src/SignalR/clients/ts/signalr/src/\
-{,SignalR-clients-ts-}third-party-notices.txt
+{,SignalR-clients-ts-}third-party-notices.txt || die
 	dodoc src/SignalR/clients/ts/signalr/src/\
 SignalR-clients-ts-third-party-notices.txt
 	cp -a src/SignalR/clients/ts/signalr-protocol-msgpack/src/\
-{,SignalR-clients-ts-signalr-protocol-msgpack-}third-party-notices.txt
+{,SignalR-clients-ts-signalr-protocol-msgpack-}third-party-notices.txt || die
 	dodoc src/SignalR/clients/ts/signalr-protocol-msgpack/src/\
 SignalR-clients-ts-signalr-protocol-msgpack-third-party-notices.txt
-	cp -a src/ProjectTemplates/{,ProjectTemplates-}THIRD-PARTY-NOTICES
+	cp -a src/ProjectTemplates/{,ProjectTemplates-}THIRD-PARTY-NOTICES || die
 	dodoc src/ProjectTemplates/ProjectTemplates-THIRD-PARTY-NOTICES
-	cp -a src/Identity/UI/src/{,Identity-UI-}THIRD-PARTY-NOTICES.txt
+	cp -a src/Identity/UI/src/{,Identity-UI-}THIRD-PARTY-NOTICES.txt || die
 	dodoc src/Identity/UI/src/Identity-UI-THIRD-PARTY-NOTICES.txt
-	cp -a src/Components/{,Components-}THIRD-PARTY-NOTICES.txt
+	cp -a src/Components/{,Components-}THIRD-PARTY-NOTICES.txt || die
 	dodoc src/Components/Components-THIRD-PARTY-NOTICES.txt
 	cp -a src/Components/benchmarkapps/BlazingPizza.Server/\
-{,Components-benchmarkapps-BlazingPizza.Server-}THIRD-PARTY-NOTICES.md
+{,Components-benchmarkapps-BlazingPizza.Server-}THIRD-PARTY-NOTICES.md || die
 	dodoc src/Components/benchmarkapps/BlazingPizza.Server/\
 Components-benchmarkapps-BlazingPizza.Server-THIRD-PARTY-NOTICES.md
 
