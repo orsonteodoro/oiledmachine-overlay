@@ -239,11 +239,13 @@ _use_native_netfx() {
 		einfo "Editing $f"
 		sed -i -e "s|\
 <Project>|\
-<Project>\n  <Import Project=\"netfx.props\" />\n|g" \
+<Project>\n\
+  <Import Project=\"netfx.props\" />\n|g" \
 			"$f" || die
 		sed -i -e "s|\
 <Project Sdk=\"Microsoft.NET.Sdk\">|\
-<Project Sdk=\"Microsoft.NET.Sdk\">\n  <Import Project=\"netfx.props\" />\n|g" \
+<Project Sdk=\"Microsoft.NET.Sdk\">\n\
+  <Import Project=\"netfx.props\" />\n|g" \
 			"$f" || die
 	done
 }
