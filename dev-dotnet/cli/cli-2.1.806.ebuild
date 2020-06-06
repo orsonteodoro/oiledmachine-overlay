@@ -217,9 +217,6 @@ _src_compile() {
 	local mydebug=$(usex debug "debug" "release")
 	local myarch=$(_getarch)
 
-	# for smoother multitasking (default 50) and to prevent IO starvation
-	export npm_config_maxsockets=5
-
 	# prevent: InvalidOperationException: The terminfo database is invalid
 	# dotnet.  It cannot be xterm-256color.
 	export TERM=linux # pretend to be outside of X

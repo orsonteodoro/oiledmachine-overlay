@@ -161,7 +161,7 @@ src_unpack() {
 	_src_compile
 }
 
-_src_prepare() {
+_getarch() {
 	if [[ ${ARCH} =~ (amd64) ]]; then
 		myarch="x64"
 	elif [[ ${ARCH} =~ (x86) ]] ; then
@@ -171,6 +171,11 @@ _src_prepare() {
 	elif [[ ${ARCH} =~ (arm) ]] ; then
 		myarch="arm"
 	fi
+	echo "${myarch}"
+}
+
+_src_prepare() {
+	local myarch=$(_getarch)
 
 #	default_src_prepare
 	cd "${CLI_S}" || die
@@ -210,26 +215,8 @@ _src_prepare() {
 
 _src_compile() {
 	local buildargs_corecli=""
-	local mydebug="release"
-	local myarch=""
-
-	# for smoother multitasking (default 50) and to prevent IO starvation
-	export npm_config_maxsockets=5
-
-	if use debug ; then
-		mydebug="debug"
-	fi
-
-	if [[ ${ARCH} =~ (amd64) ]]; then
-		myarch="x64"
-	elif [[ ${ARCH} =~ (x86) ]] ; then
-		myarch="x32"
-	elif [[ ${ARCH} =~ (arm64) ]] ; then
-		myarch="arm64"
-	elif [[ ${ARCH} =~ (arm) ]] ; then
-		myarch="arm"
-	fi
-
+	local mydebug=$(usex debug "debug" "release")
+	local myarch=$(_getarch)
 
 	# prevent: InvalidOperationException: The terminfo database is invalid
 	# dotnet.  It cannot be xterm-256color.
@@ -260,17 +247,7 @@ src_install() {
 	local ddest="${D}/${dest}"
 	local dest_sdk="${dest}/sdk/${PV}/"
 	local ddest_sdk="${ddest}/sdk/${PV}/"
-	local myarch=""
-
-	if [[ ${ARCH} =~ (amd64) ]]; then
-		myarch="x64"
-	elif [[ ${ARCH} =~ (x86) ]] ; then
-		myarch="x32"
-	elif [[ ${ARCH} =~ (arm64) ]] ; then
-		myarch="arm64"
-	elif [[ ${ARCH} =~ (arm) ]] ; then
-		myarch="arm"
-	fi
+	local myarch=$(_getarch)
 
 	# partly based on:
 # https://www.archlinux.org/packages/community/x86_64/dotnet-host/files/
