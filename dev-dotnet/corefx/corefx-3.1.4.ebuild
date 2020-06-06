@@ -20,18 +20,18 @@ LICENSE="all-rights-reserved
 	ZLIB" # The vanilla MIT license does not have all rights reserved
 KEYWORDS="~amd64 ~arm ~arm64"
 CORE_V="${PV}"
-DOTNETCLI_V="3.1.100" # found in global.json
-DOTNETCLI_V_FALLBACK=3.1.200-preview-014946 # from dev-dotnet/cli-3.1*
+SDK_V="3.1.100" # found in global.json
+SDK_V_FALLBACK=3.1.200-preview-014946 # from dev-dotnet/cli-3.1*
 IUSE="debug doc test"
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we
 # have to keep downloading it everytime the sandbox is wiped.
-DOTNETCLI_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}"
+SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
 SRC_URI="\
 https://github.com/dotnet/corefx/archive/v${CORE_V}.tar.gz \
   -> corefx-${CORE_V}.tar.gz
-  amd64? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-x64.tar.gz )
-  arm64? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-arm64.tar.gz )
-  arm? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V_FALLBACK}-linux-arm.tar.gz )"
+  amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )
+  arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
+  arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V_FALLBACK}-linux-arm.tar.gz )"
 SLOT="${PV}"
 # Requirements based on Ubuntu 16.04 minimum requirements.
 # Library requirements based on:
@@ -96,15 +96,15 @@ src_unpack() {
 	unpack "corefx-${CORE_V}.tar.gz"
 
 	cd "${COREFX_S}" || die
-	X_DOTNETCLI_V=$(grep "dotnet" global.json | head -n 1 | cut -f 4 -d "\"")
+	X_SDK_V=$(grep "dotnet" global.json | head -n 1 | cut -f 4 -d "\"")
 	if [[ ${ARCH} =~ (arm) ]] ; then
 		:;
 	elif [[ ! -f global.json ]] ; then
 		die "Cannot find global.json"
-	elif [[ "${X_DOTNETCLI_V}" != "${DOTNETCLI_V}" ]] ; then
+	elif [[ "${X_SDK_V}" != "${SDK_V}" ]] ; then
 		die \
 "Cached dotnet-sdk in distfiles is not the same as requested.  Update ebuild's \
-DOTNETCLI_V to ${X_DOTNETCLI_V}"
+SDK_V to ${X_SDK_V}"
 	fi
 
 	# gentoo or the sandbox doesn't allow downloads in compile phase
@@ -138,11 +138,11 @@ $(grep -l -r -e "__init_tools_log" $(find "${WORKDIR}" -name "*.sh"))
 	if [[ ${ARCH} =~ (arm) ]]; then
 		sed -i \
 			-e "s|\
-\"dotnet\": \"${DOTNETCLI_V}\"|\
-\"dotnet\": \"${DOTNETCLI_V_FALLBACK}\"|g" \
+\"dotnet\": \"${SDK_V}\"|\
+\"dotnet\": \"${SDK_V_FALLBACK}\"|g" \
 			-e "s|\
-\"version\": \"${DOTNETCLI_V}\"|\
-\"version\": \"${DOTNETCLI_V_FALLBACK}\"|g" \
+\"version\": \"${SDK_V}\"|\
+\"version\": \"${SDK_V_FALLBACK}\"|g" \
 			global.json || die
 	fi
 }
@@ -182,10 +182,10 @@ _src_compile() {
 	local fn
 	if [[ ${ARCH} =~ (arm) ]] ; then
 		fn=\
-"dotnet-sdk-${DOTNETCLI_V_FALLBACK}-linux-${myarch}.tar.gz"
+"dotnet-sdk-${SDK_V_FALLBACK}-linux-${myarch}.tar.gz"
 	else
 		fn=\
-"dotnet-sdk-${DOTNETCLI_V}-linux-${myarch}.tar.gz"
+"dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz"
 	fi
 	export DotNetBootstrapCliTarPath="${DISTDIR}/${fn}"
 	local p
@@ -193,7 +193,7 @@ _src_compile() {
 	mkdir -p "${p}" || die
 	pushd "${p}" || die
 		tar -xvf \
-"${DISTDIR}/dotnet-sdk-${DOTNETCLI_V}-linux-${myarch}.tar.gz" || die
+"${DISTDIR}/dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz" || die
 	popd || die
 	[ ! -f "${COREFX_S}/.dotnet/dotnet" ] && die "dotnet not found"
 

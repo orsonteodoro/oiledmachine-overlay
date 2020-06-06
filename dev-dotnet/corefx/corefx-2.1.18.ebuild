@@ -20,17 +20,17 @@ LICENSE="all-rights-reserved
 	ZLIB" # The vanilla MIT license does not have all rights reserved
 KEYWORDS="~amd64 ~arm"
 CORE_V="${PV}"
-DOTNETCLI_V="2.1.300-rc1-008673" # defined in DotnetCLIVersion.txt
+SDK_V="2.1.300-rc1-008673" # defined in DotnetCLIVersion.txt
 IUSE="debug doc heimdal test"
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we
 # have to keep downloading it everytime the sandbox is wiped.
-DOTNETCLI_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}"
+SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
 SRC_URI="\
 https://github.com/dotnet/corefx/archive/v${CORE_V}.tar.gz \
   -> corefx-${CORE_V}.tar.gz
-  amd64? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-x64.tar.gz )
-  arm64? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-arm64.tar.gz )
-  arm? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-arm.tar.gz )"
+  amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )
+  arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
+  arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )"
 SLOT="${PV}"
 # Requirements based on Ubuntu 16.04 minimum requirements.
 # Library requirements based on:
@@ -96,13 +96,13 @@ src_unpack() {
 	unpack "corefx-${CORE_V}.tar.gz"
 
 	cd "${COREFX_S}" || die
-	X_DOTNETCLI_V=$(cat DotnetCLIVersion.txt)
+	X_SDK_V=$(cat DotnetCLIVersion.txt)
 	if [[ ! -f DotnetCLIVersion.txt ]] ; then
 		die "Cannot find DotnetCLIVersion.txt"
-	elif [[ "${X_DOTNETCLI_V}" != "${DOTNETCLI_V}" ]] ; then
+	elif [[ "${X_SDK_V}" != "${SDK_V}" ]] ; then
 		die \
 "Cached dotnet-sdk in distfiles is not the same as requested.  Update ebuild's \
-DOTNETCLI_V to ${X_DOTNETCLI_V}"
+SDK_V to ${X_SDK_V}"
 	fi
 
 	# gentoo or the sandbox doesn't allow downloads in compile phase
@@ -178,7 +178,7 @@ _src_compile() {
 	cd "${COREFX_S}" || die
 
 	DotNetBootstrapCliTarPath=\
-"${DISTDIR}/dotnet-sdk-${DOTNETCLI_V}-linux-${myarch}.tar.gz" \
+"${DISTDIR}/dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz" \
 	./build.sh -buildArch -ArchGroup=${myarch} -${mydebug} \
 		${buildargs_corefx} || die
 
