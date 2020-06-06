@@ -70,16 +70,17 @@ pkg_setup() {
 	# compiling.
 	if has sandbox $FEATURES || has usersandbox $FEATURES ; then
 		die \
-"${PN} require sandbox and usersandbox to be disabled in FEATURES."
+"${PN} requires sandbox and usersandbox to be disabled in FEATURES."
 	fi
 
 	if has network-sandbox $FEATURES ; then
-		die "${PN} require network-sandbox to be disabled in FEATURES."
+		die \
+"${PN} requires network-sandbox to be disabled in FEATURES."
 	fi
 
 	einfo "CPU Architecture:"
 	case ${CHOST} in
-		aarch64*) einfo "  aarch";;
+		aarch64*) einfo "  aarch64";;
 		armv7a*h*) einfo "  armv7a";;
 		x86_64*)  einfo "  x86_64";;
 		*) die "Unsupported CPU architecture";;
