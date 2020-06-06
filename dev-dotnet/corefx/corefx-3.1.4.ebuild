@@ -18,10 +18,10 @@ LICENSE="all-rights-reserved
 	unicode
 	W3C
 	ZLIB" # The vanilla MIT license does not have all rights reserved
-KEYWORDS="~amd64"
-# ~x86 ~arm64 ~arm
+KEYWORDS="~amd64 ~arm ~arm64"
 CORE_V="${PV}"
 DOTNETCLI_V="3.1.100" # found in global.json
+DOTNETCLI_V_FALLBACK=3.1.200-preview-014946 # from dev-dotnet/cli-3.1*
 IUSE="debug doc test"
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we
 # have to keep downloading it everytime the sandbox is wiped.
@@ -29,10 +29,9 @@ DOTNETCLI_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}"
 SRC_URI="\
 https://github.com/dotnet/corefx/archive/v${CORE_V}.tar.gz \
   -> corefx-${CORE_V}.tar.gz
-  amd64? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-x64.tar.gz )"
-# x86? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-x86.tar.gz )
-# arm64? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-arm64.tar.gz )
-# arm? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-arm.tar.gz )
+  amd64? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-x64.tar.gz )
+  arm64? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-arm64.tar.gz )
+  arm? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V_FALLBACK}-linux-arm.tar.gz )"
 SLOT="${PV}"
 # Requirements based on Ubuntu 16.04 minimum requirements.
 # Library requirements based on:
@@ -67,18 +66,26 @@ RESTRICT="mirror"
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
 # but this ebuild doesn't currently use that.
 
-pkg_pretend() {
+pkg_setup() {
 	# If FEATURES="-sandbox -usersandbox" are not set dotnet will hang while
 	# compiling.
 	if has sandbox $FEATURES || has usersandbox $FEATURES ; then
 		die \
-"${PN} require sandbox and usersandbox to be disabled in FEATURES."
+"${PN} requires sandbox and usersandbox to be disabled in FEATURES."
 	fi
 
 	if has network-sandbox $FEATURES ; then
 		die \
-"${PN} require network-sandbox to be disabled in FEATURES."
+"${PN} requires network-sandbox to be disabled in FEATURES."
 	fi
+
+	einfo "CPU Architecture:"
+	case ${CHOST} in
+		aarch64*) einfo "  aarch64";;
+		armv7a*h*) einfo "  armv7a";;
+		x86_64*)  einfo "  x86_64";;
+		*) die "Unsupported CPU architecture";;
+	esac
 }
 
 src_unpack() {
@@ -90,7 +97,9 @@ src_unpack() {
 
 	cd "${COREFX_S}" || die
 	X_DOTNETCLI_V=$(grep "dotnet" global.json | head -n 1 | cut -f 4 -d "\"")
-	if [[ ! -f global.json ]] ; then
+	if [[ ${ARCH} =~ (arm) ]] ; then
+		:;
+	elif [[ ! -f global.json ]] ; then
 		die "Cannot find global.json"
 	elif [[ "${X_DOTNETCLI_V}" != "${DOTNETCLI_V}" ]] ; then
 		die \
@@ -162,8 +171,15 @@ _src_compile() {
 	fi
 
 	# comment out code block temporary and re-emerge to update ${SDK_V}
-	export DotNetBootstrapCliTarPath=\
-"${DISTDIR}/dotnet-sdk-${DOTNETCLI_V}-linux-${myarch}.tar.gz"
+	local fn
+	if [[ ${ARCH} =~ (arm) ]] ; then
+		fn=\
+"dotnet-sdk-${DOTNETCLI_V_FALLBACK}-linux-${myarch}.tar.gz"
+	else
+		fn=\
+"dotnet-sdk-${DOTNETCLI_V}-linux-${myarch}.tar.gz"
+	fi
+	export DotNetBootstrapCliTarPath="${DISTDIR}/${fn}"
 	local p
 	p="${COREFX_S}/.dotnet"
 	mkdir -p "${p}" || die

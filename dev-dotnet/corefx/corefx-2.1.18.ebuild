@@ -18,8 +18,7 @@ LICENSE="all-rights-reserved
 	unicode
 	W3C
 	ZLIB" # The vanilla MIT license does not have all rights reserved
-KEYWORDS="~amd64"
-# ~x86 ~arm64 ~arm
+KEYWORDS="~amd64 ~arm"
 CORE_V="${PV}"
 DOTNETCLI_V="2.1.300-rc1-008673" # defined in DotnetCLIVersion.txt
 IUSE="debug doc heimdal test"
@@ -29,10 +28,9 @@ DOTNETCLI_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${DOTNETCLI_V}"
 SRC_URI="\
 https://github.com/dotnet/corefx/archive/v${CORE_V}.tar.gz \
   -> corefx-${CORE_V}.tar.gz
-  amd64? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-x64.tar.gz )"
-# x86? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-x86.tar.gz )
-# arm64? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-arm64.tar.gz )
-# arm? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-arm.tar.gz )
+  amd64? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-x64.tar.gz )
+  arm64? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-arm64.tar.gz )
+  arm? ( ${DOTNETCLI_BASEURI}/dotnet-sdk-${DOTNETCLI_V}-linux-arm.tar.gz )"
 SLOT="${PV}"
 # Requirements based on Ubuntu 16.04 minimum requirements.
 # Library requirements based on:
@@ -68,14 +66,26 @@ RESTRICT="mirror"
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
 # but this ebuild doesn't currently use that.
 
-pkg_pretend() {
+pkg_setup() {
 	# If FEATURES="-sandbox -usersandbox" are not set dotnet will hang while
 	# compiling.
 	if has sandbox $FEATURES || has usersandbox $FEATURES ; then
 		die \
-".NET core command-line (CLI) tools require sandbox and usersandbox to be \
-disabled in FEATURES."
+"${PN} requires sandbox and usersandbox to be disabled in FEATURES."
 	fi
+
+	if has network-sandbox $FEATURES ; then
+		die \
+"${PN} requires network-sandbox to be disabled in FEATURES."
+	fi
+
+	einfo "CPU Architecture:"
+	case ${CHOST} in
+		aarch64*) einfo "  aarch64";;
+		armv7a*h*) einfo "  armv7a";;
+		x86_64*)  einfo "  x86_64";;
+		*) die "Unsupported CPU architecture";;
+	esac
 }
 
 src_unpack() {
