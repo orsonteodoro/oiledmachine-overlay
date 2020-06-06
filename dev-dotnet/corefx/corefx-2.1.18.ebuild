@@ -139,9 +139,6 @@ _src_compile() {
 	local mydebug="release"
 	local myarch=""
 
-	# for smoother multitasking (default 50) and to prevent IO starvation
-	export npm_config_maxsockets=1
-
 	if use heimdal; then
 		# build uses mit-krb5 by default but lets override to heimdal
 		buildargs_corefx+=" -cmakeargs -DHeimdalGssApi=ON"
