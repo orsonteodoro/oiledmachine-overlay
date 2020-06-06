@@ -49,8 +49,7 @@ RDEPEND=">=app-crypt/mit-krb5-1.13.2
 	 >=net-libs/nodejs-10.14.2
 	 >=net-misc/curl-7.47
 	 >=sys-libs/libunwind-1.1
-	 >=sys-libs/zlib-1.2.8
-"
+	 >=sys-libs/zlib-1.2.8"
 DEPEND="${RDEPEND}
 	  dev-dotnet/cli-tools
 	 !dev-dotnet/dotnetcore-aspnet-bin
