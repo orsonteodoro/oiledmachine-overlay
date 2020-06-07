@@ -87,12 +87,18 @@ SRC_URI="${SRC_URI_TGZ}
 S=${WORKDIR}
 RESTRICT="mirror"
 ASPNETCORE_REPO_URL="${ASPNET_GITHUB_BASEURI}/AspNetCore.git"
-ASPNETCORE_S="${WORKDIR}/AspNetCore-${ASPNETCORE_COMMIT}"
-#ASPNETCORE_S="${WORKDIR}/AspNetCore-${CORE_V}"
 
 # This currently isn't required but may be needed in later ebuilds
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
 # but this ebuild doesn't currently use that.
+
+_get_S() {
+	if [[ "${DropSuffix}" == "true" ]] ; then
+		echo "${WORKDIR}/AspNetCore-${CORE_V}"
+	else
+		echo "${WORKDIR}/AspNetCore-${ASPNETCORE_COMMIT}"
+	fi
+}
 
 pkg_setup() {
 	ewarn "This ebuild is a Work In Progress (WIP) and will not compile"
@@ -132,8 +138,6 @@ _unpack_asp() {
 		"${WORKDIR}/EntityFrameworkCore" || die
 	mv "${WORKDIR}/EntityFrameworkCore" . || die
 	popd || die
-
-	export ASPNETCORE_S="${S}/AspNetCore-${CORE_V}"
 }
 
 _fetch_asp() {
@@ -175,8 +179,6 @@ _fetch_asp() {
 	fi
 	[ ! -e "README.md" ] && die "found nothing"
 	cp -a "${d}" "${ASPNETCORE_S}" || die
-	mv "${S}/AspNetCore-${ASPNETCORE_COMMIT}/" "${S}/AspNetCore-${CORE_V}" || die
-	export ASPNETCORE_S="${S}/AspNetCore-${CORE_V}"
 }
 
 src_unpack() {
@@ -187,6 +189,8 @@ src_unpack() {
 	pushd "${T}/korebuild" || die
 		unpack "${FN_KOREBUILD}"
 	popd || die
+
+	export ASPNETCORE_S=$(_get_S)
 
 	# need repo references
 	if [[ "${DropSuffix}" == "true" ]] ; then
@@ -228,7 +232,8 @@ _use_native_netfx() {
 	# error MSB3644: The reference assemblies for framework
 	# ".NETFramework,Version=v4.6.1" were not found.
 
-	# trick the scripts by creating the dummy dir to skip downloading
+	# Comment code block below to see the expected version.
+	# Trick the scripts by creating the dummy dir to skip downloading.
 	local p
 	p="${ASPNETCORE_S}/.dotnet/buildtools/netfx/${NETFX_V}/"
 	mkdir -p "${p}" || die

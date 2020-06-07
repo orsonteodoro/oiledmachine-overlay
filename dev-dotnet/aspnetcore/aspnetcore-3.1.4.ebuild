@@ -90,15 +90,22 @@ SRC_URI="${SRC_URI_TGZ}
 S=${WORKDIR}
 RESTRICT="mirror"
 ASPNETCORE_REPO_URL="${ASPNET_GITHUB_BASEURI}/AspNetCore.git"
-ASPNETCORE_S="${WORKDIR}/AspNetCore-${ASPNETCORE_COMMIT}"
-#ASPNETCORE_S="${WORKDIR}/AspNetCore-${CORE_V}"
 
 # This currently isn't required but may be needed in later ebuilds
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
 # but this ebuild doesn't currently use that.
 
+_get_S() {
+	if [[ "${DropSuffix}" == "true" ]] ; then
+		echo "${WORKDIR}/AspNetCore-${CORE_V}"
+	else
+		echo "${WORKDIR}/AspNetCore-${ASPNETCORE_COMMIT}"
+	fi
+}
+
 pkg_setup() {
 	ewarn "This ebuild is a Work In Progress (WIP) and will not compile"
+	ewarn "See https://github.com/dotnet/aspnetcore/issues/18509"
 	# If FEATURES="-sandbox -usersandbox" are not set dotnet will hang while
 	# compiling.
 	if has sandbox $FEATURES || has usersandbox $FEATURES ; then
@@ -141,7 +148,6 @@ _unpack_asp() {
 		"${WORKDIR}/MessagePack-CSharp" || die
 	mv "${WORKDIR}/MessagePack-CSharp" . || die
 	popd || die
-	export ASPNETCORE_S="${S}/AspNetCore-${CORE_V}"
 }
 
 _fetch_asp() {
@@ -183,14 +189,15 @@ _fetch_asp() {
 	fi
 	[ ! -e "README.md" ] && die "found nothing"
 	cp -a "${d}" "${ASPNETCORE_S}" || die
-	mv "${S}/AspNetCore-${ASPNETCORE_COMMIT}/" "${S}/AspNetCore-${CORE_V}" || die
-	export ASPNETCORE_S="${S}/AspNetCore-${CORE_V}"
 }
 
 src_unpack() {
 	einfo \
 "If you emerged this first, please use the meta package dotnetcore-sdk instead\
  as the starting point."
+
+	export ASPNETCORE_S=$(_get_S)
+
 	# need repo references
 	if [[ "${DropSuffix}" == "true" ]] ; then
 		_unpack_asp
@@ -230,10 +237,11 @@ _use_native_netcore() {
 	# error MSB3644: The reference assemblies for framework
 	# ".NETFramework,Version=v4.6.1" were not found.
 
-	# trick the scripts by creating the dummy dir to skip downloading
-	local p
-	p="${ASPNETCORE_S}/.dotnet/buildtools/netfx/${NETCORE_V}/"
-	mkdir -p "${p}" || die
+	# Comment code block below to see the expected version.
+	# Trick the scripts by creating the dummy dir to skip downloading.
+#	local p
+#	p="${ASPNETCORE_S}/.dotnet/buildtools/netfx/${NETCORE_V}/"
+#	mkdir -p "${p}" || die
 
 	L=$(find "${ASPNETCORE_S}"/modules/EntityFrameworkCore/ -name "*.csproj")
 	for f in $L ; do
@@ -375,7 +383,7 @@ _src_prepare() {
 
 	# comment the 4 lines below to inspect versions for SDK_V and NETCORE_V/NETFX_V
 	#_use_native_netcore
-#	_use_ms_netcore
+	_use_ms_netcore
 
 	#_use_native_sdk
 	_use_ms_sdk
