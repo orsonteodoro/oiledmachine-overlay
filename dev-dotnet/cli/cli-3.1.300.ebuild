@@ -6,9 +6,9 @@
 # https://git.archlinux.org/svntogit/community.git/tree/trunk/PKGBUILD?h=packages/dotnet-core
 
 EAPI=7
-DESCRIPTION="This repo contains the .NET Core command-line (CLI) tools, used \
-for building .NET Core apps and libraries through your development flow \
-(compiling, NuGet package management, running, testing, ...)."
+DESCRIPTION="The .NET Core command-line (CLI) tools, used for building .NET \
+Core apps and libraries through your development flow (compiling, NuGet \
+package management, running, testing, ...)."
 HOMEPAGE="https://github.com/dotnet/cli"
 LICENSE="all-rights-reserved
 	Apache-2.0
