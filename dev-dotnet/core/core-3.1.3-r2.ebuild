@@ -13,8 +13,7 @@ SRC_URI="\
 https://github.com/dotnet/core/archive/v${CORE_V}.tar.gz \
 	-> core-${CORE_V}.tar.gz"
 SLOT="${PV}"
-S="${WORKDIR}"
-CORE_S="${S}/core-${CORE_V}"
+S="${WORKDIR}/core-${CORE_V}"
 RESTRICT="mirror"
 
 src_unpack() {
@@ -28,12 +27,12 @@ src_install() {
 	local ddest_core="${ddest}/core"
 	if use examples ; then
 		insinto "${dest}"
-		doins -r "${CORE_S}/samples"
+		doins -r "${S}/samples"
 	fi
-	rm -rf "${CORE_S}/samples" || die
+	rm -rf "${S}/samples" || die
 	if use doc ; then
 		insinto "${dest_core}"
-		doins -r "${CORE_S}/"*
+		doins -r "${S}/"*
 	fi
 
 	docinto license
