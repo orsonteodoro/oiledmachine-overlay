@@ -95,13 +95,11 @@ ASPNETCORE_REPO_URL="${ASPNET_GITHUB_BASEURI}/AspNetCore.git"
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
 # but this ebuild doesn't currently use that.
 
-_get_S() {
-	if [[ "${DropSuffix}" == "true" ]] ; then
-		echo "${WORKDIR}/AspNetCore-${CORE_V}"
-	else
-		echo "${WORKDIR}/AspNetCore-${ASPNETCORE_COMMIT}"
-	fi
-}
+if [[ "${DropSuffix}" == "true" ]] ; then
+S="${WORKDIR}/AspNetCore-${CORE_V}"
+else
+S="${WORKDIR}/AspNetCore-${ASPNETCORE_COMMIT}"
+fi
 
 pkg_setup() {
 	ewarn "This ebuild is a Work In Progress (WIP) and will not compile"
@@ -128,6 +126,7 @@ pkg_setup() {
 }
 
 _unpack_asp() {
+	cd "${WORKDIR}" || die
 	unpack ${A}
 
 	cd ${MY_PN}-${PV} || die
@@ -188,15 +187,16 @@ _fetch_asp() {
 		git submodule update --init --recursive || die
 	fi
 	[ ! -e "README.md" ] && die "found nothing"
-	cp -a "${d}" "${ASPNETCORE_S}" || die
+	if [[ -d "${S}" ]] ; then
+		rm -rf "${S}" || die
+	fi
+	cp -a "${d}" "${S}" || die
 }
 
 src_unpack() {
 	einfo \
 "If you emerged this first, please use the meta package dotnetcore-sdk instead\
  as the starting point."
-
-	export ASPNETCORE_S=$(_get_S)
 
 	# need repo references
 	if [[ "${DropSuffix}" == "true" ]] ; then
@@ -205,7 +205,7 @@ src_unpack() {
 		_fetch_asp
 	fi
 
-	cd "${ASPNETCORE_S}" || die
+	cd "${S}" || die
 
 #	X_NETCORE_V=$(grep -r -e "\.SDK" scripts/VsRequirements/vs.json \
 # | cut -f 2 -d "\"" | sed  -r -e "s|.*([0-9]+.[0-9]+.[0-9]+).*|\1|g")
@@ -240,10 +240,10 @@ _use_native_netcore() {
 	# Comment code block below to see the expected version.
 	# Trick the scripts by creating the dummy dir to skip downloading.
 #	local p
-#	p="${ASPNETCORE_S}/.dotnet/buildtools/netfx/${NETCORE_V}/"
+#	p="${S}/.dotnet/buildtools/netfx/${NETCORE_V}/"
 #	mkdir -p "${p}" || die
 
-	L=$(find "${ASPNETCORE_S}"/modules/EntityFrameworkCore/ -name "*.csproj")
+	L=$(find "${S}"/modules/EntityFrameworkCore/ -name "*.csproj")
 	for f in $L ; do
 		cp "${FILESDIR}"/netfx.props "$(dirname $f)" || die
 		einfo "Editing $f"
@@ -266,7 +266,7 @@ _use_ms_netcore() {
 	local myarch=$(_getarch)
 	# corefx (netcore) not the same as netfx (found in mono)
 	local p
-	p="${ASPNETCORE_S}/.dotnet" # for Microsoft tarball
+	p="${S}/.dotnet" # for Microsoft tarball
 	mkdir -p "${p}" || die
 	pushd "${p}" || die
 		tar -xvf \
@@ -276,7 +276,7 @@ _use_ms_netcore() {
 
 _use_native_sdk() {
 	local p
-	p="${ASPNETCORE_S}/.dotnet/sdk/${SDK_V}"
+	p="${S}/.dotnet/sdk/${SDK_V}"
 	mkdir -p "${p}" || die
 
 	# This is a workaround for /opt/dotnet/dotnetinstall.lock: Permission denied
@@ -309,8 +309,8 @@ _getarch() {
 # prebuilt (i.e. binary distributed)
 _use_ms_sdk() {
 	local p
-#	p="${ASPNETCORE_S}/.dotnet/sdk/${SDK_V}"
-	p="${ASPNETCORE_S}/.dotnet"
+#	p="${S}/.dotnet/sdk/${SDK_V}"
+	p="${S}/.dotnet"
 	mkdir -p "${p}" || die
 	pushd "${p}" || die
 		local myarch=$(_getarch)
@@ -340,11 +340,11 @@ _src_prepare() {
 	done
 
 	if ! use test ; then
-	_D="${ASPNETCORE_S}/src/submodules/googletest/googletest/xcode/Config"
+	_D="${S}/src/submodules/googletest/googletest/xcode/Config"
 		sed -i -e "s|-Werror||g" "${D}/General.xcconfig"
 	fi
 
-	cd "${ASPNETCORE_S}" || die
+	cd "${S}" || die
 #	eapply \
 # "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-1.patch" \
 # || die
@@ -409,7 +409,7 @@ _src_compile() {
 
 	if [[ ${ARCH} =~ (amd64) ]]; then
 		einfo "Building AspNetCore"
-		cd "${ASPNETCORE_S}" || die
+		cd "${S}" || die
 		./build.sh --verbosity normal --arch ${myarch} \
 			--configuration ${mydebug^} ${buildargs_coreasp} || die
 	fi
@@ -430,12 +430,12 @@ src_install() {
 
 	dodir "${dest_aspnetcoreall}"
 	local d1=\
-"${ASPNETCORE_S}/bin/fx/linux-${myarch}/Microsoft.AspNetCore.All/lib"
+"${S}/bin/fx/linux-${myarch}/Microsoft.AspNetCore.All/lib"
 	cp -a "${d1}/netcoreapp"$(ver_cut 1-2 ${PV})/* "${ddest_aspnetcoreall}" || die
 
 	dodir "${dest_aspnetcoreapp}"
 	local d2=\
-"${ASPNETCORE_S}/bin/fx/linux-${myarch}/Microsoft.AspNetCore.App/lib"
+"${S}/bin/fx/linux-${myarch}/Microsoft.AspNetCore.App/lib"
 	cp -a "${d2}/netcoreapp"$(ver_cut 1-2 ${PV})/* "${ddest_aspnetcoreapp}" || die
 
 	docinto licenses
