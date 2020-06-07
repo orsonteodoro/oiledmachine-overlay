@@ -29,8 +29,8 @@ IUSE="debug doc numa test"
 # to keep downloading it everytime the sandbox is wiped.
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
 SRC_URI="\
-https://github.com/dotnet/coreclr/archive/v${CORE_V}.tar.gz \
-	-> coreclr-${CORE_V}.tar.gz
+https://github.com/dotnet/${PN}/archive/v${CORE_V}.tar.gz \
+	-> ${PN}-${CORE_V}.tar.gz
   amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )
   arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V_FALLBACK}-linux-arm.tar.gz )
   arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V_FALLBACK}-linux-arm64.tar.gz )"
@@ -91,7 +91,7 @@ src_unpack() {
 "If you emerged this first, please use the meta package dotnetcore-sdk instead\
  as the starting point."
 	ewarn "This ebuild is a Work In Progress (WIP) and may not likely work"
-	unpack "coreclr-${CORE_V}.tar.gz"
+	unpack "${PN}-${CORE_V}.tar.gz"
 
 	cd "${S}" || die
 	X_SDK_V=$(cat DotnetCLIVersion.txt)
