@@ -81,13 +81,11 @@ DOTNET_CLI_REPO_URL="https://github.com/dotnet/cli.git"
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
 # but this ebuild doesn't currently use that.
 
-_get_S() {
-	if [[ "${DropSuffix}" == "true" ]] ; then
-		echo "${S}/${PN}-${PV}"
-	else
-		echo "${S}/${PN}-${DOTNET_CLI_COMMIT}"
-	fi
-}
+if [[ "${DropSuffix}" == "true" ]] ; then
+S="${S}/${PN}-${PV}"
+else
+S="${S}/${PN}-${DOTNET_CLI_COMMIT}"
+fi
 
 pkg_setup() {
 	# If FEATURES="-sandbox -usersandbox" are not set dotnet will hang while
@@ -115,8 +113,7 @@ _unpack_cli() {
 	ewarn "This ebuild is a Work In Progress (WIP) and may likely not work."
 	unpack ${PN}-${PV}.tar.gz
 
-	export CLI_S=$(_get_S)
-	cd "${CLI_S}" || die
+	cd "${S}" || die
 
 	X_SDK_V=$(grep -e "dotnet" global.json | head -n 1 | cut -f 4 -d "\"")
 	if [[ ! -f global.json ]] ; then
@@ -130,8 +127,8 @@ SDK_V to ${X_SDK_V}"
 
 _unpack_runtime() {
 	local myarch=$(_getarch)
-	mkdir -p "${CLI_S}/.dotnet" || die
-	pushd "${CLI_S}/.dotnet" || die
+	mkdir -p "${S}/.dotnet" || die
+	pushd "${S}/.dotnet" || die
 	# See eng/restore-toolset.sh for expected versions
 	if [[ ${ARCH} =~ (arm|amd64) ]] ; then
 		unpack "dotnet-runtime-2.0.0-linux-${myarch}.tar.gz"
@@ -171,10 +168,8 @@ _fetch_cli() {
 	#git checkout ${DOTNET_CLI_COMMIT} # uncomment for forced deterministic
 					# build.  comment to follow head of tag.
 	[ ! -e "README.md" ] && die "found nothing"
-	cp -a "${d}" "${CLI_S}"
-	mv "${S}/${PN}-${DOTNET_CLI_COMMIT}/" "${S}/${PN}-${PV}" || die
-	export CLI_S=$(_get_S)
-	cd "${CLI_S}" || die
+	cp -a "${d}" "${S}"
+	cd "${S}" || die
 	local rev=$(printf "%06d" $(git rev-list --count v${PV}))
 	einfo "rev=${rev}"
 	if [[ "${DropSuffix}" != "true" ]] ; then
@@ -219,7 +214,7 @@ _src_prepare() {
 	local myarch=$(_getarch)
 
 #	default_src_prepare
-	cd "${CLI_S}" || die
+	cd "${S}" || die
 	eapply ${_PATCHES[@]}
 
 	# Allows verbose output
@@ -242,12 +237,12 @@ _src_prepare() {
 
 	# Comment out code block temporary and re-emerge to update ${SDK_V}
 	local p
-	p="${CLI_S}/.dotnet"
+	p="${S}/.dotnet"
 	mkdir -p "${p}" || die
 	pushd "${p}" || die
 	tar -xvf "${DISTDIR}/dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz" || die
 	popd
-	[ ! -f "${CLI_S}/.dotnet/dotnet" ] && die "dotnet not found"
+	[ ! -f "${S}/.dotnet/dotnet" ] && die "dotnet not found"
 
 	# Common problem in 3.1.x.  darc-int is a private package but it's not
 	# supposed to be there.
@@ -293,7 +288,7 @@ _src_compile() {
 #	fi
 
 	einfo "Building CLI"
-	cd "${CLI_S}" || die
+	cd "${S}" || die
 	./build.sh --configuration ${mydebug^} --architecture ${myarch} \
 		${buildargs_corecli} || die
 }
@@ -311,7 +306,7 @@ src_install() {
 # https://www.archlinux.org/packages/community/x86_64/dotnet-runtime/files/
 
 	dodir "${dest_sdk}"
-	local d_dotnet="${CLI_S}/bin/2/linux-${myarch}/dotnet"
+	local d_dotnet="${S}/bin/2/linux-${myarch}/dotnet"
 	cp -a "${d_dotnet}/sdk/${PV}${VERSION_SUFFIX}"/* "${ddest_sdk}/" || die
 	cp -a "${d_dotnet}/dotnet" "${ddest}/" || die
 	cp -a "${d_dotnet}/host/" "${ddest}/" || die
@@ -319,7 +314,7 @@ src_install() {
 
 	# Prevents collision with CoreCLR ebuild
 	FXR_V=$(grep -r -e "MicrosoftNETCoreAppInternalPackageVersion" \
-		"${CLI_S}/Versions.props" \
+		"${S}/Versions.props" \
 		| head -n 1 | cut -f 2 -d ">" | cut -f 1 -d "<")
 	rm -rf "${ddest}"/shared/Microsoft.NETCore.App/${FXR_V} || die
 
@@ -333,7 +328,7 @@ src_install() {
 
 	mv "${D}"/opt/dotnet/dotnet "${D}"/opt/dotnet/dotnet-${PV} || die
 
-	cd "${CLI_S}" || die
+	cd "${S}" || die
 	docinto licenses
 	dodoc LICENSE THIRD-PARTY-NOTICES
 

@@ -53,20 +53,17 @@ DEPEND="${RDEPEND}
 	>=sys-devel/make-4.1"
 _PATCHES=( "${FILESDIR}/dotnet-cli-2.1.505-null-LastWriteTimeUtc-minval.patch" )
 RESTRICT="mirror"
-S="${WORKDIR}"
 DOTNET_CLI_REPO_URL="https://github.com/dotnet/cli.git"
 
 # This currently isn't required but may be needed in later ebuilds
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
 # but this ebuild doesn't currently use that.
 
-_get_S() {
-	if [[ "${DropSuffix}" == "true" ]] ; then
-		echo "${S}/${PN}-${PV}"
-	else
-		echo "${S}/${PN}-${DOTNET_CLI_COMMIT}"
-	fi
-}
+if [[ "${DropSuffix}" == "true" ]] ; then
+S="${S}/${PN}-${PV}"
+else
+S="${S}/${PN}-${DOTNET_CLI_COMMIT}"
+fi
 
 pkg_setup() {
 	# If FEATURES="-sandbox -usersandbox" are not set dotnet will hang while
@@ -94,8 +91,7 @@ _unpack_cli() {
 	ewarn "This ebuild is a Work In Progress (WIP) and may likely not work."
 	unpack ${PN}-${PV}.tar.gz
 
-	export CLI_S=$(_get_S)
-	cd "${CLI_S}" || die
+	cd "${S}" || die
 
 	X_SDK_V=$(grep -r -e "--version" run-build.sh | cut -f 4 -d "\"")
 	if [[ ! -f run-build.sh ]] ; then
@@ -137,10 +133,8 @@ _fetch_cli() {
 	#git checkout ${DOTNET_CLI_COMMIT} # uncomment for forced deterministic
 					# build.  comment to follow head of tag.
 	[ ! -e "README.md" ] && die "found nothing"
-	cp -a "${d}" "${CLI_S}"
-	mv "${S}/${PN}-${DOTNET_CLI_COMMIT}/" "${S}/${PN}-${PV}" || die
-	export CLI_S=$(_get_S)
-	cd "${CLI_S}" || die
+	cp -a "${d}" "${S}"
+	cd "${S}" || die
 	local rev=$(printf "%06d" $(git rev-list --count v${PV}))
 	einfo "rev=${rev}"
 	if [[ "${DropSuffix}" != "true" ]] ; then
@@ -152,6 +146,7 @@ src_unpack() {
 	einfo \
 "If you emerged this first, please use the meta package dotnetcore-sdk instead\
  as the starting point."
+	ewarn "This ebuild is a WIP does not work."
 	if [[ "${DropSuffix}" == "false" ]] ; then
 		_fetch_cli # for dev
 	else
@@ -181,7 +176,7 @@ _src_prepare() {
 	local myarch=$(_getarch)
 
 #	default_src_prepare
-	cd "${CLI_S}" || die
+	cd "${S}" || die
 	eapply ${_PATCHES[@]}
 
 	# Allows verbose output
@@ -204,12 +199,12 @@ _src_prepare() {
 
 	# Comment out code block temporary and re-emerge to update ${SDK_V}
 	local p
-	p="${CLI_S}/.dotnet_stage0/${myarch}"
+	p="${S}/.dotnet_stage0/${myarch}"
 	mkdir -p "${p}" || die
 	pushd "${p}" || die
 	tar -xvf "${DISTDIR}/dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz" || die
 	popd
-	[ ! -f "${CLI_S}/.dotnet_stage0/${myarch}/dotnet" ] \
+	[ ! -f "${S}/.dotnet_stage0/${myarch}/dotnet" ] \
 		&& die "dotnet not found"
 
 	# It has to be done manually if you don't let the installer get the
@@ -239,7 +234,7 @@ _src_compile() {
 	fi
 
 	einfo "Building CLI"
-	cd "${CLI_S}" || die
+	cd "${S}" || die
 	./build.sh --configuration ${mydebug^} --architecture ${myarch} \
 		${buildargs_corecli} || die
 }
@@ -257,7 +252,7 @@ src_install() {
 # https://www.archlinux.org/packages/community/x86_64/dotnet-runtime/files/
 
 	dodir "${dest_sdk}"
-	local d_dotnet="${CLI_S}/bin/2/linux-${myarch}/dotnet"
+	local d_dotnet="${S}/bin/2/linux-${myarch}/dotnet"
 	cp -a "${d_dotnet}/sdk/${PV}${VERSION_SUFFIX}"/* "${ddest_sdk}/" || die
 	cp -a "${d_dotnet}/dotnet" "${ddest}/" || die
 	cp -a "${d_dotnet}/host/" "${ddest}/" || die
@@ -265,7 +260,7 @@ src_install() {
 
 	# Prevent collision with CoreCLR ebuild
 	FXR_V=$(grep -r -e "MicrosoftNETCoreAppPackageVersion" \
-		"${CLI_S}/build/DependencyVersions.props" \
+		"${S}/build/DependencyVersions.props" \
 		| head -n 1 | cut -f 2 -d ">" | cut -f 1 -d "<")
 	rm -rf "${ddest}"/shared/Microsoft.NETCore.App/${FXR_V} || die
 
@@ -279,7 +274,7 @@ src_install() {
 
 	mv "${D}"/opt/dotnet/dotnet "${D}"/opt/dotnet/dotnet-${PV} || die
 
-	cd "${CLI_S}" || die
+	cd "${S}" || die
 	docinto licenses
 	dodoc LICENSE THIRD-PARTY-NOTICES
 
