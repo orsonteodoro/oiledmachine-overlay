@@ -43,7 +43,7 @@ SLOT="${PV}"
 # (R)DEPENDs assumes Ubuntu 16.04 lib versions minimal.
 RDEPEND=">=app-crypt/mit-krb5-1.13.2
 	 >=dev-libs/icu-55.1
-	 >=dev-libs/openssl-compat-1.0.2o:1.0
+	 >=dev-libs/openssl-compat-1.0.2o:1.0.0
 	 >=dev-util/lldb-3.9.1
 	 >=dev-util/lttng-ust-2.7.1
 	 >=net-libs/nodejs-10.14.2
