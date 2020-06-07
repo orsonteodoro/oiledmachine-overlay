@@ -62,7 +62,7 @@ DEPEND="${RDEPEND}
 ASPNET_GITHUB_BASEURI="https://github.com/aspnet"
 if [[ "${DropSuffix}" == "true" ]] ; then
 SRC_URI_TGZ="\
-${ASPNET_GITHUB_BASEURI}/AspNetCore/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
+${ASPNET_GITHUB_BASEURI}/${MY_PN}/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
 ${ASPNET_GITHUB_BASEURI}/EntityFrameworkCore/archive/${ENTITYFRAMEWORKCORE_COMMIT}.zip \
 	-> entityframeworkcore-${ENTITYFRAMEWORKCORE_COMMIT}.zip"
 SRC_URI_TGZ=""
@@ -85,16 +85,16 @@ SRC_URI="${SRC_URI_TGZ}
 	 arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )
 	 arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )"
 RESTRICT="mirror"
-ASPNETCORE_REPO_URL="${ASPNET_GITHUB_BASEURI}/AspNetCore.git"
+ASPNETCORE_REPO_URL="${ASPNET_GITHUB_BASEURI}/${MY_PN}.git"
 
 # This currently isn't required but may be needed in later ebuilds
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
 # but this ebuild doesn't currently use that.
 
 if [[ "${DropSuffix}" == "true" ]] ; then
-S="${WORKDIR}/AspNetCore-${CORE_V}"
+S="${WORKDIR}/${MY_PN}-${CORE_V}"
 else
-S="${WORKDIR}/AspNetCore-${ASPNETCORE_COMMIT}"
+S="${WORKDIR}/${MY_PN}-${ASPNETCORE_COMMIT}"
 fi
 
 pkg_setup() {
@@ -142,10 +142,10 @@ _fetch_asp() {
 	# git is used to fetch dependencies and maybe versioning info especially
 	# for preview builds.
 
-	einfo "Fetching AspNetCore"
+	einfo "Fetching ${MY_PN}"
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	b="${distdir}/dotnet-sdk"
-	d="${b}/aspnetcore"
+	d="${b}/${MY_PN,,}"
 	addwrite "${b}"
 	local update=0
 	if [[ ! -d "${d}" ]] ; then
@@ -338,15 +338,15 @@ _src_prepare() {
 
 	cd "${S}" || die
 #	eapply \
-# "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-1.patch" \
+# "${FILESDIR}/${MY_PN,,}-pull-request-6950-strict-mode-in-roslyn-compiler-1.patch" \
 # || die
 #	eapply \
-# "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-2.patch" \
+# "${FILESDIR}/${MY_PN,,}-pull-request-6950-strict-mode-in-roslyn-compiler-2.patch" \
 # || die
 #	eapply \
-# "${FILESDIR}/aspnetcore-pull-request-6950-strict-mode-in-roslyn-compiler-3.patch" \
+# "${FILESDIR}/${MY_PN,,}-pull-request-6950-strict-mode-in-roslyn-compiler-3.patch" \
 # || die
-	eapply "${FILESDIR}/aspnetcore-2.1.9-skip-tests-1.patch" || die
+	eapply "${FILESDIR}/${MY_PN,,}-2.1.9-skip-tests-1.patch" || die
 	rm src/Razor/CodeAnalysis.Razor/src/TextChangeExtensions.cs \
 		|| die # Missing TextChange
 
@@ -408,7 +408,7 @@ _src_compile() {
 				# name changes... kinda like a work around
 
 	if [[ ${ARCH} =~ (amd64) ]]; then
-		einfo "Building AspNetCore"
+		einfo "Building ${MY_PN}"
 		cd "${S}" || die
 		#-arch ${myarch} # in master
 		./build.sh /p:Configuration=${mydebug^} \
@@ -420,10 +420,10 @@ _src_compile() {
 src_install() {
 	local dest="/opt/dotnet"
 	local ddest="${D}/${dest}"
-	local dest_aspnetcoreall="${dest}/shared/Microsoft.AspNetCore.All/${PV}/"
-	local ddest_aspnetcoreall="${ddest}/shared/Microsoft.AspNetCore.All/${PV}/"
-	local dest_aspnetcoreapp="${dest}/shared/Microsoft.AspNetCore.App/${PV}/"
-	local ddest_aspnetcoreapp="${ddest}/shared/Microsoft.AspNetCore.App/${PV}/"
+	local dest_aspnetcoreall="${dest}/shared/Microsoft.${MY_PN}.All/${PV}/"
+	local ddest_aspnetcoreall="${ddest}/shared/Microsoft.${MY_PN}.All/${PV}/"
+	local dest_aspnetcoreapp="${dest}/shared/Microsoft.${MY_PN}.App/${PV}/"
+	local ddest_aspnetcoreapp="${ddest}/shared/Microsoft.${MY_PN}.App/${PV}/"
 	local myarch=$(_getarch)
 
 	# Based on https://www.archlinux.org/packages/community/x86_64/aspnet-runtime/
@@ -431,13 +431,13 @@ src_install() {
 
 	dodir "${dest_aspnetcoreall}"
 	local d1=\
-"${S}/bin/fx/linux-${myarch}/Microsoft.AspNetCore.All/lib"
+"${S}/bin/fx/linux-${myarch}/Microsoft.${MY_PN}.All/lib"
 	cp -a "${d1}/netcoreapp"$(ver_cut 1-2 ${PV})/* \
 		"${ddest_aspnetcoreall}" || die
 
 	dodir "${dest_aspnetcoreapp}"
 	local d2=\
-"${S}/bin/fx/linux-${myarch}/Microsoft.AspNetCore.App/lib"
+"${S}/bin/fx/linux-${myarch}/Microsoft.${MY_PN}.App/lib"
 	cp -a "${d2}/netcoreapp"$(ver_cut 1-2 ${PV})/* \
 		"${ddest_aspnetcoreapp}" || die
 
