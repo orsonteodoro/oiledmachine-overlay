@@ -239,7 +239,8 @@ _src_compile() {
 
 	einfo "Building ${PN^^}"
 	ewarn \
-"Restoration (i.e. downloading) may randomly fail.  Emerge and try again."
+"Restoration (i.e. downloading) may randomly fail for bad local routers, \
+firewalls, or network cards.  Emerge and try again."
 	cd "${S}" || die
 	./build.sh --configuration ${mydebug^} --architecture ${myarch} \
 		${buildargs_corecli} || die
