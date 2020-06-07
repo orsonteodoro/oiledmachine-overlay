@@ -333,7 +333,7 @@ _src_prepare() {
 
 	if ! use test ; then
 	_D="${S}/src/submodules/googletest/googletest/xcode/Config"
-		sed -i -e "s|-Werror||g" "${D}/General.xcconfig"
+		sed -i -e "s|-Werror||g" "${_D}/General.xcconfig"
 	fi
 
 	cd "${S}" || die
@@ -419,7 +419,7 @@ _src_compile() {
 # See https://docs.microsoft.com/en-us/dotnet/core/build/distribution-packaging
 src_install() {
 	local dest="/opt/dotnet"
-	local ddest="${D}/${dest}"
+	local ddest="${ED}/${dest}"
 	local dest_aspnetcoreall="${dest}/shared/Microsoft.${MY_PN}.All/${PV}/"
 	local ddest_aspnetcoreall="${ddest}/shared/Microsoft.${MY_PN}.All/${PV}/"
 	local dest_aspnetcoreapp="${dest}/shared/Microsoft.${MY_PN}.App/${PV}/"
