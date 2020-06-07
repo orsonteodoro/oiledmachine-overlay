@@ -82,9 +82,9 @@ DOTNET_CLI_REPO_URL="https://github.com/dotnet/cli.git"
 # but this ebuild doesn't currently use that.
 
 if [[ "${DropSuffix}" == "true" ]] ; then
-S="${S}/${PN}-${PV}"
+S="${WORKDIR}/${PN}-${PV}"
 else
-S="${S}/${PN}-${DOTNET_CLI_COMMIT}"
+S="${WORKDIR}/${PN}-${DOTNET_CLI_COMMIT}"
 fi
 
 pkg_setup() {
