@@ -35,7 +35,7 @@ RUNTIME_BASEURI="https://dotnetcli.azureedge.net/dotnet/Runtime"
 # 3.1.4 based on MicrosoftNETCoreAppRuntimePackageVersion in eng/Versions.props
 # 2.0.0, 2.2.0, 1.1.2 referenced in eng/restore-toolset.sh
 SRC_URI="\
-https://github.com/dotnet/cli/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
+https://github.com/dotnet/${PN}/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
   amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz
     ${RUNTIME_BASEURI}/2.0.0/dotnet-runtime-2.0.0-linux-x64.tar.gz
     ${RUNTIME_BASEURI}/2.2.0/dotnet-runtime-2.2.0-linux-x64.tar.gz
@@ -74,7 +74,7 @@ DEPEND="${RDEPEND}
 	>=sys-devel/make-4.1"
 _PATCHES=( "${FILESDIR}/dotnet-cli-2.1.505-null-LastWriteTimeUtc-minval.patch" )
 RESTRICT="mirror"
-DOTNET_CLI_REPO_URL="https://github.com/dotnet/cli.git"
+DOTNET_CLI_REPO_URL="https://github.com/dotnet/${PN}.git"
 
 # This currently isn't required but may be needed in later ebuilds
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
@@ -321,9 +321,9 @@ src_install() {
 		| head -n 1 | cut -f 2 -d ">" | cut -f 1 -d "<")
 	rm -rf "${ddest}"/shared/Microsoft.NETCore.App/${FXR_V} || die
 
-	dodir /usr/share/licenses/cli-tools-${PV}
+	dodir /usr/share/licenses/${PN}-${PV}
 	cp -a "${d_dotnet}"/{LICENSE.txt,ThirdPartyNotices.txt} \
-		"${D}/usr/share/licenses/cli-tools-${PV}" || die
+		"${D}/usr/share/licenses/${PN}-${PV}" || die
 
 	# Symlink for MonoDevelop.  15.0 is the toolsversion.
 	cd "${ddest_sdk}" || die
