@@ -290,7 +290,7 @@ _src_compile() {
 #		buildargs_corecli+=" "
 #	fi
 
-	einfo "Building CLI"
+	einfo "Building ${PN^^}"
 	cd "${S}" || die
 	./build.sh --configuration ${mydebug^} --architecture ${myarch} \
 		${buildargs_corecli} || die
