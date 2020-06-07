@@ -58,8 +58,7 @@ DEPEND="${RDEPEND}
 	 !dev-dotnet/dotnetcore-runtime-bin
 	 !dev-dotnet/dotnetcore-sdk-bin"
 RESTRICT="mirror"
-S="${WORKDIR}"
-CORECLR_S="${S}/coreclr-${CORE_V}"
+S="${WORKDIR}/${PN}-${CORE_V}"
 
 # This currently isn't required but may be needed in later ebuilds
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
@@ -94,7 +93,7 @@ src_unpack() {
 	ewarn "This ebuild is a Work In Progress (WIP) and may not likely work"
 	unpack "coreclr-${CORE_V}.tar.gz"
 
-	cd "${CORECLR_S}" || die
+	cd "${S}" || die
 	X_SDK_V=$(cat DotnetCLIVersion.txt)
 	if [[ ${ARCH} =~ (arm64|arm) ]] ; then
 		:;
@@ -113,7 +112,7 @@ SDK_V to ${X_SDK_V}"
 }
 
 _src_prepare() {
-	cd "${CORECLR_S}" || die
+	cd "${S}" || die
 
 	# allow verbose output
 	local F=$(grep -l -r -e "__init_tools_log" $(find "${WORKDIR}" -name "*.sh"))
@@ -172,7 +171,7 @@ _src_compile() {
 	fi
 
 	einfo "Building CoreCLR"
-	cd "${CORECLR_S}" || die
+	cd "${S}" || die
 
 	if [[ ${ARCH} =~ (arm64|arm) ]] ; then
 		fn=\
@@ -217,9 +216,9 @@ src_install() {
 	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
 	# copies coreclr but not runtime
-	cp -a "${CORECLR_S}/bin/Product/Linux.${myarch}.Release"/* \
+	cp -a "${S}/bin/Product/Linux.${myarch}.Release"/* \
 		"${ddest_core}"/ || die
-	#cp -a "${CORECLR_S}/Tools/dotnetcli/shared/Microsoft.NETCore.App/${PV}"/* \
+	#cp -a "${S}/Tools/dotnetcli/shared/Microsoft.NETCore.App/${PV}"/* \
 	#	"${ddest_core}"/ || die
 
 	docinto licenses
