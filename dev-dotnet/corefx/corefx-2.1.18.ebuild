@@ -58,8 +58,7 @@ DEPEND="${RDEPEND}
 	 !dev-dotnet/dotnetcore-aspnet-bin
 	 !dev-dotnet/dotnetcore-runtime-bin
 	 !dev-dotnet/dotnetcore-sdk-bin"
-S="${WORKDIR}"
-COREFX_S="${S}/corefx-${CORE_V}"
+S="${WORKDIR}/corefx-${CORE_V}"
 RESTRICT="mirror"
 
 # This currently isn't required but may be needed in later ebuilds
@@ -95,7 +94,7 @@ src_unpack() {
 	ewarn "This ebuild is a Work in Progress (WIP) and may likely not work."
 	unpack "corefx-${CORE_V}.tar.gz"
 
-	cd "${COREFX_S}" || die
+	cd "${S}" || die
 	X_SDK_V=$(cat DotnetCLIVersion.txt)
 	if [[ ! -f DotnetCLIVersion.txt ]] ; then
 		die "Cannot find DotnetCLIVersion.txt"
@@ -113,7 +112,7 @@ SDK_V to ${X_SDK_V}"
 
 _src_prepare() {
 #	default_src_prepare
-	cd "${COREFX_S}" || die
+	cd "${S}" || die
 
 	# allow verbose output
 	local F=\
@@ -175,7 +174,7 @@ _src_compile() {
 	fi
 
 	einfo "Building CoreFX"
-	cd "${COREFX_S}" || die
+	cd "${S}" || die
 
 	DotNetBootstrapCliTarPath=\
 "${DISTDIR}/dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz" \
@@ -184,7 +183,7 @@ _src_compile() {
 
 	if use test ; then
 		einfo "Building CoreFX tests"
-		cd "${COREFX_S}" || die
+		cd "${S}" || die
 		./build-tests.sh -buildArch -ArchGroup=${myarch} \
 			-${mydebug} || die
 	fi
@@ -209,10 +208,10 @@ src_install() {
 
 	dodir "${dest_core}"
 
-	cp -a "${COREFX_S}/bin/Linux.${myarch}.Release/native"/* \
+	cp -a "${S}/bin/Linux.${myarch}.Release/native"/* \
 		"${ddest_core}"/ || die
 
-	cd "${COREFX_S}" || die
+	cd "${S}" || die
 	docinto licenses
 	dodoc LICENSE.TXT PATENTS.TXT THIRD-PARTY-NOTICES.TXT
 
