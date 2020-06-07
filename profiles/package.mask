@@ -30,7 +30,6 @@ dev-dotnet/gnome-sharp
 dev-dotnet/gtk-sharp
 dev-dotnet/gwen-dotnet
 dev-dotnet/libfreenect
-dev-dotnet/libgdiplus
 dev-dotnet/libgit2sharp
 dev-dotnet/lidgren-network-gen3
 dev-dotnet/mono-addins
