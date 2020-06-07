@@ -22,7 +22,7 @@ src_unpack() {
 
 src_install() {
 	local dest="/usr/share/dotnetcore-sdk/${SLOT}"
-	local ddest="${D}/${dest}"
+	local ddest="${ED}/${dest}"
 	local dest_core="${dest}/${PN}"
 	local ddest_core="${ddest}/${PN}"
 	if use examples ; then
