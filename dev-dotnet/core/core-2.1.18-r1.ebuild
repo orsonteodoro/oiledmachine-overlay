@@ -10,21 +10,21 @@ KEYWORDS="~amd64 ~arm"
 IUSE="doc examples"
 CORE_V=${PV}
 SRC_URI="\
-https://github.com/dotnet/core/archive/v${CORE_V}.tar.gz \
-	-> core-${CORE_V}.tar.gz"
+https://github.com/dotnet/${PN}/archive/v${CORE_V}.tar.gz \
+	-> ${PN}-${CORE_V}.tar.gz"
 SLOT="${PV}"
-S="${WORKDIR}/core-${CORE_V}"
+S="${WORKDIR}/${PN}-${CORE_V}"
 RESTRICT="mirror"
 
 src_unpack() {
-	unpack "core-${CORE_V}.tar.gz"
+	unpack "${PN}-${CORE_V}.tar.gz"
 }
 
 src_install() {
 	local dest="/usr/share/dotnetcore-sdk/${SLOT}"
 	local ddest="${D}/${dest}"
-	local dest_core="${dest}/core"
-	local ddest_core="${ddest}/core"
+	local dest_core="${dest}/${PN}"
+	local ddest_core="${ddest}/${PN}"
 	if use examples ; then
 		insinto "${dest}"
 		doins -r "${S}/samples"
@@ -41,5 +41,5 @@ src_install() {
 
 pkg_postinst() {
 	einfo \
-"Samples and documents were installed in /usr/share/dotnetcore-sdk/${SLOT}/core"
+"Samples and documents were installed in /usr/share/dotnetcore-sdk/${SLOT}/${PN}"
 }
