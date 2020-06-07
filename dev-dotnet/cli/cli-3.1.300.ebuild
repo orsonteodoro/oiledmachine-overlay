@@ -74,7 +74,6 @@ DEPEND="${RDEPEND}
 	>=sys-devel/make-4.1"
 _PATCHES=( "${FILESDIR}/dotnet-cli-2.1.505-null-LastWriteTimeUtc-minval.patch" )
 RESTRICT="mirror"
-S="${WORKDIR}"
 DOTNET_CLI_REPO_URL="https://github.com/dotnet/cli.git"
 
 # This currently isn't required but may be needed in later ebuilds
