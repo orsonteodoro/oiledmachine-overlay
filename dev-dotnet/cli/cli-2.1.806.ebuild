@@ -238,6 +238,8 @@ _src_compile() {
 	fi
 
 	einfo "Building ${PN^^}"
+	ewarn \
+"Restoration (i.e. downloading) may randomly fail.  Emerge and try again."
 	cd "${S}" || die
 	./build.sh --configuration ${mydebug^} --architecture ${myarch} \
 		${buildargs_corecli} || die
@@ -262,7 +264,7 @@ src_install() {
 	cp -a "${d_dotnet}/host/" "${ddest}/" || die
 	cp -a "${d_dotnet}/shared/" "${ddest}/" || die
 
-	# Prevent collision with CoreCLR ebuild
+	# Prevents collision with CoreCLR ebuild
 	FXR_V=$(grep -r -e "MicrosoftNETCoreAppPackageVersion" \
 		"${S}/build/DependencyVersions.props" \
 		| head -n 1 | cut -f 2 -d ">" | cut -f 1 -d "<")
@@ -287,6 +289,9 @@ src_install() {
 		dodoc -r CONTRIBUTING.md Documentation ISSUE_TEMPLATE \
 			PULL_REQUEST_TEMPLATE
 	fi
+
+	# Fix security permissions.
+	find "${ED}/opt/dotnet/sdk/${PV}" -perm -o=w -type f -exec chmod o-w {} \;
 }
 
 pkg_postinst() {

@@ -291,6 +291,8 @@ _src_compile() {
 #	fi
 
 	einfo "Building ${PN^^}"
+	ewarn \
+"Restoration (i.e. downloading) may randomly fail.  Emerge and try again."
 	cd "${S}" || die
 	./build.sh --configuration ${mydebug^} --architecture ${myarch} \
 		${buildargs_corecli} || die
@@ -340,6 +342,9 @@ src_install() {
 		dodoc -r CONTRIBUTING.md Documentation ISSUE_TEMPLATE \
 			PULL_REQUEST_TEMPLATE
 	fi
+
+	# Fix security permissions.
+	find "${ED}/opt/dotnet/sdk/${PV}" -perm -o=w -type f -exec chmod o-w {} \;
 }
 
 pkg_postinst() {
