@@ -89,6 +89,7 @@ pkg_setup() {
 
 _unpack_cli() {
 	ewarn "This ebuild is a Work In Progress (WIP) and may likely not work."
+	cd "${WORKDIR}" || die
 	unpack ${PN}-${PV}.tar.gz
 
 	cd "${S}" || die
@@ -133,7 +134,10 @@ _fetch_cli() {
 	#git checkout ${DOTNET_CLI_COMMIT} # uncomment for forced deterministic
 					# build.  comment to follow head of tag.
 	[ ! -e "README.md" ] && die "found nothing"
-	cp -a "${d}" "${S}"
+	if [[ -d "${S}" ]] ; then
+		rm -rf "${S}" || die
+	fi
+	cp -a "${d}" "${S}" || die
 	cd "${S}" || die
 	local rev=$(printf "%06d" $(git rev-list --count v${PV}))
 	einfo "rev=${rev}"
