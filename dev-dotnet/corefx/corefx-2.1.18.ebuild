@@ -26,8 +26,8 @@ IUSE="debug doc heimdal test"
 # have to keep downloading it everytime the sandbox is wiped.
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
 SRC_URI="\
-https://github.com/dotnet/corefx/archive/v${CORE_V}.tar.gz \
-  -> corefx-${CORE_V}.tar.gz
+https://github.com/dotnet/${PN}/archive/v${CORE_V}.tar.gz \
+  -> ${PN}-${CORE_V}.tar.gz
   amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )
   arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
   arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )"
@@ -58,7 +58,7 @@ DEPEND="${RDEPEND}
 	 !dev-dotnet/dotnetcore-aspnet-bin
 	 !dev-dotnet/dotnetcore-runtime-bin
 	 !dev-dotnet/dotnetcore-sdk-bin"
-S="${WORKDIR}/corefx-${CORE_V}"
+S="${WORKDIR}/${PN}-${CORE_V}"
 RESTRICT="mirror"
 
 # This currently isn't required but may be needed in later ebuilds
@@ -92,7 +92,7 @@ src_unpack() {
 "If you emerged this first, please use the meta package dotnetcore-sdk instead\
  as the starting point."
 	ewarn "This ebuild is a Work in Progress (WIP) and may likely not work."
-	unpack "corefx-${CORE_V}.tar.gz"
+	unpack "${PN}-${CORE_V}.tar.gz"
 
 	cd "${S}" || die
 	X_SDK_V=$(cat DotnetCLIVersion.txt)
