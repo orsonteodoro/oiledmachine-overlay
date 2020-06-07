@@ -247,7 +247,7 @@ _src_compile() {
 
 src_install() {
 	local dest="/opt/dotnet"
-	local ddest="${D}/${dest}"
+	local ddest="${ED}/${dest}"
 	local dest_sdk="${dest}/sdk/${PV}/"
 	local ddest_sdk="${ddest}/sdk/${PV}/"
 	local myarch=$(_getarch)
@@ -272,13 +272,13 @@ src_install() {
 
 	dodir /usr/share/licenses/${PN}-${PV}
 	cp -a "${d_dotnet}"/{LICENSE.txt,ThirdPartyNotices.txt} \
-		"${D}/usr/share/licenses/${PN}-${PV}" || die
+		"${ED}/usr/share/licenses/${PN}-${PV}" || die
 
 	# Symlink for MonoDevelop.  15.0 is the toolsversion.
 	cd "${ddest_sdk}" || die
 	ln -s Current 15.0 || die
 
-	mv "${D}"/opt/dotnet/dotnet "${D}"/opt/dotnet/dotnet-${PV} || die
+	mv "${ED}"/opt/dotnet/dotnet "${ED}"/opt/dotnet/dotnet-${PV} || die
 
 	cd "${S}" || die
 	docinto licenses
