@@ -22,7 +22,8 @@ RDEPEND="aspnetcore? ( =dev-dotnet/aspnetcore-${CORE_V}*:${CORE_V}[doc?] )
 	 =dev-dotnet/core-${CORE_V}*:${CORE_V}[doc?,examples?]
 	 =dev-dotnet/coreclr-${CORE_V}*:${CORE_V}[doc?]
 	 =dev-dotnet/corefx-${CORE_V}*:${CORE_V}[doc?]
-	 =dev-dotnet/cli-${PV}*:${PV}[doc?]"
+	 =dev-dotnet/cli-${PV}*:${PV}[doc?]
+	 =dev-dotnet/dotnet-runtime-${CORE_V}*:${CORE_V}[doc?]"
 
 pkg_postinst() {
 	einfo "Core version is ${CORE_V}"
