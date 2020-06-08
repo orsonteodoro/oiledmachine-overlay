@@ -24,16 +24,19 @@ SDK_V=3.1.100 # from global.json
 SDK_V_FALLBACK=3.1.200-preview-014946 # from dev-dotnet/cli-3.1*
 # From the commit history, they say they keep DotnetCLIVersion.txt in sync with
 # other dotnet projects
+
 IUSE="debug doc numa test"
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we have
 # to keep downloading it everytime the sandbox is wiped.
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
+SDK_BASEURI_FALLBACK_ARM="https://download.visualstudio.microsoft.com/download/pr/67766a96-eb8c-4cd2-bca4-ea63d2cc115c/7bf13840aa2ed88793b7315d5e0d74e6"
+SDK_BASEURI_FALLBACK_ARM64="https://download.visualstudio.microsoft.com/download/pr/5a4c8f96-1c73-401c-a6de-8e100403188a/0ce6ab39747e2508366d498f9c0a0669"
 SRC_URI="\
 https://github.com/dotnet/${PN}/archive/v${CORE_V}.tar.gz \
 	-> ${PN}-${CORE_V}.tar.gz
   amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )
-  arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V_FALLBACK}-linux-arm.tar.gz )
-  arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V_FALLBACK}-linux-arm64.tar.gz )"
+  arm? ( ${SDK_BASEURI_FALLBACK_ARM}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )
+  arm64? ( ${SDK_BASEURI_FALLBACK_ARM64}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )"
 SLOT="${PV}"
 # Dependencies based on init-tools.sh
 # For more dependencies see
@@ -131,13 +134,6 @@ $(grep -l -r -e "__init_tools_log" $(find "${WORKDIR}" -name "*.sh"))
 		echo "Patching $f"
 		sed -i -e 's|-sSL|-L|g' -e 's|wget -q |wget |g' "$f" || die
 	done
-
-	if [[ ${ARCH} =~ (arm64|arm) ]]; then
-		sed -i -e "s|\
-\"dotnet\": \"${SDK_V}\"|\
-\"dotnet\": \"${SDK_V_FALLBACK}\"|g" \
-			global.json || die
-	fi
 }
 
 _getarch() {
@@ -176,14 +172,8 @@ _src_compile() {
 	# Temporarily comment out the codeblock below and re-emerge to update
 	# ${SDK_V}
 
-	local fn
-	if [[ ${ARCH} =~ (arm64|arm) ]] ; then
-		fn=\
-"${DISTDIR}/dotnet-sdk-${SDK_V_FALLBACK}-linux-${myarch}.tar.gz"
-	else
-		fn=\
-"${DISTDIR}/dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz"
-	fi
+	local fn=\
+"dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz"
 	export DotNetBootstrapCliTarPath="${DISTDIR}/${fn}"
 	mkdir -p "${S}/.dotnet" || die
 	pushd "${S}/.dotnet" || die
@@ -199,7 +189,7 @@ src_install() {
 	local ddest="${ED}/${dest}"
 	local dest_core="${dest}/shared/Microsoft.NETCore.App/${PV}"
 	local ddest_core="${ddest}/shared/Microsoft.NETCore.App/${PV}"
-	local mydebug=$(usex debug "debug" "release")
+	local mydebug=$(usex debug "Debug" "Release")
 	local myarch=$(_getarch)
 
 	dodir "${dest_core}"
@@ -211,10 +201,8 @@ src_install() {
 	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
 	# copies coreclr but not runtime
-	cp -a "${S}/bin/Product/Linux.${myarch}.Release"/* \
+	cp -a "${S}/bin/Product/Linux.${myarch}.${mydebug}"/* \
 		"${ddest_core}"/ || die
-	#cp -a "${S}/Tools/dotnetcli/shared/Microsoft.NETCore.App/${PV}"/* \
-	#	"${ddest_core}"/ || die
 
 	docinto licenses
 	dodoc PATENTS.TXT LICENSE.TXT THIRD-PARTY-NOTICES.TXT

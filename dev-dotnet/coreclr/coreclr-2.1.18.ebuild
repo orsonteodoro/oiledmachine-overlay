@@ -20,20 +20,24 @@ LICENSE="all-rights-reserved
 " # The vanilla MIT license doesn't come with all rights reserved
 KEYWORDS="~amd64 ~arm"
 CORE_V=${PV}
-SDK_V=2.1.2 # from DotnetCLIVersion.txt
-SDK_V_FALLBACK=2.1.403 # from dev-dotnet/cli-2.1*
+SDK_V=2.1.2 # From DotnetCLIVersion.txt ; corresponds to 2.0.3 runtime
+# https://github.com/dotnet/core/blob/9acb5791d7abe69740af7f2b1a0854f24e9d04cd/release-notes/2.0/releases.json
+# with no dotnet-sdk-2.1.2-linux-arm.tar.gz and no dotnet-sdk-2.1.2-linux-arm64.tar.gz
+SDK_V_FALLBACK=2.1.302 # Using earliest 2.1 with arm/arm64 support.
+# https://github.com/dotnet/core/blob/master/release-notes/2.1/2.1.2.md
 # From the commit history, they say they keep DotnetCLIVersion.txt in sync with
 # other dotnet projects
 IUSE="debug doc numa test"
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we have
 # to keep downloading it everytime the sandbox is wiped.
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
+SDK_BASEURI_FALLBACK="https://download.microsoft.com/download/4/0/9/40920432-3302-47a8-b13c-bbc4848ad114/"
 SRC_URI="\
 https://github.com/dotnet/${PN}/archive/v${CORE_V}.tar.gz \
 	-> ${PN}-${CORE_V}.tar.gz
-  amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )
-  arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V_FALLBACK}-linux-arm.tar.gz )
-  arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V_FALLBACK}-linux-arm64.tar.gz )"
+  amd64? ( ${SDK_BASEURI_FALLBACK}/dotnet-sdk-${SDK_V_FALLBACK}-linux-x64.tar.gz )
+  arm? ( ${SDK_BASEURI_FALLBACK}/dotnet-sdk-${SDK_V_FALLBACK}-linux-arm.tar.gz )
+  arm64? ( ${SDK_BASEURI_FALLBACK}/dotnet-sdk-${SDK_V_FALLBACK}-linux-arm64.tar.gz )"
 SLOT="${PV}"
 # Dependencies based on init-tools.sh
 # For more dependencies see
@@ -90,7 +94,6 @@ src_unpack() {
 	einfo \
 "If you emerged this first, please use the meta package dotnetcore-sdk instead\
  as the starting point."
-	ewarn "This ebuild is a Work In Progress (WIP) and may not likely work"
 	unpack "${PN}-${CORE_V}.tar.gz"
 
 	cd "${S}" || die
@@ -131,21 +134,13 @@ _src_prepare() {
 		sed -i -e 's|-sSL|-L|g' -e 's|wget -q |wget |g' "$f" || die
 	done
 
-	if [[ ${ARCH} =~ (arm64|arm) ]]; then
+	if [[ ${ARCH} =~ (arm64|arm|amd64) ]]; then
 		sed -i -e "s|${SDK_V}|${SDK_V_FALLBACK}|g" \
 			DotnetCLIVersion.txt || die
 	fi
 }
 
-_src_compile() {
-	local buildargs_coreclr=""
-	local mydebug="release"
-	local myarch=""
-
-	if use debug ; then
-		mydebug="debug"
-	fi
-
+_getarch() {
 	if [[ ${ARCH} =~ (amd64) ]]; then
 		myarch="x64"
 	elif [[ ${ARCH} =~ (x86) ]] ; then
@@ -155,6 +150,13 @@ _src_compile() {
 	elif [[ ${ARCH} =~ (arm) ]] ; then
 		myarch="arm"
 	fi
+	echo "${myarch}"
+}
+
+_src_compile() {
+	local buildargs_coreclr=""
+	local mydebug=$(usex debug "debug" "release")
+	local myarch=$(_getarch)
 
 	# prevent: InvalidOperationException: The terminfo database is invalid
 	# dotnet.  It cannot be xterm-256color.
@@ -173,12 +175,13 @@ _src_compile() {
 	einfo "Building CoreCLR"
 	cd "${S}" || die
 
-	if [[ ${ARCH} =~ (arm64|arm) ]] ; then
+	local fn
+	if [[ ${ARCH} =~ (arm64|arm|amd64) ]] ; then
 		fn=\
-"${DISTDIR}/dotnet-sdk-${SDK_V_FALLBACK}-linux-${myarch}.tar.gz"
+"dotnet-sdk-${SDK_V_FALLBACK}-linux-${myarch}.tar.gz"
 	else
 		fn=\
-"${DISTDIR}/dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz"
+"dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz"
 	fi
 	DotNetBootstrapCliTarPath="${DISTDIR}/${fn}" \
 	./build.sh -${myarch} -${mydebug} -verbose ${buildargs_coreclr} \
@@ -190,22 +193,8 @@ src_install() {
 	local ddest="${ED}/${dest}"
 	local dest_core="${dest}/shared/Microsoft.NETCore.App/${PV}"
 	local ddest_core="${ddest}/shared/Microsoft.NETCore.App/${PV}"
-	local mydebug="release"
-	local myarch=""
-
-	if use debug ; then
-		mydebug="debug"
-	fi
-
-	if [[ ${ARCH} =~ (amd64) ]]; then
-		myarch="x64"
-	elif [[ ${ARCH} =~ (x86) ]] ; then
-		myarch="x32"
-	elif [[ ${ARCH} =~ (arm64) ]] ; then
-		myarch="arm64"
-	elif [[ ${ARCH} =~ (arm) ]] ; then
-		myarch="arm"
-	fi
+	local mydebug=$(usex debug "Debug" "Release")
+	local myarch=$(_getarch)
 
 	dodir "${dest_core}"
 
@@ -216,10 +205,8 @@ src_install() {
 	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
 	# copies coreclr but not runtime
-	cp -a "${S}/bin/Product/Linux.${myarch}.Release"/* \
+	cp -a "${S}/bin/Product/Linux.${myarch}.${mydebug}"/* \
 		"${ddest_core}"/ || die
-	#cp -a "${S}/Tools/dotnetcli/shared/Microsoft.NETCore.App/${PV}"/* \
-	#	"${ddest_core}"/ || die
 
 	docinto licenses
 	dodoc CODE_OWNERS.TXT PATENTS.TXT LICENSE.TXT THIRD-PARTY-NOTICES.TXT
