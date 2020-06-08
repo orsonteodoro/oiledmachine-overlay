@@ -26,12 +26,15 @@ IUSE="debug doc test"
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we
 # have to keep downloading it everytime the sandbox is wiped.
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
+SDK_BASEURI_FALLBACK="https://download.visualstudio.microsoft.com/download/pr/67766a96-eb8c-4cd2-bca4-ea63d2cc115c/7bf13840aa2ed88793b7315d5e0d74e6"
+# Fallback URI obtained from
+# https://github.com/dotnet/core/blob/master/release-notes/3.1/releases.json
 SRC_URI="\
 https://github.com/dotnet/${PN}/archive/v${CORE_V}.tar.gz \
   -> ${PN}-${CORE_V}.tar.gz
   amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )
   arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
-  arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V_FALLBACK}-linux-arm.tar.gz )"
+  arm? ( ${SDK_BASEURI_FALLBACK}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )"
 SLOT="${PV}"
 # Requirements based on Ubuntu 16.04 minimum requirements.
 # Library requirements based on:
@@ -202,7 +205,7 @@ _src_compile() {
 
 	einfo "Building CoreFX"
 	cd "${S}" || die
-	./build.sh --arch ${myarch} --configuration ${mydebug} \
+	./run.sh --arch ${myarch} --configuration ${mydebug} \
 		${buildargs_corefx} || die
 }
 

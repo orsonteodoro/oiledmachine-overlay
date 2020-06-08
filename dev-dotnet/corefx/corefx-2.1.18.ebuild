@@ -20,7 +20,14 @@ LICENSE="all-rights-reserved
 	ZLIB" # The vanilla MIT license does not have all rights reserved
 KEYWORDS="~amd64 ~arm"
 CORE_V="${PV}"
-SDK_V="2.1.300-rc1-008673" # defined in DotnetCLIVersion.txt
+OVERRIDE_SDK_V="1"
+# The SDK_V value is defined in DotnetCLIVersion.txt ; original upstream
+# requirements.
+SDK_V="2.1.300-rc1-008673"
+# For 1.1.x runtimes
+# https://github.com/dotnet/core/tree/master/release-notes/download-archives
+# For 1.1.0 runtime see
+# https://github.com/dotnet/core/blob/master/release-notes/1.1/releases.json
 IUSE="debug doc heimdal test"
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we
 # have to keep downloading it everytime the sandbox is wiped.
@@ -95,6 +102,7 @@ src_unpack() {
 	unpack "${PN}-${CORE_V}.tar.gz"
 
 	cd "${S}" || die
+
 	X_SDK_V=$(cat DotnetCLIVersion.txt)
 	if [[ ! -f DotnetCLIVersion.txt ]] ; then
 		die "Cannot find DotnetCLIVersion.txt"
@@ -176,10 +184,15 @@ _src_compile() {
 	einfo "Building CoreFX"
 	cd "${S}" || die
 
+#	export OPENSSL_CRYPTO_LIBRARY="/usr/$(get_libdir)/libssl.so.1.0.0"
+#	export OPENSSL_INCLUDE_DIR="/usr/$(get_libdir)/libssl.so.1.0.0"
+
 	DotNetBootstrapCliTarPath=\
 "${DISTDIR}/dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz" \
-	./build.sh -buildArch -ArchGroup=${myarch} -${mydebug} \
+	./run.sh -buildArch -ArchGroup=${myarch} -${mydebug} \
 		${buildargs_corefx} || die
+
+#	./build.sh
 
 	if use test ; then
 		einfo "Building CoreFX tests"
