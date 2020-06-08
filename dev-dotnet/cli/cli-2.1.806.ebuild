@@ -263,7 +263,7 @@ src_install() {
 	cp -a "${d_dotnet}/dotnet" "${ddest}/" || die
 	cp -a "${d_dotnet}/shared/" "${ddest}/" || die
 
-	# Prevents collision with CoreCLR ebuild
+	# Prevents collision with dotnetcore-runtime ebuild
 	FXR_V=$(grep -r -e "MicrosoftNETCoreAppPackageVersion" \
 		"${S}/build/DependencyVersions.props" \
 		| head -n 1 | cut -f 2 -d ">" | cut -f 1 -d "<")
