@@ -241,7 +241,7 @@ _src_compile() {
 		buildargs_corecli+=" /t:Compile"
 	fi
 
-	einfo "Building ${PN^^}"
+	einfo "Building ${PN}"
 	ewarn \
 "Restoration (i.e. downloading) may randomly fail for bad local routers, \
 firewalls, or network cards.  Emerge and try again."
@@ -264,8 +264,8 @@ src_install() {
 
 	dodir "${dest}/shared/Microsoft.NETCore.App"
 	local d_dotnet="${S}/bin/2/linux-${myarch}/dotnet"
+        cp -a "${d_dotnet}/host/" "${ddest}/" || die
 
-	# Prevents collision with CLI ebuild
 	FXR_V=$(grep -r -e "MicrosoftNETCoreAppPackageVersion" \
 		"${S}/build/DependencyVersions.props" \
 		| head -n 1 | cut -f 2 -d ">" | cut -f 1 -d "<")
