@@ -20,9 +20,6 @@ LICENSE="all-rights-reserved
 	ZLIB" # The vanilla MIT license does not have all rights reserved
 KEYWORDS="~amd64 ~arm"
 CORE_V="${PV}"
-OVERRIDE_SDK_V="1"
-# The SDK_V value is defined in DotnetCLIVersion.txt ; original upstream
-# requirements.
 SDK_V="2.1.300-rc1-008673"
 # For 1.1.x runtimes
 # https://github.com/dotnet/core/tree/master/release-notes/download-archives

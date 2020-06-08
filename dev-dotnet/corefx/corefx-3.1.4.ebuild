@@ -21,7 +21,6 @@ LICENSE="all-rights-reserved
 KEYWORDS="~amd64 ~arm ~arm64"
 CORE_V="${PV}"
 SDK_V="3.1.100" # found in global.json
-SDK_V_FALLBACK=3.1.200-preview-014946 # from dev-dotnet/cli-3.1*
 IUSE="debug doc test"
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we
 # have to keep downloading it everytime the sandbox is wiped.
@@ -136,17 +135,6 @@ $(grep -l -r -e "__init_tools_log" $(find "${WORKDIR}" -name "*.sh"))
 		echo "Patching $f"
 		sed -i -e 's|-sSL|-L|g' -e 's|wget -q |wget |g' "$f" || die
 	done
-
-	if [[ ${ARCH} =~ (arm) ]]; then
-		sed -i \
-			-e "s|\
-\"dotnet\": \"${SDK_V}\"|\
-\"dotnet\": \"${SDK_V_FALLBACK}\"|g" \
-			-e "s|\
-\"version\": \"${SDK_V}\"|\
-\"version\": \"${SDK_V_FALLBACK}\"|g" \
-			global.json || die
-	fi
 }
 
 _getarch() {
@@ -181,14 +169,8 @@ _src_compile() {
 	fi
 
 	# comment out code block temporary and re-emerge to update ${SDK_V}
-	local fn
-	if [[ ${ARCH} =~ (arm) ]] ; then
-		fn=\
-"dotnet-sdk-${SDK_V_FALLBACK}-linux-${myarch}.tar.gz"
-	else
-		fn=\
+	local fn=\
 "dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz"
-	fi
 	export DotNetBootstrapCliTarPath="${DISTDIR}/${fn}"
 	local p
 	p="${S}/.dotnet"
