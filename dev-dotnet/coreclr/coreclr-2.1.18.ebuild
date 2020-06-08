@@ -98,8 +98,8 @@ src_unpack() {
 
 	cd "${S}" || die
 	X_SDK_V=$(cat DotnetCLIVersion.txt)
-	if [[ ${ARCH} =~ (arm64|arm) ]] ; then
-		:;
+	if [[ ${ARCH} =~ (arm64|arm|amd64) ]] ; then
+		echo "${SDK_V_FALLBACK}" > DotnetCLIVersion.txt || die
 	elif [[ ! -f DotnetCLIVersion.txt ]] ; then
 		die "Cannot find DotnetCLIVersion.txt"
 	elif [[ "${X_SDK_V}" != "${SDK_V}" ]] ; then
@@ -133,11 +133,6 @@ _src_prepare() {
 		echo "Patching $f"
 		sed -i -e 's|-sSL|-L|g' -e 's|wget -q |wget |g' "$f" || die
 	done
-
-	if [[ ${ARCH} =~ (arm64|arm|amd64) ]]; then
-		sed -i -e "s|${SDK_V}|${SDK_V_FALLBACK}|g" \
-			DotnetCLIVersion.txt || die
-	fi
 }
 
 _getarch() {
