@@ -283,7 +283,4 @@ src_install() {
 		dodoc -r CONTRIBUTING.md Documentation ISSUE_TEMPLATE \
 			PULL_REQUEST_TEMPLATE
 	fi
-
-	# Fix security permissions.
-	find "${ED}/opt/dotnet/sdk/${CLI_PV}" -perm -o=w -type f -exec chmod o-w {} \;
 }
