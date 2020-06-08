@@ -306,8 +306,6 @@ firewalls, or network cards.  Emerge and try again."
 src_install() {
 	local dest="/opt/dotnet"
 	local ddest="${ED}/${dest}"
-	local dest_sdk="${dest}/sdk/${CLI_PV}/"
-	local ddest_sdk="${ddest}/sdk/${CLI_PV}/"
 	local myarch=$(_getarch)
 
 	# Installed files partly based on
