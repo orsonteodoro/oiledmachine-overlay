@@ -1,6 +1,9 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# Keep ${PV} in sync with MicrosoftNETCoreAppPackageVersion tag in
+# build/DependencyVersions.props file from cli project
+
 # BASED ON
 # https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=dotnet-cli
 # https://git.archlinux.org/svntogit/community.git/tree/trunk/PKGBUILD?h=packages/dotnet-core
