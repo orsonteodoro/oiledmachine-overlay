@@ -88,7 +88,6 @@ pkg_setup() {
 }
 
 _unpack_cli() {
-	ewarn "This ebuild is a Work In Progress (WIP) and may likely not work."
 	cd "${WORKDIR}" || die
 	unpack ${PN}-${PV}.tar.gz
 
