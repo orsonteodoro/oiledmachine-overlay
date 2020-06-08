@@ -315,7 +315,6 @@ src_install() {
 	local d_dotnet="${S}/bin/2/linux-${myarch}/dotnet"
 	cp -a "${d_dotnet}/sdk/${PV}${VERSION_SUFFIX}"/* "${ddest_sdk}/" || die
 	cp -a "${d_dotnet}/dotnet" "${ddest}/" || die
-	cp -a "${d_dotnet}/host/" "${ddest}/" || die
 	cp -a "${d_dotnet}/shared/" "${ddest}/" || die
 
 	# Prevents collision with CoreCLR ebuild
