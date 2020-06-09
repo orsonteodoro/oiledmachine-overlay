@@ -164,9 +164,6 @@ GRAYSKY_DL_10_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v5.7%2B.patch"
 GRAYSKY_DL_9_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v5.7%2B.patch"
-elif ver_test ${K_MAJOR_MINOR} -ge 5.6 ; then
-GRAYSKY_DL_10_1_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v5.5-v5.6.patch"
 elif ver_test ${K_MAJOR_MINOR} -ge 5.5 ; then
 GRAYSKY_DL_10_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v5.5-v5.6.patch"
