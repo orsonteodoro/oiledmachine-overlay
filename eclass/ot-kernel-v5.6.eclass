@@ -38,7 +38,7 @@ IUSE="  bfq bmq bmq-quick-fix \
 	futex-wait-multiple \
 	zenmisc \
 	-zentune"
-REQUIRED_USE="^^ ( muqss cfs bmq )"
+REQUIRED_USE="^^ ( muqss cfs bmq ) !bfq"
 
 # no released patch yet
 REQUIRED_USE+=" !bmq-quick-fix"
