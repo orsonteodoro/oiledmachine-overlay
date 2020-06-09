@@ -21,6 +21,9 @@ LICENSE="all-rights-reserved
 KEYWORDS="~amd64 ~arm"
 CORE_V="${PV}"
 SDK_V="2.1.300-rc1-008673"
+SDK_V_FALLBACK=2.1.302 # Using earliest 2.1 with arm/arm64 support
+# Need to use fallback version to avoid
+# The specified framework 'Microsoft.NETCore.App', version '1.1.0' was not found.
 # For 1.1.x runtimes
 # https://github.com/dotnet/core/tree/master/release-notes/download-archives
 # For 1.1.0 runtime see
@@ -29,12 +32,13 @@ IUSE="debug doc heimdal test"
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we
 # have to keep downloading it everytime the sandbox is wiped.
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
+SDK_BASEURI_FALLBACK="https://download.microsoft.com/download/4/0/9/40920432-3302-47a8-b13c-bbc4848ad114/"
 SRC_URI="\
 https://github.com/dotnet/${PN}/archive/v${CORE_V}.tar.gz \
   -> ${PN}-${CORE_V}.tar.gz
-  amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )
-  arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )
-  arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )"
+  amd64? ( ${SDK_BASEURI_FALLBACK}/dotnet-sdk-${SDK_V_FALLBACK}-linux-x64.tar.gz )
+  arm? ( ${SDK_BASEURI_FALLBACK}/dotnet-sdk-${SDK_V_FALLBACK}-linux-arm.tar.gz )
+  arm64? ( ${SDK_BASEURI_FALLBACK}/dotnet-sdk-${SDK_V_FALLBACK}-linux-arm64.tar.gz )"
 SLOT="${PV}"
 # Requirements based on Ubuntu 16.04 minimum requirements.
 # Library requirements based on:
@@ -43,6 +47,7 @@ SLOT="${PV}"
 # cross/build-rootfs.sh
 # https://docs.microsoft.com/en-us/dotnet/core/install/dependencies?pivots=os-linux&tabs=netcore21
 RDEPEND=">=dev-libs/icu-55.1
+	 >=dev-libs/openssl-1.0.2o
 	 >=dev-libs/openssl-compat-1.0.2o:1.0.0
 	 >=dev-dotnet/libgdiplus-6.0.1
 	 >=dev-util/lldb-4.0
@@ -64,6 +69,8 @@ DEPEND="${RDEPEND}
 	 !dev-dotnet/dotnetcore-sdk-bin"
 S="${WORKDIR}/${PN}-${CORE_V}"
 RESTRICT="mirror"
+_PATCHES=( "${FILESDIR}/${PN}-2.1.18-found-clang-on-gentoo-for-build-native.patch"
+	"${FILESDIR}/${PN}-2.1.18-no-werror.patch" )
 
 # This currently isn't required but may be needed in later ebuilds
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
@@ -95,13 +102,14 @@ src_unpack() {
 	einfo \
 "If you emerged this first, please use the meta package dotnetcore-sdk instead\
  as the starting point."
-	ewarn "This ebuild is a Work in Progress (WIP) and may likely not work."
 	unpack "${PN}-${CORE_V}.tar.gz"
 
 	cd "${S}" || die
 
 	X_SDK_V=$(cat DotnetCLIVersion.txt)
-	if [[ ! -f DotnetCLIVersion.txt ]] ; then
+	if [[ ${ARCH} =~ (arm64|arm|amd64) ]] ; then
+		echo "${SDK_V_FALLBACK}" > DotnetCLIVersion.txt || die
+	elif [[ ! -f DotnetCLIVersion.txt ]] ; then
 		die "Cannot find DotnetCLIVersion.txt"
 	elif [[ "${X_SDK_V}" != "${SDK_V}" ]] ; then
 		die \
@@ -136,22 +144,11 @@ $(grep -l -r -e "__init_tools_log" $(find "${WORKDIR}" -name "*.sh"))
 		echo "Patching $f"
 		sed -i -e 's|-sSL|-L|g' -e 's|wget -q |wget |g' "$f" || die
 	done
+
+	eapply ${_PATCHES[@]}
 }
 
-_src_compile() {
-	local buildargs_corefx=""
-	local mydebug="release"
-	local myarch=""
-
-	if use heimdal; then
-		# build uses mit-krb5 by default but lets override to heimdal
-		buildargs_corefx+=" -cmakeargs -DHeimdalGssApi=ON"
-	fi
-
-	if use debug ; then
-		mydebug="debug"
-	fi
-
+_getarch() {
 	if [[ ${ARCH} =~ (amd64) ]]; then
 		myarch="x64"
 	elif [[ ${ARCH} =~ (x86) ]] ; then
@@ -161,7 +158,18 @@ _src_compile() {
 	elif [[ ${ARCH} =~ (arm) ]] ; then
 		myarch="arm"
 	fi
+	echo "${myarch}"
+}
 
+_src_compile() {
+	local buildargs_corefx=""
+	local mydebug=$(usex debug "debug" "release")
+	local myarch=$(_getarch)
+
+	if use heimdal; then
+		# build uses mit-krb5 by default but lets override to heimdal
+		buildargs_corefx+=" -cmakeargs -DHeimdalGssApi=ON"
+	fi
 
 	# prevent: InvalidOperationException: The terminfo database is invalid
 	# dotnet.  It cannot be xterm-256color.
@@ -178,23 +186,37 @@ _src_compile() {
 		buildargs_corefx+=" -SkipTests=false -BuildTests=true"
 	fi
 
+	CLANG_MAJOR=$(ver_cut 1 $(clang --version | head -n 1 | cut -f 3 -d " "))
+	CLANG_MINOR=$(ver_cut 2 $(clang --version | head -n 1 | cut -f 3 -d " "))
+	einfo "Clang detected as ${CLANG_MAJOR}.${CLANG_MINOR}"
+
 	einfo "Building CoreFX"
+	ewarn \
+"Restoration (i.e. downloading) may randomly fail for bad local routers, \
+firewalls, or network cards.  Emerge and try again."
 	cd "${S}" || die
 
-#	export OPENSSL_CRYPTO_LIBRARY="/usr/$(get_libdir)/libssl.so.1.0.0"
-#	export OPENSSL_INCLUDE_DIR="/usr/$(get_libdir)/libssl.so.1.0.0"
+	export OPENSSL_CRYPTO_LIBRARY="/usr/$(get_libdir)/libssl.so.1.0.0"
+	export OPENSSL_INCLUDE_DIR="/usr/include/openssl"
 
+	local fn
+	if [[ ${ARCH} =~ (arm64|arm|amd64) ]] ; then
+		fn=\
+"dotnet-sdk-${SDK_V_FALLBACK}-linux-${myarch}.tar.gz"
+	else
+		fn=\
+"dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz"
+	fi
 	DotNetBootstrapCliTarPath=\
-"${DISTDIR}/dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz" \
-	./run.sh -buildArch -ArchGroup=${myarch} -${mydebug} \
-		${buildargs_corefx} || die
-
-#	./build.sh
+"${DISTDIR}/${fn}" \
+	./run.sh build-native -ArchGroup=${myarch} -${mydebug} \
+		${buildargs_corefx} -- --clang${CLANG_MAJOR}.${CLANG_MINOR} \
+		--numproc ${numproc} || die
 
 	if use test ; then
 		einfo "Building CoreFX tests"
 		cd "${S}" || die
-		./build-tests.sh -buildArch -ArchGroup=${myarch} \
+		./build-tests.sh -ArchGroup=${myarch} \
 			-${mydebug} || die
 	fi
 }
@@ -204,21 +226,12 @@ src_install() {
 	local ddest="${ED}/${dest}"
 	local dest_core="${dest}/shared/Microsoft.NETCore.App/${PV}"
 	local ddest_core="${ddest}/shared/Microsoft.NETCore.App/${PV}"
-	local myarch=""
-
-	if [[ ${ARCH} =~ (amd64) ]]; then
-		myarch="x64"
-	elif [[ ${ARCH} =~ (x86) ]] ; then
-		myarch="x32"
-	elif [[ ${ARCH} =~ (arm64) ]] ; then
-		myarch="arm64"
-	elif [[ ${ARCH} =~ (arm) ]] ; then
-		myarch="arm"
-	fi
+	local myarch=$(_getarch)
+	local mydebug=$(usex debug "Debug" "Release")
 
 	dodir "${dest_core}"
 
-	cp -a "${S}/bin/Linux.${myarch}.Release/native"/* \
+	cp -a "${S}/bin/Linux.${myarch}.${mydebug}/native"/* \
 		"${ddest_core}"/ || die
 
 	cd "${S}" || die

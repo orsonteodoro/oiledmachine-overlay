@@ -43,6 +43,7 @@ SLOT="${PV}"
 # https://docs.microsoft.com/en-us/dotnet/core/install/dependencies?pivots=os-linux&tabs=netcore31
 RDEPEND=">=app-crypt/mit-krb5-1.13.2
 	 >=dev-libs/icu-55.1
+	 >=dev-libs/openssl-1.0.2o
 	 >=dev-libs/openssl-compat-1.0.2o:1.0.0
 	 >=dev-dotnet/libgdiplus-6.0.1
 	 >=dev-util/lldb-4.0
@@ -185,10 +186,18 @@ _src_compile() {
 	# tarballs.
 	export PATH="${p}:${PATH}"
 
+	CLANG_MAJOR=$(ver_cut 1 $(clang --version | head -n 1 | cut -f 3 -d " "))
+	CLANG_MINOR=$(ver_cut 2 $(clang --version | head -n 1 | cut -f 3 -d " "))
+	einfo "Clang detected as ${CLANG_MAJOR}.${CLANG_MINOR}"
+
 	einfo "Building CoreFX"
+	ewarn \
+"Restoration (i.e. downloading) may randomly fail for bad local routers, \
+firewalls, or network cards.  Emerge and try again."
 	cd "${S}" || die
-	./run.sh --arch ${myarch} --configuration ${mydebug} \
-		${buildargs_corefx} || die
+	./run.sh build -ArchGroup=${myarch} -ConfigurationGroup=${mydebug} \
+		${buildargs_corefx} -- -clang${CLANG_MAJOR}.${CLANG_MINOR} \
+		--numproc ${numproc} || die
 }
 
 src_install() {
@@ -197,10 +206,11 @@ src_install() {
 	local dest_core="${dest}/shared/Microsoft.NETCore.App/${PV}"
 	local ddest_core="${ddest}/shared/Microsoft.NETCore.App/${PV}"
 	local myarch=$(_getarch)
+	local mydebug=$(usex debug "Debug" "Release")
 
 	dodir "${dest_core}"
 
-	cp -a "${S}/bin/Linux.${myarch}.Release/native"/* \
+	cp -a "${S}/bin/Linux.${myarch}.${mydebug}/native"/* \
 		"${ddest_core}"/ || die
 
 	cd "${S}" || die
