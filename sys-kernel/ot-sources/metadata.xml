@@ -144,7 +144,7 @@
       CPU usage by less than 5%.</flag>
     <flag name="muqss">Patches the kernel with Con Kolivas patchset and
       includes his skiplist based MuQSS CPU scheduler.</flag>
-    <flag name="o3">Patches the kernel to allow for more aggressive O3
+    <flag name="o3">Patches the kernel with more experimental O3
       compiler optimizations.</flag>
     <flag name="pds">Patches the kernel with an alternative skiplist
       based scheduler.</flag>
