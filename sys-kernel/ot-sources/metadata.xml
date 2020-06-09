@@ -95,7 +95,7 @@
 
       Several global env vars can be used to control this flag that
       you set in your make.conf or per-package env:
-      CVE_FIX_TRUST_LEVEL - a "inclusive or" bit mask that controls classes of 
+      CVE_FIX_TRUST_LEVEL - an "inclusive or" bit mask that controls classes of 
                             cve hotfixes to accept.  See ot-kernel-cve.eclass
                             for acceptable values.  You will need to use the
                             hex value equivalent since these identifier
