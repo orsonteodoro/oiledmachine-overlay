@@ -19,6 +19,11 @@
 
     Older point releases are removed to eliminate some of the previously
     announced 0-day exploits.
+
+    4.14.x kernel series is kept around for the TRESOR patch.
+
+    Only Long Term Support (LTS) kernel and those marked stable
+    in kernel.org are kept.
   </longdescription>
   <upstream>
     <!-- for this patchset -->
