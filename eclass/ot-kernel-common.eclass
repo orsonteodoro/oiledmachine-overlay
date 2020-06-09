@@ -17,40 +17,38 @@
 # UKSM:
 #   https://github.com/dolohow/uksm
 # zen-tune:
-#   https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/zen-tune
-#   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce commit 3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0
-# zen-kernel 5.3/misc:
-#   https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/misc
-#   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
-#   https://github.com/torvalds/linux/compare/v5.5...zen-kernel:5.5/zen-sauce
-# zen-kernel 5.3/futex-backports
-#   https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/futex-backports
-#   The original patch:
-#     https://lwn.net/Articles/794969/
+#   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce 3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0
+#   https://github.com/torvalds/linux/compare/v5.6...zen-kernel:5.6/zen-sauce (ef3a3e65c6f4eb74afe3b42024753aadc1c80672..d33eeeb62ca70eeba3234089e7bc61ac11e8d351] ; (exclusive,inclusive]
+#   https://github.com/torvalds/linux/compare/v5.7...zen-kernel:5.7/zen-sauce (03344d1ad1076dd6374f208f8de4c7f6da9dbcee..13f40f309a6a443fcdcc51759dc3a4a0f9b7910f] ; (exclusive,inclusive]
 # zen-kernel 5.4/futex-backports
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/futex-backports
-# zen-kernel 5.5/futex-multiple-wait-v3
-#   https://github.com/torvalds/linux/compare/v5.5...zen-kernel:5.5/futex-multiple-wait-v3
+# zen-kernel 5.{6,7}/futex-multiple-wait-v3
+#   https://github.com/torvalds/linux/compare/v5.6...zen-kernel:5.6/futex-multiple-wait-v3
+#   https://github.com/torvalds/linux/compare/v5.7...zen-kernel:5.7/futex-multiple-wait-v3
 # O3 (Optimize Harder):
-#   https://github.com/torvalds/linux/commit/e80b5baf29ce0fceb04ee4d05455c1e3a1871732
-#   https://github.com/torvalds/linux/commit/360c6833e07cc9fdef5746f6bc45bdbc7212288d
+#   4.9 (O3) https://github.com/torvalds/linux/commit/7d0295dc49233d9ddff5d63d5bdc24f1e80da722
+#   circa 2018 (infiniband O3 read overflow fix) https://github.com/torvalds/linux/commit/562a14babcd56efc2f51c772cb2327973d8f90ad
+#   5.1 (O3) https://github.com/torvalds/linux/commit/e80b5baf29ce0fceb04ee4d05455c1e3a1871732
+#   5.1 (infiniband O3 read overflow fix) https://github.com/torvalds/linux/commit/360c6833e07cc9fdef5746f6bc45bdbc7212288d
 # GraySky2 GCC Patches:
 #   https://github.com/graysky2/kernel_gcc_patch
 # MUQSS CPU Scheduler:
 #   http://ck.kolivas.org/patches/muqss/4.0/4.14/
-#   http://ck.kolivas.org/patches/5.0/5.3/5.3-ck1/
 #   http://ck.kolivas.org/patches/5.0/5.4/5.4-ck1/
-#   http://ck.kolivas.org/patches/5.0/5.5/5.5-ck1/
+#   http://ck.kolivas.org/patches/5.0/5.6/5.6-ck2/
 # PDS CPU Scheduler:
 #   http://cchalpha.blogspot.com/search/label/PDS
 # BMQ CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/BMQ
 # genpatches:
 #   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
+#   https://dev.gentoo.org/~mpagano/genpatches/releases-4.14.html
+#   https://dev.gentoo.org/~mpagano/genpatches/releases-5.4.html
+#   https://dev.gentoo.org/~mpagano/genpatches/releases-5.6.html
+#   https://dev.gentoo.org/~mpagano/genpatches/releases-5.7.html
 # BFQ updates:
-#   https://github.com/torvalds/linux/compare/v5.3...zen-kernel:5.3/bfq-backports
+#   https://github.com/torvalds/linux/compare/v4.19...zen-kernel:4.19/bfq
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/bfq-backports
-#   https://github.com/torvalds/linux/compare/v5.5...zen-kernel:5.5/bfq-backports
 # TRESOR:
 #   http://www1.informatik.uni-erlangen.de/tresor
 
