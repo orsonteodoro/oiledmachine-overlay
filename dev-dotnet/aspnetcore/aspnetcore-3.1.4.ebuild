@@ -324,18 +324,6 @@ _src_prepare() {
 
 	cd "${S}" || die
 
-	eapply \
- "${FILESDIR}/${MY_PN,,}-pull-request-6950-strict-mode-in-roslyn-compiler-1.patch" \
- || die
-	eapply \
- "${FILESDIR}/${MY_PN,,}-pull-request-6950-strict-mode-in-roslyn-compiler-2.patch" \
- || die
-	eapply \
- "${FILESDIR}/${MY_PN,,}-pull-request-6950-strict-mode-in-roslyn-compiler-3.patch" \
- || die
-
-	_remove_tests
-
 	# comment the 4 lines below to inspect versions for SDK_V and NETCORE_V/NETFX_V
 	#_use_native_netcore
 	_use_ms_netcore

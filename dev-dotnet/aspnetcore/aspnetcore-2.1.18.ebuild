@@ -323,8 +323,6 @@ _src_prepare() {
  "${FILESDIR}/${MY_PN,,}-pull-request-6950-strict-mode-in-roslyn-compiler-2.patch" \
  || die
 
-	_remove_tests
-
 	if ! use signalr ; then
 		rm -rf src/SignalR || die
 		eapply \
