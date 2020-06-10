@@ -53,17 +53,8 @@ DEPEND="${RDEPEND}
 	>=sys-devel/make-4.1"
 _PATCHES=( "${FILESDIR}/dotnet-cli-2.1.505-null-LastWriteTimeUtc-minval.patch" )
 RESTRICT="mirror"
-DOTNET_CLI_REPO_URL="https://github.com/dotnet/${PN}.git"
-
-# This currently isn't required but may be needed in later ebuilds
-# running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
-# but this ebuild doesn't currently use that.
-
-if [[ "${DropSuffix}" == "true" ]] ; then
+inherit git-r3
 S="${WORKDIR}/${PN}-${PV}"
-else
-S="${WORKDIR}/${PN}-${DOTNET_CLI_COMMIT}"
-fi
 
 pkg_setup() {
 	# If FEATURES="-sandbox -usersandbox" are not set dotnet will hang while
@@ -104,39 +95,11 @@ SDK_V to ${X_SDK_V}"
 }
 
 _fetch_cli() {
-	# git is used because we need the git metadata because the scripts rely
-	# on it to pull versioning info for VERSION_SUFFIX iif DropSuffix=false
+	EGIT_REPO_URI="https://github.com/dotnet/${PN}.git"
+	EGIT_COMMIT="v${PV}"
 
-	einfo "Fetching ${PN}"
-	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	b="${distdir}/dotnet-sdk"
-	d="${b}/${PN}"
-	addwrite "${b}"
-	if [[ ! -d "${d}" ]] ; then
-		mkdir -p "${d}"
-		einfo "Cloning project"
-		git clone ${DOTNET_CLI_REPO_URL} "${d}"
-		cd "${d}"
-		git checkout master
-		git checkout tags/v${PV} -b v${PV} || die
-	else
-		einfo "Updating project"
-		cd "${d}"
-		git clean -fdx
-		git reset --hard master
-		git checkout master
-		git pull
-		git branch -D v${PV}
-		git checkout tags/v${PV} -b v${PV} || die
-	fi
-	cd "${d}"
-	#git checkout ${DOTNET_CLI_COMMIT} # uncomment for forced deterministic
-					# build.  comment to follow head of tag.
-	[ ! -e "README.md" ] && die "found nothing"
-	if [[ -d "${S}" ]] ; then
-		rm -rf "${S}" || die
-	fi
-	cp -a "${d}" "${S}" || die
+	git-r3_fetch
+	git-r3_checkout
 	cd "${S}" || die
 	local rev=$(printf "%06d" $(git rev-list --count v${PV}))
 	einfo "rev=${rev}"
