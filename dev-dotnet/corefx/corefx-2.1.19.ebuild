@@ -20,7 +20,7 @@ LICENSE="all-rights-reserved
 	ZLIB" # The vanilla MIT license does not have all rights reserved
 KEYWORDS="~amd64 ~arm"
 CORE_V="${PV}"
-SDK_V="2.1.300-rc1-008673"
+SDK_V="2.1.300-rc1-008673" # found in DotnetCLIVersion.txt
 SDK_V_FALLBACK=2.1.302 # Using earliest 2.1 with arm/arm64 support
 # Need to use fallback version to avoid
 # The specified framework 'Microsoft.NETCore.App', version '1.1.0' was not found.
