@@ -24,7 +24,7 @@ SDK_V=3.1.100 # from global.json
 SDK_V_FALLBACK=3.1.200-preview-014946 # from dev-dotnet/cli-3.1*
 # From the commit history, they say they keep DotnetCLIVersion.txt in sync with
 # other dotnet projects
-
+DropSuffix="false" # true=official latest release, false=dev for live ebuilds
 IUSE="debug doc numa test"
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we have
 # to keep downloading it everytime the sandbox is wiped.
@@ -61,6 +61,7 @@ DEPEND="${RDEPEND}
 	 !dev-dotnet/dotnetcore-runtime-bin
 	 !dev-dotnet/dotnetcore-sdk-bin"
 RESTRICT="mirror"
+inherit git-r3
 S="${WORKDIR}/${PN}-${CORE_V}"
 
 # This currently isn't required but may be needed in later ebuilds
@@ -89,6 +90,14 @@ pkg_setup() {
 	esac
 }
 
+_fetch_coreclr() {
+	EGIT_REPO_URI="https://github.com/dotnet/${PN}.git"
+	EGIT_COMMIT="v${PV}"
+	git-r3_fetch
+	git-r3_checkout
+	cd "${S}" || die
+}
+
 _set_download_cache_folder() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	local dlbasedir="${distdir}/oiledmachine-overlay-dev_dotnet"
@@ -109,8 +118,11 @@ src_unpack() {
 	einfo \
 "If you emerged this first, please use the meta package dotnetcore-sdk instead\
  as the starting point."
-	ewarn "This ebuild is a Work In Progress (WIP) and may not likely work"
-	unpack "${PN}-${CORE_V}.tar.gz"
+	if [[ "${DropSuffix}" == "true" ]] ; then
+		unpack "${PN}-${CORE_V}.tar.gz"
+	else
+		_fetch_coreclr
+	fi
 
 	cd "${S}" || die
 	X_SDK_V=$(grep "dotnet" global.json | head -n 1 | cut -f 4 -d "\"")
@@ -178,12 +190,32 @@ _src_compile() {
 	local numproc="1"
 	buildargs_coreclr+=" -numproc ${numproc}"
 
+# https://github.com/dotnet/runtime/blob/595a95c05bc1c636f73be61cc5aa7807ca54cc75/docs/workflow/building/libraries/freebsd-instructions.md
+	mkdir -p "${S}/.dotnet"
+	pushd "${S}/.dotnet" || die
+	# Pre unpack to set SourceRevisionId
+	unpack "dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz"
+	if ! ls "${S}"/.dotnet/shared/Microsoft.NETCore.App/*/libcoreclr.so ; then
+		die "Cannot find libcoreclr.so"
+	fi
+	local coreclr_revid=$(strings "${S}"/.dotnet/shared/Microsoft.NETCore.App/*/libcoreclr.so \
+		| grep -F -e "@Commit:" | cut -f 4 -d " ")
+	popd || die
+
+	buildargs_coreclr+=" /p:SourceRevisionId=${coreclr_revid}"
+
 	if ! use test ; then
 		buildargs_coreclr+=" -skiptests"
 	fi
 
 	einfo "Building CoreCLR"
 	cd "${S}" || die
+
+	# Required by Microsoft.Build.Tasks.Git
+	# See
+	# https://github.com/dotnet/sourcelink/pull/438/files
+	# https://github.com/dotnet/sourcelink/blob/master/src/Microsoft.Build.Tasks.Git.UnitTests/GitOperationsTests.cs#L207
+	git remote add origin https://github.com/dotnet/${PN}.git
 
 	# Temporarily comment out the codeblock below and re-emerge to update
 	# ${SDK_V}
