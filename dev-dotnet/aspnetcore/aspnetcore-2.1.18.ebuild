@@ -311,8 +311,8 @@ _src_prepare() {
 	done
 
 	if ! use test ; then
-	_D="${S}/src/submodules/googletest/googletest/xcode/Config"
-		sed -i -e "s|-Werror||g" "${_D}/General.xcconfig"
+		_D="${S}/src/SignalR/clients/cpp/test/gtest-1.8.0/xcode/Config"
+		sed -i -e "s|-Werror||g" "${_D}/General.xcconfig" || die
 	fi
 
 	cd "${S}" || die
