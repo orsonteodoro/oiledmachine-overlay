@@ -24,8 +24,12 @@ DOTNET_CLI_COMMIT="4824df803cfd5096338d58ab78c452441843b1a1" # exactly ${PV}
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we have
 # to keep downloading it everytime the sandbox is wiped.
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
+if [[ "${DropSuffix}" == "true" ]] ; then
 SRC_URI="\
 https://github.com/dotnet/${PN}/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
+"
+fi
+SRC_URI="\
   amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )
   arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )
   arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )"

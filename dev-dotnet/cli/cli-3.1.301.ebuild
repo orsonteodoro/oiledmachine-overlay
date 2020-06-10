@@ -34,8 +34,12 @@ RUNTIME_BASEURI="https://dotnetcli.azureedge.net/dotnet/Runtime"
 #    ${RUNTIME_BASEURI}/2.0.0/dotnet-runtime-2.0.0-linux-arm64.tar.gz
 # 3.1.4 based on MicrosoftNETCoreAppRuntimePackageVersion in eng/Versions.props
 # 2.0.0, 2.2.0, 1.1.2 referenced in eng/restore-toolset.sh
+if [[ "${DropSuffix}" == "true" ]] ; then
 SRC_URI="\
 https://github.com/dotnet/${PN}/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
+"
+fi
+SRC_URI+="\
   amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz
     ${RUNTIME_BASEURI}/2.0.0/dotnet-runtime-2.0.0-linux-x64.tar.gz
     ${RUNTIME_BASEURI}/2.2.0/dotnet-runtime-2.2.0-linux-x64.tar.gz
