@@ -123,6 +123,8 @@ _set_download_cache_folder() {
 }
 
 src_unpack() {
+	_set_download_cache_folder
+
 	einfo \
 "If you emerged this first, please use the meta package dotnetcore-sdk instead\
  as the starting point."
