@@ -44,6 +44,11 @@ dev-dotnet/taoframework
 dev-dotnet/tesseract
 dev-dotnet/tiledsharp
 dev-dotnet/xwt
+dev-dotnet/aspnetcore
+dev-dotnet/coreclr
+dev-dotnet/corefx
+dev-dotnet/dotnetcore-runtime
+dev-dotnet/dotnetcore-sdk
 
 # build time failures
 =net-libs/webkit-gtk-2.26.4-r1
