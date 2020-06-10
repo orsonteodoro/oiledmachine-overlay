@@ -330,6 +330,15 @@ _src_prepare() {
 
 	#_use_native_sdk
 	_use_ms_sdk
+
+	# Common problem in 3.1.x.  darc-int is a private package but it's not
+	# supposed to be there.
+	sed -i -e '/.*darc-int-.*/d' NuGet.config || die
+	# Should be public packages not internal
+	sed -i -e "s|\
+MicrosoftNETCoreAppInternalPackageVersion|\
+MicrosoftNETCoreAppRuntimePackageVersion|g" \
+		global.json || die
 }
 
 _src_compile() {
