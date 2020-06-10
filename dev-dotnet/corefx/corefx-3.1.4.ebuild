@@ -179,11 +179,6 @@ _src_compile() {
 	# force 1 since it slows down the pc
 	local numproc="1"
 	export ProcessorCount=${numproc}
-	#buildargs_corefx+=" --numproc ${numproc}"
-
-	if use test ; then
-		buildargs_corefx+=" --buildtests"
-	fi
 
 	# comment out code block temporary and re-emerge to update ${SDK_V}
 	local fn=\
@@ -202,18 +197,24 @@ _src_compile() {
 	# tarballs.
 	export PATH="${p}:${PATH}"
 
-	CLANG_MAJOR=$(ver_cut 1 $(clang --version | head -n 1 | cut -f 3 -d " "))
-	CLANG_MINOR=$(ver_cut 2 $(clang --version | head -n 1 | cut -f 3 -d " "))
-	einfo "Clang detected as ${CLANG_MAJOR}.${CLANG_MINOR}"
+	if use test ; then
+		buildargs_corefx+=" --buildtests"
+	fi
 
 	einfo "Building CoreFX"
 	ewarn \
 "Restoration (i.e. downloading) may randomly fail for bad local routers, \
 firewalls, or network cards.  Emerge and try again."
 	cd "${S}" || die
-	./run.sh build -ArchGroup=${myarch} -ConfigurationGroup=${mydebug} \
-		${buildargs_corefx} -- -clang${CLANG_MAJOR}.${CLANG_MINOR} \
-		--numproc ${numproc} || die
+	./build.sh --restore --build --arch ${myarch} \
+		--configuration ${mydebug} \
+		${buildargs_corefx} || die
+}
+
+src_test() {
+	if use test ; then
+		./build.sh --test || die
+	fi
 }
 
 src_install() {
@@ -225,8 +226,7 @@ src_install() {
 	local mydebug=$(usex debug "Debug" "Release")
 
 	dodir "${dest_core}"
-
-	cp -a "${S}/bin/Linux.${myarch}.${mydebug}/native"/* \
+	cp -a "${S}/artifacts/bin/native/netcoreapp-Linux-${mydebug}-${myarch}"/* \
 		"${ddest_core}"/ || die
 
 	cd "${S}" || die
