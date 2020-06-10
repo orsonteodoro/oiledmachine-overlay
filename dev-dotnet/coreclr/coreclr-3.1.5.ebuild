@@ -31,9 +31,13 @@ IUSE="debug doc numa test"
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
 SDK_BASEURI_FALLBACK_ARM="https://download.visualstudio.microsoft.com/download/pr/67766a96-eb8c-4cd2-bca4-ea63d2cc115c/7bf13840aa2ed88793b7315d5e0d74e6"
 SDK_BASEURI_FALLBACK_ARM64="https://download.visualstudio.microsoft.com/download/pr/5a4c8f96-1c73-401c-a6de-8e100403188a/0ce6ab39747e2508366d498f9c0a0669"
+if [[ "${DropSuffix}" == "true" ]] ; then
 SRC_URI="\
 https://github.com/dotnet/${PN}/archive/v${CORE_V}.tar.gz \
 	-> ${PN}-${CORE_V}.tar.gz
+"
+fi
+SRC_URI+="\
   amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )
   arm? ( ${SDK_BASEURI_FALLBACK_ARM}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )
   arm64? ( ${SDK_BASEURI_FALLBACK_ARM64}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )"
