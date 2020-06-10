@@ -142,7 +142,23 @@ _fetch_cli() {
 	fi
 }
 
+_set_download_cache_folder() {
+	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+	local dlbasedir="${distdir}/oiledmachine-overlay-dev_dotnet"
+	addwrite "${dlbasedir}"
+	local global_packages="${dlbasedir}/.nuget/packages"
+	local http_cache="${dlbasedir}/NuGet/v3-cache"
+#	mkdir -p "${global_packages}" || die
+	mkdir -p "${http_cache}" || die
+#	export NUGET_PACKAGES="${global_packages}"
+	export NUGET_HTTP_CACHE_PATH="${http_cache}"
+	einfo "Using ${dlbasedir} to store cached downloads for \`dotnet restore\` or NuGet downloads"
+	einfo "Remove the folder it if it is problematic."
+}
+
 src_unpack() {
+	_set_download_cache_folder
+
 	einfo \
 "If you emerged this first, please use the meta package dotnetcore-sdk instead\
  as the starting point."
