@@ -26,9 +26,9 @@ REQUIRED_USE="!test" # broken
 NETCORE_V="3.1.3-servicing.20128.1" # todo?
 NETFX_V="4.7.2" # max .NETFramework requested
 SDK_V="3.1.103" # from global.json
-ASPNETCORE_COMMIT="35628a67800a3e269eb375989d2fffa9d67b8dbf" # exactly ${PV}
-GOOGLETEST_COMMIT="4e4df226fc197c0dda6e37f5c8c3845ca1e73a49"
-MESSAGEPACK_CSHARP_COMMIT="8861abdde93a3b97180ac3b2eafa33459ad52392"
+ASPNETCORE_COMMIT="844a82e37cae48af2ab2ee4f39b41283e6bb4f0e" # exactly ${PV}
+GOOGLETEST_COMMIT="4e4df226fc197c0dda6e37f5c8c3845ca1e73a49" # see src/submodules
+MESSAGEPACK_CSHARP_COMMIT="8861abdde93a3b97180ac3b2eafa33459ad52392" # see src/submodules
 SLOT="${PV}"
 # For dependencies, see...
 # eng/common/cross/build-rootfs.sh
@@ -74,7 +74,6 @@ https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT}.tar.gz \
 	-> googletest-${GOOGLETEST_COMMIT}.tar.gz
 ${ASPNET_GITHUB_BASEURI}/MessagePack-CSharp/archive/${MESSAGEPACK_CSHARP_COMMIT}.tar.gz \
 	-> messagepack-csharp-${MESSAGEPACK_CSHARP_COMMIT}.tar.gz"
-SRC_URI_TGZ=""
 fi
 # We need to cache the dotnet-sdk and dotnet-runtime tarballs outside the
 # sandbox otherwise we have to keep downloading it everytime the sandbox is
@@ -356,8 +355,11 @@ _src_compile() {
 	# force 1 since it slows down the pc
 	local numproc="1"
 
+	[[ "${DropSuffix}" ]] \
+	&& ewarn "Building with DropSuffix=true (with tarballs, no git) is broken"
+
 	export DropSuffix="true" # to avoid problems for now as in directory
-				#name changes... kinda like a work around
+				# name changes... kinda like a work around
 
 	einfo "Building ${MY_PN}"
 	ewarn \

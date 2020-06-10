@@ -25,8 +25,8 @@ IUSE="debug doc signalr test"
 REQUIRED_USE="!test" # broken
 NETFX_V="4.7.2" # max .NETFramework requested
 SDK_V="2.1.512" # from $HOME/.dotnet/buildtools/korebuild/*/config/sdk.version
-ASPNETCORE_COMMIT="8d09403118ca5d3d972b599b50f942be359a9a49" # exactly ${PV}
-ENTITYFRAMEWORKCORE_COMMIT="e7a4277846e720fb8a5729c2a3de98c4c2ff67e5"
+ASPNETCORE_COMMIT="9e38dcf1fc0335862e1ba6f19fc6a1f30e82ebb0" # exactly ${PV}
+ENTITYFRAMEWORKCORE_COMMIT="e7a4277846e720fb8a5729c2a3de98c4c2ff67e5" # see modules
 SLOT="${PV}"
 # For dependencies, see...
 # build/tools/docker/ubuntu.14.04/Dockerfile
@@ -65,7 +65,6 @@ SRC_URI_TGZ="\
 ${ASPNET_GITHUB_BASEURI}/${MY_PN}/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
 ${ASPNET_GITHUB_BASEURI}/EntityFrameworkCore/archive/${ENTITYFRAMEWORKCORE_COMMIT}.zip \
 	-> entityframeworkcore-${ENTITYFRAMEWORKCORE_COMMIT}.zip"
-SRC_URI_TGZ=""
 fi
 KOREBUILD_V="2.1.7-build-20200221.1" # stored in korebuild-lock.txt
 FN_KOREBUILD="korebuild.${KOREBUILD_V}.zip"
@@ -360,6 +359,9 @@ _src_compile() {
 	else
 		buildargs_coreasp+=" /p:SkipTests=false /p:CompileOnly=false"
 	fi
+
+	[[ "${DropSuffix}" ]] \
+	&& ewarn "Building with DropSuffix=true (with tarballs, no git) is broken"
 
 	export DropSuffix="true" # to avoid problems for now as in directory
 				# name changes... kinda like a work around
