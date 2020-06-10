@@ -13,16 +13,11 @@ games-utils/godot
 
 # undergoing rennovation with the dotnet.eclass
 dev-dotnet/aforgedotnet
-dev-dotnet/aspnetcore
 dev-dotnet/assimp-net
 dev-dotnet/atitextureconverter
 dev-dotnet/beatdetectorforgames
 dev-dotnet/BulletSharpPInvoke
 dev-dotnet/cli-tools
-dev-dotnet/core
-dev-dotnet/coreclr
-dev-dotnet/corefx
-dev-dotnet/dotnetcore-sdk
 dev-dotnet/farseer-physics-engine
 dev-dotnet/fna
 dev-dotnet/freeimagenet
@@ -57,6 +52,14 @@ dev-dotnet/xwt
 # output:: Illegal instruction
 # dmesg::  traps: googleearth-bin[11657] trap invalid opcode ip:7fe48ce19124 sp:7ffd7854c690 error:0 in libsgutil.so[7fe48cd05000+161000]
 >=sci-geosciences/googleearthpro-7.3.3
+
+# Build failures / Work In Progress (WIP)
+>=dev-dotnet/aspnetcore-2.1.18
+>=dev-dotnet/aspnetcore-3.1.4
+>=dev-dotnet/coreclr-3.1.4
+>=dev-dotnet/corefx-3.1.4
+>=dev-dotnet/dotnetcore-sdk-3.1.300
+>=dev-dotnet/dotnetcore-runtime-3.1.4
 
 # Masked for security reasons
 #--------------------------------------------------------------------------------------------------
