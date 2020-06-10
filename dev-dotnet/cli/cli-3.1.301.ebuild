@@ -21,7 +21,7 @@ DropSuffix="true" # true=official latest release, false=dev for live ebuilds
 IUSE="debug doc test"
 SDK_V="3.1.200-preview-014946" # from global.json
 # The URIs are constructed from: https://dot.net/v1/dotnet-install.sh
-DOTNET_CLI_COMMIT="7e0c2e2beaf7f90c8bf86693076a21912784b22e" # exactly ${PV}
+DOTNET_CLI_COMMIT="367c515ce40a394f53f00597cacc884a25cce495" # exactly ${PV}
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we have
 # to keep downloading it everytime the sandbox is wiped.
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"

@@ -20,7 +20,7 @@ VERSION_SUFFIX=''
 DropSuffix="true" # true=official latest release, false=dev for live ebuilds
 IUSE="debug doc test"
 SDK_V="2.1.403" # from run-build.sh ; line 168
-DOTNET_CLI_COMMIT="a8985a32df4279e4f22522a9d65d0551147e6f6e" # exactly ${PV}
+DOTNET_CLI_COMMIT="4824df803cfd5096338d58ab78c452441843b1a1" # exactly ${PV}
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we have
 # to keep downloading it everytime the sandbox is wiped.
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
