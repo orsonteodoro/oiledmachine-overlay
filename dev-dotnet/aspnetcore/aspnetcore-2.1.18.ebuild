@@ -19,7 +19,6 @@ LICENSE="all-rights-reserved
 	 ZLIB
 " # The vanilla MIT license does not have all rights reserved
 KEYWORDS="~amd64 ~arm"
-CORE_V=${PV}
 DropSuffix="false" # true=official latest release, false=dev for live ebuilds
 MY_PN="AspNetCore"
 IUSE="debug doc signalr test"
@@ -40,6 +39,7 @@ RDEPEND=">=app-crypt/mit-krb5-1.13.2
 	 >=dev-libs/openssl-compat-1.0.2o:1.0.0
 	 >=dev-util/lldb-3.9.1
 	 >=dev-util/lttng-ust-2.7.1
+	 signalr? ( net-libs/nodejs )
 	 >=net-misc/curl-7.47
 	 >=sys-libs/libunwind-1.1
 	 >=sys-libs/zlib-1.2.8"
@@ -85,16 +85,16 @@ SRC_URI="${SRC_URI_TGZ}
 	 arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )
 	 arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )"
 RESTRICT="mirror"
-ASPNETCORE_REPO_URL="${ASPNET_GITHUB_BASEURI}/${MY_PN}.git"
+inherit git-r3
 
 # This currently isn't required but may be needed in later ebuilds
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
 # but this ebuild doesn't currently use that.
 
 if [[ "${DropSuffix}" == "true" ]] ; then
-S="${WORKDIR}/${MY_PN}-${CORE_V}"
+S="${WORKDIR}/${MY_PN}-${PV}"
 else
-S="${WORKDIR}/${MY_PN}-${ASPNETCORE_COMMIT}"
+S="${WORKDIR}/${MY_PN,,}-${PV}"
 fi
 
 pkg_setup() {
@@ -139,53 +139,33 @@ _unpack_asp() {
 }
 
 _fetch_asp() {
-	# git is used to fetch dependencies and maybe versioning info especially
-	# for preview builds.
+	EGIT_REPO_URI="${ASPNET_GITHUB_BASEURI}/${MY_PN}.git"
+	EGIT_COMMIT="v${PV}"
+	git-r3_fetch
+	git-r3_checkout
+}
 
-	einfo "Fetching ${MY_PN}"
+_set_download_cache_folder() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-	b="${distdir}/dotnet-sdk"
-	d="${b}/${MY_PN,,}"
-	addwrite "${b}"
-	local update=0
-	if [[ ! -d "${d}" ]] ; then
-		mkdir -p "${d}" || die
-		einfo "Cloning project"
-		git clone --recursive ${ASPNETCORE_REPO_URL} "${d}" || die
-		cd "${d}" || die
-		git checkout master
-		git checkout tags/v${PV} -b v${PV} || die
-	else
-		einfo "Updating project"
-		cd "${d}" || die
-		git clean -fdx
-		git reset --hard master
-		git checkout master
-		git pull
-		git branch -D v${PV}
-		git checkout tags/v${CORE_V} -b v${PV} || die $(pwd)
-		local update=1
-	fi
-	cd "${d}" || die
-	#git checkout ${ASPNETCORE_COMMIT} . || die # uncomment to force
-	# deterministic build.  comment to follow tag and future added commits
-	# applied to tag.
-	if [[ "$update" == "1" ]] ; then
-		git submodule update --recursive || die
-	else
-		git submodule update --init --recursive || die
-	fi
-	[ ! -e "README.md" ] && die "found nothing"
-	if [[ -d "${S}" ]] ; then
-		rm -rf "${S}" || die
-	fi
-	cp -a "${d}" "${S}" || die
+	local dlbasedir="${distdir}/oiledmachine-overlay-dev_dotnet"
+	addwrite "${dlbasedir}"
+	local global_packages="${dlbasedir}/.nuget/packages"
+	local http_cache="${dlbasedir}/NuGet/v3-cache"
+#	mkdir -p "${global_packages}" || die
+	mkdir -p "${http_cache}" || die
+#	export NUGET_PACKAGES="${global_packages}"
+	export NUGET_HTTP_CACHE_PATH="${http_cache}"
+	einfo "Using ${dlbasedir} to store cached downloads for \`dotnet restore\` or NuGet downloads"
+	einfo "Remove the folder it if it is problematic."
 }
 
 src_unpack() {
 	einfo \
 "If you emerged this first, please use the meta package dotnetcore-sdk instead\
  as the starting point."
+
+	_set_download_cache_folder
+
 	mkdir -p "${T}/korebuild" || die
 	pushd "${T}/korebuild" || die
 		unpack "${FN_KOREBUILD}"
@@ -259,7 +239,7 @@ _use_native_netfx() {
 _use_ms_netfx() {
 	# corefx (netcore) not the same as netfx (found in mono)
 	local p
-	p="${S}/.dotnet" # for Microsoft tarball
+	p="${HOME}/.dotnet/buildtools/netfx/4.7.2" # for Microsoft tarball
 	mkdir -p "${p}" || die
 	pushd "${p}" || die
 	tar -xvf "${DISTDIR}/netfx.${NETFX_V}.tar.gz" || die
@@ -301,8 +281,7 @@ _getarch() {
 # prebuilt (i.e. binary distributed)
 _use_ms_sdk() {
 	local p
-#	p="${S}/.dotnet/sdk/${SDK_V}"
-	p="${S}/.dotnet"
+	p="${HOME}/.dotnet"
 	mkdir -p "${p}" || die
 	pushd "${p}" || die
 		local myarch=$(_getarch)
@@ -337,40 +316,20 @@ _src_prepare() {
 	fi
 
 	cd "${S}" || die
-#	eapply \
-# "${FILESDIR}/${MY_PN,,}-pull-request-6950-strict-mode-in-roslyn-compiler-1.patch" \
-# || die
-#	eapply \
-# "${FILESDIR}/${MY_PN,,}-pull-request-6950-strict-mode-in-roslyn-compiler-2.patch" \
-# || die
-#	eapply \
-# "${FILESDIR}/${MY_PN,,}-pull-request-6950-strict-mode-in-roslyn-compiler-3.patch" \
-# || die
-	eapply "${FILESDIR}/${MY_PN,,}-2.1.9-skip-tests-1.patch" || die
-	rm src/Razor/CodeAnalysis.Razor/src/TextChangeExtensions.cs \
-		|| die # Missing TextChange
+	eapply \
+ "${FILESDIR}/${MY_PN,,}-pull-request-6950-strict-mode-in-roslyn-compiler-1-2.1.18.patch" \
+ || die
+	eapply \
+ "${FILESDIR}/${MY_PN,,}-pull-request-6950-strict-mode-in-roslyn-compiler-2.patch" \
+ || die
 
-	mv src/SignalR "${T}" || die
-	mv src/Servers/Kestrel/shared/test "${T}"/test.1 || die
-	mv src/DataProtection/shared/test "${T}"/test.2 || die
-	mv src/Identity "${T}" || die
-	mv modules/EntityFrameworkCore "${T}" || die
-	mv src/Templating/test "${T}"/test.3 || die
-	mv src/Http/Routing/test/UnitTests "${T}" || die
-	rm -rf $(find . -iname "test" -o -iname "tests" -o -iname "testassets" \
-		-o -iname "*.Tests" -o -iname "sample" -o -iname "samples" -type d)
-	mv "${T}"/SignalR src || die
-	mv "${T}"/test.1 src/Servers/Kestrel/shared/test || die
-	mv "${T}"/test.2 src/DataProtection/shared/test || die
-	mv "${T}"/Identity src || die
-	mv "${T}"/EntityFrameworkCore modules || die
-	mv "${T}"/test.3 src/Templating/test || die
-	mkdir -p src/Http/Routing/test/ || die
-	mv "${T}"/UnitTests src/Http/Routing/test/ || die
+	_remove_tests
 
-	# requires removed; FunctionalTests and TestServer are missing
-	#rm src/Servers/IIS/IIS/benchmarks/IIS.Performance/PlaintextBenchmark.cs \
-	#	|| die
+	if ! use signalr ; then
+		rm -rf src/SignalR || die
+		eapply \
+ "${FILESDIR}/${MY_PN,,}-2.1.18-remove-signalr.patch"
+	fi
 
 	#_use_native_netfx
 	_use_ms_netfx
@@ -407,13 +366,15 @@ _src_compile() {
 	export DropSuffix="true" # to avoid problems for now as in directory
 				# name changes... kinda like a work around
 
-	if [[ ${ARCH} =~ (amd64) ]]; then
-		einfo "Building ${MY_PN}"
-		cd "${S}" || die
-		#-arch ${myarch} # in master
-		./build.sh /p:Configuration=${mydebug^} \
-			--verbose ${buildargs_coreasp} || die
-	fi
+	einfo "Building ${MY_PN}"
+	ewarn \
+"Restoration (i.e. downloading) may randomly fail for bad local routers, \
+firewalls, or network cards.  Emerge and try again."
+	cd "${S}" || die
+	#-arch ${myarch} # in master
+	./build.sh /p:Configuration=${mydebug^} \
+		--verbose ${buildargs_coreasp} \
+		|| die
 }
 
 # See https://docs.microsoft.com/en-us/dotnet/core/build/distribution-packaging

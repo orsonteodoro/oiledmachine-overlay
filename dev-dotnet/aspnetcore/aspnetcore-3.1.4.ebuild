@@ -19,7 +19,6 @@ LICENSE="all-rights-reserved
 	 ZLIB
 " # The vanilla MIT license does not have all rights reserved
 KEYWORDS="~amd64 ~arm ~arm64"
-CORE_V=${PV}
 DropSuffix="false" # true=official latest release, false=dev for live ebuilds
 MY_PN="AspNetCore"
 IUSE="debug doc test"
@@ -89,16 +88,16 @@ SRC_URI="${SRC_URI_TGZ}
 	 arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )"
 S=${WORKDIR}
 RESTRICT="mirror"
-ASPNETCORE_REPO_URL="${ASPNET_GITHUB_BASEURI}/${MY_PN}.git"
+inherit git-r3
 
 # This currently isn't required but may be needed in later ebuilds
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
 # but this ebuild doesn't currently use that.
 
 if [[ "${DropSuffix}" == "true" ]] ; then
-S="${WORKDIR}/${MY_PN}-${CORE_V}"
+S="${WORKDIR}/${MY_PN}-${PV}"
 else
-S="${WORKDIR}/${MY_PN}-${ASPNETCORE_COMMIT}"
+S="${WORKDIR}/${MY_PN,,}-${PV}"
 fi
 
 pkg_setup() {
@@ -150,47 +149,10 @@ _unpack_asp() {
 }
 
 _fetch_asp() {
-	# git is used to fetch dependencies and maybe versioning info especially
-	# for preview builds.
-
-	einfo "Fetching ${MY_PN}"
-	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-	b="${distdir}/dotnet-sdk"
-	d="${b}/${MY_PN,,}"
-	addwrite "${b}"
-	local update=0
-	if [[ ! -d "${d}" ]] ; then
-		mkdir -p "${d}" || die
-		einfo "Cloning project"
-		git clone --recursive ${ASPNETCORE_REPO_URL} "${d}" || die
-		cd "${d}" || die
-		git checkout master
-		git checkout tags/v${PV} -b v${PV} || die
-	else
-		einfo "Updating project"
-		cd "${d}" || die
-		git clean -fdx
-		git reset --hard master
-		git checkout master
-		git pull
-		git branch -D v${PV}
-		git checkout tags/v${CORE_V} -b v${PV} || die $(pwd)
-		local update=1
-	fi
-	cd "${d}" || die
-	#git checkout ${ASPNETCORE_COMMIT} . || die # uncomment to force \
-	# deterministic build.  comment to follow tag and future added commits \
-	# applied to tag.
-	if [[ "$update" == "1" ]] ; then
-		git submodule update --recursive || die
-	else
-		git submodule update --init --recursive || die
-	fi
-	[ ! -e "README.md" ] && die "found nothing"
-	if [[ -d "${S}" ]] ; then
-		rm -rf "${S}" || die
-	fi
-	cp -a "${d}" "${S}" || die
+	EGIT_REPO_URI="${ASPNET_GITHUB_BASEURI}/${MY_PN}.git"
+	EGIT_COMMIT="v${PV}"
+	git-r3_fetch
+	git-r3_checkout
 }
 
 src_unpack() {
@@ -345,41 +307,18 @@ _src_prepare() {
 	fi
 
 	cd "${S}" || die
-#	eapply \
-# "${FILESDIR}/${MY_PN,,}-pull-request-6950-strict-mode-in-roslyn-compiler-1.patch" \
-# || die
-#	eapply \
-# "${FILESDIR}/${MY_PN,,}-pull-request-6950-strict-mode-in-roslyn-compiler-2.patch" \
-# || die
-#	eapply \
-# "${FILESDIR}/${MY_PN,,}-pull-request-6950-strict-mode-in-roslyn-compiler-3.patch" \
-# || die
-	eapply "${FILESDIR}/${MY_PN,,}-2.1.9-skip-tests-1.patch" || die
-#	rm src/Razor/CodeAnalysis.Razor/src/TextChangeExtensions.cs \
-#		|| die # Missing TextChange
 
-	mv src/SignalR "${T}" || die
-	mv src/Servers/Kestrel/shared/test "${T}"/test.1 || die
-	mv src/DataProtection/shared/test "${T}"/test.2 || die
-	mv src/Identity "${T}" || die
-	mv modules/EntityFrameworkCore "${T}" || die
-#	mv src/Templating/test "${T}"/test.3 || die
-	mv src/Http/Routing/test/UnitTests "${T}" || die
-	rm -rf $(find . -iname "test" -o -iname "tests" -o -iname "testassets" \
-		-o -iname "*.Tests" -o -iname "sample" -o -iname "samples" \
-		-type d)
-	mv "${T}"/SignalR src || die
-	mv "${T}"/test.1 src/Servers/Kestrel/shared/test || die
-	mv "${T}"/test.2 src/DataProtection/shared/test || die
-	mv "${T}"/Identity src || die
-	mv "${T}"/EntityFrameworkCore modules || die
-#	mv "${T}"/test.3 src/Templating/test || die
-	mkdir -p src/Http/Routing/test/ || die
-	mv "${T}"/UnitTests src/Http/Routing/test/ || die
+	eapply \
+ "${FILESDIR}/${MY_PN,,}-pull-request-6950-strict-mode-in-roslyn-compiler-1.patch" \
+ || die
+	eapply \
+ "${FILESDIR}/${MY_PN,,}-pull-request-6950-strict-mode-in-roslyn-compiler-2.patch" \
+ || die
+	eapply \
+ "${FILESDIR}/${MY_PN,,}-pull-request-6950-strict-mode-in-roslyn-compiler-3.patch" \
+ || die
 
-	# requires removed; FunctionalTests and TestServer are missing
-	rm src/Servers/IIS/IIS/benchmarks/IIS.Performance/PlaintextBenchmark.cs \
-	|| die
+	_remove_tests
 
 	# comment the 4 lines below to inspect versions for SDK_V and NETCORE_V/NETFX_V
 	#_use_native_netcore
@@ -407,12 +346,14 @@ _src_compile() {
 	export DropSuffix="true" # to avoid problems for now as in directory
 				#name changes... kinda like a work around
 
-	if [[ ${ARCH} =~ (amd64) ]]; then
-		einfo "Building ${MY_PN}"
-		cd "${S}" || die
-		./build.sh --verbosity normal --arch ${myarch} \
-			--configuration ${mydebug^} ${buildargs_coreasp} || die
-	fi
+	einfo "Building ${MY_PN}"
+	ewarn \
+"Restoration (i.e. downloading) may randomly fail for bad local routers, \
+firewalls, or network cards.  Emerge and try again."
+	cd "${S}" || die
+	./build.sh --verbosity normal --arch ${myarch} \
+		--configuration ${mydebug^} ${buildargs_coreasp} \
+		|| die
 }
 
 # See https://docs.microsoft.com/en-us/dotnet/core/build/distribution-packaging
