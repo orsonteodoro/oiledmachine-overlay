@@ -23,7 +23,6 @@ DropSuffix="false" # true=official latest release, false=dev for live ebuilds
 MY_PN="AspNetCore"
 IUSE="debug doc test"
 REQUIRED_USE="!test" # broken
-NETCORE_V="3.1.3-servicing.20128.1" # todo?
 NETFX_V="4.7.2" # max .NETFramework requested
 SDK_V="3.1.103" # from global.json
 ASPNETCORE_COMMIT="844a82e37cae48af2ab2ee4f39b41283e6bb4f0e" # exactly ${PV}
@@ -78,13 +77,20 @@ fi
 # We need to cache the dotnet-sdk and dotnet-runtime tarballs outside the
 # sandbox otherwise we have to keep downloading it everytime the sandbox is
 # wiped.
-NETCORE_BASEURI="https://dotnetcli.azureedge.net/dotnet/Runtime/${NETCORE_V}"
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
+CORE_V="3.1.5-servicing.20270.5" # found eng/Versions.props \
+CORE_V_BASEURI="https://dotnetcli.azureedge.net/dotnet/Runtime/${CORE_V}"
+			# under MicrosoftNETCoreAppInternalPackageVersion tag
 SRC_URI+="${SRC_URI_TGZ}
-	 ${NETCORE_BASEURI}/dotnet-runtime-${NETCORE_V}-linux-x64.tar.gz
-	 amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )
-	 arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )
-	 arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )"
+	 amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz
+		${CORE_V_BASEURI}/dotnet-runtime-${CORE_V}-linux-x64.tar.gz
+	 )
+	 arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz
+		${CORE_V_BASEURI}/dotnet-runtime-${CORE_V}-linux-arm.tar.gz
+	 )
+	 arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz
+		${CORE_V_BASEURI}/dotnet-runtime-${CORE_V}-linux-arm64.tar.gz
+	 )"
 S=${WORKDIR}
 RESTRICT="mirror"
 inherit git-r3
@@ -184,15 +190,15 @@ src_unpack() {
 
 	cd "${S}" || die
 
-#	X_NETCORE_V=$(grep -r -e "\.SDK" scripts/VsRequirements/vs.json \
-# | cut -f 2 -d "\"" | sed  -r -e "s|.*([0-9]+.[0-9]+.[0-9]+).*|\1|g")
-#	if [[ ! -f scripts/VsRequirements/vs.json ]] ; then
-#		die "Cannot find scripts/VsRequirements/vs.json"
-#	elif [[ "${X_NETFX_V}" != "${NETFX_V}" ]] ; then
-#		die \
-# "Cached dotnet-runtime in distfiles is not the same as requested.  Update \
-# ebuild's NETCORE_V to ${X_NETCORE_V}"
-#	fi
+	X_CORE_V=$(grep -r -e "MicrosoftNETCoreAppInternalPackageVersion" eng/Versions.props \
+ | cut -f 2 -d ">" | cut -f 1 -d "<")
+	if [[ ! -f eng/Versions.props ]] ; then
+		die "Cannot find eng/Versions.props"
+	elif [[ "${X_CORE_V}" != "${CORE_V}" ]] ; then
+		die \
+ "Cached dotnet-runtime in distfiles is not the same as requested.  Update \
+ ebuild's CORE_V to ${X_CORE_V}"
+	fi
 
 	X_SDK_V=$(grep "dotnet" global.json | head -n 1 | cut -f 4 -d "\"")
 	if [[ ! -f global.json ]] ; then
@@ -217,7 +223,7 @@ _use_native_netcore() {
 	# Comment code block below to see the expected version.
 	# Trick the scripts by creating the dummy dir to skip downloading.
 #	local p
-#	p="${S}/.dotnet/buildtools/netfx/${NETCORE_V}/"
+#	p="${S}/.dotnet/buildtools/netfx/${CORE_V}/"
 #	mkdir -p "${p}" || die
 
 	L=$(find "${S}"/modules/EntityFrameworkCore/ -name "*.csproj")
@@ -247,7 +253,7 @@ _use_ms_netcore() {
 	mkdir -p "${p}" || die
 	pushd "${p}" || die
 		tar -xvf \
-	"${DISTDIR}/dotnet-runtime-${NETCORE_V}-linux-${myarch}.tar.gz" || die
+	"${DISTDIR}/dotnet-runtime-${CORE_V}-linux-${myarch}.tar.gz" || die
 	popd || die
 }
 
@@ -296,6 +302,13 @@ _use_ms_sdk() {
 	export PATH="${p}:${PATH}"
 }
 
+_unpack_dotnet_runtime() {
+	local myarch=$(_getarch)
+	pushd "${HOME}/.dotnet" || die
+	unpack "dotnet-runtime-${CORE_V}-linux-${myarch}.tar.gz"
+	popd || die
+}
+
 _src_prepare() {
 	cd "${WORKDIR}" || die
 
@@ -323,21 +336,23 @@ _src_prepare() {
 
 	cd "${S}" || die
 
-	# comment the 4 lines below to inspect versions for SDK_V and NETCORE_V/NETFX_V
+	# comment the 4 lines below to inspect versions for SDK_V and CORE_V/NETFX_V
 	#_use_native_netcore
 	_use_ms_netcore
 
 	#_use_native_sdk
 	_use_ms_sdk
 
+	_unpack_dotnet_runtime
+
 	# Common problem in 3.1.x.  darc-int is a private package but it's not
 	# supposed to be there.
 	sed -i -e '/.*darc-int-.*/d' NuGet.config || die
 	# Should be public packages not internal
-	sed -i -e "s|\
-MicrosoftNETCoreAppInternalPackageVersion|\
-MicrosoftNETCoreAppRuntimePackageVersion|g" \
-		global.json || die
+#	sed -i -e "s|\
+#MicrosoftNETCoreAppInternalPackageVersion|\
+#MicrosoftNETCoreAppRuntimePackageVersion|g" \
+#		global.json || die
 }
 
 _src_compile() {

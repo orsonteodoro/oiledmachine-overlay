@@ -23,7 +23,7 @@ DropSuffix="false" # true=official latest release, false=dev for live ebuilds
 MY_PN="AspNetCore"
 IUSE="debug doc signalr test"
 REQUIRED_USE="!test" # broken
-NETFX_V="4.7.2" # max .NETFramework requested
+NETFX_V="4.7.2" # from $HOME/.dotnet/buildtools/korebuild/*/KoreBuild.sh
 SDK_V="2.1.512" # from $HOME/.dotnet/buildtools/korebuild/*/config/sdk.version
 ASPNETCORE_COMMIT="9e38dcf1fc0335862e1ba6f19fc6a1f30e82ebb0" # exactly ${PV}
 ENTITYFRAMEWORKCORE_COMMIT="e7a4277846e720fb8a5729c2a3de98c4c2ff67e5" # see modules
@@ -72,38 +72,32 @@ FN_KOREBUILD="korebuild.${KOREBUILD_V}.zip"
 # to keep downloading it everytime the sandbox is wiped.
 # We need to pre fetch the korebuild tarball to obtain SDK_V.  It is not easily
 # accessible without first going though build.sh.
-# Missing 2.0.9 dotnet-runtime for arm/arm64
-# 2.1.12 runtime \
-# https://github.com/dotnet/core/blob/master/release-notes/2.1/2.1.12/2.1.12-download.md
-# 2.0.9 \
-# runtime https://github.com/dotnet/core/blob/master/release-notes/download-archives/2.0.9-download.md
+# No dotnet runtime 2.0.9 for arm64
+# Runtime urls generated from dotnet-install.sh
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
 ASPNETCORE_HOST="https://aspnetcore.blob.core.windows.net"
 NETFX_BASEURI="${ASPNETCORE_HOST}/buildtools/netfx/${NETFX_V}"
 KOREBUILD_BASEURI=\
 "${ASPNETCORE_HOST}/buildtools/korebuild/artifacts/${KOREBUILD_V}"
+RT_V_2_0="2.0.9"
+RT_V_2_1="2.1.12"
+RUNTIME_BASEURI="https://dotnetcli.azureedge.net/dotnet/Runtime"
 SRC_URI+="${SRC_URI_TGZ}
 	 ${KOREBUILD_BASEURI}/${FN_KOREBUILD}
 	 ${NETFX_BASEURI}/netfx.${NETFX_V}.tar.gz
 	 amd64? (
 		${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz
-https://download.microsoft.com/download/3/a/3/3a3bda26-560d-4d8e-922e-6f6bc4553a84/\
-dotnet-runtime-2.0.9-linux-x64.tar.gz
-https://download.visualstudio.microsoft.com/\
-download/pr/2c78594a-dd2c-488e-b201-b7fd9b78ab00/5f2169b20fc704e069c336114ec653c5/\
-dotnet-runtime-2.1.12-linux-x64.tar.gz
+${RUNTIME_BASEURI}/${RT_V_2_0}/dotnet-runtime-${RT_V_2_0}-linux-x64.tar.gz
+${RUNTIME_BASEURI}/${RT_V_2_1}/dotnet-runtime-${RT_V_2_1}-linux-x64.tar.gz
 	 )
 	 arm? (
 		${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz
-https://download.visualstudio.microsoft.com/\
-download/pr/f759670e-1f8d-4f1a-8eb7-58b95f94c68c/69eca04ca138dc6c3caa160bd1b891d1/\
-dotnet-runtime-2.1.12-linux-arm.tar.gz
+${RUNTIME_BASEURI}/${RT_V_2_0}/dotnet-runtime-${RT_V_2_0}-linux-arm.tar.gz
+${RUNTIME_BASEURI}/${RT_V_2_1}/dotnet-runtime-${RT_V_2_1}-linux-arm.tar.gz
 	 )
 	 arm64? (
 		${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz
-https://download.visualstudio.microsoft.com/\
-download/pr/b6ac0d5e-513c-416e-acf2-124a51551a1b/a34dea8d2abb62d29d4bf76a10b9dc30/\
-dotnet-runtime-2.1.12-linux-arm64.tar.gz
+${RUNTIME_BASEURI}/${RT_V_2_1}/dotnet-runtime-${RT_V_2_1}-linux-arm64.tar.gz
 	 )"
 RESTRICT="mirror"
 inherit git-r3
@@ -201,11 +195,32 @@ src_unpack() {
 
 	cd "${S}" || die
 
-	X_NETFX_V=$(grep -r -e "\.SDK" scripts/VsRequirements/vs.json \
-		| cut -f 2 -d "\"" \
-		| sed  -r -e "s|.*([0-9]+.[0-9]+.[0-9]+).*|\1|g")
-	if [[ ! -f scripts/VsRequirements/vs.json ]] ; then
-		die "Cannot find scripts/VsRequirements/vs.json"
+	X_RT_V_2_0=$(grep -r -e "<MicrosoftNETCoreApp20PackageVersion" build/dependencies.props \
+ | cut -f 2 -d ">" | cut -f 1 -d "<")
+	if [[ ! -f build/dependencies.props ]] ; then
+		die "Cannot find build/dependencies.props"
+	elif [[ "${X_RT_V_2_0}" != "${RT_V_2_0}" ]] ; then
+		die \
+"Cached dotnet-runtime in distfiles is not the same as requested.  Update \
+ebuild's RT_V_2_0 to ${X_RT_V_2_0}"
+	fi
+
+	# MicrosoftNETCoreAppPackageVersion is ambiguous or same with
+	# MicrosoftNETCoreDotNetAppHostPackageVersion
+	X_RT_V_2_1=$(grep -r -e "<MicrosoftNETCoreAppPackageVersion" build/dependencies.props \
+ | cut -f 2 -d ">" | cut -f 1 -d "<")
+	if [[ ! -f build/dependencies.props ]] ; then
+		die "Cannot find build/dependencies.props"
+	elif [[ "${X_RT_V_2_1}" != "${RT_V_2_1}" ]] ; then
+		die \
+"Cached dotnet-runtime in distfiles is not the same as requested.  Update \
+ebuild's RT_V_2_1 to ${X_RT_V_2_1}"
+	fi
+
+	X_NETFX_V=$(grep -r -e "local netfx_version" "${T}/korebuild/KoreBuild.sh" \
+		| cut -f 2 -d "'")
+	if [[ ! -f "${T}/korebuild/KoreBuild.sh" ]] ; then
+		die "Cannot find KoreBuild.sh"
 	elif [[ "${X_NETFX_V}" != "${NETFX_V}" ]] ; then
 		die \
 "Cached dotnet-runtime in distfiles is not the same as requested.  Update \
@@ -314,10 +329,10 @@ _use_ms_sdk() {
 _unpack_dotnet_runtime() {
 	local myarch=$(_getarch)
 	pushd "${HOME}/.dotnet" || die
-	if [[ "${IUSE}" =~ (amd64) ]] ; then
-		unpack "dotnet-runtime-2.0.9-linux-${myarch}.tar.gz"
+	if [[ "${ARCH}" =~ (amd64|arm) ]] ; then
+		unpack "dotnet-runtime-${RT_V_2_0}-linux-${myarch}.tar.gz"
 	fi
-	unpack "dotnet-runtime-2.1.12-linux-${myarch}.tar.gz"
+	unpack "dotnet-runtime-${RT_V_2_1}-linux-${myarch}.tar.gz"
 	popd || die
 }
 
@@ -361,7 +376,7 @@ _src_prepare() {
 	fi
 
 	#_use_native_netfx
-	_use_ms_netfx
+#	_use_ms_netfx
 
 	#_use_native_sdk
 	_use_ms_sdk
