@@ -77,7 +77,7 @@ ASPNETCORE_HOST="https://aspnetcore.blob.core.windows.net"
 NETFX_BASEURI="${ASPNETCORE_HOST}/buildtools/netfx/${NETFX_V}"
 KOREBUILD_BASEURI=\
 "${ASPNETCORE_HOST}/buildtools/korebuild/artifacts/${KOREBUILD_V}"
-SRC_URI="${SRC_URI_TGZ}
+SRC_URI+="${SRC_URI_TGZ}
 	 ${KOREBUILD_BASEURI}/${FN_KOREBUILD}
 	 ${NETFX_BASEURI}/netfx.${NETFX_V}.tar.gz
 	 amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )

@@ -80,7 +80,7 @@ fi
 # wiped.
 NETCORE_BASEURI="https://dotnetcli.azureedge.net/dotnet/Runtime/${NETCORE_V}"
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
-SRC_URI="${SRC_URI_TGZ}
+SRC_URI+="${SRC_URI_TGZ}
 	 ${NETCORE_BASEURI}/dotnet-runtime-${NETCORE_V}-linux-x64.tar.gz
 	 amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )
 	 arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )
