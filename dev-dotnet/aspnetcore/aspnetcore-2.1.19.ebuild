@@ -181,8 +181,8 @@ src_unpack() {
 "If you emerged this first, please use the meta package dotnetcore-sdk instead\
  as the starting point."
 
-	mkdir -p "${T}/korebuild" || die
-	pushd "${T}/korebuild" || die
+	mkdir -p "${HOME}/.dotnet/buildtools/korebuild/${KOREBUILD_V}" || die
+	pushd "${HOME}/.dotnet/buildtools/korebuild/${KOREBUILD_V}" || die
 		unpack "${FN_KOREBUILD}"
 	popd || die
 
@@ -194,6 +194,15 @@ src_unpack() {
 	fi
 
 	cd "${S}" || die
+
+	X_KOREBUILD_V=$(cat korebuild-lock.txt | head -n 1 | cut -f 2 -d ":")
+	if [[ ! -f korebuild-lock.txt ]] ; then
+		die "Cannot find korebuild-lock.txt"
+	elif [[ "${X_KOREBUILD_V}" != "${KOREBUILD_V}" ]] ; then
+		die \
+"Cached korebuild in distfiles is not the same as requested.  Update \
+ebuild's KOREBUILD_V to ${X_KOREBUILD_V}"
+	fi
 
 	X_RT_V_2_0=$(grep -r -e "<MicrosoftNETCoreApp20PackageVersion" build/dependencies.props \
  | cut -f 2 -d ">" | cut -f 1 -d "<")
@@ -217,9 +226,9 @@ ebuild's RT_V_2_0 to ${X_RT_V_2_0}"
 ebuild's RT_V_2_1 to ${X_RT_V_2_1}"
 	fi
 
-	X_NETFX_V=$(grep -r -e "local netfx_version" "${T}/korebuild/KoreBuild.sh" \
+	X_NETFX_V=$(grep -r -e "local netfx_version" "${HOME}/.dotnet/buildtools/korebuild/${KOREBUILD_V}/KoreBuild.sh" \
 		| cut -f 2 -d "'")
-	if [[ ! -f "${T}/korebuild/KoreBuild.sh" ]] ; then
+	if [[ ! -f "${HOME}/.dotnet/buildtools/korebuild/${KOREBUILD_V}/KoreBuild.sh" ]] ; then
 		die "Cannot find KoreBuild.sh"
 	elif [[ "${X_NETFX_V}" != "${NETFX_V}" ]] ; then
 		die \
@@ -227,8 +236,8 @@ ebuild's RT_V_2_1 to ${X_RT_V_2_1}"
 ebuild's NETFX_V to ${X_NETFX_V}"
 	fi
 
-	X_SDK_V=$(cat "${T}/korebuild/config/sdk.version" | sed -r -e 's|\r||g')
-	if [[ ! -f "${T}/korebuild/config/sdk.version" ]] ; then
+	X_SDK_V=$(cat "${HOME}/.dotnet/buildtools/korebuild/${KOREBUILD_V}/config/sdk.version" | sed -r -e 's|\r||g')
+	if [[ ! -f "${HOME}/.dotnet/buildtools/korebuild/${KOREBUILD_V}/config/sdk.version" ]] ; then
 		die "Cannot find sdk.version"
 	elif [[ "${X_SDK_V}" != "${SDK_V}" ]] ; then
 		die \
@@ -376,7 +385,7 @@ _src_prepare() {
 	fi
 
 	#_use_native_netfx
-#	_use_ms_netfx
+	_use_ms_netfx
 
 	#_use_native_sdk
 	_use_ms_sdk
