@@ -19,6 +19,7 @@ KEYWORDS="~amd64 ~arm ~arm64"
 VERSION_SUFFIX=''
 DropSuffix="true" # true=official latest release, false=dev for live ebuilds
 IUSE="debug doc test"
+CORE_V="3.1.5" # see eng/Versions.props
 SDK_V="3.1.200-preview-014946" # from global.json
 # The URIs are constructed from: https://dot.net/v1/dotnet-install.sh
 DOTNET_CLI_COMMIT="367c515ce40a394f53f00597cacc884a25cce495" # exactly ${PV}
@@ -32,7 +33,7 @@ RUNTIME_BASEURI="https://dotnetcli.azureedge.net/dotnet/Runtime"
 #    ${RUNTIME_BASEURI}/1.1.2/dotnet-runtime-1.1.2-linux-arm64.tar.gz
 # Missing:
 #    ${RUNTIME_BASEURI}/2.0.0/dotnet-runtime-2.0.0-linux-arm64.tar.gz
-# 3.1.4 based on MicrosoftNETCoreAppRuntimePackageVersion in eng/Versions.props
+# ${CORE_V} based on MicrosoftNETCoreAppRuntimePackageVersion in eng/Versions.props
 # 2.0.0, 2.2.0, 1.1.2 referenced in eng/restore-toolset.sh
 if [[ "${DropSuffix}" == "true" ]] ; then
 SRC_URI="\
@@ -43,16 +44,16 @@ SRC_URI+="\
   amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz
     ${RUNTIME_BASEURI}/2.0.0/dotnet-runtime-2.0.0-linux-x64.tar.gz
     ${RUNTIME_BASEURI}/2.2.0/dotnet-runtime-2.2.0-linux-x64.tar.gz
-    ${RUNTIME_BASEURI}/3.1.4/dotnet-runtime-3.1.4-linux-x64.tar.gz
+    ${RUNTIME_BASEURI}/${CORE_V}/dotnet-runtime-${CORE_V}-linux-x64.tar.gz
   )
   arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz
     ${RUNTIME_BASEURI}/2.0.0/dotnet-runtime-2.0.0-linux-arm.tar.gz
     ${RUNTIME_BASEURI}/2.2.0/dotnet-runtime-2.2.0-linux-arm.tar.gz
-    ${RUNTIME_BASEURI}/3.1.4/dotnet-runtime-3.1.4-linux-arm.tar.gz
+    ${RUNTIME_BASEURI}/${CORE_V}/dotnet-runtime-${CORE_V}-linux-arm.tar.gz
   )
   arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz
     ${RUNTIME_BASEURI}/2.2.0/dotnet-runtime-2.2.0-linux-arm64.tar.gz
-    ${RUNTIME_BASEURI}/3.1.4/dotnet-runtime-3.1.4-linux-arm64.tar.gz
+    ${RUNTIME_BASEURI}/${CORE_V}/dotnet-runtime-${CORE_V}-linux-arm64.tar.gz
   )"
 SLOT="${PV}"
 # see scripts/docker/ubuntu.16.04/Dockerfile for dependencies
@@ -129,7 +130,7 @@ _unpack_runtime() {
 		unpack "dotnet-runtime-2.0.0-linux-${myarch}.tar.gz"
 	fi
 	unpack "dotnet-runtime-2.2.0-linux-${myarch}.tar.gz"
-	unpack "dotnet-runtime-3.1.4-linux-${myarch}.tar.gz"
+	unpack "dotnet-runtime-${CORE_V}-linux-${myarch}.tar.gz"
 	popd || die
 }
 
