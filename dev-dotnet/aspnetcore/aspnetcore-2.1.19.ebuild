@@ -68,10 +68,15 @@ ${ASPNET_GITHUB_BASEURI}/EntityFrameworkCore/archive/${ENTITYFRAMEWORKCORE_COMMI
 fi
 KOREBUILD_V="2.1.7-build-20200221.1" # stored in korebuild-lock.txt
 FN_KOREBUILD="korebuild.${KOREBUILD_V}.zip"
-# We need to cache the dotnet-sdk tarball outside the sandbox otherwise we have
+# We need to cache the dotnet-sdk/dotnet-runtime tarball outside the sandbox otherwise we have
 # to keep downloading it everytime the sandbox is wiped.
 # We need to pre fetch the korebuild tarball to obtain SDK_V.  It is not easily
 # accessible without first going though build.sh.
+# Missing 2.0.9 dotnet-runtime for arm/arm64
+# 2.1.12 runtime \
+# https://github.com/dotnet/core/blob/master/release-notes/2.1/2.1.12/2.1.12-download.md
+# 2.0.9 \
+# runtime https://github.com/dotnet/core/blob/master/release-notes/download-archives/2.0.9-download.md
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
 ASPNETCORE_HOST="https://aspnetcore.blob.core.windows.net"
 NETFX_BASEURI="${ASPNETCORE_HOST}/buildtools/netfx/${NETFX_V}"
@@ -80,9 +85,26 @@ KOREBUILD_BASEURI=\
 SRC_URI+="${SRC_URI_TGZ}
 	 ${KOREBUILD_BASEURI}/${FN_KOREBUILD}
 	 ${NETFX_BASEURI}/netfx.${NETFX_V}.tar.gz
-	 amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )
-	 arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )
-	 arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )"
+	 amd64? (
+		${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz
+https://download.microsoft.com/download/3/a/3/3a3bda26-560d-4d8e-922e-6f6bc4553a84/\
+dotnet-runtime-2.0.9-linux-x64.tar.gz
+https://download.visualstudio.microsoft.com/\
+download/pr/2c78594a-dd2c-488e-b201-b7fd9b78ab00/5f2169b20fc704e069c336114ec653c5/\
+dotnet-runtime-2.1.12-linux-x64.tar.gz
+	 )
+	 arm? (
+		${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz
+https://download.visualstudio.microsoft.com/\
+download/pr/f759670e-1f8d-4f1a-8eb7-58b95f94c68c/69eca04ca138dc6c3caa160bd1b891d1/\
+dotnet-runtime-2.1.12-linux-arm.tar.gz
+	 )
+	 arm64? (
+		${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz
+https://download.visualstudio.microsoft.com/\
+download/pr/b6ac0d5e-513c-416e-acf2-124a51551a1b/a34dea8d2abb62d29d4bf76a10b9dc30/\
+dotnet-runtime-2.1.12-linux-arm64.tar.gz
+	 )"
 RESTRICT="mirror"
 inherit git-r3
 
@@ -289,6 +311,16 @@ _use_ms_sdk() {
 	export PATH="${p}:${PATH}"
 }
 
+_unpack_dotnet_runtime() {
+	local myarch=$(_getarch)
+	pushd "${HOME}/.dotnet" || die
+	if [[ "${IUSE}" =~ (amd64) ]] ; then
+		unpack "dotnet-runtime-2.0.9-linux-${myarch}.tar.gz"
+	fi
+	unpack "dotnet-runtime-2.1.12-linux-${myarch}.tar.gz"
+	popd || die
+}
+
 _src_prepare() {
 	cd "${WORKDIR}" || die
 
@@ -333,6 +365,8 @@ _src_prepare() {
 
 	#_use_native_sdk
 	_use_ms_sdk
+
+	_unpack_dotnet_runtime
 }
 
 _src_compile() {
