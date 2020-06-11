@@ -18,10 +18,8 @@ RESTRICT="fetch"
 SLOT=$(ver_cut 1-2 ${PV})
 # split due to flaky servers
 CORE_V=3.1.5
-
-# On hold ; missing tarball
-#=dev-dotnet/core-${CORE_V}*:${SLOT}[doc?,examples?]
-
+# No core-${CORE_V} release yet
+# =dev-dotnet/core-${CORE_V}*:${SLOT}[doc?,examples?]
 RDEPEND="aspnetcore? ( =dev-dotnet/aspnetcore-${CORE_V}*:${CORE_V}[doc?] )
 	 =dev-dotnet/coreclr-${CORE_V}*:${CORE_V}[doc?]
 	 =dev-dotnet/corefx-${CORE_V}*:${CORE_V}[doc?]
