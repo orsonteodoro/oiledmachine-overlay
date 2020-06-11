@@ -29,4 +29,7 @@ RDEPEND="aspnetcore? ( =dev-dotnet/aspnetcore-${CORE_V}*:${CORE_V}[doc?] )
 pkg_postinst() {
 	einfo "Core version is ${CORE_V}"
 	einfo "Long Term Support (LTS) up to 2021-08-21"
+	einfo
+	einfo \
+"No dev-dotnet/core-${CORE_V} release yet.  Install an earlier release manually."
 }
