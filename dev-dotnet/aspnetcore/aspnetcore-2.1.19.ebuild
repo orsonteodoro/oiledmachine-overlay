@@ -418,7 +418,7 @@ _src_compile() {
 		buildargs_coreasp+=" /p:SkipTests=false /p:CompileOnly=false"
 	fi
 
-	[[ "${DropSuffix}" ]] \
+	[[ "${DropSuffix}" == "true" ]] \
 	&& ewarn "Building with DropSuffix=true (with tarballs, no git) is broken"
 
 	export DropSuffix="true" # to avoid problems for now as in directory

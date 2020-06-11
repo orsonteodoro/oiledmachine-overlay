@@ -370,7 +370,7 @@ _src_compile() {
 	# force 1 since it slows down the pc
 	local numproc="1"
 
-	[[ "${DropSuffix}" ]] \
+	[[ "${DropSuffix}" == "true" ]] \
 	&& ewarn "Building with DropSuffix=true (with tarballs, no git) is broken"
 
 	export DropSuffix="true" # to avoid problems for now as in directory
