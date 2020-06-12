@@ -101,6 +101,11 @@ ${RUNTIME_BASEURI}/${RT_V_2_1}/dotnet-runtime-${RT_V_2_1}-linux-arm64.tar.gz
 	 )"
 RESTRICT="mirror"
 inherit git-r3
+_PATCHES=(
+ "${FILESDIR}/${PN}-pull-request-6950-strict-mode-in-roslyn-compiler-1-2.1.18.patch"
+ "${FILESDIR}/${PN}-pull-request-6950-strict-mode-in-roslyn-compiler-2.patch"
+ "${FILESDIR}/${PN}-2.1.19-limit-maxHttpRequestsPerSource-to-1.patch"
+)
 
 # This currently isn't required but may be needed in later ebuilds
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
@@ -109,7 +114,7 @@ inherit git-r3
 if [[ "${DropSuffix}" == "true" ]] ; then
 S="${WORKDIR}/${MY_PN}-${PV}"
 else
-S="${WORKDIR}/${MY_PN,,}-${PV}"
+S="${WORKDIR}/${PN}-${PV}"
 fi
 
 pkg_setup() {
@@ -166,11 +171,11 @@ _set_download_cache_folder() {
 	addwrite "${dlbasedir}"
 	local global_packages="${dlbasedir}/.nuget/packages"
 	local http_cache="${dlbasedir}/NuGet/v3-cache"
-#	mkdir -p "${global_packages}" || die
 	mkdir -p "${http_cache}" || die
-#	export NUGET_PACKAGES="${global_packages}"
 	export NUGET_HTTP_CACHE_PATH="${http_cache}"
-	einfo "Using ${dlbasedir} to store cached downloads for \`dotnet restore\` or NuGet downloads"
+	einfo \
+"Using ${dlbasedir} to store cached downloads for \`dotnet restore\` \
+or NuGet downloads"
 	einfo "Remove the folder it if it is problematic."
 }
 
@@ -204,7 +209,8 @@ src_unpack() {
 ebuild's KOREBUILD_V to ${X_KOREBUILD_V}"
 	fi
 
-	X_RT_V_2_0=$(grep -r -e "<MicrosoftNETCoreApp20PackageVersion" build/dependencies.props \
+	X_RT_V_2_0=$(grep -r -e "<MicrosoftNETCoreApp20PackageVersion" \
+			build/dependencies.props \
  | cut -f 2 -d ">" | cut -f 1 -d "<")
 	if [[ ! -f build/dependencies.props ]] ; then
 		die "Cannot find build/dependencies.props"
@@ -216,7 +222,8 @@ ebuild's RT_V_2_0 to ${X_RT_V_2_0}"
 
 	# MicrosoftNETCoreAppPackageVersion is ambiguous or same with
 	# MicrosoftNETCoreDotNetAppHostPackageVersion
-	X_RT_V_2_1=$(grep -r -e "<MicrosoftNETCoreAppPackageVersion" build/dependencies.props \
+	X_RT_V_2_1=$(grep -r -e "<MicrosoftNETCoreAppPackageVersion" \
+			build/dependencies.props \
  | cut -f 2 -d ">" | cut -f 1 -d "<")
 	if [[ ! -f build/dependencies.props ]] ; then
 		die "Cannot find build/dependencies.props"
@@ -226,9 +233,12 @@ ebuild's RT_V_2_0 to ${X_RT_V_2_0}"
 ebuild's RT_V_2_1 to ${X_RT_V_2_1}"
 	fi
 
-	X_NETFX_V=$(grep -r -e "local netfx_version" "${HOME}/.dotnet/buildtools/korebuild/${KOREBUILD_V}/KoreBuild.sh" \
+	X_NETFX_V=$(grep -r -e "local netfx_version" \
+	"${HOME}/.dotnet/buildtools/korebuild/${KOREBUILD_V}/KoreBuild.sh" \
 		| cut -f 2 -d "'")
-	if [[ ! -f "${HOME}/.dotnet/buildtools/korebuild/${KOREBUILD_V}/KoreBuild.sh" ]] ; then
+	if [[ ! \
+-f "${HOME}/.dotnet/buildtools/korebuild/${KOREBUILD_V}/KoreBuild.sh" ]]
+	then
 		die "Cannot find KoreBuild.sh"
 	elif [[ "${X_NETFX_V}" != "${NETFX_V}" ]] ; then
 		die \
@@ -236,8 +246,12 @@ ebuild's RT_V_2_1 to ${X_RT_V_2_1}"
 ebuild's NETFX_V to ${X_NETFX_V}"
 	fi
 
-	X_SDK_V=$(cat "${HOME}/.dotnet/buildtools/korebuild/${KOREBUILD_V}/config/sdk.version" | sed -r -e 's|\r||g')
-	if [[ ! -f "${HOME}/.dotnet/buildtools/korebuild/${KOREBUILD_V}/config/sdk.version" ]] ; then
+	X_SDK_V=$(cat \
+"${HOME}/.dotnet/buildtools/korebuild/${KOREBUILD_V}/config/sdk.version" \
+	| sed -r -e 's|\r||g')
+	if [[ ! \
+-f "${HOME}/.dotnet/buildtools/korebuild/${KOREBUILD_V}/config/sdk.version" ]]
+	then
 		die "Cannot find sdk.version"
 	elif [[ "${X_SDK_V}" != "${SDK_V}" ]] ; then
 		die \
@@ -245,7 +259,8 @@ ebuild's NETFX_V to ${X_NETFX_V}"
 SDK_V to ${X_SDK_V}"
 	fi
 
-	# gentoo or the sandbox doesn't allow downloads in compile phase so move here
+	# Gentoo or the sandbox doesn't allow downloads in compile phase so move
+	# here
 	_src_prepare
 	_src_compile
 }
@@ -256,7 +271,6 @@ _use_native_netfx() {
 	# error MSB3644: The reference assemblies for framework
 	# ".NETFramework,Version=v4.6.1" were not found.
 
-	# Comment code block below to see the expected version.
 	# Trick the scripts by creating the dummy dir to skip downloading.
 	local p
 	p="${S}/.dotnet/buildtools/netfx/${NETFX_V}/"
@@ -330,7 +344,7 @@ _use_ms_sdk() {
 	mkdir -p "${p}" || die
 	pushd "${p}" || die
 		local myarch=$(_getarch)
-		tar -xvf "${DISTDIR}/dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz" || die
+		unpack "dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz"
 	popd || die
 	export PATH="${p}:${PATH}"
 }
@@ -371,12 +385,7 @@ _src_prepare() {
 	fi
 
 	cd "${S}" || die
-	eapply \
- "${FILESDIR}/${MY_PN,,}-pull-request-6950-strict-mode-in-roslyn-compiler-1-2.1.18.patch" \
- || die
-	eapply \
- "${FILESDIR}/${MY_PN,,}-pull-request-6950-strict-mode-in-roslyn-compiler-2.patch" \
- || die
+	eapply ${_PATCHES[@]}
 
 	if ! use signalr ; then
 		rm -rf src/SignalR || die
@@ -398,18 +407,18 @@ _src_compile() {
 	local mydebug="release"
 	local myarch=$(_getarch)
 
-	# for smoother multitasking (default 50) and to prevent IO starvation
+	# For smoother network multitasking (default 50)
 	export npm_config_maxsockets=1
 
 	if use debug ; then
 		mydebug="debug"
 	fi
 
-	# prevent: InvalidOperationException: The terminfo database is invalid dotnet
-	# cannot be xterm-256color
+	# This prevents InvalidOperationException: The terminfo database is
+	# invalid.  It cannot be xterm-256color.
 	export TERM=linux # pretend to be outside of X
 
-	# force 1 since it slows down the pc
+	# Force it to be 1 since it slows down the PC.
 	local numproc="1"
 
 	if ! use test ; then
@@ -429,7 +438,6 @@ _src_compile() {
 "Restoration (i.e. downloading) may randomly fail for bad local routers, \
 firewalls, or network cards.  Emerge and try again."
 	cd "${S}" || die
-	#-arch ${myarch} # in master
 	./build.sh /p:Configuration=${mydebug^} \
 		--verbose ${buildargs_coreasp} \
 		|| die

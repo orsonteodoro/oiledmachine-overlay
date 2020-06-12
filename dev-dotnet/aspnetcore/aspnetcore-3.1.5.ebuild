@@ -94,6 +94,9 @@ SRC_URI+="${SRC_URI_TGZ}
 S=${WORKDIR}
 RESTRICT="mirror"
 inherit git-r3
+_PATCHES=(
+	"${FILESDIR}/${PN}-3.1.5-limit-maxHttpRequestsPerSource-to-1.patch"
+)
 
 # This currently isn't required but may be needed in later ebuilds
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
@@ -102,7 +105,7 @@ inherit git-r3
 if [[ "${DropSuffix}" == "true" ]] ; then
 S="${WORKDIR}/${MY_PN}-${PV}"
 else
-S="${WORKDIR}/${MY_PN,,}-${PV}"
+S="${WORKDIR}/${PN}-${PV}"
 fi
 
 pkg_setup() {
@@ -166,11 +169,11 @@ _set_download_cache_folder() {
 	addwrite "${dlbasedir}"
 	local global_packages="${dlbasedir}/.nuget/packages"
 	local http_cache="${dlbasedir}/NuGet/v3-cache"
-#	mkdir -p "${global_packages}" || die
 	mkdir -p "${http_cache}" || die
-#	export NUGET_PACKAGES="${global_packages}"
 	export NUGET_HTTP_CACHE_PATH="${http_cache}"
-	einfo "Using ${dlbasedir} to store cached downloads for \`dotnet restore\` or NuGet downloads"
+	einfo \
+"Using ${dlbasedir} to store cached downloads for \`dotnet restore\` \
+or NuGet downloads"
 	einfo "Remove the folder it if it is problematic."
 }
 
@@ -220,7 +223,6 @@ _use_native_netcore() {
 	# error MSB3644: The reference assemblies for framework
 	# ".NETFramework,Version=v4.6.1" were not found.
 
-	# Comment code block below to see the expected version.
 	# Trick the scripts by creating the dummy dir to skip downloading.
 #	local p
 #	p="${S}/.dotnet/buildtools/netfx/${CORE_V}/"
@@ -297,13 +299,14 @@ _use_ms_sdk() {
 	mkdir -p "${p}" || die
 	pushd "${p}" || die
 		local myarch=$(_getarch)
-		tar -xvf "${DISTDIR}/dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz" || die
+		unpack "dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz" || die
 	popd || die
 	export PATH="${p}:${PATH}"
 }
 
 _unpack_dotnet_runtime() {
 	local myarch=$(_getarch)
+	mkdir -p "${HOME}/.dotnet" || die
 	pushd "${HOME}/.dotnet" || die
 	unpack "dotnet-runtime-${CORE_V}-linux-${myarch}.tar.gz"
 	popd || die
@@ -335,8 +338,8 @@ _src_prepare() {
 	fi
 
 	cd "${S}" || die
+	eapply ${_PATCHES[@]}
 
-	# comment the 4 lines below to inspect versions for SDK_V and CORE_V/NETFX_V
 	#_use_native_netcore
 	_use_ms_netcore
 
@@ -360,14 +363,14 @@ _src_compile() {
 	local mydebug=$(usex debug "Debug" "Release")
 	local myarch=$(_getarch)
 
-	# for smoother multitasking (default 50) and to prevent IO starvation
+	# For smoother network multitasking (default 50)
 	export npm_config_maxsockets=1
 
-	# prevent: InvalidOperationException: The terminfo database is invalid dotnet
-	# cannot be xterm-256color
+	# This prevents InvalidOperationException: The terminfo database is
+	# invalid.  It cannot be xterm-256color.
 	export TERM=linux # pretend to be outside of X
 
-	# force 1 since it slows down the pc
+	# Force it to be 1 since it slows down the PC.
 	local numproc="1"
 
 	[[ "${DropSuffix}" == "true" ]] \
