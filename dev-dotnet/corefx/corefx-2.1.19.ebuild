@@ -32,7 +32,8 @@ IUSE="debug doc heimdal test"
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we
 # have to keep downloading it everytime the sandbox is wiped.
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
-SDK_BASEURI_FALLBACK="https://download.microsoft.com/download/4/0/9/40920432-3302-47a8-b13c-bbc4848ad114/"
+SDK_BASEURI_FALLBACK="\
+https://download.microsoft.com/download/4/0/9/40920432-3302-47a8-b13c-bbc4848ad114/"
 SRC_URI="\
 https://github.com/dotnet/${PN}/archive/v${CORE_V}.tar.gz \
   -> ${PN}-${CORE_V}.tar.gz
@@ -104,11 +105,11 @@ _set_download_cache_folder() {
 	addwrite "${dlbasedir}"
 	local global_packages="${dlbasedir}/.nuget/packages"
 	local http_cache="${dlbasedir}/NuGet/v3-cache"
-#	mkdir -p "${global_packages}" || die
 	mkdir -p "${http_cache}" || die
-#	export NUGET_PACKAGES="${global_packages}"
 	export NUGET_HTTP_CACHE_PATH="${http_cache}"
-	einfo "Using ${dlbasedir} to store cached downloads for \`dotnet restore\` or NuGet downloads"
+	einfo \
+"Using ${dlbasedir} to store cached downloads for \`dotnet restore\` \
+or NuGet downloads"
 	einfo "Remove the folder it if it is problematic."
 }
 
@@ -162,6 +163,9 @@ $(grep -l -r -e "__init_tools_log" $(find "${WORKDIR}" -name "*.sh"))
 	done
 
 	eapply ${_PATCHES[@]}
+
+#	sed -i -e "s|--disable-parallel --packages|--packages|g" \
+#		Tools/Build.Common.props || die
 }
 
 _getarch() {
