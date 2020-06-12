@@ -25,7 +25,7 @@ PATCH_ZENTUNE_VER="5.7"
 PATCH_ALLOW_O3_COMMIT="f27de4dd3cd87dfcbacab7dba5eef893c19dcf3b"
 PATCH_CK_MAJOR="5.0"
 PATCH_CK_MAJOR_MINOR="5.7"
-PATCH_CK_REVISION="2"
+PATCH_CK_REVISION="1"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?10}"
 PATCH_GP_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
 PATCH_BFQ_VER="5.7"
@@ -38,7 +38,7 @@ IUSE="  bfq bmq bmq-quick-fix \
 	futex-wait-multiple \
 	zenmisc \
 	-zentune"
-REQUIRED_USE="^^ ( muqss cfs bmq ) !muqss !bfq"
+REQUIRED_USE="^^ ( muqss cfs bmq ) muqss !bfq"
 
 # no released patch yet
 REQUIRED_USE+=" !bmq-quick-fix"
@@ -66,7 +66,7 @@ inherit check-reqs ot-kernel-common
 #BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.patch"
 #BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
 
-#SRC_URI+=" ${CK_SRC_URL}"
+SRC_URI+=" ${CK_SRC_URL}"
 
 SRC_URI+=" ${KERNEL_URI}
 	   ${GENPATCHES_URI}
