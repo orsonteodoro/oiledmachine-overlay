@@ -164,7 +164,9 @@ _set_download_cache_folder() {
 	local http_cache="${dlbasedir}/NuGet/v3-cache"
 	mkdir -p "${http_cache}" || die
 	export NUGET_HTTP_CACHE_PATH="${http_cache}"
-	einfo "Using ${dlbasedir} to store cached downloads for \`dotnet restore\` or NuGet downloads"
+	einfo \
+"Using ${dlbasedir} to store cached downloads for \`dotnet restore\` \
+or NuGet downloads"
 	einfo "Remove the folder it if it is problematic."
 }
 
