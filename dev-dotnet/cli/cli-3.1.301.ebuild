@@ -162,9 +162,7 @@ _set_download_cache_folder() {
 	addwrite "${dlbasedir}"
 	local global_packages="${dlbasedir}/.nuget/packages"
 	local http_cache="${dlbasedir}/NuGet/v3-cache"
-#	mkdir -p "${global_packages}" || die
 	mkdir -p "${http_cache}" || die
-#	export NUGET_PACKAGES="${global_packages}"
 	export NUGET_HTTP_CACHE_PATH="${http_cache}"
 	einfo "Using ${dlbasedir} to store cached downloads for \`dotnet restore\` or NuGet downloads"
 	einfo "Remove the folder it if it is problematic."
@@ -275,12 +273,6 @@ _src_compile() {
 		buildargs_corecli+=\
 " /property:GitInfoCommitCount=0 /property:GitInfoCommitHash=${DOTNET_CLI_COMMIT}"
 	fi
-
-#	if ! use test ; then
-#		buildargs_corecli+=" /t:Compile"
-#	else
-#		buildargs_corecli+=" "
-#	fi
 
 	cd "${S}" || die
 
