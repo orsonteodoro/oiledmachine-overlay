@@ -65,7 +65,7 @@ DEPEND="${RDEPEND}
 	 !dev-dotnet/dotnetcore-sdk-bin"
 S="${WORKDIR}/${PN}-${CORE_V}"
 RESTRICT="mirror"
-PATCHES=(
+_PATCHES=(
 	"${FILESDIR}/${PN}-3.1.5-limit-maxHttpRequestsPerSource-to-1.patch"
 )
 
@@ -156,6 +156,11 @@ $(grep -l -r -e "__init_tools_log" $(find "${WORKDIR}" -name "*.sh"))
 		echo "Patching $f"
 		sed -i -e 's|-sSL|-L|g' -e 's|wget -q |wget |g' "$f" || die
 	done
+
+	eapply ${_PATCHES[@]}
+
+	sed -i -e "s|dotnet restore|dotnet restore --disable-parallel|g" \
+		eng/common/internal-feed-operations.sh || die
 }
 
 _getarch() {

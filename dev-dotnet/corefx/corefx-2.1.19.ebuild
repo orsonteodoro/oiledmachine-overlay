@@ -70,8 +70,10 @@ DEPEND="${RDEPEND}
 	 !dev-dotnet/dotnetcore-sdk-bin"
 S="${WORKDIR}/${PN}-${CORE_V}"
 RESTRICT="mirror"
-_PATCHES=( "${FILESDIR}/${PN}-2.1.18-found-clang-on-gentoo-for-build-native.patch"
-	"${FILESDIR}/${PN}-2.1.18-no-werror.patch" )
+_PATCHES=(
+	"${FILESDIR}/${PN}-2.1.18-found-clang-on-gentoo-for-build-native.patch"
+	"${FILESDIR}/${PN}-2.1.18-no-werror.patch"
+)
 
 # This currently isn't required but may be needed in later ebuilds
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
@@ -164,7 +166,10 @@ $(grep -l -r -e "__init_tools_log" $(find "${WORKDIR}" -name "*.sh"))
 
 	eapply ${_PATCHES[@]}
 
-#	sed -i -e "s|--disable-parallel --packages|--packages|g" \
+	sed -i -e "s|--no-cache --packages|--no-cache --packages --disable-parallel|g" \
+		init-tools.sh || die
+#	# Tools/Build.Common.props appears later
+#	sed -i -e "s|--packages|--packages --disable-parallel|g" \
 #		Tools/Build.Common.props || die
 }
 
