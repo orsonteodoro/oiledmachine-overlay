@@ -185,15 +185,13 @@ _src_compile() {
 	export ProcessorCount=${numproc}
 
 	# comment out code block temporary and re-emerge to update ${SDK_V}
-	local fn=\
-"dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz"
+	local fn="dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz"
 	export DotNetBootstrapCliTarPath="${DISTDIR}/${fn}"
 	local p
 	p="${S}/.dotnet"
 	mkdir -p "${p}" || die
 	pushd "${p}" || die
-		tar -xvf \
-"${DISTDIR}/dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz" || die
+		unpack "dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz" || die
 	popd || die
 	[ ! -f "${S}/.dotnet/dotnet" ] && die "dotnet not found"
 

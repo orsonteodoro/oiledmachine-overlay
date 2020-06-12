@@ -221,14 +221,11 @@ firewalls, or network cards.  Emerge and try again."
 
 	local fn
 	if [[ ${ARCH} =~ (arm64|arm|amd64) ]] ; then
-		fn=\
-"dotnet-sdk-${SDK_V_FALLBACK}-linux-${myarch}.tar.gz"
+		fn="dotnet-sdk-${SDK_V_FALLBACK}-linux-${myarch}.tar.gz"
 	else
-		fn=\
-"dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz"
+		fn="dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz"
 	fi
-	DotNetBootstrapCliTarPath=\
-"${DISTDIR}/${fn}" \
+	DotNetBootstrapCliTarPath="${DISTDIR}/${fn}" \
 	./run.sh build-native -ArchGroup=${myarch} -${mydebug} \
 		${buildargs_corefx} -- --clang${CLANG_MAJOR}.${CLANG_MINOR} \
 		--numproc ${numproc} || die
