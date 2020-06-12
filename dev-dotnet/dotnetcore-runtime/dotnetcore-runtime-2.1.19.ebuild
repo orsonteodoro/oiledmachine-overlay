@@ -59,7 +59,10 @@ DEPEND="${RDEPEND}
 	>=net-misc/curl-7.47
 	>=sys-devel/clang-3.5
 	>=sys-devel/make-4.1"
-_PATCHES=( "${FILESDIR}/dotnet-cli-2.1.505-null-LastWriteTimeUtc-minval.patch" )
+_PATCHES=(
+	"${FILESDIR}/${CLI_PN}-2.1.505-null-LastWriteTimeUtc-minval.patch"
+	"${FILESDIR}/${CLI_PN}-2.1.807-limit-maxHttpRequestsPerSource-to-1.patch"
+)
 RESTRICT="mirror"
 inherit git-r3
 S="${WORKDIR}/${CLI_PN}-${CLI_PV}"
@@ -122,11 +125,11 @@ _set_download_cache_folder() {
 	addwrite "${dlbasedir}"
 	local global_packages="${dlbasedir}/.nuget/packages"
 	local http_cache="${dlbasedir}/NuGet/v3-cache"
-#	mkdir -p "${global_packages}" || die
 	mkdir -p "${http_cache}" || die
-#	export NUGET_PACKAGES="${global_packages}"
 	export NUGET_HTTP_CACHE_PATH="${http_cache}"
-	einfo "Using ${dlbasedir} to store cached downloads for \`dotnet restore\` or NuGet downloads"
+	einfo \
+"Using ${dlbasedir} to store cached downloads for \`dotnet restore\` \
+or NuGet downloads"
 	einfo "Remove the folder it if it is problematic."
 }
 
