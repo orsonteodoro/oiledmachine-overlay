@@ -188,11 +188,9 @@ _src_compile() {
 
 	local fn
 	if [[ ${ARCH} =~ (arm64|arm|amd64) ]] ; then
-		fn=\
-"dotnet-sdk-${SDK_V_FALLBACK}-linux-${myarch}.tar.gz"
+		fn="dotnet-sdk-${SDK_V_FALLBACK}-linux-${myarch}.tar.gz"
 	else
-		fn=\
-"dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz"
+		fn="dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz"
 	fi
 	DotNetBootstrapCliTarPath="${DISTDIR}/${fn}" \
 	./build.sh -${myarch} -${mydebug} -verbose ${buildargs_coreclr} \

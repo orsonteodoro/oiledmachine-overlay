@@ -224,8 +224,7 @@ _src_compile() {
 	# Temporarily comment out the codeblock below and re-emerge to update
 	# ${SDK_V}
 
-	local fn=\
-"dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz"
+	local fn="dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz"
 	export DotNetBootstrapCliTarPath="${DISTDIR}/${fn}"
 	mkdir -p "${S}/.dotnet" || die
 	pushd "${S}/.dotnet" || die
