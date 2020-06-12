@@ -17,9 +17,11 @@ LICENSE="all-rights-reserved
 KEYWORDS="~amd64 ~arm ~arm64"
 # https://github.com/dotnet/core/blob/master/release-notes/3.1/3.1-supported-os.md
 VERSION_SUFFIX=''
-DropSuffix="true" # true=official latest release, false=dev for live ebuilds
+# DO NOT SET DropSuffix=true in 3.1.  Required by Microsoft.DotNet.Arcade.Sdk
+DropSuffix="false" # true=official latest release, false=dev for live ebuilds
 IUSE="debug doc test"
-CORE_V="3.1.5" # see eng/Versions.props
+CORE_V="3.1.5" # see eng/Versions.props \
+	# under MicrosoftNETCoreAppRuntimewinx64PackageVersion
 SDK_V="3.1.200-preview-014946" # from global.json
 # The URIs are constructed from: https://dot.net/v1/dotnet-install.sh
 DOTNET_CLI_COMMIT="367c515ce40a394f53f00597cacc884a25cce495" # exactly ${PV}
@@ -77,7 +79,10 @@ DEPEND="${RDEPEND}
 	>=net-misc/curl-7.47
 	>=sys-devel/clang-3.5
 	>=sys-devel/make-4.1"
-_PATCHES=( "${FILESDIR}/dotnet-cli-2.1.505-null-LastWriteTimeUtc-minval.patch" )
+_PATCHES=(
+	"${FILESDIR}/dotnet-cli-2.1.505-null-LastWriteTimeUtc-minval.patch"
+	"${FILESDIR}/${PN}-3.1.301-limit-maxHttpRequestsPerSource-to-1.patch"
+)
 RESTRICT="mirror"
 inherit git-r3
 S="${WORKDIR}/${PN}-${PV}"
@@ -102,10 +107,14 @@ pkg_setup() {
 		x86_64*)  einfo "  x86_64";;
 		*) die "Unsupported CPU architecture";;
 	esac
+
+	if [[ "${DropSuffix}" == "true" ]] ; then
+		# See https://github.com/microsoft/msbuild/issues/5311#issuecomment-621308972
+		die "DropSuffix=${DropSuffix} not supported"
+	fi
 }
 
 _unpack_cli() {
-	ewarn "This ebuild is a Work In Progress (WIP) and may likely not work."
 	cd "${WORKDIR}" || die
 	unpack ${PN}-${PV}.tar.gz
 
@@ -273,20 +282,29 @@ _src_compile() {
 #		buildargs_corecli+=" "
 #	fi
 
+	cd "${S}" || die
+
+	# Required by Microsoft.Build.Tasks.Git
+	# See
+	# https://github.com/dotnet/sourcelink/pull/438/files
+	# https://github.com/dotnet/sourcelink/blob/master/src/Microsoft.Build.Tasks.Git.UnitTests/GitOperationsTests.cs#L207
+	git remote add origin https://github.com/dotnet/${PN}.git
+
 	einfo "Building ${PN^^}"
 	ewarn \
 "Restoration (i.e. downloading) may randomly fail for bad local routers, \
 firewalls, or network cards.  Emerge and try again."
-	cd "${S}" || die
 	./build.sh --configuration ${mydebug^} --architecture ${myarch} \
 		${buildargs_corecli} || die
 }
 
+# See https://docs.microsoft.com/en-us/dotnet/core/distribution-packaging
 src_install() {
 	local dest="/opt/dotnet"
 	local ddest="${ED}/${dest}"
 	local dest_sdk="${dest}/sdk/${PV}/"
 	local ddest_sdk="${ddest}/sdk/${PV}/"
+	local mydebug=$(usex debug "Debug" "Release")
 	local myarch=$(_getarch)
 
 	# Installed files partly based on
@@ -295,10 +313,16 @@ src_install() {
 # https://www.archlinux.org/packages/community/x86_64/dotnet-runtime/files/
 
 	dodir "${dest_sdk}"
-	local d_dotnet="${S}/bin/2/linux-${myarch}/dotnet"
+	local d_dotnet="${S}/artifacts/tmp/${mydebug}/dotnet"
 	cp -a "${d_dotnet}/sdk/${PV}${VERSION_SUFFIX}"/* "${ddest_sdk}/" || die
 	cp -a "${d_dotnet}/dotnet" "${ddest}/" || die
-	cp -a "${d_dotnet}/shared/" "${ddest}/" || die
+	cp -a "${d_dotnet}/shared" "${ddest}/" || die
+	if [ -d "${d_dotnet}/packs" ] ; then
+		cp -a "${d_dotnet}/packs" "${ddest}/" || die
+	fi
+	if [ -d "${d_dotnet}/templates" ] ; then
+		cp -a "${d_dotnet}/templates" "${ddest}/" || die
+	fi
 
 	# Prevents collision with dotnetcore-runtime ebuild
 	FXR_V=$(grep -r -e "MicrosoftNETCoreAppInternalPackageVersion" \
@@ -328,6 +352,10 @@ src_install() {
 
 	# Fix security permissions.
 	find "${ED}/opt/dotnet/sdk/${PV}" -perm -o=w -type f -exec chmod o-w {} \;
+
+	dodir /etc/dotnet
+	echo "/opt/dotnet" > "${T}/install_location"
+	doins "${T}/install_location"
 }
 
 pkg_postinst() {

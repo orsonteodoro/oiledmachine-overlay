@@ -193,6 +193,11 @@ _src_prepare() {
 	[ ! -f "${S}/.dotnet_stage0/${myarch}/dotnet" ] \
 		&& die "dotnet not found"
 
+	sed -i -e "s|--runtime any|--disable-parallel --runtime any|g" \
+		build/BundledDotnetTools.proj || die
+	sed -i -e "s|--runtime|--disable-parallel --runtime|g" \
+		build/AppHostTemplate.proj || die
+
 	# It has to be done manually if you don't let the installer get the
 	# tarballs.
 	export PATH="${p}:${PATH}"
@@ -228,6 +233,7 @@ firewalls, or network cards.  Emerge and try again."
 		${buildargs_corecli} || die
 }
 
+# See https://docs.microsoft.com/en-us/dotnet/core/distribution-packaging
 src_install() {
 	local dest="/opt/dotnet"
 	local ddest="${ED}/${dest}"
@@ -244,7 +250,13 @@ src_install() {
 	local d_dotnet="${S}/bin/2/linux-${myarch}/dotnet"
 	cp -a "${d_dotnet}/sdk/${PV}${VERSION_SUFFIX}"/* "${ddest_sdk}/" || die
 	cp -a "${d_dotnet}/dotnet" "${ddest}/" || die
-	cp -a "${d_dotnet}/shared/" "${ddest}/" || die
+	cp -a "${d_dotnet}/shared" "${ddest}/" || die
+	if [ -d "${d_dotnet}/packs" ] ; then
+		cp -a "${d_dotnet}/packs" "${ddest}/" || die
+	fi
+	if [ -d "${d_dotnet}/templates" ] ; then
+		cp -a "${d_dotnet}/templates" "${ddest}/" || die
+	fi
 
 	# Prevents collision with dotnetcore-runtime ebuild
 	FXR_V=$(grep -r -e "MicrosoftNETCoreAppPackageVersion" \
@@ -274,6 +286,10 @@ src_install() {
 
 	# Fix security permissions.
 	find "${ED}/opt/dotnet/sdk/${PV}" -perm -o=w -type f -exec chmod o-w {} \;
+
+	dodir /etc/dotnet
+	echo "/opt/dotnet" > "${T}/install_location"
+	doins "${T}/install_location"
 }
 
 pkg_postinst() {
