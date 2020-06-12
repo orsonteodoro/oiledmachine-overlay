@@ -67,6 +67,9 @@ DEPEND="${RDEPEND}
 RESTRICT="mirror"
 inherit git-r3
 S="${WORKDIR}/${PN}-${CORE_V}"
+PATCHES=(
+	"${FILESDIR}/${PN}-3.1.5-limit-maxHttpRequestsPerSource-to-1.patch"
+)
 
 # This currently isn't required but may be needed in later ebuilds
 # running the dotnet cli inside a sandbox causes the dotnet cli command to hang.
@@ -148,6 +151,7 @@ SDK_V to ${X_SDK_V}"
 
 _src_prepare() {
 	cd "${S}" || die
+	eapply ${PATCHES[@]}
 
 	# allow verbose output
 	local F=\
@@ -166,6 +170,11 @@ $(grep -l -r -e "__init_tools_log" $(find "${WORKDIR}" -name "*.sh"))
 		echo "Patching $f"
 		sed -i -e 's|-sSL|-L|g' -e 's|wget -q |wget |g' "$f" || die
 	done
+
+	sed -i -e "s|--no-cache --packages|--disable-parallel --no-cache --packages|g" \
+		init-tools.sh || die
+	sed -i -e "s|\$dotnet restore|\$dotnet restore --disable-parallel|" \
+		tests/setup-stress-dependencies.sh
 }
 
 _getarch() {
@@ -230,7 +239,6 @@ _src_compile() {
 	pushd "${S}/.dotnet" || die
 		unpack "dotnet-sdk-${SDK_V}-linux-x64.tar.gz"
 	popd
-
 	./build.sh -${myarch} -${mydebug} -verbose ${buildargs_coreclr} \
 		-ignorewarnings || die
 }
