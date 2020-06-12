@@ -55,7 +55,10 @@ DEPEND="${RDEPEND}
 	>=net-misc/curl-7.47
 	>=sys-devel/clang-3.5
 	>=sys-devel/make-4.1"
-_PATCHES=( "${FILESDIR}/dotnet-cli-2.1.505-null-LastWriteTimeUtc-minval.patch" )
+_PATCHES=(
+	"${FILESDIR}/${PN}-2.1.505-null-LastWriteTimeUtc-minval.patch"
+	"${FILESDIR}/${PN}-2.1.807-limit-maxHttpRequestsPerSource-to-1.patch"
+)
 RESTRICT="mirror"
 inherit git-r3
 S="${WORKDIR}/${PN}-${PV}"
