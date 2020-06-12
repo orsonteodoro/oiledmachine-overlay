@@ -109,7 +109,7 @@ pkg_setup() {
 	esac
 
 	if [[ "${DropSuffix}" == "true" ]] ; then
-		# See https://github.com/microsoft/msbuild/issues/5311#issuecomment-621308972
+# See https://github.com/microsoft/msbuild/issues/5311#issuecomment-621308972
 		die "DropSuffix=${DropSuffix} not supported"
 	fi
 }
