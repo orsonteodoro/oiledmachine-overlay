@@ -63,7 +63,6 @@ dev-dotnet/dotnetcore-sdk
 >=dev-dotnet/aspnetcore-3.1.4
 >=dev-dotnet/corefx-3.1.4
 >=dev-dotnet/dotnetcore-sdk-3.1.300
->=dev-dotnet/dotnetcore-runtime-3.1.4
 
 # Masked for security reasons
 #--------------------------------------------------------------------------------------------------
