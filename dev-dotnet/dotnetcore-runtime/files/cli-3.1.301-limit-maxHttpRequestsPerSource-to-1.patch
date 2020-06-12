@@ -1,0 +1,22 @@
+--- a/NuGet.config.orig	2020-06-11 18:07:05.971940479 -0700
++++ b/NuGet.config	2020-06-11 18:30:12.416282265 -0700
+@@ -1,5 +1,8 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <configuration>
++  <config>
++    <add key="maxHttpRequestsPerSource" value="1" />
++  </config>
+   <!-- Only specify feed for RepoToolset SDK (see https://github.com/Microsoft/msbuild/issues/2982) -->
+   <packageSources>
+     <clear />
+--- a/eng/common/sdl/NuGet.config.orig	2020-05-21 16:44:16.000000000 -0700
++++ b/eng/common/sdl/NuGet.config	2020-06-11 18:30:06.266041358 -0700
+@@ -1,5 +1,8 @@
+ ﻿<?xml version="1.0" encoding="utf-8"?>
+ <configuration>
++  <config>
++    <add key="maxHttpRequestsPerSource" value="1" />
++  </config>
+   <solution>
+     <add key="disableSourceControlIntegration" value="true" />
+   </solution>
