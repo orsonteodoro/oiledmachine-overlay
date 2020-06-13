@@ -427,8 +427,10 @@ _src_compile() {
 		buildargs_coreasp+=" /p:SkipTests=false /p:CompileOnly=false"
 	fi
 
-	[[ "${DropSuffix}" == "true" ]] \
-	&& ewarn "Building with DropSuffix=true (with tarballs, no git) is broken"
+	if [[ "${DropSuffix}" == "true" ]] ; then
+		ewarn \
+	"Building with DropSuffix=true (with tarballs, no git) is broken"
+	fi
 
 	export DropSuffix="true" # to avoid problems for now as in directory
 				# name changes... kinda like a work around

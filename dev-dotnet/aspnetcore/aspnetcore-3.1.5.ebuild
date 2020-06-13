@@ -20,6 +20,8 @@ LICENSE="all-rights-reserved
 " # The vanilla MIT license does not have all rights reserved
 KEYWORDS="~amd64 ~arm ~arm64"
 DropSuffix="false" # true=official latest release, false=dev for live ebuilds
+# DO NOT SET DropSuffix=true for 3.1.  \
+# Tarball builds not supported.  Only git (Required by Microsoft.DotNet.Arcade.Sdk).
 MY_PN="AspNetCore"
 IUSE="debug doc test"
 REQUIRED_USE="!test" # broken
@@ -193,7 +195,8 @@ src_unpack() {
 
 	cd "${S}" || die
 
-	X_CORE_V=$(grep -r -e "MicrosoftNETCoreAppInternalPackageVersion" eng/Versions.props \
+	X_CORE_V=$(grep -r -e "MicrosoftNETCoreAppInternalPackageVersion" \
+		eng/Versions.props \
  | cut -f 2 -d ">" | cut -f 1 -d "<")
 	if [[ ! -f eng/Versions.props ]] ; then
 		die "Cannot find eng/Versions.props"
@@ -212,9 +215,14 @@ src_unpack() {
 SDK_V to ${X_SDK_V}"
 	fi
 
-	# gentoo or the sandbox doesn't allow downloads in compile phase so move here
+	# Gentoo or the sandbox doesn't allow downloads in compile phase so move
+	# here
 	_src_prepare
 	_src_compile
+
+	if [[ "${DropSuffix}" == "true" ]] ; then
+		die "Compiling with DropSuffix=${DropSuffix} is not supported."
+	fi
 }
 
 _use_native_netcore() {
@@ -352,10 +360,10 @@ _src_prepare() {
 	# supposed to be there.
 	sed -i -e '/.*darc-int-.*/d' NuGet.config || die
 	# Should be public packages not internal
-#	sed -i -e "s|\
-#MicrosoftNETCoreAppInternalPackageVersion|\
-#MicrosoftNETCoreAppRuntimePackageVersion|g" \
-#		global.json || die
+	sed -i -e "s|\
+MicrosoftNETCoreAppInternalPackageVersion|\
+MicrosoftNETCoreAppRuntimeVersion|g" \
+		global.json || die
 }
 
 _src_compile() {
@@ -373,18 +381,23 @@ _src_compile() {
 	# Force it to be 1 since it slows down the PC.
 	local numproc="1"
 
-	[[ "${DropSuffix}" == "true" ]] \
-	&& ewarn "Building with DropSuffix=true (with tarballs, no git) is broken"
+	# Required by Microsoft.Build.Tasks.Git
+	# See
+	# https://github.com/dotnet/sourcelink/pull/438/files
+	# https://github.com/dotnet/sourcelink/blob/master/src/Microsoft.Build.Tasks.Git.UnitTests/GitOperationsTests.cs#L207
+	git remote add origin https://github.com/dotnet/${PN}.git
 
-	export DropSuffix="true" # to avoid problems for now as in directory
-				# name changes... kinda like a work around
+	if [[ "${DropSuffix}" == "true" ]] ; then
+		ewarn \
+	"Building with DropSuffix=true (with tarballs, no git) is broken"
+	fi
 
 	einfo "Building ${MY_PN}"
 	ewarn \
 "Restoration (i.e. downloading) may randomly fail for bad local routers, \
 firewalls, or network cards.  Emerge and try again."
 	cd "${S}" || die
-	./build.sh --verbosity normal --arch ${myarch} \
+	./build.sh --arch ${myarch} \
 		--configuration ${mydebug^} ${buildargs_coreasp} \
 		|| die
 }
