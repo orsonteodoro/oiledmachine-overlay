@@ -63,7 +63,7 @@ DEPEND="${RDEPEND}
 	 !dev-dotnet/dotnetcore-sdk-bin"
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${CORE_V}"
-PATCHES=(
+_PATCHES=(
 	"${FILESDIR}/${PN}-2.1.19-limit-maxHttpRequestsPerSource-to-1.patch"
 )
 
@@ -135,7 +135,7 @@ SDK_V to ${X_SDK_V}"
 
 _src_prepare() {
 	cd "${S}" || die
-	eapply ${PATCHES[@]}
+	eapply ${_PATCHES[@]}
 
 	# allow verbose output
 	local F=$(grep -l -r -e "__init_tools_log" $(find "${WORKDIR}" -name "*.sh"))
