@@ -89,7 +89,11 @@ _PATCHES=(
 )
 RESTRICT="mirror"
 inherit git-r3
+if [[ "${DropSuffix}" == "true" ]] ; then
 S="${WORKDIR}/${CLI_PN}-${CLI_PV}"
+else
+S="${WORKDIR}/${PN}-${PV}"
+fi
 
 pkg_setup() {
 	# If FEATURES="-sandbox -usersandbox" are not set dotnet will hang while
