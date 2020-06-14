@@ -182,6 +182,7 @@
     <flag name="plugins_autopep8">Installs the autopep8 plugin.</flag>
     <flag name="plugins_aws">Installs the aws plugin.</flag>
     <flag name="plugins_battery">Installs the battery plugin.</flag>
+    <flag name="plugins_bazel">Installs the bazel plugin.</flag>
     <flag name="plugins_bbedit">Installs the bbedit plugin.</flag>
     <flag name="plugins_bgnotify">Installs the bgnotify plugin.</flag>
     <flag name="plugins_boot2docker">Installs the boot2docker plugin.</flag>
@@ -373,6 +374,7 @@
     <flag name="plugins_rsync">Installs the rsync plugin.</flag>
     <flag name="plugins_ruby">Installs the ruby plugin.</flag>
     <flag name="plugins_rust">Installs the rust plugin.</flag>
+    <flag name="plugins_rustup">Installs the rustup plugin.</flag>
     <flag name="plugins_rvm">Installs the rvm plugin.</flag>
     <flag name="plugins_safe-paste">Installs the safe-paste plugin.</flag>
     <flag name="plugins_salt">Installs the salt plugin.</flag>
@@ -384,6 +386,7 @@
     <flag name="plugins_sdk">Installs the sdk plugin.</flag>
     <flag name="plugins_sfdx">Installs the sfdx plugin.</flag>
     <flag name="plugins_sfffe">Installs the sfffe plugin.</flag>
+    <flag name="plugins_shell-proxy">Installs the shell-proxy plugin.</flag>
     <flag name="plugins_shrink-path">Installs the shrink-path plugin.</flag>
     <flag name="plugins_singlechar">Installs the singlechar plugin.</flag>
     <flag name="plugins_spring">Installs the spring plugin.</flag>
