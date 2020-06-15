@@ -34,10 +34,14 @@ IUSE="debug doc heimdal test"
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
 SDK_BASEURI_FALLBACK="\
 https://download.microsoft.com/download/4/0/9/40920432-3302-47a8-b13c-bbc4848ad114/"
+RT_V_1_1_BASEURI=\
+"https://download.microsoft.com/download/A/F/6/AF610E6A-1D2D-47D8-80B8-F178951A0C72/Binaries"
+# No 1.1.0 dotnet-runtime for arm/arm64
 SRC_URI="\
 https://github.com/dotnet/${PN}/archive/v${CORE_V}.tar.gz \
   -> ${PN}-${CORE_V}.tar.gz
-  amd64? ( ${SDK_BASEURI_FALLBACK}/dotnet-sdk-${SDK_V_FALLBACK}-linux-x64.tar.gz )
+  amd64? ( ${SDK_BASEURI_FALLBACK}/dotnet-sdk-${SDK_V_FALLBACK}-linux-x64.tar.gz
+	${RT_V_1_1_BASEURI}/dotnet-ubuntu.16.04-x64.1.1.0.tar.gz )
   arm? ( ${SDK_BASEURI_FALLBACK}/dotnet-sdk-${SDK_V_FALLBACK}-linux-arm.tar.gz )
   arm64? ( ${SDK_BASEURI_FALLBACK}/dotnet-sdk-${SDK_V_FALLBACK}-linux-arm64.tar.gz )"
 SLOT="${PV}"
@@ -99,6 +103,12 @@ pkg_setup() {
 		x86_64*)  einfo "  x86_64";;
 		*) die "Unsupported CPU architecture";;
 	esac
+
+	if [[ "${ARCH}" =~ (arm) ]] ; then
+		ewarn "arm is untested.  It may not build at all due to missing dotnet-runtime 1.1.0 for arm."
+	elif [[ "${ARCH}" =~ (arm64) ]] ; then
+		ewarn "arm64 is unsupported upstream.  Building anyway"
+	fi
 }
 
 _set_download_cache_folder() {
@@ -136,6 +146,12 @@ src_unpack() {
 SDK_V to ${X_SDK_V}"
 	fi
 
+	local d="Tools/dotnetcli"
+	mkdir -p "${d}" || die
+	pushd "${d}" || die
+		unpack "dotnet-ubuntu.16.04-x64.1.1.0.tar.gz"
+	popd || die
+
 	# gentoo or the sandbox doesn't allow downloads in compile phase
 	# so move here
 	_src_prepare
@@ -166,8 +182,6 @@ $(grep -l -r -e "__init_tools_log" $(find "${WORKDIR}" -name "*.sh"))
 
 	eapply ${_PATCHES[@]}
 
-	sed -i -e "s|--no-cache --packages|--no-cache --packages --disable-parallel|g" \
-		init-tools.sh || die
 #	# Tools/Build.Common.props appears later
 #	sed -i -e "s|--packages|--packages --disable-parallel|g" \
 #		Tools/Build.Common.props || die
@@ -215,14 +229,7 @@ _src_compile() {
 	CLANG_MINOR=$(ver_cut 2 $(clang --version | head -n 1 | cut -f 3 -d " "))
 	einfo "Clang detected as ${CLANG_MAJOR}.${CLANG_MINOR}"
 
-	einfo "Building CoreFX"
-	ewarn \
-"Restoration (i.e. downloading) may randomly fail for bad local routers, \
-firewalls, or network cards.  Emerge and try again."
 	cd "${S}" || die
-
-	export OPENSSL_CRYPTO_LIBRARY="/usr/$(get_libdir)/libssl.so.1.0.0"
-	export OPENSSL_INCLUDE_DIR="/usr/include/openssl"
 
 	local fn
 	if [[ ${ARCH} =~ (arm64|arm|amd64) ]] ; then
@@ -230,6 +237,15 @@ firewalls, or network cards.  Emerge and try again."
 	else
 		fn="dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz"
 	fi
+
+	einfo "Building CoreFX"
+	ewarn \
+"Restoration (i.e. downloading) may randomly fail for bad local routers, \
+firewalls, or network cards.  Emerge and try again."
+
+	export OPENSSL_CRYPTO_LIBRARY="/usr/$(get_libdir)/libssl.so.1.0.0"
+	export OPENSSL_INCLUDE_DIR="/usr/include/openssl"
+
 	DotNetBootstrapCliTarPath="${DISTDIR}/${fn}" \
 	./run.sh build-native -ArchGroup=${myarch} -${mydebug} \
 		${buildargs_corefx} -- --clang${CLANG_MAJOR}.${CLANG_MINOR} \
