@@ -311,12 +311,8 @@ src_install() {
 	cp -a "${d_dotnet}/sdk/${PV}${VERSION_SUFFIX}"/* "${ddest_sdk}/" || die
 	cp -a "${d_dotnet}/dotnet" "${ddest}/" || die
 	cp -a "${d_dotnet}/shared" "${ddest}/" || die
-	if [ -d "${d_dotnet}/packs" ] ; then
-		cp -a "${d_dotnet}/packs" "${ddest}/" || die
-	fi
-	if [ -d "${d_dotnet}/templates" ] ; then
-		cp -a "${d_dotnet}/templates" "${ddest}/" || die
-	fi
+	cp -a "${d_dotnet}/packs" "${ddest}/" || die
+	cp -a "${d_dotnet}/templates" "${ddest}/" || die
 
 	# Prevents collision with dotnetcore-runtime ebuild
 	FXR_V=$(grep -r -e "MicrosoftNETCoreAppInternalPackageVersion" \
