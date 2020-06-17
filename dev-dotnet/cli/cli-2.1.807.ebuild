@@ -35,6 +35,10 @@ SRC_URI+="\
   arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )"
 SLOT="${PV}"
 # See scripts/docker/ubuntu.16.04/Dockerfile for dependencies
+# See https://github.com/dotnet/cli/blob/v2.1.807/Documentation/manpages/tool/README.md \
+#   for man page dependendies
+PYTHON_COMPAT=( python3_{6,7} )
+inherit python-single-r1
 RDEPEND="
 	>=app-crypt/mit-krb5-1.13.2
 	>=dev-libs/icu-55.1
@@ -52,12 +56,19 @@ DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.5.1
 	>=dev-util/lldb-3.6.2
 	dev-vcs/git
+	doc? (
+		${PYTHON_DEPS}
+		app-text/pandoc
+		app-arch/unzip
+		$(python_gen_cond_dep 'dev-python/pandocfilters[${PYTHON_USEDEP}]' python3_{6,7})
+	)
 	>=net-misc/curl-7.47
 	>=sys-devel/clang-3.5
 	>=sys-devel/make-4.1"
 _PATCHES=(
 	"${FILESDIR}/${PN}-2.1.505-null-LastWriteTimeUtc-minval.patch"
 	"${FILESDIR}/${PN}-2.1.807-limit-maxHttpRequestsPerSource-to-1.patch"
+	"${FILESDIR}/${PN}-3.1.301-fix-manpage-dotnet-test-generation.patch"
 )
 RESTRICT="mirror"
 inherit git-r3
@@ -204,6 +215,11 @@ _src_prepare() {
 	# It has to be done manually if you don't let the installer get the
 	# tarballs.
 	export PATH="${p}:${PATH}"
+
+	if use doc ; then
+		sed -i -e "s|env python|env ${EPYTHON}|" \
+			Documentation/manpages/tool/man-pandoc-filter.py || die
+	fi
 }
 
 _src_compile() {
@@ -234,6 +250,9 @@ firewalls, or network cards.  Emerge and try again."
 	cd "${S}" || die
 	./build.sh --configuration ${mydebug^} --architecture ${myarch} \
 		${buildargs_corecli} || die
+	if use doc ; then
+		./Documentation/manpages/tool/update-man-pages.sh || die
+	fi
 }
 
 # See https://docs.microsoft.com/en-us/dotnet/core/distribution-packaging
@@ -279,6 +298,7 @@ src_install() {
 		docinto docs
 		dodoc -r CONTRIBUTING.md Documentation ISSUE_TEMPLATE \
 			PULL_REQUEST_TEMPLATE
+		doman Documentation/manpages/sdk/*.1
 	fi
 
 	# Fix security permissions.
