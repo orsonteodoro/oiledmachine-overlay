@@ -124,6 +124,7 @@ pkg_setup() {
 # See https://github.com/microsoft/msbuild/issues/5311#issuecomment-621308972
 		die "DropSuffix=${DropSuffix} not supported"
 	fi
+	python-single-r1_pkg_setup
 }
 
 _unpack_cli() {

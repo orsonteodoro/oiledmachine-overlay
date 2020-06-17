@@ -95,6 +95,7 @@ pkg_setup() {
 		x86_64*)  einfo "  x86_64";;
 		*) die "Unsupported CPU architecture";;
 	esac
+	python-single-r1_pkg_setup
 }
 
 _unpack_cli() {
