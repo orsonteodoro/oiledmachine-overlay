@@ -19,7 +19,6 @@ KEYWORDS="~amd64 ~arm"
 VERSION_SUFFIX=''
 DropSuffix="true" # true=official latest release, false=dev for live ebuilds
 IUSE="debug doc man man-latest test"
-REQUIRED_USE="man-latest? ( man )"
 SDK_V="2.1.403" # from run-build.sh ; line 168
 DOTNET_CLI_COMMIT="4824df803cfd5096338d58ab78c452441843b1a1" # exactly ${PV}
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we have
@@ -40,6 +39,7 @@ SLOT="${PV}"
 #   for man page dependendies
 PYTHON_COMPAT=( python3_{6,7} )
 inherit python-single-r1
+REQUIRED_USE="man-latest? ( man ^^ ( $(python_gen_useflags 'python3*') ) )"
 RDEPEND="
 	>=app-crypt/mit-krb5-1.13.2
 	>=dev-libs/icu-55.1

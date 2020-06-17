@@ -20,7 +20,6 @@ VERSION_SUFFIX=''
 # DO NOT SET DropSuffix=true in 3.1.  Required by Microsoft.DotNet.Arcade.Sdk
 DropSuffix="false" # true=official latest release, false=dev for live ebuilds
 IUSE="debug doc man man-latest test"
-REQUIRED_USE="man-latest? ( man )"
 CORE_V="3.1.5" # see eng/Versions.props \
 	# under MicrosoftNETCoreAppRuntimewinx64PackageVersion
 SDK_V="3.1.200-preview-014946" # from global.json
@@ -64,6 +63,7 @@ SLOT="${PV}"
 #   for man page dependendies
 PYTHON_COMPAT=( python3_{6,7} )
 inherit python-single-r1
+REQUIRED_USE="man-latest? ( man ^^ ( $(python_gen_useflags 'python3*') ) )"
 RDEPEND="
 	>=app-crypt/mit-krb5-1.13.2
 	>=dev-libs/icu-55.1
