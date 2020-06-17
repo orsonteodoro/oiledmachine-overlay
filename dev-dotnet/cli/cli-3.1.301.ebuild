@@ -247,7 +247,7 @@ _src_prepare() {
 	mkdir -p "${p}" || die
 	pushd "${p}" || die
 	tar -xvf "${DISTDIR}/dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz" || die
-	popd
+	popd || die
 	[ ! -f "${S}/.dotnet/dotnet" ] && die "dotnet not found"
 
 	# Common problem in 3.1.x.  darc-int is a private package but it's not

@@ -203,7 +203,7 @@ _src_prepare() {
 	mkdir -p "${p}" || die
 	pushd "${p}" || die
 	tar -xvf "${DISTDIR}/dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz" || die
-	popd
+	popd || die
 	[ ! -f "${S}/.dotnet_stage0/${myarch}/dotnet" ] \
 		&& die "dotnet not found"
 
