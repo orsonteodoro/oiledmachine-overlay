@@ -183,6 +183,7 @@ PATCHES=(
 	"${FILESDIR}/chromium-83-gcc-permissive.patch"
 	"${FILESDIR}/chromium-83-gcc-iterator.patch"
 	"${FILESDIR}/chromium-83-gcc-serviceworker.patch"
+	"${FILESDIR}/chromium-83-gcc-compatibility.patch"
 	"${FILESDIR}/chromium-83-gcc-10.patch"
 	"${FILESDIR}/chromium-83-icu67.patch"
 	"${FILESDIR}/chromium-81-re2-0.2020.05.01.patch"
