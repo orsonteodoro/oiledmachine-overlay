@@ -18,7 +18,8 @@ KEYWORDS="~amd64 ~arm"
 # https://github.com/dotnet/core/blob/master/release-notes/2.1/2.1-supported-os.md
 VERSION_SUFFIX=''
 DropSuffix="true" # true=official latest release, false=dev for live ebuilds
-IUSE="debug doc test"
+IUSE="debug doc man man-latest test"
+REQUIRED_USE="man-latest? ( man )"
 SDK_V="2.1.403" # from run-build.sh ; line 168
 DOTNET_CLI_COMMIT="4824df803cfd5096338d58ab78c452441843b1a1" # exactly ${PV}
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we have
@@ -56,7 +57,7 @@ DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.5.1
 	>=dev-util/lldb-3.6.2
 	dev-vcs/git
-	doc? (
+	man-latest? (
 		${PYTHON_DEPS}
 		app-text/pandoc
 		app-arch/unzip
@@ -216,7 +217,7 @@ _src_prepare() {
 	# tarballs.
 	export PATH="${p}:${PATH}"
 
-	if use doc ; then
+	if use man-latest ; then
 		sed -i -e "s|env python|env ${EPYTHON}|" \
 			Documentation/manpages/tool/man-pandoc-filter.py || die
 	fi
@@ -298,8 +299,9 @@ src_install() {
 		docinto docs
 		dodoc -r CONTRIBUTING.md Documentation ISSUE_TEMPLATE \
 			PULL_REQUEST_TEMPLATE
-		doman Documentation/manpages/sdk/*.1
 	fi
+	use man && \
+	doman Documentation/manpages/sdk/*.1
 
 	# Fix security permissions.
 	find "${ED}/opt/dotnet/sdk/${PV}" -perm -o=w -type f -exec chmod o-w {} \;

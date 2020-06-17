@@ -19,7 +19,8 @@ KEYWORDS="~amd64 ~arm ~arm64"
 VERSION_SUFFIX=''
 # DO NOT SET DropSuffix=true in 3.1.  Required by Microsoft.DotNet.Arcade.Sdk
 DropSuffix="false" # true=official latest release, false=dev for live ebuilds
-IUSE="debug doc test"
+IUSE="debug doc man man-latest test"
+REQUIRED_USE="man-latest? ( man )"
 CORE_V="3.1.5" # see eng/Versions.props \
 	# under MicrosoftNETCoreAppRuntimewinx64PackageVersion
 SDK_V="3.1.200-preview-014946" # from global.json
@@ -80,7 +81,7 @@ DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.5.1
 	>=dev-util/lldb-3.6.2
 	dev-vcs/git
-	doc? (
+	man-latest? (
 		${PYTHON_DEPS}
 		app-text/pandoc
 		app-arch/unzip
@@ -269,7 +270,7 @@ InstallDotNetSharedFramework \"1.1.2\"|\
 	# tarballs.
 	export PATH="${p}:${PATH}"
 
-	if use doc ; then
+	if use man-latest ; then
 		sed -i -e "s|env python|env ${EPYTHON}|" \
 			Documentation/manpages/tool/man-pandoc-filter.py || die
 	fi
@@ -357,8 +358,9 @@ src_install() {
 		docinto docs
 		dodoc -r CONTRIBUTING.md Documentation ISSUE_TEMPLATE \
 			PULL_REQUEST_TEMPLATE
-		doman Documentation/manpages/sdk/*.1
 	fi
+	use man && \
+	doman Documentation/manpages/sdk/*.1
 
 	# Fix security permissions.
 	find "${ED}/opt/dotnet/sdk/${PV}" -perm -o=w -type f -exec chmod o-w {} \;

@@ -9,6 +9,8 @@
 	<use>
 		<flag name="debug">Builds with debug symbols</flag>
 		<flag name="doc">Installs extra documentation</flag>
+		<flag name="man">Installs man pages</flag>
+		<flag name="man-latest">Generates and installs the latest man pages</flag>
 		<flag name="test">Runs tests</flag>
 	</use>
 </pkgmetadata>
