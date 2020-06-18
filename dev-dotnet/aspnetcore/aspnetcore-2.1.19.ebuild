@@ -445,6 +445,13 @@ firewalls, or network cards.  Emerge and try again."
 		|| die
 }
 
+src_test() {
+	if use test ; then
+		# todo patch korebuild version
+		./build.sh -- /p:NoBuild=true || die
+	fi
+}
+
 # See https://docs.microsoft.com/en-us/dotnet/core/build/distribution-packaging
 src_install() {
 	local dest="/opt/dotnet"
@@ -453,6 +460,7 @@ src_install() {
 	local ddest_aspnetcoreall="${ddest}/shared/Microsoft.${MY_PN}.All/${PV}/"
 	local dest_aspnetcoreapp="${dest}/shared/Microsoft.${MY_PN}.App/${PV}/"
 	local ddest_aspnetcoreapp="${ddest}/shared/Microsoft.${MY_PN}.App/${PV}/"
+	local mydebug=$(usex debug "Debug" "Release")
 	local myarch=$(_getarch)
 
 	# Based on https://www.archlinux.org/packages/community/x86_64/aspnet-runtime/

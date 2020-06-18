@@ -111,8 +111,6 @@ S="${WORKDIR}/${PN}-${PV}"
 fi
 
 pkg_setup() {
-	ewarn "This ebuild is a Work In Progress (WIP) and will not compile"
-	ewarn "See https://github.com/dotnet/${MY_PN,,}/issues/18509"
 	# If FEATURES="-sandbox -usersandbox" are not set dotnet will hang while
 	# compiling.
 	if has sandbox $FEATURES || has usersandbox $FEATURES ; then
@@ -364,6 +362,21 @@ _src_prepare() {
 MicrosoftNETCoreAppInternalPackageVersion|\
 MicrosoftNETCoreAppRuntimeVersion|g" \
 		global.json || die
+	sed -i -e "s|\
+\$(DotNetAssetRootUrl)Runtime/\$(MicrosoftNETCoreAppInternalPackageVersion)|\
+\$(DotNetAssetRootUrl)Runtime/\$(MicrosoftNETCoreAppRuntimeVersion)|g" \
+		src/Framework/src/Microsoft.AspNetCore.App.Runtime.csproj || die
+	# Replace with more reliable host.  Try to avoid:
+	# Microsoft.AspNetCore.App.Runtime.csproj(388,5): error : Giving up downloading the file from 'https://dotnetcli.blob.core.windows.net/dotnet/Runtime/3.1.5-servicing.20270.5/dotnet-runtime-3.1.5-linux-x64.tar.gz' after 5 retries.
+	# Host/dotnet-runtime same as in SRC_URI
+	sed -i -e "s|dotnetcli.blob.core.windows.net|dotnetcli.azureedge.net|" \
+		eng/Versions.props || die
+
+	if use debug ; then
+		pushd src/Components/Web.JS/dist || die
+		ln -s Release Debug || die
+		popd || die
+	fi
 }
 
 _src_compile() {
@@ -385,45 +398,49 @@ _src_compile() {
 	# See
 	# https://github.com/dotnet/sourcelink/pull/438/files
 	# https://github.com/dotnet/sourcelink/blob/master/src/Microsoft.Build.Tasks.Git.UnitTests/GitOperationsTests.cs#L207
-	git remote add origin https://github.com/dotnet/${PN}.git
+	git remote add origin https://github.com/dotnet/${PN}.git || die
 
 	if [[ "${DropSuffix}" == "true" ]] ; then
 		ewarn \
 	"Building with DropSuffix=true (with tarballs, no git) is broken"
 	fi
 
+	cd "${S}" || die
+
 	einfo "Building ${MY_PN}"
 	ewarn \
 "Restoration (i.e. downloading) may randomly fail for bad local routers, \
 firewalls, or network cards.  Emerge and try again."
-	cd "${S}" || die
 	./build.sh --arch ${myarch} \
 		--configuration ${mydebug^} ${buildargs_coreasp} \
 		|| die
+}
+
+src_test() {
+	if use test ; then
+		./build.sh --test || die
+	fi
 }
 
 # See https://docs.microsoft.com/en-us/dotnet/core/build/distribution-packaging
 src_install() {
 	local dest="/opt/dotnet"
 	local ddest="${ED}/${dest}"
-	local dest_aspnetcoreall="${dest}/shared/Microsoft.${MY_PN}.All/${PV}/"
-	local ddest_aspnetcoreall="${ddest}/shared/Microsoft.${MY_PN}.All/${PV}/"
 	local dest_aspnetcoreapp="${dest}/shared/Microsoft.${MY_PN}.App/${PV}/"
 	local ddest_aspnetcoreapp="${ddest}/shared/Microsoft.${MY_PN}.App/${PV}/"
+	local mydebug=$(usex debug "Debug" "Release")
 	local myarch=$(_getarch)
 
 	# Based on https://www.archlinux.org/packages/community/x86_64/aspnet-runtime/
 	# i.e. unpacked binary distribution
 
-	dodir "${dest_aspnetcoreall}"
-	local d1=\
-"${S}/bin/fx/linux-${myarch}/Microsoft.${MY_PN}.All/lib"
-	cp -a "${d1}/netcoreapp"$(ver_cut 1-2 ${PV})/* "${ddest_aspnetcoreall}" || die
-
 	dodir "${dest_aspnetcoreapp}"
-	local d2=\
-"${S}/bin/fx/linux-${myarch}/Microsoft.${MY_PN}.App/lib"
-	cp -a "${d2}/netcoreapp"$(ver_cut 1-2 ${PV})/* "${ddest_aspnetcoreapp}" || die
+	local rid="linux-${myarch}"
+	local module_name="Microsoft.${MY_PN}.App.Runtime"
+	local netcore_moniker="netcoreapp"$(ver_cut 1-2 ${PV})
+	local d=\
+"${S}/artifacts/bin/${module_name}/${mydebug}/${netcore_moniker}/${rid}"
+	cp -a "${d}"/* "${ddest_aspnetcoreapp}" || die
 
 	docinto licenses
 	dodoc LICENSE.txt THIRD-PARTY-NOTICES.txt
