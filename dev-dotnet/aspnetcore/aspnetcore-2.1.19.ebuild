@@ -466,18 +466,19 @@ src_install() {
 	# Based on https://www.archlinux.org/packages/community/x86_64/aspnet-runtime/
 	# i.e. unpacked binary distribution
 
+	local old_dotglob=$(shopt dotglob | cut -f 2)
+	shopt -s dotglob # copy hidden files
+
 	insinto "${dest_aspnetcoreall}"
 	local rid="linux-${myarch}"
 	local d1=\
 "${S}/bin/fx/${rid}/Microsoft.${MY_PN}.All/lib"
 	doins "${d1}/netcoreapp"$(ver_cut 1-2 ${PV})/*
-	doins "${d1}/netcoreapp"$(ver_cut 1-2 ${PV})/.version
 
 	insinto "${dest_aspnetcoreapp}"
 	local d2=\
 "${S}/bin/fx/${rid}/Microsoft.${MY_PN}.App/lib"
 	doins "${d2}/netcoreapp"$(ver_cut 1-2 ${PV})/*
-	doins "${d2}/netcoreapp"$(ver_cut 1-2 ${PV})/.version
 
 	cd "${S}" || die
 
@@ -493,5 +494,11 @@ src_install() {
 	if use doc ; then
 		docinto docs
 		dodoc -r CONTRIBUTING.md docs README.md SECURITY.md
+	fi
+
+	if [[ "${old_dotglob}" == "on" ]] ; then
+		shopt -s dotglob
+	else
+		shopt -u dotglob
 	fi
 }

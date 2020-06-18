@@ -434,6 +434,9 @@ src_install() {
 	# Based on https://www.archlinux.org/packages/community/x86_64/aspnet-runtime/
 	# i.e. unpacked binary distribution
 
+	local old_dotglob=$(shopt dotglob | cut -f 2)
+	shopt -s dotglob # copy hidden files
+
 	insinto "${dest_aspnetcoreapp}"
 	local rid="linux-${myarch}"
 	local module_name="Microsoft.${MY_PN}.App.Runtime"
@@ -441,7 +444,6 @@ src_install() {
 	local d=\
 "${S}/artifacts/bin/${module_name}/${mydebug}/${netcore_moniker}/${rid}"
 	doins "${d}"/*
-	doins "${d}"/.version
 
 	docinto licenses
 	dodoc LICENSE.txt THIRD-PARTY-NOTICES.txt
@@ -469,5 +471,11 @@ Components-benchmarkapps-BlazingPizza.Server-THIRD-PARTY-NOTICES.md
 	if use doc ; then
 		docinto docs
 		dodoc -r CONTRIBUTING.md docs README.md SECURITY.md
+	fi
+
+	if [[ "${old_dotglob}" == "on" ]] ; then
+		shopt -s dotglob
+	else
+		shopt -u dotglob
 	fi
 }
