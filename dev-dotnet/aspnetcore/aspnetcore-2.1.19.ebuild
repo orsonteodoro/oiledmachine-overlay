@@ -466,18 +466,18 @@ src_install() {
 	# Based on https://www.archlinux.org/packages/community/x86_64/aspnet-runtime/
 	# i.e. unpacked binary distribution
 
-	dodir "${dest_aspnetcoreall}"
+	insinto "${dest_aspnetcoreall}"
+	local rid="linux-${myarch}"
 	local d1=\
-"${S}/bin/fx/linux-${myarch}/Microsoft.${MY_PN}.All/lib"
-	cp -a "${d1}/netcoreapp"$(ver_cut 1-2 ${PV})/* \
-		"${ddest_aspnetcoreall}" || die
+"${S}/bin/fx/${rid}/Microsoft.${MY_PN}.All/lib"
+	doins "${d1}/netcoreapp"$(ver_cut 1-2 ${PV})/*
+	doins "${d1}/netcoreapp"$(ver_cut 1-2 ${PV})/.version
 
-	dodir "${dest_aspnetcoreapp}"
+	insinto "${dest_aspnetcoreapp}"
 	local d2=\
-"${S}/bin/fx/linux-${myarch}/Microsoft.${MY_PN}.App/lib"
-	cp -a "${d2}/netcoreapp"$(ver_cut 1-2 ${PV})/* \
-		"${ddest_aspnetcoreapp}" || die
-
+"${S}/bin/fx/${rid}/Microsoft.${MY_PN}.App/lib"
+	doins "${d2}/netcoreapp"$(ver_cut 1-2 ${PV})/*
+	doins "${d2}/netcoreapp"$(ver_cut 1-2 ${PV})/.version
 
 	cd "${S}" || die
 

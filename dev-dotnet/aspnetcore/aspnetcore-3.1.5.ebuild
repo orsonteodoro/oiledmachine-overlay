@@ -434,13 +434,14 @@ src_install() {
 	# Based on https://www.archlinux.org/packages/community/x86_64/aspnet-runtime/
 	# i.e. unpacked binary distribution
 
-	dodir "${dest_aspnetcoreapp}"
+	insinto "${dest_aspnetcoreapp}"
 	local rid="linux-${myarch}"
 	local module_name="Microsoft.${MY_PN}.App.Runtime"
 	local netcore_moniker="netcoreapp"$(ver_cut 1-2 ${PV})
 	local d=\
 "${S}/artifacts/bin/${module_name}/${mydebug}/${netcore_moniker}/${rid}"
-	cp -a "${d}"/* "${ddest_aspnetcoreapp}" || die
+	doins "${d}"/*
+	doins "${d}"/.version
 
 	docinto licenses
 	dodoc LICENSE.txt THIRD-PARTY-NOTICES.txt
