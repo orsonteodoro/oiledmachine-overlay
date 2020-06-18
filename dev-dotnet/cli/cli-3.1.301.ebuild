@@ -331,15 +331,8 @@ src_install() {
 	local d_dotnet="${S}/artifacts/tmp/${mydebug}/dotnet"
 	cp -a "${d_dotnet}/sdk/${PV}${VERSION_SUFFIX}"/* "${ddest_sdk}/" || die
 	cp -a "${d_dotnet}/dotnet" "${ddest}/" || die
-	cp -a "${d_dotnet}/shared" "${ddest}/" || die
 	cp -a "${d_dotnet}/packs" "${ddest}/" || die
 	cp -a "${d_dotnet}/templates" "${ddest}/" || die
-
-	# Prevents collision with dotnetcore-runtime ebuild
-	FXR_V=$(grep -r -e "MicrosoftNETCoreAppInternalPackageVersion" \
-		"${S}/Versions.props" \
-		| head -n 1 | cut -f 2 -d ">" | cut -f 1 -d "<")
-	rm -rf "${ddest}"/shared/Microsoft.NETCore.App/${FXR_V} || die
 
 	dodir /usr/share/licenses/${PN}-${PV}
 	cp -a "${d_dotnet}"/{LICENSE.txt,ThirdPartyNotices.txt} \
