@@ -25,6 +25,10 @@ src_install() {
 	local ddest="${ED}/${dest}"
 	local dest_core="${dest}/${PN}"
 	local ddest_core="${ddest}/${PN}"
+
+	local old_dotglob=$(shopt dotglob | cut -f 2)
+	shopt -s dotglob # copy hidden files
+
 	if use examples ; then
 		insinto "${dest}"
 		doins -r "${S}/samples"
@@ -37,6 +41,12 @@ src_install() {
 
 	docinto license
 	dodoc LICENSE.TXT
+
+	if [[ "${old_dotglob}" == "on" ]] ; then
+		shopt -s dotglob
+	else
+		shopt -u dotglob
+	fi
 }
 
 pkg_postinst() {
