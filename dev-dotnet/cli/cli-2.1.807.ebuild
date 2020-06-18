@@ -281,6 +281,7 @@ src_install() {
 	chmod 0755 \
 		$(find "${ddest_sdk}" -name "*.exe") \
 		"${ED}/opt/dotnet/dotnet" \
+		"${ddest_sdk}/AppHostTemplate/apphost" \
 		|| die
 
 	insinto /usr/share/licenses/${PN}-${PV}
