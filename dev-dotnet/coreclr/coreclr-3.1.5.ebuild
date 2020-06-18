@@ -251,7 +251,7 @@ src_install() {
 	local mydebug=$(usex debug "Debug" "Release")
 	local myarch=$(_getarch)
 
-	dodir "${dest_core}"
+	insinto "${dest_core}"
 
 	# Based on
 	# https://www.archlinux.org/packages/community/x86_64/dotnet-runtime/files/
@@ -259,9 +259,11 @@ src_install() {
 
 	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
-	# copies coreclr but not runtime
-	cp -a "${S}/bin/Product/Linux.${myarch}.${mydebug}"/* \
-		"${ddest_core}"/ || die
+	doins "${S}/bin/Product/Linux.${myarch}.${mydebug}"/*
+	fperms 0755 \
+		"${dest_core}"/*.so \
+		"${dest_core}"/\
+{coreconsole,corerun,createdump,crossgen,ilasm,ildasm,mcs,superpmi}
 
 	docinto licenses
 	dodoc PATENTS.TXT LICENSE.TXT THIRD-PARTY-NOTICES.TXT
