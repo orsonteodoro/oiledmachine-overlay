@@ -311,5 +311,5 @@ pkg_postinst() {
 	einfo \
 "You may need to symlink from /opt/dotnet/dotnet-${PV} to /usr/bin/dotnet"
 	# Clobbler the symlink anyway
-	dosym ../../usr/bin/dotnet /opt/dotnet/dotnet-${PV}
+	ln -s /opt/dotnet/dotnet-${PV} /usr/bin/dotnet
 }
