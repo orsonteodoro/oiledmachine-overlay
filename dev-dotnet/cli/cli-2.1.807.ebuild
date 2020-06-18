@@ -270,20 +270,24 @@ src_install() {
 	# For dotnet runtime libraries and FXR file list see
 # https://www.archlinux.org/packages/community/x86_64/dotnet-runtime/files/
 
-	dodir "${dest_sdk}"
 	local d_dotnet="${S}/bin/2/linux-${myarch}/dotnet"
-	cp -a "${d_dotnet}/sdk/${PV}${VERSION_SUFFIX}"/* "${ddest_sdk}/" || die
-	cp -a "${d_dotnet}/dotnet" "${ddest}/" || die
+	insinto "${dest_sdk}"
+	doins -r "${d_dotnet}/sdk/${PV}${VERSION_SUFFIX}"/*
+	insinto "${dest}"
+	mv "${d_dotnet}/dotnet/dotnet" \
+		"${d_dotnet}/dotnet/dotnet-${PV}" || die
+	doins -r "${d_dotnet}/dotnet"
 
-	dodir /usr/share/licenses/${PN}-${PV}
-	cp -a "${d_dotnet}"/{LICENSE.txt,ThirdPartyNotices.txt} \
-		"${ED}/usr/share/licenses/${PN}-${PV}" || die
+	chmod 0755 \
+		$(find "${ddest_sdk}" -name "*.exe") \
+		"${ED}/opt/dotnet/dotnet" \
+		|| die
+
+	insinto /usr/share/licenses/${PN}-${PV}
+	doins "${d_dotnet}"/{LICENSE.txt,ThirdPartyNotices.txt}
 
 	# Symlink for MonoDevelop.  15.0 is the toolsversion.
-	cd "${ddest_sdk}" || die
-	ln -s Current 15.0 || die
-
-	mv "${ED}"/opt/dotnet/dotnet "${ED}"/opt/dotnet/dotnet-${PV} || die
+	dosym "15.0" "${dest_sdk}/Current"
 
 	cd "${S}" || die
 	docinto licenses
@@ -297,11 +301,8 @@ src_install() {
 	use man && \
 	doman Documentation/manpages/sdk/*.1
 
-	# Fix security permissions.
-	find "${ED}/opt/dotnet/sdk/${PV}" -perm -o=w -type f -exec chmod o-w {} \;
-
 	dodir /etc/dotnet
-	echo "/opt/dotnet" > "${T}/install_location"
+	echo "/opt/dotnet" > "${T}/install_location" || die
 	doins "${T}/install_location"
 }
 
@@ -309,5 +310,5 @@ pkg_postinst() {
 	einfo \
 "You may need to symlink from /opt/dotnet/dotnet-${PV} to /usr/bin/dotnet"
 	# Clobbler the symlink anyway
-	ln -s /opt/dotnet/dotnet-${PV} /usr/bin/dotnet
+	dosym ../../usr/bin/dotnet /opt/dotnet/dotnet-${PV}
 }
