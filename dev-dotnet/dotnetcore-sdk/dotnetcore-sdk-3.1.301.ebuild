@@ -21,9 +21,6 @@ CORE_V=3.1.5
 # =dev-dotnet/core-${CORE_V}*:${SLOT}[doc?,examples?]
 RDEPEND="aspnetcore? ( =dev-dotnet/aspnetcore-${CORE_V}*:${CORE_V}[doc?] )
 	 =dev-dotnet/coreclr-${CORE_V}*:${CORE_V}[doc?]
-	 =dev-dotnet/corefx-2.0.0*:2.0.0[doc?]
-	 =dev-dotnet/corefx-2.2.0*:2.2.0[doc?]
-	 =dev-dotnet/corefx-3.1.2*:3.1.2[doc?]
 	 =dev-dotnet/corefx-${CORE_V}*:${CORE_V}[doc?]
 	 =dev-dotnet/cli-${PV}*:${PV}[doc?]"
 
