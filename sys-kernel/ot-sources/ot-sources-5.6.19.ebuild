@@ -15,6 +15,7 @@ inherit ot-kernel-v5.6
 KEYWORDS="~amd64 ~x86"
 
 pkg_setup() {
+	einfo "${PV} is EOL.  5.6.x kernel series to be removed in next update cycle from this repo for back-to-back 0-day exploits and security update reasons.  Switch to either 5.4.x LTS, 4.14.x LTS or 5.7.x stable."
         kernel-2_pkg_setup
 	ot-kernel-common_pkg_setup
 }

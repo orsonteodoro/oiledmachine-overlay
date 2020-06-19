@@ -892,10 +892,44 @@ live patches."
 	fi
 }
 
+# @FUNCTION: _report_eol
+# @DESCRIPTION:
+# Reports the estimated End Of Life (EOL).  Sourced from
+# https://www.kernel.org/category/releases.html
+function _report_eol() {
+	if [[ "${K_MAJOR_MINOR}" == "5.4" ]] ; then
+		einfo \
+"\n\
+The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is\n\
+Dec 2025.\n\
+"
+	elif [[ "${K_MAJOR_MINOR}" == "4.19" ]] ; then
+		einfo \
+"\n\
+The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is\n\
+Dec 2024.\n\
+"
+	elif [[ "${K_MAJOR_MINOR}" == "4.14" ]] ; then
+		einfo \
+"\n\
+The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is\n\
+Jan 2024.\n\
+"
+	else
+		ewarn \
+"\n\
+The ${K_MAJOR_MINOR} kernel series is not a Long Term Support (LTS)\n\
+kernel.  It may suddenly stop receiving security updates completely between a\n\
+week to several months.\n\
+"
+	fi
+}
+
 # @FUNCTION: ot-kernel-common_pkg_setup_cb
 # @DESCRIPTION:
 # Perform checks, warnings, and initialization before emerging
 function ot-kernel-common_pkg_setup() {
+	_report_eol
 	if has zenmisc ${IUSE_EFFECTIVE} ; then
 		if use zenmisc ; then
 			_check_network_sandbox
