@@ -29,6 +29,7 @@ SDK_V_FALLBACK=2.1.302 # Using earliest 2.1 with arm/arm64 support
 # For 1.1.0 runtime see
 # https://github.com/dotnet/core/blob/master/release-notes/1.1/releases.json
 IUSE="debug doc heimdal test"
+REQUIRED_USE="!debug"  # To prevent xunit download failure
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we
 # have to keep downloading it everytime the sandbox is wiped.
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
@@ -37,13 +38,21 @@ https://download.microsoft.com/download/4/0/9/40920432-3302-47a8-b13c-bbc4848ad1
 RT_V_1_1_BASEURI=\
 "https://download.microsoft.com/download/A/F/6/AF610E6A-1D2D-47D8-80B8-F178951A0C72/Binaries"
 # No 1.1.0 dotnet-runtime for arm/arm64
+FX_V_FALLBACK="servicing-28928-01"
+FX_V="servicing-28619-01"
+CLR_V_2_1_FALLBACK="2.1.19-${FX_V_FALLBACK}" # See CoreCLR 2.1 branch
+CLR_V_2_1="2.1.17-${FX_V}" # From MicrosoftNETCoreRuntimeCoreCLRPackageVersion in dependencies.props
+CLR_V_2_1_HASH_FALLBACK="aaadde716917918910882bc57a91157f74898897"
+CLR_V_2_1_HASH="bdc9476e343d89127d7f8ac4b939b5d9c5316245"
 SRC_URI="\
 https://github.com/dotnet/${PN}/archive/v${CORE_V}.tar.gz \
   -> ${PN}-${CORE_V}.tar.gz
   amd64? ( ${SDK_BASEURI_FALLBACK}/dotnet-sdk-${SDK_V_FALLBACK}-linux-x64.tar.gz
 	${RT_V_1_1_BASEURI}/dotnet-ubuntu.16.04-x64.1.1.0.tar.gz )
   arm? ( ${SDK_BASEURI_FALLBACK}/dotnet-sdk-${SDK_V_FALLBACK}-linux-arm.tar.gz )
-  arm64? ( ${SDK_BASEURI_FALLBACK}/dotnet-sdk-${SDK_V_FALLBACK}-linux-arm64.tar.gz )"
+  arm64? ( ${SDK_BASEURI_FALLBACK}/dotnet-sdk-${SDK_V_FALLBACK}-linux-arm64.tar.gz )
+https://github.com/dotnet/corefx/commit/84fd7608e9b0a2974ccd9a5c4e51dc2b86cc40d9.patch -> ${PN}-2.1.19-no-download-symbols.patch
+"
 SLOT="${PV}"
 # Requirements based on Ubuntu 16.04 minimum requirements.
 # Library requirements based on:
@@ -77,6 +86,10 @@ RESTRICT="mirror"
 _PATCHES=(
 	"${FILESDIR}/${PN}-2.1.18-found-clang-on-gentoo-for-build-native.patch"
 	"${FILESDIR}/${PN}-2.1.18-no-werror.patch"
+	"${FILESDIR}/${PN}-2.1.19-pull-request-31457-backport.patch"
+	"${FILESDIR}/${PN}-2.1.19-disable-parallel-in-init-tools.patch"
+	"${FILESDIR}/${PN}-2.1.19-disable-parallel-in-SharedFrameworkValidation_proj.patch"
+	"${DISTDIR}/${PN}-2.1.19-no-download-symbols.patch"
 )
 
 # This currently isn't required but may be needed in later ebuilds
@@ -182,6 +195,15 @@ $(grep -l -r -e "__init_tools_log" $(find "${WORKDIR}" -name "*.sh"))
 
 	eapply ${_PATCHES[@]}
 
+	sed -i -e "s|${CLR_V_2_1}|${CLR_V_2_1_FALLBACK}|g" \
+		"dependencies.props" || die
+	sed -i -e "s|${CLR_V_2_1_HASH}|${CLR_V_2_1_HASH_FALLBACK}|g" \
+		"dependencies.props" || die
+	sed -i -e "s|${FX_V}|${FX_V_FALLBACK}|g" \
+		"dependencies.props" || die
+	sed -i -e "s|${CLR_V_2_1}|${CLR_V_2_1_FALLBACK}|g" \
+		"tools-local/ILAsmVersion.txt" || die
+
 #	# Tools/Build.Common.props appears later
 #	sed -i -e "s|--packages|--packages --disable-parallel|g" \
 #		Tools/Build.Common.props || die
@@ -201,13 +223,16 @@ _getarch() {
 }
 
 _src_compile() {
+	cd "${S}" || die
 	local buildargs_corefx=""
+	local buildargs_corefx_native=""
+	local buildargs_corefx_managed=""
 	local mydebug=$(usex debug "debug" "release")
 	local myarch=$(_getarch)
 
 	if use heimdal; then
 		# build uses mit-krb5 by default but lets override to heimdal
-		buildargs_corefx+=" -cmakeargs -DHeimdalGssApi=ON"
+		buildargs_corefx_alt+=" -cmakeargs -DHeimdalGssApi=ON"
 	fi
 
 	# prevent: InvalidOperationException: The terminfo database is invalid
@@ -229,7 +254,16 @@ _src_compile() {
 	CLANG_MINOR=$(ver_cut 2 $(clang --version | head -n 1 | cut -f 3 -d " "))
 	einfo "Clang detected as ${CLANG_MAJOR}.${CLANG_MINOR}"
 
-	cd "${S}" || die
+	export OPENSSL_CRYPTO_LIBRARY="/usr/$(get_libdir)/libssl.so.1.0.0"
+	export OPENSSL_INCLUDE_DIR="/usr/include/openssl"
+
+	buildargs_corefx_native+=" -cmakeargs -DOPENSSL_CRYPTO_LIBRARY=${OPENSSL_CRYPTO_LIBRARY}"
+	buildargs_corefx_native+=" -cmakeargs -DOPENSSL_INCLUDE_DIR=${OPENSSL_INCLUDE_DIR}"
+
+	buildargs_corefx_managed+=" /p:DotNetBuildFromSource=true"
+
+	sed -i -e "s|unset ILASMCOMPILER_VERSION|:;#unset ILASMCOMPILER_VERSION|g" \
+		init-tools.sh || die
 
 	local fn
 	if [[ ${ARCH} =~ (arm64|arm|amd64) ]] ; then
@@ -237,19 +271,22 @@ _src_compile() {
 	else
 		fn="dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz"
 	fi
+	export DotNetBootstrapCliTarPath="${DISTDIR}/${fn}"
 
-	einfo "Building CoreFX"
 	ewarn \
 "Restoration (i.e. downloading) may randomly fail for bad local routers, \
 firewalls, or network cards.  Emerge and try again."
 
-	export OPENSSL_CRYPTO_LIBRARY="/usr/$(get_libdir)/libssl.so.1.0.0"
-	export OPENSSL_INCLUDE_DIR="/usr/include/openssl"
-
-	DotNetBootstrapCliTarPath="${DISTDIR}/${fn}" \
+	einfo "Building native CoreFX"
 	./run.sh build-native -ArchGroup=${myarch} -${mydebug} \
 		${buildargs_corefx} -- --clang${CLANG_MAJOR}.${CLANG_MINOR} \
-		--numproc ${numproc} || die
+		--numproc ${numproc} \
+		${buildargs_corefx_native} || die
+
+	einfo "Building managed CoreFX"
+	./run.sh build-managed -ArchGroup=${myarch} -${mydebug} \
+		${buildargs_corefx} \
+		-- ${buildargs_corefx_managed} || die
 
 	if use test ; then
 		einfo "Building CoreFX tests"
@@ -267,10 +304,15 @@ src_install() {
 	local myarch=$(_getarch)
 	local mydebug=$(usex debug "Debug" "Release")
 
-	dodir "${dest_core}"
+	insinto "${dest_core}"
+	doins "${S}/bin/runtime/netcoreapp-Linux-${mydebug}-${myarch}"/*
+	fperms 0755 "${dest_core}"/*.so
+	use debug && \
+	fperms 0755 "${dest_core}"/*.dbg
+	fperms 0755 "${dest_core}"/{corerun,createdump,dotnet,apphost}
 
-	cp -a "${S}/bin/Linux.${myarch}.${mydebug}/native"/* \
-		"${ddest_core}"/ || die
+	exeinto "${dest}/host/fxr/${PV}"
+	doexe "${S}/bin/runtime/netcoreapp-Linux-Release-x64"/{libhostfxr.so,apphost}
 
 	cd "${S}" || die
 	docinto licenses

@@ -177,7 +177,9 @@ _getarch() {
 }
 
 _src_compile() {
+	cd "${S}" || die
 	local buildargs_corefx=""
+	local buildargs_corefx_native=""
 	local mydebug=$(usex debug "Debug" "Release")
 	local myarch=$(_getarch)
 
@@ -189,9 +191,12 @@ _src_compile() {
 	local numproc="1"
 	export ProcessorCount=${numproc}
 
-	# comment out code block temporary and re-emerge to update ${SDK_V}
+	export OPENSSL_CRYPTO_LIBRARY="/usr/$(get_libdir)/libssl.so.1.0.0"
+	export OPENSSL_INCLUDE_DIR="/usr/include/openssl"
+
 	local fn="dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz"
 	export DotNetBootstrapCliTarPath="${DISTDIR}/${fn}"
+
 	local p
 	p="${S}/.dotnet"
 	mkdir -p "${p}" || die
@@ -208,11 +213,11 @@ _src_compile() {
 		buildargs_corefx+=" --buildtests"
 	fi
 
-	einfo "Building CoreFX"
 	ewarn \
 "Restoration (i.e. downloading) may randomly fail for bad local routers, \
 firewalls, or network cards.  Emerge and try again."
-	cd "${S}" || die
+
+	einfo "Building CoreFX"
 	./build.sh --restore --build --arch ${myarch} \
 		--configuration ${mydebug} \
 		${buildargs_corefx} || die
@@ -232,9 +237,15 @@ src_install() {
 	local myarch=$(_getarch)
 	local mydebug=$(usex debug "Debug" "Release")
 
-	dodir "${dest_core}"
-	cp -a "${S}/artifacts/bin/native/netcoreapp-Linux-${mydebug}-${myarch}"/* \
-		"${ddest_core}"/ || die
+	insinto "${dest_core}"
+	doins "${S}/artifacts/bin/native/netcoreapp-Linux-${mydebug}-${myarch}"/*
+	fperms 0755 "${dest_core}"/*.so
+	use debug && \
+	fperms 0755 "${dest_core}"/*.dbg
+	fperms 0755 "${dest_core}"/{corerun,createdump,dotnet}
+
+	exeinto "${dest}/host/fxr/${PV}"
+	doexe "${S}/artifacts/bin/runtime/netcoreapp-Linux-${mydebug}-${myarch}/libhostfxr.so"
 
 	cd "${S}" || die
 	docinto licenses
@@ -246,3 +257,4 @@ src_install() {
 			README.md
 	fi
 }
+
