@@ -213,8 +213,6 @@ _src_prepare() {
 		build/BundledDotnetTools.proj || die
 	sed -i -e "s|--runtime|--disable-parallel --runtime|g" \
 		build/AppHostTemplate.proj || die
-	sed -i -e "s|\$(PreviousStageDotnet) restore|\$(PreviousStageDotnet) restore --disable-parallel|g" \
-		build.proj || die
 
 	# It has to be done manually if you don't let the installer get the
 	# tarballs.
