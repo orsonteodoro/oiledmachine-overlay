@@ -280,7 +280,7 @@ src_install() {
 
 	chmod 0755 \
 		$(find "${ddest_sdk}" -name "*.exe") \
-		"${ED}/opt/dotnet/dotnet" \
+		"${ED}/opt/dotnet/dotnet-${PV}" \
 		"${ddest_sdk}/AppHostTemplate/apphost" \
 		|| die
 

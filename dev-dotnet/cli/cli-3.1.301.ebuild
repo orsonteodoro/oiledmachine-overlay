@@ -335,12 +335,11 @@ src_install() {
 	mv "${d_dotnet}/dotnet/dotnet" \
 		"${d_dotnet}/dotnet/dotnet-${PV}" || die
 	doins -r "${d_dotnet}/dotnet" \
-		"${d_dotnet}/packs" \
 		"${d_dotnet}/templates"
 
 	chmod 0755 \
 		$(find "${ddest_sdk}" -name "*.exe") \
-		"${ED}/opt/dotnet/dotnet" \
+		"${ED}/opt/dotnet/dotnet-${PV}" \
 		|| die
 
 	insinto /usr/share/licenses/${PN}-${PV}
