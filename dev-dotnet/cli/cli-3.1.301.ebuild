@@ -100,6 +100,7 @@ inherit git-r3
 S="${WORKDIR}/${PN}-${PV}"
 
 pkg_setup() {
+	ewarn "This ebuild is a WIP and does not work."
 	# If FEATURES="-sandbox -usersandbox" are not set dotnet will hang while
 	# compiling.
 	if has sandbox $FEATURES || has usersandbox $FEATURES ; then
@@ -189,14 +190,13 @@ src_unpack() {
 	einfo \
 "If you emerged this first, please use the meta package dotnetcore-sdk instead\
  as the starting point."
-	ewarn "This ebuild is a WIP does not work."
-	ewarn "https://github.com/dotnet/sdk/issues/11795"
 	if [[ "${DropSuffix}" == "false" ]] ; then
 		_fetch_cli # for dev
 	else
 		_unpack_cli # for official latest release (i.e. tarball)
 	fi
 
+	_unpack_stage0_cli
 	_unpack_runtime
 
 	# Gentoo or the sandbox doesn't allow downloads in compile phase so move
@@ -218,32 +218,9 @@ _getarch() {
 	echo "${myarch}"
 }
 
-_src_prepare() {
+_unpack_stage0_cli() {
 	local myarch=$(_getarch)
 
-#	default_src_prepare
-	cd "${S}" || die
-	eapply ${_PATCHES[@]}
-
-	# Allows verbose output
-	local F=$(grep -l -r -e "__init_tools_log" \
-			$(find "${WORKDIR}" -name "*.sh"))
-	for f in $F ; do
-		echo "Patching $f"
-		sed -i \
-	-e 's|>> "$__init_tools_log" 2>&1|\|\& tee -a "$__init_tools_log"|g' \
-	-e 's|>> "$__init_tools_log"|\| tee -a "$__init_tools_log"|g' \
-	-e 's| > "$__init_tools_log"| \| tee "$__init_tools_log"|g' "$f" || die
-	done
-
-	# Allows wget curl output
-	local F=$(grep -l -r -e "-sSL" $(find "${WORKDIR}" -name "*.sh"))
-	for f in $F ; do
-		echo "Patching $f"
-		sed -i -e 's|-sSL|-L|g' -e 's|wget -q |wget |g' "$f" || die
-	done
-
-	# Comment out code block temporary and re-emerge to update ${SDK_V}
 	local p
 	p="${S}/.dotnet"
 	mkdir -p "${p}" || die
@@ -251,6 +228,18 @@ _src_prepare() {
 	tar -xvf "${DISTDIR}/dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz" || die
 	popd || die
 	[ ! -f "${S}/.dotnet/dotnet" ] && die "dotnet not found"
+
+	# It has to be done manually if you don't let the installer get the
+	# tarballs.
+	export PATH="${p}:${PATH}"
+}
+
+_src_prepare() {
+	local myarch=$(_getarch)
+
+#	default_src_prepare
+	cd "${S}" || die
+	eapply ${_PATCHES[@]}
 
 	# Common problem in 3.1.x.  darc-int is a private package but it's not
 	# supposed to be there.
@@ -267,9 +256,8 @@ InstallDotNetSharedFramework \"1.1.2\"|\
 #InstallDotNetSharedFramework \"1.1.2\"|" \
 		eng/restore-toolset.sh || die
 
-	# It has to be done manually if you don't let the installer get the
-	# tarballs.
-	export PATH="${p}:${PATH}"
+	sed -i -e "s|dotnet restore|dotnet restore --disable-parallel|g" \
+		eng/common/internal-feed-operations.sh || die
 
 	if use man-latest ; then
 		sed -i -e "s|env python|env ${EPYTHON}|" \
@@ -278,6 +266,7 @@ InstallDotNetSharedFramework \"1.1.2\"|\
 }
 
 _src_compile() {
+	cd "${S}" || die
 	local buildargs_corecli=""
 	local mydebug=$(usex debug "debug" "release")
 	local myarch=$(_getarch)
@@ -293,8 +282,6 @@ _src_compile() {
 		buildargs_corecli+=\
 " /property:GitInfoCommitCount=0 /property:GitInfoCommitHash=${DOTNET_CLI_COMMIT}"
 	fi
-
-	cd "${S}" || die
 
 	# Required by Microsoft.Build.Tasks.Git
 	# See
@@ -313,12 +300,18 @@ firewalls, or network cards.  Emerge and try again."
 	fi
 }
 
+src_test() {
+	if use test ; then
+		./build.sh --test || die
+	fi
+}
+
 # See https://docs.microsoft.com/en-us/dotnet/core/distribution-packaging
 src_install() {
 	local dest="/opt/dotnet"
 	local ddest="${ED}/${dest}"
-	local dest_sdk="${dest}/sdk/${PV}/"
-	local ddest_sdk="${ddest}/sdk/${PV}/"
+	local dest_sdk="${dest}/sdk/${PV}"
+	local ddest_sdk="${ddest}/sdk/${PV}"
 	local mydebug=$(usex debug "Debug" "Release")
 	local myarch=$(_getarch)
 
@@ -330,11 +323,11 @@ src_install() {
 	local d_dotnet="${S}/artifacts/tmp/${mydebug}/dotnet"
 
 	insinto "${dest_sdk}"
-	cp -a "${d_dotnet}/sdk/${PV}${VERSION_SUFFIX}"/*
+	doins -r "${d_dotnet}/sdk/${PV}${VERSION_SUFFIX}"/*
 	insinto "${dest}"
-	mv "${d_dotnet}/dotnet/dotnet" \
-		"${d_dotnet}/dotnet/dotnet-${PV}" || die
-	doins -r "${d_dotnet}/dotnet" \
+	mv "${d_dotnet}/dotnet" \
+		"${d_dotnet}/dotnet-${PV}" || die
+	doins "${d_dotnet}/dotnet-${PV}" \
 		"${d_dotnet}/templates"
 
 	chmod 0755 \
@@ -346,7 +339,9 @@ src_install() {
 	doins "${d_dotnet}"/{LICENSE.txt,ThirdPartyNotices.txt}
 
 	# Symlink for MonoDevelop.  15.0 is the toolsversion.
-	dosym "15.0" "${dest_sdk}/Current"
+	pushd "${ddest_sdk}" || die
+		ln -s Current 15.0 || die
+	popd || die
 
 	cd "${S}" || die
 	docinto licenses
@@ -368,6 +363,5 @@ src_install() {
 pkg_postinst() {
 	einfo \
 "You may need to symlink from /opt/dotnet/dotnet-${PV} to /usr/bin/dotnet"
-	# Clobbler the symlink anyway
-	ln -s /opt/dotnet/dotnet-${PV} /usr/bin/dotnet
+	ln -sf /opt/dotnet/dotnet-${PV} /usr/bin/dotnet
 }

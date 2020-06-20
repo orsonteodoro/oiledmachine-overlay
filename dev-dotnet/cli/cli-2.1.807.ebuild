@@ -70,6 +70,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.1.505-null-LastWriteTimeUtc-minval.patch"
 	"${FILESDIR}/${PN}-2.1.807-limit-maxHttpRequestsPerSource-to-1.patch"
 	"${FILESDIR}/${PN}-3.1.301-fix-manpage-dotnet-test-generation.patch"
+	"${FILESDIR}/${PN}-2.1.807-disable-parallel-in-proj-and-targets.patch"
 )
 RESTRICT="mirror"
 inherit git-r3
@@ -148,12 +149,13 @@ src_unpack() {
 	einfo \
 "If you emerged this first, please use the meta package dotnetcore-sdk instead\
  as the starting point."
-	ewarn "This ebuild is a WIP does not work."
 	if [[ "${DropSuffix}" == "false" ]] ; then
 		_fetch_cli # for dev
 	else
 		_unpack_cli # for official latest release (i.e. tarball)
 	fi
+
+	_unpack_stage0_cli
 
 	# Gentoo or the sandbox doesn't allow downloads in compile phase so move
 	# here
@@ -174,32 +176,8 @@ _getarch() {
 	echo "${myarch}"
 }
 
-_src_prepare() {
+_unpack_stage0_cli() {
 	local myarch=$(_getarch)
-
-#	default_src_prepare
-	cd "${S}" || die
-	eapply ${_PATCHES[@]}
-
-	# Allows verbose output
-	local F=$(grep -l -r -e "__init_tools_log" \
-			$(find "${WORKDIR}" -name "*.sh"))
-	for f in $F ; do
-		echo "Patching $f"
-		sed -i \
-	-e 's|>> "$__init_tools_log" 2>&1|\|\& tee -a "$__init_tools_log"|g' \
-	-e 's|>> "$__init_tools_log"|\| tee -a "$__init_tools_log"|g' \
-	-e 's| > "$__init_tools_log"| \| tee "$__init_tools_log"|g' "$f" || die
-	done
-
-	# Allows wget curl output
-	local F=$(grep -l -r -e "-sSL" $(find "${WORKDIR}" -name "*.sh"))
-	for f in $F ; do
-		echo "Patching $f"
-		sed -i -e 's|-sSL|-L|g' -e 's|wget -q |wget |g' "$f" || die
-	done
-
-	# Comment out code block temporary and re-emerge to update ${SDK_V}
 	local p
 	p="${S}/.dotnet_stage0/${myarch}"
 	mkdir -p "${p}" || die
@@ -209,14 +187,17 @@ _src_prepare() {
 	[ ! -f "${S}/.dotnet_stage0/${myarch}/dotnet" ] \
 		&& die "dotnet not found"
 
-	sed -i -e "s|--runtime any|--disable-parallel --runtime any|g" \
-		build/BundledDotnetTools.proj || die
-	sed -i -e "s|--runtime|--disable-parallel --runtime|g" \
-		build/AppHostTemplate.proj || die
-
 	# It has to be done manually if you don't let the installer get the
 	# tarballs.
 	export PATH="${p}:${PATH}"
+}
+
+_src_prepare() {
+	local myarch=$(_getarch)
+
+#	default_src_prepare
+	cd "${S}" || die
+	eapply ${_PATCHES[@]}
 
 	if use man-latest ; then
 		sed -i -e "s|env python|env ${EPYTHON}|" \
@@ -225,6 +206,7 @@ _src_prepare() {
 }
 
 _src_compile() {
+	cd "${S}" || die
 	local buildargs_corecli=""
 	local mydebug=$(usex debug "debug" "release")
 	local myarch=$(_getarch)
@@ -249,7 +231,6 @@ _src_compile() {
 	ewarn \
 "Restoration (i.e. downloading) may randomly fail for bad local routers, \
 firewalls, or network cards.  Emerge and try again."
-	cd "${S}" || die
 	./build.sh --configuration ${mydebug^} --architecture ${myarch} \
 		${buildargs_corecli} || die
 	if use doc ; then
@@ -257,12 +238,15 @@ firewalls, or network cards.  Emerge and try again."
 	fi
 }
 
+# tests are already ran after build
+# https://github.com/dotnet/cli/blob/v2.1.807/Documentation/project-docs/developer-guide.md#running-tests
+
 # See https://docs.microsoft.com/en-us/dotnet/core/distribution-packaging
 src_install() {
 	local dest="/opt/dotnet"
 	local ddest="${ED}/${dest}"
-	local dest_sdk="${dest}/sdk/${PV}/"
-	local ddest_sdk="${ddest}/sdk/${PV}/"
+	local dest_sdk="${dest}/sdk/${PV}"
+	local ddest_sdk="${ddest}/sdk/${PV}"
 	local myarch=$(_getarch)
 
 	# Installed files partly based on
@@ -274,9 +258,9 @@ src_install() {
 	insinto "${dest_sdk}"
 	doins -r "${d_dotnet}/sdk/${PV}${VERSION_SUFFIX}"/*
 	insinto "${dest}"
-	mv "${d_dotnet}/dotnet/dotnet" \
-		"${d_dotnet}/dotnet/dotnet-${PV}" || die
-	doins -r "${d_dotnet}/dotnet"
+	mv "${d_dotnet}/dotnet" \
+		"${d_dotnet}/dotnet-${PV}" || die
+	doins "${d_dotnet}/dotnet-${PV}"
 
 	chmod 0755 \
 		$(find "${ddest_sdk}" -name "*.exe") \
@@ -288,7 +272,9 @@ src_install() {
 	doins "${d_dotnet}"/{LICENSE.txt,ThirdPartyNotices.txt}
 
 	# Symlink for MonoDevelop.  15.0 is the toolsversion.
-	dosym "15.0" "${dest_sdk}/Current"
+	pushd "${ddest_sdk}" || die
+		ln -s Current 15.0 || die
+	popd || die
 
 	cd "${S}" || die
 	docinto licenses
@@ -310,6 +296,5 @@ src_install() {
 pkg_postinst() {
 	einfo \
 "You may need to symlink from /opt/dotnet/dotnet-${PV} to /usr/bin/dotnet"
-	# Clobbler the symlink anyway
-	ln -s /opt/dotnet/dotnet-${PV} /usr/bin/dotnet
+	ln -sf /opt/dotnet/dotnet-${PV} /usr/bin/dotnet
 }
