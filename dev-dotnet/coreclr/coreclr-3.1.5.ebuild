@@ -244,8 +244,8 @@ src_install() {
 	shopt -s dotglob # copy hidden files
 	doins -r "${S}/bin/Product/Linux.${myarch}.${mydebug}"/*
 	chmod 0755 \
-		"${dest_core}"/*.so \
-		"${dest_core}"/\
+		"${ddest_core}"/*.so \
+		"${ddest_core}"/\
 {coreconsole,corerun,createdump,crossgen,ilasm,ildasm,mcs,superpmi}
 
 	docinto licenses
