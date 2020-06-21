@@ -137,23 +137,6 @@ _src_prepare() {
 	cd "${S}" || die
 	eapply ${_PATCHES[@]}
 
-	# allow verbose output
-	local F=$(grep -l -r -e "__init_tools_log" $(find "${WORKDIR}" -name "*.sh"))
-	for f in $F ; do
-		echo "Patching $f"
-		sed -i \
-	-e 's|>> "$__init_tools_log" 2>&1|\|\& tee -a "$__init_tools_log"|g' \
-	-e 's|>> "$__init_tools_log"|\| tee -a "$__init_tools_log"|g' \
-	-e 's| > "$__init_tools_log"| \| tee "$__init_tools_log"|g' "$f" || die
-	done
-
-	# allow wget curl output
-	local F=$(grep -l -r -e "-sSL" $(find "${WORKDIR}" -name "*.sh"))
-	for f in $F ; do
-		echo "Patching $f"
-		sed -i -e 's|-sSL|-L|g' -e 's|wget -q |wget |g' "$f" || die
-	done
-
 	sed -i -e "s|--no-cache --packages|--disable-parallel --no-cache --packages|g" \
 		init-tools.sh || die
 	sed -i -e "s|\$dotnetCmd restore|\$dotnetCmd restore --disable-parallel|" \
