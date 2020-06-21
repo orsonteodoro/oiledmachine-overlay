@@ -222,9 +222,10 @@ src_install() {
 
 	insinto "${dest_core}"
 	doins "${S}/artifacts/bin/native/netcoreapp-Linux-${mydebug}-${myarch}"/*
-	fperms 0755 "${dest_core}"/*.so
-	use debug && \
-	fperms 0755 "${dest_core}"/*.dbg
+	chmod 0755 "${ddest_core}"/*.so || die
+	if use debug ; then
+		chmod 0755 "${ddest_core}"/*.dbg || die
+	fi
 	fperms 0755 "${dest_core}"/{corerun,createdump,dotnet}
 
 	exeinto "${dest}/host/fxr/${PV}"
