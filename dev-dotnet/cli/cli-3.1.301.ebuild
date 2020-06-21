@@ -94,6 +94,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.1.505-null-LastWriteTimeUtc-minval.patch"
 	"${FILESDIR}/${PN}-3.1.301-limit-maxHttpRequestsPerSource-to-1.patch"
 	"${FILESDIR}/${PN}-3.1.301-fix-manpage-dotnet-test-generation.patch"
+	"${FILESDIR}/${PN}-3.1.301-msbuild-RestoreDisableParallel-true.patch"
 )
 RESTRICT="mirror"
 inherit git-r3
@@ -268,7 +269,7 @@ InstallDotNetSharedFramework \"1.1.2\"|\
 _src_compile() {
 	cd "${S}" || die
 	local buildargs_corecli=""
-	local mydebug=$(usex debug "debug" "release")
+	local mydebug=$(usex debug "Debug" "Release")
 	local myarch=$(_getarch)
 
 	# Prevent InvalidOperationException: The terminfo database is invalid
@@ -287,7 +288,10 @@ _src_compile() {
 	# See
 	# https://github.com/dotnet/sourcelink/pull/438/files
 	# https://github.com/dotnet/sourcelink/blob/master/src/Microsoft.Build.Tasks.Git.UnitTests/GitOperationsTests.cs#L207
-	git remote add origin https://github.com/dotnet/${PN}.git
+
+	git remote add origin https://github.com/dotnet/${PN}.git || die
+
+#	buildargs_corecli+=" /p:DotNetBuildFromSource=true"
 
 	einfo "Building ${PN^^}"
 	ewarn \
@@ -361,7 +365,14 @@ src_install() {
 }
 
 pkg_postinst() {
-	einfo \
-"You may need to symlink from /opt/dotnet/dotnet-${PV} to /usr/bin/dotnet"
-	ln -sf /opt/dotnet/dotnet-${PV} /usr/bin/dotnet
+	# dotnet doesn't like itself renamed
+	NEWEST_DOTNET=$(ls "${EROOT}/opt/dotnet"/dotnet-* | sort -V | tail -n 1)
+	cp -a "${NEWEST_DOTNET}" "${EROOT}/opt/dotnet/dotnet" || die
+}
+
+pkg_postrm() {
+	if ls "${EROOT}/opt/dotnet"/dotnet-* >/dev/null ; then
+		NEWEST_DOTNET=$(ls "${EROOT}/opt/dotnet"/dotnet-* | sort -V | tail -n 1)
+		cp -a "${NEWEST_DOTNET}" "${EROOT}/opt/dotnet/dotnet" || die
+	fi
 }

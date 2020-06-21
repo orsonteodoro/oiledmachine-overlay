@@ -294,7 +294,14 @@ src_install() {
 }
 
 pkg_postinst() {
-	einfo \
-"You may need to symlink from /opt/dotnet/dotnet-${PV} to /usr/bin/dotnet"
-	ln -sf /opt/dotnet/dotnet-${PV} /usr/bin/dotnet
+	# dotnet doesn't like itself renamed
+	NEWEST_DOTNET=$(ls "${EROOT}/opt/dotnet"/dotnet-* | sort -V | tail -n 1)
+	cp -a "${NEWEST_DOTNET}" "${EROOT}/opt/dotnet/dotnet" || die
+}
+
+pkg_postrm() {
+	if ls "${EROOT}/opt/dotnet"/dotnet-* >/dev/null ; then
+		NEWEST_DOTNET=$(ls "${EROOT}/opt/dotnet"/dotnet-* | sort -V | tail -n 1)
+		cp -a "${NEWEST_DOTNET}" "${EROOT}/opt/dotnet/dotnet" || die
+	fi
 }
