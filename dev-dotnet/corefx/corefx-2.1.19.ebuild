@@ -258,7 +258,6 @@ _src_compile() {
 	ewarn \
 "Restoration (i.e. downloading) may randomly fail for bad local routers, \
 firewalls, or network cards.  Emerge and try again."
-
 	einfo "Building native CoreFX"
 	./run.sh build-native -ArchGroup=${myarch} -${mydebug} \
 		${buildargs_corefx} -- --clang${CLANG_MAJOR}.${CLANG_MINOR} \
