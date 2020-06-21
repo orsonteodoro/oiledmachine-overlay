@@ -71,7 +71,7 @@ src_install() {
 }
 
 pkg_postinst() {
-	einfo "Consider adding games-util/libmaker"
+	einfo "Consider adding games-util/libmaker to extend ${MY_PN}"
 	elog \
 "If you are using dwm or non-parenting window manager or a non-responsive\n\
 title bar menus, you need to:\n\
