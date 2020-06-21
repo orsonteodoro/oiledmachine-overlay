@@ -10,13 +10,14 @@ LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 IUSE="android curl doc gles gles2 gles3 gnome gtk2 kde linux minimal \
-+openal +opengl opengl1 opengl3 radialgm sdl2 sfml test +vanilla +X"
++openal +opengl opengl1 opengl3 radialgm sdl2 test +vanilla +X"
 inherit multilib-minimal
 RDEPEND="android? ( dev-util/android-ndk
 		    dev-util/android-sdk-update-manager )
 	 curl? ( net-misc/curl[${MULTILIB_USEDEP}] )
 	 dev-cpp/yaml-cpp[${MULTILIB_USEDEP}]
 	 dev-libs/boost[${MULTILIB_USEDEP}]
+	 dev-libs/libffi[${MULTILIB_USEDEP}]
 	 media-libs/freetype[${MULTILIB_USEDEP}]
 	 dev-libs/double-conversion[${MULTILIB_USEDEP}]
 	 dev-libs/libpcre2[${MULTILIB_USEDEP},pcre16]
@@ -42,7 +43,6 @@ RDEPEND="android? ( dev-util/android-ndk
 	 radialgm? ( net-dns/c-ares[${MULTILIB_USEDEP}]
 		     net-libs/grpc[${MULTILIB_USEDEP}] )
 	 sdl2? ( media-libs/libsdl2[${MULTILIB_USEDEP}] )
-	 sfml? ( media-libs/libsfml[${MULTILIB_USEDEP}] )
 	 sys-libs/zlib[${MULTILIB_USEDEP}]
 	 wine? ( sys-devel/crossdev
 		 virtual/wine )
@@ -60,7 +60,7 @@ DEPEND="${RDEPEND}
 	test? ( dev-cpp/gtest[${MULTILIB_USEDEP}]
 		dev-libs/boost[${MULTILIB_USEDEP}]
 		x11-libs/libX11[${MULTILIB_USEDEP}] )"
-EGIT_COMMIT="912b5c592c73cb42c1ff56ec3f661840030fd7a8"
+EGIT_COMMIT="87a7f56576b087343752cf8de86880b735c2fbd8"
 SRC_URI=\
 "https://github.com/enigma-dev/enigma-dev/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
@@ -105,10 +105,7 @@ src_configure() {
 				#	Compilers/Linux/AndroidSym.ey
 			fi
 
-			if use sfml ; then
-				sed -i -e "s|AUDIO \?= OpenAL|AUDIO ?= SFML|" \
-					ENIGMAsystem/SHELL/Makefile || die
-			elif use openal ; then
+			if use openal ; then
 				sed -i \
 				-e "s|AUDIO \?= OpenAL|AUDIO ?= OpenAL|" \
 					ENIGMAsystem/SHELL/Makefile || die
@@ -278,10 +275,6 @@ OpenGL-Desktop} || die
 		fi
 	fi
 
-	if ! use sfml ; then
-		rm -rf ENIGMAsystem/SHELL/Audio_Systems/SFML || die
-	fi
-
 	if ! use test ; then
 		rm -rf Compilers/Linux/TestHarness.ey || die
 	fi
@@ -333,7 +326,7 @@ src_install() {
 					shrink_install
 				fi
 				eapply \
-"${FILESDIR}/enigma-9999_p20200330-makefile-stripped-for-production.patch"
+"${FILESDIR}/enigma-9999_p20200618-makefile-stripped-for-production.patch"
 			fi
 			if use radialgm ; then
 				doexe emake
