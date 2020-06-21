@@ -42,6 +42,8 @@ inherit python-single-r1
 REQUIRED_USE="man-latest? ( man ^^ ( $(python_gen_useflags 'python3*') ) )"
 RDEPEND="
 	>=app-crypt/mit-krb5-1.13.2
+	 <dev-dotnet/coreclr-3
+	>=dev-dotnet/coreclr-2
 	>=dev-libs/icu-55.1
 	>=dev-libs/openssl-compat-1.0.2o:1.0.0
 	>=dev-util/lttng-ust-2.7.1
@@ -50,9 +52,6 @@ RDEPEND="
 	>=sys-libs/libunwind-1.1
 	>=sys-libs/zlib-1.2.8"
 DEPEND="${RDEPEND}
-	!dev-dotnet/dotnetcore-aspnet-bin
-	!dev-dotnet/dotnetcore-runtime-bin
-	!dev-dotnet/dotnetcore-sdk-bin
 	app-arch/unzip
 	>=dev-util/cmake-3.5.1
 	>=dev-util/lldb-3.6.2
