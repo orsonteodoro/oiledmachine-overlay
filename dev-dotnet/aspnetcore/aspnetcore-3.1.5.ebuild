@@ -51,10 +51,6 @@ RDEPEND=">=app-crypt/mit-krb5-1.13.2
 	 >=sys-libs/libunwind-1.1
 	 >=sys-libs/zlib-1.2.8"
 DEPEND="${RDEPEND}
-	  dev-dotnet/cli-tools
-	 !dev-dotnet/dotnetcore-aspnet-bin
-	 !dev-dotnet/dotnetcore-runtime-bin
-	 !dev-dotnet/dotnetcore-sdk-bin
 	  dev-util/bazel
 	>=dev-util/cmake-2.5.1
 	  dev-vcs/git
