@@ -42,8 +42,7 @@ inherit python-single-r1
 REQUIRED_USE="man-latest? ( man ^^ ( $(python_gen_useflags 'python3*') ) )"
 RDEPEND="
 	>=app-crypt/mit-krb5-1.13.2
-	 <dev-dotnet/coreclr-3
-	>=dev-dotnet/coreclr-2
+	 =dev-dotnet/coreclr-2.1.19*
 	>=dev-libs/icu-55.1
 	>=dev-libs/openssl-compat-1.0.2o:1.0.0
 	>=dev-util/lttng-ust-2.7.1
