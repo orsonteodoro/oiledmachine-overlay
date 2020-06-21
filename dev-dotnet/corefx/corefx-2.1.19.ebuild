@@ -29,7 +29,7 @@ SDK_V_FALLBACK=2.1.302 # Using earliest 2.1 with arm/arm64 support
 # For 1.1.0 runtime see
 # https://github.com/dotnet/core/blob/master/release-notes/1.1/releases.json
 IUSE="debug doc heimdal test"
-REQUIRED_USE="!debug"  # To prevent xunit download failure
+REQUIRED_USE="!debug test? ( debug )"  # To prevent xunit download failure
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we
 # have to keep downloading it everytime the sandbox is wiped.
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
@@ -95,6 +95,9 @@ _PATCHES=(
 # but this ebuild doesn't currently use that.
 
 pkg_setup() {
+	# cli requires Microsoft.NETCore.App.deps.json that gets produced when
+	# "published"
+	ewarn "This package is still a Work In Progress (WIP)"
 	# If FEATURES="-sandbox -usersandbox" are not set dotnet will hang while
 	# compiling.
 	if has sandbox $FEATURES || has usersandbox $FEATURES ; then

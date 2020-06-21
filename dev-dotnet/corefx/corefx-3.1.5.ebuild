@@ -22,6 +22,7 @@ KEYWORDS="~amd64 ~arm ~arm64"
 CORE_V="${PV}"
 SDK_V="3.1.100" # found in global.json
 IUSE="debug doc test"
+REQUIRED_USE="test? ( debug )"
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we
 # have to keep downloading it everytime the sandbox is wiped.
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
@@ -73,6 +74,9 @@ _PATCHES=(
 # but this ebuild doesn't currently use that.
 
 pkg_setup() {
+	# cli requires Microsoft.NETCore.App.deps.json that gets produced when
+	# "published"
+	ewarn "This package is still a Work In Progress (WIP)"
 	# If FEATURES="-sandbox -usersandbox" are not set dotnet will hang while
 	# compiling.
 	if has sandbox $FEATURES || has usersandbox $FEATURES ; then
