@@ -98,6 +98,7 @@ RESTRICT="mirror"
 inherit git-r3
 _PATCHES=(
 	"${FILESDIR}/${PN}-3.1.5-limit-maxHttpRequestsPerSource-to-1.patch"
+	"${FILESDIR}/${PN}-3.1.5-msbuild-RestoreDisableParallel-true.patch"
 )
 
 # This currently isn't required but may be needed in later ebuilds
@@ -371,6 +372,10 @@ MicrosoftNETCoreAppRuntimeVersion|g" \
 	# Host/dotnet-runtime same as in SRC_URI
 	sed -i -e "s|dotnetcli.blob.core.windows.net|dotnetcli.azureedge.net|" \
 		eng/Versions.props || die
+
+	# todo: Needs (re-)testing
+	#sed -i -e "s|dotnet restore|dotnet restore --disable-parallel|g" \
+	#	eng/common/internal-feed-operations.sh || die
 
 	if use debug ; then
 		pushd src/Components/Web.JS/dist || die
