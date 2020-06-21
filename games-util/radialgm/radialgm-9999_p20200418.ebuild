@@ -8,7 +8,7 @@ LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 IUSE="doc"
-ENIGMA_V="9999_p20200409"
+ENIGMA_V="9999_p20200618"
 RDEPEND="dev-cpp/yaml-cpp
 	 dev-libs/double-conversion
 	 dev-libs/libpcre2[pcre16]
@@ -29,7 +29,7 @@ RDEPEND="dev-cpp/yaml-cpp
 	 >=sys-devel/gcc-7.4.0
 	 x11-libs/qscintilla
 	 virtual/jpeg"
-EGIT_COMMIT="356b0edeaba4bbb426407c16c3d4663e4b04f9dc"
+EGIT_COMMIT="faff910d6398ab2660f45c512450f48d45b47099"
 SRC_URI=\
 "https://github.com/enigma-dev/RadialGM/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
