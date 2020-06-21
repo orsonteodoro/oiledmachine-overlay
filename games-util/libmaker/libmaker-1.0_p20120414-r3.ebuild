@@ -45,7 +45,7 @@ src_compile() {
 	/usr/bin/ecj-${ECJ_V} -${JAVA_V} -nowarn -cp . -cp \
 /usr/share/java/eclipse-ecj.jar:\
 /usr/share/java/ecj.jar:\
-/usr/lib64/enigma/lateralgm.jar\
+/usr/$(get_libdir)/enigma/lateralgm.jar\
 		$(find . -name "*.java")
 	jar cmvf META-INF/MANIFEST.MF ${PN}.jar \
 		$(find . -name '*.class') \
