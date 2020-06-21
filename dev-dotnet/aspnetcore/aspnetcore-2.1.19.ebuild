@@ -362,23 +362,6 @@ _unpack_dotnet_runtime() {
 _src_prepare() {
 	cd "${WORKDIR}" || die
 
-	# allow verbose output
-	local F=$(grep -l -r -e "__init_tools_log" $(find "${WORKDIR}" -name "*.sh"))
-	for f in $F ; do
-		echo "Patching $f"
-		sed -i \
-	-e 's|>> "$__init_tools_log" 2>&1|\|\& tee -a "$__init_tools_log"|g' \
-	-e 's|>> "$__init_tools_log"|\| tee -a "$__init_tools_log"|g' \
-	-e 's| > "$__init_tools_log"| \| tee "$__init_tools_log"|g' "$f" || die
-	done
-
-	# allow wget curl output
-	local F=$(grep -l -r -e "-sSL" $(find "${WORKDIR}" -name "*.sh"))
-	for f in $F ; do
-		echo "Patching $f"
-		sed -i -e 's|-sSL|-L|g' -e 's|wget -q |wget |g' "$f" || die
-	done
-
 	if ! use test ; then
 		_D="${S}/src/SignalR/clients/cpp/test/gtest-1.8.0/xcode/Config"
 		sed -i -e "s|-Werror||g" "${_D}/General.xcconfig" || die
