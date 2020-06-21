@@ -44,10 +44,11 @@ SLOT="${PV}"
 # cross/build-rootfs.sh
 # https://docs.microsoft.com/en-us/dotnet/core/install/dependencies?pivots=os-linux&tabs=netcore31
 RDEPEND=">=app-crypt/mit-krb5-1.13.2
+	  =dev-dotnet/coreclr-${PV}*
+	 >=dev-dotnet/libgdiplus-6.0.1
 	 >=dev-libs/icu-55.1
 	 >=dev-libs/openssl-1.0.2o
 	 >=dev-libs/openssl-compat-1.0.2o:1.0.0
-	 >=dev-dotnet/libgdiplus-6.0.1
 	 >=dev-util/lldb-4.0
 	 >=dev-util/lttng-ust-2.7.1
 	 >=net-misc/curl-7.47
@@ -59,8 +60,7 @@ DEPEND="${RDEPEND}
 	  dev-vcs/git
 	>=sys-devel/clang-3.9
 	>=sys-devel/gettext-0.19.7
-	>=sys-devel/make-4.1
-	 =dev-dotnet/coreclr-${PV}*"
+	>=sys-devel/make-4.1"
 S="${WORKDIR}/${PN}-${CORE_V}"
 RESTRICT="mirror"
 _PATCHES=(
