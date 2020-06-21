@@ -57,10 +57,7 @@ DEPEND="${RDEPEND}
 	  dev-vcs/git
 	>=sys-devel/clang-3.9
 	>=sys-devel/gettext-0.19.7
-	>=sys-devel/make-4.1
-	 !dev-dotnet/dotnetcore-aspnet-bin
-	 !dev-dotnet/dotnetcore-runtime-bin
-	 !dev-dotnet/dotnetcore-sdk-bin"
+	>=sys-devel/make-4.1"
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${CORE_V}"
 _PATCHES=(
