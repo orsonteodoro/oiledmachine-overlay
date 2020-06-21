@@ -226,7 +226,7 @@ src_install() {
 	if use debug ; then
 		chmod 0755 "${ddest_core}"/*.dbg || die
 	fi
-	fperms 0755 "${dest_core}"/{corerun,createdump,dotnet}
+	fperms 0755 "${dest_core}"/dotnet
 
 	exeinto "${dest}/host/fxr/${PV}"
 	doexe "${S}/artifacts/bin/runtime/netcoreapp-Linux-${mydebug}-${myarch}/libhostfxr.so"
@@ -240,5 +240,24 @@ src_install() {
 		dodoc -r CODE_OF_CONDUCT.md CONTRIBUTING.md Documentation \
 			README.md
 	fi
+
+	# Dedupe for CoreCLR
+	pushd "${ddest_core}" || die
+	rm \
+		SOS.NETCore.dll \
+		System.Globalization.Native.so \
+		System.Private.CoreLib.dll \
+		corerun \
+		createdump \
+		libclrjit.so \
+		libcoreclr.so \
+		libcoreclrtraceptprovider.so \
+		libdbgshim.so \
+		libmscordaccore.so \
+		libmscordbi.so \
+		libsos.so \
+		libsosplugin.so \
+		sosdocsunix.txt
+	popd || die
 }
 
