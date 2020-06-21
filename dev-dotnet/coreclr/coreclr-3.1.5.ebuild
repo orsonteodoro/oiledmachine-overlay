@@ -243,7 +243,7 @@ src_install() {
 	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
 	doins -r "${S}/bin/Product/Linux.${myarch}.${mydebug}"/*
-	fperms 0755 \
+	chmod 0755 \
 		"${dest_core}"/*.so \
 		"${dest_core}"/\
 {coreconsole,corerun,createdump,crossgen,ilasm,ildasm,mcs,superpmi}
