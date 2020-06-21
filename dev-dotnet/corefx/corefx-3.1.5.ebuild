@@ -67,6 +67,7 @@ S="${WORKDIR}/${PN}-${CORE_V}"
 RESTRICT="mirror"
 _PATCHES=(
 	"${FILESDIR}/${PN}-3.1.5-limit-maxHttpRequestsPerSource-to-1.patch"
+	"${FILESDIR}/${PN}-3.1.5-msbuild-RestoreDisableParallel-true.patch"
 )
 
 # This currently isn't required but may be needed in later ebuilds
