@@ -11,7 +11,8 @@ inherit check-reqs cmake-utils xdg-utils flag-o-matic xdg-utils \
 DESCRIPTION="3D Creation/Animation/Publishing System"
 HOMEPAGE="https://www.blender.org"
 
-SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
+MY_PV="${PV}"
+SRC_URI="https://download.blender.org/source/blender-2.82a.tar.xz"
 
 # Blender can have letters in the version string,
 # so strip off the letter if it exists.
@@ -36,8 +37,9 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake
 # doc/python_api/requirements.txt
+# extern/Eigen3/eigen-update.sh
 RDEPEND="${PYTHON_DEPS}
-	>=dev-libs/boost-1.70:=[nls?,threads(+)]
+	>=dev-libs/boost-1.70.0:=[nls?,threads(+)]
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.17.0[${PYTHON_MULTI_USEDEP}]
@@ -52,7 +54,7 @@ RDEPEND="${PYTHON_DEPS}
 	virtual/jpeg:0=
 	virtual/libintl
 	virtual/opengl
-	collada? ( >=media-libs/opencollada-1.6.68:= )
+	collada? ( >=media-libs/opencollada-1.6.86:= )
 	color-management? ( >=media-libs/opencolorio-1.1.0 )
 	cuda? ( dev-util/nvidia-cuda-toolkit:= )
 	cycles? ( >=media-libs/embree-3.2.4 )
@@ -92,11 +94,12 @@ RDEPEND="${PYTHON_DEPS}
 	valgrind? ( dev-util/valgrind )"
 
 DEPEND="${RDEPEND}
-	>=dev-cpp/eigen-3.2.7:3
+	>=dev-cpp/eigen-3.3.7:3
 	virtual/pkgconfig
 	doc? (
 		app-doc/doxygen[dot]
 		>=dev-python/sphinx-1.8.5[latex]
+		>=dev-python/sphinx_rtd_theme-0.4.3
 		dev-texlive/texlive-bibtexextra
 		dev-texlive/texlive-fontsextra
 		dev-texlive/texlive-fontutils
@@ -122,7 +125,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-	ewarn "For testing purposes only."
+	ewarn "This ebuild is a Work In Progress (WIP) and all features may not work."
 	ewarn "To be removed ASAP once Gentoo portage ebuild are up to date."
 	ewarn "This ebuild may exhibit runtime failures."
 	blender_check_requirements
