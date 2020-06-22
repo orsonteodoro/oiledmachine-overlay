@@ -59,14 +59,13 @@ FFMPEG_V="3.2.4"
 ICU_V="54"
 OPENSSL_V="1.0.2t"
 QT_VERSION="5.5.1" # The version distributed with ${PN}
-INTERNAL_PV="7.3.3.7721"
 
 RDEPEND="
 	>=app-arch/bzip2-1.0.6
 	>=dev-db/sqlite-3.8.2:3
 	>=dev-lang/orc-0.4
-	>=dev-libs/glib-2.0:2
 	  dev-libs/double-conversion
+	>=dev-libs/glib-2.0:2
 	>=dev-libs/gmp-5.1.3
 	>=dev-libs/libbsd-0.6.0
 	>=dev-libs/libffi-3.0.13
@@ -145,14 +144,14 @@ pkg_setup() {
 		ewarn "Using system-expat has not been tested"
 	else
 		ewarn "The internal Expat ${EXPAT_V} library may contain CVE advisories.  For details see"
-		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=expat%202.1&search_type=all"
+		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=expat%20${EXPAT_V}&search_type=all"
 	fi
 
 	if use system-ffmpeg ; then
 		ewarn "Using system-ffmpeg has not been tested"
 	else
 		ewarn "The internal FFMpeg ${FFMPEG_V} may contain CVE advisories.  For details see"
-		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=ffmpeg%203.2&search_type=all"
+		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=ffmpeg%20$(ver_cut 1-2 ${FFMPEG_V})&search_type=all"
 	fi
 
 	if use system-gdal ; then
@@ -173,7 +172,7 @@ pkg_setup() {
 		ewarn "Using system-openssl has not been tested"
 	else
 		ewarn "The internal OpenSSL ${OPENSSL_V} contains known CVE advisories.  For details see"
-		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=openssl%201.0.2&search_type=all"
+		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=openssl%20$(ver_cut 1-3 ${OPENSSL_V})&search_type=all"
 	fi
 
 	if use system-qt5 ; then
@@ -292,7 +291,7 @@ src_unpack() {
 
 	X_SHA256=$(sha256sum "${DISTDIR}/${FN}" | cut -f 1 -d " ")
 	if [[ "${X_SHA256}" != "${EXPECTED_SHA256}" ]] ; then
-		die "sha256sum X_SHA256=${X_SHA256} (download) is not EXPECTED_SHA256=${EXPECTED_SHA256} for INTERNAL_PV=${INTERNAL_PV}"
+		die "sha256sum X_SHA256=${X_SHA256} (download) is not EXPECTED_SHA256=${EXPECTED_SHA256} for PV=${PV}"
 	fi
 
 	# default src_unpack fails with deb2targz installed, also this unpacks the data.tar.lzma as well
@@ -367,26 +366,15 @@ src_prepare() {
 
 	# Set RPATH for preserve-libs handling (bug #265372).
 	local x
-	for x in * ; do
+	for x in * plugins/*.so plugins/imageformats/*.so ; do
 		# Use \x7fELF header to separate ELF executables and libraries
 		[[ -f ${x} && $(od -t x1 -N 4 "${x}") == *"7f 45 4c 46"* ]] || continue
+		# prepare file permissions so that >patchelf-0.8 can work on the files
 		chmod u+w "${x}"
 		if [[ "${x}" =~ "libQt5Core.so.5" ]] ; then
 			continue
 		fi
 		patchelf --set-rpath '$ORIGIN' "${x}" ||
-			die "patchelf failed on ${x}"
-	done
-	# prepare file permissions so that >patchelf-0.8 can work on the files
-	chmod u+w plugins/*.so plugins/imageformats/*.so
-	for x in plugins/*.so ; do
-		[[ -f ${x} ]] || continue
-		patchelf --set-rpath '$ORIGIN/..' "${x}" ||
-			die "patchelf failed on ${x}"
-	done
-	for x in plugins/imageformats/*.so ; do
-		[[ -f ${x} ]] || continue
-		patchelf --set-rpath '$ORIGIN/../..' "${x}" ||
 			die "patchelf failed on ${x}"
 	done
 
