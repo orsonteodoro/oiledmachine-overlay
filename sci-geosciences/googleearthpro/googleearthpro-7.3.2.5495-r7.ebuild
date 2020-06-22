@@ -165,7 +165,7 @@ pkg_setup() {
 		ewarn "Using system-icu has not been tested"
 	else
 		ewarn "The internal ICU ${ICU_V} library contains known CVE advisories.  For details see"
-		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=International%20Components%20for%20Unicode%2054&search_type=all"
+		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=International%20Components%20for%20Unicode%20${ICU_V}&search_type=all"
 	fi
 
 	if use system-openssl ; then
