@@ -38,9 +38,9 @@ RDEPEND="cairo? ( >=x11-libs/cairo-1.2[${MULTILIB_USEDEP}] )
 	 png? ( >=media-libs/libpng-1.2.9:0=[${MULTILIB_USEDEP}] )
 	 poppler? ( app-text/poppler[cairo,introspection] )
 	 python? ( ${PYTHON_DEPS} )
-	 svg? ( gnome-base/librsvg[${MULTILIB_USEDEP}] )
+	 svg? ( >=gnome-base/librsvg-2.34[${MULTILIB_USEDEP}] )
 	 tiff? ( >=media-libs/tiff-4.0:0=[${MULTILIB_USEDEP}] )
-	 webp? ( >=media-libs/libwebp-0.6[${MULTILIB_USEDEP}] )
+	 webp? ( >=media-libs/libwebp-0.5[${MULTILIB_USEDEP}] )
 	 >=x11-libs/pango-1.8[${MULTILIB_USEDEP}]
 	 zlib? ( >=sys-libs/zlib-0.4[${MULTILIB_USEDEP}] )"
 DEPEND="dev-util/gtk-doc-am
