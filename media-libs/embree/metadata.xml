@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <!-- only in this ebuild fork on the oiledmachine-overlay -->
+  <maintainer type="project">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    You may define an alternative compiler with per-package environmental
+    variables for CC_ALT and CXX_ALT.
+
+    The compiler must be feature complete -std=c+++11.
+
+    The CPU must at a minimal support SSE2.
+  </longdescription>
+  <use>
+    <flag name="clang">Builds with the Clang compiler</flag>
+    <flag name="cpu_flags_x86_sse2">Sets the highest ISA to SSE2</flag>
+    <flag name="cpu_flags_x86_sse4_2">Sets the highest ISA to SSE4.2</flag>
+    <flag name="cpu_flags_x86_avx">Sets the highest ISA to AVX</flag>
+    <flag name="cpu_flags_x86_avx2">Sets the highest ISA to AVX2</flag>
+    <flag name="cpu_flags_x86_avx512knl">Sets the highest ISA to AVX-512 for
+      Xeon Phi / Knights Landing</flag>
+    <flag name="cpu_flags_x86_avx512skx">Sets the highest ISA to AVX-512 for
+      Skylake</flag>
+    <flag name="debug">Builds with debug symbols.</flag>
+    <flag name="doc">Installs the pre generated documents</flag>
+    <flag name="doc-files">Builds README.md, CHANGELOG.md, readme.pdf</flag>
+    <flag name="doc-html">Builds documentation as html pages</flag>
+    <flag name="doc-images">Builds documentation images</flag>
+    <flag name="doc-man">Builds man pages</flag>
+    <flag name="gcc">Builds with the GCC compiler</flag>
+    <flag name="icc">Builds with the Intel compiler</flag>
+    <flag name="ispc">Provides parallelized renderer</flag>
+    <flag name="raymask">Enables ray mask support.</flag>
+    <flag name="ssp">Builds with stack protection against return address
+      overrides</flag>
+    <flag name="static-libs">Builds as static-libs</flag>
+    <flag name="ttb">Prefer the Intel Threading TBB Building Blocks over the
+      internal as the tasking system.</flag>
+    <flag name="tutorials">Compiles and installs tutorial sources</flag>
+  </use>
+</pkgmetadata>
