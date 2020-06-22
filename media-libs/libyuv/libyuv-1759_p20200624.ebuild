@@ -18,7 +18,7 @@ DEPEND="${RDEPEND}
 	dev-util/cmake"
 SLOT="0/${PV}"
 inherit cmake-utils
-EGIT_COMMIT="86e4cdd91ff6061558550a548525e0a3a0cec6a8"
+EGIT_COMMIT="c5e45dcae58f5cb3eb893f8000c1de88a8fe3c4e"
 EGIT_REPO_URI="https://chromium.googlesource.com/libyuv/libyuv"
 FN_DEST="${P}.tar.gz"
 FN_SRC="${EGIT_COMMIT}.tar.gz"
