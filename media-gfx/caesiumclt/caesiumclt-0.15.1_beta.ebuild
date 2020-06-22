@@ -10,7 +10,7 @@ LICENSE="all-rights-reserved Apache-2.0 Unlicense BSD-2"
 # The licenses are for internal dependencies
 # optparse - Unlicense
 # tinydir - BSD-2
-# README.md, package - all-rights-reserved
+# README.md, package - all-rights-reserved (The vanilla Apache-2.0 doesn't have all rights reserved)
 EGIT_COMMIT="50952c1860f3dddfedca26ed311f483fdce6766d"
 GITHUB_HOMEPAGE="https://github.com/Lymphatus/caesium-clt"
 FN_DEST="${PN}-${EGIT_COMMIT}.zip"
@@ -22,7 +22,7 @@ inherit eutils cmake-utils
 SLOT="0/${PV}"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
-RDEPEND="media-libs/libcaesium:0/$(ver_cut 1-3 ${PV})"
+RDEPEND=">=media-libs/libcaesium-0.5.0"
 DEPEND="${RDEPEND}"
 RESTRICT="fetch mirror"
 S="${WORKDIR}/caesium-clt-${EGIT_COMMIT}"
