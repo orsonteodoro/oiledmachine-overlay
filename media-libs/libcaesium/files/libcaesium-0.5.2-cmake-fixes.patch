@@ -1,0 +1,52 @@
+diff -urp libcaesium-0.5.2.orig/caesium/CMakeLists.txt libcaesium-0.5.2/caesium/CMakeLists.txt
+--- libcaesium-0.5.2.orig/caesium/CMakeLists.txt	2020-02-28 06:09:56.000000000 -0800
++++ libcaesium-0.5.2/caesium/CMakeLists.txt	2020-06-21 19:55:38.547987712 -0700
+@@ -4,9 +4,9 @@ else ()
+     set(CMAKE_C_FLAGS "--std=gnu99 ${CMAKE_C_FLAGS}")
+ endif ()
+ 
+-find_library(jpeg jpeg ${MOZJPEG_PATH}/lib)
+-find_library(turbojpeg turbojpeg ${MOZJPEG_PATH}/lib)
+-find_library(zopflipng zopflipng ${ZOPFLI_PATH}/lib)
++find_library(jpeg jpeg ${MOZJPEG_PATH}/lib /usr/lib64 /usr/lib32)
++find_library(turbojpeg turbojpeg ${MOZJPEG_PATH}/lib /usr/lib64 /usr/lib32)
++find_library(zopflipng zopflipng ${ZOPFLI_PATH}/lib /usr/lib64 /usr/lib32)
+ 
+ add_library(caesium SHARED caesium.c error.c utils.c png.c vendor/lodepng.c jpeg.c)
+ 
+@@ -18,4 +18,4 @@ target_include_directories(caesium PUBLI
+ 
+ install(FILES caesium.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include)
+ install(TARGETS caesium
+-        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
++        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+diff -urp libcaesium-0.5.2.orig/CMakeLists.txt libcaesium-0.5.2/CMakeLists.txt
+--- libcaesium-0.5.2.orig/CMakeLists.txt	2020-02-28 06:09:56.000000000 -0800
++++ libcaesium-0.5.2/CMakeLists.txt	2020-06-21 19:54:12.494622955 -0700
+@@ -30,7 +30,7 @@ elseif (WIN32)
+     set(MOZJPEG_DEFAULT_PATH C:\\mozjpeg)
+     set(ZOPFLI_DEFAULT_PATH C:\\zopfli)
+ else ()
+-    set(MOZJPEG_DEFAULT_PATH /opt/mozjpeg)
++    set(MOZJPEG_DEFAULT_PATH /usr)
+     set(ZOPFLI_DEFAULT_PATH /usr)
+ endif ()
+ 
+@@ -43,15 +43,10 @@ if (NOT DEFINED ZOPFLI_PATH)
+     set(ZOPFLI_PATH ${ZOPFLI_DEFAULT_PATH})
+ endif()
+ 
+-include_directories(${MOZJPEG_PATH}/include)
++include_directories(${MOZJPEG_PATH}/include/libmozjpeg)
+ include_directories(${ZOPFLI_PATH}/include)
+ 
+-if (EXISTS ${MOZJPEG_PATH}/lib64)
+-    link_directories(${MOZJPEG_PATH}/lib64)
+-else ()
+-    link_directories(${MOZJPEG_PATH}/lib)
+-endif ()
+-link_directories(${ZOPFLI_PATH}/lib)
++link_directories(/usr/lib64 /usr/lib32)
+ 
+ add_subdirectory(caesium)
+ add_subdirectory(demo)
