@@ -207,7 +207,7 @@ src_compile() {
 	export TERM=linux # pretend to be outside of X
 
 	chmod +x gradlew
-	./gradlew shadowJar
+	./gradlew shadowJar || die
 }
 
 src_install() {
