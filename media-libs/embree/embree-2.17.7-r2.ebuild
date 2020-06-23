@@ -161,7 +161,8 @@ src_prepare() {
 	sed -e 's|CPACK_RPM_PACKAGE_RELEASE 1|CPACK_RPM_PACKAGE_RELEASE 0|' \
 		-i CMakeLists.txt || die
 	# change -O3 settings for various compilers
-	sed -e 's|-O3|-O2|' -i "${S}"/common/cmake/{clang,gcc,icc,ispc}.cmake || die
+	sed -e 's|-O3|-O2|' -i \
+		"${S}"/common/cmake/{clang,gcc,icc,ispc}.cmake || die
 }
 
 src_configure() {
@@ -262,6 +263,7 @@ src_install() {
 
 pkg_postinst() {
 	if use tutorials ; then
-		einfo "The tutorial sources have been installed at /usr/share/${PN}/tutorials"
+		einfo \
+"The tutorial sources have been installed at /usr/share/${PN}/tutorials"
 	fi
 }
