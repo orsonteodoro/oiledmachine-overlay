@@ -235,4 +235,6 @@ Run 'wmname LG3D' before you run '${PN}'"
 		ewarn "OpenCL support is not officially supported for Linux."
 		ewarn "For details see, https://github.com/laurent-clouet/sheepit-client/issues/165"
 	fi
+	einfo "Don't forget to add your user account to the video group."
+	einfo "This can be done with: \`gpasswd -a USERNAME video\`"
 }
