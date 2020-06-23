@@ -214,7 +214,9 @@ src_install() {
 	insinto /usr/share/${PN}
 	doins build/libs/sheepit-client-all.jar
 	exeinto /usr/bin
-	doexe "${FILESDIR}/sheepit-client"
+	cat "${FILESDIR}/sheepit-client-v2" \
+		> "${T}/sheepit-client"
+	doexe "${T}/sheepit-client"
 }
 
 pkg_postinst() {

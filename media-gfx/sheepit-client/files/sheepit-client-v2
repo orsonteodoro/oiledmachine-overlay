@@ -1,0 +1,40 @@
+#!/bin/bash
+
+function exit_error() {
+	local msg="${1}"
+	if [[ -z "${DISPLAY}" ]] ; then
+		if which zenity >/dev/null ; then
+			zenity --error --text="${msg}"
+		elif which kdialog >/dev/null ; then
+			kdialog --msgbox "${msg}"
+		else
+			echo "${msg}"
+		fi
+	else
+		echo "${msg}"
+	fi
+	exit 1
+}
+
+groups | grep video > /dev/null
+if [[ "$?" != "0" ]] ; then
+	exit_error "User must be in the video group"
+fi
+
+if which wmname >/dev/null ; then
+	wmname LG3D
+fi
+
+if [[ -d "/tmp/sheepit_binary_cache" ]] ; then
+	echo "Removing /tmp/sheepit_binary_cache"
+	rm -rf "/tmp/sheepit_binary_cache"
+	if [[ -d "/tmp/sheepit_binary_cache" ]] ; then
+		local u=$(stat -c "%U" /tmp/sheepit_binary_cache)
+		local g=$(stat -c "%U" /tmp/sheepit_binary_cache)
+		exit_error \
+"/tmp/sheepit_binary_cache still exists with owner=${u} group=${g}.  Ask ${u} \
+to remove it."
+	fi
+fi
+
+java -jar /usr/share/sheepit-client/sheepit-client-all.jar $*
