@@ -13,18 +13,49 @@ LICENSE="Apache-2.0
 KEYWORDS="~amd64 ~x86"
 SRC_URI="https://github.com/embree/embree/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 SLOT="2"
-X86_CPU_FLAGS=( sse2:sse2 sse4_2:sse4_2 avx:avx avx2:avx2 avx512knl:avx512knl avx512skx:avx512skx )
+X86_CPU_FLAGS=( sse2:sse2 sse4_2:sse4_2 avx:avx avx2:avx2 avx512knl:avx512knl \
+avx512skx:avx512skx )
 CPU_FLAGS=( ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_} )
-IUSE="clang debug doc gcc icc ispc raymask -ssp static-libs +tbb tutorials ${CPU_FLAGS[@]%:*}"
+IUSE="clang debug doc gcc icc ispc raymask -ssp static-libs +tbb tutorials \
+${CPU_FLAGS[@]%:*}"
 REQUIRED_USE="^^ ( clang gcc icc )"
-# It needs c++11
-# avx512 appears in 4.9
-MIN_CLANG_V="3.3"
-MIN_GCC_V="4.8.1"
-MIN_ICC_V="15.0"
-BDEPEND="clang? ( >=sys-devel/clang-${MIN_CLANG_V} )
-	 gcc? ( >=sys-devel/gcc-${MIN_GCC_V} )
-	 icc? ( >=sys-devel/icc-${MIN_ICC_V} )
+MIN_CLANG_V="3.3" # for c++11
+MIN_CLANG_V_AVX512KNL="3.4" # for -march=knl
+MIN_CLANG_V_AVX512SKX="3.6" # for -march=skx
+MIN_GCC_V="4.8.1" # for c++11
+MIN_GCC_V_AVX512KNL="4.9.1" # for -mavx512er
+MIN_GCC_V_AVX512SKX="5.1.0" # for -mavx512vl
+MIN_ICC_V="15.0" # for c++11
+MIN_ICC_V_AVX512KNL="14.0.1" # for -xMIC-AVX512
+MIN_ICC_V_AVX512SKX="15.0.1" # for -xCORE-AVX512
+# 15.0.1 -xCOMMON-AVX512
+BDEPEND="clang? (
+		>=sys-devel/clang-${MIN_CLANG_V}
+		cpu_flags_x86_avx512knl? (
+			>=sys-devel/clang-${MIN_CLANG_V_AVX512KNL}
+		)
+		cpu_flags_x86_avx512skx? (
+			>=sys-devel/clang-${MIN_CLANG_V_AVX512SKX}
+		)
+	 )
+	 gcc? (
+		>=sys-devel/gcc-${MIN_GCC_V}
+		cpu_flags_x86_avx512knl? (
+			>=sys-devel/gcc-${MIN_GCC_V_AVX512KNL}
+		)
+		cpu_flags_x86_avx512skx? (
+			>=sys-devel/gcc-${MIN_GCC_V_AVX512SKX}
+		)
+	 )
+	 icc? (
+		>=sys-devel/icc-${MIN_ICC_V}
+		cpu_flags_x86_avx512knl? (
+			>=sys-devel/icc-${MIN_ICC_V_AVX512KNL}
+		)
+		cpu_flags_x86_avx512skx? (
+			>=sys-devel/icc-${MIN_ICC_V_AVX512SKX}
+		)
+	 )
 	 virtual/pkgconfig"
 RDEPEND=">=dev-util/cmake-2.8.11
 	 ispc? ( >=dev-lang/ispc-1.8.2 )
@@ -41,7 +72,9 @@ CMAKE_BUILD_TYPE=Release
 pkg_setup() {
 	export CMAKE_BUILD_TYPE=$(usex debug "RelWithDebInfo" "Release")
 	CONFIG_CHECK="~TRANSPARENT_HUGEPAGE"
-	WARNING_TRANSPARENT_HUGEPAGE="Not enabling Transparent Hugepages (CONFIG_TRANSPARENT_HUGEPAGE) will impact rendering performance."
+	WARNING_TRANSPARENT_HUGEPAGE=\
+"Not enabling Transparent Hugepages (CONFIG_TRANSPARENT_HUGEPAGE) will \n\
+impact rendering performance."
 	linux-info_pkg_setup
 
 	if ! ( cat /proc/cpuinfo | grep sse2 > /dev/null ) ; then
@@ -52,21 +85,66 @@ pkg_setup() {
 	if use clang ; then
 		export CC=clang
 		export CXX=clang++
-		if ver_test $(clang-fullversion) -lt ${MIN_CLANG_V} ; then
-			die "You need to switch your Clang compiler to at least ${MIN_CLANG_V} or higher."
+		local cc_v=$(clang-fullversion)
+		if ver_test ${cc_v} -lt ${MIN_CLANG_V} ; then
+			die \
+"You need to switch your Clang compiler to at least ${MIN_CLANG_V} or higher \n\
+for c++11 support."
+		fi
+		if ver_test ${cc_v} -lt ${MIN_CLANG_V_AVX512KNL} \
+			&& use cpu_flags_x86_avx512knl ; then
+			die \
+"You need to switch your Clang compiler to at least ${MIN_CLANG_V_AVX512KNL} \n\
+or higher for AVX512-KNL support."
+		fi
+		if ver_test ${cc_v} -lt ${MIN_CLANG_V_AVX512SKX} \
+			&& use cpu_flags_x86_avx512skx ; then
+			die \
+"You need to switch your Clang compiler to at least ${MIN_CLANG_V_AVX512SKX} \n\
+or higher for AVX512-SKX support."
 		fi
 	elif use icc ; then
 		export CC=icc
 		export CXX=icpc
-		if ver_test $(icpc --version | head -n 1 | cut -f 3 -d " ") -lt ${MIN_ICC_V} ; then
-			die "You need to switch your icc compiler to at least ${MIN_ICC_V} or higher."
+		local cc_v=$(icpc --version | head -n 1 | cut -f 3 -d " ")
+		if ver_test ${cc_v} -lt ${MIN_ICC_V} ; then
+			die \
+"You need to switch your icc compiler to at least ${MIN_ICC_V} or higher \n\
+for c++11 support."
+		fi
+		if ver_test ${cc_v} -lt ${MIN_ICC_V_AVX512KNL} \
+			&& use cpu_flags_x86_avx512knl ; then
+			die \
+"You need to switch your icc compiler to at least ${MIN_ICC_V_AVX512KNL} or \n\
+higher for AVX512-KNL support."
+		fi
+		if ver_test ${cc_v} -lt ${MIN_ICC_V_AVX512SKX} \
+			&& use cpu_flags_x86_avx512skx ; then
+			die \
+"You need to switch your icc compiler to at least ${MIN_ICC_V_AVX512SKX} or \n\
+higher for AVX512-SKX support."
 		fi
 	else
 		export CC=${CC_ALT:-gcc}
 		export CXX=${CXX_ALT:-g++}
 		if tc-is-gcc ; then
-			if ver_test $(gcc-fullversion) -lt ${MIN_GCC_V} ; then
-				die "You need to switch your GCC compiler to at least ${MIN_GCC_V} or higher."
+			local cc_v=$(gcc-fullversion)
+			if ver_test ${cc_v} -lt ${MIN_GCC_V} ; then
+				die \
+"You need to switch your GCC compiler to at least ${MIN_GCC_V} or higher \n\
+for c++11 support."
+			fi
+			if ver_test ${cc_v} -lt ${MIN_GCC_V_AVX512KNL} \
+				&& use cpu_flags_x86_avx512knl ; then
+				die \
+"You need to switch your GCC compiler to at least ${MIN_GCC_V_AVX512KNL} or \n\
+higher for AVX512-KNL support."
+			fi
+			if ver_test ${cc_v} -lt ${MIN_GCC_V_AVX512SKX} \
+				&& use cpu_flags_x86_avx512skx ; then
+				die \
+"You need to switch your GCC compiler to at least ${MIN_GCC_V_AVX512SKX} or \n\
+higher for AVX512-SKL support."
 			fi
 		else
 			ewarn "Unrecognized compiler"
