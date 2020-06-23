@@ -231,4 +231,8 @@ no buttons or input boxes, you need to:\n\
   emerge wmname\n\
   wmname LG3D\n\
 Run 'wmname LG3D' before you run '${PN}'"
+	if use opencl ; then
+		ewarn "OpenCL support is not officially supported for Linux."
+		ewarn "For details see, https://github.com/laurent-clouet/sheepit-client/issues/165"
+	fi
 }
