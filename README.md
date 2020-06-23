@@ -184,6 +184,7 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | media-plugins/bitlbee-facebook | TBA |
 | media-plugins/gimp-dds | TBA |
 | media-plugins/gst-plugins-omx | TBA |
+| media-plugins/sheepit-client | A CPU and/or GPU render farm client with Blender support. |
 | media-sound/puddletag | This is a mp3 metatag editor.  Autosaves edits and doesn't need to be explicity be told to save.  This is the PyQt5 version.  |
 | media-sound/tizonia | This is both a command line media player and an OpenMAX library.
 | media-sound/w3crapcli-lastfm | These are shell scripts to allow for Last.fm support for mpv.  This one was modified a bit for Last.fm 2.0 API.  You need your own an developer API key from last fm to use it.  It has last played support as well.  The one on w3crapcli Github repository uses an external bloated dependency. |
