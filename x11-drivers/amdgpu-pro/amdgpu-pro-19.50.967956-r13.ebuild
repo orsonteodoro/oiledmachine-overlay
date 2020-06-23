@@ -531,9 +531,9 @@ src_install() {
 				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/vdpau/"*.so* || die
 			fi
 			if use developer ; then
-				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-9.0/lib/"*.so* || die
-				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-9.0/bin/"* || die
-				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-9.0/share/opt-viewer/"*.py || die
+				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-${PKG_VER_LLVM}/lib/"*.so* || die
+				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-${PKG_VER_LLVM}/bin/"* || die
+				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/llvm-${PKG_VER_LLVM}/share/opt-viewer/"*.py || die
 			fi
 			if use open-stack && use X ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib${b}/xorg/modules/drivers/"*.so* || die
