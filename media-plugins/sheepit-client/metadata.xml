@@ -5,6 +5,14 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <longdescription>
+    You need an account from https://www.sheepit-renderfarm.com to use this
+    product.
+
+    At the time of this writing (Jun 6, 2020), it will download Blender 2.82
+    (with hash 77d23b0bd76f built 2020-02-12 17:14:50) and use the Cycles
+    renderer if using OpenCL GPU rendering.
+  </longdescription>
   <upstream>
     <bugs-to>https://github.com/laurent-clouet/sheepit-client/issues</bugs-to>
     <doc lang="en">
