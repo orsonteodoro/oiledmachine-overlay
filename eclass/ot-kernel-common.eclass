@@ -178,10 +178,10 @@ fi
 GRAYSKY_URL_BASE=\
 "https://raw.githubusercontent.com/graysky2/kernel_gcc_patch/master/"
 if [[ -n "${GRAYSKY_DL_4_9_FN}" ]] ; then
-GRAYSKY_SRC_4_9_URL="${GRAYSKY_URL_BASE}/outdated/${GRAYSKY_DL_4_9_FN}"
+GRAYSKY_SRC_4_9_URL="${GRAYSKY_URL_BASE}/outdated_versions/${GRAYSKY_DL_4_9_FN}"
 fi
 if [[ -n "${GRAYSKY_DL_8_1_FN}" ]] ; then
-GRAYSKY_SRC_8_1_URL="${GRAYSKY_URL_BASE}${GRAYSKY_DL_8_1_FN}"
+GRAYSKY_SRC_8_1_URL="${GRAYSKY_URL_BASE}/outdated_versions/${GRAYSKY_DL_8_1_FN}"
 fi
 if [[ -n "${GRAYSKY_DL_9_1_FN}" ]] ; then
 GRAYSKY_SRC_9_1_URL="${GRAYSKY_URL_BASE}${GRAYSKY_DL_9_1_FN}"
