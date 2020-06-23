@@ -162,6 +162,7 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | media-gfx/caesiumclt | This is a command line image compressor for PNG and JPEG files. |
 | media-gfx/mojoshader | For urho3d shader support. |
 | media-gfx/nvidia-texture-tools | This one builds the C# language binding and nvtt native library required for MonoGame.  You need to install this one from the repository for MonoGame to compile correctly.  This ebuild generates Nvidia.TextureTools.dll per each vc{10,8,9,12,monogame} because upstream don't delete one of them so a consumer may depend on the old one.  You need to enable the `monogame` USE flag to generate the proper older Nvidia.TextureTools.dll. |
+| media-gfx/sheepit-client | A CPU and/or GPU render farm client with Blender support using the Cycles renderer. |
 | media-libs/glfw | TBA |
 | media-libs/libcaca | This library contains an experimental special 256 color patch from Ben Wiley Sittler.  I don't know if the patch actually works from emperical tests.  Maybe it is just me or I forward patched it wrong.  I use the experimental 256 color for facy to render Facebook photos, animated GIFs, and Facebook videos to try to better render skin color.  I still think Termpic colors rendering is better. |
 | media-libs/libcaesium | For caesium image compression. |
@@ -184,7 +185,6 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | media-plugins/bitlbee-facebook | TBA |
 | media-plugins/gimp-dds | TBA |
 | media-plugins/gst-plugins-omx | TBA |
-| media-plugins/sheepit-client | A CPU and/or GPU render farm client with Blender support using the Cycles renderer. |
 | media-sound/puddletag | This is a mp3 metatag editor.  Autosaves edits and doesn't need to be explicity be told to save.  This is the PyQt5 version.  |
 | media-sound/tizonia | This is both a command line media player and an OpenMAX library.
 | media-sound/w3crapcli-lastfm | These are shell scripts to allow for Last.fm support for mpv.  This one was modified a bit for Last.fm 2.0 API.  You need your own an developer API key from last fm to use it.  It has last played support as well.  The one on w3crapcli Github repository uses an external bloated dependency. |
