@@ -82,6 +82,12 @@ DOCS=( CHANGELOG.md README.md readme.pdf )
 CMAKE_BUILD_TYPE=Release
 PATCHES=( "${FILESDIR}/${PN}-3.10.0-tutorials-oiio-unique_ptr-to-auto.patch" )
 
+chcxx() {
+	die \
+"You need to switch your ${1} compiler to at least ${2} or higher \n\
+for ${3} support."
+}
+
 pkg_setup() {
 	export CMAKE_BUILD_TYPE=$(usex debug "RelWithDebInfo" "Release")
 	CONFIG_CHECK="~TRANSPARENT_HUGEPAGE"
@@ -100,42 +106,30 @@ impact rendering performance."
 		export CXX=clang++
 		local cc_v=$(clang-fullversion)
 		if ver_test ${cc_v} -lt ${MIN_CLANG_V} ; then
-			die \
-"You need to switch your Clang compiler to at least ${MIN_CLANG_V} or higher \n\
-for c++11 support."
+			chcxx "Clang" "${MIN_CLANG_V}" "c++11"
 		fi
 		if ver_test ${cc_v} -lt ${MIN_CLANG_V_AVX512KNL} \
 			&& use cpu_flags_x86_avx512knl ; then
-			die \
-"You need to switch your Clang compiler to at least ${MIN_CLANG_V_AVX512KNL} \n\
-or higher for AVX512-KNL support."
+			chcxx "Clang" "${MIN_CLANG_V_AVX512KNL}" "AVX512-KNL"
 		fi
 		if ver_test ${cc_v} -lt ${MIN_CLANG_V_AVX512SKX} \
 			&& use cpu_flags_x86_avx512skx ; then
-			die \
-"You need to switch your Clang compiler to at least ${MIN_CLANG_V_AVX512SKX} \n\
-or higher for AVX512-SKX support."
+			chcxx "Clang" "${MIN_CLANG_V_AVX512SKX}" "AVX512-SKX"
 		fi
 	elif use icc ; then
 		export CC=icc
 		export CXX=icpc
 		local cc_v=$(icpc --version | head -n 1 | cut -f 3 -d " ")
 		if ver_test ${cc_v} -lt ${MIN_ICC_V} ; then
-			die \
-"You need to switch your icc compiler to at least ${MIN_ICC_V} or higher \n\
-for c++11 support."
+			chcxx "icc" "${MIN_ICC_V}" "c++11"
 		fi
 		if ver_test ${cc_v} -lt ${MIN_ICC_V_AVX512KNL} \
 			&& use cpu_flags_x86_avx512knl ; then
-			die \
-"You need to switch your icc compiler to at least ${MIN_ICC_V_AVX512KNL} or \n\
-higher for AVX512-KNL support."
+			chcxx "icc" "${MIN_ICC_V_AVX512KNL}" "AVX512-KNL"
 		fi
 		if ver_test ${cc_v} -lt ${MIN_ICC_V_AVX512SKX} \
 			&& use cpu_flags_x86_avx512skx ; then
-			die \
-"You need to switch your icc compiler to at least ${MIN_ICC_V_AVX512SKX} or \n\
-higher for AVX512-SKX support."
+			chcxx "icc" "${MIN_ICC_V_AVX512SKX}" "AVX512-SKX"
 		fi
 	else
 		export CC=${CC_ALT:-gcc}
@@ -143,21 +137,15 @@ higher for AVX512-SKX support."
 		if tc-is-gcc ; then
 			local cc_v=$(gcc-fullversion)
 			if ver_test ${cc_v} -lt ${MIN_GCC_V} ; then
-				die \
-"You need to switch your GCC compiler to at least ${MIN_GCC_V} or higher \n\
-for c++11 support."
+				chcxx "GCC" "${MIN_GCC_V}" "c++11"
 			fi
 			if ver_test ${cc_v} -lt ${MIN_GCC_V_AVX512KNL} \
 				&& use cpu_flags_x86_avx512knl ; then
-				die \
-"You need to switch your GCC compiler to at least ${MIN_GCC_V_AVX512KNL} or \n\
-higher for AVX512-KNL support."
+				chcxx "GCC" "${MIN_GCC_V_AVX512KNL}" "AVX512-KNL"
 			fi
 			if ver_test ${cc_v} -lt ${MIN_GCC_V_AVX512SKX} \
 				&& use cpu_flags_x86_avx512skx ; then
-				die \
-"You need to switch your GCC compiler to at least ${MIN_GCC_V_AVX512SKX} or \n\
-higher for AVX512-SKL support."
+				chcxx "GCC" "${MIN_GCC_V_AVX512SKX}" "AVX512-SKX"
 			fi
 		else
 			ewarn "Unrecognized compiler"
