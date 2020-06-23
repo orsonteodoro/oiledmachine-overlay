@@ -477,4 +477,7 @@ pkg_postinst() {
 	einfo "The Full Spectrum Rendering (FSR) modes Low, Medium, High require the vulkan USE flag.  For details, see"
 	einfo "https://radeon-pro.github.io/RadeonProRenderDocs/plugins/blender/full_spectrum_rendering.html"
 	einfo
+	einfo "Don't forget to add your user account to the video group."
+	einfo "This can be done with: \`gpasswd -a USERNAME video\`"
+	einfo
 }
