@@ -12,14 +12,15 @@ LICENSE="AMDGPUPROEULA
 		egl? ( developer? ( BSD MIT ) MIT )
 		gles2? ( MIT developer? ( Apache-2.0 MIT ) )
 		opengl? ( MIT SGI-B-2.0 )
-		opengl_mesa? ( MIT )
-		osmesa? ( MIT )
+		opengl_mesa? ( all-rights-reserved MIT SGI-B-2.0 )
+		osmesa? ( all-rights-reserved MIT )
 		vaapi? ( MIT )
 		vdpau? ( MIT )
 		vulkan_open? ( MIT )
 		wayland? ( MIT )
 		xa? ( MIT )
 		developer? ( Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD-2 BSD ) UoI-NCSA
+		developer? ( opengl_mesa? ( all-rights-reserved MIT ) )
 		MIT
 	)
 	pro-stack? (
@@ -38,13 +39,14 @@ LICENSE="AMDGPUPROEULA
 		vulkan_pro? ( AMDGPUPROEULA )
 	)
 	X? ( MIT )"
+# eglextchromium.h - BSD
 # gbm - MIT
 # libdrm - MIT
 # libglapi-amdgpu - MIT
 # libglapi-amdgpu-pro - AMDGPUPROEULA
 # llvm - developer? ( Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD-2 ) UoI-NCSA
 #   xxhash.h - BSD-2
-# eglextchromium.h - BSD
+# Mesa - MIT all-rights-reserved SGI-B-2.0 # there is no all rights reserved in the vanilla MIT license
 # xorg-x11-amdgpu-drv-amdgpu - MIT
 KEYWORDS="~amd64 ~x86"
 MULTILIB_COMPAT=( abi_x86_{32,64} )
