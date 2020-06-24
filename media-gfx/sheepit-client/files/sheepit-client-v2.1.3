@@ -27,37 +27,18 @@ fi
 
 d="${HOME}/.cache/sheepit-client"
 
-d2="${d}/sheepit"
-if [[ -d "${d2}" ]] ; then
-	for f in $(find "${d2}" -type f) ; do
-		md5_x=$(md5sum "${f}" | cut -f 1 -d " ")
-		md5_expected=$(basename "${f}" | cut -f 1 -d '.')
-		echo "${f} : md5_x=${md5_x} md5_expected=${md5_expected}"
-		if [[ "${md5_x}" != "${md5_expected}" ]] ; then
-			echo "Removing corrupt file ${f}"
-			rm "${f}"
-		fi
-		if [[ -f "${f}" && $(stat -c "%U") != "${USER}" ]] ; then
-			exit_error "You must remove ${f} with root."
-		fi
-	done
-fi
-
-d2="${d}/sheepit_binary_cache"
-if [[ -d "${d2}" ]] ; then
-	for f in $(find "${d2}" -type f) ; do
-		md5_x=$(md5sum "${f}" | cut -f 1 -d " ")
-		md5_expected=$(basename "${f}" | cut -f 1 -d '.')
-		echo "${f} : md5_x=${md5_x} md5_expected=${md5_expected}"
-		if [[ "${md5_x}" != "${md5_expected}" ]] ; then
-			echo "Removing corrupt file ${f}"
-			rm "${f}"
-		fi
-		if [[ -f "${f}" && $(stat -c "%U") != "${USER}" ]] ; then
-			exit_error "You must remove ${f} with root."
-		fi
-	done
-fi
+for f in $(find "${d}"/{sheepit,sheepit_binary_cache} -type f) ; do
+	md5_x=$(md5sum "${f}" | cut -f 1 -d " ")
+	md5_expected=$(basename "${f}" | cut -f 1 -d '.')
+	echo "${f} : md5_x=${md5_x} md5_expected=${md5_expected}"
+	if [[ "${md5_x}" != "${md5_expected}" ]] ; then
+		echo "Removing corrupt file ${f}"
+		rm "${f}"
+	fi
+	if [[ -f "${f}" && $(stat -c "%U") != "${USER}" ]] ; then
+		exit_error "You must remove ${f} with root."
+	fi
+done
 
 mkdir -p "${d}"
 java -jar /usr/share/sheepit-client/sheepit-client-all.jar -cache-dir "${d}" $*
