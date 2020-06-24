@@ -12,7 +12,10 @@
     The list of Blender versions supported can be found at:
     https://www.sheepit-renderfarm.com/index.php?show=binaries
 
-    For Blender, it use the Cycles renderer if using OpenCL GPU rendering.
+    For Blender, it can use Internal, Eevee, or Cycles renderer.
+
+    Project requirements can be found at:
+    https://www.sheepit-renderfarm.com/getstarted.php
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/laurent-clouet/sheepit-client/issues</bugs-to>
