@@ -34,7 +34,7 @@ video_cards_radeonsi"
 REQUIRED_USE="^^ ( cuda opencl )"
 
 #Blender 2.82 (sub 7) hash 77d23b0bd76f
-RDEPEND_BLENDER282="
+RDEPEND_BLENDER="
 	dev-libs/expat
 	sys-libs/glibc
 	dev-libs/libbsd
@@ -55,7 +55,7 @@ RDEPEND_BLENDER282="
 	x11-libs/libxshmfence
 "
 
-RDEPEND="${RDEPEND_BLENDER282}
+RDEPEND="${RDEPEND_BLENDER}
 	opencl? (
 	intel-ocl? ( dev-util/intel-ocl-sdk )
 	|| (
