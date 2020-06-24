@@ -27,16 +27,17 @@ fi
 
 d="${HOME}/.cache/sheepit-client"
 
-d2="${d}/sheepit-client/sheepit"
+d2="${d}/sheepit"
 if [[ -d "${d2}" ]] ; then
-	for f in $(find ${d} -type f) ; do
-		_md5_x=$(md5sum "${f}" | cut -f 1 -d " ")
-		_md5_expected=$(basename "${f}" | cut -f 1 -d '.')
-		if [[ ${md5_x} != ${md5_expected} ]] ; then
+	for f in $(find "${d2}" -type f) ; do
+		md5_x=$(md5sum "${f}" | cut -f 1 -d " ")
+		md5_expected=$(basename "${f}" | cut -f 1 -d '.')
+		echo "${f} : md5_x=${_md5_x} md5_expected=${_md5_expected}"
+		if [[ "${md5_x}" != "${md5_expected}" ]] ; then
 			echo "Removing corrupt file ${f}"
-			rm ${f}
+			rm "${f}"
 		fi
-		if [[ $(stat -c "%U") != "${USER}" ]] ; then
+		if [[ -f "${f}" && $(stat -c "%U") != "${USER}" ]] ; then
 			exit_error "You must remove ${f} with root."
 		fi
 	done
@@ -44,14 +45,15 @@ fi
 
 d2="${d}/sheepit_binary_cache"
 if [[ -d "${d2}" ]] ; then
-	for f in $(find ${d} -type f) ; do
-		_md5_x=$(md5sum "${f}" | cut -f 1 -d " ")
-		_md5_expected=$(basename "${f}" | cut -f 1 -d '.')
-		if [[ ${md5_x} != ${md5_expected} ]] ; then
+	for f in $(find "${d2}" -type f) ; do
+		md5_x=$(md5sum "${f}" | cut -f 1 -d " ")
+		md5_expected=$(basename "${f}" | cut -f 1 -d '.')
+		echo "${f} : md5_x=${_md5_x} md5_expected=${_md5_expected}"
+		if [[ "${md5_x}" != "${md5_expected}" ]] ; then
 			echo "Removing corrupt file ${f}"
-			rm ${f}
+			rm "${f}"
 		fi
-		if [[ $(stat -c "%U") != "${USER}" ]] ; then
+		if [[ -f "${f}" && $(stat -c "%U") != "${USER}" ]] ; then
 			exit_error "You must remove ${f} with root."
 		fi
 	done
