@@ -33,7 +33,33 @@ video_cards_amdgpu video_cards_i965 video_cards_iris video_cards_nvidia \
 video_cards_radeonsi"
 REQUIRED_USE="^^ ( cuda opencl )"
 
-# For Blender 2.79-2.83
+# This maybe required for filmic
+# todo inspect via ldd
+RDEPEND_BLENDER_SHEEPIT_BLENDER="
+media-libs/openimageio
+"
+
+# Additional libraries referenced in 2.82
+RDEPEND_BLENDER_SHEEPIT="
+sys-apps/dbus
+sys-apps/util-linux
+media-libs/alsa-lib
+media-libs/flac
+media-libs/libogg
+media-libs/libsndfile
+media-libs/libvorbis
+media-libs/opus
+media-sound/pulseaudio
+net-libs/libasyncns
+sys-apps/tcp-wrappers
+sys-libs/ncurses-compat[tinfo]
+sys-libs/slang
+x11-libs/libICE
+x11-libs/libSM
+x11-libs/libXtst
+"
+
+# For vanilla Blender 2.79-2.83
 RDEPEND_BLENDER="
 	dev-libs/expat
 	sys-libs/glibc
@@ -56,6 +82,8 @@ RDEPEND_BLENDER="
 "
 
 RDEPEND="${RDEPEND_BLENDER}
+	${RDEPEND_BLENDER_SHEEPIT}
+	${RDEPEND_BLENDER_SHEEPIT_BLENDER}
 	opencl? (
 	intel-ocl? ( dev-util/intel-ocl-sdk )
 	|| (
