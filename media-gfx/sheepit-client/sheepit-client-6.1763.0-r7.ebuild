@@ -41,7 +41,6 @@ RDEPEND_BLENDER="
 	media-libs/mesa
 	sys-devel/gcc[cxx]
 	sys-libs/zlib
-	virtual/opengl
 	x11-libs/libdrm
 	x11-libs/libX11
 	x11-libs/libXau
