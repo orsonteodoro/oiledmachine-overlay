@@ -37,7 +37,7 @@ REQUIRED_USE="^^ ( cuda opencl )"
 
 # This maybe required for filmic
 # todo inspect via ldd
-RDEPEND_BLENDER_SHEEPIT_BLENDER="
+RDEPEND_BLENDER_SHEEPIT_OIIO="
 media-libs/openimageio
 "
 
@@ -85,7 +85,7 @@ RDEPEND_BLENDER="
 
 RDEPEND="${RDEPEND_BLENDER}
 	${RDEPEND_BLENDER_SHEEPIT}
-	${RDEPEND_BLENDER_SHEEPIT_BLENDER}
+	${RDEPEND_BLENDER_SHEEPIT_OIIO}
 	opencl? (
 	intel-ocl? ( dev-util/intel-ocl-sdk )
 	|| (
