@@ -11,10 +11,10 @@ BitstreamVera
 Boost-1.0
 BSD
 BSD-2
-CC0
+CC0-1.0
 GPL-2
 GPL-2-with-font-exception
-GPL-2.1
+LGPL-2.1
 GPL-3
 GPL-3-with-font-exception
 MIT
@@ -25,6 +25,8 @@ PSF-2.4
 # are licenses files and references in readmes in Blender 2.79b, 2.82, 2.83.
 # The licenses in the first line are those that were found in
 # sheepit-client sources.
+# In LICENSE-droidsans.ttf.txt at line 49 in Blender 2.82, it mentions GPL-2.1+.
+# It should be LGPL-2.1+.
 KEYWORDS="~amd64"
 SLOT="0"
 IUSE="cuda doc intel-ocl lts +opencl opencl_rocm opencl_orca \
