@@ -215,14 +215,14 @@ src_install() {
 	doins build/libs/sheepit-client-all.jar
 	exeinto /usr/bin
 	cat "${FILESDIR}/sheepit-client-v2.0.2" \
-		> "${T}/sheepit-client"
+		> "${T}/sheepit-client" || die
 	doexe "${T}/sheepit-client"
 }
 
 pkg_postinst() {
 	if [[ -d "${EROOT}/tmp/sheepit_binary_cache" ]] ; then
 		ewarn "Found ${EROOT}/tmp/sheepit_binary_cache.  Removing it."
-		rm -rf "${EROOT}/tmp/sheepit_binary_cache"
+		rm -rf "${EROOT}/tmp/sheepit_binary_cache" || die
 	fi
 	einfo \
 "You need an account from https://www.sheepit-renderfarm.com/ to use this \n\
