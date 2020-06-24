@@ -46,16 +46,19 @@ LICENSE="AMDGPUPROEULA
 		roct? ( MIT )
 		vulkan_pro? ( AMDGPUPROEULA )
 	)
-	X? ( MIT )"
+	X? ( MIT all-rights-reserved )"
 # eglextchromium.h - BSD
 # gbm - MIT
 # libdrm - MIT
-# libglapi-amdgpu - MIT
+# libglapi-amdgpu - MIT all-rights-reserved ; See [1]. The X USE flag unpacks mesa-amdgpu-libglapi.
 # libglapi-amdgpu-pro - AMDGPUPROEULA
 # llvm - developer? ( Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD-2 ) UoI-NCSA
 #   xxhash.h - BSD-2
-# Mesa - MIT all-rights-reserved SGI-B-2.0 # there is no all rights reserved in the vanilla MIT license
+# Mesa - MIT all-rights-reserved SGI-B-2.0 # See [1].
 # xorg-x11-amdgpu-drv-amdgpu - MIT
+#
+# Footnote
+# [1] There is no all rights reserved in the vanilla MIT license.
 KEYWORDS="~amd64 ~x86"
 MULTILIB_COMPAT=( abi_x86_{32,64} )
 inherit check-reqs linux-info multilib-build unpacker
