@@ -38,6 +38,7 @@ RDEPEND_BLENDER="
 	dev-libs/expat
 	sys-libs/glibc
 	dev-libs/libbsd
+	media-libs/mesa
 	sys-devel/gcc[cxx]
 	sys-libs/zlib
 	virtual/opengl
