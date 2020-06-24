@@ -16,6 +16,11 @@
 
     Project requirements can be found at:
     https://www.sheepit-renderfarm.com/getstarted.php
+
+    No server software was released.  Information about implementation
+    of the protocol can be found in the protocol.txt file.  This is important
+    for those wanting to port to other architectures.  The client allows you
+    to switch to a custom renderfarm.
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/laurent-clouet/sheepit-client/issues</bugs-to>
@@ -24,6 +29,8 @@
     </doc>
   </upstream>
   <use>
+    <flag name="cuda">Checks for CUDA drivers.</flag>
+    <flag name="doc">Installs extra documentation.</flag>
     <flag name="intel-ocl">Checks for OpenCL support for Intel
       CPUs that may be required.</flag>
     <flag name="lts">Prefer AMDGPU-PRO drivers with HWE (aka LTS [long term

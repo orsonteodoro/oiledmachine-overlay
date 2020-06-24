@@ -5,7 +5,7 @@ EAPI=7
 
 DESCRIPTION='Client for the free and distributed render farm "SheepIt Render Farm"'
 HOMEPAGE="https://github.com/laurent-clouet/sheepit-client"
-LICENSE="GPL-2 Apache-2.0
+LICENSE="GPL-2 Apache-2.0 LGPL-2.1+
 Apache-2.0
 BitstreamVera
 Boost-1.0
@@ -27,7 +27,7 @@ PSF-2.4
 # sheepit-client sources.
 KEYWORDS="~amd64"
 SLOT="0"
-IUSE="cuda intel-ocl lts +opencl opencl_rocm opencl_orca \
+IUSE="cuda doc intel-ocl lts +opencl opencl_rocm opencl_orca \
 opencl_pal opengl_mesa pro-drivers split-drivers \
 video_cards_amdgpu video_cards_i965 video_cards_iris video_cards_nvidia \
 video_cards_radeonsi"
@@ -39,7 +39,7 @@ RDEPEND_BLENDER_SHEEPIT_BLENDER="
 media-libs/openimageio
 "
 
-# Additional libraries referenced in 2.82
+# Additional libraries referenced in custom build of 2.82
 RDEPEND_BLENDER_SHEEPIT="
 sys-apps/dbus
 sys-apps/util-linux
@@ -284,16 +284,17 @@ src_install() {
 	insinto /usr/share/${PN}
 	doins build/libs/sheepit-client-all.jar
 	exeinto /usr/bin
-	cat "${FILESDIR}/sheepit-client-v2.0.2" \
+	cat "${FILESDIR}/sheepit-client-v2.0.3" \
 		> "${T}/sheepit-client" || die
 	doexe "${T}/sheepit-client"
+	dodoc licenses
+	dodoc LICENSE
+	if use doc ; then
+		dodoc protocol.txt README.md
+	fi
 }
 
 pkg_postinst() {
-	if [[ -d "${EROOT}/tmp/sheepit_binary_cache" ]] ; then
-		ewarn "Found ${EROOT}/tmp/sheepit_binary_cache.  Removing it."
-		rm -rf "${EROOT}/tmp/sheepit_binary_cache" || die
-	fi
 	einfo
 	einfo \
 "You need an account from https://www.sheepit-renderfarm.com/ to use this \n\
