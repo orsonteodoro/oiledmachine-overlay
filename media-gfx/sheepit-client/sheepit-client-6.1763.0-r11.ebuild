@@ -14,7 +14,7 @@ BSD-2
 CC0-1.0
 GPL-2
 GPL-2-with-font-exception
-LGPL-2.1
+LGPL-2.1+
 GPL-3
 GPL-3-with-font-exception
 MIT
