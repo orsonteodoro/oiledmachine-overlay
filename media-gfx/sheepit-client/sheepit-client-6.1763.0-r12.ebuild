@@ -290,7 +290,6 @@ src_install() {
 		> "${T}/sheepit-client" || die
 	doexe "${T}/sheepit-client"
 	docinto licenses
-	dodoc licenses
 	dodoc LICENSE
 	if use doc ; then
 		docinto docs
