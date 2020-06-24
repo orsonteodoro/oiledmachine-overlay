@@ -289,9 +289,11 @@ src_install() {
 	cat "${FILESDIR}/sheepit-client-v2.0.3" \
 		> "${T}/sheepit-client" || die
 	doexe "${T}/sheepit-client"
+	docinto licenses
 	dodoc licenses
 	dodoc LICENSE
 	if use doc ; then
+		docinto docs
 		dodoc protocol.txt README.md
 	fi
 }
