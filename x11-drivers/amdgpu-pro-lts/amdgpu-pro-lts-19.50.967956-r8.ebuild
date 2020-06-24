@@ -14,15 +14,16 @@ LICENSE="AMDGPUPROEULA
 		gles2? ( MIT developer? ( Apache-2.0 MIT ) )
 		hwe? ( MIT )
 		opengl? ( MIT SGI-B-2.0 )
-		opengl_mesa? ( MIT )
+		opengl_mesa? ( all-rights-reserved MIT SGI-B-2.0 )
 		openmax? ( BSD GPL-2+-with-autoconf-exception LGPL-2.1 MIT )
-		osmesa? ( MIT )
+		osmesa? ( all-rights-reserved MIT )
 		vaapi? ( MIT )
 		vdpau? ( MIT )
 		vulkan_open? ( MIT )
 		wayland? ( MIT )
 		xa? ( MIT )
 		developer? ( Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD-2 BSD ) UoI-NCSA
+		developer? ( opengl_mesa? ( all-rights-reserved MIT ) )
 		MIT
 	)
 	pro-stack? (
@@ -46,13 +47,14 @@ LICENSE="AMDGPUPROEULA
 		vulkan_pro? ( AMDGPUPROEULA )
 	)
 	X? ( MIT )"
+# eglextchromium.h - BSD
 # gbm - MIT
 # libdrm - MIT
 # libglapi-amdgpu - MIT
 # libglapi-amdgpu-pro - AMDGPUPROEULA
 # llvm - developer? ( Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD-2 ) UoI-NCSA
 #   xxhash.h - BSD-2
-# eglextchromium.h - BSD
+# Mesa - MIT all-rights-reserved SGI-B-2.0 # there is no all rights reserved in the vanilla MIT license
 # xorg-x11-amdgpu-drv-amdgpu - MIT
 KEYWORDS="~amd64 ~x86"
 MULTILIB_COMPAT=( abi_x86_{32,64} )
@@ -601,10 +603,10 @@ src_install() {
 			if use vdpau ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/vdpau/"*.so* || die
 			fi
-			chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/llvm-9.0/lib/"*.so* || die
+			chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/llvm-${PKG_VER_LLVM}/lib/"*.so* || die
 			if use developer ; then
-				chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/llvm-9.0/bin/"* || die
-				chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/llvm-9.0/share/opt-viewer/"*.py || die
+				chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/llvm-${PKG_VER_LLVM}/bin/"* || die
+				chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/llvm-${PKG_VER_LLVM}/share/opt-viewer/"*.py || die
 			fi
 			if use open-stack && ( use X || use hwe ) ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib/xorg/modules/drivers/"*.so* || die
