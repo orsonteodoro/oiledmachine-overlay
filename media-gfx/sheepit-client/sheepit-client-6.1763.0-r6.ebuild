@@ -33,7 +33,7 @@ video_cards_amdgpu video_cards_i965 video_cards_iris video_cards_nvidia \
 video_cards_radeonsi"
 REQUIRED_USE="^^ ( cuda opencl )"
 
-#Blender 2.82 (sub 7) hash 77d23b0bd76f
+# For Blender 2.79-2.83
 RDEPEND_BLENDER="
 	dev-libs/expat
 	sys-libs/glibc
