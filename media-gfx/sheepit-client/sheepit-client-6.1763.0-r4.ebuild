@@ -13,7 +13,30 @@ opencl_pal opengl_mesa pro-drivers split-drivers \
 video_cards_amdgpu video_cards_i965 video_cards_iris video_cards_nvidia \
 video_cards_radeonsi"
 REQUIRED_USE="^^ ( cuda opencl )"
-RDEPEND="
+
+#Blender 2.82 (sub 7) hash 77d23b0bd76f
+RDEPEND_BLENDER282="
+	dev-libs/expat
+	sys-libs/glibc
+	dev-libs/libbsd
+	sys-devel/gcc[cxx]
+	sys-libs/zlib
+	virtual/opengl
+	x11-libs/libdrm
+	x11-libs/libX11
+	x11-libs/libXau
+	x11-libs/libXdmcp
+	x11-libs/libXdamage
+	x11-libs/libXext
+	x11-libs/libXfixes
+	x11-libs/libXi
+	x11-libs/libXrender
+	x11-libs/libXxf86vm
+	x11-libs/libxcb
+	x11-libs/libxshmfence
+"
+
+RDEPEND="${RDEPEND_BLENDER282}
 	opencl? (
 	intel-ocl? ( dev-util/intel-ocl-sdk )
 	|| (
