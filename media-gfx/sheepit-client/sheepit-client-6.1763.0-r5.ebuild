@@ -5,7 +5,26 @@ EAPI=7
 
 DESCRIPTION='Client for the free and distributed render farm "SheepIt Render Farm"'
 HOMEPAGE="https://github.com/laurent-clouet/sheepit-client"
-LICENSE="GPL-2 Apache-2.0"
+LICENSE="GPL-2 Apache-2.0
+Apache-2.0
+BitstreamVera
+Boost-1.0
+BSD
+BSD-2
+CC0
+GPL-2
+GPL-2-with-font-exception
+GPL-2.1
+GPL-3
+GPL-3-with-font-exception
+MIT
+PSF-2
+PSF-2.4
+"
+# The licenses in the second row and below of the LICENSE variable
+# are licenses files and references in readmes in Blender 2.79b, 2.82, 2.83.
+# The licenses in the first line are those that were found in
+# sheepit-client sources.
 KEYWORDS="~amd64"
 SLOT="0"
 IUSE="cuda intel-ocl lts +opencl opencl_rocm opencl_orca \
