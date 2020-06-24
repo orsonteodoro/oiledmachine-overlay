@@ -1,0 +1,61 @@
+#!/bin/bash
+
+function exit_error() {
+	local msg="${1}"
+	if [[ -n "${DISPLAY}" ]] ; then
+		if which zenity >/dev/null ; then
+			zenity --error --text="${msg}"
+		elif which kdialog >/dev/null ; then
+			kdialog --msgbox "${msg}"
+		else
+			echo "${msg}"
+		fi
+	else
+		echo "${msg}"
+	fi
+	exit 1
+}
+
+groups | grep video > /dev/null
+if [[ "$?" != "0" ]] ; then
+	exit_error "User must be in the video group"
+fi
+
+if which wmname >/dev/null ; then
+	wmname LG3D
+fi
+
+d="${HOME}/.cache/sheepit-client"
+
+d2="${d}/sheepit-client/sheepit"
+if [[ -d "${d2}" ]] ; then
+	for f in $(find ${d} -type f) ; do
+		_md5_x=$(md5sum "${f}" | cut -f 1 -d " ")
+		_md5_expected=$(basename "${f}" | cut -f 1 -d '.')
+		if [[ ${md5_x} != ${md5_expected} ]] ; then
+			echo "Removing corrupt file ${f}"
+			rm ${f}
+		fi
+		if [[ $(stat -c "%U") != "${USER}" ]] ; then
+			exit_error "You must remove ${f} with root."
+		fi
+	done
+fi
+
+d2="${d}/sheepit_binary_cache"
+if [[ -d "${d2}" ]] ; then
+	for f in $(find ${d} -type f) ; do
+		_md5_x=$(md5sum "${f}" | cut -f 1 -d " ")
+		_md5_expected=$(basename "${f}" | cut -f 1 -d '.')
+		if [[ ${md5_x} != ${md5_expected} ]] ; then
+			echo "Removing corrupt file ${f}"
+			rm ${f}
+		fi
+		if [[ $(stat -c "%U") != "${USER}" ]] ; then
+			exit_error "You must remove ${f} with root."
+		fi
+	done
+fi
+
+mkdir -p "${d}"
+java -jar /usr/share/sheepit-client/sheepit-client-all.jar -cache-dir "${d}" $*

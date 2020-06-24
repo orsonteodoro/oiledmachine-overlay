@@ -286,7 +286,7 @@ src_install() {
 	insinto /usr/share/${PN}
 	doins build/libs/sheepit-client-all.jar
 	exeinto /usr/bin
-	cat "${FILESDIR}/sheepit-client-v2.0.3" \
+	cat "${FILESDIR}/sheepit-client-v2.1.0" \
 		> "${T}/sheepit-client" || die
 	doexe "${T}/sheepit-client"
 	docinto licenses
