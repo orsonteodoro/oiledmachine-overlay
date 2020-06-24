@@ -224,19 +224,24 @@ pkg_postinst() {
 		ewarn "Found ${EROOT}/tmp/sheepit_binary_cache.  Removing it."
 		rm -rf "${EROOT}/tmp/sheepit_binary_cache" || die
 	fi
+	einfo
 	einfo \
 "You need an account from https://www.sheepit-renderfarm.com/ to use this \n\
 product."
+	einfo
         elog \
 "If you are using dwm or non-parenting window manager and see\n\
 no buttons or input boxes, you need to:\n\
   emerge wmname\n\
   wmname LG3D\n\
 Run 'wmname LG3D' before you run '${PN}'"
+	einfo
 	if use opencl ; then
 		ewarn "OpenCL support is not officially supported for Linux."
 		ewarn "For details see, https://github.com/laurent-clouet/sheepit-client/issues/165"
 	fi
+	einfo
 	einfo "Don't forget to add your user account to the video group."
 	einfo "This can be done with: \`gpasswd -a USERNAME video\`"
+	einfo
 }
