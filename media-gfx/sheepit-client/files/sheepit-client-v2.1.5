@@ -27,7 +27,7 @@ fi
 
 d="${HOME}/.cache/sheepit-client"
 
-for f in $(find "${d}"/{sheepit,sheepit_binary_cache} -type f) ; do
+for f in $(find "${d}"/{sheepit,sheepit_binary_cache} -maxdepth 1 -type f -name "*.zip") ; do
 	md5_x=$(md5sum "${f}" | cut -f 1 -d " ")
 	md5_expected=$(basename "${f}" | cut -f 1 -d '.')
 	echo "${f} : md5_x=${md5_x} md5_expected=${md5_expected}"
@@ -37,6 +37,12 @@ for f in $(find "${d}"/{sheepit,sheepit_binary_cache} -type f) ; do
 	fi
 	if [[ -f "${f}" && $(stat -c "%U" "${f}") != "${USER}" ]] ; then
 		exit_error "You must remove ${f} with root."
+	fi
+done
+
+for f in $(find "${d}" -type f) ; do
+	if [[ -f "${f}" && $(stat -c "%U" "${f}") != "${USER}" ]] ; then
+		exit_error "You must remove ${d} with root."
 	fi
 done
 
