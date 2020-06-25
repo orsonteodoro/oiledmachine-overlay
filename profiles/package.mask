@@ -111,6 +111,10 @@ virtual/setiathome
 www-misc/facy
 www-servers/civetweb
 
+# Downloads precompiled versions of Blender containing internal dependencies
+# with critical CVE advisories.
+media-gfx/sheepit-client
+
 # Old versions; EOL (End Of Life)?; no longer receiving security updates
 media-libs/alure
 x11-base/xorg-drivers
