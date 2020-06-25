@@ -14,19 +14,61 @@ BSD-2
 CC0-1.0
 GPL-2
 GPL-2-with-font-exception
+LGPL-2.1
 LGPL-2.1+
 GPL-3
 GPL-3-with-font-exception
 MIT
+MIT all-rights-reserved
 PSF-2
 PSF-2.4
+SGI-B-1.1
+SGI-B-2.0
+WTFPL-2
 "
-# The licenses in the second row and below of the LICENSE variable
-# are licenses files and references in readmes in Blender 2.79b, 2.82, 2.83.
-# The licenses in the first line are those that were found in
-# sheepit-client sources.
-# In LICENSE-droidsans.ttf.txt at line 49 in Blender 2.82, it mentions GPL-2.1+.
-# It should be LGPL-2.1+.
+#
+# About the sheepit-client licenses
+#
+#   The licenses in the first line of the LICENSE field are those that were
+#   found in sheepit-client sources.
+#
+#
+# Third Party Licenses
+#
+#   The licenses in the second row and below of the LICENSE variable
+#   are licenses files and references in readmes in Blender 2.79b, 2.82, 2.83.
+#
+#   The GLU library references strings covered under under either
+#     SGI Free Software License B, Version 1.1
+#   or
+#     SGI FREE SOFTWARE LICENSE B (Version 2.0, Sept. 18, 2008).
+#
+#   The Mesa library has MIT license with all rights reserved as default.
+#   There is no all rights reserved in the vanilla MIT license.  Parts of it
+#   contains strings sourced from SGI-B-2.0 licensed files.
+#
+#   The libglapi is under SGI-B-2.0.  It was bundled in precompiled Blender
+#   2.80+.
+#
+# Additional Third Party Licenses (in SheepIt's Blender 2.82)
+#
+#   The libcaca library is under WTFPL-2.
+#
+#   The libfusion-1.2.so.9 library contains LGPL-2.1+ strings.
+#
+#   The libSDL [1.2.14_pre20091018] library was made
+#   available under LGPL-2.1+ in Jan 30, 2006.
+#
+#   The libXxf86vm is under MIT.
+#
+#   The tslib is under LGPL-2.1.
+#
+#
+# Uncaught license corrections:
+#
+#   In LICENSE-droidsans.ttf.txt at line 49 in Blender 2.82, it mentions
+#   GPL-2.1+.  It should be LGPL-2.1+.
+#
 KEYWORDS="~amd64"
 SLOT="0"
 IUSE="cuda doc intel-ocl lts +opencl opencl_rocm opencl_orca \
@@ -40,6 +82,10 @@ REQUIRED_USE="^^ ( cuda opencl )"
 RDEPEND_BLENDER_SHEEPIT_OIIO="
 media-libs/openimageio
 "
+
+# About the lib folder
+# 2.79, 2.80 contains glu libglapi, mesa
+# 2.82 contains DirectFB, libcaca, libglapi, glu, mesa, slang, SDL:1.2, tslib, libXxf86vm
 
 # Additional libraries referenced in custom build of 2.82
 RDEPEND_BLENDER_SHEEPIT="
@@ -150,7 +196,7 @@ SRC_URI="https://github.com/laurent-clouet/sheepit-client/archive/v${PV}.tar.gz 
 -> ${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
-BLENDER_VERSIONS="2.79 2.82" # todo 2.79b, 2.79b-filmic, 2.80, 2.81a, 2.83
+BLENDER_VERSIONS="2.79 2.80 2.82 2.83" # todo 2.79b, 2.79b-filmic, 2.81a
 # For additional versions, see
 # https://www.sheepit-renderfarm.com/index.php?show=binaries
 
@@ -270,6 +316,24 @@ pkg_setup() {
 
 
 src_prepare() {
+	ewarn
+	ewarn "Security notices:"
+	ewarn
+	ewarn "${PN} downloads Blender 2.79 with Python 3.5.3 having critical security CVE advisories"
+	ewarn "${PN} downloads Blender 2.80 with Python 3.7.0 having high security CVE advisory"
+	ewarn "${PN} downloads Blender 2.82 with Python 3.7.4 having high security CVE advisory"
+	ewarn "${PN} downloads Blender 2.82 with Python 3.7.4 having high security CVE advisory"
+	ewarn "${PN} downloads Blender 2.83 with Python 3.7.4 having high security CVE advisory"
+	ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.5&search_type=all"
+	ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.7&search_type=all"
+	ewarn
+	ewarn "${PN} downloads Blender 2.82 with DirectFB 1.2.10."
+	ewarn "https://security.gentoo.org/glsa/201701-55"
+	ewarn
+	ewarn "${PN} downloads Blender 2.82 with SDL 1.2.14_pre20091018."
+	ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=sdl%201.2&search_type=all"
+	ewarn
+
 	default
 	if use opencl ; then
 		sed -i -e "s|os instanceof Windows|true|" \
