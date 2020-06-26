@@ -62,6 +62,9 @@ dev-dotnet/dotnetcore-sdk
 # Build failures / Work In Progress (WIP)
 >=dev-dotnet/aspnetcore-2.1.18
 
+# Patch still WIP
+media-gfx/sheepit-client
+
 # Masked for security reasons
 #--------------------------------------------------------------------------------------------------
 
