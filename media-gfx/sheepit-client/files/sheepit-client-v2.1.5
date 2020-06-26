@@ -47,4 +47,4 @@ for f in $(find "${d}" -type f) ; do
 done
 
 mkdir -p "${d}"
-java -jar /usr/share/sheepit-client/sheepit-client-all.jar -cache-dir "${d}" $*
+java -jar /usr/share/sheepit-client/sheepit-client-all.jar -cache-dir "${d}" ALLOWED_RENDERERS $*

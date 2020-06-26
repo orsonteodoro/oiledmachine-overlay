@@ -21,6 +21,9 @@
     of the protocol can be found in the protocol.txt file.  This is important
     for those wanting to port to other architectures.  The client allows you
     to switch to a custom renderfarm.
+
+    It's recommended to choose only the latest stable Blender only for
+    security mitigation.
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/laurent-clouet/sheepit-client/issues</bugs-to>
@@ -29,7 +32,19 @@
     </doc>
   </upstream>
   <use>
+    <flag name="blender">Accepts Blender licenses common to all Blender
+      versions.</flag>
+    <flag name="blender279b">Allows the client to download Blender 2.79b</flag>
+    <flag name="blender279b_filmic">Allows the client to download Blender 2.79b
+      with filmic.</flag>
+    <flag name="blender280">Allows the client to download Blender 2.80.</flag>
+    <flag name="blender281a">Allows the client to download Blender 2.81a.</flag>
+    <flag name="blender282">Allows the client to download Blender 2.82 with
+      additional libraries not found in vanilla Blender.</flag>
+    <flag name="blender283">Allows the client to download Blender 2.83.</flag>
     <flag name="cuda">Checks for CUDA drivers.</flag>
+    <flag name="disable-hard-version-blocks">Permits user choice to selectively
+      choose renderers to download.</flag>
     <flag name="doc">Installs extra documentation.</flag>
     <flag name="intel-ocl">Checks for OpenCL support for Intel
       CPUs that may be required.</flag>

@@ -6,25 +6,31 @@ EAPI=7
 DESCRIPTION='Client for the free and distributed render farm "SheepIt Render Farm"'
 HOMEPAGE="https://github.com/laurent-clouet/sheepit-client"
 LICENSE="GPL-2 Apache-2.0 LGPL-2.1+
-Apache-2.0
-BitstreamVera
-Boost-1.0
-BSD
-BSD-2
-CC0-1.0
-GPL-2
-GPL-2-with-font-exception
-LGPL-2.1
-LGPL-2.1+
-GPL-3
-GPL-3-with-font-exception
-MIT
-MIT all-rights-reserved
-PSF-2
-PSF-2.4
-SGI-B-1.1
-SGI-B-2.0
-WTFPL-2
+blender? (
+	Apache-2.0
+	BitstreamVera
+	Boost-1.0
+	BSD
+	BSD-2
+	CC0-1.0
+	GPL-2
+	GPL-2-with-font-exception
+	LGPL-2.1+
+	GPL-3
+	GPL-3-with-font-exception
+	MIT
+	MIT all-rights-reserved
+	PSF-2
+	PSF-2.4
+	SGI-B-1.1
+	SGI-B-2.0
+)
+blender282? (
+	MIT
+	LGPL-2.1
+	LGPL-2.1+
+	WTFPL-2
+)
 "
 #
 # About the sheepit-client licenses
@@ -35,7 +41,7 @@ WTFPL-2
 #
 # Third Party Licenses
 #
-#   The licenses in the second row and below of the LICENSE variable
+#   The licenses in the blender section of the LICENSE variable
 #   are licenses files and references in readmes in Blender 2.79b, 2.82, 2.83.
 #
 #   The GLU library references strings covered under under either
@@ -71,12 +77,45 @@ WTFPL-2
 #
 KEYWORDS="~amd64"
 SLOT="0"
-IUSE="cuda doc intel-ocl lts +opencl opencl_rocm opencl_orca \
+
+IUSE=" \
+blender \
+blender279b blender279b_filmic blender280 blender281a blender282 blender283 \
+allow-unknown-renderers disable-hard-version-blocks \
+cuda doc intel-ocl lts +opencl opencl_rocm opencl_orca \
 opencl_pal opengl_mesa pro-drivers split-drivers \
+renderer-version-picker \
 video_cards_amdgpu video_cards_i965 video_cards_iris video_cards_nvidia \
 video_cards_radeonsi"
-REQUIRED_USE="^^ ( cuda opencl )"
-
+REQUIRED_USE="
+	allow-unknown-renderers? ( blender )
+	blender279b? ( blender )
+	blender279b_filmic? ( blender )
+	blender280? ( blender )
+	blender281a? ( blender )
+	blender282? ( blender )
+	blender283? ( blender )
+	|| ( cuda opencl )
+	|| ( blender279b blender279b_filmic blender280 blender281a blender282
+		blender283 )
+	pro-drivers? ( || ( opencl_orca opencl_pal opencl_rocm ) )
+	opencl_orca? (
+		|| ( split-drivers pro-drivers )
+		video_cards_amdgpu
+	)
+	opencl_pal? (
+		pro-drivers
+		video_cards_amdgpu
+	)
+	opencl_rocm? (
+		split-drivers
+		video_cards_amdgpu
+	)
+	split-drivers? ( || ( opencl_orca opencl_rocm ) )
+	video_cards_amdgpu? (
+		|| ( pro-drivers split-drivers )
+	)
+"
 # This maybe required for filmic
 # todo inspect via ldd
 RDEPEND_BLENDER_SHEEPIT_OIIO="
@@ -87,8 +126,8 @@ media-libs/openimageio
 # 2.79, 2.80 contains glu libglapi, mesa
 # 2.82 contains DirectFB, libcaca, libglapi, glu, mesa, slang, SDL:1.2, tslib, libXxf86vm
 
-# Additional libraries referenced in custom build of 2.82
-RDEPEND_BLENDER_SHEEPIT="
+# Additional libraries referenced in the custom build of 2.82
+RDEPEND_BLENDER_SHEEPIT282="
 sys-apps/dbus
 sys-apps/util-linux
 media-libs/alsa-lib
@@ -129,9 +168,11 @@ RDEPEND_BLENDER="
 	x11-libs/libxshmfence
 "
 
-RDEPEND="${RDEPEND_BLENDER}
-	${RDEPEND_BLENDER_SHEEPIT}
-	${RDEPEND_BLENDER_SHEEPIT_OIIO}
+RDEPEND="blender? (
+		${RDEPEND_BLENDER}
+		${RDEPEND_BLENDER_SHEEPIT_OIIO}
+		blender282? ( ${RDEPEND_BLENDER_SHEEPIT282} )
+	)
 	opencl? (
 	intel-ocl? ( dev-util/intel-ocl-sdk )
 	|| (
@@ -172,25 +213,6 @@ RDEPEND="${RDEPEND_BLENDER}
 DEPEND="${RDEPEND}
 	dev-java/gradle-bin
 	virtual/jdk:1.8"
-REQUIRED_USE="
-	pro-drivers? ( || ( opencl_orca opencl_pal opencl_rocm ) )
-	opencl_orca? (
-		|| ( split-drivers pro-drivers )
-		video_cards_amdgpu
-	)
-	opencl_pal? (
-		pro-drivers
-		video_cards_amdgpu
-	)
-	opencl_rocm? (
-		split-drivers
-		video_cards_amdgpu
-	)
-	split-drivers? ( || ( opencl_orca opencl_rocm ) )
-	video_cards_amdgpu? (
-		|| ( pro-drivers split-drivers )
-	)
-"
 inherit linux-info
 SRC_URI="https://github.com/laurent-clouet/sheepit-client/archive/v${PV}.tar.gz \
 -> ${PN}-${PV}.tar.gz"
@@ -314,6 +336,15 @@ pkg_setup() {
 	fi
 }
 
+enable_hardblock() {
+	sed -i -e "s|public static final boolean ${1} = false;|public static final boolean ${1} = true;|g" \
+		src/com/sheepit/client/Configuration.java || die
+}
+
+disable_hardblock() {
+	sed -i -e "s|public static final boolean ${1} = false;|public static final boolean ${1} = true;|g" \
+		src/com/sheepit/client/Configuration.java || die
+}
 
 src_prepare() {
 	ewarn
@@ -327,7 +358,7 @@ src_prepare() {
 	ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.5&search_type=all"
 	ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.7&search_type=all"
 	ewarn
-	ewarn "${PN} downloads Blender 2.82 with DirectFB 1.2.10."
+	ewarn "${PN} downloads repackaged Blender 2.82 with DirectFB 1.2.10."
 	ewarn "https://security.gentoo.org/glsa/201701-55"
 	ewarn
 	ewarn "${PN} downloads Blender 2.82 with SDL 1.2.14_pre20091018."
@@ -338,6 +369,43 @@ src_prepare() {
 	if use opencl ; then
 		sed -i -e "s|os instanceof Windows|true|" \
 			src/com/sheepit/client/hardware/gpu/GPU.java || die
+	fi
+
+	eapply "${FILESDIR}/sheepit-client-6.1763.0-renderer-version-picker.patch"
+	if ! use allow-unknown-renderers ; then
+		if ! use disable-hard-version-blocks ; then
+			enable_hardblock "HARDBLOCK_UNKNOWN_RENDERERS"
+		fi
+	fi
+	if ! use blender279b ; then
+		if ! use disable-hard-version-blocks ; then
+			enable_hardblock "HARDBLOCK_BLENDER_279B"
+		fi
+	fi
+	if ! use blender279b_filmic ; then
+		if ! use disable-hard-version-blocks ; then
+			enable_hardblock "HARDBLOCK_BLENDER_279B_FILMIC"
+		fi
+	fi
+	if ! use blender280 ; then
+		if ! use disable-hard-version-blocks ; then
+			enable_hardblock "HARDBLOCK_BLENDER_280"
+		fi
+	fi
+	if ! use blender281a ; then
+		if ! use disable-hard-version-blocks ; then
+			enable_hardblock "HARDBLOCK_BLENDER_281A"
+		fi
+	fi
+	if ! use blender282 ; then
+		if ! use disable-hard-version-blocks ; then
+			enable_hardblock "HARDBLOCK_BLENDER_282"
+		fi
+	fi
+	if ! use blender283 ; then
+		if ! use disable-hard-version-blocks ; then
+			enable_hardblock "HARDBLOCK_BLENDER_283"
+		fi
 	fi
 }
 
@@ -355,19 +423,55 @@ src_install() {
 	exeinto /usr/bin
 	cat "${FILESDIR}/sheepit-client-v2.1.5" \
 		> "${T}/sheepit-client" || die
-	doexe "${T}/sheepit-client"
 	docinto licenses
 	dodoc LICENSE
-	for v in ${BLENDER_VERSIONS} ; do
-		dodoc -r "${FILESDIR}/blender-${v}-licenses"
-	done
+	local allowed_renderers=""
+	if use blender279b ; then
+		dodoc -r "${FILESDIR}/blender-2.79b-licenses"
+		use doc \
+		dodoc -r "${FILESDIR}/blender-2.79b-readmes"
+		allowed_renderers+=" --allow-blender279b"
+	fi
+	if use blender279b_filmic ; then
+		dodoc -r "${FILESDIR}/blender-2.79b-flimic-licenses"
+		use doc \
+		dodoc -r "${FILESDIR}/blender-2.79b-flimic-readmes"
+		allowed_renderers+=" --allow-blender279b-filmic"
+	fi
+	if use blender280 ; then
+		dodoc -r "${FILESDIR}/blender-2.80-licenses"
+		use doc \
+		dodoc -r "${FILESDIR}/blender-2.80-readmes"
+		allowed_renderers+=" --allow-blender280"
+	fi
+	if use blender281a ; then
+		dodoc -r "${FILESDIR}/blender-2.81a-licenses"
+		use doc \
+		dodoc -r "${FILESDIR}/blender-2.81a-readmes"
+		allowed_renderers+=" --allow-blender281a"
+	fi
+	if use blender282 ; then
+		dodoc -r "${FILESDIR}/blender-2.82-licenses"
+		use doc \
+		dodoc -r "${FILESDIR}/blender-2.82-readmes"
+		allowed_renderers+=" --allow-blender282"
+	fi
+	if use blender283 ; then
+		dodoc -r "${FILESDIR}/blender-2.83-licenses"
+		use doc \
+		dodoc -r "${FILESDIR}/blender-2.83-readmes"
+		allowed_renderers+=" --allow-blender283"
+	fi
+	if use allow-unknown-renderers ; then
+		allowed_renderers+=" --allow-unknown-renderers"
+	fi
 	if use doc ; then
 		docinto docs
 		dodoc protocol.txt README.md
-		for v in ${BLENDER_VERSIONS} ; do
-			dodoc -r "${FILESDIR}/blender-${v}-readmes"
-		done
 	fi
+	sed -i -e "s|ALLOWED_RENDERERS|${allowed_renderers}|g" \
+		"${T}/sheepit-client" || die
+	doexe "${T}/sheepit-client"
 }
 
 pkg_postinst() {

@@ -4,7 +4,7 @@ GLU
 Mesa (libGL) 18.3.1
 Python 3.7.4
 
-Bundled in modified Blender 2.82:
+Bundled in repackaged Blender 2.82:
 DirectFB 1.2.10
 GLU
 libcaca 0.99.beta18
@@ -18,7 +18,7 @@ GLU
 Mesa (libGL) 18.3.1
 Python 3.7.0
 
-Bundled in Blender 2.79:
+Bundled in Blender 2.79b:
 GLU 8.0.5
 Mesa (libGL) 8.0.5
 Python 3.5.3

@@ -1,0 +1,425 @@
+Summary: Patch changes automatic opt-in to automatic opt-out policy for downloading
+renderers (e.g. Blender).
+
+This allows users to pick the degree of security mitigation.  It's recommended
+to only allow the latest stable.
+
+Change HARDBLOCK_BLENDER_ constants in src/com/sheepit/client/Configuration.java
+to false to enforce hardcoded block otherwise end-user decides.
+
+Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
+----
+diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/Client.java sheepit-client-6.1763.0/src/com/sheepit/client/Client.java
+--- sheepit-client-6.1763.0.orig/src/com/sheepit/client/Client.java	2020-06-21 02:21:23.000000000 -0700
++++ sheepit-client-6.1763.0/src/com/sheepit/client/Client.java	2020-06-25 21:49:52.687403614 -0700
+@@ -720,8 +720,55 @@ import lombok.Data;
+ 		return this.downloadFile(ajob_, ajob_.getSceneArchivePath(), ajob_.getSceneMD5(),
+ 				String.format("%s?type=job&job=%s", this.server.getPage("download-archive"), ajob_.getId()), "project");
+ 	}
++
++	private boolean isRendererAllowed(String md5_renderer) {
++		if (md5_renderer == "3d0e05e7a43ae213eccf33c47b5900c5" && (!this.configuration.getAllowBlender279b() || Configuration.HARDBLOCK_BLENDER_279B)) {
++			return false;
++		//} else if (md5_renderer == "" && (!this.configuration.getAllowBlender279bFilmic() || Configuration.HARDBLOCK_BLENDER_279B_FILMIC)) {
++		//	return false;
++		} else if (md5_renderer == "20eb01cbdc8d21c85ef744816caa83ea" && (!this.configuration.getAllowBlender280() || Configuration.HARDBLOCK_BLENDER_280)) {
++		//} else if (md5_renderer == "" && (!this.configuration.getAllowBlender281a() || Configuration.HARDBLOCK_BLENDER_281A)) {
++		//	return false;
++		} else if (md5_renderer == "8d254810f35d31d9aa988fb703e639c0" && (!this.configuration.getAllowBlender282() || Configuration.HARDBLOCK_BLENDER_282)) {
++			return false;
++		} else if (md5_renderer == "3eea78b53242fdf668ca7d10b6d1574b" && (!this.configuration.getAllowBlender283() || Configuration.HARDBLOCK_BLENDER_283)) {
++			return false;
++		} else {
++			if (!this.configuration.getAllowUnknownRenderers() || Configuration.HARDBLOCK_UNKNOWN_RENDERERS) {
++				return false;
++			}
++		}
++		return true;
++	}
++	
++	private String getRendererName(String md5_renderer) {
++		switch (md5_renderer) {
++			case "3d0e05e7a43ae213eccf33c47b5900c5":
++				return "Blender 2.79b";
++			// case "":
++			//	return "Blender 2.79b (Filmic)"
++			case "20eb01cbdc8d21c85ef744816caa83ea":
++				return "Blender 2.80";
++			// case "":
++			//	return "Blender 2.81a;
++			case "8d254810f35d31d9aa988fb703e639c0":
++				return "Blender 2.82";
++			case "3eea78b53242fdf668ca7d10b6d1574b":
++				return "Blender 2.83";
++			default:
++				break;
++		}
++		return "unknown renderer (md5: " + md5_renderer + ")";
++	}
+ 	
+ 	protected Error.Type downloadExecutable(Job ajob) throws FermeExceptionNoSpaceLeftOnDevice {
++		if (isRendererAllowed(ajob.getRendererMD5())) {
++			this.log.debug("Client::downloadExecutable allowing " + getRendererName(ajob.getRendererMD5()));
++		} else {
++			this.log.debug("Client::downloadExecutable blocking " + getRendererName(ajob.getRendererMD5()));
++			return Type.DOWNLOAD_FILE;
++		}
++
+ 		return this.downloadFile(ajob, ajob.getRendererArchivePath(), ajob.getRendererMD5(),
+ 				String.format("%s?type=binary&job=%s", this.server.getPage("download-archive"), ajob.getId()), "renderer");
+ 	}
+diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/Configuration.java sheepit-client-6.1763.0/src/com/sheepit/client/Configuration.java
+--- sheepit-client-6.1763.0.orig/src/com/sheepit/client/Configuration.java	2020-06-21 02:21:23.000000000 -0700
++++ sheepit-client-6.1763.0/src/com/sheepit/client/Configuration.java	2020-06-25 21:48:07.683374462 -0700
+@@ -66,6 +66,20 @@ import lombok.Data;
+ 	private String UIType;
+ 	private String hostname;
+ 	private String theme;
++	private boolean allowBlender279b;
++	private boolean allowBlender279bFilmic;
++	private boolean allowBlender280;
++	private boolean allowBlender281a;
++	private boolean allowBlender282;
++	private boolean allowBlender283;
++	private boolean allowUnknownRenderers;
++	public static final boolean HARDBLOCK_BLENDER_279B = false;
++	public static final boolean HARDBLOCK_BLENDER_279B_FILMIC = false;
++	public static final boolean HARDBLOCK_BLENDER_280 = false;
++	public static final boolean HARDBLOCK_BLENDER_281A = false;
++	public static final boolean HARDBLOCK_BLENDER_282 = false;
++	public static final boolean HARDBLOCK_BLENDER_283 = false;
++	public static final boolean HARDBLOCK_UNKNOWN_RENDERERS = false;
+ 	
+ 	public Configuration(File cache_dir_, String login_, String password_) {
+ 		this.configFilePath = null;
+@@ -94,6 +108,13 @@ import lombok.Data;
+ 		this.useSysTray = true;
+ 		this.UIType = null;
+ 		this.theme = null;
++		this.allowBlender279b = false;
++		this.allowBlender279bFilmic = false;
++		this.allowBlender280 = false;
++		this.allowBlender281a = false;
++		this.allowBlender282 = false;
++		this.allowBlender283 = false;
++		this.allowUnknownRenderers = false;
+ 	}
+ 	
+ 	public String toString() {
+@@ -305,4 +326,60 @@ import lombok.Data;
+ 		}
+ 		return false;
+ 	}
++	
++	public void setAllowBlender279b(boolean v) {
++		allowBlender279b = v;
++	}
++	
++	public boolean getAllowBlender279b() {
++		return allowBlender279b;
++	}
++	
++	public void setAllowBlender279bFilmic(boolean v) {
++		allowBlender279bFilmic = v;
++	}
++	
++	public boolean getAllowBlender279bFilmic() {
++		return allowBlender279bFilmic;
++	}
++	
++	public void setAllowBlender280(boolean v) {
++		allowBlender280 = v;
++	}
++	
++	public boolean getAllowBlender280() {
++		return allowBlender280;
++	}
++	
++	public void setAllowBlender281a(boolean v) {
++		allowBlender281a = v;
++	}
++	
++	public boolean getAllowBlender281a() {
++		return allowBlender281a;
++	}
++	
++	public void setAllowBlender282(boolean v) {
++		allowBlender282 = v;
++	}
++	
++	public boolean getAllowBlender282() {
++		return allowBlender282;
++	}
++	
++	public void setAllowBlender283(boolean v) {
++		allowBlender283 = v;
++	}
++	
++	public boolean getAllowBlender283() {
++		return allowBlender283;
++	}
++	
++	public void setAllowUnknownRenderers(boolean v) {
++		allowUnknownRenderers = v;
++	}
++	
++	public boolean getAllowUnknownRenderers() {
++		return allowUnknownRenderers;
++	}
+ }
+diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/SettingsLoader.java sheepit-client-6.1763.0/src/com/sheepit/client/SettingsLoader.java
+--- sheepit-client-6.1763.0.orig/src/com/sheepit/client/SettingsLoader.java	2020-06-21 02:21:23.000000000 -0700
++++ sheepit-client-6.1763.0/src/com/sheepit/client/SettingsLoader.java	2020-06-25 21:48:07.683374462 -0700
+@@ -58,6 +58,13 @@ public class SettingsLoader {
+ 	private String ui;
+ 	private String theme;
+ 	private int priority;
++	private String allowBlender279b;
++	private String allowBlender279bFilmic;
++	private String allowBlender280;
++	private String allowBlender281a;
++	private String allowBlender282;
++	private String allowBlender283;
++	private String allowUnknownRenderers;
+ 	
+ 	public SettingsLoader(String path_) {
+ 		if (path_ == null) {
+@@ -70,7 +77,8 @@ public class SettingsLoader {
+ 	
+ 	public SettingsLoader(String path_, String login_, String password_, String proxy_, String hostname_, ComputeType computeMethod_, GPUDevice gpu_,
+ 		int renderbucketSize_, int cores_, long maxRam_, int maxRenderTime_, String cacheDir_, boolean autoSignIn_, boolean useSysTray_, String ui_,
+-		String theme_, int priority_) {
++		String theme_, int priority_, boolean allowBlender279b_, boolean allowBlender279bFilmic_, boolean allowBlender280_,
++		boolean allowBlender281a_, boolean allowBlender282_, boolean allowBlender283_, boolean allowUnknownRenderers_) {
+ 		if (path_ == null) {
+ 			path = getDefaultFilePath();
+ 		}
+@@ -87,6 +95,13 @@ public class SettingsLoader {
+ 		ui = ui_;
+ 		priority = priority_;
+ 		theme = theme_;
++		allowBlender279b = String.valueOf(allowBlender279b_);
++		allowBlender279bFilmic = String.valueOf(allowBlender279bFilmic_);
++		allowBlender280 = String.valueOf(allowBlender280_);
++		allowBlender281a = String.valueOf(allowBlender281a_);
++		allowBlender282 = String.valueOf(allowBlender282_);
++		allowBlender283 = String.valueOf(allowBlender283_);
++		allowUnknownRenderers = String.valueOf(allowUnknownRenderers_);
+ 		
+ 		if (cores_ > 0) {
+ 			cores = String.valueOf(cores_);
+@@ -189,6 +204,34 @@ public class SettingsLoader {
+ 				prop.setProperty("theme", theme);
+ 			}
+ 			
++			if (allowBlender279b != null) {
++				prop.setProperty("use-blender279b", allowBlender279b);
++			}
++			
++			if (allowBlender279bFilmic != null) {
++				prop.setProperty("use-blender279b-filmic", allowBlender279bFilmic);
++			}
++			
++			if (allowBlender280 != null) {
++				prop.setProperty("use-blender280", allowBlender280);
++			}
++			
++			if (allowBlender281a != null) {
++				prop.setProperty("use-blender281a", allowBlender281a);
++			}
++			
++			if (allowBlender282 != null) {
++				prop.setProperty("use-blender282", allowBlender282);
++			}
++			
++			if (allowBlender283 != null) {
++				prop.setProperty("use-blender283", allowBlender283);
++			}
++			
++			if (allowUnknownRenderers != null) {
++				prop.setProperty("use-unknown-renderers", allowUnknownRenderers);
++			}
++			
+ 			prop.store(output, null);
+ 		}
+ 		catch (IOException io) {
+@@ -237,6 +280,13 @@ public class SettingsLoader {
+ 		this.ram = null;
+ 		this.renderTime = null;
+ 		this.theme = null;
++		this.allowBlender279b = null;
++		this.allowBlender279bFilmic = null;
++		this.allowBlender280 = null;
++		this.allowBlender281a = null;
++		this.allowBlender282 = null;
++		this.allowBlender283 = null;
++		this.allowUnknownRenderers = null;
+ 		
+ 		if (new File(path).exists() == false) {
+ 			return;
+@@ -315,6 +365,34 @@ public class SettingsLoader {
+ 			if (prop.containsKey("priority")) {
+ 				this.priority = Integer.parseInt(prop.getProperty("priority"));
+ 			}
++			
++			if (prop.containsKey("use-blender279b")) {
++				this.allowBlender279b = prop.getProperty("use-blender279b");
++			}
++			
++			if (prop.containsKey("use-blender279b-filmic")) {
++				this.allowBlender279bFilmic = prop.getProperty("use-blender279b-filmic");
++			}
++			
++			if (prop.containsKey("use-blender280")) {
++				this.allowBlender280 = prop.getProperty("use-blender280");
++			}
++			
++			if (prop.containsKey("use-blender281a")) {
++				this.allowBlender281a = prop.getProperty("use-blender281a");
++			}
++			
++			if (prop.containsKey("use-blender282")) {
++				this.allowBlender282 = prop.getProperty("use-blender282");
++			}
++			
++			if (prop.containsKey("use-blender283")) {
++				this.allowBlender283 = prop.getProperty("use-blender283");
++			}
++			
++			if (prop.containsKey("use-unknown-renderers")) {
++				this.allowUnknownRenderers = prop.getProperty("use-unknown-renderers");
++			}
+ 		}
+ 		catch (IOException io) {
+ 			io.printStackTrace();
+@@ -450,11 +528,23 @@ public class SettingsLoader {
+ 		}
+ 		
+ 		config.setAutoSignIn(Boolean.parseBoolean(autoSignIn));
++
++		config.setAllowBlender279b(Boolean.parseBoolean(allowBlender279b));
++		config.setAllowBlender279bFilmic(Boolean.parseBoolean(allowBlender279bFilmic));
++		config.setAllowBlender280(Boolean.parseBoolean(allowBlender280));
++		config.setAllowBlender281a(Boolean.parseBoolean(allowBlender281a));
++		config.setAllowBlender282(Boolean.parseBoolean(allowBlender282));
++		config.setAllowBlender283(Boolean.parseBoolean(allowBlender283));
++		config.setAllowUnknownRenderers(Boolean.parseBoolean(allowUnknownRenderers));
+ 	}
+ 	
+ 	@Override public String toString() {
+ 		return String.format(
+-			"SettingsLoader [path=%s, login=%s, password=%s, computeMethod=%s, gpu=%s, renderbucket-size=%s, cacheDir=%s, theme=%s, priority=%d, autosign=%s, usetray=%s]",
+-			path, login, password, computeMethod, gpu, renderbucketSize, cacheDir, theme, priority, autoSignIn, useSysTray);
++			"SettingsLoader [path=%s, login=%s, password=%s, computeMethod=%s, gpu=%s, renderbucket-size=%s, cacheDir=%s, theme=%s, priority=%d, autosign=%s, usetray=%s,"
++			+ " allowBlender279b=%s, allowBlender279bFilmic=%s, allowBlender280=%s, allowBlender281a=%s, allowBlender282=%s, allowBlender283=%s,"
++			+ " allowUnknownRenderers=%s]",
++			path, login, password, computeMethod, gpu, renderbucketSize, cacheDir, theme, priority, autoSignIn, useSysTray,
++			allowBlender279b, allowBlender279bFilmic, allowBlender280, allowBlender281a, allowBlender282, allowBlender283,
++			allowUnknownRenderers);
+ 	}
+ }
+diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/standalone/swing/activity/Settings.java sheepit-client-6.1763.0/src/com/sheepit/client/standalone/swing/activity/Settings.java
+--- sheepit-client-6.1763.0.orig/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-06-21 02:21:23.000000000 -0700
++++ sheepit-client-6.1763.0/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-06-25 21:48:07.683374462 -0700
+@@ -101,6 +101,13 @@ public class Settings implements Activit
+ 	
+ 	private JCheckBox saveFile;
+ 	private JCheckBox autoSignIn;
++	private JCheckBox allowBlender279b;
++	private JCheckBox allowBlender279bFilmic;
++	private JCheckBox allowBlender280;
++	private JCheckBox allowBlender281a;
++	private JCheckBox allowBlender282;
++	private JCheckBox allowBlender283;
++	private JCheckBox allowUnknownRenderers;
+ 	JButton saveButton;
+ 	
+ 	private boolean haveAutoStarted;
+@@ -481,15 +488,37 @@ public class Settings implements Activit
+ 		advanced_panel.add(hostname);
+ 		
+ 		JLabel renderTimeLabel = new JLabel("Max time per frame (in minute):");
++		allowBlender279b = new JCheckBox("Allow Blender 2.79b", parent.getConfiguration().getAllowBlender279b());
++		allowBlender279bFilmic = new JCheckBox("Allow Blender 2.79b (filmic)", parent.getConfiguration().getAllowBlender279bFilmic());
++		allowBlender280 = new JCheckBox("Allow Blender 2.80", parent.getConfiguration().getAllowBlender280());
++		allowBlender281a = new JCheckBox("Allow Blender 2.81a", parent.getConfiguration().getAllowBlender281a());
++		allowBlender282 = new JCheckBox("Allow Blender 2.82", parent.getConfiguration().getAllowBlender282());
++		allowBlender283 = new JCheckBox("Allow Blender 2.83", parent.getConfiguration().getAllowBlender283());
++		allowUnknownRenderers = new JCheckBox("Allow unknown renderers", parent.getConfiguration().getAllowUnknownRenderers());
+ 		int val = 0;
+ 		if (parent.getConfiguration().getMaxRenderTime() > 0) {
+ 			val = parent.getConfiguration().getMaxRenderTime() / 60;
+ 		}
+ 		renderTime = new JSpinner(new SpinnerNumberModel(val, 0, 1000, 1));
+ 		
++		advanced_panel.add(allowBlender279b);
++		advanced_panel.add(allowBlender279bFilmic);
++		advanced_panel.add(allowBlender280);
++		advanced_panel.add(allowBlender281a);
++		advanced_panel.add(allowBlender282);
++		advanced_panel.add(allowBlender283);
++		advanced_panel.add(allowUnknownRenderers);
+ 		advanced_panel.add(renderTimeLabel);
+ 		advanced_panel.add(renderTime);
+ 		
++		allowBlender279b.setVisible(!Configuration.HARDBLOCK_BLENDER_279B);
++		allowBlender279bFilmic.setVisible(!Configuration.HARDBLOCK_BLENDER_279B_FILMIC);
++		allowBlender280.setVisible(!Configuration.HARDBLOCK_BLENDER_280);
++		allowBlender281a.setVisible(!Configuration.HARDBLOCK_BLENDER_281A);
++		allowBlender282.setVisible(!Configuration.HARDBLOCK_BLENDER_282);
++		allowBlender283.setVisible(!Configuration.HARDBLOCK_BLENDER_283);
++		allowUnknownRenderers.setVisible(!Configuration.HARDBLOCK_UNKNOWN_RENDERERS);
++		
+ 		currentRow++;
+ 		constraints.gridx = 0;
+ 		constraints.gridy = currentRow;
+@@ -787,7 +816,9 @@ public class Settings implements Activit
+ 				parent.setSettingsLoader(
+ 						new SettingsLoader(config.getConfigFilePath(), login.getText(), new String(password.getPassword()), proxyText, hostnameText, method,
+ 								selected_gpu, renderbucket_size, cpu_cores, max_ram, max_rendertime, cachePath, autoSignIn.isSelected(), useSysTray.isSelected(),
+-								GuiSwing.type, themeOptionsGroup.getSelection().getActionCommand(), priority.getValue()));
++								GuiSwing.type, themeOptionsGroup.getSelection().getActionCommand(), priority.getValue(), allowBlender279b.isSelected(),
++								allowBlender279bFilmic.isSelected(), allowBlender280.isSelected(), allowBlender281a.isSelected(), allowBlender282.isSelected(),
++								allowBlender283.isSelected(), allowUnknownRenderers.isSelected()));
+ 				
+ 				// wait for successful authentication (to store the public key)
+ 				// or do we already have one?
+diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/standalone/Worker.java sheepit-client-6.1763.0/src/com/sheepit/client/standalone/Worker.java
+--- sheepit-client-6.1763.0.orig/src/com/sheepit/client/standalone/Worker.java	2020-06-21 02:21:23.000000000 -0700
++++ sheepit-client-6.1763.0/src/com/sheepit/client/standalone/Worker.java	2020-06-25 21:48:07.683374462 -0700
+@@ -94,6 +94,20 @@ public class Worker {
+ 	
+ 	@Option(name = "-renderbucket-size", usage = "Set a custom GPU renderbucket size (32 for 32x32px, 64 for 64x64px, and so on). NVIDIA GPUs support a maximum renderbucket size of 512x512 pixel, while AMD GPUs support a maximum 2048x2048 pixel renderbucket size. Minimum renderbucket size is 32 pixels for all GPUs", required = false) private int renderbucketSize = -1;
+ 	
++	@Option(name = "--allow-blender279b", usage = "Allow Blender 2.79b", required = false, hidden = Configuration.HARDBLOCK_BLENDER_279B) private boolean allowBlender279b = false;
++	
++	@Option(name = "--allow-blender279b-filmic", usage = "Allow Blender 2.79b (filmic)", required = false, hidden = Configuration.HARDBLOCK_BLENDER_279B_FILMIC) private boolean allowBlender279bFilmic = false;
++	
++	@Option(name = "--allow-blender280", usage = "Allow Blender 2.80", required = false, hidden = Configuration.HARDBLOCK_BLENDER_280) private boolean allowBlender280 = false;
++	
++	@Option(name = "--allow-blender281a", usage = "Allow Blender 2.81a", required = false, hidden = Configuration.HARDBLOCK_BLENDER_281A) private boolean allowBlender281a = false;
++	
++	@Option(name = "--allow-blender282", usage = "Allow Blender 2.82", required = false, hidden = Configuration.HARDBLOCK_BLENDER_282) private boolean allowBlender282 = false;
++	
++	@Option(name = "--allow-blender283", usage = "Allow Blender 2.83", required = false, hidden = Configuration.HARDBLOCK_BLENDER_283) private boolean allowBlender283 = false;
++	
++	@Option(name = "--allow-unknown-renderers", usage = "Allow unknown renderers", required = false, hidden = Configuration.HARDBLOCK_UNKNOWN_RENDERERS) private boolean allowUnknownRenderers = false;
++	
+ 	public static void main(String[] args) {
+ 		new Worker().doMain(args);
+ 	}
+@@ -293,6 +307,14 @@ public class Worker {
+ 			config.setConfigFilePath(config_file);
+ 		}
+ 		
++		config.setAllowBlender279b(allowBlender279b);
++		config.setAllowBlender279bFilmic(allowBlender279bFilmic);
++		config.setAllowBlender280(allowBlender280);
++		config.setAllowBlender281a(allowBlender281a);
++		config.setAllowBlender282(allowBlender282);
++		config.setAllowBlender283(allowBlender283);
++		config.setAllowUnknownRenderers(allowUnknownRenderers);
++		
+ 		new SettingsLoader(config_file).merge(config);
+ 		Log.getInstance(config).debug("client version " + config.getJarVersion());
+ 		
