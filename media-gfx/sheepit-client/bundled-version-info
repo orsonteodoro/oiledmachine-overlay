@@ -1,5 +1,5 @@
 # This information is used for security audits
-Bundled in Blender 2.83:
+Bundled in Blender 2.83.1:
 GLU
 Mesa (libGL) 18.3.1
 Python 3.7.4
@@ -22,3 +22,4 @@ Bundled in Blender 2.79b:
 GLU 8.0.5
 Mesa (libGL) 8.0.5
 Python 3.5.3
+

@@ -31,12 +31,6 @@ blender282? (
 	LGPL-2.1+
 	WTFPL-2
 )
-blender282-benchmark? (
-	MIT
-	LGPL-2.1
-	LGPL-2.1+
-	WTFPL-2
-)
 "
 #
 # About the sheepit-client licenses
@@ -87,7 +81,7 @@ SLOT="0"
 IUSE=" \
 blender \
 blender279b blender279b_filmic blender280 blender281a blender282 \
-blender282-benchmark blender283 \
+blender2831 blender2831-benchmark \
 allow-unknown-renderers disable-hard-version-blocks \
 cuda doc intel-ocl lts +opencl opencl_rocm opencl_orca \
 opencl_pal opengl_mesa pro-drivers split-drivers \
@@ -101,11 +95,11 @@ REQUIRED_USE="
 	blender280? ( blender )
 	blender281a? ( blender )
 	blender282? ( blender )
-	blender282-benchmark? ( blender )
-	blender283? ( blender )
+	blender2831? ( blender )
+	blender2831-benchmark? ( blender )
 	|| ( cuda opencl )
 	|| ( blender279b blender279b_filmic blender280 blender281a blender282
-		blender283 )
+		allow-unknown-renderers )
 	pro-drivers? ( || ( opencl_orca opencl_pal opencl_rocm ) )
 	opencl_orca? (
 		|| ( split-drivers pro-drivers )
@@ -154,7 +148,7 @@ x11-libs/libSM
 x11-libs/libXtst
 "
 
-# For vanilla Blender 2.79-2.83
+# For vanilla Blender 2.79-2.83.1
 RDEPEND_BLENDER="
 	dev-libs/expat
 	sys-libs/glibc
@@ -226,9 +220,6 @@ SRC_URI="https://github.com/laurent-clouet/sheepit-client/archive/v${PV}.tar.gz 
 -> ${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
-BLENDER_VERSIONS="2.79 2.80 2.82 2.83" # todo 2.79b, 2.79b-filmic, 2.81a
-# For additional versions, see
-# https://www.sheepit-renderfarm.com/index.php?show=binaries
 
 show_codename_docs() {
 	einfo
@@ -361,8 +352,7 @@ src_prepare() {
 	ewarn "${PN} downloads Blender 2.79 with Python 3.5.3 having critical security CVE advisories"
 	ewarn "${PN} downloads Blender 2.80 with Python 3.7.0 having high security CVE advisory"
 	ewarn "${PN} downloads Blender 2.82 with Python 3.7.4 having high security CVE advisory"
-	ewarn "${PN} downloads Blender 2.82 with Python 3.7.4 having high security CVE advisory"
-	ewarn "${PN} downloads Blender 2.83 with Python 3.7.4 having high security CVE advisory"
+	ewarn "${PN} downloads Blender 2.83.1 with Python 3.7.4 having high security CVE advisory"
 	ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.5&search_type=all"
 	ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.7&search_type=all"
 	ewarn
@@ -379,7 +369,7 @@ src_prepare() {
 			src/com/sheepit/client/hardware/gpu/GPU.java || die
 	fi
 
-	eapply "${FILESDIR}/sheepit-client-6.1763.0-renderer-version-picker.patch"
+	eapply "${FILESDIR}/${PN}-6.1783.0-r23-renderer-version-picker.patch"
 	if ! use allow-unknown-renderers ; then
 		if ! use disable-hard-version-blocks ; then
 			enable_hardblock "HARDBLOCK_UNKNOWN_RENDERERS"
@@ -410,9 +400,9 @@ src_prepare() {
 			enable_hardblock "HARDBLOCK_BLENDER_282"
 		fi
 	fi
-	if ! use blender283 ; then
+	if ! use blender2831 ; then
 		if ! use disable-hard-version-blocks ; then
-			enable_hardblock "HARDBLOCK_BLENDER_283"
+			enable_hardblock "HARDBLOCK_BLENDER_2831"
 		fi
 	fi
 }
@@ -464,11 +454,11 @@ src_install() {
 		dodoc -r "${FILESDIR}/blender-2.82-readmes"
 		allowed_renderers+=" --allow-blender282"
 	fi
-	if use blender283 ; then
-		dodoc -r "${FILESDIR}/blender-2.83-licenses"
+	if use blender2831 ; then
+		dodoc -r "${FILESDIR}/blender-2.83.1-licenses"
 		use doc \
-		dodoc -r "${FILESDIR}/blender-2.83-readmes"
-		allowed_renderers+=" --allow-blender283"
+		dodoc -r "${FILESDIR}/blender-2.83.1-readmes"
+		allowed_renderers+=" --allow-blender2831"
 	fi
 	if use allow-unknown-renderers ; then
 		allowed_renderers+=" --allow-unknown-renderers"
