@@ -1,10 +1,10 @@
 Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
 v2: Merge tresor-fix-addressing-mode-64-bit-index.patch into this.
-    Used __x86_64__.
+    Used __x86_64__ to allow tresor_asm.S to be compiled in i686 or x86_64.
     Updated comments.
 v1.1: Created tresor-fix-addressing-mode-64-bit-index.patch.
       Updated with 64 bit indexes.
-v1: Update prolog, epilog, tresor_set_key.
+v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
 ----
 --- a/arch/x86/crypto/tresor_asm.S	2020-06-30 21:14:38.462355830 -0700
 +++ b/arch/x86/crypto/tresor_asm.S	2020-06-30 21:17:10.619231743 -0700
