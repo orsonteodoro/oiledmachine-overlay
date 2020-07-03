@@ -275,11 +275,9 @@ function ot-kernel-common_apply_tresor_fixes() {
 	_dpatch "${PATCH_OPS}" \
 		"${FILESDIR}/tresor-testmgr-ciphers-update-for-linux-4.14.patch"
 
-	if use tresor_x86_64 ; then
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_asm_64.patch"
+	if use tresor_x86_64 || use tresor_i686 ; then
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_asm_64_v2.patch"
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_key_64.patch"
-		_dpatch "${PATCH_OPS}" \
-		  "${FILESDIR}/tresor-fix-addressing-mode-64-bit-index.patch"
 	fi
 
 	#if ! use tresor_sysfs ; then
@@ -305,11 +303,5 @@ function ot-kernel-common_pkg_postinst_cb() {
   cause a kernel panic on boot.\n\
 The MuQSS scheduler may have random system hard pauses for few seconds to\n\
   around a minute when resource usage is high."
-	fi
-
-	if use tresor ; then
-		einfo \
-"It's recommented to disable many early printk driver messsages in the kernel\n\
-config to see the tresor prompt on boot, or it will scroll off the screen."
 	fi
 }

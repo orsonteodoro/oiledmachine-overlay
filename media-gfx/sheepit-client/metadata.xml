@@ -41,6 +41,9 @@
     <flag name="blender281a">Allows the client to download Blender 2.81a.</flag>
     <flag name="blender282">Allows the client to download Blender 2.82 with
       additional libraries not found in vanilla Blender.</flag>
+    <flag name="blender282-benchmark">Temporarly downloads Blender 2.82 with
+      additional libraries not found in vanilla Blender and runs
+      unskipable benchmark.</flag>
     <flag name="blender283">Allows the client to download Blender 2.83.</flag>
     <flag name="cuda">Checks for CUDA drivers.</flag>
     <flag name="disable-hard-version-blocks">Permits user choice to selectively

@@ -1,0 +1,42 @@
+--- a/crypto/aes_generic.c.orig	2019-11-24 16:32:01.000000000 -0800
++++ b/crypto/aes_generic.c	2020-06-29 16:06:44.196549435 -0700
+@@ -326,7 +326,7 @@ __visible const u32 crypto_ft_tab[4][256
+ 	}
+ };
+ 
+-static const u32 crypto_fl_tab[4][256] ____cacheline_aligned = {
++__visible const u32 crypto_fl_tab[4][256] ____cacheline_aligned = {
+ 	{
+ 		0x00000063, 0x0000007c, 0x00000077, 0x0000007b,
+ 		0x000000f2, 0x0000006b, 0x0000006f, 0x000000c5,
+@@ -854,7 +854,7 @@ __visible const u32 crypto_it_tab[4][256
+ 	}
+ };
+ 
+-static const u32 crypto_il_tab[4][256] ____cacheline_aligned = {
++__visible const u32 crypto_il_tab[4][256] ____cacheline_aligned = {
+ 	{
+ 		0x00000052, 0x00000009, 0x0000006a, 0x000000d5,
+ 		0x00000030, 0x00000036, 0x000000a5, 0x00000038,
+@@ -1119,7 +1119,9 @@ static const u32 crypto_il_tab[4][256] _
+ };
+ 
+ EXPORT_SYMBOL_GPL(crypto_ft_tab);
++EXPORT_SYMBOL_GPL(crypto_fl_tab);
+ EXPORT_SYMBOL_GPL(crypto_it_tab);
++EXPORT_SYMBOL_GPL(crypto_il_tab);
+ 
+ /**
+  * crypto_aes_set_key - Set the AES key.
+--- a/include/crypto/aes.h.orig	2019-11-24 16:32:01.000000000 -0800
++++ b/include/crypto/aes.h	2020-06-29 16:08:04.402646791 -0700
+@@ -29,7 +29,9 @@ struct crypto_aes_ctx {
+ };
+ 
+ extern const u32 crypto_ft_tab[4][256] ____cacheline_aligned;
++extern const u32 crypto_fl_tab[4][256] ____cacheline_aligned;
+ extern const u32 crypto_it_tab[4][256] ____cacheline_aligned;
++extern const u32 crypto_il_tab[4][256] ____cacheline_aligned;
+ 
+ /*
+  * validate key length for AES algorithms

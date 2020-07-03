@@ -1032,12 +1032,77 @@ function ot-kernel-common_pkg_postinst() {
 			chmod 700 "${EROOT}"/usr/bin/tresor_sysfs || die
 			# same hash for 5.1 and 5.0.13 for tresor_sysfs
 			einfo \
-"/usr/bin/tresor_sysfs is provided to set your TRESOR key"
+"\n\
+/usr/bin/tresor_sysfs CLI command which uses /sys/kernel/tresor/key too\n\
+are provided to set your TRESOR key directly.  Your key should be a\n\
+case-insensitive hex string without spaces and without any prefixes at least\n\
+{128,192,256}-bits corresponding to AES-128, AES-192, AES-256.  Because\n\
+it is custom, you may supply your own key deriviation function (KDF) and/or\n\
+hashing algorithm, the result from gpg, or hardware key.\n\
+\n\
+Tresor AES-192 and AES-256 is only available for the tresor_aesni USE flag.\n\
+\n\
+If using /sys/kernel/tresor/password for plaintext passwords, they can only\n\
+be 53 characters maxiumum without the null character.  They will be sent to\n\
+a key derivation function is 2000 iterations of SHA256.\n\
+\n\
+It's recommend that new users use /sys/kernel/tresor/password or set the\n\
+password at boot.\n\
+\n\
+Advanced users may use /sys/kernel/tresor/key instead.\n\
+\n"
+		else
+			if has tresor ${IUSE_EFFECTIVE} ; then
+				if use tresor ; then
+					einfo \
+"\n\
+You can only enter a password that is 53 characters long without the null\n\
+character though the boot time Tresor prompt.\n\
+\n"
+				fi
+			fi
+		fi
+	fi
+
+	if has tresor ${IUSE_EFFECTIVE} ; then
+		if use tresor ; then
+			einfo \
+"\n\
+To prevent the prompt on boot from scrolling off the screen, you can do one\n\
+of the following:\n\
+\n
+  Set CONSOLE_LOGLEVEL_QUIET <= 5 AND add \`quiet\` as a kernel\n\
+  parameter to the bootloader config.\n\
+\n\
+or\n\
+\n\
+  Set CONFIG_CONSOLE_LOGLEVEL_DEFAULT <= 5 (if you didn't set the\n\
+  \`quiet\` kernel parameter.)\n\
+\n\
+Setting CONFIG_CONSOLE_LOGLEVEL_DEFAULT and CONSOLE_LOGLEVEL_QUIET to <= 2\n\
+will wipe out all the boot time verbosity leaking into the tresor prompt\n\
+from drivers.\n\
+\n\
+Tresor was not designed for parallel usage.\n\
+\n\
+The kernel may require modding the setkey portions to support different\n\
+crypto systems whenever crypto_cipher_setkey or crypto_skcipher_setkey\n\
+gets called.  The module tries to avoid copies the key to memory and\n\
+needs the key dump to registers at the time the user enters the key.\n\
+See CONFIG_CRYPTO_TRESOR code blocks in crypto/testmgr.c for details.\n\
+\n\
+Because it uses debug registers, hardware breakpoints are not available\n\
+with Tresor.\n\
+\n"
+			ewarn \
+"\n\
+Custom patches for Tresor with xts is currently Work In Progress (WIP).\n
+Do not use it at this time.\n\
+\n"
 		fi
 	fi
 
 	if declare -f ot-kernel-common_pkg_postinst_cb > /dev/null ; then
 		ot-kernel-common_pkg_postinst_cb
 	fi
-
 }

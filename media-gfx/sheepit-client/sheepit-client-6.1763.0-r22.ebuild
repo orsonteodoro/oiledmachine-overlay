@@ -31,6 +31,12 @@ blender282? (
 	LGPL-2.1+
 	WTFPL-2
 )
+blender282-benchmark? (
+	MIT
+	LGPL-2.1
+	LGPL-2.1+
+	WTFPL-2
+)
 "
 #
 # About the sheepit-client licenses
@@ -80,7 +86,8 @@ SLOT="0"
 
 IUSE=" \
 blender \
-blender279b blender279b_filmic blender280 blender281a blender282 blender283 \
+blender279b blender279b_filmic blender280 blender281a blender282 \
+blender282-benchmark blender283 \
 allow-unknown-renderers disable-hard-version-blocks \
 cuda doc intel-ocl lts +opencl opencl_rocm opencl_orca \
 opencl_pal opengl_mesa pro-drivers split-drivers \
@@ -94,6 +101,7 @@ REQUIRED_USE="
 	blender280? ( blender )
 	blender281a? ( blender )
 	blender282? ( blender )
+	blender282-benchmark? ( blender )
 	blender283? ( blender )
 	|| ( cuda opencl )
 	|| ( blender279b blender279b_filmic blender280 blender281a blender282
@@ -342,7 +350,7 @@ enable_hardblock() {
 }
 
 disable_hardblock() {
-	sed -i -e "s|public static final boolean ${1} = false;|public static final boolean ${1} = true;|g" \
+	sed -i -e "s|public static final boolean ${1} = true;|public static final boolean ${1} = false;|g" \
 		src/com/sheepit/client/Configuration.java || die
 }
 
@@ -421,7 +429,7 @@ src_install() {
 	insinto /usr/share/${PN}
 	doins build/libs/sheepit-client-all.jar
 	exeinto /usr/bin
-	cat "${FILESDIR}/sheepit-client-v2.1.5" \
+	cat "${FILESDIR}/sheepit-client-v2.1.6" \
 		> "${T}/sheepit-client" || die
 	docinto licenses
 	dodoc LICENSE

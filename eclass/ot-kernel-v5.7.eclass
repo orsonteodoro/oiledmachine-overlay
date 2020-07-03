@@ -32,6 +32,7 @@ PATCH_BFQ_VER="5.7"
 PATCH_BMQ_MAJOR_MINOR="5.7"
 DISABLE_DEBUG_V="1.1"
 ZENTUNE_5_7_COMMIT="03344d1ad1076dd6374f208f8de4c7f6da9dbcee..13f40f309a6a443fcdcc51759dc3a4a0f9b7910f"
+PATCH_TRESOR_VER="3.18.5"
 
 IUSE="  bfq bmq bmq-quick-fix \
 	+cfs disable_debug +graysky2 muqss +o3 uksm \
@@ -39,6 +40,13 @@ IUSE="  bfq bmq bmq-quick-fix \
 	zenmisc \
 	-zentune"
 REQUIRED_USE="^^ ( muqss cfs bmq ) muqss !bfq"
+
+IUSE+=" tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs"
+REQUIRED_USE+=" tresor_sysfs? ( || ( tresor_i686 tresor_x86_64 tresor_aesni ) )
+	      tresor? ( ^^ ( tresor_i686 tresor_x86_64 tresor_aesni ) )
+	      tresor_i686? ( tresor )
+	      tresor_x86_64? ( tresor )
+	      tresor_aesni? ( tresor )"
 
 # no released patch yet
 REQUIRED_USE+=" !bmq-quick-fix"
@@ -54,7 +62,7 @@ K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
 DESCRIPTION="A customizeable kernel package containing UKSM, zen-kernel patchset, GraySky's GCC \
 Patches, MUQSS CPU Scheduler, BMQ CPU Scheduler, \
-Genpatches, BFQ updates, CVE fixes"
+Genpatches, BFQ updates, CVE fixes, TRESOR"
 
 CK_URL_BASE=\
 "http://ck.kolivas.org/patches/${PATCH_CK_MAJOR}/${PATCH_CK_MAJOR_MINOR}/${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}/"
@@ -84,14 +92,68 @@ SRC_URI+=" ${KERNEL_URI}
 "
 SRC_URI+=" ${UKSM_SRC_URL}"
 
+SRC_URI+="
+	   ${TRESOR_AESNI_DL_URL}
+	   ${TRESOR_I686_DL_URL}
+	   ${TRESOR_SYSFS_DL_URL}
+	   ${TRESOR_README_DL_URL}
+	   ${TRESOR_SRC_URL}"
+
 # @FUNCTION: ot-kernel-common_pkg_setup_cb
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel-common_pkg_setup_cb() {
-	if use zentune || use muqss ; then
+	if has zentune ${IUSE_EFFECTIVE} ; then
+		if use zentune ; then
 		ewarn \
-"The zen-tune patch or muqss might cause lock up or slow io under heavy load\n\
+"The zen-tune patch might cause lock up or slow io under heavy load\n\
 like npm.  These use flags are not recommended."
+		fi
+	fi
+
+	if use tresor ; then
+		if ver_test ${PV} -ge 4.17 ; then
+			ewarn \
+	"TRESOR is experimental for ${PV}.  Use 4.14.x series for stable TRESOR."
+		fi
+	fi
+}
+
+# @FUNCTION: ot-kernel-common_apply_tresor_fixes
+# @DESCRIPTION:
+# Applies specific TRESOR fixes for this kernel major version
+function ot-kernel-common_apply_tresor_fixes() {
+	_dpatch "${PATCH_OPS}" \
+		"${FILESDIR}/tresor-testmgr-ciphers-update.patch"
+
+	if use tresor_x86_64 || use tresor_i686 ; then
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_asm_64_v2.patch"
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_key_64.patch"
+	fi
+
+	#if ! use tresor_sysfs ; then
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/wait.patch"
+	#fi
+
+	# for 5.x series uncomment below
+	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
+
+	# for 5.x series and 4.20 use tresor-testmgr-linux-x.y.patch
+        _dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-testmgr-linux-5.1.patch"
+
+        _dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-get_ds-to-kernel_ds.patch"
+
+	if use tresor_x86_64 || use tresor_i686 ; then
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-ptrace-mispatch-fix-for-5.4-i686.patch"
+	else
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-ptrace-mispatch-fix-for-5.4-aesni.patch"
+	fi
+	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-expose-aes-generic-tables-for-5.4.patch"
+
+	if use tresor_x86_64 || use tresor_i686 ; then
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-i686.patch"
+	else
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-aesni.patch"
 	fi
 }
 
@@ -108,12 +170,5 @@ You must choose Periodic timer ticks (constant rate, no dynticks)\n\
   CONFIG_HZ_PERIODIC for it not to lock up.\n\
 The MuQSS scheduler may have random system hard pauses for few seconds to\n\
   around a minute when resource usage is high."
-	fi
-
-	if use bmq ; then
-		ewarn \
-"Using bmq with lots of resources may leave zombie processes, or high CPU\n\
-  processes/threads with little processing.\n\
-This might result in a denial of service that may require rebooting."
 	fi
 }

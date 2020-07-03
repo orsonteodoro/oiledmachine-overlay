@@ -16,6 +16,11 @@ function exit_error() {
 	exit 1
 }
 
+function cleanup() {
+	echo "Stopping Blender (aka rend.exe)"
+	killall -9 rend.exe
+}
+
 groups | grep video > /dev/null
 if [[ "$?" != "0" ]] ; then
 	exit_error "User must be in the video group"
@@ -48,3 +53,5 @@ done
 
 mkdir -p "${d}"
 java -jar /usr/share/sheepit-client/sheepit-client-all.jar -cache-dir "${d}" ALLOWED_RENDERERS $*
+
+trap cleanup EXIT

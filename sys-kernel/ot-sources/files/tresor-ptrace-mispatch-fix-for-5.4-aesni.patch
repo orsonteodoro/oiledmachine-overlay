@@ -1,0 +1,65 @@
+--- a/arch/x86/kernel/ptrace.c.orig	2020-06-30 02:52:24.200373721 -0700
++++ b/arch/x86/kernel/ptrace.c	2020-06-30 02:56:45.332445194 -0700
+@@ -617,6 +617,10 @@ static unsigned long ptrace_get_debugreg
+ 	struct thread_struct *thread = &tsk->thread;
+ 	unsigned long val = 0;
+ 
++#ifdef CONFIG_CRYPTO_TRESOR
++	return val;
++#endif
++
+ 	if (n < HBP_NUM) {
+ 		int index = array_index_nospec(n, HBP_NUM);
+ 		struct perf_event *bp = thread->ptrace_bps[index];
+@@ -638,6 +642,10 @@ static int ptrace_set_breakpoint_addr(st
+ 	struct perf_event *bp = t->ptrace_bps[nr];
+ 	int err = 0;
+ 
++#ifdef CONFIG_CRYPTO_TRESOR
++	return -EBUSY;
++#endif
++
+ 	if (!bp) {
+ 		/*
+ 		 * Put stub len and type to create an inactive but correct bp.
+@@ -678,7 +686,12 @@ static int ptrace_set_debugreg(struct ta
+ 	int rc = -EIO;
+ 
+ #ifdef CONFIG_CRYPTO_TRESOR
+-	return val;
++	if (n == 4 || n == 5)
++		return -EIO;
++	else if (n == 6 || n == 7)
++		return -EPERM;
++	else
++		return -EBUSY;
+ #endif
+ 
+ 	if (n < HBP_NUM) {
+@@ -701,10 +714,6 @@ static int ptrace_set_debugreg(struct ta
+ static int ioperm_active(struct task_struct *target,
+ 			 const struct user_regset *regset)
+ {
+-#ifdef CONFIG_CRYPTO_TRESOR
+-    return -EBUSY;
+-#endif
+-
+ 	return target->thread.io_bitmap_max / regset->size;
+ }
+ 
+@@ -744,15 +753,6 @@ long arch_ptrace(struct task_struct *chi
+ 	switch (request) {
+ 	/* read the word at location addr in the USER area. */
+ 	case PTRACE_PEEKUSR: {
+-#ifdef CONFIG_CRYPTO_TRESOR
+-    if (n == 4 || n == 5)
+-        return -EIO;
+-    else if (n == 6 || n == 7)
+-        return -EPERM;
+-    else
+-        return -EBUSY;
+-#endif
+-
+ 		unsigned long tmp;
+ 
+ 		ret = -EIO;
