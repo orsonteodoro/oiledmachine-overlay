@@ -291,6 +291,8 @@ function ot-kernel-common_apply_tresor_fixes() {
         _dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-testmgr-linux-4.14.127.patch"
 
         #_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-get_ds-to-kernel_ds.patch"
+
+	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-fix-warnings-for-tresor_key_c.patch"
 }
 
 # @FUNCTION: ot-kernel-common_pkg_postinst_cb

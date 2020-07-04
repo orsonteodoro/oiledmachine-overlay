@@ -982,8 +982,8 @@ function ot-kernel-common_src_compile() {
 		if use tresor_sysfs ; then
 			cp -a "${DISTDIR}/tresor_sysfs.c" "${T}"
 			cd "${T}" || die
-			einfo "$(tc-getCC) ${CFLAGS}"
-			$(tc-getCC) ${CFLAGS} tresor_sysfs.c -o tresor_sysfs || die
+			einfo "$(tc-getCC) ${CFLAGS} -Wno-unused-result"
+			$(tc-getCC) ${CFLAGS} -Wno-unused-result tresor_sysfs.c -o tresor_sysfs || die
 		fi
 	fi
 }
@@ -1040,7 +1040,7 @@ case-insensitive hex string without spaces and without any prefixes at least\n\
 it is custom, you may supply your own key deriviation function (KDF) and/or\n\
 hashing algorithm, the result from gpg, or hardware key.\n\
 \n\
-Tresor AES-192 and AES-256 is only available for the tresor_aesni USE flag.\n\
+TRESOR AES-192 and AES-256 is only available for the tresor_aesni USE flag.\n\
 \n\
 If using /sys/kernel/tresor/password for plaintext passwords, they can only\n\
 be 53 characters maxiumum without the null character.  They will be sent to\n\
@@ -1057,7 +1057,7 @@ Advanced users may use /sys/kernel/tresor/key instead.\n\
 					einfo \
 "\n\
 You can only enter a password that is 53 characters long without the null\n\
-character though the boot time Tresor prompt.\n\
+character though the boot time TRESOR prompt.\n\
 \n"
 				fi
 			fi
@@ -1080,10 +1080,10 @@ or\n\
   \`quiet\` kernel parameter.)\n\
 \n\
 Setting CONFIG_CONSOLE_LOGLEVEL_DEFAULT and CONSOLE_LOGLEVEL_QUIET to <= 2\n\
-will wipe out all the boot time verbosity leaking into the tresor prompt\n\
+will wipe out all the boot time verbosity leaking into the TRESOR prompt\n\
 from drivers.\n\
 \n\
-Tresor was not designed for parallel usage.\n\
+TRESOR was not designed for parallel usage.\n\
 \n\
 The kernel may require modding the setkey portions to support different\n\
 crypto systems whenever crypto_cipher_setkey or crypto_skcipher_setkey\n\
@@ -1091,13 +1091,11 @@ gets called.  The module tries to avoid copies the key to memory and\n\
 needs the key dump to registers at the time the user enters the key.\n\
 See CONFIG_CRYPTO_TRESOR code blocks in crypto/testmgr.c for details.\n\
 \n\
-Because it uses debug registers, hardware breakpoints are not available\n\
-with Tresor.\n\
-\n"
-			ewarn \
-"\n\
-Custom patches for Tresor with xts is currently Work In Progress (WIP).\n
-Do not use it at this time.\n\
+Because it uses hardware breakpoint debug address registers, these debugging\n\
+features are mutually exclusive when TRESOR is being used.\n\
+\n
+TRESOR-XTS is limited to 64-bit arches and 256-bit keys, but 128-bit key for\n\
+the crypto key.\n\
 \n"
 		fi
 	fi

@@ -17,34 +17,97 @@
 #cryptsetup benchmark --cipher tresor-cbc --key-size 128
 # Tests are approximate using memory only (no storage IO).
 # Algorithm |       Key |      Encryption |      Decryption
-# tresor-cbc        128b        25.2 MiB/s        16.0 MiB/s
+# tresor-cbc        128b        24.9 MiB/s        14.7 MiB/s
 
 #cryptsetup benchmark --cipher tresor-ecb --key-size 128
 # Tests are approximate using memory only (no storage IO).
 # Algorithm |       Key |      Encryption |      Decryption
-# tresor-ecb        128b        22.4 MiB/s        14.6 MiB/s
+# tresor-ecb        128b        23.3 MiB/s        14.1 MiB/s
 
 #cryptsetup benchmark --cipher tresor-ctr --key-size 128
 # Tests are approximate using memory only (no storage IO).
 # Algorithm |       Key |      Encryption |      Decryption
-# tresor-ctr        128b        23.4 MiB/s        25.2 MiB/s
+# tresor-ctr        128b        22.0 MiB/s        22.6 MiB/s
 
 #cryptsetup benchmark --cipher aes-cbc --key-size 128
 # Tests are approximate using memory only (no storage IO).
 # Algorithm |       Key |      Encryption |      Decryption
-#    aes-cbc        128b        88.7 MiB/s       103.9 MiB/s
+#    aes-cbc        128b        92.6 MiB/s        88.6 MiB/s
 
 #cryptsetup benchmark --cipher aes-ecb --key-size 128
 # Tests are approximate using memory only (no storage IO).
 # Algorithm |       Key |      Encryption |      Decryption
-#    aes-ecb        128b       103.5 MiB/s       108.5 MiB/s
+#    aes-ecb        128b        98.3 MiB/s       101.3 MiB/s
 
 #cryptsetup benchmark --cipher aes-ctr --key-size 128
 # Tests are approximate using memory only (no storage IO).
 # Algorithm |       Key |      Encryption |      Decryption
-#    aes-ctr        128b        89.7 MiB/s        96.8 MiB/s
+#    aes-ctr        128b        91.4 MiB/s        84.8 MiB/s
+
+#cryptsetup benchmark --cipher tresor-xts --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+# tresor-xts        256b        22.6 MiB/s        13.9 MiB/s
+
+#cryptsetup benchmark --cipher aes-xts --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+#    aes-xts        256b        98.8 MiB/s        98.9 MiB/s
+
+#cryptsetup benchmark --cipher serpent-xts --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+#serpent-xts        256b       123.6 MiB/s       121.4 MiB/s
 
 #Results of /proc/crypto for kernel 5.4.49 using tresor i686 with sse2 modded for x86_64:
+#name         : __xts(tresor)
+#driver       : cryptd(__xts-tresor-sse2)
+#module       : kernel
+#priority     : 451
+#refcnt       : 1
+#selftest     : passed
+#internal     : yes
+#type         : skcipher
+#async        : yes
+#blocksize    : 16
+#min keysize  : 32
+#max keysize  : 32
+#ivsize       : 16
+#chunksize    : 16
+#walksize     : 16
+
+#name         : xts(tresor)
+#driver       : xts-tresor-sse2
+#module       : kernel
+#priority     : 401
+#refcnt       : 1
+#selftest     : passed
+#internal     : no
+#type         : skcipher
+#async        : yes
+#blocksize    : 16
+#min keysize  : 32
+#max keysize  : 32
+#ivsize       : 16
+#chunksize    : 16
+#walksize     : 16
+
+#name         : __ctr(tresor)
+#driver       : cryptd(__ctr-tresor-sse2)
+#module       : kernel
+#priority     : 450
+#refcnt       : 1
+#selftest     : passed
+#internal     : yes
+#type         : skcipher
+#async        : yes
+#blocksize    : 1
+#min keysize  : 16
+#max keysize  : 16
+#ivsize       : 16
+#chunksize    : 16
+#walksize     : 16
+
 #name         : ctr(tresor)
 #driver       : ctr-tresor-sse2
 #module       : kernel
@@ -125,6 +188,22 @@
 #chunksize    : 16
 #walksize     : 16
 
+#name         : __xts(tresor)
+#driver       : __xts-tresor-sse2
+#module       : kernel
+#priority     : 401
+#refcnt       : 1
+#selftest     : passed
+#internal     : yes
+#type         : skcipher
+#async        : no
+#blocksize    : 16
+#min keysize  : 32
+#max keysize  : 32
+#ivsize       : 16
+#chunksize    : 16
+#walksize     : 16
+
 #name         : __ctr(tresor)
 #driver       : __ctr-tresor-sse2
 #module       : kernel
@@ -184,54 +263,6 @@
 #blocksize    : 16
 #min keysize  : 16
 #max keysize  : 16
-
-#name         : __xts(aes)
-#driver       : __xts-tresor-sse2
-#module       : kernel
-#priority     : 401
-#refcnt       : 1
-#selftest     : passed
-#internal     : yes
-#type         : skcipher
-#async        : no
-#blocksize    : 16
-#min keysize  : 32
-#max keysize  : 32
-#ivsize       : 16
-#chunksize    : 16
-#walksize     : 16
-
-#name         : __xts(aes)
-#driver       : cryptd(__xts-tresor-sse2)
-#module       : kernel
-#priority     : 451
-#refcnt       : 1
-#selftest     : passed
-#internal     : yes
-#type         : skcipher
-#async        : yes
-#blocksize    : 16
-#min keysize  : 32
-#max keysize  : 32
-#ivsize       : 16
-#chunksize    : 16
-#walksize     : 16
-
-#name         : xts(aes)
-#driver       : xts-tresor-sse2
-#module       : kernel
-#priority     : 401
-#refcnt       : 1
-#selftest     : passed
-#internal     : no
-#type         : skcipher
-#async        : yes
-#blocksize    : 16
-#min keysize  : 32
-#max keysize  : 32
-#ivsize       : 16
-#chunksize    : 16
-#walksize     : 16
 
 ETYPE="sources"
 
@@ -368,10 +399,12 @@ function ot-kernel-common_apply_tresor_fixes() {
 	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-expose-aes-generic-tables-for-5.4.patch"
 
 	if use tresor_x86_64 || use tresor_i686 ; then
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-i686.patch"
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-i686-v2.patch"
 	else
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-aesni.patch"
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-aesni-v2.patch"
 	fi
+
+	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-fix-warnings-for-tresor_key_c.patch"
 }
 
 # @FUNCTION: ot-kernel-common_pkg_postinst_cb
