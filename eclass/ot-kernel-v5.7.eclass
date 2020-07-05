@@ -92,9 +92,9 @@ SRC_URI+=" ${ARCH_URI}
 	   tresor? (
 		${TRESOR_AESNI_DL_URL}
 		${TRESOR_I686_DL_URL}
+		${TRESOR_README_DL_URL2}
+		${TRESOR_RESEARCH_PDF_DL_URL}
 		${TRESOR_SYSFS_DL_URL}
-		${TRESOR_README_DL_URL}
-		${TRESOR_SRC_URL}
 	   )
 	   uksm? ( ${UKSM_SRC_URL} )"
 
@@ -151,8 +151,10 @@ function ot-kernel-common_apply_tresor_fixes() {
 
 	if use tresor_x86_64 || use tresor_i686 ; then
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-i686-v2.patch"
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-glue-remove-xts-casts-and-api-updates-for-5.6-i686.patch"
 	else
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-aesni-v2.patch"
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-aesni-v2.1.patch"
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-glue-remove-xts-casts-and-api-updates-for-5.6-aesni.patch"
 	fi
 
 	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-fix-warnings-for-tresor_key_c.patch"

@@ -1,0 +1,87 @@
+diff -urp linux-5.7.7-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.7.7-ot/arch/x86/crypto/tresor_glue.c
+--- linux-5.7.7-ot.orig/arch/x86/crypto/tresor_glue.c	2020-07-04 20:32:29.676586805 -0700
++++ linux-5.7.7-ot/arch/x86/crypto/tresor_glue.c	2020-07-04 20:51:29.450549003 -0700
+@@ -369,7 +369,7 @@ static int ctr_crypt(struct skcipher_req
+ 
+ #ifdef CONFIG_X86_64
+ /* 32-bit doesn't support 64-bit hardware breakpoint addresses */
+-void __tresor_encrypt(struct tresor_ctx *ctx, u8 *dst, const u8 *src) {
++void __tresor_encrypt(const void *ctx, u8 *dst, const u8 *src) {
+ 	unsigned long irq_flags;
+ 
+ 	/* encrypt using the cipher key */
+@@ -378,7 +378,7 @@ void __tresor_encrypt(struct tresor_ctx
+ 	tresor_epilog(&irq_flags);
+ }
+ 
+-void __tresor_decrypt(struct tresor_ctx *ctx, u8 *dst, const u8 *src) {
++void __tresor_decrypt(const void *ctx, u8 *dst, const u8 *src) {
+ 	unsigned long irq_flags;
+ 
+ 	/* decrypt using the cipher key */
+@@ -387,7 +387,7 @@ void __tresor_decrypt(struct tresor_ctx
+ 	tresor_epilog(&irq_flags);
+ }
+ 
+-void __xts_tweak_tresor_encrypt(struct tresor_ctx *ctx, u8 *dst, const u8 *src) {
++void __xts_tweak_tresor_encrypt(const void *ctx, u8 *dst, const u8 *src) {
+ 	unsigned long irq_flags;
+ 
+ 	/* encrypt using the tweak key */
+@@ -424,16 +424,16 @@ static int xts_tresor_setkey(struct cryp
+ 	return 0;
+ }
+ 
+-static void tresor_xts_enc(void *ctx, u128 *dst, const u128 *src, le128 *iv)
++static void tresor_xts_enc(const void *ctx, u8 *dst, const u8 *src, le128 *iv)
+ {
+ 	glue_xts_crypt_128bit_one(ctx, dst, src, iv,
+-				  GLUE_FUNC_CAST(__tresor_encrypt));
++				  __tresor_encrypt);
+ }
+ 
+-static void tresor_xts_dec(void *ctx, u128 *dst, const u128 *src, le128 *iv)
++static void tresor_xts_dec(const void *ctx, u8 *dst, const u8 *src, le128 *iv)
+ {
+ 	glue_xts_crypt_128bit_one(ctx, dst, src, iv,
+-				  GLUE_FUNC_CAST(__tresor_decrypt));
++				  __tresor_decrypt);
+ }
+ 
+ static const struct common_glue_ctx tresor_enc_xts = {
+@@ -442,7 +442,7 @@ static const struct common_glue_ctx tres
+ 
+ 	.funcs = { {
+ 		.num_blocks = 1,
+-		.fn_u = { .xts = GLUE_XTS_FUNC_CAST(tresor_xts_enc) }
++		.fn_u = { .xts = tresor_xts_enc }
+ 	} }
+ };
+ 
+@@ -452,7 +452,7 @@ static const struct common_glue_ctx tres
+ 
+ 	.funcs = { {
+ 		.num_blocks = 1,
+-		.fn_u = { .xts = GLUE_XTS_FUNC_CAST(tresor_xts_dec) }
++		.fn_u = { .xts = tresor_xts_dec }
+ 	} }
+ };
+ 
+@@ -462,7 +462,7 @@ static int xts_encrypt(struct skcipher_r
+ 	struct tresor_xts_ctx *ctx = crypto_skcipher_ctx(tfm);
+ 
+ 	return glue_xts_req_128bit(&tresor_enc_xts, req,
+-				   XTS_TWEAK_CAST(__xts_tweak_tresor_encrypt),
++				   __xts_tweak_tresor_encrypt,
+ 				   &ctx->tweak_ctx, &ctx->crypt_ctx, false);
+ }
+ 
+@@ -472,7 +472,7 @@ static int xts_decrypt(struct skcipher_r
+ 	struct tresor_xts_ctx *ctx = crypto_skcipher_ctx(tfm);
+ 
+ 	return glue_xts_req_128bit(&tresor_dec_xts, req,
+-				   XTS_TWEAK_CAST(__xts_tweak_tresor_encrypt),
++				   __xts_tweak_tresor_encrypt,
+ 				   &ctx->tweak_ctx, &ctx->crypt_ctx, true);
+ }
+ #endif

@@ -205,11 +205,13 @@ TRESOR_AESNI_FN="tresor-patch-${PATCH_TRESOR_VER}_aesni"
 TRESOR_I686_FN="tresor-patch-${PATCH_TRESOR_VER}_i686"
 TRESOR_SYSFS_FN="tresor_sysfs.c"
 TRESOR_README_FN="tresor-readme.html"
+TRESOR_PDF_FN="tresor.pdf"
 TRESOR_AESNI_DL_URL="http://www1.informatik.uni-erlangen.de/filepool/projects/tresor/${TRESOR_AESNI_FN}"
 TRESOR_I686_DL_URL="http://www1.informatik.uni-erlangen.de/filepool/projects/tresor/${TRESOR_I686_FN}"
 TRESOR_SYSFS_DL_URL="http://www1.informatik.uni-erlangen.de/filepool/projects/tresor/${TRESOR_SYSFS_FN}"
 TRESOR_README_DL_URL="https://www1.informatik.uni-erlangen.de/tresor?q=content/readme"
-TRESOR_SRC_URL="${TRESOR_README_DL_URL} -> ${TRESOR_README_FN}"
+TRESOR_RESEARCH_PDF_DL_URL="http://www1.informatik.uni-erlangen.de/filepool/projects/tresor/${TRESOR_PDF_FN}"
+TRESOR_README_DL_URL2="${TRESOR_README_DL_URL} -> ${TRESOR_README_FN}"
 
 KERNEL_INC_BASEURL="https://cdn.kernel.org/pub/linux/kernel/v${K_PATCH_XV}/incr/"
 KERNEL_PATCH_0_TO_1_URL="https://cdn.kernel.org/pub/linux/kernel/v${K_PATCH_XV}/patch-${K_MAJOR_MINOR}.1.xz"
@@ -264,6 +266,8 @@ UNIPATCH_LIST=""
 UNIPATCH_STRICTORDER="yes"
 
 PATCH_OPS="-p1 -F 500"
+
+RESTRICT="mirror"
 
 # @FUNCTION: _dpatch
 # @DESCRIPTION:
@@ -1025,7 +1029,8 @@ function ot-kernel-common_src_install() {
 	if has tresor ${IUSE_EFFECTIVE} ; then
 		if use tresor ; then
 			docinto /usr/share/${PF}
-			dodoc "${DISTDIR}/tresor-readme.html"
+			dodoc "${DISTDIR}/${TRESOR_README_FN}"
+			dodoc "${DISTDIR}/${TRESOR_PDF_FN}"
 		fi
 	fi
 
@@ -1071,7 +1076,7 @@ TRESOR AES-192 and AES-256 is only available for the tresor_aesni USE flag.\n\
 \n\
 If using /sys/kernel/tresor/password for plaintext passwords, they can only\n\
 be 53 characters maxiumum without the null character.  They will be sent to\n\
-a key derivation function is 2000 iterations of SHA256.\n\
+a key derivation function that is 2000 iterations of SHA256.\n\
 \n\
 It's recommend that new users use /sys/kernel/tresor/password or set the\n\
 password at boot.\n\

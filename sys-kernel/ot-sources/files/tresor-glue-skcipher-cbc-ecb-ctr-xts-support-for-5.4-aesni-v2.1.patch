@@ -1,6 +1,7 @@
 Patch Status: Testing
 Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Date: Jul 3, 2020
+v2.1:  Moved running ctr(tresor), xts(tresor) tests to arch/x86/crypto/tresor_key.c.
 v2:  Limit XTS to 128-bit cipher key, and 128-bit tweak key.
      Change location of the XTS tweak key from db4-db7 to db2-db3.
      Remove unused rounds for XTS tweak key.
@@ -15,7 +16,7 @@ Check if tresor_setkey_xts_tweak is required for crypto_skcipher_setkey
   consumers (See crypto/testmgr.c for details) for applications / 
   crypto-drivers / crypto-libraries
 ----
-diff -urp linux-5.4.50-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.50-ot/arch/x86/crypto/tresor_asm.S
+unchanged:
 --- linux-5.4.50-ot.orig/arch/x86/crypto/tresor_asm.S	2020-07-03 22:16:55.777898602 -0700
 +++ linux-5.4.50-ot/arch/x86/crypto/tresor_asm.S	2020-07-03 22:18:23.127398835 -0700
 @@ -25,9 +25,8 @@
@@ -112,7 +113,7 @@ diff -urp linux-5.4.50-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.50-ot/arch
  
  #ifdef CONFIG_CRYPTO_TRESOR_KEY_VIA_CPU0
  /* void tresor_get_key(u8 *out_key) */
-diff -urp linux-5.4.50-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.50-ot/arch/x86/crypto/tresor_glue.c
+unchanged:
 --- linux-5.4.50-ot.orig/arch/x86/crypto/tresor_glue.c	2020-07-03 22:16:55.777898602 -0700
 +++ linux-5.4.50-ot/arch/x86/crypto/tresor_glue.c	2020-07-03 22:18:23.141399397 -0700
 @@ -5,6 +5,26 @@
@@ -677,7 +678,7 @@ diff -urp linux-5.4.50-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.50-ot/arc
  	crypto_unregister_alg(&tresor_alg);
  }
  module_exit(tresor_fini);
-diff -urp linux-5.4.50-ot.orig/crypto/testmgr.c linux-5.4.50-ot/crypto/testmgr.c
+unchanged:
 --- linux-5.4.50-ot.orig/crypto/testmgr.c	2020-07-03 22:16:55.850901522 -0700
 +++ linux-5.4.50-ot/crypto/testmgr.c	2020-07-03 22:21:07.259006537 -0700
 @@ -2500,8 +2500,11 @@ static int test_skcipher_vec_cfg(const c
@@ -726,7 +727,7 @@ diff -urp linux-5.4.50-ot.orig/crypto/testmgr.c linux-5.4.50-ot/crypto/testmgr.c
  		.alg = "xts(twofish)",
  		.generic_driver = "xts(ecb(twofish-generic))",
  		.test = alg_test_skcipher,
-diff -urp linux-5.4.50-ot.orig/include/crypto/tresor.h linux-5.4.50-ot/include/crypto/tresor.h
+unchanged:
 --- linux-5.4.50-ot.orig/include/crypto/tresor.h	2020-07-03 22:16:55.792899203 -0700
 +++ linux-5.4.50-ot/include/crypto/tresor.h	2020-07-03 22:18:23.156399999 -0700
 @@ -10,10 +10,15 @@
@@ -745,9 +746,11 @@ diff -urp linux-5.4.50-ot.orig/include/crypto/tresor.h linux-5.4.50-ot/include/c
  bool tresor_capable(void);
  
  void tresor_kernel_init(void);
---- linux-5.4.50-ot.orig/init/main.c.orig	2020-07-04 16:35:37.436394359 -0700
-+++ linux-5.4.50-ot/init/main.c	2020-07-04 13:18:48.396844122 -0700
-@@ -1225,6 +1225,8 @@ static noinline void __init kernel_init_
+only in patch2:
+unchanged:
+--- linux-5.4.50-ot.orig/arch/x86/crypto/tresor_key.c.orig	2020-07-04 22:09:32.146496129 -0700
++++ linux-5.4.50-ot/arch/x86/crypto/tresor_key.c	2020-07-04 22:09:25.986256718 -0700
+@@ -627,6 +627,8 @@ void tresor_kernel_init(void)
  	tresor_unlock_tests();
  	alg_test("ecb(tresor)", "ecb(tresor)", 0, 0);
  	alg_test("cbc(tresor)", "cbc(tresor)", 0, 0);
