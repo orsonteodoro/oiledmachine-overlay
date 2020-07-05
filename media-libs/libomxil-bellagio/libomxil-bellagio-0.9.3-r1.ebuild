@@ -27,6 +27,7 @@ src_prepare() {
 		"${FILESDIR}"/${P}-dynamicloader-linking.patch
 		"${FILESDIR}"/${P}-parallel-build.patch
 		"${FILESDIR}"/${P}-version.patch
+		"${FILESDIR}"/${P}-uuid-size.patch
 	)
 	xorg-2_src_prepare
 }
