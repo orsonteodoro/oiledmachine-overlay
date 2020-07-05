@@ -1009,7 +1009,7 @@ function ot-kernel-common_src_compile() {
 		if use tresor_sysfs ; then
 			cp -a "${DISTDIR}/tresor_sysfs.c" "${T}"
 			cd "${T}" || die
-			einfo "$(tc-getCC) ${CFLAGS} -Wno-unused-result"
+			einfo "Running:  $(tc-getCC) ${CFLAGS} -Wno-unused-result tresor_sysfs.c -o tresor_sysfs"
 			$(tc-getCC) ${CFLAGS} -Wno-unused-result tresor_sysfs.c -o tresor_sysfs || die
 		fi
 	fi
