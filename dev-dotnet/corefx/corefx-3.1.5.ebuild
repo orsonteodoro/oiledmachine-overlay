@@ -49,7 +49,7 @@ RDEPEND=">=app-crypt/mit-krb5-1.13.2
 	 >=dev-dotnet/libgdiplus-6.0.1
 	 >=dev-libs/icu-55.1
 	 >=dev-libs/openssl-1.0.2o
-	 >=dev-libs/openssl-compat-1.0.2o:1.0.0
+	 >=dev-libs/openssl-compat-1.0.2o
 	 >=dev-util/lldb-4.0
 	 >=dev-util/lttng-ust-2.7.1
 	 >=net-misc/curl-7.47

@@ -64,7 +64,7 @@ RDEPEND=" =dev-dotnet/coreclr-${PV}*
 	 >=dev-dotnet/libgdiplus-6.0.1
 	 >=dev-libs/icu-55.1
 	 >=dev-libs/openssl-1.0.2o
-	 >=dev-libs/openssl-compat-1.0.2o:1.0.0
+	 >=dev-libs/openssl-compat-1.0.2o
 	 >=dev-util/lldb-4.0
 	 >=dev-util/lttng-ust-2.7.1
 	 heimdal? ( >=app-crypt/heimdal-1.7 )
