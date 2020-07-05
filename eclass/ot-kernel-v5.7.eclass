@@ -30,26 +30,22 @@ K_GENPATCHES_VER="${K_GENPATCHES_VER:?10}"
 PATCH_GP_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
 PATCH_BFQ_VER="5.7"
 PATCH_BMQ_MAJOR_MINOR="5.7"
+PATCH_PROJECT_C_MAJOR_MINOR="5.7"
 DISABLE_DEBUG_V="1.1"
 ZENTUNE_5_7_COMMIT="03344d1ad1076dd6374f208f8de4c7f6da9dbcee..13f40f309a6a443fcdcc51759dc3a4a0f9b7910f"
 PATCH_TRESOR_VER="3.18.5"
 
-IUSE="  bfq bmq bmq-quick-fix \
-	+cfs disable_debug +graysky2 muqss +o3 uksm \
-	futex-wait-multiple \
-	zenmisc \
-	-zentune"
-REQUIRED_USE="^^ ( muqss cfs bmq ) muqss !bfq"
-
-IUSE+=" tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs"
-REQUIRED_USE+=" tresor_sysfs? ( || ( tresor_i686 tresor_x86_64 tresor_aesni ) )
-	      tresor? ( ^^ ( tresor_i686 tresor_x86_64 tresor_aesni ) )
-	      tresor_i686? ( tresor )
-	      tresor_x86_64? ( tresor )
-	      tresor_aesni? ( tresor )"
-
-# no released patch yet
-REQUIRED_USE+=" !bmq-quick-fix"
+IUSE="bfq bmq +cfs disable_debug futex-wait-multiple +genpatches +graysky2 \
+muqss +o3 prjc tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 \
+uksm zenmisc -zentune"
+REQUIRED_USE="\
+!bfq
+^^ ( bmq cfs muqss prjc ) \
+tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
+tresor_i686? ( tresor )
+tresor_x86_64? ( tresor )
+tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
+tresor_aesni? ( tresor )"
 
 #K_WANT_GENPATCHES="base extras experimental"
 K_SECURITY_UNSUPPORTED=${K_SECURITY_UNSUPPORTED:="1"}
@@ -61,7 +57,7 @@ detect_arch
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
 DESCRIPTION="A customizeable kernel package containing UKSM, zen-kernel patchset, GraySky's GCC \
-Patches, MUQSS CPU Scheduler, BMQ CPU Scheduler, \
+Patches, MUQSS CPU Scheduler, BMQ CPU Scheduler, Project C CPU Scheduler, \
 Genpatches, BFQ updates, CVE fixes, TRESOR"
 
 CK_URL_BASE=\
@@ -74,30 +70,33 @@ inherit check-reqs ot-kernel-common
 #BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.patch"
 #BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
 
-SRC_URI+=" ${CK_SRC_URL}"
-
-SRC_URI+=" ${KERNEL_URI}
-	   ${GENPATCHES_URI}
-	   ${ARCH_URI}
-	   ${O3_ALLOW_SRC_URL}
-	   ${GRAYSKY_SRC_4_9_URL}
-	   ${GRAYSKY_SRC_8_1_URL}
-	   ${GRAYSKY_SRC_9_1_URL}
-	   ${GRAYSKY_SRC_10_1_URL}
-	   ${BMQ_SRC_URL}
-	   ${GENPATCHES_BASE_SRC_URL}
-	   ${GENPATCHES_EXPERIMENTAL_SRC_URL}
-	   ${GENPATCHES_EXTRAS_SRC_URL}
+SRC_URI+=" ${ARCH_URI}
 	   ${KERNEL_PATCH_URLS[@]}
-"
-SRC_URI+=" ${UKSM_SRC_URL}"
-
-SRC_URI+="
-	   ${TRESOR_AESNI_DL_URL}
-	   ${TRESOR_I686_DL_URL}
-	   ${TRESOR_SYSFS_DL_URL}
-	   ${TRESOR_README_DL_URL}
-	   ${TRESOR_SRC_URL}"
+	   ${KERNEL_URI}
+	   genpatches? (
+		${GENPATCHES_URI}
+		${GENPATCHES_BASE_SRC_URL}
+		${GENPATCHES_EXPERIMENTAL_SRC_URL}
+		${GENPATCHES_EXTRAS_SRC_URL}
+	   )
+	   bmq? ( ${BMQ_SRC_URL} )
+	   graysky2? (
+		${GRAYSKY_SRC_4_9_URL}
+		${GRAYSKY_SRC_8_1_URL}
+		${GRAYSKY_SRC_9_1_URL}
+		${GRAYSKY_SRC_10_1_URL}
+	   )
+	   muqss? ( ${CK_SRC_URL} )
+	   o3? ( ${O3_ALLOW_SRC_URL} )
+	   prjc? ( ${PRJC_SRC_URL} )
+	   tresor? (
+		${TRESOR_AESNI_DL_URL}
+		${TRESOR_I686_DL_URL}
+		${TRESOR_SYSFS_DL_URL}
+		${TRESOR_README_DL_URL}
+		${TRESOR_SRC_URL}
+	   )
+	   uksm? ( ${UKSM_SRC_URL} )"
 
 # @FUNCTION: ot-kernel-common_pkg_setup_cb
 # @DESCRIPTION:

@@ -185,14 +185,14 @@ BFQ_BRANCH="bfq"
 # Obtained from:  date -d "2017-11-12 10:46:13 -0800" +%s
 LINUX_TIMESTAMP=1510512373
 
-IUSE="+cfs disable_debug +graysky2 muqss pds +o3 uksm \
-	tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_sysfs"
-REQUIRED_USE="^^ ( muqss pds cfs )
-	      tresor_sysfs? ( || ( tresor_i686 tresor_x86_64 tresor_aesni ) )
-	      tresor? ( ^^ ( tresor_i686 tresor_x86_64 tresor_aesni ) )
-	      tresor_i686? ( tresor )
-	      tresor_x86_64? ( tresor )
-	      tresor_aesni? ( tresor )"
+IUSE="+cfs disable_debug +genpatches +graysky2 muqss pds +o3 tresor \
+tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 uksm"
+REQUIRED_USE="^^ ( cfs muqss pds )
+tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
+tresor_aesni? ( tresor )
+tresor_i686? ( tresor )
+tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
+tresor_x86_64? ( tresor )"
 
 #K_WANT_GENPATCHES="base extras experimental"
 K_SECURITY_UNSUPPORTED=${K_SECURITY_UNSUPPORTED:="1"}
@@ -213,25 +213,33 @@ CK_SRC_URL="${CK_URL_BASE}${CK_FN}"
 
 inherit ot-kernel-common
 
-SRC_URI+=" ${KERNEL_URI}
-	   ${GENPATCHES_URI}
-	   ${ARCH_URI}
-	   ${UKSM_SRC_URL}
-	   ${O3_CO_SRC_URL}
-	   ${O3_RO_SRC_URL}
-	   ${GRAYSKY_SRC_4_9_URL}
-	   ${GRAYSKY_SRC_8_1_URL}
-	   ${CK_SRC_URL}
-	   ${GENPATCHES_BASE_SRC_URL}
-	   ${GENPATCHES_EXPERIMENTAL_SRC_URL}
-	   ${GENPATCHES_EXTRAS_SRC_URL}
-	   ${TRESOR_AESNI_DL_URL}
-	   ${TRESOR_I686_DL_URL}
-	   ${TRESOR_SYSFS_DL_URL}
-	   ${TRESOR_README_DL_URL}
-	   ${TRESOR_SRC_URL}
+SRC_URI+=" ${ARCH_URI}
 	   ${KERNEL_PATCH_URLS[@]}
-	   ${PDS_SRC_URL}"
+	   ${KERNEL_URI}
+	   genpatches? (
+		${GENPATCHES_URI}
+		${GENPATCHES_BASE_SRC_URL}
+		${GENPATCHES_EXPERIMENTAL_SRC_URL}
+		${GENPATCHES_EXTRAS_SRC_URL}
+	   )
+	   graysky2? (
+		${GRAYSKY_SRC_4_9_URL}
+		${GRAYSKY_SRC_8_1_URL}
+	   )
+	   muqss? ( ${CK_SRC_URL} )
+	   o3? (
+		${O3_CO_SRC_URL}
+		${O3_RO_SRC_URL}
+	   )
+	   pds? ( ${PDS_SRC_URL} )
+	   tresor? (
+		${TRESOR_AESNI_DL_URL}
+		${TRESOR_I686_DL_URL}
+		${TRESOR_SYSFS_DL_URL}
+		${TRESOR_README_DL_URL}
+		${TRESOR_SRC_URL}
+	   )
+	   uksm? ( ${UKSM_SRC_URL} )"
 
 # @FUNCTION: ot-kernel-common_pkg_setup_cb
 # @DESCRIPTION:

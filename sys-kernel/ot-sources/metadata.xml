@@ -12,7 +12,7 @@
     Power users can choose either the BMQ, PDS, MuQSS CPU schedulers.
 
     The TRESOR patch provides increased mitigation from cold boot resistant
-    attacks (only in the 4.14.x series).
+    attacks.
 
     Compiler based optimizations are provided by GraySky2's GCC patch and the
     O3 patch.
@@ -20,7 +20,9 @@
     Older point releases are removed to eliminate some of the previously
     announced 0-day exploits.
 
-    4.14.x kernel series is kept around for the TRESOR patch.
+    4.14.x kernel series is kept around for vanilla TRESOR.
+    TRESOR for 5.x is experimental.  XTS with TRESOR is in Testing and
+    may require modding.
 
     Only Long Term Support (LTS) kernel and those marked stable
     in kernel.org are kept.
@@ -31,7 +33,7 @@
       https://github.com/orsonteodoro/oiledmachine-overlay/issues
     </bugs-to>
     <maintainer status="active" type="person">
-      <!-- for bmq and pds -->
+      <!-- for bmq, pds, Project C -->
       <email>cchalpha@gmail.com</email>
       <name>Alfred Chen</name>
     </maintainer>
@@ -141,6 +143,7 @@
       scheduler.</flag>
     <flag name="disable_debug">Installs scripts to disable debugging, tracing,
       verbose output or related code paths.</flag>
+    <flag name="genpatches">Applies the genkernel patch set.</flag>
     <flag name="graysky2">Patches the kernel for more CPU
       microarchitectures</flag>
     <flag name="futex-wait-multiple">Patches ther kernel with
@@ -153,6 +156,7 @@
       compiler optimizations.</flag>
     <flag name="pds">Patches the kernel with an alternative skiplist
       based scheduler.</flag>
+    <flag name="prjc">Applies the Project C CPU scheduler.</flag>
     <flag name="symlink">Updates the the /usr/src/linux symlink for every
       newer release.</flag>
     <flag name="tresor">Controls application of TRESOR.  AES keys are

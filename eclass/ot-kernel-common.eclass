@@ -40,6 +40,8 @@
 #   http://cchalpha.blogspot.com/search/label/PDS
 # BMQ CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/BMQ
+# Project C CPU Scheduler:
+#   http://cchalpha.blogspot.com/search/label/Project%20C
 # genpatches:
 #   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-4.14.html
@@ -78,6 +80,7 @@ HOMEPAGE+="
           http://algo.ing.unimo.it/people/paolo/disk_sched/
 	  http://cchalpha.blogspot.com/search/label/PDS
 	  https://cchalpha.blogspot.com/search/label/BMQ
+	  http://cchalpha.blogspot.com/search/label/Project%20C
 	  http://www1.informatik.uni-erlangen.de/tresor
           "
 
@@ -244,6 +247,11 @@ PDS_URL_BASE=\
 "https://gitlab.com/alfredchen/PDS-mq/raw/master/${PATCH_PDS_MAJOR_MINOR}/"
 PDS_FN="v${PATCH_PDS_MAJOR_MINOR}_pds${PATCH_PDS_VER}.patch"
 PDS_SRC_URL="${PDS_URL_BASE}${PDS_FN}"
+
+PRJC_URL_BASE=\
+"https://gitlab.com/alfredchen/projectc/-/raw/master/${PATCH_PROJECT_C_MAJOR_MINOR}/"
+PRJC_FN="prjc_v${PATCH_PROJC_VER}.patch"
+PRJC_SRC_URL="${PRJC_URL_BASE}${PRJC_FN}"
 
 BFQ_FN="bfq-${PATCH_BFQ_VER}.patch"
 BFQ_BRANCH="${BFQ_BRANCH:=bfq-backports}"
@@ -573,6 +581,15 @@ function apply_bmq() {
 	fi
 }
 
+# @FUNCTION: apply_prjc
+# @DESCRIPTION:
+# Apply the Project C CPU scheduler patchset.
+function apply_prjc() {
+	cd "${S}" || die
+	einfo "Applying Project C"
+	_dpatch "${PATCH_OPS}" "${DISTDIR}/${PRJC_FN}"
+}
+
 # @FUNCTION: apply_tresor
 # @DESCRIPTION:
 # Apply the TRESOR AES cold boot resistant patchset.
@@ -808,9 +825,19 @@ function ot-kernel-common_src_unpack() {
 		fi
 	fi
 
-	apply_genpatch_base
-	apply_genpatch_extras
-	apply_genpatch_experimental
+	if has prjc ${IUSE_EFFECTIVE} ; then
+		if use prjc ; then
+			apply_prjc
+		fi
+	fi
+
+	if has genpatches ${IUSE_EFFECTIVE} ; then
+		if use genpatches ; then
+			apply_genpatch_base
+			apply_genpatch_extras
+			apply_genpatch_experimental
+		fi
+	fi
 
 	# should be done after all the kernel point releases contained in
 	# apply_genpatch_base
