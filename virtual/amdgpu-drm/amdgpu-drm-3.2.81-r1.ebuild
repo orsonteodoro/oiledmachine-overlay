@@ -8,7 +8,7 @@ IUSE="amdgpu-dkms dkms +firmware kernel rock-dkms"
 AMDGPU_DKMS_PV="20.20.1089974"
 ROCK_DKMS_PV="3.5"
 VANILLA_KERNEL_PV="5.8"
-LINUX_FIRMWARE_PV="20200417" # matches last commit/tag AMDGPU_DKMS_PV in linux-firmware git ; arbitrary at the moment since logs don't indicate 20.20 firmware or if it is the same
+LINUX_FIRMWARE_PV="20200619" # matches last commit/tag AMDGPU_DKMS_PV in linux-firmware git
 RDEPEND="amdgpu-dkms? ( >=sys-kernel/amdgpu-dkms-${AMDGPU_DKMS_PV} )
 	 rock-dkms? ( >=sys-kernel/rock-dkms-${ROCK_DKMS_PV} )
 	 firmware? (
