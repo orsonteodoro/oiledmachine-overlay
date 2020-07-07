@@ -67,7 +67,7 @@ RDEPEND="${PYTHON_DEPS}
 	jack? ( virtual/jack )
 	jemalloc? ( dev-libs/jemalloc:= )
 	jpeg2k? ( media-libs/openjpeg:0 )
-	llvm? ( >=sys-devel/llvm-6.0.1:= )
+	llvm? ( >=sys-devel/llvm-9.0.1:= )
 	ndof? (
 		app-misc/spacenavd
 		dev-libs/libspnav
