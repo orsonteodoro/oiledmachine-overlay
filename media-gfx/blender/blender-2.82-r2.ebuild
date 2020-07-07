@@ -38,6 +38,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 # doc/python_api/requirements.txt
 # extern/Eigen3/eigen-update.sh
 RDEPEND="${PYTHON_DEPS}
+	>=dev-lang/python-3.7.4
 	>=dev-libs/boost-1.70:=[nls?,threads(+)]
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
