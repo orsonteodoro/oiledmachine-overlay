@@ -284,7 +284,7 @@ function ot-kernel-common_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-testmgr-ciphers-update-for-linux-4.14.patch"
 
 	if use tresor_x86_64 || use tresor_i686 ; then
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_asm_64_v2.patch"
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_asm_64_v2.1.patch"
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_key_64.patch"
 	fi
 

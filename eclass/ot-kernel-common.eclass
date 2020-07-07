@@ -265,7 +265,7 @@ UNIPATCH_LIST=""
 
 UNIPATCH_STRICTORDER="yes"
 
-PATCH_OPS="-p1 -F 500"
+PATCH_OPS="--no-backup-if-mismatch -r - -p1 -F 500"
 
 RESTRICT="mirror"
 
@@ -552,7 +552,7 @@ function apply_o3() {
 		mkdir -p drivers/gpu/drm/amd/display/dc/basics/
 		# trick patch for unattended patching
 		touch drivers/gpu/drm/amd/display/dc/basics/logger.c
-		_tpatch "-p1 -N" "${DISTDIR}/${O3_RO_FN}"
+		_tpatch "${PATCH_OPS} -N" "${DISTDIR}/${O3_RO_FN}"
 	fi
 
 	if declare -f ot-kernel-common_apply_o3_fixes > /dev/null ; then
@@ -1006,7 +1006,7 @@ function ot-kernel-common_pkg_pretend() {
 
 # @FUNCTION: ot-kernel-common_src_compile
 # @DESCRIPTION:
-# Compiles the userland programs especially the post-boot TRESOR AES post boot
+# Compiles the userland programs especially the TRESOR AES post-boot
 # program.
 function ot-kernel-common_src_compile() {
 	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
@@ -1023,9 +1023,6 @@ function ot-kernel-common_src_compile() {
 # @DESCRIPTION:
 # Removes patch cruft.
 function ot-kernel-common_src_install() {
-	find "${S}" -name "*.orig" -print0 -o -name "*.rej" -print0 \
-		| xargs -0 rm
-
 	if has tresor ${IUSE_EFFECTIVE} ; then
 		if use tresor ; then
 			docinto /usr/share/${PF}

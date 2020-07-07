@@ -36,8 +36,8 @@ ZENTUNE_5_7_COMMIT="03344d1ad1076dd6374f208f8de4c7f6da9dbcee..13f40f309a6a443fcd
 PATCH_TRESOR_VER="3.18.5"
 
 IUSE="bfq bmq +cfs disable_debug futex-wait-multiple +genpatches +graysky2 \
-muqss +o3 prjc tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 \
-uksm zenmisc -zentune"
+muqss +o3 prjc tresor tresor_aesni tresor_i686 \
+tresor_sysfs tresor_x86_64 uksm zenmisc -zentune"
 REQUIRED_USE="\
 !bfq
 ^^ ( bmq cfs muqss prjc ) \
@@ -126,7 +126,7 @@ function ot-kernel-common_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-testmgr-ciphers-update.patch"
 
 	if use tresor_x86_64 || use tresor_i686 ; then
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_asm_64_v2.patch"
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_asm_64_v2.1.patch"
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_key_64.patch"
 	fi
 
@@ -150,7 +150,7 @@ function ot-kernel-common_apply_tresor_fixes() {
 	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-expose-aes-generic-tables-for-5.4.patch"
 
 	if use tresor_x86_64 || use tresor_i686 ; then
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-i686-v2.patch"
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-i686-v2.1.patch"
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-glue-remove-xts-casts-and-api-updates-for-5.6-i686.patch"
 	else
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-aesni-v2.1.patch"

@@ -163,6 +163,7 @@
       stored in registers instead of RAM.</flag>
     <flag name="tresor_aesni">Patches the kernel with cold boot resistant
       AES hardware accelerated AES-NI support.</flag>
+    <flag name="tresor-fscrypt">Adds FS encryption with TRESOR support.</flag>
     <flag name="tresor_i686">Patches the kernel with cold boot resistant
       AES using SSE for 32 bit systems.</flag>
     <flag name="tresor_sysfs">Builds the external key setting program.</flag>

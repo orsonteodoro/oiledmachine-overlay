@@ -1,6 +1,7 @@
 Patch Status: Testing
 Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Date: Jul 3, 2020
+v2.1:  Change #if __x86_64__ to #ifdef __x86_64__
 v2:  Move tweak key from db4-db7 to high order db0-db3.
      Only allow XTS in 64-bit.
      Changes for key_length.
@@ -43,7 +44,7 @@ diff -urp linux-5.4.50-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.50-ot/arch
  
 +/* copy four 32-bit values from debug registers into one 128-bit sse register */
 +.macro	xts_dbg_to_sse dbg0 dbg1 dbg2 dbg3 sse
-+#if __x86_64__
++#ifdef __x86_64__
 +	movq		\dbg0,rax
 +	rorq		$32,rax
 +	movd		eax,\sse
@@ -64,7 +65,7 @@ diff -urp linux-5.4.50-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.50-ot/arch
 +	movd		eax,rhelp
 +	pslldq		$12,rhelp
 +	pxor		rhelp,\sse
-+#if __x86_64__
++#ifdef __x86_64__
 +	xorq		rax,rax
 +#else
 +	xorl		eax,eax
@@ -107,7 +108,7 @@ diff -urp linux-5.4.50-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.50-ot/arch
 +
  /* void tresor_set_key(const u8 *in_key) */
  tresor_set_key:
- #if __x86_64__
+ #ifdef __x86_64__
 @@ -584,3 +636,49 @@ tresor_set_key:
  #endif
  	xorl		eax, eax
@@ -115,7 +116,7 @@ diff -urp linux-5.4.50-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.50-ot/arch
 +
 +/* void tresor_set_key_xts_tweak_128(const u8 *in_key) */
 +tresor_set_key_xts_tweak_128:
-+#if __x86_64__
++#ifdef __x86_64__
 +	pushq		rcx
 +	pushq		rbx
 +	movl		0(rdi),eax

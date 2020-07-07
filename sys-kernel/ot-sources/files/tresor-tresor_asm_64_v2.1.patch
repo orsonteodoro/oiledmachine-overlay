@@ -1,4 +1,5 @@
 Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
+v2.1: Change from #if __x86_64__ to #ifdef ___x86_64__
 v2: Merge tresor-fix-addressing-mode-64-bit-index.patch into this.
     Used __x86_64__ to allow tresor_asm.S to be compiled in i686 or x86_64.
     Updated comments.
@@ -29,7 +30,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  .set	esp,	%esp
  .set	ebp,	%ebp
  
-+#if __x86_64__
++#ifdef __x86_64__
 +/* 64-bit GPR registers */
 +.set	rax,	%rax
 +.set	rbx,	%rbx
@@ -47,7 +48,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  
  /* function prologue */ 
  .macro prolog
-+#if __x86_64__
++#ifdef __x86_64__
 +	/* enter */
 +	pushq		rbp
 +	movq		rsp,rbp
@@ -75,7 +76,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  /* function epilogue */
  .macro epilog
  	/* write output */
-+#if __x86_64__
++#ifdef __x86_64__
 +	movq		-64(rbp),rax
 +	movdqu		rstate,0(rax)
 +#else
@@ -89,7 +90,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  	pxor		%mm6,%mm6
  	pxor		%mm7,%mm7
  	/* leave */
-+#if __x86_64__
++#ifdef __x86_64__
 +	popq		rdi
 +	popq		rsi
 +	popq		rbp
@@ -113,7 +114,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
 -/* copy four 32-bit debug registers into one 128-bit sse register */
 +/* copy four 32-bit values from debug registers into one 128-bit sse register */
  .macro	dbg_to_sse dbg0 dbg1 dbg2 dbg3 sse
-+#if __x86_64__
++#ifdef __x86_64__
 +	movq		\dbg0,rax
 +	movd		eax,\sse
 +	movq		\dbg1,rax
@@ -141,7 +142,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  	psrldq		$\index,rhelp	
  	movd		rhelp,eax
  	andl		$0x000000ff,eax
-+#if __x86_64__
++#ifdef __x86_64__
 +	.if \init
 +		movzx	ft_tab+1(,rax,4),edx
 +	.else
@@ -161,7 +162,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  	ks_box		14,\rk,0
  	shl		$8,edx
  	ks_box		13,\rk,0
-+#if __x86_64__
++#ifdef __x86_64__
 +	xorl		rc_tab(,rcx,4),edx
 +#else
  	xorl		rc_tab(,ecx,4),edx
@@ -173,7 +174,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  	psrldq		$\r,rhelp
  	movd		rhelp,eax
  	andl		$0x000000ff,eax
-+#if __x86_64__
++#ifdef __x86_64__
 +	movl		gfbd9e(,rax,4),eax
 +#else
  	movl		gfbd9e(,eax,4),eax
@@ -185,7 +186,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  	psrldq		$\r,rhelp
  	movd		rhelp,eax
  	andl		$0x000000ff,eax
-+#if __x86_64__
++#ifdef __x86_64__
 +	.if \init
 +		movl	\tab+\off(,rax,4),\reg
 +	.else
@@ -205,7 +206,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  
  /* void tresor_set_key(const u8 *in_key) */
  tresor_set_key:
-+#if __x86_64__
++#ifdef __x86_64__
 +	movl		0(rdi),eax
 +	movq		rax,db0
 +	movl		4(rdi),eax
