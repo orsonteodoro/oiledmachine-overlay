@@ -19,6 +19,9 @@ SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
 # so strip off the letter if it exists.
 MY_PV="$(ver_cut 1-2)"
 
+BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest}
+BLENDER_MULTISLOT=${BLENDER_MULTISLOT:=1}
+
 # Slotting is for scripting and plugin compatibility
 if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
 SLOT="${MY_PV}"
@@ -44,7 +47,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	nvcc? ( || ( cuda optix ) )
 	nvrtc? ( || ( cuda optix ) )
 	opencl? ( cycles )
-	optix? ( cycles ^^ ( nvcc nvrtc ) )
+	optix? ( cycles nvcc )
 	osl? ( cycles llvm )"
 
 # dependency version requirements see
@@ -207,7 +210,7 @@ src_configure() {
 
 	local mycmakeargs=()
 	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
-		mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH=/usr/bin/${PN}/${SLOT} )
+		mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH=/usr/bin/.${PN}/${SLOT} )
 	fi
 
 	if use cycles-network ; then
@@ -333,33 +336,36 @@ src_install() {
 	dodoc "${CMAKE_USE_DIR}"/release/text/readme.html
 	rm -r "${ED%/}"/usr/share/doc/blender || die
 
+	local d_dest
 	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
-		python_fix_shebang "${ED%/}/usr/bin/${PN}/${SLOT}/blender-thumbnailer.py"
+		d_dest="/usr/bin/.${PN}/${SLOT}"
 	else
-		python_fix_shebang "${ED%/}/usr/bin/blender-thumbnailer.py"
+		d_dest="/usr/bin"
 	fi
+	python_fix_shebang "${ED%/}${d_dest}/blender-thumbnailer.py"
 	python_optimize "${ED%/}/usr/share/blender/${MY_PV}/scripts"
 
 	if use cycles-network ; then
+		exeinto "${d_dest}"
 		if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
-			exeinto "/usr/bin/${PN}/${SLOT}"
-			doexe "${CMAKE_BUILD_DIR}/usr/bin/${PN}/${SLOT}/cycles_server"
-		else
-			exeinto /usr/bin
-			doexe "${CMAKE_BUILD_DIR}/bin/cycles_server"
+			dosym "../../..${d_dest}/cycles_server" \
+				"/usr/bin/cycles_server-${SLOT}" || die
 		fi
+		doexe "${CMAKE_BUILD_DIR}${d_dest}/cycles_server"
 	fi
 
 	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
 		mv "${ED}/usr/share/applications"/blender{,-${SLOT}}.desktop || die
 		local menu_file="${ED}/usr/share/applications/blender-${SLOT}.desktop"
 		sed -i -e "s|Name=Blender|Name=Blender ${PV}|g" "${menu_file}" || die
-		sed -i -e "s|Exec=blender|Exec=/usr/bin/${PN}/${SLOT}/blender|g" "${menu_file}" || die
+		sed -i -e "s|Exec=blender|Exec=${d_dest}/blender|g" "${menu_file}" || die
 		sed -i -e "s|Icon=blender|Icon=blender-${SLOT}|g" "${menu_file}" || die
 		for size in 16x16 22x22 24x24 256x256 32x32 48x48 ; do
 			mv "${ED}/usr/share/icons/hicolor/"${size}"/apps/blender"{,-${SLOT}}".png" || die
 		done
 		mv "${ED}/usr/share/icons/hicolor/scalable/apps/blender"{,-${SLOT}}".svg" || die
+		dosym "../../..${d_dest}/blender" \
+			"/usr/bin/${PN}-${SLOT}" || die
 	fi
 }
 
@@ -406,6 +412,40 @@ pkg_postinst() {
 	fi
 	xdg_icon_cache_update
 	xdg_mimeinfo_database_update
+	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
+		local d_src="${EROOT}/usr/bin/.${PN}"
+		if [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" && "${BLENDER_MAIN_SYMLINK_MODE}" == "latest-lts" ]] ; then
+			HIGHEST_LTS=$(ls "${d_src}"/*/.lts | sort -V | tail -n 1 | cut -f 5 -d "/")
+			if [[ -n "${HIGHEST_LTS}" ]] ; then
+				ln -sf "${EROOT}${d_src}/${HIGHEST_LTS}/blender" \
+					"${EROOT}/usr/bin/blender" || die
+				if use cycles-network ; then
+					ln -sf "${EROOT}${d_src}/${HIGHEST_LTS}/cycles_server" \
+						"${EROOT}/usr/bin/cycles_server" || die
+				fi
+			fi
+		elif [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" && "${BLENDER_MAIN_SYMLINK_MODE}" == "latest" ]] ; then
+			HIGHEST_V=$(ls "${EROOT}${d_src}/" | sort -V | tail -n 1)
+			if [[ -n "${HIGHEST_V}" ]] ; then
+				ln -sf "${EROOT}${d_src}/${HIGHEST_V}/blender" \
+					"${EROOT}/usr/bin/blender" || die
+				if use cycles-network ; then
+					ln -sf "${EROOT}${d_src}/${HIGHEST_V}/cycles_server" \
+						"${EROOT}/usr/bin/cycles_server" || die
+				fi
+			fi
+		elif [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" && "${BLENDER_MAIN_SYMLINK_MODE}" =~ ^custom-[0-9]\.[0-9]+$ ]] ; then
+			V=$(echo "${BLENDER_MAIN_SYMLINK_MODE}" | cut -f 2 -d "-")
+			if [[ -n "${V}" ]] ; then
+				ln -sf "${EROOT}${d_src}/${V}/blender" \
+					"${EROOT}/usr/bin/blender" || die
+				if use cycles-network ; then
+					ln -sf "${EROOT}${d_src}/${V}/cycles_server" \
+						"${EROOT}/usr/bin/cycles_server" || die
+				fi
+			fi
+		fi
+	fi
 }
 
 pkg_postrm() {
@@ -417,4 +457,14 @@ pkg_postrm() {
 	ewarn "~/.config/${PN}/${MY_PV}/cache/"
 	ewarn "It may contain extra render kernels not tracked by portage"
 	ewarn ""
+	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
+		local d_src="${EROOT}/usr/bin/.${PN}"
+		HIGHEST_V=$(ls "${EROOT}${d_src}" | sort -V | tail -n 1)
+		if [[ -z "${HIGHEST_LTS}" ]] ; then
+			rm -rf "${EROOT}/usr/bin/blender" || die
+			if use cycles-network ; then
+				rm -rf "${EROOT}/usr/bin/cycles_server" || die
+			fi
+		fi
+	fi
 }
