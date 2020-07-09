@@ -28,7 +28,6 @@
     libyuv.</flag>
   <flag name="csc_swscale">Enables the color space conversion module using
     swscale.</flag>
-  <flag name="cuda">Enables CUDA device access.</flag>
   <flag name="cuda_rebuild">Enables rebuilding CUDA kernels.</flag>
   <flag name="cups">Enables printer support.</flag>
   <flag name="dbus">Checks and enables support for DBus.</flag>

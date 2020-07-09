@@ -10,7 +10,7 @@ LICENSE="GPL-2 BSD html5? ( MPL-2.0 )"
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
 # PyCObject_Check and PyCObject_AsVoidPtr vanished with python 3.3
 PYTHON_COMPAT=( python3_{6,7,8} )
-IUSE="  avahi +client +clipboard csc_swscale csc_libyuv cuda cuda_rebuild cups \
+IUSE="  avahi +client +clipboard csc_swscale csc_libyuv cuda_rebuild cups \
 	dbus dec_avcodec2 enc_ffmpeg enc_x264 enc_x265 firejail gtk3 html5 \
 	html5_gzip html5_brotli jpeg libav +lz4 lzo opengl minify \
 	+notifications nvenc nvfbc pam pillow pulseaudio sd_listen ssl +server \
@@ -25,6 +25,8 @@ REQUIRED_USE="  ^^ (	python_targets_python3_6 \
 SLOT="0/${PV}"
 MY_PV="$(ver_cut 1-4)"
 inherit distutils-r1
+NVFBC_MIN_DRV_V="410.66"
+CUDA_7_5_DRV_V="352.31"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	|| ( client server )
 	avahi? ( dbus )
@@ -48,8 +50,6 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	csc_libyuv? ( media-libs/libyuv )
 	csc_swscale? ( !libav? ( >=media-video/ffmpeg-1.2.2:0= )
 			libav? ( media-video/libav:0= ) )
-	cuda? ( dev-python/pycuda[${PYTHON_USEDEP}]
-	      >=x11-drivers/nvidia-drivers-352.31 )
 	dec_avcodec2? ( !libav? ( >=media-video/ffmpeg-3.1:0=[x264,x265] )
 			 libav? ( media-video/libav:0=[x264,x265] ) )
 	enc_ffmpeg? ( !libav? ( >=media-video/ffmpeg-4.0:0= )
@@ -65,14 +65,13 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	nvenc? ( dev-python/numpy[${PYTHON_USEDEP}]
 		 dev-python/pycuda[${PYTHON_USEDEP}]
 		 media-video/nvidia-video-codec
-	       >=x11-drivers/nvidia-drivers-418.30
-		cuda? (
-			>=dev-util/nvidia-cuda-toolkit-7.5:=
-		)
+	       >=x11-drivers/nvidia-drivers-${NVFBC_MIN_DRV_V}
+	       >=dev-util/nvidia-cuda-toolkit-7.5:=
 	)
 	nvfbc? ( dev-python/numpy[${PYTHON_USEDEP}]
 		 dev-python/pycuda[${PYTHON_USEDEP}]
-	       >=x11-drivers/nvidia-drivers-410.66 )
+	       >=dev-util/nvidia-cuda-toolkit-10.0:=
+	       >=x11-drivers/nvidia-drivers-${NVFBC_MIN_DRV_V} )
 	opengl? (  dev-python/numpy[${PYTHON_USEDEP}] )
 	pam? ( sys-libs/pam )
 	pillow? ( dev-python/pillow[${PYTHON_USEDEP}] )
@@ -114,7 +113,6 @@ RDEPEND="${COMMON_DEPEND}
 		  dev-python/pyinotify[${PYTHON_USEDEP}]
 		>=media-libs/opencv-2.0[python] )"
 DEPEND="${COMMON_DEPEND}
-	cuda? ( >=dev-util/nvidia-cuda-sdk-7.5 )
 	>=dev-python/cython-0.16[${PYTHON_USEDEP}]
 	virtual/pkgconfig"
 PATCHES=( "${FILESDIR}"/${PN}-2.5.0_rc5-ignore-gentoo-no-compile.patch
@@ -126,7 +124,6 @@ S="${WORKDIR}/xpra-${MY_PV//_/-}"
 RESTRICT="mirror"
 
 pkg_setup() {
-	use cuda && einfo "The cuda USE flag has not been tested.  Left for ebuild developers with that GPU to work on."
 	use nvenc && einfo "The nvenc USE flag has not been tested.  Left for ebuild developers with that GPU to work on."
 	use nvfbc && einfo "The nvfbc USE flag has not been tested.  Left for ebuild developers with that GPU to work on."
 
@@ -174,7 +171,7 @@ python_configure_all() {
 		$(use_with avahi mdns)
 		$(use_with client)
 		$(use_with clipboard)
-		$(use_with cuda cuda_kernels)
+		$(use_with nvenc cuda_kernels)
 		$(use_with cuda_rebuild)
 		$(use_with csc_swscale)
 		$(use_with csc_libyuv)
