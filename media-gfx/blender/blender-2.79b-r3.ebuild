@@ -260,6 +260,11 @@ src_configure() {
 		-DWITH_SYSTEM_OPENJPEG=ON
 		-DWITH_X11=$(usex !headless)
 	)
+	if (( ${#BLENDER_CMAKE_ARGS[@]} > 0 )) ; then
+		# Set as per-package environmental variable
+		# For setting up cuda
+		mycmakeargs+=( ${BLENDER_CMAKE_ARGS[@]} )
+	fi
 	cmake-utils_src_configure
 }
 
