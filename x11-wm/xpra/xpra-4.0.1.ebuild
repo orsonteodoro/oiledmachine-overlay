@@ -65,7 +65,11 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	nvenc? ( dev-python/numpy[${PYTHON_USEDEP}]
 		 dev-python/pycuda[${PYTHON_USEDEP}]
 		 media-video/nvidia-video-codec
-	       >=x11-drivers/nvidia-drivers-418.30 )
+	       >=x11-drivers/nvidia-drivers-418.30
+		cuda? (
+			>=dev-util/nvidia-cuda-toolkit-7.5:=
+		)
+	)
 	nvfbc? ( dev-python/numpy[${PYTHON_USEDEP}]
 		 dev-python/pycuda[${PYTHON_USEDEP}]
 	       >=x11-drivers/nvidia-drivers-410.66 )
