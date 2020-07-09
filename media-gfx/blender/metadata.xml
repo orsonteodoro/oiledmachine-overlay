@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
+	<!-- only for this ebuild fork on the oiledmachine-overlay -->
+	<maintainer type="person">
+		<email>orsonteodoro@hotmail.com</email>
+		<name>Orson Teodoro</name>
+	</maintainer>
+	<!-- originators -->
 	<maintainer type="person">
 		<email>agrigo2001@yahoo.com.au</email>
 		<name>Adrian Grigo</name>
@@ -16,7 +22,28 @@
 	<longdescription>
 		Blender, the open source software for 3D modeling, animation,
 		rendering, post-production, interactive creation and playback.
+
+		Information about Cycles network rendering can be found at:
+		https://wiki.blender.org/wiki/Source/Render/Cycles/Network_Render
+		https://developer.blender.org/D2808
 	</longdescription>
+	<upstream>
+		<doc lang="en">https://docs.blender.org/manual/en/2.83/index.html</doc>
+		<doc lang="de">https://docs.blender.org/manual/de/2.83/index.html</doc>
+		<doc lang="es">https://docs.blender.org/manual/es/2.83/index.html</doc>
+		<doc lang="fr">https://docs.blender.org/manual/fr/2.83/index.html</doc>
+		<doc lang="it">https://docs.blender.org/manual/it/2.83/index.html</doc>
+		<doc lang="ja">https://docs.blender.org/manual/ja/2.83/index.html</doc>
+		<doc lang="ko">https://docs.blender.org/manual/ko/2.83/index.html</doc>
+		<doc lang="nb">https://docs.blender.org/manual/nb/2.83/index.html</doc>
+		<doc lang="pt">https://docs.blender.org/manual/pt/2.83/index.html</doc>
+		<doc lang="ru">https://docs.blender.org/manual/ru/2.83/index.html</doc>
+		<doc lang="fi">https://docs.blender.org/manual/fi/2.83/index.html</doc>
+		<doc lang="uk">https://docs.blender.org/manual/uk/2.83/index.html</doc>
+		<doc lang="vi">https://docs.blender.org/manual/vi/2.83/index.html</doc>
+		<doc lang="zh-hans">https://docs.blender.org/manual/zh-hans/2.83/index.html</doc>
+		<doc lang="zh-hant">https://docs.blender.org/manual/zh-hant/2.83/index.html</doc>
+	</upstream>
 	<use>
 		<flag name="bullet">
 			Enable Bullet (Physics Engine).
@@ -33,6 +60,9 @@
 			Build cycles renderer (requires <pkg>media-libs/openimageio</pkg> and
 			<pkg>dev-libs/boost</pkg>).
 		</flag>
+		<flag name="cycles-network">
+			Enable experimental networking support for Cycles.
+		</flag>
 		<flag name="dds">
 			Adds DDS textures support to Blender.
 		</flag>
@@ -42,8 +72,8 @@
 		<flag name="elbeem">
 			Adds surface fluid simulation to Blender using El'Beem library.
 		</flag>
-		<flag name="game-engine">
-			Adds Game Engine support to Blender.
+		<flag name="embree">
+			Build cycles renderer with Embree support as a CPU ray accelerator.
 		</flag>
 		<flag name="headless">
 			Build without graphical support (renderfarm, server mode only).
@@ -68,11 +98,13 @@
 		<flag name="openvdb">
 			Add GPU preview rendering. Only works with nVidia cards.
 		</flag>
+		<flag name="optix">
+			Build cycles renderer with nVidia OptiX support on
+			GeForce/Quadro RTX GPUs for hardware accelerated
+			rendering and denoising.
+		</flag>
 		<flag name="osl">
 			Add support for OpenShadingLanguage scripting.
-		</flag>
-		<flag name="player">
-			Build the Blender Player. THis requires the Game engine.
 		</flag>
 		<flag name="test">
 			Build the provided unit tests.

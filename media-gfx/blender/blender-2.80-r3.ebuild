@@ -11,53 +11,71 @@ inherit check-reqs cmake-utils xdg-utils flag-o-matic xdg-utils \
 DESCRIPTION="3D Creation/Animation/Publishing System"
 HOMEPAGE="https://www.blender.org"
 
-SRC_URI="https://github.com/blender/blender/archive/v${PV}.tar.gz"
+# If you use git tarballs, you need to download the submodules listed in
+# .gitmodules.  The download.blender.org are preferred because they bundle them.
+SRC_URI="https://download.blender.org/source/blender-${PV}.tar.gz"
 
 # Blender can have letters in the version string,
 # so strip off the letter if it exists.
 MY_PV="$(ver_cut 1-2)"
 
+# Slotting is for scripting and plugin compatibility
+if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
+SLOT="${MY_PV}"
+else
 SLOT="0"
+fi
 LICENSE="|| ( GPL-2 BL )"
 KEYWORDS="amd64 ~x86"
-IUSE="+bullet +dds +elbeem +game-engine +openexr collada color-management \
-	cuda cycles debug doc ffmpeg fftw headless jack jemalloc jpeg2k \
-	llvm man ndof nls openal opencl openimageio openmp opensubdiv openvdb \
-	osl player sdl sndfile test tiff valgrind"
+# Platform defaults based on CMakeList.txt
+IUSE="-asan +bullet -collada -color-management -cuda +cycles -cycles-network \
++dds -debug doc +elbeem -embree -ffmpeg -fftw -headless -jack +jemalloc jpeg2k \
+-llvm -man +ndof +nls +nvcc -nvrtc +openal opencl -openexr +openimageio \
++openmp -opensubdiv -openvdb -osl -sdl -sndfile -ssp test +tiff -valgrind"
 RESTRICT="mirror !test? ( test )"
 
+# For build configurations, see
+# https://github.com/blender/blender/blob/v2.80/build_files/cmake/config/
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
-	cuda? ( cycles )
+	cuda? ( cycles ^^ ( nvcc nvrtc ) )
 	cycles? ( openexr tiff openimageio )
+	embree? ( cycles )
+	nvcc? ( cuda )
+	nvrtc? (  cuda )
 	opencl? ( cycles )
-	osl? ( cycles llvm )
-	player? ( game-engine !headless )"
+	osl? ( cycles llvm )"
 
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake
 # doc/python_api/requirements.txt
 # extern/Eigen3/eigen-update.sh
 RDEPEND="${PYTHON_DEPS}
-	>=dev-lang/python-3.7.4
-	>=dev-libs/boost-1.70:=[nls?,threads(+)]
+	>=dev-lang/python-3.7.0
+	>=dev-libs/boost-1.68:=[nls?,threads(+)]
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.17.0[${PYTHON_MULTI_USEDEP}]
-		dev-python/requests[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/certifi-2018.8.13[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/chardet-3.0.4[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/idna-2.7[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/numpy-1.15.0[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/requests-2.19.1[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/urllib3-1.23[${PYTHON_MULTI_USEDEP}]
 	')
-	>=media-libs/freetype-2.10.1
-	media-libs/glew:*
-	media-libs/libpng:0=
+	>=media-libs/freetype-2.9.1
+	>=media-libs/glew-1.13.0:*
+	>=media-libs/libpng-1.6.35:0=
 	media-libs/libsamplerate
-	sys-libs/zlib
+	>=sys-libs/zlib-1.2.11
 	virtual/glu
-	virtual/jpeg:0=
+	|| (
+		virtual/jpeg:0=
+		>=media-libs/libjpeg-turbo-1.5.3
+	)
 	virtual/libintl
 	virtual/opengl
 	collada? ( >=media-libs/opencollada-1.6.68:= )
 	color-management? ( >=media-libs/opencolorio-1.1.0 )
-	cuda? ( dev-util/nvidia-cuda-toolkit:= )
-	cycles? ( >=media-libs/embree-3.8.0 )
+	embree? ( >=media-libs/embree-3.2.4 )
 	ffmpeg? ( >=media-video/ffmpeg-4.0.2:=[x264,mp3,encode,theora,jpeg2k?] )
 	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
 	!headless? (
@@ -66,35 +84,48 @@ RDEPEND="${PYTHON_DEPS}
 		x11-libs/libXxf86vm
 	)
 	jack? ( virtual/jack )
-	jemalloc? ( dev-libs/jemalloc:= )
-	jpeg2k? ( media-libs/openjpeg:0 )
-	llvm? ( >=sys-devel/llvm-9.0.1:= )
+	jemalloc? ( >=dev-libs/jemalloc-5.0.1:= )
+	jpeg2k? ( >=media-libs/openjpeg-2.3.0:0 )
+	llvm? ( >=sys-devel/llvm-6.0.1:= )
 	ndof? (
 		app-misc/spacenavd
-		dev-libs/libspnav
+		>=dev-libs/libspnav-0.2.3
 	)
-	nls? ( virtual/libiconv )
+	nls? (
+		|| (
+			virtual/libiconv
+			>=dev-libs/libiconv-1.15
+		)
+	)
+	nvcc? (
+		>=x11-drivers/nvidia-drivers-418.39
+		>=dev-util/nvidia-cuda-toolkit-10.1:=
+	)
+	nvrtc? (
+		>=x11-drivers/nvidia-drivers-418.39
+		>=dev-util/nvidia-cuda-toolkit-10.1:=
+	)
 	openal? ( >=media-libs/openal-1.18.2 )
 	opencl? ( virtual/opencl )
 	openimageio? ( >=media-libs/openimageio-1.8.13 )
 	openexr? (
-		>=media-libs/ilmbase-2.4.0:=
-		>=media-libs/openexr-2.4.0:=
+		>=media-libs/ilmbase-2.3.0:=
+		>=media-libs/openexr-2.3.0:=
 	)
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.0_rc2:=[cuda=,opencl=] )
 	openvdb? (
-		media-gfx/openvdb[${PYTHON_SINGLE_USEDEP},-abi3-compat(-),abi4-compat(+)]
-		>=dev-cpp/tbb-2019.9
-		>=dev-libs/c-blosc-1.5.0
+		>=media-gfx/openvdb-5.1.0[${PYTHON_SINGLE_USEDEP},-abi3-compat(-),abi4-compat(+)]
+		>=dev-cpp/tbb-2018.5
+		>=dev-libs/c-blosc-1.14.4
 	)
-	osl? ( >=media-libs/osl-1.10.9:= )
-	sdl? ( media-libs/libsdl2[sound,joystick] )
-	sndfile? ( media-libs/libsndfile )
-	tiff? ( media-libs/tiff:0 )
+	osl? ( >=media-libs/osl-1.9.9:= )
+	sdl? ( >=media-libs/libsdl2-2.0.8[sound,joystick] )
+	sndfile? ( >=media-libs/libsndfile-1.0.28 )
+	tiff? ( >=media-libs/tiff-4.0.9:0 )
 	valgrind? ( dev-util/valgrind )"
 
 DEPEND="${RDEPEND}
-	>=dev-cpp/eigen-3.3.7:3
+	>=dev-cpp/eigen-3.2.7:3
 	virtual/pkgconfig
 	doc? (
 		app-doc/doxygen[dot]
@@ -110,6 +141,8 @@ DEPEND="${RDEPEND}
 
 PATCHES=(
 	"${FILESDIR}/${PN}-2.82a-fix-install-rules.patch"
+	"${FILESDIR}/${PN}-2.82a-cycles-network-fixes.patch"
+	"${FILESDIR}/${PN}-2.80-install-paths-change.patch"
 )
 
 blender_check_requirements() {
@@ -125,14 +158,16 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-	ewarn "For testing purposes only."
-	ewarn "To be removed ASAP once Gentoo portage ebuild are up to date."
-	ewarn "This ebuild may exhibit runtime failures."
 	blender_check_requirements
 	python-single-r1_pkg_setup
+	# Needs OpenCL 1.2 (GCN 2)
 }
 
 src_prepare() {
+	ewarn
+	ewarn "This version is not Long Term Support (LTS) version."
+	ewarn "Use 2.83.x series instead."
+	ewarn
 	cmake-utils_src_prepare
 
 	# we don't want static glew, but it's scattered across
@@ -140,8 +175,14 @@ src_prepare() {
 	# !!!CHECK THIS SED ON EVERY VERSION BUMP!!!
 	local file
 	while IFS="" read -d $'\0' -r file ; do
-		sed -i -e '/-DGLEW_STATIC/d' "${file}" || die
-	done < <(find . -type f -name "CMakeLists.txt")
+		if grep -q -F -e "-DGLEW_STATIC" "${file}" ; then
+			einfo "Removing -DGLEW_STATIC from ${file}"
+			sed -i -e '/-DGLEW_STATIC/d' "${file}"
+		fi
+	done < <(find . -type f -name "CMakeLists.txt" -print0)
+
+	sed -i -e "s|bf_intern_glew_mx|bf_intern_glew_mx \${GLEW_LIBRARY}|g" \
+		intern/cycles/app/CMakeLists.txt || die
 
 	# Disable MS Windows help generation. The variable doesn't do what it
 	# it sounds like.
@@ -157,59 +198,68 @@ src_configure() {
 	# Blender is compatible ABI 4 or less, so use ABI 4.
 	append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=4
 
-	local mycmakeargs=(
+	local mycmakeargs=()
+	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
+		mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH=/usr/bin/${PN}/${SLOT} )
+	fi
+
+	if use cycles-network ; then
+		ewarn "Cycles Networking support does not work at all even for CPU rendering.  For ebuild/upstream developers only."
+	fi
+
+	mycmakeargs+=(
 		-DPYTHON_VERSION="${EPYTHON/python/}"
 		-DPYTHON_LIBRARY="$(python_get_library_path)"
 		-DPYTHON_INCLUDE_DIR="$(python_get_includedir)"
-		-DWITH_INSTALL_PORTABLE=OFF
-		-DWITH_PYTHON_INSTALL=OFF
-		-DWITH_PYTHON_INSTALL_NUMPY=OFF
-		-DWITH_STATIC_LIBS=OFF
-		-DWITH_SYSTEM_GLEW=ON
-		-DWITH_SYSTEM_OPENJPEG=ON
-		-DWITH_SYSTEM_EIGEN3=ON
-		-DWITH_SYSTEM_LZO=ON
-		-DWITH_C11=ON
-		-DWITH_CXX11=ON
+		-DWITH_ASSERT_ABORT=$(usex debug)
 		-DWITH_BOOST=ON
 		-DWITH_BULLET=$(usex bullet)
 		-DWITH_CODEC_FFMPEG=$(usex ffmpeg)
 		-DWITH_CODEC_SNDFILE=$(usex sndfile)
-		-DWITH_CUDA=$(usex cuda)
-		-DWITH_CYCLES_DEVICE_CUDA=$(usex cuda TRUE FALSE)
+		-DWITH_COMPILER_ASAN=$(usex asan)
+		-DWITH_CUDA_DYNLOAD=$(usex cuda $(usex nvcc ON OFF) ON)
+		-DWITH_CXX_GUARDEDALLOC=$(usex debug)
 		-DWITH_CYCLES=$(usex cycles)
+		-DWITH_CYCLES_CUBIN_COMPILER=$(usex nvrtc)
+		-DWITH_CYCLES_CUDA_BINARIES=$(use cuda)
+		-DWITH_CYCLES_DEVICE_CUDA=$(usex cuda TRUE FALSE)
+		-DWITH_CYCLES_DEVICE_OPENCL=$(usex opencl)
+		-DWITH_CYCLES_KERNEL_ASAN=$(usex asan)
+		-DWITH_CYCLES_NETWORK=$(usex cycles-network)
 		-DWITH_CYCLES_OSL=$(usex osl)
-		-DWITH_LLVM=$(usex llvm)
+		-DWITH_DOC_MANPAGE=$(usex man)
 		-DWITH_FFTW3=$(usex fftw)
-		-DWITH_GAMEENGINE=$(usex game-engine)
+		-DWITH_GTESTS=$(usex test)
 		-DWITH_HEADLESS=$(usex headless)
-		-DWITH_X11=$(usex !headless)
 		-DWITH_IMAGE_DDS=$(usex dds)
 		-DWITH_IMAGE_OPENEXR=$(usex openexr)
 		-DWITH_IMAGE_OPENJPEG=$(usex jpeg2k)
 		-DWITH_IMAGE_TIFF=$(usex tiff)
 		-DWITH_INPUT_NDOF=$(usex ndof)
+		-DWITH_INSTALL_PORTABLE=OFF
 		-DWITH_INTERNATIONAL=$(usex nls)
 		-DWITH_JACK=$(usex jack)
+		-DWITH_LLVM=$(usex llvm)
+		-DWITH_MEM_JEMALLOC=$(usex jemalloc)
+		-DWITH_MEM_VALGRIND=$(usex valgrind)
 		-DWITH_MOD_FLUID=$(usex elbeem)
 		-DWITH_MOD_OCEANSIM=$(usex fftw)
 		-DWITH_OPENAL=$(usex openal)
-		-DWITH_OPENCL=$(usex opencl)
-		-DWITH_OPENCOLORIO=$(usex color-management)
 		-DWITH_OPENCOLLADA=$(usex collada)
+		-DWITH_OPENCOLORIO=$(usex color-management)
 		-DWITH_OPENIMAGEIO=$(usex openimageio)
 		-DWITH_OPENMP=$(usex openmp)
 		-DWITH_OPENSUBDIV=$(usex opensubdiv)
 		-DWITH_OPENVDB=$(usex openvdb)
 		-DWITH_OPENVDB_BLOSC=$(usex openvdb)
-		-DWITH_PLAYER=$(usex player)
+		-DWITH_PYTHON_INSTALL=OFF
+		-DWITH_PYTHON_INSTALL_NUMPY=OFF
 		-DWITH_SDL=$(usex sdl)
-		-DWITH_CXX_GUARDEDALLOC=$(usex debug)
-		-DWITH_ASSERT_ABORT=$(usex debug)
-		-DWITH_GTESTS=$(usex test)
-		-DWITH_DOC_MANPAGE=$(usex man)
-		-DWITH_MEM_JEMALLOC=$(usex jemalloc)
-		-DWITH_MEM_VALGRIND=$(usex valgrind)
+		-DWITH_STATIC_LIBS=OFF
+		-DWITH_SYSTEM_EIGEN3=ON
+		-DWITH_SYSTEM_GLEW=ON
+		-DWITH_SYSTEM_LZO=ON
+		-DWITH_X11=$(usex !headless)
 	)
 	cmake-utils_src_configure
 }
@@ -267,8 +317,34 @@ src_install() {
 	dodoc "${CMAKE_USE_DIR}"/release/text/readme.html
 	rm -r "${ED%/}"/usr/share/doc/blender || die
 
-	python_fix_shebang "${ED%/}/usr/bin/blender-thumbnailer.py"
+	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
+		python_fix_shebang "${ED%/}/usr/bin/${PN}/${SLOT}/blender-thumbnailer.py"
+	else
+		python_fix_shebang "${ED%/}/usr/bin/blender-thumbnailer.py"
+	fi
 	python_optimize "${ED%/}/usr/share/blender/${MY_PV}/scripts"
+
+	if use cycles-network ; then
+		if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
+			exeinto "/usr/bin/${PN}/${SLOT}"
+			doexe "${CMAKE_BUILD_DIR}/usr/bin/${PN}/${SLOT}/cycles_server"
+		else
+			exeinto /usr/bin
+			doexe "${CMAKE_BUILD_DIR}/bin/cycles_server"
+		fi
+	fi
+
+	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
+		mv "${ED}/usr/share/applications"/blender{,-${SLOT}}.desktop || die
+		local menu_file="${ED}/usr/share/applications/blender-${SLOT}.desktop"
+		sed -i -e "s|Name=Blender|Name=Blender ${PV}|g" "${menu_file}" || die
+		sed -i -e "s|Exec=blender|Exec=/usr/bin/${PN}/${SLOT}/blender|g" "${menu_file}" || die
+		sed -i -e "s|Icon=blender|Icon=blender-${SLOT}|g" "${menu_file}" || die
+		for size in 16x16 22x22 24x24 256x256 32x32 48x48 ; do
+			mv "${ED}/usr/share/icons/hicolor/"${size}"/apps/blender"{,-${SLOT}}".png" || die
+		done
+		mv "${ED}/usr/share/icons/hicolor/scalable/apps/blender"{,-${SLOT}}".svg" || die
+	fi
 }
 
 pkg_postinst() {
@@ -288,6 +364,30 @@ pkg_postinst() {
 	ewarn "If you are concerned about security, file a bug upstream:"
 	ewarn "  https://developer.blender.org/"
 	ewarn
+	if use cycles-network ; then
+		einfo
+		ewarn "The Cycles Networking support is experimental and"
+		ewarn "incomplete."
+		einfo
+		einfo "To make a OpenCL GPU available do:"
+		einfo "cycles_server --device OPENCL"
+		einfo
+		einfo "To make a CUDA GPU available do:"
+		einfo "cycles_server --device CUDA"
+		einfo
+		einfo "To make a CPU available do:"
+		einfo "cycles_server --device CPU"
+		einfo
+		einfo "Only one instance of a cycles_server can be used on a host."
+		einfo
+		einfo "You may want to run cycles_server on the client too, but"
+		einfo "it is not necessary."
+		einfo
+		einfo "Clients need to set the Rendering Engine to Cycles and"
+		einfo "Device to Networked Device.  Finding the server is done"
+		einfo "automatically."
+		einfo
+	fi
 	xdg_icon_cache_update
 	xdg_mimeinfo_database_update
 }

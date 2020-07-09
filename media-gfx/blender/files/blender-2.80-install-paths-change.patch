@@ -1,0 +1,48 @@
+Subject:  Change destinations to accept abspath.  Put paths in quotes for EROOT.
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com
+----
+diff -urp blender-2.80.orig/CMakeLists.txt blender-2.80/CMakeLists.txt
+--- blender-2.80.orig/CMakeLists.txt	2019-07-24 00:41:38.000000000 -0700
++++ blender-2.80/CMakeLists.txt	2020-07-08 23:25:53.863314289 -0700
+@@ -115,12 +115,12 @@ enable_testing()
+ #-----------------------------------------------------------------------------
+ # Redirect output files
+ 
+-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin CACHE INTERNAL "" FORCE)
+-set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib CACHE INTERNAL "" FORCE)
++set(EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}" CACHE INTERNAL "" FORCE)
++set(LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib" CACHE INTERNAL "" FORCE)
+ if(MSVC)
+-  set(TESTS_OUTPUT_DIR ${EXECUTABLE_OUTPUT_PATH}/tests/$<CONFIG>/ CACHE INTERNAL "" FORCE)
++  set(TESTS_OUTPUT_DIR "${CMAKE_BINARY_DIR}/tests/$<CONFIG>/" CACHE INTERNAL "" FORCE)
+ else()
+-  set(TESTS_OUTPUT_DIR ${EXECUTABLE_OUTPUT_PATH}/tests/ CACHE INTERNAL "" FORCE)
++  set(TESTS_OUTPUT_DIR "${CMAKE_BINARY_DIR}/tests/" CACHE INTERNAL "" FORCE)
+ endif()
+ 
+ #-----------------------------------------------------------------------------
+Only in blender-2.80: CMakeLists.txt.orig
+Only in blender-2.80: CMakeLists.txt.rej
+diff -urp blender-2.80.orig/source/creator/CMakeLists.txt blender-2.80/source/creator/CMakeLists.txt
+--- blender-2.80.orig/source/creator/CMakeLists.txt	2019-07-24 00:41:39.000000000 -0700
++++ blender-2.80/source/creator/CMakeLists.txt	2020-07-08 23:24:20.328632164 -0700
+@@ -518,7 +518,7 @@ if(UNIX AND NOT APPLE)
+     # main blender binary
+     install(
+       TARGETS blender
+-      DESTINATION bin
++      DESTINATION "${CMAKE_INSTALL_BINDIR}"
+     )
+     if(WITH_DOC_MANPAGE)
+       # manpage only with 'blender' binary
+@@ -543,7 +543,7 @@ if(UNIX AND NOT APPLE)
+     )
+     install(
+       PROGRAMS ${CMAKE_SOURCE_DIR}/release/bin/blender-thumbnailer.py
+-      DESTINATION bin
++      DESTINATION "${CMAKE_INSTALL_BINDIR}"
+     )
+     set(BLENDER_TEXT_FILES_DESTINATION share/doc/blender)
+   endif()
+Only in blender-2.80/source/creator: CMakeLists.txt.orig
+Only in blender-2.80/source/creator: CMakeLists.txt.rej
