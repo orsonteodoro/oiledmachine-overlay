@@ -2,14 +2,46 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
+DESCRIPTION="3D Creation/Animation/Publishing System"
+HOMEPAGE="https://www.blender.org"
+KEYWORDS="amd64 ~x86"
+LICENSE="|| ( GPL-2 BL )
+all-rights-reserved
+LGPL-2.1+
+MPL-2.0
+build_creator? (
+	Apache-2.0
+	BitstreamVera
+	color-management? ( BSD )
+	jemalloc? ( BSD-2 )
+	GPL-2
+	GPL-3
+	GPL-3-with-font-exception
+	LGPL-2.1+
+	PSF-2
+)
+build_portable? (
+	Boost-1.0
+	BSD-2
+	jemalloc? ( BSD-2 )
+)
+cycles? (
+	Apache-2.0
+	Boost-1.0
+	BSD
+	MIT
+)
+"
+# intern/mikktspace contains ZLIB
+# intern/CMakeLists.txt contains GPL+ with all-rights-reserved ; there is no all rights reserved in the vanilla GPL-2
+# extern/carve/include/carve/win32.h all-rights-reserved
+# extern/carve/ || (GPL-2 GPL-3) ; could be reason why GPL-3 is bundled
 
 PYTHON_COMPAT=( python3_{7,8} )
 
-inherit check-reqs cmake-utils xdg-utils flag-o-matic xdg-utils \
+inherit blender check-reqs cmake-utils xdg-utils flag-o-matic xdg-utils \
 	pax-utils python-single-r1 toolchain-funcs eapi7-ver
 
-DESCRIPTION="3D Creation/Animation/Publishing System"
-HOMEPAGE="https://www.blender.org"
 
 # If you use git tarballs, you need to download the submodules listed in
 # .gitmodules.  The download.blender.org are preferred because they bundle them.
@@ -28,8 +60,6 @@ SLOT="${MY_PV}"
 else
 SLOT="0"
 fi
-LICENSE="|| ( GPL-2 BL )"
-KEYWORDS="amd64 ~x86"
 # Platform defaults based on CMakeList.txt
 IUSE="-asan +bullet -collada -color-management +cuda +cycles -cycles-network +dds \
 -debug doc +elbeem -embree -ffmpeg -fftw -headless -jack +jemalloc +jpeg2k \
@@ -38,8 +68,6 @@ IUSE="-asan +bullet -collada -color-management +cuda +cycles -cycles-network +dd
 +tiff -valgrind"
 RESTRICT="mirror !test? ( test )"
 
-# For build configurations, see
-# https://github.com/blender/blender/blob/v2.81/build_files/cmake/config/
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	cuda? ( cycles ^^ ( nvcc nvrtc ) )
 	cycles? ( openexr tiff openimageio )
@@ -81,6 +109,10 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	virtual/libintl
 	virtual/opengl
+	build_portable? (
+		dev-libs/boost[static-libs]
+		media-libs/openjpeg[static-libs]
+	)
 	collada? ( >=media-libs/opencollada-1.6.68:= )
 	color-management? ( >=media-libs/opencolorio-1.1.0 )
 	embree? ( >=media-libs/embree-3.2.4 )
@@ -155,6 +187,14 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.80-install-paths-change.patch"
 )
 
+get_dest() {
+	if [[ "${EBLENDER}" == "build_portable" ]] ; then
+		echo "/usr/share/${PN}/${SLOT}/${EBLENDER_NAME}"
+	else
+		echo "/usr/bin/.${PN}/${SLOT}/${EBLENDER_NAME}"
+	fi
+}
+
 blender_check_requirements() {
 	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
 
@@ -173,34 +213,72 @@ pkg_setup() {
 	# Needs OpenCL 1.2 (GCN 2)
 }
 
-src_prepare() {
+_src_prepare() {
+	if [[ "${EBLENDER}" == "build_portable" ]] ; then
+		eapply "${FILESDIR}/${PN}-2.79b-portable-dest.patch"
+	fi
+
 	ewarn
 	ewarn "This version is not Long Term Support (LTS) version."
 	ewarn "Use 2.83.x series instead."
 	ewarn
+	S="${BUILD_DIR}" \
+	CMAKE_USE_DIR="${BUILD_DIR}" \
+	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
 	cmake-utils_src_prepare
 
-	# we don't want static glew, but it's scattered across
-	# multiple files that differ from version to version
-	# !!!CHECK THIS SED ON EVERY VERSION BUMP!!!
-	local file
-	while IFS="" read -d $'\0' -r file ; do
-		if grep -q -F -e "-DGLEW_STATIC" "${file}" ; then
-			einfo "Removing -DGLEW_STATIC from ${file}"
-			sed -i -e '/-DGLEW_STATIC/d' "${file}"
-		fi
-	done < <(find . -type f -name "CMakeLists.txt" -print0)
+	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
+		# we don't want static glew, but it's scattered across
+		# multiple files that differ from version to version
+		# !!!CHECK THIS SED ON EVERY VERSION BUMP!!!
+		local file
+		while IFS="" read -d $'\0' -r file ; do
+			if grep -q -F -e "-DGLEW_STATIC" "${file}" ; then
+				einfo "Removing -DGLEW_STATIC from ${file}"
+				sed -i -e '/-DGLEW_STATIC/d' "${file}"
+			fi
+		done < <(find . -type f -name "CMakeLists.txt" -print0)
 
-	sed -i -e "s|bf_intern_glew_mx|bf_intern_glew_mx \${GLEW_LIBRARY}|g" \
-		intern/cycles/app/CMakeLists.txt || die
+		sed -i -e "s|bf_intern_glew_mx|bf_intern_glew_mx \${GLEW_LIBRARY}|g" \
+			intern/cycles/app/CMakeLists.txt || die
+	fi
 
 	# Disable MS Windows help generation. The variable doesn't do what it
 	# it sounds like.
 	sed -e "s|GENERATE_HTMLHELP      = YES|GENERATE_HTMLHELP      = NO|" \
 	    -i doc/doxygen/Doxyfile || die
+
+	if [[ "${EBLENDER}" == "build_portable" ]] ; then
+		sed -i -e "/add_subdirectory(tests)/d" CMakeLists.txt || die
+	fi
 }
 
-src_configure() {
+src_prepare() {
+	blender_prepare() {
+		cd "${BUILD_DIR}" || die
+		_src_prepare
+	}
+	blender_copy_sources
+	blender_foreach_impl blender_prepare
+}
+
+_src_configure() {
+	if [[ "${EBLENDER}" == "build_portable" ]] ; then
+		strip-flags
+		filter-flags -march=* -mtune=*
+
+		BLENDER_CXXFLAGS_ARCH="BLENDER_CXXFLAGS_${ARCH}"
+		if [[ -n "${!BLENDER_CXXFLAGS_ARCH}" ]] ; then
+			append-cxxflags ${!BLENDER_CXXFLAGS_ARCH}
+		elif [[ "${ABI}" == "amd64" && -z "${BLENDER_CXXFLAGS_X86_64}" ]] ; then
+			export CXXFLAGS=$(test-flags-CXX -march=x86-64 -mtune=generic)" ${CXXFLAGS}"
+		elif [[ "${ABI}" == "x86" && -z "${BLENDER_CXXFLAGS_X86}" ]] ; then
+			export CXXFLAGS=$(test-flags-CXX -march=i686 -mtune=generic)" ${CXXFLAGS}"
+		else
+			ewarn "Unknown ARCH.  Not setting -march"
+		fi
+	fi
+
 	# FIX: forcing '-funsigned-char' fixes an anti-aliasing issue with menu
 	# shadows, see bug #276338 for reference
 	append-flags -funsigned-char
@@ -209,8 +287,9 @@ src_configure() {
 	append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=4
 
 	local mycmakeargs=()
-	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
-		mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH=/usr/bin/.${PN}/${SLOT} )
+	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH=$(get_dest) )
+	if [[ "${EBLENDER}" == "build_portable" ]] ; then
+		mycmakeargs+=( -DPORTABLE_DEST:PATH=$(get_dest) )
 	fi
 
 	if use cycles-network ; then
@@ -224,8 +303,6 @@ src_configure() {
 		-DWITH_ASSERT_ABORT=$(usex debug)
 		-DWITH_BOOST=ON
 		-DWITH_BULLET=$(usex bullet)
-		-DWITH_CODEC_FFMPEG=$(usex ffmpeg)
-		-DWITH_CODEC_SNDFILE=$(usex sndfile)
 		-DWITH_COMPILER_ASAN=$(usex asan)
 		-DWITH_CUDA_DYNLOAD=$(usex cuda $(usex nvcc ON OFF) ON)
 		-DWITH_CXX_GUARDEDALLOC=$(usex debug)
@@ -238,26 +315,18 @@ src_configure() {
 		-DWITH_CYCLES_DEVICE_OPTIX=$(usex optix)
 		-DWITH_CYCLES_EMBREE=$(usex embree)
 		-DWITH_CYCLES_KERNEL_ASAN=$(usex asan)
-		-DWITH_CYCLES_NETWORK=$(usex cycles-network)
 		-DWITH_CYCLES_OSL=$(usex osl)
 		-DWITH_DOC_MANPAGE=$(usex man)
-		-DWITH_FFTW3=$(usex fftw)
-		-DWITH_GTESTS=$(usex test)
-		-DWITH_HEADLESS=$(usex headless)
 		-DWITH_IMAGE_DDS=$(usex dds)
 		-DWITH_IMAGE_OPENEXR=$(usex openexr)
 		-DWITH_IMAGE_OPENJPEG=$(usex jpeg2k)
 		-DWITH_IMAGE_TIFF=$(usex tiff)
-		-DWITH_INPUT_NDOF=$(usex ndof)
-		-DWITH_INSTALL_PORTABLE=OFF
 		-DWITH_INTERNATIONAL=$(usex nls)
-		-DWITH_JACK=$(usex jack)
 		-DWITH_LLVM=$(usex llvm)
 		-DWITH_MEM_JEMALLOC=$(usex jemalloc)
 		-DWITH_MEM_VALGRIND=$(usex valgrind)
 		-DWITH_MOD_FLUID=$(usex elbeem)
 		-DWITH_MOD_OCEANSIM=$(usex fftw)
-		-DWITH_OPENAL=$(usex openal)
 		-DWITH_OPENCOLLADA=$(usex collada)
 		-DWITH_OPENCOLORIO=$(usex color-management)
 		-DWITH_OPENIMAGEDENOISE=$(usex openimagedenoise)
@@ -268,24 +337,103 @@ src_configure() {
 		-DWITH_OPENVDB_BLOSC=$(usex openvdb)
 		-DWITH_PYTHON_INSTALL=OFF
 		-DWITH_PYTHON_INSTALL_NUMPY=OFF
-		-DWITH_SDL=$(usex sdl)
-		-DWITH_STATIC_LIBS=OFF
-		-DWITH_SYSTEM_EIGEN3=ON
-		-DWITH_SYSTEM_GLEW=ON
-		-DWITH_SYSTEM_LZO=ON
-		-DWITH_X11=$(usex !headless)
 	)
+
+	if [[ "${EBLENDER}" == "build_creator" \
+		|| "${EBLENDER}" == "build_portable" ]] ; then
+		if use jack || use openal ; then
+			mycmakeargs+=(
+				-DWITH_AUDASPACE=ON
+			)
+		fi
+
+		mycmakeargs+=(
+			-DWITH_CODEC_FFMPEG=$(usex ffmpeg)
+			-DWITH_CODEC_SNDFILE=$(usex sndfile)
+			-DWITH_FFTW3=$(usex fftw)
+			-DWITH_GTESTS=$(usex test)
+			-DWITH_INPUT_NDOF=$(usex ndof)
+			-DWITH_JACK=$(usex jack)
+			-DWITH_OPENAL=$(usex openal)
+			-DWITH_SDL=$(usex sdl)
+			-DWITH_X11=ON
+		)
+	fi
+
+	# For details see, https://github.com/blender/blender/tree/v2.81/build_files/cmake/config
+	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
+		mycmakeargs+=(
+			-DWITH_CYCLES_NETWORK=$(usex cycles-network)
+			-DWITH_INSTALL_PORTABLE=OFF
+			-DWITH_STATIC_LIBS=OFF
+			-DWITH_SYSTEM_EIGEN3=ON
+			-DWITH_SYSTEM_GLEW=ON
+			-DWITH_SYSTEM_LZO=ON
+		)
+	fi
+
+	if [[ "${EBLENDER}" == "build_headless" ]] ; then
+		# for render farms
+		mycmakeargs+=(
+			-DWITH_AUDASPACE=OFF
+			-DWITH_CODEC_FFMPEG=OFF
+			-DWITH_CODEC_SNDFILE=OFF
+			-DWITH_FFTW3=OFF
+			-DWITH_HEADLESS=ON
+			-DWITH_INPUT_NDOF=OFF
+			-DWITH_JACK=OFF
+			-DWITH_OPENAL=OFF
+			-DWITH_SDL=OFF
+			-DWITH_SYSTEM_GLEW=ON
+			-DWITH_X11_XINPUT=OFF
+			-DWITH_X11=OFF
+		)
+	elif [[ "${EBLENDER}" == "build_portable" ]] ; then
+		# for redistributable games, implies building player
+		mycmakeargs+=(
+			-DLLVM_STATIC=$(usex llvm)
+			-DWITH_BLENDER=OFF
+			-DWITH_GTESTS=OFF
+			-DWITH_INSTALL_PORTABLE=ON
+			-DWITH_OPENGL_TESTS=OFF
+			-DWITH_OPENMP_STATIC=$(usex openmp)
+			-DWITH_STATIC_LIBS=ON
+			-DWITH_SYSTEM_GLEW=OFF
+		)
+		if has_version 'dev-libs/boost[icu]' ; then
+			mycmakeargs+=(
+				-DWITH_BOOST_ICU=$(usex nls)
+			)
+		fi
+	fi
+
 	if (( ${#BLENDER_CMAKE_ARGS[@]} > 0 )) ; then
 		# Set as per-package environmental variable
 		# For setting up optix/cuda
 		mycmakeargs+=( ${BLENDER_CMAKE_ARGS[@]} )
 	fi
+	S="${BUILD_DIR}" \
+	CMAKE_USE_DIR="${BUILD_DIR}" \
+	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
 	cmake-utils_src_configure
 }
 
-src_compile() {
-	cmake-utils_src_compile
+src_configure() {
+	blender_configure() {
+		cd "${BUILD_DIR}" || die
+		_src_configure
+	}
+	blender_foreach_impl blender_configure
+}
 
+_src_compile() {
+	S="${BUILD_DIR}" \
+	CMAKE_USE_DIR="${BUILD_DIR}" \
+	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
+	cmake-utils_src_compile
+}
+
+_src_compile_docs() {
 	if use doc; then
 		# Workaround for binary drivers.
 		addpredict /dev/ati
@@ -306,9 +454,20 @@ src_compile() {
 	fi
 }
 
-src_test() {
+src_compile() {
+	blender_compile() {
+		cd "${BUILD_DIR}" || die
+		_src_compile
+		if [[ "${EBLENDER}" == "build_creator" ]] ; then
+			_src_compile_docs
+		fi
+	}
+	blender_foreach_impl blender_compile
+}
+
+_src_test() {
 	if use test; then
-		einfo "Running Blender Unit Tests ..."
+		einfo "Running Blender Unit Tests for ${EBLENDER} ..."
 		cd "${BUILD_DIR}"/bin/tests || die
 		local f
 		for f in *_test; do
@@ -317,10 +476,24 @@ src_test() {
 	fi
 }
 
-src_install() {
-	# Pax mark blender for hardened support.
-	pax-mark m "${CMAKE_BUILD_DIR}"/bin/blender
+src_test() {
+	blender_test() {
+		cd "${BUILD_DIR}" || die
+		_src_test
+	}
+	blender_foreach_impl blender_test
+}
 
+_src_install_cycles_network() {
+	if use cycles-network ; then
+		exeinto "${d_dest}"
+		dosym "../../..${d_dest}/cycles_server" \
+			"/usr/bin/cycles_server-${SLOT}" || die
+		doexe "${CMAKE_BUILD_DIR}${d_dest}/cycles_server"
+	fi
+}
+
+_src_install_doc() {
 	if use doc; then
 		docinto "html/API/python"
 		dodoc -r "${CMAKE_USE_DIR}"/doc/python_api/BPY_API/.
@@ -329,33 +502,78 @@ src_install() {
 		dodoc -r "${CMAKE_USE_DIR}"/doc/doxygen/html/.
 	fi
 
-	cmake-utils_src_install
-
 	# fix doc installdir
 	docinto "html"
 	dodoc "${CMAKE_USE_DIR}"/release/text/readme.html
 	rm -r "${ED%/}"/usr/share/doc/blender || die
+}
 
-	local d_dest
-	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
-		d_dest="/usr/bin/.${PN}/${SLOT}"
-	else
-		d_dest="/usr/bin"
-	fi
-	python_fix_shebang "${ED%/}${d_dest}/blender-thumbnailer.py"
-	python_optimize "${ED%/}/usr/share/blender/${MY_PV}/scripts"
-
-	if use cycles-network ; then
-		exeinto "${d_dest}"
-		if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
-			dosym "../../..${d_dest}/cycles_server" \
-				"/usr/bin/cycles_server-${SLOT}" || die
+install_licenses() {
+	for f in $(find "${BUILD_DIR}" -iname "*license*" \
+	  -o -iname "*copyright*" \
+	  -o -iname "*copying*" \
+	  -o -path "*/license/*" \
+	  -o -path "*/macholib/README.ctypes" \
+	  -o -path "*/materials_library_vx/README.txt" ) ; \
+	do
+		if [[ -f "${f}" ]] ; then
+			d=$(dirname "${f}" | sed -r -e "s|^${BUILD_DIR}||")
+		else
+			d=$(echo "${f}" | sed -r -e "s|^${BUILD_DIR}||")
 		fi
-		doexe "${CMAKE_BUILD_DIR}${d_dest}/cycles_server"
+		if [[ "${EBLENDER}" == "build_portable" ]] ; then
+			insinto "${d_dest}/licenses/${d}"
+			doins -r "${f}"
+		elif [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
+			docinto "licenses/${d}"
+			dodoc -r "${f}"
+		fi
+	done
+}
+
+install_readmes() {
+	for f in $(find "${BUILD_DIR}" -iname "*readme*") ; \
+	do
+		if [[ -f "${f}" ]] ; then
+			d=$(dirname "${f}" | sed -r -e "s|^${BUILD_DIR}||")
+		else
+			d=$(echo "${f}" | sed -r -e "s|^${BUILD_DIR}||")
+		fi
+		if [[ "${EBLENDER}" == "build_portable" ]] ; then
+			insinto "${d_dest}/readmes/${d}"
+			doins -r "${f}"
+		elif [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
+			docinto "readmes/${d}"
+			dodoc -r "${f}"
+		fi
+	done
+}
+
+_src_install() {
+	# Pax mark blender for hardened support.
+	pax-mark m "${CMAKE_BUILD_DIR}"/bin/blender
+
+	S="${BUILD_DIR}" \
+	CMAKE_USE_DIR="${BUILD_DIR}" \
+	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
+	cmake-utils_src_install
+	if [[ "${EBLENDER}" == "build_creator" ]] ; then
+		CMAKE_USE_DIR="${BUILD_DIR}" \
+		_src_install_doc
 	fi
 
-	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
-		mv "${ED}/usr/share/applications"/blender{,-${SLOT}}.desktop || die
+	local d_dest=$(get_dest)
+	if [[ "${EBLENDER}" == "build_creator" ]] ; then
+		python_fix_shebang "${ED%/}${d_dest}/blender-thumbnailer.py"
+		python_optimize "${ED%/}/usr/share/blender/${MY_PV}/scripts"
+	fi
+
+	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
+		_src_install_cycles_network
+	fi
+
+	if [[ "${EBLENDER}" == "build_creator" ]] ; then
+		cp "${ED}/usr/share/applications"/blender{,-${SLOT}}.desktop || die
 		local menu_file="${ED}/usr/share/applications/blender-${SLOT}.desktop"
 		sed -i -e "s|Name=Blender|Name=Blender ${PV}|g" "${menu_file}" || die
 		sed -i -e "s|Exec=blender|Exec=${d_dest}/blender|g" "${menu_file}" || die
@@ -366,7 +584,35 @@ src_install() {
 		mv "${ED}/usr/share/icons/hicolor/scalable/apps/blender"{,-${SLOT}}".svg" || die
 		dosym "../../..${d_dest}/blender" \
 			"/usr/bin/${PN}-${SLOT}" || die
+	elif [[ "${EBLENDER}" == "build_headless" ]] ; then
+		dosym "../../..${d_dest}/blender" \
+			"/usr/bin/${PN}-headless-${SLOT}" || die
+	elif [[ "${EBLENDER}" == "build_portable" ]] ; then
+		cp "${ED}/usr/share/applications"/blender.desktop \
+			"${ED}${d_dest}"/blender-${SLOT}-portable.desktop \
+			|| die
+		local menu_file="${ED}${d_dest}/blender-${SLOT}-portable.desktop"
+		sed -i -e "s|Name=Blender|Name=Blender ${PV} (Portable)|g" "${menu_file}" || die
+		sed -i -e "s|Exec=blender|Exec=${d_dest}/blender|g" "${menu_file}" || die
+		sed -i -e "s|Icon=blender|Icon=blender-${SLOT}|g" "${menu_file}" || die
 	fi
+	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
+		dodir "${d_dest}"
+		touch "${ED}${d_dest}/.multislot"
+	fi
+	install_licenses
+	if use doc ; then
+		install_readmes
+	fi
+}
+
+src_install() {
+	blender_install() {
+		cd "${BUILD_DIR}" || die
+		_src_install
+	}
+	blender_foreach_impl blender_install
+	rm -rf "${ED}/usr/share/applications/blender.desktop" || die
 }
 
 pkg_postinst() {
@@ -412,38 +658,33 @@ pkg_postinst() {
 	fi
 	xdg_icon_cache_update
 	xdg_mimeinfo_database_update
-	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
-		local d_src="${EROOT}/usr/bin/.${PN}"
-		if [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" && "${BLENDER_MAIN_SYMLINK_MODE}" == "latest-lts" ]] ; then
-			HIGHEST_LTS=$(ls "${d_src}"/*/.lts | sort -V | tail -n 1 | cut -f 5 -d "/")
-			if [[ -n "${HIGHEST_LTS}" ]] ; then
-				ln -sf "${EROOT}${d_src}/${HIGHEST_LTS}/blender" \
-					"${EROOT}/usr/bin/blender" || die
-				if use cycles-network ; then
-					ln -sf "${EROOT}${d_src}/${HIGHEST_LTS}/cycles_server" \
-						"${EROOT}/usr/bin/cycles_server" || die
-				fi
-			fi
-		elif [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" && "${BLENDER_MAIN_SYMLINK_MODE}" == "latest" ]] ; then
-			HIGHEST_V=$(ls "${EROOT}${d_src}/" | sort -V | tail -n 1)
-			if [[ -n "${HIGHEST_V}" ]] ; then
-				ln -sf "${EROOT}${d_src}/${HIGHEST_V}/blender" \
-					"${EROOT}/usr/bin/blender" || die
-				if use cycles-network ; then
-					ln -sf "${EROOT}${d_src}/${HIGHEST_V}/cycles_server" \
-						"${EROOT}/usr/bin/cycles_server" || die
-				fi
-			fi
-		elif [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" && "${BLENDER_MAIN_SYMLINK_MODE}" =~ ^custom-[0-9]\.[0-9]+$ ]] ; then
-			V=$(echo "${BLENDER_MAIN_SYMLINK_MODE}" | cut -f 2 -d "-")
-			if [[ -n "${V}" ]] ; then
-				ln -sf "${EROOT}${d_src}/${V}/blender" \
-					"${EROOT}/usr/bin/blender" || die
-				if use cycles-network ; then
-					ln -sf "${EROOT}${d_src}/${V}/cycles_server" \
-						"${EROOT}/usr/bin/cycles_server" || die
-				fi
-			fi
+	local d_src="${EROOT}/usr/bin/.${PN}"
+	local V=""
+	if [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" && "${BLENDER_MAIN_SYMLINK_MODE}" == "latest-lts" ]] ; then
+		# highest lts
+		V=$(ls "${d_src}"/*/creator/.lts | sort -V | tail -n 1 | cut -f 5 -d "/")
+	elif [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" && "${BLENDER_MAIN_SYMLINK_MODE}" == "latest" ]] ; then
+		# highest v
+		V=$(ls "${EROOT}${d_src}/" | sort -V | tail -n 1)
+	elif [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" && "${BLENDER_MAIN_SYMLINK_MODE}" =~ ^custom-[0-9]\.[0-9]+$ ]] ; then
+		# custom v
+		V=$(echo "${BLENDER_MAIN_SYMLINK_MODE}" | cut -f 2 -d "-")
+	fi
+	if [[ -n "${V}" ]] ; then
+		if use build_creator ; then
+			ln -sf "${EROOT}${d_src}/${V}/creator/blender" \
+				"${EROOT}/usr/bin/blender" || die
+		fi
+		if use build_headless ; then
+			ln -sf "${EROOT}${d_src}/${V}/headless/blender" \
+				"${EROOT}/usr/bin/blender-headless" || die
+		fi
+		if [[ -e "${EROOT}${d_src}/${V}/creator/cycles_server" ]] && use cycles-network ; then
+			ln -sf "${EROOT}${d_src}/${V}/creator/cycles_server" \
+				"${EROOT}/usr/bin/cycles_server" || die
+		elif [[ -e "${EROOT}${d_src}/${V}/headless/cycles_server" ]] && use cycles-network ; then
+			ln -sf "${EROOT}${d_src}/${V}/headless/cycles_server" \
+				"${EROOT}/usr/bin/cycles_server" || die
 		fi
 	fi
 }
@@ -459,10 +700,15 @@ pkg_postrm() {
 	ewarn ""
 	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
 		local d_src="${EROOT}/usr/bin/.${PN}"
-		HIGHEST_V=$(ls "${EROOT}${d_src}" | sort -V | tail -n 1)
-		if [[ -z "${HIGHEST_LTS}" ]] ; then
-			rm -rf "${EROOT}/usr/bin/blender" || die
-			if use cycles-network ; then
+		LAST_V=$(ls "${EROOT}${d_src}" | sort -V | tail -n 1)
+		if [[ -z "${LAST_V}" ]] ; then
+			if [[ -e "${EROOT}/usr/bin/blender" ]] ; then
+				rm -rf "${EROOT}/usr/bin/blender" || die
+			fi
+			if [[ -e "${EROOT}/usr/bin/blender-headless" ]] ; then
+				rm -rf "${EROOT}/usr/bin/blender-headless" || die
+			fi
+			if [[ -e "${EROOT}/usr/bin/cycles_server" ]] ; then
 				rm -rf "${EROOT}/usr/bin/cycles_server" || die
 			fi
 		fi

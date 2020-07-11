@@ -34,6 +34,12 @@
 
 		BLENDER_MULTISLOT can be set to 1 to multislot (default) or
 		0 to single slot.
+
+		When build_portable USE flag is on, it will place a portable version
+		in /usr/share/blender/${SLOT}/portable.
+
+		When build_headless USE flag is on, the executible is called
+		blender_headless-${SLOT} or blender_headless.
 	</longdescription>
 	<upstream>
 		<doc lang="en">https://docs.blender.org/manual/en/2.83/index.html</doc>
@@ -55,6 +61,15 @@
 	<use>
 		<flag name="asan">
 			Enable address sanitiation.
+		</flag>
+		<flag name="build_creator">
+			Builds the IDE.  The default.
+		</flag>
+		<flag name="build_headless">
+			Builds blender for render farms.  Disables windowing and audio.
+		</flag>
+		<flag name="build_portable">
+			Builds blender for redistribution.  Makes use of static libraries.
 		</flag>
 		<flag name="bullet">
 			Enable Bullet (Physics Engine).

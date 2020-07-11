@@ -1,0 +1,12 @@
+--- a/intern/cycles/app/CMakeLists.txt.orig	2018-03-23 08:22:25.000000000 -0700
++++ b/intern/cycles/app/CMakeLists.txt	2020-07-10 03:05:39.446198864 -0700
+@@ -58,7 +58,8 @@ link_directories(${OPENIMAGEIO_LIBPATH}
+                  ${JPEG_LIBPATH}
+                  ${ZLIB_LIBPATH}
+                  ${TIFF_LIBPATH}
+-                 ${OPENEXR_LIBPATH})
++                 ${OPENEXR_LIBPATH}
++                 ${Blender_BINARY_DIR}/lib)
+ 
+ add_definitions(${GL_DEFINITIONS})
+ 

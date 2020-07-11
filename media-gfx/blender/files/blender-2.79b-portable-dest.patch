@@ -1,0 +1,73 @@
+--- a/source/creator/CMakeLists.txt.orig	2020-07-10 18:14:37.254077614 -0700
++++ b/source/creator/CMakeLists.txt	2020-07-10 18:16:58.080610653 -0700
+@@ -287,13 +287,13 @@ endif()
+ if(UNIX AND NOT APPLE)
+ 	if(WITH_PYTHON_MODULE)
+ 		if(WITH_INSTALL_PORTABLE)
+-			set(TARGETDIR_VER ${BLENDER_VERSION})
++			set(TARGETDIR_VER ${PORTABLE_DEST}/${BLENDER_VERSION})
+ 		else()
+ 			set(TARGETDIR_VER ${PYTHON_SITE_PACKAGES}/${BLENDER_VERSION})
+ 		endif()
+ 	else()
+ 		if(WITH_INSTALL_PORTABLE)
+-			set(TARGETDIR_VER ${BLENDER_VERSION})
++			set(TARGETDIR_VER ${PORTABLE_DEST}/${BLENDER_VERSION})
+ 		else()
+ 			set(TARGETDIR_VER share/blender/${BLENDER_VERSION})
+ 		endif()
+@@ -438,7 +438,7 @@ if(UNIX AND NOT APPLE)
+ 		if(WITH_INSTALL_PORTABLE)
+ 			install(
+ 				TARGETS blender
+-				DESTINATION "."
++				DESTINATION "${PORTABLE_DEST}"
+ 			)
+ 		else()
+ 			install(
+@@ -450,29 +450,29 @@ if(UNIX AND NOT APPLE)
+ 	elseif(WITH_INSTALL_PORTABLE)
+ 		install(
+ 			TARGETS blender
+-			DESTINATION "."
++			DESTINATION "${PORTABLE_DEST}"
+ 		)
+ 
+ 		if(WITH_DOC_MANPAGE)
+ 			install(
+ 				FILES ${CMAKE_CURRENT_BINARY_DIR}/blender.1
+-				DESTINATION "."
++				DESTINATION "${PORTABLE_DEST}"
+ 			)
+ 		endif()
+ 		install(
+ 			FILES
+ 				${CMAKE_SOURCE_DIR}/release/freedesktop/blender.desktop
+ 				${CMAKE_SOURCE_DIR}/release/freedesktop/icons/scalable/apps/blender.svg
+-			DESTINATION "."
++			DESTINATION "${PORTABLE_DEST}"
+ 		)
+ 
+ 		install(
+ 			PROGRAMS
+ 			${CMAKE_SOURCE_DIR}/release/bin/blender-thumbnailer.py
+-			DESTINATION "."
++			DESTINATION "${PORTABLE_DEST}"
+ 		)
+ 
+-		set(BLENDER_TEXT_FILES_DESTINATION ".")
++		set(BLENDER_TEXT_FILES_DESTINATION "${PORTABLE_DEST}")
+ 	else()
+ 		# main blender binary
+ 		install(
+--- a/source/blenderplayer/CMakeLists.txt.orig	2020-07-10 18:14:37.255077654 -0700
++++ b/source/blenderplayer/CMakeLists.txt	2020-07-10 18:17:30.510884695 -0700
+@@ -76,7 +76,7 @@ else()
+ 	else()
+ 		install(
+ 			TARGETS blenderplayer
+-			DESTINATION "."
++			DESTINATION "${PORTABLE_DEST}"
+ 		)
+ 	endif()
+ endif()
