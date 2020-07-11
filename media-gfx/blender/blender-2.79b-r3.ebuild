@@ -15,7 +15,23 @@ NTP
 s_cbrt.c
 build_creator? (
 	Apache-2.0
+	AFL-3.0
 	BitstreamVera
+	CC-BY-SA-3.0
+	color-management? ( BSD )
+	jemalloc? ( BSD-2 )
+	GPL-2
+	GPL-3
+	GPL-3-with-font-exception
+	LGPL-2.1+
+	PSF-2
+	ZLIB
+)
+build_headless? (
+	Apache-2.0
+	AFL-3.0
+	BitstreamVera
+	CC-BY-SA-3.0
 	color-management? ( BSD )
 	jemalloc? ( BSD-2 )
 	GPL-2
@@ -41,7 +57,10 @@ cycles? (
 # intern/CMakeLists.txt contains GPL+ with all-rights-reserved ; there is no all rights reserved in the vanilla GPL-2
 # extern/carve/include/carve/win32.h all-rights-reserved
 # extern/carve/ || (GPL-2 GPL-3) ; could be reason why GPL-3 is bundled
-# source/gameengine/Expressions/intern/Value.cpp NTP ; See https://spdx.org/licenses/NTP.html
+# source/gameengine/Expressions/intern/Value.cpp NTP
+# extern/carve/include/carve/cbrt.h s_cbrt.c
+# release/scripts/addons/render_povray/templates_pov/chess2.pov AFL-3.0
+# release/scripts/addons/render_povray/templates_pov/abyss.pov CC-BY-SA-3.0
 
 PYTHON_COMPAT=( python3_6 )
 
@@ -74,7 +93,7 @@ IUSE="+bullet +dds +elbeem +game-engine -openexr -collada \
 +tiff -valgrind X"
 RESTRICT="mirror !test? ( test )"
 
-REQUIRED_USE="${PYTHON_REQUIRED_USE}
+REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	cuda? ( cycles nvcc )
 	cycles? ( openexr tiff openimageio )
 	nvcc? ( cuda )
@@ -583,14 +602,6 @@ _src_install() {
 	elif [[ "${EBLENDER}" == "build_headless" ]] ; then
 		dosym "../../..${d_dest}/blender" \
 			"/usr/bin/${PN}-headless-${SLOT}" || die
-	elif [[ "${EBLENDER}" == "build_portable" ]] ; then
-		cp "${ED}/usr/share/applications"/blender.desktop \
-			"${ED}${d_dest}"/blender-${SLOT}-portable.desktop \
-			|| die
-		local menu_file="${ED}${d_dest}/blender-${SLOT}-portable.desktop"
-		sed -i -e "s|Name=Blender|Name=Blender ${PV} (Portable)|g" "${menu_file}" || die
-		sed -i -e "s|Exec=blender|Exec=${d_dest}/blender|g" "${menu_file}" || die
-		sed -i -e "s|Icon=blender|Icon=blender-${SLOT}|g" "${menu_file}" || die
 	fi
 	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
 		dodir "${d_dest}"
@@ -695,9 +706,7 @@ pkg_postrm() {
 	ewarn "It may contain extra render kernels not tracked by portage"
 	ewarn ""
 	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
-		local d_src="${EROOT}/usr/bin/.${PN}"
-		LAST_V=$(ls "${EROOT}${d_src}" | sort -V | tail -n 1)
-		if [[ -z "${LAST_V}" ]] ; then
+		if [[ ! -d "${EROOT}/usr/bin/.blender" ]] ; then
 			if [[ -e "${EROOT}/usr/bin/blender" ]] ; then
 				rm -rf "${EROOT}/usr/bin/blender" || die
 			fi
