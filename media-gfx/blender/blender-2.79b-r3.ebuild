@@ -12,6 +12,7 @@ all-rights-reserved
 LGPL-2.1+
 MPL-2.0
 NTP
+s_cbrt.c
 build_creator? (
 	Apache-2.0
 	BitstreamVera
