@@ -32,14 +32,6 @@
 # TRESOR:
 #   http://www1.informatik.uni-erlangen.de/tresor
 
-# TRESOR is broken >= 4.17.  It requires additional coding for skcipher with cbc/ecb.
-
-# Compare these commit list and find the ones with convert to skcipher
-# interface to hint how to fix.  TRESOR with 4.16.18 works. TRESOR with 4.17
-# fails to run cryptsetup benchmark.
-# https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/log/arch/x86/crypto?h=v4.16.18
-# https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/log/arch/x86/crypto?h=v4.17
-
 # tresor passes cipher but not skcipher in self test (/proc/crypto); there is
 # a error in dmesg
 

@@ -54,18 +54,6 @@
 # TRESOR:
 #   http://www1.informatik.uni-erlangen.de/tresor
 
-# TRESOR is maybe broken.  It requires additional coding for skcipher.
-# Use the 4.9 series if you want to use TRESOR.
-# See aesni-intel_glue.c chacha20_glue.c tresor_glue.c aesni-intel_asm.S
-#   aesni-intel_asm.S in arch/x86/crypto
-# It needs to fill out the skcipher_alg structure and provide callbacks that
-#   use the skcipher_request structure.
-# CBC uses CRYPTO_ALG_TYPE_SKCIPHER
-# ECB uses CRYPTO_ALG_TYPE_BLKCIPHER
-
-# Parts that still need to be developed:
-# TRESOR - incomplete API
-
 case ${EAPI:-0} in
 	7) die "this eclass doesn't support EAPI ${EAPI}" ;;
 	*) ;;
