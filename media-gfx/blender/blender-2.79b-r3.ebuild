@@ -620,7 +620,18 @@ src_install() {
 		_src_install
 	}
 	blender_foreach_impl blender_install
+	if [[ -d "${ED}/usr/share/icons/hicolor" ]] ; then
+		for size in 16x16 22x22 24x24 256x256 32x32 48x48 ; do
+			mv "${ED}/usr/share/icons/hicolor/"${size}"/apps/blender"{,-${SLOT}}".png" || die
+		done
+	fi
+	if [[ -e "${ED}/usr/share/icons/hicolor/scalable/apps/blender.svg" ]] ; then
+		mv "${ED}/usr/share/icons/hicolor/scalable/apps/blender"{,-${SLOT}}".svg" || die
+	fi
 	rm -rf "${ED}/usr/share/applications/blender.desktop" || die
+	if [[ -d "/usr/share/doc/blender" ]] ; then
+		mv /usr/share/doc/blender{,-${SLOT}} || die
+	fi
 }
 
 pkg_postinst() {

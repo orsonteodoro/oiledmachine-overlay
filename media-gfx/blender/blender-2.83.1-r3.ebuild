@@ -131,7 +131,7 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	jack? ( virtual/jack )
 	jemalloc? ( >=dev-libs/jemalloc-5.0.1:= )
-	jpeg2k? ( >=media-libs/openjpeg-2.3.0:0 )
+	jpeg2k? ( >=media-libs/openjpeg-2.3.0:2 )
 	llvm? ( >=sys-devel/llvm-9.0.1:= )
 	ndof? (
 		app-misc/spacenavd
@@ -529,10 +529,6 @@ _src_install() {
 		sed -i -e "s|Name=Blender|Name=Blender ${PV}|g" "${menu_file}" || die
 		sed -i -e "s|Exec=blender|Exec=${d_dest}/blender|g" "${menu_file}" || die
 		sed -i -e "s|Icon=blender|Icon=blender-${SLOT}|g" "${menu_file}" || die
-		for size in 16x16 22x22 24x24 256x256 32x32 48x48 ; do
-			mv "${ED}/usr/share/icons/hicolor/"${size}"/apps/blender"{,-${SLOT}}".png" || die
-		done
-		mv "${ED}/usr/share/icons/hicolor/scalable/apps/blender"{,-${SLOT}}".svg" || die
 		dosym "../../..${d_dest}/blender" \
 			"/usr/bin/${PN}-${SLOT}" || die
 	elif [[ "${EBLENDER}" == "build_headless" ]] ; then
@@ -556,7 +552,14 @@ src_install() {
 		_src_install
 	}
 	blender_foreach_impl blender_install
+	if [[ -e "${ED}/usr/share/icons/hicolor/scalable/apps/blender.svg" ]] ; then
+		mv "${ED}/usr/share/icons/hicolor/scalable/apps/blender"{,-${SLOT}}".svg" || die
+		mv "${ED}/usr/share/icons/hicolor/symbolic/apps/blender-symbolic"{,-${SLOT}}".svg"
+	fi
 	rm -rf "${ED}/usr/share/applications/blender.desktop" || die
+	if [[ -d "/usr/share/doc/blender" ]] ; then
+		mv /usr/share/doc/blender{,-${SLOT}} || die
+	fi
 }
 
 pkg_postinst() {
