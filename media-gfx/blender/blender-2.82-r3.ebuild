@@ -37,11 +37,6 @@ build_headless? (
 	PSF-2
 	ZLIB
 )
-build_portable? (
-	Boost-1.0
-	BSD-2
-	jemalloc? ( BSD-2 )
-)
 cycles? (
 	Apache-2.0
 	Boost-1.0
@@ -76,7 +71,7 @@ else
 SLOT="0"
 fi
 # Platform defaults based on CMakeList.txt
-IUSE="-asan +bullet +collada +color-management +cuda +cycles -cycles-network +dds \
+IUSE+=" -asan +bullet +collada +color-management +cuda +cycles -cycles-network +dds \
 -debug doc +elbeem -embree +ffmpeg +fftw -headless +jack +jemalloc +jpeg2k \
 -llvm -man +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise \
 +openimageio +openmp +opensubdiv +openvdb -optix +osl +sdl +sndfile test \
@@ -85,7 +80,7 @@ RESTRICT="mirror !test? ( test )"
 
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	cuda? ( cycles ^^ ( nvcc nvrtc ) )
-	cycles? ( openexr tiff openimageio )
+	cycles? ( openexr tiff openimageio osl? ( llvm ) )
 	embree? ( cycles )
 	nvcc? ( || ( cuda optix ) )
 	nvrtc? ( || ( cuda optix ) )
@@ -124,10 +119,6 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	virtual/libintl
 	virtual/opengl
-	build_portable? (
-		dev-libs/boost[static-libs]
-		media-libs/openjpeg[static-libs]
-	)
 	collada? ( >=media-libs/opencollada-1.6.68:= )
 	color-management? ( >=media-libs/opencolorio-1.1.0 )
 	embree? ( >=media-libs/embree-3.2.4 )
@@ -203,11 +194,7 @@ PATCHES=(
 )
 
 get_dest() {
-	if [[ "${EBLENDER}" == "build_portable" ]] ; then
-		echo "/usr/share/${PN}/${SLOT}/${EBLENDER_NAME}"
-	else
-		echo "/usr/bin/.${PN}/${SLOT}/${EBLENDER_NAME}"
-	fi
+	echo "/usr/bin/.${PN}/${SLOT}/${EBLENDER_NAME}"
 }
 
 blender_check_requirements() {
@@ -229,10 +216,6 @@ pkg_setup() {
 }
 
 _src_prepare() {
-	if [[ "${EBLENDER}" == "build_portable" ]] ; then
-		eapply "${FILESDIR}/${PN}-2.79b-portable-dest.patch"
-	fi
-
 	ewarn
 	ewarn "This version is not Long Term Support (LTS) version."
 	ewarn "Use 2.83.x series instead."
@@ -262,10 +245,6 @@ _src_prepare() {
 	# it sounds like.
 	sed -e "s|GENERATE_HTMLHELP      = YES|GENERATE_HTMLHELP      = NO|" \
 	    -i doc/doxygen/Doxyfile || die
-
-	if [[ "${EBLENDER}" == "build_portable" ]] ; then
-		sed -i -e "/add_subdirectory(tests)/d" CMakeLists.txt || die
-	fi
 }
 
 src_prepare() {
@@ -278,22 +257,6 @@ src_prepare() {
 }
 
 _src_configure() {
-	if [[ "${EBLENDER}" == "build_portable" ]] ; then
-		strip-flags
-		filter-flags -march=* -mtune=*
-
-		BLENDER_CXXFLAGS_ARCH="BLENDER_CXXFLAGS_${ARCH}"
-		if [[ -n "${!BLENDER_CXXFLAGS_ARCH}" ]] ; then
-			append-cxxflags ${!BLENDER_CXXFLAGS_ARCH}
-		elif [[ "${ABI}" == "amd64" && -z "${BLENDER_CXXFLAGS_X86_64}" ]] ; then
-			export CXXFLAGS=$(test-flags-CXX -march=x86-64 -mtune=generic)" ${CXXFLAGS}"
-		elif [[ "${ABI}" == "x86" && -z "${BLENDER_CXXFLAGS_X86}" ]] ; then
-			export CXXFLAGS=$(test-flags-CXX -march=i686 -mtune=generic)" ${CXXFLAGS}"
-		else
-			ewarn "Unknown ARCH.  Not setting -march"
-		fi
-	fi
-
 	# FIX: forcing '-funsigned-char' fixes an anti-aliasing issue with menu
 	# shadows, see bug #276338 for reference
 	append-flags -funsigned-char
@@ -303,9 +266,6 @@ _src_configure() {
 
 	local mycmakeargs=()
 	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH=$(get_dest) )
-	if [[ "${EBLENDER}" == "build_portable" ]] ; then
-		mycmakeargs+=( -DPORTABLE_DEST:PATH=$(get_dest) )
-	fi
 
 	if use cycles-network ; then
 		ewarn "Cycles Networking support does not work at all even for CPU rendering.  For ebuild/upstream developers only."
@@ -341,7 +301,6 @@ _src_configure() {
 		-DWITH_MEM_JEMALLOC=$(usex jemalloc)
 		-DWITH_MEM_VALGRIND=$(usex valgrind)
 		-DWITH_MOD_FLUID=$(usex elbeem)
-		-DWITH_MOD_OCEANSIM=$(usex fftw)
 		-DWITH_OPENCOLLADA=$(usex collada)
 		-DWITH_OPENCOLORIO=$(usex color-management)
 		-DWITH_OPENIMAGEDENOISE=$(usex openimagedenoise)
@@ -354,8 +313,7 @@ _src_configure() {
 		-DWITH_PYTHON_INSTALL_NUMPY=OFF
 	)
 
-	if [[ "${EBLENDER}" == "build_creator" \
-		|| "${EBLENDER}" == "build_portable" ]] ; then
+	if [[ "${EBLENDER}" == "build_creator" ]] ; then
 		if use jack || use openal ; then
 			mycmakeargs+=(
 				-DWITH_AUDASPACE=ON
@@ -369,6 +327,7 @@ _src_configure() {
 			-DWITH_GTESTS=$(usex test)
 			-DWITH_INPUT_NDOF=$(usex ndof)
 			-DWITH_JACK=$(usex jack)
+			-DWITH_MOD_OCEANSIM=$(usex fftw)
 			-DWITH_OPENAL=$(usex openal)
 			-DWITH_SDL=$(usex sdl)
 			-DWITH_X11=ON
@@ -397,29 +356,13 @@ _src_configure() {
 			-DWITH_HEADLESS=ON
 			-DWITH_INPUT_NDOF=OFF
 			-DWITH_JACK=OFF
+			-DWITH_MOD_OCEANSIM=OFF
 			-DWITH_OPENAL=OFF
 			-DWITH_SDL=OFF
 			-DWITH_SYSTEM_GLEW=ON
 			-DWITH_X11_XINPUT=OFF
 			-DWITH_X11=OFF
 		)
-	elif [[ "${EBLENDER}" == "build_portable" ]] ; then
-		# for redistributable games, implies building player
-		mycmakeargs+=(
-			-DLLVM_STATIC=$(usex llvm)
-			-DWITH_BLENDER=OFF
-			-DWITH_GTESTS=OFF
-			-DWITH_INSTALL_PORTABLE=ON
-			-DWITH_OPENGL_TESTS=OFF
-			-DWITH_OPENMP_STATIC=$(usex openmp)
-			-DWITH_STATIC_LIBS=ON
-			-DWITH_SYSTEM_GLEW=OFF
-		)
-		if has_version 'dev-libs/boost[icu]' ; then
-			mycmakeargs+=(
-				-DWITH_BOOST_ICU=$(usex nls)
-			)
-		fi
 	fi
 
 	if (( ${#BLENDER_CMAKE_ARGS[@]} > 0 )) ; then
@@ -536,13 +479,8 @@ install_licenses() {
 		else
 			d=$(echo "${f}" | sed -r -e "s|^${BUILD_DIR}||")
 		fi
-		if [[ "${EBLENDER}" == "build_portable" ]] ; then
-			insinto "${d_dest}/licenses/${d}"
-			doins -r "${f}"
-		elif [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
-			docinto "licenses/${d}"
-			dodoc -r "${f}"
-		fi
+		docinto "licenses/${d}"
+		dodoc -r "${f}"
 	done
 }
 
@@ -554,13 +492,8 @@ install_readmes() {
 		else
 			d=$(echo "${f}" | sed -r -e "s|^${BUILD_DIR}||")
 		fi
-		if [[ "${EBLENDER}" == "build_portable" ]] ; then
-			insinto "${d_dest}/readmes/${d}"
-			doins -r "${f}"
-		elif [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
-			docinto "readmes/${d}"
-			dodoc -r "${f}"
-		fi
+		docinto "readmes/${d}"
+		dodoc -r "${f}"
 	done
 }
 

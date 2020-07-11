@@ -63,7 +63,7 @@ cycles? (
 # release/scripts/addons/render_povray/templates_pov/abyss.pov CC-BY-SA-3.0
 
 PYTHON_COMPAT=( python3_6 )
-
+HAS_PLAYER=1
 inherit blender check-reqs cmake-utils xdg-utils flag-o-matic xdg-utils \
 	pax-utils python-single-r1 toolchain-funcs eapi7-ver
 
@@ -86,7 +86,7 @@ else
 SLOT="0"
 fi
 # Platform defaults based on CMakeList.txt
-IUSE="+bullet +dds +elbeem +game-engine -openexr -collada \
+IUSE+=" +bullet +dds +elbeem +game-engine -openexr -collada \
 -color-management +cuda +cycles -cycles-network -debug doc -ffmpeg -fftw \
 -headless +jack +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc +openal +opencl \
 +openimageio +openmp -opensubdiv -openvdb -osl portable +player -sdl -sndfile -test \
@@ -95,7 +95,7 @@ RESTRICT="mirror !test? ( test )"
 
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	cuda? ( cycles nvcc )
-	cycles? ( openexr tiff openimageio )
+	cycles? ( openexr tiff openimageio osl? ( llvm ) )
 	nvcc? ( cuda )
 	opencl? ( cycles )
 	osl? ( cycles llvm )
@@ -339,7 +339,6 @@ _src_configure() {
 		-DWITH_MEM_JEMALLOC=$(usex jemalloc)
 		-DWITH_MEM_VALGRIND=$(usex valgrind)
 		-DWITH_MOD_FLUID=$(usex elbeem)
-		-DWITH_MOD_OCEANSIM=$(usex fftw)
 		-DWITH_OPENCOLLADA=$(usex collada)
 		-DWITH_OPENCOLORIO=$(usex color-management)
 		-DWITH_OPENIMAGEIO=$(usex openimageio)
@@ -366,6 +365,7 @@ _src_configure() {
 			-DWITH_GTESTS=$(usex test)
 			-DWITH_INPUT_NDOF=$(usex ndof)
 			-DWITH_JACK=$(usex jack)
+			-DWITH_MOD_OCEANSIM=$(usex fftw)
 			-DWITH_OPENAL=$(usex openal)
 			-DWITH_SDL=$(usex sdl)
 			-DWITH_X11=ON
@@ -396,6 +396,7 @@ _src_configure() {
 			-DWITH_GAMEENGINE=OFF
 			-DWITH_INPUT_NDOF=OFF
 			-DWITH_JACK=OFF
+			-DWITH_MOD_OCEANSIM=OFF
 			-DWITH_OPENAL=OFF
 			-DWITH_SDL=OFF
 			-DWITH_SYSTEM_GLEW=ON

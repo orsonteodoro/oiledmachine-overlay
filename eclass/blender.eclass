@@ -12,7 +12,10 @@ inherit multibuild
 
 # @ECLASS-VARIABLE: _IMPLS
 # @DESCRIPTION: (Private) Generates a list of implementations for the blender-multibuild context
-_IMPLS="build_creator build_headless build_portable"
+_IMPLS="build_creator build_headless"
+if [[ -n "${HAS_PLAYER}" && "${HAS_PLAYER}" == 1 ]] ; then
+	_IMPLS+=" build_portable"
+fi
 IUSE+=" ${_IMPLS/build_creator/+build_creator}"
 REQUIRED_USE+=" || ( ${IMPLS} )"
 
