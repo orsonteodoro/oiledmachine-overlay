@@ -109,8 +109,8 @@ src_configure() {
 			cc_v=$(gcc-version)
 			if ver_test ${cc_v} -ne 7.5.0 ; then
 				if \
-[[ -n "${OIDN_I_PROMISE_TO_SAVE_MY_DATA_BEFORE_COMPILING_UNTESTED_GCC}" \
-&& "${OIDN_I_PROMISE_TO_SAVE_MY_DATA_BEFORE_COMPILING_UNTESTED_GCC^^}" == "AGREE" ]]
+[[ -n "${OIDN_I_PROMISE_TO_SAVE_MY_DATA_BEFORE_COMPILING_WITH_UNTESTED_GCC}" \
+&& "${OIDN_I_PROMISE_TO_SAVE_MY_DATA_BEFORE_COMPILING_WITH_UNTESTED_GCC^^}" == "AGREE" ]]
 				then
 						:;
 				else
@@ -120,7 +120,7 @@ This package may be problematic with GCC especially 9.3.0 and cause an\n\
 indefinite freeze when compiling.  It's recommended to use the clang\n\
 USE flag instead, but you may proceed by setting\n\
 \n\
-  OIDN_I_PROMISE_TO_SAVE_MY_DATA_BEFORE_COMPILING_UNTESTED_GCC=\"AGREE\"\n\
+  OIDN_I_PROMISE_TO_SAVE_MY_DATA_BEFORE_COMPILING_WITH_UNTESTED_GCC=\"AGREE\"\n\
 \n\
 as a per-package environmental variable or in front of emerge command\n\
 to continue.\n
