@@ -111,7 +111,7 @@ src_configure() {
 				# GCC 10 is untested.
 				# Don't know if this bug still exists.
 				ewarn \
-"If it freezes when compiling, use the clang USE flag instead. (5 min
+"If it freezes when compiling, use the clang USE flag instead. (5 min \
 warning.  Save your work now or CTRL-X to cancel)"
 				sleep 300
 			fi
