@@ -334,7 +334,7 @@ _src_configure() {
 		)
 	fi
 
-	# For details see, https://github.com/blender/blender/tree/v2.81a/build_files/cmake/config
+	# For details see, https://github.com/blender/blender/tree/v2.81/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
 			-DWITH_CYCLES_NETWORK=$(usex cycles-network)
@@ -467,7 +467,7 @@ _src_install_doc() {
 }
 
 install_licenses() {
-	for f in $(find "${BUILD_DIR}" -iname "*license*" \
+	for f in $(find "${BUILD_DIR}" -iname "*license*" -type f \
 	  -o -iname "*copyright*" \
 	  -o -iname "*copying*" \
 	  -o -path "*/license/*" \

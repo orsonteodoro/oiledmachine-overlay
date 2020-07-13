@@ -55,7 +55,7 @@ inherit blender check-reqs cmake-utils xdg-utils flag-o-matic xdg-utils \
 
 # If you use git tarballs, you need to download the submodules listed in
 # .gitmodules.  The download.blender.org are preferred because they bundle them.
-SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
+SRC_URI="https://download.blender.org/source/blender-${PV}.tar.gz"
 
 # Blender can have letters in the version string,
 # so strip off the letter if it exists.
@@ -71,21 +71,19 @@ else
 SLOT="0"
 fi
 # Platform defaults based on CMakeList.txt
-IUSE+=" -asan +bullet +collada +color-management +cuda +cycles -cycles-network +dds \
--debug doc +elbeem -embree +ffmpeg +fftw -headless +jack +jemalloc +jpeg2k \
--llvm -man +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise \
-+openimageio +openmp +opensubdiv +openvdb -optix +osl +sdl +sndfile test \
-+tiff -valgrind"
+IUSE+=" -asan +bullet -collada -color-management -cuda +cycles -cycles-network \
++dds -debug doc +elbeem -embree -ffmpeg -fftw -jack +jemalloc jpeg2k \
+-llvm -man +ndof +nls +nvcc -nvrtc +openal opencl -openexr +openimageio \
++openmp -opensubdiv -openvdb -osl -sdl -sndfile test +tiff -valgrind"
 RESTRICT="mirror !test? ( test )"
 
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	cuda? ( cycles ^^ ( nvcc nvrtc ) )
 	cycles? ( openexr tiff openimageio osl? ( llvm ) )
 	embree? ( cycles )
-	nvcc? ( || ( cuda optix ) )
-	nvrtc? ( || ( cuda optix ) )
+	nvcc? ( cuda )
+	nvrtc? ( cuda )
 	opencl? ( cycles )
-	optix? ( cycles nvcc )
 	osl? ( cycles llvm )"
 
 # dependency version requirements see
@@ -93,26 +91,23 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 # doc/python_api/requirements.txt
 # extern/Eigen3/eigen-update.sh
 RDEPEND="${PYTHON_DEPS}
-	>=dev-lang/python-3.7.4
-	>=dev-libs/boost-1.70:=[nls?,threads(+)]
+	>=dev-lang/python-3.7.0
+	>=dev-libs/boost-1.68:=[nls?,threads(+)]
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
-		>=dev-python/certifi-2019.6.16[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/certifi-2018.8.13[${PYTHON_MULTI_USEDEP}]
 		>=dev-python/chardet-3.0.4[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/idna-2.8[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/numpy-1.17.0[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/requests-2.22.0[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/urllib3-1.25.3[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/idna-2.7[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/numpy-1.15.0[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/requests-2.19.1[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/urllib3-1.23[${PYTHON_MULTI_USEDEP}]
 	')
 	>=media-libs/freetype-2.9.1
 	>=media-libs/glew-1.13.0:*
 	>=media-libs/libpng-1.6.35:0=
 	media-libs/libsamplerate
 	>=sys-libs/zlib-1.2.11
-	|| (
-		virtual/glu
-		>=media-libs/glu-9.0.1
-	)
+	virtual/glu
 	|| (
 		virtual/jpeg:0=
 		>=media-libs/libjpeg-turbo-1.5.3
@@ -124,7 +119,7 @@ RDEPEND="${PYTHON_DEPS}
 	embree? ( >=media-libs/embree-3.2.4 )
 	ffmpeg? ( >=media-video/ffmpeg-4.0.2:=[x264,mp3,encode,theora,jpeg2k?] )
 	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
-	!headless? (
+	!build_headless? (
 		x11-libs/libX11
 		x11-libs/libXi
 		x11-libs/libXxf86vm
@@ -153,19 +148,17 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	openal? ( >=media-libs/openal-1.18.2 )
 	opencl? ( virtual/opencl )
-	openimagedenoise? ( >=media-libs/oidn-1.0.0 )
 	openimageio? ( >=media-libs/openimageio-1.8.13 )
 	openexr? (
-		>=media-libs/ilmbase-2.4.0:=
-		>=media-libs/openexr-2.4.0:=
+		>=media-libs/ilmbase-2.3.0:=
+		>=media-libs/openexr-2.3.0:=
 	)
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.0_rc2:=[cuda=,opencl=] )
 	openvdb? (
-		>=media-gfx/openvdb-7.0.0[${PYTHON_SINGLE_USEDEP},-abi3-compat(-),abi4-compat(+)]
-		>=dev-cpp/tbb-2019.9
-		>=dev-libs/c-blosc-1.5.0
+		>=media-gfx/openvdb-5.1.0[${PYTHON_SINGLE_USEDEP},-abi3-compat(-),abi4-compat(+)]
+		>=dev-cpp/tbb-2018.5
+		>=dev-libs/c-blosc-1.14.4
 	)
-	optix? ( >=dev-libs/optix-7 )
 	osl? ( >=media-libs/osl-1.9.9:= )
 	sdl? ( >=media-libs/libsdl2-2.0.8[sound,joystick] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
@@ -173,7 +166,7 @@ RDEPEND="${PYTHON_DEPS}
 	valgrind? ( dev-util/valgrind )"
 
 DEPEND="${RDEPEND}
-	>=dev-cpp/eigen-3.3.7:3
+	>=dev-cpp/eigen-3.2.7:3
 	virtual/pkgconfig
 	doc? (
 		app-doc/doxygen[dot]
@@ -281,15 +274,11 @@ _src_configure() {
 		-DWITH_COMPILER_ASAN=$(usex asan)
 		-DWITH_CUDA_DYNLOAD=$(usex cuda $(usex nvcc ON OFF) ON)
 		-DWITH_CXX_GUARDEDALLOC=$(usex debug)
-		-DWITH_CXX11_ABI=ON
 		-DWITH_CYCLES=$(usex cycles)
 		-DWITH_CYCLES_CUBIN_COMPILER=$(usex nvrtc)
 		-DWITH_CYCLES_CUDA_BINARIES=$(use cuda)
 		-DWITH_CYCLES_DEVICE_CUDA=$(usex cuda TRUE FALSE)
 		-DWITH_CYCLES_DEVICE_OPENCL=$(usex opencl)
-		-DWITH_CYCLES_DEVICE_OPTIX=$(usex optix)
-		-DWITH_CYCLES_EMBREE=$(usex embree)
-		-DWITH_CYCLES_KERNEL_ASAN=$(usex asan)
 		-DWITH_CYCLES_OSL=$(usex osl)
 		-DWITH_DOC_MANPAGE=$(usex man)
 		-DWITH_IMAGE_DDS=$(usex dds)
@@ -303,7 +292,6 @@ _src_configure() {
 		-DWITH_MOD_FLUID=$(usex elbeem)
 		-DWITH_OPENCOLLADA=$(usex collada)
 		-DWITH_OPENCOLORIO=$(usex color-management)
-		-DWITH_OPENIMAGEDENOISE=$(usex openimagedenoise)
 		-DWITH_OPENIMAGEIO=$(usex openimageio)
 		-DWITH_OPENMP=$(usex openmp)
 		-DWITH_OPENSUBDIV=$(usex opensubdiv)
@@ -334,7 +322,7 @@ _src_configure() {
 		)
 	fi
 
-	# For details see, https://github.com/blender/blender/tree/v2.82a/build_files/cmake/config
+	# For details see, https://github.com/blender/blender/tree/v2.80/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
 			-DWITH_CYCLES_NETWORK=$(usex cycles-network)
@@ -467,7 +455,7 @@ _src_install_doc() {
 }
 
 install_licenses() {
-	for f in $(find "${BUILD_DIR}" -iname "*license*" \
+	for f in $(find "${BUILD_DIR}" -iname "*license*" -type f \
 	  -o -iname "*copyright*" \
 	  -o -iname "*copying*" \
 	  -o -path "*/license/*" \
