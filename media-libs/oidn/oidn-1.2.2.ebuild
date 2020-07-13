@@ -107,13 +107,25 @@ src_configure() {
 			CC="${EROOT}/usr/${CHOST}/gcc-bin/${v}/gcc"
 			CXX="${EROOT}/usr/${CHOST}/gcc-bin/${v}/g++"
 			cc_v=$(gcc-version)
-			if ver_test ${cc_v} -ge 10 ; then
-				# GCC 10 is untested.
-				# Don't know if this bug still exists.
-				ewarn \
-"If it freezes when compiling, use the clang USE flag instead. (5 min \
-warning.  Save your work now or CTRL-X to cancel)"
-				sleep 300
+			if ver_test ${cc_v} -ne 7.5.0 ; then
+				if \
+[[ -n "${OIDN_I_PROMISE_TO_SAVE_MY_DATA_BEFORE_COMPILING_UNTESTED_GCC}" \
+&& "${OIDN_I_PROMISE_TO_SAVE_MY_DATA_BEFORE_COMPILING_UNTESTED_GCC^^}" == "AGREE" ]]
+				then
+						:;
+				else
+					die \
+"\n\
+This package may be problematic with GCC especially 9.3.0 and cause an\n\
+indefinite freeze when compiling.  It's recommended to use the clang\n\
+USE flag instead, but you may proceed by setting\n\
+\n\
+  OIDN_I_PROMISE_TO_SAVE_MY_DATA_BEFORE_COMPILING_UNTESTED_GCC=\"AGREE\"\n\
+\n\
+as a per-package environmental variable or in front of emerge command\n\
+to continue.\n
+\n"
+				fi
 			fi
 			einfo "Falling back to g++ ${v}"
 			if ver_test ${cc_v} -lt ${MIN_GCC_V} ; then
