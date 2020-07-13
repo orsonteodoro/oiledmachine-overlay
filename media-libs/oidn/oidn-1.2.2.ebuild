@@ -101,7 +101,7 @@ src_configure() {
 
 		# g++ 7.5.0 works
 		V=$(ls "${EROOT}"/usr/${CHOST}/gcc-bin/ | sort -rV \
-			| tr "\n"  " " | sed -r -e "s|9.3.0[ ]+||g" \
+			| tr "\n"  " " | sed -r -e "s|9\.3\.0[ ]+||g" \
 			| tr " " "\n")
 		for v in ${V} ; do
 			CC="${EROOT}/usr/${CHOST}/gcc-bin/${v}/gcc"
