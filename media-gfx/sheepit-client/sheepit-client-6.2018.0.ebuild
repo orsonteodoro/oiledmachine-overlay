@@ -81,7 +81,7 @@ SLOT="0"
 IUSE=" \
 blender \
 blender279b blender279b_filmic blender280 blender281a blender282 \
-blender2831 blender2831-benchmark \
+blender2831 blender2831-benchmark blender2832 \
 allow-unknown-renderers disable-hard-version-blocks \
 cuda doc intel-ocl lts +opencl opencl_rocm opencl_orca \
 opencl_pal opengl_mesa pro-drivers split-drivers \
@@ -97,6 +97,7 @@ REQUIRED_USE="
 	blender282? ( blender )
 	blender2831? ( blender )
 	blender2831-benchmark? ( blender )
+	blender2832? ( blender )
 	|| ( cuda opencl )
 	|| ( blender279b blender279b_filmic blender280 blender281a blender282
 		allow-unknown-renderers )
@@ -369,7 +370,7 @@ src_prepare() {
 			src/com/sheepit/client/hardware/gpu/GPU.java || die
 	fi
 
-	eapply "${FILESDIR}/sheepit-client-6.1763.0-r23-renderer-version-picker.patch"
+	eapply "${FILESDIR}/sheepit-client-6.2018.0-renderer-version-picker.patch"
 	if ! use allow-unknown-renderers ; then
 		if ! use disable-hard-version-blocks ; then
 			enable_hardblock "HARDBLOCK_UNKNOWN_RENDERERS"
@@ -403,6 +404,11 @@ src_prepare() {
 	if ! use blender2831 ; then
 		if ! use disable-hard-version-blocks ; then
 			enable_hardblock "HARDBLOCK_BLENDER_2831"
+		fi
+	fi
+	if ! use blender2832 ; then
+		if ! use disable-hard-version-blocks ; then
+			enable_hardblock "HARDBLOCK_BLENDER_2832"
 		fi
 	fi
 }
@@ -459,6 +465,12 @@ src_install() {
 		use doc \
 		dodoc -r "${FILESDIR}/blender-2.83.1-readmes"
 		allowed_renderers+=" --allow-blender2831"
+	fi
+	if use blender2832 ; then
+		dodoc -r "${FILESDIR}/blender-2.83.2-licenses"
+		use doc \
+		dodoc -r "${FILESDIR}/blender-2.83.2-readmes"
+		allowed_renderers+=" --allow-blender2832"
 	fi
 	if use allow-unknown-renderers ; then
 		allowed_renderers+=" --allow-unknown-renderers"

@@ -9,9 +9,9 @@ to false to enforce hardcoded block otherwise end-user decides.
 
 Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
 ----
-diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/Client.java sheepit-client-6.1763.0/src/com/sheepit/client/Client.java
---- sheepit-client-6.1763.0.orig/src/com/sheepit/client/Client.java	2020-06-21 02:21:23.000000000 -0700
-+++ sheepit-client-6.1763.0/src/com/sheepit/client/Client.java	2020-07-03 02:28:14.902153401 -0700
+diff -urp sheepit-client-6.2018.0.orig/src/com/sheepit/client/Client.java sheepit-client-6.2018.0/src/com/sheepit/client/Client.java
+--- sheepit-client-6.2018.0.orig/src/com/sheepit/client/Client.java	2020-07-03 02:15:00.000000000 -0700
++++ sheepit-client-6.2018.0/src/com/sheepit/client/Client.java	2020-07-14 04:07:24.009030682 -0700
 @@ -638,7 +638,8 @@ import lombok.Data;
  		}
  	}
@@ -22,7 +22,7 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/Client.java sheepi
  		Error.Type downloadRet;
  		
  		gui.setRenderingProjectName(ajob.getName());
-@@ -720,8 +721,59 @@ import lombok.Data;
+@@ -720,8 +721,63 @@ import lombok.Data;
  		return this.downloadFile(ajob_, ajob_.getSceneArchivePath(), ajob_.getSceneMD5(),
  				String.format("%s?type=job&job=%s", this.server.getPage("download-archive"), ajob_.getId()), "project");
  	}
@@ -39,6 +39,8 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/Client.java sheepi
 +		} else if (md5_renderer.equals("8d254810f35d31d9aa988fb703e639c0") && (!this.configuration.getAllowBlender282() || Configuration.HARDBLOCK_BLENDER_282)) {
 +			return false;
 +		} else if (md5_renderer.equals("d6fed9e424851f58d5d2f6d05ae9d776") && (!this.configuration.getAllowBlender2831() || Configuration.HARDBLOCK_BLENDER_2831)) {
++			return false;
++		} else if (md5_renderer.equals("9df02fcf02fa02988e670c4c9ce2285d") && (!this.configuration.getAllowBlender2832() || Configuration.HARDBLOCK_BLENDER_2832)) {
 +			return false;
 +		} else {
 +			if (!this.configuration.getAllowUnknownRenderers() || Configuration.HARDBLOCK_UNKNOWN_RENDERERS) {
@@ -62,6 +64,8 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/Client.java sheepi
 +				return "Blender 2.82";
 +			case "d6fed9e424851f58d5d2f6d05ae9d776":
 +				return "Blender 2.83.1";
++			case "9df02fcf02fa02988e670c4c9ce2285d":
++				return "Blender 2.83.2";
 +			default:
 +				break;
 +		}
@@ -82,10 +86,10 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/Client.java sheepi
  		return this.downloadFile(ajob, ajob.getRendererArchivePath(), ajob.getRendererMD5(),
  				String.format("%s?type=binary&job=%s", this.server.getPage("download-archive"), ajob.getId()), "renderer");
  	}
-diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/Configuration.java sheepit-client-6.1763.0/src/com/sheepit/client/Configuration.java
---- sheepit-client-6.1763.0.orig/src/com/sheepit/client/Configuration.java	2020-06-21 02:21:23.000000000 -0700
-+++ sheepit-client-6.1763.0/src/com/sheepit/client/Configuration.java	2020-07-03 02:28:13.317094624 -0700
-@@ -66,6 +66,20 @@ import lombok.Data;
+diff -urp sheepit-client-6.2018.0.orig/src/com/sheepit/client/Configuration.java sheepit-client-6.2018.0/src/com/sheepit/client/Configuration.java
+--- sheepit-client-6.2018.0.orig/src/com/sheepit/client/Configuration.java	2020-07-03 02:15:00.000000000 -0700
++++ sheepit-client-6.2018.0/src/com/sheepit/client/Configuration.java	2020-07-14 04:03:32.650006309 -0700
+@@ -66,6 +66,22 @@ import lombok.Data;
  	private String UIType;
  	private String hostname;
  	private String theme;
@@ -95,6 +99,7 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/Configuration.java
 +	private boolean allowBlender281a;
 +	private boolean allowBlender282;
 +	private boolean allowBlender2831;
++	private boolean allowBlender2832;
 +	private boolean allowUnknownRenderers;
 +	public static final boolean HARDBLOCK_BLENDER_279B = false;
 +	public static final boolean HARDBLOCK_BLENDER_279B_FILMIC = false;
@@ -102,11 +107,12 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/Configuration.java
 +	public static final boolean HARDBLOCK_BLENDER_281A = false;
 +	public static final boolean HARDBLOCK_BLENDER_282 = false;
 +	public static final boolean HARDBLOCK_BLENDER_2831 = false;
++	public static final boolean HARDBLOCK_BLENDER_2832 = false;
 +	public static final boolean HARDBLOCK_UNKNOWN_RENDERERS = false;
  	
  	public Configuration(File cache_dir_, String login_, String password_) {
  		this.configFilePath = null;
-@@ -94,6 +108,13 @@ import lombok.Data;
+@@ -94,6 +110,14 @@ import lombok.Data;
  		this.useSysTray = true;
  		this.UIType = null;
  		this.theme = null;
@@ -116,11 +122,12 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/Configuration.java
 +		this.allowBlender281a = false;
 +		this.allowBlender282 = false;
 +		this.allowBlender2831 = false;
++		this.allowBlender2832 = false;
 +		this.allowUnknownRenderers = false;
  	}
  	
  	public String toString() {
-@@ -305,4 +326,60 @@ import lombok.Data;
+@@ -305,4 +329,68 @@ import lombok.Data;
  		}
  		return false;
  	}
@@ -173,6 +180,14 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/Configuration.java
 +		return allowBlender2831;
 +	}
 +	
++	public void setAllowBlender2832(boolean v) {
++		allowBlender2832 = v;
++	}
++	
++	public boolean getAllowBlender2832() {
++		return allowBlender2832;
++	}
++	
 +	public void setAllowUnknownRenderers(boolean v) {
 +		allowUnknownRenderers = v;
 +	}
@@ -181,10 +196,10 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/Configuration.java
 +		return allowUnknownRenderers;
 +	}
  }
-diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/SettingsLoader.java sheepit-client-6.1763.0/src/com/sheepit/client/SettingsLoader.java
---- sheepit-client-6.1763.0.orig/src/com/sheepit/client/SettingsLoader.java	2020-06-21 02:21:23.000000000 -0700
-+++ sheepit-client-6.1763.0/src/com/sheepit/client/SettingsLoader.java	2020-07-03 02:28:09.860966480 -0700
-@@ -58,6 +58,13 @@ public class SettingsLoader {
+diff -urp sheepit-client-6.2018.0.orig/src/com/sheepit/client/SettingsLoader.java sheepit-client-6.2018.0/src/com/sheepit/client/SettingsLoader.java
+--- sheepit-client-6.2018.0.orig/src/com/sheepit/client/SettingsLoader.java	2020-07-03 02:15:00.000000000 -0700
++++ sheepit-client-6.2018.0/src/com/sheepit/client/SettingsLoader.java	2020-07-14 04:05:41.365026917 -0700
+@@ -58,6 +58,14 @@ public class SettingsLoader {
  	private String ui;
  	private String theme;
  	private int priority;
@@ -194,21 +209,22 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/SettingsLoader.jav
 +	private String allowBlender281a;
 +	private String allowBlender282;
 +	private String allowBlender2831;
++	private String allowBlender2832;
 +	private String allowUnknownRenderers;
  	
  	public SettingsLoader(String path_) {
  		if (path_ == null) {
-@@ -70,7 +77,8 @@ public class SettingsLoader {
+@@ -70,7 +78,8 @@ public class SettingsLoader {
  	
  	public SettingsLoader(String path_, String login_, String password_, String proxy_, String hostname_, ComputeType computeMethod_, GPUDevice gpu_,
  		int renderbucketSize_, int cores_, long maxRam_, int maxRenderTime_, String cacheDir_, boolean autoSignIn_, boolean useSysTray_, String ui_,
 -		String theme_, int priority_) {
 +		String theme_, int priority_, boolean allowBlender279b_, boolean allowBlender279bFilmic_, boolean allowBlender280_,
-+		boolean allowBlender281a_, boolean allowBlender282_, boolean allowBlender2831_, boolean allowUnknownRenderers_) {
++		boolean allowBlender281a_, boolean allowBlender282_, boolean allowBlender2831_, boolean allowBlender2832_, boolean allowUnknownRenderers_) {
  		if (path_ == null) {
  			path = getDefaultFilePath();
  		}
-@@ -87,6 +95,13 @@ public class SettingsLoader {
+@@ -87,6 +96,14 @@ public class SettingsLoader {
  		ui = ui_;
  		priority = priority_;
  		theme = theme_;
@@ -218,11 +234,12 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/SettingsLoader.jav
 +		allowBlender281a = String.valueOf(allowBlender281a_);
 +		allowBlender282 = String.valueOf(allowBlender282_);
 +		allowBlender2831 = String.valueOf(allowBlender2831_);
++		allowBlender2832 = String.valueOf(allowBlender2832_);
 +		allowUnknownRenderers = String.valueOf(allowUnknownRenderers_);
  		
  		if (cores_ > 0) {
  			cores = String.valueOf(cores_);
-@@ -189,6 +204,34 @@ public class SettingsLoader {
+@@ -189,6 +206,38 @@ public class SettingsLoader {
  				prop.setProperty("theme", theme);
  			}
  			
@@ -250,6 +267,10 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/SettingsLoader.jav
 +				prop.setProperty("use-blender2831", allowBlender2831);
 +			}
 +			
++			if (allowBlender2832 != null) {
++				prop.setProperty("use-blender2831", allowBlender2832);
++			}
++			
 +			if (allowUnknownRenderers != null) {
 +				prop.setProperty("use-unknown-renderers", allowUnknownRenderers);
 +			}
@@ -257,7 +278,7 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/SettingsLoader.jav
  			prop.store(output, null);
  		}
  		catch (IOException io) {
-@@ -237,6 +280,13 @@ public class SettingsLoader {
+@@ -237,6 +286,14 @@ public class SettingsLoader {
  		this.ram = null;
  		this.renderTime = null;
  		this.theme = null;
@@ -267,11 +288,12 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/SettingsLoader.jav
 +		this.allowBlender281a = null;
 +		this.allowBlender282 = null;
 +		this.allowBlender2831 = null;
++		this.allowBlender2832 = null;
 +		this.allowUnknownRenderers = null;
  		
  		if (new File(path).exists() == false) {
  			return;
-@@ -315,6 +365,34 @@ public class SettingsLoader {
+@@ -315,6 +372,38 @@ public class SettingsLoader {
  			if (prop.containsKey("priority")) {
  				this.priority = Integer.parseInt(prop.getProperty("priority"));
  			}
@@ -300,13 +322,17 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/SettingsLoader.jav
 +				this.allowBlender2831 = prop.getProperty("use-blender2831");
 +			}
 +			
++			if (prop.containsKey("use-blender2832")) {
++				this.allowBlender2832 = prop.getProperty("use-blender2832");
++			}
++			
 +			if (prop.containsKey("use-unknown-renderers")) {
 +				this.allowUnknownRenderers = prop.getProperty("use-unknown-renderers");
 +			}
  		}
  		catch (IOException io) {
  			io.printStackTrace();
-@@ -450,11 +528,23 @@ public class SettingsLoader {
+@@ -450,11 +539,24 @@ public class SettingsLoader {
  		}
  		
  		config.setAutoSignIn(Boolean.parseBoolean(autoSignIn));
@@ -317,6 +343,7 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/SettingsLoader.jav
 +		config.setAllowBlender281a(Boolean.parseBoolean(allowBlender281a));
 +		config.setAllowBlender282(Boolean.parseBoolean(allowBlender282));
 +		config.setAllowBlender2831(Boolean.parseBoolean(allowBlender2831));
++		config.setAllowBlender2832(Boolean.parseBoolean(allowBlender2832));
 +		config.setAllowUnknownRenderers(Boolean.parseBoolean(allowUnknownRenderers));
  	}
  	
@@ -326,16 +353,16 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/SettingsLoader.jav
 -			path, login, password, computeMethod, gpu, renderbucketSize, cacheDir, theme, priority, autoSignIn, useSysTray);
 +			"SettingsLoader [path=%s, login=%s, password=%s, computeMethod=%s, gpu=%s, renderbucket-size=%s, cacheDir=%s, theme=%s, priority=%d, autosign=%s, usetray=%s,"
 +			+ " allowBlender279b=%s, allowBlender279bFilmic=%s, allowBlender280=%s, allowBlender281a=%s, allowBlender282=%s, allowBlender2831=%s,"
-+			+ " allowUnknownRenderers=%s]",
++			+ " allowBlender2832=%s, allowUnknownRenderers=%s]",
 +			path, login, password, computeMethod, gpu, renderbucketSize, cacheDir, theme, priority, autoSignIn, useSysTray,
 +			allowBlender279b, allowBlender279bFilmic, allowBlender280, allowBlender281a, allowBlender282,
-+			allowBlender2831, allowUnknownRenderers);
++			allowBlender2831, allowBlender2832, allowUnknownRenderers);
  	}
  }
-diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/standalone/swing/activity/Settings.java sheepit-client-6.1763.0/src/com/sheepit/client/standalone/swing/activity/Settings.java
---- sheepit-client-6.1763.0.orig/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-06-21 02:21:23.000000000 -0700
-+++ sheepit-client-6.1763.0/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-07-03 02:28:05.912820119 -0700
-@@ -101,6 +101,13 @@ public class Settings implements Activit
+diff -urp sheepit-client-6.2018.0.orig/src/com/sheepit/client/standalone/swing/activity/Settings.java sheepit-client-6.2018.0/src/com/sheepit/client/standalone/swing/activity/Settings.java
+--- sheepit-client-6.2018.0.orig/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-07-03 02:15:00.000000000 -0700
++++ sheepit-client-6.2018.0/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-07-14 04:06:30.056926200 -0700
+@@ -101,6 +101,14 @@ public class Settings implements Activit
  	
  	private JCheckBox saveFile;
  	private JCheckBox autoSignIn;
@@ -345,11 +372,12 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/standalone/swing/a
 +	private JCheckBox allowBlender281a;
 +	private JCheckBox allowBlender282;
 +	private JCheckBox allowBlender2831;
++	private JCheckBox allowBlender2832;
 +	private JCheckBox allowUnknownRenderers;
  	JButton saveButton;
  	
  	private boolean haveAutoStarted;
-@@ -481,15 +488,37 @@ public class Settings implements Activit
+@@ -481,15 +489,40 @@ public class Settings implements Activit
  		advanced_panel.add(hostname);
  		
  		JLabel renderTimeLabel = new JLabel("Max time per frame (in minute):");
@@ -359,6 +387,7 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/standalone/swing/a
 +		allowBlender281a = new JCheckBox("Allow Blender 2.81a", parent.getConfiguration().getAllowBlender281a());
 +		allowBlender282 = new JCheckBox("Allow Blender 2.82", parent.getConfiguration().getAllowBlender282());
 +		allowBlender2831 = new JCheckBox("Allow Blender 2.83.1", parent.getConfiguration().getAllowBlender2831());
++		allowBlender2832 = new JCheckBox("Allow Blender 2.83.2", parent.getConfiguration().getAllowBlender2832());
 +		allowUnknownRenderers = new JCheckBox("Allow unknown renderers", parent.getConfiguration().getAllowUnknownRenderers());
  		int val = 0;
  		if (parent.getConfiguration().getMaxRenderTime() > 0) {
@@ -372,6 +401,7 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/standalone/swing/a
 +		advanced_panel.add(allowBlender281a);
 +		advanced_panel.add(allowBlender282);
 +		advanced_panel.add(allowBlender2831);
++		advanced_panel.add(allowBlender2832);
 +		advanced_panel.add(allowUnknownRenderers);
  		advanced_panel.add(renderTimeLabel);
  		advanced_panel.add(renderTime);
@@ -382,26 +412,27 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/standalone/swing/a
 +		allowBlender281a.setVisible(!Configuration.HARDBLOCK_BLENDER_281A);
 +		allowBlender282.setVisible(!Configuration.HARDBLOCK_BLENDER_282);
 +		allowBlender2831.setVisible(!Configuration.HARDBLOCK_BLENDER_2831);
++		allowBlender2832.setVisible(!Configuration.HARDBLOCK_BLENDER_2832);
 +		allowUnknownRenderers.setVisible(!Configuration.HARDBLOCK_UNKNOWN_RENDERERS);
 +		
  		currentRow++;
  		constraints.gridx = 0;
  		constraints.gridy = currentRow;
-@@ -787,7 +816,9 @@ public class Settings implements Activit
+@@ -787,7 +820,9 @@ public class Settings implements Activit
  				parent.setSettingsLoader(
  						new SettingsLoader(config.getConfigFilePath(), login.getText(), new String(password.getPassword()), proxyText, hostnameText, method,
  								selected_gpu, renderbucket_size, cpu_cores, max_ram, max_rendertime, cachePath, autoSignIn.isSelected(), useSysTray.isSelected(),
 -								GuiSwing.type, themeOptionsGroup.getSelection().getActionCommand(), priority.getValue()));
 +								GuiSwing.type, themeOptionsGroup.getSelection().getActionCommand(), priority.getValue(), allowBlender279b.isSelected(),
 +								allowBlender279bFilmic.isSelected(), allowBlender280.isSelected(), allowBlender281a.isSelected(), allowBlender282.isSelected(),
-+								allowBlender2831.isSelected(), allowUnknownRenderers.isSelected()));
++								allowBlender2831.isSelected(), allowBlender2832.isSelected(), allowUnknownRenderers.isSelected()));
  				
  				// wait for successful authentication (to store the public key)
  				// or do we already have one?
-diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/standalone/Worker.java sheepit-client-6.1763.0/src/com/sheepit/client/standalone/Worker.java
---- sheepit-client-6.1763.0.orig/src/com/sheepit/client/standalone/Worker.java	2020-06-21 02:21:23.000000000 -0700
-+++ sheepit-client-6.1763.0/src/com/sheepit/client/standalone/Worker.java	2020-07-03 02:28:04.293760107 -0700
-@@ -94,6 +94,20 @@ public class Worker {
+diff -urp sheepit-client-6.2018.0.orig/src/com/sheepit/client/standalone/Worker.java sheepit-client-6.2018.0/src/com/sheepit/client/standalone/Worker.java
+--- sheepit-client-6.2018.0.orig/src/com/sheepit/client/standalone/Worker.java	2020-07-03 02:15:00.000000000 -0700
++++ sheepit-client-6.2018.0/src/com/sheepit/client/standalone/Worker.java	2020-07-14 04:06:59.748084344 -0700
+@@ -94,6 +94,22 @@ public class Worker {
  	
  	@Option(name = "-renderbucket-size", usage = "Set a custom GPU renderbucket size (32 for 32x32px, 64 for 64x64px, and so on). NVIDIA GPUs support a maximum renderbucket size of 512x512 pixel, while AMD GPUs support a maximum 2048x2048 pixel renderbucket size. Minimum renderbucket size is 32 pixels for all GPUs", required = false) private int renderbucketSize = -1;
  	
@@ -417,12 +448,14 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/standalone/Worker.
 +	
 +	@Option(name = "--allow-blender2831", usage = "Allow Blender 2.83.1", required = false, hidden = Configuration.HARDBLOCK_BLENDER_2831) private boolean allowBlender2831 = false;
 +	
++	@Option(name = "--allow-blender2832", usage = "Allow Blender 2.83.2", required = false, hidden = Configuration.HARDBLOCK_BLENDER_2832) private boolean allowBlender2832 = false;
++	
 +	@Option(name = "--allow-unknown-renderers", usage = "Allow unknown renderers", required = false, hidden = Configuration.HARDBLOCK_UNKNOWN_RENDERERS) private boolean allowUnknownRenderers = false;
 +	
  	public static void main(String[] args) {
  		new Worker().doMain(args);
  	}
-@@ -293,6 +307,14 @@ public class Worker {
+@@ -293,6 +309,15 @@ public class Worker {
  			config.setConfigFilePath(config_file);
  		}
  		
@@ -432,6 +465,7 @@ diff -urp sheepit-client-6.1763.0.orig/src/com/sheepit/client/standalone/Worker.
 +		config.setAllowBlender281a(allowBlender281a);
 +		config.setAllowBlender282(allowBlender282);
 +		config.setAllowBlender2831(allowBlender2831);
++		config.setAllowBlender2832(allowBlender2832);
 +		config.setAllowUnknownRenderers(allowUnknownRenderers);
 +		
  		new SettingsLoader(config_file).merge(config);
