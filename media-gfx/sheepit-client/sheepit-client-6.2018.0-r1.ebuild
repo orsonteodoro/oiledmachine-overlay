@@ -31,6 +31,12 @@ blender282? (
 	LGPL-2.1+
 	WTFPL-2
 )
+blender281a? (
+	MIT
+	LGPL-2.1
+	LGPL-2.1+
+	WTFPL-2
+)
 "
 #
 # About the sheepit-client licenses
@@ -96,7 +102,7 @@ REQUIRED_USE="
 	blender281a? ( blender )
 	blender282? ( blender )
 	blender2831? ( blender )
-	blender2831-benchmark? ( blender )
+	blender2831-benchmark? ( blender ) blender2831-benchmark
 	blender2832? ( blender )
 	|| ( cuda opencl )
 	|| ( blender279b blender279b_filmic blender280 blender281a blender282
@@ -352,13 +358,21 @@ src_prepare() {
 	ewarn
 	ewarn "${PN} downloads Blender 2.79 with Python 3.5.3 having critical security CVE advisories"
 	ewarn "${PN} downloads Blender 2.80 with Python 3.7.0 having high security CVE advisory"
+	ewarn "${PN} downloads Blender 2.81a with Python 3.7.4 having high security CVE advisory"
 	ewarn "${PN} downloads Blender 2.82 with Python 3.7.4 having high security CVE advisory"
 	ewarn "${PN} downloads Blender 2.83.1 with Python 3.7.4 having high security CVE advisory"
+	ewarn "${PN} downloads Blender 2.83.2 with Python 3.7.4 having high security CVE advisory"
 	ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.5&search_type=all"
 	ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.7&search_type=all"
 	ewarn
+	ewarn "${PN} downloads repackaged Blender 2.81a with DirectFB 1.2.10."
+	ewarn "https://security.gentoo.org/glsa/201701-55"
+	ewarn
 	ewarn "${PN} downloads repackaged Blender 2.82 with DirectFB 1.2.10."
 	ewarn "https://security.gentoo.org/glsa/201701-55"
+	ewarn
+	ewarn "${PN} downloads Blender 2.81a with SDL 1.2.14_pre20091018."
+	ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=sdl%201.2&search_type=all"
 	ewarn
 	ewarn "${PN} downloads Blender 2.82 with SDL 1.2.14_pre20091018."
 	ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=sdl%201.2&search_type=all"
@@ -370,7 +384,7 @@ src_prepare() {
 			src/com/sheepit/client/hardware/gpu/GPU.java || die
 	fi
 
-	eapply "${FILESDIR}/sheepit-client-6.2018.0-renderer-version-picker.patch"
+	eapply "${FILESDIR}/sheepit-client-6.2018.0-r1-renderer-version-picker.patch"
 	if ! use allow-unknown-renderers ; then
 		if ! use disable-hard-version-blocks ; then
 			enable_hardblock "HARDBLOCK_UNKNOWN_RENDERERS"
