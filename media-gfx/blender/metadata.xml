@@ -40,6 +40,24 @@
 
 		When build_headless USE flag is on, the executible is called
 		blender_headless-${SLOT} or blender_headless.
+
+		The release USE flag depends on the platform defaults which are the
+		default set/unset USE flags.
+
+
+		Per-package use flags:
+
+		BLENDER_CMAKE_ARGS is a bash array to concatinate with mycmakeargs.  Useful
+		for customizing CUDA_NVCC_EXECUTABLE, CUDA_TOOLKIT_ROOT_DIR, OPTIX_ROOT_DIR
+		locations.
+
+		BLENDER_DISABLE_CUDA_AUTODETECT can be set to 1 to disable automatically
+		defining CUDA_NVCC_EXECUTABLE, CUDA_TOOLKIT_ROOT_DIR, OPTIX_ROOT_DIR
+		cmake variables.
+
+		BLENDER_CUDA_TOOLKIT_ROOT_DIR points to root directory for CUDA sdk. (e.g. /opt/cuda)
+
+		BLENDER_NVCC_PATH points to absolute path to nvcc. (e.g. /opt/cuda/bin/nvcc)
 	</longdescription>
 	<upstream>
 		<doc lang="en">https://docs.blender.org/manual/en/2.83/index.html</doc>
@@ -66,10 +84,10 @@
 			Builds the IDE.  The default.
 		</flag>
 		<flag name="build_headless">
-			Builds blender for render farms.  Disables windowing and audio.
+			Builds Blender for render farms.  Disables windowing and audio.
 		</flag>
 		<flag name="build_portable">
-			Builds blender for redistribution.  Makes use of static libraries.
+			Builds Blender for redistribution.  Makes use of static libraries.
 		</flag>
 		<flag name="bullet">
 			Enable Bullet (Physics Engine).
@@ -101,9 +119,6 @@
 		<flag name="embree">
 			Build cycles renderer with Embree support as a CPU ray accelerator.
 		</flag>
-		<flag name="headless">
-			Build without graphical support (renderfarm, server mode only).
-		</flag>
 		<flag name="llvm">
 			Enable features depending on llvm.
 		</flag>
@@ -134,6 +149,9 @@
 		<flag name="openvdb">
 			Add GPU preview rendering. Only works with nVidia cards.
 		</flag>
+		<flag name="openxr">
+			Add VR features.
+		</flag>
 		<flag name="optix">
 			Build cycles renderer with nVidia OptiX support on
 			GeForce/Quadro RTX GPUs for hardware accelerated
@@ -142,12 +160,20 @@
 		<flag name="osl">
 			Add support for OpenShadingLanguage scripting.
 		</flag>
+		<flag name="release">
+			Builds Blender with the release configuration (AKA precompiled Blender),
+			a subset of release configuration but allows for flexibility.  Otherwise,
+			it falls back to the platform default.
+		</flag>
 		<flag name="test">
 			Build the provided unit tests.
 		</flag>
 		<flag name="valgrind">
 			Add support for memory debugging using
 			<pkg>dev-util/valgrind</pkg>
+		</flag>
+		<flag name="X">
+			Checks for X11 dependencies.
 		</flag>
 	</use>
 </pkgmetadata>

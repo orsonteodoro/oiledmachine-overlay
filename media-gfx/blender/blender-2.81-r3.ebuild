@@ -71,22 +71,57 @@ else
 SLOT="0"
 fi
 # Platform defaults based on CMakeList.txt
-IUSE+=" -asan +bullet +collada +color-management +cuda +cycles -cycles-network +dds \
--debug doc +elbeem -embree +ffmpeg +fftw -headless +jack +jemalloc +jpeg2k \
--llvm -man +ndof +nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise \
-+openimageio +openmp +opensubdiv +openvdb -optix +osl +sdl +sndfile test \
-+tiff -valgrind"
+IUSE+=" X -asan +bullet -collada -color-management +cuda +cycles -cycles-network \
++dds -debug doc +elbeem -embree -ffmpeg -fftw -jack +jemalloc +jpeg2k \
+-llvm -man +ndof +nls +nvcc -nvrtc +openal +opencl -openexr -openimagedenoise \
+-openimageio +openmp -opensubdiv -openvdb -optix -osl release -sdl -sndfile \
+test +tiff -valgrind"
 RESTRICT="mirror !test? ( test )"
 
+# The release USE flag depends on platform defaults.
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
+	build_creator ( X )
 	cuda? ( cycles ^^ ( nvcc nvrtc ) )
 	cycles? ( openexr tiff openimageio osl? ( llvm ) )
 	embree? ( cycles )
 	nvcc? ( || ( cuda optix ) )
 	nvrtc? ( || ( cuda optix ) )
 	opencl? ( cycles )
-	optix? ( cycles nvcc )
-	osl? ( cycles llvm )"
+	optix? ( cuda cycles nvcc )
+	osl? ( cycles llvm )
+	release? (
+		build_creator
+		bullet
+		collada
+		color-management
+		cuda? ( nvcc )
+		cycles
+		!cycles-network
+		dds
+		!debug
+		elbeem
+		ffmpeg
+		fftw
+		jack
+		jemalloc
+		jpeg2k
+		man
+		ndof
+		nls
+		openal
+		openexr
+		openimageio
+		openmp
+		openimagedenoise
+		opensubdiv
+		openvdb
+		osl
+		sdl
+		sndfile
+		!test
+		tiff
+		!valgrind
+	)"
 
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake
@@ -94,7 +129,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 # extern/Eigen3/eigen-update.sh
 RDEPEND="${PYTHON_DEPS}
 	>=dev-lang/python-3.7.4
-	>=dev-libs/boost-1.70:=[nls?,threads(+)]
+	>=dev-libs/boost-1.68:=[nls?,threads(+)]
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
 		>=dev-python/certifi-2019.6.16[${PYTHON_MULTI_USEDEP}]
@@ -121,14 +156,13 @@ RDEPEND="${PYTHON_DEPS}
 	virtual/opengl
 	collada? ( >=media-libs/opencollada-1.6.68:= )
 	color-management? ( >=media-libs/opencolorio-1.1.0 )
+	cuda? (
+		>=x11-drivers/nvidia-drivers-418.39
+		>=dev-util/nvidia-cuda-toolkit-10.1:=
+	)
 	embree? ( >=media-libs/embree-3.2.4 )
 	ffmpeg? ( >=media-video/ffmpeg-4.0.2:=[x264,mp3,encode,theora,jpeg2k?] )
 	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
-	!headless? (
-		x11-libs/libX11
-		x11-libs/libXi
-		x11-libs/libXxf86vm
-	)
 	jack? ( virtual/jack )
 	jemalloc? ( >=dev-libs/jemalloc-5.0.1:= )
 	jpeg2k? ( >=media-libs/openjpeg-2.3.0:2 )
@@ -143,34 +177,31 @@ RDEPEND="${PYTHON_DEPS}
 			>=dev-libs/libiconv-1.15
 		)
 	)
-	nvcc? (
-		>=x11-drivers/nvidia-drivers-418.39
-		>=dev-util/nvidia-cuda-toolkit-10.1:=
-	)
-	nvrtc? (
-		>=x11-drivers/nvidia-drivers-418.39
-		>=dev-util/nvidia-cuda-toolkit-10.1:=
-	)
 	openal? ( >=media-libs/openal-1.18.2 )
 	opencl? ( virtual/opencl )
 	openimagedenoise? ( >=media-libs/oidn-1.0.0 )
 	openimageio? ( >=media-libs/openimageio-1.8.13 )
 	openexr? (
-		>=media-libs/ilmbase-2.4.0:=
-		>=media-libs/openexr-2.4.0:=
+		>=media-libs/ilmbase-2.3.0:=
+		>=media-libs/openexr-2.3.0:=
 	)
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.0_rc2:=[cuda=,opencl=] )
 	openvdb? (
-		>=media-gfx/openvdb-7.0.0[${PYTHON_SINGLE_USEDEP},-abi3-compat(-),abi4-compat(+)]
-		>=dev-cpp/tbb-2019.9
-		>=dev-libs/c-blosc-1.5.0
+		>=media-gfx/openvdb-5.1.0[${PYTHON_SINGLE_USEDEP},-abi3-compat(-),abi4-compat(+)]
+		>=dev-cpp/tbb-2018.5
+		>=dev-libs/c-blosc-1.14.4
 	)
 	optix? ( >=dev-libs/optix-7 )
 	osl? ( >=media-libs/osl-1.9.9:= )
 	sdl? ( >=media-libs/libsdl2-2.0.8[sound,joystick] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
 	tiff? ( >=media-libs/tiff-4.0.9:0 )
-	valgrind? ( dev-util/valgrind )"
+	valgrind? ( dev-util/valgrind )
+	X? (
+		x11-libs/libX11
+		x11-libs/libXi
+		x11-libs/libXxf86vm
+	)"
 
 DEPEND="${RDEPEND}
 	>=dev-cpp/eigen-3.3.7:3
@@ -334,7 +365,7 @@ _src_configure() {
 		)
 	fi
 
-	# For details see, https://github.com/blender/blender/tree/v2.82/build_files/cmake/config
+	# For details see, https://github.com/blender/blender/tree/v2.81/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
 			-DWITH_CYCLES_NETWORK=$(usex cycles-network)
@@ -364,6 +395,88 @@ _src_configure() {
 			-DWITH_X11=OFF
 		)
 	fi
+
+if [[ -n "${BLENDER_DISABLE_CUDA_AUTODETECT}" && "${BLENDER_DISABLE_CUDA_AUTODETECT}" == "1" ]] ; then
+	:;
+else
+	if use cuda ; then
+		if use nvcc ; then
+			if [[ -x "${EROOT}/opt/cuda/bin/nvcc" ]] ; then
+				mycmakeargs+=(
+			-DCUDA_NVCC_EXECUTABLE="${EROOT}/opt/cuda/bin/nvcc"
+				)
+			elif [[ -n "${BLENDER_NVCC_PATH}" \
+			&& -x "${EROOT}/${BLENDER_NVCC_PATH}/bin/nvcc" ]] ; then
+				mycmakeargs+=(
+		-DCUDA_NVCC_EXECUTABLE="${EROOT}/${BLENDER_NVCC_PATH}/nvcc"
+				)
+			elif [[ -n "${BLENDER_NVCC_PATH}" \
+		&& ! -x "${EROOT}/${BLENDER_NVCC_PATH}/bin/nvcc" ]] ; then
+				die \
+"\n\
+nvcc is unreachable from BLENDER_NVCC_PATH.  It should be an absolute path\n\
+like /opt/cuda/bin/nvcc.\n\
+\n"
+			else
+				die \
+"\n\
+You need to define BLENDER_NVCC_PATH as a per-package environmental variable\n\
+containing the absolute path to nvcc e.g. /opt/cuda/bin/nvcc.\n\
+\n"
+			fi
+		fi
+		if use nvrtc ; then
+			if [[ -f "${EROOT}/opt/cuda/lib64/libnvrtc-builtins.so" ]] ; then
+				mycmakeargs+=(
+				-DCUDA_TOOLKIT_ROOT_DIR="${EROOT}/opt/cuda"
+				)
+			elif [[ -n "${BLENDER_CUDA_TOOLKIT_ROOT_DIR}" \
+&& -f "${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/lib64/libnvrtc-builtins.so" ]] ; then
+				mycmakeargs+=(
+	-DCUDA_TOOLKIT_ROOT_DIR="${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}"
+				)
+			elif [[ -n "${BLENDER_CUDA_TOOLKIT_ROOT_DIR}" \
+&& ! -f "${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/lib64/libnvrtc-builtins.so" ]] ; then
+				die \
+"Cannot reach \$BLENDER_CUDA_TOOLKIT_ROOT_DIR/lib64/libnvrtc-builtins.so"
+			else
+				die \
+"\n
+libnvrtc-builtins.so is unreachable.  Define BLENDER_CUDA_TOOLKIT_ROOT_DIR\n\
+as a per-package environmental variable (e.g. /opt/cuda).\n
+\n"
+			fi
+		fi
+		if use optix ; then
+			if [[ -n "${BLENDER_OPTIX_ROOT_DIR}" \
+		&& -f "${EROOT}/${BLENDER_OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
+				mycmakeargs+=(
+			-DOPTIX_ROOT_DIR="${EROOT}/${BLENDER_OPTIX_ROOT_DIR}"
+				)
+			elif [[ -n "${BLENDER_OPTIX_ROOT_DIR}" \
+		&& ! -f "${EROOT}/${BLENDER_OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
+				die \
+"\n\
+Cannot reach \$BLENDER_OPTIX_ROOT_DIR/include/optix.h.  Fix it?\n\
+\n"
+			elif [[ -n "${OPTIX_ROOT_DIR}" \
+		&& -f "${EROOT}/${OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
+				:;
+			elif [[ -n "${OPTIX_ROOT_DIR}" \
+		&& ! -f "${EROOT}/${OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
+"\n\
+Cannot reach \$OPTIX_ROOT_DIR/include/optix.h.  Fix it?\n\
+\n"
+			else
+				die \
+"\n\
+You need to define BLENDER_OPTIX_ROOT_DIR to point to the Optix SDK folder.\n\
+The build scripts expect BLENDER_OPTIX_ROOT_DIR/include/optix.h.\n\
+\n"
+			fi
+		fi
+	fi
+fi
 
 	if (( ${#BLENDER_CMAKE_ARGS[@]} > 0 )) ; then
 		# Set as per-package environmental variable
