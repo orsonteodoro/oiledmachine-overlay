@@ -273,9 +273,6 @@ pkg_setup() {
 }
 
 _src_prepare() {
-#	if [[ "${EBLENDER}" == "build_portable" ]] ; then
-#	fi
-
 	S="${BUILD_DIR}" \
 	CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
