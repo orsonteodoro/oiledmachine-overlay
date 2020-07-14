@@ -44,6 +44,7 @@
     <flag name="blender2831">Allows the client to download Blender 2.83.1.</flag>
     <flag name="blender2831-benchmark">Temporarly downloads Blender 2.83.1
       and runs unskipable benchmark.</flag>
+    <flag name="blender2832">Allows the client to download Blender 2.83.2.</flag>
     <flag name="cuda">Checks for CUDA drivers.</flag>
     <flag name="disable-hard-version-blocks">Permits user choice to selectively
       choose renderers to download.</flag>
