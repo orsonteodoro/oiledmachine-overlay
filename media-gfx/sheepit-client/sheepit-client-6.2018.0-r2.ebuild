@@ -474,6 +474,11 @@ src_install() {
 		dodoc -r "${FILESDIR}/blender-2.82-readmes"
 		allowed_renderers+=" --allow-blender282"
 	fi
+	if use blender2831-benchmark ; then
+		dodoc -r "${FILESDIR}/blender-2.83.1-licenses"
+		use doc \
+		dodoc -r "${FILESDIR}/blender-2.83.1-readmes"
+	fi
 	if use blender2831 ; then
 		dodoc -r "${FILESDIR}/blender-2.83.1-licenses"
 		use doc \
