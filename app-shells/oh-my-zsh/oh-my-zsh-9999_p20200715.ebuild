@@ -25,6 +25,7 @@ LICENSE="MIT
 	 plugins_taskwarrior? ( MIT )
 	 plugins_wd? ( MIT )
 	 plugins_zsh-navigation-tools? ( MIT GPL-3 )
+	 plugins_bazel? ( Apache-2.0 )
 	 plugins_kube-ps1? ( Apache-2.0 )
 	 plugins_sfdx? ( Apache-2.0 )
 	 unicode"
@@ -36,7 +37,7 @@ USE_RUBY="ruby24 ruby25 ruby26 ruby27"
 RUBY_OPTIONAL=1
 EMOJI_LANG_DEFAULT=${EMOJI_LANG_DEFAULT:=en}
 inherit eutils python-r1 ruby-ng
-EGIT_COMMIT="cbd6fbe7a7c3ef260f497704092dc43f2e953c3f"
+EGIT_COMMIT="c99f3c50fa46a93be28be88632889404fff3b958"
 FN="${EGIT_COMMIT}.zip"
 A_URL="https://github.com/ohmyzsh/ohmyzsh/archive/${FN}"
 P_URL="https://github.com/ohmyzsh/ohmyzsh/tree/${EGIT_COMMIT}"
@@ -66,39 +67,35 @@ terminalparty theunraveler tjkirch_mod tjkirch tonotdo trapd00r wedisagree \
 wezm+ wezm wuffers xiong-chiamiov-plus xiong-chiamiov ys zhann )
 IUSE+=" ${OMZSH_THEMES[@]/#/-themes_}"
 OMZSH_PLUGINS=( adb alias-finder ansible ant apache2-macports arcanist \
-archlinux asdf autoenv autojump autopep8 aws battery bbedit bgnotify \
+archlinux asdf autoenv autojump autopep8 aws battery bazel bbedit bgnotify \
 boot2docker bower branch brew bundler cabal cake cakephp3 capistrano cargo \
 cask catimg celery chruby chucknorris cloudapp cloudfoundry codeclimate coffee \
 colemak colored-man-pages colorize command-not-found common-aliases compleat \
 composer copybuffer copydir copyfile cp cpanm dash debian dircycle direnv \
 dirhistory dirpersist django dnf dnote docker docker-compose docker-machine \
-doctl dotnet \
-dotenv \
-droplr drush eecms emacs ember-cli emoji emoji-clock emotty encode64 extract \
-fabric fancy-ctrl-z fasd fastfile fbterm fd fedora firewalld flutter forklift \
-fossil frontend-search fzf gas gatsby gb gcloud geeknote gem git \
-git-auto-fetch git-escape-magic git-extras gitfast git-flow git-flow-avh \
-github git-hubflow gitignore git-prompt git-remote-branch glassfish globalias \
-gnu-utils go golang gpg-agent gradle grails grunt gulp hanami helm heroku \
-hitokoto \
-history history-substring-search homestead httpie iterm2 jake-node jenv \
-jfrog jhbuild jira jruby jsontools jump kate keychain kitchen knife knife_ssh \
-kops \
-kubectl kube-ps1 laravel laravel4 laravel5 last-working-dir lein lighthouse \
-lol macports magic-enter man marked2 mercurial meteor minikube mix mix-fast \
-mosh mvn mysql-macports n98-magerun nanoc ng nmap node nomad npm npx nvm \
-nyan oc osx otp pass paver pep8 percol per-directory-history perl perms \
-phing pip pipenv pj please pod postgres pow powder powify profiles pyenv \
-pylint python rails rake rake-fast rand-quote rbenv rbfu react-native rebar \
-redis-cli repo ripgrep ros rsync ruby rust rvm safe-paste salt sbt scala \
-scd screen scw sdk sfdx sfffe shrink-path singlechar spring sprunge \
-ssh-agent stack sublime sudo supervisor suse svcat svn svn-fast-info \
-swiftpm symfony symfony2 systemadmin systemd taskwarrior terminitor \
-terraform textastic textmate thefuck themes thor tig timer tmux tmux-cssh \
-tmuxinator torrent transfer tugboat ubuntu ufw urltools vagrant \
-vagrant-prompt vault vim-interaction vi-mode virtualenv virtualenvwrapper \
-vscode vundle wakeonlan wd web-search wp-cli xcode yarn yii yii2 yum z \
-zeus zsh-interactive-cd zsh-navigation-tools zsh_reload )
+doctl dotnet dotenv droplr drush eecms emacs ember-cli emoji emoji-clock \
+emotty encode64 extract fabric fancy-ctrl-z fasd fastfile fbterm fd fedora \
+firewalld flutter forklift fossil frontend-search fzf gas gatsby gb gcloud \
+geeknote gem git git-auto-fetch git-escape-magic git-extras gitfast git-flow \
+git-flow-avh github git-hubflow gitignore git-prompt git-remote-branch \
+glassfish globalias gnu-utils go golang gpg-agent gradle grails grunt gulp \
+hanami helm heroku hitokoto history history-substring-search homestead httpie \
+iterm2 jake-node jenv jfrog jhbuild jira jruby jsontools jump kate keychain \
+kitchen knife knife_ssh kops kubectl kube-ps1 laravel laravel4 laravel5 \
+last-working-dir ldx lein lighthouse lol macports magic-enter man marked2 \
+mercurial meteor minikube mix mix-fast mosh mvn mysql-macports n98-magerun \
+nanoc ng nmap node nomad npm npx nvm nyan oc osx otp pass paver pep8 percol \
+per-directory-history perl perms phing pip pipenv pj please pod postgres pow \
+powder powify profiles pyenv pylint python rails rake rake-fast rand-quote \
+rbenv rbfu react-native rebar redis-cli repo ripgrep ros rsync ruby rust \
+rustup rvm safe-paste salt sbt scala scd screen scw sdk sfdx sfffe shell-proxy \
+shrink-path singlechar spring sprunge ssh-agent stack sublime sudo supervisor \
+suse svcat svn svn-fast-info swiftpm symfony symfony2 systemadmin systemd \
+taskwarrior terminitor terraform textastic textmate thefuck themes thor tig \
+timer tmux tmux-cssh tmuxinator torrent transfer tugboat ubuntu ufw urltools \
+vagrant vagrant-prompt vault vim-interaction vi-mode virtualenv \
+virtualenvwrapper vscode vundle wakeonlan wd web-search wp-cli xcode yarn yii \
+yii2 yum z zeus zsh-interactive-cd zsh-navigation-tools zsh_reload )
 IUSE+=" ${OMZSH_PLUGINS[@]/#/-plugins_}"
 PLUGINS_DEPEND="
 	 plugins_adb? ( dev-util/android-tools )
@@ -107,6 +104,7 @@ PLUGINS_DEPEND="
 	 plugins_autojump? ( app-shells/autojump )
 	 plugins_aws? ( dev-python/awscli )
 	 plugins_battery? ( sys-power/acpi )
+	 plugins_bazel? ( dev-util/bazel )
 	 plugins_bundler? ( dev-ruby/bundler )
 	 plugins_cabal? ( dev-haskell/cabal )
 	 plugins_cargo? ( virtual/cargo )
