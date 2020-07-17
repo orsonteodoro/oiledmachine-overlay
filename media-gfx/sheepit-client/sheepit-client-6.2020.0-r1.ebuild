@@ -384,7 +384,7 @@ src_prepare() {
 			src/com/sheepit/client/hardware/gpu/GPU.java || die
 	fi
 
-	eapply "${FILESDIR}/sheepit-client-6.2018.0-r1-renderer-version-picker.patch"
+	eapply "${FILESDIR}/sheepit-client-6.2020.0-r1-renderer-version-picker.patch"
 	if ! use allow-unknown-renderers ; then
 		if ! use disable-hard-version-blocks ; then
 			enable_hardblock "HARDBLOCK_UNKNOWN_RENDERERS"
@@ -451,9 +451,9 @@ src_install() {
 		allowed_renderers+=" --allow-blender279b"
 	fi
 	if use blender279b_filmic ; then
-		dodoc -r "${FILESDIR}/blender-2.79b-flimic-licenses"
+		dodoc -r "${FILESDIR}/blender-2.79b-licenses"
 		use doc \
-		dodoc -r "${FILESDIR}/blender-2.79b-flimic-readmes"
+		dodoc -r "${FILESDIR}/blender-2.79b-readmes"
 		allowed_renderers+=" --allow-blender279b-filmic"
 	fi
 	if use blender280 ; then

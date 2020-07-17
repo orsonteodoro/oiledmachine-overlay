@@ -9,9 +9,9 @@ to false to enforce hardcoded block otherwise end-user decides.
 
 Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
 ----
-diff -urp sheepit-client-6.2018.0.orig/src/com/sheepit/client/Client.java sheepit-client-6.2018.0/src/com/sheepit/client/Client.java
---- sheepit-client-6.2018.0.orig/src/com/sheepit/client/Client.java	2020-07-03 02:15:00.000000000 -0700
-+++ sheepit-client-6.2018.0/src/com/sheepit/client/Client.java	2020-07-14 09:43:42.668071892 -0700
+diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Client.java sheepit-client-6.2020.0/src/com/sheepit/client/Client.java
+--- sheepit-client-6.2020.0.orig/src/com/sheepit/client/Client.java	2020-07-07 06:38:23.000000000 -0700
++++ sheepit-client-6.2020.0/src/com/sheepit/client/Client.java	2020-07-16 17:39:13.821524951 -0700
 @@ -638,7 +638,8 @@ import lombok.Data;
  		}
  	}
@@ -30,8 +30,8 @@ diff -urp sheepit-client-6.2018.0.orig/src/com/sheepit/client/Client.java sheepi
 +	private boolean isRendererAllowed(String md5_renderer) {
 +		if (md5_renderer.equals("3d0e05e7a43ae213eccf33c47b5900c5") && (!this.configuration.getAllowBlender279b() || Configuration.HARDBLOCK_BLENDER_279B)) {
 +			return false;
-+		//} else if (md5_renderer.equals("") && (!this.configuration.getAllowBlender279bFilmic() || Configuration.HARDBLOCK_BLENDER_279B_FILMIC)) {
-+		//	return false;
++		} else if (md5_renderer.equals("a6e995c16e72b9b0e2b3857fcf45a1d0") && (!this.configuration.getAllowBlender279bFilmic() || Configuration.HARDBLOCK_BLENDER_279B_FILMIC)) {
++			return false;
 +		} else if (md5_renderer.equals("20eb01cbdc8d21c85ef744816caa83ea") && (!this.configuration.getAllowBlender280() || Configuration.HARDBLOCK_BLENDER_280)) {
 +			return false;
 +		} else if (md5_renderer.equals("f6120a679aa7c5e79f39751171f63eba") && (!this.configuration.getAllowBlender281a() || Configuration.HARDBLOCK_BLENDER_281A)) {
@@ -54,8 +54,8 @@ diff -urp sheepit-client-6.2018.0.orig/src/com/sheepit/client/Client.java sheepi
 +		switch (md5_renderer) {
 +			case "3d0e05e7a43ae213eccf33c47b5900c5":
 +				return "Blender 2.79b";
-+			// case "":
-+			//	return "Blender 2.79b (Filmic)"
++			case "a6e995c16e72b9b0e2b3857fcf45a1d0":
++				return "Blender 2.79b (Filmic)";
 +			case "20eb01cbdc8d21c85ef744816caa83ea":
 +				return "Blender 2.80";
 +			case "f6120a679aa7c5e79f39751171f63eba":
@@ -86,9 +86,9 @@ diff -urp sheepit-client-6.2018.0.orig/src/com/sheepit/client/Client.java sheepi
  		return this.downloadFile(ajob, ajob.getRendererArchivePath(), ajob.getRendererMD5(),
  				String.format("%s?type=binary&job=%s", this.server.getPage("download-archive"), ajob.getId()), "renderer");
  	}
-diff -urp sheepit-client-6.2018.0.orig/src/com/sheepit/client/Configuration.java sheepit-client-6.2018.0/src/com/sheepit/client/Configuration.java
---- sheepit-client-6.2018.0.orig/src/com/sheepit/client/Configuration.java	2020-07-03 02:15:00.000000000 -0700
-+++ sheepit-client-6.2018.0/src/com/sheepit/client/Configuration.java	2020-07-14 09:42:19.484817881 -0700
+diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Configuration.java sheepit-client-6.2020.0/src/com/sheepit/client/Configuration.java
+--- sheepit-client-6.2020.0.orig/src/com/sheepit/client/Configuration.java	2020-07-07 06:38:23.000000000 -0700
++++ sheepit-client-6.2020.0/src/com/sheepit/client/Configuration.java	2020-07-16 17:35:49.993509049 -0700
 @@ -66,6 +66,22 @@ import lombok.Data;
  	private String UIType;
  	private String hostname;
@@ -196,9 +196,9 @@ diff -urp sheepit-client-6.2018.0.orig/src/com/sheepit/client/Configuration.java
 +		return allowUnknownRenderers;
 +	}
  }
-diff -urp sheepit-client-6.2018.0.orig/src/com/sheepit/client/SettingsLoader.java sheepit-client-6.2018.0/src/com/sheepit/client/SettingsLoader.java
---- sheepit-client-6.2018.0.orig/src/com/sheepit/client/SettingsLoader.java	2020-07-03 02:15:00.000000000 -0700
-+++ sheepit-client-6.2018.0/src/com/sheepit/client/SettingsLoader.java	2020-07-14 09:42:19.484817881 -0700
+diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/SettingsLoader.java sheepit-client-6.2020.0/src/com/sheepit/client/SettingsLoader.java
+--- sheepit-client-6.2020.0.orig/src/com/sheepit/client/SettingsLoader.java	2020-07-07 06:38:23.000000000 -0700
++++ sheepit-client-6.2020.0/src/com/sheepit/client/SettingsLoader.java	2020-07-16 17:35:49.993509049 -0700
 @@ -58,6 +58,14 @@ public class SettingsLoader {
  	private String ui;
  	private String theme;
@@ -359,9 +359,9 @@ diff -urp sheepit-client-6.2018.0.orig/src/com/sheepit/client/SettingsLoader.jav
 +			allowBlender2831, allowBlender2832, allowUnknownRenderers);
  	}
  }
-diff -urp sheepit-client-6.2018.0.orig/src/com/sheepit/client/standalone/swing/activity/Settings.java sheepit-client-6.2018.0/src/com/sheepit/client/standalone/swing/activity/Settings.java
---- sheepit-client-6.2018.0.orig/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-07-03 02:15:00.000000000 -0700
-+++ sheepit-client-6.2018.0/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-07-14 09:42:19.484817881 -0700
+diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/standalone/swing/activity/Settings.java sheepit-client-6.2020.0/src/com/sheepit/client/standalone/swing/activity/Settings.java
+--- sheepit-client-6.2020.0.orig/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-07-07 06:38:23.000000000 -0700
++++ sheepit-client-6.2020.0/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-07-16 17:35:49.993509049 -0700
 @@ -101,6 +101,14 @@ public class Settings implements Activit
  	
  	private JCheckBox saveFile;
@@ -429,9 +429,9 @@ diff -urp sheepit-client-6.2018.0.orig/src/com/sheepit/client/standalone/swing/a
  				
  				// wait for successful authentication (to store the public key)
  				// or do we already have one?
-diff -urp sheepit-client-6.2018.0.orig/src/com/sheepit/client/standalone/Worker.java sheepit-client-6.2018.0/src/com/sheepit/client/standalone/Worker.java
---- sheepit-client-6.2018.0.orig/src/com/sheepit/client/standalone/Worker.java	2020-07-03 02:15:00.000000000 -0700
-+++ sheepit-client-6.2018.0/src/com/sheepit/client/standalone/Worker.java	2020-07-14 09:42:19.484817881 -0700
+diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/standalone/Worker.java sheepit-client-6.2020.0/src/com/sheepit/client/standalone/Worker.java
+--- sheepit-client-6.2020.0.orig/src/com/sheepit/client/standalone/Worker.java	2020-07-07 06:38:23.000000000 -0700
++++ sheepit-client-6.2020.0/src/com/sheepit/client/standalone/Worker.java	2020-07-16 17:35:49.993509049 -0700
 @@ -94,6 +94,22 @@ public class Worker {
  	
  	@Option(name = "-renderbucket-size", usage = "Set a custom GPU renderbucket size (32 for 32x32px, 64 for 64x64px, and so on). NVIDIA GPUs support a maximum renderbucket size of 512x512 pixel, while AMD GPUs support a maximum 2048x2048 pixel renderbucket size. Minimum renderbucket size is 32 pixels for all GPUs", required = false) private int renderbucketSize = -1;

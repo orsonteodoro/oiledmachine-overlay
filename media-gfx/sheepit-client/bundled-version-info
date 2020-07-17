@@ -32,6 +32,12 @@ GLU
 Mesa (libGL) 18.3.1
 Python 3.7.0
 
+Bundled in Blender 2.79b with filmic:
+GLU 8.0.5
+Mesa (libGL) 8.0.5
+Python 3.5.3
+Filmic Blender, master circa 20180121 f94ebab8ad3ad917d3201230ebca1bc3a93b7c86
+
 Bundled in Blender 2.79b:
 GLU 8.0.5
 Mesa (libGL) 8.0.5

@@ -80,7 +80,7 @@
     <flag name="video_cards_iris">Checks for OpenCL support
       for Intel or IGPs/GPUs.  For Gen 8+ (Broadwell)
       users.</flag>
-    <flag name="video_cards_nvidia">Checks if the GPU driver is OpenCL<flag>
+    <flag name="video_cards_nvidia">Checks if the GPU driver is OpenCL</flag>
     <flag name="video_cards_radeonsi">Checks if the GPU driver is OpenCL
       for Mesa Gallium3D users.</flag>
   </use>
