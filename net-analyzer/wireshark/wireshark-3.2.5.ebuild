@@ -11,7 +11,7 @@ SRC_URI="https://www.wireshark.org/download/src/all-versions/${P/_/}.tar.xz"
 LICENSE="GPL-2"
 
 SLOT="0/${PV}"
-KEYWORDS="~alpha amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc64 ~x86"
+KEYWORDS="~alpha amd64 arm ~arm64 ~hppa ~ia64 ppc64 x86"
 IUSE="
 	androiddump bcg729 brotli +capinfos +captype ciscodump +dftest doc dpauxmon
 	+dumpcap +editcap http2 kerberos libxml2 lua lz4 maxminddb +mergecap
@@ -88,6 +88,7 @@ RDEPEND="
 REQUIRED_USE="
 	plugin-ifdemo? ( plugins )
 "
+RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}"/${PN}-2.4-androiddump.patch
 	"${FILESDIR}"/${PN}-2.6.0-redhat.patch
@@ -188,6 +189,8 @@ src_configure() {
 
 src_test() {
 	cmake_build test-programs
+
+	myctestargs=( --disable-capture --skip-missing-programs=all --verbose )
 	cmake_src_test
 }
 
