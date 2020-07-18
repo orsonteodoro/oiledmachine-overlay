@@ -1,0 +1,11 @@
+--- a/media/libopus/include/opus_defines.h.orig	2020-07-08 12:27:12.000000000 -0700
++++ b/media/libopus/include/opus_defines.h	2020-07-17 21:41:05.558961991 -0700
+@@ -60,6 +60,8 @@ extern "C" {
+ #define OPUS_ALLOC_FAIL       -7
+ /**@}*/
+ 
++#define FLOAT_APPROX 1
++
+ /** @cond OPUS_INTERNAL_DOC */
+ /**Export control for opus functions */
+ 
