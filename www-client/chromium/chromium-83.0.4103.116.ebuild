@@ -19,7 +19,7 @@ SRC_URI="https://commondatastorage.googleapis.com/chromium-browser-official/${P}
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="amd64 ~arm64 ~x86"
-IUSE="+closure-compile component-build cups cpu_flags_arm_neon +hangouts kerberos pic +proprietary-codecs pulseaudio selinux +suid +system-ffmpeg +system-icu +system-libvpx tcmalloc widevine"
+IUSE="+closure-compile component-build cups cpu_flags_arm_neon +hangouts kerberos pic +proprietary-codecs pulseaudio selinux +suid +system-ffmpeg +system-icu +system-libvpx -tcmalloc widevine"
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE+=" ${_ABIS}"
 RESTRICT="!system-ffmpeg? ( proprietary-codecs? ( bindist ) )"
@@ -46,7 +46,8 @@ COMMON_DEPEND="
 	system-libvpx? ( >=media-libs/libvpx-1.8.2:=[postproc,svc,${MULTILIB_USEDEP}] )
 	pulseaudio? ( media-sound/pulseaudio:=[${MULTILIB_USEDEP}] )
 	system-ffmpeg? (
-		>=media-video/ffmpeg-4:=[${MULTILIB_USEDEP}]
+		>=media-video/ffmpeg-4:0[${MULTILIB_USEDEP}]
+		<media-video/ffmpeg-4.3:0=
 		|| (
 			media-video/ffmpeg[-samba,${MULTILIB_USEDEP}]
 			>=net-fs/samba-4.5.10-r1[-debug(-),${MULTILIB_USEDEP}]

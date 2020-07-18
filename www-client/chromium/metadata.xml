@@ -34,7 +34,6 @@
 			faster allocations and more memory savings.  For this ebuild fork, 
 			it is not recommended to enable this flag for stability
 			reasons.</flag>
-		<flag name="tcmalloc">Use bundled tcmalloc instead of system malloc</flag>
 		<flag name="widevine">Unsupported closed-source DRM capability (required by Netflix VOD)</flag>
 	</use>
 </pkgmetadata>
