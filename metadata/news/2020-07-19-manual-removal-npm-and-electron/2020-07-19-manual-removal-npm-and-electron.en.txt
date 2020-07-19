@@ -39,7 +39,7 @@ grep -l -r -e "NPM_SECAUDIT" -e "ELECTRON_APP" -e "NPM_UTILS_" /var/db/pkg/
 
 To fix the problem:
 
-# rm -rf /usr/lib64/node/${P}
+# rm -rf /usr/lib{64,32}/node/${P}
 # rm -rf /var/db/pkg/${CATEGORY}/${P}
 
 Re-emerge the package again.
