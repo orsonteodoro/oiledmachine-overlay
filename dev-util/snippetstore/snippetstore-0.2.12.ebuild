@@ -1,27 +1,25 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-
-RDEPEND="${RDEPEND}
-	 >=dev-util/electron-1.8.8"
-
-DEPEND="${RDEPEND}
-        net-libs/nodejs[npm]"
-
-inherit eutils desktop electron-app npm-utils
-
-MY_PN="SnippetStore"
+EAPI=7
 DESCRIPTION="A snippet management app for developers"
 HOMEPAGE="https://zerox-dg.github.io/SnippetStoreWeb/"
-SRC_URI="https://github.com/ZeroX-DG/${MY_PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-
 LICENSE="MIT"
-SLOT="0"
 KEYWORDS="~amd64"
+SLOT="0"
 IUSE=""
-
+RDEPEND="${RDEPEND}"
+DEPEND="${RDEPEND}
+        net-libs/nodejs[npm]"
+ELECTRON_APP_ELECTRON_V="1.8.8" # todo update
+inherit desktop electron-app eutils npm-utils
+MY_PN="SnippetStore"
+SRC_URI="\
+https://github.com/ZeroX-DG/${MY_PN}/archive/v${PV}.tar.gz \
+	-> ${P}.tar.gz"
 S="${WORKDIR}/${MY_PN}-${PV}"
+
+if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX}" == "1" ]] ; then
 
 TAR_V="^4.4.2"
 BABEL_CODE_FRAME_V="^6.26.0"
@@ -38,6 +36,10 @@ _fix_vulnerabilities() {
 }
 
 electron-app_src_postprepare() {
+	ewarn \
+"Vulnerability resolution has not been updated.  Consider setting the\n\
+environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX=0 per-package-wise."
+
 	_fix_vulnerabilities
 
 	npm install babel-code-frame@"${BABEL_CODE_FRAME_V}" || die
@@ -67,6 +69,8 @@ electron-app_src_postprepare() {
 	npm_audit_package_lock_update node_modules/babel-types
 }
 
+fi
+
 electron-app_src_compile() {
 	cd "${S}"
 
@@ -81,5 +85,7 @@ electron-app_src_compile() {
 }
 
 src_install() {
-	electron-app_desktop_install "*" "resources/icon/icon512.png" "${MY_PN}" "Development" "/usr/$(get_libdir)/node/${PN}/${SLOT}/dist/linux-unpacked/snippetstore"
+	electron-app_desktop_install "*" "resources/icon/icon512.png" \
+		"${MY_PN}" "Development" \
+	"/usr/$(get_libdir)/node/${PN}/${SLOT}/dist/linux-unpacked/snippetstore"
 }
