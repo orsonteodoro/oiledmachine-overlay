@@ -10,6 +10,7 @@ SLOT="0"
 RDEPEND=">=dev-util/electron-2.0.0"
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]"
+ELECTRON_APP_ELECTRON_V="9.1.0" # actually it is always latest
 inherit desktop electron-app eutils
 MY_PN="StickyNotes"
 SRC_URI=\
