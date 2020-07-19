@@ -1,0 +1,49 @@
+Title: Manual removal of npm or electron based packages required
+Author: Orson Teodoro <orsonteodoro@hotmail.com
+Content-Type: text/plain
+Posted: 2020-07-19
+Revision: 1
+News-Item-Format: 2.0
+Display-If-Installed: app-editors/epic-journal
+Display-If-Installed: app-editors/preserver
+Display-If-Installed: app-editors/noty
+Display-If-Installed: app-editors/stickynotes
+Display-If-Installed: dev-lang/typescript
+Display-If-Installed: dev-util/carbon-now-cli
+Display-If-Installed: dev-util/devhub
+Display-If-Installed: dev-util/geeks-diary
+Display-If-Installed: dev-util/lepton
+Display-If-Installed: dev-util/pullp
+Display-If-Installed: dev-util/snippetstore
+Display-If-Installed: net-im/caprine
+Display-If-Installed: net-im/igdm
+Display-If-Installed: net-im/igdm-cli
+Display-If-Installed: www-misc/nativefier
+Display-If-Installed: www-misc/ramme
+Display-If-Installed: www-misc/stockifier
+
+Ebuilds that inherit npm-secaudit.eclass, electron-apps.eclass,
+npm-utils.eclass and emerged to completion at and before 2020-07-19 are affected
+that prevent package removal and go into infinite loop.
+
+Emerge does not use the absolute image of functions in
+${OVERLAY_DIR}/eclass/{npm-utils,npm-secaudit,electron-app}.eclass containing
+the fixed versions but rather bad cached versions stored in
+/var/db/pkg/${CATEGORY}/${P}/environment.bz2 making it difficult to remove
+the package.
+
+To list affected installed packages:
+
+grep -l -r -e "NPM_SECAUDIT" -e "ELECTRON_APP" -e "NPM_UTILS_" /var/db/pkg/
+
+
+To fix the problem:
+
+# rm -rf /usr/lib64/node/${P}
+# rm -rf /var/db/pkg/${CATEGORY}/${P}
+
+Re-emerge the package again.
+
+
+Mutex lock directories named mutex-editing-pkg_db, mutex-editing-emerge-sets-db
+in /dev/shm may need to be removed
