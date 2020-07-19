@@ -8,8 +8,9 @@ LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0"
 DEPEND="${RDEPEND}
-	>=dev-lang/typescript-3.7.5
+	>=dev-lang/typescript-3.9.5
         >=net-libs/nodejs-12[npm]"
+ELECTRON_APP_ELECTRON_V="9.0.5"
 inherit desktop electron-app eutils
 SRC_URI=\
 "https://github.com/sindresorhus/caprine/archive/v${PV}.tar.gz \
