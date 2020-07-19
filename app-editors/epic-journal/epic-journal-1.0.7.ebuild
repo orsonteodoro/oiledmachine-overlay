@@ -1,28 +1,25 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+# Kept for backwards compatibility or data migration purposes only
 
-RDEPEND="${RDEPEND}
-	 >=dev-util/electron-1.7.5
-	 dev-db/sqlcipher"
-
-DEPEND="${RDEPEND}
-        net-libs/nodejs[npm]"
-
-inherit eutils desktop electron-app
-
-MY_PN="Epic Journal"
-
+EAPI=7
 DESCRIPTION="A clean and modern encrypted journal/diary app"
 HOMEPAGE="https://epicjournal.xyz/"
-SRC_URI="https://github.com/alangrainger/epic-journal/archive/v.${PV}.tar.gz -> ${P}.tar.gz"
-
 LICENSE="CC-BY-NC-4.0"
-SLOT="0"
 KEYWORDS="~amd64"
+SLOT="0"
+RDEPEND="${RDEPEND}
+	 dev-db/sqlcipher"
+DEPEND="${RDEPEND}
+        net-libs/nodejs[npm]"
+ELECTRON_APP_ELECTRON_V="1.0.6" # todo, update version
+inherit desktop electron-app eutils
+MY_PN="Epic Journal"
+SRC_URI="\
+https://github.com/alangrainger/epic-journal/archive/v.${PV}.tar.gz \
+	-> ${P}.tar.gz"
 IUSE=""
-
 S="${WORKDIR}/${PN}-v.${PV}"
 
 TAR_V="^4.4.2"
@@ -32,6 +29,9 @@ SQLITE3_V="^3.1.13"
 JS_YAML_V="^3.13.1"
 
 _fix_vulnerabilities() {
+	ewarn \
+"Vulnerability resolution has not been updated.  Consider setting the\n\
+environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX=0 per-package-wise."
 	npm i --package-lock-only
 	npm install
 
@@ -120,7 +120,9 @@ electron-app_src_preprepare() {
 }
 
 electron-app_src_postprepare() {
+	if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX}" == "1" ]] ; then
 	_fix_vulnerabilities
+	fi
 	sed -i -e "s|cssLoaderOptions += (cssLoaderOptions ? '\&' : '?') + 'minimize'||g" node_modules/vue-loader/lib/loader.js || die
 }
 
@@ -139,5 +141,7 @@ electron-app_src_compile() {
 }
 
 src_install() {
-	electron-app_desktop_install "*" "build/icons/256x256.png" "${MY_PN}" "Office" "/usr/$(get_libdir)/node/${PN}/${SLOT}/build/linux-unpacked/epic-journal"
+	electron-app_desktop_install "*" "build/icons/256x256.png" "${MY_PN}" \
+		"Office" \
+	"/usr/$(get_libdir)/node/${PN}/${SLOT}/build/linux-unpacked/epic-journal"
 }

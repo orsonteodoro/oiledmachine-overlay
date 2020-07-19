@@ -1,17 +1,20 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# Possibly development build, untagged
+
 EAPI=7
 DESCRIPTION="A clean and modern encrypted journal/diary app"
 HOMEPAGE="https://epicjournal.xyz/"
 LICENSE="CC-BY-NC-4.0"
 KEYWORDS="~amd64"
 SLOT="0"
-RDEPEND=">=dev-util/electron-1.7.5
+RDEPEND="${RDEPEND}
 	 dev-db/sqlcipher"
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]"
-inherit eutils desktop electron-app
+ELECTRON_APP_ELECTRON_V="3.1.13" # todo, update version
+inherit desktop electron-app eutils
 MY_PN="Epic Journal"
 EGIT_COMMIT="0cdc1091a1eaf7d8ccdd5893ac3d275a3b651c58"
 SRC_URI=\
@@ -28,6 +31,9 @@ SQLITE3_V="^3.1.13"
 JS_YAML_V="^3.13.1"
 
 _fix_vulnerabilities() {
+	ewarn \
+"Vulnerability resolution has not been updated.  Consider setting the\n\
+environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX=0 per-package-wise."
 	sed -i -e "s|\"clean-css\": \"3.4.x\"|\"clean-css\": \"${CLEAN_CSS_V}\"|g" \
 		node_modules/vue-html-loader/node_modules/html-minifier/package.json || die
 	rm -rf node_modules/vue-html-loader/node_modules/clean-css || die
@@ -48,6 +54,9 @@ _fix_vulnerabilities() {
 }
 
 _fix_vulnerabilitiesB() {
+	ewarn \
+"Vulnerability resolution has not been updated.  Consider setting the\n\
+environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX=0 per-package-wise."
 	npm i --package-lock-only
 	npm install
 
@@ -136,12 +145,16 @@ electron-app_src_preprepareA() {
 }
 
 electron-app_src_postprepareB() {
+	if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX}" == "1" ]] ; then
 	_fix_vulnerabilities
+	fi
 	sed -i -e "s|cssLoaderOptions += (cssLoaderOptions ? '\&' : '?') + 'minimize'||g" node_modules/vue-loader/lib/loader.js || die
 }
 
 electron-app_src_postprepare() {
+	if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX}" == "1" ]] ; then
 	_fix_vulnerabilities
+	fi
 }
 
 electron-app_src_prepare() {
