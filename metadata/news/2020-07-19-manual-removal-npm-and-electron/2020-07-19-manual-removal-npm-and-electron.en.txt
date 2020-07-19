@@ -46,4 +46,4 @@ Re-emerge the package again.
 
 
 Mutex lock directories named mutex-editing-pkg_db, mutex-editing-emerge-sets-db
-in /dev/shm may need to be removed
+in /dev/shm may need to be removed.
