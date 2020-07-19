@@ -16,7 +16,7 @@ RDEPEND="${RDEPEND}
 	 app-eselect/eselect-typescript"
 DEPEND="${RDEPEND}
 	media-libs/vips
-        net-libs/nodejs[npm]"
+        >=net-libs/nodejs-4.2.0[npm]"
 inherit eutils npm-secaudit npm-utils
 MY_PN="TypeScript"
 FN_SRC="v${PV}.tar.gz"
