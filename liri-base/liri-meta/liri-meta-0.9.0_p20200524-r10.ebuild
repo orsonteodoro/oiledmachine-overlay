@@ -6,7 +6,7 @@ DESCRIPTION="Meta package for liri"
 HOMEPAGE="https://liri.io/"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}" # based on liri-base/liri-shell
-IUSE="appcenter browser calculator +files flatpak networkmanager \
+IUSE="appcenter browser calculator +files flatpak music networkmanager \
 +platformtheme player power-manager pulseaudio screencast screenshot +settings \
 systemd +terminal text themes wallpaper xwayland"
 RDEPEND="appcenter? ( liri-base/appcenter )
@@ -16,6 +16,7 @@ RDEPEND="appcenter? ( liri-base/appcenter )
 	 flatpak? ( liri-base/xdg-desktop-portal-liri[flatpak] )
 	 >=liri-base/session-0.1.0_p20200524[systemd?]
 	   liri-base/shell:${SLOT}[systemd?]
+	 music? ( liri-extra/music )
 	 networkmanager? ( liri-extra/networkmanager )
 	 platformtheme? ( liri-base/platformtheme )
 	 player? ( liri-extra/player )
