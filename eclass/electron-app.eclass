@@ -187,6 +187,7 @@ download micropackages."
 	#export ELECTRON_VER=$(strings /usr/bin/electron | grep "%s Electron/" | sed -e "s|[%s A-Za-z/]||g")
 	export NPM_STORE_DIR="${HOME}/npm"
 	export YARN_STORE_DIR="${HOME}/yarn"
+	export npm_config_maxsockets=${ELECTRON_APP_MAXSOCKETS}
 
 	case "$ELECTRON_APP_MODE" in
 		npm)
@@ -235,7 +236,7 @@ electron-app_fetch_deps_npm() {
 	_electron-app-flakey-check
 
 	pushd "${S}" || die
-		npm install --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
+		npm install || die
 	popd
 }
 
@@ -369,7 +370,7 @@ electron-app_src_install_default() {
 # Builds an electron app with npm
 electron-app-build-npm() {
 	# electron-builder can still pull packages at the build step.
-	npm run build --maxsockets=${ELECTRON_APP_MAXSOCKETS} || die
+	npm run build || die
 }
 
 # @FUNCTION: electron-app-build-yarn

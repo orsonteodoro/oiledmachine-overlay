@@ -58,6 +58,7 @@ download micropackages."
 
 	export NPM_STORE_DIR="${HOME}/npm"
 	export npm_config_cache="${NPM_STORE_DIR}"
+	export npm_config_maxsockets=${NPM_MAXSOCKETS}
 	mkdir -p "${NPM_STORE_DIR}/offline"
 	chown -R portage:portage "${NPM_STORE_DIR}"
 
@@ -74,7 +75,7 @@ download micropackages."
 # MUST be called after default unpack AND patching.
 npm-secaudit_fetch_deps() {
 	pushd "${S}" || die
-		npm install --maxsockets=${NPM_MAXSOCKETS} || die
+		npm install || die
 	popd
 }
 
@@ -162,7 +163,7 @@ npm-secaudit_src_install_default() {
 # Builds an electron app
 npm-secaudit-build() {
 	# electron-builder can still pull packages at the build step.
-	npm run build --maxsockets=${NPM_MAXSOCKETS} || die
+	npm run build || die
 }
 
 # @FUNCTION: npm-secaudit_src_compile_default
