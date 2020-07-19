@@ -27,6 +27,80 @@ esac
 
 inherit desktop eutils npm-utils
 
+# LTS versions: https://www.electronjs.org/docs/tutorial/support
+# Currently 9.x, 8.x, 7.x
+
+# Check the runtime dependencies for electron
+# Most electron apps will have electron bundled already.  No need for seperate ebuild.
+if [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] && ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 9.0 ; then
+# See https://www.electronjs.org/docs/development/build-instructions-linux
+# Obtained from ldd
+COMMON_DEPEND="
+	  app-accessibility/at-spi2-atk:2=
+	  app-arch/bzip2:=
+	  dev-libs/atk:=
+	  dev-libs/expat:=
+	  dev-libs/fribidi:=
+	  dev-libs/glib:2
+	  dev-libs/gmp:=
+	  dev-libs/libffi
+	  dev-libs/libtasn1:=
+	  dev-libs/libbsd:=
+	  dev-libs/libpcre:=
+	  dev-libs/libunistring:=
+	  dev-libs/nss:=
+	  dev-libs/nettle:=
+	  dev-libs/nspr:=
+	  media-gfx/graphite2:=
+	  media-libs/alsa-lib:=
+	  media-libs/fontconfig:=
+	  media-libs/freetype:=
+	  media-libs/harfbuzz:=[icu(-)]
+	  media-libs/libepoxy:=
+	  media-libs/libpng:=
+	  media-libs/mesa:=[egl,gbm]
+	  media-video/ffmpeg:=
+	  net-dns/libidn2:=
+	  net-libs/gnutls:=
+	  net-print/cups:=
+	  sys-apps/dbus:=
+	  sys-apps/util-linux:=
+	  sys-devel/gcc:=
+	  sys-libs/zlib:=[minizip]
+	  virtual/ttf-fonts
+	  x11-libs/cairo:=
+	  x11-libs/gdk-pixbuf:2=
+	  x11-libs/gtk+:3[X]
+	  x11-libs/libX11:=
+	  x11-libs/libXScrnSaver:=
+	  x11-libs/libXau:=
+	  x11-libs/libXcomposite:=
+	  x11-libs/libXcursor:=
+	  x11-libs/libXdamage:=
+	  x11-libs/libXdmcp:=
+	  x11-libs/libXext:=
+	  x11-libs/libXfixes:=
+	  x11-libs/libXi:=
+	  x11-libs/libXrandr:=
+	  x11-libs/libXrender:=
+	  x11-libs/libXtst:=
+	  x11-libs/libXxf86vm:=
+	  x11-libs/libdrm:=
+	  x11-libs/libxcb:=
+	  x11-libs/libxshmfence:=
+	  x11-libs/pango:=
+	  x11-libs/pixman:=
+"
+RDEPEND+=" ${COMMON_DEPEND}"
+DEPEND+=" ${COMMON_DEPEND}"
+elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] && ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 8.0 ; then
+die "Todo electron 8.0.  Send ldd of electron to https://github.com/orsonteodoro/oiledmachine-overlay/issues"
+elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] && ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 7.0 ; then
+die "Todo electron 7.0.  Send ldd of electron to https://github.com/orsonteodoro/oiledmachine-overlay/issues"
+else
+die "Package not supported yet."
+fi
+
 EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postinst pkg_postrm
 
 DEPEND+=" app-portage/npm-secaudit"
@@ -110,7 +184,7 @@ electron-app_pkg_setup() {
 download micropackages."
 	fi
 
-	export ELECTRON_VER=$(strings /usr/bin/electron | grep "%s Electron/" | sed -e "s|[%s A-Za-z/]||g")
+	#export ELECTRON_VER=$(strings /usr/bin/electron | grep "%s Electron/" | sed -e "s|[%s A-Za-z/]||g")
 	export NPM_STORE_DIR="${HOME}/npm"
 	export YARN_STORE_DIR="${HOME}/yarn"
 
@@ -119,10 +193,10 @@ download micropackages."
 			# Lame bug.  We cannot run `electron --version` because it requires X.
 			# It is okay to emerge package outside of X without problems.
 			export npm_config_cache="${NPM_STORE_DIR}"
-			einfo "Electron version: ${ELECTRON_VER}"
-			if [[ -z "${ELECTRON_VER}" ]] ; then
-				echo "Some ebuilds may break.  Restart and run in X."
-			fi
+			#einfo "Electron version: ${ELECTRON_VER}"
+			#if [[ -z "${ELECTRON_VER}" ]] ; then
+			#	echo "Some ebuilds may break.  Restart and run in X."
+			#fi
 
 			addwrite "${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 			mkdir -p "${NPM_STORE_DIR}/offline"
