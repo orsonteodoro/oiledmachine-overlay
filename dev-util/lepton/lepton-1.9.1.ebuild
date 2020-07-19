@@ -8,22 +8,32 @@ LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0"
 RDEPEND="${RDEPEND}
-	 dev-libs/libsass
-	 dev-util/electron" # workaround
-#	 >=dev-util/electron-4.0.5" # real requirements, it is already an
-					# internal dependency
+	 dev-libs/libsass"
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]"
 
-EGIT_COMMIT="d922b48a2df1767eea144f60fd34ab24741675e2"
 SRC_URI="\
-https://github.com/hackjutsu/Lepton/archive/${EGIT_COMMIT}.tar.gz \
+https://github.com/hackjutsu/Lepton/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz"
+ELECTRON_APP_ELECTRON_V="8.4.0"
 inherit desktop electron-app eutils npm-utils
-S="${WORKDIR}/${PN^}-${EGIT_COMMIT}"
+S="${WORKDIR}/${PN^}-${PV}"
 RESTRICT="mirror"
+
+if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX}" == "1" ]] ; then
 NODE_SASS_V="^4.12.0"
 LIBSASS_EXT="auto"
+
+_fix_nodejs12_compatibility() {
+	einfo "Updating node-sass to ${NODE_SASS_V}"
+	#npm uninstall node-sass || true
+	sed -i -e "s|\
+\"node-sass\": \"^4.10.0\",|\
+\"node-sass\": \"${NODE_SASS_V}\",|g" \
+		./package.json || die
+	npm install node-sass@"${NODE_SASS_V}" --save-dev || die
+}
+fi
 
 pkg_setup() {
 	if [[ -z "$LEPTON_CLIENT_ID" || -z "$LEPTON_CLIENT_ID" ]] ; then
@@ -44,17 +54,10 @@ electron-app_src_preprepare() {
 	sed -i -e "s|<your_client_id>|$LEPTON_CLIENT_ID|" \
 		-e "s|<your_client_secret>|$LEPTON_CLIENT_SECRET|" \
 		"${S}"/configs/account.js || die
-	_fix_nodejs12_compatibility
-}
-
-_fix_nodejs12_compatibility() {
-	einfo "Updating node-sass to ${NODE_SASS_V}"
-	#npm uninstall node-sass || true
-	sed -i -e "s|\
-\"node-sass\": \"^4.10.0\",|\
-\"node-sass\": \"${NODE_SASS_V}\",|g" \
-		./package.json || die
-	npm install node-sass@"${NODE_SASS_V}" --save-dev || die
+	if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX}" == "1" ]] ; then
+		#_fix_nodejs12_compatibility
+		:;
+	fi
 }
 
 src_install() {
