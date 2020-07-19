@@ -105,7 +105,7 @@ die "Todo electron 7.0.  Send ldd of electron to https://github.com/orsonteodoro
 fi
 else
 if [[ "${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON}" == "0" ]] ; then
-die "Package not supported yet."
+die "Package not supported yet.  Electron should be updated one of the latest Long Term Support (LTS) series versions or else it likely contains critical CVE security advisories."
 fi
 fi
 
