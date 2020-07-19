@@ -74,6 +74,9 @@ _fix_vulnerabilities3() {
 }
 
 electron-app_src_postprepareA() {
+        einfo \
+"Vulnerability resolution has not been updated.  Consider setting the\n\
+environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX=0 per-package-wise."
 	# likely update breakage
 	npm uninstall css-loader
 	npm install css-loader@"^${CSS_LOADER_V}" --save-dev || die
