@@ -320,6 +320,11 @@ _pgo_add_package_to_pgo_update_if_ready() {
 	done < /etc/portage/package.pgo.phases
 }
 
+clean_update-set-mutex() {
+	einfo "Called clean_update-set-mutex"
+	rm -rf "${PGO_MUTEX_DIR}/mutex-update-set"
+}
+
 _pgo_pkg_posinst() {
 	if [[ "${PGO_SHOW_PHASES}" == "1" ]] ; then
 		einfo "pgo_pkg_postinst"
@@ -335,6 +340,7 @@ _pgo_pkg_posinst() {
 
 	while true ; do
 		if mkdir -p "${PGO_MUTEX_DIR}/mutex-update-set" ; then
+			trap clean_update-set-mutex EXIT
 			_pgo_add_package_to_pgo_update_if_ready
 			rm -rf "${PGO_MUTEX_DIR}/mutex-update-set"
 			break
