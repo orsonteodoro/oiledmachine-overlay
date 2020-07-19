@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-DESCRIPTION="Beautiful images of your code — from right inside your terminal."
+DESCRIPTION="Beautiful images of your code from right inside your terminal."
 HOMEPAGE="https://github.com/mixn/carbon-now-cli"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
