@@ -1,0 +1,134 @@
+# Copyright 1999-2020 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=7
+DESCRIPTION="GitHub Notifications Manager & Activity Watcher - Web, Mobile & \
+Desktop"
+HOMEPAGE="https://devhubapp.com"
+LICENSE="AGPL-3"
+KEYWORDS="~amd64"
+RDEPEND="${RDEPEND}"
+# =typescript-3.7.5
+SLOT="0"
+IUSE=""
+DEPEND="${RDEPEND}
+        net-libs/nodejs[npm]
+	>=sys-apps/yarn-1.13.0"
+ELECTRON_APP_MODE=yarn
+ELECTRON_APP_ELECTRON_V="9.0.3" # todo : update version
+inherit desktop electron-app eutils npm-utils
+SRC_URI="\
+https://github.com/devhubapp/devhub/archive/v${PV}.tar.gz \
+	-> ${P}.tar.gz"
+S="${WORKDIR}/${PN}-${PV}"
+
+BABEL_CODE_FRAME_V="^6.26.0"
+BABEL_MESSAGES_V="^6.23.0"
+BABEL_RUNTIME_V="^6.26.0"
+BABEL_TYPES_V="^6.26.0"
+BABEL_GENERATOR_V="^6.26.0"
+BABEL_TRAVERSE_V="^6.26.0"
+BABEL_TEMPLATE_V="7.4.4"
+REACT_NATIVE_V="0.59.8"
+BRACES_V="^2.3.1"
+
+pkg_setup() {
+	electron-app_pkg_setup
+}
+
+electron-app_src_postprepare() {
+	if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX}" == "1" ]] ; then
+        ewarn \
+"Vulnerability resolution has not been updated.  Consider setting the\n\
+environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX=0 per-package-wise."
+	einfo "electron-app_src_postprepare START"
+	npm install react-native@"${REACT_NATIVE_V}" || die
+
+	npm install babel-code-frame@"${BABEL_CODE_FRAME_V}" || die
+	npm install babel-messages@"${BABEL_MESSAGES_V}" || die
+	npm install babel-runtime@"${BABEL_RUNTIME_V}" || die
+	npm install babel-types@"${BABEL_TYPES_V}" || die
+	npm install babel-generator@"${BABEL_GENERATOR_V}" || die
+	npm install babel-traverse@"${BABEL_TRAVERSE_V}" || die
+
+	rm -rf node_modules/babel-template || die
+
+	npm install @babel/template@"${BABEL_TEMPLATE_V}" || die
+
+	npm_audit_package_lock_update node_modules/babel-traverse
+
+	npm_audit_package_lock_update node_modules/babel-runtime
+
+	npm_audit_package_lock_update node_modules/babel-types
+
+	rm -rf node_modules/metro/node_modules/cross-spawn || die
+	rm -rf node_modules/metro/node_modules/sane || die
+	rm -rf node_modules/metro-core/node_modules/sane || die
+	rm -rf node_modules/react-native/node_modules/cross-spawn || die
+	rm -rf node_modules/metro/node_modules/sane/node_modules/cross-spawn || die
+
+	rm -rf node_modules/jest-haste-map/node_modules/braces || die
+
+	rm -rf node_modules/metro/node_modules/braces || die
+	rm -rf node_modules/metro-core/node_modules/braces || die
+
+	npm_audit_package_lock_update ./
+
+	npm audit fix --force || die
+
+	sed -i -e "s|\"braces\": \"^1.8.2\"|\"braces\": \"${BRACES_V}\"|g" \
+		node_modules/jest-haste-map/node_modules/micromatch/package.json || die
+
+	pushd node_modules/jest-haste-map || die
+	npm i braces@"${BRACES_V}" --no-save || die
+	popd
+
+	npm_audit_package_lock_update ./
+
+	npm audit fix --force || die
+
+	sed -i -e "s|\"braces\": \"^1.8.2\"|\"braces\": \"${BRACES_V}\"|g" \
+		node_modules/metro-core/node_modules/micromatch/package.json || die
+	sed -i -e "s|\"braces\": \"^1.8.2\"|\"braces\": \"${BRACES_V}\"|g" \
+		node_modules/metro/node_modules/micromatch/package.json || die
+
+	rm -rf node_modules/metro/node_modules/braces || die
+	rm -rf node_modules/metro-core/node_modules/braces || die
+
+	pushd node_modules/metro || die
+	npm i braces@"${BRACES_V}" --no-save || die
+	popd
+
+	pushd node_modules/metro-core || die
+	npm i braces@"${BRACES_V}" --no-save || die
+	popd
+
+	rm package-lock.json || die
+	npm i --package-lock-only || die
+
+	einfo "electron-app_src_postprepare DONE"
+	fi
+}
+
+electron-app_src_compile() {
+	einfo "electron-app_src_compile START"
+	cd "${S}"
+
+	export PATH="${S}/node_modules/.bin:${PATH}"
+	#yarn run dev:desktop || die
+	#cross-env BROWSER=none concurrently \"yarn dev:web\" \"yarn workspace @devhub/desktop compile -w\" \"wait-on http://localhost:3000 && yarn workspace @devhub/desktop start
+	sed -i -e 's|"build:electron": "electron-builder",|"build:electron": "electron-builder -l dir",|' "packages/desktop/package.json" || die
+	yarn workspace @devhub/desktop compile || die
+	yarn workspace @devhub/desktop build:electron || die
+
+	cd "${S}"
+
+	einfo "electron-app_src_compile DONE"
+}
+
+src_install() {
+	electron-app_desktop_install "*" \
+		"node_modules/@devhub/desktop/assets/icons/icon.png" "${MY_PN}" \
+		"Development" \
+	"/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/dist/main.js"
+}
