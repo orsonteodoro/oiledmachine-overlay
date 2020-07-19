@@ -1,29 +1,27 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-
-RDEPEND="${RDEPEND}
-	 >=dev-util/electron-2.0.0"
-
+EAPI=7
+DESCRIPTION="TIL writing tool for programmer"
+HOMEPAGE="https://github.com/seokju-na/geeks-diary"
+LICENSE="MIT"
+KEYWORDS="~amd64"
+SLOT="0"
+IUSE=""
+RDEPEND="${RDEPEND}"
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]
 	>=sys-apps/yarn-1.13.0"
-
-inherit eutils desktop electron-app
-
+ELECTRON_APP_ELECTRON_V="2.0.0" # todo, update version
+inherit desktop electron-app eutils
 PV="${PV//_/-}"
-DESCRIPTION="TIL writing tool for programmer"
-HOMEPAGE="https://github.com/seokju-na/geeks-diary"
-SRC_URI="https://github.com/seokju-na/geeks-diary/archive/${PV}.tar.gz -> ${P}.tar.gz"
-
-LICENSE="MIT"
-SLOT="0"
-KEYWORDS="~amd64"
-IUSE=""
+SRC_URI="\
+https://github.com/seokju-na/geeks-diary/archive/${PV}.tar.gz \
+	-> ${P}.tar.gz"
 
 # Kept in sync with yarn.lock which CI uses.
-# NPM is not tested which should be.  NPM building is broken for npm install but untested for npm ci.
+# NPM is not tested which should be.  NPM building is broken for npm install
+# but untested for npm ci.
 
 # original requirements
 angular6_works() {
@@ -84,7 +82,9 @@ pkg_setup() {
 	if [ ! -L /usr/lib/libcurl-gnutls.so.4 ] ; then
 		# Required by nodegit in src_prepare
 		# See https://github.com/adaptlearning/adapt-cli/issues/84
-		eerror "You must \`ln -s /usr/lib/libcurl.so.4 /usr/lib/libcurl-gnutls.so.4\` .  It works even though curl was not compiled with gnutls."
+		eerror \
+"You must \`ln -s /usr/lib/libcurl.so.4 /usr/lib/libcurl-gnutls.so.4\` .\n\
+It works even though curl was not compiled with gnutls."
 		die
 	fi
 }
@@ -186,11 +186,15 @@ electron-app_src_compile() {
 	export PATH="${S}/node_modules/.bin:$PATH"
 
 	# test here again. it seems bugged
-	grep -r -e "electron-renderer" "${S}/node_modules/@angular-devkit/build-angular/src/angular-cli-files/models/webpack-configs/browser.js" || die "failed to patch"
+	grep -r -e "electron-renderer" \
+	"${S}/node_modules/@angular-devkit/build-angular/src/angular-cli-files/models/webpack-configs/browser.js" \
+		|| die "failed to patch"
 
 	electron-app_src_compile_default
 }
 
 src_install() {
-	electron-app_desktop_install "*" "src/assets/logos/512x512.png" "${MY_PN}" "Development" "/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/dist/main.js"
+	electron-app_desktop_install "*" "src/assets/logos/512x512.png" \
+		"${MY_PN}" "Development" \
+	"/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/dist/main.js"
 }
