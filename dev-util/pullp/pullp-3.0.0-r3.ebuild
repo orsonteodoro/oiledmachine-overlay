@@ -74,7 +74,7 @@ _fix_vulnerabilities3() {
 }
 
 electron-app_src_postprepareA() {
-        einfo \
+        ewarn \
 "Vulnerability resolution has not been updated.  Consider setting the\n\
 environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX=0 per-package-wise."
 	# likely update breakage
