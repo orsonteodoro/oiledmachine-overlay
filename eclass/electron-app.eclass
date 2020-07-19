@@ -27,6 +27,8 @@ esac
 
 inherit desktop eutils npm-utils
 
+ELECTRON_APP_ALLOW_NON_LTS_ELECTRON=${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON:="0"}
+
 # LTS versions: https://www.electronjs.org/docs/tutorial/support
 # Currently 9.x, 8.x, 7.x
 
@@ -94,11 +96,17 @@ COMMON_DEPEND="
 RDEPEND+=" ${COMMON_DEPEND}"
 DEPEND+=" ${COMMON_DEPEND}"
 elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] && ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 8.0 ; then
+if [[ "${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON}" == "0" ]] ; then
 die "Todo electron 8.0.  Send ldd of electron to https://github.com/orsonteodoro/oiledmachine-overlay/issues"
+fi
 elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] && ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 7.0 ; then
+if [[ "${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON}" == "0" ]] ; then
 die "Todo electron 7.0.  Send ldd of electron to https://github.com/orsonteodoro/oiledmachine-overlay/issues"
+fi
 else
+if [[ "${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON}" == "0" ]] ; then
 die "Package not supported yet."
+fi
 fi
 
 EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postinst pkg_postrm
