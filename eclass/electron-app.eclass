@@ -27,7 +27,7 @@ esac
 
 inherit desktop eutils npm-utils
 
-ELECTRON_APP_ALLOW_NON_LTS_ELECTRON=${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON:="0"}
+ELECTRON_APP_ALLOW_NON_LTS_ELECTRON=${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON:="0"} # You could define it as a per-package envar.  It not recommended in the ebuild.
 
 # LTS versions: https://www.electronjs.org/docs/tutorial/support
 # Currently 9.x, 8.x, 7.x
