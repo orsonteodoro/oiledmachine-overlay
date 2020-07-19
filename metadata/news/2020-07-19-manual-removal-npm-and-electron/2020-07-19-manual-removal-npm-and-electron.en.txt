@@ -1,5 +1,5 @@
 Title: Manual removal of npm or electron based packages required
-Author: Orson Teodoro <orsonteodoro@hotmail.com
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Content-Type: text/plain
 Posted: 2020-07-19
 Revision: 1
