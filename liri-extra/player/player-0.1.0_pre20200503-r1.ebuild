@@ -13,7 +13,7 @@ RDEPEND="${RDEPEND}
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
-	>=dev-qt/qtmultimedia-${QT_MIN_PV}:5=
+	>=dev-qt/qtmultimedia-${QT_MIN_PV}:5=[qml]
 	>=dev-qt/qtquickcontrols2-${QT_MIN_PV}:5=
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
 	>=liri-base/fluid-1.0.0"
