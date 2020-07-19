@@ -40,6 +40,8 @@ Currently many of the npm ebuilds are undergoing development.  There are current
 
 If it complains about "emerge: there are no ebuilds to satisfy" and refers to @npm-security-update.  You can remove the deleted package by editing /etc/portage/sets/npm-security-update.
 
+If you can't unemerge an npm or electron ebuild from this overlay, please read the eselect news item ["Manual removal of npm or electron based packages required"] (https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2020-07-19-manual-removal-npm-and-electron/2020-07-19-manual-removal-npm-and-electron.en.txt).
+
 ### .NET stack
 
 The dotnet packages are mostly outdated and being updated.  Many will maybe be deleted due to the lack of programs that use them.  The top priority right now (in 2019 quarters 1-3) is to fix the dotcore-sdk non binary packages first then monodevelop.
