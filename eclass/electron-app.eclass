@@ -34,7 +34,7 @@ ELECTRON_APP_ALLOW_NON_LTS_ELECTRON=${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON:="0"} 
 
 # Check the runtime dependencies for electron
 # Most electron apps will have electron bundled already.  No need for seperate ebuild.
-if [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] && ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 9.0 ; then
+
 # See https://www.electronjs.org/docs/development/build-instructions-linux
 # Obtained from ldd
 COMMON_DEPEND="
@@ -93,21 +93,21 @@ COMMON_DEPEND="
 	  x11-libs/pango:=
 	  x11-libs/pixman:=
 "
-RDEPEND+=" ${COMMON_DEPEND}"
-DEPEND+=" ${COMMON_DEPEND}"
+if [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] && ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 9.0 ; then
+:; # series supported upstream
 elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] && ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 8.0 ; then
-if [[ "${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON}" == "0" ]] ; then
-die "Todo electron 8.0.  Send ldd of electron to https://github.com/orsonteodoro/oiledmachine-overlay/issues"
-fi
+:; # series supported upstream
 elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] && ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 7.0 ; then
-if [[ "${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON}" == "0" ]] ; then
-die "Todo electron 7.0.  Send ldd of electron to https://github.com/orsonteodoro/oiledmachine-overlay/issues"
-fi
+:; # series supported upstream
 else
 if [[ "${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON}" == "0" ]] ; then
-die "Package not supported yet.  Electron should be updated one of the latest Long Term Support (LTS) series versions or else it likely contains critical CVE security advisories."
+die "Electron should be updated one of the latest Long Term Support (LTS) series versions or else it likely contains critical CVE security advisories."
 fi
 fi
+
+# Same packages as far back as 3.x
+RDEPEND+=" ${COMMON_DEPEND}"
+DEPEND+=" ${COMMON_DEPEND}"
 
 EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postinst pkg_postrm
 
