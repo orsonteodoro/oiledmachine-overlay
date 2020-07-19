@@ -1,0 +1,32 @@
+--- a/CMakeLists.txt.orig	2020-03-14 10:11:21.000000000 -0700
++++ b/CMakeLists.txt	2020-07-18 17:17:44.438779669 -0700
+@@ -7,13 +7,18 @@ project("LiriMusic"
+ )
+ 
+ ## Shared macros and functions:
+-set(LIRI_LOCAL_ECM TRUE)
++option(LIRI_LOCAL_ECM "Build with internal Fluid" FALSE)
+ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
+-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/fluid/cmake/shared/modules")
+ 
+ ## Configure Fluid:
+ option(FLUID_WITH_DOCUMENTATION "" OFF)
+ option(FLUID_WITH_DEMO "" OFF)
++if(LIRI_LOCAL_ECM)
++    list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/fluid/cmake/shared/modules")
++else()
++    find_package(LiriCMakeShared "1.0.0" REQUIRED NO_MODULE)
++    list(APPEND CMAKE_MODULE_PATH "${LCS_MODULE_PATH}")
++endif()
+ 
+ ## Set minimum versions required:
+ set(QT_MIN_VERSION "5.10.0")
+@@ -38,5 +43,7 @@ find_package(Qt5 "${QT_MIN_VERSION}"
+ include_directories(${TAGLIB_INCLUDES})
+ 
+ ## Add subdirectories:
+-add_subdirectory(fluid)
++if(LIRI_LOCAL_ECM)
++    add_subdirectory(fluid)
++endif()
+ add_subdirectory(src)

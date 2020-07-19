@@ -1,0 +1,66 @@
+diff -urp music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d.orig/cmake/Modules/FindTaglib.cmake music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d/cmake/Modules/FindTaglib.cmake
+--- music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d.orig/cmake/Modules/FindTaglib.cmake	2020-03-14 10:11:21.000000000 -0700
++++ music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d/cmake/Modules/FindTaglib.cmake	2020-07-18 16:07:42.753972353 -0700
+@@ -11,11 +11,11 @@
+ # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
+ 
+ if(NOT TAGLIB_MIN_VERSION)
+-  set(TAGLIB_MIN_VERSION "1.4")
++  set(TAGLIB_MIN_VERSION "2.0")
+ endif(NOT TAGLIB_MIN_VERSION)
+ 
+ if(NOT WIN32)
+-    find_program(TAGLIBCONFIG_EXECUTABLE NAMES taglib-config PATHS
++    find_program(TAGLIBCONFIG_EXECUTABLE NAMES taglib2-config PATHS
+        ${BIN_INSTALL_DIR}
+     )
+ endif(NOT WIN32)
+diff -urp music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d.orig/src/Components/Utilities/musicscanner.cpp music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d/src/Components/Utilities/musicscanner.cpp
+--- music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d.orig/src/Components/Utilities/musicscanner.cpp	2020-03-14 10:11:21.000000000 -0700
++++ music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d/src/Components/Utilities/musicscanner.cpp	2020-07-18 16:08:03.784784476 -0700
+@@ -8,16 +8,16 @@
+ #include <QMimeDatabase>
+ #include <QThread>
+ #include <iostream>
+-#include <taglib/mpegfile.h>
+-#include <taglib/mpegheader.h>
+-#include <taglib/tbytevector.h>
+-#include <taglib/attachedpictureframe.h>
+-#include <taglib/id3v2frame.h>
+-#include <taglib/id3v2header.h>
+-#include <taglib/id3v2tag.h>
++#include <taglib2/mpegfile.h>
++#include <taglib2/mpegheader.h>
++#include <taglib2/tbytevector.h>
++#include <taglib2/attachedpictureframe.h>
++#include <taglib2/id3v2frame.h>
++#include <taglib2/id3v2header.h>
++#include <taglib2/id3v2tag.h>
+ #include <typeinfo>
+-#include <taglib/tpicturemap.h>
+-#include <taglib/id3v1tag.h>
++#include <taglib2/tpicturemap.h>
++#include <taglib2/id3v1tag.h>
+ 
+ 
+ MusicScanner::MusicScanner():
+diff -urp music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d.orig/src/Components/Utilities/musicscanner.h music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d/src/Components/Utilities/musicscanner.h
+--- music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d.orig/src/Components/Utilities/musicscanner.h	2020-03-14 10:11:21.000000000 -0700
++++ music-626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d/src/Components/Utilities/musicscanner.h	2020-07-18 16:08:02.434732342 -0700
+@@ -7,11 +7,11 @@
+ 
+ #include <QFileSystemWatcher>
+ 
+-#include <taglib/taglib.h>
+-#include <taglib/tag.h>
+-#include <taglib/fileref.h>
+-#include <taglib/taglib_config.h>
+-#include <taglib/tpropertymap.h>
++#include <taglib2/taglib.h>
++#include <taglib2/tag.h>
++#include <taglib2/fileref.h>
++#include <taglib2/taglib_config.h>
++#include <taglib2/tpropertymap.h>
+ 
+ #include "../Songs/song.h"
+ #include "../Albums/album.h"
