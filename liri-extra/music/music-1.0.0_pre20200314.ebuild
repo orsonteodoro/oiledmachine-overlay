@@ -47,7 +47,7 @@ RDEPEND="${RDEPEND}
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
-	>=liri-base/cmake-shared-1.0.0
+	  system-fluid? ( >=liri-base/cmake-shared-1.0.0 )
 	 !system-fluid? ( ${FLUID_DEPEND} )"
 inherit cmake-utils eutils xdg
 EGIT_COMMIT="626206c4b9f3cbd85dd5c5dc27dffb3d4098fb5d"
