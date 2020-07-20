@@ -217,7 +217,7 @@ COMMON_DEPEND+="
 	>=net-libs/nodejs-4
 "
 elif [[ -n "${ELECTRON_APP_REACT_NATIVE_V}" ]] \
-	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_V}") -le 0.56 ; then
+	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_V}") -eq 0.56 ; then
 COMMON_DEPEND+="
 	>=net-libs/nodejs-8
 "
