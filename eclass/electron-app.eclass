@@ -15,10 +15,10 @@
 # maintain a secure environment.
 
 case "${EAPI:-0}" in
-        0|1|2|3)
+        0|1|2|3|4|5|6)
                 die "Unsupported EAPI=${EAPI:-0} (too old) for ${ECLASS}"
                 ;;
-        4|5|6|7)
+        7)
                 ;;
         *)
                 die "Unsupported EAPI=${EAPI} (unknown) for ${ECLASS}"

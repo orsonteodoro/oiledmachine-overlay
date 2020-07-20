@@ -7,10 +7,21 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 4 5 6 7
+# @SUPPORTED_EAPIS: 7
 # @BLURB: Eclass for wrapper npm commands
 # @DESCRIPTION:
 # The npm-utils eclass defines convenience functions for working with npm with subdirectories.
+
+case "${EAPI:-0}" in
+        0|1|2|3|4|5|6)
+                die "Unsupported EAPI=${EAPI:-0} (too old) for ${ECLASS}"
+                ;;
+        7)
+                ;;
+        *)
+                die "Unsupported EAPI=${EAPI} (unknown) for ${ECLASS}"
+                ;;
+esac
 
 NPM_UTILS_ALLOW_AUDIT_FIX=${NPM_UTILS_ALLOW_AUDIT_FIX:="1"}
 NPM_UTILS_ALLOW_AUDIT=${NPM_UTILS_ALLOW_AUDIT:="1"}
@@ -425,3 +436,4 @@ npm_update_package_locks_recursive() {
 
 	einfo "npm_update_package_locks_recursive: done"
 }
+
