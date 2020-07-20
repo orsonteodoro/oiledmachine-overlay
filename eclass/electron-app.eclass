@@ -36,10 +36,27 @@ ELECTRON_APP_ALLOW_NON_LTS_ELECTRON=${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON:="0"} 
 # Most electron apps will have electron bundled already.  No need for seperate ebuild.
 
 # See https://www.electronjs.org/docs/development/build-instructions-linux
+# See https://github.com/electron/electron/blob/8-x-y/build/install-build-deps.sh under "List of required run-time libraries"
 # Obtained from ldd
+IUSE+=" app-indicator global-menu-bar libsecret unity pulseaudio" # dlopen with cancelled processing if not found.  likely optional
+# Found in Chromium only
+# For optional fonts, see https://github.com/chromium/chromium/blob/master/build/linux/install-chromeos-fonts.py
+CHROMIUM_DEPEND="
+	  app-accessibility/speech-dispatcher:=
+	  dev-db/sqlite:3=
+	  libsecret? ( app-crypt/libsecret:= )
+	  gnome-keyring? (
+		gnome-base/gnome-keyring[pam]:=
+		gnome-base/libgnome-keyring:=
+	  )
+	  pulseaudio? ( media-sound/pulseaudio:= )
+"
+# Electron only
 COMMON_DEPEND="
+	  ${CHROMIUM_DEPEND}
 	  app-accessibility/at-spi2-atk:2=
 	  app-arch/bzip2:=
+	  app-indicator? ( dev-libs/libappindicator:3= )
 	  dev-libs/atk:=
 	  dev-libs/expat:=
 	  dev-libs/fribidi:=
@@ -48,11 +65,12 @@ COMMON_DEPEND="
 	  dev-libs/libffi
 	  dev-libs/libtasn1:=
 	  dev-libs/libbsd:=
-	  dev-libs/libpcre:=
+	  dev-libs/libpcre:3=
 	  dev-libs/libunistring:=
 	  dev-libs/nss:=
 	  dev-libs/nettle:=
 	  dev-libs/nspr:=
+	  global-menu-bar? ( dev-libs/libdbusmenu:= )
 	  media-gfx/graphite2:=
 	  media-libs/alsa-lib:=
 	  media-libs/fontconfig:=
@@ -66,9 +84,11 @@ COMMON_DEPEND="
 	  net-libs/gnutls:=
 	  net-print/cups:=
 	  sys-apps/dbus:=
+	  sys-apps/pciutils:=
 	  sys-apps/util-linux:=
-	  sys-devel/gcc:=
+	  sys-devel/gcc:=[cxx(+)]
 	  sys-libs/zlib:=[minizip]
+	  unity? ( dev-libs/libunity:= )
 	  virtual/ttf-fonts
 	  x11-libs/cairo:=
 	  x11-libs/gdk-pixbuf:2=
@@ -326,7 +346,7 @@ DEPEND+=" ${COMMON_DEPEND}"
 EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postinst pkg_postrm
 
 DEPEND+=" app-portage/npm-secaudit"
-IUSE+=" debug"
+IUSE+=" debug "
 
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
 NPM_PACKAGE_SETS_DB="/etc/portage/sets/npm-security-update"
