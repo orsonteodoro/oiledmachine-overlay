@@ -15,6 +15,7 @@ SRC_URI="\
 https://github.com/hackjutsu/Lepton/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz"
 ELECTRON_APP_ELECTRON_V="8.4.0"
+ELECTRON_APP_REACT_V="16.6.3"
 inherit desktop electron-app eutils npm-utils
 S="${WORKDIR}/${PN^}-${PV}"
 RESTRICT="mirror"
