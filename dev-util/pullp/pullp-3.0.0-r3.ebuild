@@ -14,6 +14,7 @@ https://github.com/rkclark/pullp/archive/v${PV}.tar.gz \
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]"
 ELECTRON_APP_ELECTRON_V="4.1.0"
+ELECTRON_APP_REACT_V="16.3.2"
 inherit eutils desktop electron-app npm-utils
 S="${WORKDIR}/${PN}-${PV}"
 
