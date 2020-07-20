@@ -8,7 +8,7 @@
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 4 5
-# @BLURB: Eclass for Electron packages
+# @BLURB: Eclass for GUI based Electron packages
 # @DESCRIPTION:
 # The electron-app eclass defines phase functions and utility functions for
 # Electron app packages. It depends on the app-portage/npm-secaudit package to
@@ -104,6 +104,107 @@ if [[ "${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON}" == "0" ]] ; then
 die "Electron should be updated one of the latest Long Term Support (LTS) series versions or else it likely contains critical CVE security advisories."
 fi
 fi
+
+# See https://github.com/angular/angular/blob/4.0.x/package.json
+if [[ -n "${ELECTRON_APP_ANGULAR_V}" ]] && ( \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_V}") -ge 2.0 \
+	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_V}") -le 2.4 ) ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-5.4.1
+	<net-libs/nodejs-7
+"
+elif [[ -n "${ELECTRON_APP_ANGULAR_V}" ]] && ( \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_V}") -ge 4.0 \
+	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_V}") -le 4.4 ) ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-6.9.5
+	<net-libs/nodejs-7
+"
+elif [[ -n "${ELECTRON_APP_ANGULAR_V}" ]] && ( \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_V}") -ge 5.0 \
+	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_V}") -le 6.0 ) ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-8.9.1
+	<net-libs/nodejs-9
+"
+elif [[ -n "${ELECTRON_APP_ANGULAR_V}" ]] && ( \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_V}") -ge 6.1 \
+	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_V}") -le 8.2 ) ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-10.9.0
+	<net-libs/nodejs-11
+"
+elif [[ -n "${ELECTRON_APP_ANGULAR_V}" ]] && ( \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_ANGULAR_V}") -ge 9.0 \
+	&& ver_test $(ver_cut 1 "${ELECTRON_APP_ANGULAR_V}") -le 9999 ) ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-10.9.0
+	<net-libs/nodejs-13
+"
+fi
+
+# See https://github.com/facebook/react/blob/master/package.json
+if [[ -n "${ELECTRON_APP_REACT_V}" ]] && ( \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_V}") -ge 0.3 \
+	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_V}") -le 0.13 ) ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-0.10.0
+"
+elif [[ -n "${ELECTRON_APP_REACT_V}" ]] \
+	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_V}") -eq 0.14 ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-4
+	<net-libs/nodejs-5
+"
+elif [[ -n "${ELECTRON_APP_REACT_V}" ]] && ( \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_V}") -ge 15 \
+	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_V}") -le 15.6 ) ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-4
+	<net-libs/nodejs-8
+"
+elif [[ -n "${ELECTRON_APP_REACT_V}" ]] \
+	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_V}") -eq 16.3 ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-8
+	<net-libs/nodejs-11
+"
+elif [[ -n "${ELECTRON_APP_REACT_V}" ]] \
+	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_V}") -eq 16.4 ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-8
+	<net-libs/nodejs-10
+"
+elif [[ -n "${ELECTRON_APP_REACT_V}" ]] && ( \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_V}") -ge 16.8.3 \
+	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_V}") -le 16.8.6 ) ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-8
+	<net-libs/nodejs-12
+"
+elif [[ -n "${ELECTRON_APP_REACT_V}" ]] \
+	&& ver_test $(ver_cut 1 "${ELECTRON_APP_REACT_V}") -eq 9999 ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-8
+	<net-libs/nodejs-15
+"
+fi
+
+# See https://github.com/microsoft/TypeScript/blob/v2.0.7/package.json
+if [[ -n "${ELECTRON_APP_TYPESCRIPT_V}" ]] && ( \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_TYPESCRIPT_V}") -ge 2.0 \
+	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_TYPESCRIPT_V}") -le 2.1.4 ) ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-0.8.0
+"
+elif [[ -n "${ELECTRON_APP_TYPESCRIPT_V}" ]] && ( \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_TYPESCRIPT_V}") -ge 2.1.5 \
+	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_TYPESCRIPT_V}") -le 9999 ) ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-4.2.0
+"
+fi
+
 
 # Same packages as far back as 3.x
 RDEPEND+=" ${COMMON_DEPEND}"
@@ -245,6 +346,7 @@ electron-app_fetch_deps_npm() {
 	_electron-app-flakey-check
 
 	pushd "${S}" || die
+		einfo "Running npm install inside electron-app_fetch_deps_npm"
 		npm install || die
 	popd
 }

@@ -8,7 +8,7 @@
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 4 5
-# @BLURB: Eclass for Electron packages
+# @BLURB: Eclass for CLI based nodejs packages
 # @DESCRIPTION:
 # The npm-secaudit eclass defines phase functions and utility for npm packages.
 # It depends on the app-portage/npm-secaudit package to maintain a
@@ -16,6 +16,7 @@
 #
 # It was intended to replace the insecure npm.eclass implementations and
 # reduce packaging time.
+#
 
 case "${EAPI:-0}" in
         0|1|2|3)
@@ -32,7 +33,24 @@ inherit eutils npm-utils
 
 EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postrm pkg_postinst
 
-DEPEND+=" app-portage/npm-secaudit"
+# See https://github.com/microsoft/TypeScript/blob/v2.0.7/package.json
+if [[ -n "${NPM_SECAUDIT_TYPESCRIPT_V}" ]] && ( \
+	ver_test $(ver_cut 1-2 "${NPM_SECAUDIT_TYPESCRIPT_V}") -ge 2.0 \
+	&& ver_test $(ver_cut 1-2 "${NPM_SECAUDIT_TYPESCRIPT_V}") -le 2.1.4 ) ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-0.8.0
+"
+elif [[ -n "${NPM_SECAUDIT_TYPESCRIPT_V}" ]] && ( \
+	ver_test $(ver_cut 1-2 "${NPM_SECAUDIT_TYPESCRIPT_V}") -ge 2.1.5 \
+	&& ver_test $(ver_cut 1-2 "${NPM_SECAUDIT_TYPESCRIPT_V}") -le 9999 ) ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-4.2.0
+"
+fi
+
+DEPEND+=" ${COMMON_DEPEND}
+app-portage/npm-secaudit"
+RDEPEND+=" ${COMMON_DEPEND}"
 IUSE+=" debug"
 
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
