@@ -51,34 +51,34 @@ fi
 # See https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/node/v8/index.d.ts
 # For @types/node
 if [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 0 ; then
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 0 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-0"
 if [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 4 ; then
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 4 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-4"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 6 ; then
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 6 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-6*"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 7 ; then
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 7 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-7*"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 8 ; then
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 8 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-8*"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 9 ; then
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 9 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-9*"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 10 ; then
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 10 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-10*"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 11 ; then
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 11 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-11*"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 12 ; then
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 12 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-12*"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
-	ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 13 ; then
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 13 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-13*"
 fi
 
