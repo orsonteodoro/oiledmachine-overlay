@@ -9,7 +9,7 @@ KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
 SLOT="0"
 IUSE="clipboard"
 RDEPEND="clipboard? ( x11-misc/xclip )"
-DEPEND="net-libs/nodejs[npm]"
+DEPEND=">=net-libs/nodejs-8.3[npm]"
 inherit desktop eutils npm-secaudit npm-utils
 MY_PN="${PN//-cli/}"
 SRC_URI=\
