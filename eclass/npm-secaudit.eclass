@@ -53,7 +53,7 @@ fi
 if [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
 	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 0 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-0"
-if [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
+elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
 	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_AT_TYPES_NODE_V}") -eq 4 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-4"
 elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
