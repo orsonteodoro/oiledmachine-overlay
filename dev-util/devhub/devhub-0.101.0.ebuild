@@ -7,15 +7,16 @@ Desktop"
 HOMEPAGE="https://devhubapp.com"
 LICENSE="AGPL-3"
 KEYWORDS="~amd64"
-RDEPEND="${RDEPEND}"
-# =typescript-3.7.5
 SLOT="0"
 IUSE=""
+RDEPEND="${RDEPEND}"
+# =typescript-3.7.5
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]
 	>=sys-apps/yarn-1.13.0"
 ELECTRON_APP_MODE=yarn
-ELECTRON_APP_ELECTRON_V="9.0.3" # todo : update version
+ELECTRON_APP_ELECTRON_V="6.0.11" # todo : verify
+ELECTRON_APP_REACT_NATIVE_V="0.63.0_rc1"
 inherit desktop electron-app eutils npm-utils
 SRC_URI="\
 https://github.com/devhubapp/devhub/archive/v${PV}.tar.gz \
