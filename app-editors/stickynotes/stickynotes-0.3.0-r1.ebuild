@@ -7,10 +7,11 @@ HOMEPAGE="https://github.com/Playork/StickyNotes/"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0"
-RDEPEND=">=dev-util/electron-2.0.0"
+RDEPEND="${RDEPEND}"
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]"
 ELECTRON_APP_ELECTRON_V="9.1.0" # actually it is always latest
+ELECTRON_APP_VUE_V="2.6.11" # always latest.  See https://www.npmjs.com/package/vue
 inherit desktop electron-app eutils
 MY_PN="StickyNotes"
 SRC_URI=\
