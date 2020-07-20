@@ -36,13 +36,13 @@ EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postrm pkg_postinst
 # See https://github.com/microsoft/TypeScript/blob/v2.0.7/package.json
 if [[ -n "${NPM_SECAUDIT_TYPESCRIPT_V}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${NPM_SECAUDIT_TYPESCRIPT_V}") -ge 2.0 \
-	&& ver_test $(ver_cut 1-2 "${NPM_SECAUDIT_TYPESCRIPT_V}") -le 2.1.4 ) ; then
+	&& ver_test $(ver_cut 1-3 "${NPM_SECAUDIT_TYPESCRIPT_V}") -le 2.1.4 ) ; then
 COMMON_DEPEND+="
 	>=net-libs/nodejs-0.8.0
 "
 elif [[ -n "${NPM_SECAUDIT_TYPESCRIPT_V}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${NPM_SECAUDIT_TYPESCRIPT_V}") -ge 2.1.5 \
-	&& ver_test $(ver_cut 1-2 "${NPM_SECAUDIT_TYPESCRIPT_V}") -le 9999 ) ; then
+	ver_test $(ver_cut 1-3 "${NPM_SECAUDIT_TYPESCRIPT_V}") -ge 2.1.5 \
+	&& ver_test $(ver_cut 1 "${NPM_SECAUDIT_TYPESCRIPT_V}") -le 9999 ) ; then
 COMMON_DEPEND+="
 	>=net-libs/nodejs-4.2.0
 "

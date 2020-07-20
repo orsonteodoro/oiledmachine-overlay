@@ -177,7 +177,7 @@ COMMON_DEPEND+="
 "
 elif [[ -n "${ELECTRON_APP_REACT_V}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_V}") -ge 16.8.3 \
-	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_V}") -le 16.8.6 ) ; then
+	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_REACT_V}") -le 16.8.6 ) ; then
 COMMON_DEPEND+="
 	>=net-libs/nodejs-8
 	<net-libs/nodejs-12
@@ -193,13 +193,13 @@ fi
 # See https://github.com/microsoft/TypeScript/blob/v2.0.7/package.json
 if [[ -n "${ELECTRON_APP_TYPESCRIPT_V}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_TYPESCRIPT_V}") -ge 2.0 \
-	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_TYPESCRIPT_V}") -le 2.1.4 ) ; then
+	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_TYPESCRIPT_V}") -le 2.1.4 ) ; then
 COMMON_DEPEND+="
 	>=net-libs/nodejs-0.8.0
 "
 elif [[ -n "${ELECTRON_APP_TYPESCRIPT_V}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_TYPESCRIPT_V}") -ge 2.1.5 \
-	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_TYPESCRIPT_V}") -le 9999 ) ; then
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_TYPESCRIPT_V}") -ge 2.1.5 \
+	&& ver_test $(ver_cut 1 "${ELECTRON_APP_TYPESCRIPT_V}") -le 9999 ) ; then
 COMMON_DEPEND+="
 	>=net-libs/nodejs-4.2.0
 "
