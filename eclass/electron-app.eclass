@@ -157,7 +157,7 @@ COMMON_DEPEND+="
 	<net-libs/nodejs-5
 "
 elif [[ -n "${ELECTRON_APP_REACT_V}" ]] && ( \
-	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_V}") -ge 15 \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_V}") -ge 15.0 \
 	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_V}") -le 15.6 ) ; then
 COMMON_DEPEND+="
 	>=net-libs/nodejs-4
@@ -268,6 +268,55 @@ COMMON_DEPEND+=" =net-libs/nodejs-12*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_V}" ]] \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_V}") -eq 13 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-13*"
+fi
+
+if [[ -n "${ELECTRON_APP_VUE_V}" ]] && ( \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -ge 0.6.0 \
+	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -le 0.11.10 ) ; then
+COMMON_DEPEND+=" =net-libs/nodejs-0.10*" # .travis.yml
+elif [[ -n "${ELECTRON_APP_VUE_V}" ]] && ( \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -ge 0.12.0 \
+	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -le 0.12.0 ) ; then
+COMMON_DEPEND+=" net-libs/iojs" # doesn't say
+elif [[ -n "${ELECTRON_APP_VUE_V}" ]] && ( \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -ge 0.12.1 \
+	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -le 0.12.1 ) ; then
+COMMON_DEPEND+=" net-libs/iojs-2.0.1" # .travis.yml
+elif [[ -n "${ELECTRON_APP_VUE_V}" ]] && ( \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -ge 0.12.2 \
+	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -le 0.12.2 ) ; then
+COMMON_DEPEND+=" " # doesn't say
+elif [[ -n "${ELECTRON_APP_VUE_V}" ]] && ( \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -ge 0.12.0 \
+	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -le 1.0.8 ) ; then
+COMMON_DEPEND+=" net-libs/iojs-2.0.1" # .travis.yml
+elif [[ -n "${ELECTRON_APP_VUE_V}" ]] && ( \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -ge 1.0.9 \
+	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -le 1.0.17 ) ; then
+COMMON_DEPEND+=" =net-libs/nodejs-4*" # based on circle.yml
+elif [[ -n "${ELECTRON_APP_VUE_V}" ]] && ( \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -ge 1.0.18 \
+	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -le 1.0.28 ) ; then
+COMMON_DEPEND+=" =net-libs/nodejs-5*" # based on circle.yml
+elif [[ -n "${ELECTRON_APP_VUE_V}" ]] && ( \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -ge 2.0.0 \
+	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -le 2.4.4 ) ; then
+COMMON_DEPEND+=" =net-libs/nodejs-6*" # based on circle.yml
+elif [[ -n "${ELECTRON_APP_VUE_V}" ]] && ( \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -ge 2.5.0 \
+	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -le 2.5.22 ) ; then
+	# based on @types/node restriction
+COMMON_DEPEND+=" =net-libs/nodejs-8*" # ^8.0.33 ; they did the testing in node6 in <=2.5.7
+elif [[ -n "${ELECTRON_APP_VUE_V}" ]] && ( \
+	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -ge 2.6.0 \
+	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -le 2.6.10 ) ; then
+	# based on @types/node restriction
+COMMON_DEPEND+=" =net-libs/nodejs-10*" # ^10.12.18
+elif [[ -n "${ELECTRON_APP_VUE_V}" ]] \
+	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -ge 2.6.11 ; then
+	# based on @types/node restriction
+	# dev branch
+COMMON_DEPEND+=" =net-libs/nodejs-12*" # ^12.12.0
 fi
 
 # Same packages as far back as 3.x
