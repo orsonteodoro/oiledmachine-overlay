@@ -12,7 +12,9 @@ RDEPEND="${RDEPEND}"
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]
 	>=sys-apps/yarn-1.13.0"
+ELECTRON_APP_ANGULAR_V="6.1.0" # core original before modding
 ELECTRON_APP_ELECTRON_V="2.0.0" # todo, update version
+ELECTRON_APP_TYPESCRIPT_V="2.7.2"
 inherit desktop electron-app eutils
 PV="${PV//_/-}"
 SRC_URI="\
