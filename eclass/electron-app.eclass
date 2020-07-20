@@ -205,6 +205,35 @@ COMMON_DEPEND+="
 "
 fi
 
+# See https://github.com/facebook/react-native/blob/0.63-stable/package.json
+if [[ -n "${ELECTRON_APP_REACT_NATIVE_V}" ]] && ( \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_V}") -ge 0.13 \
+	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_V}") -le 0.55 ) ; then
+COMMON_DEPEND+="" # doesn't say
+elif [[ -n "${ELECTRON_APP_REACT_NATIVE_V}" ]] && ( \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_V}") -ge 0.13 \
+	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_V}") -le 0.55 ) ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-4
+"
+elif [[ -n "${ELECTRON_APP_REACT_NATIVE_V}" ]] \
+	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_V}") -le 0.56 ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-8
+"
+elif [[ -n "${ELECTRON_APP_REACT_NATIVE_V}" ]] && ( \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_V}") -ge 0.57 \
+	&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_V}") -le 0.62 ) ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-8.3
+"
+elif [[ -n "${ELECTRON_APP_REACT_NATIVE_V}" ]] && ( \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_V}") -ge 0.63 \
+	&& ver_test $(ver_cut 1 "${ELECTRON_APP_REACT_NATIVE_V}") -le 9999 ) ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-10
+"
+fi
 
 # Same packages as far back as 3.x
 RDEPEND+=" ${COMMON_DEPEND}"
