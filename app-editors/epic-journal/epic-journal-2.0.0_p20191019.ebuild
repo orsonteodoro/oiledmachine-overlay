@@ -14,6 +14,7 @@ RDEPEND="${RDEPEND}
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]"
 ELECTRON_APP_ELECTRON_V="3.1.13" # todo, update version
+ELECTRON_APP_VUE_V="2.5.16"
 inherit desktop electron-app eutils
 MY_PN="Epic Journal"
 EGIT_COMMIT="0cdc1091a1eaf7d8ccdd5893ac3d275a3b651c58"

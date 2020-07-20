@@ -13,7 +13,8 @@ RDEPEND="${RDEPEND}
 	 dev-db/sqlcipher"
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]"
-ELECTRON_APP_ELECTRON_V="1.0.6" # todo, update version
+ELECTRON_APP_ELECTRON_V="1.7.5" # todo, update version
+ELECTRON_APP_VUE_V="2.3.3"
 inherit desktop electron-app eutils
 MY_PN="Epic Journal"
 SRC_URI="\
