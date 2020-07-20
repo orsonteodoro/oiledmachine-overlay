@@ -12,6 +12,7 @@ RDEPEND="${RDEPEND}"
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]"
 ELECTRON_APP_ELECTRON_V="1.8.8" # todo update
+ELECTRON_APP_REACT_V="16.3.2"
 inherit desktop electron-app eutils npm-utils
 MY_PN="SnippetStore"
 SRC_URI="\
