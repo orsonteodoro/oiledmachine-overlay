@@ -566,7 +566,7 @@ _query_lite_json() {
 # @DESCRIPTION:
 # Print warnings for audits or die depending on ELECTRON_APP_NO_DIE_ON_AUDIT
 adie() {
-	if [[ "${ELECTRON_APP_NO_DIE_ON_AUDIT}" == "0" ]] ; then
+	if [[ "${ELECTRON_APP_NO_DIE_ON_AUDIT}" == "1" ]] ; then
 		ewarn "${1}"
 	else
 		die "${1}"
@@ -606,22 +606,23 @@ ${INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_LINK_ADVISORY}"
 	fi
 
 	if ver_test $(ver_cut 1 "${ELECTRON_V}") -le 6 ; then
-		# Let it fail in ${CHROME_V} vulernability tests
+		# Let it fail in ${CHROMIUM_V} vulernability tests
 		ewarn "Electron ${ELECTRON_V} has already reached End Of Life (EOL)."
 	fi
 
-	CHROME_V=$(_query_lite_json '.deps.chrome')
-	if ver_test "${CHROME_V}" ${INSECURE_NVD_CHROME_LAST_CRITICAL_COND} \
+	CHROMIUM_V=$(_query_lite_json '.deps.chrome')
+	if ver_test "${CHROMIUM_V}" ${INSECURE_NVD_CHROME_LAST_CRITICAL_COND} \
 		"${INSECURE_NVD_CHROME_LAST_CRITICAL}" ; then
 		adie \
-"Electron ${ELECTRON_V} has a critical vulnerability in internal Chromium.\n\
-For details see\n\
+"Electron ${ELECTRON_V} has a critical vulnerability in internal Chromium\n\
+which is version ${CHROMIUM_V}.  For details see\n\
 ${INSECURE_NVD_CHROME_LAST_LINK_ADVISORY}"
 	fi
-	if ver_test "${CHROME_V}" ${INSECURE_GLSA_CHROME_COND} \
+	if ver_test "${CHROMIUM_V}" ${INSECURE_GLSA_CHROME_COND} \
 		"${INSECURE_GLSA_CHROME}" ; then
 		adie \
-"Electron ${ELECTRON_V} has a GLSA advisory.  See\n\
+"Electron ${ELECTRON_V} has a GLSA advisory for internal Chromium\n\
+${CHROMIUM_V}.  See\n\
 ${INSECURE_GLSA_CHROME_ADVISORY_LINK}"
 	fi
 	LIBUV_V=$(_query_lite_json '.deps.uv')
@@ -644,7 +645,7 @@ ${INSECURE_GLSA_CHROME_ADVISORY_LINK}"
 	einfo "Electron version report with internal/external dependencies:"
 	einfo
 	einfo "ELECTRON_V=${ELECTRON_V}"
-	einfo "CHROME_V=${CHROME_V}"
+	einfo "CHROMIUM_V=${CHROMIUM_V}"
 	einfo "LIBUV_V=${LIBUV_V}"
 	einfo "NODE_V=${NODE_V}"
 	einfo "V8_V=${V8_V}"
