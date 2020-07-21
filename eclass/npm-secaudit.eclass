@@ -83,7 +83,8 @@ COMMON_DEPEND+=" =net-libs/nodejs-13*"
 fi
 
 DEPEND+=" ${COMMON_DEPEND}
-app-portage/npm-secaudit"
+#DEPEND+="
+#app-portage/npm-secaudit"
 RDEPEND+=" ${COMMON_DEPEND}"
 IUSE+=" debug"
 

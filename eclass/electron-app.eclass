@@ -367,9 +367,9 @@ DEPEND+=" ${COMMON_DEPEND}"
 
 EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postinst pkg_postrm
 
-DEPEND+="
-	app-portage/npm-secaudit
-"
+#DEPEND+="
+#	app-portage/npm-secaudit
+#"
 IUSE+=" debug "
 BDEPEND+="
 	app-misc/jq
