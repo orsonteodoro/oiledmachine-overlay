@@ -143,7 +143,7 @@ elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] && ver_test $(ver_cut 1-2 "${ELECTRON
 :; # series supported upstream
 else
 if [[ "${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON}" == "0" ]] ; then
-die "Electron should be updated one of the latest Long Term Support (LTS) series versions or else it likely contains critical CVE security advisories."
+die "Electron should be updated to one of the latest Long Term Support (LTS) series versions or else it likely contains critical CVE security advisories."
 fi
 fi
 
