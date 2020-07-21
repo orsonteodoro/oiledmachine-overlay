@@ -29,6 +29,25 @@ inherit desktop eutils npm-utils
 
 ELECTRON_APP_ALLOW_NON_LTS_ELECTRON=${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON:="0"} # You could define it as a per-package envar.  It not recommended in the ebuild.
 
+# See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=electron&search_type=all
+INSECURE_NVD_ELECTRON_LAST_CRITICAL_9="9.0.0_beta21" # replace - with _
+INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_COND="-lt"
+INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_LINK_ADVISORY="https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
+INSECURE_NVD_ELECTRON_LAST_CRITICAL_8="8.2.4"
+INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_COND="-lt"
+INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_LINK_ADVISORY="https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
+INSECURE_NVD_ELECTRON_LAST_CRITICAL_7="7.2.4"
+INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_COND="-lt"
+INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_LINK_ADVISORY="https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
+# See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome&search_type=all
+INSECURE_NVD_CHROME_LAST_CRITICAL="83.0.4103.97"
+INSECURE_NVD_CHROME_LAST_CRITICAL_COND="-lt"
+INSECURE_NVD_CHROME_LAST_LINK_ADVISORY="https://nvd.nist.gov/vuln/detail/CVE-2020-6493"
+# See https://security.gentoo.org/glsa
+INSECURE_GLSA_CHROME="83.0.4103.97"
+INSECURE_GLSA_CHROME_COND="-lt"
+INSECURE_GLSA_CHROME_ADVISORY_LINK="https://security.gentoo.org/glsa/202006-02"
+
 # LTS versions: https://www.electronjs.org/docs/tutorial/support
 # Currently 9.x, 8.x, 7.x
 
@@ -38,15 +57,18 @@ ELECTRON_APP_ALLOW_NON_LTS_ELECTRON=${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON:="0"} 
 # See https://www.electronjs.org/docs/development/build-instructions-linux
 # See https://github.com/electron/electron/blob/8-x-y/build/install-build-deps.sh under "List of required run-time libraries"
 # Obtained from ldd
-IUSE+=" app-indicator global-menu-bar libsecret unity pulseaudio" # dlopen with cancelled processing if not found.  likely optional
+IUSE+=" app-indicator global-menu-bar gnome-keyring libsecret unity pulseaudio" # dlopen with cancelled processing if not found.  likely optional
 # Found in Chromium only
 # For optional fonts, see https://github.com/chromium/chromium/blob/master/build/linux/install-chromeos-fonts.py
+#  For specific versions associated with Chromium release, see as base address https://github.com/chromium/chromium/tree/66.0.3359.181/
+#    chromium/chrome/installer/linux/debian/dist_package_versions.json for chromium 66.0.3359.181 (electron version v3.0.0 to latest)
+#    chrome/installer/linux/debian/expected_deps_x64 for chromium 49.0.2623.75 to <76.0.3809.88 (electron 1.0.0 to <v3.0.0)
 CHROMIUM_DEPEND="
 	  app-accessibility/speech-dispatcher:=
 	  dev-db/sqlite:3=
 	  libsecret? ( app-crypt/libsecret:= )
 	  gnome-keyring? (
-		gnome-base/gnome-keyring[pam]:=
+		gnome-base/gnome-keyring:=[pam]
 		gnome-base/libgnome-keyring:=
 	  )
 	  pulseaudio? ( media-sound/pulseaudio:= )
@@ -530,6 +552,100 @@ electron-app_fetch_deps() {
 	esac
 }
 
+_query_lite_json() {
+	echo $(cat "${T}/lite.json" | jq '.[] | select(.tag_name == "v'${ELECTRON_V}'")' | jq ${1} | sed -e "s|[\"]*||g")
+}
+
+# @FUNCTION: adie
+# @DESCRIPTION:
+# Print warnings for audits or die depending on ELECTRON_APP_NO_DIE_ON_AUDIT
+adie() {
+	if [[ "${ELECTRON_APP_NO_DIE_ON_AUDIT}" == "0" ]] ; then
+		ewarn "${1}"
+	else
+		die "${1}"
+	fi
+}
+
+# @FUNCTION: electron-app_audit_versions
+# @DESCRIPTION:
+# Audits json logs for vulnerable versions and min requirements
+electron-app_audit_versions() {
+	einfo "Inspecting package versions for vulnerabilities and minimum version requirements"
+	wget -O "${T}/lite.json" "https://raw.githubusercontent.com/electron/releases/master/lite.json" || die
+	ELECTRON_V=$(npm ls electron | grep -P -e "electron@[0-9.]+" | tail -n 1 | sed -e "s|[^0-9\.]*||g") # used by package
+
+	if ver_test $(ver_cut 1 "${ELECTRON_V}") -eq 9 \
+		&& ver_test ${ELECTRON_V} ${INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_COND} \
+			"${INSECURE_NVD_ELECTRON_LAST_CRITICAL_9}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a critical vulnerability itself.  For details see\n\
+${INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_LINK_ADVISORY}"
+	fi
+
+	if ver_test $(ver_cut 1 "${ELECTRON_V}") -eq 8 \
+		&& ver_test ${ELECTRON_V} ${INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_COND} \
+			"${INSECURE_NVD_ELECTRON_LAST_CRITICAL_8}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a critical vulnerability itself.  For details see\n\
+${INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_LINK_ADVISORY}"
+	fi
+
+	if ver_test $(ver_cut 1 "${ELECTRON_V}") -eq 7 \
+		&& ver_test ${ELECTRON_V} ${INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_COND} \
+			"${INSECURE_NVD_ELECTRON_LAST_CRITICAL_7}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a critical vulnerability itself.  For details see\n\
+${INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_LINK_ADVISORY}"
+	fi
+
+	if ver_test $(ver_cut 1 "${ELECTRON_V}") -le 6 ; then
+		# Let it fail in ${CHROME_V} vulernability tests
+		ewarn "Electron ${ELECTRON_V} has already reached End Of Life (EOL)."
+	fi
+
+	CHROME_V=$(_query_lite_json '.deps.chrome')
+	if ver_test "${ELECTRON_V}" ${INSECURE_NVD_CHROME_LAST_CRITICAL_COND} \
+		"${INSECURE_NVD_CHROME_LAST_CRITICAL}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a critical vulnerability in internal Chromium.\n\
+For details see\n\
+${INSECURE_NVD_CHROME_LAST_LINK_ADVISORY}"
+	fi
+	if ver_test "${ELECTRON_V}" ${INSECURE_GLSA_CHROME_COND} \
+		"${INSECURE_GLSA_CHROME}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a GLSA advisory.  See\n\
+${INSECURE_GLSA_CHROME_ADVISORY_LINK}"
+	fi
+	LIBUV_V=$(_query_lite_json '.deps.uv')
+	if ! has_version ">=dev-libs/libuv-${LIBUV_V}" ; then
+		adie "Electron ${ELECTRON_V} requires at least ${LIBUV_V}"
+	fi
+	# It's actually BoringSSL not OpenSSL in Chromium.
+	# Commented out because Chromium checks
+	#BORINGSSL_V=$(_query_lite_json '.deps.openssl')
+	NODE_V=$(_query_lite_json '.deps.node')
+	if ! has_version ">=net-libs/nodejs-${NODE_V}" ; then
+		adie "Electron ${ELECTRON_V} requires at least ${NODE_V}"
+	fi
+	V8_V=$(_query_lite_json '.deps.v8')
+	ZLIB_V=$(_query_lite_json '.deps.zlib')
+	if ! has_version ">=sys-libs/zlib-${ZLIB_V}" ; then
+		adie "Electron ${ELECTRON_V} requires at least ${ZLIB_V}"
+	fi
+	einfo
+	einfo "Electron version report with internal/external dependencies:"
+	einfo
+	einfo "ELECTRON_V=${ELECTRON_V}"
+	einfo "CHROME_V=${CHROME_V}"
+	einfo "LIBUV_V=${LIBUV_V}"
+	einfo "NODE_V=${NODE_V}"
+	einfo "V8_V=${V8_V}"
+	einfo "ZLIB_V=${ZLIB_V}"
+	einfo
+}
+
 # @FUNCTION: electron-app_src_unpack
 # @DESCRIPTION:
 # Unpacks sources
@@ -576,6 +692,9 @@ electron-app_src_unpack() {
 	if declare -f electron-app_src_postcompile > /dev/null ; then
 		electron-app_src_postcompile
 	fi
+
+	cd "${S}"
+	electron-app_audit_versions
 
 	cd "${S}"
 	if declare -f electron-app_src_preinst > /dev/null ; then
