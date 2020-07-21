@@ -611,14 +611,14 @@ ${INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_LINK_ADVISORY}"
 	fi
 
 	CHROME_V=$(_query_lite_json '.deps.chrome')
-	if ver_test "${ELECTRON_V}" ${INSECURE_NVD_CHROME_LAST_CRITICAL_COND} \
+	if ver_test "${CHROME_V}" ${INSECURE_NVD_CHROME_LAST_CRITICAL_COND} \
 		"${INSECURE_NVD_CHROME_LAST_CRITICAL}" ; then
 		adie \
 "Electron ${ELECTRON_V} has a critical vulnerability in internal Chromium.\n\
 For details see\n\
 ${INSECURE_NVD_CHROME_LAST_LINK_ADVISORY}"
 	fi
-	if ver_test "${ELECTRON_V}" ${INSECURE_GLSA_CHROME_COND} \
+	if ver_test "${CHROME_V}" ${INSECURE_GLSA_CHROME_COND} \
 		"${INSECURE_GLSA_CHROME}" ; then
 		adie \
 "Electron ${ELECTRON_V} has a GLSA advisory.  See\n\
