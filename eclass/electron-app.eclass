@@ -323,7 +323,7 @@ COMMON_DEPEND+=" net-libs/iojs" # doesn't say
 elif [[ -n "${ELECTRON_APP_VUE_V}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -ge 0.12.1 \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -le 0.12.1 ) ; then
-COMMON_DEPEND+=" net-libs/iojs-2.0.1" # .travis.yml
+COMMON_DEPEND+=" ~net-libs/iojs-2.0.1" # .travis.yml
 elif [[ -n "${ELECTRON_APP_VUE_V}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -ge 0.12.2 \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -le 0.12.2 ) ; then
@@ -331,7 +331,7 @@ COMMON_DEPEND+=" " # doesn't say
 elif [[ -n "${ELECTRON_APP_VUE_V}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -ge 0.12.0 \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -le 1.0.8 ) ; then
-COMMON_DEPEND+=" net-libs/iojs-2.0.1" # .travis.yml
+COMMON_DEPEND+=" ~net-libs/iojs-2.0.1" # .travis.yml
 elif [[ -n "${ELECTRON_APP_VUE_V}" ]] && ( \
 	ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -ge 1.0.9 \
 	&& ver_test $(ver_cut 1-3 "${ELECTRON_APP_VUE_V}") -le 1.0.17 ) ; then
