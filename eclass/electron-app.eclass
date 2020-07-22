@@ -636,7 +636,7 @@ ${INSECURE_GLSA_CHROME_ADVISORY_LINK}"
 	if ! has_version ">=net-libs/nodejs-${NODE_V}" ; then
 		adie "Electron ${ELECTRON_V} requires at least ${NODE_V}"
 	fi
-	if [[ ver_test "${NODE_V}" -lt 10 ]] ; then
+	if ver_test "${NODE_V}" -lt 10 ; then
 		adie "Electron ${ELECTRON_V} uses ${NODE_V} which is End Of Life (EOL)."
 	fi
 	if has_version "<net-libs/nodejs-10" ; then
