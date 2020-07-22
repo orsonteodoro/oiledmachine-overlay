@@ -1,0 +1,6 @@
+#!/bin/bash
+PROJECT_ROOT="/usr/lib64/node/devhub/0"
+export PATH="${PROJECT_ROOT}/node_modules/.bin:${PROJECT_ROOT}/node_modules/electron/dist:${PATH}"
+pushd "${PROJECT_ROOT}"
+./packages/desktop/build/linux-unpacked/devhub
+popd

@@ -15,7 +15,7 @@ DEPEND="${RDEPEND}
         net-libs/nodejs[npm]
 	>=sys-apps/yarn-1.13.0"
 ELECTRON_APP_MODE=yarn
-ELECTRON_APP_ELECTRON_V="6.0.11" # todo : verify
+ELECTRON_APP_ELECTRON_V="6.0.11"
 ELECTRON_APP_REACT_NATIVE_V="0.63.0_rc1"
 inherit desktop electron-app eutils npm-utils
 SRC_URI="\
@@ -116,11 +116,11 @@ electron-app_src_compile() {
 	cd "${S}"
 
 	export PATH="${S}/node_modules/.bin:${PATH}"
-	#yarn run dev:desktop || die
-	#cross-env BROWSER=none concurrently \"yarn dev:web\" \"yarn workspace @devhub/desktop compile -w\" \"wait-on http://localhost:3000 && yarn workspace @devhub/desktop start
-	sed -i -e 's|"build:electron": "electron-builder",|"build:electron": "electron-builder -l dir",|' "packages/desktop/package.json" || die
-	yarn workspace @devhub/desktop compile || die
-	yarn workspace @devhub/desktop build:electron || die
+
+	yarn workspace @devhub/web build || die
+	yarn workspace @devhub/desktop build:base || die
+	yarn workspace @devhub/desktop build:web:post || die
+	yarn workspace @devhub/desktop build:electron --linux dir || die
 
 	cd "${S}"
 
@@ -128,8 +128,11 @@ electron-app_src_compile() {
 }
 
 src_install() {
-	electron-app_desktop_install "*" \
-		"node_modules/@devhub/desktop/assets/icons/icon.png" "${MY_PN}" \
-		"Development" \
-	"/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/dist/main.js"
+	electron-app_desktop_install_program "*"
+
+	exeinto /usr/bin
+	doexe "${FILESDIR}/${PN}"
+
+        newicon "node_modules/@devhub/desktop/assets/icons/icon.png" "${PN}.png"
+        make_desktop_entry ${PN} "${MY_PN}" ${PN} "Development"
 }
