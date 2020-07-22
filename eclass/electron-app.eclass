@@ -48,6 +48,8 @@ INSECURE_GLSA_CHROME="83.0.4103.97"
 INSECURE_GLSA_CHROME_COND="-lt"
 INSECURE_GLSA_CHROME_ADVISORY_LINK="https://security.gentoo.org/glsa/202006-02"
 
+NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="10"
+
 # LTS versions: https://www.electronjs.org/docs/tutorial/support
 # Currently 9.x, 8.x, 7.x
 
@@ -636,11 +638,11 @@ ${INSECURE_GLSA_CHROME_ADVISORY_LINK}"
 	if ! has_version ">=net-libs/nodejs-${NODE_V}" ; then
 		adie "Electron ${ELECTRON_V} requires at least ${NODE_V}"
 	fi
-	if ver_test "${NODE_V}" -lt 10 ; then
+	if ver_test "${NODE_V}" -lt ${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN} ; then
 		adie "Electron ${ELECTRON_V} uses ${NODE_V} which is End Of Life (EOL)."
 	fi
-	if has_version "<net-libs/nodejs-10" ; then
-		ewarn "You have a nodejs less than 10 which is End Of Life (EOL) and has vulnerabilities."
+	if has_version "<net-libs/nodejs-${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN}" ; then
+		ewarn "You have a nodejs less than ${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN} which is End Of Life (EOL) and has vulnerabilities."
 	fi
 	V8_V=$(_query_lite_json '.deps.v8')
 	ZLIB_V=$(_query_lite_json '.deps.zlib')

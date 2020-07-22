@@ -97,6 +97,8 @@ NPM_SECAUDIT_ALLOW_AUDIT_FIX=${NPM_SECAUDIT_ALLOW_AUDIT_FIX:="1"} # You could de
 NPM_SECAUDIT_NO_DIE_ON_AUDIT=${NPM_SECAUDIT_NO_DIE_ON_AUDIT:="0"} # You could define it as a per-package envar.  It not recommended in the ebuild.
 NPM_SECAUDIT_LOCKS_DIR="/dev/shm"
 
+NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="10"
+
 # @FUNCTION: npm_pkg_setup
 # @DESCRIPTION:
 # Initializes globals
@@ -121,8 +123,8 @@ download micropackages."
 		die "Missing /dev/shm.  Check the kernel config?"
 	fi
 
-	if has_version "<net-libs/nodejs-10" ; then
-		ewarn "You have a nodejs less than 10 which is End Of Life (EOL) and has vulnerabilities."
+	if has_version "<net-libs/nodejs-${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN}" ; then
+		ewarn "You have a nodejs less than ${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN} which is End Of Life (EOL) and has vulnerabilities."
 	fi
 }
 
