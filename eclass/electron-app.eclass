@@ -839,16 +839,11 @@ electron-app_src_preinst_default() {
 	true
 }
 
-# @FUNCTION: electron-app_desktop_install
+# @FUNCTION: electron-app_desktop_install_program
 # @DESCRIPTION:
-# Installs a desktop app with wrapper and desktop menu entry.
-electron-app_desktop_install() {
+# Installs program only
+electron-app_desktop_install_program() {
 	local rel_src_path="$1"
-	local rel_icon_path="$2"
-	local pkg_name="$3"
-	local category="$4"
-	local cmd="$5"
-
 	case "$ELECTRON_APP_MODE" in
 		npm)
 			local old_dotglob=$(shopt dotglob | cut -f 2)
@@ -880,6 +875,19 @@ electron-app_desktop_install() {
 			die "Unsupported package system"
 			;;
 	esac
+}
+
+# @FUNCTION: electron-app_desktop_install
+# @DESCRIPTION:
+# Installs a desktop app with wrapper and desktop menu entry.
+electron-app_desktop_install() {
+	local rel_src_path="$1"
+	local rel_icon_path="$2"
+	local pkg_name="$3"
+	local category="$4"
+	local cmd="$5"
+
+	electron-app_desktop_install_program "${rel_src_path}"
 
 	# Create wrapper
 	exeinto "/usr/bin"
