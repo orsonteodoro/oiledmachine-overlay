@@ -636,6 +636,12 @@ ${INSECURE_GLSA_CHROME_ADVISORY_LINK}"
 	if ! has_version ">=net-libs/nodejs-${NODE_V}" ; then
 		adie "Electron ${ELECTRON_V} requires at least ${NODE_V}"
 	fi
+	if [[ ver_test "${NODE_V}" -lt 10 ]] ; then
+		adie "Electron ${ELECTRON_V} uses ${NODE_V} which is End Of Life (EOL)."
+	fi
+	if has_version "<net-libs/nodejs-10" ; then
+		ewarn "You have a nodejs less than 10 which is End Of Life (EOL) and has vulnerabilities."
+	fi
 	V8_V=$(_query_lite_json '.deps.v8')
 	ZLIB_V=$(_query_lite_json '.deps.zlib')
 	if ! has_version ">=sys-libs/zlib-${ZLIB_V}" ; then

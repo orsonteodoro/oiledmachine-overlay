@@ -120,6 +120,10 @@ download micropackages."
 	if [[ ! -d "/dev/shm" ]] ; then
 		die "Missing /dev/shm.  Check the kernel config?"
 	fi
+
+	if has_version "<net-libs/nodejs-10" ; then
+		ewarn "You have a nodejs less than 10 which is End Of Life (EOL) and has vulnerabilities."
+	fi
 }
 
 # @FUNCTION: npm-secaudit_fetch_deps
