@@ -7,15 +7,18 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 7
+# @SUPPORTED_EAPIS: 6 7
 # @BLURB: Eclass for wrapper npm commands
 # @DESCRIPTION:
 # The npm-utils eclass defines convenience functions for working with npm with subdirectories.
 
 case "${EAPI:-0}" in
-        0|1|2|3|4|5|6)
+        0|1|2|3|4|5)
                 die "Unsupported EAPI=${EAPI:-0} (too old) for ${ECLASS}"
                 ;;
+	6)
+		inherit eapi7-ver
+		;;
         7)
                 ;;
         *)

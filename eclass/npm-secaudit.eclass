@@ -7,7 +7,7 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 7
+# @SUPPORTED_EAPIS: 6 7
 # @BLURB: Eclass for CLI based nodejs packages
 # @DESCRIPTION:
 # The npm-secaudit eclass defines phase functions and utility for npm packages.
@@ -19,10 +19,13 @@
 #
 
 case "${EAPI:-0}" in
-        0|1|2|3|4|5|6)
+        0|1|2|3|4|5)
                 die "Unsupported EAPI=${EAPI:-0} (too old) for ${ECLASS}"
                 ;;
-        7)
+        6)
+		inherit eapi7-ver
+		;;
+	7)
                 ;;
         *)
                 die "Unsupported EAPI=${EAPI} (unknown) for ${ECLASS}"

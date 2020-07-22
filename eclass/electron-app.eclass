@@ -7,7 +7,7 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 4 5
+# @SUPPORTED_EAPIS: 6 7
 # @BLURB: Eclass for GUI based Electron packages
 # @DESCRIPTION:
 # The electron-app eclass defines phase functions and utility functions for
@@ -15,15 +15,19 @@
 # maintain a secure environment.
 
 case "${EAPI:-0}" in
-        0|1|2|3|4|5|6)
+        0|1|2|3|4|5)
                 die "Unsupported EAPI=${EAPI:-0} (too old) for ${ECLASS}"
                 ;;
-        7)
+        6)
+		inherit eapi7-ver
+		;;
+	7)
                 ;;
         *)
                 die "Unsupported EAPI=${EAPI} (unknown) for ${ECLASS}"
                 ;;
 esac
+
 
 inherit desktop eutils npm-utils
 
@@ -373,10 +377,17 @@ EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postinst pkg_postrm
 #	app-portage/npm-secaudit
 #"
 IUSE+=" debug "
+if (( ${EAPI} == 7 )) ; then
 BDEPEND+="
 	app-misc/jq
 	net-misc/wget
 "
+else
+DEPEND+="
+	app-misc/jq
+	net-misc/wget
+"
+fi
 
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
 NPM_PACKAGE_SETS_DB="/etc/portage/sets/npm-security-update"
