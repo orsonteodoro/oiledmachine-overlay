@@ -1,0 +1,10 @@
+--- a/em++.orig	2020-07-20 15:35:39.000000000 -0700
++++ b/em++	2020-07-23 13:11:57.599096594 -0700
+@@ -30,4 +30,6 @@ if [ -z "$PYTHON" ]; then
+   exit 1
+ fi
+ 
+-exec "$PYTHON" "$0.py" "$@"
++EMSCRIPTEN_DIR=$(dirname "${EM_CONFIG}")
++
++exec "$PYTHON" "${EMSCRIPTEN_DIR}/em++.py" "$@"

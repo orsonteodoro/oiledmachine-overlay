@@ -60,21 +60,14 @@ Package
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
 PYTHON_COMPAT=( python3_{6,7,8} )
-inherit java-pkg-opt-2 python-single-r1
-IUSE="java nodejs"
+inherit python-single-r1
+IUSE="test"
 # See also .circleci/config.yml
-JAVA_V="1.6"
 RDEPEND="${PYTHON_DEPS}
 	dev-util/binaryen
 	~dev-util/emscripten-fastcomp-${PV}
-	nodejs? ( >=net-libs/nodejs-0.10.17 )"
-DEPEND="${RDEPEND}
-	java? (
-		|| (
-			>=virtual/jdk-${JAVA_V}
-			>=virtual/jre-${JAVA_V}
-		)
-	)"
+	>=net-libs/nodejs-0.10.17"
+DEPEND="${RDEPEND}"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 FN_DEST="${P}.tar.gz"
 SRC_URI="https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${FN_DEST}"
@@ -83,6 +76,10 @@ DEST="/usr/share/"
 TEST="${WORKDIR}/test/"
 DOWNLOAD_SITE="https://github.com/emscripten-core/emscripten/releases"
 FN_SRC="${PV}.tar.gz"
+PATCHES=(
+	"${FILESDIR}/emscripten-1.39.20-em++.patch"
+	"${FILESDIR}/emscripten-1.39.20-emcc.patch"
+)
 
 pkg_nofetch() {
 	# no fetch on all-rights-reserved
@@ -94,28 +91,18 @@ from ${DOWNLOAD_SITE} and rename it to ${FN_DEST} place it in ${distdir}"
 }
 
 pkg_setup() {
-	if use java ; then
-		java-pkg-opt-2_pkg_setup
-		if [[ -n "${JAVA}" && -f "${JAVA}" ]] ; then
-			:;
-		elif which java ; then
-			JAVA=$(java)
-		else
+	if use test ; then
+		if ! has test "${FEATURES}" ; then
 			die \
-"\n
-Could not find java.  Set JAVA= as per-package environmental variable and\n\
-point it to absolute path of your java executible\n\
-\n"
+"The test USE flag requires the environmental variable test to be added to\n\
+FEATURES"
 		fi
-		einfo "JAVA=${JAVA}"
-		if [[ -n "${JAVA_HOME}" && -f "${JAVA_HOME}/bin/java" ]] ; then
-			:;
-		elif [[ -z "${JAVA_HOME}" ]] ; then
-			die "JAVA_HOME is not set"
-		else
-			die "JAVA_HOME is set to ${JAVA_HOME} but cannot locate ${JAVA_HOME}/bin/java"
-		fi
-		java-pkg_ensure-vm-version-ge ${JAVA_V}
+	fi
+
+	if [[ ! -f /usr/share/emscripten-fastcomp-${PV}/bin/llc ]] ; then
+		die \
+"You need to install ~dev-util/emscripten-fastcomp-${PV}.  Only revision\n\
+updates acceptable."
 	fi
 }
 
@@ -132,30 +119,36 @@ src_prepare() {
 	eapply_user
 }
 
+src_compile() {
+	:;
+}
+
 src_test() {
-	mkdir "${TEST}" || die "Could not create test directory!"
-	cp "${FILESDIR}/hello_world.cpp" "${TEST}" \
-		|| die "Could not copy example file"
-	cp "${S}/emscripten.config" "${TEST}" \
-		|| die "Could not copy config file"
-	sed -i -e "/^EMSCRIPTEN_ROOT/s|/usr/share/|${S}|" \
-		"${TEST}/emscripten.config" \
-		|| die "Could not adjust path for testing"
-	export EM_CONFIG="${TEST}/emscripten.config" \
-		|| die "Could not export variable"
-	../"${P}/emcc" "${TEST}/hello_world.cpp" \
-		-o "${TEST}/hello_world.js" || \
-		die "Error during executing emcc!"
-	test -f "${TEST}/hello_world.js" \
-		|| die "Could not find '${TEST}/hello_world.js'"
-	OUT=$(/usr/bin/node "${TEST}/hello_world.js") || \
-		die "Could not execute /usr/bin/node"
-	EXP=$(echo -e -n 'Hello World!\n') \
-		|| die "Could not create expected string"
-	if [ "${OUT}" != "${EXP}" ]; then
-		die "Expected '${EXP}' but got '${OUT}'!"
+	if use test ; then
+		mkdir "${TEST}" || die "Could not create test directory!"
+		cp "${FILESDIR}/hello_world.cpp" "${TEST}" \
+			|| die "Could not copy example file"
+		cp "${S}/emscripten.config" "${TEST}" \
+			|| die "Could not copy config file"
+		sed -i -e "/^EMSCRIPTEN_ROOT/s|/usr/share/|${S}|" \
+			"${TEST}/emscripten.config" \
+			|| die "Could not adjust path for testing"
+		export EM_CONFIG="${TEST}/emscripten.config" \
+			|| die "Could not export variable"
+		../"${P}/emcc" "${TEST}/hello_world.cpp" \
+			-o "${TEST}/hello_world.js" || \
+			die "Error during executing emcc!"
+		test -f "${TEST}/hello_world.js" \
+			|| die "Could not find '${TEST}/hello_world.js'"
+		OUT=$(/usr/bin/node "${TEST}/hello_world.js") || \
+			die "Could not execute /usr/bin/node"
+		EXP=$(echo -e -n 'Hello World!\n') \
+			|| die "Could not create expected string"
+		if [ "${OUT}" != "${EXP}" ]; then
+			die "Expected '${EXP}' but got '${OUT}'!"
+		fi
+		rm -r "${TEST}" || die "Could not clean-up '${TEST}'"
 	fi
-	rm -r "${TEST}" || die "Could not clean-up '${TEST}'"
 }
 
 src_install() {
@@ -173,15 +166,4 @@ pkg_postinst() {
 	export EM_CONFIG="${DEST}/${P}/emscripten.config" \
 		|| die "Could not export variable"
 	/usr/bin/emcc -v || die "Could not run emcc initialization"
-
-	# See https://github.com/emscripten-core/emscripten/blob/1.39.20/tests/jsrun.py
-	einfo
-	einfo "Emscripten can work with the following JavaScript runtimes instead:"
-	einfo
-	einfo "v8/d8 (dev-lang/v8)"
-	einfo "JavaScriptCore [aka jsc] (net-libs/webkit-gtk)"
-	einfo "Node.js (net-libs/nodejs) -- the default"
-	einfo "wasmer (dev-util/wasmer)"
-	einfo "wasmtime"
-	einfo
 }
