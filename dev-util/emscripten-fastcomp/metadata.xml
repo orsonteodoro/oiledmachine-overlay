@@ -12,4 +12,8 @@
     <email>harald.weiner@jku.at</email>
     <name>Harald Weiner</name>
   </maintainer>
+  <use>
+    <flag name="clang">Builds package with clang</flag>
+    <flag name="gcc">Builds package with gcc</flag>
+  </use>
 </pkgmetadata>

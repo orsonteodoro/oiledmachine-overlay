@@ -1,9 +1,6 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# For requirements, see
-# https://github.com/emscripten-core/emscripten/blob/master/site/source/docs/building_from_source/toolchain_what_is_needed.rst
-
 EAPI=7
 DESCRIPTION="Emscripten LLVM backend - Fastcomp is the default compiler core for Emscripten"
 HOMEPAGE="http://emscripten.org/"
@@ -31,16 +28,20 @@ KEYWORDS="~amd64 ~x86"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit python-single-r1
 SLOT="0"
-REQUIRED_USE="${PYTHON_REQUIRED_USE}"
-MY_DEPEND="${PYTHON_DEPS}
-	>=net-libs/nodejs-0.12.6"
-RDEPEND="${MY_DEPEND}
-	>=virtual/jre-1.5"
-DEPEND="${MY_DEPEND}
-	>=dev-util/cmake-3.4.3"
+IUSE="clang gcc"
+REQUIRED_USE="${PYTHON_REQUIRED_USE} ^^ ( clang gcc )"
+# For dependencies see https://emscripten.org/docs/building_from_source/building_fastcomp_manually_from_source.html#what-you-ll-need
+CDEPEND="${PYTHON_DEPS}"
+RDEPEND="${CDEPEND}"
+DEPEND="${CDEPEND}"
 BDEPEND="dev-cpp/gtest
 	>=dev-util/cmake-3.4.3
-	>=net-libs/nodejs-0.12.6"
+	clang? (
+		>=sys-devel/clang-6.0.1
+		>=sys-devel/lld-6.0.1
+		>=sys-devel/llvm-6.0.1
+	)
+	gcc? ( sys-devel/gcc )"
 inherit cmake-utils
 SRC_URI="\
 https://github.com/kripken/${PN}/archive/${PV}.tar.gz \
@@ -63,6 +64,14 @@ src_prepare() {
 }
 
 src_configure() {
+	if use gcc ; then
+		export CC=gcc
+		export CXX=g++
+	elif use clang ; then
+		export CC=clang
+		export CXX=clang++
+	fi
+	einfo "CC=${CC} CXX=${CXX}"
 	# create symlink to tools/clang
 	ln -s "${WORKDIR}/${PN}-clang-${PV}/" "${WORKDIR}/${P}/tools/clang" \
 		|| die "Could not create symlink to tools/clang"
