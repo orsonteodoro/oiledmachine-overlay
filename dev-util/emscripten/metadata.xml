@@ -22,11 +22,6 @@
     <remote-id type="github">emscripten-core/emscripten</remote-id>
   </upstream>
   <use>
-    <flag name="closure">Checks proper dependencies for support for closure\
-      compiler and --closure compilation switch to minify the JavaScript
-      code.</flag>
-    <flag name="nodejs">Installs nodejs that may be required.  Additional
-      modding may be required to remove this heavy dependency.</flag>
     <flag name="test">Run tests</flag>
   </use>
 </pkgmetadata>
