@@ -60,12 +60,21 @@ Package
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
 PYTHON_COMPAT=( python3_{6,7,8} )
-inherit python-single-r1
+inherit java-pkg-opt-2 python-single-r1
+IUSE="java nodejs"
+# See also .circleci/config.yml
+JAVA_V="1.6"
 RDEPEND="${PYTHON_DEPS}
 	dev-util/binaryen
 	~dev-util/emscripten-fastcomp-${PV}
-	>=net-libs/nodejs-0.12.6"
-DEPEND="${RDEPEND}"
+	nodejs? ( >=net-libs/nodejs-0.10.17 )"
+DEPEND="${RDEPEND}
+	java? (
+		|| (
+			>=virtual/jdk-${JAVA_V}
+			>=virtual/jre-${JAVA_V}
+		)
+	)"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 FN_DEST="${P}.tar.gz"
 SRC_URI="https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${FN_DEST}"
@@ -86,6 +95,32 @@ pkg_nofetch() {
 "Please download\n\
   ${FN_SRC}\n\
 from ${DOWNLOAD_SITE} and rename it to ${FN_DEST} place it in ${distdir}"
+}
+
+pkg_setup() {
+	if use java ; then
+		java-pkg-opt-2_pkg_setup
+		if [[ -n "${JAVA}" && -f "${JAVA}" ]] ; then
+			:;
+		elif which java ; then
+			JAVA=$(java)
+		else
+			die \
+"\n
+Could not find java.  Set JAVA= as per-package environmental variable and\n\
+point it to absolute path of your java executible\n\
+\n"
+		fi
+		einfo "JAVA=${JAVA}"
+		if [[ -n "${JAVA_HOME}" && -f "${JAVA_HOME}/bin/java" ]] ; then
+			:;
+		elif [[ -z "${JAVA_HOME}" ]] ; then
+			die "JAVA_HOME is not set"
+		else
+			die "JAVA_HOME is set to ${JAVA_HOME} but cannot locate ${JAVA_HOME}/bin/java"
+		fi
+		java-pkg_ensure-vm-version-ge ${JAVA_V}
+	fi
 }
 
 prepare_file() {
@@ -142,4 +177,15 @@ pkg_postinst() {
 	export EM_CONFIG="${DEST}/${P}/emscripten.config" \
 		|| die "Could not export variable"
 	/usr/bin/emcc -v || die "Could not run emcc initialization"
+
+	# See https://github.com/emscripten-core/emscripten/blob/1.39.20/tests/jsrun.py
+	einfo
+	einfo "Emscripten can work with the following JavaScript runtimes instead:"
+	einfo
+	einfo "v8/d8 (dev-lang/v8)"
+	einfo "JavaScriptCore [aka jsc] (net-libs/webkit-gtk)"
+	einfo "Node.js (net-libs/nodejs) -- the default"
+	einfo "wasmer (dev-util/wasmer)"
+	einfo "wasmtime"
+	einfo
 }
