@@ -113,8 +113,8 @@ src_install() {
 
 	# avoid collsion with sys-devel/llvm-roc
 	if ! use man-scan-build ; then
-		if [[ -f "${ED}/usr/share/man/man1/scan-build.1.bz2" ]] ; then
-			rm -rf "${ED}/usr/share/man/man1/scan-build.1.bz2" || die
+		if [[ -f "${ED}/usr/share/man/man1/scan-build.1" ]] ; then
+			rm -rf "${ED}/usr/share/man/man1/scan-build.1" || die
 		fi
 	fi
 }
