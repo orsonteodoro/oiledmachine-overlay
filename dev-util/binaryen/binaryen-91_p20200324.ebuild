@@ -15,7 +15,7 @@ DEPEND="${RDEPEND}"
 CMAKE_MIN_VERSION="3.1.3"
 CMAKE_BUILD_TYPE="Release"
 PYTHON_COMPAT=( python3_{6,7,8} )
-inherit cmake-utils python-any-r1
+inherit cmake-utils python-any-r1 toolchain-funcs
 EGIT_COMMIT="e01e7e9db72eeb688ecb774b58416521e320c3fe"
 SRC_URI="\
 https://github.com/WebAssembly/binaryen/archive/${EGIT_COMMIT}.tar.gz \
@@ -23,6 +23,23 @@ https://github.com/WebAssembly/binaryen/archive/${EGIT_COMMIT}.tar.gz \
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 DOCS=( CHANGELOG.md README.md )
+
+pkg_setup() {
+	CC=$(tc-getCC)
+	CXX=$(tc-getCXX)
+	echo "CC=${CC} CXX=${CXX}"
+	if tc-is-gcc ; then
+		if ver_test $(gcc-major-version) -lt 5 ; then
+			die "${PN} requires GCC >=5.x for c++14 support"
+		fi
+	elif tc-is-clang ; then
+		if ver_test $(clang-version) -lt 3.4 ; then
+			die "${PN} requires Clang >=3.4.x for c++14 support"
+		fi
+	else
+		die "Compiler is not supported"
+	fi
+}
 
 src_prepare() {
 	sed -r -i \
