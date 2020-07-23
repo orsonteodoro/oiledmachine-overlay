@@ -28,7 +28,7 @@ KEYWORDS="~amd64 ~x86"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit python-single-r1
 SLOT="0"
-IUSE="clang gcc"
+IUSE="clang gcc man-scan-build"
 REQUIRED_USE="${PYTHON_REQUIRED_USE} ^^ ( clang gcc )"
 # For dependencies see https://emscripten.org/docs/building_from_source/building_fastcomp_manually_from_source.html#what-you-ll-need
 CDEPEND="${PYTHON_DEPS}"
@@ -110,4 +110,11 @@ src_install() {
 	cat "${WORKDIR}/${PN}-clang-${PV}/CODE_OWNERS.TXT" \
 		> "${T}/CODE_OWNERS.Clang.TXT"
 	dodoc "${T}/CODE_OWNERS.Clang.TXT"
+
+	# avoid collsion with sys-devel/llvm-roc
+	if ! use man-scan-build ; then
+		if [[ -f "${ED}/usr/share/man/man1/scan-build.1.bz2" ]] ; then
+			rm -rf "${ED}/usr/share/man/man1/scan-build.1.bz2" || die
+		fi
+	fi
 }
