@@ -14,6 +14,274 @@
 # The ot-kernel-v5.7 eclass defines specific applicable patching for the 5.7.x
 # linux kernel.
 
+# /proc/crypto for TRESOR sse2 with kernel 5.7.10
+# using the 256-bit AES patch
+#name         : __xts(tresor)
+#driver       : cryptd(__xts-tresor-sse2)
+#module       : kernel
+#priority     : 451
+#refcnt       : 1
+#selftest     : passed
+#internal     : yes
+#type         : skcipher
+#async        : yes
+#blocksize    : 16
+#min keysize  : 32
+#max keysize  : 32
+#ivsize       : 16
+#chunksize    : 16
+#walksize     : 16
+
+#name         : xts(tresor)
+#driver       : xts-tresor-sse2
+#module       : kernel
+#priority     : 401
+#refcnt       : 1
+#selftest     : passed
+#internal     : no
+#type         : skcipher
+#async        : yes
+#blocksize    : 16
+#min keysize  : 32
+#max keysize  : 32
+#ivsize       : 16
+#chunksize    : 16
+#walksize     : 16
+
+#name         : __ctr(tresor)
+#driver       : cryptd(__ctr-tresor-sse2)
+#module       : kernel
+#priority     : 450
+#refcnt       : 1
+#selftest     : passed
+#internal     : yes
+#type         : skcipher
+#async        : yes
+#blocksize    : 1
+#min keysize  : 16
+#max keysize  : 32
+#ivsize       : 16
+#chunksize    : 16
+#walksize     : 16
+
+#name         : ctr(tresor)
+#driver       : ctr-tresor-sse2
+#module       : kernel
+#priority     : 400
+#refcnt       : 1
+#selftest     : passed
+#internal     : no
+#type         : skcipher
+#async        : yes
+#blocksize    : 1
+#min keysize  : 16
+#max keysize  : 32
+#ivsize       : 16
+#chunksize    : 16
+#walksize     : 16
+
+#name         : __cbc(tresor)
+#driver       : cryptd(__cbc-tresor-sse2)
+#module       : kernel
+#priority     : 450
+#refcnt       : 1
+#selftest     : passed
+#internal     : yes
+#type         : skcipher
+#async        : yes
+#blocksize    : 16
+#min keysize  : 16
+#max keysize  : 32
+#ivsize       : 16
+#chunksize    : 16
+#walksize     : 16
+
+#name         : cbc(tresor)
+#driver       : cbc-tresor-sse2
+#module       : kernel
+#priority     : 400
+#refcnt       : 1
+#selftest     : passed
+#internal     : no
+#type         : skcipher
+#async        : yes
+#blocksize    : 16
+#min keysize  : 16
+#max keysize  : 32
+#ivsize       : 16
+#chunksize    : 16
+#walksize     : 16
+
+#name         : __ecb(tresor)
+#driver       : cryptd(__ecb-tresor-sse2)
+#module       : kernel
+#priority     : 450
+#refcnt       : 1
+#selftest     : passed
+#internal     : yes
+#type         : skcipher
+#async        : yes
+#blocksize    : 16
+#min keysize  : 16
+#max keysize  : 32
+#ivsize       : 0
+#chunksize    : 16
+#walksize     : 16
+
+#name         : ecb(tresor)
+#driver       : ecb-tresor-sse2
+#module       : kernel
+#priority     : 400
+#refcnt       : 1
+#selftest     : passed
+#internal     : no
+#type         : skcipher
+#async        : yes
+#blocksize    : 16
+#min keysize  : 16
+#max keysize  : 32
+#ivsize       : 0
+#chunksize    : 16
+#walksize     : 16
+
+#name         : __xts(tresor)
+#driver       : __xts-tresor-sse2
+#module       : kernel
+#priority     : 401
+#refcnt       : 1
+#selftest     : passed
+#internal     : yes
+#type         : skcipher
+#async        : no
+#blocksize    : 16
+#min keysize  : 32
+#max keysize  : 32
+#ivsize       : 16
+#chunksize    : 16
+#walksize     : 16
+
+#name         : __ctr(tresor)
+#driver       : __ctr-tresor-sse2
+#module       : kernel
+#priority     : 400
+#refcnt       : 1
+#selftest     : passed
+#internal     : yes
+#type         : skcipher
+#async        : no
+#blocksize    : 1
+#min keysize  : 16
+#max keysize  : 32
+#ivsize       : 16
+#chunksize    : 16
+#walksize     : 16
+
+#name         : __cbc(tresor)
+#driver       : __cbc-tresor-sse2
+#module       : kernel
+#priority     : 400
+#refcnt       : 1
+#selftest     : passed
+#internal     : yes
+#type         : skcipher
+#async        : no
+#blocksize    : 16
+#min keysize  : 16
+#max keysize  : 32
+#ivsize       : 16
+#chunksize    : 16
+#walksize     : 16
+
+#name         : __ecb(tresor)
+#driver       : __ecb-tresor-sse2
+#module       : kernel
+#priority     : 400
+#refcnt       : 1
+#selftest     : passed
+#internal     : yes
+#type         : skcipher
+#async        : no
+#blocksize    : 16
+#min keysize  : 16
+#max keysize  : 32
+#ivsize       : 0
+#chunksize    : 16
+#walksize     : 16
+
+#name         : tresor
+#driver       : tresor-driver
+#module       : kernel
+#priority     : 100
+#refcnt       : 1
+#selftest     : passed
+#internal     : no
+#type         : cipher
+#blocksize    : 16
+#min keysize  : 16
+#max keysize  : 32
+
+
+#cryptsetup benchmark --cipher tresor-cbc --key-size 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+# tresor-cbc        128b        28.8 MiB/s        20.0 MiB/s
+
+# cryptsetup benchmark --cipher tresor-cbc --key-size 192
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+# tresor-cbc        192b        35.6 MiB/s        21.2 MiB/s
+
+# cryptsetup benchmark --cipher tresor-cbc --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+# tresor-cbc        256b        24.4 MiB/s        15.9 MiB/s
+
+
+# cryptsetup benchmark --cipher tresor-ctr --key-size 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+# tresor-ctr        128b        29.5 MiB/s        30.2 MiB/s
+
+# cryptsetup benchmark --cipher tresor-ctr --key-size 192
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+# tresor-ctr        192b        39.0 MiB/s        39.5 MiB/s
+
+# cryptsetup benchmark --cipher tresor-ctr --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+# tresor-ctr        256b        25.2 MiB/s        25.6 MiB/s
+
+
+# cryptsetup benchmark --cipher tresor-ecb --key-size 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+# tresor-ecb        128b        29.9 MiB/s        19.4 MiB/s
+
+# cryptsetup benchmark --cipher tresor-ecb --key-size 192
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+# tresor-ecb        192b        38.5 MiB/s        22.0 MiB/s
+
+# cryptsetup benchmark --cipher tresor-ecb --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+# tresor-ecb        256b        25.3 MiB/s        15.7 MiB/s
+
+
+# cryptsetup benchmark --cipher tresor-xts --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+# tresor-xts        256b        28.2 MiB/s        19.2 MiB/s
+
+
+# 5.7.x dmesg errors (in 4.14 there were dmesg errors):
+#[    2.899917] alg: skcipher: ecb(tresor) encryption test failed (wrong result) on test vector 0, cfg="in-place"
+#[    2.899940] alg: skcipher: cbc(tresor) encryption test failed (wrong result) on test vector 0, cfg="in-place"
+#[    2.899960] alg: skcipher: ctr(tresor) encryption test failed (wrong result) on test vector 0, cfg="in-place"
+#[    2.900098] alg: skcipher: xts(tresor) encryption test failed (wrong result) on test vector 1, cfg="in-place"
+
+
 ETYPE="sources"
 
 K_MAJOR_MINOR="5.7"
@@ -36,16 +304,17 @@ ZENTUNE_5_7_COMMIT="03344d1ad1076dd6374f208f8de4c7f6da9dbcee..13f40f309a6a443fcd
 PATCH_TRESOR_VER="3.18.5"
 
 IUSE="bfq bmq +cfs disable_debug futex-wait-multiple +genpatches +graysky2 \
-muqss +o3 prjc tresor tresor_aesni tresor_i686 \
-tresor_sysfs tresor_x86_64 uksm zenmisc -zentune"
+muqss +o3 prjc tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 \
+tresor_x86_64-256-bit-key-support uksm zenmisc -zentune"
 REQUIRED_USE="\
 !bfq
 ^^ ( bmq cfs muqss prjc ) \
 tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
+tresor_aesni? ( tresor )
 tresor_i686? ( tresor )
-tresor_x86_64? ( tresor )
 tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
-tresor_aesni? ( tresor )"
+tresor_x86_64? ( tresor )
+tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )"
 
 #K_WANT_GENPATCHES="base extras experimental"
 K_SECURITY_UNSUPPORTED=${K_SECURITY_UNSUPPORTED:="1"}
@@ -158,9 +427,11 @@ function ot-kernel-common_apply_tresor_fixes() {
 	fi
 
 	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-fix-warnings-for-tresor_key_c.patch"
-#	if use tresor_x86_64 || use tresor_i686 ; then
-#		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-256-bit-aes-support-i686.patch"
-#	fi
+	if use tresor_x86_64-256-bit-key-support ; then
+		if use tresor_x86_64 || use tresor_i686 ; then
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-256-bit-aes-support-i686-v2-for-5.7.patch"
+		fi
+	fi
 }
 
 # @FUNCTION: ot-kernel-common_pkg_postinst_cb
@@ -176,5 +447,12 @@ You must choose Periodic timer ticks (constant rate, no dynticks)\n\
   CONFIG_HZ_PERIODIC for it not to lock up.\n\
 The MuQSS scheduler may have random system hard pauses for few seconds to\n\
   around a minute when resource usage is high."
+	fi
+	if use tresor_x86_64-256-bit-key-support ; then
+		ewarn \
+"\n\
+192- and 256-bit key support was added to TRESOR (sse2 for 64-bit) but is\n\
+experimental.\n\
+\n"
 	fi
 }
