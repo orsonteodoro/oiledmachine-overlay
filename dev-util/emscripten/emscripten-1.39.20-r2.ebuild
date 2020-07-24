@@ -63,8 +63,9 @@ PYTHON_COMPAT=( python3_{6,7,8} )
 inherit python-single-r1
 IUSE="test"
 # See also .circleci/config.yml
+# See also tools/shared.py EXPECTED_BINARYEN_VERSION
 RDEPEND="${PYTHON_DEPS}
-	dev-util/binaryen
+	>=dev-util/binaryen-93
 	~dev-util/emscripten-fastcomp-${PV}
 	>=net-libs/nodejs-0.10.17"
 DEPEND="${RDEPEND}"
