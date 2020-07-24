@@ -1,1 +1,2 @@
 EM_CONFIG=/usr/share/emscripten-${PV}/emscripten.config
+EM_HOME="/usr/share/emscripten-${PV}"

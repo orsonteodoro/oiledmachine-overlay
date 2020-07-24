@@ -157,6 +157,7 @@ src_install() {
 	dodir "${DEST}/${P}"
 	cp -R "${S}/" "${D}/${DEST}" || die "Could not install files"
 	dosym ../share/${P}/emcc /usr/bin/emcc
+	dosym ../share/${P}/em++ /usr/bin/em++
 	dosym ../share/${P}/emcmake /usr/bin/emcmake
 	doenvd 99emscripten
 	ewarn "If you consider using emscripten in an active shell,"\
