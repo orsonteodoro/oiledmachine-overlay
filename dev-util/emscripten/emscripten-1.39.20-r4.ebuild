@@ -78,8 +78,7 @@ TEST="${WORKDIR}/test/"
 DOWNLOAD_SITE="https://github.com/emscripten-core/emscripten/releases"
 FN_SRC="${PV}.tar.gz"
 PATCHES=(
-	"${FILESDIR}/emscripten-1.39.20-em++.patch"
-	"${FILESDIR}/emscripten-1.39.20-emcc.patch"
+	"${FILESDIR}/emscripten-1.39.20-set-wrappers-path.patch"
 )
 
 pkg_nofetch() {
@@ -156,9 +155,18 @@ src_test() {
 src_install() {
 	dodir "${DEST}/${P}"
 	cp -R "${S}/" "${D}/${DEST}" || die "Could not install files"
-	dosym ../share/${P}/emcc /usr/bin/emcc
 	dosym ../share/${P}/em++ /usr/bin/em++
+	dosym ../share/${P}/em-config /usr/bin/em-config
+	dosym ../share/${P}/emar /usr/bin/emar
+	dosym ../share/${P}/embuilder /usr/bin/embuilder
+	dosym ../share/${P}/emcc /usr/bin/emcc
 	dosym ../share/${P}/emcmake /usr/bin/emcmake
+	dosym ../share/${P}/emconfigure /usr/bin/emconfigure
+	dosym ../share/${P}/emmake /usr/bin/emmake
+	dosym ../share/${P}/emranlib /usr/bin/emranlib
+	dosym ../share/${P}/emrun /usr/bin/emrun
+	dosym ../share/${P}/emscons /usr/bin/emscons
+	dosym ../share/${P}/emsize /usr/bin/emsize
 	doenvd 99emscripten
 	ewarn "If you consider using emscripten in an active shell,"\
 		"please execute 'source /etc/profile'"
