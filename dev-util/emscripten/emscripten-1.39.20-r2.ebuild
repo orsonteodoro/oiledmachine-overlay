@@ -77,8 +77,8 @@ TEST="${WORKDIR}/test/"
 DOWNLOAD_SITE="https://github.com/emscripten-core/emscripten/releases"
 FN_SRC="${PV}.tar.gz"
 PATCHES=(
-	"${FILESDIR}/emscripten-1.39.8-em++.patch"
-	"${FILESDIR}/emscripten-1.39.8-em++_py.patch"
+	"${FILESDIR}/emscripten-1.39.20-em++.patch"
+	"${FILESDIR}/emscripten-1.39.20-emcc.patch"
 )
 
 pkg_nofetch() {
@@ -92,7 +92,7 @@ from ${DOWNLOAD_SITE} and rename it to ${FN_DEST} place it in ${distdir}"
 
 pkg_setup() {
 	if use test ; then
-		if ! has test "${FEATURES}" ; then
+		if [[ ! "${FEATURES}" =~ test ]] ; then
 			die \
 "The test USE flag requires the environmental variable test to be added to\n\
 FEATURES"
@@ -114,7 +114,8 @@ prepare_file() {
 
 src_prepare() {
 	prepare_file "99emscripten"
-	prepare_file "emscripten.config"
+	prepare_file "emscripten.config.1.39.20"
+	mv "${S}/emscripten.config"{.1.39.20,} || die
 	eapply ${PATCHES[@]}
 	eapply_user
 }
