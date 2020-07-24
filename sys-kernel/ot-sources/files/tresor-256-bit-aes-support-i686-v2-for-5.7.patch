@@ -440,7 +440,7 @@ todo: Check sanitation of key or temporary variables at the end of macro and
 +
 +	s_box rotation:
 +
-+	        4   3   2   1   : index/address of 4 32-bit words
++	        3   2   1   0   : index/address of 4 32-bit words
 +	           ^^^^vvvv
 +	index: fedcba9876543210
 +	                      |
@@ -465,7 +465,7 @@ todo: Check sanitation of key or temporary variables at the end of macro and
  	movd		edx,rhelp
 -	pxor		rhelp,\rk
 +
-+	pslldq		$8,rhelp /* placed in ^^^^ in s_box rotation section or 3 index of words */
++	pslldq		$8,rhelp /* placed in ^^^^ in s_box rotation section or 2 index of words */
 +	pxor		rhelp,\r2 /* w6 / w18 */
 +
 +	/*
