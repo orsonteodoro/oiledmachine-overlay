@@ -158,6 +158,9 @@ function ot-kernel-common_apply_tresor_fixes() {
 	fi
 
 	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-fix-warnings-for-tresor_key_c.patch"
+#	if use tresor_x86_64 || use tresor_i686 ; then
+#		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-256-bit-aes-support-i686.patch"
+#	fi
 }
 
 # @FUNCTION: ot-kernel-common_pkg_postinst_cb
