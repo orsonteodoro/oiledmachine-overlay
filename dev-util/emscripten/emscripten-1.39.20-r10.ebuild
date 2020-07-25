@@ -198,7 +198,7 @@ src_prepare() {
 			local cmd
 			if use closure_compiler_java ; then
 				cmd=\
-"/usr/bin/java -jar /opt/closure-compiler-${CLOSURE_COMPILER_SLOT}/lib/closure-compiler.jar"
+"/usr/bin/closure-compiler-java"
 			elif use closure_compiler_nodejs ; then
 				cmd=\
 "/usr/bin/closure-compiler-node"
