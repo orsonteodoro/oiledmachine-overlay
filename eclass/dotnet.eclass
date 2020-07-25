@@ -1241,11 +1241,12 @@ dotnet_is_netfx() {
 # $2 - the path to the file to distribute
 # @CODE
 dotnet_distribute_file_matching_dll_in_gac() {
+	use !prefix && has "${EAPI:-0}" 0 1 2 && ED="${D}"
 	if use gac ; then
 		local dll="${1}"
 		local h=$(sha1sum "${1}")
 		local payload_path="${2}"
-		DLLS=$(find "${D}"/usr/$(get_libdir)/mono/gac/ -name "*.dll")
+		DLLS=$(find "${ED}"/usr/$(get_libdir)/mono/gac/ -name "*.dll")
 		for f in ${DLLS} ; do
 			x_h=$(sha1sum "${f}")
 			if [[ "${x_h}" == "${h}" ]] ; then
