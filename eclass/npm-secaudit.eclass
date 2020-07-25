@@ -85,7 +85,7 @@ elif [[ -n "${NPM_SECAUDIT_AT_TYPES_NODE_V}" ]] \
 COMMON_DEPEND+=" =net-libs/nodejs-13*"
 fi
 
-DEPEND+=" ${COMMON_DEPEND}
+DEPEND+=" ${COMMON_DEPEND}"
 #DEPEND+="
 #app-portage/npm-secaudit"
 RDEPEND+=" ${COMMON_DEPEND}"
