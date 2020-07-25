@@ -75,7 +75,7 @@ inherit cmake-utils java-pkg-opt-2 npm-secaudit python-single-r1
 IUSE="+closure-compiler +native-optimizer system-closure-compiler test"
 # See also .circleci/config.yml
 # See also tools/shared.py EXPECTED_BINARYEN_VERSION
-JAVA_V="1.6"
+JAVA_V="1.8"
 # A Closure Compiler dependency (node.js-closure-compiler-externs) requires >=nodejs-0.8.
 RDEPEND="${PYTHON_DEPS}
 	closure-compiler? (
