@@ -1,5 +1,6 @@
 EM_CONFIG=/usr/share/emscripten-${PV}/emscripten.config
 EMSCRIPTEN=/usr/share/emscripten-${PV}
+EMSDK_CLOSURE_COMPILER=__EMSDK_CLOSURE_COMPILER__
 EMSDK_LLVM_ROOT=/usr/share/emscripten-fastcomp-${PV}/bin
 EMSDK_NODE=/usr/bin/node
 EMSDK_PYTHON=${PYTHON_EXE_ABSPATH}

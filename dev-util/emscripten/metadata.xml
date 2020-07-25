@@ -22,6 +22,10 @@
     <remote-id type="github">emscripten-core/emscripten</remote-id>
   </upstream>
   <use>
+    <flag name="closure-compiler">Fetches and builds the Closure Compiler
+      for minification.</flag>
+    <flag name="system-closure-compiler">Uses the system's Closure Compiler
+      instead of the internal version.</flag>
     <flag name="native-optimizer">Builds the native optimizer used after
       Emscripten has finish compilation.</flag>
     <flag name="test">Run tests</flag>
