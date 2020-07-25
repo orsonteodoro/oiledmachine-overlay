@@ -149,7 +149,9 @@ npm-secaudit_src_unpack() {
 
 	cd "${WORKDIR}"
 
-	default_src_unpack
+	if [[ ! -d "${S}" ]] ; then
+		default_src_unpack
+	fi
 
 	# all the phase hooks get run in unpack because of download restrictions
 
