@@ -293,13 +293,13 @@ pkg_postinst() {
 	einfo \
 "\n\
 LLVM_ROOT is set to EMSDK_LLVM_ROOT to avoid possible environmental variable\n\
-conflict.  Set it manually to LLVM_ROOT=\$EMSDK_LLVM_ROOT before compiling\n\
+conflict.  Set it manually to LLVM_ROOT=\"\$EMSDK_LLVM_ROOT\" before compiling\n\
 with ${P}.\n\
 \n"
 	einfo \
 "\n\
 CLOSURE_COMPILER is set to EMSDK_CLOSURE_COMPILER to avoid possible\n\
 environmental variable conflict.  Set it manually to\n\
-CLOSURE_COMPILER=\$EMSDK_CLOSURE_COMPILER before compiling with ${P}.\n\
+CLOSURE_COMPILER=\"\$EMSDK_CLOSURE_COMPILER\" before compiling with ${P}.\n\
 \n"
 }
