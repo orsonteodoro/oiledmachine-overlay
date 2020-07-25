@@ -98,6 +98,9 @@ RDEPEND="${PYTHON_DEPS}
 	>=net-libs/nodejs-0.10.17"
 DEPEND="${RDEPEND}"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
+	closure_compiler_java? ( closure-compiler )
+	closure_compiler_native? ( closure-compiler )
+	closure_compiler_nodejs? ( closure-compiler )
 	system-closure-compiler? (
 		closure-compiler
 		^^ ( closure_compiler_java closure_compiler_native closure_compiler_nodejs )
@@ -125,19 +128,23 @@ from ${DOWNLOAD_SITE} and rename it to ${FN_DEST} place it in ${distdir}"
 
 pkg_setup() {
 	if use closure-compiler ; then
-		java-pkg_init
-		if [[ -n "${JAVA_HOME}" && -f "${JAVA_HOME}/bin/java" ]] ; then
-			export JAVA="${JAVA_HOME}/bin/java"
-		elif [[ -z "${JAVA_HOME}" ]] ; then
-			die \
+		if ! use closure_compiler_native ; then
+			java-pkg_init
+			if [[ -n "${JAVA_HOME}" && -f "${JAVA_HOME}/bin/java" ]] ; then
+				export JAVA="${JAVA_HOME}/bin/java"
+			elif [[ -z "${JAVA_HOME}" ]] ; then
+				die \
 "JAVA_HOME is not set.  Use \`eselect java-vm\` to set this up."
-		else
-			die \
+			else
+				die \
 "JAVA_HOME is set to ${JAVA_HOME} but cannot locate ${JAVA_HOME}/bin/java.\n\
 Use \`eselect java-vm\` to set this up."
+			fi
+			java-pkg_ensure-vm-version-ge ${JAVA_V}
 		fi
-		java-pkg_ensure-vm-version-ge ${JAVA_V}
-		npm-secaudit_pkg_setup
+		if ! use system-closure-compiler ; then
+			npm-secaudit_pkg_setup
+		fi
 	fi
 	if use test ; then
 		if [[ ! "${FEATURES}" =~ test ]] ; then
