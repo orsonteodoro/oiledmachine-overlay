@@ -60,8 +60,8 @@ Package
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
 PYTHON_COMPAT=( python3_{6,7,8} )
-inherit python-single-r1
-IUSE="test"
+inherit cmake-utils python-single-r1
+IUSE="+native-optimizer test"
 # See also .circleci/config.yml
 # See also tools/shared.py EXPECTED_BINARYEN_VERSION
 RDEPEND="${PYTHON_DEPS}
@@ -77,9 +77,10 @@ DEST="/usr/share/"
 TEST="${WORKDIR}/test/"
 DOWNLOAD_SITE="https://github.com/emscripten-core/emscripten/releases"
 FN_SRC="${PV}.tar.gz"
-PATCHES=(
+_PATCHES=(
 	"${FILESDIR}/emscripten-1.39.20-set-wrappers-path.patch"
 )
+CMAKE_BUILD_TYPE=Release
 
 pkg_nofetch() {
 	# no fetch on all-rights-reserved
@@ -104,24 +105,44 @@ FEATURES"
 "You need to install ~dev-util/emscripten-fastcomp-${PV}.  Only revision\n\
 updates acceptable."
 	fi
+	python-single-r1_pkg_setup
 }
 
 prepare_file() {
 	cp "${FILESDIR}/${1}" "${S}/" || die "could not copy '${1}'"
 	sed -i "s/\${PV}/${PV}/g" "${S}/${1}" || \
 		die "could not adjust path for '${1}'"
+	sed -i -e "s|\${PYTHON_EXE_ABSPATH}|${PYTHON_EXE_ABSPATH}|g" "${S}/${1}" || die
 }
 
 src_prepare() {
+	export PYTHON_EXE_ABSPATH=$(which ${PYTHON})
+	einfo "PYTHON_EXE_ABSPATH=${PYTHON_EXE_ABSPATH}"
 	prepare_file "99emscripten"
 	prepare_file "emscripten.config.1.39.20"
 	mv "${S}/emscripten.config"{.1.39.20,} || die
-	eapply ${PATCHES[@]}
+	eapply ${_PATCHES[@]}
 	eapply_user
+	S="${S}/tools/optimizer" \
+	cmake-utils_src_prepare
+	if ! use native-optimizer ; then
+		sed -i "/EMSCRIPTEN_NATIVE_OPTIMIZER/d" \
+			"${S}/99emscripten" || die
+	fi
+}
+
+src_configure() {
+	S="${S}/tools/optimizer" \
+	cmake-utils_src_configure
+
 }
 
 src_compile() {
-	:;
+	if use native-optimizer ; then
+		cd "tools/optimizer" || die
+		S="${S}/tools/optimizer" \
+		cmake-utils_src_compile
+	fi
 }
 
 src_test() {
@@ -153,7 +174,27 @@ src_test() {
 }
 
 src_install() {
+	if use native-optimizer ; then
+		exeinto "${DEST}/${P}"
+		doexe "${BUILD_DIR}/optimizer"
+	fi
+
 	dodir "${DEST}/${P}"
+	# See tools/install.py
+	find "${S}" \
+	\( \
+		-path "tests/third_party" \
+		-o -name "site" \
+		-o -name "node_modules" \
+		-o -name "Makefile" \
+		-o -name ".git" \
+		-o -name "cache" \
+		-o -name "cache.lock" \
+		-o -name "*.pyc" \
+		-o -name ".*" \
+		-o -name "__pycache__" \
+	\) \
+		-exec rm -vrf "{}" \;
 	cp -R "${S}/" "${D}/${DEST}" || die "Could not install files"
 	dosym ../share/${P}/em++ /usr/bin/em++
 	dosym ../share/${P}/em-config /usr/bin/em-config
@@ -177,4 +218,5 @@ pkg_postinst() {
 	export EM_CONFIG="${DEST}/${P}/emscripten.config" \
 		|| die "Could not export variable"
 	/usr/bin/emcc -v || die "Could not run emcc initialization"
+	einfo "LLVM_ROOT is set to EMSDK_LLVM_ROOT to avoid possible environmental variable conflict."
 }

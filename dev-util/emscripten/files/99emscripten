@@ -1,2 +1,7 @@
 EM_CONFIG=/usr/share/emscripten-${PV}/emscripten.config
-EM_HOME="/usr/share/emscripten-${PV}"
+EMSCRIPTEN=/usr/share/emscripten-${PV}
+EMSDK_LLVM_ROOT=/usr/share/emscripten-fastcomp-${PV}/bin
+EMSDK_NODE=/usr/bin/node
+EMSDK_PYTHON=${PYTHON_EXE_ABSPATH}
+EMSCRIPTEN_NATIVE_OPTIMIZER=/usr/share/emscripten-${PV}/optimizer
+PATH="/usr/share/emscripten-${PV}"

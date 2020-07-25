@@ -22,6 +22,8 @@
     <remote-id type="github">emscripten-core/emscripten</remote-id>
   </upstream>
   <use>
+    <flag name="native-optimizer">Builds the native optimizer used after
+      Emscripten has finish compilation.</flag>
     <flag name="test">Run tests</flag>
   </use>
 </pkgmetadata>
