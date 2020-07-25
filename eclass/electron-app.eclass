@@ -870,8 +870,8 @@ electron-app_desktop_install_program() {
 			local old_dotglob=$(shopt dotglob | cut -f 2)
 			shopt -s dotglob # copy hidden files
 
-			mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
-			cp -a ${rel_src_path} "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+			mkdir -p "${ED}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+			cp -a ${rel_src_path} "${ED}/usr/$(get_libdir)/node/${PN}/${SLOT}"
 
 			if [[ "${old_dotglob}" == "on" ]] ; then
 				shopt -s dotglob
@@ -883,8 +883,8 @@ electron-app_desktop_install_program() {
 			local old_dotglob=$(shopt dotglob | cut -f 2)
 			shopt -s dotglob # copy hidden files
 
-			mkdir -p "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
-			cp -a ${rel_src_path} "${D}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+			mkdir -p "${ED}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+			cp -a ${rel_src_path} "${ED}/usr/$(get_libdir)/node/${PN}/${SLOT}"
 
 			if [[ "${old_dotglob}" == "on" ]] ; then
 				shopt -s dotglob
