@@ -70,29 +70,38 @@ Package
 "
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
+CLOSURE_COMPILER_SLOT="0"
 PYTHON_COMPAT=( python3_{6,7,8} )
-inherit cmake-utils java-pkg-opt-2 npm-secaudit python-single-r1
-IUSE="+closure-compiler +native-optimizer system-closure-compiler test"
+inherit cmake-utils java-utils-2 npm-secaudit python-single-r1
+IUSE="+closure-compiler closure_compiler_java closure_compiler_native \
+closure_compiler_nodejs +native-optimizer system-closure-compiler test"
 # See also .circleci/config.yml
 # See also tools/shared.py EXPECTED_BINARYEN_VERSION
 JAVA_V="1.8"
 # See https://github.com/google/closure-compiler-npm/blob/v20200224.0.0/packages/google-closure-compiler/package.json
 RDEPEND="${PYTHON_DEPS}
 	closure-compiler? (
-		system-closure-compiler? ( >=dev-util/closure-compiler-npm-20200224 )
-		|| (
-			>=virtual/jdk-${JAVA_V}
+		system-closure-compiler? ( \
+>=dev-util/closure-compiler-npm-20200224:${CLOSURE_COMPILER_SLOT}[closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?] )
+		closure_compiler_java? (
 			>=virtual/jre-${JAVA_V}
 		)
-		>=net-libs/nodejs-8
+		closure_compiler_nodejs? (
+			>=virtual/jre-${JAVA_V}
+		)
+		!system-closure-compiler? (
+			>=net-libs/nodejs-8
+		)
 	)
 	>=dev-util/binaryen-93
 	~dev-util/emscripten-fastcomp-${PV}
 	>=net-libs/nodejs-0.10.17"
 DEPEND="${RDEPEND}"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
-	closure-compiler? ( java )
-	system-closure-compiler? ( closure-compiler )"
+	system-closure-compiler? (
+		closure-compiler
+		^^ ( closure_compiler_java closure_compiler_native closure_compiler_nodejs )
+	)"
 FN_DEST="${P}.tar.gz"
 SRC_URI="https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${FN_DEST}"
 RESTRICT="fetch mirror"
@@ -116,7 +125,7 @@ from ${DOWNLOAD_SITE} and rename it to ${FN_DEST} place it in ${distdir}"
 
 pkg_setup() {
 	if use closure-compiler ; then
-		java-pkg-opt-2_pkg_setup
+		java-pkg_init
 		if [[ -n "${JAVA_HOME}" && -f "${JAVA_HOME}/bin/java" ]] ; then
 			export JAVA="${JAVA_HOME}/bin/java"
 		elif [[ -z "${JAVA_HOME}" ]] ; then
@@ -179,11 +188,18 @@ src_prepare() {
 	fi
 	if use closure-compiler ; then
 		if use system-closure-compiler ; then
-			# Based on defaults
-			EMSDK_CLOSURE_COMPILER=\
-"/usr/bin/node --max_old_space_size=8192 \
-/usr/$(get_libdir)/node/0/closure-compiler/node_modules/.bin/google-closure-compiler"
-			sed -i "s|__EMSDK_CLOSURE_COMPILER__|\"${EMSDK_CLOSURE_COMPILER}\"|" \
+			local cmd
+			if use closure_compiler_java ; then
+				cmd=\
+"/usr/bin/java -jar /opt/closure-compiler-${CLOSURE_COMPILER_SLOT}/lib/closure-compiler.jar"
+			elif use closure_compiler_nodejs ; then
+				cmd=\
+"/usr/bin/closure-compiler-node"
+			elif use closure_compiler_native ; then
+				cmd=\
+"/usr/bin/closure-compiler"
+			fi
+			sed -i "s|__EMSDK_CLOSURE_COMPILER__|\"${cmd}\"|" \
 				"${S}/99emscripten" || die
 		else
 			# Using defaults
