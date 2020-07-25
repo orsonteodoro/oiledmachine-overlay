@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 IUSE+=" pkg-config"
@@ -21,6 +21,7 @@ IUSE+=" pkg-config"
 # $N = myassemblyN-2 # see DLL_REFERENCES
 einstall_pc_file()
 {
+	use !prefix && has "${EAPI:-0}" 0 1 2 && ED="${D}"
 	if use pkg-config; then
 		local PC_NAME="$1"
 		local PC_VERSION="$2"
@@ -61,7 +62,7 @@ einstall_pc_file()
 			-e "s:@DESCRIPTION@:${DESCRIPTION}:" \
 			-e "s:@LIBDIR@:$(get_libdir):" \
 			-e "s*@LIBS@*${DLL_REFERENCES}*" \
-			<<-EOF >"${D}/${PC_DIRECTORY_VER}/${PC_FILENAME}.pc" || die
+			<<-EOF >"${ED}/${PC_DIRECTORY_VER}/${PC_FILENAME}.pc" || die
 				prefix=\${pcfiledir}/../..
 				exec_prefix=\${prefix}
 				libdir=\${exec_prefix}/@LIBDIR@
@@ -71,8 +72,8 @@ einstall_pc_file()
 				Libs: @LIBS@
 			EOF
 
-		einfo PKG_CONFIG_PATH="${D}/${PC_DIRECTORY_VER}" pkg-config --exists "${PC_FILENAME}"
-		PKG_CONFIG_PATH="${D}/${PC_DIRECTORY_VER}" pkg-config --exists "${PC_FILENAME}" || die ".pc file failed to validate."
+		einfo PKG_CONFIG_PATH="${ED}/${PC_DIRECTORY_VER}" pkg-config --exists "${PC_FILENAME}"
+		PKG_CONFIG_PATH="${ED}/${PC_DIRECTORY_VER}" pkg-config --exists "${PC_FILENAME}" || die ".pc file failed to validate."
 		eend $?
 
 		if use symlink; then
