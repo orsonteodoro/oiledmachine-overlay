@@ -76,14 +76,15 @@ IUSE="+closure-compiler +native-optimizer system-closure-compiler test"
 # See also .circleci/config.yml
 # See also tools/shared.py EXPECTED_BINARYEN_VERSION
 JAVA_V="1.8"
-# A Closure Compiler dependency (node.js-closure-compiler-externs) requires >=nodejs-0.8.
+# See https://github.com/google/closure-compiler-npm/blob/v20200224.0.0/packages/google-closure-compiler/package.json
 RDEPEND="${PYTHON_DEPS}
 	closure-compiler? (
-		system-closure-compiler? ( >=dev-util/closure-compiler-20200224 )
+		system-closure-compiler? ( >=dev-util/closure-compiler-npm-20200224 )
 		|| (
 			>=virtual/jdk-${JAVA_V}
 			>=virtual/jre-${JAVA_V}
 		)
+		>=net-libs/nodejs-8
 	)
 	>=dev-util/binaryen-93
 	~dev-util/emscripten-fastcomp-${PV}
