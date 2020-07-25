@@ -90,13 +90,30 @@ RDEPEND="${PYTHON_DEPS}
 			>=virtual/jre-${JAVA_V}
 		)
 		!system-closure-compiler? (
+			>=virtual/jre-${JAVA_V}
 			>=net-libs/nodejs-8
 		)
 	)
 	>=dev-util/binaryen-93
 	~dev-util/emscripten-fastcomp-${PV}
 	>=net-libs/nodejs-0.10.17"
-DEPEND="${RDEPEND}"
+# The java-utils-2 doesn't like it when you take off jdk from DEPEND for java-pkg_init.
+DEPEND="${RDEPEND}
+	closure-compiler? (
+		closure_compiler_java? (
+			>=virtual/jre-${JAVA_V}
+			>=virtual/jdk-${JAVA_V}
+		)
+		closure_compiler_nodejs? (
+			>=virtual/jre-${JAVA_V}
+			>=virtual/jdk-${JAVA_V}
+		)
+		!system-closure-compiler? (
+			>=virtual/jre-${JAVA_V}
+			>=virtual/jdk-${JAVA_V}
+		)
+	)
+"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	closure_compiler_java? ( closure-compiler )
 	closure_compiler_native? ( closure-compiler )
