@@ -18,7 +18,7 @@ PYTHON_COMPAT=( python3_{6,7,8} )
 inherit cmake-utils python-any-r1 toolchain-funcs
 EGIT_COMMIT="3ac849384aa861382d2ca9636a89556e237e55d6"
 SRC_URI="\
-https://github.com/WebAssembly/binaryen/archive/version_${PV}.tar.gz
+https://github.com/WebAssembly/binaryen/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
@@ -72,4 +72,8 @@ src_install() {
 		> "${T}/LICENSE.llvm-project.TXT"
 	dodoc "${T}/LICENSE.llvm-project.TXT"
 
+	cat <<-EOF > "${T}"/99${P}
+		BINARYEN_ROOT=/usr
+	EOF
+	doenvd "${T}"/99${P}
 }
