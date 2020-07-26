@@ -112,6 +112,11 @@ NPM_SECAUDIT_NO_DIE_ON_AUDIT=${NPM_SECAUDIT_NO_DIE_ON_AUDIT:="0"}
 # rapid changes in dependencies over a short period of time.
 NPM_SECAUDIT_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=${NPM_SECAUDIT_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL:="0"}
 
+# Acceptable values:  Critical, High, Moderate, Low
+# Applies to npm audit not CVSS v3
+NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL=\
+${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL:="Critical"}
+
 NPM_SECAUDIT_LOCKS_DIR="/dev/shm"
 
 NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="10"
@@ -324,7 +329,33 @@ npm-secaudit_audit_dev() {
 			if [[ -n "${nodie}" && "${NPM_SECAUDIT_NO_DIE_ON_AUDIT}" == "1" ]] ; then
 				npm audit
 			else
-				npm audit || die
+				local audit_file="${T}/npm-audit-result"
+				npm audit &> "${audit_file}"
+				local is_critical=0
+				local is_high=0
+				local is_moderate=0
+				local is_low=0
+				grep -qF " Critical " "${audit_file}" && is_critical=1
+				grep -qF " High " "${audit_file}" && is_high=1
+				grep -qF " Moderate " "${audit_file}" && is_moderate=1
+				grep -qF " Low " "${audit_file}" && is_low=1
+				if [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Critical" \
+					"${is_critical}" == "1" ]] ; then
+					cat "${audit_file}"
+					die "Detected critical vulnerability in a package."
+				elif [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "High" \
+					"${is_high}" == "1" ]] ; then
+					cat "${audit_file}"
+					die "Detected high vulnerability in a package."
+				elif [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Moderate" \
+					"${is_moderate}" == "1" ]] ; then
+					cat "${audit_file}"
+					die "Detected moderate vulnerability in a package."
+				elif [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Low" \
+					"${is_low}" == "1" ]] ; then
+					cat "${audit_file}"
+					die "Detected low vulnerability in a package."
+				fi
 			fi
 		popd
 	done

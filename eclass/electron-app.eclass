@@ -34,6 +34,7 @@ inherit desktop eutils npm-utils
 # You could define it as a per-package envar.  It not recommended in the ebuild.
 ELECTRON_APP_ALLOW_NON_LTS_ELECTRON=${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON:="0"}
 
+# Critical means based on CVSS v3 standards
 # See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=electron&search_type=all
 INSECURE_NVD_ELECTRON_LAST_CRITICAL_9="9.0.0_beta21" # replace - with _
 INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_COND="-lt"
@@ -433,6 +434,11 @@ ${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL:="0"}
 # weekly forced updates.
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP=\
 ${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP:="0"}
+
+# Acceptable values:  Critical, High, Moderate, Low
+# Applies to npm audit not CVSS v3
+ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL=\
+${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL:="Critical"}
 
 ELECTRON_APP_LOCKS_DIR="/dev/shm"
 NPM_SECAUDIT_LOCKS_DIR="/dev/shm"
@@ -893,7 +899,33 @@ electron-app_audit_dev() {
 			if [[ -n "${nodie}" && "${ELECTRON_APP_NO_DIE_ON_AUDIT}" == "1" ]] ; then
 				npm audit
 			else
-				npm audit || die
+				local audit_file="${T}/npm-audit-result"
+				npm audit &> "${audit_file}"
+				local is_critical=0
+				local is_high=0
+				local is_moderate=0
+				local is_low=0
+				grep -qF " Critical " "${audit_file}" && is_critical=1
+				grep -qF " High " "${audit_file}" && is_high=1
+				grep -qF " Moderate " "${audit_file}" && is_moderate=1
+				grep -qF " Low " "${audit_file}" && is_low=1
+				if [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Critical" \
+					"${is_critical}" == "1" ]] ; then
+					cat "${audit_file}"
+					die "Detected critical vulnerability in a package."
+				elif [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "High" \
+					"${is_high}" == "1" ]] ; then
+					cat "${audit_file}"
+					die "Detected high vulnerability in a package."
+				elif [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Moderate" \
+					"${is_moderate}" == "1" ]] ; then
+					cat "${audit_file}"
+					die "Detected moderate vulnerability in a package."
+				elif [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Low" \
+					"${is_low}" == "1" ]] ; then
+					cat "${audit_file}"
+					die "Detected low vulnerability in a package."
+				fi
 			fi
 		popd
 	done
