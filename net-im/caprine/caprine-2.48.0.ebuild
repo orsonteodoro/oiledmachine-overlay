@@ -12,6 +12,7 @@ DEPEND="${RDEPEND}
         >=net-libs/nodejs-12[npm]"
 ELECTRON_APP_ELECTRON_V="9.0.5"
 ELECTRON_APP_TYPESCRIPT_V="3.9.5"
+ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
 inherit desktop electron-app eutils
 SRC_URI=\
 "https://github.com/sindresorhus/caprine/archive/v${PV}.tar.gz \
