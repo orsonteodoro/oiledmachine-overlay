@@ -19,14 +19,14 @@ SRC_URI=\
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 
-if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX}" == "1" ]] ; then
+if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL}" == "1" ]] ; then
 
 AXIOS_V="^0.18.1"
 
 fix_vulnerabilities() {
 	ewarn \
 "Vulnerability resolution has not been updated.  Consider setting the\n\
-environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX=0 per-package-wise."
+environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=0 per-package-wise."
 	rm package-lock.json || die
 	npm i --package-lock-only
 	npm audit fix --force
