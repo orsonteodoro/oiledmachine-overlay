@@ -21,7 +21,7 @@ DEBUG_V="2.6.9"
 fix_vulnerabilities() {
 	ewarn \
 "Vulnerability resolution has not been updated.  Consider setting the\n\
-environmental variable NPM_SECAUDIT_ALLOW_AUDIT_FIX=0 per-package-wise."
+environmental variable NPM_SECAUDIT_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=0 per-package-wise."
 	sed -i -e "s|\"debug\": \"~0.8.1\",|\"debug\": \"${DEBUG_V}\",|" \
 		node_modules/git-spawned-stream/package.json || die
 	pushd node_modules/git-spawned-stream || die
@@ -33,7 +33,7 @@ environmental variable NPM_SECAUDIT_ALLOW_AUDIT_FIX=0 per-package-wise."
 }
 
 npm-secaudit_src_postprepare() {
-	if [[ "${NPM_SECAUDIT_ALLOW_AUDIT_FIX}" == "1" ]] ; then
+	if [[ "${NPM_SECAUDIT_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL}" == "1" ]] ; then
 		fix_vulnerabilities
 	fi
 	rm package-lock.json || die
