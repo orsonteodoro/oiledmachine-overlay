@@ -32,7 +32,7 @@ JS_YAML_V="^3.13.1"
 _fix_vulnerabilities() {
 	ewarn \
 "Vulnerability resolution has not been updated.  Consider setting the\n\
-environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX=0 per-package-wise."
+environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=0 per-package-wise."
 	npm i --package-lock-only
 	npm install
 
@@ -121,7 +121,7 @@ electron-app_src_preprepare() {
 }
 
 electron-app_src_postprepare() {
-	if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX}" == "1" ]] ; then
+	if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL}" == "1" ]] ; then
 	_fix_vulnerabilities
 	fi
 	sed -i -e "s|cssLoaderOptions += (cssLoaderOptions ? '\&' : '?') + 'minimize'||g" node_modules/vue-loader/lib/loader.js || die

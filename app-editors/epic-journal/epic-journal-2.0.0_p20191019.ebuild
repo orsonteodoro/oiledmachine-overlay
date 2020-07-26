@@ -34,7 +34,7 @@ JS_YAML_V="^3.13.1"
 _fix_vulnerabilities() {
 	ewarn \
 "Vulnerability resolution has not been updated.  Consider setting the\n\
-environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX=0 per-package-wise."
+environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=0 per-package-wise."
 	sed -i -e "s|\"clean-css\": \"3.4.x\"|\"clean-css\": \"${CLEAN_CSS_V}\"|g" \
 		node_modules/vue-html-loader/node_modules/html-minifier/package.json || die
 	rm -rf node_modules/vue-html-loader/node_modules/clean-css || die
@@ -146,14 +146,14 @@ electron-app_src_preprepareA() {
 }
 
 electron-app_src_postprepareB() {
-	if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX}" == "1" ]] ; then
+	if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL}" == "1" ]] ; then
 	_fix_vulnerabilities
 	fi
 	sed -i -e "s|cssLoaderOptions += (cssLoaderOptions ? '\&' : '?') + 'minimize'||g" node_modules/vue-loader/lib/loader.js || die
 }
 
 electron-app_src_postprepare() {
-	if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX}" == "1" ]] ; then
+	if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL}" == "1" ]] ; then
 	_fix_vulnerabilities
 	fi
 }
