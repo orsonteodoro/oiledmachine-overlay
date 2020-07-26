@@ -12,6 +12,7 @@ DEPEND="${RDEPEND}
 	>=net-libs/nodejs-10[npm]"
 ELECTRON_APP_AT_TYPES_NODE_V="10"
 ELECTRON_APP_ELECTRON_V="9.1.0" # See https://github.com/jiahaog/nativefier/blob/v9.1.0/src/constants.ts
+ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
 inherit eutils desktop npm-secaudit npm-utils
 SRC_URI=\
 "https://github.com/jiahaog/nativefier/archive/v${PV}.tar.gz \
