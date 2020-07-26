@@ -910,19 +910,19 @@ electron-app_audit_dev() {
 				grep -qF -e " Moderate " "${audit_file}" && is_moderate=1
 				grep -qF -e " Low " "${audit_file}" && is_low=1
 				if [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Critical" \
-					"${is_critical}" == "1" ]] ; then
+					&& "${is_critical}" == "1" ]] ; then
 					cat "${audit_file}"
 					die "Detected critical vulnerability in a package."
 				elif [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "High" \
-					"${is_high}" == "1" ]] ; then
+					&& "${is_high}" == "1" ]] ; then
 					cat "${audit_file}"
 					die "Detected high vulnerability in a package."
 				elif [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Moderate" \
-					"${is_moderate}" == "1" ]] ; then
+					&& "${is_moderate}" == "1" ]] ; then
 					cat "${audit_file}"
 					die "Detected moderate vulnerability in a package."
 				elif [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Low" \
-					"${is_low}" == "1" ]] ; then
+					&& "${is_low}" == "1" ]] ; then
 					cat "${audit_file}"
 					die "Detected low vulnerability in a package."
 				fi
