@@ -335,10 +335,10 @@ npm-secaudit_audit_dev() {
 				local is_high=0
 				local is_moderate=0
 				local is_low=0
-				grep -qF " Critical " "${audit_file}" && is_critical=1
-				grep -qF " High " "${audit_file}" && is_high=1
-				grep -qF " Moderate " "${audit_file}" && is_moderate=1
-				grep -qF " Low " "${audit_file}" && is_low=1
+				grep -qF -e " Critical " "${audit_file}" && is_critical=1
+				grep -qF -e " High " "${audit_file}" && is_high=1
+				grep -qF -e " Moderate " "${audit_file}" && is_moderate=1
+				grep -qF -e " Low " "${audit_file}" && is_low=1
 				if [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Critical" \
 					"${is_critical}" == "1" ]] ; then
 					cat "${audit_file}"
