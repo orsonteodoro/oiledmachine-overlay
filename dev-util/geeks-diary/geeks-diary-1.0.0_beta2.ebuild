@@ -21,6 +21,22 @@ SRC_URI="\
 https://github.com/seokju-na/geeks-diary/archive/${PV}.tar.gz \
 	-> ${P}.tar.gz"
 
+S="${WORKDIR}/${PN}-${PV}"
+
+pkg_setup() {
+	electron-app_pkg_setup
+	if [ ! -L /usr/lib/libcurl-gnutls.so.4 ] ; then
+		# Required by nodegit in src_prepare
+		# See https://github.com/adaptlearning/adapt-cli/issues/84
+		eerror \
+"You must \`ln -s /usr/lib/libcurl.so.4 /usr/lib/libcurl-gnutls.so.4\` .\n\
+It works even though curl was not compiled with gnutls."
+		die
+	fi
+}
+
+if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL}" == "1" ]] ; then
+
 # Kept in sync with yarn.lock which CI uses.
 # NPM is not tested which should be.  NPM building is broken for npm install
 # but untested for npm ci.
@@ -77,21 +93,11 @@ NGTOOLS_VER="^7.2.0"
 NODEGIT_VER="<0.24.0"
 #}
 
-S="${WORKDIR}/${PN}-${PV}"
-
-pkg_setup() {
-	electron-app_pkg_setup
-	if [ ! -L /usr/lib/libcurl-gnutls.so.4 ] ; then
-		# Required by nodegit in src_prepare
-		# See https://github.com/adaptlearning/adapt-cli/issues/84
-		eerror \
-"You must \`ln -s /usr/lib/libcurl.so.4 /usr/lib/libcurl-gnutls.so.4\` .\n\
-It works even though curl was not compiled with gnutls."
-		die
-	fi
-}
-
 _fix_vulnerabilities() {
+        ewarn \
+"Vulnerability resolution has not been updated.  Consider setting the\n\
+environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=0 per-package-wise."
+
 	pushd node_modules/remarkable
 	npm uninstall argparse
 	npm install argparse@"^1.0.10" --save-prod || die
@@ -178,9 +184,12 @@ electron-app_src_preprepare() {
 	_fix_vulnerabilities
 }
 
+
 electron-app_src_postprepare() {
 	patch -F 100 -p1 -i "${FILESDIR}/geeks-diary-angular-devkit-browser-config-fix-0.6.8.patch" || die
 }
+
+fi
 
 electron-app_src_compile() {
 	cd "${S}"
