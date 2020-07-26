@@ -219,7 +219,7 @@ prepare_file() {
 		"${S}/${1}" || die
 	elif use system-llvm ; then
 		sed -i -e \
-"s|__EMSDK_LLVM_ROOT__|/usr/lib/llvm/${EMSDK_LLVM_VERSION}|" \
+"s|__EMSDK_LLVM_ROOT__|/usr/lib/llvm/${EMSDK_LLVM_VERSION}/bin|" \
 			-e \
 "s|__EMCC_WASM_BACKEND__|1|" \
 		"${S}/${1}" || die
