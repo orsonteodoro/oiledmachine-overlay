@@ -1,0 +1,5 @@
+#!/bin/bash
+BASE_DIR="/usr/$(get_libdir)/node/closure-compiler/${NODE_SLOT}"
+export PATH="${BASE_DIR}/node_modules/.bin:${PATH}"
+export NODE_PATH="${BASE_DIR}/packages:${NODE_PATH}"
+/usr/bin/node "/usr/$(get_libdir)/node/closure-compiler/${NODE_SLOT}/packages/google-closure-compiler/cli.js" $*
