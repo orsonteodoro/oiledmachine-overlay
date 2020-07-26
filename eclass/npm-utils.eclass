@@ -26,9 +26,10 @@ case "${EAPI:-0}" in
                 ;;
 esac
 
-NPM_UTILS_ALLOW_AUDIT_FIX=${NPM_UTILS_ALLOW_AUDIT_FIX:="1"}
-NPM_UTILS_ALLOW_AUDIT=${NPM_UTILS_ALLOW_AUDIT:="1"}
+NPM_UTILS_ALLOW_AUDIT_FIX=${NPM_UTILS_ALLOW_AUDIT_FIX:="1"} # You could define it as a per-package envar, but should not be done in the ebuild itself.
+NPM_UTILS_ALLOW_AUDIT=${NPM_UTILS_ALLOW_AUDIT:="1"} # You could define it as a per-package envar, but should not be done in the ebuild itself.
 NPM_UTILS_ALLOW_I_PACKAGE_LOCK=${NPM_UTILS_ALLOW_I_PACKAGE_LOCK:="0"}
+NPM_UTILS_FIX_FORCE=${NPM_UTILS_FIX_FORCE:="0"} # You could define it as a per-package envar, but should not be done in the ebuild itself.
 
 # @FUNCTION: npm_install_sub
 # @DESCRIPTION:
@@ -128,6 +129,11 @@ npm_auto_fix() {
 		return
 	fi
 
+	local option_fix_force=""
+	if [[ -n "${NPM_UTILS_FIX_FORCE}" && "${NPM_UTILS_FIX_FORCE}" == "1" ]] ; then
+		option_fix_force="--force"
+	fi
+
 	local is_trivial=0
 	local is_auto_fix=0
 	local is_manual_review=0
@@ -145,8 +151,8 @@ npm_auto_fix() {
 	cat "${audit_file}" | grep -F "Missing:" >/dev/null && is_missing=1
 	cat "${audit_file}" | grep -F "Invalid Version:" >/dev/null && is_invalid_version=1
 	if [[ "${is_auto_fix}" == "1" ]] ; then
-		einfo "Found auto fixes.  Running \`npm audit fix --force\`.  is_auto_fix=1"
-		npm audit fix --force
+		einfo "Found auto fixes.  Running \`npm audit fix ${option_fix_force}\`.  is_auto_fix=1"
+		npm audit fix ${option_fix_force}
 		#L=$(cat "${audit_file}" | grep -P -e "to resolve [0-9]+ vulnerabilit(y|ies)" | sed -r -e "s|# Run  ||" -e "s#  to resolve [0-9]+ vulnerabilit(y|ies)##g")
 		#while read -r line ; do
 		#	einfo "Auto running fix: ${line}"
@@ -154,8 +160,8 @@ npm_auto_fix() {
 		#done <<< ${L}
 		return 1
 	elif [[ "${is_trivial}" == "1" ]] ; then
-		einfo "Found trivial fixes.  Running \`npm audit fix --force\`.  is_trivial=1"
-		npm audit fix --force || die
+		einfo "Found trivial fixes.  Running \`npm audit fix ${option_fix_force}\`.  is_trivial=1"
+		npm audit fix ${option_fix_force} || die
 		return 1
 		npm audit 2>&1 > "${audit_file}"
 		cat "${audit_file}" | grep -F "found 0 vulnerabilities" || die "not fixed"
@@ -179,8 +185,8 @@ npm_auto_fix() {
 		is_clean=0
 		cat "${audit_file}" | grep -F "found 0 vulnerabilities" >/dev/null && is_clean=1
 		if [[ "${is_clean}" == 0 ]] ; then
-			einfo "Running \`npm audit fix --force\` anyway."
-			npm audit fix --force
+			einfo "Running \`npm audit fix ${option_fix_force}\` anyway."
+			npm audit fix ${option_fix_force}
 		fi
 		npm audit 2>&1 > "${audit_file}"
 		cat "${audit_file}" | grep -F "found 0 vulnerabilities" || return 2
@@ -190,8 +196,8 @@ npm_auto_fix() {
 	elif [[ "${is_clean}" == "0" ]] ; then
 		einfo "Audit is not clean.  Going to fix.  is_clean=0"
 		cat "${audit_file}" || die
-		einfo "Running \`npm audit fix --force\`."
-		npm audit fix --force || die
+		einfo "Running \`npm audit fix ${option_fix_force}\`."
+		npm audit fix ${option_fix_force} || die
 		return 1
 	else
 		cat "${audit_file}" || die
