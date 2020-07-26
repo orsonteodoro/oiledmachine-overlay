@@ -354,10 +354,11 @@ npm-secaudit_src_preinst_default() {
 	true
 }
 
-# @FUNCTION: npm-secaudit_install
+# @FUNCTION: npm-secaudit_install_raw
 # @DESCRIPTION:
-# Installs an app to image area before going live.
-npm-secaudit_install() {
+# Installs an app to image area before going live.  Does not reset permissions or owner.
+# It's recommended to use npm-secaudit_install instead.
+npm-secaudit_install_raw() {
 	local rel_src_path="$1"
 
 	local old_dotglob=$(shopt dotglob | cut -f 2)
@@ -365,6 +366,40 @@ npm-secaudit_install() {
 
 	mkdir -p "${ED}/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	cp -a ${rel_src_path} "${ED}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+
+	if [[ "${old_dotglob}" == "on" ]] ; then
+		shopt -s dotglob
+	else
+		shopt -u dotglob
+	fi
+}
+
+# @FUNCTION: npm-secaudit_install
+# @DESCRIPTION:
+# Installs an app to image area before going live resetting permissions and owner.
+# Resets ownership and permissions.
+# Additional change of ownership and permissions should be done after running this.
+npm-secaudit_install() {
+	local rel_src_path="$1"
+
+	local old_dotglob=$(shopt dotglob | cut -f 2)
+	shopt -s dotglob # copy hidden files
+
+	local d="/usr/$(get_libdir)/node/${PN}/${SLOT}"
+	insinto "${d}"
+	doins -r ${rel_src_path}
+
+	# Mark .bin scripts executable
+	for dir_path in $(find "${d}" -name ".bin" -type d) ; do
+		for f in $(find "${dir_path}" ) ; do
+			chmod 0755 $(realpath "${f}") || die
+		done
+	done
+
+	# Mark libraries executable
+	for f in $(find "${d}" -name "*.so" -type f -o -name "*.so.*" -type f) ; do
+		chmod 0755 $(realpath "${f}") || die
+	done
 
 	if [[ "${old_dotglob}" == "on" ]] ; then
 		shopt -s dotglob
@@ -429,7 +464,7 @@ npm-secaudit_store_package_jsons() {
 	local ROOTDIR="${1}"
 	local d
 	local rd
-	local F=$(find ${ROOTDIR} -name "package*.json*" -o "yarn.lock")
+	local F=$(find ${ROOTDIR} -name "package*.json" -o "yarn.lock")
 	local td="${T}/package_jsons/"
 	for f in $F; do
 		d=$(dirname $f)

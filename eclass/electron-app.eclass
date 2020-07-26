@@ -860,10 +860,11 @@ electron-app_src_preinst_default() {
 	true
 }
 
-# @FUNCTION: electron-app_desktop_install_program
+# @FUNCTION: electron-app_desktop_install_program_raw
 # @DESCRIPTION:
-# Installs program only
-electron-app_desktop_install_program() {
+# Installs program only without resetting permissions or owner.
+# Use electron-app_desktop_install_program instead.
+electron-app_desktop_install_program_raw() {
 	local rel_src_path="$1"
 	case "$ELECTRON_APP_MODE" in
 		npm)
@@ -885,6 +886,79 @@ electron-app_desktop_install_program() {
 
 			mkdir -p "${ED}/usr/$(get_libdir)/node/${PN}/${SLOT}"
 			cp -a ${rel_src_path} "${ED}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+
+			if [[ "${old_dotglob}" == "on" ]] ; then
+				shopt -s dotglob
+			else
+				shopt -u dotglob
+			fi
+			;;
+		*)
+			die "Unsupported package system"
+			;;
+	esac
+}
+
+# @FUNCTION: electron-app_desktop_install_program
+# @DESCRIPTION:
+# Installs program only.  Resets permissions and ownership.
+# Additional change of ownership and permissions should be done after running this.
+electron-app_desktop_install_program() {
+	local rel_src_path="$1"
+	case "$ELECTRON_APP_MODE" in
+		npm)
+			local old_dotglob=$(shopt dotglob | cut -f 2)
+			shopt -s dotglob # copy hidden files
+
+			insinto "/usr/$(get_libdir)/node/${PN}/${SLOT}"
+			doins -r ${rel_src_path}
+
+			# Mark .bin scripts executable
+			for dir_path in $(find "${d}" -name ".bin" -type d) ; do
+				for f in $(find "${dir_path}" ) ; do
+					chmod 0755 $(realpath "${f}") || die
+				done
+			done
+
+			# Mark libraries executable
+			for f in $(find "${d}" -name "*.so" -type f -o -name "*.so.*" -type f) ; do
+				chmod 0755 $(realpath "${f}") || die
+			done
+
+			# Mark electron executable
+			for f in $(find "${d}" -path "*dist/electron" -type f) ; do
+				chmod 0755 "${f}" || die
+			done
+
+			if [[ "${old_dotglob}" == "on" ]] ; then
+				shopt -s dotglob
+			else
+				shopt -u dotglob
+			fi
+			;;
+		yarn)
+			local old_dotglob=$(shopt dotglob | cut -f 2)
+			shopt -s dotglob # copy hidden files
+
+			insinto "/usr/$(get_libdir)/node/${PN}/${SLOT}"
+			doins -r ${rel_src_path}
+
+			# Mark .bin scripts executable
+			for dir_path in $(find "${d}" -name ".bin" -type d) ; do
+				for f in $(find "${dir_path}" ) ; do
+					chmod 0755 $(realpath "${f}") || die
+				done
+			done
+
+			# Mark libraries executable
+			for f in $(find "${d}" -name "*.so" -type f -o -name "*.so.*" -type f) ; do
+				chmod 0755 $(realpath "${f}") || die
+			done
+
+			# Mark electron executable
+			for f in $(find "${d}" -path "*dist/electron" -type f) ; do
+				chmod 0755 "${f}" || die
+			done
 
 			if [[ "${old_dotglob}" == "on" ]] ; then
 				shopt -s dotglob
@@ -1058,7 +1132,7 @@ electron-app_store_package_jsons() {
 	local ROOTDIR="${1}"
 	local d
 	local rd
-	local F=$(find ${ROOTDIR} -name "package*.json*" -o -name "yarn.lock")
+	local F=$(find ${ROOTDIR} -name "package*.json" -o -name "yarn.lock")
 	local td="${T}/package_jsons/"
 	for f in $F; do
 		d=$(dirname $f)
