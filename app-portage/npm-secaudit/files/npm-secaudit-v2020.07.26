@@ -253,8 +253,12 @@ function version_audit() {
 		return 0
 	fi
 
-	einfo "pwd=$(pwd)"
-	ELECTRON_V=$(npm ls electron | grep -P -e "electron@[0-9.]+" | tail -n 1 | sed -e "s|[^0-9\.]*||g") # used by package
+	local ELECTRON_V
+	if npm ls electron ; then
+		ELECTRON_V=$(npm ls electron | grep -P -e "electron@[0-9.]+" | tail -n 1 | sed -e "s|[^0-9\.]*||g") # used by package
+	else
+		return
+	fi
 
 	local is_vulnerable=0
 	if is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d ".") "-eq" 9 \
