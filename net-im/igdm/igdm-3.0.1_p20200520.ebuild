@@ -11,6 +11,7 @@ RDEPEND="${RDEPEND}"
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]"
 ELECTRON_APP_ELECTRON_V="3.1.13"
+ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
 inherit eutils desktop electron-app npm-utils
 EGIT_COMMIT="728a432efc928110f9a530cebf3494ee1b1266fe"
 SRC_URI=\
