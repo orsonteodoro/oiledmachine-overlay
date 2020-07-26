@@ -914,15 +914,15 @@ electron-app_audit_dev() {
 					cat "${audit_file}"
 					die "Detected critical vulnerability in a package."
 				elif [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "High" \
-					&& "${is_high}" == "1" ]] ; then
+					&& ( "${is_high}" == "1" || "${is_critical}" == "1" ) ]] ; then
 					cat "${audit_file}"
 					die "Detected high vulnerability in a package."
 				elif [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Moderate" \
-					&& "${is_moderate}" == "1" ]] ; then
+					&& ( "${is_moderate}" == "1" || "${is_critical}" == "1" || "${is_high}" == "1" ) ]] ; then
 					cat "${audit_file}"
 					die "Detected moderate vulnerability in a package."
 				elif [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Low" \
-					&& "${is_low}" == "1" ]] ; then
+					&& ( "${is_low}" == "1" || "${is_critical}" == "1" || "${is_high}" == "1" || "${is_moderate}" == "1" ) ]] ; then
 					cat "${audit_file}"
 					die "Detected low vulnerability in a package."
 				fi
