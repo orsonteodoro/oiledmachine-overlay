@@ -41,7 +41,7 @@ electron-app_src_postprepare() {
 	if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL}" == "1" ]] ; then
         ewarn \
 "Vulnerability resolution has not been updated.  Consider setting the\n\
-environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX=0 per-package-wise."
+environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=0 per-package-wise."
 	einfo "electron-app_src_postprepare START"
 	npm install react-native@"${REACT_NATIVE_V}" || die
 
