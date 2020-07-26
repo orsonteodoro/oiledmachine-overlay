@@ -97,22 +97,22 @@ RDEPEND="${PYTHON_DEPS}
 	>=dev-util/binaryen-93
 	~dev-util/emscripten-fastcomp-${PV}
 	>=net-libs/nodejs-0.10.17"
-# The java-utils-2 doesn't like it when you take off jdk from DEPEND for java-pkg_init.
+# The java-utils-2 doesn't like nested conditionals.  The eclass needs at least a virtual/jdk
+# This package doesn't really need jdk to use closure-compiler because packages are prebuilt.
+# If we have closure_compiler_native, we don't need Java.
 DEPEND="${RDEPEND}
 	closure-compiler? (
 		closure_compiler_java? (
 			>=virtual/jre-${JAVA_V}
-			>=virtual/jdk-${JAVA_V}
 		)
 		closure_compiler_nodejs? (
 			>=virtual/jre-${JAVA_V}
-			>=virtual/jdk-${JAVA_V}
 		)
 		!system-closure-compiler? (
 			>=virtual/jre-${JAVA_V}
-			>=virtual/jdk-${JAVA_V}
 		)
 	)
+	>=virtual/jdk-${JAVA_V}
 "
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	closure_compiler_java? ( closure-compiler )
