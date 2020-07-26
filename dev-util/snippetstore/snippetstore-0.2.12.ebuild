@@ -20,7 +20,7 @@ https://github.com/ZeroX-DG/${MY_PN}/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
 S="${WORKDIR}/${MY_PN}-${PV}"
 
-if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX}" == "1" ]] ; then
+if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL}" == "1" ]] ; then
 
 TAR_V="^4.4.2"
 BABEL_CODE_FRAME_V="^6.26.0"
@@ -39,7 +39,7 @@ _fix_vulnerabilities() {
 electron-app_src_postprepare() {
 	ewarn \
 "Vulnerability resolution has not been updated.  Consider setting the\n\
-environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX=0 per-package-wise."
+environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=0 per-package-wise."
 
 	_fix_vulnerabilities
 
