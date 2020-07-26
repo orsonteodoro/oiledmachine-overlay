@@ -94,10 +94,24 @@ IUSE+=" debug"
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
 NPM_PACKAGE_SETS_DB="/etc/portage/sets/npm-security-update"
 NPM_SECAUDIT_REG_PATH=${NPM_SECAUDIT_REG_PATH:=""}
-NPM_MAXSOCKETS=${NPM_MAXSOCKETS:="1"} # Set this in your make.conf to control number of HTTP requests.  50 is npm default but it is too high.
-NPM_SECAUDIT_ALLOW_AUDIT=${NPM_SECAUDIT_ALLOW_AUDIT:="1"} # You could define it as a per-package envar.  It not recommended in the ebuild.
-NPM_SECAUDIT_ALLOW_AUDIT_FIX=${NPM_SECAUDIT_ALLOW_AUDIT_FIX:="1"} # You could define it as a per-package envar.  It not recommended in the ebuild.
-NPM_SECAUDIT_NO_DIE_ON_AUDIT=${NPM_SECAUDIT_NO_DIE_ON_AUDIT:="0"} # You could define it as a per-package envar.  It not recommended in the ebuild.
+
+# Set this in your make.conf to control number of HTTP requests.  50 is npm
+# default but it is too high.
+NPM_MAXSOCKETS=${NPM_MAXSOCKETS:="1"}
+
+# You could define it as a per-package envar.  It not recommended in the ebuild.
+NPM_SECAUDIT_ALLOW_AUDIT=${NPM_SECAUDIT_ALLOW_AUDIT:="1"}
+
+# You could define it as a per-package envar.  It not recommended in the ebuild.
+NPM_SECAUDIT_ALLOW_AUDIT_FIX=${NPM_SECAUDIT_ALLOW_AUDIT_FIX:="1"}
+
+# You could define it as a per-package envar.  It not recommended in the ebuild.
+NPM_SECAUDIT_NO_DIE_ON_AUDIT=${NPM_SECAUDIT_NO_DIE_ON_AUDIT:="0"}
+
+# You could define it as a per-package envar.  Disabled by default because of
+# rapid changes in dependencies over a short period of time.
+NPM_SECAUDIT_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=${NPM_SECAUDIT_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL:="0"}
+
 NPM_SECAUDIT_LOCKS_DIR="/dev/shm"
 
 NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="10"
