@@ -293,7 +293,7 @@ src_install() {
 	# See tools/install.py
 	find "${S}" \
 	\( \
-		-path "tests/third_party" \
+		-path "*/tests/third_party/*" \
 		-o -name "site" \
 		-o -name "Makefile" \
 		-o -name ".git" \
