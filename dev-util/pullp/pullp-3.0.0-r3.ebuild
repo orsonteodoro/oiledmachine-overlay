@@ -18,7 +18,7 @@ ELECTRON_APP_REACT_V="16.3.2"
 inherit eutils desktop electron-app npm-utils
 S="${WORKDIR}/${PN}-${PV}"
 
-if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX}" == "1" ]] ; then
+if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL}" == "1" ]] ; then
 
 BABEL_CODE_FAME_V="^6.26.0"
 BABEL_MESSAGES_V="^6.23.0"
@@ -77,7 +77,7 @@ _fix_vulnerabilities3() {
 electron-app_src_postprepareA() {
         ewarn \
 "Vulnerability resolution has not been updated.  Consider setting the\n\
-environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX=0 per-package-wise."
+environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=0 per-package-wise."
 	# likely update breakage
 	npm uninstall css-loader
 	npm install css-loader@"^${CSS_LOADER_V}" --save-dev || die
