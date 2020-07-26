@@ -592,7 +592,18 @@ adie() {
 electron-app_audit_versions() {
 	einfo "Inspecting package versions for vulnerabilities and minimum version requirements"
 	wget -O "${T}/lite.json" "https://raw.githubusercontent.com/electron/releases/master/lite.json" || die
-	ELECTRON_V=$(npm ls electron | grep -P -e "electron@[0-9.]+" | tail -n 1 | sed -e "s|[^0-9\.]*||g") # used by package
+
+	local ELECTRON_V
+	if npm ls electron ; then
+		# case when ^ or latest used
+		ELECTRON_V=$(npm ls electron | grep -P -e "electron@[0-9.]+" | tail -n 1 | sed -e "s|[^0-9\.]*||g") # used by package
+	elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] ; then
+		# fallback based on analysis on package.json
+		ELECTRON_V=${ELECTRON_APP_ELECTRON_V}
+	else
+		# Skip for dependency but not building ui yet
+		return
+	fi
 
 	if ver_test $(ver_cut 1 "${ELECTRON_V}") -eq 9 \
 		&& ver_test ${ELECTRON_V} ${INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_COND} \
