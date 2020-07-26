@@ -439,7 +439,7 @@ NPM_SECAUDIT_LOCKS_DIR="/dev/shm"
 
 if [[ -n "${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP}" \
 && "${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP}" == "1" ]] ; then
-DEPEND+="
+RDEPEND+="
 	app-portage/npm-secaudit
 "
 fi
