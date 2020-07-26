@@ -31,18 +31,22 @@ esac
 
 inherit desktop eutils npm-utils
 
-ELECTRON_APP_ALLOW_NON_LTS_ELECTRON=${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON:="0"} # You could define it as a per-package envar.  It not recommended in the ebuild.
+# You could define it as a per-package envar.  It not recommended in the ebuild.
+ELECTRON_APP_ALLOW_NON_LTS_ELECTRON=${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON:="0"}
 
 # See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=electron&search_type=all
 INSECURE_NVD_ELECTRON_LAST_CRITICAL_9="9.0.0_beta21" # replace - with _
 INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_COND="-lt"
-INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_LINK_ADVISORY="https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
+INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
 INSECURE_NVD_ELECTRON_LAST_CRITICAL_8="8.2.4"
 INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_COND="-lt"
-INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_LINK_ADVISORY="https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
+INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
 INSECURE_NVD_ELECTRON_LAST_CRITICAL_7="7.2.4"
 INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_COND="-lt"
-INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_LINK_ADVISORY="https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
+INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
 # See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome&search_type=all
 INSECURE_NVD_CHROME_LAST_CRITICAL="83.0.4103.97"
 INSECURE_NVD_CHROME_LAST_CRITICAL_COND="-lt"
@@ -58,17 +62,25 @@ NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="10"
 # Currently 9.x, 8.x, 7.x
 
 # Check the runtime dependencies for electron
-# Most electron apps will have electron bundled already.  No need for seperate ebuild.
+# Most electron apps will have electron bundled already.  No need for seperate
+# ebuild.
 
 # See https://www.electronjs.org/docs/development/build-instructions-linux
-# See https://github.com/electron/electron/blob/8-x-y/build/install-build-deps.sh under "List of required run-time libraries"
+# See https://github.com/electron/electron/blob/8-x-y/build/install-build-deps.sh
+#   under "List of required run-time libraries"
 # Obtained from ldd
-IUSE+=" app-indicator global-menu-bar gnome-keyring libsecret unity pulseaudio" # dlopen with cancelled processing if not found.  likely optional
+IUSE+=" app-indicator global-menu-bar gnome-keyring libsecret unity pulseaudio"
+#       dlopen with cancelled processing if not found.  likely optional
+
 # Found in Chromium only
-# For optional fonts, see https://github.com/chromium/chromium/blob/master/build/linux/install-chromeos-fonts.py
-#  For specific versions associated with Chromium release, see as base address https://github.com/chromium/chromium/tree/66.0.3359.181/
-#    chromium/chrome/installer/linux/debian/dist_package_versions.json for chromium 66.0.3359.181 (electron version v3.0.0 to latest)
-#    chrome/installer/linux/debian/expected_deps_x64 for chromium 49.0.2623.75 to <76.0.3809.88 (electron 1.0.0 to <v3.0.0)
+# For optional fonts, see
+# https://github.com/chromium/chromium/blob/master/build/linux/install-chromeos-fonts.py
+#  For specific versions associated with Chromium release, see as base address
+#  https://github.com/chromium/chromium/tree/66.0.3359.181/
+#    chromium/chrome/installer/linux/debian/dist_package_versions.json for
+#      chromium 66.0.3359.181 (electron version v3.0.0 to latest)
+#    chrome/installer/linux/debian/expected_deps_x64 for chromium 49.0.2623.75
+#      to <76.0.3809.88 (electron 1.0.0 to <v3.0.0)
 CHROMIUM_DEPEND="
 	  app-accessibility/speech-dispatcher:=
 	  dev-db/sqlite:3=
@@ -141,15 +153,19 @@ COMMON_DEPEND="
 	  x11-libs/pango:=
 	  x11-libs/pixman:=
 "
-if [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] && ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 9.0 ; then
+if [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
+&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 9.0 ; then
 :; # series supported upstream
-elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] && ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 8.0 ; then
+elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
+&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 8.0 ; then
 :; # series supported upstream
-elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] && ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 7.0 ; then
+elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
+&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 7.0 ; then
 :; # series supported upstream
 else
 if [[ "${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON}" == "0" ]] ; then
-die "Electron should be updated to one of the latest Long Term Support (LTS) series versions or else it likely contains critical CVE security advisories."
+die "Electron should be updated to one of the latest Long Term Support (LTS)\n\
+series versions or else it likely contains critical CVE security advisories."
 fi
 fi
 
@@ -373,9 +389,6 @@ DEPEND+=" ${COMMON_DEPEND}"
 
 EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postinst pkg_postrm
 
-#DEPEND+="
-#	app-portage/npm-secaudit
-#"
 IUSE+=" debug "
 if (( ${EAPI} == 7 )) ; then
 BDEPEND+="
@@ -410,10 +423,26 @@ ELECTRON_APP_NO_DIE_ON_AUDIT=${ELECTRON_APP_NO_DIE_ON_AUDIT:="0"}
 
 # You could define it as a per-package envar.  Disabled by default because
 # rapid changes in dependencies over short period of time.
-ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL:="0"}
+ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=\
+${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL:="0"}
+
+# The reoccurance interval between critical vulnerabilities in chrome is 10-14
+# days recently (worst cases), but longer interval between vulnerabilites with
+# 159 days (~5 months) and 5 days has been observed.  If the app is used like a
+# web-browser (including social media apps), the internal Chromium requires
+# weekly forced updates.
+ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP=\
+${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP:="0"}
 
 ELECTRON_APP_LOCKS_DIR="/dev/shm"
 NPM_SECAUDIT_LOCKS_DIR="/dev/shm"
+
+if [[ -n "${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP}" \
+&& "${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP}" == "1" ]] ; then
+DEPEND+="
+	app-portage/npm-secaudit
+"
+fi
 
 # @FUNCTION: _electron-app-flakey-check
 # @DESCRIPTION:
@@ -422,12 +451,16 @@ _electron-app-flakey-check() {
 	local l=$(find "${S}" -name "package.json")
 	grep -e "electron-builder" $l >/dev/null
 	if [[ "$?" == "0" ]] ; then
-		ewarn "This ebuild may fail when building with electron-builder.  Re-emerge if it fails."
+		ewarn \
+"This ebuild may fail when building with electron-builder.  Re-emerge if it\n\
+fails."
 	fi
 
 	grep -e "\"electron\":" $l >/dev/null
 	if [[ "$?" == "0" ]] ; then
-		ewarn "This ebuild may fail when downloading Electron as a dependency.  Re-emerge if it fails."
+		ewarn \
+"This ebuild may fail when downloading Electron as a dependency.  Re-emerge\n\
+if it fails."
 	fi
 }
 
@@ -482,7 +515,9 @@ electron-app_pkg_setup() {
 download micropackages."
 	fi
 
-	#export ELECTRON_VER=$(strings /usr/bin/electron | grep "%s Electron/" | sed -e "s|[%s A-Za-z/]||g")
+	#export ELECTRON_VER=$(strings /usr/bin/electron \
+	#	| grep "%s Electron/" \
+	#	| sed -e "s|[%s A-Za-z/]||g")
 	export NPM_STORE_DIR="${HOME}/npm"
 	export YARN_STORE_DIR="${HOME}/yarn"
 	export npm_config_maxsockets=${ELECTRON_APP_MAXSOCKETS}
@@ -545,7 +580,8 @@ electron-app_fetch_deps_npm() {
 # MUST be called after default unpack AND patching.
 electron-app_fetch_deps_yarn() {
 	pushd "${S}" || die
-		export FAKEROOTKEY="15574641" # don't check /usr/local/share/.yarnrc .  same number used in their testing.
+# don't check /usr/local/share/.yarnrc .  same number used in their testing.
+		export FAKEROOTKEY="15574641"
 
 		# set global dir
 		cp "${S}"/.yarnrc{,.orig}
@@ -586,7 +622,10 @@ electron-app_fetch_deps() {
 }
 
 _query_lite_json() {
-	echo $(cat "${T}/lite.json" | jq '.[] | select(.tag_name == "v'${ELECTRON_V}'")' | jq ${1} | sed -e "s|[\"]*||g")
+	echo $(cat "${T}/lite.json" \
+		| jq '.[] | select(.tag_name == "v'${ELECTRON_V}'")' \
+		| jq ${1} \
+		| sed -e "s|[\"]*||g")
 }
 
 # @FUNCTION: adie
@@ -604,13 +643,25 @@ adie() {
 # @DESCRIPTION:
 # Audits json logs for vulnerable versions and min requirements
 electron-app_audit_versions() {
-	einfo "Inspecting package versions for vulnerabilities and minimum version requirements"
-	wget -O "${T}/lite.json" "https://raw.githubusercontent.com/electron/releases/master/lite.json" || die
+	einfo \
+"Inspecting package versions for vulnerabilities and minimum version\n\
+requirements"
+	wget -O "${T}/lite.json" \
+	"https://raw.githubusercontent.com/electron/releases/master/lite.json" || die
+
+	if [[ "${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP}" == "1" ]] ; then
+		elog \
+"It's strongly recommended re-emerge the app weekly to mitigate against\n\
+critical vulnerabilities in the internal Chromium."
+	fi
 
 	local ELECTRON_V
 	if npm ls electron ; then
 		# case when ^ or latest used
-		ELECTRON_V=$(npm ls electron | grep -P -e "electron@[0-9.]+" | tail -n 1 | sed -e "s|[^0-9\.]*||g") # used by package
+		ELECTRON_V=$(npm ls electron \
+			| grep -P -e "electron@[0-9.]+" \
+			| tail -n 1 \
+			| sed -e "s|[^0-9\.]*||g") # used by package
 	elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] ; then
 		# fallback based on analysis on package.json
 		ELECTRON_V=${ELECTRON_APP_ELECTRON_V}
@@ -678,7 +729,9 @@ ${INSECURE_GLSA_CHROME_ADVISORY_LINK}"
 		adie "Electron ${ELECTRON_V} uses ${NODE_V} which is End Of Life (EOL)."
 	fi
 	if has_version "<net-libs/nodejs-${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN}" ; then
-		ewarn "You have a nodejs less than ${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN} which is End Of Life (EOL) and has vulnerabilities."
+		ewarn \
+"You have a nodejs less than ${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN} which \
+is End Of Life (EOL) and has vulnerabilities."
 	fi
 	V8_V=$(_query_lite_json '.deps.v8')
 	ZLIB_V=$(_query_lite_json '.deps.zlib')
@@ -1045,7 +1098,10 @@ electron-app-register-x() {
 			rm -rf "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
 			break
 		else
-			einfo "Waiting for mutex to be released for electron-app's pkg_db.  If it takes too long (15 min), cancel all emerges and remove ${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
+			einfo \
+"Waiting for mutex to be released for electron-app's pkg_db.  If it takes too\n\
+long (15 min), cancel all emerges and remove\n\
+${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
 			sleep 15
 		fi
 	done
@@ -1106,7 +1162,10 @@ electron-app_pkg_postrm() {
 					rm -rf "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
 					break
 				else
-					einfo "Waiting for mutex to be released for electron-app's pkg_db for npm.  If it takes too long (15 min), cancel all emerges and remove ${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
+					einfo \
+"Waiting for mutex to be released for electron-app's pkg_db for npm.  If it\n\
+takes too long (15 min), cancel all emerges and remove\n\
+${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
 					sleep 15
 				fi
 			done
@@ -1119,7 +1178,10 @@ electron-app_pkg_postrm() {
 					rm -rf "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
 					break
 				else
-					einfo "Waiting for mutex to be released for npm-secaudit's emerge-sets-db.  If it takes too long (15 min), cancel all emerges and remove ${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
+					einfo \
+"Waiting for mutex to be released for npm-secaudit's emerge-sets-db.  If it\n\
+takes too long (15 min), cancel all emerges and remove\n\
+${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
 					sleep 15
 				fi
 			done
@@ -1133,7 +1195,10 @@ electron-app_pkg_postrm() {
 					rm -rf "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
 					break
 				else
-					einfo "Waiting for mutex to be released for electron-app's pkg_db for yarn.  If it takes too long (15 min), cancel all emerges and remove ${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
+					einfo \
+"Waiting for mutex to be released for electron-app's pkg_db for yarn.  If it\n\
+takes too long (15 min), cancel all emerges and remove\n\
+${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
 					sleep 15
 				fi
 			done
