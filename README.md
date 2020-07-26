@@ -42,6 +42,10 @@ If it complains about "emerge: there are no ebuilds to satisfy" and refers to @n
 
 If you can't unemerge a npm or electron ebuild from this overlay, please read the `eselect news` item ["Manual removal of npm or electron based packages required"](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2020-07-19-manual-removal-npm-and-electron/2020-07-19-manual-removal-npm-and-electron.en.txt).
 
+See [npm-secaudit.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/npm-secaudit.eclass), [npm-utils.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/npm-utils.eclass), [electron-app.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/electron-app.eclass) for ways to control vulnerability patching using per-package environmental variables.
+
+The app-portage/npm-secaudit package is optional but provides adding npm and electron packages to the @npm-security-update set if a vulnerability was found.
+
 ### .NET stack
 
 The dotnet packages are mostly outdated and being updated.  Many will maybe be deleted due to the lack of programs that use them.  The top priority right now (in 2019 quarters 1-3) is to fix the dotcore-sdk non binary packages first then monodevelop.
