@@ -74,11 +74,14 @@ CLOSURE_COMPILER_SLOT="0"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit cmake-utils java-utils-2 npm-secaudit python-single-r1
 IUSE="+closure-compiler closure_compiler_java closure_compiler_native \
-closure_compiler_nodejs +native-optimizer system-closure-compiler test"
+closure_compiler_nodejs emscripten-fastcomp +native-optimizer \
+system-closure-compiler +system-llvm test
+"
 # See also .circleci/config.yml
 # See also tools/shared.py EXPECTED_BINARYEN_VERSION
 JAVA_V="1.8"
 # See https://github.com/google/closure-compiler-npm/blob/v20200224.0.0/packages/google-closure-compiler/package.json
+# They use the latest commit for llvm and clang
 RDEPEND="${PYTHON_DEPS}
 	closure-compiler? (
 		system-closure-compiler? ( \
@@ -95,8 +98,12 @@ RDEPEND="${PYTHON_DEPS}
 		)
 	)
 	>=dev-util/binaryen-93
-	~dev-util/emscripten-fastcomp-${PV}
-	>=net-libs/nodejs-0.10.17"
+	emscripten-fastcomp? ( ~dev-util/emscripten-fastcomp-${PV} )
+	>=net-libs/nodejs-0.10.17
+	system-llvm? (
+		>=sys-devel/llvm-6[llvm_targets_WebAssembly]
+		>=sys-devel/clang-6[llvm_targets_WebAssembly]
+	)"
 # The java-utils-2 doesn't like nested conditionals.  The eclass needs at least a virtual/jdk
 # This package doesn't really need jdk to use closure-compiler because packages are prebuilt.
 # If we have closure_compiler_native, we don't need Java.
@@ -121,7 +128,9 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	system-closure-compiler? (
 		closure-compiler
 		^^ ( closure_compiler_java closure_compiler_native closure_compiler_nodejs )
-	)"
+	)
+	^^ ( emscripten-fastcomp system-llvm )
+"
 FN_DEST="${P}.tar.gz"
 SRC_URI="https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${FN_DEST}"
 RESTRICT="fetch mirror"
@@ -177,13 +186,44 @@ FEATURES"
 updates acceptable."
 	fi
 	python-single-r1_pkg_setup
+	if use system-llvm ; then
+		if [[ -z "${EMSDK_LLVM_VERSION}" ]] ; then
+			eerror \
+"EMSDK_LLVM_VERSION must be set to a LLVM major version as a per-package\n\
+environmental variable.  The possible values are "$(ls /usr/lib/llvm)
+			die
+		fi
+		if [[ -n "${EMSDK_LLVM_VERSION}" \
+		&& ! -d "${EROOT}/usr/lib/llvm/${EMSDK_LLVM_VERSION}" ]] ; then
+			eerror \
+"The path /usr/lib/llvm/${EMSDK_LLVM_VERSION} does not exist.  Did you put\n\
+the correct EMSDK_LLVM_VERSION?"
+			die
+		fi
+	fi
 }
 
+# The activated_cfg goes in emscripten.config from the json file.
+# The activated_env goes in 99emscripten from the json file.
+# https://github.com/emscripten-core/emsdk/blob/1.39.20/emsdk_manifest.json
 prepare_file() {
 	cp "${FILESDIR}/${1}" "${S}/" || die "could not copy '${1}'"
 	sed -i "s/\${PV}/${PV}/g" "${S}/${1}" || \
 		die "could not adjust path for '${1}'"
 	sed -i -e "s|\${PYTHON_EXE_ABSPATH}|${PYTHON_EXE_ABSPATH}|g" "${S}/${1}" || die
+	if use emscripten-fastcomp ; then
+		sed -i -e \
+"s|__EMSDK_LLVM_ROOT__|/usr/share/emscripten-fastcomp-${PV}/bin|" \
+			-e \
+"s|__EMCC_WASM_BACKEND__|0|" \
+		"${S}/${1}" || die
+	elif use system-llvm ; then
+		sed -i -e \
+"s|__EMSDK_LLVM_ROOT__|/usr/lib/llvm/${EMSDK_LLVM_VERSION}|" \
+			-e \
+"s|__EMCC_WASM_BACKEND__|1|" \
+		"${S}/${1}" || die
+	fi
 }
 
 src_unpack() {
