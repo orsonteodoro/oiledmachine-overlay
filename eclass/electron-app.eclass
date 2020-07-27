@@ -800,6 +800,7 @@ electron-app_src_unpack() {
 		electron-app_src_postprepare
 	fi
 
+	die
 	# audit before possibly bundling a vulnerable package
 	electron-app_audit_dev
 
@@ -1058,6 +1059,11 @@ electron-app_desktop_install_program() {
 
 			# Mark electron executable
 			for f in $(find "${ed}" -path "*dist/electron" -type f) ; do
+				chmod 0755 "${f}" || die
+			done
+
+			# Mark chrome parts executable
+			for f in $(find "${ed}" -name "chrome-sandbox" -type f) ; do
 				chmod 0755 "${f}" || die
 			done
 
