@@ -365,6 +365,7 @@ src_install() {
 
 pkg_postinst() {
 	if use closure-compiler && ! use system-closure-compiler ; then
+		export NPM_SECAUDIT_REG_PATH="${DEST}/${P}"
 		npm-secaudit_pkg_postinst
 	fi
 	elog "Running emscripten initialization, may take a few seconds..."
