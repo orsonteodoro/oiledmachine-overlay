@@ -1115,13 +1115,13 @@ electron-app_desktop_install() {
 
 	if [[ -z "${rel_icon_path}" ]] ; then
 		die \
-"You must provide 2 arg to electron-app_desktop_install containing the\n\
+"You must provide 2nd arg to electron-app_desktop_install containing the\n\
 relative icon path"
 	fi
 
 	if [[ -z "${cmd}" ]] ; then
 		die \
-"You must provide 5 arg to electron-app_desktop_install containing the\n\
+"You must provide 5th arg to electron-app_desktop_install containing the\n\
 command to execute in the wrapper script"
 	fi
 
