@@ -442,18 +442,19 @@ npm-secaudit_install() {
 	shopt -s dotglob # copy hidden files
 
 	local d="/usr/$(get_libdir)/node/${PN}/${SLOT}"
+	local ed="${ED}/${d}"
 	insinto "${d}"
 	doins -r ${rel_src_path}
 
 	# Mark .bin scripts executable
-	for dir_path in $(find "${d}" -name ".bin" -type d) ; do
+	for dir_path in $(find "${ed}" -name ".bin" -type d) ; do
 		for f in $(find "${dir_path}" ) ; do
 			chmod 0755 $(realpath "${f}") || die
 		done
 	done
 
 	# Mark libraries executable
-	for f in $(find "${d}" -name "*.so" -type f -o -name "*.so.*" -type f) ; do
+	for f in $(find "${ed}" -name "*.so" -type f -o -name "*.so.*" -type f) ; do
 		chmod 0755 $(realpath "${f}") || die
 	done
 

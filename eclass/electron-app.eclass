@@ -1035,6 +1035,7 @@ electron-app_desktop_install_program_raw() {
 electron-app_desktop_install_program() {
 	local rel_src_path="$1"
 	local d="/usr/$(get_libdir)/node/${PN}/${SLOT}"
+	local ed="${ED}/${d}"
 	case "$ELECTRON_APP_MODE" in
 		npm)
 			local old_dotglob=$(shopt dotglob | cut -f 2)
@@ -1044,19 +1045,19 @@ electron-app_desktop_install_program() {
 			doins -r ${rel_src_path}
 
 			# Mark .bin scripts executable
-			for dir_path in $(find "${d}" -name ".bin" -type d) ; do
+			for dir_path in $(find "${ed}" -name ".bin" -type d) ; do
 				for f in $(find "${dir_path}" ) ; do
 					chmod 0755 $(realpath "${f}") || die
 				done
 			done
 
 			# Mark libraries executable
-			for f in $(find "${d}" -name "*.so" -type f -o -name "*.so.*" -type f) ; do
+			for f in $(find "${ed}" -name "*.so" -type f -o -name "*.so.*" -type f) ; do
 				chmod 0755 $(realpath "${f}") || die
 			done
 
 			# Mark electron executable
-			for f in $(find "${d}" -path "*dist/electron" -type f) ; do
+			for f in $(find "${ed}" -path "*dist/electron" -type f) ; do
 				chmod 0755 "${f}" || die
 			done
 
@@ -1074,19 +1075,19 @@ electron-app_desktop_install_program() {
 			doins -r ${rel_src_path}
 
 			# Mark .bin scripts executable
-			for dir_path in $(find "${d}" -name ".bin" -type d) ; do
+			for dir_path in $(find "${ed}" -name ".bin" -type d) ; do
 				for f in $(find "${dir_path}" ) ; do
 					chmod 0755 $(realpath "${f}") || die
 				done
 			done
 
 			# Mark libraries executable
-			for f in $(find "${d}" -name "*.so" -type f -o -name "*.so.*" -type f) ; do
+			for f in $(find "${ed}" -name "*.so" -type f -o -name "*.so.*" -type f) ; do
 				chmod 0755 $(realpath "${f}") || die
 			done
 
 			# Mark electron executable
-			for f in $(find "${d}" -path "*dist/electron" -type f) ; do
+			for f in $(find "${ed}" -path "*dist/electron" -type f) ; do
 				chmod 0755 "${f}" || die
 			done
 
