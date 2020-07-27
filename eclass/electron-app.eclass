@@ -1042,7 +1042,7 @@ electron-app_desktop_install_program() {
 			shopt -s dotglob # copy hidden files
 
 			insinto "${d}"
-			doins -r ${rel_src_path}
+			doins -r $(realpath ${rel_src_path})
 
 			# Mark .bin scripts executable
 			for dir_path in $(find "${ed}" -name ".bin" -type d) ; do
@@ -1072,7 +1072,7 @@ electron-app_desktop_install_program() {
 			shopt -s dotglob # copy hidden files
 
 			insinto "${d}"
-			doins -r ${rel_src_path}
+			doins -r $(realpath ${rel_src_path})
 
 			# Mark .bin scripts executable
 			for dir_path in $(find "${ed}" -name ".bin" -type d) ; do
