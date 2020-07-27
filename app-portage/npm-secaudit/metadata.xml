@@ -78,6 +78,13 @@ ${CATEGORY}/${PNN}:${SLOT}\t/${INSTALL_PATH}
 
   This script needs a internet connection to fetch the lite.json and to
   obtain vulnerability advisories from npm.
+
+
+  Manually removing deleted packages:
+
+  To manually remove a package, remove the line containing the package from
+  /etc/portage/sets/npm-security-update, and possibly
+  /var/lib/portage/npm-packages.
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/orsonteodoro/oiledmachine-overlay/issues</bugs-to>
