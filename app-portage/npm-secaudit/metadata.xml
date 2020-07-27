@@ -63,6 +63,21 @@ ${CATEGORY}/${PN1}:${SLOT}\t/${INSTALL_PATH}
 ${CATEGORY}/${PN2}:${SLOT}\t/${INSTALL_PATH}
 ...
 ${CATEGORY}/${PNN}:${SLOT}\t/${INSTALL_PATH}
+
+
+  The package makes use of electron/releases data that comes in lite.json.
+  This versioning data is used to compare against near up-to-date NVD
+  criticals advisories (CVSS v3) for Electron and internal Chromium.
+  This is manually added because ambiguity of the message which may be
+  only chrome specific.  If we utilized a fully automated system, it
+  may report false positive(s).  Adding exclusions will not fix the false
+  positive problem.  Please check the NVD database and do a
+  keyword check on chrome, chromium, electron, "chrome v8", if it is not
+  kept up to date.
+
+
+  This script needs a internet connection to fetch the lite.json and to
+  obtain vulnerability advisories from npm.
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/orsonteodoro/oiledmachine-overlay/issues</bugs-to>
