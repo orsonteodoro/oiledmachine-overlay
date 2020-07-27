@@ -438,13 +438,17 @@ function check() {
 
 		if [[ -f "${G_BLACKLIST}" ]] && grep -qF -e "${p}" "${G_BLACKLIST}" ; then
 			einfo "Skipping blacklisted ${p} for audit"
+		elif [[ ! -d "${path}" ]] ; then
+			einfo \
+"Skipping missing dir: ${path}.  Report to ebuild maintainer if package is\n\
+installed."
 		else
 			pushd "${path}" >/dev/null
 				recursive_package_lock_audit "${p}" "${path}"
 				local r1="$?"
 				version_audit
 				local r2="$?"
-				elif [[ "$r1" == "0" && "$r2" == "0" ]] ; then
+				if [[ "$r1" == "0" && "$r2" == "0" ]] ; then
 					dinfo "Package ${p} is good."
 				else
 					dinfo \
