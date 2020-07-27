@@ -146,7 +146,9 @@ download micropackages."
 	fi
 
 	if has_version "<net-libs/nodejs-${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN}" ; then
-		ewarn "You have a nodejs less than ${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN} which is End Of Life (EOL) and has vulnerabilities."
+		ewarn \
+"You have a nodejs less than ${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN} which\n\
+is End Of Life (EOL) and has vulnerabilities."
 	fi
 }
 
@@ -285,7 +287,10 @@ npm-secaudit-register() {
 			rm -rf "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
 			break
 		else
-			einfo "Waiting for mutex to be released for npm-secaudit's pkg_db.  If it takes too long (15 min), cancel all emerges and remove ${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
+			einfo \
+"Waiting for mutex to be released for npm-secaudit's pkg_db.  If it takes too\n\
+long (15 min), cancel all emerges and remove\n\
+${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
 			sleep 15
 		fi
 	done
@@ -339,20 +344,26 @@ npm-secaudit_audit_dev() {
 				grep -qF -e " High " "${audit_file}" && is_high=1
 				grep -qF -e " Moderate " "${audit_file}" && is_moderate=1
 				grep -qF -e " Low " "${audit_file}" && is_low=1
-				if [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Critical" \
+	if [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Critical" \
 					&& "${is_critical}" == "1" ]] ; then
 					cat "${audit_file}"
 					die "Detected critical vulnerability in a package."
-				elif [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "High" \
-					&& ( "${is_high}" == "1" || "${is_critical}" == "1" ) ]] ; then
+	elif [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "High" \
+					&& ( "${is_high}" == "1" \
+					|| "${is_critical}" == "1" ) ]] ; then
 					cat "${audit_file}"
 					die "Detected high vulnerability in a package."
-				elif [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Moderate" \
-					&& ( "${is_moderate}" == "1" || "${is_critical}" == "1" || "${is_high}" == "1" ) ]] ; then
+	elif [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Moderate" \
+					&& ( "${is_moderate}" == "1" \
+					|| "${is_critical}" == "1" \
+					|| "${is_high}" == "1" ) ]] ; then
 					cat "${audit_file}"
 					die "Detected moderate vulnerability in a package."
-				elif [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Low" \
-					&& ( "${is_low}" == "1" || "${is_critical}" == "1" || "${is_high}" == "1" || "${is_moderate}" == "1" ) ]] ; then
+	elif [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Low" \
+					&& ( "${is_low}" == "1" \
+					|| "${is_critical}" == "1" \
+					|| "${is_high}" == "1" \
+					|| "${is_moderate}" == "1" ) ]] ; then
 					cat "${audit_file}"
 					die "Detected low vulnerability in a package."
 				fi
@@ -479,7 +490,10 @@ npm-secaudit_pkg_postrm() {
 			rm -rf "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
 			break
 		else
-			einfo "Waiting for mutex to be released for npm-secaudit's pkg_db.  If it takes too long (15 min), cancel all emerges and remove ${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
+			einfo \
+"Waiting for mutex to be released for npm-secaudit's pkg_db.  If it takes too\n\
+long (15 min), cancel all emerges and remove\n\
+${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
 			sleep 15
 		fi
 	done
@@ -492,7 +506,10 @@ npm-secaudit_pkg_postrm() {
 			rm -rf "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
 			break
 		else
-			einfo "Waiting for mutex to be released for npm-secaudit's emerge-sets-db.  If it takes too long (15 min), cancel all emerges and remove ${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
+			einfo \
+"Waiting for mutex to be released for npm-secaudit's emerge-sets-db.  If it\n\
+takes too long (15 min), cancel all emerges and remove\n\
+${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
 			sleep 15
 		fi
 	done

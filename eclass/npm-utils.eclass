@@ -10,7 +10,8 @@
 # @SUPPORTED_EAPIS: 6 7
 # @BLURB: Eclass for wrapper npm commands
 # @DESCRIPTION:
-# The npm-utils eclass defines convenience functions for working with npm with subdirectories.
+# The npm-utils eclass defines convenience functions for working with npm with
+# subdirectories.
 
 case "${EAPI:-0}" in
         0|1|2|3|4|5)
@@ -26,10 +27,19 @@ case "${EAPI:-0}" in
                 ;;
 esac
 
-NPM_UTILS_ALLOW_AUDIT_FIX=${NPM_UTILS_ALLOW_AUDIT_FIX:="1"} # You could define it as a per-package envar, but should not be done in the ebuild itself.
-NPM_UTILS_ALLOW_AUDIT=${NPM_UTILS_ALLOW_AUDIT:="1"} # You could define it as a per-package envar, but should not be done in the ebuild itself.
+# You could define it as a per-package envar, but should not be done in the
+# ebuild itself.
+NPM_UTILS_ALLOW_AUDIT_FIX=${NPM_UTILS_ALLOW_AUDIT_FIX:="1"}
+
+# You could define it as a per-package envar, but should not be done in the
+# ebuild itself.
+NPM_UTILS_ALLOW_AUDIT=${NPM_UTILS_ALLOW_AUDIT:="1"}
+
 NPM_UTILS_ALLOW_I_PACKAGE_LOCK=${NPM_UTILS_ALLOW_I_PACKAGE_LOCK:="0"}
-NPM_UTILS_FIX_FORCE=${NPM_UTILS_FIX_FORCE:="0"} # You could define it as a per-package envar, but should not be done in the ebuild itself.
+
+# You could define it as a per-package envar, but should not be done in the
+# ebuild itself.
+NPM_UTILS_FIX_FORCE=${NPM_UTILS_FIX_FORCE:="0"}
 
 # @FUNCTION: npm_install_sub
 # @DESCRIPTION:
@@ -114,7 +124,8 @@ npm_package_lock_update() {
 			ewarn "package-lock.json was not found as expected"
 		fi
 		npm i --package-lock-only || die
-		[ ! -e package-lock.json ] && ewarn "package-lock.json was not created in ${dir}"
+		[ ! -e package-lock.json ] \
+		&& ewarn "package-lock.json was not created in ${dir}"
 	popd
 }
 
@@ -123,14 +134,16 @@ npm_package_lock_update() {
 # Inspects if vulnerable.  It will fix trivial vulnerabilities.
 # @RETURNS: 0 no audit fix, 1 for audit fix, 2 on error
 npm_auto_fix() {
-	if [[ -n "${NPM_UTILS_ALLOW_AUDIT_FIX}" && "${NPM_UTILS_ALLOW_AUDIT_FIX}" == "1" ]] ; then
+	if [[ -n "${NPM_UTILS_ALLOW_AUDIT_FIX}" \
+		&& "${NPM_UTILS_ALLOW_AUDIT_FIX}" == "1" ]] ; then
 		:;
 	else
 		return
 	fi
 
 	local option_fix_force=""
-	if [[ -n "${NPM_UTILS_FIX_FORCE}" && "${NPM_UTILS_FIX_FORCE}" == "1" ]] ; then
+	if [[ -n "${NPM_UTILS_FIX_FORCE}" \
+		&& "${NPM_UTILS_FIX_FORCE}" == "1" ]] ; then
 		option_fix_force="--force"
 	fi
 
@@ -144,31 +157,44 @@ npm_auto_fix() {
 	npm audit &> "${audit_file}"
 	cat "${audit_file}" || die
 	local needed_fix="$?"
-	cat "${audit_file}" | grep -F "npm audit fix" >/dev/null && is_trivial=1
-	cat "${audit_file}" | grep -F "# Run" >/dev/null && is_auto_fix=1
-	cat "${audit_file}" | grep -F "require manual review" >/dev/null && is_manual_review=1
-	cat "${audit_file}" | grep -F "found 0 vulnerabilit" >/dev/null && is_clean=1
-	cat "${audit_file}" | grep -F "Missing:" >/dev/null && is_missing=1
-	cat "${audit_file}" | grep -F "Invalid Version:" >/dev/null && is_invalid_version=1
+	cat "${audit_file}" | grep -F "npm audit fix" >/dev/null \
+		&& is_trivial=1
+	cat "${audit_file}" | grep -F "# Run" >/dev/null \
+		&& is_auto_fix=1
+	cat "${audit_file}" | grep -F "require manual review" >/dev/null \
+		&& is_manual_review=1
+	cat "${audit_file}" | grep -F "found 0 vulnerabilit" >/dev/null \
+		&& is_clean=1
+	cat "${audit_file}" | grep -F "Missing:" >/dev/null \
+		&& is_missing=1
+	cat "${audit_file}" | grep -F "Invalid Version:" >/dev/null \
+		&& is_invalid_version=1
 	if [[ "${is_auto_fix}" == "1" ]] ; then
-		einfo "Found auto fixes.  Running \`npm audit fix ${option_fix_force}\`.  is_auto_fix=1"
+		einfo \
+"Found auto fixes.  Running \`npm audit fix ${option_fix_force}\`.  is_auto_fix=1"
 		npm audit fix ${option_fix_force}
-		#L=$(cat "${audit_file}" | grep -P -e "to resolve [0-9]+ vulnerabilit(y|ies)" | sed -r -e "s|# Run  ||" -e "s#  to resolve [0-9]+ vulnerabilit(y|ies)##g")
+		#L=$(cat "${audit_file}" \
+#| grep -P -e "to resolve [0-9]+ vulnerabilit(y|ies)" \
+#| sed -r -e "s|# Run  ||" -e "s#  to resolve [0-9]+ vulnerabilit(y|ies)##g")
 		#while read -r line ; do
 		#	einfo "Auto running fix: ${line}"
 		#	eval "${line}"
 		#done <<< ${L}
 		return 1
 	elif [[ "${is_trivial}" == "1" ]] ; then
-		einfo "Found trivial fixes.  Running \`npm audit fix ${option_fix_force}\`.  is_trivial=1"
+		einfo \
+"Found trivial fixes.  Running \`npm audit fix ${option_fix_force}\`.\n\
+is_trivial=1"
 		npm audit fix ${option_fix_force} || die
 		return 1
 		npm audit 2>&1 > "${audit_file}"
-		cat "${audit_file}" | grep -F "found 0 vulnerabilities" || die "not fixed"
+		cat "${audit_file}" | grep -F "found 0 vulnerabilities" \
+			|| die "not fixed"
 	elif [[ "${is_manual_review}" == "1" ]] ; then
 		cat "${audit_file}" || die
-		ewarn "You still have a vulnerable package.  It requires hand editing.  Fix immediately.  is_manual_review=1"
-		ewarn "Reported from: $(pwd)"
+		ewarn \
+"You still have a vulnerable package.  It requires hand editing.\n\
+Fix immediately.  is_manual_review=1.  Reported from: $(pwd)"
 		# assumes that fixing operations occur immediately
 		return 2
 	elif [[ "${is_missing}" == "1" ]] ; then
@@ -183,13 +209,17 @@ npm_auto_fix() {
 			einfo "Still broken.  Requires manual editing."
 		fi
 		is_clean=0
-		cat "${audit_file}" | grep -F "found 0 vulnerabilities" >/dev/null && is_clean=1
+		cat "${audit_file}" \
+			| grep -F "found 0 vulnerabilities" >/dev/null \
+			&& is_clean=1
 		if [[ "${is_clean}" == 0 ]] ; then
-			einfo "Running \`npm audit fix ${option_fix_force}\` anyway."
+			einfo \
+			"Running \`npm audit fix ${option_fix_force}\` anyway."
 			npm audit fix ${option_fix_force}
 		fi
 		npm audit 2>&1 > "${audit_file}"
-		cat "${audit_file}" | grep -F "found 0 vulnerabilities" || return 2
+		cat "${audit_file}" | grep -F "found 0 vulnerabilities" \
+			|| return 2
 		return 1
 	elif [[ "${is_clean}" == "1" ]] ; then
 		einfo "Audit was clean.  is_clean=1"
@@ -212,7 +242,9 @@ npm_auto_fix() {
 __missing_requires_manual_intervention_message() {
 	if grep -e "Missing:" "${audit_file}" >/dev/null ; then
 		cat "${audit_file}" || die
-		ewarn "Install missing packages.  Do a \`npm ls <package_name>\` of each of the above packages.  Add them if they are missing"
+		ewarn \
+"Install missing packages.  Do a \`npm ls <package_name>\` of each of the\n\
+above packages.  Add them if they are missing"
 		ewarn
 		ewarn "The package lock dir: ${dir}"
 		ewarn "The package.json: ${dir}/package.json"
@@ -227,8 +259,13 @@ __replace_package_lock() {
 	__missing_requires_manual_intervention_message
 	if [ ! -e package-lock.json ] ; then
 		if [[ "${NPM_UTILS_ALLOW_I_PACKAGE_LOCK}" == "1" ]] ; then
-			ewarn "Could not safely restore package-lock.json with --package-lock-only.  Forcing 'npm i --package-lock' which may pull vulnerabilities.  dir=$(pwd)"
-			npm i --package-lock 2>&1 > "${audit_file}"  # warning: can pull vulnerability
+			ewarn \
+"Could not safely restore package-lock.json with --package-lock-only.\n\
+Forcing 'npm i --package-lock' which may pull vulnerabilities.  dir=$(pwd)"
+
+			# warning: can pull vulnerability
+			npm i --package-lock 2>&1 > "${audit_file}"
+
 			__missing_requires_manual_intervention_message
 		fi
 	fi
@@ -251,16 +288,20 @@ npm_pre_audit() {
 		local audit_file="${T}/npm-audit-result"
 		npm audit &> "${audit_file}"
 
-		if grep -e "Manual Review" "${audit_file}" >/dev/null || grep -e "npm audit security report" "${audit_file}" >/dev/null ; then
-			# false positive cases when project-lock.json is old caused by deduping
+		if grep -e "Manual Review" "${audit_file}" >/dev/null \
+		|| grep -e "npm audit security report" "${audit_file}" >/dev/null ; then
+			# false positive cases when project-lock.json is old
+			# caused by deduping
 			__replace_package_lock
 		elif grep -e "Missing:" "${audit_file}" >/dev/null ; then
-			# package-lock.json may be broken.  try to fix before doing audit
+			# package-lock.json may be broken.  try to fix before
+			# doing audit
 			__replace_package_lock
 		elif grep -e "does not satisfy" "${audit_file}" >/dev/null ; then
 			__replace_package_lock
 		elif [ ! -e package-lock.json ] ; then
-			die "Missing package-lock.json required for audit.  Fixme:  unknown case."
+			die \
+"Missing package-lock.json required for audit.  Fixme:  unknown case."
 		fi
 	else
 		die "Using npm_pre_audit requires a package-lock.json"
@@ -280,14 +321,16 @@ npm_pre_audit() {
 #
 # It will halt if it is not able to create a package-json.json.
 #
-# It will continue if it detects a vulnerability.  It is assumed that commands following call fix it.
+# It will continue if it detects a vulnerability.  It is assumed that commands
+# following call fix it.
 #
 # @CODE
 # Parameters:
 # $1 - directory location to perform audit
 # @CODE
 npm_audit_fix() {
-	if [[ -n "${NPM_UTILS_ALLOW_AUDIT_FIX}" && "${NPM_UTILS_ALLOW_AUDIT_FIX}" == "1" ]] ; then
+	if [[ -n "${NPM_UTILS_ALLOW_AUDIT_FIX}" \
+	&& "${NPM_UTILS_ALLOW_AUDIT_FIX}" == "1" ]] ; then
 		:;
 	else
 		return
@@ -343,10 +386,12 @@ npm_audit_fix_recursive_and_converging() {
 			elif (( ${n_repairs} == ${previous_n_repairs} )) ; then
 				tries=$((${tries}+1))
 				if (( ${tries} >= 3 )) ; then
-					einfo "Repair rate tries is used up."
+					einfo \
+"Repair rate tries is used up."
 					break
 				else
-					einfo "Repair rate is a coincidental constant?  tries=${tries}"
+					einfo \
+"Repair rate is a coincidental constant?  tries=${tries}"
 				fi
 			fi
 		fi
@@ -358,21 +403,24 @@ npm_audit_fix_recursive_and_converging() {
 
 # @FUNCTION: npm_update_package_locks_recursive
 # @DESCRIPTION:
-# Performs an recursive update of locked packages that need package-locks updated
-# in order for audits to work properly.  It should be called after deduping is performed.
-# It is assumed that the entire project at this point has already had all its in-the-wild
-# vulnerable packages removed before calling it.
+# Performs an recursive update of locked packages that need package-locks
+# updated in order for audits to work properly.  It should be called after
+# deduping is performed.
+# It is assumed that the entire project at this point has already had all its
+# in-the-wild vulnerable packages removed before calling it.
 #
 # It will halt if it is not able to create a package-json.json.
 #
-# It will continue if it detects a vulnerability.  It is assumed that commands following call fix it.
+# It will continue if it detects a vulnerability.  It is assumed that commands
+# following call fix it.
 #
 # @CODE
 # Parameters:
 # $1 - directory location to start traversing which should be the project root
 # @CODE
 npm_update_package_locks_recursive() {
-	if [[ -n "${NPM_UTILS_ALLOW_AUDIT}" && "${NPM_UTILS_ALLOW_AUDIT}" == "1" ]] ; then
+	if [[ -n "${NPM_UTILS_ALLOW_AUDIT}" \
+		&& "${NPM_UTILS_ALLOW_AUDIT}" == "1" ]] ; then
 		:;
 	else
 		return
@@ -387,7 +435,9 @@ npm_update_package_locks_recursive() {
 	local n_constant=0
 	local audit_file="${T}/npm-audit-result"
 	while true ; do
-		einfo "npm_update_package_locks_recursive (pre audit): preforming pass #${i} dir=$(realpath ${base}/${dir})"
+		einfo \
+"npm_update_package_locks_recursive (pre audit): preforming pass #${i}\n\
+dir=$(realpath ${base}/${dir})"
 		L=$(find "${dir}" -type f -name "package-lock.json")
 		for l in ${L} ; do
 			if [ -e "${l}" ] ; then
@@ -400,7 +450,8 @@ npm_update_package_locks_recursive() {
 		done
 
 		current_broken_lock_count=0
-		einfo "npm_update_package_locks_recursive (locks update): preforming pass #${i}"
+		einfo \
+"npm_update_package_locks_recursive (locks update): preforming pass #${i}"
 		L=$(find "${dir}" -type f -name "package-lock.json")
 		for l in ${L} ; do
 			if [ -e "${l}" ] ; then
@@ -438,7 +489,9 @@ npm_update_package_locks_recursive() {
 				n_constant=0
 			fi
 		fi
-		einfo "Convergence rates: current_broken_lock_count=${current_broken_lock_count} previous_broken_lock_count=${previous_broken_lock_count}"
+		einfo \
+"Convergence rates: current_broken_lock_count=${current_broken_lock_count}\n\
+previous_broken_lock_count=${previous_broken_lock_count}"
 		previous_broken_lock_count=${current_broken_lock_count}
 		i=$((${i}+1))
 	done
