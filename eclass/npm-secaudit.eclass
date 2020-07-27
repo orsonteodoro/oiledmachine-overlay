@@ -93,7 +93,7 @@ IUSE+=" debug"
 
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
 NPM_PACKAGE_SETS_DB="/etc/portage/sets/npm-security-update"
-NPM_SECAUDIT_REG_PATH=${NPM_SECAUDIT_REG_PATH:=""}
+NPM_SECAUDIT_REG_PATH=${NPM_SECAUDIT_REG_PATH:=""} # set only within in the ebuild
 
 # Set this in your make.conf to control number of HTTP requests.  50 is npm
 # default but it is too high.
@@ -270,8 +270,15 @@ npm-secaudit-register() {
 	while true ; do
 		if mkdir "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db" 2>/dev/null ; then
 			trap "rm -rf \"${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db\"" EXIT
-			local rel_path=${1:-""}
-			local check_path="/usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_path}"
+			local path=${1:-""}
+			local check_path
+			if [[ "${path}" =~ ^/ ]] ; then
+				# absolute path
+				check_path="${path}"
+			else
+				# relative path
+				check_path=$(realpath "/usr/$(get_libdir)/node/${PN}/${SLOT}/${path}")
+			fi
 			# format:
 			# ${CATEGORY}/${P}	path_to_package
 			addwrite "${NPM_PACKAGE_DB}"
@@ -468,9 +475,9 @@ npm-secaudit_install() {
 # @FUNCTION: npm-secaudit_pkg_postinst
 # @DESCRIPTION:
 # Automatically registers an npm package.
-# Set NPM_SECAUDIT_REG_PATH global to relative path to
-# scan for vulnerabilities containing node_modules.
-# scan for vulnerabilities.
+# Set NPM_SECAUDIT_REG_PATH global to relative path (NOT starting with /) or
+# absolute path (starting with /) to scan for vulnerabilities containing
+# node_modules.
 npm-secaudit_pkg_postinst() {
         debug-print-function ${FUNCNAME} "${@}"
 

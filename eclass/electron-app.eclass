@@ -406,7 +406,7 @@ fi
 NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
 NPM_PACKAGE_SETS_DB="/etc/portage/sets/npm-security-update"
 YARN_PACKAGE_DB="/var/lib/portage/yarn-packages"
-ELECTRON_APP_REG_PATH=${ELECTRON_APP_REG_PATH:=""}
+ELECTRON_APP_REG_PATH=${ELECTRON_APP_REG_PATH:=""} # set only within the ebuild
 ELECTRON_APP_MODE=${ELECTRON_APP_MODE:="npm"} # can be npm, yarn
 
 # Set this in your make.conf to control number of HTTP requests.  50 is npm
@@ -1152,8 +1152,16 @@ electron-app-register-x() {
 		if mkdir "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db" 2>/dev/null ; then
 			trap "rm -rf \"${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db\"" EXIT
 			local pkg_db="${1}"
-			local rel_path=${2:-""}
-			local check_path="/usr/$(get_libdir)/node/${PN}/${SLOT}/${rel_path}"
+			local path=${2:-""}
+			local check_path
+			if [[ "${path}" =~ ^/ ]] ; then
+				# assumed absolute path
+				check_path="${path}"
+			else
+				# relative path
+				check_path=$(realpath "/usr/$(get_libdir)/node/${PN}/${SLOT}/${path}")
+			fi
+
 			# format:
 			# ${CATEGORY}/${P}	path_to_package
 			addwrite "${pkg_db}"
@@ -1183,8 +1191,8 @@ ${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
 # Adds the package to the electron database
 # This function MUST be called in pkg_postinst.
 electron-app-register-npm() {
-	local rel_path=${1:-""}
-	electron-app-register-x "${NPM_PACKAGE_DB}" "${rel_path}"
+	local path=${1:-""}
+	electron-app-register-x "${NPM_PACKAGE_DB}" "${path}"
 }
 
 # @FUNCTION: electron-app-register-yarn
@@ -1192,15 +1200,16 @@ electron-app-register-npm() {
 # Adds the package to the electron database
 # This function MUST be called in pkg_postinst.
 electron-app-register-yarn() {
-	local rel_path=${1:-""}
-	electron-app-register-x "${YARN_PACKAGE_DB}" "${rel_path}"
+	local path=${1:-""}
+	electron-app-register-x "${YARN_PACKAGE_DB}" "${path}"
 }
 
 # @FUNCTION: electron-app_pkg_postinst
 # @DESCRIPTION:
 # Automatically registers an electron app package.
-# Set ELECTRON_APP_REG_PATH global to relative path to
-# scan for vulnerabilities containing node_modules.
+# Set ELECTRON_APP_REG_PATH global to relative path (NOT starting with /)
+# or absolute path (starting with /) to scan for vulnerabilities containing
+# node_modules.
 electron-app_pkg_postinst() {
         debug-print-function ${FUNCNAME} "${@}"
 
