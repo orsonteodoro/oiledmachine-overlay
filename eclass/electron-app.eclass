@@ -1034,12 +1034,13 @@ electron-app_desktop_install_program_raw() {
 # Additional change of ownership and permissions should be done after running this.
 electron-app_desktop_install_program() {
 	local rel_src_path="$1"
+	local d="/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	case "$ELECTRON_APP_MODE" in
 		npm)
 			local old_dotglob=$(shopt dotglob | cut -f 2)
 			shopt -s dotglob # copy hidden files
 
-			insinto "/usr/$(get_libdir)/node/${PN}/${SLOT}"
+			insinto "${d}"
 			doins -r ${rel_src_path}
 
 			# Mark .bin scripts executable
@@ -1069,7 +1070,7 @@ electron-app_desktop_install_program() {
 			local old_dotglob=$(shopt dotglob | cut -f 2)
 			shopt -s dotglob # copy hidden files
 
-			insinto "/usr/$(get_libdir)/node/${PN}/${SLOT}"
+			insinto "${d}"
 			doins -r ${rel_src_path}
 
 			# Mark .bin scripts executable
