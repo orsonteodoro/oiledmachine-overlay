@@ -38,7 +38,8 @@ electron-app_src_prepare() {
 }
 
 electron-app_src_postcompile() {
-	# for stopping version lock warning from audit.  production packages installed only.
+	# for stopping version lock warning from audit.  production packages
+	# installed only.
 	npm uninstall gulp -D
 }
 
@@ -52,4 +53,11 @@ src_install() {
 		-e "s|\${PN}|${PN}|" \
 		"${T}/${PN}"
 	doexe "${T}/${PN}"
+
+	ewarn \
+"${PN} is insecure by design and utilizes some parts of the Chromium code.\n\
+Chromium itself has reoccurance interval of NVD critical vulnerabilites\n\
+between 5 days to ~5 months and high vulunerability advisories with higher\n\
+frequency.  This ebuild should be updated weekly with an updated version of\n\
+internal Chromium and programs produced by it must be updated weekly."
 }
