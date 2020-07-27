@@ -472,9 +472,11 @@ if it fails."
 
 # @FUNCTION: electron-app_audit_fix_npm
 # @DESCRIPTION:
-# Removes vulnerable packages.  It will audit every folder containing a package-lock.json
+# Removes vulnerable packages.  It will audit every folder containing a
+# package-lock.json
 electron-app_audit_fix_npm() {
-	if [[ -n "${ELECTRON_APP_ALLOW_AUDIT_FIX}" && "${ELECTRON_APP_ALLOW_AUDIT_FIX}" == "1" ]] ; then
+	if [[ -n "${ELECTRON_APP_ALLOW_AUDIT_FIX}" \
+		&& "${ELECTRON_APP_ALLOW_AUDIT_FIX}" == "1" ]] ; then
 		:;
 	else
 		return
@@ -489,7 +491,8 @@ electron-app_audit_fix_npm() {
 # @DESCRIPTION:
 # Removes vulnerable packages based on the packaging system.
 electron-app_audit_fix() {
-	if [[ -n "${ELECTRON_APP_ALLOW_AUDIT_FIX}" && "${ELECTRON_APP_ALLOW_AUDIT_FIX}" == "1" ]] ; then
+	if [[ -n "${ELECTRON_APP_ALLOW_AUDIT_FIX}" \
+		&& "${ELECTRON_APP_ALLOW_AUDIT_FIX}" == "1" ]] ; then
 		:;
 	else
 		return
@@ -501,7 +504,8 @@ electron-app_audit_fix() {
 			;;
 		yarn)
 			# use npm audit anyway?
-			ewarn "No audit fix implemented in yarn.  Package may be likely vulnerable."
+			ewarn \
+"No audit fix implemented in yarn.  Package may be likely vulnerable."
 			;;
 		*)
 			;;
@@ -530,8 +534,10 @@ download micropackages."
 
 	case "$ELECTRON_APP_MODE" in
 		npm)
-			# Lame bug.  We cannot run `electron --version` because it requires X.
-			# It is okay to emerge package outside of X without problems.
+			# Lame bug.  We cannot run `electron --version` because
+			# it requires X.
+			# It is okay to emerge package outside of X without
+			# problems.
 			export npm_config_cache="${NPM_STORE_DIR}"
 			#einfo "Electron version: ${ELECTRON_VER}"
 			#if [[ -z "${ELECTRON_VER}" ]] ; then
@@ -593,14 +599,17 @@ electron-app_fetch_deps_yarn() {
 		cp "${S}"/.yarnrc{,.orig}
 		echo "prefix \"${S}/.yarn\"" >> "${S}/.yarnrc" || die
 		echo "global-folder \"${S}/.yarn\"" >> "${S}/.yarnrc" || die
-		echo "offline-cache-mirror \"${YARN_STORE_DIR}/offline\"" >> "${S}/.yarnrc" || die
+		echo "offline-cache-mirror \"${YARN_STORE_DIR}/offline\"" \
+			>> "${S}/.yarnrc" || die
 
 		mkdir -p "${S}/.yarn"
-		einfo "yarn prefix: $(yarn config get prefix)"
-		einfo "yarn global-folder: $(yarn config get global-folder)"
-		einfo "yarn offline-cache-mirror: $(yarn config get offline-cache-mirror)"
+		einfo \
+"yarn prefix: $(yarn config get prefix)\n\
+yarn global-folder: $(yarn config get global-folder)\n\
+yarn offline-cache-mirror: $(yarn config get offline-cache-mirror)"
 
-		yarn install --network-concurrency ${ELECTRON_APP_MAXSOCKETS} --verbose || die
+		yarn install --network-concurrency ${ELECTRON_APP_MAXSOCKETS} \
+				--verbose || die
 		# todo yarn audit auto patch
 		# an analog to yarn audix fix doesn't exit yet
 	popd
@@ -742,7 +751,8 @@ is End Of Life (EOL) and has vulnerabilities."
 	V8_V=$(_query_lite_json '.deps.v8')
 	ZLIB_V=$(_query_lite_json '.deps.zlib')
 	if ! has_version ">=sys-libs/zlib-${ZLIB_V}" ; then
-		adie "Electron ${ELECTRON_V} requires at least >=sys-libs/zlib-${ZLIB_V}"
+		adie \
+"Electron ${ELECTRON_V} requires at least >=sys-libs/zlib-${ZLIB_V}"
 	fi
 	einfo
 	einfo "Electron version report with internal/external dependencies:"
@@ -818,7 +828,8 @@ electron-app_src_unpack() {
 
 # @FUNCTION: electron-app_src_prepare_default
 # @DESCRIPTION:
-# Fetches dependencies and audit fixes them.  Currently a stub.  TODO per package patching support.
+# Fetches dependencies and audit fixes them.  Currently a stub.
+# TODO per package patching support.
 electron-app_src_prepare_default() {
         debug-print-function ${FUNCNAME} "${@}"
 
@@ -884,19 +895,21 @@ electron-app_src_compile_default() {
 # $1 - if set to 1 will not die (optional).  It should ONLY be be used for debugging.
 # @CODE
 electron-app_audit_dev() {
-	if [[ -n "${ELECTRON_APP_ALLOW_AUDIT}" && "${ELECTRON_APP_ALLOW_AUDIT}" == "1" ]] ; then
+	if [[ -n "${ELECTRON_APP_ALLOW_AUDIT}" \
+		&& "${ELECTRON_APP_ALLOW_AUDIT}" == "1" ]] ; then
 		:;
 	else
 		return
 	fi
 
 	local nodie="${1}"
-	[ ! -e package-lock.json ] && die "Missing package-lock.json in implied root $(pwd)"
+	[ ! -e package-lock.json ] \
+		&& die "Missing package-lock.json in implied root $(pwd)"
 
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
 		pushd $(dirname $l) || die
-			if [[ -n "${nodie}" && "${ELECTRON_APP_NO_DIE_ON_AUDIT}" == "1" ]] ; then
+	if [[ -n "${nodie}" && "${ELECTRON_APP_NO_DIE_ON_AUDIT}" == "1" ]] ; then
 				npm audit
 			else
 				local audit_file="${T}/npm-audit-result"
@@ -909,20 +922,26 @@ electron-app_audit_dev() {
 				grep -qF -e " High " "${audit_file}" && is_high=1
 				grep -qF -e " Moderate " "${audit_file}" && is_moderate=1
 				grep -qF -e " Low " "${audit_file}" && is_low=1
-				if [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Critical" \
+	if [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Critical" \
 					&& "${is_critical}" == "1" ]] ; then
 					cat "${audit_file}"
 					die "Detected critical vulnerability in a package."
-				elif [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "High" \
-					&& ( "${is_high}" == "1" || "${is_critical}" == "1" ) ]] ; then
+	elif [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "High" \
+					&& ( "${is_high}" == "1" \
+					|| "${is_critical}" == "1" ) ]] ; then
 					cat "${audit_file}"
 					die "Detected high vulnerability in a package."
-				elif [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Moderate" \
-					&& ( "${is_moderate}" == "1" || "${is_critical}" == "1" || "${is_high}" == "1" ) ]] ; then
+	elif [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Moderate" \
+					&& ( "${is_moderate}" == "1" \
+					|| "${is_critical}" == "1" \
+					|| "${is_high}" == "1" ) ]] ; then
 					cat "${audit_file}"
 					die "Detected moderate vulnerability in a package."
-				elif [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Low" \
-					&& ( "${is_low}" == "1" || "${is_critical}" == "1" || "${is_high}" == "1" || "${is_moderate}" == "1" ) ]] ; then
+	elif [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Low" \
+					&& ( "${is_low}" == "1" \
+					|| "${is_critical}" == "1" \
+					|| "${is_high}" == "1" \
+					|| "${is_moderate}" == "1" ) ]] ; then
 					cat "${audit_file}"
 					die "Detected low vulnerability in a package."
 				fi
