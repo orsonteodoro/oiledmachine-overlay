@@ -1042,7 +1042,7 @@ electron-app_desktop_install_program() {
 			shopt -s dotglob # copy hidden files
 
 			insinto "${d}"
-			doins -r $(realpath ${rel_src_path})
+			doins -r ${rel_src_path}
 
 			# Mark .bin scripts executable
 			for dir_path in $(find "${ed}" -name ".bin" -type d) ; do
@@ -1072,7 +1072,7 @@ electron-app_desktop_install_program() {
 			shopt -s dotglob # copy hidden files
 
 			insinto "${d}"
-			doins -r $(realpath ${rel_src_path})
+			doins -r ${rel_src_path}
 
 			# Mark .bin scripts executable
 			for dir_path in $(find "${ed}" -name ".bin" -type d) ; do
@@ -1112,6 +1112,18 @@ electron-app_desktop_install() {
 	local pkg_name="$3"
 	local category="$4"
 	local cmd="$5"
+
+	if [[ -z "${rel_icon_path}" ]] ; then
+		die \
+"You must provide 2 arg to electron-app_desktop_install containing the\n\
+relative icon path"
+	fi
+
+	if [[ -z "${cmd}" ]] ; then
+		die \
+"You must provide 5 arg to electron-app_desktop_install containing the\n\
+command to execute in the wrapper script"
+	fi
 
 	electron-app_desktop_install_program "${rel_src_path}"
 
