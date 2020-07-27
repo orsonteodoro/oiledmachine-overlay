@@ -13,24 +13,46 @@ inherit multilib-minimal
 
 DESCRIPTION="Open-source version of Google Chrome web browser"
 HOMEPAGE="https://chromium.org/"
+XCB_PROTO_VERSION="1.14"
+PATCHSET="3"
+PATCHSET_NAME="chromium-$(ver_cut 1)-patchset-${PATCHSET}"
 SRC_URI="https://commondatastorage.googleapis.com/chromium-browser-official/${P}.tar.xz
-	https://files.pythonhosted.org/packages/ed/7b/bbf89ca71e722b7f9464ebffe4b5ee20a9e5c9a555a56e2d3914bb9119a6/setuptools-44.1.0.zip"
+	https://files.pythonhosted.org/packages/ed/7b/bbf89ca71e722b7f9464ebffe4b5ee20a9e5c9a555a56e2d3914bb9119a6/setuptools-44.1.0.zip
+	https://www.x.org/releases/individual/proto/xcb-proto-${XCB_PROTO_VERSION}.tar.xz
+	https://github.com/stha09/chromium-patches/releases/download/${PATCHSET_NAME}/${PATCHSET_NAME}.tar.xz"
 
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="amd64 ~arm64 ~x86"
-IUSE="+closure-compile component-build cups cpu_flags_arm_neon +hangouts kerberos pic +proprietary-codecs pulseaudio selinux +suid +system-ffmpeg +system-icu +system-libvpx -tcmalloc widevine"
+KEYWORDS="amd64 arm64 ~x86"
+IUSE="+closure-compile component-build cups cpu_flags_arm_neon +hangouts headless kerberos ozone pic +proprietary-codecs pulseaudio selinux +suid +system-ffmpeg +system-icu +system-libvpx -tcmalloc wayland widevine"
 _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE+=" ${_ABIS}"
 RESTRICT="!system-ffmpeg? ( proprietary-codecs? ( bindist ) )"
-REQUIRED_USE="component-build? ( !suid )"
+REQUIRED_USE="
+	component-build? ( !suid )
+	wayland? ( ozone )
+"
 REQUIRED_USE+=" ^^ ( ${_ABIS} )"
 
+COMMON_X_DEPEND="
+	media-libs/mesa:=[gbm,${MULTILIB_USEDEP}]
+	x11-libs/libX11:=[${MULTILIB_USEDEP}]
+	x11-libs/libXcomposite:=[${MULTILIB_USEDEP}]
+	x11-libs/libXcursor:=[${MULTILIB_USEDEP}]
+	x11-libs/libXdamage:=[${MULTILIB_USEDEP}]
+	x11-libs/libXext:=[${MULTILIB_USEDEP}]
+	x11-libs/libXfixes:=[${MULTILIB_USEDEP}]
+	>=x11-libs/libXi-1.6.0:=[${MULTILIB_USEDEP}]
+	x11-libs/libXrandr:=[${MULTILIB_USEDEP}]
+	x11-libs/libXrender:=[${MULTILIB_USEDEP}]
+	x11-libs/libXtst:=[${MULTILIB_USEDEP}]
+	x11-libs/libXScrnSaver:=[${MULTILIB_USEDEP}]
+	x11-libs/libxcb:=[${MULTILIB_USEDEP}]
+"
+
 COMMON_DEPEND="
-	>=app-accessibility/at-spi2-atk-2.26:2[${MULTILIB_USEDEP}]
 	app-arch/bzip2:=[${MULTILIB_USEDEP}]
 	cups? ( >=net-print/cups-1.3.11:=[${MULTILIB_USEDEP}] )
-	>=dev-libs/atk-2.26[${MULTILIB_USEDEP}]
 	dev-libs/expat:=[${MULTILIB_USEDEP}]
 	dev-libs/glib:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-2.9.4-r3:=[icu,${MULTILIB_USEDEP}]
@@ -42,12 +64,10 @@ COMMON_DEPEND="
 	>=media-libs/harfbuzz-2.4.0:0=[icu(-),${MULTILIB_USEDEP}]
 	media-libs/libjpeg-turbo:=[${MULTILIB_USEDEP}]
 	media-libs/libpng:=[${MULTILIB_USEDEP}]
-	media-libs/mesa:=[gbm,${MULTILIB_USEDEP}]
 	system-libvpx? ( >=media-libs/libvpx-1.8.2:=[postproc,svc,${MULTILIB_USEDEP}] )
 	pulseaudio? ( media-sound/pulseaudio:=[${MULTILIB_USEDEP}] )
 	system-ffmpeg? (
-		>=media-video/ffmpeg-4:0[${MULTILIB_USEDEP}]
-		<media-video/ffmpeg-4.3:0=
+		>=media-video/ffmpeg-4:=[${MULTILIB_USEDEP}]
 		|| (
 			media-video/ffmpeg[-samba,${MULTILIB_USEDEP}]
 			>=net-fs/samba-4.5.10-r1[-debug(-),${MULTILIB_USEDEP}]
@@ -59,23 +79,30 @@ COMMON_DEPEND="
 	virtual/udev
 	x11-libs/cairo:=[${MULTILIB_USEDEP}]
 	x11-libs/gdk-pixbuf:2[${MULTILIB_USEDEP}]
-	x11-libs/gtk+:3[X,${MULTILIB_USEDEP}]
-	x11-libs/libX11:=[${MULTILIB_USEDEP}]
-	x11-libs/libXcomposite:=[${MULTILIB_USEDEP}]
-	x11-libs/libXcursor:=[${MULTILIB_USEDEP}]
-	x11-libs/libXdamage:=[${MULTILIB_USEDEP}]
-	x11-libs/libXext:=[${MULTILIB_USEDEP}]
-	x11-libs/libXfixes:=[${MULTILIB_USEDEP}]
-	>=x11-libs/libXi-1.6.0:=[${MULTILIB_USEDEP}]
-	x11-libs/libXrandr:=[${MULTILIB_USEDEP}]
-	x11-libs/libXrender:=[${MULTILIB_USEDEP}]
-	x11-libs/libXScrnSaver:=[${MULTILIB_USEDEP}]
-	x11-libs/libXtst:=[${MULTILIB_USEDEP}]
 	x11-libs/pango:=[${MULTILIB_USEDEP}]
 	media-libs/flac:=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.4.0:=[${MULTILIB_USEDEP}]
 	sys-libs/zlib:=[minizip,${MULTILIB_USEDEP}]
 	kerberos? ( virtual/krb5[${MULTILIB_USEDEP}] )
+	ozone? (
+		!headless? (
+			${COMMON_X_DEPEND}
+			x11-libs/gtk+:3[wayland?,X,${MULTILIB_USEDEP}]
+			wayland? (
+				dev-libs/wayland:=[${MULTILIB_USEDEP}]
+				dev-libs/libffi:=[${MULTILIB_USEDEP}]
+				x11-libs/libdrm:=[${MULTILIB_USEDEP}]
+				x11-libs/libxkbcommon:=[${MULTILIB_USEDEP}]
+			)
+		)
+	)
+	!ozone? (
+		>=app-accessibility/at-spi2-atk-2.26:2[${MULTILIB_USEDEP}]
+		>=app-accessibility/at-spi2-core-2.26:2[${MULTILIB_USEDEP}]
+		>=dev-libs/atk-2.26[${MULTILIB_USEDEP}]
+		x11-libs/gtk+:3[X,${MULTILIB_USEDEP}]
+		${COMMON_X_DEPEND}
+	)
 "
 # For nvidia-drivers blocker, see bug #413637 .
 RDEPEND="${COMMON_DEPEND}
@@ -103,10 +130,6 @@ BDEPEND="
 	sys-devel/flex[${MULTILIB_USEDEP}]
 	virtual/pkgconfig[${MULTILIB_USEDEP}]
 	closure-compile? ( virtual/jre )
-	!system-libvpx? (
-		amd64? ( dev-lang/yasm )
-		x86? ( dev-lang/yasm )
-	)
 "
 
 : ${CHROMIUM_FORCE_CLANG=no}
@@ -119,10 +142,6 @@ fi
 if [[ ${CHROMIUM_FORCE_LIBCXX} == yes ]]; then
 	RDEPEND+=" >=sys-libs/libcxx-9[${MULTILIB_USEDEP}]"
 	DEPEND+=" >=sys-libs/libcxx-9[${MULTILIB_USEDEP}]"
-	BDEPEND+="
-		amd64? ( dev-lang/yasm )
-		x86? ( dev-lang/yasm )
-	"
 else
 	COMMON_DEPEND="
 		app-arch/snappy:=[${MULTILIB_USEDEP}]
@@ -169,32 +188,14 @@ in /etc/chromium/default.
 "
 
 PATCHES=(
-	"${FILESDIR}/chromium-compiler-r12.patch"
-	"${FILESDIR}/chromium-fix-char_traits.patch"
-	"${FILESDIR}/chromium-blink-style_format.patch"
-	"${FILESDIR}/chromium-78-protobuf-export.patch"
-	"${FILESDIR}/chromium-79-gcc-alignas.patch"
-	"${FILESDIR}/chromium-80-gcc-quiche.patch"
-	"${FILESDIR}/chromium-82-gcc-noexcept.patch"
-	"${FILESDIR}/chromium-82-gcc-incomplete-type.patch"
-	"${FILESDIR}/chromium-82-gcc-template.patch"
-	"${FILESDIR}/chromium-82-gcc-iterator.patch"
-	"${FILESDIR}/chromium-83-gcc-template.patch"
-	"${FILESDIR}/chromium-83-gcc-include.patch"
-	"${FILESDIR}/chromium-83-gcc-permissive.patch"
-	"${FILESDIR}/chromium-83-gcc-iterator.patch"
-	"${FILESDIR}/chromium-83-gcc-serviceworker.patch"
-	"${FILESDIR}/chromium-83-gcc-compatibility.patch"
-	"${FILESDIR}/chromium-83-gcc-10.patch"
-	"${FILESDIR}/chromium-83-icu67.patch"
-	"${FILESDIR}/chromium-81-re2-0.2020.05.01.patch"
+	"${FILESDIR}/chromium-84-mediaalloc.patch"
 )
 
 pre_build_checks() {
 	if [[ ${MERGE_TYPE} != binary ]]; then
 		local -x CPP="$(tc-getCXX) -E"
-		if tc-is-gcc && ! ver_test "$(gcc-version)" -ge 8.0; then
-			die "At least gcc 8.0 is required"
+		if tc-is-gcc && ! ver_test "$(gcc-version)" -ge 9.2; then
+			die "At least gcc 9.2 is required"
 		fi
 		# component build hangs with tcmalloc enabled due to sandbox issue, bug #695976.
 		if has usersandbox ${FEATURES} && use tcmalloc && use component-build; then
@@ -234,6 +235,8 @@ pkg_setup() {
 src_prepare() {
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
+
+	eapply "${WORKDIR}/patches"
 
 	default
 
@@ -311,6 +314,8 @@ src_prepare() {
 		third_party/depot_tools
 		third_party/devscripts
 		third_party/devtools-frontend
+		third_party/devtools-frontend/src/front_end/third_party/acorn
+		third_party/devtools-frontend/src/front_end/third_party/codemirror
 		third_party/devtools-frontend/src/front_end/third_party/fabricjs
 		third_party/devtools-frontend/src/front_end/third_party/lighthouse
 		third_party/devtools-frontend/src/front_end/third_party/wasmparser
@@ -339,6 +344,7 @@ src_prepare() {
 		third_party/libaom
 		third_party/libaom/source/libaom/third_party/vector
 		third_party/libaom/source/libaom/third_party/x86inc
+		third_party/libavif
 		third_party/libjingle
 		third_party/libphonenumber
 		third_party/libsecret
@@ -349,6 +355,7 @@ src_prepare() {
 		third_party/libxml/chromium
 		third_party/libyuv
 		third_party/llvm
+		third_party/lottie
 		third_party/lss
 		third_party/lzma_sdk
 		third_party/mako
@@ -361,6 +368,7 @@ src_prepare() {
 		third_party/node/node_modules/polymer-bundler/lib/third_party/UglifyJS2
 		third_party/one_euro_filter
 		third_party/openscreen
+		third_party/openscreen/src/third_party/mozilla
 		third_party/openscreen/src/third_party/tinycbor/src/src
 		third_party/ots
 		third_party/pdfium
@@ -408,7 +416,7 @@ src_prepare() {
 		third_party/web-animations-js
 		third_party/webdriver
 		third_party/webrtc
-		third_party/webrtc/common_audio/third_party/fft4g
+		third_party/webrtc/common_audio/third_party/ooura
 		third_party/webrtc/common_audio/third_party/spl_sqrt_floor
 		third_party/webrtc/modules/third_party/fft
 		third_party/webrtc/modules/third_party/g711
@@ -433,7 +441,6 @@ src_prepare() {
 		third_party/speech-dispatcher
 		third_party/usb_ids
 		third_party/xdg-utils
-		third_party/yasm/run_yasm.py
 	)
 	if ! use system-ffmpeg; then
 		keeplibs+=( third_party/ffmpeg third_party/opus )
@@ -456,6 +463,9 @@ src_prepare() {
 	fi
 	if use tcmalloc; then
 		keeplibs+=( third_party/tcmalloc )
+	fi
+	if use ozone && use wayland && ! use headless ; then
+		keeplibs+=( third_party/wayland )
 	fi
 	if [[ ${CHROMIUM_FORCE_LIBCXX} == yes ]]; then
 		keeplibs+=( third_party/libxml )
@@ -539,7 +549,6 @@ multilib_src_configure() {
 		libjpeg
 		libpng
 		libwebp
-		yasm
 		zlib
 	)
 	if use system-ffmpeg; then
@@ -582,7 +591,7 @@ multilib_src_configure() {
 	# Never use bundled gold binary. Disable gold linker flags for now.
 	# Do not use bundled clang.
 	# Trying to use gold results in linker crash.
-	myconf_gn+=" use_gold=false use_sysroot=false linux_use_bundled_binutils=false use_custom_libcxx=false"
+	myconf_gn+=" use_gold=false use_sysroot=false use_custom_libcxx=false"
 
 	# Disable forced lld, bug 641556
 	myconf_gn+=" use_lld=false"
@@ -714,6 +723,29 @@ multilib_src_configure() {
 		myconf_gn+=" icu_use_data_file=false"
 	fi
 
+	# Use bundled xcb-proto, bug #727000
+	myconf_gn+=" xcbproto_path=\"${WORKDIR}/xcb-proto-${XCB_PROTO_VERSION}/src\""
+
+	# Enable ozone support
+	if use ozone; then
+		myconf_gn+=" use_ozone=true ozone_auto_platforms=false"
+		myconf_gn+=" ozone_platform_headless=true"
+		if ! use headless; then
+			myconf_gn+=" use_system_libdrm=true"
+			myconf_gn+=" ozone_platform_wayland=$(usex wayland true false)"
+			myconf_gn+=" ozone_platform_x11=true"
+			myconf_gn+=" ozone_platform_headless=true"
+			if use wayland; then
+				myconf_gn+=" use_system_minigbm=true use_xkbcommon=true"
+				myconf_gn+=" ozone_platform=\"wayland\""
+			else
+				myconf_gn+=" ozone_platform=\"x11\""
+			fi
+		else
+			myconf_gn+=" ozone_platform=\"headless\""
+		fi
+	fi
+
 	einfo "Configuring Chromium..."
 	set -- gn gen --args="${myconf_gn} ${EXTRA_GN}" out/Release
 	echo "$@"
@@ -728,7 +760,8 @@ multilib_src_compile() {
 	python_setup
 
 	# https://bugs.gentoo.org/717456
-	local -x PYTHONPATH="${WORKDIR}/setuptools-44.1.0${PYTHONPATH+:}${PYTHONPATH}"
+	# Use bundled xcb-proto, because system xcb-proto doesn't have Python 2.7 support
+	local -x PYTHONPATH="${WORKDIR}/setuptools-44.1.0:${WORKDIR}/xcb-proto-${XCB_PROTO_VERSION}${PYTHONPATH+:}${PYTHONPATH}"
 
 	#"${EPYTHON}" tools/clang/scripts/update.py --force-local-build --gcc-toolchain /usr --skip-checkout --use-system-cmake --without-android || die
 
@@ -778,8 +811,14 @@ multilib_src_install() {
 
 	doexe out/Release/chromedriver
 
-	local sedargs=( -e "s:/usr/lib/:/usr/$(get_libdir)/:g" )
-	sed "${sedargs[@]}" "${FILESDIR}/chromium-launcher-r3.sh" > chromium-launcher.sh || die
+	ozone_auto_session () {
+		use ozone && use wayland && ! use headless && echo true || echo false
+	}
+	local sedargs=( -e
+			"s:/usr/lib/:/usr/$(get_libdir)/:g;
+			s:@@OZONE_AUTO_SESSION@@:$(ozone_auto_session):g"
+	)
+	sed "${sedargs[@]}" "${FILESDIR}/chromium-launcher-r4.sh" > chromium-launcher.sh || die
 	doexe chromium-launcher.sh
 
 	# It is important that we name the target "chromium-browser",
@@ -801,7 +840,11 @@ multilib_src_install() {
 	insinto "${CHROMIUM_HOME}"
 	doins out/Release/*.bin
 	doins out/Release/*.pak
-	doins out/Release/*.so
+	(
+		shopt -s nullglob
+		local files=(out/Release/*.so)
+		[[ ${#files[@]} -gt 0 ]] && doins "${files[@]}"
+	)
 
 	if ! use system-icu; then
 		doins out/Release/icudtl.dat
