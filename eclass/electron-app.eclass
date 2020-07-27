@@ -722,14 +722,14 @@ ${INSECURE_GLSA_CHROME_ADVISORY_LINK}"
 	fi
 	LIBUV_V=$(_query_lite_json '.deps.uv')
 	if ! has_version ">=dev-libs/libuv-${LIBUV_V}" ; then
-		adie "Electron ${ELECTRON_V} requires at least ${LIBUV_V}"
+		adie "Electron ${ELECTRON_V} requires at least >=dev-libs/libuv-${LIBUV_V} libuv"
 	fi
 	# It's actually BoringSSL not OpenSSL in Chromium.
 	# Commented out because Chromium checks
 	#BORINGSSL_V=$(_query_lite_json '.deps.openssl')
 	NODE_V=$(_query_lite_json '.deps.node')
 	if ! has_version ">=net-libs/nodejs-${NODE_V}" ; then
-		adie "Electron ${ELECTRON_V} requires at least ${NODE_V}"
+		adie "Electron ${ELECTRON_V} requires at least >=net-libs/nodejs-${NODE_V}"
 	fi
 	if ver_test "${NODE_V}" -lt ${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN} ; then
 		adie "Electron ${ELECTRON_V} uses ${NODE_V} which is End Of Life (EOL)."
@@ -742,7 +742,7 @@ is End Of Life (EOL) and has vulnerabilities."
 	V8_V=$(_query_lite_json '.deps.v8')
 	ZLIB_V=$(_query_lite_json '.deps.zlib')
 	if ! has_version ">=sys-libs/zlib-${ZLIB_V}" ; then
-		adie "Electron ${ELECTRON_V} requires at least ${ZLIB_V}"
+		adie "Electron ${ELECTRON_V} requires at least >=sys-libs/zlib-${ZLIB_V}"
 	fi
 	einfo
 	einfo "Electron version report with internal/external dependencies:"
