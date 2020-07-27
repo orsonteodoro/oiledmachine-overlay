@@ -15,7 +15,7 @@ S="${WORKDIR}"
 
 src_install() {
 	exeinto /etc/portage/postsync.d
-	cat "${FILESDIR}/${PN}-v${PV}" > "${T}/${PN}"
+	cat "${FILESDIR}/${PN}-v${PVR}" > "${T}/${PN}"
 	doexe "${T}/${PN}"
 }
 
