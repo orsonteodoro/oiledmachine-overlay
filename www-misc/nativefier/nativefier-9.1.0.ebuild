@@ -43,11 +43,13 @@ electron-app_src_postcompile() {
 }
 
 src_install() {
-	electron-app_desktop_install "*"
+	electron-app_desktop_install_program "*"
 
-	# create wrapper
 	exeinto /usr/bin
-	echo "#!/bin/bash" > "${T}/${PN}"
-	echo "node /usr/$(get_libdir)/node/${PN}/${SLOT}/lib/cli.js \$@" >> "${T}/${PN}"
+	cp -a "${FILESDIR}/${PN}" "${T}" || die
+	sed -i -e "s|\${SLOT}|${SLOT}|" \
+		-e "s|\$(get_libdir)|$(get_libdir)|" \
+		-e "s|\${PN}|${PN}|" \
+		"${T}/${PN}"
 	doexe "${T}/${PN}"
 }

@@ -1,0 +1,2 @@
+#!/bin/bash
+/usr/bin/node /usr/$(get_libdir)/node/${PN}/${SLOT}/lib/cli.js $@
