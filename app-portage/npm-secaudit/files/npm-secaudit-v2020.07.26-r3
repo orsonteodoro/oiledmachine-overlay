@@ -155,7 +155,7 @@ directory."
 	mkdir -p "${G_DATA_CACHE}"
 	pushd "${G_DATA_CACHE}"
 		# only interested in lastest critical
-		rm lite.json.* 2>/dev/null 1>/dev/null
+		rm lite.json* 2>/dev/null 1>/dev/null
 		if [[ -f "lite.json" ]] && (( $(($(stat -c "%W" "lite.json")+86400)) > $(date +%s) )) ; then
 			einfo "Using cached version of ${G_DATA_CACHE}/lite.json.  Remove it if download interrupted."
 		else
