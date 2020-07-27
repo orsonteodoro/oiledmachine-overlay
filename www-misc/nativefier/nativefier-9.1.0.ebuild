@@ -22,45 +22,11 @@ SRC_URI=\
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 
-if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL}" == "1" ]] ; then
-
-AXIOS_V="^0.18.1"
-
-fix_vulnerabilities() {
-	ewarn \
-"Vulnerability resolution has not been updated.  Consider setting the\n\
-environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=0 per-package-wise."
-	rm package-lock.json || die
-	npm i --package-lock-only
-	npm audit fix --force
-	rm package-lock.json || die
-	npm i --package-lock-only
-
-	pushd node_modules/gitcloud || die
-		npm uninstall axios
-		npm_install_prod axios@"${AXIOS_V}"
-	popd
-	pushd node_modules/page-icon || die
-		npm uninstall axios
-		npm_install_prod axios@"${AXIOS_V}"
-	popd
-
-	rm package-lock.json || die
-	npm i --package-lock-only
-}
-
-electron-app_src_postprepare() {
-	npm_package_lock_update ./
-	fix_vulnerabilities
-	npm_update_package_locks_recursive ./
-}
-else
 if [[ "${ELECTRON_APP_ALLOW_AUDIT}" == "1" ]] ; then
 electron-app_src_postprepare() {
 	einfo "Fixing missing package-lock.json"
 	npm_package_lock_update ./
 }
-fi
 fi
 
 electron-app_src_prepare() {
