@@ -7,13 +7,15 @@ HOMEPAGE="https://github.com/jiahaog/nativefier"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0"
+IUSE="images-to-icons"
 RDEPEND="${RDEPEND}"
 DEPEND="${RDEPEND}
+	images-to-icons? ( media-gfx/imagemagick )
 	>=net-libs/nodejs-10[npm]"
 ELECTRON_APP_AT_TYPES_NODE_V="10"
 ELECTRON_APP_ELECTRON_V="9.1.0" # See https://github.com/jiahaog/nativefier/blob/v9.1.0/src/constants.ts
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
-inherit eutils desktop npm-secaudit npm-utils
+inherit eutils desktop electron-app npm-utils
 SRC_URI=\
 "https://github.com/jiahaog/nativefier/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
@@ -47,29 +49,35 @@ environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=0 per-packag
 	npm i --package-lock-only
 }
 
-npm-secaudit_src_postprepare() {
+electron-app_src_postprepare() {
 	npm_package_lock_update ./
 	fix_vulnerabilities
 	npm_update_package_locks_recursive ./
 }
-
+else
+if [[ "${ELECTRON_APP_ALLOW_AUDIT}" == "1" ]] ; then
+electron-app_src_postprepare() {
+	einfo "Fixing missing package-lock.json"
+	npm_package_lock_update ./
+}
+fi
 fi
 
-npm-secaudit_src_prepare() {
+electron-app_src_prepare() {
 	S="${WORKDIR}/${PN}-${PV}/app" \
-	npm-secaudit_fetch_deps
+	electron-app_fetch_deps
 
 	S="${WORKDIR}/${PN}-${PV}" \
-	npm-secaudit_fetch_deps
+	electron-app_fetch_deps
 }
 
-npm-secaudit_src_postcompile() {
+electron-app_src_postcompile() {
 	# for stopping version lock warning from audit.  production packages installed only.
 	npm uninstall gulp -D
 }
 
 src_install() {
-	npm-secaudit_install "*"
+	electron-app_desktop_install "*"
 
 	# create wrapper
 	exeinto /usr/bin
