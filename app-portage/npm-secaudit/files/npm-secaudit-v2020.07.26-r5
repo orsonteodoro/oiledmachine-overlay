@@ -24,6 +24,11 @@ G_DEBUG=""
 G_INSECURE_SET_DIR="/etc/portage/sets/"
 G_INSECURE_SET_FN="npm-security-update"
 G_INSECURE_SET_FP="${G_INSECURE_SET_DIR}/${G_INSECURE_SET_FN}"
+
+# can only be 1 for comprehensive long scan, 0 to short circuit the scan if it
+# met >=G_TOLERANCE level
+G_LONG_SCAN=${G_LONG_SCAN:="0"}
+
 G_NPM_APPS="/var/lib/portage/npm-packages" # location of registered npm packages
 G_PACKAGE_LOCK_DIR="/dev/shm"
 G_VERBOSE=${G_VERBOSE:="0"} # can only be 0 for silent, or 1 for more output
@@ -84,6 +89,9 @@ for arg in $@ ; do
 		--help|-help|-h)
 			echo "${H_HELP}"
 			exit
+			;;
+		-l|--long)
+			G_LONG_SCAN="1"
 			;;
 		-sc|--critical)
 			G_TOLERANCE="critical"
@@ -156,11 +164,13 @@ directory."
 	pushd "${G_DATA_CACHE}"
 		# only interested in lastest critical
 		rm lite.json* 2>/dev/null 1>/dev/null
-		if [[ -f "lite.json" ]] && (( $(($(stat -c "%W" "lite.json")+86400)) > $(date +%s) )) ; then
-			einfo "Using cached version of ${G_DATA_CACHE}/lite.json.  Remove it if download interrupted."
+		if [[ -f "lite.json" ]] \
+	&& (( $(($(stat -c "%W" "lite.json")+86400)) > $(date +%s) )) ; then
+			einfo \
+"Using cached version of ${G_DATA_CACHE}/lite.json.  Remove it if download interrupted."
 		else
-			wget https://raw.githubusercontent.com/electron/releases/master/lite.json # data is MIT
-
+# data is MIT licensed
+wget https://raw.githubusercontent.com/electron/releases/master/lite.json
 		fi
 	popd
 }
@@ -170,7 +180,8 @@ directory."
 is_x_lt_y() {
 	local x="${1}"
 	local y="${2}"
-	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " | cut -f1 -d $' ')
+	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
+		| cut -f1 -d $' ')
 	if [[ "${result}" == "${x}" ]] ; then
 		return 0
 	else
@@ -180,7 +191,8 @@ is_x_lt_y() {
 is_x_le_y() {
 	local x="${1}"
 	local y="${2}"
-	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " | cut -f1 -d $' ')
+	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
+		| cut -f1 -d $' ')
 	if [[ "${result}" == "${x}" || "${x}" == "${y}" ]] ; then
 		return 0
 	else
@@ -190,7 +202,8 @@ is_x_le_y() {
 is_x_gt_y() {
 	local x="${1}"
 	local y="${2}"
-	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " | cut -f1 -d $' ')
+	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
+		| cut -f1 -d $' ')
 	if [[ "${result}" != "${x}" ]] ; then
 		return 0
 	else
@@ -200,7 +213,8 @@ is_x_gt_y() {
 is_x_ge_y() {
 	local x="${1}"
 	local y="${2}"
-	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " | cut -f1 -d $' ')
+	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
+		| cut -f1 -d $' ')
 	if [[ "${result}" == "${x}" || "${x}" == "${y}" ]] ; then
 		return 0
 	else
@@ -247,24 +261,22 @@ is_x_op_y() {
 }
 
 _query_lite_json() {
-	echo $(cat "${G_DATA_CACHE}/lite.json" | jq '.[] | select(.tag_name == "v'${ELECTRON_V}'")' | jq ${1} | sed -e "s|[\"]*||g")
+	echo $(cat "${G_DATA_CACHE}/lite.json" \
+		| jq '.[] | select(.tag_name == "v'${ELECTRON_V}'")' \
+		| jq ${1} | sed -e "s|[\"]*||g")
 }
 
 function version_audit() {
-	einfo "Inspecting package versions for vulnerabilities and minimum version requirements"
+	einfo "Inspecting the ${p} package internal versions for vulnerabilities"
 
 	if npm ls electron | grep -q electron ; then
-		einfo "Detected electron"
+		einfo "Detected Electron"
 	else
 		return 0
 	fi
 
-	local ELECTRON_V
-	if npm ls electron ; then
-		ELECTRON_V=$(npm ls electron | grep -P -e "electron@[0-9.]+" | tail -n 1 | sed -e "s|[^0-9\.]*||g") # used by package
-	else
-		return
-	fi
+	ELECTRON_V=$(npm ls electron | grep -P -e "electron@[0-9.]+" \
+		| tail -n 1 | sed -e "s|[^0-9\.]*||g") # used by package
 
 	local is_vulnerable=0
 	if is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d ".") "-eq" 9 \
@@ -345,14 +357,14 @@ function recursive_package_lock_audit() {
 	dinfo "Performing recursive package-lock.json audit"
 	L=$(find . -name "package-lock.json")
 	for l in ${L}; do
-		if [[ "${LONG_SCAN}" != "1" && "${result}" == "1" ]] ; then
+		if [[ "${G_LONG_SCAN}" != "1" && "${result}" == "1" ]] ; then
 			dinfo "Skipping long scan"
 			break
-		elif [[ "${LONG_SCAN}" == "1" ]] ; then
+		elif [[ "${G_LONG_SCAN}" == "1" ]] ; then
 			dinfo "Continuing long scan"
 		fi
 		pushd $(dirname ${l}) >/dev/null
-		dinfo "Path: ${path}/${l}"
+		dinfo "Path: "$(realpath "${path}/${l}")
 		[ -e /tmp/npm-secaudit-result ] && rm /tmp/npm-secaudit-result
 		if [[ "${G_VERBOSE}" == "1" ]]; then
 			npm audit &> /tmp/npm-secaudit-result
@@ -369,11 +381,8 @@ function recursive_package_lock_audit() {
 re-emerge to verify if has a vulnerability."
 		else
 			cat /tmp/npm-secaudit-result \
-				| grep -F -e "require manual review" >/dev/null
+				| grep -F -e "npm audit security report" >/dev/null
 			local result_found1="$?"
-			cat /tmp/npm-secaudit-result \
-				| grep -F -e "npm audit fix" >/dev/null
-			local result_found2="$?"
 			cat /tmp/npm-secaudit-result \
 				| grep -F -e " Critical " >/dev/null
 			local result_critical="$?"
@@ -384,10 +393,9 @@ re-emerge to verify if has a vulnerability."
 				| grep -F -e " Moderate " >/dev/null
 			local result_moderate="$?"
 			cat /tmp/npm-secaudit-result \
-				| grep -F -e" Low " >/dev/null
+				| grep -F -e " Low " >/dev/null
 			local result_low="$?"
-			if [[ "${result_found1}" == "0" \
-				|| "${result_found2}" == "0" ]] ; then
+			if [[ "${result_found1}" == "0" ]] ; then
 				if [[ "${result_critical}" == "0" \
 					&& "${G_TOLERANCE}" == "critical" ]]
 				then
@@ -448,6 +456,7 @@ installed."
 				local r1="$?"
 				version_audit
 				local r2="$?"
+				einfo "r1=${r1} r2=${r2}"
 				if [[ "$r1" == "0" && "$r2" == "0" ]] ; then
 					dinfo "Package ${p} is good."
 				else
@@ -477,7 +486,7 @@ with \`emerge @${G_INSECURE_SET_FN}\`.\n\
 \n\
 For a full report, run with \`${D}/$(basename $BASH_SOURCE) -v\`."
 	else
-		einfo "No insecure npm/electron apps found."
+		einfo "No apps found with >=${G_TOLERANCE} vulnerability level."
 	fi
 }
 

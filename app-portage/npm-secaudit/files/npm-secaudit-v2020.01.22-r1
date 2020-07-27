@@ -135,14 +135,14 @@ function raudit() {
 	dinfo "Performing recursive package-lock.json audit"
 	L=$(find . -name "package-lock.json")
 	for l in ${L}; do
-		if [[ "${LONG_SCAN}" != "1" && "${result}" == "1" ]] ; then
+		if [[ "${G_LONG_SCAN}" != "1" && "${result}" == "1" ]] ; then
 			dinfo "Skipping long scan"
 			break
-		elif [[ "${LONG_SCAN}" == "1" ]] ; then
+		elif [[ "${G_LONG_SCAN}" == "1" ]] ; then
 			dinfo "Continuing long scan"
 		fi
 		pushd $(dirname ${l}) >/dev/null
-		dinfo "Path: ${path}/${l}"
+		dinfo "Path: "$(realpath "${path}/${l}")
 		[ -e /tmp/npm-secaudit-result ] && rm /tmp/npm-secaudit-result
 		if [[ "${G_VERBOSE}" == "1" ]]; then
 			npm audit &> /tmp/npm-secaudit-result
@@ -159,11 +159,8 @@ function raudit() {
 re-emerge to verify if has a vulnerability."
 		else
 			cat /tmp/npm-secaudit-result \
-				| grep -F -e "require manual review" >/dev/null
+				| grep -F -e "npm audit security report" >/dev/null
 			local result_found1="$?"
-			cat /tmp/npm-secaudit-result \
-				| grep -F -e "npm audit fix" >/dev/null
-			local result_found2="$?"
 			cat /tmp/npm-secaudit-result \
 				| grep -F -e " Critical " >/dev/null
 			local result_critical="$?"
@@ -174,10 +171,9 @@ re-emerge to verify if has a vulnerability."
 				| grep -F -e " Moderate " >/dev/null
 			local result_moderate="$?"
 			cat /tmp/npm-secaudit-result \
-				| grep -F -e" Low " >/dev/null
+				| grep -F -e " Low " >/dev/null
 			local result_low="$?"
-			if [[ "${result_found1}" == "0" \
-				|| "${result_found2}" == "0" ]] ; then
+			if [[ "${result_found1}" == "0" ]] ; then
 				if [[ "${result_critical}" == "0" \
 					&& "${G_SCAN_MODE}" == "critical" ]]
 				then
