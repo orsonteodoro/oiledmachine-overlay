@@ -269,7 +269,7 @@ _query_lite_json() {
 function version_audit() {
 	einfo "Inspecting the ${p} package internal versions for vulnerabilities"
 
-	if npm ls electron | grep -qF -e "electron@" ; then
+	if npm ls electron | grep -qF -e " electron@" ; then
 		einfo "Detected Electron"
 	else
 		return 0
