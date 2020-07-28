@@ -671,7 +671,7 @@ critical vulnerabilities in the internal Chromium."
 	fi
 
 	local ELECTRON_V
-	if npm ls electron | grep -qF "electron@" ; then
+	if npm ls electron | grep -qF -e "electron@" ; then
 		# case when ^ or latest used
 		ELECTRON_V=$(npm ls electron \
 			| grep -P -e "electron@[0-9.]+" \
