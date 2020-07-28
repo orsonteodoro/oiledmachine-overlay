@@ -800,7 +800,6 @@ electron-app_src_unpack() {
 		electron-app_src_postprepare
 	fi
 
-	die
 	# audit before possibly bundling a vulnerable package
 	electron-app_audit_dev
 
