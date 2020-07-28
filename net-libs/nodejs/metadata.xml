@@ -65,7 +65,9 @@
 		are noted in the use flag section.
 
 		If you run /usr/bin/node without the environmental
-		variable NODE_VERSION, it will default to node 14.
+		variable NODE_VERSION, it will default to node the
+		selected active from eselect nodejs (or the major version
+		contained in node_version.h from the active symlink.
 
 		The NODE_VERSION valid values are 10, 12, 14 which
 		are the Long Term Support (LTS) versions.

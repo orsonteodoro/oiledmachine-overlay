@@ -1,6 +1,8 @@
 #!/bin/bash
-NODE_VERSION=${NODE_VERSION:-"14"}
 EPREFIX=${EPREFIX:=""}
+ACTIVE_VERSION=$(grep -r -e "#define NODE_MAJOR_VERSION" \
+	"${EPREFIX}/usr/include/node/node_version.h" | cut -f 3 -d " ")
+NODE_VERSION=${NODE_VERSION:-${ACTIVE_VERSION}}
 
 if [[ "${NODE_VERSION}" == "14" ]] ; then
 	"${EPREFIX}/usr/bin/node14" $*
