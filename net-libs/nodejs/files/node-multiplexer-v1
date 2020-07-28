@@ -1,0 +1,16 @@
+#!/bin/bash
+NODE_VERSION=${NODE_VERSION:-"14"}
+EPREFIX=${EPREFIX:=""}
+
+if [[ "${NODE_VERSION}" == "14" ]] ; then
+	"${EPREFIX}/usr/bin/node14" $*
+elif [[ "${NODE_VERSION}" == "12" ]] ; then
+	"${EPREFIX}/usr/bin/node12" $*
+elif [[ "${NODE_VERSION}" == "10" ]] ; then
+	"${EPREFIX}/usr/bin/node10" $*
+else
+	echo "LTS is only supported"
+	exit 1
+fi
+
+exit 0
