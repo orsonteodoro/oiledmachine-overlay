@@ -32,7 +32,7 @@ G_LONG_SCAN=${G_LONG_SCAN:="0"}
 G_NPM_APPS="/var/lib/portage/npm-packages" # location of registered npm packages
 G_PACKAGE_LOCK_DIR="/dev/shm"
 G_VERBOSE=${G_VERBOSE:="0"} # can only be 0 for silent, or 1 for more output
-G_VERSION="2020.07.26-r1"
+G_VERSION="2020.07.28-r1"
 G_DATA_CACHE="/var/cache/npm-secaudit"
 G_NVD_SCHEMA="1.1"
 
@@ -43,21 +43,37 @@ G_BLACKLIST="/etc/portage/npm-secaudit-blacklist"
 # See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=electron&search_type=all
 G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9="9.0.0_beta21" # replace - with _
 G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_COND="-lt"
-G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_LINK_ADVISORY="https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
+G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
 G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_8="8.2.4"
 G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_COND="-lt"
-G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_LINK_ADVISORY="https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
+G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
 G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7="7.2.4"
 G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_COND="-lt"
-G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_LINK_ADVISORY="https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
+G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
 # See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome&search_type=all
 G_INSECURE_NVD_CHROME_LAST_CRITICAL="83.0.4103.97"
 G_INSECURE_NVD_CHROME_LAST_CRITICAL_COND="-lt"
-G_INSECURE_NVD_CHROME_LAST_LINK_ADVISORY="https://nvd.nist.gov/vuln/detail/CVE-2020-6493"
+G_INSECURE_NVD_CHROME_LAST_CRITICAL_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2020-6493"
+G_INSECURE_NVD_CHROME_LAST_HIGH="84.0.4147.89"
+G_INSECURE_NVD_CHROME_LAST_HIGH_COND="-lt"
+G_INSECURE_NVD_CHROME_LAST_HIGH_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2020-6525"
+# See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome%20v8&search_type=all
+G_INSECURE_NVD_V8_LAST_HIGH="83.0.4103.97"
+G_INSECURE_NVD_V8_LAST_HIGH_COND="-lt"
+G_INSECURE_NVD_V8_LAST_HIGH_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2020-6493"
+# GLSA doesn't use high, medium, low.  This is a NVD addition.
 # See https://security.gentoo.org/glsa
-G_INSECURE_GLSA_CHROME="83.0.4103.97"
-G_INSECURE_GLSA_CHROME_COND="-lt"
-G_INSECURE_GLSA_CHROME_ADVISORY_LINK="https://security.gentoo.org/glsa/202006-02"
+# GLSA placement in G_TOLERANCE based on worst case NVD/CVE reference
+G_INSECURE_GLSA_CHROME_LATEST="84.0.4147.89"
+G_INSECURE_GLSA_CHROME_LATEST_COND="-lt"
+G_INSECURE_GLSA_CHROME_LATEST_LINK_ADVISORY=\
+"https://security.gentoo.org/glsa/202007-08"
 
 H_INFO="\
 $(basename $BASH_SOURCE) ${G_VERSION}
@@ -277,11 +293,15 @@ function version_audit() {
 
 	ELECTRON_V=$(npm ls electron | grep -P -e "electron@[0-9.]+" \
 		| tail -n 1 | sed -e "s|[^0-9\.]*||g") # used by package
+	CHROMIUM_V=$(_query_lite_json '.deps.chrome')
+	V8_V=$(_query_lite_json '.deps.v8')
 
 	local is_vulnerable=0
+if [[ "${G_TOLERANCE}" == "critical" || "${G_TOLERANCE}" == "high" \
+	|| "${G_TOLERANCE}" == "moderate" || "${G_TOLERANCE}" == "low" ]] ; then
 	if is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d ".") "-eq" 9 \
 		&& is_x_op_y ${ELECTRON_V} ${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_COND} \
-			"${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9}" ; then
+			$(echo "${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9}" | cut -f 1 -d "_") ; then
 		einfo \
 "Electron ${ELECTRON_V} has a critical vulnerability itself.  For details see\n\
 ${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_LINK_ADVISORY}"
@@ -290,7 +310,7 @@ ${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_LINK_ADVISORY}"
 
 	if is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d ".") "-eq" 8 \
 		&& is_x_op_y ${ELECTRON_V} ${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_COND} \
-			"${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_8}" ; then
+			$(echo "${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_8}" | cut -f 1 -d "_") ; then
 		einfo \
 "Electron ${ELECTRON_V} has a critical vulnerability itself.  For details see\n\
 ${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_LINK_ADVISORY}"
@@ -299,7 +319,7 @@ ${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_LINK_ADVISORY}"
 
 	if is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d ".") "-eq" 7 \
 		&& is_x_op_y ${ELECTRON_V} ${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_COND} \
-			"${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7}" ; then
+			$(echo "${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7}" | cut -f 1 -d "_") ; then
 		einfo \
 "Electron ${ELECTRON_V} has a critical vulnerability itself.  For details see\n\
 ${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_LINK_ADVISORY}"
@@ -312,28 +332,49 @@ ${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_LINK_ADVISORY}"
 		is_vulnerable=1
 	fi
 
-	CHROMIUM_V=$(_query_lite_json '.deps.chrome')
 	if is_x_op_y "${CHROMIUM_V}" ${G_INSECURE_NVD_CHROME_LAST_CRITICAL_COND} \
 		"${G_INSECURE_NVD_CHROME_LAST_CRITICAL}" ; then
 		einfo \
 "Electron ${ELECTRON_V} has a critical vulnerability in internal Chromium\n\
 which is version ${CHROMIUM_V}.  For details see\n\
-${G_INSECURE_NVD_CHROME_LAST_LINK_ADVISORY}"
+${G_INSECURE_NVD_CHROME_LAST_CRITICAL_LINK_ADVISORY}"
 		is_vulnerable=1
 	fi
-	if is_x_op_y "${CHROMIUM_V}" ${G_INSECURE_GLSA_CHROME_COND} \
-		"${G_INSECURE_GLSA_CHROME}" ; then
+	if is_x_op_y "${CHROMIUM_V}" ${G_INSECURE_GLSA_CHROME_LATEST_COND} \
+		"${G_INSECURE_GLSA_CHROME_LATEST}" ; then
 		einfo \
 "Electron ${ELECTRON_V} has a GLSA advisory for internal Chromium\n\
 ${CHROMIUM_V}.  See\n\
-${G_INSECURE_GLSA_CHROME_ADVISORY_LINK}"
+${G_INSECURE_GLSA_CHROME_LATEST_LINK_ADVISORY}"
 		is_vulnerable=1
 	fi
+fi
+
+if [[ "${G_TOLERANCE}" == "high" || "${G_TOLERANCE}" == "moderate" \
+	|| "${G_TOLERANCE}" == "low" ]] ; then
+	if is_x_op_y $(echo "${V8_V}" | cut -f 1 -d "-") ${G_INSECURE_NVD_CHROME_LAST_HIGH_COND} \
+		"${G_INSECURE_NVD_CHROME_LAST_HIGH}" ; then
+		einfo \
+"Electron ${ELECTRON_V} has a GLSA advisory for internal V8\n\
+${V8_V}.  See\n\
+${G_INSECURE_NVD_CHROME_LAST_HIGH_LINK_ADVISORY}"
+		is_vulnerable=1
+	fi
+
+
+	if is_x_op_y $(echo "${V8_V}" | cut -f 1 -d "-") ${G_INSECURE_NVD_V8_LAST_HIGH_COND} \
+		"${G_INSECURE_NVD_V8_LAST_HIGH}" ; then
+		einfo \
+"Electron ${ELECTRON_V} has a GLSA advisory for internal V8\n\
+${V8_V}.  See\n\
+${G_INSECURE_NVD_V8_LAST_HIGH_LINK_ADVISORY}"
+		is_vulnerable=1
+	fi
+fi
 	if [[ "${G_VERBOSE}" == "1" ]]; then
 	LIBUV_V=$(_query_lite_json '.deps.uv')
 	BORINGSSL_V=$(_query_lite_json '.deps.openssl')
 	NODE_V=$(_query_lite_json '.deps.node')
-	V8_V=$(_query_lite_json '.deps.v8')
 	ZLIB_V=$(_query_lite_json '.deps.zlib')
 	einfo
 	einfo "Electron version report with internal/external dependencies:"

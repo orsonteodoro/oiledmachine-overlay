@@ -15,7 +15,7 @@
   At the end of `emerge --sync`, the script runs every time.
 
 
-  Persistent settings (&gt;=2020.07.26-r1 only):
+  Persistent settings:
   You may save settings to /etc/npm-secaudit.conf.
 
   Example contents of /etc/npm-secaudit.conf
@@ -44,7 +44,7 @@
   critical implies ignore the lesser vulnerabities but triage the criticals.
 
 
-  Blacklists (&gt;=2020.07.26-r1 only):
+  Blacklists:
   A package may be blacklisted in /etc/portage/npm-secaudit-blacklist as
   in not allowed to be added to the @npm-security-update set.  Use at
   your own risk.  The format is as follows:
