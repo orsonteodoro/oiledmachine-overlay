@@ -23,8 +23,9 @@
   G_VERBOSE="0" # can only be 0 for silent, or 1 for more output
   G_ACTIVE="1" # can only be 0 to disable, or 1 to run audits
   G_LONG_SCAN="1" # can only be 1 for comprehensive, 0 for short scan to stop
-    immediately when it finds a package with &gt;=tolerance vulnerability level
-
+    # immediately when it finds a package with &gt;=tolerance vulnerability level
+  G_USE_ELECTRON="1" # can only be 1 to check version and download version
+    # release info or 0 to not download.
 
   Vulnerability levels:
 
