@@ -175,9 +175,9 @@ npm-secaudit_fetch_deps() {
 	popd
 }
 
-# @FUNCTION: npm_unpack
+# @FUNCTION: npm-secaudit_src_unpack
 # @DESCRIPTION:
-# Unpack sources
+# Runs phases for downloading dependencies, unpacking, building
 npm-secaudit_src_unpack() {
         debug-print-function ${FUNCNAME} "${@}"
 

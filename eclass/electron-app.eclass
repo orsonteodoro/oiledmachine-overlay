@@ -874,7 +874,7 @@ is End Of Life (EOL) and has vulnerabilities."
 
 # @FUNCTION: electron-app_src_unpack
 # @DESCRIPTION:
-# Unpacks sources
+# Runs phases for downloading dependencies, unpacking, building
 electron-app_src_unpack() {
         debug-print-function ${FUNCNAME} "${@}"
 
