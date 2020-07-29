@@ -27,6 +27,26 @@ case "${EAPI:-0}" in
                 ;;
 esac
 
+# ############## START Per-package environmental variables #####################
+
+# Anything with := is likely a environmental variable setting
+# These manage the degree of consent.  Some users want a highly secure system.
+# Other users just want the product to install.  By default, the eclasses use
+# the policy to block criticals from being merged into the system.
+
+# For those that just want it to install (no security) you can add
+# /etc/portage/env/npm-no-audit-fix.conf with the following without # character:
+# NPM_SECAUDIT_ALLOW_AUDIT=0
+# NPM_SECAUDIT_ALLOW_AUDIT_FIX=0
+# NPM_SECAUDIT_NO_DIE_ON_AUDIT=1
+# ELECTRON_APP_ALLOW_AUDIT=0
+# ELECTRON_APP_ALLOW_AUDIT_FIX=0
+# ELECTRON_APP_NO_DIE_ON_AUDIT=1
+
+# Then, add to /etc/portage/package.env
+# ${CATEGORY}/${PN} npm-no-audit-fix.conf
+
+
 # You could define it as a per-package envar, but should not be done in the
 # ebuild itself.
 NPM_UTILS_ALLOW_AUDIT_FIX=${NPM_UTILS_ALLOW_AUDIT_FIX:="1"}
@@ -40,6 +60,8 @@ NPM_UTILS_ALLOW_I_PACKAGE_LOCK=${NPM_UTILS_ALLOW_I_PACKAGE_LOCK:="0"}
 # You could define it as a per-package envar, but should not be done in the
 # ebuild itself.
 NPM_UTILS_FIX_FORCE=${NPM_UTILS_FIX_FORCE:="0"}
+
+# ##################  END Per-package environmental variables ##################
 
 # @FUNCTION: npm_install_sub
 # @DESCRIPTION:
@@ -497,5 +519,69 @@ previous_broken_lock_count=${previous_broken_lock_count}"
 	done
 
 	einfo "npm_update_package_locks_recursive: done"
+}
+
+# @FUNCTION: npm-utils_install_licenses
+# @DESCRIPTION:
+# Installs all licenses from main package and micropackages
+# Standardizes the process.
+npm-utils_install_licenses() {
+	OIFS="${IFS}"
+	export IFS=$'\n'
+	for f in $(find "${S}" \
+	  -iname "*license*" -type f \
+	  -o -iname "*copyright*" \
+	  -o -iname "*copying*" \
+	  -o -iname "*patent*" \
+	  -o -iname "ofl.txt" \
+	  -o -iname "*notice*" \
+	  ) ; \
+	do
+		if [[ -f "${f}" ]] ; then
+			d=$(dirname "${f}" | sed -r -e "s|^${S}||")
+		else
+			d=$(echo "${f}" | sed -r -e "s|^${S}||")
+		fi
+		docinto "licenses/${d}"
+		dodoc -r "${f}"
+	done
+	export IFS="${OIFS}"
+}
+
+# @FUNCTION: npm-utils_install_readmes
+# @DESCRIPTION:
+# Installs all readmes including those from micropackages.  Standardizes the
+# process.
+npm-utils_install_readmes() {
+	OIFS="${IFS}"
+	export IFS=$'\n'
+	for f in $(find "${S}" \
+	  -iname "*.pdf" \
+	  -o -iname "*authors*" \
+	  -o -iname "*bug*report*.md" \
+	  -o -iname "*changelog*" \
+	  -o -iname "*changes*" \
+	  -o -iname "*code*of*conduct*" \
+	  -o -iname "*contributing*" \
+	  -o -iname "*feature*request*.md" \
+	  -o -iname "*governance*" \
+	  -o -iname "*history*" \
+	  -o -iname "*issue*template*.md" \
+	  -o -iname "*language*.md" \
+	  -o -iname "*pull*request*template*.md" \
+	  -o -iname "*readme*" \
+	  -o -ipath "*/doc/*" \
+	  -o -ipath "*/docs/*" \
+	  ) ; \
+	do
+		if [[ -f "${f}" ]] ; then
+			d=$(dirname "${f}" | sed -r -e "s|^${S}||")
+		else
+			d=$(echo "${f}" | sed -r -e "s|^${S}||")
+		fi
+		docinto "readmes/${d}"
+		dodoc -r "${f}"
+	done
+	export IFS="${OIFS}"
 }
 

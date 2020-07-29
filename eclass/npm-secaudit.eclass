@@ -36,6 +36,46 @@ inherit eutils npm-utils
 
 EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postrm pkg_postinst
 
+# ############## START Per-package environmental variables #####################
+
+# Set this in your make.conf to control number of HTTP requests.  50 is npm
+# default but it is too high.
+NPM_MAXSOCKETS=${NPM_MAXSOCKETS:="1"}
+
+# You could define it as a per-package envar.  It not recommended in the ebuild.
+NPM_SECAUDIT_ALLOW_AUDIT=${NPM_SECAUDIT_ALLOW_AUDIT:="1"}
+
+# You could define it as a per-package envar.  It not recommended in the ebuild.
+NPM_SECAUDIT_ALLOW_AUDIT_FIX=${NPM_SECAUDIT_ALLOW_AUDIT_FIX:="1"}
+
+# You could define it as a per-package envar.  It not recommended in the ebuild.
+NPM_SECAUDIT_NO_DIE_ON_AUDIT=${NPM_SECAUDIT_NO_DIE_ON_AUDIT:="0"}
+
+# You could define it as a per-package envar.  Disabled by default because of
+# rapid changes in dependencies over a short period of time.
+NPM_SECAUDIT_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=${NPM_SECAUDIT_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL:="0"}
+
+# Acceptable values:  Critical, High, Moderate, Low
+# Applies to npm audit not CVSS v3
+# For those that are confused, this is interpeted as tolerance level meaning
+# >=$NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL.
+NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL=\
+${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL:="Critical"}
+
+# ##################  END Per-package environmental variables ##################
+
+# ##################  START ebuild and eclass global variables #################
+
+_NPM_SECAUDIT_REG_PATH=${_NPM_SECAUDIT_REG_PATH:=""} # private set only within in the eclass
+if [[ -n "${NPM_SECAUDIT_REG_PATH}" ]] ; then
+die "NPM_SECAUDIT_REG_PATH has been removed and replaced with\n\
+NPM_SECAUDIT_INSTALL_PATH.  Please wait for the next ebuild update."
+fi
+NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
+NPM_PACKAGE_SETS_DB="/etc/portage/sets/npm-security-update"
+NPM_SECAUDIT_LOCKS_DIR="/dev/shm"
+NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="10"
+
 # See https://github.com/microsoft/TypeScript/blob/v2.0.7/package.json
 if [[ -n "${NPM_SECAUDIT_TYPESCRIPT_V}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${NPM_SECAUDIT_TYPESCRIPT_V}") -ge 2.0 \
@@ -91,35 +131,8 @@ DEPEND+=" ${COMMON_DEPEND}"
 RDEPEND+=" ${COMMON_DEPEND}"
 IUSE+=" debug"
 
-NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
-NPM_PACKAGE_SETS_DB="/etc/portage/sets/npm-security-update"
-NPM_SECAUDIT_REG_PATH=${NPM_SECAUDIT_REG_PATH:=""} # set only within in the ebuild
+# ##################  END ebuild and eclass global variables #################
 
-# Set this in your make.conf to control number of HTTP requests.  50 is npm
-# default but it is too high.
-NPM_MAXSOCKETS=${NPM_MAXSOCKETS:="1"}
-
-# You could define it as a per-package envar.  It not recommended in the ebuild.
-NPM_SECAUDIT_ALLOW_AUDIT=${NPM_SECAUDIT_ALLOW_AUDIT:="1"}
-
-# You could define it as a per-package envar.  It not recommended in the ebuild.
-NPM_SECAUDIT_ALLOW_AUDIT_FIX=${NPM_SECAUDIT_ALLOW_AUDIT_FIX:="1"}
-
-# You could define it as a per-package envar.  It not recommended in the ebuild.
-NPM_SECAUDIT_NO_DIE_ON_AUDIT=${NPM_SECAUDIT_NO_DIE_ON_AUDIT:="0"}
-
-# You could define it as a per-package envar.  Disabled by default because of
-# rapid changes in dependencies over a short period of time.
-NPM_SECAUDIT_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=${NPM_SECAUDIT_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL:="0"}
-
-# Acceptable values:  Critical, High, Moderate, Low
-# Applies to npm audit not CVSS v3
-NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL=\
-${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL:="Critical"}
-
-NPM_SECAUDIT_LOCKS_DIR="/dev/shm"
-
-NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="10"
 
 # @FUNCTION: npm_pkg_setup
 # @DESCRIPTION:
@@ -231,16 +244,45 @@ npm-secaudit_src_prepare_default() {
 	#default_src_prepare
 }
 
+
+# @FUNCTION: npm_secaudit_store_jsons_for_security_audit
+# @DESCRIPTION:
+# Standardize the install location for .audit
+npm_secaudit_store_jsons_for_security_audit() {
+	_npm-secaudit_check_missing_install_path
+	npm_secaudit_store_package_jsons "${S}"
+	export _NPM_SECAUDIT_REG_PATH="${NPM_SECAUDIT_INSTALL_PATH}/.audit"
+	insinto "${_NPM_SECAUDIT_REG_PATH}"
+
+	local old_dotglob=$(shopt dotglob | cut -f 2)
+	shopt -s dotglob # copy hidden files
+
+	doins -r "${T}/package_jsons"/*
+
+	if [[ "${old_dotglob}" == "on" ]] ; then
+		shopt -s dotglob
+	else
+		shopt -u dotglob
+	fi
+}
+
 # @FUNCTION: npm-secaudit_src_install_default
 # @DESCRIPTION:
-# Installs the program.  Currently a stub.
+# Installs the program.  Analog of electron-app_desktop_install.
 npm-secaudit_src_install_default() {
         debug-print-function ${FUNCNAME} "${@}"
+	local rel_src_path="$1"
+	local cmd="$2"
 
-	cd "${S}"
+	npm-secaudit_install "${rel_src_path}"
 
-	die "currently uninplemented.  must override"
-# todo npm-secaudit_src_install_default
+	# Create wrapper
+	exeinto "/usr/bin"
+	echo "#!/bin/bash" > "${T}/${PN}"
+	echo "${cmd}" >> "${T}/${PN}"
+	doexe "${T}/${PN}"
+
+	npm-secaudit_store_jsons_for_security_audit
 }
 
 # @FUNCTION: npm-secaudit-build
@@ -417,18 +459,33 @@ npm-secaudit_src_preinst_default() {
 	true
 }
 
+# @FUNCTION: _npm-secaudit_check_missing_install_path
+# @DESCRIPTION:
+# Checks if NPM_SECAUDIT_INSTALL_PATH has been defined.
+_npm-secaudit_check_missing_install_path() {
+	if [[ -z "${NPM_SECAUDIT_INSTALL_PATH}" ]] ; then
+		die \
+"You must specify NPM_SECAUDIT_INSTALL_PATH.  Usually same location as\n\
+/usr/\$(get_libdir)/\${PN}/\${SLOT} without \$ED."
+	fi
+}
+
 # @FUNCTION: npm-secaudit_install_raw
 # @DESCRIPTION:
 # Installs an app to image area before going live.  Does not reset permissions or owner.
 # It's recommended to use npm-secaudit_install instead.
 npm-secaudit_install_raw() {
+	_npm-secaudit_check_missing_install_path
 	local rel_src_path="$1"
 
 	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
 
-	mkdir -p "${ED}/usr/$(get_libdir)/node/${PN}/${SLOT}"
-	cp -a ${rel_src_path} "${ED}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+	local d="${NPM_SECAUDIT_INSTALL_PATH}"
+	local ed="${ED}/${d}"
+
+	mkdir -p "${ed}"
+	cp -a ${rel_src_path} "${ed}"
 
 	if [[ "${old_dotglob}" == "on" ]] ; then
 		shopt -s dotglob
@@ -443,12 +500,13 @@ npm-secaudit_install_raw() {
 # Resets ownership and permissions.
 # Additional change of ownership and permissions should be done after running this.
 npm-secaudit_install() {
+	_npm-secaudit_check_missing_install_path
 	local rel_src_path="$1"
 
 	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
 
-	local d="/usr/$(get_libdir)/node/${PN}/${SLOT}"
+	local d="${NPM_SECAUDIT_INSTALL_PATH}"
 	local ed="${ED}/${d}"
 	insinto "${d}"
 	doins -r ${rel_src_path}
@@ -524,9 +582,9 @@ ${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
 }
 
 # @FUNCTION: npm-secaudit_store_package_jsons
-# @DESCRIPTION: Saves the package{,-lock}.json to T for auditing
+# @DESCRIPTION: Saves the package-lock.json to T for auditing
 npm-secaudit_store_package_jsons() {
-	einfo "Saving package.json and package-lock.json for future audits ..."
+	einfo "Saving package-lock.json and npm-shrinkwrap.json for future audits"
 
 	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
@@ -534,14 +592,16 @@ npm-secaudit_store_package_jsons() {
 	local ROOTDIR="${1}"
 	local d
 	local rd
-	local F=$(find ${ROOTDIR} -name "package*.json" -o "yarn.lock")
+	local F=$(find ${ROOTDIR} -name "package-lock.json" \
+		-o -name "npm-shrinkwrap.json" -o -name "yarn.lock")
 	local td="${T}/package_jsons/"
-	for f in $F; do
-		d=$(dirname $f)
+	for f in ${F}; do
+		d=$(dirname ${f})
 		rd=$(dirname $(echo "${f}" | sed -e "s|${ROOTDIR}||"))
-		mkdir -p "${td}/${rd}"
-		einfo "Copying $f to ${td}/${rd}"
-		cp -a "${f}" "${td}/${rd}" || die
+		local temp_dest=$(realpath --canonicalize-missing "${td}/${rd}")
+		mkdir -p "${temp_dest}"
+		einfo "Copying ${f} to ${temp_dest}"
+		cp -a "${f}" "${temp_dest}" || die
 	done
 
 	if [[ "${old_dotglob}" == "on" ]] ; then
@@ -552,15 +612,15 @@ npm-secaudit_store_package_jsons() {
 }
 
 # @FUNCTION: npm-secaudit_restore_package_jsons
-# @DESCRIPTION: Restores the package{,-lock}.json to T for auditing
+# @DESCRIPTION: Restores the package-lock.json to T for auditing
 npm-secaudit_restore_package_jsons() {
 	local dest="${1}"
-	einfo "Restoring package.jsons to ${dest} ..."
+	einfo "Restoring package-lock.json and npm-shrinkwrap.json to ${dest}"
 
 	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
 
-	local td="${T}/package_jsons/${rd}"
+	local td="${T}/package_jsons"
 
 	cp -a "${td}"/* "${dest}" || die
 

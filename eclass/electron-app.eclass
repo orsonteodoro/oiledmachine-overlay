@@ -31,8 +31,88 @@ esac
 
 inherit desktop eutils npm-utils
 
+# ############## START Per-package environmental variables #####################
+
+# Anything with := is likely a environmental variable setting
+# These manage the degree of consent.  Some users want a highly secure system.
+# Other users just want the product to install.  By default, the eclasses use
+# the policy to block criticals from being merged into the system.
+
+# For those that just want it to install (no security) you can add
+# /etc/portage/env/npm-no-audit-fix.conf with the following without # character:
+# NPM_SECAUDIT_ALLOW_AUDIT=0
+# NPM_SECAUDIT_ALLOW_AUDIT_FIX=0
+# NPM_SECAUDIT_NO_DIE_ON_AUDIT=1
+# ELECTRON_APP_ALLOW_AUDIT=0
+# ELECTRON_APP_ALLOW_AUDIT_FIX=0
+# ELECTRON_APP_NO_DIE_ON_AUDIT=1
+
+# Then, add to /etc/portage/package.env
+# ${CATEGORY}/${PN} npm-no-audit-fix.conf
+
+
+ELECTRON_APP_MODE=${ELECTRON_APP_MODE:="npm"} # can be npm, yarn
+
+# Set this in your make.conf to control number of HTTP requests.  50 is npm
+# default but it is too high.
+ELECTRON_APP_MAXSOCKETS=${ELECTRON_APP_MAXSOCKETS:="1"}
+
+# You could define it as a per-package envar.  It not recommended in the ebuild.
+ELECTRON_APP_ALLOW_AUDIT=${ELECTRON_APP_ALLOW_AUDIT:="1"}
+
+# You could define it as a per-package envar.  It not recommended in the ebuild.
+ELECTRON_APP_ALLOW_AUDIT_FIX=${ELECTRON_APP_ALLOW_AUDIT_FIX:="1"}
+
+# You could define it as a per-package envar.  It not recommended in the ebuild.
+ELECTRON_APP_NO_DIE_ON_AUDIT=${ELECTRON_APP_NO_DIE_ON_AUDIT:="0"}
+
+# You could define it as a per-package envar.  Disabled by default because
+# rapid changes in dependencies over short period of time.
+ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=\
+${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL:="0"}
+
+# Acceptable values:  Critical, High, Moderate, Low
+# Applies to npm audit not CVSS v3
+# For those that are confused, this is interpeted as tolerance level meaning
+# >=$ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL.
+ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL=\
+${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL:="Critical"}
+
 # You could define it as a per-package envar.  It not recommended in the ebuild.
 ELECTRON_APP_ALLOW_NON_LTS_ELECTRON=${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON:="0"}
+
+# ##################  END Per-package environmental variables ##################
+
+# ##################  START ebuild and eclass global variables #################
+
+NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
+NPM_PACKAGE_SETS_DB="/etc/portage/sets/npm-security-update"
+YARN_PACKAGE_DB="/var/lib/portage/yarn-packages"
+_ELECTRON_APP_REG_PATH=${_ELECTRON_APP_REG_PATH:=""} # private set only within the eclass
+
+if [[ -n "${ELECTRON_APP_REG_PATH}" ]] ; then
+die "ELECTRON_APP_REG_PATH has been removed and replaced with\n\
+ELECTRON_APP_INSTALL_PATH.  Please wait for the next ebuild update."
+fi
+
+# The reoccurance interval between critical vulnerabilities in chrome is 10-14
+# days recently (worst cases), but longer interval between vulnerabilites with
+# 159 days (~5 months) and 5 days has been observed.  If the app is used like a
+# web-browser (including social media apps), the internal Chromium requires
+# weekly forced updates.
+ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP=\
+${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP:="0"}
+
+ELECTRON_APP_LOCKS_DIR="/dev/shm"
+NPM_SECAUDIT_LOCKS_DIR="/dev/shm"
+ELECTRON_APP_DATA_DIR="${EROOT}/var/cache/npm-secaudit"
+ELECTRON_APP_VERSION_DATA_PATH="${ELECTRON_APP_DATA_DIR}/lite.json"
+
+# These are carefully picked to avoid false positive or
+# chrome only feature advisories.
+# Basic stuff associated with rendering, networking, javascript
+# are weighed heavier than added value exclusive features.
+
 
 # Critical means based on CVSS v3 standards
 # See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=electron&search_type=all
@@ -48,14 +128,31 @@ INSECURE_NVD_ELECTRON_LAST_CRITICAL_7="7.2.4"
 INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_COND="-lt"
 INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_LINK_ADVISORY=\
 "https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
+
 # See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome&search_type=all
-INSECURE_NVD_CHROME_LAST_CRITICAL="83.0.4103.97"
+INSECURE_NVD_CHROME_LAST_CRITICAL="83.0.4103.116"
 INSECURE_NVD_CHROME_LAST_CRITICAL_COND="-lt"
-INSECURE_NVD_CHROME_LAST_LINK_ADVISORY="https://nvd.nist.gov/vuln/detail/CVE-2020-6493"
+INSECURE_NVD_CHROME_LAST_CRITICAL_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2020-6509"
+
+# GLSA doesn't use high, medium, low.  This is a NVD addition.
 # See https://security.gentoo.org/glsa
-INSECURE_GLSA_CHROME="83.0.4103.97"
-INSECURE_GLSA_CHROME_COND="-lt"
-INSECURE_GLSA_CHROME_ADVISORY_LINK="https://security.gentoo.org/glsa/202006-02"
+# Placed in worst case NVD/CVE reference
+INSECURE_GLSA_CHROME_LATEST="84.0.4147.89"
+INSECURE_GLSA_CHROME_LATEST_COND="-lt"
+INSECURE_GLSA_CHROME_LATEST_LINK_ADVISORY=\
+"https://security.gentoo.org/glsa/202007-08"
+
+INSECURE_NVD_CHROME_LAST_HIGH="84.0.4147.89"
+INSECURE_NVD_CHROME_LAST_HIGH_COND="-lt"
+INSECURE_NVD_CHROME_LAST_HIGH_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2020-6525"
+
+# See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=v8%20chrome&search_type=all
+INSECURE_NVD_V8_LAST_HIGH="84.0.4147.89"
+INSECURE_NVD_V8_LAST_HIGH_COND="-lt"
+INSECURE_NVD_V8_LAST_HIGH_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2020-6533"
 
 NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="10"
 
@@ -403,52 +500,14 @@ DEPEND+="
 "
 fi
 
-NPM_PACKAGE_DB="/var/lib/portage/npm-packages"
-NPM_PACKAGE_SETS_DB="/etc/portage/sets/npm-security-update"
-YARN_PACKAGE_DB="/var/lib/portage/yarn-packages"
-ELECTRON_APP_REG_PATH=${ELECTRON_APP_REG_PATH:=""} # set only within the ebuild
-ELECTRON_APP_MODE=${ELECTRON_APP_MODE:="npm"} # can be npm, yarn
-
-# Set this in your make.conf to control number of HTTP requests.  50 is npm
-# default but it is too high.
-ELECTRON_APP_MAXSOCKETS=${ELECTRON_APP_MAXSOCKETS:="1"}
-
-# You could define it as a per-package envar.  It not recommended in the ebuild.
-ELECTRON_APP_ALLOW_AUDIT=${ELECTRON_APP_ALLOW_AUDIT:="1"}
-
-# You could define it as a per-package envar.  It not recommended in the ebuild.
-ELECTRON_APP_ALLOW_AUDIT_FIX=${ELECTRON_APP_ALLOW_AUDIT_FIX:="1"}
-
-# You could define it as a per-package envar.  It not recommended in the ebuild.
-ELECTRON_APP_NO_DIE_ON_AUDIT=${ELECTRON_APP_NO_DIE_ON_AUDIT:="0"}
-
-# You could define it as a per-package envar.  Disabled by default because
-# rapid changes in dependencies over short period of time.
-ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=\
-${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL:="0"}
-
-# The reoccurance interval between critical vulnerabilities in chrome is 10-14
-# days recently (worst cases), but longer interval between vulnerabilites with
-# 159 days (~5 months) and 5 days has been observed.  If the app is used like a
-# web-browser (including social media apps), the internal Chromium requires
-# weekly forced updates.
-ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP=\
-${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP:="0"}
-
-# Acceptable values:  Critical, High, Moderate, Low
-# Applies to npm audit not CVSS v3
-ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL=\
-${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL:="Critical"}
-
-ELECTRON_APP_LOCKS_DIR="/dev/shm"
-NPM_SECAUDIT_LOCKS_DIR="/dev/shm"
-
 if [[ -n "${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP}" \
 && "${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP}" == "1" ]] ; then
 RDEPEND+="
 	app-portage/npm-secaudit
 "
 fi
+
+# ##################  END ebuild and eclass global variables #################
 
 # @FUNCTION: _electron-app-flakey-check
 # @DESCRIPTION:
@@ -522,7 +581,7 @@ electron-app_pkg_setup() {
 	if has network-sandbox $FEATURES ; then
 		die \
 "FEATURES=\"-network-sandbox\" must be added per-package env to be able to\n\
-download micropackages."
+download micropackages and obtain version releases information."
 	fi
 
 	#export ELECTRON_VER=$(strings /usr/bin/electron \
@@ -570,6 +629,26 @@ download micropackages."
 
 	if [[ ! -d "/dev/shm" ]] ; then
 		die "Missing /dev/shm.  Check the kernel config?"
+	fi
+
+	local prev_update
+	if [[ -f "${ELECTRON_APP_VERSION_DATA_PATH}" ]] ; then
+		prev_update=$(stat -c "%W" "${ELECTRON_APP_VERSION_DATA_PATH}")
+	else
+		prev_update=0
+	fi
+	local now=$(date +%s)
+	local next_update_seconds=86400
+	if [[ ! -d "${ELECTRON_APP_DATA_DIR}" ]] ; then
+		mkdir -p "${ELECTRON_APP_DATA_DIR}" || die
+	fi
+	if (( $((${prev_update} + ${next_update_seconds})) < ${now} )) ; then
+		einfo "Updating Electron release data"
+		rm -rf "${ELECTRON_APP_VERSION_DATA_PATH}" || true
+		wget -O "${ELECTRON_APP_VERSION_DATA_PATH}" \
+		"https://raw.githubusercontent.com/electron/releases/master/lite.json" || die
+	else
+		einfo "Using cached Electron release data"
 	fi
 }
 
@@ -637,7 +716,7 @@ electron-app_fetch_deps() {
 }
 
 _query_lite_json() {
-	echo $(cat "${T}/lite.json" \
+	echo $(cat "${ELECTRON_APP_VERSION_DATA_PATH}" \
 		| jq '.[] | select(.tag_name == "v'${ELECTRON_V}'")' \
 		| jq ${1} \
 		| sed -e "s|[\"]*||g")
@@ -661,8 +740,6 @@ electron-app_audit_versions() {
 	einfo \
 "Inspecting package versions for vulnerabilities and minimum version\n\
 requirements"
-	wget -O "${T}/lite.json" \
-	"https://raw.githubusercontent.com/electron/releases/master/lite.json" || die
 
 	if [[ "${ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP}" == "1" ]] ; then
 		elog \
@@ -684,7 +761,19 @@ critical vulnerabilities in the internal Chromium."
 		# Skip for dependency but not building ui yet
 		return
 	fi
+	#BORINGSSL_V=$(_query_lite_json '.deps.openssl')
+	CHROMIUM_V=$(_query_lite_json '.deps.chrome')
+	LIBUV_V=$(_query_lite_json '.deps.uv')
+	NODE_V=$(_query_lite_json '.deps.node')
+	V8_V=$(_query_lite_json '.deps.v8')
+	ZLIB_V=$(_query_lite_json '.deps.zlib')
 
+	# ##### Vulnerability tests ############################################
+
+if [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Critical" \
+	|| "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "High" \
+	|| "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Moderate" \
+	|| "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Low" ]] ; then
 	if ver_test $(ver_cut 1 "${ELECTRON_V}") -eq 9 \
 		&& ver_test ${ELECTRON_V} ${INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_COND} \
 			"${INSECURE_NVD_ELECTRON_LAST_CRITICAL_9}" ; then
@@ -708,48 +797,65 @@ ${INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_LINK_ADVISORY}"
 "Electron ${ELECTRON_V} has a critical vulnerability itself.  For details see\n\
 ${INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_LINK_ADVISORY}"
 	fi
+	if ver_test "${CHROMIUM_V}" ${INSECURE_NVD_CHROME_LAST_CRITICAL_COND} \
+		"${INSECURE_NVD_CHROME_LAST_CRITICAL}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a critical vulnerability in internal Chromium\n\
+which is version ${CHROMIUM_V}.  For details see\n\
+${INSECURE_NVD_CHROME_LAST_CRITICAL_LINK_ADVISORY}"
+	fi
+	if ver_test "${CHROMIUM_V}" ${INSECURE_GLSA_CHROME_LATEST_COND} \
+		"${INSECURE_GLSA_CHROME_LATEST}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a GLSA advisory for internal Chromium\n\
+${CHROMIUM_V}.  See\n\
+${INSECURE_GLSA_CHROME_LATEST_LINK_ADVISORY}"
+	fi
+fi
+if [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "High" \
+	|| "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Moderate" \
+	|| "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Low" ]] ; then
+	if ver_test "${CHROMIUM_V}" ${INSECURE_NVD_CHROME_LAST_HIGH_COND} \
+		"${INSECURE_NVD_CHROME_LAST_HIGH}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a high vulnerability in internal Chromium\n\
+which is version ${CHROMIUM_V}.  For details see\n\
+${INSECURE_NVD_CHROME_LAST_HIGH_LINK_ADVISORY}"
+	fi
+	if ver_test $(echo "${V8_V}" | cut -f 1 -d "-") ${INSECURE_NVD_V8_LAST_HIGH_COND} \
+		"${INSECURE_NVD_V8_LAST_HIGH}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a high vulnerability for internal V8\n\
+${V8_V}.  See\n\
+${INSECURE_NVD_V8_LAST_HIGH_LINK_ADVISORY}"
+	fi
+fi
 
 	if ver_test $(ver_cut 1 "${ELECTRON_V}") -le 6 ; then
 		# Let it fail in ${CHROMIUM_V} vulernability tests
 		ewarn "Electron ${ELECTRON_V} has already reached End Of Life (EOL)."
 	fi
 
-	CHROMIUM_V=$(_query_lite_json '.deps.chrome')
-	if ver_test "${CHROMIUM_V}" ${INSECURE_NVD_CHROME_LAST_CRITICAL_COND} \
-		"${INSECURE_NVD_CHROME_LAST_CRITICAL}" ; then
-		adie \
-"Electron ${ELECTRON_V} has a critical vulnerability in internal Chromium\n\
-which is version ${CHROMIUM_V}.  For details see\n\
-${INSECURE_NVD_CHROME_LAST_LINK_ADVISORY}"
+	if ver_test "${NODE_V}" -lt ${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN} ; then
+		adie "Electron ${ELECTRON_V} uses ${NODE_V} which is End Of Life (EOL)."
 	fi
-	if ver_test "${CHROMIUM_V}" ${INSECURE_GLSA_CHROME_COND} \
-		"${INSECURE_GLSA_CHROME}" ; then
-		adie \
-"Electron ${ELECTRON_V} has a GLSA advisory for internal Chromium\n\
-${CHROMIUM_V}.  See\n\
-${INSECURE_GLSA_CHROME_ADVISORY_LINK}"
+
+	if has_version "<net-libs/nodejs-${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN}" ; then
+		ewarn \
+"You have a nodejs installed with less than ${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN} which \
+is End Of Life (EOL) and has vulnerabilities."
 	fi
-	LIBUV_V=$(_query_lite_json '.deps.uv')
+
+	# ##### Compatibity tests ##################################################
+
 	if ! has_version ">=dev-libs/libuv-${LIBUV_V}" ; then
 		adie "Electron ${ELECTRON_V} requires at least >=dev-libs/libuv-${LIBUV_V} libuv"
 	fi
 	# It's actually BoringSSL not OpenSSL in Chromium.
 	# Commented out because Chromium checks
-	#BORINGSSL_V=$(_query_lite_json '.deps.openssl')
-	NODE_V=$(_query_lite_json '.deps.node')
 	if ! has_version ">=net-libs/nodejs-${NODE_V}" ; then
 		adie "Electron ${ELECTRON_V} requires at least >=net-libs/nodejs-${NODE_V}"
 	fi
-	if ver_test "${NODE_V}" -lt ${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN} ; then
-		adie "Electron ${ELECTRON_V} uses ${NODE_V} which is End Of Life (EOL)."
-	fi
-	if has_version "<net-libs/nodejs-${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN}" ; then
-		ewarn \
-"You have a nodejs less than ${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN} which \
-is End Of Life (EOL) and has vulnerabilities."
-	fi
-	V8_V=$(_query_lite_json '.deps.v8')
-	ZLIB_V=$(_query_lite_json '.deps.zlib')
 	if ! has_version ">=sys-libs/zlib-${ZLIB_V}" ; then
 		adie \
 "Electron ${ELECTRON_V} requires at least >=sys-libs/zlib-${ZLIB_V}"
@@ -994,14 +1100,17 @@ electron-app_src_preinst_default() {
 # Installs program only without resetting permissions or owner.
 # Use electron-app_desktop_install_program instead.
 electron-app_desktop_install_program_raw() {
+	_electron-app_check_missing_install_path
 	local rel_src_path="$1"
+	local d="${ELECTRON_APP_INSTALL_PATH}"
+	local ed="${ED}/${d}"
 	case "$ELECTRON_APP_MODE" in
 		npm)
 			local old_dotglob=$(shopt dotglob | cut -f 2)
 			shopt -s dotglob # copy hidden files
 
-			mkdir -p "${ED}/usr/$(get_libdir)/node/${PN}/${SLOT}"
-			cp -a ${rel_src_path} "${ED}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+			mkdir -p "${ed}"
+			cp -a ${rel_src_path} "${ed}"
 
 			if [[ "${old_dotglob}" == "on" ]] ; then
 				shopt -s dotglob
@@ -1013,8 +1122,8 @@ electron-app_desktop_install_program_raw() {
 			local old_dotglob=$(shopt dotglob | cut -f 2)
 			shopt -s dotglob # copy hidden files
 
-			mkdir -p "${ED}/usr/$(get_libdir)/node/${PN}/${SLOT}"
-			cp -a ${rel_src_path} "${ED}/usr/$(get_libdir)/node/${PN}/${SLOT}"
+			mkdir -p "${ed}"
+			cp -a ${rel_src_path} "${ed}"
 
 			if [[ "${old_dotglob}" == "on" ]] ; then
 				shopt -s dotglob
@@ -1033,8 +1142,9 @@ electron-app_desktop_install_program_raw() {
 # Installs program only.  Resets permissions and ownership.
 # Additional change of ownership and permissions should be done after running this.
 electron-app_desktop_install_program() {
+	_electron-app_check_missing_install_path
 	local rel_src_path="$1"
-	local d="/usr/$(get_libdir)/node/${PN}/${SLOT}"
+	local d="${ELECTRON_APP_INSTALL_PATH}"
 	local ed="${ED}/${d}"
 	case "$ELECTRON_APP_MODE" in
 		npm)
@@ -1108,6 +1218,38 @@ electron-app_desktop_install_program() {
 	esac
 }
 
+# @FUNCTION: _electron-app_check_missing_install_path
+# @DESCRIPTION:
+# Checks to see if ELECTRON_APP_INSTALL_PATH has been defined.
+_electron-app_check_missing_install_path() {
+	if [[ -z "${ELECTRON_APP_INSTALL_PATH}" ]] ; then
+		die \
+"You must specify ELECTRON_APP_INSTALL_PATH.  Usually same location as\n\
+/usr/\$(get_libdir)/\${PN}/\${SLOT} without \$ED"
+	fi
+}
+
+# @FUNCTION: electron-app_store_jsons_for_security_audit
+# @DESCRIPTION:
+# Standardize the install location for .audit
+electron-app_store_jsons_for_security_audit() {
+	_electron-app_check_missing_install_path
+	electron-app_store_package_jsons "${S}"
+	export _ELECTRON_APP_REG_PATH="${ELECTRON_APP_INSTALL_PATH}/.audit"
+	insinto "${_ELECTRON_APP_REG_PATH}"
+
+	local old_dotglob=$(shopt dotglob | cut -f 2)
+	shopt -s dotglob # copy hidden files
+
+	doins -r "${T}/package_jsons"/*
+
+	if [[ "${old_dotglob}" == "on" ]] ; then
+		shopt -s dotglob
+	else
+		shopt -u dotglob
+	fi
+}
+
 # @FUNCTION: electron-app_desktop_install
 # @DESCRIPTION:
 # Installs a desktop app with wrapper and desktop menu entry.
@@ -1140,6 +1282,8 @@ command to execute in the wrapper script"
 
 	newicon "${rel_icon_path}" "${PN}.png"
 	make_desktop_entry ${PN} "${pkg_name}" ${PN} "${category}"
+
+	electron-app_store_jsons_for_security_audit
 }
 
 # @FUNCTION: electron-app-register-x
@@ -1206,7 +1350,7 @@ electron-app-register-yarn() {
 # @FUNCTION: electron-app_pkg_postinst
 # @DESCRIPTION:
 # Automatically registers an electron app package.
-# Set ELECTRON_APP_REG_PATH global to relative path (NOT starting with /)
+# Set _ELECTRON_APP_REG_PATH global to relative path (NOT starting with /)
 # or absolute path (starting with /) to scan for vulnerabilities containing
 # node_modules.
 electron-app_pkg_postinst() {
@@ -1214,10 +1358,10 @@ electron-app_pkg_postinst() {
 
 	case "$ELECTRON_APP_MODE" in
 		npm)
-			electron-app-register-npm "${ELECTRON_APP_REG_PATH}"
+			electron-app-register-npm "${_ELECTRON_APP_REG_PATH}"
 			;;
 		yarn)
-			electron-app-register-yarn "${ELECTRON_APP_REG_PATH}"
+			electron-app-register-yarn "${_ELECTRON_APP_REG_PATH}"
 			;;
 		*)
 			die "Unsupported package system"
@@ -1291,9 +1435,9 @@ ${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
 }
 
 # @FUNCTION: electron-app_store_package_jsons
-# @DESCRIPTION: Saves the package{,-lock}.json to T for auditing
+# @DESCRIPTION: Saves the package-lock.json to T for auditing
 electron-app_store_package_jsons() {
-	einfo "Saving package.json and package-lock.json for future audits ..."
+	einfo "Saving package-lock.json and npm-shrinkwrap.json for future audits"
 
 	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
@@ -1301,14 +1445,16 @@ electron-app_store_package_jsons() {
 	local ROOTDIR="${1}"
 	local d
 	local rd
-	local F=$(find ${ROOTDIR} -name "package*.json" -o -name "yarn.lock")
+	local F=$(find ${ROOTDIR} -name "package-lock.json" \
+		-o -name "npm-shrinkwrap.json" -o -name "yarn.lock")
 	local td="${T}/package_jsons/"
-	for f in $F; do
-		d=$(dirname $f)
+	for f in ${F}; do
+		d=$(dirname ${f})
 		rd=$(dirname $(echo "${f}" | sed -e "s|${ROOTDIR}||"))
-		mkdir -p "${td}/${rd}"
-		einfo "Copying $f to ${td}/${rd}"
-		cp -a "${f}" "${td}/${rd}" || die
+		local temp_dest=$(realpath --canonicalize-missing "${td}/${rd}")
+		mkdir -p "${temp_dest}"
+		einfo "Copying ${f} to ${temp_dest}"
+		cp -a "${f}" "${temp_dest}" || die
 	done
 
 	if [[ "${old_dotglob}" == "on" ]] ; then
@@ -1319,15 +1465,15 @@ electron-app_store_package_jsons() {
 }
 
 # @FUNCTION: electron-app_restore_package_jsons
-# @DESCRIPTION: Restores the package{,-lock}.json to T for auditing
+# @DESCRIPTION: Restores the package-lock.json to T for auditing
 electron-app_restore_package_jsons() {
 	local dest="${1}"
-	einfo "Restoring package.jsons to ${dest} ..."
+	einfo "Restoring package-lock.json and npm-shrinkwrap.json to ${dest}"
 
 	local old_dotglob=$(shopt dotglob | cut -f 2)
 	shopt -s dotglob # copy hidden files
 
-	local td="${T}/package_jsons/${rd}"
+	local td="${T}/package_jsons"
 
 	cp -a "${td}"/* "${dest}" || die
 
