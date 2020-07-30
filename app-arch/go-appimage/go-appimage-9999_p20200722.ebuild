@@ -16,10 +16,14 @@ LICENSE+=" GPL-3" # patchelf # ait
 LICENSE+=" all-rights-reserved MIT" # runtime from runtime.c from AppImageKit # MIT license does not have all rights reserved
 LICENSE+=" MIT" # upload tool
 KEYWORDS="~amd64 ~arm ~arm64"
-IUSE=""
-RDEPEND="sys-apps/dbus"
+IUSE="gnome kde"
+RDEPEND="sys-apps/dbus
+	gnome? ( gnome-base/gvfs[udisks] )
+	kde? ( kde-frameworks/solid )
+	sys-apps/systemd"
 DEPEND="${RDEPEND}
 	>=dev-lang/go-1.13.4"
+REQUIRED_USE="|| ( gnome kde )"
 SLOT="0/${PV}"
 EGIT_COMMIT="4ac0e102e05507f43c82beef558d0eedba0e50ae"
 SRC_URI=\
@@ -29,6 +33,7 @@ SRC_URI=\
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 PATCHES=( "${FILESDIR}/${PN}-9999_p20200722-gentooize.patch" )
+inherit linux-info
 
 # See scripts/build.sh
 
@@ -38,6 +43,41 @@ pkg_setup() {
 "${PN} requires network-sandbox to be disabled in FEATURES in order to download\n\
 micropackages."
 	fi
+	linux-info_pkg_setup
+	linux_config_exists
+	if ! linux_chkconfig_builtin INOTIFY_USER ; then
+		die "You need to change your kernel .config to CONFIG_INOTIFY_USER=y"
+	fi
+	if ! linux_chkconfig_builtin BINFMT_MISC && ! linux_chkconfig_module BINFMT_MISC ; then
+		die "You need to change your kernel .config to CONFIG_BINFMT_MISC=y or CONFIG_BINFMT_MISC=m"
+	fi
+
+	local found_appimage_type=0
+	if [[ -f "${EROOT}/proc/sys/fs/binfmt_misc/appimage-type1" ]] \
+		&& grep -F -e "enabled" "${EROOT}/proc/sys/fs/binfmt_misc/appimage-type1" ; then
+		found_appimage_type=1
+		eerror "You need to:  echo \"-1\" > /proc/sys/fs/binfmt_misc/appimage-type1"
+		die
+	fi
+	if [[ -f "${EROOT}/proc/sys/fs/binfmt_misc/appimage-type2" ]] \
+		&& grep -F -e "enabled" "${EROOT}/proc/sys/fs/binfmt_misc/appimage-type2" ; then
+		eerror "You need to:  echo \"-1\" > /proc/sys/fs/binfmt_misc/appimage-type2"
+		die
+	fi
+
+	if [[ "${found_appimage_type}" == "1" ]] ; then
+		eerror "See issue: https://github.com/probonopd/go-appimage/issues/7"
+		eerror
+		eerror "See also:"
+		eerror "https://github.com/probonopd/go-appimage/blob/4ac0e102e05507f43c82beef558d0eedba0e50ae/src/appimaged/prerequisites.go#L216"
+		eerror "https://www.kernel.org/doc/Documentation/admin-guide/binfmt-misc.rst"
+		die
+	fi
+
+	if [[ -f "${EROOT}/usr/bin/AppImageLauncher" ]] ; then
+		die "AppImageLauncher is not compatible and needs to be uninstalled."
+	fi
+	ewarn "This package is a Work In Progress (WIP)"
 }
 
 src_unpack() {
@@ -45,6 +85,8 @@ src_unpack() {
 	cd "${S}" || die
 	chmod +x ./scripts/build.sh || die
 	eapply ${PATCHES[@]}
+	sed -i -e "s|\tensureRunningFromLiveSystem|\t//ensureRunningFromLiveSystem|g" \
+		"src/appimaged/prerequisites.go" || die
 	# Workaround emerge policy concerning downloads in src_compile phase.
 	./scripts/build.sh
 }
