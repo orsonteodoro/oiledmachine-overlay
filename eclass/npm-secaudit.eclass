@@ -309,6 +309,10 @@ npm-secaudit_src_compile_default() {
 # Adds the package to the electron database
 # This function MUST be called in post_inst.
 npm-secaudit-register() {
+	if [[ -n "${NPM_SECAUDIT_REG_PATH}" ]] ; then
+	die "NPM_SECAUDIT_REG_PATH has been removed and replaced with\n\
+	NPM_SECAUDIT_INSTALL_PATH.  Please wait for the next ebuild update."
+	fi
 	while true ; do
 		if mkdir "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db" 2>/dev/null ; then
 			trap "rm -rf \"${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db\"" EXIT

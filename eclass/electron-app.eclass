@@ -1291,6 +1291,10 @@ command to execute in the wrapper script"
 # Adds the package to the electron database
 # This function MUST be called in pkg_postinst.
 electron-app-register-x() {
+	if [[ -n "${ELECTRON_APP_REG_PATH}" ]] ; then
+	die "ELECTRON_APP_REG_PATH has been removed and replaced with\n\
+	ELECTRON_APP_INSTALL_PATH.  Please wait for the next ebuild update."
+	fi
 	while true ; do
 		if mkdir "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db" 2>/dev/null ; then
 			trap "rm -rf \"${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db\"" EXIT
