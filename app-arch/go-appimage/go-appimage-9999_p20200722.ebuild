@@ -102,7 +102,7 @@ src_unpack() {
 }
 
 src_prepare() {
-	# fork to compile
+	# fork to add patches
 	touch "${T}/.portage_user_patches_applied"
 	touch "${PORTAGE_BUILDDIR}/.user_patches_applied"
 }
@@ -111,7 +111,7 @@ src_compile() {
 	:;
 }
 
-# @FUNCTION: npm-utils_install_licenses
+# @FUNCTION: install_licenses
 # @DESCRIPTION:
 # Installs all licenses from main package and micropackages
 # Standardizes the process.
