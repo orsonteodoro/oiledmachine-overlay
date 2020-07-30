@@ -16,10 +16,16 @@ LICENSE+=" GPL-3" # patchelf # ait
 LICENSE+=" all-rights-reserved MIT" # runtime from runtime.c from AppImageKit # MIT license does not have all rights reserved
 LICENSE+=" MIT" # upload tool
 KEYWORDS="~amd64 ~arm ~arm64"
-IUSE="gnome kde"
-RDEPEND="sys-apps/dbus
+IUSE="firejail gnome travis-ci kde"
+RDEPEND="
+	travis-ci? (
+		dev-libs/openssl
+		dev-vcs/git
+	)
+	firejail? ( sys-apps/firejail )
 	gnome? ( gnome-base/gvfs[udisks] )
 	kde? ( kde-frameworks/solid )
+	sys-apps/dbus
 	sys-apps/systemd"
 DEPEND="${RDEPEND}
 	>=dev-lang/go-1.13.4"
@@ -52,6 +58,10 @@ micropackages."
 		die "You need to change your kernel .config to CONFIG_BINFMT_MISC=y or CONFIG_BINFMT_MISC=m"
 	fi
 
+	if ! linux_chkconfig_builtin CONFIG_SQUASHFS && ! linux_chkconfig_module CONFIG_SQUASHFS ; then
+		die "You need to change your kernel .config to CONFIG_SQUASHFS=y or CONFIG_SQUASHFS=m"
+	fi
+
 	local found_appimage_type=0
 	if [[ -f "${EROOT}/proc/sys/fs/binfmt_misc/appimage-type1" ]] \
 		&& grep -F -e "enabled" "${EROOT}/proc/sys/fs/binfmt_misc/appimage-type1" ; then
@@ -77,7 +87,7 @@ micropackages."
 	if [[ -f "${EROOT}/usr/bin/AppImageLauncher" ]] ; then
 		die "AppImageLauncher is not compatible and needs to be uninstalled."
 	fi
-	ewarn "This package is a Work In Progress (WIP)"
+	ewarn "This package is a Work In Progress (WIP)."
 }
 
 src_unpack() {
