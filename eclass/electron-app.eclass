@@ -1225,7 +1225,7 @@ _electron-app_check_missing_install_path() {
 	if [[ -z "${ELECTRON_APP_INSTALL_PATH}" ]] ; then
 		die \
 "You must specify ELECTRON_APP_INSTALL_PATH.  Usually same location as\n\
-/usr/\$(get_libdir)/\${PN}/\${SLOT} without \$ED"
+/usr/\$(get_libdir)/node/\${PN}/\${SLOT} without \$ED"
 	fi
 }
 

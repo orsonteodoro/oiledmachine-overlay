@@ -466,7 +466,7 @@ _npm-secaudit_check_missing_install_path() {
 	if [[ -z "${NPM_SECAUDIT_INSTALL_PATH}" ]] ; then
 		die \
 "You must specify NPM_SECAUDIT_INSTALL_PATH.  Usually same location as\n\
-/usr/\$(get_libdir)/\${PN}/\${SLOT} without \$ED."
+/usr/\$(get_libdir)/node/\${PN}/\${SLOT} without \$ED."
 	fi
 }
 
