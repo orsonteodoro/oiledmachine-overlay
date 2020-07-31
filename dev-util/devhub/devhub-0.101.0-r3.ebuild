@@ -136,4 +136,6 @@ src_install() {
 
         newicon "node_modules/@devhub/desktop/assets/icons/icon.png" "${PN}.png"
         make_desktop_entry ${PN} "${MY_PN}" ${PN} "Development"
+	chmod 0755 \
+"${ELECTRON_APP_INSTALL_PATH}/packages/desktop/build/linux-unpacked/devhub" || die
 }
