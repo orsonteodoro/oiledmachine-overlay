@@ -86,7 +86,10 @@ electron-app_src_compile() {
 }
 
 src_install() {
+	export ELECTRON_APP_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	electron-app_desktop_install "*" "resources/icon/icon512.png" \
 		"${MY_PN}" "Development" \
-	"/usr/$(get_libdir)/node/${PN}/${SLOT}/dist/linux-unpacked/snippetstore"
+	"${ELECTRON_APP_INSTALL_PATH}/dist/linux-unpacked/snippetstore"
+	fperms 0755 \
+	"${ELECTRON_APP_INSTALL_PATH}/dist/linux-unpacked/snippetstore"
 }
