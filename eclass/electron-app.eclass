@@ -1488,10 +1488,10 @@ electron-app_restore_package_jsons() {
 	fi
 }
 
-# @FUNCTION: electron-app_electron_packager_get_arch
+# @FUNCTION: electron-app_get_arch
 # @DESCRIPTION: Gets the suffix based on ARCH and possibly CHOST
-# This applies to packages that use electron-packager
-electron-app_electron_packager_get_arch() {
+# This applies to use of electron-packager and electron-builder
+electron-app_get_arch() {
 	if [[ "${ARCH}" == "amd64" ]] ; then
                 echo "x64"
         elif [[ "${ARCH}" == "x86" ]] ; then
