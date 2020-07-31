@@ -2,6 +2,12 @@
 # Distributed under the terms of the GNU General Public License v2
 
 # See regex_{2,3}/regex.py for versioning
+# This is equivalent to 2020.4.4.
+
+# This is the same source as dev-python/regex in the gentoo overlay.
+# We use this name because ycmd repo referred to it that way.
+
+# Split for the possiblity of adding additional patches.
 
 EAPI=7
 DESCRIPTION="Alternative regular expression module, to replace re."
@@ -10,6 +16,8 @@ LICENSE="CNRI"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/${PV}"
 IUSE="test"
+RDEPEND="!dev-python/regex"
+DEPEND="!dev-python/regex"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit distutils-r1
 EHG_HASH_LONG="c660527507bb5a4cef10568a74a4ff1fa309504e"
