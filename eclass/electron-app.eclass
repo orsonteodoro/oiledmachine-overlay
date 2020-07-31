@@ -1502,5 +1502,7 @@ electron-app_electron_packager_get_arch() {
                 echo "armv7l"
         elif [[ "${ARCH}" == "n64" ]] ; then
                 echo "mips64el"
+	else
+		die "${ARCH} not supported"
         fi
 }
