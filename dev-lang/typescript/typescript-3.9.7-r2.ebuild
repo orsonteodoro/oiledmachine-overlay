@@ -59,6 +59,7 @@ npm-secaudit_src_postcompile() {
 }
 
 src_install() {
+	export NPM_SECAUDIT_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	npm-secaudit_install "*"
 }
 
