@@ -29,5 +29,5 @@ src_install() {
 	electron-app_desktop_install "*" "assets/instagram-uploader-icon.png" "${PN^}" "Network" \
 "PATH=\"${ELECTRON_APP_INSTALL_PATH}/node_modules/.bin:\$PATH\" \
 electron ${ELECTRON_APP_INSTALL_PATH}/"
-	chmod 0755 "${ED}/${ELECTRON_APP_INSTALL_PATH}/builds/${PN}-linux-"$(electron-app_get_arch)"/${PN}"
+	fperms 0755 "${ED}/${ELECTRON_APP_INSTALL_PATH}/builds/${PN}-linux-"$(electron-app_get_arch)"/${PN}"
 }
