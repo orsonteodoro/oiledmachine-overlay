@@ -41,14 +41,17 @@ _fix_vulnerabilities1() {
 	npm update lodash --depth 4 || die
 
 	rm -rf node_modules/svgo/node_modules/js-yaml || die
-	sed -i -e "s|\"js-yaml\": \"~3.7.0\",|\"js-yaml\": \"${JS_YAML_V}\",|g" node_modules/svgo/package.json || die
+	sed -i -e "s|\"js-yaml\": \"~3.7.0\",|\"js-yaml\": \"${JS_YAML_V}\",|g" \
+		node_modules/svgo/package.json || die
 
-	npm_audit_package_lock_update node_modules/rst-selector-parser/node_modules/registry-auth-token
+	npm_audit_package_lock_update \
+		node_modules/rst-selector-parser/node_modules/registry-auth-token
 
 #	npm_audit_package_lock_update ./
 
 	rm -rf node_modules/rst-selector-parser/node_modules/braces
-	sed -i -e "s|\"braces\": \"^1.8.2\",|\"braces\": \"${BRACES_V}\",|g" node_modules/rst-selector-parser/node_modules/micromatch/package.json || die
+	sed -i -e "s|\"braces\": \"^1.8.2\",|\"braces\": \"${BRACES_V}\",|g" \
+	  node_modules/rst-selector-parser/node_modules/micromatch/package.json || die
 	pushd node_modules/rst-selector-parser || die
 	npm uninstall braces
 	npm install braces@"${BRACES_V}" --save-prod || die
@@ -99,9 +102,11 @@ environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=0 per-packag
 	npm install babel-traverse@"${BABEL_TRAVERSE_V}" || die
 	npm install babel-core@"${BABEL_CORE_V}" || die
 
-	npm_audit_package_lock_update node_modules/babel-template/node_modules/babel-traverse
+	npm_audit_package_lock_update \
+	  node_modules/babel-template/node_modules/babel-traverse
 
-	npm_audit_package_lock_update node_modules/babel-register/node_modules/babel-core/node_modules/babel-template
+	npm_audit_package_lock_update \
+	  node_modules/babel-register/node_modules/babel-core/node_modules/babel-template
 
 	# prevent dependency chain dependency cycle with babel-register
 	npm dedupe || die
@@ -110,9 +115,12 @@ environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=0 per-packag
 
 	_fix_vulnerabilities1
 
-	npm_audit_package_lock_update node_modules/rst-selector-parser
-	npm_audit_package_lock_update node_modules/rst-selector-parser/node_modules/babel-template
-	npm_audit_package_lock_update node_modules/rst-selector-parser/node_modules/babel-register
+	npm_audit_package_lock_update \
+	  node_modules/rst-selector-parser
+	npm_audit_package_lock_update \
+	  node_modules/rst-selector-parser/node_modules/babel-template
+	npm_audit_package_lock_update \
+	  node_modules/rst-selector-parser/node_modules/babel-register
 
 	_fix_vulnerabilities2
 
@@ -131,5 +139,9 @@ electron-app_src_compile() {
 }
 
 src_install() {
-	electron-app_desktop_install "*" "public/icons/512x512.png" "${PN}" "Development" "/usr/$(get_libdir)/node/${PN}/${SLOT}/dist/linux-unpacked/pullp"
+	export ELECTRON_APP_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT}"
+	electron-app_desktop_install "*" "public/icons/512x512.png" "${PN}" "Development" \
+	"{ELECTRON_APP_INSTALL_PATH}/dist/linux-unpacked/pullp"
+	fperms 0755 \
+"{ELECTRON_APP_INSTALL_PATH}/dist/linux-unpacked/pullp"
 }
