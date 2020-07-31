@@ -205,7 +205,8 @@ electron-app_src_compile() {
 }
 
 src_install() {
+	export ELECTRON_APP_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	electron-app_desktop_install "*" "src/assets/logos/512x512.png" \
 		"${MY_PN}" "Development" \
-	"/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/dist/main.js"
+	"/usr/bin/electron ${ELECTRON_APP_INSTALL_PATH}/dist/main.js"
 }
