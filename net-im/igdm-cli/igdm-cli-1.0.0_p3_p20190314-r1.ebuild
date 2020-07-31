@@ -41,12 +41,13 @@ npm-secaudit_src_postprepare() {
 }
 
 src_install() {
+	export NPM_SECAUDIT_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	npm-secaudit_install "*"
 
 	#create wrapper
 	exeinto /usr/bin
 	echo "#!/bin/bash" > "${T}/${PN}"
-	echo "/usr/bin/node /usr/$(get_libdir)/node/${PN}/${SLOT}/bin \$@" \
+	echo "/usr/bin/node ${NPM_SECAUDIT_INSTALL_PATH}/bin \$@" \
 		>> "${T}/${PN}"
 	doexe "${T}/${PN}"
 }
