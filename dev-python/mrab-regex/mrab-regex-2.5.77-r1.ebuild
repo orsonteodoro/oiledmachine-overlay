@@ -7,7 +7,8 @@
 # This is the same source as dev-python/regex in the gentoo overlay.
 # We use this name because ycmd repo referred to it that way.
 
-# Split for the possiblity of adding additional patches.
+# Split for the possiblity of adding additional commit patches that
+# ycmd may add.
 
 EAPI=7
 DESCRIPTION="Alternative regular expression module, to replace re."
