@@ -47,7 +47,7 @@ src_install() {
 	#create wrapper
 	exeinto /usr/bin
 	echo "#!/bin/bash" > "${T}/${PN}"
-	echo "/usr/bin/node ${NPM_SECAUDIT_INSTALL_PATH}/bin \$@" \
+	echo "/usr/bin/node ${NPM_SECAUDIT_INSTALL_PATH}/bin/index.js \$@" \
 		>> "${T}/${PN}"
 	doexe "${T}/${PN}"
 }
