@@ -44,6 +44,7 @@ electron-app_src_postcompile() {
 }
 
 src_install() {
+	export ELECTRON_APP_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	electron-app_desktop_install_program "*"
 
 	exeinto /usr/bin
