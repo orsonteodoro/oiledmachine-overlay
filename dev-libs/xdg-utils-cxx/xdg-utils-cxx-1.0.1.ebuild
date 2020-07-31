@@ -56,4 +56,6 @@ src_install() {
 		cmake-utils_src_install
 	}
 	xdg-utils-cxx_foreach_impl install_impl
+	docinto licenses
+	dodoc LICENSE
 }
