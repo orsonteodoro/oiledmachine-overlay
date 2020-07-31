@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 # See regex_{2,3}/regex.py for versioning
-# The regex.py __version__ is equivalent to 2020.4.4 for the entire package.
+# The regex.py __version__ is equivalent to 2020.7.14 for the entire package.
 
 # This is the same source as dev-python/regex in the gentoo overlay.
 # We use this name because ycmd repo referred to it that way.
