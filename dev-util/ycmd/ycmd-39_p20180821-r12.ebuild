@@ -75,13 +75,22 @@ RDEPEND="${CDEPEND}
 	system-godef? ( >=dev-go/godef-9999_p20170920 )
 	system-jedi? ( >=dev-python/jedi-0.12.0_p20180620[${PYTHON_USEDEP}]
 			>=dev-python/parso-0.2.1[${PYTHON_USEDEP}] )
-	system-mrab-regex? ( >=dev-python/mrab-regex-2.4.140[${PYTHON_USEDEP}] )
+	system-mrab-regex? (
+		|| (
+			>=dev-python/mrab-regex-2.4.140[${PYTHON_USEDEP}]
+			>=dev-python/regex-2018.6.5[${PYTHON_USEDEP}]
+		)
+	)
 	system-omnisharp? ( >=dev-dotnet/omnisharp-1.0.0.0_p20150829[net40] )
 	system-requests? ( >=dev-python/requests-2.9.1[${PYTHON_USEDEP}] )
 	system-racerd? ( >=dev-rust/racerd-2.1.0 )
 	system-tern? ( >=dev-nodejs/tern-0.21.0 )
 	system-typescript? ( >=dev-lang/typescript-1.5 )
 	system-waitress? ( >=dev-python/waitress-1.1.0[${PYTHON_USEDEP}] )"
+# The versioning for dev-python/regex is messed up we have some people padding
+# the day and month with 0 and gentoo overlay not doing it.  We stick to the
+# gentoo overlay versioning.
+# The versioning for mrab-regex is based on __version__ in regex.py.
 DEPEND="${CDEPEND}
 	javascript? ( net-libs/nodejs[npm] )
 	typescript? ( net-libs/nodejs[npm] )
