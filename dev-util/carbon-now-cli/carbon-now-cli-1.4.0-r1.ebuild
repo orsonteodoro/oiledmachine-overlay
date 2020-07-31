@@ -22,6 +22,7 @@ npm-secaudit_src_compile() {
 }
 
 src_install() {
+	export NPM_SECAUDIT_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	npm-secaudit_install "*"
 	cp "${FILESDIR}/${MY_PN}" "${T}" || die
 	sed -i -e "s|lib64|$(get_libdir)|g" \
