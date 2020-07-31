@@ -142,7 +142,8 @@ electron-app_src_compile() {
 }
 
 src_install() {
+	export ELECTRON_APP_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	electron-app_desktop_install "*" "build/icons/256x256.png" "${MY_PN}" \
 		"Office" \
-	"/usr/$(get_libdir)/node/${PN}/${SLOT}/build/linux-unpacked/epic-journal"
+	"${ELECTRON_APP_INSTALL_PATH}/build/linux-unpacked/epic-journal"
 }
