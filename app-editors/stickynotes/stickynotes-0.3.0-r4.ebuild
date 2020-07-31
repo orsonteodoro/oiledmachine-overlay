@@ -34,4 +34,6 @@ src_install() {
 	electron-app_desktop_install "*" "src/assets/logo.png" "${PN}" \
 		"Utility" \
 "${ELECTRON_APP_INSTALL_PATH}/dist_electron/linux-unpacked/stickynotes"
+	fperms 0755 \
+"${ELECTRON_APP_INSTALL_PATH}/dist_electron/linux-unpacked/stickynotes"
 }
