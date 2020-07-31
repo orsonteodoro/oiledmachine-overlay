@@ -7,14 +7,19 @@ EAPI=6
 DESCRIPTION="NotoColorEmoji is colored emojis"
 HOMEPAGE="https://www.google.com/get/noto/#emoji-qaae-color"
 LICENSE="Apache-2.0 OFL-1.1"
+LICENSE+=" all-rights-reserved" # the Apache-2.0 license doesn't contain all rights reserved ; See flag_glyph_name.py
+LICENSE+=" !system-nototools? ( Apache-2.0 )" # nototools default license
+LICENSE+=" !system-nototools? ( BSD )" # nototools/third_party/dspl
+LICENSE+=" !system-nototools? ( GPL-2 )" # nototools/third_party/spiro
+LICENSE+=" !system-nototools? ( unicode )" # nototools/third_party/{cldr,ucd,unicode}
 # Font files are OFL-1.1
 # Artwork is Apache-2.0 and flags are public domain
 KEYWORDS="~alpha ~amd64 ~amd64-linux ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 \
 ~s390 ~sh ~sparc ~sparc-solaris ~x64-solaris ~x86 ~x86-linux ~x86-solaris"
 PYTHON_COMPAT=( python3_{6,7,8} )
 SLOT="0/${PV}"
-IUSE="optipng +zopflipng"
-inherit python-single-r1
+IUSE="optipng system-nototools +zopflipng"
+inherit eapi7-ver python-single-r1
 REQUIRED_USE="^^ ( optipng zopflipng ) \
 	      ^^ ( $(python_gen_useflags 'python*') )"
 RDEPEND=">=media-libs/fontconfig-2.11.91
@@ -22,24 +27,34 @@ RDEPEND=">=media-libs/fontconfig-2.11.91
           !media-fonts/noto-color-emoji-bin
 	  !media-fonts/noto-emoji
          >=x11-libs/cairo-1.16"
+NOTOTOOLS_DEPEND="
+        $(python_gen_cond_dep '>=media-gfx/scour-0.37[${PYTHON_USEDEP}]' python3_{6,7,8})
+        $(python_gen_cond_dep '>=dev-python/booleanOperations-0.8.2[${PYTHON_USEDEP}]' python3_{6,7,8})
+        $(python_gen_cond_dep '>=dev-python/defcon-0.6.0[${PYTHON_USEDEP}]' python3_{6,7,8})
+        $(python_gen_cond_dep '>=dev-python/fonttools-4.0.2[${PYTHON_USEDEP}]' python3_{6,7,8})
+        $(python_gen_cond_dep '>=dev-python/pillow-6.2.2[${PYTHON_USEDEP}]' python3_{6,7,8})
+        $(python_gen_cond_dep '>=dev-python/pyclipper-1.1.0_p1[${PYTHON_USEDEP}]' python3_{6,7,8})"
+INTERNAL_NOTOTOOLS_PV="0.2.0_p20200401" # see setup.py for versioning ; official release was 20191017
 DEPEND="${RDEPEND}
         ${PYTHON_DEPS}
-        $(python_gen_cond_dep '>=dev-python/fonttools-3.15.1[${PYTHON_USEDEP}]' python3_{6,7,8})
-	  dev-python/six
+	$(python_gen_cond_dep 'dev-python/fonttools[${PYTHON_USEDEP}]' python3_{6,7,8})
         media-gfx/imagemagick
 	media-gfx/pngquant
+	!system-nototools? ( ${NOTOTOOLS_DEPEND} )
+	system-nototools? (
+		$(python_gen_cond_dep '~dev-python/nototools-'$(ver_cut 1-3 ${INTERNAL_NOTOTOOLS_PV})'[${PYTHON_USEDEP}]' python3_{6,7,8})
+	)
         optipng?   ( media-gfx/optipng )
 	zopflipng? ( app-arch/zopfli )"
 FONT_SUFFIX="ttf"
 FONT_CONF=( )
 NOTO_EMOJI_COMMIT="ac1703e9d7feebbf5443a986e08332b1e1c5afcf"
-NOTO_TOOLS_COMMIT="e0a39bad11ca47f924b432bb05c3cccd87e68571"
-NOTO_TOOLS_PV="0.2.0_p20200401" # see setup.py for versioning
+NOTOTOOLS_COMMIT="e0a39bad11ca47f924b432bb05c3cccd87e68571"
 SRC_URI=\
 "https://github.com/googlei18n/noto-emoji/archive/${NOTO_EMOJI_COMMIT}.tar.gz \
 	-> noto-emoji-${PV}.tar.gz
-https://github.com/googlei18n/nototools/archive/${NOTO_TOOLS_COMMIT}.tar.gz \
-	-> noto-tools-${NOTO_TOOLS_PV}.tar.gz"
+!system-nototools? ( https://github.com/googlei18n/nototools/archive/${NOTOTOOLS_COMMIT}.tar.gz \
+	-> nototools-${INTERNAL_NOTOTOOLS_PV}.tar.gz )"
 inherit eutils font
 RESTRICT="mirror"
 S="${WORKDIR}/noto-emoji-${NOTO_EMOJI_COMMIT}"
@@ -51,11 +66,6 @@ pkg_setup() {
 
 src_prepare() {
 	default
-	sed -i -e "s|\
-from fontTools.misc.py23 import unichr|\
-from six import unichr|" \
-	"${WORKDIR}/nototools-${NOTO_TOOLS_COMMIT}/nototools/unicode_data.py" \
-		|| die
 	if use zopflipng ; then
 		sed -i -e "s|\
 emoji: \$(EMOJI_FILES)|\
@@ -85,10 +95,12 @@ src_compile() {
 	else
 		export OPTIPNG=
 	fi
-	export PYTHONPATH=\
-"${WORKDIR}/nototools-${NOTO_TOOLS_COMMIT}:${PYTHONPATH}"
-	export PATH=\
-"${WORKDIR}/nototools-${NOTO_TOOLS_COMMIT}/nototools:${PATH}"
+	if ! use system-nototools ; then
+		export PYTHONPATH=\
+"${WORKDIR}/nototools-${NOTOTOOLS_COMMIT}:${PYTHONPATH}"
+		export PATH=\
+"${WORKDIR}/nototools-${NOTOTOOLS_COMMIT}/nototools:${PATH}"
+	fi
 	emake || die "Failed to compile font"
 }
 
