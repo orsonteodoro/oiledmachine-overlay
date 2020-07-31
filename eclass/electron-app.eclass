@@ -1487,3 +1487,20 @@ electron-app_restore_package_jsons() {
 		shopt -u dotglob
 	fi
 }
+
+# @FUNCTION: electron-app_electron_packager_get_arch
+# @DESCRIPTION: Gets the suffix based on ARCH and possibly CHOST
+# This applies to packages that use electron-packager
+electron-app_electron_packager_get_arch() {
+	if [[ "${ARCH}" == "amd64" ]] ; then
+                echo "x64"
+        elif [[ "${ARCH}" == "x86" ]] ; then
+                echo "ia32"
+        elif [[ "${ARCH}" == "arm64" ]] ; then
+                echo "arm64"
+        elif [[ "${ARCH}" == "arm" ]] ; then
+                echo "armv7l"
+        elif [[ "${ARCH}" == "n64" ]] ; then
+                echo "mips64el"
+        fi
+}
