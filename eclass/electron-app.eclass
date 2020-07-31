@@ -1499,7 +1499,11 @@ electron-app_electron_packager_get_arch() {
         elif [[ "${ARCH}" == "arm64" ]] ; then
                 echo "arm64"
         elif [[ "${ARCH}" == "arm" ]] ; then
-                echo "armv7l"
+		if [[ "${CHOST}" =~ armv7* ]] ; then
+	                echo "armv7l"
+		else
+			die "${CHOST} is not supported"
+		fi
         elif [[ "${ARCH}" == "n64" ]] ; then
                 echo "mips64el"
 	else
