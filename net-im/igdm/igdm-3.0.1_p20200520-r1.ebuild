@@ -48,7 +48,9 @@ electron-app_src_compile() {
 }
 
 src_install() {
+	export ELECTRON_APP_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	electron-app_desktop_install "*" "docs/img/icon.png" "${MY_PN}" \
-		"Network" "/usr/bin/electron \
-		/usr/$(get_libdir)/node/${PN}/${SLOT}/"
+	"Network" \
+"PATH=\"${ELECTRON_APP_INSTALL_PATH}/node_modules/.bin:\$PATH\" \
+electron ${ELECTRON_APP_INSTALL_PATH}/"
 }
