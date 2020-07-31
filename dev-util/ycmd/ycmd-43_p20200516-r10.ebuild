@@ -92,7 +92,7 @@ RDEPEND="${CDEPEND}
 	system-mrab-regex? (
 		|| (
 			>=dev-python/mrab-regex-2.5.33[${PYTHON_USEDEP}]
-			>=dev-python/regex-2019.6.8[${PYTHON_USEDEP}]
+			>=dev-python/regex-2019.06.08[${PYTHON_USEDEP}]
 		)
 	)
 	system-omnisharp-roslyn? ( >=dev-dotnet/omnisharp-roslyn-1.34.2[net472?,netcoreapp21?] )
@@ -105,7 +105,7 @@ RDEPEND="${CDEPEND}
 	system-watchdog? ( >=dev-python/watchdog-0.12.2 )"
 # The versioning for dev-python/regex is messed up we have some people padding
 # the day and month with 0 and gentoo overlay not doing it.  We stick to the
-# gentoo overlay versioning.
+# upstream versioning.
 # The versioning for mrab-regex is based on __version__ in regex.py.
 DEPEND="${CDEPEND}
 	javascript? ( net-libs/nodejs[npm] )
