@@ -21,13 +21,15 @@ RESTRICT="mirror"
 electron-app_src_compile() {
 	cd "${S}"
 	export PATH="${S}/node_modules/.bin:${PATH}"
-	npm run package:linux
+	npm run package:linux || die
 }
 
 src_install() {
 	export ELECTRON_APP_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT}"
-	electron-app_desktop_install "*" "assets/instagram-uploader-icon.png" "${PN^}" "Network" \
+	electron-app_desktop_install "*" "assets/instagram-uploader-icon.png" \
+		"${PN^}" "Network" \
 "PATH=\"${ELECTRON_APP_INSTALL_PATH}/node_modules/.bin:\$PATH\" \
 electron ${ELECTRON_APP_INSTALL_PATH}/"
-	fperms 0755 "${ED}/${ELECTRON_APP_INSTALL_PATH}/builds/${PN}-linux-"$(electron-app_get_arch)"/${PN}"
+	fperms 0755 \
+"${ELECTRON_APP_INSTALL_PATH}/builds/${PN}-linux-"$(electron-app_get_arch)"/${PN}"
 }
