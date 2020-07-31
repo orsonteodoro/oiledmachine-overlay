@@ -1,7 +1,7 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# Kept for backwards compatibility or data migration purposes only
+# Possibly development build, untagged
 
 EAPI=7
 DESCRIPTION="A clean and modern encrypted journal/diary app"
@@ -13,16 +13,18 @@ RDEPEND="${RDEPEND}
 	 dev-db/sqlcipher"
 DEPEND="${RDEPEND}
         net-libs/nodejs[npm]"
-ELECTRON_APP_ELECTRON_V="1.7.5" # todo, update version
-ELECTRON_APP_VUE_V="2.3.3"
+ELECTRON_APP_ELECTRON_V="3.1.13" # todo, update version
+ELECTRON_APP_VUE_V="2.5.16"
 inherit desktop electron-app eutils
 MY_PN="Epic Journal"
-SRC_URI="\
-https://github.com/alangrainger/epic-journal/archive/v.${PV}.tar.gz \
+EGIT_COMMIT="0cdc1091a1eaf7d8ccdd5893ac3d275a3b651c58"
+SRC_URI=\
+"https://github.com/alangrainger/epic-journal/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz"
-IUSE=""
-S="${WORKDIR}/${PN}-v.${PV}"
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+RESTRICT="mirror"
 
+LODASH_MERGE="^4.6.2"
 TAR_V="^4.4.2"
 HOEK_V="<5.0.0"
 CLEAN_CSS_V="^4.1.11"
@@ -33,6 +35,29 @@ _fix_vulnerabilities() {
 	ewarn \
 "Vulnerability resolution has not been updated.  Consider setting the\n\
 environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=0 per-package-wise."
+	sed -i -e "s|\"clean-css\": \"3.4.x\"|\"clean-css\": \"${CLEAN_CSS_V}\"|g" \
+		node_modules/vue-html-loader/node_modules/html-minifier/package.json || die
+	rm -rf node_modules/vue-html-loader/node_modules/clean-css || die
+	pushd node_modules/vue-html-loader || die
+		npm install clean-css@"${CLEAN_CSS_V}" --no-save || die
+	popd
+
+	sed -i -e "s|\"lodash.merge\": \"^3.3.2\"|\"lodash.merge\": \"${LODASH_MERGE_V}\"|g" \
+		node_modules/multispinner/package.json || die
+	rm -rf node_modules/lodash.merge || die
+	npm install lodash.merge@"${LODASH_MERGE_V}" --no-save || die
+	rm package-lock.json
+	npm i --package-lock-only
+
+	# compatibility?
+	rm -rf node_modules/hoek || die
+	npm install hoek@"${HOEK_V}" || die
+}
+
+_fix_vulnerabilitiesB() {
+	ewarn \
+"Vulnerability resolution has not been updated.  Consider setting the\n\
+environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX=0 per-package-wise."
 	npm i --package-lock-only
 	npm install
 
@@ -53,7 +78,7 @@ environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=0 per-packag
 		einfo "Running \`npm i --package-lock-only\`"
 		npm i --package-lock-only || die
 		einfo "Running \`npm audit fix --force\`"
-		npm audit fix --force --maxsockets=${ELECTRON_APP_MAXSOCKETS}
+		npm audit fix --force
 		popd
 	done
 	einfo "Audit fix done"
@@ -62,7 +87,8 @@ environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=0 per-packag
 		npm install
 	popd
 
-	sed -i -e "s|\"tar\": \"^4\"|\"tar\": \"${TAR_V}\"|g" node_modules/unix-sqlcipher/node_modules/sqlite3/node_modules/node-pre-gyp/package.json || die
+	sed -i -e "s|\"tar\": \"^4\"|\"tar\": \"${TAR_V}\"|g" \
+		node_modules/unix-sqlcipher/node_modules/sqlite3/node_modules/node-pre-gyp/package.json || die
 
 	rm -rf node_modules/tar || die
 	rm -rf node_modules/sqlite3/node_modules/tar || die
@@ -87,11 +113,13 @@ environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=0 per-packag
 	done
 	einfo "Audit fix done GA"
 
-	sed -i -e "s|\"clean-css\": \"3.4.x\"|\"clean-css\": \"${CLEAN_CSS_V}\"|g" node_modules/html-minifier/package.json || die
+	sed -i -e "s|\"clean-css\": \"3.4.x\"|\"clean-css\": \"${CLEAN_CSS_V}\"|g" \
+		node_modules/html-minifier/package.json || die
 	rm -rf node_modules/clean-css || die
 	npm install clean-css@"${CLEAN_CSS_V}" --no-save || die
 
-	sed -i -e "s|\"clean-css\": \"3.4.x\"|\"clean-css\": \"${CLEAN_CSS_V}\"|g" node_modules/vue-html-loader/node_modules/html-minifier/package.json || die
+	sed -i -e "s|\"clean-css\": \"3.4.x\"|\"clean-css\": \"${CLEAN_CSS_V}\"|g" \
+		node_modules/vue-html-loader/node_modules/html-minifier/package.json || die
 	rm -rf node_modules/vue-html-loader/node_modules/clean-css || die
 	pushd node_modules/vue-html-loader || die
 	npm install clean-css@"${CLEAN_CSS_V}" --no-save || die
@@ -104,10 +132,11 @@ environmental variable ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL=0 per-packag
 	electron-app_audit_fix_npm
 }
 
-electron-app_src_preprepare() {
+electron-app_src_preprepareA() {
 	ewarn "This ebuild may fail randomly.  Re-emerge it again."
 
-	sed -i -e "s|\"win-sqlcipher\": \"^0.0.4\",|\"unix-sqlcipher\": \"^0.0.4\",|g" package.json || die
+	sed -i -e "s|\"win-sqlcipher\": \"^0.0.4\",|\"unix-sqlcipher\": \"^0.0.4\",|g" \
+		package.json || die
 	sed -i -e "s|win-sqlcipher|unix-sqlcipher|g" src/main/datastore.js || die
 
 	mkdir -p node_modules/unix-sqlcipher/node_modules || die
@@ -120,11 +149,18 @@ electron-app_src_preprepare() {
 	popd
 }
 
+electron-app_src_postprepareB() {
+	if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL}" == "1" ]] ; then
+	_fix_vulnerabilities
+	fi
+	sed -i -e "s|cssLoaderOptions += (cssLoaderOptions ? '\&' : '?') + 'minimize'||g" \
+		node_modules/vue-loader/lib/loader.js || die
+}
+
 electron-app_src_postprepare() {
 	if [[ "${ELECTRON_APP_ALLOW_AUDIT_FIX_AT_EBUILD_LEVEL}" == "1" ]] ; then
 	_fix_vulnerabilities
 	fi
-	sed -i -e "s|cssLoaderOptions += (cssLoaderOptions ? '\&' : '?') + 'minimize'||g" node_modules/vue-loader/lib/loader.js || die
 }
 
 electron-app_src_prepare() {
@@ -146,4 +182,5 @@ src_install() {
 	electron-app_desktop_install "*" "build/icons/256x256.png" "${MY_PN}" \
 		"Office" \
 	"${ELECTRON_APP_INSTALL_PATH}/build/linux-unpacked/epic-journal"
+	chmod 0755 "${ELECTRON_APP_INSTALL_PATH}/build/linux-unpacked/epic-journal" || die
 }
