@@ -214,13 +214,13 @@ prepare_file() {
 	if use emscripten-fastcomp ; then
 		sed -i -e \
 "s|__EMSDK_LLVM_ROOT__|/usr/share/emscripten-fastcomp-${PV}/bin|" \
-			-e \
+		-e \
 "s|__EMCC_WASM_BACKEND__|0|" \
 		"${S}/${1}" || die
 	elif use system-llvm ; then
 		sed -i -e \
 "s|__EMSDK_LLVM_ROOT__|/usr/lib/llvm/${EMSDK_LLVM_VERSION}/bin|" \
-			-e \
+		-e \
 "s|__EMCC_WASM_BACKEND__|1|" \
 		"${S}/${1}" || die
 	fi
@@ -365,7 +365,7 @@ src_install() {
 
 pkg_postinst() {
 	if use closure-compiler && ! use system-closure-compiler ; then
-		export NPM_SECAUDIT_REG_PATH="${DEST}/${P}"
+		export NPM_SECAUDIT_INSTALL_PATH="${DEST}/${P}"
 		npm-secaudit_pkg_postinst
 	fi
 	elog "Running emscripten initialization, may take a few seconds..."
