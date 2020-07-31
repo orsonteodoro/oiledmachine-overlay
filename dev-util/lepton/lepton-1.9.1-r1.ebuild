@@ -44,7 +44,8 @@ electron-app_src_preprepare() {
 }
 
 src_install() {
+	export ELECTRON_APP_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	electron-app_desktop_install "*" "build/icon/icon.png" "${PN^}" \
 	"Development" \
-	"/usr/bin/electron /usr/$(get_libdir)/node/${PN}/${SLOT}/main.js"
+	"/usr/bin/electron ${ELECTRON_APP_INSTALL_PATH}/main.js"
 }
