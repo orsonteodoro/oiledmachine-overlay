@@ -30,7 +30,8 @@ electron-app_src_compile() {
 }
 
 src_install() {
+	export ELECTRON_APP_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	electron-app_desktop_install "*" "src/assets/logo.png" "${PN}" \
 		"Utility" \
-"/usr/$(get_libdir)/node/${PN}/${SLOT}/dist_electron/linux-unpacked/stickynotes"
+"${ELECTRON_APP_INSTALL_PATH}/dist_electron/linux-unpacked/stickynotes"
 }
