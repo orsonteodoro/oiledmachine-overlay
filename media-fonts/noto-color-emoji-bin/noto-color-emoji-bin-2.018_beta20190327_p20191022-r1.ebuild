@@ -55,9 +55,12 @@ pkg_postinst() {
         rebuild_fontfiles
 	fc-cache -fv
 	ewarn \
-"To see emojis in your x11-term you need to switch to a utf8 locale.\n\
+"To see emojis in your x11-term you need to switch to a .utf8 suffixed locale\n\
+via \`eselect locale\`.\n\
+\n\
 Try manually running \`fc-cache -fv\` on the non-root user account and\n\
 logging off all accounts to get X to work.\n\
+\n\
 \`emerge noto-color-emoji-config\` from ebuild from oiledmachine-overlay to\n\
 get noto color emojis to display properly on firefox, google-chrome, etc\n\
 systemwide."
