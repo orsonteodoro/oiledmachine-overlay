@@ -30,8 +30,8 @@ FONT_CONF=( )
 
 src_unpack() {
 	mkdir -p "${S}" || die
-	cp "${DISTDIR}/${P}.LICENSE" LICENSE || ${S}
-	cp "${DISTDIR}/${P}.ttf" NotoColorEmoji.ttf || ${S}
+	cp "${DISTDIR}/${P}.LICENSE" LICENSE || die
+	cp "${DISTDIR}/${P}.ttf" NotoColorEmoji.ttf || die
 }
 
 rebuild_fontfiles() {
