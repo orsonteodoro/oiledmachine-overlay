@@ -116,8 +116,6 @@ src_install() {
 	dodoc font/LICENSE
 	docinto licenses/tools_and_images
 	dodoc LICENSE
-	docinto licenses/svg
-	dodoc svg/LICENSE
 	docinto licenses/third_party/color_emoji
 	dodoc third_party/color_emoji/LICENSE
 	docinto licenses/third_party/region-flags
