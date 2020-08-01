@@ -39,6 +39,10 @@ rebuild_fontfiles() {
 
 src_install() {
 	font_src_install
+	docinto licenses
+	dodoc LICENSE_OFL.txt
+	docinto readmes
+	dodoc README
 }
 
 pkg_postinst() {

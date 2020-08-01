@@ -18,13 +18,21 @@ RDEPEND=" !media-fonts/noto-color-emoji
          >=x11-libs/cairo-1.16"
 DEPEND="dev-python/fonttools
         ${RDEPEND}"
+EGIT_COMMIT="ca22132c45adb022c1a6c6bed96df76cf0c4fb18"
+GH_URI="https://github.com/googlefonts/noto-emoji/raw/${EGIT_COMMIT}/fonts/"
 SRC_URI=\
-"https://noto-website.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip \
-	-> ${PN}-${PVR}.zip"
+"${GH_URI}/LICENSE -> ${P}.LICENSE
+${GH_URI}/NotoColorEmoji.ttf -> ${P}.ttf"
 RESTRICT="mirror"
 S="${WORKDIR}"
 FONT_SUFFIX="ttf"
 FONT_CONF=( )
+
+src_unpack() {
+	mkdir -p "${S}" || die
+	cp "${DISTDIR}/${P}.LICENSE" LICENSE || ${S}
+	cp "${DISTDIR}/${P}.ttf" NotoColorEmoji.ttf || ${S}
+}
 
 rebuild_fontfiles() {
         einfo "Refreshing fonts.scale and fonts.dir..."
@@ -40,9 +48,7 @@ rebuild_fontfiles() {
 src_install() {
 	font_src_install
 	docinto licenses
-	dodoc LICENSE_OFL.txt
-	docinto readmes
-	dodoc README
+	dodoc LICENSE
 }
 
 pkg_postinst() {

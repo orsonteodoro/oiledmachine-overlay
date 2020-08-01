@@ -6,11 +6,13 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
+    Noto Color Emoji 1.3x is the chubby Jelly Bean emoji set and Emoji 4.0 
+    ready font supporting colored skin tones.
+
     Noto Color Emoji 2.x is the rounder Oreo style with the latest Emoji 12.0
     set.
 
-    Noto Color Emoji 1.33 is the chubby Jelly Bean emoji set and Emoji 4.0 
-    ready font supporting colored skin tones.
+    Noto Color Emoji 2.019_beta20200307_p20200721 adds up to Unicode 13 emojis.
   </longdescription>
   <upstream>
     <bugs-to>
