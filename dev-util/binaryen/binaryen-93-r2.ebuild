@@ -20,7 +20,7 @@ EGIT_COMMIT="3ac849384aa861382d2ca9636a89556e237e55d6"
 SRC_URI="\
 https://github.com/WebAssembly/binaryen/archive/version_${PV}.tar.gz
 	-> ${P}.tar.gz"
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+S="${WORKDIR}/${PN}-version_${PV}"
 RESTRICT="mirror"
 DOCS=( CHANGELOG.md README.md )
 
