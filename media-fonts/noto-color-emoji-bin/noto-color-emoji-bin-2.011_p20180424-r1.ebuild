@@ -20,7 +20,7 @@ DEPEND="dev-python/fonttools
         ${RDEPEND}"
 SRC_URI=\
 "https://noto-website-2.storage.googleapis.com/pkgs/NotoColorEmoji-unhinted.zip \
-	-> ${PN}-${PVR}.zip"
+	-> ${PN}-${PV}.zip"
 RESTRICT="mirror"
 S="${WORKDIR}"
 FONT_SUFFIX="ttf"
