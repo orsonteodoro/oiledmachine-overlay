@@ -151,7 +151,9 @@ pkg_postinst() {
         rebuild_fontfiles
 	fc-cache -fv
 	einfo \
-"To see emojis in your x11-term you need to switch to a utf8 locale.\n\
+"To see emojis in your x11-term you need to switch to a .utf8 suffixed\n\
+locale.  To set the locale see \`eselect locale\`.\n\
+\n\
 \`emerge media-fonts/noto-color-emoji-config\` to fix emojis on firefox,\n\
 google-chrome, etc systemwide."
 }
