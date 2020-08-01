@@ -15,6 +15,9 @@
     some Emoji 4.0 with ZWJ used with multiple emojis to represent one emoji.
     
     This package is used to build the font from sources.
+
+    See files/noto-color-emoji-2.019_beta20200307_p20200721-revert-optipng-removal.patch
+    on details about compression (optipng vs zopflipng).
   </longdescription>
   <upstream>
     <bugs-to>
@@ -27,10 +30,13 @@
     <remote-id type="github">googlefonts/noto-emoji</remote-id>
   </upstream>
   <use>
-    <flag name="optipng">Compresses emoji images with optipng.
+    <flag name="optipng">Compresses emoji images with optipng
+    6 times faster than upstream. (ebuild default, recommended for development
+    or custom modding).
     </flag>
     <flag name="zopflipng">Compresses emoji images with zoptlipng.  Better
-    compression results at around 5-10% compared to zlib deflate but slower.
-    (default)</flag>
+    compression results at around ~3% (~373K savings, ~94 pages of memory
+    savings) and deflate but ~6 times slower (or ~167 minutes longer) compared
+    to optipng.  (upstream default, recommeded for mobile or production)</flag>
   </use>
 </pkgmetadata>

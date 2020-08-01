@@ -18,7 +18,7 @@ KEYWORDS="~alpha ~amd64 ~amd64-linux ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 \
 ~s390 ~sh ~sparc ~sparc-solaris ~x64-solaris ~x86 ~x86-linux ~x86-solaris"
 PYTHON_COMPAT=( python2_7 )
 SLOT="0/${PV}"
-IUSE="optipng system-nototools +zopflipng"
+IUSE="+optipng system-nototools zopflipng"
 inherit eapi7-ver python-single-r1
 REQUIRED_USE="^^ ( optipng zopflipng ) \
 	      ^^ ( $(python_gen_useflags 'python*') )"
@@ -33,6 +33,7 @@ INTERNAL_NOTOTOOLS_PV="0.0.1_pre20160427" # see setup.py for versioning ; no tag
 DEPEND="${RDEPEND}
         ${PYTHON_DEPS}
 	$(python_gen_cond_dep 'dev-python/fonttools[${PYTHON_USEDEP}]' python2_7)
+	dev-util/pkgconfig
         media-gfx/imagemagick
 	media-gfx/pngquant
 	!system-nototools? ( ${NOTOTOOLS_DEPEND} )
@@ -57,6 +58,9 @@ S="${WORKDIR}/noto-emoji-${NOTO_EMOJI_COMMIT}"
 pkg_setup() {
 	python_setup
 	einfo "PYTHON=${PYTHON}"
+	if [[ ! ( "${LANG}" =~ \.utf8$ ) ]] ; then
+		die "Change your locale to suffix .utf8.  Use \`eselect locale\` to set it."
+	fi
 }
 
 src_prepare() {
@@ -97,6 +101,7 @@ src_compile() {
 "${WORKDIR}/nototools-${NOTOTOOLS_COMMIT}/nototools:${PATH}"
 	fi
 	emake || die "Failed to compile font"
+	[[ ! -f NotoColorEmoji.ttf ]] && die "NotoColorEmoji.ttf missing"
 }
 
 rebuild_fontfiles() {

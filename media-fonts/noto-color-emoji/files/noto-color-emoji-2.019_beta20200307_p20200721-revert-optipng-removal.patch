@@ -1,0 +1,96 @@
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date: July 31, 2020 (Unix time: 1596246153)
+Subject:  Revert removal of optipng compressor
+Reason:  zopflipng takes unreasonably longer to compress
+for a few percentage benefit.
+
+Tests conducted on
+NOTO_EMOJI_COMMIT="ac1703e9d7feebbf5443a986e08332b1e1c5afcf"
+NOTOTOOLS_COMMIT="e0a39bad11ca47f924b432bb05c3cccd87e68571"
+
+OptiPNG version 0.7.7:
+time USE="optipng -zopflipng" emerge -1vO noto-color-emoji
+real	9m58.613s
+user	30m57.679s
+sys	2m26.910s
+
+ls -l NotoColorEmoji.ttf
+-rw-r--r-- 1 portage portage 10415324 Jul 31 19:54 NotoColorEmoji.ttf
+
+ZopfliPNG from the zopfli-1.0.2 package:
+time USE="-optipng zopflipng" emerge -1vO noto-color-emoji
+real	52m21.555s
+user	198m27.194s
+sys	2m10.177s
+-rw-r--r-- 1 portage portage 10041864 Jul 31 20:51 NotoColorEmoji.ttf
+
+373460 bytes difference in NotoColorEmoji.ttf. ~3.65% benefit
+
+33.409816667 minutes optipng total time versus 200.62285 minutes zopflipng total time.  6 times longer.
+
+# emerge noto-color-emoji will use `make -j5`
+
+Manually reverted commits:
+0553e8fb9b2e046a2af5b404afc5f2b6a3ec7963  ; no reason to display using zopflipng if it is the only choice
+48c935347a752a5a729c0269b0d65ade1789d7ef  ; only zopflipng
+97f95d0d696806dd7fbe201d0c7432ec1aafe4ca  ; tweak check for tools & venv
+
+----
+--- noto-emoji-d5e261484286d33a1fe8a02676f5907ecc02106f.orig/Makefile.orig	2020-07-21 19:16:40.000000000 -0700
++++ noto-emoji-d5e261484286d33a1fe8a02676f5907ecc02106f/Makefile	2020-07-31 18:32:08.019078271 -0700
+@@ -24,7 +24,15 @@ PNGQUANTFLAGS = --speed 1 --skip-if-larg
+ BODY_DIMENSIONS = 136x128
+ IMOPS := -size $(BODY_DIMENSIONS) canvas:none -compose copy -gravity center
+ 
++# zopflipng is better (about 5-10%) but much slower.  it will be used if
++# present.  pass ZOPFLIPNG= as an arg to make to use optipng instead.
++# The cost of frequent retesting is substantially higher with
++# zopflipng, reverting optipng removal.
++# Use zopflipng for production or mobile.  # omt addition
++# Use optipng for development or desktop.   # omt addition
++
+ ZOPFLIPNG = zopflipng
++OPTIPNG = optipng
+ TTX = ttx
+ 
+ EMOJI_BUILDER = third_party/color_emoji/emoji_builder.py
+@@ -90,6 +98,12 @@ ifndef VIRTUAL_ENV
+   MISSING_VENV = fail
+ endif
+ 
++ifeq (,$(shell which $(OPTIPNG)))
++  ifeq (,$(wildcard $(OPTIPNG)))
++    MISSING_OPTIPNG = fail
++  endif
++endif
++
+ ifeq (, $(shell which $(VS_ADDER)))
+   MISSING_PY_TOOLS = fail
+ endif
+@@ -136,7 +150,13 @@ compressed: $(ALL_COMPRESSED_FILES)
+ 
+ check_tools:
+ ifdef MISSING_ZOPFLI
+-	$(error "Missing $(ZOPFLIPNG). Try 'brew install zopfli' (Mac) or 'sudo apt-get install zopfli' (linux)")
++  ifdef MISSING_OPTIPNG
++	$(error "neither $(ZOPFLIPNG) nor $(OPTIPNG) is available. Try 'brew install zopfli' (Mac) or 'sudo apt-get zopfli' (linux)")
++  else
++	@echo "using $(OPTIPNG)"
++  endif
++else
++	@echo "using $(ZOPFLIPNG)"
+ endif
+ ifdef MISSING_VENV
+ 		$(error "Please start your virtual environment, and run: "'pip install -r requirements.txt'")
+@@ -188,7 +209,11 @@ $(QUANTIZED_DIR)/%.png: $(EMOJI_DIR)/%.p
+ 	@($(PNGQUANT) $(PNGQUANTFLAGS) -o "$@" "$<"; case "$$?" in "98"|"99") echo "reuse $<";cp $< $@;; *) exit "$$?";; esac)
+ 
+ $(COMPRESSED_DIR)/%.png: $(QUANTIZED_DIR)/%.png | check_tools $(COMPRESSED_DIR)
++ifdef MISSING_ZOPFLI
++	@$(OPTIPNG) -quiet -o7 -clobber -force -out "$@" "$<"
++else
+ 	@$(ZOPFLIPNG) -y "$<" "$@" 1> /dev/null 2>&1
++endif
+ 
+ # Make 3.81 can endless loop here if the target is missing but no
+ # prerequisite is updated and make has been invoked with -j, e.g.:
