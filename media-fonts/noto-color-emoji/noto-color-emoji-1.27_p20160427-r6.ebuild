@@ -18,7 +18,7 @@ KEYWORDS="~alpha ~amd64 ~amd64-linux ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 \
 ~s390 ~sh ~sparc ~sparc-solaris ~x64-solaris ~x86 ~x86-linux ~x86-solaris"
 PYTHON_COMPAT=( python2_7 )
 SLOT="0/${PV}"
-IUSE="+optipng system-nototools zopflipng"
+IUSE="doc +optipng system-nototools zopflipng"
 inherit eapi7-ver python-single-r1
 REQUIRED_USE="^^ ( optipng zopflipng ) \
 	      ^^ ( $(python_gen_useflags 'python*') )"
@@ -102,6 +102,32 @@ src_compile() {
 	fi
 	emake || die "Failed to compile font"
 	[[ ! -f NotoColorEmoji.ttf ]] && die "NotoColorEmoji.ttf missing"
+}
+
+src_install() {
+	font_src_install
+	docinto licenses/font
+	dodoc font/LICENSE
+	docinto licenses/tools_and_images
+	dodoc LICENSE
+	docinto licenses/third_party/color_emoji
+	dodoc third_party/color_emoji/LICENSE
+	docinto licenses/third_party/region-flags
+	dodoc third_party/region-flags/LICENSE
+	docinto licenses/third_party/pngquant
+	dodoc third_party/pngquant/LICENSE
+	if ! use system-nototools ; then
+		docinto licenses/third_party/nototools
+		dodoc "${WORKDIR}/nototools-${NOTOTOOLS_COMMIT}/LICENSE"
+	fi
+	if use doc ; then
+		docinto readmes
+		dodoc README.md AUTHORS CONTRIBUTING.md CONTRIBUTORS
+		docinto readmes/third_party/color_emoji
+		dodoc third_party/color_emoji/{README,README.third_party}
+		docinto readmes/third_party/region-flags
+		dodoc third_party/region-flags/{AUTHORS,README.third_party}
+	fi
 }
 
 rebuild_fontfiles() {
