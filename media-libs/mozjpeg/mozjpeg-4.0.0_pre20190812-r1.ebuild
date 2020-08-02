@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -9,16 +9,16 @@ KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 IUSE="java static-libs"
 inherit multilib-minimal
-RDEPEND="sys-libs/zlib[${MULTILIB_USEDEP},static-libs?]
-	 >=media-libs/libpng-1.6[${MULTILIB_USEDEP},static-libs?]
-	 virtual/jpeg[${MULTILIB_USEDEP},static-libs?]
+RDEPEND="sys-libs/zlib:=[${MULTILIB_USEDEP},static-libs?]
+	 >=media-libs/libpng-1.6:=[${MULTILIB_USEDEP},static-libs?]
+	 virtual/jpeg:=[${MULTILIB_USEDEP},static-libs?]
 	 java? ( virtual/jdk )"
 DEPEND="${RDEPEND}"
 inherit cmake-utils eutils
-EGIT_COMMIT="6d95c51adf0c314017f541b6cb07e13cc1bce754"
+EGIT_COMMIT="bbb7550709d396aae66d5ea5fad5ef06b1ec7f59"
 SRC_URI="\
 https://github.com/mozilla/mozjpeg/archive/${EGIT_COMMIT}.tar.gz \
-	-> ${PN}-${PVR}.tar.gz"
+	-> ${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 SO_AGE="3"
