@@ -8,9 +8,9 @@ HOMEPAGE="https://icculus.org/theoraplay/"
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-IUSE="debug static-libs"
-inherit multilib-build theoraplay
-REQUIRED_USE="static? ( static-libs ) static-libs? ( static )"
+IUSE="debug"
+inherit cmake-static-libs multilib-build
+REQUIRED_USE=""
 RDEPEND="media-libs/libtheora[static-libs?,${MULTILIB_USEDEP}]
          media-libs/libogg[static-libs?,${MULTILIB_USEDEP}]
          media-libs/libvorbis[static-libs?,${MULTILIB_USEDEP}]"
@@ -30,7 +30,7 @@ src_prepare() {
 	premake5 --file=buildcpp.lua gmake || die
 	prepare_abi() {
 		cd "${BUILD_DIR}" || die
-		theoraplay_copy_sources
+		cmake-static-libs_copy_sources
 	}
 	multilib_copy_sources
 	multilib_foreach_abi prepare_abi
@@ -40,16 +40,16 @@ src_compile() {
 	local mydebug=$(usex debug "debug" "release")
 	compile_abi() {
 		cd "${BUILD_DIR}" || die
-		theoraplay_compile_static_shared() {
+		cmake-static-libs_compile() {
 			cd "${BUILD_DIR}" || die
 			cd build/ || die
-			if [[ "${ETHEORAPLAY}" == "shared" ]] ; then
+			if [[ "${ECMAKE_LIB_TYPE}" == "shared" ]] ; then
 				emake config=${mydebug}sharedlib || die
-			elif [[ "${ETHEORAPLAY}" == "static" ]] ; then
+			else
 				emake config=${mydebug}staticlib || die
 			fi
 		}
-		theoraplay_foreach_impl theoraplay_compile_static_shared
+		cmake-static-libs_foreach_impl cmake-static-libs_compile
 	}
 	multilib_foreach_abi compile_abi
 }
@@ -58,9 +58,9 @@ src_install() {
 	local mydebug=$(usex debug "Debug" "Release")
 	install_abi() {
 		cd "${BUILD_DIR}" || die
-		theoraplay_install_static_shared() {
+		cmake-static-libs_install() {
 			cd "${BUILD_DIR}" || die
-			if [[ "${ETHEORAPLAY}" == "shared" ]] ; then
+			if [[ "${ECMAKE_LIB_TYPE}" == "shared" ]] ; then
 				cd "build/bin/${mydebug}SharedLib" || die
 				dolib.so lib${PN}.so
 			else
@@ -70,7 +70,7 @@ src_install() {
 			cd "${BUILD_DIR}" || die
 			doheader ${PN}.h
 		}
-		theoraplay_foreach_impl theoraplay_install_static_shared
+		cmake-static-libs_foreach_impl cmake-static-libs_install
 	}
 	multilib_foreach_abi install_abi
 }
