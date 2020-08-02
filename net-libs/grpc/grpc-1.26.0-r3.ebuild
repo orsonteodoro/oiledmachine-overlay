@@ -13,7 +13,7 @@ SRC_URI="https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz -> ${P}.tar.gz
 	https://dev.gentoo.org/~gyakovlev/distfiles/grpc-1.26-fix-odr-violation.patch.bz2"
 
 LICENSE="Apache-2.0"
-SLOT="0"
+SLOT="0/${PV}"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 IUSE="examples doc perftools systemtap static-libs"
 
