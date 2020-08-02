@@ -6,7 +6,7 @@ DESCRIPTION="The OpenAL Utility Toolkit"
 HOMEPAGE="https://kcat.strangesoft.net/alure.html"
 LICENSE="MIT"
 KEYWORDS="amd64 ~ppc ~ppc64 x86"
-SLOT="0"
+SLOT="0/${PV}"
 IUSE="dumb examples flac fluidsynth mp3 sndfile static-libs vorbis"
 inherit cmake-multilib
 RDEPEND="
