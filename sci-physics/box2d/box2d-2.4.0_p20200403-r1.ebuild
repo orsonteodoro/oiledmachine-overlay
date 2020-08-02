@@ -15,7 +15,7 @@ RDEPEND="media-libs/glew[${MULTILIB_USEDEP}]
 	 media-libs/glfw[${MULTILIB_USEDEP}]"
 DEPEND="${RDEPEND}
 	doc? ( app-doc/doxygen )"
-inherit box2d eutils cmake-utils
+inherit cmake-static-libs eutils cmake-utils
 SRC_URI=\
 "https://github.com/erincatto/Box2D/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
@@ -27,9 +27,9 @@ src_prepare() {
 	export CMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 	prepare_abi() {
 		cd "${BUILD_DIR}" || die
-		box2d_prepare_static_shared() {
+		cmake-static-libs_prepare() {
 			cd "${BUILD_DIR}" || die
-			if [[ "${EBOX2D}" == "shared" ]] ; then
+			if [[ "${ECMAKE_LIB_TYPE}" == "shared" ]] ; then
 				sed -i -e "s|STATIC|SHARED|" src/CMakeLists.txt || die
 				sed -i -e "s|STATIC|SHARED|" extern/glad/CMakeLists.txt || die
 				sed -i -e "s|STATIC|SHARED|" extern/imgui/CMakeLists.txt || die
@@ -37,8 +37,9 @@ src_prepare() {
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 			cmake-utils_src_prepare
 		}
-		box2d_copy_sources
-		box2d_foreach_impl box2d_prepare_static_shared
+		cmake-static-libs_copy_sources
+		cmake-static-libs_foreach_impl \
+			cmake-static-libs_prepare
 	}
 	multilib_copy_sources
 	multilib_foreach_abi prepare_abi
@@ -51,12 +52,13 @@ src_configure() {
 	)
 	configure_abi() {
 		cd "${BUILD_DIR}" || die
-		box2d_configure_static_shared() {
+		cmake-static-libs_configure() {
 			cd "${BUILD_DIR}" || die
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 			cmake-utils_src_configure
 		}
-		box2d_foreach_impl box2d_configure_static_shared
+		cmake-static-libs_foreach_impl \
+			cmake-static-libs_configure
 	}
 	multilib_foreach_abi configure_abi
 }
@@ -64,12 +66,13 @@ src_configure() {
 src_compile() {
 	compile_abi() {
 		cd "${BUILD_DIR}" || die
-		box2d_compile_static_shared() {
+		cmake-static-libs_compile() {
 			cd "${BUILD_DIR}" || die
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 			cmake-utils_src_compile
 		}
-		box2d_foreach_impl box2d_compile_static_shared
+		cmake-static-libs_foreach_impl \
+			cmake-static-libs_compile
 	}
 	multilib_foreach_abi compile_abi
 }
@@ -78,9 +81,9 @@ src_install() {
 	local mydebug=$(usex debug "Debug" "Release")
 	install_abi() {
 		cd "${BUILD_DIR}" || die
-		box2d_install_static_shared() {
+		cmake-static-libs_install() {
 			pushd "${BUILD_DIR}" || die
-			if [[ "${EBOX2D}" == "shared" ]] ; then
+			if [[ "${ECMAKE_LIB_TYPE}" == "shared" ]] ; then
 				dolib.so src/libbox2d.so \
 					extern/glad/libglad.so \
 					extern/imgui/libimgui.so
@@ -91,7 +94,8 @@ src_install() {
 			fi
 			popd
 		}
-		box2d_foreach_impl box2d_install_static_shared
+		cmake-static-libs_foreach_impl \
+			cmake-static-libs_install
 	}
 	multilib_foreach_abi install_abi
 
