@@ -9,7 +9,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86"
 IUSE="cgi cpp debug doc ipv6 +shared ssl static websocket"
 LUA_VER="5.2"
-inherit multilib-minimal
+inherit cmake-static-libs multilib-minimal
 RDEPEND="dev-db/sqlite:3[${MULTILIB_USEDEP}]
 	 dev-lang/lua:${LUA_VER}[static=,civetweb]
 	 dev-lua/luafilesystem
@@ -18,7 +18,7 @@ DEPEND="${RDEPEND}"
 SRC_URI="\
 https://github.com/civetweb/civetweb/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
-inherit civetweb eutils flag-o-matic
+inherit eutils flag-o-matic
 S="${WORKDIR}/civetweb-${PV}"
 PATCHES=( "${FILESDIR}/${PN}-1.12-cflags.patch" )
 DOCS=( docs/Embedding.md docs/OpenSSL.md README.md RELEASE_NOTES.md \
@@ -28,21 +28,21 @@ src_prepare() {
 	default
 	multilib_copy_sources
 	prepare_abi() {
-		civetweb_copy_sources
+		cmake-static-libs_copy_sources
 		cd "${BUILD_DIR}" || die
 		prepare_impl() {
 			cd "${BUILD_DIR}" || die
 			sed -i -e "s|__LUA_VER__|${LUA_VER}|g" Makefile || die
 			sed -i -e "s|lib64|$(get_libdir)|g" Makefile || die
 		}
-		civetweb_foreach_impl prepare_impl
+		cmake-static-libs_foreach_impl prepare_impl
 	}
 	multilib_foreach_abi prepare_abi
 }
 
 src_configure() {
 	configure_abi() {
-		civetweb_copy_sources
+		cmake-static-libs_copy_sources
 		cd "${BUILD_DIR}" || die
 		configure_impl() {
 			cd "${BUILD_DIR}" || die
@@ -52,7 +52,7 @@ src_configure() {
 					Makefile || die
 			fi
 		}
-		civetweb_foreach_impl configure_impl
+		cmake-static-libs_foreach_impl configure_impl
 	}
 	multilib_foreach_abi configure_abi
 }
@@ -72,7 +72,7 @@ src_compile() {
 				"WITH_DEBUG=0") )
 			myuse+=( $(usex ipv6 "WITH_IPV6=1" \
 				"WITH_IPV6=0") )
-			myuse+=( $(usex static "WITH_LUA=1" \
+			myuse+=( $(usex static-libs "WITH_LUA=1" \
 				"WITH_LUA_SHARED=1") )
 			myuse+=( "WITH_LUA_VERSION=502" )
 			mycopt+=$(usex debug "-DDEBUG" \
@@ -82,14 +82,14 @@ src_compile() {
 			if [[ "${ABI}" == "amd64" ]] ; then
 				append-cflags -fPIC
 			fi
-			if [[ "${ECIVETWEB}" == "static" ]] ; then
+			if [[ "${ECMAKE_LIB_TYPE}" == "static-libs" ]] ; then
 				mystatic="lib"
 			else
 				mystatic="slib"
 			fi
 			make build ${mystatic} ${myuse[@]} COPT="${mycopt}"
 		}
-		civetweb_foreach_impl compile_impl
+		cmake-static-libs_foreach_impl compile_impl
 	}
 	multilib_foreach_abi compile_abi
 }
@@ -100,7 +100,7 @@ src_install() {
 		install_impl() {
 			cd "${BUILD_DIR}" || die
 			emake PREFIX="${D}/usr" install
-			if [[ "${ECIVETWEB}" == "static" ]] ; then
+			if [[ "${ECMAKE_LIB_TYPE}" == "static-libs" ]] ; then
 				dolib.a libcivetweb.a
 			else
 				dolib.so libcivetweb.so.${PV}.0
@@ -114,7 +114,7 @@ src_install() {
 			insinto "/usr/include/${PN}"
 			doins include/*
 		}
-		civetweb_foreach_impl install_impl
+		cmake-static-libs_foreach_impl install_impl
 	}
 	multilib_foreach_abi install_abi
 }
