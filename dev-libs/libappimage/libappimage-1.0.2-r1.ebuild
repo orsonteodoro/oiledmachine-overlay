@@ -18,10 +18,10 @@ RDEPEND="
 	>=dev-libs/glib-2.40:2
 	>=gnome-base/librsvg-2
 	sys-libs/zlib
-	system-boost? ( >=dev-libs/boost-1.69[static-libs] )
-	system-libarchive? ( app-arch/libarchive[static-libs] )
-	system-xdgutils? ( dev-libs/xdg-utils-cxx[static] )
-	system-xz? ( app-arch/xz-utils[static-libs] )
+	system-boost? ( >=dev-libs/boost-1.69:=[static-libs] )
+	system-libarchive? ( app-arch/libarchive:=[static-libs] )
+	system-xdgutils? ( dev-libs/xdg-utils-cxx:=[static] )
+	system-xz? ( app-arch/xz-utils:=[static-libs] )
 	x11-libs/cairo"
 DEPEND="${RDEPEND}"
 BDEPEND="
