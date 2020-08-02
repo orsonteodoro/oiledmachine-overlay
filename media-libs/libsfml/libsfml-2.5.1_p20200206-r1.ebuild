@@ -6,7 +6,7 @@ DESCRIPTION="Simple and Fast Multimedia Library (SFML)"
 HOMEPAGE="https://www.sfml-dev.org/ https://github.com/SFML/SFML"
 LICENSE="ZLIB"
 KEYWORDS="amd64 x86"
-SLOT="0/$(ver_cut 1-2)"
+SLOT="0/${PV}"
 IUSE="debug doc examples"
 inherit cmake-multilib
 RDEPEND="
