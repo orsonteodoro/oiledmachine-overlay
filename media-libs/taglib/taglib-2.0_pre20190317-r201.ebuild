@@ -13,7 +13,7 @@ SRC_URI="https://github.com/${PN}/${PN}/archive/${EGIT_COMMIT}.tar.gz -> ${P}.ta
 
 LICENSE="LGPL-2.1 MPL-1.1"
 KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~mips ppc ppc64 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x86-solaris"
-SLOT="taglib2-preview/0" # -preview suffix added to avoid future conflicts with official release
+SLOT="taglib2-preview/${PV}" # -preview suffix added to avoid future conflicts with official release
 IUSE="debug examples test"
 RESTRICT="mirror !test? ( test )"
 
