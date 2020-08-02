@@ -11,7 +11,7 @@ IUSE="cgi cpp debug doc ipv6 +shared ssl static websocket"
 LUA_VER="5.2"
 inherit cmake-static-libs multilib-minimal
 RDEPEND="dev-db/sqlite:3[${MULTILIB_USEDEP}]
-	 dev-lang/lua:${LUA_VER}[static=,civetweb]
+	 dev-lang/lua:${LUA_VER}=[static=,civetweb]
 	 dev-lua/luafilesystem
 	 dev-lua/luasqlite3"
 DEPEND="${RDEPEND}"
