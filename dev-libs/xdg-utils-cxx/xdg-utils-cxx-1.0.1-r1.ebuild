@@ -14,11 +14,11 @@ SRC_URI=\
 	 -> ${P}.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
-inherit cmake-utils xdg-utils-cxx
+inherit cmake-static-libs cmake-utils
 
 src_prepare() {
 	cmake-utils_src_prepare
-	xdg-utils-cxx_copy_sources
+	cmake-static-libs_copy_sources
 }
 
 src_configure() {
@@ -27,19 +27,15 @@ src_configure() {
 			-DXDG_UTILS_TESTS=OFF
 			-DXDG_UTILS_CODE_COVERAGE=OFF
 		)
-		if [[ "${EXDG_UTILS_CXX}" == "static" ]] ; then
-			if use static ; then
-				mycmakeargs+=( -DXDG_UTILS_SHARED=OFF )
-			fi
-		elif [[ "${EXDG_UTILS_CXX}" == "shared" ]] ; then
-			if use shared ; then
-				mycmakeargs+=( -DXDG_UTILS_SHARED=ON )
-			fi
+		if [[ "${ECMAKE_LIB_TYPE}" == "static-libs" ]] ; then
+			mycmakeargs+=( -DXDG_UTILS_SHARED=OFF )
+		elif [[ "${ECMAKE_LIB_TYPE}" == "shared" ]] ; then
+			mycmakeargs+=( -DXDG_UTILS_SHARED=ON )
 		fi
 		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 		cmake-utils_src_configure
 	}
-	xdg-utils-cxx_foreach_impl configure_impl
+	cmake-static-libs_foreach_impl configure_impl
 }
 
 src_compile() {
@@ -47,7 +43,7 @@ src_compile() {
 		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 		cmake-utils_src_compile
 	}
-	xdg-utils-cxx_foreach_impl compile_impl
+	cmake-static-libs_foreach_impl compile_impl
 }
 
 src_install() {
@@ -55,7 +51,7 @@ src_install() {
 		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 		cmake-utils_src_install
 	}
-	xdg-utils-cxx_foreach_impl install_impl
+	cmake-static-libs_foreach_impl install_impl
 	docinto licenses
 	dodoc LICENSE
 }
