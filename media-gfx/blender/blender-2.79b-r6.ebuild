@@ -174,8 +174,8 @@ RDEPEND="${PYTHON_DEPS}
 	virtual/libintl
 	virtual/opengl
 	build_portable? (
-		dev-libs/boost[static-libs]
-		media-libs/openjpeg[static-libs]
+		dev-libs/boost:=[static-libs]
+		media-libs/openjpeg:=[static-libs]
 	)
 	collada? ( >=media-libs/opencollada-1.6.51:= )
 	color-management? ( >=media-libs/opencolorio-1.0.9 )
