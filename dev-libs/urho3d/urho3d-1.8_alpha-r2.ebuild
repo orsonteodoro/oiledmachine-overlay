@@ -150,19 +150,19 @@ native? (
 			dev-libs/angelscript:=[${MULTILIB_USEDEP},static-libs=]
 		)
 	)
-	box2d? ( system-box2d? ( sci-physics/box2d[${MULTILIB_USEDEP},static=] ) )
+	box2d? ( system-box2d? ( sci-physics/box2d:=[${MULTILIB_USEDEP},static=] ) )
 	bullet? ( system-bullet? ( sci-physics/bullet ) )
 	lua? (   system-lua? ( dev-lang/lua:${LUA_VER}=[static=] )
 		 system-luajit? ( luajit? ( dev-lang/luajit[lua52compat] ) )
 		!system-luajit? ( luajit? ( !dev-lang/luajit ) )
-		 system-tolua++? ( dev-lua/tolua++[static=,urho3d,debug?] )
+		 system-tolua++? ( dev-lua/tolua++:=[static=,urho3d,debug?] )
 	)
 	media-libs/alsa-lib[${MULTILIB_USEDEP}]
 	media-libs/libsdl2[${MULTILIB_USEDEP},X,opengl?]
 	!odbc? ( sqlite? ( !dev-db/unixODBC[${MULTILIB_USEDEP}] ) )
 	odbc? (
 		system-nanodbc? (
-			>=dev-db/nanodbc-2.12.4[${MULTILIB_USEDEP},-libcxx,boost_convert,static=,-unicode]
+			>=dev-db/nanodbc-2.12.4:=[${MULTILIB_USEDEP},-libcxx,boost_convert,static=,-unicode]
 			dev-db/unixODBC
 		)
 	)
@@ -175,12 +175,12 @@ native? (
 		system-libcpuid? ( sys-libs/libcpuid[${MULTILIB_USEDEP}] )
 	)
 	!opengl? (
-		system-mojoshader? ( media-gfx/mojoshader[static=] )
+		system-mojoshader? ( media-gfx/mojoshader:=[static=] )
 		system-libcpuid? ( sys-libs/libcpuid[${MULTILIB_USEDEP}] )
 	)
 	recastnavigation? (
 		system-recastnavigation? (
-			dev-libs/recastnavigation[${MULTILIB_USEDEP},static=]
+			dev-libs/recastnavigation:=[${MULTILIB_USEDEP},static=]
 		)
 	)
 	sqlite? (
@@ -190,7 +190,7 @@ native? (
 	system-lz4? ( app-arch/lz4[${MULTILIB_USEDEP}] )
 	system-pugixml? ( dev-libs/pugixml:=[${MULTILIB_USEDEP},static=] )
 	system-rapidjson? ( dev-cpp/rapidjson )
-	tools? ( system-assimp? ( media-libs/assimp[${MULTILIB_USEDEP},static=] ) )
+	tools? ( system-assimp? ( media-libs/assimp:=[${MULTILIB_USEDEP},static=] ) )
 	x11-apps/xrandr
 	x11-libs/libX11[${MULTILIB_USEDEP}] )
 raspberry-pi? ( alsa? ( media-libs/libsdl2:=[alsa,sound?,threads?,static-libs=] )
