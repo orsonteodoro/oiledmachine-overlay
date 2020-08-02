@@ -89,6 +89,8 @@ src_configure() {
 		CC=icc
 		CXX=icpc
 	fi
+	local gcc_v
+	local target_v=""
 
 	if use gcc && \
 	ls "${EROOT}"/usr/${CHOST}/gcc-bin/*/g++ 2>/dev/null 1>/dev/null ; then
@@ -101,18 +103,21 @@ src_configure() {
 
 		# g++ 7.5.0 works
 		V=$(ls "${EROOT}"/usr/${CHOST}/gcc-bin/ | sort -rV \
-			| tr "\n"  " " | sed -r -e "s|9\.3\.0[ ]+||g" \
-			| tr " " "\n")
+			| tr "\n"  " " | tr " " "\n")
 		for v in ${V} ; do
-			CC="${EROOT}/usr/${CHOST}/gcc-bin/${v}/gcc"
-			CXX="${EROOT}/usr/${CHOST}/gcc-bin/${v}/g++"
+			einfo "Checking ${v}"
+			export CC="${EROOT}/usr/${CHOST}/gcc-bin/${v}/gcc"
+			export CXX="${EROOT}/usr/${CHOST}/gcc-bin/${v}/g++"
 			cc_v=$(gcc-version)
-			if ver_test ${cc_v} -ne 7.5.0 ; then
+			if ver_test $(ver_cut 1-3 ${v}) -eq 9.3.0 ; then
+				continue
+			elif ver_test ${cc_v} -ne 7.5.0 && ver_test ${cc_v} -ge ${MIN_GCC_V} ; then
 				if \
 [[ -n "${OIDN_I_PROMISE_TO_SAVE_MY_DATA_BEFORE_COMPILING_WITH_UNTESTED_GCC}" \
 && "${OIDN_I_PROMISE_TO_SAVE_MY_DATA_BEFORE_COMPILING_WITH_UNTESTED_GCC^^}" == "AGREE" ]]
 				then
-						:;
+					target_v="${v}"
+					break
 				else
 					die \
 "\n\
@@ -126,36 +131,47 @@ as a per-package environmental variable or in front of emerge command\n\
 to continue.\n
 \n"
 				fi
-			fi
-			einfo "Falling back to g++ ${v}"
-			if ver_test ${cc_v} -lt ${MIN_GCC_V} ; then
-				die "gcc version ${cc_v} not supported"
-			fi
-			mycmakeargs+=(
-		-DCMAKE_CXX_COMPILER="${EROOT}/usr/${CHOST}/gcc-bin/${v}/g++"
-		-DCMAKE_C_COMPILER="${EROOT}/usr/${CHOST}/gcc-bin/${v}/gcc"
-			)
-			break
-		done
-	elif use clang \
-	&& ls "${EROOT}"/usr/lib/llvm/*/bin/clang 2>/dev/null 1>/dev/null ; then
-		for v in $(ls /usr/lib/llvm/ | tr "\n" " " \
-				| sed -e "s| roc ||" | tr " " "\n" | sort -rV) ; do
-			if [[ -f "${EROOT}/usr/lib/llvm/${v}/bin/clang" ]] ; then
-				einfo "Falling back to clang ${v}"
-				CC="${EROOT}/usr/lib/llvm/${v}/bin/clang"
-				CXX="${EROOT}/usr/lib/llvm/${v}/bin/clang++"
-				cc_v=$(clang-version)
-				if ver_test ${cc_v} -lt ${MIN_CLANG_V} ; then
-					die "clang version ${cc_v} not supported"
-				fi
-				mycmakeargs+=(
-		-DCMAKE_CXX_COMPILER="${EROOT}/usr/lib/llvm/${v}/bin/clang++"
-		-DCMAKE_C_COMPILER="${EROOT}/usr/lib/llvm/${v}/bin/clang"
-				)
+			elif ver_test ${cc_v} -eq 7.5.0 ; then
+				target_v="${v}"
 				break
 			fi
 		done
+		if [[ -z "${target_v}" ]] ; then
+			die "You need >=sys-devel/gcc-${MIN_GCC_V} to continue."
+		fi
+		cc_v=$(gcc-version)
+		einfo "Falling back to gcc ${target_v}"
+		mycmakeargs+=(
+		-DCMAKE_CXX_COMPILER="${EROOT}/usr/${CHOST}/gcc-bin/${target_v}/g++"
+		-DCMAKE_C_COMPILER="${EROOT}/usr/${CHOST}/gcc-bin/${target_v}/gcc"
+		)
+	elif use clang \
+	&& ls "${EROOT}"/usr/lib/llvm/*/bin/clang 2>/dev/null 1>/dev/null ; then
+		for v in $(ls /usr/lib/llvm/ | tr "\n" " " \
+				| tr " " "\n" | sort -rV) ; do
+			einfo "Checking ${v}"
+			[[ "${v}" == "roc" ]] && continue
+			if [[ -f "${EROOT}/usr/lib/llvm/${v}/bin/clang" ]] ; then
+				export CC="${EROOT}/usr/lib/llvm/${v}/bin/clang"
+				export CXX="${EROOT}/usr/lib/llvm/${v}/bin/clang++"
+				cc_v=$(clang-version)
+				if ver_test ${cc_v} -lt ${MIN_CLANG_V} ; then
+					continue
+				else
+					target_v="${v}"
+					break
+				fi
+			fi
+		done
+		if [[ -z "${target_v}" ]] ; then
+			die "You need >=sys-devel/clang-${MIN_CLANG_V} to continue."
+		fi
+		cc_v=$(gcc-version)
+		einfo "Falling back to clang ${target_v}"
+		mycmakeargs+=(
+		-DCMAKE_CXX_COMPILER="${EROOT}/usr/lib/llvm/${target_v}/bin/clang++"
+		-DCMAKE_C_COMPILER="${EROOT}/usr/lib/llvm/${target_vv}/bin/clang"
+		)
 	elif use icc \
 	&& has_version '>=sys-devel/icc-${MIN_ICC_V}' ; then
 		if [[ -z "${OIDN_ICPC_CXX_PATH}" ]] ; then
