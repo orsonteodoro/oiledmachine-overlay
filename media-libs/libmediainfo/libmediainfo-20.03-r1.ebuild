@@ -17,9 +17,9 @@ IUSE="curl doc mms static-libs"
 
 RDEPEND="sys-libs/zlib[${MULTILIB_USEDEP}]
 	dev-libs/tinyxml2:=[${MULTILIB_USEDEP}]
-	>=media-libs/libzen-0.4.37[static-libs=,${MULTILIB_USEDEP}]
+	>=media-libs/libzen-0.4.37:=[static-libs=,${MULTILIB_USEDEP}]
 	curl? ( net-misc/curl[${MULTILIB_USEDEP}] )
-	mms? ( >=media-libs/libmms-0.6.1[static-libs=,${MULTILIB_USEDEP}] )"
+	mms? ( >=media-libs/libmms-0.6.1:=[static-libs=,${MULTILIB_USEDEP}] )"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig[${MULTILIB_USEDEP}]
 	doc? ( app-doc/doxygen )"
