@@ -41,6 +41,7 @@ S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 CMAKE_MAKEFILE_GENERATOR="emake" # required for downloading in compile phase
 inherit cmake-utils linux-info
+PATCHES=( "${FILESDIR}/${PN}-1.0.2-fix-cflag-include-libappimage_pc.patch" )
 
 pkg_setup() {
 	# forced on because we need sources for squashfuse
