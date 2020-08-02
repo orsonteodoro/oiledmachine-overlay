@@ -175,7 +175,7 @@ native? (
 		system-libcpuid? ( sys-libs/libcpuid[${MULTILIB_USEDEP}] )
 	)
 	!opengl? (
-		system-mojoshader? ( media-gfx/mojoshader:=[static=] )
+		system-mojoshader? ( media-libs/mojoshader:=[static-libs=] )
 		system-libcpuid? ( sys-libs/libcpuid[${MULTILIB_USEDEP}] )
 	)
 	recastnavigation? (
