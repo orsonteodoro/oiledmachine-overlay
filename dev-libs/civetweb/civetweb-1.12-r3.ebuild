@@ -5,11 +5,12 @@ EAPI=7
 DESCRIPTION="CivetWeb is an embedded C++ web server"
 HOMEPAGE="https://github.com/civetweb"
 LICENSE="MIT"
-SLOT="0"
+SLOT="0/${PV}"
 KEYWORDS="~amd64 ~ppc ~x86"
-IUSE="cgi cpp debug doc ipv6 +shared ssl static websocket"
+IUSE="cgi cpp debug doc ipv6 ssl static websocket"
 LUA_VER="5.2"
 inherit cmake-static-libs multilib-minimal
+REQUIRED_USE+=" static-libs? ( static )"
 RDEPEND="dev-db/sqlite:3[${MULTILIB_USEDEP}]
 	 dev-lang/lua:${LUA_VER}=[static=,civetweb]
 	 dev-lua/luafilesystem
