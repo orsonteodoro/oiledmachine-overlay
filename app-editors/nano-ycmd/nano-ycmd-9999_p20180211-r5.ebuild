@@ -20,8 +20,8 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	      ^^ ( libgcrypt nettle openssl )"
 YCMD_SLOT="1"
 LIB_DEPEND="
-	magic? ( sys-apps/file[static-libs(+)] )
-	!ncurses? ( slang? ( sys-libs/slang[static-libs(+)] ) )
+	magic? ( sys-apps/file:=[static-libs(+)] )
+	!ncurses? ( slang? ( sys-libs/slang:=[static-libs(+)] ) )
 	nls? ( virtual/libintl )
 	>=sys-libs/ncurses-5.9-r1:0=[unicode?]
 	sys-libs/ncurses:0=[static-libs(+)]"
