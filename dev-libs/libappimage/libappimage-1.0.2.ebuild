@@ -17,7 +17,6 @@ IUSE="system-boost system-libarchive system-xdgutils system-xz"
 RDEPEND="
 	>=dev-libs/glib-2.40:2
 	>=gnome-base/librsvg-2
-	sys-fs/inotify-tools
 	sys-libs/zlib
 	system-boost? ( >=dev-libs/boost-1.69[static-libs] )
 	system-libarchive? ( app-arch/libarchive[static-libs] )
