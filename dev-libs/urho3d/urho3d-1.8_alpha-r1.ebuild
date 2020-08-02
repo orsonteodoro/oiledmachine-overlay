@@ -144,15 +144,15 @@ javascript? ( dev-libs/urho3d-web
 	      >=dev-util/emscripten-1.36.10
 	      >=sys-devel/llvm-3.9.0 )
 native? (
-	alsa? ( media-libs/libsdl2[${MULTILIB_USEDEP},alsa,sound?,threads?,static-libs=] )
+	alsa? ( media-libs/libsdl2:=[${MULTILIB_USEDEP},alsa,sound?,threads?,static-libs=] )
 	angelscript? (
 		system-angelscript? (
-			dev-libs/angelscript[${MULTILIB_USEDEP},static-libs=]
+			dev-libs/angelscript:=[${MULTILIB_USEDEP},static-libs=]
 		)
 	)
 	box2d? ( system-box2d? ( sci-physics/box2d[${MULTILIB_USEDEP},static=] ) )
 	bullet? ( system-bullet? ( sci-physics/bullet ) )
-	lua? (   system-lua? ( dev-lang/lua:${LUA_VER}[static=] )
+	lua? (   system-lua? ( dev-lang/lua:${LUA_VER}=[static=] )
 		 system-luajit? ( luajit? ( dev-lang/luajit[lua52compat] ) )
 		!system-luajit? ( luajit? ( !dev-lang/luajit ) )
 		 system-tolua++? ( dev-lua/tolua++[static=,urho3d,debug?] )
@@ -167,11 +167,11 @@ native? (
 		)
 	)
 	network? (
-		system-civetweb? ( www-servers/civetweb[static=] )
+		system-civetweb? ( www-servers/civetweb:=[static-libs=] )
 		system-slikenet? ( net-misc/slikenet[${MULTILIB_USEDEP}] )
 	)
 	opengl? (
-		system-glew? ( media-libs/glew[${MULTILIB_USEDEP},static-libs=] )
+		system-glew? ( media-libs/glew:=[${MULTILIB_USEDEP},static-libs=] )
 		system-libcpuid? ( sys-libs/libcpuid[${MULTILIB_USEDEP}] )
 	)
 	!opengl? (
@@ -184,16 +184,16 @@ native? (
 		)
 	)
 	sqlite? (
-		system-sqlite? ( dev-db/sqlite[${MULTILIB_USEDEP},static-libs=] )
+		system-sqlite? ( dev-db/sqlite:=[${MULTILIB_USEDEP},static-libs=] )
 	)
-	system-freetype? ( media-libs/freetype[${MULTILIB_USEDEP},static-libs=] )
+	system-freetype? ( media-libs/freetype:=[${MULTILIB_USEDEP},static-libs=] )
 	system-lz4? ( app-arch/lz4[${MULTILIB_USEDEP}] )
-	system-pugixml? ( dev-libs/pugixml[${MULTILIB_USEDEP},static=] )
+	system-pugixml? ( dev-libs/pugixml:=[${MULTILIB_USEDEP},static=] )
 	system-rapidjson? ( dev-cpp/rapidjson )
 	tools? ( system-assimp? ( media-libs/assimp[${MULTILIB_USEDEP},static=] ) )
 	x11-apps/xrandr
 	x11-libs/libX11[${MULTILIB_USEDEP}] )
-raspberry-pi? ( alsa? ( media-libs/libsdl2[alsa,sound?,threads?,static-libs=] )
+raspberry-pi? ( alsa? ( media-libs/libsdl2:=[alsa,sound?,threads?,static-libs=] )
 		media-libs/alsa-lib
                 media-libs/libsdl2[X,opengl?]
 		|| ( sys-fs/udev sys-apps/systemd )
