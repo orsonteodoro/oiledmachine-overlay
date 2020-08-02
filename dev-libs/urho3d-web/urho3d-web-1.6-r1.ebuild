@@ -10,7 +10,7 @@ HOMEPAGE="http://urho3d.github.io/"
 SRC_URI="https://github.com/urho3d/Urho3D/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MIT"
-SLOT="1.6"
+SLOT="0/${PV}"
 KEYWORDS="~amd64 ~ppc ~x86 ~arm"
 IUSE="abi_mips_n64 boost sound alsa pulseaudio debug automated-testing javascript static static-libs +pch -docs pulseaudio -angelscript +lua -lua-jit -network -odbc sqlite +recastnavigation +box2d +bullet +opengl +samples -extras +tools -clang-tools -debug-raw-script-loader +filewatcher -c++11 -bindings logging profiling threads debug"
 REQUIRED_USE="
