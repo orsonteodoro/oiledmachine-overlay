@@ -20,7 +20,7 @@ RDEPEND="
 	sys-libs/zlib
 	system-boost? ( >=dev-libs/boost-1.69:=[static-libs] )
 	system-libarchive? ( app-arch/libarchive:=[static-libs] )
-	system-xdgutils? ( dev-libs/xdg-utils-cxx:=[static] )
+	system-xdgutils? ( dev-libs/xdg-utils-cxx:=[static-libs] )
 	system-xz? ( app-arch/xz-utils:=[static-libs] )
 	x11-libs/cairo"
 DEPEND="${RDEPEND}"
