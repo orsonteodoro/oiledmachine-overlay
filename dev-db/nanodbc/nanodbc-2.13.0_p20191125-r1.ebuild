@@ -11,7 +11,7 @@ IUSE="-boost_convert +debug +examples -handle_nodata_bug +libcxx -unicode -stati
 REQUIRED_USE="!libcxx"
 #building with USE libcxx is broken?
 inherit multilib-build
-RDEPEND="dev-libs/boost[${MULTILIB_USEDEP},nls,static-libs?]
+RDEPEND="dev-libs/boost:=[${MULTILIB_USEDEP},nls,static-libs?]
 	 dev-db/unixODBC[${MULTILIB_USEDEP}]
 	 libcxx? ( sys-libs/libcxx[${MULTILIB_USEDEP}] )"
 DEPEND="${RDEPEND}
