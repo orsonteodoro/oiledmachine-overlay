@@ -11,9 +11,9 @@ SLOT="0/${PV}"
 IUSE="debug"
 inherit cmake-static-libs multilib-build
 REQUIRED_USE=""
-RDEPEND="media-libs/libtheora[static-libs?,${MULTILIB_USEDEP}]
-         media-libs/libogg[static-libs?,${MULTILIB_USEDEP}]
-         media-libs/libvorbis[static-libs?,${MULTILIB_USEDEP}]"
+RDEPEND="media-libs/libtheora:=[static-libs?,${MULTILIB_USEDEP}]
+         media-libs/libogg:=[static-libs?,${MULTILIB_USEDEP}]
+         media-libs/libvorbis:=[static-libs?,${MULTILIB_USEDEP}]"
 DEPEND="${RDEPEND}
         dev-util/premake:5"
 EGIT_COMMIT="99e5fc74603e"
