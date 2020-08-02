@@ -38,6 +38,7 @@ SRC_URI=\
 https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT}.tar.gz \
 	-> ${P}-googletest.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
+S_BAK="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 CMAKE_MAKEFILE_GENERATOR="emake" # required for downloading in compile phase
 inherit cmake-utils linux-info
@@ -81,6 +82,10 @@ src_configure() {
 
 src_install() {
 	cmake-utils_src_install
+	insinto /usr/$(get_libdir)
+	doins "${BUILD_DIR}/src/xdg-basedir/libxdg-basedir.a"
+	insinto /usr/include/appimage
+	doins "${S_BAK}/src/xdg-basedir/xdg-basedir.h"
 	docinto licenses
 	dodoc LICENSE
 	if ! use system-boost ; then
