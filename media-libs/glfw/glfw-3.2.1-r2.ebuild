@@ -1,8 +1,7 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
-
+EAPI=6
 inherit cmake-multilib
 
 DESCRIPTION="The Portable OpenGL FrameWork"
@@ -10,9 +9,9 @@ HOMEPAGE="https://www.glfw.org/"
 SRC_URI="https://github.com/glfw/glfw/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="ZLIB"
-SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~hppa ~x86"
-IUSE="wayland"
+SLOT="0/${PV}"
+KEYWORDS="amd64 ~arm64 ~hppa x86"
+IUSE="examples wayland"
 
 RDEPEND="
 	x11-libs/libxkbcommon[${MULTILIB_USEDEP}]
@@ -31,16 +30,16 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	wayland? ( dev-libs/wayland-protocols[${MULTILIB_USEDEP}] )
-"
-BDEPEND="
-	wayland? ( kde-frameworks/extra-cmake-modules )
+	wayland? (
+		dev-libs/wayland-protocols[${MULTILIB_USEDEP}]
+		kde-frameworks/extra-cmake-modules
+	)
 "
 
 src_configure() {
 	configure_abi() {
 		local mycmakeargs=(
-			-DGLFW_BUILD_EXAMPLES=no
+			-DGLFW_BUILD_EXAMPLES="$(usex examples)"
 			-DGLFW_USE_WAYLAND="$(usex wayland)"
 			-DBUILD_SHARED_LIBS=1
 		)
