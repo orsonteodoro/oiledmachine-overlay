@@ -7,7 +7,7 @@ HOMEPAGE="http://hunspell.github.io/"
 LICENSE="GPL-2 LGPL-2.1 MPL-1.1"
 KEYWORDS="~alpha amd64 ~amd64-linux arm ~arm64 ~hppa ~ia64 ppc ppc64 ~sparc \
 x86 ~x86-linux"
-SLOT="0"
+SLOT="0/${PV}"
 IUSE="static-libs"
 inherit multilib-minimal
 RDEPEND="app-text/hunspell[${MULTILIB_USEDEP}]"
