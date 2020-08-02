@@ -10,7 +10,7 @@ HOMEPAGE="https://www.xiph.org/fishsound/"
 SRC_URI="https://downloads.xiph.org/releases/libfishsound/${P}.tar.gz"
 
 LICENSE="BSD"
-SLOT="0"
+SLOT="0/${PV}"
 KEYWORDS="amd64 x86"
 IUSE="flac speex"
 
