@@ -8,7 +8,7 @@ HOMEPAGE="https://icculus.org/mojoshader/"
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~x86 ~x64-macos"
 inherit cmake-utils eutils mercurial
-EHG_REVISION_C="422f68756c9f"
+EHG_REVISION_C="cee4402d5ab8"
 EHG_REVISION="${PV}"
 EHG_REPO_URI="https://hg.icculus.org/icculus/mojoshader/"
 # Wrong CMakeLists.txt ; use mercurial
@@ -16,7 +16,7 @@ EHG_REPO_URI="https://hg.icculus.org/icculus/mojoshader/"
 #"https://hg.icculus.org/icculus/${PN}/archive/${EGH_REVISION}.tar.bz2 -> ${P}.tar.bz2"
 IUSE="-compiler_support debug -depth_clipping +profile_arb1 +profile_arb1_nv \
 +profile_bytecode +profile_d3d +profile_glsl120 +profile_glsl +profile_metal \
-+effect_support -flip_viewport static -xna_vertextexture"
++effect_support -flip_viewport static-libs -xna_vertextexture"
 REQUIRED_USE=""
 SLOT="0/${PV}"
 RDEPEND="dev-util/re2c
@@ -81,7 +81,7 @@ src_configure() {
                 -DPROFILE_METAL=$(usex profile_metal)
                 -DXNA4_VERTEXTEXTURE=$(usex xna_vertextexture)
 		-DBUILD_SHARED_LIBS="ON"
-		-DBUILD_STATIC_LIBS=$(usex static "ON" "OFF")
+		-DBUILD_STATIC_LIBS=$(usex static-libs "ON" "OFF")
 		-DCMAKE_SKIP_RPATH=ON
         )
 
