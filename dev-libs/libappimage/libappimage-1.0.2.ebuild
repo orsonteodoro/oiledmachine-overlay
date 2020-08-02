@@ -44,7 +44,7 @@ CMAKE_MAKEFILE_GENERATOR="emake" # required for downloading in compile phase
 inherit cmake-utils linux-info
 
 pkg_setup() {
-	# forced on because we need sources for squashfuse and xz
+	# forced on because we need sources for squashfuse
 	if has network-sandbox $FEATURES ; then
 		die \
 "${PN} requires network-sandbox to be disabled in FEATURES in order to download\n\
