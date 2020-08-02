@@ -10,7 +10,7 @@ HOMEPAGE="https://github.com/inotify-tools/inotify-tools"
 SRC_URI="https://github.com/${PN}/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-2"
-SLOT="0"
+SLOT="0/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~mips ~sparc ~x86"
 IUSE="doc static-libs"
 
