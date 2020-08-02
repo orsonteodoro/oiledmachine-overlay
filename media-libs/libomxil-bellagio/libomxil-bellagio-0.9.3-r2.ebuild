@@ -13,7 +13,7 @@ HOMEPAGE="http://omxil.sourceforge.net/"
 SRC_URI="mirror://sourceforge/${PN:3:5}/${P}.tar.gz mirror://ubuntu/pool/universe/${PN:0:4}/${PN}/${PN}_${PV}-1ubuntu2.debian.tar.gz"
 
 LICENSE="LGPL-2.1"
-SLOT="0"
+SLOT="0/${PV}"
 KEYWORDS="amd64 x86"
 IUSE="+audioeffects +clocksrc debug doc +videoscheduler"
 
