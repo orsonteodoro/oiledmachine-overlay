@@ -11,7 +11,7 @@ HOMEPAGE="https://github.com/MediaArea/ZenLib"
 SRC_URI="https://mediaarea.net/download/source/${PN}/${PV}/${P/-/_}.tar.bz2"
 
 LICENSE="ZLIB"
-SLOT="0"
+SLOT="0/${PV}"
 KEYWORDS="~amd64 ~x86"
 IUSE="doc static-libs"
 
