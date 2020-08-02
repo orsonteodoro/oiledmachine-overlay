@@ -13,7 +13,7 @@ LICENSE+=" !system-libarchive? ( BSD BSD-2 BSD-4 public-domain )" # copied from 
 LICENSE+=" !system-xdgutils? ( MIT BSD )" # copied from the dev-libs/xdg-utils-cxx ebuild
 LICENSE+=" !system-xz? ( public-domain LGPL-2.1+ GPL-2+ )" # copied from the app-arch/xz-utils ebuild
 KEYWORDS="~amd64 ~x86"
-IUSE="system-boost system-libarchive system-xdgutils system-xz"
+IUSE="cmake-static-libs system-boost system-libarchive system-xdgutils system-xz"
 RDEPEND="
 	>=dev-libs/glib-2.40:2
 	>=gnome-base/librsvg-2
@@ -83,7 +83,8 @@ src_configure() {
 src_install() {
 	cmake-utils_src_install
 	insinto /usr/$(get_libdir)
-	doins "${BUILD_DIR}/src/xdg-basedir/libxdg-basedir.a"
+	doins "${BUILD_DIR}/src/xdg-basedir/libxdg-basedir.a" \
+		"${BUILD_DIR}/src/libappimage/libappimage_static.a"
 	insinto /usr/include/appimage
 	doins "${S_BAK}/src/xdg-basedir/xdg-basedir.h"
 	docinto licenses
