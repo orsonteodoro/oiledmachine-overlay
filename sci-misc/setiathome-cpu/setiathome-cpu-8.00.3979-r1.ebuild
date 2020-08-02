@@ -24,7 +24,7 @@ IUSE="${X86_CPU_FEATURES[@]%:*} opengl custom-cflags altivec neon pgo"
 REQUIRED_USE=""
 
 RDEPEND="
-	sci-libs/fftw[static-libs]
+	sci-libs/fftw:=[static-libs]
 	sci-misc/setiathome-art:7
 "
 
