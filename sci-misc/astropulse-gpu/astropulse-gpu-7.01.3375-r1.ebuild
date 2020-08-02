@@ -31,7 +31,7 @@ IUSE="${X86_CPU_FEATURES[@]%:*} ${IUSE_GPUS} ${IUSE_APIS} test custom-cflags cor
 REQUIRED_USE=""
 
 RDEPEND="
-	sci-libs/fftw[static-libs]
+	sci-libs/fftw:=[static-libs]
 	opencl? (
 		|| (
 			virtual/opencl
