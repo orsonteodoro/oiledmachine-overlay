@@ -72,7 +72,7 @@ KEYWORDS="~amd64 ~x86"
 SLOT="0"
 CLOSURE_COMPILER_SLOT="0"
 PYTHON_COMPAT=( python3_{6,7,8} )
-inherit cmake-utils java-utils-2 npm-secaudit python-single-r1
+inherit cmake-utils flag-o-matic java-utils-2 npm-secaudit python-single-r1 toolchain-funcs
 IUSE="+closure-compiler closure_compiler_java closure_compiler_native \
 closure_compiler_nodejs emscripten-fastcomp +native-optimizer \
 system-closure-compiler +system-llvm test
@@ -98,11 +98,11 @@ RDEPEND="${PYTHON_DEPS}
 		)
 	)
 	>=dev-util/binaryen-93
-	emscripten-fastcomp? ( ~dev-util/emscripten-fastcomp-${PV} )
+	emscripten-fastcomp? ( ~dev-util/emscripten-fastcomp-${PV}:= )
 	>=net-libs/nodejs-0.10.17
 	system-llvm? (
-		>=sys-devel/llvm-6[llvm_targets_WebAssembly]
-		>=sys-devel/clang-6[llvm_targets_WebAssembly]
+		>=sys-devel/llvm-11.0.0_rc1:=[llvm_targets_WebAssembly]
+		>=sys-devel/clang-11.0.0_rc1:=[llvm_targets_WebAssembly]
 	)"
 # The java-utils-2 doesn't like nested conditionals.  The eclass needs at least a virtual/jdk
 # This package doesn't really need jdk to use closure-compiler because packages are prebuilt.
@@ -180,25 +180,31 @@ FEATURES"
 		fi
 	fi
 
-	if [[ ! -f /usr/share/emscripten-fastcomp-${PV}/bin/llc ]] ; then
-		die \
-"You need to install ~dev-util/emscripten-fastcomp-${PV}.  Only revision\n\
-updates acceptable."
-	fi
 	python-single-r1_pkg_setup
 	if use system-llvm ; then
-		if [[ -z "${EMSDK_LLVM_VERSION}" ]] ; then
-			eerror \
-"EMSDK_LLVM_VERSION must be set to a LLVM major version as a per-package\n\
-environmental variable.  The possible values are "$(ls /usr/lib/llvm)
-			die
-		fi
+		HIGHEST_LLVM_VER=$(basename $(find /usr/lib/llvm -maxdepth 1 \
+			-regextype 'posix-extended' -regex ".*[0-9]+.*" \
+			| sort -V | tail -n 1))
+		# You are allowed to set EMSDK_LLVM_VERSION as a per-package
+		# environmental variable.
+		export EMSDK_LLVM_VERSION=${EMSDK_LLVM_VERSION:=${HIGHEST_LLVM_VER}}
 		if [[ -n "${EMSDK_LLVM_VERSION}" \
 		&& ! -d "${EROOT}/usr/lib/llvm/${EMSDK_LLVM_VERSION}" ]] ; then
 			eerror \
 "The path /usr/lib/llvm/${EMSDK_LLVM_VERSION} does not exist.  Did you put\n\
 the correct EMSDK_LLVM_VERSION?"
 			die
+		fi
+		CXX=$(tc-getCXX)
+		test-flag-CXX -fignore-exceptions
+		if [[ "$?" != "0" ]] ; then
+			die "You need llvm >=11.0.0_rc1 to use this product."
+		fi
+	else
+		if [[ ! -f /usr/share/emscripten-fastcomp-${PV}/bin/llc ]] ; then
+			die \
+"You need to install ~dev-util/emscripten-fastcomp-${PV}.  Only revision\n\
+updates acceptable."
 		fi
 	fi
 }
@@ -216,12 +222,16 @@ prepare_file() {
 "s|__EMSDK_LLVM_ROOT__|/usr/share/emscripten-fastcomp-${PV}/bin|" \
 		-e \
 "s|__EMCC_WASM_BACKEND__|0|" \
+		-e \
+"s|__LLVM_BIN_PATH__|/usr/share/emscripten-fastcomp-${PV}/bin|" \
 		"${S}/${1}" || die
 	elif use system-llvm ; then
 		sed -i -e \
 "s|__EMSDK_LLVM_ROOT__|/usr/lib/llvm/${EMSDK_LLVM_VERSION}/bin|" \
 		-e \
 "s|__EMCC_WASM_BACKEND__|1|" \
+		-e \
+"s|__LLVM_BIN_PATH__|/usr/lib/llvm/${EMSDK_LLVM_VERSION}/bin|" \
 		"${S}/${1}" || die
 	fi
 }
@@ -296,6 +306,19 @@ npm-secaudit_src_compile() {
 }
 
 src_test() {
+	cp "${S}/99emscripten" "${T}/99emscripten" || die
+	sed -i -e "s|PATH=\"/usr/share/emscripten-1.40.0\"|PATH=\"/usr/share/emscripten-1.40.0:\${PATH}\"|" "${T}/99emscripten" || die
+	source "${T}/99emscripten"
+	if use system-llvm ; then
+		export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
+		if [[ "${EMCC_WASM_BACKEND}" != "1" ]] ; then
+			die "EMCC_WASM_BACKEND should be 1 with system-llvm"
+		fi
+	elif use emscripten-fastcomp ; then
+		if [[ "${EMCC_WASM_BACKEND}" != "0" ]] ; then
+			die "EMCC_WASM_BACKEND should be 0 with emscripten-fastcomp"
+		fi
+	fi
 	if use test ; then
 		mkdir "${TEST}" || die "Could not create test directory!"
 		cp "${FILESDIR}/hello_world.cpp" "${TEST}" \
@@ -359,11 +382,24 @@ src_install() {
 	dosym ../share/${P}/emscons /usr/bin/emscons
 	dosym ../share/${P}/emsize /usr/bin/emsize
 	doenvd 99emscripten
+	. /etc/profile
+	if use system-llvm ; then
+		export LLVM_ROOT="/usr/lib/llvm/${EMSDK_LLVM_VERSION}/bin"
+	fi
 	ewarn "If you consider using emscripten in an active shell,"\
 		"please execute 'source /etc/profile'"
 }
 
 pkg_postinst() {
+	if use system-llvm ; then
+		if [[ "${EMCC_WASM_BACKEND}" != "1" ]] ; then
+			die "EMCC_WASM_BACKEND should be 1 with system-llvm"
+		fi
+	elif use emscripten-fastcomp ; then
+		if [[ "${EMCC_WASM_BACKEND}" != "0" ]] ; then
+			die "EMCC_WASM_BACKEND should be 0 with emscripten-fastcomp"
+		fi
+	fi
 	if use closure-compiler && ! use system-closure-compiler ; then
 		export NPM_SECAUDIT_INSTALL_PATH="${DEST}/${P}"
 		npm-secaudit_pkg_postinst
