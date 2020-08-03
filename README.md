@@ -26,7 +26,7 @@ git pull
 
 ## Important stuff
 
-Many of these packages have special licenses and EULAs attached to them.  I recommend that you edit your /etc/portage/make.conf so it looks like this ACCEPT_LICENSE="-*" and manually accept each of the licenses.  Licenses can be found in the licenses folder of this overlay and the free copyleft licenses can be found on the official gentoo overlay in their license folder too.
+Many of these packages have special licenses and EULAs attached to them.  I recommend that you edit your /etc/portage/make.conf so it looks like this ACCEPT_LICENSE="-*" and manually accept each of the licenses.  Licenses can be found in the licenses folder of this overlay and the remaining [licenses](https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses) can be found on the [https://gitweb.gentoo.org/repo/gentoo.git/tree/](official gentoo overlay) in their license folder too.
 
 Many of these packages especially non-free software also require you to manually obtain the installer or files to install and may require you to register on their website.  The required files are listed in the ebuild.
 
