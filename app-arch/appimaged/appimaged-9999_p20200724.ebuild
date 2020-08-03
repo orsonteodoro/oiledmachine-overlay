@@ -12,7 +12,7 @@ IUSE="firejail system-inotify-tools"
 RDEPEND="
 	!app-arch/go-appimage
 	dev-libs/glib:=[static-libs]
-	dev-libs/libappimage:=
+	dev-libs/libappimage:=[static-libs]
 	dev-libs/xdg-utils-cxx:=[static-libs]
 	firejail? ( sys-apps/firejail )
 	sys-apps/systemd
