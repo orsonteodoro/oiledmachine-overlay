@@ -384,7 +384,7 @@ src_prepare() {
 			src/com/sheepit/client/hardware/gpu/GPU.java || die
 	fi
 
-	eapply "${FILESDIR}/sheepit-client-6.2020.0-r1-renderer-version-picker.patch"
+	eapply "${FILESDIR}/sheepit-client-6.2020.0-r2-renderer-version-picker.patch"
 	if ! use allow-unknown-renderers ; then
 		if ! use disable-hard-version-blocks ; then
 			enable_hardblock "HARDBLOCK_UNKNOWN_RENDERERS"
