@@ -1,0 +1,244 @@
+# -*-eselect-*-  vim: ft=eselect
+# Copyright 2019-2020 Orson Teodoro
+# Copyright 2005-2012 Gentoo Foundation
+# Distributed under the terms of the GNU GPL version 2 or later
+
+DESCRIPTION="Manages the 99emscripten and emscripten.config files"
+MAINTAINER="orsonteodoro@hotmail.com"
+VERSION="20200801"
+PN="nodejs"
+
+# Permute emscripten, emscripten-fastcomp (asm.js), llvm (wasm) targets
+find_targets() {
+    local f
+    # /usr/share/emscripten-
+    EMSCRIPTEN_VERSIONS=$(find "${EROOT}/usr/share" -maxdepth 1 -regextype 'posix-egrep' -regex ".*emscripten-[0-9.]+" | sort -V | cut -f 4 -d "/" | sed -e "s|^${EROOT}||" | sed -e "s|emscripten-||g")
+    # /usr/share/emscripten-fastcomp-${PV}/bin
+    LLVM_VERSIONS=$(find "${EROOT}/usr/lib64/llvm" -maxdepth 1 -regextype 'posix-egrep' -regex ".*[0-9.]+" | sed -e "s|^${EROOT}||" | sort -V | cut -f 5 -d "/")
+    # /usr/lib64/llvm/10/bin
+
+    for em_v in ${EMSCRIPTEN_VERSIONS} ; do
+        [[ ! -f "${EROOT}/usr/share/emscripten-${em_v}/emcc" ]] && continue
+        local use_path=$(realpath --canonicalize-missing "${EROOT}"/var/db/pkg/dev-util/emscripten-${em_v}*/USE)
+        [[ ! -f "${use_path}" ]] && continue
+        for compiler in fastcomp llvm ; do
+            if [[ "${compiler}" == "fastcomp" ]] ; then
+                echo "emscripten-${em_v},emscripten-fastcomp-${em_v}"
+            elif [[ "${compiler}" == "llvm" ]] ; then
+                for llvm_v in ${LLVM_VERSIONS} ; do
+                    echo "emscripten-${em_v},llvm-${llvm_v}"
+                done
+            fi
+        done
+    done
+}
+
+# remove the emscripten files
+remove_symlink() {
+    rm "${EROOT}/etc/env.d/99emscripten" 2>/dev/null 1>/dev/null || true
+    rm "${EROOT}/usr/share/emscripten-"*"/emscripten.config" 2>/dev/null 1>/dev/null || true
+}
+
+# write out 99emscripten and emscripten.config
+set_config() {
+    local target=$1
+    local em
+    local fc
+    local llvm
+    local compiler
+
+    # to set
+    local __EMCC_WASM_BACKEND__=
+    local __EMSDK_LLVM_ROOT__=
+    local __EMSDK_CLOSURE_COMPILER__=
+    local PYTHON_EXE_ABSPATH=
+    local PV=
+
+    if is_number "${target}"; then
+        local targets=( $(find_targets) )
+        target=${targets[target-1]}
+        em=$(echo "${target}" | cut -f 1 -d ",")
+        PV=$(echo "${em}" | cut -f 2 -d "-")
+        compiler=$(echo "${target}" | cut -f 2 -d ",")
+        if [[ "${compiler}" =~ "llvm" ]] ; then
+            llvm_v=$(echo "${compiler}" | cut -f 2 -d "-")
+            __LLVM_BIN_PATH__=/usr/lib/llvm/${llvm_v}/bin
+            __EMCC_WASM_BACKEND__=1
+        elif [[ "${compiler}" =~ "emscripten-fastcomp" ]] ; then
+            fc_p="${compiler}"
+            __LLVM_BIN_PATH__=/usr/share/${fc_p}/bin
+            __EMCC_WASM_BACKEND__=0
+        fi
+    elif [[ "${target}" =~ emscripten- && "${target}" =~ (llvm-|emscripten-fastcomp-) ]] ; then
+        em=$(echo "${target}" | cut -f 1 -d " ")
+        PV=$(echo "${em}" | cut -f 2 -d "-")
+        compiler=$(echo "${target}" | cut -f 2 -d " ")
+        if [[ "${compiler}" =~ "llvm" ]] ; then
+            llvm_v=$(echo "${compiler}" | cut -f 2 -d "-")
+            __LLVM_BIN_PATH__=/usr/lib/llvm/${llvm_v}/bin
+            __EMCC_WASM_BACKEND__=1
+        elif [[ "${compiler}" =~ "emscripten-fastcomp" ]] ; then
+            fc_p="${compiler}"
+            __LLVM_BIN_PATH__=/usr/share/${fc_p}/bin
+            __EMCC_WASM_BACKEND__=0
+        fi
+    else
+        echo "Failed to set config and is now gone."
+        return
+    fi
+
+    local use_path=$(realpath --canonicalize-missing /var/db/pkg/dev-util/emscripten-${PV}*/USE)
+    if [[ ! -f "${use_path}" ]] ; then
+        echo "emscripten ${PV} is not installed."
+        return 1
+    fi
+    if grep -qF -e "closure_compiler_java" "${use_path}" ; then
+        __EMSDK_CLOSURE_COMPILER__=/usr/bin/closure-compiler-java
+    elif grep -qF -e "closure_compiler_nodejs" "${use_path}" ; then
+        __EMSDK_CLOSURE_COMPILER__=/usr/bin/closure-compiler-node
+    elif grep -qF -e "closure_compiler_native" "${use_path}" ; then
+        __EMSDK_CLOSURE_COMPILER__=/usr/bin/closure-compiler
+    else
+        __EMSDK_CLOSURE_COMPILER__=
+    fi
+
+    if grep -qF -e "python_single_target_python3_8" "${use_path}" ; then
+        PYTHON_EXE_ABSPATH=/usr/bin/python3.8
+    elif grep -qF -e "python_single_target_python3_7" "${use_path}" ; then
+        PYTHON_EXE_ABSPATH=/usr/bin/python3.7
+    elif grep -qF -e "python_single_target_python3_6" "${use_path}" ; then
+        PYTHON_EXE_ABSPATH=/usr/bin/python3.6
+    fi
+
+    T_ENV=$(mktemp)
+    cat << EOF > "${T_ENV}" || die
+EM_CONFIG=/usr/share/emscripten-${PV}/emscripten.config
+EMSCRIPTEN=/usr/share/emscripten-${PV}
+EMSDK_CLOSURE_COMPILER=${__EMSDK_CLOSURE_COMPILER__}
+EMSDK_LLVM_ROOT=${__LLVM_BIN_PATH__}
+EMSDK_NODE=/usr/bin/node
+EMSDK_PYTHON=${PYTHON_EXE_ABSPATH}
+EMSCRIPTEN_NATIVE_OPTIMIZER=/usr/share/emscripten-${PV}/optimizer
+PATH="/usr/share/emscripten-${PV}"
+EMCC_WASM_BACKEND=${__EMCC_WASM_BACKEND__}
+EOF
+    cat "${T_ENV}" > "${EROOT}/etc/env.d/99emscripten"
+    rm ${T_ENV}
+
+    [[ -z "${__EMSDK_CLOSURE_COMPILER__}" ]] && sed -i "/EMSDK_CLOSURE_COMPILER/d" \
+        "${EROOT}/etc/env.d/99emscripten"
+
+    if echo -e "${_use_flags}" | grep -qF -e "-native-optimizer" ; then
+        sed -i "/EMSCRIPTEN_NATIVE_OPTIMIZER/d" \
+            "${EROOT}/etc/env.d/99emscripten"
+    fi
+
+    T_CONFIG=$(mktemp)
+    cat << EOF > "${T_CONFIG}" || die
+import os
+EMSCRIPTEN_ROOT = os.path.expanduser(os.getenv('EMSCRIPTEN') or '/usr/share/emscripten-${PV}')
+LLVM_ROOT = os.path.expanduser(os.getenv('LLVM') or '${__LLVM_BIN_PATH__}')
+BINARYEN_ROOT = os.path.expanduser(os.getenv('BINARYEN', '') or '/usr')
+NODE_JS = os.path.expanduser(os.getenv('NODE') or '/usr/bin/node')
+JAVA = 'java'
+TEMP_DIR = '/tmp'
+EOF
+    cat "${T_CONFIG}" > "${EROOT}/usr/share/emscripten-${PV}/emscripten.config"
+    rm ${T_CONFIG}
+}
+
+### show action ###
+
+describe_show() {
+    echo "Show the current emscripten, emscripten-fastcomp, llvm combination"
+}
+
+do_show() {
+    write_list_start "Current emscritpen, emscripten-fastcomp, llvm combo:"
+
+    [[ ! -f /etc/env.d/99emscripten ]] && return
+    em_v=$(basename $(grep -r -e "EMSCRIPTEN=" /etc/env.d/99emscripten) | sed -e "s|emscripten-||g")
+    is_llvm=$(grep -r -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | grep -qF -e "/usr/lib/llvm"  ; echo "$?")
+    is_fc=$(grep -r -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | grep -qF -e "/usr/share/emscripten-fastcomp"  ; echo "$?")
+
+    llvm_v=$(grep "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | sed -e "s|EMSDK_LLVM_ROOT=/usr/lib/llvm/||" -e "s|/bin||")
+    fc_v=$(grep "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | sed -e "s|EMSDK_LLVM_ROOT=/usr/share/emscripten-fastcomp-||" -e "s|/bin||")
+
+    if [[ "${is_llvm}" == "0" ]] ; then
+        local k_node_src="emscripten-${em_v}"
+        local k_node_dest="llvm-${llvm_v}"
+        write_kv_list_entry "${k_node_src%/}" "${k_node_dest%/}"
+    elif [[ "${is_fc}" == "0" ]]; then
+        local k_node_src="emscripten-${em_v}"
+        local k_node_dest="emscripten-fastcomp-${fc_v}"
+        write_kv_list_entry "${k_node_src%/}" "${k_node_dest%/}"
+    else
+        write_kv_list_entry "(unset)" ""
+    fi
+}
+
+### list action ###
+
+describe_list() {
+    echo "List available emscripten, emscripten-fastcomp, llvm combo targets"
+}
+
+do_list() {
+    local i targets=( $(find_targets) )
+
+    em_v=$(basename $(grep -r -e "EMSCRIPTEN=" /etc/env.d/99emscripten) | sed -e "s|emscripten-||g")
+    is_llvm=$(grep -r -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | grep -qF -e "/usr/lib/llvm"  ; echo "$?")
+    is_fc=$(grep -r -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | grep -qF -e "/usr/share/emscripten-fastcomp"  ; echo "$?")
+
+    llvm_v=$(grep "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | sed -e "s|EMSDK_LLVM_ROOT=/usr/lib/llvm/||" -e "s|/bin||")
+    fc_v=$(grep "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | sed -e "s|EMSDK_LLVM_ROOT=/usr/share/emscripten-fastcomp-||" -e "s|/bin||")
+
+    expected_highligted_line="emscripten-${em_v}"
+    if [[ "${is_llvm}" == "0" ]] ; then
+        expected_highligted_line+=",llvm-${llvm_v}"
+    elif [[ "${is_fc}" == "0" ]] ; then
+        expected_highligted_line+=",emscripten-fastcomp-${fc_v}"
+    fi
+
+    write_list_start "Available emscripten, emscripten-fastcomp, llvm combo targets:"
+
+    for (( i = 0; i < ${#targets[@]}; i++ )); do
+        # highlight the target where the symlink is pointing to
+        [[ ${targets[i]} = \
+            ${expected_highligted_line} ]] \
+            && targets[i]=$(highlight_marker "${targets[i]}")
+    done
+    write_numbered_list -m "(none found)" "${targets[@]}"
+}
+
+### set action ###
+
+describe_set() {
+    echo "Set a new emscripten, emscripten-fastcomp, llvm combo target"
+}
+
+describe_set_parameters() {
+    echo "\"<emscripten-pv> <llvm-pv|emscripten-fastcomp-pv>\""
+}
+
+describe_set_options() {
+    echo "emscripten-pv : emscripten-\${PV}, see list"
+    echo "llvm-pv : llvm-\${PV}, see list"
+    echo "emscripten-fastcomp-pv : emscripten-fastcomp-\${PV}, see list"
+}
+
+do_set() {
+    [[ -z $1 ]] && die -q "You didn't tell me what to set the symlink to"
+    [[ $# -gt 1 ]] && die -q "Too many parameters"
+
+    if [[ -L ${EROOT}/usr/include/node ]]; then
+        # existing symlink
+        remove_symlink || die -q "Couldn't remove existing symlink"
+        set_config "$1" || die -q "Couldn't set a new symlink"
+    elif [[ -e ${EROOT}/usr/include/node ]]; then
+        # we have something strange
+        die -q "${EROOT}/usr/include/node exists but is not a symlink"
+    else
+        set_config "$1" || die -q "Couldn't set a new symlink"
+    fi
+}

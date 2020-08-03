@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <!-- only on the oiledmachine-overlay -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+  This manages the 99emscripten envd file and the emscripten.config file.
+  Works like the emsdk package but the Gentoo way.
+  </longdescription>
+  <upstream>
+    <bugs-to>https://github.com/orsonteodoro/oiledmachine-overlay/issues</bugs-to>
+    <remote-id type="github">orsonteodoro/oiledmachine-overlay</remote-id>
+  </upstream>
+</pkgmetadata>
