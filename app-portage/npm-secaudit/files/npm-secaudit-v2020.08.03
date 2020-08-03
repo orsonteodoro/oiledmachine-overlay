@@ -32,7 +32,7 @@ G_LONG_SCAN=${G_LONG_SCAN:="0"}
 G_NPM_APPS="/var/lib/portage/npm-packages" # location of registered npm packages
 G_PACKAGE_LOCK_DIR="/dev/shm"
 G_VERBOSE=${G_VERBOSE:="0"} # can only be 0 for silent, or 1 for more output
-G_VERSION="2020.07.28-r2"
+G_VERSION="2020.08.03"
 G_DATA_CACHE_DIR="/var/cache/npm-secaudit"
 G_DATA_VERSION_DATA_PATH="${G_DATA_CACHE_DIR}/lite.json"
 G_USE_ELECTRON=${G_USE_ELECTRON:="1"}
@@ -293,10 +293,10 @@ _query_lite_json() {
 }
 
 function version_audit() {
-	einfo "Inspecting the ${p} package internal versions for vulnerabilities"
+	[[ "${G_VERBOSE}" == "1" ]] && einfo "Inspecting the ${p} package internal versions for vulnerabilities"
 
 	if npm ls electron | grep -qF -e " electron@" ; then
-		einfo "Detected Electron"
+		[[ "${G_VERBOSE}" == "1" ]] && einfo "Detected Electron"
 	else
 		return 0
 	fi
@@ -312,7 +312,7 @@ if [[ "${G_TOLERANCE}" == "critical" || "${G_TOLERANCE}" == "high" \
 	if is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d ".") "-eq" 9 \
 		&& is_x_op_y ${ELECTRON_V} ${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_COND} \
 			$(echo "${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9}" | cut -f 1 -d "_") ; then
-		einfo \
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
 "Electron ${ELECTRON_V} has a critical vulnerability itself.  For details see\n\
 ${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_LINK_ADVISORY}"
 		is_vulnerable=1
@@ -321,7 +321,7 @@ ${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_LINK_ADVISORY}"
 	if is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d ".") "-eq" 8 \
 		&& is_x_op_y ${ELECTRON_V} ${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_COND} \
 			$(echo "${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_8}" | cut -f 1 -d "_") ; then
-		einfo \
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
 "Electron ${ELECTRON_V} has a critical vulnerability itself.  For details see\n\
 ${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_LINK_ADVISORY}"
 		is_vulnerable=1
@@ -330,7 +330,7 @@ ${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_LINK_ADVISORY}"
 	if is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d ".") "-eq" 7 \
 		&& is_x_op_y ${ELECTRON_V} ${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_COND} \
 			$(echo "${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7}" | cut -f 1 -d "_") ; then
-		einfo \
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
 "Electron ${ELECTRON_V} has a critical vulnerability itself.  For details see\n\
 ${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_LINK_ADVISORY}"
 		is_vulnerable=1
@@ -338,13 +338,13 @@ ${G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_LINK_ADVISORY}"
 
 	if is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d ".") "-le" 6 ; then
 		# Let it fail in ${CHROMIUM_V} vulernability tests
-		einfo "Electron ${ELECTRON_V} has already reached End Of Life (EOL)."
+		[[ "${G_VERBOSE}" == "1" ]] && einfo "Electron ${ELECTRON_V} has already reached End Of Life (EOL)."
 		is_vulnerable=1
 	fi
 
 	if is_x_op_y "${CHROMIUM_V}" ${G_INSECURE_NVD_CHROME_LAST_CRITICAL_COND} \
 		"${G_INSECURE_NVD_CHROME_LAST_CRITICAL}" ; then
-		einfo \
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
 "Electron ${ELECTRON_V} has a critical vulnerability in internal Chromium\n\
 which is version ${CHROMIUM_V}.  For details see\n\
 ${G_INSECURE_NVD_CHROME_LAST_CRITICAL_LINK_ADVISORY}"
@@ -352,7 +352,7 @@ ${G_INSECURE_NVD_CHROME_LAST_CRITICAL_LINK_ADVISORY}"
 	fi
 	if is_x_op_y "${CHROMIUM_V}" ${G_INSECURE_GLSA_CHROME_LATEST_COND} \
 		"${G_INSECURE_GLSA_CHROME_LATEST}" ; then
-		einfo \
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
 "Electron ${ELECTRON_V} has a GLSA advisory for internal Chromium\n\
 ${CHROMIUM_V}.  See\n\
 ${G_INSECURE_GLSA_CHROME_LATEST_LINK_ADVISORY}"
@@ -364,7 +364,7 @@ if [[ "${G_TOLERANCE}" == "high" || "${G_TOLERANCE}" == "moderate" \
 	|| "${G_TOLERANCE}" == "low" ]] ; then
 	if is_x_op_y $(echo "${CHROMIUM_V}" | cut -f 1 -d "-") ${G_INSECURE_NVD_CHROME_LAST_HIGH_COND} \
 		"${G_INSECURE_NVD_CHROME_LAST_HIGH}" ; then
-		einfo \
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
 "Electron ${ELECTRON_V} has a high advisory for internal Chromium\n\
 ${V8_V}.  See\n\
 ${G_INSECURE_NVD_CHROME_LAST_HIGH_LINK_ADVISORY}"
@@ -374,7 +374,7 @@ ${G_INSECURE_NVD_CHROME_LAST_HIGH_LINK_ADVISORY}"
 
 	if is_x_op_y $(echo "${V8_V}" | cut -f 1 -d "-") ${G_INSECURE_NVD_V8_LAST_HIGH_COND} \
 		"${G_INSECURE_NVD_V8_LAST_HIGH}" ; then
-		einfo \
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
 "Electron ${ELECTRON_V} has a high advisory for internal V8\n\
 ${V8_V}.  See\n\
 ${G_INSECURE_NVD_V8_LAST_HIGH_LINK_ADVISORY}"
@@ -404,7 +404,7 @@ function recursive_package_lock_audit() {
 	local result="0"
 	local p="$1"
 	local path="$2"
-	echo -e "\n>>> Checking ${p}"
+	echo ">>> Checking ${p}"
 	dinfo "Performing recursive package-lock.json audit"
 	L=$(find . -name "package-lock.json")
 	for l in ${L}; do
@@ -482,7 +482,6 @@ re-emerge to verify if has a vulnerability."
 		popd >/dev/null
 	done
 	dinfo "Auditing security done"
-	echo ""
 	return ${result}
 }
 
@@ -510,7 +509,7 @@ installed."
 					version_audit
 					r2="$?"
 				fi
-				einfo "r1=${r1} r2=${r2}"
+				dinfo "r1=${r1} r2=${r2}"
 				if [[ "$r1" == "0" && "$r2" == "0" ]] ; then
 					dinfo "Package ${p} is good."
 				else
@@ -537,7 +536,6 @@ function summary() {
 		einfo \
 "npm-secaudit found ${n_insecure} insecure apps.  Please update immediately\n\
 with \`emerge @${G_INSECURE_SET_FN}\`.\n\
-\n\
 For a full report, run with \`${D}/$(basename $BASH_SOURCE) -v\`."
 	else
 		einfo "No apps found with >=${G_TOLERANCE} vulnerability level."
