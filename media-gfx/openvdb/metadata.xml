@@ -3,9 +3,10 @@
 <pkgmetadata>
 	<!-- ebuild fork only on the oiledmachine-overlay -->
 	<maintainer type="person">
-		<email>dracwyrm@gentoo.org</email>
-		<name>Jonathan Scruggs</name>
+		<email>orsonteodoro@hotmail.com</email>
+		<name>Orson Teodoro</name>
 	</maintainer>
+        <!-- ebuild copied from cg overlay -->
 	<!-- originators -->
 	<maintainer type="person">
 		<email>dracwyrm@gentoo.org</email>
@@ -19,6 +20,9 @@
 		This ebuild fork is temporary and may be removed in the future
 		without warning.  It's to fix the:
 		files/file.patch: No such file or directory error.
+
+		SLOT changed to 0/${PV} as a security precaution in case this ebuild
+		allows static-libs.
 
 		Libraries from Dreamworks Animation for the efficient manipulation 
 		of volumetric data used in big budget movies like 'Cloudy with a
