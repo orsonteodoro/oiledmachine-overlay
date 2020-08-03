@@ -54,11 +54,9 @@ src_install() {
 	cmake-static-libs_foreach_impl install_impl
 	docinto licenses
 	dodoc LICENSE
-	if use vdpau ; then
-		cat <<-EOF > "${T}"/99${P}
-			LDPATH=\
+	cat <<-EOF > "${T}"/99${P}
+		LDPATH=\
 "/usr/lib64/XdgUtils"
-		EOF
-		doenvd "${T}"/99${P}
-	fi
+	EOF
+	doenvd "${T}"/99${P}
 }
