@@ -18,15 +18,16 @@ LICENSE+=" MIT" # upload tool
 KEYWORDS="~amd64 ~arm ~arm64"
 IUSE="firejail gnome travis-ci kde"
 RDEPEND="
-	travis-ci? (
-		dev-libs/openssl
-		dev-vcs/git
-	)
+	!app-arch/appimaged
 	firejail? ( sys-apps/firejail )
 	gnome? ( gnome-base/gvfs[udisks] )
 	kde? ( kde-frameworks/solid )
 	sys-apps/dbus
-	sys-apps/systemd"
+	sys-apps/systemd
+	travis-ci? (
+		dev-libs/openssl
+		dev-vcs/git
+	)"
 DEPEND="${RDEPEND}
 	>=dev-lang/go-1.13.4"
 REQUIRED_USE="|| ( gnome kde )"
