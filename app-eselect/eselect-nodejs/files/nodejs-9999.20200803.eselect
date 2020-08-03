@@ -5,7 +5,7 @@
 
 DESCRIPTION="Manages the nodejs include symlink"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20200727"
+VERSION="20200803"
 PN="nodejs"
 
 # find a list of Node.js symlink targets
@@ -18,7 +18,7 @@ find_targets() {
 
 # remove the Node.js symlinks
 remove_symlink() {
-    rm "${EROOT}/usr/include/node"
+    rm "${EROOT}/usr/include/node" 2>/dev/null 1>/dev/null || true
 }
 
 # set the Node.js symlinks
@@ -28,14 +28,15 @@ set_symlink() {
     if is_number "${target}"; then
         local targets=( $(find_targets) )
         target=${targets[target-1]}
+        ln -s "${EROOT}/usr/include/${target}" "${EROOT}/usr/include/node"
     elif [[ -d "${EROOT}/usr/include/${target}" && "${target}" =~ ^node[0-9]* ]] ; then
         target=$(echo "${target}" | sed -e "s|node||g")
+        ln -s "${EROOT}/usr/include/node${target}" "${EROOT}/usr/include/node"
     else
         echo "Failed to set symlink and is now gone."
         return
     fi
 
-    ln -s "${EROOT}/usr/include/node${target}" "${EROOT}/usr/include/node"
 }
 
 ### show action ###
