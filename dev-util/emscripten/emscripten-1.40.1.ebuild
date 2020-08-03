@@ -69,7 +69,7 @@ Package
   libcxx, libcxxabi, libunwind - MIT UoI-NCSA
 "
 KEYWORDS="~amd64 ~x86"
-SLOT="0"
+SLOT="$(ver_cut 1)/${PV}"
 CLOSURE_COMPILER_SLOT="0"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit cmake-utils flag-o-matic java-utils-2 npm-secaudit python-single-r1 toolchain-funcs
@@ -83,6 +83,7 @@ JAVA_V="1.8"
 # See https://github.com/google/closure-compiler-npm/blob/v20200224.0.0/packages/google-closure-compiler/package.json
 # They use the latest commit for llvm and clang
 RDEPEND="${PYTHON_DEPS}
+	app-eselect/eselect-emscripten
 	closure-compiler? (
 		system-closure-compiler? ( \
 >=dev-util/closure-compiler-npm-20200224:${CLOSURE_COMPILER_SLOT}[closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?] )
