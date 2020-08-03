@@ -1,0 +1,20 @@
+--- a/openvdb/python/pyGrid.h
++++ b/openvdb/python/pyGrid.h
+@@ -40,6 +40,7 @@
+ #include <boost/version.hpp>
+ #define DWA_BOOST_VERSION (10 * BOOST_VERSION)
+ #endif
++#define PY_OPENVDB_USE_NUMPY
+ #ifdef PY_OPENVDB_USE_NUMPY
+   #if DWA_BOOST_VERSION >= 1065000
+     // boost::python::numeric was replaced with boost::python::numpy in Boost 1.65.
+--- a/openvdb/python/CMakeLists.txt
++++ b/openvdb/python/CMakeLists.txt
+@@ -90,6 +90,7 @@
+   ${GLFW_DEPENDENT_LIBRARIES}
+   ${GLEW_GLEW_LIBRARY}
+   ${Boost_PYTHON_LIBRARY}
++  ${Boost_NUMPY_LIBRARY}
+   ${PYTHON_LIBRARY}
+   ${Ilmbase_HALF_LIBRARY}
+   )

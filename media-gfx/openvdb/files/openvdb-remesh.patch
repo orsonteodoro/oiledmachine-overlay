@@ -1,0 +1,573 @@
+--- a/openvdb/python/pyGrid.h
++++ b/openvdb/python/pyGrid.h
+@@ -63,10 +63,13 @@
+ #include "openvdb/io/Stream.h"
+ #include "openvdb/math/Math.h" // for math::isExactlyEqual()
+ #include "openvdb/tools/LevelSetSphere.h"
++#include "openvdb/tools/ParticlesToLevelSet.h"
+ #include "openvdb/tools/Dense.h"
+ #include "openvdb/tools/ChangeBackground.h"
+ #include "openvdb/tools/Prune.h"
+ #include "openvdb/tools/SignedFloodFill.h"
++#include "openvdb/tools/Filter.h"
++
+ #include "pyutil.h"
+ #include "pyAccessor.h" // for pyAccessor::AccessorWrap
+ #include "pyopenvdb.h"
+@@ -313,7 +316,11 @@
+ {
+     if (grid) {
+         if (!strObj) { // if name is None
++#ifdef WIN32
++			grid->removeMeta("name");
++#else
+             grid->removeMeta(GridBase::META_GRID_NAME);
++#endif
+         } else {
+             const std::string name = pyutil::extractArg<std::string>(
+                 strObj, "setName", /*className=*/nullptr, /*argIdx=*/1, "str");
+@@ -328,7 +335,11 @@
+ {
+     if (grid) {
+         if (!strObj) { // if name is None
++#ifdef WIN32
++			grid->removeMeta("creator");
++#else
+             grid->removeMeta(GridBase::META_GRID_CREATOR);
++#endif
+         } else {
+             const std::string name = pyutil::extractArg<std::string>(
+                 strObj, "setCreator", /*className=*/nullptr, /*argIdx=*/1, "str");
+@@ -1390,6 +1401,259 @@
+ }
+ 
+ 
++//template<typename GridType>
++//inline typename GridType::Ptr
++template<typename GridType>
++inline openvdb::FloatGrid::Ptr
++pointsToLevelSet(
++	py::object pointsObj,
++	py::object xformObj,
++	py::object radiusObj)
++{
++	class ParticleList {
++	private:
++		std::vector<Vec3s> *points;
++		openvdb::Real psize;
++	public:
++		ParticleList(std::vector<Vec3s> *p) {
++			points = p;
++			psize = 0.0f;
++		}
++
++		using PosType = openvdb::Vec3R;
++		// Return the total number of particles in list.
++		// Always required!
++		size_t size() const {
++			return points->size();
++		}
++
++		// Get the world space position of the nth particle.
++		// Required by ParticledToLevelSet::rasterizeSphere(*this,radius).
++		void getPos(size_t n, Vec3R& xyz) const {
++			const Vec3s p = points->at(n);
++			xyz[0] = p[0], xyz[1] = p[1], xyz[2] = p[2];
++		}
++
++		// Get the world space position and radius of the nth particle.
++		// Required by ParticledToLevelSet::rasterizeSphere(*this).
++		void getPosRad(size_t n, Vec3R& xyz, Real& rad) const {
++			const Vec3s p = points->at(n);
++			xyz[0] = p[0], xyz[1] = p[1], xyz[2] = p[2];
++			rad = psize;
++		}
++		// Get the world space position, radius and velocity of the nth particle.
++		// Required by ParticledToLevelSet::rasterizeSphere(*this,radius).
++		void getPosRadVel(size_t n, Vec3R& xyz, Real& rad, Vec3R& vel) const {
++			const Vec3s p = points->at(n);
++			xyz[0] = p[0], xyz[1] = p[1], xyz[2] = p[2];
++			rad = psize;
++		}
++
++		// Get the attribute of the nth particle. AttributeType is user-defined!
++		// Only required if attribute transfer is enabled in ParticlesToLevelSet.
++		void getAtt(size_t n, openvdb::Int32& att) const {
++			att = 0;
++		};
++	};
++
++	struct Local {
++		// Return the name of the Python grid method (for use in error messages).
++		static const char* methodName() { return "createLevelSetFromPoints"; }
++
++		// Raise a Python exception if the given NumPy array does not have dimensions M x N
++		// or does not have an integer or floating-point data type.
++		static void validate2DNumPyArray(NumPyArrayType arrayObj,
++			const size_t N, const char* desiredType)
++		{
++			const auto dims = arrayDimensions(arrayObj);
++
++			bool wrongArrayType = false;
++			// Check array dimensions.
++			if (dims.size() != 2 || dims[1] != N) {
++				wrongArrayType = true;
++			}
++			else {
++				// Check array data type.
++				switch (arrayTypeId(arrayObj)) {
++				case DtId::FLOAT: case DtId::DOUBLE: //case DtId::HALF:
++				case DtId::INT16: case DtId::INT32: case DtId::INT64:
++				case DtId::UINT32: case DtId::UINT64: break;
++				default: wrongArrayType = true; break;
++				}
++			}
++			if (wrongArrayType) {
++				// Generate an error message and raise a Python TypeError.
++				std::ostringstream os;
++				os << "expected N x 3 numpy.ndarray of " << desiredType << ", found ";
++				switch (dims.size()) {
++				case 0: os << "zero-dimensional"; break;
++				case 1: os << "one-dimensional"; break;
++				default:
++					os << dims[0];
++					for (size_t i = 1; i < dims.size(); ++i) { os << " x " << dims[i]; }
++					break;
++				}
++				os << " " << arrayTypeName(arrayObj) << " array as argument 1 to "
++					<< pyutil::GridTraits<GridType>::name() << "." << methodName() << "()";
++				PyErr_SetString(PyExc_TypeError, os.str().c_str());
++				py::throw_error_already_set();
++			}
++		}
++	};
++
++	// Extract the list of mesh vertices from the arguments to this method.
++	std::vector<Vec3s> points;
++	if (!pointsObj.is_none()) {
++		// Extract a reference to (not a copy of) a NumPy array argument,
++		// or throw an exception if the argument is not a NumPy array object.
++		auto arrayObj = extractValueArg<GridType, NumPyArrayType>(
++			pointsObj, Local::methodName(), /*argIdx=*/1, "numpy.ndarray");
++
++		// Throw an exception if the array has the wrong type or dimensions.
++		Local::validate2DNumPyArray(arrayObj, /*N=*/3, /*desiredType=*/"float");
++
++		// Copy values from the array to the vector.
++		copyVecArray(arrayObj, points);
++	}
++
++	// Extract the transform from the arguments to this method.
++	math::Transform::Ptr xform = math::Transform::createLinearTransform();
++	if (!xformObj.is_none()) {
++		xform = extractValueArg<GridType, math::Transform::Ptr>(
++			xformObj, Local::methodName(), /*argIdx=*/2, "Transform");
++	}
++
++	const float radius = pyutil::extractArg<float>(
++		radiusObj, "pointsToLevelSet", /*className=*/nullptr, /*argIdx=*/3, "float");
++
++	openvdb::FloatGrid::Ptr outputGrid;
++
++	float background = xform->voxelSize()[0] * 2.0f; // / 8.0f;
++
++	outputGrid = openvdb::FloatGrid::create(background);
++	outputGrid->setGridClass(openvdb::GRID_LEVEL_SET);
++	outputGrid->setTransform(xform);
++
++	openvdb::tools::ParticlesToLevelSet<openvdb::FloatGrid, openvdb::Int32> raster(*outputGrid);
++
++	raster.setRmin(1.0f);
++	raster.setRmax(1e15f);
++
++	ParticleList paList(&points);
++
++	raster.rasterizeSpheres(paList, radius);
++
++	// always prune to produce a valid narrow-band level set.
++	raster.finalize(true);
++	
++	//openvdb::Int32Grid::Ptr closestPtnIdxGrid = raster.attributeGrid();
++
++	return outputGrid;
++}
++
++
++// Extending OpenVDB Python functionality
++
++template<typename GridType>
++inline py::object
++volumeToComplexMesh(GridType& grid, py::object isovalueObj, 
++	py::object adaptivityObj,
++	py::object smoothvalueObj,
++	py::object widthObj,
++	py::object sigmaObj
++	)
++{
++	const double isovalue = pyutil::extractArg<double>(
++		isovalueObj, "convertToComplex", /*className=*/nullptr, /*argIdx=*/2, "float");
++
++	const double adaptivity = pyutil::extractArg<double>(
++		adaptivityObj, "convertToComplex", /*className=*/nullptr, /*argIdx=*/3, "float");
++
++	const int smooth = pyutil::extractArg<int>(
++		smoothvalueObj, "convertToComplex", /*className=*/nullptr, /*argIdx=*/4, "int");
++
++	const double width = pyutil::extractArg<int>(
++		widthObj, "convertToComplex", /*className=*/nullptr, /*argIdx=*/5, "int");
++
++	const double sigma = pyutil::extractArg<double>(
++		sigmaObj, "convertToComplex", /*className=*/nullptr, /*argIdx=*/6, "float");
++
++	// Mesh the input grid and populate lists of mesh vertices and face vertex indices.
++	std::vector<Vec3s> points;
++	std::vector<Vec4I> quads;
++	std::vector<Vec3I> triangles;
++
++	// Gaussian smoothing
++	openvdb::tools::Filter<GridType> filter(grid);
++	
++	if (smooth > 0) {
++		filter.gaussian(width, smooth, sigma);
++	}
++
++	tools::volumeToMesh(grid, points, triangles, quads, isovalue, adaptivity);
++
++#ifdef PY_OPENVDB_USE_BOOST_PYTHON_NUMPY
++    const py::object own;
++    auto dtype = py::numpy::dtype::get_builtin<Vec3s::value_type>();
++    auto shape = py::make_tuple(points.size(), 3);
++    auto stride = py::make_tuple(3 * sizeof(Vec3s::value_type), sizeof(Vec3s::value_type));
++    // Create a deep copy of the array (because the point vector will be destroyed
++    // when this function returns).
++    auto pointArrayObj = py::numpy::from_data(points.data(), dtype, shape, stride, own).copy();
++
++    dtype = py::numpy::dtype::get_builtin<Vec3I::value_type>();
++    shape = py::make_tuple(triangles.size(), 3);
++    stride = py::make_tuple(3 * sizeof(Vec3I::value_type), sizeof(Vec3I::value_type));
++    auto triangleArrayObj = py::numpy::from_data(
++        triangles.data(), dtype, shape, stride, own).copy(); // deep copy
++
++    dtype = py::numpy::dtype::get_builtin<Vec4I::value_type>();
++    shape = py::make_tuple(quads.size(), 4);
++    stride = py::make_tuple(4 * sizeof(Vec4I::value_type), sizeof(Vec4I::value_type));
++    auto quadArrayObj = py::numpy::from_data(
++        quads.data(), dtype, shape, stride, own).copy(); // deep copy
++#else // !defined PY_OPENVDB_USE_BOOST_PYTHON_NUMPY
++    // Copy vertices into an N x 3 NumPy array.
++    py::object pointArrayObj = py::numeric::array(py::list(), "float32");
++    if (!points.empty()) {
++        npy_intp dims[2] = { npy_intp(points.size()), 3 };
++        // Construct a NumPy array that wraps the point vector.
++        if (PyArrayObject* arrayObj = reinterpret_cast<PyArrayObject*>(
++            PyArray_SimpleNewFromData(/*dims=*/2, dims, NPY_FLOAT, &points[0])))
++        {
++            // Create a deep copy of the array (because the point vector will be
++            // destroyed when this function returns).
++            pointArrayObj = copyNumPyArray(arrayObj, NPY_CORDER);
++        }
++    }
++
++    // Copy triangular face indices into an N x 3 NumPy array.
++    py::object triangleArrayObj = py::numeric::array(py::list(), "uint32");
++    if (!triangles.empty()) {
++        npy_intp dims[2] = { npy_intp(triangles.size()), 3 };
++        if (PyArrayObject* arrayObj = reinterpret_cast<PyArrayObject*>(
++            PyArray_SimpleNewFromData(/*dims=*/2, dims, NPY_UINT32, &triangles[0])))
++        {
++            triangleArrayObj = copyNumPyArray(arrayObj, NPY_CORDER);
++        }
++    }
++
++    // Copy quadrilateral face indices into an N x 4 NumPy array.
++    py::object quadArrayObj = py::numeric::array(py::list(), "uint32");
++    if (!quads.empty()) {
++        npy_intp dims[2] = { npy_intp(quads.size()), 4 };
++        if (PyArrayObject* arrayObj = reinterpret_cast<PyArrayObject*>(
++            PyArray_SimpleNewFromData(/*dims=*/2, dims, NPY_UINT32, &quads[0])))
++        {
++            quadArrayObj = copyNumPyArray(arrayObj, NPY_CORDER);
++        }
++    }
++#endif // PY_OPENVDB_USE_BOOST_PYTHON_NUMPY
++
++	return py::make_tuple(pointArrayObj, triangleArrayObj, quadArrayObj);
++}
++
++
+ template<typename GridType>
+ inline py::object
+ volumeToQuadMesh(const GridType& grid, py::object isovalueObj)
+@@ -2375,7 +2639,24 @@
+                 + std::string(openvdb::VecTraits<ValueT>::IsVec ? "four" : "three")
+                 + "-dimensional array with values\n"
+                 "from this grid, starting at voxel (i, j, k).").c_str())
+-
++			.def("convertToComplex",
++				&pyGrid::volumeToComplexMesh<GridType>,
++				(py::arg("isovalue") = 0, 
++					py::arg("adaptivity") = 0,
++					py::arg("smooth") = 0,
++					py::arg("width") = 1,
++					py::arg("sigma") = 2.0
++					),
++				"convertToComplex(isovalue=0, adaptivity=0, smooth=0, width=1) -> points, quads\n\n"
++				"First do a Gaussian filtering on the grid.\n\n"
++				"Then adaptively mesh a scalar grid that has a continuous isosurface\n"
++				"at the given isovalue.  Return a NumPy array of world-space\n"
++				"points and NumPy arrays of 3- and 4-tuples of point indices,\n"
++				"which specify the vertices of the triangles and quadrilaterals\n"
++				"that form the mesh.  Adaptivity can vary from 0 to 1, where 0\n"
++				"produces a high-polygon-count mesh that closely approximates\n"
++				"the isosurface, and 1 produces a lower-polygon-count mesh\n"
++				"with some loss of surface detail.")
+             .def("convertToQuads",
+                 &pyGrid::volumeToQuadMesh<GridType>,
+                 (py::arg("isovalue")=0),
+@@ -2396,6 +2677,16 @@
+                 "produces a high-polygon-count mesh that closely approximates\n"
+                 "the isosurface, and 1 produces a lower-polygon-count mesh\n"
+                 "with some loss of surface detail.")
++
++			.def("createLevelSetFromPoints",
++				&pyGrid::pointsToLevelSet<GridType>,
++				(py::arg("points"),
++					py::arg("transform")=py::object(),
++					py::arg("radius")=py::object()
++					//py::arg("size") = 1.0f
++					),
++				"(TBD) points, transform, radius")
++
+             .def("createLevelSetFromPolygons",
+                 &pyGrid::meshToLevelSet<GridType>,
+                 (py::arg("points"),
+--- a/openvdb/tools/Filter.h
++++ b/openvdb/tools/Filter.h
+@@ -51,7 +51,11 @@
+ #include <algorithm> // for std::max()
+ #include <functional>
+ #include <type_traits>
++#include <cmath>
+ 
++#define PI 3.141592653589793f
++#define EE 2.718281828459045f
++#define PISQRT 2.5066282746310002f
+ 
+ namespace openvdb {
+ OPENVDB_USE_VERSION_NAMESPACE
+@@ -149,12 +153,11 @@
+ 
+     /// @brief One iteration of a fast separable Gaussian filter.
+     ///
+-    /// @note This is approximated as 4 iterations of a separable mean filter
+-    /// which typically leads an approximation that's better than 95%!
+     /// @param width The width of the mean-value filter is 2*width+1 voxels.
+     /// @param iterations Number of times the mean-value filter is applied.
++	/// @param sigma of the Gaussian distribution
+     /// @param mask Optional alpha mask.
+-    void gaussian(int width = 1, int iterations = 1, const MaskType* mask = nullptr);
++    void gaussian(int width=1, int iterations=1, float sigma=1.0, const MaskType* mask = nullptr);
+ 
+     /// @brief One iteration of a median-value filter
+     ///
+@@ -198,12 +201,28 @@
+         const float frac;
+     };
+ 
++	template<size_t Axis>
++	struct AvgI {
++		AvgI(const GridT* grid, Int32 w, float q) : acc(grid->tree()), width(w), sigma(q) {}
++		inline ValueType operator()(Coord xyz);
++		typename GridT::ConstAccessor acc;
++		const Int32 width;
++		const float sigma;
++	};
++
+     // Private filter methods called by tbb::parallel_for threads
+     template <typename AvgT>
+     void doBox( const RangeType& r, Int32 w);
+     void doBoxX(const RangeType& r, Int32 w) { this->doBox<Avg<0> >(r,w); }
+     void doBoxZ(const RangeType& r, Int32 w) { this->doBox<Avg<1> >(r,w); }
+     void doBoxY(const RangeType& r, Int32 w) { this->doBox<Avg<2> >(r,w); }
++
++	template <typename AvgT>
++	void doBoxI(const RangeType& r, Int32 w, float q);
++	void doBoxXI(const RangeType& r, Int32 w, float q) { this->doBoxI<AvgI<0> >(r, w, q); }
++	void doBoxZI(const RangeType& r, Int32 w, float q) { this->doBoxI<AvgI<1> >(r, w, q); }
++	void doBoxYI(const RangeType& r, Int32 w, float q) { this->doBoxI<AvgI<2> >(r, w, q); }
++
+     void doMedian(const RangeType&, int);
+     void doOffset(const RangeType&, ValueType);
+     /// @return true if the process was interrupted
+@@ -242,6 +261,34 @@
+ }
+ 
+ 
++template<typename GridT, typename MaskT, typename InterruptT>
++template<size_t Axis>
++inline typename GridT::ValueType
++Filter<GridT, MaskT, InterruptT>::AvgI<Axis>::operator()(Coord xyz)
++{
++	// Sampled Gaussian kernel
++	ValueType sum = zeroVal<ValueType>();
++	float multiplier = 0.f, error = 0.f;
++	//float sigma = std::sqrt((float)width / 4.0f);
++	// M = C*sqrt(t) + 1
++	//int M = (int)(5.0f * sigma + 1.0f);
++	int M = width;
++
++	Int32 &i = xyz[Axis], j = i + M;
++	Int32 center = i;
++
++	for (i -= M; i <= j; ++i) {
++		// G(x) = 1/sqrt(2*PI)/sigma * e ** -(x**2/(2*sigma**2))
++		Int32 x = i - center;
++		multiplier = 1.f / PISQRT / sigma * std::pow(EE, -x*x / (2 * sigma*sigma));
++		error += multiplier;
++		filter_internal::accum(sum, multiplier * acc.getValue(xyz));
++	}
++	//return static_cast<ValueType>(sum / error);
++	return static_cast<ValueType>(sum);
++}
++
++
+ ////////////////////////////////////////
+ 
+ 
+@@ -274,27 +321,26 @@
+ 
+ template<typename GridT, typename MaskT, typename InterruptT>
+ inline void
+-Filter<GridT, MaskT, InterruptT>::gaussian(int width, int iterations, const MaskType* mask)
++Filter<GridT, MaskT, InterruptT>::gaussian(int width, int iterations, float sigma, const MaskType* mask)
+ {
+     mMask = mask;
+ 
+     if (mInterrupter) mInterrupter->start("Applying Gaussian filter");
+ 
+-    const int w = std::max(1, width);
++	const float q = std::max(0.1f, sigma);
++	const int w = std::max(1, width);
+ 
+     LeafManagerType leafs(mGrid->tree(), 1, mGrainSize==0);
+ 
+     for (int i=0; i<iterations; ++i) {
+-        for (int n=0; n<4 && !this->wasInterrupted(); ++n) {
+-            mTask = std::bind(&Filter::doBoxX, std::placeholders::_1, std::placeholders::_2, w);
+-            this->cook(leafs);
++        mTask = std::bind(&Filter::doBoxXI, std::placeholders::_1, std::placeholders::_2, w, q);
++        this->cook(leafs);
+ 
+-            mTask = std::bind(&Filter::doBoxY, std::placeholders::_1, std::placeholders::_2, w);
+-            this->cook(leafs);
++        mTask = std::bind(&Filter::doBoxYI, std::placeholders::_1, std::placeholders::_2, w, q);
++        this->cook(leafs);
+ 
+-            mTask = std::bind(&Filter::doBoxZ, std::placeholders::_1, std::placeholders::_2, w);
+-            this->cook(leafs);
+-        }
++        mTask = std::bind(&Filter::doBoxZI, std::placeholders::_1, std::placeholders::_2, w, q);
++        this->cook(leafs);
+     }
+ 
+     if (mInterrupter) mInterrupter->end();
+@@ -385,6 +431,24 @@
+ }
+ 
+ 
++/// One dimensional convolution of a separable filter
++template<typename GridT, typename MaskT, typename InterruptT>
++template <typename AvgT>
++inline void
++Filter<GridT, MaskT, InterruptT>::doBoxI(const RangeType& range, Int32 w, float q)
++{
++	this->wasInterrupted();
++	AvgT avg(mGrid, w, q);
++
++	for (LeafIterT leafIter = range.begin(); leafIter; ++leafIter) {
++		BufferT& buffer = leafIter.buffer(1);
++		for (VoxelCIterT iter = leafIter->cbeginValueOn(); iter; ++iter) {
++			buffer.setValue(iter.pos(), avg(iter.getCoord()));
++		}
++	}
++}
++
++
+ /// Performs simple but slow median-value diffusion
+ template<typename GridT, typename MaskT, typename InterruptT>
+ inline void
+--- a/openvdb/util/Util.cc
++++ b/openvdb/util/Util.cc
+@@ -36,6 +36,10 @@
+ namespace OPENVDB_VERSION_NAME {
+ namespace util {
+ 
++#ifdef WIN32
++
++#else
++
+ const Index32 INVALID_IDX = std::numeric_limits<Index32>::max();
+ 
+ const Coord COORD_OFFSETS[26] =
+@@ -68,6 +72,9 @@
+     Coord( 1,  1, -1)
+ };
+ 
++#endif
++
++
+ } // namespace util
+ } // namespace OPENVDB_VERSION_NAME
+ } // namespace openvdb
+--- a/openvdb/util/Util.h
++++ b/openvdb/util/Util.h
+@@ -42,11 +42,48 @@
+ namespace OPENVDB_VERSION_NAME {
+ namespace util {
+ 
++#ifdef WIN32
++
++OPENVDB_API extern const Index32 INVALID_IDX = 0xFFFFFFFF;
++
++OPENVDB_API extern const Coord COORD_OFFSETS[26] =
++{
++	Coord(1,  0,  0), /// Voxel-face adjacent neghbours
++	Coord(-1,  0,  0), /// 0 to 5
++	Coord(0,  1,  0),
++	Coord(0, -1,  0),
++	Coord(0,  0,  1),
++	Coord(0,  0, -1),
++	Coord(1,  0, -1), /// Voxel-edge adjacent neghbours
++	Coord(-1,  0, -1), /// 6 to 17
++	Coord(1,  0,  1),
++	Coord(-1,  0,  1),
++	Coord(1,  1,  0),
++	Coord(-1,  1,  0),
++	Coord(1, -1,  0),
++	Coord(-1, -1,  0),
++	Coord(0, -1,  1),
++	Coord(0, -1, -1),
++	Coord(0,  1,  1),
++	Coord(0,  1, -1),
++	Coord(-1, -1, -1), /// Voxel-corner adjacent neghbours
++	Coord(-1, -1,  1), /// 18 to 25
++	Coord(1, -1,  1),
++	Coord(1, -1, -1),
++	Coord(-1,  1, -1),
++	Coord(-1,  1,  1),
++	Coord(1,  1,  1),
++	Coord(1,  1, -1)
++};
++
++#else
++
+ OPENVDB_API extern const Index32 INVALID_IDX;
+ 
+-/// @brief coordinate offset table for neighboring voxels
+ OPENVDB_API extern const Coord COORD_OFFSETS[26];
+ 
++#endif
++
+ 
+ ////////////////////////////////////////
+ 

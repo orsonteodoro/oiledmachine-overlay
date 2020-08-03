@@ -1,0 +1,13 @@
+diff --git a/openvdb/python/CMakeLists.txt b/openvdb/python/CMakeLists.txt
+index 4b06434..91ac808 100644
+--- a/openvdb/python/CMakeLists.txt
++++ b/openvdb/python/CMakeLists.txt
+@@ -3,7 +3,7 @@ PROJECT ( PyOpenVDB )
+ 
+ FIND_PACKAGE ( PythonInterp REQUIRED )
+ FIND_PACKAGE ( PythonLibs REQUIRED )
+-FIND_PACKAGE ( Boost ${MINIMUM_BOOST_VERSION} REQUIRED COMPONENTS python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR} )
++FIND_PACKAGE ( Boost ${MINIMUM_BOOST_VERSION} REQUIRED COMPONENTS python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR} )
+ 
+ 
+ IF ( NOT OPENVDB_BUILD_CORE )

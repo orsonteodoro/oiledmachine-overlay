@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<!-- ebuild fork only on the oiledmachine-overlay -->
+	<maintainer type="person">
+		<email>dracwyrm@gentoo.org</email>
+		<name>Jonathan Scruggs</name>
+	</maintainer>
+	<!-- originators -->
+	<maintainer type="person">
+		<email>dracwyrm@gentoo.org</email>
+		<name>Jonathan Scruggs</name>
+	</maintainer>
+	<maintainer type="person">
+		<email>agrigo2001@yahoo.com.au</email>
+		<name>Adrian Grigo</name>
+	</maintainer>
+	<longdescription>
+		This ebuild fork is temporary and may be removed in the future
+		without warning.  It's to fix the:
+		files/file.patch: No such file or directory error.
+
+		Libraries from Dreamworks Animation for the efficient manipulation 
+		of volumetric data used in big budget movies like 'Cloudy with a
+		Chance of Meatballs2' and 'How to Train Your Dragon 2'. 
+	</longdescription>
+	<use>
+		<flag restrict="&lt;media-gfx/openvdb-5.0.0" name="abi3-compat">
+			Disables newer features to maintain compatibility with ABI3. Enabled by default.
+		</flag>
+		<flag restrict="&gt;=media-gfx/openvdb-5.0.0" name="abi4-compat">
+			Disables newer features to maintain compatibility with ABI4. Enabled by default.
+		</flag>
+	</use>
+	<upstream>
+		<remote-id type="github">dreamworksanimation/openvdb</remote-id>
+	</upstream>
+</pkgmetadata>

@@ -1,0 +1,16 @@
+--- a/openvdb/unittest/TestFile.cc
++++ b/openvdb/unittest/TestFile.cc
+@@ -2551,7 +2551,13 @@
+         outdata(new char[decompbufbytes]);
+ 
+     for (int compcode = 0; compcode <= BLOSC_ZLIB; ++compcode) {
++
++#if BLOSC_VERSION_MAJOR > 1 || (BLOSC_VERSION_MAJOR == 1 && BLOSC_VERSION_MINOR >= 14)
++        const char* compname = nullptr;
++#else
+         char* compname = nullptr;
++#endif
++
+         if (0 > blosc_compcode_to_compname(compcode, &compname)) continue;
+         /// @todo This changes the compressor setting globally.
+         if (blosc_set_compressor(compname) < 0) continue;
