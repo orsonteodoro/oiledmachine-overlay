@@ -597,7 +597,9 @@ npm-secaudit_store_package_jsons() {
 	local d
 	local rd
 	local F=$(find ${ROOTDIR} -name "package-lock.json" \
-		-o -name "npm-shrinkwrap.json" -o -name "yarn.lock")
+		-o -name "npm-shrinkwrap.json" \
+		-o -name "package.json" \
+		-o -name "yarn.lock")
 	local td="${T}/package_jsons/"
 	for f in ${F}; do
 		d=$(dirname ${f})
