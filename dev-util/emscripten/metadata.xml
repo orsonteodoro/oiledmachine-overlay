@@ -30,8 +30,9 @@
       Closure Compiler.</flag>
     <flag name="closure_compiler_nodejs">Prefers using the Node.js version of
       Closure Compiler.</flag>
-    <flag name="emscripten-fastcomp">Configures and pulls this compiler.
-      This compiler is deprecated and not recommended.</flag>
+    <flag name="emscripten-fastcomp">Configures and pulls this compiler for
+      asm.js generation.  This compiler is deprecated and not
+      recommended.</flag>
     <flag name="system-closure-compiler">Uses the system's Closure Compiler
       instead of the internal version.</flag>
     <flag name="system-llvm">Configures and pulls this compiler using the
