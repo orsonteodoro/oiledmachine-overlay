@@ -5,7 +5,7 @@
 
 DESCRIPTION="Manage the /usr/bin/tsc and /usr/bin/tsserver symlinks"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20200727"
+VERSION="20200803"
 PN="typescript"
 
 # find a list of TypeScript symlink targets
@@ -18,15 +18,14 @@ find_targets() {
 
 # remove the TypeScript symlinks
 remove_symlink() {
-    rm "${EROOT}/usr/bin/tsc"
-    rm "${EROOT}/usr/bin/tsserver"
+    rm "${EROOT}/usr/bin/tsc" 2>/dev/null 1>/dev/null || true
+    rm "${EROOT}/usr/bin/tsserver" 2>/dev/null 1>/dev/null || true
 }
 
 # set the TypeScript symlinks
 set_symlink() {
     local target=$1
-
-    if [[ -f "${EROOT}/usr/lib/node/${PN}/${target}" ]] ; then
+    if [[ "${target}" =~ \. && -f "${EROOT}/usr/lib/node/${PN}/${target}/bin/tsc" ]] ; then
         target="${target}"
     elif is_number "${target}" ; then
         local targets=( $(find_targets) )
@@ -76,9 +75,11 @@ do_list() {
 
     write_list_start "Available TypeScript symlink targets:"
     for (( i = 0; i < ${#targets[@]}; i++ )); do
+        lnk_pv=$(realpath "/usr/bin/tsc" \
+		| sed -e "s|/usr/lib64/node/typescript/||" \
+			-e "s|/bin/tsc||")
         # highlight the target where the symlink is pointing to
-        [[ ${targets[i]} = \
-            $(basename "$(canonicalise "${EROOT}/usr/bin/tsc")") ]] \
+        [[ "${targets[i]}" == "${lnk_pv}" ]] \
             && targets[i]=$(highlight_marker "${targets[i]}")
     done
     write_numbered_list -m "(none found)" "${targets[@]}"
