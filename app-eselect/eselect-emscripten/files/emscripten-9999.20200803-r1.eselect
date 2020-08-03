@@ -5,7 +5,7 @@
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20200803"
+VERSION="20200803-r1"
 PN="nodejs"
 
 # Permute emscripten, emscripten-fastcomp (asm.js), llvm (wasm) targets
@@ -26,7 +26,9 @@ find_targets() {
                 echo "emscripten-${em_v},emscripten-fastcomp-${em_v}"
             elif [[ "${compiler}" == "llvm" ]] ; then
                 for llvm_v in ${LLVM_VERSIONS} ; do
-                    echo "emscripten-${em_v},llvm-${llvm_v}"
+                    if grep -qF -e "llvm_targets_WebAssembly" $(realpath "${EROOT}"/var/db/pkg/sys-devel/llvm-${llvm_v}*/USE) ; then
+                        echo "emscripten-${em_v},llvm-${llvm_v}"
+                    fi
                 done
             fi
         done

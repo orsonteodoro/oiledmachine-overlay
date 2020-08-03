@@ -17,7 +17,7 @@ RESTRICT="fetch"
 src_unpack() {
 	default
 	mkdir -p "${S}" || die
-	cp "${FILESDIR}/emscripten-${PV}.eselect" "${S}/emscripten.eselect" || die
+	cp "${FILESDIR}/emscripten-${PVR}.eselect" "${S}/emscripten.eselect" || die
 }
 
 src_install() {
