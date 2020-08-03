@@ -27,7 +27,7 @@ LICENSE="all-rights-reserved BSD BSD-2 emscripten-fastcomp-md5 GPL-2+ LLVM-Grant
 KEYWORDS="~amd64 ~x86"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit python-single-r1
-SLOT="0"
+SLOT="$(ver_cut 1-2)/${PV}"
 IUSE="clang gcc man-scan-build"
 REQUIRED_USE="${PYTHON_REQUIRED_USE} ^^ ( clang gcc )"
 # For dependencies see https://emscripten.org/docs/building_from_source/building_fastcomp_manually_from_source.html#what-you-ll-need
