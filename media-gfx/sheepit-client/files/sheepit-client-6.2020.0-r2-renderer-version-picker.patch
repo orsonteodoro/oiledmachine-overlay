@@ -268,7 +268,7 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/SettingsLoader.jav
 +			}
 +			
 +			if (allowBlender2832 != null) {
-+				prop.setProperty("use-blender2831", allowBlender2832);
++				prop.setProperty("use-blender2832", allowBlender2832);
 +			}
 +			
 +			if (allowUnknownRenderers != null) {
