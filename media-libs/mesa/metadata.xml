@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
+	<!-- only for this ebuild fork on the oiledmachine-overlay -->
+	<maintainer type="project">
+		<email>orsonteodoro@hotmail.com</email>
+		<name>Orson Teodoro</name>
+	</maintainer>
+	<!-- originator -->
 	<maintainer type="project">
 		<email>x11@gentoo.org</email>
 		<name>X11</name>
 	</maintainer>
+	<longdescription>
+		This ebuild fork exists for OpenMax support.  Updated only for ebuilds marked stable.
+	</longdescription>
 	<use>
 		<flag name="classic">Build drivers based on the classic architecture.</flag>
 		<flag name="d3d9">Enable Direct 3D9 API through Nine state tracker. Can be used together with patched wine.</flag>
@@ -17,6 +26,9 @@
 		<flag name="libglvnd">Use libglvnd for dispatch.</flag>
 		<flag name="llvm">Enable LLVM backend for Gallium3D.</flag>
 		<flag name="opencl">Enable the Clover Gallium OpenCL state tracker.</flag>
+		<flag name="openmax">Enable OpenMAX support</flag>
+		<flag name="omx-bellagio">Uses the older Bellagio as the OpenMAX IL</flag>
+		<flag name="omx-tizonia">Uses the newer Tizonia as the OpenMAX IL</flag>
 		<flag name="osmesa">Build the Mesa library for off-screen rendering.</flag>
 		<flag name="pax_kernel">Enable if the user plans to run the package under a pax enabled hardened kernel</flag>
 		<flag name="pic">disable optimized assembly code that is not PIC friendly</flag>
@@ -27,6 +39,7 @@
 		<flag name="wayland">Enable support for dev-libs/wayland</flag>
 		<flag name="xa">Enable the XA (X Acceleration) API for Gallium3D.</flag>
 		<flag name="xvmc">Enable the XvMC acceleration interface for the Gallium3D Video Layer.</flag>
+
 	</use>
 	<upstream>
 		<remote-id type="cpe">cpe:/a:mesa3d:mesa</remote-id>
