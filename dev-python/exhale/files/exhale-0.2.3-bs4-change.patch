@@ -1,0 +1,8 @@
+--- exhale-0.2.3/requirements.txt.orig	2019-06-04 23:15:16.000000000 -0700
++++ exhale-0.2.3/requirements.txt	2020-08-02 21:52:30.812155848 -0700
+@@ -1,4 +1,4 @@
+-bs4            # BeautifulSoup!
++beautifulsoup4 # BeautifulSoup!
+ lxml           # We need the lxml backend for BeautifulSoup.
+ sphinx>=1.6.1  # Exhale is a Sphinx extension.  1.6 introduces logging API.
+ breathe        # The directives used for documentation come from the excellent Breathe.
