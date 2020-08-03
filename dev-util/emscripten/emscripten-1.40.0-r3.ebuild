@@ -98,7 +98,7 @@ RDEPEND="${PYTHON_DEPS}
 			>=net-libs/nodejs-8
 		)
 	)
-	>=dev-util/binaryen-93
+	>=dev-util/binaryen-94
 	emscripten-fastcomp? ( ~dev-util/emscripten-fastcomp-${PV}:= )
 	>=net-libs/nodejs-0.10.17
 	system-llvm? (
