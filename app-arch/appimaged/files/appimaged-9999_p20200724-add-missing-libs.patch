@@ -1,0 +1,23 @@
+--- a/src/CMakeLists.txt.orig	2020-08-02 11:05:12.455590950 -0700
++++ b/src/CMakeLists.txt	2020-08-02 11:13:43.575284646 -0700
+@@ -4,12 +4,19 @@ cmake_minimum_required(VERSION 3.6)
+ 
+ find_package(PkgConfig)
++pkg_check_modules(CAIRO cairo IMPORTED_TARGET)
+ pkg_check_modules(GLIB glib-2.0 IMPORTED_TARGET)
++pkg_check_modules(LIBARCHIVE libarchive IMPORTED_TARGET)
++pkg_check_modules(LIBRSVG librsvg-2.0 IMPORTED_TARGET)
++pkg_check_modules(SQUASHFUSE squashfuse IMPORTED_TARGET)
+ 
+ pkg_check_modules(LIBAPPIMAGE libappimage REQUIRED)
+ include_directories(${LIBAPPIMAGE_INCLUDE_DIRS})
+ 
++find_package(XdgUtils "0.1.1" REQUIRED)
++link_directories(${XDGUTILS_LIBDIR})
++
+ add_executable(appimaged main.c notify.c notify.h)
+-target_link_libraries(appimaged PRIVATE inotify-tools appimage_static xdg-basedir dl PkgConfig::GLIB)
++target_link_libraries(appimaged PRIVATE inotifytools appimage_static appimage_hashlib xdg-basedir boost_filesystem dl stdc++ PkgConfig::CAIRO PkgConfig::GLIB PkgConfig::LIBARCHIVE PkgConfig::LIBRSVG PkgConfig::SQUASHFUSE pthread ${XDGUTILS_LINK_LIBRARIES})
+ 
+ install(
+     TARGETS appimaged
