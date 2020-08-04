@@ -37,11 +37,6 @@
       required to use the denoiser.</flag>
     <flag name="intel-ocl">Checks for OpenCL 1.2 support for Intel
       CPUs that may be required.</flag>
-    <flag name="lts">Prefer AMDGPU-PRO drivers with HWE (aka LTS [long term
-      support]).  HWE allows for xserver 1.20.x compatibility instead of
-      1.17.x HardWare Enabled for newer GPU products; otherwise, use the more
-      Gentoo compatible release cycle driver.
-      </flag>
     <flag name="materials">Installs the material library.</flag>
     <flag name="opencl">Checks for proper OpenCL support for GPUs.</flag>
     <flag name="opencl_orca">Checks for proper OpenCL support for pre-Vega 10
@@ -53,15 +48,19 @@
     <flag name="opengl_mesa">Pulls the required dependencies if Pro support in
       the AMDGPU-PRO driver has not been installed.</flag>
     <flag name="materials">Installs the material library.</flag>
-    <flag name="pro-drivers">Preference for the bundled AMDGPU-PRO
-      drivers.</flag>
     <flag name="split-drivers">Preference for the split AMDGPU-PRO
       packages.</flag>
     <flag name="systemwide">Installs the plugin systemwide.  Not recommened.
       </flag>
     <flag name="video_cards_amdgpu">
+      Checks for OpenCL 1.2 support or Vulkan compatibility for open amdgpu
+      drivers.</flag>
+    <flag name="video_cards_amdgpu-pro">
       Checks for OpenCL 1.2 support or Vulkan compatibility for AMDGPU-PRO
       drivers.</flag>
+    <flag name="video_cards_amdgpu-lts">
+      Checks for OpenCL 1.2 support or Vulkan compatibility for AMDGPU-PRO
+      (HWE/LTS) drivers.</flag>
     <flag name="video_cards_i965">Checks for OpenCL 1.2 support or Vulkan
       compatibility for Intel or IGPs/GPUs.  For Gen 7.5+ (Haswell)
       users.</flag>

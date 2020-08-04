@@ -7,28 +7,27 @@ DESCRIPTION="An OpenCL accelerated scaleable raytracing rendering engine for \
 Blender"
 HOMEPAGE="https://www.amd.com/en/technologies/radeon-prorender-blender"
 HOMEPAGE_DL=\
-"https://www.amd.com/en/support/kb/release-notes/rn-prorender-blender-v2-4"
+"https://www.amd.com/en/support/kb/release-notes/rn-prorender-blender-v2-3-blender-2-80-2-81-2-82"
 LICENSE="AMD-RADEON-PRORENDER-BLENDER-EULA \
 	AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES \
-	Apache-2.0 \
 	PSF-2 MIT BSD BSD-2 CC-BY"
 KEYWORDS="~amd64"
-INTERNAL_PV="2.4.11"
+INTERNAL_PV="2.3.4"
 PLUGIN_NAME="rprblender"
 MATLIB_NAME="rprmaterials"
-S_FN1="RadeonProRenderBlender_Ubuntu.zip"
+S_FN1="radeonprorenderblender_ubuntu.zip"
 S_FN2="radeonprorendermateriallibraryinstaller.run"
 D_FN1="${P}-plugin.zip"
 MIN_BLENDER_V="2.80"
-MAX_BLENDER_V="2.84" # exclusive
-SHA1SUM_PLUGIN="39d8e6631f480ba9d4070d9040007687bf041f1a"
+MAX_BLENDER_V="2.83" # exclusive
+SHA1SUM_PLUGIN="0e1bb299672dc111c6bb5ea4b52efa9dce8d55d6"
 SHA1SUM_MATLIB="a4b22ef16515eab431c682421e07ec5b2940319d"
 D_FN2="${PN}-matlib-${SHA1SUM_MATLIB}.run"
 SLOT="0"
-IUSE="denoiser intel-ocl lts +materials +opencl opencl_rocm opencl_orca \
-opencl_pal opengl_mesa pro-drivers split-drivers -systemwide test \
-video_cards_amdgpu video_cards_i965 video_cards_iris video_cards_nvidia \
-video_cards_radeonsi +vulkan"
+IUSE="denoiser intel-ocl +materials +opencl opencl_rocm opencl_orca \
+opencl_pal opengl_mesa split-drivers -systemwide test video_cards_amdgpu \
+video_cards_amdgpu-pro video_cards_amdgpu-pro-lts video_cards_i965 \
+video_cards_iris video_cards_nvidia video_cards_radeonsi +vulkan"
 NV_DRIVER_VERSION_OCL_1_2="368.39" # >= OpenCL 1.2
 NV_DRIVER_VERSION_VULKAN="390.132"
 PYTHON_COMPAT=( python3_{7,8} ) # same as blender
@@ -37,22 +36,38 @@ RDEPEND="${PYTHON_DEPS}
 	opencl? (
 	intel-ocl? ( dev-util/intel-ocl-sdk )
 	|| (
+		video_cards_amdgpu-pro? (
+			!split-drivers? (
+				opengl_mesa? (
+					x11-drivers/amdgpu-pro[X,developer,open-stack,opengl_mesa,opencl,opencl_pal?,opencl_orca?]
+				)
+				!opengl_mesa? (
+					x11-drivers/amdgpu-pro[opencl,opencl_pal?,opencl_orca?]
+				)
+			)
+			split-drivers? (
+				opencl_orca? ( dev-libs/amdgpu-pro-opencl )
+				opencl_rocm? ( dev-libs/rocm-opencl-runtime )
+			)
+		)
+		video_cards_amdgpu-pro-lts? (
+			!split-drivers? (
+				opengl_mesa? (
+					x11-drivers/amdgpu-pro-lts[X,developer,open-stack,opengl_mesa,opencl,opencl_pal?,opencl_orca?]
+				)
+				!opengl_mesa? (
+					x11-drivers/amdgpu-pro-lts[opencl,opencl_pal?,opencl_orca?]
+				)
+			)
+			split-drivers? (
+				opencl_orca? ( dev-libs/amdgpu-pro-opencl )
+				opencl_rocm? ( dev-libs/rocm-opencl-runtime )
+			)
+		)
 		video_cards_amdgpu? (
-			|| (
-				pro-drivers? (
-					opengl_mesa? (
-						!lts? ( x11-drivers/amdgpu-pro[X,developer,open-stack,opengl_mesa,opencl,opencl_pal?,opencl_orca?] )
-						lts? ( x11-drivers/amdgpu-pro-lts[X,developer,open-stack,opengl_mesa,opencl,opencl_pal?,opencl_orca?] )
-					)
-					!opengl_mesa? (
-						!lts? ( x11-drivers/amdgpu-pro[opencl,opencl_pal?,opencl_orca?] )
-						lts? ( x11-drivers/amdgpu-pro-lts[opencl,opencl_pal?,opencl_orca?] )
-					)
-				)
-				split-drivers? (
-					opencl_orca? ( dev-libs/amdgpu-pro-opencl )
-					opencl_rocm? ( dev-libs/rocm-opencl-runtime )
-				)
+			split-drivers? (
+				opencl_orca? ( dev-libs/amdgpu-pro-opencl )
+				opencl_rocm? ( dev-libs/rocm-opencl-runtime )
 			)
 		)
 		video_cards_i965? (
@@ -84,9 +99,15 @@ RDEPEND="${PYTHON_DEPS}
 		|| (
 			video_cards_amdgpu? (
 				|| (
-		!lts? ( x11-drivers/amdgpu-pro[vulkan] )
-		lts? ( x11-drivers/amdgpu-pro-lts[vulkan] )
+		media-libs/mesa[video_cards_radeonsi,vulkan]
+		media-libs/amdvlk
 				)
+			)
+			video_cards_amdgpu-pro? (
+		x11-drivers/amdgpu-pro[vulkan]
+			)
+			video_cards_amdgpu-pro-lts? (
+		x11-drivers/amdgpu-pro-lts[vulkan]
 			)
 			video_cards_i965? (
 		media-libs/mesa[video_cards_i965,vulkan]
@@ -114,23 +135,32 @@ RDEPEND="${PYTHON_DEPS}
 	x11-libs/libXxf86vm"
 DEPEND="${RDEPEND}"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
-	!systemwide
-	pro-drivers? ( || ( opencl_orca opencl_pal opencl_rocm ) )
 	opencl_orca? (
-		|| ( split-drivers pro-drivers )
-		video_cards_amdgpu
+		|| ( video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts )
 	)
 	opencl_pal? (
-		pro-drivers
-		video_cards_amdgpu
+		|| ( video_cards_amdgpu-pro video_cards_amdgpu-pro-lts )
 	)
 	opencl_rocm? (
 		split-drivers
-		video_cards_amdgpu
+		|| ( video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts )
 	)
 	split-drivers? ( || ( opencl_orca opencl_rocm ) )
 	video_cards_amdgpu? (
-		|| ( pro-drivers split-drivers )
+		!video_cards_amdgpu-pro
+		!video_cards_amdgpu-pro-lts
+		split-drivers
+		|| ( opencl_orca opencl_rocm )
+	)
+	video_cards_amdgpu-pro? (
+		!video_cards_amdgpu
+		!video_cards_amdgpu-pro-lts
+		|| ( opencl_orca opencl_pal opencl_rocm )
+	)
+	video_cards_amdgpu-pro-lts? (
+		!video_cards_amdgpu
+		!video_cards_amdgpu-pro
+		|| ( opencl_orca opencl_pal opencl_rocm )
 	)
 "
 RESTRICT="fetch strip"
@@ -173,7 +203,7 @@ show_codename_docs() {
 	einfo "Radeon RX 5xx:  https://en.wikipedia.org/wiki/Radeon_RX_500_series"
 	einfo "Radeon RX 4xx:  https://en.wikipedia.org/wiki/Radeon_RX_400_series"
 	einfo "Radeon R5/R7/R9:  https://en.wikipedia.org/wiki/Radeon_Rx_300_series"
-	einfo "APU: https://en.wikipedia.org/wiki/AMD_Accelerated_Processing_Unit"
+	einfo "APU:  https://en.wikipedia.org/wiki/AMD_Accelerated_Processing_Unit"
 	einfo "Device IDs <-> codename: https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/roc-3.3.0/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c#L777"
 	einfo
 }
@@ -323,6 +353,14 @@ src_unpack() {
 
 	unpack_zip ${D_FN1}
 
+	unpack_makeself RadeonProRenderForBlender_${INTERNAL_PV}.run
+
+	if use systemwide ; then
+		unpack_zip addon/addon.zip
+	fi
+
+	rm *.run || die
+
 	cd "${S_MATLIB}" || die
 
 	unpack_makeself ${D_FN2}
@@ -334,6 +372,20 @@ src_install_systemwide_matlib() {
 	dodir "${D_MATERIALS}"
 	cp -a "${S_MATLIB}"/matlib/feature_MaterialLibrary/* \
 		"${ED}/${D_MATERIALS}" || die
+}
+
+generate_enable_plugin_script() {
+	einfo "Generating script"
+	local path="${1}"
+	local s_plugin="${2}"
+	head -n 311 "${S_PLUGIN}/install.py" \
+		| tail -n 6 \
+		| cut -c 10- \
+		| sed -e "s|\",$||g" \
+		| sed -e "4d" \
+		| sed -e "s|\" % str(||g" \
+		| sed -e "s|%s|${path}|g" \
+		> "${T}/install_blender_addon.py" || die
 }
 
 src_install_systemwide_plugin() {
@@ -363,6 +415,17 @@ src_install_systemwide_plugin() {
 				echo "${D_MATERIALS}" > "${ed_matlib_meta}/.matlib_installed" || die
 				echo "${D_MATERIALS}" > "${ed_install}/.matlib_installed" || die
 			fi
+			einfo "Attempting to mark installation as registered..."
+			touch "${ed_install}/.registered" || die
+			dodir "${d_install}/addon" || die
+			touch "${ed_install}/addon/.installed" || die
+			touch "${ed_install}/.files_installed" || die
+			generate_enable_plugin_script \
+				"${d_install}/addon/addon.zip"
+			exeinto "${d_install}/addon"
+			doexe "${T}/install_blender_addon.py"
+			exeinto "${d_install}"
+			doexe uninstall.py
 		else
 			einfo "Blender ${d_ver} not supported.  Skipping..."
 		fi
@@ -386,8 +449,17 @@ src_install_per_user() {
 		local ed_matlib="${ED}/${d_matlib}"
 		cd "${S_PLUGIN}" || die
 		insinto "${d_addon}/addon"
-		doins "${DISTDIR}/${D_FN1}"
-		mv "${ed_addon}/addon/${D_FN1}" "${ed_addon}/addon/addon.zip" || die
+		doins addon/addon.zip
+		exeinto "${d_addon}"
+		doexe uninstall.py
+		touch "${ed_addon}/.registered" || die
+		touch "${ed_addon}/.files_installed" || die
+		touch "${ed_addon}/.installed" || die
+
+		generate_enable_plugin_script \
+			"${d_addon}/addon/addon.zip"
+		exeinto "${d_addon}/addon"
+		doexe "${T}/install_blender_addon.py"
 
 		if use materials ; then
 			cd "${S_MATLIB}" || die
@@ -401,7 +473,6 @@ src_install_per_user() {
 			fowners -R ${u}:${u} "${d_matlib_meta}"
 		fi
 		fowners -R ${u}:${u} "${d_addon}"
-
 	done
 }
 
@@ -418,8 +489,8 @@ EOF
 	else
 		src_install_per_user
 	fi
-	cd "${S_PLUGIN}/${PLUGIN_NAME}" || die
-	dodoc EULA.html
+	cd "${S_PLUGIN}" || die
+	dodoc eula.txt
 }
 
 pkg_postinst() {
@@ -437,6 +508,11 @@ pkg_postinst() {
 	else
 		einfo "You must install this product manually through blender per user."
 		for u in ${RPR_USERS} ; do
+			einfo
+			einfo "To install and enable the plugin, tell ${u} to run:"
+			einfo "/usr/bin/blender --background --python /home/${u}/.local/share/${PLUGIN_NAME}/addon/install_blender_addon.py"
+			einfo
+			einfo "or"
 			einfo
 			einfo "Edit > Preferences > Add-ons > Install"
 			einfo
@@ -458,6 +534,7 @@ pkg_postinst() {
 				einfo "  Then, re-log."
 				einfo
 			fi
+			einfo
 		done
 	fi
 
