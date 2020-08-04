@@ -1,0 +1,81 @@
+CI=${CI:=0}
+VERBOSE=${VERBOSE:=0}
+if [[ ${@} =~ (-v|--verbose) ]]; then
+	VERBOSE=1
+fi
+
+if grep --help | grep -Fq -e "--perl-regexp" ; then
+	:;
+else
+	echo "You need grep compiled with Perl regular expressions."
+	return 1
+fi
+
+if ! which shellcheck 2>/dev/null 1>/dev/null ; then
+	echo "You need to install shellcheck to check ebuilds as bash scripts."
+	return 1
+fi
+
+if ! which xmllint 2>/dev/null 1>/dev/null ; then
+	echo "You need to install xmllint to check metadata.xml."
+	return 1
+fi
+
+echo "Checking ebuilds for security risks.  (This can yield false positives.)"
+for f in $(find $(pwd) -name "*.ebuild") ; do
+	if grep -r -e "SLOT=\"0\"" "${f}" 2>/dev/null 1>/dev/null ; then
+		if [[ ${f} =~ ("-libs/"|"-gfx/"|dev-cpp|dev-qt|dev-db) ]] ;then
+			# It happens when copy pasting ebuild templates from apps to libs.  Apps can use SLOT=0, but libraries should have a variable in subslot.
+			# USE="static-libs" PackageA:0 # insecure
+			# USE="static-libs" PackageB:0/${PV} # precautiously-secure for dependent because subslot changes trigger updates
+			echo "Security risk:  ${f} does not trigger update for dependent with static-libs security updates.  SR1"
+		fi
+	fi
+
+	# It happens when = slot operator is not explicitly used.  The dependent using the package as a static-libs will not receive a security update.
+	# PackageA[static-libs] -> PackageB  ## insecure pattern
+	# PackageA:=[static-libs] -> PackageB ## secure pattern
+	if grep -P -r -e '(?<!=)\[static-libs' "${f}" 2>/dev/null 1>/dev/null ; then
+		echo "Security risk:  ${f} ignores security update for subslot.  SR2"
+	fi
+	if grep -P -r -e '(?<!=)\[.*static-libs,' "${f}" 2>/dev/null 1>/dev/null ; then
+		echo "Security risk:  ${f} ignores security update for subslot.  SR3"
+	fi
+	if grep -P -r -e '(?<!=)\[.*static-libs\]' "${f}" 2>/dev/null 1>/dev/null ; then
+		echo "Security risk:  ${f} ignores security update for subslot.  SR4"
+	fi
+done
+
+# SC2076: Don't quote right-hand side of =~
+# SC2148 -- shebang
+# SC2068: Double quote array expansions to avoid re-splitting elements.
+
+echo "Checking ebuilds for syntax errors.  (This can yield false positives.)"
+for f in $(find $(pwd) -name "*.ebuild") ; do
+	if [[ "${CI}" == "1" ]] ; then
+		shellcheck -e SC2148,SC2076,SC2068 -S error "${f}" 2>/dev/null 1>/dev/null
+	elif [[ "${VERBOSE}" == "1" ]] ; then
+		shellcheck -e SC2148,SC2076,SC2068 -S error "${f}" || echo "Syntax problems in ${f}"
+	else
+		shellcheck -e SC2148,SC2076,SC2068 -S error "${f}" 2>/dev/null 1>/dev/null || echo "Syntax problems in ${f}"
+	fi
+done
+
+echo "Checking metadata.xml for syntax errors."
+for f in $(find $(pwd) -name "metadata.xml") ; do
+	if [[ "${CI}" == "1" ]] ; then
+		xmllint "${f}" 2>/dev/null 1>/dev/null 2>/dev/null 1>/dev/null
+	elif [[ "${VERBOSE}" == "1" ]] ; then
+		xmllint "${f}" || echo "Syntax problems in ${f}"
+	else
+		xmllint "${f}" 2>/dev/null 1>/dev/null || echo "Syntax problems in ${f}"
+	fi
+done
+
+if [[ "${VERBOSE}" == "1" ]] ; then
+echo "Checking repo for trash directories"
+for d in $(find $(pwd) -name ".trash*") ; do
+	echo "Found ${d}"
+done
+fi
+
