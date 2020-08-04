@@ -4,7 +4,7 @@
 <!-- only in this fork from the oiledmachine-overlay -->
 <maintainer type="project">
 	<email>orsonteodoro@hotmail.com</email>
-	<name>orsonteodoro@hotmail.com</name>
+	<name>Orson Teodoro</name>
 </maintainer>
 <!-- originator -->
 <maintainer type="project">
@@ -14,9 +14,9 @@
 <longdescription>
 	Firefox is an HTML5 compatible web browser.
 
-	This ebuild allows you to build 32 bit Firefox under 64 bit.
+	This ebuild fork allows you to build 32 bit Firefox under 64 bit.
 	You can only choose one ABI 64 or 32.
-<longdescription>
+</longdescription>
 <upstream>
 	<bugs-to>https://developer.mozilla.org/en-US/docs/Mozilla/QA/Bug_writing_guidelines</bugs-to>
 </upstream>
@@ -30,7 +30,7 @@
 	<flag name="jemalloc">Uses a memory allocator that will result in decreased memory
 		consumption; otherwisem it will use the default Linux allocator.  For this ebuild
 		it is recommended to turn jemalloc off as it may be more stable in the worst case
-		high memory usage case.</file>
+		high memory usage case.</flag>
 	<flag name="geckodriver">Enable WebDriver support</flag>
 	<flag name="gmp-autoupdate">Allow Gecko Media Plugins (binary blobs) to be automatically
 		downloaded and kept up-to-date in user profiles</flag>
