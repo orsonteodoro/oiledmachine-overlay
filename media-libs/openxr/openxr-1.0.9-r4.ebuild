@@ -24,8 +24,6 @@ RDEPEND="${PYTHON_DEPS}
 	|| (
 		video_cards_amdgpu? (
 			|| (
-				!x11-drivers/amdgpu-pro
-				!x11-drivers/amdgpu-pro-lts
 				media-libs/mesa[video_cards_radeonsi,vulkan]
 				x11-base/xorg-drivers[video_cards_amdgpu]
 			)
