@@ -18,8 +18,9 @@
 #   https://github.com/dolohow/uksm
 # zen-tune:
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce 3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0
-#   https://github.com/torvalds/linux/compare/v5.6...zen-kernel:5.6/zen-sauce (ef3a3e65c6f4eb74afe3b42024753aadc1c80672..d33eeeb62ca70eeba3234089e7bc61ac11e8d351] ; (exclusive,inclusive]
-#   https://github.com/torvalds/linux/compare/v5.7...zen-kernel:5.7/zen-sauce (03344d1ad1076dd6374f208f8de4c7f6da9dbcee..13f40f309a6a443fcdcc51759dc3a4a0f9b7910f] ; (exclusive,inclusive]
+#   https://github.com/torvalds/linux/compare/v5.6...zen-kernel:5.6/zen-sauce (ef3a3e65c6f4eb74afe3b42024753aadc1c80672..d33eeeb62ca70eeba3234089e7bc61ac11e8d351] ; (exclusive-end,inclusive-start]
+#   https://github.com/torvalds/linux/compare/v5.7...zen-kernel:5.7/zen-sauce (03344d1ad1076dd6374f208f8de4c7f6da9dbcee..13f40f309a6a443fcdcc51759dc3a4a0f9b7910f] ; (exclusive-end,inclusive-start]
+#   https://github.com/torvalds/linux/compare/v5.7...zen-kernel:5.8/zen-sauce (994279ebfc0d19e185792fb11cacb63e6750e22e..78070e0e766369a33bcc279128c07124276d4b80] ; (exclusive-end,inclusive-start]
 # zen-kernel 5.4/futex-backports
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/futex-backports
 # zen-kernel 5.{6,7}/futex-multiple-wait-v3
@@ -35,7 +36,8 @@
 # MUQSS CPU Scheduler:
 #   http://ck.kolivas.org/patches/muqss/4.0/4.14/
 #   http://ck.kolivas.org/patches/5.0/5.4/5.4-ck1/
-#   http://ck.kolivas.org/patches/5.0/5.6/5.6-ck2/
+#   http://ck.kolivas.org/patches/5.0/5.7/5.7-ck1/
+#   http://ck.kolivas.org/patches/5.0/5.8/5.8-ck1/
 # PDS CPU Scheduler:
 #   http://cchalpha.blogspot.com/search/label/PDS
 # BMQ CPU Scheduler:
@@ -48,11 +50,16 @@
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.4.html
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.6.html
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.7.html
+#   https://dev.gentoo.org/~mpagano/genpatches/releases-5.8.html
 # BFQ updates:
 #   https://github.com/torvalds/linux/compare/v4.19...zen-kernel:4.19/bfq
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/bfq-backports
 # TRESOR:
 #   http://www1.informatik.uni-erlangen.de/tresor
+# FUTEX_MULTIPLE_WAIT
+#   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/futex-backports
+#   https://github.com/torvalds/linux/compare/v5.7...zen-kernel:5.7/futex-multiple-wait-v3
+#   https://github.com/torvalds/linux/compare/v5.8...zen-kernel:5.8/futex-multiple-wait-v3
 
 case ${EAPI:-0} in
 	7) die "this eclass doesn't support EAPI ${EAPI}" ;;
@@ -754,7 +761,9 @@ function ot-kernel-common_src_unpack() {
 			einfo "GCC patch is 4.9"
 			UNIPATCH_LIST+=" ${DISTDIR}/${GRAYSKY_DL_4_9_FN}"
 		else
-			die "Cannot find graysky2's GCC patch."
+			die \
+"Cannot find a compatible graysky2 GCC patch for "$(gcc-version)" and\n\
+kernel ${K_MAJOR_MINOR}.  Skipping graysky2 patches."
 		fi
 	fi
 	#if use bfq ; then

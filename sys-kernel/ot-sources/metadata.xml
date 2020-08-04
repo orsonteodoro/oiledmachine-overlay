@@ -66,6 +66,7 @@
       <!-- for graysky2 GCC patches -->
       <email>graysky AT archlinux DOT us</email>
       <name>graysky</name>
+    </maintainer>
     <maintainer status="active" type="person">
       <!-- for tresor aes-ni and i386, 2010 -->
       <email>tilo.mueller@informatik.uni-erlangen.de</email>

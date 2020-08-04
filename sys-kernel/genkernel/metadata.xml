@@ -1,17 +1,41 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
+	<!-- ebuild fork only on this oiledmachine-overlay -->
+	<maintainer type="person">
+		<email>orsonteodoro@hotmail.com</email>
+	</maintainer>
+	<!-- originator -->
 	<maintainer type="project">
 		<email>genkernel@gentoo.org</email>
 	</maintainer>
+	<longdescription>
+		This is an ebuild fork that applies subdir_mount and
+		crypt_root_plain patches.
+
+		3.x is stable.
+		4.x is experimental.
+	</longdescription>
 	<use>
-		<flag name="crypt">Obsolete USE flag. Use cryptsetup for LUKS support. (bug ##414523)</flag>
-		<flag name="cryptsetup">Enable support for Luks disk encryption using <pkg>sys-fs/cryptsetup</pkg></flag>
-		<flag name="firmware">Prefer system firmware <pkg>sys-kernel/linux-firmware</pkg> over local copy.</flag>
+		<flag name="subdir_mount">Adds mounting subdirectory support.
+			Used for mounting muslx32 or stage2 or stage3 images
+			in place produced from crossdev and mounting them
+			directly at /usr/$CTARGET without risk of damage caused
+			by human error replacing / with /usr/$CTARGET.
+			</flag>
+		<flag name="crypt_root_plain">Adds dmcrypt plain support</flag>
+		<flag name="cryptsetup">Enable support for Luks disk encryption
+			using <pkg>sys-fs/cryptsetup</pkg></flag>
+		<flag name="firmware">Prefer system firmware
+			<pkg>sys-kernel/linux-firmware</pkg> over local copy.
+			</flag>
 	</use>
 	<!--
 	<upstream>
 		<remote-id type="gentoo">git://git.gentoo.org/proj/genkernel</remote-id>
 	</upstream>
 	-->
+	<upstream>
+		<remote-id type="sourceforge">fuse</remote-id>
+	</upstream>
 </pkgmetadata>

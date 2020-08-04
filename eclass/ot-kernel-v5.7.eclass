@@ -300,7 +300,7 @@ PATCH_BFQ_VER="5.7"
 PATCH_BMQ_MAJOR_MINOR="5.7"
 PATCH_PROJECT_C_MAJOR_MINOR="5.7"
 DISABLE_DEBUG_V="1.1"
-ZENTUNE_5_7_COMMIT="03344d1ad1076dd6374f208f8de4c7f6da9dbcee..13f40f309a6a443fcdcc51759dc3a4a0f9b7910f"
+ZENTUNE_5_7_COMMIT="03344d1ad1076dd6374f208f8de4c7f6da9dbcee..13f40f309a6a443fcdcc51759dc3a4a0f9b7910f" # (exclusive-end,inclusive-start]
 PATCH_TRESOR_VER="3.18.5"
 
 IUSE="bfq bmq +cfs disable_debug futex-wait-multiple +genpatches +graysky2 \

@@ -1,0 +1,31 @@
+--- a/defaults/linuxrc.orig	2020-07-20 09:05:15.000000000 -0700
++++ b/defaults/linuxrc	2020-08-03 20:42:04.662872556 -0700
+@@ -79,6 +79,9 @@ do
+ 		subdir=*)
+ 			SUBDIR=${x#*=}
+ 		;;
++		subdir_mount=*)
++			SUBDIR_MOUNT=${x#*=}
++		;;
+ 		real_init=*)
+ 			REAL_INIT=${x#*=}
+ 		;;
+@@ -1323,6 +1326,18 @@ fi
+ 
+ cleanup
+ 
++if [ -n "${SUBDIR_MOUNT}" ]
++then
++	mkdir -p /newroot2
++	mount -o bind "${NEW_ROOT}/${SUBDIR_MOUNT}" /newroot2
++	CHROOT="/newroot2"
++
++	# Retained the same behavior as genkernel 3.x.
++	# Comment out the two lines if mounting fails in genkernel 4.x.
++	cd "${CHROOT}"
++	mkdir "${CHROOT}/proc" "${CHROOT}/sys" "${CHROOT}/run" 2>/dev/null
++fi
++
+ # If devtmpfs is mounted, try move it to the new root
+ # If that fails, try to unmount all possible mounts of
+ # devtmpfs as stuff breaks otherwise

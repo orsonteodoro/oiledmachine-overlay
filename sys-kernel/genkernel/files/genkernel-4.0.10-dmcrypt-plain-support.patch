@@ -1,0 +1,66 @@
+diff -urp genkernel-4.0.10.orig/defaults/initrd.scripts genkernel-4.0.10/defaults/initrd.scripts
+--- genkernel-4.0.10.orig/defaults/initrd.scripts	2020-07-20 09:05:15.000000000 -0700
++++ genkernel-4.0.10/defaults/initrd.scripts	2020-08-03 21:38:50.383075489 -0700
+@@ -1706,7 +1706,7 @@ start_volumes() {
+ 			then
+ 				good_msg "ZFS pool ${ZFS_POOL} already imported."
+ 
+-				if [ -n "${CRYPT_ROOT}" -o -n "${CRYPT_SWAP}" ]
++				if [ -n "${CRYPT_ROOT}" -o -n "${CRYPT_SWAP}" -o -n "${CRYPT_ROOT_PLAIN}" ]
+ 				then
+ 					good_msg "LUKS detected. Reimporting ${ZFS_POOL} ..."
+ 
+@@ -1856,7 +1856,16 @@ openLUKS() {
+ 			fi
+ 
+ 			setup_md_device ${LUKS_DEVICE}
+-			if ! run cryptsetup isLuks ${LUKS_DEVICE}
++			local ret_isLuks
++			if [ -n "${CRYPT_ROOT}" ]
++			then
++				# for dmcrypt2
++				ret_isLuks=$(run cryptsetup isLuks ${LUKS_DEVICE} ; echo $?)
++			else
++				# for dmcrypt plain
++				ret_isLuks=$([ -z "${CRYPT_ROOT_PLAIN}" ] ; echo $?)
++			fi
++			if [ ${ret_isLuks} -ne 0 ]
+ 			then
+ 				bad_msg "The LUKS device ${LUKS_DEVICE} does not contain a LUKS header" ${CRYPT_SILENT}
+ 				DEV_ERROR=1
+@@ -1951,7 +1960,12 @@ openLUKS() {
+ 					fi
+ 				fi
+ 				# At this point, keyfile or not, we're ready!
+-				crypt_filter "${gpg_cmd}cryptsetup ${cryptsetup_options} luksOpen ${LUKS_DEVICE} ${LUKS_NAME}"
++				if [ -n "${CRYPT_ROOT_PLAIN}" ]
++				then
++					crypt_filter "${gpg_cmd}cryptsetup ${cryptsetup_options} plainOpen ${CRYPT_ROOT_PLAIN} ${LUKS_NAME}"
++				else
++					crypt_filter "${gpg_cmd}cryptsetup ${cryptsetup_options} luksOpen ${LUKS_DEVICE} ${LUKS_NAME}"
++				fi
+ 				crypt_filter_ret=$?
+ 
+ 				[ -e /dev/tty.org ] \
+@@ -2314,7 +2328,7 @@ start_LUKS() {
+ 	[ -n "${CRYPT_ROOT_KEY}" ] && [ -z "${CRYPT_ROOT_KEYDEV}" ] \
+ 		&& sleep 6 && bootstrapKey "ROOT"
+ 
+-	if [ -n "${CRYPT_ROOT}" ]
++	if [ -n "${CRYPT_ROOT}" -o -n "${CRYPT_ROOT_PLAIN}" ]
+ 	then
+ 		openLUKS "root"
+ 		if [ -n "${REAL_ROOT}" ]
+diff -urp genkernel-4.0.10.orig/defaults/linuxrc genkernel-4.0.10/defaults/linuxrc
+--- genkernel-4.0.10.orig/defaults/linuxrc	2020-07-20 09:05:15.000000000 -0700
++++ genkernel-4.0.10/defaults/linuxrc	2020-08-03 21:07:06.820867543 -0700
+@@ -248,6 +248,9 @@ do
+ 			CRYPT_ROOT=${x#*=}
+ 			USE_CRYPTSETUP=1
+ 		;;
++		crypt_root_plain=*)
++			CRYPT_ROOT_PLAIN=${x#*=}
++		;;
+ 		crypt_swap=*)
+ 			CRYPT_SWAP=${x#*=}
+ 			USE_CRYPTSETUP=1

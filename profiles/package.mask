@@ -62,6 +62,9 @@ dev-dotnet/dotnetcore-sdk
 # Build failures / Work In Progress (WIP)
 >=dev-dotnet/aspnetcore-2.1.18
 
+# Testing
+=genkernel/genkernel-4.0.10
+
 # Masked for security reasons
 #--------------------------------------------------------------------------------------------------
 
