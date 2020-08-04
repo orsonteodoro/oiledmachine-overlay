@@ -61,6 +61,17 @@ for f in $(find $(pwd) -name "*.ebuild") ; do
 	fi
 done
 
+echo "Checking repo for missing metadata.xml"
+for f in $(find $(pwd) -name "*.ebuild") ; do
+	d=$(dirname ${f})
+	if [[ ! -f ${d}/metadata.xml ]] ; then
+		echo "Missing metadata.xml in ${d}"
+		if [[ "${CI}" == "1" ]] ; then
+			return 1
+		fi
+	fi
+done
+
 echo "Checking metadata.xml for syntax errors."
 for f in $(find $(pwd) -name "metadata.xml") ; do
 	if [[ "${CI}" == "1" ]] ; then
@@ -74,8 +85,7 @@ done
 
 if [[ "${VERBOSE}" == "1" ]] ; then
 echo "Checking repo for trash directories"
-for d in $(find $(pwd) -name ".trash*") ; do
+for d in $(find $(pwd) -name ".trash*" -type d) ; do
 	echo "Found ${d}"
 done
 fi
-
