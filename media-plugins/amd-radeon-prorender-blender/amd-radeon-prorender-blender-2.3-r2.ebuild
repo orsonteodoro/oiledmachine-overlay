@@ -88,16 +88,16 @@ RDEPEND="${PYTHON_DEPS}
 				)
 			)
 			video_cards_i965? (
-		media-libs/mesa[vulkan]
+		media-libs/mesa[video_cards_i965,vulkan]
 			)
 			video_cards_iris? (
-		media-libs/mesa[vulkan]
+		media-libs/mesa[video_cards_iris,vulkan]
 			)
 			video_cards_nvidia? (
 		>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_VULKAN}
 			)
 			video_cards_radeonsi? (
-		media-libs/mesa[vulkan]
+		media-libs/mesa[video_cards_radeonsi,vulkan]
 			)
 		)
 	)
