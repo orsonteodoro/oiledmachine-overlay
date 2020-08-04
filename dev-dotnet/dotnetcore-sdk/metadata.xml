@@ -18,7 +18,7 @@
 		dev-dotnet/corefx - Contains class libraries to handle collections (data structures), xml, json, System.* namespace
 
 		You may also choose the precompiled version found in the dotnet overlay.
-	<longdescription>
+	</longdescription>
 	<use>
 		<flag name="aspnetcore">Installs ASP.NET Core</flag>
 		<flag name="doc">Installs documentation</flag>
