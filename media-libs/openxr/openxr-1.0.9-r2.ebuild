@@ -42,6 +42,7 @@ RDEPEND="${PYTHON_DEPS}
 	media-libs/mesa[vulkan]
 		)
 	)
+	media-libs/mesa[libglvnd]
 	system-jsoncpp? ( dev-libs/jsoncpp )
 	xcb? (
 		x11-libs/libxcb
@@ -56,8 +57,7 @@ RDEPEND="${PYTHON_DEPS}
 		dev-libs/wayland
 		dev-libs/wayland-protocols
 		media-libs/mesa[egl]
-	)
-	virtual/opengl"
+	)"
 #	x11-libs/libXrandr
 #	x11-libs/libXxf86vm
 DEPEND="${RDEPEND}"
