@@ -59,6 +59,10 @@ for f in $(find $(pwd) -name "*.ebuild") ; do
 	else
 		shellcheck -e SC2148,SC2076,SC2068 -S error "${f}" 2>/dev/null 1>/dev/null || echo "Syntax problems in ${f}"
 	fi
+
+	if grep -F -e '$(use ' "${f}" ; then
+		echo "Possible USE flag error \`use\` might need to be changed to \`usex\` in src_configure or when used as inline if-else.  See"
+	fi
 done
 
 echo "Checking repo for missing metadata.xml"
