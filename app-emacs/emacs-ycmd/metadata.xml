@@ -8,7 +8,7 @@
   <longdescription>
     emacs-ycmd is a client for ycmd, the code completion system.
 
-    For (C-c Y <cmd>) key bindings see,
+    For (C-c Y &lt;cmd&gt;) key bindings see,
     https://github.com/abingham/emacs-ycmd/blob/master/ycmd.el#L610
   </longdescription>
   <upstream>
