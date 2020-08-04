@@ -11,7 +11,7 @@
     multimedia acceleration and deployment C API for audio, video, still processing, codecs.
   </longdescription>
   <upstream>
-    <doc lang="en">http://docs.tizonia.org/<doc>
+    <doc lang="en">http://docs.tizonia.org/</doc>
     <bugs-to>https://github.com/tizonia/tizonia-openmax-il/issues</bugs-to>
     <maintainer status="active" type="person">
       <name>Juan A. Rubio</name>
