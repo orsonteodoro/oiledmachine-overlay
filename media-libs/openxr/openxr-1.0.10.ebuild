@@ -15,18 +15,17 @@ SRC_URI="\
 	${ORG_GH}/${MY_PN}/archive/release-${PV}.tar.gz
 -> ${P}.tar.gz"
 NV_DRIVER_VERSION_VULKAN="390.132"
-IUSE="+system-jsoncpp video_cards_amdgpu video_cards_i965 \
-video_cards_iris video_cards_nvidia video_cards_radeonsi wayland xcb +xlib"
+IUSE="+system-jsoncpp video_cards_amdgpu \
+video_cards_i965 video_cards_iris video_cards_nvidia video_cards_radeonsi \
+wayland xcb +xlib"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	^^ ( xlib xcb wayland )
 "
 RDEPEND="${PYTHON_DEPS}
 	|| (
 		video_cards_amdgpu? (
-			|| (
-				media-libs/mesa[video_cards_radeonsi,vulkan]
-				x11-base/xorg-drivers[video_cards_amdgpu]
-			)
+	media-libs/mesa[video_cards_radeonsi,vulkan]
+	x11-base/xorg-drivers[video_cards_amdgpu]
 		)
 		video_cards_i965? (
 	media-libs/mesa[video_cards_i965,vulkan]
@@ -66,7 +65,6 @@ DEPEND="${RDEPEND}"
 CMAKE_BUILD_TYPE=Release
 RESTRICT="mirror"
 S="${WORKDIR}/${MY_PN}-release-${PV}"
-#PATCHES=( "${FILESDIR}/${PN}-1.0.9-optionize-opengl-gl-preference.patch" )
 
 src_configure() {
 	mycmakeargs=(
