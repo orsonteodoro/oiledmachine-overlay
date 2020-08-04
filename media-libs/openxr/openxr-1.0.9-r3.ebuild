@@ -15,34 +15,38 @@ SRC_URI="\
 	${ORG_GH}/${MY_PN}/archive/release-${PV}.tar.gz
 -> ${P}.tar.gz"
 NV_DRIVER_VERSION_VULKAN="390.132"
-IUSE="lts +system-jsoncpp video_cards_amdgpu video_cards_i965 \
+IUSE="+system-jsoncpp video_cards_amdgpu video_cards_i965 \
 video_cards_iris video_cards_nvidia video_cards_radeonsi wayland xcb +xlib"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	^^ ( xlib xcb wayland )
 "
 RDEPEND="${PYTHON_DEPS}
-	media-libs/vulkan-loader
 	|| (
 		video_cards_amdgpu? (
 			|| (
-	!lts? ( x11-drivers/amdgpu-pro[vulkan] )
-	lts? ( x11-drivers/amdgpu-pro-lts[vulkan] )
+				!x11-drivers/amdgpu-pro
+				!x11-drivers/amdgpu-pro-lts
+				media-libs/mesa[video_cards_radeonsi,vulkan]
+				x11-base/xorg-drivers[video_cards_amdgpu]
 			)
 		)
 		video_cards_i965? (
-	media-libs/mesa[vulkan]
+	media-libs/mesa[video_cards_i965,vulkan]
+	x11-base/xorg-drivers[video_cards_i965]
 		)
 		video_cards_iris? (
-	media-libs/mesa[vulkan]
+	media-libs/mesa[video_cards_iris,vulkan]
 		)
 		video_cards_nvidia? (
 	>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_VULKAN}
 		)
 		video_cards_radeonsi? (
-	media-libs/mesa[vulkan]
+	media-libs/mesa[video_cards_radeonsi,vulkan]
+	x11-base/xorg-drivers[video_cards_radeonsi]
 		)
 	)
 	media-libs/mesa[libglvnd]
+	media-libs/vulkan-loader
 	system-jsoncpp? ( dev-libs/jsoncpp )
 	xcb? (
 		x11-libs/libxcb
@@ -64,13 +68,14 @@ DEPEND="${RDEPEND}"
 CMAKE_BUILD_TYPE=Release
 RESTRICT="mirror"
 S="${WORKDIR}/${MY_PN}-release-${PV}"
+#PATCHES=( "${FILESDIR}/${PN}-1.0.9-optionize-opengl-gl-preference.patch" )
 
 src_configure() {
 	mycmakeargs=(
 		-DBUILD_API_LAYERS=OFF
 		-DBUILD_TESTS=OFF
 		-DBUILD_CONFORMANCE_TESTS=OFF
-		-DBUILD_WITH_SYSTEM_JSONCPP=$(use system-jsoncpp)
+		-DBUILD_WITH_SYSTEM_JSONCPP=$(usex system-jsoncpp)
 	)
 	if use xlib ; then
 		mycmakeargs+=( -DPRESENTATION_BACKEND=xlib )
