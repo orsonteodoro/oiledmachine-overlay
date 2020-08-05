@@ -56,7 +56,8 @@ for f in $(find $(pwd) -name "*.ebuild") ; do
 	if grep ${GREP_ARGS} -P -r -e '(?<!=)\[.*static-libs\]' "${f}" 2>/dev/null 1>/dev/null ; then
 		einfo "Security risk:  ${f} ignores security update for subslot.  SR4"
 	fi
-	if grep ${GREP_ARGS} -P -r -e '[0]?77[0-7]' "${f}" 2>/dev/null 1>/dev/null ; then
+	if grep ${GREP_ARGS} -F -r -e '(fperms|chmod)' "${f}" 2>/dev/null 1>/dev/null \
+		&& grep ${GREP_ARGS} -P -r -e '[0]?77[0-7]' "${f}" 2>/dev/null 1>/dev/null ; then
 		einfo \
 "Security risk:  ${f} may use insecure permissions.  Users may inject \
 malicious scripts or exfiltrate data in multiuser environment when file uses \
