@@ -111,58 +111,58 @@ src_install() {
 	dodoc LICENSE
 }
 
+cpown() {
+	local src=$(realpath "${1}")
+	local src_basename=$(basename "${src}")
+	local dest=$(realpath "${2}")
+	cp -a "${src}" "${dest}"
+	if [[ ! -d "${dest}" ]] ; then
+		mkdir -p "${dest}" || die
+		chown ${USEROWNER}:${USERGROUP} \
+			"${dest}" || die
+	fi
+	chown -R ${USEROWNER}:${USERGROUP} \
+		"${d}/${src_basename}" || die
+	einfo "Copied ${src_basename} to ${dest}"
+	chown 0700 "${d}/${src_basename}"
+}
+
 _set_settings() {
 	local d="${USERFOLDER}/.local/bin"
 	mkdir -p "${d}" || die
 	local s="/usr/share/${PN}"
 	if use download-tracks ; then
-		cp -a "${s}/download-tracks" \
-			"${d}" || die
-		einfo "Copied download-tracks to ${d}"
+		cpown "${s}/download-tracks" "${d}"
 	fi
 	if use gettracks ; then
-		cp -a "${s}/gettracks.hs" \
-			"${d}" || die
+		cpown "${s}/gettracks.hs" "${d}"
 		sed -i -e "s|ae26d4892e373c6fc188acf7e3cb36c3|${APP_API_KEY}|g" \
 			"${d}/gettracks.hs" || die
-		einfo "Copied gettracks.hs to ${d}"
 	fi
 	if use glistfm ; then
-		cp -a "${s}/glistfm.sh" \
-			"${d}" || die
+		cpown "${s}/glistfm.sh" "${d}"
 		sed -i -e "s|b25b959554ed76058ac220b7b2e0a026|${APP_API_KEY}|g" \
 			"${d}/glistfm.sh" || die
-		einfo "Copied glistfm.sh to ${d}"
 	fi
 	if use grab-lastfm-userpic ; then
-		cp -a "${s}/grab-lastfm-userpic" \
-			"${d}" || die
-		einfo "Copied grab-lastfm-userpic to ${d}"
+		cpown "${s}/grab-lastfm-userpic" "${d}"
 	fi
 	if use lastfmpost ; then
-		cp -a "${s}/lastfmpost" \
-			"${d}" || die
+		cpown "${s}/lastfmpost" "${d}"
 		sed -i -e "s|<USERNAME>|${LFM_NAME}|g" \
 			"${d}/lastfmpost" || die
 		sed -i -e "s|<PASSWORD>|${LFM_PASS}|g" \
 			"${d}/lastfmpost" || die
-		einfo "Copied lastfmpost to ${d}"
 	fi
 	if use mplayerfm ; then
-		cp -a "${s}/mplayerfm" \
-			"${d}" || die
-		einfo "Copied mplayerfm to ${d}"
+		cpown "${s}/mplayerfm" "${d}"
 	fi
 	if use mpv ; then
-		mkdir -p "${USERFOLDER}/.config/mpv/scripts/" || die
-		cp -a "${s}/mpv-lastfm.lua" \
+		cpown "${s}/mpv-lastfm.lua" \
 			"${USERFOLDER}/.config/mpv/scripts/"
 		chown ${USEROWNER}:${USERGROUP} \
 			"${USERFOLDER}/.config/mpv/scripts/mpv-lastfm.lua"
-		einfo "Copied mpv-lastfm.lua to ${USERFOLDER}/.config/mpv/scripts/"
 	fi
-	einfo "Fixing permissions in ${d}"
-	chown ${USEROWNER}:${USERGROUP} "${d}"/*
 	einfo "Add ${d} to your profile's PATH"
 	unset LFM_PASS
 	unset APP_API_KEY
