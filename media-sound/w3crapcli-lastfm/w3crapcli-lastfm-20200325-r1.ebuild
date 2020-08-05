@@ -161,8 +161,6 @@ _set_settings() {
 	if use mpv ; then
 		cpown "${s}/mpv-lastfm.lua" \
 			"${USERFOLDER}/.config/mpv/scripts/"
-		chown ${USEROWNER}:${USERGROUP} \
-			"${USERFOLDER}/.config/mpv/scripts/mpv-lastfm.lua"
 	fi
 	einfo "Add ${d} to your profile's PATH"
 	unset LFM_PASS
