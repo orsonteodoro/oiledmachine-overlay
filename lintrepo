@@ -64,7 +64,7 @@ malicious scripts or exfiltrate data in multiuser environment when file uses \
 777 or 77x.  When file permission is 777, it is dangerous.  For 77x it is \
 only dangerous if the group is \`user\` or similar.  SR5"
 	fi
-	if grep ${GREP_ARGS} -P -r -e 'cp.*(-a|-r)' "${f}" 2>/dev/null 1>/dev/null ; then
+	if grep ${GREP_ARGS} -P -r -e 'cp.*(-a|-r|-R|--recursive|--archive)' "${f}" 2>/dev/null 1>/dev/null ; then
 		einfo \
 "Security risk:  ${f} files possibly bypass sanitation to reset ownership and \
 file permissions.  An upstream developer may inadvertantly elevate \
