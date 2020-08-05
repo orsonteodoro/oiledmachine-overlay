@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="Radeon™ Software for Linux®"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-50-unified"
+"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-10"
 LICENSE="AMDGPUPROEULA
 	doc? ( AMDGPUPROEULA MIT BSD )
 	dkms? ( AMDGPU-FIRMWARE GPL-2 MIT )
@@ -20,7 +20,6 @@ LICENSE="AMDGPUPROEULA
 		vaapi? ( MIT )
 		vdpau? ( MIT )
 		vulkan_open? ( MIT )
-		wayland? ( MIT )
 		xa? ( MIT )
 		developer? ( Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD-2 BSD ) UoI-NCSA
 		developer? ( opengl_mesa? ( all-rights-reserved MIT ) )
@@ -43,7 +42,6 @@ LICENSE="AMDGPUPROEULA
 			hwe? ( AMDGPUPROEULA )
 		)
 		opengl_pro? ( AMDGPUPROEULA )
-		roct? ( MIT )
 		vulkan_pro? ( AMDGPUPROEULA )
 	)
 	X? ( MIT all-rights-reserved )"
@@ -68,7 +66,7 @@ PKG_REV=$(ver_cut 3)
 PKG_ARCH="ubuntu"
 PKG_ARCH_VER="18.04"
 PKG_ARCH_SUFFIX="_"
-PKG_VER_AMF="1.4.16"
+PKG_VER_AMF="1.4.17"
 PKG_VER_GCC="5.2.0"
 PKG_VER_GLAMOR="1.19.0"
 PKG_VER_GST_OMX="1.0.0.1"
@@ -76,17 +74,17 @@ PKG_VER_GST=$(ver_cut 1-2 ${PKG_VER_GST_OMX})
 PKG_VER_HSAKMT="1.0.6"
 PKG_VER_HSAKMT_A="1.0.9"
 PKG_VER_ID="1.0.0"
-PKG_VER_LIBDRM="2.4.99"
-PKG_VER_LIBWAYLAND="1.15.0"
+PKG_VER_LIBDRM="2.4.100"
+PKG_VER_LIBWAYLAND="1.16.0"
 PKG_VER_LLVM_TRIPLE="9.0.0"
 PKG_VER_LLVM=$(ver_cut 1-2 ${PKG_VER_LLVM_TRIPLE})
 PKG_VER_LLVM_MAJ=$(ver_cut 1 ${PKG_VER_LLVM_TRIPLE})
-PKG_VER_MESA="19.2.2"
+PKG_VER_MESA="19.3.4"
 PKG_VER_ROCT="1.0.9"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
 PKG_VER_STRING_DIR=${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}
-PKG_VER_WAYLAND_PROTO="1.18"
-PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.0.1" # about the same as the mesa version
+PKG_VER_WAYLAND_PROTO="1.17"
+PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.1.0" # about the same as the mesa version
 VULKAN_SDK_VER="1.1.121.1"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
@@ -139,7 +137,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 		)
 	 )
 	 freesync? ( >=virtual/amdgpu-drm-3.2.08[dkms?] )
-	 >=virtual/amdgpu-drm-3.2.56[dkms?]
+	 >=virtual/amdgpu-drm-3.2.72[dkms?]
 	 glamor? ( media-libs/libepoxy )
 	 open-stack? (
 	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
@@ -159,6 +157,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
 	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
 		    >=media-libs/vulkan-loader-${VULKAN_SDK_VER} )
+         wayland? ( >=dev-libs/wayland-${PKG_VER_LIBWAYLAND} )
 	 X? (
 	 || ( >=sys-fs/udev-183 virtual/libudev )
 	 hwe? (
@@ -214,11 +213,11 @@ REQUIRED_USE="
 
 _set_check_reqs_requirements() {
 	if use abi_x86_32 && use abi_x86_64 ; then
-		CHECKREQS_DISK_BUILD="1698M"
-		CHECKREQS_DISK_USR="1610M"
+		CHECKREQS_DISK_BUILD="1697M"
+		CHECKREQS_DISK_USR="1614M"
 	else
-		CHECKREQS_DISK_BUILD="1698M"
-		CHECKREQS_DISK_USR="1610M"
+		CHECKREQS_DISK_BUILD="1697M"
+		CHECKREQS_DISK_USR="1614M"
 	fi
 }
 
@@ -392,16 +391,6 @@ src_unpack_open_stack() {
 		unpack_deb "${d_debs}/vulkan-amdgpu_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 	fi
 
-	if use wayland ; then
-		unpack_deb "${d_debs}/libwayland-amdgpu-client0_${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		unpack_deb "${d_debs}/libwayland-amdgpu-doc_${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${archall}.deb"
-		use egl && \
-		unpack_deb "${d_debs}/libwayland-amdgpu-egl1_${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		unpack_deb "${d_debs}/libwayland-amdgpu-server0_${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		unpack_deb "${d_debs}/libwayland-amdgpu-cursor0_${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		unpack_deb "${d_debs}/wayland-protocols-amdgpu_${PKG_VER_WAYLAND_PROTO}-${PKG_REV}${PKG_ARCH_SUFFIX}${archall}.deb"
-	fi
-
 	if use X ; then
 		if [[ "${ABI}" == "amd64" ]] ; then
 			if use hwe ; then
@@ -475,14 +464,6 @@ src_unpack_pro_stack() {
 		fi
 		unpack_deb "${d_debs}/libgl1-amdgpu-pro-dri_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 		unpack_deb "${d_debs}/libgl1-amdgpu-pro-glx_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
-	fi
-
-	if use roct ; then
-		if [[ "${ABI}" == "amd64" ]] ; then
-			unpack_deb "${d_debs}/hsakmt-roct-amdgpu_${PKG_VER_HSAKMT_A}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-			use developer && \
-			unpack_deb "${d_debs}/hsakmt-roct-amdgpu-dev_${PKG_VER_HSAKMT_A}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
-		fi
 	fi
 
 	if use vulkan_pro ; then
@@ -619,7 +600,7 @@ src_install() {
 			fi
 			if use openmax ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib/libomxil-bellagio0/"*.so* || die
-				chmod 0775 "${ED}/${od_amdgpu}/lib/${chost}/gstreamer-${PKG_VER_GST}/libgstomx.so" || die
+				chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/gstreamer-${PKG_VER_GST}/libgstomx.so" || die
 			fi
 			if use opengl_mesa ; then
 				dosym libGL.so.1.2.0 ${od_amdgpu}/lib/${chost}/libGL.so

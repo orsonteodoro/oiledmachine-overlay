@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="Radeon™ Software for Linux®"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-10"
+"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-20"
 LICENSE="AMDGPUPROEULA
 	doc? ( AMDGPUPROEULA MIT BSD )
 	dkms? ( AMDGPU-FIRMWARE GPL-2 MIT )
@@ -76,16 +76,16 @@ PKG_VER_HSAKMT_A="1.0.9"
 PKG_VER_ID="1.0.0"
 PKG_VER_LIBDRM="2.4.100"
 PKG_VER_LIBWAYLAND="1.16.0"
-PKG_VER_LLVM_TRIPLE="9.0.0"
+PKG_VER_LLVM_TRIPLE="10.0.0"
 PKG_VER_LLVM=$(ver_cut 1-2 ${PKG_VER_LLVM_TRIPLE})
 PKG_VER_LLVM_MAJ=$(ver_cut 1 ${PKG_VER_LLVM_TRIPLE})
-PKG_VER_MESA="19.3.4"
+PKG_VER_MESA="20.0.5"
 PKG_VER_ROCT="1.0.9"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
 PKG_VER_STRING_DIR=${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}
 PKG_VER_WAYLAND_PROTO="1.17"
 PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.1.0" # about the same as the mesa version
-VULKAN_SDK_VER="1.1.121.1"
+VULKAN_SDK_VER="1.2.135.0"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
@@ -137,7 +137,7 @@ RDEPEND="!x11-drivers/amdgpu-pro
 		)
 	 )
 	 freesync? ( >=virtual/amdgpu-drm-3.2.08[dkms?] )
-	 >=virtual/amdgpu-drm-3.2.72[dkms?]
+	 >=virtual/amdgpu-drm-3.2.81[dkms?]
 	 glamor? ( media-libs/libepoxy )
 	 open-stack? (
 	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
@@ -600,7 +600,7 @@ src_install() {
 			fi
 			if use openmax ; then
 				chmod 0755 "${ED}/${od_amdgpu}/lib/libomxil-bellagio0/"*.so* || die
-				chmod 0775 "${ED}/${od_amdgpu}/lib/${chost}/gstreamer-${PKG_VER_GST}/libgstomx.so" || die
+				chmod 0755 "${ED}/${od_amdgpu}/lib/${chost}/gstreamer-${PKG_VER_GST}/libgstomx.so" || die
 			fi
 			if use opengl_mesa ; then
 				dosym libGL.so.1.2.0 ${od_amdgpu}/lib/${chost}/libGL.so
