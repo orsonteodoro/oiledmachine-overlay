@@ -60,8 +60,8 @@ src_install() {
 	insinto /usr/share/${PN}-${SLOT}/lib
 	doins ${PN}.jar
 	exeinto /usr/bin
-	cp -a "${FILESDIR}/${PN}" "${T}"
-	sed -i -e "s|${PN}-0|${PN}-${SLOT}|g" "${T}/${PN}"
+	cp -a "${FILESDIR}/${PN}" "${T}" || die
+	sed -i -e "s|${PN}-0|${PN}-${SLOT}|g" "${T}/${PN}" || die
 	doexe "${T}/${PN}"
 	doicon "${S}"/org/lateralgm/${PN}/icons/lgl-128.png
 	make_desktop_entry "/usr/bin/libmaker" "${MY_PN}" \
