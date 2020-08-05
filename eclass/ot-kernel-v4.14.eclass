@@ -14,24 +14,6 @@
 # The ot-kernel-v4.14 eclass defines specific applicable patching for the
 # 4.14.x linux kernel.
 
-# UKSM:
-#   https://github.com/dolohow/uksm
-# zen-tune:
-#   https://github.com/torvalds/linux/compare/v4.20...zen-kernel:4.20/zen-tune
-# O3 (Optimize Harder):
-#   https://github.com/torvalds/linux/commit/7d0295dc49233d9ddff5d63d5bdc24f1e80da722
-#   https://github.com/torvalds/linux/commit/562a14babcd56efc2f51c772cb2327973d8f90ad
-# GraySky2 GCC Patches:
-#   https://github.com/graysky2/kernel_gcc_patch
-# MUQSS CPU Scheduler:
-#   http://ck.kolivas.org/patches/4.0/4.14/4.14-ck1/
-# genpatches:
-#   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
-# BFQ updates:
-#   https://github.com/torvalds/linux/compare/v4.20...zen-kernel:4.20/bfq-backports
-# TRESOR:
-#   http://www1.informatik.uni-erlangen.de/tresor
-
 # tresor passes cipher but not skcipher in self test (/proc/crypto); there is
 # a error in dmesg
 
@@ -164,15 +146,13 @@ PATCH_O3_RO_COMMIT="562a14babcd56efc2f51c772cb2327973d8f90ad" # O3 read overflow
 PATCH_GRAYSKY2_GCC_COMMIT="c53ae690ee282d129fae7e6e10a4c00e5030d588" # zen gcc graysky2
 PATCH_PDS_MAJOR_MINOR="4.14"
 PATCH_PDS_VER="${PATCH_PDS_VER:=098i}"
-PATCH_CK_MAJOR="4.0"
-PATCH_CK_MAJOR_MINOR="4.14"
-PATCH_CK_REVISION="1"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?135}"
 PATCH_GP_MAJOR_MINOR_REVISION="4.14-${K_GENPATCHES_VER}"
 PATCH_BFQ_VER="4.19"
 PATCH_TRESOR_VER="3.18.5"
 DISABLE_DEBUG_V="1.1"
 BFQ_BRANCH="bfq"
+MUQSS_VER="0.162"
 
 # Obtained from:  date -d "2017-11-12 10:46:13 -0800" +%s
 LINUX_TIMESTAMP=1510512373
@@ -198,11 +178,6 @@ K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 DESCRIPTION="A customizeable kernel package containing UKSM, GraySky's GCC \
 Patches, MUQSS CPU Scheduler, PDS CPU Scheduler, Genpatches, TRESOR"
 
-CK_URL_BASE=\
-"http://ck.kolivas.org/patches/${PATCH_CK_MAJOR}/${PATCH_CK_MAJOR_MINOR}/${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}/"
-CK_FN="${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}-broken-out.tar.xz"
-CK_SRC_URL="${CK_URL_BASE}${CK_FN}"
-
 inherit ot-kernel-common
 
 SRC_URI+=" ${ARCH_URI}
@@ -218,7 +193,6 @@ SRC_URI+=" ${ARCH_URI}
 		${GRAYSKY_SRC_4_9_URL}
 		${GRAYSKY_SRC_8_1_URL}
 	   )
-	   muqss? ( ${CK_SRC_URL} )
 	   o3? (
 		${O3_CO_SRC_URL}
 		${O3_RO_SRC_URL}

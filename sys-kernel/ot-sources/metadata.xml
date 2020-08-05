@@ -82,6 +82,10 @@
       <email>krisman-AT-collabora.com</email>
       <name>Gabriel Krisman Bertazi</name>
     </maintainer>
+    <maintainer status="active">
+      <!-- These additional patches are from Terrell -->
+      <name>Facebook</name>
+    </maintainer>
   </upstream>
   <use>
     <flag name="bfq">Patches the kernel with BFQ fixes and updates from the
@@ -202,5 +206,7 @@
       The zenmisc set contains patches that add drivers or functionality
       related to gaming, laptops, optimizations, etc.
      </flag>
+    <flag name="zstd">Applies additional kernel patches for enabling
+      zstd initramfs decompression.</zstd>
   </use>
 </pkgmetadata>

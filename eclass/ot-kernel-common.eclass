@@ -34,10 +34,10 @@
 # GraySky2 GCC Patches:
 #   https://github.com/graysky2/kernel_gcc_patch
 # MUQSS CPU Scheduler:
-#   http://ck.kolivas.org/patches/muqss/4.0/4.14/
-#   http://ck.kolivas.org/patches/5.0/5.4/5.4-ck1/
-#   http://ck.kolivas.org/patches/5.0/5.7/5.7-ck1/
-#   http://ck.kolivas.org/patches/5.0/5.8/5.8-ck1/
+#   https://github.com/torvalds/linux/compare/v4.14...ckolivas:4.14-ck
+#   https://github.com/torvalds/linux/compare/v5.4...ckolivas:5.4-ck
+#   https://github.com/torvalds/linux/compare/v5.7...ckolivas:5.7-ck
+#   https://github.com/torvalds/linux/compare/v5.8...ckolivas:5.8-ck
 # PDS CPU Scheduler:
 #   http://cchalpha.blogspot.com/search/label/PDS
 # BMQ CPU Scheduler:
@@ -60,6 +60,10 @@
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/futex-backports
 #   https://github.com/torvalds/linux/compare/v5.7...zen-kernel:5.7/futex-multiple-wait-v3
 #   https://github.com/torvalds/linux/compare/v5.8...zen-kernel:5.8/futex-multiple-wait-v3
+# terrelln:zstd-v{4,10}
+#   https://lkml.org/lkml/2020/7/30/973
+#   https://github.com/torvalds/linux/compare/v5.7...terrelln:zstd-v4
+#   https://github.com/torvalds/linux/compare/v5.8...terrelln:zstd-v10
 
 case ${EAPI:-0} in
 	7) die "this eclass doesn't support EAPI ${EAPI}" ;;
@@ -139,6 +143,16 @@ FUTEX_WAIT_MULTIPLE_PROJ="futex-multiple-wait-v3"
 fi
 FUTEX_WAIT_MULTIPLE_FN="${FUTEX_WAIT_MULTIPLE_PROJ}-${K_MAJOR_MINOR}.patch"
 FUTEX_WAIT_MULTIPLE_DL_URL="${FUTEX_WAIT_MULTIPLE_BASE}${FUTEX_WAIT_MULTIPLE_PROJ}.patch"
+
+ZSTD_PROJ="zstd-v${ZSTD_VER}"
+ZSTD_BASE="https://github.com/torvalds/linux/compare/v${K_MAJOR_MINOR}...terrelln:"
+ZSTD_FN="${ZSTD_PROJ}-${K_MAJOR_MINOR}.patch"
+ZSTD_DL_URL="${ZSTD_BASE}${ZSTD_PROJ}.patch"
+
+CK_PROJ="${K_MAJOR_MINOR}-ck"
+CK_BASE="https://github.com/torvalds/linux/compare/v${K_MAJOR_MINOR}...ckolivas:"
+CK_FN="${CK_PROJ}-${K_MAJOR_MINOR}.patch"
+CK_DL_URL="${CK_BASE}${CK_PROJ}.patch"
 
 UKSM_BASE="https://raw.githubusercontent.com/dolohow/uksm/master/v${PATCH_UKSM_MVER}.x/"
 UKSM_FN="uksm-${PATCH_UKSM_VER}.patch"
@@ -370,6 +384,21 @@ function apply_zenmisc() {
 # syscall.  It may shave of <5% CPU usage.
 function apply_futex_wait_multiple() {
 	_dpatch "${PATCH_OPS} -N" "${T}/${FUTEX_WAIT_MULTIPLE_FN}"
+}
+
+# @FUNCTION: apply_zstd
+# @DESCRIPTION:
+# Adds a the zstd compressor.  This will shave off ~.2 seconds when switching
+# from lz4.  See files/ot-kernel-zstd-vs-lz4.txt for my analysis.
+function apply_zstd() {
+	_dpatch "${PATCH_OPS} -N" "${T}/${ZSTD_FN}"
+}
+
+# @FUNCTION: apply_ck
+# @DESCRIPTION:
+# applies the ck patchset
+function apply_ck() {
+	_dpatch "${PATCH_OPS} -N" "${T}/${CK_FN}"
 }
 
 # @FUNCTION: _filter_genpatches
@@ -676,6 +705,22 @@ function fetch_futex_wait_multiple() {
 	wget -O "${T}/${FUTEX_WAIT_MULTIPLE_FN}" "${FUTEX_WAIT_MULTIPLE_DL_URL}" || die
 }
 
+# @FUNCTION: fetch_zstd
+# @DESCRIPTION:
+# Fetches the zstd patchset.
+function fetch_zstd() {
+	einfo "Fetching the zstd patch from a live source..."
+	wget -O "${T}/${ZSTD_FN}" "${ZSTD_DL_URL}" || die
+}
+
+# @FUNCTION: fetch_ck
+# @DESCRIPTION:
+# Fetches the ck patchset.
+function fetch_ck() {
+	einfo "Fetching the ck patch from a live source..."
+	wget -O "${T}/${CK_FN}" "${CK_DL_URL}" || die
+}
+
 # @FUNCTION: fetch_linux_sources
 # @DESCRIPTION:
 # Fetches a local copy of the linux kernel repo.
@@ -738,9 +783,6 @@ function ot-kernel-common_src_unpack() {
 	#if use uksm ; then
 	#	UNIPATCH_LIST+=" ${DISTDIR}/${UKSM_FN}"
 	#fi
-	if use muqss ; then
-		UNIPATCH_LIST+=" ${DISTDIR}/${CK_FN}"
-	fi
 	if use graysky2 ; then
 		if $(ver_test $(gcc-version) -ge 10.1) \
 			&& test -f "${DISTDIR}/${GRAYSKY_DL_10_1_FN}" ; \
@@ -774,6 +816,14 @@ kernel ${K_MAJOR_MINOR}.  Skipping graysky2 patches."
 
 	cd "${S}" || die
 
+	if has muqss ${IUSE_EFFECTIVE} ; then
+		if use muqss ; then
+			fetch_ck
+			apply_ck
+			_dpatch "${PATCH_OPS}" "${FILESDIR}/muqss-dont-attach-ckversion.patch"
+		fi
+	fi
+
 	if has zentune ${IUSE_EFFECTIVE} ; then
 		if use zentune ; then
 			fetch_zentune
@@ -798,6 +848,13 @@ kernel ${K_MAJOR_MINOR}.  Skipping graysky2 patches."
 		fi
 	fi
 
+	if has zstd ${IUSE_EFFECTIVE} ; then
+		if use zstd ; then
+			fetch_zstd
+			apply_zstd
+		fi
+	fi
+
 	if use uksm ; then
 		apply_uksm
 	fi
@@ -807,11 +864,6 @@ kernel ${K_MAJOR_MINOR}.  Skipping graysky2 patches."
 			fetch_bfq
 			apply_bfq
 		fi
-	fi
-
-	if use muqss ; then
-		#_dpatch "${PATCH_OPS}" "${FILESDIR}/MuQSS-4.18-missing-se-member.patch"
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/muqss-dont-attach-ckversion.patch"
 	fi
 
 	if has pds ${IUSE_EFFECTIVE} ; then

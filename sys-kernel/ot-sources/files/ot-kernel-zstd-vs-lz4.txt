@@ -1,0 +1,243 @@
+01234567890123456789012345678901234567890123456789012345678901234567890123456789
+
+Title: zstd versus lz4 with initramfs on Gentoo
+Author: Orson Teodoro
+Date: Aug 5, 2020
+
+Synopsis:
+
+This is another lz4 to zstd comparison but with userspace tools.  I didn't use
+the kernel decompression modules itself to decompress because booting 500
+times to test and collect data is insane.
+
+Terrell (fb) reported in (https://lwn.net/Articles/816054/) 3 seconds for 
+initramfs decompression and 2 seconds kernel decompression for zstd.
+
+--------------------------------------------------------------------------------
+  The Question
+--------------------------------------------------------------------------------
+
+Is this compressor going to make my boot instant or super fast?
+
+--------------------------------------------------------------------------------
+  Computer Specs
+--------------------------------------------------------------------------------
+
+The Computer specification is kept secret for security reasons.
+
+--------------------------------------------------------------------------------
+  Package Versions
+--------------------------------------------------------------------------------
+
+Linux kernel 5.8
+app-arch/zstd-1.4.4-r4:0/1::gentoo
+app-arch/lz4-1.9.2:0/r132::gentoo
+genkernel-4.0.10
+  zstd-1.4.5
+
+--------------------------------------------------------------------------------
+  Genkernel Settings
+--------------------------------------------------------------------------------
+
+These were listed in compression_methods.sh.
+
+  zstd -f -19 -q
+  lz4 -f -9 -l -q
+
+19 is slow compression with high compression for zstd in the normal range.
+22 is the highest.
+
+9 is high compression for lz4.
+
+--------------------------------------------------------------------------------
+  Testing Conditions
+--------------------------------------------------------------------------------
+
+*The lz4 tool used is on a mechanical drive.
+
+*All cores are used while testing or compiling clang in the background.  Your
+typical normal.
+
+--------------------------------------------------------------------------------
+  Compression results
+--------------------------------------------------------------------------------
+
+The size is reported in bytes.
+
+................................................................................
+    lz4                                                                           
+................................................................................
+
+ls initramfs-5.8.0-ot-x86_64.img
+9077440 initramfs-5.8.0-ot-x86_64.img
+
+................................................................................
+    zstd                                                                          
+................................................................................
+
+ls /boot/initramfs* for zstd
+4661662 initramfs-5.8.0-ot-x86_64.img
+
+
+--------------------------------------------------------------------------------
+  Benchmark Scripts
+--------------------------------------------------------------------------------
+
+................................................................................
+    The Decompression Script                                                          
+................................................................................
+
+#!/bin/bash
+# assumes working in /dev/shm/controlled_environment
+rm results
+touch results
+f() {
+	rm -rf bin dev etc init lib lib32 lib64 linuxrc mnt proc run sbin sys \
+		tmp usr var
+	echo "3" >/proc/sys/vm/drop_caches
+	{ time lz4cat initramfs-5.8.0-ot-x86_64.img.zstd | cpio -idm ; } 2>>results
+}
+
+for t in $(seq 1 500) ; do
+	f
+done
+
+# use \`source decomp\` to run script on tmpfs
+# change 500 for sample size
+# change zstd suffix for compressor/decompressor name
+# change lz4cat for compressor/decompressor name
+
+................................................................................
+    Data Averaging One-Liner                                                   
+................................................................................
+
+total=0 ; \
+for t in $(grep "real" results | cut -f 2 -d "m" | sed -e "s|s||g") ; do \
+	total=$(echo "scale=8 ; ${t}+${total}" | bc) ; \
+done ; \
+echo "scale=8 ; ${total}/500" | bc
+
+
+................................................................................
+  The Upload From USB To Tmpfs Script                                                        
+................................................................................
+
+#!/bin/bash
+# assumes working in /dev/shm/controlled_environment
+rm results
+touch results
+f() {
+	rm ./initramfs*
+	echo "3" >/proc/sys/vm/drop_caches
+	{ time cp -a /boot/initramfs-5.8.0-ot-x86_64.img ./initramfs-5.8.0-ot-x86_64.img.zstd ; } 2>>results
+}
+
+for t in $(seq 1 500) ; do
+	f
+done
+
+# use \`source usb_to_tmpfs\` to run script on tmpfs
+# change 500 for sample size
+# change zstd suffix to compressor/decompressor name
+
+
+--------------------------------------------------------------------------------
+  Benchmark Data                                                                
+--------------------------------------------------------------------------------
+
+................................................................................
+  Typical Gentoo Conditions / Medium Load
+................................................................................
+
+  This is the data for while compiling in the background and Internet radio.
+
+Main formula:
+T_total = T_upload_to_ram + T_decompress_all
+
+
+*T_upload is defined as the time to copy from the usb to tmpfs.
+*T_upload is in seconds n=number of trials / sample size
+
+T_upload=.82481400 n=500 lz4 run 1 11.00M/s *operating system slowdown, clock not refreshing, invalid trial?
+T_upload=.76339200 n=500 lz4 run 2 11.89M/s
+T_upload=.82071400 n=500 lz4 run 2 11.06M/s
+T_upload_mean_avg = 0.802973333 lz4
+T_upload=.34313000 n=100 zstd 13.58M/s
+T_upload=.38277500 n=200 zstd 12.17M/s
+T_upload=.38374400 n=500 zstd 12.14M/s
+T_upload_mean_avg = 0.369883 zstd
+
+lz4 upload time 2.170884666 times longer than zstd.
+
+T_decompress_all = .28997800 n=500 lz4 run 1
+T_decompress_all = .29859400 n=500 lz4 run 2
+T_decompress_all = .28848600 n=500 lz4 run 3
+T_decompress_all_mean_avg = 0.292352667 lz4
+T_decompress_all = .40481400 n=500 zstd run 1
+T_decompress_all = .32193400 n=500 zstd run 2
+T_decompress_all = .32776400 n=500 zstd run 3
+T_decompress_all_mean_avg = 0.351504 zstd
+
+T_decompress_all_avg/s = 31049622.680541512 bytes (29.61 MiB/s) lz4
+T_decompress_all_avg/s = 13262045.382129364 bytes (12.64 MiB/s) zstd
+
+T_total = 1.095326 lz4
+T_total = 0.721387 zstd
+
+The difference is 0.373939 seconds.
+
+zstd is faster
+
+
+................................................................................
+  Light Load Test
+................................................................................
+
+  Just Firefox with Internet radio playing.
+
+
+T_upload=.61425600 n=500 run 1 lz4
+T_upload=.60835800 n=500 run 2 lz4
+T_upload=.60020600 n=500 run 3 lz4
+T_upload_mean_avg=0.607606667 lz4
+T_upload=.33606000 n=500 run 1 zstd
+T_upload=.33349400 n=500 run 2 zstd
+T_upload=.33591800 n=500 run 3 zstd
+T_upload_mean_avg=0.335157333 zstd
+
+
+T_decompress=.17253600 n=500 run 1 lz4
+T_decompress=.17615200 n=500 run 2 lz4
+T_decompress=.17631600 n=500 run 3 lz4
+T_decompress_mean_avg=0.175001333 lz4
+T_decompress=.20697600 n=500 run 1 zstd
+T_decompress=.20646200 n=500 run 2 zstd
+T_decompress=.20688200 n=500 run 3 zstd
+T_decompress_mean_avg=0.206773333 zstd
+
+T_decompress_all_avg/s = 51870690.607825256 bytes/s (49.46 MiB/s) lz4
+T_decompress_all_avg/s = 22544793.046403136 bytes/s (21.50 MiB/s) zstd
+
+
+T_total = 0.782608 lz4
+T_total = 0.541930666 zstd
+
+The difference is 0.240677334 seconds
+
+--------------------------------------------------------------------------------
+  Conclusion
+--------------------------------------------------------------------------------
+
+Uploading and decompression is the same order of magnitude.  The 0.24-0.37
+seconds gain is negligble for users switching from lz4 to zstd.  This answers
+the initial question.  The decompressing initramfs is only a quarter a second
+of the total Linux boot process which is several seconds.
+
+For our test, this computer did an order of magnitude better (0.35s/0.54) while
+compiling than Facebook's 3 seconds decompression.  It could be that their
+measurement added additional times from non-initramfs related sources, or
+the kernel zstd is slower than the userspace version.
+
+Facebook reported (https://facebook.github.io/zstd/) 4530 MB/s lz4 and
+1660 MB/s zstd which is 10^3 orders of magnitude.  For this hardware, I
+only managed 10^1 orders of magnitude decompression avg. for zstd.

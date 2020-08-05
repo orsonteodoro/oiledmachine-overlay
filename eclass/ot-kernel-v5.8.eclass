@@ -23,9 +23,6 @@ PATCH_UKSM_VER="5.8"
 PATCH_UKSM_MVER="5"
 PATCH_ZENTUNE_VER="5.8"
 PATCH_ALLOW_O3_COMMIT="bf804ff720d6aa54c15d9783fb9e067df94ff2e8"
-PATCH_CK_MAJOR="5.0"
-PATCH_CK_MAJOR_MINOR="5.8"
-PATCH_CK_REVISION="1"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?10}"
 #PATCH_GP_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
 PATCH_GP_MAJOR_MINOR_REVISION="5.7-${K_GENPATCHES_VER}" # temporary
@@ -35,10 +32,12 @@ PATCH_PROJECT_C_MAJOR_MINOR="5.8"
 DISABLE_DEBUG_V="1.1"
 ZENTUNE_5_8_COMMIT="994279ebfc0d19e185792fb11cacb63e6750e22e..78070e0e766369a33bcc279128c07124276d4b80" # (exclusive-end,inclusive-start]
 PATCH_TRESOR_VER="3.18.5"
+ZSTD_VER="10"
+MUQSS_VER=""
 
 IUSE="bfq bmq +cfs disable_debug futex-wait-multiple +genpatches +graysky2 \
 muqss +o3 prjc tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 \
-tresor_x86_64-256-bit-key-support uksm zenmisc -zentune"
+tresor_x86_64-256-bit-key-support uksm zenmisc -zentune zstd"
 REQUIRED_USE="\
 !bfq !uksm !bmq !muqss !graysky2
 ^^ ( bmq cfs muqss prjc ) \
@@ -60,12 +59,7 @@ K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
 DESCRIPTION="A customizeable kernel package containing UKSM, zen-kernel patchset, GraySky's GCC \
 Patches, MUQSS CPU Scheduler, BMQ CPU Scheduler, Project C CPU Scheduler, \
-Genpatches, BFQ updates, CVE fixes, TRESOR"
-
-CK_URL_BASE=\
-"http://ck.kolivas.org/patches/${PATCH_CK_MAJOR}/${PATCH_CK_MAJOR_MINOR}/${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}/"
-CK_FN="${PATCH_CK_MAJOR_MINOR}-ck${PATCH_CK_REVISION}-broken-out.tar.xz"
-CK_SRC_URL="${CK_URL_BASE}${CK_FN}"
+Genpatches, BFQ updates, CVE fixes, TRESOR, zstd"
 
 inherit check-reqs ot-kernel-common
 
@@ -98,7 +92,6 @@ SRC_URI_DISABLED+="
 		${GRAYSKY_SRC_9_1_URL}
 		${GRAYSKY_SRC_10_1_URL}
 	   )
-	   muqss? ( ${CK_SRC_URL} )
 	   prjc? ( ${PRJC_SRC_URL} )
 	   uksm? ( ${UKSM_SRC_URL} )
 "
