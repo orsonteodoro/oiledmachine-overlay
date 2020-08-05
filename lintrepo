@@ -1,7 +1,9 @@
 CI=${CI:=0}
 VERBOSE=${VERBOSE:=0}
+GREP_ARGS=-q
 if [[ ${@} =~ (-v|--verbose) ]]; then
 	VERBOSE=1
+	GREP_ARGS=
 fi
 
 if grep --help | grep -Fq -e "--perl-regexp" ; then
@@ -23,7 +25,7 @@ fi
 
 echo "Checking ebuilds for security risks.  (This can yield false positives.)"
 for f in $(find $(pwd) -name "*.ebuild") ; do
-	if grep -r -e "SLOT=\"0\"" "${f}" 2>/dev/null 1>/dev/null ; then
+	if grep ${GREP_ARGS} -r -e "SLOT=\"0\"" "${f}" 2>/dev/null 1>/dev/null ; then
 		if [[ ${f} =~ ("-libs/"|"-gfx/"|dev-cpp|dev-qt|dev-db) ]] ;then
 			# It happens when copy pasting ebuild templates from apps to libs.  Apps can use SLOT=0, but libraries should have a variable in subslot.
 			# USE="static-libs" PackageA:0 # insecure
@@ -35,13 +37,13 @@ for f in $(find $(pwd) -name "*.ebuild") ; do
 	# It happens when = slot operator is not explicitly used.  The dependent using the package as a static-libs will not receive a security update.
 	# PackageA[static-libs] -> PackageB  ## insecure pattern
 	# PackageA:=[static-libs] -> PackageB ## secure pattern
-	if grep -P -r -e '(?<!=)\[static-libs' "${f}" 2>/dev/null 1>/dev/null ; then
+	if grep ${GREP_ARGS} -P -r -e '(?<!=)\[static-libs' "${f}" 2>/dev/null 1>/dev/null ; then
 		echo "Security risk:  ${f} ignores security update for subslot.  SR2"
 	fi
-	if grep -P -r -e '(?<!=)\[.*static-libs,' "${f}" 2>/dev/null 1>/dev/null ; then
+	if grep ${GREP_ARGS} -P -r -e '(?<!=)\[.*static-libs,' "${f}" 2>/dev/null 1>/dev/null ; then
 		echo "Security risk:  ${f} ignores security update for subslot.  SR3"
 	fi
-	if grep -P -r -e '(?<!=)\[.*static-libs\]' "${f}" 2>/dev/null 1>/dev/null ; then
+	if grep ${GREP_ARGS} -P -r -e '(?<!=)\[.*static-libs\]' "${f}" 2>/dev/null 1>/dev/null ; then
 		echo "Security risk:  ${f} ignores security update for subslot.  SR4"
 	fi
 done
@@ -60,7 +62,7 @@ for f in $(find $(pwd) -name "*.ebuild") ; do
 		shellcheck -e SC2148,SC2076,SC2068 -S error "${f}" 2>/dev/null 1>/dev/null || echo "Syntax problems in ${f}"
 	fi
 
-	if grep -F -e '$(use ' "${f}" ; then
+	if grep ${GREP_ARGS} -F -e '$(use ' "${f}" ; then
 		echo "Possible USE flag error \`use\` might need to be changed to \`usex\` in src_configure or when used as inline if-else.  See ${f}"
 	fi
 done
@@ -76,10 +78,49 @@ for f in $(find $(pwd) -name "*.ebuild") ; do
 	fi
 done
 
+echo "Checking repo for missing/incomplete LICENSE in ebuild"
+for f in $(find $(pwd) -name "*.ebuild") ; do
+	d=$(dirname ${f})
+	if ! grep ${GREP_ARGS} -F -e "LICENSE=" "${f}" ; then
+		echo "Missing LICENSE= in ${f}"
+		if [[ "${CI}" == "1" ]] ; then
+			return 1
+		fi
+	fi
+	if grep ${GREP_ARGS} -F -e "LICENSE=\"\"" "${f}" ; then
+		echo "Empty LICENSE=\"\" in ${f}"
+		if [[ "${CI}" == "1" ]] ; then
+			return 1
+		fi
+	fi
+done
+
+echo "Checking repo for deprecated/EOL python use"
+for f in $(find $(pwd) -name "*.ebuild") ; do
+	if grep ${GREP_ARGS} -P -e "PYTHON_COMPAT=.*(python2|python2_|python\{.*2_.*\}).*" "${f}" ; then
+		echo "Please edit ${f} and remove python2_x from PYTHON_COMPAT"
+		if [[ "${CI}" == "1" ]] ; then
+			return 1
+		fi
+	fi
+	if grep ${GREP_ARGS} -P -e "PYTHON_COMPAT=.*(python3_4|python\{.*3_4.*\}|python3\{.*_4.*\}).*" "${f}" ; then
+		echo "Please edit ${f} and remove python3_4 from PYTHON_COMPAT"
+		if [[ "${CI}" == "1" ]] ; then
+			return 1
+		fi
+	fi
+	if grep ${GREP_ARGS} -P -e "PYTHON_COMPAT=.*(python3_5|python\{.*3_5.*\}|python3\{.*_5.*\}).*" "${f}" ; then
+		echo "Please edit ${f} and remove python3_5 from PYTHON_COMPAT"
+		if [[ "${CI}" == "1" ]] ; then
+			return 1
+		fi
+	fi
+done
+
 echo "Checking metadata.xml for syntax errors."
 for f in $(find $(pwd) -name "metadata.xml") ; do
 	if [[ "${CI}" == "1" ]] ; then
-		xmllint "${f}" 2>/dev/null 1>/dev/null 2>/dev/null 1>/dev/null
+		xmllint "${f}" 2>/dev/null 1>/dev/null
 	elif [[ "${VERBOSE}" == "1" ]] ; then
 		xmllint "${f}" || echo "Syntax problems in ${f}"
 	else
