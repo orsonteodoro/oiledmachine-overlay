@@ -181,7 +181,7 @@ src_prepare() {
 	fi
 
 	if use crypt_root_plain ; then
-		eapply "${FILESDIR}"/${PN}-4.0.10-dmcrypt-plain-support.patch
+		eapply "${FILESDIR}"/${PN}-4.0.10-dmcrypt-plain-support-v2.patch
 	fi
 }
 
