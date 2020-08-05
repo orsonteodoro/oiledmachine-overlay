@@ -7,7 +7,7 @@ inherit linux-info unpacker
 
 DESCRIPTION="AMDGPU DKMS kernel module"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-50-unified"
+"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-10"
 LICENSE="GPL-2 MIT
 	firmware? ( AMDGPU-FIRMWARE )"
 KEYWORDS="amd64"
@@ -19,6 +19,7 @@ PKG_ARCH="ubuntu"
 PKG_ARCH_VER="18.04"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
 PKG_VER_STRING_DIR=${PKG_VER}-${PKG_REV}-${PKG_ARCH}-${PKG_ARCH_VER}
+PKG_VER_DKMS="5.4.7.53-1048554"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 SLOT="0/${PV}"
@@ -29,8 +30,8 @@ if [[ "${AMDGPU_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
 KV_NOT_SUPPORTED_MAX="99999"
 KV_SUPPORTED_MIN="5.0"
 else
-# See https://cgit.freedesktop.org/~agd5f/linux/tree/Makefile?h=amd-19.50
-KV_NOT_SUPPORTED_MAX="5.3"
+# See https://cgit.freedesktop.org/~agd5f/linux/tree/Makefile?h=amd-20.10
+KV_NOT_SUPPORTED_MAX="5.5"
 KV_SUPPORTED_MIN="5.0"
 fi
 RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
@@ -62,13 +63,13 @@ S="${WORKDIR}"
 RESTRICT="fetch"
 DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${MY_RPR}"
-DC_VER="3.2.56"
-AMDGPU_VERSION="5.2.0.19.50"
-ROCK_VER="2.9.0" # See changes in kfd keywords and tag ;  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/commits/master?path[]=drivers&path[]=gpu&path[]=drm&path[]=amd&path[]=amdkfd
+DC_VER="3.2.72"
+AMDGPU_VERSION="5.4.7.20.10"
+ROCK_VER="3.3.0_pre20200204" # See changes in kfd keywords and tag ;  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/tree/roc-3.1.0/drivers/gpu/drm/amd/amdkfd
 
-PATCHES=( "${FILESDIR}/rock-dkms-2.8_p13-makefile-recognize-gentoo.patch"
+PATCHES=( "${FILESDIR}/amdgpu-dkms-20.10.1048554-makefile-recognize-gentoo.patch"
 	  "${FILESDIR}/amdgpu-dkms-19.50.967956-enable-mmu_notifier.patch"
-	  "${FILESDIR}/amdgpu-dkms-19.50.967956-no-firmware-install.patch"
+	  "${FILESDIR}/amdgpu-dkms-20.10.1048554-no-firmware-install.patch"
 	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
 	  "${FILESDIR}/amdgpu-dkms-19.50.967956-add-header-to-kcl_mn_c.patch" )
 
@@ -80,7 +81,7 @@ pkg_nofetch() {
 }
 
 pkg_pretend() {
-	ewarn "Kernels 5.0.x <= x <= 5.2.x are only supported."
+	ewarn "Kernels 5.0.x <= x <= 5.4.x are only supported."
 	if use check-pcie ; then
 		if has sandbox $FEATURES ; then
 			die "${PN} require sandbox to be disabled in FEATURES when testing hardware with check-pcie USE flag."
@@ -355,8 +356,8 @@ unpack_deb() {
 
 src_unpack() {
 	default
-	unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/amdgpu-dkms_${PKG_VER}-${PKG_REV}_all.deb"
-	export S="${WORKDIR}/usr/src/amdgpu-${PKG_VER}-${PKG_REV}"
+	unpack_deb "amdgpu-pro-${PKG_VER_STRING_DIR}/amdgpu-dkms_${PKG_VER_DKMS}_all.deb"
+	export S="${WORKDIR}/usr/src/amdgpu-${PKG_VER_DKMS}"
 	rm -rf "${S}/firmware" || die
 }
 
@@ -382,7 +383,7 @@ src_install() {
 	dodir usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}
 	insinto usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}
 	doins -r "${S}"/*
-	fperms 0770 /usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/{post-remove.sh,pre-build.sh,amd/dkms/pre-build.sh,configure}
+	fperms 0750 /usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/{post-remove.sh,pre-build.sh,amd/dkms/pre-build.sh,configure}
 	insinto /etc/modprobe.d
 	doins "${WORKDIR}/etc/modprobe.d/blacklist-radeon.conf"
 	insinto /lib/udev/rules.d
