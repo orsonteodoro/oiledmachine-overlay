@@ -115,7 +115,7 @@ cpown() {
 	local src=$(realpath "${1}")
 	local src_basename=$(basename "${src}")
 	local dest=$(realpath "${2}")
-	cp -a "${src}" "${dest}"
+	cp -a "${src}" "${dest}" || die
 	if [[ ! -d "${dest}" ]] ; then
 		mkdir -p "${dest}" || die
 		chown ${USEROWNER}:${USERGROUP} \
