@@ -76,7 +76,8 @@ APP_SHARED_SECRET="myappsharedsecret"
 EOF
 		die \
 "You must fill out your own savedconfig before preceeding.  Copy and edit the\n\
-into /etc/portage/savedconfig/media-sound/${PN}-${PV} and try again."
+into /etc/portage/savedconfig/media-sound/${PN}-${PV} and try again.  Make\n\
+sure the permission is 700."
 		fi
 	fi
 }
