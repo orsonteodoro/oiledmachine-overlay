@@ -71,11 +71,11 @@ else
 SLOT="0"
 fi
 # Platform defaults based on CMakeList.txt
-IUSE+=" X -asan +bullet +collada +color-management +cuda +cycles -cycles-network \
-+dds -debug doc +elbeem -embree +ffmpeg +fftw +jack +jemalloc \
-+jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal +opencl +openexr \
-+openimagedenoise +openimageio +openmp +opensubdiv +openvdb +openxr -optix \
-+osl release +sdl +sndfile test +tiff -valgrind"
+IUSE+=" X -asan +bullet -collada -color-management +cuda +cycles -cycles-network \
++dds -debug doc +elbeem -embree -ffmpeg -fftw -jack +jemalloc +jpeg2k \
+-llvm -man +ndof +nls +nvcc -nvrtc +openal +opencl -openexr -openimagedenoise \
+-openimageio +openmp -opensubdiv -openvdb -optix -osl release -sdl -sndfile \
+test +tiff -valgrind"
 RESTRICT="mirror !test? ( test )"
 
 # The release USE flag depends on platform defaults.
@@ -129,7 +129,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 # extern/Eigen3/eigen-update.sh
 RDEPEND="${PYTHON_DEPS}
 	>=dev-lang/python-3.7.4
-	>=dev-libs/boost-1.70:=[nls?,threads(+)]
+	>=dev-libs/boost-1.68:=[nls?,threads(+)]
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
 		>=dev-python/certifi-2019.6.16[${PYTHON_MULTI_USEDEP}]
@@ -139,7 +139,7 @@ RDEPEND="${PYTHON_DEPS}
 		>=dev-python/requests-2.22.0[${PYTHON_MULTI_USEDEP}]
 		>=dev-python/urllib3-1.25.3[${PYTHON_MULTI_USEDEP}]
 	')
-	>=media-libs/freetype-2.10.1
+	>=media-libs/freetype-2.9.1
 	>=media-libs/glew-1.13.0:*
 	>=media-libs/libpng-1.6.35:0=
 	media-libs/libsamplerate
@@ -160,13 +160,13 @@ RDEPEND="${PYTHON_DEPS}
 		>=x11-drivers/nvidia-drivers-418.39
 		>=dev-util/nvidia-cuda-toolkit-10.1:=
 	)
-	embree? ( >=media-libs/embree-3.8.0 )
+	embree? ( >=media-libs/embree-3.2.4 )
 	ffmpeg? ( >=media-video/ffmpeg-4.0.2:=[x264,mp3,encode,theora,jpeg2k?] )
 	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
 	jack? ( virtual/jack )
 	jemalloc? ( >=dev-libs/jemalloc-5.0.1:= )
 	jpeg2k? ( >=media-libs/openjpeg-2.3.0:2 )
-	llvm? ( >=sys-devel/llvm-9.0.1:= )
+	llvm? ( >=sys-devel/llvm-6.0.1:= )
 	ndof? (
 		app-misc/spacenavd
 		>=dev-libs/libspnav-0.2.3
@@ -182,18 +182,17 @@ RDEPEND="${PYTHON_DEPS}
 	openimagedenoise? ( >=media-libs/oidn-1.0.0 )
 	openimageio? ( >=media-libs/openimageio-1.8.13 )
 	openexr? (
-		>=media-libs/ilmbase-2.4.0:=
-		>=media-libs/openexr-2.4.0:=
+		>=media-libs/ilmbase-2.3.0:=
+		>=media-libs/openexr-2.3.0:=
 	)
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.0_rc2:=[cuda=,opencl=] )
 	openvdb? (
-		>=media-gfx/openvdb-7.0.0[${PYTHON_SINGLE_USEDEP},-abi3-compat(-),abi4-compat(+)]
-		>=dev-cpp/tbb-2019.9
-		>=dev-libs/c-blosc-1.5.0
+		>=media-gfx/openvdb-5.1.0[${PYTHON_SINGLE_USEDEP},-abi3-compat(-),abi4-compat(+)]
+		>=dev-cpp/tbb-2018.5
+		>=dev-libs/c-blosc-1.14.4
 	)
-	openxr? ( media-libs/openxr )
 	optix? ( >=dev-libs/optix-7 )
-	osl? ( >=media-libs/osl-1.10.9:= )
+	osl? ( >=media-libs/osl-1.9.9:= )
 	sdl? ( >=media-libs/libsdl2-2.0.8[sound,joystick] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
 	tiff? ( >=media-libs/tiff-4.0.9:0 )
@@ -222,9 +221,6 @@ DEPEND="${RDEPEND}
 PATCHES=(
 	"${FILESDIR}/${PN}-2.82a-fix-install-rules.patch"
 	"${FILESDIR}/${PN}-2.82a-cycles-network-fixes.patch"
-	"${FILESDIR}/${PN}-2.83.1-device_network_h-fixes.patch"
-	"${FILESDIR}/${PN}-2.83.1-device_network_h-add-device-header.patch"
-	"${FILESDIR}/${PN}-2.83.1-update-acquire_tile-for-cycles-networking.patch"
 	"${FILESDIR}/${PN}-2.80-install-paths-change.patch"
 )
 
@@ -251,10 +247,10 @@ pkg_setup() {
 }
 
 _src_prepare() {
-	einfo
-	einfo "$(ver_cut 1-2) version series is a Long Term Support (LTS) version."
-	einfo "Upstream supports this series up to May 2020 (2 years)."
-	einfo
+	ewarn
+	ewarn "This version is not Long Term Support (LTS) version."
+	ewarn "Use 2.83.x series instead."
+	ewarn
 	S="${BUILD_DIR}" \
 	CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
@@ -319,7 +315,7 @@ _src_configure() {
 		-DWITH_CXX11_ABI=ON
 		-DWITH_CYCLES=$(usex cycles)
 		-DWITH_CYCLES_CUBIN_COMPILER=$(usex nvrtc)
-		-DWITH_CYCLES_CUDA_BINARIES=$(use cuda)
+		-DWITH_CYCLES_CUDA_BINARIES=$(usex cuda)
 		-DWITH_CYCLES_DEVICE_CUDA=$(usex cuda TRUE FALSE)
 		-DWITH_CYCLES_DEVICE_OPENCL=$(usex opencl)
 		-DWITH_CYCLES_DEVICE_OPTIX=$(usex optix)
@@ -346,7 +342,6 @@ _src_configure() {
 		-DWITH_OPENVDB_BLOSC=$(usex openvdb)
 		-DWITH_PYTHON_INSTALL=OFF
 		-DWITH_PYTHON_INSTALL_NUMPY=OFF
-		-DWITH_XR_OPENXR=$(usex openxr)
 	)
 
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
@@ -370,7 +365,7 @@ _src_configure() {
 		)
 	fi
 
-	# For details see, https://github.com/blender/blender/tree/v2.83.1/build_files/cmake/config
+	# For details see, https://github.com/blender/blender/tree/v2.81/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
 			-DWITH_CYCLES_NETWORK=$(usex cycles-network)
@@ -650,7 +645,6 @@ _src_install() {
 		dosym "../../..${d_dest}/blender" \
 			"/usr/bin/${PN}-headless-${SLOT}" || die
 	fi
-	touch "${ED}${d_dest}" || die
 	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
 		dodir "${d_dest}"
 		touch "${ED}${d_dest}/.multislot"

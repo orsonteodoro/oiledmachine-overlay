@@ -71,11 +71,11 @@ else
 SLOT="0"
 fi
 # Platform defaults based on CMakeList.txt
-IUSE+=" X -asan +bullet -collada -color-management +cuda +cycles -cycles-network \
-+dds -debug doc +elbeem -embree -ffmpeg -fftw -jack +jemalloc +jpeg2k \
--llvm -man +ndof +nls +nvcc -nvrtc +openal +opencl -openexr -openimagedenoise \
--openimageio +openmp -opensubdiv -openvdb -optix -osl release -sdl -sndfile \
-test +tiff -valgrind"
+IUSE+=" X -asan +bullet +collada +color-management +cuda +cycles -cycles-network \
++dds -debug doc +elbeem -embree +ffmpeg +fftw +jack +jemalloc \
++jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal +opencl +openexr \
++openimagedenoise +openimageio +openmp +opensubdiv +openvdb -optix +osl \
+release +sdl +sndfile test +tiff -valgrind"
 RESTRICT="mirror !test? ( test )"
 
 # The release USE flag depends on platform defaults.
@@ -129,7 +129,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 # extern/Eigen3/eigen-update.sh
 RDEPEND="${PYTHON_DEPS}
 	>=dev-lang/python-3.7.4
-	>=dev-libs/boost-1.68:=[nls?,threads(+)]
+	>=dev-libs/boost-1.70:=[nls?,threads(+)]
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
 		>=dev-python/certifi-2019.6.16[${PYTHON_MULTI_USEDEP}]
@@ -182,14 +182,14 @@ RDEPEND="${PYTHON_DEPS}
 	openimagedenoise? ( >=media-libs/oidn-1.0.0 )
 	openimageio? ( >=media-libs/openimageio-1.8.13 )
 	openexr? (
-		>=media-libs/ilmbase-2.3.0:=
-		>=media-libs/openexr-2.3.0:=
+		>=media-libs/ilmbase-2.4.0:=
+		>=media-libs/openexr-2.4.0:=
 	)
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.0_rc2:=[cuda=,opencl=] )
 	openvdb? (
-		>=media-gfx/openvdb-5.1.0[${PYTHON_SINGLE_USEDEP},-abi3-compat(-),abi4-compat(+)]
-		>=dev-cpp/tbb-2018.5
-		>=dev-libs/c-blosc-1.14.4
+		>=media-gfx/openvdb-7.0.0[${PYTHON_SINGLE_USEDEP},-abi3-compat(-),abi4-compat(+)]
+		>=dev-cpp/tbb-2019.9
+		>=dev-libs/c-blosc-1.5.0
 	)
 	optix? ( >=dev-libs/optix-7 )
 	osl? ( >=media-libs/osl-1.9.9:= )
@@ -315,7 +315,7 @@ _src_configure() {
 		-DWITH_CXX11_ABI=ON
 		-DWITH_CYCLES=$(usex cycles)
 		-DWITH_CYCLES_CUBIN_COMPILER=$(usex nvrtc)
-		-DWITH_CYCLES_CUDA_BINARIES=$(use cuda)
+		-DWITH_CYCLES_CUDA_BINARIES=$(usex cuda)
 		-DWITH_CYCLES_DEVICE_CUDA=$(usex cuda TRUE FALSE)
 		-DWITH_CYCLES_DEVICE_OPENCL=$(usex opencl)
 		-DWITH_CYCLES_DEVICE_OPTIX=$(usex optix)
@@ -365,7 +365,7 @@ _src_configure() {
 		)
 	fi
 
-	# For details see, https://github.com/blender/blender/tree/v2.81/build_files/cmake/config
+	# For details see, https://github.com/blender/blender/tree/v2.82a/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
 			-DWITH_CYCLES_NETWORK=$(usex cycles-network)

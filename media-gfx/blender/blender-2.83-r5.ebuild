@@ -53,20 +53,18 @@ inherit blender check-reqs cmake-utils xdg-utils flag-o-matic xdg-utils \
 	pax-utils python-single-r1 toolchain-funcs eapi7-ver
 
 
+MY_PV="2.83.0"
+
 # If you use git tarballs, you need to download the submodules listed in
 # .gitmodules.  The download.blender.org are preferred because they bundle them.
-SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
-
-# Blender can have letters in the version string,
-# so strip off the letter if it exists.
-MY_PV="$(ver_cut 1-2)"
+SRC_URI="https://download.blender.org/source/blender-${MY_PV}.tar.xz"
 
 BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest}
 BLENDER_MULTISLOT=${BLENDER_MULTISLOT:=1}
 
 # Slotting is for scripting and plugin compatibility
 if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
-SLOT="${MY_PV}"
+SLOT="${PV}"
 else
 SLOT="0"
 fi
@@ -227,6 +225,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.83.1-update-acquire_tile-for-cycles-networking.patch"
 	"${FILESDIR}/${PN}-2.80-install-paths-change.patch"
 )
+S="${WORKDIR}/${PN}-${MY_PV}"
 
 get_dest() {
 	echo "/usr/bin/.${PN}/${SLOT}/${EBLENDER_NAME}"
@@ -319,7 +318,7 @@ _src_configure() {
 		-DWITH_CXX11_ABI=ON
 		-DWITH_CYCLES=$(usex cycles)
 		-DWITH_CYCLES_CUBIN_COMPILER=$(usex nvrtc)
-		-DWITH_CYCLES_CUDA_BINARIES=$(use cuda)
+		-DWITH_CYCLES_CUDA_BINARIES=$(usex cuda)
 		-DWITH_CYCLES_DEVICE_CUDA=$(usex cuda TRUE FALSE)
 		-DWITH_CYCLES_DEVICE_OPENCL=$(usex opencl)
 		-DWITH_CYCLES_DEVICE_OPTIX=$(usex optix)
@@ -370,7 +369,7 @@ _src_configure() {
 		)
 	fi
 
-	# For details see, https://github.com/blender/blender/tree/v2.83.2/build_files/cmake/config
+	# For details see, https://github.com/blender/blender/tree/v2.83/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
 			-DWITH_CYCLES_NETWORK=$(usex cycles-network)
