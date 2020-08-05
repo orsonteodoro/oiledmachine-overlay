@@ -8,7 +8,7 @@ inherit linux-info unpacker
 DESCRIPTION="ROCk DKMS kernel module"
 HOMEPAGE="https://rocm-documentation.readthedocs.io/en/latest/Installation_Guide/ROCk-kernel.html"
 LICENSE="GPL-2 MIT
-	firmware? ( AMDGPU-FIRMWARE )"
+	firmware? ( AMDGPU-FIRMWARE RADEON-FIRMWARE )"
 KEYWORDS="amd64"
 MY_RPR="${PV//_p/-}" # Remote PR
 FN="rock-dkms_${MY_RPR}_all.deb"
@@ -22,7 +22,7 @@ if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
 KV_NOT_SUPPORTED_MAX="99999"
 KV_SUPPORTED_MIN="5.0"
 else
-KV_NOT_SUPPORTED_MAX="5.7"
+KV_NOT_SUPPORTED_MAX="5.5"
 KV_SUPPORTED_MIN="5.0"
 fi
 RDEPEND="firmware? ( sys-firmware/rock-firmware:${SLOT} )
@@ -55,13 +55,14 @@ S="${WORKDIR}/usr/src/amdgpu-${MY_RPR}"
 RESTRICT="fetch"
 DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${MY_RPR}"
-DC_VER="3.2.81"
-AMDGPU_VERSION="5.6.0"
+DC_VER="3.2.68"
+AMDGPU_VERSION="5.4.4"
 
-PATCHES=( "${FILESDIR}/rock-dkms-3.5_p30-makefile-recognize-gentoo.patch"
-	  "${FILESDIR}/rock-dkms-3.5_p30-enable-mmu_notifier.patch"
-	  "${FILESDIR}/rock-dkms-3.5_p32-no-firmware-install.patch"
-	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch" )
+PATCHES=( "${FILESDIR}/rock-dkms-2.8_p13-makefile-recognize-gentoo.patch"
+	  "${FILESDIR}/rock-dkms-3.0_p6-enable-mmu_notifier.patch"
+	  "${FILESDIR}/rock-dkms-3.1_p44-no-firmware-install.patch"
+	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
+	  "${FILESDIR}/rock-dkms-3.1_p44-fix-retval-for-drm_dp_atomic_find_vcpi_slots.patch" )
 
 pkg_nofetch() {
         local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
@@ -350,10 +351,12 @@ src_prepare() {
 if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" != "1" ]] ; then
 	check_hardware
 fi
-	chmod 0770 amd/dkms/autogen.sh || die
-	pushd amd/dkms || die
+	chmod 0750 autogen.sh || die
 	./autogen.sh || die
-	popd || die
+	pushd amd/dkms || die
+	chmod 0750 autogen.sh || die
+	./autogen.sh || die
+	popd
 }
 
 src_configure() {
@@ -368,7 +371,7 @@ src_install() {
 	dodir usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}
 	insinto usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}
 	doins -r "${S}"/*
-	fperms 0770 /usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/{amd/dkms/post-remove.sh,amd/dkms/pre-build.sh,amd/dkms/config/install-sh,amd/dkms/configure,amd/dkms/autogen.sh}
+	fperms 0750 /usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/{post-install.sh,post-remove.sh,pre-build.sh,config/install-sh,configure,amd/dkms/configure,amd/dkms/pre-build.sh,autogen.sh,amd/dkms/autogen.sh}
 	insinto /etc/modprobe.d
 	doins "${WORKDIR}/etc/modprobe.d/blacklist-radeon.conf"
 }

@@ -350,10 +350,10 @@ src_prepare() {
 if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" != "1" ]] ; then
 	check_hardware
 fi
-	chmod 0770 autogen.sh || die
+	chmod 0750 autogen.sh || die
 	./autogen.sh || die
 	pushd amd/dkms || die
-	chmod 0770 autogen.sh || die
+	chmod 0750 autogen.sh || die
 	./autogen.sh || die
 	popd
 }
@@ -370,7 +370,7 @@ src_install() {
 	dodir usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}
 	insinto usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}
 	doins -r "${S}"/*
-	fperms 0770 /usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/{post-install.sh,post-remove.sh,pre-build.sh,config/install-sh,configure,amd/dkms/configure,amd/dkms/pre-build.sh,autogen.sh,amd/dkms/autogen.sh}
+	fperms 0750 /usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/{post-install.sh,post-remove.sh,pre-build.sh,config/install-sh,configure,amd/dkms/configure,amd/dkms/pre-build.sh,autogen.sh,amd/dkms/autogen.sh}
 	insinto /etc/modprobe.d
 	doins "${WORKDIR}/etc/modprobe.d/blacklist-radeon.conf"
 }
