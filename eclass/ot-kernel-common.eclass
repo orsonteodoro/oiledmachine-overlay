@@ -1178,6 +1178,15 @@ the crypto key.\n\
 		fi
 	fi
 
+	einfo \
+"\n\
+For Genkernel users.  It's recommended to add either\n\
+  --compress-initramfs-type=zstd\n\
+or\n\
+  --compress-initramfs-type=lz4\n\
+to genkernel invocation.\n\
+\n"
+
 	if declare -f ot-kernel-common_pkg_postinst_cb > /dev/null ; then
 		ot-kernel-common_pkg_postinst_cb
 	fi

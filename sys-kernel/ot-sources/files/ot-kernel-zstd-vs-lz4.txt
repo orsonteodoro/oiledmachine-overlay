@@ -58,6 +58,7 @@ These were listed in compression_methods.sh.
 *All cores are used while testing or compiling clang in the background.  Your
 typical normal.
 
+
 --------------------------------------------------------------------------------
   Compression results
 --------------------------------------------------------------------------------
@@ -69,14 +70,14 @@ The size is reported in bytes.
 ................................................................................
 
 ls initramfs-5.8.0-ot-x86_64.img
-9077440 initramfs-5.8.0-ot-x86_64.img
+SIZE_OF_ARCHIVE = 9077440 initramfs-5.8.0-ot-x86_64.img
 
 ................................................................................
     zstd                                                                          
 ................................................................................
 
 ls /boot/initramfs* for zstd
-4661662 initramfs-5.8.0-ot-x86_64.img
+SIZE_OF_ARCHIVE = 4661662 initramfs-5.8.0-ot-x86_64.img
 
 
 --------------------------------------------------------------------------------
@@ -177,6 +178,8 @@ T_decompress_all = .40481400 n=500 zstd run 1
 T_decompress_all = .32193400 n=500 zstd run 2
 T_decompress_all = .32776400 n=500 zstd run 3
 T_decompress_all_mean_avg = 0.351504 zstd
+
+T_decompress_all_avg/s = SIZE_OF_ARCHIVE / T_decompress_all_mean_avg
 
 T_decompress_all_avg/s = 31049622.680541512 bytes (29.61 MiB/s) lz4
 T_decompress_all_avg/s = 13262045.382129364 bytes (12.64 MiB/s) zstd
