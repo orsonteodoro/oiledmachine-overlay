@@ -279,10 +279,12 @@ pkg_postinst() {
 	elog "The 4.x Genkernel patches for subdir_mount and crypt_root_plain are"
 	elog "experimental."
 	elog "  -subdir_mount is untested on Genkernel 4.0."
-	elog "  -crypt_root_plain is in testing for Genkernel 4.0."
 	elog
-	elog "Use 3.x Genkernel series for tested reliable patch for subdir_mount and"
-	elog "crypt_root_plain."
+	elog "To activate the USE flag do:"
+	elog "mkdir -p /etc/portage/profile"
+	elog "echo \"sys-kernel/genkernel -subdir_mount\" >> /etc/portage/profile/package.use.mask"
+	elog
+	elog "Use 3.x Genkernel series for tested reliable patch for subdir_mount."
 	elog
 	elog "Genkernel 4.x users should keep a backup of your old initramfs produced"
 	elog "by Genkernel 3.x just in case things go wrong."
