@@ -18,14 +18,13 @@
 #   https://github.com/dolohow/uksm
 # zen-tune:
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce 3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0
-#   https://github.com/torvalds/linux/compare/v5.6...zen-kernel:5.6/zen-sauce (ef3a3e65c6f4eb74afe3b42024753aadc1c80672..d33eeeb62ca70eeba3234089e7bc61ac11e8d351] ; (exclusive-end,inclusive-start]
 #   https://github.com/torvalds/linux/compare/v5.7...zen-kernel:5.7/zen-sauce (03344d1ad1076dd6374f208f8de4c7f6da9dbcee..13f40f309a6a443fcdcc51759dc3a4a0f9b7910f] ; (exclusive-end,inclusive-start]
-#   https://github.com/torvalds/linux/compare/v5.7...zen-kernel:5.8/zen-sauce (994279ebfc0d19e185792fb11cacb63e6750e22e..78070e0e766369a33bcc279128c07124276d4b80] ; (exclusive-end,inclusive-start]
+#   https://github.com/torvalds/linux/compare/v5.8...zen-kernel:5.8/zen-sauce (994279ebfc0d19e185792fb11cacb63e6750e22e..78070e0e766369a33bcc279128c07124276d4b80] ; (exclusive-end,inclusive-start]
 # zen-kernel 5.4/futex-backports
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/futex-backports
 # zen-kernel 5.{6,7}/futex-multiple-wait-v3
-#   https://github.com/torvalds/linux/compare/v5.6...zen-kernel:5.6/futex-multiple-wait-v3
 #   https://github.com/torvalds/linux/compare/v5.7...zen-kernel:5.7/futex-multiple-wait-v3
+#   https://github.com/torvalds/linux/compare/v5.8...zen-kernel:5.8/futex-multiple-wait-v3
 # O3 (Optimize Harder):
 #   4.9 (O3) https://github.com/torvalds/linux/commit/7d0295dc49233d9ddff5d63d5bdc24f1e80da722
 #   circa 2018 (infiniband O3 read overflow fix) https://github.com/torvalds/linux/commit/562a14babcd56efc2f51c772cb2327973d8f90ad
@@ -48,7 +47,6 @@
 #   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-4.14.html
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.4.html
-#   https://dev.gentoo.org/~mpagano/genpatches/releases-5.6.html
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.7.html
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.8.html
 # BFQ updates:
