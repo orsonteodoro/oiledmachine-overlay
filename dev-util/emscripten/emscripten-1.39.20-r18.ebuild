@@ -83,6 +83,7 @@ JAVA_V="1.8"
 # They use the latest commit for llvm and clang
 RDEPEND="${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
+	asmjs? ( ~dev-util/emscripten-fastcomp-${PV}:= )
 	closure-compiler? (
 		system-closure-compiler? ( \
 			>=dev-util/closure-compiler-npm-20200224:\
@@ -100,7 +101,6 @@ ${CLOSURE_COMPILER_SLOT}\
 		)
 	)
 	>=dev-util/binaryen-93
-	asmjs? ( ~dev-util/emscripten-fastcomp-${PV}:= )
 	>=net-libs/nodejs-0.10.17
 	wasm? (
 		>=sys-devel/llvm-11.0.0_rc1:=[llvm_targets_WebAssembly]
