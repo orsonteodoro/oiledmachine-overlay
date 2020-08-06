@@ -199,7 +199,7 @@ the correct EMSDK_LLVM_VERSION?"
 		CXX=$(tc-getCXX)
 		test-flag-CXX -fignore-exceptions
 		if [[ "$?" != "0" ]] ; then
-			die "You need llvm >=11.0.0_rc1 to use this product."
+			die "You need clang and llvm >=11.0.0_rc1 to use this product."
 		fi
 	else
 		if [[ ! -f /usr/share/emscripten-fastcomp-${PV}/bin/llc ]] ; then
