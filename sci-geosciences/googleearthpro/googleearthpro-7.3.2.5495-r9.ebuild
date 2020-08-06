@@ -6,7 +6,7 @@
 
 EAPI=5
 
-inherit eapi7-ver eutils fdo-mime gnome2-utils unpacker pax-utils
+inherit eapi7-ver eutils fdo-mime gnome2-utils pax-utils unpacker
 
 DESCRIPTION="A 3D interface to the planet"
 HOMEPAGE="https://earth.google.com/"
@@ -49,7 +49,11 @@ LICENSE="googleearthpro-7.3.2
 SLOT="0"
 KEYWORDS="~amd64"
 RESTRICT="mirror splitdebug fetch" # fetch for more control and determinism
-IUSE="system-expat system-ffmpeg system-icu system-gdal system-openssl system-qt5 system-spnav"
+LANGS=(ar bg ca cs da de el es-419 es fa fil fi fr he hi hr hu id it ja ko \
+lt lv nl no pl pt-PT pt ro ru sk sl sr sv th tr uk vi zh-Hans zh-Hant-HK \
+zh-Hant)
+IUSE="+l10n_en ${LANGS[@]/#/l10n_} system-expat system-ffmpeg system-icu system-gdal system-openssl system-qt5 system-spnav"
+LANGS+=( en )
 MY_PN="${PN//pro/}"
 
 QA_PREBUILT="*"
@@ -417,6 +421,14 @@ src_install() {
 	find . -type f -name "*.so*" -exec chmod +x '{}' +
 
 	pax-mark -m "${ED%/}"/opt/${PN}/${MY_PN}-bin
+
+	mkdir -p "${T}/langs" || die
+	mv "${ED}/opt/googleearthpro/lang/"* "${T}/langs" || die
+	insinto /opt/googleearthpro/lang
+	for l in ${L10N} ; do
+		einfo "Installing language ${l}"
+		doins "${T}/langs/${l}.qm"
+	done
 }
 
 pkg_preinst() {
@@ -430,6 +442,10 @@ pkg_postinst() {
 	elog "enableTips=false"
 	elog ""
 	elog "If it fails to load, you may need to \`killall googleearth-bin\`"
+
+	if ! use l10n_en ; then
+		einfo "You must manually set the language in Tools > Options > General > Language Settings"
+	fi
 
 	fdo-mime_desktop_database_update
 	fdo-mime_mime_database_update
