@@ -1,6 +1,9 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# To find the version use:
+# dpkg -I 'google-earth-pro-stable_7.3.2_amd64.deb'
+
 EAPI=5
 
 inherit eapi7-ver eutils fdo-mime gnome2-utils unpacker pax-utils

@@ -1,6 +1,9 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# To find the version use:
+# dpkg -I 'google-earth-pro-stable_7.3.3_amd64.deb'
+
 EAPI=5
 
 inherit eapi7-ver eutils fdo-mime gnome2-utils unpacker pax-utils
@@ -8,7 +11,7 @@ inherit eapi7-ver eutils fdo-mime gnome2-utils unpacker pax-utils
 DESCRIPTION="A 3D interface to the planet"
 HOMEPAGE="https://earth.google.com/"
 # See https://support.google.com/earth/answer/168344?hl=en for list of direct links
-EXPECTED_SHA256="db3f4b224426789ffb8d76a5f64126f8a2822bc42d30da162ac05d039047a152"
+EXPECTED_SHA256="63ad2fdae55cefa7674e68a2f7383274a1768ad118c13cc613e0b897f9546ce8"
 MY_PV=$(ver_cut 1-3 ${PV})
 SRC_FN_AMD64="google-earth-pro-stable_${MY_PV}_amd64.deb"
 DEST_FN_AMD64="GoogleEarthProLinux-${MY_PV}_${EXPECTED_SHA256}_amd64.deb"
@@ -53,7 +56,7 @@ QA_PREBUILT="*"
 
 # Using system-openssl, system-icu USE flags requires custom slotting
 
-EXPAT_V="2.1"
+EXPAT_V="2.2.1"
 GDAL_V="2.3.2"
 FFMPEG_V="3.2.4"
 ICU_V="54"
