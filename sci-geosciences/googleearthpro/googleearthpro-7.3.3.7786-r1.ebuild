@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 # To find the version use:
-# dpkg -I 'google-earth-pro-stable_7.3.2_amd64.deb'
+# dpkg -I 'google-earth-pro-stable_7.3.3_amd64.deb'
 
 EAPI=5
 
@@ -11,13 +11,14 @@ inherit eapi7-ver eutils fdo-mime gnome2-utils unpacker pax-utils
 DESCRIPTION="A 3D interface to the planet"
 HOMEPAGE="https://earth.google.com/"
 # See https://support.google.com/earth/answer/168344?hl=en for list of direct links
-EXPECTED_SHA256="57b6c970609dc2960e9255b08a7ddf3af2581cb7c06ff92d16820269d0b2530d"
+EXPECTED_SHA256="63ad2fdae55cefa7674e68a2f7383274a1768ad118c13cc613e0b897f9546ce8"
 MY_PV=$(ver_cut 1-3 ${PV})
 SRC_FN_AMD64="google-earth-pro-stable_${MY_PV}_amd64.deb"
 DEST_FN_AMD64="GoogleEarthProLinux-${MY_PV}_${EXPECTED_SHA256}_amd64.deb"
 SRC_URI="amd64? ( https://dl.google.com/dl/linux/direct/${SRC_FN_AMD64}
 			-> ${DEST_FN_AMD64} )"
-LICENSE="googleearthpro-7.3.2
+# See opt/google/earth/pro/resources/licenses.rcc or Help > About for full license list
+LICENSE="googleearthpro-7.3.3
 	Apache-2.0
 	BSD
 	Boost-1.0
@@ -28,21 +29,26 @@ LICENSE="googleearthpro-7.3.2
 	IJG
 	Info-ZIP
 	LGPL-2
+	LGPL-2.1
+	libpng
+	libtiff
+	MIT
 	MS-RL
+	SCEA
 	!system-expat? ( MIT )
 	!system-ffmpeg? ( LGPL-2.1 BSD )
 	!system-gdal? ( BSD Info-ZIP MIT Qhull HDF-EOS gdal-degrib-and-g2clib e_log.c )
 	!system-icu? ( BSD )
 	!system-openssl? ( openssl )
-	!system-qt5? ( BSD-2 BSD LGPL-2.1 googleearthpro-7.3.2 )
+	!system-qt5? ( BSD-2 BSD LGPL-2.1 googleearthpro-7.3.3 )
 	!system-spnav? ( BSD )
 	ZLIB"
 # libvpx is BSD.  libvpx is referenced in ffmpeg and possibly internally
 # Qt5WebKit BSD-2, BSD (ANGLE), LGPL-2.1 (for WebCore), plus possibly custom code
-# More custom licenses are located in googleearthpro-7.3.2
+# More custom licenses are located in googleearthpro-7.3.3
 SLOT="0"
 KEYWORDS="~amd64"
-RESTRICT="mirror splitdebug fetch" # fetch for more control and determinism
+RESTRICT="mirror splitdebug fetch strip" # fetch for more control and determinism
 IUSE="system-expat system-ffmpeg system-icu system-gdal system-openssl system-qt5 system-spnav"
 MY_PN="${PN//pro/}"
 
@@ -56,11 +62,11 @@ QA_PREBUILT="*"
 
 # Using system-openssl, system-icu USE flags requires custom slotting
 
-EXPAT_V="2.1"
-GDAL_V="1.11.5"
+EXPAT_V="2.2.1"
+GDAL_V="2.3.2"
 FFMPEG_V="3.2.4"
 ICU_V="54"
-OPENSSL_V="1.0.2o"
+OPENSSL_V="1.0.2t"
 QT_VERSION="5.5.1" # The version distributed with ${PN}
 
 RDEPEND="
@@ -90,7 +96,7 @@ RDEPEND="
 	>=net-print/cups-1.7.2
 	>=sys-apps/dbus-1.6.18
 	>=sys-apps/util-linux-2.20.1
-	>=sys-devel/gcc-4.8.5[cxx]
+	>=sys-devel/gcc-4.9.4[cxx]
 	>=sys-libs/zlib-1.2.8
 	virtual/opengl
 	virtual/ttf-fonts
@@ -113,7 +119,7 @@ RDEPEND="
 		<media-video/ffmpeg-4
 		>=media-video/ffmpeg-${FFMPEG_V}
 	)
-	system-gdal? ( >=sci-libs/gdal-${GDAL_V}:1 )
+	system-gdal? ( >=sci-libs/gdal-${GDAL_V}:2 )
 	system-icu? ( dev-libs/icu:${ICU_V} )
 	system-openssl? ( >=dev-libs/openssl-${OPENSSL_V}:1.0 )
 	system-qt5? (
@@ -143,7 +149,6 @@ DEPEND="dev-util/patchelf"
 S=${WORKDIR}/opt/google/earth/pro
 
 pkg_setup() {
-	ewarn "This version may contain vulnerabilities.  See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=google%20earth%20$(ver_cut 1-2 ${PV})&search_type=all"
 	if use system-expat ; then
 		ewarn "Using system-expat has not been tested"
 	else
@@ -401,9 +406,6 @@ src_install() {
 
 	insinto /opt/${PN}
 	doins -r *
-	# Missing from licenses.rcc file but mentioned in ${PN} 7.3.3
-	doins "${FILESDIR}/e_log.c.LICENSE"
-	doins "${FILESDIR}/HDF-EOS.LICENSE"
 
 	fperms +x /opt/${PN}/${MY_PN}{,-bin} \
 		/opt/${PN}/{gpsbabel,repair_tool}

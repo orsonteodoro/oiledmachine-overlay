@@ -11,12 +11,13 @@ inherit eapi7-ver eutils fdo-mime gnome2-utils unpacker pax-utils
 DESCRIPTION="A 3D interface to the planet"
 HOMEPAGE="https://earth.google.com/"
 # See https://support.google.com/earth/answer/168344?hl=en for list of direct links
-EXPECTED_SHA256="17fa9df4aa917a25d563d37620c925d5def9bde06fc578f7118d46318640986e"
+EXPECTED_SHA256="57b6c970609dc2960e9255b08a7ddf3af2581cb7c06ff92d16820269d0b2530d"
 MY_PV=$(ver_cut 1-3 ${PV})
 SRC_FN_AMD64="google-earth-pro-stable_${MY_PV}_amd64.deb"
 DEST_FN_AMD64="GoogleEarthProLinux-${MY_PV}_${EXPECTED_SHA256}_amd64.deb"
 SRC_URI="amd64? ( https://dl.google.com/dl/linux/direct/${SRC_FN_AMD64}
 			-> ${DEST_FN_AMD64} )"
+# See opt/google/earth/pro/resources/licenses.rcc or Help > About for full license list
 LICENSE="googleearthpro-7.3.2
 	Apache-2.0
 	BSD
@@ -28,7 +29,12 @@ LICENSE="googleearthpro-7.3.2
 	IJG
 	Info-ZIP
 	LGPL-2
+	LGPL-2.1
+	libpng
+	libtiff
+	MIT
 	MS-RL
+	SCEA
 	!system-expat? ( MIT )
 	!system-ffmpeg? ( LGPL-2.1 BSD )
 	!system-gdal? ( BSD Info-ZIP MIT Qhull HDF-EOS gdal-degrib-and-g2clib e_log.c )
