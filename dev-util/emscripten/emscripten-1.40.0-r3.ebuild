@@ -196,6 +196,9 @@ FEATURES"
 the correct EMSDK_LLVM_VERSION?"
 			die
 		fi
+		if ! has ">=sys-devel/clang-11.0.0_rc1" ; then
+			die "clang >=11.0.0_rc1 is not installed."
+		fi
 		CXX=$(tc-getCXX)
 		test-flag-CXX -fignore-exceptions
 		if [[ "$?" != "0" ]] ; then
