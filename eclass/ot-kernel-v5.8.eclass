@@ -39,7 +39,7 @@ IUSE="bfq bmq +cfs disable_debug futex-wait-multiple +genpatches +graysky2 \
 muqss +o3 prjc tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 \
 tresor_x86_64-256-bit-key-support uksm zenmisc -zentune zstd"
 REQUIRED_USE="\
-!bfq !uksm !bmq !muqss !graysky2
+!bfq !bmq !muqss !graysky2
 ^^ ( bmq cfs muqss prjc ) \
 tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 tresor_aesni? ( tresor )
@@ -83,7 +83,8 @@ SRC_URI+=" ${ARCH_URI}
 		${TRESOR_README_DL_URL2}
 		${TRESOR_RESEARCH_PDF_DL_URL}
 		${TRESOR_SYSFS_DL_URL}
-	   )"
+	   )
+	   uksm? ( ${UKSM_SRC_URL} )"
 
 SRC_URI_DISABLED+="
 	   graysky2? (
@@ -93,7 +94,6 @@ SRC_URI_DISABLED+="
 		${GRAYSKY_SRC_10_1_URL}
 	   )
 	   prjc? ( ${PRJC_SRC_URL} )
-	   uksm? ( ${UKSM_SRC_URL} )
 "
 
 # @FUNCTION: ot-kernel-common_pkg_setup_cb
