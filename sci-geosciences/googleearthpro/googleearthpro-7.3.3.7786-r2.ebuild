@@ -150,7 +150,7 @@ RDEPEND="
 "
 DEPEND="dev-util/patchelf"
 
-S=${WORKDIR}/opt/google/earth/pro
+S="${WORKDIR}/opt/google/earth/pro"
 
 pkg_setup() {
 	if use system-expat ; then

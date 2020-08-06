@@ -150,7 +150,7 @@ RDEPEND="
 "
 DEPEND="dev-util/patchelf"
 
-S=${WORKDIR}/opt/google/earth/pro
+S="${WORKDIR}/opt/google/earth/pro"
 
 pkg_setup() {
 	ewarn "This version may contain vulnerabilities.  See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=google%20earth%20$(ver_cut 1-2 ${PV})&search_type=all"
