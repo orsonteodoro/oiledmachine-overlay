@@ -150,8 +150,10 @@ EOF
 
     env-update
     . /etc/profile
+    export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
     export EM_CONFIG="${EROOT}/usr/share/emscripten-${PV}/emscripten.config"
     /usr/bin/emcc -v
+    unset LLVM_ROOT
 }
 
 ### show action ###
