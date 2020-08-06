@@ -20,8 +20,7 @@ closure-compiler? (
 	MIT
 	MPL-2.0
 	NPL-1.1
-)
-"
+)"
 LICENSE_NOTES="
 Third-party
   ansidecl.h - GPL-2+
@@ -66,8 +65,7 @@ Package
   compiler-rt - Apache-2.0-with-LLVM-exceptions MIT UoI-NCSA
   sdl - ZLIB
   musl - all-rights-reserved MIT
-  libcxx, libcxxabi, libunwind - MIT UoI-NCSA
-"
+  libcxx, libcxxabi, libunwind - MIT UoI-NCSA "
 KEYWORDS="~amd64 ~x86"
 SLOT_MAJOR=$(ver_cut 1-2 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
@@ -86,7 +84,8 @@ RDEPEND="${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
 	closure-compiler? (
 		system-closure-compiler? ( \
->=dev-util/closure-compiler-npm-20200224:${CLOSURE_COMPILER_SLOT}[closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?] )
+			>=dev-util/closure-compiler-npm-20200224:${CLOSURE_COMPILER_SLOT}\
+[closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?] )
 		closure_compiler_java? (
 			>=virtual/jre-${JAVA_V}
 		)
@@ -177,7 +176,6 @@ Use \`eselect java-vm\` to set this up."
 FEATURES"
 		fi
 	fi
-
 	python-single-r1_pkg_setup
 	if use wasm ; then
 		export HIGHEST_LLVM_VER=$(basename $(find /usr/lib/llvm -maxdepth 1 \
@@ -291,7 +289,6 @@ src_prepare() {
 src_configure() {
 	S="${S}/tools/optimizer" \
 	cmake-utils_src_configure
-
 }
 
 src_compile() {
@@ -310,7 +307,10 @@ npm-secaudit_src_compile() {
 src_test() {
 	for t in asm.js wasm ; do
 		cp "${S}/99emscripten" "${T}/99emscripten" || die
-		sed -i -e "s|PATH=\"/usr/share/emscripten-1.40.0\"|PATH=\"/usr/share/emscripten-1.40.0:\${PATH}\"|" "${T}/99emscripten" || die
+		sed -i -e "s|\
+PATH=\"/usr/share/emscripten-1.40.0\"|\
+PATH=\"/usr/share/emscripten-1.40.0:\${PATH}\"|" \
+			"${T}/99emscripten" || die
 		source "${T}/99emscripten"
 		export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
 		local enable_test=0
@@ -365,7 +365,6 @@ src_install() {
 		exeinto "${DEST}/${P}"
 		doexe "${BUILD_DIR}/optimizer"
 	fi
-
 	dodir "${DEST}/${P}"
 	# See tools/install.py
 	find "${S}" \
@@ -425,15 +424,11 @@ pkg_postinst() {
 LLVM_ROOT is set to EMSDK_LLVM_ROOT to avoid possible environmental variable\n\
 conflict.  Set it manually to LLVM_ROOT=\"\$EMSDK_LLVM_ROOT\" before compiling\n\
 with ${P}.\n\
-\n"
-	einfo \
-"\n\
+\n\
 CLOSURE_COMPILER is set to EMSDK_CLOSURE_COMPILER to avoid possible\n\
 environmental variable conflict.  Set it manually to\n\
 CLOSURE_COMPILER=\"\$EMSDK_CLOSURE_COMPILER\" before compiling with ${P}.\n\
-\n"
-	einfo \
-"\n\
+\n\
 Set wasm (llvm) or asm.js (emscripten-fastcomp) output via app-eselect/eselect-emscripten.
 \n"
 }
