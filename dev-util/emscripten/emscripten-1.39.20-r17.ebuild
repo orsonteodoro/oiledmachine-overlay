@@ -315,6 +315,7 @@ src_test() {
 		cp "${S}/99emscripten" "${T}/99emscripten" || die
 		sed -i -e "s|PATH=\"/usr/share/emscripten-1.40.0\"|PATH=\"/usr/share/emscripten-1.40.0:\${PATH}\"|" "${T}/99emscripten" || die
 		source "${T}/99emscripten"
+		local enable_test=0
 		if [[ "${t}" == "wasm" ]] ; then
 			if use system-llvm ; then
 				einfo "Testing ${t}"
