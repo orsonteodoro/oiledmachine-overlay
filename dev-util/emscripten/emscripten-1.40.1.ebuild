@@ -315,11 +315,11 @@ src_test() {
 		cp "${S}/99emscripten" "${T}/99emscripten" || die
 		sed -i -e "s|PATH=\"/usr/share/emscripten-1.40.0\"|PATH=\"/usr/share/emscripten-1.40.0:\${PATH}\"|" "${T}/99emscripten" || die
 		source "${T}/99emscripten"
+		export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
 		local enable_test=0
 		if [[ "${t}" == "wasm" ]] ; then
 			if use system-llvm ; then
 				einfo "Testing ${t}"
-				export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
 				if [[ "${EMCC_WASM_BACKEND}" != "1" ]] ; then
 					die "EMCC_WASM_BACKEND should be 1 with system-llvm"
 				fi
@@ -329,7 +329,6 @@ src_test() {
 		if [[ "${t}" == "asm.js" ]]  ; then
 			if use emscripten-fastcomp ; then
 				einfo "Testing ${t}"
-				export LLVM_ROOT=
 				if [[ "${EMCC_WASM_BACKEND}" != "0" ]] ; then
 					die "EMCC_WASM_BACKEND should be 0 with emscripten-fastcomp"
 				fi
