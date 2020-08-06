@@ -71,7 +71,8 @@ SLOT_MAJOR=$(ver_cut 1-2 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 CLOSURE_COMPILER_SLOT="0"
 PYTHON_COMPAT=( python3_{6,7,8} )
-inherit cmake-utils flag-o-matic java-utils-2 npm-secaudit python-single-r1 toolchain-funcs
+inherit cmake-utils flag-o-matic java-utils-2 npm-secaudit python-single-r1 \
+	toolchain-funcs
 IUSE="asmjs +closure-compiler closure_compiler_java closure_compiler_native \
 closure_compiler_nodejs +native-optimizer \
 system-closure-compiler test +wasm"
@@ -84,7 +85,8 @@ RDEPEND="${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
 	closure-compiler? (
 		system-closure-compiler? ( \
-			>=dev-util/closure-compiler-npm-20200224:${CLOSURE_COMPILER_SLOT}\
+			>=dev-util/closure-compiler-npm-20200224:\
+${CLOSURE_COMPILER_SLOT}\
 [closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?] )
 		closure_compiler_java? (
 			>=virtual/jre-${JAVA_V}
@@ -104,9 +106,10 @@ RDEPEND="${PYTHON_DEPS}
 		>=sys-devel/llvm-11.0.0_rc1:=[llvm_targets_WebAssembly]
 		>=sys-devel/clang-11.0.0_rc1:=[llvm_targets_WebAssembly]
 	)"
-# The java-utils-2 doesn't like nested conditionals.  The eclass needs at least a virtual/jdk
-# This package doesn't really need jdk to use closure-compiler because packages are prebuilt.
-# If we have closure_compiler_native, we don't need Java.
+# The java-utils-2 doesn't like nested conditionals.  The eclass needs at least
+# a virtual/jdk.  This package doesn't really need jdk to use closure-compiler
+# because packages are prebuilt.  If we have closure_compiler_native, we don't
+# need Java.
 DEPEND="${RDEPEND}
 	closure-compiler? (
 		closure_compiler_java? (
@@ -126,7 +129,8 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	closure_compiler_nodejs? ( closure-compiler )
 	system-closure-compiler? (
 		closure-compiler
-		^^ ( closure_compiler_java closure_compiler_native closure_compiler_nodejs )
+		^^ ( closure_compiler_java closure_compiler_native \
+			closure_compiler_nodejs )
 	)"
 FN_DEST="${P}.tar.gz"
 SRC_URI="https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${FN_DEST}"
@@ -153,7 +157,8 @@ pkg_setup() {
 	if use closure-compiler ; then
 		if ! use closure_compiler_native ; then
 			java-pkg_init
-			if [[ -n "${JAVA_HOME}" && -f "${JAVA_HOME}/bin/java" ]] ; then
+			if [[ -n "${JAVA_HOME}" \
+				&& -f "${JAVA_HOME}/bin/java" ]] ; then
 				export JAVA="${JAVA_HOME}/bin/java"
 			elif [[ -z "${JAVA_HOME}" ]] ; then
 				die \
@@ -198,7 +203,8 @@ the correct EMSDK_LLVM_VERSION?"
 		einfo "CXX=${CXX}"
 		test-flag-CXX -fignore-exceptions
 		if [[ "$?" != "0" ]] ; then
-			die "You need clang and llvm >=11.0.0_rc1 to use this product."
+			die \
+"You need clang and llvm >=11.0.0_rc1 to use this product."
 		fi
 	else
 		if [[ ! -f /usr/share/emscripten-fastcomp-${PV}/bin/llc ]] ; then
@@ -216,7 +222,8 @@ prepare_file() {
 	cp "${FILESDIR}/${1}" "${S}/" || die "could not copy '${1}'"
 	sed -i "s/\${PV}/${PV}/g" "${S}/${1}" || \
 		die "could not adjust path for '${1}'"
-	sed -i -e "s|\${PYTHON_EXE_ABSPATH}|${PYTHON_EXE_ABSPATH}|g" "${S}/${1}" || die
+	sed -i -e "s|\${PYTHON_EXE_ABSPATH}|${PYTHON_EXE_ABSPATH}|g" \
+		"${S}/${1}" || die
 	if use asmjs ; then
 		sed -i -e \
 "s|__EMSDK_LLVM_ROOT__|/usr/share/emscripten-fastcomp-${PV}/bin|" \
@@ -429,6 +436,7 @@ CLOSURE_COMPILER is set to EMSDK_CLOSURE_COMPILER to avoid possible\n\
 environmental variable conflict.  Set it manually to\n\
 CLOSURE_COMPILER=\"\$EMSDK_CLOSURE_COMPILER\" before compiling with ${P}.\n\
 \n\
-Set wasm (llvm) or asm.js (emscripten-fastcomp) output via app-eselect/eselect-emscripten.
+Set wasm (llvm) or asm.js (emscripten-fastcomp) output via\n\
+app-eselect/eselect-emscripten.
 \n"
 }
