@@ -443,9 +443,7 @@ pkg_postinst() {
 	elog ""
 	elog "If it fails to load, you may need to \`killall googleearth-bin\`"
 
-	if ! use l10n_en ; then
-		einfo "You must manually set the language in Tools > Options > General > Language Settings"
-	fi
+	einfo "Multilingual users must manually set the language in Tools > Options > General > Language Settings"
 
 	fdo-mime_desktop_database_update
 	fdo-mime_mime_database_update
