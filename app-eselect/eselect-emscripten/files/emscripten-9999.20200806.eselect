@@ -149,6 +149,7 @@ EOF
     rm ${T_CONFIG}
 
     env-update
+    . /etc/profile
     export EM_CONFIG="${EROOT}/usr/share/emscripten-${PV}/emscripten.config"
     /usr/bin/emcc -v
 }
