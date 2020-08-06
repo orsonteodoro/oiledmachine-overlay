@@ -423,10 +423,6 @@ pkg_postinst() {
 		export NPM_SECAUDIT_INSTALL_PATH="${DEST}/${P}"
 		npm-secaudit_pkg_postinst
 	fi
-	elog "Running emscripten initialization, may take a few seconds..."
-	export EM_CONFIG="${DEST}/${P}/emscripten.config" \
-		|| die "Could not export variable"
-	/usr/bin/emcc -v || die "Could not run emcc initialization"
 	einfo \
 "\n\
 LLVM_ROOT is set to EMSDK_LLVM_ROOT to avoid possible environmental variable\n\
