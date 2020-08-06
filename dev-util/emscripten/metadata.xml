@@ -22,6 +22,8 @@
     <remote-id type="github">emscripten-core/emscripten</remote-id>
   </upstream>
   <use>
+    <flag name="asmjs">Adds asm.js output support.  This is deprecated.
+      </flag>
     <flag name="closure-compiler">Fetches and builds the Closure Compiler
       for minification.</flag>
     <flag name="closure_compiler_java">Prefers using the Java version of
@@ -30,16 +32,12 @@
       Closure Compiler.</flag>
     <flag name="closure_compiler_nodejs">Prefers using the Node.js version of
       Closure Compiler.</flag>
-    <flag name="emscripten-fastcomp">Configures and pulls this compiler for
-      asm.js generation.  This compiler is deprecated and not
-      recommended.</flag>
     <flag name="system-closure-compiler">Uses the system's Closure Compiler
       instead of the internal version.</flag>
-    <flag name="system-llvm">Configures and pulls this compiler using the
-      WebAssembly (wasm) backend.  Recommended upstream.  The SDK uses
-      the latest commit.</flag>
     <flag name="native-optimizer">Builds the native optimizer used after
       Emscripten has finish compilation.</flag>
     <flag name="test">Run tests</flag>
+    <flag name="wasm">Adds WebAssembly output support.  Recommended upstream.
+      </flag>
   </use>
 </pkgmetadata>

@@ -74,9 +74,9 @@ SLOT="${SLOT_MAJOR}/${PV}"
 CLOSURE_COMPILER_SLOT="0"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit cmake-utils flag-o-matic java-utils-2 npm-secaudit python-single-r1 toolchain-funcs
-IUSE="+closure-compiler closure_compiler_java closure_compiler_native \
-closure_compiler_nodejs emscripten-fastcomp +native-optimizer \
-system-closure-compiler +system-llvm test
+IUSE="asmjs +closure-compiler closure_compiler_java closure_compiler_native \
+closure_compiler_nodejs +native-optimizer \
+system-closure-compiler test +wasm
 "
 # See also .circleci/config.yml
 # See also tools/shared.py EXPECTED_BINARYEN_VERSION
@@ -100,9 +100,9 @@ RDEPEND="${PYTHON_DEPS}
 		)
 	)
 	>=dev-util/binaryen-94
-	emscripten-fastcomp? ( ~dev-util/emscripten-fastcomp-${PV}:= )
+	asmjs? ( ~dev-util/emscripten-fastcomp-${PV}:= )
 	>=net-libs/nodejs-0.10.17
-	system-llvm? (
+	wasm? (
 		>=sys-devel/llvm-11.0.0_rc1:=[llvm_targets_WebAssembly]
 		>=sys-devel/clang-11.0.0_rc1:=[llvm_targets_WebAssembly]
 	)"
@@ -182,7 +182,7 @@ FEATURES"
 	fi
 
 	python-single-r1_pkg_setup
-	if use system-llvm ; then
+	if use wasm ; then
 		export HIGHEST_LLVM_VER=$(basename $(find /usr/lib/llvm -maxdepth 1 \
 			-regextype 'posix-extended' -regex ".*[0-9]+.*" \
 			| sort -V | tail -n 1))
@@ -222,7 +222,7 @@ prepare_file() {
 	sed -i "s/\${PV}/${PV}/g" "${S}/${1}" || \
 		die "could not adjust path for '${1}'"
 	sed -i -e "s|\${PYTHON_EXE_ABSPATH}|${PYTHON_EXE_ABSPATH}|g" "${S}/${1}" || die
-	if use emscripten-fastcomp ; then
+	if use asmjs ; then
 		sed -i -e \
 "s|__EMSDK_LLVM_ROOT__|/usr/share/emscripten-fastcomp-${PV}/bin|" \
 		-e \
@@ -230,7 +230,7 @@ prepare_file() {
 		-e \
 "s|__LLVM_BIN_PATH__|/usr/share/emscripten-fastcomp-${PV}/bin|" \
 		"${S}/${1}" || die
-	elif use system-llvm ; then
+	elif use wasm ; then
 		sed -i -e \
 "s|__EMSDK_LLVM_ROOT__|/usr/lib/llvm/${EMSDK_LLVM_VERSION}/bin|" \
 		-e \
@@ -318,19 +318,19 @@ src_test() {
 		export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
 		local enable_test=0
 		if [[ "${t}" == "wasm" ]] ; then
-			if use system-llvm ; then
+			if use wasm ; then
 				einfo "Testing ${t}"
 				if [[ "${EMCC_WASM_BACKEND}" != "1" ]] ; then
-					die "EMCC_WASM_BACKEND should be 1 with system-llvm"
+					die "EMCC_WASM_BACKEND should be 1 with wasm"
 				fi
 				enable_test=1
 			fi
 		fi
 		if [[ "${t}" == "asm.js" ]]  ; then
-			if use emscripten-fastcomp ; then
+			if use asmjs ; then
 				einfo "Testing ${t}"
 				if [[ "${EMCC_WASM_BACKEND}" != "0" ]] ; then
-					die "EMCC_WASM_BACKEND should be 0 with emscripten-fastcomp"
+					die "EMCC_WASM_BACKEND should be 0 with asmjs"
 				fi
 				enable_test=1
 			fi
@@ -400,7 +400,7 @@ src_install() {
 	dosym ../share/${P}/emsize /usr/bin/emsize
 	doenvd 99emscripten
 	. /etc/profile
-	if use system-llvm ; then
+	if use wasm ; then
 		export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
 	fi
 	ewarn "If you consider using emscripten in an active shell,"\
@@ -408,15 +408,15 @@ src_install() {
 }
 
 pkg_postinst() {
-	if use system-llvm ; then
+	if use wasm ; then
 		eselect emscripten set "emscripten-${PV} llvm-${HIGHEST_LLVM_VER}"
 		if [[ "${EMCC_WASM_BACKEND}" != "1" ]] ; then
-			die "EMCC_WASM_BACKEND should be 1 with system-llvm"
+			die "EMCC_WASM_BACKEND should be 1 with wasm"
 		fi
-	elif use emscripten-fastcomp ; then
+	elif use asmjs ; then
 		eselect emscripten set "emscripten-${PV} emscripten-fastcomp-${PV}"
 		if [[ "${EMCC_WASM_BACKEND}" != "0" ]] ; then
-			die "EMCC_WASM_BACKEND should be 0 with emscripten-fastcomp"
+			die "EMCC_WASM_BACKEND should be 0 with asmjs"
 		fi
 	fi
 	if use closure-compiler && ! use system-closure-compiler ; then
