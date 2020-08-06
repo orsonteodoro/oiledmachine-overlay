@@ -199,7 +199,8 @@ the correct EMSDK_LLVM_VERSION?"
 		if ! has_version ">=sys-devel/clang-11.0.0_rc1" ; then
 			die "clang >=11.0.0_rc1 is not installed."
 		fi
-		CXX=$(tc-getCXX)
+		CXX="${EROOT}/usr/lib/llvm/${EMSDK_LLVM_VERSION}/bin/clang"
+		echo "CXX=${CXX}"
 		test-flag-CXX -fignore-exceptions
 		if [[ "$?" != "0" ]] ; then
 			die "You need clang and llvm >=11.0.0_rc1 to use this product."
