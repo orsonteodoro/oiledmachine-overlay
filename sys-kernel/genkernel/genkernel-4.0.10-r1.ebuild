@@ -277,8 +277,7 @@ pkg_postinst() {
 	fi
 	elog
 	elog "The 4.x Genkernel patches for subdir_mount are"
-	elog "experimental."
-	elog "  -subdir_mount is untested on Genkernel 4.0."
+	elog "experimental and untested."
 	elog
 	elog "To activate the USE flag do:"
 	elog "mkdir -p /etc/portage/profile"
