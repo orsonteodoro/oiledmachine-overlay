@@ -16,7 +16,8 @@ LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 MIT"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x64-macos"
-IUSE="cpu_flags_x86_sse2 debug doc icu inspector man npm +snapshot +ssl +system-ssl systemtap test"
+IUSE="cpu_flags_x86_sse2 debug doc icu inspector npm +snapshot +ssl +system-ssl systemtap test"
+IUSE+=" man"
 REQUIRED_USE="
 	inspector? ( icu ssl )
 	npm? ( ssl )
@@ -48,7 +49,7 @@ PATCHES=(
 )
 RESTRICT="test"
 S="${WORKDIR}/node-v${PV}"
-NPM_V="6.14.4" # See https://github.com/nodejs/node/blob/v10.20.1/deps/npm/package.json
+NPM_V="6.14.4" # See https://github.com/nodejs/node/blob/v12.17.0/deps/npm/package.json
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
