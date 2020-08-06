@@ -147,6 +147,10 @@ TEMP_DIR = '/tmp'
 EOF
     cat "${T_CONFIG}" > "${EROOT}/usr/share/emscripten-${PV}/emscripten.config"
     rm ${T_CONFIG}
+
+    env-update
+    export EM_CONFIG="${EROOT}/usr/share/emscripten-${PV}/emscripten.config"
+    /usr/bin/emcc -v
 }
 
 ### show action ###
