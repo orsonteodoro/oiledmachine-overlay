@@ -276,7 +276,7 @@ pkg_postinst() {
 		fi
 	fi
 	elog
-	elog "The 4.x Genkernel patches for subdir_mount and crypt_root_plain are"
+	elog "The 4.x Genkernel patches for subdir_mount are"
 	elog "experimental."
 	elog "  -subdir_mount is untested on Genkernel 4.0."
 	elog
