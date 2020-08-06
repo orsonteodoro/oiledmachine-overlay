@@ -49,8 +49,8 @@ https://github.com/kripken/${PN}/archive/${PV}.tar.gz \
 https://github.com/kripken/${PN}-clang/archive/${PV}.tar.gz \
 	-> ${PN}-clang-${PV}.tar.gz"
 _PATCHES=(
-	"${FILESDIR}/${PN}-1.40.0-cmake.patch"
-	"${FILESDIR}/${PN}-1.40.0-version_cpp.patch"
+	"${FILESDIR}/${PN}-1.40.1-cmake.patch"
+	"${FILESDIR}/${PN}-1.40.1-version_cpp.patch"
 )
 RESTRICT="mirror"
 

@@ -1,0 +1,11 @@
+--- a/emscripten-fastcomp-1.40.1/CMakeLists.txt.orig	2020-02-25 18:50:21.949349814 -0800
++++ b/emscripten-fastcomp-1.40.1/CMakeLists.txt	2020-02-25 18:50:47.330344692 -0800
+@@ -267,7 +267,7 @@ endif()
+ string(TOUPPER "${CMAKE_BUILD_TYPE}" uppercase_CMAKE_BUILD_TYPE)
+ 
+ if (CMAKE_BUILD_TYPE AND
+-    NOT uppercase_CMAKE_BUILD_TYPE MATCHES "^(DEBUG|RELEASE|RELWITHDEBINFO|MINSIZEREL)$")
++    NOT uppercase_CMAKE_BUILD_TYPE MATCHES "^(DEBUG|RELEASE|RELWITHDEBINFO|MINSIZEREL|GENTOO)$")
+   message(FATAL_ERROR "Invalid value for CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
+ endif()
+ 
