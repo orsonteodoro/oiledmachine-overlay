@@ -76,8 +76,7 @@ PYTHON_COMPAT=( python3_{6,7,8} )
 inherit cmake-utils flag-o-matic java-utils-2 npm-secaudit python-single-r1 toolchain-funcs
 IUSE="asmjs +closure-compiler closure_compiler_java closure_compiler_native \
 closure_compiler_nodejs +native-optimizer \
-system-closure-compiler test +wasm
-"
+system-closure-compiler test +wasm"
 # See also .circleci/config.yml
 # See also tools/shared.py EXPECTED_BINARYEN_VERSION
 JAVA_V="1.8"
@@ -121,8 +120,7 @@ DEPEND="${RDEPEND}
 			>=virtual/jre-${JAVA_V}
 		)
 	)
-	>=virtual/jdk-${JAVA_V}
-"
+	>=virtual/jdk-${JAVA_V}"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	closure_compiler_java? ( closure-compiler )
 	closure_compiler_native? ( closure-compiler )
@@ -130,8 +128,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	system-closure-compiler? (
 		closure-compiler
 		^^ ( closure_compiler_java closure_compiler_native closure_compiler_nodejs )
-	)
-"
+	)"
 FN_DEST="${P}.tar.gz"
 SRC_URI="https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${FN_DEST}"
 RESTRICT="fetch mirror"
