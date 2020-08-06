@@ -69,7 +69,8 @@ Package
   libcxx, libcxxabi, libunwind - MIT UoI-NCSA
 "
 KEYWORDS="~amd64 ~x86"
-SLOT="$(ver_cut 1-2)/${PV}"
+SLOT_MAJOR=$(ver_cut 1-2 ${PV})
+SLOT="${SLOT_MAJOR}/${PV}"
 CLOSURE_COMPILER_SLOT="0"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit cmake-utils flag-o-matic java-utils-2 npm-secaudit python-single-r1 toolchain-funcs
@@ -130,7 +131,6 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 		closure-compiler
 		^^ ( closure_compiler_java closure_compiler_native closure_compiler_nodejs )
 	)
-	^^ ( emscripten-fastcomp system-llvm )
 "
 FN_DEST="${P}.tar.gz"
 SRC_URI="https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${FN_DEST}"
@@ -183,7 +183,7 @@ FEATURES"
 
 	python-single-r1_pkg_setup
 	if use system-llvm ; then
-		HIGHEST_LLVM_VER=$(basename $(find /usr/lib/llvm -maxdepth 1 \
+		export HIGHEST_LLVM_VER=$(basename $(find /usr/lib/llvm -maxdepth 1 \
 			-regextype 'posix-extended' -regex ".*[0-9]+.*" \
 			| sort -V | tail -n 1))
 		# You are allowed to set EMSDK_LLVM_VERSION as a per-package
@@ -200,7 +200,7 @@ the correct EMSDK_LLVM_VERSION?"
 			die "clang >=11.0.0_rc1 is not installed."
 		fi
 		CXX="${EROOT}/usr/lib/llvm/${EMSDK_LLVM_VERSION}/bin/clang"
-		echo "CXX=${CXX}"
+		einfo "CXX=${CXX}"
 		test-flag-CXX -fignore-exceptions
 		if [[ "$?" != "0" ]] ; then
 			die "You need clang and llvm >=11.0.0_rc1 to use this product."
@@ -311,44 +311,56 @@ npm-secaudit_src_compile() {
 }
 
 src_test() {
-	cp "${S}/99emscripten" "${T}/99emscripten" || die
-	sed -i -e "s|PATH=\"/usr/share/emscripten-1.40.0\"|PATH=\"/usr/share/emscripten-1.40.0:\${PATH}\"|" "${T}/99emscripten" || die
-	source "${T}/99emscripten"
-	if use system-llvm ; then
-		export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
-		if [[ "${EMCC_WASM_BACKEND}" != "1" ]] ; then
-			die "EMCC_WASM_BACKEND should be 1 with system-llvm"
+	for t in asm.js wasm ; do
+		cp "${S}/99emscripten" "${T}/99emscripten" || die
+		sed -i -e "s|PATH=\"/usr/share/emscripten-1.40.0\"|PATH=\"/usr/share/emscripten-1.40.0:\${PATH}\"|" "${T}/99emscripten" || die
+		source "${T}/99emscripten"
+		if [[ "${t}" == "wasm" ]] ; then
+			if use system-llvm ; then
+				einfo "Testing ${t}"
+				export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
+				if [[ "${EMCC_WASM_BACKEND}" != "1" ]] ; then
+					die "EMCC_WASM_BACKEND should be 1 with system-llvm"
+				fi
+				enable_test=1
+			fi
 		fi
-	elif use emscripten-fastcomp ; then
-		if [[ "${EMCC_WASM_BACKEND}" != "0" ]] ; then
-			die "EMCC_WASM_BACKEND should be 0 with emscripten-fastcomp"
+		if [[ "${t}" == "asm.js" ]]  ; then
+			if use emscripten-fastcomp ; then
+				einfo "Testing ${t}"
+				export LLVM_ROOT=
+				if [[ "${EMCC_WASM_BACKEND}" != "0" ]] ; then
+					die "EMCC_WASM_BACKEND should be 0 with emscripten-fastcomp"
+				fi
+				enable_test=1
+			fi
 		fi
-	fi
-	if use test ; then
-		mkdir "${TEST}" || die "Could not create test directory!"
-		cp "${FILESDIR}/hello_world.cpp" "${TEST}" \
-			|| die "Could not copy example file"
-		cp "${S}/emscripten.config" "${TEST}" \
-			|| die "Could not copy config file"
-		sed -i -e "/^EMSCRIPTEN_ROOT/s|/usr/share/|${S}|" \
-			"${TEST}/emscripten.config" \
-			|| die "Could not adjust path for testing"
-		export EM_CONFIG="${TEST}/emscripten.config" \
-			|| die "Could not export variable"
-		../"${P}/emcc" "${TEST}/hello_world.cpp" \
-			-o "${TEST}/hello_world.js" || \
-			die "Error during executing emcc!"
-		test -f "${TEST}/hello_world.js" \
-			|| die "Could not find '${TEST}/hello_world.js'"
-		OUT=$(/usr/bin/node "${TEST}/hello_world.js") || \
-			die "Could not execute /usr/bin/node"
-		EXP=$(echo -e -n 'Hello World!\n') \
-			|| die "Could not create expected string"
-		if [ "${OUT}" != "${EXP}" ]; then
-			die "Expected '${EXP}' but got '${OUT}'!"
+		if [[ "${enable_test}" == "1" ]] && use test ; then
+			mkdir "${TEST}" || die "Could not create test directory!"
+			cp "${FILESDIR}/hello_world.cpp" "${TEST}" \
+				|| die "Could not copy example file"
+			cp "${S}/emscripten.config" "${TEST}" \
+				|| die "Could not copy config file"
+			sed -i -e "/^EMSCRIPTEN_ROOT/s|/usr/share/|${S}|" \
+				"${TEST}/emscripten.config" \
+				|| die "Could not adjust path for testing"
+			export EM_CONFIG="${TEST}/emscripten.config" \
+				|| die "Could not export variable"
+			../"${P}/emcc" "${TEST}/hello_world.cpp" \
+				-o "${TEST}/hello_world.js" || \
+				die "Error during executing emcc!"
+			test -f "${TEST}/hello_world.js" \
+				|| die "Could not find '${TEST}/hello_world.js'"
+			OUT=$(/usr/bin/node "${TEST}/hello_world.js") || \
+				die "Could not execute /usr/bin/node"
+			EXP=$(echo -e -n 'Hello World!\n') \
+				|| die "Could not create expected string"
+			if [ "${OUT}" != "${EXP}" ]; then
+				die "Expected '${EXP}' but got '${OUT}'!"
+			fi
+			rm -r "${TEST}" || die "Could not clean-up '${TEST}'"
 		fi
-		rm -r "${TEST}" || die "Could not clean-up '${TEST}'"
-	fi
+	done
 }
 
 src_install() {
@@ -389,7 +401,7 @@ src_install() {
 	doenvd 99emscripten
 	. /etc/profile
 	if use system-llvm ; then
-		export LLVM_ROOT="/usr/lib/llvm/${EMSDK_LLVM_VERSION}/bin"
+		export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
 	fi
 	ewarn "If you consider using emscripten in an active shell,"\
 		"please execute 'source /etc/profile'"
@@ -397,10 +409,12 @@ src_install() {
 
 pkg_postinst() {
 	if use system-llvm ; then
+		eselect emscripten set "emscripten-${PV} llvm-${HIGHEST_LLVM_VER}"
 		if [[ "${EMCC_WASM_BACKEND}" != "1" ]] ; then
 			die "EMCC_WASM_BACKEND should be 1 with system-llvm"
 		fi
 	elif use emscripten-fastcomp ; then
+		eselect emscripten set "emscripten-${PV} emscripten-fastcomp-${PV}"
 		if [[ "${EMCC_WASM_BACKEND}" != "0" ]] ; then
 			die "EMCC_WASM_BACKEND should be 0 with emscripten-fastcomp"
 		fi
@@ -424,5 +438,9 @@ with ${P}.\n\
 CLOSURE_COMPILER is set to EMSDK_CLOSURE_COMPILER to avoid possible\n\
 environmental variable conflict.  Set it manually to\n\
 CLOSURE_COMPILER=\"\$EMSDK_CLOSURE_COMPILER\" before compiling with ${P}.\n\
+\n"
+	einfo \
+"\n\
+Set wasm (llvm) or asm.js (emscripten-fastcomp) output via app-eselect/eselect-emscripten.
 \n"
 }
