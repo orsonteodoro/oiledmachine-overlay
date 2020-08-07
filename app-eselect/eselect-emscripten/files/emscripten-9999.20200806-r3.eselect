@@ -5,7 +5,7 @@
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20200806-r2"
+VERSION="20200806-r3"
 PN="nodejs"
 
 # Permute emscripten, emscripten-fastcomp (asm.js), llvm (wasm) targets
@@ -148,6 +148,15 @@ EOF
     cat "${T_CONFIG}" > "${EROOT}/usr/share/emscripten-${PV}/emscripten.config"
     rm ${T_CONFIG}
 
+    einfo "Setting up symlinks"
+    for tool in em++ em-config emar embuilder emcc emcmake emconfigure emmake emranlib emrun emscons emsize ; do
+        if [[ ! -f "${EROOT}/usr/share/emscripten-${PV}/${tool}" ]] ; then
+            echo "Missing ${EROOT}/usr/share/emscripten-${PV}/${tool}.  Failed to set toolchain."
+            return 1
+        fi
+        ln -s "${EROOT}/usr/share/emscripten-${PV}/${tool}" "${EROOT}/usr/bin/${tool}"
+    done
+
     env-update
     . /etc/profile
     CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}" \
@@ -206,28 +215,32 @@ describe_list() {
 do_list() {
     local i targets=( $(find_targets) )
 
-    em_v=$(basename $(grep -r -e "EMSCRIPTEN=" /etc/env.d/99emscripten) | sed -e "s|emscripten-||g")
-    is_llvm=$(grep -r -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | grep -qF -e "/usr/lib/llvm"  ; echo "$?")
-    is_fc=$(grep -r -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | grep -qF -e "/usr/share/emscripten-fastcomp"  ; echo "$?")
+    if [[ -f /etc/env.d/99emscripten ]] ; then
+        em_v=$(basename $(grep -r -e "EMSCRIPTEN=" /etc/env.d/99emscripten) | sed -e "s|emscripten-||g")
+        is_llvm=$(grep -r -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | grep -qF -e "/usr/lib/llvm"  ; echo "$?")
+        is_fc=$(grep -r -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | grep -qF -e "/usr/share/emscripten-fastcomp"  ; echo "$?")
 
-    llvm_v=$(grep "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | sed -e "s|EMSDK_LLVM_ROOT=/usr/lib/llvm/||" -e "s|/bin||")
-    fc_v=$(grep "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | sed -e "s|EMSDK_LLVM_ROOT=/usr/share/emscripten-fastcomp-||" -e "s|/bin||")
+        llvm_v=$(grep "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | sed -e "s|EMSDK_LLVM_ROOT=/usr/lib/llvm/||" -e "s|/bin||")
+        fc_v=$(grep "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | sed -e "s|EMSDK_LLVM_ROOT=/usr/share/emscripten-fastcomp-||" -e "s|/bin||")
 
-    expected_highligted_line="emscripten-${em_v}"
-    if [[ "${is_llvm}" == "0" ]] ; then
-        expected_highligted_line+=",llvm-${llvm_v}"
-    elif [[ "${is_fc}" == "0" ]] ; then
-        expected_highligted_line+=",emscripten-fastcomp-${fc_v}"
+        expected_highligted_line="emscripten-${em_v}"
+        if [[ "${is_llvm}" == "0" ]] ; then
+            expected_highligted_line+=",llvm-${llvm_v}"
+        elif [[ "${is_fc}" == "0" ]] ; then
+            expected_highligted_line+=",emscripten-fastcomp-${fc_v}"
+        fi
     fi
 
     write_list_start "Available emscripten, emscripten-fastcomp, llvm combo targets:"
 
-    for (( i = 0; i < ${#targets[@]}; i++ )); do
-        # highlight the target where the symlink is pointing to
-        [[ ${targets[i]} = \
-            ${expected_highligted_line} ]] \
-            && targets[i]=$(highlight_marker "${targets[i]}")
-    done
+    if [[ -f /etc/env.d/99emscripten ]] ; then
+        for (( i = 0; i < ${#targets[@]}; i++ )); do
+            # highlight the target where the symlink is pointing to
+                [[ ${targets[i]} = \
+                     ${expected_highligted_line} ]] \
+                     && targets[i]=$(highlight_marker "${targets[i]}")
+        done
+    fi
     write_numbered_list -m "(none found)" "${targets[@]}"
 }
 
