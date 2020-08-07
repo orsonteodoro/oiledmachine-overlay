@@ -100,7 +100,7 @@ ${CLOSURE_COMPILER_SLOT}\
 			>=net-libs/nodejs-8
 		)
 	)
-	>=dev-util/binaryen-94
+	>=dev-util/binaryen-93
 	>=net-libs/nodejs-0.10.17
 	wasm? (
 		>=sys-devel/llvm-11.0.0_rc1:=[llvm_targets_WebAssembly]
@@ -199,7 +199,7 @@ the correct EMSDK_LLVM_VERSION?"
 		if ! has_version ">=sys-devel/clang-11.0.0_rc1" ; then
 			die "clang >=11.0.0_rc1 is not installed."
 		fi
-		CXX="${EROOT}/usr/lib/llvm/${EMSDK_LLVM_VERSION}/bin/clang"
+		CXX="${EROOT}/usr/lib/llvm/${EMSDK_LLVM_VERSION}/bin/clang++"
 		einfo "CXX=${CXX}"
 		test-flag-CXX -fignore-exceptions
 		if [[ "$?" != "0" ]] ; then
