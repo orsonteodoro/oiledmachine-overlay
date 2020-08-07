@@ -151,7 +151,7 @@ find_targets() {
                            $(realpath "${EROOT}"/var/db/pkg/sys-devel/llvm-${llvm_slot}*/USE) \
                        && grep -qF -e "llvm_targets_WebAssembly" \
                            $(realpath "${EROOT}"/var/db/pkg/sys-devel/clang-${llvm_slot}*/USE) ; then
-			llvm_v=$(basename $(realpath /var/db/pkg/sys-devel/clang-${llvm_slot}*) | sed -e "s|clang-||")
+			llvm_v=$(basename $(realpath "${EROOT}"/var/db/pkg/sys-devel/clang-${llvm_slot}*) | sed -e "s|clang-||")
                         llvm_major="${llvm_slot}"
                         llvm_major_minor=$(echo "${llvm_v}" | cut -f 1-2 -d '.')
                         if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.20" \
