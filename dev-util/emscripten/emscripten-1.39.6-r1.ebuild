@@ -79,10 +79,10 @@ system-closure-compiler test +wasm"
 # See also .circleci/config.yml
 # See also tools/shared.py EXPECTED_BINARYEN_VERSION
 JAVA_V="1.8"
-# See https://github.com/google/closure-compiler-npm/blob/v20200224.0.0/packages/google-closure-compiler/package.json
+# See https://github.com/google/closure-compiler-npm/blob/v20190106.0.0/packages/google-closure-compiler/package.json
 # They use the latest commit for llvm and clang
 # For required LLVM, see https://github.com/emscripten-core/emscripten/blob/1.39.20/tools/shared.py#L431
-LLVM_V="12.0.0"
+LLVM_V="10.0.0"
 RDEPEND="${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
 	asmjs? ( ~dev-util/emscripten-fastcomp-${PV}:= )
@@ -99,10 +99,10 @@ ${CLOSURE_COMPILER_SLOT}\
 		)
 		!system-closure-compiler? (
 			>=virtual/jre-${JAVA_V}
-			>=net-libs/nodejs-8
+			>=net-libs/nodejs-6
 		)
 	)
-	>=dev-util/binaryen-93
+	>=dev-util/binaryen-90
 	>=net-libs/nodejs-0.10.17
 	wasm? (
 		>=sys-devel/llvm-${LLVM_V}:=[llvm_targets_WebAssembly]
@@ -186,28 +186,17 @@ FEATURES"
 	fi
 	python-single-r1_pkg_setup
 	if use wasm ; then
-		export HIGHEST_LLVM_VER=$(basename $(find /usr/lib/llvm -maxdepth 1 \
+		export HIGHEST_LLVM_SLOT=$(basename $(find /usr/lib/llvm -maxdepth 1 \
 			-regextype 'posix-extended' -regex ".*[0-9]+.*" \
 			| sort -V | tail -n 1))
-		# You are allowed to set EMSDK_LLVM_VERSION as a per-package
-		# environmental variable.
-		export EMSDK_LLVM_VERSION=${EMSDK_LLVM_VERSION:=${HIGHEST_LLVM_VER}}
-		if [[ -n "${EMSDK_LLVM_VERSION}" \
-		&& ! -d "${EROOT}/usr/lib/llvm/${EMSDK_LLVM_VERSION}" ]] ; then
-			eerror \
-"The path /usr/lib/llvm/${EMSDK_LLVM_VERSION} does not exist.  Did you put\n\
-the correct EMSDK_LLVM_VERSION?"
-			die
-		fi
-		if ! has_version ">=sys-devel/clang-${LLVM_V}" ; then
-			die "clang >=${LLVM_V} is not installed."
-		fi
-		CXX="${EROOT}/usr/lib/llvm/${EMSDK_LLVM_VERSION}/bin/clang++"
-		einfo "CXX=${CXX}"
-		if ver_test $(clang-fullversion) -lt "${LLVM_V}"; then
-			die \
-"You need clang and llvm >=${LLVM_V} to use wasm with ${PN}."
-		fi
+		for llvm_slot in $(seq $(ver_cut 1 ${LLVM_V}) ${HIGHEST_LLVM_SLOT}) ; do
+			if has_version "sys-devel/clang:${llvm_slot}[llvm_targets_WebAssembly]" \
+			&& has_version "sys-devel/llvm:${llvm_slot}[llvm_targets_WebAssembly]" ; then
+				export LLVM_SLOT="${llvm_slot}"
+				CXX="${EROOT}/usr/lib/llvm/${EMSDK_LLVM_VERSION}/bin/clang++"
+				break
+			fi
+		done
 	else
 		if [[ ! -f /usr/share/emscripten-fastcomp-${PV}/bin/llc ]] ; then
 			die \
@@ -406,7 +395,7 @@ src_install() {
 
 pkg_postinst() {
 	if use wasm ; then
-		eselect emscripten set "emscripten-${PV} llvm-${HIGHEST_LLVM_VER}"
+		eselect emscripten set "emscripten-${PV} llvm-${LLVM_SLOT}"
 	elif use asmjs ; then
 		eselect emscripten set "emscripten-${PV} emscripten-fastcomp-${PV}"
 	fi
