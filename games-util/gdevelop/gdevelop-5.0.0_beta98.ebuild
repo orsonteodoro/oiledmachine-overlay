@@ -178,6 +178,7 @@ src_install() {
 electron-app_src_compile() {
 	if [[ "${STEP}" == "BUILDING_GDEVELOPJS" ]] ; then
 		einfo "Compiling GDevelop.js"
+		# In https://github.com/4ian/GDevelop/blob/v5.0.0-beta98/GDevelop.js/Gruntfile.js#L88
 		# --dev requires emscripten[wasm]
 		# not --dev requires emscripten[asmjs]
 		npm run build -- --dev || die
