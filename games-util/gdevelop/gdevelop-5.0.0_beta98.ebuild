@@ -5,8 +5,7 @@ EAPI=7
 DESCRIPTION="GDevelop is an open-source, cross-platform game engine designed \
 to be used by everyone."
 HOMEPAGE="https://gdevelop-app.com/"
-LICENSE="MIT all-rights-reserved"
-# all-rights-reserved is for the name, GDevelop, and logo
+LICENSE="MIT GDevelop"
 KEYWORDS="~amd64"
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
