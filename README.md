@@ -143,6 +143,7 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-util/emscripten | For urho3d's JavaScript support. |
 | dev-util/emscripten-fastcomp | TBA |
 | dev-util/geeks-diary | This is an Electron based diary / notetaker for programmers.
+| dev-util/gdevelop | This is a game development software using Electron or web browser as the IDE to produce HTML5 games. |
 | dev-util/gycm | Gycm is a Geany plugin and ycmd client to improve IntelliSense support on top of the stock completer. |
 | dev-util/lldb | TBA |
 | dev-util/lepton | This is a programmer reusable code snipplet manager based on Electron and able to sync with Gist.
