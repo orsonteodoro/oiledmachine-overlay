@@ -349,6 +349,17 @@ PATH=\"/usr/share/emscripten-1.40.0:\${PATH}\"|" \
 				|| die "Could not adjust path for testing"
 			export EM_CONFIG="${TEST}/emscripten.config" \
 				|| die "Could not export variable"
+			local cc_cmd
+			if use closure_compiler_java ; then
+				cc_cmd="/usr/bin/closure-compiler-java"
+			elif use closure_compiler_nodejs ; then
+				cc_cmd="/usr/bin/closure-compiler-node"
+			elif use closure_compiler_native ; then
+				cc_cmd="/usr/bin/closure-compiler"
+			elif use closure-compiler ; then
+				cc_cmd="" # use defaults
+			fi
+			CLOSURE_COMPILER="${cc_cmd}" \
 			LLVM_ROOT="${EMSDK_LLVM_ROOT}" \
 			../"${P}/emcc" "${TEST}/hello_world.cpp" \
 				-o "${TEST}/hello_world.js" || \
@@ -407,14 +418,8 @@ src_install() {
 pkg_postinst() {
 	if use wasm ; then
 		eselect emscripten set "emscripten-${PV} llvm-${HIGHEST_LLVM_VER}"
-		if [[ "${EMCC_WASM_BACKEND}" != "1" ]] ; then
-			die "EMCC_WASM_BACKEND should be 1 with wasm"
-		fi
 	elif use asmjs ; then
 		eselect emscripten set "emscripten-${PV} emscripten-fastcomp-${PV}"
-		if [[ "${EMCC_WASM_BACKEND}" != "0" ]] ; then
-			die "EMCC_WASM_BACKEND should be 0 with asmjs"
-		fi
 	fi
 	if use closure-compiler && ! use system-closure-compiler ; then
 		export NPM_SECAUDIT_INSTALL_PATH="${DEST}/${P}"
@@ -422,14 +427,6 @@ pkg_postinst() {
 	fi
 	einfo \
 "\n\
-LLVM_ROOT is set to EMSDK_LLVM_ROOT to avoid possible environmental variable\n\
-conflict.  Set it manually to LLVM_ROOT=\"\$EMSDK_LLVM_ROOT\" before compiling\n\
-with ${P}.\n\
-\n\
-CLOSURE_COMPILER is set to EMSDK_CLOSURE_COMPILER to avoid possible\n\
-environmental variable conflict.  Set it manually to\n\
-CLOSURE_COMPILER=\"\$EMSDK_CLOSURE_COMPILER\" before compiling with ${P}.\n\
-\n\
 Set wasm (llvm) or asm.js (emscripten-fastcomp) output via\n\
 app-eselect/eselect-emscripten.
 \n"
