@@ -33,6 +33,10 @@ if ! which xmllint 2>/dev/null 1>/dev/null ; then
 	return 1
 fi
 
+if ! which pcregrep 2>/dev/null 1>/dev/null ; then
+	einfo "You need to install libpcre"
+fi
+
 einfo "Checking ebuilds for security risks.  (This can yield false positives.)"
 for f in $(find $(pwd) -name "*.ebuild") ; do
 	if grep ${GREP_ARGS} -r -e "SLOT=\"0\"" "${f}" 2>/dev/null 1>/dev/null ; then
@@ -159,3 +163,10 @@ for d in $(find $(pwd) -name ".trash*" -type d) ; do
 	einfo "Found ${d}"
 done
 fi
+
+einfo "Checking files with > 80 characters for GitHub code reviewers or for packagers"
+for f in $(find $(pwd) -name "*.ebuild" -o -name "metadata.xml") ; do
+	if pcregrep -q -r -M '^.{80}.+\n' "${f}" ; then
+		einfo "Found ${f}"
+	fi
+done
