@@ -5,7 +5,7 @@
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20200807-r1"
+VERSION="20200807-r2"
 PN="nodejs"
 
 # 1.39.20 llvm 12 ; node 4.1.1 ; binaryen 93
@@ -289,7 +289,7 @@ EOF
     [[ -z "${__EMSDK_CLOSURE_COMPILER__}" ]] && sed -i "/EMSDK_CLOSURE_COMPILER/d" \
         "${EROOT}/etc/env.d/99emscripten"
 
-    if echo -e "${_use_flags}" | grep -qF -e "-native-optimizer" ; then
+    if grep -qF -e "native-optimizer" "${use_path}" ; then
         sed -i "/EMSCRIPTEN_NATIVE_OPTIMIZER/d" \
             "${EROOT}/etc/env.d/99emscripten"
     fi
