@@ -5,17 +5,133 @@
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20200806-r5"
+VERSION="20200807"
 PN="nodejs"
+
+# 1.39.20 llvm 12 ; node 4.1.1 ; binaryen 93
+# 1.39.19 llvm 11 ; node 4.1.1 ; binaryen 93
+# 1.39.13 ; binaryen 93
+# 1.39.13 ; binaryen 90
+# 1.39.7 llvm 11 ; binaryen 90
+# 1.39.6 llvm 10 ; 
+# 1.38.40 llvm 10
+# 1.38.39 llvm 9
+# 1.38.24 llvm 9
+# 1.38.23 llvm 8
+# 1.38.11 llvm 8
+# 1.38.0 llvm 7
+# 1.37.28 llvm 7 ; node 4.1.1
+# 1.37.27 llvm 6 ; node 0.8.0
+# 1.37.21 llvm 6
+# 1.37.20 llvm 5
+# 1.37.15 llvm 5
+# 1.37.14 llvm 4
+# 1.37.7 llvm 4 ; 
+# 1.36.1 llvm 3.9 ; node 0.8.0 earliest wasm reference 
+# 1.35.22 llvm 3.9
+# 1.35.21 llvm 3.8
+# 1.35.2 llvm 3.8
+# 1.35.1 llvm 3.7
+# 1.32.4 llvm 3.7
+# 1.32.3 llvm 3.6
+# 1.30.1 llvm 3.6
+# 1.30.0 llvm 3.5
+# 1.29.1 llvm 3.5
+# 1.29.0 llvm 3.4
+# 1.27.1 llvm 3.4
+# 1.27.0 llvm 3.3
+# 1.17.0 llvm 3.3 ; node 0.8.0
+
+# version tests
+# x < y
+is_x_lt_y() {
+	local x="${1}"
+	local y="${2}"
+	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
+		| cut -f1 -d $' ')
+	if [[ "${result}" == "${x}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+is_x_le_y() {
+	local x="${1}"
+	local y="${2}"
+	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
+		| cut -f1 -d $' ')
+	if [[ "${result}" == "${x}" || "${x}" == "${y}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+is_x_gt_y() {
+	local x="${1}"
+	local y="${2}"
+	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
+		| cut -f1 -d $' ')
+	if [[ "${result}" != "${x}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+is_x_ge_y() {
+	local x="${1}"
+	local y="${2}"
+	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
+		| cut -f1 -d $' ')
+	if [[ "${result}" == "${x}" || "${x}" == "${y}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+is_x_eq_y() {
+	local x="${1}"
+	local y="${2}"
+	if [[ "${x}" == "${y}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+is_x_ne_y() {
+	local x="${1}"
+	local y="${2}"
+	if [[ "${x}" != "${y}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+is_x_op_y() {
+	local x="${1}"
+	local op="${2}"
+	local y="${3}"
+
+	if [[ "${op}" == "<" ]] ; then
+		is_x_lt_y "${x}" "${y}"
+	elif [[ "${op}" == "<=" ]] ; then
+		is_x_le_y "${x}" "${y}"
+	elif [[ "${op}" == ">" ]] ; then
+		is_x_gt_y "${x}" "${y}"
+	elif [[ "${op}" == ">=" ]] ; then
+		is_x_ge_y "${x}" "${y}"
+	elif [[ "${op}" == "==" ]] ; then
+		is_x_eq_y "${x}" "${y}"
+	elif [[ "${op}" == "!=" ]] ; then
+		is_x_ne_y "${x}" "${y}"
+	fi
+}
 
 # Permute emscripten, emscripten-fastcomp (asm.js), llvm (wasm) targets
 find_targets() {
     local f
-    # /usr/share/emscripten-
     EMSCRIPTEN_VERSIONS=$(find "${EROOT}/usr/share" -maxdepth 1 -regextype 'posix-egrep' -regex ".*emscripten-[0-9.]+" | sort -V | cut -f 4 -d "/" | sed -e "s|^${EROOT}||" | sed -e "s|emscripten-||g")
-    # /usr/share/emscripten-fastcomp-${PV}/bin
     LLVM_VERSIONS=$(find "${EROOT}/usr/lib64/llvm" -maxdepth 1 -regextype 'posix-egrep' -regex ".*[0-9.]+" | sed -e "s|^${EROOT}||" | sort -V | cut -f 5 -d "/")
-    # /usr/lib64/llvm/10/bin
 
     for em_v in ${EMSCRIPTEN_VERSIONS} ; do
         [[ ! -f "${EROOT}/usr/share/emscripten-${em_v}/emcc" ]] && continue
@@ -27,7 +143,29 @@ find_targets() {
             elif [[ "${compiler}" == "llvm" ]] ; then
                 for llvm_v in ${LLVM_VERSIONS} ; do
                     if grep -qF -e "llvm_targets_WebAssembly" $(realpath "${EROOT}"/var/db/pkg/sys-devel/llvm-${llvm_v}*/USE) ; then
-                        echo "emscripten-${em_v},llvm-${llvm_v}"
+                        llvm_major=$(echo "${llvm_v}" | cut -f 1 -d '.')
+                        llvm_major_minor=$(echo "${llvm_v}" | cut -f 1-2 -d '.')
+                        if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.20" && [[ "${llvm_major}" -ge 12 ]] ; then
+                            echo "emscripten-${em_v},llvm-${llvm_v}"
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.7" && [[ "${llvm_major}" -ge 11 ]] ; then
+                            echo "emscripten-${em_v},llvm-${llvm_v}"
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.40" && [[ "${llvm_major}" -ge 10 ]] ; then
+                            echo "emscripten-${em_v},llvm-${llvm_v}"
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.24" && [[ "${llvm_major}" -ge 9 ]] ; then
+                            echo "emscripten-${em_v},llvm-${llvm_v}"
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.11" && [[ "${llvm_major}" -ge 8 ]] ; then
+                            echo "emscripten-${em_v},llvm-${llvm_v}"
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.28" && [[ "${llvm_major}" -ge 7 ]] ; then
+                            echo "emscripten-${em_v},llvm-${llvm_v}"
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.21" && [[ "${llvm_major}" -ge 6 ]] ; then
+                            echo "emscripten-${em_v},llvm-${llvm_v}"
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.15" && [[ "${llvm_major}" -ge 5 ]] ; then
+                            echo "emscripten-${em_v},llvm-${llvm_v}"
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.7" && [[ "${llvm_major}" -ge 4 ]] ; then
+                            echo "emscripten-${em_v},llvm-${llvm_v}"
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.36.1" && is_x_op_y ${llvm_major_minor} ">=" "3.9" ; then
+                            echo "emscripten-${em_v},llvm-${llvm_v}"
+                        fi
                     fi
                 done
             fi
