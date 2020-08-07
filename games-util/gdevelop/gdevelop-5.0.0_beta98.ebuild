@@ -9,7 +9,7 @@ LICENSE="MIT GDevelop"
 KEYWORDS="~amd64"
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
-IUSE="doc electron +html5 +extensions kdialog minimal native web-browser zenity"
+IUSE="doc electron +extensions +html5 kdialog minimal native web-browser zenity"
 REQUIRED_USE="^^ ( html5 native )
 	|| ( kdialog zenity )
 	|| ( electron web-browser )"
