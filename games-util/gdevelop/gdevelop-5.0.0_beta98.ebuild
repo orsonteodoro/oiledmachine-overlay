@@ -72,6 +72,7 @@ pkg_setup() {
 		fi
 		if [[ -z "${EMSCRIPTEN}" ]] ; then
 			die "EMSCRIPTEN is empty.  Did you install the emscripten package?"
+		else
 			if [[ ! -d "${EMSCRIPTEN}" ]] ; then
 				die \
 "EMSCRIPTEN should point to a directory.  Your emscripten package is broken.\n\
