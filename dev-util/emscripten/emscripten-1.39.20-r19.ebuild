@@ -351,11 +351,11 @@ PATH=\"/usr/share/emscripten-1.40.0:\${PATH}\"|" \
 				|| die "Could not export variable"
 			local cc_cmd
 			if use closure_compiler_java ; then
-				cc_cmd="/usr/bin/closure-compiler-java"
+				cc_cmd="${EROOT}/usr/bin/closure-compiler-java"
 			elif use closure_compiler_nodejs ; then
-				cc_cmd="/usr/bin/closure-compiler-node"
+				cc_cmd="${EROOT}/usr/bin/closure-compiler-node"
 			elif use closure_compiler_native ; then
-				cc_cmd="/usr/bin/closure-compiler"
+				cc_cmd="${EROOT}/usr/bin/closure-compiler"
 			elif use closure-compiler ; then
 				cc_cmd="" # use defaults
 			fi
