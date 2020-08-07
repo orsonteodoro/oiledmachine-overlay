@@ -204,10 +204,9 @@ the correct EMSDK_LLVM_VERSION?"
 		fi
 		CXX="${EROOT}/usr/lib/llvm/${EMSDK_LLVM_VERSION}/bin/clang++"
 		einfo "CXX=${CXX}"
-		test-flag-CXX -fignore-exceptions
-		if [[ "$?" != "0" ]] ; then
+		if ver_test $(clang-fullversion) -lt "${LLVM_V}"; then
 			die \
-"You need clang and llvm >=11.0.0_rc1 to use this product."
+"You need clang and llvm >=${LLVM_V} to use wasm with ${PN}."
 		fi
 	else
 		if [[ ! -f /usr/share/emscripten-fastcomp-${PV}/bin/llc ]] ; then
