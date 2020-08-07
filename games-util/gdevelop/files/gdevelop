@@ -1,0 +1,11 @@
+#!/bin/bash
+ROOT="/usr/$(get_libdir)/node/${PN}/${SLOT_MAJOR}"
+IDE_MODE=${IDE_MODE:="Electron"} # can be either Electron or Web_Browser
+
+pushd "${ROOT}/newIDE/electron-app"
+if [[ "${IDE_MODE}" == "Electron" ]] ; then
+	./node_modules/electron/dist/electron app "${@}"
+else
+	xdg-open "http://localhost:3000"
+fi
+popd
