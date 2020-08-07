@@ -11,7 +11,6 @@ SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE="doc electron +extensions +html5 kdialog minimal native web-browser zenity"
 REQUIRED_USE="^^ ( html5 native )
-	|| ( kdialog zenity )
 	|| ( electron web-browser )"
 #See https://github.com/4ian/GDevelop/blob/master/ExtLibs/installDeps.sh
 RDEPEND="${RDEPEND}
