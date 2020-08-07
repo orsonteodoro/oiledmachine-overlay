@@ -401,19 +401,6 @@ src_install() {
 		-exec rm -vrf "{}" \;
 	#	-o -name "node_modules" was included but removed for closure-compiler
 	cp -R "${S}/" "${D}/${DEST}" || die "Could not install files"
-	dosym ../share/${P}/em++ /usr/bin/em++
-	dosym ../share/${P}/em-config /usr/bin/em-config
-	dosym ../share/${P}/emar /usr/bin/emar
-	dosym ../share/${P}/embuilder /usr/bin/embuilder
-	dosym ../share/${P}/emcc /usr/bin/emcc
-	dosym ../share/${P}/emcmake /usr/bin/emcmake
-	dosym ../share/${P}/emconfigure /usr/bin/emconfigure
-	dosym ../share/${P}/emmake /usr/bin/emmake
-	dosym ../share/${P}/emranlib /usr/bin/emranlib
-	dosym ../share/${P}/emrun /usr/bin/emrun
-	dosym ../share/${P}/emscons /usr/bin/emscons
-	dosym ../share/${P}/emsize /usr/bin/emsize
-	doenvd 99emscripten
 }
 
 pkg_postinst() {
