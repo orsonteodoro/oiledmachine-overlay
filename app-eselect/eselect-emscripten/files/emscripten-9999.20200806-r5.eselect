@@ -5,7 +5,7 @@
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20200806-r4"
+VERSION="20200806-r5"
 PN="nodejs"
 
 # Permute emscripten, emscripten-fastcomp (asm.js), llvm (wasm) targets
@@ -163,6 +163,10 @@ EOF
     LLVM_ROOT="${EMSDK_LLVM_ROOT}" \
     EM_CONFIG="${EROOT}/usr/share/emscripten-${PV}/emscripten.config" \
     /usr/bin/emcc -v
+    CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}" \
+    LLVM_ROOT="${EMSDK_LLVM_ROOT}" \
+    EM_CONFIG="${EROOT}/usr/share/emscripten-${PV}/emscripten.config" \
+    /usr/bin/em++ -v
     echo "You need to . /etc/profile in the current shell."
     # The LLVM_ prefix is reserved for the package llvm package only, \
     # the emscripten package has no right to it.
