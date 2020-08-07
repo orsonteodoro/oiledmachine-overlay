@@ -81,7 +81,8 @@ system-closure-compiler test +wasm"
 JAVA_V="1.8"
 # See https://github.com/google/closure-compiler-npm/blob/v20200224.0.0/packages/google-closure-compiler/package.json
 # They use the latest commit for llvm and clang
-# For required LLVM, see https://github.com/emscripten-core/emscripten/blob/1.40.1/tools/shared.py#L432
+# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/1.40.1/tools/shared.py#L432
+# For the required nodejs, see https://github.com/emscripten-core/emscripten/blob/1.40.1/tools/shared.py#L43
 LLVM_V="12.0.0"
 RDEPEND="${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
@@ -103,7 +104,7 @@ ${CLOSURE_COMPILER_SLOT}\
 		)
 	)
 	>=dev-util/binaryen-94
-	>=net-libs/nodejs-0.10.17
+	>=net-libs/nodejs-4.1.1
 	wasm? (
 		>=sys-devel/llvm-${LLVM_V}:=[llvm_targets_WebAssembly]
 		>=sys-devel/clang-${LLVM_V}:=[llvm_targets_WebAssembly]
