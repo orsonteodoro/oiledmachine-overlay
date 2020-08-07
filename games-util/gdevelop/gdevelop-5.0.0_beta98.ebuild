@@ -27,8 +27,6 @@ RDEPEND="${RDEPEND}
 		x11-apps/xrandr
 		x11-libs/gtk+:3
 	)
-	kdialog? ( kde-apps/kdialog )
-	zenity? ( gnome-extra/zenity )
 	web-browser? ( x11-misc/xdg-utils )
 	virtual/opengl
 "
