@@ -124,6 +124,7 @@ DEPEND="${RDEPEND}
 	)
 	>=virtual/jdk-${JAVA_V}"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
+	|| ( asmjs wasm )
 	closure_compiler_java? ( closure-compiler )
 	closure_compiler_native? ( closure-compiler )
 	closure_compiler_nodejs? ( closure-compiler )
