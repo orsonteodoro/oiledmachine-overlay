@@ -319,7 +319,6 @@ PATH=\"/usr/share/emscripten-1.40.0\"|\
 PATH=\"/usr/share/emscripten-1.40.0:\${PATH}\"|" \
 			"${T}/99emscripten" || die
 		source "${T}/99emscripten"
-		export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
 		local enable_test=0
 		if [[ "${t}" == "wasm" ]] ; then
 			if use wasm ; then
@@ -350,6 +349,7 @@ PATH=\"/usr/share/emscripten-1.40.0:\${PATH}\"|" \
 				|| die "Could not adjust path for testing"
 			export EM_CONFIG="${TEST}/emscripten.config" \
 				|| die "Could not export variable"
+			LLVM_ROOT="${EMSDK_LLVM_ROOT}" \
 			../"${P}/emcc" "${TEST}/hello_world.cpp" \
 				-o "${TEST}/hello_world.js" || \
 				die "Error during executing emcc!"
@@ -402,12 +402,6 @@ src_install() {
 	dosym ../share/${P}/emscons /usr/bin/emscons
 	dosym ../share/${P}/emsize /usr/bin/emsize
 	doenvd 99emscripten
-	. /etc/profile
-	if use wasm ; then
-		export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
-	fi
-	ewarn "If you consider using emscripten in an active shell,"\
-		"please execute 'source /etc/profile'"
 }
 
 pkg_postinst() {
