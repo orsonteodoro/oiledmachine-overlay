@@ -81,6 +81,8 @@ system-closure-compiler test +wasm"
 JAVA_V="1.8"
 # See https://github.com/google/closure-compiler-npm/blob/v20200224.0.0/packages/google-closure-compiler/package.json
 # They use the latest commit for llvm and clang
+# For required LLVM, see https://github.com/emscripten-core/emscripten/blob/1.39.20/tools/shared.py#L431
+LLVM_V="12.0.0"
 RDEPEND="${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
 	asmjs? ( ~dev-util/emscripten-fastcomp-${PV}:= )
@@ -100,11 +102,11 @@ ${CLOSURE_COMPILER_SLOT}\
 			>=net-libs/nodejs-8
 		)
 	)
-	>=dev-util/binaryen-94
+	>=dev-util/binaryen-93
 	>=net-libs/nodejs-0.10.17
 	wasm? (
-		>=sys-devel/llvm-11.0.0_rc1:=[llvm_targets_WebAssembly]
-		>=sys-devel/clang-11.0.0_rc1:=[llvm_targets_WebAssembly]
+		>=sys-devel/llvm-${LLVM_V}:=[llvm_targets_WebAssembly]
+		>=sys-devel/clang-${LLVM_V}:=[llvm_targets_WebAssembly]
 	)"
 # The java-utils-2 doesn't like nested conditionals.  The eclass needs at least
 # a virtual/jdk.  This package doesn't really need jdk to use closure-compiler
@@ -197,8 +199,8 @@ FEATURES"
 the correct EMSDK_LLVM_VERSION?"
 			die
 		fi
-		if ! has_version ">=sys-devel/clang-11.0.0_rc1" ; then
-			die "clang >=11.0.0_rc1 is not installed."
+		if ! has_version ">=sys-devel/clang-${LLVM_V}" ; then
+			die "clang >=${LLVM_V} is not installed."
 		fi
 		CXX="${EROOT}/usr/lib/llvm/${EMSDK_LLVM_VERSION}/bin/clang++"
 		einfo "CXX=${CXX}"
