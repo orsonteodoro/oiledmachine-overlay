@@ -5,7 +5,7 @@
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20200807-r2"
+VERSION="20200807-r3"
 PN="nodejs"
 
 # 1.39.20 llvm 12 ; node 4.1.1 ; binaryen 93
@@ -146,43 +146,44 @@ find_targets() {
             if [[ "${compiler}" == "fastcomp" ]] ; then
                 echo "emscripten-${em_v},emscripten-fastcomp-${em_v}"
             elif [[ "${compiler}" == "llvm" ]] ; then
-                for llvm_v in ${LLVM_VERSIONS} ; do
+                for llvm_slot in ${LLVM_VERSIONS} ; do
                     if grep -qF -e "llvm_targets_WebAssembly" \
-                           $(realpath "${EROOT}"/var/db/pkg/sys-devel/llvm-${llvm_v}*/USE) \
+                           $(realpath "${EROOT}"/var/db/pkg/sys-devel/llvm-${llvm_slot}*/USE) \
                        && grep -qF -e "llvm_targets_WebAssembly" \
-                           $(realpath "${EROOT}"/var/db/pkg/sys-devel/clang-${llvm_v}*/USE) ; then
-                        llvm_major=$(echo "${llvm_v}" | cut -f 1 -d '.')
+                           $(realpath "${EROOT}"/var/db/pkg/sys-devel/clang-${llvm_slot}*/USE) ; then
+			llvm_v=$(basename $(realpath /var/db/pkg/sys-devel/clang-${llvm_slot}*) | sed -e "s|clang-||")
+                        llvm_major="${llvm_slot}"
                         llvm_major_minor=$(echo "${llvm_v}" | cut -f 1-2 -d '.')
                         if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.20" \
                             && [[ "${llvm_major}" -ge 12 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_v}"
+                            echo "emscripten-${em_v},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.7" \
                             && [[ "${llvm_major}" -ge 11 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_v}"
+                            echo "emscripten-${em_v},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.40" \
                             && [[ "${llvm_major}" -ge 10 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_v}"
+                            echo "emscripten-${em_v},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.24" \
                             && [[ "${llvm_major}" -ge 9 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_v}"
+                            echo "emscripten-${em_v},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.11" \
                             && [[ "${llvm_major}" -ge 8 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_v}"
+                            echo "emscripten-${em_v},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.28" \
                             && [[ "${llvm_major}" -ge 7 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_v}"
+                            echo "emscripten-${em_v},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.21" \
                             && [[ "${llvm_major}" -ge 6 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_v}"
+                            echo "emscripten-${em_v},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.15" \
                             && [[ "${llvm_major}" -ge 5 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_v}"
+                            echo "emscripten-${em_v},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.7" \
                             && [[ "${llvm_major}" -ge 4 ]] ; then
-                            echo "emscripten-${em_v},llvm-${llvm_v}"
+                            echo "emscripten-${em_v},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.36.1" \
                             && is_x_op_y ${llvm_major_minor} ">=" "3.9" ; then
-                            echo "emscripten-${em_v},llvm-${llvm_v}"
+                            echo "emscripten-${em_v},llvm-${llvm_slot}"
                         fi
                     fi
                 done
