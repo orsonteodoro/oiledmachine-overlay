@@ -249,7 +249,7 @@ set_config() {
     fi
 
     local use_path=$(realpath --canonicalize-missing \
-        /var/db/pkg/dev-util/emscripten-${PV}*/USE)
+        "${EROOT}"/var/db/pkg/dev-util/emscripten-${PV}*/USE)
     if [[ ! -f "${use_path}" ]] ; then
         echo "emscripten ${PV} is not installed."
         return 1
