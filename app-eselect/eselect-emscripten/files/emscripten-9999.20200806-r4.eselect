@@ -5,7 +5,7 @@
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20200806-r3"
+VERSION="20200806-r2"
 PN="nodejs"
 
 # Permute emscripten, emscripten-fastcomp (asm.js), llvm (wasm) targets
@@ -148,13 +148,13 @@ EOF
     cat "${T_CONFIG}" > "${EROOT}/usr/share/emscripten-${PV}/emscripten.config"
     rm ${T_CONFIG}
 
-    einfo "Setting up symlinks"
+    echo "Setting up symlinks"
     for tool in em++ em-config emar embuilder emcc emcmake emconfigure emmake emranlib emrun emscons emsize ; do
         if [[ ! -f "${EROOT}/usr/share/emscripten-${PV}/${tool}" ]] ; then
             echo "Missing ${EROOT}/usr/share/emscripten-${PV}/${tool}.  Failed to set toolchain."
             return 1
         fi
-        ln -s "${EROOT}/usr/share/emscripten-${PV}/${tool}" "${EROOT}/usr/bin/${tool}"
+        ln -sf "${EROOT}/usr/share/emscripten-${PV}/${tool}" "${EROOT}/usr/bin/${tool}"
     done
 
     env-update
@@ -166,12 +166,12 @@ EOF
     echo "You need to . /etc/profile in the current shell."
     # The LLVM_ prefix is reserved for the package llvm package only, \
     # the emscripten package has no right to it.
-    echo \
+    echo -e \
 "A reminder that LLVM_ROOT=\"\${EMSDK_LLVM_ROOT}\" needs to be called prior\n\
 to running the emscripten toolchain."
-    echo \
     # The CLOSURE_COMPILER is reserved for the closure-compiler package,
     # the emscripten package has no right to it.
+    echo -e \
 "A reminder that CLOSURE_COMPILER=\"\${EMSDK_CLOSURE_COMPILER}\" needs to be\n\
 called prior to running the emscripten toolchain."
 }
