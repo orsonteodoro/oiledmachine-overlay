@@ -5,7 +5,7 @@
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20200807"
+VERSION="20200807-r1"
 PN="nodejs"
 
 # 1.39.20 llvm 12 ; node 4.1.1 ; binaryen 93
@@ -130,40 +130,58 @@ is_x_op_y() {
 # Permute emscripten, emscripten-fastcomp (asm.js), llvm (wasm) targets
 find_targets() {
     local f
-    EMSCRIPTEN_VERSIONS=$(find "${EROOT}/usr/share" -maxdepth 1 -regextype 'posix-egrep' -regex ".*emscripten-[0-9.]+" | sort -V | cut -f 4 -d "/" | sed -e "s|^${EROOT}||" | sed -e "s|emscripten-||g")
-    LLVM_VERSIONS=$(find "${EROOT}/usr/lib64/llvm" -maxdepth 1 -regextype 'posix-egrep' -regex ".*[0-9.]+" | sed -e "s|^${EROOT}||" | sort -V | cut -f 5 -d "/")
+    EMSCRIPTEN_VERSIONS=$(find "${EROOT}/usr/share" -maxdepth 1 \
+        -regextype 'posix-egrep' -regex ".*emscripten-[0-9.]+" | sort -V \
+        | cut -f 4 -d "/" | sed -e "s|^${EROOT}||" | sed -e "s|emscripten-||g")
+    LLVM_VERSIONS=$(find "${EROOT}/usr/lib64/llvm" -maxdepth 1 \
+        -regextype 'posix-egrep' -regex ".*[0-9.]+" | sed -e "s|^${EROOT}||" \
+        | sort -V | cut -f 5 -d "/")
 
     for em_v in ${EMSCRIPTEN_VERSIONS} ; do
         [[ ! -f "${EROOT}/usr/share/emscripten-${em_v}/emcc" ]] && continue
-        local use_path=$(realpath --canonicalize-missing "${EROOT}"/var/db/pkg/dev-util/emscripten-${em_v}*/USE)
+        local use_path=$(realpath --canonicalize-missing \
+            "${EROOT}"/var/db/pkg/dev-util/emscripten-${em_v}*/USE)
         [[ ! -f "${use_path}" ]] && continue
         for compiler in fastcomp llvm ; do
             if [[ "${compiler}" == "fastcomp" ]] ; then
                 echo "emscripten-${em_v},emscripten-fastcomp-${em_v}"
             elif [[ "${compiler}" == "llvm" ]] ; then
                 for llvm_v in ${LLVM_VERSIONS} ; do
-                    if grep -qF -e "llvm_targets_WebAssembly" $(realpath "${EROOT}"/var/db/pkg/sys-devel/llvm-${llvm_v}*/USE) ; then
+                    if grep -qF -e "llvm_targets_WebAssembly" \
+                           $(realpath "${EROOT}"/var/db/pkg/sys-devel/llvm-${llvm_v}*/USE) \
+                       && grep -qF -e "llvm_targets_WebAssembly" \
+                           $(realpath "${EROOT}"/var/db/pkg/sys-devel/clang-${llvm_v}*/USE) ; then
                         llvm_major=$(echo "${llvm_v}" | cut -f 1 -d '.')
                         llvm_major_minor=$(echo "${llvm_v}" | cut -f 1-2 -d '.')
-                        if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.20" && [[ "${llvm_major}" -ge 12 ]] ; then
+                        if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.20" \
+                            && [[ "${llvm_major}" -ge 12 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_v}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.7" && [[ "${llvm_major}" -ge 11 ]] ; then
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.7" \
+                            && [[ "${llvm_major}" -ge 11 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_v}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.40" && [[ "${llvm_major}" -ge 10 ]] ; then
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.40" \
+                            && [[ "${llvm_major}" -ge 10 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_v}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.24" && [[ "${llvm_major}" -ge 9 ]] ; then
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.24" \
+                            && [[ "${llvm_major}" -ge 9 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_v}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.11" && [[ "${llvm_major}" -ge 8 ]] ; then
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.11" \
+                            && [[ "${llvm_major}" -ge 8 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_v}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.28" && [[ "${llvm_major}" -ge 7 ]] ; then
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.28" \
+                            && [[ "${llvm_major}" -ge 7 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_v}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.21" && [[ "${llvm_major}" -ge 6 ]] ; then
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.21" \
+                            && [[ "${llvm_major}" -ge 6 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_v}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.15" && [[ "${llvm_major}" -ge 5 ]] ; then
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.15" \
+                            && [[ "${llvm_major}" -ge 5 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_v}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.7" && [[ "${llvm_major}" -ge 4 ]] ; then
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.7" \
+                            && [[ "${llvm_major}" -ge 4 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_v}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.36.1" && is_x_op_y ${llvm_major_minor} ">=" "3.9" ; then
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.36.1" \
+                            && is_x_op_y ${llvm_major_minor} ">=" "3.9" ; then
                             echo "emscripten-${em_v},llvm-${llvm_v}"
                         fi
                     fi
@@ -176,7 +194,8 @@ find_targets() {
 # remove the emscripten files
 remove_symlink() {
     rm "${EROOT}/etc/env.d/99emscripten" 2>/dev/null 1>/dev/null || true
-    rm "${EROOT}/usr/share/emscripten-"*"/emscripten.config" 2>/dev/null 1>/dev/null || true
+    rm "${EROOT}/usr/share/emscripten-"*"/emscripten.config" \
+        2>/dev/null 1>/dev/null || true
 }
 
 # write out 99emscripten and emscripten.config
@@ -209,7 +228,8 @@ set_config() {
             __LLVM_BIN_PATH__=/usr/share/${fc_p}/bin
             __EMCC_WASM_BACKEND__=0
         fi
-    elif [[ "${target}" =~ emscripten- && "${target}" =~ (llvm-|emscripten-fastcomp-) ]] ; then
+    elif [[ "${target}" =~ emscripten- \
+        && "${target}" =~ (llvm-|emscripten-fastcomp-) ]] ; then
         em=$(echo "${target}" | cut -f 1 -d " ")
         PV=$(echo "${em}" | cut -f 2 -d "-")
         compiler=$(echo "${target}" | cut -f 2 -d " ")
@@ -227,7 +247,8 @@ set_config() {
         return
     fi
 
-    local use_path=$(realpath --canonicalize-missing /var/db/pkg/dev-util/emscripten-${PV}*/USE)
+    local use_path=$(realpath --canonicalize-missing \
+        /var/db/pkg/dev-util/emscripten-${PV}*/USE)
     if [[ ! -f "${use_path}" ]] ; then
         echo "emscripten ${PV} is not installed."
         return 1
@@ -287,12 +308,15 @@ EOF
     rm ${T_CONFIG}
 
     echo "Setting up symlinks"
-    for tool in em++ em-config emar embuilder emcc emcmake emconfigure emmake emranlib emrun emscons emsize ; do
+    for tool in em++ em-config emar embuilder emcc emcmake emconfigure emmake \
+        emranlib emrun emscons emsize ; do
         if [[ ! -f "${EROOT}/usr/share/emscripten-${PV}/${tool}" ]] ; then
-            echo "Missing ${EROOT}/usr/share/emscripten-${PV}/${tool}.  Failed to set toolchain."
+            echo \
+"Missing ${EROOT}/usr/share/emscripten-${PV}/${tool}.  Failed to set toolchain."
             return 1
         fi
-        ln -sf "${EROOT}/usr/share/emscripten-${PV}/${tool}" "${EROOT}/usr/bin/${tool}"
+        ln -sf "${EROOT}/usr/share/emscripten-${PV}/${tool}" \
+            "${EROOT}/usr/bin/${tool}"
     done
 
     env-update
@@ -328,12 +352,18 @@ do_show() {
     write_list_start "Current emscritpen, emscripten-fastcomp, llvm combo:"
 
     [[ ! -f /etc/env.d/99emscripten ]] && return
-    em_v=$(basename $(grep -r -e "EMSCRIPTEN=" /etc/env.d/99emscripten) | sed -e "s|emscripten-||g")
-    is_llvm=$(grep -r -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | grep -qF -e "/usr/lib/llvm"  ; echo "$?")
-    is_fc=$(grep -r -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | grep -qF -e "/usr/share/emscripten-fastcomp"  ; echo "$?")
+    em_v=$(basename $(grep -r -e "EMSCRIPTEN=" /etc/env.d/99emscripten) \
+        | sed -e "s|emscripten-||g")
+    is_llvm=$(grep -r -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+        | grep -qF -e "/usr/lib/llvm"  ; echo "$?")
+    is_fc=$(grep -r -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+        | grep -qF -e "/usr/share/emscripten-fastcomp"  ; echo "$?")
 
-    llvm_v=$(grep "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | sed -e "s|EMSDK_LLVM_ROOT=/usr/lib/llvm/||" -e "s|/bin||")
-    fc_v=$(grep "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | sed -e "s|EMSDK_LLVM_ROOT=/usr/share/emscripten-fastcomp-||" -e "s|/bin||")
+    llvm_v=$(grep "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+        | sed -e "s|EMSDK_LLVM_ROOT=/usr/lib/llvm/||" -e "s|/bin||")
+    fc_v=$(grep "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+        | sed -e "s|EMSDK_LLVM_ROOT=/usr/share/emscripten-fastcomp-||" \
+        -e "s|/bin||")
 
     if [[ "${is_llvm}" == "0" ]] ; then
         local k_node_src="emscripten-${em_v}"
@@ -358,12 +388,18 @@ do_list() {
     local i targets=( $(find_targets) )
 
     if [[ -f /etc/env.d/99emscripten ]] ; then
-        em_v=$(basename $(grep -r -e "EMSCRIPTEN=" /etc/env.d/99emscripten) | sed -e "s|emscripten-||g")
-        is_llvm=$(grep -r -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | grep -qF -e "/usr/lib/llvm"  ; echo "$?")
-        is_fc=$(grep -r -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | grep -qF -e "/usr/share/emscripten-fastcomp"  ; echo "$?")
+        em_v=$(basename $(grep -r -e "EMSCRIPTEN=" /etc/env.d/99emscripten) \
+            | sed -e "s|emscripten-||g")
+        is_llvm=$(grep -r -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+            | grep -qF -e "/usr/lib/llvm"  ; echo "$?")
+        is_fc=$(grep -r -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+            | grep -qF -e "/usr/share/emscripten-fastcomp"  ; echo "$?")
 
-        llvm_v=$(grep "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | sed -e "s|EMSDK_LLVM_ROOT=/usr/lib/llvm/||" -e "s|/bin||")
-        fc_v=$(grep "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten | sed -e "s|EMSDK_LLVM_ROOT=/usr/share/emscripten-fastcomp-||" -e "s|/bin||")
+        llvm_v=$(grep "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+            | sed -e "s|EMSDK_LLVM_ROOT=/usr/lib/llvm/||" -e "s|/bin||")
+        fc_v=$(grep "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+            | sed -e "s|EMSDK_LLVM_ROOT=/usr/share/emscripten-fastcomp-||" \
+            -e "s|/bin||")
 
         expected_highligted_line="emscripten-${em_v}"
         if [[ "${is_llvm}" == "0" ]] ; then
