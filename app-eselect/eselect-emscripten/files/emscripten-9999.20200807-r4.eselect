@@ -137,7 +137,7 @@ find_targets() {
     EMSCRIPTEN_VERSIONS=$(find "${EROOT}/usr/share" -maxdepth 1 \
         -regextype 'posix-egrep' -regex ".*emscripten-[0-9.]+" | sort -V \
         | cut -f 4 -d "/" | sed -e "s|^${EROOT}||" | sed -e "s|emscripten-||g")
-    LLVM_VERSIONS=$(find "${EROOT}/usr/lib64/llvm" -maxdepth 1 \
+    LLVM_VERSIONS=$(find "${EROOT}/usr/$(get_libdir)/llvm" -maxdepth 1 \
         -regextype 'posix-egrep' -regex ".*[0-9.]+" | sed -e "s|^${EROOT}||" \
         | sort -V | cut -f 5 -d "/")
 
