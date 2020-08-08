@@ -32,7 +32,7 @@ G_LONG_SCAN=${G_LONG_SCAN:="0"}
 G_NPM_APPS="/var/lib/portage/npm-packages" # location of registered npm packages
 G_PACKAGE_LOCK_DIR="/dev/shm"
 G_VERBOSE=${G_VERBOSE:="0"} # can only be 0 for silent, or 1 for more output
-G_VERSION="2020.08.03"
+G_VERSION="2020.08.07"
 G_DATA_CACHE_DIR="/var/cache/npm-secaudit"
 G_DATA_VERSION_DATA_PATH="${G_DATA_CACHE_DIR}/lite.json"
 G_USE_ELECTRON=${G_USE_ELECTRON:="1"}
@@ -241,7 +241,7 @@ is_x_ge_y() {
 	local y="${2}"
 	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
 		| cut -f1 -d $' ')
-	if [[ "${result}" == "${x}" || "${x}" == "${y}" ]] ; then
+	if [[ "${result}" != "${x}" || "${x}" == "${y}" ]] ; then
 		return 0
 	else
 		return 1
