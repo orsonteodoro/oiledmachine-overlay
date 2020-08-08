@@ -1,0 +1,13 @@
+--- a/tools/shared.py.orig	2020-01-15 11:13:56.000000000 -0800
++++ b/tools/shared.py	2020-08-07 16:27:08.389443682 -0700
+@@ -664,7 +664,9 @@ if CLANG_ADD_VERSION is None:
+ # Some distributions ship with multiple llvm versions so they add
+ # the version to the binaries, cope with that
+ def build_llvm_tool_path(tool):
+-  if LLVM_ADD_VERSION:
++  if tool.find('wasm-ld') > -1:
++    return os.path.join('/usr/bin', tool)
++  elif LLVM_ADD_VERSION:
+     return os.path.join(LLVM_ROOT, tool + "-" + LLVM_ADD_VERSION)
+   else:
+     return os.path.join(LLVM_ROOT, tool)

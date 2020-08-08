@@ -8,7 +8,8 @@ LICENSE="Apache-2.0 Apache-2.0-with-LLVM-exceptions"
 # root directory contains Apache-2.0 but third_party/llvm-project
 # contains Apache-2.0-with-LLVM-exceptions
 KEYWORDS="~amd64 ~x86"
-SLOT="0/$(ver_cut 1 ${PV})"
+SLOT_MAJOR="$(ver_cut 1 ${PV})"
+SLOT="${SLOT_MAJOR}/${PV}"
 IUSE="doc"
 RDEPEND="${PYTHON_DEPS}"
 DEPEND="${RDEPEND}"
@@ -16,11 +17,10 @@ CMAKE_MIN_VERSION="3.1.3"
 CMAKE_BUILD_TYPE="Release"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit cmake-utils python-any-r1 toolchain-funcs
-EGIT_COMMIT="3ac849384aa861382d2ca9636a89556e237e55d6"
 SRC_URI="\
-https://github.com/WebAssembly/binaryen/archive/${EGIT_COMMIT}.tar.gz \
+https://github.com/WebAssembly/binaryen/archive/version_${PV}.tar.gz
 	-> ${P}.tar.gz"
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+S="${WORKDIR}/${PN}-version_${PV}"
 RESTRICT="mirror"
 DOCS=( CHANGELOG.md README.md )
 
@@ -50,6 +50,9 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
+		-DCMAKE_INSTALL_LIBDIR=/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/$(get_libdir)
+		-DCMAKE_INSTALL_BINDIR=/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/bin
+		-DCMAKE_INSTALL_INCLUDEDIR=/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/include
 		-DBUILD_STATIC_LIB=OFF
 		-DENABLE_WERROR=OFF
 	)
@@ -58,12 +61,14 @@ src_configure() {
 
 src_install() {
 	cmake-utils_src_install
-	insinto "/usr/include/${PN}"
+	insinto "/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/include"
 	doins "${S}/src/"*.h
 	for hdir in asmjs emscripten-optimizer ir support; do
-		insinto "/usr/include/${PN}/${hdir}"
+		insinto "/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/include/${hdir}"
 		doins "${S}/src/${hdir}/"*.h
 	done
+	dosym /usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/$(get_libdir) \
+		/usr/$(get_libdir)/binaryen/${SLOT_MAJOR}/lib
 	dodoc LICENSE
 	cat third_party/llvm-project/include/llvm/Support/LICENSE.TXT \
 		> "${T}/LICENSE.LLVM_System_Interface_Library.TXT"
@@ -71,9 +76,4 @@ src_install() {
 	cat third_party/llvm-project/include/llvm/LICENSE.TXT \
 		> "${T}/LICENSE.llvm-project.TXT"
 	dodoc "${T}/LICENSE.llvm-project.TXT"
-
-	cat <<-EOF > "${T}"/99${P}
-		BINARYEN_ROOT=/usr
-	EOF
-	doenvd "${T}"/99${P}
 }

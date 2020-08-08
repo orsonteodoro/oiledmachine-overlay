@@ -84,6 +84,7 @@ JAVA_V="1.8"
 # For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/1.39.6/tools/shared.py#L449
 # For the required nodejs, see https://github.com/emscripten-core/emscripten/blob/1.39.6/tools/shared.py#L515
 LLVM_V="10.0.0"
+BINARYEN_V="90" # doesn't actually say the expected.  Based on next release.
 RDEPEND="${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
 	asmjs? ( ~dev-util/emscripten-fastcomp-${PV}:= )
@@ -103,9 +104,10 @@ ${CLOSURE_COMPILER_SLOT}\
 			>=net-libs/nodejs-6
 		)
 	)
-	>=dev-util/binaryen-90
+	dev-util/binaryen:${BINARYEN_V}
 	>=net-libs/nodejs-4.1.1
 	wasm? (
+		>=sys-devel/lld-${LLVM_V}
 		>=sys-devel/llvm-${LLVM_V}:=[llvm_targets_WebAssembly]
 		>=sys-devel/clang-${LLVM_V}:=[llvm_targets_WebAssembly]
 	)"
@@ -144,7 +146,7 @@ TEST="${WORKDIR}/test/"
 DOWNLOAD_SITE="https://github.com/emscripten-core/emscripten/releases"
 FN_SRC="${PV}.tar.gz"
 _PATCHES=(
-	"${FILESDIR}/emscripten-1.39.20-set-wrappers-path.patch"
+	"${FILESDIR}/emscripten-1.39.6-gentoo-wasm-ld-path.patch"
 )
 CMAKE_BUILD_TYPE=Release
 
@@ -194,7 +196,26 @@ FEATURES"
 			if has_version "sys-devel/clang:${llvm_slot}[llvm_targets_WebAssembly]" \
 			&& has_version "sys-devel/llvm:${llvm_slot}[llvm_targets_WebAssembly]" ; then
 				export LLVM_SLOT="${llvm_slot}"
-				CXX="${EROOT}/usr/lib/llvm/${EMSDK_LLVM_VERSION}/bin/clang++"
+				CXX="${EROOT}/usr/lib/llvm/${llvm_slot}/bin/clang++"
+				einfo "CXX=${CXX}"
+				if [[ ! -f "${CXX}" ]] ; then
+					die "CXX path is wrong and doesn't exist"
+				fi
+				lld_slot=$(ver_cut 1 $(wasm-ld --version \
+						| sed -e "s|LLD ||"))
+# The lld slotting is broken.  See https://bugs.gentoo.org/691900
+# ldd lld shows that libLLVM-10.so => /usr/lib64/llvm/10/lib64/libLLVM-10.so but
+# but slot 10 doesn't have wasm and one of the other >=${LLVM_V} do have it and
+# tricking the RDEPENDs.  We need to make sure that =lld-${lld_slot}*
+# with =llvm-${lld_slot}*[llvm_targets_WebAssembly].
+				if ! has_version "sys-devel/clang:${lld_slot}[llvm_targets_WebAssembly]" \
+				|| ! has_version "sys-devel/llvm:${lld_slot}[llvm_targets_WebAssembly]" ; then
+					die \
+"lld's corresponding version to clang and llvm versions must have\n\
+llvm_targets_WebAssembly.  Either upgrade lld to version ${LLVM_SLOT} or\n\
+rebuild with llvm:${lld_slot}[llvm_targets_WebAssembly] and\n\
+clang:${lld_slot}[llvm_targets_WebAssembly]"
+				fi
 				break
 			fi
 		done
@@ -210,54 +231,45 @@ updates acceptable."
 # The activated_cfg goes in emscripten.config from the json file.
 # The activated_env goes in 99emscripten from the json file.
 # https://github.com/emscripten-core/emsdk/blob/1.39.20/emsdk_manifest.json
+# For examples of environmental variables and paths used in this package, see
+# https://github.com/emscripten-core/emsdk/issues/167#issuecomment-414935332
 prepare_file() {
-	cp "${FILESDIR}/${1}" "${S}/" || die "could not copy '${1}'"
-	sed -i "s/\${PV}/${PV}/g" "${S}/${1}" || \
-		die "could not adjust path for '${1}'"
+	local type="${1}"
+	local dest_dir="${2}"
+	local source_filename="${3}"
+	cp "${FILESDIR}/${source_filename}" "${dest_dir}/" || die "could not copy '${source_filename}'"
+	sed -i "s/\${PV}/${PV}/g" "${dest_dir}/${source_filename}" || \
+		die "could not adjust path for '${source_filename}'"
 	sed -i -e "s|\${PYTHON_EXE_ABSPATH}|${PYTHON_EXE_ABSPATH}|g" \
-		"${S}/${1}" || die
-	if use asmjs ; then
+		"${dest_dir}/${source_filename}" || die
+	if [[ "${type}" == "asmjs" ]] ; then
 		sed -i -e \
 "s|__EMSDK_LLVM_ROOT__|/usr/share/emscripten-fastcomp-${PV}/bin|" \
 		-e \
 "s|__EMCC_WASM_BACKEND__|0|" \
 		-e \
 "s|__LLVM_BIN_PATH__|/usr/share/emscripten-fastcomp-${PV}/bin|" \
-		"${S}/${1}" || die
-	elif use wasm ; then
+		-e \
+"s|\$(get_libdir)|$(get_libdir)|" \
+		-e \
+"s|\${BINARYEN_SLOT}|${BINARYEN_V}|" \
+		"${dest_dir}/${source_filename}" || die
+	elif [[ "${type}" == "wasm" ]] ; then
 		sed -i -e \
-"s|__EMSDK_LLVM_ROOT__|/usr/lib/llvm/${EMSDK_LLVM_VERSION}/bin|" \
+"s|__EMSDK_LLVM_ROOT__|/usr/lib/llvm/${LLVM_SLOT}/bin|" \
 		-e \
 "s|__EMCC_WASM_BACKEND__|1|" \
 		-e \
-"s|__LLVM_BIN_PATH__|/usr/lib/llvm/${EMSDK_LLVM_VERSION}/bin|" \
-		"${S}/${1}" || die
+"s|__LLVM_BIN_PATH__|/usr/lib/llvm/${LLVM_SLOT}/bin|" \
+		-e \
+"s|\$(get_libdir)|$(get_libdir)|" \
+		-e \
+"s|\${BINARYEN_SLOT}|${BINARYEN_V}|" \
+		"${dest_dir}/${source_filename}" || die
 	fi
-}
-
-src_unpack() {
-	unpack ${A}
-	if use closure-compiler && ! use system-closure-compiler ; then
-		# Fetches and builds the closure compiler here.
-		npm-secaudit_src_unpack
-	fi
-}
-
-src_prepare() {
-	export PYTHON_EXE_ABSPATH=$(which ${PYTHON})
-	einfo "PYTHON_EXE_ABSPATH=${PYTHON_EXE_ABSPATH}"
-	# For examples of environmental variables and paths used in this package, see
-	# https://github.com/emscripten-core/emsdk/issues/167#issuecomment-414935332
-	prepare_file "99emscripten"
-	prepare_file "emscripten.config.1.39.20"
-	mv "${S}/emscripten.config"{.1.39.20,} || die
-	eapply ${_PATCHES[@]}
-	eapply_user
-	S="${S}/tools/optimizer" \
-	cmake-utils_src_prepare
 	if ! use native-optimizer ; then
 		sed -i "/EMSCRIPTEN_NATIVE_OPTIMIZER/d" \
-			"${S}/99emscripten" || die
+			"${dest_dir}/${source_filename}" || die
 	fi
 	if use closure-compiler ; then
 		if use system-closure-compiler ; then
@@ -273,16 +285,33 @@ src_prepare() {
 "/usr/bin/closure-compiler"
 			fi
 			sed -i "s|__EMSDK_CLOSURE_COMPILER__|\"${cmd}\"|" \
-				"${S}/99emscripten" || die
+				"${dest_dir}/${source_filename}" || die
 		else
 			# Using defaults
 			sed -i "/EMSDK_CLOSURE_COMPILER/d" \
-				"${S}/99emscripten" || die
+				"${dest_dir}/${source_filename}" || die
 		fi
 	else
 		sed -i "/EMSDK_CLOSURE_COMPILER/d" \
-			"${S}/99emscripten" || die
+			"${dest_dir}/${source_filename}" || die
 	fi
+}
+
+src_unpack() {
+	unpack ${A}
+	if use closure-compiler && ! use system-closure-compiler ; then
+		# Fetches and builds the closure compiler here.
+		npm-secaudit_src_unpack
+	fi
+}
+
+src_prepare() {
+	export PYTHON_EXE_ABSPATH=$(which ${PYTHON})
+	einfo "PYTHON_EXE_ABSPATH=${PYTHON_EXE_ABSPATH}"
+	eapply ${_PATCHES[@]}
+	eapply_user
+	S="${S}/tools/optimizer" \
+	cmake-utils_src_prepare
 }
 
 src_configure() {
@@ -303,27 +332,32 @@ npm-secaudit_src_compile() {
 	:;
 }
 
+gen_files() {
+	local config_v="1.39.20"
+	mkdir "${TEST}" || die "Could not create test directory!"
+	prepare_file "${t}" "${TEST}" "99emscripten"
+	prepare_file "${t}" "${TEST}" "emscripten.config.${config_v}"
+	mv "${TEST}/emscripten.config"{.${config_v},} || die
+	source "${TEST}/99emscripten"
+}
+
 src_test() {
-	for t in asm.js wasm ; do
-		cp "${S}/99emscripten" "${T}/99emscripten" || die
-		sed -i -e "s|\
-PATH=\"/usr/share/emscripten-1.40.0\"|\
-PATH=\"/usr/share/emscripten-1.40.0:\${PATH}\"|" \
-			"${T}/99emscripten" || die
-		source "${T}/99emscripten"
+	for t in asmjs wasm ; do
 		local enable_test=0
 		if [[ "${t}" == "wasm" ]] ; then
 			if use wasm ; then
 				einfo "Testing ${t}"
+				gen_files "${t}"
 				if [[ "${EMCC_WASM_BACKEND}" != "1" ]] ; then
 					die "EMCC_WASM_BACKEND should be 1 with wasm"
 				fi
 				enable_test=1
 			fi
 		fi
-		if [[ "${t}" == "asm.js" ]]  ; then
+		if [[ "${t}" == "asmjs" ]]  ; then
 			if use asmjs ; then
 				einfo "Testing ${t}"
+				gen_files "${t}"
 				if [[ "${EMCC_WASM_BACKEND}" != "0" ]] ; then
 					die "EMCC_WASM_BACKEND should be 0 with asmjs"
 				fi
@@ -331,11 +365,8 @@ PATH=\"/usr/share/emscripten-1.40.0:\${PATH}\"|" \
 			fi
 		fi
 		if [[ "${enable_test}" == "1" ]] && use test ; then
-			mkdir "${TEST}" || die "Could not create test directory!"
 			cp "${FILESDIR}/hello_world.cpp" "${TEST}" \
 				|| die "Could not copy example file"
-			cp "${S}/emscripten.config" "${TEST}" \
-				|| die "Could not copy config file"
 			sed -i -e "/^EMSCRIPTEN_ROOT/s|/usr/share/|${S}|" \
 				"${TEST}/emscripten.config" \
 				|| die "Could not adjust path for testing"
@@ -366,6 +397,8 @@ PATH=\"/usr/share/emscripten-1.40.0:\${PATH}\"|" \
 				die "Expected '${EXP}' but got '${OUT}'!"
 			fi
 			rm -r "${TEST}" || die "Could not clean-up '${TEST}'"
+			rm -r "${HOME}/.emscripten_cache" \
+				|| die "Could not clean up \${HOME}/.emscripten_cache"
 		fi
 	done
 }
