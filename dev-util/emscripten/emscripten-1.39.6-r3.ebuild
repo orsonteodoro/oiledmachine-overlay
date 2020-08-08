@@ -189,7 +189,7 @@ FEATURES"
 	fi
 	python-single-r1_pkg_setup
 	if use wasm ; then
-		export HIGHEST_LLVM_SLOT=$(basename $(find /usr/lib/llvm -maxdepth 1 \
+		export HIGHEST_LLVM_SLOT=$(basename $(find "${EROOT}/usr/lib/llvm" -maxdepth 1 \
 			-regextype 'posix-extended' -regex ".*[0-9]+.*" \
 			| sort -V | tail -n 1))
 		for llvm_slot in $(seq $(ver_cut 1 ${LLVM_V}) ${HIGHEST_LLVM_SLOT}) ; do
