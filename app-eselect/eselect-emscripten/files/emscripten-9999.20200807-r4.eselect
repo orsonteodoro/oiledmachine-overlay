@@ -3,14 +3,18 @@
 # Copyright 2005-2012 Gentoo Foundation
 # Distributed under the terms of the GNU GPL version 2 or later
 
+inherit multilib
+
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20200807-r3"
+VERSION="20200807-r4"
 PN="emscripten"
 
+# 1.40.1 llvm 12 ; node 4.4.1 ; binaryen 94
+# 1.40.0 llvm 12 ; node 4.4.1 ; binaryen 94
 # 1.39.20 llvm 12 ; node 4.1.1 ; binaryen 93
 # 1.39.19 llvm 11 ; node 4.1.1 ; binaryen 93
-# 1.39.13 ; binaryen 93
+# 1.39.14 ; binaryen 93
 # 1.39.13 ; binaryen 90
 # 1.39.7 llvm 11 ; binaryen 90
 # 1.39.6 llvm 10 ; 
@@ -82,7 +86,7 @@ is_x_ge_y() {
 	local y="${2}"
 	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
 		| cut -f1 -d $' ')
-	if [[ "${result}" == "${x}" || "${x}" == "${y}" ]] ; then
+	if [[ "${result}" != "${x}" || "${x}" == "${y}" ]] ; then
 		return 0
 	else
 		return 1
@@ -295,12 +299,14 @@ EOF
             "${EROOT}/etc/env.d/99emscripten"
     fi
 
+    BINARYEN_SLOT=$(grep -e "BINARYEN_V=" "${EROOT}/var/db/pkg/dev-util/emscripten-${PV}"*/*ebuild | sed -e "s|BINARYEN_V=||" -e "s|\"||g" | cut -f1 -d " ")
+
     T_CONFIG=$(mktemp)
     cat << EOF > "${T_CONFIG}" || die
 import os
 EMSCRIPTEN_ROOT = os.path.expanduser(os.getenv('EMSCRIPTEN') or '/usr/share/emscripten-${PV}')
 LLVM_ROOT = os.path.expanduser(os.getenv('LLVM') or '${__LLVM_BIN_PATH__}')
-BINARYEN_ROOT = os.path.expanduser(os.getenv('BINARYEN', '') or '/usr')
+BINARYEN_ROOT = os.path.expanduser(os.getenv('BINARYEN', '') or '/usr/$(get_libdir)/binaryen/${BINARYEN_SLOT}')
 NODE_JS = os.path.expanduser(os.getenv('NODE') or '/usr/bin/node')
 JAVA = 'java'
 TEMP_DIR = '/tmp'
@@ -309,8 +315,12 @@ EOF
     rm ${T_CONFIG}
 
     echo "Setting up symlinks"
-    for tool in em++ em-config emar embuilder emcc emcmake emconfigure emmake \
-        emranlib emrun emscons emsize ; do
+    additional_tools=()
+    if is_x_op_y $(echo "${PV}" | cut -f 1 -d "-") ">=" 1.39.13 ; then
+        additional_tools+=( embuilder emsize )
+    fi
+    for tool in em++ em-config emar emcc emcmake emconfigure emmake \
+        emranlib emrun emscons ${additional_tools[@]} ; do
         if [[ ! -f "${EROOT}/usr/share/emscripten-${PV}/${tool}" ]] ; then
             echo \
 "Missing ${EROOT}/usr/share/emscripten-${PV}/${tool}.  Failed to set toolchain."
