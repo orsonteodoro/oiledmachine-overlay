@@ -492,11 +492,13 @@ if (( ${EAPI} == 7 )) ; then
 BDEPEND+="
 	app-misc/jq
 	net-misc/wget
+	sys-apps/file
 "
 else
 DEPEND+="
 	app-misc/jq
 	net-misc/wget
+	sys-apps/file
 "
 fi
 
@@ -1280,8 +1282,23 @@ command to execute in the wrapper script"
 	echo "${cmd}" >> "${T}/${PN}"
 	doexe "${T}/${PN}"
 
-	newicon "${rel_icon_path}" "${PN}.png"
-	make_desktop_entry ${PN} "${pkg_name}" ${PN} "${category}"
+	local icon=""
+	local mime_type=$(file --mime-type $(realpath "./${rel_icon_path}"))
+	if echo "${mime_type}" | grep -q -E "image/png" ; then
+		icon="${PN}"
+		newicon "${rel_icon_path}" "${icon}.png"
+	elif echo "${mime_type}" | grep -q -E "image/svg" ; then
+		icon="${PN}"
+		newicon "${rel_icon_path}" "${icon}.svg"
+	elif echo "${mime_type}" | grep -q -E "image/x-xpmi" ; then
+		icon="${PN}"
+		newicon "${rel_icon_path}" "${icon}.xpm"
+	else
+		# See https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
+		ewarn "Only png, svg, xpm accepted as icons for the XDG desktop icon theme spec.  Skipping."
+	fi
+
+	make_desktop_entry "${PN}" "${pkg_name}" "${icon}" "${category}"
 
 	electron-app_store_jsons_for_security_audit
 }
