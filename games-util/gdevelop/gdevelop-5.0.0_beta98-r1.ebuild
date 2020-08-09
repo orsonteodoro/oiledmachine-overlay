@@ -438,8 +438,8 @@ pkg_postinst() {
 	electron-app_pkg_postinst
 	xdg_pkg_postinst
 	einfo \
-"You must start the daemon process from\n\
-/etc/init.d/gdevelop-server\n\
+"Currently OpenRC is supported.  The init script is called gdevelop-server.\n\
+It must be started before running the gdevelop wrapper.\n\
 \n\
 Do not add users to ${PN} group.  It is for server use only.\n\
 \n\
@@ -460,8 +460,5 @@ IDE_MODE=\"Web_Browser\"\n\
 \n\
 After saving IDE_MODE in gdevelop.conf, make sure that you:\n\
 \`chown \${USER}:\${USER} ~/.config/gdevelop/gdevelop.conf\`\n\
-\`chmod go-w ~/.config/gdevelop/gdevelop.conf\`.\n\
-\n\
-Currently OpenRC is supported.  The init script is called gdevelop-server.\n\
-It must be started before running the gdevelop wrapper."
+\`chmod go-w ~/.config/gdevelop/gdevelop.conf\`."
 }
