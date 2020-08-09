@@ -3,23 +3,22 @@
 # but not root.  Must create a user called gdevelop that to not be used
 # by normal users but only the server.
 
-PROJECT_ROOT="/usr/$(get_libdir)/node/${PN}/${SLOT_MAJOR}"
-SERVER_PID_FILE="/var/run/server.pid"
+PROJECT_ROOT="/usr/lib64/node/gdevelop/5"
+SERVER_PID_FILE="/var/run/gdevelop/gdevelop-server.pid"
 LOGFILE="/var/log/gdevelop-server.log"
 ENABLE_LOGGING=${ENABLE_LOGGING:="1"} # can set this in /etc/conf.d/gdevelop-server
+WAIT_TIME="180000" # It took 2:46.03 to start it up.
 
 logmsg() {
 	local msg="${1}"
+	touch "${LOGFILE}"
+	chown gdevelop:gdevelop "${LOGFILE}"
 	if [[ "${ENABLE_LOGGING}" == "1" ]] ; then
 		echo -e "${msg}" >> "${LOGFILE}"
 	fi
 }
 
 check_prereqs() {
-	if ! which netstat ; then
-		logmsg "You need netstat in order to keep loading sequence in sync."
-		exit 1
-	fi
 	if ! which npm ; then
 		local msg="You need npm to start the server."
 		logmsg "${msg}"
@@ -33,28 +32,37 @@ check_prereqs() {
 }
 
 start_server() {
-	rm -rf "${SERVER_PID_FILE}" 2>/dev/null 1>/dev/null
+	mkdir -p "$(dirname ${SERVER_PID_FILE})"
+	touch "${SERVER_PID_FILE}"
+	chown gdevelop:gdevelop "$(dirname ${SERVER_PID_FILE})" "${SERVER_PID_FILE}"
 
 	cd "${PROJECT_ROOT}/newIDE/app"
-	trap 'kill_server' EXIT
-	npm start 2>/dev/null 1>/dev/null &
-}
-
-kill_server() {
-	logmsg "Killing server"
-	if [[ -f "${SERVER_PID_FILE}" ]] ; then
-		kill -9 $(cat "${SERVER_PID_FILE}") 1>/dev/null 2>/dev/null
-	fi
-	rm -rf "${SERVER_PID_FILE}" 2>/dev/null 1>/dev/null
+	start-stop-daemon \
+		--background \
+		--start \
+		--group gdevelop \
+		--user gdevelop \
+		--pidfile "${SERVER_PID_FILE}" \
+		--wait ${WAIT_TIME} \
+		--stdout "${LOGFILE}" \
+		--stderr "${LOGFILE}" \
+		--exec /usr/bin/npm -- start
+	eend $?
 }
 
 start()
 {
-	ebegin "Starting GDevelop server"
+	local m="Starting GDevelop server"
+	ebegin "${m}"
+	logmsg "${m}"
 	start_server
 }
 
 stop() {
-	ebegin "Stopping GDevelop server"
-	kill_server
+	local m="Stopping GDevelop server"
+	ebegin "${m}"
+	logmsg "${m}"
+	start-stop-daemon \
+		--stop \
+		--pidfile "${SERVER_PID_FILE}"
 }

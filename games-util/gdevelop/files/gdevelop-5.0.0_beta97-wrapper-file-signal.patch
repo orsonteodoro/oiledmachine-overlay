@@ -12,7 +12,7 @@
  }
  
  function printInstructions(appName, urls, useYarn) {
-+  var path = '/var/run/gdevelop-server.pid';
++  var path = '/var/run/gdevelop/gdevelop-server.pid';
 +  fs.writeFile(path, `${process.pid}`, (err) => {
 +    if (err) throw err;
 +  });
