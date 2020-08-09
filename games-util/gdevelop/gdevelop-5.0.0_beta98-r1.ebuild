@@ -186,7 +186,7 @@ versions of Electron and internal Chromium.  The internal v8 is\n\
 8.0.426.27-electron.0.\n\
 \n\
 Details about chrome security can be found at:\n\
-https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome&search_type=all
+https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome&search_type=all\n\
 https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=v8%20chrome&search_type=all"
 	fi
 }
