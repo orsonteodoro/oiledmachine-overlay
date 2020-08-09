@@ -175,7 +175,7 @@ einfo "Checking repo for newicon .ico use ebuild"
 for f in $(find $(pwd) -name "*.ebuild") ; do
 	if grep -qP -i -e "newicon.*\.(png|svg|xpm)" "${f}" ; then
 		:;
-	elif grep -qP -e "newicon" ; then
+	elif grep -qP -e "newicon" "${f}" ; then
 		einfo "${f} uses wrong format for icon.  Not one of the official XDG icon formats for Linux desktop interoperability.  Use either png, svg, or xpm only."
 	fi
 done
