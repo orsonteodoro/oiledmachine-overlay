@@ -29,11 +29,12 @@ RDEPEND="dev-cpp/yaml-cpp
 	 >=sys-devel/gcc-7.4.0
 	 x11-libs/qscintilla
 	 virtual/jpeg"
+DEPEND="media-gfx/imagemagick[png]"
 EGIT_COMMIT="faff910d6398ab2660f45c512450f48d45b47099"
 SRC_URI=\
 "https://github.com/enigma-dev/RadialGM/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
-inherit cmake-utils desktop eutils toolchain-funcs
+inherit cmake-utils desktop eutils toolchain-funcs xdg
 MY_PN="RadialGM"
 S="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
@@ -42,6 +43,7 @@ CMAKE_BUILD_TYPE=Release
 
 src_prepare() {
 	cmake-utils_src_prepare
+	xdg_src_prepare
 	rm -rf "${S}/Submodules/enigma-dev" || die
 	cp -a /usr/$(get_libdir)/enigma/vanilla "${S}/Submodules" || die
 	mv "${S}/Submodules/vanilla" "${S}/Submodules/enigma-dev" || die
@@ -67,7 +69,12 @@ src_install() {
 	sed -i -e "s|lib64|$(get_libdir)|g" "${T}/${MY_PN}" || die
 	exeinto /usr/bin
 	doexe "${T}/${MY_PN}"
-	newicon Images/icon.ico ${MY_PN}.ico
+	pushd Images || die
+		convert -verbose icon.ico[0] icon-32x32.png || die
+		convert -verbose icon.ico[2] icon-16x16.png || die
+	popd
+	newicon -s 32 Images/icon-32x32.png ${MY_PN}.png
+	newicon -s 16 Images/icon-16x16.png ${MY_PN}.png
 	make_desktop_entry /usr/$(get_libdir)/${MY_PN} "Development;IDE"
 	dosym /usr/$(get_libdir)/enigma/vanilla /usr/$(get_libdir)/${MY_PN}/enigma-dev
 }
