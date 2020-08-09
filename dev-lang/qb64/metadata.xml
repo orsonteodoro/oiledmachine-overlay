@@ -7,6 +7,11 @@
   </maintainer>
   <longdescription>
     QB64 is a QBasic clone.
+
+    A per package environmental variable QB64_USERS must be defined.
+    It should look like:
+
+    QB64_USERS="person1;person2;person3".
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/Galleondragon/qb64/issues</bugs-to>
@@ -25,10 +30,8 @@
     <remote-id type="github">Galleondragon/qb64</remote-id>
   </upstream>
   <use>
-    <flag name="android">Checks the android dependencies to build Android executibles and installs android examples.</flag>
-    <flag name="auto-install-per-user">Automatically installs per user without mounting.  Recommended for easy updates per user.  The per package environmental variable QB64_USERS should look like QB64_USERS="person1:/home/person1;person2:/home/person files".  ${HOME}/.bin must be unencrypted.  Plausible deniability compromised if drive is not fully encrypted.</flag>
-    <flag name="pkg-config">Installs a copy per-user via emerge --config.  Recommended for mounted or encrypted home directories.  It is required that the user login to mount their home directory.</flag>
+    <flag name="android">Checks the android dependencies to build Android
+      executibles and installs android examples.</flag>
     <flag name="samples">Installs example BASIC scripts.</flag>
-    <flag name="systemwide">Installs and configures the program for systemwide use.  Not recommended.</flag>
   </use>
 </pkgmetadata>
