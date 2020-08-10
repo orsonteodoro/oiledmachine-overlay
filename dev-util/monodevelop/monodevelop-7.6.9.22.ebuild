@@ -74,6 +74,7 @@ DEPEND="${COMMON_DEPEND}
 	sys-devel/gettext
 	x11-misc/shared-mime-info
 	x11-terms/xterm
+	sys-apps/grep[pcre]
 	virtual/pkgconfig"
 inherit autotools fdo-mime gnome2-utils dotnet eutils git-r3
 MAKEOPTS="${MAKEOPTS} -j1"
