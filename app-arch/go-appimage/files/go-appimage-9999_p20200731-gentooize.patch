@@ -1,0 +1,52 @@
+diff -urp go-appimage-f1ebcce70dae0ab9a671604261d4fd46be88384f.orig/scripts/build.sh go-appimage-f1ebcce70dae0ab9a671604261d4fd46be88384f/scripts/build.sh
+--- go-appimage-f1ebcce70dae0ab9a671604261d4fd46be88384f.orig/scripts/build.sh	2020-07-31 08:19:25.000000000 -0700
++++ go-appimage-f1ebcce70dae0ab9a671604261d4fd46be88384f/scripts/build.sh	2020-08-10 01:24:47.991310400 -0700
+@@ -19,8 +19,7 @@ set -x
+ ##############################################################
+ 
+ # Disregard any other Go environment that may be on the system (e.g., on Travis CI)
+-unset GOARCH GOBIN GOEXE GOHOSTARCH GOHOSTOS GOOS GORACE GOROOT GOPATH GOTOOLDIR CC GOGCCFLAGS CGO_ENABLED GO111MODULE
+-export GOPATH=/tmp/go
++export GOPATH="${WORKDIR}/go_build"
+ mkdir -p $GOPATH/src
+ 
+ # Export version and build number
+@@ -35,14 +34,6 @@ fi
+ # Get pinned version of Go directly from upstream
+ if [ "aarch64" == "$TRAVIS_ARCH" ] ; then export ARCH=arm64 ; fi
+ if [ "amd64" == "$TRAVIS_ARCH" ] ; then export ARCH=amd64 ; fi
+-wget -c -nv https://dl.google.com/go/go1.13.4.linux-$ARCH.tar.gz
+-sudo tar -C /usr/local -xzf go*.tar.gz
+-export PATH=/usr/local/go/bin:$PATH
+-
+-# Get dependencies needed for CGo # FIXME: Get rid of the need for CGo and, in return, those dependencies
+-sudo apt-get -q update
+-if [ $(go env GOHOSTARCH) == "amd64" ] ; then sudo apt-get -y install gcc-multilib autoconf ; fi
+-if [ $(go env GOHOSTARCH) == "arm64" ] ; then sudo apt-get -y install gcc-arm-linux-gnueabi autoconf ; fi
+ 
+ ##############################################################
+ # Build appimagetool
+@@ -87,8 +78,6 @@ fi
+ # TODO: Do this for ARM as well
+ ##############################################################
+ 
+-unset ARCH # It contains "amd64" which we cannot use since we need "x86_64"
+-
+ if [ $(go env GOHOSTARCH) != "amd64" ] ; then
+   exit 0
+ fi
+@@ -107,7 +96,7 @@ mkdir -p appimagetool.AppDir/usr/bin
+ ( cd appimagetool.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/desktop-file-validate-$ARCHITECTURE -O desktop-file-validate )
+ ( cd appimagetool.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/mksquashfs-$ARCHITECTURE -O mksquashfs )
+ ( cd appimagetool.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/static-tools/releases/download/continuous/patchelf-$ARCHITECTURE -O patchelf )
+-( cd appimagetool.AppDir/usr/bin/ ; wget -c https://github.com/AppImage/AppImageKit/releases/download/continuous/runtime-$ARCHITECTURE )
++( cd appimagetool.AppDir/usr/bin/ ; wget -c https://github.com/AppImage/AppImageKit/releases/download/continuous/runtime-$ARCHITECTURE -O runtime-amd64 )
+ ( cd appimagetool.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh -O uploadtool )
+ chmod +x appimagetool.AppDir/usr/bin/*
+ cp appimagetool-amd64 appimagetool.AppDir/usr/bin/appimagetool
+@@ -145,4 +134,4 @@ Categories=Utility;
+ Terminal=true
+ NoDisplay=true
+ EOF
+-./appimagetool-*-x86_64.AppImage ./appimaged.AppDir
++#./appimagetool-*-amd64.AppImage ./appimaged.AppDir
