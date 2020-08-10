@@ -59,7 +59,7 @@ micropackages."
 		die "You need to change your kernel .config to CONFIG_BINFMT_MISC=y or CONFIG_BINFMT_MISC=m"
 	fi
 
-	if ! linux_chkconfig_builtin CONFIG_SQUASHFS && ! linux_chkconfig_module CONFIG_SQUASHFS ; then
+	if ! linux_chkconfig_builtin SQUASHFS && ! linux_chkconfig_module SQUASHFS ; then
 		die "You need to change your kernel .config to CONFIG_SQUASHFS=y or CONFIG_SQUASHFS=m"
 	fi
 
