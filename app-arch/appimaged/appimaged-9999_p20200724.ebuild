@@ -91,7 +91,7 @@ pkg_postinst() {
 		einfo
 		einfo "Do \`rc-update add appimaged\` to run the service on boot."
 		einfo "You can \`/etc/init.d/${PN} start\` to start it now."
-	elif use system ; then
+	elif use systemd ; then
 		einfo "You must \`systemctl --user enable appimaged\` inside the user account to add the service on login."
 		einfo "You can \`systemctl --user start appimaged\` to start it now."
 	fi
