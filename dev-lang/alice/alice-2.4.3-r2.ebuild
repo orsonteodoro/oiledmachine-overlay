@@ -57,6 +57,7 @@ src_install() {
 		fperms g+x "${d}"/run-alice
 		fowners root:users "${d}"/run-alice
 
+		ewarn "TODO/FIXME: fix possible security problem (folder with users group with g+w) with ${d}/jython-2.1/cachedir/packages in src_install"
 		dodir "${d}"/jython-2.1/cachedir/packages
 		fperms g+w "${d}"/jython-2.1/cachedir/packages
 		fowners root:users "${d}"/jython-2.1/cachedir/packages
