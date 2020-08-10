@@ -8,14 +8,18 @@ HOMEPAGE="https://github.com/AppImage/appimaged"
 LICENSE="MIT" # appimaged project's default license
 LICENSE+=" all-rights-reserved" # src/main.c ; The vanilla MIT license doesn't have all-rights-reserved
 KEYWORDS="~amd64 ~x86"
-IUSE="firejail system-inotify-tools"
+IUSE="firejail openrc systemd system-inotify-tools"
 RDEPEND="
 	!app-arch/go-appimage
 	dev-libs/glib:=[static-libs]
 	dev-libs/libappimage:=[static-libs]
 	dev-libs/xdg-utils-cxx:=[static-libs]
 	firejail? ( sys-apps/firejail )
-	sys-apps/systemd
+	openrc? (
+		sys-apps/openrc
+		sys-apps/grep[pcre]
+	)
+	systemd? ( sys-apps/systemd )
 	sys-fs/squashfuse:=[static-libs]
 	sys-libs/glibc:=
 	system-inotify-tools? ( sys-fs/inotify-tools:=[static-libs] )
@@ -30,7 +34,7 @@ SRC_URI=\
 "
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
-inherit cmake-utils linux-info
+inherit cmake-utils linux-info user
 PATCHES=(
 	"${FILESDIR}/${PN}-${PV}-fill-git-commit.patch"
 	"${FILESDIR}/${PN}-9999_p20200724-use-find_package.patch"
@@ -55,6 +59,9 @@ internal dependencies."
 	if ! linux_chkconfig_builtin INOTIFY_USER ; then
 		die "You need to change your kernel .config to CONFIG_INOTIFY_USER=y"
 	fi
+	# server only
+	enewgroup ${PN}
+	enewuser ${PN} -1 -1 /var/lib/${PN} ${PN}
 }
 
 src_configure() {
@@ -70,4 +77,22 @@ src_install() {
 	dodoc LICENSE
 	docinto readmes
 	dodoc README.md
+	if use openrc ; then
+		cp "${FILESDIR}/${PN}-openrc" \
+			"${T}/${PN}" || die
+		exeinto /etc/init.d
+		doexe "${T}/${PN}"
+	fi
+}
+
+pkg_postinst() {
+	if use openrc ; then
+		einfo "OpenRC support is experimental.  It may or not work for encrypted home."
+		einfo
+		einfo "Do \`rc-update add appimaged\` to run the service on boot."
+		einfo "You can \`/etc/init.d/${PN} start\` to start it now."
+	elif use system ; then
+		einfo "You must \`systemctl --user enable appimaged\` inside the user account to add the service on login."
+		einfo "You can \`systemctl --user start appimaged\` to start it now."
+	fi
 }
