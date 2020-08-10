@@ -39,7 +39,7 @@ fi
 
 einfo "Checking ebuilds for security risks.  (This can yield false positives.)"
 for f in $(find $(pwd) -name "*.ebuild") ; do
-	if grep ${GREP_ARGS} -r -e "SLOT=\"0\"" "${f}" 2>/dev/null 1>/dev/null ; then
+	if grep ${GREP_ARGS} -e "SLOT=\"0\"" "${f}" 2>/dev/null 1>/dev/null ; then
 		if [[ ${f} =~ ("-libs/"|"-gfx/"|dev-cpp|dev-qt|dev-db) ]] ;then
 			# It happens when copy pasting ebuild templates from apps to libs.  Apps can use SLOT=0, but libraries should have a variable in subslot.
 			# USE="static-libs" PackageA:0 # insecure
@@ -51,29 +51,35 @@ for f in $(find $(pwd) -name "*.ebuild") ; do
 	# It happens when = slot operator is not explicitly used.  The dependent using the package as a static-libs will not receive a security update.
 	# PackageA[static-libs] -> PackageB  ## insecure pattern
 	# PackageA:=[static-libs] -> PackageB ## secure pattern
-	if grep ${GREP_ARGS} -P -r -e '(?<!=)\[static-libs' "${f}" 2>/dev/null 1>/dev/null ; then
+	if grep ${GREP_ARGS} -P -e '(?<!=)\[static-libs' "${f}" 2>/dev/null 1>/dev/null ; then
 		einfo "Security risk:  ${f} ignores security update for subslot.  SR2"
 	fi
-	if grep ${GREP_ARGS} -P -r -e '(?<!=)\[.*static-libs,' "${f}" 2>/dev/null 1>/dev/null ; then
+	if grep ${GREP_ARGS} -P -e '(?<!=)\[.*static-libs,' "${f}" 2>/dev/null 1>/dev/null ; then
 		einfo "Security risk:  ${f} ignores security update for subslot.  SR3"
 	fi
-	if grep ${GREP_ARGS} -P -r -e '(?<!=)\[.*static-libs\]' "${f}" 2>/dev/null 1>/dev/null ; then
+	if grep ${GREP_ARGS} -P -e '(?<!=)\[.*static-libs\]' "${f}" 2>/dev/null 1>/dev/null ; then
 		einfo "Security risk:  ${f} ignores security update for subslot.  SR4"
 	fi
-	if grep ${GREP_ARGS} -F -r -e '(fperms|chmod)' "${f}" 2>/dev/null 1>/dev/null \
-		&& grep ${GREP_ARGS} -P -r -e '[0]?77[0-7]' "${f}" 2>/dev/null 1>/dev/null ; then
+	if grep ${GREP_ARGS} -F -e '(fperms|chmod)' "${f}" 2>/dev/null 1>/dev/null \
+		&& grep ${GREP_ARGS} -P -e '[0]?77[0-7]' "${f}" 2>/dev/null 1>/dev/null ; then
 		einfo \
 "Security risk:  ${f} may use insecure permissions.  Users may inject \
 malicious scripts or exfiltrate data in multiuser environment when file uses \
 777 or 77x.  When file permission is 777, it is dangerous.  For 77x it is \
 only dangerous if the group is \`user\` or similar.  SR5"
 	fi
-	if grep ${GREP_ARGS} -P -r -e 'cp.*(-a|-r|-R|--recursive|--archive)' "${f}" 2>/dev/null 1>/dev/null ; then
+	if grep ${GREP_ARGS} -P -e 'cp.*(-a|-r|-R|--recursive|--archive)' "${f}" 2>/dev/null 1>/dev/null ; then
 		einfo \
 "Security risk:  ${f} files possibly bypass sanitation to reset ownership and \
 file permissions.  An upstream developer may inadvertantly elevate \
 permissions or forget to reset it.  Use ebuild install functions only or special \
 wrapper install function.  SR6"
+	fi
+	if grep ${GREP_ARGS} -P -e '(chown|fowners).*users' "${f}" ; then
+		einfo \
+"Security risk:  ${f} may use users group for fowners/chown with with go+w\n\
+file/folder permissions for shell wrappers or it may be abused on\n\
+files/folders to replace packages with compromised ones.  SR7"
 	fi
 done
 
@@ -166,16 +172,23 @@ fi
 
 einfo "Checking files with > 80 characters for GitHub code reviewers or for packagers"
 for f in $(find $(pwd) -name "*.ebuild" -o -name "metadata.xml") ; do
-	if pcregrep -q -r -M '^.{80}.+\n' "${f}" ; then
+	if pcregrep ${GREP_ARGS} -M '^.{80}.+\n' "${f}" ; then
 		einfo "Found ${f}"
 	fi
 done
 
 einfo "Checking repo for newicon .ico use ebuild"
 for f in $(find $(pwd) -name "*.ebuild") ; do
-	if grep -qP -i -e "newicon.*\.(png|svg|xpm)" "${f}" ; then
+	if grep ${GREP_ARGS} -P -i -e "newicon.*\.(png|svg|xpm)" "${f}" ; then
 		:;
-	elif grep -qP -e "newicon" "${f}" ; then
+	elif grep ${GREP_ARGS} -P -e "newicon" "${f}" ; then
 		einfo "${f} uses wrong format for icon.  Not one of the official XDG icon formats for Linux desktop interoperability.  Use either png, svg, or xpm only."
+	fi
+done
+
+einfo "Checking repo for missing pcre"
+for f in $(find $(pwd) -name "*.ebuild") ; do
+	if grep ${GREP_ARGS} -P -e "grep.*-P" "${f}" ; then
+		einfo "${f} makes use of sys-devel/grep[pcre] which is not enabled by default.  Check if it needs to be added to DEPENDS."
 	fi
 done
