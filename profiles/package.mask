@@ -57,11 +57,8 @@ dev-dotnet/dotnetcore-sdk
 # Build failures / Work In Progress (WIP)
 >=dev-dotnet/aspnetcore-2.1.18
 
-# Package on hold until emscripten packages are fixed completely.
-# Script loading problem related to possibly missing wasm.
-# Building with asmjs with --dev is not compatible and not emphasized in build instructions.
-# The upstream build scripts didn't catch this.
-games-util/gdevelop
+# On indefinte hold until the possibly private closed dependency problem resolves
+app-arch/go-appimage
 
 # Masked for security reasons
 #--------------------------------------------------------------------------------------------------
