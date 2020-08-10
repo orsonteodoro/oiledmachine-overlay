@@ -57,7 +57,8 @@ RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
 "
 DEPEND="${RDEPEND}
 	check-pcie? ( sys-apps/dmidecode )
-	check-gpu? ( sys-apps/pciutils )"
+	check-gpu? ( sys-apps/pciutils )
+	sys-apps/grep[pcre]"
 S="${WORKDIR}"
 RESTRICT="fetch"
 DKMS_PKG_NAME="amdgpu"
