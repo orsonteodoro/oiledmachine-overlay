@@ -493,12 +493,14 @@ BDEPEND+="
 	app-misc/jq
 	net-misc/wget
 	sys-apps/file
+	sys-apps/grep[pcre]
 "
 else
 DEPEND+="
 	app-misc/jq
 	net-misc/wget
 	sys-apps/file
+	sys-apps/grep[pcre]
 "
 fi
 
