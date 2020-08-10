@@ -46,7 +46,8 @@ DEPEND="${RDEPEND}
 		net-libs/nodejs[npm]
 	)
 	dev-vcs/git
-	media-gfx/imagemagick[png]"
+	media-gfx/imagemagick[png]
+	sys-apps/grep[pcre]"
 ELECTRON_APP_ELECTRON_V="8.2.5"
 ELECTRON_APP_REACT_V="16.8.6"
 inherit check-reqs cmake-utils desktop electron-app eutils user xdg
