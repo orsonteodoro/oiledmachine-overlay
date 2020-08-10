@@ -3,25 +3,18 @@
 
 EAPI="6"
 
-K_GENPATCHES_VER="10"
-PATCH_BMQ_VER="5.7-r1"
-BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
-PATCH_PROJC_VER="5.7-r3"
+K_GENPATCHES_VER="201"
 
 # Not supported by the Gentoo crew
 K_SECURITY_UNSUPPORTED="1"
 
-inherit ot-kernel-v5.7
+inherit ot-kernel-v4.14
 
 KEYWORDS="~amd64 ~x86"
 
 pkg_setup() {
         kernel-2_pkg_setup
 	ot-kernel-common_pkg_setup
-}
-
-pkg_pretend() {
-	ot-kernel-common_pkg_pretend
 }
 
 src_unpack() {
