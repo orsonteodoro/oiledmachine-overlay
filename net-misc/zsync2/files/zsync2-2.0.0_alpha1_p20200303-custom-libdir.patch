@@ -1,0 +1,12 @@
+--- zsync2-10e85c0eab4da4a1a85a949fb0f69d77cef9972f/src/CMakeLists.txt.orig	2020-08-10 13:02:47.362039025 -0700
++++ zsync2-10e85c0eab4da4a1a85a949fb0f69d77cef9972f/src/CMakeLists.txt	2020-08-10 13:10:19.369618663 -0700
+@@ -52,7 +52,7 @@ target_link_libraries(zsyncmake2 ${ZSYNC
+ install(
+     TARGETS zsync2 libzsync2 zsyncmake2
+     RUNTIME DESTINATION bin
+-    LIBRARY DESTINATION lib
+-    ARCHIVE DESTINATION lib/static
++    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/static
+     INCLUDES DESTINATION include
+ )
