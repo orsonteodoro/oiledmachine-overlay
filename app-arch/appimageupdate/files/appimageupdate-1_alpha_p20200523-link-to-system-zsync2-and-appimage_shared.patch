@@ -1,0 +1,14 @@
+--- AppImageUpdate-9ea5b15dde7fd659cfee5bbba16a82a304671494/src/CMakeLists.txt.orig	2020-08-10 14:49:16.850660752 -0700
++++ AppImageUpdate-9ea5b15dde7fd659cfee5bbba16a82a304671494/src/CMakeLists.txt	2020-08-10 14:50:41.363954431 -0700
+@@ -38,9 +38,9 @@ set_target_properties(libappimageupdate
+ )
+ # link thread libraries
+ target_link_libraries(libappimageupdate
+-    PUBLIC libappimage_shared
++    PUBLIC appimage_shared
+     PRIVATE ${CMAKE_THREAD_LIBS_INIT}
+-    PRIVATE libzsync2
++    PUBLIC zsync2
+     PRIVATE ${CPR_LIBRARIES}
+ )
+ # include directories, publicly

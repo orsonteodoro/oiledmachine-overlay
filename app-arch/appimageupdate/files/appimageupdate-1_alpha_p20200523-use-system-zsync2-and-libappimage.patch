@@ -1,0 +1,12 @@
+--- AppImageUpdate-9ea5b15dde7fd659cfee5bbba16a82a304671494/lib/CMakeLists.txt.orig	2020-08-10 14:26:27.397119612 -0700
++++ AppImageUpdate-9ea5b15dde7fd659cfee5bbba16a82a304671494/lib/CMakeLists.txt	2020-08-10 14:27:27.349471073 -0700
+@@ -1,5 +1,5 @@
+-add_subdirectory(zsync2 EXCLUDE_FROM_ALL)
++#add_subdirectory(zsync2 EXCLUDE_FROM_ALL)
+ 
+-if(NOT TARGET libappimage)
+-    add_subdirectory(libappimage EXCLUDE_FROM_ALL)
+-endif()
++#if(NOT TARGET libappimage)
++#    add_subdirectory(libappimage EXCLUDE_FROM_ALL)
++#endif()

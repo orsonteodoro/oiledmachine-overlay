@@ -1,0 +1,11 @@
+--- AppImageUpdate-9ea5b15dde7fd659cfee5bbba16a82a304671494/src/CMakeLists.txt.orig	2020-08-10 14:52:29.818179574 -0700
++++ AppImageUpdate-9ea5b15dde7fd659cfee5bbba16a82a304671494/src/CMakeLists.txt	2020-08-10 14:56:38.207849878 -0700
+@@ -87,7 +87,7 @@ target_include_directories(libappimageup
+ # CLI application
+ add_executable(appimageupdatetool main.cpp)
+ # link to core lib
+-target_link_libraries(appimageupdatetool libappimageupdate args)
++target_link_libraries(appimageupdatetool libappimageupdate)
+ 
+ # set up rpath
+ set_target_properties(libappimageupdate libappimageupdate_static PROPERTIES INSTALL_RPATH "\$ORIGIN")

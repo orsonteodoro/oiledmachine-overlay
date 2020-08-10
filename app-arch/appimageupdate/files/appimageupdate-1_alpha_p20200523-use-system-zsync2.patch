@@ -1,0 +1,24 @@
+--- AppImageUpdate-9ea5b15dde7fd659cfee5bbba16a82a304671494/src/CMakeLists.txt.orig	2020-08-10 14:08:21.005124282 -0700
++++ AppImageUpdate-9ea5b15dde7fd659cfee5bbba16a82a304671494/src/CMakeLists.txt	2020-08-10 14:22:23.807675643 -0700
+@@ -48,8 +48,8 @@ target_include_directories(libappimageup
+     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+     $<INSTALL_INTERFACE:include>
+     # FIXME: works for now, but should be possible without these workaround
+-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/lib/zsync2/lib/cpr/include>
+-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/lib/zsync2/include>
++    /usr/include/zsync2/cpr
++    /usr/include/zsync2
+ )
+ 
+ 
+@@ -79,8 +79,8 @@ target_include_directories(libappimageup
+     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+     $<INSTALL_INTERFACE:include>
+     # FIXME: works for now, but should be possible without these workaround
+-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/lib/zsync2/lib/cpr/include>
+-    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/lib/zsync2/include>
++    /usr/include/zsync2/cpr
++    /usr/include/zsync2
+ )
+ 
+ 

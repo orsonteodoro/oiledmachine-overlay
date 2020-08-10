@@ -1,0 +1,22 @@
+--- AppImageUpdate-9ea5b15dde7fd659cfee5bbba16a82a304671494/CMakeLists.txt.orig	2020-08-10 14:08:21.025125056 -0700
++++ AppImageUpdate-9ea5b15dde7fd659cfee5bbba16a82a304671494/CMakeLists.txt	2020-08-10 14:09:56.748824794 -0700
+@@ -10,12 +10,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ # WARNING: this value will be stored in the CMake cache
+ # to update it, you will have to reset the CMake cache
+ # (doesn't matter for CI builds like Travis for instance, where there's no permanent CMake cache)
+-execute_process(
+-    COMMAND git rev-parse --short HEAD
+-    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+-    OUTPUT_VARIABLE GIT_COMMIT
+-    OUTPUT_STRIP_TRAILING_WHITESPACE
+-)
++#execute_process(
++#    COMMAND git rev-parse --short HEAD
++#    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
++#    OUTPUT_VARIABLE GIT_COMMIT
++#    OUTPUT_STRIP_TRAILING_WHITESPACE
++#)
++set(GIT_COMMIT "9ea5b15dde7fd659cfee5bbba16a82a304671494")
+ 
+ # set version and build number
+ set(VERSION 1-alpha)
