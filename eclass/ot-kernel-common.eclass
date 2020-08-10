@@ -167,7 +167,12 @@ O3_RO_SRC_URL="${O3_SRC_URL}${O3_RO_DL_FN} -> ${O3_RO_FN}"
 O3_ALLOW_FN="O3-allow-unrestricted-${PATCH_ALLOW_O3_COMMIT}.patch"
 O3_ALLOW_SRC_URL="${O3_SRC_URL}${PATCH_ALLOW_O3_COMMIT}.patch -> ${O3_ALLOW_FN}"
 
-if ver_test ${K_MAJOR_MINOR} -ge 5.7 ; then
+if ver_test ${K_MAJOR_MINOR} -ge 5.8 ; then
+GRAYSKY_DL_10_1_FN=\
+"enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v5.7%2B.patch"
+GRAYSKY_DL_9_1_FN=\
+"enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v5.8%2B.patch"
+elif ver_test ${K_MAJOR_MINOR} -ge 5.7 ; then
 GRAYSKY_DL_10_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v5.7%2B.patch"
 GRAYSKY_DL_9_1_FN=\

@@ -39,7 +39,7 @@ IUSE="bfq bmq +cfs disable_debug futex-wait-multiple +genpatches +graysky2 \
 muqss +o3 prjc tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 \
 tresor_x86_64-256-bit-key-support uksm zenmisc -zentune zstd"
 REQUIRED_USE="\
-!bfq !bmq !muqss !graysky2
+!bfq !bmq !muqss
 ^^ ( bmq cfs muqss prjc ) \
 tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 tresor_aesni? ( tresor )
@@ -76,6 +76,12 @@ SRC_URI+=" ${ARCH_URI}
 		${GENPATCHES_EXTRAS_SRC_URL}
 	   )
 	   bmq? ( ${BMQ_SRC_URL} )
+	   graysky2? (
+		${GRAYSKY_SRC_4_9_URL}
+		${GRAYSKY_SRC_8_1_URL}
+		${GRAYSKY_SRC_9_1_URL}
+		${GRAYSKY_SRC_10_1_URL}
+	   )
 	   o3? ( ${O3_ALLOW_SRC_URL} )
 	   tresor? (
 		${TRESOR_AESNI_DL_URL}
@@ -87,12 +93,6 @@ SRC_URI+=" ${ARCH_URI}
 	   uksm? ( ${UKSM_SRC_URL} )"
 
 SRC_URI_DISABLED+="
-	   graysky2? (
-		${GRAYSKY_SRC_4_9_URL}
-		${GRAYSKY_SRC_8_1_URL}
-		${GRAYSKY_SRC_9_1_URL}
-		${GRAYSKY_SRC_10_1_URL}
-	   )
 	   prjc? ( ${PRJC_SRC_URL} )
 "
 
