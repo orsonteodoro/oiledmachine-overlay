@@ -7,8 +7,9 @@
   </maintainer>
   <use>
     <flag name="firejail">Checks for firejail for firejail support</flag>
-    <flag name="openrc">Adds openrc support</flag>
-    <flag name="systemd">Checks for systemd for systemd support</flag>
+    <flag name="openrc">Adds openrc support.</flag>
+    <flag name="systemd">Checks for systemd for systemd support.  It's the
+      default upstream.</flag>
     <flag name="system-inotify-tools">Prefer the system's inotify-tools over
       the internal version</flag>
   </use>

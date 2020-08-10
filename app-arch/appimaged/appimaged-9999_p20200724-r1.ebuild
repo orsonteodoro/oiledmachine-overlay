@@ -8,7 +8,7 @@ HOMEPAGE="https://github.com/AppImage/appimaged"
 LICENSE="MIT" # appimaged project's default license
 LICENSE+=" all-rights-reserved" # src/main.c ; The vanilla MIT license doesn't have all-rights-reserved
 KEYWORDS="~amd64 ~x86"
-IUSE="firejail openrc systemd system-inotify-tools"
+IUSE="firejail openrc +systemd system-inotify-tools"
 RDEPEND="
 	!app-arch/go-appimage
 	dev-libs/glib:=[static-libs]
@@ -25,7 +25,7 @@ RDEPEND="
 	system-inotify-tools? ( sys-fs/inotify-tools:=[static-libs] )
 	x11-libs/cairo:=[static-libs]"
 DEPEND="${RDEPEND}"
-REQUIRED_USE=""
+REQUIRED_USE="|| ( openrc systemd )"
 SLOT="0/${PV}"
 EGIT_COMMIT="8e248f5afe975b8ef65c7e3e5596ab13c6af3a4d"
 SRC_URI=\
@@ -91,7 +91,8 @@ pkg_postinst() {
 		einfo
 		einfo "Do \`rc-update add appimaged\` to run the service on boot."
 		einfo "You can \`/etc/init.d/${PN} start\` to start it now."
-	elif use systemd ; then
+	fi
+	if use systemd ; then
 		einfo "You must \`systemctl --user enable appimaged\` inside the user account to add the service on login."
 		einfo "You can \`systemctl --user start appimaged\` to start it now."
 	fi
