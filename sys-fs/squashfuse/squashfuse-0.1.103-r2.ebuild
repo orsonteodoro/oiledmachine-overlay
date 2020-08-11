@@ -115,6 +115,7 @@ src_install() {
 				fs.h \
 				nonstd.h \
 				squashfs_fs.h \
+				squashfuse_dlopen.h \
 				stack.h \
 				table.h \
 				traverse.h \
