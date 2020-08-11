@@ -1,0 +1,12 @@
+diff -urp libappimage-1.0.2.orig/cmake/dependencies.cmake libappimage-1.0.2/cmake/dependencies.cmake
+--- libappimage-1.0.2.orig/cmake/dependencies.cmake	2019-06-06 19:42:43.000000000 -0700
++++ libappimage-1.0.2/cmake/dependencies.cmake	2020-08-11 01:20:31.036942261 -0700
+@@ -98,7 +98,7 @@ if(NOT USE_SYSTEM_SQUASHFUSE)
+ else()
+     message(STATUS "Using system squashfuse")
+ 
+-    import_pkgconfig_target(TARGET_NAME libsquashfuse PKGCONFIG_TARGET squashfuse)
++    import_pkgconfig_target(TARGET_NAME libsquashfuse PKGCONFIG_TARGET squashfuse_appimage)
+ endif()
+ 
+ 

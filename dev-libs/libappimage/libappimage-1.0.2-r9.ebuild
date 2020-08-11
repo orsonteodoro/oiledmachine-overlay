@@ -20,7 +20,7 @@ RDEPEND="
 	sys-libs/zlib
 	system-boost? ( >=dev-libs/boost-1.69:=[static-libs] )
 	system-libarchive? ( app-arch/libarchive:=[static-libs] )
-	system-squashfuse? ( sys-fs/squashfuse:=[static-libs] )
+	system-squashfuse? ( sys-fs/squashfuse:=[libsquashfuse-appimage,static-libs] )
 	system-xdgutils? ( dev-libs/xdg-utils-cxx:=[static-libs] )
 	system-xz? ( app-arch/xz-utils:=[static-libs] )
 	x11-libs/cairo"
@@ -30,7 +30,6 @@ BDEPEND="
 	dev-util/desktop-file-utils
 	dev-util/xxd
 	dev-vcs/git"
-REQUIRED_USE=""
 SLOT="0/${PV}"
 GOOGLETEST_COMMIT="ec44c6c1675c25b9827aacd08c02433cccde7780"
 SRC_URI=\
@@ -43,7 +42,10 @@ S_BAK="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 CMAKE_MAKEFILE_GENERATOR="emake" # required for downloading in compile phase
 inherit cmake-utils linux-info
-PATCHES=( "${FILESDIR}/${PN}-1.0.2-fix-cflag-include-libappimage_pc.patch" )
+PATCHES=(
+	"${FILESDIR}/${PN}-1.0.2-fix-cflag-include-libappimage_pc.patch"
+	"${FILESDIR}/${PN}-1.0.2-use-squashfuse_appimage-for-pkgconfig.patch"
+)
 
 pkg_setup() {
 	# forced on because we need sources for squashfuse
@@ -62,7 +64,7 @@ internal dependencies."
 		ewarn "Using the internal boost will have build time failures."
 	fi
 	if use system-squashfuse ; then
-		if [[ ! -f "${EROOT}/usr/include/squashfuse/dir.h" ]] ; then
+		if [[ ! -d "${EROOT}/usr/lib64/squashfuse_appimage" ]] ; then
 			die "You need the squashfuse package from the oiledmachine-overlay."
 		fi
 	fi
@@ -117,6 +119,8 @@ src_install() {
 	fi
 	insinto /usr/include/libappimage_hashlib
 	doins -r src/libappimage_hashlib/include/*
-	insinto /usr/include/appimage
-	doins src/patches/squashfuse_dlopen.h
+	if ! use system-squashfuse ; then
+		insinto /usr/include/appimage
+		doins src/patches/squashfuse_dlopen.h
+	fi
 }
