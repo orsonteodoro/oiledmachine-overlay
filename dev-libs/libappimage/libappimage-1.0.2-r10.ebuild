@@ -45,6 +45,7 @@ inherit cmake-utils linux-info
 PATCHES=(
 	"${FILESDIR}/${PN}-1.0.2-fix-cflag-include-libappimage_pc.patch"
 	"${FILESDIR}/${PN}-1.0.2-use-squashfuse_appimage-for-pkgconfig.patch"
+	"${FILESDIR}/${PN}-1.0.2-same-files-static-build.patch"
 )
 
 pkg_setup() {
