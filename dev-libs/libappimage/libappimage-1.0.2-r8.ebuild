@@ -13,13 +13,14 @@ LICENSE+=" !system-libarchive? ( BSD BSD-2 BSD-4 public-domain )" # copied from 
 LICENSE+=" !system-xdgutils? ( MIT BSD )" # copied from the dev-libs/xdg-utils-cxx ebuild
 LICENSE+=" !system-xz? ( public-domain LGPL-2.1+ GPL-2+ )" # copied from the app-arch/xz-utils ebuild
 KEYWORDS="~amd64 ~x86"
-IUSE="cmake-static-libs system-boost system-libarchive system-xdgutils system-xz"
+IUSE="cmake-static-libs system-boost system-libarchive system-squashfuse system-xdgutils system-xz"
 RDEPEND="
 	>=dev-libs/glib-2.40:2
 	>=gnome-base/librsvg-2
 	sys-libs/zlib
 	system-boost? ( >=dev-libs/boost-1.69:=[static-libs] )
 	system-libarchive? ( app-arch/libarchive:=[static-libs] )
+	system-squashfuse? ( sys-fs/squashfuse:=[static-libs] )
 	system-xdgutils? ( dev-libs/xdg-utils-cxx:=[static-libs] )
 	system-xz? ( app-arch/xz-utils:=[static-libs] )
 	x11-libs/cairo"
@@ -60,6 +61,11 @@ internal dependencies."
 	if ! use system-boost ; then
 		ewarn "Using the internal boost will have build time failures."
 	fi
+	if use system-squashfuse ; then
+		if [[ ! -f "${EROOT}/usr/include/squashfuse/dir.h" ]] ; then
+			die "You need the squashfuse package from the oiledmachine-overlay."
+		fi
+	fi
 }
 
 src_unpack() {
@@ -73,7 +79,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DUSE_SYSTEM_BOOST=$(usex system-boost)
 		-DUSE_SYSTEM_LIBARCHIVE=$(usex system-libarchive)
-		-DUSE_SYSTEM_SQUASHFUSE=OFF
+		-DUSE_SYSTEM_SQUASHFUSE=$(usex system-squashfuse)
 		-DUSE_SYSTEM_XDGUTILS=$(usex system-xdgutils)
 		-DUSE_SYSTEM_XZ=$(usex system-xz)
 	)
@@ -105,8 +111,10 @@ src_install() {
 		docinto licenses/third_party/xz
 		dodoc "${BUILD_DIR}/xz-EXTERNAL-prefix/src/xz-EXTERNAL/"{COPYING,COPYING.GPLv2,COPYING.GPLv3,COPYING.LGPLv2.1}
 	fi
-	docinto licenses/third_party/squashfuse
-	dodoc "${BUILD_DIR}/squashfuse-EXTERNAL-prefix/src/squashfuse-EXTERNAL/LICENSE"
+	if ! use system-squashfuse ; then
+		docinto licenses/third_party/squashfuse
+		dodoc "${BUILD_DIR}/squashfuse-EXTERNAL-prefix/src/squashfuse-EXTERNAL/LICENSE"
+	fi
 	insinto /usr/include/libappimage_hashlib
 	doins -r src/libappimage_hashlib/include/*
 	insinto /usr/include/appimage
