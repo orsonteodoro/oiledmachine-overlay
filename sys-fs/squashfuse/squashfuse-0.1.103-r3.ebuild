@@ -121,6 +121,8 @@ src_install() {
 				traverse.h \
 				util.h \
 				xattr.h
+			insinto /usr/$(get_libdir)/${PN}_appimage/lib
+			doins .libs/libsquashfuse_ll.a
 		fi
 	}
 	squashfuse_foreach_impl install

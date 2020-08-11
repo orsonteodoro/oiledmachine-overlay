@@ -36,5 +36,5 @@ diff -Nurp squashfuse-0.1.103-libsquashfuse-appimage.orig/squashfuse_appimage.pc
 +Version: @VERSION@
 +
 +Requires:
-+Libs: -L${libdir} -lsquashfuse
++Libs: -L${libdir} -lsquashfuse -lsquashfuse_ll
 +Cflags: -I${includedir}
