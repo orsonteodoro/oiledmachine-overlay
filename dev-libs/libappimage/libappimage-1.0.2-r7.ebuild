@@ -109,4 +109,6 @@ src_install() {
 	dodoc "${BUILD_DIR}/squashfuse-EXTERNAL-prefix/src/squashfuse-EXTERNAL/LICENSE"
 	insinto /usr/include/libappimage_hashlib
 	doins -r src/libappimage_hashlib/include/*
+	insinto /usr/include/appimage
+	doins src/patches/squashfuse_dlopen.h
 }
