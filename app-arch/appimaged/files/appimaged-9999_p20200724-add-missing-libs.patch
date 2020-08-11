@@ -7,7 +7,7 @@
  pkg_check_modules(GLIB glib-2.0 IMPORTED_TARGET)
 +pkg_check_modules(LIBARCHIVE libarchive IMPORTED_TARGET)
 +pkg_check_modules(LIBRSVG librsvg-2.0 IMPORTED_TARGET)
-+pkg_check_modules(SQUASHFUSE squashfuse IMPORTED_TARGET)
++pkg_check_modules(SQUASHFUSE squashfuse_appimage IMPORTED_TARGET)
  
  pkg_check_modules(LIBAPPIMAGE libappimage REQUIRED)
  include_directories(${LIBAPPIMAGE_INCLUDE_DIRS})

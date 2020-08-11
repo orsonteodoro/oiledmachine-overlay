@@ -20,7 +20,7 @@ RDEPEND="
 		sys-apps/grep[pcre]
 	)
 	systemd? ( sys-apps/systemd )
-	sys-fs/squashfuse:=[static-libs]
+	sys-fs/squashfuse:=[libsquashfuse-appimage,static-libs]
 	sys-libs/glibc:=
 	system-inotify-tools? ( sys-fs/inotify-tools:=[static-libs] )
 	x11-libs/cairo:=[static-libs]"
@@ -34,8 +34,8 @@ SRC_URI=\
 "
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
-inherit cmake-utils linux-info user
-PATCHES=(
+inherit cmake-utils linux-info user xdg
+_PATCHES=(
 	"${FILESDIR}/${PN}-${PV}-fill-git-commit.patch"
 	"${FILESDIR}/${PN}-9999_p20200724-use-find_package.patch"
 	"${FILESDIR}/${PN}-9999_p20200724-add-libappimage-include-directories.patch"
@@ -62,6 +62,12 @@ internal dependencies."
 	# server only
 	enewgroup ${PN}
 	enewuser ${PN} -1 -1 /var/lib/${PN} ${PN}
+}
+
+src_prepare() {
+	eapply ${_PATCHES[@]}
+	cmake-utils_src_prepare
+	xdg_src_prepare
 }
 
 src_configure() {
@@ -96,4 +102,5 @@ pkg_postinst() {
 		einfo "You must \`systemctl --user enable appimaged\` inside the user account to add the service on login."
 		einfo "You can \`systemctl --user start appimaged\` to start it now."
 	fi
+	xdg_pkg_postinst
 }
