@@ -1,8 +1,0 @@
---- a/cmake/libappimage.pc.in.orig	2019-06-06 19:42:43.000000000 -0700
-+++ b/cmake/libappimage.pc.in	2020-08-02 00:27:23.159262402 -0700
-@@ -9,4 +9,4 @@ Version: @libappimage_VERSION@
- URL: https://github.com/AppImage/libappimage
- 
- Libs: -L${libdir} -lappimage
--Cflags: -I${includedir}
-+Cflags: -I${includedir}/appimage

@@ -44,7 +44,6 @@ RESTRICT="mirror"
 CMAKE_MAKEFILE_GENERATOR="emake" # required for downloading in compile phase
 inherit cmake-utils linux-info
 PATCHES=(
-	"${FILESDIR}/${PN}-1.0.2-fix-cflag-include-libappimage_pc.patch"
 	"${FILESDIR}/${PN}-1.0.2-use-squashfuse_appimage-for-pkgconfig.patch"
 	"${FILESDIR}/${PN}-1.0.2-same-files-static-build.patch"
 	"${FILESDIR}/${PN}-1.0.2-add-requires-to-pkgconfig.patch"
@@ -75,7 +74,7 @@ internal dependencies."
 
 src_unpack() {
 	unpack ${A}
-	rm -rf "${S}/lib/gtest" 2>/dev/null 1>/dev/null
+	rm -rf "${S}/lib/gtest" 2>/dev/null 1>/dev/null || die
 	ln -s "${WORKDIR}/googletest-${GOOGLETEST_COMMIT}" \
 		"${S}/lib/gtest" || die
 }
