@@ -37,7 +37,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.1_p12_p20200707-use-system-libs-and-headers.patch"
 	"${FILESDIR}/${PN}-0.1_p12_p20200707-extern-appimage_get_elf_size.patch"
 )
-MAKEOPTS="-j1"
 
 pkg_setup() {
 	if has network-sandbox $FEATURES ; then
