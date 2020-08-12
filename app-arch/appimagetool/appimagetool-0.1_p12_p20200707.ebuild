@@ -13,7 +13,8 @@ LICENSE="MIT" # project's default license
 LICENSE+=" all-rights-reserved" # src/appimagetool.c ; The vanilla MIT license doesn't have all-rights-reserved
 KEYWORDS="~amd64 ~x86"
 IUSE="additional-tools"
-RDEPEND="additional-tools? ( dev-libs/openssl )
+RDEPEND="!app-arch/go-appimage
+	additional-tools? ( dev-libs/openssl )
 	app-arch/xz-utils:=[static-libs]
 	sys-fs/squashfuse
 	sys-fs/squashfs-tools
