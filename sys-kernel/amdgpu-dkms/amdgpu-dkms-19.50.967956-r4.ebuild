@@ -7,7 +7,7 @@ inherit linux-info unpacker
 
 DESCRIPTION="AMDGPU DKMS kernel module"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-30-unified"
+"https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-50-unified"
 LICENSE="GPL-2 MIT
 	firmware? ( AMDGPU-FIRMWARE )"
 KEYWORDS="amd64"
@@ -26,22 +26,35 @@ IUSE="acpi +build +check-mmu-notifier check-pcie check-gpu custom-kernel directg
 REQUIRED_USE="rock? ( check-pcie check-gpu )
 	      hybrid-graphics? ( acpi )"
 if [[ "${AMDGPU_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
-KV_NOT_SUPPORTED="99999"
+KV_NOT_SUPPORTED_MAX="99999"
+KV_SUPPORTED_MIN="5.0"
 else
-KV_NOT_SUPPORTED="5.0"
+# See https://cgit.freedesktop.org/~agd5f/linux/tree/Makefile?h=amd-19.50
+KV_NOT_SUPPORTED_MAX="5.3"
+KV_SUPPORTED_MIN="5.0"
 fi
 RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
 	 sys-kernel/dkms
 	 !custom-kernel? (
-	 || ( <sys-kernel/bliss-kernel-bin-${KV_NOT_SUPPORTED}
-	      <sys-kernel/ck-sources-${KV_NOT_SUPPORTED}
-	      <sys-kernel/gentoo-kernel-bin-${KV_NOT_SUPPORTED}
-	      <sys-kernel/gentoo-sources-${KV_NOT_SUPPORTED}
-	      <sys-kernel/ot-sources-${KV_NOT_SUPPORTED}
-	      <sys-kernel/pf-sources-${KV_NOT_SUPPORTED}
-	      <sys-kernel/rt-sources-${KV_NOT_SUPPORTED}
-	      <sys-kernel/vanilla-sources-${KV_NOT_SUPPORTED}
-	      <sys-kernel/zen-sources-${KV_NOT_SUPPORTED} ) )"
+	 || ( <sys-kernel/bliss-kernel-bin-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/ck-sources-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/gentoo-kernel-bin-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/gentoo-sources-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/ot-sources-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/pf-sources-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/rt-sources-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/vanilla-sources-${KV_NOT_SUPPORTED_MAX}
+	      <sys-kernel/zen-sources-${KV_NOT_SUPPORTED_MAX} )
+	 || ( >=sys-kernel/bliss-kernel-bin-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/ck-sources-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/gentoo-kernel-bin-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/gentoo-sources-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/ot-sources-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/pf-sources-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/rt-sources-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/vanilla-sources-${KV_SUPPORTED_MIN}
+	      >=sys-kernel/zen-sources-${KV_SUPPORTED_MIN} ) )
+"
 DEPEND="${RDEPEND}
 	check-pcie? ( sys-apps/dmidecode )
 	check-gpu? ( sys-apps/pciutils )
@@ -50,19 +63,15 @@ S="${WORKDIR}"
 RESTRICT="fetch"
 DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${MY_RPR}"
-DC_VER="3.2.42"
-AMDGPU_VERSION="5.0.73.19.30"
-ROCK_VER="2.7.0_p20190627" # See changes in kfd keywords and tag ;  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/commits/master?path[]=drivers&path[]=gpu&path[]=drm&path[]=amd&path[]=amdkfd
+DC_VER="3.2.56"
+AMDGPU_VERSION="5.2.0.19.50"
+ROCK_VER="2.9.0" # See changes in kfd keywords and tag ;  https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/commits/master?path[]=drivers&path[]=gpu&path[]=drm&path[]=amd&path[]=amdkfd
 
 PATCHES=( "${FILESDIR}/rock-dkms-2.8_p13-makefile-recognize-gentoo.patch"
-	  "${FILESDIR}/amdgpu-dkms-19.30.838629-enable-mmu_notifier.patch"
-	  "${FILESDIR}/amdgpu-dkms-19.30.934563-no-firmware-install.patch"
-
-	  "${FILESDIR}/amdgpu-dkms-drm-amdkfd-fix-a-potential-NULL-pointer-dereference-v2.patch"
-	  "${FILESDIR}/amdgpu-drm-amdgpu-fix-multiple-memory-leaks-in-acp_hw_init.patch"
-	  "${FILESDIR}/amdgpu-drm-amd-display-memory-leak.patch"
-	  "${FILESDIR}/amdgpu-drm-amd-display-prevent-memory-leak.patch"
-	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch" )
+	  "${FILESDIR}/amdgpu-dkms-19.50.967956-enable-mmu_notifier.patch"
+	  "${FILESDIR}/amdgpu-dkms-19.50.967956-no-firmware-install.patch"
+	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
+	  "${FILESDIR}/amdgpu-dkms-19.50.967956-add-header-to-kcl_mn_c.patch" )
 
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
@@ -72,8 +81,7 @@ pkg_nofetch() {
 }
 
 pkg_pretend() {
-	ewarn "Long Term Support (LTS) kernels 4.4.x, 4.9.x, 4.14.x, 4.19.x are only supported."
-	# version compatibility at >=5.1 looks sloppy
+	ewarn "Kernels 5.0.x <= x <= 5.2.x are only supported."
 	if use check-pcie ; then
 		if has sandbox $FEATURES ; then
 			die "${PN} require sandbox to be disabled in FEATURES when testing hardware with check-pcie USE flag."
@@ -293,7 +301,10 @@ check_hardware() {
 check_kernel() {
 	local k="$1"
 	local kv=$(echo "${k}" | cut -f1 -d'-')
-	if ver_test ${kv} -ge ${KV_NOT_SUPPORTED} ; then
+	if ver_test ${kv} -ge ${KV_NOT_SUPPORTED_MAX} ; then
+		die "Kernel version ${kv} is not supported.  Update your AMDGPU_DKMS_KERNELS environmental variable."
+	fi
+	if ver_test ${kv} -lt ${KV_SUPPORTED_MIN} ; then
 		die "Kernel version ${kv} is not supported.  Update your AMDGPU_DKMS_KERNELS environmental variable."
 	fi
 	KERNEL_DIR="/usr/src/linux-${k}"
@@ -372,11 +383,40 @@ src_install() {
 	dodir usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}
 	insinto usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}
 	doins -r "${S}"/*
-	fperms 0750 /usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/{post-remove.sh,pre-build.sh,amd/dkms/pre-build.sh}
+	fperms 0750 /usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/{post-remove.sh,pre-build.sh,amd/dkms/pre-build.sh,configure}
 	insinto /etc/modprobe.d
 	doins "${WORKDIR}/etc/modprobe.d/blacklist-radeon.conf"
 	insinto /lib/udev/rules.d
 	doins "${WORKDIR}/etc/udev/rules.d/70-amdgpu.rules"
+}
+
+get_arch() {
+	# defined in /usr/share/genkernel/arch
+	echo $(uname -m)
+}
+
+get_modules_folder() {
+	local md
+	if [[ -d "/lib/modules/${k}-$(get_arch)" ]] ; then
+		md="/lib/modules/${k}-$(get_arch)"
+	elif [[ -d "/lib/modules/${k}" ]] ; then
+		md="/lib/modules/${k}"
+	else
+		die "Could not locate modules folder to sign."
+	fi
+	echo "${md}"
+}
+
+git_modules_folder_suffix() {
+	local md
+	if [[ -d "/lib/modules/${k}-$(get_arch)" ]] ; then
+		md="-$(get_arch)"
+	elif [[ -d "/lib/modules/${k}" ]] ; then
+		md=""
+	else
+		die "Could not locate modules folder to sign."
+	fi
+	echo "${md}"
 }
 
 sign_module() {
@@ -392,7 +432,7 @@ signing_modules() {
 	linux_config_exists
 	if linux_chkconfig_builtin "MODULE_SIG" && use sign-modules ; then
 		local kd="/usr/src/linux-${k}"
-		local md="/lib/modules/${k}"
+		local md=$(get_modules_folder)
 		local module_sig_hash="$(grep -Po '(?<=CONFIG_MODULE_SIG_HASH=").*(?=")' ${kd}/.config)"
 		local module_sig_key="$(grep -Po '(?<=CONFIG_MODULE_SIG_KEY=").*(?=")' ${kd}/.config)"
 		module_sig_key="${module_sig_key:-certs/signing_key.pem}"
@@ -410,11 +450,12 @@ signing_modules() {
 }
 
 dkms_build() {
-	einfo "Running: \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH}\`"
-	dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} || die
-	einfo "Running: \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} --force\`"
-	dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} --force || die
-	einfo "The modules where installed in /lib/modules/${k}/updates"
+	local _k="${k}$(git_modules_folder_suffix)/${ARCH}"
+	einfo "Running: \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k}\`"
+	dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} || die
+	einfo "Running: \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} --force\`"
+	dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} --force || die
+	einfo "The modules where installed in $(get_modules_folder)/updates"
 	signing_modules ${k}
 }
 
@@ -461,7 +502,7 @@ pkg_postinst() {
 	einfo "If Intel IOMMU, add to kernel parameters either intel_iommu=off or iommu=pt"
 	einfo "For more information, See https://rocm-documentation.readthedocs.io/en/latest/Remote_Device_Programming/Remote-Device-Programming.html#rocmrdma ."
 	einfo
-	einfo "Only <${KV_NOT_SUPPORTED} kernels are supported for these kernel modules."
+	einfo "Only <${KV_NOT_SUPPORTED_MAX} kernels are supported for these kernel modules."
 	einfo
 
 	einfo "DirectGMA / SSG is disabled by default.  You need to explicitly enable it in your bootloader config."

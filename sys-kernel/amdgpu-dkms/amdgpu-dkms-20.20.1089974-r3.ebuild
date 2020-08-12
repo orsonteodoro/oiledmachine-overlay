@@ -391,6 +391,35 @@ src_install() {
 	doins "${WORKDIR}/etc/udev/rules.d/70-amdgpu.rules"
 }
 
+get_arch() {
+	# defined in /usr/share/genkernel/arch
+	echo $(uname -m)
+}
+
+get_modules_folder() {
+	local md
+	if [[ -d "/lib/modules/${k}-$(get_arch)" ]] ; then
+		md="/lib/modules/${k}-$(get_arch)"
+	elif [[ -d "/lib/modules/${k}" ]] ; then
+		md="/lib/modules/${k}"
+	else
+		die "Could not locate modules folder to sign."
+	fi
+	echo "${md}"
+}
+
+git_modules_folder_suffix() {
+	local md
+	if [[ -d "/lib/modules/${k}-$(get_arch)" ]] ; then
+		md="-$(get_arch)"
+	elif [[ -d "/lib/modules/${k}" ]] ; then
+		md=""
+	else
+		die "Could not locate modules folder to sign."
+	fi
+	echo "${md}"
+}
+
 sign_module() {
 	local module_path="${1}"
 	einfo "Signing $(basename ${module_path})"
@@ -404,7 +433,7 @@ signing_modules() {
 	linux_config_exists
 	if linux_chkconfig_builtin "MODULE_SIG" && use sign-modules ; then
 		local kd="/usr/src/linux-${k}"
-		local md="/lib/modules/${k}"
+		local md=$(get_modules_folder)
 		local module_sig_hash="$(grep -Po '(?<=CONFIG_MODULE_SIG_HASH=").*(?=")' ${kd}/.config)"
 		local module_sig_key="$(grep -Po '(?<=CONFIG_MODULE_SIG_KEY=").*(?=")' ${kd}/.config)"
 		module_sig_key="${module_sig_key:-certs/signing_key.pem}"
@@ -422,11 +451,12 @@ signing_modules() {
 }
 
 dkms_build() {
-	einfo "Running: \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH}\`"
-	dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} || die
-	einfo "Running: \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} --force\`"
-	dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${k}/${ARCH} --force || die
-	einfo "The modules where installed in /lib/modules/${k}/updates"
+	local _k="${k}$(git_modules_folder_suffix)/${ARCH}"
+	einfo "Running: \`dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k}\`"
+	dkms build ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} || die
+	einfo "Running: \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} --force\`"
+	dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} --force || die
+	einfo "The modules where installed in $(get_modules_folder)/updates"
 	signing_modules ${k}
 }
 
