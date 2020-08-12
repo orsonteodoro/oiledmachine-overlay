@@ -31,6 +31,7 @@ BDEPEND="
 	dev-util/xxd
 	dev-vcs/git"
 SLOT="0/${PV}"
+EGIT_COMMIT="0dd6cf369a4bc066ea2dff6bc5795a948a4b9364" # keep in sync with PV
 GOOGLETEST_COMMIT="ec44c6c1675c25b9827aacd08c02433cccde7780"
 SRC_URI=\
 "https://github.com/AppImage/libappimage/archive/v${PV}.tar.gz \
@@ -80,6 +81,7 @@ src_unpack() {
 
 src_configure() {
 	local mycmakeargs=(
+		-DGIT_COMMIT="${EGIT_COMMIT}"
 		-DUSE_SYSTEM_BOOST=$(usex system-boost)
 		-DUSE_SYSTEM_LIBARCHIVE=$(usex system-libarchive)
 		-DUSE_SYSTEM_SQUASHFUSE=$(usex system-squashfuse)
