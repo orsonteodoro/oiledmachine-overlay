@@ -46,7 +46,7 @@ inherit cmake-utils linux-info
 PATCHES=(
 	"${FILESDIR}/${PN}-1.0.2-use-squashfuse_appimage-for-pkgconfig.patch"
 	"${FILESDIR}/${PN}-1.0.2-same-files-static-build.patch"
-	"${FILESDIR}/${PN}-1.0.2-add-requires-to-pkgconfig.patch"
+	"${FILESDIR}/${PN}-1.0.2-complete-pkgconfig.patch"
 )
 
 pkg_setup() {
