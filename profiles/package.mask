@@ -57,7 +57,7 @@ dev-dotnet/dotnetcore-sdk
 # Build failures / Work In Progress (WIP)
 >=dev-dotnet/aspnetcore-2.1.18
 
-# On indefinte hold until the possibly private closed dependency problem resolves
+# On indefinte hold until deleted project and dependency go-zsyncmake are replaced.  Use app-arch/appimaged app-arch/appimagetool packages instead.
 app-arch/go-appimage
 
 # Masked for security reasons
