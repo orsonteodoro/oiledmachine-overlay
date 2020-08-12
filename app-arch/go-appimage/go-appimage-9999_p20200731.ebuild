@@ -22,6 +22,7 @@ KEYWORDS="~amd64 ~arm ~arm64"
 IUSE="firejail gnome kde openrc systemd travis-ci"
 RDEPEND="
 	!app-arch/appimaged
+	!app-arch/appimagetool
 	firejail? ( sys-apps/firejail )
 	gnome? ( gnome-base/gvfs[udisks] )
 	kde? ( kde-frameworks/solid )
