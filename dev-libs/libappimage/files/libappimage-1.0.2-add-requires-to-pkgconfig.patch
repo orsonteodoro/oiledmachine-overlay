@@ -8,6 +8,6 @@ diff -urp libappimage-1.0.2.orig/cmake/libappimage.pc.in libappimage-1.0.2/cmake
 -
 -Libs: -L${libdir} -lappimage
 -Cflags: -I${includedir}
-+Requires: pangocairo gio-2.0 glib-2.0 libarchive libacl libbsd libcroco-0.6 libcrypto liblzma librsvg-2.0 libxml-2.0 mount squashfuse_appimage xshmfence zlib
++Requires: pangocairo gio-2.0 glib-2.0 libarchive libbsd libcroco-0.6 libcrypto liblzma librsvg-2.0 libxml-2.0 mount squashfuse_appimage xshmfence zlib
 +Libs: -L${libdir} -lappimage -lbz2 -lstdc++ -lboost_filesystem -L${libdir}/XdgUtils -lXdgUtilsBaseDir -lXdgUtilsDesktopEntry
 +Cflags: -I${includedir} -I${includedir}/XdgUtils
