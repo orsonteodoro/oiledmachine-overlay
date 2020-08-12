@@ -75,7 +75,6 @@ SRC_URI+=" ${ARCH_URI}
 		${GENPATCHES_EXPERIMENTAL_SRC_URL}
 		${GENPATCHES_EXTRAS_SRC_URL}
 	   )
-	   bmq? ( ${BMQ_SRC_URL} )
 	   graysky2? (
 		${GRAYSKY_SRC_4_9_URL}
 		${GRAYSKY_SRC_8_1_URL}
@@ -83,6 +82,7 @@ SRC_URI+=" ${ARCH_URI}
 		${GRAYSKY_SRC_10_1_URL}
 	   )
 	   o3? ( ${O3_ALLOW_SRC_URL} )
+	   prjc? ( ${PRJC_SRC_URL} )
 	   tresor? (
 		${TRESOR_AESNI_DL_URL}
 		${TRESOR_I686_DL_URL}
@@ -93,7 +93,7 @@ SRC_URI+=" ${ARCH_URI}
 	   uksm? ( ${UKSM_SRC_URL} )"
 
 SRC_URI_DISABLED+="
-	   prjc? ( ${PRJC_SRC_URL} )
+	   bmq? ( ${BMQ_SRC_URL} )
 "
 
 # @FUNCTION: ot-kernel-common_pkg_setup_cb
