@@ -17,9 +17,9 @@ RDEPEND="additional-tools? ( dev-libs/openssl )
 	app-arch/xz-utils:=[static-libs]
 	sys-fs/squashfuse
 	sys-fs/squashfs-tools
-	dev-libs/libappimage:=[static-libs]
-	dev-util/sanitizers-cmake"
+	dev-libs/libappimage:=[static-libs]"
 DEPEND="${RDEPEND}
+	dev-util/sanitizers-cmake
 	sys-devel/binutils"
 REQUIRED_USE=""
 SLOT="0/${PV}"
