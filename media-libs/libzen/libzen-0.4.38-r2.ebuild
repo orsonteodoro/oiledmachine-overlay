@@ -10,7 +10,9 @@ DESCRIPTION="Shared library for libmediainfo and mediainfo"
 HOMEPAGE="https://github.com/MediaArea/ZenLib"
 SRC_URI="https://mediaarea.net/download/source/${PN}/${PV}/${P/-/_}.tar.bz2"
 
-LICENSE="ZLIB"
+LICENSE="all-rights-reserved ZLIB"
+# the vanilla ZLIB does not have all rights reserved but stated explictly in the
+# README.md
 SLOT="0/${PV}"
 KEYWORDS="~amd64 ~x86"
 IUSE="doc static-libs"
