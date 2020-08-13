@@ -22,7 +22,7 @@ DEPEND="${RDEPEND}
 	>=liri-base/cmake-shared-1.1.0_p20200511
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
 inherit cmake-utils eutils
-EGIT_COMMIT="d29a5e0b6cb47c0e60475f8d05e9e02a16ddd3f2"
+EGIT_COMMIT="5b1e3bf991bd966a91e4bcb495f7f2a4bb330f5d"
 SRC_URI=\
 "https://github.com/lirios/wayland/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${PN}-${PV}.tar.gz"
