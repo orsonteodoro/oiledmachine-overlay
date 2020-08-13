@@ -70,4 +70,6 @@ multilib_src_install() {
 	fi
 
 	find "${ED}" -name '*.la' -delete || die
+	dodoc License.txt
+	dodoc ReadMe.txt
 }
