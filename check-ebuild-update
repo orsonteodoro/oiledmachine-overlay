@@ -7,6 +7,8 @@
 
 # Still work in progress
 
+PORTAGE_DIR="/usr/portage"
+
 if grep --help | grep -Fq -e "--perl-regexp" ; then
 	:;
 else
@@ -99,8 +101,6 @@ is_x_op_y() {
 	fi
 }
 
-PORTAGE_DIR="/usr/portage"
-
 get_stable_versions() {
 	arch="${1}"
 	for ebuild in $(find "${PORTAGE_DIR}/${category}/${pn}" -name "*.ebuild" 2>/dev/null | sort -V ) ; do
@@ -128,4 +128,18 @@ scan_gentoo_overlay() {
 	done
 }
 
-scan_gentoo_overlay
+main() {
+	if [[ ! -d "${PORTAGE_DIR}" ]] ; then
+		echo "Your PORTAGE_DIR cannot be found"
+		return 1
+	fi
+
+	if [[ "${PORTAGE_DIR}" != "/usr/portage" ]] ; then
+		echo "Your PORTAGE_DIR is not /usr/portage.  You must check the cut commands are working properly."
+		return 1
+	fi
+
+	scan_gentoo_overlay
+}
+
+main
