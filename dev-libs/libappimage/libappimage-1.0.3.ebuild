@@ -24,14 +24,15 @@ RDEPEND="
 	system-xdgutils? ( dev-libs/xdg-utils-cxx:=[static-libs] )
 	system-xz? ( app-arch/xz-utils:=[static-libs] )
 	x11-libs/cairo"
-DEPEND="${RDEPEND}"
+DEPEND="${RDEPEND}
+	sys-devel/clang"
 BDEPEND="
 	>=dev-util/cmake-3.4
 	dev-util/desktop-file-utils
 	dev-util/xxd
 	dev-vcs/git"
 SLOT="0/${PV}"
-EGIT_COMMIT="0dd6cf369a4bc066ea2dff6bc5795a948a4b9364" # keep in sync with PV
+EGIT_COMMIT="3682efb71847391f75ce6999e94b01b8b8434748" # keep in sync with PV
 GOOGLETEST_COMMIT="ec44c6c1675c25b9827aacd08c02433cccde7780"
 SRC_URI=\
 "https://github.com/AppImage/libappimage/archive/v${PV}.tar.gz \
@@ -47,6 +48,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.0.2-use-squashfuse_appimage-for-pkgconfig.patch"
 	"${FILESDIR}/${PN}-1.0.2-same-files-static-build.patch"
 	"${FILESDIR}/${PN}-1.0.2-complete-pkgconfig.patch"
+	"${FILESDIR}/${PN}-1.0.3-move-definition-in-cpp-file.patch"
 )
 
 pkg_setup() {

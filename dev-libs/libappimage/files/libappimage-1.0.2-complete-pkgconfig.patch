@@ -1,6 +1,6 @@
-diff -Nurp libappimage-1.0.2.orig/cmake/libappimage_hashlib.pc.in libappimage-1.0.2/cmake/libappimage_hashlib.pc.in
---- libappimage-1.0.2.orig/cmake/libappimage_hashlib.pc.in	1969-12-31 16:00:00.000000000 -0800
-+++ libappimage-1.0.2/cmake/libappimage_hashlib.pc.in	2020-08-12 12:49:12.686295881 -0700
+diff -urpN libappimage-1.0.3.orig/cmake/libappimage_hashlib.pc.in libappimage-1.0.3/cmake/libappimage_hashlib.pc.in
+--- libappimage-1.0.3.orig/cmake/libappimage_hashlib.pc.in	1969-12-31 16:00:00.000000000 -0800
++++ libappimage-1.0.3/cmake/libappimage_hashlib.pc.in	2020-08-12 17:00:53.289128421 -0700
 @@ -0,0 +1,11 @@
 +prefix=@CMAKE_INSTALL_PREFIX@
 +# Use prefix as base path to make the package relocatable
@@ -13,9 +13,9 @@ diff -Nurp libappimage-1.0.2.orig/cmake/libappimage_hashlib.pc.in libappimage-1.
 +URL: https://github.com/AppImage/libappimage
 +Libs: -L${libdir} -lappimage_hashlib
 +Cflags: -I${includedir}/libappimage_hashlib
-diff -Nurp libappimage-1.0.2.orig/cmake/libappimage.pc.in libappimage-1.0.2/cmake/libappimage.pc.in
---- libappimage-1.0.2.orig/cmake/libappimage.pc.in	2019-06-06 19:42:43.000000000 -0700
-+++ libappimage-1.0.2/cmake/libappimage.pc.in	2020-08-12 12:49:13.956345105 -0700
+diff -urpN libappimage-1.0.3.orig/cmake/libappimage.pc.in libappimage-1.0.3/cmake/libappimage.pc.in
+--- libappimage-1.0.3.orig/cmake/libappimage.pc.in	2020-07-24 23:03:28.000000000 -0700
++++ libappimage-1.0.3/cmake/libappimage.pc.in	2020-08-12 17:00:53.289128421 -0700
 @@ -7,6 +7,6 @@ Name: @PROJECT_NAME@
  Description: AppImage management and desktop integration
  Version: @libappimage_VERSION@
@@ -26,9 +26,9 @@ diff -Nurp libappimage-1.0.2.orig/cmake/libappimage.pc.in libappimage-1.0.2/cmak
 +Requires: pangocairo gio-2.0 glib-2.0 libappimage_shared libappimage_hashlib libarchive libbsd libcroco-0.6 libcrypto liblzma librsvg-2.0 libxml-2.0 mount squashfuse_appimage xshmfence zlib
 +Libs: -L${libdir} -lappimage -lbz2 -lstdc++ -lboost_filesystem -L${libdir}/XdgUtils -lXdgUtilsBaseDir -lXdgUtilsDesktopEntry
 +Cflags: -I${includedir}/appimage -I${includedir}/XdgUtils
-diff -Nurp libappimage-1.0.2.orig/cmake/libappimage_shared.pc.in libappimage-1.0.2/cmake/libappimage_shared.pc.in
---- libappimage-1.0.2.orig/cmake/libappimage_shared.pc.in	1969-12-31 16:00:00.000000000 -0800
-+++ libappimage-1.0.2/cmake/libappimage_shared.pc.in	2020-08-12 12:49:11.666256344 -0700
+diff -urpN libappimage-1.0.3.orig/cmake/libappimage_shared.pc.in libappimage-1.0.3/cmake/libappimage_shared.pc.in
+--- libappimage-1.0.3.orig/cmake/libappimage_shared.pc.in	1969-12-31 16:00:00.000000000 -0800
++++ libappimage-1.0.3/cmake/libappimage_shared.pc.in	2020-08-12 17:00:53.289128421 -0700
 @@ -0,0 +1,11 @@
 +prefix=@CMAKE_INSTALL_PREFIX@
 +# Use prefix as base path to make the package relocatable
@@ -41,9 +41,9 @@ diff -Nurp libappimage-1.0.2.orig/cmake/libappimage_shared.pc.in libappimage-1.0
 +URL: https://github.com/AppImage/libappimage
 +Libs: -L${libdir} -lappimage_shared
 +Cflags: -I${includedir}/appimage
-diff -Nurp libappimage-1.0.2.orig/cmake/libappimage_static.pc.in libappimage-1.0.2/cmake/libappimage_static.pc.in
---- libappimage-1.0.2.orig/cmake/libappimage_static.pc.in	1969-12-31 16:00:00.000000000 -0800
-+++ libappimage-1.0.2/cmake/libappimage_static.pc.in	2020-08-12 12:49:16.006424568 -0700
+diff -urpN libappimage-1.0.3.orig/cmake/libappimage_static.pc.in libappimage-1.0.3/cmake/libappimage_static.pc.in
+--- libappimage-1.0.3.orig/cmake/libappimage_static.pc.in	1969-12-31 16:00:00.000000000 -0800
++++ libappimage-1.0.3/cmake/libappimage_static.pc.in	2020-08-12 17:00:53.289128421 -0700
 @@ -0,0 +1,12 @@
 +prefix=@CMAKE_INSTALL_PREFIX@
 +# Use prefix as base path to make the package relocatable
@@ -57,19 +57,35 @@ diff -Nurp libappimage-1.0.2.orig/cmake/libappimage_static.pc.in libappimage-1.0
 +Requires: pangocairo gio-2.0 glib-2.0 libappimage_shared libappimage_hashlib libarchive libbsd libcroco-0.6 libcrypto liblzma librsvg-2.0 libxml-2.0 mount squashfuse_appimage xshmfence zlib
 +Libs: -L${libdir} -lappimage_static -lbz2 -lstdc++ -lboost_filesystem -L${libdir}/XdgUtils -lXdgUtilsBaseDir -lXdgUtilsDesktopEntry
 +Cflags: -I${includedir}/appimage -I${includedir}/XdgUtils
-diff -Nurp libappimage-1.0.2.orig/src/CMakeLists.txt libappimage-1.0.2/src/CMakeLists.txt
---- libappimage-1.0.2.orig/src/CMakeLists.txt	2019-06-06 19:42:43.000000000 -0700
-+++ libappimage-1.0.2/src/CMakeLists.txt	2020-08-12 12:50:55.530282352 -0700
-@@ -53,8 +53,11 @@ install(
+diff -urpN libappimage-1.0.3.orig/cmake/xdg-basedir.pc.in libappimage-1.0.3/cmake/xdg-basedir.pc.in
+--- libappimage-1.0.3.orig/cmake/xdg-basedir.pc.in	1969-12-31 16:00:00.000000000 -0800
++++ libappimage-1.0.3/cmake/xdg-basedir.pc.in	2020-08-12 17:05:10.519009348 -0700
+@@ -0,0 +1,11 @@
++prefix=@CMAKE_INSTALL_PREFIX@
++# Use prefix as base path to make the package relocatable
++libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
++includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
++
++Name: xdg-basedir
++Description: XDG functions for libappimage
++Version: @libappimage_VERSION@
++URL: https://github.com/AppImage/libappimage
++Libs: -L${libdir} -lxdg-basedir
++Cflags: -I${includedir}/appimage
+diff -urpN libappimage-1.0.3.orig/src/CMakeLists.txt libappimage-1.0.3/src/CMakeLists.txt
+--- libappimage-1.0.3.orig/src/CMakeLists.txt	2020-07-24 23:03:28.000000000 -0700
++++ libappimage-1.0.3/src/CMakeLists.txt	2020-08-12 17:05:52.940639228 -0700
+@@ -53,8 +53,12 @@ install(
  
  # pkg-config
  configure_file("${PROJECT_SOURCE_DIR}/cmake/libappimage.pc.in" "${PROJECT_BINARY_DIR}/libappimage.pc" @ONLY)
 +configure_file("${PROJECT_SOURCE_DIR}/cmake/libappimage_shared.pc.in" "${PROJECT_BINARY_DIR}/libappimage_shared.pc" @ONLY)
 +configure_file("${PROJECT_SOURCE_DIR}/cmake/libappimage_static.pc.in" "${PROJECT_BINARY_DIR}/libappimage_static.pc" @ONLY)
 +configure_file("${PROJECT_SOURCE_DIR}/cmake/libappimage_hashlib.pc.in" "${PROJECT_BINARY_DIR}/libappimage_hashlib.pc" @ONLY)
++configure_file("${PROJECT_SOURCE_DIR}/cmake/xdg-basedir.pc.in" "${PROJECT_BINARY_DIR}/xdg-basedir.pc" @ONLY)
  
 -install(FILES "${PROJECT_BINARY_DIR}/libappimage.pc"
-+install(FILES "${PROJECT_BINARY_DIR}/libappimage.pc" "${PROJECT_BINARY_DIR}/libappimage_shared.pc" "${PROJECT_BINARY_DIR}/libappimage_static.pc" "${PROJECT_BINARY_DIR}/libappimage_hashlib.pc"
++install(FILES "${PROJECT_BINARY_DIR}/libappimage.pc" "${PROJECT_BINARY_DIR}/libappimage_shared.pc" "${PROJECT_BINARY_DIR}/libappimage_static.pc" "${PROJECT_BINARY_DIR}/libappimage_hashlib.pc" "${PROJECT_BINARY_DIR}/xdg-basedir.pc"
      DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
      COMPONENT libappimage-dev
  )
