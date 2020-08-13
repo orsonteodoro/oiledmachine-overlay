@@ -24,8 +24,7 @@ RDEPEND="
 	system-xdgutils? ( dev-libs/xdg-utils-cxx:=[static-libs] )
 	system-xz? ( app-arch/xz-utils:=[static-libs] )
 	x11-libs/cairo"
-DEPEND="${RDEPEND}
-	sys-devel/clang"
+DEPEND="${RDEPEND}"
 BDEPEND="
 	>=dev-util/cmake-3.4
 	dev-util/desktop-file-utils
