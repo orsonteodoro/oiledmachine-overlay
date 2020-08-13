@@ -7,7 +7,7 @@ HOMEPAGE="https://github.com/AppImage/libappimage"
 LICENSE="MIT" # project default license
 LICENSE+=" all-rights-reserved" # src/libappimage/libappimage.c ; The vanilla MIT license doesn't have all-rights-reserved
 # The below licenses apply to static linking and third-party packages.
-LICENSE+=" BSD-2" # for internal squashefuse
+LICENSE+=" BSD-2" # for internal squashfuse
 LICENSE+=" !system-boost? ( Boost-1.0 )" # copied from the boost ebuild
 LICENSE+=" !system-libarchive? ( BSD BSD-2 BSD-4 public-domain )" # copied from the libarchive ebuild
 LICENSE+=" !system-xdgutils? ( MIT BSD )" # copied from the dev-libs/xdg-utils-cxx ebuild
