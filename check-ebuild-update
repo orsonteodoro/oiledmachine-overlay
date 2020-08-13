@@ -1,0 +1,131 @@
+#!/bin/bash
+# License: MIT or GPL2+
+# Checks if a newer vanilla ebuild from various sources so this overlay can
+# apply modifications to them.  For example we check the gentoo overlay
+# to see if there is a latest stable and apply multilib modifications to
+# them.
+
+# Still work in progress
+
+if grep --help | grep -Fq -e "--perl-regexp" ; then
+	:;
+else
+	einfo "You need grep compiled with Perl regular expressions."
+	return 1
+fi
+
+# version tests
+# x < y
+is_x_lt_y() {
+	local x="${1}"
+	local y="${2}"
+	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
+		| cut -f1 -d $' ')
+	if [[ "${result}" == "${x}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+is_x_le_y() {
+	local x="${1}"
+	local y="${2}"
+	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
+		| cut -f1 -d $' ')
+	if [[ "${result}" == "${x}" || "${x}" == "${y}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+is_x_gt_y() {
+	local x="${1}"
+	local y="${2}"
+	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
+		| cut -f1 -d $' ')
+	if [[ "${result}" != "${x}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+is_x_ge_y() {
+	local x="${1}"
+	local y="${2}"
+	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
+		| cut -f1 -d $' ')
+	if [[ "${result}" != "${x}" || "${x}" == "${y}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+is_x_eq_y() {
+	local x="${1}"
+	local y="${2}"
+	if [[ "${x}" == "${y}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+is_x_ne_y() {
+	local x="${1}"
+	local y="${2}"
+	if [[ "${x}" != "${y}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+is_x_op_y() {
+	local x="${1}"
+	local op="${2}"
+	local y="${3}"
+
+	if [[ "${op}" == "-lt" ]] ; then
+		is_x_lt_y "${x}" "${y}"
+	elif [[ "${op}" == "-le" ]] ; then
+		is_x_le_y "${x}" "${y}"
+	elif [[ "${op}" == "-gt" ]] ; then
+		is_x_gt_y "${x}" "${y}"
+	elif [[ "${op}" == "-ge" ]] ; then
+		is_x_ge_y "${x}" "${y}"
+	elif [[ "${op}" == "-eq" ]] ; then
+		is_x_eq_y "${x}" "${y}"
+	elif [[ "${op}" == "-ne" ]] ; then
+		is_x_ne_y "${x}" "${y}"
+	fi
+}
+
+PORTAGE_DIR="/usr/portage"
+
+get_stable_versions() {
+	arch="${1}"
+	for ebuild in $(find "${PORTAGE_DIR}/${category}/${pn}" -name "*.ebuild" 2>/dev/null | sort -V ) ; do
+		if grep -q -P -e "KEYWORDS=\".*(?<!\~)${arch}" "${ebuild}" ; then
+			echo "${ebuild}"
+		fi
+	done
+}
+
+scan_gentoo_overlay() {
+	for ebuild in $(find . -name "*.ebuild") ; do
+		local category=$(echo "${ebuild}" | cut -f 2 -d "/")
+		local ebuild_filename=$(basename "${ebuild}")
+		local pn=$(echo "${ebuild}" | cut -f 3 -d "/")
+		local oiledmachine_pv=$(echo "${ebuild_filename}" | sed -e "s|${pn}-||g" -e "s|\.ebuild$||")
+		local newest=$(get_stable_versions "amd64" | tail -n 1)
+		if (( ${#newest} > 0 )) ; then
+			local bn_newest=$(basename "${newest}")
+			local gentoo_pv=$(echo "${bn_newest}" | sed -e "s|${pn}-||g" -e "s|\.ebuild$||")
+
+			if is_x_op_y $(echo "${gentoo_pv}" | cut -f 1 -d "-") "-gt" $(echo "${oiledmachine_pv}" | cut -f 1 -d "-") ; then
+				echo "Found ${pn} is newer on gentoo overlay oiledmachine_pv=${oiledmachine_pv} gentoo_pv=${gentoo_pv}"
+			fi
+		fi
+	done
+}
+
+scan_gentoo_overlay
