@@ -751,8 +751,9 @@ https://github.com/lirios/cmake-shared.git)
 }
 
 repo_latest_version_get_liri-base-eglfs_pv() {
-	local pv=$(get_newest_prefixed_v_pv \
-https://github.com/lirios/eglfs.git)
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/lirios/eglfs/develop/CMakeLists.txt \
+| grep -e " VERSION \"" | head -n 1 | grep -P -o -e "[0-9\.]+")
 	local suffix=$(get_head_suffix "lirios/eglfs" "develop")
 	echo "${pv}_pre${suffix}"
 }
@@ -968,7 +969,7 @@ https://raw.githubusercontent.com/lirios/screenshot/develop/CMakeLists.txt \
 }
 
 repo_latest_version_get_liri-extra-text_pv() {
-	local pv=$(get_newest_prefixed_v_pv \
+	local pv=$(get_newest_pv \
 https://github.com/lirios/text.git)
 	local suffix=$(get_head_suffix "lirios/text" "develop")
 	echo "${pv}_p${suffix}"
@@ -1525,8 +1526,8 @@ scan_repos() {
 			| sed -e "s|${pn}-||g" -e "s|\.ebuild$||")
 		local repo_pv
 #		echo "inspecting pn:${pn}"
-		for p in $(grep "^repo_latest_version_get_" $(basename "$0") \
-			| sed -e "s|() {||g" -e "s|repo_latest_version_get_||" \
+		for p in $(grep -P -e "^repo_latest_version_get_(${category}-)?" $(basename "$0") \
+			| sed -r -e "s|\(\) \{||g" -e "s|repo_latest_version_get_(${category}-)?||" \
 			-e "s|_pv||g") ; do
 			[[ "${p}" != "${pn}" ]] && continue
 
