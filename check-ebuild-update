@@ -209,7 +209,7 @@ get_newest_pv() {
 
 get_head_suffix() {
 	local org_project="${1}"
-	local branch="${1}"
+	local branch="${2}"
 	# github reports local timestamp on www (Firefox) but on wget it is UTC/zulu
 	echo $(TZ="America/Los_Angeles" date -d "$(wget -q -O - \
 https://github.com/${org_project}/commit/\
