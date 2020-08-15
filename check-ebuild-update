@@ -27,9 +27,21 @@
 
 # The technical spec: https://wiki.gentoo.org/wiki/Package_Manager_Specification
 
-PORTAGE_DIR="/usr/portage"
-STABLE_ARCH="amd64"
-SCRAPERS_FILE="check-ebuild-update-scrapers"
+if [[ -f .check-ebuild-update.config ]] ; then
+source .check-ebuild-update.config
+fi
+
+PORTAGE_DIR=${PORTAGE_DIR:="/usr/portage"}
+STABLE_ARCH=${STABLE_ARCH:="amd64"}
+SCRAPERS_FILE=${SCRAPERS_FILE:="check-ebuild-update-scrapers"}
+DEBUG=${DEBUG:="0"}
+REPO_TZ=${REPO_TZ:="America/Los_Angeles"}
+CACHE_EXPIRE=${CACHE_EXPIRE:=86400} # 1 day
+CACHE_DIR=${CACHE_DIR:="/tmp/check-ebuild-update"}
+
+setup_cache() {
+	mkdir -p "${CACHE_DIR}"
+}
 
 check_prereqs() {
 	if [[ ! -d "${PORTAGE_DIR}" ]] ; then
@@ -177,31 +189,41 @@ get_newest_prefixed_v_pv() {
 		| sed -e "s|_preview|_pre|" | sort -V \
 		| tail -n 1)
 	if echo "${r}" | grep -P -e "^[^0-9]" ; then
-		echo "FIXME: ${category}/${pn} has tag that is not version r=${r}"
+		echo "${category}/${pn} has tag that is not a version r=${r}"
+		exit 1
+	fi
+	if [[ -z "${r}" ]] ; then
+		echo "${category}/${pn} has an empty pv"
 		exit 1
 	fi
 	echo "${r}"
 }
 
 # gets all tags without prefixed v
-# space delimited
-# You need to call \`| tr " " "\n"\` immediately after.
 get_tags() {
 	local uri="${1}"
 	local r=$(git ls-remote --tags "${uri}" | cut -f 3 -d "/" \
 		| grep -v -e "[\^]" | sed -r -e "s|^v||g" \
 		| sed -r -e "s#-(alpha|beta|rc|pre)\.?#_\1#g" \
 		| sed -e "s|_preview|_pre|")
+	if [[ -z "${r}" ]] ; then
+		echo "${category}/${pn} has no tags"
+		exit 1
+	fi
 	echo "${r}"
 }
 
 # same as get_newest_prefixed_v_pv but with non prefixed v
 get_newest_pv() {
 	local uri="${1}"
-	local r=$(get_tags ${uri} | tr " " "\n" \
+	local r=$(get_tags ${uri} \
 		| sort -V | tail -n 1)
 	if echo "${r}" | grep -P -e "^[^0-9]" ; then
-		echo "FIXME: ${category}/${pn} has tag that is not version r=${r}"
+		echo "${category}/${pn} has tag that is not a version r=${r}"
+		exit 1
+	fi
+	if [[ -z "${r}" ]] ; then
+		echo "${category}/${pn} has an empty pv"
 		exit 1
 	fi
 	echo "${r}"
@@ -219,27 +241,64 @@ $(git ls-remote --heads https://github.com/${org_project}.git \
 | sed -r -e "s|datetime=\"||g" -e "s|\" ||g")" +"%Y%m%d")
 }
 
-source ${SCRAPERS_FILE}
+get_head_suffix_rss() {
+	local url="${1}"
+	wget -q -O - "${1}" | grep pubDate | sed -r -e "s|[</]+pubDate[>]||g" \
+	| head -n 1 | sed -r -e "s|^[ ]+||g"
+}
+
+source "${SCRAPERS_FILE}"
+
+edebug() {
+	local message="${1}"
+	if [[ -n "${DEBUG}" && "${DEBUG}" == "1" ]] ; then
+		echo "${message}"
+	fi
+}
+
+gen_save_pv() {
+	mkdir -p "${CACHE_DIR}/${category}/${pn}"
+	rm -rf "${CACHE_DIR}/${category}/${pn}/${slot_b64}"
+	"${fn}" > "${CACHE_DIR}/${category}/${pn}/${slot_b64}"
+	cat "${CACHE_DIR}/${category}/${pn}/${slot_b64}"
+}
+
+get_pv() {
+	local fn="${1}"
+	if [[ -f "${CACHE_DIR}/${category}/${pn}/${slot_b64}" ]] ; then
+		local datec=$(stat -c "%W" "${CACHE_DIR}/${category}/${pn}/${slot_b64}")
+		local now=$(date +"%s")
+		if (( ${now} < ${datec} + ${CACHE_EXPIRE} )) ; then
+			cat "${CACHE_DIR}/${category}/${pn}/${slot_b64}"
+		else
+			gen_save_pv
+		fi
+	else
+		gen_save_pv
+	fi
+}
 
 scan_repos() {
 	echo "Checking projects"
 	for ebuild in $(find . -name "*.ebuild") ; do
+		local slot_b64=$(echo $(grep "SLOT=" "${ebuild}") | base64)
 		local category=$(echo "${ebuild}" | cut -f 2 -d "/")
 		local ebuild_filename=$(basename "${ebuild}")
 		local pn=$(echo "${ebuild}" | cut -f 3 -d "/")
 		local oiledmachine_pv=$(echo "${ebuild_filename}" \
 			| sed -e "s|${pn}-||g" -e "s|\.ebuild$||")
 		local repo_pv
-#		echo "inspecting pn:${pn}"
-		for p in $(grep -P -e "^repo_latest_version_get_(${category}-)?" ${SCRAPERS_FILE} \
+		edebug "Inspecting ${category}/${pn}"
+		for p in $(grep -P -e "^repo_latest_version_get_(${category}-)?" "${SCRAPERS_FILE}" \
 			| sed -r -e "s|\(\) \{||g" -e "s|repo_latest_version_get_(${category}-)?||" \
 			-e "s|_pv||g") ; do
 			[[ "${p}" != "${pn}" ]] && continue
 
 			if grep -q -e \
 				"repo_latest_version_get_${category}-${pn}_pv" \
-				$(basename "$0") ; then
-				repo_pv=$(repo_latest_version_get_${category}-${pn}_pv)
+				"${SCRAPERS_FILE}" ; then
+				repo_pv=$(get_pv repo_latest_version_get_${category}-${pn}_pv)
+				edebug "${repo_pv} > ${oiledmachine_pv}"
 				if is_x_op_y ${repo_pv} "-gt" \
 					"${oiledmachine_pv}"
 				then
@@ -247,7 +306,8 @@ scan_repos() {
 "Found newer ${pn} repo_pv=${repo_pv} oiledmachine_pv=${oiledmachine_pv}"
 				fi
 			elif [[ "${pn}" == "tulua++" ]] ; then
-				repo_pv=$(repo_latest_version_get_tuluaxx_pv)
+				repo_pv=$(get_pv repo_latest_version_get_tuluaxx_pv)
+				edebug "${repo_pv} > ${oiledmachine_pv}"
 				if is_x_op_y ${repo_pv} "-gt" \
 					"${oiledmachine_pv}"
 				then
@@ -256,7 +316,8 @@ scan_repos() {
 				fi
 			elif [[ "${pn}" == "noto-color-emoji" \
 				|| "${pn}" == "noto-color-emoji-bin" ]] ; then
-				repo_pv=$(repo_latest_version_get_${pn}_pv)
+				repo_pv=$(get_pv repo_latest_version_get_${pn}_pv)
+				edebug "${repo_pv} > ${oiledmachine_pv}"
 				oiledmachine_pv_date=$(echo "${oiledmachine_pv}" \
 					| sed -r -e "s#_beta[0-9]+##g" \
 					| sed -r -e "s#(_|-)#-#g" \
@@ -269,12 +330,15 @@ scan_repos() {
 "Found newer ${pn} repo_pv=${repo_pv} oiledmachine_pv_date=${oiledmachine_pv_date}"
 				fi
 			elif [[ "${pn}" == "${p}" ]] ; then
-				repo_pv=$(repo_latest_version_get_${pn}_pv)
+				repo_pv=$(get_pv repo_latest_version_get_${pn}_pv)
+				edebug "${repo_pv} > ${oiledmachine_pv}"
 				if is_x_op_y ${repo_pv} "-gt" "${oiledmachine_pv}"
 				then
 					echo \
 "Found newer ${pn} repo_pv=${repo_pv} oiledmachine_pv=${oiledmachine_pv}"
 				fi
+			else
+				edebug "Skipped ${category}/${pn}"
 			fi
 		done
 	done
@@ -295,9 +359,14 @@ filter_by_slot() {
 	fi
 }
 
+gen_gentoo_ver() {
+	echo "${bn_newest}" | sed -e "s|${pn}-||g" -e "s|\.ebuild$||"
+}
+
 scan_gentoo_overlay() {
 	echo "Checking the Gentoo overlay"
 	for ebuild in $(find . -name "*.ebuild") ; do
+		local slot_b64=$(echo $(grep "SLOT=" "${ebuild}") | base64)
 		local category=$(echo "${ebuild}" | cut -f 2 -d "/")
 		local ebuild_filename=$(basename "${ebuild}")
 		local pn=$(echo "${ebuild}" | cut -f 3 -d "/")
@@ -306,10 +375,11 @@ scan_gentoo_overlay() {
 		local versions=$(filter_by_slot $(get_stable_versions "${STABLE_ARCH}"))
 		local newest=$(echo -e "${versions}" | tail -n 1)
 		if (( ${#newest} > 0 )) ; then
+			edebug "Inspecting ${category}/${pn}"
 			local bn_newest=$(basename "${newest}")
-			local gentoo_pv=$(echo "${bn_newest}" \
-				| sed -e "s|${pn}-||g" -e "s|\.ebuild$||")
+			local gentoo_pv=$(get_pv gen_gentoo_ver)
 
+			edebug "${gentoo_pv} > ${oiledmachine_pv}"
 			if is_x_op_y $(echo "${gentoo_pv}" | cut -f 1 -d "-") \
 				"-gt" \
 				$(echo "${oiledmachine_pv}" | cut -f 1 -d "-")
@@ -318,12 +388,15 @@ scan_gentoo_overlay() {
 "Found ${pn} is newer on the Gentoo overlay oiledmachine_pv=${oiledmachine_pv} \
 gentoo_pv=${gentoo_pv}"
 			fi
+		else
+			edebug "Skipped ${category}/${pn}"
 		fi
 	done
 }
 
 main() {
 	check_prereqs
+	setup_cache
 	scan_gentoo_overlay
 	scan_repos
 }
