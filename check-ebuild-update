@@ -1,7 +1,7 @@
 #!/bin/bash
 # License: MIT or GPL2+
 # Checks if a newer vanilla ebuild from various sources so this overlay can
-# apply modifications to them.  For example we check the gentoo overlay
+# apply modifications to them.  For example we check the Gentoo overlay
 # to see if there is a latest stable and apply multilib modifications to
 # them.
 
@@ -20,7 +20,15 @@
 
 # Still work in progress
 
+# _pYYYMMDD is broken if using timestamp because there is no standard timezone
+# for YYMMDD in the gentoo spec, so there could be off by one errors.
+
+# The overlay assumes local time PDT/PST for _YYMMDD.
+
+# The technical spec: https://wiki.gentoo.org/wiki/Package_Manager_Specification
+
 PORTAGE_DIR="/usr/portage"
+STABLE_ARCH="amd64"
 
 check_prereqs() {
 	if [[ ! -d "${PORTAGE_DIR}" ]] ; then
@@ -162,10 +170,16 @@ get_stable_versions() {
 # only applies if repo has v prefix for the version
 get_newest_prefixed_v_pv() {
 	local uri="${1}"
-	echo $(git ls-remote --tags "${uri}" | cut -f 2 -d "v" \
+	local r=$(git ls-remote --tags "${uri}" | cut -f 2 -d "v" \
 		| grep -v -e "[\^]" \
-		| sed -r -e "s#-(alpha|beta|rc|pre)\.?#_\1#g" | sort -V \
+		| sed -r -e "s#-(alpha|beta|rc|pre)\.?#_\1#g" \
+		| sed -e "s|_preview|_pre|" | sort -V \
 		| tail -n 1)
+	if echo "${r}" | grep -P -e "^[^0-9]" ; then
+		echo "FIXME: ${category}/${pn} has tag that is not version r=${r}"
+		exit 1
+	fi
+	echo "${r}"
 }
 
 # gets all tags without prefixed v
@@ -173,28 +187,57 @@ get_newest_prefixed_v_pv() {
 # You need to call \`| tr " " "\n"\` immediately after.
 get_tags() {
 	local uri="${1}"
-	echo $(git ls-remote --tags "${uri}" | cut -f 3 -d "/" \
+	local r=$(git ls-remote --tags "${uri}" | cut -f 3 -d "/" \
 		| grep -v -e "[\^]" | sed -r -e "s|^v||g" \
-		| sed -r -e "s#-(alpha|beta|rc|pre)\.?#_\1#g")
+		| sed -r -e "s#-(alpha|beta|rc|pre)\.?#_\1#g" \
+		| sed -e "s|_preview|_pre|")
+	echo "${r}"
 }
 
 # same as get_newest_prefixed_v_pv but with non prefixed v
 get_newest_pv() {
 	local uri="${1}"
-	echo $(get_tags ${uri} | tr " " "\n" \
+	local r=$(get_tags ${uri} | tr " " "\n" \
 		| sort -V | tail -n 1)
+	if echo "${r}" | grep -P -e "^[^0-9]" ; then
+		echo "FIXME: ${category}/${pn} has tag that is not version r=${r}"
+		exit 1
+	fi
+	echo "${r}"
 }
 
 get_head_suffix() {
 	local org_project="${1}"
 	local branch="${1}"
-	echo $(date  -d "$(wget -q -O - \
+	# github reports local timestamp on www (Firefox) but on wget it is UTC/zulu
+	echo $(TZ="America/Los_Angeles" date -d "$(wget -q -O - \
 https://github.com/${org_project}/commit/\
 $(git ls-remote --heads https://github.com/${org_project}.git \
-| grep master | cut -f 1 -d ' ') | html2text | grep committed \
-| sed -e "s|.*committed| committed|" \
-| cut -f 3- -d ' ')" +"%Y%m%d")
+| grep -e "${branch}" | cut -f 1 -d $'\t') | grep "relative-time" \
+| grep -P -o -e "datetime=\".*\" " \
+| sed -r -e "s|datetime=\"||g" -e "s|\" ||g")" +"%Y%m%d")
+}
 
+repo_latest_version_get_alice_pv() {
+	echo $(wget -q -O - \
+https://www.alice.org/get-alice/alice-$(echo "${oiledmachine_pv}" | cut -f 1 -d ".")/ \
+| html2text -nobs | grep -P -o -e "[0-9\.]+( |_)Installer" \
+| sed -r -e "s#( |_)Installer##g" | sort -V | tail -n 1)
+}
+
+# we track only 1.x (dated 2014) for enigma
+repo_latest_version_get_alure_pv() {
+	# time here is zulu
+	local pv=$(wget -q -O - \
+https://repo.or.cz/alure.git/blob_plain/refs/heads/alure-1.x:/include/AL/alure.h \
+| grep "ALURE_VERSION_STRING" | grep -P -o "[0-9\.]+")
+	# The server sends utc in rss but web is local time.
+	# The ebuild timestamp is based on local.
+	local suffix=$(TZ="America/Los_Angeles" date -d "TZ=\"UTC\" $(wget -q  -O - \
+https://repo.or.cz/alure.git/rss/refs/heads/alure-1.x \
+| html2text -nobs -width 1000  | grep "@" | head -n 2 | tail -n 1 | cut -f 3 -d ';' \
+| cut -f 2-7 -d ' ')" +"%Y%m%d")
+	echo "${pv}_p${suffix}"
 }
 
 repo_latest_version_get_aforgedotnet_pv() {
@@ -236,17 +279,17 @@ repo_latest_version_get_assimp-net_pv() {
 https://github.com/assimp/assimp-net.git)
 }
 
-repo_latest_version_get_aforgedotnet_pv() {
+repo_latest_version_get_abseil-cpp_pv() {
+	echo $(get_newest_pv \
+https://github.com/abseil/abseil-cpp.git)
+}
+
+repo_latest_version_get_atitextureconverter_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/infinitespace-studios/ATI.TextureConverter/master/ATI.TextureConverter/Properties/AssemblyInfo.cs \
 | grep -e "AssemblyVersion" | grep -P -o -e "[0-9\.]+" | cut -f 1-2 -d ".")
 	local suffix=$(get_head_suffix "infinitespace-studios/ATI.TextureConverter" "master")
 	echo "${pv}_p${suffix}"
-}
-
-repo_latest_version_get_abseil-cpp_pv() {
-	echo $(get_newest_pv \
-https://github.com/abseil/abseil-cpp.git)
 }
 
 # don't sort, already sorted
@@ -413,6 +456,14 @@ repo_latest_version_get_emacs-ycmd_pv() {
 https://github.com/abingham/emacs-ycmd.git)
 }
 
+repo_latest_version_get_emoji-cli_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/b4b4r07/emoji-cli/master/CHANGELOG.md \
+| grep -P -o -e "v[0-9\.]+" | head -n 1 | sed -e "s|v||g")
+	local suffix=$(get_head_suffix "b4b4r07/emoji-cli" "master")
+	echo "${pv}_p${suffix}"
+}
+
 repo_latest_version_get_emojify_pv() {
 	echo $(get_newest_pv \
 https://github.com/mrowa44/emojify.git)
@@ -445,7 +496,8 @@ git://git.suckless.org/dwm)
 repo_latest_version_get_godot_pv() {
 	echo $(get_tags \
 https://github.com/godotengine/godot.git | tr " " "\n" \
-| grep -P -e "^[0-9]" | grep -P -e "^"$(echo "${oiledmachine_pv}" \
+| grep -P -e "^[0-9]" | sed -e "s|-stable||g" \
+| grep -P -e "^"$(echo "${oiledmachine_pv}" \
 	| cut -f 1 -d "-" | cut -f 1 -d ".") \
 | sort -V | tail -n 1)
 }
@@ -525,6 +577,8 @@ https://github.com/svenevs/exhale.git \
 		| tail -n 1)
 }
 
+# farseer-physics-engine needs to be pruned?
+
 repo_latest_version_get_freeimagenet_pv() {
 	echo $(wget -q -O - \
 "https://sourceforge.net/projects/freeimage/rss?path=/Source%20Distribution" \
@@ -545,6 +599,15 @@ repo_latest_version_get_gcr_pv() {
 	echo $(get_tags \
 https://gitlab.gnome.org/GNOME/gcr.git | tr " " "\n" \
 	| tr " " "\n" | grep -P -e "^[0-9]" | sort -V | tail -n 1)
+}
+
+# slots are 5 and 4
+repo_latest_version_get_gdevelop_pv() {
+	echo $(get_tags \
+https://github.com/4ian/GDevelop.git \
+| tr " " "\n" | grep -P -e "^[0-9]" \
+| grep -P -e $(echo "${oiledmachine_pv}" | cut -f 1 -d "-" | cut -f 1 -d ".") \
+| sort -V | tail -n 1)
 }
 
 repo_latest_version_get_geeks-diary_pv() {
@@ -583,6 +646,8 @@ repo_latest_version_get_gst-plugins-omx_pv() {
 https://gitlab.freedesktop.org/gstreamer/gst-omx.git | tr " " "\n" \
 	| tr " " "\n" | grep -P -e "^[0-9]" | sort -V | tail -n 1)
 }
+
+# gwen-dotnet needs to be pruned?
 
 repo_latest_version_get_hunspell_pv() {
 	echo $(get_tags \
@@ -626,11 +691,6 @@ repo_latest_version_get_instatron_pv() {
 https://github.com/alexdevero/instatron.git)
 }
 
-repo_latest_version_get_instatron_pv() {
-	echo $(get_newest_prefixed_v_pv \
-https://github.com/IsmAvatar/LateralGM.git)
-}
-
 repo_latest_version_get_joshedit_pv() {
 	local pv=1 # versioned by slot. 0 is for mainline.  1 is for lateralgm use.
 	local suffix=$(get_head_suffix "JoshDreamland/JoshEdit" "master")
@@ -647,6 +707,11 @@ repo_latest_version_get_koala_pv() {
 https://github.com/arsduo/koala.git \
 		| tr " " "\n" | sed -r -e "s#\.?(rc|beta)#_\1#g" | sort -V \
 		| tail -n 1)
+}
+
+repo_latest_version_get_lateralgm_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/IsmAvatar/LateralGM.git)
 }
 
 repo_latest_version_get_libappimage_pv() {
@@ -671,6 +736,14 @@ repo_latest_version_get_libcpuid_pv() {
 https://github.com/anrieff/libcpuid.git)
 }
 
+repo_latest_version_get_libgdiplus_pv() {
+	echo $(get_tags \
+https://github.com/mono/libgdiplus.git \
+		| tr " " "\n" | grep -P -o "^[0-9]" \
+		| sort -V \
+		| tail -n 1)
+}
+
 # change _p to _pre?  untagged
 repo_latest_version_get_lidgren-network-gen3_pv() {
 	local pv=$(wget -q -O - \
@@ -686,6 +759,11 @@ repo_latest_version_get_libdesktopenvironments_pv() {
 	echo "${pv}_p${suffix}"
 }
 
+repo_latest_version_get_libfishsound_pv() {
+	echo $(get_newest_pv \
+https://gitlab.xiph.org/xiph/libfishsound.git)
+}
+
 repo_latest_version_get_libfreenect_pv() {
 	echo $(get_newest_prefixed_v_pv \
 https://github.com/OpenKinect/libfreenect.git)
@@ -697,10 +775,18 @@ https://github.com/libgit2/libgit2sharp.git | tr " " "\n" \
 	| tr " " "\n" | sed -e "s|-rc|_rc|g" | sort -V | tail -n 1)
 }
 
+repo_latest_version_get_libmaker_pv() {
+	local pv="9999"
+	local suffix=$(get_head_suffix "IsmAvatar/LibMaker" "master")
+	echo "${pv}_pre${suffix}"
+}
+
 repo_latest_version_get_libmediainfo_pv() {
 	echo $(get_newest_prefixed_v_pv \
 https://github.com/MediaArea/MediaInfoLib.git)
 }
+
+# libmp4v2 no official repo.  dead project?
 
 repo_latest_version_get_libomxil-bellagio_pv() {
 	echo $(
@@ -821,6 +907,13 @@ repo_latest_version_get_liri-base-qtaccountsservice_pv() {
 	local pv=$(get_newest_prefixed_v_pv \
 https://github.com/lirios/qtaccountsservice.git)
 	echo "${pv}"
+}
+
+repo_latest_version_get_liri-base-qtgsettings_pv() {
+	local pv=$(get_newest_prefixed_v_pv \
+https://github.com/lirios/qtudev.git)
+	local suffix=$(get_head_suffix "lirios/qtgsettings" "develop")
+	echo "${pv}_p${suffix}"
 }
 
 repo_latest_version_get_liri-base-qtudev_pv() {
@@ -952,14 +1045,6 @@ https://raw.githubusercontent.com/lirios/screencast/develop/CMakeLists.txt \
 	echo "${pv}_pre${suffix}"
 }
 
-repo_latest_version_get_liri-extra-screencast_pv() {
-	local pv=$(wget -q -O - \
-https://raw.githubusercontent.com/lirios/screencast/develop/CMakeLists.txt \
-| grep -e " VERSION \"" | head -n 1 | grep -P -o -e "[0-9\.]+")
-	local suffix=$(get_head_suffix "lirios/screencast" "develop")
-	echo "${pv}_pre${suffix}"
-}
-
 repo_latest_version_get_liri-extra-screenshot_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/lirios/screenshot/develop/CMakeLists.txt \
@@ -1031,6 +1116,12 @@ repo_latest_version_get_monogame-extended_pv() {
 https://github.com/craftworkgames/MonoGame.Extended.git)
 }
 
+repo_latest_version_get_mrab-regex_pv() {
+	echo $(wget -q -O - \
+https://bitbucket.org/mrabarnett/mrab-regex/raw/hg/regex_3/regex.py \
+| grep "__version__ =" | grep -P -o "[0-9\.]+")
+}
+
 #trash?
 repo_latest_version_get_msbuild_pv() {
 	local pv=$(wget -q -O - \
@@ -1067,10 +1158,25 @@ repo_latest_version_get_nativefier_pv() {
 https://github.com/jiahaog/nativefier.git)
 }
 
+# prune?
+repo_latest_version_get_ndesk-options_pv() {
+	echo $(wget -q -O - \
+http://www.ndesk.org/Options | html2text -nobs | grep "ZIP" \
+| grep -P -o -e "_[0-9\.]+" | sed -e "s|_||g" | sort -V \
+| tail -n 1)
+}
+
 repo_latest_version_get_nestegg_pv() {
 	local pv="9999"
 	local suffix=$(get_head_suffix "kinetiknz/nestegg" "master")
 	echo "${pv}_pre${suffix}"
+}
+
+repo_latest_version_get_netbeans-alice_pv() {
+	echo $(wget -q -O - \
+https://www.alice.org/get-alice/alice-3-with-netbeans/ \
+| grep -o "Alice3.*Plugin.*.nbm" | sed -e "s|Alice3NetBeans[0-9]Plugin_||g" \
+	-e "s|.nbm||g" -e "s|_|.|g" | sort -V | uniq | tail -n 1)
 }
 
 repo_latest_version_get_nodejs_pv() {
@@ -1098,6 +1204,18 @@ https://github.com/googlefonts/noto-emoji.git \
 		| sed -e "s|-||g")
 }
 
+repo_latest_version_get_nuget_pv() {
+	# todo
+	echo $(get_tags \
+https://github.com/mrward/nuget.git \
+| tr " " "\n" | sed -r -e "s#(Release-|rel-|release-)##g" -e "s|-RC|_rc|g" \
+-e "s|Beta|_beta|g" -e "s|-public||g" -e "s|-MonoDevelop||g" \
+-e "s|monodevelop-|2.8.1|g" -e "s|Release([0-9])|\1|g" -e "s|mondevelop-|2.8.1|g" -e "s|||g" \
+| grep -v -e "2.0oob-0619" | grep -v -e "-NuGet.Core_Only" \
+| sort -V | uniq | tail -n 1)
+	echo "${pv}"
+}
+
 repo_latest_version_get_nunit_pv() {
 	echo $(get_tags \
 https://github.com/nunit/nunit.git | tr " " "\n" \
@@ -1116,6 +1234,12 @@ repo_latest_version_get_nvorbis_pv() {
 https://github.com/NVorbis/NVorbis.git)
 }
 
+repo_latest_version_get_nxjson_pv() {
+	local pv="9999"
+	local suffix=$(get_head_suffix "yarosla/nxjson" "master")
+	echo "${pv}_p${suffix}"
+}
+
 repo_latest_version_get_obs-studio_pv() {
 	echo $(get_newest_pv \
 https://github.com/obsproject/obs-studio.git)
@@ -1124,6 +1248,16 @@ https://github.com/obsproject/obs-studio.git)
 repo_latest_version_get_oidn_pv() {
 	echo $(get_newest_prefixed_v_pv \
 https://github.com/OpenImageDenoise/oidn.git)
+}
+
+repo_latest_version_get_oggz_pv() {
+	echo $(get_newest_pv \
+https://gitlab.xiph.org/xiph/liboggz.git)
+}
+
+repo_latest_version_get_opusfile_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://gitlab.xiph.org/xiph/opusfile.git)
 }
 
 repo_latest_version_get_ot-kernel_pv() {
@@ -1190,6 +1324,8 @@ https://github.com/premake/premake-core.git \
 	| cut -f 1 -d ".") \
 | sort -V | tail -n 1)
 }
+
+# protobuild is eol
 
 # untagged.  use _pre?
 # we use qt5 because qt4 removed from gentoo
@@ -1378,6 +1514,8 @@ repo_latest_version_get_taglib_pv() {
 	echo "${pv}_pre${suffix}"
 }
 
+# taoframework may be pruned
+
 repo_latest_version_get_tesseract_pv() {
 	echo $(get_newest_pv \
 https://github.com/charlesw/tesseract.git)
@@ -1397,11 +1535,36 @@ https://github.com/marshallward/TiledSharp.git | tr " " "\n" \
 		| tail -n 1)
 }
 
+repo_latest_version_get_lua_pv() {
+	echo $(get_tags \
+https://github.com/lua/lua.git | tr " " "\n" \
+| grep -P "^[0-9]" \
+| grep -P "^"$(echo "${oiledmachine_pv}" | cut -f 1 -d "-" | cut -f 1-2 -d ".") \
+| sort -V | tail -n 1)
+}
+
 repo_latest_version_get_luasqlite3_pv() {
 	echo $(wget -q -O - \
 http://lua.sqlite.org/index.cgi/home | html2text -nobs \
 | grep -P -o -e "Version\w[0-9\.]+" | sed -e "s|Version\w||g" \
 | sort -V | head -n 1)
+}
+
+# untagged.  change from _p to _pre?
+repo_latest_version_get_theorafile_pv() {
+	local pv="9999"
+	local suffix=$(get_head_suffix "FNA-XNA/Theorafile" "master")
+	echo "9999_p${suffix}"
+}
+
+repo_latest_version_get_theoraplay_pv() {
+	local pv="9999"
+	# time on rss is -0400
+	local suffix=$(TZ="America/Los_Angeles" date -d "$(wget -q -O - \
+https://hg.icculus.org/icculus/theoraplay/rss-log \
+| html2text -nobs -width 240 | grep '@' | head -n 2 | tail -n 1 \
+| cut -f 3- -d '>' | sed -r -e 's|^[ ]+||g')" +"%Y%m%d")
+	echo "9999_p${suffix}"
 }
 
 repo_latest_version_get_tuluaxx_pv() {
@@ -1446,10 +1609,7 @@ https://github.com/libvips/libvips.git)
 }
 
 repo_latest_version_get_w3crapcli-lastfm_pv() {
-	local suffix=$(date -d "$(wget -q -O - \
-https://github.com/l29ah/w3crapcli/commits/master/last.fm \
-| html2text -nobs | grep -P -e 'Commits on' | head -n 1 \
-| cut -f 4-6 -d ' ')" +"%Y%m%d")
+	local suffix=$(get_head_suffix "l29ah/w3crapcli" "master")
 	echo "${suffix}"
 }
 
@@ -1512,12 +1672,13 @@ repo_latest_version_get_zsync2_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/AppImage/zsync2/master/CMakeLists.txt \
 | grep -e "set(VERSION" | sed -e "s|set(VERSION \"||g" -e "s|\")||g" \
-| sed -e "s|-|_|g")
+| sed -e "s|-||g")
 	local suffix=$(get_head_suffix "AppImage/zsync2" "master")
 	echo "${pv}_p${suffix}"
 }
 
 scan_repos() {
+	echo "Checking projects"
 	for ebuild in $(find . -name "*.ebuild") ; do
 		local category=$(echo "${ebuild}" | cut -f 2 -d "/")
 		local ebuild_filename=$(basename "${ebuild}")
@@ -1575,14 +1736,31 @@ scan_repos() {
 	done
 }
 
+filter_by_slot() {
+	local stable_versions=$(get_stable_versions "${STABLE_ARCH}")
+	if [[ "${category}/${pn}" == "dev-lang/lua" ]] ; then
+		echo "${stable_versions}" | grep -P -e "^"$(echo "${oiledmachine_pv}" | cut -f 1-2 -d ".")
+	elif [[ "${category}/${pn}" == "dev-util/premake" ]] ; then
+		echo "${stable_versions}" | grep -P -e "^"$(echo "${oiledmachine_pv}" | cut -f 1 -d ".")
+	elif [[ "${category}/${pn}" == "media-gfx/blender" ]] ; then
+		echo "${stable_versions}" | grep -P -e "^"$(echo "${oiledmachine_pv}" | cut -f 1-2 -d ".")
+	elif [[ "${category}/${pn}" == "net-libs/nodejs" ]] ; then
+		echo "${stable_versions}" | grep -P -e "^"$(echo "${oiledmachine_pv}" | cut -f 1 -d ".")
+	else
+		echo -e "${stable_versions}"
+	fi
+}
+
 scan_gentoo_overlay() {
+	echo "Checking the Gentoo overlay"
 	for ebuild in $(find . -name "*.ebuild") ; do
 		local category=$(echo "${ebuild}" | cut -f 2 -d "/")
 		local ebuild_filename=$(basename "${ebuild}")
 		local pn=$(echo "${ebuild}" | cut -f 3 -d "/")
 		local oiledmachine_pv=$(echo "${ebuild_filename}" \
 			| sed -e "s|${pn}-||g" -e "s|\.ebuild$||")
-		local newest=$(get_stable_versions "amd64" | tail -n 1)
+		local versions=$(filter_by_slot $(get_stable_versions "${STABLE_ARCH}"))
+		local newest=$(echo -e "${versions}" | tail -n 1)
 		if (( ${#newest} > 0 )) ; then
 			local bn_newest=$(basename "${newest}")
 			local gentoo_pv=$(echo "${bn_newest}" \
@@ -1593,7 +1771,7 @@ scan_gentoo_overlay() {
 				$(echo "${oiledmachine_pv}" | cut -f 1 -d "-")
 			then
 				echo -e \
-"Found ${pn} is newer on gentoo overlay oiledmachine_pv=${oiledmachine_pv} \
+"Found ${pn} is newer on the Gentoo overlay oiledmachine_pv=${oiledmachine_pv} \
 gentoo_pv=${gentoo_pv}"
 			fi
 		fi
