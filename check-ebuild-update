@@ -258,18 +258,19 @@ edebug() {
 
 gen_save_pv() {
 	mkdir -p "${CACHE_DIR}/${category}/${pn}"
-	rm -rf "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv_b64}"
-	"${fn}" > "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv_b64}"
-	cat "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv_b64}"
+	rm -rf "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv}"
+	"${fn}" > "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv}"
+	cat "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv}"
 }
 
 get_pv() {
 	local fn="${1}"
-	if [[ -f "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv_b64}" ]] ; then
-		local datec=$(stat -c "%W" "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv_b64}")
+	# can't use SLOT because it uses ver_cut and variables
+	if [[ -f "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv}" ]] ; then
+		local datec=$(stat -c "%W" "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv}")
 		local now=$(date +"%s")
 		if (( ${now} < ${datec} + ${CACHE_EXPIRE} )) ; then
-			cat "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv_b64}"
+			cat "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv}"
 		else
 			gen_save_pv
 		fi
@@ -286,8 +287,6 @@ scan_repos() {
 		local pn=$(echo "${ebuild}" | cut -f 3 -d "/")
 		local oiledmachine_pv=$(echo "${ebuild_filename}" \
 			| sed -e "s|${pn}-||g" -e "s|\.ebuild$||")
-		# can't use SLOT because it uses ver_cut and variables
-		local oiledmachine_pv_b64=$(echo "${oiledmachine_pv}" | base64)
 		local repo_pv
 		edebug "Inspecting ${category}/${pn}"
 		for p in $(grep -P -e "^repo_latest_version_get_(${category}-)?" "${SCRAPERS_FILE}" \
@@ -372,8 +371,6 @@ scan_gentoo_overlay() {
 		local pn=$(echo "${ebuild}" | cut -f 3 -d "/")
 		local oiledmachine_pv=$(echo "${ebuild_filename}" \
 			| sed -e "s|${pn}-||g" -e "s|\.ebuild$||")
-		# can't use SLOT because it uses ver_cut and variables
-		local oiledmachine_pv_b64=$(echo "${oiledmachine_pv}" | base64)
 		local versions=$(filter_by_slot $(get_stable_versions "${STABLE_ARCH}"))
 		local newest=$(echo -e "${versions}" | tail -n 1)
 		if (( ${#newest} > 0 )) ; then
