@@ -1,0 +1,1458 @@
+repo_latest_version_get_alice_pv() {
+	echo $(wget -q -O - \
+https://www.alice.org/get-alice/alice-$(echo "${oiledmachine_pv}" | cut -f 1 -d ".")/ \
+| html2text -nobs | grep -P -o -e "[0-9\.]+( |_)Installer" \
+| sed -r -e "s#( |_)Installer##g" | sort -V | tail -n 1)
+}
+
+# we track only 1.x (dated 2014) for enigma
+repo_latest_version_get_alure_pv() {
+	# time here is zulu
+	local pv=$(wget -q -O - \
+https://repo.or.cz/alure.git/blob_plain/refs/heads/alure-1.x:/include/AL/alure.h \
+| grep "ALURE_VERSION_STRING" | grep -P -o "[0-9\.]+")
+	# The server sends utc in rss but web is local time.
+	# The ebuild timestamp is based on local.
+	local suffix=$(TZ="America/Los_Angeles" date -d "TZ=\"UTC\" $(wget -q  -O - \
+https://repo.or.cz/alure.git/rss/refs/heads/alure-1.x \
+| html2text -nobs -width 1000  | grep "@" | head -n 2 | tail -n 1 | cut -f 3 -d ';' \
+| cut -f 2-7 -d ' ')" +"%Y%m%d")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_aforgedotnet_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/andrewkirillov/AForge.NET/master/Sources/Core/Properties/AssemblyInfo.cs \
+| grep -e "AssemblyVersion" | grep -v "//" | grep -P -o "[0-9\.]+" | cut -f 1-3 -d ".")
+	local suffix=$(get_head_suffix "andrewkirillov/AForge.NET" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_appimaged_pv() {
+	local pv="9999"
+	local suffix=$(get_head_suffix "AppImage/appimaged" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_appimagetool_pv() {
+	local pv1=$(wget -q -O - \
+https://raw.githubusercontent.com/AppImage/AppImageKit/master/src/appimagetoolnoglib.c \
+| grep "\"appimagetool" | head -n 1 | grep -P -o "[0-9\.]+")
+	local pv2=$(get_tags \
+https://github.com/AppImage/AppImageKit.git \
+		| tr " " "\n" | grep -P -e "^[0-9]" \
+		| sort -V | uniq | tail -n 1)
+	local suffix=$(get_head_suffix "AppImage/AppImageKit" "master")
+	echo "${pv1}_p${pv2}_p${suffix}"
+}
+
+repo_latest_version_get_appimageupdate_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/AppImage/AppImageUpdate/rewrite/CMakeLists.txt \
+| grep -F -e "set(VERSION" | sed -e "s|set(VERSION ||g" -e "s|)||" -e "s|-|_|")
+	local suffix=$(get_head_suffix "AppImage/AppImageUpdate" "rewrite")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_assimp-net_pv() {
+	echo $(get_newest_pv \
+https://github.com/assimp/assimp-net.git)
+}
+
+repo_latest_version_get_abseil-cpp_pv() {
+	echo $(get_newest_pv \
+https://github.com/abseil/abseil-cpp.git)
+}
+
+repo_latest_version_get_atitextureconverter_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/infinitespace-studios/ATI.TextureConverter/master/ATI.TextureConverter/Properties/AssemblyInfo.cs \
+| grep -e "AssemblyVersion" | grep -P -o -e "[0-9\.]+" | cut -f 1-2 -d ".")
+	local suffix=$(get_head_suffix "infinitespace-studios/ATI.TextureConverter" "master")
+	echo "${pv}_p${suffix}"
+}
+
+# don't sort, already sorted
+repo_latest_version_get_binaryen_pv() {
+	echo $(get_tags \
+https://github.com/WebAssembly/binaryen.git \
+		| tr " " "\n" | sed -e "s|version_||g" | grep -P -e "^[0-9]" \
+		| tail -n 1)
+}
+
+repo_latest_version_get_bitlbee-facebook_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/bitlbee/bitlbee-facebook.git)
+}
+
+repo_latest_version_get_bear_pv() {
+	echo $(get_newest_pv \
+https://github.com/rizsotto/Bear.git)
+}
+
+repo_latest_version_get_beatdetectorforgames_pv() {
+	local pv="9999"
+	local suffix=$(get_head_suffix "Terracorrupt/BeatDetectorForGames" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_boinc-bfgminer-cpu_pv() {
+	echo $(get_tags \
+https://github.com/luke-jr/bfgminer.git \
+		| tr " " "\n" | sed -e "s|bfgminer-||g" \
+		| grep -P -e "^[0-9]" \
+		| sort -V | tail -n 1)
+}
+
+repo_latest_version_get_boinc-bfgminer-gpu_pv() {
+	echo $(repo_latest_version_get_boinc-bfgminer-cpu_pv)
+}
+
+repo_latest_version_get_black_pv() {
+	echo $(get_tags \
+https://github.com/psf/black.git \
+		| tr " " "\n" | sed -e "s|b|_beta|g" -e "s|a|_alpha|" \
+		| grep -P -e "^[0-9]" \
+		| tail -n 1)
+}
+
+repo_latest_version_get_blender_pv() {
+	echo $(get_tags \
+https://github.com/blender/blender.git \
+		| tr " " "\n" \
+		| grep -P -o $(echo "${oiledmachine_pv}" \
+			| cut -f 1 -d "-" | sed -e "s|[a-z]||" \
+			| cut -f 1-2 -d ".")"[a-z0-9\.]?" \
+		| sort -V | tail -n 1)
+}
+
+repo_latest_version_get_boinc_pv() {
+	echo $(git ls-remote --tags \
+https://github.com/BOINC/boinc.git \
+		| tr " " "\n" | cut -f 3- -d "/" | grep -v "[\^]" \
+		| grep "client_release" | cut -f 3 -d "/" \
+		| grep -v "OSX_notices_hotfix" | sort -V | tail -n 1)
+}
+
+repo_latest_version_get_boinc-server_pv() {
+	echo $(git ls-remote --tags \
+https://github.com/BOINC/boinc.git \
+		| tr " " "\n" | cut -f 3- -d "/" | grep -v "[\^]" \
+		| grep "server_release" | cut -f 3 -d "/" \
+		| grep -v "server_release" | sort -V | uniq | tail -n 1)
+}
+
+repo_latest_version_get_BulletSharpPInvoke_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/AndresTraks/BulletSharpPInvoke/master/BulletSharp/Properties/AssemblyInfo.cs \
+| grep -e "AssemblyVersion" | grep -v "//" | grep -P -o "[0-9\.]+" | cut -f 1-2 -d ".")
+	local suffix=$(get_head_suffix "AndresTraks/BulletSharpPInvoke" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_bullet_pv() {
+	echo $(get_newest_pv \
+https://github.com/bulletphysics/bullet3.git)
+}
+
+repo_latest_version_get_caesium-clt_pv() {
+	echo $(get_tags \
+https://github.com/Lymphatus/caesium-clt.git \
+		| tr " " "\n" | sed -r -e "s|^v\.||g" -e "s|\.beta|_beta|g" \
+		| sort -V | tail -n 1)
+}
+
+repo_latest_version_get_caprine_pv() {
+	echo $(get_newest_pv \
+https://github.com/sindresorhus/caprine.git)
+}
+
+repo_latest_version_get_carbon-now-cli_pv() {
+	echo $(get_newest_pv \
+https://github.com/mixn/carbon-now-cli.git)
+}
+
+repo_latest_version_get_civetweb_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/civetweb/civetweb.git)
+}
+
+repo_latest_version_get_closure-compiler-npm_pv() {
+	echo $(get_newest_pv \
+https://github.com/google/closure-compiler-npm.git)
+}
+
+repo_latest_version_get_corert_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/dotnet/corert/master/Packaging.props \
+| grep -e "PackageVersion" | grep -v "Lineup" | grep -P -o -e "[0-9\.]+")
+	local is_alpha=""
+	if wget -q -O - https://raw.githubusercontent.com/dotnet/corert/master/Packaging.props \
+		| grep -e "PreReleaseLabel" | grep -q -e "alpha" ; then
+		is_alpha="_alpha"
+	fi
+	local suffix=$(get_head_suffix "dotnet/corert" "master")
+	echo "${pv}${is_alpha}_p${suffix}"
+}
+
+repo_latest_version_get_cpupower-gui_pv() {
+	echo $(get_newest_pv \
+https://github.com/vagnum08/cpupower-gui.git)
+}
+
+repo_latest_version_get_devhub_pv() {
+	echo $(get_tags \
+https://github.com/devhubapp/devhub.git \
+		| tr " " "\n" | grep -P -e "^[0-9]" \
+		| grep -v "14241a00ebbf24a8a5c116000c1cc6d1421771ef" \
+		| sort -V | tail -n 1)
+}
+
+repo_latest_version_get_ddgr_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/jarun/ddgr.git)
+}
+
+repo_latest_version_get_double-conversion_pv() {
+	echo $(get_newest_pv \
+https://github.com/google/double-conversion.git)
+}
+
+repo_latest_version_get_ecryptfs-utils_pv() {
+	echo $(wget -q -O - \
+https://bazaar.launchpad.net/~ecryptfs/ecryptfs/trunk/download/head:/configure.ac \
+| grep AC_INIT | grep -P -o "[0-9]+")
+}
+
+repo_latest_version_get_embree_pv() {
+	echo $(get_tags \
+https://github.com/embree/embree.git | tr " " "\n" \
+		| sed -r -e "s#-(alpha|beta)\.?#_\1#g" | grep -v -e "knc" \
+		| grep -v -e "sycl_stable" | sort -V | tail -n 1)
+}
+
+repo_latest_version_get_emacs-ycmd_pv() {
+	echo $(get_newest_pv \
+https://github.com/abingham/emacs-ycmd.git)
+}
+
+repo_latest_version_get_emoji-cli_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/b4b4r07/emoji-cli/master/CHANGELOG.md \
+| grep -P -o -e "v[0-9\.]+" | head -n 1 | sed -e "s|v||g")
+	local suffix=$(get_head_suffix "b4b4r07/emoji-cli" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_emojify_pv() {
+	echo $(get_newest_pv \
+https://github.com/mrowa44/emojify.git)
+}
+
+repo_latest_version_get_firejail_pv() {
+	echo $(get_tags \
+https://github.com/netblue30/firejail.git | tr " " "\n" \
+	| sed -r -e "s|-rc|_rc|g" -e "s#(-LTS|-LTS-release)##g" \
+	| grep -P -e "^[0-9]" | sort -V | tail -n 1)
+}
+
+repo_latest_version_get_fna_pv() {
+	echo $(get_newest_pv \
+https://github.com/FNA-XNA/FNA.git)
+}
+
+repo_latest_version_go-appimage_pv() {
+	local pv="9999"
+	local suffix=$(get_head_suffix "probonopd/go-appimage" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_dwm_pv() {
+	echo $(get_newest_pv \
+git://git.suckless.org/dwm)
+}
+
+# This repo tracks 3.x and 2.x
+repo_latest_version_get_godot_pv() {
+	echo $(get_tags \
+https://github.com/godotengine/godot.git | tr " " "\n" \
+| grep -P -e "^[0-9]" | sed -e "s|-stable||g" \
+| grep -P -e "^"$(echo "${oiledmachine_pv}" \
+	| cut -f 1 -d "-" | cut -f 1 -d ".") \
+| sort -V | tail -n 1)
+}
+
+repo_latest_version_get_googler_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/jarun/googler.git)
+}
+
+repo_latest_version_get_grex_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/pemistahl/grex.git)
+}
+
+repo_latest_version_get_grpc_pv() {
+	echo $(get_tags \
+https://github.com/grpc/grpc.git | tr " " "\n" \
+	| grep -P -e "^[0-9]" | sort -V | tail -n 1)
+}
+
+repo_latest_version_get_gtk-sharp_pv() {
+	echo $(get_tags \
+https://github.com/mono/gtk-sharp.git \
+	| tr " " "\n" \
+	| grep -v -e "2.x" \
+	| grep -P -e "^[0-9]" | sort -V | tail -n 1)
+}
+
+repo_latest_version_get_gycm_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/jakeanq/gycm/master/gycm.cpp  \
+| grep PLUGIN_SET_INFO | cut -f 3 -d "," | grep -P -o "[0-9\.]+")
+	local suffix=$(get_head_suffix "jakeanq/gycm" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_epic-journal_pv() {
+	echo $(get_tags \
+https://github.com/alangrainger/epic-journal.git \
+		| tr " " "\n" | sed -r -e "s|^\.||g" | sort -V | tail -n 1)
+}
+
+repo_latest_version_get_emscripten_pv() {
+	echo $(get_tags \
+https://github.com/emscripten-core/emscripten.git \
+| tr " " "\n" | grep -P -e "^[0-9]" | grep -P -o -e \
+$(echo ${oiledmachine_pv} | cut -f 1 -d "-" | cut -f 1-2 -d ".") \
+	| sort -V | tail -n 1)
+}
+
+repo_latest_version_get_emscripten-fastcomp_pv() {
+	echo $(get_tags \
+https://github.com/emscripten-core/emscripten-fastcomp.git \
+| tr " " "\n" | grep -P -e "^[0-9]" | grep -P -o -e \
+$(echo ${oiledmachine_pv} | cut -f 1 -d "-" | cut -f 1-2 -d ".") \
+	| sort -V | tail -n 1)
+}
+
+repo_latest_version_get_enchant_pv() {
+	echo $(get_tags \
+https://github.com/AbiWord/enchant.git | tr " " "\n" \
+	| sed -r -e "s#(release-|enchant-)##" -e "s|-|.|g" \
+	| grep -P -e "^[0-9]" \
+	| sort -V | tail -n 1)
+}
+
+repo_latest_version_get_enigma_pv() {
+	local pv="9999"
+	local suffix=$(get_head_suffix "enigma-dev/enigma-dev" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_exhale_pv() {
+	echo $(get_tags \
+https://github.com/svenevs/exhale.git \
+		| tr " " "\n" | grep -P -e "^[0-9]" | sort -V \
+		| tail -n 1)
+}
+
+# farseer-physics-engine needs to be pruned?
+
+repo_latest_version_get_freeimagenet_pv() {
+	echo $(wget -q -O - \
+"https://sourceforge.net/projects/freeimage/rss?path=/Source%20Distribution" \
+| grep -P -o -e "FreeImage[0-9]+.zip" \
+| sort -V | sed -e "s|FreeImage||g" -e "s|.zip||" \
+| sed -r -e "s|([0-9])([0-9]{2})([0-9])|\1.\2.\3|" -e "s|([0-9])([0-9])([0-9])|\1.\2.\3|g" \
+| uniq | tail -n 1)
+}
+
+repo_latest_version_get_gambas_pv() {
+	echo $(get_tags \
+https://gitlab.com/gambas/gambas.git \
+		| tr " " "\n" | grep -P -e "^[0-9]" | sort -V \
+		| tail -n 1)
+}
+
+repo_latest_version_get_gcr_pv() {
+	echo $(get_tags \
+https://gitlab.gnome.org/GNOME/gcr.git | tr " " "\n" \
+	| tr " " "\n" | grep -P -e "^[0-9]" | sort -V | tail -n 1)
+}
+
+# slots are 5 and 4
+repo_latest_version_get_gdevelop_pv() {
+	echo $(get_tags \
+https://github.com/4ian/GDevelop.git \
+| tr " " "\n" | grep -P -e "^[0-9]" \
+| grep -P -e $(echo "${oiledmachine_pv}" | cut -f 1 -d "-" | cut -f 1 -d ".") \
+| sort -V | tail -n 1)
+}
+
+repo_latest_version_get_geeks-diary_pv() {
+	echo $(get_newest_pv \
+https://github.com/seokju-na/geeks-diary.git)
+}
+
+repo_latest_version_get_glfw_pv() {
+	echo $(get_newest_pv \
+https://github.com/glfw/glfw.git)
+}
+
+repo_latest_version_get_genkernel_pv() {
+	echo $(get_tags \
+https://github.com/gentoo/genkernel.git \
+	| tr " " "\n" \
+	| sed -r -e "s|-funtoo||g" -e "s|^genkernel-||g" \
+	| grep -P -e "^[0-9]" | sort -V \
+	| tail -n 1)
+}
+
+repo_latest_version_get_googleearthpro_pv() {
+	echo $(wget -q -O - \
+https://support.google.com/earth/answer/168344 \
+| html2text | grep -P -e "v[0-9]\.[0-9]\.[0-9]" | sort -V | tail -n 1 \
+| sed -e "s|^v||")
+}
+
+repo_latest_version_get_gnome-sharp_pv() {
+	echo $(get_newest_pv \
+https://github.com/mono/gnome-sharp.git)
+}
+
+repo_latest_version_get_gst-plugins-omx_pv() {
+	echo $(get_tags \
+https://gitlab.freedesktop.org/gstreamer/gst-omx.git | tr " " "\n" \
+	| tr " " "\n" | grep -P -e "^[0-9]" | sort -V | tail -n 1)
+}
+
+# gwen-dotnet needs to be pruned?
+
+repo_latest_version_get_hunspell_pv() {
+	echo $(get_tags \
+https://github.com/hunspell/hunspell.git | tr " " "\n" \
+	| grep -P -e "^[0-9]" | sort -V \
+	| tail -n 1)
+}
+
+repo_latest_version_get_hyphen_pv() {
+	echo $(wget -q -O - \
+"https://sourceforge.net/projects/hunspell/rss?path=/Hyphen" \
+| grep -P -o -e "hyphen-[0-9\.]+.tar.gz" \
+| sed -r -e "s|-([0-9]\.[0-9])\.tar\.gz|-\1.0.tar.gz|g" \
+| sed -e "s|hyphen-||" -e "s|.tar.gz||" | sort -V | uniq | tail -n 1)
+}
+
+# only stable
+repo_latest_version_get_igdm_pv() {
+	echo $(get_tags \
+https://github.com/igdmapps/igdm.git \
+		| tr " " "\n" | grep -P -i -v -e ".*(ALPHA|BETA|RC).*" \
+		| sort -V \
+		| tail -n 1)
+}
+
+# normalized to gentoo pv standards
+repo_latest_version_get_igdm-cli_pv() {
+	echo $(get_tags \
+https://github.com/mathdroid/igdm-cli.git \
+		| tr " " "\n" | sed -r -e "s|-([0-9]+)|_p\1|g" | sort -V \
+		| tail -n 1)
+}
+
+repo_latest_version_get_inotify-tools_pv() {
+	echo $(get_newest_pv \
+https://github.com/inotify-tools/inotify-tools.git)
+}
+
+repo_latest_version_get_instatron_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/alexdevero/instatron.git)
+}
+
+repo_latest_version_get_joshedit_pv() {
+	local pv=1 # versioned by slot. 0 is for mainline.  1 is for lateralgm use.
+	local suffix=$(get_head_suffix "JoshDreamland/JoshEdit" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_kitchen_pv() {
+	echo $(get_newest_pv \
+https://github.com/fedora-infra/kitchen.git)
+}
+
+repo_latest_version_get_koala_pv() {
+	echo $(get_tags \
+https://github.com/arsduo/koala.git \
+		| tr " " "\n" | sed -r -e "s#\.?(rc|beta)#_\1#g" | sort -V \
+		| tail -n 1)
+}
+
+repo_latest_version_get_lateralgm_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/IsmAvatar/LateralGM.git)
+}
+
+repo_latest_version_get_libappimage_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/AppImage/libappimage.git)
+}
+
+repo_latest_version_get_libcaesium_pv() {
+	echo $(get_newest_pv \
+https://github.com/Lymphatus/libcaesium.git)
+}
+
+repo_latest_version_get_libcaca_pv() {
+	echo $(get_tags \
+https://github.com/cacalabs/libcaca.git | tr " " "\n" \
+		| sed -r -e "s|^v||g" -e "s|\.beta|_beta|g" | sort -V \
+		| tail -n 1)
+}
+
+repo_latest_version_get_libcpuid_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/anrieff/libcpuid.git)
+}
+
+repo_latest_version_get_libgdiplus_pv() {
+	echo $(get_tags \
+https://github.com/mono/libgdiplus.git \
+		| tr " " "\n" | grep -P -o "^[0-9]" \
+		| sort -V \
+		| tail -n 1)
+}
+
+# change _p to _pre?  untagged
+repo_latest_version_get_lidgren-network-gen3_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/lidgren/lidgren-network-gen3/master/Lidgren.Network/Properties/AssemblyInfo.cs \
+| grep -e "AssemblyVersion" | grep -v "//" | grep -P -o "[0-9\.]+")
+	local suffix=$(get_head_suffix "lidgren/lidgren-network-gen3" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_libdesktopenvironments_pv() {
+	local pv="9999"
+	local suffix=$(get_head_suffix "TheAssassin/libdesktopenvironments" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_libfishsound_pv() {
+	echo $(get_newest_pv \
+https://gitlab.xiph.org/xiph/libfishsound.git)
+}
+
+repo_latest_version_get_libfreenect_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/OpenKinect/libfreenect.git)
+}
+
+repo_latest_version_get_libgit2sharp_pv() {
+	echo $(get_tags \
+https://github.com/libgit2/libgit2sharp.git | tr " " "\n" \
+	| tr " " "\n" | sed -e "s|-rc|_rc|g" | sort -V | tail -n 1)
+}
+
+repo_latest_version_get_libmaker_pv() {
+	local pv="9999"
+	local suffix=$(get_head_suffix "IsmAvatar/LibMaker" "master")
+	echo "${pv}_pre${suffix}"
+}
+
+repo_latest_version_get_libmediainfo_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/MediaArea/MediaInfoLib.git)
+}
+
+# libmp4v2 no official repo.  dead project?
+
+repo_latest_version_get_libomxil-bellagio_pv() {
+	echo $(
+wget -q -O - \
+https://sourceforge.net/projects/omxil/rss?path=/ \
+| grep -P -o -e "libomxil(-bellagio)?-[0-9\.]+.tar.gz" \
+| sed -r -e "s#(libomxil-|libomxil-bellagio-)##g" \
+	-e "s|\.tar\.gz||g" -e "s|([0-9]).([0-9])|\1.\2.0|g" \
+| sort -V | tail -n 1	)
+}
+
+repo_latest_version_get_libsfml_pv() {
+	echo $(get_tags \
+https://github.com/SFML/SFML.git \
+		| tr " " "\n" | grep -P -e "^[0-9]" | sort -V | tail -n 1)
+}
+
+repo_latest_version_get_libspotify_pv() {
+	echo $(wget -q -O - \
+https://github.com/mopidy/libspotify-archive \
+| html2text -nobs | grep -P -e "libspotify-.*(tar.gz|zip)" \
+| sort -V | tail -n 1 | grep -P -o -e "-[0-9\.]+-" | sed -e "s|-||g")
+}
+
+repo_latest_version_get_libzen_pv() {
+	echo $(get_newest_pv \
+https://github.com/MediaArea/ZenLib.git)
+}
+
+repo_latest_version_get_libyuv_pv() {
+	echo $(wget -q -O - \
+https://chromium.googlesource.com/libyuv/libyuv/+/refs/heads/master/README.chromium \
+		| html2text | grep -e "Version:" | sed -r -e "s|[^0-9]+||g")
+}
+
+repo_latest_version_get_liri-base-appcenter_pv() {
+	local pv=$(get_newest_prefixed_v_pv \
+https://github.com/lirios/appcenter.git)
+	local suffix=$(get_head_suffix "lirios/appcenter" "develop")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_liri-base-cmake-shared_pv() {
+	local pv=$(get_newest_prefixed_v_pv \
+https://github.com/lirios/cmake-shared.git)
+	local suffix=$(get_head_suffix "lirios/cmake-shared" "develop")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_liri-base-eglfs_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/lirios/eglfs/develop/CMakeLists.txt \
+| grep -e " VERSION \"" | head -n 1 | grep -P -o -e "[0-9\.]+")
+	local suffix=$(get_head_suffix "lirios/eglfs" "develop")
+	echo "${pv}_pre${suffix}"
+}
+
+repo_latest_version_get_liri-base-files_pv() {
+	local pv=$(get_newest_prefixed_v_pv \
+https://github.com/lirios/files.git)
+	local suffix=$(get_head_suffix "lirios/files" "develop")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_liri-base-fluid_pv() {
+	local pv=$(get_newest_prefixed_v_pv \
+https://github.com/lirios/fluid.git)
+	local suffix=$(get_head_suffix "lirios/fluid" "develop")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_liri-base-libliri_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/lirios/libliri/develop/CMakeLists.txt \
+| grep -e " VERSION \"" | head -n 1 | grep -P -o -e "[0-9\.]+")
+	local suffix=$(get_head_suffix "lirios/libliri" "develop")
+	echo "${pv}_pre${suffix}"
+}
+
+repo_latest_version_get_liri-base-materialdecoration_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/lirios/materialdecoration/develop/CMakeLists.txt \
+| grep -e " VERSION \"" | head -n 1 | grep -P -o -e "[0-9\.]+")
+	local suffix=$(get_head_suffix "lirios/materialdecoration" "develop")
+	echo "${pv}_pre${suffix}"
+}
+
+repo_latest_version_get_liri-base-platformtheme_pv() {
+	local pv=$(get_newest_prefixed_v_pv \
+https://github.com/lirios/platformtheme.git)
+	local suffix=$(get_head_suffix "lirios/platformtheme" "develop")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_liri-base-pulseaudio_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/lirios/pulseaudio/develop/CMakeLists.txt \
+| grep -e " VERSION \"" | head -n 1 | grep -P -o -e "[0-9\.]+")
+	local suffix=$(get_head_suffix "lirios/pulseaudio" "develop")
+	echo "${pv}_pre${suffix}"
+}
+
+repo_latest_version_get_liri-base-qbs-shared_pv() {
+	local pv=$(get_newest_prefixed_v_pv \
+https://github.com/lirios/qbs-shared.git)
+	local suffix=$(get_head_suffix "lirios/qbs-shared" "develop")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_liri-base-qml-xwayland_pv() {
+	local pv=$(get_newest_prefixed_v_pv \
+https://github.com/lirios/qml-xwayland.git)
+	local suffix=$(get_head_suffix "lirios/qml-xwayland" "develop")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_liri-base-qtaccountsservice_pv() {
+	local pv=$(get_newest_prefixed_v_pv \
+https://github.com/lirios/qtaccountsservice.git)
+	echo "${pv}"
+}
+
+repo_latest_version_get_liri-base-qtgsettings_pv() {
+	local pv=$(get_newest_prefixed_v_pv \
+https://github.com/lirios/qtudev.git)
+	local suffix=$(get_head_suffix "lirios/qtgsettings" "develop")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_liri-base-qtudev_pv() {
+	local pv=$(get_newest_prefixed_v_pv \
+https://github.com/lirios/qtudev.git)
+	local suffix=$(get_head_suffix "lirios/qtudev" "develop")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_liri-base-session_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/lirios/session/develop/CMakeLists.txt \
+| grep -e " VERSION \"" | head -n 1 | grep -P -o -e "[0-9\.]+")
+	local suffix=$(get_head_suffix "lirios/session" "develop")
+	echo "${pv}_pre${suffix}"
+}
+
+repo_latest_version_get_liri-base-settings_pv() {
+	local pv=$(get_newest_prefixed_v_pv \
+https://github.com/lirios/settings.git)
+	local suffix=$(get_head_suffix "lirios/settings" "develop")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_liri-base-shell_pv() {
+	local pv=$(get_newest_prefixed_v_pv \
+https://github.com/lirios/shell.git)
+	local suffix=$(get_head_suffix "lirios/shell" "develop")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_liri-base-terminal_pv() {
+	local pv=$(get_newest_prefixed_v_pv \
+https://github.com/lirios/terminal.git)
+	local suffix=$(get_head_suffix "lirios/terminal" "develop")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_liri-base-themes_pv() {
+	local pv=$(get_newest_prefixed_v_pv \
+https://github.com/lirios/themes.git)
+	local suffix=$(get_head_suffix "lirios/themes" "develop")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_liri-base-wallpapers_pv() {
+	local pv=$(get_newest_prefixed_v_pv \
+https://github.com/lirios/wallpapers.git)
+	local suffix=$(get_head_suffix "lirios/wallpapers" "develop")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_liri-base-wayland_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/lirios/wayland/develop/CMakeLists.txt \
+| grep -e " VERSION \"" | head -n 1 | grep -P -o -e "[0-9\.]+")
+	local suffix=$(get_head_suffix "lirios/wayland" "develop")
+	echo "${pv}_pre${suffix}"
+}
+
+repo_latest_version_get_liri-base-xdg-desktop-portal-liri_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/lirios/xdg-desktop-portal-liri/develop/CMakeLists.txt \
+| grep -e " VERSION \"" | head -n 1 | grep -P -o -e "[0-9\.]+")
+	local suffix=$(get_head_suffix "lirios/xdg-desktop-portal-liri" "develop")
+	echo "${pv}_pre${suffix}"
+}
+
+repo_latest_version_get_liri-extra-browser_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/lirios/browser/develop/CMakeLists.txt \
+| grep -e " VERSION \"" | head -n 1 | grep -P -o -e "[0-9\.]+")
+	local suffix=$(get_head_suffix "lirios/browser" "develop")
+	echo "${pv}_pre${suffix}"
+}
+
+repo_latest_version_get_liri-extra-calculator_pv() {
+	local pv=$(get_newest_prefixed_v_pv \
+https://github.com/lirios/calculator.git)
+	local suffix=$(get_head_suffix "lirios/calculator" "develop")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_liri-extra-music_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/lirios/music/master/CMakeLists.txt \
+| grep -e " VERSION \"" | head -n 1 | grep -P -o -e "[0-9\.]+")
+	local suffix=$(get_head_suffix "lirios/music" "develop")
+	echo "${pv}_pre${suffix}"
+}
+
+repo_latest_version_get_liri-extra-networkmanager_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/lirios/networkmanager/develop/CMakeLists.txt \
+| grep -e " VERSION \"" | head -n 1 | grep -P -o -e "[0-9\.]+")
+	local suffix=$(get_head_suffix "lirios/networkmanager" "develop")
+	echo "${pv}_pre${suffix}"
+}
+
+repo_latest_version_get_liri-extra-player_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/lirios/player/develop/CMakeLists.txt \
+| grep -e " VERSION \"" | head -n 1 | grep -P -o -e "[0-9\.]+")
+	local suffix=$(get_head_suffix "lirios/player" "develop")
+	echo "${pv}_pre${suffix}"
+}
+
+repo_latest_version_get_liri-extra-power-manager_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/lirios/power-manager/develop/CMakeLists.txt \
+| grep -e " VERSION \"" | head -n 1 | grep -P -o -e "[0-9\.]+")
+	local suffix=$(get_head_suffix "lirios/power-manager" "develop")
+	echo "${pv}_pre${suffix}"
+}
+
+repo_latest_version_get_liri-extra-samtal_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/lirios/samtal/develop/CMakeLists.txt \
+| grep -e " VERSION \"" | head -n 1 | grep -P -o -e "[0-9\.]+")
+	local suffix=$(get_head_suffix "lirios/samtal" "develop")
+	echo "${pv}_pre${suffix}"
+}
+
+repo_latest_version_get_liri-extra-screencast_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/lirios/screencast/develop/CMakeLists.txt \
+| grep -e " VERSION \"" | head -n 1 | grep -P -o -e "[0-9\.]+")
+	local suffix=$(get_head_suffix "lirios/screencast" "develop")
+	echo "${pv}_pre${suffix}"
+}
+
+repo_latest_version_get_liri-extra-screenshot_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/lirios/screenshot/develop/CMakeLists.txt \
+| grep -e " VERSION \"" | head -n 1 | grep -P -o -e "[0-9\.]+")
+	local suffix=$(get_head_suffix "lirios/screenshot" "develop")
+	echo "${pv}_pre${suffix}"
+}
+
+repo_latest_version_get_liri-extra-text_pv() {
+	local pv=$(get_newest_pv \
+https://github.com/lirios/text.git)
+	local suffix=$(get_head_suffix "lirios/text" "develop")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_lepton_pv() {
+	echo $(get_newest_pv \
+https://github.com/hackjutsu/Lepton.git)
+}
+
+repo_latest_version_get_leveldb_pv() {
+	echo $(get_newest_pv \
+https://github.com/google/leveldb.git)
+}
+
+repo_latest_version_get_lgmplugin_pv() {
+	echo $(get_tags \
+https://github.com/enigma-dev/lgmplugin.git | tr " " "\n" \
+		| sed "s|r|_p|g" | sort -V | tail -n 1)
+}
+
+repo_latest_version_get_log4c_pv() {
+	echo $(wget -q -O - \
+"https://sourceforge.net/projects/log4c/rss?path=/" \
+| grep -P -o -e "log4c-[0-9\.]+.tar.gz" \
+| sed -e "s|log4c-||" -e "s|\.tar\.gz||" | sort -V | uniq | tail -n 1)
+}
+
+repo_latest_version_get_mesa_pv() {
+	echo $(get_tags \
+https://gitlab.freedesktop.org/mesa/mesa.git | tr " " "\n" \
+| grep -e "mesa" | sed -r -e "s#(mesa_|mesa-)##g" | grep -P -o -e "^[0-9\.]+" \
+| grep -v "branchpoint" | grep -P -v -e "^[0-9]{8}" \
+| sort -V | tail -n 1)
+}
+
+repo_latest_version_get_mono-addins_pv() {
+	echo $(get_tags \
+https://github.com/mono/mono-addins.git | tr " " "\n" \
+		| sed "s|mono-addins-||g" | sort -V | tail -n 1)
+}
+
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
+repo_latest_version_get_monodevelop_pv() {
+	echo $(get_tags \
+https://github.com/mono/monodevelop.git | tr " " "\n" \
+		| grep -P -e "^monodevelop-" | sed -e "s|monodevelop-||g" \
+		| sort -V \
+		| tail -n 1)
+}
+
+repo_latest_version_get_monogame_pv() {
+	echo $(get_newest_pv \
+https://github.com/MonoGame/MonoGame.git)
+}
+
+repo_latest_version_get_monogame-extended_pv() {
+	echo $(get_newest_pv \
+https://github.com/craftworkgames/MonoGame.Extended.git)
+}
+
+repo_latest_version_get_mrab-regex_pv() {
+	echo $(wget -q -O - \
+https://bitbucket.org/mrabarnett/mrab-regex/raw/hg/regex_3/regex.py \
+| grep "__version__ =" | grep -P -o "[0-9\.]+")
+}
+
+#trash?
+repo_latest_version_get_msbuild_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/mono/msbuild/xplat-master/eng/Versions.props \
+| grep "VersionPrefix" | head -n 1 | grep -P -o "[0-9\.]+")
+	local suffix=$(get_head_suffix "mono/msbuild" "xplat-master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_mozjpeg_pv() {
+	echo $(get_tags \
+https://github.com/mozilla/mozjpeg.git | tr " " "\n" \
+		| grep -v -e "jpeg" | sort -V | tail -n 1)
+}
+
+repo_latest_version_get_nant_pv() {
+# versioning should be on ver_cut 1-2 to be consistent with tagged releases
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/nant/nant/master/src/CommonAssemblyInfo.cs \
+| grep "AssemblyVersionAttribute" | grep -P -o -e "[0-9\.]+")
+	local suffix=$(get_head_suffix "nant/nant" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_nanodbc_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/nanodbc/nanodbc/master/VERSION)
+	local suffix=$(get_head_suffix "nanodbc/nanodbc" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_nativefier_pv() {
+	echo $(get_newest_pv \
+https://github.com/jiahaog/nativefier.git)
+}
+
+# prune?
+repo_latest_version_get_ndesk-options_pv() {
+	echo $(wget -q -O - \
+http://www.ndesk.org/Options | html2text -nobs | grep "ZIP" \
+| grep -P -o -e "_[0-9\.]+" | sed -e "s|_||g" | sort -V \
+| tail -n 1)
+}
+
+repo_latest_version_get_nestegg_pv() {
+	local pv="9999"
+	local suffix=$(get_head_suffix "kinetiknz/nestegg" "master")
+	echo "${pv}_pre${suffix}"
+}
+
+repo_latest_version_get_netbeans-alice_pv() {
+	echo $(wget -q -O - \
+https://www.alice.org/get-alice/alice-3-with-netbeans/ \
+| grep -o "Alice3.*Plugin.*.nbm" | sed -e "s|Alice3NetBeans[0-9]Plugin_||g" \
+	-e "s|.nbm||g" -e "s|_|.|g" | sort -V | uniq | tail -n 1)
+}
+
+repo_latest_version_get_nodejs_pv() {
+	echo $(get_tags \
+https://github.com/nodejs/node.git  \
+| tr " " "\n" | grep -P -e "^[0-9]" \
+| grep -P -e "^"$(echo "${oiledmachine_pv}" | cut -f 1 -d "-" \
+	| cut -f 1 -d ".") \
+| sort -V | tail -n 1)
+}
+
+# only _p
+repo_latest_version_get_noto-color-emoji_pv() {
+	echo $(git ls-remote --tags \
+https://github.com/googlefonts/noto-emoji.git \
+		| cut -f 3 -d "/" | grep -v "[\^]" | tail -n 1 | cut -c 2-11 \
+		| sed -e "s|-||g")
+}
+
+# only _p
+repo_latest_version_get_noto-color-emoji-bin_pv() {
+	echo $(git ls-remote --tags \
+https://github.com/googlefonts/noto-emoji.git \
+		| cut -f 3 -d "/" | grep -v "[\^]" | tail -n 1 | cut -c 2-11 \
+		| sed -e "s|-||g")
+}
+
+repo_latest_version_get_nuget_pv() {
+	# todo
+	echo $(get_tags \
+https://github.com/mrward/nuget.git \
+| tr " " "\n" | sed -r -e "s#(Release-|rel-|release-)##g" -e "s|-RC|_rc|g" \
+-e "s|Beta|_beta|g" -e "s|-public||g" -e "s|-MonoDevelop||g" \
+-e "s|monodevelop-|2.8.1|g" -e "s|Release([0-9])|\1|g" -e "s|mondevelop-|2.8.1|g" -e "s|||g" \
+| grep -v -e "2.0oob-0619" | grep -v -e "-NuGet.Core_Only" \
+| sort -V | uniq | tail -n 1)
+	echo "${pv}"
+}
+
+repo_latest_version_get_nunit_pv() {
+	echo $(get_tags \
+https://github.com/nunit/nunit.git | tr " " "\n" \
+		| grep -P "^[0-9]" \
+		| sort -V \
+		| tail -n 1)
+}
+
+repo_latest_version_get_nvidia-texture-tools_pv() {
+	echo $(get_newest_pv \
+https://github.com/castano/nvidia-texture-tools.git)
+}
+
+repo_latest_version_get_nvorbis_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/NVorbis/NVorbis.git)
+}
+
+repo_latest_version_get_nxjson_pv() {
+	local pv="9999"
+	local suffix=$(get_head_suffix "yarosla/nxjson" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_obs-studio_pv() {
+	echo $(get_newest_pv \
+https://github.com/obsproject/obs-studio.git)
+}
+
+repo_latest_version_get_oidn_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/OpenImageDenoise/oidn.git)
+}
+
+repo_latest_version_get_oggz_pv() {
+	echo $(get_newest_pv \
+https://gitlab.xiph.org/xiph/liboggz.git)
+}
+
+repo_latest_version_get_opusfile_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://gitlab.xiph.org/xiph/opusfile.git)
+}
+
+repo_latest_version_get_ot-kernel_pv() {
+	echo $(wget -q -O - \
+https://www.kernel.org/feeds/kdist.xml | xmlstarlet unesc \
+| grep -P -o "Version:.*"$(echo ${oiledmachine_pv} \
+	| cut -f 1 -d "-" | cut -f 1-2 -d ".")"[0-9\.]+" \
+| grep -P -o -e "[0-9\.]+")
+}
+
+repo_latest_version_get_openvdb_pv() {
+	echo $(get_newest_pv \
+https://github.com/AcademySoftwareFoundation/openvdb.git)
+}
+
+repo_latest_version_get_openxr_pv() {
+	echo $(get_tags \
+https://github.com/KhronosGroup/OpenXR-SDK-Source.git | tr " " "\n" \
+		| sed -e "s|release-||g" | sort -V | tail -n 1)
+}
+
+repo_latest_version_get_oh-my-zsh_pv() {
+	local pv="9999"
+	local suffix=$(get_head_suffix "ohmyzsh/ohmyzsh" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_opentk_pv() {
+	echo $(get_newest_pv \
+https://github.com/opentk/opentk.git)
+}
+
+# the latest but prefer the older versions
+repo_latest_version_get_pdfchain_pv() {
+	echo $(wget -q -O - \
+"https://sourceforge.net/projects/pdfchain/rss?path=/" \
+| grep -P -o "pdfchain-[0-9\.]+.tar.gz" | grep -v -e "-0.123" \
+| sort -V | tail -n 1 | sed -e "s|pdfchain-||g" -e "s|\.tar\.gz||")
+}
+
+repo_latest_version_get_pocket_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/tapanpandita/pocket.git)
+}
+
+repo_latest_version_get_percol_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/mooz/percol.git)
+}
+
+repo_latest_version_get_python-plexapi_pv() {
+	echo $(get_tags \
+https://github.com/pkkid/python-plexapi.git \
+		| tr " " "\n" | grep -P -e "^[0-9]" \
+		| sort -V | tail -n 1)
+}
+
+# This overlay tracks both 4.x and 5.x
+repo_latest_version_get_premake_pv() {
+	echo $(get_tags \
+https://github.com/premake/premake-core.git \
+| tr " " "\n" | grep -P -e "^[0-9]" \
+| grep -P -e "^"$(echo ${oiledmachine_pv} | cut -f 1 -d "-" \
+	| cut -f 1 -d ".") \
+| sort -V | tail -n 1)
+}
+
+# protobuild is eol
+
+# untagged.  use _pre?
+# we use qt5 because qt4 removed from gentoo
+repo_latest_version_get_puddletag_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/puddletag/puddletag/pyqt5/source/puddlestuff/__init__.py \
+| grep "version_string =" | grep -P -o "[0-9\.]+")
+	local suffix=$(get_head_suffix "puddletag/puddletag" "pyqt5")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_pugixml_pv() {
+	echo $(get_tags \
+https://github.com/zeux/pugixml.git | tr " " "\n" \
+		| grep -v "latest" | sort -V | tail -n 1)
+}
+
+repo_latest_version_get_pullp_pv() {
+	echo $(get_newest_pv \
+https://github.com/rkclark/pullp.git)
+}
+
+#todo reversion the ebuilds
+repo_latest_version_get_pvrtexlibnet_pv() {
+	echo $(get_newest_pv \
+https://github.com/flyingdevelopmentstudio/PVRTexLibNET.git)
+}
+
+# untagged? use pre_?
+repo_latest_version_get_py-stackexchange_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/lucjon/Py-StackExchange/master/setup.py \
+| grep -P -e "version =" | grep -o -P -e "[0-9\.]+")
+	local suffix=$(get_head_suffix "lucjon/Py-StackExchange" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_pyfiglet_pv() {
+	# The latest tag was dated in Dec 2018.
+	local pv=$(get_tags \
+https://github.com/pwaller/pyfiglet.git | tr " " "\n" \
+		| sed -e "s|\.?post|_p|g" | sort -V | tail -n 1)
+	local suffix=$(get_head_suffix "pwaller/pyfiglet" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_pytest-raises_pv() {
+	echo $(get_newest_pv \
+https://github.com/Lemmons/pytest-raises.git)
+}
+
+repo_latest_version_get_qb64_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/Galleondragon/qb64.git)
+}
+
+# doesn't tag newer releases, so inspect latest commit
+repo_latest_version_get_rainbowstream_pv() {
+	echo $(wget -q -O - \
+https://raw.githubusercontent.com/orakaro/rainbowstream/master/setup.py \
+		| grep "version =" | sed -e "s|version = '||" -e "s|'||")
+}
+
+repo_latest_version_get_recastnavigation_pv() {
+	local pv="9999"
+	local suffix=$(get_head_suffix "recastnavigation/recastnavigation" "master")
+	echo "${pv}_p${suffix}"
+}
+
+#repo_latest_version_get_r_ock-dkms_pv() {
+#	echo $(get_tags \
+#https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver.git | tr " " "\n" \
+#| sed -r -e "s|Beta|_beta|g" -e "s#(roc-|hipclang-|rocm-)##g" | sort -V \
+#| tail -n 1)
+#}
+
+repo_latest_version_get_rock-dkms_pv() {
+	echo $(wget -q -O - \
+http://repo.radeon.com/rocm/apt/debian/pool/main/r/rock-dkms/ \
+| html2text -nobs | grep -e "rock-dkms_" | cut -f 1 -d " " \
+| sed -e "s|rock-dkms_||" -e "s|_all\.deb||" \
+| sed -r -e "s|([0-9].[0-9])-([0-9]+)|\1_p\2|")
+}
+
+repo_latest_version_get_rock-firmware_pv() {
+	echo $(wget -q -O - \
+http://repo.radeon.com/rocm/apt/debian/pool/main/r/rock-dkms/ \
+| html2text -nobs | grep -e "rock-dkms-firmware" | cut -f 1 -d " " \
+| sed -e "s|rock-dkms-firmware_||" -e "s|_all\.deb||" \
+| sed -r -e "s|([0-9].[0-9])-([0-9]+)|\1_p\2|")
+}
+
+repo_latest_version_get_rvt_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/michael-lazar/rtv.git)
+}
+
+repo_latest_version_get_sanitizers-cmake_pv() {
+	local pv="9999"
+	local suffix=$(get_head_suffix "arsenm/sanitizers-cmake" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_sfmldotnet_pv() {
+	echo $(get_tags \
+https://github.com/SFML/SFML.Net.git | tr " " "\n" \
+		| sed -r -e "s|-rc|_rc|g" | sort -V \
+		| tail -n 1)
+}
+
+repo_latest_version_get_sharpnav_pv() {
+	echo $(get_tags \
+https://github.com/Robmaister/SharpNav.git | tr " " "\n" \
+		| sed -r -e "s|-alpha\.|_alpha|g" | sort -V \
+		| tail -n 1)
+}
+
+repo_latest_version_get_sharpfont_pv() {
+	echo $(get_newest_pv \
+https://github.com/Robmaister/SharpFont.git)
+}
+
+repo_latest_version_get_sheepit-client_pv() {
+	echo $(get_newest_pv \
+https://github.com/laurent-clouet/sheepit-client.git)
+}
+
+repo_latest_version_get_slntools_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/ArsenShnurkov/slntools/master/Main/SLNTools.msi/Product.wxs \
+| grep "ProductVersion=" | grep -P -o -e "[0-9\.]+")
+	local suffix=$(get_head_suffix "ArsenShnurkov/slntools" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_snippetstore_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/ZeroX-DG/SnippetStore.git)
+}
+
+repo_latest_version_get_socli_pv() {
+	echo $(get_newest_pv \
+https://github.com/gautamkrishnar/socli.git)
+}
+
+# untagged release.  use _pre?
+repo_latest_version_get_souncloud-python_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/soundcloud/soundcloud-python/master/soundcloud/__init__.py \
+| grep "__version__ =" | head -n 1 | grep -P -o "[0-9\.]+")
+	local suffix=$(get_head_suffix "soundcloud/soundcloud-python" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_spotify_pv() {
+	echo $(wget -q -O - \
+http://repository.spotify.com/dists/stable/non-free/binary-amd64/Packages \
+| grep "spotify-client_" | cut -f 2 -d "_" | grep -P -o "^[0-9\.]+" \
+| sed -r -e "s|\.$||g")
+}
+
+repo_latest_version_get_squashfuse_pv() {
+	echo $(get_newest_pv \
+https://github.com/vasi/squashfuse.git)
+}
+
+repo_latest_version_get_stickynotes_pv() {
+	echo $(get_newest_pv \
+https://github.com/Playork/StickyNotes.git)
+}
+
+repo_latest_version_get_startup-notification_pv() {
+	echo $(get_tags \
+git://anongit.freedesktop.org/git/startup-notification | tr " " "\n" \
+		| sed -e "s|STARTUP_NOTIFICATION_||g" -e "s|_|.|g" | sort -V | tail -n 1)
+}
+
+repo_latest_version_get_surf_pv() {
+	echo $(get_newest_pv \
+git://git.suckless.org/surf)
+}
+
+repo_latest_version_get_taglib_pv() {
+	local pv=2.0 # made up but refers to taglib2 branch ; unofficial
+	local suffix=$(get_head_suffix "taglib/taglib" "taglib2")
+	echo "${pv}_pre${suffix}"
+}
+
+# taoframework may be pruned
+
+repo_latest_version_get_tesseract_pv() {
+	echo $(get_newest_pv \
+https://github.com/charlesw/tesseract.git)
+}
+
+repo_latest_version_get_tizonia_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/tizonia/tizonia-openmax-il.git)
+}
+
+repo_latest_version_get_tiledsharp_pv() {
+	echo $(get_tags \
+https://github.com/marshallward/TiledSharp.git | tr " " "\n" \
+		| sed -e "s|r|_p|g" \
+		| grep -P "^[0-9]" \
+		| sort -V \
+		| tail -n 1)
+}
+
+repo_latest_version_get_lua_pv() {
+	echo $(get_tags \
+https://github.com/lua/lua.git | tr " " "\n" \
+| grep -P "^[0-9]" \
+| grep -P "^"$(echo "${oiledmachine_pv}" | cut -f 1 -d "-" | cut -f 1-2 -d ".") \
+| sort -V | tail -n 1)
+}
+
+repo_latest_version_get_luasqlite3_pv() {
+	echo $(wget -q -O - \
+http://lua.sqlite.org/index.cgi/home | html2text -nobs \
+| grep -P -o -e "Version\w[0-9\.]+" | sed -e "s|Version\w||g" \
+| sort -V | head -n 1)
+}
+
+# untagged.  change from _p to _pre?
+repo_latest_version_get_theorafile_pv() {
+	local pv="9999"
+	local suffix=$(get_head_suffix "FNA-XNA/Theorafile" "master")
+	echo "9999_p${suffix}"
+}
+
+repo_latest_version_get_theoraplay_pv() {
+	local pv="9999"
+	# time on rss is -0400
+	local suffix=$(TZ="America/Los_Angeles" date -d "$(wget -q -O - \
+https://hg.icculus.org/icculus/theoraplay/rss-log \
+| html2text -nobs -width 240 | grep '@' | head -n 2 | tail -n 1 \
+| cut -f 3- -d '>' | sed -r -e 's|^[ ]+||g')" +"%Y%m%d")
+	echo "9999_p${suffix}"
+}
+
+repo_latest_version_get_tuluaxx_pv() {
+	echo $(wget -q -O - \
+https://raw.githubusercontent.com/waltervn/toluapp/master/include/tolua%2B%2B.h \
+| grep -e "TOLUA_VERSION" | grep -P -o -e "[0-9\.]+" | head -n 1)
+}
+
+repo_latest_version_get_twitter_pv() {
+	echo $(get_tags \
+https://github.com/sixohsix/twitter.git \
+		| tr " " "\n" | sed -e "s|twitter-||g" \
+		| grep -P -e "^[0-9]" | sort -V | tail -n 1)
+}
+
+# it's slotted by ver_cut 1-2
+# already sorted, we don't sort because they don't pad 3.9-rc
+repo_latest_version_get_typescript_pv() {
+	echo $(get_tags \
+https://github.com/microsoft/TypeScript.git \
+| tr " " "\n" | grep -P -e "^[0-9]" \
+| grep -P -e "^"$(echo "${oiledmachine_pv}" \
+| cut -f 1 -d "-" | cut -f 1-2 -d ".") \
+| tail -n 1)
+}
+
+# only stable, don't sort! 1.23 should be 1.2.3? 1.32 should be 1.3.2?
+repo_latest_version_get_urho3d_pv() {
+	echo $(get_tags \
+https://github.com/urho3d/Urho3D.git | tr " " "\n" \
+		| grep -P -i -v -e ".*(ALPHA|BETA|RC).*" | tail -n 1)
+}
+
+# only stable, don't sort! 1.23 should be 1.2.3? 1.32 should be 1.3.2?
+repo_latest_version_get_urho3d-web_pv() {
+	echo $(repo_latest_version_get_urho3d_pv)
+}
+
+repo_latest_version_get_vips_pv() {
+	echo $(get_newest_pv \
+https://github.com/libvips/libvips.git)
+}
+
+repo_latest_version_get_w3crapcli-lastfm_pv() {
+	local suffix=$(get_head_suffix "l29ah/w3crapcli" "master")
+	echo "${suffix}"
+}
+
+repo_latest_version_get_wireshark_pv() {
+	echo $(get_tags \
+https://code.wireshark.org/review/wireshark.git | tr " " "\n" \
+| tr " " "\n" | sed -e "s|wireshark-||g" | grep -P -e "^[0-9]" \
+| sed -e "s|rc|_rc|g" | sort -V | tail -n 1)
+}
+
+repo_latest_version_get_webkit-gtk_pv() {
+	echo $(wget -q -O - \
+https://webkitgtk.org/releases/ | html2text -nobs \
+| grep -P -o "webkitgtk-[0-9\.]+\.tar\.xz" \
+| sed -r -e "s|webkitgtk-||g" -e "s|.tar.xz||g" | sort -V | uniq \
+| tail -n 1)
+}
+
+repo_latest_version_get_woff2_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/google/woff2.git)
+}
+
+repo_latest_version_get_xdg-utils-cxx_pv() {
+	echo $(get_newest_prefixed_v_pv \
+https://github.com/azubieta/xdg-utils-cxx.git)
+}
+
+repo_latest_version_get_xpra_pv() {
+	echo $( wget -q -O - https://xpra.org/src/ | html2text -nobs \
+| grep -P -o -e "xpra-[0-9\.]+\.tar\.bz2 " | sed -r -e "s|xpra-|#|g" \
+	-e "s|\.tar\.bz2|#|g" -e "s|#([0-9]\.[0-9]+)#|\1.0|g" -e "s|#||g" \
+| sort -V | tail -n 1)
+}
+
+# untagged? change _p  to _pre
+repo_latest_version_get_xwt_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/mono/xwt/master/Xwt/AssemblyInfo.cs \
+| grep -e "AssemblyInformationalVersion" | sed "s|-prerelease|_pre|" \
+| grep -P -o -e "[0-9\.]+")
+	local suffix=$(get_head_suffix "mono/xwt" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_ycmd_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/ycm-core/ycmd/master/CORE_VERSION)
+	local suffix=$(get_head_suffix "ycm-core/ycmd" "master")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_ycm-generator_pv() {
+	local pv="9999"
+	local suffix=$(get_head_suffix "rdnetto/YCM-Generator" "stable")
+	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_zsync2_pv() {
+	local pv=$(wget -q -O - \
+https://raw.githubusercontent.com/AppImage/zsync2/master/CMakeLists.txt \
+| grep -e "set(VERSION" | sed -e "s|set(VERSION \"||g" -e "s|\")||g" \
+| sed -e "s|-||g")
+	local suffix=$(get_head_suffix "AppImage/zsync2" "master")
+	echo "${pv}_p${suffix}"
+}
