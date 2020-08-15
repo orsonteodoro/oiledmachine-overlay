@@ -258,18 +258,18 @@ edebug() {
 
 gen_save_pv() {
 	mkdir -p "${CACHE_DIR}/${category}/${pn}"
-	rm -rf "${CACHE_DIR}/${category}/${pn}/${slot_b64}"
-	"${fn}" > "${CACHE_DIR}/${category}/${pn}/${slot_b64}"
-	cat "${CACHE_DIR}/${category}/${pn}/${slot_b64}"
+	rm -rf "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv_b64}"
+	"${fn}" > "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv_b64}"
+	cat "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv_b64}"
 }
 
 get_pv() {
 	local fn="${1}"
-	if [[ -f "${CACHE_DIR}/${category}/${pn}/${slot_b64}" ]] ; then
-		local datec=$(stat -c "%W" "${CACHE_DIR}/${category}/${pn}/${slot_b64}")
+	if [[ -f "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv_b64}" ]] ; then
+		local datec=$(stat -c "%W" "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv_b64}")
 		local now=$(date +"%s")
 		if (( ${now} < ${datec} + ${CACHE_EXPIRE} )) ; then
-			cat "${CACHE_DIR}/${category}/${pn}/${slot_b64}"
+			cat "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv_b64}"
 		else
 			gen_save_pv
 		fi
@@ -281,12 +281,13 @@ get_pv() {
 scan_repos() {
 	echo "Checking projects"
 	for ebuild in $(find . -name "*.ebuild") ; do
-		local slot_b64=$(echo $(grep "SLOT=" "${ebuild}") | base64)
 		local category=$(echo "${ebuild}" | cut -f 2 -d "/")
 		local ebuild_filename=$(basename "${ebuild}")
 		local pn=$(echo "${ebuild}" | cut -f 3 -d "/")
 		local oiledmachine_pv=$(echo "${ebuild_filename}" \
 			| sed -e "s|${pn}-||g" -e "s|\.ebuild$||")
+		# can't use SLOT because it uses ver_cut and variables
+		local oiledmachine_pv_b64=$(echo "${oiledmachine_pv}" | base64)
 		local repo_pv
 		edebug "Inspecting ${category}/${pn}"
 		for p in $(grep -P -e "^repo_latest_version_get_(${category}-)?" "${SCRAPERS_FILE}" \
@@ -366,12 +367,13 @@ gen_gentoo_ver() {
 scan_gentoo_overlay() {
 	echo "Checking the Gentoo overlay"
 	for ebuild in $(find . -name "*.ebuild") ; do
-		local slot_b64=$(echo $(grep "SLOT=" "${ebuild}") | base64)
 		local category=$(echo "${ebuild}" | cut -f 2 -d "/")
 		local ebuild_filename=$(basename "${ebuild}")
 		local pn=$(echo "${ebuild}" | cut -f 3 -d "/")
 		local oiledmachine_pv=$(echo "${ebuild_filename}" \
 			| sed -e "s|${pn}-||g" -e "s|\.ebuild$||")
+		# can't use SLOT because it uses ver_cut and variables
+		local oiledmachine_pv_b64=$(echo "${oiledmachine_pv}" | base64)
 		local versions=$(filter_by_slot $(get_stable_versions "${STABLE_ARCH}"))
 		local newest=$(echo -e "${versions}" | tail -n 1)
 		if (( ${#newest} > 0 )) ; then
