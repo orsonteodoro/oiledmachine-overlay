@@ -4,7 +4,8 @@ repo_latest_version_get_alice_pv() {
 	echo $(wget -q -O - \
 https://www.alice.org/get-alice/alice-$(echo "${oiledmachine_pv}" | cut -f 1 -d ".")/ \
 | html2text -nobs | grep -P -o -e "[0-9\.]+( |_)Installer" \
-| sed -r -e "s#( |_)Installer##g" | sort -V | tail -n 1)
+| sed -r -e "s#( |_)Installer##g" \
+| esort | tr " " "\n" | tail -n 1)
 }
 
 # we track only 1.x (dated 2014) for enigma
@@ -41,7 +42,7 @@ https://raw.githubusercontent.com/AppImage/AppImageKit/master/src/appimagetoolno
 	local pv2=$(get_tags \
 https://github.com/AppImage/AppImageKit.git \
 		| grep -P -e "^[0-9]" \
-		| sort -V | uniq | tail -n 1)
+		| esort | tr " " "\n" | uniq | tail -n 1)
 	local suffix=$(get_head_suffix "AppImage/AppImageKit" "master")
 	echo "${pv1}_p${pv2}_p${suffix}"
 }
@@ -101,7 +102,7 @@ repo_latest_version_get_boinc-bfgminer-cpu_pv() {
 https://github.com/luke-jr/bfgminer.git \
 		| sed -e "s|bfgminer-||g" \
 		| grep -P -e "^[0-9]" \
-		| sort -V | tail -n 1)
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_boinc-bfgminer-gpu_pv() {
@@ -122,7 +123,7 @@ https://github.com/blender/blender.git \
 		| grep -P -o $(echo "${oiledmachine_pv}" \
 			| cut -f 1 -d "-" | sed -e "s|[a-z]||" \
 			| cut -f 1-2 -d ".")"[a-z0-9\.]?" \
-		| sort -V | tail -n 1)
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_boinc_pv() {
@@ -130,7 +131,8 @@ repo_latest_version_get_boinc_pv() {
 https://github.com/BOINC/boinc.git \
 		| cut -f 3- -d "/" | grep -v "[\^]" \
 		| grep "client_release" | cut -f 3 -d "/" \
-		| grep -v "OSX_notices_hotfix" | sort -V | tail -n 1)
+		| grep -v "OSX_notices_hotfix" \
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_boinc-server_pv() {
@@ -138,7 +140,8 @@ repo_latest_version_get_boinc-server_pv() {
 https://github.com/BOINC/boinc.git \
 		| cut -f 3- -d "/" | grep -v "[\^]" \
 		| grep "server_release" | cut -f 3 -d "/" \
-		| grep -v "server_release" | sort -V | uniq | tail -n 1)
+		| grep -v "server_release" \
+		| esort | tr " " "\n" | uniq | tail -n 1)
 }
 
 repo_latest_version_get_BulletSharpPInvoke_pv() {
@@ -158,7 +161,7 @@ repo_latest_version_get_caesium-clt_pv() {
 	echo $(get_tags \
 https://github.com/Lymphatus/caesium-clt.git \
 		| sed -r -e "s|^v\.||g" -e "s|\.beta|_beta|g" \
-		| sort -V | tail -n 1)
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_caprine_pv() {
@@ -204,7 +207,7 @@ repo_latest_version_get_devhub_pv() {
 https://github.com/devhubapp/devhub.git \
 		| grep -P -e "^[0-9]" \
 		| grep -v "14241a00ebbf24a8a5c116000c1cc6d1421771ef" \
-		| sort -V | tail -n 1)
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_ddgr_pv() {
@@ -227,7 +230,8 @@ repo_latest_version_get_embree_pv() {
 	echo $(get_tags \
 https://github.com/embree/embree.git \
 		| sed -r -e "s#-(alpha|beta)\.?#_\1#g" | grep -v -e "knc" \
-		| grep -v -e "sycl_stable" | sort -V | tail -n 1)
+		| grep -v -e "sycl_stable" \
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_emacs-ycmd_pv() {
@@ -252,7 +256,8 @@ repo_latest_version_get_firejail_pv() {
 	echo $(get_tags \
 https://github.com/netblue30/firejail.git \
 	| sed -r -e "s|-rc|_rc|g" -e "s#(-LTS|-LTS-release)##g" \
-	| grep -P -e "^[0-9]" | sort -V | tail -n 1)
+	| grep -P -e "^[0-9]" \
+	| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_fna_pv() {
@@ -278,7 +283,7 @@ https://github.com/godotengine/godot.git \
 | grep -P -e "^[0-9]" | sed -e "s|-stable||g" \
 | grep -P -e "^"$(echo "${oiledmachine_pv}" \
 	| cut -f 1 -d "-" | cut -f 1 -d ".") \
-| sort -V | tail -n 1)
+| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_googler_pv() {
@@ -294,14 +299,16 @@ https://github.com/pemistahl/grex.git)
 repo_latest_version_get_grpc_pv() {
 	echo $(get_tags \
 https://github.com/grpc/grpc.git \
-	| grep -P -e "^[0-9]" | sort -V | tail -n 1)
+	| grep -P -e "^[0-9]" \
+	| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_gtk-sharp_pv() {
 	echo $(get_tags \
 https://github.com/mono/gtk-sharp.git \
 	| grep -v -e "2.x" \
-	| grep -P -e "^[0-9]" | sort -V | tail -n 1)
+	| grep -P -e "^[0-9]" \
+	| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_gycm_pv() {
@@ -315,7 +322,8 @@ https://raw.githubusercontent.com/jakeanq/gycm/master/gycm.cpp  \
 repo_latest_version_get_epic-journal_pv() {
 	echo $(get_tags \
 https://github.com/alangrainger/epic-journal.git \
-		| sed -r -e "s|^\.||g" | sort -V | tail -n 1)
+		| sed -r -e "s|^\.||g" \
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_emscripten_pv() {
@@ -323,7 +331,7 @@ repo_latest_version_get_emscripten_pv() {
 https://github.com/emscripten-core/emscripten.git \
 | grep -P -e "^[0-9]" | grep -P -o -e \
 $(echo ${oiledmachine_pv} | cut -f 1 -d "-" | cut -f 1-2 -d ".") \
-	| sort -V | tail -n 1)
+	| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_emscripten-fastcomp_pv() {
@@ -331,7 +339,7 @@ repo_latest_version_get_emscripten-fastcomp_pv() {
 https://github.com/emscripten-core/emscripten-fastcomp.git \
 | grep -P -e "^[0-9]" | grep -P -o -e \
 $(echo ${oiledmachine_pv} | cut -f 1 -d "-" | cut -f 1-2 -d ".") \
-	| sort -V | tail -n 1)
+	| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_enchant_pv() {
@@ -339,7 +347,7 @@ repo_latest_version_get_enchant_pv() {
 https://github.com/AbiWord/enchant.git \
 	| sed -r -e "s#(release-|enchant-)##" -e "s|-|.|g" \
 	| grep -P -e "^[0-9]" \
-	| sort -V | tail -n 1)
+	| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_enigma_pv() {
@@ -351,8 +359,8 @@ repo_latest_version_get_enigma_pv() {
 repo_latest_version_get_exhale_pv() {
 	echo $(get_tags \
 https://github.com/svenevs/exhale.git \
-		| grep -P -e "^[0-9]" | sort -V \
-		| tail -n 1)
+		| grep -P -e "^[0-9]" \
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 # farseer-physics-engine needs to be pruned?
@@ -361,7 +369,7 @@ repo_latest_version_get_freeimagenet_pv() {
 	echo $(wget -q -O - \
 "https://sourceforge.net/projects/freeimage/rss?path=/Source%20Distribution" \
 | grep -P -o -e "FreeImage[0-9]+.zip" \
-| sort -V | sed -e "s|FreeImage||g" -e "s|.zip||" \
+| esort | tr " " "\n" | sed -e "s|FreeImage||g" -e "s|.zip||" \
 | sed -r -e "s|([0-9])([0-9]{2})([0-9])|\1.\2.\3|" -e "s|([0-9])([0-9])([0-9])|\1.\2.\3|g" \
 | uniq | tail -n 1)
 }
@@ -369,14 +377,15 @@ repo_latest_version_get_freeimagenet_pv() {
 repo_latest_version_get_gambas_pv() {
 	echo $(get_tags \
 https://gitlab.com/gambas/gambas.git \
-		| grep -P -e "^[0-9]" | sort -V \
-		| tail -n 1)
+		| grep -P -e "^[0-9]" \
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_gcr_pv() {
 	echo $(get_tags \
 https://gitlab.gnome.org/GNOME/gcr.git \
-	| grep -P -e "^[0-9]" | sort -V | tail -n 1)
+	| grep -P -e "^[0-9]" \
+	| esort | tr " " "\n" | tail -n 1)
 }
 
 # slots are 5 and 4
@@ -385,7 +394,7 @@ repo_latest_version_get_gdevelop_pv() {
 https://github.com/4ian/GDevelop.git \
 | grep -P -e "^[0-9]" \
 | grep -P -e $(echo "${oiledmachine_pv}" | cut -f 1 -d "-" | cut -f 1 -d ".") \
-| sort -V | tail -n 1)
+| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_geeks-diary_pv() {
@@ -402,14 +411,15 @@ repo_latest_version_get_genkernel_pv() {
 	echo $(get_tags \
 https://github.com/gentoo/genkernel.git \
 	| sed -r -e "s|-funtoo||g" -e "s|^genkernel-||g" \
-	| grep -P -e "^[0-9]" | sort -V \
-	| tail -n 1)
+	| grep -P -e "^[0-9]" \
+	| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_googleearthpro_pv() {
 	echo $(wget -q -O - \
 https://support.google.com/earth/answer/168344 \
-| html2text | grep -P -e "v[0-9]\.[0-9]\.[0-9]" | sort -V | tail -n 1 \
+| html2text | grep -P -e "v[0-9]\.[0-9]\.[0-9]" \
+| esort | tr " " "\n" | tail -n 1 \
 | sed -e "s|^v||")
 }
 
@@ -421,7 +431,8 @@ https://github.com/mono/gnome-sharp.git)
 repo_latest_version_get_gst-plugins-omx_pv() {
 	echo $(get_tags \
 https://gitlab.freedesktop.org/gstreamer/gst-omx.git \
-	| grep -P -e "^[0-9]" | sort -V | tail -n 1)
+	| grep -P -e "^[0-9]" \
+	| esort | tr " " "\n" | tail -n 1)
 }
 
 # gwen-dotnet needs to be pruned?
@@ -429,8 +440,8 @@ https://gitlab.freedesktop.org/gstreamer/gst-omx.git \
 repo_latest_version_get_hunspell_pv() {
 	echo $(get_tags \
 https://github.com/hunspell/hunspell.git \
-	| grep -P -e "^[0-9]" | sort -V \
-	| tail -n 1)
+	| grep -P -e "^[0-9]" \
+	| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_hyphen_pv() {
@@ -438,7 +449,8 @@ repo_latest_version_get_hyphen_pv() {
 "https://sourceforge.net/projects/hunspell/rss?path=/Hyphen" \
 | grep -P -o -e "hyphen-[0-9\.]+.tar.gz" \
 | sed -r -e "s|-([0-9]\.[0-9])\.tar\.gz|-\1.0.tar.gz|g" \
-| sed -e "s|hyphen-||" -e "s|.tar.gz||" | sort -V | uniq | tail -n 1)
+| sed -e "s|hyphen-||" -e "s|.tar.gz||" \
+| esort | tr " " "\n" | uniq | tail -n 1)
 }
 
 # only stable
@@ -446,16 +458,15 @@ repo_latest_version_get_igdm_pv() {
 	echo $(get_tags \
 https://github.com/igdmapps/igdm.git \
 		| grep -P -i -v -e ".*(ALPHA|BETA|RC).*" \
-		| sort -V \
-		| tail -n 1)
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 # normalized to gentoo pv standards
 repo_latest_version_get_igdm-cli_pv() {
 	echo $(get_tags \
 https://github.com/mathdroid/igdm-cli.git \
-		| sed -r -e "s|-([0-9]+)|_p\1|g" | sort -V \
-		| tail -n 1)
+		| sed -r -e "s|-([0-9]+)|_p\1|g" \
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_inotify-tools_pv() {
@@ -482,8 +493,8 @@ https://github.com/fedora-infra/kitchen.git)
 repo_latest_version_get_koala_pv() {
 	echo $(get_tags \
 https://github.com/arsduo/koala.git \
-		| sed -r -e "s#\.?(rc|beta)#_\1#g" | sort -V \
-		| tail -n 1)
+		| sed -r -e "s#\.?(rc|beta)#_\1#g" \
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_lateralgm_pv() {
@@ -504,8 +515,8 @@ https://github.com/Lymphatus/libcaesium.git)
 repo_latest_version_get_libcaca_pv() {
 	echo $(get_tags \
 https://github.com/cacalabs/libcaca.git \
-		| sed -r -e "s|^v||g" -e "s|\.beta|_beta|g" | sort -V \
-		| tail -n 1)
+		| sed -r -e "s|^v||g" -e "s|\.beta|_beta|g" \
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_libcpuid_pv() {
@@ -517,8 +528,7 @@ repo_latest_version_get_libgdiplus_pv() {
 	echo $(get_tags \
 https://github.com/mono/libgdiplus.git \
 		| grep -P -o "^[0-9]" \
-		| sort -V \
-		| tail -n 1)
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 # change _p to _pre?  untagged
@@ -549,7 +559,8 @@ https://github.com/OpenKinect/libfreenect.git)
 repo_latest_version_get_libgit2sharp_pv() {
 	echo $(get_tags \
 https://github.com/libgit2/libgit2sharp.git \
-	| sed -e "s|-rc|_rc|g" | sort -V | tail -n 1)
+	| sed -e "s|-rc|_rc|g" \
+	| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_libmaker_pv() {
@@ -572,20 +583,22 @@ https://sourceforge.net/projects/omxil/rss?path=/ \
 | grep -P -o -e "libomxil(-bellagio)?-[0-9\.]+.tar.gz" \
 | sed -r -e "s#(libomxil-|libomxil-bellagio-)##g" \
 	-e "s|\.tar\.gz||g" -e "s|([0-9]).([0-9])|\1.\2.0|g" \
-| sort -V | tail -n 1	)
+| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_libsfml_pv() {
 	echo $(get_tags \
 https://github.com/SFML/SFML.git \
-		| grep -P -e "^[0-9]" | sort -V | tail -n 1)
+		| grep -P -e "^[0-9]" \
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_libspotify_pv() {
 	echo $(wget -q -O - \
 https://github.com/mopidy/libspotify-archive \
 | html2text -nobs | grep -P -e "libspotify-.*(tar.gz|zip)" \
-| sort -V | tail -n 1 | grep -P -o -e "-[0-9\.]+-" | sed -e "s|-||g")
+| esort | tr " " "\n" | tail -n 1 \
+| grep -P -o -e "-[0-9\.]+-" | sed -e "s|-||g")
 }
 
 repo_latest_version_get_libzen_pv() {
@@ -850,14 +863,16 @@ https://github.com/google/leveldb.git)
 repo_latest_version_get_lgmplugin_pv() {
 	echo $(get_tags \
 https://github.com/enigma-dev/lgmplugin.git \
-		| sed "s|r|_p|g" | sort -V | tail -n 1)
+		| sed "s|r|_p|g" \
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_log4c_pv() {
 	echo $(wget -q -O - \
 "https://sourceforge.net/projects/log4c/rss?path=/" \
 | grep -P -o -e "log4c-[0-9\.]+.tar.gz" \
-| sed -e "s|log4c-||" -e "s|\.tar\.gz||" | sort -V | uniq | tail -n 1)
+| sed -e "s|log4c-||" -e "s|\.tar\.gz||" \
+| esort | tr " " "\n" | uniq | tail -n 1)
 }
 
 repo_latest_version_get_mesa_pv() {
@@ -865,13 +880,14 @@ repo_latest_version_get_mesa_pv() {
 https://gitlab.freedesktop.org/mesa/mesa.git \
 | grep -e "mesa" | sed -r -e "s#(mesa_|mesa-)##g" | grep -P -o -e "^[0-9\.]+" \
 | grep -v "branchpoint" | grep -P -v -e "^[0-9]{8}" \
-| sort -V | tail -n 1)
+| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_mono-addins_pv() {
 	echo $(get_tags \
 https://github.com/mono/mono-addins.git \
-		| sed "s|mono-addins-||g" | sort -V | tail -n 1)
+		| sed "s|mono-addins-||g" \
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
@@ -879,8 +895,7 @@ repo_latest_version_get_monodevelop_pv() {
 	echo $(get_tags \
 https://github.com/mono/monodevelop.git \
 		| grep -P -e "^monodevelop-" | sed -e "s|monodevelop-||g" \
-		| sort -V \
-		| tail -n 1)
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_monogame_pv() {
@@ -911,7 +926,8 @@ https://raw.githubusercontent.com/mono/msbuild/xplat-master/eng/Versions.props \
 repo_latest_version_get_mozjpeg_pv() {
 	echo $(get_tags \
 https://github.com/mozilla/mozjpeg.git \
-		| grep -v -e "jpeg" | sort -V | tail -n 1)
+		| grep -v -e "jpeg" \
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_nant_pv() {
@@ -939,8 +955,8 @@ https://github.com/jiahaog/nativefier.git)
 repo_latest_version_get_ndesk-options_pv() {
 	echo $(wget -q -O - \
 http://www.ndesk.org/Options | html2text -nobs | grep "ZIP" \
-| grep -P -o -e "_[0-9\.]+" | sed -e "s|_||g" | sort -V \
-| tail -n 1)
+| grep -P -o -e "_[0-9\.]+" | sed -e "s|_||g" \
+| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_nestegg_pv() {
@@ -953,7 +969,8 @@ repo_latest_version_get_netbeans-alice_pv() {
 	echo $(wget -q -O - \
 https://www.alice.org/get-alice/alice-3-with-netbeans/ \
 | grep -o "Alice3.*Plugin.*.nbm" | sed -e "s|Alice3NetBeans[0-9]Plugin_||g" \
-	-e "s|.nbm||g" -e "s|_|.|g" | sort -V | uniq | tail -n 1)
+	-e "s|.nbm||g" -e "s|_|.|g" \
+	| esort | tr " " "\n" | uniq | tail -n 1)
 }
 
 repo_latest_version_get_nodejs_pv() {
@@ -962,7 +979,7 @@ https://github.com/nodejs/node.git  \
 | grep -P -e "^[0-9]" \
 | grep -P -e "^"$(echo "${oiledmachine_pv}" | cut -f 1 -d "-" \
 	| cut -f 1 -d ".") \
-| sort -V | tail -n 1)
+| esort | tr " " "\n" | tail -n 1)
 }
 
 # only _p
@@ -989,7 +1006,7 @@ https://github.com/mrward/nuget.git \
 -e "s|Beta|_beta|g" -e "s|-public||g" -e "s|-MonoDevelop||g" \
 -e "s|monodevelop-|2.8.1|g" -e "s|Release([0-9])|\1|g" -e "s|mondevelop-|2.8.1|g" -e "s|||g" \
 | grep -v -e "2.0oob-0619" | grep -v -e "-NuGet.Core_Only" \
-| sort -V | uniq | tail -n 1)
+| esort | tr " " "\n" | uniq | tail -n 1)
 	echo "${pv}"
 }
 
@@ -997,8 +1014,7 @@ repo_latest_version_get_nunit_pv() {
 	echo $(get_tags \
 https://github.com/nunit/nunit.git \
 		| grep -P "^[0-9]" \
-		| sort -V \
-		| tail -n 1)
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_nvidia-texture-tools_pv() {
@@ -1053,7 +1069,8 @@ https://github.com/AcademySoftwareFoundation/openvdb.git)
 repo_latest_version_get_openxr_pv() {
 	echo $(get_tags \
 https://github.com/KhronosGroup/OpenXR-SDK-Source.git \
-		| sed -e "s|release-||g" | sort -V | tail -n 1)
+		| sed -e "s|release-||g" \
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_oh-my-zsh_pv() {
@@ -1072,7 +1089,8 @@ repo_latest_version_get_pdfchain_pv() {
 	echo $(wget -q -O - \
 "https://sourceforge.net/projects/pdfchain/rss?path=/" \
 | grep -P -o "pdfchain-[0-9\.]+.tar.gz" | grep -v -e "-0.123" \
-| sort -V | tail -n 1 | sed -e "s|pdfchain-||g" -e "s|\.tar\.gz||")
+| esort | tr " " "\n" | tail -n 1 \
+| sed -e "s|pdfchain-||g" -e "s|\.tar\.gz||")
 }
 
 repo_latest_version_get_pocket_pv() {
@@ -1089,7 +1107,7 @@ repo_latest_version_get_python-plexapi_pv() {
 	echo $(get_tags \
 https://github.com/pkkid/python-plexapi.git \
 		| grep -P -e "^[0-9]" \
-		| sort -V | tail -n 1)
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 # This overlay tracks both 4.x and 5.x
@@ -1099,7 +1117,7 @@ https://github.com/premake/premake-core.git \
 | grep -P -e "^[0-9]" \
 | grep -P -e "^"$(echo ${oiledmachine_pv} | cut -f 1 -d "-" \
 	| cut -f 1 -d ".") \
-| sort -V | tail -n 1)
+| esort | tr " " "\n" | tail -n 1)
 }
 
 # protobuild is eol
@@ -1117,7 +1135,8 @@ https://raw.githubusercontent.com/puddletag/puddletag/pyqt5/source/puddlestuff/_
 repo_latest_version_get_pugixml_pv() {
 	echo $(get_tags \
 https://github.com/zeux/pugixml.git \
-		| grep -v "latest" | sort -V | tail -n 1)
+		| grep -v "latest" \
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_pullp_pv() {
@@ -1144,7 +1163,8 @@ repo_latest_version_get_pyfiglet_pv() {
 	# The latest tag was dated in Dec 2018.
 	local pv=$(get_tags \
 https://github.com/pwaller/pyfiglet.git \
-		| sed -e "s|\.?post|_p|g" | sort -V | tail -n 1)
+		| sed -e "s|\.?post|_p|g" \
+		| esort | tr " " "\n" | tail -n 1)
 	local suffix=$(get_head_suffix "pwaller/pyfiglet" "master")
 	echo "${pv}_p${suffix}"
 }
@@ -1175,8 +1195,8 @@ repo_latest_version_get_recastnavigation_pv() {
 #repo_latest_version_get_r_ock-dkms_pv() {
 #	echo $(get_tags \
 #https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver.git \
-#| sed -r -e "s|Beta|_beta|g" -e "s#(roc-|hipclang-|rocm-)##g" | sort -V \
-#| tail -n 1)
+#| sed -r -e "s|Beta|_beta|g" -e "s#(roc-|hipclang-|rocm-)##g" \
+#| esort | tr " " "\n" | tail -n 1)
 #}
 
 repo_latest_version_get_rock-dkms_pv() {
@@ -1209,15 +1229,15 @@ repo_latest_version_get_sanitizers-cmake_pv() {
 repo_latest_version_get_sfmldotnet_pv() {
 	echo $(get_tags \
 https://github.com/SFML/SFML.Net.git \
-		| sed -r -e "s|-rc|_rc|g" | sort -V \
-		| tail -n 1)
+		| sed -r -e "s|-rc|_rc|g" \
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_sharpnav_pv() {
 	echo $(get_tags \
 https://github.com/Robmaister/SharpNav.git \
-		| sed -r -e "s|-alpha\.|_alpha|g" | sort -V \
-		| tail -n 1)
+		| sed -r -e "s|-alpha\.|_alpha|g" \
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_sharpfont_pv() {
@@ -1277,7 +1297,8 @@ https://github.com/Playork/StickyNotes.git)
 repo_latest_version_get_startup-notification_pv() {
 	echo $(get_tags \
 git://anongit.freedesktop.org/git/startup-notification \
-		| sed -e "s|STARTUP_NOTIFICATION_||g" -e "s|_|.|g" | sort -V | tail -n 1)
+		| sed -e "s|STARTUP_NOTIFICATION_||g" -e "s|_|.|g" \
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_surf_pv() {
@@ -1308,8 +1329,7 @@ repo_latest_version_get_tiledsharp_pv() {
 https://github.com/marshallward/TiledSharp.git \
 		| sed -e "s|r|_p|g" \
 		| grep -P "^[0-9]" \
-		| sort -V \
-		| tail -n 1)
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_lua_pv() {
@@ -1317,14 +1337,14 @@ repo_latest_version_get_lua_pv() {
 https://github.com/lua/lua.git \
 | grep -P "^[0-9]" \
 | grep -P "^"$(echo "${oiledmachine_pv}" | cut -f 1 -d "-" | cut -f 1-2 -d ".") \
-| sort -V | tail -n 1)
+| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_luasqlite3_pv() {
 	echo $(wget -q -O - \
 http://lua.sqlite.org/index.cgi/home | html2text -nobs \
 | grep -P -o -e "Version\w[0-9\.]+" | sed -e "s|Version\w||g" \
-| sort -V | head -n 1)
+| esort | tr " " "\n" | head -n 1)
 }
 
 # untagged.  change from _p to _pre?
@@ -1352,7 +1372,8 @@ repo_latest_version_get_twitter_pv() {
 	echo $(get_tags \
 https://github.com/sixohsix/twitter.git \
 		| sed -e "s|twitter-||g" \
-		| grep -P -e "^[0-9]" | sort -V | tail -n 1)
+		| grep -P -e "^[0-9]" \
+		| esort | tr " " "\n" | tail -n 1)
 }
 
 # it's slotted by ver_cut 1-2
@@ -1392,15 +1413,16 @@ repo_latest_version_get_wireshark_pv() {
 	echo $(get_tags \
 https://code.wireshark.org/review/wireshark.git \
 | sed -e "s|wireshark-||g" | grep -P -e "^[0-9]" \
-| sed -e "s|rc|_rc|g" | sort -V | tail -n 1)
+| sed -e "s|rc|_rc|g" \
+| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_webkit-gtk_pv() {
 	echo $(wget -q -O - \
 https://webkitgtk.org/releases/ | html2text -nobs \
 | grep -P -o "webkitgtk-[0-9\.]+\.tar\.xz" \
-| sed -r -e "s|webkitgtk-||g" -e "s|.tar.xz||g" | sort -V | uniq \
-| tail -n 1)
+| sed -r -e "s|webkitgtk-||g" -e "s|.tar.xz||g" \
+| esort | tr " " "\n" | uniq | tail -n 1)
 }
 
 repo_latest_version_get_woff2_pv() {
@@ -1417,7 +1439,7 @@ repo_latest_version_get_xpra_pv() {
 	echo $( wget -q -O - https://xpra.org/src/ | html2text -nobs \
 | grep -P -o -e "xpra-[0-9\.]+\.tar\.bz2 " | sed -r -e "s|xpra-|#|g" \
 	-e "s|\.tar\.bz2|#|g" -e "s|#([0-9]\.[0-9]+)#|\1.0|g" -e "s|#||g" \
-| sort -V | tail -n 1)
+| esort | tr " " "\n" | tail -n 1)
 }
 
 # untagged? change _p  to _pre

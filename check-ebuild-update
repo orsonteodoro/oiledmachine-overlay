@@ -172,7 +172,8 @@ is_x_op_y() {
 get_stable_versions() {
 	arch="${1}"
 	for ebuild in $(find "${PORTAGE_DIR}/${category}/${pn}" \
-			-name "*.ebuild" 2>/dev/null | sort -V ) ; do
+			-name "*.ebuild" 2>/dev/null \
+			| esort | tr " " "\n" ) ; do
 		if grep -q -P -e "KEYWORDS=\".*(?<!\~)${arch}" "${ebuild}"
 		then
 			echo "${ebuild}"
@@ -186,8 +187,8 @@ get_newest_prefixed_v_pv() {
 	local r=$(git ls-remote --tags "${uri}" | cut -f 2 -d "v" \
 		| grep -v -e "[\^]" \
 		| sed -r -e "s#-(alpha|beta|rc|pre)\.?#_\1#g" \
-		| sed -e "s|_preview|_pre|" | sort -V \
-		| tail -n 1)
+		| sed -e "s|_preview|_pre|" \
+		| esort | tr " " "\n" | tail -n 1)
 	if echo "${r}" | grep -P -e "^[^0-9]" ; then
 		echo "${category}/${pn} has tag that is not a version r=${r}"
 		exit 1
@@ -213,11 +214,32 @@ get_tags() {
 	echo "${r}"
 }
 
+# Demote _beta, _alpha, _rc, _pre, etc for sort -V
+# You need to call `| tr " " "\n"` immediately afterwards.
+demote_prereleases() {
+      	ARG=$(</dev/stdin)
+        echo -e $(echo -e "${ARG}" | sed -r -e 's|([0-9]+)$|\1__|g')
+}
+
+# strip hinter
+strip_hinter() {
+      	ARG=$(</dev/stdin)
+        echo -e $(echo -e "${ARG}" | sed -r -e 's|([0-9]+)__$|\1|g')
+}
+
+# You need to call `| tr " " "\n"` immediately afterwards.
+esort() {
+      	ARG=$(</dev/stdin)
+	echo -e $(echo -e "${ARG}" | demote_prereleases | tr " " "\n" | sort -V | strip_hinter)
+}
+
 # same as get_newest_prefixed_v_pv but with non prefixed v
 get_newest_pv() {
 	local uri="${1}"
+	# adjust sorting so that _alpha,_beta has lower priority than 0__
 	local r=$(get_tags ${uri} \
-		| sort -V | tail -n 1)
+		| esort | tr " " "\n" \
+		| tail -n 1)
 	if echo "${r}" | grep -P -e "^[^0-9]" ; then
 		echo "${category}/${pn} has tag that is not a version r=${r}"
 		exit 1
