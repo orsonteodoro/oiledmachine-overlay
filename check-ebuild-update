@@ -257,20 +257,21 @@ edebug() {
 }
 
 gen_save_pv() {
-	mkdir -p "${CACHE_DIR}/${category}/${pn}"
-	rm -rf "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv}"
-	"${fn}" > "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv}"
-	cat "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv}"
+	mkdir -p "${CACHE_DIR}/${type}/${category}/${pn}"
+	rm -rf "${CACHE_DIR}/${type}/${category}/${pn}/${oiledmachine_pv}"
+	"${fn}" > "${CACHE_DIR}/${type}/${category}/${pn}/${oiledmachine_pv}"
+	cat "${CACHE_DIR}/${type}/${category}/${pn}/${oiledmachine_pv}"
 }
 
 get_pv() {
 	local fn="${1}"
+	local type="${2}" # can be gentoo or repos
 	# can't use SLOT because it uses ver_cut and variables
-	if [[ -f "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv}" ]] ; then
-		local datec=$(stat -c "%W" "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv}")
+	if [[ -f "${CACHE_DIR}/${type}/${category}/${pn}/${oiledmachine_pv}" ]] ; then
+		local datec=$(stat -c "%W" "${CACHE_DIR}/${type}/${category}/${pn}/${oiledmachine_pv}")
 		local now=$(date +"%s")
 		if (( ${now} < ${datec} + ${CACHE_EXPIRE} )) ; then
-			cat "${CACHE_DIR}/${category}/${pn}/${oiledmachine_pv}"
+			cat "${CACHE_DIR}/${type}/${category}/${pn}/${oiledmachine_pv}"
 		else
 			gen_save_pv
 		fi
@@ -297,7 +298,7 @@ scan_repos() {
 			if grep -q -e \
 				"repo_latest_version_get_${category}-${pn}_pv" \
 				"${SCRAPERS_FILE}" ; then
-				repo_pv=$(get_pv repo_latest_version_get_${category}-${pn}_pv)
+				repo_pv=$(get_pv repo_latest_version_get_${category}-${pn}_pv "repos")
 				edebug "${repo_pv} > ${oiledmachine_pv}"
 				if is_x_op_y ${repo_pv} "-gt" \
 					"${oiledmachine_pv}"
@@ -316,7 +317,7 @@ scan_repos() {
 				fi
 			elif [[ "${pn}" == "noto-color-emoji" \
 				|| "${pn}" == "noto-color-emoji-bin" ]] ; then
-				repo_pv=$(get_pv repo_latest_version_get_${pn}_pv)
+				repo_pv=$(get_pv repo_latest_version_get_${pn}_pv "repos")
 				edebug "${repo_pv} > ${oiledmachine_pv}"
 				oiledmachine_pv_date=$(echo "${oiledmachine_pv}" \
 					| sed -r -e "s#_beta[0-9]+##g" \
@@ -330,7 +331,7 @@ scan_repos() {
 "Found newer ${pn} repo_pv=${repo_pv} oiledmachine_pv_date=${oiledmachine_pv_date}"
 				fi
 			elif [[ "${pn}" == "${p}" ]] ; then
-				repo_pv=$(get_pv repo_latest_version_get_${pn}_pv)
+				repo_pv=$(get_pv repo_latest_version_get_${pn}_pv "repos")
 				edebug "${repo_pv} > ${oiledmachine_pv}"
 				if is_x_op_y ${repo_pv} "-gt" "${oiledmachine_pv}"
 				then
@@ -376,7 +377,7 @@ scan_gentoo_overlay() {
 		if (( ${#newest} > 0 )) ; then
 			edebug "Inspecting ${category}/${pn}"
 			local bn_newest=$(basename "${newest}")
-			local gentoo_pv=$(get_pv gen_gentoo_ver)
+			local gentoo_pv=$(get_pv gen_gentoo_ver "gentoo")
 
 			edebug "${gentoo_pv} > ${oiledmachine_pv}"
 			if is_x_op_y $(echo "${gentoo_pv}" | cut -f 1 -d "-") \
