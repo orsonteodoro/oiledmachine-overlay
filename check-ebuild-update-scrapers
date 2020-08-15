@@ -567,7 +567,7 @@ repo_latest_version_get_libmediainfo_pv() {
 https://github.com/MediaArea/MediaInfoLib.git)
 }
 
-# libmp4v2 no official repo.  dead project?
+# libmp4v2 no official active repo.  dead project?
 
 repo_latest_version_get_libomxil-bellagio_pv() {
 	echo $(
