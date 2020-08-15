@@ -90,7 +90,6 @@ dev-ruby/koala
 dev-util/msbuild
 media-gfx/nvidia-texture-tools
 media-plugins/bitlbee-facebook
-media-plugins/gimp-dds
 net-misc/boinc-bfgminer-cpu
 net-misc/boinc-bfgminer-gpu
 sci-misc/astropulse-art

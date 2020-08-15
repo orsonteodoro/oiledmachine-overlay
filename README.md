@@ -190,7 +190,6 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | media-libs/vips | Kept for typescript. |
 | media-plugins/amd-radeon-prorender-blender | TBA |
 | media-plugins/bitlbee-facebook | TBA |
-| media-plugins/gimp-dds | TBA |
 | media-plugins/gst-plugins-omx | TBA |
 | media-sound/puddletag | This is a mp3 metatag editor.  Autosaves edits and doesn't need to be explicity be told to save.  This is the PyQt5 version.  |
 | media-sound/tizonia | This is both a command line media player and an OpenMAX library.
