@@ -1,16 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<!-- maintainer-needed -->
-	<use>
-		<flag name="gpg">Enable <pkg>app-crypt/gnupg</pkg> key module</flag>
-		<flag name="openssl">Enable <pkg>dev-libs/openssl</pkg> key
-			module</flag>
-		<flag name="pkcs11">Enable PKCS#11 (Smartcards) key module</flag>
-		<flag name="tpm">Enable support for Trusted Platform Module (TPM) using <pkg>app-crypt/trousers</pkg></flag>
-	</use>
-	<upstream>
-		<remote-id type="cpe">cpe:/a:ecryptfs:ecryptfs_utils</remote-id>
-		<remote-id type="launchpad">ecryptfs</remote-id>
-	</upstream>
+  <!-- only on this fork on the oiledmachine-overlay -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    The ecryptfs-utils-111_p20170609 on the Gentoo overlay corresponds to
+    112_pre894 on this overlay.
+  </longdescription>
+  <!-- originator is gentoo overlay -->
+  <!-- requested by gentoo overlay: maintainer-needed -->
+  <use>
+    <flag name="gpg">Enable <pkg>app-crypt/gnupg</pkg> key module</flag>
+    <flag name="openssl">Enable <pkg>dev-libs/openssl</pkg> key
+      module</flag>
+    <flag name="pkcs11">Enable PKCS#11 (Smartcards) key module</flag>
+    <flag name="tpm">Enable support for Trusted Platform Module (TPM) using
+      <pkg>app-crypt/trousers</pkg></flag></use>
+  <upstream>
+    <remote-id type="cpe">cpe:/a:ecryptfs:ecryptfs_utils</remote-id>
+    <remote-id type="launchpad">ecryptfs</remote-id>
+  </upstream>
 </pkgmetadata>

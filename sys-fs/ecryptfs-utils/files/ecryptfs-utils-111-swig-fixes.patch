@@ -1,0 +1,72 @@
+Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Aug 16, 2020 (Unix timestamp: 1597615947)
+Subject:  Update swig for forwards (3.x) Python compatibility.
+
+It's looks like it's been broken for years and only worked for 1.x swig.
+----
+diff -urp ecryptfs-utils-111.orig/m4/ac_pkg_swig.m4 ecryptfs-utils-111/m4/ac_pkg_swig.m4
+--- ecryptfs-utils-111.orig/m4/ac_pkg_swig.m4	2020-08-15 15:46:26.104106000 -0700
++++ ecryptfs-utils-111/m4/ac_pkg_swig.m4	2020-08-16 15:08:53.426090156 -0700
+@@ -8,41 +8,8 @@ AC_DEFUN([AC_PROG_SWIG],[
+                 [swig_version=`$SWIG -version 2>&1 | grep 'SWIG Version' | sed 's/.*\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*/\1/g'`]
+                 AC_MSG_RESULT([$swig_version])
+                 if test -n "$swig_version" ; then
+-                        # Calculate the required version number components
+-                        [required=$1]
+-                        [required_major=`echo $required | sed 's/[^0-9].*//'`]
+-                        if test -z "$required_major" ; then
+-                                [required_major=0]
+-                        fi
+-                        [required=`echo $required | sed 's/[0-9]*[^0-9]//'`]
+-                        [required_minor=`echo $required | sed 's/[^0-9].*//'`]
+-                        if test -z "$required_minor" ; then
+-                                [required_minor=0]
+-                        fi
+-                        [required=`echo $required | sed 's/[0-9]*[^0-9]//'`]
+-                        [required_patch=`echo $required | sed 's/[^0-9].*//'`]
+-                        if test -z "$required_patch" ; then
+-                                [required_patch=0]
+-                        fi
+-                        # Calculate the available version number components
+-                        [available=$swig_version]
+-                        [available_major=`echo $available | sed 's/[^0-9].*//'`]
+-                        if test -z "$available_major" ; then
+-                                [available_major=0]
+-                        fi
+-                        [available=`echo $available | sed 's/[0-9]*[^0-9]//'`]
+-                        [available_minor=`echo $available | sed 's/[^0-9].*//'`]
+-                        if test -z "$available_minor" ; then
+-                                [available_minor=0]
+-                        fi
+-                        [available=`echo $available | sed 's/[0-9]*[^0-9]//'`]
+-                        [available_patch=`echo $available | sed 's/[^0-9].*//'`]
+-                        if test -z "$available_patch" ; then
+-                                [available_patch=0]
+-                        fi
+-                        if test $available_major -ne $required_major \
+-                                -o $available_minor -ne $required_minor \
+-                                -o $available_patch -lt $required_patch ; then
++                        result=`echo -e "${swig_version}\n$1" | sort -V | cut -f 1 -d $'\n'`
++                        if test ${result} = ${swig_version} ; then
+                                 AC_MSG_WARN([SWIG version >= $1 is required.  You have $swig_version.  You should look at http://www.swig.org])
+                                 SWIG='echo "Error: SWIG version >= $1 is required.  You have '"$swig_version"'.  You should look at http://www.swig.org" ; false'
+                         else
+diff -urp ecryptfs-utils-111.orig/m4/swig_python.m4 ecryptfs-utils-111/m4/swig_python.m4
+--- ecryptfs-utils-111.orig/m4/swig_python.m4	2020-08-15 15:46:26.104106000 -0700
++++ ecryptfs-utils-111/m4/swig_python.m4	2020-08-16 15:07:10.452075136 -0700
+@@ -2,6 +2,14 @@ AC_DEFUN([SWIG_PYTHON],[
+         AC_REQUIRE([AC_PROG_SWIG])
+         AC_REQUIRE([AC_PYTHON_DEVEL])
+         test "x$1" != "xno" || swig_shadow=" -noproxy"
+-        AC_SUBST([SWIG_PYTHON_OPT],[-python$swig_shadow])
++        py_version_maj=`echo ${py_version} | cut -f 1 -d "."`
++        AC_MSG_CHECKING([whether py3 should be set for swig])
++        if test ${py_version_maj} -ge 3 ; then
++                swig_py3=" -py3"
++                AC_MSG_RESULT([yes])
++        else
++                AC_MSG_RESULT([no])
++        fi
++        AC_SUBST([SWIG_PYTHON_OPT],[-python$swig_shadow$swig_py3])
+         AC_SUBST([SWIG_PYTHON_CPPFLAGS],[$PYTHON_CPPFLAGS])
+ ])

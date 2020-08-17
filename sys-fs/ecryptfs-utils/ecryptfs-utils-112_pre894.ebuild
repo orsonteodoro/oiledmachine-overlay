@@ -1,0 +1,176 @@
+# Copyright 1999-2020 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+# This ebuild uses the exact revision in 111_p20170609.
+
+EAPI="6"
+DESCRIPTION="eCryptfs userspace utilities"
+HOMEPAGE="https://launchpad.net/ecryptfs"
+LICENSE="GPL-2 GPL-2+ CC-BY-SA-3.0
+GPL-2-with-linking-exception
+python? ( GPL-3+ )"
+KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86"
+PYTHON_COMPAT=( python3_{6,7,8} ) # fork ebuild and add for python2_7 support
+inherit autotools flag-o-matic linux-info pam python-single-r1
+SLOT="0"
+LANGS=( ca )
+IUSE="${LANGS[@]/#/l10n_} doc gpg gtk nls openssl pam pkcs11 python suid test tpm"
+RDEPEND="
+	>=sys-apps/keyutils-1.5.11-r1:=
+	>=dev-libs/libgcrypt-1.2.0:0
+	dev-libs/nss
+	gpg? ( app-crypt/gpgme )
+	gtk? ( x11-libs/gtk+:2 )
+	openssl? ( >=dev-libs/openssl-0.9.7:= )
+	pam? ( sys-libs/pam )
+	pkcs11? (
+		>=dev-libs/openssl-0.9.7:=
+		>=dev-libs/pkcs11-helper-1.04
+	)
+	python? (
+		${PYTHON_DEPS}
+		$(python_gen_cond_dep 'dev-python/future[${PYTHON_USEDEP}]' \
+			python3_{6,7,8})
+	)
+	tpm? ( app-crypt/trousers )"
+DEPEND="${RDEPEND}
+	dev-vcs/bzr
+	>=dev-util/intltool-0.41.0
+	sys-devel/autoconf-archive
+	sys-devel/gettext
+	python? ( dev-lang/swig )
+	virtual/pkgconfig"
+REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
+RESTRICT="fetch"
+EBZR_REPO_URI="lp:~ecryptfs/ecryptfs/trunk"
+EBZR_REVISION="$(ver_cut 3)"
+PATCHES=(
+	"${FILESDIR}/${PN}-111-python3-ac_python_devel_m4.patch"
+	"${FILESDIR}/${PN}-111-swig-fixes.patch"
+	"${FILESDIR}/${PN}-111-update-libecryptfs_i.patch"
+)
+
+pkg_setup() {
+	einfo "EBZR_REVISION=${EBZR_REVISION}"
+	use python && python-single-r1_pkg_setup
+	CONFIG_CHECK="~ECRYPT_FS"
+	linux-info_pkg_setup
+	if has network-sandbox $FEATURES ; then
+		die \
+"FEATURES=\"-network-sandbox\" must be added per-package env to be able to\n\
+download from a live source."
+	fi
+	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+	addwrite "${distdir}"
+	if [[ ! -d "${distdir}/ecryptfs-utils-src" ]] ; then
+		mkdir -p "${distdir}/ecryptfs-utils-src" || die
+	fi
+	chown portage:portage "${distdir}/ecryptfs-utils-src" || die
+	if use test ; then
+		if [[ ! "${FEATURES}" =~ test ]] ; then
+			die \
+"The test USE flag requires the environmental variable test to be added to\n\
+FEATURES"
+		fi
+	fi
+}
+
+src_unpack() {
+	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+	addwrite "${distdir}/ecryptfs-utils-src"
+	cd "${distdir}/ecryptfs-utils-src" || die
+	if [[ ! -f "${distdir}/ecryptfs-utils-src/configure.ac" ]] ; then
+		bzr init-repo . || die
+		bzr branch ${EBZR_REPO_URI} . || die
+		bzr reconfigure --tree || die
+	fi
+	bzr update -r${EBZR_REVISION} || die
+	mkdir -p "${S}" || die
+	cp -a . "${S}" || die
+	cd "${S}" || die
+}
+
+src_prepare() {
+	default
+	eautoreconf
+	if use python ; then
+		futurize -0 -v -w ./ || die
+	fi
+	if use python ; then
+		# Remove to regenerate  Don't fail on cached version.
+		rm src/libecryptfs-swig/libecryptfs_wrap.c || die
+		sed -i -e "s|#!/usr/bin/env python|#!/usr/bin/env ${EPYTHON}|g" \
+			src/python/ecryptfsapi.py || die
+	fi
+}
+
+src_configure() {
+	append-cppflags -D_FILE_OFFSET_BITS=64
+	econf \
+		--enable-nss \
+		--libdir=/usr/$(get_libdir) \
+		--with-pamdir=$(getpam_mod_dir) \
+		$(use_enable doc docs) \
+		$(use_enable gpg) \
+		$(use_enable gtk gui) \
+		$(use_enable nls) \
+		$(use_enable openssl) \
+		$(use_enable pam) \
+		$(use_enable pkcs11 pkcs11-helper) \
+		$(use_enable python pywrap) \
+		$(use_enable test tests) \
+		$(use_enable tpm tspi)
+}
+
+src_test() {
+	if use test ; then
+		pushd "tests" || die
+			./run_tests.sh -U -c safe || die
+			if use python ; then
+				PYTHONPATH="${S}/src/libecryptfs-swig:${PYTHONPATH}" \
+				LD_LIBRARY_PATH="${S}/src/libecryptfs-swig/.libs:${LD_LIBRARY_PATH}" \
+				${EPYTHON} -c "import libecryptfs" || die
+			fi
+		popd
+	fi
+}
+
+src_install() {
+	emake DESTDIR="${D}" install
+	if use python; then
+		echo "ecryptfs-utils" > "${T}/ecryptfs-utils.pth" || die
+		insinto $(python_get_sitedir)
+		doins "${T}/ecryptfs-utils.pth"
+		head -n 21 src/python/ecryptfsapi.py \
+			> "${T}/LICENSE.ecryptfsapi"
+		docinto licenses
+		dodoc "${T}/LICENSE.ecryptfsapi"
+	fi
+	use suid && fperms u+s /sbin/mount.ecryptfs_private
+	find "${ED}" -name '*.la' -exec rm -f '{}' + || die
+	docinto licenses
+	dodoc debian/copyright
+	dodoc COPYING
+	if use doc ; then
+		docinto readmes
+		dodoc AUTHORS ChangeLog CONTRIBUTING THANKS
+	fi
+
+	mkdir -p "${T}/langs" || die
+	mv "${ED}/usr/share/locale/"* "${T}/langs" || die
+	insinto /usr/share/locale
+	for l in ${L10N} ; do
+		einfo "Installing language ${l}"
+		doins -r "${T}/langs/${l}"
+	done
+}
+
+pkg_postinst() {
+	if use suid; then
+		ewarn \
+"\n\
+You have chosen to install ${PN} with the binary setuid root. This\n\
+means that if there are any undetected vulnerabilities in the binary,\n\
+then local users may be able to gain root access on your machine.\n"
+	fi
+}

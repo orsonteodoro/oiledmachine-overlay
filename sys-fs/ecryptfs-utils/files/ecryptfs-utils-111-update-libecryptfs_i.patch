@@ -1,0 +1,16 @@
+diff -urp ecryptfs-utils-111.orig/src/libecryptfs-swig/libecryptfs.i ecryptfs-utils-111/src/libecryptfs-swig/libecryptfs.i
+--- ecryptfs-utils-111.orig/src/libecryptfs-swig/libecryptfs.i	2020-08-15 15:46:26.104106000 -0700
++++ ecryptfs-utils-111/src/libecryptfs-swig/libecryptfs.i	2020-08-16 17:35:14.515815071 -0700
+@@ -9,7 +9,11 @@ extern int ecryptfs_add_blob_to_keyring(
+ #include "../include/ecryptfs.h"
+ 
+ %typemap(out) binary_data {
+-    $result = PyString_FromStringAndSize((char *)($1.data),$1.size);
++%#if PY_MAJOR_VERSION >= 3
++    $result = PyUnicode_FromStringAndSize((char *)($1.data),$1.size);
++%#else
++    $result = PyString_FromStringAndSize((char *)($1.data),$1.size);
++%#endif
+ }
+ 
+ extern binary_data ecryptfs_passphrase_blob(char *salt, char *passphrase);
