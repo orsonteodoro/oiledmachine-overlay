@@ -36,7 +36,6 @@ RDEPEND="
 DEPEND="${RDEPEND}
 	dev-vcs/bzr
 	>=dev-util/intltool-0.41.0
-	sys-devel/autoconf-archive
 	sys-devel/gettext
 	python? ( dev-lang/swig )
 	virtual/pkgconfig"
