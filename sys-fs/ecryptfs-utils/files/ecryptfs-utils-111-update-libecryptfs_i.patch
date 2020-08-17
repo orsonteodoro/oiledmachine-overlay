@@ -1,3 +1,7 @@
+Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  Aug 16, 2020 (Unix timestamp: 1597615947)
+Subject:  Make the swig interface forwards (3.x) and backwards (2.x) compatible.
+----
 diff -urp ecryptfs-utils-111.orig/src/libecryptfs-swig/libecryptfs.i ecryptfs-utils-111/src/libecryptfs-swig/libecryptfs.i
 --- ecryptfs-utils-111.orig/src/libecryptfs-swig/libecryptfs.i	2020-08-15 15:46:26.104106000 -0700
 +++ ecryptfs-utils-111/src/libecryptfs-swig/libecryptfs.i	2020-08-16 17:35:14.515815071 -0700
