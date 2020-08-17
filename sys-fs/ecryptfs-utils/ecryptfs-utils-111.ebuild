@@ -125,8 +125,8 @@ src_test() {
 		pushd "tests" || die
 			./run_tests.sh -U -c safe || die
 			if use python ; then
-				PYTHONPATH="${S}/src/libecryptfs-swig:${PYTHONPATH}" \
-				LD_LIBRARY_PATH="${S}/src/libecryptfs-swig/.libs:${LD_LIBRARY_PATH}" \
+	PYTHONPATH="${S}/src/libecryptfs-swig:${PYTHONPATH}" \
+	LD_LIBRARY_PATH="${S}/src/libecryptfs-swig/.libs:${LD_LIBRARY_PATH}" \
 				${EPYTHON} -c "import libecryptfs" || die
 			fi
 		popd
