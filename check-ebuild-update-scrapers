@@ -265,10 +265,70 @@ repo_latest_version_get_fna_pv() {
 https://github.com/FNA-XNA/FNA.git)
 }
 
-repo_latest_version_go-appimage_pv() {
+repo_latest_version_get_go-appimage_pv() {
 	local pv="9999"
 	local suffix=$(get_head_suffix "probonopd/go-appimage" "master")
 	echo "${pv}_p${suffix}"
+}
+
+repo_latest_version_get_dev-dotnet-aspnetcore_pv() {
+	echo $(get_tags \
+https://github.com/dotnet/aspnetcore.git \
+	| grep -P -e "^[0-9]" \
+	| grep -P -e "^"$(echo "${oiledmachine_pv}" \
+		| cut -f 1 -d "-" | cut -f 1-2 -d ".") \
+	| tr " " "\n" | tail -n 1)
+	# already sorted
+}
+
+repo_latest_version_get_dev-dotnet-cli_pv() {
+	echo $(get_tags \
+https://github.com/dotnet/cli.git \
+	| grep -P -e "^[0-9]" \
+	| grep -P -e "^"$(echo "${oiledmachine_pv}" \
+		| cut -f 1 -d "-" | cut -f 1-2 -d ".") \
+	| tr " " "\n" | tail -n 1)
+	# already sorted
+}
+
+repo_latest_version_get_dev-dotnet-dotnetcore-sdk_pv() {
+	echo $(get_tags \
+https://github.com/dotnet/cli.git \
+	| grep -P -e "^[0-9]" \
+	| grep -P -e "^"$(echo "${oiledmachine_pv}" \
+		| cut -f 1 -d "-" | cut -f 1-2 -d ".") \
+	| tr " " "\n" | tail -n 1)
+	# already sorted
+}
+
+repo_latest_version_get_dev-dotnet-core_pv() {
+	echo $(get_tags \
+https://github.com/dotnet/core.git \
+	| grep -P -e "^[0-9]" \
+	| grep -P -e "^"$(echo "${oiledmachine_pv}" \
+		| cut -f 1 -d "-" | cut -f 1-2 -d ".") \
+	| tr " " "\n" | tail -n 1)
+	# already sorted
+}
+
+repo_latest_version_get_dev-dotnet-coreclr_pv() {
+	echo $(get_tags \
+https://github.com/dotnet/coreclr.git \
+	| grep -P -e "^[0-9]" \
+	| grep -P -e "^"$(echo "${oiledmachine_pv}" \
+		| cut -f 1 -d "-" | cut -f 1-2 -d ".") \
+	| tr " " "\n" | tail -n 1)
+	# already sorted
+}
+
+repo_latest_version_get_dev-dotnet-corefx_pv() {
+	echo $(get_tags \
+https://github.com/dotnet/corefx.git \
+	| grep -P -e "^[0-9]" \
+	| grep -P -e "^"$(echo "${oiledmachine_pv}" \
+		| cut -f 1 -d "-" | cut -f 1-2 -d ".") \
+	| tr " " "\n" | tail -n 1)
+	# already sorted
 }
 
 repo_latest_version_get_dwm_pv() {
