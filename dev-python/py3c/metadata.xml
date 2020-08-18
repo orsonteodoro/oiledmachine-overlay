@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <doc lang="en">https://py3c.readthedocs.io/en/latest/</doc>
+    <remote-id type="github">encukou/py3c</remote-id>
+    <bugs-to>https://github.com/encukou/py3c/issues</bugs-to>
+  </upstream>
+</pkgmetadata>
