@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
+  <!-- only for this ebuild fork on the oildmachine overlay -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!-- originator -->
   <maintainer type="person">
     <email>patrick@gentoo.org</email>
     <name>Patrick Lauer</name>
   </maintainer>
   <use>
+    <flag name="tcmalloc">adds more efficient memory allocation</flag>
     <flag name="snappy">support the snappy compression library</flag>
   </use>
   <upstream>
