@@ -88,7 +88,7 @@ src_compile() {
 			else
 				mystatic="slib"
 			fi
-			make build ${mystatic} ${myuse[@]} COPT="${mycopt}"
+			make build ${mystatic} ${myuse[@]} COPT="${mycopt}" || die
 		}
 		cmake-static-libs_foreach_impl compile_impl
 	}
