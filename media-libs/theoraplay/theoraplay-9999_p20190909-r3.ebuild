@@ -43,7 +43,7 @@ src_compile() {
 		cmake-static-libs_compile() {
 			cd "${BUILD_DIR}" || die
 			cd build/ || die
-			if [[ "${ECMAKE_LIB_TYPE}" == "shared" ]] ; then
+			if [[ "${ECMAKE_LIB_TYPE}" == "shared-libs" ]] ; then
 				emake config=${mydebug}sharedlib || die
 			else
 				emake config=${mydebug}staticlib || die
@@ -60,7 +60,7 @@ src_install() {
 		cd "${BUILD_DIR}" || die
 		cmake-static-libs_install() {
 			cd "${BUILD_DIR}" || die
-			if [[ "${ECMAKE_LIB_TYPE}" == "shared" ]] ; then
+			if [[ "${ECMAKE_LIB_TYPE}" == "shared-libs" ]] ; then
 				cd "build/bin/${mydebug}SharedLib" || die
 				dolib.so lib${PN}.so
 			else
