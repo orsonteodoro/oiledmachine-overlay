@@ -193,9 +193,9 @@ for f in $(find $(pwd) -name "*.ebuild") ; do
 	fi
 done
 
-# its implied that the main program that is multilib capable as in compiled as
+# It's implied that the main program that is multilib capable as in compiled as
 # 32-bit on 64-bit or a library that is multilib have all library
-# dependendencies multilib
+# dependendencies multilib.
 einfo "Checking repo for inconsistent multilib in (R)DEPENDs"
 for f in $(find $(pwd) -name "*.ebuild") ; do
 	if grep ${GREP_ARGS} -P -e "multilib" "${f}" ; then
