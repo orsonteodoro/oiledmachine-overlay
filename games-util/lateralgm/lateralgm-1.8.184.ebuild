@@ -17,9 +17,7 @@ DEPEND="${RDEPEND}
 inherit desktop enigma eutils
 MY_PN="LateralGM"
 SRC_URI=\
-"https://github.com/IsmAvatar/${MY_PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
-https://github.com/IsmAvatar/${MY_PN}/commit/af0cadc1557914f02fb316b74d112d0fb9a00c6d.patch \
-	-> ${PN}-${PV}-revert-casts.patch"
+"https://github.com/IsmAvatar/${MY_PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 RESTRICT="mirror"
 S="${WORKDIR}/${MY_PN}-${PV}"
 JAVA_V="1.7"
@@ -29,7 +27,6 @@ src_prepare() {
 	cp -r "${ROOT}"/usr/share/joshedit-${SLOT_JOSHEDIT}/source/org ./ || die
 	sed -i -e "s|-source 1.7|-source ${JAVA_V}|g" \
 		-e "s|-target 1.7|-target ${JAVA_V}|g" Makefile || die
-	eapply -R "${DISTDIR}/${PN}-${PV}-revert-casts.patch"
 	# no need to call enigma_copy_sources
 	# it will complain about cd (change directory) failure in src_install phase
 }
