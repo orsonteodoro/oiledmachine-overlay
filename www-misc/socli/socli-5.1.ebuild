@@ -21,6 +21,12 @@ RDEPEND="${DEPEND}"
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${PV}"
 
+src_prepare() {
+	sed -i "/setup_requires/d" setup.py || die
+	sed -i "/tests_require/d" setup.py || die
+	distutils-r1_src_prepare
+}
+
 python_install_all() {
 	distutils-r1_python_install_all
 	rm -rf "${D}/usr/socli"
