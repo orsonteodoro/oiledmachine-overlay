@@ -1159,6 +1159,14 @@ https://raw.githubusercontent.com/lucjon/Py-StackExchange/master/setup.py \
 	echo "${pv}_p${suffix}"
 }
 
+repo_latest_version_get_py3c_pv() {
+	echo $(get_tags \
+https://github.com/encukou/py3c.git \
+		| grep -P -e "^[0-9]" \
+		| sed -e "s|a|_alpha|g" \
+		| esort | tr " " "\n" | tail -n 1)
+}
+
 repo_latest_version_get_pyfiglet_pv() {
 	# The latest tag was dated in Dec 2018.
 	local pv=$(get_tags \
