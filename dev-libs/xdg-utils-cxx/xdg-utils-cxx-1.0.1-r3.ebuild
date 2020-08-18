@@ -29,7 +29,7 @@ src_configure() {
 		)
 		if [[ "${ECMAKE_LIB_TYPE}" == "static-libs" ]] ; then
 			mycmakeargs+=( -DXDG_UTILS_SHARED=OFF )
-		elif [[ "${ECMAKE_LIB_TYPE}" == "shared" ]] ; then
+		else
 			mycmakeargs+=( -DXDG_UTILS_SHARED=ON )
 		fi
 		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
