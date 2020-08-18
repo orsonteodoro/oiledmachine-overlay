@@ -12,9 +12,9 @@ inherit multibuild
 
 # @ECLASS-VARIABLE: _IMPLS
 # @DESCRIPTION: (Private) Generates a list of implementations for the cmake-static-libs-multibuild context
-_IMPLS="static-libs shared"
-IUSE+=" static-libs +shared"
-REQUIRED_USE+=" || ( static-libs shared )"
+_IMPLS="static-libs shared-libs"
+IUSE+=" static-libs +shared-libs"
+REQUIRED_USE+=" || ( static-libs shared-libs ) shared-libs"
 
 # @FUNCTION: _python_multibuild_wrapper
 # @DESCRIPTION: Initialize the environment for this implementation
