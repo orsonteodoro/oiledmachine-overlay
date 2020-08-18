@@ -6,7 +6,6 @@ DESCRIPTION="Box2D is a 2D physics engine for games"
 HOMEPAGE="http://box2d.org/"
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~x86"
-EGIT_COMMIT="1025f9a10949b963d6311995910bdd04f72dae6c"
 SLOT="0/${PV}"
 IUSE="debug doc examples test"
 inherit multilib-build
@@ -17,9 +16,9 @@ DEPEND="${RDEPEND}
 	doc? ( app-doc/doxygen )"
 inherit cmake-static-libs eutils cmake-utils
 SRC_URI=\
-"https://github.com/erincatto/Box2D/archive/${EGIT_COMMIT}.tar.gz \
+"https://github.com/erincatto/Box2D/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
-S="${WORKDIR}/box2d-${EGIT_COMMIT}"
+S="${WORKDIR}/box2d-${PV}"
 RESTRICT="mirror"
 
 src_prepare() {
@@ -29,7 +28,7 @@ src_prepare() {
 		cd "${BUILD_DIR}" || die
 		cmake-static-libs_prepare() {
 			cd "${BUILD_DIR}" || die
-			if [[ "${ECMAKE_LIB_TYPE}" == "shared" ]] ; then
+			if [[ "${ECMAKE_LIB_TYPE}" == "shared-libs" ]] ; then
 				sed -i -e "s|STATIC|SHARED|" src/CMakeLists.txt || die
 				sed -i -e "s|STATIC|SHARED|" extern/glad/CMakeLists.txt || die
 				sed -i -e "s|STATIC|SHARED|" extern/imgui/CMakeLists.txt || die
@@ -83,7 +82,7 @@ src_install() {
 		cd "${BUILD_DIR}" || die
 		cmake-static-libs_install() {
 			pushd "${BUILD_DIR}" || die
-			if [[ "${ECMAKE_LIB_TYPE}" == "shared" ]] ; then
+			if [[ "${ECMAKE_LIB_TYPE}" == "shared-libs" ]] ; then
 				dolib.so src/libbox2d.so \
 					extern/glad/libglad.so \
 					extern/imgui/libimgui.so

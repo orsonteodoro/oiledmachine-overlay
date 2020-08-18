@@ -48,7 +48,7 @@ src_prepare() {
 		cmake-static-libs_prepare() {
 			cd "${BUILD_DIR}" || die
 			cd "Box2D" || die
-			if [[ "${ECMAKE_LIB_TYPE}" == "shared" ]] ; then
+			if [[ "${ECMAKE_LIB_TYPE}" == "shared-libs" ]] ; then
 				sed -i -e "s|StaticLib|SharedLib|g" \
 					premake4.lua || die
 			fi
@@ -97,7 +97,7 @@ src_install() {
 		cmake-static-libs_install() {
 			cd "${BUILD_DIR}" || die
 			pushd "Box2D/Build/gmake/bin/${mydebug}" || die
-			if [[ "${ECMAKE_LIB_TYPE}" == "shared" ]] ; then
+			if [[ "${ECMAKE_LIB_TYPE}" == "shared-libs" ]] ; then
 				dolib.so libBox2D.so libGLUI.so
 			else
 				dolib.a libBox2D.a libGLUI.a
