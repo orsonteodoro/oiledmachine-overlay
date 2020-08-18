@@ -199,7 +199,7 @@ done
 einfo "Checking repo for inconsistent multilib in (R)DEPENDs"
 for f in $(find $(pwd) -name "*.ebuild") ; do
 	if grep ${GREP_ARGS} -P -e "multilib" "${f}" ; then
-		if grep -P -e '(app-accessibility|app-arch|.*-libs|dev-db|dev-cpp|net-fs|net-print|media-gfx|media-sound|media-video|sys-apps|sys-devel|virtual)/[-a-zA-Z0-9_\.]+(?!.*MULTILIB_USEDEP.*)' "${f}" ; then
+		if grep -P -e '(app-accessibility|app-arch|.*-libs|dev-db|dev-cpp|net-fs|net-print|media-gfx|media-sound|media-video|sys-apps|sys-devel|virtual)/.+(?!.*MULTILIB_USEDEP.*)' "${f}" ; then
 			einfo "${f} may have missing suffixes for [\$MULTILIB_USEDEP] for some (R)DEPENDs entries"
 		fi
 	fi
