@@ -24,14 +24,15 @@ REQUIRED_USE="
 
 CDEPEND="!net-libs/nodejs:0
 	app-eselect/eselect-nodejs"
+# Keep versions in sync with deps folder
 RDEPEND="${CDEPEND}
 	>=dev-libs/libuv-1.34.2:=
 	>=net-dns/c-ares-1.15.0
 	>=net-libs/http-parser-2.9.3:=
-	>=net-libs/nghttp2-1.39.2
+	>=net-libs/nghttp2-1.41.0
 	sys-libs/zlib
 	icu? ( >=dev-libs/icu-64.2:= )
-	system-ssl? ( >=dev-libs/openssl-1.1.1:0= )
+	system-ssl? ( >=dev-libs/openssl-1.1.1g:0= )
 "
 DEPEND="${CDEPEND}
 	${RDEPEND}
@@ -44,7 +45,7 @@ PATCHES=(
 )
 RESTRICT="test"
 S="${WORKDIR}/node-v${PV}"
-NPM_V="6.14.4" # See https://github.com/nodejs/node/blob/v10.20.1/deps/npm/package.json
+NPM_V="6.14.4" # See https://github.com/nodejs/node/blob/v10.21.0/deps/npm/package.json
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
@@ -247,6 +248,13 @@ src_test() {
 }
 
 pkg_postinst() {
+	einfo "The global npm config lives in /etc/npm. This deviates slightly"
+	einfo "from upstream which otherwise would have it live in /usr/etc/."
+	einfo ""
+	einfo "Protip: When using node-gyp to install native modules, you can"
+	einfo "avoid having to download extras by doing the following:"
+	einfo "$ node-gyp --nodedir /usr/include/node <command>"
+
 	if has '>=net-libs/nodejs-${PV}' ; then
 		einfo \
 "Found higher slots, manually change the headers with \`eselect nodejs\`."

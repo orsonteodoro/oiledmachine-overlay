@@ -26,14 +26,15 @@ REQUIRED_USE="
 
 CDEPEND="!net-libs/nodejs:0
 	app-eselect/eselect-nodejs"
+# Keep versions in sync with deps folder
 RDEPEND="${CDEPEND}
 	>=dev-libs/libuv-1.37.0:=
 	>=net-dns/c-ares-1.16.0
 	>=net-libs/http-parser-2.9.3:=
 	>=net-libs/nghttp2-1.40.0
 	sys-libs/zlib
-	icu? ( >=dev-libs/icu-64.2:= )
-	system-ssl? ( >=dev-libs/openssl-1.1.1:0= )
+	icu? ( >=dev-libs/icu-67.1:= )
+	system-ssl? ( >=dev-libs/openssl-1.1.1g:0= )
 "
 BDEPEND="${CDEPEND}
 	${PYTHON_DEPS}
