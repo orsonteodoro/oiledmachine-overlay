@@ -3,7 +3,7 @@
 
 EAPI=7
 DESCRIPTION="Very small JSON parser written in C."
-HOMEPAGE="https://bitbucket.org/yarosla/nxjson/overview"
+HOMEPAGE="https://github.com/yarosla/nxjson"
 LICENSE="LGPL-3+"
 KEYWORDS="~alpha ~amd64 ~amd64-linux ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc \
 ~ppc64 ~riscv ~ppc-macos ~s390 ~sh ~sparc ~x64-macos ~x86 ~x86-macos"
@@ -16,13 +16,12 @@ LIBRARY_SUFFIX="${SO_SUFFIX}.${LIBRARY_AGE}.${LIBRARY_REVISION}"
 SO_NAME="libnxjson.${SO_SUFFIX}"
 SLOT="${SO_SUFFIX}/${PV}"
 IUSE="static test"
-BB_USER="yarosla"
-COMMIT="afaf7f999a95"
+EGIT_COMMIT="d7445b645b0c05f862db8fa02848fd898c4c238c"
 SRC_URI=\
-"https://bitbucket.org/${BB_USER}/nxjson/get/${COMMIT}.tar.gz \
+"https://github.com/yarosla/nxjson/archive/${GIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz"
 inherit eutils multilib-minimal toolchain-funcs
-S="${WORKDIR}/${BB_USER}-${PN}-${COMMIT}"
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 PATCHES=( "${FILESDIR}/nxjson-9999.20141019-create-libs.patch" )
 
