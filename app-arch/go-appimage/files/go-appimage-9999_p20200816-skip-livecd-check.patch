@@ -1,0 +1,24 @@
+diff -urp go-appimage-bc3066f71e70a526464a16168baacf2fe45968f2.orig2/src/appimaged/prerequisites.go go-appimage-bc3066f71e70a526464a16168baacf2fe45968f2/src/appimaged/prerequisites.go
+--- go-appimage-bc3066f71e70a526464a16168baacf2fe45968f2.orig2/src/appimaged/prerequisites.go	2020-08-16 12:45:05.000000000 -0700
++++ go-appimage-bc3066f71e70a526464a16168baacf2fe45968f2/src/appimaged/prerequisites.go	2020-08-17 04:43:03.651160746 -0700
+@@ -30,7 +30,7 @@ func checkPrerequisites() {
+ 	// Once the experience on Live systems is as intended, we may lift this restriction.
+ 	// We want to prevent people from working on this code without caring about
+ 	// Live systems.
+-	ensureRunningFromLiveSystem()
++	// ensureRunningFromLiveSystem()
+ 
+ 	// Check for needed files on $PATH
+ 	helpers.AddHereToPath() // Add the location of the executable to the $PATH
+diff -urp go_build.orig/src/github.com/probonopd/go-appimage/src/appimaged/prerequisites.go go_build/src/github.com/probonopd/go-appimage/src/appimaged/prerequisites.go
+--- go_build.orig/src/github.com/probonopd/go-appimage/src/appimaged/prerequisites.go	2020-08-17 04:30:51.512523615 -0700
++++ go_build/src/github.com/probonopd/go-appimage/src/appimaged/prerequisites.go	2020-08-17 04:30:16.991172642 -0700
+@@ -30,7 +30,7 @@ func checkPrerequisites() {
+ 	// Once the experience on Live systems is as intended, we may lift this restriction.
+ 	// We want to prevent people from working on this code without caring about
+ 	// Live systems.
+-	ensureRunningFromLiveSystem()
++	// ensureRunningFromLiveSystem()
+ 
+ 	// Check for needed files on $PATH
+ 	helpers.AddHereToPath() // Add the location of the executable to the $PATH

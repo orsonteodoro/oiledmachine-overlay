@@ -18,7 +18,7 @@ LICENSE+=" all-rights-reserved MIT" # \
 # The runtime archive comes from runtime.c from AppImageKit \
 # MIT license does not have all rights reserved
 LICENSE+=" MIT" # upload tool
-KEYWORDS="~amd64 ~arm ~arm64"
+KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 IUSE="firejail gnome kde openrc systemd travis-ci"
 RDEPEND="
 	!app-arch/appimaged
@@ -35,17 +35,17 @@ RDEPEND="
 		dev-vcs/git
 	)"
 DEPEND="${RDEPEND}
-	>=dev-lang/go-1.13.4"
+	>=dev-lang/go-1.13.4:="
 REQUIRED_USE="|| ( gnome kde )"
 SLOT="0/${PV}"
-EGIT_COMMIT="f1ebcce70dae0ab9a671604261d4fd46be88384f"
+EGIT_COMMIT="bc3066f71e70a526464a16168baacf2fe45968f2"
 SRC_URI=\
 "https://github.com/probonopd/go-appimage/archive/${EGIT_COMMIT}.tar.gz
 	 -> ${P}.tar.gz
 "
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
-PATCHES=( "${FILESDIR}/${PN}-9999_p20200731-gentooize.patch" )
+PATCHES=( "${FILESDIR}/${PN}-${PV}-gentooize.patch" )
 inherit linux-info user
 
 # See scripts/build.sh
@@ -59,43 +59,60 @@ micropackages."
 	linux-info_pkg_setup
 	linux_config_exists
 	if ! linux_chkconfig_builtin INOTIFY_USER ; then
-		die "You need to change your kernel .config to CONFIG_INOTIFY_USER=y"
+		die \
+"You need to change your kernel .config to CONFIG_INOTIFY_USER=y"
 	fi
-	if ! linux_chkconfig_builtin BINFMT_MISC && ! linux_chkconfig_module BINFMT_MISC ; then
-		die "You need to change your kernel .config to CONFIG_BINFMT_MISC=y or CONFIG_BINFMT_MISC=m"
+	if ! linux_chkconfig_builtin BINFMT_MISC \
+		&& ! linux_chkconfig_module BINFMT_MISC ; then
+		die \
+"You need to change your kernel .config to CONFIG_BINFMT_MISC=y or \
+CONFIG_BINFMT_MISC=m"
 	fi
 
-	if ! linux_chkconfig_builtin SQUASHFS && ! linux_chkconfig_module SQUASHFS ; then
-		die "You need to change your kernel .config to CONFIG_SQUASHFS=y or CONFIG_SQUASHFS=m"
+	if ! linux_chkconfig_builtin SQUASHFS \
+		&& ! linux_chkconfig_module SQUASHFS ; then
+		die \
+"You need to change your kernel .config to CONFIG_SQUASHFS=y or \
+CONFIG_SQUASHFS=m"
 	fi
 
 	local found_appimage_type=0
 	if [[ -f "${EROOT}/proc/sys/fs/binfmt_misc/appimage-type1" ]] \
-		&& grep -F -e "enabled" "${EROOT}/proc/sys/fs/binfmt_misc/appimage-type1" ; then
+		&& grep -F -e "enabled" \
+			"${EROOT}/proc/sys/fs/binfmt_misc/appimage-type1" ; then
 		found_appimage_type=1
-		eerror "You need to:  echo \"-1\" > /proc/sys/fs/binfmt_misc/appimage-type1"
+		eerror \
+"You need to:  echo \"-1\" > /proc/sys/fs/binfmt_misc/appimage-type1"
 		die
 	fi
 	if [[ -f "${EROOT}/proc/sys/fs/binfmt_misc/appimage-type2" ]] \
-		&& grep -F -e "enabled" "${EROOT}/proc/sys/fs/binfmt_misc/appimage-type2" ; then
-		eerror "You need to:  echo \"-1\" > /proc/sys/fs/binfmt_misc/appimage-type2"
+		&& grep -F -e "enabled" \
+			"${EROOT}/proc/sys/fs/binfmt_misc/appimage-type2" ; then
+		eerror \
+"You need to:  echo \"-1\" > /proc/sys/fs/binfmt_misc/appimage-type2"
 		die
 	fi
 
 	if [[ "${found_appimage_type}" == "1" ]] ; then
-		eerror "See issue: https://github.com/probonopd/go-appimage/issues/7"
+		eerror \
+"See issue: https://github.com/probonopd/go-appimage/issues/7"
 		eerror
 		eerror "See also:"
 		eerror \
-"https://github.com/probonopd/go-appimage/blob/4ac0e102e05507f43c82beef558d0eedba0e50ae/src/appimaged/prerequisites.go#L216"
-		eerror "https://www.kernel.org/doc/Documentation/admin-guide/binfmt-misc.rst"
+"https://github.com/probonopd/go-appimage/blob/\
+4ac0e102e05507f43c82beef558d0eedba0e50ae/src/appimaged/prerequisites.go#L216"
+		eerror \
+"https://www.kernel.org/doc/Documentation/admin-guide/binfmt-misc.rst"
 		die
 	fi
 
 	if [[ -f "${EROOT}/usr/bin/AppImageLauncher" ]] ; then
-		die "AppImageLauncher is not compatible and needs to be uninstalled."
+		die \
+"AppImageLauncher is not compatible and needs to be uninstalled."
 	fi
-	ewarn "This package is a Work In Progress (WIP) both on the ebuild level, upstream, openrc script."
+	ewarn \
+"This package is a Work In Progress (WIP) both on the ebuild level, upstream, \
+openrc script."
 	# server only
 	enewgroup appimaged
 	enewuser appimaged -1 -1 /var/lib/appimaged appimaged
@@ -105,16 +122,18 @@ src_unpack() {
 	unpack ${A}
 	cd "${S}" || die
 	chmod +x ./scripts/build.sh || die
+	cp -a "${FILESDIR}/apply-patches-${PV}.sh" "${WORKDIR}" || die
+	chmod +x "${WORKDIR}/apply-patches-${PV}.sh"
 	eapply ${PATCHES[@]}
-	sed -i -e "s|\tensureRunningFromLiveSystem|\t//ensureRunningFromLiveSystem|g" \
-		"src/appimaged/prerequisites.go" || die
+	# required for public key embedding
+	git init || die
+	git add . || die
+	export GIT_ROOT="${S}"
+	# required for mounting when calling:
+	#   ./appimagetool-2020-08-17_00:47:34-amd64.AppImage ./appimaged.AppDir
+	addwrite /dev/fuse
 	# Workaround emerge policy concerning downloads in src_compile phase.
-	./scripts/build.sh
-	pushd "${WORKDIR}/go_build/src"
-#	addpredict /dev/fuse
-	# TODO/UNFINISHED
-	./appimagetool-*-amd64.AppImage ./appimaged.AppDir || die
-	popd
+	./scripts/build.sh || die
 }
 
 src_prepare() {
@@ -155,23 +174,32 @@ install_licenses() {
 	export IFS="${OIFS}"
 }
 
+
+
 src_install() {
+	local goArch=$(go env GOHOSTARCH)
 	exeinto /usr/bin
 	BUILD_DIR="${WORKDIR}/go_build/src"
 	# No support for multi go yet the other is false
-	doexe "${BUILD_DIR}/"appimaged-${ARCH//x86/386}
-	doexe "${BUILD_DIR}/"appimagetool-${ARCH//x86/386}
-	doexe "${BUILD_DIR}/"appimagetool-*-amd64.AppImage
-	dosym ../../../usr/bin/appimaged-${ARCH//x86/386} /usr/bin/appimaged
-	dosym ../../../usr/bin/appimagetool-${ARCH//x86/386} /usr/bin/appimagetool
+	# Gentoo's Go is not multilib that's why.
+	local aits=$(basename $(realpath "${BUILD_DIR}/appimaged-*-${goArch}.AppImage") \
+		| cut -f 2-4 -d "-")
+	local aid_fn="appimaged-${aits}-${goArch}.AppImage"
+	local ait_fn="appimagetool-${aits}-${goArch}.AppImage"
+	doexe "${BUILD_DIR}/${aid_fn}"
+	doexe "${BUILD_DIR}/${ait_fn}"
+	dosym ../../../usr/bin/${aid_fn} /usr/bin/appimaged
+	dosym ../../../usr/bin/${ait_fn} /usr/bin/appimagetool
 	install_licenses "${BUILD_DIR}"
 	docinto licenses
 	dodoc "${S}/LICENSE"
 	docinto readme
 	dodoc "${S}/README.md"
-	cp "${S}/src/appimaged/README.md" "${T}/appimaged-README.md"
+	cp "${S}/src/appimaged/README.md" \
+		"${T}/appimaged-README.md" || die
 	dodoc "${T}/appimaged-README.md"
-	cp "${S}/src/appimagetool/README.md" "${T}/appimagetool-README.md"
+	cp "${S}/src/appimagetool/README.md" \
+		"${T}/appimagetool-README.md" || die
 	dodoc "${T}/appimagetool-README.md"
 	if use openrc ; then
 		cp "${FILESDIR}/${PN}-openrc" \
@@ -179,13 +207,6 @@ src_install() {
 		exeinto /etc/init.d
 		doexe "${T}/${PN}"
 	fi
-	insinto /usr/share/${PN}
-	doins -R appimaged.AppDir
-	doins -R appimagetool.AppDir
-	exeinto /usr/share/${PN}
-	fperms 0755 /usr/share/${PN}/appimaged.AppDir/usr/bin/{appimaged,bsdtar,unsquashfs}
-	fperms 0755 /usr/share/${PN}/appimagetool.AppDir/usr/bin/{appimagetool,desktop-file-validate,mksquashfs,runtime-amd64,uploadtool}
-	# TODO/UNFINISHED install needs to be done possibly in user session
 }
 
 pkg_postinst() {
