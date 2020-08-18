@@ -57,6 +57,10 @@ dev-dotnet/dotnetcore-sdk
 # Build failures / Work In Progress (WIP)
 >=dev-dotnet/aspnetcore-2.1.18
 
+# Patches to make it OpenRC compatible is WIP.
+# Gentoo supports OpenRC by default.
+app-arch/go-appimage
+
 # Masked for security reasons
 #--------------------------------------------------------------------------------------------------
 
@@ -115,13 +119,6 @@ x11-drivers/xf86-video-ati
 
 # Masked for ebuild quality control reasons
 #--------------------------------------------------------------------------------------------------
-
-# appimaged does not work.  Use app-arch/appimaged instead.
-# Broken os.Getuid() after built
-#   returns 0 [os.Getuid() uid returns proper uid in isolated test code]
-#   when chmod 7777 appimaged* appimagetool* it says "open dir error: Permission denied"
-# multiple ERROR watchDirectoriesReally ... too many open files errrors.
-app-arch/go-appimage
 
 # for upstream development only
 =app-editors/nano-ycmd-9999

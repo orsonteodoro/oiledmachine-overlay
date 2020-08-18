@@ -1,5 +1,7 @@
-# UNFINISHED
 #!/sbin/openrc-run
+#
+# UNFINISHED
+#
 # Tries to emulate the systemd user service but OpenRC way.
 
 SERVER_PID_DIR="/var/run/appimaged/"
@@ -14,6 +16,11 @@ logmsg() {
 	if [[ "${ENABLE_LOGGING}" == "1" ]] ; then
 		echo -e "${msg}" >> "${LOGFILE}"
 	fi
+}
+
+get_uid() {
+	local username="${1}"
+	$(grep -P -e "^${username}:" /etc/group | cut -f 3 -d ":")
 }
 
 get_appimage_users() {
@@ -42,6 +49,7 @@ start_servers() {
 		start-stop-daemon \
 			--background \
 			--start \
+			--env XDG_RUNTIME_DIR=/run/user/$(get_uid) \
 			--group ${user} \
 			--user ${user} \
 			--pidfile "${user_pid_file}" \
