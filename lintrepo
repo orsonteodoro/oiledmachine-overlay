@@ -40,7 +40,6 @@ if ! which pcregrep 2>/dev/null 1>/dev/null ; then
 	einfo "You need to install libpcre"
 fi
 
-if false ; then
 einfo "Checking ebuilds for security risks.  (This can yield false positives.)"
 for f in $(find $(pwd) -name "*.ebuild") ; do
 	if grep ${GREP_ARGS} -e "SLOT=\"0\"" "${f}" 2>/dev/null 1>/dev/null ; then
@@ -196,7 +195,6 @@ for f in $(find $(pwd) -name "*.ebuild") ; do
 		einfo "${f} makes use of sys-devel/grep[pcre] which is not enabled by default.  Check if it needs to be added to DEPENDS."
 	fi
 done
-fi
 
 _sanitize_package_list() {
 	ARG=$(</dev/stdin)
