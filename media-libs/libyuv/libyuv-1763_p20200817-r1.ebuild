@@ -13,8 +13,8 @@ inherit multilib-minimal
 IUSE="static system-gflags test"
 RDEPEND="virtual/jpeg"
 DEPEND="${RDEPEND}
-	test? ( dev-cpp/gtest
-		dev-cpp/gflags )
+	test? ( dev-cpp/gtest[${MULTILIB_USEDEP}]
+		dev-cpp/gflags[${MULTILIB_USEDEP}] )
 	dev-util/cmake"
 SLOT="0/${PV}"
 inherit cmake-utils
