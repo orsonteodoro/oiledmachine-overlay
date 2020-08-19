@@ -5,6 +5,9 @@
 CI=${CI:=0}
 VERBOSE=${VERBOSE:=0}
 GREP_ARGS=-q
+PORTAGE_DIR="/usr/portage"
+LAYMAN_DIR="/var/lib/layman"
+
 if [[ ${@} =~ (-v|--verbose) ]]; then
 	VERBOSE=1
 	GREP_ARGS=
@@ -37,6 +40,7 @@ if ! which pcregrep 2>/dev/null 1>/dev/null ; then
 	einfo "You need to install libpcre"
 fi
 
+if false ; then
 einfo "Checking ebuilds for security risks.  (This can yield false positives.)"
 for f in $(find $(pwd) -name "*.ebuild") ; do
 	if grep ${GREP_ARGS} -e "SLOT=\"0\"" "${f}" 2>/dev/null 1>/dev/null ; then
@@ -192,18 +196,123 @@ for f in $(find $(pwd) -name "*.ebuild") ; do
 		einfo "${f} makes use of sys-devel/grep[pcre] which is not enabled by default.  Check if it needs to be added to DEPENDS."
 	fi
 done
+fi
+
+_sanitize_package_list() {
+	ARG=$(</dev/stdin)
+	echo $(cat "${ARG}" \
+		| sed -r -e "/^[ \t]*(ewarn|einfo|eerror|elog|die|has_version)/d" \
+		| sed -r -e "/^[ \t]*#/d" \
+		| sed -r -e "/^[ \t]*if/d" \
+		| sed -e "/^\"/d" \
+		| sed -r -e "s|^[ \t]*[A-Z_]+=||g" \
+		| sed -r -e "s|[\"]||g" \
+			-e "s#(DEPEND|RDEPEND|CDEPEND|BDEPEND)##g" \
+			-e "s|[*]||g" \
+		| tr " " "\n" \
+		| sort \
+		| uniq \
+		| sed -r -e "s#(=|>=|<=|<|>|\!|\~|\|\|)##g" \
+			-e "s|[-a-zA-Z0-9]+\?||g" \
+			-e "s|[()]||g" -e "s|\[.*\]||g" \
+			-e "s|:.*||g" \
+			-e "s|-[_0-9a-z\.]+[ ]*$||g" \
+			-e "s|[ \t]*||g" -e "s|\$||g" \
+			| sed -r -e "s|[$][{].*[}]||g" \
+				-e "s|-$||g" \
+				| sort \
+				| uniq  \
+				| sed -r -e "/^[ \t]*$/d")
+}
+
+# meta folders
+NOT_CATEGORY="[.]|.git|.local|metadata|profiles|eclass|.travis|.github|licenses|etc"
+
+get_all_portage_categories() {
+	pushd "${PORTAGE_DIR}" 2>/dev/null 1>/dev/null
+	find . -maxdepth 1 -type d | sed -r -e "s|./||g" -e "/^(${NOT_CATEGORY})$/d"
+	popd 2>/dev/null 1>/dev/null
+}
+
+get_all_oiledmachine_overlay_categories() {
+	find . -maxdepth 1 -type d | sed -r -e "s|./||g" -e "/^(${NOT_CATEGORY})$/d"
+}
+
+get_all_layman_categories() {
+	local skipped_first=0
+	pushd "${LAYMAN_DIR}" 2>/dev/null 1>/dev/null
+	for repo in $(find . -maxdepth 1 -type d) ; do
+		pushd "${repo}" 2>/dev/null 1>/dev/null
+			if [[ "${skipped_first}" == "0" ]] ; then
+				skipped_first=1
+				continue
+			fi
+			find . -maxdepth 1 -type d | sed -r -e "s|./||g" -e "/^(${NOT_CATEGORY})$/d" | tr " " "\n"
+		popd 2>/dev/null 1>/dev/null
+	done
+	popd 2>/dev/null 1>/dev/null
+}
 
 # It's implied that the main program that is multilib capable as in compiled as
 # 32-bit on 64-bit or a library that is multilib have all library
 # dependendencies multilib.
+categories=$(echo -e "$(get_all_portage_categories)$(get_all_oiledmachine_overlay_categories)$(get_all_layman_categories)" | sort | uniq | tr "\n" "|")
 einfo "Checking repo for inconsistent multilib in (R)DEPENDs"
 for f in $(find $(pwd) -name "*.ebuild") ; do
 	if grep ${GREP_ARGS} -P -e "multilib" "${f}" ; then
 		results_file=$(mktemp)
-		if grep -P -e '(app-accessibility|app-arch|.*-libs|dev-db|dev-cpp|net-fs|net-print|media-gfx|media-sound|media-video|sys-apps|sys-devel|virtual)/(?![^\]]+MULTILIB_USEDEP[^\]]+)' "${f}" > ${results_file} ; then
-			einfo "${f} may have missing suffixes for [\$MULTILIB_USEDEP] for some (R)DEPENDs entries:  Results:"
-			cat "${results_file}"
-			echo
+		if grep -P -e '('${categories}')/(?![^\]]+MULTILIB_USEDEP[^\]]+)' \
+			"${f}" > ${results_file} ; then
+
+			#einfo "---start results---"
+			#cat "${results_file}"
+			#einfo "---end results---"
+
+			#einfo "---start sanitation--"
+			#echo "${results_file}" | _sanitize_package_list | tr " " "\n"
+			#einfo "---end sanitiation--"
+
+			showed_header=0
+
+			for p in $(echo "${results_file}" | _sanitize_package_list | tr " " "\n") ; do
+				reported=0
+				if ls ./${p}*/*.ebuild 2>/dev/null 1>/dev/null ; then
+					if grep -q -P -e "multilib_" ./${p}*/*.ebuild ; then
+						if [[ "${showed_header}" == "0" ]] ; then
+							einfo "${f} may need change to (R)DEPENDs with:"
+							showed_header=1
+						fi
+
+						echo "${p}[\$MULTILIB_USEDEP]"
+						reported=1
+					fi
+				fi
+				if ls -f "${PORTAGE_DIR}"/${p}*/*.ebuild 2>/dev/null 1>/dev/null && [[ "${reported}" == "0" ]] ; then
+					if grep -q -P -e "multilib_" "${PORTAGE_DIR}"/${p}*/*.ebuild ; then
+						if [[ "${showed_header}" == "0" ]] ; then
+							einfo "${f} may need change to (R)DEPENDs with:"
+							showed_header=1
+						fi
+
+						echo "${p}[\$MULTILIB_USEDEP]"
+						reported=1
+					fi
+				fi
+				if ls "${LAYMAN_DIR}"/*/${p}*/*.ebuild 2>/dev/null 1>/dev/null && [[ "${reported}" == "0" ]] ; then
+					if grep -q -P -e "multilib_" "${LAYMAN_DIR}"/*/${p}*/*.ebuild ; then
+						if [[ "${showed_header}" == "0" ]] ; then
+							einfo "${f} may need change to (R)DEPENDs with:"
+							showed_header=1
+						fi
+
+						echo "${p}[\$MULTILIB_USEDEP]"
+						reported=1
+					fi
+				fi
+			done
+			if [[ "${showed_header}" == "1" ]] ; then
+				echo
+			fi
 		fi
 		rm ${results_file}
 	fi
