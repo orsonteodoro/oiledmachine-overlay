@@ -10,11 +10,10 @@ KEYWORDS="~amd64 ~ppc ~x86"
 IUSE="cgi cpp debug doc ipv6 ssl static websocket"
 LUA_VER="5.2"
 inherit cmake-static-libs multilib-minimal
-REQUIRED_USE+=" static-libs? ( static )"
 RDEPEND="dev-db/sqlite:3[${MULTILIB_USEDEP}]
-	 dev-lang/lua:${LUA_VER}=[static=,civetweb]
-	 dev-lua/luafilesystem
-	 dev-lua/luasqlite3"
+	 dev-lang/lua:${LUA_VER}=[${MULTILIB_USEDEP},static=,civetweb]
+	 dev-lua/luafilesystem[${MULTILIB_USEDEP}]
+	 dev-lua/luasqlite3[${MULTILIB_USEDEP}]"
 DEPEND="${RDEPEND}"
 SRC_URI="\
 https://github.com/civetweb/civetweb/archive/v${PV}.tar.gz \
@@ -43,7 +42,6 @@ src_prepare() {
 
 src_configure() {
 	configure_abi() {
-		cmake-static-libs_copy_sources
 		cd "${BUILD_DIR}" || die
 		configure_impl() {
 			cd "${BUILD_DIR}" || die
