@@ -21,7 +21,7 @@ LICENSE+=" unicode"
 API_VERSION="4.0"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
 SLOT="${SLOT_MAJOR}/37" # soname version of libwebkit2gtk-4.0
-KEYWORDS="~amd64 ~arm arm64 ~ppc64 ~sparc ~x86"
+KEYWORDS="amd64 ~arm arm64 ~ppc64 ~sparc x86"
 
 IUSE="aqua +egl +geolocation gles2-only gnome-keyring +gstreamer gtk-doc +introspection +jpeg2k +jumbo-build libnotify +opengl seccomp spell wayland +X"
 IUSE+=" accelerated-2d-canvas bmalloc ftl-jit hardened +jit minibrowser +webgl"
@@ -210,7 +210,7 @@ src_prepare() {
 	eapply "${FILESDIR}/${PN}-2.24.4-eglmesaext-include.patch" # bug 699054 # https://bugs.webkit.org/show_bug.cgi?id=204108
 	eapply "${FILESDIR}"/2.28.2-opengl-without-X-fixes.patch
 	eapply "${FILESDIR}"/2.28.2-non-jumbo-fix.patch
-	eapply "${FILESDIR}"/2.28.3-non-jumbo-fix2.patch
+	eapply "${FILESDIR}"/2.28.4-non-jumbo-fix2.patch
 	cmake-utils_src_prepare
 	gnome2_src_prepare
 	multilib_copy_sources
@@ -352,6 +352,8 @@ multilib_src_install() {
 
 	# Prevents crashes on PaX systems, bug #522808
 	local d="${ED}usr/$(get_libdir)/misc/webkit2gtk-${API_VERSION}"
-	pax-mark m "${d}/jsc" "${d}/WebKitWebProcess"
+	# usr/libexec int not multilib this is why it is changed
 	pax-mark m "${d}/WebKitPluginProcess"
+	pax-mark m "${d}/WebKitWebProcess"
+	pax-mark m "${d}/jsc"
 }
