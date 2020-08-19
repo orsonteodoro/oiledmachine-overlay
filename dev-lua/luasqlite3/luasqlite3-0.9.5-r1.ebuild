@@ -9,7 +9,8 @@ LICENSE="all-rights-reserved MIT"
 KEYWORDS="~amd64 ~ppc ~x86"
 SLOT="0/${PV}"
 IUSE="doc"
-RDEPEND=">=dev-lang/lua-5.1"
+inherit multilib-minimal
+RDEPEND=">=dev-lang/lua-5.1[${MULTILIB_USEDEP}]"
 DEPEND="${RDEPEND}"
 S="${WORKDIR}/lsqlite3_fsl09y"
 inherit eutils toolchain-funcs
@@ -20,14 +21,19 @@ src_configure() {
 	:;
 }
 
-src_compile() {
+src_prepare() {
+	default
+	multilib_copy_sources
+}
+
+multilib_src_compile() {
 	CC=$(tc-getCC ${ABI})
 	${CC} -DLSQLITE_VERSION=\"${PV}\" -fPIC -Wall -c lsqlite3.c || die
 	${CC} -shared -Wl,-soname,lsqlite3.so.0 \
 		-o lsqlite3.so lsqlite3.o -lsqlite3 || die
 }
 
-src_install() {
+multilib_src_install() {
 	dolib.so lsqlite3.so
 	dodoc doc/lsqlite3.wiki
 }
