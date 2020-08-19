@@ -21,7 +21,7 @@ RDEPEND="
 	readline? ( sys-libs/readline:=[${MULTILIB_USEDEP}] )
 "
 DEPEND="${RDEPEND}
-	sys-devel/gettext
+	sys-devel/gettext[${MULTILIB_USEDEP}]
 "
 
 LANGS="af bg ca cs cy da de de-1901 el en eo es et fo fr ga gl he hr hu ia id
