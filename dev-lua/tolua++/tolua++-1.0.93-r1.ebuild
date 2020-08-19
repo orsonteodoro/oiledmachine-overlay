@@ -15,7 +15,7 @@ SRC_URI=""
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="alpha amd64 ppc ppc64 sparc x86"
-IUSE="static urho3d debug"
+IUSE="static-libs urho3d debug"
 
 RESTRICT="fetch"
 
@@ -38,7 +38,7 @@ src_prepare() {
 	if use urho3d ; then
 		eapply "${FILESDIR}"/tolua++-1.0.93-urho3d-1.patch || die "failed to add urho3d extension 1"
 	fi
-	if use static; then
+	if use static-libs; then
 		true
 	else
 		sed -i -e "s|add_library(libtolua++|add_library(libtolua++ SHARED|" src/lib/CMakeLists.txt
@@ -72,7 +72,7 @@ src_install() {
 	cp "tolua++" "${D}/usr/bin" || die
 
 	cd "${WORKDIR}/tolua++-1.0.93_build/lib"
-	if use static; then
+	if use static-libs; then
 		cp "libtolua++.a" "${D}/usr/$(get_libdir)" || die
 	else
 		cp "libtolua++.so" "${D}/usr/$(get_libdir)" || die
