@@ -28,7 +28,7 @@ if [[ ${MOZ_ESR} == 1 ]] ; then
 fi
 
 # Patch version
-PATCH="${PN}-78.0-patches-05"
+PATCH="${PN}-79.0-patches-04"
 
 MOZ_HTTP_URI="https://archive.mozilla.org/pub/${PN}/releases"
 MOZ_SRC_URI="${MOZ_HTTP_URI}/${MOZ_PV}/source/${PN}-${MOZ_PV}.source.tar.xz"
@@ -62,7 +62,8 @@ _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 
 IUSE+=" ${_ABIS}"
 IUSE+=" -jemalloc"
 
-REQUIRED_USE="pgo? ( lto )"
+REQUIRED_USE="pgo? ( lto )
+	screencast? ( wayland )"
 REQUIRED_USE+=" ^^ ( ${_ABIS} )"
 
 RESTRICT="!bindist? ( bindist )
@@ -74,7 +75,7 @@ SRC_URI="${SRC_URI}
 	${PATCH_URIS[@]}"
 
 CDEPEND="
-	>=dev-libs/nss-3.53.1[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.54[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.25[${MULTILIB_USEDEP}]
 	dev-libs/atk[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
@@ -109,7 +110,7 @@ CDEPEND="
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-2.6.4:0=[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-2.6.8:0=[${MULTILIB_USEDEP}]
 		>=media-gfx/graphite2-1.3.13[${MULTILIB_USEDEP}]
 	)
 	system-icu? ( >=dev-libs/icu-67.1:=[${MULTILIB_USEDEP}] )
@@ -139,12 +140,12 @@ RDEPEND="${CDEPEND}
 DEPEND="${CDEPEND}
 	app-arch/zip
 	app-arch/unzip
-	>=dev-util/cbindgen-0.14.1
+	>=dev-util/cbindgen-0.14.3
 	>=net-libs/nodejs-10.19.0
 	>=sys-devel/binutils-2.30
 	sys-apps/findutils
 	virtual/pkgconfig[${MULTILIB_USEDEP}]
-	>=dev-lang/rust-1.41.0[${MULTILIB_USEDEP}]
+	>=dev-lang/rust-1.43.0[${MULTILIB_USEDEP}]
 	!dev-lang/rust-bin
 	|| (
 		(
@@ -236,43 +237,51 @@ llvm_check_deps() {
 }
 
 pkg_pretend() {
-	if use pgo ; then
-		if ! has usersandbox $FEATURES ; then
-			die "You must enable usersandbox as X server can not run as root!"
+	if [[ ${MERGE_TYPE} != binary ]] ; then
+		if use pgo ; then
+			if ! has usersandbox $FEATURES ; then
+				die "You must enable usersandbox as X server can not run as root!"
+			fi
 		fi
-	fi
 
-	# Ensure we have enough disk space to compile
-	if use pgo || use lto || use debug || use test ; then
-		CHECKREQS_DISK_BUILD="10G"
-	else
-		CHECKREQS_DISK_BUILD="5G"
-	fi
+		# Ensure we have enough disk space to compile
+		if use pgo || use lto || use debug || use test ; then
+			CHECKREQS_DISK_BUILD="10G"
+		else
+			CHECKREQS_DISK_BUILD="5G"
+		fi
 
-	check-reqs_pkg_pretend
+		check-reqs_pkg_pretend
+	fi
 }
 
 pkg_setup() {
 	moz_pkgsetup
 
-	# Ensure we have enough disk space to compile
-	if use pgo || use lto || use debug || use test ; then
-		CHECKREQS_DISK_BUILD="10G"
-	else
-		CHECKREQS_DISK_BUILD="5G"
+	if [[ ${MERGE_TYPE} != binary ]] ; then
+		# Ensure we have enough disk space to compile
+		if use pgo || use lto || use debug || use test ; then
+			CHECKREQS_DISK_BUILD="10G"
+		else
+			CHECKREQS_DISK_BUILD="5G"
+		fi
+
+		check-reqs_pkg_setup
+
+		# Avoid PGO profiling problems due to enviroment leakage
+		# These should *always* be cleaned up anyway
+		unset DBUS_SESSION_BUS_ADDRESS \
+			DISPLAY \
+			ORBIT_SOCKETDIR \
+			SESSION_MANAGER \
+			XDG_CACHE_HOME \
+			XDG_SESSION_COOKIE \
+			XAUTHORITY
+
+		addpredict /proc/self/oom_score_adj
+
+		llvm_pkg_setup
 	fi
-
-	check-reqs_pkg_setup
-
-	# Avoid PGO profiling problems due to enviroment leakage
-	# These should *always* be cleaned up anyway
-	unset DBUS_SESSION_BUS_ADDRESS \
-		DISPLAY \
-		ORBIT_SOCKETDIR \
-		SESSION_MANAGER \
-		XDG_CACHE_HOME \
-		XDG_SESSION_COOKIE \
-		XAUTHORITY
 
 	if ! use bindist ; then
 		einfo
@@ -281,10 +290,6 @@ pkg_setup() {
 		elog "a legal problem with Mozilla Foundation."
 		elog "You can disable it by emerging ${PN} _with_ the bindist USE-flag."
 	fi
-
-	addpredict /proc/self/oom_score_adj
-
-	llvm_pkg_setup
 }
 
 src_unpack() {
@@ -310,6 +315,12 @@ src_prepare() {
 		-e "s/multiprocessing.cpu_count()/$(makeopts_jobs)/" \
 		"${S}"/intl/icu_sources_data.py \
 		|| die "sed failed to set num_cores"
+
+	# sed-in toolchain prefix
+	sed -i \
+		-e "s/objdump/${CHOST}-objdump/" \
+		"${S}"/python/mozbuild/mozbuild/configure/check_debug_ranges.py \
+		|| die "sed failed to set toolchain prefix"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
