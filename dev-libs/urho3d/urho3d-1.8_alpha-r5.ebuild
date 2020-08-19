@@ -138,11 +138,11 @@ inherit multilib-minimal
 # todo check multilib/32 bit, every linked lib should have ${MULTILIB_USEDEP}
 RDEPEND="
 android? ( dev-util/android-ndk )
-bindings? ( sys-devel/llvm )
-clang-tools? ( sys-devel/llvm )
+bindings? ( sys-devel/llvm[${MULTILIB_USEDEP}] )
+clang-tools? ( sys-devel/llvm[${MULTILIB_USEDEP}] )
 javascript? ( dev-libs/urho3d-web
 	      >=dev-util/emscripten-1.36.10
-	      >=sys-devel/llvm-3.9.0 )
+	      >=sys-devel/llvm-3.9.0[${MULTILIB_USEDEP}] )
 native? (
 	alsa? ( media-libs/libsdl2:=[${MULTILIB_USEDEP},alsa,sound?,threads?,static-libs=] )
 	angelscript? (
@@ -150,20 +150,20 @@ native? (
 			dev-libs/angelscript:=[${MULTILIB_USEDEP},static-libs=]
 		)
 	)
-	box2d? ( system-box2d? ( sci-physics/box2d:=[${MULTILIB_USEDEP},static=] ) )
+	box2d? ( system-box2d? ( sci-physics/box2d:=[${MULTILIB_USEDEP},static-libs=] ) )
 	bullet? ( system-bullet? ( sci-physics/bullet ) )
-	lua? (   system-lua? ( dev-lang/lua:${LUA_VER}=[static=] )
+	lua? (   system-lua? ( dev-lang/lua:${LUA_VER}=[${MULTILIB_USEDEP},static=] )
 		 system-luajit? ( luajit? ( dev-lang/luajit[lua52compat] ) )
 		!system-luajit? ( luajit? ( !dev-lang/luajit ) )
-		 system-tolua++? ( dev-lua/tolua++:=[static=,urho3d,debug?] )
+		 system-tolua++? ( dev-lua/tolua++:=[static-libs=,urho3d,debug?] )
 	)
 	media-libs/alsa-lib[${MULTILIB_USEDEP}]
 	media-libs/libsdl2[${MULTILIB_USEDEP},X,opengl?]
 	!odbc? ( sqlite? ( !dev-db/unixODBC[${MULTILIB_USEDEP}] ) )
 	odbc? (
 		system-nanodbc? (
-			>=dev-db/nanodbc-2.12.4:=[${MULTILIB_USEDEP},-libcxx,boost_convert,static=,-unicode]
-			dev-db/unixODBC
+			>=dev-db/nanodbc-2.12.4:=[${MULTILIB_USEDEP},-libcxx,boost_convert,static-libs=,-unicode]
+			dev-db/unixODBC[${MULTILIB_USEDEP}]
 		)
 	)
 	network? (
@@ -180,7 +180,7 @@ native? (
 	)
 	recastnavigation? (
 		system-recastnavigation? (
-			dev-libs/recastnavigation:=[${MULTILIB_USEDEP},static=]
+			dev-libs/recastnavigation:=[${MULTILIB_USEDEP},static-libs=]
 		)
 	)
 	sqlite? (
@@ -188,15 +188,15 @@ native? (
 	)
 	system-freetype? ( media-libs/freetype:=[${MULTILIB_USEDEP},static-libs=] )
 	system-lz4? ( app-arch/lz4[${MULTILIB_USEDEP}] )
-	system-pugixml? ( dev-libs/pugixml:=[${MULTILIB_USEDEP},static=] )
+	system-pugixml? ( dev-libs/pugixml:=[${MULTILIB_USEDEP},static-libs=] )
 	system-rapidjson? ( dev-cpp/rapidjson )
-	tools? ( system-assimp? ( media-libs/assimp:=[${MULTILIB_USEDEP},static=] ) )
+	tools? ( system-assimp? ( media-libs/assimp:=[${MULTILIB_USEDEP},static-libs=] ) )
 	x11-apps/xrandr
 	x11-libs/libX11[${MULTILIB_USEDEP}] )
-raspberry-pi? ( alsa? ( media-libs/libsdl2:=[alsa,sound?,threads?,static-libs=] )
-		media-libs/alsa-lib
-                media-libs/libsdl2[X,opengl?]
-		|| ( sys-fs/udev sys-apps/systemd )
+raspberry-pi? ( alsa? ( media-libs/libsdl2:=[${MULTILIB_USEDEP},alsa,sound?,threads?,static-libs=] )
+		media-libs/alsa-lib[${MULTILIB_USEDEP}]
+                media-libs/libsdl2[${MULTILIB_USEDEP},X,opengl?]
+		|| ( sys-fs/udev[${MULTILIB_USEDEP}] sys-apps/systemd[${MULTILIB_USEDEP}] )
 		x11-apps/xrandr
 		x11-libs/libX11 )"
 DEPEND="${RDEPEND}
