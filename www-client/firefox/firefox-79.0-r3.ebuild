@@ -1004,7 +1004,7 @@ pkg_postinst() {
 	fi
 
 	elog
-	elog "By default, the /usr/bin/firefox symlink it set to the last ABI installed."
+	elog "By default, the /usr/bin/firefox symlink is set to the last ABI installed."
 	elog "You must change it manually if you want to run on a different default ABI."
 	elog
 	elog "Examples"
