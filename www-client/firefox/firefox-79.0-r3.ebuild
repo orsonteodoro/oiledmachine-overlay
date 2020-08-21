@@ -64,7 +64,6 @@ IUSE+=" -jemalloc"
 
 REQUIRED_USE="pgo? ( lto )
 	screencast? ( wayland )"
-REQUIRED_USE+=" ^^ ( ${_ABIS} )"
 
 RESTRICT="!bindist? ( bindist )
 	!test? ( test )"
@@ -290,6 +289,9 @@ pkg_setup() {
 		elog "a legal problem with Mozilla Foundation."
 		elog "You can disable it by emerging ${PN} _with_ the bindist USE-flag."
 	fi
+
+	einfo
+	einfo "To set up cross-compile for other ABIs see \`epkginfo -d firefox\`"
 }
 
 src_unpack() {
@@ -303,6 +305,8 @@ src_prepare() {
 	eapply "${WORKDIR}/firefox"
 	eapply "${FILESDIR}/${PN}-68.4.2-dont-check-rustc-host.patch"
 	eapply "${FILESDIR}/${PN}-68.4.2-force-cross-compile.patch"
+	eapply "${FILESDIR}/${PN}-79.0-compile-cargo-packages-same-abi-1.patch"
+	eapply "${FILESDIR}/${PN}-79.0-compile-cargo-packages-same-abi-2.patch"
 
 	# Make LTO respect MAKEOPTS
 	sed -i \
@@ -316,11 +320,7 @@ src_prepare() {
 		"${S}"/intl/icu_sources_data.py \
 		|| die "sed failed to set num_cores"
 
-	# sed-in toolchain prefix
-	sed -i \
-		-e "s/objdump/${CHOST}-objdump/" \
-		"${S}"/python/mozbuild/mozbuild/configure/check_debug_ranges.py \
-		|| die "sed failed to set toolchain prefix"
+	# sed-in toolchain prefix was moved to the bottom of this function
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -409,8 +409,12 @@ src_prepare() {
 
 # corrections based on the ABI being compiled
 _fix_paths() {
+	# For proper rust cargo cross-compile for libloading and glslopt \
+	export RUST_CROSSCOMPILE_TARGET=${chost//pc/unknown}
+	export CARGO_CFG_TARGET_ARCH=$(echo ${chost} | cut -f 1 -d "-")
 	MOZILLA_FIVE_HOME="/usr/$(get_libdir)/${PN}"
 	BUILD_OBJ_DIR="${BUILD_DIR}/ff"
+	# for rust crates libloading and glslopt
 	if use clang && ! tc-is-clang ; then
 		CC=${chost}-clang
 		CXX=${chost}-clang++
@@ -697,6 +701,7 @@ multilib_src_configure() {
 	mkdir -p "${BUILD_DIR}"/third_party/rust/libloading/.deps
 
 	# workaround for funky/broken upstream configure...
+	TARGET="${chost}" \
 	SHELL="${SHELL:-${EPREFIX}/bin/bash}" MOZ_NOSPAM=1 \
 	./mach configure || die
 }
@@ -714,6 +719,7 @@ multilib_src_compile() {
 		addpredict /root
 	fi
 
+	TARGET="${chost}" \
 	GDK_BACKEND=x11 \
 		MOZ_MAKE_FLAGS="${MAKEOPTS} -O" \
 		SHELL="${SHELL:-${EPREFIX}/bin/bash}" \
@@ -781,6 +787,7 @@ multilib_src_install() {
 	fi
 
 	cd "${BUILD_DIR}"
+	TARGET="${chost}" \
 	MOZ_MAKE_FLAGS="${MAKEOPTS}" SHELL="${SHELL:-${EPREFIX}/bin/bash}" MOZ_NOSPAM=1 \
 	DESTDIR="${D}" ./mach install || die
 
@@ -840,13 +847,15 @@ PROFILE_EOF
 
 	local app_name desktop_filename display_protocol exec_command
 	for display_protocol in ${display_protocols} ; do
-		app_name="${name} on ${display_protocol}"
-		desktop_filename="${PN}-${display_protocol,,}.desktop"
+		app_name="${name} (${ABI}) on ${display_protocol}"
+		desktop_filename="${PN}-${ABI}-${display_protocol,,}.desktop"
 
 		case ${display_protocol} in
 			Wayland)
-				exec_command='firefox-wayland --name firefox-wayland'
-				newbin "${FILESDIR}"/firefox-wayland.sh firefox-wayland
+				exec_command='firefox-${ABI}-wayland --name firefox-${ABI}-wayland'
+				newbin "${FILESDIR}"/firefox-wayland.sh firefox-${ABI}-wayland
+				[ -e "/usr/bin/firefox-wayland" ] && rm /usr/bin/firefox-wayland
+				dosym /usr/bin/firefox-${ABI}-wayland /usr/bin/firefox-wayland
 				;;
 			X11)
 				if ! use wayland ; then
@@ -855,13 +864,15 @@ PROFILE_EOF
 					continue
 				fi
 
-				exec_command='firefox-x11 --name firefox-x11'
-				newbin "${FILESDIR}"/firefox-x11.sh firefox-x11
+				exec_command='firefox-${ABI}-x11 --name firefox-${ABI}-x11'
+				newbin "${FILESDIR}"/firefox-x11.sh firefox-${ABI}-x11
+				[ -e "/usr/bin/firefox-x11" ] && rm /usr/bin/firefox-x11
+				dosym /usr/bin/firefox-${ABI}-x11 /usr/bin/firefox-x11
 				;;
 			*)
 				app_name="${name}"
-				desktop_filename="${PN}.desktop"
-				exec_command='firefox'
+				desktop_filename="${PN}-${ABI}.desktop"
+				exec_command='firefox-${ABI}'
 				;;
 		esac
 
@@ -874,18 +885,21 @@ PROFILE_EOF
 	done
 
 	rm "${ED%/}"/usr/bin/firefox || die
-	newbin "${FILESDIR}"/firefox.sh firefox
+	newbin "${FILESDIR}"/firefox.sh firefox-${ABI}
+	[ -e "/usr/bin/firefox" ] && rm /usr/bin/firefox
+	dosym /usr/bin/firefox-${ABI} /usr/bin/firefox
 
 	local wrapper
 	for wrapper in \
-		"${ED%/}"/usr/bin/firefox \
-		"${ED%/}"/usr/bin/firefox-x11 \
-		"${ED%/}"/usr/bin/firefox-wayland \
+		"${ED%/}"/usr/bin/firefox-${ABI} \
+		"${ED%/}"/usr/bin/firefox-${ABI}-x11 \
+		"${ED%/}"/usr/bin/firefox-${ABI}-wayland \
 	; do
 		[[ ! -f "${wrapper}" ]] && continue
 
 		sed -i \
 			-e "s:@PREFIX@:${EPREFIX%/}/usr:" \
+			-e "s:@LIBDIR@:$(get_libdir):"
 			-e "s:@DEFAULT_WAYLAND@:${use_wayland}:" \
 			"${wrapper}" || die
 	done
@@ -988,6 +1002,16 @@ pkg_postinst() {
 		elog
 		elog "in about:config."
 	fi
+
+	elog
+	elog "By default, the /usr/bin/firefox symlink it set to the last ABI installed."
+	elog "You must change it manually if you want to run on a different default ABI."
+	elog
+	elog "Examples"
+	elog "ln -sf /usr/lib64/${PN} /usr/bin/firefox"
+	elog "ln -sf /usr/lib/${PN} /usr/bin/firefox"
+	elog "ln -sf /usr/lib32/${PN} /usr/bin/firefox"
+	elog
 }
 
 pkg_postrm() {

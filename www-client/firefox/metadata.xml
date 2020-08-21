@@ -15,7 +15,18 @@
 	Firefox is an HTML5 compatible web browser.
 
 	This ebuild fork allows you to build 32 bit Firefox under 64 bit.
-	You can only choose one ABI 64 or 32.
+	You can choose multiple ABIs.  This will allow you to support running
+	(binary only or DRM [Digital Rights Management]) plugins that only
+        support one particular major ABI.
+
+	Benchmarks have shown reduced memory usage 10s-100s MB saved for
+	running the 32 bit version compared to 64 bit version.
+	
+	You need to add the following in /etc/portage/profile/package.use.force
+	in order to select a non-native ABI.
+	----- CUT BELOW HERE -----
+www-client/firefox -abi_x86_64 -abi_mips_n64 -abi_ppc_64 -abi_s390_64
+	----- CUT ABOVE HERE -----
 </longdescription>
 <upstream>
 	<bugs-to>https://developer.mozilla.org/en-US/docs/Mozilla/QA/Bug_writing_guidelines</bugs-to>

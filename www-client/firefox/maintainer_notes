@@ -1,0 +1,56 @@
+Keeping these ebuild requires takes a lot of time.  The vanilla ebuilds used are
+same as the gentoo overlay which get modified with multilib changes.  We
+use the vanilla ebuilds because the (R)DEPENDs are updated by them and cut
+down the maintenance cost a bit.
+
+Due to time to compile and time it takes to migrate changes, there may be large
+lag time between Gentoo's release and the one found on oiledmachine-overlay.
+
+
+Here is the checklist if you are maintaining your own multilib fork:
+
+It helps if you diff it with the same ebuild point release to see which parts
+of the ebuild/package got added or changed.
+
+Make sure that (R)DEPENDs have MULTILIB_USEDEP for all libraries and programs
+that have it.
+
+Make sure that the inherit adds multilib-minimal.
+
+Make sure that the functions call the src_ and pkg_ functions get
+prefixed with multilib_.
+
+If a new library (in categories *-libs) is used without supporting multilib,
+the ebuild it needs to be forked to make it multilib ready.
+
+Make sure that the binary is properly built with the right multilib
+toolchain and libraries and the CHOST for the ABI is used.
+
+Make sure all wrappers use the respected multilib versions.
+
+Make sure that _fix_paths gets copied and called so that the VARIABLES and
+toolchain get built with the proper values and programs.
+
+Make sure that the eclasses are in kept in sync with gentoo overlay and
+have multilib changes.
+
+Important:  Due to the large codebase and internal libraries, the ebuild
+needs to be updated every critical vulnerability and that ebuild and earlier
+be removed.  The reoccurance interval is about a month between criticals
+and high.  Currently is +85 days from May 26, 2020.
+
+For the list of CVE's see:
+https://nvd.nist.gov/vuln/search/results?query=firefox&results_type=overview&form_type=Basic&search_type=all&startIndex=0
+
+Verify in the About > Help that you are using the 32-bit version or non-native
+ABI version.
+
+Make sure that all cargo parts get built for the respective target ABI.
+Do:
+`grep -F -r -e "TARGET = Some(\"x86_64-unknown-linux-g" /var/tmp/portage/www-client/firefox-79.0-r3/temp/build.log`,
+replacing x86_64 with the one returned by get `$(get_abi_CHOST ${ABI} | cut -f 1 -d "-")`,
+and to see if it is in compile phase of x86.  If it is, the cross compiling is broken.
+
+Make sure no other -m64 gets mixed with -m32 (should be the same ABI) in the compiling phase.
+It must be the same ABI throughout the phase.
+
