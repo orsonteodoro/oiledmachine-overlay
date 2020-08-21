@@ -6,7 +6,7 @@ EAPI="6"
 K_GENPATCHES_VER="2"
 PATCH_BMQ_VER="5.7-r3"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
-PATCH_PROJC_VER="5.8-r0"
+PATCH_PROJC_VER="5.8-r1"
 
 # Not supported by the Gentoo crew
 K_SECURITY_UNSUPPORTED="1"
