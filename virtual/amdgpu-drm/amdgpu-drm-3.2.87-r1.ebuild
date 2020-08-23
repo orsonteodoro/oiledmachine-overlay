@@ -7,7 +7,7 @@ KEYWORDS="amd64 x86"
 IUSE="amdgpu-dkms dkms +firmware kernel rock-dkms"
 AMDGPU_DKMS_PV="20.30.1109583"
 ROCK_DKMS_PV="3.6_beta"
-VANILLA_KERNEL_PV="9999" #  DC_VER >="3.2.87" was not released yet in any official point release.  It appears on master on May 28, 2020.
+VANILLA_KERNEL_PV="5.9_rc1"
 LINUX_FIRMWARE_PV="20200807" # matches last commit/tag AMDGPU_DKMS_PV in linux-firmware git
 RDEPEND="amdgpu-dkms? ( >=sys-kernel/amdgpu-dkms-${AMDGPU_DKMS_PV} )
 	 rock-dkms? ( >=sys-kernel/rock-dkms-${ROCK_DKMS_PV} )
