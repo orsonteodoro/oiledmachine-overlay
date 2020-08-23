@@ -56,7 +56,7 @@ working properly."
 		exit 1
 	fi
 
-	if grep --help | grep -Fq -e "--perl-regexp" ; then
+	if grep --help | grep -q -F -e "--perl-regexp" ; then
 		:;
 	else
 		echo "You need grep compiled with Perl regular expressions."
@@ -185,11 +185,11 @@ get_stable_versions() {
 get_newest_prefixed_v_pv() {
 	local uri="${1}"
 	local r=$(git ls-remote --tags "${uri}" | cut -f 2 -d "v" \
-		| grep -v -e "[\^]" \
+		| grep -v -G -e "[\^]" \
 		| sed -r -e "s#-(alpha|beta|rc|pre)\.?#_\1#g" \
 		| sed -e "s|_preview|_pre|" \
 		| esort | tr " " "\n" | tail -n 1)
-	if echo "${r}" | grep -P -e "^[^0-9]" ; then
+	if echo "${r}" | grep -G -e "^[^0-9]" ; then
 		echo "${category}/${pn} has tag that is not a version r=${r}"
 		exit 1
 	fi
@@ -204,7 +204,7 @@ get_newest_prefixed_v_pv() {
 get_tags() {
 	local uri="${1}"
 	local r=$(git ls-remote --tags "${uri}" | cut -f 3 -d "/" \
-		| grep -v -e "[\^]" | sed -r -e "s|^v||g" \
+		| grep -v -G -e "[\^]" | sed -r -e "s|^v||g" \
 		| sed -r -e "s#-(alpha|beta|rc|pre)\.?#_\1#g" \
 		| sed -e "s|_preview|_pre|")
 	if [[ -z "${r}" ]] ; then
@@ -240,7 +240,7 @@ get_newest_pv() {
 	local r=$(get_tags ${uri} \
 		| esort | tr " " "\n" \
 		| tail -n 1)
-	if echo "${r}" | grep -P -e "^[^0-9]" ; then
+	if echo "${r}" | grep -G -e "^[^0-9]" ; then
 		echo "${category}/${pn} has tag that is not a version r=${r}"
 		exit 1
 	fi
@@ -258,14 +258,14 @@ get_head_suffix() {
 	echo $(TZ="America/Los_Angeles" date -d "$(wget -q -O - \
 https://github.com/${org_project}/commit/\
 $(git ls-remote --heads https://github.com/${org_project}.git \
-| grep -e "${branch}" | cut -f 1 -d $'\t') | grep "relative-time" \
-| grep -P -o -e "datetime=\".*\" " \
-| sed -r -e "s|datetime=\"||g" -e "s|\" ||g")" +"%Y%m%d")
+| grep -F -e "${branch}" | cut -f 1 -d $'\t') | grep -F -e "relative-time" \
+| grep -G -o -e "datetime=\".*\" " \
+| sed -e "s|datetime=\"||g" -e "s|\" ||g")" +"%Y%m%d")
 }
 
 get_head_suffix_rss() {
 	local url="${1}"
-	wget -q -O - "${1}" | grep pubDate | sed -r -e "s|[</]+pubDate[>]||g" \
+	wget -q -O - "${1}" | grep -F -e "pubDate" | sed -r -e "s|[</]+pubDate[>]||g" \
 	| head -n 1 | sed -r -e "s|^[ ]+||g"
 }
 
@@ -309,15 +309,15 @@ scan_repos() {
 		local ebuild_filename=$(basename "${ebuild}")
 		local pn=$(echo "${ebuild}" | cut -f 3 -d "/")
 		local oiledmachine_pv=$(echo "${ebuild_filename}" \
-			| sed -e "s|${pn}-||g" -e "s|\.ebuild$||")
+			| sed -r -e "s|${pn}-||g" -e "s|\.ebuild$||")
 		local repo_pv
 		edebug "Inspecting ${category}/${pn}"
-		for p in $(grep -P -e "^repo_latest_version_get_(${category}-)?" "${SCRAPERS_FILE}" \
+		for p in $(grep -E -e "^repo_latest_version_get_(${category}-)?" "${SCRAPERS_FILE}" \
 			| sed -r -e "s|\(\) \{||g" -e "s|repo_latest_version_get_(${category}-)?||" \
 			-e "s|_pv||g") ; do
 			[[ "${p}" != "${pn}" ]] && continue
 
-			if grep -q -e \
+			if grep -q -F -e \
 				"repo_latest_version_get_${category}-${pn}_pv" \
 				"${SCRAPERS_FILE}" ; then
 				repo_pv=$(get_pv repo_latest_version_get_${category}-${pn}_pv "repos")
@@ -370,20 +370,20 @@ scan_repos() {
 filter_by_slot() {
 	local stable_versions=$(get_stable_versions "${STABLE_ARCH}")
 	if [[ "${category}/${pn}" == "dev-lang/lua" ]] ; then
-		echo "${stable_versions}" | grep -P -e "^"$(echo "${oiledmachine_pv}" | cut -f 1-2 -d ".")
+		echo "${stable_versions}" | grep -F -e "^"$(echo "${oiledmachine_pv}" | cut -f 1-2 -d ".")
 	elif [[ "${category}/${pn}" == "dev-util/premake" ]] ; then
-		echo "${stable_versions}" | grep -P -e "^"$(echo "${oiledmachine_pv}" | cut -f 1 -d ".")
+		echo "${stable_versions}" | grep -F -e "^"$(echo "${oiledmachine_pv}" | cut -f 1 -d ".")
 	elif [[ "${category}/${pn}" == "media-gfx/blender" ]] ; then
-		echo "${stable_versions}" | grep -P -e "^"$(echo "${oiledmachine_pv}" | cut -f 1-2 -d ".")
+		echo "${stable_versions}" | grep -F -e "^"$(echo "${oiledmachine_pv}" | cut -f 1-2 -d ".")
 	elif [[ "${category}/${pn}" == "net-libs/nodejs" ]] ; then
-		echo "${stable_versions}" | grep -P -e "^"$(echo "${oiledmachine_pv}" | cut -f 1 -d ".")
+		echo "${stable_versions}" | grep -F -e "^"$(echo "${oiledmachine_pv}" | cut -f 1 -d ".")
 	else
 		echo -e "${stable_versions}"
 	fi
 }
 
 gen_gentoo_ver() {
-	echo "${bn_newest}" | sed -e "s|${pn}-||g" -e "s|\.ebuild$||"
+	echo "${bn_newest}" | sed -r -e "s|${pn}-||g" -e "s|\.ebuild$||"
 }
 
 scan_gentoo_overlay() {
@@ -393,7 +393,7 @@ scan_gentoo_overlay() {
 		local ebuild_filename=$(basename "${ebuild}")
 		local pn=$(echo "${ebuild}" | cut -f 3 -d "/")
 		local oiledmachine_pv=$(echo "${ebuild_filename}" \
-			| sed -e "s|${pn}-||g" -e "s|\.ebuild$||")
+			| sed -r -e "s|${pn}-||g" -e "s|\.ebuild$||")
 		local versions=$(filter_by_slot $(get_stable_versions "${STABLE_ARCH}"))
 		local newest=$(echo -e "${versions}" | tail -n 1)
 		if (( ${#newest} > 0 )) ; then
