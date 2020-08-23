@@ -943,6 +943,17 @@ https://gitlab.freedesktop.org/mesa/mesa.git \
 | esort | tr " " "\n" | tail -n 1)
 }
 
+repo_latest_version_get_mojoshader_pv() {
+	local pv=$(wget -q -O - \
+https://hg.icculus.org/icculus/mojoshader/rev/tip \
+| html2text | grep -P -o "changeset [0-9]+" | cut -f 2 -d " ")
+	# The server sends utc in rss but web is local time.
+	# The ebuild timestamp is based on local.
+	local suffix=$(TZ="${REPO_TZ}" date -d "$(get_head_suffix_rss \
+https://hg.icculus.org/icculus/mojoshader/rss-log)" +"%Y%m%d")
+	echo "${pv}_p${suffix}"
+}
+
 repo_latest_version_get_mono-addins_pv() {
 	echo $(get_tags \
 https://github.com/mono/mono-addins.git \
