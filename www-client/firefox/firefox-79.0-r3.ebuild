@@ -44,7 +44,7 @@ LLVM_MAX_SLOT=10
 inherit check-reqs eapi7-ver flag-o-matic toolchain-funcs eutils \
 		gnome2-utils llvm mozcoreconf-v6 pax-utils xdg-utils \
 		autotools mozlinguas-v2 multiprocessing virtualx
-inherit multilib-minimal
+inherit multilib-minimal rust-toolchain
 
 DESCRIPTION="Firefox Web Browser"
 HOMEPAGE="https://www.mozilla.com/firefox"
@@ -305,8 +305,14 @@ src_prepare() {
 	eapply "${WORKDIR}/firefox"
 	eapply "${FILESDIR}/${PN}-68.4.2-dont-check-rustc-host.patch"
 	eapply "${FILESDIR}/${PN}-68.4.2-force-cross-compile.patch"
-	eapply "${FILESDIR}/${PN}-79.0-compile-cargo-packages-same-abi-1.patch"
-	eapply "${FILESDIR}/${PN}-79.0-compile-cargo-packages-same-abi-2.patch"
+
+	# Disabled because they don't support multilib Python.  Only native ABI supported.
+	# This means cbindgen cannot load the 32 bit clang.  It will build the cargo
+	# parts.  When it links it, it fails because of cbindings is 64-bit and the
+	# dependencies use the build information for 64-bit linking.
+	#
+#	eapply "${FILESDIR}/${PN}-79.0-compile-cargo-packages-same-abi-1.patch"
+#	eapply "${FILESDIR}/${PN}-79.0-compile-cargo-packages-same-abi-2.patch"
 
 	# Make LTO respect MAKEOPTS
 	sed -i \
@@ -410,7 +416,8 @@ src_prepare() {
 # corrections based on the ABI being compiled
 _fix_paths() {
 	# For proper rust cargo cross-compile for libloading and glslopt \
-	export RUST_CROSSCOMPILE_TARGET=${chost//pc/unknown}
+	export PKG_CONFIG=${chost}-pkg-config
+	export CROSSCOMPILE=$(rust_abi ${chost})
 	export CARGO_CFG_TARGET_ARCH=$(echo ${chost} | cut -f 1 -d "-")
 	MOZILLA_FIVE_HOME="/usr/$(get_libdir)/${PN}"
 	BUILD_OBJ_DIR="${BUILD_DIR}/ff"
@@ -472,7 +479,7 @@ multilib_src_configure() {
 	mozconfig_annotate 'Enable by Gentoo' --enable-release
 
 	# libclang.so is not properly detected work around issue
-	mozconfig_annotate '' --with-libclang-path="$(llvm-config --libdir)"
+	mozconfig_annotate '' --with-libclang-path="$(${chost}-llvm-config --libdir)"
 
 	if use pgo ; then
 		if ! has userpriv $FEATURES ; then
@@ -692,7 +699,9 @@ multilib_src_configure() {
 
 	einfo "Cross-compile: ${ABI} CFLAGS=${CFLAGS}"
 	einfo "Cross-compile: CC=${CC} CXX=${CXX}"
+	echo "export PKG_CONFIG=${chost}-pkg-config" >> .mozconfig
 	echo "export PKG_CONFIG_PATH=/usr/$(get_libdir)/pkgconfig:/usr/share/pkgconfig" >> .mozconfig
+	echo "export CROSSCOMPILE=${CROSSCOMPILE}" >> .mozconfig
 	mozconfig_annotate '' --target=${chost%-*}
 
 	# Finalize and report settings

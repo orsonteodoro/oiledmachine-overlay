@@ -51,6 +51,13 @@ Do:
 replacing x86_64 with the one returned by get `$(get_abi_CHOST ${ABI} | cut -f 1 -d "-")`,
 and to see if it is in compile phase of x86.  If it is, the cross compiling is broken.
 
-Make sure no other -m64 gets mixed with -m32 (should be the same ABI) in the compiling phase.
-It must be the same ABI throughout the phase.
+x scratch (ignore)
+x Make sure no other -m64 gets mixed with -m32 (should be the same ABI) in the
+x compiling phase.  It must be the same ABI throughout the phase.  See build.log
+x for details.
 
+x scratch (ignore)
+x Make sure that no /lib64/ gets mixed in the multilib_src_configure if
+x using -m32.  See build.log for details.
+
+We do not use full cross compile, but but the browser still works.
