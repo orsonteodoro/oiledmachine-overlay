@@ -1197,9 +1197,9 @@ https://github.com/premake/premake-core.git \
 # we use qt5 because qt4 removed from gentoo
 repo_latest_version_get_puddletag_pv() {
 	local pv=$(wget -q -O - \
-https://raw.githubusercontent.com/puddletag/puddletag/pyqt5/source/puddlestuff/__init__.py \
+https://github.com/puddletag/puddletag/blob/master/source/puddlestuff/__init__.py \
 | grep "version_string =" | grep -P -o "[0-9\.]+")
-	local suffix=$(get_head_suffix "puddletag/puddletag" "pyqt5")
+	local suffix=$(get_head_suffix "puddletag/puddletag" "master")
 	echo "${pv}_p${suffix}"
 }
 
