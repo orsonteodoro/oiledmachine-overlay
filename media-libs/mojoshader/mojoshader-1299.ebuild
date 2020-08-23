@@ -8,18 +8,19 @@ HOMEPAGE="https://icculus.org/mojoshader/"
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~x86 ~x64-macos"
 inherit cmake-utils eutils mercurial
-EHG_REVISION_C="422f68756c9f"
+EHG_REVISION_C="02d36217591b"
 EHG_REVISION="${PV}"
 EHG_REPO_URI="https://hg.icculus.org/icculus/mojoshader/"
 # Wrong CMakeLists.txt ; use mercurial
 #SRC_URI=\
 #"https://hg.icculus.org/icculus/${PN}/archive/${EGH_REVISION}.tar.bz2 -> ${P}.tar.bz2"
-IUSE="-compiler_support debug -depth_clipping +profile_arb1 +profile_arb1_nv \
-+profile_bytecode +profile_d3d +profile_glsl120 +profile_glsl +profile_metal \
-+effect_support -flip_viewport static-libs -xna_vertextexture"
+IUSE="+compiler_support debug -depth_clipping +profile_arb1 +profile_arb1_nv \
++profile_bytecode +profile_d3d +profile_glsl120 +profile_glsl +profile_glsles \
++profile_hlsl +profile_metal +profile_spirv +profile_glspirv +effect_support \
+-flip_viewport static-libs -xna_vertextexture"
 REQUIRED_USE=""
 SLOT="0/${PV}"
-RDEPEND="dev-util/re2c
+RDEPEND=">=dev-util/re2c-1.2.1
 	 media-libs/libsdl2
 	 profile_metal? ( sys-devel/gcc[objc] )"
 DEPEND="${RDEPEND}
@@ -78,7 +79,11 @@ src_configure() {
                 -DPROFILE_D3D=$(usex profile_d3d)
                 -DPROFILE_GLSL120=$(usex profile_glsl120)
                 -DPROFILE_GLSL=$(usex profile_glsl)
+                -DPROFILE_GLSLES=$(usex profile_glsles)
+                -DPROFILE_HLSL=$(usex profile_hlsl)
                 -DPROFILE_METAL=$(usex profile_metal)
+                -DPROFILE_SPIRV=$(usex profile_spirv)
+                -DPROFILE_GLSPIRV=$(usex profile_glspirv)
                 -DXNA4_VERTEXTEXTURE=$(usex xna_vertextexture)
 		-DBUILD_SHARED_LIBS="ON"
 		-DBUILD_STATIC_LIBS=$(usex static-libs "ON" "OFF")
