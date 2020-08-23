@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 )
+PYTHON_COMPAT=( python3_{6,7,8} )
 
 inherit distutils-r1 fdo-mime
 
@@ -19,16 +19,22 @@ SLOT="0"
 SRC_URI="https://github.com/keithgg/${PN}/archive/${EGIT_COMMIT}.tar.gz -> ${PF}.tar.gz"
 IUSE="acoustid cover musicbrainz quodlibet"
 RDEPEND="acoustid? ( >=media-libs/chromaprint-0.6 )
-	 dev-python/PyQt5[${PYTHON_USEDEP},svg,gui,widgets]
-	 >=dev-python/configobj-4.7.2[${PYTHON_USEDEP}]
+	 >=dev-python/PyQt5-5.15[${PYTHON_USEDEP},svg,gui,widgets]
+	 >=dev-python/PyRSS2Gen-1.1[${PYTHON_USEDEP}]
+	 >=dev-python/configobj-5.0[${PYTHON_USEDEP}]
 	 >=dev-python/lxml-3.0.1[${PYTHON_USEDEP}]
-	 >=dev-python/pyparsing-1.5.1[${PYTHON_USEDEP}]
-	 >=dev-python/sip-4.14.2:0[${PYTHON_USEDEP}]
-	 >=media-libs/mutagen-1.21[${PYTHON_USEDEP}]
-	 musicbrainz? ( >=dev-python/python-musicbrainz-0.7.4[${PYTHON_USEDEP}] )
+	 >=dev-python/markdown-3.1.1[${PYTHON_USEDEP}]
+	 >=dev-python/pyparsing-2.4.7[${PYTHON_USEDEP}]
+	 >=dev-python/sip-4.14.2-r1:0[${PYTHON_USEDEP}]
+	 >=dev-python/sphinx-bootstrap-theme-0.4.13[${PYTHON_USEDEP}]
+	 >=dev-python/sphinx-1.4.8[${PYTHON_USEDEP}]
+	 $(python_gen_cond_dep 'dev-python/wheel[${PYTHON_USEDEP}]' python3_{6,7,8})
+	 >=media-libs/mutagen-1.45[${PYTHON_USEDEP}]
+	 musicbrainz? ( >=dev-python/python-musicbrainz-0.7.4-r1[${PYTHON_USEDEP}] )
 	 quodlibet? ( >=media-sound/quodlibet-2.5[${PYTHON_USEDEP}] )"
 #	 dev-python/python-levenshtein[${PYTHON_USEDEP}]
-DEPEND="${RDEPEND}"
+DEPEND="${RDEPEND}
+"
 
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}/source"
 
