@@ -1001,6 +1001,13 @@ https://raw.githubusercontent.com/mono/msbuild/xplat-master/eng/Versions.props \
 	echo "${pv}_p${suffix}"
 }
 
+repo_latest_version_get_mutagen_pv() {
+	echo $(git ls-remote --tags \
+https://github.com/quodlibet/mutagen.git \
+		| cut -f 3 -d "/" | grep -v "[\^]" | sed -e "s|release-||g" \
+		| esort | tr " " "\n" | tail -n 1)
+}
+
 repo_latest_version_get_nant_pv() {
 # versioning should be on ver_cut 1-2 to be consistent with tagged releases
 	local pv=$(wget -q -O - \
@@ -1197,7 +1204,7 @@ https://github.com/premake/premake-core.git \
 # we use qt5 because qt4 removed from gentoo
 repo_latest_version_get_puddletag_pv() {
 	local pv=$(wget -q -O - \
-https://github.com/puddletag/puddletag/blob/master/source/puddlestuff/__init__.py \
+https://raw.githubusercontent.com/puddletag/puddletag/master/source/puddlestuff/__init__.py \
 | grep "version_string =" | grep -P -o "[0-9\.]+")
 	local suffix=$(get_head_suffix "puddletag/puddletag" "master")
 	echo "${pv}_p${suffix}"
@@ -1242,7 +1249,7 @@ repo_latest_version_get_pyfiglet_pv() {
 	# The latest tag was dated in Dec 2018.
 	local pv=$(get_tags \
 https://github.com/pwaller/pyfiglet.git \
-		| sed -e "s|\.?post|_p|g" \
+		| sed -r -e "s|\.?post|_p|g" \
 		| esort | tr " " "\n" | tail -n 1)
 	local suffix=$(get_head_suffix "pwaller/pyfiglet" "master")
 	echo "${pv}_p${suffix}"
