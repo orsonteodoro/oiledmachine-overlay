@@ -120,6 +120,9 @@ x11-drivers/xf86-video-ati
 # Masked for ebuild quality control reasons
 #--------------------------------------------------------------------------------------------------
 
+# build time failure
+>=media-sound/puddletag-2
+
 # for upstream development only
 =app-editors/nano-ycmd-9999
 
