@@ -979,6 +979,13 @@ repo_latest_version_get_monogame-extended_pv() {
 https://github.com/craftworkgames/MonoGame.Extended.git)
 }
 
+repo_latest_version_get_mozjpeg_pv() {
+	echo $(get_tags \
+https://github.com/mozilla/mozjpeg.git \
+		| grep -v -e "jpeg" \
+		| esort | tr " " "\n" | tail -n 1)
+}
+
 repo_latest_version_get_mrab-regex_pv() {
 	echo $(wget -q -O - \
 https://bitbucket.org/mrabarnett/mrab-regex/raw/hg/regex_3/regex.py \
@@ -992,13 +999,6 @@ https://raw.githubusercontent.com/mono/msbuild/xplat-master/eng/Versions.props \
 | grep "VersionPrefix" | head -n 1 | grep -P -o "[0-9\.]+")
 	local suffix=$(get_head_suffix "mono/msbuild" "xplat-master")
 	echo "${pv}_p${suffix}"
-}
-
-repo_latest_version_get_mozjpeg_pv() {
-	echo $(get_tags \
-https://github.com/mozilla/mozjpeg.git \
-		| grep -v -e "jpeg" \
-		| esort | tr " " "\n" | tail -n 1)
 }
 
 repo_latest_version_get_nant_pv() {
