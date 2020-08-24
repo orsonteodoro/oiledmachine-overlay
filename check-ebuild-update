@@ -90,7 +90,7 @@ is_x_lt_y() {
 	local x="${1}"
 	local y="${2}"
 	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
-		| cut -f1 -d $' ')
+		| cut -f 1 -d $' ')
 	if [[ "${result}" == "${x}" ]] ; then
 		return 0
 	else
@@ -101,7 +101,7 @@ is_x_le_y() {
 	local x="${1}"
 	local y="${2}"
 	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
-		| cut -f1 -d $' ')
+		| cut -f 1 -d $' ')
 	if [[ "${result}" == "${x}" || "${x}" == "${y}" ]] ; then
 		return 0
 	else
@@ -112,7 +112,7 @@ is_x_gt_y() {
 	local x="${1}"
 	local y="${2}"
 	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
-		| cut -f1 -d $' ')
+		| cut -f 1 -d $' ')
 	if [[ "${result}" != "${x}" ]] ; then
 		return 0
 	else
@@ -123,7 +123,7 @@ is_x_ge_y() {
 	local x="${1}"
 	local y="${2}"
 	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
-		| cut -f1 -d $' ')
+		| cut -f 1 -d $' ')
 	if [[ "${result}" != "${x}" || "${x}" == "${y}" ]] ; then
 		return 0
 	else
