@@ -99,7 +99,7 @@ inherit autotools desktop eutils fdo-mime toolchain-funcs xdg-utils
 S="${WORKDIR}/${PN}-${PV}"
 DOCS=( AUTHORS ChangeLog COPYING README )
 RESTRICT="mirror"
-declare -Ax USE_TO_MODULE_NAME=( \
+declare -Ax USE_FLAG_TO_MODULE_NAME=( \
 	[bzip2]="bzlib2" \
 	[cairo]="cairo" \
 	[crypt]="crypt"  \
@@ -218,7 +218,7 @@ src_prepare() {
 	for m in ${GAMBAS_MODULES} ; do
 		[[ "${m}" == "jit" ]] && continue
 		echo "$USE" | grep -F -q -o "${m}" \
-			|| mod_off ${USE_TO_MODULE_NAME[${m}]}
+			|| mod_off ${USE_FLAG_TO_MODULE_NAME[${m}]}
 	done
 	mod_off qt4
 	L=$(find . -name "configure.ac")
