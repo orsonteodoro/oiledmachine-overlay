@@ -238,7 +238,7 @@ prepare_file() {
 	local dest_dir="${2}"
 	local source_filename="${3}"
 	cp "${FILESDIR}/${source_filename}" "${dest_dir}/" || die "could not copy '${source_filename}'"
-	sed -i "s/\${PV}/${PV}/g" "${dest_dir}/${source_filename}" || \
+	sed -i -e "s/\${PV}/${PV}/g" "${dest_dir}/${source_filename}" || \
 		die "could not adjust path for '${source_filename}'"
 	sed -i -e "s|\${PYTHON_EXE_ABSPATH}|${PYTHON_EXE_ABSPATH}|g" \
 		"${dest_dir}/${source_filename}" || die
@@ -284,7 +284,7 @@ prepare_file() {
 				cmd=\
 "/usr/bin/closure-compiler"
 			fi
-			sed -i "s|__EMSDK_CLOSURE_COMPILER__|\"${cmd}\"|" \
+			sed -i -e "s|__EMSDK_CLOSURE_COMPILER__|\"${cmd}\"|" \
 				"${dest_dir}/${source_filename}" || die
 		else
 			# Using defaults
