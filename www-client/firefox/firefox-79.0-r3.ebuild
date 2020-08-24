@@ -292,6 +292,12 @@ pkg_setup() {
 
 	einfo
 	einfo "To set up cross-compile for other ABIs see \`epkginfo -d firefox\`"
+
+	local jobs=$(echo "${MAKEOPTS}" | grep -P -o -e "(-j|--jobs=)\s*[0-9]+" | sed -r -e "s#(-j|--jobs=)\s*##g")
+	local cores=$(nproc)
+	if (( $((${jobs}/2)) > $((${cores}/2)) )) ; then
+		ewarn "Firefox may lock up or freeze the computer if the N value in MAKEOPTS=\"-jN\" is greater than \$(nproc)/2"
+	fi
 }
 
 src_unpack() {
@@ -305,6 +311,9 @@ src_prepare() {
 	eapply "${WORKDIR}/firefox"
 	eapply "${FILESDIR}/${PN}-68.4.2-dont-check-rustc-host.patch"
 	eapply "${FILESDIR}/${PN}-68.4.2-force-cross-compile.patch"
+	eapply "${FILESDIR}/${PN}-79.0-elfhack-makefile-no-prefix-for-readelf.patch"
+	eapply "${FILESDIR}/${PN}-79.0-check_binary-no-prefix-for-readelf.patch"
+	eapply "${FILESDIR}/${PN}-79.0-dependentlibs_py-no-toolchain-prefix-for-readelf.patch"
 
 	# Disabled because they don't support multilib Python.  Only native ABI supported.
 	# This means cbindgen cannot load the 32 bit clang.  It will build the cargo
@@ -479,7 +488,12 @@ multilib_src_configure() {
 	mozconfig_annotate 'Enable by Gentoo' --enable-release
 
 	# libclang.so is not properly detected work around issue
-	mozconfig_annotate '' --with-libclang-path="$(${chost}-llvm-config --libdir)"
+
+	# mozconfig_annotate '' --with-libclang-path="$(${chost}-llvm-config --libdir)" # \
+	#   disabled because Gentoo doesn't support multilib python, so full cross-compile is not supported.
+
+	#   the commented above is mutually exclusive with this line below.
+	mozconfig_annotate '' --with-libclang-path="$(llvm-config --libdir)" # \
 
 	if use pgo ; then
 		if ! has userpriv $FEATURES ; then

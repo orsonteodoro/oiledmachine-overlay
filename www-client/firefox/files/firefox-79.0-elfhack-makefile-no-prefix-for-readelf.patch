@@ -1,0 +1,18 @@
+--- a/build/unix/elfhack/Makefile.in.orig	2020-07-20 13:53:07.000000000 -0700
++++ b/build/unix/elfhack/Makefile.in	2020-08-23 13:19:52.365307146 -0700
+@@ -14,13 +14,13 @@ test-array$(DLL_SUFFIX) test-ctors$(DLL_
+ 	@echo === Use --disable-elf-hack until this is fixed.
+ 	@echo ===
+ 	# Fail if the library doesn't have $(DT_TYPE) .dynamic info
+-	$(TOOLCHAIN_PREFIX)readelf -d $@ | grep '($(DT_TYPE))'
++	readelf -d $@ | grep '($(DT_TYPE))'
+ 	@rm -f $@.bak
+ 	$(CURDIR)/elfhack -b -f $@
+ 	# Fail if the backup file doesn't exist
+ 	[ -f '$@.bak' ]
+ 	# Fail if the new library doesn't contain less relocations
+-	[ $$($(TOOLCHAIN_PREFIX)objdump -R $@.bak | wc -l) -gt $$(objdump -R $@ | wc -l) ]
++	[ $$(objdump -R $@.bak | wc -l) -gt $$(objdump -R $@ | wc -l) ]
+ 
+ test-array$(DLL_SUFFIX) test-ctors$(DLL_SUFFIX): DSO_SONAME=$@
+ test-array$(DLL_SUFFIX): DT_TYPE=INIT_ARRAY

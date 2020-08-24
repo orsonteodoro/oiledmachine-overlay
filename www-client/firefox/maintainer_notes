@@ -36,7 +36,7 @@ have multilib changes.
 
 Important:  Due to the large codebase and internal libraries, the ebuild
 needs to be updated every critical vulnerability and that ebuild and earlier
-be removed.  The reoccurance interval is about a month between criticals
+be removed.  The recurrance interval is about a month between criticals
 and high.  Currently is +85 days from May 26, 2020.
 
 For the list of CVE's see:
