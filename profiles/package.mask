@@ -120,6 +120,9 @@ x11-drivers/xf86-video-ati
 # Masked for ebuild quality control reasons
 #--------------------------------------------------------------------------------------------------
 
+# testing
+=sys-kernel/genkernel-4.1.0-r2
+
 # build time failure
 >=media-sound/puddletag-2
 

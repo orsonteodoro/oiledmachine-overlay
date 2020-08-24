@@ -1,0 +1,78 @@
+diff -urp genkernel-4.1.0.orig/defaults/initrd.scripts genkernel-4.1.0/defaults/initrd.scripts
+--- genkernel-4.1.0.orig/defaults/initrd.scripts	2020-08-10 02:19:15.000000000 -0700
++++ genkernel-4.1.0/defaults/initrd.scripts	2020-08-23 23:24:40.222516098 -0700
+@@ -1640,7 +1640,7 @@ start_volumes() {
+ 			then
+ 				good_msg "ZFS pool ${ZFS_POOL} already imported."
+ 
+-				if [ -n "${CRYPT_ROOT}" -o -n "${CRYPT_SWAP}" ]
++				if [ -n "${CRYPT_ROOT}" -o -n "${CRYPT_SWAP}" -o -n "${CRYPT_ROOT_PLAIN}" ]
+ 				then
+ 					good_msg "LUKS detected. Reimporting ${ZFS_POOL} ..."
+ 
+@@ -1808,14 +1808,27 @@ openLUKS() {
+ 			KEYDEV_ERROR=0
+ 		else
+ 			LUKS_DEVICE=$(find_real_device "${LUKS_DEVICE}")
+-			if [ -z "${LUKS_DEVICE}" ]
++			if [ -z "${LUKS_DEVICE}" -a -z "${CRYPT_ROOT_PLAIN}" ]
+ 			then
+ 				bad_msg "Looks like CRYPT_${TYPE} kernel cmdline argument is not set." ${CRYPT_SILENT}
+ 				DEV_ERROR=1
+ 				continue
+ 			fi
+ 
+-			if ! run cryptsetup isLuks ${LUKS_DEVICE}
++			local isLuks
++			if [ -n "${CRYPT_ROOT}" ]
++			then
++				# for luks
++				isLuks=$(run cryptsetup isLuks ${LUKS_DEVICE} ; echo "$?")
++			else
++				# for plain
++				if [ -n "${CRYPT_ROOT_PLAIN}" ] ; then
++					isLuks=0
++				else
++					isLuks=1
++				fi
++			fi
++			if [ ${isLuks} -ne 0 ]
+ 			then
+ 				bad_msg "The LUKS device ${LUKS_DEVICE} does not contain a LUKS header" ${CRYPT_SILENT}
+ 				DEV_ERROR=1
+@@ -1911,7 +1924,12 @@ openLUKS() {
+ 					fi
+ 				fi
+ 				# At this point, keyfile or not, we're ready!
+-				crypt_filter "${gpg_cmd}cryptsetup ${cryptsetup_options} luksOpen ${LUKS_DEVICE} ${LUKS_NAME}"
++				if [ -n "${CRYPT_ROOT_PLAIN}" ]
++				then
++					crypt_filter "${gpg_cmd}cryptsetup ${cryptsetup_options} plainOpen ${CRYPT_ROOT_PLAIN} ${LUKS_NAME}"
++				else
++					crypt_filter "${gpg_cmd}cryptsetup ${cryptsetup_options} luksOpen ${LUKS_DEVICE} ${LUKS_NAME}"
++				fi
+ 				crypt_filter_ret=$?
+ 
+ 				[ -e /dev/tty.org ] \
+@@ -2277,7 +2295,7 @@ start_LUKS() {
+ 	[ -n "${CRYPT_ROOT_KEY}" ] && [ -z "${CRYPT_ROOT_KEYDEV}" ] \
+ 		&& sleep 6 && bootstrapKey "ROOT"
+ 
+-	if [ -n "${CRYPT_ROOT}" ]
++	if [ -n "${CRYPT_ROOT}" -o -n "${CRYPT_ROOT_PLAIN}" ]
+ 	then
+ 		openLUKS "root"
+ 		if [ -n "${REAL_ROOT}" ]
+diff -urp genkernel-4.1.0.orig/defaults/linuxrc genkernel-4.1.0/defaults/linuxrc
+--- genkernel-4.1.0.orig/defaults/linuxrc	2020-08-10 02:19:15.000000000 -0700
++++ genkernel-4.1.0/defaults/linuxrc	2020-08-23 23:22:48.158193037 -0700
+@@ -246,6 +246,9 @@ do
+ 			CRYPT_ROOT=${x#*=}
+ 			USE_CRYPTSETUP=1
+ 		;;
++		crypt_root_plain=*)
++			CRYPT_ROOT_PLAIN=${x#*=}
++		;;
+ 		crypt_swap=*)
+ 			CRYPT_SWAP=${x#*=}
+ 			USE_CRYPTSETUP=1
