@@ -7,7 +7,7 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20200807-r4"
+VERSION="20200823"
 PN="emscripten"
 
 # 1.40.1 llvm 12 ; node 4.4.1 ; binaryen 94
@@ -52,7 +52,7 @@ is_x_lt_y() {
 	local x="${1}"
 	local y="${2}"
 	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
-		| cut -f1 -d $' ')
+		| cut -f 1 -d $' ')
 	if [[ "${result}" == "${x}" ]] ; then
 		return 0
 	else
@@ -63,7 +63,7 @@ is_x_le_y() {
 	local x="${1}"
 	local y="${2}"
 	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
-		| cut -f1 -d $' ')
+		| cut -f 1 -d $' ')
 	if [[ "${result}" == "${x}" || "${x}" == "${y}" ]] ; then
 		return 0
 	else
@@ -74,7 +74,7 @@ is_x_gt_y() {
 	local x="${1}"
 	local y="${2}"
 	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
-		| cut -f1 -d $' ')
+		| cut -f 1 -d $' ')
 	if [[ "${result}" != "${x}" ]] ; then
 		return 0
 	else
@@ -85,7 +85,7 @@ is_x_ge_y() {
 	local x="${1}"
 	local y="${2}"
 	local result=$(echo -e "${x}\n${y}" | sort -V | tr "\n" " " \
-		| cut -f1 -d $' ')
+		| cut -f 1 -d $' ')
 	if [[ "${result}" != "${x}" || "${x}" == "${y}" ]] ; then
 		return 0
 	else
@@ -151,11 +151,12 @@ find_targets() {
                 echo "emscripten-${em_v},emscripten-fastcomp-${em_v}"
             elif [[ "${compiler}" == "llvm" ]] ; then
                 for llvm_slot in ${LLVM_VERSIONS} ; do
-                    if grep -qF -e "llvm_targets_WebAssembly" \
+                    if grep -q -F -e "llvm_targets_WebAssembly" \
                            $(realpath "${EROOT}"/var/db/pkg/sys-devel/llvm-${llvm_slot}*/USE) \
-                       && grep -qF -e "llvm_targets_WebAssembly" \
+                       && grep -q -F -e "llvm_targets_WebAssembly" \
                            $(realpath "${EROOT}"/var/db/pkg/sys-devel/clang-${llvm_slot}*/USE) ; then
-			llvm_v=$(basename $(realpath "${EROOT}"/var/db/pkg/sys-devel/clang-${llvm_slot}*) | sed -e "s|clang-||")
+			llvm_v=$(basename $(realpath "${EROOT}"/var/db/pkg/sys-devel/clang-${llvm_slot}*) \
+				| sed -e "s|clang-||")
                         llvm_major="${llvm_slot}"
                         llvm_major_minor=$(echo "${llvm_v}" | cut -f 1-2 -d '.')
                         if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.20" \
@@ -258,21 +259,21 @@ set_config() {
         echo "emscripten ${PV} is not installed."
         return 1
     fi
-    if grep -qF -e "closure_compiler_java" "${use_path}" ; then
+    if grep -q -F -e "closure_compiler_java" "${use_path}" ; then
         __EMSDK_CLOSURE_COMPILER__=/usr/bin/closure-compiler-java
-    elif grep -qF -e "closure_compiler_nodejs" "${use_path}" ; then
+    elif grep -q -F -e "closure_compiler_nodejs" "${use_path}" ; then
         __EMSDK_CLOSURE_COMPILER__=/usr/bin/closure-compiler-node
-    elif grep -qF -e "closure_compiler_native" "${use_path}" ; then
+    elif grep -q -F -e "closure_compiler_native" "${use_path}" ; then
         __EMSDK_CLOSURE_COMPILER__=/usr/bin/closure-compiler
     else
         __EMSDK_CLOSURE_COMPILER__=
     fi
 
-    if grep -qF -e "python_single_target_python3_8" "${use_path}" ; then
+    if grep -q -F -e "python_single_target_python3_8" "${use_path}" ; then
         PYTHON_EXE_ABSPATH=/usr/bin/python3.8
-    elif grep -qF -e "python_single_target_python3_7" "${use_path}" ; then
+    elif grep -q -F -e "python_single_target_python3_7" "${use_path}" ; then
         PYTHON_EXE_ABSPATH=/usr/bin/python3.7
-    elif grep -qF -e "python_single_target_python3_6" "${use_path}" ; then
+    elif grep -q -F -e "python_single_target_python3_6" "${use_path}" ; then
         PYTHON_EXE_ABSPATH=/usr/bin/python3.6
     fi
 
@@ -294,12 +295,13 @@ EOF
     [[ -z "${__EMSDK_CLOSURE_COMPILER__}" ]] && sed -i "/EMSDK_CLOSURE_COMPILER/d" \
         "${EROOT}/etc/env.d/99emscripten"
 
-    if grep -qF -e "native-optimizer" "${use_path}" ; then
+    if grep -q -F -e "native-optimizer" "${use_path}" ; then
         sed -i "/EMSCRIPTEN_NATIVE_OPTIMIZER/d" \
             "${EROOT}/etc/env.d/99emscripten"
     fi
 
-    BINARYEN_SLOT=$(grep -e "BINARYEN_V=" "${EROOT}/var/db/pkg/dev-util/emscripten-${PV}"*/*ebuild | sed -e "s|BINARYEN_V=||" -e "s|\"||g" | cut -f1 -d " ")
+    BINARYEN_SLOT=$(grep -F -e "BINARYEN_V=" "${EROOT}/var/db/pkg/dev-util/emscripten-${PV}"*/*ebuild \
+			| sed -e "s|BINARYEN_V=||" -e "s|\"||g" | cut -f 1 -d " ")
 
     T_CONFIG=$(mktemp)
     cat << EOF > "${T_CONFIG}" || die
@@ -363,16 +365,16 @@ do_show() {
     write_list_start "Current emscritpen, emscripten-fastcomp, llvm combo:"
 
     [[ ! -f /etc/env.d/99emscripten ]] && return
-    em_v=$(basename $(grep -r -e "EMSCRIPTEN=" /etc/env.d/99emscripten) \
+    em_v=$(basename $(grep -F -e "EMSCRIPTEN=" /etc/env.d/99emscripten) \
         | sed -e "s|emscripten-||g")
-    is_llvm=$(grep -r -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
-        | grep -qF -e "/usr/lib/llvm"  ; echo "$?")
-    is_fc=$(grep -r -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
-        | grep -qF -e "/usr/share/emscripten-fastcomp"  ; echo "$?")
+    is_llvm=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+        | grep -q -F -e "/usr/lib/llvm" ; echo "$?")
+    is_fc=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+        | grep -q -F -e "/usr/share/emscripten-fastcomp" ; echo "$?")
 
-    llvm_v=$(grep "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+    llvm_v=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
         | sed -e "s|EMSDK_LLVM_ROOT=/usr/lib/llvm/||" -e "s|/bin||")
-    fc_v=$(grep "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+    fc_v=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
         | sed -e "s|EMSDK_LLVM_ROOT=/usr/share/emscripten-fastcomp-||" \
         -e "s|/bin||")
 
@@ -399,16 +401,16 @@ do_list() {
     local i targets=( $(find_targets) )
 
     if [[ -f /etc/env.d/99emscripten ]] ; then
-        em_v=$(basename $(grep -r -e "EMSCRIPTEN=" /etc/env.d/99emscripten) \
+        em_v=$(basename $(grep -F -e "EMSCRIPTEN=" /etc/env.d/99emscripten) \
             | sed -e "s|emscripten-||g")
-        is_llvm=$(grep -r -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
-            | grep -qF -e "/usr/lib/llvm"  ; echo "$?")
-        is_fc=$(grep -r -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
-            | grep -qF -e "/usr/share/emscripten-fastcomp"  ; echo "$?")
+        is_llvm=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+            | grep -q -F -e "/usr/lib/llvm" ; echo "$?")
+        is_fc=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+            | grep -q -F -e "/usr/share/emscripten-fastcomp" ; echo "$?")
 
-        llvm_v=$(grep "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+        llvm_v=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
             | sed -e "s|EMSDK_LLVM_ROOT=/usr/lib/llvm/||" -e "s|/bin||")
-        fc_v=$(grep "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
+        fc_v=$(grep -F -e "EMSDK_LLVM_ROOT=" /etc/env.d/99emscripten \
             | sed -e "s|EMSDK_LLVM_ROOT=/usr/share/emscripten-fastcomp-||" \
             -e "s|/bin||")
 
