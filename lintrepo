@@ -19,7 +19,7 @@ einfo() {
 #	echo ""
 }
 
-if grep --help | grep -Fq -e "--perl-regexp" ; then
+if grep --help | grep -q -F -e "--perl-regexp" ; then
 	:;
 else
 	einfo "You need grep compiled with Perl regular expressions."
@@ -42,7 +42,7 @@ fi
 
 einfo "Checking ebuilds for security risks.  (This can yield false positives.)"
 for f in $(find $(pwd) -name "*.ebuild") ; do
-	if grep ${GREP_ARGS} -e "SLOT=\"0\"" "${f}" 2>/dev/null 1>/dev/null ; then
+	if grep ${GREP_ARGS} -F -e "SLOT=\"0\"" "${f}" 2>/dev/null 1>/dev/null ; then
 		if [[ ${f} =~ ("-libs/"|"-gfx/"|dev-cpp|dev-qt|dev-db) ]] ;then
 			# It happens when copy pasting ebuild templates from apps to libs.  Apps can use SLOT=0, but libraries should have a variable in subslot.
 			# USE="static-libs" PackageA:0 # insecure
@@ -63,22 +63,22 @@ for f in $(find $(pwd) -name "*.ebuild") ; do
 	if grep ${GREP_ARGS} -P -e '(?<!=)\[.*static-libs\]' "${f}" 2>/dev/null 1>/dev/null ; then
 		einfo "Security risk:  ${f} ignores security update for subslot.  SR4"
 	fi
-	if grep ${GREP_ARGS} -F -e '(fperms|chmod)' "${f}" 2>/dev/null 1>/dev/null \
-		&& grep ${GREP_ARGS} -P -e '[0]?77[0-7]' "${f}" 2>/dev/null 1>/dev/null ; then
+	if grep ${GREP_ARGS} -E -e '(fperms|chmod)' "${f}" 2>/dev/null 1>/dev/null \
+		&& grep ${GREP_ARGS} -E -e '[0]?77[0-7]' "${f}" 2>/dev/null 1>/dev/null ; then
 		einfo \
 "Security risk:  ${f} may use insecure permissions.  Users may inject \
 malicious scripts or exfiltrate data in multiuser environment when file uses \
 777 or 77x.  When file permission is 777, it is dangerous.  For 77x it is \
 only dangerous if the group is \`user\` or similar.  SR5"
 	fi
-	if grep ${GREP_ARGS} -P -e 'cp.*(-a|-r|-R|--recursive|--archive)' "${f}" 2>/dev/null 1>/dev/null ; then
+	if grep ${GREP_ARGS} -E -e 'cp.*(-a|-r|-R|--recursive|--archive)' "${f}" 2>/dev/null 1>/dev/null ; then
 		einfo \
 "Security risk:  ${f} files possibly bypass sanitation to reset ownership and \
 file permissions.  An upstream developer may inadvertantly elevate \
 permissions or forget to reset it.  Use ebuild install functions only or special \
 wrapper install function.  SR6"
 	fi
-	if grep ${GREP_ARGS} -P -e '(chown|fowners).*users' "${f}" ; then
+	if grep ${GREP_ARGS} -E -e '(chown|fowners).*users' "${f}" ; then
 		einfo \
 "Security risk:  ${f} may use users group for fowners/chown with with go+w\n\
 file/folder permissions for shell wrappers or it may be abused on\n\
@@ -135,19 +135,19 @@ done
 
 einfo "Checking repo for deprecated/EOL python use"
 for f in $(find $(pwd) -name "*.ebuild") ; do
-	if grep ${GREP_ARGS} -P -e "PYTHON_COMPAT=.*(python2|python2_|python\{.*2_.*\}).*" "${f}" ; then
+	if grep ${GREP_ARGS} -E -e "PYTHON_COMPAT=.*(python2|python2_|python\{.*2_.*\}).*" "${f}" ; then
 		einfo "Please edit ${f} and remove python2_x from PYTHON_COMPAT"
 		if [[ "${CI}" == "1" ]] ; then
 			return 1
 		fi
 	fi
-	if grep ${GREP_ARGS} -P -e "PYTHON_COMPAT=.*(python3_4|python\{.*3_4.*\}|python3\{.*_4.*\}).*" "${f}" ; then
+	if grep ${GREP_ARGS} -E -e "PYTHON_COMPAT=.*(python3_4|python\{.*3_4.*\}|python3\{.*_4.*\}).*" "${f}" ; then
 		einfo "Please edit ${f} and remove python3_4 from PYTHON_COMPAT"
 		if [[ "${CI}" == "1" ]] ; then
 			return 1
 		fi
 	fi
-	if grep ${GREP_ARGS} -P -e "PYTHON_COMPAT=.*(python3_5|python\{.*3_5.*\}|python3\{.*_5.*\}).*" "${f}" ; then
+	if grep ${GREP_ARGS} -E -e "PYTHON_COMPAT=.*(python3_5|python\{.*3_5.*\}|python3\{.*_5.*\}).*" "${f}" ; then
 		einfo "Please edit ${f} and remove python3_5 from PYTHON_COMPAT"
 		if [[ "${CI}" == "1" ]] ; then
 			return 1
@@ -182,16 +182,16 @@ done
 
 einfo "Checking repo for newicon .ico use ebuild"
 for f in $(find $(pwd) -name "*.ebuild") ; do
-	if grep ${GREP_ARGS} -P -i -e "newicon.*\.(png|svg|xpm)" "${f}" ; then
+	if grep ${GREP_ARGS} -E -i -e "newicon.*\.(png|svg|xpm)" "${f}" ; then
 		:;
-	elif grep ${GREP_ARGS} -P -e "newicon" "${f}" ; then
+	elif grep ${GREP_ARGS} -F -e "newicon" "${f}" ; then
 		einfo "${f} uses wrong format for icon.  Not one of the official XDG icon formats for Linux desktop interoperability.  Use either png, svg, or xpm only."
 	fi
 done
 
 einfo "Checking repo for missing pcre"
 for f in $(find $(pwd) -name "*.ebuild") ; do
-	if grep ${GREP_ARGS} -P -e "grep.*-P" "${f}" ; then
+	if grep ${GREP_ARGS} -G -e "grep.*-P" "${f}" ; then
 		einfo "${f} makes use of sys-devel/grep[pcre] which is not enabled by default.  Check if it needs to be added to DEPENDS."
 	fi
 done
@@ -228,12 +228,12 @@ NOT_CATEGORY="[.]|.git|.local|metadata|profiles|eclass|.travis|.github|licenses|
 
 get_all_portage_categories() {
 	pushd "${PORTAGE_DIR}" 2>/dev/null 1>/dev/null
-	find . -maxdepth 1 -type d | sed -r -e "s|./||g" -e "/^(${NOT_CATEGORY})$/d"
+	find . -maxdepth 1 -type d | sed -r -e "s|\./||g" -e "/^(${NOT_CATEGORY})$/d"
 	popd 2>/dev/null 1>/dev/null
 }
 
 get_all_oiledmachine_overlay_categories() {
-	find . -maxdepth 1 -type d | sed -r -e "s|./||g" -e "/^(${NOT_CATEGORY})$/d"
+	find . -maxdepth 1 -type d | sed -r -e "s|\./||g" -e "/^(${NOT_CATEGORY})$/d"
 }
 
 get_all_layman_categories() {
@@ -245,7 +245,7 @@ get_all_layman_categories() {
 				skipped_first=1
 				continue
 			fi
-			find . -maxdepth 1 -type d | sed -r -e "s|./||g" -e "/^(${NOT_CATEGORY})$/d" | tr " " "\n"
+			find . -maxdepth 1 -type d | sed -r -e "s|\./||g" -e "/^(${NOT_CATEGORY})$/d" | tr " " "\n"
 		popd 2>/dev/null 1>/dev/null
 	done
 	popd 2>/dev/null 1>/dev/null
@@ -257,7 +257,7 @@ get_all_layman_categories() {
 categories=$(echo -e "$(get_all_portage_categories)$(get_all_oiledmachine_overlay_categories)$(get_all_layman_categories)" | sort | uniq | tr "\n" "|")
 einfo "Checking repo for inconsistent multilib in (R)DEPENDs"
 for f in $(find $(pwd) -name "*.ebuild") ; do
-	if grep ${GREP_ARGS} -P -e "multilib" "${f}" ; then
+	if grep ${GREP_ARGS} -F -e "multilib" "${f}" ; then
 		results_file=$(mktemp)
 		if grep -P -e '('${categories}')/(?![^\]]+MULTILIB_USEDEP[^\]]+)' \
 			"${f}" > ${results_file} ; then
@@ -275,7 +275,7 @@ for f in $(find $(pwd) -name "*.ebuild") ; do
 			for p in $(echo "${results_file}" | _sanitize_package_list | tr " " "\n") ; do
 				reported=0
 				if ls ./${p}*/*.ebuild 2>/dev/null 1>/dev/null ; then
-					if grep -q -P -e "multilib_" ./${p}*/*.ebuild ; then
+					if grep -q -F -e "multilib_" ./${p}*/*.ebuild ; then
 						if [[ "${showed_header}" == "0" ]] ; then
 							einfo "${f} may need change to (R)DEPENDs with:"
 							showed_header=1
@@ -286,7 +286,7 @@ for f in $(find $(pwd) -name "*.ebuild") ; do
 					fi
 				fi
 				if ls -f "${PORTAGE_DIR}"/${p}*/*.ebuild 2>/dev/null 1>/dev/null && [[ "${reported}" == "0" ]] ; then
-					if grep -q -P -e "multilib_" "${PORTAGE_DIR}"/${p}*/*.ebuild ; then
+					if grep -q -F -e "multilib_" "${PORTAGE_DIR}"/${p}*/*.ebuild ; then
 						if [[ "${showed_header}" == "0" ]] ; then
 							einfo "${f} may need change to (R)DEPENDs with:"
 							showed_header=1
@@ -297,7 +297,7 @@ for f in $(find $(pwd) -name "*.ebuild") ; do
 					fi
 				fi
 				if ls "${LAYMAN_DIR}"/*/${p}*/*.ebuild 2>/dev/null 1>/dev/null && [[ "${reported}" == "0" ]] ; then
-					if grep -q -P -e "multilib_" "${LAYMAN_DIR}"/*/${p}*/*.ebuild ; then
+					if grep -q -F -e "multilib_" "${LAYMAN_DIR}"/*/${p}*/*.ebuild ; then
 						if [[ "${showed_header}" == "0" ]] ; then
 							einfo "${f} may need change to (R)DEPENDs with:"
 							showed_header=1
