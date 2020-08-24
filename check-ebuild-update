@@ -56,7 +56,7 @@ working properly."
 		exit 1
 	fi
 
-	if grep --help | grep -q -F -e "--perl-regexp" ; then
+	if grep --help | grep -q -P -e "--perl-regexp" ; then
 		:;
 	else
 		echo "You need grep compiled with Perl regular expressions."

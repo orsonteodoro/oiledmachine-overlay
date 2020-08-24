@@ -19,7 +19,7 @@ einfo() {
 #	echo ""
 }
 
-if grep --help | grep -q -F -e "--perl-regexp" ; then
+if grep --help | grep -q -P -e "--perl-regexp" ; then
 	:;
 else
 	einfo "You need grep compiled with Perl regular expressions."
