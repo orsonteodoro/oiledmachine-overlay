@@ -1,6 +1,6 @@
 #!/bin/bash
 G_INFO="
-Copyright 2016 Orson Teodoro
+Copyright 2016-2020 Orson Teodoro
 License: Dual licensed under MIT or GPL2
 "
 
@@ -12,8 +12,8 @@ PGO_SHOW_PHASES=${PGO_SHOW_PHASES:="0"}
 
 _pgo_pkg_setup_check_sandbox_permissions() {
 	if [[ "${CC}" == "gcc" || "${CXX}" == "g++"  ]]; then
-		grep -r -e "SANDBOX_WRITE" /etc/sandbox.d/* \
-			| grep "/var/lib/pgo"
+		grep -r -F -e "SANDBOX_WRITE" /etc/sandbox.d/* \
+			| grep -F -e "/var/lib/pgo"
 		if [[ "$?" != "0" ]]; then
 			die \
 "You need to add /var/lib/pgo to SANDBOX_WRITE in /etc/sandbox.d/00default"
@@ -31,7 +31,7 @@ _pgo_promote_package_to_phase3_if_gcc() {
 		|| "${CXX}" == "clang++" ]]
 	then
 		LST=$(ls ${ROOT}/var/lib/pgo/${CATEGORY}/${PF}/default.profraw)
-		echo "${LST}" | grep ".profraw" &>/dev/null
+		echo "${LST}" | grep -F -e ".profraw" &>/dev/null
 		if [[ "$?" == "0" ]]; then
 			einfo "Detected clang/LLVM PGO profiling data."
 			A="=${CATEGORY}/${PF} *" \
@@ -71,14 +71,14 @@ $(date --date="@${T}" "+%a %b %d %r %Z %Y")
 
 _pgo_pkg_setup_found_old_package() {
 	PGO_PACKAGE=$(cat "${PGO_PACKAGE_PHASES}" \
-		| grep "${CATEGORY}/${PF}")
+		| grep -F -e "${CATEGORY}/${PF}")
 	IFS=" " \
 	read -ra ROW <<< "${PGO_PACKAGE}"
 	PGO_PACKAGE_PHASE="${ROW[1]}"
 
 	if [[ "${PGO_PACKAGE_PHASE}" == "*" ]]; then
 		PGO_PACKAGE=$(cat "${PGO_PACKAGE_PHASES}" \
-			| grep "${CATEGORY}/${PF}")
+			| grep -F -e "${CATEGORY}/${PF}")
 		IFS=" " read -ra ROW <<< "${PGO_PACKAGE}"
 		local A
 		local B
@@ -113,12 +113,12 @@ _pgo_pkg_setup() {
 	fi
 
 	cat "${PGO_WHITELIST}" \
-		| grep "${CATEGORY}/${PN}" \
-		| grep -v "#" &>/dev/null
+		| grep -F -e "${CATEGORY}/${PN}" \
+		| grep -v -F -e "#" &>/dev/null
 	if [[ "$?" == "0" ]]; then
 		V=$(clang -v 2>&1 \
-			| grep -o "version [0-9.]*" \
-			| sed "s|version ||g")
+			| grep -E -o -e "version [0-9.]*" \
+			| sed -e "s|version ||g")
 		if [[ "$V" < "3.7.0" ]]; then
 			die \
 "System-wide PGO requires clang/llvm 3.7.0.  Please upgrade."
@@ -126,7 +126,7 @@ _pgo_pkg_setup() {
 
 		einfo "Package is in PGO whitelist [OK]"
 		cat "${PGO_PACKAGE_PHASES}" \
-			| grep "${CATEGORY}/${PF}" &>/dev/null
+			| grep -F -e "${CATEGORY}/${PF}" &>/dev/null
 		if [[ "$?" != "0" ]]; then
 			_pgo_pkg_setup_found_new_package
 		else
@@ -138,7 +138,7 @@ _pgo_pkg_setup() {
 
 _pgo_set_compiler_flags() {
 	PGO_PACKAGE=$(cat "${PGO_PACKAGE_PHASES}" \
-			| grep "${CATEGORY}/${PF}")
+			| grep -F -e "${CATEGORY}/${PF}")
 	IFS=" " read -ra ROW <<< "${PGO_PACKAGE}"
 	PGO_PACKAGE_PHASE="${ROW[1]}"
 	if [[ "${#PGO_PACKAGE_PHASE}" != "0" ]]; then
@@ -200,8 +200,8 @@ _pgo_src_configure() {
 		einfo "pgo_src_configure"
 	fi
 	cat "${PGO_WHITELIST}" \
-		| grep "${CATEGORY}/${PN}" \
-		| grep -v "#" &>/dev/null
+		| grep -F -e "${CATEGORY}/${PN}" \
+		| grep -v -F -e "#" &>/dev/null
 	if [[ "$?" == "0" ]]; then
 		_pgo_set_compiler_flags
 	fi
@@ -212,8 +212,8 @@ _pgo_src_compile() {
 		einfo "pgo_src_compile"
 	fi
 	cat "${PGO_WHITELIST}" \
-		| grep "${CATEGORY}/${PN}" \
-		| grep -v "#" &>/dev/null
+		| grep -F -e "${CATEGORY}/${PN}" \
+		| grep -v -F -e "#" &>/dev/null
 	if [[ "$?" == "0" \
 		&& "${PGO_PACKAGE_PHASE}" == "1" ]]; then
 		einfo "Compiling with PGO..."
@@ -222,11 +222,11 @@ _pgo_src_compile() {
 
 _pgo_promote_package_phase() {
 	cat "${PGO_WHITELIST}" \
-		| grep "${CATEGORY}/${PN}" \
-		| grep -v "#" &>/dev/null
+		| grep -F -e "${CATEGORY}/${PN}" \
+		| grep -v -F -e "#" &>/dev/null
 	if [[ "$?" == "0" ]]; then
 		PGO_PACKAGE=$(cat "${PGO_PACKAGE_PHASES}" \
-			| grep "${CATEGORY}/${PF}")
+			| grep -F -e "${CATEGORY}/${PF}")
 		IFS=" " read -ra ROW <<< "${PGO_PACKAGE}"
 		PGO_PACKAGE_PHASE="${ROW[1]}"
 
@@ -287,17 +287,17 @@ _pgo_generate_package_simulation_lists() {
 	A=$(find /var/lib/pgo -name "*.gcda" \
 		| sed -r \
 -e "s|/var/tmp/ccache/././[^\.]+.o.tmp.[^\.]+.[0-9]*[.]?gcda||g" \
-		| sed "s|\./|=|g" \
-		| sed "s|/var/lib/pgo||g" \
-		| sed "s|^/|=|g" \
+		| sed -e "s|\./|=|g" \
+		| sed -e "s|/var/lib/pgo||g" \
+		| sed -e "s|^/|=|g" \
 		| uniq)
 
 	# llvm
 	B=$(find /var/lib/pgo -name "*.profraw" \
-		| sed -r -e "s|/default.profraw||g" \
-		| sed "s|\./|=|g" \
-		| sed "s|/var/lib/pgo||g" \
-		| sed "s|^/|=|g" )
+		| sed -e "s|/default.profraw||g" \
+		| sed -e "s|\./|=|g" \
+		| sed -e "s|/var/lib/pgo||g" \
+		| sed -e "s|^/|=|g" )
 	# einfo "${A}"
 	# einfo "${B}"
 }
