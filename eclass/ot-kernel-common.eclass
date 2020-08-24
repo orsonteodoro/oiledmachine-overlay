@@ -421,7 +421,7 @@ function _filter_genpatches() {
 		for f in $(ls -1) ; do
 			#einfo "Processing ${f}"
 			if [[ "${f}" =~ \.patch$ ]] ; then
-				local l=$(echo "${f}" | cut -f1 -d"_")
+				local l=$(echo "${f}" | cut -f 1 -d"_")
 				if (( ${l} < 1500 )) ; then
 					# vanilla kernel inc patches
 					# already applied
