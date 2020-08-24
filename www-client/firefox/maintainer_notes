@@ -60,4 +60,8 @@ x scratch (ignore)
 x Make sure that no /lib64/ gets mixed in the multilib_src_configure if
 x using -m32.  See build.log for details.
 
-We do not use full cross compile, but but the browser still works.
+We do not use full cross compile, but but the browser still works.  WebRender tested ok on 32-bit.
+
+Check that the libX matches the corresponding ABI for correctness.
+for f in $(find /usr/lib64/firefox) ; do readelf -h "${f}" ; done
+for f in $(find /usr/lib32/firefox) ; do readelf -h "${f}" ; done

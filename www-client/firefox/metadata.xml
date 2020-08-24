@@ -25,7 +25,7 @@
 	You need to add the following in /etc/portage/profile/package.use.force
 	in order to select a non-native ABI.
 	----- CUT BELOW HERE -----
-www-client/firefox -abi_x86_64 -abi_mips_n64 -abi_ppc_64 -abi_s390_64
+www-client/firefox -abi_x86_64 -abi_x86_x32 -abi_mips_n64 -abi_ppc_64 -abi_s390_64
 	----- CUT ABOVE HERE -----
 </longdescription>
 <upstream>

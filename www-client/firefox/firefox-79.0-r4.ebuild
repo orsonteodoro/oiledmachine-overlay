@@ -831,7 +831,7 @@ multilib_src_install() {
 		# Firefox's new rapid release cycle means no more codenames
 		# Let's just stick with this one...
 		icon="aurora"
-		name="Aurora"
+		name="Aurora (${ABI})"
 
 		# Override preferences to set the MOZ_DEV_EDITION defaults, since we
 		# don't define MOZ_DEV_EDITION to avoid profile debaucles.
@@ -847,7 +847,7 @@ PROFILE_EOF
 		sizes="16 22 24 32 48 64 128 256"
 		icon_path="${BUILD_DIR}/browser/branding/official"
 		icon="${PN}"
-		name="Mozilla Firefox"
+		name="Mozilla Firefox (${ABI})"
 	fi
 
 	# Disable built-in auto-update because we update firefox through package manager
@@ -870,12 +870,12 @@ PROFILE_EOF
 
 	local app_name desktop_filename display_protocol exec_command
 	for display_protocol in ${display_protocols} ; do
-		app_name="${name} (${ABI}) on ${display_protocol}"
+		app_name="${name} on ${display_protocol}"
 		desktop_filename="${PN}-${ABI}-${display_protocol,,}.desktop"
 
 		case ${display_protocol} in
 			Wayland)
-				exec_command='firefox-${ABI}-wayland --name firefox-${ABI}-wayland'
+				exec_command="firefox-${ABI}-wayland --name firefox-${ABI}-wayland"
 				newbin "${FILESDIR}"/firefox-wayland.sh firefox-${ABI}-wayland
 				[ -e "/usr/bin/firefox-wayland" ] && rm /usr/bin/firefox-wayland
 				dosym /usr/bin/firefox-${ABI}-wayland /usr/bin/firefox-wayland
@@ -887,7 +887,7 @@ PROFILE_EOF
 					continue
 				fi
 
-				exec_command='firefox-${ABI}-x11 --name firefox-${ABI}-x11'
+				exec_command="firefox-${ABI}-x11 --name firefox-${ABI}-x11"
 				newbin "${FILESDIR}"/firefox-x11.sh firefox-${ABI}-x11
 				[ -e "/usr/bin/firefox-x11" ] && rm /usr/bin/firefox-x11
 				dosym /usr/bin/firefox-${ABI}-x11 /usr/bin/firefox-x11
@@ -895,7 +895,7 @@ PROFILE_EOF
 			*)
 				app_name="${name}"
 				desktop_filename="${PN}-${ABI}.desktop"
-				exec_command='firefox-${ABI}'
+				exec_command="firefox-${ABI}"
 				;;
 		esac
 
@@ -922,7 +922,7 @@ PROFILE_EOF
 
 		sed -i \
 			-e "s:@PREFIX@:${EPREFIX%/}/usr:" \
-			-e "s:@LIBDIR@:$(get_libdir):"
+			-e "s:@LIBDIR@:$(get_libdir):" \
 			-e "s:@DEFAULT_WAYLAND@:${use_wayland}:" \
 			"${wrapper}" || die
 	done
