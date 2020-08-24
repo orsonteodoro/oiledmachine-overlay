@@ -95,7 +95,7 @@ die "ELECTRON_APP_REG_PATH has been removed and replaced with\n\
 ELECTRON_APP_INSTALL_PATH.  Please wait for the next ebuild update."
 fi
 
-# The reoccurance interval between critical vulnerabilities in chrome is 10-14
+# The recurrance interval between critical vulnerabilities in chrome is 10-14
 # days recently (worst cases), but longer interval between vulnerabilites with
 # 159 days (~5 months) and 5 days has been observed.  If the app is used like a
 # web-browser (including social media apps), the internal Chromium requires
