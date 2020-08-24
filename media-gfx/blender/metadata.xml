@@ -77,6 +77,21 @@
 		<doc lang="zh-hant">https://docs.blender.org/manual/zh-hant/2.83/index.html</doc>
 	</upstream>
 	<use>
+		<flag name="abi3-compat">
+			Use ABI 3.x compatible OpenVDB.
+		</flag>
+		<flag name="abi4-compat">
+			Use ABI 4.x compatible OpenVDB.
+		</flag>
+		<flag name="abi5-compat">
+			Use ABI 5.x compatible OpenVDB.
+		</flag>
+		<flag name="abi6-compat">
+			Use ABI 6.x compatible OpenVDB.
+		</flag>
+		<flag name="abi7-compat">
+			Use ABI 7.x compatible OpenVDB.
+		</flag>
 		<flag name="asan">
 			Enable address sanitiation.
 		</flag>
