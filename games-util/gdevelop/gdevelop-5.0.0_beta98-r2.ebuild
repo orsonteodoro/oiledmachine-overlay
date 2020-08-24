@@ -46,8 +46,7 @@ DEPEND="${RDEPEND}
 		net-libs/nodejs[npm]
 	)
 	dev-vcs/git
-	media-gfx/imagemagick[png]
-	sys-apps/grep[pcre]"
+	media-gfx/imagemagick[png]"
 ELECTRON_APP_ELECTRON_V="8.2.5"
 ELECTRON_APP_REACT_V="16.8.6"
 inherit check-reqs cmake-utils desktop electron-app eutils user xdg
@@ -92,20 +91,20 @@ Use the one from oiledmachine-overlay.  Also try to \`source /etc/profile\`."
 	fi
 
 	if use wasm ; then
-		if eselect emscripten list | grep -qP -e "llvm-[0-9]+ \*" ; then
+		if eselect emscripten list | grep -q -E -e "llvm-[0-9]+ \*" ; then
 			:;
 		else
 			die \
 "You need to set your >=emscripten-${EMSCRIPTEN_MIN_V} and >=llvm-10.\n\
 See \`eselect emscripten\` for details.  (1)"
 		fi
-		local line=$(eselect emscripten list | grep -P -e "llvm-[0-9]+ *")
-		local em_v=$(echo "${line}" | grep -P -e "llvm-[0-9]+ \*" \
-			| grep -oP -e "emscripten-[0-9.]+" \
+		local line=$(eselect emscripten list | grep -E -e "llvm-[0-9]+ \*")
+		local em_v=$(echo "${line}" | grep -E -e "llvm-[0-9]+ \*" \
+			| grep -E -o -e "emscripten-[0-9.]+" \
 			| sed -e "s|emscripten-||")
 		local llvm_v=$(echo "${line}" \
-			| grep -P -e "llvm-[0-9]+ \*" \
-			| grep -oP -e "llvm-[0-9.]+" | sed -e "s|llvm-||")
+			| grep -E -e "llvm-[0-9]+ \*" \
+			| grep -E -o -e "llvm-[0-9.]+" | sed -e "s|llvm-||")
 
 		if ver_test ${em_v} -ge "${EMSCRIPTEN_MIN_V}" \
 			&& ver_test ${llvm_v} -ge 10 ; then
@@ -117,7 +116,7 @@ See \`eselect emscripten\` for details.  (2)"
 		fi
 	else
 		if eselect emscripten list \
-			| grep -qP -e "emscripten-fastcomp-[0-9]+ *" ; then
+			| grep -q -E -e "emscripten-fastcomp-[0-9]+ \*" ; then
 			:;
 		else
 			die \
@@ -126,12 +125,12 @@ See \`eselect emscripten\` for details.  (2)"
 See \`eselect emscripten\` for details.  (1)"
 		fi
 		local line=$(eselect emscripten list \
-			| grep -P -e "emscripten-fastcomp-[0-9]+ \*")
-		local em_v=$(echo "${line}" | grep -P -e "llvm-[0-9]+ \*" \
-			| grep -oP -e "emscripten-[0-9.]+" \
+			| grep -E -e "emscripten-fastcomp-[0-9]+ \*")
+		local em_v=$(echo "${line}" | grep -E -e "llvm-[0-9]+ \*" \
+			| grep -E -o -e "emscripten-[0-9.]+" \
 			| sed -e "s|emscripten-||")
-		local fc_v=$(echo "${line}" | grep -P -e "llvm-[0-9]+ \*" \
-			| grep -oP -e "emscripten-fastcomp-[0-9.]+" \
+		local fc_v=$(echo "${line}" | grep -E -e "llvm-[0-9]+ \*" \
+			| grep -E -o -e "emscripten-fastcomp-[0-9.]+" \
 			| sed -e "s|emscripten-fastcomp-||")
 
 		if ver_test ${em_v} -ge "${EMSCRIPTEN_MIN_V}" \
@@ -151,7 +150,7 @@ See \`eselect emscripten\` for details.  (2)"
 		die \
 "EM_CONFIG is empty.  Did you install the emscripten package?"
 	fi
-	export ACTIVE_VERSION=$(grep -r -e "#define NODE_MAJOR_VERSION" \
+	export ACTIVE_VERSION=$(grep -F -e "#define NODE_MAJOR_VERSION" \
         "${EROOT}/usr/include/node/node_version.h" | cut -f 3 -d " ")
 	if ver_test "${ACTIVE_VERSION}" -ge 14 ; then
 		die \
