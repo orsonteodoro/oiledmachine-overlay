@@ -472,7 +472,7 @@ function apply_genpatch_base() {
 	cd "$d" || die
 	unpack "${GENPATCHES_BASE_FN}"
 
-	sed -r -i -e "s|EXTRAVERSION = ${EXTRAVERSION}|EXTRAVERSION =|" \
+	sed -i -e "s|EXTRAVERSION = ${EXTRAVERSION}|EXTRAVERSION =|" \
 		"${S}"/Makefile \
 		|| die
 
@@ -499,7 +499,7 @@ function apply_genpatch_base() {
 		done
 	fi
 
-	sed -r -i -e "s|EXTRAVERSION =|EXTRAVERSION = ${EXTRAVERSION}|" \
+	sed -i -e "s|EXTRAVERSION =|EXTRAVERSION = ${EXTRAVERSION}|" \
 		"${S}"/Makefile \
 		|| die
 
@@ -564,7 +564,7 @@ function apply_o3() {
 		_tpatch "${PATCH_OPS}" "${DISTDIR}/${O3_ALLOW_FN}"
 	elif ver_test "${K_MAJOR_MINOR}" -lt 5.4 ; then
 		# fix patch
-		sed -r -e "s|-1028,6 +1028,13|-1076,6 +1076,13|" \
+		sed -e 's|-1028,6 +1028,13|-1076,6 +1076,13|' \
 			"${DISTDIR}"/${O3_CO_FN} \
 			> "${T}"/${O3_CO_FN} || die
 
