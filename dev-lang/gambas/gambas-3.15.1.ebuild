@@ -15,6 +15,7 @@ GAMBAS_MODULES="bzip2 cairo crypt curl dbus gmp gnome-keyring gsl gstreamer
 gtk2 gtk3 httpd imlib2 jit mime mixer mysql ncurses network odbc openal
 opengl openssl pcre pdf pixbuf postgresql qt5 sdl sdl2 sqlite2 sqlite3 v4l
 X xml xslt zlib"
+QT_MIN_PV="5.3"
 IUSE="${GAMBAS_MODULES} doc ide smtp webkit"
 RDEPEND="bzip2? ( app-arch/bzip2 )
 	cairo? ( >=x11-libs/cairo-1.6 )
@@ -48,21 +49,21 @@ RDEPEND="bzip2? ( app-arch/bzip2 )
 	openal? ( >=media-libs/openal-1.13 )
 	opengl? ( media-libs/mesa
 		media-libs/glew )
-	openssl? ( dev-libs/openssl )
+	openssl? ( >=dev-libs/openssl-1 )
 	pcre? ( dev-libs/libpcre )
 	pdf? ( >=app-text/poppler-0.5 )
 	pixbuf? ( >=x11-libs/gdk-pixbuf-2.4.13 )
 	postgresql? ( dev-db/postgresql )
-	qt5? ( >=dev-qt/qtcore-5.3:5
-		dev-qt/qtgui:5
-		dev-qt/qtprintsupport
-		dev-qt/qtsvg:5
-		dev-qt/qtwidgets
-		dev-qt/qtx11extras
-		opengl? ( dev-qt/qtopengl:5 )
-		webkit? ( dev-qt/qtnetwork
-			dev-qt/qtwebkit:5
-			dev-qt/qtxml ) )
+	qt5? ( >=dev-qt/qtcore-${QT_MIN_PV}:5=
+		>=dev-qt/qtgui-${QT_MIN_PV}:5=
+		>=dev-qt/qtprintsupport-${QT_MIN_PV}:5=
+		>=dev-qt/qtsvg-${QT_MIN_PV}:5=
+		>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
+		>=dev-qt/qtx11extras-${QT_MIN_PV}:5=
+		opengl? ( >=dev-qt/qtopengl-${QT_MIN_PV}:5= )
+		webkit? ( >=dev-qt/qtnetwork-${QT_MIN_PV}:5=
+			>=dev-qt/qtwebkit-${QT_MIN_PV}:5=
+			>=dev-qt/qtxml-${QT_MIN_PV}:5= ) )
 	sdl? ( >=media-libs/libsdl-1.2.8
 		media-libs/sdl-ttf )
 	sdl2? ( >=media-libs/libsdl2-2.0.2
@@ -86,7 +87,7 @@ DEPEND="${RDEPEND}
 	>=sys-devel/autoconf-2.68
 	>=sys-devel/automake-1.11.1
 	>=sys-devel/libtool-2.4"
-REQUIRED_USE="
+AREQUIRED_USE="
 	gtk2? ( X cairo )
 	gtk3? ( X cairo )
 	ide ( X network curl ^^ ( qt5 ) webkit )
@@ -98,6 +99,43 @@ inherit autotools desktop eutils fdo-mime toolchain-funcs xdg-utils
 S="${WORKDIR}/${PN}-${PV}"
 DOCS=( AUTHORS ChangeLog COPYING README )
 RESTRICT="mirror"
+declare -Ax USE_TO_MODULE_NAME=( \
+	[bzip2]="bzlib2" \
+	[cairo]="cairo" \
+	[crypt]="crypt"  \
+	[curl]="curl" \
+	[dbus]="dbus" \
+	[gmp]="gmp" \
+	[gnome-keyring]="keyring" \
+	[gsl]="gsl"  \
+	[gstreamer]="media" \
+	[gtk2]="gtk2"  \
+	[gtk3]="gtk3" \
+	[httpd]="httpd" \
+	[imlib2]="imageimlib"  \
+	[mime]="mime" \
+	[ncurses]="ncurses"  \
+	[network]="net" \
+	[mixer]="sdlsound" \
+	[mysql]="mysql" \
+	[odbc]="odbc" \
+	[openal]="openal" \
+	[opengl]="opengl" \
+	[openssl]="openssl" \
+	[pcre]="pcre" \
+	[pdf]="pdf" \
+	[pixbuf]="imageio" \
+	[postgresql]="postgresql" \
+	[qt5]="qt5"  \
+	[sdl]="sdl" \
+	[sdl2]="sdl2"  \
+	[sqlite2]="sqlite2"  \
+	[sqlite3]="sqlite3" \
+	[v4l]="v4l" \
+	[X]="X" \
+	[xslt]="xslt" \
+	[xml]="libxml" \
+	[zlib]="zlib" )
 
 pkg_setup() {
 	if [[ "$(tc-getCC)" == "clang" || "$(tc-getCXX)" == "clang++" ]]; then
@@ -106,6 +144,62 @@ pkg_setup() {
 doesn't support nested functions.  Forcing GCC..."
 		export CC="gcc"
 		export CXX="g++"
+	fi
+
+
+	if use qt5 ; then
+		local QT_VERSION=$("${EROOT}/usr/lib/libQt5Core.so.5" | head -n 1 | cut -f 8 -d " ")
+		if ver_test ${QT_VERSION} -lt ${QT_MIN_PV} ; then
+			die "You need >=${QT_MIN_PV} for the Qt system libraries."
+		fi
+
+		QTCORE_PV=$(pkg-config --modversion Qt5Core)
+		QTGUI_PV=$(pkg-config --modversion Qt5Gui)
+		use webkit && \
+		QTNETWORK_PV=$(pkg-config --modversion Qt5Network)
+		use opengl && \
+		QTOPENGL_PV=$(pkg-config --modversion Qt5OpenGL)
+		QTPRINTSUPPORT_PV=$(pkg-config --modversion Qt5PrintSupport)
+		QTSVG_PV=$(pkg-config --modversion Qt5Svg)
+		use webkit && \
+		QTWEBKIT_PV=$(pkg-config --modversion Qt5WebKit)
+		QTWIDGETS_PV=$(pkg-config --modversion Qt5Widgets)
+		QTX11EXTRAS_PV=$(pkg-config --modversion Qt5X11Extras)
+		use webkit && \
+		QTXML_PV=$(pkg-config --modversion Qt5Xml)
+
+		if ver_test ${QT_VERSION} -ne ${QTCORE_PV} ; then
+			die "QT_VERSION is not the same version as Qt5Core"
+		fi
+		if ver_test ${QT_VERSION} -ne ${QTGUI_PV} ; then
+			die "QT_VERSION is not the same version as Qt5Gui"
+		fi
+		if use webkit && ( ver_test ${QT_VERSION} -ne ${QTNETWORK_PV} ) ; then
+			die "QT_VERSION is not the same version as Qt5Network"
+		fi
+		if use opengl ; then
+			if ver_test ${QT_VERSION} -ne ${QTOPENGL_PV} ; then
+				die "QT_VERSION is not the same version as Qt5OpenGL"
+			fi
+		fi
+		if ver_test ${QT_VERSION} -ne ${QTPRINTSUPPORT_PV} ; then
+			die "QT_VERSION is not the same version as Qt5PrintSupport"
+		fi
+		if ver_test ${QT_VERSION} -ne ${QTSVG_PV} ; then
+			die "QT_VERSION is not the same version as Qt5Svg"
+		fi
+		if use webkit && ( ver_test ${QT_VERSION} -ne ${QTWEBKIT_PV} ) ; then
+			die "QT_VERSION is not the same version as Qt5WebKit"
+		fi
+		if ver_test ${QT_VERSION} -ne ${QTWIDGETS_PV} ; then
+			die "QT_VERSION is not the same version as Qt5Widgets"
+		fi
+		if ver_test ${QT_VERSION} -ne ${QTX11EXTRAS_PV} ; then
+			die "QT_VERSION is not the same version as Qt5X11Extras"
+		fi
+		if use webkit && ( ver_test ${QT_VERSION} -ne ${QTXML_PV} ) ; then
+			die "QT_VERSION is not the same version as Qt5Xml"
+		fi
 	fi
 }
 
@@ -122,10 +216,11 @@ src_prepare() {
 	default
 	cd "${S}" || die
 	for m in ${GAMBAS_MODULES} ; do
+		[[ "${m}" == "jit" ]] && continue
 		echo "$USE" | grep -F -q -o "${m}" \
-			|| mod_off $(remap_use ${m})
+			|| mod_off ${USE_TO_MODULE_NAME[${m}]}
 	done
-
+	mod_off qt4
 	L=$(find . -name "configure.ac")
 	for c in ${L} ; do
 		[[ "${c}" =~ TEMPLATE ]] && continue
