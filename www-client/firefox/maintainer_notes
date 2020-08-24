@@ -1,5 +1,5 @@
 Keeping these ebuild requires takes a lot of time.  The vanilla ebuilds used are
-same as the gentoo overlay which get modified with multilib changes.  We
+the same as the gentoo overlay which get modified with multilib changes.  We
 use the vanilla ebuilds because the (R)DEPENDs are updated by them and cut
 down the maintenance cost a bit.
 
@@ -37,7 +37,7 @@ have multilib changes.
 Important:  Due to the large codebase and internal libraries, the ebuild
 needs to be updated every critical vulnerability and that ebuild and earlier
 be removed.  The recurrance interval is about a month between criticals
-and high.  Currently is +85 days from May 26, 2020.
+and high.  Currently it is +85 days from May 26, 2020.
 
 For the list of CVE's see:
 https://nvd.nist.gov/vuln/search/results?query=firefox&results_type=overview&form_type=Basic&search_type=all&startIndex=0
@@ -45,23 +45,30 @@ https://nvd.nist.gov/vuln/search/results?query=firefox&results_type=overview&for
 Verify in the About > Help that you are using the 32-bit version or non-native
 ABI version.
 
-Make sure that all cargo parts get built for the respective target ABI.
-Do:
-`grep -F -r -e "TARGET = Some(\"x86_64-unknown-linux-g" /var/tmp/portage/www-client/firefox-79.0-r3/temp/build.log`,
-replacing x86_64 with the one returned by get `$(get_abi_CHOST ${ABI} | cut -f 1 -d "-")`,
-and to see if it is in compile phase of x86.  If it is, the cross compiling is broken.
+x in beginning of line means scratch and (ignore)
+x Make sure that all cargo parts get built for the respective target ABI.
+x Do:
+x `grep -F -r -e "TARGET = Some(\"x86_64-unknown-linux-g" /var/tmp/portage/www-client/firefox-79.0-r3/temp/build.log`,
+x replacing x86_64 with the one returned by get `$(get_abi_CHOST ${ABI} | cut -f 1 -d "-")`,
+x and to see if it is in compile phase of x86.  If it is, the cross compiling is broken.
 
-x scratch (ignore)
 x Make sure no other -m64 gets mixed with -m32 (should be the same ABI) in the
 x compiling phase.  It must be the same ABI throughout the phase.  See build.log
 x for details.
 
-x scratch (ignore)
 x Make sure that no /lib64/ gets mixed in the multilib_src_configure if
 x using -m32.  See build.log for details.
 
-We do not use full cross compile, but but the browser still works.  WebRender tested ok on 32-bit.
+We do not use full cross compile, but but the browser still works.  WebRender
+tested ok on 32-bit.  Some parts are native ABI for the bindings generator
+toolchain which get used by python with native ABI.  No multilib python exists
+in gentoo overlay.  The code generated may likley be the cross compiled one.
 
-Check that the libX matches the corresponding ABI for correctness.
-for f in $(find /usr/lib64/firefox) ; do readelf -h "${f}" ; done
-for f in $(find /usr/lib32/firefox) ; do readelf -h "${f}" ; done
+Check that the libX matches the corresponding ABI for correctness.  All
+libraries and executibles are the same ABI.  Code to check:
+for f in $(find /usr/lib64/firefox) ; do readelf -h "${f}" ; done # Class should say ELF64
+for f in $(find /usr/lib32/firefox) ; do readelf -h "${f}" ; done # Class should say ELF32
+
+Check if the .desktop files have distinguishable from 32-bit or 64-bit with
+labels and links to ABI.  Make sure the wrappers produced in the install
+section of the ebuild indicate the ABI.
