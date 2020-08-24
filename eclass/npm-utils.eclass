@@ -179,25 +179,25 @@ npm_auto_fix() {
 	npm audit &> "${audit_file}"
 	cat "${audit_file}" || die
 	local needed_fix="$?"
-	cat "${audit_file}" | grep -F "npm audit fix" >/dev/null \
+	cat "${audit_file}" | grep -q -F -e "npm audit fix" \
 		&& is_trivial=1
-	cat "${audit_file}" | grep -F "# Run" >/dev/null \
+	cat "${audit_file}" | grep -q -F -e "# Run" \
 		&& is_auto_fix=1
-	cat "${audit_file}" | grep -F "require manual review" >/dev/null \
+	cat "${audit_file}" | grep -q -F -e "require manual review" \
 		&& is_manual_review=1
-	cat "${audit_file}" | grep -F "found 0 vulnerabilit" >/dev/null \
+	cat "${audit_file}" | grep -q -F -e "found 0 vulnerabilit" \
 		&& is_clean=1
-	cat "${audit_file}" | grep -F "Missing:" >/dev/null \
+	cat "${audit_file}" | grep -q -F -e "Missing:" \
 		&& is_missing=1
-	cat "${audit_file}" | grep -F "Invalid Version:" >/dev/null \
+	cat "${audit_file}" | grep -q -F -e "Invalid Version:" \
 		&& is_invalid_version=1
 	if [[ "${is_auto_fix}" == "1" ]] ; then
 		einfo \
 "Found auto fixes.  Running \`npm audit fix ${option_fix_force}\`.  is_auto_fix=1"
 		npm audit fix ${option_fix_force}
 		#L=$(cat "${audit_file}" \
-#| grep -P -e "to resolve [0-9]+ vulnerabilit(y|ies)" \
-#| sed -r -e "s|# Run  ||" -e "s#  to resolve [0-9]+ vulnerabilit(y|ies)##g")
+#| grep -E -e "to resolve [0-9]+ vulnerabilit(y|ies)" \
+#| sed -e "s|# Run  ||" -e "s#  to resolve [0-9]+ vulnerabilit(y|ies)##g")
 		#while read -r line ; do
 		#	einfo "Auto running fix: ${line}"
 		#	eval "${line}"
@@ -210,7 +210,7 @@ is_trivial=1"
 		npm audit fix ${option_fix_force} || die
 		return 1
 		npm audit 2>&1 > "${audit_file}"
-		cat "${audit_file}" | grep -F "found 0 vulnerabilities" \
+		cat "${audit_file}" | grep -q -F -e "found 0 vulnerabilities" \
 			|| die "not fixed"
 	elif [[ "${is_manual_review}" == "1" ]] ; then
 		cat "${audit_file}" || die
@@ -226,13 +226,13 @@ Fix immediately.  is_manual_review=1.  Reported from: $(pwd)"
 		einfo "Invalid file case.  Fix lock?  is_invalid_version=1"
 		rm package-lock.json
 		npm i --package-lock-only 2>&1 > "${audit_file}"
-		if cat "${audit_file}" | grep -F "Invalid Version:" >/dev/null ; then
+		if cat "${audit_file}" | grep -q -F -e "Invalid Version:" ; then
 			cat "${audit_file}" || die
 			einfo "Still broken.  Requires manual editing."
 		fi
 		is_clean=0
 		cat "${audit_file}" \
-			| grep -F "found 0 vulnerabilities" >/dev/null \
+			| grep -q -F -e "found 0 vulnerabilities" \
 			&& is_clean=1
 		if [[ "${is_clean}" == 0 ]] ; then
 			einfo \
@@ -240,7 +240,7 @@ Fix immediately.  is_manual_review=1.  Reported from: $(pwd)"
 			npm audit fix ${option_fix_force}
 		fi
 		npm audit 2>&1 > "${audit_file}"
-		cat "${audit_file}" | grep -F "found 0 vulnerabilities" \
+		cat "${audit_file}" | grep -q -F -e "found 0 vulnerabilities" \
 			|| return 2
 		return 1
 	elif [[ "${is_clean}" == "1" ]] ; then
@@ -262,7 +262,7 @@ Fix immediately.  is_manual_review=1.  Reported from: $(pwd)"
 # @DESCRIPTION:
 # Handles the Missing: package dependency in audit's report.
 __missing_requires_manual_intervention_message() {
-	if grep -e "Missing:" "${audit_file}" >/dev/null ; then
+	if grep -q -F -e "Missing:" "${audit_file}" ; then
 		cat "${audit_file}" || die
 		ewarn \
 "Install missing packages.  Do a \`npm ls <package_name>\` of each of the\n\
@@ -310,16 +310,16 @@ npm_pre_audit() {
 		local audit_file="${T}/npm-audit-result"
 		npm audit &> "${audit_file}"
 
-		if grep -e "Manual Review" "${audit_file}" >/dev/null \
-		|| grep -e "npm audit security report" "${audit_file}" >/dev/null ; then
+		if grep -q -F -e "Manual Review" "${audit_file}" \
+		|| grep -q -F -e "npm audit security report" "${audit_file}" ; then
 			# false positive cases when project-lock.json is old
 			# caused by deduping
 			__replace_package_lock
-		elif grep -e "Missing:" "${audit_file}" >/dev/null ; then
+		elif grep -q -F -e "Missing:" "${audit_file}" ; then
 			# package-lock.json may be broken.  try to fix before
 			# doing audit
 			__replace_package_lock
-		elif grep -e "does not satisfy" "${audit_file}" >/dev/null ; then
+		elif grep -q -F -e "does not satisfy" "${audit_file}" ; then
 			__replace_package_lock
 		elif [ ! -e package-lock.json ] ; then
 			die \
@@ -479,7 +479,7 @@ dir=$(realpath ${base}/${dir})"
 			if [ -e "${l}" ] ; then
 				pushd "$(dirname ${l})" || die
 					npm audit &> "${audit_file}"
-					if grep -e "Missing:" "${audit_file}" >/dev/null ; then
+					if grep -q -F -e "Missing:" "${audit_file}" ; then
 						npm_pre_audit
 						current_broken_lock_count=$((${current_broken_lock_count}+1))
 					fi
@@ -538,9 +538,9 @@ npm-utils_install_licenses() {
 	  ) ; \
 	do
 		if [[ -f "${f}" ]] ; then
-			d=$(dirname "${f}" | sed -r -e "s|^${S}||")
+			d=$(dirname "${f}" | sed -e "s|^${S}||")
 		else
-			d=$(echo "${f}" | sed -r -e "s|^${S}||")
+			d=$(echo "${f}" | sed -e "s|^${S}||")
 		fi
 		docinto "licenses/${d}"
 		dodoc -r "${f}"
@@ -575,9 +575,9 @@ npm-utils_install_readmes() {
 	  ) ; \
 	do
 		if [[ -f "${f}" ]] ; then
-			d=$(dirname "${f}" | sed -r -e "s|^${S}||")
+			d=$(dirname "${f}" | sed -e "s|^${S}||")
 		else
-			d=$(echo "${f}" | sed -r -e "s|^${S}||")
+			d=$(echo "${f}" | sed -e "s|^${S}||")
 		fi
 		docinto "readmes/${d}"
 		dodoc -r "${f}"

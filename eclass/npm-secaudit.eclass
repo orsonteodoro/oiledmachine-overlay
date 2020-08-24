@@ -331,7 +331,7 @@ npm-secaudit-register() {
 
 			# remove existing entry
 			touch "${NPM_PACKAGE_DB}"
-			sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
+			sed -i -r -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
 
 			echo -e "${CATEGORY}/${PN}:${SLOT}\t${check_path}" >> "${NPM_PACKAGE_DB}"
 
@@ -393,10 +393,10 @@ npm-secaudit_audit_dev() {
 				local is_high=0
 				local is_moderate=0
 				local is_low=0
-				grep -qF -e " Critical " "${audit_file}" && is_critical=1
-				grep -qF -e " High " "${audit_file}" && is_high=1
-				grep -qF -e " Moderate " "${audit_file}" && is_moderate=1
-				grep -qF -e " Low " "${audit_file}" && is_low=1
+				grep -q -F -e " Critical " "${audit_file}" && is_critical=1
+				grep -q -F -e " High " "${audit_file}" && is_high=1
+				grep -q -F -e " Moderate " "${audit_file}" && is_moderate=1
+				grep -q -F -e " Low " "${audit_file}" && is_low=1
 	if [[ "${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Critical" \
 					&& "${is_critical}" == "1" ]] ; then
 					cat "${audit_file}"
@@ -442,11 +442,11 @@ npm-secaudit_audit_prod() {
 		pushd $(dirname $l) || die
 			local audit_file="${T}"/npm-secaudit-result
 			npm audit &> "${audit_file}"
-			cat "${audit_file}" | grep "ELOCKVERIFY" >/dev/null
+			cat "${audit_file}" | grep -q -F -e "ELOCKVERIFY"
 			if [[ "$?" != "0" ]] ; then
-				cat "${audit_file}" | grep "require manual review" >/dev/null
+				cat "${audit_file}" | grep -q -F -e "require manual review"
 				local result_found1="$?"
-				cat "${audit_file}" | grep "npm audit fix" >/dev/null
+				cat "${audit_file}" | grep -q -F -e "npm audit fix"
 				local result_found2="$?"
 				if [[ "${result_found1}" == "0" || "${result_found2}" == "0" ]] ; then
 					die "package is still vulnerable at $(pwd)$l"
@@ -555,7 +555,7 @@ npm-secaudit_pkg_postrm() {
 	while true ; do
 		if mkdir "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db" 2>/dev/null ; then
 			trap "rm -rf \"${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db\"" EXIT
-			sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
+			sed -i -r -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
 			sed -i '/^$/d' "${NPM_PACKAGE_DB}"
 			rm -rf "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
 			break
@@ -571,7 +571,7 @@ ${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-pkg_db"
 	while true ; do
 		if mkdir "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db" 2>/dev/null ; then
 			trap "rm -rf \"${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db\"" EXIT
-			sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_SETS_DB}"
+			sed -i -r -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_SETS_DB}"
 			sed -i '/^$/d' "${NPM_PACKAGE_SETS_DB}"
 			rm -rf "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
 			break

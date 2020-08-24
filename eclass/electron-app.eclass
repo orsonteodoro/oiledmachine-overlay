@@ -518,14 +518,14 @@ fi
 # Warns user that download or building can fail randomly
 _electron-app-flakey-check() {
 	local l=$(find "${S}" -name "package.json")
-	grep -e "electron-builder" $l >/dev/null
+	grep -q -F -e "electron-builder" $l
 	if [[ "$?" == "0" ]] ; then
 		ewarn \
 "This ebuild may fail when building with electron-builder.  Re-emerge if it\n\
 fails."
 	fi
 
-	grep -e "\"electron\":" $l >/dev/null
+	grep -q -F -e "\"electron\":" $l
 	if [[ "$?" == "0" ]] ; then
 		ewarn \
 "This ebuild may fail when downloading Electron as a dependency.  Re-emerge\n\
@@ -589,8 +589,8 @@ download micropackages and obtain version releases information."
 	fi
 
 	#export ELECTRON_VER=$(strings /usr/bin/electron \
-	#	| grep "%s Electron/" \
-	#	| sed -e "s|[%s A-Za-z/]||g")
+	#	| grep -F -e "%s Electron/" \
+	#	| sed -r -e "s|[%s A-Za-z/]||g")
 	export NPM_STORE_DIR="${HOME}/npm"
 	export YARN_STORE_DIR="${HOME}/yarn"
 	export npm_config_maxsockets=${ELECTRON_APP_MAXSOCKETS}
@@ -723,7 +723,7 @@ _query_lite_json() {
 	echo $(cat "${ELECTRON_APP_VERSION_DATA_PATH}" \
 		| jq '.[] | select(.tag_name == "v'${ELECTRON_V}'")' \
 		| jq ${1} \
-		| sed -e "s|[\"]*||g")
+		| sed -r -e "s|[\"]*||g")
 }
 
 # @FUNCTION: adie
@@ -752,12 +752,12 @@ critical vulnerabilities in the internal Chromium."
 	fi
 
 	local ELECTRON_V
-	if npm ls electron | grep -qF -e " electron@" ; then
+	if npm ls electron | grep -q -F -e " electron@" ; then
 		# case when ^ or latest used
 		ELECTRON_V=$(npm ls electron \
-			| grep -P -e "electron@[0-9.]+" \
+			| grep -E -e "electron@[0-9.]+" \
 			| tail -n 1 \
-			| sed -e "s|[^0-9\.]*||g") # used by package
+			| sed -r -e "s|[^0-9\.]*||g") # used by package
 	elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] ; then
 		# fallback based on analysis on package.json
 		ELECTRON_V=${ELECTRON_APP_ELECTRON_V}
@@ -1028,10 +1028,10 @@ electron-app_audit_dev() {
 				local is_high=0
 				local is_moderate=0
 				local is_low=0
-				grep -qF -e " Critical " "${audit_file}" && is_critical=1
-				grep -qF -e " High " "${audit_file}" && is_high=1
-				grep -qF -e " Moderate " "${audit_file}" && is_moderate=1
-				grep -qF -e " Low " "${audit_file}" && is_low=1
+				grep -q -F -e " Critical " "${audit_file}" && is_critical=1
+				grep -q -F -e " High " "${audit_file}" && is_high=1
+				grep -q -F -e " Moderate " "${audit_file}" && is_moderate=1
+				grep -q -F -e " Low " "${audit_file}" && is_low=1
 	if [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Critical" \
 					&& "${is_critical}" == "1" ]] ; then
 					cat "${audit_file}"
@@ -1078,11 +1078,11 @@ electron-app_audit_prod() {
 		pushd $(dirname $l) || die
 		local audit_file="${T}"/npm-secaudit-result
 		npm audit &> "${audit_file}"
-		cat "${audit_file}" | grep "ELOCKVERIFY" >/dev/null
+		cat "${audit_file}" | grep -q -F -e "ELOCKVERIFY"
 		if [[ "$?" != "0" ]] ; then
-			cat "${audit_file}" | grep "require manual review" >/dev/null
+			cat "${audit_file}" | grep -q -F -e "require manual review"
 			local result_found1="$?"
-			cat "${audit_file}" | grep "npm audit fix" >/dev/null
+			cat "${audit_file}" | grep -q -F -e "npm audit fix"
 			local result_found2="$?"
 			if [[ "${result_found1}" == "0" || "${result_found2}" == "0" ]] ; then
 				die "package is still vulnerable at $(pwd)$l"
@@ -1286,13 +1286,13 @@ command to execute in the wrapper script"
 
 	local icon=""
 	local mime_type=$(file --mime-type $(realpath "./${rel_icon_path}"))
-	if echo "${mime_type}" | grep -q -E "image/png" ; then
+	if echo "${mime_type}" | grep -q -F -e "image/png" ; then
 		icon="${PN}"
 		newicon "${rel_icon_path}" "${icon}.png"
-	elif echo "${mime_type}" | grep -q -E "image/svg" ; then
+	elif echo "${mime_type}" | grep -q -F -e "image/svg" ; then
 		icon="${PN}"
 		newicon "${rel_icon_path}" "${icon}.svg"
-	elif echo "${mime_type}" | grep -q -E "image/x-xpmi" ; then
+	elif echo "${mime_type}" | grep -q -F -e "image/x-xpmi" ; then
 		icon="${PN}"
 		newicon "${rel_icon_path}" "${icon}.xpm"
 	else
@@ -1334,7 +1334,7 @@ electron-app-register-x() {
 
 			# remove existing entry
 			touch "${pkg_db}"
-			sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${pkg_db}"
+			sed -i -r -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${pkg_db}"
 
 			echo -e "${CATEGORY}/${PN}:${SLOT}\t${check_path}" >> "${pkg_db}"
 
@@ -1403,7 +1403,7 @@ electron-app_pkg_postrm() {
 			while true ; do
 				if mkdir "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db" 2>/dev/null ; then
 					trap "rm -rf \"${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db\"" EXIT
-					sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
+					sed -i -r -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_DB}"
 					sed -i '/^$/d' "${NPM_PACKAGE_DB}"
 					rm -rf "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
 					break
@@ -1419,7 +1419,7 @@ ${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
 			while true ; do
 				if mkdir "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db" 2>/dev/null ; then
 					trap "rm -rf \"${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db\"" EXIT
-					sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_SETS_DB}"
+					sed -i -r -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${NPM_PACKAGE_SETS_DB}"
 					sed -i '/^$/d' "${NPM_PACKAGE_SETS_DB}"
 					rm -rf "${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
 					break
@@ -1436,7 +1436,7 @@ ${NPM_SECAUDIT_LOCKS_DIR}/mutex-editing-emerge-sets-db"
 			while true ; do
 				if mkdir "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db" 2>/dev/null ; then
 					trap "rm -rf \"${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db\"" EXIT
-					sed -i -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${YARN_PACKAGE_DB}"
+					sed -i -r -e "s|${CATEGORY}/${PN}:${SLOT}\t.*||g" "${YARN_PACKAGE_DB}"
 					sed -i '/^$/d' "${YARN_PACKAGE_DB}"
 					rm -rf "${ELECTRON_APP_LOCKS_DIR}/mutex-editing-pkg_db"
 					break
