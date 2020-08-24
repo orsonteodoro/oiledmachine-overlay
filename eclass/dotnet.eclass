@@ -812,7 +812,7 @@ dotnet_multilib_comply() {
 				&& "$(find "${dir}" -name '*.pc')" != "" ]]
 			then
 				pushd "${dir}" &> /dev/null
-				sed  -i -r \
+				sed -i -r \
 			-e 's:/(lib)([^a-zA-Z0-9]|$):/'"$(get_libdir)"'\2:g' \
 					*.pc \
 			|| die "Sedding some sense into pkgconfig files failed."
@@ -848,7 +848,7 @@ dotnet_multilib_comply() {
 # $4 - patch with using System.Reflection; (optional) -- set to 1
 # @CODE
 estrong_assembly_info() {
-	sed -i -r -e "s|$1|$1\n[assembly:AssemblyKeyFileAttribute(\"$2\")]|" \
+	sed -i -e "s|$1|$1\n[assembly:AssemblyKeyFileAttribute(\"$2\")]|" \
 		"$3" || die
 
 	if [[ -n "$4" ]] ; then
@@ -872,7 +872,7 @@ estrong_assembly_info() {
 # @CODE
 estrong_assembly_info2() {
 	local public_key=$(sn -tp "$2" | tail -n 7 | head -n 5 | tr -d '\n')
-	sed -i -r -e "s|\
+	sed -i -e "s|\
 \[assembly\: InternalsVisibleTo\(\"$1\"\)\]|\
 \[assembly: InternalsVisibleTo(\"$1, PublicKey=${public_key}\")\]|" \
 		"$3" || die
@@ -1272,7 +1272,7 @@ dotnet_copy_dllmap_config() {
 	wordsize="${wordsize//lib/}"
 	wordsize="${wordsize//[on]/}"
 
-	sed -i -e "s|wordsize=\"[0-9]+\"|wordsize=\"${wordsize}\"|g" \
+	sed -i -r -e "s|wordsize=\"[0-9]+\"|wordsize=\"${wordsize}\"|g" \
 		"${dllmap_basename}" || die
 	sed -i -e "s|lib64|$(get_libdir)|g" "${dllmap_basename}" || die
 }
@@ -1281,15 +1281,15 @@ dotnet_copy_dllmap_config() {
 # @DESCRIPTION:  This will fill the highest TOOLS_VERSION by scanning
 # recursively the csprojs in current directory
 dotnet_fill_tools_version_recursive() {
-	grep -r -e "ToolsVersion=\"Current\"" $(find . -name "*.csproj") \
+	grep -F -r -e "ToolsVersion=\"Current\"" $(find . -name "*.csproj") \
 		&& export TOOLS_VERSION="Current" && return
-	grep -r -e "ToolsVersion=\"15.0\"" $(find . -name "*.csproj") \
+	grep -F -r -e "ToolsVersion=\"15.0\"" $(find . -name "*.csproj") \
 		&& export TOOLS_VERSION="Current" && return
-	grep -r -e "ToolsVersion=\"4.0\"" $(find . -name "*.csproj") \
+	grep -F -r -e "ToolsVersion=\"4.0\"" $(find . -name "*.csproj") \
 		&& export TOOLS_VERSION="4.0" && return
-	grep -r -e "ToolsVersion=\"3.5\"" $(find . -name "*.csproj") \
+	grep -F -r -e "ToolsVersion=\"3.5\"" $(find . -name "*.csproj") \
 		&& export TOOLS_VERSION="3.5" && return
-	grep -r -e "ToolsVersion=\"2.0\"" $(find . -name "*.csproj") \
+	grep -F -r -e "ToolsVersion=\"2.0\"" $(find . -name "*.csproj") \
 		&& export TOOLS_VERSION="2.0" && return
 }
 
@@ -1302,15 +1302,15 @@ dotnet_fill_tools_version_recursive() {
 # @CODE
 dotnet_fill_tools_version_by_file() {
 	local file="$1"
-	grep -e "ToolsVersion=\"Current\"" "${file}" \
+	grep -F -e "ToolsVersion=\"Current\"" "${file}" \
 		&& export TOOLS_VERSION="Current" && return
-	grep -e "ToolsVersion=\"15.0\"" "${file}" \
+	grep -F -e "ToolsVersion=\"15.0\"" "${file}" \
 		&& export TOOLS_VERSION="Current" && return
-	grep -e "ToolsVersion=\"4.0\"" "${file}" \
+	grep -F -e "ToolsVersion=\"4.0\"" "${file}" \
 		&& export TOOLS_VERSION="4.0" && return
-	grep -e "ToolsVersion=\"3.5\"" "${file}" \
+	grep -F -e "ToolsVersion=\"3.5\"" "${file}" \
 		&& export TOOLS_VERSION="3.5" && return
-	grep -e "ToolsVersion=\"2.0\"" "${file}" \
+	grep -F -e "ToolsVersion=\"2.0\"" "${file}" \
 		&& export TOOLS_VERSION="2.0" && return
 }
 
