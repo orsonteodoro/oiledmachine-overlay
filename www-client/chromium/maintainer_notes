@@ -19,7 +19,7 @@ Make sure that the versions of the dependencies are the same.  It is easier
 to just copy the ebuild and apply changes.
 
 If a package is in a *-libs category and is not multilib ready,
-the ebuild must likely be forked and rebuilt as multilib.
+the ebuild most likely be forked and rebuilt as multilib.
 
 IUSE must be modded with ABI USE flags.
 
