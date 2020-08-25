@@ -909,7 +909,6 @@ PROFILE_EOF
 
 	rm "${ED%/}"/usr/bin/firefox || die
 	newbin "${FILESDIR}"/firefox.sh firefox-${ABI}
-	[ -e "/usr/bin/firefox" ] && rm /usr/bin/firefox
 	dosym /usr/bin/firefox-${ABI} /usr/bin/firefox
 
 	local wrapper
