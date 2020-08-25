@@ -15,6 +15,9 @@ RDEPEND and DEPEND must have MULTILIB_USEDEP for all packages
 dependencies that are multilib capable for simplicity and less
 build time failure chance.
 
+Make sure that the versions of the dependencies are the same.  It is easier
+to just copy the ebuild and apply changes.
+
 If a package is in a *-libs category and is not multilib ready,
 the ebuild must likely be forked and rebuilt as multilib.
 
