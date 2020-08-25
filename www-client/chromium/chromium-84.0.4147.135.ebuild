@@ -485,6 +485,7 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	local chost=$(get_abi_CHOST ${ABI})
 	# Calling this here supports resumption via FEATURES=keepwork
 	python_setup
 
@@ -495,8 +496,8 @@ multilib_src_configure() {
 
 	if [[ ${CHROMIUM_FORCE_CLANG} == yes ]] && ! tc-is-clang; then
 		# Force clang since gcc is pretty broken at the moment.
-		CC=${CHOST}-clang
-		CXX=${CHOST}-clang++
+		CC=${chost}-clang
+		CXX=${chost}-clang++
 		strip-unsupported-flags
 	fi
 
@@ -659,7 +660,6 @@ multilib_src_configure() {
 		die "Failed to determine target arch, got '$myarch'."
 	fi
 
-	local chost=$(get_abi_CHOST ${ABI})
 	local target_cpu=""
 	case "${ABI}" in
 		amd64*|x64*)
