@@ -7,13 +7,24 @@ Due to time to compile and time it takes to migrate changes, there may be large
 lag time between Gentoo's release and the one found on oiledmachine-overlay.
 
 
-Here is the checklist if you are maintaining your own multilib fork:
+Time Investment Estimation:
 
-It helps if you diff it with the same ebuild point release to see which parts
-of the ebuild/package got added or changed.
+Estimated ebuild update time (best case): 30 minutes
+Estimated ebuild update time (worst case) with additonal patches: 3 days to a week.
+Estimated build time to build 2 ABIs: 8 hours to 1 days
+
+
+Update checklist fork:
+
+Make sure that you copy the files folder but also copy the custom patches
+you added.
 
 Make sure that (R)DEPENDs have MULTILIB_USEDEP for all libraries and programs
 that have it.
+
+Make sure that the versions of the dependencies are the same.  It is easier
+to just copy the ebuild and apply changes.  Some dependencies must be
+changed especially the virtuals which must be changed to be multilib aware.
 
 Make sure that the inherit adds multilib-minimal.
 
@@ -72,3 +83,12 @@ for f in $(find /usr/lib32/firefox) ; do readelf -h "${f}" ; done # Class should
 Check if the .desktop files have distinguishable from 32-bit or 64-bit with
 labels and links to ABI.  Make sure the wrappers produced in the install
 section of the ebuild indicate the ABI.
+
+
+Additional notes:
+
+It helps if you diff it with the same ebuild point release to see which parts
+of the ebuild/package got added or changed.
+
+It helps to do a side-by-side comparison between the forked and the same
+point release to see what changes to migrate.
