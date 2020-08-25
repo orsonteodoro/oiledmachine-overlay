@@ -1,0 +1,62 @@
+This ebuild fork is kept in sync with the gentoo overlay.  We use
+the vanilla package and add on top of it with multilib changes.
+
+
+Estimated modding times:
+
+Simple update: less than 30 minutes
+Worst case for missing multilib compat patch:  3 days to 1 week
+Estimated build time is 1-2 days to build 2 ABIs.
+
+
+Update checklist:
+
+RDEPEND and DEPEND must have MULTILIB_USEDEP for all packages
+dependencies that are multilib capable for simplicity and less
+build time failure chance.
+
+If a package is in a *-libs category and is not multilib ready,
+the ebuild must likely be forked and rebuilt as multilib.
+
+IUSE must be modded with ABI USE flags.
+
+inherit multilib-minimal must be added.
+
+The recurrence interval for a critical vulnerability can vary.
+The worst case is between 1 week for critical vulnerabilities and
+best case is ~6 months.  For a high vulnerability CVSS 3.x score,
+the recurrence interval is around 2 weeks.  It's recommended to
+use only the stable KEYWORDed version unless that keyworded
+version has a vulnerability advisory.
+
+Three NVD keywords must be tracked: chrome, chromium, "v8 chrome".
+
+For details see:
+https://nvd.nist.gov/vuln/search/results?query=chrome&results_type=overview&form_type=Basic&search_type=all&startIndex=0
+https://nvd.nist.gov/vuln/search/results?query=chromium&results_type=overview&form_type=Basic&search_type=all&startIndex=0
+https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome%20v8&search_type=all
+
+The ebuild must be updated every critical vulnerability and old ebuilds
+removed.
+
+Some phase functions must be prefixed multilib_ from src_configure
+to src_install.
+
+The multilib_copy_sources must be called in src_prepare.
+
+The src_configure parts related to target_cpu to target the ABI must be
+transferred between point releases.
+
+The wrapper scripts and .desktop files should be distingishable between ABIs.
+
+The files folders containing patches, wrappers, etc must be kept in
+sync also with the gentoo overlay.
+
+
+Additional notes:
+
+It helps to diff between the forked version and the same
+point release so see what changes need to be migrated.
+
+It also helps to do a side-by-side comparison to migrate
+changes.
