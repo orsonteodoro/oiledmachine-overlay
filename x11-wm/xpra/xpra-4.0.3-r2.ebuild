@@ -42,6 +42,7 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	sound? ( pulseaudio )
 	X? ( gtk3 gtk3? ( client? ( pillow webp opengl? ( jpeg pillow ) ) ) )"
 # from my experience firejail doesn't need pillow with webp or with jpeg
+# See https://www.xpra.org/trac/wiki/Dependencies for the full list.
 COMMON_DEPEND="${PYTHON_DEPS}
 	dev-lang/python[ssl?]
 	dev-python/pygtk:2[python_targets_python2_7]
