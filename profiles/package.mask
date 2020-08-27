@@ -120,9 +120,6 @@ x11-drivers/xf86-video-ati
 # Masked for ebuild quality control reasons
 #--------------------------------------------------------------------------------------------------
 
-# runtime failure complaint
->=x11-wm/xpra-4
-
 # testing
 =sys-kernel/genkernel-4.1.0-r2
 
