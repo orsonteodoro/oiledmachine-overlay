@@ -11,6 +11,9 @@ Estimated build time is 3-4 days to build 2 ABIs.
 
 Update checklist:
 
+Make sure you are using ccache first and it works.  This will
+cut down on rebuild times from several days to a few minutes.
+
 RDEPEND and DEPEND must have MULTILIB_USEDEP for all packages
 dependencies that are multilib capable for simplicity and less
 build time failure chance.

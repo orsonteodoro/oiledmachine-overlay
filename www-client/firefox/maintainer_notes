@@ -16,6 +16,9 @@ Estimated build time to build 2 ABIs: 8 hours to 1 days
 
 Update checklist fork:
 
+Make sure you are using ccache first and it works.  This will
+cut down on rebuild times from several days to a few minutes.
+
 Make sure that you copy the files folder but also copy the custom patches
 you added.
 

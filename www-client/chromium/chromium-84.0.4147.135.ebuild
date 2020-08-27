@@ -793,11 +793,12 @@ multilib_src_compile() {
 		out/Release/chromium-browser.1 || die
 
 	# Build desktop file; bug #706786
-	sed -e 's|@@MENUNAME@@|Chromium|g;
-		s|@@USR_BIN_SYMLINK_NAME@@|chromium-browser|g;
-		s|@@PACKAGE@@|chromium-browser|g;
+	sed -e 's|@@PACKAGE@@|chromium-browser|g;
 		s|\(^Exec=\)/usr/bin/|\1|g;' \
 		chrome/installer/linux/common/desktop.template > \
+		out/Release/chromium-browser-chromium.desktop || die
+	sed -i -e "s|@@MENUNAME@@|Chromium (${ABI})|g" \
+		-e "s|@@USR_BIN_SYMLINK_NAME@@|chromium-browser-${ABI}|g" \
 		out/Release/chromium-browser-chromium.desktop || die
 }
 
@@ -875,7 +876,7 @@ multilib_src_install() {
 	done
 
 	# Install desktop entry
-	domenu out/Release/chromium-browser-chromium.desktop
+	newmenu out/Release/chromium-browser-chromium.desktop chromium-browser-chromium-${ABI}.desktop
 
 	# Install GNOME default application entry (bug #303100).
 	insinto /usr/share/gnome-control-center/default-apps
