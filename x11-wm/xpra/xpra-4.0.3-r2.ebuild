@@ -13,7 +13,7 @@ PYTHON_COMPAT=( python3_{6,7,8} )
 IUSE="  avahi +client +clipboard csc_swscale csc_libyuv cuda_rebuild cups \
 	dbus dec_avcodec2 enc_ffmpeg enc_x264 enc_x265 firejail gtk3 html5 \
 	html5_gzip html5_brotli jpeg libav +lz4 lzo opengl minify \
-	+notifications nvenc nvfbc pam pillow pulseaudio sd_listen ssl +server \
+	+notifications nvenc nvfbc pam pillow pulseaudio sd_listen +ssl +server \
 	sound systemd test vpx vsock v4l2 webcam webp websockets X xdg"
 REQUIRED_USE="  ^^ (	python_targets_python3_6 \
 			python_targets_python3_7 \
@@ -102,6 +102,7 @@ RDEPEND="${COMMON_DEPEND}
 	app-admin/sudo
 	cups? ( dev-python/pycups[${PYTHON_USEDEP}] )
 	dbus? ( dev-python/dbus-python[${PYTHON_USEDEP}] )
+	dev-python/cryptography[${PYTHON_USEDEP}]
 	dev-python/netifaces[${PYTHON_USEDEP}]
 	dev-python/rencode[${PYTHON_USEDEP}]
 	lz4? ( dev-python/lz4[${PYTHON_USEDEP}] )
@@ -118,7 +119,6 @@ DEPEND="${COMMON_DEPEND}
 	>=dev-python/cython-0.16[${PYTHON_USEDEP}]
 	virtual/pkgconfig"
 PATCHES=( "${FILESDIR}/${PN}-2.5.0_rc5-ignore-gentoo-no-compile.patch"
-	  "${FILESDIR}/${PN}-2.0-suid-warning.patch"
 	  "${FILESDIR}/${PN}-2.5.0_rc5-openrc-init-fix-v2.patch"
 	  "${FILESDIR}/${PN}-3.0_rc1-ldconfig-skip.patch"
 	  "${FILESDIR}/${PN}-4.0.3-change-init-config-path.patch" )
@@ -230,9 +230,9 @@ python_configure_all() {
 	)
 
 	if use gtk3 ; then
-		mydistutilsargs+=( --with-gtk_x11 --without-gtk2 --with-gtk3 )
+		mydistutilsargs+=( --with-gtk_x11 --with-gtk3 )
 	else
-		mydistutilsargs+=( --without-gtk_x11 --without-gtk2 --without-gtk3 )
+		mydistutilsargs+=( --without-gtk_x11 --without-gtk3 )
 	fi
 
 	# see https://www.xpra.org/trac/ticket/1080
@@ -299,6 +299,17 @@ pkg_postinst() {
 	einfo "This change has not been duplicated on the systemd version yet."
 	einfo
         einfo "Xpra proxy creation as root has been disabled by default for the OpenRC script."
+	einfo
+	einfo "By default xpra will use SSL.  You need to create a self-signed digital cert."
+	einfo "Details can be found at https://xpra.org/trac/wiki/Encryption/SSL"
+	einfo
+	einfo "Do:"
+	einfo "openssl req -new -x509 -days 365 -nodes -out cert.pem -keyout key.pem -sha256"
+	einfo "cat key.pem cert.pem > /etc/xpra/ssl-cert.pem"
+	einfo
+	einfo "The OpenRC scripts expects the cert to be located at /etc/xpra/ssl-cert.pem"
+	einfo
+	einfo "Make sure you change the mode in the GUI to SSL."
 	einfo
 }
 

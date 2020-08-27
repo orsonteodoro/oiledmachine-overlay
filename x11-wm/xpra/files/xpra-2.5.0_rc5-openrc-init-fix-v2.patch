@@ -1,6 +1,6 @@
 diff -urp xpra-4.0.3.orig/service/xpra xpra-4.0.3/service/xpra
 --- xpra-4.0.3.orig/service/xpra	2020-05-10 10:00:50.000000000 -0700
-+++ xpra-4.0.3/service/xpra	2020-08-26 20:06:54.818615402 -0700
++++ xpra-4.0.3/service/xpra	2020-08-27 05:46:06.538296066 -0700
 @@ -1,4 +1,4 @@
 -#!/bin/sh
 +#!/sbin/openrc-run
@@ -58,8 +58,8 @@ diff -urp xpra-4.0.3.orig/service/xpra xpra-4.0.3/service/xpra
 +  local user="$1"
 +  local path="$2"
 +  mkdir -p $path
-+  chmod 660 $path
-+  chown -R $user:xpra $path
++  chmod 700 $path
++  chown -R $user:$user $path
 +}
 +
 +get_users() {
