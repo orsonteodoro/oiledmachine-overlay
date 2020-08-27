@@ -138,7 +138,7 @@ diff -urp xpra-4.0.3.orig/service/xpra xpra-4.0.3/service/xpra
 +        _port=${user_to_port[$user]}
 +        taken_port[${_port}]=1
 +      else
-+        for p in $(seq ${PORT} 65535) ; do
++        for p in $(seq $((${PORT} + 1)) 65535) ; do
 +          netstat -tulpn 2>/dev/null | grep -F -e "LISTEN" \
 +            | sed -r -e "s|[ ]+|\t|g" | cut -f 4 -d $'\t' \
 +            | grep -q -F -e ":${p}"
@@ -160,7 +160,7 @@ diff -urp xpra-4.0.3.orig/service/xpra xpra-4.0.3/service/xpra
 +        _display=${user_to_display[$user]}
 +        taken_display[${_display}]=1
 +      else
-+        for d in $(seq ${VIRTUAL_DISPLAY/:/} 65535) ; do
++        for d in $(seq $((${VIRTUAL_DISPLAY/:/} + 1)) 65535) ; do
 +          ps -aux | grep -F -e "/usr/bin/X" | grep -v -F -e "grep" \
 +            | grep -q -F -e ":${d} "
 +          if [[ "$?" != "0" && -z "${taken_display[${d}]}" ]] ; then
