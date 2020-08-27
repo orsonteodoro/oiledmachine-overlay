@@ -40,7 +40,8 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 	opengl? ( client )
 	sd_listen? ( systemd )
 	sound? ( pulseaudio )
-	X? ( gtk3 )"
+	X? ( gtk3 gtk3? ( client? ( pillow webp opengl? ( jpeg pillow ) ) ) )"
+# from my experience firejail doesn't need pillow with webp or with jpeg
 COMMON_DEPEND="${PYTHON_DEPS}
 	dev-lang/python[ssl?]
 	dev-python/pygtk:2[python_targets_python2_7]
@@ -74,7 +75,7 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	       >=x11-drivers/nvidia-drivers-${NVFBC_MIN_DRV_V} )
 	opengl? (  dev-python/numpy[${PYTHON_USEDEP}] )
 	pam? ( sys-libs/pam )
-	pillow? ( dev-python/pillow[${PYTHON_USEDEP}] )
+	pillow? ( dev-python/pillow[${PYTHON_USEDEP},jpeg?,webp?] )
 	pulseaudio? ( media-sound/pulseaudio[dbus?] )
 	sound? ( dev-libs/gobject-introspection
 		 dev-python/gst-python:1.0[${PYTHON_USEDEP}]
@@ -98,6 +99,7 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	     x11-libs/libxkbfile )
 	xdg? ( x11-misc/xdg-utils )"
 RDEPEND="${COMMON_DEPEND}
+	app-admin/sudo
 	cups? ( dev-python/pycups[${PYTHON_USEDEP}] )
 	dbus? ( dev-python/dbus-python[${PYTHON_USEDEP}] )
 	dev-python/netifaces[${PYTHON_USEDEP}]
@@ -115,11 +117,12 @@ RDEPEND="${COMMON_DEPEND}
 DEPEND="${COMMON_DEPEND}
 	>=dev-python/cython-0.16[${PYTHON_USEDEP}]
 	virtual/pkgconfig"
-PATCHES=( "${FILESDIR}"/${PN}-2.5.0_rc5-ignore-gentoo-no-compile.patch
-	  "${FILESDIR}"/${PN}-2.0-suid-warning.patch
-	  "${FILESDIR}"/${PN}-2.5.0_rc5-openrc-init-fix.patch
-	  "${FILESDIR}"/${PN}-3.0_rc1-ldconfig-skip.patch )
-inherit eutils flag-o-matic linux-info prefix user tmpfiles xdg
+PATCHES=( "${FILESDIR}/${PN}-2.5.0_rc5-ignore-gentoo-no-compile.patch"
+	  "${FILESDIR}/${PN}-2.0-suid-warning.patch"
+	  "${FILESDIR}/${PN}-2.5.0_rc5-openrc-init-fix-v2.patch"
+	  "${FILESDIR}/${PN}-3.0_rc1-ldconfig-skip.patch"
+	  "${FILESDIR}/${PN}-4.0.3-change-init-config-path.patch" )
+inherit eutils flag-o-matic linux-info prefix tmpfiles user xdg
 SRC_URI="http://xpra.org/src/${PN}-${MY_PV//_/-}.tar.xz"
 S="${WORKDIR}/xpra-${MY_PV//_/-}"
 RESTRICT="mirror"
@@ -133,6 +136,21 @@ pkg_setup() {
 		WARNING_VIDEO_V4L2="You need CONFIG_VIDEO_V4L2 kernel config"
 		WARNING_VIDEO_V4L2+=" in order to use v4l2 support."
 		linux-info_pkg_setup
+	fi
+
+	# server only
+	enewgroup ${PN}
+	enewuser ${PN} -1 -1 /var/lib/${PN} ${PN}
+
+	python_setup
+	einfo "EPYTHON=${EPYTHON}"
+	[[ -z "${EPYTHON}" ]] && die "EPYTHON is empty"
+	if use opengl ; then
+		PYOPENGL_V=$(cat "${EROOT}/usr/lib/${EPYTHON}/site-packages/OpenGL/version.py" | grep -F -e "__version__" | grep -E -o -e "[0-9\.]+")
+		PYOPENGL_ACCELERATE_V=$(cat "${EROOT}/usr/lib/${EPYTHON}/site-packages/OpenGL_accelerate/__init__.py" | grep -F -e "__version__" | grep -E -o -e "[0-9.]+")
+		if ver_test ${PYOPENGL_V} -ne ${PYOPENGL_ACCELERATE_V} ; then
+			die "${PN} demands pyopengl-${PYOPENGL_V} and pyopengl_accelerate-${PYOPENGL_ACCELERATE_V} be the same version."
+		fi
 	fi
 }
 
@@ -148,7 +166,7 @@ python_prepare_all() {
 	hprefixify tmpfiles.d/xpra.conf xpra/server/{server,socket}_util.py \
 		xpra/platform{/xposix,}/paths.py xpra/scripts/server.py
 
-	sed -i -e "s|opengl = probe|#opengl = probe|g" \
+	sed -i -e "s|^opengl =|#opengl =|g" \
 		etc/xpra/conf.d/40_client.conf.in || die
 	if use opengl ; then
 		sed -i -e "s|#opengl = yes|opengl = yes|g" \
@@ -237,7 +255,6 @@ python_install_all() {
 }
 
 pkg_postinst() {
-	enewgroup ${PN}
 	tmpfiles_process /usr/lib/tmpfiles.d/xpra.conf
 	xdg_pkg_postinst
 	einfo "You need to add yourself to the xpra, tty, dialout groups."
@@ -268,6 +285,21 @@ pkg_postinst() {
 		elog "  systemctl enable xpra@username"
 		elog "  systemctl start xpra@username"
 	fi
+	einfo
+	einfo "The init config has been moved to /etc/conf.d/xpra"
+	einfo
+	einfo "XPRA_USER_TO_PORT and XPRA_USER_TO_DISPLAY should be set to /etc/conf.d/xpra"
+	einfo
+	einfo "For the OpenRC init script, they should be defined as follows:"
+	einfo "XPRA_USER_TO_PORT=\"user0:port0;user1:port1;...;userN:portN\""
+	einfo "XPRA_USER_TO_DISPLAY=\"user0:display0;user1:display1;...;userN:displayN\""
+	einfo
+	einfo "This is to isolate each user's own session from each other."
+	einfo
+	einfo "This change has not been duplicated on the systemd version yet."
+	einfo
+        einfo "Xpra proxy creation as root has been disabled by default for the OpenRC script."
+	einfo
 }
 
 pkg_postrm() {
