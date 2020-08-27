@@ -6,7 +6,8 @@ Estimated modding times:
 
 Simple update: less than 30 minutes
 Worst case for missing multilib compat patch:  3 days to 1 week
-Estimated build time is 3-4 days to build 2 ABIs.
+Estimated build time is 3 days to build 1 ABIs so maybe 6
+days for 2 ABIs.
 
 
 Update checklist:
