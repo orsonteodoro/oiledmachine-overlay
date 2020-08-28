@@ -13,8 +13,8 @@ IUSE="  avahi +client +clipboard csc_swscale csc_libyuv cuda_rebuild cups dbus \
 	dec_avcodec2 enc_ffmpeg enc_x264 enc_x265 firejail gtk3 gss html5 \
 	html5_gzip html5_brotli jpeg kerberos ldap ldap3 +lz4 lzo opengl \
 	openrc mdns minify mysql +notifications nvenc nvfbc pam pillow png \
-	sd_listen sound sqlite ssh sshpass +ssl +server systemd test u2f vpx \
-	vsock v4l2 webcam webp websockets X xdg zeroconf zlib"
+	sd_listen selinux +server sound sqlite ssh sshpass +ssl systemd test \
+	u2f vpx vsock v4l2 webcam webp websockets X xdg zeroconf zlib"
 GSTREAMER_IUSE+="aac alsa flac jack lame matroska ogg opus oss pulseaudio \
 speex twolame vorbis wavpack"
 IUSE+=" ${GSTREAMER_IUSE}"
@@ -78,7 +78,7 @@ COMMON_DEPEND="${PYTHON_DEPS}
 	       >=dev-util/nvidia-cuda-toolkit-10.0:=
 	       >=x11-drivers/nvidia-drivers-${NVFBC_MIN_DRV_V} )
 	opengl? (  dev-python/numpy[${PYTHON_USEDEP}] )
-	pam? ( sys-libs/pam )
+	pam? ( sys-libs/pam[selinux?] )
 	pillow? ( dev-python/pillow[${PYTHON_USEDEP},jpeg?,webp?,zlib?] )
 	pulseaudio? ( media-sound/pulseaudio[dbus?] )
 	sound? ( aac? ( media-plugins/gst-plugins-faac:1.0
@@ -139,10 +139,11 @@ DEPEND="${COMMON_DEPEND}
 	>=dev-python/cython-0.16[${PYTHON_USEDEP}]
 	virtual/pkgconfig"
 PATCHES=( "${FILESDIR}/${PN}-2.5.0_rc5-ignore-gentoo-no-compile.patch"
+	  "${FILESDIR}/${PN}-2.0-suid-warning.patch"
 	  "${FILESDIR}/${PN}-2.5.0_rc5-openrc-init-fix-v2.patch"
 	  "${FILESDIR}/${PN}-3.0_rc1-ldconfig-skip.patch"
 	  "${FILESDIR}/${PN}-4.0.3-change-init-config-path.patch"
-	  "${FILESDIR}/${PN}-4.0.3-use-py3nvml-for-python3-compat.patch" )
+	  "${FILESDIR}/${PN}-3.0.9-use-py3nvml-for-python3-compat.patch" )
 inherit eutils flag-o-matic linux-info prefix tmpfiles user xdg
 SRC_URI="http://xpra.org/src/${PN}-${MY_PV//_/-}.tar.xz"
 S="${WORKDIR}/xpra-${MY_PV//_/-}"
@@ -173,12 +174,27 @@ pkg_setup() {
 			die "${PN} demands pyopengl-${PYOPENGL_V} and pyopengl_accelerate-${PYOPENGL_ACCELERATE_V} be the same version."
 		fi
 	fi
+	if use selinux && use pam ; then
+		if [[ ! -e "${EROOT}/$(get_libdir)/security/pam_selinux.so" ]] ; then
+			die "You are missing pam_selinux.so.  Reinstall pam[selinux]."
+		fi
+	fi
 }
 
 src_prepare() {
 	distutils-r1_src_prepare
 	if use firejail ; then
 		eapply "${FILESDIR}"/${PN}-3.0.9-envar-sound-override-on-start.patch
+	fi
+	if use pam ; then
+		if ! use selinux ; then
+			sed -r -i -e "s|^session(.*)pam_selinux.so|#session\1pam_selinux.so|g" \
+				etc/pam.d/xpra || die
+		fi
+		if ! use systemd ; then
+			sed -r -i -e "s|^session(.*)pam_systemd.so|#session\1pam_systemd.so|g" \
+				etc/pam.d/xpra || die
+		fi
 	fi
 }
 
@@ -226,12 +242,12 @@ python_configure_all() {
 		$(use_with html5_brotli)
 		$(use_with jpeg jpeg_encoder)
 		$(use_with jpeg jpeg_decoder)
-		$(use_with mdns)
 		$(use_with minify)
 		$(use_with opengl)
 		$(use_with pam)
 		--without-PIC
 		$(use_with pillow)
+		$(use_with mdns)
 		$(use_with notifications)
 		$(use_with nvenc)
 		$(use_with server)
@@ -251,9 +267,9 @@ python_configure_all() {
 	)
 
 	if use gtk3 ; then
-		mydistutilsargs+=( --with-gtk_x11 --with-gtk3 )
+		mydistutilsargs+=( --with-gtk_x11 --without-gtk2 --with-gtk3 )
 	else
-		mydistutilsargs+=( --without-gtk_x11 --without-gtk3 )
+		mydistutilsargs+=( --without-gtk_x11 --without-gtk2 --without-gtk3 )
 	fi
 
 	# see https://www.xpra.org/trac/ticket/1080
