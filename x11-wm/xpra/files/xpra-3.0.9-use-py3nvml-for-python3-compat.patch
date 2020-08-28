@@ -1,0 +1,59 @@
+diff -urp xpra-3.0.9.orig/xpra/codecs/nv_util.py xpra-3.0.9/xpra/codecs/nv_util.py
+--- xpra-3.0.9.orig/xpra/codecs/nv_util.py	2020-04-07 23:45:00.000000000 -0700
++++ xpra-3.0.9/xpra/codecs/nv_util.py	2020-08-27 16:04:35.691653574 -0700
+@@ -21,7 +21,7 @@ def wrap_nvml_init(nvmlInit):
+         nvmlInit()
+         return True
+     except Exception as e:
+-        log("get_nvml_driver_version() pynvml error", exc_info=True)
++        log("get_nvml_driver_version() py3nvml error", exc_info=True)
+         global nvml_init_warned
+         if not nvml_init_warned:
+             log.warn("Warning: failed to initialize NVML:")
+@@ -31,7 +31,7 @@ def wrap_nvml_init(nvmlInit):
+ 
+ def get_nvml_driver_version():
+     try:
+-        from pynvml import nvmlInit, nvmlShutdown, nvmlSystemGetDriverVersion
++        from py3nvml import nvmlInit, nvmlShutdown, nvmlSystemGetDriverVersion
+         try:
+             if wrap_nvml_init(nvmlInit):
+                 try:
+@@ -41,7 +41,7 @@ def get_nvml_driver_version():
+                 log("nvmlSystemGetDriverVersion=%s", bytestostr(v))
+                 return v.split(b".")
+         except Exception as e:
+-            log("get_nvml_driver_version() pynvml error", exc_info=True)
++            log("get_nvml_driver_version() py3nvml error", exc_info=True)
+             log.warn("Warning: failed to query the NVidia kernel module version using NVML:")
+             log.warn(" %s", e)
+     except ImportError as e:
+@@ -99,8 +99,8 @@ def get_nvidia_module_version(probe=True
+ def identify_cards():
+     devices = {}
+     try:
+-        import pynvml
+-        from pynvml import nvmlInit, nvmlShutdown, nvmlDeviceGetCount, nvmlDeviceGetHandleByIndex
++        import py3nvml
++        from py3nvml import nvmlInit, nvmlShutdown, nvmlDeviceGetCount, nvmlDeviceGetHandleByIndex
+         deviceCount = None
+         try:
+             if not wrap_nvml_init(nvmlInit):
+@@ -157,7 +157,7 @@ def identify_cards():
+                        ("", "vbios-version",            "nvmlDeviceGetVbiosVersion",            (),     strtobytes),
+                        ):
+                     try:
+-                        fn = getattr(pynvml, fn_name)
++                        fn = getattr(py3nvml, fn_name)
+                         v = fn(handle, *args)
+                         if conv:
+                             v = conv(v)
+@@ -175,7 +175,7 @@ def identify_cards():
+             #unitCount = nvmlUnitGetCount()
+             #log.info("unitCount=%s", unitCount)
+         except Exception as e:
+-            log("identify_cards() pynvml error", exc_info=True)
++            log("identify_cards() py3nvml error", exc_info=True)
+             log.warn("Warning: failed to query the NVidia cards using NVML:")
+             log.warn(" %s", e)
+         finally:

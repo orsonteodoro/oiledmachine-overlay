@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-<!-- for this forked ebuild version only on oiledmachine-overlay -->
+<!-- for this forked ebuild version only on the oiledmachine-overlay -->
 <maintainer type="person" status="active">
   <email>orsonteodoro@hotmail.com</email>
   <name>Orson Teodoro</name>
@@ -19,6 +19,8 @@
   </maintainer>
 </upstream>
 <use>
+  <flag name="aac">Adds support for AAC.</flag>
+  <flag name="alsa">Adds support for ALSA sound cards.</flag>
   <flag name="avahi">Enables support for Avahi auto discovery.</flag>
   <flag name="client">Build client-side code.</flag>
   <flag name="clipboard">Enable clipboard support.</flag>
@@ -33,29 +35,45 @@
   <flag name="dbus">Checks and enables support for DBus.</flag>
   <flag name="dec_avcodec2">Enables support for encoding and decoding video
     (MPEG1/2/4, H264, H265, WEBM, VP8/9) and audio (MP4A, AAC).</flag>
-  <flag name="enc_ffmpeg">Enable advanced ffmpeg/libav encoder support.</flag>
+  <flag name="enc_ffmpeg">Enable advanced ffmpeg encoder support.</flag>
   <flag name="enc_x264">Enable x264 encoder support.</flag>
   <flag name="enc_x265">Enable x265 encoder support.</flag>
   <flag name="firejail">Checks for proper Firejail support.</flag>
+  <flag name="flac">Adds support for this lossless codec.</flag>
+  <flag name="gss">Adds gss authentication support.</flag>
   <flag name="gtk2">Uses GTK2 library to create the GUI.</flag>
   <flag name="gtk3">Uses GTK3 library to create the GUI.</flag>
   <flag name="html5">Enables the HTML5 client allowing to view a xpra session
     on a web browser.</flag>
   <flag name="html5_brotli">Enables brotli compression for clipboard.</flag>
   <flag name="html5_gzip">Enables accepting gzip compressed files.</flag>
+  <flag name="jack">Adds support for the JACK audio sound server.</flag>
   <flag name="jpeg">Enables support for JPEG encoding and decoding.</flag>
-  <flag name="libav">Uses libav instead of ffmpeg.</flag>
+  <flag name="kerberos">Adds kerberos authentication support.</flag>
+  <flag name="lame">Adds LAME MP3 encoding support.</flag>
+  <flag name="ldap">Adds ldap authentication support.</flag>
+  <flag name="ldap3">Adds ldap3 authentication support .</flag>
   <flag name="lz4">Enable support for lz4 compression.</flag>
   <flag name="lzo">Enable support for lzo compression.</flag>
+  <flag name="matroska">Adds support for the Matroska container format.</flag>
+  <flag name="mdns">Enables multicast DNS for easier device discovery.</flag>
   <flag name="minify">Enables minifying the client.</flag>
+  <flag name="mysql">Adds support for MySQL authentication.</flag>
   <flag name="notifications">Enables support for system notifications.</flag>
+  <flag name="mp3">Adds support for LAME MP3 encoding.</flag>
   <flag name="nvenc">Enables support for the nvenc hardware encoder.</flag>
   <flag name="nvfbc">Enables support for nvfbc screen capture.</flag>
+  <flag name="ogg">Adds support for the OGG container format.</flag>
   <flag name="opengl">Enables support for OpenGL accelerated rendering on
     client.</flag>
-  <flag name="pam">Enables support for PAM.</flag>
+  <flag name="openrc">Adds OpenRC support.</flag>
+  <flag name="opus">Adds support for both voice and general audio compression.</flag>
+  <flag name="oss">Adds support for OSS sound cards.</flag>
+  <flag name="pam">Adds support for PAM for authentication.</flag>
   <flag name="pillow">Enable pillow support to encode and decode PNG, JPEG,
     WebP.</flag>
+  <flag name="png">Adds PNG encoding support.</flag>
+  <flag name="speex">Adds voice compression.</flag>
   <flag name="pulseaudio">Enables support for PulseAudio.</flag>
   <flag name="python_targets_python3_5">Compatible with this python
     version.</flag>
@@ -67,15 +85,22 @@
     feature.</flag>
   <flag name="server">Enables server-side code.</flag>
   <flag name="sound">Enables the sound support.</flag>
+  <flag name="sqlite">Add support for SQLite authentication.</flag>
+  <flag name="ssh">Enables SSH networking support.</flag>
+  <flag name="sshpass">Enables sshpass support to supply passwords for SSH.</flag>
   <flag name="ssl">Enables SSL support for secured connections and the ssl://
     connection string.</flag>
   <flag name="systemd">Installs systemd services.</flag>
   <flag name="test">Enables self tests.</flag>
+  <flag name="twolame">Adds MPEG Audio Layer 2 (MP2) encoding support.</flag>
+  <flag name="u2f">Adds Universal 2nd Factor (U2F) authentication support.</flag>
+  <flag name="vorbis">Adds lossy patent free audio encoding support.</flag>
   <flag name="v4l2">Enables support for v4l2loopback devices for additional
     post-processing.</flag>
   <flag name="vpx">Enables VP8/VP9 video format support.</flag>
   <flag name="vsock">Enable support for VSOCK and the vsock:// connection
     string.</flag>
+  <flag name="wavpack">Adds support for WavPack lossless compression.</flag>
   <flag name="webcam">Enable webcam support via opencv.</flag>
   <flag name="webp">Enables encoding and decoding WebP images.</flag>
   <flag name="websockets">Enables server support for the websockets and to serve
@@ -83,5 +108,7 @@
     </flag>
   <flag name="xdg">Enables support for xdg_open.</flag>
   <flag name="X">Enables support for native X GUI.</flag>
+  <flag name="zeroconf">Resolves LAN IP address to computer name.</flag>
+  <flag name="zlib">Enables support for PNGs in pillow.</flag>
 </use>
 </pkgmetadata>
