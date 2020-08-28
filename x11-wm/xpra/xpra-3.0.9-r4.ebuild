@@ -150,8 +150,12 @@ S="${WORKDIR}/xpra-${MY_PV//_/-}"
 RESTRICT="mirror"
 
 pkg_setup() {
-	use nvenc && einfo "The nvenc USE flag has not been tested.  Left for ebuild developers with that GPU to work on."
-	use nvfbc && einfo "The nvfbc USE flag has not been tested.  Left for ebuild developers with that GPU to work on."
+	use nvenc && einfo \
+"The nvenc USE flag has not been tested.  Left for ebuild developers with that \
+GPU to work on."
+	use nvfbc && einfo \
+"The nvfbc USE flag has not been tested.  Left for ebuild developers with that \
+GPU to work on."
 
 	if use v4l2 ; then
 		CONFIG_CHECK="~VIDEO_V4L2"
@@ -168,15 +172,23 @@ pkg_setup() {
 	einfo "EPYTHON=${EPYTHON}"
 	[[ -z "${EPYTHON}" ]] && die "EPYTHON is empty"
 	if use opengl ; then
-		PYOPENGL_V=$(cat "${EROOT}/usr/lib/${EPYTHON}/site-packages/OpenGL/version.py" | grep -F -e "__version__" | grep -E -o -e "[0-9\.]+")
-		PYOPENGL_ACCELERATE_V=$(cat "${EROOT}/usr/lib/${EPYTHON}/site-packages/OpenGL_accelerate/__init__.py" | grep -F -e "__version__" | grep -E -o -e "[0-9.]+")
+		PYOPENGL_V=$(cat \
+"${EROOT}/usr/lib/${EPYTHON}/site-packages/OpenGL/version.py" \
+			| grep -F -e "__version__" | grep -E -o -e "[0-9\.]+")
+		PYOPENGL_ACCELERATE_V=$(cat \
+"${EROOT}/usr/lib/${EPYTHON}/site-packages/OpenGL_accelerate/__init__.py" \
+			| grep -F -e "__version__" | grep -E -o -e "[0-9.]+")
 		if ver_test ${PYOPENGL_V} -ne ${PYOPENGL_ACCELERATE_V} ; then
-			die "${PN} demands pyopengl-${PYOPENGL_V} and pyopengl_accelerate-${PYOPENGL_ACCELERATE_V} be the same version."
+			die \
+"${PN} demands pyopengl-${PYOPENGL_V} and \
+pyopengl_accelerate-${PYOPENGL_ACCELERATE_V} be the same version."
 		fi
 	fi
 	if use selinux && use pam ; then
-		if [[ ! -e "${EROOT}/$(get_libdir)/security/pam_selinux.so" ]] ; then
-			die "You are missing pam_selinux.so.  Reinstall pam[selinux]."
+		if [[ ! -e "${EROOT}/$(get_libdir)/security/pam_selinux.so" ]]
+		then
+			die \
+		"You are missing pam_selinux.so.  Reinstall pam[selinux]."
 		fi
 	fi
 }
@@ -188,11 +200,13 @@ src_prepare() {
 	fi
 	if use pam ; then
 		if ! use selinux ; then
-			sed -r -i -e "s|^session(.*)pam_selinux.so|#session\1pam_selinux.so|g" \
+			sed -r -i -e \
+		"s|^session(.*)pam_selinux.so|#session\1pam_selinux.so|g" \
 				etc/pam.d/xpra || die
 		fi
 		if ! use systemd ; then
-			sed -r -i -e "s|^session(.*)pam_systemd.so|#session\1pam_systemd.so|g" \
+			sed -r -i -e \
+		"s|^session(.*)pam_systemd.so|#session\1pam_systemd.so|g" \
 				etc/pam.d/xpra || die
 		fi
 	fi
