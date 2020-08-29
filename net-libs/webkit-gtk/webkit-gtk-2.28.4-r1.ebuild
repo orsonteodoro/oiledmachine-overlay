@@ -60,6 +60,7 @@ wpe_depend="
 	>=gui-libs/wpebackend-fdo-1.3.1:1.0[${MULTILIB_USEDEP}]
 "
 # TODO: gst-plugins-base[X] is only needed when build configuration ends up with GLX set, but that's a bit automagic too to fix
+# Technically, dev-libs/gobject-introspection requires [${MULTILIB_USEDEP}].  It is removed to only allow native abi to use it.
 RDEPEND="
 	>=x11-libs/cairo-1.16.0:=[X?,${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.13.0:1.0[${MULTILIB_USEDEP}]
@@ -81,7 +82,7 @@ RDEPEND="
 	>=dev-libs/libxslt-1.1.7[${MULTILIB_USEDEP}]
 	media-libs/woff2[${MULTILIB_USEDEP}]
 	gnome-keyring? ( app-crypt/libsecret[${MULTILIB_USEDEP}] )
-	introspection? ( >=dev-libs/gobject-introspection-1.32.0:=[${MULTILIB_USEDEP}] )
+	introspection? ( >=dev-libs/gobject-introspection-1.32.0:= )
 	dev-libs/libtasn1:=[${MULTILIB_USEDEP}]
 	spell? ( >=app-text/enchant-0.22:2[${MULTILIB_USEDEP}] )
 	gstreamer? (
