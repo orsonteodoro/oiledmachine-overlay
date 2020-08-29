@@ -16,6 +16,7 @@ inherit ot-kernel-v5.7
 KEYWORDS="~amd64 ~x86"
 
 pkg_setup() {
+	ewarn "The 5.7 series will be removed in the next update cycle."
         kernel-2_pkg_setup
 	ot-kernel-common_pkg_setup
 }
