@@ -1,7 +1,4 @@
 #!/sbin/openrc-run
-#
-# UNFINISHED
-#
 # Tries to emulate the systemd user service but OpenRC way.
 
 SERVER_PID_DIR="/var/run/appimaged/"
@@ -40,7 +37,9 @@ start_servers() {
 			mkdir -p /var/log/appimaged/logs
 			chown appimaged:appimaged /var/log/appimaged/logs
 			chmod go+w /var/log/appimaged/logs
-			ewarn "Logging stored in /var/log/appimaged/logs/${user}.log.  Remove when done for privacy and security reasons."
+			ewarn \
+"Logging stored in /var/log/appimaged/logs/${user}.log.  Remove when done for \
+privacy and security reasons."
 			extra_args="
 				--stdout /var/log/appimaged/logs/${user}.log
 				--stderr /var/log/appimaged/logs/${user}.log
@@ -49,7 +48,6 @@ start_servers() {
 		start-stop-daemon \
 			--background \
 			--start \
-			--env XDG_RUNTIME_DIR=/run/user/$(get_uid) \
 			--group ${user} \
 			--user ${user} \
 			--pidfile "${user_pid_file}" \

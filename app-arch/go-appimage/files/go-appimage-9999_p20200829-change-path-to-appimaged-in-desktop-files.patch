@@ -1,0 +1,24 @@
+diff -urp go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087.orig/src/appimaged/desktop.go go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087/src/appimaged/desktop.go
+--- go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087.orig/src/appimaged/desktop.go	2020-08-29 04:05:53.000000000 -0700
++++ go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087/src/appimaged/desktop.go	2020-08-29 15:27:03.934502512 -0700
+@@ -57,7 +57,7 @@ func writeDesktopFile(ai AppImage) {
+ 	// FIXME: KDE seems to have a problem when the AppImage is on a partition of which the disklabel contains "_"?
+ 	// Then the desktop file won't run the application
+ 	
+-	arg0abs, err := filepath.Abs(os.Args[0])
++	arg0abs, err := filepath.Abs("/usr/bin/appimaged")
+ 	if err != nil {
+ 		log.Println(err)
+ 	}
+diff -urp go_build.orig/src/github.com/probonopd/go-appimage/src/appimaged/desktop.go go_build/src/github.com/probonopd/go-appimage/src/appimaged/desktop.go
+--- go_build.orig/src/github.com/probonopd/go-appimage/src/appimaged/desktop.go	2020-08-17 04:30:51.512523615 -0700
++++ go_build/src/github.com/probonopd/go-appimage/src/appimaged/desktop.go	2020-08-17 04:30:16.991172642 -0700
+@@ -57,7 +57,7 @@ func writeDesktopFile(ai AppImage) {
+ 	// FIXME: KDE seems to have a problem when the AppImage is on a partition of which the disklabel contains "_"?
+ 	// Then the desktop file won't run the application
+ 	
+-	arg0abs, err := filepath.Abs(os.Args[0])
++	arg0abs, err := filepath.Abs("/usr/bin/appimaged")
+ 	if err != nil {
+ 		log.Println(err)
+ 	}

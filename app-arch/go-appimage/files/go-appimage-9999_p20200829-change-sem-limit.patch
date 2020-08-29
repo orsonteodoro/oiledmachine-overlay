@@ -1,0 +1,38 @@
+--- go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087/src/appimaged/appimaged.go.orig	2020-08-16 12:45:05.000000000 -0700
++++ go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087/src/appimaged/appimaged.go	2020-08-28 18:43:27.472651702 -0700
+@@ -9,6 +9,7 @@ import (
+ 	"os"
+ 	"os/exec"
+ 	"path/filepath"
++	"runtime"
+ 	"strconv"
+ 	"strings"
+ 	"sync"
+@@ -285,7 +286,7 @@ func moveDesktopFiles() {
+ 	// We limit the number of concurrent go routines
+ 	// sem is a channel that will allow up to 8 concurrent operations, a "Bounded channel"
+ 	// so that we won't get "too many files open" errors
+-	var sem = make(chan int, 1024)
++	var sem = make(chan int, 1) //
+ 
+ 	for _, path := range ToBeIntegratedOrUnintegrated {
+ 		ai := NewAppImage(path)
+--- go_build.orig/src/github.com/probonopd/go-appimage/src/appimaged/appimaged.go	2020-08-17 04:30:51.512523615 -0700
++++ go_build/src/github.com/probonopd/go-appimage/src/appimaged/appimaged.go	2020-08-17 04:30:16.991172642 -0700
+@@ -9,6 +9,7 @@ import (
+ 	"os"
+ 	"os/exec"
+ 	"path/filepath"
++	"runtime"
+ 	"strconv"
+ 	"strings"
+ 	"sync"
+@@ -285,7 +286,7 @@ func moveDesktopFiles() {
+ 	// We limit the number of concurrent go routines
+ 	// sem is a channel that will allow up to 8 concurrent operations, a "Bounded channel"
+ 	// so that we won't get "too many files open" errors
+-	var sem = make(chan int, 1024)
++	var sem = make(chan int, 1) //
+ 
+ 	for _, path := range ToBeIntegratedOrUnintegrated {
+ 		ai := NewAppImage(path)

@@ -29,6 +29,7 @@ RDEPEND="
 	openrc? ( sys-apps/openrc )
 	sys-apps/dbus
 	>=sys-fs/squashfs-tools-4.4
+	sys-fs/udisks[daemon]
 	systemd? ( sys-apps/systemd )
 	travis-ci? (
 		dev-libs/openssl
@@ -38,7 +39,7 @@ DEPEND="${RDEPEND}
 	>=dev-lang/go-1.13.4:="
 REQUIRED_USE="|| ( gnome kde )"
 SLOT="0/${PV}"
-EGIT_COMMIT="bc3066f71e70a526464a16168baacf2fe45968f2"
+EGIT_COMMIT="0c02e035e6a93d6e9bb6e3c5623dcc4333540087"
 SRC_URI=\
 "https://github.com/probonopd/go-appimage/archive/${EGIT_COMMIT}.tar.gz
 	 -> ${P}.tar.gz
@@ -111,8 +112,7 @@ CONFIG_SQUASHFS=m"
 "AppImageLauncher is not compatible and needs to be uninstalled."
 	fi
 	ewarn \
-"This package is a Work In Progress (WIP) both on the ebuild level, upstream, \
-openrc script."
+"This package is a Work In Progress (WIP) upstream."
 	# server only
 	enewgroup appimaged
 	enewuser appimaged -1 -1 /var/lib/appimaged appimaged
@@ -231,4 +231,8 @@ the service on login.\n\
 You can \`systemctl --user start appimaged\` to start it now.\n\
 \n"
 	fi
+	einfo
+	einfo "The appimaged daemon will randomly quit when watching files"
+	einfo "and needs to be restarted."
+	einfo
 }

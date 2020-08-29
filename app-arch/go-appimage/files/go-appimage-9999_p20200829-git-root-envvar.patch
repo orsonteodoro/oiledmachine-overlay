@@ -1,6 +1,6 @@
-diff -urp go-appimage-bc3066f71e70a526464a16168baacf2fe45968f2.orig/internal/helpers/git.go go-appimage-bc3066f71e70a526464a16168baacf2fe45968f2/internal/helpers/git.go
---- go-appimage-bc3066f71e70a526464a16168baacf2fe45968f2.orig/internal/helpers/git.go	2020-08-16 12:45:05.000000000 -0700
-+++ go-appimage-bc3066f71e70a526464a16168baacf2fe45968f2/internal/helpers/git.go	2020-08-17 12:28:17.852036681 -0700
+diff -urp go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087.orig/internal/helpers/git.go go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087/internal/helpers/git.go
+--- go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087.orig/internal/helpers/git.go	2020-08-16 12:45:05.000000000 -0700
++++ go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087/internal/helpers/git.go	2020-08-17 12:28:17.852036681 -0700
 @@ -60,22 +60,28 @@ func TestGit() {
  
  }

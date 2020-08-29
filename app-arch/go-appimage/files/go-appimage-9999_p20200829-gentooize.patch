@@ -1,6 +1,6 @@
-diff -urp go-appimage-bc3066f71e70a526464a16168baacf2fe45968f2.orig/scripts/build.sh go-appimage-bc3066f71e70a526464a16168baacf2fe45968f2/scripts/build.sh
---- go-appimage-bc3066f71e70a526464a16168baacf2fe45968f2.orig/scripts/build.sh	2020-08-16 12:45:05.000000000 -0700
-+++ go-appimage-bc3066f71e70a526464a16168baacf2fe45968f2/scripts/build.sh	2020-08-17 04:27:25.354455862 -0700
+diff -urp go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087.orig/scripts/build.sh go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087/scripts/build.sh
+--- go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087.orig/scripts/build.sh	2020-08-16 12:45:05.000000000 -0700
++++ go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087/scripts/build.sh	2020-08-17 04:27:25.354455862 -0700
 @@ -19,8 +19,7 @@ set -x
  ##############################################################
  
@@ -34,7 +34,7 @@ diff -urp go-appimage-bc3066f71e70a526464a16168baacf2fe45968f2.orig/scripts/buil
  cd $GOPATH/src
  go get -d -v github.com/probonopd/go-appimage/...
  
-+"${WORKDIR}/apply-patches-9999_p20200816.sh"
++"${WORKDIR}/apply-patches-9999_p20200829.sh"
 +
  # 64-bit
  go build -v -trimpath -ldflags="-s -w -X main.commit=$COMMIT" github.com/probonopd/go-appimage/src/appimagetool
