@@ -57,10 +57,6 @@ dev-dotnet/dotnetcore-sdk
 # Build failures / Work In Progress (WIP)
 >=dev-dotnet/aspnetcore-2.1.18
 
-# Patches to make it OpenRC compatible is WIP.
-# Gentoo supports OpenRC by default.
-app-arch/go-appimage
-
 # Masked for security reasons
 #--------------------------------------------------------------------------------------------------
 
@@ -119,6 +115,10 @@ x11-drivers/xf86-video-ati
 
 # Masked for ebuild quality control reasons
 #--------------------------------------------------------------------------------------------------
+
+# Random quit with appimaged.  Init script or daemon does not auto-restart.
+# Use app-arch/appimaged instead.
+app-arch/go-appimage
 
 # testing
 =sys-kernel/genkernel-4.1.0-r2
