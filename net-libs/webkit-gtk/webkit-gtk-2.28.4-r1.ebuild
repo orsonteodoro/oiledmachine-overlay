@@ -334,6 +334,10 @@ multilib_src_configure() {
 		ewarn "The accelerated-2d-canvas USE flag is unstable and not recommended."
 	fi
 
+	if [[ "${ABI}" == "x86" ]] ; then
+		mycmakeargs+=( -DFORCE_32BIT=ON )
+	fi
+
 	WK_USE_CCACHE=NO cmake-utils_src_configure
 }
 
