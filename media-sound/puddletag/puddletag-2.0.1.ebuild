@@ -11,12 +11,12 @@ DESCRIPTION="Audio tag editor"
 HOMEPAGE="http://docs.puddletag.net/"
 LICENSE="GPL-2 GPL-3"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
-EGIT_COMMIT="8010f3341301ee36bb1782b21384ce1609de36ea" # pyqt5 branch
-DOCS=( changelog HACKING NEWS THANKS TODO )
+EGIT_COMMIT="e0d35889d70507dfd0a8dc00cf7c8e5361deba0f"
+DOCS=( changelog NEWS THANKS TODO )
 RESTRICT="mirror"
 SLOT="0"
 # version string contained in puddletag/source/puddlestuff/__init__.py
-SRC_URI="https://github.com/keithgg/${PN}/archive/${EGIT_COMMIT}.tar.gz -> ${PF}.tar.gz"
+SRC_URI="https://github.com/keithgg/${PN}/archive/${PV}.tar.gz -> ${PV}.tar.gz"
 IUSE="acoustid cover musicbrainz quodlibet"
 RDEPEND="acoustid? ( >=media-libs/chromaprint-0.6 )
 	 >=dev-python/PyQt5-5.15[${PYTHON_USEDEP},svg,gui,widgets]
@@ -32,13 +32,5 @@ RDEPEND="acoustid? ( >=media-libs/chromaprint-0.6 )
 	 >=media-libs/mutagen-1.45[${PYTHON_USEDEP}]
 	 musicbrainz? ( >=dev-python/python-musicbrainz-0.7.4-r1[${PYTHON_USEDEP}] )
 	 quodlibet? ( >=media-sound/quodlibet-2.5[${PYTHON_USEDEP}] )"
-#	 dev-python/python-levenshtein[${PYTHON_USEDEP}]
-DEPEND="${RDEPEND}
-"
-
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}/source"
-
-pkg_postinst() {
-	einfo "The package saves autosaves metadata, but the file commands to explicitly save are disabled."
-	einfo "In other words, it still works."
-}
+DEPEND="${RDEPEND}"
+S="${WORKDIR}/${PN}-${PV}/source"

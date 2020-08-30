@@ -123,9 +123,6 @@ app-arch/go-appimage
 # testing
 =sys-kernel/genkernel-4.1.0-r2
 
-# build time failure
->=media-sound/puddletag-2
-
 # for upstream development only
 =app-editors/nano-ycmd-9999
 
