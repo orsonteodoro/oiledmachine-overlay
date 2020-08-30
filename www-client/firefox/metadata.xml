@@ -52,6 +52,8 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
 		instead of downloading binary blob from Mozilla at runtime</flag>
 	<flag name="pgo">Add support for profile-guided optimization using gcc-4.5,
 		for faster binaries. This option will double the compile time.</flag>
+	<flag name="pulseaudio">Use pulseaudio for audio output and microphone.
+		Disabling it may disable microphone support.</flag>
 	<flag name="rust">Enable support for using rust compiler  (experimental)</flag>
 	<flag name="screencast">Enable support for remote desktop and screen cast using <pkg>media-video/pipewire</pkg></flag>
 	<flag name="screenshot">Allow to disable screenshot extension in global profile</flag>
