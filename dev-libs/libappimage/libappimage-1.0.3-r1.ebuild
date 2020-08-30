@@ -13,7 +13,7 @@ LICENSE+=" !system-libarchive? ( BSD BSD-2 BSD-4 public-domain )" # copied from 
 LICENSE+=" !system-xdgutils? ( MIT BSD )" # copied from the dev-libs/xdg-utils-cxx ebuild
 LICENSE+=" !system-xz? ( public-domain LGPL-2.1+ GPL-2+ )" # copied from the app-arch/xz-utils ebuild
 KEYWORDS="~amd64 ~x86"
-IUSE="cmake-static-libs system-boost system-libarchive system-squashfuse system-xdgutils system-xz"
+IUSE="system-boost system-libarchive system-squashfuse system-xdgutils system-xz"
 RDEPEND="
 	>=dev-libs/glib-2.40:2
 	>=gnome-base/librsvg-2
@@ -42,7 +42,7 @@ S="${WORKDIR}/${PN}-${PV}"
 S_BAK="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 CMAKE_MAKEFILE_GENERATOR="emake" # required for downloading in compile phase
-inherit cmake-utils linux-info
+inherit cmake-utils cmake-static-libs linux-info
 PATCHES=(
 	"${FILESDIR}/${PN}-1.0.2-use-squashfuse_appimage-for-pkgconfig.patch"
 	"${FILESDIR}/${PN}-1.0.2-same-files-static-build.patch"
