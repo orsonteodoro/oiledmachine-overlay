@@ -87,6 +87,8 @@ Check if the .desktop files have distinguishable from 32-bit or 64-bit with
 labels and links to ABI.  Make sure the wrappers produced in the install
 section of the ebuild indicate the ABI.
 
+Test microphone support on sound recording website or "search by sound" website.
+
 
 Additional notes:
 

@@ -298,6 +298,10 @@ pkg_setup() {
 	if (( $((${jobs}/2)) > $((${cores}/2)) )) ; then
 		ewarn "Firefox may lock up or freeze the computer if the N value in MAKEOPTS=\"-jN\" is greater than \$(nproc)/2"
 	fi
+
+	if ! use pulseaudio ; then
+		ewarn "Microphone support may be disabled when pulseaudio is disabled."
+	fi
 }
 
 src_unpack() {
