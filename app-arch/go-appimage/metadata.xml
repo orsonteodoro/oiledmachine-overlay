@@ -29,6 +29,14 @@
 
     You may need to mod https://github.com/probonopd/go-appimage/blob/master/src/appimaged/appimaged.go#L79
     in order to support a different location.
+
+    Security:  Do not download AppImages from untrusted sites.
+
+    AppImageHub, a portal site for AppImage downloads mentioned in
+    appimagetool, can be found at https://appimage.github.io/
+
+    Old appimages may have vulnerabilities.  Make sure you use
+    an up-to-date version or well maintained alternative.
   </longdescription>
   <use>
     <flag name="disable_watching_desktop_folder">Disable watching the

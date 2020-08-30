@@ -260,4 +260,12 @@ You can \`systemctl --user start appimaged\` to start it now.\n\
 	einfo \
 "The user may need to be added to the \"disk\" group in order for firejail\n\
 rules to work."
+	einfo
+	einfo "Security:  Do not download AppImages from untrusted sites."
+	einfo
+	einfo "AppImageHub, a portal site for AppImage downloads mentioned in"
+	einfo "appimagetool, can be found at https://appimage.github.io/"
+	einfo
+	einfo "Old appimages may have vulnerabilities.  Make sure you use"
+	einfo "an up-to-date version or well maintained alternative."
 }
