@@ -257,9 +257,8 @@ You can \`systemctl --user start appimaged\` to start it now.\n\
 	einfo "The appimaged daemon will randomly quit when watching files"
 	einfo "and needs to be restarted."
 	einfo
-	einfo \
-"The user may need to be added to the \"disk\" group in order for firejail\n\
-rules to work."
+	einfo "The user may need to be added to the \"disk\" group in order"
+	einfo "for firejail rules to work."
 	einfo
 	einfo "Security:  Do not download AppImages from untrusted sites."
 	einfo
