@@ -29,9 +29,14 @@ src_configure() {
 src_install() {
 	cmake-multilib_src_install
 
-	dobin ${BUILD_DIR}/woff2_compress
-	dobin ${BUILD_DIR}/woff2_decompress
-	dobin ${BUILD_DIR}/woff2_info
+	install_bin() {
+		if multilib_is_native_abi ; then
+			dobin "${BUILD_DIR}/woff2_compress"
+			dobin "${BUILD_DIR}/woff2_decompress"
+			dobin "${BUILD_DIR}/woff2_info"
+		fi
+	}
+	multilib_foreach_abi install_bin
 
 	einstalldocs
 }
