@@ -43,6 +43,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-9999_p20200724-add-libappimage-include-directories.patch"
 	"${FILESDIR}/${PN}-9999_p20200724-rename-input-lib-to-appimage_static.patch"
 	"${FILESDIR}/${PN}-9999_p20200724-add-missing-libs.patch"
+	"${FILESDIR}/${PN}-9999_p20200724-add-watch-opt-AppImage.patch"
 )
 
 # See scripts/build.sh
@@ -84,7 +85,7 @@ src_prepare() {
 		sed -i -e "/G_USER_DIRECTORY_DOWNLOAD/d" src/main.c || die
 	fi
 	if use disable_watching_opt_folder ; then
-		sed -i -e "#/opt#d" src/main.c || die
+		sed -i -e "/[/]opt\"/d" src/main.c || die
 	fi
 }
 

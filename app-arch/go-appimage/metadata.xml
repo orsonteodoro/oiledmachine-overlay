@@ -5,4 +5,45 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <longdescription>
+    go-appimage is appimaged and appimagetool implemented in the Go language.
+    It is planned as the replacement package for those older packages.
+
+    appimaged is a daemon that automatically installs .AppImages for
+    a user.
+
+    The appimagetool is a publishing tool that produces AppImages that are
+    signed for distribution.  Only Type 2 SquashFS based AppImages are
+    supported by this tool.
+
+    appimaged will watch these folders for new .AppImage(s):
+    ~/Downloads
+    ~/Desktop
+    ~/.local/bin
+    ~/bin
+    ~/Applications
+    ~/opt
+    ~/usr/local/bin
+    /run/user/0 # for the Live CD mount point (This could be a bug.  It should be ${ROOT} [aka /]?)
+    /opt/AppImage # A system-wide Gentoo addition (tentative / testing)
+
+    You may need to mod https://github.com/probonopd/go-appimage/blob/master/src/appimaged/appimaged.go#L79
+    in order to support a different location.
+  </longdescription>
+  <use>
+    <flag name="disable_watching_desktop_folder">Disable watching the
+      ~/Desktop folder for new .AppImages.  This may speed up loading.
+      </flag>
+    <flag name="disable_watching_user_downloads_folder">Disable watching
+      ~/Downloads for new .AppImages.  This may speed up loading.</flag>
+    <flag name="firejail">Checks for Firejail support for sandbox
+      support.</flag>
+    <flag name="gnome">Checks support for udisk support in Gnome.</flag>
+    <flag name="kde">Checks support for udisk support in KDE.</flag>
+    <flag name="openrc">Adds OpenRC support.</flag>
+    <flag name="overlayfs">Checks for OverlayFS support.</flag>
+    <flag name="systemd">Checks for systemd support.  It's the
+      default upstream.</flag>
+    <flag name="travis-ci">Adds support for Travis CI.</flag>
+  </use>
 </pkgmetadata>

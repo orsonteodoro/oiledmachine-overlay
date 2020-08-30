@@ -34,39 +34,3 @@ diff -urp go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087.orig/internal/hel
  	}
  
  	return repo, nil
-diff -urp go_build.orig/src/github.com/probonopd/go-appimage/internal/helpers/git.go go_build/src/github.com/probonopd/go-appimage/internal/helpers/git.go
---- go_build.orig/src/github.com/probonopd/go-appimage/internal/helpers/git.go	2020-08-17 04:30:51.512523615 -0700
-+++ go_build/src/github.com/probonopd/go-appimage/internal/helpers/git.go	2020-08-17 04:30:16.991172642 -0700
-@@ -60,22 +60,28 @@ func TestGit() {
- 
- }
- 
--// GetGitRepository returns a git Repository if cwd is a git repository, and error otherwise
-+// GetGitRepository returns a git Repository if cwd or environmental variable GIT_ROOT is a git repository, and error otherwise
- func GetGitRepository() (*git.Repository, error) {
- 	var repo *git.Repository
--	cwd, err := os.Getwd()
-+	var path = os.Getenv("GIT_ROOT")
-+	var err error
-+	if path != "" {
-+		err = nil
-+	} else {
-+		path, err = os.Getwd()
-+	}
- 	if err != nil {
- 		return repo, err
- 	}
- 
--	repo, err = git.PlainOpenWithOptions(cwd, &git.PlainOpenOptions{DetectDotGit: true})
-+	repo, err = git.PlainOpenWithOptions(path, &git.PlainOpenOptions{DetectDotGit: true})
- 	if err != nil {
- 		return repo, err
- 	}
- 
- 	if repo == nil {
- 		fmt.Println()
--		return repo, errors.New("Could not open repository. Please execute this command from within a git repository. " + cwd)
-+		return repo, errors.New("Could not open repository. Please execute this command from within a git repository. " + path)
- 	}
- 
- 	return repo, nil

@@ -19,7 +19,8 @@ LICENSE+=" all-rights-reserved MIT" # \
 # MIT license does not have all rights reserved
 LICENSE+=" MIT" # upload tool
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
-IUSE="firejail gnome kde openrc systemd travis-ci"
+IUSE="disable_watching_desktop_folder disable_watching_downloads_folder \
+firejail gnome kde openrc overlayfs systemd travis-ci"
 RDEPEND="
 	!app-arch/appimaged
 	!app-arch/appimagetool
@@ -111,6 +112,20 @@ CONFIG_SQUASHFS=m"
 		die \
 "AppImageLauncher is not compatible and needs to be uninstalled."
 	fi
+	if use firejail ; then
+		if ! linux_chkconfig_builtin BLK_DEV_LOOP \
+			&& ! linux_chkconfig_module BLK_DEV_LOOP ; then
+			die \
+"You need to change your kernel .config to CONFIG_BLK_DEV_LOOP=y or \
+CONFIG_BLK_DEV_LOOP=m"
+		fi
+		if use overlayfs && ! linux_chkconfig_builtin OVERLAY_FS \
+			&& ! linux_chkconfig_module OVERLAY_FS ; then
+			die \
+"You need to change your kernel .config to CONFIG_OVERLAY_FS=y or \
+CONFIG_OVERLAY_FS=m"
+		fi
+	fi
 	ewarn \
 "This package is a Work In Progress (WIP) upstream."
 	# server only
@@ -132,6 +147,13 @@ src_unpack() {
 	# required for mounting when calling:
 	#   ./appimagetool-2020-08-17_00:47:34-amd64.AppImage ./appimaged.AppDir
 	addwrite /dev/fuse
+	if use disable_watching_downloads_folder ; then
+		export USE_DISABLE_WATCHING_DOWNLOADS_FOLDER=1
+	fi
+	if use disable_watching_desktop_folder ; then
+		export USE_DISABLE_WATCHING_DESKTOP_FOLDER=1
+	fi
+	export EGIT_COMMIT
 	# Workaround emerge policy concerning downloads in src_compile phase.
 	./scripts/build.sh || die
 }
@@ -235,4 +257,7 @@ You can \`systemctl --user start appimaged\` to start it now.\n\
 	einfo "The appimaged daemon will randomly quit when watching files"
 	einfo "and needs to be restarted."
 	einfo
+	einfo \
+"The user may need to be added to the \"disk\" group in order for firejail\n\
+rules to work."
 }

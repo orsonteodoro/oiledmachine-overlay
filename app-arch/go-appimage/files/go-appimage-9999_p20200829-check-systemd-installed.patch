@@ -14,19 +14,3 @@ diff -urp go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087.orig/src/appimage
  	conn, err := systemddbus.NewUserConnection()
  	defer conn.Close()
  	helpers.PrintError("pre: checkIfSystemdServiceRunning", err)
-diff -urp go_build.orig/src/github.com/probonopd/go-appimage/src/appimaged/prerequisites.go go_build/src/github.com/probonopd/go-appimage/src/appimaged/prerequisites.go
---- go_build.orig/src/github.com/probonopd/go-appimage/src/appimaged/prerequisites.go	2020-08-17 04:30:51.512523615 -0700
-+++ go_build/src/github.com/probonopd/go-appimage/src/appimaged/prerequisites.go	2020-08-17 04:30:16.991172642 -0700
-@@ -133,7 +133,11 @@ func checkPrerequisites() {
- }
- 
- func checkIfSystemdServiceRunning(servicenames []string) bool {
--
-+	_, err0 := os.Stat("/lib/systemd/systemd")
-+	_, err1 := os.Stat("/usr/lib/systemd/systemd")
-+	if (os.IsNotExist(err0) && os.IsNotExist(err1)) {
-+		return false
-+	}
- 	conn, err := systemddbus.NewUserConnection()
- 	defer conn.Close()
- 	helpers.PrintError("pre: checkIfSystemdServiceRunning", err)

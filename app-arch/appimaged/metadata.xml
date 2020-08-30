@@ -18,6 +18,7 @@
     /Applications
     /opt
     /usr/local/bin
+    /opt/AppImage # A system-wide Gentoo addition (tentative / testing)
 
     There is a lag time if a lot of files are located in these
     folders.  To speed it it up, either mod this package or

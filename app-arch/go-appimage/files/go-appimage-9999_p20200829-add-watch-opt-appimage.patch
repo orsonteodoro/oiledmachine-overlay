@@ -1,0 +1,11 @@
+diff -urp go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087.orig/src/appimaged/appimaged.go go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087/src/appimaged/appimaged.go
+--- go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087.orig/src/appimaged/appimaged.go	2020-08-29 04:05:53.000000000 -0700
++++ go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087/src/appimaged/appimaged.go	2020-08-30 02:08:28.033442883 -0700
+@@ -84,6 +84,7 @@ var candidateDirectories = []string{
+ 	home + "/Applications",
+ 	home + "/opt",
+ 	home + "/usr/local/bin",
++	"/opt/AppImage",
+ }
+ 
+ func main() {

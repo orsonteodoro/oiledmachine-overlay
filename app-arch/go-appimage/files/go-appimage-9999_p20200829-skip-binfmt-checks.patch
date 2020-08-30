@@ -12,17 +12,3 @@ diff -urp go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087.orig/src/appimage
  
  	// Clean pre-existing desktop files and thumbnails
  	// This is useful for debugging
-diff -urp go_build.orig/src/github.com/probonopd/go-appimage/src/appimaged/prerequisites.go go_build/src/github.com/probonopd/go-appimage/src/appimaged/prerequisites.go
---- go_build.orig/src/github.com/probonopd/go-appimage/src/appimaged/prerequisites.go	2020-08-17 04:30:51.512523615 -0700
-+++ go_build/src/github.com/probonopd/go-appimage/src/appimaged/prerequisites.go	2020-08-17 04:30:16.991172642 -0700
-@@ -81,8 +81,8 @@ func checkPrerequisites() {
- 	}
- 
- 	// Disable binfmt-misc of AppImageLauncher when we are NOT root? Argh!
--	exitIfBinfmtExists("/proc/sys/fs/binfmt_misc/appimage-type1")
--	exitIfBinfmtExists("/proc/sys/fs/binfmt_misc/appimage-type2")
-+	// exitIfBinfmtExists("/proc/sys/fs/binfmt_misc/appimage-type1")
-+	// exitIfBinfmtExists("/proc/sys/fs/binfmt_misc/appimage-type2")
- 
- 	// Clean pre-existing desktop files and thumbnails
- 	// This is useful for debugging
