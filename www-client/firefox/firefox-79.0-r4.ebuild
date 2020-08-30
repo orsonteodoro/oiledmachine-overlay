@@ -1038,6 +1038,9 @@ pkg_postinst() {
 	elog "ln -sf /usr/lib/${PN} /usr/bin/firefox"
 	elog "ln -sf /usr/lib32/${PN} /usr/bin/firefox"
 	elog
+	# Reported in bugid 1010527, 1646007, 1449901
+	elog "WebGL performance is suboptimal and runs at ~40 FPS.  There is currently no fix for this."
+	elog
 }
 
 pkg_postrm() {
