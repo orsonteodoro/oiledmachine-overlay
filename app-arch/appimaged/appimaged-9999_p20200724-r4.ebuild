@@ -84,7 +84,7 @@ src_prepare() {
 		sed -i -e "/G_USER_DIRECTORY_DOWNLOAD/d" src/main.c || die
 	fi
 	if use disable_watching_opt_folder ; then
-		sed -i -e "/opt/d" src/main.c || die
+		sed -i -e "#/opt#d" src/main.c || die
 	fi
 }
 
