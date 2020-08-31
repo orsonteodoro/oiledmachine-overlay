@@ -182,6 +182,7 @@ src_install() {
 	exeinto /usr/bin
 	if use appimagetool ; then
 		doexe "${WORKDIR}/out/appimagetool-${ABI}.AppImage"
+		dosym /usr/bin/appimagetool-${ABI}.AppImage /usr/bin/appimagetool
 	fi
 	# already embedded
 	#doexe "${WORKDIR}/out/AppRun-${ABI}"
@@ -190,5 +191,4 @@ src_install() {
 		# exposed for go-appimage
 		doexe "${WORKDIR}/out/runtime-${ABI}"
 	fi
-	dosym /usr/bin/appimagetool-${ABI}.AppImage /usr/bin/appimagetool
 }
