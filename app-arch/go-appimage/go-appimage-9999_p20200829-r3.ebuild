@@ -20,12 +20,14 @@ LICENSE+=" all-rights-reserved MIT" # \
 LICENSE+=" MIT" # upload tool
 LICENSE+=" !system-binaries? ( MIT LGPL-2 GPL-2 )" # from musl libc package
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
-IUSE="disable_watching_desktop_folder disable_watching_downloads_folder \
-firejail gnome kde openrc overlayfs +system-binaries systemd travis-ci"
+IUSE="appimaged appimagetool disable_watching_desktop_folder \
+disable_watching_downloads_folder firejail gnome kde openrc overlayfs \
++system-binaries systemd travis-ci"
 RDEPEND="
-	!app-arch/appimaged
-	app-arch/AppImageKit[-appimagetool,runtime]
+	appimaged? ( !app-arch/appimaged )
+	appimagetool? ( app-arch/AppImageKit[-appimagetool] )
 	system-binaries? (
+		app-arch/AppImageKit[runtime]
 		>=app-arch/libarchive-3.3.2:=
 		>=dev-util/desktop-file-utils-0.15:=
 		>=dev-util/patchelf-0.9:=
@@ -45,7 +47,7 @@ RDEPEND="
 	)"
 DEPEND="${RDEPEND}
 	>=dev-lang/go-1.13.4:="
-REQUIRED_USE="|| ( gnome kde )"
+REQUIRED_USE="|| ( gnome kde ) openrc? ( appimaged ) systemd? ( appimaged )"
 SLOT="0/${PV}"
 EGIT_COMMIT="0c02e035e6a93d6e9bb6e3c5623dcc4333540087"
 SRC_URI=\
@@ -221,10 +223,20 @@ src_install() {
 		| cut -f 2-4 -d "-")
 	local aid_fn="appimaged-${aits}-${goArch}.AppImage"
 	local ait_fn="appimagetool-${aits}-${goArch}.AppImage"
-	doexe "${BUILD_DIR}/${aid_fn}"
-	doexe "${BUILD_DIR}/${ait_fn}"
-	dosym ../../../usr/bin/${aid_fn} /usr/bin/appimaged
-	dosym ../../../usr/bin/${ait_fn} /usr/bin/appimagetool
+	if use appimaged ; then
+		doexe "${BUILD_DIR}/${aid_fn}"
+		dosym ../../../usr/bin/${aid_fn} /usr/bin/appimaged
+		if use openrc ; then
+			cp "${FILESDIR}/${PN}-openrc" \
+				"${T}/${PN}" || die
+			exeinto /etc/init.d
+			doexe "${T}/${PN}"
+		fi
+	fi
+	if use appimagetool ; then
+		doexe "${BUILD_DIR}/${ait_fn}"
+		dosym ../../../usr/bin/${ait_fn} /usr/bin/appimagetool
+	fi
 	install_licenses "${BUILD_DIR}"
 	docinto licenses
 	dodoc "${S}/LICENSE"
@@ -236,12 +248,6 @@ src_install() {
 	cp "${S}/src/appimagetool/README.md" \
 		"${T}/appimagetool-README.md" || die
 	dodoc "${T}/appimagetool-README.md"
-	if use openrc ; then
-		cp "${FILESDIR}/${PN}-openrc" \
-			"${T}/${PN}" || die
-		exeinto /etc/init.d
-		doexe "${T}/${PN}"
-	fi
 }
 
 pkg_postinst() {

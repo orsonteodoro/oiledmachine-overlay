@@ -39,6 +39,8 @@
     an up-to-date version or well maintained alternative.
   </longdescription>
   <use>
+    <flag name="appimaged">Installs appimaged.</flag>
+    <flag name="appimagetool">Installs appimagetool.</flag>
     <flag name="disable_watching_desktop_folder">Disable watching the
       ~/Desktop folder for new .AppImages.  This may speed up loading.
       </flag>
