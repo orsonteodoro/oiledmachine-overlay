@@ -14,7 +14,7 @@ LICENSE="MIT" # project's default license
 LICENSE+=" all-rights-reserved" # src/appimagetool.c ; The vanilla MIT license doesn't have all-rights-reserved
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 IUSE="additional-tools appstream +appimagetool runtime"
-RDEPEND="!app-arch/go-appimage
+RDEPEND="app-arch/go-appimage[-appimagetool]
 	additional-tools? ( dev-libs/openssl )
 	app-arch/xz-utils:=[static-libs]
 	appstream? ( dev-libs/appstream:= )
