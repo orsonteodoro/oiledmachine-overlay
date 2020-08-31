@@ -45,7 +45,8 @@ cycles? (
 )
 "
 # intern/mikktspace contains ZLIB
-# intern/CMakeLists.txt contains GPL+ with all-rights-reserved ; there is no all rights reserved in the vanilla GPL-2
+# intern/CMakeLists.txt contains GPL+ with all-rights-reserved ; there is no
+#   all rights reserved in the vanilla GPL-2
 
 PYTHON_COMPAT=( python3_{7,8} )
 
@@ -71,11 +72,14 @@ else
 SLOT="0"
 fi
 # Platform defaults based on CMakeList.txt
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
 IUSE+=" X +abi7-compat -asan +bullet +collada +color-management +cuda +cycles \
--cycles-network +dds -debug doc +elbeem -embree +ffmpeg +fftw +jack +jemalloc \
-+jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal +opencl +openexr \
-+openimagedenoise +openimageio +openmp +opensubdiv +openvdb +openxr -optix \
-+osl release +sdl +sndfile test +tiff -valgrind"
+-cycles-network +dds -debug doc +elbeem -embree +ffmpeg +fftw flac +jack \
++jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal +opencl +openexr \
++openimagedenoise +openimageio +openmp +opensubdiv +openvdb -optix +osl \
+release +sdl +sndfile test +tiff -valgrind"
+FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
+IUSE+=" ${FFMPEG_IUSE}"
 RESTRICT="mirror !test? ( test )"
 
 # The release USE flag depends on platform defaults.
@@ -84,11 +88,13 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	cuda? ( cycles ^^ ( nvcc nvrtc ) )
 	cycles? ( openexr tiff openimageio osl? ( llvm ) )
 	embree? ( cycles )
+	mp3? ( ffmpeg )
 	nvcc? ( || ( cuda optix ) )
 	nvrtc? ( || ( cuda optix ) )
 	opencl? ( cycles )
 	openvdb? ( abi7-compat )
 	optix? ( cuda cycles nvcc )
+	opus? ( ffmpeg )
 	osl? ( cycles llvm )
 	release? (
 		build_creator
@@ -122,13 +128,20 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 		!test
 		tiff
 		!valgrind
-	)"
+	)
+	theora? ( ffmpeg )
+	vorbis? ( ffmpeg )
+	vpx? ( ffmpeg )
+	webm? ( ffmpeg opus vpx )
+	x264? ( ffmpeg )
+	xvid? ( ffmpeg )"
 
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake
 # doc/python_api/requirements.txt
 # extern/Eigen3/eigen-update.sh
 # Track OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER for changes.
+# Track build_files/build_environment/dependencies.dot for ffmpeg dependencies
 RDEPEND="${PYTHON_DEPS}
 	>=dev-lang/python-3.7.4
 	>=dev-libs/boost-1.70:=[nls?,threads(+)]
@@ -141,7 +154,7 @@ RDEPEND="${PYTHON_DEPS}
 		>=dev-python/requests-2.22.0[${PYTHON_MULTI_USEDEP}]
 		>=dev-python/urllib3-1.25.3[${PYTHON_MULTI_USEDEP}]
 	')
-	>=media-libs/freetype-2.10.1
+	>=media-libs/freetype-2.9.1
 	>=media-libs/glew-1.13.0:*
 	>=media-libs/libpng-1.6.35:0=
 	media-libs/libsamplerate
@@ -162,13 +175,15 @@ RDEPEND="${PYTHON_DEPS}
 		>=x11-drivers/nvidia-drivers-418.39
 		>=dev-util/nvidia-cuda-toolkit-10.1:=
 	)
-	embree? ( >=media-libs/embree-3.8.0 )
-	ffmpeg? ( >=media-video/ffmpeg-4.0.2:=[x264,mp3,encode,theora,jpeg2k?] )
+	embree? ( >=media-libs/embree-3.2.4 )
+	ffmpeg? ( >=media-video/ffmpeg-4.0.2:=\
+[encode,jpeg2k?,mp3?,opus?,theora?,vorbis?,vpx?,x264,xvid?,zlib] )
 	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
+	flac? ( >=media-libs/flac-1.3.2 )
 	jack? ( virtual/jack )
 	jemalloc? ( >=dev-libs/jemalloc-5.0.1:= )
 	jpeg2k? ( >=media-libs/openjpeg-2.3.0:2 )
-	llvm? ( >=sys-devel/llvm-9.0.1:= )
+	llvm? ( >=sys-devel/llvm-6.0.1:= )
 	ndof? (
 		app-misc/spacenavd
 		>=dev-libs/libspnav-0.2.3
@@ -182,7 +197,7 @@ RDEPEND="${PYTHON_DEPS}
 	openal? ( >=media-libs/openal-1.18.2 )
 	opencl? ( virtual/opencl )
 	openimagedenoise? ( >=media-libs/oidn-1.0.0 )
-	openimageio? ( >=media-libs/openimageio-1.8.13 )
+	openimageio? ( >=media-libs/openimageio-1.8.13[color-management?,jpeg2k?] )
 	openexr? (
 		>=media-libs/ilmbase-2.4.0:=
 		>=media-libs/openexr-2.4.0:=
@@ -195,12 +210,11 @@ RDEPEND="${PYTHON_DEPS}
 		>=dev-cpp/tbb-2019.9
 		>=dev-libs/c-blosc-1.5.0
 	)
-	openxr? ( >=media-libs/openxr-1.0.6 )
 	optix? ( >=dev-libs/optix-7 )
-	osl? ( >=media-libs/osl-1.10.9:= )
+	osl? ( >=media-libs/osl-1.9.9:= )
 	sdl? ( >=media-libs/libsdl2-2.0.8[sound,joystick] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
-	tiff? ( >=media-libs/tiff-4.0.9:0 )
+	tiff? ( >=media-libs/tiff-4.0.9:0[zlib] )
 	valgrind? ( dev-util/valgrind )
 	X? (
 		x11-libs/libX11
@@ -210,6 +224,7 @@ RDEPEND="${PYTHON_DEPS}
 
 DEPEND="${RDEPEND}
 	>=dev-cpp/eigen-3.3.7:3
+	>=dev-util/cmake-3.5
 	virtual/pkgconfig
 	doc? (
 		app-doc/doxygen[dot]
@@ -226,9 +241,6 @@ DEPEND="${RDEPEND}
 PATCHES=(
 	"${FILESDIR}/${PN}-2.82a-fix-install-rules.patch"
 	"${FILESDIR}/${PN}-2.82a-cycles-network-fixes.patch"
-	"${FILESDIR}/${PN}-2.83.1-device_network_h-fixes.patch"
-	"${FILESDIR}/${PN}-2.83.1-device_network_h-add-device-header.patch"
-	"${FILESDIR}/${PN}-2.83.1-update-acquire_tile-for-cycles-networking.patch"
 	"${FILESDIR}/${PN}-2.80-install-paths-change.patch"
 )
 
@@ -263,10 +275,10 @@ pkg_setup() {
 }
 
 _src_prepare() {
-	einfo
-	einfo "$(ver_cut 1-2) version series is a Long Term Support (LTS) version."
-	einfo "Upstream supports this series up to May 2020 (2 years)."
-	einfo
+	ewarn
+	ewarn "This version is not Long Term Support (LTS) version."
+	ewarn "Use 2.83.x series instead."
+	ewarn
 	S="${BUILD_DIR}" \
 	CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
@@ -315,7 +327,9 @@ _src_configure() {
 	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH=$(get_dest) )
 
 	if use cycles-network ; then
-		ewarn "Cycles Networking support does not work at all even for CPU rendering.  For ebuild/upstream developers only."
+		ewarn \
+"Cycles Networking support does not work at all even for CPU rendering.  For \
+ebuild/upstream developers only."
 	fi
 
 	mycmakeargs+=(
@@ -359,7 +373,6 @@ _src_configure() {
 		-DWITH_OPENVDB_BLOSC=$(usex openvdb)
 		-DWITH_PYTHON_INSTALL=OFF
 		-DWITH_PYTHON_INSTALL_NUMPY=OFF
-		-DWITH_XR_OPENXR=$(usex openxr)
 	)
 
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
@@ -383,8 +396,10 @@ _src_configure() {
 		)
 	fi
 
-	# For details see, https://github.com/blender/blender/tree/v2.83.2/build_files/cmake/config
-	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
+# For details see,
+# https://github.com/blender/blender/tree/v2.82a/build_files/cmake/config
+	if [[ "${EBLENDER}" == "build_creator" \
+		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
 			-DWITH_CYCLES_NETWORK=$(usex cycles-network)
 			-DWITH_INSTALL_PORTABLE=OFF
@@ -414,7 +429,8 @@ _src_configure() {
 		)
 	fi
 
-if [[ -n "${BLENDER_DISABLE_CUDA_AUTODETECT}" && "${BLENDER_DISABLE_CUDA_AUTODETECT}" == "1" ]] ; then
+if [[ -n "${BLENDER_DISABLE_CUDA_AUTODETECT}" \
+	&& "${BLENDER_DISABLE_CUDA_AUTODETECT}" == "1" ]] ; then
 	:;
 else
 	if use cuda ; then
@@ -536,7 +552,9 @@ _src_compile_docs() {
 
 		cd "${CMAKE_USE_DIR}" || die
 		einfo "Generating (BPY) Blender Python API docs ..."
-		"${BUILD_DIR}"/bin/blender --background --python doc/python_api/sphinx_doc_gen.py -noaudio || die "sphinx failed."
+		"${BUILD_DIR}"/bin/blender --background \
+			--python doc/python_api/sphinx_doc_gen.py -noaudio \
+			|| die "sphinx failed."
 
 		cd "${CMAKE_USE_DIR}"/doc/python_api || die
 		sphinx-build sphinx-in BPY_API || die "sphinx failed."
@@ -647,7 +665,8 @@ _src_install() {
 		python_optimize "${ED%/}/usr/share/blender/${MY_PV}/scripts"
 	fi
 
-	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
+	if [[ "${EBLENDER}" == "build_creator" \
+		|| "${EBLENDER}" == "build_headless" ]] ; then
 		_src_install_cycles_network
 	fi
 
@@ -663,7 +682,6 @@ _src_install() {
 		dosym "../../..${d_dest}/blender" \
 			"/usr/bin/${PN}-headless-${SLOT}" || die
 	fi
-	touch "${ED}${d_dest}" || die
 	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
 		dodir "${d_dest}"
 		touch "${ED}${d_dest}/.multislot"
@@ -680,9 +698,12 @@ src_install() {
 		_src_install
 	}
 	blender_foreach_impl blender_install
-	if [[ -e "${ED}/usr/share/icons/hicolor/scalable/apps/blender.svg" ]] ; then
-		mv "${ED}/usr/share/icons/hicolor/scalable/apps/blender"{,-${SLOT}}".svg" || die
-		mv "${ED}/usr/share/icons/hicolor/symbolic/apps/blender-symbolic"{,-${SLOT}}".svg"
+	local d_icon_hc="${ED}/usr/share/icons/hicolor"
+	local d_icon_scale="${d_icon_hc}/scalable"
+	local d_icon_sym="${d_icon_hc}/symbolic"
+	if [[ -e "${d_icon_scale}/apps/blender.svg" ]] ; then
+		mv "${d_icon_scale}/apps/blender"{,-${SLOT}}".svg" || die
+		mv "${d_icon_sym}/apps/blender-symbolic"{,-${SLOT}}".svg"
 	fi
 	rm -rf "${ED}/usr/share/applications/blender.desktop" || die
 	if [[ -d "/usr/share/doc/blender" ]] ; then
@@ -735,13 +756,17 @@ pkg_postinst() {
 	xdg_mimeinfo_database_update
 	local d_src="${EROOT}/usr/bin/.${PN}"
 	local V=""
-	if [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" && "${BLENDER_MAIN_SYMLINK_MODE}" == "latest-lts" ]] ; then
+	if [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" \
+	&& "${BLENDER_MAIN_SYMLINK_MODE}" == "latest-lts" ]] ; then
 		# highest lts
-		V=$(ls "${d_src}"/*/creator/.lts | sort -V | tail -n 1 | cut -f 5 -d "/")
-	elif [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" && "${BLENDER_MAIN_SYMLINK_MODE}" == "latest" ]] ; then
+		V=$(ls "${d_src}"/*/creator/.lts | sort -V | tail -n 1 \
+			| cut -f 5 -d "/")
+	elif [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" \
+	&& "${BLENDER_MAIN_SYMLINK_MODE}" == "latest" ]] ; then
 		# highest v
 		V=$(ls "${EROOT}${d_src}/" | sort -V | tail -n 1)
-	elif [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" && "${BLENDER_MAIN_SYMLINK_MODE}" =~ ^custom-[0-9]\.[0-9]+$ ]] ; then
+	elif [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" \
+	&& "${BLENDER_MAIN_SYMLINK_MODE}" =~ ^custom-[0-9]\.[0-9]+$ ]] ; then
 		# custom v
 		V=$(echo "${BLENDER_MAIN_SYMLINK_MODE}" | cut -f 2 -d "-")
 	fi
@@ -754,10 +779,12 @@ pkg_postinst() {
 			ln -sf "${EROOT}${d_src}/${V}/headless/blender" \
 				"${EROOT}/usr/bin/blender-headless" || die
 		fi
-		if [[ -e "${EROOT}${d_src}/${V}/creator/cycles_server" ]] && use cycles-network ; then
+		if [[ -e "${EROOT}${d_src}/${V}/creator/cycles_server" ]] \
+			&& use cycles-network ; then
 			ln -sf "${EROOT}${d_src}/${V}/creator/cycles_server" \
 				"${EROOT}/usr/bin/cycles_server" || die
-		elif [[ -e "${EROOT}${d_src}/${V}/headless/cycles_server" ]] && use cycles-network ; then
+		elif [[ -e "${EROOT}${d_src}/${V}/headless/cycles_server" ]] \
+			&& use cycles-network ; then
 			ln -sf "${EROOT}${d_src}/${V}/headless/cycles_server" \
 				"${EROOT}/usr/bin/cycles_server" || die
 		fi

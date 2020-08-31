@@ -12,3 +12,6 @@ media-gfx/sheepit-client disable-hard-version-blocks
 
 # Untested.  Please report back to remove hard use mask
 >=sys-kernel/genkernel-4 subdir_mount
+
+# Broken, poorly maintained through several versions of Blender
+media-gfx/blender cycles-network
