@@ -8,7 +8,7 @@ USE_RUBY="ruby24 ruby25 ruby26 ruby27"
 CMAKE_MIN_VERSION=3.10
 
 inherit check-reqs cmake-utils flag-o-matic gnome2 pax-utils python-any-r1 ruby-single toolchain-funcs virtualx
-inherit multilib-minimal
+inherit desktop multilib-minimal
 
 MY_P="webkitgtk-${PV}"
 DESCRIPTION="Open source web browser engine"
@@ -24,7 +24,11 @@ SLOT="${SLOT_MAJOR}/37" # soname version of libwebkit2gtk-4.0
 KEYWORDS="amd64 ~arm arm64 ~ppc64 ~sparc x86"
 
 IUSE="aqua +egl +geolocation gles2-only gnome-keyring +gstreamer gtk-doc +introspection +jpeg2k +jumbo-build libnotify +opengl seccomp spell wayland +X"
-IUSE+=" accelerated-2d-canvas bmalloc ftl-jit hardened +jit minibrowser +webgl"
+LANGS=( ar as bg ca cs da de el en_CA en_GB eo es et eu fi fr gl gu he hi hu \
+id it ja kn ko lt lv ml mr nb nl or pa pl pt_BR pt ro ru sl sr@latin sr sv ta \
+te tr uk vi zh_CN )
+IUSE+=" ${LANGS[@]/#/l10n_} accelerated-2d-canvas bmalloc ftl-jit \
+hardened +jit minibrowser +webgl"
 
 # gstreamer with opengl/gles2 needs egl
 REQUIRED_USE="
@@ -204,7 +208,6 @@ pkg_setup() {
 	fi
 
 	python-any-r1_pkg_setup
-	ewarn "The build may crash randomly when building.  Re-emerge again."
 }
 
 src_prepare() {
@@ -361,4 +364,21 @@ multilib_src_install() {
 	pax-mark m "${d}/WebKitPluginProcess"
 	pax-mark m "${d}/WebKitWebProcess"
 	pax-mark m "${d}/jsc"
+
+	if use minibrowser ; then
+		exeinto /usr/bin
+		newexe "${FILESDIR}/minibrowser" minibrowser-${ABI}
+		sed -i -e "s|\$(get_libdir)|$(get_libdir)|g" \
+			"${ED}/usr/bin/minibrowser-${ABI}" || die
+		dosym /usr/bin/minibrowser-${ABI} /usr/bin/minibrowser
+		make_desktop_entry minibrowser-${ABI} "MiniBrowser (${ABI})" \
+			"" "Network;WebBrowser"
+	fi
+	mkdir -p "${T}/langs" || die
+	cp -a "${ED}/usr/share/locale/"* "${T}/langs" || die
+	rm -rf "${ED}/usr/share/locale"
+	insinto /usr/share/locale
+	for l in ${L10N} ; do
+		doins -r "${T}/langs/${l}"
+	done
 }

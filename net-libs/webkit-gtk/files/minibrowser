@@ -1,0 +1,2 @@
+#!/bin/bash
+/usr/$(get_libdir)/misc/webkit2gtk-4.0/MiniBrowser "$@"
