@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="disable_watching_user_downloads_folder disable_watching_opt_folder \
 firejail openrc +systemd system-inotify-tools"
 RDEPEND="
-	!app-arch/go-appimage
+	app-arch/go-appimage[-appimaged]
 	dev-libs/glib:=[static-libs]
 	dev-libs/libappimage:=[static-libs]
 	dev-libs/xdg-utils-cxx:=[static-libs]
