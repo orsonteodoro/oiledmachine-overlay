@@ -171,7 +171,7 @@ diff -urp AppImageKit-08800854de05f4f6f7c1f3901dc165b8518822e1.orig/travis/travi
 -wget https://github.com/AppImage/AppImageKit/files/584665/data.zip -O data.tar.gz.gpg
 -( set +x ; echo $KEY | gpg2 --batch --passphrase-fd 0 --no-tty --skip-verify --output data.tar.gz --decrypt data.tar.gz.gpg ) || true
 -( tar xf data.tar.gz ; sudo chown -R $USER .gnu* ; rm -rf $HOME/.gnu* ; mv .gnu* $HOME/ ) || true
-+THIS_D=$(dirname "${BASH_SOURCE[0]}")
++
  
  # prepare output directory
 -mkdir -p ./out/
