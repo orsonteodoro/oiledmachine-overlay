@@ -52,6 +52,11 @@
     <flag name="overlayfs">Checks for OverlayFS support.</flag>
     <flag name="systemd">Checks for systemd support.  It's the
       default upstream.</flag>
+    <flag name="system-binaries">
+      Uses the system packages and binaries instead of the
+      older static binaries from the Alpine operating system statically
+      linked with musl.
+      </flang>
     <flag name="travis-ci">Adds support for Travis CI.</flag>
   </use>
 </pkgmetadata>

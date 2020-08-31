@@ -8,7 +8,7 @@ HOMEPAGE="https://github.com/probonopd/go-appimage"
 LICENSE="MIT" # go-appimage project's default license
 # dependencies of go various micropackages
 LICENSE+=" Apache-2.0 BSD BSD-2 EPL-1.0 GPL-3 ISC MPL-2.0"
-# Static libraries follow below
+# Static executables follow below
 # aid = included in appimaged ; ait = included in appimagetool
 LICENSE+=" BSD BSD-2 BSD-4 public-domain" # libarchive aid
 LICENSE+=" GPL-2" # squashfs-tools ait aid
@@ -18,18 +18,25 @@ LICENSE+=" all-rights-reserved MIT" # \
 # The runtime archive comes from runtime.c from AppImageKit \
 # MIT license does not have all rights reserved
 LICENSE+=" MIT" # upload tool
+LICENSE+=" !system-binaries? ( MIT LGPL-2 GPL-2 )" # from musl libc package
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 IUSE="disable_watching_desktop_folder disable_watching_downloads_folder \
-firejail gnome kde openrc overlayfs systemd travis-ci"
+firejail gnome kde openrc overlayfs +system-binaries systemd travis-ci"
 RDEPEND="
 	!app-arch/appimaged
-	!app-arch/appimagetool
+	app-arch/AppImageKit[-appimagetool,runtime]
+	system-binaries? (
+		>=app-arch/libarchive-3.3.2:=
+		>=dev-util/desktop-file-utils-0.15:=
+		>=dev-util/patchelf-0.9:=
+		>=sys-fs/squashfs-tools-4.4:=[static]
+	)
 	firejail? ( sys-apps/firejail )
 	gnome? ( gnome-base/gvfs[udisks] )
 	kde? ( kde-frameworks/solid )
 	openrc? ( sys-apps/openrc )
 	sys-apps/dbus
-	>=sys-fs/squashfs-tools-4.4
+	>=sys-fs/squashfs-tools-4.4:=
 	sys-fs/udisks[daemon]
 	systemd? ( sys-apps/systemd )
 	travis-ci? (
@@ -152,6 +159,12 @@ src_unpack() {
 	fi
 	if use disable_watching_desktop_folder ; then
 		export USE_DISABLE_WATCHING_DESKTOP_FOLDER=1
+	fi
+	if use system-binaries ; then
+		export USE_SYSTEM_BINARIES=1
+		export LIBDIR=$(get_libdir)
+	else
+		export USE_SYSTEM_BINARIES=0
 	fi
 	export EGIT_COMMIT
 	# Workaround emerge policy concerning downloads in src_compile phase.
