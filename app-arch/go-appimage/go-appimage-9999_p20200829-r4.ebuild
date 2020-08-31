@@ -20,7 +20,7 @@ LICENSE+=" all-rights-reserved MIT" # \
 LICENSE+=" MIT" # upload tool
 LICENSE+=" !system-binaries? ( MIT LGPL-2 GPL-2 )" # from musl libc package
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
-IUSE="+appimaged +appimagetool disable_watching_desktop_folder \
+IUSE="-appimaged -appimagetool disable_watching_desktop_folder \
 disable_watching_downloads_folder firejail gnome kde openrc overlayfs \
 +system-binaries systemd travis-ci"
 RDEPEND="
