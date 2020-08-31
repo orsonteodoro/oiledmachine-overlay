@@ -26,13 +26,6 @@ disable_watching_downloads_folder firejail gnome kde openrc overlayfs \
 RDEPEND="
 	appimaged? ( !app-arch/appimaged )
 	appimagetool? ( app-arch/AppImageKit[-appimagetool] )
-	system-binaries? (
-		app-arch/AppImageKit[runtime]
-		>=app-arch/libarchive-3.3.2:=
-		>=dev-util/desktop-file-utils-0.15:=
-		>=dev-util/patchelf-0.9:=
-		>=sys-fs/squashfs-tools-4.4:=[static]
-	)
 	firejail? ( sys-apps/firejail )
 	gnome? ( gnome-base/gvfs[udisks] )
 	kde? ( kde-frameworks/solid )
@@ -40,6 +33,13 @@ RDEPEND="
 	sys-apps/dbus
 	>=sys-fs/squashfs-tools-4.4:=
 	sys-fs/udisks[daemon]
+	system-binaries? (
+		app-arch/AppImageKit[runtime]
+		>=app-arch/libarchive-3.3.2:=
+		>=dev-util/desktop-file-utils-0.15:=
+		>=dev-util/patchelf-0.9:=
+		>=sys-fs/squashfs-tools-4.4:=[static]
+	)
 	systemd? ( sys-apps/systemd )
 	travis-ci? (
 		dev-libs/openssl
