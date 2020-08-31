@@ -12,7 +12,7 @@ diff -urp go-appimage-0c02e035e6a93d6e9bb6e3c5623dcc4333540087.orig/scripts/buil
 +( cd appimagetool.AppDir/usr/bin/ ; cp -a "${EROOT}/usr/bin/desktop-file-validate" ./ )
 +( cd appimagetool.AppDir/usr/bin/ ; cp -a "${EROOT}/usr/bin/mksquashfs" ./ )
 +( cd appimagetool.AppDir/usr/bin/ ; cp -a "${EROOT}/usr/bin/patchelf" ./ )
-+( cd appimagetool.AppDir/usr/bin/ ; cp -a "${EROOT}/usr/${LIBDIR}/AppImageKit/runtime-${ARCHITECTURE2}" ./ )
++( cd appimagetool.AppDir/usr/bin/ ; cp -a "${EROOT}/usr/${GET_LIBDIR}/AppImageKit/runtime-${ARCHITECTURE2}" ./ )
  ( cd appimagetool.AppDir/usr/bin/ ; wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh -O uploadtool )
  chmod +x appimagetool.AppDir/usr/bin/*
  cp appimagetool-${_GOHOSTARCH} appimagetool.AppDir/usr/bin/appimagetool

@@ -174,7 +174,7 @@ src_unpack() {
 	fi
 	if use system-binaries ; then
 		export USE_SYSTEM_BINARIES=1
-		export LIBDIR=$(get_libdir)
+		export GET_LIBDIR=$(get_libdir)
 	else
 		export USE_SYSTEM_BINARIES=0
 	fi
