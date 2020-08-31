@@ -376,7 +376,7 @@ multilib_src_install() {
 	fi
 	mkdir -p "${T}/langs" || die
 	cp -a "${ED}/usr/share/locale/"* "${T}/langs" || die
-	rm -rf "${ED}/usr/share/locale"
+	rm -rf "${ED}/usr/share/locale" || die
 	insinto /usr/share/locale
 	for l in ${L10N} ; do
 		doins -r "${T}/langs/${l}"
