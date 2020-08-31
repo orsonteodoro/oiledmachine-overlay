@@ -15,10 +15,8 @@ for b in ${BASE_LOCATIONS[@]} ; do
 	patch -p1 -i "${FILESDIR}/go-appimage-9999_p20200829-skip-watching-mountpoints-not-owned.patch"
 	patch -p1 -i "${FILESDIR}/go-appimage-9999_p20200829-change-path-to-appimaged-in-desktop-files.patch"
 	patch -p1 -i "${FILESDIR}/go-appimage-9999_p20200829-add-watch-opt-appimage.patch"
-	elif [[ -n "${USE_SYSTEM_BINARIES}" && "${USE_SYSTEM_BINARIES}" == "0" ]] ; then
+	if [[ -n "${USE_SYSTEM_BINARIES}" && "${USE_SYSTEM_BINARIES}" == "0" ]] ; then
 		patch -p1 -i "${FILESDIR}/go-appimage-9999_p20200829-use-system-binaries.patch"
-	else
-		:;
 	fi
 	if [[ -n "${USE_DISABLE_WATCHING_DOWNLOADS_FOLDER}" && "${USE_DISABLE_WATCHING_DOWNLOADS_FOLDER}" == "1" ]] ; then
 		echo "Modding appimaged.d (for disable_watching_download_folder USE flag)"
