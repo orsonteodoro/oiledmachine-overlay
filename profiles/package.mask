@@ -116,10 +116,6 @@ x11-drivers/xf86-video-ati
 # Masked for ebuild quality control reasons
 #--------------------------------------------------------------------------------------------------
 
-# Random quit with appimaged.  Init script or daemon does not auto-restart.
-# Use app-arch/appimaged instead.
-app-arch/go-appimage
-
 # testing
 =sys-kernel/genkernel-4.1.0-r2
 
