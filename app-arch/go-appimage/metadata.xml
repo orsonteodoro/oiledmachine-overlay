@@ -36,7 +36,7 @@
     appimagetool, can be found at https://appimage.github.io/
 
     Old appimages may have vulnerabilities.  Make sure you use
-    an up-to-date version or well maintained alternative.
+    an up-to-date version or a well maintained alternative.
   </longdescription>
   <use>
     <flag name="appimaged">Installs appimaged.</flag>

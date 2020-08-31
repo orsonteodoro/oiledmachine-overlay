@@ -297,5 +297,5 @@ You can \`systemctl --user start appimaged\` to start it now.\n\
 	einfo "appimagetool, can be found at https://appimage.github.io/"
 	einfo
 	einfo "Old appimages may have vulnerabilities.  Make sure you use"
-	einfo "an up-to-date version or well maintained alternative."
+	einfo "an up-to-date version or a well maintained alternative."
 }
