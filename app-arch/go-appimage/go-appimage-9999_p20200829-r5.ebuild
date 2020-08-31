@@ -10,11 +10,13 @@ LICENSE="MIT" # go-appimage project's default license
 LICENSE+=" Apache-2.0 BSD BSD-2 EPL-1.0 GPL-3 ISC MPL-2.0"
 # Static executables follow below
 # aid = included in appimaged ; ait = included in appimagetool
-LICENSE+=" BSD BSD-2 BSD-4 public-domain" # libarchive aid
-LICENSE+=" GPL-2" # squashfs-tools ait aid
-LICENSE+=" GPL-2+" # desktop-file-utils ait
-LICENSE+=" GPL-3" # patchelf # ait
-LICENSE+=" all-rights-reserved MIT" # \
+# LICENSE is already handled and accepted in other packages when
+# system-binaries USE is enabled.
+LICENSE+=" !system-binaries? ( BSD BSD-2 BSD-4 public-domain )" # libarchive aid
+LICENSE+=" !system-binaries? ( GPL-2 )" # squashfs-tools ait aid
+LICENSE+=" !system-binaries? ( GPL-2+ )" # desktop-file-utils ait
+LICENSE+=" !system-binaries? ( GPL-3 )" # patchelf # ait
+LICENSE+=" !system-binaries? ( all-rights-reserved MIT )" # \
 # The runtime archive comes from runtime.c from AppImageKit \
 # MIT license does not have all rights reserved
 LICENSE+=" MIT" # upload tool
