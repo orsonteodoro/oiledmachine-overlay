@@ -20,7 +20,7 @@ LICENSE+=" all-rights-reserved MIT" # \
 LICENSE+=" MIT" # upload tool
 LICENSE+=" !system-binaries? ( MIT LGPL-2 GPL-2 )" # from musl libc package
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
-IUSE="appimaged appimagetool disable_watching_desktop_folder \
+IUSE="+appimaged +appimagetool disable_watching_desktop_folder \
 disable_watching_downloads_folder firejail gnome kde openrc overlayfs \
 +system-binaries systemd travis-ci"
 RDEPEND="
@@ -47,7 +47,11 @@ RDEPEND="
 	)"
 DEPEND="${RDEPEND}
 	>=dev-lang/go-1.13.4:="
-REQUIRED_USE="|| ( gnome kde ) openrc? ( appimaged ) systemd? ( appimaged )"
+REQUIRED_USE="
+	|| ( appimaged appimagetool )
+	|| ( gnome kde )
+	openrc? ( appimaged )
+	systemd? ( appimaged )"
 SLOT="0/${PV}"
 EGIT_COMMIT="0c02e035e6a93d6e9bb6e3c5623dcc4333540087"
 SRC_URI=\
