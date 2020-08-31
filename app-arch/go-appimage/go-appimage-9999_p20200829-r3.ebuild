@@ -137,6 +137,12 @@ CONFIG_OVERLAY_FS=m"
 	fi
 	ewarn \
 "This package is a Work In Progress (WIP) upstream."
+	if use appimaged ; then
+		ewarn \
+"The appimaged in this package is not production quality and may random quit \
+at random times.  An auto-restart for this daemon has not been implemented.  \
+Use the appimaged package instead."
+	fi
 	# server only
 	enewgroup appimaged
 	enewuser appimaged -1 -1 /var/lib/appimaged appimaged
