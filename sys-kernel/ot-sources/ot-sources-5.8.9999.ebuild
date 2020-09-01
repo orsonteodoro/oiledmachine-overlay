@@ -9,6 +9,7 @@ K_GENPATCHES_VER="6"
 PATCH_BMQ_VER="5.7-r3"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
 PATCH_PROJC_VER="5.8-r1"
+SLOT=${PV}
 
 inherit ot-kernel-v5.8
 
