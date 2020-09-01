@@ -145,7 +145,8 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 #
 # Mentioned in versions.cmake but missing in (R)DEPENDS freeglut, alembic,
 # glfw, clew, cuew, hidapi, webp, xml2, tinyxml, yaml, lcms, pugi, flexbison,
-# bzip2 libffi, lzma, openssl, sqlite, usd, mesa, nasm, ispc, faad
+# bzip2 libffi, lzma, openssl, sqlite, usd, mesa, nasm, ispc,
+# faad (added in 0.6 ffmpeg but removed in 0.7+)
 #
 # Already processed as ffmpeg dependency: lame, ogg, vorbis, theora,
 # vpx, opus, x264, vidcore
