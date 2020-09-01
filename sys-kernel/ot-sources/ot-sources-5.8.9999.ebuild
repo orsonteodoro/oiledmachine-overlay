@@ -3,15 +3,16 @@
 
 EAPI="7"
 
-K_GENPATCHES_VER="19"
-PATCH_BMQ_VER="5.7-r1"
+FETCH_VANILLA_SOURCES_BY_BRANCH=1
+K_LIVE_PATCHABLE=1
+K_GENPATCHES_VER="6"
+PATCH_BMQ_VER="5.7-r3"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
-PATCH_PROJC_VER="5.7-r3"
+PATCH_PROJC_VER="5.8-r1"
 
-inherit ot-kernel-v5.7
+inherit ot-kernel-v5.8
 
 pkg_setup() {
-	ewarn "The 5.7 series will be removed in the next update cycle."
 	ot-kernel-common_pkg_setup
 }
 

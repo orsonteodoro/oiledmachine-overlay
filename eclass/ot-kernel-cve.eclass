@@ -7,7 +7,7 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 2 3 4 5 6
+# @SUPPORTED_EAPIS: 7
 # @BLURB: Eclass for CVE patching the kernel
 # @DESCRIPTION:
 # The ot-kernel-cve eclass resolves CVE vulnerabilities for any linux kernel
@@ -216,4 +216,3 @@ apply_cve_hotfixes() {
 			${min_year} || die
 	popd
 }
-

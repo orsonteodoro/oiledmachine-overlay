@@ -8,7 +8,7 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 2 3 4 5 6
+# @SUPPORTED_EAPIS: 7
 # @BLURB: Eclass for patching the 5.8.x kernel
 # @DESCRIPTION:
 # The ot-kernel-v5.8 eclass defines specific applicable patching for the 5.8.x
@@ -48,12 +48,7 @@ tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 tresor_x86_64? ( tresor )
 tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )"
 
-#K_WANT_GENPATCHES="base extras experimental"
-K_SECURITY_UNSUPPORTED=${K_SECURITY_UNSUPPORTED:="1"}
-
-inherit kernel-2 toolchain-funcs
-detect_version
-detect_arch
+inherit toolchain-funcs
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
@@ -66,10 +61,14 @@ inherit check-reqs ot-kernel-common
 #BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.patch"
 #BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
 
-SRC_URI+=" ${ARCH_URI}
-	   ${KERNEL_PATCH_URLS[@]}
-	   ${KERNEL_URI}
-	   genpatches? (
+if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
+	:;
+else
+SRC_URI+=" https://cdn.kernel.org/pub/linux/kernel/v${K_PATCH_XV}/linux-${K_MAJOR_MINOR}.tar.xz
+	   ${KERNEL_PATCH_URLS[@]}"
+fi
+
+SRC_URI+=" genpatches? (
 		${GENPATCHES_URI}
 		${GENPATCHES_BASE_SRC_URL}
 		${GENPATCHES_EXPERIMENTAL_SRC_URL}

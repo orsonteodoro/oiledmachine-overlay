@@ -8,7 +8,7 @@
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
-# @SUPPORTED_EAPIS: 2 3 4 5 6
+# @SUPPORTED_EAPIS: 7
 # @BLURB: Eclass for patching the kernel
 # @DESCRIPTION:
 # The ot-kernel-common eclass defines common patching steps for any linux
@@ -64,8 +64,9 @@
 #   https://github.com/torvalds/linux/compare/v5.8...terrelln:zstd-v10
 
 case ${EAPI:-0} in
-	7) die "this eclass doesn't support EAPI ${EAPI}" ;;
-	*) ;;
+	7) ;;
+	*) die "this eclass doesn't support EAPI ${EAPI}" ;;
+
 esac
 
 HOMEPAGE+="
@@ -81,10 +82,33 @@ HOMEPAGE+="
 	  http://www1.informatik.uni-erlangen.de/tresor
           "
 
+OT_KERNEL_SLOT_STYLE=${OT_KERNEL_SLOT_STYLE:="MAJOR_MINOR"}
+KEYWORDS=${KEYWORDS:=\
+"~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"}
+# OT_KERNEL_SLOT_STYLE can be MAJOR_MINOR (default), PV, LATEST_STABLE
+if [[ -n "${OT_KERNEL_SLOT_STYLE}" \
+      && "${OT_KERNEL_SLOT_STYLE}" == "PV" ]] ; then
+SLOT=${SLOT:=${PV}}
+elif [[ -n "${OT_KERNEL_SLOT_STYLE}" \
+	&& "${OT_KERNEL_SLOT_STYLE}" == "LATEST_STABLE" ]] ; then
+SLOT=${SLOT:=0}
+else
+SLOT=${SLOT:=${K_MAJOR_MINOR}}
+fi
+K_TAG="-ot"
+S="${WORKDIR}/linux-${PV}${K_TAG}"
+
 inherit ot-kernel-cve
+
+if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
+RDEPEND+="dev-vcs/git
+	  sys-kernel/livepatch-daemon"
+fi
 
 DEPEND+=" dev-util/patchutils
 	  sys-apps/grep[pcre]"
+
+
 
 # @FUNCTION: gen_kernel_seq
 # @DESCRIPTION:
@@ -236,7 +260,9 @@ elif ver_test ${PV} -eq ${K_MAJOR_MINOR}.0 ; then
 KERNEL_0_TO_1_ONLY="1"
 fi
 
-if [[ -n "${KERNEL_NO_POINT_RELEASE}" && "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; then
+if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
+	:;
+elif [[ -n "${KERNEL_NO_POINT_RELEASE}" && "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; then
 	KERNEL_PATCH_URLS=()
 elif [[ -n "${KERNEL_0_TO_1_ONLY}" && "${KERNEL_0_TO_1_ONLY}" == "1" ]] ; then
 	KERNEL_PATCH_URLS=(${KERNEL_PATCH_0_TO_1_URL})
@@ -252,7 +278,7 @@ else
 	KERNEL_PATCH_URLS=\
 (${KERNEL_PATCH_0_TO_1_URL} ${KERNEL_PATCH_FNS_EXT[@]/#/${KERNEL_INC_BASEURL}})
 	KERNEL_PATCH_FNS_EXT=\
-(patch-${K_MAJOR_MINOR}.1.xz ${KERNEL_PATCH_FNS_EXT[@]/#/patch-${K_MAJOR_MINOR}.})
+(patch-${K_MAJOR_MINOR}.1.xz ${KERNEL_PATCH_FNS_EXT[@]})
 	KERNEL_PATCH_FNS_NOEXT=\
 (patch-${K_MAJOR_MINOR}.1 ${KERNEL_PATCH_TO_FROM[@]/#/patch-${K_MAJOR_MINOR}.})
 fi
@@ -272,10 +298,6 @@ BFQ_BRANCH="${BFQ_BRANCH:=bfq-backports}"
 BFQ_DL_URL=\
 "https://github.com/torvalds/linux/compare/v${PATCH_BFQ_VER}...zen-kernel:${PATCH_BFQ_VER}/${BFQ_BRANCH}.patch"
 BFQ_SRC_URL="${BFQ_DL_URL} -> ${BFQ_FN}"
-
-UNIPATCH_LIST=""
-
-UNIPATCH_STRICTORDER="yes"
 
 PATCH_OPS="--no-backup-if-mismatch -r - -p1 -F 500"
 
@@ -414,9 +436,10 @@ function apply_ck() {
 # For example,
 # GENPATCHES_BLACKLIST="2500 2600"
 function _filter_genpatches() {
-	# already applied
-	# 5010-5012 GCC graysky2 patches
-	P_GENPATCHES_BLACKLIST=" 5010 5011 5012"
+	# already applied 5010-5013 GCC graysky2 patches
+	P_GENPATCHES_BLACKLIST=" 5010 5011 5012 5013"
+	# already applied 5000-5007 ZSTD patches
+	P_GENPATCHES_BLACKLIST+=" 5000 5001 5002 5003 5004 5005 5006 5007"
 	pushd "${d}" || die
 		for f in $(ls -1) ; do
 			#einfo "Processing ${f}"
@@ -724,10 +747,10 @@ function fetch_ck() {
 	wget -O "${T}/${CK_FN}" "${CK_DL_URL}" || die
 }
 
-# @FUNCTION: fetch_linux_sources
+# @FUNCTION: ot-kernel-common_fetch_linux_sources
 # @DESCRIPTION:
 # Fetches a local copy of the linux kernel repo.
-function fetch_linux_sources() {
+function ot-kernel-common_fetch_linux_sources() {
 	einfo "Fetching the vanilla Linux kernel sources.  It may take hours."
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	cd "${DISTDIR}" || die
@@ -755,7 +778,13 @@ function fetch_linux_sources() {
 		git clone "${LINUX_REPO_URL}" "${d}"
 		cd "${d}" || die
 		git checkout master
-		git checkout -b v${PV} tags/v${PV}
+		if [[ -n "${FETCH_VANILLA_SOURCES_BY_TAG}" \
+			&& "${FETCH_VANILLA_SOURCES_BY_TAG}" == "1" ]] ; then
+			git checkout -b v${PV} tags/v${PV}
+		elif [[ -n "${FETCH_VANILLA_SOURCES_BY_BRANCH}" \
+			&& "${FETCH_VANILLA_SOURCES_BY_BRANCH}" == "1" ]] ; then
+			git checkout -b linux-${PV}.y linux-${K_MAJOR_MINOR}.y
+		fi
 	else
 		local G=$(find "${d}" -group "root")
 		if (( ${#G} > 0 )) ; then
@@ -769,55 +798,84 @@ function fetch_linux_sources() {
 		git reset --hard origin/master
 		git checkout master
 		git pull
-		git branch -D v${PV}
-		git checkout -b v${PV} tags/v${PV}
+		if [[ -n "${FETCH_VANILLA_SOURCES_BY_TAG}" \
+			&& "${FETCH_VANILLA_SOURCES_BY_TAG}" == "1" ]] ; then
+			git branch -D v${PV}
+			git checkout -b v${PV} tags/v${PV}
+		elif [[ -n "${FETCH_VANILLA_SOURCES_BY_BRANCH}" \
+			&& "${FETCH_VANILLA_SOURCES_BY_BRANCH}" == "1" ]] ; then
+			git branch -D ${PV}
+			git checkout -b linux-${PV}.y linux-${K_MAJOR_MINOR}.y
+		fi
 		git pull
 	fi
 	cd "${d}" || die
 }
 
+# @FUNCTION: ot-kernel-common_unpack_tarball
+# @DESCRIPTION:
+# Unpacks the main tarball
+ot-kernel-common_unpack_tarball() {
+	cd "${WORKDIR}" || die
+	unpack "linux-${K_MAJOR_MINOR}.tar.xz"
+}
+
+# @FUNCTION: ot-kernel-common_unpack_tarball
+# @DESCRIPTION:
+# Unpacks all point release tarballs
+ot-kernel-common_unpack_point_releases() {
+	cd "${T}" || die
+	for p in ${KERNEL_PATCH_FNS_EXT[@]} ; do
+		unpack "${p}"
+	done
+}
+
 # @FUNCTION: ot-kernel-common_src_unpack
 # @DESCRIPTION:
-# Applies patch sets in order.  It calls kernel-2_src_unpack.
+# Applies patch sets in order.
 function ot-kernel-common_src_unpack() {
-	#if use zentune ; then
-	#	UNIPATCH_LIST+=" ${DISTDIR}/${ZENTUNE_FN}"
-	#fi
-	#if use uksm ; then
-	#	UNIPATCH_LIST+=" ${DISTDIR}/${UKSM_FN}"
-	#fi
+	_PATCHES=()
 	if use graysky2 ; then
 		if $(ver_test $(gcc-version) -ge 10.1) \
 			&& test -f "${DISTDIR}/${GRAYSKY_DL_10_1_FN}" ; \
 		then
 			einfo "GCC patch is 10.1"
-			UNIPATCH_LIST+=" ${DISTDIR}/${GRAYSKY_DL_10_1_FN}"
+			_PATCHES+=( "${DISTDIR}/${GRAYSKY_DL_10_1_FN}" )
 		elif $(ver_test $(gcc-version) -ge 9.1) \
 			&& test -f "${DISTDIR}/${GRAYSKY_DL_9_1_FN}" ; \
 		then
 			einfo "GCC patch is 9.1"
-			UNIPATCH_LIST+=" ${DISTDIR}/${GRAYSKY_DL_9_1_FN}"
+			_PATCHES+=( "${DISTDIR}/${GRAYSKY_DL_9_1_FN}")
 		elif $(ver_test $(gcc-version) -ge 8.1) \
 			&& test -f "${DISTDIR}/${GRAYSKY_DL_8_1_FN}" ; \
 		then
 			einfo "GCC patch is 8.1"
-			UNIPATCH_LIST+=" ${DISTDIR}/${GRAYSKY_DL_8_1_FN}"
+			_PATCHES+=( "${DISTDIR}/${GRAYSKY_DL_8_1_FN}" )
 		elif test -f "${DISTDIR}/${GRAYSKY_DL_4_9_FN}" ; then
 			einfo "GCC patch is 4.9"
-			UNIPATCH_LIST+=" ${DISTDIR}/${GRAYSKY_DL_4_9_FN}"
+			_PATCHES+=( "${DISTDIR}/${GRAYSKY_DL_4_9_FN}" )
 		else
 			die \
 "Cannot find a compatible graysky2 GCC patch for "$(gcc-version)" and\n\
 kernel ${K_MAJOR_MINOR}.  Skipping graysky2 patches."
 		fi
 	fi
-	#if use bfq ; then
-	#	UNIPATCH_LIST+=" ${DISTDIR}/${BFQ_FN}"
-	#fi
 
-	kernel-2_src_unpack
+	if [[ -z "${K_LIVE_PATCHABLE}" ]] ; then
+		ot-kernel-common_unpack_tarball
+		# ot-kernel-common_unpack_point_releases # already done in apply_genpatch_base
+	else
+		ot-kernel-common_fetch_linux_sources
+		die
+	fi
+
+	cd "${WORKDIR}" || die
+	mv "linux-${K_MAJOR_MINOR}" "${S}" || die
 
 	cd "${S}" || die
+	if (( ${#_PATCHES[@]} > 0 )) ; then
+		eapply ${_PATCHES[@]}
+	fi
 
 	if has muqss ${IUSE_EFFECTIVE} ; then
 		if use muqss ; then
@@ -1045,6 +1103,10 @@ function ot-kernel-common_pkg_setup() {
 			_check_network_sandbox
 		fi
 	fi
+
+	if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
+		einfo "Live patchable branches is experimental and is a Work In Progress (WIP)"
+	fi
 }
 
 # @FUNCTION: ot-kernel-common_pkg_pretend_cb
@@ -1082,7 +1144,9 @@ function ot-kernel-common_src_install() {
 			dodoc "${DISTDIR}/${TRESOR_PDF_FN}"
 		fi
 	fi
-
+	# usually we sanitize permissions but skip for now
+	dodir /usr/src
+	mv "${S}" "${ED}/usr/src" || die
 }
 
 # @FUNCTION: ot-kernel-common_pkg_postinst

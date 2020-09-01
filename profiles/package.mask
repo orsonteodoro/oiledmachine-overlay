@@ -57,6 +57,11 @@ dev-dotnet/dotnetcore-sdk
 # Build failures / Work In Progress (WIP)
 >=dev-dotnet/aspnetcore-2.1.18
 
+# Reserved for kernel live patching for branches
+# KLP ready is Work In Progress (WIP) for this package
+=sys-kernel/ot-sources-4.14.9999
+=sys-kernel/ot-sources-5.8.9999
+
 # Masked for security reasons
 #--------------------------------------------------------------------------------------------------
 

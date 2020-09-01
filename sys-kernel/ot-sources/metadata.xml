@@ -26,6 +26,14 @@
 
     Only Long Term Support (LTS) kernel and those marked stable
     in kernel.org are kept.
+
+
+    Per-package environmental variables:
+
+    OT_KERNEL_SLOT_STYLE - can be either MAJOR_MINOR (default), PV, LATEST_STABLE
+      MAJOR_MINOR - suitable for LTS (Long Term Support) tracks the minor release
+      PV - suitable for binary only kernel packages
+      LATEST_STABLE - suitable for people that want the latest stable kernel release
   </longdescription>
   <upstream>
     <!-- for this patchset -->
