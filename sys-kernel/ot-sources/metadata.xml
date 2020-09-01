@@ -207,6 +207,6 @@
       related to gaming, laptops, optimizations, etc.
      </flag>
     <flag name="zstd">Applies additional kernel patches for enabling
-      zstd initramfs decompression.</zstd>
+      zstd initramfs decompression.</flag>
   </use>
 </pkgmetadata>
