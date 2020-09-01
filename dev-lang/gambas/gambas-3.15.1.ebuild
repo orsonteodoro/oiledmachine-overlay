@@ -225,7 +225,7 @@ src_prepare() {
 	for c in ${L} ; do
 		[[ "${c}" =~ TEMPLATE ]] && continue
 		pushd $(dirname "${c}") || die
-			eautoreconf || die
+			eautoreconf
 		popd
 	done
 }
@@ -282,12 +282,11 @@ src_configure() {
 		$(usex xslt $($(use_enable xslt xmlxslt) \
 				--enable-xmlhtml) ) \
 		$(use_enable xml) \
-		$(use_enable zlib) \
-		|| die
+		$(use_enable zlib)
 }
 
 src_compile() {
-	emake || die
+	emake
 }
 
 src_install() {
