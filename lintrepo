@@ -47,20 +47,21 @@ for f in $(find $(pwd) -name "*.ebuild") ; do
 			# It happens when copy pasting ebuild templates from apps to libs.  Apps can use SLOT=0, but libraries should have a variable in subslot.
 			# USE="static-libs" PackageA:0 # insecure
 			# USE="static-libs" PackageB:0/${PV} # precautiously-secure for dependent because subslot changes trigger updates
-			einfo "Security risk:  ${f} does not trigger update for dependent with static-libs security updates.  SR1"
+			# If a package uses a static binary and packages it in a squashfs used in initramfs or portable apps or iso9660 container used in live CDs and uses it, it is still vulnerable.
+			einfo "Security risk:  ${f} does not trigger update for dependent with static binaries or static-libs security updates.  SR1"
 		fi
 	fi
 
-	# It happens when = slot operator is not explicitly used.  The dependent using the package as a static-libs will not receive a security update.
+	# It happens when = slot operator is not explicitly used.  The dependent using the package as a static/static-libs will not receive a security update.
 	# PackageA[static-libs] -> PackageB  ## insecure pattern
 	# PackageA:=[static-libs] -> PackageB ## secure pattern
-	if grep ${GREP_ARGS} -P -e '(?<!=)\[static-libs' "${f}" 2>/dev/null 1>/dev/null ; then
+	if grep ${GREP_ARGS} -P -e '(?<!=)\[(static|static-libs)' "${f}" 2>/dev/null 1>/dev/null ; then
 		einfo "Security risk:  ${f} ignores security update for subslot.  SR2"
 	fi
-	if grep ${GREP_ARGS} -P -e '(?<!=)\[.*static-libs,' "${f}" 2>/dev/null 1>/dev/null ; then
+	if grep ${GREP_ARGS} -P -e '(?<!=)\[.*(static|static-libs),' "${f}" 2>/dev/null 1>/dev/null ; then
 		einfo "Security risk:  ${f} ignores security update for subslot.  SR3"
 	fi
-	if grep ${GREP_ARGS} -P -e '(?<!=)\[.*static-libs\]' "${f}" 2>/dev/null 1>/dev/null ; then
+	if grep ${GREP_ARGS} -P -e '(?<!=)\[.*(static|static-libs)\]' "${f}" 2>/dev/null 1>/dev/null ; then
 		einfo "Security risk:  ${f} ignores security update for subslot.  SR4"
 	fi
 	if grep ${GREP_ARGS} -E -e '(fperms|chmod)' "${f}" 2>/dev/null 1>/dev/null \
@@ -315,3 +316,15 @@ for f in $(find $(pwd) -name "*.ebuild") ; do
 		rm ${results_file}
 	fi
 done
+
+# TODO
+#einfo "Checking for incomplete python (R/B)DEPENDs"
+#for f in $(find $(pwd) -name "*.ebuild") ; do
+#	if grep -E -e "(distutils-r[0-9]+|python-any-r[0-9]+|python-r[0-9]+|python-single-r[0-9]+|python-utils-r[0-9]+)" ; then
+#		results_file=$(mktemp)
+#		if grep -P -e '('${categories}')/(?![^\]]+MULTILIB_USEDEP[^\]]+)' \
+#			"${f}" > ${results_file} ; then
+#		fi
+#	fi
+#done
+
