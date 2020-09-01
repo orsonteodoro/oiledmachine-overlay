@@ -10,7 +10,7 @@
 
     HTML5 is only complete on the ebuild level.
     Currently it only builds GDevelop 5.
-  </longdescripten>
+  </longdescription>
   <upstream>
     <bugs-to>https://github.com/4ian/GDevelop/issues</bugs-to>
     <!-- GDevelop 5 wiki -->
