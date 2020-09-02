@@ -37,7 +37,7 @@ USE_RUBY="ruby24 ruby25 ruby26 ruby27"
 RUBY_OPTIONAL=1
 EMOJI_LANG_DEFAULT=${EMOJI_LANG_DEFAULT:=en}
 inherit eutils python-r1 ruby-ng
-EGIT_COMMIT="3935ccce647c722bcfdaa771b01613079db20935"
+EGIT_COMMIT="a7f5170d68c0b75a9864763a90ac11e51ec67c81"
 FN="${EGIT_COMMIT}.zip"
 A_URL="https://github.com/ohmyzsh/ohmyzsh/archive/${FN}"
 P_URL="https://github.com/ohmyzsh/ohmyzsh/tree/${EGIT_COMMIT}"
@@ -57,7 +57,7 @@ fishy flazz fletcherm fox frisk frontcube funky fwalch gallifrey gallois \
 garyblessington gentoo geoffgarside gianu gnzh gozilla half-life humza imajes \
 intheloop itchy jaischeema jbergantine jispwoso jnrowe jonathan josh jreese \
 jtriley juanghurtado junkfood kafeitu kardan kennethreitz kiwi kolo kphoen \
-lambda linuxonly lukerandall macovsky-ruby macovsky maran mgutz mh \
+lambda linuxonly lukerandall macovsky-ruby macovsky maran mgutz mh mlh \
 michelebologna mikeh miloshadzic minimal mira mortalscumbag mrtazz murilasso \
 muse nanotech nebirhos nicoulaj norm obraun peepcode philips pmcgee \
 pygmalion-virtualenv pygmalion re5et refined rgm risto rixius rkj-repos rkj \
