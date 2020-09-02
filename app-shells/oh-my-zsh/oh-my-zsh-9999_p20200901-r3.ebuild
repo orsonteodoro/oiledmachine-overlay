@@ -6,8 +6,10 @@ DESCRIPTION="A delightful community-driven framework for managing your zsh"
 DESCRIPTION+=" configuration that includes optional plugins and themes."
 HOMEPAGE="http://ohmyz.sh/"
 LICENSE="MIT
-	 plugins_shrink-path? ( WTFPL-2 )
-	 plugins_z? ( WTFPL-2 )
+	 unicode
+	 plugins_bazel? ( Apache-2.0 )
+	 plugins_kube-ps1? ( Apache-2.0 )
+	 plugins_sfdx? ( Apache-2.0 )
 	 plugins_coffee? ( BSD )
 	 plugins_docker? ( BSD )
 	 plugins_history-substring-search? ( BSD )
@@ -27,11 +29,9 @@ LICENSE="MIT
 	 plugins_taskwarrior? ( MIT )
 	 plugins_wd? ( MIT )
 	 plugins_zsh-navigation-tools? ( MIT GPL-3 )
-	 plugins_bazel? ( Apache-2.0 )
-	 plugins_kube-ps1? ( Apache-2.0 )
-	 plugins_sfdx? ( Apache-2.0 )
-	 plugins_per-directory-history? ( ZLIB )
-	 unicode"
+	 plugins_shrink-path? ( WTFPL-2 )
+	 plugins_z? ( WTFPL-2 )
+	 plugins_per-directory-history? ( ZLIB )"
 KEYWORDS="~alpha ~amd64 ~amd64-linux ~arm ~arm64 ~hppa ~ia64 ~m68k ~m68k-mint \
 ~mips ~ppc ~ppc-macos ~ppc64 ~s390 ~sh ~sparc ~sparc-solaris ~sparc64-solaris \
 ~x64-macos ~x64-solaris ~x86 ~x86-linux ~x86-macos ~x86-solaris"
@@ -271,7 +271,10 @@ PLUGINS_DEPEND="
 THEMES_DEPEND="
 	 themes_adben? ( games-misc/fortune-mod )
 	 "
-RDEPEND="7zip? ( app-arch/p7zip )
+RDEPEND="${PLUGINS_DEPEND}
+	 ${PYTHON_DEPS}
+	 ${THEMES_DEPEND}
+	 7zip? ( app-arch/p7zip )
 	 >=app-shells/zsh-4.3.9
 	 ace? ( app-arch/unace )
 	 bzr? ( dev-vcs/bzr )
@@ -293,9 +296,7 @@ RDEPEND="7zip? ( app-arch/p7zip )
 	 lzma? ( app-arch/xz-utils )
 	 mercurial? ( dev-vcs/mercurial )
 	 nodejs? ( net-libs/nodejs )
-	 ${PLUGINS_DEPEND}
          powerline? ( media-fonts/powerline-symbols )
-	 ${PYTHON_DEPS}
 	 python? ( ${PYTHON_DEPS} )
 	 rar? ( app-arch/unrar )
 	 rpm? ( app-arch/cpio
@@ -304,7 +305,6 @@ RDEPEND="7zip? ( app-arch/p7zip )
 	 rust? ( virtual/rust )
 	 subversion? ( dev-vcs/subversion )
 	 sudo? ( app-admin/sudo )
-	 ${THEMES_DEPEND}
 	 update-emoji-data? ( dev-perl/XML-LibXML
 			      dev-perl/Text-Unaccent )
 	 unzip? ( app-arch/unzip )
@@ -322,7 +322,6 @@ REQUIRED_USE="branding? ( themes_gentoo )
 	      themes_emotty? ( powerline )
 	      themes_amuse? ( powerline )
 	      plugins_coffee? ( clipboard )
-	      plugins_common-aliases? ( ace rar zip )
 	      plugins_copybuffer? ( clipboard )
 	      plugins_copydir? ( clipboard )
 	      plugins_copyfile? ( clipboard )
@@ -371,6 +370,7 @@ REQUIRED_USE="branding? ( themes_gentoo )
 	      plugins_gpg-agent? ( gpg )
 	      plugins_otp? ( gpg )
 	      plugins_pass? ( gpg )
+	      plugins_common-aliases? ( ace rar zip )
 	      plugins_extract? ( || ( 7zip bzip2 gzip lrzip lz4 lzip lzma unzip
 					rar rpm xz zstd ) )
 	      plugins_archlinux? ( curl )
@@ -384,7 +384,6 @@ REQUIRED_USE="branding? ( themes_gentoo )
 	      plugins_perl? ( curl )
 	      plugins_pip? ( curl )
 	      plugins_rand-quote? ( curl )
-	      plugins_salt? ( python )
 	      plugins_singlechar? ( curl )
 	      plugins_sprunge? ( curl )
 	      plugins_systemadmin? ( curl )
@@ -409,6 +408,7 @@ REQUIRED_USE="branding? ( themes_gentoo )
 	      plugins_cloudapp? ( ruby )
 	      plugins_rbenv? ( ruby )
 	      plugins_rust? ( rust )
+	      plugins_salt? ( python )
 	      wget? ( || (
 		plugins_singlechar
 		plugins_n98-magerun
