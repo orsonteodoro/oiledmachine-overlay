@@ -41,7 +41,7 @@ BDEPEND="dev-java/maven-bin
 	sys-apps/yarn"
 inherit check-reqs eutils java-utils-2 npm-secaudit
 FN_DEST="${PN}-${PV}.tar.gz"
-CLOSURE_COMPILER_COMMIT="6a5376f9152cb9eec283bff6bc9c834a4848625b"
+CLOSURE_COMPILER_COMMIT="12c62c55de3080b6462bf97eec0d722e79737bbb"
 FN_DEST2="closure-compiler-${CLOSURE_COMPILER_COMMIT}.tar.gz"
 SRC_URI=\
 "https://github.com/google/closure-compiler-npm/archive/v${PV}.tar.gz \
