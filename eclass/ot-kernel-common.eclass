@@ -747,6 +747,22 @@ function fetch_ck() {
 	wget -O "${T}/${CK_FN}" "${CK_DL_URL}" || die
 }
 
+function get_current_tag_for_k_major_minor_branch() {
+	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	d="${distdir}/ot-sources-src/linux"
+	pushd "${d}" 2>/dev/null 1>/dev/null || die
+		echo $(git tag | grep -E -e v${K_MAJOR_MINOR} | tail -n 1)
+	popd 2>/dev/null 1>/dev/null
+}
+
+function get_current_commit_for_k_major_minor_branch() {
+	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	d="${distdir}/ot-sources-src/linux"
+	pushd "${d}" 2>/dev/null 1>/dev/null || die
+		echo $(git rev-parse linux-${K_MAJOR_MINOR}.y)
+	popd 2>/dev/null 1>/dev/null
+}
+
 # @FUNCTION: ot-kernel-common_fetch_linux_sources
 # @DESCRIPTION:
 # Fetches a local copy of the linux kernel repo.
@@ -783,7 +799,7 @@ function ot-kernel-common_fetch_linux_sources() {
 			git checkout -b v${PV} tags/v${PV}
 		elif [[ -n "${FETCH_VANILLA_SOURCES_BY_BRANCH}" \
 			&& "${FETCH_VANILLA_SOURCES_BY_BRANCH}" == "1" ]] ; then
-			git checkout -b linux-${PV}.y linux-${K_MAJOR_MINOR}.y
+			git checkout -b linux-${K_MAJOR_MINOR}.y origin/linux-${K_MAJOR_MINOR}.y
 		fi
 	else
 		local G=$(find "${d}" -group "root")
@@ -804,8 +820,8 @@ function ot-kernel-common_fetch_linux_sources() {
 			git checkout -b v${PV} tags/v${PV}
 		elif [[ -n "${FETCH_VANILLA_SOURCES_BY_BRANCH}" \
 			&& "${FETCH_VANILLA_SOURCES_BY_BRANCH}" == "1" ]] ; then
-			git branch -D ${PV}
-			git checkout -b linux-${PV}.y linux-${K_MAJOR_MINOR}.y
+			git branch -D linux-${K_MAJOR_MINOR}.y
+			git checkout -b linux-${K_MAJOR_MINOR}.y origin/linux-${K_MAJOR_MINOR}.y
 		fi
 		git pull
 	fi
@@ -864,13 +880,17 @@ kernel ${K_MAJOR_MINOR}.  Skipping graysky2 patches."
 	if [[ -z "${K_LIVE_PATCHABLE}" ]] ; then
 		ot-kernel-common_unpack_tarball
 		# ot-kernel-common_unpack_point_releases # already done in apply_genpatch_base
+		cd "${WORKDIR}" || die
+		mv "linux-${K_MAJOR_MINOR}" "${S}" || die
 	else
 		ot-kernel-common_fetch_linux_sources
-		die
+		cp -r "${d}" "${WORKDIR}" || die
+		cd "${WORKDIR}" || die
+		mv linux "${S}" || die
+		echo $(get_current_tag_for_k_major_minor_branch) > "${S}/tag"
+		echo $(get_current_commit_for_k_major_minor_branch) > "${S}/commit"
+		rm -rf "${S}/.git" || die
 	fi
-
-	cd "${WORKDIR}" || die
-	mv "linux-${K_MAJOR_MINOR}" "${S}" || die
 
 	cd "${S}" || die
 	if (( ${#_PATCHES[@]} > 0 )) ; then
