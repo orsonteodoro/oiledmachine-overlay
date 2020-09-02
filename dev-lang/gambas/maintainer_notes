@@ -1,14 +1,13 @@
 # Use this code below to inspect the code quality:
 OUT= ; \
 for l in $(grep -l -F -e "State" $(find . -name "*.component")) ; do \
-	if grep -F -e "State=" "${l}" | cut -f 2 -d "=" \
-		| grep -q -E -e "gb.xml/.component$" ; then \
+	if echo "${l}" | grep -q -E -e "gb.xml/.component$" ; then \
 		continue ; \        
 	fi ; \
 	state=$(grep -F -e "State=" "${l}" | cut -f 2 -d "=") ; \
 	OUT+=$(echo -e "${l}" | sed -r -e "s|comp/src/||g" \
+		-e "s|comp/src/||g" \
 		-e "s|main/lib/[^/]+/||g" \
-		-e "s|gb.xml/.component|gb.xml/gb.xml.component|g" \
 		-e "s|[^/]+/src/[^/]+/||g" | cut -f 2 -d "/")\
 ":  $(echo ${state} | sed -e 's|0|STABLE|g' \
 -e 's|1|STABLE_NOT_FINISHED|g' \

@@ -338,8 +338,7 @@ src_configure() {
 		$(use_enable zlib)
 
 	for p in $(grep -l -F -e "State" $(find . -name "*.component")) ; do
-		if grep -F -e "State=" "${p}" | cut -f 2 -d "=" \
-			| grep -q -E -e "gb.xml/.component$" ; then
+		if echo "${p}" | grep -q -E -e "gb.xml/.component$" ; then
 			# Makefile traversal doesn't go in this folder
 			continue
 		fi
@@ -354,30 +353,25 @@ src_configure() {
 		# See app/src/gambas3/.src/Component/CComponent.class
 		local m=""
 		if [[ "${state}" =~ (0|Stable) ]] ; then
-			m="${component}: stable"
-			einfo "${m}"
+			m=" \e[92m*\e[39m ${component}: stable"
 		elif [[ "${state}" =~ Finished ]] ; then
-			m="${component}: finished"
-			einfo "${m}"
+			m=" \e[92m*\e[39m ${component}: finished"
 		elif [[ "${state}" =~ NotFinished ]] ; then
-			m="${component}: is not finished"
-			ewarn "${m}"
+			m=" \e[93m*\e[39m ${component}: is not finished"
 		elif [[ "${state}" =~ 1 ]] ; then
-			m="${component}: is stable but not finished"
-			ewarn "${m}"
+			m=" \e[93m*\e[39m ${component}: is stable but not finished"
 		elif [[ "${state}" =~ 2 ]] ; then
-			m="${component} is unstable"
-			ewarn "${m}"
+			m=" \e[93m*\e[39m ${component}: is unstable"
 		elif [[ "${state}" =~ (3|Deprecated) ]] ; then
-			m="${component}: is deprecated and may be removed soon"
-			ewarn "${m}"
+			m=" \e[93m*\e[39m ${component}: is deprecated and may be removed soon"
 		elif [[ "${state}" =~ 4 ]] ; then
-			m="${component}: is of unknown code quality"
-			ewarn "${m}"
+			m=" \e[93m*\e[39m ${component}: is of unknown code quality"
 		fi
 		CODE_QUALITY_REPORT+="${m}\n"
 	done
 	CODE_QUALITY_REPORT=$(echo -e "${CODE_QUALITY_REPORT}" | sort)
+	einfo "Code quality:"
+	echo -e "${CODE_QUALITY_REPORT}"
 }
 
 src_compile() {
@@ -445,6 +439,6 @@ src_install() {
 
 pkg_postinst() {
 	einfo "Upstream code quality report:"
-	ewarn "${CODE_QUALITY_REPORT}"
+	echo -e "${CODE_QUALITY_REPORT}"
 	xdg_pkg_postinst
 }
