@@ -14,11 +14,13 @@ LICENSE="MIT
 	 plugins_httpie? ( BSD )
 	 plugins_kitchen? ( BSD )
 	 plugins_ripgrep? ( BSD )
+	 plugins_scala? ( BSD )
 	 plugins_yarn? ( BSD )
 	 plugins_git-escape-magic? ( BSD-2 )
 	 plugins_gitfast? ( GPL-2 )
 	 plugins_pass? ( GPL-2+ )
 	 plugins_geeknote? ( GPL-3+ )
+	 plugins_gradle? ( MIT )
 	 plugins_grunt? ( MIT )
 	 plugins_gulp? ( MIT )
 	 plugins_osx? ( MIT )
@@ -28,6 +30,7 @@ LICENSE="MIT
 	 plugins_bazel? ( Apache-2.0 )
 	 plugins_kube-ps1? ( Apache-2.0 )
 	 plugins_sfdx? ( Apache-2.0 )
+	 plugins_per-directory-history? ( ZLIB )
 	 unicode"
 KEYWORDS="~alpha ~amd64 ~amd64-linux ~arm ~arm64 ~hppa ~ia64 ~m68k ~m68k-mint \
 ~mips ~ppc ~ppc-macos ~ppc64 ~s390 ~sh ~sparc ~sparc-solaris ~sparc64-solaris \
