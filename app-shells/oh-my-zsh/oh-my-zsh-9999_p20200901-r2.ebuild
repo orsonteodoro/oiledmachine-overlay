@@ -50,8 +50,9 @@ SRC_URI="${A_URL} -> ${P}.zip"
 RESTRICT="fetch"
 SLOT="0"
 IUSE="branding bzr clipboard curl emojis update-emoji-data java git gpg"
-IUSE+=" mercurial nodejs powerline python ruby rust subversion sudo wget"
-IUSE+=" 7zip bzip2 gzip lrzip lz4 lzip lzma unzip rar xz zstd"
+IUSE+=" mercurial nodejs powerline perlbrew python ruby rust subversion sudo"
+IUSE+=" uri wget"
+IUSE+=" 7zip ace bzip2 gzip lrzip lz4 lzip lzma unzip rar rpm xz zip zstd"
 OMZSH_THEMES=( 3den adben af-magic afowler agnoster alanpeabody amuse apple \
 arrow aussiegeek avit awesomepanda bira blinks bureau candy-kingdom candy \
 clean cloud crcandy crunch cypher dallas darkblood daveverwer dieter dogenpunk \
@@ -100,26 +101,52 @@ vagrant vagrant-prompt vault vim-interaction vi-mode virtualenv \
 virtualenvwrapper vscode vundle wakeonlan wd web-search wp-cli xcode yarn yii \
 yii2 yum z zeus zsh-interactive-cd zsh-navigation-tools zsh_reload )
 IUSE+=" ${OMZSH_PLUGINS[@]/#/-plugins_}"
+RDEPEND_COMMON_ALIASES=()
+if [[ -z "${OMZ_CHM_VIEWER}" ]] ; then
+RDEPEND_COMMON_ALIASES+=( app-text/xchm )
+fi
+if [[ -z "${OMZ_PDF_VIEWER}" ]] ; then
+RDEPEND_COMMON_ALIASES+=( app-text/acroread )
+fi
+if [[ -z "${OMZ_PS_VIEWER}" ]] ; then
+RDEPEND_COMMON_ALIASES+=( app-text/gv )
+fi
+if [[ -z "${OMZ_DVI_VIEWER}" ]] ; then
+RDEPEND_COMMON_ALIASES+=( app-text/xdvik )
+fi
+if [[ -z "${OMZ_DJVU_VIEWER}" ]] ; then
+RDEPEND_COMMON_ALIASES+=( app-text/djview )
+fi
+if [[ -z "${OMZ_MEDIA_PLAYER}" ]] ; then
+RDEPEND_COMMON_ALIASES+=( media-video/mplayer )
+fi
 PLUGINS_DEPEND="
 	 plugins_adb? ( dev-util/android-tools )
 	 plugins_ansible? ( app-admin/ansible )
 	 plugins_ant? ( dev-java/ant )
+	 plugins_arcanist? ( dev-util/arcanist )
 	 plugins_autojump? ( app-shells/autojump )
 	 plugins_aws? ( dev-python/awscli )
 	 plugins_battery? ( sys-power/acpi )
 	 plugins_bazel? ( dev-util/bazel )
+	 plugins_bower? ( dev-nodejs/bower )
 	 plugins_bundler? ( dev-ruby/bundler )
 	 plugins_cabal? ( dev-haskell/cabal )
-	 plugins_cargo? ( virtual/cargo )
+	 plugins_cargo? ( dev-lang/rust )
 	 plugins_catimg? ( media-gfx/imagemagick[png] )
 	 plugins_celery? ( dev-python/celery )
 	 plugins_chucknorris? ( games-misc/fortune-mod )
 	 plugins_colorize? ( dev-python/pygments )
 	 plugins_colored-man-pages? ( sys-apps/groff )
+	 plugins_common-aliases? ( ${RDEPEND_COMMON_ALIASES[@]}
+				   sys-process/procps
+				   dev-python/pygments )
 	 plugins_composer? ( dev-lang/php dev-php/composer )
 	 plugins_cpanm? ( dev-perl/App-cpanminus )
+	 plugins_debian? ( app-arch/dpkg )
 	 plugins_direnv? ( dev-util/direnv )
 	 plugins_django? ( dev-python/django )
+	 plugins_docker-compose? ( app-emulation/docker-compose )
 	 plugins_docker-machine? ( app-emulation/docker-machine )
 	 plugins_doctl? ( app-admin/doctl )
 	 plugins_dotnet? ( || ( dev-dotnet/cli-tools
@@ -128,6 +155,7 @@ PLUGINS_DEPEND="
 	 plugins_eecms? ( dev-lang/php )
 	 plugins_emacs? ( >=app-editors/emacs-24.0 )
 	 plugins_emoji? ( dev-lang/perl dev-perl/Path-Class )
+	 plugins_fasd? ( app-misc/fasd )
 	 plugins_fbterm? ( app-i18n/fbterm )
 	 plugins_firewalld? ( net-firewall/firewalld )
 	 plugins_flutter? ( dev-util/flutter )
@@ -136,6 +164,10 @@ PLUGINS_DEPEND="
 	 plugins_gb? ( dev-go/gb )
 	 plugins_gcloud? ( app-misc/google-cloud-sdk )
 	 plugins_geeknote? ( app-misc/geeknote )
+	 plugins_gem? ( virtual/rubygems )
+	 plugins_github? ( dev-vcs/hub )
+	 plugins_git-extras? ( dev-vcs/git-extras )
+	 plugins_gnu-utils? ( sys-apps/coreutils )
 	 plugins_go? ( dev-lang/go )
 	 plugins_golang? ( dev-lang/go )
 	 plugins_gradle? ( virtual/gradle )
@@ -145,12 +177,13 @@ PLUGINS_DEPEND="
 	 plugins_jfrog? ( dev-util/jfrog-cli )
 	 plugins_kate? ( kde-apps/kate )
 	 plugins_keychain? ( net-misc/keychain )
-	 plugins_knife_ssh? ( virtual/ssh )
 	 plugins_kops? ( sys-cluster/kops )
-	 plugins_kubectl? ( sys-cluster/kubectl )
+	 plugins_kube-ps1? ( sys-cluster/kubernetes )
+	 plugins_kubectl? ( sys-cluster/kubernetes )
 	 plugins_laravel? ( dev-lang/php )
 	 plugins_laravel4? ( dev-lang/php )
 	 plugins_laravel5? ( dev-lang/php )
+	 plugins_lol? ( sys-process/procps )
 	 plugins_man? ( virtual/man )
 	 plugins_minikube? ( sys-cluster/minikube )
 	 plugins_mix? ( dev-lang/elixir )
@@ -166,7 +199,8 @@ PLUGINS_DEPEND="
 	 plugins_paver? ( dev-python/paver )
 	 plugins_percol? ( app-shells/percol )
 	 plugins_pep8? ( dev-python/pep8 )
-	 plugins_perl? ( dev-lang/perl )
+	 plugins_perl? ( dev-lang/perl
+			 perlbrew? ( dev-perl/App-perlbrew ) )
 	 plugins_phing? ( dev-php/phing )
 	 plugins_pip? ( dev-python/pip )
 	 plugins_pipenv? ( dev-python/pipenv )
@@ -178,11 +212,13 @@ PLUGINS_DEPEND="
 	 plugins_rake-fast? ( dev-ruby/rake )
 	 plugins_rand-quote? ( net-misc/curl )
 	 plugins_rebar? ( dev-util/rebar3 )
+	 plugins_redis-cli? ( dev-db/redis )
 	 plugins_repo? ( dev-util/repo )
 	 plugins_ripgrep? ( sys-apps/ripgrep )
 	 plugins_ros? ( dev-lisp/roswell )
 	 plugins_rsync? ( net-misc/rsync )
 	 plugins_ruby? ( dev-lang/ruby dev-ruby/rubygems )
+	 plugins_rvm? ( dev-ruby/rvm )
 	 plugins_salt? ( app-admin/salt dev-lang/python )
 	 plugins_sbt? ( || ( dev-java/sbt dev-java/sbt-bin ) )
 	 plugins_scala? ( dev-lang/scala )
@@ -192,6 +228,12 @@ PLUGINS_DEPEND="
 	 plugins_stack? ( dev-haskell/stack )
 	 plugins_sublime? ( app-editors/sublime-text )
 	 plugins_supervisor? ( app-admin/supervisor )
+	 plugins_svn-fast-info? ( >=dev-vcs/subversion-1.6 )
+	 plugins_systemadmin? ( || ( sys-apps/iproute2 sys-apps/net-tools )
+				sys-apps/net-tools
+				sys-apps/findutils
+				sys-process/procps
+				net-analyzer/tcpdump )
 	 plugins_systemd? ( sys-apps/systemd )
 	 plugins_symfony? ( dev-lang/php dev-php/symfony-console )
 	 plugins_symfony2? ( dev-lang/php dev-php/symfony-console )
@@ -213,7 +255,8 @@ PLUGINS_DEPEND="
 	 plugins_wakeonlan? ( net-misc/wakeonlan )
 	 plugins_yarn? ( sys-apps/yarn )
 	 plugins_wp-cli? ( app-admin/wp-cli )
-	 plugins_zsh-interactive-cd? ( app-shells/fzf )"
+	 plugins_zsh-interactive-cd? ( app-shells/fzf )
+	 plugins_zsh-navigation-tools? ( sys-process/procps )"
 #	 plugins_urltools? ( || ( dev-lang/perl
 #				  net-libs/nodejs
 #				  dev-lang/php
@@ -227,6 +270,7 @@ THEMES_DEPEND="
 	 "
 RDEPEND="7zip? ( app-arch/p7zip )
 	 >=app-shells/zsh-4.3.9
+	 ace? ( app-arch/unace )
 	 bzr? ( dev-vcs/bzr )
 	 clipboard? ( || ( x11-misc/xclip x11-misc/xsel app-misc/tmux ) )
 	 emojis? ( || ( media-fonts/noto-color-emoji
@@ -251,6 +295,8 @@ RDEPEND="7zip? ( app-arch/p7zip )
 	 ${PYTHON_DEPS}
 	 python? ( ${PYTHON_DEPS} )
 	 rar? ( app-arch/unrar )
+	 rpm? ( app-arch/cpio
+		app-arch/rpm )
 	 ruby? ( $(ruby_implementations_depend) )
 	 rust? ( virtual/rust )
 	 subversion? ( dev-vcs/subversion )
@@ -263,6 +309,7 @@ RDEPEND="7zip? ( app-arch/p7zip )
 	 wget? ( net-misc/wget )
 	 x11-misc/xdg-utils
 	 xz? ( app-arch/xz-utils )
+	 zip? ( app-arch/unzip )
 	 zstd? ( app-arch/zstd )"
 DEPEND="${RDEPEND}
 	net-misc/wget
@@ -273,6 +320,7 @@ REQUIRED_USE="branding? ( themes_gentoo )
 	      themes_emotty? ( powerline )
 	      themes_amuse? ( powerline )
 	      plugins_coffee? ( clipboard )
+	      plugins_common-aliases? ( ace rar zip )
 	      plugins_copybuffer? ( clipboard )
 	      plugins_copydir? ( clipboard )
 	      plugins_copyfile? ( clipboard )
@@ -295,6 +343,7 @@ REQUIRED_USE="branding? ( themes_gentoo )
 	      plugins_svn? ( subversion )
 	      plugins_svn-fast-info? ( subversion )
 	      plugins_apache2-macports? ( sudo )
+	      plugins_debian? ( sudo )
 	      plugins_dnf? ( sudo )
 	      plugins_drush? ( sudo )
 	      plugins_firewalld? ( sudo )
@@ -303,8 +352,10 @@ REQUIRED_USE="branding? ( themes_gentoo )
 	      plugins_mysql-macports? ( sudo )
 	      plugins_nmap? ( sudo )
 	      plugins_rake? ( sudo )
+	      plugins_singlechar? ( sudo )
 	      plugins_sudo? ( sudo )
 	      plugins_suse? ( sudo )
+	      plugins_systemd? ( sudo )
 	      plugins_systemadmin? ( sudo )
 	      plugins_ubuntu? ( sudo )
 	      plugins_xcode? ( sudo )
@@ -319,7 +370,7 @@ REQUIRED_USE="branding? ( themes_gentoo )
 	      plugins_otp? ( gpg )
 	      plugins_pass? ( gpg )
 	      plugins_extract? ( || ( 7zip bzip2 gzip lrzip lz4 lzip lzma unzip
-					rar xz zstd ) )
+					rar rpm xz zstd ) )
 	      plugins_archlinux? ( curl )
 	      plugins_composer? ( curl )
 	      plugins_gitfast? ( curl )
@@ -446,6 +497,37 @@ ZSH_THEME="robbyrussell"!\
 ZSH_THEME="robbyrussell"!\
 [[ -z "${ZSH_THEME}" ]] \&\& ZSH_THEME="robbyrussell"!g' \
 		  "${S}/${ZSH_TEMPLATE}" || die
+	fi
+
+	if use plugins_common-aliases ; then
+		if [[ -n "${OMZ_CHM_VIEWER}" ]] ; then
+			sed -i -e "s|xchm|${OMZ_CHM_VIEWER}|" \
+				"${S}/plugins/common-aliases/common-aliases.plugin.zsh" || die
+		fi
+		if [[ -n "${OMZ_PDF_VIEWER}" ]] ; then
+			sed -i -e "s|acroread|${OMZ_PDF_VIEWER}|" \
+				"${S}/plugins/common-aliases/common-aliases.plugin.zsh" || die
+		fi
+		if [[ -n "${OMZ_PS_VIEWER}" ]] ; then
+			sed -i -e "s|gv|${OMZ_PS_VIEWER}|" \
+				"${S}/plugins/common-aliases/common-aliases.plugin.zsh" || die
+		fi
+		if [[ -n "${OMZ_DJVU_VIEWER}" ]] ; then
+			sed -i -e "s|djview|${OMZ_DJVU_VIEWER}|" \
+				"${S}/plugins/common-aliases/common-aliases.plugin.zsh" || die
+		fi
+		if [[ -n "${OMZ_DVI_VIEWER}" ]] ; then
+			sed -i -e "s|xdvi|${OMZ_DVI_VIEWER}|" \
+				"${S}/plugins/common-aliases/common-aliases.plugin.zsh" || die
+		fi
+		if [[ -n "${OMZ_MEDIA_PLAYER}" ]] ; then
+			sed -i -e "s|mplayer|${OMZ_MEDIA_PLAYER}|" \
+				"${S}/plugins/common-aliases/common-aliases.plugin.zsh" || die
+		fi
+	fi
+
+	if use plugins_gem ; then
+		ewarn "The plugins_gem requires modding."
 	fi
 
 	if use plugins_salt ; then

@@ -13,6 +13,14 @@
     line is presented turning a plain left hand side in more status
     reporting display or more stylistic fancy look.  Themes may report
     information about local copy of a repository.
+
+    For plugins_common-aliases:
+    OMZ_CHM_VIEWER
+    OMZ_PDF_VIEWER
+    OMZ_PS_VIEWER - PostScript
+    OMZ_DVI_VIEWER
+    OMZ_DJVU_VIEWER
+    OMZ_MEDIA_PLAYER
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/robbyrussell/oh-my-zsh/issues</bugs-to>
@@ -129,7 +137,8 @@
     <flag name="themes_peepcode">Adds the peepcode theme.</flag>
     <flag name="themes_philips">Adds the philips theme.</flag>
     <flag name="themes_pmcgee">Adds the pmcgee theme.</flag>
-    <flag name="themes_pygmalion-virtualenv">Adds the pygmalion-virtualenv theme.</flag>
+    <flag name="themes_pygmalion-virtualenv">Adds the pygmalion-virtualenv
+      theme.</flag>
     <flag name="themes_pygmalion">Adds the pygmalion theme.</flag>
     <flag name="themes_re5et">Adds the re5et theme.</flag>
     <flag name="themes_refined">Adds the refined theme.</flag>
@@ -165,7 +174,8 @@
     <flag name="themes_wezm+">Adds the wezm+ theme.</flag>
     <flag name="themes_wezm">Adds the wezm theme.</flag>
     <flag name="themes_wuffers">Adds the wuffers theme.</flag>
-    <flag name="themes_xiong-chiamiov-plus">Adds the xiong-chiamiov-plus theme.</flag>
+    <flag name="themes_xiong-chiamiov-plus">Adds the xiong-chiamiov-plus
+      theme.</flag>
     <flag name="themes_xiong-chiamiov">Adds the xiong-chiamiov theme.</flag>
     <flag name="themes_ys">Adds the ys theme.</flag>
     <flag name="themes_zhann">Adds the zhann theme.</flag>
@@ -174,7 +184,8 @@
     <flag name="plugins_alias-finder">Installs the alias-finder plugin.</flag>
     <flag name="plugins_ansible">Installs the ansible plugin.</flag>
     <flag name="plugins_ant">Installs the ant plugin.</flag>
-    <flag name="plugins_apache2-macports">Installs the apache2-macports plugin.</flag>
+    <flag name="plugins_apache2-macports">Installs the apache2-macports
+      plugin.</flag>
     <flag name="plugins_arcanist">Installs the arcanist plugin.</flag>
     <flag name="plugins_archlinux">Installs the archlinux plugin.</flag>
     <flag name="plugins_asdf">Installs the asdf plugin.</flag>
@@ -206,10 +217,13 @@
     <flag name="plugins_codeclimate">Installs the codeclimate plugin.</flag>
     <flag name="plugins_coffee">Installs the coffee plugin.</flag>
     <flag name="plugins_colemak">Installs the colemak plugin.</flag>
-    <flag name="plugins_colored-man-pages">Installs the colored-man-pages plugin.</flag>
+    <flag name="plugins_colored-man-pages">Installs the colored-man-pages
+      plugin.</flag>
     <flag name="plugins_colorize">Installs the colorize plugin.</flag>
-    <flag name="plugins_command-not-found">Installs the command-not-found plugin.</flag>
-    <flag name="plugins_common-aliases">Installs the common-aliases plugin.</flag>
+    <flag name="plugins_command-not-found">Installs the command-not-found
+      plugin.</flag>
+    <flag name="plugins_common-aliases">Installs the common-aliases
+      plugin.</flag>
     <flag name="plugins_compleat">Installs the compleat plugin.</flag>
     <flag name="plugins_composer">Installs the composer plugin.</flag>
     <flag name="plugins_copybuffer">Installs the copybuffer plugin.</flag>
@@ -227,8 +241,10 @@
     <flag name="plugins_dnf">Installs the dnf plugin.</flag>
     <flag name="plugins_dnote">Installs the dnote plugin.</flag>
     <flag name="plugins_docker">Installs the docker plugin.</flag>
-    <flag name="plugins_docker-compose">Installs the docker-compose plugin.</flag>
-    <flag name="plugins_docker-machine">Installs the docker-machine plugin.</flag>
+    <flag name="plugins_docker-compose">Installs the docker-compose
+      plugin.</flag>
+    <flag name="plugins_docker-machine">Installs the docker-machine
+      plugin.</flag>
     <flag name="plugins_doctl">Installs the doctl plugin.</flag>
     <flag name="plugins_dotenv">Installs the dotenv plugin.</flag>
     <flag name="plugins_droplr">Installs the droplr plugin.</flag>
@@ -252,7 +268,8 @@
     <flag name="plugins_flutter">Installs the flutter plugin.</flag>
     <flag name="plugins_forklift">Installs the forklift plugin.</flag>
     <flag name="plugins_fossil">Installs the fossil plugin.</flag>
-    <flag name="plugins_frontend-search">Installs the frontend-search plugin.</flag>
+    <flag name="plugins_frontend-search">Installs the frontend-search
+      plugin.</flag>
     <flag name="plugins_fzf">Installs the fzf plugin.</flag>
     <flag name="plugins_gas">Installs the gas plugin.</flag>
     <flag name="plugins_gatsby">Installs the gatsby plugin.</flag>
@@ -261,8 +278,10 @@
     <flag name="plugins_geeknote">Installs the geeknote plugin.</flag>
     <flag name="plugins_gem">Installs the gem plugin.</flag>
     <flag name="plugins_git">Installs the git plugin.</flag>
-    <flag name="plugins_git-auto-fetch">Installs the git-auto-fetch plugin.</flag>
-    <flag name="plugins_git-escape-magic">Installs the git-escape-magic plugin.</flag>
+    <flag name="plugins_git-auto-fetch">Installs the git-auto-fetch
+      plugin.</flag>
+    <flag name="plugins_git-escape-magic">Installs the git-escape-magic
+      plugin.</flag>
     <flag name="plugins_git-extras">Installs the git-extras plugin.</flag>
     <flag name="plugins_gitfast">Installs the gitfast plugin.</flag>
     <flag name="plugins_git-flow">Installs the git-flow plugin.</flag>
@@ -271,7 +290,8 @@
     <flag name="plugins_git-hubflow">Installs the git-hubflow plugin.</flag>
     <flag name="plugins_gitignore">Installs the gitignore plugin.</flag>
     <flag name="plugins_git-prompt">Installs the git-prompt plugin.</flag>
-    <flag name="plugins_git-remote-branch">Installs the git-remote-branch plugin.</flag>
+    <flag name="plugins_git-remote-branch">Installs the git-remote-branch
+      plugin.</flag>
     <flag name="plugins_glassfish">Installs the glassfish plugin.</flag>
     <flag name="plugins_globalias">Installs the globalias plugin.</flag>
     <flag name="plugins_gnu-utils">Installs the gnu-utils plugin.</flag>
@@ -287,7 +307,8 @@
     <flag name="plugins_heroku">Installs the heroku plugin.</flag>
     <flag name="plugins_hitokoto">Installs the hitokoto plugin.</flag>
     <flag name="plugins_history">Installs the history plugin.</flag>
-    <flag name="plugins_history-substring-search">Installs the history-substring-search plugin.</flag>
+    <flag name="plugins_history-substring-search">Installs the
+      history-substring-search plugin.</flag>
     <flag name="plugins_homestead">Installs the homestead plugin.</flag>
     <flag name="plugins_httpie">Installs the httpie plugin.</flag>
     <flag name="plugins_iterm2">Installs the iterm2 plugin.</flag>
@@ -310,7 +331,8 @@
     <flag name="plugins_laravel">Installs the laravel plugin.</flag>
     <flag name="plugins_laravel4">Installs the laravel4 plugin.</flag>
     <flag name="plugins_laravel5">Installs the laravel5 plugin.</flag>
-    <flag name="plugins_last-working-dir">Installs the last-working-dir plugin.</flag>
+    <flag name="plugins_last-working-dir">Installs the last-working-dir
+      plugin.</flag>
     <flag name="plugins_lein">Installs the lein plugin.</flag>
     <flag name="plugins_lighthouse">Installs the lighthouse plugin.</flag>
     <flag name="plugins_lol">Installs the lol plugin.</flag>
@@ -325,7 +347,8 @@
     <flag name="plugins_mix-fast">Installs the mix-fast plugin.</flag>
     <flag name="plugins_mosh">Installs the mosh plugin.</flag>
     <flag name="plugins_mvn">Installs the mvn plugin.</flag>
-    <flag name="plugins_mysql-macports">Installs the mysql-macports plugin.</flag>
+    <flag name="plugins_mysql-macports">Installs the mysql-macports
+      plugin.</flag>
     <flag name="plugins_n98-magerun">Installs the n98-magerun plugin.</flag>
     <flag name="plugins_nanoc">Installs the nanoc plugin.</flag>
     <flag name="plugins_ng">Installs the ng plugin.</flag>
@@ -343,7 +366,8 @@
     <flag name="plugins_paver">Installs the paver plugin.</flag>
     <flag name="plugins_pep8">Installs the pep8 plugin.</flag>
     <flag name="plugins_percol">Installs the percol plugin.</flag>
-    <flag name="plugins_per-directory-history">Installs the per-directory-history plugin.</flag>
+    <flag name="plugins_per-directory-history">Installs the
+      per-directory-history plugin.</flag>
     <flag name="plugins_perl">Installs the perl plugin.</flag>
     <flag name="plugins_perms">Installs the perms plugin.</flag>
     <flag name="plugins_phing">Installs the phing plugin.</flag>
@@ -427,12 +451,15 @@
     <flag name="plugins_ufw">Installs the ufw plugin.</flag>
     <flag name="plugins_urltools">Installs the urltools plugin.</flag>
     <flag name="plugins_vagrant">Installs the vagrant plugin.</flag>
-    <flag name="plugins_vagrant-prompt">Installs the vagrant-prompt plugin.</flag>
+    <flag name="plugins_vagrant-prompt">Installs the vagrant-prompt
+      plugin.</flag>
     <flag name="plugins_vault">Installs the vault plugin.</flag>
-    <flag name="plugins_vim-interaction">Installs the vim-interaction plugin.</flag>
+    <flag name="plugins_vim-interaction">Installs the vim-interaction
+      plugin.</flag>
     <flag name="plugins_vi-mode">Installs the vi-mode plugin.</flag>
     <flag name="plugins_virtualenv">Installs the virtualenv plugin.</flag>
-    <flag name="plugins_virtualenvwrapper">Installs the virtualenvwrapper plugin.</flag>
+    <flag name="plugins_virtualenvwrapper">Installs the virtualenvwrapper
+      plugin.</flag>
     <flag name="plugins_vscode">Installs the vscode plugin.</flag>
     <flag name="plugins_vundle">Installs the vundle plugin.</flag>
     <flag name="plugins_wakeonlan">Installs the wakeonlan plugin.</flag>
@@ -446,21 +473,28 @@
     <flag name="plugins_yum">Installs the yum plugin.</flag>
     <flag name="plugins_z">Installs the z plugin.</flag>
     <flag name="plugins_zeus">Installs the zeus plugin.</flag>
-    <flag name="plugins_zsh-interactive-cd">Installs the zsh-interactive-cd plugin.</flag>
-    <flag name="plugins_zsh-navigation-tools">Installs the zsh-navigation-tools plugin.</flag>
+    <flag name="plugins_zsh-interactive-cd">Installs the zsh-interactive-cd
+      plugin.</flag>
+    <flag name="plugins_zsh-navigation-tools">Installs the zsh-navigation-tools
+      plugin.</flag>
     <flag name="plugins_zsh_reload">Installs the zsh_reload plugin.</flag>
+    <flag name="ace">Checks for proper ace archiver support.</flag>
     <flag name="branding">Enables gentoo branding.</flag>
     <flag name="bzr">Checks for proper bzr support.</flag>
     <flag name="clipboard">Checks dependencies for X clipboard support.</flag>
     <flag name="curl">Checks for proper cURL support.</flag>
     <flag name="emojis">Checks for proper emoji support.</flag>
-    <flag name="update-emoji-data">Updates emoji information on emerge time to the bleeding edge emoji version (currently emoji version 13.0).  If disabled, it may only support emoji 1.0 plus some of emoji 2.0.</flag>
+    <flag name="update-emoji-data">Updates emoji information on emerge time to
+      the bleeding edge emoji version (currently emoji version 13.0).  If
+      disabled, it may only support emoji 1.0 plus some of emoji 2.0.</flag>
     <flag name="java">Checks for proper Java support.</flag>
     <flag name="git">Checks for proper Git support.</flag>
     <flag name="gpg">Checks for proper GnuPG support.</flag>
     <flag name="mercurial">Checks for proper Mercurial support.</flag>
     <flag name="nodejs">Checks for proper NodeJS support </flag>
-    <flag name="powerline">Checks for installation of the powerline font and themes that depend on it.</flag>
+    <flag name="perlbrew">Adds perlbrew support for the perl plugin </flag>
+    <flag name="powerline">Checks for installation of the powerline font and
+      themes that depend on it.</flag>
     <flag name="python">Enables python support.</flag>
     <flag name="ruby">Checks for proper Ruby support.</flag>
     <flag name="rust">Checks for proper Rust support.</flag>
@@ -476,7 +510,10 @@
     <flag name="lzma">Adds lzma support for the extract plugin.</flag>
     <flag name="unzip">Adds unzip support for the extract plugin.</flag>
     <flag name="rar">Adds rar support for the extract plugin.</flag>
+    <flag name="rar">Adds rpm support for the extract plugin.</flag>
     <flag name="xz">Adds xz support for the extract plugin.</flag>
+    <flag name="zip">Adds zip support for the extract plugin to list files in
+      common-aliases.</flag>
     <flag name="zstd">Adds zstd support for the extract plugin.</flag>
     <flag name="python_targets_python2_7">Checks for Python 2.7 support.</flag>
     <flag name="python_targets_python3_5">Checks for Python 3.x support.</flag>
