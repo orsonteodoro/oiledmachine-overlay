@@ -120,7 +120,7 @@ fi
 if [[ -z "${OMZ_MEDIA_PLAYER}" ]] ; then
 RDEPEND_COMMON_ALIASES+=( media-video/mplayer )
 fi
-PLUGINS_DEPEND="
+PLUGINS_RDEPEND="
 	 plugins_adb? ( dev-util/android-tools )
 	 plugins_ansible? ( app-admin/ansible )
 	 plugins_ant? ( dev-java/ant )
@@ -268,12 +268,12 @@ PLUGINS_DEPEND="
 #	 plugins_jsontools? ( || ( dev-lang/ruby
 #				   dev-lang/python
 #				   net-libs/nodejs ) )
-THEMES_DEPEND="
+THEMES_RDEPEND="
 	 themes_adben? ( games-misc/fortune-mod )
 	 "
-RDEPEND="${PLUGINS_DEPEND}
+RDEPEND="${PLUGINS_RDEPEND}
 	 ${PYTHON_DEPS}
-	 ${THEMES_DEPEND}
+	 ${THEMES_RDEPEND}
 	 7zip? ( app-arch/p7zip )
 	 >=app-shells/zsh-4.3.9
 	 ace? ( app-arch/unace )
