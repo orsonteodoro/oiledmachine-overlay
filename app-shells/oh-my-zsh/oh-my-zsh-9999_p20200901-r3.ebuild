@@ -170,6 +170,7 @@ PLUGINS_DEPEND="
 	 plugins_gnu-utils? ( sys-apps/coreutils )
 	 plugins_go? ( dev-lang/go )
 	 plugins_golang? ( dev-lang/go )
+	 plugins_globalias? ( sys-apps/grep[pcre] )
 	 plugins_gradle? ( virtual/gradle )
 	 plugins_helm? ( app-admin/helm )
 	 plugins_heroku? ( dev-util/heroku-cli )
@@ -187,7 +188,8 @@ PLUGINS_DEPEND="
 	 plugins_man? ( virtual/man )
 	 plugins_minikube? ( sys-cluster/minikube )
 	 plugins_mix? ( dev-lang/elixir )
-	 plugins_mvn? ( dev-java/maven-bin )
+	 plugins_mvn? ( dev-java/maven-bin
+			sys-apps/grep[pcre] )
 	 plugins_nanoc? ( www-apps/nanoc )
 	 plugins_nmap? ( net-analyzer/nmap )
 	 plugins_nomad? ( sys-cluster/nomad )
@@ -200,7 +202,8 @@ PLUGINS_DEPEND="
 	 plugins_percol? ( app-shells/percol )
 	 plugins_pep8? ( dev-python/pep8 )
 	 plugins_perl? ( dev-lang/perl
-			 perlbrew? ( dev-perl/App-perlbrew ) )
+			 perlbrew? ( dev-perl/App-perlbrew )
+			 sys-apps/grep[pcre] )
 	 plugins_phing? ( dev-php/phing )
 	 plugins_pip? ( dev-python/pip )
 	 plugins_pipenv? ( dev-python/pipenv )
@@ -312,8 +315,7 @@ RDEPEND="7zip? ( app-arch/p7zip )
 	 zip? ( app-arch/unzip )
 	 zstd? ( app-arch/zstd )"
 DEPEND="${RDEPEND}
-	net-misc/wget
-	sys-apps/grep[pcre]"
+	net-misc/wget"
 S="${WORKDIR}/${PN//-/}-${EGIT_COMMIT}"
 REQUIRED_USE="branding? ( themes_gentoo )
 	      themes_agnoster? ( powerline )
@@ -534,7 +536,7 @@ ZSH_THEME="robbyrussell"!\
 		sed -i -e "s|python2|python3|" "${S}/plugins/salt/_salt" || die
 	fi
 
-	REQ_THEMES=$(echo "$USE" | grep -o -P "themes_[^ ]+")
+	REQ_THEMES=$(echo "$USE" | grep -E -o -e "themes_[^ ]+")
 	mv themes themes.trash
 	mkdir themes
 	for theme in ${REQ_THEMES} ; do
@@ -551,7 +553,7 @@ ZSH_THEME="robbyrussell"!\
 		fi
 	done
 
-	REQ_PLUGINS=$(echo "$USE" | grep -o -P "plugins_[^ ]+")
+	REQ_PLUGINS=$(echo "$USE" | grep -E -o -e "plugins_[^ ]+")
 	mv plugins plugins.trash
 	mkdir plugins
 	for plugin in ${REQ_PLUGINS} ; do
