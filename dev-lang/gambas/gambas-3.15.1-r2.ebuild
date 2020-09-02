@@ -404,9 +404,9 @@ src_install() {
 	emake DESTDIR="${D}" install
 	! use ide && rm "${D}/usr/bin/gambas3"
 	if use ide; then
-		doicon -s 48 "app/desktop/gambas3.png" gambas3.png
-		doicon -s 256 "app/desktop/gambas3.svg" gambas3.svg
-		doicon -s scalable "app/desktop/gambas3.svg" gambas3.svg
+		doicon -s 48 "app/desktop/gambas3.png"
+		doicon -s 256 "app/desktop/gambas3.svg"
+		doicon -s scalable "app/desktop/gambas3.svg"
 		make_desktop_entry "/usr/bin/gambas3.gambas" "Gambas" \
 			"/usr/share/gambas/gambas3.png" "Development;IDE"
 	fi
