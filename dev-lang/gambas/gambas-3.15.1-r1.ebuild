@@ -257,6 +257,8 @@ src_prepare() {
 	done
 	mod_off qt4
 	mod_off sqlite2
+	# prevent duplicate install failure
+	sed -i -e "/dist_gblib_DATA/d" component.am || die
 	L=$(find . -name "configure.ac")
 	for c in ${L} ; do
 		[[ "${c}" =~ TEMPLATE ]] && continue
@@ -265,9 +267,6 @@ src_prepare() {
 		popd
 	done
 	xdg_src_prepare
-
-	# prevent duplicate install failure
-	sed -i -e "/dist_gblib_DATA/d" component.am
 }
 
 CODE_QUALITY_REPORT=
