@@ -86,7 +86,7 @@ src_compile() {
 
 src_install() {
 	if use kpatch-build; then
-		emake DESTDIR="${D}" PREFIX="/usr" install -C kpatch-build
+		emake DESTDIR="${ED}" PREFIX="/usr" install -C kpatch-build
 		insinto /usr/share/${PN}/patch
 		doins kmod/patch/kpatch{.lds.S,-macros.h,-patch.h,-patch-hook.c}
 		doins kmod/patch/{livepatch-patch-hook.c,Makefile,patch-hook.c}
@@ -94,11 +94,11 @@ src_install() {
 		doman man/kpatch-build.1
 	fi
 	if use kpatch; then
-		emake DESTDIR="${D}" PREFIX="/usr" install -C kpatch
+		emake DESTDIR="${ED}" PREFIX="/usr" install -C kpatch
 		doman man/kpatch.1
 	fi
 	use kmod && set_arch_to_kernel \
-		&& emake DESTDIR="${D}" PREFIX="/usr" install -C kmod
-	use contrib && emake DESTDIR="${D}" PREFIX="/usr" install -C contrib
+		&& emake DESTDIR="${ED}" PREFIX="/usr" install -C kmod
+	use contrib && emake DESTDIR="${ED}" PREFIX="/usr" install -C contrib
 	dodoc README.md doc/patch-author-guide.md
 }
