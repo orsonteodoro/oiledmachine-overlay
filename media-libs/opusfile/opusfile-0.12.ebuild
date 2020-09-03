@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -11,7 +11,7 @@ SRC_URI="https://downloads.xiph.org/releases/opus/${P}.tar.gz"
 
 LICENSE="BSD"
 SLOT="0/${PV}"
-KEYWORDS="alpha amd64 arm arm64 hppa ia64 ppc ppc64 sparc x86"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 IUSE="doc fixed-point +float +http libressl static-libs"
 
 RDEPEND="media-libs/libogg[${MULTILIB_USEDEP}]
@@ -26,16 +26,13 @@ DEPEND="${RDEPEND}
 
 REQUIRED_USE="^^ ( fixed-point float )"
 
-PATCHES=( "${FILESDIR}/opusfile-0.11-libressl.patch" )
-
 src_prepare() {
 	default
 	multilib_copy_sources
 }
 
-multilib_src_configure() {
+src_configure() {
 	local myeconfargs=(
-		--docdir="${EPREFIX}/usr/share/doc/${PF}"
 		$(use_enable doc)
 		$(use_enable fixed-point)\
 		$(use_enable float)
@@ -45,7 +42,7 @@ multilib_src_configure() {
 	econf "${myeconfargs[@]}"
 }
 
-multilib_src_install() {
+src_install() {
 	default
-	find "${ED}" -name "*.la" -delete || die
+	find "${ED}" -type f -name "*.la" -delete || die
 }
