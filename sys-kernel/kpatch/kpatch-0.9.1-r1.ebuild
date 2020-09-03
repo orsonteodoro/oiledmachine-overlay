@@ -30,7 +30,7 @@ eerror "Please be sure a .config file is available in the kernel src dir"
 eerror "and ensure the kernel has been built."
 			else
 # Fail to build if these kernel options are not enabled
-# (see kpatch/kmod/core/Makefile)
+# (see kpatch/kmod/core/Makefile and kpatch-build/kpatch-build)
 				CONFIG_CHECK=\
 "!GCC_PLUGIN_LATENT_ENTROPY !GCC_PLUGIN_RANDSTRUCT !DEBUG_INFO_SPLIT \
 DYNAMIC_FTRACE_WITH_REGS FUNCTION_TRACER HAVE_FENTRY KALLSYMS_ALL LIVEPATCH \
