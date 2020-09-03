@@ -22,7 +22,19 @@ SRC_URI=\
 RESTRICT="mirror"
 
 pkg_setup() {
-	if use kmod; then
+	if use kpatch-build ; then
+# See kpatch-build/kpatch-build
+		CONFIG_CHECK=\
+"!GCC_PLUGIN_LATENT_ENTROPY !GCC_PLUGIN_RANDSTRUCT !DEBUG_INFO_SPLIT"
+		ERROR_DEBUG_INFO_SPLIT=\
+"CONFIG_DEBUG_INFO_SPLIT must be disabled in the kernel's config file."
+		ERROR_GCC_PLUGIN_LATENT_ENTROPY=\
+"CONFIG_GCC_PLUGIN_LATENT_ENTROPY must be disabled in the kernel's config file."
+		ERROR_GCC_PLUGIN_RANDSTRUCT=\
+"CONFIG_GCC_PLUGIN_RANDSTRUCT must be disabled in the kernel's config file."
+		check_extra_config
+	fi
+	if use kmod ; then
 		if kernel_is gt 3 9 0; then
 			if ! linux_config_exists; then
 eerror "Unable to check the currently running kernel for kpatch support"
@@ -30,33 +42,21 @@ eerror "Please be sure a .config file is available in the kernel src dir"
 eerror "and ensure the kernel has been built."
 			else
 # Fail to build if these kernel options are not enabled
-# (see kpatch/kmod/core/Makefile and kpatch-build/kpatch-build)
+# (see kmod/core/core.c)
 				CONFIG_CHECK=\
-"!GCC_PLUGIN_LATENT_ENTROPY !GCC_PLUGIN_RANDSTRUCT !DEBUG_INFO_SPLIT \
-DYNAMIC_FTRACE_WITH_REGS FUNCTION_TRACER HAVE_FENTRY KALLSYMS_ALL LIVEPATCH \
-MODULES SYSFS UNUSED_SYMBOLS"
-				ERROR_DEBUG_INFO_SPLIT=\
-"CONFIG_DEBUG_INFO_SPLIT must be disabled in the kernel's config file."
-				ERROR_DYNAMIC_FTRACE_WITH_REGS=\
-"DYNAMIC_FTRACE_WITH_REGS must be enabled in the kernel's config file"
+"FUNCTION_TRACER HAVE_FENTRY KALLSYMS_ALL MODULES SYSFS STACKTRACE"
 				ERROR_FUNCTION_TRACER=\
 "CONFIG_FUNCTION_TRACER must be enabled in the kernel's config file"
-				ERROR_GCC_PLUGIN_LATENT_ENTROPY=\
-"CONFIG_GCC_PLUGIN_LATENT_ENTROPY must be disabled in the kernel's config file."
-				ERROR_GCC_PLUGIN_RANDSTRUCT=\
-"CONFIG_GCC_PLUGIN_RANDSTRUCT must be disabled in the kernel's config file."
 				ERROR_HAVE_FENTRY=\
 "CONFIG_HAVE_FENTRY must be enabled in the kernel's config file"
 				ERROR_KALLSYMS_ALL=\
 "CONFIG_KALLSYMS_ALL must be enabled in the kernel's config file"
-				ERROR_LIVEPATCH=\
-"CONFIG_LIVEPATCH must be enabled in the kernel's config file"
 				ERROR_MODULES=\
 "CONFIG_MODULES must be enabled in the kernel's config file"
+				ERROR_STACKTRACE=\
+"CONFIG_STACKTRACE must be enabled in the kernel's config file"
 				ERROR_SYSFS=\
 "CONFIG_SYSFS must be enabled in the kernel's config file"
-				ERROR_UNUSED_SYMBOLS=\
-"CONFIG_UNUSED_SYMBOLS must be enabled in the kernel's config file"
 			fi
 		else
 			eerror
@@ -68,7 +68,23 @@ MODULES SYSFS UNUSED_SYMBOLS"
 		fi
 		check_extra_config
 	fi
-
+# See https://github.com/torvalds/linux/blob/master/kernel/livepatch/Kconfig
+	# Requirements for live patch
+	CONFIG_CHECK=\
+"DYNAMIC_FTRACE_WITH_REGS KALLSYMS_ALL LIVEPATCH MODULES SYSFS !UNUSED_SYMBOLS"
+	ERROR_DYNAMIC_FTRACE_WITH_REGS=\
+"CONFIG_DYNAMIC_FTRACE_WITH_REGS must be enabled in the kernel's config file"
+	ERROR_KALLSYMS_ALL=\
+"CONFIG_KALLSYMS_ALL must be enabled in the kernel's config file"
+	ERROR_LIVEPATCH=\
+"CONFIG_LIVEPATCH must be enabled in the kernel's config file"
+	ERROR_MODULES=\
+"CONFIG_MODULES must be enabled in the kernel's config file"
+	ERROR_SYSFS=\
+"CONFIG_SYSFS must be enabled in the kernel's config file"
+	ERROR_UNUSED_SYMBOLS=\
+"CONFIG_UNUSED_SYMBOLS must be disabled in the kernel's config file"
+	check_extra_config
 }
 
 src_prepare() {
