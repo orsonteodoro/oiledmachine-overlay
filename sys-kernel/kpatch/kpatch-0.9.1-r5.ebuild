@@ -71,7 +71,7 @@ eerror "and ensure the kernel has been built."
 # See https://github.com/torvalds/linux/blob/master/kernel/livepatch/Kconfig
 	# Requirements for live patch
 	CONFIG_CHECK=\
-"DYNAMIC_FTRACE_WITH_REGS KALLSYMS_ALL LIVEPATCH MODULES SYSFS !UNUSED_SYMBOLS"
+"DYNAMIC_FTRACE_WITH_REGS KALLSYMS_ALL LIVEPATCH MODULES SYSFS !TRIM_UNUSED_KSYMS"
 	ERROR_DYNAMIC_FTRACE_WITH_REGS=\
 "CONFIG_DYNAMIC_FTRACE_WITH_REGS must be enabled in the kernel's config file"
 	ERROR_KALLSYMS_ALL=\
@@ -82,8 +82,8 @@ eerror "and ensure the kernel has been built."
 "CONFIG_MODULES must be enabled in the kernel's config file"
 	ERROR_SYSFS=\
 "CONFIG_SYSFS must be enabled in the kernel's config file"
-	ERROR_UNUSED_SYMBOLS=\
-"CONFIG_UNUSED_SYMBOLS must be disabled in the kernel's config file"
+	ERROR_UNUSED_KSYMS=\
+"CONFIG_TRIM_UNUSED_KSYMS must be disabled in the kernel's config file"
 	check_extra_config
 }
 
