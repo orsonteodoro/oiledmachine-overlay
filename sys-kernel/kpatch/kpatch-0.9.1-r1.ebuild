@@ -32,11 +32,19 @@ eerror "and ensure the kernel has been built."
 # Fail to build if these kernel options are not enabled
 # (see kpatch/kmod/core/Makefile)
 				CONFIG_CHECK=\
-"FUNCTION_TRACER HAVE_FENTRY MODULES SYSFS KALLSYMS_ALL"
+"!GCC_PLUGIN_LATENT_ENTROPY !GCC_PLUGIN_RANDSTRUCT !DEBUG_INFO_SPLIT \
+DYNAMIC_FTRACE_WITH_REGS FUNCTION_TRACER HAVE_FENTRY KALLSYMS_ALL LIVEPATCH \
+MODULES SYSFS UNUSED_SYMBOLS"
+				ERROR_DEBUG_INFO_SPLIT=\
+"CONFIG_DEBUG_INFO_SPLIT must be disabled in the kernel's config file."
 				ERROR_DYNAMIC_FTRACE_WITH_REGS=\
 "DYNAMIC_FTRACE_WITH_REGS must be enabled in the kernel's config file"
 				ERROR_FUNCTION_TRACER=\
 "CONFIG_FUNCTION_TRACER must be enabled in the kernel's config file"
+				ERROR_GCC_PLUGIN_LATENT_ENTROPY=\
+"CONFIG_GCC_PLUGIN_LATENT_ENTROPY must be disabled in the kernel's config file."
+				ERROR_GCC_PLUGIN_RANDSTRUCT=\
+"CONFIG_GCC_PLUGIN_RANDSTRUCT must be disabled in the kernel's config file."
 				ERROR_HAVE_FENTRY=\
 "CONFIG_HAVE_FENTRY must be enabled in the kernel's config file"
 				ERROR_KALLSYMS_ALL=\
@@ -49,25 +57,6 @@ eerror "and ensure the kernel has been built."
 "CONFIG_SYSFS must be enabled in the kernel's config file"
 				ERROR_UNUSED_SYMBOLS=\
 "CONFIG_UNUSED_SYMBOLS must be enabled in the kernel's config file"
-				if linux_chkconfig_builtin \
-					"DEBUG_INFO_SPLIT" ; then
-					die \
-"CONFIG_DEBUG_INFO_SPLIT must be set to =n in the kernel .config."
-				fi
-				if linux_chkconfig_builtin \
-					"GCC_PLUGIN_LATENT_ENTROPY" ; then
-					die \
-"CONFIG_GCC_PLUGIN_LATENT_ENTROPY must be set to =n in the kernel .config.  It \
-can be found at \`General architecture-dependent options > GCC plugins > \
-\Generate some entropy during boot and runtime\`."
-				fi
-				if linux_chkconfig_builtin \
-					"GCC_PLUGIN_RANDSTRUCT" ; then
-					die \
-"CONFIG_GCC_PLUGIN_RANDSTRUCT must be set to =n in the kernel .config.  It can \
-be found at \`General architecture-dependent options > GCC plugins > \
-\Randomize layout of sensitive kernel structures\`."
-				fi
 			fi
 		else
 			eerror
