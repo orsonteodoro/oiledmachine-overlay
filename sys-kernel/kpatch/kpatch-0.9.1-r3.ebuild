@@ -73,6 +73,7 @@ MODULES SYSFS UNUSED_SYMBOLS"
 
 src_prepare() {
 	replace-flags '-O?' '-O1'
+	replace-flags '-Ofast' '-O1'
 	default
 }
 
