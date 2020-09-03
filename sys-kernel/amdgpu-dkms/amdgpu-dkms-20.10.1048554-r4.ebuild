@@ -163,7 +163,7 @@ pkg_setup_warn() {
 		ewarn "CONFIG_DRM_AMDGPU (Graphics support > AMD GPU) must be compiled as a module (=m)."
 	fi
 
-	if [ ! -e "${ROOT}/usr/src/linux-${k}/Module.symvers" ] ; then
+	if [ ! -e "${EROOT}/usr/src/linux-${k}/Module.symvers" ] ; then
 		ewarn "Your kernel sources must have a Module.symvers in the root of the linux sources folder produced from a successful kernel compile beforehand in order to build this driver."
 	fi
 }
@@ -237,7 +237,7 @@ pkg_setup_error() {
 		die "CONFIG_DRM_AMDGPU (Graphics support > AMD GPU) must be compiled as a module (=m)."
 	fi
 
-	if [ ! -e "${ROOT}/usr/src/linux-${k}/Module.symvers" ] ; then
+	if [ ! -e "${EROOT}/usr/src/linux-${k}/Module.symvers" ] ; then
 		die "Your kernel sources must have a Module.symvers in the root folder produced from a successful kernel compile beforehand in order to build this driver."
 	fi
 }
