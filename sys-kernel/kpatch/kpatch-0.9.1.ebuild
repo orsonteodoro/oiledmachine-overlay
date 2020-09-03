@@ -10,8 +10,8 @@ SLOT="0"
 IUSE="contrib kmod +kpatch +kpatch-build test"
 RESTRICT="!test? ( test )"
 RDEPEND="app-crypt/pesign
-	 sys-libs/zlib
-	 sys-apps/pciutils"
+	 sys-apps/pciutils
+	 sys-libs/zlib"
 DEPEND="${RDEPEND}
 	dev-libs/elfutils
 	sys-devel/bison

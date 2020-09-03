@@ -18,13 +18,13 @@
 		up to date properly.
 	</longdescription>
 	<use>
-		<flag name="kpatch-build">Enable tools which convert a source
-			diff patch to a patch module.</flag>
-		<flag name="kpatch">Enable a command-line tool which allows a
-			user to manage a collection of patch modules.</flag>
+		<flag name="contrib">Enable contrib kpatch services files.</flag>
 		<flag name="kmod">Enable a kernel module (.ko file) which
 			provides an interface for the patch modules to register
 			new functions for replacement.</flag>
-		<flag name="contrib">Enable contrib kpatch services files.</flag>
+		<flag name="kpatch">Enable a command-line tool which allows a
+			user to manage a collection of patch modules.</flag>
+		<flag name="kpatch-build">Enable tools which convert a source
+			diff patch to a patch module.</flag>
 	</use>
 </pkgmetadata>
