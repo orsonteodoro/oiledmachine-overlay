@@ -5,13 +5,12 @@ EAPI="7"
 
 FETCH_VANILLA_SOURCES_BY_BRANCH=1
 K_LIVE_PATCHABLE=1
-K_GENPATCHES_VER="6"
-PATCH_BMQ_VER="5.7-r3"
+TEST_REWIND_SOURCES_BACK_TO="77fcb48939fc863d9ba9d808fac9000959e937d3" # 5.4.60
+K_GENPATCHES_VER="62"
+PATCH_BMQ_VER="5.4-r2"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
-PATCH_PROJC_VER="5.8-r1"
-SLOT=${PV}
 
-inherit ot-kernel-v5.8
+inherit ot-kernel-v5.4
 
 pkg_setup() {
 	ewarn "ebuild for testing purposes only.  do not use at this time."

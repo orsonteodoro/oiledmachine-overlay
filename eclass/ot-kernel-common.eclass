@@ -102,6 +102,7 @@ inherit ot-kernel-cve
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 RDEPEND+="dev-vcs/git
+	  sys-kernel/kpatch
 	  sys-kernel/livepatch-daemon"
 fi
 
@@ -751,7 +752,7 @@ function get_current_tag_for_k_major_minor_branch() {
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	d="${distdir}/ot-sources-src/linux"
 	pushd "${d}" 2>/dev/null 1>/dev/null || die
-		echo $(git tag | grep -E -e v${K_MAJOR_MINOR} | tail -n 1)
+		echo $(git --no-pager tag --points-at HEAD)
 	popd 2>/dev/null 1>/dev/null
 }
 
@@ -759,7 +760,7 @@ function get_current_commit_for_k_major_minor_branch() {
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	d="${distdir}/ot-sources-src/linux"
 	pushd "${d}" 2>/dev/null 1>/dev/null || die
-		echo $(git rev-parse linux-${K_MAJOR_MINOR}.y)
+		echo $(git rev-parse HEAD)
 	popd 2>/dev/null 1>/dev/null
 }
 
@@ -824,6 +825,9 @@ function ot-kernel-common_fetch_linux_sources() {
 			git checkout -b linux-${K_MAJOR_MINOR}.y origin/linux-${K_MAJOR_MINOR}.y
 		fi
 		git pull
+		if [[ -n "${TEST_REWIND_SOURCES_BACK_TO}" ]] ; then
+			git checkout ${TEST_REWIND_SOURCES_BACK_TO}
+		fi
 	fi
 	cd "${d}" || die
 }
@@ -1276,5 +1280,16 @@ to genkernel invocation.\n\
 
 	if declare -f ot-kernel-common_pkg_postinst_cb > /dev/null ; then
 		ot-kernel-common_pkg_postinst_cb
+	fi
+
+	if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
+		local sublevel=$(grep -F -e "SUBLEVEL =" \
+			"${ED}"/usr/src/linux-${K_MAJOR_MINOR}.9999-ot/Makefile \
+			| head -n 1 | cut -f 3 -d " ")
+		local machine=$(uname -m)
+		ewarn \
+"If you use dkms, you must manually set the symlink to the kernel modules \
+from /lib/modules/${K_MAJOR_MINOR}.${sublevel}-ot-${machine} to \
+/lib/modules/${K_MAJOR_MINOR}.9999-ot-${machine}"
 	fi
 }

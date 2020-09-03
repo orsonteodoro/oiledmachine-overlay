@@ -60,6 +60,7 @@ dev-dotnet/dotnetcore-sdk
 # Reserved for kernel live patching for branches
 # KLP ready is Work In Progress (WIP) for this package
 =sys-kernel/ot-sources-5.8.9999
+=sys-kernel/ot-sources-5.4.9999
 
 # Masked for security reasons
 #--------------------------------------------------------------------------------------------------
