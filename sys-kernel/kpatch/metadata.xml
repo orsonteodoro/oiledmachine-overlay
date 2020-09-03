@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<!-- only for this temporary ebuild fork on the oiledmachine overlay -->
+	<!-- only for this ebuild fork on the oiledmachine overlay -->
 	<maintainer type="person">
 		<name>Orson Teodoro</name>
 		<email>orsonteodoro@hotmail.com</email>
@@ -14,8 +14,6 @@
 		Dynamic kernel patching for the Linux kernel
 
 		This ebuild fork will track the latest release.
-		It may be removed anytime when gentoo overlay updates keep it
-		up to date properly.
 	</longdescription>
 	<use>
 		<flag name="contrib">Enable contrib kpatch services files.</flag>
