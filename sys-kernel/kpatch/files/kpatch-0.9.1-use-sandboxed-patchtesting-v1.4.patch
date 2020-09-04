@@ -1,0 +1,256 @@
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  20200903 (Unix timestamp 1599195647)
+Summary:  Replace buggy  patch -R  with sandboxed copy and remove --dry-run.
+Patch status:  Work in progress (WIP)
+
+patch -R does not work well with combinediff patches with split patches
+combined in one file of the same filename instead of one.  Using patch -R may
+complain about Unreversed patch detected!  Ignore -R? [n].
+
+The bug description about --dry-run:
+When you have two hunks one that creates a file and another hunk
+that modifies the same new file.  The dry-run actually is wrong (false
+positive) and the patch will cleanly apply when --dry-run is removed.
+
+current v1 design:
+v1.4 increased scope of sandbox from beginning to end to revert destructive changes to SRCDIR
+     removed buggy \`patch --dry-test\`.  All testing is done with actual patching in the sandbox.
+v1.3 bug fixes to variable expansion
+v1.2 sandbox removal on cleanup()
+v1: used sandbox for entire kernel source for patch testing
+
+abandoned v2 design:
+... see repo for full v2 version history
+v2: changed designed from save/restore to only affected files for performance and space savings
+
+diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/kpatch-build
+--- kpatch-0.9.1.orig/kpatch-build/kpatch-build	2020-03-11 07:02:33.000000000 -0700
++++ kpatch-0.9.1/kpatch-build/kpatch-build	2020-09-04 14:10:18.382631492 -0700
+@@ -42,6 +42,7 @@ ARCH="$(uname -m)"
+ CPUS="$(getconf _NPROCESSORS_ONLN)"
+ CACHEDIR="${CACHEDIR:-$HOME/.kpatch}"
+ SRCDIR="$CACHEDIR/src"
++SANDBOXED_SRCDIR=$(mktemp -d) # \`patch -R\` is bugged so use a sandbox
+ RPMTOPDIR="$CACHEDIR/buildroot"
+ VERSIONFILE="$CACHEDIR/version"
+ TEMPDIR="$CACHEDIR/tmp"
+@@ -119,34 +120,17 @@ apply_patches() {
+ 	local patch
+ 
+ 	for patch in "${PATCH_LIST[@]}"; do
+-		patch -N -p1 --dry-run < "$patch" 2>&1 | logger || die "$patch file failed to apply"
+ 		patch -N -p1 < "$patch" 2>&1 | logger || die "$patch file failed to apply"
+ 		(( APPLIED_PATCHES++ ))
+ 	done
+ }
+ 
+-remove_patches() {
+-	local patch
+-	local idx
+-
+-	for (( ; APPLIED_PATCHES>0; APPLIED_PATCHES-- )); do
+-		idx=$(( APPLIED_PATCHES - 1))
+-		patch="${PATCH_LIST[$idx]}"
+-		patch -p1 -R -d "$SRCDIR" < "$patch" &> /dev/null
+-	done
+-
+-	# If $SRCDIR was a git repo, make sure git actually sees that
+-	# we've reverted our patch(es).
+-	[[ -d "$SRCDIR/.git" ]] && (cd "$SRCDIR" && git update-index -q --refresh)
+-}
+-
+ cleanup() {
+-	rm -f "$SRCDIR/.scmversion"
+-
+-	remove_patches
++	echo "Called cleanup() trap callback"
+ 
+-	# restore original vmlinux if it was overwritten by sourcedir build
+-	[[ -e "$TEMPDIR/vmlinux" ]] && mv -f "$TEMPDIR/vmlinux" "$SRCDIR/"
++	if [[ -d "${SANDBOXED_SRCDIR}" ]] ; then
++		rm -rf "${SANDBOXED_SRCDIR}"
++	fi
+ 
+ 	[[ "$DEBUG" -eq 0 ]] && rm -rf "$TEMPDIR"
+ 	rm -rf "$RPMTOPDIR"
+@@ -604,6 +588,10 @@ fi
+ 
+ [[ -z "$TARGETS" ]] && TARGETS="vmlinux modules"
+ 
++# We need to use a sandbox and only make changes to that sandbox from the start.
++echo "Setting up sandbox for non-destructive edits."
++cp -aT "${SRCDIR}" "${SANDBOXED_SRCDIR}" || die
++
+ # Don't check external file.
+ # shellcheck disable=SC1090
+ [[ -f "$RELEASE_FILE" ]] && source "$RELEASE_FILE"
+@@ -637,7 +625,7 @@ if [[ -n "$USERSRCDIR" ]]; then
+ 	echo "Using source directory at $USERSRCDIR"
+ 
+ 	# save original vmlinux before it gets overwritten by sourcedir build
+-	if [[ -z "$OOT_MODULE" ]] && [[ "$VMLINUX" -ef "$SRCDIR"/vmlinux ]]; then
++	if [[ -z "$OOT_MODULE" ]] && [[ "$VMLINUX" -ef "${SANDBOXED_SRCDIR}"/vmlinux ]]; then
+ 		cp -f "$VMLINUX" "$TEMPDIR/vmlinux"
+ 		VMLINUX="$TEMPDIR/vmlinux"
+ 	fi
+@@ -647,8 +635,8 @@ if [[ -n "$USERSRCDIR" ]]; then
+ 		CONFIGFILE="/boot/config-${ARCHVERSION}"
+ 	fi
+ 
+-elif [[ -e "$SRCDIR"/.config ]] && [[ -e "$VERSIONFILE" ]] && [[ "$(cat "$VERSIONFILE")" = "$ARCHVERSION" ]]; then
+-	echo "Using cache at $SRCDIR"
++elif [[ -e "${SANDBOXED_SRCDIR}"/.config ]] && [[ -e "$VERSIONFILE" ]] && [[ "$(cat "$VERSIONFILE")" = "$ARCHVERSION" ]]; then
++	echo "Using cache at ${SANDBOXED_SRCDIR}"
+ 
+ else
+ 	if [[ "$DISTRO" = fedora ]] || [[ "$DISTRO" = rhel ]] || [[ "$DISTRO" = ol ]] || [[ "$DISTRO" = centos ]]; then
+@@ -674,19 +662,19 @@ else
+ 		rpmbuild -D "_topdir $RPMTOPDIR" -bp --nodeps "--target=$(uname -m)" "$RPMTOPDIR"/SPECS/kernel$ALT.spec 2>&1 | logger ||
+ 			die "rpmbuild -bp failed.  you may need to run 'yum-builddep kernel' first."
+ 
+-		mv "$RPMTOPDIR"/BUILD/kernel-*/linux-* "$SRCDIR" 2>&1 | logger || die
++		mv "$RPMTOPDIR"/BUILD/kernel-*/linux-* "${SANDBOXED_SRCDIR}" 2>&1 | logger || die
+ 		rm -rf "$RPMTOPDIR"
+-		rm -rf "$SRCDIR/.git"
++		rm -rf "${SANDBOXED_SRCDIR}/.git"
+ 
+ 		if [[ "$ARCHVERSION" == *-* ]]; then
+-			echo "-${ARCHVERSION##*-}" > "$SRCDIR/localversion" || die
++			echo "-${ARCHVERSION##*-}" > "${SANDBOXED_SRCDIR}/localversion" || die
+ 		fi
+ 
+ 		echo "$ARCHVERSION" > "$VERSIONFILE" || die
+ 
+-		[[ -z "$CONFIGFILE" ]] && CONFIGFILE="$SRCDIR/configs/kernel$ALT-$KVER-$ARCH.config"
++		[[ -z "$CONFIGFILE" ]] && CONFIGFILE="${SANDBOXED_SRCDIR}/configs/kernel$ALT-$KVER-$ARCH.config"
+ 
+-		(cd "$SRCDIR" && make mrproper 2>&1 | logger) || die
++		(cd "${SANDBOXED_SRCDIR}" && make mrproper 2>&1 | logger) || die
+ 
+ 	elif [[ "$DISTRO" = ubuntu ]] || [[ "$DISTRO" = debian ]]; then
+ 
+@@ -715,14 +703,14 @@ else
+ 		echo "Downloading and unpacking the kernel source for $ARCHVERSION"
+ 		# Download source deb pkg
+ 		(dget -u "$url/${pkgname}/${dscname}" 2>&1) | logger || die "dget: Could not fetch/unpack $url/${pkgname}/${dscname}"
+-		mv "${pkgname}-$KVER" "$SRCDIR" || die
++		mv "${pkgname}-$KVER" "${SANDBOXED_SRCDIR}" || die
+ 		[[ -z "$CONFIGFILE" ]] && CONFIGFILE="/boot/config-${ARCHVERSION}"
+ 		if [[ "$ARCHVERSION" == *-* ]]; then
+-			echo "-${ARCHVERSION#*-}" > "$SRCDIR/localversion" || die
++			echo "-${ARCHVERSION#*-}" > "${SANDBOXED_SRCDIR}/localversion" || die
+ 		fi
+ 		# for some reason the Ubuntu kernel versions don't follow the
+ 		# upstream SUBLEVEL; they are always at SUBLEVEL 0
+-		sed -i "s/^SUBLEVEL.*/${sublevel}/" "$SRCDIR/Makefile" || die
++		sed -i "s/^SUBLEVEL.*/${sublevel}/" "${SANDBOXED_SRCDIR}/Makefile" || die
+ 		echo "$ARCHVERSION" > "$VERSIONFILE" || die
+ 
+ 	else
+@@ -730,9 +718,9 @@ else
+ 	fi
+ fi
+ 
+-[[ -z "$CONFIGFILE" ]] && CONFIGFILE="$SRCDIR"/.config
++[[ -z "$CONFIGFILE" ]] && CONFIGFILE="${SANDBOXED_SRCDIR}"/.config
+ [[ ! -e "$CONFIGFILE" ]] && die "can't find config file"
+-[[ ! "$CONFIGFILE" -ef "$SRCDIR"/.config ]] && cp -f "$CONFIGFILE" "$SRCDIR/.config"
++[[ ! "$CONFIGFILE" -ef "${SANDBOXED_SRCDIR}"/.config ]] && cp -f "$CONFIGFILE" "${SANDBOXED_SRCDIR}/.config"
+ 
+ # Build variables - Set some defaults, then adjust features
+ # according to .config and kernel version
+@@ -780,10 +768,13 @@ grep -q "CONFIG_GCC_PLUGIN_LATENT_ENTROP
+ grep -q "CONFIG_GCC_PLUGIN_RANDSTRUCT=y" "$CONFIGFILE" && die "kernel option 'CONFIG_GCC_PLUGIN_RANDSTRUCT' not supported"
+ 
+ echo "Testing patch file(s)"
+-cd "$SRCDIR" || die
++cd "${SANDBOXED_SRCDIR}" || die
+ verify_patch_files
+ apply_patches
+-remove_patches
++rm -rf "${SANDBOXED_SRCDIR}" || die
++mkdir -p "${SANDBOXED_SRCDIR}" || die
++cp -aT "${SRCDIR}" "${SANDBOXED_SRCDIR}" || die
++cd "${SANDBOXED_SRCDIR}" || die
+ 
+ cp -LR "$DATADIR/patch" "$TEMPDIR" || die
+ 
+@@ -813,7 +804,7 @@ apply_patches
+ mkdir -p "$TEMPDIR/orig" "$TEMPDIR/patched"
+ KPATCH_GCC_TEMPDIR="$TEMPDIR"
+ export KPATCH_GCC_TEMPDIR
+-KPATCH_GCC_SRCDIR="$SRCDIR"
++KPATCH_GCC_SRCDIR="${SANDBOXED_SRCDIR}"
+ export KPATCH_GCC_SRCDIR
+ # $TARGETS used as list, no quotes.
+ # shellcheck disable=SC2086
+@@ -832,14 +823,14 @@ if [[ ! -e "$TEMPDIR/changed_objs" ]]; t
+ 	die "no changed objects found"
+ fi
+ 
+-[[ -n "$OOT_MODULE" ]] || grep -q vmlinux "$SRCDIR/Module.symvers" || die "truncated $SRCDIR/Module.symvers file"
++[[ -n "$OOT_MODULE" ]] || grep -q vmlinux "${SANDBOXED_SRCDIR}/Module.symvers" || die "truncated ${SANDBOXED_SRCDIR}/Module.symvers file"
+ 
+ # Read as words, no quotes.
+ # shellcheck disable=SC2013
+ for i in $(cat "$TEMPDIR/changed_objs")
+ do
+ 	mkdir -p "$TEMPDIR/patched/$(dirname "$i")" || die
+-	cp -f "$SRCDIR/$i" "$TEMPDIR/patched/$i" || die
++	cp -f "${SANDBOXED_SRCDIR}/$i" "$TEMPDIR/patched/$i" || die
+ done
+ 
+ echo "Extracting new and modified ELF sections"
+@@ -881,7 +872,7 @@ for i in $FILES; do
+ 	[[ "$i" = usr/initramfs_data.o ]] && continue
+ 
+ 	mkdir -p "output/$(dirname "$i")"
+-	cd "$SRCDIR" || die
++	cd "${SANDBOXED_SRCDIR}" || die
+ 	find_kobj "$i"
+ 	cd "$TEMPDIR" || die
+ 	if [[ -e "orig/$i" ]]; then
+@@ -889,21 +880,21 @@ for i in $FILES; do
+ 			KOBJFILE_NAME=vmlinux
+ 			KOBJFILE_PATH="$VMLINUX"
+ 			SYMTAB="${TEMPDIR}/${KOBJFILE_NAME}.symtab"
+-			SYMVERS_FILE="$SRCDIR/Module.symvers"
++			SYMVERS_FILE="${SANDBOXED_SRCDIR}/Module.symvers"
+ 		elif [[ "$(basename "$KOBJFILE")" = "$(basename "$OOT_MODULE")" ]]; then
+ 			KOBJFILE_NAME="$(basename --suffix=.ko "$OOT_MODULE")"
+ 			KOBJFILE_PATH="$OOT_MODULE"
+ 			SYMTAB="${TEMPDIR}/module/${KOBJFILE_NAME}.symtab"
+ 			SYMVERS_FILE="$TEMPDIR/Module.symvers"
+ 			BUILDDIR="/lib/modules/$ARCHVERSION/build/"
+-			cp "$SRCDIR/Module.symvers" "$SYMVERS_FILE"
++			cp "${SANDBOXED_SRCDIR}/Module.symvers" "$SYMVERS_FILE"
+ 			awk '{ print $1 "\t" $2 "\t" $3 "\t" $4}' "${BUILDDIR}/Module.symvers" >> "$SYMVERS_FILE"
+ 		else
+ 			KOBJFILE_NAME=$(basename "${KOBJFILE%.ko}")
+ 			KOBJFILE_NAME="${KOBJFILE_NAME//-/_}"
+ 			KOBJFILE_PATH="${TEMPDIR}/module/$KOBJFILE"
+ 			SYMTAB="${KOBJFILE_PATH}.symtab"
+-			SYMVERS_FILE="$SRCDIR/Module.symvers"
++			SYMVERS_FILE="${SANDBOXED_SRCDIR}/Module.symvers"
+ 		fi
+ 
+ 		readelf -s --wide "$KOBJFILE_PATH" > "$SYMTAB"
+@@ -956,7 +947,7 @@ if [[ -z "$USERSRCDIR" ]] && [[ "$DISTRO
+ 	# UBUNTU: add UTS_UBUNTU_RELEASE_ABI to utsrelease.h after regenerating it
+ 	UBUNTU_ABI="${ARCHVERSION#*-}"
+ 	UBUNTU_ABI="${UBUNTU_ABI%-*}"
+-	echo "#define UTS_UBUNTU_RELEASE_ABI $UBUNTU_ABI" >> "$SRCDIR"/include/generated/utsrelease.h
++	echo "#define UTS_UBUNTU_RELEASE_ABI $UBUNTU_ABI" >> "${SANDBOXED_SRCDIR}"/include/generated/utsrelease.h
+ fi
+ 
+ cd "$TEMPDIR/output" || die
+@@ -977,7 +968,7 @@ fi
+ 
+ cd "$TEMPDIR/patch" || die
+ if [[ -z "$OOT_MODULE" ]]; then
+-	KPATCH_BUILD="$SRCDIR"
++	KPATCH_BUILD="${SANDBOXED_SRCDIR}"
+ else
+ 	KPATCH_BUILD="/lib/modules/$ARCHVERSION/build"
+ fi
+Only in kpatch-0.9.1/kpatch-build: kpatch-build.orig
