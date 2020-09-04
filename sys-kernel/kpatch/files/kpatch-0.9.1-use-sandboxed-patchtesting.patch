@@ -1,6 +1,7 @@
 Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
 Date:  20200903 (Unix timestamp 1599195647)
 Summary:  Replace buggy  patch -R  with sandboxed copy.
+Patch status:  Work in progress (WIP)
 
 patch -R does not work well with combinediff patches with split patches
 combined in one file of the same filename instead of one.  Using patch -R may
@@ -45,12 +46,12 @@ diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/
 -cd "$SRCDIR" || die
 +SANDBOXED_SRCDIR=$(mktemp -d) # \`patch -R\` is bugged so use a sandbox
 +cp -aT "${SRCDIR}" "${SANDBOXED_SRCDIR}" || die
-+cd "{$SANDBOXED_SRCDIR}" || die
++cd "${SANDBOXED_SRCDIR}" || die
  verify_patch_files
  apply_patches
 -remove_patches
 +rm -rf "${SANDBOXED_SRCDIR}" || die
-+mkdir -p "{$SANDBOXED_SRCDIR}" || die
++mkdir -p "${SANDBOXED_SRCDIR}" || die
 +cp -aT "${SRCDIR}" "${SANDBOXED_SRCDIR}" || die
 +cd "${SANDBOXED_SRCDIR}" || die
  
