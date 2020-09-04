@@ -62,6 +62,10 @@ dev-dotnet/dotnetcore-sdk
 =sys-kernel/ot-sources-5.8.9999
 =sys-kernel/ot-sources-5.4.9999
 
+# ebuild in development
+# Fixing major problems related to testing and restoring files.
+sys-kernel/kpatch
+
 # Masked for security reasons
 #--------------------------------------------------------------------------------------------------
 
