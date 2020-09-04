@@ -10,52 +10,39 @@ v2:  restore only affected files
 v1:  copy entire SRCDIR
 
 diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/kpatch-build
---- kpatch-0.9.1.orig/kpatch-build/kpatch-build	2020-09-03 21:27:51.332394681 -0700
-+++ kpatch-0.9.1/kpatch-build/kpatch-build	2020-09-03 21:59:34.617825970 -0700
-@@ -134,25 +134,12 @@ to modify the same new file triggers fal
- 	done
- }
+--- kpatch-0.9.1.orig/kpatch-build/kpatch-build	2020-09-03 23:25:11.098271942 -0700
++++ kpatch-0.9.1/kpatch-build/kpatch-build	2020-09-03 23:31:37.402973699 -0700
+@@ -43,6 +43,7 @@ ARCH="$(uname -m)"
+ CPUS="$(getconf _NPROCESSORS_ONLN)"
+ CACHEDIR="${CACHEDIR:-$HOME/.kpatch}"
+ SRCDIR="$CACHEDIR/src"
++PATCH_SANDBOX="$CACHEDIR/patchsandbox"
+ RPMTOPDIR="$CACHEDIR/buildroot"
+ VERSIONFILE="$CACHEDIR/version"
+ TEMPDIR="$CACHEDIR/tmp"
+@@ -119,6 +120,12 @@ verify_patch_files() {
+ apply_patches() {
+ 	local patch
  
--remove_patches() {
--	local patch
--	local idx
--
++	mkdir -p "${PATCH_SANDBOX}"
++
++	for f in $(cat "${PATCH_LIST[@]}" | grep -E -e "^[-][-][-]" | cut -f 2- -d "/" | sort | uniq | sed -e "/dev[/]null/d") ; do
++		cp -a "$SRCDIR/${f}" "${PATCH_SANDBOX}"
++	done
++
+ 	for patch in "${PATCH_LIST[@]}"; do
+ 		if [[ "${DIE_ON_PATCH_DRY_RUN}" == "1" ]] ; then
+ 			patch -N -p1 --dry-run < "$patch" 2>&1 | logger || die \
+@@ -138,11 +145,7 @@ remove_patches() {
+ 	local patch
+ 	local idx
+ 
 -	for (( ; APPLIED_PATCHES>0; APPLIED_PATCHES-- )); do
 -		idx=$(( APPLIED_PATCHES - 1))
 -		patch="${PATCH_LIST[$idx]}"
 -		patch -p1 -R -d "$SRCDIR" < "$patch" &> /dev/null
 -	done
--
--	# If $SRCDIR was a git repo, make sure git actually sees that
--	# we've reverted our patch(es).
--	[[ -d "$SRCDIR/.git" ]] && (cd "$SRCDIR" && git update-index -q --refresh)
--}
--
- cleanup() {
- 	rm -f "$SRCDIR/.scmversion"
++	cp -a "${PATCH_SANDBOX}" "${SRCDIR}"
  
--	remove_patches
-+	if [[ -d "$SANDBOXED_SRCDIR" ]] ; then
-+		rm -rf "$SANDBOXED_SRCDIR"
-+	fi
- 
- 	# restore original vmlinux if it was overwritten by sourcedir build
- 	[[ -e "$TEMPDIR/vmlinux" ]] && mv -f "$TEMPDIR/vmlinux" "$SRCDIR/"
-@@ -794,10 +781,15 @@ grep -q "CONFIG_GCC_PLUGIN_LATENT_ENTROP
- grep -q "CONFIG_GCC_PLUGIN_RANDSTRUCT=y" "$CONFIGFILE" && die "kernel option 'CONFIG_GCC_PLUGIN_RANDSTRUCT' not supported"
- 
- echo "Testing patch file(s)"
--cd "$SRCDIR" || die
-+SANDBOXED_SRCDIR=$(mktemp -d) # \`patch -R\` is bugged so use a sandbox
-+cp -aT "${SRCDIR}" "${SANDBOXED_SRCDIR}" || die
-+cd "{$SANDBOXED_SRCDIR}" || die
- verify_patch_files
- apply_patches
--remove_patches
-+rm -rf "${SANDBOXED_SRCDIR}" || die
-+mkdir -p "{$SANDBOXED_SRCDIR}" || die
-+cp -aT "${SRCDIR}" "${SANDBOXED_SRCDIR}" || die
-+cd "${SANDBOXED_SRCDIR}" || die
- 
- cp -LR "$DATADIR/patch" "$TEMPDIR" || die
- 
+ 	# If $SRCDIR was a git repo, make sure git actually sees that
+ 	# we've reverted our patch(es).
