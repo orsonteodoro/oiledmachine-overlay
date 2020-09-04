@@ -23,7 +23,7 @@ RESTRICT="mirror"
 PATCHES=( "${FILESDIR}/kpatch-0.9.1-downgrade-patch-dry-run-from-die-to-warn.patch"
 	  "${FILESDIR}/kpatch-0.9.1-use-sandboxed-patchtesting-v2.3.patch" )
 
-Apkg_setup() {
+pkg_setup() {
 	if use kpatch-build ; then
 # See kpatch-build/kpatch-build
 		CONFIG_CHECK=\
