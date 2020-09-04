@@ -16,7 +16,7 @@ DEPEND="${RDEPEND}
 	dev-libs/elfutils
 	sys-devel/bison
 	test? ( dev-util/shellcheck-bin )"
-#inherit flag-o-matic linux-mod
+inherit flag-o-matic linux-mod
 SRC_URI=\
 "https://github.com/dynup/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 RESTRICT="mirror"
