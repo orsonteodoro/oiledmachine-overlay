@@ -20,7 +20,7 @@ inherit flag-o-matic linux-mod
 SRC_URI=\
 "https://github.com/dynup/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 RESTRICT="mirror"
-PATCHES=( "${FILESDIR}/kpatch-0.9.1-use-sandboxed-patchtesting-v1.4.patch"
+PATCHES=( "${FILESDIR}/kpatch-0.9.1-use-sandboxed-patchtesting-v1.5.patch"
 	  "${FILESDIR}/kpatch-0.9.1-ERROR-to-WARNING-message.patch" )
 
 pkg_setup() {

@@ -13,6 +13,7 @@ that modifies the same new file.  The dry-run actually is wrong (false
 positive) and the patch will cleanly apply when --dry-run is removed.
 
 current v1 design:
+v1.5 clone / restore modified distro specific image
 v1.4 increased scope of sandbox from beginning to end to revert destructive changes to SRCDIR
      removed buggy \`patch --dry-test\`.  All testing is done with actual patching in the sandbox.
 v1.3 bug fixes to variable expansion
@@ -25,16 +26,18 @@ v2: changed designed from save/restore to only affected files for performance an
 
 diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/kpatch-build
 --- kpatch-0.9.1.orig/kpatch-build/kpatch-build	2020-03-11 07:02:33.000000000 -0700
-+++ kpatch-0.9.1/kpatch-build/kpatch-build	2020-09-04 14:10:18.382631492 -0700
-@@ -42,6 +42,7 @@ ARCH="$(uname -m)"
++++ kpatch-0.9.1/kpatch-build/kpatch-build	2020-09-04 16:19:16.416335088 -0700
+@@ -42,6 +42,9 @@ ARCH="$(uname -m)"
  CPUS="$(getconf _NPROCESSORS_ONLN)"
  CACHEDIR="${CACHEDIR:-$HOME/.kpatch}"
  SRCDIR="$CACHEDIR/src"
 +SANDBOXED_SRCDIR=$(mktemp -d) # \`patch -R\` is bugged so use a sandbox
++SANDBOXED_SRCDIR_DISTRO=$(mktemp -d)
++DISTRO_MODDED=0
  RPMTOPDIR="$CACHEDIR/buildroot"
  VERSIONFILE="$CACHEDIR/version"
  TEMPDIR="$CACHEDIR/tmp"
-@@ -119,34 +120,17 @@ apply_patches() {
+@@ -119,34 +122,20 @@ apply_patches() {
  	local patch
  
  	for patch in "${PATCH_LIST[@]}"; do
@@ -70,10 +73,13 @@ diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/
 +	if [[ -d "${SANDBOXED_SRCDIR}" ]] ; then
 +		rm -rf "${SANDBOXED_SRCDIR}"
 +	fi
++	if [[ -d "${SANDBOXED_SRCDIR_DISTRO}" ]] ; then
++		rm -rf "${SANDBOXED_SRCDIR_DISTRO}"
++	fi
  
  	[[ "$DEBUG" -eq 0 ]] && rm -rf "$TEMPDIR"
  	rm -rf "$RPMTOPDIR"
-@@ -604,6 +588,10 @@ fi
+@@ -604,6 +593,10 @@ fi
  
  [[ -z "$TARGETS" ]] && TARGETS="vmlinux modules"
  
@@ -84,7 +90,7 @@ diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/
  # Don't check external file.
  # shellcheck disable=SC1090
  [[ -f "$RELEASE_FILE" ]] && source "$RELEASE_FILE"
-@@ -637,7 +625,7 @@ if [[ -n "$USERSRCDIR" ]]; then
+@@ -637,7 +630,7 @@ if [[ -n "$USERSRCDIR" ]]; then
  	echo "Using source directory at $USERSRCDIR"
  
  	# save original vmlinux before it gets overwritten by sourcedir build
@@ -93,7 +99,7 @@ diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/
  		cp -f "$VMLINUX" "$TEMPDIR/vmlinux"
  		VMLINUX="$TEMPDIR/vmlinux"
  	fi
-@@ -647,8 +635,8 @@ if [[ -n "$USERSRCDIR" ]]; then
+@@ -647,8 +640,8 @@ if [[ -n "$USERSRCDIR" ]]; then
  		CONFIGFILE="/boot/config-${ARCHVERSION}"
  	fi
  
@@ -104,7 +110,7 @@ diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/
  
  else
  	if [[ "$DISTRO" = fedora ]] || [[ "$DISTRO" = rhel ]] || [[ "$DISTRO" = ol ]] || [[ "$DISTRO" = centos ]]; then
-@@ -674,19 +662,19 @@ else
+@@ -674,20 +667,21 @@ else
  		rpmbuild -D "_topdir $RPMTOPDIR" -bp --nodeps "--target=$(uname -m)" "$RPMTOPDIR"/SPECS/kernel$ALT.spec 2>&1 | logger ||
  			die "rpmbuild -bp failed.  you may need to run 'yum-builddep kernel' first."
  
@@ -127,9 +133,11 @@ diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/
 -		(cd "$SRCDIR" && make mrproper 2>&1 | logger) || die
 +		(cd "${SANDBOXED_SRCDIR}" && make mrproper 2>&1 | logger) || die
  
++		DISTRO_MODDED=1
  	elif [[ "$DISTRO" = ubuntu ]] || [[ "$DISTRO" = debian ]]; then
  
-@@ -715,14 +703,14 @@ else
+ 		echo "Debian/Ubuntu distribution detected"
+@@ -715,24 +709,25 @@ else
  		echo "Downloading and unpacking the kernel source for $ARCHVERSION"
  		# Download source deb pkg
  		(dget -u "$url/${pkgname}/${dscname}" 2>&1) | logger || die "dget: Could not fetch/unpack $url/${pkgname}/${dscname}"
@@ -146,8 +154,9 @@ diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/
 +		sed -i "s/^SUBLEVEL.*/${sublevel}/" "${SANDBOXED_SRCDIR}/Makefile" || die
  		echo "$ARCHVERSION" > "$VERSIONFILE" || die
  
++		DISTRO_MODDED=1
  	else
-@@ -730,9 +718,9 @@ else
+ 		die "Unsupported distribution"
  	fi
  fi
  
@@ -159,23 +168,35 @@ diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/
  
  # Build variables - Set some defaults, then adjust features
  # according to .config and kernel version
-@@ -780,10 +768,13 @@ grep -q "CONFIG_GCC_PLUGIN_LATENT_ENTROP
+@@ -779,11 +774,25 @@ grep -q "CONFIG_DEBUG_INFO_SPLIT=y" "$CO
+ grep -q "CONFIG_GCC_PLUGIN_LATENT_ENTROPY=y" "$CONFIGFILE" && die "kernel option 'CONFIG_GCC_PLUGIN_LATENT_ENTROPY' not supported"
  grep -q "CONFIG_GCC_PLUGIN_RANDSTRUCT=y" "$CONFIGFILE" && die "kernel option 'CONFIG_GCC_PLUGIN_RANDSTRUCT' not supported"
  
++if (( ${DISTRO_MODDED} == 1 )) ; then
++	echo "Cloning distro modded sandbox"
++	cp -aT "${SANDBOXED_SRCDIR}" "${SANDBOXED_SRCDIR_DISTRO}"
++fi
++
  echo "Testing patch file(s)"
 -cd "$SRCDIR" || die
 +cd "${SANDBOXED_SRCDIR}" || die
  verify_patch_files
  apply_patches
 -remove_patches
++echo "Clearing sandbox"
 +rm -rf "${SANDBOXED_SRCDIR}" || die
++echo "Preparing a new clean sandbox"
 +mkdir -p "${SANDBOXED_SRCDIR}" || die
-+cp -aT "${SRCDIR}" "${SANDBOXED_SRCDIR}" || die
++if (( ${DISTRO_MODDED} == 1 )) ; then
++	cp -aT "${SANDBOXED_SRCDIR_DISTRO}" "${SANDBOXED_SRCDIR}" || die
++else
++	cp -aT "${SRCDIR}" "${SANDBOXED_SRCDIR}" || die
++fi
 +cd "${SANDBOXED_SRCDIR}" || die
  
  cp -LR "$DATADIR/patch" "$TEMPDIR" || die
  
-@@ -813,7 +804,7 @@ apply_patches
+@@ -813,7 +822,7 @@ apply_patches
  mkdir -p "$TEMPDIR/orig" "$TEMPDIR/patched"
  KPATCH_GCC_TEMPDIR="$TEMPDIR"
  export KPATCH_GCC_TEMPDIR
@@ -184,7 +205,7 @@ diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/
  export KPATCH_GCC_SRCDIR
  # $TARGETS used as list, no quotes.
  # shellcheck disable=SC2086
-@@ -832,14 +823,14 @@ if [[ ! -e "$TEMPDIR/changed_objs" ]]; t
+@@ -832,14 +841,14 @@ if [[ ! -e "$TEMPDIR/changed_objs" ]]; t
  	die "no changed objects found"
  fi
  
@@ -201,7 +222,7 @@ diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/
  done
  
  echo "Extracting new and modified ELF sections"
-@@ -881,7 +872,7 @@ for i in $FILES; do
+@@ -881,7 +890,7 @@ for i in $FILES; do
  	[[ "$i" = usr/initramfs_data.o ]] && continue
  
  	mkdir -p "output/$(dirname "$i")"
@@ -210,7 +231,7 @@ diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/
  	find_kobj "$i"
  	cd "$TEMPDIR" || die
  	if [[ -e "orig/$i" ]]; then
-@@ -889,21 +880,21 @@ for i in $FILES; do
+@@ -889,21 +898,21 @@ for i in $FILES; do
  			KOBJFILE_NAME=vmlinux
  			KOBJFILE_PATH="$VMLINUX"
  			SYMTAB="${TEMPDIR}/${KOBJFILE_NAME}.symtab"
@@ -235,7 +256,7 @@ diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/
  		fi
  
  		readelf -s --wide "$KOBJFILE_PATH" > "$SYMTAB"
-@@ -956,7 +947,7 @@ if [[ -z "$USERSRCDIR" ]] && [[ "$DISTRO
+@@ -956,7 +965,7 @@ if [[ -z "$USERSRCDIR" ]] && [[ "$DISTRO
  	# UBUNTU: add UTS_UBUNTU_RELEASE_ABI to utsrelease.h after regenerating it
  	UBUNTU_ABI="${ARCHVERSION#*-}"
  	UBUNTU_ABI="${UBUNTU_ABI%-*}"
@@ -244,7 +265,7 @@ diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/
  fi
  
  cd "$TEMPDIR/output" || die
-@@ -977,7 +968,7 @@ fi
+@@ -977,7 +986,7 @@ fi
  
  cd "$TEMPDIR/patch" || die
  if [[ -z "$OOT_MODULE" ]]; then
@@ -253,4 +274,3 @@ diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/
  else
  	KPATCH_BUILD="/lib/modules/$ARCHVERSION/build"
  fi
-Only in kpatch-0.9.1/kpatch-build: kpatch-build.orig
