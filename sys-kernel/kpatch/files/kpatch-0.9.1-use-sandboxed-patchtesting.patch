@@ -44,15 +44,15 @@ diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/
  echo "Testing patch file(s)"
 -cd "$SRCDIR" || die
 +SANDBOXED_SRCDIR=$(mktemp -d) # \`patch -R\` is bugged so use a sandbox
-+cp -aT "$SRCDIR" "$SANDBOXED_SRCDIR" || die
-+cd "$SANDBOXED_SRCDIR" || die
++cp -aT "${SRCDIR}" "${SANDBOXED_SRCDIR}" || die
++cd "{$SANDBOXED_SRCDIR}" || die
  verify_patch_files
  apply_patches
 -remove_patches
-+rm -rf "$SANDBOXED_SRCDIR" || die
-+mkdir -p "$SANDBOXED_SRCDIR" || die
-+cp -aT "$SRCDIR" "$SANDBOXED_SRCDIR" || die
-+cd "$SANDBOXED_SRCDIR" || die
++rm -rf "${SANDBOXED_SRCDIR}" || die
++mkdir -p "{$SANDBOXED_SRCDIR}" || die
++cp -aT "${SRCDIR}" "${SANDBOXED_SRCDIR}" || die
++cd "${SANDBOXED_SRCDIR}" || die
  
  cp -LR "$DATADIR/patch" "$TEMPDIR" || die
  
