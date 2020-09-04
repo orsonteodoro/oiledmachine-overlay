@@ -1,0 +1,60 @@
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  20200903 (Unix timestamp 1599182366)
+Subject:  Add new kpatch-build script to downgrade dry-run failures from die to
+warn
+
+This address when you have two hunks one that creates a file and another hunk
+that modifies the same new file.  The dry-run actually is wrong (false
+positive) and the patch will cleanly apply when --dry-run is removed.
+
+diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/kpatch-build
+--- kpatch-0.9.1.orig/kpatch-build/kpatch-build	2020-03-11 07:02:33.000000000 -0700
++++ kpatch-0.9.1/kpatch-build/kpatch-build	2020-09-03 18:17:44.338612736 -0700
+@@ -36,6 +36,7 @@
+ 
+ set -o pipefail
+ 
++DIE_ON_PATCH_DRY_RUN=1
+ BASE="$PWD"
+ SCRIPTDIR="$(readlink -f "$(dirname "$(type -p "$0")")")"
+ ARCH="$(uname -m)"
+@@ -119,7 +120,15 @@ apply_patches() {
+ 	local patch
+ 
+ 	for patch in "${PATCH_LIST[@]}"; do
+-		patch -N -p1 --dry-run < "$patch" 2>&1 | logger || die "$patch file failed to apply"
++		if [[ "${DIE_ON_PATCH_DRY_RUN}" == "1" ]] ; then
++			patch -N -p1 --dry-run < "$patch" 2>&1 | logger || die \
++"$patch file failed to dry-run.  combinediff-ing a new file chunk with hunk \
++to modify the same new file triggers false positive.  Try --no-dry-run-dies."
++		else
++			patch -N -p1 --dry-run < "$patch" 2>&1 | logger || warn \
++"$patch file failed to dry-run.  combinediff-ing a new file chunk with hunk \
++to modify the same new file triggers false positive.  Try --no-dry-run-dies."
++		fi
+ 		patch -N -p1 < "$patch" 2>&1 | logger || die "$patch file failed to apply"
+ 		(( APPLIED_PATCHES++ ))
+ 	done
+@@ -456,9 +465,10 @@ usage() {
+ 	echo "		--skip-cleanup     Skip post-build cleanup" >&2
+ 	echo "		--skip-gcc-check   Skip gcc version matching check" >&2
+ 	echo "		                   (not recommended)" >&2
++	echo "          --no-dry-run-dies  Downgrade patch dry-run failure from die to warn" >&2
+ }
+ 
+-options="$(getopt -o ha:r:s:c:v:j:t:n:o:de: -l "help,archversion:,sourcerpm:,sourcedir:,config:,vmlinux:,jobs:,target:,name:,output:,oot-module:,debug,skip-gcc-check,skip-cleanup" -- "$@")" || die "getopt failed"
++options="$(getopt -o ha:r:s:c:v:j:t:n:o:de: -l "help,archversion:,sourcerpm:,sourcedir:,config:,vmlinux:,jobs:,target:,name:,output:,oot-module:,debug,skip-gcc-check,skip-cleanup,no-dry-run-dies" -- "$@")" || die "getopt failed"
+ 
+ eval set -- "$options"
+ 
+@@ -529,6 +539,10 @@ while [[ $# -gt 0 ]]; do
+ 		echo "WARNING: Skipping gcc version matching check (not recommended)"
+ 		SKIPGCCCHECK=1
+ 		;;
++	--no-dry-run-dies)
++		echo "Skipping dies on patch dry-runs"
++		DIE_ON_PATCH_DRY_RUN=0
++		;;
+ 	*)
+ 		[[ "$1" = "--" ]] && shift && continue
+ 		[[ ! -f "$1" ]] && die "patch file '$1' not found"

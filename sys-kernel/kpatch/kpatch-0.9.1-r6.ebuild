@@ -20,6 +20,7 @@ inherit flag-o-matic linux-mod
 SRC_URI=\
 "https://github.com/dynup/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 RESTRICT="mirror"
+PATCHES=( "${FILESDIR}/kpatch-0.9.1-downgrade-patch-dry-run-from-die-to-warn.patch" )
 
 pkg_setup() {
 	if use kpatch-build ; then
