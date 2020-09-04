@@ -1,0 +1,58 @@
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date:  20200903 (Unix timestamp 1599195647)
+Summary:  Replace buggy  patch -R  with sandboxed copy.
+
+patch -R does not work well with combinediff patches with split patches
+combined in one file of the same filename instead of one.  Using patch -R may
+complain about Unreversed patch detected!  Ignore -R? [n].
+
+diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/kpatch-build
+--- kpatch-0.9.1.orig/kpatch-build/kpatch-build	2020-09-03 21:27:51.332394681 -0700
++++ kpatch-0.9.1/kpatch-build/kpatch-build	2020-09-03 21:59:34.617825970 -0700
+@@ -134,25 +134,12 @@ to modify the same new file triggers fal
+ 	done
+ }
+ 
+-remove_patches() {
+-	local patch
+-	local idx
+-
+-	for (( ; APPLIED_PATCHES>0; APPLIED_PATCHES-- )); do
+-		idx=$(( APPLIED_PATCHES - 1))
+-		patch="${PATCH_LIST[$idx]}"
+-		patch -p1 -R -d "$SRCDIR" < "$patch" &> /dev/null
+-	done
+-
+-	# If $SRCDIR was a git repo, make sure git actually sees that
+-	# we've reverted our patch(es).
+-	[[ -d "$SRCDIR/.git" ]] && (cd "$SRCDIR" && git update-index -q --refresh)
+-}
+-
+ cleanup() {
+ 	rm -f "$SRCDIR/.scmversion"
+ 
+-	remove_patches
++	if [[ -d "$SANDBOXED_SRCDIR" ]] ; then
++		rm -rf "$SANDBOXED_SRCDIR"
++	fi
+ 
+ 	# restore original vmlinux if it was overwritten by sourcedir build
+ 	[[ -e "$TEMPDIR/vmlinux" ]] && mv -f "$TEMPDIR/vmlinux" "$SRCDIR/"
+@@ -794,10 +781,15 @@ grep -q "CONFIG_GCC_PLUGIN_LATENT_ENTROP
+ grep -q "CONFIG_GCC_PLUGIN_RANDSTRUCT=y" "$CONFIGFILE" && die "kernel option 'CONFIG_GCC_PLUGIN_RANDSTRUCT' not supported"
+ 
+ echo "Testing patch file(s)"
+-cd "$SRCDIR" || die
++SANDBOXED_SRCDIR=$(mktemp -d) # \`patch -R\` is bugged so use a sandbox
++cp -aT "${SRCDIR}" "${SANDBOXED_SRCDIR}" || die
++cd "{$SANDBOXED_SRCDIR}" || die
+ verify_patch_files
+ apply_patches
+-remove_patches
++rm -rf "${SANDBOXED_SRCDIR}" || die
++mkdir -p "{$SANDBOXED_SRCDIR}" || die
++cp -aT "${SRCDIR}" "${SANDBOXED_SRCDIR}" || die
++cd "${SANDBOXED_SRCDIR}" || die
+ 
+ cp -LR "$DATADIR/patch" "$TEMPDIR" || die
+ 
