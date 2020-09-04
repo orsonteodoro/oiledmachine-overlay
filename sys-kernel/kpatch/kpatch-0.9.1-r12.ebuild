@@ -16,14 +16,14 @@ DEPEND="${RDEPEND}
 	dev-libs/elfutils
 	sys-devel/bison
 	test? ( dev-util/shellcheck-bin )"
-inherit flag-o-matic linux-mod
+#inherit flag-o-matic linux-mod
 SRC_URI=\
 "https://github.com/dynup/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 RESTRICT="mirror"
 PATCHES=( "${FILESDIR}/kpatch-0.9.1-downgrade-patch-dry-run-from-die-to-warn.patch"
-	  "${FILESDIR}/kpatch-0.9.1-use-sandboxed-patchtesting-v2.2.patch" )
+	  "${FILESDIR}/kpatch-0.9.1-use-sandboxed-patchtesting-v2.3.patch" )
 
-pkg_setup() {
+Apkg_setup() {
 	if use kpatch-build ; then
 # See kpatch-build/kpatch-build
 		CONFIG_CHECK=\
