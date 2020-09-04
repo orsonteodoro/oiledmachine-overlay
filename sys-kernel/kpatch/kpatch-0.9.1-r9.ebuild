@@ -21,7 +21,7 @@ SRC_URI=\
 "https://github.com/dynup/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 RESTRICT="mirror"
 PATCHES=( "${FILESDIR}/kpatch-0.9.1-downgrade-patch-dry-run-from-die-to-warn.patch"
-	  "${FILESDIR}/kpatch-0.9.1-use-sandboxed-patchtesting.patch" )
+	  "${FILESDIR}/kpatch-0.9.1-use-sandboxed-patchtesting-v2.patch" )
 
 pkg_setup() {
 	if use kpatch-build ; then
