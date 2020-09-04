@@ -6,6 +6,7 @@ patch -R does not work well with combinediff patches with split patches
 combined in one file of the same filename instead of one.  Using patch -R may
 complain about Unreversed patch detected!  Ignore -R? [n].
 
+v2.2:  copy hidden files, fix copy
 v2.1:  delete sandbox on exit
 v2:  restore only affected files
 v1:  copy entire SRCDIR
@@ -43,7 +44,7 @@ diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/
 -		patch="${PATCH_LIST[$idx]}"
 -		patch -p1 -R -d "$SRCDIR" < "$patch" &> /dev/null
 -	done
-+	cp -a "${PATCH_SANDBOX}" "${SRCDIR}"
++	cp -aT "${PATCH_SANDBOX}" "${SRCDIR}"
  
  	# If $SRCDIR was a git repo, make sure git actually sees that
  	# we've reverted our patch(es).
