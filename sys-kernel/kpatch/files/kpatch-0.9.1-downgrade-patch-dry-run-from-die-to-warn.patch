@@ -9,7 +9,7 @@ positive) and the patch will cleanly apply when --dry-run is removed.
 
 diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/kpatch-build
 --- kpatch-0.9.1.orig/kpatch-build/kpatch-build	2020-03-11 07:02:33.000000000 -0700
-+++ kpatch-0.9.1/kpatch-build/kpatch-build	2020-09-03 18:17:44.338612736 -0700
++++ kpatch-0.9.1/kpatch-build/kpatch-build	2020-09-03 18:53:27.401232777 -0700
 @@ -36,6 +36,7 @@
  
  set -o pipefail
@@ -58,3 +58,16 @@ diff -urp kpatch-0.9.1.orig/kpatch-build/kpatch-build kpatch-0.9.1/kpatch-build/
  	*)
  		[[ "$1" = "--" ]] && shift && continue
  		[[ ! -f "$1" ]] && die "patch file '$1' not found"
+diff -urp kpatch-0.9.1.orig/man/kpatch-build.1 kpatch-0.9.1/man/kpatch-build.1
+--- kpatch-0.9.1.orig/man/kpatch-build.1	2020-03-11 07:02:33.000000000 -0700
++++ kpatch-0.9.1/man/kpatch-build.1	2020-09-03 18:55:04.125040732 -0700
+@@ -64,6 +64,9 @@ effect.
+    this option might result in unexpected changed objects
+    being detected.
+ 
++--no-dry-run-dies
++   Downgrades dies on patch dry-runs to warnings.
++
+ .SH SEE ALSO
+ kpatch(1)
+ .SH BUGS
