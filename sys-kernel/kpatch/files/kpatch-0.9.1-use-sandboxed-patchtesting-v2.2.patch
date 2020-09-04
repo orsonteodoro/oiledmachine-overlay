@@ -1,6 +1,7 @@
-Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
 Date:  20200903 (Unix timestamp 1599195647)
 Summary:  Replace buggy  patch -R  with sandboxed copy.
+Patch status:  Work in progress (WIP)
 
 patch -R does not work well with combinediff patches with split patches
 combined in one file of the same filename instead of one.  Using patch -R may

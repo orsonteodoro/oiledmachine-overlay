@@ -1,7 +1,8 @@
-Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Patch author:  Orson Teodoro <orsonteodoro@hotmail.com>
 Date:  20200903 (Unix timestamp 1599182366)
 Subject:  Add new kpatch-build script to downgrade dry-run failures from die to
 warn
+Patch status:  Complete
 
 This address when you have two hunks one that creates a file and another hunk
 that modifies the same new file.  The dry-run actually is wrong (false
