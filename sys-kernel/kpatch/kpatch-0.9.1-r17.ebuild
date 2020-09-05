@@ -21,7 +21,8 @@ SRC_URI=\
 "https://github.com/dynup/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 RESTRICT="mirror"
 PATCHES=( "${FILESDIR}/kpatch-0.9.1-use-sandboxed-patchtesting-v1.5.patch"
-	  "${FILESDIR}/kpatch-0.9.1-ERROR-to-WARNING-message.patch" )
+	  "${FILESDIR}/kpatch-0.9.1-ERROR-to-WARNING-message.patch"
+	  "${FILESDIR}/kpatch-0.9.1-skip-tmp-o-for-kpatch-gcc.patch" )
 
 pkg_setup() {
 	if use kpatch-build ; then
