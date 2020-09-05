@@ -17,6 +17,7 @@
 	</longdescription>
 	<use>
 		<flag name="contrib">Enable contrib kpatch services files.</flag>
+		<flag name="debug">Adds debug symbols for gdb coredump backtraces.</flag>
 		<flag name="kmod">Enable a kernel module (.ko file) which
 			provides an interface for the patch modules to register
 			new functions for replacement.</flag>

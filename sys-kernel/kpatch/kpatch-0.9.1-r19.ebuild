@@ -104,6 +104,7 @@ src_prepare() {
 		replace-flags '-O?' '-Og'
 		replace-flags '-Ofast' '-Og'
 		filter-flags -fomit-frame-pointer
+		filter-ldflags -s
 	else
 		replace-flags '-O?' '-O1'
 		replace-flags '-Ofast' '-O1'
