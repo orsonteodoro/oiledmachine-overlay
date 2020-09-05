@@ -92,7 +92,7 @@ eerror "and ensure the kernel has been built."
 }
 
 src_prepare() {
-	if use debug ; then
+	if ! use debug ; then
 		replace-flags '-O?' '-O1'
 		replace-flags '-Ofast' '-O1'
 		filter-flags -fomit-frame-pointer
