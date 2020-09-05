@@ -89,6 +89,14 @@ eerror "and ensure the kernel has been built."
 	ERROR_UNUSED_KSYMS=\
 "CONFIG_TRIM_UNUSED_KSYMS must be disabled in the kernel's config file"
 	check_extra_config
+
+	if use debug ; then
+		if [[ "${FEATURES}" =~ (nostrip|splitdebug) ]] ; then
+			:;
+		else
+			die "You must add either nostrip or splitdebug to per-package environmental variables FEATURES"
+		fi
+	fi
 }
 
 src_prepare() {
