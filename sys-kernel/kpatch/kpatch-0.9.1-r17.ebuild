@@ -22,7 +22,8 @@ SRC_URI=\
 RESTRICT="mirror"
 PATCHES=( "${FILESDIR}/kpatch-0.9.1-use-sandboxed-patchtesting-v1.5.patch"
 	  "${FILESDIR}/kpatch-0.9.1-ERROR-to-WARNING-message.patch"
-	  "${FILESDIR}/kpatch-0.9.1-skip-tmp-o-for-kpatch-gcc.patch" )
+	  "${FILESDIR}/kpatch-0.9.1-skip-tmp-o-for-kpatch-gcc.patch"
+	  "${FILESDIR}/kpatch-0.9.1-create-diff-object-null-dereference-check.patch" )
 
 pkg_setup() {
 	if use kpatch-build ; then

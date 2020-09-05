@@ -1,0 +1,22 @@
+diff -urp kpatch-0.9.1.orig/kpatch-build/create-diff-object.c kpatch-0.9.1/kpatch-build/create-diff-object.c
+--- kpatch-0.9.1.orig/kpatch-build/create-diff-object.c	2020-03-11 07:02:33.000000000 -0700
++++ kpatch-0.9.1/kpatch-build/create-diff-object.c	2020-09-05 11:57:51.835339410 -0700
+@@ -2059,7 +2059,7 @@ static void kpatch_regenerate_special_se
+ 		 * key.
+ 		 */
+ 		if (jump_table) {
+-			struct rela *code, *key;
++			struct rela *code = NULL, *key = NULL;
+ 			int i = 0;
+ 
+ 			list_for_each_entry(rela, &sec->relas, list) {
+@@ -2076,6 +2076,9 @@ static void kpatch_regenerate_special_se
+ 			if (i != 3)
+ 				ERROR("BUG: __jump_table has an unexpected format");
+ 
++			if (code == NULL || key == NULL)
++				continue;
++
+ 			/* inert tracepoints are harmless */
+ 			if (!strncmp(key->sym->name, "__tracepoint_", 13))
+ 				continue;
