@@ -103,7 +103,7 @@ inherit ot-kernel-cve
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 RDEPEND+="dev-vcs/git
 	  sys-kernel/kpatch
-	  sys-kernel/livepatch-daemon"
+	  sys-kernel/kpatch-daemon"
 fi
 
 DEPEND+=" dev-util/patchutils
