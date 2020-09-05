@@ -7,7 +7,7 @@ HOMEPAGE="https://github.com/dynup/kpatch"
 LICENSE="GPL-2+"
 KEYWORDS="~amd64"
 SLOT="0"
-IUSE="contrib kmod +kpatch +kpatch-build test"
+IUSE="contrib debug kmod +kpatch +kpatch-build test"
 RESTRICT="!test? ( test )"
 RDEPEND="app-crypt/pesign
 	 sys-apps/pciutils
@@ -91,8 +91,14 @@ eerror "and ensure the kernel has been built."
 }
 
 src_prepare() {
-	replace-flags '-O?' '-O1'
-	replace-flags '-Ofast' '-O1'
+	if use debug ; then
+		replace-flags '-O?' '-O1'
+		replace-flags '-Ofast' '-O1'
+		filter-flags -fomit-frame-pointer
+	else
+		replace-flags '-O?' '-Og'
+		replace-flags '-Ofast' '-Og'
+	fi
 	default
 }
 
