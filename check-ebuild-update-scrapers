@@ -112,7 +112,7 @@ repo_latest_version_get_boinc-bfgminer-gpu_pv() {
 repo_latest_version_get_black_pv() {
 	echo $(get_tags \
 https://github.com/psf/black.git \
-		| sed -e "s|b|_beta|g" -e "s|a|_alpha|" \
+		| sed -e "s|[0-9]b[0-9]|_beta|g" -e "s|[0-9]a[0-9]|_alpha|" \
 		| grep -G -e "^[0-9]" \
 		| tail -n 1)
 }
