@@ -1,0 +1,42 @@
+diff -urp gcr-3.36.0.orig/gcr/meson.build gcr-3.36.0/gcr/meson.build
+--- gcr-3.36.0.orig/gcr/meson.build	2020-03-11 00:09:56.000000000 -0700
++++ gcr-3.36.0/gcr/meson.build	2020-09-05 22:24:14.127089098 -0700
+@@ -233,6 +233,7 @@ gcr_ssh_askpass = executable('gcr-ssh-as
+   include_directories: config_h_dir,
+   install: true,
+   install_dir: get_option('libexecdir'),
++  name_suffix: get_option('abi'),
+ )
+ 
+ # Services
+diff -urp gcr-3.36.0.orig/meson_options.txt gcr-3.36.0/meson_options.txt
+--- gcr-3.36.0.orig/meson_options.txt	2020-03-11 00:09:56.000000000 -0700
++++ gcr-3.36.0/meson_options.txt	2020-09-05 22:27:11.453845602 -0700
+@@ -13,3 +13,8 @@ option('gtk_doc',
+   value: true,
+   description: 'Build the reference documentation (requires gtk-doc)',
+ )
++option('abi',
++  type: 'string',
++  value: '',
++  description: 'Sets the suffix for the binaries in an ABI installation',
++)
+diff -urp gcr-3.36.0.orig/ui/meson.build gcr-3.36.0/ui/meson.build
+--- gcr-3.36.0.orig/ui/meson.build	2020-03-11 00:09:56.000000000 -0700
++++ gcr-3.36.0/ui/meson.build	2020-09-05 22:24:15.927157665 -0700
+@@ -198,6 +198,7 @@ gcr_viewer = executable('gcr-viewer',
+   c_args: gcr_ui_cflags,
+   include_directories: config_h_dir,
+   install: true,
++  name_suffix: get_option('abi'),
+ )
+ 
+ i18n.merge_file(
+@@ -221,6 +222,7 @@ gcr_prompter = executable('gcr-prompter'
+   include_directories: config_h_dir,
+   install: true,
+   install_dir: get_option('libexecdir'),
++  name_suffix: get_option('abi'),
+ )
+ 
+ i18n.merge_file(
