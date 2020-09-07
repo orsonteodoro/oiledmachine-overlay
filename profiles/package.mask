@@ -1,6 +1,9 @@
 # Ebuilds currently in develpment
 #--------------------------------------------------------------------------------------------------
 
+# Need to fix linking bug
+>=media-sound/tizonia-0.22.0
+
 # the official milestone dependencies are deprecated (vibe, greenisland), use latest instead
 <liri-base/liri-meta-0.9.0_p20200524
 <liri-base/shell-0.9.0_p20200524
