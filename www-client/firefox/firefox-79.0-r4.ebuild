@@ -295,7 +295,7 @@ pkg_setup() {
 
 	local jobs=$(echo "${MAKEOPTS}" | grep -P -o -e "(-j|--jobs=)\s*[0-9]+" | sed -r -e "s#(-j|--jobs=)\s*##g")
 	local cores=$(nproc)
-	if (( $((${jobs}/2)) > $((${cores}/2)) )) ; then
+	if (( ${jobs} > $((${cores}/2)) )) ; then
 		ewarn "Firefox may lock up or freeze the computer if the N value in MAKEOPTS=\"-jN\" is greater than \$(nproc)/2"
 	fi
 
