@@ -42,7 +42,7 @@ REQUIRED_USE="chromecast? ( player python boost curl dbus google-music )
 # 3rd party repos may be required and be added to package.unmask.  Use
 # `layman -a <repo-name>` to add some of these overlays that hold these
 # packages:
-# =media-sound/tizonia-0.18.0::oiledmachine-overlay
+# =media-sound/tizonia-0.22.0-r3::oiledmachine-overlay
 # =dev-python/casttube-0.2.0::HomeAssistantRepository
 # =dev-python/fuzzywuzzy-0.12.0::gentoo
 # =dev-python/gmusicapi-12.1.1::palmer
@@ -54,6 +54,7 @@ REQUIRED_USE="chromecast? ( player python boost curl dbus google-music )
 # =dev-python/soundcloud-python-9999.20151015::oiledmachine-overlay
 # =dev-python/validictory-1.1.2::palmer
 # =media-libs/nestegg-9999.20190603::oiledmachine-overlay
+# * Use the newer version if possible.  The versions listed are examples.
 
 # The following should be added to package.accept_keywords or package.unmask
 # if you are using multilib with 32-bit:
@@ -343,58 +344,6 @@ src_install() {
 			|| die
 	fi
 	einstalldocs
-}
-
-trash() {
-	# fixes header mismatch
-	if ! multilib_is_native_abi ; then
-		insinto /usr/include/tizonia/
-		if use chromecast ; then
-			pushd clients/chromecast/libtizchromecast/src || die
-			doins tizchromecastctxtypes.h \
-				tizchromecastctx_c.h \
-				tizchromecast_c.h \
-				tizchromecastctx.hpp \
-				tizchromecast.hpp \
-				tizchromecasttypes.h
-			popd
-		fi
-		if use google-music ; then
-			pushd clients/gmusic/libtizgmusic/src || die
-			doins tizgmusic.hpp tizgmusic_c.h
-			popd
-		fi
-		if use iheart ; then
-			pushd clients/gmusic/libtiziheart/src || die
-			doins tiziheart.hpp tiziheart_c.h
-			popd
-		fi
-		if use plex ; then
-			pushd clients/plex/libtizplex/src || die
-			doins tizplex.hpp tizplex_c.h
-			popd
-		fi
-		if use soundcloud ; then
-			pushd clients/soundcloud/libtizsoundcloud/src || die
-			doins tizsoundcloud.hpp tizsoundcloud_c.h
-			popd
-		fi
-		if use spotify ; then
-			pushd clients/spotify/libtizspotify/src || die
-			doins tizspotify.hpp tizspotify_c.h
-			popd
-		fi
-		if use tunein ; then
-			pushd clients/tunein/libtiztunein/src || die
-			doins tiztunein.hpp tiztunein_c.h
-			popd
-		fi
-		if use youtube ; then
-			pushd clients/youtube/libtizyoutube/src || die
-			doins tizyoutube.hpp tizyoutube_c.h
-			popd
-		fi
-	fi
 }
 
 pkg_postrm() {
