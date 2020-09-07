@@ -208,7 +208,7 @@ src_configure() {
 		fi
 
 		if use lame ; then
-			plugins+=( mp3_decoder )
+			plugins+=( mp3_encoder )
 		fi
 
 		if use libsndfile ; then
@@ -216,7 +216,7 @@ src_configure() {
 		fi
 
 		if use mad ; then
-			plugins+=( mp3_encoder )
+			plugins+=( mp3_decoder )
 		fi
 
 		if use opus ; then
