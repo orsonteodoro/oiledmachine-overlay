@@ -24,7 +24,12 @@ start()
 	ebegin "Starting ${description}"
 
 	local _retval=$?
-	start-stop-daemon --start --quiet --pidfile ${PIDFILE} \
+	start-stop-daemon \
+		--start \
+		--group tizonia \
+		--user tizonia \
+		--quiet \
+		--pidfile ${PIDFILE} \
 		--exec /usr/bin/tizrmd -- --pid-file ${PIDFILE}
 	eend $?
 }

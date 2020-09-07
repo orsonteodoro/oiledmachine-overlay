@@ -29,8 +29,8 @@ REQUIRED_USE="chromecast? ( player python boost curl dbus google-music )
 	      openrc? ( dbus )
 	      player? ( boost python )
 	      plex? ( player python boost fuzzywuzzy curl )
-	      python? ( chromecast google-music iheart plex player
-			soundcloud spotify tunein youtube )
+	      python? ( || ( chromecast google-music iheart plex player
+			soundcloud spotify tunein youtube ) )
 	      !python? ( !chromecast !google-music !iheart !plex !player
 			!soundcloud !spotify !tunein !youtube )
 	      soundcloud? ( player python boost fuzzywuzzy curl )
@@ -143,6 +143,13 @@ _PATCHES=(
 	"${FILESDIR}/tizonia-0.22.0-modular-meson-build.patch"
 	"${FILESDIR}/tizonia-0.22.0-modular-meson-optional-python.patch"
 )
+
+pkg_setup() {
+	python_setup
+	# for service only
+	enewgroup ${PN}
+	enewuser ${PN} -1 -1 /var/lib/${PN} ${PN}
+}
 
 src_prepare() {
 	xdg_src_prepare
