@@ -166,10 +166,8 @@ is greater than \$(nproc)/2"
 }
 
 src_prepare() {
-	xdg_src_prepare
-	ewarn \
-"You may need to completely uninstall ${PN} before building this package."
 	default
+	xdg_src_prepare
 	eapply ${_PATCHES[@]}
 	multilib_copy_sources
 }
