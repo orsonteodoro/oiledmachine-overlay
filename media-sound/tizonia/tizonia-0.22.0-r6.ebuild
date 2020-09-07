@@ -281,13 +281,6 @@ src_configure() {
 			plugins+=( http_source )
 		fi
 
-		if multilib_is_native_abi ; then
-			sed -i -e "s|BOOST_PYTHON|${EPYTHON//./}|g" meson.build || die
-		else
-			# No multilib python on Gentoo
-			sed -i -e "s|BOOST_PYTHON||g" meson.build || die
-		fi
-
 		local emesonargs=(
 			-Dplugins=$(echo ${plugins[@]} | tr " " ",")
 			-Dclient-services=$(echo ${clients[@]} | tr " " ",")
