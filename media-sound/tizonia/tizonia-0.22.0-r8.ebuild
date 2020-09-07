@@ -9,11 +9,11 @@ HOMEPAGE="http://tizonia.org"
 LICENSE="LGPL-3.0+"
 KEYWORDS="~amd64 ~x86"
 PYTHON_COMPAT=( python3_{6,7,8} )
-inherit eutils flag-o-matic meson multilib-minimal python-single-r1 xdg
+inherit eutils flag-o-matic meson multilib-minimal python-single-r1 user xdg
 SLOT="0/${PV}"
-IUSE="+aac +alsa +bash-completion blocking-etb-ftb blocking-sendcommand
+IUSE="+aac +alsa +bash-completion -blocking-etb-ftb -blocking-sendcommand
  +boost +curl +dbus +file-io +flac +fuzzywuzzy +inproc-io
- mp4 +ogg +opus +lame +libsndfile +mad +mp3-metadata-eraser +mp2 +mpg123
+ +mp4 +ogg +opus +lame +libsndfile +mad +mp3-metadata-eraser +mp2 +mpg123
  +player +pulseaudio +python +sdl +icecast-client +icecast-server
  +iheart -test +vorbis +vpx +webm +zsh-completion openrc systemd
  +chromecast +google-music +plex +soundcloud +spotify +tunein +youtube"
