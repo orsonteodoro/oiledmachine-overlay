@@ -155,10 +155,13 @@ pkg_setup() {
 	enewgroup ${PN}
 	enewuser ${PN} -1 -1 /var/lib/${PN} ${PN}
 
-	local jobs=$(echo "${MAKEOPTS}" | grep -P -o -e "(-j|--jobs=)\s*[0-9]+" | sed -r -e "s#(-j|--jobs=)\s*##g")
+	local jobs=$(echo "${MAKEOPTS}" | grep -P -o -e "(-j|--jobs=)\s*[0-9]+" \
+			| sed -r -e "s#(-j|--jobs=)\s*##g")
 	local cores=$(nproc)
 	if (( ${jobs} > $((${cores}/2)) )) ; then
-		ewarn "${PN} may lock up or freeze the computer if the N value in MAKEOPTS=\"-jN\" is greater than \$(nproc)/2"
+		ewarn \
+"${PN} may lock up or freeze the computer if the N value in MAKEOPTS=\"-jN\" \
+is greater than \$(nproc)/2"
 	fi
 }
 
