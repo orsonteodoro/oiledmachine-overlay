@@ -231,7 +231,7 @@ diff -urp tizonia-openmax-il-0.22.0.orig/meson.build tizonia-openmax-il-0.22.0/m
  enabled_plugins = []
  foreach p: get_option('plugins')
 -   if (p == 'spotify' and enable_libspotify) or p != 'spotify'
-+   if (enable_curl and enable_clients and p == 'http_source' and enabled_client_services.length() > 0 and enable_clients)
++   if (enable_curl and enable_clients and p == 'http_source' and (enabled_client_services.length() > 0 or enable_icecast_client) and enable_clients)
 +      enabled_plugins += p
 +   elif (p == 'aac_decoder' and enable_aac)
 +      enabled_plugins += p
