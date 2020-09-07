@@ -182,7 +182,6 @@ src_configure() {
 		PKG_CONFIG="/usr/bin/$(get_abi_CHOST ${ABI})-pkg-config" \
 
 		local plugins=
-
 		use aac && plugins+=( aac_decoder )
 		use alsa && plugins+=( pcm_renderer_alsa )
 		use file-io && plugins+=( file_writer )
@@ -214,10 +213,9 @@ src_configure() {
 		use tunein && clients+=( tunein )
 		use youtube && clients+=( youtube )
 
-		if use icecast-client || use google-music || use iheart || use plex \
-			|| use soundcloud || use tunein || use youtube ; then
-			plugins+=( http_source )
-		fi
+		( use icecast-client || use google-music || use iheart || use plex \
+			|| use soundcloud || use tunein || use youtube ) \
+			&& plugins+=( http_source )
 
 		local emesonargs=(
 			-Dplugins=$(echo ${plugins[@]} | tr " " ",")
