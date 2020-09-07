@@ -52,7 +52,7 @@
     <flag name="icecast-server">Enables LAN icecast server feature.</flag>
     <flag name="test">Enables testing.</flag>
     <flag name="vorbis">Enables Vorbis support.</flag>
-    <flag name="vpx">Enables VPX support.</flag>
+    <flag name="vpx">Enables VP8 support.</flag>
     <flag name="webm">Enables WebM support.</flag>
     <flag name="zsh-completion">Installs zsh-completion script.</flag>
     <flag name="openrc">Installs OpenRC service files.</flag>
