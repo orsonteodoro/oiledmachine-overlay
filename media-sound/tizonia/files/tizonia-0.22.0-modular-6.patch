@@ -1,5 +1,6 @@
---- a/player/src/tizgraphfactory.cpp.orig	2019-03-13 16:05:10.000000000 -0700
-+++ b/player/src/tizgraphfactory.cpp	2019-08-03 21:27:40.227217963 -0700
+diff -urp tizonia-openmax-il-0.22.0.orig/player/src/tizgraphfactory.cpp tizonia-openmax-il-0.22.0/player/src/tizgraphfactory.cpp
+--- tizonia-openmax-il-0.22.0.orig/player/src/tizgraphfactory.cpp	2020-05-22 15:33:08.000000000 -0700
++++ tizonia-openmax-il-0.22.0/player/src/tizgraphfactory.cpp	2020-09-06 22:09:14.895813022 -0700
 @@ -35,15 +35,38 @@
  #include <boost/make_shared.hpp>
  #include <boost/filesystem.hpp>
@@ -30,7 +31,7 @@
  #include "decoders/tizoggflacgraph.hpp"
 +#endif
 +#endif
-+#ifdef HAVE_LIBSNDFILE
++#ifdef HAVE_PCM
  #include "decoders/tizpcmgraph.hpp"
 +#endif
 +#ifdef HAVE_MP2
@@ -39,12 +40,14 @@
  #include "tizprobe.hpp"
  #include "tizgraphfactory.hpp"
  
-@@ -64,21 +86,29 @@ tizgraph_ptr_t graph::factory::create_gr
+@@ -64,21 +87,30 @@ tizgraph_ptr_t graph::factory::create_gr
             tiz_domain_to_str (p->get_omx_domain ()));
    TIZ_LOG (TIZ_PRIORITY_DEBUG, "coding type : %s",
             tiz_audio_coding_to_str (p->get_audio_coding_type ()));
+-  if (p->get_omx_domain () == OMX_PortDomainAudio
++  if (0) ;
 +#ifdef HAVE_MP2
-   if (p->get_omx_domain () == OMX_PortDomainAudio
++  else if (p->get_omx_domain () == OMX_PortDomainAudio
        && p->get_audio_coding_type () == OMX_AUDIO_CodingMP2)
    {
      return boost::make_shared< tiz::graph::mpegdecoder >();
@@ -69,7 +72,7 @@
    else if (p->get_omx_domain () == OMX_PortDomainAudio
             && p->get_audio_coding_type () == OMX_AUDIO_CodingOPUS)
    {
-@@ -91,6 +121,10 @@ tizgraph_ptr_t graph::factory::create_gr
+@@ -91,6 +123,10 @@ tizgraph_ptr_t graph::factory::create_gr
          return boost::make_shared< tiz::graph::oggopusdecoder >();
        }
    }
@@ -80,7 +83,7 @@
    else if (p->get_omx_domain () == OMX_PortDomainAudio
             && p->get_audio_coding_type () == OMX_AUDIO_CodingFLAC)
    {
-@@ -105,16 +139,22 @@ tizgraph_ptr_t graph::factory::create_gr
+@@ -105,16 +141,22 @@ tizgraph_ptr_t graph::factory::create_gr
        return boost::make_shared< tiz::graph::flacdecoder >();
      }
    }
@@ -93,7 +96,7 @@
      return boost::make_shared< tiz::graph::vorbisdecoder >();
    }
 +#endif
-+#ifdef HAVE_LIBSNDFILE
++#ifdef HAVE_PCM
    else if (p->get_omx_domain () == OMX_PortDomainAudio
             && p->get_audio_coding_type () == OMX_AUDIO_CodingPCM)
    {

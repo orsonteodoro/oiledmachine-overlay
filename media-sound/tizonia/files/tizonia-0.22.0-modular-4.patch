@@ -1,6 +1,7 @@
---- a/player/src/tizprogramopts.cpp	2019-12-13 13:53:55.000000000 -0800
-+++ b/player/src/tizprogramopts.cpp	2020-01-15 22:54:17.877404785 -0800
-@@ -538,35 +538,51 @@ void tiz::programopts::print_usage_help
+diff -urp tizonia-openmax-il-0.22.0.orig/player/src/tizprogramopts.cpp tizonia-openmax-il-0.22.0/player/src/tizprogramopts.cpp
+--- tizonia-openmax-il-0.22.0.orig/player/src/tizprogramopts.cpp	2020-05-22 15:33:08.000000000 -0700
++++ tizonia-openmax-il-0.22.0/player/src/tizprogramopts.cpp	2020-09-06 02:01:11.626052511 -0700
+@@ -563,38 +563,56 @@ void tiz::programopts::print_usage_help
    std::cout << "  "
              << "openmax       Various OpenMAX IL query options."
              << "\n";
@@ -29,10 +30,10 @@
              << "soundcloud    SoundCloud options."
              << "\n";
 +#endif
-+#ifdef HAVE_DIRBLE
- //   std::cout << "  "
- //             << "dirble        Dirble options."
- //             << "\n";
++#ifdef HAVE_TUNEIN
+   std::cout << "  "
+             << "tunein        TuneIn options."
+             << "\n";
 +#endif
 +#ifdef HAVE_YOUTUBE
    std::cout << "  "
@@ -44,6 +45,11 @@
              << "plex          Plex options."
              << "\n";
 +#endif
++#ifdef HAVE_IHEART
+   std::cout << "  "
+             << "iheart        Iheart options."
+             << "\n";
++#endif
 +#ifdef HAVE_CHROMECAST
    std::cout << "  "
              << "chromecast    Chromecast options."
@@ -52,7 +58,7 @@
    std::cout << "  "
              << "proxy         Proxy server options."
              << "\n";
-@@ -1516,6 +1532,7 @@ void tiz::programopts::init_omx_options
+@@ -1647,6 +1665,7 @@ void tiz::programopts::init_omx_options
  
  void tiz::programopts::init_streaming_server_options ()
  {
@@ -60,7 +66,7 @@
    server_.add_options ()
        /* TIZ_CLASS_COMMENT: This is to avoid the clang formatter messing up
           these lines*/
-@@ -1559,10 +1576,12 @@ void tiz::programopts::init_streaming_se
+@@ -1686,10 +1705,12 @@ void tiz::programopts::init_streaming_se
              "station-genre") ("no-icy-metadata") ("bitrate-modes") (
              "sampling-rates")
              .convert_to_container< std::vector< std::string > > ();
@@ -73,7 +79,7 @@
    client_.add_options ()
        /* TIZ_CLASS_COMMENT: */
        ("station-id", po::value (&station_name_),
-@@ -1572,6 +1591,7 @@ void tiz::programopts::init_streaming_cl
+@@ -1699,6 +1720,7 @@ void tiz::programopts::init_streaming_cl
    all_streaming_client_options_
        = boost::assign::list_of ("station-id")
              .convert_to_container< std::vector< std::string > > ();
@@ -81,7 +87,7 @@
  }
  
  void tiz::programopts::init_spotify_options ()
-@@ -1669,6 +1689,7 @@ void tiz::programopts::init_spotify_opti
+@@ -1821,6 +1843,7 @@ void tiz::programopts::init_spotify_opti
  
  void tiz::programopts::init_gmusic_options ()
  {
@@ -89,7 +95,7 @@
    gmusic_.add_options ()
        /* TIZ_CLASS_COMMENT: */
        ("gmusic-user", po::value (&gmusic_user_),
-@@ -1753,10 +1774,12 @@ void tiz::programopts::init_gmusic_optio
+@@ -1905,10 +1928,12 @@ void tiz::programopts::init_gmusic_optio
              "gmusic-unlimited-feeling-lucky-station") (
              "gmusic-unlimited-promoted-tracks")
              .convert_to_container< std::vector< std::string > > ();
@@ -102,33 +108,33 @@
    scloud_.add_options ()
        /* TIZ_CLASS_COMMENT: */
        ("soundcloud-oauth-token", po::value (&scloud_oauth_token_),
-@@ -1793,10 +1816,12 @@ void tiz::programopts::init_scloud_optio
+@@ -1945,10 +1970,12 @@ void tiz::programopts::init_scloud_optio
              "soundcloud-tracks") ("soundcloud-playlists") (
              "soundcloud-genres") ("soundcloud-tags")
              .convert_to_container< std::vector< std::string > > ();
 +#endif
  }
  
- // void tiz::programopts::init_dirble_options ()
- // {
-+#ifdef HAVE_DIRBLE
- //   dirble_.add_options ()
- //       /* TIZ_CLASS_COMMENT: */
- //       ("dirble-api-key", po::value (&dirble_api_key_),
-@@ -1816,10 +1841,12 @@ void tiz::programopts::init_scloud_optio
- //       = boost::assign::list_of ("dirble-api-key") ("dirble-popular-stations") (
- //             "dirble-station") ("dirble-category") ("dirble-country")
- //             .convert_to_container< std::vector< std::string > > ();
+ void tiz::programopts::init_tunein_options ()
+ {
++#ifdef HAVE_TUNEIN
+   tunein_.add_options ()
+       /* TIZ_CLASS_COMMENT: */
+       ("tunein-search", po::value (&tunein_search_),
+@@ -1994,10 +2021,12 @@ void tiz::programopts::init_tunein_optio
+             "tunein-location") ("tunein-podcasts") ("tunein-trending") (
+             "tunein-keywords")
+             .convert_to_container< std::vector< std::string > > ();
 +#endif
- // }
+ }
  
  void tiz::programopts::init_youtube_options ()
  {
 +#ifdef HAVE_YOUTUBE
    youtube_.add_options ()
        /* TIZ_CLASS_COMMENT: */
-       ("youtube-audio-stream", po::value (&youtube_audio_stream_),
-@@ -1850,10 +1877,12 @@ void tiz::programopts::init_youtube_opti
+       ("youtube-api-key", po::value (&youtube_api_key_),
+@@ -2031,10 +2060,12 @@ void tiz::programopts::init_youtube_opti
              "youtube-audio-search") ("youtube-audio-mix-search") (
              "youtube-audio-channel-uploads") ("youtube-audio-channel-playlist")
              .convert_to_container< std::vector< std::string > > ();
@@ -141,15 +147,15 @@
    plex_.add_options ()
        /* TIZ_CLASS_COMMENT: */
        ("plex-server-base-url", po::value (&plex_base_url_),
-@@ -1886,6 +1915,7 @@ void tiz::programopts::init_plex_options
+@@ -2067,6 +2098,7 @@ void tiz::programopts::init_plex_options
              "plex-music-section") ("plex-audio-tracks") ("plex-audio-artist") (
              "plex-audio-album") ("plex-audio-playlist")
              .convert_to_container< std::vector< std::string > > ();
 +#endif
  }
  
- void tiz::programopts::init_input_uri_option ()
-@@ -1910,16 +1940,30 @@ uint32_t tiz::programopts::parse_command
+ void tiz::programopts::init_iheart_options ()
+@@ -2111,17 +2143,33 @@ uint32_t tiz::programopts::parse_command
    all.add (global_)
        .add (debug_)
        .add (omx_)
@@ -168,8 +174,8 @@
 +#ifdef HAVE_SOUNDCLOUD
        .add (scloud_)
 +#endif
-+#ifdef HAVE_DIRBLE
- //       .add (dirble_)
++#ifdef HAVE_TUNEIN
+       .add (tunein_)
 +#endif
 +#ifdef HAVE_YOUTUBE
        .add (youtube_)
@@ -177,10 +183,13 @@
 +#ifdef HAVE_PLEX
        .add (plex_)
 +#endif
++#ifdef HAVE_IHEART
+       .add (iheart_)
++#endif
        .add (input_);
    po::parsed_options parsed = po::command_line_parser (argc, argv)
                                    .options (all)
-@@ -1983,44 +2027,60 @@ int tiz::programopts::consume_global_opt
+@@ -2185,48 +2233,66 @@ int tiz::programopts::consume_global_opt
      {
        print_usage_feature (omx_);
      }
@@ -214,11 +223,11 @@
        print_usage_feature (scloud_);
      }
 +#endif
-+#ifdef HAVE_DIRBLE
- //     else if (0 == help_option_.compare ("dirble"))
- //     {
- //       print_usage_feature (dirble_);
- //     }
++#ifdef HAVE_TUNEIN
+     else if (0 == help_option_.compare ("tunein"))
+     {
+       print_usage_feature (tunein_);
+     }
 +#endif
 +#ifdef HAVE_YOUTUBE
      else if (0 == help_option_.compare ("youtube"))
@@ -232,6 +241,12 @@
        print_usage_feature (plex_);
      }
 +#endif
++#ifdef HAVE_IHEART
+     else if (0 == help_option_.compare ("iheart"))
+     {
+       print_usage_feature (iheart_);
+     }
++#endif
 +#ifdef HAVE_CHROMECAST
      else if (0 == help_option_.compare ("chromecast"))
      {
@@ -241,3 +256,5 @@
      else if (0 == help_option_.compare ("proxy"))
      {
        print_usage_feature (proxy_);
+Only in tizonia-openmax-il-0.22.0/player/src: tizprogramopts.cpp.orig
+Only in tizonia-openmax-il-0.22.0/player/src: tizprogramopts.cpp.rej

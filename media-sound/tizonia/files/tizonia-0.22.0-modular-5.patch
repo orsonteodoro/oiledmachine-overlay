@@ -1,6 +1,7 @@
---- b/player/src/tizplayapp.cpp	2020-03-08 14:18:54.000000000 -0700
-+++ a/player/src/tizplayapp.cpp	2020-04-06 04:18:22.026122977 -0700
-@@ -67,25 +67,41 @@
+diff -urp tizonia-openmax-il-0.22.0.orig/player/src/tizplayapp.cpp tizonia-openmax-il-0.22.0/player/src/tizplayapp.cpp
+--- tizonia-openmax-il-0.22.0.orig/player/src/tizplayapp.cpp	2020-05-22 15:33:08.000000000 -0700
++++ tizonia-openmax-il-0.22.0/player/src/tizplayapp.cpp	2020-09-06 23:01:09.596970146 -0700
+@@ -69,27 +69,45 @@
  #include "tizgraphtypes.hpp"
  #include "tizomxutil.hpp"
  #include <decoders/tizdecgraphmgr.hpp>
@@ -39,10 +40,14 @@
  #include <services/youtube/tizyoutubeconfig.hpp>
  #include <services/youtube/tizyoutubemgr.hpp>
 +#endif
++#ifdef HAVE_IHEART
+ #include <services/iheart/tiziheartconfig.hpp>
+ #include <services/iheart/tiziheartmgr.hpp>
++#endif
  
  #include "tizplayapp.hpp"
  
-@@ -505,54 +521,82 @@ void tiz::playapp::set_option_handlers (
+@@ -651,61 +669,93 @@ void tiz::playapp::set_option_handlers (
    // local audio decoding program options
    popts_.set_option_handler ("decode-local",
                               boost::bind (&tiz::playapp::decode_local, this));
@@ -86,6 +91,11 @@
    popts_.set_option_handler ("plex-stream",
                               boost::bind (&tiz::playapp::plex_stream, this));
 +#endif
++#ifdef HAVE_IHEART
+   // Iheart audio streaming client program options
+   popts_.set_option_handler ("iheart-stream",
+                              boost::bind (&tiz::playapp::iheart_stream, this));
++#endif
 +#ifdef HAVE_CHROMECAST
    // HTTP music streaming on Chromecast device
    popts_.set_option_handler (
@@ -121,11 +131,17 @@
        "plex-stream-chromecast",
        boost::bind (&tiz::playapp::plex_stream_chromecast, this));
 +#endif
++#ifdef HAVE_IHEART
+   // Iheart audio streaming on Chromecast device
+   popts_.set_option_handler (
+       "iheart-stream-chromecast",
+       boost::bind (&tiz::playapp::iheart_stream_chromecast, this));
++#endif
 +#endif
  }
  
  OMX_ERRORTYPE
-@@ -782,6 +826,7 @@ tiz::playapp::decode_local ()
+@@ -984,6 +1034,7 @@ tiz::playapp::decode_local ()
    return rc;
  }
  
@@ -133,7 +149,7 @@
  OMX_ERRORTYPE
  tiz::playapp::serve_stream ()
  {
-@@ -874,7 +919,9 @@ tiz::playapp::serve_stream ()
+@@ -1076,7 +1127,9 @@ tiz::playapp::serve_stream ()
  
    return rc;
  }
@@ -143,7 +159,7 @@
  OMX_ERRORTYPE
  tiz::playapp::decode_stream ()
  {
-@@ -911,6 +958,7 @@ tiz::playapp::decode_stream ()
+@@ -1113,6 +1166,7 @@ tiz::playapp::decode_stream ()
  
    return rc;
  }
@@ -151,7 +167,7 @@
  
  #ifdef HAVE_LIBSPOTIFY
  OMX_ERRORTYPE
-@@ -974,14 +1022,9 @@ tiz::playapp::spotify_stream ()
+@@ -1176,14 +1230,9 @@ tiz::playapp::spotify_stream ()
  
    return rc;
  }
@@ -167,7 +183,7 @@
  OMX_ERRORTYPE
  tiz::playapp::gmusic_stream ()
  {
-@@ -1038,7 +1081,9 @@ tiz::playapp::gmusic_stream ()
+@@ -1240,7 +1289,9 @@ tiz::playapp::gmusic_stream ()
  
    return rc;
  }
@@ -177,7 +193,7 @@
  OMX_ERRORTYPE
  tiz::playapp::scloud_stream ()
  {
-@@ -1081,7 +1126,9 @@ tiz::playapp::scloud_stream ()
+@@ -1283,7 +1334,9 @@ tiz::playapp::scloud_stream ()
  
    return rc;
  }
@@ -187,7 +203,7 @@
  OMX_ERRORTYPE
  tiz::playapp::tunein_stream ()
  {
-@@ -1126,7 +1173,9 @@ tiz::playapp::tunein_stream ()
+@@ -1328,7 +1381,9 @@ tiz::playapp::tunein_stream ()
  
    return rc;
  }
@@ -197,7 +213,7 @@
  OMX_ERRORTYPE
  tiz::playapp::youtube_stream ()
  {
-@@ -1170,7 +1219,9 @@ tiz::playapp::youtube_stream ()
+@@ -1372,7 +1427,9 @@ tiz::playapp::youtube_stream ()
  
    return rc;
  }
@@ -207,7 +223,7 @@
  OMX_ERRORTYPE
  tiz::playapp::plex_stream ()
  {
-@@ -1215,7 +1266,9 @@ tiz::playapp::plex_stream ()
+@@ -1460,7 +1517,9 @@ tiz::playapp::iheart_stream ()
  
    return rc;
  }
@@ -217,66 +233,65 @@
  OMX_ERRORTYPE
  tiz::playapp::http_stream_chromecast ()
  {
-@@ -1260,7 +1313,10 @@ tiz::playapp::http_stream_chromecast ()
- 
+@@ -1506,6 +1565,7 @@ tiz::playapp::http_stream_chromecast ()
    return rc;
  }
-+#endif
  
-+#ifdef HAVE_CHROMECAST
 +#ifdef HAVE_GMUSIC
  OMX_ERRORTYPE
  tiz::playapp::gmusic_stream_chromecast ()
  {
-@@ -1324,7 +1380,11 @@ tiz::playapp::gmusic_stream_chromecast (
+@@ -1569,7 +1629,9 @@ tiz::playapp::gmusic_stream_chromecast (
  
    return rc;
  }
 +#endif
-+#endif
  
-+#ifdef HAVE_CHROMECAST
 +#ifdef HAVE_SOUNDCLOUD
  OMX_ERRORTYPE
  tiz::playapp::scloud_stream_chromecast ()
  {
-@@ -1374,7 +1434,11 @@ tiz::playapp::scloud_stream_chromecast (
+@@ -1619,7 +1681,9 @@ tiz::playapp::scloud_stream_chromecast (
  
    return rc;
  }
 +#endif
-+#endif
  
-+#ifdef HAVE_CHROMECAST
 +#ifdef HAVE_TUNEIN
  OMX_ERRORTYPE
  tiz::playapp::tunein_stream_chromecast ()
  {
-@@ -1426,7 +1490,11 @@ tiz::playapp::tunein_stream_chromecast (
+@@ -1671,7 +1735,9 @@ tiz::playapp::tunein_stream_chromecast (
  
    return rc;
  }
 +#endif
-+#endif
  
-+#ifdef HAVE_CHROMECAST
 +#ifdef HAVE_YOUTUBE
  OMX_ERRORTYPE
  tiz::playapp::youtube_stream_chromecast ()
  {
-@@ -1476,7 +1544,11 @@ tiz::playapp::youtube_stream_chromecast
+@@ -1721,7 +1787,9 @@ tiz::playapp::youtube_stream_chromecast
  
    return rc;
  }
 +#endif
-+#endif
  
-+#ifdef HAVE_CHROMECAST
 +#ifdef HAVE_PLEX
  OMX_ERRORTYPE
  tiz::playapp::plex_stream_chromecast ()
  {
-@@ -1529,6 +1601,8 @@ tiz::playapp::plex_stream_chromecast ()
+@@ -1774,7 +1842,9 @@ tiz::playapp::plex_stream_chromecast ()
+ 
+   return rc;
+ }
++#endif
+ 
++#ifdef HAVE_IHEART
+ OMX_ERRORTYPE
+ tiz::playapp::iheart_stream_chromecast ()
+ {
+@@ -1824,6 +1894,8 @@ tiz::playapp::iheart_stream_chromecast (
  
    return rc;
  }
@@ -285,5 +300,3 @@
  
  void tiz::playapp::print_banner () const
  {
-Only in tizonia-openmax-il-0.21.0/player/src: tizplayapp.cpp.orig
-Only in tizonia-openmax-il-0.21.0/player/src: tizplayapp.cpp.rej

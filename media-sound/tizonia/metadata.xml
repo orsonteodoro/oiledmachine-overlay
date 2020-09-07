@@ -6,9 +6,10 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    Tizonia is a command line client with support for cloud streaming and local playback.
-    It also implements OpenMAX IL 1.2.  OpenMAX is a open standards, royalty free, 
-    multimedia acceleration and deployment C API for audio, video, still processing, codecs.
+    Tizonia is a command line client with support for cloud streaming and local
+    playback.  It also implements OpenMAX IL 1.2.  OpenMAX is a open standards,
+    royalty free, multimedia acceleration and deployment C API for audio,
+    video, still image processing, codecs.
   </longdescription>
   <upstream>
     <doc lang="en">http://docs.tizonia.org/</doc>
@@ -21,9 +22,12 @@
   <use>
     <flag name="aac">Enables AAC support.</flag>
     <flag name="alsa">Enables ALSA support.</flag>
-    <flag name="bash-completion">Enables installing the bash-completion script.</flag>
-    <flag name="blocking-etb-ftb">Enables conforming behavior for ETB and FTB APIs.</flag>
-    <flag name="blocking-sendcommand">Enables conforming behavior for SendCommand API.</flag>
+    <flag name="bash-completion">Enables installing the bash-completion
+      script.</flag>
+    <flag name="blocking-etb-ftb">Enables conforming behavior for ETB and FTB
+      APIs.</flag>
+    <flag name="blocking-sendcommand">Enables conforming behavior for
+      SendCommand API.</flag>
     <flag name="boost">Enables boost support.</flag>
     <flag name="curl">Enables curl support.</flag>
     <flag name="dbus">Enables DBUS support.</flag>
@@ -37,7 +41,8 @@
     <flag name="lame">Enables LAME MP3 encoding.</flag>
     <flag name="libsndfile">Enables support for WAV, PCM, AU files.</flag>
     <flag name="mad">Enables MAD MP3 decoding.</flag>
-    <flag name="mp3-metadata-eraser">Enables building the icecast-server plugin to erase metadata before reaching clients.</flag>
+    <flag name="mp3-metadata-eraser">Enables building the icecast-server plugin
+      to erase metadata before reaching clients.</flag>
     <flag name="mp2">Enables building MP2 support.</flag>
     <flag name="mpg123">Enables dependency use of mpg123.</flag>
     <flag name="player">Enables the CLI player.</flag>
@@ -55,6 +60,7 @@
     <flag name="chromecast">Enables Chromecast support.</flag>
     <flag name="dirble">Enables Dirable service support.</flag>
     <flag name="google-music">Enables Google Music service support.</flag>
+    <flag name="iheart">Enables IHeartRadio service support.</flag>
     <flag name="plex">Enables Plex service support.</flag>
     <flag name="soundcloud">Enables SoundCloud service support.</flag>
     <flag name="spotify">Enables Spotify service support.</flag>
