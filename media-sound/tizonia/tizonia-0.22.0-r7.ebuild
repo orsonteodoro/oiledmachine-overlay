@@ -183,98 +183,36 @@ src_configure() {
 
 		local plugins=
 
-		if use alsa ; then
-			plugins+=( pcm_renderer_alsa )
-		fi
-
-		if use aac ; then
-			plugins+=( aac_decoder )
-		fi
-
-		if use flac ; then
-			plugins+=( flac_decoder )
-		fi
-
-		if use file-io ; then
-			plugins+=( file_writer )
-		fi
-
-		if use icecast-server ; then
-			plugins+=( http_renderer )
-		fi
-
-		if use inproc-io ; then
-			plugins+=( inproc_reader inproc_writer )
-		fi
-
-		if use lame ; then
-			plugins+=( mp3_encoder )
-		fi
-
-		if use libsndfile ; then
-			plugins+=( pcm_decoder )
-		fi
-
-		if use mad ; then
-			plugins+=( mp3_decoder )
-		fi
-
-		if use opus ; then
-			plugins+=( opus_decoder opusfile_decoder )
-		fi
-
-		if use pulseaudio ; then
-			plugins+=( pcm_renderer_pa )
-		fi
-
-		if use mp3-metadata-eraser ; then
-			plugins+=( mp3_metadata )
-		fi
-
-		if use sdl ; then
-			plugins+=( yuv_renderer )
-		fi
-
-		if use vorbis ; then
-			plugins+=( vorbis_decoder )
-		fi
-
-		if use vpx ; then
-			plugins+=( vp8_decoder )
-		fi
-
-		if use webm ; then
-			plugins+=( webm_demuxer )
-		fi
+		use aac && plugins+=( aac_decoder )
+		use alsa && plugins+=( pcm_renderer_alsa )
+		use file-io && plugins+=( file_writer )
+		use flac && plugins+=( flac_decoder )
+		use icecast-server && plugins+=( http_renderer )
+		use inproc-io && plugins+=( inproc_reader inproc_writer )
+		use lame && plugins+=( mp3_encoder )
+		use libsndfile && plugins+=( pcm_decoder )
+		use mad && plugins+=( mp3_decoder )
+		use mp3-metadata-eraser && plugins+=( mp3_metadata )
+		use opus && plugins+=( opus_decoder opusfile_decoder )
+		use pulseaudio && plugins+=( pcm_renderer_pa )
+		use sdl && plugins+=( yuv_renderer )
+		use vorbis && plugins+=( vorbis_decoder )
+		use vpx && plugins+=( vp8_decoder )
+		use webm && plugins+=( webm_demuxer )
 
 		local clients=
-		if use chromecast ; then
-			clients+=( chromecast )
-			plugins+=( chromecast_renderer )
-		fi
-
-		if use google-music ; then
-			clients+=( gmusic )
-		fi
-		if use iheart ; then
-			clients+=( iheart )
-		fi
-		if use plex ; then
-			clients+=( plex )
-		fi
-		if use soundcloud ; then
-			clients+=( soundcloud )
-		fi
-		if use spotify ; then
-			clients+=( spotify )
-			plugins+=( spotify )
-		fi
-		if use tunein ; then
-			clients+=( tunein )
-		fi
-		if use youtube ; then
-			clients+=( youtube )
-		fi
+		use chromecast \
+			&& clients+=( chromecast ) \
+			&& plugins+=( chromecast_renderer )
+		use google-music && clients+=( gmusic )
+		use iheart && clients+=( iheart )
+		use plex && clients+=( plex )
+		use soundcloud && clients+=( soundcloud )
+		use spotify \
+			&& clients+=( spotify ) \
+			&& plugins+=( spotify )
+		use tunein && clients+=( tunein )
+		use youtube && clients+=( youtube )
 
 		if use icecast-client || use google-music || use iheart || use plex \
 			|| use soundcloud || use tunein || use youtube ; then
