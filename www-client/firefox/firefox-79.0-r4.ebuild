@@ -293,10 +293,13 @@ pkg_setup() {
 	einfo
 	einfo "To set up cross-compile for other ABIs see \`epkginfo -d firefox\`"
 
-	local jobs=$(echo "${MAKEOPTS}" | grep -P -o -e "(-j|--jobs=)\s*[0-9]+" | sed -r -e "s#(-j|--jobs=)\s*##g")
+	local jobs=$(echo "${MAKEOPTS}" | grep -P -o -e "(-j|--jobs=)\s*[0-9]+" \
+			| sed -r -e "s#(-j|--jobs=)\s*##g")
 	local cores=$(nproc)
 	if (( ${jobs} > $((${cores}/2)) )) ; then
-		ewarn "Firefox may lock up or freeze the computer if the N value in MAKEOPTS=\"-jN\" is greater than \$(nproc)/2"
+		ewarn \
+"Firefox may lock up or freeze the computer if the N value in MAKEOPTS=\"-jN\" \
+is greater than \$(nproc)/2"
 	fi
 
 	if ! use pulseaudio ; then
