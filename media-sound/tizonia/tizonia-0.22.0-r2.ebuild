@@ -9,7 +9,7 @@ HOMEPAGE="http://tizonia.org"
 LICENSE="LGPL-3.0+"
 KEYWORDS="~amd64 ~x86"
 PYTHON_COMPAT=( python3_{6,7,8} )
-inherit eutils flag-o-matic meson multilib-minimal python-single-r1
+inherit eutils flag-o-matic meson multilib-minimal python-single-r1 xdg
 SLOT="0/${PV}"
 IUSE="+aac +alsa +bash-completion blocking-etb-ftb blocking-sendcommand
  +boost +curl +dbus +file-io +flac +fuzzywuzzy +inproc-io
@@ -27,12 +27,12 @@ REQUIRED_USE="chromecast? ( player python boost curl dbus google-music )
 	      mp3-metadata-eraser? ( mpg123 )
 	      ogg? ( curl )
 	      openrc? ( dbus )
-	      player? ( boost )
+	      player? ( boost python )
 	      plex? ( player python boost fuzzywuzzy curl )
-	      python? ( || ( chromecast google-music iheart plex soundcloud
-			spotify tunein youtube ) )
-	      !python? ( !chromecast !google-music !iheart !plex !soundcloud
-			!spotify !tunein !youtube )
+	      python? ( chromecast google-music iheart plex player
+			soundcloud spotify tunein youtube )
+	      !python? ( !chromecast !google-music !iheart !plex !player
+			!soundcloud !spotify !tunein !youtube )
 	      soundcloud? ( player python boost fuzzywuzzy curl )
 	      spotify? ( player python boost fuzzywuzzy )
 	      tunein? ( player python boost fuzzywuzzy curl )
@@ -138,11 +138,14 @@ _PATCHES=(
 	"${FILESDIR}/tizonia-0.22.0-modular-9.patch"
 	"${FILESDIR}/tizonia-0.22.0-modular-10.patch"
 	"${FILESDIR}/tizonia-0.22.0-modular-11.patch"
+	"${FILESDIR}/tizonia-0.22.0-modular-12.patch"
+	"${FILESDIR}/tizonia-0.22.0-modular-13.patch"
 	"${FILESDIR}/tizonia-0.22.0-modular-meson-build.patch"
 	"${FILESDIR}/tizonia-0.22.0-modular-meson-optional-python.patch"
 )
 
 src_prepare() {
+	xdg_src_prepare
 	ewarn \
 "You may need to completely uninstall ${PN} before building this package."
 	default
@@ -280,11 +283,13 @@ src_configure() {
 			$(meson_use blocking-sendcommand)
 			$(meson_use aac)
 			$(meson_use alsa)
+			$(meson_use curl)
 			$(meson_use dbus)
 			$(meson_use icecast-client)
 			$(meson_use icecast-server)
 			$(multilib_native_usex python -Dpython=true -Dpython=false)
 			$(multilib_native_usex player -Dplayer=true -Dplayer=false)
+			$(usex python -Dboost_python_version=${EPYTHON/./} -Dboost_python_version='')
 			$(usex bash-completion -Dbashcompletiondir=/usr/share/bash-completion/completions "")
 			$(usex zsh-completion -Dzshcompletiondir=/usr/share/zsh/vendor-completions "")
 		)
@@ -326,6 +331,10 @@ src_install() {
 		rm -rf "${D}"/usr/share/dbus-1/services/com.aratelia.tiz.rm.service \
 			|| die
 	fi
+	einstalldocs
+}
+
+trash() {
 	# fixes header mismatch
 	if ! multilib_is_native_abi ; then
 		insinto /usr/include/tizonia/
@@ -375,29 +384,29 @@ src_install() {
 			popd
 		fi
 	fi
-	einstalldocs
 }
 
 pkg_postrm() {
-	if use openrc ; then
+	if use dbus && use openrc ; then
 		einfo "For OpenRC support do:"
 		einfo "  rc-update add tizrmd"
 		einfo "  /etc/init.d/tizrmd start"
 	fi
-	if use systemd ; then
+	if use dbus && use systemd ; then
 		einfo "For systemd support do:"
 		einfo "	 systemctl enable com.aratelia.tiz.rm.service"
 		einfo "  systemctl start com.aratelia.tiz.rm.service"
 	fi
+	xdg_pkg_postrm
 }
 
 pkg_prerm() {
-	if use openrc ; then
+	if use dbus && use openrc ; then
 		einfo "For OpenRC support do:"
 		einfo "  /etc/init.d/tizrmd stop"
 		einfo "  rc-update delete tizrmd"
 	fi
-	if use systemd ; then
+	if use dbus && use systemd ; then
 		einfo "For systemd support do:"
 		einfo "  systemctl disable com.aratelia.tiz.rm.service"
 		einfo "  systemctl stop com.aratelia.tiz.rm.service"
