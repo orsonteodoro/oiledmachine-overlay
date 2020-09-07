@@ -38,7 +38,10 @@ REQUIRED_USE="chromecast? ( player python boost curl dbus google-music )
 	      tunein? ( player python boost fuzzywuzzy curl )
 	      systemd? ( dbus )
 	      youtube? ( player python boost fuzzywuzzy curl )"
-# 3rd party repos may be required and add to package.unmask.  use layman -a
+
+# 3rd party repos may be required and be added to package.unmask.  Use
+# `layman -a <repo-name>` to add some of these overlays that hold these
+# packages:
 # =media-sound/tizonia-0.18.0::oiledmachine-overlay
 # =dev-python/casttube-0.2.0::HomeAssistantRepository
 # =dev-python/fuzzywuzzy-0.12.0::gentoo
@@ -52,7 +55,8 @@ REQUIRED_USE="chromecast? ( player python boost curl dbus google-music )
 # =dev-python/validictory-1.1.2::palmer
 # =media-libs/nestegg-9999.20190603::oiledmachine-overlay
 
-# keywords/unmask if using multilib with 32 bit
+# The following should be added to package.accept_keywords or package.unmask
+# if you are using multilib with 32-bit:
 # dev-libs/libspotify::oiledmachine-overlay
 # dev-libs/log4c::oiledmachine-overlay
 # media-libs/liboggz::oiledmachine-overlay
@@ -60,7 +64,7 @@ REQUIRED_USE="chromecast? ( player python boost curl dbus google-music )
 # media-libs/libmp4v2::oiledmachine-overlay
 # media-libs/libfishsound::oiledmachine-overlay
 
-# masks if using multilib with 32 bit
+# The following require package.masks if using multilib with 32-bit:
 # dev-libs/libspotify::gentoo
 # dev-libs/libspotify::palmer
 # media-libs/liboggz::gentoo
