@@ -58,12 +58,12 @@
     <flag name="openrc">Installs OpenRC service files.</flag>
     <flag name="systemd">Installs systemd service files.</flag>
     <flag name="chromecast">Enables Chromecast support.</flag>
-    <flag name="dirble">Enables Dirable service support.</flag>
     <flag name="google-music">Enables Google Music service support.</flag>
     <flag name="iheart">Enables IHeartRadio service support.</flag>
     <flag name="plex">Enables Plex service support.</flag>
     <flag name="soundcloud">Enables SoundCloud service support.</flag>
     <flag name="spotify">Enables Spotify service support.</flag>
+    <flag name="tunein">Enables TuneIn service support.</flag>
     <flag name="youtube">Enables YouTube service support.</flag>
   </use>
 </pkgmetadata>
