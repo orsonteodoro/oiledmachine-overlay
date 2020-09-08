@@ -9,7 +9,7 @@ HOMEPAGE="http://tizonia.org"
 LICENSE="LGPL-3.0+"
 KEYWORDS="~amd64 ~x86"
 PYTHON_COMPAT=( python3_{6,7,8} )
-inherit eutils flag-o-matic meson multilib-minimal python-single-r1 user xdg
+inherit eutils flag-o-matic meson multilib-minimal python-single-r1 xdg
 SLOT="0/${PV}"
 IUSE="+aac +alsa +bash-completion -blocking-etb-ftb -blocking-sendcommand
  +boost +curl +dbus +file-io +flac +fuzzywuzzy +inproc-io
@@ -148,10 +148,6 @@ _PATCHES=(
 
 pkg_setup() {
 	python_setup
-	# for service only
-	enewgroup ${PN}
-	enewuser ${PN} -1 -1 /var/lib/${PN} ${PN}
-
 	local jobs=$(echo "${MAKEOPTS}" | grep -P -o -e "(-j|--jobs=)\s*[0-9]+" \
 			| sed -r -e "s#(-j|--jobs=)\s*##g")
 	local cores=$(nproc)
