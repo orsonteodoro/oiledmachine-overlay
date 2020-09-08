@@ -48,8 +48,8 @@
     <flag name="player">Enables the CLI player.</flag>
     <flag name="pulseaudio">Enables building PulseAudio support.</flag>
     <flag name="sdl">Enables SDL for viewing image or video playback.</flag>
-    <flag name="icecast-client">Enables LAN icecast client feature.</flag>
-    <flag name="icecast-server">Enables LAN icecast server feature.</flag>
+    <flag name="icecast-client">Enables LAN Icecast client feature.</flag>
+    <flag name="icecast-server">Enables LAN Icecast server feature.</flag>
     <flag name="test">Enables testing.</flag>
     <flag name="vorbis">Enables Vorbis support.</flag>
     <flag name="vpx">Enables VP8 support.</flag>
