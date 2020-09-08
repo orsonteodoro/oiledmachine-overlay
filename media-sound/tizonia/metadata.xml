@@ -29,8 +29,8 @@
     <flag name="blocking-sendcommand">Enables conforming behavior for
       SendCommand API.</flag>
     <flag name="boost">Enables boost support.</flag>
-    <flag name="curl">Enables curl support.</flag>
-    <flag name="dbus">Enables DBUS support.</flag>
+    <flag name="curl">Enables cURL support.</flag>
+    <flag name="dbus">Enables D-Bus support.</flag>
     <flag name="file-io">Enables file IO operations.</flag>
     <flag name="flac">Enables FLAC support.</flag>
     <flag name="fuzzywuzzy">Enables dependency use of fuzzywuzzy library.</flag>
