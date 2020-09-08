@@ -4,6 +4,9 @@
 # genkernel-9999        -> latest Git branch "master"
 # genkernel-VERSION     -> normal genkernel release
 
+# The original version of this ebuild is 4.1.2-r3 from the gentoo overlay
+# modified with subdir_mount and crypt_root_plain changes.
+
 EAPI="7"
 
 inherit bash-completion-r1
@@ -15,7 +18,7 @@ VERSION_BOOST="1.73.0"
 VERSION_BTRFS_PROGS="5.7"
 VERSION_BUSYBOX="1.32.0"
 VERSION_COREUTILS="8.32"
-VERSION_CRYPTSETUP="2.3.3"
+VERSION_CRYPTSETUP="2.3.4"
 VERSION_DMRAID="1.0.0.rc16-3"
 VERSION_DROPBEAR="2020.80"
 VERSION_EUDEV="3.2.9"
@@ -23,13 +26,13 @@ VERSION_EXPAT="2.2.9"
 VERSION_E2FSPROGS="1.45.6"
 VERSION_FUSE="2.9.9"
 VERSION_GPG="1.4.23"
-VERSION_HWIDS="20200306"
+VERSION_HWIDS="20200813.1"
 VERSION_ISCSI="2.0.878"
 VERSION_JSON_C="0.13.1"
 VERSION_KMOD="27"
 VERSION_LIBAIO="0.3.112"
 VERSION_LIBGCRYPT="1.8.6"
-VERSION_LIBGPGERROR="1.38"
+VERSION_LIBGPGERROR="1.39"
 VERSION_LVM="2.02.187"
 VERSION_LZO="2.10"
 VERSION_MDADM="4.1"
@@ -39,6 +42,7 @@ VERSION_THIN_PROVISIONING_TOOLS="0.8.5"
 VERSION_UNIONFS_FUSE="2.0"
 VERSION_UTIL_LINUX="2.36"
 VERSION_XFSPROGS="5.7.0"
+VERSION_XZ="5.2.5"
 VERSION_ZLIB="1.2.11"
 VERSION_ZSTD="1.4.5"
 
@@ -72,6 +76,7 @@ COMMON_URI="
 	https://github.com/rpodgorny/unionfs-fuse/archive/v${VERSION_UNIONFS_FUSE}.tar.gz -> unionfs-fuse-${VERSION_UNIONFS_FUSE}.tar.gz
 	https://www.kernel.org/pub/linux/utils/util-linux/v${VERSION_UTIL_LINUX:0:4}/util-linux-${VERSION_UTIL_LINUX}.tar.xz
 	https://www.kernel.org/pub/linux/utils/fs/xfs/xfsprogs/xfsprogs-${VERSION_XFSPROGS}.tar.xz
+	https://tukaani.org/xz/xz-${VERSION_XZ}.tar.gz
 	https://zlib.net/zlib-${VERSION_ZLIB}.tar.gz
 	https://github.com/facebook/zstd/archive/v${VERSION_ZSTD}.tar.gz -> zstd-${VERSION_ZSTD}.tar.gz
 "
@@ -181,6 +186,7 @@ src_prepare() {
 		-e "s:VERSION_USERSPACE_RCU:${VERSION_USERSPACE_RCU}:"\
 		-e "s:VERSION_UTIL_LINUX:${VERSION_UTIL_LINUX}:"\
 		-e "s:VERSION_XFSPROGS:${VERSION_XFSPROGS}:"\
+		-e "s:VERSION_XZ:${VERSION_XZ}:"\
 		-e "s:VERSION_ZLIB:${VERSION_ZLIB}:"\
 		-e "s:VERSION_ZSTD:${VERSION_ZSTD}:"\
 		"${S}"/defaults/software.sh \
@@ -287,12 +293,29 @@ pkg_postinst() {
 	fi
 
 	local n_root_args=$(grep -o -- '\<root=' /proc/cmdline 2>/dev/null | wc -l)
-	if [[ ${n_root_args} > 1 ]]; then
+	if [[ ${n_root_args} > 1 ]] ; then
 		ewarn "WARNING: Multiple root arguments (root=) on kernel command-line detected!"
 		ewarn "If you are appending non-persistent device names to kernel command-line,"
 		ewarn "next reboot could fail in case running system and initramfs do not agree"
 		ewarn "on detected root device name!"
 	fi
+
+	if [[ -d /run ]] ; then
+		local permission_run_expected="drwxr-xr-x"
+		local permission_run=$(stat -c "%A" /run)
+		if [[ "${permission_run}" != "${permission_run_expected}" ]] ; then
+			ewarn "Found the following problematic permissions:"
+			ewarn ""
+			ewarn "    ${permission_run} /run"
+			ewarn ""
+			ewarn "Expected:"
+			ewarn ""
+			ewarn "    ${permission_run_expected} /run"
+			ewarn ""
+			ewarn "This is known to be causing problems for any UDEV-enabled service."
+		fi
+	fi
+
 	elog
 	elog "The 4.x Genkernel patches for subdir_mount are"
 	elog "experimental and untested."
@@ -306,4 +329,3 @@ pkg_postinst() {
 	elog "Genkernel 4.x users should keep a backup of your old initramfs produced"
 	elog "by Genkernel 3.x just in case things go wrong."
 }
-
