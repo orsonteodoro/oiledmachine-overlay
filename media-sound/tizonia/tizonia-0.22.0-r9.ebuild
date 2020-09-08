@@ -6,7 +6,9 @@ DESCRIPTION="Command-line cloud music player for Linux with support for \
 Spotify, Google Play Music, YouTube, SoundCloud, TuneIn, IHeartRadio, Plex \
 servers and Chromecast devices."
 HOMEPAGE="http://tizonia.org"
-LICENSE="LGPL-3.0+"
+LICENSE="LGPL-3.0+
+	openrc? ( BSD-2 )"
+# BSD-2 applies only to the OpenRC init scripts files.  OpenRC uses BSD-2.
 KEYWORDS="~amd64 ~x86"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit eutils flag-o-matic meson multilib-minimal python-single-r1 user xdg
@@ -269,42 +271,78 @@ src_install() {
 	if use openrc ; then
 		dodir /etc/init.d
 		exeinto /etc/init.d
-		doexe "${FILESDIR}/tizrmd"
+		use dbus \
+		&& doexe "${FILESDIR}/tizrmd"
+		use chromecast \
+		&& doexe "${FILESDIR}/tizcastd"
 	fi
 	if use systemd ; then
 		dodir /usr/lib/systemd/system/
-		mv "${D}"/usr/share/dbus-1/services/com.aratelia.tiz.rm.service \
-			"${D}"/usr/lib/systemd/system/ || die
+		if use dbus ; then
+			mv "${ED}"/usr/share/dbus-1/services/com.aratelia.tiz.rm.service \
+				"${ED}"/usr/lib/systemd/system || die
+		fi
+		if use chromecast ; then
+			mv "${ED}"/usr/share/dbus-1/services/com.aratelia.tiz.cast.service \
+				"${ED}"/usr/lib/systemd/system || die
+		fi
 	else
-		rm -rf "${D}"/usr/share/dbus-1/services/com.aratelia.tiz.rm.service \
-			|| die
+		if [ -f "${ED}"/usr/share/dbus-1/services/com.aratelia.tiz.rm.service ] ; then
+			rm -rf "${ED}"/usr/share/dbus-1/services/com.aratelia.tiz.rm.service \
+				|| die
+		fi
+		if [ -f "${ED}"/usr/share/dbus-1/services/com.aratelia.tiz.cast.service ] ; then
+			rm -rf "${ED}"/usr/share/dbus-1/services/com.aratelia.tiz.cast.service \
+				|| die
+		fi
 	fi
 	einstalldocs
 }
 
-pkg_postrm() {
+pkg_postinst() {
 	if use dbus && use openrc ; then
 		einfo "For OpenRC support do:"
 		einfo "  rc-update add tizrmd"
 		einfo "  /etc/init.d/tizrmd start"
+	fi
+	if use chromecast && use openrc ; then
+		einfo "For OpenRC support do:"
+		einfo "  rc-update add tizcastd"
+		einfo "  /etc/init.d/tizcastd start"
 	fi
 	if use dbus && use systemd ; then
 		einfo "For systemd support do:"
 		einfo "	 systemctl enable com.aratelia.tiz.rm.service"
 		einfo "  systemctl start com.aratelia.tiz.rm.service"
 	fi
-	xdg_pkg_postrm
+	if use chromecast && use systemd ; then
+		einfo "For systemd support do:"
+		einfo "	 systemctl enable com.aratelia.tiz.cast.service"
+		einfo "  systemctl start com.aratelia.tiz.cast.service"
+	fi
+	xdg_pkg_postinst
 }
 
-pkg_prerm() {
+pkg_postrm() {
 	if use dbus && use openrc ; then
-		einfo "For OpenRC support do:"
+		einfo "To remove OpenRC support do:"
 		einfo "  /etc/init.d/tizrmd stop"
 		einfo "  rc-update delete tizrmd"
 	fi
+	if use chromecast && use openrc ; then
+		einfo "To remove OpenRC support do:"
+		einfo "  /etc/init.d/tizcastd stop"
+		einfo "  rc-update delete tizcastd"
+	fi
 	if use dbus && use systemd ; then
-		einfo "For systemd support do:"
+		einfo "To remove systemd support do:"
 		einfo "  systemctl disable com.aratelia.tiz.rm.service"
 		einfo "  systemctl stop com.aratelia.tiz.rm.service"
 	fi
+	if use chromecast && use systemd ; then
+		einfo "To remove systemd support do:"
+		einfo "  systemctl disable com.aratelia.tiz.cast.service"
+		einfo "  systemctl stop com.aratelia.tiz.cast.service"
+	fi
+	xdg_pkg_postrm
 }
