@@ -73,7 +73,7 @@ CLOSURE_COMPILER_SLOT="0"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit cmake-utils flag-o-matic java-utils-2 npm-secaudit python-single-r1 \
 	toolchain-funcs
-IUSE="asmjs +closure-compiler closure_compiler_java closure_compiler_native \
+IUSE="+closure-compiler closure_compiler_java closure_compiler_native \
 closure_compiler_nodejs +native-optimizer \
 system-closure-compiler test +wasm"
 # See also .circleci/config.yml
@@ -87,7 +87,6 @@ LLVM_V="12.0.0"
 BINARYEN_V="95"
 RDEPEND="${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
-	asmjs? ( ~dev-util/emscripten-fastcomp-${PV}:= )
 	closure-compiler? (
 		system-closure-compiler? ( \
 			>=dev-util/closure-compiler-npm-20200224:\
@@ -129,7 +128,7 @@ DEPEND="${RDEPEND}
 	)
 	>=virtual/jdk-${JAVA_V}"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
-	|| ( asmjs wasm )
+	wasm
 	closure_compiler_java? ( closure-compiler )
 	closure_compiler_native? ( closure-compiler )
 	closure_compiler_nodejs? ( closure-compiler )
@@ -243,19 +242,7 @@ prepare_file() {
 		die "could not adjust path for '${source_filename}'"
 	sed -i -e "s|\${PYTHON_EXE_ABSPATH}|${PYTHON_EXE_ABSPATH}|g" \
 		"${dest_dir}/${source_filename}" || die
-	if [[ "${type}" == "asmjs" ]] ; then
-		sed -i -e \
-"s|__EMSDK_LLVM_ROOT__|/usr/share/emscripten-fastcomp-${PV}/bin|" \
-		-e \
-"s|__EMCC_WASM_BACKEND__|0|" \
-		-e \
-"s|__LLVM_BIN_PATH__|/usr/share/emscripten-fastcomp-${PV}/bin|" \
-		-e \
-"s|\$(get_libdir)|$(get_libdir)|" \
-		-e \
-"s|\${BINARYEN_SLOT}|${BINARYEN_V}|" \
-		"${dest_dir}/${source_filename}" || die
-	elif [[ "${type}" == "wasm" ]] ; then
+	if [[ "${type}" == "wasm" ]] ; then
 		sed -i -e \
 "s|__EMSDK_LLVM_ROOT__|/usr/lib/llvm/${LLVM_SLOT}/bin|" \
 		-e \
@@ -343,7 +330,7 @@ gen_files() {
 }
 
 src_test() {
-	for t in asmjs wasm ; do
+	for t in wasm ; do
 		local enable_test=0
 		if [[ "${t}" == "wasm" ]] ; then
 			if use wasm ; then
@@ -351,16 +338,6 @@ src_test() {
 				gen_files "${t}"
 				if [[ "${EMCC_WASM_BACKEND}" != "1" ]] ; then
 					die "EMCC_WASM_BACKEND should be 1 with wasm"
-				fi
-				enable_test=1
-			fi
-		fi
-		if [[ "${t}" == "asmjs" ]]  ; then
-			if use asmjs ; then
-				einfo "Testing ${t}"
-				gen_files "${t}"
-				if [[ "${EMCC_WASM_BACKEND}" != "0" ]] ; then
-					die "EMCC_WASM_BACKEND should be 0 with asmjs"
 				fi
 				enable_test=1
 			fi
@@ -431,8 +408,6 @@ src_install() {
 pkg_postinst() {
 	if use wasm ; then
 		eselect emscripten set "emscripten-${PV} llvm-${LLVM_SLOT}"
-	elif use asmjs ; then
-		eselect emscripten set "emscripten-${PV} emscripten-fastcomp-${PV}"
 	fi
 	if use closure-compiler && ! use system-closure-compiler ; then
 		export NPM_SECAUDIT_INSTALL_PATH="${DEST}/${P}"
