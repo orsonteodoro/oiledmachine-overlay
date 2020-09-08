@@ -55,8 +55,6 @@
     <flag name="vpx">Enables VP8 support.</flag>
     <flag name="webm">Enables WebM support.</flag>
     <flag name="zsh-completion">Installs zsh-completion script.</flag>
-    <flag name="openrc">Installs OpenRC service files.</flag>
-    <flag name="systemd">Installs systemd service files.</flag>
     <flag name="chromecast">Enables Chromecast support.</flag>
     <flag name="google-music">Enables Google Music service support.</flag>
     <flag name="iheart">Enables IHeartRadio service support.</flag>
