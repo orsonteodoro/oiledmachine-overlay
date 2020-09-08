@@ -75,7 +75,7 @@ inherit cmake-utils flag-o-matic java-utils-2 npm-secaudit python-single-r1 \
 	toolchain-funcs
 IUSE="+closure-compiler closure_compiler_java closure_compiler_native \
 closure_compiler_nodejs +native-optimizer \
-system-closure-compiler test +wasm"
+system-closure-compiler test"
 # See also .circleci/config.yml
 # See also tools/shared.py EXPECTED_BINARYEN_VERSION
 JAVA_V="1.8"
@@ -105,11 +105,9 @@ ${CLOSURE_COMPILER_SLOT}\
 	)
 	dev-util/binaryen:${BINARYEN_V}
 	>=net-libs/nodejs-4.1.1
-	wasm? (
-		>=sys-devel/lld-${LLVM_V}
-		>=sys-devel/llvm-${LLVM_V}:=[llvm_targets_WebAssembly]
-		>=sys-devel/clang-${LLVM_V}:=[llvm_targets_WebAssembly]
-	)"
+	>=sys-devel/lld-${LLVM_V}
+	>=sys-devel/llvm-${LLVM_V}:=[llvm_targets_WebAssembly]
+	>=sys-devel/clang-${LLVM_V}:=[llvm_targets_WebAssembly]"
 # The java-utils-2 doesn't like nested conditionals.  The eclass needs at least
 # a virtual/jdk.  This package doesn't really need jdk to use closure-compiler
 # because packages are prebuilt.  If we have closure_compiler_native, we don't
@@ -128,7 +126,6 @@ DEPEND="${RDEPEND}
 	)
 	>=virtual/jdk-${JAVA_V}"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}
-	wasm
 	closure_compiler_java? ( closure-compiler )
 	closure_compiler_native? ( closure-compiler )
 	closure_compiler_nodejs? ( closure-compiler )
@@ -188,44 +185,36 @@ FEATURES"
 		fi
 	fi
 	python-single-r1_pkg_setup
-	if use wasm ; then
-		export HIGHEST_LLVM_SLOT=$(basename $(find "${EROOT}/usr/lib/llvm" -maxdepth 1 \
-			-regextype 'posix-extended' -regex ".*[0-9]+.*" \
-			| sort -V | tail -n 1))
-		for llvm_slot in $(seq $(ver_cut 1 ${LLVM_V}) ${HIGHEST_LLVM_SLOT}) ; do
-			if has_version "sys-devel/clang:${llvm_slot}[llvm_targets_WebAssembly]" \
-			&& has_version "sys-devel/llvm:${llvm_slot}[llvm_targets_WebAssembly]" ; then
-				export LLVM_SLOT="${llvm_slot}"
-				CXX="${EROOT}/usr/lib/llvm/${llvm_slot}/bin/clang++"
-				einfo "CXX=${CXX}"
-				if [[ ! -f "${CXX}" ]] ; then
-					die "CXX path is wrong and doesn't exist"
-				fi
-				lld_slot=$(ver_cut 1 $(wasm-ld --version \
-						| sed -e "s|LLD ||"))
+	export HIGHEST_LLVM_SLOT=$(basename $(find "${EROOT}/usr/lib/llvm" -maxdepth 1 \
+		-regextype 'posix-extended' -regex ".*[0-9]+.*" \
+		| sort -V | tail -n 1))
+	for llvm_slot in $(seq $(ver_cut 1 ${LLVM_V}) ${HIGHEST_LLVM_SLOT}) ; do
+		if has_version "sys-devel/clang:${llvm_slot}[llvm_targets_WebAssembly]" \
+		&& has_version "sys-devel/llvm:${llvm_slot}[llvm_targets_WebAssembly]" ; then
+			export LLVM_SLOT="${llvm_slot}"
+			CXX="${EROOT}/usr/lib/llvm/${llvm_slot}/bin/clang++"
+			einfo "CXX=${CXX}"
+			if [[ ! -f "${CXX}" ]] ; then
+				die "CXX path is wrong and doesn't exist"
+			fi
+			lld_slot=$(ver_cut 1 $(wasm-ld --version \
+					| sed -e "s|LLD ||"))
 # The lld slotting is broken.  See https://bugs.gentoo.org/691900
 # ldd lld shows that libLLVM-10.so => /usr/lib64/llvm/10/lib64/libLLVM-10.so but
 # but slot 10 doesn't have wasm and one of the other >=${LLVM_V} do have it and
 # tricking the RDEPENDs.  We need to make sure that =lld-${lld_slot}*
 # with =llvm-${lld_slot}*[llvm_targets_WebAssembly].
-				if ! has_version "sys-devel/clang:${lld_slot}[llvm_targets_WebAssembly]" \
-				|| ! has_version "sys-devel/llvm:${lld_slot}[llvm_targets_WebAssembly]" ; then
-					die \
+			if ! has_version "sys-devel/clang:${lld_slot}[llvm_targets_WebAssembly]" \
+			|| ! has_version "sys-devel/llvm:${lld_slot}[llvm_targets_WebAssembly]" ; then
+				die \
 "lld's corresponding version to clang and llvm versions must have\n\
 llvm_targets_WebAssembly.  Either upgrade lld to version ${LLVM_SLOT} or\n\
 rebuild with llvm:${lld_slot}[llvm_targets_WebAssembly] and\n\
 clang:${lld_slot}[llvm_targets_WebAssembly]"
-				fi
-				break
 			fi
-		done
-	else
-		if [[ ! -f /usr/share/emscripten-fastcomp-${PV}/bin/llc ]] ; then
-			die \
-"You need to install ~dev-util/emscripten-fastcomp-${PV}.  Only revision\n\
-updates acceptable."
+			break
 		fi
-	fi
+	done
 }
 
 # The activated_cfg goes in emscripten.config from the json file.
@@ -242,8 +231,7 @@ prepare_file() {
 		die "could not adjust path for '${source_filename}'"
 	sed -i -e "s|\${PYTHON_EXE_ABSPATH}|${PYTHON_EXE_ABSPATH}|g" \
 		"${dest_dir}/${source_filename}" || die
-	if [[ "${type}" == "wasm" ]] ; then
-		sed -i -e \
+	sed -i -e \
 "s|__EMSDK_LLVM_ROOT__|/usr/lib/llvm/${LLVM_SLOT}/bin|" \
 		-e \
 "s|__EMCC_WASM_BACKEND__|1|" \
@@ -254,7 +242,6 @@ prepare_file() {
 		-e \
 "s|\${BINARYEN_SLOT}|${BINARYEN_V}|" \
 		"${dest_dir}/${source_filename}" || die
-	fi
 	if ! use native-optimizer ; then
 		sed -i "/EMSCRIPTEN_NATIVE_OPTIMIZER/d" \
 			"${dest_dir}/${source_filename}" || die
@@ -330,55 +317,47 @@ gen_files() {
 }
 
 src_test() {
-	for t in wasm ; do
-		local enable_test=0
-		if [[ "${t}" == "wasm" ]] ; then
-			if use wasm ; then
-				einfo "Testing ${t}"
-				gen_files "${t}"
-				if [[ "${EMCC_WASM_BACKEND}" != "1" ]] ; then
-					die "EMCC_WASM_BACKEND should be 1 with wasm"
-				fi
-				enable_test=1
-			fi
+	einfo "Testing ${t}"
+	gen_files "${t}"
+	if [[ "${EMCC_WASM_BACKEND}" != "1" ]] ; then
+		die "EMCC_WASM_BACKEND should be 1 with wasm"
+	fi
+	if use test ; then
+		cp "${FILESDIR}/hello_world.cpp" "${TEST}" \
+			|| die "Could not copy example file"
+		sed -i -e "/^EMSCRIPTEN_ROOT/s|/usr/share/|${S}|" \
+			"${TEST}/emscripten.config" \
+			|| die "Could not adjust path for testing"
+		export EM_CONFIG="${TEST}/emscripten.config" \
+			|| die "Could not export variable"
+		local cc_cmd
+		if use closure_compiler_java ; then
+			cc_cmd="${EROOT}/usr/bin/closure-compiler-java"
+		elif use closure_compiler_nodejs ; then
+			cc_cmd="${EROOT}/usr/bin/closure-compiler-node"
+		elif use closure_compiler_native ; then
+			cc_cmd="${EROOT}/usr/bin/closure-compiler"
+		elif use closure-compiler ; then
+			cc_cmd="" # use defaults
 		fi
-		if [[ "${enable_test}" == "1" ]] && use test ; then
-			cp "${FILESDIR}/hello_world.cpp" "${TEST}" \
-				|| die "Could not copy example file"
-			sed -i -e "/^EMSCRIPTEN_ROOT/s|/usr/share/|${S}|" \
-				"${TEST}/emscripten.config" \
-				|| die "Could not adjust path for testing"
-			export EM_CONFIG="${TEST}/emscripten.config" \
-				|| die "Could not export variable"
-			local cc_cmd
-			if use closure_compiler_java ; then
-				cc_cmd="${EROOT}/usr/bin/closure-compiler-java"
-			elif use closure_compiler_nodejs ; then
-				cc_cmd="${EROOT}/usr/bin/closure-compiler-node"
-			elif use closure_compiler_native ; then
-				cc_cmd="${EROOT}/usr/bin/closure-compiler"
-			elif use closure-compiler ; then
-				cc_cmd="" # use defaults
-			fi
-			CLOSURE_COMPILER="${cc_cmd}" \
-			LLVM_ROOT="${EMSDK_LLVM_ROOT}" \
-			../"${P}/emcc" "${TEST}/hello_world.cpp" \
-				-o "${TEST}/hello_world.js" || \
-				die "Error during executing emcc!"
-			test -f "${TEST}/hello_world.js" \
-				|| die "Could not find '${TEST}/hello_world.js'"
-			OUT=$(/usr/bin/node "${TEST}/hello_world.js") || \
-				die "Could not execute /usr/bin/node"
-			EXP=$(echo -e -n 'Hello World!\n') \
-				|| die "Could not create expected string"
-			if [ "${OUT}" != "${EXP}" ]; then
-				die "Expected '${EXP}' but got '${OUT}'!"
-			fi
-			rm -r "${TEST}" || die "Could not clean-up '${TEST}'"
-			rm -r "${HOME}/.emscripten_cache" \
-				|| die "Could not clean up \${HOME}/.emscripten_cache"
+		CLOSURE_COMPILER="${cc_cmd}" \
+		LLVM_ROOT="${EMSDK_LLVM_ROOT}" \
+		../"${P}/emcc" "${TEST}/hello_world.cpp" \
+			-o "${TEST}/hello_world.js" || \
+			die "Error during executing emcc!"
+		test -f "${TEST}/hello_world.js" \
+			|| die "Could not find '${TEST}/hello_world.js'"
+		OUT=$(/usr/bin/node "${TEST}/hello_world.js") || \
+			die "Could not execute /usr/bin/node"
+		EXP=$(echo -e -n 'Hello World!\n') \
+			|| die "Could not create expected string"
+		if [ "${OUT}" != "${EXP}" ]; then
+			die "Expected '${EXP}' but got '${OUT}'!"
 		fi
-	done
+		rm -r "${TEST}" || die "Could not clean-up '${TEST}'"
+		rm -r "${HOME}/.emscripten_cache" \
+			|| die "Could not clean up \${HOME}/.emscripten_cache"
+	fi
 }
 
 src_install() {
@@ -406,9 +385,7 @@ src_install() {
 }
 
 pkg_postinst() {
-	if use wasm ; then
-		eselect emscripten set "emscripten-${PV} llvm-${LLVM_SLOT}"
-	fi
+	eselect emscripten set "emscripten-${PV} llvm-${LLVM_SLOT}"
 	if use closure-compiler && ! use system-closure-compiler ; then
 		export NPM_SECAUDIT_INSTALL_PATH="${DEST}/${P}"
 		npm-secaudit_pkg_postinst
