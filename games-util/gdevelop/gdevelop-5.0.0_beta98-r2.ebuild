@@ -41,7 +41,11 @@ RDEPEND="${RDEPEND}
 EMSCRIPTEN_MIN_V="1.39.6"
 DEPEND="${RDEPEND}
 	html5? (
-		>=dev-util/emscripten-${EMSCRIPTEN_MIN_V}[asmjs?,wasm?]
+		asmjs? (
+			>=dev-util/emscripten-${EMSCRIPTEN_MIN_V}[asmjs]
+			<dev-util/emscripten-2[asmjs]
+		)
+		wasm? ( >=dev-util/emscripten-${EMSCRIPTEN_MIN_V}[wasm(+)] )
 		<net-libs/nodejs-14
 		net-libs/nodejs[npm]
 	)
