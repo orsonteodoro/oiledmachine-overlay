@@ -358,8 +358,7 @@ src_install_html5() {
 	if [[ ! -d "Core/GDCore" ]] ; then
 		die "Missing Core/GDCore"
 	fi
-	# Can't use appimage because of systemd and no OpenRC support.
-	# Gentoo uses OpenRC by default.
+	# appimaged is still in testing
 	#
 	# We can't use .ico (image/vnd.microsoft.icon) because of XDG icon
 	# standards.  Not interoperable with Linux desktop.
