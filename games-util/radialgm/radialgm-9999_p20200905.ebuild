@@ -8,7 +8,7 @@ LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 IUSE="doc"
-ENIGMA_V="9999_p20200618"
+ENIGMA_V="9999_p20200829"
 RDEPEND="dev-cpp/yaml-cpp
 	 dev-libs/double-conversion
 	 dev-libs/libpcre2[pcre16]
@@ -30,7 +30,7 @@ RDEPEND="dev-cpp/yaml-cpp
 	 x11-libs/qscintilla
 	 virtual/jpeg"
 DEPEND="media-gfx/imagemagick[png]"
-EGIT_COMMIT="faff910d6398ab2660f45c512450f48d45b47099"
+EGIT_COMMIT="86bb197b3194579a9e96bc5ac350ce40696ef72e"
 SRC_URI=\
 "https://github.com/enigma-dev/RadialGM/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
@@ -40,6 +40,15 @@ S="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 DOCS=( README.md )
 CMAKE_BUILD_TYPE=Release
+
+pkg_setup() {
+	pushd /usr/$(get_libdir)/enigma/vanilla 2>/dev/null 1>/dev/null || die
+	LD_LIBRARY_PATH="$(pwd):${LD_LIBRARY_PATH}" ./emake --help | grep -q -F -e "--server"
+	if [[ "$?" != "0" ]] ; then
+		die "Your enigma is not built with --server.  Re-emerge with the radialgm USE flag."
+	fi
+	popd 2>/dev/null 1>/dev/null || die
+}
 
 src_prepare() {
 	cmake-utils_src_prepare
@@ -52,7 +61,7 @@ src_prepare() {
 src_configure() {
 	DIRS=$(find /usr/lib/gcc/ -name "libstdc++fs.a" -print0 | xargs -0 dirname | tr "\n" ":")
 	local mycmakeargs=(
-		-DEGM_BUILD_EMAKE=OFF
+		-DRGM_BUILD_EMAKE=OFF
 		-DCMAKE_INSTALL_PREFIX=/usr/$(get_libdir)/${MY_PN}
 	)
 	CMAKE_LIBRARY_PATH=\"${DIRS}\" \
