@@ -99,8 +99,7 @@ LICENSE+=" MIT examples? ( MIT ) extras? ( MIT )"
 
 # examples/pybullet/gym/pybullet_envs/agents # Apache-2.0
 # examples/pybullet/gym/pybullet_data/husky/husky.urdf # BSD
-LICENSE+=" python? ( Apache-2.0 BSD ) demos? ( Apache-2.0 BSD )"
-
+LICENSE+=" examples? ( Apache-2.0 BSD ) demos? ( Apache-2.0 BSD ) python? ( Apache-2.0 BSD )"
 
 # test/Bullet2/vectormath/neon/quat_aos.h
 # the ZLIB does not have all rights reserved but in the source it is explicitly
