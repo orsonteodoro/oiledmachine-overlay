@@ -15,3 +15,6 @@ media-gfx/sheepit-client disable-hard-version-blocks
 
 # Broken, poorly maintained through several versions of Blender
 media-gfx/blender cycles-network
+
+# Untested.  You may disable at your own risk
+games-misc/enigma android wine

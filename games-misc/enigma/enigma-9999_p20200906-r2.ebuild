@@ -21,6 +21,9 @@ inherit multilib-minimal
 # No code references but only on build files: libvorbis3, vorbisfile,
 # pulseaudio, libpulse
 # media-libs/libvorbis[${MULTILIB_USEDEP}] # line to be placed in openal RDEPEND
+#
+# The design for WINE support requires a chroot containing a mingw toolchain.
+# See https://wiki.gentoo.org/wiki/Mingw for details.
 RDEPEND="android? ( dev-util/android-ndk
 		    dev-util/android-sdk-update-manager )
 	 box2d? ( sci-physics/box2d[${MULTILIB_USEDEP}] )
@@ -67,7 +70,6 @@ RDEPEND="android? ( dev-util/android-ndk
 	 virtual/jpeg[${MULTILIB_USEDEP}]
 "
 REQUIRED_USE="
-	!android
 	gles? ( sdl2 )
 	gles2? ( gles opengl )
 	gles3? ( gles opengl )
