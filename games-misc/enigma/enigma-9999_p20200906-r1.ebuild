@@ -203,6 +203,9 @@ src_compile() {
 		ml_compile_abi() {
 			cd "${BUILD_DIR}" || die
 			# libpng-util lacks a main()
+			if use radialgm ; then
+				export CLI_ENABLE_SERVER=TRUE
+			fi
 			local targets=( ENIGMA emake gm2egm \
 					libProtocols libEGM gm2egm )
 			if use test ; then
@@ -211,7 +214,7 @@ src_compile() {
 			targets+=( .FORCE )
 			emake ${targets[@]}
 			if use radialgm ; then
-				emake ${targets[@]} emake CLI_ENABLE_SERVER=TRUE
+				unset CLI_ENABLE_SERVER
 			fi
 		}
 		multilib_foreach_abi ml_compile_abi
@@ -361,6 +364,7 @@ src_install() {
 	platform_install() {
 		cd "${BUILD_DIR}" || die
 		ml_install_abi() {
+			cd "${BUILD_DIR}" || die
 			if [[ "${EENIGMA}" == "vanilla" ]] \
 				&& ! multilib_is_native_abi; then
 				return
