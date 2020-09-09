@@ -168,7 +168,6 @@ NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="10"
 #   under "List of required run-time libraries"
 # Obtained from ldd
 IUSE+=" app-indicator global-menu-bar gnome-keyring libsecret unity pulseaudio"
-#       dlopen with cancelled processing if not found.  likely optional
 
 # Found in Chromium only
 # For optional fonts, see
