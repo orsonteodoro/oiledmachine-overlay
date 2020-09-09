@@ -201,7 +201,7 @@ src_install() {
 pkg_postinst() {
 	if use demos ; then
 		einfo
-		einfo "Top properly render the TwoJoint do:"
+		einfo "To properly render the TwoJoint do:"
 		einfo "  cd /usr/share/bullet/demos/data"
 		einfo \
 "  /usr/share/bullet/demos/examples/TwoJoint/App_TwoJoint-2.88"
