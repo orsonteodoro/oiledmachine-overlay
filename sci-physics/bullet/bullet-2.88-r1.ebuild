@@ -47,10 +47,6 @@ LICENSE+=" demos? ( TurboSquid-Royalty-Free-License )"
 # docs/pybullet_quickstart_guide/WordpressPreview/PreviewBlogPage.htm
 LICENSE+=" doc? ( BSD-2 BSD GPL-2+ )"
 
-# examples/ThirdPartyLibs/Eigen/src/SparseCholesky/SimplicialCholesky_impl.h
-# The LGPL-2.1+ does not have all rights reserved.
-LICENSE+=" examples? ( all-rights-reserved LGPL-2.1+ )"
-
 # examples/ThirdPartyLibs/openvr/bin/osx64/OpenVR.framework/Headers/openvr_api.cs
 # examples/ThirdPartyLibs/openvr/bin/osx64/OpenVR.framework/Headers/openvr_capi.h
 #  just contains all-rights-reserved but no mention of other license
@@ -98,17 +94,16 @@ LICENSE="examples? ( ZLIB ) test? ( ZLIB )"
 # src/clew/clew.h,
 LICENSE+=" MIT examples? ( MIT ) extras? ( MIT )"
 
-LICENSE+=" MPL-2.0" # some files in examples/ThirdPartyLibs/Eigen
 
 # examples/pybullet/gym/pybullet_envs/agents # Apache-2.0
 # examples/pybullet/gym/pybullet_data/husky/husky.urdf # BSD
 LICENSE+=" python? ( Apache-2.0 BSD ) demos? ( Apache-2.0 BSD )"
 
+
 # test/Bullet2/vectormath/neon/quat_aos.h
 # the ZLIB does not have all rights reserved but in the source it is explicitly
 #   stated
 LICENSE="test? ( all-rights-reserved ZLIB )"
-
 
 KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~amd64-linux ~x86-linux"
 PYTHON_COMPAT=( python3_{6,7,8} )
@@ -117,7 +112,11 @@ SRC_URI=\
 "https://github.com/bulletphysics/bullet3/archive/${PV}.tar.gz -> ${P}.tar.gz"
 SLOT="0/${PV}"
 IUSE="+bullet3 +demos doc -double-precision examples +extras +networking -numpy -python test"
-RDEPEND="media-libs/freeglut[${MULTILIB_USEDEP}]
+RDEPEND="demos? (
+		media-libs/mesa[${MULTILIB_USEDEP},egl]
+		x11-libs/libX11[${MULTILIB_USEDEP}]
+	 )
+	 media-libs/freeglut[${MULTILIB_USEDEP}]
 	 python? (
 		${PYTHON_DEPS}
 		numpy? ( dev-python/numpy[${PYTHON_USEDEP}] )
@@ -204,7 +203,7 @@ pkg_postinst() {
 		einfo "Top properly render the TwoJoint do:"
 		einfo "  cd /usr/share/bullet/demos/data"
 		einfo \
-"  /usr/share/bullet/demos/examples/TwoJoint/App_TwoJoint-2.89"
+"  /usr/share/bullet/demos/examples/TwoJoint/App_TwoJoint-2.88"
 		einfo
 		einfo "To properly render the pybullet models do:"
 		einfo "  cd /usr/share/bullet/demos/data"
