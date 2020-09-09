@@ -64,12 +64,8 @@ LICENSE+=" examples? ( BSD MIT )"
 # examples/ThirdPartyLibs/clsocket/src/ActiveSocket.h
 LICENSE+=" examples? ( BSD-4 )"
 
-# Extras/Serialize/makesdna/makesdna.cpp (First line says ZLIB for complete
-#   rewrite in C++ but some parts look the same as original)
 # examples/Importers/ImportBsp/BspLoader.cpp,
-# The GPL-2+ license does not contain all rights reserved but in the source it
-#   is explicit.
-LICENSE+=" examples? ( GPL-2+ ZLIB ) extras? ( all-rights-reserved GPL-2+ )"
+LICENSE+=" examples? ( GPL-2+ )"
 
 LICENSE+=" examples? ( Info-ZIP )" # examples/ThirdPartyLibs/minizip/unzip.c
 
@@ -88,6 +84,12 @@ LICENSE+=" examples? ( optionalX11-KP optionalX11-OG optionalX11-OG-DEC optional
 # examples/ThirdPartyLibs/openvr/samples/shared/lodepng.h
 # test/GwenOpenGLTest,
 LICENSE="examples? ( ZLIB ) test? ( ZLIB )"
+
+# Extras/Serialize/makesdna/makesdna.cpp (First line says ZLIB for complete
+#   rewrite in C++ but some parts look the same as original)
+# The GPL-2+ license does not contain all rights reserved but in the source it
+#   is explicit.
+LICENSE+=" extras? ( all-rights-reserved GPL-2+ ZLIB )"
 
 # build3/lcpp.lua,
 # Extras/VHACD/inc/vhacdMutex.h
