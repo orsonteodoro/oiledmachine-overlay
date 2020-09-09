@@ -10,7 +10,7 @@ SLOT="0"
 IUSE="libmaker +vanilla"
 SLOT_JOSHEDIT="1"
 inherit multilib-build
-RDEPEND="=dev-java/joshedit-1_p20190429*:${SLOT_JOSHEDIT}[lateralgm]
+RDEPEND="=dev-java/joshedit-1_p20200904*:${SLOT_JOSHEDIT}=[lateralgm]
 	 virtual/jre"
 DEPEND="${RDEPEND}
 	 virtual/jdk"
