@@ -13,7 +13,7 @@ DEPEND="maven? ( app-arch/zip \
 		dev-java/maven-bin )
 	virtual/jdk"
 PROJECT_NAME="JoshEdit"
-EGIT_COMMIT="dffac863ce212175b55c9a2c1ce7f6f784f4f2cf"
+EGIT_COMMIT="d50db861f57a142483fd44be2cd70fad929d1eba"
 SRC_URI=\
 "https://github.com/JoshDreamland/${PROJECT_NAME}/archive/${EGIT_COMMIT}.tar.gz\
 	-> ${P}.tar.gz"

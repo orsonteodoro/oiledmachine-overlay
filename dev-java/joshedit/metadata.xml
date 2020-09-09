@@ -20,4 +20,8 @@
     <flag name="maven">Build using Maven.  Requires you to add a per-package
       FEATURES="-network-sandbox".</flag>
   </use>
+  <slots>
+    <slot name="0">Reserved for vanilla JoshEdit.</slot>
+    <slot name="1">Reserved for LateralGM's fork.</slot>
+  </slot>
 </pkgmetadata>
