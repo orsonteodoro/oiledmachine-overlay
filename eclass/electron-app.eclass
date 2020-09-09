@@ -691,13 +691,13 @@ electron-app_fetch_deps_npm() {
 		local install_args=()
 		# Avoid adding fsevent (a MacOS dependency) which may require older node
 		if [[ -e "yarn.lock" ]] ; then
-			grep -F -e "chokidar" "yarn.lock" \
+			grep -q -F -e "chokidar" "yarn.lock" \
 				&& install_args+=( --no-optional )
 		elif [[ -e "package-lock.json" ]] ; then
-			grep -F -e "chokidar" "package-lock.json" \
+			grep -q -F -e "chokidar" "package-lock.json" \
 				&& install_args+=( --no-optional )
 		else
-			grep -F \
+			grep -q -F \
 				-e "vue-cli-plugin-electron-builder" \
 				-e "chokidar" \
 				"package.json" \
