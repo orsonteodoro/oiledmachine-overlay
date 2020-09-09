@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
+  <!-- only for this ebuild fork on the oiledmachine-overlay -->
+  <maintainer>
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!-- originator -->
   <maintainer type="project">
     <email>sci-physics@gentoo.org</email>
     <name>Gentoo Physics Project</name>
@@ -9,11 +15,22 @@
   Bullet is a professional open source multi-threaded 
   3D Collision Detection and Rigid Body Dynamics Library
   for games and animation.
-</longdescription>
+
+  This ebuild fork is more license comprehensive,
+  has multilib support, has more accessible features.
+
+  It may have intermediate version snapshots to satisfy C#
+  bindings requirements.
+  </longdescription>
   <use>
     <flag name="bullet3">Build Bullet 3</flag>
+    <flag name="demos">Build example demos</flag>
     <flag name="double-precision">Build libraries in double precision</flag>
+    <flag name="examples">Install examples</flag>
     <flag name="extras">Build additional libraries</flag>
+    <flag name="networking">Build UDP/TCP networking support in demos and in
+      robotics library</flag>
+    <flag name="python">Build Python bindings and demo</flag>
   </use>
   <upstream>
     <remote-id type="google-code">bullet</remote-id>

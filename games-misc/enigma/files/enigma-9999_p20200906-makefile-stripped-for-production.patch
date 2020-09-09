@@ -1,0 +1,76 @@
+diff -urp enigma-dev-6b37591579ee7de649c7312ddda6a6e8d6893116.orig/Makefile enigma-dev-6b37591579ee7de649c7312ddda6a6e8d6893116/Makefile
+--- enigma-dev-6b37591579ee7de649c7312ddda6a6e8d6893116.orig/Makefile	2020-09-08 17:28:41.159589511 -0700
++++ enigma-dev-6b37591579ee7de649c7312ddda6a6e8d6893116/Makefile	2020-09-08 17:53:38.407797408 -0700
+@@ -3,22 +3,9 @@ include Config.mk
+ PATH := $(eTCpath)$(PATH)
+ SHELL=/bin/bash
+ 
+-.PHONY: ENIGMA all clean Game clean-game clean-protos emake emake-tests gm2egm libpng-util libProtocols libEGM required-directories .FORCE
++.PHONY: all Game clean-game .FORCE
+ 
+-$(LIB_PFX)compileEGMf$(LIB_EXT): ENIGMA
+-ENIGMA: .FORCE libProtocols$(LIB_EXT) libENIGMAShared$(LIB_EXT)
+-	$(MAKE) -C CompilerSource
+-
+-clean: .FORCE
+-	$(MAKE) -C CompilerSource/ clean
+-	$(MAKE) -C CommandLine/emake/ clean
+-	$(MAKE) -C CommandLine/libEGM/ clean
+-	$(MAKE) -C CommandLine/testing/ clean
+-	$(MAKE) -C shared/ clean
+-	$(MAKE) -C shared/protos/ clean
+-	$(MAKE) -C CommandLine/gm2egm/ clean
+-
+-all: libENIGMAShared libProtocols libEGM ENIGMA gm2egm emake emake-tests test-runner .FORCE
++all: .FORCE
+ 
+ Game: .FORCE
+ 	@$(RM) -f logs/enigma_compile.log
+@@ -27,46 +14,6 @@ Game: .FORCE
+ clean-game: .FORCE
+ 	$(MAKE) -C ENIGMAsystem/SHELL clean
+ 
+-clean-protos: .FORCE
+-	$(MAKE) -C shared/protos/ clean
+-
+-libpng-util: .FORCE
+-	$(MAKE) -C shared/libpng-util/
+-
+-libENIGMAShared$(LIB_EXT): libENIGMAShared
+-libENIGMAShared: .FORCE libProtocols$(LIB_EXT)
+-	$(MAKE) -C shared/
+-
+-libProtocols$(LIB_EXT): libProtocols
+-libProtocols: .FORCE
+-	$(MAKE) -C shared/protos/
+-
+-libEGM$(LIB_EXT): libEGM
+-libEGM: .FORCE libProtocols$(LIB_EXT) libENIGMAShared$(LIB_EXT)
+-	$(MAKE) -C CommandLine/libEGM/
+-
+-EMAKE_TARGETS = .FORCE ENIGMA
+-
+-ifneq ($(CLI_ENABLE_EGM), FALSE)
+-	EMAKE_TARGETS += libEGM$(LIB_EXT)
+-else
+-	EMAKE_TARGETS += libProtocols$(LIB_EXT)
+-endif
+-
+-emake: $(EMAKE_TARGETS) $(LIB_PFX)compileEGMf$(LIB_EXT)
+-	$(MAKE) -C CommandLine/emake/
+-
+-emake-tests: .FORCE libEGM$(LIB_EXT) $(LIB_PFX)compileEGMf$(LIB_EXT)
+-	TESTS=TRUE $(MAKE) -C CommandLine/emake/
+-
+-gm2egm: libEGM$(LIB_EXT) .FORCE
+-	$(MAKE) -C CommandLine/gm2egm/
+-
+-test-runner: emake .FORCE
+-	$(MAKE) -C CommandLine/testing/
+-
+-required-directories: .FORCE
+-	@mkdir -p "$(WORKDIR)"
+-	@mkdir -p "$(CODEGEN)/Preprocessor_Environment_Editable/"
++EMAKE_TARGETS = .FORCE
+ 
+ .FORCE:

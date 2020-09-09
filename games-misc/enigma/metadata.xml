@@ -33,12 +33,16 @@
     <flag name="android">Adds support to porting games to Android, 
       Adds the android only toolchain.  Bypasses
       rebuilding the toolchain when building the game.</flag>
+    <flag name="box2">Adds Box2D support for 2D physics support.</flag>
+    <flag name="bullet">Adds Box2D support for 3D physics support.</flag>
     <flag name="curl">Adds cURL support for multiplayer support.</flag>
     <flag name="doc">Installs documents.</flag>
     <flag name="gles">Installs and adds general OpenGL ES support.</flag>
     <flag name="gles1">Installs and adds OpenGL ES 1.x support.</flag>
     <flag name="gles2">Installs and adds OpenGL ES 2.x support.</flag>
     <flag name="gles3">Installs and adds OpenGL ES 3.x support.</flag>
+    <flag name="gme">Checks for proper dependencies for support for
+      music formats used in 8-bit/16-bit console systems.</flag>
     <flag name="gnome">Uses Zenity as the default widget engine if not using
       KDE for alerts, user prompts, file dialogs, color picker.</flag>
     <flag name="gtk2">Makes GTK+2 the default widget system for file dialogs,
