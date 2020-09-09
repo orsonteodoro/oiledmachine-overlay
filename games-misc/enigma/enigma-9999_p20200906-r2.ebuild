@@ -42,7 +42,7 @@ RDEPEND="android? ( dev-util/android-ndk
 		media-libs/libepoxy[${MULTILIB_USEDEP}]
 		media-libs/mesa[${MULTILIB_USEDEP}]
 	 )
-	 gme? ( media-libs/libgme[${MULTILIB_USEDEP}] )
+	 gme? ( media-libs/game-music-emu[${MULTILIB_USEDEP}] )
 	 gnome? ( gnome-extra/zenity )
 	 gtk2? ( x11-libs/gtk+[${MULTILIB_USEDEP}] )
 	 kde? ( kde-apps/kdialog )
