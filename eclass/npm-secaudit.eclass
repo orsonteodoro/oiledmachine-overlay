@@ -171,7 +171,23 @@ is End Of Life (EOL) and has vulnerabilities."
 # MUST be called after default unpack AND patching.
 npm-secaudit_fetch_deps() {
 	pushd "${S}" || die
-		npm install || die
+		local install_args=()
+		# Avoid adding fsevent (a MacOS dependency) which may require older node
+		if [[ -e "yarn.lock" ]] ; then
+			grep -F -e "chokidar" "yarn.lock" \
+				&& install_args+=( --no-optional )
+		elif [[ -e "package-lock.json" ]] ; then
+			grep -F -e "chokidar" "package-lock.json" \
+				&& install_args+=( --no-optional )
+		else
+			grep -F \
+				-e "vue-cli-plugin-electron-builder" \
+				-e "chokidar" \
+				"package.json" \
+				&& install_args+=( --no-optional )
+		fi
+		einfo "Running npm install ${install_args[@]}"
+		npm install ${install_args[@]} || die
 	popd
 }
 
