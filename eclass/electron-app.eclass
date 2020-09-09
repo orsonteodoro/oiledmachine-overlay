@@ -519,21 +519,24 @@ fi
 # electron-builder package the app manually.  Do something like:
 # electron-builder -l AppImage --pd dist/linux-unpackaged/
 # electron-builder -l snap --pd dist/linux-unpackaged/
+_ELECTRON_APP_PACKAGING_METHODS+=( unpacked )
 if [[ -n "${ELECTRON_APP_APPIMAGEABLE}" && "${ELECTRON_APP_APPIMAGEABLE}" == 1 ]] ; then
-IUSE+=" appimage"
+_ELECTRON_APP_PACKAGING_METHODS+=( appimage )
 RDEPEND+="appimage? ( || (
 		app-arch/appimaged
 		app-arch/go-appimage[appimaged]
 		    )    )"
 # Dump the .AppImage in that folder.
-ELECTRON_APP_APPIMAGEABLE_INSTALL_DIR=\
-${ELECTRON_APP_APPIMAGEABLE_INSTALL_DIR:="${ED}/opt/AppImage/${PN}"}
+ELECTRON_APP_APPIMAGE_INSTALL_DIR=\
+${ELECTRON_APP_APPIMAGE_INSTALL_DIR:="/opt/AppImage/${PN}"}
 fi
 if [[ -n "${ELECTRON_APP_SNAPPABLE}" && "${ELECTRON_APP_SNAPPABLE}" == 1 ]] ; then
-IUSE+=" snap"
+_ELECTRON_APP_PACKAGING_METHODS+=( snap )
 RDEPEND+="snap? ( app-emulation/snapd )"
-# TODO: put systemwide ELECTRON_APP_SNAPABLE_INSTALL_DIR
 fi
+IUSE+=" ${_ELECTRON_APP_PACKAGING_METHODS[@]/#unpacked/+unpacked}"
+REQUIRED_USE+=" || ( ${_ELECTRON_APP_PACKAGING_METHODS[@]} )"
+
 
 # ##################  END ebuild and eclass global variables #################
 
@@ -1143,6 +1146,7 @@ electron-app_src_preinst_default() {
 # Installs program only without resetting permissions or owner.
 # Use electron-app_desktop_install_program instead.
 electron-app_desktop_install_program_raw() {
+	use unpacked || return
 	_electron-app_check_missing_install_path
 	local rel_src_path="$1"
 	local d="${ELECTRON_APP_INSTALL_PATH}"
@@ -1185,6 +1189,7 @@ electron-app_desktop_install_program_raw() {
 # Installs program only.  Resets permissions and ownership.
 # Additional change of ownership and permissions should be done after running this.
 electron-app_desktop_install_program() {
+	use unpacked || return
 	_electron-app_check_missing_install_path
 	local rel_src_path="$1"
 	local d="${ELECTRON_APP_INSTALL_PATH}"
@@ -1315,28 +1320,45 @@ relative icon path"
 command to execute in the wrapper script"
 	fi
 
-	electron-app_desktop_install_program "${rel_src_path}"
+	if use unpacked ; then
+		electron-app_desktop_install_program "${rel_src_path}"
+		# Create wrapper
+		exeinto "/usr/bin"
+		echo "#!/bin/bash" > "${T}/${PN}"
+		echo "${cmd}" >> "${T}/${PN}"
+		doexe "${T}/${PN}"
 
-	# Create wrapper
-	exeinto "/usr/bin"
-	echo "#!/bin/bash" > "${T}/${PN}"
-	echo "${cmd}" >> "${T}/${PN}"
-	doexe "${T}/${PN}"
-
-	local icon=""
-	local mime_type=$(file --mime-type $(realpath "./${rel_icon_path}"))
-	if echo "${mime_type}" | grep -q -F -e "image/png" ; then
-		icon="${PN}"
-		newicon "${rel_icon_path}" "${icon}.png"
-	elif echo "${mime_type}" | grep -q -F -e "image/svg" ; then
-		icon="${PN}"
-		newicon "${rel_icon_path}" "${icon}.svg"
-	elif echo "${mime_type}" | grep -q -F -e "image/x-xpmi" ; then
-		icon="${PN}"
-		newicon "${rel_icon_path}" "${icon}.xpm"
-	else
-		# See https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
-		ewarn "Only png, svg, xpm accepted as icons for the XDG desktop icon theme spec.  Skipping."
+		local icon=""
+		local mime_type=$(file --mime-type $(realpath "./${rel_icon_path}"))
+		if echo "${mime_type}" | grep -q -F -e "image/png" ; then
+			icon="${PN}"
+			newicon "${rel_icon_path}" "${icon}.png"
+		elif echo "${mime_type}" | grep -q -F -e "image/svg" ; then
+			icon="${PN}"
+			newicon "${rel_icon_path}" "${icon}.svg"
+		elif echo "${mime_type}" | grep -q -F -e "image/x-xpmi" ; then
+			icon="${PN}"
+			newicon "${rel_icon_path}" "${icon}.xpm"
+		else
+			# See https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
+			ewarn "Only png, svg, xpm accepted as icons for the XDG desktop icon theme spec.  Skipping."
+		fi
+	fi
+	if use appimage ; then
+		exeinto "${ELECTRON_APP_APPIMAGE_INSTALL_DIR}"
+		doexe "${ELECTRON_APP_APPIMAGE_PATH}"
+	fi
+	if use snap ; then
+		# TODO testing
+		# I don't know if snap will sanitize the files for system-wide installation.
+		local has_assertion_file="--dangerous"
+		if [[ -e "${ELECTRON_APP_SNAP_ASSERT_PATH}" ]] ; then
+			snap ack "${ELECTRON_APP_SNAP_ASSERT_PATH}"
+			has_assertion_file=""
+		else
+			ewarn "Missing assertion file for snap.  Installing with --dangerous."
+		fi
+		snap install ${has_assertion_file} "${ELECTRON_APP_SNAP_PATH}"
 	fi
 
 	make_desktop_entry "${PN}" "${pkg_name}" "${icon}" "${category}"
