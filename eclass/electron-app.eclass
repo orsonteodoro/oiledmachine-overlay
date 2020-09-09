@@ -511,6 +511,31 @@ RDEPEND+="
 "
 fi
 
+# This is for single exe portable versions versus the traditional install
+# `doins -r.`   AppImage or snaps have advantages like putting electron apps
+# in a sandbox and bundled in a compressed archive like squashfs.
+# The uncompressed install is typically +1G so using a portable install
+# may reduce to just a few MB.
+# Ebuild developer must provide an electron-app_src_compile to tell
+# electron-builder package the app manually.  Do something like:
+# electron-builder -l AppImage --pd dist/linux-unpackaged/
+# electron-builder -l snap --pd dist/linux-unpackaged/
+if [[ -n "${ELECTRON_APP_APPIMAGEABLE}" && "${ELECTRON_APP_APPIMAGEABLE}" == 1 ]] ; then
+IUSE+=" appimage"
+RDEPEND+="appimage? ( || (
+		app-arch/appimaged
+		app-arch/go-appimage[appimaged]
+		    )    )"
+# Dump the .AppImage in that folder.
+ELECTRON_APP_APPIMAGEABLE_INSTALL_DIR=\
+${ELECTRON_APP_APPIMAGEABLE_INSTALL_DIR:="${ED}/opt/AppImage/${PN}"}
+fi
+if [[ -n "${ELECTRON_APP_SNAPPABLE}" && "${ELECTRON_APP_SNAPPABLE}" == 1 ]] ; then
+IUSE+=" snap"
+RDEPEND+="snap? ( app-emulation/snapd )"
+# TODO: put systemwide ELECTRON_APP_SNAPABLE_INSTALL_DIR
+fi
+
 # ##################  END ebuild and eclass global variables #################
 
 # @FUNCTION: _electron-app-flakey-check
