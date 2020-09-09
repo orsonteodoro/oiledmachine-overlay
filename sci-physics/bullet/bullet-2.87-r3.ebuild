@@ -11,17 +11,6 @@ LICENSE="ZLIB" # The default license
 
 # Additional licenses found:
 
-# build3/cmake,
-# Extras/ConvexDecomposition/bestfit.cpp
-# examples/OpenGLWindow/TwFonts.h
-# src/BulletCollision/NarrowPhaseCollision,
-# src/Bullet3Collision/NarrowPhaseCollision/shared,
-# src/Bullet3OpenCL/NarrowphaseCollision/kernels/mprKernels.h
-LICENSE+=" BSD examples? ( BSD ) extras? ( BSD )"
-
-# The ^^ ( LGPL-2.1+ BSD ) conditional was subsituted with BSD.
-LICENSE+=" BSD ZLIB" # src/BulletDynamics/MLCPSolvers
-
 # data/MPL, test/OpenCL/RadixSortBenchmark/
 LICENSE+=" demos? ( Apache-2.0 ) test? ( Apache-2.0 )"
 
@@ -33,6 +22,17 @@ LICENSE+=" demos? ( all-rights-reserved Apache-2.0 )"
 # examples/ThirdPartyLibs/Wavefront
 LICENSE+=" demos? ( BSD-2 ) examples? ( BSD-2 )"
 
+# build3/cmake,
+# Extras/ConvexDecomposition/bestfit.cpp
+# examples/OpenGLWindow/TwFonts.h
+# src/BulletCollision/NarrowPhaseCollision,
+# src/Bullet3Collision/NarrowPhaseCollision/shared,
+# src/Bullet3OpenCL/NarrowphaseCollision/kernels/mprKernels.h
+LICENSE+=" BSD examples? ( BSD ) extras? ( BSD )"
+
+# The ^^ ( LGPL-2.1+ BSD ) conditional was subsituted with BSD.
+LICENSE+=" BSD ZLIB" # src/BulletDynamics/MLCPSolvers
+
 LICENSE+=" demos? ( CC-BY-SA-4.0 )" # data/dinnerware (It actually says "CC-SA")
 LICENSE+=" demos? ( CC-BY-3.0 )" # data/kuka_lwr/meshes_arm
 
@@ -42,14 +42,6 @@ LICENSE+=" demos? ( SCEA ) examples? ( SCEA )"
 
 # data/kitchens https://blog.turbosquid.com/royalty-free-license/
 LICENSE+=" demos? ( TurboSquid-Royalty-Free-License )"
-
-# docs/pybullet_quickstart_guide/WordpressPreview/markdeep.min.js
-# docs/pybullet_quickstart_guide/WordpressPreview/PreviewBlogPage.htm
-LICENSE+=" doc? ( BSD-2 BSD GPL-2+ )"
-
-# examples/ThirdPartyLibs/Eigen/src/SparseCholesky/SimplicialCholesky_impl.h
-# The LGPL-2.1+ does not have all rights reserved.
-LICENSE+=" examples? ( all-rights-reserved LGPL-2.1+ )"
 
 # examples/ThirdPartyLibs/openvr/bin/osx64/OpenVR.framework/Headers/openvr_api.cs
 # examples/ThirdPartyLibs/openvr/bin/osx64/OpenVR.framework/Headers/openvr_capi.h
@@ -68,11 +60,7 @@ LICENSE+=" examples? ( BSD-4 )"
 LICENSE+=" examples? ( GPL-2+ )"
 
 LICENSE+=" examples? ( Info-ZIP )" # examples/ThirdPartyLibs/minizip/unzip.c
-
-# The ^^ ( MIT Unlicense ) conditional was subsituted with Unlicense
-# You may fork the ebuild if you want the MIT license instead.
-LICENSE+=" examples? ( Unlicense )" # examples/ThirdPartyLibs/imgui/stb_truetype.h
-
+LICENSE+=" examples? ( imgui-public-domain )" # examples/ThirdPartyLibs/imgui/stb_truetype.h
 LICENSE+=" examples? ( imgui-public-domain )" # examples/ThirdPartyLibs/imgui/stb_textedit.h
 LICENSE+=" examples? ( RtAudio )" # examples/TinyAudio ; modified MIT
 LICENSE+=" examples? ( RtMidi )" # examples/ThirdPartyLibs/midi ; modified MIT
@@ -83,7 +71,7 @@ LICENSE+=" examples? ( optionalX11-KP optionalX11-OG optionalX11-OG-DEC optional
 # examples/ThirdPartyLibs/Gwen,
 # examples/ThirdPartyLibs/openvr/samples/shared/lodepng.h
 # test/GwenOpenGLTest,
-LICENSE="examples? ( ZLIB ) test? ( ZLIB )"
+LICENSE+=" examples? ( ZLIB ) test? ( ZLIB )"
 
 # Extras/Serialize/makesdna/makesdna.cpp (First line says ZLIB for complete
 #   rewrite in C++ but some parts look the same as original)
@@ -100,8 +88,6 @@ LICENSE+=" extras? ( all-rights-reserved GPL-2+ ZLIB )"
 # src/clew/clew.h,
 LICENSE+=" MIT examples? ( MIT ) extras? ( MIT )"
 
-LICENSE+=" MPL-2.0" # some files in examples/ThirdPartyLibs/Eigen
-
 # examples/pybullet/gym/pybullet_envs/agents # Apache-2.0
 # examples/pybullet/gym/pybullet_data/husky/husky.urdf # BSD
 LICENSE+=" python? ( Apache-2.0 BSD ) demos? ( Apache-2.0 BSD )"
@@ -109,16 +95,17 @@ LICENSE+=" python? ( Apache-2.0 BSD ) demos? ( Apache-2.0 BSD )"
 # test/Bullet2/vectormath/neon/quat_aos.h
 # the ZLIB does not have all rights reserved but in the source it is explicitly
 #   stated
-LICENSE="test? ( all-rights-reserved ZLIB )"
+LICENSE+=" test? ( all-rights-reserved ZLIB )"
 
-
-KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~amd64-linux ~x86-linux"
+KEYWORDS="amd64 ~arm ~ppc ~ppc64 x86 ~amd64-linux ~x86-linux"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit cmake-multilib python-r1
 SRC_URI=\
 "https://github.com/bulletphysics/bullet3/archive/${PV}.tar.gz -> ${P}.tar.gz"
 SLOT="0/${PV}"
-IUSE="+bullet3 +demos doc -double-precision examples +extras +networking -numpy -python test"
+# Python bindings is default on because Gentoo comes with python.
+# Upstream picks Python bindings on if Python libraries found.
+IUSE="+bullet3 +demos doc -double-precision examples +extras +networking -numpy +python test"
 RDEPEND="demos? (
 		media-libs/mesa[${MULTILIB_USEDEP},egl]
 		x11-libs/libX11[${MULTILIB_USEDEP}]
@@ -154,10 +141,10 @@ src_configure() {
 		local mycmakeargs=(
 			-DBUILD_BULLET2_DEMOS=$(usex demos)
 			-DBUILD_BULLET3=$(usex bullet3)
-			-DBUILD_CLSOCKET=$(usex networking)
-			-DBUILD_ENET=$(usex networking)
 			-DBUILD_EXTRAS=$(usex extras)
 			-DBUILD_PYBULLET=$(multilib_native_usex python $(usex python) OFF)
+			-DBUILD_PYBULLET_CLSOCKET=$(usex networking)
+			-DBUILD_PYBULLET_ENET=$(usex networking)
 			-DBUILD_PYBULLET_NUMPY=$(multilib_native_usex python $(usex numpy) OFF)
 			-DBUILD_SHARED_LIBS=ON
 			-DBUILD_UNIT_TESTS=$(usex test)
@@ -210,7 +197,7 @@ pkg_postinst() {
 		einfo "Top properly render the TwoJoint do:"
 		einfo "  cd /usr/share/bullet/demos/data"
 		einfo \
-"  /usr/share/bullet/demos/examples/TwoJoint/App_TwoJoint-2.89"
+"  /usr/share/bullet/demos/examples/TwoJoint/App_TwoJoint-2.87"
 		einfo
 		einfo "To properly render the pybullet models do:"
 		einfo "  cd /usr/share/bullet/demos/data"
