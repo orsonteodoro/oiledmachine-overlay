@@ -125,6 +125,7 @@ REQUIRED_USE="
 		video_cards_amdgpu
 	)
 	split-drivers? ( || ( opencl_orca opencl_rocm ) )
+	system-blender? ( !allow-unknown-renderers )
 	video_cards_amdgpu? (
 		|| ( pro-drivers split-drivers )
 	)
@@ -189,14 +190,14 @@ RDEPEND="!system-blender? (
 		)
 	)
 	system-blender? (
-		blender279b? ( ~media-gfx/blender-2.79[headless,filmic(-)] )
-		blender279b_filmic? ( ~media-gfx/blender-2.79[headless,filmic] )
-		blender280? ( ~media-gfx/blender-2.80[headless] )
-		blender281a? ( ~media-gfx/blender-2.81a[headless] )
-		blender282? ( ~media-gfx/blender-2.82[headless] )
-		blender2831? ( ~media-gfx/blender-2.83.1[headless] )
-		blender2832? ( ~media-gfx/blender-2.83.2[headless] )
-		blender2832? ( ~media-gfx/blender-2.90.0[headless] )
+		blender279b? ( ~media-gfx/blender-2.79[cycles,headless,filmic(-)] )
+		blender279b_filmic? ( ~media-gfx/blender-2.79[cycles,headless,filmic] )
+		blender280? ( ~media-gfx/blender-2.80[cycles,headless] )
+		blender281a? ( ~media-gfx/blender-2.81a[cycles,headless] )
+		blender282? ( ~media-gfx/blender-2.82[cycles,headless] )
+		blender2831? ( ~media-gfx/blender-2.83.1[cycles,headless] )
+		blender2832? ( ~media-gfx/blender-2.83.2[cycles,headless] )
+		blender2832? ( ~media-gfx/blender-2.90.0[cycles,headless] )
 	)
 	opencl? (
 	intel-ocl? ( dev-util/intel-ocl-sdk )

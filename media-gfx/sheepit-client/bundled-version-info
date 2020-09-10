@@ -1,4 +1,9 @@
 # This information is used for security audits
+Bundled in Blender 2.90.0:
+GLU
+Mesa (libGL) 18.3.1
+Python 3.7.7
+
 Bundled in Blender 2.83.2:
 GLU
 Mesa (libGL) 18.3.1
@@ -46,3 +51,4 @@ Python 3.5.3
 Comparison is done with sha256sum between the Sheepit service tarballs and tarballs from downloads.blender.org.
 All tarballs are repackaged with renamed blender as rend.exe.
 *Contains extra library files not found in downloads.blender.org tarball from unspecified source.
+

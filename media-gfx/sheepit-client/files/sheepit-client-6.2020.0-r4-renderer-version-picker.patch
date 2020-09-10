@@ -9,7 +9,10 @@ to false to enforce hardcoded block otherwise end-user decides.
 
 Also, this makes it so that it doesn't download renderers but use the system
 provided renderers instead via the USE_SYSTEM_RENDERERS constants in both
-in Configuration.java and Linux.java.
+in Configuration.java and Linux.java only for Linux currently.  You need to
+mod it for other distros or operating systems.
+
+LD_LIBRARY_PATH tricks are disabled when USE_SYSTEM_RENDERERS = true.
 
 Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
 ----
@@ -126,8 +129,8 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Client.java sheepi
  				this.log.error(
 diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Configuration.java sheepit-client-6.2020.0/src/com/sheepit/client/Configuration.java
 --- sheepit-client-6.2020.0.orig/src/com/sheepit/client/Configuration.java	2020-07-07 06:38:23.000000000 -0700
-+++ sheepit-client-6.2020.0/src/com/sheepit/client/Configuration.java	2020-09-09 23:17:51.253739594 -0700
-@@ -66,6 +66,34 @@ import lombok.Data;
++++ sheepit-client-6.2020.0/src/com/sheepit/client/Configuration.java	2020-09-09 23:40:52.667018078 -0700
+@@ -66,6 +66,35 @@ import lombok.Data;
  	private String UIType;
  	private String hostname;
  	private String theme;
@@ -150,6 +153,7 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Configuration.java
 +	public static final boolean HARDBLOCK_BLENDER_2900 = false;
 +	public static final boolean HARDBLOCK_UNKNOWN_RENDERERS = false;
 +	public static final boolean USE_SYSTEM_RENDERERS = true;
++	public static final boolean SLOT_STYLE = 2;
 +	public static final String MD5_279B = "3d0e05e7a43ae213eccf33c47b5900c5";
 +	public static final String MD5_279B_FILMIC = "a6e995c16e72b9b0e2b3857fcf45a1d0";
 +	public static final String MD5_280 = "20eb01cbdc8d21c85ef744816caa83ea";
@@ -162,7 +166,7 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Configuration.java
  	
  	public Configuration(File cache_dir_, String login_, String password_) {
  		this.configFilePath = null;
-@@ -94,6 +122,15 @@ import lombok.Data;
+@@ -94,6 +123,15 @@ import lombok.Data;
  		this.useSysTray = true;
  		this.UIType = null;
  		this.theme = null;
@@ -178,7 +182,7 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Configuration.java
  	}
  	
  	public String toString() {
-@@ -305,4 +342,76 @@ import lombok.Data;
+@@ -305,4 +343,76 @@ import lombok.Data;
  		}
  		return false;
  	}
@@ -317,7 +321,7 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Job.java sheepit-c
  	public String getRendererPath() {
 diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/os/Linux.java sheepit-client-6.2020.0/src/com/sheepit/client/os/Linux.java
 --- sheepit-client-6.2020.0.orig/src/com/sheepit/client/os/Linux.java	2020-07-07 06:38:23.000000000 -0700
-+++ sheepit-client-6.2020.0/src/com/sheepit/client/os/Linux.java	2020-09-09 22:38:57.724668759 -0700
++++ sheepit-client-6.2020.0/src/com/sheepit/client/os/Linux.java	2020-09-10 00:25:46.890340041 -0700
 @@ -34,6 +34,7 @@ import com.sheepit.client.hardware.cpu.C
  public class Linux extends OS {
  	private final String NICE_BINARY_PATH = "nice";
@@ -339,6 +343,39 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/os/Linux.java shee
  	}
  	
  	@Override public CPU getCPU() {
+@@ -152,18 +157,20 @@ public class Linux extends OS {
+ 		Map<String, String> new_env = new HashMap<String, String>();
+ 		new_env.putAll(java.lang.System.getenv()); // clone the env
+ 		
+-		// if Blender is already loading an OpenGL library, don't need to load Blender's default one (it will
+-		// create system incompatibilities). If no OpenGL library is found, then load the one included in the binary
+-		// zip file
+-		if (isOpenGLAlreadyInstalled(command.get(0)) == false) {
+-			Boolean has_ld_library_path = new_env.containsKey("LD_LIBRARY_PATH");
+-			
+-			String lib_dir = (new File(command.get(0))).getParent() + File.separator + "lib";
+-			if (has_ld_library_path == false) {
+-				new_env.put("LD_LIBRARY_PATH", lib_dir);
+-			}
+-			else {
+-				new_env.put("LD_LIBRARY_PATH", new_env.get("LD_LIBRARY_PATH") + ":" + lib_dir);
++		if (!this.USE_SYSTEM_RENDERERS) {
++			// if Blender is already loading an OpenGL library, don't need to load Blender's default one (it will
++			// create system incompatibilities). If no OpenGL library is found, then load the one included in the binary
++			// zip file
++			if (isOpenGLAlreadyInstalled(command.get(0)) == false) {
++				Boolean has_ld_library_path = new_env.containsKey("LD_LIBRARY_PATH");
++				
++				String lib_dir = (new File(command.get(0))).getParent() + File.separator + "lib";
++				if (has_ld_library_path == false) {
++					new_env.put("LD_LIBRARY_PATH", lib_dir);
++				}
++				else {
++					new_env.put("LD_LIBRARY_PATH", new_env.get("LD_LIBRARY_PATH") + ":" + lib_dir);
++				}
+ 			}
+ 		}
+ 		
 diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/SettingsLoader.java sheepit-client-6.2020.0/src/com/sheepit/client/SettingsLoader.java
 --- sheepit-client-6.2020.0.orig/src/com/sheepit/client/SettingsLoader.java	2020-07-07 06:38:23.000000000 -0700
 +++ sheepit-client-6.2020.0/src/com/sheepit/client/SettingsLoader.java	2020-09-09 21:50:25.634507572 -0700
