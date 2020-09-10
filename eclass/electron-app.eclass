@@ -531,10 +531,11 @@ RDEPEND+="appimage? ( || (
 ELECTRON_APP_APPIMAGE_INSTALL_DIR=\
 ${ELECTRON_APP_APPIMAGE_INSTALL_DIR:="/opt/AppImage/${PN}"}
 if [[ -z "${ELECTRON_APP_APPIMAGE_PATH}" ]] ; then
-	die "ELECTRON_APP_APPIMAGE_PATH must be defined relative to \${S}"
+	die "ELECTRON_APP_APPIMAGE_PATH must be defined relative to \${BUILD_DIR}"
 fi
 fi
-if [[ -n "${ELECTRON_APP_SNAPPABLE}" && "${ELECTRON_APP_SNAPPABLE}" == 1 ]] ; then
+if [[ -n "${ELECTRON_APP_SNAPPABLE}" \
+	&& "${ELECTRON_APP_SNAPPABLE}" == 1 ]] ; then
 _ELECTRON_APP_PACKAGING_METHODS+=( snap )
 RDEPEND+="snap? ( app-emulation/snapd )"
 # emerge will dump it in that folder then use snap functions
@@ -543,20 +544,7 @@ ${ELECTRON_APP_SNAP_INSTALL_DIR:="/opt/snap/${PN}"}
 ELECTRON_APP_SNAP_NAME=${ELECTRON_APP_SNAP_NAME:=${PN}}
 # ELECTRON_APP_SNAP_REVISION is also defineable
 if [[ -z "${ELECTRON_APP_SNAP_PATH}" ]] ; then
-	die "ELECTRON_APP_SNAP_PATH must be defined relative to \${S}"
-fi
-if [[ -z "${ELECTRON_APP_SNAP_PATH_BASENAME}" ]] ; then
-	die \
-"ELECTRON_APP_SNAP_PATH_BASENAME must be defined relative to \
-ELECTRON_APP_SNAP_INSTALL_DIR"
-fi
-if [[ -n "${ELECTRON_APP_SNAP_ASSERT_PATH}" \
-	&& -z "${ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME}" ]] ; then
-	die "ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME must be defined."
-fi
-if [[ -n "${ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME}" \
-	&& -z "${ELECTRON_APP_SNAP_ASSERT_PATH}" ]] ; then
-	die "ELECTRON_APP_SNAP_ASSERT_PATH must be defined."
+	die "ELECTRON_APP_SNAP_PATH must be defined relative to \${BUILD_DIR}"
 fi
 fi
 IUSE+=" ${_ELECTRON_APP_PACKAGING_METHODS[@]/#unpacked/+unpacked}"
@@ -705,6 +693,23 @@ download micropackages and obtain version releases information."
 		"https://raw.githubusercontent.com/electron/releases/master/lite.json" || die
 	else
 		einfo "Using cached Electron release data"
+	fi
+
+	if [[ -n "${ELECTRON_APP_SNAPPABLE}" \
+		&& "${ELECTRON_APP_SNAPPABLE}" == 1 ]] ; then
+		if [[ -z "${ELECTRON_APP_SNAP_PATH_BASENAME}" ]] ; then
+			die \
+"ELECTRON_APP_SNAP_PATH_BASENAME must be defined relative to \
+ELECTRON_APP_SNAP_INSTALL_DIR"
+		fi
+		if [[ -n "${ELECTRON_APP_SNAP_ASSERT_PATH}" \
+			&& -z "${ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME}" ]] ; then
+			die "ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME must be defined."
+		fi
+		if [[ -n "${ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME}" \
+			&& -z "${ELECTRON_APP_SNAP_ASSERT_PATH}" ]] ; then
+			die "ELECTRON_APP_SNAP_ASSERT_PATH must be defined."
+		fi
 	fi
 }
 
