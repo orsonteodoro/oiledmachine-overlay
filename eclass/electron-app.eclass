@@ -484,7 +484,7 @@ fi
 RDEPEND+=" ${COMMON_DEPEND}"
 DEPEND+=" ${COMMON_DEPEND}"
 
-EXPORT_FUNCTIONS pkg_setup src_unpack pkg_postinst pkg_postrm
+EXPORT_FUNCTIONS pkg_setup src_unpack pkg_preinst pkg_postinst pkg_postrm
 
 IUSE+=" debug "
 if (( ${EAPI} == 7 )) ; then
@@ -529,10 +529,27 @@ RDEPEND+="appimage? ( || (
 # Dump the .AppImage in that folder.
 ELECTRON_APP_APPIMAGE_INSTALL_DIR=\
 ${ELECTRON_APP_APPIMAGE_INSTALL_DIR:="/opt/AppImage/${PN}"}
+if [[ -z "${ELECTRON_APP_APPIMAGE_PATH}" ]] ; then
+	die "ELECTRON_APP_APPIMAGE_PATH must be defined relative to ${S}"
+fi
 fi
 if [[ -n "${ELECTRON_APP_SNAPPABLE}" && "${ELECTRON_APP_SNAPPABLE}" == 1 ]] ; then
 _ELECTRON_APP_PACKAGING_METHODS+=( snap )
 RDEPEND+="snap? ( app-emulation/snapd )"
+${ELECTRON_APP_SNAP_INSTALL_DIR:="/opt/snap/${PN}"}
+ELECTRON_APP_SNAP_NAME=${ELECTRON_APP_SNAP_NAME:=${PN}}
+# ELECTRON_APP_SNAP_REVISION is also defineable
+if [[ -z "${ELECTRON_APP_SNAP_PATH}" ]] ; then
+	die "ELECTRON_APP_SNAP_PATH must be defined relative to ${S}"
+fi
+if [[ -z "${ELECTRON_APP_SNAP_PATH_BASENAME}" ]] ; then
+	die \
+"ELECTRON_APP_SNAP_PATH_BASENAME must be defined relative to \
+ELECTRON_APP_SNAP_INSTALL_DIR"
+fi
+# ELECTRON_APP_SNAP_ASSERT_PATH is also defineable
+# ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME must be defined if \
+#   ELECTRON_APP_SNAP_ASSERT_PATH is provided
 fi
 IUSE+=" ${_ELECTRON_APP_PACKAGING_METHODS[@]/#unpacked/+unpacked}"
 REQUIRED_USE+=" || ( ${_ELECTRON_APP_PACKAGING_METHODS[@]} )"
@@ -1349,16 +1366,11 @@ command to execute in the wrapper script"
 		doexe "${ELECTRON_APP_APPIMAGE_PATH}"
 	fi
 	if use snap ; then
-		# TODO testing
-		# I don't know if snap will sanitize the files for system-wide installation.
-		local has_assertion_file="--dangerous"
+		insinto "${ELECTRON_APP_SNAP_INSTALL_DIR}"
+		doins "${ELECTRON_APP_SNAP_PATH}"
 		if [[ -e "${ELECTRON_APP_SNAP_ASSERT_PATH}" ]] ; then
-			snap ack "${ELECTRON_APP_SNAP_ASSERT_PATH}"
-			has_assertion_file=""
-		else
-			ewarn "Missing assertion file for snap.  Installing with --dangerous."
+			doins "${ELECTRON_APP_SNAP_ASSERT_PATH}"
 		fi
-		snap install ${has_assertion_file} "${ELECTRON_APP_SNAP_PATH}"
 	fi
 
 	make_desktop_entry "${PN}" "${pkg_name}" "${icon}" "${category}"
@@ -1431,6 +1443,20 @@ electron-app-register-yarn() {
 	electron-app-register-x "${YARN_PACKAGE_DB}" "${path}"
 }
 
+electron-app_pkg_preinst() {
+        debug-print-function ${FUNCNAME} "${@}"
+	if use snap ; then
+		# Remove previous install
+		local revision_arg
+		if [[ -n "${ELECTRON_APP_SNAP_REVISION}" ]] ; then
+			revision_arg="--revision=${ELECTRON_APP_SNAP_REVISION}"
+		fi
+		if snap info "${ELECTRON_APP_SNAP_NAME}" 2>/dev/null 1>/dev/null ; then
+			snap remove ${ELECTRON_APP_SNAP_NAME} ${ELECTRON_APP_SNAP_REVISION} --purge || die
+		fi
+	fi
+}
+
 # @FUNCTION: electron-app_pkg_postinst
 # @DESCRIPTION:
 # Automatically registers an electron app package.
@@ -1439,6 +1465,21 @@ electron-app-register-yarn() {
 # node_modules.
 electron-app_pkg_postinst() {
         debug-print-function ${FUNCNAME} "${@}"
+
+	if use snap ; then
+		ewarn "snap support untested"
+		ewarn "Remember do not update the snap manually through the snap executable.  Allow the emerge system to update it."
+		# I don't know if snap will sanitize the files for system-wide installation.
+		local has_assertion_file="--dangerous"
+		if [[ -e "${ELECTRON_APP_SNAP_ASSERT_PATH}" ]] ; then
+			snap ack "${EROOT}/${ELECTRON_APP_SNAP_INSTALL_DIR}/${ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME}"
+			has_assertion_file=""
+		else
+			ewarn "Missing assertion file for snap.  Installing with --dangerous."
+		fi
+		# This will add the desktop links to the snap.
+		snap install ${has_assertion_file} "${EROOT}/${ELECTRON_APP_SNAP_INSTALL_DIR}/${ELECTRON_APP_SNAP_PATH_BASENAME}"
+	fi
 
 	case "$ELECTRON_APP_MODE" in
 		npm)
