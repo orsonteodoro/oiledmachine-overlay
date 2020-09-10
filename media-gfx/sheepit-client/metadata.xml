@@ -45,6 +45,7 @@
     <flag name="blender2831-benchmark">Temporarly downloads Blender 2.83.1
       and runs unskipable benchmark.</flag>
     <flag name="blender2832">Allows the client to download Blender 2.83.2.</flag>
+    <flag name="blender2900">Allows the client to download Blender 2.90.0.</flag>
     <flag name="cuda">Checks for CUDA drivers.</flag>
     <flag name="disable-hard-version-blocks">Permits user choice to selectively
       choose renderers to download.</flag>
@@ -72,6 +73,8 @@
       drivers.</flag>
     <flag name="split-drivers">Preference for the split AMDGPU-PRO
       packages.</flag>
+    <flag name="system-blender">Use the installed system blender instead
+      of the ones provided by the Sheep it Render Farm service.</flag>
     <flag name="video_cards_amdgpu">
       Checks for OpenCL support for the AMDGPU-PRO drivers.</flag>
     <flag name="video_cards_i965">Checks for OpenCL support
