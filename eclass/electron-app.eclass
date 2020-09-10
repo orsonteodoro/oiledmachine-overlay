@@ -540,9 +540,6 @@ RDEPEND+="snap? ( app-emulation/snapd )"
 ${ELECTRON_APP_SNAP_INSTALL_DIR:="/opt/snap/${PN}"}
 ELECTRON_APP_SNAP_NAME=${ELECTRON_APP_SNAP_NAME:=${PN}}
 # ELECTRON_APP_SNAP_REVISION is also defineable
-if [[ -z "${ELECTRON_APP_SNAP_PATH}" ]] ; then
-	die "ELECTRON_APP_SNAP_PATH must be defined relative to \${BUILD_DIR}"
-fi
 fi
 IUSE+=" ${_ELECTRON_APP_PACKAGING_METHODS[@]/#unpacked/+unpacked}"
 REQUIRED_USE+=" || ( ${_ELECTRON_APP_PACKAGING_METHODS[@]} )"
@@ -705,6 +702,9 @@ download micropackages and obtain version releases information."
 			die \
 "ELECTRON_APP_SNAP_PATH_BASENAME must be defined relative to \
 ELECTRON_APP_SNAP_INSTALL_DIR"
+		fi
+		if [[ -z "${ELECTRON_APP_SNAP_PATH}" ]] ; then
+			die "ELECTRON_APP_SNAP_PATH must be defined relative to \${BUILD_DIR}"
 		fi
 		if [[ -n "${ELECTRON_APP_SNAP_ASSERT_PATH}" \
 			&& -z "${ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME}" ]] ; then
