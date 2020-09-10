@@ -530,9 +530,6 @@ RDEPEND+="appimage? ( || (
 # emerge will dump the .AppImage in that folder.
 ELECTRON_APP_APPIMAGE_INSTALL_DIR=\
 ${ELECTRON_APP_APPIMAGE_INSTALL_DIR:="/opt/AppImage/${PN}"}
-if [[ -z "${ELECTRON_APP_APPIMAGE_PATH}" ]] ; then
-	die "ELECTRON_APP_APPIMAGE_PATH must be defined relative to \${BUILD_DIR}"
-fi
 fi
 if [[ -n "${ELECTRON_APP_SNAPPABLE}" \
 	&& "${ELECTRON_APP_SNAPPABLE}" == 1 ]] ; then
@@ -693,6 +690,13 @@ download micropackages and obtain version releases information."
 		"https://raw.githubusercontent.com/electron/releases/master/lite.json" || die
 	else
 		einfo "Using cached Electron release data"
+	fi
+
+	if [[ -n "${ELECTRON_APP_APPIMAGEABLE}" \
+		&& "${ELECTRON_APP_APPIMAGEABLE}" == 1 ]] ; then
+		if [[ -z "${ELECTRON_APP_APPIMAGE_PATH}" ]] ; then
+			die "ELECTRON_APP_APPIMAGE_PATH must be defined relative to \${BUILD_DIR}"
+		fi
 	fi
 
 	if [[ -n "${ELECTRON_APP_SNAPPABLE}" \
