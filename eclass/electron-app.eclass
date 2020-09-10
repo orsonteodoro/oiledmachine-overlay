@@ -1645,3 +1645,37 @@ electron-app_get_arch() {
 		die "${ARCH} not supported"
         fi
 }
+
+# @FUNCTION: electron-app_get_arch_suffix_snap
+# @DESCRIPTION: Gets the arch suffix found at the end of the archive
+electron-app_get_arch_suffix_snap() {
+	if [[ "${ARCH}" == "amd64" ]] ; then
+                echo "amd64"
+        elif [[ "${ARCH}" == "x86" ]] ; then
+                echo "i386"
+        elif [[ "${ARCH}" == "arm64" ]] ; then
+                echo "arm64"
+        elif [[ "${ARCH}" == "arm" ]] ; then
+		if [[ "${CHOST}" =~ armv7* ]] ; then
+	                echo "armhf"
+		fi
+        fi
+	echo "${CHOST%%-*}"
+}
+
+# @FUNCTION: electron-app_get_arch_suffix_appimage
+# @DESCRIPTION: Gets the arch suffix found at the end of the archive
+electron-app_get_arch_suffix_appimage() {
+	if [[ "${ARCH}" == "amd64" ]] ; then
+                echo "x86_64"
+        elif [[ "${ARCH}" == "x86" ]] ; then
+                echo "i386"
+        elif [[ "${ARCH}" == "arm64" ]] ; then
+                echo "arm64"
+        elif [[ "${ARCH}" == "arm" ]] ; then
+		if [[ "${CHOST}" =~ armv7* ]] ; then
+	                echo "armhf"
+		fi
+        fi
+	echo "${CHOST%%-*}"
+}
