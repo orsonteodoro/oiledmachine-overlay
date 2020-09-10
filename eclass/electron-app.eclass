@@ -523,7 +523,7 @@ fi
 _ELECTRON_APP_PACKAGING_METHODS+=( unpacked )
 if [[ -n "${ELECTRON_APP_APPIMAGEABLE}" && "${ELECTRON_APP_APPIMAGEABLE}" == 1 ]] ; then
 _ELECTRON_APP_PACKAGING_METHODS+=( appimage )
-RDEPEND+="appimage? ( || (
+RDEPEND+=" appimage? ( || (
 		app-arch/appimaged
 		app-arch/go-appimage[appimaged]
 		    )    )"
@@ -534,7 +534,7 @@ fi
 if [[ -n "${ELECTRON_APP_SNAPPABLE}" \
 	&& "${ELECTRON_APP_SNAPPABLE}" == 1 ]] ; then
 _ELECTRON_APP_PACKAGING_METHODS+=( snap )
-RDEPEND+="snap? ( app-emulation/snapd )"
+RDEPEND+=" snap? ( app-emulation/snapd )"
 # emerge will dump it in that folder then use snap functions
 # to install desktop files and mount the image.
 ELECTRON_APP_SNAP_INSTALL_DIR=\
@@ -542,7 +542,7 @@ ${ELECTRON_APP_SNAP_INSTALL_DIR:="/opt/snap/${PN}"}
 ELECTRON_APP_SNAP_NAME=${ELECTRON_APP_SNAP_NAME:=${PN}}
 # ELECTRON_APP_SNAP_REVISION is also defineable
 fi
-IUSE+=" ${_ELECTRON_APP_PACKAGING_METHODS[@]/#unpacked/+unpacked}"
+IUSE+=" ${_ELECTRON_APP_PACKAGING_METHODS[@]/unpacked/+unpacked}"
 REQUIRED_USE+=" || ( ${_ELECTRON_APP_PACKAGING_METHODS[@]} )"
 
 
