@@ -33,10 +33,12 @@ inherit desktop eutils npm-utils
 
 # ############## START Per-package environmental variables #####################
 
-# Anything with := is likely a environmental variable setting
-# These manage the degree of consent.  Some users want a highly secure system.
-# Other users just want the product to install.  By default, the eclasses use
-# the policy to block criticals from being merged into the system.
+# Some of these environmental variables manage the degree of consent for
+# acceptable vulnerability level.  While the eclass author requires critical for
+# updates, other organizations may be tolerant or have different security
+# standards.  While some users want a highly secure system, other users just
+# want the product to install.  By default, the eclasses use the policy to block
+# criticals from being merged into the system.
 
 # For those that just want it to install (no security) you can add
 # /etc/portage/env/npm-no-audit-fix.conf with the following without # character:
@@ -179,76 +181,76 @@ IUSE+=" app-indicator global-menu-bar gnome-keyring libsecret unity pulseaudio"
 #    chrome/installer/linux/debian/expected_deps_x64 for chromium 49.0.2623.75
 #      to <76.0.3809.88 (electron 1.0.0 to <v3.0.0)
 CHROMIUM_DEPEND="
-	  app-accessibility/speech-dispatcher:=
-	  dev-db/sqlite:3=
-	  libsecret? ( app-crypt/libsecret:= )
+	  app-accessibility/speech-dispatcher
+	  dev-db/sqlite:3
+	  libsecret? ( app-crypt/libsecret )
 	  gnome-keyring? (
-		gnome-base/gnome-keyring:=[pam]
-		gnome-base/libgnome-keyring:=
+		gnome-base/gnome-keyring[pam]
+		gnome-base/libgnome-keyring
 	  )
-	  pulseaudio? ( media-sound/pulseaudio:= )
+	  pulseaudio? ( media-sound/pulseaudio )
 "
 # Electron only
 COMMON_DEPEND="
 	  ${CHROMIUM_DEPEND}
-	  app-accessibility/at-spi2-atk:2=
-	  app-arch/bzip2:=
-	  app-indicator? ( dev-libs/libappindicator:3= )
-	  dev-libs/atk:=
-	  dev-libs/expat:=
-	  dev-libs/fribidi:=
+	  app-accessibility/at-spi2-atk:2
+	  app-arch/bzip2
+	  app-indicator? ( dev-libs/libappindicator:3 )
+	  dev-libs/atk
+	  dev-libs/expat
+	  dev-libs/fribidi
 	  dev-libs/glib:2
-	  dev-libs/gmp:=
+	  dev-libs/gmp
 	  dev-libs/libffi
-	  dev-libs/libtasn1:=
-	  dev-libs/libbsd:=
-	  dev-libs/libpcre:3=
-	  dev-libs/libunistring:=
-	  dev-libs/nss:=
-	  dev-libs/nettle:=
-	  dev-libs/nspr:=
-	  global-menu-bar? ( dev-libs/libdbusmenu:= )
-	  media-gfx/graphite2:=
-	  media-libs/alsa-lib:=
-	  media-libs/fontconfig:=
-	  media-libs/freetype:=
-	  media-libs/harfbuzz:=[icu(-)]
-	  media-libs/libepoxy:=
-	  media-libs/libpng:=
-	  media-libs/mesa:=[egl,gbm]
-	  media-video/ffmpeg:=
-	  net-dns/libidn2:=
-	  net-libs/gnutls:=
-	  net-print/cups:=
-	  sys-apps/dbus:=
-	  sys-apps/pciutils:=
-	  sys-apps/util-linux:=
-	  sys-devel/gcc:=[cxx(+)]
-	  sys-libs/zlib:=[minizip]
-	  unity? ( dev-libs/libunity:= )
+	  dev-libs/libtasn1
+	  dev-libs/libbsd
+	  dev-libs/libpcre:3
+	  dev-libs/libunistring
+	  dev-libs/nss
+	  dev-libs/nettle
+	  dev-libs/nspr
+	  global-menu-bar? ( dev-libs/libdbusmenu )
+	  media-gfx/graphite2
+	  media-libs/alsa-lib
+	  media-libs/fontconfig
+	  media-libs/freetype
+	  media-libs/harfbuzz[icu(-)]
+	  media-libs/libepoxy
+	  media-libs/libpng
+	  media-libs/mesa[egl,gbm]
+	  media-video/ffmpeg
+	  net-dns/libidn2
+	  net-libs/gnutls
+	  net-print/cups
+	  sys-apps/dbus
+	  sys-apps/pciutils
+	  sys-apps/util-linux
+	  sys-devel/gcc[cxx(+)]
+	  sys-libs/zlib[minizip]
+	  unity? ( dev-libs/libunity )
 	  virtual/ttf-fonts
-	  x11-libs/cairo:=
-	  x11-libs/gdk-pixbuf:2=
+	  x11-libs/cairo
+	  x11-libs/gdk-pixbuf:2
 	  x11-libs/gtk+:3[X]
-	  x11-libs/libX11:=
-	  x11-libs/libXScrnSaver:=
-	  x11-libs/libXau:=
-	  x11-libs/libXcomposite:=
-	  x11-libs/libXcursor:=
-	  x11-libs/libXdamage:=
-	  x11-libs/libXdmcp:=
-	  x11-libs/libXext:=
-	  x11-libs/libXfixes:=
-	  x11-libs/libXi:=
-	  x11-libs/libXrandr:=
-	  x11-libs/libXrender:=
-	  x11-libs/libXtst:=
-	  x11-libs/libXxf86vm:=
-	  x11-libs/libdrm:=
-	  x11-libs/libxcb:=
-	  x11-libs/libxshmfence:=
-	  x11-libs/pango:=
-	  x11-libs/pixman:=
+	  x11-libs/libX11
+	  x11-libs/libXScrnSaver
+	  x11-libs/libXau
+	  x11-libs/libXcomposite
+	  x11-libs/libXcursor
+	  x11-libs/libXdamage
+	  x11-libs/libXdmcp
+	  x11-libs/libXext
+	  x11-libs/libXfixes
+	  x11-libs/libXi
+	  x11-libs/libXrandr
+	  x11-libs/libXrender
+	  x11-libs/libXtst
+	  x11-libs/libXxf86vm
+	  x11-libs/libdrm
+	  x11-libs/libxcb
+	  x11-libs/libxshmfence
+	  x11-libs/pango
+	  x11-libs/pixman
 "
 if [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
 && ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 9.0 ; then
