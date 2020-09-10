@@ -519,6 +519,7 @@ fi
 # electron-builder package the app manually.  Do something like:
 # electron-builder -l AppImage --pd dist/linux-unpackaged/
 # electron-builder -l snap --pd dist/linux-unpackaged/
+#
 _ELECTRON_APP_PACKAGING_METHODS+=( unpacked )
 if [[ -n "${ELECTRON_APP_APPIMAGEABLE}" && "${ELECTRON_APP_APPIMAGEABLE}" == 1 ]] ; then
 _ELECTRON_APP_PACKAGING_METHODS+=( appimage )
@@ -526,30 +527,37 @@ RDEPEND+="appimage? ( || (
 		app-arch/appimaged
 		app-arch/go-appimage[appimaged]
 		    )    )"
-# Dump the .AppImage in that folder.
+# emerge will dump the .AppImage in that folder.
 ELECTRON_APP_APPIMAGE_INSTALL_DIR=\
 ${ELECTRON_APP_APPIMAGE_INSTALL_DIR:="/opt/AppImage/${PN}"}
 if [[ -z "${ELECTRON_APP_APPIMAGE_PATH}" ]] ; then
-	die "ELECTRON_APP_APPIMAGE_PATH must be defined relative to ${S}"
+	die "ELECTRON_APP_APPIMAGE_PATH must be defined relative to \${S}"
 fi
 fi
 if [[ -n "${ELECTRON_APP_SNAPPABLE}" && "${ELECTRON_APP_SNAPPABLE}" == 1 ]] ; then
 _ELECTRON_APP_PACKAGING_METHODS+=( snap )
 RDEPEND+="snap? ( app-emulation/snapd )"
+# emerge will dump it in that folder then use snap functions
+# to install desktop files and mount the image.
 ${ELECTRON_APP_SNAP_INSTALL_DIR:="/opt/snap/${PN}"}
 ELECTRON_APP_SNAP_NAME=${ELECTRON_APP_SNAP_NAME:=${PN}}
 # ELECTRON_APP_SNAP_REVISION is also defineable
 if [[ -z "${ELECTRON_APP_SNAP_PATH}" ]] ; then
-	die "ELECTRON_APP_SNAP_PATH must be defined relative to ${S}"
+	die "ELECTRON_APP_SNAP_PATH must be defined relative to \${S}"
 fi
 if [[ -z "${ELECTRON_APP_SNAP_PATH_BASENAME}" ]] ; then
 	die \
 "ELECTRON_APP_SNAP_PATH_BASENAME must be defined relative to \
 ELECTRON_APP_SNAP_INSTALL_DIR"
 fi
-# ELECTRON_APP_SNAP_ASSERT_PATH is also defineable
-# ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME must be defined if \
-#   ELECTRON_APP_SNAP_ASSERT_PATH is provided
+if [[ -n "${ELECTRON_APP_SNAP_ASSERT_PATH}" \
+	&& -z "${ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME}" ]] ; then
+	die "ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME must be defined."
+fi
+if [[ -n "${ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME}" \
+	&& -z "${ELECTRON_APP_SNAP_ASSERT_PATH}" ]] ; then
+	die "ELECTRON_APP_SNAP_ASSERT_PATH must be defined."
+fi
 fi
 IUSE+=" ${_ELECTRON_APP_PACKAGING_METHODS[@]/#unpacked/+unpacked}"
 REQUIRED_USE+=" || ( ${_ELECTRON_APP_PACKAGING_METHODS[@]} )"
@@ -1468,7 +1476,7 @@ electron-app_pkg_postinst() {
 
 	if use snap ; then
 		ewarn "snap support untested"
-		ewarn "Remember do not update the snap manually through the snap executable.  Allow the emerge system to update it."
+		ewarn "Remember do not update the snap manually through the \`snap\` tool.  Allow the emerge system to update it."
 		# I don't know if snap will sanitize the files for system-wide installation.
 		local has_assertion_file="--dangerous"
 		if [[ -e "${ELECTRON_APP_SNAP_ASSERT_PATH}" ]] ; then
