@@ -225,7 +225,9 @@ npm-secaudit_src_unpack() {
 		npm-secaudit_src_postprepare
 	fi
 
-	# audit before possibly bundling a vulnerable package
+	# Audit both the production and dev packages before possibly
+	# bundling a vulnerable package/library or a dev package that
+	# generates vulnerable code.
 	npm-secaudit_audit_dev
 
 	cd "${S}"

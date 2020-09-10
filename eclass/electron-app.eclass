@@ -977,7 +977,9 @@ electron-app_src_unpack() {
 		electron-app_src_postprepare
 	fi
 
-	# audit before possibly bundling a vulnerable package
+	# Audit both the production and dev packages before possibly
+	# bundling a vulnerable package/library or a dev package that
+	# generates vulnerable code.
 	electron-app_audit_dev
 
 	cd "${S}"
@@ -993,6 +995,8 @@ electron-app_src_unpack() {
 	fi
 
 	cd "${S}"
+	# Another audit happens because electron-builder downloads again
+	# possibly vulnerable libraries.
 	electron-app_audit_versions
 
 	cd "${S}"
