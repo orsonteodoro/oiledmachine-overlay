@@ -95,6 +95,7 @@ cuda doc intel-ocl lts +opencl opencl_rocm opencl_orca \
 opencl_pal opengl_mesa pro-drivers split-drivers \
 renderer-version-picker \
 system-blender \
+gentoo-blender \
 video_cards_amdgpu video_cards_i965 video_cards_iris video_cards_nvidia \
 video_cards_radeonsi"
 REQUIRED_USE="
@@ -110,6 +111,7 @@ REQUIRED_USE="
 	blender2900? ( blender )
 	|| ( cuda opencl )
 	|| ( blender279b blender279b_filmic blender280 blender281a blender282
+		blender2831 blender2831 blender2832 blender2900
 		allow-unknown-renderers )
 	pro-drivers? ( || ( opencl_orca opencl_pal opencl_rocm ) )
 	opencl_orca? (
@@ -190,14 +192,19 @@ RDEPEND="!system-blender? (
 		)
 	)
 	system-blender? (
-		blender279b? ( ~media-gfx/blender-2.79[cycles,headless,filmic(-)] )
-		blender279b_filmic? ( ~media-gfx/blender-2.79[cycles,headless,filmic] )
-		blender280? ( ~media-gfx/blender-2.80[cycles,headless] )
-		blender281a? ( ~media-gfx/blender-2.81a[cycles,headless] )
-		blender282? ( ~media-gfx/blender-2.82[cycles,headless] )
-		blender2831? ( ~media-gfx/blender-2.83.1[cycles,headless] )
-		blender2832? ( ~media-gfx/blender-2.83.2[cycles,headless] )
-		blender2832? ( ~media-gfx/blender-2.90.0[cycles,headless] )
+		gentoo-blender? (
+			blender279b? ( ~media-gfx/blender-2.79[cycles,-headless] )
+		)
+		!gentoo-blender? (
+			blender279b? ( ~media-gfx/blender-2.79[cycles,build_creator(+),filmic(-)] )
+			blender279b_filmic? ( ~media-gfx/blender-2.79[cycles,build_creator(+),filmic] )
+			blender280? ( ~media-gfx/blender-2.80[cycles,build_creator(+)] )
+			blender281a? ( ~media-gfx/blender-2.81a[cycles,build_creator(+)] )
+			blender282? ( ~media-gfx/blender-2.82[cycles,build_creator(+)] )
+			blender2831? ( ~media-gfx/blender-2.83.1[cycles,build_creator(+)] )
+			blender2832? ( ~media-gfx/blender-2.83.2[cycles,build_creator(+)] )
+			blender2832? ( ~media-gfx/blender-2.90.0[cycles,build_creator(+)] )
+		)
 	)
 	opencl? (
 	intel-ocl? ( dev-util/intel-ocl-sdk )
@@ -327,7 +334,22 @@ show_notice_pal_support() {
 	show_codename_docs
 }
 
+gbewarn() {
+	local pv="${1}"
+	ewarn "Blender ${pv} is not supported with the gentoo-blender USE flag"
+}
+
 pkg_setup() {
+	if use gentoo-blender ; then
+		use blender279b_filmic && gbewarn "2.79b_filmic"
+		use blender280 && gbewarn "2.80"
+		use blender281a && gbewarn "2.81a"
+		use blender282 && gbewarn "2.82"
+		use blender2831 && gbewarn "2.83.1"
+		use blender2832 && gbewarn "2.83.2"
+		use blender2900 && gbewarn "2.90.0"
+	fi
+
 	if has network-sandbox $FEATURES ; then
 		die \
 "${PN} requires network-sandbox to be disabled in FEATURES."
@@ -370,30 +392,33 @@ disable_hardblock() {
 }
 
 src_prepare() {
-	ewarn
-	ewarn "Security notices:"
-	ewarn
-	ewarn "${PN} downloads Blender 2.79 with Python 3.5.3 having critical security CVE advisories"
-	ewarn "${PN} downloads Blender 2.80 with Python 3.7.0 having high security CVE advisory"
-	ewarn "${PN} downloads Blender 2.81a with Python 3.7.4 having high security CVE advisory"
-	ewarn "${PN} downloads Blender 2.82 with Python 3.7.4 having high security CVE advisory"
-	ewarn "${PN} downloads Blender 2.83.1 with Python 3.7.4 having high security CVE advisory"
-	ewarn "${PN} downloads Blender 2.83.2 with Python 3.7.4 having high security CVE advisory"
-	ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.5&search_type=all"
-	ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.7&search_type=all"
-	ewarn
-	ewarn "${PN} downloads repackaged Blender 2.81a with DirectFB 1.2.10."
-	ewarn "https://security.gentoo.org/glsa/201701-55"
-	ewarn
-	ewarn "${PN} downloads repackaged Blender 2.82 with DirectFB 1.2.10."
-	ewarn "https://security.gentoo.org/glsa/201701-55"
-	ewarn
-	ewarn "${PN} downloads Blender 2.81a with SDL 1.2.14_pre20091018."
-	ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=sdl%201.2&search_type=all"
-	ewarn
-	ewarn "${PN} downloads Blender 2.82 with SDL 1.2.14_pre20091018."
-	ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=sdl%201.2&search_type=all"
-	ewarn
+	if ! use system-blender ; then
+		ewarn
+		ewarn "Security notices:"
+		ewarn
+		ewarn "${PN} downloads Blender 2.79 with Python 3.5.3 having critical security CVE advisories"
+		ewarn "${PN} downloads Blender 2.80 with Python 3.7.0 having high security CVE advisory"
+		ewarn "${PN} downloads Blender 2.81a with Python 3.7.4 having high security CVE advisory"
+		ewarn "${PN} downloads Blender 2.82 with Python 3.7.4 having high security CVE advisory"
+		ewarn "${PN} downloads Blender 2.83.1 with Python 3.7.4 having high security CVE advisory"
+		ewarn "${PN} downloads Blender 2.83.2 with Python 3.7.4 having high security CVE advisory"
+		ewarn "${PN} downloads Blender 2.90.0 with Python 3.7.7 having high security CVE advisory"
+		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.5&search_type=all"
+		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=python%203.7&search_type=all"
+		ewarn
+		ewarn "${PN} downloads repackaged Blender 2.81a with DirectFB 1.2.10."
+		ewarn "https://security.gentoo.org/glsa/201701-55"
+		ewarn
+		ewarn "${PN} downloads repackaged Blender 2.82 with DirectFB 1.2.10."
+		ewarn "https://security.gentoo.org/glsa/201701-55"
+		ewarn
+		ewarn "${PN} downloads Blender 2.81a with SDL 1.2.14_pre20091018."
+		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=sdl%201.2&search_type=all"
+		ewarn
+		ewarn "${PN} downloads Blender 2.82 with SDL 1.2.14_pre20091018."
+		ewarn "https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=sdl%201.2&search_type=all"
+		ewarn
+	fi
 
 	default
 	if use opencl ; then
@@ -401,26 +426,21 @@ src_prepare() {
 			src/com/sheepit/client/hardware/gpu/GPU.java || die
 	fi
 
-	eapply "${FILESDIR}/sheepit-client-6.2020.0-r3-renderer-version-picker.patch"
+	eapply "${FILESDIR}/sheepit-client-6.2020.0-r5-renderer-version-picker.patch"
 
 	if use system-blender ; then
-		if bzcat /var/db/pkg/media-gfx/blender-2.79b-r3/environment.bz2 \
+		if use gentoo-blender ; then
+			sed -i -e "s|SLOT_STYLE = 2|SLOT_STYLE = -1|g" \
+				src/com/sheepit/client/Configuration.java || die
+		elif bzcat /var/db/pkg/media-gfx/blender-2.79b-r3/environment.bz2 \
 			| grep -q -F -e "BLENDER_MULTISLOT" ; then
 local blender_multislot=$(bzcat "${EROOT}/var/db/pkg/media-gfx/blender-"*"/environment.bz2" \
 		| grep "BLENDER_MULTISLOT" | head -n 1 | grep -E -o -e "[0-9]")
 			sed -i -e "s|SLOT_STYLE = 2|SLOT_STYLE = ${blender_multislot}|g" \
 				src/com/sheepit/client/Configuration.java || die
 		else
-			ewarn \
-"We detected that you are using blender from not the oiledmachine-overlay.  \
-This ebuild may require modding."
-		fi
-
-		if ! grep -F -e "oiledmachine-overlay" \
-			"${EROOT}/var/db/pkg/media-gfx/blender-"*"/repository" ; then
-			ewarn \
-"Blender from oiledmachine-overlay is required.  Otherwise, fork ebuild and \
-patch (sheepit-client-6.2020.0-r3-renderer-version-picker.patch) the patch."
+			die \
+"Use either gentoo-blender or the blender ebuilds from the oiledmachine-overlay"
 		fi
 	fi
 

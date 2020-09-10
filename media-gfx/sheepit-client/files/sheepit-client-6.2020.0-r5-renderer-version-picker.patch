@@ -12,8 +12,6 @@ provided renderers instead via the USE_SYSTEM_RENDERERS constants in both
 in Configuration.java and Linux.java only for Linux currently.  You need to
 mod it for other distros or operating systems.
 
-LD_LIBRARY_PATH tricks are disabled when USE_SYSTEM_RENDERERS = true.
-
 Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
 ----
 diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Client.java sheepit-client-6.2020.0/src/com/sheepit/client/Client.java
@@ -36,14 +34,14 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Client.java sheepi
 +
 +	private boolean isUnknownRenderer(String md5_renderer) {
 +		switch (md5_renderer) {
-+			case this.configuration.MD5_279B:
-+			case this.configuration.MD5_279B_FILMIC:
-+			case this.configuration.MD5_280:
-+			case this.configuration.MD5_281A:
-+			case this.configuration.MD5_282:
-+			case this.configuration.MD5_2831:
-+			case this.configuration.MD5_2832:
-+			case this.configuration.MD5_2900:
++			case Configuration.MD5_279B:
++			case Configuration.MD5_279B_FILMIC:
++			case Configuration.MD5_280:
++			case Configuration.MD5_281A:
++			case Configuration.MD5_282:
++			case Configuration.MD5_2831:
++			case Configuration.MD5_2832:
++			case Configuration.MD5_2900:
 +				return false;
 +			default:
 +				break;
@@ -52,21 +50,21 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Client.java sheepi
 +	}
 +
 +	private boolean isRendererAllowed(String md5_renderer) {
-+		if (md5_renderer.equals(this.configuration.MD5_279B) && (!this.configuration.getAllowBlender279b() || Configuration.HARDBLOCK_BLENDER_279B)) {
++		if (md5_renderer.equals(Configuration.MD5_279B) && (!this.configuration.getAllowBlender279b() || Configuration.HARDBLOCK_BLENDER_279B)) {
 +			return false;
-+		} else if (md5_renderer.equals(this.configuration.MD5_279B_FILMIC) && (!this.configuration.getAllowBlender279bFilmic() || Configuration.HARDBLOCK_BLENDER_279B_FILMIC)) {
++		} else if (md5_renderer.equals(Configuration.MD5_279B_FILMIC) && (!this.configuration.getAllowBlender279bFilmic() || Configuration.HARDBLOCK_BLENDER_279B_FILMIC)) {
 +			return false;
-+		} else if (md5_renderer.equals(this.configuration.MD5_280) && (!this.configuration.getAllowBlender280() || Configuration.HARDBLOCK_BLENDER_280)) {
++		} else if (md5_renderer.equals(Configuration.MD5_280) && (!this.configuration.getAllowBlender280() || Configuration.HARDBLOCK_BLENDER_280)) {
 +			return false;
-+		} else if (md5_renderer.equals(this.configuration.MD5_281A) && (!this.configuration.getAllowBlender281a() || Configuration.HARDBLOCK_BLENDER_281A)) {
++		} else if (md5_renderer.equals(Configuration.MD5_281A) && (!this.configuration.getAllowBlender281a() || Configuration.HARDBLOCK_BLENDER_281A)) {
 +			return false;
-+		} else if (md5_renderer.equals(this.configuration.MD5_282) && (!this.configuration.getAllowBlender282() || Configuration.HARDBLOCK_BLENDER_282)) {
++		} else if (md5_renderer.equals(Configuration.MD5_282) && (!this.configuration.getAllowBlender282() || Configuration.HARDBLOCK_BLENDER_282)) {
 +			return false;
-+		} else if (md5_renderer.equals(this.configuration.MD5_2831) && (!this.configuration.getAllowBlender2831() || Configuration.HARDBLOCK_BLENDER_2831)) {
++		} else if (md5_renderer.equals(Configuration.MD5_2831) && (!this.configuration.getAllowBlender2831() || Configuration.HARDBLOCK_BLENDER_2831)) {
 +			return false;
-+		} else if (md5_renderer.equals(this.configuration.MD5_2832) && (!this.configuration.getAllowBlender2832() || Configuration.HARDBLOCK_BLENDER_2832)) {
++		} else if (md5_renderer.equals(Configuration.MD5_2832) && (!this.configuration.getAllowBlender2832() || Configuration.HARDBLOCK_BLENDER_2832)) {
 +			return false;
-+		} else if (md5_renderer.equals(this.configuration.MD5_2900) && (!this.configuration.getAllowBlender2832() || Configuration.HARDBLOCK_BLENDER_2900)) {
++		} else if (md5_renderer.equals(Configuration.MD5_2900) && (!this.configuration.getAllowBlender2832() || Configuration.HARDBLOCK_BLENDER_2900)) {
 +			return false;
 +		} else {
 +			if (!this.configuration.getAllowUnknownRenderers() || Configuration.HARDBLOCK_UNKNOWN_RENDERERS) {
@@ -78,21 +76,21 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Client.java sheepi
 +	
 +	private String getRendererName(String md5_renderer) {
 +		switch (md5_renderer) {
-+			case this.configuration.MD5_279B:
++			case Configuration.MD5_279B:
 +				return "Blender 2.79b";
-+			case this.configuration.MD5_279B_FILMIC:
++			case Configuration.MD5_279B_FILMIC:
 +				return "Blender 2.79b (Filmic)";
-+			case this.configuration.MD5_280:
++			case Configuration.MD5_280:
 +				return "Blender 2.80";
-+			case this.configuration.MD5_281A:
++			case Configuration.MD5_281A:
 +				return "Blender 2.81a";
-+			case this.configuration.MD5_282:
++			case Configuration.MD5_282:
 +				return "Blender 2.82";
-+			case this.configuration.MD5_2831:
++			case Configuration.MD5_2831:
 +				return "Blender 2.83.1";
-+			case this.configuration.MD5_2832:
++			case Configuration.MD5_2832:
 +				return "Blender 2.83.2";
-+			case this.configuration.MD5_2900:
++			case Configuration.MD5_2900:
 +				return "Blender 2.90.0";
 +			default:
 +				break;
@@ -101,7 +99,7 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Client.java sheepi
 +	}
  	
  	protected Error.Type downloadExecutable(Job ajob) throws FermeExceptionNoSpaceLeftOnDevice {
-+		if (this.configuration.MD5_SCENE.equals(ajob.getSceneMD5())) {
++		if (Configuration.MD5_SCENE.equals(ajob.getSceneMD5())) {
 +			// uses 2.82
 +			this.log.debug("Client::downloadExecutable allowing " + getRendererName(ajob.getRendererMD5()) + " temporarly for 'check computer strength' test");
 +		} else if (isRendererAllowed(ajob.getRendererMD5())) {
@@ -114,22 +112,9 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Client.java sheepi
  		return this.downloadFile(ajob, ajob.getRendererArchivePath(), ajob.getRendererMD5(),
  				String.format("%s?type=binary&job=%s", this.server.getPage("download-archive"), ajob.getId()), "renderer");
  	}
-@@ -811,11 +888,11 @@ import lombok.Data;
- 			// Directory already exists -> do nothing
- 		}
- 		else {
-+			// unzip the archive
- 			this.gui.status("Extracting renderer");
- 			// we create the directory
- 			renderer_path_file.mkdir();
- 			
--			// unzip the archive
- 			ret = Utils.unzipFileIntoDirectory(renderer_archive, renderer_path, null, log);
- 			if (ret != 0) {
- 				this.log.error(
 diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Configuration.java sheepit-client-6.2020.0/src/com/sheepit/client/Configuration.java
 --- sheepit-client-6.2020.0.orig/src/com/sheepit/client/Configuration.java	2020-07-07 06:38:23.000000000 -0700
-+++ sheepit-client-6.2020.0/src/com/sheepit/client/Configuration.java	2020-09-09 23:40:52.667018078 -0700
++++ sheepit-client-6.2020.0/src/com/sheepit/client/Configuration.java	2020-09-10 01:16:02.966954631 -0700
 @@ -66,6 +66,35 @@ import lombok.Data;
  	private String UIType;
  	private String hostname;
@@ -153,7 +138,7 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Configuration.java
 +	public static final boolean HARDBLOCK_BLENDER_2900 = false;
 +	public static final boolean HARDBLOCK_UNKNOWN_RENDERERS = false;
 +	public static final boolean USE_SYSTEM_RENDERERS = true;
-+	public static final boolean SLOT_STYLE = 2;
++	public static final int SLOT_STYLE = 2; // -1 = gentoo single slot, 0 = latest stable, 1 = LTS style $(ver_cut 1-2 ${PV}), 2 = per version style ${PV}(_filmic)?
 +	public static final String MD5_279B = "3d0e05e7a43ae213eccf33c47b5900c5";
 +	public static final String MD5_279B_FILMIC = "a6e995c16e72b9b0e2b3857fcf45a1d0";
 +	public static final String MD5_280 = "20eb01cbdc8d21c85ef744816caa83ea";
@@ -261,54 +246,84 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Configuration.java
  }
 diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Job.java sheepit-client-6.2020.0/src/com/sheepit/client/Job.java
 --- sheepit-client-6.2020.0.orig/src/com/sheepit/client/Job.java	2020-07-07 06:38:23.000000000 -0700
-+++ sheepit-client-6.2020.0/src/com/sheepit/client/Job.java	2020-09-09 22:50:29.240971644 -0700
-@@ -139,7 +139,55 @@ import lombok.Getter;
++++ sheepit-client-6.2020.0/src/com/sheepit/client/Job.java	2020-09-10 01:17:09.709559558 -0700
+@@ -139,7 +139,85 @@ import lombok.Getter;
  	}
  	
  	public String getRendererDirectory() {
 -		return configuration.getWorkingDirectory().getAbsolutePath() + File.separator + rendererMD5;
 +		String defaultPath = configuration.getWorkingDirectory().getAbsolutePath() + File.separator + rendererMD5 ;
-+		if (configuration.USE_SYSTEM_RENDERERS && configuration.SLOT_STYLE == 1) {
++		if (configuration.USE_SYSTEM_RENDERERS && configuration.SLOT_STYLE == -1) {
 +			/* For latest LTS slotting */
-+			switch (md5_renderer) {
-+				case this.configuration.MD5_279B:
-+					return "/usr/bin/.blender/2.79/headless";
-+				case this.configuration.MD5_279B_FILMIC:
-+					return "/usr/bin/.blender/2.79/headless";
-+				case this.configuration.MD5_280:
-+					return "/usr/bin/.blender/2.80/headless";
-+				case this.configuration.MD5_281A:
-+					return "/usr/bin/.blender/2.80/headless";
-+				case this.configuration.MD5_282:
-+					return "/usr/bin/.blender/2.82/headless";
-+				case this.configuration.MD5_2831:
-+					return "/usr/bin/.blender/2.83/headless";
-+				case this.configuration.MD5_2832:
-+					return "/usr/bin/.blender/2.83/headless";
-+				case this.configuration.MD5_2900:
-+					return "/usr/bin/.blender/2.90/headless";
++			switch (rendererMD5) {
++				case Configuration.MD5_279B:
++				case Configuration.MD5_279B_FILMIC:
++				case Configuration.MD5_280:
++				case Configuration.MD5_281A:
++				case Configuration.MD5_282:
++				case Configuration.MD5_2831:
++				case Configuration.MD5_2832:
++				case Configuration.MD5_2900:
++					return "/usr/bin";
++				default:
++					return defaultPath;
++			}
++		} else if (configuration.USE_SYSTEM_RENDERERS && configuration.SLOT_STYLE == 0) {
++			/* For latest stable */
++			switch (rendererMD5) {
++				case Configuration.MD5_279B:
++				case Configuration.MD5_279B_FILMIC:
++				case Configuration.MD5_280:
++				case Configuration.MD5_281A:
++				case Configuration.MD5_282:
++				case Configuration.MD5_2831:
++				case Configuration.MD5_2832:
++				case Configuration.MD5_2900:
++					return "/usr/bin/.blender/0/creator";
++				default:
++					return defaultPath;
++			}
++		} else if (configuration.USE_SYSTEM_RENDERERS && configuration.SLOT_STYLE == 1) {
++			/* For latest LTS slotting */
++			switch (rendererMD5) {
++				case Configuration.MD5_279B:
++					return "/usr/bin/.blender/2.79/creator";
++				case Configuration.MD5_279B_FILMIC:
++					return "/usr/bin/.blender/2.79/creator";
++				case Configuration.MD5_280:
++					return "/usr/bin/.blender/2.80/creator";
++				case Configuration.MD5_281A:
++					return "/usr/bin/.blender/2.80/creator";
++				case Configuration.MD5_282:
++					return "/usr/bin/.blender/2.82/creator";
++				case Configuration.MD5_2831:
++					return "/usr/bin/.blender/2.83/creator";
++				case Configuration.MD5_2832:
++					return "/usr/bin/.blender/2.83/creator";
++				case Configuration.MD5_2900:
++					return "/usr/bin/.blender/2.90/creator";
 +				default:
 +					return defaultPath;
 +			}
 +		} else if (configuration.USE_SYSTEM_RENDERERS && configuration.SLOT_STYLE == 2) {
 +			/* For per version slotting */
-+			switch (md5_renderer) {
-+				case this.configuration.MD5_279B:
-+					return "/usr/bin/.blender/2.79b/headless";
-+				case this.configuration.MD5_279B_FILMIC:
-+					return "/usr/bin/.blender/2.79b_filmic/headless";
-+				case this.configuration.MD5_280:
-+					return "/usr/bin/.blender/2.80/headless";
-+				case this.configuration.MD5_281A:
-+					return "/usr/bin/.blender/2.80a/headless";
-+				case this.configuration.MD5_282:
-+					return "/usr/bin/.blender/2.82/headless";
-+				case this.configuration.MD5_2831:
-+					return "/usr/bin/.blender/2.83.1/headless";
-+				case this.configuration.MD5_2832:
-+					return "/usr/bin/.blender/2.83.2/headless";
-+				case this.configuration.MD5_2900:
-+					return "/usr/bin/.blender/2.90.0/headless";
++			switch (rendererMD5) {
++				case Configuration.MD5_279B:
++					return "/usr/bin/.blender/2.79b/creator";
++				case Configuration.MD5_279B_FILMIC:
++					return "/usr/bin/.blender/2.79b_filmic/creator";
++				case Configuration.MD5_280:
++					return "/usr/bin/.blender/2.80/creator";
++				case Configuration.MD5_281A:
++					return "/usr/bin/.blender/2.80a/creator";
++				case Configuration.MD5_282:
++					return "/usr/bin/.blender/2.82/creator";
++				case Configuration.MD5_2831:
++					return "/usr/bin/.blender/2.83.1/creator";
++				case Configuration.MD5_2832:
++					return "/usr/bin/.blender/2.83.2/creator";
++				case Configuration.MD5_2900:
++					return "/usr/bin/.blender/2.90.0/creator";
 +				default:
 +					return defaultPath;
 +			}
@@ -321,7 +336,7 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Job.java sheepit-c
  	public String getRendererPath() {
 diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/os/Linux.java sheepit-client-6.2020.0/src/com/sheepit/client/os/Linux.java
 --- sheepit-client-6.2020.0.orig/src/com/sheepit/client/os/Linux.java	2020-07-07 06:38:23.000000000 -0700
-+++ sheepit-client-6.2020.0/src/com/sheepit/client/os/Linux.java	2020-09-10 00:25:46.890340041 -0700
++++ sheepit-client-6.2020.0/src/com/sheepit/client/os/Linux.java	2020-09-10 01:00:19.680336858 -0700
 @@ -34,6 +34,7 @@ import com.sheepit.client.hardware.cpu.C
  public class Linux extends OS {
  	private final String NICE_BINARY_PATH = "nice";
@@ -343,39 +358,6 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/os/Linux.java shee
  	}
  	
  	@Override public CPU getCPU() {
-@@ -152,18 +157,20 @@ public class Linux extends OS {
- 		Map<String, String> new_env = new HashMap<String, String>();
- 		new_env.putAll(java.lang.System.getenv()); // clone the env
- 		
--		// if Blender is already loading an OpenGL library, don't need to load Blender's default one (it will
--		// create system incompatibilities). If no OpenGL library is found, then load the one included in the binary
--		// zip file
--		if (isOpenGLAlreadyInstalled(command.get(0)) == false) {
--			Boolean has_ld_library_path = new_env.containsKey("LD_LIBRARY_PATH");
--			
--			String lib_dir = (new File(command.get(0))).getParent() + File.separator + "lib";
--			if (has_ld_library_path == false) {
--				new_env.put("LD_LIBRARY_PATH", lib_dir);
--			}
--			else {
--				new_env.put("LD_LIBRARY_PATH", new_env.get("LD_LIBRARY_PATH") + ":" + lib_dir);
-+		if (!this.USE_SYSTEM_RENDERERS) {
-+			// if Blender is already loading an OpenGL library, don't need to load Blender's default one (it will
-+			// create system incompatibilities). If no OpenGL library is found, then load the one included in the binary
-+			// zip file
-+			if (isOpenGLAlreadyInstalled(command.get(0)) == false) {
-+				Boolean has_ld_library_path = new_env.containsKey("LD_LIBRARY_PATH");
-+				
-+				String lib_dir = (new File(command.get(0))).getParent() + File.separator + "lib";
-+				if (has_ld_library_path == false) {
-+					new_env.put("LD_LIBRARY_PATH", lib_dir);
-+				}
-+				else {
-+					new_env.put("LD_LIBRARY_PATH", new_env.get("LD_LIBRARY_PATH") + ":" + lib_dir);
-+				}
- 			}
- 		}
- 		
 diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/SettingsLoader.java sheepit-client-6.2020.0/src/com/sheepit/client/SettingsLoader.java
 --- sheepit-client-6.2020.0.orig/src/com/sheepit/client/SettingsLoader.java	2020-07-07 06:38:23.000000000 -0700
 +++ sheepit-client-6.2020.0/src/com/sheepit/client/SettingsLoader.java	2020-09-09 21:50:25.634507572 -0700
