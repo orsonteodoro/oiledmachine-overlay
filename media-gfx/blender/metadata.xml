@@ -32,9 +32,9 @@
     slotted version series.  This will set the /usr/bin/blender symlink
     to that version
 
-    BLENDER_MULTISLOT can be set to 0 for single slot, 1 for multislot
-    LTS [Long Term Support] (default), 2 for multislot per version
-    (for compatibility for the Sheep it Render Farm).
+    BLENDER_MULTISLOT can be set to 0 for single slot to subscribe to latest
+    stable release, 1 for multislot LTS [Long Term Support] (default), 2 for
+    multislot per version (for compatibility for the sheepit-client).
 
     When build_portable USE flag is on, it will place a portable version
     in /usr/share/blender/${SLOT}/portable.
