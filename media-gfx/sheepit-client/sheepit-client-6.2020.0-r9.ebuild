@@ -91,7 +91,7 @@ KEYWORDS="~amd64"
 SLOT="0"
 
 IUSE=" \
-benchmark \
++benchmark \
 blender \
 blender279b blender279b_filmic blender280 blender281a blender282 \
 blender2831 blender2831 blender2832 \
@@ -99,13 +99,13 @@ blender2900 \
 allow-unknown-renderers disable-hard-version-blocks \
 cuda doc intel-ocl lts +opencl opencl_rocm opencl_orca \
 opencl_pal opengl_mesa pro-drivers split-drivers \
-renderer-version-picker \
 system-blender \
 gentoo-blender \
 video_cards_amdgpu video_cards_i965 video_cards_iris video_cards_nvidia \
 video_cards_radeonsi"
 REQUIRED_USE="
 	allow-unknown-renderers? ( blender !system-blender )
+	benchmark
 	benchmark? ( blender )
 	blender279b? ( blender )
 	blender279b_filmic? ( blender )
@@ -435,16 +435,16 @@ src_prepare() {
 			src/com/sheepit/client/hardware/gpu/GPU.java || die
 	fi
 
-	eapply "${FILESDIR}/sheepit-client-6.2020.0-r6-renderer-version-picker.patch"
+	eapply "${FILESDIR}/sheepit-client-6.2020.0-r9-renderer-version-picker.patch"
 
 	if use system-blender ; then
 		if use gentoo-blender ; then
 			sed -i -e "s|SLOT_STYLE = 2|SLOT_STYLE = -1|g" \
 				src/com/sheepit/client/Configuration.java || die
-		elif bzcat /var/db/pkg/media-gfx/blender-2.79b-r3/environment.bz2 \
+		elif bzcat /var/db/pkg/media-gfx/blender-*/environment.bz2 \
 			| grep -q -F -e "BLENDER_MULTISLOT" ; then
 local blender_multislot=$(bzcat "${EROOT}/var/db/pkg/media-gfx/blender-"*"/environment.bz2" \
-		| grep "BLENDER_MULTISLOT" | head -n 1 | grep -E -o -e "[0-9]")
+		| grep -F -e "BLENDER_MULTISLOT" | head -n 1 | grep -E -o -e "[0-9]")
 			sed -i -e "s|SLOT_STYLE = 2|SLOT_STYLE = ${blender_multislot}|g" \
 				src/com/sheepit/client/Configuration.java || die
 		else
@@ -456,8 +456,6 @@ local blender_multislot=$(bzcat "${EROOT}/var/db/pkg/media-gfx/blender-"*"/envir
 	if ! use system-blender ; then
 		sed -i -e "s|USE_SYSTEM_RENDERERS = true|USE_SYSTEM_RENDERERS = false|g" \
 			src/com/sheepit/client/Configuration.java || die
-		sed -i -e "s|USE_SYSTEM_RENDERERS = true|USE_SYSTEM_RENDERERS = false|g" \
-			src/com/sheepit/client/os/Linux.java || die
 	fi
 
 	if ! use allow-unknown-renderers ; then

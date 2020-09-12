@@ -16,7 +16,7 @@ Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
 ----
 diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Client.java sheepit-client-6.2020.0/src/com/sheepit/client/Client.java
 --- sheepit-client-6.2020.0.orig/src/com/sheepit/client/Client.java	2020-07-07 06:38:23.000000000 -0700
-+++ sheepit-client-6.2020.0/src/com/sheepit/client/Client.java	2020-09-09 23:17:44.323473640 -0700
++++ sheepit-client-6.2020.0/src/com/sheepit/client/Client.java	2020-09-12 15:55:01.446538744 -0700
 @@ -638,7 +638,8 @@ import lombok.Data;
  		}
  	}
@@ -114,7 +114,7 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Client.java sheepi
  	}
 diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Configuration.java sheepit-client-6.2020.0/src/com/sheepit/client/Configuration.java
 --- sheepit-client-6.2020.0.orig/src/com/sheepit/client/Configuration.java	2020-07-07 06:38:23.000000000 -0700
-+++ sheepit-client-6.2020.0/src/com/sheepit/client/Configuration.java	2020-09-10 01:16:02.966954631 -0700
++++ sheepit-client-6.2020.0/src/com/sheepit/client/Configuration.java	2020-09-12 15:55:01.446538744 -0700
 @@ -66,6 +66,35 @@ import lombok.Data;
  	private String UIType;
  	private String hostname;
@@ -246,8 +246,8 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Configuration.java
  }
 diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Job.java sheepit-client-6.2020.0/src/com/sheepit/client/Job.java
 --- sheepit-client-6.2020.0.orig/src/com/sheepit/client/Job.java	2020-07-07 06:38:23.000000000 -0700
-+++ sheepit-client-6.2020.0/src/com/sheepit/client/Job.java	2020-09-10 01:17:09.709559558 -0700
-@@ -139,7 +139,85 @@ import lombok.Getter;
++++ sheepit-client-6.2020.0/src/com/sheepit/client/Job.java	2020-09-12 15:55:01.446538744 -0700
+@@ -139,11 +139,90 @@ import lombok.Getter;
  	}
  	
  	public String getRendererDirectory() {
@@ -272,7 +272,6 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Job.java sheepit-c
 +			/* For latest stable */
 +			switch (rendererMD5) {
 +				case Configuration.MD5_279B:
-+				case Configuration.MD5_279B_FILMIC:
 +				case Configuration.MD5_280:
 +				case Configuration.MD5_281A:
 +				case Configuration.MD5_282:
@@ -280,6 +279,8 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Job.java sheepit-c
 +				case Configuration.MD5_2832:
 +				case Configuration.MD5_2900:
 +					return "/usr/bin/.blender/0/creator";
++				case Configuration.MD5_279B_FILMIC:
++					return "/usr/bin";
 +				default:
 +					return defaultPath;
 +			}
@@ -289,7 +290,7 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Job.java sheepit-c
 +				case Configuration.MD5_279B:
 +					return "/usr/bin/.blender/2.79/creator";
 +				case Configuration.MD5_279B_FILMIC:
-+					return "/usr/bin/.blender/2.79/creator";
++					return "/usr/bin";
 +				case Configuration.MD5_280:
 +					return "/usr/bin/.blender/2.80/creator";
 +				case Configuration.MD5_281A:
@@ -311,7 +312,7 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Job.java sheepit-c
 +				case Configuration.MD5_279B:
 +					return "/usr/bin/.blender/2.79b/creator";
 +				case Configuration.MD5_279B_FILMIC:
-+					return "/usr/bin/.blender/2.79b_filmic/creator";
++					return "/usr/bin";
 +				case Configuration.MD5_280:
 +					return "/usr/bin/.blender/2.80/creator";
 +				case Configuration.MD5_281A:
@@ -334,33 +335,92 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/Job.java sheepit-c
  	}
  	
  	public String getRendererPath() {
-diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/os/Linux.java sheepit-client-6.2020.0/src/com/sheepit/client/os/Linux.java
---- sheepit-client-6.2020.0.orig/src/com/sheepit/client/os/Linux.java	2020-07-07 06:38:23.000000000 -0700
-+++ sheepit-client-6.2020.0/src/com/sheepit/client/os/Linux.java	2020-09-10 01:00:19.680336858 -0700
-@@ -34,6 +34,7 @@ import com.sheepit.client.hardware.cpu.C
- public class Linux extends OS {
- 	private final String NICE_BINARY_PATH = "nice";
- 	private final String ID_COMMAND_INVOCATION = "id -u";
-+	public static final boolean USE_SYSTEM_RENDERERS = true;
- 	
- 	public Linux() {
- 		super();
-@@ -44,7 +45,11 @@ public class Linux extends OS {
+-		return getRendererDirectory() + File.separator + OS.getOS().getRenderBinaryPath();
++		return getRendererDirectory() + File.separator + OS.getOS().getRenderBinaryPath(rendererMD5);
  	}
  	
- 	@Override public String getRenderBinaryPath() {
+ 	public String getRendererArchivePath() {
+diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/os/FreeBSD.java sheepit-client-6.2020.0/src/com/sheepit/client/os/FreeBSD.java
+--- sheepit-client-6.2020.0.orig/src/com/sheepit/client/os/FreeBSD.java	2020-07-07 06:38:23.000000000 -0700
++++ sheepit-client-6.2020.0/src/com/sheepit/client/os/FreeBSD.java	2020-09-12 15:55:01.446538744 -0700
+@@ -42,7 +42,7 @@ public class FreeBSD extends OS {
+ 		return "freebsd";
+ 	}
+ 	
+-	@Override public String getRenderBinaryPath() {
++	@Override public String getRenderBinaryPath(String rendererMD5) {
+ 		return "rend.exe";
+ 	}
+ 	
+diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/os/Linux.java sheepit-client-6.2020.0/src/com/sheepit/client/os/Linux.java
+--- sheepit-client-6.2020.0.orig/src/com/sheepit/client/os/Linux.java	2020-07-07 06:38:23.000000000 -0700
++++ sheepit-client-6.2020.0/src/com/sheepit/client/os/Linux.java	2020-09-12 15:58:28.014533646 -0700
+@@ -28,6 +28,7 @@ import java.util.List;
+ import java.util.Map;
+ import java.util.Scanner;
+ 
++import com.sheepit.client.Configuration;
+ import com.sheepit.client.Log;
+ import com.sheepit.client.hardware.cpu.CPU;
+ 
+@@ -43,8 +44,16 @@ public class Linux extends OS {
+ 		return "linux";
+ 	}
+ 	
+-	@Override public String getRenderBinaryPath() {
 -		return "rend.exe";
-+		if (this.USE_SYSTEM_RENDERERS) {
-+			return "blender";
++	@Override public String getRenderBinaryPath(String rendererMD5) {
++		if (Configuration.USE_SYSTEM_RENDERERS) {
++			if (rendererMD5.equals(Configuration.MD5_279B_FILMIC)) {
++				return "blender-2.79b-filmic-sheepit";
++			} else {
++				return "blender";
++			}
 +		} else {
 +			return "rend.exe";
 +		}
  	}
  	
  	@Override public CPU getCPU() {
+diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/os/Mac.java sheepit-client-6.2020.0/src/com/sheepit/client/os/Mac.java
+--- sheepit-client-6.2020.0.orig/src/com/sheepit/client/os/Mac.java	2020-07-07 06:38:23.000000000 -0700
++++ sheepit-client-6.2020.0/src/com/sheepit/client/os/Mac.java	2020-09-12 15:55:01.446538744 -0700
+@@ -41,7 +41,7 @@ public class Mac extends OS {
+ 		return "mac";
+ 	}
+ 	
+-	@Override public String getRenderBinaryPath() {
++	@Override public String getRenderBinaryPath(String rendererMD5) {
+ 		return "Blender" + File.separator + "blender.app" + File.separator + "Contents" + File.separator + "MacOS" + File.separator + "blender";
+ 	}
+ 	
+diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/os/OS.java sheepit-client-6.2020.0/src/com/sheepit/client/os/OS.java
+--- sheepit-client-6.2020.0.orig/src/com/sheepit/client/os/OS.java	2020-07-07 06:38:23.000000000 -0700
++++ sheepit-client-6.2020.0/src/com/sheepit/client/os/OS.java	2020-09-12 15:55:01.446538744 -0700
+@@ -35,7 +35,7 @@ public abstract class OS {
+ 	
+ 	public abstract long getFreeMemory();
+ 	
+-	public abstract String getRenderBinaryPath();
++	public abstract String getRenderBinaryPath(String rendererMD5);
+ 	
+ 	public String getCUDALib() {
+ 		return null;
+diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/os/Windows.java sheepit-client-6.2020.0/src/com/sheepit/client/os/Windows.java
+--- sheepit-client-6.2020.0.orig/src/com/sheepit/client/os/Windows.java	2020-07-07 06:38:23.000000000 -0700
++++ sheepit-client-6.2020.0/src/com/sheepit/client/os/Windows.java	2020-09-12 15:55:01.446538744 -0700
+@@ -37,7 +37,7 @@ public class Windows extends OS {
+ 		return "windows";
+ 	}
+ 	
+-	@Override public String getRenderBinaryPath() {
++	@Override public String getRenderBinaryPath(String rendererMD5) {
+ 		return "rend.exe";
+ 	}
+ 	
 diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/SettingsLoader.java sheepit-client-6.2020.0/src/com/sheepit/client/SettingsLoader.java
 --- sheepit-client-6.2020.0.orig/src/com/sheepit/client/SettingsLoader.java	2020-07-07 06:38:23.000000000 -0700
-+++ sheepit-client-6.2020.0/src/com/sheepit/client/SettingsLoader.java	2020-09-09 21:50:25.634507572 -0700
++++ sheepit-client-6.2020.0/src/com/sheepit/client/SettingsLoader.java	2020-09-12 15:55:01.446538744 -0700
 @@ -58,6 +58,15 @@ public class SettingsLoader {
  	private String ui;
  	private String theme;
@@ -536,7 +596,7 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/SettingsLoader.jav
  }
 diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/standalone/swing/activity/Settings.java sheepit-client-6.2020.0/src/com/sheepit/client/standalone/swing/activity/Settings.java
 --- sheepit-client-6.2020.0.orig/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-07-07 06:38:23.000000000 -0700
-+++ sheepit-client-6.2020.0/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-09-09 21:50:25.634507572 -0700
++++ sheepit-client-6.2020.0/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-09-12 15:55:01.446538744 -0700
 @@ -101,6 +101,15 @@ public class Settings implements Activit
  	
  	private JCheckBox saveFile;
@@ -610,7 +670,7 @@ diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/standalone/swing/a
  				// or do we already have one?
 diff -urp sheepit-client-6.2020.0.orig/src/com/sheepit/client/standalone/Worker.java sheepit-client-6.2020.0/src/com/sheepit/client/standalone/Worker.java
 --- sheepit-client-6.2020.0.orig/src/com/sheepit/client/standalone/Worker.java	2020-07-07 06:38:23.000000000 -0700
-+++ sheepit-client-6.2020.0/src/com/sheepit/client/standalone/Worker.java	2020-09-09 21:50:25.634507572 -0700
++++ sheepit-client-6.2020.0/src/com/sheepit/client/standalone/Worker.java	2020-09-12 15:55:01.456539130 -0700
 @@ -94,6 +94,24 @@ public class Worker {
  	
  	@Option(name = "-renderbucket-size", usage = "Set a custom GPU renderbucket size (32 for 32x32px, 64 for 64x64px, and so on). NVIDIA GPUs support a maximum renderbucket size of 512x512 pixel, while AMD GPUs support a maximum 2048x2048 pixel renderbucket size. Minimum renderbucket size is 32 pixels for all GPUs", required = false) private int renderbucketSize = -1;
