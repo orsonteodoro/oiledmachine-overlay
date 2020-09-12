@@ -203,7 +203,10 @@ RDEPEND="!system-blender? (
 		)
 		!gentoo-blender? (
 			blender279b? ( ~media-gfx/blender-2.79[cycles,build_creator(+),filmic(-)] )
-			blender279b_filmic? ( ~media-gfx/blender-2.79[cycles,build_creator(+),filmic] )
+			blender279b_filmic? (
+				~media-gfx/blender-2.79[cycles,build_creator(+),filmic]
+				media-plugins/filmic-blender:sheepit
+			)
 			blender280? ( ~media-gfx/blender-2.80[cycles,build_creator(+)] )
 			blender281a? ( ~media-gfx/blender-2.81a[cycles,build_creator(+)] )
 			blender282? ( ~media-gfx/blender-2.82[cycles,build_creator(+)] )
@@ -432,7 +435,7 @@ src_prepare() {
 			src/com/sheepit/client/hardware/gpu/GPU.java || die
 	fi
 
-	eapply "${FILESDIR}/sheepit-client-6.2020.0-r5-renderer-version-picker.patch"
+	eapply "${FILESDIR}/sheepit-client-6.2020.0-r6-renderer-version-picker.patch"
 
 	if use system-blender ; then
 		if use gentoo-blender ; then
@@ -522,53 +525,67 @@ src_install() {
 	dodoc LICENSE
 	local allowed_renderers=""
 	if use blender279b ; then
-		dodoc -r "${FILESDIR}/blender-2.79b-licenses"
-		use doc \
-		dodoc -r "${FILESDIR}/blender-2.79b-readmes"
+		if ! use system-blender ; then
+			dodoc -r "${FILESDIR}/blender-2.79b-licenses"
+			use doc \
+			dodoc -r "${FILESDIR}/blender-2.79b-readmes"
+		fi
 		allowed_renderers+=" --allow-blender279b"
 	fi
 	if use blender279b_filmic ; then
-		dodoc -r "${FILESDIR}/blender-2.79b-licenses"
-		use doc \
-		dodoc -r "${FILESDIR}/blender-2.79b-readmes"
+		if ! use system-blender ; then
+			dodoc -r "${FILESDIR}/blender-2.79b-licenses"
+			use doc \
+			dodoc -r "${FILESDIR}/blender-2.79b-readmes"
+		fi
 		allowed_renderers+=" --allow-blender279b-filmic"
 	fi
 	if use blender280 ; then
-		dodoc -r "${FILESDIR}/blender-2.80-licenses"
-		use doc \
-		dodoc -r "${FILESDIR}/blender-2.80-readmes"
+		if ! use system-blender ; then
+			dodoc -r "${FILESDIR}/blender-2.80-licenses"
+			use doc \
+			dodoc -r "${FILESDIR}/blender-2.80-readmes"
+		fi
 		allowed_renderers+=" --allow-blender280"
 	fi
 	if use blender281a ; then
-		dodoc -r "${FILESDIR}/blender-2.81a-licenses"
-		use doc \
-		dodoc -r "${FILESDIR}/blender-2.81a-readmes"
+		if ! use system-blender ; then
+			dodoc -r "${FILESDIR}/blender-2.81a-licenses"
+			use doc \
+			dodoc -r "${FILESDIR}/blender-2.81a-readmes"
+		fi
 		allowed_renderers+=" --allow-blender281a"
 	fi
 	if use blender282 ; then
-		dodoc -r "${FILESDIR}/blender-2.82-licenses"
-		use doc \
-		dodoc -r "${FILESDIR}/blender-2.82-readmes"
+		if ! use system-blender ; then
+			dodoc -r "${FILESDIR}/blender-2.82-licenses"
+			use doc \
+			dodoc -r "${FILESDIR}/blender-2.82-readmes"
+		fi
 		allowed_renderers+=" --allow-blender282"
 	fi
 	if use blender2831 ; then
-		dodoc -r "${FILESDIR}/blender-2.83.1-licenses"
-		use doc \
-		dodoc -r "${FILESDIR}/blender-2.83.1-readmes"
+		if ! use system-blender ; then
+			dodoc -r "${FILESDIR}/blender-2.83.1-licenses"
+			use doc \
+			dodoc -r "${FILESDIR}/blender-2.83.1-readmes"
+		fi
 		allowed_renderers+=" --allow-blender2831"
 	fi
 	if use blender2832 || use benchmark ; then
-		dodoc -r "${FILESDIR}/blender-2.83.2-licenses"
-		use doc \
-		dodoc -r "${FILESDIR}/blender-2.83.2-readmes"
-		use blender2832 && \
+		if ! use system-blender ; then
+			dodoc -r "${FILESDIR}/blender-2.83.2-licenses"
+			use doc \
+			dodoc -r "${FILESDIR}/blender-2.83.2-readmes"
+		fi
 		allowed_renderers+=" --allow-blender2832"
 	fi
 	if use blender2900 ; then
-		# TODO
-		dodoc -r "${FILESDIR}/blender-2.90.0-licenses"
-		use doc \
-		dodoc -r "${FILESDIR}/blender-2.90.0-readmes"
+		if ! use system-blender ; then
+			dodoc -r "${FILESDIR}/blender-2.90.0-licenses"
+			use doc \
+			dodoc -r "${FILESDIR}/blender-2.90.0-readmes"
+		fi
 		allowed_renderers+=" --allow-blender2900"
 	fi
 	if use allow-unknown-renderers ; then
