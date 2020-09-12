@@ -6,39 +6,41 @@ EAPI=7
 DESCRIPTION='Client for the free and distributed render farm "SheepIt Render Farm"'
 HOMEPAGE="https://github.com/laurent-clouet/sheepit-client"
 LICENSE="GPL-2 Apache-2.0 LGPL-2.1+
-blender? (
-	Apache-2.0
-	BitstreamVera
-	Boost-1.0
-	BSD
-	BSD-2
-	CC0-1.0
-	GPL-2
-	GPL-2-with-font-exception
-	LGPL-2.1+
-	GPL-3
-	GPL-3-with-font-exception
-	MIT
-	MIT all-rights-reserved
-	PSF-2
-	PSF-2.4
-	SGI-B-1.1
-	SGI-B-2.0
-)
-blender282? (
-	MIT
-	LGPL-2.1
-	LGPL-2.1+
-	WTFPL-2
-)
-blender281a? (
-	MIT
-	LGPL-2.1
-	LGPL-2.1+
-	WTFPL-2
-)
-blender279b_filmic? (
-	all-rights-reserved
+!system-blender? (
+	blender? (
+		Apache-2.0
+		BitstreamVera
+		Boost-1.0
+		BSD
+		BSD-2
+		CC0-1.0
+		GPL-2
+		GPL-2-with-font-exception
+		LGPL-2.1+
+		GPL-3
+		GPL-3-with-font-exception
+		MIT
+		MIT all-rights-reserved
+		PSF-2
+		PSF-2.4
+		SGI-B-1.1
+		SGI-B-2.0
+	)
+	blender282? (
+		MIT
+		LGPL-2.1
+		LGPL-2.1+
+		WTFPL-2
+	)
+	blender281a? (
+		MIT
+		LGPL-2.1
+		LGPL-2.1+
+		WTFPL-2
+	)
+	blender279b_filmic? (
+		all-rights-reserved
+	)
 )
 "
 #
@@ -190,29 +192,30 @@ RDEPEND_BLENDER="
 	x11-libs/libxshmfence
 "
 
-RDEPEND="!system-blender? (
-		blender? (
+RDEPEND="
+	blender? (
+		!system-blender? (
 			${RDEPEND_BLENDER}
 			${RDEPEND_BLENDER_SHEEPIT_OIIO}
 			blender282? ( ${RDEPEND_BLENDER_SHEEPIT282} )
 		)
-	)
-	system-blender? (
-		gentoo-blender? (
-			blender279b? ( ~media-gfx/blender-2.79b[cycles,-headless] )
-		)
-		!gentoo-blender? (
-			blender279b? ( ~media-gfx/blender-2.79b[cycles,build_creator(+)] )
-			blender279b_filmic? (
-				~media-gfx/blender-2.79b[cycles,build_creator(+)]
-				media-plugins/filmic-blender:sheepit
+		system-blender? (
+			gentoo-blender? (
+				blender279b? ( ~media-gfx/blender-2.79b[cycles,-headless] )
 			)
-			blender280? ( ~media-gfx/blender-2.80[cycles,build_creator(+)] )
-			blender281a? ( ~media-gfx/blender-2.81a[cycles,build_creator(+)] )
-			blender282? ( ~media-gfx/blender-2.82[cycles,build_creator(+)] )
-			blender2831? ( ~media-gfx/blender-2.83.1[cycles,build_creator(+)] )
-			blender2832? ( ~media-gfx/blender-2.83.2[cycles,build_creator(+)] )
-			blender2900? ( ~media-gfx/blender-2.90.0[cycles,build_creator(+)] )
+			!gentoo-blender? (
+				blender279b? ( ~media-gfx/blender-2.79b[cycles,build_creator(+)] )
+				blender279b_filmic? (
+					~media-gfx/blender-2.79b[cycles,build_creator(+)]
+					media-plugins/filmic-blender:sheepit
+				)
+				blender280? ( ~media-gfx/blender-2.80[cycles,build_creator(+)] )
+				blender281a? ( ~media-gfx/blender-2.81a[cycles,build_creator(+)] )
+				blender282? ( ~media-gfx/blender-2.82[cycles,build_creator(+)] )
+				blender2831? ( ~media-gfx/blender-2.83.1[cycles,build_creator(+)] )
+				blender2832? ( ~media-gfx/blender-2.83.2[cycles,build_creator(+)] )
+				blender2900? ( ~media-gfx/blender-2.90.0[cycles,build_creator(+)] )
+			)
 		)
 	)
 	opencl? (
