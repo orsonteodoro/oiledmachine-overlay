@@ -44,30 +44,29 @@ cycles? (
 	MIT
 )
 "
+
 # intern/mikktspace contains ZLIB
 # intern/CMakeLists.txt contains GPL+ with all-rights-reserved ; there is no
 #   all rights reserved in the vanilla GPL-2
 
 PYTHON_COMPAT=( python3_{7,8} )
 
-inherit blender check-reqs cmake-utils xdg-utils flag-o-matic xdg-utils \
-	pax-utils python-single-r1 toolchain-funcs eapi7-ver
-
+inherit eapi7-ver
+inherit blender check-reqs cmake-utils flag-o-matic pax-utils \
+	python-single-r1 toolchain-funcs xdg
 
 # If you use git tarballs, you need to download the submodules listed in
 # .gitmodules.  The download.blender.org are preferred because they bundle them.
 SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
 
-# Blender can have letters in the version string,
-# so strip off the letter if it exists.
-MY_PV="$(ver_cut 1-2)"
-
 BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest}
 BLENDER_MULTISLOT=${BLENDER_MULTISLOT:=1}
 
 # Slotting is for scripting and plugin compatibility
-if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
-SLOT="${MY_PV}"
+if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "2" ]] ; then
+SLOT="${PV}"
+elif [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
+SLOT="$(ver_cut 1-2)"
 else
 SLOT="0"
 fi
@@ -76,8 +75,8 @@ fi
 IUSE+=" X +abi7-compat -asan +bullet +collada +color-management +cuda +cycles \
 -cycles-network +dds -debug doc +elbeem -embree +ffmpeg +fftw flac +jack \
 +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal +opencl +openexr \
-+openimagedenoise +openimageio +openmp +opensubdiv +openvdb -optix +osl \
-release +sdl +sndfile test +tiff -valgrind"
++openimagedenoise +openimageio +openmp +opensubdiv +openvdb +openxr -optix \
++osl release +sdl +sndfile test +tiff -valgrind"
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 RESTRICT="mirror !test? ( test )"
@@ -154,7 +153,7 @@ RDEPEND="${PYTHON_DEPS}
 		>=dev-python/requests-2.22.0[${PYTHON_MULTI_USEDEP}]
 		>=dev-python/urllib3-1.25.3[${PYTHON_MULTI_USEDEP}]
 	')
-	>=media-libs/freetype-2.9.1
+	>=media-libs/freetype-2.10.1
 	>=media-libs/glew-1.13.0:*
 	>=media-libs/libpng-1.6.35:0=
 	media-libs/libsamplerate
@@ -175,7 +174,7 @@ RDEPEND="${PYTHON_DEPS}
 		>=x11-drivers/nvidia-drivers-418.39
 		>=dev-util/nvidia-cuda-toolkit-10.1:=
 	)
-	embree? ( >=media-libs/embree-3.2.4 )
+	embree? ( >=media-libs/embree-3.8.0 )
 	ffmpeg? ( >=media-video/ffmpeg-4.0.2:=\
 [encode,jpeg2k?,mp3?,opus?,theora?,vorbis?,vpx?,x264,xvid?,zlib] )
 	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
@@ -183,7 +182,7 @@ RDEPEND="${PYTHON_DEPS}
 	jack? ( virtual/jack )
 	jemalloc? ( >=dev-libs/jemalloc-5.0.1:= )
 	jpeg2k? ( >=media-libs/openjpeg-2.3.0:2 )
-	llvm? ( >=sys-devel/llvm-6.0.1:= )
+	llvm? ( >=sys-devel/llvm-9.0.1:= )
 	ndof? (
 		app-misc/spacenavd
 		>=dev-libs/libspnav-0.2.3
@@ -210,8 +209,9 @@ RDEPEND="${PYTHON_DEPS}
 		>=dev-cpp/tbb-2019.9
 		>=dev-libs/c-blosc-1.5.0
 	)
+	openxr? ( >=media-libs/openxr-1.0.6 )
 	optix? ( >=dev-libs/optix-7 )
-	osl? ( >=media-libs/osl-1.9.9:= )
+	osl? ( >=media-libs/osl-1.10.9:= )
 	sdl? ( >=media-libs/libsdl2-2.0.8[sound,joystick] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
 	tiff? ( >=media-libs/tiff-4.0.9:0[zlib] )
@@ -238,9 +238,12 @@ DEPEND="${RDEPEND}
 	)
 	nls? ( sys-devel/gettext )"
 
-PATCHES=(
+_PATCHES=(
 	"${FILESDIR}/${PN}-2.82a-fix-install-rules.patch"
 	"${FILESDIR}/${PN}-2.82a-cycles-network-fixes.patch"
+	"${FILESDIR}/${PN}-2.83.1-device_network_h-fixes.patch"
+	"${FILESDIR}/${PN}-2.83.1-device_network_h-add-device-header.patch"
+	"${FILESDIR}/${PN}-2.83.1-update-acquire_tile-for-cycles-networking.patch"
 	"${FILESDIR}/${PN}-2.80-install-paths-change.patch"
 )
 
@@ -275,14 +278,16 @@ pkg_setup() {
 }
 
 _src_prepare() {
-	ewarn
-	ewarn "This version is not Long Term Support (LTS) version."
-	ewarn "Use 2.83.x series instead."
-	ewarn
+	eapply ${_PATCHES[@]}
+
 	S="${BUILD_DIR}" \
 	CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
 	cmake-utils_src_prepare
+
+	if [[ "${BLENDER_MULTISLOT}" == "2" ]] ; then
+		eapply "${FILESDIR}/blender-2.83.1-parent-datafiles-dir-change.patch"
+	fi
 
 	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
 		# we don't want static glew, but it's scattered across
@@ -307,6 +312,11 @@ _src_prepare() {
 }
 
 src_prepare() {
+	einfo
+	einfo "$(ver_cut 1-2) version series is a Long Term Support (LTS) version."
+	einfo "Upstream supports this series up to May 2020 (2 years)."
+	einfo
+	xdg_src_prepare
 	blender_prepare() {
 		cd "${BUILD_DIR}" || die
 		_src_prepare
@@ -373,6 +383,7 @@ ebuild/upstream developers only."
 		-DWITH_OPENVDB_BLOSC=$(usex openvdb)
 		-DWITH_PYTHON_INSTALL=OFF
 		-DWITH_PYTHON_INSTALL_NUMPY=OFF
+		-DWITH_XR_OPENXR=$(usex openxr)
 	)
 
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
@@ -397,7 +408,7 @@ ebuild/upstream developers only."
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.82/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.83.1/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -662,7 +673,7 @@ _src_install() {
 	local d_dest=$(get_dest)
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
 		python_fix_shebang "${ED%/}${d_dest}/blender-thumbnailer.py"
-		python_optimize "${ED%/}/usr/share/blender/${MY_PV}/scripts"
+		python_optimize "${ED%/}/usr/share/blender/${SLOT}/scripts"
 	fi
 
 	if [[ "${EBLENDER}" == "build_creator" \
@@ -678,13 +689,15 @@ _src_install() {
 		sed -i -e "s|Icon=blender|Icon=blender-${SLOT}|g" "${menu_file}" || die
 		dosym "../../..${d_dest}/blender" \
 			"/usr/bin/${PN}-${SLOT}" || die
+		touch "${d_dest}/creator/.lts"
 	elif [[ "${EBLENDER}" == "build_headless" ]] ; then
 		dosym "../../..${d_dest}/blender" \
 			"/usr/bin/${PN}-headless-${SLOT}" || die
 	fi
-	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
+	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" =~ (1|2) ]] ; then
 		dodir "${d_dest}"
-		touch "${ED}${d_dest}/.multislot"
+		# metainfo
+		echo "${BLENDER_MULTISLOT}" > "${ED}${d_dest}/.multislot"
 	fi
 	install_licenses
 	if use doc ; then
@@ -698,16 +711,16 @@ src_install() {
 		_src_install
 	}
 	blender_foreach_impl blender_install
-	local d_icon_hc="${ED}/usr/share/icons/hicolor"
-	local d_icon_scale="${d_icon_hc}/scalable"
-	local d_icon_sym="${d_icon_hc}/symbolic"
-	if [[ -e "${d_icon_scale}/apps/blender.svg" ]] ; then
-		mv "${d_icon_scale}/apps/blender"{,-${SLOT}}".svg" || die
-		mv "${d_icon_sym}/apps/blender-symbolic"{,-${SLOT}}".svg"
+	local ed_icon_hc="${ED}/usr/share/icons/hicolor"
+	local ed_icon_scale="${ed_icon_hc}/scalable"
+	local ed_icon_sym="${ed_icon_hc}/symbolic"
+	if [[ -e "${ed_icon_scale}/apps/blender.svg" ]] ; then
+		mv "${ed_icon_scale}/apps/blender"{,-${SLOT}}".svg" || die
+		mv "${ed_icon_sym}/apps/blender-symbolic"{,-${SLOT}}".svg"
 	fi
 	rm -rf "${ED}/usr/share/applications/blender.desktop" || die
-	if [[ -d "/usr/share/doc/blender" ]] ; then
-		mv /usr/share/doc/blender{,-${SLOT}} || die
+	if [[ -d "${ED}/usr/share/doc/blender" ]] ; then
+		mv "${ED}/usr/share/doc/blender"{,-${SLOT}} || die
 	fi
 }
 
@@ -752,8 +765,7 @@ pkg_postinst() {
 		einfo "automatically."
 		einfo
 	fi
-	xdg_icon_cache_update
-	xdg_mimeinfo_database_update
+	xdg_pkg_postinst
 	local d_src="${EROOT}/usr/bin/.${PN}"
 	local V=""
 	if [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" \
@@ -792,12 +804,11 @@ pkg_postinst() {
 }
 
 pkg_postrm() {
-	xdg_icon_cache_update
-	xdg_mimeinfo_database_update
+	xdg_pkg_postrm
 
 	ewarn ""
 	ewarn "You may want to remove the following directory."
-	ewarn "~/.config/${PN}/${MY_PV}/cache/"
+	ewarn "~/.config/${PN}/${SLOT}/cache/"
 	ewarn "It may contain extra render kernels not tracked by portage"
 	ewarn ""
 	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then

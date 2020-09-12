@@ -1,0 +1,181 @@
+--- a/source/blender/blenkernel/intern/appdir.c.orig	2018-03-23 08:22:25.000000000 -0700
++++ b/source/blender/blenkernel/intern/appdir.c	2020-09-10 23:06:44.825792176 -0700
+@@ -105,8 +105,8 @@ const char *BKE_appdir_folder_default(vo
+ /* returns a formatted representation of the specified version number. Non-reentrant! */
+ static char *blender_version_decimal(const int ver)
+ {
+-	static char version_str[5];
+-	sprintf(version_str, "%d.%02d", ver / 100, ver % 100);
++	static char version_str[6]; /* recalculate size of array for tag length */
++	sprintf(version_str, "%d.%02d%s%s", ver / 100, ver % 100, STRINGIFY(BLENDER_VERSION_CHAR), STRINGIFY(BLENDER_VERSION_TAG));
+ 	return version_str;
+ }
+ 
+--- a/source/creator/CMakeLists.txt.orig	2020-09-10 22:57:00.952946691 -0700
++++ b/source/creator/CMakeLists.txt	2020-09-10 23:00:53.812064641 -0700
+@@ -287,15 +287,15 @@ endif()
+ if(UNIX AND NOT APPLE)
+ 	if(WITH_PYTHON_MODULE)
+ 		if(WITH_INSTALL_PORTABLE)
+-			set(TARGETDIR_VER ${PORTABLE_DEST}/${BLENDER_VERSION})
++			set(TARGETDIR_VER ${PORTABLE_DEST}/${BLENDER_VERSION}${BLENDER_VERSION_CHAR}${BLENDER_VERSION_TAG})
+ 		else()
+-			set(TARGETDIR_VER ${PYTHON_SITE_PACKAGES}/${BLENDER_VERSION})
++			set(TARGETDIR_VER ${PYTHON_SITE_PACKAGES}/${BLENDER_VERSION}${BLENDER_VERSION_CHAR}${BLENDER_VERSION_TAG})
+ 		endif()
+ 	else()
+ 		if(WITH_INSTALL_PORTABLE)
+-			set(TARGETDIR_VER ${PORTABLE_DEST}/${BLENDER_VERSION})
++			set(TARGETDIR_VER ${PORTABLE_DEST}/${BLENDER_VERSION}${BLENDER_VERSION_CHAR}${BLENDER_VERSION_TAG})
+ 		else()
+-			set(TARGETDIR_VER share/blender/${BLENDER_VERSION})
++			set(TARGETDIR_VER share/blender/${BLENDER_VERSION}${BLENDER_VERSION_CHAR}${BLENDER_VERSION_TAG})
+ 		endif()
+ 	endif()
+ 
+@@ -665,7 +665,7 @@ elseif(WIN32)
+ 			install(
+ 				CODE
+ 				"
+-				message(STATUS \"Extracting Python to: \${CMAKE_INSTALL_PREFIX}/${BLENDER_VERSION}/python\")
++				message(STATUS \"Extracting Python to: \${CMAKE_INSTALL_PREFIX}/${BLENDER_VERSION}${BLENDER_VERSION_CHAR}${BLENDER_VERSION_TAG}/python\")
+ 				if(\"\${CMAKE_INSTALL_CONFIG_NAME}\" MATCHES \"^([Dd][Ee][Bb][Uu][Gg])$\")
+ 					set(PYTHON_ZIP \"${LIBDIR}/release/python${_PYTHON_VERSION_NO_DOTS}_d.tar.gz\")
+ 				else()
+@@ -674,9 +674,9 @@ elseif(WIN32)
+ 
+ 				execute_process(
+ 					COMMAND \${CMAKE_COMMAND} -E make_directory
+-					        \"\${CMAKE_INSTALL_PREFIX}/${BLENDER_VERSION}/python\"
++					        \"\${CMAKE_INSTALL_PREFIX}/${BLENDER_VERSION}${BLENDER_VERSION_CHAR}${BLENDER_VERSION_TAG}/python\"
+ 					COMMAND \${CMAKE_COMMAND} -E
+-					        chdir \"\${CMAKE_INSTALL_PREFIX}/${BLENDER_VERSION}/python\"
++					        chdir \"\${CMAKE_INSTALL_PREFIX}/${BLENDER_VERSION}${BLENDER_VERSION_CHAR}${BLENDER_VERSION_TAG}/python\"
+ 					        \${CMAKE_COMMAND} -E
+ 					        tar xzfv \"\${PYTHON_ZIP}\"
+ 				)
+@@ -687,7 +687,7 @@ elseif(WIN32)
+ 			# release/site-packages
+ 			install(
+ 				DIRECTORY ${LIBDIR}/release/site-packages
+-				DESTINATION ${BLENDER_VERSION}/python/lib
++				DESTINATION ${BLENDER_VERSION}${BLENDER_VERSION_CHAR}${BLENDER_VERSION_TAG}/python/lib
+ 				PATTERN ".svn" EXCLUDE
+ 				PATTERN "__pycache__" EXCLUDE           # * any cache *
+ 				PATTERN "*.pyc" EXCLUDE                 # * any cache *
+@@ -696,26 +696,26 @@ elseif(WIN32)
+ 
+ 			if(WITH_PYTHON_INSTALL_NUMPY)
+ 				set(PYTHON_NUMPY_VERSION 1.10)
+-				add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BLENDER_VERSION}/python/lib/site-packages
++				add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BLENDER_VERSION}${BLENDER_VERSION_CHAR}${BLENDER_VERSION_TAG}/python/lib/site-packages
+ 					COMMAND ${CMAKE_COMMAND} -E
+-					        make_directory ${CMAKE_CURRENT_BINARY_DIR}/${BLENDER_VERSION}/python/lib/site-packages)
++					        make_directory ${CMAKE_CURRENT_BINARY_DIR}/${BLENDER_VERSION}${BLENDER_VERSION_CHAR}${BLENDER_VERSION_TAG}/python/lib/site-packages)
+ 
+ 				add_custom_command(
+-					OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BLENDER_VERSION}/python/lib/site-packages/numpy
++					OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${BLENDER_VERSION}${BLENDER_VERSION_CHAR}${BLENDER_VERSION_TAG}/python/lib/site-packages/numpy
+ 					COMMAND ${CMAKE_COMMAND} -E
+ 					        tar xzvf "${LIBDIR}/release/python${_PYTHON_VERSION_NO_DOTS}_numpy_${PYTHON_NUMPY_VERSION}$<$<CONFIG:Debug>:d>.tar.gz"
+ 					DEPENDS
+ 						${LIBDIR}/release/python${_PYTHON_VERSION_NO_DOTS}_numpy_${PYTHON_NUMPY_VERSION}$<$<CONFIG:Debug>:d>.tar.gz
+-						${CMAKE_CURRENT_BINARY_DIR}/${BLENDER_VERSION}/python/lib/site-packages
+-					WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${BLENDER_VERSION}/python/lib/site-packages
++						${CMAKE_CURRENT_BINARY_DIR}/${BLENDER_VERSION}${BLENDER_VERSION_CHAR}${BLENDER_VERSION_TAG}/python/lib/site-packages
++					WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${BLENDER_VERSION}${BLENDER_VERSION_CHAR}${BLENDER_VERSION_TAG}/python/lib/site-packages
+ 				)
+ 				add_custom_target(
+ 					python_numpy ALL
+-					DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BLENDER_VERSION}/python/lib/site-packages/numpy
++					DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${BLENDER_VERSION}${BLENDER_VERSION_CHAR}${BLENDER_VERSION_TAG}/python/lib/site-packages/numpy
+ 				)
+ 				install(
+-					DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${BLENDER_VERSION}/python/lib/site-packages/numpy
+-					DESTINATION ${BLENDER_VERSION}/python/lib/site-packages
++					DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${BLENDER_VERSION}${BLENDER_VERSION_CHAR}${BLENDER_VERSION_TAG}/python/lib/site-packages/numpy
++					DESTINATION ${BLENDER_VERSION}${BLENDER_VERSION_CHAR}${BLENDER_VERSION_TAG}/python/lib/site-packages
+ 				)
+ 			endif()
+ 
+@@ -723,12 +723,12 @@ elseif(WIN32)
+ 			# TODO(sergey): For unti we've got better way to deal with python binary
+ 			install(
+ 				FILES ${LIBDIR}/python/lib/python${_PYTHON_VERSION_NO_DOTS}.dll
+-				DESTINATION ${BLENDER_VERSION}/python/bin
++				DESTINATION ${BLENDER_VERSION}${BLENDER_VERSION_CHAR}${BLENDER_VERSION_TAG}/python/bin
+ 				CONFIGURATIONS Release;RelWithDebInfo;MinSizeRel
+ 			)
+ 			install(
+ 				FILES ${LIBDIR}/python/lib/python${_PYTHON_VERSION_NO_DOTS}_d.dll
+-				DESTINATION ${BLENDER_VERSION}/python/bin
++				DESTINATION ${BLENDER_VERSION}${BLENDER_VERSION_CHAR}${BLENDER_VERSION_TAG}/python/bin
+ 				CONFIGURATIONS Debug
+ 			)
+ 		endif()
+@@ -958,7 +958,7 @@ elseif(APPLE)
+ 	if(WITH_GAMEENGINE AND WITH_PLAYER)
+ 		set(OSX_APP_PLAYER_SOURCEDIR ${CMAKE_SOURCE_DIR}/release/darwin/blenderplayer.app)
+ 		set(PLAYER_SOURCEINFO ${OSX_APP_PLAYER_SOURCEDIR}/Contents/Info.plist)
+-		set(PLAYER_TARGETDIR_VER blenderplayer.app/Contents/Resources/${BLENDER_VERSION})
++		set(PLAYER_TARGETDIR_VER blenderplayer.app/Contents/Resources/${BLENDER_VERSION}${BLENDER_VERSION_CHAR}${BLENDER_VERSION_TAG})
+ 
+ 
+ 		# important to make a clean  install each time else old scripts get loaded.
+@@ -1019,7 +1019,7 @@ if(DEFINED BLENDER_TEXT_FILES_DESTINATIO
+ 		CODE
+ 		"
+ 		file(READ \"${CMAKE_SOURCE_DIR}/release/text/readme.html\" DATA_SRC)
+-		string(REGEX REPLACE \"BLENDER_VERSION\" \"${BLENDER_VERSION}\" DATA_DST \"\${DATA_SRC}\")
++		string(REGEX REPLACE \"BLENDER_VERSION\" \"${BLENDER_VERSION}${BLENDER_VERSION_CHAR}${BLENDER_VERSION_TAG}\" DATA_DST \"\${DATA_SRC}\")
+ 		file(WRITE \"${CMAKE_BINARY_DIR}/release/text/readme.html\" \"\${DATA_DST}\")
+ 		unset(DATA_SRC)
+ 		unset(DATA_DST)
+--- a/build_files/cmake/macros.cmake.orig	2018-03-23 08:22:25.000000000 -0700
++++ b/build_files/cmake/macros.cmake	2020-09-10 23:08:21.459567976 -0700
+@@ -1186,6 +1186,7 @@ function(get_blender_version)
+ 	# - BLENDER_SUBVERSION (used for internal versioning mainly)
+ 	# - BLENDER_VERSION_CHAR (a, b, c, ...or empty string)
+ 	# - BLENDER_VERSION_CYCLE (alpha, beta, rc, release)
++	# - BLENDER_VERSION_TAG (_filmic) to indicate type of mod
+ 
+ 	# So cmake depends on BKE_blender.h, beware of inf-loops!
+ 	CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/source/blender/blenkernel/BKE_blender_version.h
+@@ -1197,6 +1198,7 @@ function(get_blender_version)
+ 	string(REGEX REPLACE ".*#define[ \t]+BLENDER_SUBVERSION[ \t]+([0-9]+).*" "\\1" _out_subversion "${_contents}")
+ 	string(REGEX REPLACE ".*#define[ \t]+BLENDER_VERSION_CHAR[ \t]+([a-z]+).*" "\\1" _out_version_char "${_contents}")
+ 	string(REGEX REPLACE ".*#define[ \t]+BLENDER_VERSION_CYCLE[ \t]+([a-z]+).*" "\\1" _out_version_cycle "${_contents}")
++	string(REGEX REPLACE ".*#define[ \t]+BLENDER_VERSION_TAG[ \t]+([a-z_]*).*" "\\1" _out_version_tag "${_contents}")
+ 
+ 	if(NOT ${_out_version} MATCHES "[0-9]+")
+ 		message(FATAL_ERROR "Version parsing failed for BLENDER_VERSION")
+@@ -1219,6 +1221,10 @@ function(get_blender_version)
+ 		message(FATAL_ERROR "Version parsing failed for BLENDER_VERSION_CYCLE")
+ 	endif()
+ 
++	#if(NOT ${_out_version_tag} MATCHES "[a-z_]+")
++	#	message(FATAL_ERROR "Version parsing failed for BLENDER_VERSION_TAG")
++	#endif()
++
+ 	math(EXPR _out_version_major "${_out_version} / 100")
+ 	math(EXPR _out_version_minor "${_out_version} % 100")
+ 
+@@ -1240,6 +1246,7 @@ function(get_blender_version)
+ 	set(BLENDER_VERSION_CHAR "${_out_version_char}" PARENT_SCOPE)
+ 	set(BLENDER_VERSION_CHAR_INDEX "${_out_version_char_index}" PARENT_SCOPE)
+ 	set(BLENDER_VERSION_CYCLE "${_out_version_cycle}" PARENT_SCOPE)
++	set(BLENDER_VERSION_TAG "${_out_version_tag}" PARENT_SCOPE)
+ 
+ endfunction()
+ 
+--- a/source/blender/blenkernel/BKE_blender_version.h.orig	2018-03-23 08:22:25.000000000 -0700
++++ b/source/blender/blenkernel/BKE_blender_version.h	2020-09-10 23:07:01.416440528 -0700
+@@ -38,6 +38,8 @@
+ #define BLENDER_VERSION_CHAR    b
+ /* alpha/beta/rc/release, docs use this */
+ #define BLENDER_VERSION_CYCLE   release
++/* tag or flavor */
++#define BLENDER_VERSION_TAG     
+ 
+ extern char versionstr[]; /* from blender.c */
+ 

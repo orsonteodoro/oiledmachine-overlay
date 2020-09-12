@@ -44,30 +44,29 @@ cycles? (
 	MIT
 )
 "
+
 # intern/mikktspace contains ZLIB
 # intern/CMakeLists.txt contains GPL+ with all-rights-reserved ; there is no
 #   all rights reserved in the vanilla GPL-2
 
 PYTHON_COMPAT=( python3_{7,8} )
 
-inherit blender check-reqs cmake-utils xdg-utils flag-o-matic xdg-utils \
-	pax-utils python-single-r1 toolchain-funcs eapi7-ver
-
+inherit eapi7-ver
+inherit blender check-reqs cmake-utils flag-o-matic pax-utils \
+	python-single-r1 toolchain-funcs xdg
 
 # If you use git tarballs, you need to download the submodules listed in
 # .gitmodules.  The download.blender.org are preferred because they bundle them.
 SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
 
-# Blender can have letters in the version string,
-# so strip off the letter if it exists.
-MY_PV="$(ver_cut 1-2)"
-
 BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest}
 BLENDER_MULTISLOT=${BLENDER_MULTISLOT:=1}
 
 # Slotting is for scripting and plugin compatibility
-if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
-SLOT="${MY_PV}"
+if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "2" ]] ; then
+SLOT="${PV}"
+elif [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
+SLOT="$(ver_cut 1-2)"
 else
 SLOT="0"
 fi
@@ -239,7 +238,7 @@ DEPEND="${RDEPEND}
 	)
 	nls? ( sys-devel/gettext )"
 
-PATCHES=(
+_PATCHES=(
 	"${FILESDIR}/${PN}-2.82a-fix-install-rules.patch"
 	"${FILESDIR}/${PN}-2.82a-cycles-network-fixes.patch"
 	"${FILESDIR}/${PN}-2.83.1-device_network_h-fixes.patch"
@@ -278,15 +277,23 @@ pkg_setup() {
 	fi
 }
 
+src_unpack() {
+	cd "${WORKDIR}" || die
+	unpack ${A}
+	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
+}
+
 _src_prepare() {
-	einfo
-	einfo "$(ver_cut 1-2) version series is a Long Term Support (LTS) version."
-	einfo "Upstream supports this series up to May 2020 (2 years)."
-	einfo
+	eapply ${_PATCHES[@]}
+
 	S="${BUILD_DIR}" \
 	CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
 	cmake-utils_src_prepare
+
+	if [[ "${BLENDER_MULTISLOT}" == "2" ]] ; then
+		eapply "${FILESDIR}/blender-2.83.1-parent-datafiles-dir-change.patch"
+	fi
 
 	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
 		# we don't want static glew, but it's scattered across
@@ -311,6 +318,11 @@ _src_prepare() {
 }
 
 src_prepare() {
+	einfo
+	einfo "$(ver_cut 1-2) version series is a Long Term Support (LTS) version."
+	einfo "Upstream supports this series up to May 2020 (2 years)."
+	einfo
+	xdg_src_prepare
 	blender_prepare() {
 		cd "${BUILD_DIR}" || die
 		_src_prepare
@@ -402,7 +414,7 @@ ebuild/upstream developers only."
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.83.1/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.83.5/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -667,7 +679,7 @@ _src_install() {
 	local d_dest=$(get_dest)
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
 		python_fix_shebang "${ED%/}${d_dest}/blender-thumbnailer.py"
-		python_optimize "${ED%/}/usr/share/blender/${MY_PV}/scripts"
+		python_optimize "${ED%/}/usr/share/blender/${SLOT}/scripts"
 	fi
 
 	if [[ "${EBLENDER}" == "build_creator" \
@@ -683,14 +695,15 @@ _src_install() {
 		sed -i -e "s|Icon=blender|Icon=blender-${SLOT}|g" "${menu_file}" || die
 		dosym "../../..${d_dest}/blender" \
 			"/usr/bin/${PN}-${SLOT}" || die
+		touch "${d_dest}/creator/.lts"
 	elif [[ "${EBLENDER}" == "build_headless" ]] ; then
 		dosym "../../..${d_dest}/blender" \
 			"/usr/bin/${PN}-headless-${SLOT}" || die
 	fi
-	touch "${ED}${d_dest}" || die
-	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
+	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" =~ (1|2) ]] ; then
 		dodir "${d_dest}"
-		touch "${ED}${d_dest}/.multislot"
+		# metainfo
+		echo "${BLENDER_MULTISLOT}" > "${ED}${d_dest}/.multislot"
 	fi
 	install_licenses
 	if use doc ; then
@@ -704,16 +717,16 @@ src_install() {
 		_src_install
 	}
 	blender_foreach_impl blender_install
-	local d_icon_hc="${ED}/usr/share/icons/hicolor"
-	local d_icon_scale="${d_icon_hc}/scalable"
-	local d_icon_sym="${d_icon_hc}/symbolic"
-	if [[ -e "${d_icon_scale}/apps/blender.svg" ]] ; then
-		mv "${d_icon_scale}/apps/blender"{,-${SLOT}}".svg" || die
-		mv "${d_icon_sym}/apps/blender-symbolic"{,-${SLOT}}".svg"
+	local ed_icon_hc="${ED}/usr/share/icons/hicolor"
+	local ed_icon_scale="${ed_icon_hc}/scalable"
+	local ed_icon_sym="${ed_icon_hc}/symbolic"
+	if [[ -e "${ed_icon_scale}/apps/blender.svg" ]] ; then
+		mv "${ed_icon_scale}/apps/blender"{,-${SLOT}}".svg" || die
+		mv "${ed_icon_sym}/apps/blender-symbolic"{,-${SLOT}}".svg"
 	fi
 	rm -rf "${ED}/usr/share/applications/blender.desktop" || die
-	if [[ -d "/usr/share/doc/blender" ]] ; then
-		mv /usr/share/doc/blender{,-${SLOT}} || die
+	if [[ -d "${ED}/usr/share/doc/blender" ]] ; then
+		mv "${ED}/usr/share/doc/blender"{,-${SLOT}} || die
 	fi
 }
 
@@ -758,8 +771,7 @@ pkg_postinst() {
 		einfo "automatically."
 		einfo
 	fi
-	xdg_icon_cache_update
-	xdg_mimeinfo_database_update
+	xdg_pkg_postinst
 	local d_src="${EROOT}/usr/bin/.${PN}"
 	local V=""
 	if [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" \
@@ -798,12 +810,11 @@ pkg_postinst() {
 }
 
 pkg_postrm() {
-	xdg_icon_cache_update
-	xdg_mimeinfo_database_update
+	xdg_pkg_postrm
 
 	ewarn ""
 	ewarn "You may want to remove the following directory."
-	ewarn "~/.config/${PN}/${MY_PV}/cache/"
+	ewarn "~/.config/${PN}/${SLOT}/cache/"
 	ewarn "It may contain extra render kernels not tracked by portage"
 	ewarn ""
 	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then

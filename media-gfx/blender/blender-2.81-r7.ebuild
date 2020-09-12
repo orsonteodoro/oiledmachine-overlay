@@ -44,41 +44,40 @@ cycles? (
 	MIT
 )
 "
+
 # intern/mikktspace contains ZLIB
 # intern/CMakeLists.txt contains GPL+ with all-rights-reserved ; there is no
 #   all rights reserved in the vanilla GPL-2
 
 PYTHON_COMPAT=( python3_{7,8} )
 
-inherit blender check-reqs cmake-utils xdg-utils flag-o-matic xdg-utils \
-	pax-utils python-single-r1 toolchain-funcs eapi7-ver
-
+inherit eapi7-ver
+inherit blender check-reqs cmake-utils flag-o-matic pax-utils \
+	python-single-r1 toolchain-funcs xdg
 
 # If you use git tarballs, you need to download the submodules listed in
 # .gitmodules.  The download.blender.org are preferred because they bundle them.
-SRC_URI="https://download.blender.org/source/blender-${PV}.tar.gz"
-
-# Blender can have letters in the version string,
-# so strip off the letter if it exists.
-MY_PV="$(ver_cut 1-2)"
+SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
 
 BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest}
 BLENDER_MULTISLOT=${BLENDER_MULTISLOT:=1}
 
 # Slotting is for scripting and plugin compatibility
-if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
-SLOT="${MY_PV}"
+if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "2" ]] ; then
+SLOT="${PV}"
+elif [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
+SLOT="$(ver_cut 1-2)"
 else
 SLOT="0"
 fi
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 IUSE+=" X +abi5-compat abi6-compat abi7-compat -asan +bullet -collada \
--color-management -cuda +cycles -cycles-network +dds -debug doc +elbeem \
--embree -ffmpeg -fftw flac -jack +jemalloc jpeg2k -llvm -man +ndof +nls +nvcc \
--nvrtc +openal opencl -openexr +openimageio +openmp -opensubdiv -openvdb -osl \
-release -sdl -sndfile test +tiff -valgrind X"
-FFMPEG_IUSE+=" jpeg2k +mp3 +theora vorbis vpx x264 xvid"
+-color-management +cuda +cycles -cycles-network +dds -debug doc +elbeem \
+-embree -ffmpeg -fftw flac -jack +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc \
+-nvrtc +openal +opencl -openexr -openimagedenoise -openimageio +openmp \
+-opensubdiv -openvdb -optix -osl release -sdl -sndfile test +tiff -valgrind"
+FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 RESTRICT="mirror !test? ( test )"
 
@@ -89,10 +88,11 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	cycles? ( openexr tiff openimageio osl? ( llvm ) )
 	embree? ( cycles )
 	mp3? ( ffmpeg )
-	nvcc? ( cuda )
-	nvrtc? ( cuda )
+	nvcc? ( || ( cuda optix ) )
+	nvrtc? ( || ( cuda optix ) )
 	opencl? ( cycles )
 	openvdb? ( ^^ ( abi5-compat abi6-compat abi7-compat ) )
+	optix? ( cuda cycles nvcc )
 	opus? ( ffmpeg )
 	osl? ( cycles llvm )
 	release? (
@@ -118,6 +118,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 		openexr
 		openimageio
 		openmp
+		openimagedenoise
 		opensubdiv
 		openvdb
 		osl
@@ -130,6 +131,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	theora? ( ffmpeg )
 	vorbis? ( ffmpeg )
 	vpx? ( ffmpeg )
+	webm? ( ffmpeg opus vpx )
 	x264? ( ffmpeg )
 	xvid? ( ffmpeg )"
 
@@ -139,23 +141,26 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 # extern/Eigen3/eigen-update.sh
 # Track OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER for changes.
 RDEPEND="${PYTHON_DEPS}
-	>=dev-lang/python-3.7.0
+	>=dev-lang/python-3.7.4
 	>=dev-libs/boost-1.68:=[nls?,threads(+)]
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
-		>=dev-python/certifi-2018.8.13[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/certifi-2019.6.16[${PYTHON_MULTI_USEDEP}]
 		>=dev-python/chardet-3.0.4[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/idna-2.7[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/numpy-1.15.0[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/requests-2.19.1[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/urllib3-1.23[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/idna-2.8[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/numpy-1.17.0[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/requests-2.22.0[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/urllib3-1.25.3[${PYTHON_MULTI_USEDEP}]
 	')
 	>=media-libs/freetype-2.9.1
 	>=media-libs/glew-1.13.0:*
 	>=media-libs/libpng-1.6.35:0=
 	media-libs/libsamplerate
 	>=sys-libs/zlib-1.2.11
-	virtual/glu
+	|| (
+		virtual/glu
+		>=media-libs/glu-9.0.1
+	)
 	|| (
 		virtual/jpeg:0=
 		>=media-libs/libjpeg-turbo-1.5.3
@@ -170,7 +175,7 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	embree? ( >=media-libs/embree-3.2.4 )
 	ffmpeg? ( >=media-video/ffmpeg-4.0.2:=\
-[encode,jpeg2k?,mp3?,theora?,vorbis?,vpx?,x264,xvid?,zlib] )
+[encode,jpeg2k?,mp3?,opus?,theora?,vorbis?,vpx?,x264,xvid?,zlib] )
 	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
 	flac? ( >=media-libs/flac-1.3.3 )
 	jack? ( virtual/jack )
@@ -189,6 +194,7 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	openal? ( >=media-libs/openal-1.18.2 )
 	opencl? ( virtual/opencl )
+	openimagedenoise? ( >=media-libs/oidn-1.0.0 )
 	openimageio? ( >=media-libs/openimageio-1.8.13[color-management?,jpeg2k?] )
 	openexr? (
 		>=media-libs/ilmbase-2.3.0:=
@@ -201,6 +207,7 @@ RDEPEND="${PYTHON_DEPS}
 		>=dev-cpp/tbb-2018.5
 		>=dev-libs/c-blosc-1.14.4
 	)
+	optix? ( >=dev-libs/optix-7 )
 	osl? ( >=media-libs/osl-1.9.9:= )
 	sdl? ( >=media-libs/libsdl2-2.0.8[sound,joystick] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
@@ -213,7 +220,7 @@ RDEPEND="${PYTHON_DEPS}
 	)"
 
 DEPEND="${RDEPEND}
-	>=dev-cpp/eigen-3.2.7:3
+	>=dev-cpp/eigen-3.3.7:3
 	>=dev-util/cmake-3.5
 	virtual/pkgconfig
 	doc? (
@@ -228,7 +235,7 @@ DEPEND="${RDEPEND}
 	)
 	nls? ( sys-devel/gettext )"
 
-PATCHES=(
+_PATCHES=(
 	"${FILESDIR}/${PN}-2.82a-fix-install-rules.patch"
 	"${FILESDIR}/${PN}-2.82a-cycles-network-fixes.patch"
 	"${FILESDIR}/${PN}-2.80-install-paths-change.patch"
@@ -265,14 +272,16 @@ pkg_setup() {
 }
 
 _src_prepare() {
-	ewarn
-	ewarn "This version is not Long Term Support (LTS) version."
-	ewarn "Use 2.83.x series instead."
-	ewarn
+	eapply ${_PATCHES[@]}
+
 	S="${BUILD_DIR}" \
 	CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
 	cmake-utils_src_prepare
+
+	if [[ "${BLENDER_MULTISLOT}" == "2" ]] ; then
+		eapply "${FILESDIR}/blender-2.81a-parent-datafiles-dir-change.patch"
+	fi
 
 	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
 		# we don't want static glew, but it's scattered across
@@ -297,6 +306,11 @@ _src_prepare() {
 }
 
 src_prepare() {
+	ewarn
+	ewarn "This version is not a Long Term Support (LTS) version."
+	ewarn "Use 2.83.x series instead."
+	ewarn
+	xdg_src_prepare
 	blender_prepare() {
 		cd "${BUILD_DIR}" || die
 		_src_prepare
@@ -334,11 +348,15 @@ $(usex abi7-compat 7 $(usex abi6-compat 6 5)) "")
 		-DWITH_COMPILER_ASAN=$(usex asan)
 		-DWITH_CUDA_DYNLOAD=$(usex cuda $(usex nvcc ON OFF) ON)
 		-DWITH_CXX_GUARDEDALLOC=$(usex debug)
+		-DWITH_CXX11_ABI=ON
 		-DWITH_CYCLES=$(usex cycles)
 		-DWITH_CYCLES_CUBIN_COMPILER=$(usex nvrtc)
 		-DWITH_CYCLES_CUDA_BINARIES=$(usex cuda)
 		-DWITH_CYCLES_DEVICE_CUDA=$(usex cuda TRUE FALSE)
 		-DWITH_CYCLES_DEVICE_OPENCL=$(usex opencl)
+		-DWITH_CYCLES_DEVICE_OPTIX=$(usex optix)
+		-DWITH_CYCLES_EMBREE=$(usex embree)
+		-DWITH_CYCLES_KERNEL_ASAN=$(usex asan)
 		-DWITH_CYCLES_OSL=$(usex osl)
 		-DWITH_DOC_MANPAGE=$(usex man)
 		-DWITH_IMAGE_DDS=$(usex dds)
@@ -352,6 +370,7 @@ $(usex abi7-compat 7 $(usex abi6-compat 6 5)) "")
 		-DWITH_MOD_FLUID=$(usex elbeem)
 		-DWITH_OPENCOLLADA=$(usex collada)
 		-DWITH_OPENCOLORIO=$(usex color-management)
+		-DWITH_OPENIMAGEDENOISE=$(usex openimagedenoise)
 		-DWITH_OPENIMAGEIO=$(usex openimageio)
 		-DWITH_OPENMP=$(usex openmp)
 		-DWITH_OPENSUBDIV=$(usex opensubdiv)
@@ -383,7 +402,7 @@ $(usex abi7-compat 7 $(usex abi6-compat 6 5)) "")
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.80/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.81/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -442,6 +461,56 @@ like /opt/cuda/bin/nvcc.\n\
 "\n\
 You need to define BLENDER_NVCC_PATH as a per-package environmental variable\n\
 containing the absolute path to nvcc e.g. /opt/cuda/bin/nvcc.\n\
+\n"
+			fi
+		fi
+		if use nvrtc ; then
+			if [[ -f "${EROOT}/opt/cuda/lib64/libnvrtc-builtins.so" ]] ; then
+				mycmakeargs+=(
+				-DCUDA_TOOLKIT_ROOT_DIR="${EROOT}/opt/cuda"
+				)
+			elif [[ -n "${BLENDER_CUDA_TOOLKIT_ROOT_DIR}" \
+&& -f "${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/lib64/libnvrtc-builtins.so" ]] ; then
+				mycmakeargs+=(
+	-DCUDA_TOOLKIT_ROOT_DIR="${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}"
+				)
+			elif [[ -n "${BLENDER_CUDA_TOOLKIT_ROOT_DIR}" \
+&& ! -f "${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/lib64/libnvrtc-builtins.so" ]] ; then
+				die \
+"Cannot reach \$BLENDER_CUDA_TOOLKIT_ROOT_DIR/lib64/libnvrtc-builtins.so"
+			else
+				die \
+"\n
+libnvrtc-builtins.so is unreachable.  Define BLENDER_CUDA_TOOLKIT_ROOT_DIR\n\
+as a per-package environmental variable (e.g. /opt/cuda).\n
+\n"
+			fi
+		fi
+		if use optix ; then
+			if [[ -n "${BLENDER_OPTIX_ROOT_DIR}" \
+		&& -f "${EROOT}/${BLENDER_OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
+				mycmakeargs+=(
+			-DOPTIX_ROOT_DIR="${EROOT}/${BLENDER_OPTIX_ROOT_DIR}"
+				)
+			elif [[ -n "${BLENDER_OPTIX_ROOT_DIR}" \
+		&& ! -f "${EROOT}/${BLENDER_OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
+				die \
+"\n\
+Cannot reach \$BLENDER_OPTIX_ROOT_DIR/include/optix.h.  Fix it?\n\
+\n"
+			elif [[ -n "${OPTIX_ROOT_DIR}" \
+		&& -f "${EROOT}/${OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
+				:;
+			elif [[ -n "${OPTIX_ROOT_DIR}" \
+		&& ! -f "${EROOT}/${OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
+"\n\
+Cannot reach \$OPTIX_ROOT_DIR/include/optix.h.  Fix it?\n\
+\n"
+			else
+				die \
+"\n\
+You need to define BLENDER_OPTIX_ROOT_DIR to point to the Optix SDK folder.\n\
+The build scripts expect BLENDER_OPTIX_ROOT_DIR/include/optix.h.\n\
 \n"
 			fi
 		fi
@@ -598,7 +667,7 @@ _src_install() {
 	local d_dest=$(get_dest)
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
 		python_fix_shebang "${ED%/}${d_dest}/blender-thumbnailer.py"
-		python_optimize "${ED%/}/usr/share/blender/${MY_PV}/scripts"
+		python_optimize "${ED%/}/usr/share/blender/${SLOT}/scripts"
 	fi
 
 	if [[ "${EBLENDER}" == "build_creator" \
@@ -618,9 +687,10 @@ _src_install() {
 		dosym "../../..${d_dest}/blender" \
 			"/usr/bin/${PN}-headless-${SLOT}" || die
 	fi
-	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
+	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" =~ (1|2) ]] ; then
 		dodir "${d_dest}"
-		touch "${ED}${d_dest}/.multislot"
+		# metainfo
+		echo "${BLENDER_MULTISLOT}" > "${ED}${d_dest}/.multislot"
 	fi
 	install_licenses
 	if use doc ; then
@@ -634,16 +704,16 @@ src_install() {
 		_src_install
 	}
 	blender_foreach_impl blender_install
-	local d_icon_hc="${ED}/usr/share/icons/hicolor"
-	local d_icon_scale="${d_icon_hc}/scalable"
-	local d_icon_sym="${d_icon_hc}/symbolic"
-	if [[ -e "${d_icon_scale}/apps/blender.svg" ]] ; then
-		mv "${d_icon_scale}/apps/blender"{,-${SLOT}}".svg" || die
-		mv "${d_icon_sym}/apps/blender-symbolic"{,-${SLOT}}".svg"
+	local ed_icon_hc="${ED}/usr/share/icons/hicolor"
+	local ed_icon_scale="${ed_icon_hc}/scalable"
+	local ed_icon_sym="${ed_icon_hc}/symbolic"
+	if [[ -e "${ed_icon_scale}/apps/blender.svg" ]] ; then
+		mv "${ed_icon_scale}/apps/blender"{,-${SLOT}}".svg" || die
+		mv "${ed_icon_sym}/apps/blender-symbolic"{,-${SLOT}}".svg"
 	fi
 	rm -rf "${ED}/usr/share/applications/blender.desktop" || die
-	if [[ -d "/usr/share/doc/blender" ]] ; then
-		mv /usr/share/doc/blender{,-${SLOT}} || die
+	if [[ -d "${ED}/usr/share/doc/blender" ]] ; then
+		mv "${ED}/usr/share/doc/blender"{,-${SLOT}} || die
 	fi
 }
 
@@ -688,8 +758,7 @@ pkg_postinst() {
 		einfo "automatically."
 		einfo
 	fi
-	xdg_icon_cache_update
-	xdg_mimeinfo_database_update
+	xdg_pkg_postinst
 	local d_src="${EROOT}/usr/bin/.${PN}"
 	local V=""
 	if [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" \
@@ -728,12 +797,11 @@ pkg_postinst() {
 }
 
 pkg_postrm() {
-	xdg_icon_cache_update
-	xdg_mimeinfo_database_update
+	xdg_pkg_postrm
 
 	ewarn ""
 	ewarn "You may want to remove the following directory."
-	ewarn "~/.config/${PN}/${MY_PV}/cache/"
+	ewarn "~/.config/${PN}/${SLOT}/cache/"
 	ewarn "It may contain extra render kernels not tracked by portage"
 	ewarn ""
 	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then

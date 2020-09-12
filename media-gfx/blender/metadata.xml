@@ -1,223 +1,232 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<!-- only for this ebuild fork on the oiledmachine-overlay -->
-	<maintainer type="person">
-		<email>orsonteodoro@hotmail.com</email>
-		<name>Orson Teodoro</name>
-	</maintainer>
-	<!-- originators -->
-	<maintainer type="person">
-		<email>agrigo2001@yahoo.com.au</email>
-		<name>Adrian Grigo</name>
-	</maintainer>
-	<maintainer type="project">
-		<email>proxy-maint@gentoo.org</email>
-		<name>Proxy Maintainers</name>
-	</maintainer>
-	<maintainer type="project">
-		<email>graphics@gentoo.org</email>
-		<name>Gentoo Graphics Project</name>
-	</maintainer>
-	<longdescription>
-		Blender, the open source software for 3D modeling, animation,
-		rendering, post-production, interactive creation and playback.
+  <!-- only for this ebuild fork on the oiledmachine-overlay -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!-- originators -->
+  <maintainer type="person">
+    <email>agrigo2001@yahoo.com.au</email>
+    <name>Adrian Grigo</name>
+  </maintainer>
+  <maintainer type="project">
+    <email>proxy-maint@gentoo.org</email>
+    <name>Proxy Maintainers</name>
+  </maintainer>
+  <maintainer type="project">
+    <email>graphics@gentoo.org</email>
+    <name>Gentoo Graphics Project</name>
+  </maintainer>
+  <longdescription>
+    Blender, the open source software for 3D modeling, animation,
+    rendering, post-production, interactive creation and playback.
 
-		Information about Cycles network rendering can be found at:
-		https://wiki.blender.org/wiki/Source/Render/Cycles/Network_Render
-		https://developer.blender.org/D2808
+    Information about Cycles network rendering can be found at:
+    https://wiki.blender.org/wiki/Source/Render/Cycles/Network_Render
+    https://developer.blender.org/D2808
 
-		BLENDER_MAIN_SYMLINK_MODE as a per-package environmental variable
-		can be set to latest-lts, latest (default), custom-x.yy where x.yy is a
-		slotted version series.  This will set the /usr/bin/blender symlink
-		to that version
+    BLENDER_MAIN_SYMLINK_MODE as a per-package environmental variable
+    can be set to latest-lts, latest (default), custom-x.yy where x.yy is a
+    slotted version series.  This will set the /usr/bin/blender symlink
+    to that version
 
-		BLENDER_MULTISLOT can be set to 1 to multislot (default) or
-		0 to single slot.
+    BLENDER_MULTISLOT can be set to 0 for single slot, 1 for multislot
+    LTS [Long Term Support] (default), 2 for multislot per version
+    (for compatibility for the Sheep it Render Farm).
 
-		When build_portable USE flag is on, it will place a portable version
-		in /usr/share/blender/${SLOT}/portable.
+    When build_portable USE flag is on, it will place a portable version
+    in /usr/share/blender/${SLOT}/portable.
 
-		When build_headless USE flag is on, the executible is called
-		blender_headless-${SLOT} or blender_headless.
+    When build_headless USE flag is on, the executible is called
+    blender_headless-${SLOT} or blender_headless.
 
-		The release USE flag depends on the platform defaults which are the
-		default set/unset USE flags.
+    The release USE flag depends on the platform defaults which are the
+    default set/unset USE flags.
 
+    Per-package use flags:
 
-		Per-package use flags:
+    BLENDER_CMAKE_ARGS is a bash array to concatinate with mycmakeargs.  Useful
+    for customizing CUDA_NVCC_EXECUTABLE, CUDA_TOOLKIT_ROOT_DIR, OPTIX_ROOT_DIR
+    locations.
 
-		BLENDER_CMAKE_ARGS is a bash array to concatinate with mycmakeargs.  Useful
-		for customizing CUDA_NVCC_EXECUTABLE, CUDA_TOOLKIT_ROOT_DIR, OPTIX_ROOT_DIR
-		locations.
+    BLENDER_DISABLE_CUDA_AUTODETECT can be set to 1 to disable automatically
+    defining CUDA_NVCC_EXECUTABLE, CUDA_TOOLKIT_ROOT_DIR, OPTIX_ROOT_DIR
+    cmake variables.
 
-		BLENDER_DISABLE_CUDA_AUTODETECT can be set to 1 to disable automatically
-		defining CUDA_NVCC_EXECUTABLE, CUDA_TOOLKIT_ROOT_DIR, OPTIX_ROOT_DIR
-		cmake variables.
+    BLENDER_CUDA_TOOLKIT_ROOT_DIR points to root directory for CUDA sdk. (e.g. /opt/cuda)
 
-		BLENDER_CUDA_TOOLKIT_ROOT_DIR points to root directory for CUDA sdk. (e.g. /opt/cuda)
-
-		BLENDER_NVCC_PATH points to absolute path to nvcc. (e.g. /opt/cuda/bin/nvcc)
-	</longdescription>
-	<upstream>
-		<doc lang="en">https://docs.blender.org/manual/en/2.83/index.html</doc>
-		<doc lang="de">https://docs.blender.org/manual/de/2.83/index.html</doc>
-		<doc lang="es">https://docs.blender.org/manual/es/2.83/index.html</doc>
-		<doc lang="fr">https://docs.blender.org/manual/fr/2.83/index.html</doc>
-		<doc lang="it">https://docs.blender.org/manual/it/2.83/index.html</doc>
-		<doc lang="ja">https://docs.blender.org/manual/ja/2.83/index.html</doc>
-		<doc lang="ko">https://docs.blender.org/manual/ko/2.83/index.html</doc>
-		<doc lang="nb">https://docs.blender.org/manual/nb/2.83/index.html</doc>
-		<doc lang="pt">https://docs.blender.org/manual/pt/2.83/index.html</doc>
-		<doc lang="ru">https://docs.blender.org/manual/ru/2.83/index.html</doc>
-		<doc lang="fi">https://docs.blender.org/manual/fi/2.83/index.html</doc>
-		<doc lang="uk">https://docs.blender.org/manual/uk/2.83/index.html</doc>
-		<doc lang="vi">https://docs.blender.org/manual/vi/2.83/index.html</doc>
-		<doc lang="zh-hans">https://docs.blender.org/manual/zh-hans/2.83/index.html</doc>
-		<doc lang="zh-hant">https://docs.blender.org/manual/zh-hant/2.83/index.html</doc>
-	</upstream>
-	<use>
-		<flag name="abi3-compat">
-			Use ABI 3.x compatible OpenVDB.
-		</flag>
-		<flag name="abi4-compat">
-			Use ABI 4.x compatible OpenVDB.
-		</flag>
-		<flag name="abi5-compat">
-			Use ABI 5.x compatible OpenVDB.
-		</flag>
-		<flag name="abi6-compat">
-			Use ABI 6.x compatible OpenVDB.
-		</flag>
-		<flag name="abi7-compat">
-			Use ABI 7.x compatible OpenVDB.
-		</flag>
-		<flag name="asan">
-			Enable address sanitiation.
-		</flag>
-		<flag name="build_creator">
-			Builds the IDE.  The default.
-		</flag>
-		<flag name="build_headless">
-			Builds Blender for render farms.  Disables windowing and audio.
-		</flag>
-		<flag name="build_portable">
-			Builds Blender for redistribution.  Makes use of static libraries.
-		</flag>
-		<flag name="bullet">
-			Enable Bullet (Physics Engine).
-		</flag>
-		<flag name="collada">
-			Add support for Collada interchange format through
-			<pkg>media-libs/opencollada</pkg>.
-		</flag>
-		<flag name="color-management">Enable color management via <pkg>media-libs/opencolorio</pkg>.</flag>
-		<flag name="cuda">
-			Build cycles renderer with nVidia CUDA support.
-		</flag>
-		<flag name="cycles">
-			Build cycles renderer (requires <pkg>media-libs/openimageio</pkg> and
-			<pkg>dev-libs/boost</pkg>).
-		</flag>
-		<flag name="cycles-network">
-			Enable experimental networking support for Cycles.
-		</flag>
-		<flag name="dds">
-			Adds DDS textures support to Blender.
-		</flag>
-		<flag name="doc">
-			Build C and Python API documentation directly from the source code.
-		</flag>
-		<flag name="elbeem">
-			Adds surface fluid simulation to Blender using El'Beem library.
-		</flag>
-		<flag name="embree">
-			Build cycles renderer with Embree support as a CPU ray accelerator.
-		</flag>
-		<flag name="flac">
-			Adds support for FLAC lossless audio support.
-		</flag>
-		<flag name="ffmpeg">
-			Adds support for FFMPEG enabling internal FFMPEG codecs support and
-			possibly external codec support if added.
-		</flag>
-		<flag name="llvm">
-			Enable features depending on llvm.
-		</flag>
-		<flag name="man">
-			Build and install man pages.
-		</flag>
-		<flag name="ndof">
-			Enable NDOF input devices (SpaceNavigator and friends).
-		</flag>
-		<flag name="nvcc">
-			Use the NVCC compiler for CUDA/Optix support.
-		</flag>
-		<flag name="nvrtc">
-			Use NVRTC to build the cubin compiler for CUDA support.
-		</flag>
-		<flag name="openal">
-			Adds 3D sound support.
-		</flag>
-		<flag name="opus">
-			Adds support for the Opus audio codec used for speech compression
-			and general use.
-		</flag>
-		<flag name="opencl">
-			Allow OpenCL Graphics Acceleration. This may
-			require extra graphics card drivers.</flag>
-		<flag name="openimagedenoise">Enable OpenImageDenoise Support</flag>
-		<flag name="openimageio">Enable OpenImageIO Support</flag>
-		<flag name="opensubdiv">
-			Add rendering support form OpenSubdiv from Dreamworks Animation
-			through <pkg>media-libs/opensubdiv</pkg>.
-		</flag>
-		<flag name="openvdb">
-			Add GPU preview rendering. Only works with nVidia cards.
-		</flag>
-		<flag name="openxr">
-			Add VR features.
-		</flag>
-		<flag name="optix">
-			Build cycles renderer with nVidia OptiX support on
-			GeForce/Quadro RTX GPUs for hardware accelerated
-			rendering and denoising.
-		</flag>
-		<flag name="osl">
-			Add support for OpenShadingLanguage scripting.
-		</flag>
-		<flag name="release">
-			Builds Blender with the release configuration (AKA precompiled Blender),
-			a subset of release configuration but allows for flexibility.  Otherwise,
-			it falls back to the platform default.
-		</flag>
-		<flag name="test">
-			Build the provided unit tests.
-		</flag>
-		<flag name="theora">
-			Adds theora as an audio output format.
-		</flag>
-		<flag name="webm">
-			Adds support for WebM preset with dependency checks.
-		</flag>
-		<flag name="vorbis">
-			Adds vorbis as an audio output format.
-		</flag>
-		<flag name="valgrind">
-			Add support for memory debugging using
-			<pkg>dev-util/valgrind</pkg>
-		</flag>
-		<flag name="vpx">
-			Adds support for VP9 for video output.
-		</flag>
-		<flag name="x264">
-			Adds support for x264 for video output.
-		</flag>
-		<flag name="X">
-			Checks for X11 dependencies.
-		</flag>
-		<flag name="xvid">
-			Adds support for the Xvid codec to render and output MPEG-4 video.
-		</flag>
-	</use>
+    BLENDER_NVCC_PATH points to absolute path to nvcc. (e.g. /opt/cuda/bin/nvcc)
+  </longdescription>
+  <upstream>
+    <doc lang="en">https://docs.blender.org/manual/en/2.83/index.html</doc>
+    <doc lang="de">https://docs.blender.org/manual/de/2.83/index.html</doc>
+    <doc lang="es">https://docs.blender.org/manual/es/2.83/index.html</doc>
+    <doc lang="fr">https://docs.blender.org/manual/fr/2.83/index.html</doc>
+    <doc lang="it">https://docs.blender.org/manual/it/2.83/index.html</doc>
+    <doc lang="ja">https://docs.blender.org/manual/ja/2.83/index.html</doc>
+    <doc lang="ko">https://docs.blender.org/manual/ko/2.83/index.html</doc>
+    <doc lang="nb">https://docs.blender.org/manual/nb/2.83/index.html</doc>
+    <doc lang="pt">https://docs.blender.org/manual/pt/2.83/index.html</doc>
+    <doc lang="ru">https://docs.blender.org/manual/ru/2.83/index.html</doc>
+    <doc lang="fi">https://docs.blender.org/manual/fi/2.83/index.html</doc>
+    <doc lang="uk">https://docs.blender.org/manual/uk/2.83/index.html</doc>
+    <doc lang="vi">https://docs.blender.org/manual/vi/2.83/index.html</doc>
+    <doc lang="zh-hans">
+      https://docs.blender.org/manual/zh-hans/2.83/index.html
+    </doc>
+    <doc lang="zh-hant">
+      https://docs.blender.org/manual/zh-hant/2.83/index.html
+    </doc>
+    <bugs-to>
+      https://developer.blender.org/
+    </bugs-to>
+  </upstream>
+  <use>
+    <flag name="abi3-compat">
+      Use ABI 3.x compatible OpenVDB.
+    </flag>
+    <flag name="abi4-compat">
+      Use ABI 4.x compatible OpenVDB.
+    </flag>
+    <flag name="abi5-compat">
+      Use ABI 5.x compatible OpenVDB.
+    </flag>
+    <flag name="abi6-compat">
+      Use ABI 6.x compatible OpenVDB.
+    </flag>
+    <flag name="abi7-compat">
+      Use ABI 7.x compatible OpenVDB.
+    </flag>
+    <flag name="asan">
+      Enable address sanitiation.
+    </flag>
+    <flag name="build_creator">
+      Builds the IDE.  The default.
+    </flag>
+    <flag name="build_headless">
+      Builds Blender for render farms.  Disables windowing and audio.
+    </flag>
+    <flag name="build_portable">
+      Builds Blender for redistribution.  Makes use of static libraries.
+    </flag>
+    <flag name="bullet">
+      Enable Bullet (Physics Engine).
+    </flag>
+    <flag name="collada">
+      Add support for Collada interchange format through
+      <pkg>media-libs/opencollada</pkg>.
+    </flag>
+    <flag name="color-management">
+      Enable color management via <pkg>media-libs/opencolorio</pkg>.
+    </flag>
+    <flag name="cuda">
+      Build cycles renderer with nVidia CUDA support.
+    </flag>
+    <flag name="cycles">
+      Build cycles renderer (requires <pkg>media-libs/openimageio</pkg> and
+      <pkg>dev-libs/boost</pkg>).
+    </flag>
+    <flag name="cycles-network">
+      Enable experimental networking support for Cycles.
+    </flag>
+    <flag name="dds">
+      Adds DDS textures support to Blender.
+    </flag>
+    <flag name="doc">
+      Build C and Python API documentation directly from the source code.
+    </flag>
+    <flag name="elbeem">
+      Adds surface fluid simulation to Blender using El'Beem library.
+    </flag>
+    <flag name="embree">
+      Build cycles renderer with Embree support as a CPU ray accelerator.
+    </flag>
+    <flag name="flac">
+      Adds support for FLAC lossless audio support.
+    </flag>
+    <flag name="ffmpeg">
+      Adds support for FFMPEG enabling internal FFMPEG codecs support and
+      possibly external codec support if added.
+    </flag>
+    <flag name="llvm">
+      Enable features depending on llvm.
+    </flag>
+    <flag name="man">
+      Build and install man pages.
+    </flag>
+    <flag name="ndof">
+      Enable NDOF input devices (SpaceNavigator and friends).
+    </flag>
+    <flag name="nvcc">
+      Use the NVCC compiler for CUDA/Optix support.
+    </flag>
+    <flag name="nvrtc">
+      Use NVRTC to build the cubin compiler for CUDA support.
+    </flag>
+    <flag name="openal">
+      Adds 3D sound support.
+    </flag>
+    <flag name="opus">
+      Adds support for the Opus audio codec used for speech compression
+      and general use.
+    </flag>
+    <flag name="opencl">
+      Allow OpenCL Graphics Acceleration. This may
+      require extra graphics card drivers.</flag>
+    <flag name="openimagedenoise">Enable OpenImageDenoise Support</flag>
+    <flag name="openimageio">Enable OpenImageIO Support</flag>
+    <flag name="opensubdiv">
+      Add rendering support form OpenSubdiv from Dreamworks Animation
+      through <pkg>media-libs/opensubdiv</pkg>.
+    </flag>
+    <flag name="openvdb">
+      Add GPU preview rendering. Only works with nVidia cards.
+    </flag>
+    <flag name="openxr">
+      Add VR features.
+    </flag>
+    <flag name="optix">
+      Build cycles renderer with nVidia OptiX support on
+      GeForce/Quadro RTX GPUs for hardware accelerated
+      rendering and denoising.
+    </flag>
+    <flag name="osl">
+      Add support for OpenShadingLanguage scripting.
+    </flag>
+    <flag name="release">
+      Builds Blender with the release configuration (AKA precompiled Blender),
+      a subset of release configuration but allows for flexibility.  Otherwise,
+      it falls back to the platform default.
+    </flag>
+    <flag name="test">
+      Build the provided unit tests.
+    </flag>
+    <flag name="theora">
+      Adds theora as an audio output format.
+    </flag>
+    <flag name="webm">
+      Adds support for WebM preset with dependency checks.
+    </flag>
+    <flag name="vorbis">
+      Adds vorbis as an audio output format.
+    </flag>
+    <flag name="valgrind">
+      Add support for memory debugging using
+      <pkg>dev-util/valgrind</pkg>
+    </flag>
+    <flag name="vpx">
+      Adds support for VP9 for video output.
+    </flag>
+    <flag name="x264">
+      Adds support for x264 for video output.
+    </flag>
+    <flag name="X">
+      Checks for X11 dependencies.
+    </flag>
+    <flag name="xvid">
+      Adds support for the Xvid codec to render and output MPEG-4 video.
+    </flag>
+  </use>
 </pkgmetadata>
