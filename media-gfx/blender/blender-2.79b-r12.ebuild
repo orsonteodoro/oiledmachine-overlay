@@ -89,6 +89,7 @@ SLOT="$(ver_cut 1-2)/${PV}"
 else
 SLOT="0/${PV}"
 fi
+SLOT_MAJ=${SLOT%/*}
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 IUSE+=" X abi3-compat +abi4-compat abi5-compat abi6-compat abi7-compat +bullet \
@@ -274,9 +275,9 @@ _PATCHES=(
 
 get_dest() {
 	if [[ "${EBLENDER}" == "build_portable" ]] ; then
-		echo "/usr/share/${PN}/${SLOT}/${EBLENDER_NAME}"
+		echo "/usr/share/${PN}/${SLOT_MAJ}/${EBLENDER_NAME}"
 	else
-		echo "/usr/bin/.${PN}/${SLOT}/${EBLENDER_NAME}"
+		echo "/usr/bin/.${PN}/${SLOT_MAJ}/${EBLENDER_NAME}"
 	fi
 }
 
@@ -653,7 +654,7 @@ _src_install_cycles_network() {
 	if use cycles-network ; then
 		exeinto "${d_dest}"
 		dosym "../../..${d_dest}/cycles_server" \
-			"/usr/bin/cycles_server-${SLOT}" || die
+			"/usr/bin/cycles_server-${SLOT_MAJ}" || die
 		doexe "${CMAKE_BUILD_DIR}${d_dest}/cycles_server"
 	fi
 }
@@ -732,7 +733,7 @@ _src_install() {
 	local d_dest=$(get_dest)
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
 		python_fix_shebang "${ED%/}${d_dest}/blender-thumbnailer.py"
-		python_optimize "${ED%/}/usr/share/blender/${SLOT}/scripts"
+		python_optimize "${ED%/}/usr/share/blender/${SLOT_MAJ}/scripts"
 	fi
 
 	if [[ "${EBLENDER}" == "build_creator" \
@@ -742,20 +743,20 @@ _src_install() {
 
 	local ed_icon_hc="${ED}/usr/share/icons/hicolor"
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
-		cp "${ED}/usr/share/applications"/blender{,-${SLOT}}.desktop || die
-		local menu_file="${ED}/usr/share/applications/blender-${SLOT}.desktop"
+		cp "${ED}/usr/share/applications"/blender{,-${SLOT_MAJ}}.desktop || die
+		local menu_file="${ED}/usr/share/applications/blender-${SLOT_MAJ}.desktop"
 		sed -i -e "s|Name=Blender|Name=Blender ${PV}|g" "${menu_file}" || die
 		sed -i -e "s|Exec=blender|Exec=${d_dest}/blender|g" "${menu_file}" || die
-		sed -i -e "s|Icon=blender|Icon=blender-${SLOT}|g" "${menu_file}" || die
+		sed -i -e "s|Icon=blender|Icon=blender-${SLOT_MAJ}|g" "${menu_file}" || die
 		for size in 16x16 22x22 24x24 256x256 32x32 48x48 ; do
-			mv "${ed_icon_hc}/"${size}"/apps/blender"{,-${SLOT}}".png" || die
+			mv "${ed_icon_hc}/"${size}"/apps/blender"{,-${SLOT_MAJ}}".png" || die
 		done
-		mv "${ed_icon_hc}/scalable/apps/blender"{,-${SLOT}}".svg" || die
+		mv "${ed_icon_hc}/scalable/apps/blender"{,-${SLOT_MAJ}}".svg" || die
 		dosym "../../..${d_dest}/blender" \
-			"/usr/bin/${PN}-${SLOT}" || die
+			"/usr/bin/${PN}-${SLOT_MAJ}" || die
 	elif [[ "${EBLENDER}" == "build_headless" ]] ; then
 		dosym "../../..${d_dest}/blender" \
-			"/usr/bin/${PN}-headless-${SLOT}" || die
+			"/usr/bin/${PN}-headless-${SLOT_MAJ}" || die
 	fi
 	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" =~ (1|2) ]] ; then
 		dodir "${d_dest}"
@@ -779,15 +780,15 @@ src_install() {
 	local ed_icon_sym="${ed_icon_hc}/symbolic"
 	if [[ -d "${ed_icon_hc}" ]] ; then
 		for size in 16x16 22x22 24x24 256x256 32x32 48x48 ; do
-			mv "${ed_icon_hc}/"${size}"/apps/blender"{,-${SLOT}}".png" || die
+			mv "${ed_icon_hc}/"${size}"/apps/blender"{,-${SLOT_MAJ}}".png" || die
 		done
 	fi
 	if [[ -e "${ed_icon_scale}/apps/blender.svg" ]] ; then
-		mv "${ed_icon_scale}/apps/blender"{,-${SLOT}}".svg" || die
+		mv "${ed_icon_scale}/apps/blender"{,-${SLOT_MAJ}}".svg" || die
 	fi
 	rm -rf "${ED}/usr/share/applications/blender.desktop" || die
 	if [[ -d "${ED}/usr/share/doc/blender" ]] ; then
-		mv "${ED}/usr/share/doc/blender"{,-${SLOT}} || die
+		mv "${ED}/usr/share/doc/blender"{,-${SLOT_MAJ}} || die
 	fi
 }
 
@@ -875,7 +876,7 @@ pkg_postrm() {
 
 	ewarn ""
 	ewarn "You may want to remove the following directory."
-	ewarn "~/.config/${PN}/${SLOT}/cache/"
+	ewarn "~/.config/${PN}/${SLOT_MAJ}/cache/"
 	ewarn "It may contain extra render kernels not tracked by portage"
 	ewarn ""
 	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then

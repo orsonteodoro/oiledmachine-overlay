@@ -55,11 +55,9 @@ inherit eapi7-ver
 inherit blender check-reqs cmake-utils flag-o-matic pax-utils \
 	python-single-r1 toolchain-funcs xdg
 
-DL_PV="2.83.0"
-
 # If you use git tarballs, you need to download the submodules listed in
 # .gitmodules.  The download.blender.org are preferred because they bundle them.
-SRC_URI="https://download.blender.org/source/blender-${DL_PV}.tar.xz"
+SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
 
 BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest}
 BLENDER_MULTISLOT=${BLENDER_MULTISLOT:=1}
@@ -72,6 +70,7 @@ SLOT="$(ver_cut 1-2)/${PV}"
 else
 SLOT="0/${PV}"
 fi
+SLOT_MAJ=${SLOT%/*}
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 IUSE+=" X +abi7-compat -asan +bullet +collada +color-management +cuda +cycles \
@@ -248,10 +247,9 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.83.1-update-acquire_tile-for-cycles-networking.patch"
 	"${FILESDIR}/${PN}-2.80-install-paths-change.patch"
 )
-S="${WORKDIR}/${PN}-${DL_PV}"
 
 get_dest() {
-	echo "/usr/bin/.${PN}/${SLOT}/${EBLENDER_NAME}"
+	echo "/usr/bin/.${PN}/${SLOT_MAJ}/${EBLENDER_NAME}"
 }
 
 blender_check_requirements() {
@@ -411,7 +409,7 @@ ebuild/upstream developers only."
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.83/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.83.2/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -609,7 +607,7 @@ _src_install_cycles_network() {
 	if use cycles-network ; then
 		exeinto "${d_dest}"
 		dosym "../../..${d_dest}/cycles_server" \
-			"/usr/bin/cycles_server-${SLOT}" || die
+			"/usr/bin/cycles_server-${SLOT_MAJ}" || die
 		doexe "${CMAKE_BUILD_DIR}${d_dest}/cycles_server"
 	fi
 }
@@ -676,7 +674,7 @@ _src_install() {
 	local d_dest=$(get_dest)
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
 		python_fix_shebang "${ED%/}${d_dest}/blender-thumbnailer.py"
-		python_optimize "${ED%/}/usr/share/blender/${SLOT}/scripts"
+		python_optimize "${ED%/}/usr/share/blender/${SLOT_MAJ}/scripts"
 	fi
 
 	if [[ "${EBLENDER}" == "build_creator" \
@@ -685,17 +683,17 @@ _src_install() {
 	fi
 
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
-		cp "${ED}/usr/share/applications"/blender{,-${SLOT}}.desktop || die
-		local menu_file="${ED}/usr/share/applications/blender-${SLOT}.desktop"
+		cp "${ED}/usr/share/applications"/blender{,-${SLOT_MAJ}}.desktop || die
+		local menu_file="${ED}/usr/share/applications/blender-${SLOT_MAJ}.desktop"
 		sed -i -e "s|Name=Blender|Name=Blender ${PV}|g" "${menu_file}" || die
 		sed -i -e "s|Exec=blender|Exec=${d_dest}/blender|g" "${menu_file}" || die
-		sed -i -e "s|Icon=blender|Icon=blender-${SLOT}|g" "${menu_file}" || die
+		sed -i -e "s|Icon=blender|Icon=blender-${SLOT_MAJ}|g" "${menu_file}" || die
 		dosym "../../..${d_dest}/blender" \
-			"/usr/bin/${PN}-${SLOT}" || die
+			"/usr/bin/${PN}-${SLOT_MAJ}" || die
 		touch "${d_dest}/creator/.lts"
 	elif [[ "${EBLENDER}" == "build_headless" ]] ; then
 		dosym "../../..${d_dest}/blender" \
-			"/usr/bin/${PN}-headless-${SLOT}" || die
+			"/usr/bin/${PN}-headless-${SLOT_MAJ}" || die
 	fi
 	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" =~ (1|2) ]] ; then
 		dodir "${d_dest}"
@@ -718,12 +716,12 @@ src_install() {
 	local ed_icon_scale="${ed_icon_hc}/scalable"
 	local ed_icon_sym="${ed_icon_hc}/symbolic"
 	if [[ -e "${ed_icon_scale}/apps/blender.svg" ]] ; then
-		mv "${ed_icon_scale}/apps/blender"{,-${SLOT}}".svg" || die
-		mv "${ed_icon_sym}/apps/blender-symbolic"{,-${SLOT}}".svg"
+		mv "${ed_icon_scale}/apps/blender"{,-${SLOT_MAJ}}".svg" || die
+		mv "${ed_icon_sym}/apps/blender-symbolic"{,-${SLOT_MAJ}}".svg"
 	fi
 	rm -rf "${ED}/usr/share/applications/blender.desktop" || die
 	if [[ -d "${ED}/usr/share/doc/blender" ]] ; then
-		mv "${ED}/usr/share/doc/blender"{,-${SLOT}} || die
+		mv "${ED}/usr/share/doc/blender"{,-${SLOT_MAJ}} || die
 	fi
 }
 
@@ -811,7 +809,7 @@ pkg_postrm() {
 
 	ewarn ""
 	ewarn "You may want to remove the following directory."
-	ewarn "~/.config/${PN}/${SLOT}/cache/"
+	ewarn "~/.config/${PN}/${SLOT_MAJ}/cache/"
 	ewarn "It may contain extra render kernels not tracked by portage"
 	ewarn ""
 	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
