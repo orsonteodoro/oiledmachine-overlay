@@ -204,7 +204,7 @@ RDEPEND="!system-blender? (
 		!gentoo-blender? (
 			blender279b? ( ~media-gfx/blender-2.79[cycles,build_creator(+),filmic(-)] )
 			blender279b_filmic? (
-				~media-gfx/blender-2.79[cycles,build_creator(+),filmic]
+				~media-gfx/blender-2.79[cycles,build_creator(+)]
 				media-plugins/filmic-blender:sheepit
 			)
 			blender280? ( ~media-gfx/blender-2.80[cycles,build_creator(+)] )
