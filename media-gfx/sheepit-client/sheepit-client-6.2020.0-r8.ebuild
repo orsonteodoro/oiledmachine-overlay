@@ -199,12 +199,12 @@ RDEPEND="!system-blender? (
 	)
 	system-blender? (
 		gentoo-blender? (
-			blender279b? ( ~media-gfx/blender-2.79[cycles,-headless] )
+			blender279b? ( ~media-gfx/blender-2.79b[cycles,-headless] )
 		)
 		!gentoo-blender? (
-			blender279b? ( ~media-gfx/blender-2.79[cycles,build_creator(+),filmic(-)] )
+			blender279b? ( ~media-gfx/blender-2.79b[cycles,build_creator(+)] )
 			blender279b_filmic? (
-				~media-gfx/blender-2.79[cycles,build_creator(+)]
+				~media-gfx/blender-2.79b[cycles,build_creator(+)]
 				media-plugins/filmic-blender:sheepit
 			)
 			blender280? ( ~media-gfx/blender-2.80[cycles,build_creator(+)] )
