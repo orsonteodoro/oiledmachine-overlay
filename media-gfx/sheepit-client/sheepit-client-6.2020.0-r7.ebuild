@@ -105,7 +105,7 @@ gentoo-blender \
 video_cards_amdgpu video_cards_i965 video_cards_iris video_cards_nvidia \
 video_cards_radeonsi"
 REQUIRED_USE="
-	allow-unknown-renderers? ( blender )
+	allow-unknown-renderers? ( blender !system-blender )
 	benchmark? ( blender )
 	blender279b? ( blender )
 	blender279b_filmic? ( blender )
