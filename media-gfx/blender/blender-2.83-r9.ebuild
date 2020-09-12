@@ -55,9 +55,11 @@ inherit eapi7-ver
 inherit blender check-reqs cmake-utils flag-o-matic pax-utils \
 	python-single-r1 toolchain-funcs xdg
 
+DL_PV="2.83.0"
+
 # If you use git tarballs, you need to download the submodules listed in
 # .gitmodules.  The download.blender.org are preferred because they bundle them.
-SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
+SRC_URI="https://download.blender.org/source/blender-${DL_PV}.tar.xz"
 
 BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest}
 BLENDER_MULTISLOT=${BLENDER_MULTISLOT:=1}
@@ -66,9 +68,9 @@ BLENDER_MULTISLOT=${BLENDER_MULTISLOT:=1}
 if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "2" ]] ; then
 SLOT="${PV}"
 elif [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
-SLOT="$(ver_cut 1-2)"
+SLOT="$(ver_cut 1-2)/${PV}"
 else
-SLOT="0"
+SLOT="0/${PV}"
 fi
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
@@ -246,6 +248,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.83.1-update-acquire_tile-for-cycles-networking.patch"
 	"${FILESDIR}/${PN}-2.80-install-paths-change.patch"
 )
+S="${WORKDIR}/${PN}-${DL_PV}"
 
 get_dest() {
 	echo "/usr/bin/.${PN}/${SLOT}/${EBLENDER_NAME}"
@@ -408,7 +411,7 @@ ebuild/upstream developers only."
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.83.5/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.83/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(

@@ -66,9 +66,9 @@ BLENDER_MULTISLOT=${BLENDER_MULTISLOT:=1}
 if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "2" ]] ; then
 SLOT="${PV}"
 elif [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
-SLOT="$(ver_cut 1-2)"
+SLOT="$(ver_cut 1-2)/${PV}"
 else
-SLOT="0"
+SLOT="0/${PV}"
 fi
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
@@ -275,12 +275,6 @@ pkg_setup() {
 			fi
 		fi
 	fi
-}
-
-src_unpack() {
-	cd "${WORKDIR}" || die
-	unpack ${A}
-	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 }
 
 _src_prepare() {

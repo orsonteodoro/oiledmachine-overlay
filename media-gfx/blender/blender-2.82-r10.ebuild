@@ -66,9 +66,9 @@ BLENDER_MULTISLOT=${BLENDER_MULTISLOT:=1}
 if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "2" ]] ; then
 SLOT="${PV}"
 elif [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
-SLOT="$(ver_cut 1-2)"
+SLOT="$(ver_cut 1-2)/${PV}"
 else
-SLOT="0"
+SLOT="0/${PV}"
 fi
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
@@ -403,7 +403,7 @@ ebuild/upstream developers only."
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.82a/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.82/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(

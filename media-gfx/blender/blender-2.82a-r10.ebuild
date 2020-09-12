@@ -1,8 +1,6 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# Based on blender-2.79b-r2 from the gentoo overlay.
-
 EAPI=6
 DESCRIPTION="3D Creation/Animation/Publishing System"
 HOMEPAGE="https://www.blender.org"
@@ -11,8 +9,6 @@ LICENSE="|| ( GPL-2 BL )
 all-rights-reserved
 LGPL-2.1+
 MPL-2.0
-NTP
-s_cbrt.c
 build_creator? (
 	Apache-2.0
 	AFL-3.0
@@ -41,80 +37,66 @@ build_headless? (
 	PSF-2
 	ZLIB
 )
-build_portable? (
-	Boost-1.0
-	BSD-2
-	jemalloc? ( BSD-2 )
-)
 cycles? (
 	Apache-2.0
 	Boost-1.0
 	BSD
 	MIT
 )
-game-engine? (
-	GPL-2+
-	ZLIB
-)
 "
 
 # intern/mikktspace contains ZLIB
 # intern/CMakeLists.txt contains GPL+ with all-rights-reserved ; there is no
 #   all rights reserved in the vanilla GPL-2
-# extern/carve/include/carve/win32.h all-rights-reserved
-# extern/carve/ || (GPL-2 GPL-3) ; could be reason why GPL-3 is bundled
-# source/gameengine/Expressions/intern/Value.cpp NTP
-# extern/carve/include/carve/cbrt.h s_cbrt.c
-# release/scripts/addons/render_povray/templates_pov/chess2.pov AFL-3.0
-# release/scripts/addons/render_povray/templates_pov/abyss.pov CC-BY-SA-3.0
 
-PYTHON_COMPAT=( python3_6 )
-HAS_PLAYER=1
+PYTHON_COMPAT=( python3_{7,8} )
+
 inherit eapi7-ver
 inherit blender check-reqs cmake-utils flag-o-matic pax-utils \
 	python-single-r1 toolchain-funcs xdg
 
 # If you use git tarballs, you need to download the submodules listed in
 # .gitmodules.  The download.blender.org are preferred because they bundle them.
-SRC_URI="https://download.blender.org/source/${P}.tar.gz"
+SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
 
-BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest} # can be latest, latest-lts, custom-x.yy
+BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest}
 BLENDER_MULTISLOT=${BLENDER_MULTISLOT:=1}
 
 # Slotting is for scripting and plugin compatibility
 if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "2" ]] ; then
 SLOT="${PV}"
 elif [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
-SLOT="$(ver_cut 1-2)"
+SLOT="$(ver_cut 1-2)/${PV}"
 else
-SLOT="0"
+SLOT="0/${PV}"
 fi
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-IUSE+=" X abi3-compat +abi4-compat abi5-compat abi6-compat abi7-compat +bullet \
-+dds +elbeem +game-engine -openexr -collada -color-management +cuda +cycles \
--cycles-network -debug doc flac -ffmpeg -fftw +jack +jemalloc +jpeg2k -llvm \
--man +ndof +nls +nvcc +openal +opencl +openimageio +openmp -opensubdiv \
--openvdb -osl release -sdl -sndfile -test +tiff -valgrind X"
-FFMPEG_IUSE+=" jpeg2k +mp3 +theora vorbis x264 xvid"
+IUSE+=" X +abi7-compat -asan +bullet +collada +color-management +cuda +cycles \
+-cycles-network +dds -debug doc +elbeem -embree +ffmpeg +fftw flac +jack \
++jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal +opencl +openexr \
++openimagedenoise +openimageio +openmp +opensubdiv +openvdb -optix +osl \
+release +sdl +sndfile test +tiff -valgrind"
+FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 RESTRICT="mirror !test? ( test )"
 
 # The release USE flag depends on platform defaults.
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	build_creator ( X )
-	build_portable ( X game-engine )
-	cuda? ( cycles nvcc )
+	cuda? ( cycles ^^ ( nvcc nvrtc ) )
 	cycles? ( openexr tiff openimageio osl? ( llvm ) )
+	embree? ( cycles )
 	mp3? ( ffmpeg )
-	nvcc? ( cuda )
+	nvcc? ( || ( cuda optix ) )
+	nvrtc? ( || ( cuda optix ) )
 	opencl? ( cycles )
-	openvdb? ( ^^ ( abi3-compat abi4-compat abi5-compat abi6-compat abi7-compat ) )
+	openvdb? ( abi7-compat )
+	optix? ( cuda cycles nvcc )
+	opus? ( ffmpeg )
 	osl? ( cycles llvm )
 	release? (
-		!abi3-compat
 		build_creator
-		build_portable
 		bullet
 		collada
 		color-management
@@ -126,7 +108,6 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 		elbeem
 		ffmpeg
 		fftw
-		game-engine
 		jack
 		jemalloc
 		jpeg2k
@@ -137,6 +118,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 		openexr
 		openimageio
 		openmp
+		openimagedenoise
 		opensubdiv
 		openvdb
 		osl
@@ -148,65 +130,59 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	)
 	theora? ( ffmpeg )
 	vorbis? ( ffmpeg )
+	vpx? ( ffmpeg )
+	webm? ( ffmpeg opus vpx )
 	x264? ( ffmpeg )
 	xvid? ( ffmpeg )"
 
-#REQUIRED_USE=" !cycles-network" # Fails for CPU and OPENCL
-
 # dependency version requirements see
-# 2.79b tagged on Mar 22, 2018
-
-# The below link is from blender2.7b branch with same patch subject.
-# https://github.com/blender/blender/blob/cfe43f8d1af2183a115414abd56a899d116be27d/build_files/build_environment/cmake/versions.cmake
-
-# https://github.com/blender/blender/blob/cfe43f8d1af2183a115414abd56a899d116be27d/extern/Eigen3/eigen-update.sh
+# build_files/build_environment/cmake/versions.cmake
+# doc/python_api/requirements.txt
+# extern/Eigen3/eigen-update.sh
 # Track OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER for changes.
-# They use OpenVDB 3.1.0 but disable abi3-compat but copyGridWithNewTree appears in 3.3.0.
+# Track build_files/build_environment/dependencies.dot for ffmpeg dependencies
 RDEPEND="${PYTHON_DEPS}
-	>=dev-lang/python-3.6.2
-	>=dev-libs/boost-1.60:=[nls?,threads(+)]
+	>=dev-lang/python-3.7.4
+	>=dev-libs/boost-1.70:=[nls?,threads(+)]
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
-		>=dev-python/certifi-2017.7.27.1[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/chardet-3.0.2[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/idna-2.6[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/numpy-1.15.0[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/requests-2.18.4[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/urllib3-1.22[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/certifi-2019.6.16[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/chardet-3.0.4[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/idna-2.8[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/numpy-1.17.0[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/requests-2.22.0[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/urllib3-1.25.3[${PYTHON_MULTI_USEDEP}]
 	')
-	>=media-libs/freetype-2.6.3
+	>=media-libs/freetype-2.9.1
 	>=media-libs/glew-1.13.0:*
-	>=media-libs/libpng-1.6.21:0=
+	>=media-libs/libpng-1.6.35:0=
 	media-libs/libsamplerate
-	>=sys-libs/zlib-1.2.8
+	>=sys-libs/zlib-1.2.11
 	|| (
 		virtual/glu
-		>=media-libs/glu-3.0.0
+		>=media-libs/glu-9.0.1
 	)
 	|| (
 		virtual/jpeg:0=
-		>=media-libs/libjpeg-turbo-1.4.2
+		>=media-libs/libjpeg-turbo-1.5.3
 	)
 	virtual/libintl
 	virtual/opengl
-	build_portable? (
-		dev-libs/boost:=[static-libs]
-		media-libs/openjpeg:=[static-libs]
-	)
-	collada? ( >=media-libs/opencollada-1.6.51:= )
-	color-management? ( >=media-libs/opencolorio-1.0.9 )
+	collada? ( >=media-libs/opencollada-1.6.68:= )
+	color-management? ( >=media-libs/opencolorio-1.1.0 )
 	cuda? (
-		>=x11-drivers/nvidia-drivers-367.48
-		>=dev-util/nvidia-cuda-toolkit-8.0:=
+		>=x11-drivers/nvidia-drivers-418.39
+		>=dev-util/nvidia-cuda-toolkit-10.1:=
 	)
-	ffmpeg? ( >=media-video/ffmpeg-3.2.1:=\
-[encode,jpeg2k?,mp3?,theora?,vorbis?,x264,xvid?,zlib] )
-	fftw? ( >=sci-libs/fftw-3.3.4:3.0= )
-	flac? ( >=media-libs/flac-1.3.1 )
+	embree? ( >=media-libs/embree-3.2.4 )
+	ffmpeg? ( >=media-video/ffmpeg-4.0.2:=\
+[encode,jpeg2k?,mp3?,opus?,theora?,vorbis?,vpx?,x264,xvid?,zlib] )
+	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
+	flac? ( >=media-libs/flac-1.3.2 )
 	jack? ( virtual/jack )
 	jemalloc? ( >=dev-libs/jemalloc-5.0.1:= )
-	jpeg2k? ( >=media-libs/openjpeg-1.5.2:0 )
-	llvm? ( >=sys-devel/llvm-3.4.2:= )
+	jpeg2k? ( >=media-libs/openjpeg-2.3.0:2 )
+	llvm? ( >=sys-devel/llvm-6.0.1:= )
 	ndof? (
 		app-misc/spacenavd
 		>=dev-libs/libspnav-0.2.3
@@ -214,32 +190,30 @@ RDEPEND="${PYTHON_DEPS}
 	nls? (
 		|| (
 			virtual/libiconv
-			>=dev-libs/libiconv-1.14
+			>=dev-libs/libiconv-1.15
 		)
 	)
-	openal? ( >=media-libs/openal-1.17.2 )
+	openal? ( >=media-libs/openal-1.18.2 )
 	opencl? ( virtual/opencl )
-	openimageio? ( >=media-libs/openimageio-1.7.15[color-management?,jpeg2k?] )
+	openimagedenoise? ( >=media-libs/oidn-1.0.0 )
+	openimageio? ( >=media-libs/openimageio-1.8.13[color-management?,jpeg2k?] )
 	openexr? (
-		>=media-libs/ilmbase-2.2.0:=
-		>=media-libs/openexr-2.2.0:=
+		>=media-libs/ilmbase-2.4.0:=
+		>=media-libs/openexr-2.4.0:=
 	)
-	opensubdiv? ( >=media-libs/opensubdiv-3.1.1:=[cuda=,opencl=] )
+	opensubdiv? ( >=media-libs/opensubdiv-3.4.0_rc2:=[cuda=,opencl=] )
 	openvdb? (
-		abi3-compat? (
-			>=media-gfx/openvdb-3.1.0[${PYTHON_SINGLE_USEDEP},abi3-compat]
+		abi7-compat? (
+			>=media-gfx/openvdb-7[${PYTHON_SINGLE_USEDEP},abi7-compat?]
 		)
-		!abi3-compat? (
-			>=media-gfx/openvdb-3.3.0\
-[${PYTHON_SINGLE_USEDEP},abi4-compat?,abi5-compat?,abi6-compat?,abi7-compat?]
-		)
-		>=dev-cpp/tbb-2017.7
-		>=dev-libs/c-blosc-1.7.1
+		>=dev-cpp/tbb-2019.9
+		>=dev-libs/c-blosc-1.5.0
 	)
-	osl? ( >=media-libs/osl-1.7.5:= )
-	sdl? ( >=media-libs/libsdl2-2.0.4[sound,joystick] )
+	optix? ( >=dev-libs/optix-7 )
+	osl? ( >=media-libs/osl-1.9.9:= )
+	sdl? ( >=media-libs/libsdl2-2.0.8[sound,joystick] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
-	tiff? ( >=media-libs/tiff-4.0.6:0[zlib] )
+	tiff? ( >=media-libs/tiff-4.0.9:0[zlib] )
 	valgrind? ( dev-util/valgrind )
 	X? (
 		x11-libs/libX11
@@ -248,12 +222,13 @@ RDEPEND="${PYTHON_DEPS}
 	)"
 
 DEPEND="${RDEPEND}
-	>=dev-cpp/eigen-3.2.7:3
+	>=dev-cpp/eigen-3.3.7:3
 	>=dev-util/cmake-3.5
 	virtual/pkgconfig
 	doc? (
 		app-doc/doxygen[dot]
-		dev-python/sphinx[latex]
+		>=dev-python/sphinx-1.8.5[latex]
+		>=dev-python/sphinx_rtd_theme-0.4.3
 		dev-texlive/texlive-bibtexextra
 		dev-texlive/texlive-fontsextra
 		dev-texlive/texlive-fontutils
@@ -263,21 +238,13 @@ DEPEND="${RDEPEND}
 	nls? ( sys-devel/gettext )"
 
 _PATCHES=(
-	"${FILESDIR}/${PN}-2.79b-fix-install-rules.patch"
-	"${FILESDIR}/${PN}-2.79b-gcc-8.patch"
-	"${FILESDIR}/${PN}-2.79b-ffmpeg-4-compat.patch"
-	"${FILESDIR}/${PN}-2.79b-fix-for-gcc9-new-openmp-data-sharing.patch"
-	"${FILESDIR}/${PN}-2.79b-install-paths-change.patch"
-	"${FILESDIR}/${PN}-2.79b-bundled-lib-search-path.patch"
-	"${FILESDIR}/${PN}-2.79b-portable-dest.patch"
+	"${FILESDIR}/${PN}-2.82a-fix-install-rules.patch"
+	"${FILESDIR}/${PN}-2.82a-cycles-network-fixes.patch"
+	"${FILESDIR}/${PN}-2.80-install-paths-change.patch"
 )
 
 get_dest() {
-	if [[ "${EBLENDER}" == "build_portable" ]] ; then
-		echo "/usr/share/${PN}/${SLOT}/${EBLENDER_NAME}"
-	else
-		echo "/usr/bin/.${PN}/${SLOT}/${EBLENDER_NAME}"
-	fi
+	echo "/usr/bin/.${PN}/${SLOT}/${EBLENDER_NAME}"
 }
 
 blender_check_requirements() {
@@ -295,6 +262,7 @@ pkg_pretend() {
 pkg_setup() {
 	blender_check_requirements
 	python-single-r1_pkg_setup
+	# Needs OpenCL 1.2 (GCN 2)
 	if use openvdb ; then
 		if ! grep -q -F -e "delta()" /usr/include/openvdb/util/CpuTimer.h ; then
 			if use abi7-compat ; then
@@ -306,15 +274,15 @@ pkg_setup() {
 }
 
 _src_prepare() {
+	eapply ${_PATCHES[@]}
+
 	S="${BUILD_DIR}" \
 	CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
 	cmake-utils_src_prepare
 
-	eapply ${_PATCHES[@]}
-
 	if [[ "${BLENDER_MULTISLOT}" == "2" ]] ; then
-		eapply "${FILESDIR}/blender-2.79b-parent-datafiles-dir-change.patch"
+		eapply "${FILESDIR}/blender-2.81a-parent-datafiles-dir-change.patch"
 	fi
 
 	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
@@ -333,19 +301,10 @@ _src_prepare() {
 			intern/cycles/app/CMakeLists.txt || die
 	fi
 
-	if [[ "${EBLENDER}" == "build_portable" ]] ; then
-		sed -i -e "s|bf_intern_glew_mx|bf_intern_glew_mx ${BUILD_DIR}/lib/|g" \
-			intern/cycles/app/CMakeLists.txt || die
-	fi
-
 	# Disable MS Windows help generation. The variable doesn't do what it
 	# it sounds like.
 	sed -e "s|GENERATE_HTMLHELP      = YES|GENERATE_HTMLHELP      = NO|" \
 	    -i doc/doxygen/Doxyfile || die
-
-	if [[ "${EBLENDER}" == "build_portable" ]] ; then
-		sed -i -e "/add_subdirectory(tests)/d" CMakeLists.txt || die
-	fi
 }
 
 src_prepare() {
@@ -363,22 +322,6 @@ src_prepare() {
 }
 
 _src_configure() {
-	if [[ "${EBLENDER}" == "build_portable" ]] ; then
-		strip-flags
-		filter-flags -march=* -mtune=*
-
-		BLENDER_CXXFLAGS_ARCH="BLENDER_CXXFLAGS_${ARCH}"
-		if [[ -n "${!BLENDER_CXXFLAGS_ARCH}" ]] ; then
-			append-cxxflags ${!BLENDER_CXXFLAGS_ARCH}
-		elif [[ "${ABI}" == "amd64" && -z "${BLENDER_CXXFLAGS_X86_64}" ]] ; then
-			export CXXFLAGS=$(test-flags-CXX -march=x86-64 -mtune=generic)" ${CXXFLAGS}"
-		elif [[ "${ABI}" == "x86" && -z "${BLENDER_CXXFLAGS_X86}" ]] ; then
-			export CXXFLAGS=$(test-flags-CXX -march=i686 -mtune=generic)" ${CXXFLAGS}"
-		else
-			ewarn "Unknown ARCH.  Not setting -march"
-		fi
-	fi
-
 	# FIX: forcing '-funsigned-char' fixes an anti-aliasing issue with menu
 	# shadows, see bug #276338 for reference
 	append-flags -funsigned-char
@@ -388,9 +331,6 @@ _src_configure() {
 
 	local mycmakeargs=()
 	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH=$(get_dest) )
-	if [[ "${EBLENDER}" == "build_portable" ]] ; then
-		mycmakeargs+=( -DPORTABLE_DEST:PATH=$(get_dest) )
-	fi
 
 	if use cycles-network ; then
 		ewarn \
@@ -399,26 +339,27 @@ ebuild/upstream developers only."
 	fi
 
 	mycmakeargs+=(
-		$(usex openvdb -DOPENVDB_ABI_VERSION_NUMBER=\
-$(usex abi7-compat 7 $(usex abi6-compat 6 $(usex abi5-compat 5 $(usex abi4-compat 4 3)))) "")
+		$(usex openvdb -DOPENVDB_ABI_VERSION_NUMBER=7 "")
 		-DPYTHON_VERSION="${EPYTHON/python/}"
 		-DPYTHON_LIBRARY="$(python_get_library_path)"
 		-DPYTHON_INCLUDE_DIR="$(python_get_includedir)"
 		-DWITH_ASSERT_ABORT=$(usex debug)
 		-DWITH_BOOST=ON
 		-DWITH_BULLET=$(usex bullet)
-		-DWITH_C11=ON
+		-DWITH_COMPILER_ASAN=$(usex asan)
 		-DWITH_CUDA_DYNLOAD=$(usex cuda $(usex nvcc ON OFF) ON)
-		-DWITH_CXX11=ON
 		-DWITH_CXX_GUARDEDALLOC=$(usex debug)
+		-DWITH_CXX11_ABI=ON
 		-DWITH_CYCLES=$(usex cycles)
+		-DWITH_CYCLES_CUBIN_COMPILER=$(usex nvrtc)
 		-DWITH_CYCLES_CUDA_BINARIES=$(usex cuda)
 		-DWITH_CYCLES_DEVICE_CUDA=$(usex cuda TRUE FALSE)
 		-DWITH_CYCLES_DEVICE_OPENCL=$(usex opencl)
-		-DWITH_CYCLES_OPENSUBDIV=$(usex opensubdiv)
+		-DWITH_CYCLES_DEVICE_OPTIX=$(usex optix)
+		-DWITH_CYCLES_EMBREE=$(usex embree)
+		-DWITH_CYCLES_KERNEL_ASAN=$(usex asan)
 		-DWITH_CYCLES_OSL=$(usex osl)
 		-DWITH_DOC_MANPAGE=$(usex man)
-		-DWITH_GAMEENGINE=$(usex game-engine)
 		-DWITH_IMAGE_DDS=$(usex dds)
 		-DWITH_IMAGE_OPENEXR=$(usex openexr)
 		-DWITH_IMAGE_OPENJPEG=$(usex jpeg2k)
@@ -430,19 +371,18 @@ $(usex abi7-compat 7 $(usex abi6-compat 6 $(usex abi5-compat 5 $(usex abi4-compa
 		-DWITH_MOD_FLUID=$(usex elbeem)
 		-DWITH_OPENCOLLADA=$(usex collada)
 		-DWITH_OPENCOLORIO=$(usex color-management)
+		-DWITH_OPENIMAGEDENOISE=$(usex openimagedenoise)
 		-DWITH_OPENIMAGEIO=$(usex openimageio)
 		-DWITH_OPENMP=$(usex openmp)
 		-DWITH_OPENSUBDIV=$(usex opensubdiv)
 		-DWITH_OPENVDB=$(usex openvdb)
 		-DWITH_OPENVDB_BLOSC=$(usex openvdb)
-		-DWITH_OPENVDB_3_ABI_COMPATIBLE=$(use abi3-compat)
 		-DWITH_PYTHON_INSTALL=OFF
 		-DWITH_PYTHON_INSTALL_NUMPY=OFF
 	)
 
-	if [[ "${EBLENDER}" == "build_creator" \
-		|| "${EBLENDER}" == "build_portable" ]] ; then
-		if use game-engine || use jack || use openal ; then
+	if [[ "${EBLENDER}" == "build_creator" ]] ; then
+		if use jack || use openal ; then
 			mycmakeargs+=(
 				-DWITH_AUDASPACE=ON
 			)
@@ -463,7 +403,7 @@ $(usex abi7-compat 7 $(usex abi6-compat 6 $(usex abi5-compat 5 $(usex abi4-compa
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.79b/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.82a/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -473,7 +413,6 @@ $(usex abi7-compat 7 $(usex abi6-compat 6 $(usex abi5-compat 5 $(usex abi4-compa
 			-DWITH_SYSTEM_EIGEN3=ON
 			-DWITH_SYSTEM_GLEW=ON
 			-DWITH_SYSTEM_LZO=ON
-			-DWITH_SYSTEM_OPENJPEG=ON
 		)
 	fi
 
@@ -485,7 +424,6 @@ $(usex abi7-compat 7 $(usex abi6-compat 6 $(usex abi5-compat 5 $(usex abi4-compa
 			-DWITH_CODEC_SNDFILE=OFF
 			-DWITH_FFTW3=OFF
 			-DWITH_HEADLESS=ON
-			-DWITH_GAMEENGINE=OFF
 			-DWITH_INPUT_NDOF=OFF
 			-DWITH_JACK=OFF
 			-DWITH_MOD_OCEANSIM=OFF
@@ -495,24 +433,6 @@ $(usex abi7-compat 7 $(usex abi6-compat 6 $(usex abi5-compat 5 $(usex abi4-compa
 			-DWITH_X11_XINPUT=OFF
 			-DWITH_X11=OFF
 		)
-	elif [[ "${EBLENDER}" == "build_portable" ]] ; then
-		# for redistributable games, implies building player
-		mycmakeargs+=(
-			-DLLVM_STATIC=$(usex llvm)
-			-DWITH_BLENDER=OFF
-			-DWITH_GTESTS=OFF
-			-DWITH_INSTALL_PORTABLE=ON
-			-DWITH_OPENGL_TESTS=OFF
-			-DWITH_OPENMP_STATIC=$(usex openmp)
-			-DWITH_PLAYER=ON
-			-DWITH_STATIC_LIBS=ON
-			-DWITH_SYSTEM_GLEW=OFF
-		)
-		if has_version 'dev-libs/boost[icu]' ; then
-			mycmakeargs+=(
-				-DWITH_BOOST_ICU=$(usex nls)
-			)
-		fi
 	fi
 
 if [[ -n "${BLENDER_DISABLE_CUDA_AUTODETECT}" \
@@ -567,12 +487,40 @@ as a per-package environmental variable (e.g. /opt/cuda).\n
 \n"
 			fi
 		fi
+		if use optix ; then
+			if [[ -n "${BLENDER_OPTIX_ROOT_DIR}" \
+		&& -f "${EROOT}/${BLENDER_OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
+				mycmakeargs+=(
+			-DOPTIX_ROOT_DIR="${EROOT}/${BLENDER_OPTIX_ROOT_DIR}"
+				)
+			elif [[ -n "${BLENDER_OPTIX_ROOT_DIR}" \
+		&& ! -f "${EROOT}/${BLENDER_OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
+				die \
+"\n\
+Cannot reach \$BLENDER_OPTIX_ROOT_DIR/include/optix.h.  Fix it?\n\
+\n"
+			elif [[ -n "${OPTIX_ROOT_DIR}" \
+		&& -f "${EROOT}/${OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
+				:;
+			elif [[ -n "${OPTIX_ROOT_DIR}" \
+		&& ! -f "${EROOT}/${OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
+"\n\
+Cannot reach \$OPTIX_ROOT_DIR/include/optix.h.  Fix it?\n\
+\n"
+			else
+				die \
+"\n\
+You need to define BLENDER_OPTIX_ROOT_DIR to point to the Optix SDK folder.\n\
+The build scripts expect BLENDER_OPTIX_ROOT_DIR/include/optix.h.\n\
+\n"
+			fi
+		fi
 	fi
 fi
 
 	if (( ${#BLENDER_CMAKE_ARGS[@]} > 0 )) ; then
 		# Set as per-package environmental variable
-		# For setting up cuda
+		# For setting up optix/cuda
 		mycmakeargs+=( ${BLENDER_CMAKE_ARGS[@]} )
 	fi
 	S="${BUILD_DIR}" \
@@ -686,14 +634,8 @@ install_licenses() {
 		else
 			d=$(echo "${f}" | sed -e "s|^${BUILD_DIR}||")
 		fi
-		if [[ "${EBLENDER}" == "build_portable" ]] ; then
-			insinto "${d_dest}/licenses/${d}"
-			doins -r "${f}"
-		elif [[ "${EBLENDER}" == "build_creator" \
-		     || "${EBLENDER}" == "build_headless" ]] ; then
-			docinto "licenses/${d}"
-			dodoc -r "${f}"
-		fi
+		docinto "licenses/${d}"
+		dodoc -r "${f}"
 	done
 }
 
@@ -705,14 +647,8 @@ install_readmes() {
 		else
 			d=$(echo "${f}" | sed -e "s|^${BUILD_DIR}||")
 		fi
-		if [[ "${EBLENDER}" == "build_portable" ]] ; then
-			insinto "${d_dest}/readmes/${d}"
-			doins -r "${f}"
-		elif [[ "${EBLENDER}" == "build_creator" \
-		     || "${EBLENDER}" == "build_headless" ]] ; then
-			docinto "readmes/${d}"
-			dodoc -r "${f}"
-		fi
+		docinto "readmes/${d}"
+		dodoc -r "${f}"
 	done
 }
 
@@ -740,17 +676,12 @@ _src_install() {
 		_src_install_cycles_network
 	fi
 
-	local ed_icon_hc="${ED}/usr/share/icons/hicolor"
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
 		cp "${ED}/usr/share/applications"/blender{,-${SLOT}}.desktop || die
 		local menu_file="${ED}/usr/share/applications/blender-${SLOT}.desktop"
 		sed -i -e "s|Name=Blender|Name=Blender ${PV}|g" "${menu_file}" || die
 		sed -i -e "s|Exec=blender|Exec=${d_dest}/blender|g" "${menu_file}" || die
 		sed -i -e "s|Icon=blender|Icon=blender-${SLOT}|g" "${menu_file}" || die
-		for size in 16x16 22x22 24x24 256x256 32x32 48x48 ; do
-			mv "${ed_icon_hc}/"${size}"/apps/blender"{,-${SLOT}}".png" || die
-		done
-		mv "${ed_icon_hc}/scalable/apps/blender"{,-${SLOT}}".svg" || die
 		dosym "../../..${d_dest}/blender" \
 			"/usr/bin/${PN}-${SLOT}" || die
 	elif [[ "${EBLENDER}" == "build_headless" ]] ; then
@@ -777,13 +708,9 @@ src_install() {
 	local ed_icon_hc="${ED}/usr/share/icons/hicolor"
 	local ed_icon_scale="${ed_icon_hc}/scalable"
 	local ed_icon_sym="${ed_icon_hc}/symbolic"
-	if [[ -d "${ed_icon_hc}" ]] ; then
-		for size in 16x16 22x22 24x24 256x256 32x32 48x48 ; do
-			mv "${ed_icon_hc}/"${size}"/apps/blender"{,-${SLOT}}".png" || die
-		done
-	fi
 	if [[ -e "${ed_icon_scale}/apps/blender.svg" ]] ; then
 		mv "${ed_icon_scale}/apps/blender"{,-${SLOT}}".svg" || die
+		mv "${ed_icon_sym}/apps/blender-symbolic"{,-${SLOT}}".svg"
 	fi
 	rm -rf "${ED}/usr/share/applications/blender.desktop" || die
 	if [[ -d "${ED}/usr/share/doc/blender" ]] ; then
