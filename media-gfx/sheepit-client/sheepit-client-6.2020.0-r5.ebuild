@@ -37,6 +37,9 @@ blender281a? (
 	LGPL-2.1+
 	WTFPL-2
 )
+blender279b_filmic? (
+	all-rights-reserved
+)
 "
 #
 # About the sheepit-client licenses
@@ -61,6 +64,9 @@ blender281a? (
 #
 #   The libglapi is under SGI-B-2.0.  It was bundled in precompiled Blender
 #   2.80+.
+#
+#   No license stated or declared copyright in the filmic-blender project
+#   or in any of the files.
 #
 # Additional Third Party Licenses (in SheepIt's Blender 2.82)
 #
