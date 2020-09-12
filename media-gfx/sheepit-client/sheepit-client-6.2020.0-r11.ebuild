@@ -109,6 +109,9 @@ REQUIRED_USE="
 	allow-unknown-renderers? ( blender !system-blender )
 	benchmark
 	benchmark? ( blender )
+	blender? ( || ( blender279b blender279b_filmic blender280 blender281a
+			blender282 blender2831 blender2832 blender2900
+			allow-unknown-renderers ) )
 	blender279b? ( blender )
 	blender279b_filmic? ( blender )
 	blender280? ( blender )
@@ -118,9 +121,6 @@ REQUIRED_USE="
 	blender2832? ( blender )
 	blender2900? ( blender )
 	|| ( cuda opencl )
-	|| ( blender279b blender279b_filmic blender280 blender281a blender282
-		blender2831 blender2831 blender2832 blender2900
-		allow-unknown-renderers )
 	pro-drivers? ( || ( opencl_orca opencl_pal opencl_rocm ) )
 	opencl_orca? (
 		|| ( split-drivers pro-drivers )

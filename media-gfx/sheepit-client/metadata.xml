@@ -33,7 +33,7 @@
   </upstream>
   <use>
     <flag name="blender">Accepts Blender licenses common to all Blender
-      versions.</flag>
+      versions and to choose to render Blender projects.</flag>
     <flag name="blender279b">Allows the client to download Blender 2.79b</flag>
     <flag name="blender279b_filmic">Allows the client to download Blender 2.79b
       with filmic.</flag>
