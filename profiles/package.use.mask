@@ -4,9 +4,6 @@ x11-drivers/amdgpu-pro-lts opengl_mesa
 # Placeholder
 liri-base/liri-meta appcenter
 
-# Critical advisories for internal dependency python in blender
-media-gfx/sheepit-client blender279b blender279b_filmic
-
 # For hardcoded blocking.  You may disable at your own risk.
 media-gfx/sheepit-client disable-hard-version-blocks
 
