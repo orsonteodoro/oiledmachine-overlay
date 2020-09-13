@@ -51,6 +51,6 @@ src_install() {
 	export ELECTRON_APP_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	electron-app_desktop_install "*" "docs/img/icon.png" "${MY_PN}" \
 	"Network" \
-"PATH=\"${ELECTRON_APP_INSTALL_PATH}/node_modules/.bin:\$PATH\" \
+"env PATH=\"${ELECTRON_APP_INSTALL_PATH}/node_modules/.bin:\$PATH\" \
 electron ${ELECTRON_APP_INSTALL_PATH}/"
 }
