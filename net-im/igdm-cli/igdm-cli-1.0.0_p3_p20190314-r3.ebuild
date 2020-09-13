@@ -44,10 +44,9 @@ src_install() {
 	export NPM_SECAUDIT_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	npm-secaudit_install "*"
 
-	#create wrapper
 	exeinto /usr/bin
-	echo "#!/bin/bash" > "${T}/${PN}"
-	echo "/usr/bin/node ${NPM_SECAUDIT_INSTALL_PATH}/bin/index.js \$@" \
-		>> "${T}/${PN}"
+	cp "${FILESDIR}/${PN}" "${T}"
+	sed -i -e "s|\${NPM_SECAUDIT_INSTALL_PATH}|${NPM_SECAUDIT_INSTALL_PATH}|" \
+		"${T}/${PN}"
 	doexe "${T}/${PN}"
 }
