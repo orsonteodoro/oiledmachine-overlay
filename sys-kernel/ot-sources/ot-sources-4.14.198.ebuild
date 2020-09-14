@@ -3,19 +3,12 @@
 
 EAPI="7"
 
-K_GENPATCHES_VER="9"
-PATCH_BMQ_VER="5.7-r3"
-BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
-PATCH_PROJC_VER="5.8-r2"
+K_GENPATCHES_VER="208"
 
-inherit ot-kernel-v5.8
+inherit ot-kernel-v4.14
 
 pkg_setup() {
 	ot-kernel-common_pkg_setup
-}
-
-pkg_pretend() {
-	ot-kernel-common_pkg_pretend
 }
 
 src_unpack() {
