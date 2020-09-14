@@ -261,6 +261,16 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+	if use osl || use llvm ; then
+		if (( $(ls "${EROOT}/usr/$(get_libdir)/llvm" | wc -l) > 1 )) ; then
+			# : CommandLine Error: Option 'help-list' registered more than once!
+			# LLVM ERROR: inconsistency in registered CommandLine options
+			die \
+"USE flags llvm and osl not supported with multiple LLVM installations.  \
+Investigating..."
+		fi
+	fi
+
 	blender_check_requirements
 	python-single-r1_pkg_setup
 	# Needs OpenCL 1.2 (GCN 2)

@@ -268,6 +268,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.79b-gcc-8.patch"
 	"${FILESDIR}/${PN}-2.79b-ffmpeg-4-compat.patch"
 	"${FILESDIR}/${PN}-2.79b-fix-for-gcc9-new-openmp-data-sharing.patch"
+	"${FILESDIR}/${PN}-2.79b-fix-opencollada.patch"
 	"${FILESDIR}/${PN}-2.79b-install-paths-change.patch"
 	"${FILESDIR}/${PN}-2.79b-bundled-lib-search-path.patch"
 	"${FILESDIR}/${PN}-2.79b-portable-dest.patch"
@@ -294,6 +295,16 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+	if use osl || use llvm ; then
+		if (( $(ls "${EROOT}/usr/$(get_libdir)/llvm" | wc -l) > 1 )) ; then
+			# : CommandLine Error: Option 'help-list' registered more than once!
+			# LLVM ERROR: inconsistency in registered CommandLine options
+			ewarn \
+"USE flags llvm and osl may not work with multiple LLVM installations especially \
+on 3.83.x LTS.  Disable osl and llvm if you experience problems"
+		fi
+	fi
+
 	blender_check_requirements
 	python-single-r1_pkg_setup
 	if use openvdb ; then

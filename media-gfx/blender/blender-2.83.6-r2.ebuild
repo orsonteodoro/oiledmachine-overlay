@@ -83,10 +83,11 @@ IUSE+=" ${FFMPEG_IUSE}"
 RESTRICT="mirror !test? ( test )"
 
 # The release USE flag depends on platform defaults.
+# OSL is already linked to LLVM so don't link twice to prevent error in pkg_setup.
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	build_creator ( X )
 	cuda? ( cycles ^^ ( nvcc nvrtc ) )
-	cycles? ( openexr tiff openimageio osl? ( llvm ) )
+	cycles? ( openexr tiff openimageio osl? ( !llvm ) )
 	embree? ( cycles )
 	mp3? ( ffmpeg )
 	nvcc? ( || ( cuda optix ) )
@@ -95,7 +96,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	openvdb? ( abi7-compat )
 	optix? ( cuda cycles nvcc )
 	opus? ( ffmpeg )
-	osl? ( cycles llvm )
+	osl? ( cycles !llvm )
 	release? (
 		build_creator
 		bullet
@@ -142,6 +143,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 # extern/Eigen3/eigen-update.sh
 # Track OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER for changes.
 # Track build_files/build_environment/dependencies.dot for ffmpeg dependencies
+LLVM_V="9.0.1"
 RDEPEND="${PYTHON_DEPS}
 	>=dev-lang/python-3.7.4
 	>=dev-libs/boost-1.70:=[nls?,threads(+)]
@@ -183,7 +185,7 @@ RDEPEND="${PYTHON_DEPS}
 	jack? ( virtual/jack )
 	jemalloc? ( >=dev-libs/jemalloc-5.0.1:= )
 	jpeg2k? ( >=media-libs/openjpeg-2.3.0:2 )
-	llvm? ( >=sys-devel/llvm-9.0.1:= )
+	llvm? ( >=sys-devel/llvm-${LLVM_V}:= )
 	ndof? (
 		app-misc/spacenavd
 		>=dev-libs/libspnav-0.2.3
@@ -265,6 +267,16 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+	if use osl || use llvm ; then
+		if (( $(ls "${EROOT}/usr/$(get_libdir)/llvm" | wc -l) > 1 )) ; then
+			# : CommandLine Error: Option 'help-list' registered more than once!
+			# LLVM ERROR: inconsistency in registered CommandLine options
+			die \
+"USE flags llvm and osl not supported with multiple LLVM installations.  \
+Investigating..."
+		fi
+	fi
+
 	blender_check_requirements
 	python-single-r1_pkg_setup
 	# Needs OpenCL 1.2 (GCN 2)
@@ -696,7 +708,7 @@ _src_install() {
 		sed -i -e "s|Icon=blender|Icon=blender-${SLOT_MAJ}|g" "${menu_file}" || die
 		dosym "../../..${d_dest}/blender" \
 			"/usr/bin/${PN}-${SLOT_MAJ}" || die
-		touch "${d_dest}/creator/.lts"
+		touch "${ED}/${d_dest}/.lts"
 	elif [[ "${EBLENDER}" == "build_headless" ]] ; then
 		dosym "../../..${d_dest}/blender" \
 			"/usr/bin/${PN}-headless-${SLOT_MAJ}" || die
