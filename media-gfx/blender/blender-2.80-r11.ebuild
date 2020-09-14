@@ -255,7 +255,7 @@ pkg_setup() {
 			# : CommandLine Error: Option 'help-list' registered more than once!
 			# LLVM ERROR: inconsistency in registered CommandLine options
 			die \
-"USE flags llvm and osl not supported with multiple LLVM installations.  \
+"USE flags llvm and osl are not supported with multiple LLVM installations.  \
 Investigating..."
 		fi
 	fi
