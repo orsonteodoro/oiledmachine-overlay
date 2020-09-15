@@ -77,8 +77,10 @@ SLOT_MAJ=${SLOT%/*}
 IUSE+=" X +abi7-compat -asan +bullet +collada +color-management +cuda +cycles \
 -cycles-network +dds -debug doc +elbeem -embree +ffmpeg +fftw flac +jack \
 +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal +opencl +openexr \
-+openimagedenoise +openimageio +openmp +opensubdiv +openvdb -optix +osl \
++openimagedenoise +openimageio +openmp +opensubdiv +openvdb -optix -osl \
 release +sdl +sndfile test +tiff -valgrind"
+# osl is a platform default for upstream for this version on but marked
+# default off by ebuild maintainer
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 RESTRICT="mirror !test? ( test )"
