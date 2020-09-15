@@ -125,7 +125,9 @@ src_install() {
 		doexe "${BUILD_DIR}/bin/cycles_server"
 	fi
 	if use nvrtc ; then
-		doexe "${BUILD_DIR}/bin/cycles_cubin_cc"
+		if [[ -e "${BUILD_DIR}/bin/cycles_cubin_cc" ]] ; then
+			doexe "${BUILD_DIR}/bin/cycles_cubin_cc"
+		fi
 	fi
 	insinto /usr/$(get_libdir)/cycles/$(get_libdir)
 	doins "${BUILD_DIR}/lib/"*
