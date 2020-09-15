@@ -192,6 +192,8 @@ RDEPEND_BLENDER="
 	x11-libs/libxshmfence
 "
 
+# Due to the many different Blender project requirements, the release config
+# flags will be used to match especially those that affect the rendering.
 RDEPEND="
 	blender? (
 		!system-blender? (
@@ -201,20 +203,23 @@ RDEPEND="
 		)
 		system-blender? (
 			gentoo-blender? (
-				blender279b? ( ~media-gfx/blender-2.79b[cycles,-headless] )
+				blender279b? (
+					~media-gfx/blender-2.79b[bullet,collada,color-management,cycles,dds,elbeem,fftw,-headless,nls,openexr,openimageio,opensubdiv,osl,tiff]
+					sci-physics/bullet
+				)
 			)
 			!gentoo-blender? (
-				blender279b? ( ~media-gfx/blender-2.79b[cycles,build_creator(+)] )
+				blender279b? ( ~media-gfx/blender-2.79b[cycles,build_creator(+),release(+)] )
 				blender279b_filmic? (
-					~media-gfx/blender-2.79b[cycles,build_creator(+)]
+					~media-gfx/blender-2.79b[cycles,build_creator(+),release(+)]
 					media-plugins/filmic-blender:sheepit
 				)
-				blender280? ( ~media-gfx/blender-2.80[cycles,build_creator(+)] )
-				blender281a? ( ~media-gfx/blender-2.81a[cycles,build_creator(+)] )
-				blender282? ( ~media-gfx/blender-2.82[cycles,build_creator(+)] )
-				blender2831? ( ~media-gfx/blender-2.83.1[cycles,build_creator(+)] )
-				blender2832? ( ~media-gfx/blender-2.83.2[cycles,build_creator(+)] )
-				blender2900? ( ~media-gfx/blender-2.90.0[cycles,build_creator(+)] )
+				blender280? ( ~media-gfx/blender-2.80[cycles,build_creator(+),release(+)] )
+				blender281a? ( ~media-gfx/blender-2.81a[cycles,build_creator(+),release(+)] )
+				blender282? ( ~media-gfx/blender-2.82[cycles,build_creator(+),release(+)] )
+				blender2831? ( ~media-gfx/blender-2.83.1[cycles,build_creator(+),release(+)] )
+				blender2832? ( ~media-gfx/blender-2.83.2[cycles,build_creator(+),release(+)] )
+				blender2900? ( ~media-gfx/blender-2.90.0[cycles,build_creator(+),release(+)] )
 			)
 		)
 	)
@@ -391,6 +396,8 @@ pkg_setup() {
 			show_notice_pal_support
 		fi
 	fi
+
+	ewarn "The system-blender USE flag is a Work in Progress (WIP)."
 }
 
 enable_hardblock() {
