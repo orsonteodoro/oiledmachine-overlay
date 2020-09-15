@@ -217,7 +217,7 @@ RDEPEND="${PYTHON_DEPS}
 	openxr? ( >=media-libs/openxr-1.0.6 )
 	optix? ( >=dev-libs/optix-7 )
 	osl? ( >=media-libs/osl-1.10.9:=
-		<media-libs/mesa-19.2 )
+		<media-libs/mesa-19.2:blender )
 	sdl? ( >=media-libs/libsdl2-2.0.8[sound,joystick] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
 	tiff? ( >=media-libs/tiff-4.0.9:0[zlib] )
