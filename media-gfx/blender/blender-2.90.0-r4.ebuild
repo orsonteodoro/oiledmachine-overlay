@@ -50,9 +50,10 @@ cycles? (
 #   all rights reserved in the vanilla GPL-2
 
 PYTHON_COMPAT=( python3_{7,8} )
+LLVM_MAX_SLOT=9
 
 inherit eapi7-ver
-inherit blender check-reqs cmake-utils flag-o-matic pax-utils \
+inherit blender check-reqs cmake-utils flag-o-matic llvm pax-utils \
 	python-single-r1 toolchain-funcs xdg
 
 # If you use git tarballs, you need to download the submodules listed in
@@ -225,7 +226,8 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	openxr? ( >=media-libs/openxr-1.0.8 )
 	optix? ( >=dev-libs/optix-7 )
-	osl? ( >=media-libs/osl-1.10.10:= )
+	osl? ( >=media-libs/osl-1.10.10:=
+		<media-libs/mesa-19.2 )
 	sdl? ( >=media-libs/libsdl2-2.0.12[sound,joystick] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
 	tiff? ( >=media-libs/tiff-4.1.0:0[zlib] )
@@ -280,16 +282,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-	if use osl ; then
-		if (( $(ls "${EROOT}/usr/$(get_libdir)/llvm" | wc -l) > 1 )) ; then
-			# : CommandLine Error: Option 'help-list' registered more than once!
-			# LLVM ERROR: inconsistency in registered CommandLine options
-			die \
-"USE flag osl is not supported with multiple LLVM installations.  \
-Investigating..."
-		fi
-	fi
-
+	llvm_pkg_setup
 	blender_check_requirements
 	python-single-r1_pkg_setup
 	# Needs OpenCL 1.2 (GCN 2)
