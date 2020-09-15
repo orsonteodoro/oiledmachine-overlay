@@ -40,7 +40,8 @@ RDEPEND="
 	)
 "
 
-DEPEND="${RDEPEND}"
+DEPEND="${RDEPEND}
+	media-libs/mesa:="
 BDEPEND="
 	sys-devel/bison
 	sys-devel/flex

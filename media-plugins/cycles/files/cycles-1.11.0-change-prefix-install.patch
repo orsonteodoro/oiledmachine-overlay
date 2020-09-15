@@ -1,0 +1,10 @@
+diff -urp cycles-1.11.0.orig/src/CMakeLists.txt cycles-1.11.0/src/CMakeLists.txt
+--- cycles-1.11.0.orig/src/CMakeLists.txt	2020-09-14 20:18:28.092885901 -0700
++++ cycles-1.11.0/src/CMakeLists.txt	2020-09-14 20:27:36.614088170 -0700
+@@ -386,5 +386,5 @@ if(WITH_GTESTS)
+ endif()
+ 
+ if(NOT WITH_BLENDER AND WITH_CYCLES_STANDALONE)
+-  delayed_do_install(${CMAKE_BINARY_DIR}/bin)
++  delayed_do_install(${CMAKE_INSTALL_PREFIX})
+ endif()

@@ -1,0 +1,15 @@
+Subject:  Add missing header to define enum DeviceType
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+
+Adapted from blender patches.
+--- a/src/device/device_network.h.orig	2020-07-08 01:38:08.200732139 -0700
++++ b/src/device/device_network.h	2020-07-08 01:52:23.630832163 -0700
+@@ -33,6 +33,8 @@
+ #  include <iostream>
+ #  include <sstream>
+ 
++#  include "device/device.h"
++
+ #  include "render/buffers.h"
+ 
+ #  include "util/util_foreach.h"

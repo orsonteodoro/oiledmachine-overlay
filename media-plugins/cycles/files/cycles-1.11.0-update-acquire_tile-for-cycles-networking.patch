@@ -1,0 +1,18 @@
+Subject:  Updates to acquire_tile for Cycles Networking resulting from changes
+from af54bbd61c769c69891c9b39df19eb3cad9dafe2 "Cycles: Rework tile scheduling
+for denoising"
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+
+Adapted from blender patches.
+----
+--- a/src/device/device_network.cpp.orig	2020-07-08 10:14:32.760007646 -0700
++++ b/src/device/device_network.cpp	2020-07-08 10:30:17.345750929 -0700
+@@ -231,7 +231,7 @@ class NetworkDevice : public Device {
+         lock.unlock();
+ 
+         /* todo: watch out for recursive calls! */
+-        if (the_task.acquire_tile(this, tile)) { /* write return as bool */
++        if (the_task.acquire_tile(this, tile, the_task.tile_types)) { /* write return as bool */
+           the_tiles.push_back(tile);
+ 
+           lock.lock();
