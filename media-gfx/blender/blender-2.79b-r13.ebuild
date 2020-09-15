@@ -163,6 +163,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 # https://github.com/blender/blender/blob/cfe43f8d1af2183a115414abd56a899d116be27d/extern/Eigen3/eigen-update.sh
 # Track OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER for changes.
 # They use OpenVDB 3.1.0 but disable abi3-compat but copyGridWithNewTree appears in 3.3.0.
+# The pugixml version was not declared in versions.cmake but based on 2.80.
 RDEPEND="${PYTHON_DEPS}
 	>=dev-lang/python-3.6.2
 	>=dev-libs/boost-1.60:=[nls?,threads(+)]
@@ -200,6 +201,7 @@ RDEPEND="${PYTHON_DEPS}
 		>=x11-drivers/nvidia-drivers-367.48
 		>=dev-util/nvidia-cuda-toolkit-8.0:=
 	)
+	cycles? ( >=dev-libs/pugixml-1.9 )
 	ffmpeg? ( >=media-video/ffmpeg-3.2.1:=\
 [encode,jpeg2k?,mp3?,theora?,vorbis?,x264,xvid?,zlib] )
 	fftw? ( >=sci-libs/fftw-3.3.4:3.0= )
@@ -251,7 +253,6 @@ RDEPEND="${PYTHON_DEPS}
 DEPEND="${RDEPEND}
 	>=dev-cpp/eigen-3.2.7:3
 	>=dev-util/cmake-3.5
-	virtual/pkgconfig
 	doc? (
 		app-doc/doxygen[dot]
 		dev-python/sphinx[latex]
@@ -261,7 +262,8 @@ DEPEND="${RDEPEND}
 		dev-texlive/texlive-latex
 		dev-texlive/texlive-latexextra
 	)
-	nls? ( sys-devel/gettext )"
+	nls? ( sys-devel/gettext )
+	virtual/pkgconfig"
 
 _PATCHES=(
 	"${FILESDIR}/${PN}-2.79b-fix-install-rules.patch"
@@ -295,13 +297,13 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-	if use osl || use llvm ; then
+	if use osl ; then
 		if (( $(ls "${EROOT}/usr/$(get_libdir)/llvm" | wc -l) > 1 )) ; then
 			# : CommandLine Error: Option 'help-list' registered more than once!
 			# LLVM ERROR: inconsistency in registered CommandLine options
-			ewarn \
-"USE flags llvm and osl may not work with multiple LLVM installations especially \
-on 3.83.x LTS.  Disable osl and llvm if you experience problems"
+			die \
+"USE flag osl is not supported with multiple LLVM installations.  \
+Investigating..."
 		fi
 	fi
 

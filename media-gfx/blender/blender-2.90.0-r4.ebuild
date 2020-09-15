@@ -187,6 +187,7 @@ RDEPEND="${PYTHON_DEPS}
 		>=x11-drivers/nvidia-drivers-418.39
 		>=dev-util/nvidia-cuda-toolkit-10.1:=
 	)
+	cycles? ( >=dev-libs/pugixml-1.10 )
 	embree? ( >=media-libs/embree-3.31.1 )
 	ffmpeg? ( >=media-video/ffmpeg-4.2.3:=\
 [encode,jpeg2k?,mp3?,opus?,theora?,vorbis?,vpx?,x264,xvid?,zlib] )
@@ -236,9 +237,10 @@ RDEPEND="${PYTHON_DEPS}
 	)"
 
 DEPEND="${RDEPEND}
+	asan? ( || ( sys-devel/clang
+                     sys-devel/gcc ) )
 	>=dev-cpp/eigen-3.3.7:3
 	>=dev-util/cmake-3.10
-	virtual/pkgconfig
 	doc? (
 		app-doc/doxygen[dot]
 		>=dev-python/sphinx-3.3.1[latex]
@@ -249,7 +251,8 @@ DEPEND="${RDEPEND}
 		dev-texlive/texlive-latex
 		dev-texlive/texlive-latexextra
 	)
-	nls? ( sys-devel/gettext )"
+	nls? ( sys-devel/gettext )
+	virtual/pkgconfig"
 
 _PATCHES=(
 	"${FILESDIR}/${PN}-2.82a-fix-install-rules.patch"
@@ -277,12 +280,12 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-	if use osl || use llvm ; then
+	if use osl ; then
 		if (( $(ls "${EROOT}/usr/$(get_libdir)/llvm" | wc -l) > 1 )) ; then
 			# : CommandLine Error: Option 'help-list' registered more than once!
 			# LLVM ERROR: inconsistency in registered CommandLine options
 			die \
-"USE flags llvm and osl are not supported with multiple LLVM installations.  \
+"USE flag osl is not supported with multiple LLVM installations.  \
 Investigating..."
 		fi
 	fi
