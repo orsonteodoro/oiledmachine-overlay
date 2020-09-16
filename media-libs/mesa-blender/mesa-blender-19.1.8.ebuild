@@ -34,7 +34,9 @@
 # The Blender devs wants to skip ahead to c++17 instead.
 
 # The Gentoo devs removed 19.1.x series so it is impossible to get OSL alone
-# to work with the gentoo-overlay, so only LLVM-10 can be used unless you fork.
+# to work with the gentoo-overlay with blender, so only LLVM-10 can be used
+# unless you fork.  If you disable the osl USE flag with LLVM USE flag still,
+# enabled, the problem goes away.
 
 # That's the big LLVM compatibility problem.  That is the situation.
 
