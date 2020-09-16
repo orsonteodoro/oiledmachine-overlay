@@ -527,7 +527,7 @@ multilib_src_install() {
 	DESTDIR="${ED}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/" \
 	eninja -C "${BUILD_DIR}" install
 
-	use libglvnd_ && rm -f "${D}"/usr/$(get_libdir)/libGLESv{1_CM,2}.so*
+	use libglvnd_ && rm -f "${ED}"/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGLESv{1_CM,2}.so*
 #	if use openmax; then
 #		echo "XDG_DATA_DIRS=\"${EPREFIX}/usr/share/mesa/xdg\"" > "${T}/99mesaxdgomx"
 #		doenvd "${T}"/99mesaxdgomx
