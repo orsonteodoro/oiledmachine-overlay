@@ -57,7 +57,8 @@ inherit blender check-reqs cmake-utils flag-o-matic llvm pax-utils \
 	python-single-r1 toolchain-funcs xdg
 
 # If you use git tarballs, you need to download the submodules listed in
-# .gitmodules.  The download.blender.org are preferred because they bundle them.
+# .gitmodules.  The download.blender.org tarball is preferred because they
+# bundle all the dependencies.
 SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
 
 BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest}
