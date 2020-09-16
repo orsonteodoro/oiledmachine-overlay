@@ -75,7 +75,7 @@ fi
 SLOT_MAJ=${SLOT%/*}
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-IUSE+=" X +abi5-compat abi6-compat -asan +bullet -collada \
+IUSE+=" X +abi5-compat abi6-compat abi7-compat -asan +bullet -collada \
 -color-management -cuda +cycles -cycles-network +dds -debug doc +elbeem \
 -embree -ffmpeg -fftw flac -jack +jemalloc jpeg2k -llvm -man +ndof +nls +nvcc \
 -nvrtc +openal opencl -openexr +openimageio +openmp -opensubdiv -openvdb -osl \
@@ -96,7 +96,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	nvcc? ( cuda )
 	nvrtc? ( cuda )
 	opencl? ( cycles )
-	openvdb? ( ^^ ( abi5-compat abi6-compat ) )
+	openvdb? ( ^^ ( abi5-compat abi6-compat abi7-compat ) )
 	osl? ( cycles llvm )
 	release? (
 		build_creator
@@ -208,9 +208,9 @@ RDEPEND="${PYTHON_DEPS}
 	openvdb? (
 		>=blender-libs/boost-1.68:=[nls?,threads(+)]
 		>=blender-libs/openvdb-5.1.0\
-[${PYTHON_SINGLE_USEDEP},abi5-compat?,abi6-compat?]
-		 <blender-libs/openvdb-7\
-[${PYTHON_SINGLE_USEDEP},abi5-compat?,abi6-compat?]
+[${PYTHON_SINGLE_USEDEP},abi5-compat?,abi6-compat?,abi7-compat?]
+		 <blender-libs/openvdb-7.1\
+[${PYTHON_SINGLE_USEDEP},abi5-compat?,abi6-compat?,abi7-compat?]
 		>=dev-cpp/tbb-2018.5
 		>=dev-libs/c-blosc-1.14.4
 	)
@@ -271,6 +271,14 @@ pkg_setup() {
 	blender_check_requirements
 	python-single-r1_pkg_setup
 	# Needs OpenCL 1.2 (GCN 2)
+	if use openvdb ; then
+		if ! grep -q -F -e "delta()" /usr/include/openvdb/util/CpuTimer.h ; then
+			if use abi7-compat ; then
+				# compatible as long as the function is present
+				die "OpenVDB delta() is missing try <=7.1.x only"
+			fi
+		fi
+	fi
 }
 
 _src_prepare() {
@@ -372,7 +380,7 @@ ebuild/upstream developers only."
 
 	mycmakeargs+=(
 		$(usex openvdb -DOPENVDB_ABI_VERSION_NUMBER=\
-$(usex abi6-compat 6 5) "")
+$(usex abi7-compat 7 $(usex abi6-compat 6 5)) "")
 		-DPYTHON_VERSION="${EPYTHON/python/}"
 		-DPYTHON_LIBRARY="$(python_get_library_path)"
 		-DPYTHON_INCLUDE_DIR="$(python_get_includedir)"
