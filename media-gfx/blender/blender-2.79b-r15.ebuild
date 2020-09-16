@@ -170,7 +170,6 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 # The pugixml version was not declared in versions.cmake but based on 2.80.
 RDEPEND="${PYTHON_DEPS}
 	>=dev-lang/python-3.6.2
-	>=dev-libs/boost-1.60:=[nls?,threads(+)]
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
 		>=dev-python/certifi-2017.7.27.1[${PYTHON_MULTI_USEDEP}]
@@ -233,17 +232,24 @@ RDEPEND="${PYTHON_DEPS}
 		>=media-libs/openexr-2.2.0:=
 	)
 	opensubdiv? ( >=media-libs/opensubdiv-3.1.1:=[cuda=,opencl=] )
-	openvdb? (
-		abi3-compat? (
-			>=blender-libs/openvdb-3.1.0[${PYTHON_SINGLE_USEDEP},abi3-compat]
-			 <blender-libs/openvdb-7.1[${PYTHON_SINGLE_USEDEP},abi3-compat]
+	!openvdb? (
+		|| (
+			>=blender-libs/boost-1.60:=[nls?,threads(+)]
+			>=dev-libs/boost-1.60:=[nls?,threads(+)]
 		)
+	)
+	openvdb? (
 		!abi3-compat? (
 			>=blender-libs/openvdb-3.3.0\
 [${PYTHON_SINGLE_USEDEP},abi4-compat?,abi5-compat?,abi6-compat?,abi7-compat?]
 			 <blender-libs/openvdb-7.1\
 [${PYTHON_SINGLE_USEDEP},abi4-compat?,abi5-compat?,abi6-compat?,abi7-compat?]
 		)
+		abi3-compat? (
+			>=blender-libs/openvdb-3.1.0[${PYTHON_SINGLE_USEDEP},abi3-compat]
+			 <blender-libs/openvdb-7.1[${PYTHON_SINGLE_USEDEP},abi3-compat]
+		)
+		>=blender-libs/boost-1.60:=[nls?,threads(+)]
 		>=dev-cpp/tbb-2017.7
 		>=dev-libs/c-blosc-1.7.1
 	)

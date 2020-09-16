@@ -159,7 +159,6 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 #
 RDEPEND="${PYTHON_DEPS}
 	>=dev-lang/python-3.7.4
-	>=dev-libs/boost-1.70:=[nls?,threads(+)]
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
 		>=dev-python/certifi-2020.4.5.2[${PYTHON_MULTI_USEDEP}]
@@ -219,11 +218,18 @@ RDEPEND="${PYTHON_DEPS}
 		>=media-libs/openexr-2.4.0:=
 	)
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.3:=[cuda=,opencl=] )
+	!openvdb? (
+		|| (
+			>=blender-libs/boost-1.70:=[nls?,threads(+)]
+			>=dev-libs/boost-1.70:=[nls?,threads(+)]
+		)
+	)
 	openvdb? (
 		abi7-compat? (
 			>=blender-libs/openvdb-7[${PYTHON_SINGLE_USEDEP},abi7-compat?]
 			 <blender-libs/openvdb-7.1[${PYTHON_SINGLE_USEDEP},abi7-compat?]
 		)
+		>=blender-libs/boost-1.70:=[nls?,threads(+)]
 		>=dev-cpp/tbb-2019.9
 		>=dev-libs/c-blosc-1.5.0
 	)

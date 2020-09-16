@@ -142,7 +142,6 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 # Track OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER for changes.
 RDEPEND="${PYTHON_DEPS}
 	>=dev-lang/python-3.7.0
-	>=dev-libs/boost-1.68:=[nls?,threads(+)]
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
 		>=dev-python/certifi-2018.8.13[${PYTHON_MULTI_USEDEP}]
@@ -199,7 +198,14 @@ RDEPEND="${PYTHON_DEPS}
 		>=media-libs/openexr-2.3.0:=
 	)
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.0_rc2:=[cuda=,opencl=] )
+	!openvdb? (
+		|| (
+			>=blender-libs/boost-1.68:=[nls?,threads(+)]
+			>=dev-libs/boost-1.68:=[nls?,threads(+)]
+		)
+	)
 	openvdb? (
+		>=blender-libs/boost-1.68:=[nls?,threads(+)]
 		>=blender-libs/openvdb-5.1.0\
 [${PYTHON_SINGLE_USEDEP},abi5-compat?,abi6-compat?,abi7-compat?]
 		 <blender-libs/openvdb-7.1\
