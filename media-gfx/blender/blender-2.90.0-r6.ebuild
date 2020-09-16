@@ -222,6 +222,7 @@ RDEPEND="${PYTHON_DEPS}
 	openvdb? (
 		abi7-compat? (
 			>=blender-libs/openvdb-7[${PYTHON_SINGLE_USEDEP},abi7-compat?]
+			 <blender-libs/openvdb-7.1[${PYTHON_SINGLE_USEDEP},abi7-compat?]
 		)
 		>=dev-cpp/tbb-2019.9
 		>=dev-libs/c-blosc-1.5.0
