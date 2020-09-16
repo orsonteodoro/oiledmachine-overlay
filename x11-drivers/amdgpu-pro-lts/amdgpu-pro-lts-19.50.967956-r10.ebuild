@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="Radeon™ Software for Linux®"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-20"
+"https://www.amd.com/en/support/kb/release-notes/rn-rad-lin-19-50-unified"
 LICENSE="AMDGPUPROEULA
 	doc? ( AMDGPUPROEULA MIT BSD )
 	dkms? ( AMDGPU-FIRMWARE GPL-2 MIT )
@@ -20,6 +20,7 @@ LICENSE="AMDGPUPROEULA
 		vaapi? ( MIT )
 		vdpau? ( MIT )
 		vulkan_open? ( MIT )
+		wayland? ( MIT )
 		xa? ( MIT )
 		developer? ( Apache-2.0-with-LLVM-exceptions UoI-NCSA BSD-2 BSD ) UoI-NCSA
 		developer? ( opengl_mesa? ( all-rights-reserved MIT ) )
@@ -42,6 +43,7 @@ LICENSE="AMDGPUPROEULA
 			hwe? ( AMDGPUPROEULA )
 		)
 		opengl_pro? ( AMDGPUPROEULA )
+		roct? ( MIT )
 		vulkan_pro? ( AMDGPUPROEULA )
 	)
 	X? ( MIT all-rights-reserved )"
@@ -66,7 +68,7 @@ PKG_REV=$(ver_cut 3)
 PKG_ARCH="ubuntu"
 PKG_ARCH_VER="18.04"
 PKG_ARCH_SUFFIX="_"
-PKG_VER_AMF="1.4.17"
+PKG_VER_AMF="1.4.16"
 PKG_VER_GCC="5.2.0"
 PKG_VER_GLAMOR="1.19.0"
 PKG_VER_GST_OMX="1.0.0.1"
@@ -74,18 +76,18 @@ PKG_VER_GST=$(ver_cut 1-2 ${PKG_VER_GST_OMX})
 PKG_VER_HSAKMT="1.0.6"
 PKG_VER_HSAKMT_A="1.0.9"
 PKG_VER_ID="1.0.0"
-PKG_VER_LIBDRM="2.4.100"
-PKG_VER_LIBWAYLAND="1.16.0"
-PKG_VER_LLVM_TRIPLE="10.0.0"
+PKG_VER_LIBDRM="2.4.99"
+PKG_VER_LIBWAYLAND="1.15.0"
+PKG_VER_LLVM_TRIPLE="9.0.0"
 PKG_VER_LLVM=$(ver_cut 1-2 ${PKG_VER_LLVM_TRIPLE})
 PKG_VER_LLVM_MAJ=$(ver_cut 1 ${PKG_VER_LLVM_TRIPLE})
-PKG_VER_MESA="20.0.5"
+PKG_VER_MESA="19.2.2"
 PKG_VER_ROCT="1.0.9"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
 PKG_VER_STRING_DIR=${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}
-PKG_VER_WAYLAND_PROTO="1.17"
-PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.1.0" # about the same as the mesa version
-VULKAN_SDK_VER="1.2.135.0"
+PKG_VER_WAYLAND_PROTO="1.18"
+PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.0.1" # about the same as the mesa version
+VULKAN_SDK_VER="1.1.121.1"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
@@ -102,6 +104,8 @@ SLOT="1"
 # For more info on VIDEODRV see https://www.x.org/wiki/XorgModuleABIVersions/
 # sys-libs/ncurses[tinfo] required by llvm in this package
 
+# Mesa subslots now automatically trigger re-emerging of this ebuild to sort out
+# the libglvnd/eselect-opengl mess and any new mess encountered.
 RDEPEND="!x11-drivers/amdgpu-pro
 	 >=dev-util/cunit-2.1
 	 >=dev-libs/expat-2.01
@@ -137,13 +141,12 @@ RDEPEND="!x11-drivers/amdgpu-pro
 		)
 	 )
 	 freesync? ( >=virtual/amdgpu-drm-3.2.08[dkms?] )
-	 >=virtual/amdgpu-drm-3.2.81[dkms?]
+	 >=virtual/amdgpu-drm-3.2.56[dkms?]
 	 glamor? ( media-libs/libepoxy )
 	 open-stack? (
 	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
 	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}] )
 	 opencl? ( !opencl-icd-loader? ( >=virtual/opencl-3 ) )
-	 opengl? (  >=app-eselect/eselect-opengl-1.0.7 )
 	 openmax? ( >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
 		    >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
 		      media-libs/libomxil-bellagio
@@ -154,10 +157,9 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 >=sys-devel/gcc-${PKG_VER_GCC}
 	 vaapi? ( >=x11-libs/libva-2.1.0 )
 	 vdpau? ( >=x11-libs/libvdpau-1.1.1 )
-	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
-	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
+	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}:= )
+	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}:=[-vulkan]
 		    >=media-libs/vulkan-loader-${VULKAN_SDK_VER} )
-         wayland? ( >=dev-libs/wayland-${PKG_VER_LIBWAYLAND} )
 	 X? (
 	 || ( >=sys-fs/udev-183 virtual/libudev )
 	 hwe? (
@@ -213,13 +215,15 @@ REQUIRED_USE="
 
 _set_check_reqs_requirements() {
 	if use abi_x86_32 && use abi_x86_64 ; then
-		CHECKREQS_DISK_BUILD="1697M"
-		CHECKREQS_DISK_USR="1614M"
+		CHECKREQS_DISK_BUILD="1698M"
+		CHECKREQS_DISK_USR="1610M"
 	else
-		CHECKREQS_DISK_BUILD="1697M"
-		CHECKREQS_DISK_USR="1614M"
+		CHECKREQS_DISK_BUILD="1698M"
+		CHECKREQS_DISK_USR="1610M"
 	fi
 }
+
+MESA_USES_LIBGLVND="N"
 
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
@@ -241,11 +245,6 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-	if ! grep -q -e "Added amdgpu-pro, amdgpu-pro-lts support" \
-		"${EROOT}/usr/share/eselect/modules/opengl.eselect" ; then
-		die "You need eselect-opengl from the oiledmachine-overlay."
-	fi
-
 	if [ ! -L /lib64/libedit.so.2 ] ; then
 		einfo \
 "You need to do \`ln -s /lib64/libedit.so.0 /lib64/libedit.so.2\`"
@@ -281,6 +280,31 @@ the roct USE flag."
 
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
+
+	if has_version 'media-libs/mesa[libglvnd]' ; then
+		einfo "Detected mesa using libglvnd"
+		export MESA_USES_LIBGLVND="Y"
+		if [[ -f "${EROOT}/etc/env.d/000opengl" ]] ; then
+			ewarn \
+"Please remove /etc/env.d/000opengl and do ldconfig && env-update manually. \
+This is to remove leftovers from eselect-opengl removal that might cause \
+problems."
+		fi
+		if [[ -f "${EROOT}/etc/X11/xorg.conf.d/20opengl.conf" ]] ; then
+			ewarn \
+"Please remove /etc/X11/xorg.conf.d/20opengl.conf manually.  This is to remove \
+leftovers from eselect-opengl removal that might cause problems."
+		fi
+	elif has_version '>=app-eselect/eselect-opengl-1.0.7' ; then
+		einfo "Detected mesa without libglvnd"
+		export MESA_USES_LIBGLVND="N"
+		if ! grep -q -e "Added amdgpu-pro, amdgpu-pro-lts support" \
+			"${EROOT}/usr/share/eselect/modules/opengl.eselect" ; then
+			die "You need eselect-opengl from the oiledmachine-overlay."
+		fi
+	else
+		die "Either download >=eselect-opengl-1.0.7 or use media-libs/mesa[libglvnd]"
+	fi
 }
 
 src_unpack_common() {
@@ -391,6 +415,16 @@ src_unpack_open_stack() {
 		unpack_deb "${d_debs}/vulkan-amdgpu_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 	fi
 
+	if use wayland ; then
+		unpack_deb "${d_debs}/libwayland-amdgpu-client0_${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		unpack_deb "${d_debs}/libwayland-amdgpu-doc_${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${archall}.deb"
+		use egl && \
+		unpack_deb "${d_debs}/libwayland-amdgpu-egl1_${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		unpack_deb "${d_debs}/libwayland-amdgpu-server0_${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		unpack_deb "${d_debs}/libwayland-amdgpu-cursor0_${PKG_VER_LIBWAYLAND}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		unpack_deb "${d_debs}/wayland-protocols-amdgpu_${PKG_VER_WAYLAND_PROTO}-${PKG_REV}${PKG_ARCH_SUFFIX}${archall}.deb"
+	fi
+
 	if use X ; then
 		if [[ "${ABI}" == "amd64" ]] ; then
 			if use hwe ; then
@@ -466,6 +500,14 @@ src_unpack_pro_stack() {
 		unpack_deb "${d_debs}/libgl1-amdgpu-pro-glx_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 	fi
 
+	if use roct ; then
+		if [[ "${ABI}" == "amd64" ]] ; then
+			unpack_deb "${d_debs}/hsakmt-roct-amdgpu_${PKG_VER_HSAKMT_A}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+			use developer && \
+			unpack_deb "${d_debs}/hsakmt-roct-amdgpu-dev_${PKG_VER_HSAKMT_A}-${PKG_REV}${PKG_ARCH_SUFFIX}${arch}.deb"
+		fi
+	fi
+
 	if use vulkan_pro ; then
 		unpack_deb "${d_debs}/vulkan-amdgpu-pro_${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.deb"
 	fi
@@ -536,6 +578,22 @@ Section "Monitor"
 	Option       "DPMS"   "true"
 EndSection
 EOF
+
+	if [[ "${MESA_USES_LIBGLVND}" == "Y" ]] ; then
+		modulepaths=
+		[[ -d "${ED}/opt/amdgpu-pro/lib/xorg/modules" ]] && modulepaths+="\tModulePath \"/opt/amdgpu-pro/lib/xorg/modules\"\n"
+		[[ -d "${ED}/opt/amdgpu/lib/xorg/modules" ]] && modulepaths+="\tModulePath \"/opt/amdgpu/lib/xorg/modules\"\n"
+		[[ -d "${ED}/opt/amdgpu-pro/lib64/xorg/modules" ]] && modulepaths+="\tModulePath \"/opt/amdgpu-pro/lib64/xorg/modules\"\n"
+		[[ -d "${ED}/opt/amdgpu/lib64/xorg/modules" ]] && modulepaths+="\tModulePath \"/opt/amdgpu/lib64/xorg/modules\"\n"
+		[[ -d "${EROOT}/usr/lib/xorg/modules" ]] && modulepaths+="\tModulePath \"/usr/lib/xorg/modules\"\n"
+		[[ -d "${EROOT}/usr/lib64/xorg/modules" ]] && modulepaths+="\tModulePath \"/usr/lib64/xorg/modules\"\n"
+		modulepaths=$(echo -e "${modulepaths}")
+		cat << EOF > "${T}/20-${PN}-opengl.conf"
+Section "Files"
+${modulepaths}
+EndSection
+EOF
+	fi
 }
 
 src_install() {
@@ -544,6 +602,9 @@ src_install() {
 		doins "${T}/10-screen.conf"
 		doins "${T}/10-monitor.conf"
 		doins "${T}/10-device.conf"
+		if [[ "${MESA_USES_LIBGLVND}" == "Y" ]] ; then
+			doins "${T}/20-${PN}-opengl.conf"
+		fi
 	fi
 
 	insinto /lib/udev/rules.d
@@ -669,10 +730,32 @@ src_install() {
 		EOF
 		doenvd "${T}"/50${P}-vdpau
 	fi
+
+	if [[ "${MESA_USES_LIBGLVND}" == "Y" ]] ; then
+		ldpaths=""
+		[[ -d "${ED}/opt/amdgpu-pro/lib/x86_64-linux-gnu" ]] && ldpaths+="/opt/amdgpu-pro/lib/x86_64-linux-gnu\n"
+		[[ -d "${ED}/opt/amdgpu-pro/lib/i386-linux-gnu" ]] && ldpaths+="/opt/amdgpu-pro/lib/i386-linux-gnu\n"
+		[[ -d "${ED}/opt/amdgpu/lib/x86_64-linux-gnu" ]] && ldpaths+="/opt/amdgpu/lib/x86_64-linux-gnu\n"
+		[[ -d "${ED}/opt/amdgpu/lib/i386-linux-gnu" ]] && ldpaths+="/opt/amdgpu/lib/i386-linux-gnu\n"
+		[[ -d "${ED}/opt/amdgpu-pro/lib64" ]] && ldpaths+="/opt/amdgpu-pro/lib64\n"
+		ldpaths=$(echo -e "${ldpaths}" | tr "\n" ":")
+		opengl_profile=
+		if use opengl_mesa ; then
+			opengl_profile=amdgpu
+		elif use opengl_pro ; then
+			opengl_profile=amdgpu-pro
+		fi
+		cat <<-EOF > "${T}"/000${PN}
+			LDPATH="${ldpaths}"
+			OPENGL_PROFILE="${opengl_profile}"
+		EOF
+		doenvd "${T}"/000${PN}
+	fi
 }
 
 pkg_prerm() {
-	if use opengl ; then
+	if use opengl && [[ "${MESA_USES_LIBGLVND}" == "N" ]] \
+		&& has_version 'app-eselect/eselect-opengl' ; then
 		"${EROOT}"/usr/bin/eselect opengl set xorg-x11
 	fi
 
@@ -688,10 +771,13 @@ pkg_prerm() {
 }
 
 pkg_postinst() {
-	if use opengl_pro ; then
-		"${EROOT}"/usr/bin/eselect opengl set amdgpu-pro
-	elif use opengl_mesa ; then
-		"${EROOT}"/usr/bin/eselect opengl set amdgpu
+	if has_version 'app-eselect/eselect-opengl' \
+		&& [[ "${MESA_USES_LIBGLVND}" == "N" ]] ; then
+		if use opengl_pro ; then
+			"${EROOT}"/usr/bin/eselect opengl set amdgpu-pro
+		elif use opengl_mesa ; then
+			"${EROOT}"/usr/bin/eselect opengl set amdgpu
+		fi
 	fi
 
 	if use opencl ; then

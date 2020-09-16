@@ -104,6 +104,8 @@ SLOT="1"
 # For more info on VIDEODRV see https://www.x.org/wiki/XorgModuleABIVersions/
 # sys-libs/ncurses[tinfo] required by llvm in this package
 
+# Mesa subslots now automatically trigger re-emerging of this ebuild to sort out
+# the libglvnd/eselect-opengl mess and any new mess encountered.
 RDEPEND="!x11-drivers/amdgpu-pro
 	 >=dev-util/cunit-2.1
 	 >=dev-libs/expat-2.01
@@ -145,7 +147,6 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
 	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}] )
 	 opencl? ( !opencl-icd-loader? ( >=virtual/opencl-3 ) )
-	 opengl? (  >=app-eselect/eselect-opengl-1.0.7 )
 	 openmax? ( >=media-libs/gst-plugins-base-1.6.0[${MULTILIB_USEDEP}]
 		    >=media-libs/gstreamer-1.6.0[${MULTILIB_USEDEP}]
 		      media-libs/libomxil-bellagio
@@ -156,8 +157,8 @@ RDEPEND="!x11-drivers/amdgpu-pro
 	 >=sys-devel/gcc-${PKG_VER_GCC}
 	 vaapi? ( >=x11-libs/libva-2.1.0 )
 	 vdpau? ( >=x11-libs/libvdpau-1.1.1 )
-	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA} )
-	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}[-vulkan]
+	 !vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}:= )
+	  vulkan? ( >=media-libs/mesa-${PKG_VER_MESA}:=[-vulkan]
 		    >=media-libs/vulkan-loader-${VULKAN_SDK_VER} )
 	 X? (
 	 || ( >=sys-fs/udev-183 virtual/libudev )
@@ -222,6 +223,8 @@ _set_check_reqs_requirements() {
 	fi
 }
 
+MESA_USES_LIBGLVND="N"
+
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	einfo "Please download"
@@ -243,11 +246,6 @@ pkg_pretend() {
 
 pkg_setup() {
 	ewarn "This version may no longer work."
-
-	if ! grep -q -e "Added amdgpu-pro, amdgpu-pro-lts support" \
-		"${EROOT}/usr/share/eselect/modules/opengl.eselect" ; then
-		die "You need eselect-opengl from the oiledmachine-overlay."
-	fi
 
 	if [ ! -L /lib64/libedit.so.2 ] ; then
 		einfo \
@@ -284,6 +282,31 @@ the roct USE flag."
 
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
+
+	if has_version 'media-libs/mesa[libglvnd]' ; then
+		einfo "Detected mesa using libglvnd"
+		export MESA_USES_LIBGLVND="Y"
+		if [[ -f "${EROOT}/etc/env.d/000opengl" ]] ; then
+			ewarn \
+"Please remove /etc/env.d/000opengl and do ldconfig && env-update manually. \
+This is to remove leftovers from eselect-opengl removal that might cause \
+problems."
+		fi
+		if [[ -f "${EROOT}/etc/X11/xorg.conf.d/20opengl.conf" ]] ; then
+			ewarn \
+"Please remove /etc/X11/xorg.conf.d/20opengl.conf manually.  This is to remove \
+leftovers from eselect-opengl removal that might cause problems."
+		fi
+	elif has_version '>=app-eselect/eselect-opengl-1.0.7' ; then
+		einfo "Detected mesa without libglvnd"
+		export MESA_USES_LIBGLVND="N"
+		if ! grep -q -e "Added amdgpu-pro, amdgpu-pro-lts support" \
+			"${EROOT}/usr/share/eselect/modules/opengl.eselect" ; then
+			die "You need eselect-opengl from the oiledmachine-overlay."
+		fi
+	else
+		die "Either download >=eselect-opengl-1.0.7 or use media-libs/mesa[libglvnd]"
+	fi
 }
 
 src_unpack_common() {
@@ -555,6 +578,22 @@ Section "Monitor"
 	Option       "DPMS"   "true"
 EndSection
 EOF
+
+	if [[ "${MESA_USES_LIBGLVND}" == "Y" ]] ; then
+		modulepaths=
+		[[ -d "${ED}/opt/amdgpu-pro/lib/xorg/modules" ]] && modulepaths+="\tModulePath \"/opt/amdgpu-pro/lib/xorg/modules\"\n"
+		[[ -d "${ED}/opt/amdgpu/lib/xorg/modules" ]] && modulepaths+="\tModulePath \"/opt/amdgpu/lib/xorg/modules\"\n"
+		[[ -d "${ED}/opt/amdgpu-pro/lib64/xorg/modules" ]] && modulepaths+="\tModulePath \"/opt/amdgpu-pro/lib64/xorg/modules\"\n"
+		[[ -d "${ED}/opt/amdgpu/lib64/xorg/modules" ]] && modulepaths+="\tModulePath \"/opt/amdgpu/lib64/xorg/modules\"\n"
+		[[ -d "${EROOT}/usr/lib/xorg/modules" ]] && modulepaths+="\tModulePath \"/usr/lib/xorg/modules\"\n"
+		[[ -d "${EROOT}/usr/lib64/xorg/modules" ]] && modulepaths+="\tModulePath \"/usr/lib64/xorg/modules\"\n"
+		modulepaths=$(echo -e "${modulepaths}")
+		cat << EOF > "${T}/20-${PN}-opengl.conf"
+Section "Files"
+${modulepaths}
+EndSection
+EOF
+	fi
 }
 
 src_install() {
@@ -563,6 +602,9 @@ src_install() {
 		doins "${T}/10-screen.conf"
 		doins "${T}/10-monitor.conf"
 		doins "${T}/10-device.conf"
+		if [[ "${MESA_USES_LIBGLVND}" == "Y" ]] ; then
+			doins "${T}/20-${PN}-opengl.conf"
+		fi
 	fi
 
 	insinto /lib/udev/rules.d
@@ -708,10 +750,32 @@ opt/amdgpu-pro/lib/i386-linux-gnu/gbm"
 		EOF
 		doenvd "${T}"/50${P}-gbm
 	fi
+
+	if [[ "${MESA_USES_LIBGLVND}" == "Y" ]] ; then
+		ldpaths=""
+		[[ -d "${ED}/opt/amdgpu-pro/lib/x86_64-linux-gnu" ]] && ldpaths+="/opt/amdgpu-pro/lib/x86_64-linux-gnu\n"
+		[[ -d "${ED}/opt/amdgpu-pro/lib/i386-linux-gnu" ]] && ldpaths+="/opt/amdgpu-pro/lib/i386-linux-gnu\n"
+		[[ -d "${ED}/opt/amdgpu/lib/x86_64-linux-gnu" ]] && ldpaths+="/opt/amdgpu/lib/x86_64-linux-gnu\n"
+		[[ -d "${ED}/opt/amdgpu/lib/i386-linux-gnu" ]] && ldpaths+="/opt/amdgpu/lib/i386-linux-gnu\n"
+		[[ -d "${ED}/opt/amdgpu-pro/lib64" ]] && ldpaths+="/opt/amdgpu-pro/lib64\n"
+		ldpaths=$(echo -e "${ldpaths}" | tr "\n" ":")
+		opengl_profile=
+		if use opengl_mesa ; then
+			opengl_profile=amdgpu
+		elif use opengl_pro ; then
+			opengl_profile=amdgpu-pro
+		fi
+		cat <<-EOF > "${T}"/000${PN}
+			LDPATH="${ldpaths}"
+			OPENGL_PROFILE="${opengl_profile}"
+		EOF
+		doenvd "${T}"/000${PN}
+	fi
 }
 
 pkg_prerm() {
-	if use opengl ; then
+	if use opengl && [[ "${MESA_USES_LIBGLVND}" == "N" ]] \
+		&& has_version 'app-eselect/eselect-opengl' ; then
 		"${EROOT}"/usr/bin/eselect opengl set xorg-x11
 	fi
 
@@ -727,10 +791,13 @@ pkg_prerm() {
 }
 
 pkg_postinst() {
-	if use opengl_pro ; then
-		"${EROOT}"/usr/bin/eselect opengl set amdgpu-pro
-	elif use opengl_mesa ; then
-		"${EROOT}"/usr/bin/eselect opengl set amdgpu
+	if has_version 'app-eselect/eselect-opengl' \
+		&& [[ "${MESA_USES_LIBGLVND}" == "N" ]] ; then
+		if use opengl_pro ; then
+			"${EROOT}"/usr/bin/eselect opengl set amdgpu-pro
+		elif use opengl_mesa ; then
+			"${EROOT}"/usr/bin/eselect opengl set amdgpu
+		fi
 	fi
 
 	if use opencl ; then
