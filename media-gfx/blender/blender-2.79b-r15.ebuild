@@ -95,7 +95,7 @@ fi
 SLOT_MAJ=${SLOT%/*}
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-IUSE+=" X abi3-compat +abi4-compat abi5-compat abi6-compat abi7-compat +bullet \
+IUSE+=" X abi3-compat +abi4-compat abi5-compat abi6-compat +bullet \
 +dds +elbeem +game-engine -openexr -collada -color-management +cuda +cycles \
 -cycles-network -debug doc flac -ffmpeg -fftw +jack +jemalloc +jpeg2k -llvm \
 -man +ndof +nls +nvcc +openal +opencl +openimageio +openmp -opensubdiv \
@@ -115,7 +115,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	mp3? ( ffmpeg )
 	nvcc? ( cuda )
 	opencl? ( cycles )
-	openvdb? ( ^^ ( abi3-compat abi4-compat abi5-compat abi6-compat abi7-compat ) )
+	openvdb? ( ^^ ( abi3-compat abi4-compat abi5-compat abi6-compat ) )
 	osl? ( cycles llvm )
 	release? (
 		!abi3-compat
@@ -242,13 +242,13 @@ RDEPEND="${PYTHON_DEPS}
 	openvdb? (
 		!abi3-compat? (
 			>=blender-libs/openvdb-3.3.0\
-[${PYTHON_SINGLE_USEDEP},abi4-compat?,abi5-compat?,abi6-compat?,abi7-compat?]
-			 <blender-libs/openvdb-7.1\
-[${PYTHON_SINGLE_USEDEP},abi4-compat?,abi5-compat?,abi6-compat?,abi7-compat?]
+[${PYTHON_SINGLE_USEDEP},abi4-compat?,abi5-compat?,abi6-compat?]
+			 <blender-libs/openvdb-7\
+[${PYTHON_SINGLE_USEDEP},abi4-compat?,abi5-compat?,abi6-compat?]
 		)
 		abi3-compat? (
 			>=blender-libs/openvdb-3.1.0[${PYTHON_SINGLE_USEDEP},abi3-compat]
-			 <blender-libs/openvdb-7.1[${PYTHON_SINGLE_USEDEP},abi3-compat]
+			 <blender-libs/openvdb-7[${PYTHON_SINGLE_USEDEP},abi3-compat]
 		)
 		>=blender-libs/boost-1.60:=[nls?,threads(+)]
 		>=dev-cpp/tbb-2017.7
@@ -316,14 +316,6 @@ pkg_setup() {
 	llvm_pkg_setup
 	blender_check_requirements
 	python-single-r1_pkg_setup
-	if use openvdb ; then
-		if ! grep -q -F -e "delta()" /usr/include/openvdb/util/CpuTimer.h ; then
-			if use abi7-compat ; then
-				# compatible as long as the function is present?
-				die "OpenVDB delta() is missing try <=7.1.x only"
-			fi
-		fi
-	fi
 }
 
 _src_prepare() {
@@ -453,7 +445,7 @@ ebuild/upstream developers only."
 
 	mycmakeargs+=(
 		$(usex openvdb -DOPENVDB_ABI_VERSION_NUMBER=\
-$(usex abi7-compat 7 $(usex abi6-compat 6 $(usex abi5-compat 5 $(usex abi4-compat 4 3)))) "")
+$(usex abi6-compat 6 $(usex abi5-compat 5 $(usex abi4-compat 4 3))) "")
 		-DPYTHON_VERSION="${EPYTHON/python/}"
 		-DPYTHON_LIBRARY="$(python_get_library_path)"
 		-DPYTHON_INCLUDE_DIR="$(python_get_includedir)"
