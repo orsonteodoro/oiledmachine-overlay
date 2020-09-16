@@ -48,8 +48,7 @@ inherit llvm meson multilib-minimal pax-utils python-any-r1
 
 OPENGL_DIR="xorg-x11"
 
-_MY_P="${P/-blender/}"
-MY_P="${_MY_P/_/-}"
+MY_P="${P/_/-}"
 
 DESCRIPTION="OpenGL-like graphic library for Linux for Blender use only"
 HOMEPAGE="https://www.mesa3d.org/ https://mesa.freedesktop.org/"
