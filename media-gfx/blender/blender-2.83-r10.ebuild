@@ -324,7 +324,7 @@ _src_prepare() {
 src_prepare() {
 	einfo
 	einfo "$(ver_cut 1-2) version series is a Long Term Support (LTS) version."
-	einfo "Upstream supports this series up to May 2020 (2 years)."
+	einfo "Upstream supports this series up to May 2022 (2 years)."
 	einfo
 	xdg_src_prepare
 	blender_prepare() {
