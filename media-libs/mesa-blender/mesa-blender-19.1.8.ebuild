@@ -1,7 +1,8 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# Based on commit 5671613f07850086a11a1ace34816b498e9b69b7
+# Based on the ebuild file commit 5671613f07850086a11a1ace34816b498e9b69b7 from
+# the gentoo overlay.
 
 # This is a ebuild fork for mesa.
 # In the binary distribution of blender, Mesa's libGL is packaged with Blender.
