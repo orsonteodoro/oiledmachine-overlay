@@ -210,7 +210,7 @@ RDEPEND="${PYTHON_DEPS}
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.0_rc2:=[cuda=,opencl=] )
 	openvdb? (
 		abi7-compat? (
-			>=media-gfx/openvdb-7[${PYTHON_SINGLE_USEDEP},abi7-compat?]
+			>=blender-libs/openvdb-7[${PYTHON_SINGLE_USEDEP},abi7-compat?]
 		)
 		>=dev-cpp/tbb-2019.9
 		>=dev-libs/c-blosc-1.5.0
@@ -218,7 +218,7 @@ RDEPEND="${PYTHON_DEPS}
 	openxr? ( >=media-libs/openxr-1.0.6 )
 	optix? ( >=dev-libs/optix-7 )
 	osl? ( >=media-libs/osl-1.10.9:=
-		<media-libs/mesa-blender-19.2 )
+		<blender-libs/mesa-19.2 )
 	sdl? ( >=media-libs/libsdl2-2.0.8[sound,joystick] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
 	tiff? ( >=media-libs/tiff-4.0.9:0[zlib] )
@@ -374,7 +374,7 @@ ebuild/upstream developers only."
 				# legacy
 				mycmakeargs+=( -DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so" )
 			else
-				die "Use either media-libs/mesa-blender or media-libs/mesa[libglvnd] or media-libs/libglvnd"
+				die "Use either blender-libs/mesa or media-libs/mesa[libglvnd] or media-libs/libglvnd"
 			fi
 			if [[ -e "${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" ]] ; then
 				mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" )
@@ -450,7 +450,7 @@ ebuild/upstream developers only."
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.83.2/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.83.5/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(

@@ -60,6 +60,9 @@ inherit blender check-reqs cmake-utils flag-o-matic llvm pax-utils \
 # .gitmodules.  The download.blender.org are preferred because they bundle them.
 SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
 
+# Blender can have letters in the version string,
+# so strip off the letter if it exists.
+
 BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest}
 BLENDER_MULTISLOT=${BLENDER_MULTISLOT:=1}
 
@@ -75,10 +78,10 @@ SLOT_MAJ=${SLOT%/*}
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 IUSE+=" X +abi7-compat -asan +bullet +collada +color-management +cuda +cycles \
--cycles-network +dds -debug doc +elbeem -embree +ffmpeg +fftw flac +jack \
+-cycles-network +dds -debug doc +elbeem +embree +ffmpeg +fftw flac +jack \
 +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal +opencl +openexr \
-+openimagedenoise +openimageio +openmp +opensubdiv +openvdb -optix +osl \
-release +sdl +sndfile test +tiff -valgrind"
++openimagedenoise +openimageio +openmp +opensubdiv +openvdb +openxr -optix \
++osl release +sdl +sndfile test +tiff -valgrind"
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 RESTRICT="mirror !test? ( test )"
@@ -145,21 +148,30 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 # extern/Eigen3/eigen-update.sh
 # Track OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER for changes.
 # Track build_files/build_environment/dependencies.dot for ffmpeg dependencies
+#
+# Mentioned in versions.cmake but missing in (R)DEPENDS freeglut, alembic,
+# glfw, clew, cuew, hidapi, webp, xml2, tinyxml, yaml, lcms, flexbison,
+# bzip2 libffi, lzma, openssl, sqlite, usd, mesa, nasm, ispc,
+# faad (added in 0.6 ffmpeg but removed in 0.7+)
+#
+# Already processed as ffmpeg dependency: lame, ogg, vorbis, theora,
+# vpx, opus, x264, vidcore
+#
 RDEPEND="${PYTHON_DEPS}
 	>=dev-lang/python-3.7.4
 	>=dev-libs/boost-1.70:=[nls?,threads(+)]
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
-		>=dev-python/certifi-2019.6.16[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/certifi-2020.4.5.2[${PYTHON_MULTI_USEDEP}]
 		>=dev-python/chardet-3.0.4[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/idna-2.8[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/numpy-1.17.0[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/requests-2.22.0[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/urllib3-1.25.3[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/idna-2.9[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/numpy-1.17.5[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/requests-2.23.0[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/urllib3-1.25.9[${PYTHON_MULTI_USEDEP}]
 	')
-	>=media-libs/freetype-2.9.1
+	>=media-libs/freetype-2.10.2
 	>=media-libs/glew-1.13.0:*
-	>=media-libs/libpng-1.6.35:0=
+	>=media-libs/libpng-1.6.37:0=
 	media-libs/libsamplerate
 	>=sys-libs/zlib-1.2.11
 	|| (
@@ -168,27 +180,26 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	|| (
 		virtual/jpeg:0=
-		>=media-libs/libjpeg-turbo-1.5.3
+		>=media-libs/libjpeg-turbo-2.0.4
 	)
 	virtual/libintl
 	virtual/opengl
 	collada? ( >=media-libs/opencollada-1.6.68:= )
-	color-management? ( >=media-libs/opencolorio-1.1.0 )
+	color-management? ( >=media-libs/opencolorio-1.1.1 )
 	cuda? (
 		>=x11-drivers/nvidia-drivers-418.39
 		>=dev-util/nvidia-cuda-toolkit-10.1:=
 	)
-	cycles? ( >=dev-libs/pugixml-1.9 )
-	embree? ( >=media-libs/embree-3.2.4 )
-	ffmpeg? ( >=media-video/ffmpeg-4.0.2:=\
+	cycles? ( >=dev-libs/pugixml-1.10 )
+	embree? ( >=media-libs/embree-3.31.1 )
+	ffmpeg? ( >=media-video/ffmpeg-4.2.3:=\
 [encode,jpeg2k?,mp3?,opus?,theora?,vorbis?,vpx?,x264,xvid?,zlib] )
 	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
-	flac? ( >=media-libs/flac-1.3.2 )
+	flac? ( >=media-libs/flac-1.3.3 )
 	jack? ( virtual/jack )
-	jemalloc? ( >=dev-libs/jemalloc-5.0.1:= )
-	jpeg2k? ( >=media-libs/openjpeg-2.3.0:2 )
-	llvm? ( >=sys-devel/llvm-6.0.1:=
-		 <sys-devel/llvm-10 )
+	jemalloc? ( >=dev-libs/jemalloc-5.2.1:= )
+	jpeg2k? ( >=media-libs/openjpeg-2.3.1:2 )
+	llvm? ( >=sys-devel/llvm-9.0.1:= )
 	ndof? (
 		app-misc/spacenavd
 		>=dev-libs/libspnav-0.2.3
@@ -196,31 +207,32 @@ RDEPEND="${PYTHON_DEPS}
 	nls? (
 		|| (
 			virtual/libiconv
-			>=dev-libs/libiconv-1.15
+			>=dev-libs/libiconv-1.16
 		)
 	)
-	openal? ( >=media-libs/openal-1.18.2 )
+	openal? ( >=media-libs/openal-1.20.1 )
 	opencl? ( virtual/opencl )
-	openimagedenoise? ( >=media-libs/oidn-1.0.0 )
-	openimageio? ( >=media-libs/openimageio-1.8.13[color-management?,jpeg2k?] )
+	openimagedenoise? ( >=media-libs/oidn-1.2.1 )
+	openimageio? ( >=media-libs/openimageio-2.1.15.0[color-management?,jpeg2k?] )
 	openexr? (
 		>=media-libs/ilmbase-2.4.0:=
 		>=media-libs/openexr-2.4.0:=
 	)
-	opensubdiv? ( >=media-libs/opensubdiv-3.4.0_rc2:=[cuda=,opencl=] )
+	opensubdiv? ( >=media-libs/opensubdiv-3.4.3:=[cuda=,opencl=] )
 	openvdb? (
 		abi7-compat? (
-			>=media-gfx/openvdb-7[${PYTHON_SINGLE_USEDEP},abi7-compat?]
+			>=blender-libs/openvdb-7[${PYTHON_SINGLE_USEDEP},abi7-compat?]
 		)
 		>=dev-cpp/tbb-2019.9
 		>=dev-libs/c-blosc-1.5.0
 	)
+	openxr? ( >=media-libs/openxr-1.0.8 )
 	optix? ( >=dev-libs/optix-7 )
-	osl? ( >=media-libs/osl-1.9.9:=
-		<media-libs/mesa-blender-19.2 )
-	sdl? ( >=media-libs/libsdl2-2.0.8[sound,joystick] )
+	osl? ( >=media-libs/osl-1.10.10:=
+		<blender-libs/mesa-19.2 )
+	sdl? ( >=media-libs/libsdl2-2.0.12[sound,joystick] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
-	tiff? ( >=media-libs/tiff-4.0.9:0[zlib] )
+	tiff? ( >=media-libs/tiff-4.1.0:0[zlib] )
 	valgrind? ( dev-util/valgrind )
 	X? (
 		x11-libs/libX11
@@ -232,11 +244,11 @@ DEPEND="${RDEPEND}
 	asan? ( || ( sys-devel/clang
                      sys-devel/gcc ) )
 	>=dev-cpp/eigen-3.3.7:3
-	>=dev-util/cmake-3.5
+	>=dev-util/cmake-3.10
 	doc? (
 		app-doc/doxygen[dot]
-		>=dev-python/sphinx-1.8.5[latex]
-		>=dev-python/sphinx_rtd_theme-0.4.3
+		>=dev-python/sphinx-3.3.1[latex]
+		>=dev-python/sphinx_rtd_theme-0.5.0
 		dev-texlive/texlive-bibtexextra
 		dev-texlive/texlive-fontsextra
 		dev-texlive/texlive-fontutils
@@ -249,6 +261,9 @@ DEPEND="${RDEPEND}
 _PATCHES=(
 	"${FILESDIR}/${PN}-2.82a-fix-install-rules.patch"
 	"${FILESDIR}/${PN}-2.82a-cycles-network-fixes.patch"
+	"${FILESDIR}/${PN}-2.83.1-device_network_h-fixes.patch"
+	"${FILESDIR}/${PN}-2.83.1-device_network_h-add-device-header.patch"
+	"${FILESDIR}/${PN}-2.83.1-update-acquire_tile-for-cycles-networking.patch"
 	"${FILESDIR}/${PN}-2.80-install-paths-change.patch"
 )
 
@@ -292,7 +307,7 @@ _src_prepare() {
 	cmake-utils_src_prepare
 
 	if [[ "${BLENDER_MULTISLOT}" == "2" ]] ; then
-		eapply "${FILESDIR}/blender-2.81a-parent-datafiles-dir-change.patch"
+		eapply "${FILESDIR}/blender-2.83.1-parent-datafiles-dir-change.patch"
 	fi
 
 	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
@@ -370,7 +385,7 @@ ebuild/upstream developers only."
 				# legacy
 				mycmakeargs+=( -DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so" )
 			else
-				die "Use either media-libs/mesa-blender or media-libs/mesa[libglvnd] or media-libs/libglvnd"
+				die "Use either blender-libs/mesa or media-libs/mesa[libglvnd] or media-libs/libglvnd"
 			fi
 			if [[ -e "${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" ]] ; then
 				mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" )
@@ -421,6 +436,7 @@ ebuild/upstream developers only."
 		-DWITH_OPENVDB_BLOSC=$(usex openvdb)
 		-DWITH_PYTHON_INSTALL=OFF
 		-DWITH_PYTHON_INSTALL_NUMPY=OFF
+		-DWITH_XR_OPENXR=$(usex openxr)
 	)
 
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
@@ -445,7 +461,7 @@ ebuild/upstream developers only."
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.82/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.90.0/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
