@@ -560,9 +560,9 @@ multilib_src_install() {
 #	fi
 }
 
-#multilib_src_install_all() {
-#	einstalldocs
-#}
+multilib_src_install_all() {
+	einstalldocs
+}
 
 multilib_src_test() {
 	meson test -v -C "${BUILD_DIR}" -t 100
