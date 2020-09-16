@@ -7,13 +7,35 @@
 # In the binary distribution of blender, Mesa's libGL is packaged with Blender.
 #
 # Blender distributes in the lib folder:
-# libglapi.so libglapi.so.0 libglapi.so.0.0.0 libGL.so libGL.so.1 libGL.so.1.5.0 libGLU.so libGLU.so.1 libGLU.so.1.3.1
+# libglapi.so libglapi.so.0 libglapi.so.0.0.0 libGL.so libGL.so.1 libGL.so.1.5.0
+# libGLU.so libGLU.so.1 libGLU.so.1.3.1
 #
 # The build config can be found at:
 # https://github.com/blender/blender/blob/v2.90.0/build_files/build_environment/cmake/mesa.cmake
 #
-# The oiledmachine-overlay will use the built LLVM to avoid the multiple LLVM
-# versions problem when loading Blender.
+# The oiledmachine-overlay will use the mesa built against LLVM-9 to avoid the
+# multiple LLVM versions problem when loading Blender.
+
+# The goal is to avoid this error:
+# : CommandLine Error: Option 'help-list' registered more than once!
+# LLVM ERROR: inconsistency in registered CommandLine options
+
+# This is triggered when multiple LLVM versions are installed by the same
+# program.  In my case, LLVM-9 and LLVM-10.
+
+# When doing a strace on Blender, it will load a radeon driver that links
+# against LLVM10.  That file was backtracked to the mesa ebuild-package.
+
+# LLVM-9 defaults to c++11
+# LLVM-{10,11,12} defaults to c++14
+# OSL (Open Shader Library) in the gentoo-overlay defaults to LLVM-9.
+# Blender before 2.90.x defaults to c++11 so it can only do LLVM-9
+# The Blender devs wants to skip ahead to c++17 instead.
+
+# The Gentoo devs removed 19.1.x series so it is impossible to get OSL alone
+# with the gentoo-overlay, so only LLVM-10 can be used unless you fork.
+
+# That's the big LLVM compatibility problem.  That is the situation.
 
 EAPI=7
 
