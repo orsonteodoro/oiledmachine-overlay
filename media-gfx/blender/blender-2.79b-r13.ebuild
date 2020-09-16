@@ -102,6 +102,8 @@ IUSE+=" X abi3-compat +abi4-compat abi5-compat abi6-compat abi7-compat +bullet \
 FFMPEG_IUSE+=" jpeg2k +mp3 +theora vorbis x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 RESTRICT="mirror !test? ( test )"
+USE_LIBGLVND="N"
+LLVM_V=9
 
 # The release USE flag depends on platform defaults.
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
@@ -405,6 +407,38 @@ _src_configure() {
 		ewarn \
 "Cycles Networking support does not work at all even for CPU rendering.  For \
 ebuild/upstream developers only."
+	fi
+
+	if use osl ; then
+		if [[ "${USE_LIBGLVND}" == "Y" ]] ; then
+			mycmakeargs+=( -DOpenGL_GL_PREFERENCE=GLVND )
+			if [[ -e "${EROOT}/usr/$(get_libdir)/libGLX.so" ]] ; then
+				mycmakeargs+=( -DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/libGLX.so" )
+			else
+				die "Install media-libs/libglvnd or indirectly through mesa[libglvnd]."
+			fi
+			if [[ -e "${EROOT}/usr/$(get_libdir)/libOpenGL.so" ]] ; then
+				mycmakeargs+=( -DOPENGL_opengl_LIBRARY="${EROOT}/usr/$(get_libdir)/libOpenGL.so" )
+			else
+				die "Install media-libs/libglvnd or indirectly through mesa[libglvnd]."
+			fi
+			if [[ -e "${EROOT}/usr/$(get_libdir)/libEGL.so" ]] ; then
+				mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/libEGL.so" )
+			fi
+		else
+			mycmakeargs+=( -DOpenGL_GL_PREFERENCE=LEGACY )
+			if [[ -e "${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so" ]] ; then
+				# legacy
+				mycmakeargs+=( -DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so" )
+			else
+				die "Use either media-libs/mesa-blender or media-libs/mesa[libglvnd] or media-libs/libglvnd"
+			fi
+			if [[ -e "${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" ]] ; then
+				mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" )
+			fi
+			export CMAKE_LIBRARY_PATH="/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/:${CMAKE_LIBRARY_PATH}"
+			export CMAKE_INCLUDE_PATH="/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include:${CMAKE_INCLUDE_PATH}"
+		fi
 	fi
 
 	mycmakeargs+=(
@@ -754,17 +788,37 @@ _src_install() {
 		cp "${ED}/usr/share/applications"/blender{,-${SLOT_MAJ}}.desktop || die
 		local menu_file="${ED}/usr/share/applications/blender-${SLOT_MAJ}.desktop"
 		sed -i -e "s|Name=Blender|Name=Blender ${PV}|g" "${menu_file}" || die
-		sed -i -e "s|Exec=blender|Exec=${d_dest}/blender|g" "${menu_file}" || die
+		sed -i -e "s|Exec=blender|Exec=/usr/bin/${PN}-${SLOT_MAJ}|g" "${menu_file}" || die
 		sed -i -e "s|Icon=blender|Icon=blender-${SLOT_MAJ}|g" "${menu_file}" || die
 		for size in 16x16 22x22 24x24 256x256 32x32 48x48 ; do
 			mv "${ed_icon_hc}/"${size}"/apps/blender"{,-${SLOT_MAJ}}".png" || die
 		done
 		mv "${ed_icon_hc}/scalable/apps/blender"{,-${SLOT_MAJ}}".svg" || die
-		dosym "../../..${d_dest}/blender" \
-			"/usr/bin/${PN}-${SLOT_MAJ}" || die
+		cp "${FILESDIR}/blender-wrapper" \
+			"${T}/${PN}-${SLOT_MAJ}" || die
+		sed -i -e "s|\$(get_libdir)|$(get_libdir)|g" \
+			-e "s|\${LLVM_V}|${LLVM_V}|g" \
+			-e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
+			"${T}/${PN}-${SLOT_MAJ}" || die
+		if use osl ; then
+			sed -i -e "s|#LD_LIBRARY_PATH|LD_LIBRARY_PATH|g" \
+				"${T}/${PN}-${SLOT_MAJ}" || die
+		fi
+		exeinto /usr/bin
+		doexe "${T}/${PN}-${SLOT_MAJ}"
 	elif [[ "${EBLENDER}" == "build_headless" ]] ; then
-		dosym "../../..${d_dest}/blender" \
-			"/usr/bin/${PN}-headless-${SLOT_MAJ}" || die
+		cp "${FILESDIR}/blender-wrapper" \
+			"${T}/${PN}-headless-${SLOT_MAJ}" || die
+		sed -i -e "s|\$(get_libdir)|$(get_libdir)|g" \
+			-e "s|\${LLVM_V}|${LLVM_V}|g" \
+			-e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
+			"${T}/${PN}-headless-${SLOT_MAJ}" || die
+		if use osl ; then
+			sed -i -e "s|#LD_LIBRARY_PATH|LD_LIBRARY_PATH|g" \
+				"${T}/${PN}-headless-${SLOT_MAJ}" || die
+		fi
+		exeinto /usr/bin
+		doexe "${T}/${PN}-${SLOT_MAJ}"
 	fi
 	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" =~ (1|2) ]] ; then
 		dodir "${d_dest}"
