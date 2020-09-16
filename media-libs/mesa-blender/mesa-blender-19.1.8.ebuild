@@ -3,7 +3,7 @@
 
 # Based on commit 5671613f07850086a11a1ace34816b498e9b69b7
 
-# This is a ebuild fork for Blender.
+# This is a ebuild fork for mesa.
 # In the binary distribution of blender, Mesa's libGL is packaged with Blender.
 #
 # Blender distributes in the lib folder:
