@@ -29,7 +29,7 @@
 
 # LLVM-9 defaults to c++11
 # LLVM-{10,11,12} defaults to c++14
-# OSL (Open Shader Library) in the gentoo-overlay defaults to LLVM-9.
+# OSL (Open Shader Language) in the gentoo-overlay defaults to LLVM-9.
 # Blender before 2.90.x defaults to c++11 so it can only do LLVM-9
 # The Blender devs wants to skip ahead to c++17 instead.
 
