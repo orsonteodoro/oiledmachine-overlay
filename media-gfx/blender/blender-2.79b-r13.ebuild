@@ -243,7 +243,7 @@ RDEPEND="${PYTHON_DEPS}
 		>=dev-libs/c-blosc-1.7.1
 	)
 	osl? ( >=media-libs/osl-1.7.5:=
-		<media-libs/mesa-19.2:blender )
+		<media-libs/mesa-blender-19.2 )
 	sdl? ( >=media-libs/libsdl2-2.0.4[sound,joystick] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
 	tiff? ( >=media-libs/tiff-4.0.6:0[zlib] )
