@@ -81,6 +81,7 @@ IUSE="${IUSE_VIDEO_CARDS}
 	vdpau vulkan vulkan-overlay wayland xa xvmc"
 #IUSE+=" openmax omx-bellagio omx-tizonia"
 
+# libglvnd is disabled because re-enabling and using it causes a segfault with blender.
 REQUIRED_USE="
 	!libglvnd_
 	d3d9?   ( dri3 || ( video_cards_iris video_cards_r300 video_cards_r600 video_cards_radeonsi video_cards_nouveau video_cards_vmware ) )
