@@ -59,7 +59,7 @@ inherit blender check-reqs cmake-utils flag-o-matic llvm pax-utils \
 # If you use git tarballs, you need to download the submodules listed in
 # .gitmodules.  The download.blender.org tarball is preferred because they
 # bundle all the dependencies.
-SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
+SRC_URI="https://download.blender.org/source/blender-${PV}.tar.gz"
 
 BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest}
 BLENDER_MULTISLOT=${BLENDER_MULTISLOT:=1}
@@ -76,11 +76,11 @@ SLOT_MAJ=${SLOT%/*}
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 IUSE+=" X +abi5-compat abi6-compat abi7-compat -asan +bullet -collada \
--color-management +cuda +cycles -cycles-network +dds -debug doc +elbeem \
--embree -ffmpeg -fftw flac -jack +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc \
--nvrtc +openal +opencl -openexr -openimagedenoise -openimageio +openmp \
--opensubdiv -openvdb -optix -osl release -sdl -sndfile test +tiff -valgrind"
-FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
+-color-management -cuda +cycles -cycles-network +dds -debug doc +elbeem \
+-embree -ffmpeg -fftw flac -jack +jemalloc jpeg2k -llvm -man +ndof +nls +nvcc \
+-nvrtc +openal opencl -openexr +openimageio +openmp -opensubdiv -openvdb -osl \
+release -sdl -sndfile test +tiff -valgrind X"
+FFMPEG_IUSE+=" jpeg2k +mp3 +theora vorbis vpx x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 RESTRICT="mirror !test? ( test )"
 USE_LIBGLVND="N"
@@ -93,12 +93,10 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	cycles? ( openexr tiff openimageio osl? ( llvm ) )
 	embree? ( cycles )
 	mp3? ( ffmpeg )
-	nvcc? ( || ( cuda optix ) )
-	nvrtc? ( || ( cuda optix ) )
+	nvcc? ( cuda )
+	nvrtc? ( cuda )
 	opencl? ( cycles )
 	openvdb? ( ^^ ( abi5-compat abi6-compat abi7-compat ) )
-	optix? ( cuda cycles nvcc )
-	opus? ( ffmpeg )
 	osl? ( cycles llvm )
 	release? (
 		build_creator
@@ -123,7 +121,6 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 		openexr
 		openimageio
 		openmp
-		openimagedenoise
 		opensubdiv
 		openvdb
 		osl
@@ -136,7 +133,6 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	theora? ( ffmpeg )
 	vorbis? ( ffmpeg )
 	vpx? ( ffmpeg )
-	webm? ( ffmpeg opus vpx )
 	x264? ( ffmpeg )
 	xvid? ( ffmpeg )"
 
@@ -146,25 +142,22 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 # extern/Eigen3/eigen-update.sh
 # Track OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER for changes.
 RDEPEND="${PYTHON_DEPS}
-	>=dev-lang/python-3.7.4
+	>=dev-lang/python-3.7.0
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
-		>=dev-python/certifi-2019.6.16[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/certifi-2018.8.13[${PYTHON_MULTI_USEDEP}]
 		>=dev-python/chardet-3.0.4[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/idna-2.8[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/numpy-1.17.0[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/requests-2.22.0[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/urllib3-1.25.3[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/idna-2.7[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/numpy-1.15.0[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/requests-2.19.1[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/urllib3-1.23[${PYTHON_MULTI_USEDEP}]
 	')
 	>=media-libs/freetype-2.9.1
 	>=media-libs/glew-1.13.0:*
 	>=media-libs/libpng-1.6.35:0=
 	media-libs/libsamplerate
 	>=sys-libs/zlib-1.2.11
-	|| (
-		virtual/glu
-		>=media-libs/glu-9.0.1
-	)
+	virtual/glu
 	|| (
 		virtual/jpeg:0=
 		>=media-libs/libjpeg-turbo-1.5.3
@@ -180,7 +173,7 @@ RDEPEND="${PYTHON_DEPS}
 	cycles? ( >=dev-libs/pugixml-1.9 )
 	embree? ( >=media-libs/embree-3.2.4 )
 	ffmpeg? ( >=media-video/ffmpeg-4.0.2:=\
-[encode,jpeg2k?,mp3?,opus?,theora?,vorbis?,vpx?,x264,xvid?,zlib] )
+[encode,jpeg2k?,mp3?,theora?,vorbis?,vpx?,x264,xvid?,zlib] )
 	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
 	flac? ( >=media-libs/flac-1.3.3 )
 	jack? ( virtual/jack )
@@ -200,7 +193,6 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	openal? ( >=media-libs/openal-1.18.2 )
 	opencl? ( virtual/opencl )
-	openimagedenoise? ( >=media-libs/oidn-1.0.0 )
 	openimageio? ( >=media-libs/openimageio-1.8.13[color-management?,jpeg2k?] )
 	openexr? (
 		>=media-libs/ilmbase-2.3.0:=
@@ -215,14 +207,15 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	openvdb? (
 		>=blender-libs/boost-1.68:=[nls?,threads(+)]
-abi5-compat? ( >=blender-libs/openvdb-5.1.0:5[${PYTHON_SINGLE_USEDEP},abi5-compat(+)] )
-abi6-compat? ( >=blender-libs/openvdb-5.1.0:6[${PYTHON_SINGLE_USEDEP},abi6-compat(+)] )
+abi5-compat? ( >=blender-libs/openvdb-5.1.0:5[${PYTHON_SINGLE_USEDEP},abi5-compat(+)]
+		 <blender-libs/openvdb-7.1:5[${PYTHON_SINGLE_USEDEP},abi5-compat(+)] )
+abi6-compat? ( >=blender-libs/openvdb-5.1.0:6[${PYTHON_SINGLE_USEDEP},abi6-compat(+)]
+		 <blender-libs/openvdb-7.1:6[${PYTHON_SINGLE_USEDEP},abi6-compat(+)] )
 abi7-compat? ( >=blender-libs/openvdb-5.1.0:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
 		 <blender-libs/openvdb-7.1:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)] )
 		>=dev-cpp/tbb-2018.5
 		>=dev-libs/c-blosc-1.14.4
 	)
-	optix? ( >=dev-libs/optix-7 )
 	osl? ( >=media-libs/osl-1.9.9:=
 		<blender-libs/mesa-19.2 )
 	sdl? ( >=media-libs/libsdl2-2.0.8[sound,joystick] )
@@ -238,7 +231,7 @@ abi7-compat? ( >=blender-libs/openvdb-5.1.0:7[${PYTHON_SINGLE_USEDEP},abi7-compa
 DEPEND="${RDEPEND}
 	asan? ( || ( sys-devel/clang
                      sys-devel/gcc ) )
-	>=dev-cpp/eigen-3.3.7:3
+	>=dev-cpp/eigen-3.2.7:3
 	>=dev-util/cmake-3.5
 	doc? (
 		app-doc/doxygen[dot]
@@ -300,7 +293,7 @@ _src_prepare() {
 	cmake-utils_src_prepare
 
 	if [[ "${BLENDER_MULTISLOT}" == "2" ]] ; then
-		eapply "${FILESDIR}/blender-2.81a-parent-datafiles-dir-change.patch"
+		eapply "${FILESDIR}/blender-2.80-parent-datafiles-dir-change.patch"
 	fi
 
 	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
@@ -419,15 +412,11 @@ ebuild/upstream developers only."
 		-DWITH_COMPILER_ASAN=$(usex asan)
 		-DWITH_CUDA_DYNLOAD=$(usex cuda $(usex nvcc ON OFF) ON)
 		-DWITH_CXX_GUARDEDALLOC=$(usex debug)
-		-DWITH_CXX11_ABI=ON
 		-DWITH_CYCLES=$(usex cycles)
 		-DWITH_CYCLES_CUBIN_COMPILER=$(usex nvrtc)
 		-DWITH_CYCLES_CUDA_BINARIES=$(usex cuda)
 		-DWITH_CYCLES_DEVICE_CUDA=$(usex cuda TRUE FALSE)
 		-DWITH_CYCLES_DEVICE_OPENCL=$(usex opencl)
-		-DWITH_CYCLES_DEVICE_OPTIX=$(usex optix)
-		-DWITH_CYCLES_EMBREE=$(usex embree)
-		-DWITH_CYCLES_KERNEL_ASAN=$(usex asan)
 		-DWITH_CYCLES_OSL=$(usex osl)
 		-DWITH_DOC_MANPAGE=$(usex man)
 		-DWITH_IMAGE_DDS=$(usex dds)
@@ -441,7 +430,6 @@ ebuild/upstream developers only."
 		-DWITH_MOD_FLUID=$(usex elbeem)
 		-DWITH_OPENCOLLADA=$(usex collada)
 		-DWITH_OPENCOLORIO=$(usex color-management)
-		-DWITH_OPENIMAGEDENOISE=$(usex openimagedenoise)
 		-DWITH_OPENIMAGEIO=$(usex openimageio)
 		-DWITH_OPENMP=$(usex openmp)
 		-DWITH_OPENSUBDIV=$(usex opensubdiv)
@@ -473,7 +461,7 @@ ebuild/upstream developers only."
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.81a/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.80/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -532,56 +520,6 @@ like /opt/cuda/bin/nvcc.\n\
 "\n\
 You need to define BLENDER_NVCC_PATH as a per-package environmental variable\n\
 containing the absolute path to nvcc e.g. /opt/cuda/bin/nvcc.\n\
-\n"
-			fi
-		fi
-		if use nvrtc ; then
-			if [[ -f "${EROOT}/opt/cuda/lib64/libnvrtc-builtins.so" ]] ; then
-				mycmakeargs+=(
-				-DCUDA_TOOLKIT_ROOT_DIR="${EROOT}/opt/cuda"
-				)
-			elif [[ -n "${BLENDER_CUDA_TOOLKIT_ROOT_DIR}" \
-&& -f "${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/lib64/libnvrtc-builtins.so" ]] ; then
-				mycmakeargs+=(
-	-DCUDA_TOOLKIT_ROOT_DIR="${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}"
-				)
-			elif [[ -n "${BLENDER_CUDA_TOOLKIT_ROOT_DIR}" \
-&& ! -f "${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/lib64/libnvrtc-builtins.so" ]] ; then
-				die \
-"Cannot reach \$BLENDER_CUDA_TOOLKIT_ROOT_DIR/lib64/libnvrtc-builtins.so"
-			else
-				die \
-"\n
-libnvrtc-builtins.so is unreachable.  Define BLENDER_CUDA_TOOLKIT_ROOT_DIR\n\
-as a per-package environmental variable (e.g. /opt/cuda).\n
-\n"
-			fi
-		fi
-		if use optix ; then
-			if [[ -n "${BLENDER_OPTIX_ROOT_DIR}" \
-		&& -f "${EROOT}/${BLENDER_OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
-				mycmakeargs+=(
-			-DOPTIX_ROOT_DIR="${EROOT}/${BLENDER_OPTIX_ROOT_DIR}"
-				)
-			elif [[ -n "${BLENDER_OPTIX_ROOT_DIR}" \
-		&& ! -f "${EROOT}/${BLENDER_OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
-				die \
-"\n\
-Cannot reach \$BLENDER_OPTIX_ROOT_DIR/include/optix.h.  Fix it?\n\
-\n"
-			elif [[ -n "${OPTIX_ROOT_DIR}" \
-		&& -f "${EROOT}/${OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
-				:;
-			elif [[ -n "${OPTIX_ROOT_DIR}" \
-		&& ! -f "${EROOT}/${OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
-"\n\
-Cannot reach \$OPTIX_ROOT_DIR/include/optix.h.  Fix it?\n\
-\n"
-			else
-				die \
-"\n\
-You need to define BLENDER_OPTIX_ROOT_DIR to point to the Optix SDK folder.\n\
-The build scripts expect BLENDER_OPTIX_ROOT_DIR/include/optix.h.\n\
 \n"
 			fi
 		fi

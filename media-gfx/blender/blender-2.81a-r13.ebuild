@@ -215,8 +215,10 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	openvdb? (
 		>=blender-libs/boost-1.68:=[nls?,threads(+)]
-abi5-compat? ( >=blender-libs/openvdb-5.1.0:5[${PYTHON_SINGLE_USEDEP},abi5-compat(+)] )
-abi6-compat? ( >=blender-libs/openvdb-5.1.0:6[${PYTHON_SINGLE_USEDEP},abi6-compat(+)] )
+abi5-compat? ( >=blender-libs/openvdb-5.1.0:5[${PYTHON_SINGLE_USEDEP},abi5-compat(+)]
+		 <blender-libs/openvdb-7.1:5[${PYTHON_SINGLE_USEDEP},abi5-compat(+)] )
+abi6-compat? ( >=blender-libs/openvdb-5.1.0:6[${PYTHON_SINGLE_USEDEP},abi6-compat(+)]
+		 <blender-libs/openvdb-7.1:6[${PYTHON_SINGLE_USEDEP},abi6-compat(+)] )
 abi7-compat? ( >=blender-libs/openvdb-5.1.0:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
 		 <blender-libs/openvdb-7.1:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)] )
 		>=dev-cpp/tbb-2018.5
@@ -473,7 +475,7 @@ ebuild/upstream developers only."
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.81/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.81a/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
