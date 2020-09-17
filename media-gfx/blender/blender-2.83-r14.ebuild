@@ -56,10 +56,12 @@ inherit eapi7-ver
 inherit blender check-reqs cmake-utils flag-o-matic llvm pax-utils \
 	python-single-r1 toolchain-funcs xdg
 
+DL_PV="2.83.0"
+
 # If you use git tarballs, you need to download the submodules listed in
 # .gitmodules.  The download.blender.org tarball is preferred because they
 # bundle all the dependencies.
-SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
+SRC_URI="https://download.blender.org/source/blender-${DL_PV}.tar.xz"
 
 BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest}
 BLENDER_MULTISLOT=${BLENDER_MULTISLOT:=1}
@@ -126,6 +128,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 		openimagedenoise
 		opensubdiv
 		openvdb
+		openxr
 		osl
 		sdl
 		sndfile
@@ -215,8 +218,10 @@ RDEPEND="${PYTHON_DEPS}
 		)
 	)
 	openvdb? (
-	>=blender-libs/openvdb-7:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
-	 <blender-libs/openvdb-7.1:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+		abi7-compat? (
+			>=blender-libs/openvdb-7:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+			 <blender-libs/openvdb-7.1:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+		)
 		>=blender-libs/boost-1.70:=[nls?,threads(+)]
 		>=dev-cpp/tbb-2019.9
 		>=dev-libs/c-blosc-1.5.0
@@ -261,6 +266,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.83.1-update-acquire_tile-for-cycles-networking.patch"
 	"${FILESDIR}/${PN}-2.80-install-paths-change.patch"
 )
+S="${WORKDIR}/${PN}-${DL_PV}"
 
 get_dest() {
 	echo "/usr/bin/.${PN}/${SLOT_MAJ}/${EBLENDER_NAME}"
@@ -477,7 +483,7 @@ ebuild/upstream developers only."
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.83.1/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.83/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(

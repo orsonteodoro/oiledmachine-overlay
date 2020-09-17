@@ -126,6 +126,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 		openimagedenoise
 		opensubdiv
 		openvdb
+		openxr
 		osl
 		sdl
 		sndfile
@@ -477,7 +478,7 @@ ebuild/upstream developers only."
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.83.5/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.83.3/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
