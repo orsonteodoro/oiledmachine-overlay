@@ -283,8 +283,9 @@ pkg_setup() {
 	blender_check_requirements
 	python-single-r1_pkg_setup
 	# Needs OpenCL 1.2 (GCN 2)
+	export OPENVDB_V=$(usex openvdb 7 "")
 	if use openvdb ; then
-		if ! grep -q -F -e "delta()" /usr/include/openvdb/util/CpuTimer.h ; then
+		if ! grep -q -F -e "delta()" "${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr/include/openvdb/util/CpuTimer.h" ; then
 			if use abi7-compat ; then
 				# compatible as long as the function is present?
 				die "OpenVDB delta() is missing try <=7.1.x only"
@@ -346,7 +347,7 @@ _src_configure() {
 	# shadows, see bug #276338 for reference
 	append-flags -funsigned-char
 	append-lfs-flags
-	append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=$(usex openvdb 7 "")
+	append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=${OPENVDB_V}
 
 	local mycmakeargs=()
 	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH=$(get_dest) )
@@ -357,11 +358,14 @@ _src_configure() {
 ebuild/upstream developers only."
 	fi
 
+	unset CMAKE_LIBRARY_PATH
+	unset CMAKE_INCLUDE_PATH
+	unset _LD_LIBRARY_PATH
 	if use osl ; then
 		if [[ "${USE_LIBGLVND}" == "Y" ]] ; then
 			mycmakeargs+=( -DOpenGL_GL_PREFERENCE=GLVND )
 			if [[ -e "${EROOT}/usr/$(get_libdir)/libGLX.so" ]] ; then
-				mycmakeargs+=( -DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/libGLX.so" )
+				mycmakeargs+=( -DOPENGL_glx_LIBRARY="${EROOT}/usr/$(get_libdir)/libGLX.so" )
 			else
 				die "Install media-libs/libglvnd or indirectly through mesa[libglvnd]."
 			fi
@@ -384,13 +388,31 @@ ebuild/upstream developers only."
 			if [[ -e "${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" ]] ; then
 				mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" )
 			fi
-			export CMAKE_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/:${CMAKE_LIBRARY_PATH}"
-			export CMAKE_INCLUDE_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include:${CMAKE_INCLUDE_PATH}"
+			export CMAKE_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+			export CMAKE_INCLUDE_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
+			_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
 		fi
 	fi
 
+	if use openvdb ; then
+		export OPENVDB_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr"
+		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+	fi
+
+	if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" ]] ; then
+		mycmakeargs+=( -DBoost_NO_SYSTEM_PATHS=ON )
+		mycmakeargs+=( -DBoost_INCLUDE_DIR="${EROOT}/usr/$(get_libdir)/blender/boost/usr/include" )
+		mycmakeargs+=( -DBoost_LIBRARY_DIR_RELEASE="${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" )
+		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+	fi
+
+	if [[ -n "${_LD_LIBRARY_PATH}" ]] ; then
+		sed -i -e "s|\[blender_bin|['env', \"LD_LIBRARY_PATH=${_LD_LIBRARY_PATH}\", blender_bin|" \
+			doc/manpage/blender.1.py || die
+	fi
+
 	mycmakeargs+=(
-		$(usex openvdb -DOPENVDB_ABI_VERSION_NUMBER=7 "")
+		$(usex openvdb -DOPENVDB_ABI_VERSION_NUMBER=${OPENVDB_V} "")
 		-DPYTHON_VERSION="${EPYTHON/python/}"
 		-DPYTHON_LIBRARY="$(python_get_library_path)"
 		-DPYTHON_INCLUDE_DIR="$(python_get_includedir)"
@@ -455,7 +477,7 @@ ebuild/upstream developers only."
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.83.2/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.83.1/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -741,7 +763,16 @@ _src_install() {
 			-e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
 			"${T}/${PN}-${SLOT_MAJ}" || die
 		if use osl ; then
-			sed -i -e "s|#LD_LIBRARY_PATH|LD_LIBRARY_PATH|g" \
+			sed -i -e "s|#MESA ||g" \
+				"${T}/${PN}-${SLOT_MAJ}" || die
+		fi
+		if use openvdb ; then
+			sed -i -e "s|#OPENVDB ||g" \
+				-e "s|\${OPENVDB_V}|${OPENVDB_V}|g" \
+				"${T}/${PN}-${SLOT_MAJ}" || die
+		fi
+		if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" ]] ; then
+			sed -i -e "s|#BOOST ||g" \
 				"${T}/${PN}-${SLOT_MAJ}" || die
 		fi
 		exeinto /usr/bin
@@ -755,11 +786,20 @@ _src_install() {
 			-e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
 			"${T}/${PN}-headless-${SLOT_MAJ}" || die
 		if use osl ; then
-			sed -i -e "s|#LD_LIBRARY_PATH|LD_LIBRARY_PATH|g" \
+			sed -i -e "s|#MESA ||g" \
+				"${T}/${PN}-headless-${SLOT_MAJ}" || die
+		fi
+		if use openvdb ; then
+			sed -i -e "s|#OPENVDB ||g" \
+				-e "s|\${OPENVDB_V}|${OPENVDB_V}|g" \
+				"${T}/${PN}-headless-${SLOT_MAJ}" || die
+		fi
+		if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" ]] ; then
+			sed -i -e "s|#BOOST ||g" \
 				"${T}/${PN}-headless-${SLOT_MAJ}" || die
 		fi
 		exeinto /usr/bin
-		doexe "${T}/${PN}-${SLOT_MAJ}"
+		doexe "${T}/${PN}-headless-${SLOT_MAJ}"
 	fi
 	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" =~ (1|2) ]] ; then
 		dodir "${d_dest}"

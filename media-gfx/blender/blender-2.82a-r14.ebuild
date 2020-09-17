@@ -75,11 +75,11 @@ fi
 SLOT_MAJ=${SLOT%/*}
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-IUSE+=" X +abi5-compat abi6-compat abi7-compat -asan +bullet -collada \
--color-management +cuda +cycles -cycles-network +dds -debug doc +elbeem \
--embree -ffmpeg -fftw flac -jack +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc \
--nvrtc +openal +opencl -openexr -openimagedenoise -openimageio +openmp \
--opensubdiv -openvdb -optix -osl release -sdl -sndfile test +tiff -valgrind"
+IUSE+=" X +abi7-compat -asan +bullet +collada +color-management +cuda +cycles \
+-cycles-network +dds -debug doc +elbeem -embree +ffmpeg +fftw flac +jack \
++jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal +opencl +openexr \
++openimagedenoise +openimageio +openmp +opensubdiv +openvdb -optix +osl \
+release +sdl +sndfile test +tiff -valgrind"
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 RESTRICT="mirror !test? ( test )"
@@ -96,7 +96,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	nvcc? ( || ( cuda optix ) )
 	nvrtc? ( || ( cuda optix ) )
 	opencl? ( cycles )
-	openvdb? ( ^^ ( abi5-compat abi6-compat abi7-compat ) )
+	openvdb? ( abi7-compat )
 	optix? ( cuda cycles nvcc )
 	opus? ( ffmpeg )
 	osl? ( cycles llvm )
@@ -145,6 +145,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 # doc/python_api/requirements.txt
 # extern/Eigen3/eigen-update.sh
 # Track OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER for changes.
+# Track build_files/build_environment/dependencies.dot for ffmpeg dependencies
 RDEPEND="${PYTHON_DEPS}
 	>=dev-lang/python-3.7.4
 	dev-libs/lzo:2
@@ -182,7 +183,7 @@ RDEPEND="${PYTHON_DEPS}
 	ffmpeg? ( >=media-video/ffmpeg-4.0.2:=\
 [encode,jpeg2k?,mp3?,opus?,theora?,vorbis?,vpx?,x264,xvid?,zlib] )
 	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
-	flac? ( >=media-libs/flac-1.3.3 )
+	flac? ( >=media-libs/flac-1.3.2 )
 	jack? ( virtual/jack )
 	jemalloc? ( >=dev-libs/jemalloc-5.0.1:= )
 	jpeg2k? ( >=media-libs/openjpeg-2.3.0:2 )
@@ -203,24 +204,22 @@ RDEPEND="${PYTHON_DEPS}
 	openimagedenoise? ( >=media-libs/oidn-1.0.0 )
 	openimageio? ( >=media-libs/openimageio-1.8.13[color-management?,jpeg2k?] )
 	openexr? (
-		>=media-libs/ilmbase-2.3.0:=
-		>=media-libs/openexr-2.3.0:=
+		>=media-libs/ilmbase-2.4.0:=
+		>=media-libs/openexr-2.4.0:=
 	)
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.0_rc2:=[cuda=,opencl=] )
 	!openvdb? (
 		|| (
-			>=blender-libs/boost-1.68:=[nls?,threads(+)]
-			>=dev-libs/boost-1.68:=[nls?,threads(+)]
+			>=blender-libs/boost-1.70:=[nls?,threads(+)]
+			>=dev-libs/boost-1.70:=[nls?,threads(+)]
 		)
 	)
 	openvdb? (
-		>=blender-libs/boost-1.68:=[nls?,threads(+)]
-abi5-compat? ( >=blender-libs/openvdb-5.1.0:5[${PYTHON_SINGLE_USEDEP},abi5-compat(+)] )
-abi6-compat? ( >=blender-libs/openvdb-5.1.0:6[${PYTHON_SINGLE_USEDEP},abi6-compat(+)] )
-abi7-compat? ( >=blender-libs/openvdb-5.1.0:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
-		 <blender-libs/openvdb-7.1:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)] )
-		>=dev-cpp/tbb-2018.5
-		>=dev-libs/c-blosc-1.14.4
+	>=blender-libs/openvdb-7:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+	 <blender-libs/openvdb-7.1:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+		>=blender-libs/boost-1.70:=[nls?,threads(+)]
+		>=dev-cpp/tbb-2019.9
+		>=dev-libs/c-blosc-1.5.0
 	)
 	optix? ( >=dev-libs/optix-7 )
 	osl? ( >=media-libs/osl-1.9.9:=
@@ -280,10 +279,11 @@ pkg_setup() {
 	blender_check_requirements
 	python-single-r1_pkg_setup
 	# Needs OpenCL 1.2 (GCN 2)
+	export OPENVDB_V=$(usex openvdb 7 "")
 	if use openvdb ; then
-		if ! grep -q -F -e "delta()" /usr/include/openvdb/util/CpuTimer.h ; then
+		if ! grep -q -F -e "delta()" "${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr/include/openvdb/util/CpuTimer.h" ; then
 			if use abi7-compat ; then
-				# compatible as long as the function is present
+				# compatible as long as the function is present?
 				die "OpenVDB delta() is missing try <=7.1.x only"
 			fi
 		fi
@@ -343,8 +343,7 @@ _src_configure() {
 	# shadows, see bug #276338 for reference
 	append-flags -funsigned-char
 	append-lfs-flags
-	append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=\
-$(usex openvdb $(usex abi7-compat 7 $(usex abi6-compat 6 5)) "")
+	append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=${OPENVDB_V}
 
 	local mycmakeargs=()
 	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH=$(get_dest) )
@@ -355,11 +354,14 @@ $(usex openvdb $(usex abi7-compat 7 $(usex abi6-compat 6 5)) "")
 ebuild/upstream developers only."
 	fi
 
+	unset CMAKE_LIBRARY_PATH
+	unset CMAKE_INCLUDE_PATH
+	unset _LD_LIBRARY_PATH
 	if use osl ; then
 		if [[ "${USE_LIBGLVND}" == "Y" ]] ; then
 			mycmakeargs+=( -DOpenGL_GL_PREFERENCE=GLVND )
 			if [[ -e "${EROOT}/usr/$(get_libdir)/libGLX.so" ]] ; then
-				mycmakeargs+=( -DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/libGLX.so" )
+				mycmakeargs+=( -DOPENGL_glx_LIBRARY="${EROOT}/usr/$(get_libdir)/libGLX.so" )
 			else
 				die "Install media-libs/libglvnd or indirectly through mesa[libglvnd]."
 			fi
@@ -382,14 +384,31 @@ ebuild/upstream developers only."
 			if [[ -e "${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" ]] ; then
 				mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" )
 			fi
-			export CMAKE_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/:${CMAKE_LIBRARY_PATH}"
-			export CMAKE_INCLUDE_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include:${CMAKE_INCLUDE_PATH}"
+			export CMAKE_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+			export CMAKE_INCLUDE_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
+			_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
 		fi
 	fi
 
+	if use openvdb ; then
+		export OPENVDB_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr"
+		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+	fi
+
+	if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" ]] ; then
+		mycmakeargs+=( -DBoost_NO_SYSTEM_PATHS=ON )
+		mycmakeargs+=( -DBoost_INCLUDE_DIR="${EROOT}/usr/$(get_libdir)/blender/boost/usr/include" )
+		mycmakeargs+=( -DBoost_LIBRARY_DIR_RELEASE="${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" )
+		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+	fi
+
+	if [[ -n "${_LD_LIBRARY_PATH}" ]] ; then
+		sed -i -e "s|\[blender_bin|['env', \"LD_LIBRARY_PATH=${_LD_LIBRARY_PATH}\", blender_bin|" \
+			doc/manpage/blender.1.py || die
+	fi
+
 	mycmakeargs+=(
-		$(usex openvdb -DOPENVDB_ABI_VERSION_NUMBER=\
-$(usex abi7-compat 7 $(usex abi6-compat 6 5)) "")
+		$(usex openvdb -DOPENVDB_ABI_VERSION_NUMBER=${OPENVDB_V} "")
 		-DPYTHON_VERSION="${EPYTHON/python/}"
 		-DPYTHON_LIBRARY="$(python_get_library_path)"
 		-DPYTHON_INCLUDE_DIR="$(python_get_includedir)"
@@ -453,7 +472,7 @@ $(usex abi7-compat 7 $(usex abi6-compat 6 5)) "")
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.81a/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.82a/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -739,7 +758,16 @@ _src_install() {
 			-e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
 			"${T}/${PN}-${SLOT_MAJ}" || die
 		if use osl ; then
-			sed -i -e "s|#LD_LIBRARY_PATH|LD_LIBRARY_PATH|g" \
+			sed -i -e "s|#MESA ||g" \
+				"${T}/${PN}-${SLOT_MAJ}" || die
+		fi
+		if use openvdb ; then
+			sed -i -e "s|#OPENVDB ||g" \
+				-e "s|\${OPENVDB_V}|${OPENVDB_V}|g" \
+				"${T}/${PN}-${SLOT_MAJ}" || die
+		fi
+		if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" ]] ; then
+			sed -i -e "s|#BOOST ||g" \
 				"${T}/${PN}-${SLOT_MAJ}" || die
 		fi
 		exeinto /usr/bin
@@ -752,11 +780,20 @@ _src_install() {
 			-e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
 			"${T}/${PN}-headless-${SLOT_MAJ}" || die
 		if use osl ; then
-			sed -i -e "s|#LD_LIBRARY_PATH|LD_LIBRARY_PATH|g" \
+			sed -i -e "s|#MESA ||g" \
+				"${T}/${PN}-headless-${SLOT_MAJ}" || die
+		fi
+		if use openvdb ; then
+			sed -i -e "s|#OPENVDB ||g" \
+				-e "s|\${OPENVDB_V}|${OPENVDB_V}|g" \
+				"${T}/${PN}-headless-${SLOT_MAJ}" || die
+		fi
+		if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" ]] ; then
+			sed -i -e "s|#BOOST ||g" \
 				"${T}/${PN}-headless-${SLOT_MAJ}" || die
 		fi
 		exeinto /usr/bin
-		doexe "${T}/${PN}-${SLOT_MAJ}"
+		doexe "${T}/${PN}-headless-${SLOT_MAJ}"
 	fi
 	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" =~ (1|2) ]] ; then
 		dodir "${d_dest}"
