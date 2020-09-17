@@ -446,8 +446,8 @@ ebuild/upstream developers only."
 			if [[ -e "${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" ]] ; then
 				mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" )
 			fi
-			export CMAKE_LIBRARY_PATH="/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/:${CMAKE_LIBRARY_PATH}"
-			export CMAKE_INCLUDE_PATH="/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include:${CMAKE_INCLUDE_PATH}"
+			export CMAKE_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/:${CMAKE_LIBRARY_PATH}"
+			export CMAKE_INCLUDE_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include:${CMAKE_INCLUDE_PATH}"
 		fi
 	fi
 
