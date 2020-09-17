@@ -9,21 +9,20 @@ inherit cmake flag-o-matic python-single-r1
 
 DESCRIPTION="Library for the efficient manipulation of volumetric data"
 HOMEPAGE="https://www.openvdb.org"
-SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
-	https://dev.gentoo.org/~dracwyrm/patches/${P}-patchset-02.tar.xz"
+SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MPL-2.0"
-IUSE="+abi4-compat doc python test"
-SLOT_MAJ="4"
+IUSE="+abi6-compat doc python test"
+SLOT_MAJ="6"
 SLOT="${SLOT_MAJ}/${PV}"
-KEYWORDS="amd64 ~x86"
+KEYWORDS="~amd64 ~x86"
 RESTRICT="!test? ( test )"
 
 # Blender disables python
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
 # Prevent file collisions also with ABI masks
 REQUIRED_USE="
-	abi4-compat
+	abi6-compat
 	python? ( ${PYTHON_REQUIRED_USE} )
 	!python
 "
@@ -49,12 +48,12 @@ RDEPEND="
 			blender-libs/boost:=[python?,${PYTHON_USEDEP}]
 			dev-python/numpy[${PYTHON_USEDEP}]
 		')
-	)
-"
+	)"
 
 DEPEND="${RDEPEND}"
 
 BDEPEND="
+	>=dev-util/cmake-3.16.2-r1
 	virtual/pkgconfig
 	doc? (
 		app-doc/doxygen
@@ -68,12 +67,9 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${WORKDIR}/${P}-patchset-02/0001-use-gnuinstalldirs.patch"
-	"${WORKDIR}/${P}-patchset-02/0002-use-pkgconfig-for-ilmbase-and-openexr.patch"
-	"${WORKDIR}/${P}-patchset-02/0003-boost-1.65-numpy-support.patch"
-	"${FILESDIR}/${P}-findboost-fix.patch"
-	"${FILESDIR}/${P}-fix-const-correctness-for-unittest.patch"
-	"${FILESDIR}/${P}-fix-build-docs.patch"
+	"${FILESDIR}/${P}-fix-multilib-header-source.patch"
+	"${FILESDIR}/${PN}-4.0.2-fix-const-correctness-for-unittest.patch"
+	"${FILESDIR}/${P}-use-gnuinstalldirs.patch"
 )
 LLVM_V=9
 
@@ -103,27 +99,24 @@ src_configure() {
 	local myprefix2="$(iprfx)" # for install only
 
 	export CMAKE_LIBRARY_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/:\
-${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir):${CMAKE_LIBRARY_PATH}:${CMAKE_LIBRARY_PATH}"
+${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);\
+${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 	export CMAKE_INCLUDE_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include:\
-${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir):${CMAKE_INCLUDE_PATH}:${CMAKE_INCLUDE_PATH}"
+${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;\
+${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_INCLUDE_PATH}"
 
 	local mycmakeargs=(
-		-DBLOSC_LOCATION="${myprefix}"
-		-DCMAKE_INSTALL_DOCDIR="${myprefix2}/share/doc/${PF}"
+		-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
 		-DCMAKE_INSTALL_PREFIX="${myprefix2}"
-		-DGLFW3_LOCATION="${myprefix}"
+		-DOPENVDB_ABI_VERSION_NUMBER=${SLOT_MAJ}
 		-DOPENVDB_BUILD_DOCS=$(usex doc)
 		-DOPENVDB_BUILD_PYTHON_MODULE=$(usex python)
 		-DOPENVDB_BUILD_UNITTESTS=$(usex test)
-		-DOPENVDB_ENABLE_3_ABI_COMPATIBLE=OFF
 		-DOPENVDB_ENABLE_RPATH=OFF
 		-DOpenGL_GL_PREFERENCE=LEGACY
 		-DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so"
 		-DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so"
-		-DTBB_LOCATION="${myprefix}"
-		-DUSE_GLFW3=ON
+		-DCHOST="${CHOST}"
 	)
 
 	use python && mycmakeargs+=( -DPYOPENVDB_INSTALL_DIRECTORY="$(python_get_sitedir)" )

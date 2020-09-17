@@ -100,15 +100,15 @@ src_configure() {
 	local myprefix2="$(iprfx)" # for install only
 
 	export CMAKE_LIBRARY_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/:\
-${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir):${CMAKE_LIBRARY_PATH}:${CMAKE_LIBRARY_PATH}"
+${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);\
+${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 	export CMAKE_INCLUDE_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include:\
-${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir):${CMAKE_INCLUDE_PATH}:${CMAKE_INCLUDE_PATH}"
+${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;\
+${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_INCLUDE_PATH}"
 
 	local mycmakeargs=(
 		-DBLOSC_LOCATION="${myprefix}"
-		-DCMAKE_INSTALL_DOCDIR="${myprefix2}/share/doc/${PF}"
+		-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
 		-DCMAKE_INSTALL_PREFIX="${myprefix2}"
 		-DGLFW3_LOCATION="${myprefix}"
 		-DOPENVDB_ABI_VERSION_NUMBER=${SLOT_MAJ}

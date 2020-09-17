@@ -12,17 +12,20 @@ HOMEPAGE="https://www.openvdb.org"
 SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MPL-2.0"
-IUSE="+abi4-compat doc python test"
-SLOT_MAJ="4"
+IUSE="+abi7-compat cpu_flags_x86_avx cpu_flags_x86_sse4_2 doc numpy python static-libs test utils"
+SLOT_MAJ="7"
 SLOT="${SLOT_MAJ}/${PV}"
 KEYWORDS="~amd64 ~x86"
 RESTRICT="!test? ( test )"
 
+# Blender only uses static-libs to avoid c++14
+# Unit tests uses c++14 code
 # Blender disables python
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
-# Prevent file collisions also with ABI masks
 REQUIRED_USE="
-	abi4-compat
+	abi7-compat
+	!test
+	numpy? ( python )
 	python? ( ${PYTHON_REQUIRED_USE} )
 	!python
 "
@@ -45,8 +48,8 @@ RDEPEND="
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			blender-libs/boost:=[python?,${PYTHON_USEDEP}]
-			dev-python/numpy[${PYTHON_USEDEP}]
+			blender-libs/boost:=[numpy?,python?,${PYTHON_USEDEP}]
+			numpy? ( dev-python/numpy[${PYTHON_USEDEP}] )
 		')
 	)
 "
@@ -54,6 +57,7 @@ RDEPEND="
 DEPEND="${RDEPEND}"
 
 BDEPEND="
+	>=dev-util/cmake-3.16.2-r1
 	virtual/pkgconfig
 	doc? (
 		app-doc/doxygen
@@ -67,10 +71,8 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}/${P}-use-gnuinstalldirs.patch"
-	"${FILESDIR}/${P}-use-pkgconfig-for-ilmbase-and-openexr.patch"
-	"${FILESDIR}/${PN}-4.0.2-fix-const-correctness-for-unittest.patch"
-	"${FILESDIR}/${PN}-4.0.2-fix-build-docs.patch"
+	"${FILESDIR}/${PN}-7.1.0-0001-Fix-multilib-header-source.patch"
+	"${FILESDIR}/${PN}-7.1.0-0002-Fix-doc-install-dir.patch"
 )
 LLVM_V=9
 
@@ -87,6 +89,13 @@ is greater than \$(nproc)/4"
 	fi
 }
 
+src_prepare() {
+	cmake_src_prepare
+	# We are only interested parts that don't require c++14.
+	sed -i "s|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD 11|" CMakeLists.txt || die
+	sed -i "s|CMAKE_CXX_STANDARD_REQUIRED ON|CMAKE_CXX_STANDARD_REQUIRED OFF|" CMakeLists.txt || die
+}
+
 iprfx() {
 	echo "${EPREFIX}/usr/$(get_libdir)/blender/${PN}/${SLOT_MAJ}/usr"
 }
@@ -97,34 +106,64 @@ src_configure() {
 	# To stay in sync with blender-libs/boost
 	append-cxxflags -std=c++11
 
+	# Add extra checks for downgrading to c++11
+	append-cxxflags -Wall -Werror
+
+	# Relax some warnings
+	append-cxxflags -Wno-error=class-memaccess -Wno-error=int-in-bool-context
+
+	# make_unique is c++14 and is being used so disable parts that reference it
+	# make_unique was referenced in a header
+
+	# SESI_OPENVDB and SESI_OPENVDB_PRIM code contains c++14 code referencing make_unique but not used.
+
+	# tools/LevelSetMeasure.h contains make_unique but not used by Blender.  So most of it can be c++11 compiled.
+
 	local myprefix2="$(iprfx)" # for install only
 
 	export CMAKE_LIBRARY_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/:\
-${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir):${CMAKE_LIBRARY_PATH}:${CMAKE_LIBRARY_PATH}"
+${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);\
+${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 	export CMAKE_INCLUDE_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include:\
-${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir):${CMAKE_INCLUDE_PATH}:${CMAKE_INCLUDE_PATH}"
+${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;\
+${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_INCLUDE_PATH}"
 
 	local mycmakeargs=(
-		-DBLOSC_LOCATION="${myprefix}"
-		-DCMAKE_INSTALL_DOCDIR="${myprefix2}/share/doc/${PF}"
+		-DCHOST="${CHOST}"
+		-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
 		-DCMAKE_INSTALL_PREFIX="${myprefix2}"
-		-DGLFW3_LOCATION="${myprefix}"
 		-DOPENVDB_ABI_VERSION_NUMBER=${SLOT_MAJ}
 		-DOPENVDB_BUILD_DOCS=$(usex doc)
-		-DOPENVDB_BUILD_PYTHON_MODULE=$(usex python)
 		-DOPENVDB_BUILD_UNITTESTS=$(usex test)
+		-DOPENVDB_BUILD_VDB_LOD=$(usex !utils)
+		-DOPENVDB_BUILD_VDB_RENDER=$(usex !utils)
+		-DOPENVDB_BUILD_VDB_VIEW=$(usex !utils)
+		-DOPENVDB_CORE_SHARED=ON
+		-DOPENVDB_CORE_STATIC=$(usex static-libs)
 		-DOPENVDB_ENABLE_RPATH=OFF
 		-DOpenGL_GL_PREFERENCE=LEGACY
 		-DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so"
 		-DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so"
-		-DTBB_LOCATION="${myprefix}"
-		-DUSE_GLFW3=ON
+		-DUSE_CCACHE=OFF
+		-DUSE_COLORED_OUTPUT=ON
+		-DUSE_EXR=ON
+		-DUSE_LOG4CPLUS=ON
 	)
 
-	use python && mycmakeargs+=( -DPYOPENVDB_INSTALL_DIRECTORY="$(python_get_sitedir)" )
-	use test && mycmakeargs+=( -DCPPUNIT_LOCATION="${myprefix}" )
+	if use python; then
+		mycmakeargs+=(
+			-DOPENVDB_BUILD_PYTHON_MODULE=ON
+			-DUSE_NUMPY=$(usex numpy)
+			-DPYOPENVDB_INSTALL_DIRECTORY="$(python_get_sitedir)"
+			-DPython_EXECUTABLE="${EPYTHON}"
+		)
+	fi
+
+	if use cpu_flags_x86_avx; then
+		mycmakeargs+=( -DOPENVDB_SIMD=AVX )
+	elif use cpu_flags_x86_sse4_2; then
+		mycmakeargs+=( -DOPENVDB_SIMD=SSE42 )
+	fi
 
 	cmake_src_configure
 }

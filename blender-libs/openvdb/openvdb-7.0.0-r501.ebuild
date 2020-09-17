@@ -12,8 +12,8 @@ HOMEPAGE="https://www.openvdb.org"
 SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MPL-2.0"
-IUSE="+abi6-compat cpu_flags_x86_avx cpu_flags_x86_sse4_2 doc numpy python static-libs test utils"
-SLOT_MAJ="6"
+IUSE="+abi5-compat cpu_flags_x86_avx cpu_flags_x86_sse4_2 doc numpy python static-libs test utils"
+SLOT_MAJ="5"
 SLOT="${SLOT_MAJ}/${PV}"
 KEYWORDS="~amd64 ~x86"
 RESTRICT="!test? ( test )"
@@ -23,7 +23,7 @@ RESTRICT="!test? ( test )"
 # Blender disables python
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
 REQUIRED_USE="
-	abi6-compat
+	abi5-compat
 	!test
 	numpy? ( python )
 	python? ( ${PYTHON_REQUIRED_USE} )
@@ -122,15 +122,15 @@ src_configure() {
 	local myprefix2="$(iprfx)" # for install only
 
 	export CMAKE_LIBRARY_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/:\
-${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir):${CMAKE_LIBRARY_PATH}:${CMAKE_LIBRARY_PATH}"
+${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);\
+${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 	export CMAKE_INCLUDE_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include:\
-${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir):${CMAKE_INCLUDE_PATH}:${CMAKE_INCLUDE_PATH}"
+${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;\
+${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_INCLUDE_PATH}"
 
 	local mycmakeargs=(
 		-DCHOST="${CHOST}"
-		-DCMAKE_INSTALL_DOCDIR="${myprefix2}/share/doc/${PF}"
+		-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
 		-DCMAKE_INSTALL_PREFIX="${myprefix2}"
 		-DOPENVDB_ABI_VERSION_NUMBER=${SLOT_MAJ}
 		-DOPENVDB_BUILD_DOCS=$(usex doc)
