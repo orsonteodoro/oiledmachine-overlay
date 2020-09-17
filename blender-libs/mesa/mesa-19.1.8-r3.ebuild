@@ -560,9 +560,10 @@ multilib_src_install() {
 #	fi
 }
 
-#multilib_src_install_all() {
-#	einstalldocs
-#}
+multilib_src_install_all() {
+	einstalldocs
+	mv "${ED}/usr/share" "${ED}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/share" || die
+}
 
 multilib_src_test() {
 	meson test -v -C "${BUILD_DIR}" -t 100
