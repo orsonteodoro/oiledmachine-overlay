@@ -241,14 +241,15 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	openvdb? (
 		!abi3-compat? (
-			>=blender-libs/openvdb-3.3.0\
-[${PYTHON_SINGLE_USEDEP},abi4-compat?,abi5-compat?,abi6-compat?,abi7-compat?]
-			 <blender-libs/openvdb-7.1\
-[${PYTHON_SINGLE_USEDEP},abi4-compat?,abi5-compat?,abi6-compat?,abi7-compat?]
+abi4-compat? ( >=blender-libs/openvdb-3.3.0:4[${PYTHON_SINGLE_USEDEP},abi4-compat(+)] )
+abi5-compat? ( >=blender-libs/openvdb-3.3.0:5[${PYTHON_SINGLE_USEDEP},abi5-compat(+)] )
+abi6-compat? ( >=blender-libs/openvdb-3.3.0:6[${PYTHON_SINGLE_USEDEP},abi6-compat(+)] )
+abi7-compat? ( >=blender-libs/openvdb-3.3.0:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+	        <blender-libs/openvdb-7.1:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)] )
 		)
 		abi3-compat? (
-			>=blender-libs/openvdb-3.1.0[${PYTHON_SINGLE_USEDEP},abi3-compat]
-			 <blender-libs/openvdb-7.1[${PYTHON_SINGLE_USEDEP},abi3-compat]
+			>=blender-libs/openvdb-3.1.0[${PYTHON_SINGLE_USEDEP},abi3-compat(+)]
+			 <blender-libs/openvdb-7.1[${PYTHON_SINGLE_USEDEP},abi3-compat(+)]
 		)
 		>=blender-libs/boost-1.60:=[nls?,threads(+)]
 		>=dev-cpp/tbb-2017.7
@@ -404,8 +405,8 @@ _src_configure() {
 	# shadows, see bug #276338 for reference
 	append-flags -funsigned-char
 	append-lfs-flags
-	# Blender is compatible ABI 4 or less, so use ABI 4.
-	append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=4
+	append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=\
+$(usex openvdb $(usex abi7-compat 7 $(usex abi6-compat 6 $(usex abi5-compat 5 $(usex abi4-compat 4 3)))) "")
 
 	local mycmakeargs=()
 	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH=$(get_dest) )

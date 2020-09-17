@@ -215,10 +215,8 @@ RDEPEND="${PYTHON_DEPS}
 		)
 	)
 	openvdb? (
-		abi7-compat? (
-			>=blender-libs/openvdb-7[${PYTHON_SINGLE_USEDEP},abi7-compat?]
-			 <blender-libs/openvdb-7.1[${PYTHON_SINGLE_USEDEP},abi7-compat?]
-		)
+	>=blender-libs/openvdb-7:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+	 <blender-libs/openvdb-7.1:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
 		>=blender-libs/boost-1.70:=[nls?,threads(+)]
 		>=dev-cpp/tbb-2019.9
 		>=dev-libs/c-blosc-1.5.0
@@ -344,8 +342,7 @@ _src_configure() {
 	# shadows, see bug #276338 for reference
 	append-flags -funsigned-char
 	append-lfs-flags
-	# Blender is compatible ABI 4 or less, so use ABI 4.
-	append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=4
+	append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=$(usex openvdb 7 "")
 
 	local mycmakeargs=()
 	mycmakeargs+=( -DCMAKE_INSTALL_BINDIR:PATH=$(get_dest) )
