@@ -204,7 +204,7 @@ RDEPEND="
 		system-blender? (
 			gentoo-blender? (
 				blender279b? (
-					~media-gfx/blender-2.79b[bullet,collada,color-management,cycles,dds,elbeem,fftw,-headless,nls,openexr,openimageio,opensubdiv,osl,tiff]
+					~media-gfx/blender-2.79b[bullet,collada,color-management,cycles,dds,-debug,elbeem,fftw,-headless,nls,openexr,openimageio,opensubdiv,openvdb,osl,tiff]
 					sci-physics/bullet
 				)
 			)
