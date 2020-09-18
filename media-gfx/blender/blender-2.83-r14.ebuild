@@ -226,7 +226,7 @@ RDEPEND="${PYTHON_DEPS}
 		>=dev-cpp/tbb-2019.9
 		>=dev-libs/c-blosc-1.5.0
 	)
-	openxr? ( >=media-libs/openxr-1.0.6 )
+	openxr? ( >=blender-libs/openxr-1.0.6 )
 	optix? ( >=dev-libs/optix-7 )
 	osl? ( >=media-libs/osl-1.10.9:=
 		<blender-libs/mesa-19.2 )

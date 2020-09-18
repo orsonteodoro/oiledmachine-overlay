@@ -114,6 +114,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 		dds
 		!debug
 		elbeem
+		embree
 		ffmpeg
 		fftw
 		jack
@@ -234,7 +235,7 @@ RDEPEND="${PYTHON_DEPS}
 		>=dev-cpp/tbb-2019.9
 		>=dev-libs/c-blosc-1.5.0
 	)
-	openxr? ( >=media-libs/openxr-1.0.8 )
+	openxr? ( >=blender-libs/openxr-1.0.8 )
 	optix? ( >=dev-libs/optix-7 )
 	osl? ( >=media-libs/osl-1.10.10:=
 		<blender-libs/mesa-19.2 )
