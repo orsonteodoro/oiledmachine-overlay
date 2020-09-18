@@ -1,7 +1,8 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# This is the last version released for c++11
+# This is the first version with build system updated to c++14 but without any c++14 code.
+# See https://github.com/KhronosGroup/OpenXR-SDK-Source/blob/release-1.0.4/CHANGELOG.SDK.md
 
 EAPI=7
 DESCRIPTION="Generated headers and sources for OpenXR loader."
@@ -35,7 +36,7 @@ RDEPEND="${PYTHON_DEPS}
 		)
 		video_cards_amdgpu-pro-lts? (
 	blender-libs/mesa:=[video_cards_radeonsi,vulkan]
-	x11-drivers/amdgpu-pro[-opengl_pro,opengl_mesa,vulkan]
+	x11-drivers/amdgpu-pro-lts[-opengl_pro,opengl_mesa,vulkan]
 		)
 		video_cards_i965? (
 	blender-libs/mesa:=[video_cards_i965,vulkan]
