@@ -83,7 +83,6 @@ IUSE+=" X +abi7-compat -asan +bullet +collada +color-management +cuda +cycles \
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 RESTRICT="mirror !test? ( test )"
-USE_LIBGLVND="N"
 LLVM_V=9
 
 # The release USE flag depends on platform defaults.
@@ -293,6 +292,15 @@ pkg_setup() {
 			fi
 		fi
 	fi
+
+	if ( has_version 'media-libs/mesa[libglvnd]' \
+		&& has_version 'x11-drivers/amdgpu-pro[opengl_pro]') \
+	|| ( has_version 'media-libs/mesa[libglvnd]' \
+		&& has_version 'x11-drivers/amdgpu-pro-lts[opengl_pro]'); then
+		die \
+"You must switch to x11-drivers/amdgpu-pro[opengl_mesa] or \
+x11-drivers/amdgpu-pro-lts[opengl_mesa] instead"
+	fi
 }
 
 _src_prepare() {
@@ -359,11 +367,30 @@ _src_configure() {
 ebuild/upstream developers only."
 	fi
 
-	unset CMAKE_LIBRARY_PATH
-	unset CMAKE_INCLUDE_PATH
 	unset _LD_LIBRARY_PATH
-	if use osl ; then
-		if [[ "${USE_LIBGLVND}" == "Y" ]] ; then
+	unset CMAKE_INCLUDE_PATH
+	unset CMAKE_LIBRARY_PATH
+	unset CMAKE_PREFIX_PATH
+
+	if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" ]] ; then
+		mycmakeargs+=( -DBoost_NO_SYSTEM_PATHS=ON )
+		mycmakeargs+=( -DBoost_INCLUDE_DIR="${EROOT}/usr/$(get_libdir)/blender/boost/usr/include" )
+		mycmakeargs+=( -DBoost_LIBRARY_DIR_RELEASE="${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" )
+		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+	fi
+
+	if use openxr ; then
+		export XR_OPENXR_SDK_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/openxr/usr"
+		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/openxr/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+	fi
+
+	if use openvdb ; then
+		export OPENVDB_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr"
+		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+	fi
+
+	if use openxr || use osl ; then
+		if has_version 'blender-libs/mesa[libglvnd]' ; then
 			mycmakeargs+=( -DOpenGL_GL_PREFERENCE=GLVND )
 			if [[ -e "${EROOT}/usr/$(get_libdir)/libGLX.so" ]] ; then
 				mycmakeargs+=( -DOPENGL_glx_LIBRARY="${EROOT}/usr/$(get_libdir)/libGLX.so" )
@@ -389,22 +416,10 @@ ebuild/upstream developers only."
 			if [[ -e "${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" ]] ; then
 				mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" )
 			fi
-			export CMAKE_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 			export CMAKE_INCLUDE_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
+			export CMAKE_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 			_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
 		fi
-	fi
-
-	if use openvdb ; then
-		export OPENVDB_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr"
-		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
-	fi
-
-	if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" ]] ; then
-		mycmakeargs+=( -DBoost_NO_SYSTEM_PATHS=ON )
-		mycmakeargs+=( -DBoost_INCLUDE_DIR="${EROOT}/usr/$(get_libdir)/blender/boost/usr/include" )
-		mycmakeargs+=( -DBoost_LIBRARY_DIR_RELEASE="${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" )
-		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
 	fi
 
 	if [[ -n "${_LD_LIBRARY_PATH}" ]] ; then
@@ -478,7 +493,7 @@ ebuild/upstream developers only."
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.83.2/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.83.3/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -763,13 +778,17 @@ _src_install() {
 			-e "s|\${LLVM_V}|${LLVM_V}|g" \
 			-e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
 			"${T}/${PN}-${SLOT_MAJ}" || die
-		if use osl ; then
-			sed -i -e "s|#MESA ||g" \
-				"${T}/${PN}-${SLOT_MAJ}" || die
-		fi
 		if use openvdb ; then
 			sed -i -e "s|#OPENVDB ||g" \
 				-e "s|\${OPENVDB_V}|${OPENVDB_V}|g" \
+				"${T}/${PN}-${SLOT_MAJ}" || die
+		fi
+		if use openxr ; then
+			sed -i -e "s|#OPENXR ||g" \
+				"${T}/${PN}-${SLOT_MAJ}" || die
+		fi
+		if use openxr || use osl ; then
+			sed -i -e "s|#MESA ||g" \
 				"${T}/${PN}-${SLOT_MAJ}" || die
 		fi
 		if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" ]] ; then
@@ -786,13 +805,17 @@ _src_install() {
 			-e "s|\${LLVM_V}|${LLVM_V}|g" \
 			-e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
 			"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		if use osl ; then
-			sed -i -e "s|#MESA ||g" \
-				"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		fi
 		if use openvdb ; then
 			sed -i -e "s|#OPENVDB ||g" \
 				-e "s|\${OPENVDB_V}|${OPENVDB_V}|g" \
+				"${T}/${PN}-headless-${SLOT_MAJ}" || die
+		fi
+		if use openxr ; then
+			sed -i -e "s|#OPENXR ||g" \
+				"${T}/${PN}-headless-${SLOT_MAJ}" || die
+		fi
+		if use openxr || use osl ; then
+			sed -i -e "s|#MESA ||g" \
 				"${T}/${PN}-headless-${SLOT_MAJ}" || die
 		fi
 		if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" ]] ; then
