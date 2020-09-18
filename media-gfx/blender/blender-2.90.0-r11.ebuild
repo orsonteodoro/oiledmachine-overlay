@@ -192,7 +192,7 @@ RDEPEND="${PYTHON_DEPS}
 		>=dev-util/nvidia-cuda-toolkit-10.1:=
 	)
 	cycles? ( >=dev-libs/pugixml-1.10 )
-	embree? ( >=media-libs/embree-3.31.1 )
+	embree? ( >=media-libs/embree-3.10.0 )
 	ffmpeg? ( >=media-video/ffmpeg-4.2.3:=\
 [encode,jpeg2k?,mp3?,opus?,theora?,vorbis?,vpx?,x264,xvid?,zlib] )
 	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
