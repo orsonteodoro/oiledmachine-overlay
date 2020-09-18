@@ -33,7 +33,7 @@ RDEPEND="${PYTHON_DEPS}
 		)
 		video_cards_amdgpu-pro-lts? (
 	blender-libs/mesa:=[video_cards_radeonsi,vulkan]
-	x11-drivers/amdgpu-pro[-opengl_pro,opengl_mesa,vulkan]
+	x11-drivers/amdgpu-pro-lts[-opengl_pro,opengl_mesa,vulkan]
 		)
 		video_cards_i965? (
 	media-libs/mesa[video_cards_i965,vulkan]
