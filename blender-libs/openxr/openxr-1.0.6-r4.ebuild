@@ -1,7 +1,7 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# This is the last version released for c++11
+# This is the version that Blender uses.
 
 EAPI=7
 DESCRIPTION="Generated headers and sources for OpenXR loader."
@@ -9,7 +9,7 @@ HOMEPAGE="https://khronos.org/openxr"
 KEYWORDS="~amd64"
 LICENSE="Apache-2.0 MIT"
 PYTHON_COMPAT=( python3_{6,7,8} )
-inherit cmake-utils eutils python-single-r1 toolchain-funcs
+inherit cmake-utils eutils flag-o-matic python-single-r1 toolchain-funcs
 ORG_GH="https://github.com/KhronosGroup"
 SLOT="0/${PV}"
 MY_PN="OpenXR-SDK-Source"
@@ -30,11 +30,11 @@ RDEPEND="${PYTHON_DEPS}
 	x11-base/xorg-drivers[video_cards_amdgpu]
 		)
 		video_cards_amdgpu-pro? (
-	blender-libs/mesa:=[video_cards_radeonsi,vulkan]
+	blender-libs/mesa:=[video_cards_radeonsi]
 	x11-drivers/amdgpu-pro[-opengl_pro,opengl_mesa,vulkan]
 		)
 		video_cards_amdgpu-pro-lts? (
-	blender-libs/mesa:=[video_cards_radeonsi,vulkan]
+	blender-libs/mesa:=[video_cards_radeonsi]
 	x11-drivers/amdgpu-pro-lts[-opengl_pro,opengl_mesa,vulkan]
 		)
 		video_cards_i965? (
@@ -82,6 +82,14 @@ iprfx() {
 
 src_configure() {
 	ewarn "This ebuild-package is a Work in Progress (WIP)"
+	# Match Blender's c++11 default
+	sed -i -e "s|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD 11|g" \
+		src/CMakeLists.txt || die
+
+	# For scanning errors introduced by downgrading from c++14 to c++11
+	# There's still a chance that it doesn't flag headers with c++14.
+	append-cxxflags -Wall -Werror
+
 	mycmakeargs=(
 		-DBUILD_API_LAYERS=OFF
 		-DBUILD_TESTS=OFF
