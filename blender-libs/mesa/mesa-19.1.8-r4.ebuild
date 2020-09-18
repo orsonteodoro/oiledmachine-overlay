@@ -75,14 +75,12 @@ for card in ${VIDEO_CARDS}; do
 done
 
 IUSE="${IUSE_VIDEO_CARDS}
-	+classic d3d9 debug +dri3 +egl +gallium +gbm gles1 +gles2 -libglvnd_ +llvm
+	+classic d3d9 debug +dri3 +egl +gallium +gbm gles1 +gles2 +libglvnd +llvm
 	lm-sensors opencl osmesa pax_kernel pic selinux test unwind vaapi valgrind
 	vdpau vulkan vulkan-overlay wayland xa xvmc"
 #IUSE+=" openmax omx-bellagio omx-tizonia"
 
-# libglvnd is disabled because re-enabling and using it causes a segfault with blender.
 REQUIRED_USE="
-	!libglvnd_
 	d3d9?   ( dri3 || ( video_cards_iris video_cards_r300 video_cards_r600 video_cards_radeonsi video_cards_nouveau video_cards_vmware ) )
 	gles1?  ( egl )
 	gles2?  ( egl )
@@ -112,7 +110,7 @@ REQUIRED_USE="
 
 LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.97"
 #	This was removed from RDEPEND.
-#	!libglvnd_? (
+#	!libglvnd? (
 #		>=app-eselect/eselect-opengl-1.3.0
 #	)
 RDEPEND="
@@ -126,7 +124,7 @@ RDEPEND="
 	>=x11-libs/libXxf86vm-1.1.3:=[${MULTILIB_USEDEP}]
 	>=x11-libs/libxcb-1.13:=[${MULTILIB_USEDEP}]
 	x11-libs/libXfixes:=[${MULTILIB_USEDEP}]
-	libglvnd_? (
+	libglvnd? (
 		media-libs/libglvnd[${MULTILIB_USEDEP}]
 		!app-eselect/eselect-opengl
 	)
@@ -531,7 +529,7 @@ multilib_src_configure() {
 		$(meson_use gbm)
 		$(meson_use gles1)
 		$(meson_use gles2)
-		$(meson_use libglvnd_ glvnd)
+		$(meson_use libglvnd glvnd)
 		$(meson_use selinux)
 		-Dvalgrind=$(usex valgrind auto false)
 		-Ddri-drivers=$(driver_list "${DRI_DRIVERS[*]}")
@@ -552,7 +550,7 @@ multilib_src_install() {
 	DESTDIR="${ED}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/" \
 	eninja -C "${BUILD_DIR}" install
 
-	use libglvnd_ && rm -f "${ED}"/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGLESv{1_CM,2}.so*
+	use libglvnd && rm -f "${ED}"/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGLESv{1_CM,2}.so*
 #	if use openmax; then
 #		echo "XDG_DATA_DIRS=\"${EPREFIX}/usr/share/mesa/xdg\"" > "${T}/99mesaxdgomx"
 #		doenvd "${T}"/99mesaxdgomx
