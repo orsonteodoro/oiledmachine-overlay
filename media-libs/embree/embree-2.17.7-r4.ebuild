@@ -12,7 +12,8 @@ LICENSE="Apache-2.0
 	 static-libs? ( BSD BZIP2 MIT ZLIB )"
 KEYWORDS="~amd64 ~x86"
 SRC_URI="https://github.com/embree/embree/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-SLOT="2/${PV}"
+SLOT_MAJ="2"
+SLOT="${SLOT_MAJ}/${PV}"
 X86_CPU_FLAGS=( sse2:sse2 sse4_2:sse4_2 avx:avx avx2:avx2 avx512knl:avx512knl \
 avx512skx:avx512skx )
 CPU_FLAGS=( ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_} )
@@ -233,7 +234,7 @@ src_compile() {
 src_install() {
 	cmake-utils_src_install
 
-	doenvd "${FILESDIR}"/99${PN}${SLOT}
+	doenvd "${FILESDIR}"/99${PN}${SLOT_MAJ}
 
 	docinto docs
 	if use doc ; then
