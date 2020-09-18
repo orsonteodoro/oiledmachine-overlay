@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    This package only contains only loader and headers for application use only.
+
+    This version is for use for Blender only.
+
+    This project has decided to go with c++14.  Blender dev discussion so
+    far is to skip c++14.  Custom changes will be added to ensure that it passes
+    passes c++11 compatibility when downgraded from c++14 to c++11.
+  </longdescription>
+  <upstream>
+    <bugs-to>https://github.com/KhronosGroup/OpenXR-SDK-Source</bugs-to>
+  </upstream>
+  <use>
+    <flag name="doc">Install documentation.</flag>
+    <flag name="lts">Prefer the amdgpu-pro lts driver</flag>
+    <flag name="system-jsoncpp">Use the system provide jsoncpp package instead
+      of the internal</flag>
+    <flag name="test">Builds tests</flag>
+    <flag name="video_cards_amdgpu">Checks if the mesa Vulkan driver is
+      installed.  AMDGPU-PRO is not supported.</flag>
+    <flag name="video_cards_i965">Checks if the Gen7.5+ (Haswell or newer)
+      Vulkan driver is installed</flag>
+    <flag name="video_cards_iris">Checks if the Gen8+ (Broadwell or newer)
+      Vulkan driver is installed</flag>
+    <flag name="video_cards_nvidia">Checks if the NVIDIA Vulkan driver is
+      installed</flag>
+    <flag name="video_cards_radeonsi">Checks if the Mesa Vulkan driver is
+      installed</flag>
+  </use>
+</pkgmetadata>
