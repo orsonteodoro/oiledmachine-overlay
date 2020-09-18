@@ -12,8 +12,8 @@ HOMEPAGE="https://www.openvdb.org"
 SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MPL-2.0"
-IUSE="+abi3-compat doc python test"
-SLOT_MAJ="3"
+IUSE="+abi4-compat doc python test"
+SLOT_MAJ="4"
 SLOT="${SLOT_MAJ}/${PV}"
 KEYWORDS="~amd64 ~x86"
 RESTRICT="!test? ( test )"
@@ -22,7 +22,7 @@ RESTRICT="!test? ( test )"
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
 # Prevent file collisions also with ABI masks
 REQUIRED_USE="
-	abi3-compat
+	abi4-compat
 	python? ( ${PYTHON_REQUIRED_USE} )
 	!python
 "
@@ -99,12 +99,10 @@ src_configure() {
 
 	local myprefix2="$(iprfx)" # for install only
 
-	export CMAKE_LIBRARY_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);\
-${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 	export CMAKE_INCLUDE_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;\
 ${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_INCLUDE_PATH}"
+	export CMAKE_LIBRARY_PATH="\
+${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 
 	local mycmakeargs=(
 		-DBLOSC_LOCATION="${myprefix}"
@@ -116,12 +114,36 @@ ${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_INCLUDE_PATH}
 		-DOPENVDB_BUILD_PYTHON_MODULE=$(usex python)
 		-DOPENVDB_BUILD_UNITTESTS=$(usex test)
 		-DOPENVDB_ENABLE_RPATH=OFF
-		-DOpenGL_GL_PREFERENCE=LEGACY
-		-DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so"
-		-DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so"
 		-DTBB_LOCATION="${myprefix}"
 		-DUSE_GLFW3=ON
 	)
+
+	if has_version 'blender-libs/mesa[libglvnd]' ; then
+		einfo "Detected blender-libs/mesa[libglvnd]"
+		export CMAKE_INCLUDE_PATH="\
+${EROOT}/usr/include;${CMAKE_INCLUDE_PATH}"
+		export CMAKE_LIBRARY_PATH="\
+${EROOT}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+
+		mycmakeargs+=(
+			-DOpenGL_GL_PREFERENCE=GLVND
+			-DOPENGL_egl_LIBRARY=/usr/$(get_libdir)/libEGL.so
+			-DOPENGL_glx_LIBRARY=/usr/$(get_libdir)/libGLX.so
+			-DOPENGL_opengl_LIBRARY=/usr/$(get_libdir)/libOpenGL.so
+		)
+	else
+		einfo "Detected blender-libs/mesa[-libglvnd]"
+		export CMAKE_INCLUDE_PATH="\
+${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
+		export CMAKE_LIBRARY_PATH="\
+${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+
+		mycmakeargs+=(
+			-DOpenGL_GL_PREFERENCE=LEGACY
+			-DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so"
+			-DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so"
+		)
+	fi
 
 	use python && mycmakeargs+=( -DPYOPENVDB_INSTALL_DIRECTORY="$(python_get_sitedir)" )
 	use test && mycmakeargs+=( -DCPPUNIT_LOCATION="${myprefix}" )
@@ -133,3 +155,4 @@ src_install() {
 	cmake_src_install
 	mv "${ED}/usr/share" "${ED}/$(iprfx)" || die
 }
+

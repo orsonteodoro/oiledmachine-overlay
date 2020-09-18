@@ -12,8 +12,8 @@ HOMEPAGE="https://www.openvdb.org"
 SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MPL-2.0"
-IUSE="+abi5-compat cpu_flags_x86_avx cpu_flags_x86_sse4_2 doc numpy python static-libs test utils"
-SLOT_MAJ="5"
+IUSE="+abi6-compat cpu_flags_x86_avx cpu_flags_x86_sse4_2 doc numpy python static-libs test utils"
+SLOT_MAJ="6"
 SLOT="${SLOT_MAJ}/${PV}"
 KEYWORDS="~amd64 ~x86"
 RESTRICT="!test? ( test )"
@@ -23,7 +23,7 @@ RESTRICT="!test? ( test )"
 # Blender disables python
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
 REQUIRED_USE="
-	abi5-compat
+	abi6-compat
 	!test
 	numpy? ( python )
 	python? ( ${PYTHON_REQUIRED_USE} )
@@ -121,12 +121,10 @@ src_configure() {
 
 	local myprefix2="$(iprfx)" # for install only
 
-	export CMAKE_LIBRARY_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);\
-${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 	export CMAKE_INCLUDE_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;\
 ${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_INCLUDE_PATH}"
+	export CMAKE_LIBRARY_PATH="\
+${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 
 	local mycmakeargs=(
 		-DCHOST="${CHOST}"
@@ -141,14 +139,38 @@ ${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_INCLUDE_PATH}
 		-DOPENVDB_CORE_SHARED=ON
 		-DOPENVDB_CORE_STATIC=$(usex static-libs)
 		-DOPENVDB_ENABLE_RPATH=OFF
-		-DOpenGL_GL_PREFERENCE=LEGACY
-		-DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so"
-		-DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so"
 		-DUSE_CCACHE=OFF
 		-DUSE_COLORED_OUTPUT=ON
 		-DUSE_EXR=ON
 		-DUSE_LOG4CPLUS=ON
 	)
+
+	if has_version 'blender-libs/mesa[libglvnd]' ; then
+		einfo "Detected blender-libs/mesa[libglvnd]"
+		export CMAKE_INCLUDE_PATH="\
+${EROOT}/usr/include;${CMAKE_INCLUDE_PATH}"
+		export CMAKE_LIBRARY_PATH="\
+${EROOT}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+
+		mycmakeargs+=(
+			-DOpenGL_GL_PREFERENCE=GLVND
+			-DOPENGL_egl_LIBRARY=/usr/$(get_libdir)/libEGL.so
+			-DOPENGL_glx_LIBRARY=/usr/$(get_libdir)/libGLX.so
+			-DOPENGL_opengl_LIBRARY=/usr/$(get_libdir)/libOpenGL.so
+		)
+	else
+		einfo "Detected blender-libs/mesa[-libglvnd]"
+		export CMAKE_INCLUDE_PATH="\
+${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
+		export CMAKE_LIBRARY_PATH="\
+${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+
+		mycmakeargs+=(
+			-DOpenGL_GL_PREFERENCE=LEGACY
+			-DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so"
+			-DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so"
+		)
+	fi
 
 	if use python; then
 		mycmakeargs+=(
