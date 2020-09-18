@@ -47,11 +47,10 @@ BDEPEND="
 RESTRICT="test"
 
 PATCHES=(
-	"${FILESDIR}/${P}-fix-compile-error-with-Lut1DOp.cpp.patch"
-	"${FILESDIR}/${P}-use-GNUInstallDirs-and-fix-cmake-install-location.patch"
-	"${FILESDIR}/${P}-remove-building-of-bundled-programs.patch"
-	"${FILESDIR}/${P}-yaml-cpp-0.6.patch"
-	"${FILESDIR}/${P}-remove-Werror.patch"
+	"${FILESDIR}/${PN}-1.1.0-use-GNUInstallDirs-and-fix-cmake-install-location.patch"
+	"${FILESDIR}/${PN}-1.1.0-remove-building-of-bundled-programs.patch"
+	"${FILESDIR}/${PN}-1.1.0-yaml-cpp-0.6.patch"
+	"${FILESDIR}/${PN}-1.1.0-remove-Werror.patch"
 )
 
 S="${WORKDIR}/OpenColorIO-${PV}"
