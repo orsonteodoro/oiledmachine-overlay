@@ -43,12 +43,8 @@ src_install() {
 		slot=$(cat "${p}/SLOT")
 		slot_maj=${slot%/*}
 		if bzcat "${p}/environment.bz2" \
-			| grep -q -F -e "BLENDER_MULTISLOT" ; then
+			| grep -q -F -e "parent-datafiles-dir-change" ; then
 			# ebuild from this overlay
-			multislot=$(bzcat "${p}/environment.bz2" \
-					| grep -F -e "BLENDER_MULTISLOT" \
-					| head -n 1 \
-					| grep -E -o -e "[0-9]")
 			exe_path="/usr/bin/blender-${slot_maj}"
 			entry_name="Blender ${pv}"
 			icon_name="blender-${slot_maj}"
