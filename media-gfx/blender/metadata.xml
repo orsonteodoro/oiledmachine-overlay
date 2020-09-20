@@ -58,6 +58,13 @@
     BLENDER_CUDA_TOOLKIT_ROOT_DIR points to root directory for CUDA sdk. (e.g. /opt/cuda)
 
     BLENDER_NVCC_PATH points to absolute path to nvcc. (e.g. /opt/cuda/bin/nvcc)
+
+
+    x86 users (AKA 32-bit):
+
+    You may define BLENDER_CC_ALT and BLENDER_CXX_ALT to change the compiler.
+    Using gcc may result in less optimal code when compiling Cycles.  If not
+    defined, it will fall back to clang++, then icpc.
   </longdescription>
   <upstream>
     <doc lang="en">https://docs.blender.org/manual/en/2.83/index.html</doc>
@@ -120,6 +127,15 @@
     </flag>
     <flag name="color-management">
       Enable color management via <pkg>media-libs/opencolorio</pkg>.
+    </flag>
+    <flag name="cpudetection">
+      Detect at build time the SIMD instruction sets for cycles.
+    </flag>
+    <flag name="cpu_flags_x86_bmi">
+      Enables support for BMI optimizations if cpudetection is disabled.
+    </flag>
+    <flag name="cpu_flags_x86_lzcnt">
+      Enables support for LZCNT optimization if cpudetection is disabled.
     </flag>
     <flag name="cuda">
       Build cycles renderer with nVidia CUDA support.

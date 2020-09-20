@@ -61,9 +61,6 @@ inherit blender check-reqs cmake-utils flag-o-matic llvm pax-utils \
 # bundle all the dependencies.
 SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
 
-# Blender can have letters in the version string,
-# so strip off the letter if it exists.
-
 BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest}
 BLENDER_MULTISLOT=${BLENDER_MULTISLOT:=1}
 
@@ -78,21 +75,59 @@ fi
 SLOT_MAJ=${SLOT%/*}
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-IUSE+=" X +abi7-compat -asan +bullet +collada +color-management +cuda +cycles \
--cycles-network +dds -debug doc +elbeem +embree +ffmpeg +fftw flac +jack \
-+jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal +opencl +openexr \
-+openimagedenoise +openimageio +openmp +opensubdiv +openvdb +openxr -optix \
-+osl release +sdl +sndfile test +tiff -valgrind"
+X86_CPU_FLAGS=( mmx:mmx sse:sse sse2:sse2 sse3:sse3 ssse3:ssse3 sse4_1:sse4_1 \
+sse4_2:sse4_2 avx:avx avx2:avx2 fma:fma lzcnt:lzcnt bmi:bmi f16c:f16c )
+CPU_FLAGS=( ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_} )
+IUSE+=" ${CPU_FLAGS[@]%:*}"
+IUSE="${IUSE/cpu_flags_x86_mmx/+cpu_flags_x86_mmx}"
+IUSE="${IUSE/cpu_flags_x86_sse /+cpu_flags_x86_sse }"
+IUSE="${IUSE/cpu_flags_x86_sse2/+cpu_flags_x86_sse2}"
+IUSE+=" X +abi7-compat -asan +bullet +collada +color-management -cpudetection \
++cuda +cycles -cycles-network +dds -debug doc +elbeem -embree +ffmpeg +fftw \
+flac +jack +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal \
++opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb \
++openxr -optix +osl release +sdl +sndfile test +tiff -valgrind"
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 RESTRICT="mirror !test? ( test )"
 LLVM_V=9
 
 # The release USE flag depends on platform defaults.
+# Disabled dead code optimization flags introduced by
+#   cd5e1ff74e4f6443f3e4b836dd23fe46b56cb7ed
+# At the source code level, they mix the sse2 intrinsics functions up with the
+#   __KERNEL_SSE__.
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
+	!cpu_flags_x86_mmx? ( !cpu_flags_x86_sse !cpu_flags_x86_sse2 )
 	build_creator ( X )
+	cpu_flags_x86_sse2? ( !cpu_flags_x86_sse? ( cpu_flags_x86_mmx ) )
 	cuda? ( cycles ^^ ( nvcc nvrtc ) )
-	cycles? ( openexr tiff openimageio osl? ( llvm ) )
+	cycles? (
+		openexr tiff openimageio osl? ( llvm )
+		amd64? ( cpu_flags_x86_sse2 )
+		x86? ( cpu_flags_x86_sse2 )
+		cpu_flags_x86_sse? ( cpu_flags_x86_sse2 )
+		cpu_flags_x86_sse2? ( cpu_flags_x86_sse )
+		cpudetection? (
+			cpu_flags_x86_avx? ( cpu_flags_x86_sse )
+			cpu_flags_x86_avx2? ( cpu_flags_x86_sse )
+		)
+		!cpudetection? (
+			amd64? (
+				cpu_flags_x86_sse4_1? ( cpu_flags_x86_sse3 )
+				cpu_flags_x86_avx? ( cpu_flags_x86_sse4_1 )
+				cpu_flags_x86_avx2? ( cpu_flags_x86_avx
+							cpu_flags_x86_sse4_1
+							cpu_flags_x86_fma
+							cpu_flags_x86_lzcnt
+							cpu_flags_x86_bmi
+							cpu_flags_x86_f16c )
+			)
+			cpu_flags_x86_sse3? ( cpu_flags_x86_sse2
+						cpu_flags_x86_ssse3 )
+			cpu_flags_x86_ssse3? ( cpu_flags_x86_sse3 )
+		)
+	)
 	embree? ( cycles )
 	mp3? ( ffmpeg )
 	nvcc? ( || ( cuda optix ) )
@@ -113,7 +148,6 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 		dds
 		!debug
 		elbeem
-		embree
 		ffmpeg
 		fftw
 		jack
@@ -150,29 +184,20 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 # extern/Eigen3/eigen-update.sh
 # Track OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER for changes.
 # Track build_files/build_environment/dependencies.dot for ffmpeg dependencies
-#
-# Mentioned in versions.cmake but missing in (R)DEPENDS freeglut, alembic,
-# glfw, clew, cuew, hidapi, webp, xml2, tinyxml, yaml, lcms, flexbison,
-# bzip2 libffi, lzma, openssl, sqlite, usd, mesa, nasm, ispc,
-# faad (added in 0.6 ffmpeg but removed in 0.7+)
-#
-# Already processed as ffmpeg dependency: lame, ogg, vorbis, theora,
-# vpx, opus, x264, vidcore
-#
 RDEPEND="${PYTHON_DEPS}
-	>=dev-lang/python-3.7.7
+	>=dev-lang/python-3.7.4
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
-		>=dev-python/certifi-2020.4.5.2[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/certifi-2019.6.16[${PYTHON_MULTI_USEDEP}]
 		>=dev-python/chardet-3.0.4[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/idna-2.9[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/numpy-1.17.5[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/requests-2.23.0[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/urllib3-1.25.9[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/idna-2.8[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/numpy-1.17.0[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/requests-2.22.0[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/urllib3-1.25.3[${PYTHON_MULTI_USEDEP}]
 	')
-	>=media-libs/freetype-2.10.2
+	>=media-libs/freetype-2.10.1
 	>=media-libs/glew-1.13.0:*
-	>=media-libs/libpng-1.6.37:0=
+	>=media-libs/libpng-1.6.35:0=
 	media-libs/libsamplerate
 	>=sys-libs/zlib-1.2.11
 	|| (
@@ -181,25 +206,26 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	|| (
 		virtual/jpeg:0=
-		>=media-libs/libjpeg-turbo-2.0.4
+		>=media-libs/libjpeg-turbo-1.5.3
 	)
 	virtual/libintl
 	virtual/opengl
 	collada? ( >=media-libs/opencollada-1.6.68:= )
-	color-management? ( >=media-libs/opencolorio-1.1.1 )
+	color-management? ( >=media-libs/opencolorio-1.1.0 )
 	cuda? (
 		>=x11-drivers/nvidia-drivers-418.39
 		>=dev-util/nvidia-cuda-toolkit-10.1:=
 	)
-	cycles? ( >=dev-libs/pugixml-1.10 )
-	embree? ( >=media-libs/embree-3.10.0 )
-	ffmpeg? ( >=media-video/ffmpeg-4.2.3:=\
+	cycles? ( >=dev-libs/pugixml-1.9 )
+	embree? ( >=media-libs/embree-3.8.0:=\
+[cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,static-libs] )
+	ffmpeg? ( >=media-video/ffmpeg-4.0.2:=\
 [encode,jpeg2k?,mp3?,opus?,theora?,vorbis?,vpx?,x264,xvid?,zlib] )
 	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
-	flac? ( >=media-libs/flac-1.3.3 )
+	flac? ( >=media-libs/flac-1.3.2 )
 	jack? ( virtual/jack )
-	jemalloc? ( >=dev-libs/jemalloc-5.2.1:= )
-	jpeg2k? ( >=media-libs/openjpeg-2.3.1:2 )
+	jemalloc? ( >=dev-libs/jemalloc-5.0.1:= )
+	jpeg2k? ( >=media-libs/openjpeg-2.3.0:2 )
 	llvm? ( >=sys-devel/llvm-9.0.1:=
 		 <sys-devel/llvm-10 )
 	ndof? (
@@ -209,18 +235,18 @@ RDEPEND="${PYTHON_DEPS}
 	nls? (
 		|| (
 			virtual/libiconv
-			>=dev-libs/libiconv-1.16
+			>=dev-libs/libiconv-1.15
 		)
 	)
-	openal? ( >=media-libs/openal-1.20.1 )
+	openal? ( >=media-libs/openal-1.18.2 )
 	opencl? ( virtual/opencl )
-	openimagedenoise? ( >=media-libs/oidn-1.2.1 )
-	openimageio? ( >=media-libs/openimageio-2.1.15.0[color-management?,jpeg2k?] )
+	openimagedenoise? ( >=media-libs/oidn-1.0.0 )
+	openimageio? ( >=media-libs/openimageio-1.8.13[color-management?,jpeg2k?] )
 	openexr? (
 		>=media-libs/ilmbase-2.4.0:=
 		>=media-libs/openexr-2.4.0:=
 	)
-	opensubdiv? ( >=media-libs/opensubdiv-3.4.3:=[cuda=,opencl=] )
+	opensubdiv? ( >=media-libs/opensubdiv-3.4.0_rc2:=[cuda=,opencl=] )
 	!openvdb? (
 		|| (
 			>=blender-libs/boost-1.70:=[nls?,threads(+)]
@@ -228,19 +254,19 @@ RDEPEND="${PYTHON_DEPS}
 		)
 	)
 	openvdb? (
-		>=blender-libs/openvdb-7:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
-		 <blender-libs/openvdb-7.1:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+	>=blender-libs/openvdb-7:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+	 <blender-libs/openvdb-7.1:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
 		>=blender-libs/boost-1.70:=[nls?,threads(+)]
 		>=dev-cpp/tbb-2019.9
 		>=dev-libs/c-blosc-1.5.0
 	)
-	openxr? ( >=blender-libs/openxr-1.0.8 )
+	openxr? ( >=blender-libs/openxr-1.0.6 )
 	optix? ( >=dev-libs/optix-7 )
-	osl? ( >=media-libs/osl-1.10.10:=
+	osl? ( >=media-libs/osl-1.10.9:=[static-libs]
 		<blender-libs/mesa-19.2 )
-	sdl? ( >=media-libs/libsdl2-2.0.12[sound,joystick] )
+	sdl? ( >=media-libs/libsdl2-2.0.8[sound,joystick] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
-	tiff? ( >=media-libs/tiff-4.1.0:0[zlib] )
+	tiff? ( >=media-libs/tiff-4.0.9:0[zlib] )
 	valgrind? ( dev-util/valgrind )
 	X? (
 		x11-libs/libX11
@@ -252,11 +278,17 @@ DEPEND="${RDEPEND}
 	asan? ( || ( sys-devel/clang
                      sys-devel/gcc ) )
 	>=dev-cpp/eigen-3.3.7:3
-	>=dev-util/cmake-3.10
+	>=dev-util/cmake-3.5
+	cycles? (
+		x86? ( || (
+			sys-devel/clang
+			dev-lang/icc
+		) )
+	)
 	doc? (
 		app-doc/doxygen[dot]
-		>=dev-python/sphinx-3.3.1[latex]
-		>=dev-python/sphinx_rtd_theme-0.5.0
+		>=dev-python/sphinx-1.8.5[latex]
+		>=dev-python/sphinx_rtd_theme-0.4.3
 		dev-texlive/texlive-bibtexextra
 		dev-texlive/texlive-fontsextra
 		dev-texlive/texlive-fontutils
@@ -314,6 +346,80 @@ pkg_setup() {
 "You must switch to x11-drivers/amdgpu-pro[opengl_mesa] or \
 x11-drivers/amdgpu-pro-lts[opengl_mesa] instead"
 	fi
+
+	grep -q -i -E -e 'abm( |$)' /proc/cpuinfo
+	local has_abm="$?"
+	grep -q -i -E -e 'bmi1( |$)' /proc/cpuinfo
+	local has_bmi1="$?"
+	grep -q -i -E -e 'f16c( |$)' /proc/cpuinfo
+	local has_f16c="$?"
+	grep -q -i -E -e 'fma( |$)' /proc/cpuinfo
+	local has_fma="$?"
+	grep -q -i -E -e 'ssse3( |$)' /proc/cpuinfo
+	local has_ssse3="$?"
+
+	# For tzcnt
+	if use cpu_flags_x86_bmi ; then
+		if [[ "${has_bmi1}" != "0" ]] ; then
+			ewarn \
+"bmi may not be supported on your CPU and was enabled via cpu_flags_x86_bmi"
+		fi
+	fi
+
+	if use cpu_flags_x86_f16c ; then
+		if [[ "${has_f16c}" != "0" ]] ; then
+			ewarn \
+"f16c may not be supported on your CPU and was enabled via cpu_flags_x86_f16c"
+		fi
+	fi
+
+	if use cpu_flags_x86_fma ; then
+		if [[ "${has_fma}" != "0" ]] ; then
+			ewarn \
+"fma may not be supported on your CPU and was enabled via cpu_flags_x86_fma"
+		fi
+	fi
+
+	if use cpu_flags_x86_lzcnt ; then
+		if [[ "${has_bmi1}" != "0" && "${has_abm}" != "0" ]] ; then
+			ewarn \
+"lzcnt may not be supported on your CPU and was enabled via cpu_flags_x86_lzcnt"
+		fi
+	fi
+
+	if use cpu_flags_x86_ssse3 ; then
+		if [[ "${has_ssse3}" != "0" ]] ; then
+			ewarn \
+"ssse3 may not be supported on your CPU and was enabled via cpu_flags_x86_ssse3"
+		fi
+	fi
+
+	if [[ "${ABI}" == "x86" ]] ; then
+		# Cycles says that a bug might be in in gcc so use clang or icc.
+		# If you use gcc, it will not optimize cycles except with maybe sse2.
+		if [[ -n "${BLENDER_CC_ALT}" && -n "${BLENDER_CXX_ALT}" ]] ; then
+			export CC=${BLENDER_CC_ALT}
+			export CXX=${BLENDER_CXX_ALT}
+		elif [[ -n "${CC}" && -n "${CXX}" ]] ; then
+			# Defined by user from per-package environmental variables.
+			export CC
+			export CXX
+		elif has_version 'sys-devel/clang' ; then
+			export CC=clang
+			export CXX=clang++
+		elif has_version 'dev-lang/icc' ; then
+			export CC=icc
+			export CXX=icpc
+		fi
+	else
+		if [[ ! -n "${CC}" || ! -n "${CXX}" ]] ; then
+			export CC=$(tc-getCC $(get_abi_CHOST "${ABI}"))
+			export CXX=$(tc-getCXX $(get_abi_CHOST "${ABI}"))
+		fi
+	fi
+
+	einfo "CC=${CC}"
+	einfo "CXX=${CXX}"
 }
 
 _src_prepare() {
@@ -351,10 +457,10 @@ _src_prepare() {
 }
 
 src_prepare() {
-	ewarn
-	ewarn "This version is not a Long Term Support (LTS) version."
-	ewarn "Use 2.83.x series instead."
-	ewarn
+	einfo
+	einfo "$(ver_cut 1-2) version series is a Long Term Support (LTS) version."
+	einfo "Upstream supports this series up to May 2022 (2 years)."
+	einfo
 	xdg_src_prepare
 	blender_prepare() {
 		cd "${BUILD_DIR}" || die
@@ -384,6 +490,183 @@ ebuild/upstream developers only."
 	unset CMAKE_INCLUDE_PATH
 	unset CMAKE_LIBRARY_PATH
 	unset CMAKE_PREFIX_PATH
+
+	if ! has_version 'media-libs/embree[cpu_flags_x86_avx]' ; then
+		sed -i -e "/embree_avx/d" \
+			build_files/cmake/Modules/FindEmbree.cmake || die
+	fi
+
+	if ! has_version 'media-libs/embree[cpu_flags_x86_avx2]' ; then
+		sed -i -e "/embree_avx2/d" \
+			build_files/cmake/Modules/FindEmbree.cmake || die
+	fi
+
+	if ! has_version 'media-libs/embree[cpu_flags_x86_sse4_2]' ; then
+		sed -i -e "/embree_sse42/d" \
+			build_files/cmake/Modules/FindEmbree.cmake || die
+	fi
+
+	if use cycles && ! use cpudetection ; then
+		if use cpu_flags_x86_sse ; then
+			# clang / gcc
+			sed -i -e "s|check_cxx_compiler_flag(-msse CXX_HAS_SSE)|set(CXX_HAS_SSE TRUE)|g" \
+				intern/cycles/CMakeLists.txt || die
+			# icc
+			sed -i -e "s|check_cxx_compiler_flag(-xsse2 CXX_HAS_SSE)|set(CXX_HAS_SSE TRUE)|g" \
+				intern/cycles/CMakeLists.txt || die
+		else
+			# clang / gcc
+			sed -i -e "s|check_cxx_compiler_flag(-msse CXX_HAS_SSE)|set(CXX_HAS_SSE FALSE)|g" \
+				intern/cycles/CMakeLists.txt || die
+			# icc
+			sed -i -e "s|check_cxx_compiler_flag(-xsse2 CXX_HAS_SSE)|set(CXX_HAS_SSE FALSE)|g" \
+				intern/cycles/CMakeLists.txt || die
+		fi
+
+		if ! use cpu_flags_x86_sse2 ; then
+			sed -i -e "/WITH_KERNEL_SSE2/d" \
+				intern/cycles/CMakeLists.txt || die
+		fi
+
+		if ! use cpu_flags_x86_sse3 ; then
+			sed -i -e "/WITH_KERNEL_SSE3/d" \
+				intern/cycles/CMakeLists.txt || die
+		fi
+
+		if ! use cpu_flags_x86_sse4_1 ; then
+			sed -i -e "/WITH_KERNEL_SSE41/d" \
+				intern/cycles/CMakeLists.txt || die
+		fi
+
+		if use cpu_flags_x86_avx ; then
+			# clang / gcc
+			sed -i -e "s|check_cxx_compiler_flag(-mavx CXX_HAS_AVX)|set(CXX_HAS_AVX TRUE)|g" \
+				intern/cycles/CMakeLists.txt || die
+			# icc
+			sed -i -e "s|check_cxx_compiler_flag(-xavx CXX_HAS_AVX)|set(CXX_HAS_AVX TRUE)|g" \
+				intern/cycles/CMakeLists.txt || die
+		else
+			# clang / gcc
+			sed -i -e "s|check_cxx_compiler_flag(-mavx CXX_HAS_AVX)|set(CXX_HAS_AVX FALSE)|g" \
+				intern/cycles/CMakeLists.txt || die
+			# icc
+			sed -i -e "s|check_cxx_compiler_flag(-xavx CXX_HAS_AVX)|set(CXX_HAS_AVX FALSE)|g" \
+				intern/cycles/CMakeLists.txt || die
+		fi
+
+		if use cpu_flags_x86_avx2 ; then
+			# clang / gcc
+			sed -i -e "s|check_cxx_compiler_flag(-mavx2 CXX_HAS_AVX2)|set(CXX_HAS_AVX2 TRUE)|g" \
+				intern/cycles/CMakeLists.txt || die
+			# icc
+			sed -i -e "s|check_cxx_compiler_flag(-xcore-avx2 CXX_HAS_AVX2)|set(CXX_HAS_AVX2 TRUE)|g" \
+				intern/cycles/CMakeLists.txt || die
+		else
+			# clang / gcc
+			sed -i -e "s|check_cxx_compiler_flag(-mavx2 CXX_HAS_AVX2)|set(CXX_HAS_AVX2 FALSE)|g" \
+				intern/cycles/CMakeLists.txt || die
+			# icc
+			sed -i -e "s|check_cxx_compiler_flag(-xcore-avx2 CXX_HAS_AVX2)|set(CXX_HAS_AVX2 FALSE)|g" \
+				intern/cycles/CMakeLists.txt || die
+		fi
+
+		if [[ "${ABI}" == "x86" ]] && grep -q -F -e "WITH_KERNEL_SSE41" intern/cycles/CMakeLists.txt ; then
+			# See intern/cycles/util/util_optimization.h for reason why it was axed in x86 (32-bit).
+			sed -i -e "/WITH_KERNEL_SSE41/d" \
+				intern/cycles/CMakeLists.txt || die
+		fi
+
+		# No instructions present
+		sed -i -e "s|-mbmi2||g" \
+			intern/cycles/CMakeLists.txt || die
+	fi
+
+	# The avx2 config in CMakeLists.txt already sets this.
+	if tc-is-gcc || tc-is-clang ; then
+		if ! use cpudetection && use cycles && ! use cpu_flags_x86_avx2 ; then
+			if use cpu_flags_x86_bmi ; then
+				# bmi1 only, tzcnt
+				if [[ "${CXXFLAGS}" =~ march=(\
+native|\
+\
+haswell|broadwell|skylake|knl|knm|skylake-avx512|cannonlake|icelake-client|\
+icelake-server|cascadelake|cooperlake|tigerlake|sapphirerapids|\
+\
+bdver2|bdver3|bdver4|znver1|znver2|btver2) ]] \
+				|| [[ "${CXXFLAGS}" =~ mbmi( |$) ]] ; then
+					# Already added
+					:;
+				else
+					append-cxxflags -mbmi
+				fi
+			else
+				append-cxxflags -mno-bmi
+			fi
+			if use cpu_flags_x86_lzcnt ; then
+				# intel puts lzcnt in bmi1
+				# amd puts lzcnt in abm
+				if [[ "${CXXFLAGS}" =~ march=(\
+native|\
+\
+haswell|broadwell|skylake|knl|knm|skylake-avx512|cannonlake|icelake-client|\
+icelake-server|cascadelake|cooperlake|tigerlake|sapphirerapids|\
+\
+amdfam10|barcelona|bdver1|bdver2|bdver3|bdver4|znver1|znver2|btver1|btver2) ]] \
+				|| [[ "${CXXFLAGS}" =~ mlzcnt ]] ; then
+					# Already added
+					:;
+				else
+					append-cxxflags -mlzcnt
+				fi
+			else
+				append-cxxflags -mno-lzcnt
+			fi
+		fi
+
+		if use cpu_flags_x86_f16c ; then
+			if [[ "${CXXFLAGS}" =~ march=(\
+native|\
+\
+ivybridge|haswell|broadwell|skylake|knl|knm|skylake-avx512|cannonlake|\
+icelake-client|icelake-server|cascadelake|copperlake|tigerlake|sapphirerapids|\
+\
+bdver2|bdver3|bdver4|znver1|znver2|btver2) ]] \
+			|| [[ "${CXXFLAGS}" =~ mf16c ]] ; then
+				# Already added
+				:;
+			else
+				append-cxxflags -mf16c
+			fi
+		else
+			append-cxxflags -mno-f16c
+		fi
+
+		if use cpu_flags_x86_fma ; then
+			# for eigen and cycles
+			if [[ "${CXXFLAGS}" =~ march=(\
+native|\
+\
+haswell|broadwell|skylake|knl|knm|skylake-avx512|cannonlake|icelake-client|\
+icelake-server|cascadelake|cooperlake|tigerlake|sapphirerapids|alderlake|\
+\
+bdver2|bdver3|bdver4|znver1|znver2) ]] \
+			|| [[ "${CXXFLAGS}" =~ mfma ]] ; then
+				# Already added
+				:;
+			else
+				append-cxxflags -mfma
+			fi
+		else
+			append-cxxflags -mno-fma
+		fi
+
+		if use cycles && use cpudetection ; then
+			# automatically adds -march=native
+			filter-flags -m*avx* -m*mmx -m*sse* -m*ssse3 -m*3dnow -m*popcnt -m*abm -m*bmi -m*lzcnt -m*f16c -m*fma
+			filter-flags -march=*
+		fi
+
+	fi
 
 	if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" ]] ; then
 		mycmakeargs+=( -DBoost_NO_SYSTEM_PATHS=ON )
@@ -445,10 +728,13 @@ ebuild/upstream developers only."
 		-DPYTHON_VERSION="${EPYTHON/python/}"
 		-DPYTHON_LIBRARY="$(python_get_library_path)"
 		-DPYTHON_INCLUDE_DIR="$(python_get_includedir)"
+		-DSUPPORT_SSE_BUILD=$(usex cpu_flags_x86_sse)
+		-DSUPPORT_SSE2_BUILD=$(usex cpu_flags_x86_sse2)
 		-DWITH_ASSERT_ABORT=$(usex debug)
 		-DWITH_BOOST=ON
 		-DWITH_BULLET=$(usex bullet)
 		-DWITH_COMPILER_ASAN=$(usex asan)
+		-DWITH_CPU_SSE=$(usex cpu_flags_x86_sse2)
 		-DWITH_CUDA_DYNLOAD=$(usex cuda $(usex nvcc ON OFF) ON)
 		-DWITH_CXX_GUARDEDALLOC=$(usex debug)
 		-DWITH_CXX11_ABI=ON
@@ -460,6 +746,7 @@ ebuild/upstream developers only."
 		-DWITH_CYCLES_DEVICE_OPTIX=$(usex optix)
 		-DWITH_CYCLES_EMBREE=$(usex embree)
 		-DWITH_CYCLES_KERNEL_ASAN=$(usex asan)
+		-DWITH_CYCLES_NATIVE_ONLY=$(usex cpudetection)
 		-DWITH_CYCLES_OSL=$(usex osl)
 		-DWITH_DOC_MANPAGE=$(usex man)
 		-DWITH_IMAGE_DDS=$(usex dds)
@@ -506,7 +793,7 @@ ebuild/upstream developers only."
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.90.0/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.83.2/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -810,6 +1097,7 @@ _src_install() {
 		fi
 		exeinto /usr/bin
 		doexe "${T}/${PN}-${SLOT_MAJ}"
+		touch "${ED}/${d_dest}/.lts"
 	elif [[ "${EBLENDER}" == "build_headless" ]] ; then
 		cp "${FILESDIR}/blender-wrapper" \
 			"${T}/${PN}-headless-${SLOT_MAJ}" || die
