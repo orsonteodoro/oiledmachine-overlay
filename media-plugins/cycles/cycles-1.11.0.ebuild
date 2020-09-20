@@ -145,7 +145,9 @@ pkg_setup() {
 		if [[ -n "${BLENDER_CC_ALT}" && -n "${BLENDER_CXX_ALT}" ]] ; then
 			export CC=${BLENDER_CC_ALT}
 			export CXX=${BLENDER_CXX_ALT}
-		elif [[ -n "${CC}" && -n "${CXX}" ]] ; then
+		elif [[ -n "${CC}" && -n "${CXX}" ]] \
+			&& [[ ! ( "${CC}" =~ gcc ) ]] \
+			&& [[ ! ( "${CXX}" =~ "g++" ) ]] ; then
 			# Defined by user from per-package environmental variables.
 			export CC
 			export CXX
