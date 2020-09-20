@@ -62,16 +62,9 @@ inherit blender check-reqs cmake-utils flag-o-matic llvm pax-utils \
 SRC_URI="https://download.blender.org/source/blender-${PV}.tar.gz"
 
 BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest}
-BLENDER_MULTISLOT=${BLENDER_MULTISLOT:=1}
 
 # Slotting is for scripting and plugin compatibility
-if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "2" ]] ; then
 SLOT="${PV}"
-elif [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
-SLOT="$(ver_cut 1-2)/${PV}"
-else
-SLOT="0/${PV}"
-fi
 SLOT_MAJ=${SLOT%/*}
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
@@ -421,9 +414,7 @@ _src_prepare() {
 	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
 	cmake-utils_src_prepare
 
-	if [[ "${BLENDER_MULTISLOT}" == "2" ]] ; then
-		eapply "${FILESDIR}/blender-2.80-parent-datafiles-dir-change.patch"
-	fi
+	eapply "${FILESDIR}/blender-2.80-parent-datafiles-dir-change.patch"
 
 	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
 		# we don't want static glew, but it's scattered across
@@ -1046,11 +1037,6 @@ _src_install() {
 		exeinto /usr/bin
 		doexe "${T}/${PN}-headless-${SLOT_MAJ}"
 	fi
-	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" =~ (1|2) ]] ; then
-		dodir "${d_dest}"
-		# metainfo
-		echo "${BLENDER_MULTISLOT}" > "${ED}${d_dest}/.multislot"
-	fi
 	install_licenses
 	if use doc ; then
 		install_readmes
@@ -1164,17 +1150,15 @@ pkg_postrm() {
 	ewarn "~/.config/${PN}/${SLOT_MAJ}/cache/"
 	ewarn "It may contain extra render kernels not tracked by portage"
 	ewarn ""
-	if [[ -n "${BLENDER_MULTISLOT}" && "${BLENDER_MULTISLOT}" == "1" ]] ; then
-		if [[ ! -d "${EROOT}/usr/bin/.blender" ]] ; then
-			if [[ -e "${EROOT}/usr/bin/blender" ]] ; then
-				rm -rf "${EROOT}/usr/bin/blender" || die
-			fi
-			if [[ -e "${EROOT}/usr/bin/blender-headless" ]] ; then
-				rm -rf "${EROOT}/usr/bin/blender-headless" || die
-			fi
-			if [[ -e "${EROOT}/usr/bin/cycles_server" ]] ; then
-				rm -rf "${EROOT}/usr/bin/cycles_server" || die
-			fi
+	if [[ ! -d "${EROOT}/usr/bin/.blender" ]] ; then
+		if [[ -e "${EROOT}/usr/bin/blender" ]] ; then
+			rm -rf "${EROOT}/usr/bin/blender" || die
+		fi
+		if [[ -e "${EROOT}/usr/bin/blender-headless" ]] ; then
+			rm -rf "${EROOT}/usr/bin/blender-headless" || die
+		fi
+		if [[ -e "${EROOT}/usr/bin/cycles_server" ]] ; then
+			rm -rf "${EROOT}/usr/bin/cycles_server" || die
 		fi
 	fi
 }

@@ -32,9 +32,8 @@
     slotted version series.  This will set the /usr/bin/blender symlink
     to that version
 
-    BLENDER_MULTISLOT can be set to 0 for single slot to subscribe to latest
-    stable release, 1 for multislot LTS [Long Term Support] (default), 2 for
-    multislot per version (for compatibility for the sheepit-client).
+    For tracking the latest or stable please use virtual/blender-lts or
+    virtual/blender-stable instead.  Do not emerge this package directly.
 
     When build_portable USE flag is on, it will place a portable version
     in /usr/share/blender/${SLOT}/portable.
