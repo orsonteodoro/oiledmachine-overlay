@@ -452,11 +452,8 @@ src_prepare() {
 			sed -i -e "s|SLOT_STYLE = 2|SLOT_STYLE = -1|g" \
 				src/com/sheepit/client/Configuration.java || die
 		elif bzcat /var/db/pkg/media-gfx/blender-*/environment.bz2 \
-			| grep -q -F -e "BLENDER_MULTISLOT" ; then
-local blender_multislot=$(bzcat "${EROOT}/var/db/pkg/media-gfx/blender-"*"/environment.bz2" \
-		| grep -F -e "BLENDER_MULTISLOT" | head -n 1 | grep -E -o -e "[0-9]")
-			sed -i -e "s|SLOT_STYLE = 2|SLOT_STYLE = ${blender_multislot}|g" \
-				src/com/sheepit/client/Configuration.java || die
+			| grep -q -F -e "parent-datafiles-dir-change" ; then
+			:;
 		else
 			die \
 "Use either gentoo-blender or the blender ebuilds from the oiledmachine-overlay"
