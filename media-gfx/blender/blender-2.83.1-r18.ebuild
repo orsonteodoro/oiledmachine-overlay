@@ -793,7 +793,7 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.83.3/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.83.1/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -1153,6 +1153,7 @@ src_install() {
 	if [[ -d "${ED}/usr/share/doc/blender" ]] ; then
 		mv "${ED}/usr/share/doc/blender"{,-${SLOT_MAJ}} || die
 	fi
+	mv "${ED}/usr/share/man/man1/blender"{,-${SLOT_MAJ}}".1"
 }
 
 pkg_postinst() {

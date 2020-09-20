@@ -86,7 +86,7 @@ IUSE+=" X +abi7-compat -asan +bullet +collada +color-management -cpudetection \
 +cuda +cycles -cycles-network +dds -debug doc +elbeem -embree +ffmpeg +fftw \
 flac +jack +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal \
 +opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb \
-+openxr -optix +osl release +sdl +sndfile test +tiff -valgrind"
+-optix +osl release +sdl +sndfile test +tiff -valgrind"
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 RESTRICT="mirror !test? ( test )"
@@ -163,7 +163,6 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 		openimagedenoise
 		opensubdiv
 		openvdb
-		openxr
 		osl
 		sdl
 		sndfile
@@ -195,7 +194,7 @@ RDEPEND="${PYTHON_DEPS}
 		>=dev-python/requests-2.22.0[${PYTHON_MULTI_USEDEP}]
 		>=dev-python/urllib3-1.25.3[${PYTHON_MULTI_USEDEP}]
 	')
-	>=media-libs/freetype-2.10.1
+	>=media-libs/freetype-2.9.1
 	>=media-libs/glew-1.13.0:*
 	>=media-libs/libpng-1.6.35:0=
 	media-libs/libsamplerate
@@ -217,7 +216,7 @@ RDEPEND="${PYTHON_DEPS}
 		>=dev-util/nvidia-cuda-toolkit-10.1:=
 	)
 	cycles? ( >=dev-libs/pugixml-1.9 )
-	embree? ( >=media-libs/embree-3.8.0:=\
+	embree? ( >=media-libs/embree-3.2.4:=\
 [cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,static-libs] )
 	ffmpeg? ( >=media-video/ffmpeg-4.0.2:=\
 [encode,jpeg2k?,mp3?,opus?,theora?,vorbis?,vpx?,x264,xvid?,zlib] )
@@ -226,7 +225,7 @@ RDEPEND="${PYTHON_DEPS}
 	jack? ( virtual/jack )
 	jemalloc? ( >=dev-libs/jemalloc-5.0.1:= )
 	jpeg2k? ( >=media-libs/openjpeg-2.3.0:2 )
-	llvm? ( >=sys-devel/llvm-9.0.1:=
+	llvm? ( >=sys-devel/llvm-6.0.1:=
 		 <sys-devel/llvm-10 )
 	ndof? (
 		app-misc/spacenavd
@@ -260,9 +259,8 @@ RDEPEND="${PYTHON_DEPS}
 		>=dev-cpp/tbb-2019.9
 		>=dev-libs/c-blosc-1.5.0
 	)
-	openxr? ( >=blender-libs/openxr-1.0.6 )
 	optix? ( >=dev-libs/optix-7 )
-	osl? ( >=media-libs/osl-1.10.9:=[static-libs]
+	osl? ( >=media-libs/osl-1.9.9:=[static-libs]
 		<blender-libs/mesa-19.2 )
 	sdl? ( >=media-libs/libsdl2-2.0.8[sound,joystick] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
@@ -301,9 +299,6 @@ DEPEND="${RDEPEND}
 _PATCHES=(
 	"${FILESDIR}/${PN}-2.82a-fix-install-rules.patch"
 	"${FILESDIR}/${PN}-2.82a-cycles-network-fixes.patch"
-	"${FILESDIR}/${PN}-2.83.1-device_network_h-fixes.patch"
-	"${FILESDIR}/${PN}-2.83.1-device_network_h-add-device-header.patch"
-	"${FILESDIR}/${PN}-2.83.1-update-acquire_tile-for-cycles-networking.patch"
 	"${FILESDIR}/${PN}-2.80-install-paths-change.patch"
 )
 
@@ -431,7 +426,7 @@ _src_prepare() {
 	cmake-utils_src_prepare
 
 	if [[ "${BLENDER_MULTISLOT}" == "2" ]] ; then
-		eapply "${FILESDIR}/blender-2.83.1-parent-datafiles-dir-change.patch"
+		eapply "${FILESDIR}/blender-2.81a-parent-datafiles-dir-change.patch"
 	fi
 
 	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
@@ -457,10 +452,10 @@ _src_prepare() {
 }
 
 src_prepare() {
-	einfo
-	einfo "$(ver_cut 1-2) version series is a Long Term Support (LTS) version."
-	einfo "Upstream supports this series up to May 2022 (2 years)."
-	einfo
+	ewarn
+	ewarn "This version is not a Long Term Support (LTS) version."
+	ewarn "Use 2.83.x series instead."
+	ewarn
 	xdg_src_prepare
 	blender_prepare() {
 		cd "${BUILD_DIR}" || die
@@ -571,7 +566,7 @@ ebuild/upstream developers only."
 		fi
 
 		if [[ "${ABI}" == "x86" ]] && grep -q -F -e "WITH_KERNEL_SSE41" intern/cycles/CMakeLists.txt ; then
-			# See intern/cycles/util/util_optimization.h for reason why it was axed in x86 (32-bit)..
+			# See intern/cycles/util/util_optimization.h for reason why it was axed in x86 (32-bit).
 			sed -i -e "/WITH_KERNEL_SSE41/d" \
 				intern/cycles/CMakeLists.txt || die
 		fi
@@ -675,17 +670,12 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
 	fi
 
-	if use openxr ; then
-		export XR_OPENXR_SDK_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/openxr/usr"
-		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/openxr/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
-	fi
-
 	if use openvdb ; then
 		export OPENVDB_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr"
 		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
 	fi
 
-	if use openxr || use osl ; then
+	if use osl ; then
 		if has_version 'blender-libs/mesa[libglvnd]' ; then
 			mycmakeargs+=( -DOpenGL_GL_PREFERENCE=GLVND )
 			if [[ -e "${EROOT}/usr/$(get_libdir)/libGLX.so" ]] ; then
@@ -768,7 +758,6 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 		-DWITH_OPENVDB_BLOSC=$(usex openvdb)
 		-DWITH_PYTHON_INSTALL=OFF
 		-DWITH_PYTHON_INSTALL_NUMPY=OFF
-		-DWITH_XR_OPENXR=$(usex openxr)
 	)
 
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
@@ -793,7 +782,7 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.83.6/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.82a/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -1083,11 +1072,7 @@ _src_install() {
 				-e "s|\${OPENVDB_V}|${OPENVDB_V}|g" \
 				"${T}/${PN}-${SLOT_MAJ}" || die
 		fi
-		if use openxr ; then
-			sed -i -e "s|#OPENXR ||g" \
-				"${T}/${PN}-${SLOT_MAJ}" || die
-		fi
-		if use openxr || use osl ; then
+		if use osl ; then
 			sed -i -e "s|#MESA ||g" \
 				"${T}/${PN}-${SLOT_MAJ}" || die
 		fi
@@ -1097,7 +1082,6 @@ _src_install() {
 		fi
 		exeinto /usr/bin
 		doexe "${T}/${PN}-${SLOT_MAJ}"
-		touch "${ED}/${d_dest}/.lts"
 	elif [[ "${EBLENDER}" == "build_headless" ]] ; then
 		cp "${FILESDIR}/blender-wrapper" \
 			"${T}/${PN}-headless-${SLOT_MAJ}" || die
@@ -1110,11 +1094,7 @@ _src_install() {
 				-e "s|\${OPENVDB_V}|${OPENVDB_V}|g" \
 				"${T}/${PN}-headless-${SLOT_MAJ}" || die
 		fi
-		if use openxr ; then
-			sed -i -e "s|#OPENXR ||g" \
-				"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		fi
-		if use openxr || use osl ; then
+		if use osl ; then
 			sed -i -e "s|#MESA ||g" \
 				"${T}/${PN}-headless-${SLOT_MAJ}" || die
 		fi
@@ -1153,6 +1133,7 @@ src_install() {
 	if [[ -d "${ED}/usr/share/doc/blender" ]] ; then
 		mv "${ED}/usr/share/doc/blender"{,-${SLOT_MAJ}} || die
 	fi
+	mv "${ED}/usr/share/man/man1/blender"{,-${SLOT_MAJ}}".1"
 }
 
 pkg_postinst() {

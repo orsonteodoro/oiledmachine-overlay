@@ -571,7 +571,7 @@ ebuild/upstream developers only."
 		fi
 
 		if [[ "${ABI}" == "x86" ]] && grep -q -F -e "WITH_KERNEL_SSE41" intern/cycles/CMakeLists.txt ; then
-			# See intern/cycles/util/util_optimization.h for reason why it was axed in x86 (32-bit).
+			# See intern/cycles/util/util_optimization.h for reason why it was axed in x86 (32-bit)..
 			sed -i -e "/WITH_KERNEL_SSE41/d" \
 				intern/cycles/CMakeLists.txt || die
 		fi
@@ -793,7 +793,7 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.83.5/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.83.6/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -1153,6 +1153,7 @@ src_install() {
 	if [[ -d "${ED}/usr/share/doc/blender" ]] ; then
 		mv "${ED}/usr/share/doc/blender"{,-${SLOT_MAJ}} || die
 	fi
+	mv "${ED}/usr/share/man/man1/blender"{,-${SLOT_MAJ}}".1"
 }
 
 pkg_postinst() {

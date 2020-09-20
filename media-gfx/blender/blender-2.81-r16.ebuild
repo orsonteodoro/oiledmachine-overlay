@@ -1137,6 +1137,7 @@ src_install() {
 	if [[ -d "${ED}/usr/share/doc/blender" ]] ; then
 		mv "${ED}/usr/share/doc/blender"{,-${SLOT_MAJ}} || die
 	fi
+	mv "${ED}/usr/share/man/man1/blender"{,-${SLOT_MAJ}}".1"
 }
 
 pkg_postinst() {
