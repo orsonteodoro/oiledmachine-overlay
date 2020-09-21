@@ -9,23 +9,22 @@ inherit cmake flag-o-matic python-single-r1
 
 DESCRIPTION="Library for the efficient manipulation of volumetric data"
 HOMEPAGE="https://www.openvdb.org"
-SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
-	https://dev.gentoo.org/~dracwyrm/patches/${P}-patchset-02.tar.xz"
+SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MPL-2.0"
-IUSE="+abi3-compat doc python test"
+IUSE="+abi6-compat doc python test"
 CXXABI=11
 LLVM_V=9
-SLOT_MAJ="3"
+SLOT_MAJ="6"
 SLOT="${SLOT_MAJ}/${PV}"
-KEYWORDS="amd64 ~x86"
+KEYWORDS="~amd64 ~x86"
 RESTRICT="!test? ( test )"
 
 # Blender disables python
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
 # Prevent file collisions also with ABI masks
 REQUIRED_USE="
-	abi3-compat
+	abi6-compat
 	python? ( ${PYTHON_REQUIRED_USE} )
 	!python
 "
@@ -52,12 +51,12 @@ RDEPEND="
 			blender-libs/boost:'${CXXABI}'=[python?,${PYTHON_USEDEP}]
 			dev-python/numpy[${PYTHON_USEDEP}]
 		')
-	)
-"
+	)"
 
 DEPEND="${RDEPEND}"
 
 BDEPEND="
+	>=dev-util/cmake-3.16.2-r1
 	virtual/pkgconfig
 	doc? (
 		app-doc/doxygen
@@ -71,12 +70,9 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${WORKDIR}/${P}-patchset-02/0001-use-gnuinstalldirs.patch"
-	"${WORKDIR}/${P}-patchset-02/0002-use-pkgconfig-for-ilmbase-and-openexr.patch"
-	"${WORKDIR}/${P}-patchset-02/0003-boost-1.65-numpy-support.patch"
-	"${FILESDIR}/${P}-findboost-fix.patch"
-	"${FILESDIR}/${P}-fix-const-correctness-for-unittest.patch"
-	"${FILESDIR}/${P}-fix-build-docs.patch"
+	"${FILESDIR}/${P}-fix-multilib-header-source.patch"
+	"${FILESDIR}/${PN}-4.0.2-fix-const-correctness-for-unittest.patch"
+	"${FILESDIR}/${P}-use-gnuinstalldirs.patch"
 )
 
 pkg_setup() {
@@ -108,21 +104,18 @@ src_configure() {
 "${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 
 	local mycmakeargs=(
-		-DBLOSC_LOCATION="${myprefix}"
 		-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
 		-DCMAKE_INSTALL_PREFIX="$(iprfx)"
-		-DGLFW3_LOCATION="${myprefix}"
+		-DOPENVDB_ABI_VERSION_NUMBER=${SLOT_MAJ}
 		-DOPENVDB_BUILD_DOCS=$(usex doc)
 		-DOPENVDB_BUILD_PYTHON_MODULE=$(usex python)
 		-DOPENVDB_BUILD_UNITTESTS=$(usex test)
-		-DOPENVDB_ENABLE_3_ABI_COMPATIBLE=ON
 		-DOPENVDB_ENABLE_RPATH=OFF
-		-DTBB_LOCATION="${myprefix}"
-		-DUSE_GLFW3=ON
+		-DCHOST="${CHOST}"
 	)
 
-	if has_version 'blender-libs/mesa[libglvnd]' ; then
-		einfo "Detected blender-libs/mesa[libglvnd]"
+	if has_version 'blender-libs/mesa:'${LLVM_V}'[libglvnd]' ; then
+		einfo "Detected blender-libs/mesa:${LLVM_V}[libglvnd]"
 		export CMAKE_INCLUDE_PATH=\
 "${EROOT}/usr/include;${CMAKE_INCLUDE_PATH}"
 		export CMAKE_LIBRARY_PATH=\
@@ -135,7 +128,7 @@ src_configure() {
 			-DOPENGL_opengl_LIBRARY=/usr/$(get_libdir)/libOpenGL.so
 		)
 	else
-		einfo "Detected blender-libs/mesa[-libglvnd]"
+		einfo "Detected blender-libs/mesa:${LLVM_V}[-libglvnd]"
 		export CMAKE_INCLUDE_PATH=\
 "${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
 		export CMAKE_LIBRARY_PATH=\

@@ -12,10 +12,10 @@ HOMEPAGE="https://www.openvdb.org"
 SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MPL-2.0"
-IUSE="+abi6-compat doc python test"
+IUSE="+abi5-compat doc python test"
 CXXABI=11
 LLVM_V=9
-SLOT_MAJ="6"
+SLOT_MAJ="5"
 SLOT="${SLOT_MAJ}/${PV}"
 KEYWORDS="~amd64 ~x86"
 RESTRICT="!test? ( test )"
@@ -24,7 +24,7 @@ RESTRICT="!test? ( test )"
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
 # Prevent file collisions also with ABI masks
 REQUIRED_USE="
-	abi6-compat
+	abi5-compat
 	python? ( ${PYTHON_REQUIRED_USE} )
 	!python
 "
@@ -114,8 +114,8 @@ src_configure() {
 		-DCHOST="${CHOST}"
 	)
 
-	if has_version 'blender-libs/mesa[libglvnd]' ; then
-		einfo "Detected blender-libs/mesa[libglvnd]"
+	if has_version 'blender-libs/mesa:'${LLVM_V}'[libglvnd]' ; then
+		einfo "Detected blender-libs/mesa:${LLVM_V}[libglvnd]"
 		export CMAKE_INCLUDE_PATH=\
 "${EROOT}/usr/include;${CMAKE_INCLUDE_PATH}"
 		export CMAKE_LIBRARY_PATH=\
@@ -128,7 +128,7 @@ src_configure() {
 			-DOPENGL_opengl_LIBRARY=/usr/$(get_libdir)/libOpenGL.so
 		)
 	else
-		einfo "Detected blender-libs/mesa[-libglvnd]"
+		einfo "Detected blender-libs/mesa:${LLVM_V}[-libglvnd]"
 		export CMAKE_INCLUDE_PATH=\
 "${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
 		export CMAKE_LIBRARY_PATH=\

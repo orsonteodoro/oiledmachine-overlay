@@ -145,8 +145,8 @@ src_configure() {
 		-DUSE_LOG4CPLUS=ON
 	)
 
-	if has_version 'blender-libs/mesa[libglvnd]' ; then
-		einfo "Detected blender-libs/mesa[libglvnd]"
+	if has_version 'blender-libs/mesa:'${LLVM_V}'[libglvnd]' ; then
+		einfo "Detected blender-libs/mesa:${LLVM_V}[libglvnd]"
 		export CMAKE_INCLUDE_PATH=\
 "${EROOT}/usr/include;${CMAKE_INCLUDE_PATH}"
 		export CMAKE_LIBRARY_PATH=\
@@ -159,7 +159,7 @@ src_configure() {
 			-DOPENGL_opengl_LIBRARY=/usr/$(get_libdir)/libOpenGL.so
 		)
 	else
-		einfo "Detected blender-libs/mesa[-libglvnd]"
+		einfo "Detected blender-libs/mesa:${LLVM_V}[-libglvnd]"
 		export CMAKE_INCLUDE_PATH=\
 "${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
 		export CMAKE_LIBRARY_PATH=\
