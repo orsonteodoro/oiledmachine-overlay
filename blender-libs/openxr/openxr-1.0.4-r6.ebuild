@@ -13,6 +13,7 @@ PYTHON_COMPAT=( python3_{6,7,8} )
 inherit cmake-utils eutils python-single-r1 toolchain-funcs
 ORG_GH="https://github.com/KhronosGroup"
 CXXABI="11"
+LLVM_V="9"
 SLOT="${CXXABI}/${PV}"
 MY_PN="OpenXR-SDK-Source"
 SRC_URI="\
@@ -28,33 +29,33 @@ REQUIRED_USE="${PYTHON_REQUIRED_USE}
 RDEPEND="${PYTHON_DEPS}
 	|| (
 		video_cards_amdgpu? (
-	blender-libs/mesa:=[video_cards_radeonsi,vulkan]
+	blender-libs/mesa:${LLVM_V}=[video_cards_radeonsi,vulkan]
 	x11-base/xorg-drivers[video_cards_amdgpu]
 		)
 		video_cards_amdgpu-pro? (
-	blender-libs/mesa:=[video_cards_radeonsi]
+	blender-libs/mesa:${LLVM_V}=[video_cards_radeonsi]
 	x11-drivers/amdgpu-pro[-opengl_pro,opengl_mesa,vulkan]
 		)
 		video_cards_amdgpu-pro-lts? (
-	blender-libs/mesa:=[video_cards_radeonsi]
+	blender-libs/mesa:${LLVM_V}=[video_cards_radeonsi]
 	x11-drivers/amdgpu-pro-lts[-opengl_pro,opengl_mesa,vulkan]
 		)
 		video_cards_i965? (
-	blender-libs/mesa:=[video_cards_i965,vulkan]
+	blender-libs/mesa:${LLVM_V}=[video_cards_i965,vulkan]
 	x11-base/xorg-drivers[video_cards_i965]
 		)
 		video_cards_iris? (
-	blender-libs/mesa:=[video_cards_iris,vulkan]
+	blender-libs/mesa:${LLVM_V}=[video_cards_iris,vulkan]
 		)
 		video_cards_nvidia? (
 	>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_VULKAN}
 		)
 		video_cards_radeonsi? (
-	blender-libs/mesa:=[video_cards_radeonsi,vulkan]
+	blender-libs/mesa:${LLVM_V}=[video_cards_radeonsi,vulkan]
 	x11-base/xorg-drivers[video_cards_radeonsi]
 		)
 	)
-	blender-libs/mesa:=[libglvnd]
+	blender-libs/mesa:${LLVM_V}=[libglvnd]
 	media-libs/vulkan-loader
 	system-jsoncpp? ( dev-libs/jsoncpp )
 	xcb? (
@@ -69,7 +70,7 @@ RDEPEND="${PYTHON_DEPS}
 	wayland? (
 		dev-libs/wayland
 		dev-libs/wayland-protocols
-		blender-libs/mesa:=[egl]
+		blender-libs/mesa:${LLVM_V}=[egl]
 	)"
 #	x11-libs/libXrandr
 #	x11-libs/libXxf86vm
@@ -102,12 +103,12 @@ src_configure() {
 		die "Must choose a PRESENTATION_BACKEND"
 	fi
 
-	if has_version 'blender-libs/mesa:=[libglvnd]' ; then
-		einfo "Detected blender-libs/mesa:=[libglvnd]"
-		export CMAKE_LIBRARY_PATH="\
-${EROOT}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
-		export CMAKE_INCLUDE_PATH="\
-${EROOT}/usr/include;${CMAKE_INCLUDE_PATH}"
+	if has_version 'blender-libs/mesa:'${LLVM_V}'=[libglvnd]' ; then
+		einfo "Detected blender-libs/mesa:${LLVM_V}=[libglvnd]"
+		export CMAKE_LIBRARY_PATH=\
+"${EROOT}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+		export CMAKE_INCLUDE_PATH=\
+"${EROOT}/usr/include;${CMAKE_INCLUDE_PATH}"
 
 		mycmakeargs+=(
 			-DOPENGL_egl_LIBRARY=/usr/$(get_libdir)/libEGL.so
@@ -115,11 +116,11 @@ ${EROOT}/usr/include;${CMAKE_INCLUDE_PATH}"
 			-DOPENGL_opengl_LIBRARY=/usr/$(get_libdir)/libOpenGL.so
 		)
 	else
-		einfo "Detected blender-libs/mesa:=[-libglvnd]"
-		export CMAKE_LIBRARY_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
-		export CMAKE_INCLUDE_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
+		einfo "Detected blender-libs/mesa:${LLVM_V}=[-libglvnd]"
+		export CMAKE_LIBRARY_PATH=\
+"${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+		export CMAKE_INCLUDE_PATH=\
+"${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
 
 		mycmakeargs+=(
 			-DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so"
