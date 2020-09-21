@@ -27,7 +27,7 @@ IUSE="doc partio qt5 test ${CPU_FEATURES[@]%:*}"
 
 RDEPEND="
 	sys-devel/llvm:${LLVM_V}
-	dev-libs/boost:${CXXABI}=
+	blender-libs/boost:${CXXABI}=
 	dev-libs/pugixml
 	media-libs/openexr:=
 	media-libs/openimageio:=
