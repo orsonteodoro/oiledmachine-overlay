@@ -11,7 +11,8 @@ LICENSE="Apache-2.0 MIT"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit cmake-utils eutils python-single-r1 toolchain-funcs
 ORG_GH="https://github.com/KhronosGroup"
-SLOT="0/${PV}"
+CXXABI="11"
+SLOT="${CXXABI}/${PV}"
 MY_PN="OpenXR-SDK-Source"
 SRC_URI="\
 	${ORG_GH}/${MY_PN}/archive/release-${PV}.tar.gz
@@ -77,7 +78,7 @@ RESTRICT="mirror"
 S="${WORKDIR}/${MY_PN}-release-${PV}"
 
 iprfx() {
-	echo "${EPREFIX}/usr/$(get_libdir)/blender/${PN}/usr"
+	echo "${EPREFIX}/usr/$(get_libdir)/blender/${PN}/${CXXABI}/usr"
 }
 
 src_configure() {
