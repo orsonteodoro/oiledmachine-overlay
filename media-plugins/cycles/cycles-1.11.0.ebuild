@@ -12,31 +12,50 @@ LICENSE="Apache-2.0
 	 Boost-1.0
 	 BSD
 	 MIT"
+CXXABI_V=11
+LLVM_V=9
+LLVM_MAX_SLOT=${LLVM_V}
 SLOT="0/${PV}"
 RESTRICT="fetch mirror"
 X86_CPU_FLAGS=( mmx:mmx sse:sse sse2:sse2 sse3:sse3 ssse3:ssse3 sse4_1:sse4_1 \
 sse4_2:sse4_2 avx:avx avx2:avx2 fma:fma lzcnt:lzcnt bmi:bmi f16c:f16c )
 CPU_FLAGS=( ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_} )
+PYTHON_COMPAT=( python3_{7,8} )
+inherit llvm python-single-r1
 IUSE=" ${CPU_FLAGS[@]%:*}"
 IUSE="${IUSE/cpu_flags_x86_mmx/+cpu_flags_x86_mmx}"
 IUSE="${IUSE/cpu_flags_x86_sse /+cpu_flags_x86_sse }"
 IUSE="${IUSE/cpu_flags_x86_sse2/+cpu_flags_x86_sse2}"
-IUSE+=" asan color-management cpudetection cuda -debug embree +gui -network \
-nvcc nvrtc opencl -opensubdiv openvdb optix -osl"
+IUSE+=" +abi5-compat abi6-compat abi7-compat asan color-management \
+cpudetection cuda -debug embree +gui -network nvcc nvrtc opencl -opensubdiv \
+openvdb optix -osl"
 # Same dependency versions as Blender 2.81
-RDEPEND="color-management? ( >=media-libs/opencolorio-1.1.0 )
+RDEPEND="${PYTHON_DEPS}
+	>=dev-lang/python-3.7.4
+	color-management? ( >=media-libs/opencolorio-1.1.0 )
 	cuda? ( >=x11-drivers/nvidia-drivers-418.39
 		 >=dev-util/nvidia-cuda-toolkit-10.1:= )
-	>=dev-libs/boost-1.68[threads]
+	>=blender-libs/boost-1.68:${CXXABI_V}=[threads]
 	>=dev-libs/pugixml-1.9
 	embree? ( >=media-libs/embree-3.2.4:=\
 [cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,static-libs] )
-	media-libs/mesa
+	blender-libs/mesa:${LLVM_V}=
 	>=media-libs/glew-1.13.0
 	>=media-libs/openimageio-1.8.13
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.0_rc2[cuda=,opencl=] )
+	openvdb? (
+abi5-compat? ( >=blender-libs/openvdb-5.1.0:5[${PYTHON_SINGLE_USEDEP},abi5-compat(+)]
+		 <blender-libs/openvdb-7.1:5[${PYTHON_SINGLE_USEDEP},abi5-compat(+)] )
+abi6-compat? ( >=blender-libs/openvdb-5.1.0:6[${PYTHON_SINGLE_USEDEP},abi6-compat(+)]
+		 <blender-libs/openvdb-7.1:6[${PYTHON_SINGLE_USEDEP},abi6-compat(+)] )
+abi7-compat? ( >=blender-libs/openvdb-5.1.0:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+		 <blender-libs/openvdb-7.1:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)] )
+		>=dev-cpp/tbb-2018.5
+		>=dev-libs/c-blosc-1.14.4
+	)
 	optix? ( >=dev-libs/optix-7 )
-	osl? ( >=media-libs/osl-1.9.9:=[static-libs] )
+	osl? ( >=blender-libs/osl-1.9.9:${LLVM_V}=[static-libs]
+		blender-libs/mesa:${LLVM_V}= )
 	virtual/opencl"
 DEPEND="${RDEPEND}
 	asan? ( || ( sys-devel/clang
@@ -46,8 +65,7 @@ DEPEND="${RDEPEND}
 		dev-lang/icc
 	) )"
 # OpenVDB is disabled until multiple LLVMs problem is resolved for standalone cycles.
-REQUIRED_USE="
-	!openvdb
+REQUIRED_USE=" ${PYTHON_REQUIRED_USE}
 	amd64? ( cpu_flags_x86_sse2 )
 	x86? ( cpu_flags_x86_sse2 )
 	cpu_flags_x86_sse? ( cpu_flags_x86_sse2 )
@@ -92,6 +110,11 @@ PATCHES=(
 )
 
 pkg_setup() {
+	llvm_pkg_setup
+	python-single-r1_pkg_setup
+	export OPENVDB_V=$(usex openvdb $(usex abi7-compat 7 $(usex abi6-compat 6 5)) "")
+	export OPENVDB_V_DIR=$(usex openvdb $(usex abi7-compat 7-${CXXABI_V} $(usex abi6-compat 6 5)) "")
+
 	grep -q -i -E -e 'abm( |$)' /proc/cpuinfo
 	local has_abm="$?"
 	grep -q -i -E -e 'bmi1( |$)' /proc/cpuinfo
@@ -360,6 +383,57 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 			filter-flags -march=*
 		fi
 
+	fi
+
+	# Cycles must use <= c++11 or it might have build time failures.
+	# Apps must have the same LLVM version to avoid the multiple LLVM versions bug.
+
+	if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir)" ]] ; then
+		mycmakeargs+=( -DBoost_NO_SYSTEM_PATHS=ON )
+		mycmakeargs+=( -DBoost_INCLUDE_DIR="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/include" )
+		mycmakeargs+=( -DBoost_LIBRARY_DIR_RELEASE="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir)" )
+		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+	fi
+
+	if has_version 'blender-libs/mesa:'${LLVM_V}'[libglvnd]' ; then
+		mycmakeargs+=( -DOpenGL_GL_PREFERENCE=GLVND )
+		if [[ -e "${EROOT}/usr/$(get_libdir)/libGLX.so" ]] ; then
+			mycmakeargs+=( -DOPENGL_glx_LIBRARY="${EROOT}/usr/$(get_libdir)/libGLX.so" )
+		else
+			die "Install media-libs/libglvnd or indirectly through blender-libs/mesa:${LLVM_V}[libglvnd]."
+		fi
+		if [[ -e "${EROOT}/usr/$(get_libdir)/libOpenGL.so" ]] ; then
+			mycmakeargs+=( -DOPENGL_opengl_LIBRARY="${EROOT}/usr/$(get_libdir)/libOpenGL.so" )
+		else
+			die "Install media-libs/libglvnd or indirectly through blender-libs/mesa:${LLVM_V}[libglvnd]."
+		fi
+		if [[ -e "${EROOT}/usr/$(get_libdir)/libEGL.so" ]] ; then
+			mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/libEGL.so" )
+		fi
+	else
+		mycmakeargs+=( -DOpenGL_GL_PREFERENCE=LEGACY )
+		if [[ -e "${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so" ]] ; then
+			# legacy
+			mycmakeargs+=( -DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so" )
+		else
+			die "Use either blender-libs/mesa:${LLVM_V}[-libglvnd], or blender-libs/mesa:${LLVM_V}[libglvnd] with media-libs/libglvnd"
+		fi
+		if [[ -e "${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" ]] ; then
+			mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" )
+		fi
+		export CMAKE_INCLUDE_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
+		export CMAKE_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+	fi
+
+	if use openvdb ; then
+		export OPENVDB_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V_DIR}/usr"
+		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V_DIR}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+	fi
+
+	if use osl ; then
+		export OSL_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/osl/${LLVM_V}"
+		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/osl/${LLVM_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
 	fi
 
 	mycmakeargs=(

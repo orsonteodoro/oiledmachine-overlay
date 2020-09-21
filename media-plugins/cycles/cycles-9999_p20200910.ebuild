@@ -10,30 +10,44 @@ LICENSE="Apache-2.0
 	 Boost-1.0
 	 BSD
 	 MIT"
+CXXABI_V=11
+LLVM_V=10
+LLVM_MAX_SLOT=${LLVM_V}
 SLOT="0/${PV}"
 RESTRICT="fetch mirror"
 X86_CPU_FLAGS=( mmx:mmx sse:sse sse2:sse2 sse3:sse3 ssse3:ssse3 sse4_1:sse4_1 \
 sse4_2:sse4_2 avx:avx avx2:avx2 fma:fma lzcnt:lzcnt bmi:bmi f16c:f16c )
 CPU_FLAGS=( ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_} )
+PYTHON_COMPAT=( python3_{7,8} )
+inherit llvm python-single-r1
 IUSE=" ${CPU_FLAGS[@]%:*}"
 IUSE="${IUSE/cpu_flags_x86_mmx/+cpu_flags_x86_mmx}"
 IUSE="${IUSE/cpu_flags_x86_sse /+cpu_flags_x86_sse }"
 IUSE="${IUSE/cpu_flags_x86_sse2/+cpu_flags_x86_sse2}"
-IUSE+=" asan +color-management cpudetection cuda -debug +embree +gui -network \
-nvcc nvrtc opencl +openimagedenoise +opensubdiv +openvdb optix +osl"
+IUSE+=" abi7-compat asan +color-management cpudetection cuda -debug +embree \
++gui -network nvcc nvrtc opencl +openimagedenoise +opensubdiv +openvdb optix \
++osl"
 # Same dependency versions as Blender 2.90.0
 EGIT_COMMIT="3738dbe4c64a391bef4951c08965d144203f3892"
-RDEPEND="color-management? ( >=media-libs/opencolorio-1.1.1 )
+RDEPEND="${PYTHON_DEPS}
+	>=dev-lang/python-3.7.7
+	color-management? ( >=media-libs/opencolorio-1.1.1 )
 	cuda? ( >=x11-drivers/nvidia-drivers-418.39
 		 >=dev-util/nvidia-cuda-toolkit-10.1:= )
-	>=dev-libs/boost-1.70.0[threads]
+	>=dev-libs/boost-1.70[threads(+)]
 	>=dev-libs/pugixml-1.10
 	embree? ( >=media-libs/embree-3.10.0:=\
 [cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,static-libs] )
-	media-libs/mesa
+	>=media-libs/mesa-20.0.6:=
 	>=media-libs/glew-1.13.0
 	>=media-libs/openimageio-2.1.15.0
+	openimagedenoise? ( >=media-libs/oidn-1.2.1 )
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.3[cuda=,opencl=] )
+	openvdb? (
+		>=media-gfx/openvdb-7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+		>=dev-cpp/tbb-2019.9
+		>=dev-libs/c-blosc-1.5.0
+	)
 	optix? ( >=dev-libs/optix-7 )
 	osl? ( >=media-libs/osl-1.10.10:=[static-libs] )
 	virtual/opencl"
@@ -45,8 +59,7 @@ DEPEND="${RDEPEND}
 		dev-lang/icc
 	) )"
 # OpenVDB is disabled until multiple LLVMs problem is resolved for standalone cycles.
-REQUIRED_USE="
-	!openvdb
+REQUIRED_USE=" ${PYTHON_REQUIRED_USE}
 	amd64? ( cpu_flags_x86_sse2 )
 	x86? ( cpu_flags_x86_sse2 )
 	cpu_flags_x86_sse? ( cpu_flags_x86_sse2 )
@@ -91,6 +104,11 @@ PATCHES=(
 )
 
 pkg_setup() {
+	llvm_pkg_setup
+	python-single-r1_pkg_setup
+	export OPENVDB_V=$(usex openvdb 7 "")
+	export OPENVDB_V_DIR=$(usex openvdb 7-14 "")
+
 	grep -q -i -E -e 'abm( |$)' /proc/cpuinfo
 	local has_abm="$?"
 	grep -q -i -E -e 'bmi1( |$)' /proc/cpuinfo
@@ -166,6 +184,37 @@ pkg_setup() {
 
 	einfo "CC=${CC}"
 	einfo "CXX=${CXX}"
+
+	# Checks to avoid loading multiple versions of LLVM.
+
+	if ls ldd "${EROOT}"/usr/$(get_libdir)/dri/*.so 2>/dev/null 1>/dev/null ; then
+		local llvm_ret=$(ldd "${EROOT}"/usr/$(get_libdir)/dri/*.so \
+			| grep -q -e "LLVM-${LLVM_V}")
+		if [[ "${llvm_ret}" != "0" ]] ; then
+			die \
+"You need link media-libs/mesa with LLVM ${LLVM_V}.  See media-libs/mesa \
+ebuilds for compatibility details."
+		fi
+	fi
+
+	if use osl && [[ -e "/usr/$(get_libdir)/liboslexec.so" ]] ; then
+		osl_llvm=
+		if ldd /usr/$(get_libdir)/liboslexec.so \
+			| grep -q -F "libLLVMAnalysis.so.9" ; then
+			# split llvm
+			osl_llvm=9
+		else
+			# monolithic llvm
+			osl_llvm=$(ldd /usr/$(get_libdir)/liboslexec.so \
+				| grep -F -i -e "LLVM" | head -n 1 \
+				| grep -o -E -e "libLLVM-[0-9]+.so" \
+				| head -n 1 | grep -o -E -e "[0-9]+")
+		fi
+		if [[ -n "${osl_llvm}" ]] \
+			&& ver_test "${osl_llvm}" -ne "${LLVM_V}" ; then
+			die "media-libs/osl must be linked to LLVM ${LLVM_V}"
+		fi
+	fi
 }
 
 src_unpack() {
@@ -375,6 +424,9 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 		fi
 
 	fi
+
+	# Cycles must use <= c++17 or it might have build time failures.
+	# Apps must have the same LLVM version to avoid the multiple LLVM versions bug.
 
 	mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX=/usr/$(get_libdir)/cycles
