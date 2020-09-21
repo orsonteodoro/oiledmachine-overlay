@@ -5,6 +5,7 @@ EAPI=7
 inherit cmake-static-libs cmake-utils llvm multilib-minimal toolchain-funcs
 
 # check this on updates
+CXXABI=11
 LLVM_V=9
 LLVM_MAX_SLOT=${LLVM_V}
 
@@ -26,11 +27,12 @@ IUSE="doc partio qt5 test ${CPU_FEATURES[@]%:*}"
 
 RDEPEND="
 	sys-devel/llvm:${LLVM_V}
-	dev-libs/boost:=
+	dev-libs/boost:${CXXABI}=
 	dev-libs/pugixml
 	media-libs/openexr:=
 	media-libs/openimageio:=
-	<sys-devel/clang-10:=
+	sys-devel/clang:${LLVM_V}=
+	sys-devel/llvm:${LLVM_V}=
 	sys-libs/zlib:=
 	partio? ( media-libs/partio )
 	qt5? (
@@ -88,6 +90,14 @@ src_configure() {
 		cd "${BUILD_DIR}" || die
 		cmake-static-libs_configure() {
 			cd "${BUILD_DIR}" || die
+
+			unset CMAKE_INCLUDE_PATH
+			unset CMAKE_LIBRARY_PATH
+
+			export CMAKE_INCLUDE_PATH=\
+"${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir);${CMAKE_INCLUDE_PATH}"
+			export CMAKE_LIBRARY_PATH=\
+"${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 
 			local cpufeature
 			local mysimd=()
