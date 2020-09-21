@@ -51,7 +51,7 @@ cycles? (
 
 CXXABI_V=11
 LLVM_V=9
-LLVM_MAX_SLOT=${LLVM_V}
+LLVM_MAX_SLOT=${LLVM_9}
 PYTHON_COMPAT=( python3_{7,8} )
 
 inherit eapi7-ver
@@ -791,7 +791,7 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.83.1/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.83.4/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -1094,8 +1094,8 @@ _src_install() {
 		cp "${FILESDIR}/blender-wrapper" \
 			"${T}/${PN}-${SLOT_MAJ}" || die
 		sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
-			-e "s|#LD_LIBRARY_PATH|LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}\"|g" \
-			-e "s|#PATH|PATH=\"${_PATH}\"|g" \
+			-e "s|#LD_LIBRARY_PATH|export LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}\"|g" \
+			-e "s|#PATH|export PATH=\"${_PATH}\"|g" \
 			"${T}/${PN}-${SLOT_MAJ}" || die
 		exeinto /usr/bin
 		doexe "${T}/${PN}-${SLOT_MAJ}"
@@ -1104,8 +1104,8 @@ _src_install() {
 		cp "${FILESDIR}/blender-wrapper" \
 			"${T}/${PN}-headless-${SLOT_MAJ}" || die
 		sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
-			-e "s|#LD_LIBRARY_PATH|LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}\"|g" \
-			-e "s|#PATH|PATH=\"${_PATH}\"|g" \
+			-e "s|#LD_LIBRARY_PATH|export LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}\"|g" \
+			-e "s|#PATH|export PATH=\"${_PATH}\"|g" \
 			"${T}/${PN}-headless-${SLOT_MAJ}" || die
 		exeinto /usr/bin
 		doexe "${T}/${PN}-headless-${SLOT_MAJ}"

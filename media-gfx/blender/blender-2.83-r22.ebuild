@@ -1099,8 +1099,8 @@ _src_install() {
 		cp "${FILESDIR}/blender-wrapper" \
 			"${T}/${PN}-${SLOT_MAJ}" || die
 		sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
-			-e "s|#LD_LIBRARY_PATH|LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}\"|g" \
-			-e "s|#PATH|PATH=\"${_PATH}\"|g" \
+			-e "s|#LD_LIBRARY_PATH|export LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}\"|g" \
+			-e "s|#PATH|export PATH=\"${_PATH}\"|g" \
 			"${T}/${PN}-${SLOT_MAJ}" || die
 		exeinto /usr/bin
 		doexe "${T}/${PN}-${SLOT_MAJ}"
@@ -1109,8 +1109,8 @@ _src_install() {
 		cp "${FILESDIR}/blender-wrapper" \
 			"${T}/${PN}-headless-${SLOT_MAJ}" || die
 		sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
-			-e "s|#LD_LIBRARY_PATH|LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}\"|g" \
-			-e "s|#PATH|PATH=\"${_PATH}\"|g" \
+			-e "s|#LD_LIBRARY_PATH|export LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}\"|g" \
+			-e "s|#PATH|export PATH=\"${_PATH}\"|g" \
 			"${T}/${PN}-headless-${SLOT_MAJ}" || die
 		exeinto /usr/bin
 		doexe "${T}/${PN}-headless-${SLOT_MAJ}"
