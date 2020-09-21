@@ -226,7 +226,7 @@ RDEPEND="${PYTHON_DEPS}
 	virtual/libintl
 	virtual/opengl
 	build_portable? (
-		dev-libs/boost:=[static-libs]
+		dev-libs/boost:${CXXABI_V}=[static-libs]
 		media-libs/openjpeg:=[static-libs]
 	)
 	collada? ( >=media-libs/opencollada-1.6.51:= )
@@ -265,7 +265,7 @@ RDEPEND="${PYTHON_DEPS}
 	opensubdiv? ( >=media-libs/opensubdiv-3.1.1:=[cuda=,opencl=] )
 	!openvdb? (
 		|| (
-			>=blender-libs/boost-1.60:=[nls?,threads(+)]
+			>=blender-libs/boost-1.60:${CXXABI_V}=[nls?,threads(+)]
 			>=dev-libs/boost-1.60:=[nls?,threads(+)]
 		)
 	)
@@ -283,7 +283,7 @@ abi7-compat? ( >=blender-libs/openvdb-3.3.0:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP
 			>=blender-libs/openvdb-3.1.0:3[${PYTHON_SINGLE_USEDEP},abi3-compat(+)]
 			 <blender-libs/openvdb-7.1:3[${PYTHON_SINGLE_USEDEP},abi3-compat(+)]
 		)
-		>=blender-libs/boost-1.60:=[nls?,threads(+)]
+		>=blender-libs/boost-1.60:${CXXABI_V}=[nls?,threads(+)]
 		>=dev-cpp/tbb-2017.7
 		>=dev-libs/c-blosc-1.7.1
 	)

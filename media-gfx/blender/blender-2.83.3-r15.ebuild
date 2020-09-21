@@ -51,7 +51,7 @@ cycles? (
 
 CXXABI_V=11
 LLVM_V=9
-LLVM_MAX_SLOT=${LLVM_9}
+LLVM_MAX_SLOT=${LLVM_V}
 PYTHON_COMPAT=( python3_{7,8} )
 
 inherit eapi7-ver
@@ -243,18 +243,18 @@ RDEPEND="${PYTHON_DEPS}
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.0_rc2:=[cuda=,opencl=] )
 	!openvdb? (
 		|| (
-			>=blender-libs/boost-1.70:=[nls?,threads(+)]
+			>=blender-libs/boost-1.70:${CXXABI_V}=[nls?,threads(+)]
 			>=dev-libs/boost-1.70:=[nls?,threads(+)]
 		)
 	)
 	openvdb? (
 	>=blender-libs/openvdb-7:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
 	 <blender-libs/openvdb-7.1:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
-		>=blender-libs/boost-1.70:=[nls?,threads(+)]
+		>=blender-libs/boost-1.70:${CXXABI_V}=[nls?,threads(+)]
 		>=dev-cpp/tbb-2019.9
 		>=dev-libs/c-blosc-1.5.0
 	)
-	openxr? ( >=blender-libs/openxr-1.0.6 )
+	openxr? ( >=blender-libs/openxr-1.0.6:${CXXABI_V} )
 	optix? ( >=dev-libs/optix-7 )
 	osl? ( >=blender-libs/osl-1.10.9:${LLVM_V}=[static-libs]
 		blender-libs/mesa:${LLVM_V}= )
@@ -791,7 +791,7 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.83.4/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.83.3/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(

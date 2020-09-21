@@ -243,18 +243,18 @@ RDEPEND="${PYTHON_DEPS}
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.0_rc2:=[cuda=,opencl=] )
 	!openvdb? (
 		|| (
-			>=blender-libs/boost-1.70:=[nls?,threads(+)]
+			>=blender-libs/boost-1.70:${CXXABI_V}=[nls?,threads(+)]
 			>=dev-libs/boost-1.70:=[nls?,threads(+)]
 		)
 	)
 	openvdb? (
 	>=blender-libs/openvdb-7:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
 	 <blender-libs/openvdb-7.1:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
-		>=blender-libs/boost-1.70:=[nls?,threads(+)]
+		>=blender-libs/boost-1.70:${CXXABI_V}=[nls?,threads(+)]
 		>=dev-cpp/tbb-2019.9
 		>=dev-libs/c-blosc-1.5.0
 	)
-	openxr? ( >=blender-libs/openxr-1.0.6 )
+	openxr? ( >=blender-libs/openxr-1.0.6:${CXXABI_V} )
 	optix? ( >=dev-libs/optix-7 )
 	osl? ( >=blender-libs/osl-1.10.9:${LLVM_V}=[static-libs]
 		blender-libs/mesa:${LLVM_V}= )

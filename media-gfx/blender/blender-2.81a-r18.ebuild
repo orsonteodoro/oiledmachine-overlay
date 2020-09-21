@@ -242,12 +242,12 @@ RDEPEND="${PYTHON_DEPS}
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.0_rc2:=[cuda=,opencl=] )
 	!openvdb? (
 		|| (
-			>=blender-libs/boost-1.68:=[nls?,threads(+)]
+			>=blender-libs/boost-1.68:${CXXABI_V}=[nls?,threads(+)]
 			>=dev-libs/boost-1.68:=[nls?,threads(+)]
 		)
 	)
 	openvdb? (
-		>=blender-libs/boost-1.68:=[nls?,threads(+)]
+		>=blender-libs/boost-1.68:${CXXABI_V}=[nls?,threads(+)]
 abi5-compat? ( >=blender-libs/openvdb-5.1.0:5[${PYTHON_SINGLE_USEDEP},abi5-compat(+)]
 		 <blender-libs/openvdb-7.1:5[${PYTHON_SINGLE_USEDEP},abi5-compat(+)] )
 abi6-compat? ( >=blender-libs/openvdb-5.1.0:6[${PYTHON_SINGLE_USEDEP},abi6-compat(+)]
@@ -781,7 +781,7 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.81/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.81a/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(

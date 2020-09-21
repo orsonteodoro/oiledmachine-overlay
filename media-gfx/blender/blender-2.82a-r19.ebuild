@@ -77,12 +77,11 @@ IUSE+=" ${CPU_FLAGS[@]%:*}"
 IUSE="${IUSE/cpu_flags_x86_mmx/+cpu_flags_x86_mmx}"
 IUSE="${IUSE/cpu_flags_x86_sse /+cpu_flags_x86_sse }"
 IUSE="${IUSE/cpu_flags_x86_sse2/+cpu_flags_x86_sse2}"
-IUSE+=" X +abi5-compat abi6-compat abi7-compat -asan +bullet -collada \
--color-management -cpudetection +cuda +cycles -cycles-network +dds -debug doc \
-+elbeem -embree -ffmpeg -fftw flac -jack +jemalloc +jpeg2k -llvm -man +ndof \
-+nls +nvcc -nvrtc +openal +opencl -openexr -openimagedenoise -openimageio \
-+openmp -opensubdiv -openvdb -optix -osl release -sdl -sndfile test +tiff \
--valgrind"
+IUSE+=" X +abi7-compat -asan +bullet +collada +color-management -cpudetection \
++cuda +cycles -cycles-network +dds -debug doc +elbeem -embree +ffmpeg +fftw \
+flac +jack +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal \
++opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb \
+-optix +osl release +sdl +sndfile test +tiff -valgrind"
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 RESTRICT="mirror !test? ( test )"
@@ -128,7 +127,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	nvcc? ( || ( cuda optix ) )
 	nvrtc? ( || ( cuda optix ) )
 	opencl? ( cycles )
-	openvdb? ( ^^ ( abi5-compat abi6-compat abi7-compat ) )
+	openvdb? ( abi7-compat )
 	optix? ( cuda cycles nvcc )
 	opus? ( ffmpeg )
 	osl? ( cycles llvm )
@@ -177,6 +176,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 # doc/python_api/requirements.txt
 # extern/Eigen3/eigen-update.sh
 # Track OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER for changes.
+# Track build_files/build_environment/dependencies.dot for ffmpeg dependencies
 RDEPEND="${PYTHON_DEPS}
 	>=dev-lang/python-3.7.4
 	dev-libs/lzo:2
@@ -215,7 +215,7 @@ RDEPEND="${PYTHON_DEPS}
 	ffmpeg? ( >=media-video/ffmpeg-4.0.2:=\
 [encode,jpeg2k?,mp3?,opus?,theora?,vorbis?,vpx?,x264,xvid?,zlib] )
 	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
-	flac? ( >=media-libs/flac-1.3.3 )
+	flac? ( >=media-libs/flac-1.3.2 )
 	jack? ( virtual/jack )
 	jemalloc? ( >=dev-libs/jemalloc-5.0.1:= )
 	jpeg2k? ( >=media-libs/openjpeg-2.3.0:2 )
@@ -236,26 +236,22 @@ RDEPEND="${PYTHON_DEPS}
 	openimagedenoise? ( >=media-libs/oidn-1.0.0 )
 	openimageio? ( >=media-libs/openimageio-1.8.13[color-management?,jpeg2k?] )
 	openexr? (
-		>=media-libs/ilmbase-2.3.0:=
-		>=media-libs/openexr-2.3.0:=
+		>=media-libs/ilmbase-2.4.0:=
+		>=media-libs/openexr-2.4.0:=
 	)
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.0_rc2:=[cuda=,opencl=] )
 	!openvdb? (
 		|| (
-			>=blender-libs/boost-1.68:=[nls?,threads(+)]
-			>=dev-libs/boost-1.68:=[nls?,threads(+)]
+			>=blender-libs/boost-1.70:${CXXABI_V}=[nls?,threads(+)]
+			>=dev-libs/boost-1.70:=[nls?,threads(+)]
 		)
 	)
 	openvdb? (
-		>=blender-libs/boost-1.68:=[nls?,threads(+)]
-abi5-compat? ( >=blender-libs/openvdb-5.1.0:5[${PYTHON_SINGLE_USEDEP},abi5-compat(+)]
-		 <blender-libs/openvdb-7.1:5[${PYTHON_SINGLE_USEDEP},abi5-compat(+)] )
-abi6-compat? ( >=blender-libs/openvdb-5.1.0:6[${PYTHON_SINGLE_USEDEP},abi6-compat(+)]
-		 <blender-libs/openvdb-7.1:6[${PYTHON_SINGLE_USEDEP},abi6-compat(+)] )
-abi7-compat? ( >=blender-libs/openvdb-5.1.0:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
-		 <blender-libs/openvdb-7.1:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)] )
-		>=dev-cpp/tbb-2018.5
-		>=dev-libs/c-blosc-1.14.4
+	>=blender-libs/openvdb-7:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+	 <blender-libs/openvdb-7.1:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+		>=blender-libs/boost-1.70:${CXXABI_V}=[nls?,threads(+)]
+		>=dev-cpp/tbb-2019.9
+		>=dev-libs/c-blosc-1.5.0
 	)
 	optix? ( >=dev-libs/optix-7 )
 	osl? ( >=blender-libs/osl-1.9.9:${LLVM_V}=[static-libs]
@@ -321,12 +317,12 @@ pkg_setup() {
 	blender_check_requirements
 	python-single-r1_pkg_setup
 	# Needs OpenCL 1.2 (GCN 2)
-	export OPENVDB_V=$(usex openvdb $(usex abi7-compat 7 $(usex abi6-compat 6 5)) "")
-	export OPENVDB_V_DIR=$(usex openvdb $(usex abi7-compat 7-${CXXABI_V} $(usex abi6-compat 6 5)) "")
+	export OPENVDB_V=$(usex openvdb 7 "")
+	export OPENVDB_V_DIR=$(usex openvdb 7-${CXXABI_V} "")
 	if use openvdb ; then
 		if ! grep -q -F -e "delta()" "${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V_DIR}/usr/include/openvdb/util/CpuTimer.h" ; then
 			if use abi7-compat ; then
-				# compatible as long as the function is present
+				# compatible as long as the function is present?
 				die "OpenVDB delta() is missing try <=7.1.x only"
 			fi
 		fi
@@ -781,7 +777,7 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.81a/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.82a/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
