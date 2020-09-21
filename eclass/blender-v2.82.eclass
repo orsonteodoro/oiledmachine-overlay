@@ -1,10 +1,16 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+# @ECLASS: blender-v2.82.eclass
+# @MAINTAINER: orsonteodoro@hotmail.com
+# @BLURB: blender implementation
+# @DESCRIPTION:
+# The blender eclass helps reduce code duplication across ebuilds
+# using the same major.minor version.
+
 DESCRIPTION="3D Creation/Animation/Publishing System"
 HOMEPAGE="https://www.blender.org"
-KEYWORDS="amd64 ~x86"
+KEYWORDS=${KEYWORDS:="~amd64 ~x86"}
 LICENSE="|| ( GPL-2 BL )
 all-rights-reserved
 LGPL-2.1+
@@ -77,12 +83,11 @@ IUSE+=" ${CPU_FLAGS[@]%:*}"
 IUSE="${IUSE/cpu_flags_x86_mmx/+cpu_flags_x86_mmx}"
 IUSE="${IUSE/cpu_flags_x86_sse /+cpu_flags_x86_sse }"
 IUSE="${IUSE/cpu_flags_x86_sse2/+cpu_flags_x86_sse2}"
-IUSE+=" X +abi5-compat abi6-compat abi7-compat -asan +bullet -collada \
--color-management -cpudetection +cuda +cycles -cycles-network +dds -debug doc \
-+elbeem -embree -ffmpeg -fftw flac -jack +jemalloc +jpeg2k -llvm -man +ndof \
-+nls +nvcc -nvrtc +openal +opencl -openexr -openimagedenoise -openimageio \
-+openmp -opensubdiv -openvdb -optix -osl release -sdl -sndfile test +tiff \
--valgrind"
+IUSE+=" X +abi7-compat -asan +bullet +collada +color-management -cpudetection \
++cuda +cycles -cycles-network +dds -debug doc +elbeem -embree +ffmpeg +fftw \
+flac +jack +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal \
++opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb \
+-optix +osl release +sdl +sndfile test +tiff -valgrind"
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 RESTRICT="mirror !test? ( test )"
@@ -128,7 +133,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	nvcc? ( || ( cuda optix ) )
 	nvrtc? ( || ( cuda optix ) )
 	opencl? ( cycles )
-	openvdb? ( ^^ ( abi5-compat abi6-compat abi7-compat ) )
+	openvdb? ( abi7-compat )
 	optix? ( cuda cycles nvcc )
 	opus? ( ffmpeg )
 	osl? ( cycles llvm )
@@ -177,6 +182,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 # doc/python_api/requirements.txt
 # extern/Eigen3/eigen-update.sh
 # Track OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER for changes.
+# Track build_files/build_environment/dependencies.dot for ffmpeg dependencies
 RDEPEND="${PYTHON_DEPS}
 	>=dev-lang/python-3.7.4
 	dev-libs/lzo:2
@@ -215,7 +221,7 @@ RDEPEND="${PYTHON_DEPS}
 	ffmpeg? ( >=media-video/ffmpeg-4.0.2:=\
 [encode,jpeg2k?,mp3?,opus?,theora?,vorbis?,vpx?,x264,xvid?,zlib] )
 	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
-	flac? ( >=media-libs/flac-1.3.3 )
+	flac? ( >=media-libs/flac-1.3.2 )
 	jack? ( virtual/jack )
 	jemalloc? ( >=dev-libs/jemalloc-5.0.1:= )
 	jpeg2k? ( >=media-libs/openjpeg-2.3.0:2 )
@@ -236,26 +242,22 @@ RDEPEND="${PYTHON_DEPS}
 	openimagedenoise? ( >=media-libs/oidn-1.0.0 )
 	openimageio? ( >=media-libs/openimageio-1.8.13[color-management?,jpeg2k?] )
 	openexr? (
-		>=media-libs/ilmbase-2.3.0:=
-		>=media-libs/openexr-2.3.0:=
+		>=media-libs/ilmbase-2.4.0:=
+		>=media-libs/openexr-2.4.0:=
 	)
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.0_rc2:=[cuda=,opencl=] )
 	!openvdb? (
 		|| (
-			>=blender-libs/boost-1.68:${CXXABI_V}=[nls?,threads(+)]
-			>=dev-libs/boost-1.68:=[nls?,threads(+)]
+			>=blender-libs/boost-1.70:${CXXABI_V}=[nls?,threads(+)]
+			>=dev-libs/boost-1.70:=[nls?,threads(+)]
 		)
 	)
 	openvdb? (
-		>=blender-libs/boost-1.68:${CXXABI_V}=[nls?,threads(+)]
-abi5-compat? ( >=blender-libs/openvdb-5.1.0:5[${PYTHON_SINGLE_USEDEP},abi5-compat(+)]
-		 <blender-libs/openvdb-7.1:5[${PYTHON_SINGLE_USEDEP},abi5-compat(+)] )
-abi6-compat? ( >=blender-libs/openvdb-5.1.0:6[${PYTHON_SINGLE_USEDEP},abi6-compat(+)]
-		 <blender-libs/openvdb-7.1:6[${PYTHON_SINGLE_USEDEP},abi6-compat(+)] )
-abi7-compat? ( >=blender-libs/openvdb-5.1.0:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
-		 <blender-libs/openvdb-7.1:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)] )
-		>=dev-cpp/tbb-2018.5
-		>=dev-libs/c-blosc-1.14.4
+	>=blender-libs/openvdb-7:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+	 <blender-libs/openvdb-7.1:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+		>=blender-libs/boost-1.70:${CXXABI_V}=[nls?,threads(+)]
+		>=dev-cpp/tbb-2019.9
+		>=dev-libs/c-blosc-1.5.0
 	)
 	optix? ( >=dev-libs/optix-7 )
 	osl? ( >=blender-libs/osl-1.9.9:${LLVM_V}=[static-libs]
@@ -312,6 +314,16 @@ blender_check_requirements() {
 	fi
 }
 
+# Dependency PreFiX
+dpfx() {
+	echo "${EROOT}/usr/$(get_libdir)/${PN}"
+}
+
+# EROOT Dependency PreFiX
+erdpfx() {
+	echo "${EROOT}/$(dpfx)"
+}
+
 pkg_pretend() {
 	blender_check_requirements
 }
@@ -321,12 +333,13 @@ pkg_setup() {
 	blender_check_requirements
 	python-single-r1_pkg_setup
 	# Needs OpenCL 1.2 (GCN 2)
-	export OPENVDB_V=$(usex openvdb $(usex abi7-compat 7 $(usex abi6-compat 6 5)) "")
-	export OPENVDB_V_DIR=$(usex openvdb $(usex abi7-compat 7-${CXXABI_V} $(usex abi6-compat 6 5)) "")
+	export OPENVDB_V=$(usex openvdb 7 "")
+	export OPENVDB_V_DIR=$(usex openvdb 7-${CXXABI_V} "")
 	if use openvdb ; then
-		if ! grep -q -F -e "delta()" "${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V_DIR}/usr/include/openvdb/util/CpuTimer.h" ; then
+		if ! grep -q -F -e "delta()" \
+"$(erdpfx)/openvdb/${OPENVDB_V_DIR}/usr/include/openvdb/util/CpuTimer.h" ; then
 			if use abi7-compat ; then
-				# compatible as long as the function is present
+				# compatible as long as the function is present?
 				die "OpenVDB delta() is missing try <=7.1.x only"
 			fi
 		fi
@@ -656,26 +669,27 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 
 		if use cycles && use cpudetection ; then
 			# automatically adds -march=native
-			filter-flags -m*avx* -m*mmx -m*sse* -m*ssse3 -m*3dnow -m*popcnt -m*abm -m*bmi -m*lzcnt -m*f16c -m*fma
+			filter-flags -m*avx* -m*mmx -m*sse* -m*ssse3 -m*3dnow \
+				-m*popcnt -m*abm -m*bmi -m*lzcnt -m*f16c -m*fma
 			filter-flags -march=*
 		fi
 
 	fi
 
-	if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir)" ]] ; then
+	if [[ -d "$(erdpfx)/boost/${CXXABI_V}/usr/$(get_libdir)" ]] ; then
 		mycmakeargs+=( -DBoost_NO_SYSTEM_PATHS=ON )
-		mycmakeargs+=( -DBoost_INCLUDE_DIR="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/include" )
-		mycmakeargs+=( -DBoost_LIBRARY_DIR_RELEASE="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir)" )
-		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+		mycmakeargs+=( -DBoost_INCLUDE_DIR="$(erdpfx)/boost/${CXXABI_V}/usr/include" )
+		mycmakeargs+=( -DBoost_LIBRARY_DIR_RELEASE="$(erdpfx)/boost/${CXXABI_V}/usr/$(get_libdir)" )
+		_LD_LIBRARY_PATH="$(erdpfx)/boost/${CXXABI_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
 	fi
 
 	if use openvdb ; then
-		export OPENVDB_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V_DIR}/usr"
-		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V_DIR}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+		export OPENVDB_ROOT_DIR="$(erdpfx)/openvdb/${OPENVDB_V_DIR}/usr"
+		_LD_LIBRARY_PATH="$(erdpfx)/openvdb/${OPENVDB_V_DIR}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
 	fi
 
 	if use osl ; then
-		if has_version 'blender-libs/mesa[libglvnd]' ; then
+		if has_version 'blender-libs/mesa:'${LLVM_V}'[libglvnd]' ; then
 			mycmakeargs+=( -DOpenGL_GL_PREFERENCE=GLVND )
 			if [[ -e "${EROOT}/usr/$(get_libdir)/libGLX.so" ]] ; then
 				mycmakeargs+=( -DOPENGL_glx_LIBRARY="${EROOT}/usr/$(get_libdir)/libGLX.so" )
@@ -692,21 +706,21 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 			fi
 		else
 			mycmakeargs+=( -DOpenGL_GL_PREFERENCE=LEGACY )
-			if [[ -e "${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so" ]] ; then
+			if [[ -e "$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so" ]] ; then
 				# legacy
-				mycmakeargs+=( -DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so" )
+				mycmakeargs+=( -DOPENGL_gl_LIBRARY="$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so" )
 			else
 				die "Use either blender-libs/mesa or media-libs/mesa[libglvnd] or media-libs/libglvnd"
 			fi
-			if [[ -e "${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" ]] ; then
-				mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" )
+			if [[ -e "$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" ]] ; then
+				mycmakeargs+=( -DOPENGL_egl_LIBRARY="$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" )
 			fi
-			export CMAKE_INCLUDE_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
-			export CMAKE_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
-			_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+			export CMAKE_INCLUDE_PATH="$(erdpfx)/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
+			export CMAKE_LIBRARY_PATH="$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+			_LD_LIBRARY_PATH="$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
 		fi
-		export OSL_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/osl/${LLVM_V}"
-		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/osl/${LLVM_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+		export OSL_ROOT_DIR="$(erdpfx)/osl/${LLVM_V}"
+		_LD_LIBRARY_PATH="$(erdpfx)/osl/${LLVM_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
 	fi
 
 	if [[ -n "${_LD_LIBRARY_PATH}" ]] ; then
@@ -781,7 +795,8 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.81a/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.82/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.82a/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -1046,7 +1061,7 @@ _src_install() {
 	local d_dest=$(get_dest)
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
 		python_fix_shebang "${ED%/}${d_dest}/blender-thumbnailer.py"
-		python_optimize "${ED%/}/usr/share/blender/${SLOT_MAJ}/scripts"
+		python_optimize "${ED%/}/usr/share/${PN}/${SLOT_MAJ}/scripts"
 	fi
 
 	if [[ "${EBLENDER}" == "build_creator" \
@@ -1057,43 +1072,52 @@ _src_install() {
 	_LD_LIBRARY_PATH=()
 	_PATH=()
 	if use openvdb ; then
-		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V_DIR}/usr/$(get_libdir)\n" )
+		_LD_LIBRARY_PATH+=( "$(dpfx)/openvdb/${OPENVDB_V_DIR}/usr/$(get_libdir)\n" )
 	fi
 	if use osl ; then
-		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)\n" )
-		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/osl/${LLVM_V}/usr/$(get_libdir)\n" )
-		_PATH+=( "/usr/$(get_libdir)/blender/osl/${LLVM_V}/usr/$(get_libdir)/osl/bin\n" )
+		_LD_LIBRARY_PATH+=( "$(dpfx)/mesa/${LLVM_V}/usr/$(get_libdir)\n" )
+		_LD_LIBRARY_PATH+=( "$(dpfx)/osl/${LLVM_V}/usr/$(get_libdir)\n" )
+		_PATH+=( "$(dpfx)/osl/${LLVM_V}/usr/$(get_libdir)/osl/bin\n" )
 	fi
-	if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir)" ]] ; then
+	if [[ -d "$(erdpfx)/boost/${CXXABI_V}/usr/$(get_libdir)" ]] ; then
 		sed -i -e "s|#BOOST ||g" \
 			"${T}/${PN}-${SLOT_MAJ}" || die
 	fi
 	_LD_LIBRARY_PATH=$(echo -e "${_LD_LIBRARY_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
 	_PATH=$(echo -e "${_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
 
+	local suffix=
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
 		cp "${ED}/usr/share/applications"/blender{,-${SLOT_MAJ}}.desktop || die
 		local menu_file="${ED}/usr/share/applications/blender-${SLOT_MAJ}.desktop"
 		sed -i -e "s|Name=Blender|Name=Blender ${PV}|g" "${menu_file}" || die
 		sed -i -e "s|Exec=blender|Exec=/usr/bin/${PN}-${SLOT_MAJ}|g" "${menu_file}" || die
 		sed -i -e "s|Icon=blender|Icon=blender-${SLOT_MAJ}|g" "${menu_file}" || die
+	fi
+
+	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
+		if [[ "${EBLENDER_NAME}" == "creator" ]] ; then
+			suffix=""
+		elif [[ "${EBLENDER_NAME}" == "headless" ]] ; then
+			suffix="-headless"
+		fi
 		cp "${FILESDIR}/blender-wrapper" \
-			"${T}/${PN}-${SLOT_MAJ}" || die
+			"${T}/${PN}${suffix}-${SLOT_MAJ}" || die
 		sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
 			-e "s|#LD_LIBRARY_PATH|export LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}\"|g" \
 			-e "s|#PATH|export PATH=\"${_PATH}\"|g" \
-			"${T}/${PN}-${SLOT_MAJ}" || die
+			"${T}/${PN}${suffix}-${SLOT_MAJ}" || die
 		exeinto /usr/bin
-		doexe "${T}/${PN}-${SLOT_MAJ}"
-	elif [[ "${EBLENDER}" == "build_headless" ]] ; then
-		cp "${FILESDIR}/blender-wrapper" \
-			"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
-			-e "s|#LD_LIBRARY_PATH|export LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}\"|g" \
-			-e "s|#PATH|export PATH=\"${_PATH}\"|g" \
-			"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		exeinto /usr/bin
-		doexe "${T}/${PN}-headless-${SLOT_MAJ}"
+		doexe "${T}/${PN}${suffix}-${SLOT_MAJ}"
+		if use cycles-network ; then
+			cp "${FILESDIR}/blender-wrapper" \
+				"${T}/cycles_network${suffix/-/_}-${SLOT_MAJ}" || die
+			sed -i -e "s|\${BLENDER_EXE}|${d_dest}/cycles_network|g" \
+				-e "s|#LD_LIBRARY_PATH|export LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}\"|g" \
+				-e "s|#PATH|export PATH=\"${_PATH}\"|g" \
+				"${T}/cycles_network${suffix/-/_}-${SLOT_MAJ}" || die
+				doexe "${T}/cycles_network${suffix/-/_}-${SLOT_MAJ}"
+		fi
 	fi
 	install_licenses
 	if use doc ; then
@@ -1181,21 +1205,20 @@ pkg_postinst() {
 	fi
 	if [[ -n "${V}" ]] ; then
 		if use build_creator ; then
-			ln -sf "${EROOT}${d_src}/${V}/creator/blender" \
-				"${EROOT}/usr/bin/blender" || die
+			ln -sf "${EROOT}/usr/bin/${PN}-${V}" \
+				"${EROOT}/usr/bin/${PN}" || die
+			if use cycles-network ; then
+				ln -sf "${EROOT}/usr/bin/cycles_server-${V}" \
+					"${EROOT}/usr/bin/cycles_server" || die
+			fi
 		fi
 		if use build_headless ; then
-			ln -sf "${EROOT}${d_src}/${V}/headless/blender" \
-				"${EROOT}/usr/bin/blender-headless" || die
-		fi
-		if [[ -e "${EROOT}${d_src}/${V}/creator/cycles_server" ]] \
-			&& use cycles-network ; then
-			ln -sf "${EROOT}${d_src}/${V}/creator/cycles_server" \
-				"${EROOT}/usr/bin/cycles_server" || die
-		elif [[ -e "${EROOT}${d_src}/${V}/headless/cycles_server" ]] \
-			&& use cycles-network ; then
-			ln -sf "${EROOT}${d_src}/${V}/headless/cycles_server" \
-				"${EROOT}/usr/bin/cycles_server" || die
+			ln -sf "${EROOT}/usr/bin/${PN}-headless-${V}" \
+				"${EROOT}/usr/bin/${PN}-headless" || die
+			if use cycles-network ; then
+				ln -sf "${EROOT}/usr/bin/cycles_server_headless-${V}" \
+					"${EROOT}/usr/bin/cycles_server_headless" || die
+			fi
 		fi
 	fi
 }
@@ -1217,6 +1240,9 @@ pkg_postrm() {
 		fi
 		if [[ -e "${EROOT}/usr/bin/cycles_server" ]] ; then
 			rm -rf "${EROOT}/usr/bin/cycles_server" || die
+		fi
+		if [[ -e "${EROOT}/usr/bin/cycles_server_headless" ]] ; then
+			rm -rf "${EROOT}/usr/bin/cycles_server_headless" || die
 		fi
 	fi
 }
