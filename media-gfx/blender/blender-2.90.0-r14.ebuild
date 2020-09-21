@@ -50,7 +50,7 @@ cycles? (
 #   all rights reserved in the vanilla GPL-2
 
 PYTHON_COMPAT=( python3_{7,8} )
-LLVM_MAX_SLOT=9
+LLVM_MAX_SLOT=10
 
 inherit eapi7-ver
 inherit blender check-reqs cmake-utils flag-o-matic llvm pax-utils \
@@ -76,14 +76,15 @@ IUSE="${IUSE/cpu_flags_x86_mmx/+cpu_flags_x86_mmx}"
 IUSE="${IUSE/cpu_flags_x86_sse /+cpu_flags_x86_sse }"
 IUSE="${IUSE/cpu_flags_x86_sse2/+cpu_flags_x86_sse2}"
 IUSE+=" X +abi7-compat -asan +bullet +collada +color-management -cpudetection \
-+cuda +cycles -cycles-network +dds -debug doc +elbeem -embree +ffmpeg +fftw \
++cuda +cycles -cycles-network +dds -debug doc +elbeem +embree +ffmpeg +fftw \
 flac +jack +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal \
 +opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb \
 +openxr -optix +osl release +sdl +sndfile test +tiff -valgrind"
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 RESTRICT="mirror !test? ( test )"
-LLVM_V=9
+LLVM_V=10
+CXXABI_V=17
 
 # The release USE flag depends on platform defaults.
 # Disabled dead code optimization flags introduced by
@@ -141,6 +142,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 		dds
 		!debug
 		elbeem
+		embree
 		ffmpeg
 		fftw
 		jack
@@ -177,20 +179,34 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 # extern/Eigen3/eigen-update.sh
 # Track OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER for changes.
 # Track build_files/build_environment/dependencies.dot for ffmpeg dependencies
+#
+# Mentioned in versions.cmake but missing in (R)DEPENDS freeglut, alembic,
+# glfw, clew, cuew, hidapi, webp, xml2, tinyxml, yaml, lcms, flexbison,
+# bzip2 libffi, lzma, openssl, sqlite, usd, mesa, nasm, ispc,
+# faad (added in 0.6 ffmpeg but removed in 0.7+)
+#
+# Already processed as ffmpeg dependency: lame, ogg, vorbis, theora,
+# vpx, opus, x264, vidcore
+#
+# The actual llvm version requested by Blender upstream
+#	llvm? ( >=sys-devel/llvm-9.0.1:=
+#		 <sys-devel/llvm-10 )
+# It should match mesa's linked llvm version to avoid multiple version problem.
+# if using system's mesa.
 RDEPEND="${PYTHON_DEPS}
-	>=dev-lang/python-3.7.4
+	>=dev-lang/python-3.7.7
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
-		>=dev-python/certifi-2019.6.16[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/certifi-2020.4.5.2[${PYTHON_MULTI_USEDEP}]
 		>=dev-python/chardet-3.0.4[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/idna-2.8[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/numpy-1.17.0[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/requests-2.22.0[${PYTHON_MULTI_USEDEP}]
-		>=dev-python/urllib3-1.25.3[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/idna-2.9[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/numpy-1.17.5[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/requests-2.23.0[${PYTHON_MULTI_USEDEP}]
+		>=dev-python/urllib3-1.25.9[${PYTHON_MULTI_USEDEP}]
 	')
-	>=media-libs/freetype-2.10.1
+	>=media-libs/freetype-2.10.2
 	>=media-libs/glew-1.13.0:*
-	>=media-libs/libpng-1.6.35:0=
+	>=media-libs/libpng-1.6.37:0=
 	media-libs/libsamplerate
 	>=sys-libs/zlib-1.2.11
 	|| (
@@ -199,28 +215,27 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	|| (
 		virtual/jpeg:0=
-		>=media-libs/libjpeg-turbo-1.5.3
+		>=media-libs/libjpeg-turbo-2.0.4
 	)
 	virtual/libintl
 	virtual/opengl
 	collada? ( >=media-libs/opencollada-1.6.68:= )
-	color-management? ( >=media-libs/opencolorio-1.1.0 )
+	color-management? ( >=media-libs/opencolorio-1.1.1 )
 	cuda? (
 		>=x11-drivers/nvidia-drivers-418.39
 		>=dev-util/nvidia-cuda-toolkit-10.1:=
 	)
-	cycles? ( >=dev-libs/pugixml-1.9 )
-	embree? ( >=media-libs/embree-3.8.0:=\
+	cycles? ( >=dev-libs/pugixml-1.10 )
+	embree? ( >=media-libs/embree-3.10.0:=\
 [cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,static-libs] )
-	ffmpeg? ( >=media-video/ffmpeg-4.0.2:=\
+	ffmpeg? ( >=media-video/ffmpeg-4.2.3:=\
 [encode,jpeg2k?,mp3?,opus?,theora?,vorbis?,vpx?,x264,xvid?,zlib] )
 	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
-	flac? ( >=media-libs/flac-1.3.2 )
+	flac? ( >=media-libs/flac-1.3.3 )
 	jack? ( virtual/jack )
-	jemalloc? ( >=dev-libs/jemalloc-5.0.1:= )
-	jpeg2k? ( >=media-libs/openjpeg-2.3.0:2 )
-	llvm? ( >=sys-devel/llvm-9.0.1:=
-		 <sys-devel/llvm-10 )
+	jemalloc? ( >=dev-libs/jemalloc-5.2.1:= )
+	jpeg2k? ( >=media-libs/openjpeg-2.3.1:2 )
+	llvm? ( sys-devel/llvm:${LLVM_V}= )
 	ndof? (
 		app-misc/spacenavd
 		>=dev-libs/libspnav-0.2.3
@@ -228,38 +243,33 @@ RDEPEND="${PYTHON_DEPS}
 	nls? (
 		|| (
 			virtual/libiconv
-			>=dev-libs/libiconv-1.15
+			>=dev-libs/libiconv-1.16
 		)
 	)
-	openal? ( >=media-libs/openal-1.18.2 )
+	openal? ( >=media-libs/openal-1.20.1 )
 	opencl? ( virtual/opencl )
-	openimagedenoise? ( >=media-libs/oidn-1.0.0 )
-	openimageio? ( >=media-libs/openimageio-1.8.13[color-management?,jpeg2k?] )
+	openimagedenoise? ( >=media-libs/oidn-1.2.1 )
+	openimageio? ( >=media-libs/openimageio-2.1.15.0[color-management?,jpeg2k?] )
 	openexr? (
 		>=media-libs/ilmbase-2.4.0:=
 		>=media-libs/openexr-2.4.0:=
 	)
-	opensubdiv? ( >=media-libs/opensubdiv-3.4.0_rc2:=[cuda=,opencl=] )
+	opensubdiv? ( >=media-libs/opensubdiv-3.4.3:=[cuda=,opencl=] )
 	!openvdb? (
-		|| (
-			>=blender-libs/boost-1.70:=[nls?,threads(+)]
-			>=dev-libs/boost-1.70:=[nls?,threads(+)]
-		)
+		>=dev-libs/boost-1.70:=[nls?,threads(+)]
 	)
 	openvdb? (
-	>=blender-libs/openvdb-7:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
-	 <blender-libs/openvdb-7.1:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
-		>=blender-libs/boost-1.70:=[nls?,threads(+)]
+		>=media-gfx/openvdb-7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+		>=dev-libs/boost-1.70:=[nls?,threads(+)]
 		>=dev-cpp/tbb-2019.9
 		>=dev-libs/c-blosc-1.5.0
 	)
-	openxr? ( >=blender-libs/openxr-1.0.6 )
+	openxr? ( >=media-libs/openxr-1.0.8 )
 	optix? ( >=dev-libs/optix-7 )
-	osl? ( >=media-libs/osl-1.10.9:=[static-libs]
-		<blender-libs/mesa-19.2 )
-	sdl? ( >=media-libs/libsdl2-2.0.8[sound,joystick] )
+	osl? ( >=media-libs/osl-1.10.10:=[static-libs] )
+	sdl? ( >=media-libs/libsdl2-2.0.12[sound,joystick] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
-	tiff? ( >=media-libs/tiff-4.0.9:0[zlib] )
+	tiff? ( >=media-libs/tiff-4.1.0:0[zlib] )
 	valgrind? ( dev-util/valgrind )
 	X? (
 		x11-libs/libX11
@@ -271,7 +281,7 @@ DEPEND="${RDEPEND}
 	asan? ( || ( sys-devel/clang
                      sys-devel/gcc ) )
 	>=dev-cpp/eigen-3.3.7:3
-	>=dev-util/cmake-3.5
+	>=dev-util/cmake-3.10
 	cycles? (
 		x86? ( || (
 			sys-devel/clang
@@ -280,8 +290,8 @@ DEPEND="${RDEPEND}
 	)
 	doc? (
 		app-doc/doxygen[dot]
-		>=dev-python/sphinx-1.8.5[latex]
-		>=dev-python/sphinx_rtd_theme-0.4.3
+		>=dev-python/sphinx-3.3.1[latex]
+		>=dev-python/sphinx_rtd_theme-0.5.0
 		dev-texlive/texlive-bibtexextra
 		dev-texlive/texlive-fontsextra
 		dev-texlive/texlive-fontutils
@@ -323,7 +333,7 @@ pkg_setup() {
 	# Needs OpenCL 1.2 (GCN 2)
 	export OPENVDB_V=$(usex openvdb 7 "")
 	if use openvdb ; then
-		if ! grep -q -F -e "delta()" "${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr/include/openvdb/util/CpuTimer.h" ; then
+		if ! grep -q -F -e "delta()" "${EROOT}/usr/include/openvdb/util/CpuTimer.h" ; then
 			if use abi7-compat ; then
 				# compatible as long as the function is present?
 				die "OpenVDB delta() is missing try <=7.1.x only"
@@ -415,6 +425,37 @@ x11-drivers/amdgpu-pro-lts[opengl_mesa] instead"
 
 	einfo "CC=${CC}"
 	einfo "CXX=${CXX}"
+
+	# Checks to avoid loading multiple versions of LLVM.
+
+	if ls ldd "${EROOT}"/usr/$(get_libdir)/dri/*.so 2>/dev/null 1>/dev/null ; then
+		local llvm_ret=$(ldd "${EROOT}"/usr/$(get_libdir)/dri/*.so \
+			| grep -q -e "LLVM-${LLVM_V}")
+		if [[ "${llvm_ret}" != "0" ]] ; then
+			die \
+"You need link media-libs/mesa with LLVM ${LLVM_V}.  See media-libs/mesa \
+ebuilds for compatibility details."
+		fi
+	fi
+
+	if use osl && [[ -e "/usr/$(get_libdir)/liboslexec.so" ]] ; then
+		osl_llvm=
+		if ldd /usr/$(get_libdir)/liboslexec.so \
+			| grep -q -F "libLLVMAnalysis.so.9" ; then
+			# split llvm
+			osl_llvm=9
+		else
+			# monolithic llvm
+			osl_llvm=$(ldd /usr/$(get_libdir)/liboslexec.so \
+				| grep -F -i -e "LLVM" | head -n 1 \
+				| grep -o -E -e "libLLVM-[0-9]+.so" \
+				| head -n 1 | grep -o -E -e "[0-9]+")
+		fi
+		if [[ -n "${osl_llvm}" ]] \
+			&& ver_test "${osl_llvm}" -ne "${LLVM_}" ; then
+			die "media-libs/osl must be linked to LLVM ${LLVM_V}"
+		fi
+	fi
 }
 
 _src_prepare() {
@@ -450,10 +491,10 @@ _src_prepare() {
 }
 
 src_prepare() {
-	einfo
-	einfo "$(ver_cut 1-2) version series is a Long Term Support (LTS) version."
-	einfo "Upstream supports this series up to May 2022 (2 years)."
-	einfo
+	ewarn
+	ewarn "This version is not a Long Term Support (LTS) version."
+	ewarn "Use 2.83.x series instead."
+	ewarn
 	xdg_src_prepare
 	blender_prepare() {
 		cd "${BUILD_DIR}" || die
@@ -479,7 +520,6 @@ _src_configure() {
 ebuild/upstream developers only."
 	fi
 
-	unset _LD_LIBRARY_PATH
 	unset CMAKE_INCLUDE_PATH
 	unset CMAKE_LIBRARY_PATH
 	unset CMAKE_PREFIX_PATH
@@ -661,25 +701,8 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 
 	fi
 
-	if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" ]] ; then
-		mycmakeargs+=( -DBoost_NO_SYSTEM_PATHS=ON )
-		mycmakeargs+=( -DBoost_INCLUDE_DIR="${EROOT}/usr/$(get_libdir)/blender/boost/usr/include" )
-		mycmakeargs+=( -DBoost_LIBRARY_DIR_RELEASE="${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" )
-		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
-	fi
-
-	if use openxr ; then
-		export XR_OPENXR_SDK_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/openxr/usr"
-		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/openxr/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
-	fi
-
-	if use openvdb ; then
-		export OPENVDB_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr"
-		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
-	fi
-
 	if use openxr || use osl ; then
-		if has_version 'blender-libs/mesa[libglvnd]' ; then
+		if has_version 'media-libs/mesa[libglvnd]' ; then
 			mycmakeargs+=( -DOpenGL_GL_PREFERENCE=GLVND )
 			if [[ -e "${EROOT}/usr/$(get_libdir)/libGLX.so" ]] ; then
 				mycmakeargs+=( -DOPENGL_glx_LIBRARY="${EROOT}/usr/$(get_libdir)/libGLX.so" )
@@ -696,28 +719,21 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 			fi
 		else
 			mycmakeargs+=( -DOpenGL_GL_PREFERENCE=LEGACY )
-			if [[ -e "${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so" ]] ; then
+			if [[ -e "${EROOT}/usr/$(get_libdir)/libGL.so" ]] ; then
 				# legacy
-				mycmakeargs+=( -DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so" )
+				mycmakeargs+=( -DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/libGL.so" )
 			else
-				die "Use either blender-libs/mesa or media-libs/mesa[libglvnd] or media-libs/libglvnd"
+				die "Use either media-libs/mesa[libglvnd] or media-libs/libglvnd"
 			fi
-			if [[ -e "${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" ]] ; then
-				mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" )
+			if [[ -e "${EROOT}/usr/$(get_libdir)/libEGL.so" ]] ; then
+				mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/libEGL.so" )
 			fi
-			export CMAKE_INCLUDE_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
-			export CMAKE_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
-			_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+			export CMAKE_INCLUDE_PATH="${EROOT}/usr/include;${CMAKE_INCLUDE_PATH}"
+			export CMAKE_LIBRARY_PATH="${EROOT}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 		fi
 	fi
 
-	if [[ -n "${_LD_LIBRARY_PATH}" ]] ; then
-		sed -i -e "s|\[blender_bin|['env', \"LD_LIBRARY_PATH=${_LD_LIBRARY_PATH}\", blender_bin|" \
-			doc/manpage/blender.1.py || die
-	fi
-
 	mycmakeargs+=(
-		$(usex openvdb -DOPENVDB_ABI_VERSION_NUMBER=${OPENVDB_V} "")
 		-DPYTHON_VERSION="${EPYTHON/python/}"
 		-DPYTHON_LIBRARY="$(python_get_library_path)"
 		-DPYTHON_INCLUDE_DIR="$(python_get_includedir)"
@@ -781,12 +797,11 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 			-DWITH_MOD_OCEANSIM=$(usex fftw)
 			-DWITH_OPENAL=$(usex openal)
 			-DWITH_SDL=$(usex sdl)
-			-DWITH_X11=ON
 		)
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.83.2/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.90.0/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -1067,54 +1082,17 @@ _src_install() {
 		sed -i -e "s|Icon=blender|Icon=blender-${SLOT_MAJ}|g" "${menu_file}" || die
 		cp "${FILESDIR}/blender-wrapper" \
 			"${T}/${PN}-${SLOT_MAJ}" || die
-		sed -i -e "s|\$(get_libdir)|$(get_libdir)|g" \
-			-e "s|\${LLVM_V}|${LLVM_V}|g" \
-			-e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
+		sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
+			-e "s|#LD_LIBRARY_PATH|${LD_LIBRARY_PATH}|g" \
 			"${T}/${PN}-${SLOT_MAJ}" || die
-		if use openvdb ; then
-			sed -i -e "s|#OPENVDB ||g" \
-				-e "s|\${OPENVDB_V}|${OPENVDB_V}|g" \
-				"${T}/${PN}-${SLOT_MAJ}" || die
-		fi
-		if use openxr ; then
-			sed -i -e "s|#OPENXR ||g" \
-				"${T}/${PN}-${SLOT_MAJ}" || die
-		fi
-		if use openxr || use osl ; then
-			sed -i -e "s|#MESA ||g" \
-				"${T}/${PN}-${SLOT_MAJ}" || die
-		fi
-		if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" ]] ; then
-			sed -i -e "s|#BOOST ||g" \
-				"${T}/${PN}-${SLOT_MAJ}" || die
-		fi
 		exeinto /usr/bin
 		doexe "${T}/${PN}-${SLOT_MAJ}"
-		touch "${ED}/${d_dest}/.lts"
 	elif [[ "${EBLENDER}" == "build_headless" ]] ; then
 		cp "${FILESDIR}/blender-wrapper" \
 			"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		sed -i -e "s|\$(get_libdir)|$(get_libdir)|g" \
-			-e "s|\${LLVM_V}|${LLVM_V}|g" \
-			-e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
+		sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
+			-e "s|#LD_LIBRARY_PATH|${LD_LIBRARY_PATH}|g" \
 			"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		if use openvdb ; then
-			sed -i -e "s|#OPENVDB ||g" \
-				-e "s|\${OPENVDB_V}|${OPENVDB_V}|g" \
-				"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		fi
-		if use openxr ; then
-			sed -i -e "s|#OPENXR ||g" \
-				"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		fi
-		if use openxr || use osl ; then
-			sed -i -e "s|#MESA ||g" \
-				"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		fi
-		if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" ]] ; then
-			sed -i -e "s|#BOOST ||g" \
-				"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		fi
 		exeinto /usr/bin
 		doexe "${T}/${PN}-headless-${SLOT_MAJ}"
 	fi

@@ -86,6 +86,7 @@ FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 RESTRICT="mirror !test? ( test )"
 LLVM_V=9
+CXXABI_V=11
 
 # The release USE flag depends on platform defaults.
 # Disabled dead code optimization flags introduced by
@@ -259,7 +260,7 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	openxr? ( >=blender-libs/openxr-1.0.6 )
 	optix? ( >=dev-libs/optix-7 )
-	osl? ( >=media-libs/osl-1.10.9:=[static-libs]
+	osl? ( >=blender-libs/osl-1.10.9:=[static-libs]
 		<blender-libs/mesa-19.2 )
 	sdl? ( >=media-libs/libsdl2-2.0.8[sound,joystick] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
@@ -722,7 +723,6 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 	fi
 
 	mycmakeargs+=(
-		$(usex openvdb -DOPENVDB_ABI_VERSION_NUMBER=${OPENVDB_V} "")
 		-DPYTHON_VERSION="${EPYTHON/python/}"
 		-DPYTHON_LIBRARY="$(python_get_library_path)"
 		-DPYTHON_INCLUDE_DIR="$(python_get_includedir)"
@@ -786,7 +786,6 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 			-DWITH_MOD_OCEANSIM=$(usex fftw)
 			-DWITH_OPENAL=$(usex openal)
 			-DWITH_SDL=$(usex sdl)
-			-DWITH_X11=ON
 		)
 	fi
 
@@ -1064,6 +1063,21 @@ _src_install() {
 		_src_install_cycles_network
 	fi
 
+	_LD_LIBRARY_PATH=()
+	if use openvdb ; then
+		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr/$(get_libdir)\n" )
+	fi
+	if use openxr ; then
+		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/openxr/usr/$(get_libdir)\n" )
+	fi
+	if use openxr || use osl ; then
+		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)\n" )
+	fi
+	if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" && "${CXXABI}" == "11" ]] ; then
+		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)\n" )
+	fi
+	_LD_LIBRARY_PATH=$(echo -e "${_LD_LIBRARY_PATH[@]}" | tr "\n" ":")
+
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
 		cp "${ED}/usr/share/applications"/blender{,-${SLOT_MAJ}}.desktop || die
 		local menu_file="${ED}/usr/share/applications/blender-${SLOT_MAJ}.desktop"
@@ -1072,54 +1086,18 @@ _src_install() {
 		sed -i -e "s|Icon=blender|Icon=blender-${SLOT_MAJ}|g" "${menu_file}" || die
 		cp "${FILESDIR}/blender-wrapper" \
 			"${T}/${PN}-${SLOT_MAJ}" || die
-		sed -i -e "s|\$(get_libdir)|$(get_libdir)|g" \
-			-e "s|\${LLVM_V}|${LLVM_V}|g" \
-			-e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
+		sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
+			-e "s|#LD_LIBRARY_PATH|${LD_LIBRARY_PATH}|g" \
 			"${T}/${PN}-${SLOT_MAJ}" || die
-		if use openvdb ; then
-			sed -i -e "s|#OPENVDB ||g" \
-				-e "s|\${OPENVDB_V}|${OPENVDB_V}|g" \
-				"${T}/${PN}-${SLOT_MAJ}" || die
-		fi
-		if use openxr ; then
-			sed -i -e "s|#OPENXR ||g" \
-				"${T}/${PN}-${SLOT_MAJ}" || die
-		fi
-		if use openxr || use osl ; then
-			sed -i -e "s|#MESA ||g" \
-				"${T}/${PN}-${SLOT_MAJ}" || die
-		fi
-		if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" ]] ; then
-			sed -i -e "s|#BOOST ||g" \
-				"${T}/${PN}-${SLOT_MAJ}" || die
-		fi
 		exeinto /usr/bin
 		doexe "${T}/${PN}-${SLOT_MAJ}"
 		touch "${ED}/${d_dest}/.lts"
 	elif [[ "${EBLENDER}" == "build_headless" ]] ; then
 		cp "${FILESDIR}/blender-wrapper" \
 			"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		sed -i -e "s|\$(get_libdir)|$(get_libdir)|g" \
-			-e "s|\${LLVM_V}|${LLVM_V}|g" \
-			-e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
+		sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
+			-e "s|#LD_LIBRARY_PATH|${LD_LIBRARY_PATH}|g" \
 			"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		if use openvdb ; then
-			sed -i -e "s|#OPENVDB ||g" \
-				-e "s|\${OPENVDB_V}|${OPENVDB_V}|g" \
-				"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		fi
-		if use openxr ; then
-			sed -i -e "s|#OPENXR ||g" \
-				"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		fi
-		if use openxr || use osl ; then
-			sed -i -e "s|#MESA ||g" \
-				"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		fi
-		if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" ]] ; then
-			sed -i -e "s|#BOOST ||g" \
-				"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		fi
 		exeinto /usr/bin
 		doexe "${T}/${PN}-headless-${SLOT_MAJ}"
 	fi

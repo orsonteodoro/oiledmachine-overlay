@@ -1,7 +1,3 @@
 #!/bin/bash
-#BOOST LD_LIBRARY_PATH="/usr/$(get_libdir)/blender/boost/usr/$(get_libdir):${LD_LIBRARY_PATH}"
-#MESA LD_LIBRARY_PATH="/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir):${LD_LIBRARY_PATH}"
-#OPENVDB LD_LIBRARY_PATH="/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr/$(get_libdir):${LD_LIBRARY_PATH}"
-#OPENXR LD_LIBRARY_PATH="/usr/$(get_libdir)/blender/openxr/usr/$(get_libdir):${LD_LIBRARY_PATH}"
-export LD_LIBRARY_PATH
+#LD_LIBRARY_PATH
 "${BLENDER_EXE}" "$@"

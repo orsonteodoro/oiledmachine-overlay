@@ -103,6 +103,7 @@ FFMPEG_IUSE+=" jpeg2k +mp3 +theora vorbis x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 RESTRICT="mirror !test? ( test )"
 LLVM_V=9
+CXXABI_V=11
 
 # The release USE flag depends on platform defaults.
 # Disabled dead code optimization flags introduced by
@@ -286,7 +287,7 @@ abi7-compat? ( >=blender-libs/openvdb-3.3.0:7[${PYTHON_SINGLE_USEDEP},abi7-compa
 		>=dev-cpp/tbb-2017.7
 		>=dev-libs/c-blosc-1.7.1
 	)
-	osl? ( >=media-libs/osl-1.7.5:=[static-libs]
+	osl? ( >=blender-libs/osl-1.7.5:=[static-libs]
 		<blender-libs/mesa-19.2 )
 	sdl? ( >=media-libs/libsdl2-2.0.4[sound,joystick] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
@@ -759,7 +760,6 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 	fi
 
 	mycmakeargs+=(
-		$(usex openvdb -DOPENVDB_ABI_VERSION_NUMBER=${OPENVDB_V} "")
 		-DPYTHON_VERSION="${EPYTHON/python/}"
 		-DPYTHON_LIBRARY="$(python_get_library_path)"
 		-DPYTHON_INCLUDE_DIR="$(python_get_includedir)"
@@ -821,7 +821,6 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 			-DWITH_MOD_OCEANSIM=$(usex fftw)
 			-DWITH_OPENAL=$(usex openal)
 			-DWITH_SDL=$(usex sdl)
-			-DWITH_X11=ON
 		)
 	fi
 
@@ -1103,6 +1102,18 @@ _src_install() {
 		_src_install_cycles_network
 	fi
 
+	_LD_LIBRARY_PATH=()
+	if use openvdb ; then
+		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr/$(get_libdir)\n" )
+	fi
+	if use osl ; then
+		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)\n" )
+	fi
+	if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" && "${CXXABI_V}" == "11" ]] ; then
+		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)\n" )
+	fi
+	_LD_LIBRARY_PATH=$(echo -e "${_LD_LIBRARY_PATH[@]}" | tr "\n" ":")
+
 	local ed_icon_hc="${ED}/usr/share/icons/hicolor"
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
 		cp "${ED}/usr/share/applications"/blender{,-${SLOT_MAJ}}.desktop || die
@@ -1116,45 +1127,17 @@ _src_install() {
 		mv "${ed_icon_hc}/scalable/apps/blender"{,-${SLOT_MAJ}}".svg" || die
 		cp "${FILESDIR}/blender-wrapper" \
 			"${T}/${PN}-${SLOT_MAJ}" || die
-		sed -i -e "s|\$(get_libdir)|$(get_libdir)|g" \
-			-e "s|\${LLVM_V}|${LLVM_V}|g" \
-			-e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
+		sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
+			-e "s|#LD_LIBRARY_PATH|${LD_LIBRARY_PATH}|g" \
 			"${T}/${PN}-${SLOT_MAJ}" || die
-		if use openvdb ; then
-			sed -i -e "s|#OPENVDB ||g" \
-				-e "s|\${OPENVDB_V}|${OPENVDB_V}|g" \
-				"${T}/${PN}-${SLOT_MAJ}" || die
-		fi
-		if use osl ; then
-			sed -i -e "s|#MESA ||g" \
-				"${T}/${PN}-${SLOT_MAJ}" || die
-		fi
-		if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" ]] ; then
-			sed -i -e "s|#BOOST ||g" \
-				"${T}/${PN}-${SLOT_MAJ}" || die
-		fi
 		exeinto /usr/bin
 		doexe "${T}/${PN}-${SLOT_MAJ}"
 	elif [[ "${EBLENDER}" == "build_headless" ]] ; then
 		cp "${FILESDIR}/blender-wrapper" \
 			"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		sed -i -e "s|\$(get_libdir)|$(get_libdir)|g" \
-			-e "s|\${LLVM_V}|${LLVM_V}|g" \
-			-e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
+		sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
+			-e "s|#LD_LIBRARY_PATH|${LD_LIBRARY_PATH}|g" \
 			"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		if use openvdb ; then
-			sed -i -e "s|#OPENVDB ||g" \
-				-e "s|\${OPENVDB_V}|${OPENVDB_V}|g" \
-				"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		fi
-		if use osl ; then
-			sed -i -e "s|#MESA ||g" \
-				"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		fi
-		if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" ]] ; then
-			sed -i -e "s|#BOOST ||g" \
-				"${T}/${PN}-headless-${SLOT_MAJ}" || die
-		fi
 		exeinto /usr/bin
 		doexe "${T}/${PN}-headless-${SLOT_MAJ}"
 	fi
