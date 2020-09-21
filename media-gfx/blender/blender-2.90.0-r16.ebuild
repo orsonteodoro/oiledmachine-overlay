@@ -453,7 +453,7 @@ ebuilds for compatibility details."
 				| head -n 1 | grep -o -E -e "[0-9]+")
 		fi
 		if [[ -n "${osl_llvm}" ]] \
-			&& ver_test "${osl_llvm}" -ne "${LLVM_}" ; then
+			&& ver_test "${osl_llvm}" -ne "${LLVM_V}" ; then
 			die "media-libs/osl must be linked to LLVM ${LLVM_V}"
 		fi
 	fi
