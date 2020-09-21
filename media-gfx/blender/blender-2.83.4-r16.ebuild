@@ -51,7 +51,7 @@ cycles? (
 
 CXXABI_V=11
 LLVM_V=9
-LLVM_MAX_SLOT=${LLVM_V}
+LLVM_MAX_SLOT=${LLVM_9}
 PYTHON_COMPAT=( python3_{7,8} )
 
 inherit eapi7-ver
@@ -791,7 +791,7 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.83.1/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.83.4/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -1082,8 +1082,8 @@ _src_install() {
 	if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir)" ]] ; then
 		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir)\n" )
 	fi
-	_LD_LIBRARY_PATH=$(echo -e "${_LD_LIBRARY_PATH[@]}" | tr "\n" ":")
-	_PATH=$(echo -e "${_PATH[@]}" | tr "\n" ":")
+	_LD_LIBRARY_PATH=$(echo -e "${_LD_LIBRARY_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
+	_PATH=$(echo -e "${_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
 
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
 		cp "${ED}/usr/share/applications"/blender{,-${SLOT_MAJ}}.desktop || die

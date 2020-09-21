@@ -566,7 +566,7 @@ ebuild/upstream developers only."
 		fi
 
 		if [[ "${ABI}" == "x86" ]] && grep -q -F -e "WITH_KERNEL_SSE41" intern/cycles/CMakeLists.txt ; then
-			# See intern/cycles/util/util_optimization.h for reason why it was axed in x86 (32-bit)..
+			# See intern/cycles/util/util_optimization.h for reason why it was axed in x86 (32-bit).
 			sed -i -e "/WITH_KERNEL_SSE41/d" \
 				intern/cycles/CMakeLists.txt || die
 		fi
@@ -791,7 +791,7 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.83.6/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.83.5/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -1082,8 +1082,8 @@ _src_install() {
 	if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir)" ]] ; then
 		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir)\n" )
 	fi
-	_LD_LIBRARY_PATH=$(echo -e "${_LD_LIBRARY_PATH[@]}" | tr "\n" ":")
-	_PATH=$(echo -e "${_PATH[@]}" | tr "\n" ":")
+	_LD_LIBRARY_PATH=$(echo -e "${_LD_LIBRARY_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
+	_PATH=$(echo -e "${_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
 
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
 		cp "${ED}/usr/share/applications"/blender{,-${SLOT_MAJ}}.desktop || die

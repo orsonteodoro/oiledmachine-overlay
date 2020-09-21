@@ -58,12 +58,10 @@ inherit eapi7-ver
 inherit blender check-reqs cmake-utils flag-o-matic llvm pax-utils \
 	python-single-r1 toolchain-funcs xdg
 
-DL_PV="2.83.0"
-
 # If you use git tarballs, you need to download the submodules listed in
 # .gitmodules.  The download.blender.org tarball is preferred because they
 # bundle all the dependencies.
-SRC_URI="https://download.blender.org/source/blender-${DL_PV}.tar.xz"
+SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
 
 BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest}
 
@@ -250,10 +248,8 @@ RDEPEND="${PYTHON_DEPS}
 		)
 	)
 	openvdb? (
-		abi7-compat? (
-			>=blender-libs/openvdb-7:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
-			 <blender-libs/openvdb-7.1:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
-		)
+	>=blender-libs/openvdb-7:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+	 <blender-libs/openvdb-7.1:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
 		>=blender-libs/boost-1.70:${CXXABI_V}=[nls?,threads(+)]
 		>=dev-cpp/tbb-2019.9
 		>=dev-libs/c-blosc-1.5.0
@@ -304,7 +300,6 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.83.1-update-acquire_tile-for-cycles-networking.patch"
 	"${FILESDIR}/${PN}-2.80-install-paths-change.patch"
 )
-S="${WORKDIR}/${PN}-${DL_PV}"
 
 get_dest() {
 	echo "/usr/bin/.${PN}/${SLOT_MAJ}/${EBLENDER_NAME}"
@@ -796,7 +791,7 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.83/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.83.3/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -1087,8 +1082,8 @@ _src_install() {
 	if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir)" ]] ; then
 		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir)\n" )
 	fi
-	_LD_LIBRARY_PATH=$(echo -e "${_LD_LIBRARY_PATH[@]}" | tr "\n" ":")
-	_PATH=$(echo -e "${_PATH[@]}" | tr "\n" ":")
+	_LD_LIBRARY_PATH=$(echo -e "${_LD_LIBRARY_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
+	_PATH=$(echo -e "${_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
 
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
 		cp "${ED}/usr/share/applications"/blender{,-${SLOT_MAJ}}.desktop || die
