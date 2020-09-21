@@ -62,8 +62,19 @@ else
 	KEYWORDS="~alpha amd64 arm arm64 hppa ia64 ~mips ppc ppc64 s390 ~sh sparc x86 ~amd64-linux ~x86-linux ~sparc-solaris ~x64-solaris ~x86-solaris"
 fi
 
+# Please keep the LLVM dependency block separate. Since LLVM is slotted,
+# we need to *really* make sure we're not pulling one than more slot
+# simultaneously.
+#
+# How to use it:
+# 1. List all the working slots (with min versions) in ||, newest first.
+# 2. Update the := to specify *max* version, e.g. < 10.
+# 3. Specify LLVM_MAX_SLOT, e.g. 9.
+LLVM_V="9"
+LLVM_MAX_SLOT="${LLVM_V}"
+
 LICENSE="MIT"
-SLOT="blender/${PV}"
+SLOT="${LLVM_V}/${PV}"
 RESTRICT="
 	!test? ( test )
 "
@@ -175,24 +186,9 @@ RDEPEND="${RDEPEND}
 	video_cards_radeonsi? ( ${LIBDRM_DEPSTRING}[video_cards_amdgpu] )
 "
 
-# Please keep the LLVM dependency block separate. Since LLVM is slotted,
-# we need to *really* make sure we're not pulling one than more slot
-# simultaneously.
-#
-# How to use it:
-# 1. List all the working slots (with min versions) in ||, newest first.
-# 2. Update the := to specify *max* version, e.g. < 10.
-# 3. Specify LLVM_MAX_SLOT, e.g. 9.
-LLVM_MAX_SLOT="9"
-LLVM_V="9"
 LLVM_DEPSTR="
-	|| (
-		sys-devel/llvm:${LLVM_V}[${MULTILIB_USEDEP}]
-	)
-	sys-devel/llvm:=[${MULTILIB_USEDEP}]
+	sys-devel/llvm:${LLVM_V}=[${MULTILIB_USEDEP}]
 "
-#		sys-devel/llvm:8[${MULTILIB_USEDEP}]
-#		sys-devel/llvm:7[${MULTILIB_USEDEP}]
 LLVM_DEPSTR_AMDGPU=${LLVM_DEPSTR//]/,llvm_targets_AMDGPU(-)]}
 CLANG_DEPSTR=${LLVM_DEPSTR//llvm/clang}
 CLANG_DEPSTR_AMDGPU=${CLANG_DEPSTR//]/,llvm_targets_AMDGPU(-)]}
