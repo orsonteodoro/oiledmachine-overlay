@@ -13,7 +13,8 @@ SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.g
 
 LICENSE="MPL-2.0"
 IUSE="+abi7-compat cpu_flags_x86_avx cpu_flags_x86_sse4_2 doc numpy python static-libs test utils"
-CXXABI="14"
+CXXABI=14
+LLVM_V=9
 SLOT_MAJ="7-${CXXABI}"
 SLOT="${SLOT_MAJ}/${PV}"
 KEYWORDS="~amd64 ~x86"
@@ -33,7 +34,8 @@ REQUIRED_USE="
 
 RDEPEND="
 	dev-cpp/tbb
-	blender-libs/boost:=
+	blender-libs/boost:${CXXABI}=
+	blender-libs/mesa:${LLVM_V}=
 	dev-libs/c-blosc:=
 	dev-libs/jemalloc:=
 	dev-libs/log4cplus:=
@@ -49,7 +51,7 @@ RDEPEND="
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			blender-libs/boost:=[numpy?,python?,${PYTHON_USEDEP}]
+			blender-libs/boost:'${CXXABI}'=[numpy?,python?,${PYTHON_USEDEP}]
 			numpy? ( dev-python/numpy[${PYTHON_USEDEP}] )
 		')
 	)
@@ -75,7 +77,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-7.1.0-0001-Fix-multilib-header-source.patch"
 	"${FILESDIR}/${PN}-7.1.0-0002-Fix-doc-install-dir.patch"
 )
-LLVM_V=9
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
@@ -92,8 +93,7 @@ is greater than \$(nproc)/4"
 
 src_prepare() {
 	cmake_src_prepare
-	# We are only interested parts that don't require c++14.
-	sed -i "s|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD 11|" CMakeLists.txt || die
+	sed -i "s|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD ${CXXABI}|" CMakeLists.txt || die
 	sed -i "s|CMAKE_CXX_STANDARD_REQUIRED ON|CMAKE_CXX_STANDARD_REQUIRED OFF|" CMakeLists.txt || die
 }
 
@@ -105,32 +105,23 @@ src_configure() {
 	local myprefix="${EPREFIX}/usr/" # for compiling only
 
 	# To stay in sync with blender-libs/boost
-	append-cxxflags -std=c++11
+	append-cxxflags -std=c++${CXXABI}
 
-	# Add extra checks for downgrading to c++11
+	# Add extra checks for testing against c++${CXXABI}
 	append-cxxflags -Wall -Werror
 
 	# Relax some warnings
 	append-cxxflags -Wno-error=class-memaccess -Wno-error=int-in-bool-context
 
-	# make_unique is c++14 and is being used so disable parts that reference it
-	# make_unique was referenced in a header
-
-	# SESI_OPENVDB and SESI_OPENVDB_PRIM code contains c++14 code referencing make_unique but not used.
-
-	# tools/LevelSetMeasure.h contains make_unique but not used by Blender.  So most of it can be c++11 compiled.
-
-	local myprefix2="$(iprfx)" # for install only
-
-	export CMAKE_INCLUDE_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_INCLUDE_PATH}"
-	export CMAKE_LIBRARY_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+	export CMAKE_INCLUDE_PATH=\
+"${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir);${CMAKE_INCLUDE_PATH}"
+	export CMAKE_LIBRARY_PATH=\
+"${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 
 	local mycmakeargs=(
 		-DCHOST="${CHOST}"
 		-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
-		-DCMAKE_INSTALL_PREFIX="${myprefix2}"
+		-DCMAKE_INSTALL_PREFIX="$(iprfx)"
 		-DOPENVDB_ABI_VERSION_NUMBER=${SLOT_MAJ}
 		-DOPENVDB_BUILD_DOCS=$(usex doc)
 		-DOPENVDB_BUILD_UNITTESTS=$(usex test)
@@ -149,10 +140,10 @@ ${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}
 
 	if has_version 'blender-libs/mesa[libglvnd]' ; then
 		einfo "Detected blender-libs/mesa[libglvnd]"
-		export CMAKE_INCLUDE_PATH="\
-${EROOT}/usr/include;${CMAKE_INCLUDE_PATH}"
-		export CMAKE_LIBRARY_PATH="\
-${EROOT}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+		export CMAKE_INCLUDE_PATH=\
+"${EROOT}/usr/include;${CMAKE_INCLUDE_PATH}"
+		export CMAKE_LIBRARY_PATH=\
+"${EROOT}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 
 		mycmakeargs+=(
 			-DOpenGL_GL_PREFERENCE=GLVND
@@ -162,15 +153,17 @@ ${EROOT}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 		)
 	else
 		einfo "Detected blender-libs/mesa[-libglvnd]"
-		export CMAKE_INCLUDE_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
-		export CMAKE_LIBRARY_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+		export CMAKE_INCLUDE_PATH=\
+"${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
+		export CMAKE_LIBRARY_PATH=\
+"${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 
 		mycmakeargs+=(
 			-DOpenGL_GL_PREFERENCE=LEGACY
-			-DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so"
-			-DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so"
+			-DOPENGL_egl_LIBRARY=\
+"${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so"
+			-DOPENGL_gl_LIBRARY=\
+"${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so"
 		)
 	fi
 

@@ -12,8 +12,10 @@ HOMEPAGE="https://www.openvdb.org"
 SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MPL-2.0"
-IUSE="+abi5-compat cpu_flags_x86_avx cpu_flags_x86_sse4_2 doc numpy python static-libs test utils"
-SLOT_MAJ="5"
+IUSE="+abi6-compat cpu_flags_x86_avx cpu_flags_x86_sse4_2 doc numpy python static-libs test utils"
+CXXABI=11
+LLVM_V=9
+SLOT_MAJ="6"
 SLOT="${SLOT_MAJ}/${PV}"
 KEYWORDS="~amd64 ~x86"
 RESTRICT="!test? ( test )"
@@ -23,7 +25,7 @@ RESTRICT="!test? ( test )"
 # Blender disables python
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
 REQUIRED_USE="
-	abi5-compat
+	abi6-compat
 	!test
 	numpy? ( python )
 	python? ( ${PYTHON_REQUIRED_USE} )
@@ -32,7 +34,8 @@ REQUIRED_USE="
 
 RDEPEND="
 	dev-cpp/tbb
-	blender-libs/boost:=
+	blender-libs/boost:${CXXABI}=
+	blender-libs/mesa:${LLVM_V}=
 	dev-libs/c-blosc:=
 	dev-libs/jemalloc:=
 	dev-libs/log4cplus:=
@@ -48,7 +51,7 @@ RDEPEND="
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			blender-libs/boost:=[numpy?,python?,${PYTHON_USEDEP}]
+			blender-libs/boost:'${CXXABI}'=[numpy?,python?,${PYTHON_USEDEP}]
 			numpy? ( dev-python/numpy[${PYTHON_USEDEP}] )
 		')
 	)
@@ -74,7 +77,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-7.1.0-0001-Fix-multilib-header-source.patch"
 	"${FILESDIR}/${PN}-7.1.0-0002-Fix-doc-install-dir.patch"
 )
-LLVM_V=9
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
@@ -104,7 +106,7 @@ src_configure() {
 	local myprefix="${EPREFIX}/usr/" # for compiling only
 
 	# To stay in sync with blender-libs/boost
-	append-cxxflags -std=c++11
+	append-cxxflags -std=c++${CXXABI}
 
 	# Add extra checks for downgrading to c++11
 	append-cxxflags -Wall -Werror
@@ -119,17 +121,15 @@ src_configure() {
 
 	# tools/LevelSetMeasure.h contains make_unique but not used by Blender.  So most of it can be c++11 compiled.
 
-	local myprefix2="$(iprfx)" # for install only
-
-	export CMAKE_INCLUDE_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_INCLUDE_PATH}"
-	export CMAKE_LIBRARY_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+	export CMAKE_INCLUDE_PATH=\
+"${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir);${CMAKE_INCLUDE_PATH}"
+	export CMAKE_LIBRARY_PATH=\
+"${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 
 	local mycmakeargs=(
 		-DCHOST="${CHOST}"
 		-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
-		-DCMAKE_INSTALL_PREFIX="${myprefix2}"
+		-DCMAKE_INSTALL_PREFIX="$(iprfx)"
 		-DOPENVDB_ABI_VERSION_NUMBER=${SLOT_MAJ}
 		-DOPENVDB_BUILD_DOCS=$(usex doc)
 		-DOPENVDB_BUILD_UNITTESTS=$(usex test)
@@ -147,10 +147,10 @@ ${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}
 
 	if has_version 'blender-libs/mesa[libglvnd]' ; then
 		einfo "Detected blender-libs/mesa[libglvnd]"
-		export CMAKE_INCLUDE_PATH="\
-${EROOT}/usr/include;${CMAKE_INCLUDE_PATH}"
-		export CMAKE_LIBRARY_PATH="\
-${EROOT}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+		export CMAKE_INCLUDE_PATH=\
+"${EROOT}/usr/include;${CMAKE_INCLUDE_PATH}"
+		export CMAKE_LIBRARY_PATH=\
+"${EROOT}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 
 		mycmakeargs+=(
 			-DOpenGL_GL_PREFERENCE=GLVND
@@ -160,15 +160,17 @@ ${EROOT}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 		)
 	else
 		einfo "Detected blender-libs/mesa[-libglvnd]"
-		export CMAKE_INCLUDE_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
-		export CMAKE_LIBRARY_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+		export CMAKE_INCLUDE_PATH=\
+"${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
+		export CMAKE_LIBRARY_PATH=\
+"${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 
 		mycmakeargs+=(
 			-DOpenGL_GL_PREFERENCE=LEGACY
-			-DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so"
-			-DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so"
+			-DOPENGL_egl_LIBRARY=\
+"${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so"
+			-DOPENGL_gl_LIBRARY=\
+"${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so"
 		)
 	fi
 

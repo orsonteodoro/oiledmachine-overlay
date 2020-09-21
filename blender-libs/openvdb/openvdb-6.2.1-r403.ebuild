@@ -12,8 +12,10 @@ HOMEPAGE="https://www.openvdb.org"
 SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MPL-2.0"
-IUSE="+abi6-compat doc python test"
-SLOT_MAJ="6"
+IUSE="+abi4-compat doc python test"
+CXXABI=11
+LLVM_V=9
+SLOT_MAJ="4"
 SLOT="${SLOT_MAJ}/${PV}"
 KEYWORDS="~amd64 ~x86"
 RESTRICT="!test? ( test )"
@@ -22,14 +24,15 @@ RESTRICT="!test? ( test )"
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
 # Prevent file collisions also with ABI masks
 REQUIRED_USE="
-	abi6-compat
+	abi4-compat
 	python? ( ${PYTHON_REQUIRED_USE} )
 	!python
 "
 
 RDEPEND="
 	dev-cpp/tbb
-	blender-libs/boost:=
+	blender-libs/boost:${CXXABI}=
+	blender-libs/mesa:${LLVM_V}=
 	dev-libs/c-blosc:=
 	dev-libs/jemalloc:=
 	dev-libs/log4cplus:=
@@ -45,7 +48,7 @@ RDEPEND="
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			blender-libs/boost:=[python?,${PYTHON_USEDEP}]
+			blender-libs/boost:'${CXXABI}'=[python?,${PYTHON_USEDEP}]
 			dev-python/numpy[${PYTHON_USEDEP}]
 		')
 	)"
@@ -71,7 +74,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.0.2-fix-const-correctness-for-unittest.patch"
 	"${FILESDIR}/${P}-use-gnuinstalldirs.patch"
 )
-LLVM_V=9
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
@@ -94,18 +96,16 @@ src_configure() {
 	local myprefix="${EPREFIX}/usr/" # for compiling only
 
 	# To stay in sync with blender-libs/boost
-	append-cxxflags -std=c++11
+	append-cxxflags -std=c++${CXXABI}
 
-	local myprefix2="$(iprfx)" # for install only
-
-	export CMAKE_INCLUDE_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_INCLUDE_PATH}"
-	export CMAKE_LIBRARY_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+	export CMAKE_INCLUDE_PATH=\
+"${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir);${CMAKE_INCLUDE_PATH}"
+	export CMAKE_LIBRARY_PATH=\
+"${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
-		-DCMAKE_INSTALL_PREFIX="${myprefix2}"
+		-DCMAKE_INSTALL_PREFIX="$(iprfx)"
 		-DOPENVDB_ABI_VERSION_NUMBER=${SLOT_MAJ}
 		-DOPENVDB_BUILD_DOCS=$(usex doc)
 		-DOPENVDB_BUILD_PYTHON_MODULE=$(usex python)
@@ -116,10 +116,10 @@ ${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}
 
 	if has_version 'blender-libs/mesa[libglvnd]' ; then
 		einfo "Detected blender-libs/mesa[libglvnd]"
-		export CMAKE_INCLUDE_PATH="\
-${EROOT}/usr/include;${CMAKE_INCLUDE_PATH}"
-		export CMAKE_LIBRARY_PATH="\
-${EROOT}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+		export CMAKE_INCLUDE_PATH=\
+"${EROOT}/usr/include;${CMAKE_INCLUDE_PATH}"
+		export CMAKE_LIBRARY_PATH=\
+"${EROOT}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 
 		mycmakeargs+=(
 			-DOpenGL_GL_PREFERENCE=GLVND
@@ -129,15 +129,17 @@ ${EROOT}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 		)
 	else
 		einfo "Detected blender-libs/mesa[-libglvnd]"
-		export CMAKE_INCLUDE_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
-		export CMAKE_LIBRARY_PATH="\
-${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+		export CMAKE_INCLUDE_PATH=\
+"${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
+		export CMAKE_LIBRARY_PATH=\
+"${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 
 		mycmakeargs+=(
 			-DOpenGL_GL_PREFERENCE=LEGACY
-			-DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so"
-			-DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so"
+			-DOPENGL_egl_LIBRARY=\
+"${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so"
+			-DOPENGL_gl_LIBRARY=\
+"${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so"
 		)
 	fi
 
