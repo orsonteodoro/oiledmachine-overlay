@@ -332,6 +332,7 @@ pkg_setup() {
 	python-single-r1_pkg_setup
 	# Needs OpenCL 1.2 (GCN 2)
 	export OPENVDB_V=$(usex openvdb 7 "")
+	export OPENVDB_V_DIR=$(usex openvdb 7-14 "")
 	if use openvdb ; then
 		if ! grep -q -F -e "delta()" "${EROOT}/usr/include/openvdb/util/CpuTimer.h" ; then
 			if use abi7-compat ; then

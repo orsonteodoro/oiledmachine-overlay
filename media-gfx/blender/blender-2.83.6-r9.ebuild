@@ -248,16 +248,16 @@ RDEPEND="${PYTHON_DEPS}
 		)
 	)
 	openvdb? (
-	>=blender-libs/openvdb-7:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
-	 <blender-libs/openvdb-7.1:7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+	>=blender-libs/openvdb-7:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+	 <blender-libs/openvdb-7.1:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
 		>=blender-libs/boost-1.70:=[nls?,threads(+)]
 		>=dev-cpp/tbb-2019.9
 		>=dev-libs/c-blosc-1.5.0
 	)
 	openxr? ( >=blender-libs/openxr-1.0.6 )
 	optix? ( >=dev-libs/optix-7 )
-	osl? ( >=blender-libs/osl-1.10.9:=[static-libs]
-		<blender-libs/mesa-19.2 )
+	osl? ( >=blender-libs/osl-1.10.9:${LLVM_V}=[static-libs]
+		blender-libs/mesa:${LLVM_V}= )
 	sdl? ( >=media-libs/libsdl2-2.0.8[sound,joystick] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
 	tiff? ( >=media-libs/tiff-4.0.9:0[zlib] )
@@ -323,8 +323,9 @@ pkg_setup() {
 	python-single-r1_pkg_setup
 	# Needs OpenCL 1.2 (GCN 2)
 	export OPENVDB_V=$(usex openvdb 7 "")
+	export OPENVDB_V_DIR=$(usex openvdb 7-${CXXABI_V} "")
 	if use openvdb ; then
-		if ! grep -q -F -e "delta()" "${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr/include/openvdb/util/CpuTimer.h" ; then
+		if ! grep -q -F -e "delta()" "${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V_DIR}/usr/include/openvdb/util/CpuTimer.h" ; then
 			if use abi7-compat ; then
 				# compatible as long as the function is present?
 				die "OpenVDB delta() is missing try <=7.1.x only"
@@ -662,21 +663,21 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 
 	fi
 
-	if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" ]] ; then
+	if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir)" ]] ; then
 		mycmakeargs+=( -DBoost_NO_SYSTEM_PATHS=ON )
-		mycmakeargs+=( -DBoost_INCLUDE_DIR="${EROOT}/usr/$(get_libdir)/blender/boost/usr/include" )
-		mycmakeargs+=( -DBoost_LIBRARY_DIR_RELEASE="${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" )
-		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+		mycmakeargs+=( -DBoost_INCLUDE_DIR="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/include" )
+		mycmakeargs+=( -DBoost_LIBRARY_DIR_RELEASE="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir)" )
+		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
 	fi
 
 	if use openxr ; then
-		export XR_OPENXR_SDK_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/openxr/usr"
-		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/openxr/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+		export XR_OPENXR_SDK_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/openxr/${CXXABI_V}/usr"
+		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/openxr/${CXXABI_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
 	fi
 
 	if use openvdb ; then
-		export OPENVDB_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr"
-		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+		export OPENVDB_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V_DIR}/usr"
+		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V_DIR}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
 	fi
 
 	if use openxr || use osl ; then
@@ -714,7 +715,7 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 
 	if use osl ; then
 		export OSL_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/osl/${LLVM_V}"
-		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/osl/${LLVM_V}/$(get_libdir):${_LD_LIBRARY_PATH}"
+		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/osl/${LLVM_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
 	fi
 
 	if [[ -n "${_LD_LIBRARY_PATH}" ]] ; then
@@ -1065,16 +1066,19 @@ _src_install() {
 
 	_LD_LIBRARY_PATH=()
 	if use openvdb ; then
-		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V}/usr/$(get_libdir)\n" )
+		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V_DIR}/usr/$(get_libdir)\n" )
 	fi
 	if use openxr ; then
-		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/openxr/usr/$(get_libdir)\n" )
+		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/openxr/${CXXABI_V}/usr/$(get_libdir)\n" )
 	fi
 	if use openxr || use osl ; then
 		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)\n" )
 	fi
-	if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)" && "${CXXABI}" == "11" ]] ; then
-		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/boost/usr/$(get_libdir)\n" )
+	if use osl ; then
+		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/osl/${LLVM_V}/usr/$(get_libdir)\n" )
+	fi
+	if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir)" ]] ; then
+		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir)\n" )
 	fi
 	_LD_LIBRARY_PATH=$(echo -e "${_LD_LIBRARY_PATH[@]}" | tr "\n" ":")
 
