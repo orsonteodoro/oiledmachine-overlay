@@ -49,8 +49,10 @@ cycles? (
 # intern/CMakeLists.txt contains GPL+ with all-rights-reserved ; there is no
 #   all rights reserved in the vanilla GPL-2
 
+CXXABI_V=17
+LLVM_V=10
+LLVM_MAX_SLOT=${LLVM_V}
 PYTHON_COMPAT=( python3_{7,8} )
-LLVM_MAX_SLOT=10
 
 inherit eapi7-ver
 inherit blender check-reqs cmake-utils flag-o-matic llvm pax-utils \
@@ -83,8 +85,6 @@ flac +jack +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal \
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 RESTRICT="mirror !test? ( test )"
-LLVM_V=10
-CXXABI_V=17
 
 # The release USE flag depends on platform defaults.
 # Disabled dead code optimization flags introduced by

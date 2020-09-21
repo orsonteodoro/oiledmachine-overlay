@@ -68,9 +68,11 @@ game-engine? (
 # release/scripts/addons/render_povray/templates_pov/chess2.pov AFL-3.0
 # release/scripts/addons/render_povray/templates_pov/abyss.pov CC-BY-SA-3.0
 
-PYTHON_COMPAT=( python3_6 )
+CXXABI_V=11
 HAS_PLAYER=1
-LLVM_MAX_SLOT=9
+LLVM_V=9
+LLVM_MAX_SLOT=${LLVM_V}
+PYTHON_COMPAT=( python3_6 )
 
 inherit eapi7-ver
 inherit blender check-reqs cmake-utils flag-o-matic llvm pax-utils \
@@ -102,8 +104,6 @@ IUSE+=" X abi3-compat +abi4-compat abi5-compat abi6-compat abi7-compat +bullet \
 FFMPEG_IUSE+=" jpeg2k +mp3 +theora vorbis x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 RESTRICT="mirror !test? ( test )"
-LLVM_V=9
-CXXABI_V=11
 
 # The release USE flag depends on platform defaults.
 # Disabled dead code optimization flags introduced by
@@ -752,6 +752,8 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 			export CMAKE_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 			_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
 		fi
+		export OSL_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/osl/${LLVM_V}"
+		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/osl/${LLVM_V}/$(get_libdir):${_LD_LIBRARY_PATH}"
 	fi
 
 	if [[ -n "${_LD_LIBRARY_PATH}" ]] ; then

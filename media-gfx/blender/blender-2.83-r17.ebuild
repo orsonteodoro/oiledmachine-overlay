@@ -49,8 +49,10 @@ cycles? (
 # intern/CMakeLists.txt contains GPL+ with all-rights-reserved ; there is no
 #   all rights reserved in the vanilla GPL-2
 
+CXXABI_V=11
+LLVM_V=9
+LLVM_MAX_SLOT=${LLVM_V}
 PYTHON_COMPAT=( python3_{7,8} )
-LLVM_MAX_SLOT=9
 
 inherit eapi7-ver
 inherit blender check-reqs cmake-utils flag-o-matic llvm pax-utils \
@@ -85,8 +87,6 @@ flac +jack +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal \
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 RESTRICT="mirror !test? ( test )"
-LLVM_V=9
-CXXABI_V=11
 
 # The release USE flag depends on platform defaults.
 # Disabled dead code optimization flags introduced by
@@ -715,6 +715,11 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 			export CMAKE_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 			_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
 		fi
+	fi
+
+	if use osl ; then
+		export OSL_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/osl/${LLVM_V}"
+		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/osl/${LLVM_V}/$(get_libdir):${_LD_LIBRARY_PATH}"
 	fi
 
 	if [[ -n "${_LD_LIBRARY_PATH}" ]] ; then
