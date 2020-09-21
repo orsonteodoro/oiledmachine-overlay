@@ -20,7 +20,8 @@
 		renderers and other applications, ideal for describing materials,
 		lights, displacement, and pattern generation.
 
-		This ebuild fork builds static libraries of osl.
+		This ebuild fork builds static libraries of osl.  Static libs
+		is required by Blender's cycles plugin with OSL support.
 	</longdescription>
 	<use>
 		<flag name="partio">Use <pkg>media-libs/partio</pkg></flag>

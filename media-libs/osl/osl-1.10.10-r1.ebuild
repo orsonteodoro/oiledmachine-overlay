@@ -4,9 +4,6 @@
 EAPI=7
 inherit cmake-static-libs cmake-utils llvm multilib-minimal toolchain-funcs
 
-# check this on updates
-LLVM_MAX_SLOT=9
-
 DESCRIPTION="Advanced shading language for production GI renderers"
 HOMEPAGE="http://opensource.imageworks.com/?p=osl"
 SRC_URI="https://github.com/imageworks/OpenShadingLanguage/archive/Release-${PV}.tar.gz -> ${P}.tar.gz"
@@ -21,9 +18,18 @@ X86_CPU_FEATURES=(
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
 
-IUSE="doc partio qt5 test ${CPU_FEATURES[@]%:*}"
+IUSE="doc partio qt5 test ${CPU_FEATURES[@]%:*} llvm-9 +llvm-10"
+REQUIRED_USE="^^ ( llvm-9 llvm-10 )"
 
 RDEPEND="
+	llvm-9? (
+		sys-devel/llvm:9
+		sys-devel/clang:9
+	)
+	llvm-10? (
+		sys-devel/llvm:10
+		sys-devel/clang:10
+	)
 	dev-libs/boost:=
 	dev-libs/pugixml
 	media-libs/openexr:=
@@ -56,6 +62,20 @@ S="${WORKDIR}/OpenShadingLanguage-Release-${PV}"
 
 llvm_check_deps() {
 	has_version -r "sys-devel/clang:${LLVM_SLOT}"
+}
+
+pkg_setup() {
+	# See https://github.com/imageworks/OpenShadingLanguage/blob/master/INSTALL.md
+	# Supports LLVM-{7,8,9,10} but should be the same throughout the system.
+	if use llvm-9 ; then
+		einfo "Linking with LLVM-9"
+		export LLVM_MAX_SLOT=9
+	elif use llvm-10 ; then
+		einfo "Linking with LLVM-10"
+		export LLVM_MAX_SLOT=10
+	fi
+
+	llvm_pkg_setup
 }
 
 src_prepare() {
