@@ -777,7 +777,7 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.82/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.82a/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
@@ -1051,18 +1051,21 @@ _src_install() {
 	fi
 
 	_LD_LIBRARY_PATH=()
+	_PATH=()
 	if use openvdb ; then
 		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V_DIR}/usr/$(get_libdir)\n" )
 	fi
 	if use osl ; then
 		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)\n" )
 		_LD_LIBRARY_PATH+=( "/usr/$(get_libdir)/blender/osl/${LLVM_V}/usr/$(get_libdir)\n" )
+		_PATH+=( "/usr/$(get_libdir)/blender/osl/${LLVM_V}/usr/$(get_libdir)/osl/bin\n" )
 	fi
 	if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir)" ]] ; then
 		sed -i -e "s|#BOOST ||g" \
 			"${T}/${PN}-${SLOT_MAJ}" || die
 	fi
 	_LD_LIBRARY_PATH=$(echo -e "${_LD_LIBRARY_PATH[@]}" | tr "\n" ":")
+	_PATH=$(echo -e "${_PATH[@]}" | tr "\n" ":")
 
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
 		cp "${ED}/usr/share/applications"/blender{,-${SLOT_MAJ}}.desktop || die
@@ -1073,7 +1076,8 @@ _src_install() {
 		cp "${FILESDIR}/blender-wrapper" \
 			"${T}/${PN}-${SLOT_MAJ}" || die
 		sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
-			-e "s|#LD_LIBRARY_PATH|${LD_LIBRARY_PATH}|g" \
+			-e "s|#LD_LIBRARY_PATH|LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}\"|g" \
+			-e "s|#PATH|PATH=\"${_PATH}\"|g" \
 			"${T}/${PN}-${SLOT_MAJ}" || die
 		exeinto /usr/bin
 		doexe "${T}/${PN}-${SLOT_MAJ}"
@@ -1081,7 +1085,8 @@ _src_install() {
 		cp "${FILESDIR}/blender-wrapper" \
 			"${T}/${PN}-headless-${SLOT_MAJ}" || die
 		sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
-			-e "s|#LD_LIBRARY_PATH|${LD_LIBRARY_PATH}|g" \
+			-e "s|#LD_LIBRARY_PATH|LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}\"|g" \
+			-e "s|#PATH|PATH=\"${_PATH}\"|g" \
 			"${T}/${PN}-headless-${SLOT_MAJ}" || die
 		exeinto /usr/bin
 		doexe "${T}/${PN}-headless-${SLOT_MAJ}"
