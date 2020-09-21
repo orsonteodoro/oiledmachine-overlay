@@ -121,6 +121,7 @@ src_configure() {
 				-DLLVM_STATIC=ON
 				-DOSL_BUILD_TESTS=$(usex test)
 				-DSTOP_ON_WARNING=OFF
+				-DUSE_CPP=$(usex llvm-9 11 14)
 				-DUSE_PARTIO=$(usex partio)
 				-DUSE_QT=$(usex qt5)
 				-DUSE_SIMD="$(IFS=","; echo "${mysimd[*]}")"
