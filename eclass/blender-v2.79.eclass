@@ -449,8 +449,8 @@ ebuild/upstream developers only."
 	unset CMAKE_PREFIX_PATH
 
 	blender_configure_simd_cycles
-	blender_configure_boost_cxx11
-	blender_configure_openvdb_cxx11
+	blender_configure_boost_cxxyy
+	blender_configure_openvdb_cxxyy
 	blender_configure_osl_match_llvm
 
 	if use osl ; then
