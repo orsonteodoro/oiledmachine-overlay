@@ -706,8 +706,8 @@ _src_install() {
 			"${T}/${PN}${suffix}-${SLOT_MAJ}" || die
 		if declare -f blender_set_wrapper_deps > /dev/null ; then
 			sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
-				-e "s|#LD_LIBRARY_PATH|export LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}\"|g" \
-				-e "s|#PATH|export PATH=\"${_PATH}\"|g" \
+				-e "s|#LD_LIBRARY_PATH|export LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}:\${LD_LIBRARY_PATH}\"|g" \
+				-e "s|#PATH|export PATH=\"${_PATH}:\${PATH}\"|g" \
 				"${T}/${PN}${suffix}-${SLOT_MAJ}" || die
 		else
 			sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
@@ -720,8 +720,8 @@ _src_install() {
 				"${T}/cycles_network${suffix/-/_}-${SLOT_MAJ}" || die
 			if declare -f blender_set_wrapper_deps > /dev/null ; then
 				sed -i -e "s|\${BLENDER_EXE}|${d_dest}/cycles_network|g" \
-					-e "s|#LD_LIBRARY_PATH|export LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}\"|g" \
-					-e "s|#PATH|export PATH=\"${_PATH}\"|g" \
+					-e "s|#LD_LIBRARY_PATH|export LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}:\${LD_LIBRARY_PATH}\"|g" \
+					-e "s|#PATH|export PATH=\"${_PATH}:\${PATH}\"|g" \
 					"${T}/cycles_network${suffix/-/_}-${SLOT_MAJ}" || die
 			else
 				sed -i -e "s|\${BLENDER_EXE}|${d_dest}/cycles_network|g" \
