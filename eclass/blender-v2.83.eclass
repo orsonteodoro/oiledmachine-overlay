@@ -318,36 +318,8 @@ if [[ "${PV}" == "2.83" ]] ; then
 S="${WORKDIR}/${PN}-${DL_PV}"
 fi
 
-get_dest() {
-	echo "/usr/bin/.${PN}/${SLOT_MAJ}/${EBLENDER_NAME}"
-}
-
-blender_check_requirements() {
-	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
-
-	if use doc; then
-		CHECKREQS_DISK_BUILD="4G" check-reqs_pkg_pretend
-	fi
-}
-
-# Dependency PreFiX
-dpfx() {
-	echo "${EROOT}/usr/$(get_libdir)/${PN}"
-}
-
-# EROOT Dependency PreFiX
-erdpfx() {
-	echo "${EROOT}/$(dpfx)"
-}
-
-blender_pkg_pretend() {
-	blender_check_requirements
-}
-
 blender_pkg_setup() {
-	llvm_pkg_setup
-	blender_check_requirements
-	python-single-r1_pkg_setup
+	blender_pkg_setup_common
 	# Needs OpenCL 1.2 (GCN 2)
 	export OPENVDB_V=$(usex openvdb 7 "")
 	export OPENVDB_V_DIR=$(usex openvdb 7-${CXXABI_V} "")
@@ -360,91 +332,6 @@ blender_pkg_setup() {
 			fi
 		fi
 	fi
-
-	if ( has_version 'media-libs/mesa[libglvnd]' \
-		&& has_version 'x11-drivers/amdgpu-pro[opengl_pro]') \
-	|| ( has_version 'media-libs/mesa[libglvnd]' \
-		&& has_version 'x11-drivers/amdgpu-pro-lts[opengl_pro]'); then
-		die \
-"You must switch to x11-drivers/amdgpu-pro[opengl_mesa] or \
-x11-drivers/amdgpu-pro-lts[opengl_mesa] instead"
-	fi
-
-	grep -q -i -E -e 'abm( |$)' /proc/cpuinfo
-	local has_abm="$?"
-	grep -q -i -E -e 'bmi1( |$)' /proc/cpuinfo
-	local has_bmi1="$?"
-	grep -q -i -E -e 'f16c( |$)' /proc/cpuinfo
-	local has_f16c="$?"
-	grep -q -i -E -e 'fma( |$)' /proc/cpuinfo
-	local has_fma="$?"
-	grep -q -i -E -e 'ssse3( |$)' /proc/cpuinfo
-	local has_ssse3="$?"
-
-	# For tzcnt
-	if use cpu_flags_x86_bmi ; then
-		if [[ "${has_bmi1}" != "0" ]] ; then
-			ewarn \
-"bmi may not be supported on your CPU and was enabled via cpu_flags_x86_bmi"
-		fi
-	fi
-
-	if use cpu_flags_x86_f16c ; then
-		if [[ "${has_f16c}" != "0" ]] ; then
-			ewarn \
-"f16c may not be supported on your CPU and was enabled via cpu_flags_x86_f16c"
-		fi
-	fi
-
-	if use cpu_flags_x86_fma ; then
-		if [[ "${has_fma}" != "0" ]] ; then
-			ewarn \
-"fma may not be supported on your CPU and was enabled via cpu_flags_x86_fma"
-		fi
-	fi
-
-	if use cpu_flags_x86_lzcnt ; then
-		if [[ "${has_bmi1}" != "0" && "${has_abm}" != "0" ]] ; then
-			ewarn \
-"lzcnt may not be supported on your CPU and was enabled via cpu_flags_x86_lzcnt"
-		fi
-	fi
-
-	if use cpu_flags_x86_ssse3 ; then
-		if [[ "${has_ssse3}" != "0" ]] ; then
-			ewarn \
-"ssse3 may not be supported on your CPU and was enabled via cpu_flags_x86_ssse3"
-		fi
-	fi
-
-	if [[ "${ABI}" == "x86" ]] ; then
-		# Cycles says that a bug might be in in gcc so use clang or icc.
-		# If you use gcc, it will not optimize cycles except with maybe sse2.
-		if [[ -n "${BLENDER_CC_ALT}" && -n "${BLENDER_CXX_ALT}" ]] ; then
-			export CC=${BLENDER_CC_ALT}
-			export CXX=${BLENDER_CXX_ALT}
-		elif [[ -n "${CC}" && -n "${CXX}" ]] \
-			&& [[ ! ( "${CC}" =~ gcc ) ]] \
-			&& [[ ! ( "${CXX}" =~ "g++" ) ]] ; then
-			# Defined by user from per-package environmental variables.
-			export CC
-			export CXX
-		elif has_version 'sys-devel/clang' ; then
-			export CC=clang
-			export CXX=clang++
-		elif has_version 'dev-lang/icc' ; then
-			export CC=icc
-			export CXX=icpc
-		fi
-	else
-		if [[ ! -n "${CC}" || ! -n "${CXX}" ]] ; then
-			export CC=$(tc-getCC $(get_abi_CHOST "${ABI}"))
-			export CXX=$(tc-getCXX $(get_abi_CHOST "${ABI}"))
-		fi
-	fi
-
-	einfo "CC=${CC}"
-	einfo "CXX=${CXX}"
 }
 
 _src_prepare() {
