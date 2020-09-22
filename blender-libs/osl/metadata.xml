@@ -22,6 +22,9 @@
 
 		This ebuild fork builds static libraries of osl.  Static libs
 		is required by Blender's cycles plugin with OSL support.
+
+		The ebuild slotting is important to avoid a load-time
+		multiple version LLVM bug.
 	</longdescription>
 	<use>
 		<flag name="partio">Use <pkg>media-libs/partio</pkg></flag>
@@ -30,4 +33,8 @@
 	<upstream>
 		<remote-id type="github">imageworks/OpenShadingLanguage</remote-id>
 	</upstream>
+	<slots>
+		<slot name="9">Compiled with LLVM 9.</slot>
+		<slot name="10">Compiled with LLVM 10.</slot>
+	</slots>
 </pkgmetadata>
