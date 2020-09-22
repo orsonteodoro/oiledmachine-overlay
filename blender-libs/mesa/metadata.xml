@@ -45,4 +45,8 @@
 		<remote-id type="cpe">cpe:/a:mesa3d:mesa</remote-id>
 		<remote-id type="sourceforge">mesa3d</remote-id>
 	</upstream>
+	<slots>
+		<slot name="9">Compiled against LLVM 9</slot>
+		<slot name="10">Compiled against LLVM 10</slot>
+	</slots>
 </pkgmetadata>
