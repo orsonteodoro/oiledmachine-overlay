@@ -431,214 +431,10 @@ ebuild/upstream developers only."
 	unset CMAKE_LIBRARY_PATH
 	unset CMAKE_PREFIX_PATH
 
-	if ! has_version 'media-libs/embree[cpu_flags_x86_avx]' ; then
-		sed -i -e "/embree_avx/d" \
-			build_files/cmake/Modules/FindEmbree.cmake || die
-	fi
-
-	if ! has_version 'media-libs/embree[cpu_flags_x86_avx2]' ; then
-		sed -i -e "/embree_avx2/d" \
-			build_files/cmake/Modules/FindEmbree.cmake || die
-	fi
-
-	if ! has_version 'media-libs/embree[cpu_flags_x86_sse4_2]' ; then
-		sed -i -e "/embree_sse42/d" \
-			build_files/cmake/Modules/FindEmbree.cmake || die
-	fi
-
-	if use cycles && ! use cpudetection ; then
-		if use cpu_flags_x86_sse ; then
-			# clang / gcc
-			sed -i -e "s|check_cxx_compiler_flag(-msse CXX_HAS_SSE)|set(CXX_HAS_SSE TRUE)|g" \
-				intern/cycles/CMakeLists.txt || die
-			# icc
-			sed -i -e "s|check_cxx_compiler_flag(-xsse2 CXX_HAS_SSE)|set(CXX_HAS_SSE TRUE)|g" \
-				intern/cycles/CMakeLists.txt || die
-		else
-			# clang / gcc
-			sed -i -e "s|check_cxx_compiler_flag(-msse CXX_HAS_SSE)|set(CXX_HAS_SSE FALSE)|g" \
-				intern/cycles/CMakeLists.txt || die
-			# icc
-			sed -i -e "s|check_cxx_compiler_flag(-xsse2 CXX_HAS_SSE)|set(CXX_HAS_SSE FALSE)|g" \
-				intern/cycles/CMakeLists.txt || die
-		fi
-
-		if ! use cpu_flags_x86_sse2 ; then
-			sed -i -e "/WITH_KERNEL_SSE2/d" \
-				intern/cycles/CMakeLists.txt || die
-		fi
-
-		if ! use cpu_flags_x86_sse3 ; then
-			sed -i -e "/WITH_KERNEL_SSE3/d" \
-				intern/cycles/CMakeLists.txt || die
-		fi
-
-		if ! use cpu_flags_x86_sse4_1 ; then
-			sed -i -e "/WITH_KERNEL_SSE41/d" \
-				intern/cycles/CMakeLists.txt || die
-		fi
-
-		if use cpu_flags_x86_avx ; then
-			# clang / gcc
-			sed -i -e "s|check_cxx_compiler_flag(-mavx CXX_HAS_AVX)|set(CXX_HAS_AVX TRUE)|g" \
-				intern/cycles/CMakeLists.txt || die
-			# icc
-			sed -i -e "s|check_cxx_compiler_flag(-xavx CXX_HAS_AVX)|set(CXX_HAS_AVX TRUE)|g" \
-				intern/cycles/CMakeLists.txt || die
-		else
-			# clang / gcc
-			sed -i -e "s|check_cxx_compiler_flag(-mavx CXX_HAS_AVX)|set(CXX_HAS_AVX FALSE)|g" \
-				intern/cycles/CMakeLists.txt || die
-			# icc
-			sed -i -e "s|check_cxx_compiler_flag(-xavx CXX_HAS_AVX)|set(CXX_HAS_AVX FALSE)|g" \
-				intern/cycles/CMakeLists.txt || die
-		fi
-
-		if use cpu_flags_x86_avx2 ; then
-			# clang / gcc
-			sed -i -e "s|check_cxx_compiler_flag(-mavx2 CXX_HAS_AVX2)|set(CXX_HAS_AVX2 TRUE)|g" \
-				intern/cycles/CMakeLists.txt || die
-			# icc
-			sed -i -e "s|check_cxx_compiler_flag(-xcore-avx2 CXX_HAS_AVX2)|set(CXX_HAS_AVX2 TRUE)|g" \
-				intern/cycles/CMakeLists.txt || die
-		else
-			# clang / gcc
-			sed -i -e "s|check_cxx_compiler_flag(-mavx2 CXX_HAS_AVX2)|set(CXX_HAS_AVX2 FALSE)|g" \
-				intern/cycles/CMakeLists.txt || die
-			# icc
-			sed -i -e "s|check_cxx_compiler_flag(-xcore-avx2 CXX_HAS_AVX2)|set(CXX_HAS_AVX2 FALSE)|g" \
-				intern/cycles/CMakeLists.txt || die
-		fi
-
-		if [[ "${ABI}" == "x86" ]] && grep -q -F -e "WITH_KERNEL_SSE41" intern/cycles/CMakeLists.txt ; then
-			# See intern/cycles/util/util_optimization.h for reason why it was axed in x86 (32-bit).
-			sed -i -e "/WITH_KERNEL_SSE41/d" \
-				intern/cycles/CMakeLists.txt || die
-		fi
-
-		# No instructions present
-		sed -i -e "s|-mbmi2||g" \
-			intern/cycles/CMakeLists.txt || die
-	fi
-
-	# The avx2 config in CMakeLists.txt already sets this.
-	if tc-is-gcc || tc-is-clang ; then
-		if ! use cpudetection && use cycles && ! use cpu_flags_x86_avx2 ; then
-			if use cpu_flags_x86_bmi ; then
-				# bmi1 only, tzcnt
-				if [[ "${CXXFLAGS}" =~ march=(\
-native|\
-\
-haswell|broadwell|skylake|knl|knm|skylake-avx512|cannonlake|icelake-client|\
-icelake-server|cascadelake|cooperlake|tigerlake|sapphirerapids|\
-\
-bdver2|bdver3|bdver4|znver1|znver2|btver2) ]] \
-				|| [[ "${CXXFLAGS}" =~ mbmi( |$) ]] ; then
-					# Already added
-					:;
-				else
-					append-cxxflags -mbmi
-				fi
-			else
-				append-cxxflags -mno-bmi
-			fi
-			if use cpu_flags_x86_lzcnt ; then
-				# intel puts lzcnt in bmi1
-				# amd puts lzcnt in abm
-				if [[ "${CXXFLAGS}" =~ march=(\
-native|\
-\
-haswell|broadwell|skylake|knl|knm|skylake-avx512|cannonlake|icelake-client|\
-icelake-server|cascadelake|cooperlake|tigerlake|sapphirerapids|\
-\
-amdfam10|barcelona|bdver1|bdver2|bdver3|bdver4|znver1|znver2|btver1|btver2) ]] \
-				|| [[ "${CXXFLAGS}" =~ mlzcnt ]] ; then
-					# Already added
-					:;
-				else
-					append-cxxflags -mlzcnt
-				fi
-			else
-				append-cxxflags -mno-lzcnt
-			fi
-		fi
-
-		if use cpu_flags_x86_f16c ; then
-			if [[ "${CXXFLAGS}" =~ march=(\
-native|\
-\
-ivybridge|haswell|broadwell|skylake|knl|knm|skylake-avx512|cannonlake|\
-icelake-client|icelake-server|cascadelake|copperlake|tigerlake|sapphirerapids|\
-\
-bdver2|bdver3|bdver4|znver1|znver2|btver2) ]] \
-			|| [[ "${CXXFLAGS}" =~ mf16c ]] ; then
-				# Already added
-				:;
-			else
-				append-cxxflags -mf16c
-			fi
-		else
-			append-cxxflags -mno-f16c
-		fi
-
-		if use cpu_flags_x86_fma ; then
-			# for eigen and cycles
-			if [[ "${CXXFLAGS}" =~ march=(\
-native|\
-\
-haswell|broadwell|skylake|knl|knm|skylake-avx512|cannonlake|icelake-client|\
-icelake-server|cascadelake|cooperlake|tigerlake|sapphirerapids|alderlake|\
-\
-bdver2|bdver3|bdver4|znver1|znver2) ]] \
-			|| [[ "${CXXFLAGS}" =~ mfma ]] ; then
-				# Already added
-				:;
-			else
-				append-cxxflags -mfma
-			fi
-		else
-			append-cxxflags -mno-fma
-		fi
-
-		if use cycles && use cpudetection ; then
-			# automatically adds -march=native
-			filter-flags -m*avx* -m*mmx -m*sse* -m*ssse3 -m*3dnow \
-				-m*popcnt -m*abm -m*bmi -m*lzcnt -m*f16c -m*fma
-			filter-flags -march=*
-		fi
-
-	fi
+	blender_configure_simd_cycles
 
 	if use openxr || use osl ; then
-		if has_version 'blender-libs/mesa:'${LLVM_V}'[libglvnd]' ; then
-			mycmakeargs+=( -DOpenGL_GL_PREFERENCE=GLVND )
-			if [[ -e "${EROOT}/usr/$(get_libdir)/libGLX.so" ]] ; then
-				mycmakeargs+=( -DOPENGL_glx_LIBRARY="${EROOT}/usr/$(get_libdir)/libGLX.so" )
-			else
-				die "Install media-libs/libglvnd or indirectly through mesa[libglvnd]."
-			fi
-			if [[ -e "${EROOT}/usr/$(get_libdir)/libOpenGL.so" ]] ; then
-				mycmakeargs+=( -DOPENGL_opengl_LIBRARY="${EROOT}/usr/$(get_libdir)/libOpenGL.so" )
-			else
-				die "Install media-libs/libglvnd or indirectly through mesa[libglvnd]."
-			fi
-			if [[ -e "${EROOT}/usr/$(get_libdir)/libEGL.so" ]] ; then
-				mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/libEGL.so" )
-			fi
-		else
-			mycmakeargs+=( -DOpenGL_GL_PREFERENCE=LEGACY )
-			if [[ -e "${EROOT}/usr/$(get_libdir)/libGL.so" ]] ; then
-				# legacy
-				mycmakeargs+=( -DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/libGL.so" )
-			else
-				die "Use either media-libs/mesa[libglvnd] or media-libs/libglvnd"
-			fi
-			if [[ -e "${EROOT}/usr/$(get_libdir)/libEGL.so" ]] ; then
-				mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/libEGL.so" )
-			fi
-			export CMAKE_INCLUDE_PATH="${EROOT}/usr/include;${CMAKE_INCLUDE_PATH}"
-			export CMAKE_LIBRARY_PATH="${EROOT}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
-		fi
+		blender_configure_mesa_match_system_llvm
 	fi
 
 	mycmakeargs+=(
@@ -741,94 +537,23 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 		)
 	fi
 
-if [[ -n "${BLENDER_DISABLE_CUDA_AUTODETECT}" \
-	&& "${BLENDER_DISABLE_CUDA_AUTODETECT}" == "1" ]] ; then
-	:;
-else
-	if use cuda ; then
-		if use nvcc ; then
-			if [[ -x "${EROOT}/opt/cuda/bin/nvcc" ]] ; then
-				mycmakeargs+=(
-			-DCUDA_NVCC_EXECUTABLE="${EROOT}/opt/cuda/bin/nvcc"
-				)
-			elif [[ -n "${BLENDER_NVCC_PATH}" \
-			&& -x "${EROOT}/${BLENDER_NVCC_PATH}/bin/nvcc" ]] ; then
-				mycmakeargs+=(
-		-DCUDA_NVCC_EXECUTABLE="${EROOT}/${BLENDER_NVCC_PATH}/nvcc"
-				)
-			elif [[ -n "${BLENDER_NVCC_PATH}" \
-		&& ! -x "${EROOT}/${BLENDER_NVCC_PATH}/bin/nvcc" ]] ; then
-				die \
-"\n\
-nvcc is unreachable from BLENDER_NVCC_PATH.  It should be an absolute path\n\
-like /opt/cuda/bin/nvcc.\n\
-\n"
-			else
-				die \
-"\n\
-You need to define BLENDER_NVCC_PATH as a per-package environmental variable\n\
-containing the absolute path to nvcc e.g. /opt/cuda/bin/nvcc.\n\
-\n"
-			fi
-		fi
-		if use nvrtc ; then
-			if [[ -f "${EROOT}/opt/cuda/lib64/libnvrtc-builtins.so" ]] ; then
-				mycmakeargs+=(
-				-DCUDA_TOOLKIT_ROOT_DIR="${EROOT}/opt/cuda"
-				)
-			elif [[ -n "${BLENDER_CUDA_TOOLKIT_ROOT_DIR}" \
-&& -f "${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/lib64/libnvrtc-builtins.so" ]] ; then
-				mycmakeargs+=(
-	-DCUDA_TOOLKIT_ROOT_DIR="${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}"
-				)
-			elif [[ -n "${BLENDER_CUDA_TOOLKIT_ROOT_DIR}" \
-&& ! -f "${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/lib64/libnvrtc-builtins.so" ]] ; then
-				die \
-"Cannot reach \$BLENDER_CUDA_TOOLKIT_ROOT_DIR/lib64/libnvrtc-builtins.so"
-			else
-				die \
-"\n
-libnvrtc-builtins.so is unreachable.  Define BLENDER_CUDA_TOOLKIT_ROOT_DIR\n\
-as a per-package environmental variable (e.g. /opt/cuda).\n
-\n"
-			fi
-		fi
-		if use optix ; then
-			if [[ -n "${BLENDER_OPTIX_ROOT_DIR}" \
-		&& -f "${EROOT}/${BLENDER_OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
-				mycmakeargs+=(
-			-DOPTIX_ROOT_DIR="${EROOT}/${BLENDER_OPTIX_ROOT_DIR}"
-				)
-			elif [[ -n "${BLENDER_OPTIX_ROOT_DIR}" \
-		&& ! -f "${EROOT}/${BLENDER_OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
-				die \
-"\n\
-Cannot reach \$BLENDER_OPTIX_ROOT_DIR/include/optix.h.  Fix it?\n\
-\n"
-			elif [[ -n "${OPTIX_ROOT_DIR}" \
-		&& -f "${EROOT}/${OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
-				:;
-			elif [[ -n "${OPTIX_ROOT_DIR}" \
-		&& ! -f "${EROOT}/${OPTIX_ROOT_DIR}/include/optix.h" ]] ; then
-"\n\
-Cannot reach \$OPTIX_ROOT_DIR/include/optix.h.  Fix it?\n\
-\n"
-			else
-				die \
-"\n\
-You need to define BLENDER_OPTIX_ROOT_DIR to point to the Optix SDK folder.\n\
-The build scripts expect BLENDER_OPTIX_ROOT_DIR/include/optix.h.\n\
-\n"
-			fi
+	if [[ -n "${BLENDER_DISABLE_CUDA_AUTODETECT}" \
+		&& "${BLENDER_DISABLE_CUDA_AUTODETECT}" == "1" ]] ; then
+		:;
+	else
+		if use cuda ; then
+			blender_configure_nvcc
+			blender_configure_nvrtc
+			blender_configure_optix
 		fi
 	fi
-fi
 
 	if (( ${#BLENDER_CMAKE_ARGS[@]} > 0 )) ; then
 		# Set as per-package environmental variable
 		# For setting up optix/cuda
 		mycmakeargs+=( ${BLENDER_CMAKE_ARGS[@]} )
 	fi
+
 	S="${BUILD_DIR}" \
 	CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
