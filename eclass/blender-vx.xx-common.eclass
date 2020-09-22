@@ -39,7 +39,7 @@ blender_check_requirements() {
 
 # Dependency PreFiX
 dpfx() {
-	echo "${EROOT}/usr/$(get_libdir)/${PN}"
+	echo "/usr/$(get_libdir)/${PN}"
 }
 
 # EROOT Dependency PreFiX
