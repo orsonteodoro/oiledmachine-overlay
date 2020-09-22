@@ -281,7 +281,10 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	openal? ( >=media-libs/openal-1.17.2 )
 	opencl? ( virtual/opencl )
-	openimageio? ( >=media-libs/openimageio-1.7.15:=[color-management?,jpeg2k?] )
+	openimageio? (
+		>=blender-libs/openimageio-1.7.15:=[color-management?,jpeg2k?]
+		 <blender-libs/openimageio-2
+	)
 	openexr? (
 		>=media-libs/ilmbase-2.2.0:=
 		>=media-libs/openexr-2.2.0:=
@@ -381,10 +384,6 @@ _src_prepare() {
 	cmake-utils_src_prepare
 
 	eapply "${FILESDIR}/blender-2.79b-parent-datafiles-dir-change.patch"
-
-	if has_version '>=media-libs/openimageio-2' ; then
-		eapply "${FILESDIR}/blender-2.79b-oiio-2.x-compat.patch"
-	fi
 
 	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
 		# we don't want static glew, but it's scattered across
