@@ -118,8 +118,8 @@ RESTRICT="mirror !test? ( test )"
 #   __KERNEL_SSE__.
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	!cpu_flags_x86_mmx? ( !cpu_flags_x86_sse !cpu_flags_x86_sse2 )
-	build_creator ( X )
-	build_portable ( X game-engine )
+	build_creator? ( X )
+	build_portable? ( X game-engine )
 	cpu_flags_x86_sse2? ( !cpu_flags_x86_sse? ( cpu_flags_x86_mmx ) )
 	cuda? ( cycles nvcc )
 	cycles? (
