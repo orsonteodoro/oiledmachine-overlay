@@ -450,19 +450,19 @@ containing the absolute path to nvcc e.g. /opt/cuda/bin/nvcc.\n\
 
 blender_configure_nvrtc() {
 	if use nvrtc ; then
-		if [[ -f "${EROOT}/opt/cuda/lib64/libnvrtc-builtins.so" ]] ; then
+		if [[ -f "${EROOT}/opt/cuda/$(get_libdir)/libnvrtc-builtins.so" ]] ; then
 			mycmakeargs+=(
 			-DCUDA_TOOLKIT_ROOT_DIR="${EROOT}/opt/cuda"
 			)
 		elif [[ -n "${BLENDER_CUDA_TOOLKIT_ROOT_DIR}" \
-&& -f "${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/lib64/libnvrtc-builtins.so" ]] ; then
+&& -f "${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/$(get_libdir)/libnvrtc-builtins.so" ]] ; then
 			mycmakeargs+=(
 	-DCUDA_TOOLKIT_ROOT_DIR="${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}"
 			)
 		elif [[ -n "${BLENDER_CUDA_TOOLKIT_ROOT_DIR}" \
-&& ! -f "${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/lib64/libnvrtc-builtins.so" ]] ; then
+&& ! -f "${EROOT}/${BLENDER_CUDA_TOOLKIT_ROOT_DIR}/$(get_libdir)/libnvrtc-builtins.so" ]] ; then
 			die \
-"Cannot reach \$BLENDER_CUDA_TOOLKIT_ROOT_DIR/lib64/libnvrtc-builtins.so"
+"Cannot reach \$BLENDER_CUDA_TOOLKIT_ROOT_DIR/$(get_libdir)/libnvrtc-builtins.so"
 		else
 			die \
 "\n
