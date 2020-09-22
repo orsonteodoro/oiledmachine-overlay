@@ -1,0 +1,242 @@
+Subject:  Update code to be compatible with OIIO 2.0
+URI:  https://github.com/blender/blender/commit/66d8bfb85c61aafe3bad2edf0e7b4d9d694ee2e7
+
+Notes:  Backported commit to 2.79b
+
+----
+diff -Nurp -x '*.orig' -x '*.rej' blender-2.79b-build_creator.orig/intern/cycles/blender/blender_python.cpp blender-2.79b-build_creator/intern/cycles/blender/blender_python.cpp
+--- blender-2.79b-build_creator.orig/intern/cycles/blender/blender_python.cpp	2018-03-23 08:22:25.000000000 -0700
++++ blender-2.79b-build_creator/intern/cycles/blender/blender_python.cpp	2020-09-22 00:55:11.634020673 -0700
+@@ -493,7 +493,7 @@ static PyObject *osl_update_node_func(Py
+ 				socket_type = "NodeSocketString";
+ 				data_type = BL::NodeSocket::type_STRING;
+ 				if(param->validdefault)
+-					default_string = param->sdefault[0];
++					default_string = param->sdefault[0].string();
+ 			}
+ 			else
+ 				continue;
+diff -Nurp -x '*.orig' -x '*.rej' blender-2.79b-build_creator.orig/intern/cycles/graph/node_xml.cpp blender-2.79b-build_creator/intern/cycles/graph/node_xml.cpp
+--- blender-2.79b-build_creator.orig/intern/cycles/graph/node_xml.cpp	2018-03-23 08:22:25.000000000 -0700
++++ blender-2.79b-build_creator/intern/cycles/graph/node_xml.cpp	2020-09-22 00:55:11.634020673 -0700
+@@ -250,7 +250,7 @@ void xml_read_node(XMLReader& reader, No
+ 		}
+ 	}
+ 
+-	if(node->name)
++	if(!node->name.empty())
+ 		reader.node_map[node->name] = node;
+ }
+ 
+diff -Nurp -x '*.orig' -x '*.rej' blender-2.79b-build_creator.orig/intern/cycles/render/image.cpp blender-2.79b-build_creator/intern/cycles/render/image.cpp
+--- blender-2.79b-build_creator.orig/intern/cycles/render/image.cpp	2018-03-23 08:22:25.000000000 -0700
++++ blender-2.79b-build_creator/intern/cycles/render/image.cpp	2020-09-22 01:04:34.015645394 -0700
+@@ -23,6 +23,7 @@
+ #include "util/util_path.h"
+ #include "util/util_progress.h"
+ #include "util/util_texture.h"
++#include "util/util_unique_ptr.h"
+ 
+ #ifdef WITH_OSL
+ #include <OSL/oslexec.h>
+@@ -148,7 +149,7 @@ ImageDataType ImageManager::get_image_me
+ 		return IMAGE_DATA_TYPE_BYTE4;
+ 	}
+ 
+-	ImageInput *in = ImageInput::create(filename);
++	unique_ptr<ImageInput> in(ImageInput::create(filename));
+ 
+ 	if(in) {
+ 		ImageSpec spec;
+@@ -193,8 +194,6 @@ ImageDataType ImageManager::get_image_me
+ 
+ 			in->close();
+ 		}
+-
+-		delete in;
+ 	}
+ 
+ 	if(is_half) {
+@@ -449,7 +448,7 @@ void ImageManager::tag_reload_image(cons
+ }
+ 
+ bool ImageManager::file_load_image_generic(Image *img,
+-                                           ImageInput **in,
++                                           unique_ptr<ImageInput> *in,
+                                            int &width,
+                                            int &height,
+                                            int &depth,
+@@ -465,7 +464,7 @@ bool ImageManager::file_load_image_gener
+ 		}
+ 
+ 		/* load image from file through OIIO */
+-		*in = ImageInput::create(img->filename);
++		*in = unique_ptr<ImageInput>(ImageInput::create(img->filename));
+ 
+ 		if(!*in)
+ 			return false;
+@@ -477,8 +476,6 @@ bool ImageManager::file_load_image_gener
+ 			config.attribute("oiio:UnassociatedAlpha", 1);
+ 
+ 		if(!(*in)->open(img->filename, spec, config)) {
+-			delete *in;
+-			*in = NULL;
+ 			return false;
+ 		}
+ 
+@@ -500,10 +497,7 @@ bool ImageManager::file_load_image_gener
+ 	if(!(components >= 1 && components <= 4)) {
+ 		if(*in) {
+ 			(*in)->close();
+-			delete *in;
+-			*in = NULL;
+ 		}
+-
+ 		return false;
+ 	}
+ 
+@@ -519,7 +513,7 @@ bool ImageManager::file_load_image(Image
+                                    device_vector<DeviceType>& tex_img)
+ {
+ 	const StorageType alpha_one = (FileFormat == TypeDesc::UINT8)? 255 : 1;
+-	ImageInput *in = NULL;
++	unique_ptr<ImageInput> in = NULL;
+ 	int width, height, depth, components;
+ 	if(!file_load_image_generic(img, &in, width, height, depth, components)) {
+ 		return false;
+@@ -575,7 +569,6 @@ bool ImageManager::file_load_image(Image
+ 		}
+ 		cmyk = strcmp(in->format_name(), "jpeg") == 0 && components == 4;
+ 		in->close();
+-		delete in;
+ 	}
+ 	else {
+ 		if(FileFormat == TypeDesc::FLOAT) {
+diff -Nurp -x '*.orig' -x '*.rej' blender-2.79b-build_creator.orig/intern/cycles/render/image.h blender-2.79b-build_creator/intern/cycles/render/image.h
+--- blender-2.79b-build_creator.orig/intern/cycles/render/image.h	2018-03-23 08:22:25.000000000 -0700
++++ blender-2.79b-build_creator/intern/cycles/render/image.h	2020-09-22 00:57:19.518938003 -0700
+@@ -23,6 +23,7 @@
+ #include "util/util_image.h"
+ #include "util/util_string.h"
+ #include "util/util_thread.h"
++#include "util/util_unique_ptr.h"
+ #include "util/util_vector.h"
+ 
+ CCL_NAMESPACE_BEGIN
+@@ -133,7 +134,7 @@ private:
+ 	bool pack_images;
+ 
+ 	bool file_load_image_generic(Image *img,
+-	                             ImageInput **in,
++	                             unique_ptr<ImageInput> *in,
+ 	                             int &width,
+ 	                             int &height,
+ 	                             int &depth,
+diff -Nurp -x '*.orig' -x '*.rej' blender-2.79b-build_creator.orig/intern/cycles/util/util_unique_ptr.h blender-2.79b-build_creator/intern/cycles/util/util_unique_ptr.h
+--- blender-2.79b-build_creator.orig/intern/cycles/util/util_unique_ptr.h	1969-12-31 16:00:00.000000000 -0800
++++ blender-2.79b-build_creator/intern/cycles/util/util_unique_ptr.h	2020-09-22 00:55:11.644021059 -0700
+@@ -0,0 +1,28 @@
++/*
++ * Copyright 2011-2013 Blender Foundation
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++#ifndef __UTIL_UNIQUE_PTR_H__
++#define __UTIL_UNIQUE_PTR_H__
++
++#include <memory>
++
++CCL_NAMESPACE_BEGIN
++
++using std::unique_ptr;
++
++CCL_NAMESPACE_END
++
++#endif  /* __UTIL_UNIQUE_PTR_H__ */
+diff -Nurp -x '*.orig' -x '*.rej' blender-2.79b-build_creator.orig/source/blender/imbuf/intern/oiio/openimageio_api.cpp blender-2.79b-build_creator/source/blender/imbuf/intern/oiio/openimageio_api.cpp
+--- blender-2.79b-build_creator.orig/source/blender/imbuf/intern/oiio/openimageio_api.cpp	2018-02-20 01:26:29.000000000 -0800
++++ blender-2.79b-build_creator/source/blender/imbuf/intern/oiio/openimageio_api.cpp	2020-09-22 00:55:11.644021059 -0700
+@@ -35,6 +35,11 @@
+ #include "utfconv.h"
+ #endif
+ 
++// NOTE: Keep first, BLI_path_util conflicts with OIIO's format.
++#include <memory>
++#include <openimageio_api.h>
++#include <OpenImageIO/imageio.h>
++
+ extern "C"
+ {
+ #include "MEM_guardedalloc.h"
+@@ -48,12 +53,10 @@ extern "C"
+ #include "IMB_colormanagement_intern.h"
+ }
+ 
+-#include <openimageio_api.h>
+-#include <OpenImageIO/imageio.h>
+-
+ OIIO_NAMESPACE_USING
+ 
+ using std::string;
++using std::unique_ptr;
+ 
+ typedef unsigned char uchar;
+ 
+@@ -197,7 +200,6 @@ int imb_save_photoshop(struct ImBuf *ibu
+ 
+ struct ImBuf *imb_load_photoshop(const char *filename, int flags, char colorspace[IM_MAX_SPACE])
+ {
+-	ImageInput *in = NULL;
+ 	struct ImBuf *ibuf = NULL;
+ 	int width, height, components;
+ 	bool is_float, is_alpha;
+@@ -210,7 +212,7 @@ struct ImBuf *imb_load_photoshop(const c
+ 
+ 	colorspace_set_default_role(colorspace, IM_MAX_SPACE, COLOR_ROLE_DEFAULT_BYTE);
+ 
+-	in = ImageInput::create(filename);
++	unique_ptr<ImageInput> in(ImageInput::create(filename));
+ 	if (!in) {
+ 		std::cerr << __func__ << ": ImageInput::create() failed:" << std::endl
+ 		          << OIIO_NAMESPACE::geterror() << std::endl;
+@@ -223,7 +225,6 @@ struct ImBuf *imb_load_photoshop(const c
+ 	if (!in->open(filename, spec, config)) {
+ 		std::cerr << __func__ << ": ImageInput::open() failed:" << std::endl
+ 		          << in->geterror() << std::endl;
+-		delete in;
+ 		return NULL;
+ 	}
+ 
+@@ -249,19 +250,17 @@ struct ImBuf *imb_load_photoshop(const c
+ 	if (!(components >= 1 && components <= 4)) {
+ 		if (in) {
+ 			in->close();
+-			delete in;
+ 		}
+ 		return NULL;
+ 	}
+ 
+ 	if (is_float)
+-		ibuf = imb_oiio_load_image_float(in, width, height, components, flags, is_alpha);
++		ibuf = imb_oiio_load_image_float(in.get(), width, height, components, flags, is_alpha);
+ 	else
+-		ibuf = imb_oiio_load_image(in, width, height, components, flags, is_alpha);
++		ibuf = imb_oiio_load_image(in.get(), width, height, components, flags, is_alpha);
+ 
+ 	if (in) {
+ 		in->close();
+-		delete in;
+ 	}
+ 
+ 	if (!ibuf)

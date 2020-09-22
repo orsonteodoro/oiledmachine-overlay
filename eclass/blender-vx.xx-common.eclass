@@ -157,7 +157,7 @@ knl|knm|skylake-avx512|cannonlake|icelake-client|icelake-server|cascadelake\
 			append-cxxflags -mavx512f
 		fi
 	else
-		append-cxxflags -mno-mavx512f
+		append-cxxflags -mno-avx512f
 	fi
 
 	if use cpu_flags_x86_avx512dq ; then
@@ -173,7 +173,7 @@ skylake-avx512|cannonlake|icelake-client|icelake-server|cascadelake|cooperlake\
 			append-cxxflags -mavx512dq
 		fi
 	else
-		append-cxxflags -mno-mavx512dq
+		append-cxxflags -mno-avx512dq
 	fi
 
 	if use cpu_flags_x86_avx512er ; then
@@ -188,7 +188,7 @@ knl|knm) ]] \
 			append-cxxflags -mavx512er
 		fi
 	else
-		append-cxxflags -mno-mavx512er
+		append-cxxflags -mno-avx512er
 	fi
 
 	if use cpu_flags_x86_avx512f ; then

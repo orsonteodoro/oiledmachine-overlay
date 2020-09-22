@@ -222,6 +222,7 @@ REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 # Track OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER for changes.
 # They use OpenVDB 3.1.0 but disable abi3-compat but copyGridWithNewTree appears in 3.3.0.
 # The pugixml version was not declared in versions.cmake but based on 2.80.
+# openimageio is subslot triggered to apply oiio compat patch.
 RDEPEND="${PYTHON_DEPS}
 	>=dev-lang/python-3.6.2
 	dev-libs/lzo:2
@@ -280,7 +281,7 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	openal? ( >=media-libs/openal-1.17.2 )
 	opencl? ( virtual/opencl )
-	openimageio? ( >=media-libs/openimageio-1.7.15[color-management?,jpeg2k?] )
+	openimageio? ( >=media-libs/openimageio-1.7.15:=[color-management?,jpeg2k?] )
 	openexr? (
 		>=media-libs/ilmbase-2.2.0:=
 		>=media-libs/openexr-2.2.0:=
@@ -380,6 +381,10 @@ _src_prepare() {
 	cmake-utils_src_prepare
 
 	eapply "${FILESDIR}/blender-2.79b-parent-datafiles-dir-change.patch"
+
+	if has_version '>=media-libs/openimageio-2' ; then
+		eapply "${FILESDIR}/blender-2.79b-oiio-2.x-compat.patch"
+	fi
 
 	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
 		# we don't want static glew, but it's scattered across
