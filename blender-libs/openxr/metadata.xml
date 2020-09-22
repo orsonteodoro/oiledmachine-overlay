@@ -10,7 +10,7 @@
 
     This version is for use for Blender only.
 
-    This project has decided to go with c++14.  Blender dev discussion so
+    The openxr project has decided to go with c++14.  Blender dev discussion so
     far is to skip c++14.  Custom changes will be added to ensure that it passes
     passes c++11 compatibility when downgraded from c++14 to c++11.
   </longdescription>
@@ -34,4 +34,8 @@
     <flag name="video_cards_radeonsi">Checks if the Mesa Vulkan driver is
       installed</flag>
   </use>
+  <slots>
+    <slot name="11">Compiled with -std=c++11</slot>
+    <slot name="14">Compiled with -std=c++14</slot>
+  </slots>
 </pkgmetadata>
