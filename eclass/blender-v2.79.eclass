@@ -95,14 +95,6 @@ SLOT="${PV}"
 SLOT_MAJ=${SLOT%/*}
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-X86_CPU_FLAGS=( mmx:mmx sse:sse sse2:sse2 sse3:sse3 ssse3:ssse3 sse4_1:sse4_1 \
-sse4_2:sse4_2 avx:avx avx2:avx2 avx512f:avx512f avx512dq:avx512dq \
-avx512er:avx512er fma:fma lzcnt:lzcnt bmi:bmi f16c:f16c )
-CPU_FLAGS=( ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_} )
-IUSE+=" ${CPU_FLAGS[@]%:*}"
-IUSE="${IUSE/cpu_flags_x86_mmx/+cpu_flags_x86_mmx}"
-IUSE="${IUSE/cpu_flags_x86_sse /+cpu_flags_x86_sse }"
-IUSE="${IUSE/cpu_flags_x86_sse2/+cpu_flags_x86_sse2}"
 IUSE+=" X abi3-compat +abi4-compat abi5-compat abi6-compat abi7-compat +bullet \
 +dds +elbeem +game-engine -openexr -collada -color-management -cpudetection \
 +cuda +cycles -cycles-network -debug doc flac -ffmpeg -fftw +jack +jemalloc \
@@ -282,8 +274,7 @@ RDEPEND="${PYTHON_DEPS}
 	openal? ( >=media-libs/openal-1.17.2 )
 	opencl? ( virtual/opencl )
 	openimageio? (
-		>=blender-libs/openimageio-1.7.15:=[color-management?,jpeg2k?]
-		 <blender-libs/openimageio-2
+		>=media-libs/openimageio-1.7.15:=[color-management?,jpeg2k?]
 	)
 	openexr? (
 		>=media-libs/ilmbase-2.2.0:=

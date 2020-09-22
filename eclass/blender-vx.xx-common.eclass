@@ -12,6 +12,15 @@ DESCRIPTION="3D Creation/Animation/Publishing System"
 HOMEPAGE="https://www.blender.org"
 KEYWORDS=${KEYWORDS:="~amd64 ~x86"}
 
+X86_CPU_FLAGS=( mmx:mmx sse:sse sse2:sse2 sse3:sse3 ssse3:ssse3 lzcnt:lzcnt \
+sse4_1:sse4_1 sse4_2:sse4_2 avx:avx f16c:f16c fma:fma bmi:bmi avx2:avx2 \
+avx512f:avx512f avx512er:avx512er avx512dq:avx512dq )
+CPU_FLAGS=( ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_} )
+IUSE+=" ${CPU_FLAGS[@]%:*}"
+IUSE="${IUSE/cpu_flags_x86_mmx/+cpu_flags_x86_mmx}"
+IUSE="${IUSE/cpu_flags_x86_sse /+cpu_flags_x86_sse }"
+IUSE="${IUSE/cpu_flags_x86_sse2/+cpu_flags_x86_sse2}"
+
 get_dest() {
 	if [[ "${EBLENDER}" == "build_portable" ]] ; then
 		echo "/usr/share/${PN}/${SLOT_MAJ}/${EBLENDER_NAME}"
@@ -54,53 +63,158 @@ x11-drivers/amdgpu-pro-lts[opengl_mesa] instead"
 }
 
 check_cpu() {
-	grep -q -i -E -e 'abm( |$)' /proc/cpuinfo
-	local has_abm="$?"
-	grep -q -i -E -e 'bmi1( |$)' /proc/cpuinfo
-	local has_bmi1="$?"
-	grep -q -i -E -e 'f16c( |$)' /proc/cpuinfo
-	local has_f16c="$?"
-	grep -q -i -E -e 'fma( |$)' /proc/cpuinfo
-	local has_fma="$?"
-	grep -q -i -E -e 'ssse3( |$)' /proc/cpuinfo
-	local has_ssse3="$?"
+	if [[ ! -e "/proc/cpuinfo" ]] ; then
+		ewarn "Skipping cpu checks.  The compiled program may exhibit runtime failure."
+	fi
 
-	# For tzcnt
-	if use cpu_flags_x86_bmi ; then
-		if [[ "${has_bmi1}" != "0" ]] ; then
-			ewarn \
-"bmi may not be supported on your CPU and was enabled via cpu_flags_x86_bmi"
+	# Sorted by chronological order to be able to disable remaining
+	# incompatible.
+	grep -q -i -E -e 'mmx( |$)' /proc/cpuinfo # 1997
+	local has_mmx="$?"
+	grep -q -i -E -e 'sse( |$)' /proc/cpuinfo # 1999
+	local has_sse="$?"
+	grep -q -i -E -e 'sse2( |$)' /proc/cpuinfo # 2000
+	local has_sse2="$?"
+	grep -q -i -E -e 'sse3( |$)' /proc/cpuinfo # 2004
+	local has_sse3="$?"
+	grep -q -i -E -e 'ssse3( |$)' /proc/cpuinfo # 2006
+	local has_ssse3="$?"
+	grep -q -i -E -e 'abm( |$)' /proc/cpuinfo # 2007
+	local has_abm="$?"
+	grep -q -i -E -e 'sse4_1( |$)' /proc/cpuinfo # 2008
+	local has_sse4_1="$?"
+	grep -q -i -E -e 'sse4_2( |$)' /proc/cpuinfo # 2008
+	local has_sse4_2="$?"
+	grep -q -i -E -e 'avx( |$)' /proc/cpuinfo # 2011
+	local has_avx="$?"
+	grep -q -i -E -e 'f16c( |$)' /proc/cpuinfo # 2011
+	local has_f16c="$?"
+	grep -q -i -E -e 'fma( |$)' /proc/cpuinfo # 2012
+	local has_fma="$?"
+	grep -q -i -E -e 'bmi1( |$)' /proc/cpuinfo # 2013
+	local has_bmi1="$?"
+	grep -q -i -E -e 'avx2( |$)' /proc/cpuinfo # 2013
+	local has_avx2="$?"
+	grep -q -i -E -e 'avx512f( |$)' /proc/cpuinfo # 2016 / 2017
+	local has_avx512f="$?"
+	grep -q -i -E -e 'avx512er( |$)' /proc/cpuinfo # 2016
+	local has_avx512er="$?"
+	grep -q -i -E -e 'avx512dq( |$)' /proc/cpuinfo # 2017
+	local has_avx512dq="$?"
+
+
+	if use cpu_flags_x86_mmx ; then
+		if [[ "${has_mmx}" != "0" ]] ; then
+			die \
+"mmx may not be supported on your CPU and was enabled via cpu_flags_x86_mmx"
+		fi
+	fi
+
+	if use cpu_flags_x86_sse ; then
+		if [[ "${has_sse}" != "0" ]] ; then
+			die \
+"sse may not be supported on your CPU and was enabled via cpu_flags_x86_sse"
+		fi
+	fi
+
+	if use cpu_flags_x86_sse2 ; then
+		if [[ "${has_sse2}" != "0" ]] ; then
+			die \
+"sse2 may not be supported on your CPU and was enabled via cpu_flags_x86_sse2"
+		fi
+	fi
+
+	if use cpu_flags_x86_sse3 ; then
+		if [[ "${has_sse3}" != "0" ]] ; then
+			die \
+"sse3 may not be supported on your CPU and was enabled via cpu_flags_x86_sse3"
+		fi
+	fi
+
+	if use cpu_flags_x86_ssse3 ; then
+		if [[ "${has_ssse3}" != "0" ]] ; then
+			die \
+"ssse3 may not be supported on your CPU and was enabled via cpu_flags_x86_ssse3"
+		fi
+	fi
+
+	if use cpu_flags_x86_lzcnt ; then
+		if [[ "${has_bmi1}" != "0" && "${has_abm}" != "0" ]] ; then
+			die \
+"lzcnt may not be supported on your CPU and was enabled via cpu_flags_x86_lzcnt"
+		fi
+	fi
+
+	if use cpu_flags_x86_sse4_1 ; then
+		if [[ "${has_sse4_1}" != "0" ]] ; then
+			die \
+"sse4_1 may not be supported on your CPU and was enabled via cpu_flags_x86_sse4_1"
+		fi
+	fi
+
+	if use cpu_flags_x86_sse4_2 ; then
+		if [[ "${has_sse4_2}" != "0" ]] ; then
+			die \
+"sse4_2 may not be supported on your CPU and was enabled via cpu_flags_x86_sse4_2"
+		fi
+	fi
+
+	if use cpu_flags_x86_avx ; then
+		if [[ "${has_avx}" != "0" ]] ; then
+			die \
+"avx may not be supported on your CPU and was enabled via cpu_flags_x86_avx"
 		fi
 	fi
 
 	if use cpu_flags_x86_f16c ; then
 		if [[ "${has_f16c}" != "0" ]] ; then
-			ewarn \
+			die \
 "f16c may not be supported on your CPU and was enabled via cpu_flags_x86_f16c"
 		fi
 	fi
 
 	if use cpu_flags_x86_fma ; then
 		if [[ "${has_fma}" != "0" ]] ; then
-			ewarn \
+			die \
 "fma may not be supported on your CPU and was enabled via cpu_flags_x86_fma"
 		fi
 	fi
 
-	if use cpu_flags_x86_lzcnt ; then
-		if [[ "${has_bmi1}" != "0" && "${has_abm}" != "0" ]] ; then
-			ewarn \
-"lzcnt may not be supported on your CPU and was enabled via cpu_flags_x86_lzcnt"
+	# For tzcnt
+	if use cpu_flags_x86_bmi ; then
+		if [[ "${has_bmi1}" != "0" ]] ; then
+			die \
+"bmi may not be supported on your CPU and was enabled via cpu_flags_x86_bmi"
 		fi
 	fi
 
-	if use cpu_flags_x86_ssse3 ; then
-		if [[ "${has_ssse3}" != "0" ]] ; then
-			ewarn \
-"ssse3 may not be supported on your CPU and was enabled via cpu_flags_x86_ssse3"
+	if use cpu_flags_x86_avx2 ; then
+		if [[ "${has_avx2}" != "0" ]] ; then
+			die \
+"avx2 may not be supported on your CPU and was enabled via cpu_flags_x86_avx2"
 		fi
 	fi
 
+	if use cpu_flags_x86_avx512f ; then
+		if [[ "${has_avx512f}" != "0" ]] ; then
+			die \
+"avx512f may not be supported on your CPU and was enabled via cpu_flags_x86_avx512f"
+		fi
+	fi
+
+	if use cpu_flags_x86_avx512er ; then
+		if [[ "${has_avx512er}" != "0" ]] ; then
+			die \
+"avx512er may not be supported on your CPU and was enabled via cpu_flags_x86_avx512er"
+		fi
+	fi
+
+	if use cpu_flags_x86_avx512dq ; then
+		if [[ "${has_avx512dq}" != "0" ]] ; then
+			die \
+"avx512dq may not be supported on your CPU and was enabled via cpu_flags_x86_avx512dq"
+		fi
+	fi
 }
 
 check_optimal_compiler_for_cycles_x86() {
@@ -193,6 +307,23 @@ knl|knm) ]] \
 
 	if use cpu_flags_x86_avx512f ; then
 		append-cxxflags -DEIGEN_ENABLE_AVX512
+	fi
+
+	if ! use cpu_flags_x86_mmx \
+	&& ! use cpu_flags_x86_sse \
+	&& ! use cpu_flags_x86_sse2 \
+	&& ! use cpu_flags_x86_sse3 \
+	&& ! use cpu_flags_x86_ssse3 \
+	&& ! use cpu_flags_x86_sse4_1 \
+	&& ! use cpu_flags_x86_sse4_2 \
+	&& ! use cpu_flags_x86_avx \
+	&& ! use cpu_flags_x86_avx2 \
+	&& ! use cpu_flags_x86_avx512f \
+	&& ! use cpu_flags_x86_avx512dq \
+	&& ! use cpu_flags_x86_avx512er \
+	&& ! use cpu_flags_x86_fma \
+	&& ! use cpu_flags_x86_f16c ; then
+		append-cxxflags -DEIGEN_DONT_VECTORIZE
 	fi
 }
 
