@@ -602,8 +602,19 @@ install_licenses() {
 		else
 			d=$(echo "${f}" | sed -e "s|^${BUILD_DIR}||")
 		fi
-		docinto "licenses/${d}"
-		dodoc -r "${f}"
+		if $(ver_cut 1-2 ${PV}) -ge 2.80 ; then
+			docinto "licenses/${d}"
+			dodoc -r "${f}"
+		else
+			if [[ "${EBLENDER}" == "build_portable" ]] ; then
+				insinto "${d_dest}/licenses/${d}"
+				doins -r "${f}"
+			elif [[ "${EBLENDER}" == "build_creator" \
+			     || "${EBLENDER}" == "build_headless" ]] ; then
+				docinto "licenses/${d}"
+				dodoc -r "${f}"
+			fi
+		fi
 	done
 }
 
@@ -615,8 +626,19 @@ install_readmes() {
 		else
 			d=$(echo "${f}" | sed -e "s|^${BUILD_DIR}||")
 		fi
-		docinto "readmes/${d}"
-		dodoc -r "${f}"
+		if $(ver_cut 1-2 ${PV}) -ge 2.80 ; then
+			docinto "readmes/${d}"
+			dodoc -r "${f}"
+		else
+			if [[ "${EBLENDER}" == "build_portable" ]] ; then
+				insinto "${d_dest}/readmes/${d}"
+				doins -r "${f}"
+			elif [[ "${EBLENDER}" == "build_creator" \
+			     || "${EBLENDER}" == "build_headless" ]] ; then
+				docinto "readmes/${d}"
+				dodoc -r "${f}"
+			fi
+		fi
 	done
 }
 
