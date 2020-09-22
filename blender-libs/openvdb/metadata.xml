@@ -55,4 +55,12 @@
 	<upstream>
 		<remote-id type="github">AcademySoftwareFoundation/openvdb</remote-id>
 	</upstream>
+	<slots>
+		<slot name="3">For abi-compat 3 with c++11</slot>
+		<slot name="4">For abi-compat 4 with c++11</slot>
+		<slot name="5">For abi-compat 5 with c++11</slot>
+		<slot name="6">For abi-compat 6 with c++11</slot>
+		<slot name="7-11">For abi-compat 7 with c++11</slot>
+		<slot name="7-14">For abi-compat 7 with c++14</slot>
+	</slots>
 </pkgmetadata>
