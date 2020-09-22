@@ -143,6 +143,59 @@ blender_pkg_setup_common() {
 	check_optimal_compiler_for_cycles_x86
 }
 
+blender_configure_eigen() {
+	if use cpu_flags_x86_avx512f ; then
+		if [[ "${CXXFLAGS}" =~ march=(\
+native|\
+\
+knl|knm|skylake-avx512|cannonlake|icelake-client|icelake-server|cascadelake\
+|cooperlake|tigerlake|sapphirerapids) ]] \
+		|| [[ "${CXXFLAGS}" =~ mavx512f( |$) ]] ; then
+			# Already added
+			:;
+		else
+			append-cxxflags -mavx512f
+		fi
+	else
+		append-cxxflags -mno-mavx512f
+	fi
+
+	if use cpu_flags_x86_avx512dq ; then
+		if [[ "${CXXFLAGS}" =~ march=(\
+native|\
+\
+skylake-avx512|cannonlake|icelake-client|icelake-server|cascadelake|cooperlake\
+|tigerlake|sapphirerapids) ]] \
+		|| [[ "${CXXFLAGS}" =~ mavx512dq( |$) ]] ; then
+			# Already added
+			:;
+		else
+			append-cxxflags -mavx512dq
+		fi
+	else
+		append-cxxflags -mno-mavx512dq
+	fi
+
+	if use cpu_flags_x86_avx512er ; then
+		if [[ "${CXXFLAGS}" =~ march=(\
+native|\
+\
+knl|knm) ]] \
+		|| [[ "${CXXFLAGS}" =~ mavx512er( |$) ]] ; then
+			# Already added
+			:;
+		else
+			append-cxxflags -mavx512er
+		fi
+	else
+		append-cxxflags -mno-mavx512er
+	fi
+
+	if use cpu_flags_x86_avx512f ; then
+		append-cxxflags -DEIGEN_ENABLE_AVX512
+	fi
+}
+
 blender_configure_simd_cycles() {
 	if $(ver_cut 1-2 ${PV}) -ge 2.80 ; then
 		if ! has_version 'media-libs/embree[cpu_flags_x86_avx]' ; then

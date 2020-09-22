@@ -76,7 +76,8 @@ SLOT_MAJ=${SLOT%/*}
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 X86_CPU_FLAGS=( mmx:mmx sse:sse sse2:sse2 sse3:sse3 ssse3:ssse3 sse4_1:sse4_1 \
-sse4_2:sse4_2 avx:avx avx2:avx2 fma:fma lzcnt:lzcnt bmi:bmi f16c:f16c )
+sse4_2:sse4_2 avx:avx avx2:avx2 avx512f:avx512f avx512dq:avx512dq \
+avx512er:avx512er fma:fma lzcnt:lzcnt bmi:bmi f16c:f16c )
 CPU_FLAGS=( ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_} )
 IUSE+=" ${CPU_FLAGS[@]%:*}"
 IUSE="${IUSE/cpu_flags_x86_mmx/+cpu_flags_x86_mmx}"
@@ -96,7 +97,23 @@ RESTRICT="mirror !test? ( test )"
 #   cd5e1ff74e4f6443f3e4b836dd23fe46b56cb7ed
 # At the source code level, they mix the sse2 intrinsics functions up with the
 #   __KERNEL_SSE__.
+# See https://gitlab.com/libeigen/eigen/-/blob/3.3.7/Eigen/Core
+REQUIRED_USE_EIGEN="
+	cpu_flags_x86_avx? (
+		cpu_flags_x86_sse3
+		cpu_flags_x86_ssse3
+		cpu_flags_x86_sse4_1
+		cpu_flags_x86_sse4_2
+	)
+	cpu_flags_x86_avx512er? ( cpu_flags_x86_avx512f )
+	cpu_flags_x86_avx512dq? ( cpu_flags_x86_avx512f )
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_fma
+		cpu_flags_x86_avx
+		cpu_flags_x86_avx2
+	)"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
+	${REQUIRED_USE_EIGEN}
 	!cpu_flags_x86_mmx? ( !cpu_flags_x86_sse !cpu_flags_x86_sse2 )
 	build_creator? ( X )
 	cpu_flags_x86_sse2? ( !cpu_flags_x86_sse? ( cpu_flags_x86_mmx ) )
@@ -385,6 +402,7 @@ ebuild/upstream developers only."
 	unset CMAKE_PREFIX_PATH
 
 	blender_configure_simd_cycles
+	blender_configure_eigen
 	blender_configure_boost_cxxyy
 	blender_configure_openvdb_cxxyy
 	blender_configure_osl_match_llvm
