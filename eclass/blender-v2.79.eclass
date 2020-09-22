@@ -232,7 +232,7 @@ RDEPEND="${PYTHON_DEPS}
 	virtual/libintl
 	virtual/opengl
 	build_portable? (
-		dev-libs/boost:${CXXABI_V}=[static-libs]
+		blender-libs/boost:${CXXABI_V}=[static-libs]
 		media-libs/openjpeg:=[static-libs]
 	)
 	collada? ( >=media-libs/opencollada-1.6.51:= )
@@ -574,7 +574,7 @@ ebuild/upstream developers only."
 			-DWITH_STATIC_LIBS=ON
 			-DWITH_SYSTEM_GLEW=OFF
 		)
-		if has_version 'dev-libs/boost[icu]' ; then
+		if has_version 'blender-libs/boost:'${CXXABI_V}'[icu]' ; then
 			mycmakeargs+=(
 				-DWITH_BOOST_ICU=$(usex nls)
 			)
