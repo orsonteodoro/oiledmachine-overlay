@@ -88,6 +88,7 @@ apfx() {
 src_configure() {
 	configure_abi() {
 		cd "${BUILD_DIR}" || die
+		export LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir)"
 		cmake-static-libs_configure() {
 			cd "${BUILD_DIR}" || die
 
