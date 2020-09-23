@@ -86,7 +86,9 @@ inherit blender check-reqs cmake-utils flag-o-matic llvm pax-utils \
 # If you use git tarballs, you need to download the submodules listed in
 # .gitmodules.  The download.blender.org tarball is preferred because they
 # bundle all the dependencies.
-SRC_URI="https://download.blender.org/source/${P}.tar.gz"
+SRC_URI="https://download.blender.org/source/${P}.tar.gz
+https://github.com/blender/blender/commit/f1e6838376a0a07b5ce45d70ad18357c7c6cc2eb.patch -> \
+	blender-2.79b-find-blosc.patch"
 
 BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest} # can be latest, latest-lts, custom-x.yy
 
@@ -347,6 +349,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.79b-install-paths-change.patch"
 	"${FILESDIR}/${PN}-2.79b-bundled-lib-search-path.patch"
 	"${FILESDIR}/${PN}-2.79b-portable-dest.patch"
+	"${DISTDIR}/${PN}-2.79b-find-blosc.patch"
 )
 
 blender_pkg_setup() {
