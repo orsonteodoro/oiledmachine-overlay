@@ -1,0 +1,43 @@
+Subject: Backport for several commits for compatibility for mesa[libglvnd]
+
+The following were applied:
+0658d047a94a86060f039790898a80a7adb0dcd9 (CMake: Fixes for OpenGL library preferences)
+e54182427a41d54a900deac5b55b09a2407e31f6 (Merge branch 'master' into blender2.8)
+255ab75eb3af6e1e56e68c5abf09970a59d980e5 (Don't link against GLU library)
+6c7762687e57f2dd490f763d0b54288d84337a59 (Fix T60187: Latest couple of builds fail to run, need libGLX.so.0)
+
+A slight modification was made that we move the conditional block into
+if(WITH_GL_PROFILE_COMPAT OR WITH_GL_PROFILE_CORE) case.
+----
+diff -urp blender-2.79b-build_creator.orig/CMakeLists.txt blender-2.79b-build_creator/CMakeLists.txt
+--- blender-2.79b-build_creator.orig/CMakeLists.txt	2020-09-22 16:41:44.125801226 -0700
++++ blender-2.79b-build_creator/CMakeLists.txt	2020-09-22 16:47:19.828783541 -0700
+@@ -47,6 +47,13 @@ endif()
+ 
+ cmake_minimum_required(VERSION 2.8)
+ 
++# Prever LEGACY OpenGL to eb compatible with all the existing releases and
++# platforms which don't hare GLVND yet. Only do it if preference was not set
++# externally.
++if(NOT DEFINED OpenGL_GL_PREFERENCE)
++	set(OpenGL_GL_PREFERENCE "LEGACY")
++endif()
++
+ if(NOT EXECUTABLE_OUTPUT_PATH)
+ 	set(FIRST_RUN TRUE)
+ else()
+@@ -983,8 +990,12 @@ if(WITH_SYSTEM_GLES)
+ endif()
+ 
+ if(WITH_GL_PROFILE_COMPAT OR WITH_GL_PROFILE_CORE)
+-	list(APPEND BLENDER_GL_LIBRARIES "${OPENGL_gl_LIBRARY}")
+-
++	if(OpenGL_GL_PREFERENCE STREQUAL "LEGACY" AND OPENGL_gl_LIBRARY)
++		# Same as WITH_GL_PROFILE_COMPAT
++		list(APPEND BLENDER_GL_LIBRARIES ${OPENGL_gl_LIBRARY})
++	else()
++		list(APPEND BLENDER_GL_LIBRARIES ${OPENGL_opengl_LIBRARY} ${OPENGL_glx_LIBRARY})
++	endif()
+ elseif(WITH_GL_PROFILE_ES20)
+ 	if(WITH_SYSTEM_GLES)
+ 		if(NOT OPENGLES_LIBRARY)

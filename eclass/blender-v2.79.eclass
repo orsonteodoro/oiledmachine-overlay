@@ -230,7 +230,7 @@ RDEPEND="${PYTHON_DEPS}
 	>=media-libs/glew-1.13.0:*
 	>=media-libs/libpng-1.6.21:0=
 	media-libs/libsamplerate
-	>=sys-libs/zlib-1.2.8
+	>=sys-libs/zlib-1.2.8:=
 	|| (
 		virtual/glu
 		>=media-libs/glu-3.0.0
@@ -254,7 +254,7 @@ RDEPEND="${PYTHON_DEPS}
 	cycles? ( >=dev-libs/pugixml-1.9 )
 	ffmpeg? ( >=media-video/ffmpeg-3.2.1:=\
 [encode,jpeg2k?,mp3?,theora?,vorbis?,x264,xvid?,zlib] )
-	fftw? ( >=sci-libs/fftw-3.3.4:3.0= )
+	fftw? ( >=sci-libs/fftw-3.3.4:3.0=[static-libs] )
 	flac? ( >=media-libs/flac-1.3.1 )
 	jack? ( virtual/jack )
 	jemalloc? ( >=dev-libs/jemalloc-5.0.1:= )
@@ -263,7 +263,7 @@ RDEPEND="${PYTHON_DEPS}
 		 <sys-devel/llvm-10 )
 	ndof? (
 		app-misc/spacenavd
-		>=dev-libs/libspnav-0.2.3
+		>=dev-libs/libspnav-0.2.3:=
 	)
 	nls? (
 		|| (
@@ -289,17 +289,17 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	openvdb? (
 		!abi3-compat? (
-abi4-compat? ( >=blender-libs/openvdb-3.3.0:4[${PYTHON_SINGLE_USEDEP},abi4-compat(+)] )
-abi5-compat? ( >=blender-libs/openvdb-3.3.0:5[${PYTHON_SINGLE_USEDEP},abi5-compat(+)]
-	        <blender-libs/openvdb-7.1:5[${PYTHON_SINGLE_USEDEP},abi5-compat(+)] )
-abi6-compat? ( >=blender-libs/openvdb-3.3.0:6[${PYTHON_SINGLE_USEDEP},abi6-compat(+)]
-	        <blender-libs/openvdb-7.1:6[${PYTHON_SINGLE_USEDEP},abi6-compat(+)] )
-abi7-compat? ( >=blender-libs/openvdb-3.3.0:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
-	        <blender-libs/openvdb-7.1:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)] )
+abi4-compat? ( >=blender-libs/openvdb-3.3.0:4=[${PYTHON_SINGLE_USEDEP},abi4-compat(+)] )
+abi5-compat? ( >=blender-libs/openvdb-3.3.0:5=[${PYTHON_SINGLE_USEDEP},abi5-compat(+)]
+	        <blender-libs/openvdb-7.1:5=[${PYTHON_SINGLE_USEDEP},abi5-compat(+)] )
+abi6-compat? ( >=blender-libs/openvdb-3.3.0:6=[${PYTHON_SINGLE_USEDEP},abi6-compat(+)]
+	        <blender-libs/openvdb-7.1:6=[${PYTHON_SINGLE_USEDEP},abi6-compat(+)] )
+abi7-compat? ( >=blender-libs/openvdb-3.3.0:7-${CXXABI_V}=[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
+	        <blender-libs/openvdb-7.1:7-${CXXABI_V}=[${PYTHON_SINGLE_USEDEP},abi7-compat(+)] )
 		)
 		abi3-compat? (
-			>=blender-libs/openvdb-3.1.0:3[${PYTHON_SINGLE_USEDEP},abi3-compat(+)]
-			 <blender-libs/openvdb-7.1:3[${PYTHON_SINGLE_USEDEP},abi3-compat(+)]
+			>=blender-libs/openvdb-3.1.0:3=[${PYTHON_SINGLE_USEDEP},abi3-compat(+)]
+			 <blender-libs/openvdb-7.1:3=[${PYTHON_SINGLE_USEDEP},abi3-compat(+)]
 		)
 		>=blender-libs/boost-1.60:${CXXABI_V}=[nls?,threads(+)]
 		>=dev-cpp/tbb-2017.7
@@ -351,6 +351,7 @@ _PATCHES=(
 
 blender_pkg_setup() {
 	blender_pkg_setup_common
+	check_portable_dependencies
 	export OPENVDB_V=\
 $(usex openvdb $(usex abi7-compat 7 $(usex abi6-compat 6 $(usex abi5-compat 5 $(usex abi4-compat 4 3)))) "")
 	export OPENVDB_V_DIR=\
@@ -375,6 +376,15 @@ _src_prepare() {
 	cmake-utils_src_prepare
 
 	eapply "${FILESDIR}/blender-2.79b-parent-datafiles-dir-change.patch"
+
+	if has_version '>=media-libs/openimageio-2' ; then
+		eapply "${FILESDIR}/blender-2.79b-oiio-2.x-compat.patch"
+		eapply "${FILESDIR}/blender-2.79b-oiio-2.x-compat-for-cycles.patch"
+	fi
+
+	if has_version 'blender-libs/mesa:'${LLVM_V}'=[libglvnd]' ; then
+		eapply "${FILESDIR}/blender-2.79b-backport-glvnd-compat.patch"
+	fi
 
 	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
 		# we don't want static glew, but it's scattered across
@@ -515,7 +525,6 @@ ebuild/upstream developers only."
 		-DWITH_OPENSUBDIV=$(usex opensubdiv)
 		-DWITH_OPENVDB=$(usex openvdb)
 		-DWITH_OPENVDB_BLOSC=$(usex openvdb)
-		-DWITH_OPENVDB_3_ABI_COMPATIBLE=$(use abi3-compat)
 		-DWITH_PYTHON_INSTALL=OFF
 		-DWITH_PYTHON_INSTALL_NUMPY=OFF
 	)

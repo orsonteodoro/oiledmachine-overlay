@@ -1,0 +1,32 @@
+Subject:  Update Cycles on Blender 2.79b for oiio 2.x
+Based on commit 2947882bb1dbc457182a9cb653770c5956417840
+----
+diff -urp blender-2.79b-build_creator.orig/intern/cycles/render/buffers.cpp blender-2.79b-build_creator/intern/cycles/render/buffers.cpp
+--- blender-2.79b-build_creator.orig/intern/cycles/render/buffers.cpp	2018-03-23 08:22:25.000000000 -0700
++++ blender-2.79b-build_creator/intern/cycles/render/buffers.cpp	2020-09-22 12:26:35.575201766 -0700
+@@ -27,6 +27,7 @@
+ #include "util/util_opengl.h"
+ #include "util/util_time.h"
+ #include "util/util_types.h"
++#include "util/util_unique_ptr.h"
+ 
+ CCL_NAMESPACE_BEGIN
+ 
+@@ -453,7 +454,7 @@ void DisplayBuffer::write(Device *device
+ 	device->pixels_copy_from(rgba, 0, w, h);
+ 
+ 	/* write image */
+-	ImageOutput *out = ImageOutput::create(filename);
++	unique_ptr<ImageOutput> out = unique_ptr<ImageOutput>(ImageOutput::create(filename));
+ 	ImageSpec spec(w, h, 4, TypeDesc::UINT8);
+ 	int scanlinesize = w*4*sizeof(uchar);
+ 
+@@ -467,8 +468,6 @@ void DisplayBuffer::write(Device *device
+ 		AutoStride);
+ 
+ 	out->close();
+-
+-	delete out;
+ }
+ 
+ device_memory& DisplayBuffer::rgba_data()

@@ -226,7 +226,10 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	virtual/libintl
 	virtual/opengl
-	collada? ( >=media-libs/opencollada-1.6.68:= )
+	collada? (
+		dev-libs/libpcre:=[static-libs]
+		>=media-libs/opencollada-1.6.68:=
+	)
 	color-management? ( >=media-libs/opencolorio-1.1.0 )
 	cuda? (
 		>=x11-drivers/nvidia-drivers-418.39

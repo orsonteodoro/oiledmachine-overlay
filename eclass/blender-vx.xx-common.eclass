@@ -62,6 +62,71 @@ x11-drivers/amdgpu-pro-lts[opengl_mesa] instead"
 	fi
 }
 
+check_portable_dependencies() {
+	# The idea with Blender player was to share games.
+	# It requires all dependencies of Blender to be generically compiled.
+
+	# About the player:
+# https://docs.blender.org/manual/en/2.79/game_engine/blender_player.html
+	# Game licensing details:
+# https://docs.blender.org/manual/en/2.79/game_engine/licensing.html
+
+	# Libraries also get statically linked to reduce the complexity of
+	# running the game on different machines.
+
+	# Best way to make it portable is maybe chroot or by docker container.
+	# This way you keep system packages optimized, the container or chroot
+	# image is portable.
+	if has build_portable ${IUSE_EFFECTIVE} ; then
+		if use build_portable ; then
+			if [[ "${ABI}" == "x86" ]] ; then
+				[[ "${CXXFLAGS}" =~ "march=x86-64" ]] \
+					|| ewarn \
+"The CXXFLAGs doesn't contain -march=x86-64.  It will not be portable unless \
+you change it."
+			fi
+			if [[ "${ABI}" == "x86" ]] ; then
+				[[ "${CXXFLAGS}" =~ "march=i686" ]] \
+					|| ewarn \
+"The CXXFLAGs doesn't contain -march=i686.  It will not be portable unless \
+you change it."
+			fi
+			# These are .a libraries listed from the linking phase
+			# of build_portable
+			RDEPEND_279=(
+				"blender-libs/boost"
+				"blender-libs/openvdb"
+				"blender-libs/osl"
+				"dev-libs/libpcre"
+				"dev-libs/libspnav"
+				"media-libs/opensubdiv"
+				"media-libs/openjpeg"
+				"sci-libs/fftw"
+				"sys-libs/zlib"
+			)
+			for p in ${RDEPEND_279[@]} ; do
+				if ls "${EROOT}"/var/db/pkg/${p}-*/C{,XX}FLAGS \
+					2>/dev/null 1>/dev/null ; then
+					if [[ "${ABI}" == "amd64" ]] ; then
+						grep -q -F -e "march=x86-64" \
+							"${EROOT}"/var/db/pkg/${p}-*/C{,XX}FLAGS \
+							|| ewarn \
+"${p} is not compiled with -march=x86-64.  It is not portable.  Recompile the \
+dependency."
+					fi
+					if [[ "${ABI}" == "x86" ]] ; then
+						grep -q -F -e "march=i686" \
+							"${EROOT}"/var/db/pkg/${p}-*/C{,XX}FLAGS \
+							|| ewarn \
+"${p} is not compiled with -march=i686.  It is not portable.  Recompile the \
+dependency"
+					fi
+				fi
+			done
+		fi
+	fi
+}
+
 check_cpu() {
 	if [[ ! -e "/proc/cpuinfo" ]] ; then
 		ewarn "Skipping cpu checks.  The compiled program may exhibit runtime failure."
