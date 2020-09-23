@@ -21,6 +21,22 @@ IUSE="${IUSE/cpu_flags_x86_mmx/+cpu_flags_x86_mmx}"
 IUSE="${IUSE/cpu_flags_x86_sse /+cpu_flags_x86_sse }"
 IUSE="${IUSE/cpu_flags_x86_sse2/+cpu_flags_x86_sse2}"
 
+# See https://gitlab.com/libeigen/eigen/-/blob/3.3.7/Eigen/Core
+REQUIRED_USE_EIGEN="
+	cpu_flags_x86_avx? (
+		cpu_flags_x86_sse3
+		cpu_flags_x86_ssse3
+		cpu_flags_x86_sse4_1
+		cpu_flags_x86_sse4_2
+	)
+	cpu_flags_x86_avx512er? ( cpu_flags_x86_avx512f )
+	cpu_flags_x86_avx512dq? ( cpu_flags_x86_avx512f )
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_fma
+		cpu_flags_x86_avx
+		cpu_flags_x86_avx2
+	)"
+
 get_dest() {
 	if [[ "${EBLENDER}" == "build_portable" ]] ; then
 		echo "/usr/share/${PN}/${SLOT_MAJ}/${EBLENDER_NAME}"
@@ -978,6 +994,18 @@ _src_install() {
 			fi
 			doexe "${T}/cycles_network${suffix/-/_}-${SLOT_MAJ}"
 		fi
+	fi
+	if [[ "${EBLENDER}" == "build_portable" ]] ; then
+		echo \
+"The following libraries were linked to blenderplayer as shared libraries and\n
+need to be present on the other computer or distributed with blenderplayer\n
+with licenses or built without such dependencies.\n\n" \
+			>> "${d_dest}/README.3rdparty_deps"
+		[[ ! -e "${T}/build-build_portable.log" ]] \
+			&& die "Missing build log"
+		grep -E -e "-o .*blenderplayer " "${T}"/build-build_portable.log \
+			| grep -o -E -e "[^ ]+\.so(.[0-9]+)?" | sort | uniq \
+			>> "${d_dest}/README.3rdparty_deps"
 	fi
 	install_licenses
 	if use doc ; then

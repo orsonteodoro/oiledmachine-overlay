@@ -97,21 +97,6 @@ RESTRICT="mirror !test? ( test )"
 #   cd5e1ff74e4f6443f3e4b836dd23fe46b56cb7ed
 # At the source code level, they mix the sse2 intrinsics functions up with the
 #   __KERNEL_SSE__.
-# See https://gitlab.com/libeigen/eigen/-/blob/3.3.7/Eigen/Core
-REQUIRED_USE_EIGEN="
-	cpu_flags_x86_avx? (
-		cpu_flags_x86_sse3
-		cpu_flags_x86_ssse3
-		cpu_flags_x86_sse4_1
-		cpu_flags_x86_sse4_2
-	)
-	cpu_flags_x86_avx512er? ( cpu_flags_x86_avx512f )
-	cpu_flags_x86_avx512dq? ( cpu_flags_x86_avx512f )
-	cpu_flags_x86_avx512f? (
-		cpu_flags_x86_fma
-		cpu_flags_x86_avx
-		cpu_flags_x86_avx2
-	)"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	${REQUIRED_USE_EIGEN}
 	!cpu_flags_x86_mmx? ( !cpu_flags_x86_sse !cpu_flags_x86_sse2 )
