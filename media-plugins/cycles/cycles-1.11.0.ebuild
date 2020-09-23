@@ -219,6 +219,13 @@ ebuild/upstream developers only."
 
 }
 
+# PreFix
+prfx() {
+	echo "${EROOT}/usr/$(get_libdir)/blender"
+}
+
+_LD_LIBRARY_PATH=()
+_PATH=()
 src_configure() {
 	append-cppflags -DOPENVDB_ABI_VERSION_NUMBER=${OPENVDB_V}
 
@@ -388,11 +395,9 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 	# Cycles must use <= c++11 or it might have build time failures.
 	# Apps must have the same LLVM version to avoid the multiple LLVM versions bug.
 
-	if [[ -d "${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir)" ]] ; then
-		mycmakeargs+=( -DBoost_NO_SYSTEM_PATHS=ON )
-		mycmakeargs+=( -DBoost_INCLUDE_DIR="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/include" )
-		mycmakeargs+=( -DBoost_LIBRARY_DIR_RELEASE="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir)" )
-		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+	if [[ -d "$(prfx)/boost/${CXXABI_V}/usr/$(get_libdir)" ]] ; then
+		export BOOST_ROOT="$(prfx)/boost/${CXXABI_V}/usr"
+		_LD_LIBRARY_PATH+=( "$(prfx)/boost/${CXXABI_V}/usr/$(get_libdir)\n" )
 	fi
 
 	if has_version 'blender-libs/mesa:'${LLVM_V}'[libglvnd]' ; then
@@ -412,29 +417,34 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 		fi
 	else
 		mycmakeargs+=( -DOpenGL_GL_PREFERENCE=LEGACY )
-		if [[ -e "${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so" ]] ; then
+		if [[ -e "$(prfx)/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so" ]] ; then
 			# legacy
-			mycmakeargs+=( -DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so" )
+			mycmakeargs+=( -DOPENGL_gl_LIBRARY="$(prfx)/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so" )
 		else
 			die "Use either blender-libs/mesa:${LLVM_V}[-libglvnd], or blender-libs/mesa:${LLVM_V}[libglvnd] with media-libs/libglvnd"
 		fi
-		if [[ -e "${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" ]] ; then
-			mycmakeargs+=( -DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" )
+		if [[ -e "$(prfx)/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" ]] ; then
+			mycmakeargs+=( -DOPENGL_egl_LIBRARY="$(prfx)/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so" )
 		fi
-		export CMAKE_INCLUDE_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
-		export CMAKE_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
-		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+		export CMAKE_INCLUDE_PATH="$(prfx)/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
+		export CMAKE_LIBRARY_PATH="$(prfx)/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+		_LD_LIBRARY_PATH+=( "$(prfx)/mesa/${LLVM_V}/usr/$(get_libdir)\n" )
 	fi
 
 	if use openvdb ; then
-		export OPENVDB_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V_DIR}/usr"
-		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/openvdb/${OPENVDB_V_DIR}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+		export OPENVDB_ROOT_DIR="$(prfx)/openvdb/${OPENVDB_V_DIR}/usr"
+		_LD_LIBRARY_PATH+=( "$(prfx)/openvdb/${OPENVDB_V_DIR}/usr/$(get_libdir)\n" )
 	fi
 
 	if use osl ; then
-		export OSL_ROOT_DIR="${EROOT}/usr/$(get_libdir)/blender/osl/${LLVM_V}"
-		_LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/osl/${LLVM_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+		export OSL_ROOT_DIR="$(prfx)/osl/${LLVM_V}"
+		_LD_LIBRARY_PATH+=( "$(prfx)/osl/${LLVM_V}/usr/$(get_libdir)\n" )
+		_PATH+=( "$(prfx)/osl/${LLVM_V}/usr/$(get_libdir)/osl/bin\n" )
 	fi
+
+	use network \
+	&& sed -i -e "/WITH_CYCLES_NETWORK FALSE/d" \
+		src/CMakeLists.txt || die
 
 	mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX=/usr/$(get_libdir)/cycles
@@ -469,9 +479,9 @@ src_compile() {
 src_install() {
 	cmake-utils_src_install
 	exeinto /usr/$(get_libdir)/cycles/bin
-	doexe "${BUILD_DIR}/bin/cycles"
+	newexe "${BUILD_DIR}/bin/cycles" ".cycles"
 	if use network ; then
-		doexe "${BUILD_DIR}/bin/cycles_server"
+		newexe "${BUILD_DIR}/bin/cycles_server" ".cycles"
 	fi
 	if use nvrtc ; then
 		if [[ -e "${BUILD_DIR}/bin/cycles_cubin_cc" ]] ; then
@@ -480,6 +490,22 @@ src_install() {
 	fi
 	insinto /usr/$(get_libdir)/cycles/$(get_libdir)
 	doins "${BUILD_DIR}/lib/"*
+	_LD_LIBRARY_PATH=$(echo -e "${_LD_LIBRARY_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
+	_PATH=$(echo -e "${_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
+	cp "${FILESDIR}/cycles-wrapper" "${T}/cycles" || die
+	sed -i -e "s|\${CYCLES_EXE}|/usr/$(get_libdir)/cycles/bin/.cycles|" \
+		-e "s|#\${LD_LIBRARY_PATH}|${_LD_LIBRARY_PATH}|" \
+		-e "s|#\${PATH}|${_PATH}|" \
+		"${T}/cycles" || die
+	doexe "${T}/cycles"
+	if use network ; then
+		cp "${FILESDIR}/cycles-wrapper" "${T}/cycles_server" || die
+		sed -i -e "s|\${CYCLES_EXE}|/usr/$(get_libdir)/cycles/bin/.cycles_server|" \
+			-e "s|#\${LD_LIBRARY_PATH}|${_LD_LIBRARY_PATH}|" \
+			-e "s|#\${PATH}|${_PATH}|" \
+			"${T}/cycles_server" || die
+		doexe "${T}/cycles_server"
+	fi
 }
 
 pkg_postinst() {

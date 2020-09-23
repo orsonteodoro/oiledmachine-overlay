@@ -425,6 +425,11 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 
 	fi
 
+	use network \
+	&& sed -i -e "/WITH_CYCLES_NETWORK FALSE/d" \
+		src/CMakeLists.txt || die
+
+
 	# Cycles must use <= c++17 or it might have build time failures.
 	# Apps must have the same LLVM version to avoid the multiple LLVM versions bug.
 
