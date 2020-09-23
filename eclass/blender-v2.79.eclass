@@ -533,6 +533,12 @@ ebuild/upstream developers only."
 			-DWITH_X11=OFF
 		)
 	elif [[ "${EBLENDER}" == "build_portable" ]] ; then
+		if use osl ; then
+			mycmakeargs+=(
+				-DWITH_LINKER_GOLD=OFF
+			)
+		fi
+
 		# for redistributable games, implies building player
 		mycmakeargs+=(
 			-DLLVM_STATIC=$(usex llvm)
