@@ -9,23 +9,25 @@ inherit cmake flag-o-matic python-single-r1
 
 DESCRIPTION="Library for the efficient manipulation of volumetric data"
 HOMEPAGE="https://www.openvdb.org"
-SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
-	https://dev.gentoo.org/~dracwyrm/patches/${P}-patchset-02.tar.xz"
+SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MPL-2.0"
-IUSE="+abi4-compat doc python test"
-CXXABI=11
-LLVM_V=9
-SLOT_MAJ="4"
+IUSE="+abi7-compat cpu_flags_x86_avx cpu_flags_x86_sse4_2 doc numpy python static-libs test utils"
+CXXABI=14
+LLVM_V=10
+SLOT_MAJ="7-${CXXABI}"
 SLOT="${SLOT_MAJ}/${PV}"
-KEYWORDS="amd64 ~x86"
+KEYWORDS="~amd64 ~x86"
 RESTRICT="!test? ( test )"
 
+# Blender only uses static-libs to avoid c++14
+# Unit tests uses c++14 code
 # Blender disables python
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
-# Prevent file collisions also with ABI masks
 REQUIRED_USE="
-	abi4-compat
+	abi7-compat
+	!test
+	numpy? ( python )
 	python? ( ${PYTHON_REQUIRED_USE} )
 	!python
 "
@@ -49,8 +51,8 @@ RDEPEND="
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			blender-libs/boost:'${CXXABI}'=[python?,${PYTHON_USEDEP}]
-			dev-python/numpy[${PYTHON_USEDEP}]
+			blender-libs/boost:'${CXXABI}'=[numpy?,python?,${PYTHON_USEDEP}]
+			numpy? ( dev-python/numpy[${PYTHON_USEDEP}] )
 		')
 	)
 "
@@ -58,6 +60,7 @@ RDEPEND="
 DEPEND="${RDEPEND}"
 
 BDEPEND="
+	>=dev-util/cmake-3.16.2-r1
 	virtual/pkgconfig
 	doc? (
 		app-doc/doxygen
@@ -71,12 +74,8 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${WORKDIR}/${P}-patchset-02/0001-use-gnuinstalldirs.patch"
-	"${WORKDIR}/${P}-patchset-02/0002-use-pkgconfig-for-ilmbase-and-openexr.patch"
-	"${WORKDIR}/${P}-patchset-02/0003-boost-1.65-numpy-support.patch"
-	"${FILESDIR}/${P}-findboost-fix.patch"
-	"${FILESDIR}/${P}-fix-const-correctness-for-unittest.patch"
-	"${FILESDIR}/${P}-fix-build-docs.patch"
+	"${FILESDIR}/${PN}-7.1.0-0001-Fix-multilib-header-source.patch"
+	"${FILESDIR}/${PN}-7.1.0-0002-Fix-doc-install-dir.patch"
 )
 
 pkg_setup() {
@@ -92,6 +91,12 @@ is greater than \$(nproc)/4"
 	fi
 }
 
+src_prepare() {
+	cmake_src_prepare
+	sed -i "s|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD ${CXXABI}|" CMakeLists.txt || die
+	sed -i "s|CMAKE_CXX_STANDARD_REQUIRED ON|CMAKE_CXX_STANDARD_REQUIRED OFF|" CMakeLists.txt || die
+}
+
 iprfx() {
 	echo "${EPREFIX}/usr/$(get_libdir)/blender/${PN}/${SLOT_MAJ}/usr"
 }
@@ -102,23 +107,32 @@ src_configure() {
 	# To stay in sync with blender-libs/boost
 	append-cxxflags -std=c++${CXXABI}
 
-	export CMAKE_INCLUDE_PATH=\
-"${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir);${CMAKE_INCLUDE_PATH}"
-	export CMAKE_LIBRARY_PATH=\
-"${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+	# Add extra checks for testing against c++${CXXABI}
+	append-cxxflags -Wall -Werror
+
+	# Relax some warnings
+	append-cxxflags -Wno-error=class-memaccess -Wno-error=int-in-bool-context
+
+	export BOOST_ROOT="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr"
 
 	local mycmakeargs=(
-		-DBLOSC_LOCATION="${myprefix}"
+		-DCHOST="${CHOST}"
 		-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
 		-DCMAKE_INSTALL_PREFIX="$(iprfx)"
-		-DGLFW3_LOCATION="${myprefix}"
+		-DOPENVDB_ABI_VERSION_NUMBER=${SLOT_MAJ%-*}
 		-DOPENVDB_BUILD_DOCS=$(usex doc)
-		-DOPENVDB_BUILD_PYTHON_MODULE=$(usex python)
 		-DOPENVDB_BUILD_UNITTESTS=$(usex test)
-		-DOPENVDB_ENABLE_3_ABI_COMPATIBLE=OFF
+		-DOPENVDB_BUILD_VDB_LOD=$(usex !utils)
+		-DOPENVDB_BUILD_VDB_RENDER=$(usex !utils)
+		-DOPENVDB_BUILD_VDB_VIEW=$(usex !utils)
+		-DOPENVDB_CORE_SHARED=ON
+		-DOPENVDB_CORE_STATIC=$(usex static-libs)
 		-DOPENVDB_ENABLE_RPATH=OFF
-		-DTBB_LOCATION="${myprefix}"
-		-DUSE_GLFW3=ON
+		-DOpenGL_GL_PREFERENCE=LEGACY
+		-DUSE_CCACHE=OFF
+		-DUSE_COLORED_OUTPUT=ON
+		-DUSE_EXR=ON
+		-DUSE_LOG4CPLUS=ON
 	)
 
 	if has_version 'blender-libs/mesa:'${LLVM_V}'[libglvnd]' ; then
@@ -150,8 +164,20 @@ src_configure() {
 		)
 	fi
 
-	use python && mycmakeargs+=( -DPYOPENVDB_INSTALL_DIRECTORY="$(python_get_sitedir)" )
-	use test && mycmakeargs+=( -DCPPUNIT_LOCATION="${myprefix}" )
+	if use python; then
+		mycmakeargs+=(
+			-DOPENVDB_BUILD_PYTHON_MODULE=ON
+			-DUSE_NUMPY=$(usex numpy)
+			-DPYOPENVDB_INSTALL_DIRECTORY="$(python_get_sitedir)"
+			-DPython_EXECUTABLE="${EPYTHON}"
+		)
+	fi
+
+	if use cpu_flags_x86_avx; then
+		mycmakeargs+=( -DOPENVDB_SIMD=AVX )
+	elif use cpu_flags_x86_sse4_2; then
+		mycmakeargs+=( -DOPENVDB_SIMD=SSE42 )
+	fi
 
 	cmake_src_configure
 }

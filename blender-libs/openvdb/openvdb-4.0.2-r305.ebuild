@@ -102,10 +102,7 @@ src_configure() {
 	# To stay in sync with blender-libs/boost
 	append-cxxflags -std=c++${CXXABI}
 
-	export CMAKE_INCLUDE_PATH=\
-"${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir);${CMAKE_INCLUDE_PATH}"
-	export CMAKE_LIBRARY_PATH=\
-"${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+	export BOOST_ROOT="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr"
 
 	local mycmakeargs=(
 		-DBLOSC_LOCATION="${myprefix}"

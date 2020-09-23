@@ -121,10 +121,7 @@ src_configure() {
 
 	# tools/LevelSetMeasure.h contains make_unique but not used by Blender.  So most of it can be c++11 compiled.
 
-	export CMAKE_INCLUDE_PATH=\
-"${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir);${CMAKE_INCLUDE_PATH}"
-	export CMAKE_LIBRARY_PATH=\
-"${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+	export BOOST_ROOT="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr"
 
 	local mycmakeargs=(
 		-DCHOST="${CHOST}"

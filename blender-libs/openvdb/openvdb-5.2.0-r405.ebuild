@@ -12,10 +12,10 @@ HOMEPAGE="https://www.openvdb.org"
 SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MPL-2.0"
-IUSE="+abi3-compat doc python test"
+IUSE="+abi4-compat doc python test"
 CXXABI=11
 LLVM_V=9
-SLOT_MAJ="3"
+SLOT_MAJ="4"
 SLOT="${SLOT_MAJ}/${PV}"
 KEYWORDS="~amd64 ~x86"
 RESTRICT="!test? ( test )"
@@ -24,7 +24,7 @@ RESTRICT="!test? ( test )"
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
 # Prevent file collisions also with ABI masks
 REQUIRED_USE="
-	abi3-compat
+	abi4-compat
 	python? ( ${PYTHON_REQUIRED_USE} )
 	!python
 "
@@ -99,10 +99,7 @@ src_configure() {
 	# To stay in sync with blender-libs/boost
 	append-cxxflags -std=c++${CXXABI}
 
-	export CMAKE_INCLUDE_PATH=\
-"${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir);${CMAKE_INCLUDE_PATH}"
-	export CMAKE_LIBRARY_PATH=\
-"${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
+	export BOOST_ROOT="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr"
 
 	local mycmakeargs=(
 		-DBLOSC_LOCATION="${myprefix}"
@@ -157,3 +154,4 @@ src_install() {
 	cmake_src_install
 	mv "${ED}/usr/share" "${ED}/$(iprfx)" || die
 }
+
