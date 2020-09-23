@@ -12,50 +12,14 @@
 
 inherit blender-vx.xx-common
 
-LICENSE="|| ( GPL-2 BL )
-all-rights-reserved
-LGPL-2.1+
-MPL-2.0
+# For additional licenses see blender-vx.xx-common
+LICENSE+="
 NTP
 s_cbrt.c
-build_creator? (
-	Apache-2.0
-	AFL-3.0
-	BitstreamVera
-	CC-BY-SA-3.0
-	color-management? ( BSD )
-	jemalloc? ( BSD-2 )
-	GPL-2
-	GPL-3
-	GPL-3-with-font-exception
-	LGPL-2.1+
-	PSF-2
-	ZLIB
-)
-build_headless? (
-	Apache-2.0
-	AFL-3.0
-	BitstreamVera
-	CC-BY-SA-3.0
-	color-management? ( BSD )
-	jemalloc? ( BSD-2 )
-	GPL-2
-	GPL-3
-	GPL-3-with-font-exception
-	LGPL-2.1+
-	PSF-2
-	ZLIB
-)
 build_portable? (
 	Boost-1.0
 	BSD-2
 	jemalloc? ( BSD-2 )
-)
-cycles? (
-	Apache-2.0
-	Boost-1.0
-	BSD
-	MIT
 )
 game-engine? (
 	GPL-2+
@@ -63,9 +27,6 @@ game-engine? (
 )
 "
 
-# intern/mikktspace contains ZLIB
-# intern/CMakeLists.txt contains GPL+ with all-rights-reserved ; there is no
-#   all rights reserved in the vanilla GPL-2
 # extern/carve/include/carve/win32.h all-rights-reserved
 # extern/carve/ || (GPL-2 GPL-3) ; could be reason why GPL-3 is bundled
 # source/gameengine/Expressions/intern/Value.cpp NTP

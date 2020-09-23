@@ -12,6 +12,49 @@ DESCRIPTION="3D Creation/Animation/Publishing System"
 HOMEPAGE="https://www.blender.org"
 KEYWORDS=${KEYWORDS:="~amd64 ~x86"}
 
+LICENSE="|| ( GPL-2 BL )
+all-rights-reserved
+LGPL-2.1+
+MPL-2.0
+build_creator? (
+	Apache-2.0
+	AFL-3.0
+	BitstreamVera
+	CC-BY-SA-3.0
+	color-management? ( BSD )
+	jemalloc? ( BSD-2 )
+	GPL-2
+	GPL-3
+	GPL-3-with-font-exception
+	LGPL-2.1+
+	PSF-2
+	ZLIB
+)
+build_headless? (
+	Apache-2.0
+	AFL-3.0
+	BitstreamVera
+	CC-BY-SA-3.0
+	color-management? ( BSD )
+	jemalloc? ( BSD-2 )
+	GPL-2
+	GPL-3
+	GPL-3-with-font-exception
+	LGPL-2.1+
+	PSF-2
+	ZLIB
+)
+cycles? (
+	Apache-2.0
+	Boost-1.0
+	BSD
+	MIT
+)
+"
+# intern/mikktspace contains ZLIB
+# intern/CMakeLists.txt contains GPL+ with all-rights-reserved ; there is no
+#   all rights reserved in the vanilla GPL-2
+
 X86_CPU_FLAGS=( mmx:mmx sse:sse sse2:sse2 sse3:sse3 ssse3:ssse3 lzcnt:lzcnt \
 sse4_1:sse4_1 sse4_2:sse4_2 avx:avx f16c:f16c fma:fma bmi:bmi avx2:avx2 \
 avx512f:avx512f avx512er:avx512er avx512dq:avx512dq )
