@@ -118,7 +118,7 @@ src_configure() {
 			local gcc=$(tc-getCC)
 			# LLVM needs CPP11. Do not disable.
 			local mycmakeargs=(
-				-DCMAKE_INSTALL_PREFIX="$(apfx)"
+				-DCMAKE_INSTALL_PREFIX="$(apfx)/usr"
 				-DCMAKE_INSTALL_BINDIR="$(apfx)/usr/bin${bin_suffix}"
 				-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
 				-DENABLERTTI=OFF
