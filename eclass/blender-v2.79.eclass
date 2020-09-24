@@ -449,13 +449,6 @@ ebuild/upstream developers only."
 		-DWITH_CUDA_DYNLOAD=$(usex cuda $(usex nvcc ON OFF) ON)
 		-DWITH_CXX11=ON
 		-DWITH_CXX_GUARDEDALLOC=$(usex debug)
-		-DWITH_CYCLES=$(usex cycles)
-		-DWITH_CYCLES_CUDA_BINARIES=$(usex cuda)
-		-DWITH_CYCLES_DEVICE_CUDA=$(usex cuda TRUE FALSE)
-		-DWITH_CYCLES_DEVICE_OPENCL=$(usex opencl)
-		-DWITH_CYCLES_NATIVE_ONLY=$(usex cpudetection)
-		-DWITH_CYCLES_OPENSUBDIV=$(usex opensubdiv)
-		-DWITH_CYCLES_OSL=$(usex osl)
 		-DWITH_DOC_MANPAGE=$(usex man)
 		-DWITH_GAMEENGINE=$(usex game-engine)
 		-DWITH_IMAGE_DDS=$(usex dds)
@@ -504,7 +497,14 @@ ebuild/upstream developers only."
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
+			-DWITH_CYCLES=$(usex cycles)
+			-DWITH_CYCLES_CUDA_BINARIES=$(usex cuda)
+			-DWITH_CYCLES_DEVICE_CUDA=$(usex cuda TRUE FALSE)
+			-DWITH_CYCLES_DEVICE_OPENCL=$(usex opencl)
+			-DWITH_CYCLES_NATIVE_ONLY=$(usex cpudetection)
 			-DWITH_CYCLES_NETWORK=$(usex cycles-network)
+			-DWITH_CYCLES_OPENSUBDIV=$(usex opensubdiv)
+			-DWITH_CYCLES_OSL=$(usex osl)
 			-DWITH_INSTALL_PORTABLE=OFF
 			-DWITH_STATIC_LIBS=OFF
 			-DWITH_SYSTEM_EIGEN3=ON
@@ -533,16 +533,20 @@ ebuild/upstream developers only."
 			-DWITH_X11=OFF
 		)
 	elif [[ "${EBLENDER}" == "build_portable" ]] ; then
-		if use osl ; then
-			mycmakeargs+=(
-				-DWITH_LINKER_GOLD=OFF
-			)
-		fi
+		# Not all the features in creator will be used in player.
+		# Cycles will not be enabled because of performance problems.
+		# Plus the .cmake files show that all features in
+		# BLENDER_SORTED_LIBS are not present in
+		# ./source/blenderplayer/CMakeLists.txt and
+		# ./build_files/cmake/macros.cmake (used in creator.
+		# BLENDER_SORTED_LIBS gets init by setup_blender_sorted_libs
+		# function).
 
-		# for redistributable games, implies building player
+		# For redistributable games, implies building player
 		mycmakeargs+=(
 			-DLLVM_STATIC=$(usex llvm)
 			-DWITH_BLENDER=OFF
+			-DWITH_CYCLES=OFF
 			-DWITH_GTESTS=OFF
 			-DWITH_INSTALL_PORTABLE=ON
 			-DWITH_OPENGL_TESTS=OFF

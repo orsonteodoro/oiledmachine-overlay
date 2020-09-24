@@ -407,16 +407,6 @@ ebuild/upstream developers only."
 		-DWITH_CUDA_DYNLOAD=$(usex cuda $(usex nvcc ON OFF) ON)
 		-DWITH_CXX_GUARDEDALLOC=$(usex debug)
 		-DWITH_CXX11_ABI=ON
-		-DWITH_CYCLES=$(usex cycles)
-		-DWITH_CYCLES_CUBIN_COMPILER=$(usex nvrtc)
-		-DWITH_CYCLES_CUDA_BINARIES=$(usex cuda)
-		-DWITH_CYCLES_DEVICE_CUDA=$(usex cuda TRUE FALSE)
-		-DWITH_CYCLES_DEVICE_OPENCL=$(usex opencl)
-		-DWITH_CYCLES_DEVICE_OPTIX=$(usex optix)
-		-DWITH_CYCLES_EMBREE=$(usex embree)
-		-DWITH_CYCLES_KERNEL_ASAN=$(usex asan)
-		-DWITH_CYCLES_NATIVE_ONLY=$(usex cpudetection)
-		-DWITH_CYCLES_OSL=$(usex osl)
 		-DWITH_DOC_MANPAGE=$(usex man)
 		-DWITH_IMAGE_DDS=$(usex dds)
 		-DWITH_IMAGE_OPENEXR=$(usex openexr)
@@ -465,7 +455,17 @@ ebuild/upstream developers only."
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
+			-DWITH_CYCLES=$(usex cycles)
+			-DWITH_CYCLES_CUBIN_COMPILER=$(usex nvrtc)
+			-DWITH_CYCLES_CUDA_BINARIES=$(usex cuda)
+			-DWITH_CYCLES_DEVICE_CUDA=$(usex cuda TRUE FALSE)
+			-DWITH_CYCLES_DEVICE_OPENCL=$(usex opencl)
+			-DWITH_CYCLES_DEVICE_OPTIX=$(usex optix)
+			-DWITH_CYCLES_EMBREE=$(usex embree)
+			-DWITH_CYCLES_KERNEL_ASAN=$(usex asan)
+			-DWITH_CYCLES_NATIVE_ONLY=$(usex cpudetection)
 			-DWITH_CYCLES_NETWORK=$(usex cycles-network)
+			-DWITH_CYCLES_OSL=$(usex osl)
 			-DWITH_INSTALL_PORTABLE=OFF
 			-DWITH_STATIC_LIBS=OFF
 			-DWITH_SYSTEM_EIGEN3=ON

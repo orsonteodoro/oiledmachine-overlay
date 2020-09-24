@@ -189,6 +189,7 @@ dependency"
 check_cpu() {
 	if [[ ! -e "/proc/cpuinfo" ]] ; then
 		ewarn "Skipping cpu checks.  The compiled program may exhibit runtime failure."
+		return
 	fi
 
 	# Sorted by chronological order to be able to disable remaining
@@ -452,7 +453,7 @@ knl|knm) ]] \
 }
 
 blender_configure_simd_cycles() {
-	if $(ver_cut 1-2 ${PV}) -ge 2.80 ; then
+	if ver_test $(ver_cut 1-2 ${PV}) -ge 2.80 ; then
 		if ! has_version 'media-libs/embree[cpu_flags_x86_avx]' ; then
 			sed -i -e "/embree_avx/d" \
 				build_files/cmake/Modules/FindEmbree.cmake || die
@@ -910,7 +911,7 @@ install_licenses() {
 		else
 			d=$(echo "${f}" | sed -e "s|^${BUILD_DIR}||")
 		fi
-		if $(ver_cut 1-2 ${PV}) -ge 2.80 ; then
+		if ver_test $(ver_cut 1-2 ${PV}) -ge 2.80 ; then
 			docinto "licenses/${d}"
 			dodoc -r "${f}"
 		else
@@ -934,7 +935,7 @@ install_readmes() {
 		else
 			d=$(echo "${f}" | sed -e "s|^${BUILD_DIR}||")
 		fi
-		if $(ver_cut 1-2 ${PV}) -ge 2.80 ; then
+		if ver_test $(ver_cut 1-2 ${PV}) -ge 2.80 ; then
 			docinto "readmes/${d}"
 			dodoc -r "${f}"
 		else
@@ -982,10 +983,6 @@ _src_install() {
 	_LD_LIBRARY_PATH=$(echo -e "${_LD_LIBRARY_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
 	_PATH=$(echo -e "${_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
 
-	local ed_icon_hc
-	if $(ver_cut 1-2 ${PV}) -lt 2.80 ; then
-		ed_icon_hc="${ED}/usr/share/icons/hicolor"
-	fi
 	local suffix=
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
 		cp "${ED}/usr/share/applications"/blender{,-${SLOT_MAJ}}.desktop || die
@@ -993,12 +990,6 @@ _src_install() {
 		sed -i -e "s|Name=Blender|Name=Blender ${PV}|g" "${menu_file}" || die
 		sed -i -e "s|Exec=blender|Exec=/usr/bin/${PN}-${SLOT_MAJ}|g" "${menu_file}" || die
 		sed -i -e "s|Icon=blender|Icon=blender-${SLOT_MAJ}|g" "${menu_file}" || die
-		if $(ver_cut 1-2 ${PV}) -lt 2.80 ; then
-			for size in 16x16 22x22 24x24 256x256 32x32 48x48 ; do
-				mv "${ed_icon_hc}/"${size}"/apps/blender"{,-${SLOT_MAJ}}".png" || die
-			done
-			mv "${ed_icon_hc}/scalable/apps/blender"{,-${SLOT_MAJ}}".svg" || die
-		fi
 		if [[ -n "${IS_LTS}" && "${IS_LTS}" == "1" ]] ; then
 			touch "${ED}/${d_dest}/.lts"
 		fi
@@ -1042,13 +1033,14 @@ _src_install() {
 		echo \
 "The following libraries were linked to blenderplayer as shared libraries and\n
 need to be present on the other computer or distributed with blenderplayer\n
-with licenses or built without such dependencies.\n\n" \
-			>> "${d_dest}/README.3rdparty_deps"
+with licenses or built without such dependencies.  The dependency of those\n
+direct shared dependencies may also be required.\n\n" \
+			> "${ED}${d_dest}/README.3rdparty_deps"
 		[[ ! -e "${T}/build-build_portable.log" ]] \
 			&& die "Missing build log"
 		grep -E -e "-o .*blenderplayer " "${T}"/build-build_portable.log \
 			| grep -o -E -e "[^ ]+\.so(.[0-9]+)?" | sort | uniq \
-			>> "${d_dest}/README.3rdparty_deps"
+			>> "${ED}${d_dest}/README.3rdparty_deps"
 	fi
 	install_licenses
 	if use doc ; then
@@ -1064,17 +1056,18 @@ blender_src_install() {
 	blender_foreach_impl blender_install
 	local ed_icon_hc="${ED}/usr/share/icons/hicolor"
 	local ed_icon_scale="${ed_icon_hc}/scalable"
-	local ed_icon_sym="${ed_icon_hc}/symbolic"
-	if $(ver_cut 1-2 "${PV}") -lt "2.80" ; then
-		if [[ -d "${ed_icon_hc}" ]] ; then
-			for size in 16x16 22x22 24x24 256x256 32x32 48x48 ; do
-				mv "${ed_icon_hc}/"${size}"/apps/blender"{,-${SLOT_MAJ}}".png" || die
-			done
-		fi
+	if ver_test $(ver_cut 1-2 ${PV}) -lt 2.80 ; then
+		local ed_icon_hc="${ED}/usr/share/icons/hicolor"
+		for size in 16x16 22x22 24x24 256x256 32x32 48x48 ; do
+			if [[ -e "${ed_icon_hc}/${size}/apps/blender.png" ]] ; then
+				mv "${ed_icon_hc}/${size}/apps/blender"{,-${SLOT_MAJ}}".png" || die
+			fi
+		done
+		mv "${ed_icon_hc}/scalable/apps/blender"{,-${SLOT_MAJ}}".svg" || die
 	fi
 	if [[ -e "${ed_icon_scale}/apps/blender.svg" ]] ; then
 		mv "${ed_icon_scale}/apps/blender"{,-${SLOT_MAJ}}".svg" || die
-		if $(ver_cut 1-2) -ge 2.80 ; then
+		if ver_test $(ver_cut 1-2) -ge 2.80 ; then
 			mv "${ed_icon_sym}/apps/blender-symbolic"{,-${SLOT_MAJ}}".svg"
 		fi
 	fi
