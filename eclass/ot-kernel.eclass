@@ -3,7 +3,7 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: ot-kernel-common.eclass
+# @ECLASS: ot-kernel.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
@@ -11,7 +11,7 @@
 # @SUPPORTED_EAPIS: 7
 # @BLURB: Eclass for patching the kernel
 # @DESCRIPTION:
-# The ot-kernel-common eclass defines common patching steps for any linux
+# The ot-kernel eclass defines common patching steps for any linux
 # kernel version.
 
 # UKSM:
@@ -69,6 +69,33 @@ case ${EAPI:-0} in
 
 esac
 
+# I did a grep -i -r -e "SPDX" ./ | cut -f 3 -d ":" | sort | uniq
+# and looked it up through github.com or my copy to confirm the license on the file.
+
+# Solo licenses detected by:
+#   `grep -E -r -e "SPDX.*GPL-2" ./ | grep -i -v "GPL"`
+# Replace GPL-2 with SPDX identifier
+
+# For kernel license templates see:
+# https://github.com/torvalds/linux/tree/master/LICENSES
+# See also https://github.com/torvalds/linux/blob/master/Documentation/process/license-rules.rst
+LICENSE="GPL-2 Linux-syscall-note" #  Applies to whole source  \
+#   that are GPL-2 compatible.  See paragraph 3 of the above link for details.
+# The following licenses applies to individual files:
+LICENSE+=" ZLIB" # See zlib_dfltcc/dfltcc.c, ...
+LICENSE+=" ISC" # See linux/drivers/net/wireless/ath/wil6210/trace.c, \
+# linux/drivers/net/wireless/ath/ath5k/Makefile, ...
+LICENSE+=" all-rights-reserved GPL-2" # See lib/zstd/compress.c, ... ;
+# The GPL-2 license doesn't come with all rights reserved.
+# The all rights reserved is explicitly stated in several files with GPL.
+LICENSE+=" LGPL-2.1" # See fs/ext4/migrate.c, ...
+LICENSE+=" LGPL-2+ Linux-syscall-note" # See arch/x86/include/uapi/asm/mtrr.h
+LICENSE+=" MIT" # See drivers/gpu/drm/drm_dsc.c
+LICENSE+=" BSD-2" # See include/linux/firmware/broadcom/tee_bnxt_fw.h
+LICENSE+=" BSD" # See include/linux/packing.h, ...
+LICENSE+=" Clear-BSD" # See drivers/net/wireless/ath/ath11k/core.h, ...
+LICENSE+=" Apache-2.0" # See drivers/staging/wfx/hif_api_cmd.h
+
 HOMEPAGE+="
           https://github.com/dolohow/uksm
           https://liquorix.net/
@@ -85,19 +112,11 @@ HOMEPAGE+="
 OT_KERNEL_SLOT_STYLE=${OT_KERNEL_SLOT_STYLE:="MAJOR_MINOR"}
 KEYWORDS=${KEYWORDS:=\
 "~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"}
-# OT_KERNEL_SLOT_STYLE can be MAJOR_MINOR (default), PV, LATEST_STABLE
-if [[ -n "${OT_KERNEL_SLOT_STYLE}" \
-      && "${OT_KERNEL_SLOT_STYLE}" == "PV" ]] ; then
 SLOT=${SLOT:=${PV}}
-elif [[ -n "${OT_KERNEL_SLOT_STYLE}" \
-	&& "${OT_KERNEL_SLOT_STYLE}" == "LATEST_STABLE" ]] ; then
-SLOT=${SLOT:=0}
-else
-SLOT=${SLOT:=${K_MAJOR_MINOR}}
-fi
 K_TAG="-ot"
 S="${WORKDIR}/linux-${PV}${K_TAG}"
 
+inherit check-reqs toolchain-funcs
 inherit ot-kernel-cve
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
@@ -109,7 +128,8 @@ fi
 DEPEND+=" dev-util/patchutils
 	  sys-apps/grep[pcre]"
 
-
+EXPORT_FUNCTIONS pkg_pretend pkg_setup src_unpack src_compile src_install \
+		pkg_postinst
 
 # @FUNCTION: gen_kernel_seq
 # @DESCRIPTION:
@@ -343,17 +363,152 @@ function _tpatch() {
 	patch ${patchops} -i ${path} || true
 }
 
+# @FUNCTION: ot-kernel_pkg_pretend
+# @DESCRIPTION:
+# Perform checks and warnings before emerging
+function ot-kernel_pkg_pretend() {
+	if declare -f ot-kernel_pkg_pretend_cb > /dev/null ; then
+		ot-kernel_pkg_pretend_cb
+	fi
+}
+
+# @FUNCTION: _report_eol
+# @DESCRIPTION:
+# Reports the estimated End Of Life (EOL).  Sourced from
+# https://www.kernel.org/category/releases.html
+function _report_eol() {
+	if [[ "${K_MAJOR_MINOR}" == "5.4" ]] ; then
+		einfo \
+"\n\
+The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is\n\
+Dec 2025.\n\
+"
+	elif [[ "${K_MAJOR_MINOR}" == "4.19" ]] ; then
+		einfo \
+"\n\
+The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is\n\
+Dec 2024.\n\
+"
+	elif [[ "${K_MAJOR_MINOR}" == "4.14" ]] ; then
+		einfo \
+"\n\
+The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is\n\
+Jan 2024.\n\
+"
+	else
+		ewarn \
+"\n\
+The ${K_MAJOR_MINOR} kernel series is not a Long Term Support (LTS)\n\
+kernel.  It may suddenly stop receiving security updates completely between a\n\
+week to several months.\n\
+"
+	fi
+}
+
+# @FUNCTION: zenmisc_setup
+# @DESCRIPTION:
+# Checks the existance for the ZENMISC_WHITELIST_5_3 variable
+function zenmisc_setup() {
+	if use zenmisc ; then
+		local ZM="ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_}"
+		if [[ -z "${!ZM}" ]] ; then
+			local zenmisc_url
+			if ver_test ${PV} -ge 5.4 ; then
+				zenmisc_url=\
+"https://github.com/torvalds/linux/compare/v${K_MAJOR_MINOR}...zen-kernel:${K_MAJOR_MINOR}/zen-sauce"
+			else
+				zenmisc_url=\
+"https://github.com/torvalds/linux/compare/v${K_MAJOR_MINOR}...zen-kernel:${K_MAJOR_MINOR}/misc"
+			fi
+
+			eerror \
+"You must define ZENMISC_WHITELIST_${K_MAJOR_MINOR} in /etc/make.conf\n\
+or as a per-package env containing commits to accepted from\n\
+  ${zenmisc_url}\n\
+\n\
+For example:\n\
+\n\
+  ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_}=\"214d031dbeef940efe1dbba274caf5ccc4ff2774 83d7f482c60b6dfda030325394ec07baac7f5a30\"\n\
+\n\
+This must be in chronological and topological order (if the timestamp is the\n\
+same) from oldest-left to newest-right."
+			die
+		fi
+	fi
+}
+
+# @FUNCTION: _check_network_sandbox
+# @DESCRIPTION:
+# Check if sandbox is more lax when downloading in unpack phase
+function _check_network_sandbox() {
+	# justifications
+	# bfq - no way to compare against "branch with commit"
+	#   (i.e. v${K_MAJOR_MINOR}...zen-kernel:${K_MAJOR_MINOR}/misc/${c})
+	# zenmisc - random choice of commits by user, mimimize
+	#   downloading unnecessary commits, less manifest
+	#   entries
+	# zentune - no way to version as explained in bfq
+	if has network-sandbox $FEATURES ; then
+		die \
+"FEATURES=\"-network-sandbox\" must be added per-package env to be able to use\n\
+live patches."
+	fi
+}
+
+# @FUNCTION: ot-kernel_pkg_setup
+# @DESCRIPTION:
+# Perform checks, warnings, and initialization before emerging
+function ot-kernel_pkg_setup() {
+	_report_eol
+	if has zenmisc ${IUSE_EFFECTIVE} ; then
+		if use zenmisc ; then
+			_check_network_sandbox
+		fi
+	fi
+	if has zentune ${IUSE_EFFECTIVE} ; then
+		if use zentune ; then
+			_check_network_sandbox
+		fi
+	fi
+	if has bfq ${IUSE_EFFECTIVE} ; then
+		if use bfq ; then
+			_check_network_sandbox
+		fi
+	fi
+	if has futex-wait-multiple ${IUSE_EFFECTIVE} ; then
+		if use bfq ; then
+			_check_network_sandbox
+		fi
+	fi
+
+	if declare -f ot-kernel_pkg_setup_cb > /dev/null ; then
+		ot-kernel_pkg_setup_cb
+	fi
+	if has zenmisc ${IUSE_EFFECTIVE} ; then
+		zenmisc_setup
+	fi
+	if has cve_hotfix ${IUSE_EFFECTIVE} ; then
+		if use cve_hotfix ; then
+			_check_network_sandbox
+		fi
+	fi
+
+	if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
+		einfo "Live patchable branches is experimental and is a Work In Progress (WIP)"
+	fi
+}
+
 # @FUNCTION: apply_uksm
 # @DESCRIPTION:
 # Apply the UKSM patches.
 #
-# ot-kernel-common_uksm_fixes - callback to fix the patch
+# ot-kernel_uksm_fixes - callback to fix the patch
 #
 function apply_uksm() {
 	_tpatch "${PATCH_OPS} -N" "${DISTDIR}/${UKSM_FN}"
 
-	if declare -f ot-kernel-common_uksm_fixes > /dev/null ; then
-		ot-kernel-common_uksm_fixes
+	if declare -f ot-kernel_uksm_fixes > /dev/null ; then
+		ot-kernel_uksm_fixes
 	fi
 }
 
@@ -485,7 +640,7 @@ function _filter_genpatches() {
 # @DESCRIPTION:
 # Apply the base genpatches patchset.
 #
-# ot-kernel-common_apply_genpatch_base_post - callback to apply individual
+# ot-kernel_apply_genpatch_base_post - callback to apply individual
 #   fixes
 #
 function apply_genpatch_base() {
@@ -536,7 +691,7 @@ function apply_genpatch_base() {
 # @DESCRIPTION:
 # Apply the experimental genpatches patchset.
 #
-# ot-kernel-common_apply_genpatch_experimental_patchset - callback to apply
+# ot-kernel_apply_genpatch_experimental_patchset - callback to apply
 #   individual patches
 #
 function apply_genpatch_experimental() {
@@ -557,7 +712,7 @@ function apply_genpatch_experimental() {
 # @DESCRIPTION:
 # Apply the extra genpatches patchset.
 #
-# ot-kernel-common_apply_genpatch_extras_patchset - callback to apply \
+# ot-kernel_apply_genpatch_extras_patchset - callback to apply \
 #   individual patches
 #
 function apply_genpatch_extras() {
@@ -578,7 +733,7 @@ function apply_genpatch_extras() {
 # @DESCRIPTION:
 # Apply the GraySky2 O3 patchset.
 #
-# ot-kernel-common_apply_o3_fixes - callback for fix to O3 patches
+# ot-kernel_apply_o3_fixes - callback for fix to O3 patches
 #
 function apply_o3() {
 	cd "${S}" || die
@@ -606,8 +761,8 @@ function apply_o3() {
 		_tpatch "${PATCH_OPS} -N" "${DISTDIR}/${O3_RO_FN}"
 	fi
 
-	if declare -f ot-kernel-common_apply_o3_fixes > /dev/null ; then
-		ot-kernel-common_apply_o3_fixes
+	if declare -f ot-kernel_apply_o3_fixes > /dev/null ; then
+		ot-kernel_apply_o3_fixes
 	fi
 }
 
@@ -624,15 +779,15 @@ function apply_pds() {
 # @DESCRIPTION:
 # Apply the BMQ CPU scheduler patchset.
 #
-# ot-kernel-common_apply_bmq_quickfixes - callback to apply quick fixes
+# ot-kernel_apply_bmq_quickfixes - callback to apply quick fixes
 #
 function apply_bmq() {
 	cd "${S}" || die
 	einfo "Applying bmq"
 	_dpatch "${PATCH_OPS}" "${DISTDIR}/${BMQ_FN}"
 
-	if declare -f ot-kernel-common_apply_bmq_quickfixes > /dev/null ; then
-		ot-kernel-common_apply_bmq_quickfixes
+	if declare -f ot-kernel_apply_bmq_quickfixes > /dev/null ; then
+		ot-kernel_apply_bmq_quickfixes
 	fi
 }
 
@@ -649,7 +804,7 @@ function apply_prjc() {
 # @DESCRIPTION:
 # Apply the TRESOR AES cold boot resistant patchset.
 #
-# ot-kernel-common_apply_tresor_fixes - callback to apply tresor fixes
+# ot-kernel_apply_tresor_fixes - callback to apply tresor fixes
 #
 function apply_tresor() {
 	cd "${S}" || die
@@ -666,8 +821,8 @@ function apply_tresor() {
 
 	_tpatch "${PATCH_OPS}" \
 		"${DISTDIR}/tresor-patch-${PATCH_TRESOR_VER}_${platform}"
-	if declare -f ot-kernel-common_apply_tresor_fixes > /dev/null ; then
-		ot-kernel-common_apply_tresor_fixes
+	if declare -f ot-kernel_apply_tresor_fixes > /dev/null ; then
+		ot-kernel_apply_tresor_fixes
 	fi
 }
 
@@ -764,10 +919,10 @@ function get_current_commit_for_k_major_minor_branch() {
 	popd 2>/dev/null 1>/dev/null
 }
 
-# @FUNCTION: ot-kernel-common_fetch_linux_sources
+# @FUNCTION: ot-kernel_fetch_linux_sources
 # @DESCRIPTION:
 # Fetches a local copy of the linux kernel repo.
-function ot-kernel-common_fetch_linux_sources() {
+function ot-kernel_fetch_linux_sources() {
 	einfo "Fetching the vanilla Linux kernel sources.  It may take hours."
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	cd "${DISTDIR}" || die
@@ -832,28 +987,28 @@ function ot-kernel-common_fetch_linux_sources() {
 	cd "${d}" || die
 }
 
-# @FUNCTION: ot-kernel-common_unpack_tarball
+# @FUNCTION: ot-kernel_unpack_tarball
 # @DESCRIPTION:
 # Unpacks the main tarball
-ot-kernel-common_unpack_tarball() {
+ot-kernel_unpack_tarball() {
 	cd "${WORKDIR}" || die
 	unpack "linux-${K_MAJOR_MINOR}.tar.xz"
 }
 
-# @FUNCTION: ot-kernel-common_unpack_tarball
+# @FUNCTION: ot-kernel_unpack_tarball
 # @DESCRIPTION:
 # Unpacks all point release tarballs
-ot-kernel-common_unpack_point_releases() {
+ot-kernel_unpack_point_releases() {
 	cd "${T}" || die
 	for p in ${KERNEL_PATCH_FNS_EXT[@]} ; do
 		unpack "${p}"
 	done
 }
 
-# @FUNCTION: ot-kernel-common_src_unpack
+# @FUNCTION: ot-kernel_src_unpack
 # @DESCRIPTION:
 # Applies patch sets in order.
-function ot-kernel-common_src_unpack() {
+function ot-kernel_src_unpack() {
 	_PATCHES=()
 	if use graysky2 ; then
 		if $(ver_test $(gcc-version) -ge 10.1) \
@@ -882,12 +1037,12 @@ kernel ${K_MAJOR_MINOR}.  Skipping graysky2 patches."
 	fi
 
 	if [[ -z "${K_LIVE_PATCHABLE}" ]] ; then
-		ot-kernel-common_unpack_tarball
-		# ot-kernel-common_unpack_point_releases # already done in apply_genpatch_base
+		ot-kernel_unpack_tarball
+		# ot-kernel_unpack_point_releases # already done in apply_genpatch_base
 		cd "${WORKDIR}" || die
 		mv "linux-${K_MAJOR_MINOR}" "${S}" || die
 	else
-		ot-kernel-common_fetch_linux_sources
+		ot-kernel_fetch_linux_sources
 		cp -r "${d}" "${WORKDIR}" || die
 		cd "${WORKDIR}" || die
 		mv linux "${S}" || die
@@ -1007,146 +1162,11 @@ kernel ${K_MAJOR_MINOR}.  Skipping graysky2 patches."
 	#_dpatch "${PATCH_OPS}" "${FILESDIR}/linux-4.20-kconfig-ioscheds.patch"
 }
 
-# @FUNCTION: zenmisc_setup
-# @DESCRIPTION:
-# Checks the existance for the ZENMISC_WHITELIST_5_3 variable
-function zenmisc_setup() {
-	if use zenmisc ; then
-		local ZM="ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_}"
-		if [[ -z "${!ZM}" ]] ; then
-			local zenmisc_url
-			if ver_test ${PV} -ge 5.4 ; then
-				zenmisc_url=\
-"https://github.com/torvalds/linux/compare/v${K_MAJOR_MINOR}...zen-kernel:${K_MAJOR_MINOR}/zen-sauce"
-			else
-				zenmisc_url=\
-"https://github.com/torvalds/linux/compare/v${K_MAJOR_MINOR}...zen-kernel:${K_MAJOR_MINOR}/misc"
-			fi
-
-			eerror \
-"You must define ZENMISC_WHITELIST_${K_MAJOR_MINOR} in /etc/make.conf\n\
-or as a per-package env containing commits to accepted from\n\
-  ${zenmisc_url}\n\
-\n\
-For example:\n\
-\n\
-  ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_}=\"214d031dbeef940efe1dbba274caf5ccc4ff2774 83d7f482c60b6dfda030325394ec07baac7f5a30\"\n\
-\n\
-This must be in chronological and topological order (if the timestamp is the\n\
-same) from oldest-left to newest-right."
-			die
-		fi
-	fi
-}
-
-# @FUNCTION: _check_network_sandbox
-# @DESCRIPTION:
-# Check if sandbox is more lax when downloading in unpack phase
-function _check_network_sandbox() {
-	# justifications
-	# bfq - no way to compare against "branch with commit"
-	#   (i.e. v${K_MAJOR_MINOR}...zen-kernel:${K_MAJOR_MINOR}/misc/${c})
-	# zenmisc - random choice of commits by user, mimimize
-	#   downloading unnecessary commits, less manifest
-	#   entries
-	# zentune - no way to version as explained in bfq
-	if has network-sandbox $FEATURES ; then
-		die \
-"FEATURES=\"-network-sandbox\" must be added per-package env to be able to use\n\
-live patches."
-	fi
-}
-
-# @FUNCTION: _report_eol
-# @DESCRIPTION:
-# Reports the estimated End Of Life (EOL).  Sourced from
-# https://www.kernel.org/category/releases.html
-function _report_eol() {
-	if [[ "${K_MAJOR_MINOR}" == "5.4" ]] ; then
-		einfo \
-"\n\
-The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is\n\
-Dec 2025.\n\
-"
-	elif [[ "${K_MAJOR_MINOR}" == "4.19" ]] ; then
-		einfo \
-"\n\
-The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is\n\
-Dec 2024.\n\
-"
-	elif [[ "${K_MAJOR_MINOR}" == "4.14" ]] ; then
-		einfo \
-"\n\
-The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is\n\
-Jan 2024.\n\
-"
-	else
-		ewarn \
-"\n\
-The ${K_MAJOR_MINOR} kernel series is not a Long Term Support (LTS)\n\
-kernel.  It may suddenly stop receiving security updates completely between a\n\
-week to several months.\n\
-"
-	fi
-}
-
-# @FUNCTION: ot-kernel-common_pkg_setup_cb
-# @DESCRIPTION:
-# Perform checks, warnings, and initialization before emerging
-function ot-kernel-common_pkg_setup() {
-	_report_eol
-	if has zenmisc ${IUSE_EFFECTIVE} ; then
-		if use zenmisc ; then
-			_check_network_sandbox
-		fi
-	fi
-	if has zentune ${IUSE_EFFECTIVE} ; then
-		if use zentune ; then
-			_check_network_sandbox
-		fi
-	fi
-	if has bfq ${IUSE_EFFECTIVE} ; then
-		if use bfq ; then
-			_check_network_sandbox
-		fi
-	fi
-	if has futex-wait-multiple ${IUSE_EFFECTIVE} ; then
-		if use bfq ; then
-			_check_network_sandbox
-		fi
-	fi
-
-	if declare -f ot-kernel-common_pkg_setup_cb > /dev/null ; then
-		ot-kernel-common_pkg_setup_cb
-	fi
-	if has zenmisc ${IUSE_EFFECTIVE} ; then
-		zenmisc_setup
-	fi
-	if has cve_hotfix ${IUSE_EFFECTIVE} ; then
-		if use cve_hotfix ; then
-			_check_network_sandbox
-		fi
-	fi
-
-	if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
-		einfo "Live patchable branches is experimental and is a Work In Progress (WIP)"
-	fi
-}
-
-# @FUNCTION: ot-kernel-common_pkg_pretend_cb
-# @DESCRIPTION:
-# Perform checks and warnings before emerging
-function ot-kernel-common_pkg_pretend() {
-	if declare -f ot-kernel-common_pkg_pretend_cb > /dev/null ; then
-		ot-kernel-common_pkg_pretend_cb
-	fi
-}
-
-# @FUNCTION: ot-kernel-common_src_compile
+# @FUNCTION: ot-kernel_src_compile
 # @DESCRIPTION:
 # Compiles the userland programs especially the TRESOR AES post-boot
 # program.
-function ot-kernel-common_src_compile() {
+function ot-kernel_src_compile() {
 	if has tresor_sysfs ${IUSE_EFFECTIVE} ; then
 		if use tresor_sysfs ; then
 			cp -a "${DISTDIR}/tresor_sysfs.c" "${T}"
@@ -1157,10 +1177,10 @@ function ot-kernel-common_src_compile() {
 	fi
 }
 
-# @FUNCTION: ot-kernel-common_src_install
+# @FUNCTION: ot-kernel_src_install
 # @DESCRIPTION:
 # Removes patch cruft.
-function ot-kernel-common_src_install() {
+function ot-kernel_src_install() {
 	if has tresor ${IUSE_EFFECTIVE} ; then
 		if use tresor ; then
 			docinto /usr/share/${PF}
@@ -1173,13 +1193,13 @@ function ot-kernel-common_src_install() {
 	mv "${S}" "${ED}/usr/src" || die
 }
 
-# @FUNCTION: ot-kernel-common_pkg_postinst
+# @FUNCTION: ot-kernel_pkg_postinst
 # @DESCRIPTION:
 # Present warnings and avoid collision checks.
 #
-# ot-kernel-common_pkg_postinst_cb - callback if any to handle after emerge phase
+# ot-kernel_pkg_postinst_cb - callback if any to handle after emerge phase
 #
-function ot-kernel-common_pkg_postinst() {
+function ot-kernel_pkg_postinst() {
 	if use disable_debug ; then
 		einfo \
 "The disable debug scripts have been placed in your /usr/src folder.\n"\
@@ -1278,8 +1298,8 @@ or\n\
 to genkernel invocation.\n\
 \n"
 
-	if declare -f ot-kernel-common_pkg_postinst_cb > /dev/null ; then
-		ot-kernel-common_pkg_postinst_cb
+	if declare -f ot-kernel_pkg_postinst_cb > /dev/null ; then
+		ot-kernel_pkg_postinst_cb
 	fi
 
 	if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then

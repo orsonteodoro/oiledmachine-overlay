@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    This is used to pull the latest LTS release.
+
+    Users still need to call `emerge --depclean`
+
+    Since emerge/ebuild doesn't support conditional slotting, it must be
+    done though a virtual ebuild.
+  </longdescription>
+  <use>
+    <flag name="4_14">Monitor the 4.14 branch for updates.</flag>
+    <flag name="5_4">Monitor the 5.4 branch for updates.</flag>
+  </use>
+</pkgmetadata>

@@ -133,8 +133,6 @@
 #    aes-ecb        128b       158.5 MiB/s       177.5 MiB/s
 
 
-ETYPE="sources"
-
 K_MAJOR_MINOR="4.14"
 K_PATCH_XV="4.x"
 EXTRAVERSION="-ot"
@@ -166,14 +164,12 @@ tresor_i686? ( tresor )
 tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 tresor_x86_64? ( tresor )"
 
-inherit toolchain-funcs
-
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
 DESCRIPTION="A customizeable kernel package containing UKSM, GraySky's GCC \
 Patches, MUQSS CPU Scheduler, PDS CPU Scheduler, Genpatches, TRESOR"
 
-inherit ot-kernel-common
+inherit ot-kernel
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:;
@@ -206,10 +202,10 @@ SRC_URI+=" genpatches? (
 	   )
 	   uksm? ( ${UKSM_SRC_URL} )"
 
-# @FUNCTION: ot-kernel-common_pkg_setup_cb
+# @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
-function ot-kernel-common_pkg_setup_cb() {
+function ot-kernel_pkg_setup_cb() {
 	# tresor for x86_64 generic was known to pass crypto testmgr on this
 	# version.
 	ewarn \
@@ -240,10 +236,10 @@ like npm.  These use flags are not recommended."
 	fi
 }
 
-# @FUNCTION: ot-kernel-common_apply_tresor_fixes
+# @FUNCTION: ot-kernel_apply_tresor_fixes
 # @DESCRIPTION:
 # Applies specific TRESOR fixes for this kernel major version
-function ot-kernel-common_apply_tresor_fixes() {
+function ot-kernel_apply_tresor_fixes() {
 	# for 4.20 series and 5.x use tresor-testmgr-ciphers-update.patch instead
 	_dpatch "${PATCH_OPS}" \
 		"${FILESDIR}/tresor-testmgr-ciphers-update-for-linux-4.14.patch"
@@ -268,10 +264,10 @@ function ot-kernel-common_apply_tresor_fixes() {
 	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-fix-warnings-for-tresor_key_c.patch"
 }
 
-# @FUNCTION: ot-kernel-common_pkg_postinst_cb
+# @FUNCTION: ot-kernel_pkg_postinst_cb
 # @DESCRIPTION:
 # Show messages and avoid collision triggering
-function ot-kernel-common_pkg_postinst_cb() {
+function ot-kernel_pkg_postinst_cb() {
 	if use muqss ; then
 		ewarn \
 "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL will\n\

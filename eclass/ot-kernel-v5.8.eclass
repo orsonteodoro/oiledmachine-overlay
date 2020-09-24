@@ -14,8 +14,6 @@
 # The ot-kernel-v5.8 eclass defines specific applicable patching for the 5.8.x
 # linux kernel.
 
-ETYPE="sources"
-
 K_MAJOR_MINOR="5.8"
 K_PATCH_XV="5.x"
 EXTRAVERSION="-ot"
@@ -48,15 +46,13 @@ tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 tresor_x86_64? ( tresor )
 tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )"
 
-inherit toolchain-funcs
-
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
 DESCRIPTION="A customizeable kernel package containing UKSM, zen-kernel patchset, GraySky's GCC \
 Patches, MUQSS CPU Scheduler, BMQ CPU Scheduler, Project C CPU Scheduler, \
 Genpatches, BFQ updates, CVE fixes, TRESOR, zstd"
 
-inherit check-reqs ot-kernel-common
+inherit ot-kernel
 
 #BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.patch"
 #BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
@@ -95,10 +91,10 @@ SRC_URI_DISABLED+="
 	   bmq? ( ${BMQ_SRC_URL} )
 "
 
-# @FUNCTION: ot-kernel-common_pkg_setup_cb
+# @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
-function ot-kernel-common_pkg_setup_cb() {
+function ot-kernel_pkg_setup_cb() {
 	if has zentune ${IUSE_EFFECTIVE} ; then
 		if use zentune ; then
 		ewarn \
@@ -115,10 +111,10 @@ like npm.  These use flags are not recommended."
 	fi
 }
 
-# @FUNCTION: ot-kernel-common_apply_tresor_fixes
+# @FUNCTION: ot-kernel_apply_tresor_fixes
 # @DESCRIPTION:
 # Applies specific TRESOR fixes for this kernel major version
-function ot-kernel-common_apply_tresor_fixes() {
+function ot-kernel_apply_tresor_fixes() {
 	_dpatch "${PATCH_OPS}" \
 		"${FILESDIR}/tresor-testmgr-ciphers-update.patch"
 
@@ -162,10 +158,10 @@ function ot-kernel-common_apply_tresor_fixes() {
 	fi
 }
 
-# @FUNCTION: ot-kernel-common_pkg_postinst_cb
+# @FUNCTION: ot-kernel_pkg_postinst_cb
 # @DESCRIPTION:
 # Show messages and avoid collision triggering
-function ot-kernel-common_pkg_postinst_cb() {
+function ot-kernel_pkg_postinst_cb() {
 	if use muqss ; then
 		ewarn \
 "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL and\n\
