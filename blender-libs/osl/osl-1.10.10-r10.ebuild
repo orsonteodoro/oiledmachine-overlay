@@ -82,7 +82,7 @@ src_prepare() {
 
 # Abbreviated PreFiX
 apfx() {
-	echo "/usr/$(get_libdir)/blender/osl/${LLVM_V}"
+	echo "/usr/$(get_libdir)/blender/osl/${LLVM_V}/usr"
 }
 
 src_configure() {
@@ -118,8 +118,8 @@ src_configure() {
 			local gcc=$(tc-getCC)
 			# LLVM needs CPP11. Do not disable.
 			local mycmakeargs=(
-				-DCMAKE_INSTALL_PREFIX="$(apfx)/usr"
-				-DCMAKE_INSTALL_BINDIR="$(apfx)/usr/bin${bin_suffix}"
+				-DCMAKE_INSTALL_PREFIX="$(apfx)"
+				-DCMAKE_INSTALL_BINDIR="$(apfx)/bin${bin_suffix}"
 				-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
 				-DENABLERTTI=OFF
 				-DINSTALL_DOCS=$(usex doc)
