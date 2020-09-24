@@ -1162,14 +1162,13 @@ blender_src_install() {
 	blender_foreach_impl blender_install
 	local ed_icon_hc="${ED}/usr/share/icons/hicolor"
 	local ed_icon_scale="${ed_icon_hc}/scalable"
+	local ed_icon_sym="${ed_icon_hc}/symbolic"
 	if ver_test $(ver_cut 1-2 ${PV}) -lt 2.80 ; then
-		local ed_icon_hc="${ED}/usr/share/icons/hicolor"
 		for size in 16x16 22x22 24x24 256x256 32x32 48x48 ; do
 			if [[ -e "${ed_icon_hc}/${size}/apps/blender.png" ]] ; then
 				mv "${ed_icon_hc}/${size}/apps/blender"{,-${SLOT_MAJ}}".png" || die
 			fi
 		done
-		mv "${ed_icon_hc}/scalable/apps/blender"{,-${SLOT_MAJ}}".svg" || die
 	fi
 	if [[ -e "${ed_icon_scale}/apps/blender.svg" ]] ; then
 		mv "${ed_icon_scale}/apps/blender"{,-${SLOT_MAJ}}".svg" || die
