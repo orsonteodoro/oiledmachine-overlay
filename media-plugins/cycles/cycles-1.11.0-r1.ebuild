@@ -439,7 +439,7 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 	if use osl ; then
 		export OSL_ROOT_DIR="$(prfx)/osl/${LLVM_V}"
 		_LD_LIBRARY_PATH+=( "$(prfx)/osl/${LLVM_V}/usr/$(get_libdir)\n" )
-		_PATH+=( "$(prfx)/osl/${LLVM_V}/usr/$(get_libdir)/osl/bin\n" )
+		_PATH+=( "$(prfx)/osl/${LLVM_V}/usr/bin\n" )
 	fi
 
 	use network \
