@@ -64,6 +64,10 @@ IUSE="${IUSE/cpu_flags_x86_mmx/+cpu_flags_x86_mmx}"
 IUSE="${IUSE/cpu_flags_x86_sse /+cpu_flags_x86_sse }"
 IUSE="${IUSE/cpu_flags_x86_sse2/+cpu_flags_x86_sse2}"
 
+# This could be modded for multiabi builds.
+declare -A _LD_LIBRARY_PATHS
+declare -A _PATHS
+
 # See https://gitlab.com/libeigen/eigen/-/blob/3.3.7/Eigen/Core
 REQUIRED_USE_EIGEN="
 	cpu_flags_x86_avx? (
@@ -387,6 +391,50 @@ blender_pkg_setup_common() {
 	check_amdgpu_pro
 	check_cpu
 	check_optimal_compiler_for_cycles_x86
+}
+
+_src_prepare() {
+	eapply ${_PATCHES[@]}
+
+	S="${BUILD_DIR}" \
+	CMAKE_USE_DIR="${BUILD_DIR}" \
+	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
+	cmake-utils_src_prepare
+
+	if declare -f _src_prepare_patches > /dev/null ; then
+		_src_prepare_patches
+	fi
+
+	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
+		# we don't want static glew, but it's scattered across
+		# multiple files that differ from version to version
+		# !!!CHECK THIS SED ON EVERY VERSION BUMP!!!
+		local file
+		while IFS="" read -d $'\0' -r file ; do
+			if grep -q -F -e "-DGLEW_STATIC" "${file}" ; then
+				einfo "Removing -DGLEW_STATIC from ${file}"
+				sed -i -e '/-DGLEW_STATIC/d' "${file}"
+			fi
+		done < <(find . -type f -name "CMakeLists.txt" -print0)
+
+		sed -i -e "s|bf_intern_glew_mx|bf_intern_glew_mx \${GLEW_LIBRARY}|g" \
+			intern/cycles/app/CMakeLists.txt || die
+	fi
+
+	# Disable MS Windows help generation. The variable doesn't do what it
+	# it sounds like.
+	sed -e "s|GENERATE_HTMLHELP      = YES|GENERATE_HTMLHELP      = NO|" \
+	    -i doc/doxygen/Doxyfile || die
+}
+
+blender_src_prepare() {
+	xdg_src_prepare
+	blender_prepare() {
+		cd "${BUILD_DIR}" || die
+		_src_prepare
+	}
+	blender_copy_sources
+	blender_foreach_impl blender_prepare
 }
 
 blender_configure_eigen() {
@@ -733,6 +781,7 @@ blender_configure_osl_match_llvm() {
 	if use osl ; then
 		export OSL_ROOT_DIR="$(erdpfx)/osl/${LLVM_V}/usr"
 		_LD_LIBRARY_PATH="$(erdpfx)/osl/${LLVM_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+		_PATH="$(erdpfx)/osl/${LLVM_V}/usr/bin:${_PATH}"
 	fi
 }
 
@@ -820,8 +869,24 @@ The build scripts expect BLENDER_OPTIX_ROOT_DIR/include/optix.h.\n\
 	fi
 }
 
+blender_src_configure() {
+	blender_configure() {
+		cd "${BUILD_DIR}" || die
+		_src_configure
+	}
+	blender_foreach_impl blender_configure
+}
 
 _src_compile() {
+	if [[ -n "${_LD_LIBRARY_PATHS[${EBLENDER}]}" ]] ; then
+		export LD_LIBRARY_PATH="${_LD_LIBRARY_PATHS[${EBLENDER}]}"
+		einfo "LD_LIBRARY_PATH=${LD_LIBRARY_PATH}"
+	fi
+	if [[ -n "${_PATHS[${EBLENDER}]}" ]] ; then
+		export PATH="${_PATHS[${EBLENDER}]}:${PATH}"
+		einfo "PATH=${PATH}"
+	fi
+
 	S="${BUILD_DIR}" \
 	CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
@@ -853,11 +918,13 @@ _src_compile_docs() {
 
 blender_src_compile() {
 	blender_compile() {
+		_ORIG_PATH="${PATH}"
 		cd "${BUILD_DIR}" || die
 		_src_compile
 		if [[ "${EBLENDER}" == "build_creator" ]] ; then
 			_src_compile_docs
 		fi
+		export PATH="${_ORIG_PATH}"
 	}
 	blender_foreach_impl blender_compile
 }
@@ -1078,6 +1145,7 @@ Blender adds mesa libs to their binary distribution.  You may need to do\n\
 the same especially to avoid the multiple LLVM versions being loaded bug." \
 			>> "${ED}${d_dest}/README.3rdparty_deps" || die
 		dodir "${d_dest}/lib"
+		exeinto "${d_dest}"
 		doexe "${FILESDIR}/gamelaunch.sh"
 	fi
 	install_licenses

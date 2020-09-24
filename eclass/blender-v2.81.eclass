@@ -276,52 +276,14 @@ $(usex openvdb $(usex abi7-compat 7-${CXXABI_V} $(usex abi6-compat 6 5)) "")
 			fi
 		fi
 	fi
-}
-
-_src_prepare() {
-	eapply ${_PATCHES[@]}
-
-	S="${BUILD_DIR}" \
-	CMAKE_USE_DIR="${BUILD_DIR}" \
-	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
-	cmake-utils_src_prepare
-
-	eapply "${FILESDIR}/blender-2.81a-parent-datafiles-dir-change.patch"
-
-	if [[ "${EBLENDER}" == "build_creator" || "${EBLENDER}" == "build_headless" ]] ; then
-		# we don't want static glew, but it's scattered across
-		# multiple files that differ from version to version
-		# !!!CHECK THIS SED ON EVERY VERSION BUMP!!!
-		local file
-		while IFS="" read -d $'\0' -r file ; do
-			if grep -q -F -e "-DGLEW_STATIC" "${file}" ; then
-				einfo "Removing -DGLEW_STATIC from ${file}"
-				sed -i -e '/-DGLEW_STATIC/d' "${file}"
-			fi
-		done < <(find . -type f -name "CMakeLists.txt" -print0)
-
-		sed -i -e "s|bf_intern_glew_mx|bf_intern_glew_mx \${GLEW_LIBRARY}|g" \
-			intern/cycles/app/CMakeLists.txt || die
-	fi
-
-	# Disable MS Windows help generation. The variable doesn't do what it
-	# it sounds like.
-	sed -e "s|GENERATE_HTMLHELP      = YES|GENERATE_HTMLHELP      = NO|" \
-	    -i doc/doxygen/Doxyfile || die
-}
-
-blender_src_prepare() {
 	ewarn
 	ewarn "This version is not a Long Term Support (LTS) version."
 	ewarn "Use 2.83.x series instead."
 	ewarn
-	xdg_src_prepare
-	blender_prepare() {
-		cd "${BUILD_DIR}" || die
-		_src_prepare
-	}
-	blender_copy_sources
-	blender_foreach_impl blender_prepare
+}
+
+_src_prepare_patches() {
+	eapply "${FILESDIR}/blender-2.81a-parent-datafiles-dir-change.patch"
 }
 
 _src_configure() {
@@ -354,6 +316,10 @@ ebuild/upstream developers only."
 	if use osl ; then
 		blender_configure_mesa_match_llvm
 	fi
+
+	# Just attach the abi as a suffix for the key for multiabi support.
+	_LD_LIBRARY_PATHS[${EBLENDER}]="${_LD_LIBRARY_PATH}"
+	_PATHS[${EBLENDER}]="${_PATH}"
 
 	if [[ -n "${_LD_LIBRARY_PATH}" ]] ; then
 		sed -i -e "s|\[blender_bin|['env', \"LD_LIBRARY_PATH=${_LD_LIBRARY_PATH}\", blender_bin|" \
@@ -481,14 +447,6 @@ ebuild/upstream developers only."
 	CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}_${EBLENDER}" \
 	cmake-utils_src_configure
-}
-
-blender_src_configure() {
-	blender_configure() {
-		cd "${BUILD_DIR}" || die
-		_src_configure
-	}
-	blender_foreach_impl blender_configure
 }
 
 blender_set_wrapper_deps() {
