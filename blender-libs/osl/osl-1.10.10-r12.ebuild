@@ -112,7 +112,7 @@ src_configure() {
 				bin_suffix=""
 			else
 				# avoid collision
-				bin_suffix="32"
+				bin_suffix="-${ABI}"
 			fi
 
 			local gcc=$(tc-getCC)
