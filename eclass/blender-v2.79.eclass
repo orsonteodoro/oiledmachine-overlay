@@ -69,13 +69,7 @@ https://github.com/blender/blender/commit/f1e6838376a0a07b5ce45d70ad18357c7c6cc2
 	blender-2.79b-find-blosc.patch"
 
 # The release USE flag depends on platform defaults.
-# Disabled dead code optimization flags introduced by
-#   cd5e1ff74e4f6443f3e4b836dd23fe46b56cb7ed
-# At the source code level, they mix the sse2 intrinsics functions up with the
-#   __KERNEL_SSE__.
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
-	${REQUIRED_USE_EIGEN}
-	${REQUIRED_USE_MINIMAL_CPU_FLAGS}
+REQUIRED_USE+="
 	build_creator? ( X )
 	build_portable? ( X game-engine )
 	cuda? ( cycles nvcc )

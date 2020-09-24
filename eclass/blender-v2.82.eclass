@@ -28,14 +28,7 @@ inherit blender
 # See the blender.eclass for the LICENSE variable.
 
 # The release USE flag depends on platform defaults.
-# Disabled dead code optimization flags introduced by
-#   cd5e1ff74e4f6443f3e4b836dd23fe46b56cb7ed
-# At the source code level, they mix the sse2 intrinsics functions up with the
-#   __KERNEL_SSE__.
-REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
-	${REQUIRED_USE_EIGEN}
-	${REQUIRED_USE_CYCLES}
-	${REQUIRED_USE_MINIMAL_CPU_FLAGS}
+REQUIRED_USE+="
 	build_creator? ( X )
 	cuda? ( cycles ^^ ( nvcc nvrtc ) )
 	embree? ( cycles )

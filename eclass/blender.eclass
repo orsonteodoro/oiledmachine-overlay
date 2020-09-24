@@ -86,6 +86,8 @@ IUSE="${IUSE/cpu_flags_x86_mmx/+cpu_flags_x86_mmx}"
 IUSE="${IUSE/cpu_flags_x86_sse /+cpu_flags_x86_sse }"
 IUSE="${IUSE/cpu_flags_x86_sse2/+cpu_flags_x86_sse2}"
 
+# At the source code level, they mix the sse2 intrinsics functions up with the
+#   __KERNEL_SSE__.
 REQUIRED_USE_MINIMAL_CPU_FLAGS="
 	!cpu_flags_x86_mmx? ( !cpu_flags_x86_sse !cpu_flags_x86_sse2 )
 	cpu_flags_x86_sse2? ( !cpu_flags_x86_sse? ( cpu_flags_x86_mmx ) )
@@ -135,6 +137,13 @@ REQUIRED_USE_EIGEN="
 		cpu_flags_x86_avx
 		cpu_flags_x86_avx2
 	)
+"
+
+REQUIRED_USE+="
+	${PYTHON_REQUIRED_USE}
+	${REQUIRED_USE_EIGEN}
+	${REQUIRED_USE_CYCLES}
+	${REQUIRED_USE_MINIMAL_CPU_FLAGS}
 "
 
 # This could be modded for multiabi builds.
