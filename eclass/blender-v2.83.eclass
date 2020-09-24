@@ -521,7 +521,7 @@ blender_set_wrapper_deps() {
 	fi
 	if use osl ; then
 		_LD_LIBRARY_PATH+=( "$(dpfx)/osl/${LLVM_V}/usr/$(get_libdir)\n" )
-		_PATH+=( "$(dpfx)/osl/${LLVM_V}/usr/$(get_libdir)/osl/bin\n" )
+		_PATH+=( "$(dpfx)/osl/${LLVM_V}/usr/bin\n" )
 	fi
 	if [[ -d "$(erdpfx)/boost/${CXXABI_V}/usr/$(get_libdir)" ]] ; then
 		_LD_LIBRARY_PATH+=( "$(dpfx)/boost/${CXXABI_V}/usr/$(get_libdir)\n" )
