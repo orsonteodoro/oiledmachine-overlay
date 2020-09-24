@@ -19,7 +19,14 @@ s_cbrt.c
 build_portable? (
 	Boost-1.0
 	BSD-2
+	collada? ( BSD )
 	jemalloc? ( BSD-2 )
+	fftw? ( GPL-2+ )
+	jpeg2k? ( BSD-2 )
+	ndof? ( BSD )
+	openvdb? ( MPL-2.0 )
+	osl? ( BSD )
+	ZLIB
 )
 game-engine? (
 	GPL-2+
@@ -27,6 +34,12 @@ game-engine? (
 )
 "
 
+# The statically linked dependencies are repeated for the build_portable
+#   (containing the Blender player) and mostly correspond to the USE flags.
+#   The build_portable USE flag also include the licenses in the game-engine
+#   USE flag.
+# The zlib library gets statically linked to blenderplayer and is ZLIB licensed.
+# libpcre is statically linked and used by the collada USE flag and build_portable
 # extern/carve/include/carve/win32.h all-rights-reserved
 # extern/carve/ || (GPL-2 GPL-3) ; could be reason why GPL-3 is bundled
 # source/gameengine/Expressions/intern/Value.cpp NTP
@@ -193,7 +206,10 @@ RDEPEND="${PYTHON_DEPS}
 		blender-libs/boost:${CXXABI_V}=[static-libs]
 		media-libs/openjpeg:=[static-libs]
 	)
-	collada? ( >=media-libs/opencollada-1.6.51:= )
+	collada? (
+		dev-libs/libpcre:=[static-libs]
+		>=media-libs/opencollada-1.6.51:=
+	)
 	color-management? ( >=media-libs/opencolorio-1.0.9 )
 	cuda? (
 		>=x11-drivers/nvidia-drivers-367.48
@@ -313,6 +329,15 @@ $(usex openvdb $(usex abi7-compat 7-${CXXABI_V} $(usex abi6-compat 6 $(usex abi5
 				die "OpenVDB delta() is missing try <=7.1.x only"
 			fi
 		fi
+	fi
+
+	if use build_portable ; then
+		ewarn \
+"The Blender player has been deprecated and removed in >=2.80."
+	fi
+	if use game-engine ; then
+		ewarn \
+"The Blender game engine has been deprecated and removed in >=2.80."
 	fi
 }
 

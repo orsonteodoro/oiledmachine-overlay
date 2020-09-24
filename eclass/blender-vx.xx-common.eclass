@@ -152,8 +152,13 @@ you change it."
 			fi
 			# These are .a libraries listed from the linking phase
 			# of build_portable
+			#
+			# Mesa is listed because it was shipped in the Blender
+			# binary distribution.  This may be required in the
+			# when distributing games with Blender player.
 			RDEPEND_279=(
 				"blender-libs/boost"
+				"blender-libs/mesa"
 				"blender-libs/openvdb"
 				"blender-libs/osl"
 				"dev-libs/libpcre"
@@ -227,6 +232,8 @@ check_cpu() {
 	grep -q -i -E -e 'avx512dq( |$)' /proc/cpuinfo # 2017
 	local has_avx512dq="$?"
 
+	# We cancel building to prevent runtime errors with dependencies
+	# that may not do sufficient runtime checks for cpu types like eigen.
 
 	if use cpu_flags_x86_mmx ; then
 		if [[ "${has_mmx}" != "0" ]] ; then
@@ -1030,17 +1037,48 @@ _src_install() {
 		fi
 	fi
 	if [[ "${EBLENDER}" == "build_portable" ]] ; then
-		echo \
-"The following libraries were linked to blenderplayer as shared libraries and\n
-need to be present on the other computer or distributed with blenderplayer\n
-with licenses or built without such dependencies.  The dependency of those\n
-direct shared dependencies may also be required.\n\n" \
+		echo -e \
+"# The following libraries were linked to blenderplayer as shared libraries and\n\
+# need to be present on the other computer or distributed with blenderplayer\n\
+# with licenses or built without such dependencies.  The dependency of those\n\
+# direct shared dependencies may also be required.\n\n" \
 			> "${ED}${d_dest}/README.3rdparty_deps"
 		[[ ! -e "${T}/build-build_portable.log" ]] \
 			&& die "Missing build log"
-		grep -E -e "-o .*blenderplayer " "${T}"/build-build_portable.log \
+
+		# List direct dependencies
+		echo -e "# Direct shared dependencies:\n" \
+			>> "${ED}${d_dest}/README.3rdparty_deps" || die
+		grep -E -e "-o .*blenderplayer " \
+			"${T}"/build-build_portable.log \
 			| grep -o -E -e "[^ ]+\.so(.[0-9]+)?" | sort | uniq \
-			>> "${ED}${d_dest}/README.3rdparty_deps"
+			| sed -e "/^$/d" \
+			>> "${ED}${d_dest}/README.3rdparty_deps" || die
+		echo -e "\n\n# Dependency of direct shared dependencies:\n" \
+			>> "${ED}${d_dest}/README.3rdparty_deps" || die
+
+		# List dependency of those direct dependencies
+		echo -e $(for f in $(cat "${ED}/${d_dest}/README.3rdparty_deps" \
+				| sed -e "/^#/d" ) ; do \
+				ldd "${f}" \
+					| cut -f 2 -d ">" \
+					| sed -e "s|\t||g" -e "s|^[ ]||g" \
+					| sort ; \
+			done) \
+			| sed -E -e "s|\([0-9a-z]+\)||g" \
+			| tr " " "\n" | sort | uniq \
+			| sed -E -e "/(statically|linked|linux-vdso.so.1)/d" \
+			| sed -e "/^$/d" \
+			>> "${ED}${d_dest}/README.3rdparty_deps" || die
+		echo -e \
+"\n\nPlace the shared libraries in the lib folder containing blenderplayer\n\
+along with licenses.  A \`gamelaunch.sh\` launcher wrapper script has been\n\
+provided.  Edit the file and set the name of my_game_project.blend file.\n\
+Blender adds mesa libs to their binary distribution.  You may need to do\n\
+the same especially to avoid the multiple LLVM versions being loaded bug." \
+			>> "${ED}${d_dest}/README.3rdparty_deps" || die
+		dodir "${d_dest}/lib"
+		doexe "${FILESDIR}/gamelaunch.sh"
 	fi
 	install_licenses
 	if use doc ; then
