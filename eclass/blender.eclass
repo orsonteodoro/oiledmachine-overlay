@@ -230,7 +230,7 @@ you change it."
 			# of build_portable
 			#
 			# Mesa is listed because it was shipped in the Blender
-			# binary distribution.  This may be required in the
+			# binary distribution.  This may be required
 			# when distributing games with Blender player.
 			RDEPEND_279=(
 				"blender-libs/boost"
