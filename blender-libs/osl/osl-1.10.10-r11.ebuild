@@ -107,7 +107,7 @@ src_configure() {
 			[[ -z ${mysimd} ]] && mysimd=("0")
 
 			local bin_suffix=
-			if ! multilib_is_native_abi ; then
+			if multilib_is_native_abi ; then
 				# Blender expects oslc to be placed in $OSL_ROOT_DIR/bin
 				bin_suffix=""
 			else
@@ -185,5 +185,5 @@ src_install() {
 #		fi
 	}
 	multilib_foreach_abi install_abi
-	mv "${ED}/usr/share" "${ED}/$(apfx)/usr" || die
+	mv "${ED}/usr/share" "${ED}/$(apfx)" || die
 }
