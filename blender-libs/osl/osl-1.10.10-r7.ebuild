@@ -106,11 +106,20 @@ src_configure() {
 			# If no CPU SIMDs were used, completely disable them
 			[[ -z ${mysimd} ]] && mysimd=("0")
 
+			local bin_suffix=
+			if ! multilib_is_native_abi ; then
+				# Blender expects oslc to be placed in $OSL_ROOT_DIR/bin
+				bin_suffix=""
+			else
+				# avoid collision
+				bin_suffix="32"
+			fi
+
 			local gcc=$(tc-getCC)
 			# LLVM needs CPP11. Do not disable.
 			local mycmakeargs=(
 				-DCMAKE_INSTALL_PREFIX="$(apfx)"
-				-DCMAKE_INSTALL_BINDIR="$(apfx)/usr/$(get_libdir)/osl/bin"
+				-DCMAKE_INSTALL_BINDIR="$(apfx)/bin${bin_suffix}"
 				-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
 				-DENABLERTTI=OFF
 				-DINSTALL_DOCS=$(usex doc)
