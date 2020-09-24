@@ -731,7 +731,7 @@ blender_configure_mesa_match_system_llvm() {
 
 blender_configure_osl_match_llvm() {
 	if use osl ; then
-		export OSL_ROOT_DIR="$(erdpfx)/osl/${LLVM_V}"
+		export OSL_ROOT_DIR="$(erdpfx)/osl/${LLVM_V}/usr"
 		_LD_LIBRARY_PATH="$(erdpfx)/osl/${LLVM_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
 	fi
 }
