@@ -5,50 +5,28 @@
 # @MAINTAINER: orsonteodoro@hotmail.com
 # @BLURB: blender implementation
 # @DESCRIPTION:
-# The blender eclass helps reduce code duplication across ebuilds
+# The blender-v2.83.eclass helps reduce code duplication across ebuilds
 # using the same major.minor version.
-
-IS_LTS="1"
-inherit blender-vx.xx-common
-
-# For additional licenses see blender-vx.xx-common
 
 CXXABI_V=11
 LLVM_V=9
 LLVM_MAX_SLOT=${LLVM_V}
 PYTHON_COMPAT=( python3_{7,8} )
+IS_LTS="1"
 
-inherit eapi7-ver
-inherit blender check-reqs cmake-utils flag-o-matic llvm pax-utils \
-	python-single-r1 toolchain-funcs xdg
-
-
-# If you use git tarballs, you need to download the submodules listed in
-# .gitmodules.  The download.blender.org tarball is preferred because they
-# bundle all the dependencies.
-if [[ "${PV}" == "2.83" ]] ; then
-DL_PV="2.83.0"
-SRC_URI="https://download.blender.org/source/blender-${DL_PV}.tar.xz"
-else
-SRC_URI="https://download.blender.org/source/blender-${PV}.tar.xz"
-fi
-
-
-BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest}
-
-# Slotting is for scripting and plugin compatibility
-SLOT="${PV}"
-SLOT_MAJ=${SLOT%/*}
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-IUSE+=" X +abi7-compat -asan +bullet +collada +color-management -cpudetection \
+IUSE=" X +abi7-compat -asan +bullet +collada +color-management -cpudetection \
 +cuda +cycles -cycles-network +dds -debug doc +elbeem -embree +ffmpeg +fftw \
 flac +jack +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal \
 +opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb \
 +openxr -optix +osl release +sdl +sndfile test +tiff -valgrind"
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
-RESTRICT="mirror !test? ( test )"
+
+inherit blender
+
+# See the blender.eclass for the LICENSE variable.
 
 # The release USE flag depends on platform defaults.
 # Disabled dead code optimization flags introduced by
@@ -57,36 +35,10 @@ RESTRICT="mirror !test? ( test )"
 #   __KERNEL_SSE__.
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	${REQUIRED_USE_EIGEN}
-	!cpu_flags_x86_mmx? ( !cpu_flags_x86_sse !cpu_flags_x86_sse2 )
+	${REQUIRED_USE_CYCLES}
+	${REQUIRED_USE_MINIMAL_CPU_FLAGS}
 	build_creator? ( X )
-	cpu_flags_x86_sse2? ( !cpu_flags_x86_sse? ( cpu_flags_x86_mmx ) )
 	cuda? ( cycles ^^ ( nvcc nvrtc ) )
-	cycles? (
-		openexr tiff openimageio osl? ( llvm )
-		amd64? ( cpu_flags_x86_sse2 )
-		x86? ( cpu_flags_x86_sse2 )
-		cpu_flags_x86_sse? ( cpu_flags_x86_sse2 )
-		cpu_flags_x86_sse2? ( cpu_flags_x86_sse )
-		cpudetection? (
-			cpu_flags_x86_avx? ( cpu_flags_x86_sse )
-			cpu_flags_x86_avx2? ( cpu_flags_x86_sse )
-		)
-		!cpudetection? (
-			amd64? (
-				cpu_flags_x86_sse4_1? ( cpu_flags_x86_sse3 )
-				cpu_flags_x86_avx? ( cpu_flags_x86_sse4_1 )
-				cpu_flags_x86_avx2? ( cpu_flags_x86_avx
-							cpu_flags_x86_sse4_1
-							cpu_flags_x86_fma
-							cpu_flags_x86_lzcnt
-							cpu_flags_x86_bmi
-							cpu_flags_x86_f16c )
-			)
-			cpu_flags_x86_sse3? ( cpu_flags_x86_sse2
-						cpu_flags_x86_ssse3 )
-			cpu_flags_x86_ssse3? ( cpu_flags_x86_sse3 )
-		)
-	)
 	embree? ( cycles )
 	mp3? ( ffmpeg )
 	nvcc? ( || ( cuda optix ) )
@@ -270,11 +222,10 @@ _PATCHES=(
 )
 
 if [[ "${PV}" == "2.83" ]] ; then
-S="${WORKDIR}/${PN}-${DL_PV}"
+S="${WORKDIR}/${PN}-${PV}.0"
 fi
 
-blender_pkg_setup() {
-	blender_pkg_setup_common
+_blender_pkg_setup() {
 	# Needs OpenCL 1.2 (GCN 2)
 	export OPENVDB_V=$(usex openvdb 7 "")
 	export OPENVDB_V_DIR=$(usex openvdb 7-${CXXABI_V} "")

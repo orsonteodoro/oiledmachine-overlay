@@ -5,14 +5,31 @@
 # @MAINTAINER: orsonteodoro@hotmail.com
 # @BLURB: blender implementation
 # @DESCRIPTION:
-# The blender eclass helps reduce code duplication across ebuilds
+# The blender-v2.79.eclass helps reduce code duplication across ebuilds
 # using the same major.minor version.
 
 # Based on blender-2.79b-r2 from the gentoo overlay.
 
-inherit blender-vx.xx-common
+CXXABI_V=11
+HAS_PLAYER=1
+LLVM_V=9
+LLVM_MAX_SLOT=${LLVM_V}
+PYTHON_COMPAT=( python3_6 )
 
-# For additional licenses see blender-vx.xx-common
+# Platform defaults based on CMakeList.txt
+#1234567890123456789012345678901234567890123456789012345678901234567890123456789
+IUSE=" X abi3-compat +abi4-compat abi5-compat abi6-compat abi7-compat +bullet \
++dds +elbeem +game-engine -openexr -collada -color-management -cpudetection \
++cuda +cycles -cycles-network -debug doc flac -ffmpeg -fftw +jack +jemalloc \
++jpeg2k -llvm -man +ndof +nls +nvcc +openal +opencl +openimageio +openmp \
+-opensubdiv -openvdb -osl release -sdl -sndfile -test +tiff -valgrind X"
+FFMPEG_IUSE+=" jpeg2k +mp3 +theora vorbis x264 xvid"
+IUSE+=" ${FFMPEG_IUSE}"
+
+inherit blender
+
+# See the blender.eclass for the LICENSE variable which this eclass extends.
+
 LICENSE+="
 NTP
 s_cbrt.c
@@ -47,38 +64,9 @@ game-engine? (
 # release/scripts/addons/render_povray/templates_pov/chess2.pov AFL-3.0
 # release/scripts/addons/render_povray/templates_pov/abyss.pov CC-BY-SA-3.0
 
-CXXABI_V=11
-HAS_PLAYER=1
-LLVM_V=9
-LLVM_MAX_SLOT=${LLVM_V}
-PYTHON_COMPAT=( python3_6 )
-
-inherit eapi7-ver
-inherit blender check-reqs cmake-utils flag-o-matic llvm pax-utils \
-	python-single-r1 toolchain-funcs xdg
-
-# If you use git tarballs, you need to download the submodules listed in
-# .gitmodules.  The download.blender.org tarball is preferred because they
-# bundle all the dependencies.
-SRC_URI="https://download.blender.org/source/${P}.tar.gz
+SRC_URI+=" \
 https://github.com/blender/blender/commit/f1e6838376a0a07b5ce45d70ad18357c7c6cc2eb.patch -> \
 	blender-2.79b-find-blosc.patch"
-
-BLENDER_MAIN_SYMLINK_MODE=${BLENDER_MAIN_SYMLINK_MODE:=latest} # can be latest, latest-lts, custom-x.yy
-
-# Slotting is for scripting and plugin compatibility
-SLOT="${PV}"
-SLOT_MAJ=${SLOT%/*}
-# Platform defaults based on CMakeList.txt
-#1234567890123456789012345678901234567890123456789012345678901234567890123456789
-IUSE+=" X abi3-compat +abi4-compat abi5-compat abi6-compat abi7-compat +bullet \
-+dds +elbeem +game-engine -openexr -collada -color-management -cpudetection \
-+cuda +cycles -cycles-network -debug doc flac -ffmpeg -fftw +jack +jemalloc \
-+jpeg2k -llvm -man +ndof +nls +nvcc +openal +opencl +openimageio +openmp \
--opensubdiv -openvdb -osl release -sdl -sndfile -test +tiff -valgrind X"
-FFMPEG_IUSE+=" jpeg2k +mp3 +theora vorbis x264 xvid"
-IUSE+=" ${FFMPEG_IUSE}"
-RESTRICT="mirror !test? ( test )"
 
 # The release USE flag depends on platform defaults.
 # Disabled dead code optimization flags introduced by
@@ -87,37 +75,10 @@ RESTRICT="mirror !test? ( test )"
 #   __KERNEL_SSE__.
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}
 	${REQUIRED_USE_EIGEN}
-	!cpu_flags_x86_mmx? ( !cpu_flags_x86_sse !cpu_flags_x86_sse2 )
+	${REQUIRED_USE_MINIMAL_CPU_FLAGS}
 	build_creator? ( X )
 	build_portable? ( X game-engine )
-	cpu_flags_x86_sse2? ( !cpu_flags_x86_sse? ( cpu_flags_x86_mmx ) )
 	cuda? ( cycles nvcc )
-	cycles? (
-		openexr tiff openimageio osl? ( llvm )
-		amd64? ( cpu_flags_x86_sse2 )
-		x86? ( cpu_flags_x86_sse2 )
-		cpu_flags_x86_sse? ( cpu_flags_x86_sse2 )
-		cpu_flags_x86_sse2? ( cpu_flags_x86_sse )
-		cpudetection? (
-			cpu_flags_x86_avx? ( cpu_flags_x86_sse )
-			cpu_flags_x86_avx2? ( cpu_flags_x86_sse )
-		)
-		!cpudetection? (
-			amd64? (
-				cpu_flags_x86_sse4_1? ( cpu_flags_x86_sse3 )
-				cpu_flags_x86_avx? ( cpu_flags_x86_sse4_1 )
-				cpu_flags_x86_avx2? ( cpu_flags_x86_avx
-							cpu_flags_x86_sse4_1
-							cpu_flags_x86_fma
-							cpu_flags_x86_lzcnt
-							cpu_flags_x86_bmi
-							cpu_flags_x86_f16c )
-			)
-			cpu_flags_x86_sse3? ( cpu_flags_x86_sse2
-						cpu_flags_x86_ssse3 )
-			cpu_flags_x86_ssse3? ( cpu_flags_x86_sse3 )
-		)
-	)
 	mp3? ( ffmpeg )
 	nvcc? ( cuda )
 	opencl? ( cycles )
@@ -314,8 +275,7 @@ _PATCHES=(
 	"${DISTDIR}/${PN}-2.79b-find-blosc.patch"
 )
 
-blender_pkg_setup() {
-	blender_pkg_setup_common
+_blender_pkg_setup() {
 	check_portable_dependencies
 	export OPENVDB_V=\
 $(usex openvdb $(usex abi7-compat 7 $(usex abi6-compat 6 $(usex abi5-compat 5 $(usex abi4-compat 4 3)))) "")
