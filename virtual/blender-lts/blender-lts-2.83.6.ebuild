@@ -6,11 +6,12 @@
 
 EAPI=7
 DESCRIPTION="Virtual for Blender LTS"
-KEYWORDS="amd64 x86"
-IUSE="newest-only"
-RDEPEND="~media-gfx/blender-${PV}
-	newest-only? (
-		!<media-gfx/blender-${PV}
-	)"
+KEYWORDS="~amd64 ~x86"
+IUSE=""
+RDEPEND="~media-gfx/blender-${PV}"
 REQUIRED_USE=""
 SLOT="0/${PV}"
+
+pkg_postinst() {
+	einfo "You still need to \`emerge --depclean\`."
+}

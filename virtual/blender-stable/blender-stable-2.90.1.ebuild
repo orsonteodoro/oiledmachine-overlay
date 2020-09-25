@@ -4,10 +4,13 @@
 # This ebuild will assist in updating blender to the latest stable automatically.
 
 EAPI=7
-DESCRIPTION="Virtual for Blender Stable"
-KEYWORDS="amd64 x86"
-IUSE="newest-only"
-RDEPEND="~media-gfx/blender-${PV}
-	newest-only? ( !<media-gfx/blender-${PV} )"
+DESCRIPTION="Virtual for Blender stable"
+KEYWORDS="~amd64 ~x86"
+IUSE=""
+RDEPEND="~sys-kernel/ot-sources-${PV}"
 REQUIRED_USE=""
 SLOT="0/${PV}"
+
+pkg_postinst() {
+	einfo "You still need to \`emerge --depclean\`."
+}
