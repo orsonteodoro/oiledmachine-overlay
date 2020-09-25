@@ -1,6 +1,9 @@
 # Ebuilds currently in develpment
 #--------------------------------------------------------------------------------------------------
 
+# WIP multiple LLVM bug again
+<media-gfx/blender-2.90
+
 # the official milestone dependencies are deprecated (vibe, greenisland), use latest instead
 <liri-base/liri-meta-0.9.0_p20200524
 <liri-base/shell-0.9.0_p20200524
