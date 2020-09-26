@@ -286,6 +286,8 @@ check_gpu() {
 		# Blender requires GLSL 3.3 support which corresponds to OpenGL 3.3
 		# Check a few OpenGL 3.3 extensions used in Blender 2.80+
 		if glxinfo | grep -q -e "ARB_vertex_type_2_10_10_10_rev" ; then
+			:;
+		else
 			die \
 "Blender ${PV} requires OpenGL 3.3 or above drivers and video card released \
 after Mar 2010.  Stick to Blender 2.79 if your card supports OpenGL 2.1."
@@ -294,6 +296,8 @@ after Mar 2010.  Stick to Blender 2.79 if your card supports OpenGL 2.1."
 	if ver_test $(ver_cut 1-2 ${PV}) -eq 2.79 ; then
 		# Requirements pages says you need OpenGL 2.1 for 2.79
 		if glxinfo | grep -q -e "ARB_pixel_buffer_object" ; then
+			:;
+		else
 			die \
 "Blender ${PV} requires OpenGL 2.1 or above drivers and video card released \
 after Aug 2006."
