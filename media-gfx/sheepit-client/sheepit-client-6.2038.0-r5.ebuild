@@ -220,6 +220,7 @@ RDEPEND="
 				blender282? ( ~media-gfx/blender-2.82[cycles,build_creator(+),release(+)] )
 				blender2831? ( ~media-gfx/blender-2.83.1[cycles,build_creator(+),release(+)] )
 				blender2832? ( ~media-gfx/blender-2.83.2[cycles,build_creator(+),release(+)] )
+				blender2836? ( ~media-gfx/blender-2.83.2[cycles,build_creator(+),release(+)] )
 				blender2900? ( ~media-gfx/blender-2.90.0[cycles,build_creator(+),release(+)] )
 			)
 		)
