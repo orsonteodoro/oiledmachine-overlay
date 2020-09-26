@@ -816,11 +816,11 @@ blender_configure_mesa_match_llvm() {
 		export CMAKE_INCLUDE_PATH="$(erdpfx)/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
 		export CMAKE_LIBRARY_PATH="$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 		_LD_LIBRARY_PATH="$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
-
-		# Fix loading {vendor}_dri.so linked with LLVM-9
-		_LIBGL_DRIVERS_DIR="$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri" # works but deprecated
-		_LIBGL_DRIVERS_PATH="$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri" # not work but replaces LIBGL_DRIVERS_DIR
 	fi
+
+	# Fix loading {vendor}_dri.so linked with LLVM-9
+	_LIBGL_DRIVERS_DIR="$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri" # works but deprecated
+	_LIBGL_DRIVERS_PATH="$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri" # not work but replaces LIBGL_DRIVERS_DIR
 }
 
 blender_configure_mesa_match_system_llvm() {
