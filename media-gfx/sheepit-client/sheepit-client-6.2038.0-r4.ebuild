@@ -110,7 +110,7 @@ REQUIRED_USE="
 	benchmark
 	benchmark? ( blender blender2836 )
 	blender? ( || ( blender279b blender279b_filmic blender280 blender281a
-			blender282 blender2831 blender2832 blender2900
+			blender282 blender2831 blender2832 blender2836 blender2900
 			allow-unknown-renderers ) )
 	blender279b? ( blender )
 	blender279b_filmic? ( blender )
@@ -403,7 +403,9 @@ pkg_setup() {
 
 	# See https://www.blender.org/download/requirements/
 
-	if use blender280 || use blender281a || use blender282 || use blender2831 || use blender2832 || use blender2900 ; then
+	if use blender280 || use blender281a || use blender282 \
+		|| use blender2831 || use blender2832 || use blender2836 \
+		|| use blender2900 ; then
 		# Blender requires GLSL 3.3 support which corresponds to OpenGL 3.3
 		# Check a few OpenGL 3.3 extensions used in Blender 2.80+
 		if glxinfo | grep -q -e "ARB_vertex_type_2_10_10_10_rev" ; then
