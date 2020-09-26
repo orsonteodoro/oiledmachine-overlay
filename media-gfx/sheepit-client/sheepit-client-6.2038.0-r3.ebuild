@@ -89,7 +89,7 @@ LICENSE="GPL-2 Apache-2.0 LGPL-2.1+
 #   In LICENSE-droidsans.ttf.txt at line 49 in Blender 2.82, it mentions
 #   GPL-2.1+.  It should be LGPL-2.1+.
 #
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64"
 SLOT="0"
 
 IUSE=" \
@@ -358,12 +358,6 @@ gbewarn() {
 }
 
 pkg_setup() {
-	if [[ "${ABI}" == "x86" ]] ; then
-		if ! use system-blender ; then
-			die "x86 ABI only works with the system-blender USE flag."
-		fi
-	fi
-
 	if use gentoo-blender ; then
 		use blender279b_filmic && gbewarn "2.79b_filmic"
 		use blender280 && gbewarn "2.80"
