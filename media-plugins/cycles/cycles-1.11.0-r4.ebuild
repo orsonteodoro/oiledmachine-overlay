@@ -429,6 +429,9 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 		export CMAKE_INCLUDE_PATH="$(prfx)/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
 		export CMAKE_LIBRARY_PATH="$(prfx)/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 		_LD_LIBRARY_PATH+=( "$(prfx)/mesa/${LLVM_V}/usr/$(get_libdir)\n" )
+	fi
+
+	if [[ -d "$(prfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri" ]] ; then
 		_LIBGL_DRIVERS_PATH+=( "$(prfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri\n" )
 		_LIBGL_DRIVERS_DIR+=( "$(prfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri\n" )
 	fi
