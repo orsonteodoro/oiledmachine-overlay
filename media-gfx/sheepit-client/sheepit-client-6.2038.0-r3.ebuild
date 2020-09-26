@@ -263,6 +263,7 @@ RDEPEND="
 	virtual/jre:1.8"
 DEPEND="${RDEPEND}
 	dev-java/gradle-bin
+	x11-apps/mesa-progs
 	virtual/jdk:1.8"
 inherit linux-info
 SRC_URI="https://github.com/laurent-clouet/sheepit-client/archive/v${PV}.tar.gz \
@@ -399,6 +400,26 @@ pkg_setup() {
 	fi
 
 	ewarn "The system-blender USE flag is a Work in Progress (WIP)."
+
+	# See https://www.blender.org/download/requirements/
+
+	if use blender280 || use blender281a || use blender282 || use blender2831 || use blender2832 || use blender2900 ; then
+		# Blender requires GLSL 3.3 support which corresponds to OpenGL 3.3
+		# Check a few OpenGL 3.3 extensions used in Blender 2.80+
+		if glxinfo | grep -q -e "ARB_vertex_type_2_10_10_10_rev" ; then
+			die \
+"Blender ${PV} requires OpenGL 3.3 or above drivers and video card released \
+after Mar 2010.  Stick to Blender 2.79 if your card supports OpenGL 2.1."
+		fi
+	fi
+	if use blender279b ; then
+		# Requirements pages says you need OpenGL 2.1 for 2.79
+		if glxinfo | grep -q -e "ARB_pixel_buffer_object" ; then
+			die \
+"Blender ${PV} requires OpenGL 2.1 or above drivers and video card released \
+after Aug 2006."
+		fi
+	fi
 }
 
 enable_hardblock() {
