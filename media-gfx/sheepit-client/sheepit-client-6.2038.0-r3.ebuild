@@ -420,6 +420,19 @@ after Mar 2010.  Stick to Blender 2.79 if your card supports OpenGL 2.1."
 after Aug 2006."
 		fi
 	fi
+
+	if use blender ; then
+		grep -q -i -E -e 'sse2( |$)' /proc/cpuinfo # 2000
+		local has_sse2="$?"
+
+		if [[ "${has_sse2}" != "0" ]] ; then
+			die "Blender requires sse2 on your CPU."
+		fi
+
+		if (( $(nproc) < 2 )) ; then
+			ewarn "Blender a requires dual core CPU."
+		fi
+	fi
 }
 
 enable_hardblock() {
