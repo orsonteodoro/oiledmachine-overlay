@@ -264,7 +264,6 @@ RDEPEND="
 	virtual/jre:1.8"
 DEPEND="${RDEPEND}
 	dev-java/gradle-bin
-	x11-apps/mesa-progs
 	virtual/jdk:1.8"
 inherit linux-info
 SRC_URI="https://github.com/laurent-clouet/sheepit-client/archive/v${PV}.tar.gz \
