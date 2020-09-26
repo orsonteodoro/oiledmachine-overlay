@@ -308,7 +308,11 @@ ebuild/upstream developers only."
 
 	# Just attach the abi as a suffix for the key for multiabi support.
 	_LD_LIBRARY_PATHS[${EBLENDER}]="${_LD_LIBRARY_PATH}"
+	_LIBGL_DRIVERS_DIRS[${EBLENDER}]="${_LIBGL_DRIVERS_DIR}"
+	_LIBGL_DRIVERS_PATHS[${EBLENDER}]="${_LIBGL_DRIVERS_PATH}"
 	_PATHS[${EBLENDER}]="${_PATH}"
+
+	# TODO: migrate blender-libs changes from blender-v2.83 once LLVM-10 is deprecated
 
 	mycmakeargs+=(
 		-DPYTHON_VERSION="${EPYTHON/python/}"

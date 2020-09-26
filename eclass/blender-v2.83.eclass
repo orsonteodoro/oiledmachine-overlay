@@ -275,10 +275,12 @@ ebuild/upstream developers only."
 
 	# Just attach the abi as a suffix for the key for multiabi support.
 	_LD_LIBRARY_PATHS[${EBLENDER}]="${_LD_LIBRARY_PATH}"
+	_LIBGL_DRIVERS_DIRS[${EBLENDER}]="${_LIBGL_DRIVERS_DIR}"
+	_LIBGL_DRIVERS_PATHS[${EBLENDER}]="${_LIBGL_DRIVERS_PATH}"
 	_PATHS[${EBLENDER}]="${_PATH}"
 
 	if [[ -n "${_LD_LIBRARY_PATH}" ]] ; then
-		sed -i -e "s|\[blender_bin|['env', \"LD_LIBRARY_PATH=${_LD_LIBRARY_PATH}\", blender_bin|" \
+		sed -i -e "s|\[blender_bin|['env', \"LD_LIBRARY_PATH=${_LD_LIBRARY_PATH}\", \"LIBGL_DRIVERS_DIR=${_LIBGL_DRIVERS_DIR}\", \"LIBGL_DRIVERS_PATH=${_LIBGL_DRIVERS_PATH}\", blender_bin|" \
 			doc/manpage/blender.1.py || die
 	fi
 
@@ -420,6 +422,8 @@ blender_set_wrapper_deps() {
 	fi
 	if use openxr || use osl ; then
 		_LD_LIBRARY_PATH+=( "$(dpfx)/mesa/${LLVM_V}/usr/$(get_libdir)\n" )
+		_LIBGL_DRIVERS_DIR+=( "$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri\n" )
+		_LIBGL_DRIVERS_PATH+=( "$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri\n" )
 	fi
 	if use osl ; then
 		_LD_LIBRARY_PATH+=( "$(dpfx)/osl/${LLVM_V}/usr/$(get_libdir)\n" )

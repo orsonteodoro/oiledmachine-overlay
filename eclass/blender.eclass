@@ -148,6 +148,8 @@ REQUIRED_USE+="
 
 # This could be modded for multiabi builds.
 declare -A _LD_LIBRARY_PATHS
+declare -A _LIBGL_DRIVERS_DIRS
+declare -A _LIBGL_DRIVERS_PATHS
 declare -A _PATHS
 
 EXPORT_FUNCTIONS pkg_pretend pkg_setup src_prepare src_configure src_compile \
@@ -814,6 +816,10 @@ blender_configure_mesa_match_llvm() {
 		export CMAKE_INCLUDE_PATH="$(erdpfx)/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
 		export CMAKE_LIBRARY_PATH="$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 		_LD_LIBRARY_PATH="$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir):${_LD_LIBRARY_PATH}"
+
+		# Fix loading {vendor}_dri.so linked with LLVM-9
+		_LIBGL_DRIVERS_DIR="$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri" # works but deprecated
+		_LIBGL_DRIVERS_PATH="$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri" # not work but replaces LIBGL_DRIVERS_DIR
 	fi
 }
 
@@ -1127,6 +1133,8 @@ _src_install() {
 		blender_set_wrapper_deps
 	fi
 	_LD_LIBRARY_PATH=$(echo -e "${_LD_LIBRARY_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
+	_LIBGL_DRIVERS_DIR=$(echo -e "${_LIBGL_DRIVERS_DIR[@]}" | tr "\n" ":" | sed "s|: |:|g")
+	_LIBGL_DRIVERS_PATH=$(echo -e "${_LIBGL_DRIVERS_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
 	_PATH=$(echo -e "${_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
 
 	local suffix=
@@ -1153,6 +1161,8 @@ _src_install() {
 			sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
 				-e "s|#LD_LIBRARY_PATH|export LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}:\${LD_LIBRARY_PATH}\"|g" \
 				-e "s|#PATH|export PATH=\"${_PATH}:\${PATH}\"|g" \
+				-e "s|#LIBGL_DRIVERS_DIR|export LIBGL_DRIVERS_DIR=\"${_LIBGL_DRIVERS_DIR}\"|g" \
+				-e "s|#LIBGL_DRIVERS_PATH|export LIBGL_DRIVERS_PATH=\"${_LIBGL_DRIVERS_PATH}\"|g" \
 				"${T}/${PN}${suffix}-${SLOT_MAJ}" || die
 		else
 			sed -i -e "s|\${BLENDER_EXE}|${d_dest}/blender|g" \
@@ -1167,6 +1177,8 @@ _src_install() {
 				sed -i -e "s|\${BLENDER_EXE}|${d_dest}/cycles_network|g" \
 					-e "s|#LD_LIBRARY_PATH|export LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}:\${LD_LIBRARY_PATH}\"|g" \
 					-e "s|#PATH|export PATH=\"${_PATH}:\${PATH}\"|g" \
+					-e "s|#LIBGL_DRIVERS_DIR|export LIBGL_DRIVERS_DIR=\"${_LIBGL_DRIVERS_DIR}\"|g" \
+					-e "s|#LIBGL_DRIVERS_PATH|export LIBGL_DRIVERS_PATH=\"${_LIBGL_DRIVERS_PATH}\"|g" \
 					"${T}/cycles_network${suffix/-/_}-${SLOT_MAJ}" || die
 			else
 				sed -i -e "s|\${BLENDER_EXE}|${d_dest}/cycles_network|g" \
@@ -1216,7 +1228,7 @@ provided.  Edit the file and set the name of my_game_project.blend file.\n\
 Blender adds mesa libs to their binary distribution.  You may need to do\n\
 the same especially to avoid the multiple LLVM versions being loaded bug." \
 			>> "${ED}${d_dest}/README.3rdparty_deps" || die
-		dodir "${d_dest}/lib"
+		dodir "${d_dest}/lib/dri"
 		exeinto "${d_dest}"
 		doexe "${FILESDIR}/gamelaunch.sh"
 	fi
