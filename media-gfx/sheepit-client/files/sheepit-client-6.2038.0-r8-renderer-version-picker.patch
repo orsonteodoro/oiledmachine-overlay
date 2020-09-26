@@ -145,7 +145,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Configuration.java
 +	public static final boolean HARDBLOCK_BLENDER_2900 = false;
 +	public static final boolean HARDBLOCK_UNKNOWN_RENDERERS = false;
 +	public static final boolean USE_SYSTEM_RENDERERS = true;
-+	public static final boolean SYSTEM_RENDERER_TYPE = "oiledmachine-overlay";
++	public static final String SYSTEM_RENDERER_TYPE = "oiledmachine-overlay";
 +	public static final String MD5_279B = "3d0e05e7a43ae213eccf33c47b5900c5";
 +	public static final String MD5_279B_FILMIC = "a6e995c16e72b9b0e2b3857fcf45a1d0";
 +	public static final String MD5_280 = "20eb01cbdc8d21c85ef744816caa83ea";
