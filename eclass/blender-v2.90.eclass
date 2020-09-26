@@ -211,7 +211,6 @@ DEPEND="${RDEPEND}
 		dev-texlive/texlive-latexextra
 	)
 	nls? ( sys-devel/gettext )
-	x11-apps/mesa-progs
 	virtual/pkgconfig"
 
 _PATCHES=(
