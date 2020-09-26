@@ -191,6 +191,7 @@ blender_pkg_setup() {
 	python-single-r1_pkg_setup
 	check_amdgpu_pro
 	check_cpu
+	check_gpu
 	check_optimal_compiler_for_cycles_x86
 	if declare -f _blender_pkg_setup > /dev/null ; then
 		_blender_pkg_setup
@@ -274,6 +275,26 @@ dependency"
 					fi
 				fi
 			done
+		fi
+	fi
+}
+
+check_gpu() {
+	# See https://www.blender.org/download/requirements/
+
+	if ver_test $(ver_cut 1-2 ${PV}) -ge 2.80 ; then
+		# Check a few OpenGL 3.3 extensions used in Blender 2.80+
+		if glxinfo | grep -q -e "ARB_vertex_type_2_10_10_10_rev" ; then
+			die \
+"Blender ${PV} requires OpenGL 3.3 or above drivers and video card.  Stick to \
+Blender 2.79 if your card supports OpenGL 2.1."
+		fi
+	fi
+	if ver_test $(ver_cut 1-2 ${PV}) -eq 2.79 ; then
+		# Requirements pages says you need OpenGL 2.1 for 2.79
+		if glxinfo | grep -q -e "ARB_texture_rectangle" ; then
+			die \
+"Blender ${PV} requires OpenGL 2.1 or above drivers and video card."
 		fi
 	fi
 }
