@@ -430,7 +430,7 @@ after Aug 2006."
 		fi
 
 		if (( $(nproc) < 2 )) ; then
-			ewarn "Blender a requires dual core CPU."
+			ewarn "Blender requires a dual core CPU."
 		fi
 	fi
 }
