@@ -16,7 +16,7 @@ Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
 ----
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java sheepit-client-6.2038.0/src/com/sheepit/client/Client.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/Client.java	2020-09-25 21:12:17.558478900 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/Client.java	2020-09-26 04:36:41.353882030 -0700
 @@ -704,7 +704,8 @@ import lombok.Data;
  		}
  	}
@@ -117,10 +117,9 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java sheepi
  		return this.downloadFile(ajob, ajob.getRendererArchivePath(), ajob.getRendererMD5(),
  				String.format("%s?type=binary&job=%s", this.server.getPage("download-archive"), ajob.getId()), "renderer");
  	}
-Only in sheepit-client-6.2038.0/src/com/sheepit/client: Client.java.orig
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Configuration.java sheepit-client-6.2038.0/src/com/sheepit/client/Configuration.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/Configuration.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/Configuration.java	2020-09-25 21:12:18.578518575 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/Configuration.java	2020-09-26 04:26:06.139161512 -0700
 @@ -68,6 +68,38 @@ import lombok.Data;
  	private String UIType;
  	private String hostname;
@@ -146,7 +145,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Configuration.java
 +	public static final boolean HARDBLOCK_BLENDER_2900 = false;
 +	public static final boolean HARDBLOCK_UNKNOWN_RENDERERS = false;
 +	public static final boolean USE_SYSTEM_RENDERERS = true;
-+	public static final int SLOT_STYLE = 2; // -1 = gentoo single slot, 0 = latest stable, 1 = LTS style $(ver_cut 1-2 ${PV}), 2 = per version style ${PV}(_filmic)?
++	public static final boolean SYSTEM_RENDERER_TYPE = "oiledmachine-overlay";
 +	public static final String MD5_279B = "3d0e05e7a43ae213eccf33c47b5900c5";
 +	public static final String MD5_279B_FILMIC = "a6e995c16e72b9b0e2b3857fcf45a1d0";
 +	public static final String MD5_280 = "20eb01cbdc8d21c85ef744816caa83ea";
@@ -262,18 +261,16 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Configuration.java
 +		return allowUnknownRenderers;
 +	}
  }
-Only in sheepit-client-6.2038.0/src/com/sheepit/client: Configuration.java.orig
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Job.java sheepit-client-6.2038.0/src/com/sheepit/client/Job.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/Job.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/Job.java	2020-09-25 21:12:19.438552026 -0700
-@@ -138,11 +138,96 @@ import lombok.Getter;
++++ sheepit-client-6.2038.0/src/com/sheepit/client/Job.java	2020-09-26 04:36:51.494277001 -0700
+@@ -138,11 +138,30 @@ import lombok.Getter;
  	}
  	
  	public String getRendererDirectory() {
 -		return configuration.getWorkingDirectory().getAbsolutePath() + File.separator + rendererMD5;
 +		String defaultPath = configuration.getWorkingDirectory().getAbsolutePath() + File.separator + rendererMD5 ;
-+		if (configuration.USE_SYSTEM_RENDERERS && configuration.SLOT_STYLE == -1) {
-+			/* For latest LTS slotting */
++		if (configuration.USE_SYSTEM_RENDERERS) {
 +			switch (rendererMD5) {
 +				case Configuration.MD5_279B:
 +				case Configuration.MD5_279B_FILMIC:
@@ -285,71 +282,6 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Job.java sheepit-c
 +				case Configuration.MD5_2836:
 +				case Configuration.MD5_2900:
 +					return "/usr/bin";
-+				default:
-+					return defaultPath;
-+			}
-+		} else if (configuration.USE_SYSTEM_RENDERERS && configuration.SLOT_STYLE == 0) {
-+			/* For latest stable */
-+			switch (rendererMD5) {
-+				case Configuration.MD5_279B:
-+				case Configuration.MD5_280:
-+				case Configuration.MD5_281A:
-+				case Configuration.MD5_282:
-+				case Configuration.MD5_2831:
-+				case Configuration.MD5_2832:
-+				case Configuration.MD5_2836:
-+				case Configuration.MD5_2900:
-+					return "/usr/bin/.blender/0/creator";
-+				case Configuration.MD5_279B_FILMIC:
-+					return "/usr/bin";
-+				default:
-+					return defaultPath;
-+			}
-+		} else if (configuration.USE_SYSTEM_RENDERERS && configuration.SLOT_STYLE == 1) {
-+			/* For latest LTS slotting */
-+			switch (rendererMD5) {
-+				case Configuration.MD5_279B:
-+					return "/usr/bin/.blender/2.79/creator";
-+				case Configuration.MD5_279B_FILMIC:
-+					return "/usr/bin";
-+				case Configuration.MD5_280:
-+					return "/usr/bin/.blender/2.80/creator";
-+				case Configuration.MD5_281A:
-+					return "/usr/bin/.blender/2.80/creator";
-+				case Configuration.MD5_282:
-+					return "/usr/bin/.blender/2.82/creator";
-+				case Configuration.MD5_2831:
-+					return "/usr/bin/.blender/2.83/creator";
-+				case Configuration.MD5_2832:
-+					return "/usr/bin/.blender/2.83/creator";
-+				case Configuration.MD5_2836:
-+					return "/usr/bin/.blender/2.83/creator";
-+				case Configuration.MD5_2900:
-+					return "/usr/bin/.blender/2.90/creator";
-+				default:
-+					return defaultPath;
-+			}
-+		} else if (configuration.USE_SYSTEM_RENDERERS && configuration.SLOT_STYLE == 2) {
-+			/* For per version slotting */
-+			switch (rendererMD5) {
-+				case Configuration.MD5_279B:
-+					return "/usr/bin/.blender/2.79b/creator";
-+				case Configuration.MD5_279B_FILMIC:
-+					return "/usr/bin";
-+				case Configuration.MD5_280:
-+					return "/usr/bin/.blender/2.80/creator";
-+				case Configuration.MD5_281A:
-+					return "/usr/bin/.blender/2.80a/creator";
-+				case Configuration.MD5_282:
-+					return "/usr/bin/.blender/2.82/creator";
-+				case Configuration.MD5_2831:
-+					return "/usr/bin/.blender/2.83.1/creator";
-+				case Configuration.MD5_2832:
-+					return "/usr/bin/.blender/2.83.2/creator";
-+				case Configuration.MD5_2836:
-+					return "/usr/bin/.blender/2.83.6/creator";
-+				case Configuration.MD5_2900:
-+					return "/usr/bin/.blender/2.90.0/creator";
 +				default:
 +					return defaultPath;
 +			}
@@ -365,10 +297,9 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Job.java sheepit-c
  	}
  	
  	public String getRendererArchivePath() {
-Only in sheepit-client-6.2038.0/src/com/sheepit/client: Job.java.orig
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/FreeBSD.java sheepit-client-6.2038.0/src/com/sheepit/client/os/FreeBSD.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/FreeBSD.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/os/FreeBSD.java	2020-09-25 20:59:16.848086796 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/os/FreeBSD.java	2020-09-26 04:18:56.062309796 -0700
 @@ -42,7 +42,7 @@ public class FreeBSD extends OS {
  		return "freebsd";
  	}
@@ -380,7 +311,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/FreeBSD.java sh
  	
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Linux.java sheepit-client-6.2038.0/src/com/sheepit/client/os/Linux.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Linux.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/os/Linux.java	2020-09-25 21:12:22.048653549 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/os/Linux.java	2020-09-26 04:36:53.604359189 -0700
 @@ -28,6 +28,7 @@ import java.util.List;
  import java.util.Map;
  import java.util.Scanner;
@@ -389,7 +320,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Linux.java shee
  import com.sheepit.client.Log;
  import com.sheepit.client.hardware.cpu.CPU;
  
-@@ -43,8 +44,16 @@ public class Linux extends OS {
+@@ -43,8 +44,39 @@ public class Linux extends OS {
  		return "linux";
  	}
  	
@@ -397,10 +328,33 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Linux.java shee
 -		return "rend.exe";
 +	@Override public String getRenderBinaryPath(String rendererMD5) {
 +		if (Configuration.USE_SYSTEM_RENDERERS) {
-+			if (rendererMD5.equals(Configuration.MD5_279B_FILMIC)) {
-+				return "blender-2.79b-filmic-sheepit";
-+			} else {
++			if (Configuration.SYSTEM_RENDERER_TYPE.equals("oiledmachine-overlay")) {
++				switch (rendererMD5) {
++					case Configuration.MD5_279B:
++						return "blender-2.79b";
++					case Configuration.MD5_279B_FILMIC:
++						return "blender-2.79b-filmic-sheepit";
++					case Configuration.MD5_280:
++						return "blender-2.80";
++					case Configuration.MD5_281A:
++						return "blender-2.81a";
++					case Configuration.MD5_282:
++						return "blender-2.82";
++					case Configuration.MD5_2831:
++						return "blender-2.83.1";
++					case Configuration.MD5_2832:
++						return "blender-2.83.2";
++					case Configuration.MD5_2836:
++						return "blender-2.83.6";
++					case Configuration.MD5_2900:
++						return "blender-2.90.0";
++					default:
++						return "rend.exe";
++				}
++			} else if (Configuration.SYSTEM_RENDERER_TYPE.equals("gentoo-overlay")) {
 +				return "blender";
++			} else {
++				return "rend.exe";
 +			}
 +		} else {
 +			return "rend.exe";
@@ -410,7 +364,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Linux.java shee
  	@Override public CPU getCPU() {
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Mac.java sheepit-client-6.2038.0/src/com/sheepit/client/os/Mac.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Mac.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/os/Mac.java	2020-09-25 20:59:16.848086796 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/os/Mac.java	2020-09-26 04:18:56.062309796 -0700
 @@ -41,7 +41,7 @@ public class Mac extends OS {
  		return "mac";
  	}
@@ -422,7 +376,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Mac.java sheepi
  	
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/OS.java sheepit-client-6.2038.0/src/com/sheepit/client/os/OS.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/OS.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/os/OS.java	2020-09-25 20:59:16.848086796 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/os/OS.java	2020-09-26 04:18:56.062309796 -0700
 @@ -35,7 +35,7 @@ public abstract class OS {
  	
  	public abstract long getFreeMemory();
@@ -434,7 +388,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/OS.java sheepit
  		return null;
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Windows.java sheepit-client-6.2038.0/src/com/sheepit/client/os/Windows.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Windows.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/os/Windows.java	2020-09-25 20:59:16.848086796 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/os/Windows.java	2020-09-26 04:18:56.062309796 -0700
 @@ -37,7 +37,7 @@ public class Windows extends OS {
  		return "windows";
  	}
@@ -446,7 +400,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Windows.java sh
  	
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/SettingsLoader.java sheepit-client-6.2038.0/src/com/sheepit/client/SettingsLoader.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/SettingsLoader.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/SettingsLoader.java	2020-09-25 21:33:17.818188870 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/SettingsLoader.java	2020-09-26 04:18:56.062309796 -0700
 @@ -58,6 +58,16 @@ public class SettingsLoader {
  	private String ui;
  	private String theme;
@@ -634,7 +588,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/SettingsLoader.jav
  }
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/standalone/swing/activity/Settings.java sheepit-client-6.2038.0/src/com/sheepit/client/standalone/swing/activity/Settings.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-09-25 21:12:26.358821196 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-09-26 04:18:56.072310192 -0700
 @@ -101,6 +101,16 @@ public class Settings implements Activit
  	
  	private JCheckBox saveFile;
@@ -713,7 +667,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/standalone/swing/a
  				// or do we already have one?
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/standalone/Worker.java sheepit-client-6.2038.0/src/com/sheepit/client/standalone/Worker.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/standalone/Worker.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/standalone/Worker.java	2020-09-25 21:12:27.598869430 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/standalone/Worker.java	2020-09-26 04:18:56.072310192 -0700
 @@ -106,6 +106,26 @@ public class Worker {
  	
  	@Option(name = "-hostname", usage = "Set a custom hostname name (name change will be lost when client is closed)", required = false) private String hostname = null;
@@ -759,4 +713,3 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/standalone/Worker.
  		new SettingsLoader(config_file).merge(config);
  		Log.getInstance(config).debug("client version " + config.getJarVersion());
  		
-Only in sheepit-client-6.2038.0/src/com/sheepit/client/standalone: Worker.java.orig

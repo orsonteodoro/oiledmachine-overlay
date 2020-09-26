@@ -460,11 +460,11 @@ src_prepare() {
 			src/com/sheepit/client/hardware/gpu/GPU.java || die
 	fi
 
-	eapply "${FILESDIR}/sheepit-client-6.2038.0-r3-renderer-version-picker.patch"
+	eapply "${FILESDIR}/sheepit-client-6.2038.0-r8-renderer-version-picker.patch"
 
 	if use system-blender ; then
 		if use gentoo-blender ; then
-			sed -i -e "s|SLOT_STYLE = 2|SLOT_STYLE = -1|g" \
+			sed -i -e "s|oiledmachine-overlay|gentoo-overlay|g" \
 				src/com/sheepit/client/Configuration.java || die
 		elif bzcat /var/db/pkg/media-gfx/blender-*/environment.bz2 \
 			| grep -q -F -e "parent-datafiles-dir-change" ; then
