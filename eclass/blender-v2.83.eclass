@@ -422,8 +422,8 @@ blender_set_wrapper_deps() {
 	fi
 	if use openxr || use osl ; then
 		_LD_LIBRARY_PATH+=( "$(dpfx)/mesa/${LLVM_V}/usr/$(get_libdir)\n" )
-		_LIBGL_DRIVERS_DIR+=( "$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri\n" )
-		_LIBGL_DRIVERS_PATH+=( "$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri\n" )
+		_LIBGL_DRIVERS_DIR+=( "$(dpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri\n" )
+		_LIBGL_DRIVERS_PATH+=( "$(dpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri\n" )
 	fi
 	if use osl ; then
 		_LD_LIBRARY_PATH+=( "$(dpfx)/osl/${LLVM_V}/usr/$(get_libdir)\n" )

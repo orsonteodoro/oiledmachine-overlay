@@ -409,8 +409,8 @@ blender_set_wrapper_deps() {
 	if use osl ; then
 		_LD_LIBRARY_PATH+=( "$(dpfx)/mesa/${LLVM_V}/usr/$(get_libdir)\n" )
 		_LD_LIBRARY_PATH+=( "$(dpfx)/osl/${LLVM_V}/usr/$(get_libdir)\n" )
-		_LIBGL_DRIVERS_DIR+=( "$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri\n" )
-		_LIBGL_DRIVERS_PATH+=( "$(erdpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri\n" )
+		_LIBGL_DRIVERS_DIR+=( "$(dpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri\n" )
+		_LIBGL_DRIVERS_PATH+=( "$(dpfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri\n" )
 		_PATH+=( "$(dpfx)/osl/${LLVM_V}/usr/bin\n" )
 	fi
 	if [[ -d "$(erdpfx)/boost/${CXXABI_V}/usr/$(get_libdir)" ]] ; then
