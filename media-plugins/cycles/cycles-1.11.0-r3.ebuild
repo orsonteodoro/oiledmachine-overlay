@@ -429,6 +429,8 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 		export CMAKE_INCLUDE_PATH="$(prfx)/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
 		export CMAKE_LIBRARY_PATH="$(prfx)/mesa/${LLVM_V}/usr/$(get_libdir);${CMAKE_LIBRARY_PATH}"
 		_LD_LIBRARY_PATH+=( "$(prfx)/mesa/${LLVM_V}/usr/$(get_libdir)\n" )
+		_LIBGL_DRIVERS_PATH+=( "$(prfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri\n" )
+		_LIBGL_DRIVERS_DIR+=( "$(prfx)/mesa/${LLVM_V}/usr/$(get_libdir)/dri\n" )
 	fi
 
 	if use openvdb ; then
@@ -494,15 +496,19 @@ src_install() {
 	_PATH=$(echo -e "${_PATH[@]}" | tr "\n" ":" | sed "s|: |:|g")
 	cp "${FILESDIR}/cycles-wrapper" "${T}/cycles" || die
 	sed -i -e "s|\${CYCLES_EXE}|/usr/$(get_libdir)/cycles/bin/.cycles|" \
-		-e "s|#\${LD_LIBRARY_PATH}|${_LD_LIBRARY_PATH}|" \
-		-e "s|#\${PATH}|${_PATH}|" \
+		-e "s|#LD_LIBRARY_PATH|export LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}\"|" \
+		-e "s|#LIBGL_DRIVERS_PATH|export LIBGL_DRIVERS_PATH=\"${_LIBGL_DRIVERS_PATH}\"|" \
+		-e "s|#LIBGL_DRIVERS_DIR|export LIBGL_DRIVERS_DIR=\"${_LIBGL_DRIVERS_DIR}\"|" \
+		-e "s|#PATH|export PATH=\"${_PATH}\"|" \
 		"${T}/cycles" || die
 	doexe "${T}/cycles"
 	if use network ; then
 		cp "${FILESDIR}/cycles-wrapper" "${T}/cycles_server" || die
 		sed -i -e "s|\${CYCLES_EXE}|/usr/$(get_libdir)/cycles/bin/.cycles_server|" \
-			-e "s|#\${LD_LIBRARY_PATH}|${_LD_LIBRARY_PATH}|" \
-			-e "s|#\${PATH}|${_PATH}|" \
+			-e "s|#LD_LIBRARY_PATH|export LD_LIBRARY_PATH=\"${_LD_LIBRARY_PATH}\"|" \
+			-e "s|#LIBGL_DRIVERS_PATH|export LIBGL_DRIVERS_PATH=\"${_LIBGL_DRIVERS_PATH}\"|" \
+			-e "s|#LIBGL_DRIVERS_DIR|export LIBGL_DRIVERS_DIR=\"${_LIBGL_DRIVERS_DIR}\"|" \
+			-e "s|#PATH|export PATH=\"${_PATH}\"|" \
 			"${T}/cycles_server" || die
 		doexe "${T}/cycles_server"
 	fi
