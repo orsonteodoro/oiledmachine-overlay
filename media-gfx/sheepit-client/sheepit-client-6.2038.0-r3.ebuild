@@ -96,7 +96,7 @@ IUSE=" \
 +benchmark \
 blender \
 blender279b blender279b_filmic blender280 blender281a blender282 \
-blender2831 blender2831 blender2832 \
+blender2831 blender2831 blender2832 blender2836 \
 blender2900 \
 allow-unknown-renderers disable-hard-version-blocks \
 cuda doc intel-ocl lts +opencl opencl_rocm opencl_orca \
@@ -108,7 +108,7 @@ video_cards_radeonsi"
 REQUIRED_USE="
 	allow-unknown-renderers? ( blender !system-blender )
 	benchmark
-	benchmark? ( blender )
+	benchmark? ( blender blender2836 )
 	blender? ( || ( blender279b blender279b_filmic blender280 blender281a
 			blender282 blender2831 blender2832 blender2900
 			allow-unknown-renderers ) )
@@ -119,6 +119,7 @@ REQUIRED_USE="
 	blender282? ( blender )
 	blender2831? ( blender )
 	blender2832? ( blender )
+	blender2836? ( blender )
 	blender2900? ( blender )
 	|| ( cuda opencl )
 	pro-drivers? ( || ( opencl_orca opencl_pal opencl_rocm ) )
@@ -445,7 +446,7 @@ src_prepare() {
 			src/com/sheepit/client/hardware/gpu/GPU.java || die
 	fi
 
-	eapply "${FILESDIR}/sheepit-client-6.2020.0-r9-renderer-version-picker.patch"
+	eapply "${FILESDIR}/sheepit-client-6.2038.0-r3-renderer-version-picker.patch"
 
 	if use system-blender ; then
 		if use gentoo-blender ; then
@@ -503,6 +504,11 @@ src_prepare() {
 	if ! use blender2832 ; then
 		if ! use disable-hard-version-blocks ; then
 			enable_hardblock "HARDBLOCK_BLENDER_2832"
+		fi
+	fi
+	if ! use blender2836 ; then
+		if ! use disable-hard-version-blocks ; then
+			enable_hardblock "HARDBLOCK_BLENDER_2836"
 		fi
 	fi
 	if ! use blender2900 ; then
@@ -577,13 +583,21 @@ src_install() {
 		fi
 		allowed_renderers+=" --allow-blender2831"
 	fi
-	if use blender2832 || use benchmark ; then
+	if use blender2832 ; then
 		if ! use system-blender ; then
 			dodoc -r "${FILESDIR}/blender-2.83.2-licenses"
 			use doc \
 			dodoc -r "${FILESDIR}/blender-2.83.2-readmes"
 		fi
 		allowed_renderers+=" --allow-blender2832"
+	fi
+	if use blender2836 || use benchmark ; then
+		if ! use system-blender ; then
+			dodoc -r "${FILESDIR}/blender-2.83.6-licenses"
+			use doc \
+			dodoc -r "${FILESDIR}/blender-2.83.6-readmes"
+		fi
+		allowed_renderers+=" --allow-blender2836"
 	fi
 	if use blender2900 ; then
 		if ! use system-blender ; then
@@ -602,6 +616,12 @@ src_install() {
 	fi
 	sed -i -e "s|ALLOWED_RENDERERS|${allowed_renderers}|g" \
 		"${T}/sheepit-client" || die
+
+	if use system-blender ; then
+		sed -i -e "s|^#USE_SYSTEM_BLENDER|USE_SYSTEM_BLENDER|g" \
+		"${T}/sheepit-client" || die
+	fi
+
 	doexe "${T}/sheepit-client"
 }
 

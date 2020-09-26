@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#USE_SYSTEM_BLENDER="1"
+
 function exit_error() {
 	local msg="${1}"
 	if [[ -n "${DISPLAY}" ]] ; then
@@ -32,7 +34,10 @@ fi
 
 d="${HOME}/.cache/sheepit-client"
 
-for f in $(find "${d}"/{sheepit,sheepit_binary_cache} -maxdepth 1 -type f -name "*.zip") ; do
+for f in $(find "${d}"/{sheepit,sheepit_binary_cache} -maxdepth 1 -type f \
+		-name "*.zip") ; do
+	[[ -n "${USE_SYSTEM_BLENDER}" && "${USE_SYSTEM_BLENDER}" == "1" \
+		&& "${f}" =~ "sheepit_binary_cache" ]] && continue
 	md5_x=$(md5sum "${f}" | cut -f 1 -d " ")
 	md5_expected=$(basename "${f}" | cut -f 1 -d '.')
 	echo "${f} : md5_x=${md5_x} md5_expected=${md5_expected}"
@@ -52,6 +57,7 @@ for f in $(find "${d}" -type f) ; do
 done
 
 mkdir -p "${d}"
-java -jar /usr/share/sheepit-client/sheepit-client-all.jar -cache-dir "${d}" ALLOWED_RENDERERS $*
+java -jar /usr/share/sheepit-client/sheepit-client-all.jar -cache-dir "${d}" \
+	ALLOWED_RENDERERS $*
 
 trap cleanup EXIT
