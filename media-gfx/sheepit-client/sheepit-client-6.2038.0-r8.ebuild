@@ -410,8 +410,6 @@ pkg_setup() {
 		fi
 	fi
 
-	ewarn "The system-blender USE flag is a Work in Progress (WIP)."
-
 	if use blender ; then
 		grep -q -i -E -e 'sse2( |$)' /proc/cpuinfo # 2000
 		local has_sse2="$?"
