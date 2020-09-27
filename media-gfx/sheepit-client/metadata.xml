@@ -57,6 +57,7 @@
       1.17.x HardWare Enabled for newer GPU products; otherwise, use the more
       Gentoo compatible release cycle driver.
       </flag>
+    <flag name="no-repacks">Preference for upstream tarballs.</flag>
     <flag name="opencl">Checks for proper OpenCL support for GPUs.  It will
       also patch the software for OpenCL to work on Linux.  Not supported
       upstream.  See https://github.com/laurent-clouet/sheepit-client/issues/165

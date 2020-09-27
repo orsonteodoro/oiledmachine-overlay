@@ -103,6 +103,7 @@ cuda doc intel-ocl lts +opencl opencl_rocm opencl_orca \
 opencl_pal opengl_mesa pro-drivers split-drivers \
 system-blender \
 gentoo-blender \
+no-repacks \
 video_cards_amdgpu video_cards_i965 video_cards_iris video_cards_nvidia \
 video_cards_radeonsi"
 REQUIRED_USE="
@@ -122,6 +123,7 @@ REQUIRED_USE="
 	blender2836? ( blender )
 	blender2900? ( blender )
 	|| ( cuda opencl )
+	no-repacks? ( !allow-unknown-renderers !system-blender )
 	pro-drivers? ( || ( opencl_orca opencl_pal opencl_rocm ) )
 	opencl_orca? (
 		|| ( split-drivers pro-drivers )
@@ -261,6 +263,11 @@ RDEPEND="
 	)
 	)
 	cuda? ( x11-drivers/nvidia-drivers )
+	no-repacks? (
+		app-arch/bzip2
+		app-arch/tar
+		app-arch/xz-utils
+	)
 	virtual/jre:1.8"
 DEPEND="${RDEPEND}
 	dev-java/gradle-bin
@@ -460,7 +467,7 @@ src_prepare() {
 			src/com/sheepit/client/hardware/gpu/GPU.java || die
 	fi
 
-	eapply "${FILESDIR}/sheepit-client-6.2038.0-r8-renderer-version-picker.patch"
+	eapply "${FILESDIR}/sheepit-client-6.2038.0-r9-renderer-version-picker.patch"
 
 	if use system-blender ; then
 		if use gentoo-blender ; then
@@ -477,6 +484,11 @@ src_prepare() {
 
 	if ! use system-blender ; then
 		sed -i -e "s|USE_SYSTEM_RENDERERS = true|USE_SYSTEM_RENDERERS = false|g" \
+			src/com/sheepit/client/Configuration.java || die
+	fi
+
+	if use no-repacks ; then
+		sed -i -e "s|USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG = false|USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG = true|g" \
 			src/com/sheepit/client/Configuration.java || die
 	fi
 
