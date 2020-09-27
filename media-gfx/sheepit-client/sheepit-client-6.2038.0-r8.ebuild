@@ -68,7 +68,11 @@ LICENSE="GPL-2 Apache-2.0 LGPL-2.1+
 #   2.80+.
 #
 #   No license stated or declared copyright in the filmic-blender project
-#   or in any of the files.
+#   or in any of the files.  For commentary about licensing numbers by
+#   the owner of the filmic-blender project, see:
+#
+#     https://github.com/sobotka/filmic-blender/pull/29#issuecomment-502137400
+#
 #
 # Additional Third Party Licenses (in SheepIt's Blender 2.82)
 #

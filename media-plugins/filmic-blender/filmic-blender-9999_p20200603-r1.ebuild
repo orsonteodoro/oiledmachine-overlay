@@ -6,6 +6,8 @@ DESCRIPTION="Film Emulsion-Like Camera Rendering Transforms for Blender"
 HOMEPAGE="https://sobotka.github.io/filmic-blender/"
 KEYWORDS="amd64 ~x86"
 # No license on new files discovered or old files if any and no default licenses.
+# For commentary from the author about licensing numbers, see:
+# https://github.com/sobotka/filmic-blender/pull/29#issuecomment-502137400
 LICENSE="all-rights-reserved"
 SLOT="0/${PV}" # 0/${PV} for latest, sheepit/${PV} for sheep it only
 RESTRICT="fetch mirror"
