@@ -14,7 +14,9 @@
     Noto Color Emoji 1.2x is the skinny Jelly Bean styled emoji which supported
     some Emoji 4.0 with ZWJ used with multiple emojis to represent one emoji.
 
-    noto-color-emoji-2.019_beta20200307_p20200721-r2 adds emojis for Unicode 13.0.
+    Noto Color Emoji 2.019_beta20200307_p20200721-r2 adds emojis for Unicode 13.0.
+
+    Noto Color Emoji 2.020 adds Unicode 13.1 support and new emojis.
     
     This package is used to build the font from sources.
 
