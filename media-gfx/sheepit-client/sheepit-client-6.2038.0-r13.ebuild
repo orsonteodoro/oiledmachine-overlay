@@ -26,17 +26,19 @@ LICENSE="GPL-2 Apache-2.0 LGPL-2.1+
 		SGI-B-1.1
 		SGI-B-2.0
 	)
-	blender282? (
-		MIT
-		LGPL-2.1
-		LGPL-2.1+
-		WTFPL-2
-	)
-	blender281a? (
-		MIT
-		LGPL-2.1
-		LGPL-2.1+
-		WTFPL-2
+	!no-repacks? (
+		blender282? (
+			MIT
+			LGPL-2.1
+			LGPL-2.1+
+			WTFPL-2
+		)
+		blender281a? (
+			MIT
+			LGPL-2.1
+			LGPL-2.1+
+			WTFPL-2
+		)
 	)
 	blender279b_filmic? (
 		all-rights-reserved
@@ -147,15 +149,10 @@ REQUIRED_USE="
 		|| ( pro-drivers split-drivers )
 	)
 "
-# This maybe required for filmic
-# todo inspect via ldd
-RDEPEND_BLENDER_SHEEPIT_OIIO="
-media-libs/openimageio
-"
 
 # About the lib folder
 # 2.79, 2.80 contains glu libglapi, mesa
-# 2.82 contains DirectFB, libcaca, libglapi, glu, mesa, slang, SDL:1.2, tslib, libXxf86vm
+# 2.82, 2.81a contains DirectFB, libcaca, libglapi, glu, mesa, slang, SDL:1.2, tslib, libXxf86vm
 
 # Additional libraries referenced in the custom build of 2.82
 RDEPEND_BLENDER_SHEEPIT282="
@@ -205,8 +202,8 @@ RDEPEND="
 	blender? (
 		!system-blender? (
 			${RDEPEND_BLENDER}
-			${RDEPEND_BLENDER_SHEEPIT_OIIO}
-			blender282? ( ${RDEPEND_BLENDER_SHEEPIT282} )
+			blender281a? ( !no-repacks? ( ${RDEPEND_BLENDER_SHEEPIT282} ) )
+			blender282? ( !no-repacks? ( ${RDEPEND_BLENDER_SHEEPIT282} ) )
 		)
 		system-blender? (
 			gentoo-blender? (
