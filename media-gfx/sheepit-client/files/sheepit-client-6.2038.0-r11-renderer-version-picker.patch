@@ -19,8 +19,29 @@ Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
 ----
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java sheepit-client-6.2038.0/src/com/sheepit/client/Client.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/Client.java	2020-09-26 23:38:27.173294552 -0700
-@@ -704,7 +704,8 @@ import lombok.Data;
++++ sheepit-client-6.2038.0/src/com/sheepit/client/Client.java	2020-09-27 16:35:28.742513139 -0700
+@@ -19,9 +19,12 @@
+ 
+ package com.sheepit.client;
+ 
++import java.io.BufferedReader;
+ import java.io.File;
+ import java.io.FileOutputStream;
+ import java.io.IOException;
++import java.io.InputStream;
++import java.io.InputStreamReader;
+ import java.io.PrintWriter;
+ import java.io.StringWriter;
+ import java.util.ArrayList;
+@@ -592,6 +595,7 @@ import lombok.Data;
+ 	}
+ 	
+ 	protected void sendError(int step_, Job job_to_reset_, Error.Type error) {
++		this.disableErrorSending = true;
+ 		if (this.disableErrorSending) {
+ 			this.log.debug("Error sending is disabled, do not send log");
+ 			return;
+@@ -704,7 +708,8 @@ import lombok.Data;
  		}
  	}
  	
@@ -30,22 +51,31 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java sheepi
  		Error.Type downloadRet;
  		
  		gui.setRenderingProjectName(ajob.getName());
-@@ -786,10 +787,222 @@ import lombok.Data;
+@@ -739,6 +744,8 @@ import lombok.Data;
+ 		final File scene_file = new File(ajob.getScenePath());
+ 		File renderer_file = new File(ajob.getRendererPath());
+ 		
++		this.log.debug("Client::work renderer_path: " + ajob.getRendererPath());
++		
+ 		if (scene_file.exists() == false) {
+ 			gui.setRenderingProjectName("");
+ 			this.log.error("Client::work job preparation failed (scene file '" + scene_file.getAbsolutePath()
+@@ -786,10 +793,222 @@ import lombok.Data;
  		return this.downloadFile(ajob_, ajob_.getSceneArchivePath(), ajob_.getSceneMD5(),
  				String.format("%s?type=job&job=%s", this.server.getPage("download-archive"), ajob_.getId()), "project");
  	}
 +
 +	private boolean isUnknownRenderer(String md5_renderer) {
 +		switch (md5_renderer) {
-+			case Configuration.MD5_X86_64_279B:
-+			case Configuration.MD5_X86_64_279B_FILMIC:
-+			case Configuration.MD5_X86_64_280:
-+			case Configuration.MD5_X86_64_281A:
-+			case Configuration.MD5_X86_64_282:
-+			case Configuration.MD5_X86_64_2831:
-+			case Configuration.MD5_X86_64_2832:
-+			case Configuration.MD5_X86_64_2836:
-+			case Configuration.MD5_X86_64_2900:
++			case Configuration.MD5_LINUX_X86_64_279B:
++			case Configuration.MD5_LINUX_X86_64_279B_FILMIC:
++			case Configuration.MD5_LINUX_X86_64_280:
++			case Configuration.MD5_LINUX_X86_64_281A:
++			case Configuration.MD5_LINUX_X86_64_282:
++			case Configuration.MD5_LINUX_X86_64_2831:
++			case Configuration.MD5_LINUX_X86_64_2832:
++			case Configuration.MD5_LINUX_X86_64_2836:
++			case Configuration.MD5_LINUX_X86_64_2900:
 +				return false;
 +			default:
 +				break;
@@ -54,39 +84,39 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java sheepi
 +	}
 +
 +	private boolean isRendererAllowed(String md5_renderer) {
-+		if (md5_renderer.equals(Configuration.MD5_X86_64_279B)) {
++		if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_279B)) {
 +			if (!this.configuration.getAllowBlender279b() || Configuration.HARDBLOCK_BLENDER_279B) {
 +				return false;
 +			}
-+		} else if (md5_renderer.equals(Configuration.MD5_X86_64_279B_FILMIC)) {
++		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_279B_FILMIC)) {
 +			if (!this.configuration.getAllowBlender279bFilmic() || Configuration.HARDBLOCK_BLENDER_279B_FILMIC) {
 +				return false;
 +			}
-+		} else if (md5_renderer.equals(Configuration.MD5_X86_64_280)) {
++		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_280)) {
 +			if (!this.configuration.getAllowBlender280() || Configuration.HARDBLOCK_BLENDER_280) {
 +				return false;
 +			}
-+		} else if (md5_renderer.equals(Configuration.MD5_X86_64_281A)) {
++		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_281A)) {
 +			if (!this.configuration.getAllowBlender281a() || Configuration.HARDBLOCK_BLENDER_281A) {
 +				return false;
 +			}
-+		} else if (md5_renderer.equals(Configuration.MD5_X86_64_282)) {
++		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_282)) {
 +			if (!this.configuration.getAllowBlender282() || Configuration.HARDBLOCK_BLENDER_282) {
 +				return false;
 +			}
-+		} else if (md5_renderer.equals(Configuration.MD5_X86_64_2831)) {
++		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_2831)) {
 +			if (!this.configuration.getAllowBlender2831() || Configuration.HARDBLOCK_BLENDER_2831) {
 +				return false;
 +			}
-+		} else if (md5_renderer.equals(Configuration.MD5_X86_64_2832)) {
++		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_2832)) {
 +			if (!this.configuration.getAllowBlender2832() || Configuration.HARDBLOCK_BLENDER_2832) {
 +				return false;
 +			}
-+		} else if (md5_renderer.equals(Configuration.MD5_X86_64_2836)) {
++		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_2836)) {
 +			if (!this.configuration.getAllowBlender2836() || Configuration.HARDBLOCK_BLENDER_2836) {
 +				return false;
 +			}
-+		} else if (md5_renderer.equals(Configuration.MD5_X86_64_2900)) {
++		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_2900)) {
 +			if (!this.configuration.getAllowBlender2900() || Configuration.HARDBLOCK_BLENDER_2900) {
 +				return false;
 +			}
@@ -100,23 +130,23 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java sheepi
 +	
 +	private String getRendererName(String md5_renderer) {
 +		switch (md5_renderer) {
-+			case Configuration.MD5_X86_64_279B:
++			case Configuration.MD5_LINUX_X86_64_279B:
 +				return "Blender 2.79b";
-+			case Configuration.MD5_X86_64_279B_FILMIC:
++			case Configuration.MD5_LINUX_X86_64_279B_FILMIC:
 +				return "Blender 2.79b (Filmic)";
-+			case Configuration.MD5_X86_64_280:
++			case Configuration.MD5_LINUX_X86_64_280:
 +				return "Blender 2.80";
-+			case Configuration.MD5_X86_64_281A:
++			case Configuration.MD5_LINUX_X86_64_281A:
 +				return "Blender 2.81a";
-+			case Configuration.MD5_X86_64_282:
++			case Configuration.MD5_LINUX_X86_64_282:
 +				return "Blender 2.82";
-+			case Configuration.MD5_X86_64_2831:
++			case Configuration.MD5_LINUX_X86_64_2831:
 +				return "Blender 2.83.1";
-+			case Configuration.MD5_X86_64_2832:
++			case Configuration.MD5_LINUX_X86_64_2832:
 +				return "Blender 2.83.2";
-+			case Configuration.MD5_X86_64_2836:
++			case Configuration.MD5_LINUX_X86_64_2836:
 +				return "Blender 2.83.6";
-+			case Configuration.MD5_X86_64_2900:
++			case Configuration.MD5_LINUX_X86_64_2900:
 +				return "Blender 2.90.0";
 +			default:
 +				break;
@@ -126,16 +156,16 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java sheepi
 +	
 +	public static String downloadDotBlenderDotOrgExt(String md5_renderer) {
 +		switch (md5_renderer) {
-+			case Configuration.MD5_X86_64_279B:
-+			case Configuration.MD5_X86_64_279B_FILMIC:
-+			case Configuration.MD5_X86_64_280:
-+			case Configuration.MD5_X86_64_281A:
++			case Configuration.MD5_LINUX_X86_64_279B:
++			case Configuration.MD5_LINUX_X86_64_279B_FILMIC:
++			case Configuration.MD5_LINUX_X86_64_280:
++			case Configuration.MD5_LINUX_X86_64_281A:
 +				return ".tar.bz2";
-+			case Configuration.MD5_X86_64_282:
-+			case Configuration.MD5_X86_64_2831:
-+			case Configuration.MD5_X86_64_2832:
-+			case Configuration.MD5_X86_64_2836:
-+			case Configuration.MD5_X86_64_2900:
++			case Configuration.MD5_LINUX_X86_64_282:
++			case Configuration.MD5_LINUX_X86_64_2831:
++			case Configuration.MD5_LINUX_X86_64_2832:
++			case Configuration.MD5_LINUX_X86_64_2836:
++			case Configuration.MD5_LINUX_X86_64_2900:
 +				return ".tar.xz";
 +		}
 +		return "";
@@ -143,22 +173,22 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java sheepi
 +	
 +	private String downloadDotBlenderDotOrgUrl(String md5_renderer) {
 +		switch (md5_renderer) {
-+			case Configuration.MD5_X86_64_279B:
-+			case Configuration.MD5_X86_64_279B_FILMIC:
++			case Configuration.MD5_LINUX_X86_64_279B:
++			case Configuration.MD5_LINUX_X86_64_279B_FILMIC:
 +				return "https://download.blender.org/release/Blender2.79/blender-2.79b-linux-glibc219-x86_64.tar.bz2";
-+			case Configuration.MD5_X86_64_280:
++			case Configuration.MD5_LINUX_X86_64_280:
 +				return "https://download.blender.org/release/Blender2.80/blender-2.80-linux-glibc217-x86_64.tar.bz2";
-+			case Configuration.MD5_X86_64_281A:
++			case Configuration.MD5_LINUX_X86_64_281A:
 +				return "https://download.blender.org/release/Blender2.81/blender-2.81a-linux-glibc217-x86_64.tar.bz2";
-+			case Configuration.MD5_X86_64_282:
++			case Configuration.MD5_LINUX_X86_64_282:
 +				return "https://download.blender.org/release/Blender2.82/blender-2.82-linux64.tar.xz";
-+			case Configuration.MD5_X86_64_2831:
++			case Configuration.MD5_LINUX_X86_64_2831:
 +				return "https://download.blender.org/release/Blender2.83/blender-2.83.1-linux64.tar.xz";
-+			case Configuration.MD5_X86_64_2832:
++			case Configuration.MD5_LINUX_X86_64_2832:
 +				return "https://download.blender.org/release/Blender2.83/blender-2.83.2-linux64.tar.xz";
-+			case Configuration.MD5_X86_64_2836:
++			case Configuration.MD5_LINUX_X86_64_2836:
 +				return "https://download.blender.org/release/Blender2.83/blender-2.83.6-linux64.tar.xz";
-+			case Configuration.MD5_X86_64_2900:
++			case Configuration.MD5_LINUX_X86_64_2900:
 +				return "https://download.blender.org/release/Blender2.90/blender-2.90.0-linux64.tar.xz";
 +		}
 +		return "";
@@ -166,24 +196,24 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java sheepi
 +	
 +	public static String downloadDotBlenderDotOrgHash(String md5_renderer) {
 +		switch (md5_renderer) {
-+			case Configuration.MD5_X86_64_279B:
-+				return Configuration.MD5_X86_64_VANILLA_279B;
-+			case Configuration.MD5_X86_64_279B_FILMIC:
-+				return Configuration.MD5_X86_64_VANILLA_279B;
-+			case Configuration.MD5_X86_64_280:
-+				return Configuration.MD5_X86_64_VANILLA_280;
-+			case Configuration.MD5_X86_64_281A:
-+				return Configuration.MD5_X86_64_VANILLA_281A;
-+			case Configuration.MD5_X86_64_282:
-+				return Configuration.MD5_X86_64_VANILLA_282;
-+			case Configuration.MD5_X86_64_2831:
-+				return Configuration.MD5_X86_64_VANILLA_2831;
-+			case Configuration.MD5_X86_64_2832:
-+				return Configuration.MD5_X86_64_VANILLA_2832;
-+			case Configuration.MD5_X86_64_2836:
-+				return Configuration.MD5_X86_64_VANILLA_2836;
-+			case Configuration.MD5_X86_64_2900:
-+				return Configuration.MD5_X86_64_VANILLA_2900;
++			case Configuration.MD5_LINUX_X86_64_279B:
++				return Configuration.MD5_LINUX_X86_64_VANILLA_279B;
++			case Configuration.MD5_LINUX_X86_64_279B_FILMIC:
++				return Configuration.MD5_LINUX_X86_64_VANILLA_279B;
++			case Configuration.MD5_LINUX_X86_64_280:
++				return Configuration.MD5_LINUX_X86_64_VANILLA_280;
++			case Configuration.MD5_LINUX_X86_64_281A:
++				return Configuration.MD5_LINUX_X86_64_VANILLA_281A;
++			case Configuration.MD5_LINUX_X86_64_282:
++				return Configuration.MD5_LINUX_X86_64_VANILLA_282;
++			case Configuration.MD5_LINUX_X86_64_2831:
++				return Configuration.MD5_LINUX_X86_64_VANILLA_2831;
++			case Configuration.MD5_LINUX_X86_64_2832:
++				return Configuration.MD5_LINUX_X86_64_VANILLA_2832;
++			case Configuration.MD5_LINUX_X86_64_2836:
++				return Configuration.MD5_LINUX_X86_64_VANILLA_2836;
++			case Configuration.MD5_LINUX_X86_64_2900:
++				return Configuration.MD5_LINUX_X86_64_VANILLA_2900;
 +		}
 +		return "";
 +	}
@@ -221,7 +251,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java sheepi
 +		} else if (Configuration.USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG && !Configuration.USE_SYSTEM_RENDERERS) {
 +			md5 = downloadDotBlenderDotOrgHash(renderer_md5);
 +			url = downloadDotBlenderDotOrgUrl(renderer_md5);
-+			if (renderer_md5.equals(Configuration.MD5_X86_64_279B_FILMIC)) {
++			if (renderer_md5.equals(Configuration.MD5_LINUX_X86_64_279B_FILMIC)) {
 +				md5_mod = Configuration.FILMIC_BLENDER_DL_f94ebab_URL;
 +				url_mod = Configuration.MD5_FILMIC_BLENDER_DL_f94ebab;
 +			}
@@ -235,7 +265,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java sheepi
 +			url = renderer_archive_path;
 +		}
 +
-+		if (Configuration.USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG && !Configuration.USE_SYSTEM_RENDERERS && renderer_md5.equals(Configuration.MD5_X86_64_279B_FILMIC)) {
++		if (Configuration.USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG && !Configuration.USE_SYSTEM_RENDERERS && renderer_md5.equals(Configuration.MD5_LINUX_X86_64_279B_FILMIC)) {
 +			// Download the renderer
 +			Error.Type ret1 = this.downloadFile(ajob, renderer_archive_path, md5, url, "renderer");
 +			if (ret1 != Type.OK)
@@ -255,7 +285,32 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java sheepi
  	}
  	
  	private Error.Type downloadFile(Job ajob, String local_path, String md5_server, String url, String download_type) throws FermeExceptionNoSpaceLeftOnDevice {
-@@ -881,14 +1094,29 @@ import lombok.Data;
+@@ -804,6 +1023,7 @@ import lombok.Data;
+ 		this.gui.status(String.format("Downloading %s", download_type), 0, 0);
+ 		
+ 		// must download the archive
++		this.log.debug("Client::downloadFile url: " + url + " local_path: " + local_path);
+ 		Error.Type ret = this.server.HTTPGetFile(url, local_path, this.gui, update_ui);
+ 		
+ 		if (ret == Type.RENDERER_KILLED_BY_SERVER || ret == Type.RENDERER_KILLED_BY_USER_OVER_TIME || ret == Type.RENDERER_KILLED_BY_USER) {
+@@ -872,6 +1092,16 @@ import lombok.Data;
+ 		String renderer_archive = ajob.getRendererArchivePath();
+ 		String renderer_path = ajob.getRendererDirectory();
+ 		File renderer_path_file = new File(renderer_path);
++		File renderer_archive_file = new File(renderer_archive);
++
++		if (renderer_archive_file.exists()) {
++			this.log.debug("Client::prepareWorkingDirectory renderer_archive: " + renderer_archive + " exists.");
++		} else {
++			this.log.debug("Client::prepareWorkingDirectory renderer_archive: " + renderer_archive + " is missing.");
++		}
++
++		this.log.debug("Client::prepareWorkingDirectory renderer_archive: " + renderer_archive);
++		this.log.debug("Client::prepareWorkingDirectory renderer_path: " + renderer_path);
+ 		
+ 		if (renderer_path_file.exists()) {
+ 			// Directory already exists -> do nothing
+@@ -881,14 +1111,69 @@ import lombok.Data;
  			// we create the directory
  			renderer_path_file.mkdir();
  			
@@ -267,7 +322,60 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java sheepi
 -								+ ret);
 -				this.gui.error(String.format("Unable to extract the renderer (error %d)", ret));
 -				return -1;
-+			if (!Configuration.USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG) {
++			if (Configuration.USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG && !Configuration.USE_SYSTEM_RENDERERS) {
++				Process p = null;
++				BufferedReader input = null;
++				String line;
++				try {
++					String [] cmd_unpack_renderer = {
++						"/bin/tar",
++						"--strip-components=1",
++						"-xvf",
++						renderer_archive,
++						"-C",
++						renderer_path
++					};
++					p = Runtime.getRuntime().exec(cmd_unpack_renderer);
++					input = new BufferedReader(new InputStreamReader(p.getInputStream()));
++					while ((line = input.readLine()) != null) {
++						System.out.println(line);
++					}
++					input.close();
++					input = null;
++					p.waitFor();
++					if (ajob.getRendererMD5().equals(Configuration.MD5_LINUX_X86_64_279B_FILMIC)) {
++						String filmic_archive = ajob.getCustomRendererArchivePath(Configuration.MD5_FILMIC_BLENDER_DL_f94ebab, ".tar.gz");
++						String [] cmd_unpack_filmic = {
++							"/bin/tar",
++							"--strip-components=1",
++							"-xvf",
++							filmic_archive,
++							"-C",
++							renderer_path + File.separator + "2.79" + File.separator + "datafiles" + File.separator + "colormanagement"
++						};
++						p = Runtime.getRuntime().exec(cmd_unpack_filmic);
++						input = new BufferedReader(new InputStreamReader(p.getInputStream()));
++						while ((line = input.readLine()) != null) {
++							System.out.println(line);
++						}
++						input.close();
++						input = null;
++						p.waitFor();
++					}
++				}
++				catch (Exception err) {
++					System.out.println("exception " + err);
++					err.printStackTrace();
++				} finally {
++					if (input != null) {
++						try {
++							input.close();
++							input = null;
++						} catch (IOException e) {
++						}
++					}
++				}
++			} else {
 +				// unzip the archive
 +				ret = Utils.unzipFileIntoDirectory(renderer_archive, renderer_path, null, log);
 +				if (ret != 0) {
@@ -277,25 +385,12 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java sheepi
 +					this.gui.error(String.format("Unable to extract the renderer (error %d)", ret));
 +					return -1;
 +				}
-+			} else {
-+				try {
-+					Runtime.getRuntime().exec("/bin/tar --strip-components=1 -xvf '" + renderer_archive  + "' -C '" + renderer_path + "'");
-+					if (ajob.getRendererMD5().equals(Configuration.MD5_X86_64_279B_FILMIC)) {
-+						String filmic_archive = ajob.getCustomRendererArchivePath(Configuration.MD5_FILMIC_BLENDER_DL_f94ebab, ".tar.gz");
-+						Runtime.getRuntime().exec("/bin/tar --strip-components=1 -xvf '" + renderer_archive  + "' -C '" + renderer_path + File.separator
-+												+ "2.79" + File.separator + "datafiles" + File.separator + "colormanagement'");
-+					}
-+				}
-+				catch (Exception err) {
-+					System.out.println("exception " + err);
-+					err.printStackTrace();
-+				}
  			}
  			
  			try {
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Configuration.java sheepit-client-6.2038.0/src/com/sheepit/client/Configuration.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/Configuration.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/Configuration.java	2020-09-26 23:34:12.343281110 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/Configuration.java	2020-09-27 16:34:36.560508600 -0700
 @@ -68,6 +68,57 @@ import lombok.Data;
  	private String UIType;
  	private String hostname;
@@ -325,27 +420,27 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Configuration.java
 +	public static final String SYSTEM_RENDERER_TYPE = "oiledmachine-overlay";
 +
 +	/* Hashes from modified tarballs from service */
-+	public static final String MD5_X86_64_279B = "3d0e05e7a43ae213eccf33c47b5900c5";
-+	public static final String MD5_X86_64_279B_FILMIC = "a6e995c16e72b9b0e2b3857fcf45a1d0";
-+	public static final String MD5_X86_64_280 = "20eb01cbdc8d21c85ef744816caa83ea";
-+	public static final String MD5_X86_64_281A = "f6120a679aa7c5e79f39751171f63eba";
-+	public static final String MD5_X86_64_282 = "8d254810f35d31d9aa988fb703e639c0";
-+	public static final String MD5_X86_64_2831 = "d6fed9e424851f58d5d2f6d05ae9d776";
-+	public static final String MD5_X86_64_2832 = "9df02fcf02fa02988e670c4c9ce2285d";
-+	public static final String MD5_X86_64_2836 = "542ca8ea03215a6444adfb168a4fb1a9";
-+	public static final String MD5_X86_64_2900 = "736ae3c99bae3482cde45623535d7149";
++	public static final String MD5_LINUX_X86_64_279B = "3d0e05e7a43ae213eccf33c47b5900c5";
++	public static final String MD5_LINUX_X86_64_279B_FILMIC = "a6e995c16e72b9b0e2b3857fcf45a1d0";
++	public static final String MD5_LINUX_X86_64_280 = "20eb01cbdc8d21c85ef744816caa83ea";
++	public static final String MD5_LINUX_X86_64_281A = "f6120a679aa7c5e79f39751171f63eba";
++	public static final String MD5_LINUX_X86_64_282 = "8d254810f35d31d9aa988fb703e639c0";
++	public static final String MD5_LINUX_X86_64_2831 = "d6fed9e424851f58d5d2f6d05ae9d776";
++	public static final String MD5_LINUX_X86_64_2832 = "9df02fcf02fa02988e670c4c9ce2285d";
++	public static final String MD5_LINUX_X86_64_2836 = "542ca8ea03215a6444adfb168a4fb1a9";
++	public static final String MD5_LINUX_X86_64_2900 = "736ae3c99bae3482cde45623535d7149";
 +
 +	/* Hashes from downloads.blender.org tarballs */
-+	public static final String MD5_X86_64_VANILLA_279B = "099555c6c8cb16bfcc0745dd303d692c";
-+	public static final String MD5_X86_VANILLA_279B = "7fafed4d8a22f1e8a60e3b3d10babb7d";
-+	public static final String MD5_X86_64_VANILLA_280 = "6f8afe0326093e479cb5505a8c783336";
-+	public static final String MD5_X86_VANILLA_280 = "77c62e04a49e8284ef1474608d3a1b61";
-+	public static final String MD5_X86_64_VANILLA_281A = "bb6e03ef79d2d7273336f8cfcd5a3b3f";
-+	public static final String MD5_X86_64_VANILLA_282 = "a1ca369cab0ee19cc5eba1c06c5c40d5";
-+	public static final String MD5_X86_64_VANILLA_2831 = "3c8ada31170fe0b551ad39db746dfb70";
-+	public static final String MD5_X86_64_VANILLA_2832 = "96194bd9d0630686765d7c12d92fcaeb";
-+	public static final String MD5_X86_64_VANILLA_2836 = "3e18bcf8a63479d64b7d955aee907d93";
-+	public static final String MD5_X86_64_VANILLA_2900 = "0933e02bf26b56675e9b88ee4e8df956";
++	public static final String MD5_LINUX_X86_64_VANILLA_279B = "099555c6c8cb16bfcc0745dd303d692c";
++	public static final String MD5_LINUX_X86_VANILLA_279B = "7fafed4d8a22f1e8a60e3b3d10babb7d";
++	public static final String MD5_LINUX_X86_64_VANILLA_280 = "6f8afe0326093e479cb5505a8c783336";
++	public static final String MD5_LINUX_X86_VANILLA_280 = "77c62e04a49e8284ef1474608d3a1b61";
++	public static final String MD5_LINUX_X86_64_VANILLA_281A = "bb6e03ef79d2d7273336f8cfcd5a3b3f";
++	public static final String MD5_LINUX_X86_64_VANILLA_282 = "a1ca369cab0ee19cc5eba1c06c5c40d5";
++	public static final String MD5_LINUX_X86_64_VANILLA_2831 = "3c8ada31170fe0b551ad39db746dfb70";
++	public static final String MD5_LINUX_X86_64_VANILLA_2832 = "96194bd9d0630686765d7c12d92fcaeb";
++	public static final String MD5_LINUX_X86_64_VANILLA_2836 = "3e18bcf8a63479d64b7d955aee907d93";
++	public static final String MD5_LINUX_X86_64_VANILLA_2900 = "0933e02bf26b56675e9b88ee4e8df956";
 +	public static final String MD5_BENCHMARK_SCENE = "db26b54689516484633b7d4855fb1567";
 +
 +	// Dated Jan 21, 2018
@@ -458,32 +553,30 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Configuration.java
  }
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Job.java sheepit-client-6.2038.0/src/com/sheepit/client/Job.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/Job.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/Job.java	2020-09-26 23:34:12.343281110 -0700
-@@ -138,15 +138,42 @@ import lombok.Getter;
++++ sheepit-client-6.2038.0/src/com/sheepit/client/Job.java	2020-09-27 16:34:36.560508600 -0700
+@@ -138,15 +138,40 @@ import lombok.Getter;
  	}
  	
  	public String getRendererDirectory() {
 -		return configuration.getWorkingDirectory().getAbsolutePath() + File.separator + rendererMD5;
-+		String defaultPath = configuration.getWorkingDirectory().getAbsolutePath() + File.separator + rendererMD5 ;
 +		if (configuration.USE_SYSTEM_RENDERERS) {
 +			switch (rendererMD5) {
-+				case Configuration.MD5_X86_64_279B:
-+				case Configuration.MD5_X86_64_279B_FILMIC:
-+				case Configuration.MD5_X86_64_280:
-+				case Configuration.MD5_X86_64_281A:
-+				case Configuration.MD5_X86_64_282:
-+				case Configuration.MD5_X86_64_2831:
-+				case Configuration.MD5_X86_64_2832:
-+				case Configuration.MD5_X86_64_2836:
-+				case Configuration.MD5_X86_64_2900:
++				case Configuration.MD5_LINUX_X86_64_279B:
++				case Configuration.MD5_LINUX_X86_64_279B_FILMIC:
++				case Configuration.MD5_LINUX_X86_64_280:
++				case Configuration.MD5_LINUX_X86_64_281A:
++				case Configuration.MD5_LINUX_X86_64_282:
++				case Configuration.MD5_LINUX_X86_64_2831:
++				case Configuration.MD5_LINUX_X86_64_2832:
++				case Configuration.MD5_LINUX_X86_64_2836:
++				case Configuration.MD5_LINUX_X86_64_2900:
 +					return "/usr/bin";
-+				default:
-+					return defaultPath;
 +			}
-+		} else {
-+			/* Upstream default */
-+			return defaultPath;
++		} else if (Configuration.USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG && !Configuration.USE_SYSTEM_RENDERERS) {
++			return configuration.getWorkingDirectory().getAbsolutePath() + File.separator + Client.downloadDotBlenderDotOrgHash(rendererMD5) ;
 +		}
++		/* Upstream default */
++		return configuration.getWorkingDirectory().getAbsolutePath() + File.separator + rendererMD5 ;
  	}
  	
  	public String getRendererPath() {
@@ -507,7 +600,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Job.java sheepit-c
  	public String getSceneDirectory() {
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/FreeBSD.java sheepit-client-6.2038.0/src/com/sheepit/client/os/FreeBSD.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/FreeBSD.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/os/FreeBSD.java	2020-09-26 23:34:12.343281110 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/os/FreeBSD.java	2020-09-27 16:34:36.560508600 -0700
 @@ -42,7 +42,7 @@ public class FreeBSD extends OS {
  		return "freebsd";
  	}
@@ -519,7 +612,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/FreeBSD.java sh
  	
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Linux.java sheepit-client-6.2038.0/src/com/sheepit/client/os/Linux.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Linux.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/os/Linux.java	2020-09-26 23:34:12.343281110 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/os/Linux.java	2020-09-27 16:34:36.560508600 -0700
 @@ -28,6 +28,7 @@ import java.util.List;
  import java.util.Map;
  import java.util.Scanner;
@@ -538,23 +631,23 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Linux.java shee
 +		if (Configuration.USE_SYSTEM_RENDERERS) {
 +			if (Configuration.SYSTEM_RENDERER_TYPE.equals("oiledmachine-overlay")) {
 +				switch (rendererMD5) {
-+					case Configuration.MD5_X86_64_279B:
++					case Configuration.MD5_LINUX_X86_64_279B:
 +						return "blender-2.79b";
-+					case Configuration.MD5_X86_64_279B_FILMIC:
++					case Configuration.MD5_LINUX_X86_64_279B_FILMIC:
 +						return "blender-2.79b-filmic-sheepit";
-+					case Configuration.MD5_X86_64_280:
++					case Configuration.MD5_LINUX_X86_64_280:
 +						return "blender-2.80";
-+					case Configuration.MD5_X86_64_281A:
++					case Configuration.MD5_LINUX_X86_64_281A:
 +						return "blender-2.81a";
-+					case Configuration.MD5_X86_64_282:
++					case Configuration.MD5_LINUX_X86_64_282:
 +						return "blender-2.82";
-+					case Configuration.MD5_X86_64_2831:
++					case Configuration.MD5_LINUX_X86_64_2831:
 +						return "blender-2.83.1";
-+					case Configuration.MD5_X86_64_2832:
++					case Configuration.MD5_LINUX_X86_64_2832:
 +						return "blender-2.83.2";
-+					case Configuration.MD5_X86_64_2836:
++					case Configuration.MD5_LINUX_X86_64_2836:
 +						return "blender-2.83.6";
-+					case Configuration.MD5_X86_64_2900:
++					case Configuration.MD5_LINUX_X86_64_2900:
 +						return "blender-2.90.0";
 +					default:
 +						return "rend.exe";
@@ -578,7 +671,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Linux.java shee
  	}
  	
  	@Override public CPU getCPU() {
-@@ -152,18 +192,20 @@ public class Linux extends OS {
+@@ -152,18 +192,21 @@ public class Linux extends OS {
  		Map<String, String> new_env = new HashMap<String, String>();
  		new_env.putAll(java.lang.System.getenv()); // clone the env
  		
@@ -587,20 +680,22 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Linux.java shee
 -		// zip file
 -		if (isOpenGLAlreadyInstalled(command.get(0)) == false) {
 -			Boolean has_ld_library_path = new_env.containsKey("LD_LIBRARY_PATH");
-+		if (Configuration.USE_SYSTEM_RENDERERS == false) {
-+			// if Blender is already loading an OpenGL library, don't need to load Blender's default one (it will
-+			// create system incompatibilities). If no OpenGL library is found, then load the one included in the binary
-+			// zip file
-+			if (isOpenGLAlreadyInstalled(command.get(0)) == false) {
-+				Boolean has_ld_library_path = new_env.containsKey("LD_LIBRARY_PATH");
- 			
+-			
 -			String lib_dir = (new File(command.get(0))).getParent() + File.separator + "lib";
 -			if (has_ld_library_path == false) {
 -				new_env.put("LD_LIBRARY_PATH", lib_dir);
 -			}
 -			else {
 -				new_env.put("LD_LIBRARY_PATH", new_env.get("LD_LIBRARY_PATH") + ":" + lib_dir);
++		if (Configuration.USE_SYSTEM_RENDERERS == false) {
++			// if Blender is already loading an OpenGL library, don't need to load Blender's default one (it will
++			// create system incompatibilities). If no OpenGL library is found, then load the one included in the binary
++			// zip file
++			if (isOpenGLAlreadyInstalled(command.get(0)) == false) {
++				Boolean has_ld_library_path = new_env.containsKey("LD_LIBRARY_PATH");
++			
 +				String lib_dir = (new File(command.get(0))).getParent() + File.separator + "lib";
++				System.err.println("Linux::exec lib_dir: " + lib_dir);
 +				if (has_ld_library_path == false) {
 +					new_env.put("LD_LIBRARY_PATH", lib_dir);
 +				}
@@ -610,9 +705,17 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Linux.java shee
  			}
  		}
  		
+@@ -240,6 +283,7 @@ public class Linux extends OS {
+ 	}
+ 	
+ 	protected boolean isOpenGLAlreadyInstalled(String pathToRendEXE) {
++		System.err.println("Linux::isOpenGLAlreadyInstalled pathToRendEXE" + pathToRendEXE);
+ 		ProcessBuilder processBuilder = new ProcessBuilder();
+ 		processBuilder.command("bash", "-c", "ldd '" + pathToRendEXE + "'");    // support for paths with an space
+ 		processBuilder.redirectErrorStream(true);
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Mac.java sheepit-client-6.2038.0/src/com/sheepit/client/os/Mac.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Mac.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/os/Mac.java	2020-09-26 23:34:12.343281110 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/os/Mac.java	2020-09-27 16:34:36.560508600 -0700
 @@ -41,7 +41,7 @@ public class Mac extends OS {
  		return "mac";
  	}
@@ -624,7 +727,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Mac.java sheepi
  	
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/OS.java sheepit-client-6.2038.0/src/com/sheepit/client/os/OS.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/OS.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/os/OS.java	2020-09-26 23:34:12.343281110 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/os/OS.java	2020-09-27 16:34:36.560508600 -0700
 @@ -35,7 +35,7 @@ public abstract class OS {
  	
  	public abstract long getFreeMemory();
@@ -636,7 +739,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/OS.java sheepit
  		return null;
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Windows.java sheepit-client-6.2038.0/src/com/sheepit/client/os/Windows.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Windows.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/os/Windows.java	2020-09-26 23:34:12.343281110 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/os/Windows.java	2020-09-27 16:34:36.560508600 -0700
 @@ -37,7 +37,7 @@ public class Windows extends OS {
  		return "windows";
  	}
@@ -648,7 +751,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Windows.java sh
  	
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/SettingsLoader.java sheepit-client-6.2038.0/src/com/sheepit/client/SettingsLoader.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/SettingsLoader.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/SettingsLoader.java	2020-09-26 23:34:12.343281110 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/SettingsLoader.java	2020-09-27 16:34:36.560508600 -0700
 @@ -58,6 +58,16 @@ public class SettingsLoader {
  	private String ui;
  	private String theme;
@@ -924,7 +1027,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/SettingsLoader.jav
  }
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/standalone/swing/activity/Settings.java sheepit-client-6.2038.0/src/com/sheepit/client/standalone/swing/activity/Settings.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-09-26 23:34:12.343281110 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-09-27 16:34:36.560508600 -0700
 @@ -101,6 +101,16 @@ public class Settings implements Activit
  	
  	private JCheckBox saveFile;
@@ -1020,7 +1123,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/standalone/swing/a
  				// or do we already have one?
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/standalone/Worker.java sheepit-client-6.2038.0/src/com/sheepit/client/standalone/Worker.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/standalone/Worker.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/standalone/Worker.java	2020-09-26 23:34:12.343281110 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/standalone/Worker.java	2020-09-27 16:34:36.560508600 -0700
 @@ -106,6 +106,26 @@ public class Worker {
  	
  	@Option(name = "-hostname", usage = "Set a custom hostname name (name change will be lost when client is closed)", required = false) private String hostname = null;

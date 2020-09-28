@@ -469,7 +469,7 @@ src_prepare() {
 			src/com/sheepit/client/hardware/gpu/GPU.java || die
 	fi
 
-	eapply "${FILESDIR}/sheepit-client-6.2038.0-r10-renderer-version-picker.patch"
+	eapply "${FILESDIR}/sheepit-client-6.2038.0-r11-renderer-version-picker.patch"
 
 	if use system-blender ; then
 		if use gentoo-blender ; then
