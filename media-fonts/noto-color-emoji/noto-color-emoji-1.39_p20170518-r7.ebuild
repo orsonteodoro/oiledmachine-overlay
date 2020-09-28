@@ -28,12 +28,13 @@ RDEPEND=">=media-libs/fontconfig-2.11.91
 	  !media-fonts/noto-emoji
          >=x11-libs/cairo-1.16"
 NOTOTOOLS_DEPEND="
-        $(python_gen_cond_dep '>=dev-python/booleanOperations-0.7.0[${PYTHON_USEDEP}]' python3_{6,7,8})
-        $(python_gen_cond_dep '>=dev-python/defcon-0.3.1[${PYTHON_USEDEP}]' python3_{6,7,8})
-        $(python_gen_cond_dep '>=dev-python/fonttools-3.9.1[${PYTHON_USEDEP}]' python3_{6,7,8})
-        $(python_gen_cond_dep '>=dev-python/pillow-4.0.0[${PYTHON_USEDEP}]' python3_{6,7,8})
-        $(python_gen_cond_dep '>=dev-python/pyclipper-1.0.6[${PYTHON_USEDEP}]' python3_{6,7,8})
-        $(python_gen_cond_dep '>=dev-python/ufolib-2.0.0[${PYTHON_USEDEP}]' python3_{6,7,8})"
+        $(python_gen_cond_dep '>=dev-python/booleanOperations-0.7.0[${PYTHON_USEDEP}]' python2_7)
+        $(python_gen_cond_dep '>=dev-python/defcon-0.3.1[${PYTHON_USEDEP}]' python2_7)
+        $(python_gen_cond_dep '>=dev-python/fonttools-3.9.1[${PYTHON_USEDEP}]' python2_7)
+        $(python_gen_cond_dep '>=dev-python/pillow-4.0.0[${PYTHON_USEDEP}]' python2_7)
+        $(python_gen_cond_dep '>=dev-python/pyclipper-1.0.6[${PYTHON_USEDEP}]' python2_7)
+        $(python_gen_cond_dep '>=dev-python/ufolib-2.0.0[${PYTHON_USEDEP}]' python2_7)
+"
 # the ufolib library has not been package yet on any overlay.
 INTERNAL_NOTOTOOLS_PV="0.0.1_pre20170518" # see setup.py for versioning ; no tagged release
 DEPEND="${RDEPEND}
