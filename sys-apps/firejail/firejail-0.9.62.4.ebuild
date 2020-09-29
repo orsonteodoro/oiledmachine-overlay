@@ -99,4 +99,13 @@ pkg_postinst() {
 		einfo "  xpra_speaker_on  # enables sound forwarding for xpra"
 		einfo
 	fi
+	ewarn "Files marked chmod uo+r permissions and filenames containing"
+	ewarn "sensitive info contained in the root directory are exposed."
+	ewarn "to an attacker in the sandbox.  They should be moved in"
+	ewarn "either another disk, or in folder with parent folder and"
+	ewarn "descendants with uo-r chmod permissions or explicitly added"
+	ewarn "as a blacklist rule in /etc/firejail/globals.local."
+	ewarn
+	ewarn "Always check your sandbox profile in the shell to see if it"
+	ewarn "meets your privacy requirements."
 }
