@@ -145,7 +145,6 @@ REQUIRED_USE+="
 	${REQUIRED_USE_CYCLES}
 	${REQUIRED_USE_MINIMAL_CPU_FLAGS}
 "
-
 # This could be modded for multiabi builds.
 declare -A _LD_LIBRARY_PATHS
 declare -A _LIBGL_DRIVERS_DIRS
@@ -159,7 +158,7 @@ get_dest() {
 	if [[ "${EBLENDER}" == "build_portable" ]] ; then
 		echo "/usr/share/${PN}/${SLOT_MAJ}/${EBLENDER_NAME}"
 	else
-		echo "/usr/bin/.${PN}/${SLOT_MAJ}/${EBLENDER_NAME}"
+		echo "/usr/$(get_libdir)/${PN}/${SLOT_MAJ}/${EBLENDER_NAME}"
 	fi
 }
 
@@ -1309,7 +1308,7 @@ blender_pkg_postinst() {
 		einfo
 	fi
 	xdg_pkg_postinst
-	local d_src="${EROOT}/usr/bin/.${PN}"
+	local d_src="${EROOT}/usr/$(get_libdir)/${PN}"
 	local V=""
 	if [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" \
 	&& "${BLENDER_MAIN_SYMLINK_MODE}" == "latest-lts" ]] ; then
