@@ -19,7 +19,7 @@ Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
 ----
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java sheepit-client-6.2038.0/src/com/sheepit/client/Client.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/Client.java	2020-09-27 16:35:28.742513139 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/Client.java	2020-09-29 20:48:06.701686892 -0700
 @@ -19,9 +19,12 @@
  
  package com.sheepit.client;
@@ -37,7 +37,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java sheepi
  	}
  	
  	protected void sendError(int step_, Job job_to_reset_, Error.Type error) {
-+		//this.disableErrorSending = true;
++		this.disableErrorSending = true;
  		if (this.disableErrorSending) {
  			this.log.debug("Error sending is disabled, do not send log");
  			return;
@@ -310,7 +310,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java sheepi
  		
  		if (renderer_path_file.exists()) {
  			// Directory already exists -> do nothing
-@@ -881,14 +1111,69 @@ import lombok.Data;
+@@ -881,23 +1111,84 @@ import lombok.Data;
  			// we create the directory
  			renderer_path_file.mkdir();
  			
@@ -335,6 +335,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java sheepi
 +						"-C",
 +						renderer_path
 +					};
++					this.log.debug("Client::prepareWorkingDirectory start unpacking renderer N1");
 +					p = Runtime.getRuntime().exec(cmd_unpack_renderer);
 +					input = new BufferedReader(new InputStreamReader(p.getInputStream()));
 +					while ((line = input.readLine()) != null) {
@@ -343,6 +344,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java sheepi
 +					input.close();
 +					input = null;
 +					p.waitFor();
++					this.log.debug("Client::prepareWorkingDirectory finished unpacking renderer N2");
 +					if (ajob.getRendererMD5().equals(Configuration.MD5_LINUX_X86_64_279B_FILMIC)) {
 +						String filmic_archive = ajob.getCustomRendererArchivePath(Configuration.MD5_FILMIC_BLENDER_DL_f94ebab, ".tar.gz");
 +						String [] cmd_unpack_filmic = {
@@ -387,10 +389,40 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java sheepi
 +				}
  			}
  			
++			this.log.debug("Client::prepareWorkingDirectory start marking executible N3");
  			try {
+ 				File f = new File(ajob.getRendererPath());
+ 				f.setExecutable(true);
+ 			}
+ 			catch (SecurityException e) {
+ 			}
++			this.log.debug("Client::prepareWorkingDirectory done marking executible N4");
+ 		}
++
++		this.log.debug("Client::prepareWorkingDirectory done unpacking renderer 2b");
+ 		
+ 		String scene_archive = ajob.getSceneArchivePath();
+ 		String scene_path = ajob.getSceneDirectory();
+@@ -907,6 +1198,7 @@ import lombok.Data;
+ 			// Directory already exists -> do nothing
+ 		}
+ 		else {
++			this.log.debug("Client::prepareWorkingDirectory extracting project ");
+ 			this.gui.status("Extracting project");
+ 			// we create the directory
+ 			scene_path_file.mkdir();
+@@ -921,6 +1213,8 @@ import lombok.Data;
+ 				return -2;
+ 			}
+ 		}
++
++		this.log.debug("Client::prepareWorkingDirectory done extracting project");
+ 		
+ 		return 0;
+ 	}
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Configuration.java sheepit-client-6.2038.0/src/com/sheepit/client/Configuration.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/Configuration.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/Configuration.java	2020-09-27 16:34:36.560508600 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/Configuration.java	2020-09-29 20:38:00.768081936 -0700
 @@ -68,6 +68,57 @@ import lombok.Data;
  	private String UIType;
  	private String hostname;
@@ -553,7 +585,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Configuration.java
  }
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Job.java sheepit-client-6.2038.0/src/com/sheepit/client/Job.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/Job.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/Job.java	2020-09-27 16:34:36.560508600 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/Job.java	2020-09-29 20:38:00.768081936 -0700
 @@ -138,15 +138,40 @@ import lombok.Getter;
  	}
  	
@@ -600,7 +632,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Job.java sheepit-c
  	public String getSceneDirectory() {
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/FreeBSD.java sheepit-client-6.2038.0/src/com/sheepit/client/os/FreeBSD.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/FreeBSD.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/os/FreeBSD.java	2020-09-27 16:34:36.560508600 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/os/FreeBSD.java	2020-09-29 20:38:00.768081936 -0700
 @@ -42,7 +42,7 @@ public class FreeBSD extends OS {
  		return "freebsd";
  	}
@@ -612,7 +644,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/FreeBSD.java sh
  	
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Linux.java sheepit-client-6.2038.0/src/com/sheepit/client/os/Linux.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Linux.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/os/Linux.java	2020-09-27 16:34:36.560508600 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/os/Linux.java	2020-09-29 20:38:00.768081936 -0700
 @@ -28,6 +28,7 @@ import java.util.List;
  import java.util.Map;
  import java.util.Scanner;
@@ -715,7 +747,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Linux.java shee
  		processBuilder.redirectErrorStream(true);
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Mac.java sheepit-client-6.2038.0/src/com/sheepit/client/os/Mac.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Mac.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/os/Mac.java	2020-09-27 16:34:36.560508600 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/os/Mac.java	2020-09-29 20:38:00.768081936 -0700
 @@ -41,7 +41,7 @@ public class Mac extends OS {
  		return "mac";
  	}
@@ -727,7 +759,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Mac.java sheepi
  	
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/OS.java sheepit-client-6.2038.0/src/com/sheepit/client/os/OS.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/OS.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/os/OS.java	2020-09-27 16:34:36.560508600 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/os/OS.java	2020-09-29 20:38:00.768081936 -0700
 @@ -35,7 +35,7 @@ public abstract class OS {
  	
  	public abstract long getFreeMemory();
@@ -739,7 +771,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/OS.java sheepit
  		return null;
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Windows.java sheepit-client-6.2038.0/src/com/sheepit/client/os/Windows.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Windows.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/os/Windows.java	2020-09-27 16:34:36.560508600 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/os/Windows.java	2020-09-29 20:38:00.768081936 -0700
 @@ -37,7 +37,7 @@ public class Windows extends OS {
  		return "windows";
  	}
@@ -751,7 +783,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/os/Windows.java sh
  	
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/SettingsLoader.java sheepit-client-6.2038.0/src/com/sheepit/client/SettingsLoader.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/SettingsLoader.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/SettingsLoader.java	2020-09-27 16:34:36.560508600 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/SettingsLoader.java	2020-09-29 20:38:00.768081936 -0700
 @@ -58,6 +58,16 @@ public class SettingsLoader {
  	private String ui;
  	private String theme;
@@ -1027,7 +1059,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/SettingsLoader.jav
  }
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/standalone/swing/activity/Settings.java sheepit-client-6.2038.0/src/com/sheepit/client/standalone/swing/activity/Settings.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-09-27 16:34:36.560508600 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-09-29 20:38:00.768081936 -0700
 @@ -101,6 +101,16 @@ public class Settings implements Activit
  	
  	private JCheckBox saveFile;
@@ -1123,7 +1155,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/standalone/swing/a
  				// or do we already have one?
 diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/standalone/Worker.java sheepit-client-6.2038.0/src/com/sheepit/client/standalone/Worker.java
 --- sheepit-client-6.2038.0.orig/src/com/sheepit/client/standalone/Worker.java	2020-09-12 02:12:54.000000000 -0700
-+++ sheepit-client-6.2038.0/src/com/sheepit/client/standalone/Worker.java	2020-09-27 16:34:36.560508600 -0700
++++ sheepit-client-6.2038.0/src/com/sheepit/client/standalone/Worker.java	2020-09-29 20:38:00.768081936 -0700
 @@ -106,6 +106,26 @@ public class Worker {
  	
  	@Option(name = "-hostname", usage = "Set a custom hostname name (name change will be lost when client is closed)", required = false) private String hostname = null;

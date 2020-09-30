@@ -98,18 +98,11 @@ LICENSE="GPL-2 Apache-2.0 LGPL-2.1+
 KEYWORDS="~amd64"
 SLOT="0"
 
-IUSE=" \
-+benchmark \
-blender \
-blender279b blender279b_filmic blender280 blender281a blender282 \
-blender2831 blender2831 blender2832 blender2836 \
-blender2900 \
-allow-unknown-renderers disable-hard-version-blocks \
-cuda doc intel-ocl lts +opencl opencl_rocm opencl_orca \
-opencl_pal opengl_mesa pro-drivers split-drivers \
-system-blender \
-gentoo-blender \
-no-repacks \
+IUSE=" +benchmark blender blender279b blender279b_filmic blender280 \
+blender281a blender282 blender2831 blender2831 blender2832 blender2836 \
+blender2900 allow-unknown-renderers disable-hard-version-blocks cuda doc \
+firejail intel-ocl lts +opencl opencl_rocm opencl_orca opencl_pal opengl_mesa \
+pro-drivers split-drivers system-blender gentoo-blender no-repacks \
 video_cards_amdgpu video_cards_i965 video_cards_iris video_cards_nvidia \
 video_cards_radeonsi"
 REQUIRED_USE="
@@ -200,6 +193,7 @@ RDEPEND_BLENDER="
 # flags will be used to match especially those that affect the rendering.
 RDEPEND="
 	blender? (
+		firejail? ( sys-apps/firejail )
 		!system-blender? (
 			${RDEPEND_BLENDER}
 			blender281a? ( !no-repacks? ( ${RDEPEND_BLENDER_SHEEPIT282} ) )
@@ -266,6 +260,7 @@ RDEPEND="
 	cuda? ( x11-drivers/nvidia-drivers )
 	no-repacks? (
 		app-arch/bzip2
+		app-arch/gzip
 		app-arch/tar
 		app-arch/xz-utils
 	)
@@ -278,6 +273,7 @@ SRC_URI="https://github.com/laurent-clouet/sheepit-client/archive/v${PV}.tar.gz 
 -> ${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
+WRAPPER_VERSION="3.0.0"
 
 show_codename_docs() {
 	einfo
@@ -555,7 +551,7 @@ src_install() {
 	insinto /usr/share/${PN}
 	doins build/libs/sheepit-client-all.jar
 	exeinto /usr/bin
-	cat "${FILESDIR}/sheepit-client-v2.1.6" \
+	cat "${FILESDIR}/sheepit-client-v${WRAPPER_VERSION}" \
 		> "${T}/sheepit-client" || die
 	docinto licenses
 	dodoc LICENSE
@@ -647,6 +643,26 @@ src_install() {
 		"${T}/sheepit-client" || die
 	fi
 
+	# Work In Progress (WIP)
+	if use firejail ; then
+		sed -i -e "s|^#USE_FIREJAIL|USE_FIREJAIL|g" \
+		"${T}/sheepit-client" || die
+
+		insinto /etc/firejail
+		if use system-blender ; then
+			newins "${FILESDIR}/firejail-profiles/sheepit-client-default.profile" \
+				"sheepit-client.profile"
+		fi
+		if use no-repacks ; then
+			newins "${FILESDIR}/firejail-profiles/sheepit-client-no-repacks.profile" \
+				"sheepit-client.profile"
+		fi
+		if use no-repacks ; then
+			newins "${FILESDIR}/firejail-profiles/sheepit-client-system-blender.profile" \
+				"sheepit-client.profile"
+		fi
+	fi
+
 	doexe "${T}/sheepit-client"
 }
 
@@ -671,4 +687,16 @@ Run 'wmname LG3D' before you run '${PN}'"
 	einfo "Don't forget to add your user account to the video group."
 	einfo "This can be done with: \`gpasswd -a USERNAME video\`"
 	einfo
+
+	if use firejail ; then
+		ewarn \
+"The Firejail profile is experimental.  Several updates may occur to improve \n\
+the privacy within the sandboxed image and reduce the attack surface.  Also, \n\
+updates may occur to fix errors between different configurations.  It currently \n\
+does not work."
+		einfo \
+"The Firejail profile requires additional rules for your JRE and video card \n\
+drivers.  Add them to /etc/firejail/sheepit-client.local.  Use ldd on the \n\
+shared libraries and drivers to add more private-lib or whitelist rules."
+	fi
 }

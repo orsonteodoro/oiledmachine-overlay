@@ -52,6 +52,7 @@
     <flag name="disable-hard-version-blocks">Permits user choice to selectively
       choose renderers to download.</flag>
     <flag name="doc">Installs extra documentation.</flag>
+    <flag name="firejail">Adds Firejail support for sandboxed isolation.</flag>
     <flag name="intel-ocl">Checks for OpenCL support for Intel
       CPUs that may be required.</flag>
     <flag name="lts">Prefer AMDGPU-PRO drivers with HWE (aka LTS [long term

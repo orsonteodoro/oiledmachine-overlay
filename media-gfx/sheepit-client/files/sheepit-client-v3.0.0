@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #USE_SYSTEM_BLENDER="1"
+#USE_FIREJAIL="1"
 
 function exit_error() {
 	local msg="${1}"
@@ -32,7 +33,7 @@ if which wmname >/dev/null ; then
 	wmname LG3D
 fi
 
-d="${HOME}/.cache/sheepit-client"
+d="${HOME}/.sheepit-client"
 
 for f in $(find "${d}"/{sheepit,sheepit_binary_cache} -maxdepth 1 -type f \
 		-name "*.zip") ; do
@@ -57,7 +58,12 @@ for f in $(find "${d}" -type f) ; do
 done
 
 mkdir -p "${d}"
+if [[ -n "${USE_FIREJAIL}" && "${USE_FIREJAIL}" == "1" ]] ; then
+firejail --profile="/etc/firejail/sheepit-client.profile" java -jar /usr/share/sheepit-client/sheepit-client-all.jar -cache-dir "${d}" \
+	ALLOWED_RENDERERS $*
+else
 java -jar /usr/share/sheepit-client/sheepit-client-all.jar -cache-dir "${d}" \
 	ALLOWED_RENDERERS $*
+fi
 
 trap cleanup EXIT
