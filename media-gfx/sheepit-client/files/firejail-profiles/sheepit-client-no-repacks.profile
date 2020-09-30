@@ -85,7 +85,7 @@ private-bin X11
 private-bin wmname
 
 # For debugging this profile
-#private-bin ldd,ls,wc
+#private-bin find,grep,ldd,ls,wc
 
 # For Firejail
 private-bin xauth
@@ -164,9 +164,9 @@ private-lib libm.so.*,libpcre.so.*,libpthread.so.*,librt.so.*,libselinux.so.*
 private-lib libstdc++.so.*,libxshmfence.so.*,libtinfo.so.*,libudev.so.*
 private-lib libX11.so.*,libX11-xcb.so.*,libXau.so.*,libXdamage.so.*
 private-lib libXdmcp.so.*,libXext.so.*,libXfixes.so.*,libXxf86vm.so.*
-private-lib libxcb.so.*,libxcb-dri2.so.*,libxcb-dri3.so.*,libxcb-glx.so.*
-private-lib libxcb-present.so.*,libxcb-sync.so.*,libz.so.*
-private-lib libwayland-server.so.*
+private-lib libxcb.so.*,libxcb-dri2.so.*,libxcb-dri3.so.*,libxcb-xfixes.so.*
+private-lib libxcb-glx.so.*,libxcb-present.so.*,libxcb-sync.so.*,libz.so.*
+private-lib libwayland-server.so.*,libwayland-client.so.*
 
 # For xauth
 private-lib ld-linux-x86-64.so.*,libc.so.*,libdl.so.*,libX11.so.*,libXau.so.*
@@ -189,5 +189,14 @@ private-lib libz.so.*
 private-lib ld-linux-x86-64.so.*,libc.so.*,libcrypt.so.*,libdl.so.*,libm.so.*
 private-lib libncursesw.so.*,libnsl.so.*,libpanelw.so.*,libpthread.so.*
 private-lib libutil.so.*,libstdc++.so.*,libtinfo.so.*,libtinfow.so.*
+
+# For openvdb
+private-lib libGLU.so.*,libglfw.so.*
+
+# For mesa drivers - libvulkan_radeon.so
+private-lib libxcb-randr.so.*
+
+# For mesa libEGL_mesa.so.0.0.0
+private-lib libxcb-xfixes.so.*
 
 private-tmp

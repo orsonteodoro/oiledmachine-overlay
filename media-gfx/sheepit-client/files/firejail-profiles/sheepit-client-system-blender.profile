@@ -64,7 +64,9 @@ private-bin blender-2.90.0
 # whitelist /usr/include/CL
 
 include allow-java.inc
-include disable-devel.inc # needs testing
+
+# needs testing
+include disable-devel.inc
 
 # Allow usage of AMD GPU by OpenCL
 noblacklist /sys/module
@@ -104,7 +106,7 @@ private-bin X11
 private-bin wmname
 
 # For debugging this profile
-#private-bin ldd,ls,wc
+#private-bin find,grep,ldd,ls,wc
 
 # For Firejail
 private-bin xauth
@@ -172,9 +174,9 @@ private-lib libm.so.*,libpcre.so.*,libpthread.so.*,librt.so.*,libselinux.so.*
 private-lib libstdc++.so.*,libxshmfence.so.*,libtinfo.so.*,libudev.so.*
 private-lib libX11.so.*,libX11-xcb.so.*,libXau.so.*,libXdamage.so.*
 private-lib libXdmcp.so.*,libXext.so.*,libXfixes.so.*,libXxf86vm.so.*
-private-lib libxcb.so.*,libxcb-dri2.so.*,libxcb-dri3.so.*,libxcb-glx.so.*
-private-lib libxcb-present.so.*,libxcb-sync.so.*,libz.so.*
-private-lib libwayland-server.so.*
+private-lib libxcb.so.*,libxcb-dri2.so.*,libxcb-dri3.so.*,libxcb-xfixes.so.*
+private-lib libxcb-glx.so.*,libxcb-present.so.*,libxcb-sync.so.*,libz.so.*
+private-lib libwayland-server.so.*,libwayland-client.so.*
 
 # For xauth
 private-lib ld-linux-x86-64.so.*,libc.so.*,libdl.so.*,libX11.so.*,libXau.so.*
@@ -190,14 +192,14 @@ private-lib libavfilter.so.*,libavformat.so.*,libavresample.so.*,libavutil.so.*
 private-lib libblosc.so.*,libbsd.so.*,libbz2.so.*,libc.so.*,libdb-*.so
 private-lib libdl.so.*,libdrm.so.*,libfftw3.so.*,libfreetype.so.*,
 private-lib libftoa.so.*,libgif.so.*,libGLdispatch.so.*,libGLEW.so.*
-private-lib libGL.so.*,libGLX.so.*,libgmp.so.*,libgnutls.so.*,libgomp.so.*
+private-lib libGL.so.*,libGLU.so.*,libGLX.so.*,libgmp.so.*,libgnutls.so.*,libgomp.so.*
 private-lib libHalf-*.so.*,libhogweed.so.*,libicudata.so.*,libicuuc.so.*
 private-lib libidn2.so.*,libIex-*.so.*,libIlmImf-*.so.*,libIlmThread-*.so.*
 private-lib libImath-*.so.*,libjack.so.*,libjemalloc.so.*,libjpeg.so.*
 private-lib libjsoncpp.so.*,liblcms2.so.*,liblz4.so.*,liblzo2.so.*,libm.so.*
 private-lib libnettle.so.*,libogg.so.*,libOpenCL.so.*,libOpenColorIO.so.*
 private-lib libOpenGL.so.*,libOpenImageDenoise.so.*,libOpenImageIO.so.*
-private-lib libopenjp2.so.*,libosdCPU.so.*,libosdGPU.so.*,libpcre.so.*
+private-lib libopenjpeg.so.*,libopenjp2.so.*,libosdCPU.so.*,libosdGPU.so.*,libpcre.so.*
 private-lib libpng16.so.*,libpostproc.so.*,libpthread.so.*,libpugixml.so.*
 private-lib libpython*m.so.*,libraw_r.so.*,librt.so.*,libSDL2-2.0.so.*
 private-lib libsnappy.so.*,libsndfile.so.*,libspnav.so.*,libstdc++.so.*
@@ -210,7 +212,6 @@ private-lib libXcursor.so.*,libXdmcp.so.*,libXext.so.*,libXfixes.so.*,libXi.so.*
 private-lib libxml2.so.*,libXrandr.so.*,libXrender.so.*,libXxf86vm.so.*
 private-lib libyaml-cpp.so.*,libz.so.*
 
-
 # For Blender 2.90.0 system-blender (includes above block)
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 private-lib libboost_chrono.so.*,libboost_date_time.so.*
@@ -218,5 +219,14 @@ private-lib libboost_filesystem.so.*,libboost_iostreams.so.*
 private-lib libboost_locale.so.*,libboost_system.so.*,libboost_thread.so.*
 private-lib libboost_wave.so.*,libLLVM-*.so,libopenvdb.so.*
 private-lib libopenxr_loader.so.*,liboslcomp.so.*,liboslexec.so.*
+
+# For openvdb
+private-lib libGLU.so.*,libglfw.so.*
+
+# For mesa drivers - libvulkan_radeon.so
+private-lib libxcb-randr.so.*
+
+# For mesa libEGL_mesa.so.0.0.0
+private-lib libxcb-xfixes.so.*
 
 private-tmp

@@ -100,17 +100,18 @@ SLOT="0"
 
 IUSE=" +benchmark blender blender279b blender279b_filmic blender280 \
 blender281a blender282 blender2831 blender2831 blender2832 blender2836 \
-blender2900 allow-unknown-renderers disable-hard-version-blocks cuda doc \
-firejail intel-ocl lts +opencl opencl_rocm opencl_orca opencl_pal opengl_mesa \
-pro-drivers split-drivers system-blender gentoo-blender no-repacks \
+blender2900 blender2901 allow-unknown-renderers disable-hard-version-blocks \
+cuda doc firejail intel-ocl lts +opencl opencl_rocm opencl_orca opencl_pal \
+opengl_mesa pro-drivers split-drivers system-blender gentoo-blender no-repacks \
 video_cards_amdgpu video_cards_i965 video_cards_iris video_cards_nvidia \
 video_cards_radeonsi"
 REQUIRED_USE="
 	allow-unknown-renderers? ( blender !system-blender )
 	benchmark
-	benchmark? ( blender blender2836 )
+	benchmark? ( blender blender2901 )
 	blender? ( || ( blender279b blender279b_filmic blender280 blender281a
 			blender282 blender2831 blender2832 blender2836 blender2900
+			blender2901
 			allow-unknown-renderers ) )
 	blender279b? ( blender )
 	blender279b_filmic? ( blender )
@@ -121,6 +122,7 @@ REQUIRED_USE="
 	blender2832? ( blender )
 	blender2836? ( blender )
 	blender2900? ( blender )
+	blender2901? ( blender )
 	|| ( cuda opencl )
 	no-repacks? ( !allow-unknown-renderers !system-blender )
 	pro-drivers? ( || ( opencl_orca opencl_pal opencl_rocm ) )
@@ -137,7 +139,7 @@ REQUIRED_USE="
 		video_cards_amdgpu
 	)
 	split-drivers? ( || ( opencl_orca opencl_rocm ) )
-	system-blender? ( !allow-unknown-renderers )
+	system-blender? ( !allow-unknown-renderers !no-repacks )
 	video_cards_amdgpu? (
 		|| ( pro-drivers split-drivers )
 	)
@@ -219,6 +221,7 @@ RDEPEND="
 				blender2832? ( ~media-gfx/blender-2.83.2[cycles,build_creator(+),release(+)] )
 				blender2836? ( ~media-gfx/blender-2.83.6[cycles,build_creator(+),release(+)] )
 				blender2900? ( ~media-gfx/blender-2.90.0[cycles,build_creator(+),release(+)] )
+				blender2901? ( ~media-gfx/blender-2.90.1[cycles,build_creator(+),release(+)] )
 			)
 		)
 	)
@@ -462,7 +465,7 @@ src_prepare() {
 			src/com/sheepit/client/hardware/gpu/GPU.java || die
 	fi
 
-	eapply "${FILESDIR}/sheepit-client-6.2038.0-r11-renderer-version-picker.patch"
+	eapply "${FILESDIR}/sheepit-client-6.2038.0-r15-renderer-version-picker.patch"
 
 	if use system-blender ; then
 		if use gentoo-blender ; then
@@ -535,6 +538,11 @@ src_prepare() {
 	if ! use blender2900 ; then
 		if ! use disable-hard-version-blocks ; then
 			enable_hardblock "HARDBLOCK_BLENDER_2900"
+		fi
+	fi
+	if ! use blender2901 ; then
+		if ! use disable-hard-version-blocks ; then
+			enable_hardblock "HARDBLOCK_BLENDER_2901"
 		fi
 	fi
 }
@@ -612,7 +620,7 @@ src_install() {
 		fi
 		allowed_renderers+=" --allow-blender2832"
 	fi
-	if use blender2836 || use benchmark ; then
+	if use blender2836 ; then
 		if ! use system-blender ; then
 			dodoc -r "${FILESDIR}/blender-2.83.6-licenses"
 			use doc \
@@ -627,6 +635,14 @@ src_install() {
 			dodoc -r "${FILESDIR}/blender-2.90.0-readmes"
 		fi
 		allowed_renderers+=" --allow-blender2900"
+	fi
+	if use blender2901 || use benchmark ; then
+		if ! use system-blender ; then
+			dodoc -r "${FILESDIR}/blender-2.90.1-licenses"
+			use doc \
+			dodoc -r "${FILESDIR}/blender-2.90.1-readmes"
+		fi
+		allowed_renderers+=" --allow-blender2901"
 	fi
 	if use allow-unknown-renderers ; then
 		allowed_renderers+=" --allow-unknown-renderers"
@@ -650,16 +666,17 @@ src_install() {
 
 		insinto /etc/firejail
 		if use system-blender ; then
-			newins "${FILESDIR}/firejail-profiles/sheepit-client-default.profile" \
-				"sheepit-client.profile"
-		fi
-		if use no-repacks ; then
-			newins "${FILESDIR}/firejail-profiles/sheepit-client-no-repacks.profile" \
-				"sheepit-client.profile"
-		fi
-		if use no-repacks ; then
 			newins "${FILESDIR}/firejail-profiles/sheepit-client-system-blender.profile" \
 				"sheepit-client.profile"
+		else
+			if use no-repacks ; then
+				newins "${FILESDIR}/firejail-profiles/sheepit-client-no-repacks.profile" \
+					"sheepit-client.profile"
+			else
+				newins "${FILESDIR}/firejail-profiles/sheepit-client-default.profile" \
+					"sheepit-client.profile"
+
+			fi
 		fi
 	fi
 

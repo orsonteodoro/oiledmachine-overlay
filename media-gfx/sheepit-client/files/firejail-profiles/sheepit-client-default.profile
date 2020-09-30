@@ -85,7 +85,7 @@ private-bin X11
 private-bin wmname
 
 # For debugging this profile
-#private-bin ldd,ls,wc
+#private-bin find,grep,ldd,ls,wc
 
 # For Firejail
 private-bin xauth
@@ -153,9 +153,9 @@ private-lib libm.so.*,libpcre.so.*,libpthread.so.*,librt.so.*,libselinux.so.*
 private-lib libstdc++.so.*,libxshmfence.so.*,libtinfo.so.*,libudev.so.*
 private-lib libX11.so.*,libX11-xcb.so.*,libXau.so.*,libXdamage.so.*
 private-lib libXdmcp.so.*,libXext.so.*,libXfixes.so.*,libXxf86vm.so.*
-private-lib libxcb.so.*,libxcb-dri2.so.*,libxcb-dri3.so.*,libxcb-glx.so.*
-private-lib libxcb-present.so.*,libxcb-sync.so.*,libz.so.*
-private-lib libwayland-server.so.*
+private-lib libxcb.so.*,libxcb-dri2.so.*,libxcb-dri3.so.*,libxcb-xfixes.so.*
+private-lib libxcb-glx.so.*,libxcb-present.so.*,libxcb-sync.so.*,libz.so.*
+private-lib libwayland-server.so.*,libwayland-client.so.*
 
 # For xauth
 private-lib ld-linux-x86-64.so.*,libc.so.*,libdl.so.*,libX11.so.*,libXau.so.*
@@ -194,4 +194,30 @@ private-lib libutil.so.*,libstdc++.so.*,libtinfo.so.*,libtinfow.so.*
 #private-lib libX11.so.*,libX11-xcb.so.*,libXau.so.*,libxcb.so.*,libXdmcp.so.*,
 #private-lib libXext.so.*,libXtst.so.*,libz.so.*
 
+# For openvdb
+private-lib libGLU.so.*,libglfw.so.*
+
+# For mesa drivers - libvulkan_radeon.so
+private-lib libxcb-randr.so.*
+
+# For mesa libEGL_mesa.so.0.0.0
+private-lib libxcb-xfixes.so.*
+
 private-tmp
+
+# We have to individually mask because private-lib cannot reconstruct the
+# sliced path properly.  It only attaches the basename of the path.  It will copy
+# the 10 folder to /usr/lib64 which is wrong.
+
+blacklist /usr/lib64/llvm/roc
+blacklist /usr/lib64/llvm/14
+blacklist /usr/lib64/llvm/13
+blacklist /usr/lib64/llvm/12
+blacklist /usr/lib64/llvm/10/lib32
+blacklist /usr/lib64/llvm/9/lib32
+blacklist /usr/lib64/llvm/8
+blacklist /usr/lib64/llvm/7
+blacklist /usr/lib64/llvm/6
+blacklist /usr/lib64/llvm/5
+blacklist /usr/lib64/llvm/4
+blacklist /usr/lib64/llvm/3
