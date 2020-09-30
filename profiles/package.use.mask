@@ -8,7 +8,7 @@ liri-base/liri-meta appcenter
 media-gfx/sheepit-client disable-hard-version-blocks
 
 # No longer distributed by service
-media-gfx/sheepit-client blender2831 blender2832 blender2900
+media-gfx/sheepit-client blender2831 blender2832
 
 # Work In Progress (WIP)
 media-gfx/sheepit-client firejail
