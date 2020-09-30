@@ -1313,12 +1313,12 @@ blender_pkg_postinst() {
 	if [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" \
 	&& "${BLENDER_MAIN_SYMLINK_MODE}" == "latest-lts" ]] ; then
 		# highest lts
-		V=$(ls "${d_src}"/*/creator/.lts | sort -V | tail -n 1 \
-			| cut -f 5 -d "/")
+		V=$(basename $(dirname $(dirname $(ls \
+			"${d_src}"/*/creator/.lts | sort -V | tail -n 1))))
 	elif [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" \
 	&& "${BLENDER_MAIN_SYMLINK_MODE}" == "latest" ]] ; then
 		# highest v
-		V=$(ls "${EROOT}${d_src}/" | sort -V | tail -n 1)
+		V=$(ls "${d_src}/" | sed -e "/^[a-z]/d" | sort -V | tail -n 1)
 	elif [[ -n "${BLENDER_MAIN_SYMLINK_MODE}" \
 	&& "${BLENDER_MAIN_SYMLINK_MODE}" =~ ^custom-[0-9]\.[0-9]+$ ]] ; then
 		# custom v
