@@ -8,11 +8,8 @@ inherit bash-completion-r1 eutils flag-o-matic pax-utils python-any-r1 toolchain
 
 DESCRIPTION="A JavaScript runtime built on Chrome's V8 JavaScript engine"
 HOMEPAGE="https://nodejs.org/"
-SRC_URI="
-	https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz
-"
-
 LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 MIT"
+SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x64-macos"
@@ -21,35 +18,30 @@ IUSE+=" man"
 REQUIRED_USE="
 	inspector? ( icu ssl )
 	npm? ( ssl )
-	system-ssl? ( ssl )
-"
-
+	system-ssl? ( ssl )"
 CDEPEND="!net-libs/nodejs:0
 	app-eselect/eselect-nodejs"
 # Keep versions in sync with deps folder
 RDEPEND="${CDEPEND}
-	>=dev-libs/libuv-1.38.1:=
-	>=net-dns/c-ares-1.16.0
+	>=app-arch/brotli-1.0.9
+	>=dev-libs/libuv-1.40.0:=
+	>=net-dns/c-ares-1.16.1
 	>=net-libs/nghttp2-1.41.0
-	sys-libs/zlib
+	>=sys-libs/zlib-1.2.11
 	icu? ( >=dev-libs/icu-67.1:= )
-	system-ssl? ( >=dev-libs/openssl-1.1.1g:0= )
-"
+	system-ssl? ( >=dev-libs/openssl-1.1.1g:0= )"
 BDEPEND="${CDEPEND}
 	${PYTHON_DEPS}
 	systemtap? ( dev-util/systemtap )
 	test? ( net-misc/curl )
-	pax_kernel? ( sys-apps/elfix )
-"
-DEPEND="
-	${RDEPEND}
-"
+	pax_kernel? ( sys-apps/elfix )"
+DEPEND="${RDEPEND}"
 PATCHES=(
 	"${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch
 )
 RESTRICT="test"
 S="${WORKDIR}/node-v${PV}"
-NPM_V="6.14.6" # See https://github.com/nodejs/node/blob/v14.6.0/deps/npm/package.json
+NPM_V="6.14.8" # See https://github.com/nodejs/node/blob/v14.13.0/deps/npm/package.json
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
@@ -129,7 +121,11 @@ src_configure() {
 	xdg_environment_reset
 
 	local myconf=(
-		--shared-cares --shared-libuv --shared-nghttp2 --shared-zlib
+		--shared-brotli
+		--shared-cares
+		--shared-libuv
+		--shared-nghttp2
+		--shared-zlib
 	)
 	use debug && myconf+=( --debug )
 	use icu && myconf+=( --with-intl=system-icu ) || myconf+=( --with-intl=none )
@@ -174,7 +170,6 @@ src_install() {
 	default
 
 	mv "${ED}"/usr/bin/node{,${SLOT_MAJOR}} || die
-	pax-mark -m "${ED}"/usr/bin/node${SLOT_MAJOR}
 
 	# set up a symlink structure that node-gyp expects..
 	local D_INCLUDE_BASE="/usr/include/node${SLOT_MAJOR}"

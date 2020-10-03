@@ -8,9 +8,8 @@ inherit bash-completion-r1 eutils flag-o-matic pax-utils python-any-r1 toolchain
 
 DESCRIPTION="A JavaScript runtime built on Chrome's V8 JavaScript engine"
 HOMEPAGE="https://nodejs.org/"
-SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
-
 LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 MIT"
+SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x64-macos"
@@ -19,33 +18,29 @@ IUSE+=" man"
 REQUIRED_USE="
 	inspector? ( icu ssl )
 	npm? ( ssl )
-	system-ssl? ( ssl )
-"
-
+	system-ssl? ( ssl )"
 CDEPEND="!net-libs/nodejs:0
 	app-eselect/eselect-nodejs"
 # Keep versions in sync with deps folder
 RDEPEND="${CDEPEND}
-	>=dev-libs/libuv-1.34.2:=
+	>=dev-libs/libuv-1.39.0:=
 	>=net-dns/c-ares-1.15.0
 	>=net-libs/http-parser-2.9.3:=
-	>=net-libs/nghttp2-1.39.2
-	sys-libs/zlib
+	>=net-libs/nghttp2-1.41.0
+	>=sys-libs/zlib-1.2.11
 	icu? ( >=dev-libs/icu-64.2:= )
-	system-ssl? ( >=dev-libs/openssl-1.1.1e:0= )
-"
+	system-ssl? ( >=dev-libs/openssl-1.1.1g:0= )"
 DEPEND="${CDEPEND}
 	${RDEPEND}
 	${PYTHON_DEPS}
 	systemtap? ( dev-util/systemtap )
-	test? ( net-misc/curl )
-"
+	test? ( net-misc/curl )"
 PATCHES=(
 	"${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch
 )
 RESTRICT="test"
 S="${WORKDIR}/node-v${PV}"
-NPM_V="6.14.4" # See https://github.com/nodejs/node/blob/v10.20.1/deps/npm/package.json
+NPM_V="6.14.6" # See https://github.com/nodejs/node/blob/v10.22.1/deps/npm/package.json
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
@@ -248,6 +243,13 @@ src_test() {
 }
 
 pkg_postinst() {
+	einfo "The global npm config lives in /etc/npm. This deviates slightly"
+	einfo "from upstream which otherwise would have it live in /usr/etc/."
+	einfo ""
+	einfo "Protip: When using node-gyp to install native modules, you can"
+	einfo "avoid having to download extras by doing the following:"
+	einfo "$ node-gyp --nodedir /usr/include/node <command>"
+
 	if has '>=net-libs/nodejs-${PV}' ; then
 		einfo \
 "Found higher slots, manually change the headers with \`eselect nodejs\`."
