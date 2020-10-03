@@ -1,8 +1,21 @@
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 # This Firejail profile is for the sheepit-client using tarballs from the Sheep
 # it service.
-# Status:  Work In Progress (WIP) / Incomplete
-# Bug: Halts after benchmark
+# Status:  Work In Progress (WIP) / Testing
+# TODO:  Add more blacklist rules for dev tools, usr/libexec, opt/icedtea-bin, internal python
+# TODO:  Blacklist rules to block compilation
+# TODO:  Add netfilter firewall rules
+
+# Uncomment (*) sections and use an interactive shell and do to find missing
+# libs:
+#
+#   for f in $(find . -executable -type f) ; do echo "inspecting ${f}" ; \
+#   ldd "${f}" | grep "not found" ; done
+#
+# Add the missing libs with the private-libs rule.
+#
+# To use the interactive shell run:
+# firejail --profile=/etc/firejail/sheepit-client.profile bash
 
 # Add OpenCL driver and Java overrides in here
 include sheepit-client.local
@@ -19,13 +32,14 @@ whitelist /etc/ca-certificates
 whitelist /etc/java-config-2
 whitelist /etc/ld.so.cache
 whitelist /etc/ld.so.preload
-whitelist /etc/passwd
 whitelist /etc/OpenCL
 whitelist /etc/resolv.conf
 whitelist /etc/ssl
 whitelist /etc/vulkan
+# For auto-restoring service password.  Disable if you don't need auto-restore.
+whitelist /etc/passwd
 
-# etc paths allowed for debugging only.  Disable when not in use
+# (*) etc paths allowed for debugging only.  Disable when not in use
 #whitelist /etc/bash
 #whitelist /etc/terminfo
 
@@ -73,7 +87,7 @@ private-dev
 private-home .sheepit.conf,.sheepit-client
 mkdir ${HOME}/.cache
 
-# For sheepit-client wrapper
+# (*) For sheepit-client wrapper
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 #private-bin bash,basename,cut,echo,find,grep,groups,kdialog,killall,md5sum
 #private-bin mkdir,rm,stat,which,zenity
@@ -85,7 +99,7 @@ private-bin X11
 private-bin wmname
 
 # For debugging this profile
-#private-bin find,grep,ldd,ls,wc
+#private-bin find,grep,ldd,less,ls,strings,wc
 
 # For Firejail
 private-bin xauth
@@ -100,13 +114,13 @@ private-bin bash,id,ldd,nice,sheepit-client
 #private-bin shutdown
 
 # For icedtea-bin jre
-# private-lib libasound.so.* # disabled because sound is disabled
 private-lib gcc,jvm,ld-linux-x86-64.so.*,libbsd.so.*,libbz2.so.*,libc.so.*
 private-lib libdl.so.*,libexpat.so.*,libfontconfig.so.*,libfreetype.so.*
 private-lib libgif.so.*,libjpeg.so.*,liblcms2.so.*,libm.so.*,libpng16.so.*
 private-lib libpthread.so.*,libstdc++.so.*,libthread_db.so.*,libuuid.so.*
 private-lib libX11.so.*,libXau.so.*,libXcomposite.so.*,libXdmcp.so.*
 private-lib libXext.so.*,libXi.so.*,libXrender.so.*,libXtst.so.*,libz.so.*
+# private-lib libasound.so.* # disabled because sound is disabled
 
 # For jna
 private-lib jna,ld-linux-x86-64.so.*,libffi.so.*,libc.so.*
@@ -121,7 +135,6 @@ private-lib ld-linux-x86-64.so.*,libreadline.so.*,libtinfo.so.*,libc.so.*,libtin
 private-lib ld-linux-x86-64.so.*,libc.so.*,libpcre.so.*,libpthread.so.*
 
 # For killall (used by sheepit-client wrapper to remove zombie)
-
 
 # For wmname
 #private-lib ld-linux-x86-64.so.*,libbsd.so.*,libc.so.*,libdl.so.*,libX11.so.*
@@ -203,21 +216,13 @@ private-lib libxcb-randr.so.*
 # For mesa libEGL_mesa.so.0.0.0
 private-lib libxcb-xfixes.so.*
 
+# For cycles and OpenCL.java
+private-lib libOpenCL.so.*
+
+# Required if not using internal python to avoid: ModuleNotFoundError: No module named 'encodings'
+#private-lib python2.7
+#private-lib python3.6
+#private-lib python3.7
+#private-lib python3.8
+
 private-tmp
-
-# We have to individually mask because private-lib cannot reconstruct the
-# sliced path properly.  It only attaches the basename of the path.  It will copy
-# the 10 folder to /usr/lib64 which is wrong.
-
-blacklist /usr/lib64/llvm/roc
-blacklist /usr/lib64/llvm/14
-blacklist /usr/lib64/llvm/13
-blacklist /usr/lib64/llvm/12
-blacklist /usr/lib64/llvm/10/lib32
-blacklist /usr/lib64/llvm/9/lib32
-blacklist /usr/lib64/llvm/8
-blacklist /usr/lib64/llvm/7
-blacklist /usr/lib64/llvm/6
-blacklist /usr/lib64/llvm/5
-blacklist /usr/lib64/llvm/4
-blacklist /usr/lib64/llvm/3

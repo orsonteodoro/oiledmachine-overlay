@@ -709,11 +709,10 @@ Run 'wmname LG3D' before you run '${PN}'"
 		ewarn \
 "The Firejail profile is experimental.  Several updates may occur to improve \n\
 the privacy within the sandboxed image and reduce the attack surface.  Also, \n\
-updates may occur to fix errors between different configurations.  It currently \n\
-does not work."
+updates may occur to fix errors between different configurations."
 		einfo \
 "The Firejail profile requires additional rules for your JRE and video card \n\
-drivers.  Add them to /etc/firejail/sheepit-client.local.  Use ldd on the \n\
+drivers.  Add them to /etc/firejail/sheepit-client.local.  Use ldd on the\n\
 shared libraries and drivers to add more private-lib or whitelist rules."
 	fi
 }

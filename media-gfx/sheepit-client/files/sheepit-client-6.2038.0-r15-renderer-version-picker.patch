@@ -37,7 +37,7 @@ diff -urp sheepit-client-6.2038.0.orig/src/com/sheepit/client/Client.java sheepi
  	}
  	
  	protected void sendError(int step_, Job job_to_reset_, Error.Type error) {
-+		this.disableErrorSending = true;
++		//this.disableErrorSending = true;
  		if (this.disableErrorSending) {
  			this.log.debug("Error sending is disabled, do not send log");
  			return;
