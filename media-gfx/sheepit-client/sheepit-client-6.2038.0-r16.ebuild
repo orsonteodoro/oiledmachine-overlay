@@ -108,7 +108,7 @@ video_cards_radeonsi"
 REQUIRED_USE="
 	allow-unknown-renderers? ( blender !system-blender )
 	benchmark
-	benchmark? ( blender blender2901 )
+	benchmark? ( blender blender2836 )
 	blender? ( || ( blender279b blender279b_filmic blender280 blender281a
 			blender282 blender2831 blender2832 blender2836 blender2900
 			blender2901
@@ -620,7 +620,7 @@ src_install() {
 		fi
 		allowed_renderers+=" --allow-blender2832"
 	fi
-	if use blender2836 ; then
+	if use blender2836 || use benchmark ; then
 		if ! use system-blender ; then
 			dodoc -r "${FILESDIR}/blender-2.83.6-licenses"
 			use doc \
@@ -636,7 +636,7 @@ src_install() {
 		fi
 		allowed_renderers+=" --allow-blender2900"
 	fi
-	if use blender2901 || use benchmark ; then
+	if use blender2901 ; then
 		if ! use system-blender ; then
 			dodoc -r "${FILESDIR}/blender-2.90.1-licenses"
 			use doc \
