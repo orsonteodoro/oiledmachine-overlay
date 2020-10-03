@@ -10,9 +10,6 @@ media-gfx/sheepit-client disable-hard-version-blocks
 # No longer distributed by service
 media-gfx/sheepit-client blender2831 blender2832
 
-# Work In Progress (WIP)
-media-gfx/sheepit-client firejail
-
 # Untested.  Please report back to remove hard use mask
 >=sys-kernel/genkernel-4 subdir_mount
 
