@@ -620,7 +620,7 @@ src_install() {
 		fi
 		allowed_renderers+=" --allow-blender2832"
 	fi
-	if use blender2836 || use benchmark ; then
+	if use blender2836 ; then
 		if ! use system-blender ; then
 			dodoc -r "${FILESDIR}/blender-2.83.6-licenses"
 			use doc \

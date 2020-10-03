@@ -5,6 +5,7 @@
 # TODO:  Add more blacklist rules for dev tools, usr/libexec, opt/icedtea-bin, internal python
 # TODO:  Blacklist rules to block compilation
 # TODO:  Add netfilter firewall rules
+# TODO:  Apparmor support
 
 # Uncomment (*) sections and use an interactive shell and do to find missing
 # libs:
