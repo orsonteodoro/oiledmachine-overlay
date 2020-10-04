@@ -125,6 +125,9 @@ x11-drivers/xf86-video-ati
 # Masked for ebuild quality control reasons
 #--------------------------------------------------------------------------------------------------
 
+# The subdir_mount USE flag and patch needs testing
+>=sys-kernel/genkernel-4.1
+
 # for upstream development only
 =app-editors/nano-ycmd-9999
 

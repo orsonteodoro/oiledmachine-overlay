@@ -193,7 +193,7 @@ src_prepare() {
 		|| die "Could not adjust versions"
 
 	if use subdir_mount ; then # conditional and codeblock and use flag added by muslx32 overlay
-		eapply "${FILESDIR}"/${PN}-4.0.10-subdir-mount.patch
+		eapply "${FILESDIR}"/${PN}-4.1.2-subdir-mount.patch
 	fi
 
 	if use crypt_root_plain ; then

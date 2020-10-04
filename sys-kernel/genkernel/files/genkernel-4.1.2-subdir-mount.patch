@@ -1,0 +1,29 @@
+diff -urp genkernel-4.1.2.orig/defaults/linuxrc genkernel-4.1.2/defaults/linuxrc
+--- genkernel-4.1.2.orig/defaults/linuxrc	2020-10-04 10:27:22.607644315 -0700
++++ genkernel-4.1.2/defaults/linuxrc	2020-10-04 10:31:45.318018948 -0700
+@@ -84,6 +84,9 @@ do
+ 		subdir=*)
+ 			SUBDIR=${x#*=}
+ 		;;
++		subdir_mount=*)
++			SUBDIR_MOUNT=${x#*=}
++		;;
+ 		real_init=*)
+ 			REAL_INIT=${x#*=}
+ 		;;
+@@ -1320,6 +1323,13 @@ fi
+ 
+ cleanup
+ 
++if [ -n "${SUBDIR_MOUNT}" ]
++then
++	mkdir -p /newroot2
++	mount -o bind "${NEW_ROOT}/${SUBDIR_MOUNT}" /newroot2
++	CHROOT="/newroot2"
++fi
++
+ udevsettle
+ run udevadm control --exit
+ if pgrep udevd >/dev/null 2>&1
+Only in genkernel-4.1.2/defaults: linuxrc.orig
+Only in genkernel-4.1.2/defaults: linuxrc.rej
