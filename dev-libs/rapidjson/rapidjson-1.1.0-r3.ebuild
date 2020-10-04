@@ -5,7 +5,7 @@
 
 EAPI=7
 
-inherit cmake-multilib
+inherit cmake-utils
 
 DESCRIPTION="A fast JSON parser/generator for C++ with both SAX/DOM style API"
 HOMEPAGE="https://rapidjson.org/"
@@ -32,8 +32,10 @@ DEPEND="
 	)"
 RDEPEND=""
 
+# Header only use shared folders like glm
 PATCHES=(
 	"${FILESDIR}/${P}-gcc-7.patch"
+	"${FILESDIR}/${PN}-1.1.0-r2-shared-dest.patch"
 )
 
 src_prepare() {
@@ -41,13 +43,13 @@ src_prepare() {
 
 	sed -i -e 's|-Werror||g' CMakeLists.txt || die
 	sed -i -e 's|-Werror||g' example/CMakeLists.txt || die
-	multilib_copy_sources
 }
 
-multilib_src_configure() {
+src_configure() {
 	local mycmakeargs=(
 		-DDOC_INSTALL_DIR="${EPREFIX}/usr/share/doc/${PF}"
 		-DLIB_INSTALL_DIR="${EPREFIX}/usr/$(get_libdir)"
+		-DSHARE_INSTALL_DIR="${EPREFIX}/usr/share"
 		-DRAPIDJSON_BUILD_DOC=$(usex doc)
 		-DRAPIDJSON_BUILD_EXAMPLES=$(usex examples)
 		-DRAPIDJSON_BUILD_TESTS=$(usex test)
