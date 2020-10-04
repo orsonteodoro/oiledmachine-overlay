@@ -37,11 +37,11 @@ RDEPEND="android? ( dev-util/android-ndk
 	 dev-libs/openssl[${MULTILIB_USEDEP}]
 	 dev-libs/protobuf[${MULTILIB_USEDEP}]
 	 dev-libs/pugixml[${MULTILIB_USEDEP}]
-	 dev-libs/rapidjson[${MULTILIB_USEDEP}]
+	 dev-libs/rapidjson
 	 games-misc/lgmplugin
 	 games-util/lateralgm[android?,linux?,vanilla?,${MULTILIB_USEDEP}]
 	 gles? (
-		media-libs/glm[${MULTILIB_USEDEP}]
+		media-libs/glm
 		media-libs/libepoxy[${MULTILIB_USEDEP}]
 		media-libs/mesa[${MULTILIB_USEDEP}]
 	 )
@@ -57,7 +57,7 @@ RDEPEND="android? ( dev-util/android-ndk
 		media-libs/dumb[${MULTILIB_USEDEP}]
 		media-libs/openal[${MULTILIB_USEDEP}] )
 	 opengl? ( media-libs/glew[${MULTILIB_USEDEP}]
-		   media-libs/glm[${MULTILIB_USEDEP}]
+		   media-libs/glm
 		   media-libs/mesa[${MULTILIB_USEDEP}] )
 	 radialgm? ( net-dns/c-ares[${MULTILIB_USEDEP}]
 		     net-libs/grpc[${MULTILIB_USEDEP}] )
@@ -81,9 +81,9 @@ DEPEND="${RDEPEND}
 		>=sys-devel/gcc-9
 	)
 	clang? (
-		>=sys-devel/clang-10
+		>=sys-devel/clang-10[${MULTILIB_USEDEP}]
 		>=sys-devel/lld-10
-		>=sys-devel/llvm-10
+		>=sys-devel/llvm-10[${MULTILIB_USEDEP}]
 	)
 	>=dev-util/cmake-3.14
 	dev-util/pkgconfig[${MULTILIB_USEDEP}]
