@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{6,7} )
 PYTHON_REQ_USE="threads(+)"
 inherit bash-completion-r1 eutils flag-o-matic pax-utils python-any-r1 toolchain-funcs xdg-utils
 
@@ -12,8 +12,8 @@ LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 MIT"
 SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x64-macos"
-IUSE="cpu_flags_x86_sse2 debug doc +icu inspector npm pax_kernel +snapshot +ssl +system-ssl systemtap test"
+KEYWORDS="amd64 ~arm arm64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x64-macos"
+IUSE="cpu_flags_x86_sse2 debug doc icu inspector npm +snapshot +ssl +system-ssl systemtap test"
 IUSE+=" man"
 REQUIRED_USE="
 	inspector? ( icu ssl )
@@ -23,9 +23,10 @@ CDEPEND="!net-libs/nodejs:0
 	app-eselect/eselect-nodejs"
 # Keep versions in sync with deps folder
 RDEPEND="${CDEPEND}
-	>=app-arch/brotli-1.0.9
-	>=dev-libs/libuv-1.40.0:=
+	>=app-arch/brotli-1.0.7
+	>=dev-libs/libuv-1.39.0:=
 	>=net-dns/c-ares-1.16.1
+	>=net-libs/http-parser-2.9.3:=
 	>=net-libs/nghttp2-1.41.0
 	>=sys-libs/zlib-1.2.11
 	icu? ( >=dev-libs/icu-67.1:= )
@@ -33,15 +34,15 @@ RDEPEND="${CDEPEND}
 BDEPEND="${CDEPEND}
 	${PYTHON_DEPS}
 	systemtap? ( dev-util/systemtap )
-	test? ( net-misc/curl )
-	pax_kernel? ( sys-apps/elfix )"
+	test? ( net-misc/curl )"
 DEPEND="${RDEPEND}"
 PATCHES=(
 	"${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch
+	"${FILESDIR}"/${PN}-99999999-llhttp.patch
 )
 RESTRICT="test"
 S="${WORKDIR}/node-v${PV}"
-NPM_V="6.14.8" # See https://github.com/nodejs/node/blob/v14.13.0/deps/npm/package.json
+NPM_V="6.14.6" # See https://github.com/nodejs/node/blob/v12.18.4/deps/npm/package.json
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
@@ -59,9 +60,9 @@ pkg_setup() {
 "You need to disable npm on net-libs/nodejs[npm]:multislot/10.  Only enable\n\
 npm on the highest slot."
 	fi
-	if has 'net-libs/nodejs[npm]:multislot/12' ; then
+	if has 'net-libs/nodejs[npm]:multislot/14' ; then
 		die \
-"You need to disable npm on net-libs/nodejs[npm]:multislot/12.  Only enable\n\
+"You need to disable npm on net-libs/nodejs[npm]:multislot/14.  Only enable\n\
 npm on the highest slot."
 	fi
 	if has 'net-libs/nodejs[man]:multislot/10' ; then
@@ -69,15 +70,15 @@ npm on the highest slot."
 "You need to disable npm on net-libs/nodejs[man]:multislot/10.  Only enable\n\
 man on the highest slot."
 	fi
-	if has 'net-libs/nodejs[man]:multislot/12' ; then
+	if has 'net-libs/nodejs[man]:multislot/14' ; then
 		die \
-"You need to disable npm on net-libs/nodejs[man]:multislot/12.  Only enable\n\
+"You need to disable npm on net-libs/nodejs[man]:multislot/14.  Only enable\n\
 man on the highest slot."
 	fi
 }
 
 src_prepare() {
-	tc-export AR CC CXX PKG_CONFIG
+	tc-export CC CXX PKG_CONFIG
 	export V=1
 	export BUILDTYPE=Release
 
@@ -111,9 +112,6 @@ src_prepare() {
 		BUILDTYPE=Debug
 	fi
 
-	# We need to disable mprotect on two files when it builds Bug 694100.
-	use pax_kernel && PATCHES+=( "${FILESDIR}"/${PN}-13.8.0-paxmarking.patch )
-
 	default
 }
 
@@ -123,6 +121,7 @@ src_configure() {
 	local myconf=(
 		--shared-brotli
 		--shared-cares
+		--shared-http-parser
 		--shared-libuv
 		--shared-nghttp2
 		--shared-zlib
@@ -160,6 +159,8 @@ src_configure() {
 }
 
 src_compile() {
+	emake -C out mksnapshot
+	pax-mark m "out/${BUILDTYPE}/mksnapshot"
 	emake -C out
 }
 
@@ -170,6 +171,7 @@ src_install() {
 	default
 
 	mv "${ED}"/usr/bin/node{,${SLOT_MAJOR}} || die
+	pax-mark -m "${ED}"/usr/bin/node${SLOT_MAJOR}
 
 	# set up a symlink structure that node-gyp expects..
 	local D_INCLUDE_BASE="/usr/include/node${SLOT_MAJOR}"
@@ -243,10 +245,17 @@ src_install() {
 
 src_test() {
 	out/${BUILDTYPE}/cctest || die
-	"${EPYTHON}" tools/test.py --mode=${BUILDTYPE,,} -J message parallel sequential || die
+	"${PYTHON}" tools/test.py --mode=${BUILDTYPE,,} -J message parallel sequential || die
 }
 
 pkg_postinst() {
+	elog "The global npm config lives in /etc/npm. This deviates slightly"
+	elog "from upstream which otherwise would have it live in /usr/etc/."
+	elog ""
+	elog "Protip: When using node-gyp to install native modules, you can"
+	elog "avoid having to download extras by doing the following:"
+	elog "$ node-gyp --nodedir /usr/include/node <command>"
+
 	if has '>=net-libs/nodejs-${PV}' ; then
 		einfo \
 "Found higher slots, manually change the headers with \`eselect nodejs\`."
@@ -256,7 +265,7 @@ pkg_postinst() {
 	cp "${FILESDIR}/node-multiplexer-v2" "${EROOT}/usr/bin/node" || die
 	chmod 0755 /usr/bin/node || die
 	chown root:root /usr/bin/node || die
-
+	grep -q -F "NODE_VERSION" "${EROOT}/usr/bin/node" || die "Wrapper did not copy."
 	einfo
 	einfo "When compiling with nodejs multislot, you to switch via"
 	einfo "\`eselect nodejs\` in order to compile against the headers"
