@@ -28,11 +28,11 @@ RDEPEND="${PYTHON_DEPS}
 	x11-base/xorg-drivers[video_cards_amdgpu]
 		)
 		video_cards_amdgpu-pro? (
-	blender-libs/mesa:=[video_cards_radeonsi]
+	media-libs/mesa:=[video_cards_radeonsi]
 	x11-drivers/amdgpu-pro[-opengl_pro,opengl_mesa,vulkan]
 		)
 		video_cards_amdgpu-pro-lts? (
-	blender-libs/mesa:=[video_cards_radeonsi]
+	media-libs/mesa:=[video_cards_radeonsi]
 	x11-drivers/amdgpu-pro-lts[-opengl_pro,opengl_mesa,vulkan]
 		)
 		video_cards_i965? (
