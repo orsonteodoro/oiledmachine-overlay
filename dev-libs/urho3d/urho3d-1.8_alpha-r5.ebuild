@@ -73,7 +73,6 @@ IUSE="${X86_CPU_FEATURES[@]%:*} \
 	+webp"
 REQUIRED_USE="
 	alsa? ( sound threads )
-	!android
 	android? ( !system-angelscript
 		!system-assimp
 		!system-box2d
@@ -102,7 +101,6 @@ REQUIRED_USE="
 	native
 	odbc? ( !sqlite )
 	opengl
-	!raspberry-pi
 	raspberry-pi? (
 		multitarget? (
 			!system-angelscript
