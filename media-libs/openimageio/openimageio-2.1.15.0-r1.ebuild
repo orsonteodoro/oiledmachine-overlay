@@ -95,6 +95,10 @@ DEPEND="${RDEPEND}"
 
 DOCS=( CHANGES.md CREDITS.md README.md )
 
+PATCHES=(
+	"${FILESDIR}/${PN}-2.1.15.0-longitude-spelling.patch"
+)
+
 S="${WORKDIR}/oiio-Release-${PV}"
 
 pkg_setup() {

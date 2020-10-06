@@ -83,7 +83,9 @@ DEPEND="${RDEPEND}"
 
 DOCS=( CHANGES.md CREDITS.md README.md src/doc/${PN}.pdf )
 
-PATCHES=( "${FILESDIR}/${P}-boostpython.patch" )
+PATCHES=(
+	"${FILESDIR}/${P}-boostpython.patch"
+)
 
 S="${WORKDIR}/oiio-Release-${PV}"
 
