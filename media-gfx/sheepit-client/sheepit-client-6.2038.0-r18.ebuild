@@ -374,6 +374,57 @@ gbewarn() {
 	ewarn "Blender ${pv} is not supported with the gentoo-blender USE flag"
 }
 
+check_embree() {
+	# There is no standard embree ebuild.  Assume other repo or local copy.
+
+	# This check is ensure that the rendering quality is the same and the output
+	# is the same especially if the animated movies are split.
+
+	if has embree ${IUSE_EFFECTIVE} && use embree ; then
+		# The default for EMBREE_FILTER_FUNCTION is ON in embree.
+		if grep -q -F -e "EMBREE_FILTER_FUNCTION=OFF" \
+			"${EROOT}/var/db/pkg/media-libs/embree-"*/*.ebuild ; then
+			die "EMBREE_FILTER_FUNCTION should be set to ON for embree."
+		else
+			if has_version 'media-libs/embree[-filter_function]' || \
+				has_version 'media-libs/embree[-filter-function]' || \
+				has_version 'media-libs/embree[-filterfunction]' ; then
+				die "EMBREE_FILTER_FUNCTION should be set to ON for embree."
+			fi
+		fi
+
+		# The default for EMBREE_BACKFACE_CULLING is OFF in embree.
+		if grep -q -F -e "EMBREE_BACKFACE_CULLING=ON" \
+			"${EROOT}/var/db/pkg/media-libs/embree-"*/*.ebuild ; then
+			die "EMBREE_BACKFACE_CULLING should be set to OFF for embree."
+		else
+			if has_version 'media-libs/embree[backface_culling]' || \
+				has_version 'media-libs/embree[backface-culling]' || \
+				has_version 'media-libs/embree[backfaceculling]' ; then
+				die "EMBREE_BACKFACE_CULLING should be set to OFF for embree."
+			fi
+		fi
+
+		# The default for EMBREE_RAY_MASK is OFF in embree.
+		if grep -q -F -e "EMBREE_RAY_MASK=OFF" \
+			"${EROOT}/var/db/pkg/media-libs/embree-"*/*.ebuild ; then
+			die "EMBREE_RAY_MASK should be set to ON for embree."
+		else
+			if has_version 'media-libs/embree[-ray_mask]' || \
+				has_version 'media-libs/embree[-ray-mask]' || \
+				has_version 'media-libs/embree[-raymask]' ; then
+				die "EMBREE_RAY_MASK should be set to ON for embree."
+			elif has_version 'media-libs/embree[ray_mask]' || \
+				has_version 'media-libs/embree[ray-mask]' || \
+				has_version 'media-libs/embree[raymask]' ; then
+				:;
+			elif has_version 'media-libs/embree' ; then
+				die "EMBREE_RAY_MASK should be set to ON for embree."
+			fi
+		fi
+	fi
+}
+
 pkg_setup() {
 	if use gentoo-blender ; then
 		use blender279b_filmic && gbewarn "2.79b_filmic"
@@ -425,6 +476,10 @@ pkg_setup() {
 
 		if (( $(nproc) < 2 )) ; then
 			ewarn "Blender requires a dual core CPU."
+		fi
+
+		if use system-blender ; then
+			check_embree
 		fi
 	fi
 }
