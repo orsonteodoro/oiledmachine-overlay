@@ -184,6 +184,54 @@ blender_pkg_pretend() {
 	blender_check_requirements
 }
 
+check_embree() {
+	# There is no standard embree ebuild.  Assume other repo or local copy.
+
+	if has embree ${IUSE_EFFECTIVE} && use embree ; then
+		# The default for EMBREE_FILTER_FUNCTION is ON in embree.
+		if grep -q -F -e "EMBREE_FILTER_FUNCTION=OFF" \
+			"${EROOT}/var/db/pkg/media-libs/embree-"*/*.ebuild ; then
+			ewarn "EMBREE_FILTER_FUNCTION should be set to ON for embree."
+		else
+			if has_version 'media-libs/embree[-filter_function]' || \
+				has_version 'media-libs/embree[-filter-function]' || \
+				has_version 'media-libs/embree[-filterfunction]' ; then
+				ewarn "EMBREE_FILTER_FUNCTION should be set to ON for embree."
+			fi
+		fi
+
+		# The default for EMBREE_BACKFACE_CULLING is OFF in embree.
+		if grep -q -F -e "EMBREE_BACKFACE_CULLING=ON" \
+			"${EROOT}/var/db/pkg/media-libs/embree-"*/*.ebuild ; then
+			ewarn "EMBREE_BACKFACE_CULLING should be set to OFF for embree."
+		else
+			if has_version 'media-libs/embree[backface_culling]' || \
+				has_version 'media-libs/embree[backface-culling]' || \
+				has_version 'media-libs/embree[backfaceculling]' ; then
+				ewarn "EMBREE_BACKFACE_CULLING should be set to OFF for embree."
+			fi
+		fi
+
+		# The default for EMBREE_RAY_MASK is OFF in embree.
+		if grep -q -F -e "EMBREE_RAY_MASK=OFF" \
+			"${EROOT}/var/db/pkg/media-libs/embree-"*/*.ebuild ; then
+			ewarn "EMBREE_RAY_MASK should be set to ON for embree."
+		else
+			if has_version 'media-libs/embree[-ray_mask]' || \
+				has_version 'media-libs/embree[-ray-mask]' || \
+				has_version 'media-libs/embree[-raymask]' ; then
+				ewarn "EMBREE_RAY_MASK should be set to ON for embree."
+			elif has_version 'media-libs/embree[ray_mask]' || \
+				has_version 'media-libs/embree[ray-mask]' || \
+				has_version 'media-libs/embree[raymask]' ; then
+				:;
+			elif has_version 'media-libs/embree' ; then
+				ewarn "EMBREE_RAY_MASK should be set to ON for embree."
+			fi
+		fi
+	fi
+}
+
 blender_pkg_setup() {
 	llvm_pkg_setup
 	blender_check_requirements
@@ -191,6 +239,7 @@ blender_pkg_setup() {
 	check_amdgpu_pro
 	check_cpu
 	check_optimal_compiler_for_cycles_x86
+	check_embree
 	if declare -f _blender_pkg_setup > /dev/null ; then
 		_blender_pkg_setup
 	fi
