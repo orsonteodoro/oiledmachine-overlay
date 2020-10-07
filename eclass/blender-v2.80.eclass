@@ -115,7 +115,7 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	cycles? ( >=dev-libs/pugixml-1.9 )
 	embree? ( >=media-libs/embree-3.2.4:=\
-[cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,static-libs] )
+[cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,raymask,static-libs] )
 	ffmpeg? ( >=media-video/ffmpeg-4.0.2:=\
 [encode,jpeg2k?,mp3?,theora?,vorbis?,vpx?,x264,xvid?,zlib] )
 	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
