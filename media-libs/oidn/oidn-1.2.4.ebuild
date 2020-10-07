@@ -9,7 +9,7 @@ LICENSE="Apache-2.0"
 PYTHON_COMPAT=( python2_7 python3_{6,7,8} )
 inherit cmake-utils eutils python-single-r1 toolchain-funcs
 # MKL_DNN is 1.4.0 with additional custom commits.
-MKL_DNN_COMMIT="9730e5bf70fb6f6dc81d8514202dbbd00adaa305"
+MKL_DNN_COMMIT="603620ba45185e7d91fe112b69287e7d86c64353"
 OIDN_WEIGHTS_COMMIT="08092e46a1961b13b70e48ad80fa19b452bd4c01"
 ORG_GH="https://github.com/OpenImageDenoise"
 SLOT="0/${PV}"
@@ -47,6 +47,7 @@ RDEPEND="${PYTHON_DEPS}
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.1"
 CMAKE_BUILD_TYPE=Release
+RESTRICT="mirror"
 
 pkg_setup() {
 	if [[ ! -f /proc/cpuinfo ]] ; then
