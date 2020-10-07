@@ -6,9 +6,9 @@ DESCRIPTION="Intel(R) Open Image Denoise library"
 HOMEPAGE="http://www.openimagedenoise.org/"
 KEYWORDS="~amd64"
 LICENSE="Apache-2.0"
-PYTHON_COMPAT=( python2_7 python3_{6,7,8} )
+PYTHON_COMPAT=( python2_7 python3_{6,7,8,9} )
 inherit cmake-utils eutils python-single-r1 toolchain-funcs
-# MKL_DNN is 1.4.0 with additional custom commits.
+# MKL_DNN is oneDNN 1.6.2 with additional custom commits.
 MKL_DNN_COMMIT="603620ba45185e7d91fe112b69287e7d86c64353"
 OIDN_WEIGHTS_COMMIT="08092e46a1961b13b70e48ad80fa19b452bd4c01"
 ORG_GH="https://github.com/OpenImageDenoise"
@@ -42,7 +42,7 @@ RDEPEND="${PYTHON_DEPS}
 		icc? ( >=dev-lang/icc-${MIN_ICC_V} )
 	)
 	>=dev-cpp/tbb-2017
-	>=dev-lang/ispc-1.12.0
+	>=dev-lang/ispc-1.14.1
 	openimageio? ( media-libs/openimageio )"
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.1"
