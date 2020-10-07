@@ -122,8 +122,10 @@ src_configure() {
 "${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/include;${CMAKE_INCLUDE_PATH}"
 
 		mycmakeargs+=(
-			-DOPENGL_egl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so"
-			-DOPENGL_gl_LIBRARY="${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so"
+			-DOPENGL_egl_LIBRARY=\
+"${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libEGL.so"
+			-DOPENGL_gl_LIBRARY=\
+"${EROOT}/usr/$(get_libdir)/blender/mesa/${LLVM_V}/usr/$(get_libdir)/libGL.so"
 		)
 	fi
 
