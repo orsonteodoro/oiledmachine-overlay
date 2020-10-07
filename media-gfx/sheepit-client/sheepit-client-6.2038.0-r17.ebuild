@@ -193,6 +193,10 @@ RDEPEND_BLENDER="
 
 # Due to the many different Blender project requirements, the release config
 # flags will be used to match especially those that affect the rendering.
+#
+# If you use the gentoo-overlay ebuilds, you must match exactly the benchmark
+# version of Blender in order to progress to render other projects.  This
+# may require to maintain your own version on your local repository.
 RDEPEND="
 	blender? (
 		firejail? ( sys-apps/firejail )
@@ -203,8 +207,13 @@ RDEPEND="
 		)
 		system-blender? (
 			gentoo-blender? (
-				blender279b? (
-					~media-gfx/blender-2.79b[bullet,collada,color-management,cycles,dds,-debug,elbeem,fftw,-headless,nls,openexr,openimageio,opensubdiv,openvdb,osl,tiff]
+				blender2836? (
+					~media-gfx/blender-2.83.6[bullet,collada,color-management,cycles,dds,-debug,elbeem,fftw,-headless,nls,openexr,openimagedenoise,openimageio,opensubdiv,openvdb,openxr,osl,tiff]
+					sci-physics/bullet
+				)
+				blender2901? (
+					~media-gfx/blender-2.83.6[bullet,collada,color-management,cycles,dds,-debug,elbeem,embree,fftw,-headless,nls,openexr,openimagedenoise,openimageio,opensubdiv,openvdb,openxr,osl,tiff]
+					media-libs/embree[raymask]
 					sci-physics/bullet
 				)
 			)
