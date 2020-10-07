@@ -238,7 +238,7 @@ _src_prepare_patches() {
 
 	if use osl ; then
 		sed -i "/[/]usr[/]include[/]OSL[/]/a\    /usr/$(get_libdir)/${PN}/osl/${LLVM_V}/usr/include/OSL" \
-			build_files/cmake/Modules/FindOpenShadingLanguage.cmake
+			build_files/cmake/Modules/FindOpenShadingLanguage.cmake || die
 	fi
 }
 
