@@ -316,6 +316,11 @@ _src_prepare_patches() {
 			intern/cycles/app/CMakeLists.txt || die
 		sed -i -e "/add_subdirectory(tests)/d" CMakeLists.txt || die
 	fi
+
+	if use osl ; then
+		sed -i "/[/]usr[/]include[/]OSL[/]/a\    /usr/$(get_libdir)/${PN}/osl/${LLVM_V}/usr/include/OSL" \
+			build_files/cmake/Modules/FindOpenShadingLanguage.cmake
+	fi
 }
 
 _src_configure() {

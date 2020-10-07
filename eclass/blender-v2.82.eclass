@@ -229,6 +229,11 @@ _blender_pkg_setup() {
 
 _src_prepare_patches() {
 	eapply "${FILESDIR}/blender-2.81a-parent-datafiles-dir-change.patch"
+
+	if use osl ; then
+		sed -i "/[/]usr[/]include[/]OSL[/]/a\    /usr/$(get_libdir)/${PN}/osl/${LLVM_V}/usr/include/OSL" \
+			build_files/cmake/Modules/FindOpenShadingLanguage.cmake
+	fi
 }
 
 _src_configure() {

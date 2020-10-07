@@ -225,6 +225,11 @@ $(usex openvdb $(usex abi7-compat 7-${CXXABI_V} $(usex abi6-compat 6 5)) "")
 
 _src_prepare_patches() {
 	eapply "${FILESDIR}/blender-2.80-parent-datafiles-dir-change.patch"
+
+	if use osl ; then
+		sed -i "/[/]usr[/]include[/]OSL[/]/a\    /usr/$(get_libdir)/${PN}/osl/${LLVM_V}/usr/include/OSL" \
+			build_files/cmake/Modules/FindOpenShadingLanguage.cmake
+	fi
 }
 
 _src_configure() {
