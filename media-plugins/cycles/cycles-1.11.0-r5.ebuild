@@ -447,9 +447,10 @@ bdver2|bdver3|bdver4|znver1|znver2) ]] \
 		_PATH+=( "$(prfx)/osl/${LLVM_V}/usr/bin\n" )
 	fi
 
-	use network \
-	&& sed -i -e "/WITH_CYCLES_NETWORK FALSE/d" \
-		src/CMakeLists.txt || die
+	if use network ; then
+		sed -i -e "/WITH_CYCLES_NETWORK FALSE/d" \
+			src/CMakeLists.txt || die
+	fi
 
 	mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX=/usr/$(get_libdir)/cycles
