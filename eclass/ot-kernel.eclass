@@ -1300,12 +1300,12 @@ to genkernel invocation.\n\
 
 	if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 		local sublevel=$(grep -F -e "SUBLEVEL =" \
-			"${ED}"/usr/src/linux-${K_MAJOR_MINOR}.9999-ot/Makefile \
+			"${EROOT}"/usr/src/linux-${K_MAJOR_MINOR}.9999-ot/Makefile \
 			| head -n 1 | cut -f 3 -d " ")
 		local machine=$(uname -m)
 		ewarn \
-"If you use dkms, you must manually set the symlink to the kernel modules \
-from /lib/modules/${K_MAJOR_MINOR}.${sublevel}-ot-${machine} to \
+"If you use dkms, you must manually set the symlink to the kernel modules\n\
+from /lib/modules/${K_MAJOR_MINOR}.${sublevel}-ot-${machine} to\n\
 /lib/modules/${K_MAJOR_MINOR}.9999-ot-${machine}"
 	fi
 
