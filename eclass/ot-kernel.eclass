@@ -18,45 +18,40 @@
 #   https://github.com/dolohow/uksm
 # zen-tune:
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce 3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0
-#   https://github.com/torvalds/linux/compare/v5.7...zen-kernel:5.7/zen-sauce (03344d1ad1076dd6374f208f8de4c7f6da9dbcee..13f40f309a6a443fcdcc51759dc3a4a0f9b7910f] ; (exclusive-end,inclusive-start]
 #   https://github.com/torvalds/linux/compare/v5.8...zen-kernel:5.8/zen-sauce (994279ebfc0d19e185792fb11cacb63e6750e22e..78070e0e766369a33bcc279128c07124276d4b80] ; (exclusive-end,inclusive-start]
 # zen-kernel 5.4/futex-backports
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/futex-backports
 # zen-kernel 5.{6,7}/futex-multiple-wait-v3
-#   https://github.com/torvalds/linux/compare/v5.7...zen-kernel:5.7/futex-multiple-wait-v3
 #   https://github.com/torvalds/linux/compare/v5.8...zen-kernel:5.8/futex-multiple-wait-v3
 # O3 (Optimize Harder):
 #   4.9 (O3) https://github.com/torvalds/linux/commit/7d0295dc49233d9ddff5d63d5bdc24f1e80da722
 #   circa 2018 (infiniband O3 read overflow fix) https://github.com/torvalds/linux/commit/562a14babcd56efc2f51c772cb2327973d8f90ad
 #   5.1 (O3) https://github.com/torvalds/linux/commit/e80b5baf29ce0fceb04ee4d05455c1e3a1871732
 #   5.1 (infiniband O3 read overflow fix) https://github.com/torvalds/linux/commit/360c6833e07cc9fdef5746f6bc45bdbc7212288d
-# GraySky2 GCC Patches:
+# GraySky2 Kernel GCC Patches:
 #   https://github.com/graysky2/kernel_gcc_patch
 # MUQSS CPU Scheduler:
 #   https://github.com/torvalds/linux/compare/v4.14...ckolivas:4.14-ck
 #   https://github.com/torvalds/linux/compare/v5.4...ckolivas:5.4-ck
-#   https://github.com/torvalds/linux/compare/v5.7...ckolivas:5.7-ck
 #   https://github.com/torvalds/linux/compare/v5.8...ckolivas:5.8-ck
 # PDS CPU Scheduler:
-#   http://cchalpha.blogspot.com/search/label/PDS
+#   https://cchalpha.blogspot.com/search/label/PDS
 # BMQ CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/BMQ
 # Project C CPU Scheduler:
-#   http://cchalpha.blogspot.com/search/label/Project%20C
+#   https://cchalpha.blogspot.com/search/label/Project%20C
 # genpatches:
 #   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-4.14.html
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.4.html
-#   https://dev.gentoo.org/~mpagano/genpatches/releases-5.7.html
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.8.html
 # BFQ updates:
 #   https://github.com/torvalds/linux/compare/v4.19...zen-kernel:4.19/bfq
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/bfq-backports
 # TRESOR:
-#   http://www1.informatik.uni-erlangen.de/tresor
+#   https://www1.informatik.uni-erlangen.de/tresor
 # FUTEX_MULTIPLE_WAIT
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/futex-backports
-#   https://github.com/torvalds/linux/compare/v5.7...zen-kernel:5.7/futex-multiple-wait-v3
 #   https://github.com/torvalds/linux/compare/v5.8...zen-kernel:5.8/futex-multiple-wait-v3
 # terrelln:zstd-v{4,10}
 #   https://lkml.org/lkml/2020/7/30/973
@@ -97,17 +92,17 @@ LICENSE+=" Clear-BSD" # See drivers/net/wireless/ath/ath11k/core.h, ...
 LICENSE+=" Apache-2.0" # See drivers/staging/wfx/hif_api_cmd.h
 
 HOMEPAGE+="
-          https://github.com/dolohow/uksm
-          https://liquorix.net/
-          https://github.com/graysky2/kernel_gcc_patch
-	  http://ck-hack.blogspot.com/
-          https://dev.gentoo.org/~mpagano/genpatches/
-          http://algo.ing.unimo.it/people/paolo/disk_sched/
-	  http://cchalpha.blogspot.com/search/label/PDS
+          https://algo.ing.unimo.it/people/paolo/disk_sched/
 	  https://cchalpha.blogspot.com/search/label/BMQ
-	  http://cchalpha.blogspot.com/search/label/Project%20C
-	  http://www1.informatik.uni-erlangen.de/tresor
-          "
+	  https://cchalpha.blogspot.com/search/label/PDS
+	  https://cchalpha.blogspot.com/search/label/Project%20C
+	  https://ck-hack.blogspot.com/
+          https://dev.gentoo.org/~mpagano/genpatches/
+          https://github.com/dolohow/uksm
+          https://github.com/graysky2/kernel_gcc_patch
+          https://liquorix.net/
+	  https://www1.informatik.uni-erlangen.de/tresor
+"
 
 OT_KERNEL_SLOT_STYLE=${OT_KERNEL_SLOT_STYLE:="MAJOR_MINOR"}
 KEYWORDS=${KEYWORDS:=\
@@ -213,41 +208,41 @@ O3_ALLOW_FN="O3-allow-unrestricted-${PATCH_ALLOW_O3_COMMIT}.patch"
 O3_ALLOW_SRC_URL="${O3_SRC_URL}${PATCH_ALLOW_O3_COMMIT}.patch -> ${O3_ALLOW_FN}"
 
 if ver_test ${K_MAJOR_MINOR} -ge 5.8 ; then
-GRAYSKY_DL_10_1_FN=\
+KGCCP_DL_10_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v5.7%2B.patch"
-GRAYSKY_DL_9_1_FN=\
+KGCCP_DL_9_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v5.8%2B.patch"
 elif ver_test ${K_MAJOR_MINOR} -ge 5.7 ; then
-GRAYSKY_DL_10_1_FN=\
+KGCCP_DL_10_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v5.7%2B.patch"
-GRAYSKY_DL_9_1_FN=\
+KGCCP_DL_9_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v5.7%2B.patch"
 elif ver_test ${K_MAJOR_MINOR} -ge 5.5 ; then
-GRAYSKY_DL_10_1_FN=\
+KGCCP_DL_10_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v5.5-v5.6.patch"
-GRAYSKY_DL_9_1_FN=\
+KGCCP_DL_9_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v5.5%2B.patch"
 elif ver_test ${K_MAJOR_MINOR} -ge 4.13 ; then
-GRAYSKY_DL_9_1_FN=\
+KGCCP_DL_9_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v4.13%2B.patch"
-GRAYSKY_DL_8_1_FN=\
+KGCCP_DL_8_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B.patch"
-GRAYSKY_DL_4_9_FN=\
-"${GRAYSKY_DL_4_9_FN:=enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B.patch}"
+KGCCP_DL_4_9_FN=\
+"${KGCCP_DL_4_9_FN:=enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B.patch}"
 fi
-GRAYSKY_URL_BASE=\
+KGCCP_URL_BASE=\
 "https://raw.githubusercontent.com/graysky2/kernel_gcc_patch/master/"
-if [[ -n "${GRAYSKY_DL_4_9_FN}" ]] ; then
-GRAYSKY_SRC_4_9_URL="${GRAYSKY_URL_BASE}/outdated_versions/${GRAYSKY_DL_4_9_FN}"
+if [[ -n "${KGCCP_DL_4_9_FN}" ]] ; then
+KGCCP_SRC_4_9_URL="${KGCCP_URL_BASE}/outdated_versions/${KGCCP_DL_4_9_FN}"
 fi
-if [[ -n "${GRAYSKY_DL_8_1_FN}" ]] ; then
-GRAYSKY_SRC_8_1_URL="${GRAYSKY_URL_BASE}/outdated_versions/${GRAYSKY_DL_8_1_FN}"
+if [[ -n "${KGCCP_DL_8_1_FN}" ]] ; then
+KGCCP_SRC_8_1_URL="${KGCCP_URL_BASE}/outdated_versions/${KGCCP_DL_8_1_FN}"
 fi
-if [[ -n "${GRAYSKY_DL_9_1_FN}" ]] ; then
-GRAYSKY_SRC_9_1_URL="${GRAYSKY_URL_BASE}${GRAYSKY_DL_9_1_FN}"
+if [[ -n "${KGCCP_DL_9_1_FN}" ]] ; then
+KGCCP_SRC_9_1_URL="${KGCCP_URL_BASE}${KGCCP_DL_9_1_FN}"
 fi
-if [[ -n "${GRAYSKY_DL_10_1_FN}" ]] ; then
-GRAYSKY_SRC_10_1_URL="${GRAYSKY_URL_BASE}${GRAYSKY_DL_10_1_FN}"
+if [[ -n "${KGCCP_DL_10_1_FN}" ]] ; then
+KGCCP_SRC_10_1_URL="${KGCCP_URL_BASE}${KGCCP_DL_10_1_FN}"
 fi
 
 GENPATCHES_URL_BASE="https://dev.gentoo.org/~mpagano/genpatches/tarballs/"
@@ -263,11 +258,11 @@ TRESOR_I686_FN="tresor-patch-${PATCH_TRESOR_VER}_i686"
 TRESOR_SYSFS_FN="tresor_sysfs.c"
 TRESOR_README_FN="tresor-readme.html"
 TRESOR_PDF_FN="tresor.pdf"
-TRESOR_AESNI_DL_URL="http://www1.informatik.uni-erlangen.de/filepool/projects/tresor/${TRESOR_AESNI_FN}"
-TRESOR_I686_DL_URL="http://www1.informatik.uni-erlangen.de/filepool/projects/tresor/${TRESOR_I686_FN}"
-TRESOR_SYSFS_DL_URL="http://www1.informatik.uni-erlangen.de/filepool/projects/tresor/${TRESOR_SYSFS_FN}"
+TRESOR_AESNI_DL_URL="https://www1.informatik.uni-erlangen.de/filepool/projects/tresor/${TRESOR_AESNI_FN}"
+TRESOR_I686_DL_URL="https://www1.informatik.uni-erlangen.de/filepool/projects/tresor/${TRESOR_I686_FN}"
+TRESOR_SYSFS_DL_URL="https://www1.informatik.uni-erlangen.de/filepool/projects/tresor/${TRESOR_SYSFS_FN}"
 TRESOR_README_DL_URL="https://www1.informatik.uni-erlangen.de/tresor?q=content/readme"
-TRESOR_RESEARCH_PDF_DL_URL="http://www1.informatik.uni-erlangen.de/filepool/projects/tresor/${TRESOR_PDF_FN}"
+TRESOR_RESEARCH_PDF_DL_URL="https://www1.informatik.uni-erlangen.de/filepool/projects/tresor/${TRESOR_PDF_FN}"
 TRESOR_README_DL_URL2="${TRESOR_README_DL_URL} -> ${TRESOR_README_FN}"
 
 KERNEL_INC_BASEURL="https://cdn.kernel.org/pub/linux/kernel/v${K_PATCH_XV}/incr/"
@@ -409,7 +404,7 @@ week to several months.\n\
 # @DESCRIPTION:
 # Checks the existance for the ZENMISC_WHITELIST_5_3 variable
 function zenmisc_setup() {
-	if use zenmisc ; then
+	if use zen-misc ; then
 		local ZM="ZENMISC_WHITELIST_${K_MAJOR_MINOR/./_}"
 		if [[ -z "${!ZM}" ]] ; then
 			local zenmisc_url
@@ -444,10 +439,10 @@ function _check_network_sandbox() {
 	# justifications
 	# bfq - no way to compare against "branch with commit"
 	#   (i.e. v${K_MAJOR_MINOR}...zen-kernel:${K_MAJOR_MINOR}/misc/${c})
-	# zenmisc - random choice of commits by user, mimimize
+	# zen-misc - random choice of commits by user, mimimize
 	#   downloading unnecessary commits, less manifest
 	#   entries
-	# zentune - no way to version as explained in bfq
+	# zen-tune - no way to version as explained in bfq
 	if has network-sandbox $FEATURES ; then
 		die \
 "FEATURES=\"-network-sandbox\" must be added per-package env to be able to use\n\
@@ -460,13 +455,13 @@ live patches."
 # Perform checks, warnings, and initialization before emerging
 function ot-kernel_pkg_setup() {
 	_report_eol
-	if has zenmisc ${IUSE_EFFECTIVE} ; then
-		if use zenmisc ; then
+	if has zen-misc ${IUSE_EFFECTIVE} ; then
+		if use zen-misc ; then
 			_check_network_sandbox
 		fi
 	fi
-	if has zentune ${IUSE_EFFECTIVE} ; then
-		if use zentune ; then
+	if has zen-tune ${IUSE_EFFECTIVE} ; then
+		if use zen-tune ; then
 			_check_network_sandbox
 		fi
 	fi
@@ -484,8 +479,10 @@ function ot-kernel_pkg_setup() {
 	if declare -f ot-kernel_pkg_setup_cb > /dev/null ; then
 		ot-kernel_pkg_setup_cb
 	fi
-	if has zenmisc ${IUSE_EFFECTIVE} ; then
-		zenmisc_setup
+	if has zen-misc ${IUSE_EFFECTIVE} ; then
+		if use zen-misc ; then
+			zenmisc_setup
+		fi
 	fi
 	if has cve_hotfix ${IUSE_EFFECTIVE} ; then
 		if use cve_hotfix ; then
@@ -542,7 +539,7 @@ function apply_zenmisc() {
 	for c in ${!ZM} ; do
 		if ver_test -ge 5.4 ; then
 			if [[ "${c}" == "${PATCH_ALLOW_O3_COMMIT}" \
-				|| "${c}" == "${PATCH_GRAYSKY2_GCC_COMMIT}" \
+				|| "${c}" == "${PATCH_KGCCP_COMMIT}" \
 				|| "${c}" == "${ZENTUNE_5_4_COMMIT}" ]]
 			then
 				continue
@@ -550,7 +547,7 @@ function apply_zenmisc() {
 		else
 			if [[ "${c}" == "${PATCH_O3_CO_COMMIT}" \
 				|| "${c}" == "${PATCH_O3_RO_COMMIT}" \
-				|| "${c}" == "${PATCH_GRAYSKY2_GCC_COMMIT}" ]]
+				|| "${c}" == "${PATCH_KGCCP_COMMIT}" ]]
 			then
 				continue
 			fi
@@ -592,9 +589,9 @@ function apply_ck() {
 # For example,
 # GENPATCHES_BLACKLIST="2500 2600"
 function _filter_genpatches() {
-	# already applied 5010-5013 GCC graysky2 patches
+	# Already applied 5010-5013 GraySky2's kernel_gcc_patche
 	P_GENPATCHES_BLACKLIST=" 5010 5011 5012 5013"
-	# already applied 5000-5007 ZSTD patches
+	# Already applied 5000-5007 ZSTD patches
 	P_GENPATCHES_BLACKLIST+=" 5000 5001 5002 5003 5004 5005 5006 5007"
 	pushd "${d}" || die
 		for f in $(ls -1) ; do
@@ -731,7 +728,7 @@ function apply_genpatch_extras() {
 
 # @FUNCTION: apply_o3
 # @DESCRIPTION:
-# Apply the GraySky2 O3 patchset.
+# Apply the O3 patchset.
 #
 # ot-kernel_apply_o3_fixes - callback for fix to O3 patches
 #
@@ -1010,29 +1007,29 @@ ot-kernel_unpack_point_releases() {
 # Applies patch sets in order.
 function ot-kernel_src_unpack() {
 	_PATCHES=()
-	if use graysky2 ; then
+	if use kernel_gcc_patch ; then
 		if $(ver_test $(gcc-version) -ge 10.1) \
-			&& test -f "${DISTDIR}/${GRAYSKY_DL_10_1_FN}" ; \
+			&& test -f "${DISTDIR}/${KGCCP_DL_10_1_FN}" ; \
 		then
 			einfo "GCC patch is 10.1"
-			_PATCHES+=( "${DISTDIR}/${GRAYSKY_DL_10_1_FN}" )
+			_PATCHES+=( "${DISTDIR}/${KGCCP_DL_10_1_FN}" )
 		elif $(ver_test $(gcc-version) -ge 9.1) \
-			&& test -f "${DISTDIR}/${GRAYSKY_DL_9_1_FN}" ; \
+			&& test -f "${DISTDIR}/${KGCCP_DL_9_1_FN}" ; \
 		then
 			einfo "GCC patch is 9.1"
-			_PATCHES+=( "${DISTDIR}/${GRAYSKY_DL_9_1_FN}")
+			_PATCHES+=( "${DISTDIR}/${KGCCP_DL_9_1_FN}")
 		elif $(ver_test $(gcc-version) -ge 8.1) \
-			&& test -f "${DISTDIR}/${GRAYSKY_DL_8_1_FN}" ; \
+			&& test -f "${DISTDIR}/${KGCCP_DL_8_1_FN}" ; \
 		then
 			einfo "GCC patch is 8.1"
-			_PATCHES+=( "${DISTDIR}/${GRAYSKY_DL_8_1_FN}" )
-		elif test -f "${DISTDIR}/${GRAYSKY_DL_4_9_FN}" ; then
+			_PATCHES+=( "${DISTDIR}/${KGCCP_DL_8_1_FN}" )
+		elif test -f "${DISTDIR}/${KGCCP_DL_4_9_FN}" ; then
 			einfo "GCC patch is 4.9"
-			_PATCHES+=( "${DISTDIR}/${GRAYSKY_DL_4_9_FN}" )
+			_PATCHES+=( "${DISTDIR}/${KGCCP_DL_4_9_FN}" )
 		else
 			die \
-"Cannot find a compatible graysky2 GCC patch for "$(gcc-version)" and\n\
-kernel ${K_MAJOR_MINOR}.  Skipping graysky2 patches."
+"Cannot find a compatible kernel_gcc_patch for "$(gcc-version)" and\n\
+kernel ${K_MAJOR_MINOR}.  Skipping kernel_gcc_patch."
 		fi
 	fi
 
@@ -1064,8 +1061,8 @@ kernel ${K_MAJOR_MINOR}.  Skipping graysky2 patches."
 		fi
 	fi
 
-	if has zentune ${IUSE_EFFECTIVE} ; then
-		if use zentune ; then
+	if has zen-tune ${IUSE_EFFECTIVE} ; then
+		if use zen-tune ; then
 			fetch_zentune
 			apply_zentune
 			if ver_test ${K_MAJOR_MINOR} -eq 5.5 ; then
@@ -1074,8 +1071,8 @@ kernel ${K_MAJOR_MINOR}.  Skipping graysky2 patches."
 		fi
 	fi
 
-	if has zenmisc ${IUSE_EFFECTIVE} ; then
-		if use zenmisc ; then
+	if has zen-misc ${IUSE_EFFECTIVE} ; then
+		if use zen-misc ; then
 			fetch_zenmisc
 			apply_zenmisc
 		fi
@@ -1146,8 +1143,8 @@ kernel ${K_MAJOR_MINOR}.  Skipping graysky2 patches."
 		fi
 	fi
 
-	if has o3 ${IUSE_EFFECTIVE} ; then
-		if use o3 ; then
+	if has O3 ${IUSE_EFFECTIVE} ; then
+		if use O3 ; then
 			apply_o3
 		fi
 	fi
@@ -1284,8 +1281,7 @@ Because it uses hardware breakpoint debug address registers, these debugging\n\
 features are mutually exclusive when TRESOR is being used.\n\
 \n
 TRESOR-XTS is limited to 64-bit arches and 256-bit keys, but 128-bit key for\n\
-the crypto key.\n\
-\n"
+the crypto key."
 		fi
 	fi
 
@@ -1312,4 +1308,19 @@ to genkernel invocation.\n\
 from /lib/modules/${K_MAJOR_MINOR}.${sublevel}-ot-${machine} to \
 /lib/modules/${K_MAJOR_MINOR}.9999-ot-${machine}"
 	fi
+
+	einfo \
+"Please upgrade both the motherboard and CPU with support with either VT-d\n\
+or AMD-Vi to mitigate from cold-boot attack if using full disk encryption.\n\
+Ensure that that IOMMU is being used. \n\
+See https://en.wikipedia.org/wiki/List_of_IOMMU-supporting_hardware for\n\
+supported hardware.  For details about the DMA side-channel attack see \n\
+\n\
+  https://en.wikipedia.org/wiki/DMA_attack\n\
+\n\
+If you cannot afford the hardware, you may consider removing DMA based\n\
+ports and disabling DMA to mitigate against an DMA attack.\n\
+\n\
+Any crypto algorithm that stores keys in memory or registers are vulnerable.\n\
+This includes TRESOR as well."
 }

@@ -11,11 +11,39 @@
 
     Power users can choose either the BMQ, PDS, MuQSS CPU schedulers.
 
-    The TRESOR patch provides increased mitigation from cold boot resistant
-    attacks.
+    CFS, used as the stock CPU scheduler, uses red-black trees.  The Red-black
+    tree is O(log n) search, O(log n) task insert, O(log n) task removal.
+    CFS does not use runqueues but red-black trees instead ordered by time.
+    
+    PDS is multiple run queues per CPU with backend skiplists.  Tries to
+    balance throughput with latency.
 
-    Compiler based optimizations are provided by GraySky2's GCC patch and the
-    O3 patch.
+    BMQ design tries to resume tasks faster for unfinished timeslices and
+    uses PDS plus another scheduler design.  FIFO for non-rt and priority
+    queue for rt tasks.
+
+    MuQSS uses O(1) task removal. O(log n) task insertion. O(k) next task
+    execution, with k CPU cores.  Each core has it's own runqueue of
+    array of doubly linked lists arranged as a skip list.  Tasks are ordered
+    by priority class and virtual deadline.  MuQSS tries to improve upon
+    BFS with faster next task lookup from O(log n) to O(k) and choose between
+    improved latency (single queue runqueue) or throughput (multiqueue runqueue).
+
+    BMQ has been renamed to Project C.  Project C will merge both PDS and
+    BMQ.  C means cross.
+
+    In layman terms, O(1) is faster than O(log n).  O(log n) is faster than
+    O(n).
+
+    The TRESOR patch provides increased mitigation from cold boot resistant
+    attacks.  TRESOR is vulnerable to a DMA attack side-channel attack.  All
+    older hardware that does not have IOMMU VT-d / AMD-Vi and not using it is
+    vulnerable.  DMA attack is used to extract keys.  See
+    https://en.wikipedia.org/wiki/List_of_IOMMU-supporting_hardware
+    for a list of hardware supporting IOMMU.
+
+    Compiler based optimizations are provided by GraySky2's kernel_gcc_patch 
+    and the O3 patch.
 
     Older point releases are removed to eliminate some of the previously
     announced 0-day exploits.
@@ -46,7 +74,7 @@
       <name>Con Kolivas</name>
     </maintainer>
     <maintainer status="active" type="person">
-      <!-- for zentune patchset -->
+      <!-- for zen-tune patchset -->
       <email>jan.steffens@gmail.com</email>
       <name>Jan Alexander Steffens</name>
       <!-- aka heftig -->
@@ -66,7 +94,7 @@
       <name>Gentoo Kernel Project</name>
     </maintainer>
     <maintainer status="active" type="person">
-      <!-- for graysky2 GCC patches -->
+      <!-- for GraySky2's kernel_gcc_patches -->
       <email>graysky AT archlinux DOT us</email>
       <name>graysky</name>
     </maintainer>
@@ -147,20 +175,20 @@
       CVE_DELAY=0
       CVE_ALLOW_RISKY_BACKPORTS=1
       </flag>
-    <flag name="cfs">Assumes the IO scheduler will be the stock CFS CPU
-      scheduler.</flag>
+    <flag name="cfs">Uses the CFS (Completely Fair Scheduling) CPU scheduler
+      and not apply any third-party CPU scheduler.</flag>
     <flag name="disable_debug">Installs scripts to disable debugging, tracing,
       verbose output or related code paths.</flag>
     <flag name="genpatches">Applies the genkernel patch set.</flag>
-    <flag name="graysky2">Patches the kernel for more CPU
-      microarchitectures</flag>
     <flag name="futex-wait-multiple">Patches ther kernel with
       FUTEX_WAIT_MULTIPLE futex syscall option which may be used in the
       wine-proton package and in Steam Play (based on Proton).  It may reduce 
       CPU usage by less than 5%.</flag>
+    <flag name="kernel_gcc_patch">Patches the kernel for more CPU
+      microarchitectures</flag>
     <flag name="muqss">Patches the kernel with Con Kolivas patchset and
       includes his skiplist based MuQSS CPU scheduler.</flag>
-    <flag name="o3">Patches the kernel with more experimental O3
+    <flag name="O3">Patches the kernel with more experimental O3
       compiler optimizations.</flag>
     <flag name="pds">Patches the kernel with an alternative skiplist
       based scheduler.</flag>
@@ -183,9 +211,9 @@
     <flag name="uksm">Patches the kernel with the Ultra Kernel Samepage
       Merging, a type of memory page deduper algorithm.  Using it may be
       insecure.</flag>
-    <flag name="zentune">Patches the kernel with Zen Interactive
+    <flag name="zen-tune">Patches the kernel with Zen Interactive
       Tuning.</flag>
-    <flag name="zenmisc">Patches the kernel with selected Zen kernel
+    <flag name="zen-misc">Patches the kernel with selected Zen kernel
       commits.  You will need to define a ZENMISC_WHITELIST_5_3 environmental
       variable (in your make.conf or per-package env), replacing 5_3 with 5
       as the kernel major version and 3 the kernel minor version, containing
@@ -203,10 +231,10 @@
       for 5.7 see:
       https://github.com/torvalds/linux/compare/v5.7...zen-kernel:5.7/zen-sauce
 
-      Use the o3, zenmisc, graysky2 USE flags instead of passing their commit
+      Use the o3, zen-misc, kernel_gcc_patch USE flags instead of passing their commit
       IDs.
 
-      The zenmisc set contains patches that add drivers or functionality
+      The zen-misc set contains patches that add drivers or functionality
       related to gaming, laptops, optimizations, etc.
      </flag>
     <flag name="zstd">Applies additional kernel patches for enabling

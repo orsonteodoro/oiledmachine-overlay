@@ -33,9 +33,9 @@ PATCH_TRESOR_VER="3.18.5"
 ZSTD_VER="10"
 MUQSS_VER=""
 
-IUSE="bfq bmq +cfs disable_debug futex-wait-multiple +genpatches +graysky2 \
-muqss +o3 prjc tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 \
-tresor_x86_64-256-bit-key-support uksm zenmisc -zentune zstd"
+IUSE="bfq bmq +cfs disable_debug futex-wait-multiple +genpatches +kernel_gcc_patch \
+muqss +O3 prjc tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 \
+tresor_x86_64-256-bit-key-support uksm zen-misc -zen-tune zstd"
 REQUIRED_USE="\
 !bfq !bmq !muqss
 ^^ ( bmq cfs muqss prjc ) \
@@ -48,11 +48,33 @@ tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )"
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="A customizeable kernel package containing UKSM, zen-kernel patchset, GraySky's GCC \
-Patches, MUQSS CPU Scheduler, BMQ CPU Scheduler, Project C CPU Scheduler, \
-Genpatches, BFQ updates, CVE fixes, TRESOR, zstd"
+DESCRIPTION="A customizeable kernel package containing UKSM, zen-kernel \
+patchset, GraySky2's Kernel GCC Patch, MUQSS CPU Scheduler, BMQ CPU Scheduler, \
+Project C CPU Scheduler, genpatches, BFQ updates, CVE fixes, TRESOR, zstd"
 
 inherit ot-kernel
+
+LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
+  # third-party CPU scheduler but the stock CPU scheduler.
+LICENSE+=" prjc? ( GPL-2 Linux-syscall-note )" # some new files in the patch \
+  # do not come with an explicit license but default to
+  # GPL-2 with Linux-syscall-note.
+LICENSE+=" futex-wait-multiple? ( GPL-2 Linux-syscall-note GPL-2+ )"
+LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
+LICENSE+=" kernel_gcc_patch? ( GPL-2 )"
+LICENSE+=" muqss? ( GPL-2 )"
+LICENSE+=" O3? ( GPL-2 )"
+LICENSE+=" tresor? ( GPL-2 )"
+LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
+  # GPL-2 applies to the files being patched \
+  # all-rights-reserved applies to new files introduced and no default license
+  #   found in the project.  (The implementation is based on an academic paper
+  #   from public universities.)
+LICENSE+=" zen-tune? ( GPL-2 )"
+LICENSE+=" zstd? ( GPL-2 BSD-2 all-rights-reserved )" # \
+  # GPL-2 and BSD-2 applies to the files being patched. \
+  # all-rights-reserved which is explicitly stated and GPL-2 both applies to \
+  #   lib/zstd/zstd_internal.h being patched.
 
 #BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.patch"
 #BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
@@ -70,13 +92,13 @@ SRC_URI+=" genpatches? (
 		${GENPATCHES_EXPERIMENTAL_SRC_URL}
 		${GENPATCHES_EXTRAS_SRC_URL}
 	   )
-	   graysky2? (
-		${GRAYSKY_SRC_4_9_URL}
-		${GRAYSKY_SRC_8_1_URL}
-		${GRAYSKY_SRC_9_1_URL}
-		${GRAYSKY_SRC_10_1_URL}
+	   kernel_gcc_patch? (
+		${KGCCP_SRC_4_9_URL}
+		${KGCCP_SRC_8_1_URL}
+		${KGCCP_SRC_9_1_URL}
+		${KGCCP_SRC_10_1_URL}
 	   )
-	   o3? ( ${O3_ALLOW_SRC_URL} )
+	   O3? ( ${O3_ALLOW_SRC_URL} )
 	   prjc? ( ${PRJC_SRC_URL} )
 	   tresor? (
 		${TRESOR_AESNI_DL_URL}
@@ -95,9 +117,9 @@ SRC_URI_DISABLED+="
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel_pkg_setup_cb() {
-	if has zentune ${IUSE_EFFECTIVE} ; then
-		if use zentune ; then
-		ewarn \
+	if has zen-tune ${IUSE_EFFECTIVE} ; then
+		if use zen-tune ; then
+			ewarn \
 "The zen-tune patch might cause lock up or slow io under heavy load\n\
 like npm.  These use flags are not recommended."
 		fi

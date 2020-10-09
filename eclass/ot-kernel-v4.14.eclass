@@ -139,9 +139,9 @@ EXTRAVERSION="-ot"
 PATCH_UKSM_VER="4.14"
 PATCH_UKSM_MVER="4"
 PATCH_ZENTUNE_VER="4.19"
-PATCH_O3_CO_COMMIT="7d0295dc49233d9ddff5d63d5bdc24f1e80da722" # 4.19 # O3 config option
+PATCH_O3_CO_COMMIT="7d0295dc49233d9ddff5d63d5bdc24f1e80da722" # O3 config option
 PATCH_O3_RO_COMMIT="562a14babcd56efc2f51c772cb2327973d8f90ad" # O3 read overflow fix
-PATCH_GRAYSKY2_GCC_COMMIT="c53ae690ee282d129fae7e6e10a4c00e5030d588" # zen gcc graysky2
+PATCH_KGCCP_COMMIT="c53ae690ee282d129fae7e6e10a4c00e5030d588" # GraySky2's kernel_gcc_patch
 PATCH_PDS_MAJOR_MINOR="4.14"
 PATCH_PDS_VER="${PATCH_PDS_VER:=098i}"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?135}"
@@ -155,7 +155,7 @@ MUQSS_VER="0.162"
 # Obtained from:  date -d "2017-11-12 10:46:13 -0800" +%s
 LINUX_TIMESTAMP=1510512373
 
-IUSE="+cfs disable_debug +genpatches +graysky2 muqss pds +o3 tresor \
+IUSE="+cfs disable_debug +genpatches +kernel_gcc_patch muqss pds +O3 tresor \
 tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 uksm"
 REQUIRED_USE="^^ ( cfs muqss pds )
 tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
@@ -166,10 +166,26 @@ tresor_x86_64? ( tresor )"
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
-DESCRIPTION="A customizeable kernel package containing UKSM, GraySky's GCC \
-Patches, MUQSS CPU Scheduler, PDS CPU Scheduler, Genpatches, TRESOR"
+DESCRIPTION="A customizeable kernel package containing UKSM, GraySky2's Kernel \
+GCC Patches, MUQSS CPU Scheduler, PDS CPU Scheduler, genpatches, TRESOR"
 
 inherit ot-kernel
+
+LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
+  # third-party CPU scheduler but the stock CPU scheduler.
+LICENSE+=" kernel_gcc_patch? ( GPL-2 )"
+LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
+LICENSE+=" muqss? ( GPL-2 )"
+LICENSE+=" O3? ( GPL-2 )"
+LICENSE+=" pds? ( GPL-2 Linux-syscall-note )" # some new files in the patch \
+  # do not come with an explicit license but default to
+  # GPL-2 with Linux-syscall-note.
+LICENSE+=" tresor? ( GPL-2 )"
+LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
+  # GPL-2 applies to the files being patched \
+  # all-rights-reserved applies to new files introduced and no default license
+  #   found in the project.  (The implementation is based on an academic paper
+  #   from public universities.)
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:;
@@ -184,11 +200,11 @@ SRC_URI+=" genpatches? (
 		${GENPATCHES_EXPERIMENTAL_SRC_URL}
 		${GENPATCHES_EXTRAS_SRC_URL}
 	   )
-	   graysky2? (
-		${GRAYSKY_SRC_4_9_URL}
-		${GRAYSKY_SRC_8_1_URL}
+	   kernel_gcc_patch? (
+		${KGCCP_SRC_4_9_URL}
+		${KGCCP_SRC_8_1_URL}
 	   )
-	   o3? (
+	   O3? (
 		${O3_CO_SRC_URL}
 		${O3_RO_SRC_URL}
 	   )
@@ -214,9 +230,9 @@ tresor devices.  This 4.14.x series is EOL for this repo but not for\n\
 upstream.  It will be removed immediately once tresor has been fixed for\n\
 mainline / stable for >=5.x ."
 
-	if has zentune ${IUSE_EFFECTIVE} ; then
-		if use zentune ; then
-		ewarn \
+	if has zen-tune ${IUSE_EFFECTIVE} ; then
+		if use zen-tune ; then
+			ewarn \
 "The zen-tune patch might cause lock up or slow io under heavy load\n\
 like npm.  These use flags are not recommended."
 		fi
