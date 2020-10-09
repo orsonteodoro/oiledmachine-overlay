@@ -10,9 +10,15 @@ lag time between Gentoo's release and the one found on oiledmachine-overlay.
 Time Investment Estimation:
 
 Estimated ebuild update time (best case): 30 minutes
-Estimated ebuild update time (worst case) with additonal patches: 3 days to a week.
-Estimated build time to build 2 ABIs: 8 hours to 1 days
+Estimated ebuild update time (worst case) with additonal patches for building
+  and patching and finding a solution: 3 days to a week.
+Estimated build time to build 2 ABIs: ~11 hours to 1 days
 
+The raw numbers for 2 ABI (from doing `time emerge firefox`) are:
+
+real	661m8.513s  <- The wall time because doing time sleep 2 demonstrates this number.
+user	937m36.251s
+sys	56m48.536s
 
 Update checklist fork:
 
