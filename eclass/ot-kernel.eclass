@@ -1319,7 +1319,8 @@ supported hardware.  For details about the DMA side-channel attack see \n\
   https://en.wikipedia.org/wiki/DMA_attack\n\
 \n\
 If you cannot afford the hardware, you may consider removing DMA based\n\
-ports and disabling DMA to mitigate against an DMA attack.\n\
+ports, soldering connections, and disabling DMA to mitigate against an DMA\n\
+attack.\n\
 \n\
 Any crypto algorithm that stores keys in memory or registers are vulnerable.\n\
 This includes TRESOR as well."
