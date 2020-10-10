@@ -1327,5 +1327,10 @@ disabling DMA to mitigate against a DMA attack.\n\
 Any crypto algorithm or password store that stores keys in memory or\n\
 registers are vulnerable.  This includes TRESOR as well.\n\
 \n\
-To properly use full disk encryption, do not use suspend to RAM."
+To properly use full disk encryption, do not use suspend to RAM and\n\
+shutdown the computer immediately on idle.\n\
+\n\
+Futher mitigation recommendations can be found at\n\
+\n\
+  https://en.wikipedia.org/wiki/Cold_boot_attack#Mitigation"
 }
