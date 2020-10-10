@@ -287,8 +287,6 @@ function ot-kernel_pkg_postinst_cb() {
 	if use muqss ; then
 		ewarn \
 "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL will\n\
-  cause a kernel panic on boot.\n\
-The MuQSS scheduler may have random system hard pauses for few seconds to\n\
-  around a minute when resource usage is high."
+  cause a kernel panic on boot."
 	fi
 }
