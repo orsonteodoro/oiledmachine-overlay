@@ -5,10 +5,10 @@ EAPI=7
 DESCRIPTION="Virtual for the amdgpu DRM (Direct Rendering Manager) kernel module"
 KEYWORDS="amd64 x86"
 IUSE="amdgpu-dkms dkms +firmware kernel rock-dkms"
-AMDGPU_DKMS_PV="18.50"
-ROCK_DKMS_PV="2.0"
-VANILLA_KERNEL_PV="5.0"
-LINUX_FIRMWARE_PV="20190312" # matches last commit/tag AMDGPU_DKMS_PV in linux-firmware git
+AMDGPU_DKMS_PV="20.40.1147287"
+ROCK_DKMS_PV="3.8"
+VANILLA_KERNEL_PV="9999" # >=${PV} not released yet.  Currently 5.9 is 3.2.95
+LINUX_FIRMWARE_PV="20201005" # matches last commit/tag AMDGPU_DKMS_PV in linux-firmware git
 # Find the timestamp at https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/log/amdgpu
 RDEPEND="amdgpu-dkms? ( >=sys-kernel/amdgpu-dkms-${AMDGPU_DKMS_PV} )
 	 rock-dkms? ( >=sys-kernel/rock-dkms-${ROCK_DKMS_PV} )
@@ -28,31 +28,9 @@ REQUIRED_USE="^^ ( amdgpu-dkms kernel rock-dkms )
 	dkms? ( ^^ ( amdgpu-dkms rock-dkms ) )
 	rock-dkms? ( dkms )"
 SLOT="0/${PV}" # based on DC_VER, rock-dkms will not be an exact fit
-inherit linux-info
-
-cve_notice() {
-        KERNEL_DIR="/usr/src/linux"
-	linux-info_pkg_setup
-	if ver_test ${KV_MAJOR}.${KV_MINOR}.${KV_PATCH} -le 5.2.14 ; then
-		ewarn
-		ewarn "CVE advisory:"
-		ewarn
-		ewarn "CVE-2019-16229 (CVSS 2.0 Medium) : https://nvd.nist.gov/vuln/detail/CVE-2019-16229"
-		ewarn
-		einfo "It's recommended to use either amdgpu-dkms (>=19.50), rock-dkms (>=3.1), or LTS kernels >= 5.4.x."
-	fi
-	if ver_test ${KV_MAJOR}.${KV_MINOR}.${KV_PATCH} -le 5.3.8 ; then
-		ewarn
-		ewarn "CVE advisories:"
-		ewarn
-		ewarn "CVE-2019-19067 (CVSS 2.0 Medium) : https://nvd.nist.gov/vuln/detail/CVE-2019-19067"
-		ewarn "CVE-2019-19083 (CVSS 2.0 Medium) : https://nvd.nist.gov/vuln/detail/CVE-2019-19083"
-		ewarn
-		einfo "It's recommended to use either amdgpu-dkms (>=19.50), rock-dkms (>=3.1), or LTS kernels >= 5.4.x."
-	fi
-}
 
 pkg_setup() {
+	ewarn "The linux-firmware git logs currently doesn't indicate 20.20 firmware yet as of 20200614"
 	if use amdgpu-dkms || use rock-dkms ; then
 		:;
 	else
@@ -64,5 +42,4 @@ pkg_setup() {
 			die "Your DC_VER is old.  Your kernel needs to be at least ${VANILLA_KERNEL_PV} or DC_VER needs to be ${PV}."
 		fi
 	fi
-	cve_notice
 }

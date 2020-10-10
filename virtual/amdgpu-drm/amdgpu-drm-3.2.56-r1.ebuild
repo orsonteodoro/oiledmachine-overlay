@@ -9,6 +9,7 @@ AMDGPU_DKMS_PV="19.50.967956"
 ROCK_DKMS_PV="3.0"
 VANILLA_KERNEL_PV="5.5"
 LINUX_FIRMWARE_PV="20200309" # matches last commit/tag AMDGPU_DKMS_PV in linux-firmware git
+# Find the timestamp at https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/log/amdgpu
 RDEPEND="amdgpu-dkms? ( >=sys-kernel/amdgpu-dkms-${AMDGPU_DKMS_PV} )
 	 rock-dkms? ( >=sys-kernel/rock-dkms-${ROCK_DKMS_PV} )
 	 firmware? (
