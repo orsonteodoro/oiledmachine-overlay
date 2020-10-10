@@ -289,6 +289,7 @@
     <flag name="plugins_github">Installs the github plugin.</flag>
     <flag name="plugins_git-hubflow">Installs the git-hubflow plugin.</flag>
     <flag name="plugins_gitignore">Installs the gitignore plugin.</flag>
+    <flag name="plugins_git-lfs">Installs the git-lfs plugin.</flag>
     <flag name="plugins_git-prompt">Installs the git-prompt plugin.</flag>
     <flag name="plugins_git-remote-branch">Installs the git-remote-branch
       plugin.</flag>
@@ -328,6 +329,7 @@
     <flag name="plugins_kops">Installs the kops plugin.</flag>
     <flag name="plugins_kubectl">Installs the kubectl plugin.</flag>
     <flag name="plugins_kube-ps1">Installs the kube-ps1 plugin.</flag>
+    <flag name="plugins_lando">Installs the lando plugin.</flag>
     <flag name="plugins_laravel">Installs the laravel plugin.</flag>
     <flag name="plugins_laravel4">Installs the laravel4 plugin.</flag>
     <flag name="plugins_laravel5">Installs the laravel5 plugin.</flag>
@@ -419,6 +421,7 @@
     <flag name="plugins_ssh-agent">Installs the ssh-agent plugin.</flag>
     <flag name="plugins_stack">Installs the stack plugin.</flag>
     <flag name="plugins_sublime">Installs the sublime plugin.</flag>
+    <flag name="plugins_sublime-merge">Installs the sublime-merge plugin.</flag>
     <flag name="plugins_sudo">Installs the sudo plugin.</flag>
     <flag name="plugins_supervisor">Installs the supervisor plugin.</flag>
     <flag name="plugins_suse">Installs the suse plugin.</flag>

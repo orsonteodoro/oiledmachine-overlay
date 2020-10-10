@@ -25,6 +25,7 @@ LICENSE="MIT
 	 plugins_gradle? ( MIT )
 	 plugins_grunt? ( MIT )
 	 plugins_gulp? ( MIT )
+	 plugins_lando? ( MIT )
 	 plugins_osx? ( MIT )
 	 plugins_taskwarrior? ( MIT )
 	 plugins_wd? ( MIT )
@@ -81,11 +82,11 @@ doctl dotnet dotenv droplr drush eecms emacs ember-cli emoji emoji-clock \
 emotty encode64 extract fabric fancy-ctrl-z fasd fastfile fbterm fd fedora \
 firewalld flutter forklift fossil frontend-search fzf gas gatsby gb gcloud \
 geeknote gem git git-auto-fetch git-escape-magic git-extras gitfast git-flow \
-git-flow-avh github git-hubflow gitignore git-prompt git-remote-branch \
+git-flow-avh github git-hubflow gitignore git-lfs git-prompt git-remote-branch \
 glassfish globalias gnu-utils go golang gpg-agent gradle grails grunt gulp \
 hanami helm heroku hitokoto history history-substring-search homestead httpie \
 iterm2 jake-node jenv jfrog jhbuild jira jruby jsontools jump kate keychain \
-kitchen knife knife_ssh kops kubectl kube-ps1 laravel laravel4 laravel5 \
+kitchen knife knife_ssh kops kubectl kube-ps1 lando laravel laravel4 laravel5 \
 last-working-dir ldx lein lighthouse lol macports magic-enter man marked2 \
 mercurial meteor minikube mix mix-fast mosh mvn mysql-macports n98-magerun \
 nanoc ng nmap node nomad npm npx nvm nyan oc osx otp pass paver pep8 percol \
@@ -93,7 +94,8 @@ per-directory-history perl perms phing pip pipenv pj please pod postgres pow \
 powder powify profiles pyenv pylint python rails rake rake-fast rand-quote \
 rbenv rbfu react-native rebar redis-cli repo ripgrep ros rsync ruby rust \
 rustup rvm safe-paste salt sbt scala scd screen scw sdk sfdx sfffe shell-proxy \
-shrink-path singlechar spring sprunge ssh-agent stack sublime sudo supervisor \
+shrink-path singlechar spring sprunge ssh-agent stack sublime sublime-merge \
+sudo supervisor \
 suse svcat svn svn-fast-info swiftpm symfony symfony2 systemadmin systemd \
 taskwarrior terminitor terraform textastic textmate thefuck themes thor tig \
 timer tmux tmux-cssh tmuxinator torrent transfer tugboat ubuntu ufw urltools \
@@ -167,6 +169,7 @@ PLUGINS_RDEPEND="
 	 plugins_gem? ( virtual/rubygems )
 	 plugins_github? ( dev-vcs/hub )
 	 plugins_git-extras? ( dev-vcs/git-extras )
+	 plugins_git-lfs? ( dev-vcs/git-lfs )
 	 plugins_gnu-utils? ( sys-apps/coreutils )
 	 plugins_go? ( dev-lang/go )
 	 plugins_golang? ( dev-lang/go )
@@ -230,6 +233,7 @@ PLUGINS_RDEPEND="
 	 plugins_sfffe? ( sys-apps/ack )
 	 plugins_stack? ( dev-haskell/stack )
 	 plugins_sublime? ( app-editors/sublime-text )
+	 plugins_sublime-merge? ( dev-vcs/sublime-merge )
 	 plugins_supervisor? ( app-admin/supervisor )
 	 plugins_svn-fast-info? ( >=dev-vcs/subversion-1.6 )
 	 plugins_systemadmin? ( || ( sys-apps/iproute2 sys-apps/net-tools )
