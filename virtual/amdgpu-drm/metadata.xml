@@ -19,5 +19,8 @@
       /usr/src/linux/drivers/gpu/drm/amd/display/dc/dc.h</flag>
     <flag name="firmware">Pulls compatible firmware.</flag>
     <flag name="rock-dkms">Selects rock-dkms as the DRM driver</flag>
+    <flag name="strict-pairing">Both the firmware and DRM driver
+      are paired so they coinside, meaning the 20.40 driver matches
+      the corresponding the 20.40 firmware.</flag>
   </use>
 </pkgmetadata>

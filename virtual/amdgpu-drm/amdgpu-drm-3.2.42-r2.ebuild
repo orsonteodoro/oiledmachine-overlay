@@ -4,23 +4,42 @@
 EAPI=7
 DESCRIPTION="Virtual for the amdgpu DRM (Direct Rendering Manager) kernel module"
 KEYWORDS="amd64 x86"
-IUSE="amdgpu-dkms dkms +firmware kernel rock-dkms"
-AMDGPU_DKMS_PV="19.30.934563"
-ROCK_DKMS_PV="2.8"
-VANILLA_KERNEL_PV="5.4"
-LINUX_FIRMWARE_PV="20191113" # matches last commit/tag AMDGPU_DKMS_PV in linux-firmware git
+IUSE="amdgpu-dkms dkms +firmware kernel rock-dkms strict-pairing"
+AMDGPU_DKMS_PV="19.30" # DC_VER = 3.2.42
+ROCK_DKMS_PV="2.8" # DC_VER = 3.2.46
+VANILLA_KERNEL_PV="5.4" # DC_VER = 3.2.48
+LINUX_FIRMWARE_PV_MIN="20190926" # matches last commit/tag AMDGPU_DKMS_PV in linux-firmware git
+LINUX_FIRMWARE_PV_MAX="20191029"
 # Find the timestamp at https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/log/amdgpu
-RDEPEND="amdgpu-dkms? ( >=sys-kernel/amdgpu-dkms-${AMDGPU_DKMS_PV} )
-	 rock-dkms? ( >=sys-kernel/rock-dkms-${ROCK_DKMS_PV} )
-	 firmware? (
-		|| (
-			amdgpu-dkms? ( >=sys-firmware/amdgpu-firmware-${AMDGPU_DKMS_PV} )
-			rock-dkms? ( >=sys-firmware/rock-firmware-${ROCK_DKMS_PV} )
-			!amdgpu-dkms? (
-				!rock-dkms? (
-					>=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV}
+RDEPEND="strict-pairing? (
+		 amdgpu-dkms? ( =sys-kernel/amdgpu-dkms-${AMDGPU_DKMS_PV}* )
+		 rock-dkms? ( =sys-kernel/rock-dkms-${ROCK_DKMS_PV}* )
+		 firmware? (
+				|| (
+					amdgpu-dkms? ( =sys-firmware/amdgpu-firmware-${AMDGPU_DKMS_PV}* )
+					rock-dkms? ( =sys-firmware/rock-firmware-${ROCK_DKMS_PV}* )
+					!amdgpu-dkms? (
+						!rock-dkms? (
+							>=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV_MIN}
+							<=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV_MAX}
+						)
+					)
 				)
-			)
+		)
+	 )
+	 !strict-pairing? (
+		 amdgpu-dkms? ( >=sys-kernel/amdgpu-dkms-${AMDGPU_DKMS_PV} )
+		 rock-dkms? ( >=sys-kernel/rock-dkms-${ROCK_DKMS_PV} )
+		 firmware? (
+				|| (
+					amdgpu-dkms? ( >=sys-firmware/amdgpu-firmware-${AMDGPU_DKMS_PV} )
+					rock-dkms? ( >=sys-firmware/rock-firmware-${ROCK_DKMS_PV} )
+					!amdgpu-dkms? (
+						!rock-dkms? (
+							>=sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV_MIN}
+						)
+					)
+				)
 		)
 	 )"
 REQUIRED_USE="^^ ( amdgpu-dkms kernel rock-dkms )
@@ -75,4 +94,13 @@ pkg_setup() {
 		fi
 	fi
 	cve_notice
+}
+
+pkg_postinst() {
+	if use firmware ; then
+		if use !amdgpu-dkms && use !rock-dkms ; then
+			einfo "For the latest navi14, raven updates, you need =sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV_MAX}"
+			einfo "For the latest vega12, vega10, picasso, raven2, raven updates, you need =sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV_MIN}"
+		fi
+	fi
 }
