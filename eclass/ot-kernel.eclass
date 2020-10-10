@@ -1312,16 +1312,20 @@ from /lib/modules/${K_MAJOR_MINOR}.${sublevel}-ot-${machine} to\n\
 	einfo \
 "Please upgrade both the motherboard and CPU with support with either VT-d\n\
 or AMD-Vi to mitigate from cold-boot attack if using full disk encryption.\n\
-Ensure that that IOMMU is being used. \n\
-See https://en.wikipedia.org/wiki/List_of_IOMMU-supporting_hardware for\n\
-supported hardware.  For details about the DMA side-channel attack see \n\
+Ensure that that IOMMU is being used.  See\n\
+\n\
+  https://en.wikipedia.org/wiki/List_of_IOMMU-supporting_hardware\n\
+\n\
+for IOMMU supported hardware.  For details about the DMA side-channel attack, see\n\
 \n\
   https://en.wikipedia.org/wiki/DMA_attack\n\
 \n\
 If you cannot afford the hardware, you may consider removing DMA based\n\
-ports, soldering connections, and disabling DMA to mitigate against an DMA\n\
-attack.\n\
+ports, soldering connections, hardware based encrypted RAM, and\n\
+disabling DMA to mitigate against a DMA attack.\n\
 \n\
-Any crypto algorithm that stores keys in memory or registers are vulnerable.\n\
-This includes TRESOR as well."
+Any crypto algorithm or password store that stores keys in memory or\n\
+registers are vulnerable.  This includes TRESOR as well.\n\
+\n\
+To properly use full disk encryption, do not use suspend to RAM."
 }
