@@ -195,8 +195,9 @@
     <flag name="prjc">Applies the Project C CPU scheduler.</flag>
     <flag name="symlink">Updates the the /usr/src/linux symlink for every
       newer release.</flag>
-    <flag name="tresor">Controls application of TRESOR.  AES keys are
-      stored in registers instead of RAM.</flag>
+    <flag name="tresor">Controls application of TRESOR, a cold boot resistant
+      AES cipher.  AES keys are stored in registers instead of RAM.  It only
+      supports one device at a time but supports 128-, 192-, 256- bit keys.</flag>
     <flag name="tresor_aesni">Patches the kernel with cold boot resistant
       AES hardware accelerated AES-NI support.</flag>
     <flag name="tresor-fscrypt">Adds FS encryption with TRESOR support.</flag>

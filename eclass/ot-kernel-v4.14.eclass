@@ -155,8 +155,8 @@ MUQSS_VER="0.162"
 # Obtained from:  date -d "2017-11-12 10:46:13 -0800" +%s
 LINUX_TIMESTAMP=1510512373
 
-IUSE="+cfs disable_debug +genpatches +kernel_gcc_patch muqss pds +O3 tresor \
-tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 uksm"
+IUSE="+cfs disable_debug +genpatches +kernel_gcc_patch muqss pds \
++O3 tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 uksm"
 REQUIRED_USE="^^ ( cfs muqss pds )
 tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 tresor_aesni? ( tresor )

@@ -33,9 +33,10 @@ PATCH_TRESOR_VER="3.18.5"
 ZSTD_VER="10"
 MUQSS_VER=""
 
-IUSE="bfq bmq +cfs disable_debug futex-wait-multiple +genpatches +kernel_gcc_patch \
-muqss +O3 prjc tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 \
-tresor_x86_64-256-bit-key-support uksm zen-misc -zen-tune zstd"
+IUSE="bfq bmq +cfs disable_debug futex-wait-multiple +genpatches \
++kernel_gcc_patch muqss +O3 prjc tresor tresor_aesni tresor_i686 \
+tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-misc \
+-zen-tune zstd"
 REQUIRED_USE="\
 !bfq !bmq !muqss
 ^^ ( bmq cfs muqss prjc ) \
@@ -75,7 +76,6 @@ LICENSE+=" zstd? ( GPL-2 BSD-2 all-rights-reserved )" # \
   # GPL-2 and BSD-2 applies to the files being patched. \
   # all-rights-reserved which is explicitly stated and GPL-2 both applies to \
   #   lib/zstd/zstd_internal.h being patched.
-
 #BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.patch"
 #BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
 

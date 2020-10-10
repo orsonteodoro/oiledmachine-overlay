@@ -565,8 +565,8 @@ PATCH_TRESOR_VER="3.18.5"
 MUQSS_VER="0.196"
 
 IUSE="bfq bmq +cfs disable_debug +genpatches +kernel_gcc_patch muqss +O3 \
-futex-wait-multiple tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 \
-tresor_x86_64-256-bit-key-support uksm zen-misc -zen-tune"
+futex-wait-multiple tresor tresor_aesni tresor_i686 tresor_sysfs \
+tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-misc -zen-tune"
 REQUIRED_USE="\
 ^^ ( bmq cfs muqss ) \
 tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
