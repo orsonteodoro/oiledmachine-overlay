@@ -12,11 +12,12 @@ KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit distutils-r1 eutils
 SLOT="0"
-DEPEND="dev-python/py-stackexchange[${PYTHON_USEDEP}]
-        dev-python/requests[${PYTHON_USEDEP}]
-        dev-python/colorama[${PYTHON_USEDEP}]
-        dev-python/urwid[${PYTHON_USEDEP}]
-        dev-python/beautifulsoup:4[${PYTHON_USEDEP}]"
+DEPEND=">=dev-python/beautifulsoup-4.9.1:4[${PYTHON_USEDEP}]
+	>=dev-python/colorama-0.4.3[${PYTHON_USEDEP}]
+	>=dev-python/py-stackexchange-2.2.7[${PYTHON_USEDEP}]
+	>=dev-python/requests-2.24.0[${PYTHON_USEDEP}]
+	>=dev-python/urwid-2.1.1[${PYTHON_USEDEP}]
+	>=dev-python/sentry-sdk-0.18.0[${PYTHON_USEDEP}]"
 RDEPEND="${DEPEND}"
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${PV}"
