@@ -5,11 +5,11 @@ EAPI=7
 DESCRIPTION="Virtual for the amdgpu DRM (Direct Rendering Manager) kernel module"
 KEYWORDS="amd64 x86"
 IUSE="amdgpu-dkms dkms +firmware kernel rock-dkms strict-pairing"
-AMDGPU_DKMS_PV="19.30" # DC_VER = 3.2.42
-ROCK_DKMS_PV="2.8" # DC_VER = 3.2.46
-VANILLA_KERNEL_PV="5.4" # DC_VER = 3.2.48
-LINUX_FIRMWARE_PV_MIN="20190926" # matches last commit/tag AMDGPU_DKMS_PV in linux-firmware git
-LINUX_FIRMWARE_PV_MAX="20191029"
+AMDGPU_DKMS_PV="19.50" # DC_VER = 3.2.56
+ROCK_DKMS_PV="3.0" # DC_VER = 3.2.60
+VANILLA_KERNEL_PV="5.5" # DC_VER = 3.2.56
+LINUX_FIRMWARE_PV_MIN="20200107" # matches last commit/tag AMDGPU_DKMS_PV in linux-firmware git
+LINUX_FIRMWARE_PV_MAX="20200309"
 # Find the timestamp at https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/log/amdgpu
 RDEPEND="strict-pairing? (
 		 amdgpu-dkms? ( =sys-kernel/amdgpu-dkms-${AMDGPU_DKMS_PV}* )
@@ -54,7 +54,7 @@ cve_notice() {
 	linux-info_pkg_setup
 	if ver_test ${KV_MAJOR}.${KV_MINOR}.${KV_PATCH} -le 5.2.14 ; then
 		if use amdgpu-dkms || use rock-dkms ; then
-			# patch applied on oiledmachine-overlay ebuilds
+			# patch applied upstream
 			:;
 		else
 			ewarn
@@ -67,7 +67,7 @@ cve_notice() {
 	fi
 	if ver_test ${KV_MAJOR}.${KV_MINOR}.${KV_PATCH} -le 5.3.8 ; then
 		if use amdgpu-dkms || use rock-dkms ; then
-			# patch applied on oiledmachine-overlay ebuilds
+			# patch applied upstream
 			:;
 		else
 			ewarn
@@ -98,9 +98,12 @@ pkg_setup() {
 
 pkg_postinst() {
 	if use firmware ; then
-		if use !amdgpu-dkms && use !rock-dkms ; then
-			einfo "For the latest navi14, raven updates, you need =sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV_MAX}"
-			einfo "For the latest vega12, vega10, picasso, raven2, raven updates, you need =sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV_MIN}"
+		if ! use amdgpu-dkms && ! use rock-dkms ; then
+			einfo "For the latest vega20, vega12, vega10 updates, you need =sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV_MAX}"
+			einfo "For the latest raven updates, you need =sys-kernel/linux-firmware-20200219"
+			einfo "For the latest navi10 updates, you need =sys-kernel/linux-firmware-20200204"
+			einfo "For the latest renoir, raven2 updates, you need =sys-kernel/linux-firmware-20200203"
+			einfo "For the latest picasso, navi14 updates, you need =sys-kernel/linux-firmware-{LINUX_FIRMWARE_PV_MIN}"
 		fi
 	fi
 }

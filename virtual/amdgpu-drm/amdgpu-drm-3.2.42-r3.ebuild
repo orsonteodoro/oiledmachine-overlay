@@ -5,11 +5,11 @@ EAPI=7
 DESCRIPTION="Virtual for the amdgpu DRM (Direct Rendering Manager) kernel module"
 KEYWORDS="amd64 x86"
 IUSE="amdgpu-dkms dkms +firmware kernel rock-dkms strict-pairing"
-AMDGPU_DKMS_PV="20.30" # DC_VER = 3.2.87
-ROCK_DKMS_PV="3.6_beta" # DC_VER = 3.2.87
-VANILLA_KERNEL_PV="5.9_rc1" # DC_VER = 3.2.95
-LINUX_FIRMWARE_PV_MIN="20200807" # matches last commit/tag AMDGPU_DKMS_PV in linux-firmware git
-LINUX_FIRMWARE_PV_MAX="20200824"
+AMDGPU_DKMS_PV="19.30" # DC_VER = 3.2.42
+ROCK_DKMS_PV="2.8" # DC_VER = 3.2.46
+VANILLA_KERNEL_PV="5.4" # DC_VER = 3.2.48
+LINUX_FIRMWARE_PV_MIN="20190926" # matches last commit/tag AMDGPU_DKMS_PV in linux-firmware git
+LINUX_FIRMWARE_PV_MAX="20191029"
 # Find the timestamp at https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/log/amdgpu
 RDEPEND="strict-pairing? (
 		 amdgpu-dkms? ( =sys-kernel/amdgpu-dkms-${AMDGPU_DKMS_PV}* )
@@ -47,6 +47,39 @@ REQUIRED_USE="^^ ( amdgpu-dkms kernel rock-dkms )
 	dkms? ( ^^ ( amdgpu-dkms rock-dkms ) )
 	rock-dkms? ( dkms )"
 SLOT="0/${PV}" # based on DC_VER, rock-dkms will not be an exact fit
+inherit linux-info
+
+cve_notice() {
+        KERNEL_DIR="/usr/src/linux"
+	linux-info_pkg_setup
+	if ver_test ${KV_MAJOR}.${KV_MINOR}.${KV_PATCH} -le 5.2.14 ; then
+		if use amdgpu-dkms || use rock-dkms ; then
+			# patch applied on oiledmachine-overlay ebuilds
+			:;
+		else
+			ewarn
+			ewarn "CVE advisory:"
+			ewarn
+			ewarn "CVE-2019-16229 (CVSS 2.0 Medium) : https://nvd.nist.gov/vuln/detail/CVE-2019-16229"
+			ewarn
+			einfo "It's recommended to use either amdgpu-dkms (>=19.50), rock-dkms (>=3.1), or LTS kernels >= 5.4.x."
+		fi
+	fi
+	if ver_test ${KV_MAJOR}.${KV_MINOR}.${KV_PATCH} -le 5.3.8 ; then
+		if use amdgpu-dkms || use rock-dkms ; then
+			# patch applied on oiledmachine-overlay ebuilds
+			:;
+		else
+			ewarn
+			ewarn "CVE advisories:"
+			ewarn
+			ewarn "CVE-2019-19067 (CVSS 2.0 Medium) : https://nvd.nist.gov/vuln/detail/CVE-2019-19067"
+			ewarn "CVE-2019-19083 (CVSS 2.0 Medium) : https://nvd.nist.gov/vuln/detail/CVE-2019-19083"
+			ewarn
+			einfo "It's recommended to use either amdgpu-dkms (>=19.50), rock-dkms (>=3.1), or LTS kernels >= 5.4.x."
+		fi
+	fi
+}
 
 pkg_setup() {
 	if use amdgpu-dkms || use rock-dkms ; then
@@ -60,12 +93,14 @@ pkg_setup() {
 			die "Your DC_VER is old.  Your kernel needs to be at least ${VANILLA_KERNEL_PV} or DC_VER needs to be ${PV}."
 		fi
 	fi
+	cve_notice
 }
 
 pkg_postinst() {
 	if use firmware ; then
-		if use !amdgpu-dkms && use !rock-dkms ; then
-			einfo "For the latest navi10 and navi10 updates, you need =sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV_MAX}"
+		if ! use amdgpu-dkms && ! use rock-dkms ; then
+			einfo "For the latest navi14, raven updates, you need =sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV_MAX}"
+			einfo "For the latest vega12, vega10, picasso, raven2, raven updates, you need =sys-kernel/linux-firmware-${LINUX_FIRMWARE_PV_MIN}"
 		fi
 	fi
 }
