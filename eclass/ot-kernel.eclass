@@ -1309,10 +1309,13 @@ from /lib/modules/${K_MAJOR_MINOR}.${sublevel}-ot-${machine} to\n\
 /lib/modules/${K_MAJOR_MINOR}.9999-ot-${machine}"
 	fi
 
+	# For possible impractical passthough (pt) DMA attack, see
+	# https://link.springer.com/article/10.1186/s13173-017-0066-7#Fn1
 	einfo \
 "Please upgrade both the motherboard and CPU with support with either VT-d\n\
 or AMD-Vi to mitigate from cold-boot attack if using full disk encryption.\n\
-Ensure that that IOMMU is being used.  See\n\
+Ensure that that IOMMU is being used.  Do not disable IOMMU or use\n\
+passthrough (pt).  See\n\
 \n\
   https://en.wikipedia.org/wiki/List_of_IOMMU-supporting_hardware\n\
 \n\

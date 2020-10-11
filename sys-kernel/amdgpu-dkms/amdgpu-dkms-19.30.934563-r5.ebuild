@@ -502,6 +502,13 @@ pkg_postinst() {
 	einfo "where X is in MB with max limit of 96"
 	einfo "For details see:  https://www.amd.com/en/support/kb/release-notes/rn-radeonprossg-linux"
 
+	# For possible impractical passthough (pt) DMA attack, see
+	# https://link.springer.com/article/10.1186/s13173-017-0066-7#Fn1
+	ewarn
+	ewarn "Disabling IOMMU or using passthrough (pt) is not recommended to mitigate against a DMA attack"
+	ewarn "used in cold boot attacks for full disk encryption."
+	ewarn
+
 	check_modprobe_conf
 }
 
