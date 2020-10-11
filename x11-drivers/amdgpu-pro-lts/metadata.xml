@@ -66,6 +66,8 @@
       recommended for Radeon PRO products.</flag>
     <flag name="roct">Install the hsakmt library needed for API calls to
       communicate with the ROCk kernel.</flag>
+    <flag name="strict-pairing">Pairs the amdgpu-pro-lts package to the
+      same firmware and same DRM kernel driver.</flag>
     <flag name="vaapi">Install VAAPI (Video Acceleration API)
       acceleration driver for accelerated video playback (H.264) and video
       post-processing.</flag>
