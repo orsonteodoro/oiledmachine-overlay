@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="Radeon™ Software for Linux®"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-20"
+"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-40"
 LICENSE="AMDGPUPROEULA
 	doc? ( AMDGPUPROEULA MIT BSD )
 	dkms? ( AMDGPU-FIRMWARE GPL-2 MIT )
@@ -67,19 +67,19 @@ PKG_VER_LIBDRM="2.4.100"
 PKG_VER_LLVM_TRIPLE="10.0.0"
 PKG_VER_LLVM=$(ver_cut 1-2 ${PKG_VER_LLVM_TRIPLE})
 PKG_VER_LLVM_MAJ=$(ver_cut 1 ${PKG_VER_LLVM_TRIPLE})
-PKG_VER_MESA="20.0.5"
+PKG_VER_MESA="20.1.5"
 PKG_VER_STRING=${PKG_VER}-${PKG_REV}
 PKG_VER_STRING_DIR=${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}
 PKG_VER_VA="1.8.3"
-PKG_VER_XORG_VIDEO_AMDGPU_DRV="19.1.0" # about the same as the mesa version
-VULKAN_SDK_VER="1.2.135.0"
+PKG_VER_XORG_VIDEO_AMDGPU_DRV="24.0.0" # about the same as the mesa version
+VULKAN_SDK_VER="1.2.148"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
 IUSE="bindist clinfo developer dkms doc +egl +gles2 freesync hip-clang \
 +open-stack +opencl opencl-icd-loader +opencl_orca +opencl_pal +opengl \
-opengl_mesa +opengl_pro osmesa +pro-stack roct +vaapi +vdpau +vulkan \
-vulkan_open vulkan_pro +X xa"
+opengl_mesa +opengl_pro osmesa +pro-stack roct strict-pairing +vaapi \
++vdpau +vulkan vulkan_open vulkan_pro +X xa"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -124,8 +124,13 @@ RDEPEND="!x11-drivers/amdgpu-pro-lts
 			virtual/libudev
 		)
 	 )
-	 freesync? ( >=virtual/amdgpu-drm-3.2.08[dkms?] )
-	 >=virtual/amdgpu-drm-3.2.81[dkms?]
+	 !strict-pairing? (
+		freesync? ( >=virtual/amdgpu-drm-3.2.08[dkms?] )
+		>=virtual/amdgpu-drm-3.2.97[dkms?]
+	 )
+	 strict-pairing? (
+		~virtual/amdgpu-drm-3.2.97[dkms?,strict-pairing]
+	 )
 	 open-stack? (
 	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
 	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}] )
@@ -207,12 +212,6 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-	if [ ! -L /lib64/libedit.so.2 ] ; then
-		einfo \
-"You need to do \`ln -s /lib64/libedit.so.0 /lib64/libedit.so.2\`"
-		die
-	fi
-
 	CONFIG_CHECK="~DRM_AMDGPU"
 
 	WARNING_DRM_AMDGPU=\
@@ -366,7 +365,7 @@ src_unpack_pro_stack() {
 			unpack_rpm "${d_rpms}/clinfo-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		fi
 		use opencl-icd-loader && \
-		unpack_rpm "${d_rpms}/libopencl-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		unpack_rpm "${d_rpms}/opencl-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 		if use opencl_pal ; then
 			unpack_rpm "${d_rpms}/opencl-amdgpu-pro-comgr-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
 			if [[ "${ABI}" == "amd64" ]] ; then

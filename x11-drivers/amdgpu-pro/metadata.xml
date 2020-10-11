@@ -65,6 +65,8 @@
       communicate with the ROCk kernel.</flag>
     <flag name="system-libva">Prefer the libva provided by the system over
       the one provided by the driver.</flag>
+    <flag name="strict-pairing">Pairs the amdgpu-pro-lts package to the
+      same firmware and same DRM kernel driver.</flag>
     <flag name="vaapi">Install VAAPI (Video Acceleration API)
       acceleration driver for accelerated video playback (H.264) and video
       post-processing.</flag>

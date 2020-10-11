@@ -84,8 +84,8 @@ SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
 IUSE="bindist clinfo developer dkms doc +egl +gles2 freesync hip-clang \
 +open-stack +opencl opencl-icd-loader +opencl_orca +opencl_pal +opengl \
-opengl_mesa +opengl_pro osmesa +pro-stack roct system-libva +vaapi +vdpau \
-+vulkan vulkan_open vulkan_pro wayland +X xa"
+opengl_mesa +opengl_pro osmesa +pro-stack roct strict-pairing system-libva \
++vaapi +vdpau +vulkan vulkan_open vulkan_pro wayland +X xa"
 SLOT="1"
 
 # The x11-base/xorg-server-<ver> must match this drivers version or this error
@@ -136,8 +136,13 @@ RDEPEND="!x11-drivers/amdgpu-pro-lts
 			sys-kernel/rock-dkms
 		)
 	 )
-	 freesync? ( >=virtual/amdgpu-drm-3.2.08[dkms?] )
-	 >=virtual/amdgpu-drm-3.2.56[dkms?]
+	 !strict-pairing? (
+		freesync? ( >=virtual/amdgpu-drm-3.2.08[dkms?] )
+		>=virtual/amdgpu-drm-3.2.56[dkms?]
+	 )
+	 strict-pairing? (
+		~virtual/amdgpu-drm-3.2.56[dkms?,strict-pairing]
+	 )
 	 open-stack? (
 	   sys-libs/ncurses:0/6[tinfo,${MULTILIB_USEDEP}]
 	   sys-libs/ncurses-compat:5[tinfo,${MULTILIB_USEDEP}] )
