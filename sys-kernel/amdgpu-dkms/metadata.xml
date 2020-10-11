@@ -13,7 +13,7 @@
     against different kernel versions.  For example,
 
     For 4.x kernels use the amdgpu-dkms-19.30.x package.
-    For 5.0.x to 5.2.x kernels use amdgpu-dkms-19.50.x package.
+    For 5.0.x to 5.2.x kernels use the amdgpu-dkms-19.50.x package.
     For 5.0.x to 5.4.x use the amdgpu-dkms-20.10.x package.
     For 5.0.x to 5.6.x use the amdgpu-dkms-20.20.x package.
     Versions 5.7.x and above are not supported.
