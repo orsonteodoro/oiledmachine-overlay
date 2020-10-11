@@ -7,7 +7,7 @@ inherit linux-info unpacker
 
 DESCRIPTION="AMDGPU DKMS kernel module"
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-30"
+"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-40"
 LICENSE="GPL-2 MIT
 	firmware? ( AMDGPU-FIRMWARE )"
 KEYWORDS="amd64"
