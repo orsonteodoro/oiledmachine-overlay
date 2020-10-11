@@ -16,7 +16,7 @@
     For 5.0.x to 5.2.x kernels use the amdgpu-dkms-19.50.x package.
     For 5.0.x to 5.4.x use the amdgpu-dkms-20.10.x package.
     For 5.0.x to 5.6.x use the amdgpu-dkms-20.20.x package.
-    Versions 5.7.x and above are not supported.
+    Kernel versions 5.7.x and above are not supported.
 
     The latest point releases of the long-term support kernels (4.14.x,
     4.19.x, 5.4.x) or the non-"End Of Life" (EOL) stable kernels are
