@@ -11,12 +11,20 @@ MY_PN="${PN/b/B}"
 SLOT="0"
 PYTHON_COMPAT=( python3_{6,7,8} )
 inherit python-single-r1
-IUSE="bash-completion test"
-RDEPEND="${PYTHON_DEPS}"
+IUSE="test"
+REQUIRED_USE="${PYTHON_REQUIRED_USE}"
+RDEPEND=">=dev-cpp/nlohmann_json-3.7.3
+	 >=dev-libs/libfmt-6.2
+	 >=dev-libs/spdlog-1.5
+	 >=net-libs/grpc-1.28
+	 >=dev-libs/protobuf-3.11"
 DEPEND="${RDEPEND}
-	>=dev-util/cmake-2.8
+	>=dev-util/cmake-3.12
 	test? (
+		${PYTHON_DEPS}
+		>=dev-cpp/gtest-1.10
 		$(python_gen_cond_dep '>=dev-python/lit-0.7[${PYTHON_USEDEP}]' python3_{6,7,8})
+		dev-util/valgrind
 	)
 	virtual/pkgconfig"
 SRC_URI=\
@@ -28,7 +36,14 @@ RESTRICT="mirror"
 
 src_configure() {
 	local mycmakeargs=(
-		-DUSE_SHELL_COMPLETION=$(usex bash-completion)
+		-DENABLE_UNIT_TESTS=$(usex test)
+		-DENABLE_FUNC_TESTS=$(usex test)
 	)
 	cmake-utils_src_configure
+}
+
+src_install() {
+	cmake-utils_src_install
+	# Removed staged folder.  It contains the same contents.
+	rm -rf "${ED}/var" || die
 }
