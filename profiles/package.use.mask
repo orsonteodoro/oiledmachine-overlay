@@ -22,3 +22,6 @@ games-misc/enigma android wine
 
 # Untested
 dev-libs/urho3d android raspberry-pi
+
+# Untested
+dev-util/bear test
