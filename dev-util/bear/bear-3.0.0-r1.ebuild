@@ -23,7 +23,8 @@ DEPEND="${RDEPEND}
 	test? (
 		${PYTHON_DEPS}
 		>=dev-cpp/gtest-1.10
-		$(python_gen_cond_dep '>=dev-python/lit-0.7[${PYTHON_USEDEP}]' python3_{6,7,8})
+		$(python_gen_cond_dep '>=dev-python/lit-0.7[${PYTHON_USEDEP}]' \
+			python3_{6,7,8})
 		dev-util/valgrind
 	)
 	virtual/pkgconfig"

@@ -17,7 +17,8 @@ RDEPEND="${PYTHON_DEPS}"
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-2.8
 	test? (
-		$(python_gen_cond_dep '>=dev-python/lit-0.7[${PYTHON_USEDEP}]' python3_{6,7,8})
+		$(python_gen_cond_dep '>=dev-python/lit-0.7[${PYTHON_USEDEP}]' \
+			python3_{6,7,8})
 	)
 	virtual/pkgconfig"
 SRC_URI=\
