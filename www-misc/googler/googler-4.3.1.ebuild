@@ -8,7 +8,7 @@ LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~arm ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0"
 MY_PV="$(ver_cut 1-2 ${PV})"
-PYTHON_COMPAT=( python{3_6,3_7,3_8} )
+PYTHON_COMPAT=( python3_{6,7,8,9} )
 inherit python-single-r1
 RESTRICT="mirror"
 SRC_URI=\
