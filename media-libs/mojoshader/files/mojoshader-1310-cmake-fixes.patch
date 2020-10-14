@@ -1,22 +1,23 @@
---- a/CMakeLists.txt.orig	2020-04-03 22:58:05.061373236 -0700
-+++ b/CMakeLists.txt	2020-04-03 23:00:33.287088025 -0700
-@@ -182,6 +182,7 @@ IF(COMPILER_SUPPORT)
+diff -urp mojoshader-.orig/CMakeLists.txt mojoshader-/CMakeLists.txt
+--- mojoshader-.orig/CMakeLists.txt	2020-10-13 21:28:13.451704284 -0700
++++ mojoshader-/CMakeLists.txt	2020-10-13 21:34:41.246614184 -0700
+@@ -189,6 +189,7 @@ IF(COMPILER_SUPPORT)
  ENDIF(COMPILER_SUPPORT)
  IF(BUILD_SHARED_LIBS)
      TARGET_LINK_LIBRARIES(mojoshader ${LIBM} ${LOBJC} ${CARBON_FRAMEWORK})
 +    INSTALL(TARGETS mojoshader LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
  ENDIF(BUILD_SHARED_LIBS)
  
- SET_SOURCE_FILES_PROPERTIES(
-@@ -212,6 +213,7 @@ IF(SDL2)
-     TARGET_LINK_LIBRARIES(bestprofile mojoshader ${SDL2} ${LIBM} ${LOBJC} ${CARBON_FRAMEWORK})
-     ADD_EXECUTABLE(availableprofiles utils/availableprofiles.c)
+ TARGET_INCLUDE_DIRECTORIES(mojoshader PUBLIC
+@@ -225,6 +226,7 @@ IF(SDL2)
      TARGET_LINK_LIBRARIES(availableprofiles mojoshader ${SDL2} ${LIBM} ${LOBJC} ${CARBON_FRAMEWORK})
-+    INSTALL(TARGETS glcaps bestprofile availableprofiles RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}/mojoshader)
+     ADD_EXECUTABLE(testglcompile utils/testglcompile.c)
+     TARGET_LINK_LIBRARIES(testglcompile mojoshader ${SDL2} ${LIBM} ${LOBJC} ${CARBON_FRAMEWORK})
++    INSTALL(TARGETS glcaps bestprofile availableprofiles testglcompile RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}/mojoshader)
  ENDIF(SDL2)
  
  IF(COMPILER_SUPPORT)
-@@ -223,6 +225,7 @@ IF(COMPILER_SUPPORT)
+@@ -236,6 +238,7 @@ IF(COMPILER_SUPPORT)
              PROPERTIES COMPILE_FLAGS "-DFINDERRORS_COMPILE_SHADERS=1"
          )
      ENDIF(SDL2)
@@ -24,7 +25,7 @@
  ENDIF(COMPILER_SUPPORT)
  
  FIND_PATH(SPIRV_TOOLS_INCLUDE_DIR "spirv-tools/libspirv.h" PATH_SUFFIXES "include")
-@@ -242,7 +245,10 @@ TARGET_LINK_LIBRARIES(testoutput mojosha
+@@ -255,7 +258,10 @@ TARGET_LINK_LIBRARIES(testoutput mojosha
  IF(COMPILER_SUPPORT)
      ADD_EXECUTABLE(mojoshader-compiler utils/mojoshader-compiler.c)
      TARGET_LINK_LIBRARIES(mojoshader-compiler mojoshader ${LIBM} ${LOBJC} ${CARBON_FRAMEWORK})
@@ -35,3 +36,5 @@
  
  # Unit tests...
  IF(COMPILER_SUPPORT)
+Only in mojoshader-: CMakeLists.txt.orig
+Only in mojoshader-: CMakeLists.txt.rej

@@ -35,7 +35,7 @@ src_unpack() {
 
 src_prepare() {
 	default
-	eapply "${FILESDIR}/mojoshader-1240-cmake-fixes.patch"
+	eapply "${FILESDIR}/mojoshader-1310-cmake-fixes.patch"
 	eapply "${FILESDIR}/mojoshader-1240-cmake-build-both-static-and-shared.patch"
 	# Bugged CMakeLists.txt always points to tip but not static values as
 	# expected.
