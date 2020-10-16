@@ -23,7 +23,10 @@ closure_compiler_nodejs closure_compiler_native doc"
 REQUIRED_USE="closure_compiler_nodejs? ( closure_compiler_java )
 || ( closure_compiler_java closure_compiler_js closure_compiler_nodejs \
 closure_compiler_native )"
-CDEPEND="closure_compiler_nodejs? ( >=net-libs/nodejs-8 )"
+# For the node version, see
+# https://github.com/google/closure-compiler-npm/blob/master/packages/google-closure-compiler/package.json
+NODE_V="10"
+CDEPEND="closure_compiler_nodejs? ( >=net-libs/nodejs-${NODE_V} )"
 RDEPEND="${CDEPEND}
 	!dev-lang/closure-compiler-bin
 	closure_compiler_java? (
@@ -41,7 +44,7 @@ BDEPEND="dev-java/maven-bin
 	sys-apps/yarn"
 inherit check-reqs eutils java-utils-2 npm-secaudit
 FN_DEST="${PN}-${PV}.tar.gz"
-CLOSURE_COMPILER_COMMIT="12c62c55de3080b6462bf97eec0d722e79737bbb"
+CLOSURE_COMPILER_COMMIT="17f14e8fd09e503328d55cdcce7ae5d6be33a9be"
 FN_DEST2="closure-compiler-${CLOSURE_COMPILER_COMMIT}.tar.gz"
 SRC_URI=\
 "https://github.com/google/closure-compiler-npm/archive/v${PV}.tar.gz \
@@ -86,6 +89,16 @@ download micropackages."
 
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
+	if use closure_compiler_nodejs ; then
+		# Check nodejs still in a multislot scenario
+		X_NODE_V=$(node --version | grep -E -o -e "[0-9.]+" | cut -f 1 -d ".")
+		if ver_test "${X_NODE_V}" -lt "${NODE_V}" ; then
+			die \
+"Your active nodejs needs to be at least >=${NODE_V}.  See \`eselect nodejs\`"
+		else
+			einfo "NODE_V:  ${NODE_V}"
+		fi
+	fi
 }
 
 src_unpack() {
