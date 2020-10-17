@@ -4,7 +4,7 @@
 EAPI=7
 PYTHON_COMPAT=( python3_{6,7,8} )
 PYTHON_REQ_USE="threads(+)"
-inherit bash-completion-r1 eutils flag-o-matic pax-utils python-any-r1 toolchain-funcs xdg-utils
+inherit bash-completion-r1 flag-o-matic pax-utils python-any-r1 toolchain-funcs xdg-utils
 
 DESCRIPTION="A JavaScript runtime built on Chrome's V8 JavaScript engine"
 HOMEPAGE="https://nodejs.org/"
@@ -32,6 +32,7 @@ RDEPEND="${CDEPEND}
 	system-ssl? ( >=dev-libs/openssl-1.1.1g:0= )"
 BDEPEND="${CDEPEND}
 	${PYTHON_DEPS}
+	sys-apps/coreutils
 	systemtap? ( dev-util/systemtap )
 	test? ( net-misc/curl )
 	pax_kernel? ( sys-apps/elfix )"
@@ -41,7 +42,7 @@ PATCHES=(
 )
 RESTRICT="test"
 S="${WORKDIR}/node-v${PV}"
-NPM_V="6.14.8" # See https://github.com/nodejs/node/blob/v14.13.0/deps/npm/package.json
+NPM_V="6.14.8" # See https://github.com/nodejs/node/blob/v14.13.1/deps/npm/package.json
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
@@ -170,6 +171,7 @@ src_install() {
 	default
 
 	mv "${ED}"/usr/bin/node{,${SLOT_MAJOR}} || die
+	pax-mark -m "${ED}"/usr/bin/node${SLOT_MAJOR}
 
 	# set up a symlink structure that node-gyp expects..
 	local D_INCLUDE_BASE="/usr/include/node${SLOT_MAJOR}"
@@ -200,7 +202,7 @@ src_install() {
 		# npm otherwise tries to write outside of the sandbox
 		local npm_config="${REL_D_BASE}/node_modules/npm/lib/config/core.js"
 		sed -i -e "s|'/etc'|'${ED}/etc'|g" "${ED}/${npm_config}" || die
-		local tmp_npm_completion_file="$(emktemp)"
+		local tmp_npm_completion_file="$(TMPDIR="${T}" mktemp -t npm.XXXXXXXXXX)"
 		"${ED}/usr/bin/npm" completion > "${tmp_npm_completion_file}"
 		newbashcomp "${tmp_npm_completion_file}" npm
 		sed -i -e "s|'${ED}/etc'|'/etc'|g" "${ED}/${npm_config}" || die
