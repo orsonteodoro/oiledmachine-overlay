@@ -9,10 +9,10 @@ functionality to cpupower."
 HOMEPAGE="https://github.com/vagnum08/cpupower-gui"
 LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~x86"
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{6,7,8,9} )
 SLOT="0"
 inherit python-r1
-LANGS=(el_GR en en_GB hu zh_CN)
+LANGS=(el_GR en en_GB hu nl zh_CN)
 IUSE="${LANGS[@]/#/l10n_} +l10n_en"
 RDEPEND="${PYTHON_DEPS}
 	 dev-libs/glib
