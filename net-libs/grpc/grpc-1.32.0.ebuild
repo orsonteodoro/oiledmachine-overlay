@@ -14,24 +14,33 @@ SRC_URI="https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="Apache-2.0"
 SLOT="0/${PV}"
 KEYWORDS="~amd64 ~ppc64 ~x86"
-IUSE="doc examples libressl"
+IUSE="doc examples libressl test"
 
-DEPEND="
+RDEPEND="
 	=dev-cpp/abseil-cpp-20200225*:=[${MULTILIB_USEDEP}]
-	>=dev-libs/protobuf-3.11.2:=[${MULTILIB_USEDEP}]
+	dev-libs/re2:=[${MULTILIB_USEDEP}]
+	>=dev-libs/protobuf-3.13.0:=[${MULTILIB_USEDEP}]
 	>=net-dns/c-ares-1.15.0:=[${MULTILIB_USEDEP}]
 	sys-libs/zlib:=[${MULTILIB_USEDEP}]
-	!libressl? ( >=dev-libs/openssl-1.0.2:0=[-bindist,${MULTILIB_USEDEP}] )
+	!libressl? ( >=dev-libs/openssl-1.1.1:0=[-bindist,${MULTILIB_USEDEP}] )
 	libressl? ( dev-libs/libressl:0=[${MULTILIB_USEDEP}] )
 "
 
-RDEPEND="${DEPEND}"
+DEPEND="${RDEPEND}
+	test? (
+		dev-cpp/benchmark
+		dev-cpp/gflags[${MULTILIB_USEDEP}]
+	)
+"
+
 BDEPEND="virtual/pkgconfig"
 
-# requires git checkouts of google tools
+# requires sources of many google tools
 RESTRICT="test"
 
 S="${WORKDIR}/${PN}-${MY_PV}"
+
+PATCHES=( "${FILESDIR}/use-pkg-config-to-find-re2.patch" )
 
 src_prepare() {
 	cmake-utils_src_prepare
@@ -53,12 +62,17 @@ src_configure() {
 		local mycmakeargs=(
 			-DgRPC_INSTALL=ON
 			-DgRPC_ABSL_PROVIDER=package
+			-DgRPC_BACKWARDS_COMPATIBILITY_MODE=OFF
 			-DgRPC_CARES_PROVIDER=package
 			-DgRPC_INSTALL_CMAKEDIR="$(get_libdir)/cmake/${PN}"
 			-DgRPC_INSTALL_LIBDIR="$(get_libdir)"
 			-DgRPC_PROTOBUF_PROVIDER=package
+			-DgRPC_RE2_PROVIDER=package
 			-DgRPC_SSL_PROVIDER=package
 			-DgRPC_ZLIB_PROVIDER=package
+			-DgRPC_BUILD_TESTS=$(usex test)
+			$(usex test '-DgRPC_GFLAGS_PROVIDER=package' '')
+			$(usex test '-DgRPC_BENCHMARK_PROVIDER=package' '')
 		)
 		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 		cmake-utils_src_configure
