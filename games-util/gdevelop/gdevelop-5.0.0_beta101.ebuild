@@ -35,7 +35,7 @@ RDEPEND="${RDEPEND}
 	virtual/opengl
 "
 # For the required emscripten version, \
-# see https://github.com/4ian/GDevelop/blob/v5.0.0-beta98/.circleci/config.yml
+# see https://github.com/4ian/GDevelop/blob/v5.0.0-beta101/.circleci/config.yml
 # See also electron-app_src_compile about the wasm (llvm) vs \
 # asmjs (emscripten-fastcomp) requirement.
 EMSCRIPTEN_MIN_V="1.39.6"
@@ -56,6 +56,8 @@ ELECTRON_APP_REACT_V="16.8.6"
 inherit check-reqs cmake-utils desktop electron-app eutils user xdg
 MY_PN="GDevelop"
 MY_PV="${PV//_/-}"
+# For the SFML version, see
+# https://github.com/4ian/GDevelop/blob/v5.0.0-beta101/ExtLibs/CMakeLists.txt
 SFML_V="2.4.1"
 SRC_URI=\
 "https://github.com/4ian/GDevelop/archive/v${MY_PV}.tar.gz \
