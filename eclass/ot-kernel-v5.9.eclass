@@ -3,32 +3,32 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: ot-kernel-v5.8.eclass
+# @ECLASS: ot-kernel-v5.9.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7
-# @BLURB: Eclass for patching the 5.8.x kernel
+# @BLURB: Eclass for patching the 5.9.x kernel
 # @DESCRIPTION:
-# The ot-kernel-v5.8 eclass defines specific applicable patching for the 5.8.x
+# The ot-kernel-v5.9 eclass defines specific applicable patching for the 5.9.x
 # linux kernel.
 
-K_MAJOR_MINOR="5.8"
+K_MAJOR_MINOR="5.9"
 K_PATCH_XV="5.x"
 EXTRAVERSION="-ot"
-PATCH_UKSM_VER="5.8"
+PATCH_UKSM_VER="5.9"
 PATCH_UKSM_MVER="5"
-PATCH_ZENTUNE_VER="5.8"
-PATCH_ALLOW_O3_COMMIT="bf804ff720d6aa54c15d9783fb9e067df94ff2e8"
+PATCH_ZENTUNE_VER="5.9"
+PATCH_ALLOW_O3_COMMIT="d0ee207cac1217d2b111bef6f0f9581a10b35f6c"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?10}"
 #PATCH_GP_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
-PATCH_GP_MAJOR_MINOR_REVISION="5.8-${K_GENPATCHES_VER}"
-PATCH_BFQ_VER="5.8"
-PATCH_BMQ_MAJOR_MINOR="5.8"
-PATCH_PROJECT_C_MAJOR_MINOR="5.8"
+PATCH_GP_MAJOR_MINOR_REVISION="5.9-${K_GENPATCHES_VER}"
+PATCH_BFQ_VER="5.9"
+PATCH_BMQ_MAJOR_MINOR="5.9"
+PATCH_PROJECT_C_MAJOR_MINOR="5.9"
 DISABLE_DEBUG_V="1.1"
-ZENTUNE_5_8_COMMIT="994279ebfc0d19e185792fb11cacb63e6750e22e..78070e0e766369a33bcc279128c07124276d4b80" # (exclusive-end,inclusive-start]
+ZENTUNE_5_9_COMMIT="8141729974d4c2fae2c758e83136ae4b12feba7a..cbef2dd68b27d957d4b24ee020fd33ef5ebdf26b" # (exclusive-end,inclusive-start]
 PATCH_TRESOR_VER="3.18.5"
 ZSTD_VER="10"
 MUQSS_VER=""
@@ -38,7 +38,7 @@ IUSE="bfq bmq +cfs disable_debug futex-wait-multiple +genpatches \
 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-misc \
 -zen-tune zstd"
 REQUIRED_USE="\
-!bfq !bmq !muqss
+!bfq !bmq !genpatches !muqss !prjc
 ^^ ( bmq cfs muqss prjc ) \
 tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 tresor_aesni? ( tresor )
@@ -68,7 +68,7 @@ LICENSE+=" O3? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
 LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   # GPL-2 applies to the files being patched \
-  # all-rights-reserved applies to new files introduced and no default license
+  # all-rights-reserved applies to new files introduced and no defaults license
   #   found in the project.  (The implementation is based on an academic paper
   #   from public universities.)
 LICENSE+=" zen-tune? ( GPL-2 )"
@@ -86,13 +86,7 @@ SRC_URI+=" https://cdn.kernel.org/pub/linux/kernel/v${K_PATCH_XV}/linux-${K_MAJO
 	   ${KERNEL_PATCH_URLS[@]}"
 fi
 
-SRC_URI+=" genpatches? (
-		${GENPATCHES_URI}
-		${GENPATCHES_BASE_SRC_URL}
-		${GENPATCHES_EXPERIMENTAL_SRC_URL}
-		${GENPATCHES_EXTRAS_SRC_URL}
-	   )
-	   kernel_gcc_patch? (
+SRC_URI+=" kernel_gcc_patch? (
 		${KGCCP_SRC_4_9_URL}
 		${KGCCP_SRC_8_1_URL}
 		${KGCCP_SRC_9_1_URL}
@@ -111,7 +105,12 @@ SRC_URI+=" genpatches? (
 
 SRC_URI_DISABLED+="
 	   bmq? ( ${BMQ_SRC_URL} )
-"
+	   genpatches? (
+		${GENPATCHES_URI}
+		${GENPATCHES_BASE_SRC_URL}
+		${GENPATCHES_EXPERIMENTAL_SRC_URL}
+		${GENPATCHES_EXTRAS_SRC_URL}
+	   )"
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:
@@ -200,6 +199,6 @@ experimental.\n\
 \n"
 	fi
 	einfo ""
-	einfo "Genkernel users may require 4.x series to build the 5.8.x kernel series."
+	einfo "Genkernel users may require 4.x series to build the 5.9.x kernel series."
 	einfo ""
 }

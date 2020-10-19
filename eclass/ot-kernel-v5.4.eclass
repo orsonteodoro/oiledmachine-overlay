@@ -587,7 +587,7 @@ inherit ot-kernel
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
 LICENSE+=" bmq? ( GPL-2 Linux-syscall-note )" # some new files in the patch \
-  # do not come with an explicit license but default to
+  # do not come with an explicit license but defaults to
   # GPL-2 with Linux-syscall-note.
 LICENSE+=" futex-wait-multiple? ( GPL-2 Linux-syscall-note GPL-2+ )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources

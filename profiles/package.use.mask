@@ -22,7 +22,10 @@ games-misc/enigma android wine
 
 # Untested
 dev-libs/urho3d android raspberry-pi
+>=sys-kernel/ot-sources-5.9 tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support
 
 # Untested tests
 dev-util/bear test
 net-libs/grpc test
+
+

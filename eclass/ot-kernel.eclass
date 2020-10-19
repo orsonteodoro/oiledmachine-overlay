@@ -19,6 +19,7 @@
 # zen-tune:
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce 3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0
 #   https://github.com/torvalds/linux/compare/v5.8...zen-kernel:5.8/zen-sauce (994279ebfc0d19e185792fb11cacb63e6750e22e..78070e0e766369a33bcc279128c07124276d4b80] ; (exclusive-end,inclusive-start]
+#   https://github.com/torvalds/linux/compare/v5.8...zen-kernel:5.8/zen-sauce (8141729974d4c2fae2c758e83136ae4b12feba7a..cbef2dd68b27d957d4b24ee020fd33ef5ebdf26b] ; (exclusive-end,inclusive-start]
 # zen-kernel 5.4/futex-backports
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/futex-backports
 # zen-kernel 5.{6,7}/futex-multiple-wait-v3
@@ -171,12 +172,13 @@ fi
 ZENMISC_URL_BASE="https://github.com/torvalds/linux/commit/"
 
 FUTEX_WAIT_MULTIPLE_BASE="https://github.com/torvalds/linux/compare/v${PATCH_ZENTUNE_VER}...zen-kernel:${PATCH_ZENTUNE_VER}/"
-if [[ "${K_MAJOR_MINOR}" == "5.4" \
-|| "${K_MAJOR_MINOR}" == "5.3" \
-|| "${K_MAJOR_MINOR}" == "5.2" ]] ; then
+if [[ "${K_MAJOR_MINOR}" == "5.2" \
+	|| "${K_MAJOR_MINOR}" == "5.3" \
+	|| "${K_MAJOR_MINOR}" == "5.4" ]] ; then
 FUTEX_WAIT_MULTIPLE_PROJ="futex-backports"
-elif [[ "${K_MAJOR_MINOR}" == "5.5" \
-	|| "${K_MAJOR_MINOR}" == "5.6" ]] ; then
+elif [[ "${K_MAJOR_MINOR}" == "5.6" \
+	|| "${K_MAJOR_MINOR}" == "5.5" \
+	|| "${K_MAJOR_MINOR}" == "5.9" ]] ; then
 FUTEX_WAIT_MULTIPLE_PROJ="futex-multiple-wait-v3"
 fi
 FUTEX_WAIT_MULTIPLE_FN="${FUTEX_WAIT_MULTIPLE_PROJ}-${K_MAJOR_MINOR}.patch"

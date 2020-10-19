@@ -178,7 +178,7 @@ LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" O3? ( GPL-2 )"
 LICENSE+=" pds? ( GPL-2 Linux-syscall-note )" # some new files in the patch \
-  # do not come with an explicit license but default to
+  # do not come with an explicit license but defaults to
   # GPL-2 with Linux-syscall-note.
 LICENSE+=" tresor? ( GPL-2 )"
 LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
