@@ -10,8 +10,8 @@ SLOT="0"
 DEPEND="${RDEPEND}
 	>=dev-lang/typescript-4.0.2
         >=net-libs/nodejs-12[npm]"
-ELECTRON_APP_ELECTRON_V="10.1.1"
-ELECTRON_APP_TYPESCRIPT_V="4.0.2"
+ELECTRON_APP_ELECTRON_V="10.1.3"
+ELECTRON_APP_TYPESCRIPT_V="4.0.3"
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
 inherit desktop electron-app eutils
 SRC_URI=\
