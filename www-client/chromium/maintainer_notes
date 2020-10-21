@@ -64,6 +64,7 @@ Additional notes:
 
 It helps to diff between the forked version and the same
 point release so see what changes need to be migrated.
+See the _maintainer_notes folder for details on ebuild changes.
 
 It also helps to do a side-by-side comparison to migrate
 changes.
