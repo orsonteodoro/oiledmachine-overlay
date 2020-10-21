@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{6..9} )
 
 inherit llvm meson multilib-minimal python-any-r1 linux-info
 
@@ -35,7 +35,7 @@ for card in ${VIDEO_CARDS}; do
 done
 
 IUSE="${IUSE_VIDEO_CARDS}
-	+classic d3d9 debug +dri3 +egl +gallium +gbm gles1 +gles2 +libglvnd +llvm
+	+classic d3d9 debug +dri3 +egl +gallium +gbm gles1 +gles2 +llvm
 	lm-sensors opencl osmesa selinux test unwind vaapi valgrind vdpau vulkan
 	vulkan-overlay wayland +X xa xvmc +zstd"
 IUSE+=" openmax omx-bellagio omx-tizonia"
@@ -75,14 +75,8 @@ LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.100"
 RDEPEND="
 	!app-eselect/eselect-mesa
 	>=dev-libs/expat-2.1.0-r3:=[${MULTILIB_USEDEP}]
+	>=media-libs/libglvnd-1.3.2[X?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.8[${MULTILIB_USEDEP}]
-	libglvnd? (
-		>=media-libs/libglvnd-1.2.0-r1[X?,${MULTILIB_USEDEP}]
-		!app-eselect/eselect-opengl
-	)
-	!libglvnd? (
-		>=app-eselect/eselect-opengl-1.3.0
-	)
 	gallium? (
 		unwind? ( sys-libs/libunwind[${MULTILIB_USEDEP}] )
 		llvm? (
@@ -250,7 +244,7 @@ x86? (
 	usr/lib*/libGLESv2.so.2.0.0
 	usr/lib*/libGL.so.1.2.0
 	usr/lib*/libOSMesa.so.8.0.0
-	libglvnd? ( usr/lib/libGLX_mesa.so.0.0.0 )
+	usr/lib/libGLX_mesa.so.0.0.0
 )"
 
 llvm_check_deps() {
@@ -496,13 +490,13 @@ multilib_src_configure() {
 	emesonargs+=(
 		$(meson_use test build-tests)
 		-Dglx=$(usex X dri disabled)
+		-Dglvnd=true
 		-Dshared-glapi=true
 		$(meson_use dri3)
 		$(meson_use egl)
 		$(meson_use gbm)
 		$(meson_use gles1)
 		$(meson_use gles2)
-		$(meson_use libglvnd glvnd)
 		$(meson_use selinux)
 		$(meson_use zstd)
 		-Dvalgrind=$(usex valgrind auto false)
@@ -535,16 +529,10 @@ multilib_src_install_all() {
 }
 
 multilib_src_test() {
-	meson test -v -C "${BUILD_DIR}" -t 100
+	meson test -v -C "${BUILD_DIR}" -t 100 || die "tests failed"
 }
 
 pkg_postinst() {
-	if ! use libglvnd; then
-		# Switch to the xorg implementation.
-		echo
-		eselect opengl set --use-old ${OPENGL_DIR}
-	fi
-
 	# run omxregister-bellagio to make the OpenMAX drivers known system-wide
 	if use openmax; then
 		ebegin "Registering OpenMAX drivers"
