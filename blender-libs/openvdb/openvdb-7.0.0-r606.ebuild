@@ -108,7 +108,7 @@ src_configure() {
 	# To stay in sync with blender-libs/boost
 	append-cxxflags -std=c++${CXXABI}
 
-	# Add extra checks for downgrading to c++11
+	# Add extra checks for testing against c++${CXXABI}
 	append-cxxflags -Wall -Werror
 
 	# Relax some warnings

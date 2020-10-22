@@ -25,7 +25,7 @@ RESTRICT="!test? ( test )"
 # Blender disables python
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
 REQUIRED_USE="
-	abi7-compat
+	abi6-compat
 	!test
 	numpy? ( python )
 	python? ( ${PYTHON_REQUIRED_USE} )
@@ -93,6 +93,7 @@ is greater than \$(nproc)/4"
 
 src_prepare() {
 	cmake_src_prepare
+	# We are only interested parts that don't require c++14.
 	sed -i "s|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD ${CXXABI}|" CMakeLists.txt || die
 	sed -i "s|CMAKE_CXX_STANDARD_REQUIRED ON|CMAKE_CXX_STANDARD_REQUIRED OFF|" CMakeLists.txt || die
 }
@@ -112,6 +113,13 @@ src_configure() {
 
 	# Relax some warnings
 	append-cxxflags -Wno-error=class-memaccess -Wno-error=int-in-bool-context
+
+	# make_unique is c++14 and is being used so disable parts that reference it
+	# make_unique was referenced in a header
+
+	# SESI_OPENVDB and SESI_OPENVDB_PRIM code contains c++14 code referencing make_unique but not used.
+
+	# tools/LevelSetMeasure.h contains make_unique but not used by Blender.  So most of it can be c++11 compiled.
 
 	export LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir)"
 	export BOOST_ROOT="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr"
