@@ -13,11 +13,11 @@ SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.g
 
 LICENSE="MPL-2.0"
 IUSE="+abi7-compat cpu_flags_x86_avx cpu_flags_x86_sse4_2 doc numpy python static-libs test utils"
-CXXABI=14
-LLVM_V=10
+CXXABI=11
+LLVM_V=9
 SLOT_MAJ="7-${CXXABI}"
 SLOT="${SLOT_MAJ}/${PV}"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~ppc64 ~x86"
 RESTRICT="!test? ( test )"
 
 # Blender only uses static-libs to avoid c++14
@@ -74,8 +74,8 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}/${PN}-7.1.0-0001-Fix-multilib-header-source.patch"
-	"${FILESDIR}/${PN}-7.1.0-0002-Fix-doc-install-dir.patch"
+	"${FILESDIR}/${P}-0001-Fix-multilib-header-source.patch"
+	"${FILESDIR}/${P}-0002-Fix-doc-install-dir.patch"
 )
 
 pkg_setup() {
@@ -129,7 +129,6 @@ src_configure() {
 		-DOPENVDB_CORE_SHARED=ON
 		-DOPENVDB_CORE_STATIC=$(usex static-libs)
 		-DOPENVDB_ENABLE_RPATH=OFF
-		-DOpenGL_GL_PREFERENCE=LEGACY
 		-DUSE_CCACHE=OFF
 		-DUSE_COLORED_OUTPUT=ON
 		-DUSE_EXR=ON
