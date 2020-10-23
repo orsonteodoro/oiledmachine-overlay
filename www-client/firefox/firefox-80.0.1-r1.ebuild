@@ -336,8 +336,8 @@ src_prepare() {
 	# parts.  When it links it, it fails because of cbindings is 64-bit and the
 	# dependencies use the build information for 64-bit linking.
 	#
-#	eapply "${FILESDIR}/multiabi/${PN}-79.0-compile-cargo-packages-same-abi-1.patch"
-#	eapply "${FILESDIR}/multiabi/${PN}-79.0-compile-cargo-packages-same-abi-2.patch"
+	# eapply "${FILESDIR}/multiabi/${PN}-79.0-compile-cargo-packages-same-abi-1.patch"
+	# eapply "${FILESDIR}/multiabi/${PN}-79.0-compile-cargo-packages-same-abi-2.patch"
 
 	# Make LTO respect MAKEOPTS
 	sed -i \
@@ -413,7 +413,7 @@ src_prepare() {
 
 	if [[ "${CFLAGS}" =~ "fast-math" || "${CXXFLAGS}" =~ "fast-math" ]] ; then
 		pushd "${S}" || die
-		eapply "${FILESDIR}/multilib/firefox-78.0.2-opus-fast-math.patch"
+		eapply "${FILESDIR}/multiabi/firefox-78.0.2-opus-fast-math.patch"
 		popd || die
 	fi
 
@@ -887,7 +887,7 @@ PROFILE_EOF
 		case ${display_protocol} in
 			Wayland)
 				exec_command="firefox-${ABI}-wayland --name firefox-${ABI}-wayland"
-				newbin "${FILESDIR}"/multilib/firefox-wayland.sh firefox-${ABI}-wayland
+				newbin "${FILESDIR}"/multiabi/firefox-wayland.sh firefox-${ABI}-wayland
 				[ -e "/usr/bin/firefox-wayland" ] && rm /usr/bin/firefox-wayland
 				dosym /usr/bin/firefox-${ABI}-wayland /usr/bin/firefox-wayland
 				;;
@@ -899,7 +899,7 @@ PROFILE_EOF
 				fi
 
 				exec_command="firefox-${ABI}-x11 --name firefox-${ABI}-x11"
-				newbin "${FILESDIR}"/multilib/firefox-x11.sh firefox-${ABI}-x11
+				newbin "${FILESDIR}"/multiabi/firefox-x11.sh firefox-${ABI}-x11
 				[ -e "/usr/bin/firefox-x11" ] && rm /usr/bin/firefox-x11
 				dosym /usr/bin/firefox-${ABI}-x11 /usr/bin/firefox-x11
 				;;
@@ -919,7 +919,7 @@ PROFILE_EOF
 	done
 
 	rm "${ED%/}"/usr/bin/firefox || die
-	newbin "${FILESDIR}"/multilib/firefox.sh firefox-${ABI}
+	newbin "${FILESDIR}"/multiabi/firefox.sh firefox-${ABI}
 	dosym /usr/bin/firefox-${ABI} /usr/bin/firefox
 
 	local wrapper

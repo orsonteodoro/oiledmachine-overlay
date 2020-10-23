@@ -205,6 +205,7 @@ S="${WORKDIR}/${PN}-${PV%_*}"
 S_BAK="${WORKDIR}/${PN}-${PV%_*}"
 
 MOZILLA_FIVE_HOME=""
+BUILD_OBJ_DIR=""
 
 # Allow MOZ_GMP_PLUGIN_LIST to be set in an eclass or
 # overridden in the enviromnent (advanced hackers only)
@@ -505,9 +506,9 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	eapply "${WORKDIR}/firefox-patches"
-	eapply "${FILESDIR}/multiabi/${PN}-68.4.2-dont-check-rustc-host.patch"
+	eapply "${FILESDIR}/multiabi/${PN}-82.0-dont-check-rustc-host.patch"
 	eapply "${FILESDIR}/multiabi/${PN}-68.4.2-force-cross-compile.patch"
-	eapply "${FILESDIR}/multiabi/${PN}-79.0-elfhack-makefile-no-prefix-for-readelf.patch"
+	eapply "${FILESDIR}/multiabi/${PN}-82.0-elfhack-makefile-no-prefix-for-readelf.patch"
 	eapply "${FILESDIR}/multiabi/${PN}-79.0-check_binary-no-prefix-for-readelf.patch"
 	eapply "${FILESDIR}/multiabi/${PN}-79.0-dependentlibs_py-no-toolchain-prefix-for-readelf.patch"
 
@@ -516,8 +517,8 @@ src_prepare() {
 	# parts.  When it links it, it fails because of cbindings is 64-bit and the
 	# dependencies use the build information for 64-bit linking.
 	#
-#	eapply "${FILESDIR}/multiabi/${PN}-79.0-compile-cargo-packages-same-abi-1.patch"
-#	eapply "${FILESDIR}/multiabi/${PN}-79.0-compile-cargo-packages-same-abi-2.patch"
+	# eapply "${FILESDIR}/multiabi/${PN}-79.0-compile-cargo-packages-same-abi-1.patch"
+	# eapply "${FILESDIR}/multiabi/${PN}-79.0-compile-cargo-packages-same-abi-2.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -547,10 +548,6 @@ src_prepare() {
 	# Clearing checksums where we have applied patches
 	moz_clear_vendor_checksums target-lexicon-0.9.0
 
-	# Create build dir
-	BUILD_DIR="${WORKDIR}/${PN}_build"
-	mkdir -p "${BUILD_DIR}" || die
-
 	# Write API keys to disk
 	echo -n "${MOZ_API_KEY_GOOGLE//gGaPi/}" > "${S}"/api-google.key || die
 
@@ -558,7 +555,7 @@ src_prepare() {
 
 	if [[ "${CFLAGS}" =~ "fast-math" || "${CXXFLAGS}" =~ "fast-math" ]] ; then
 		pushd "${S}" || die
-		eapply "${FILESDIR}/multilib/firefox-78.0.2-opus-fast-math.patch"
+		eapply "${FILESDIR}/multiabi/firefox-78.0.2-opus-fast-math.patch"
 		popd || die
 	fi
 
@@ -583,6 +580,7 @@ _fix_paths() {
 	export CROSSCOMPILE=$(rust_abi ${chost})
 	export CARGO_CFG_TARGET_ARCH=$(echo ${chost} | cut -f 1 -d "-")
 	export MOZILLA_FIVE_HOME="/usr/$(get_libdir)/${PN}"
+	export BUILD_OBJ_DIR="${BUILD_DIR}/ff"
 	# for rust crates libloading and glslopt
 	if use clang && ! tc-is-clang ; then
 		CC=${chost}-clang
@@ -633,9 +631,6 @@ multilib_src_configure() {
 	export HOST_CC="$(tc-getBUILD_CC)"
 	export HOST_CXX="$(tc-getBUILD_CXX)"
 	tc-export CC CXX LD AR NM OBJDUMP RANLIB PKG_CONFIG
-
-	# Set MOZILLA_FIVE_HOME
-	export MOZILLA_FIVE_HOME="/usr/$(get_libdir)/${PN}"
 
 	_fix_paths
 
@@ -897,7 +892,7 @@ multilib_src_configure() {
 	mozconfig_add_options_mk 'Gentoo default' "XARGS=${EPREFIX}/usr/bin/xargs"
 
 	# Set build dir
-	mozconfig_add_options_mk 'Gentoo default' "MOZ_OBJDIR=${BUILD_DIR}"
+	mozconfig_add_options_mk 'Gentoo default' "MOZ_OBJDIR=${BUILD_OBJ_DIR}"
 
 	if ! use jemalloc ; then
 		mozconfig_add_options_ac '-jemalloc' --disable-jemalloc
@@ -964,11 +959,12 @@ multilib_src_compile() {
 multilib_src_install() {
 	local chost=$(get_abi_CHOST ${ABI})
 	_fix_paths
+	cd "${BUILD_OBJ_DIR}" || die
 	# xpcshell is getting called during install
 	pax-mark m \
-		"${BUILD_DIR}"/dist/bin/xpcshell \
-		"${BUILD_DIR}"/dist/bin/firefox \
-		"${BUILD_DIR}"/dist/bin/plugin-container
+		"${BUILD_OBJ_DIR}"/dist/bin/xpcshell \
+		"${BUILD_OBJ_DIR}"/dist/bin/firefox \
+		"${BUILD_OBJ_DIR}"/dist/bin/plugin-container
 
 	local -x TARGET="${chost}"
 
@@ -1032,15 +1028,15 @@ multilib_src_install() {
 	# Install geckodriver
 	if use geckodriver ; then
 		einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
-		pax-mark m "${BUILD_DIR}"/dist/bin/geckodriver
+		pax-mark m "${BUILD_OBJ_DIR}"/dist/bin/geckodriver
 		exeinto "${MOZILLA_FIVE_HOME}"
-		doexe "${BUILD_DIR}"/dist/bin/geckodriver
+		doexe "${BUILD_OBJ_DIR}"/dist/bin/geckodriver
 
 		dosym ${MOZILLA_FIVE_HOME}/geckodriver /usr/bin/geckodriver
 	fi
 
 	# Install icons
-	local icon_srcdir="${BUILD_DIR}/browser/branding/official"
+	local icon_srcdir="${BUILD_OBJ_DIR}/browser/branding/official"
 	local icon_symbolic_file="${FILESDIR}/icon/firefox-symbolic.svg"
 
 	insinto /usr/share/icons/hicolor/symbolic/apps
@@ -1080,7 +1076,7 @@ multilib_src_install() {
 		case ${display_protocol} in
 			Wayland)
 				exec_command="${PN}-${ABI}-wayland --name ${PN}-${ABI}-wayland"
-				newbin "${FILESDIR}/multilib/${wrapper_wayland}" ${PN}-${ABI}-wayland
+				newbin "${FILESDIR}/multiabi/${wrapper_wayland}" ${PN}-${ABI}-wayland
 				;;
 			X11)
 				if ! use wayland ; then
@@ -1090,7 +1086,7 @@ multilib_src_install() {
 				fi
 
 				exec_command="${PN}-${ABI}-x11 --name ${PN}-${ABI}-x11"
-				newbin "${FILESDIR}/multilib/${wrapper_x11}" ${PN}-${ABI}-x11
+				newbin "${FILESDIR}/multiabi/${wrapper_x11}" ${PN}-${ABI}-x11
 				[ -e "/usr/bin/${PN}-x11" ] && rm /usr/bin/${PN}-x11
 				dosym /usr/bin/${PN}-${ABI}-x11 /usr/bin/${PN}-x11
 				;;
@@ -1117,7 +1113,7 @@ multilib_src_install() {
 
 	# Install generic wrapper script
 	[[ -f "${ED}/usr/bin/${PN}" ]] && rm "${ED}/usr/bin/${PN}"
-	newbin "${FILESDIR}/multilib/${PN}.sh" ${PN}-${ABI}
+	newbin "${FILESDIR}/multiabi/${PN}.sh" ${PN}-${ABI}
 	dosym /usr/bin/${PN}-${ABI} /usr/bin/${PN}
 
 	# Update wrapper
