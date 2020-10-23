@@ -66,9 +66,12 @@ dev-dotnet/dotnetcore-sdk
 # Fixing major problems related to testing and restoring files.
 sys-kernel/kpatch
 
-# Untest yet / missing for USE flag mods
+# Untested yet / missing for USE flag mods
 >=sys-kernel/ot-sources-5.9
 >=virtual/ot-sources-stable-5.9
+
+# Untested
+>=www-client/firefox-82
 
 # Masked for security reasons
 #--------------------------------------------------------------------------------------------------

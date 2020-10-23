@@ -99,7 +99,8 @@ Test microphone support on sound recording website or "search by sound" website.
 Additional notes:
 
 It helps if you diff it with the same ebuild point release to see which parts
-of the ebuild/package got added or changed.
+of the ebuild/package got added or changed.  See the _maintainer_notes
+folder for details.
 
 It helps to do a side-by-side comparison between the forked and the same
 point release to see what changes to migrate.

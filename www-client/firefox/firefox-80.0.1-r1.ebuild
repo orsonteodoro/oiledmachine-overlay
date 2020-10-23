@@ -199,9 +199,11 @@ DEPEND="${CDEPEND}
 	wayland? ( >=x11-libs/gtk+-3.11:3[wayland,${MULTILIB_USEDEP}] )
 	abi_x86_64? ( >=dev-lang/yasm-1.1 virtual/opengl[${MULTILIB_USEDEP}] )
 	abi_x86_32? ( >=dev-lang/yasm-1.1 virtual/opengl[${MULTILIB_USEDEP}] )
+	abi_x86_x32? ( >=dev-lang/yasm-1.1 virtual/opengl[${MULTILIB_USEDEP}] )
 	!system-av1? (
 		abi_x86_64? ( >=dev-lang/nasm-2.13 )
 		abi_x86_32? ( >=dev-lang/nasm-2.13 )
+		abi_x86_x32? ( >=dev-lang/nasm-2.13 )
 	)"
 # Gentoo's rust-bin package doesn't install the i686 libs.  Use only the
 # compiled version.
@@ -323,19 +325,19 @@ src_unpack() {
 src_prepare() {
 	use pgo && rm "${WORKDIR}"/firefox/0032-LTO-Only-enable-LTO-for-Rust-when-complete-build-use.patch
 	eapply "${WORKDIR}/firefox"
-	eapply "${FILESDIR}/${PN}-68.4.2-dont-check-rustc-host.patch"
-	eapply "${FILESDIR}/${PN}-68.4.2-force-cross-compile.patch"
-	eapply "${FILESDIR}/${PN}-79.0-elfhack-makefile-no-prefix-for-readelf.patch"
-	eapply "${FILESDIR}/${PN}-79.0-check_binary-no-prefix-for-readelf.patch"
-	eapply "${FILESDIR}/${PN}-79.0-dependentlibs_py-no-toolchain-prefix-for-readelf.patch"
+	eapply "${FILESDIR}/multiabi/${PN}-68.4.2-dont-check-rustc-host.patch"
+	eapply "${FILESDIR}/multiabi/${PN}-68.4.2-force-cross-compile.patch"
+	eapply "${FILESDIR}/multiabi/${PN}-79.0-elfhack-makefile-no-prefix-for-readelf.patch"
+	eapply "${FILESDIR}/multiabi/${PN}-79.0-check_binary-no-prefix-for-readelf.patch"
+	eapply "${FILESDIR}/multiabi/${PN}-79.0-dependentlibs_py-no-toolchain-prefix-for-readelf.patch"
 
 	# Disabled because they don't support multilib Python.  Only native ABI supported.
 	# This means cbindgen cannot load the 32 bit clang.  It will build the cargo
 	# parts.  When it links it, it fails because of cbindings is 64-bit and the
 	# dependencies use the build information for 64-bit linking.
 	#
-#	eapply "${FILESDIR}/${PN}-79.0-compile-cargo-packages-same-abi-1.patch"
-#	eapply "${FILESDIR}/${PN}-79.0-compile-cargo-packages-same-abi-2.patch"
+#	eapply "${FILESDIR}/multiabi/${PN}-79.0-compile-cargo-packages-same-abi-1.patch"
+#	eapply "${FILESDIR}/multiabi/${PN}-79.0-compile-cargo-packages-same-abi-2.patch"
 
 	# Make LTO respect MAKEOPTS
 	sed -i \
@@ -411,7 +413,7 @@ src_prepare() {
 
 	if [[ "${CFLAGS}" =~ "fast-math" || "${CXXFLAGS}" =~ "fast-math" ]] ; then
 		pushd "${S}" || die
-		eapply "${FILESDIR}/firefox-78.0.2-opus-fast-math.patch"
+		eapply "${FILESDIR}/multilib/firefox-78.0.2-opus-fast-math.patch"
 		popd || die
 	fi
 
@@ -885,7 +887,7 @@ PROFILE_EOF
 		case ${display_protocol} in
 			Wayland)
 				exec_command="firefox-${ABI}-wayland --name firefox-${ABI}-wayland"
-				newbin "${FILESDIR}"/firefox-wayland.sh firefox-${ABI}-wayland
+				newbin "${FILESDIR}"/multilib/firefox-wayland.sh firefox-${ABI}-wayland
 				[ -e "/usr/bin/firefox-wayland" ] && rm /usr/bin/firefox-wayland
 				dosym /usr/bin/firefox-${ABI}-wayland /usr/bin/firefox-wayland
 				;;
@@ -897,7 +899,7 @@ PROFILE_EOF
 				fi
 
 				exec_command="firefox-${ABI}-x11 --name firefox-${ABI}-x11"
-				newbin "${FILESDIR}"/firefox-x11.sh firefox-${ABI}-x11
+				newbin "${FILESDIR}"/multilib/firefox-x11.sh firefox-${ABI}-x11
 				[ -e "/usr/bin/firefox-x11" ] && rm /usr/bin/firefox-x11
 				dosym /usr/bin/firefox-${ABI}-x11 /usr/bin/firefox-x11
 				;;
@@ -917,7 +919,7 @@ PROFILE_EOF
 	done
 
 	rm "${ED%/}"/usr/bin/firefox || die
-	newbin "${FILESDIR}"/firefox.sh firefox-${ABI}
+	newbin "${FILESDIR}"/multilib/firefox.sh firefox-${ABI}
 	dosym /usr/bin/firefox-${ABI} /usr/bin/firefox
 
 	local wrapper
