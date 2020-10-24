@@ -78,13 +78,13 @@ pkg_setup() {
 	CC=$(tc-getCC)
 	CXX=$(tc-getCC)
 
-	if [[ ${CXX} =~ 'g++' ]] ; then
+	if [[ "${CXX}" =~ 'g++' ]] ; then
 		if ver_test $(gcc-version) -lt 9 ; then
-			ewarn "Upstream tests with GCC >= 9 only.  Switch to >=9 if it breaks."
+			ewarn "Upstream tests with GCC >= 9 only.  Switch to version >=9 if it breaks."
 		fi
-	elif [[ ${CXX} =~ 'clang++' ]] ; then
+	elif [[ "${CXX}" =~ 'clang++' ]] ; then
 		if ver_test $(clang-version) -lt 10 ; then
-			ewarn "Upstream tests with clang++ >= 10 only.  Switch >=10 if it breaks."
+			ewarn "Upstream tests with clang++ >= 10 only.  Switch to version >=10 if it breaks."
 		fi
 	fi
 }
