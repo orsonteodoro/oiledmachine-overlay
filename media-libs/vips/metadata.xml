@@ -17,34 +17,45 @@
     <remote-id type="github">libvips/libvips</remote-id>
   </upstream>
   <use>
-    <flag name="analyze">Enables support for reading Analyze 7.5 file format used in biomedical imaging.</flag>
+    <flag name="analyze">Enables support for reading Analyze 7.5 file format
+      used in biomedical imaging.</flag>
     <flag name="cairo">Enables displaying of PDF.</flag>
     <flag name="cxx">Enables the creation of C++ bindings.</flag>
     <flag name="debug">Enables debug</flag>
     <flag name="doc">Generates documentation</flag>
-    <flag name="exif">Enables support for saving and loading JPEG and HEIF EXIF image metadata.</flag>
+    <flag name="exif">Enables support for saving and loading JPEG and HEIF EXIF
+      image metadata.</flag>
     <flag name="fftw">Enables image transform operations with FFTW.</flag>
     <flag name="fits">Enables FITS file support used in astronomy.</flag>
     <flag name="giflib">Enables support for loading GIF images.</flag>
-    <flag name="graphicsmagick">Uses GraphicsMagick as the backend for editing images.</flag>
-    <flag name="gsf">Enables support for creating image pyramids used in Deep Zoom.</flag>
+    <flag name="graphicsmagick">Uses GraphicsMagick as the backend for editing
+      images.</flag>
+    <flag name="gsf">Enables support for creating image pyramids used in Deep
+      Zoom.</flag>
     <flag name="hdr">Enables support for HDR images.</flag>
-    <flag name="heif">Enables support for HEIF images used in mobile devices.</flag>
-    <flag name="imagemagick">Uses ImageMagick as the backend for editing images.</flag>
+    <flag name="heif">Enables support for HEIF images used in mobile devices.
+      </flag>
+    <flag name="imagemagick">Uses ImageMagick as the backend for editing images.
+      </flag>
     <flag name="imagequant">Enables 8-BPP PNG quantisation.</flag>
     <flag name="jpeg">Enables import and export of JPEG images.</flag>
     <flag name="lcms">Enables ICC profile support.</flag>
     <flag name="matio">Enables file import with matio.</flag>
+    <flag name="minimal">Removes deprecated functions.</flag>
     <flag name="openexr">Enables file import of EXR images.</flag>
-    <flag name="openslide">Enables support for loading OpenSlide supported formats used in biological research.</flag>
+    <flag name="openslide">Enables support for loading OpenSlide supported
+      formats used in biological research.</flag>
     <flag name="orc">Enables loop acceleration.</flag>
+    <flag name="pangoft2">Enables PangoFT2 support.</flag>
     <flag name="png">Enables import and export of PNG image files.</flag>
     <flag name="poppler">Enables PDF import with the poppler library.</flag>
-    <flag name="ppm">Enables PPM (Portable Pixmap Format) support used to exchange between platforms.</flag>
+    <flag name="ppm">Enables PPM (Portable Pixmap Format) support used to
+      exchange between platforms.</flag>
     <flag name="python">Enables the creation of Python bindings.</flag>
     <flag name="static-libs">Builds static libraries</flag>
     <flag name="svg">Enables SVG vector images import.</flag>
-    <flag name="tiff">Enables importing and exporting TIFF professional graphic images.</flag>
+    <flag name="tiff">Enables importing and exporting TIFF professional graphic
+      images.</flag>
     <flag name="webp">Enables importing and exporting of WebP images.</flag>
     <flag name="zlib">Enables SVGZ, or compressed SVG files.</flag>
   </use>
