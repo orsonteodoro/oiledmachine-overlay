@@ -5,7 +5,7 @@ EAPI=7
 
 PYTHON_COMPAT=( python3_{6,7,8} )
 
-inherit autotools eutils multilib-minimal python-single-r1
+inherit autotools eutils multilib-minimal python-single-r1 toolchain-funcs
 
 DESCRIPTION="VIPS Image Processing Library"
 HOMEPAGE="https://jcupitt.github.io/libvips/"
@@ -74,6 +74,19 @@ DOCS=( AUTHORS ChangeLog NEWS README.md THANKS )
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
+
+	CC=$(tc-getCC)
+	CXX=$(tc-getCC)
+
+	if [[ ${CXX} =~ 'g++' ]] ; then
+		if ver_test $(gcc-version) -lt 9 ; then
+			ewarn "Upstream tests with GCC >= 9 only.  Switch to >=9 if it breaks."
+		fi
+	elif [[ ${CXX} =~ 'clang++' ]] ; then
+		if ver_test $(clang-version) -lt 10 ; then
+			ewarn "Upstream tests with clang++ >= 10 only.  Switch >=10 if it breaks."
+		fi
+	fi
 }
 
 src_prepare() {
