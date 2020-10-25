@@ -11,7 +11,7 @@ SRC_URI="https://github.com/glfw/glfw/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="ZLIB"
 SLOT="0/${PV}"
-KEYWORDS="~amd64 ~arm64 ~hppa ~x86"
+KEYWORDS="amd64 ~arm64 ~hppa ~ppc64 x86"
 IUSE="wayland"
 
 RDEPEND="
@@ -31,6 +31,7 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
+	!wayland? ( x11-libs/libXi[${MULTILIB_USEDEP}] )
 	wayland? ( dev-libs/wayland-protocols[${MULTILIB_USEDEP}] )
 "
 BDEPEND="
