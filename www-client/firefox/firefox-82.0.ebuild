@@ -968,10 +968,14 @@ multilib_src_install() {
 
 	local -x TARGET="${chost}"
 
+	cd "${BUILD_DIR}" || die
+
 	DESTDIR="${D}" ./mach install || die
 
 	# Upstream cannot ship symlink but we can (bmo#658850)
-	rm "${ED}${MOZILLA_FIVE_HOME}/${PN}-bin" || die
+	if [[ -e "${ED}${MOZILLA_FIVE_HOME}/${PN}-bin" ]] ; then
+		rm "${ED}${MOZILLA_FIVE_HOME}/${PN}-bin" || die
+	fi
 	dosym ${PN} ${MOZILLA_FIVE_HOME}/${PN}-bin
 
 	# Don't install llvm-symbolizer from sys-devel/llvm package
@@ -1036,7 +1040,7 @@ multilib_src_install() {
 	fi
 
 	# Install icons
-	local icon_srcdir="${BUILD_OBJ_DIR}/browser/branding/official"
+	local icon_srcdir="${BUILD_DIR}/browser/branding/official"
 	local icon_symbolic_file="${FILESDIR}/icon/firefox-symbolic.svg"
 
 	insinto /usr/share/icons/hicolor/symbolic/apps

@@ -1,5 +1,5 @@
 --- firefox-82.0.ebuild.orig	2020-10-21 10:39:18.000000000 -0700
-+++ firefox-82.0.ebuild	2020-10-23 11:11:15.155694448 -0700
++++ firefox-82.0.ebuild	2020-10-24 18:02:54.606468807 -0700
 @@ -1,6 +1,8 @@
  # Copyright 1999-2020 Gentoo Authors
  # Distributed under the terms of the GNU General Public License v2
@@ -488,7 +488,7 @@
  	local virtx_cmd=
  
  	if use pgo ; then
-@@ -854,17 +950,23 @@ src_compile() {
+@@ -854,22 +950,32 @@ src_compile() {
  	fi
  
  	local -x GDK_BACKEND=x11
@@ -513,10 +513,20 @@
 +		"${BUILD_OBJ_DIR}"/dist/bin/plugin-container
 +
 +	local -x TARGET="${chost}"
++
++	cd "${BUILD_DIR}" || die
  
  	DESTDIR="${D}" ./mach install || die
  
-@@ -926,15 +1028,15 @@ src_install() {
+ 	# Upstream cannot ship symlink but we can (bmo#658850)
+-	rm "${ED}${MOZILLA_FIVE_HOME}/${PN}-bin" || die
++	if [[ -e "${ED}${MOZILLA_FIVE_HOME}/${PN}-bin" ]] ; then
++		rm "${ED}${MOZILLA_FIVE_HOME}/${PN}-bin" || die
++	fi
+ 	dosym ${PN} ${MOZILLA_FIVE_HOME}/${PN}-bin
+ 
+ 	# Don't install llvm-symbolizer from sys-devel/llvm package
+@@ -926,15 +1032,15 @@ src_install() {
  	# Install geckodriver
  	if use geckodriver ; then
  		einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
@@ -531,11 +541,11 @@
  
  	# Install icons
 -	local icon_srcdir="${S}/browser/branding/official"
-+	local icon_srcdir="${BUILD_OBJ_DIR}/browser/branding/official"
++	local icon_srcdir="${BUILD_DIR}/browser/branding/official"
  	local icon_symbolic_file="${FILESDIR}/icon/firefox-symbolic.svg"
  
  	insinto /usr/share/icons/hicolor/symbolic/apps
-@@ -953,12 +1055,12 @@ src_install() {
+@@ -953,12 +1059,12 @@ src_install() {
  	done
  
  	# Install menus
@@ -551,7 +561,7 @@
  	local use_wayland="false"
  
  	if use wayland ; then
-@@ -969,12 +1071,12 @@ src_install() {
+@@ -969,12 +1075,12 @@ src_install() {
  	local app_name desktop_filename display_protocol exec_command
  	for display_protocol in ${display_protocols} ; do
  		app_name="${name} on ${display_protocol}"
@@ -567,7 +577,7 @@
  				;;
  			X11)
  				if ! use wayland ; then
-@@ -983,13 +1085,15 @@ src_install() {
+@@ -983,13 +1089,15 @@ src_install() {
  					continue
  				fi
  
@@ -587,7 +597,7 @@
  				;;
  		esac
  
-@@ -1009,19 +1113,21 @@ src_install() {
+@@ -1009,19 +1117,21 @@ src_install() {
  
  	# Install generic wrapper script
  	[[ -f "${ED}/usr/bin/${PN}" ]] && rm "${ED}/usr/bin/${PN}"
@@ -613,7 +623,7 @@
  			-e "s:@MOZ_FIVE_HOME@:${MOZILLA_FIVE_HOME}:" \
  			-e "s:@APULSELIB_DIR@:${apulselib}:" \
  			-e "s:@DEFAULT_WAYLAND@:${use_wayland}:" \
-@@ -1117,4 +1223,17 @@ pkg_postinst() {
+@@ -1117,4 +1227,17 @@ pkg_postinst() {
  		elog
  		elog "in about:config."
  	fi
