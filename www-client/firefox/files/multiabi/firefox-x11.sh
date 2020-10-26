@@ -4,4 +4,5 @@
 # Run Mozilla Firefox on X11
 #
 export MOZ_DISABLE_WAYLAND=1
-exec @PREFIX@/bin/firefox "$@"
+abi=$(basename "$0" | cut -f 2 -d "-")
+exec @PREFIX@/bin/firefox-${abi} "$@"

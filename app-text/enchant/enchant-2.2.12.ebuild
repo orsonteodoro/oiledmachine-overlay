@@ -21,6 +21,11 @@ SRC_URI=\
 "https://github.com/AbiWord/enchant/releases/download/v${PV}/${P}.tar.gz"
 RESTRICT="test"
 
+src_prepare() {
+	default
+	multilib_copy_sources
+}
+
 multilib_src_configure() {
 	# TODO: Add app-text/nuspell support
 	econf \
