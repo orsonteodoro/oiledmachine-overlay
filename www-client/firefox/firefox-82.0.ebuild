@@ -581,6 +581,10 @@ _fix_paths() {
 	export CARGO_CFG_TARGET_ARCH=$(echo ${chost} | cut -f 1 -d "-")
 	export MOZILLA_FIVE_HOME="/usr/$(get_libdir)/${PN}"
 	export BUILD_OBJ_DIR="${BUILD_DIR}/ff"
+
+	# Set MOZCONFIG
+	export MOZCONFIG="${BUILD_DIR}/.mozconfig"
+
 	# for rust crates libloading and glslopt
 	if use clang && ! tc-is-clang ; then
 		CC=${chost}-clang
@@ -633,14 +637,6 @@ multilib_src_configure() {
 	tc-export CC CXX LD AR NM OBJDUMP RANLIB PKG_CONFIG
 
 	_fix_paths
-
-	export TARGET="${chost}"
-
-	# python/mach/mach/mixin/process.py fails to detect SHELL
-	export SHELL="${EPREFIX}/bin/bash"
-
-	# Set MOZCONFIG
-	export MOZCONFIG="${BUILD_DIR}/.mozconfig"
 
 	# Initialize MOZCONFIG
 	mozconfig_add_options_ac '' --enable-application=browser
@@ -934,12 +930,21 @@ multilib_src_configure() {
 	echo "=========================================================="
 	echo
 
+
+	# SHELL: python/mach/mach/mixin/process.py fails to detect SHELL
+
+	TARGET="${chost}" \
+	SHELL="${EPREFIX}/bin/bash" \
 	./mach configure || die
 }
 
 multilib_src_compile() {
 	local chost=$(get_abi_CHOST ${ABI})
 	_fix_paths
+	cd "${BUILD_DIR}" || die
+	einfo "BUILD_DIR=${BUILD_DIR}"
+	einfo "pwd="$(pwd)
+	einfo "PATH="${PATH}
 	local virtx_cmd=
 
 	if use pgo ; then
@@ -951,9 +956,8 @@ multilib_src_compile() {
 		addpredict /root
 	fi
 
-	local -x GDK_BACKEND=x11
-	local -x TARGET="${chost}"
-
+	GDK_BACKEND=x11 \
+	TARGET="${chost}" \
 	${virtx_cmd} ./mach build --verbose \
 		|| die
 }

@@ -1,5 +1,5 @@
 --- firefox-80.0.1-r1.ebuild.orig	2020-10-23 05:13:14.000000000 -0700
-+++ firefox-80.0.1-r1.ebuild	2020-10-23 11:11:37.846606320 -0700
++++ firefox-80.0.1-r1.ebuild	2020-10-26 11:50:21.052520824 -0700
 @@ -1,6 +1,8 @@
  # Copyright 1999-2020 Gentoo Authors
  # Distributed under the terms of the GNU General Public License v2
@@ -429,7 +429,7 @@
  
  	mozconfig_annotate '' --enable-extensions="${MEXTENSIONS}"
  
-@@ -629,20 +713,36 @@ src_configure() {
+@@ -629,20 +713,37 @@ src_configure() {
  		fi
  	fi
  
@@ -467,10 +467,11 @@
 +multilib_src_compile() {
 +	local chost=$(get_abi_CHOST ${ABI})
 +	_fix_paths
++	cd "${BUILD_DIR}" || die
  	local _virtx=
  	if use pgo ; then
  		_virtx=virtx
-@@ -653,6 +753,7 @@ src_compile() {
+@@ -653,6 +754,7 @@ src_compile() {
  		addpredict /root
  	fi
  
@@ -478,7 +479,7 @@
  	GDK_BACKEND=x11 \
  		MOZ_MAKE_FLAGS="${MAKEOPTS} -O" \
  		SHELL="${SHELL:-${EPREFIX}/bin/bash}" \
-@@ -662,7 +763,9 @@ src_compile() {
+@@ -662,7 +764,9 @@ src_compile() {
  		|| die
  }
  
@@ -489,17 +490,17 @@
  	cd "${BUILD_OBJ_DIR}" || die
  
  	# Pax mark xpcshell for hardened support, only used for startupcache creation.
-@@ -717,7 +820,8 @@ src_install() {
+@@ -717,7 +821,8 @@ src_install() {
  		done
  	fi
  
 -	cd "${S}"
-+	cd "${BUILD_DIR}"
++	cd "${BUILD_DIR}" || die
 +	TARGET="${chost}" \
  	MOZ_MAKE_FLAGS="${MAKEOPTS}" SHELL="${SHELL:-${EPREFIX}/bin/bash}" MOZ_NOSPAM=1 \
  	DESTDIR="${D}" ./mach install || die
  
-@@ -734,11 +838,11 @@ src_install() {
+@@ -734,11 +839,11 @@ src_install() {
  	local size sizes icon_path icon name
  	if use bindist ; then
  		sizes="16 32 48"
@@ -513,7 +514,7 @@
  
  		# Override preferences to set the MOZ_DEV_EDITION defaults, since we
  		# don't define MOZ_DEV_EDITION to avoid profile debaucles.
-@@ -752,9 +856,9 @@ PROFILE_EOF
+@@ -752,9 +857,9 @@ PROFILE_EOF
  
  	else
  		sizes="16 22 24 32 48 64 128 256"
@@ -525,7 +526,7 @@
  	fi
  
  	# Disable built-in auto-update because we update firefox through package manager
-@@ -778,12 +882,14 @@ PROFILE_EOF
+@@ -778,12 +883,14 @@ PROFILE_EOF
  	local app_name desktop_filename display_protocol exec_command
  	for display_protocol in ${display_protocols} ; do
  		app_name="${name} on ${display_protocol}"
@@ -543,7 +544,7 @@
  				;;
  			X11)
  				if ! use wayland ; then
-@@ -792,13 +898,15 @@ PROFILE_EOF
+@@ -792,13 +899,15 @@ PROFILE_EOF
  					continue
  				fi
  
@@ -563,7 +564,7 @@
  				;;
  		esac
  
-@@ -811,18 +919,20 @@ PROFILE_EOF
+@@ -811,18 +920,20 @@ PROFILE_EOF
  	done
  
  	rm "${ED%/}"/usr/bin/firefox || die
@@ -588,7 +589,7 @@
  			-e "s:@DEFAULT_WAYLAND@:${use_wayland}:" \
  			"${wrapper}" || die
  	done
-@@ -925,6 +1035,19 @@ pkg_postinst() {
+@@ -925,6 +1036,19 @@ pkg_postinst() {
  		elog
  		elog "in about:config."
  	fi

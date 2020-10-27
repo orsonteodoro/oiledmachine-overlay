@@ -1,5 +1,5 @@
 --- firefox-82.0.ebuild.orig	2020-10-21 10:39:18.000000000 -0700
-+++ firefox-82.0.ebuild	2020-10-25 14:54:06.516014409 -0700
++++ firefox-82.0.ebuild	2020-10-26 18:11:48.999298348 -0700
 @@ -1,6 +1,8 @@
  # Copyright 1999-2020 Gentoo Authors
  # Distributed under the terms of the GNU General Public License v2
@@ -282,7 +282,7 @@
  
  	sed -i \
  		-e 's/ccache_stats = None/return None/' \
-@@ -507,30 +548,66 @@ src_prepare() {
+@@ -507,30 +548,70 @@ src_prepare() {
  	# Clearing checksums where we have applied patches
  	moz_clear_vendor_checksums target-lexicon-0.9.0
  
@@ -323,6 +323,10 @@
 +	export CARGO_CFG_TARGET_ARCH=$(echo ${chost} | cut -f 1 -d "-")
 +	export MOZILLA_FIVE_HOME="/usr/$(get_libdir)/${PN}"
 +	export BUILD_OBJ_DIR="${BUILD_DIR}/ff"
++
++	# Set MOZCONFIG
++	export MOZCONFIG="${BUILD_DIR}/.mozconfig"
++
 +	# for rust crates libloading and glslopt
 +	if use clang && ! tc-is-clang ; then
 +		CC=${chost}-clang
@@ -356,7 +360,7 @@
  		NM=llvm-nm
  		RANLIB=llvm-ranlib
  	elif ! use clang && ! tc-is-gcc ; then
-@@ -538,8 +615,8 @@ src_configure() {
+@@ -538,8 +619,8 @@ src_configure() {
  		have_switched_compiler=yes
  		einfo "Enforcing the use of gcc due to USE=-clang ..."
  		AR=gcc-ar
@@ -367,26 +371,23 @@
  		NM=gcc-nm
  		RANLIB=gcc-ranlib
  	fi
-@@ -555,14 +632,15 @@ src_configure() {
+@@ -555,14 +636,7 @@ src_configure() {
  	export HOST_CXX="$(tc-getBUILD_CXX)"
  	tc-export CC CXX LD AR NM OBJDUMP RANLIB PKG_CONFIG
  
 -	# Set MOZILLA_FIVE_HOME
 -	export MOZILLA_FIVE_HOME="/usr/$(get_libdir)/${PN}"
-+	_fix_paths
-+
-+	export TARGET="${chost}"
- 
- 	# python/mach/mach/mixin/process.py fails to detect SHELL
- 	export SHELL="${EPREFIX}/bin/bash"
- 
- 	# Set MOZCONFIG
+-
+-	# python/mach/mach/mixin/process.py fails to detect SHELL
+-	export SHELL="${EPREFIX}/bin/bash"
+-
+-	# Set MOZCONFIG
 -	export MOZCONFIG="${S}/.mozconfig"
-+	export MOZCONFIG="${BUILD_DIR}/.mozconfig"
++	_fix_paths
  
  	# Initialize MOZCONFIG
  	mozconfig_add_options_ac '' --enable-application=browser
-@@ -581,40 +659,45 @@ src_configure() {
+@@ -581,40 +655,45 @@ src_configure() {
  		--enable-release \
  		--enable-system-ffi \
  		--enable-system-pixman \
@@ -441,7 +442,7 @@
  	else
  		einfo "Building without Google API key ..."
  	fi
-@@ -741,13 +824,13 @@ src_configure() {
+@@ -741,13 +820,13 @@ src_configure() {
  		fi
  	fi
  
@@ -457,7 +458,7 @@
  				|| die
  		fi
  	fi
-@@ -809,7 +892,20 @@ src_configure() {
+@@ -809,7 +888,20 @@ src_configure() {
  	mozconfig_add_options_mk 'Gentoo default' "XARGS=${EPREFIX}/usr/bin/xargs"
  
  	# Set build dir
@@ -479,7 +480,15 @@
  
  	# Show flags we will use
  	einfo "Build CFLAGS:    ${CFLAGS}"
-@@ -841,7 +937,9 @@ src_configure() {
+@@ -838,10 +930,21 @@ src_configure() {
+ 	echo "=========================================================="
+ 	echo
+ 
++
++	# SHELL: python/mach/mach/mixin/process.py fails to detect SHELL
++
++	TARGET="${chost}" \
++	SHELL="${EPREFIX}/bin/bash" \
  	./mach configure || die
  }
  
@@ -487,15 +496,21 @@
 +multilib_src_compile() {
 +	local chost=$(get_abi_CHOST ${ABI})
 +	_fix_paths
++	cd "${BUILD_DIR}" || die
++	einfo "BUILD_DIR=${BUILD_DIR}"
++	einfo "pwd="$(pwd)
++	einfo "PATH="${PATH}
  	local virtx_cmd=
  
  	if use pgo ; then
-@@ -854,22 +952,32 @@ src_compile() {
+@@ -853,23 +956,32 @@ src_compile() {
+ 		addpredict /root
  	fi
  
- 	local -x GDK_BACKEND=x11
-+	local -x TARGET="${chost}"
- 
+-	local -x GDK_BACKEND=x11
+-
++	GDK_BACKEND=x11 \
++	TARGET="${chost}" \
  	${virtx_cmd} ./mach build --verbose \
  		|| die
  }
@@ -528,7 +543,7 @@
  	dosym ${PN} ${MOZILLA_FIVE_HOME}/${PN}-bin
  
  	# Don't install llvm-symbolizer from sys-devel/llvm package
-@@ -926,15 +1034,15 @@ src_install() {
+@@ -926,15 +1038,15 @@ src_install() {
  	# Install geckodriver
  	if use geckodriver ; then
  		einfo "Installing geckodriver into ${ED}${MOZILLA_FIVE_HOME} ..."
@@ -547,7 +562,7 @@
  	local icon_symbolic_file="${FILESDIR}/icon/firefox-symbolic.svg"
  
  	insinto /usr/share/icons/hicolor/symbolic/apps
-@@ -953,12 +1061,12 @@ src_install() {
+@@ -953,12 +1065,12 @@ src_install() {
  	done
  
  	# Install menus
@@ -563,7 +578,7 @@
  	local use_wayland="false"
  
  	if use wayland ; then
-@@ -969,12 +1077,12 @@ src_install() {
+@@ -969,12 +1081,12 @@ src_install() {
  	local app_name desktop_filename display_protocol exec_command
  	for display_protocol in ${display_protocols} ; do
  		app_name="${name} on ${display_protocol}"
@@ -579,7 +594,7 @@
  				;;
  			X11)
  				if ! use wayland ; then
-@@ -983,13 +1091,15 @@ src_install() {
+@@ -983,13 +1095,15 @@ src_install() {
  					continue
  				fi
  
@@ -599,7 +614,7 @@
  				;;
  		esac
  
-@@ -1009,19 +1119,21 @@ src_install() {
+@@ -1009,19 +1123,21 @@ src_install() {
  
  	# Install generic wrapper script
  	[[ -f "${ED}/usr/bin/${PN}" ]] && rm "${ED}/usr/bin/${PN}"
@@ -625,7 +640,7 @@
  			-e "s:@MOZ_FIVE_HOME@:${MOZILLA_FIVE_HOME}:" \
  			-e "s:@APULSELIB_DIR@:${apulselib}:" \
  			-e "s:@DEFAULT_WAYLAND@:${use_wayland}:" \
-@@ -1117,4 +1229,17 @@ pkg_postinst() {
+@@ -1117,4 +1233,17 @@ pkg_postinst() {
  		elog
  		elog "in about:config."
  	fi

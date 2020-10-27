@@ -743,6 +743,7 @@ multilib_src_configure() {
 multilib_src_compile() {
 	local chost=$(get_abi_CHOST ${ABI})
 	_fix_paths
+	cd "${BUILD_DIR}" || die
 	local _virtx=
 	if use pgo ; then
 		_virtx=virtx
@@ -820,7 +821,7 @@ multilib_src_install() {
 		done
 	fi
 
-	cd "${BUILD_DIR}"
+	cd "${BUILD_DIR}" || die
 	TARGET="${chost}" \
 	MOZ_MAKE_FLAGS="${MAKEOPTS}" SHELL="${SHELL:-${EPREFIX}/bin/bash}" MOZ_NOSPAM=1 \
 	DESTDIR="${D}" ./mach install || die
