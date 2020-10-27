@@ -70,9 +70,6 @@ sys-kernel/kpatch
 >=sys-kernel/ot-sources-5.9
 >=virtual/ot-sources-stable-5.9
 
-# Untested
->=www-client/firefox-82
-
 # Masked for security reasons
 #--------------------------------------------------------------------------------------------------
 
