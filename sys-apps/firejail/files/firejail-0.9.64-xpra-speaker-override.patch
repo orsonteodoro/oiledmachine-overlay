@@ -1,7 +1,7 @@
-diff -urp firejail-0.9.62.orig/src/firejail/firejail.h firejail-0.9.62/src/firejail/firejail.h
---- firejail-0.9.62.orig/src/firejail/firejail.h	2019-12-28 21:57:49.000000000 -0800
-+++ firejail-0.9.62/src/firejail/firejail.h	2020-05-13 17:00:42.249928315 -0700
-@@ -310,6 +310,7 @@ extern int arg_apparmor;	// apparmor
+diff -urp firejail-0.9.64.orig/src/firejail/firejail.h firejail-0.9.64/src/firejail/firejail.h
+--- firejail-0.9.64.orig/src/firejail/firejail.h	2020-10-21 04:54:58.000000000 -0700
++++ firejail-0.9.64/src/firejail/firejail.h	2020-10-26 22:15:34.090997999 -0700
+@@ -332,6 +332,7 @@ extern int arg_apparmor;	// apparmor
  extern int arg_allow_debuggers;	// allow debuggers
  extern int arg_x11_block;	// block X11
  extern int arg_x11_xorg;	// use X11 security extension
@@ -9,11 +9,11 @@ diff -urp firejail-0.9.62.orig/src/firejail/firejail.h firejail-0.9.62/src/firej
  extern int arg_allusers;	// all user home directories visible
  extern int arg_machineid;	// preserve /etc/machine-id
  extern int arg_disable_mnt;	// disable /mnt and /media
-Only in firejail-0.9.62/src/firejail: firejail.h.orig
-diff -urp firejail-0.9.62.orig/src/firejail/main.c firejail-0.9.62/src/firejail/main.c
---- firejail-0.9.62.orig/src/firejail/main.c	2019-12-28 21:57:49.000000000 -0800
-+++ firejail-0.9.62/src/firejail/main.c	2020-05-13 17:00:42.249928315 -0700
-@@ -132,6 +132,7 @@ int arg_apparmor = 0;				// apparmor
+Only in firejail-0.9.64/src/firejail: firejail.h.orig
+diff -urp firejail-0.9.64.orig/src/firejail/main.c firejail-0.9.64/src/firejail/main.c
+--- firejail-0.9.64.orig/src/firejail/main.c	2020-10-21 04:54:58.000000000 -0700
++++ firejail-0.9.64/src/firejail/main.c	2020-10-26 22:15:34.100998393 -0700
+@@ -136,6 +136,7 @@ int arg_apparmor = 0;				// apparmor
  int arg_allow_debuggers = 0;			// allow debuggers
  int arg_x11_block = 0;				// block X11
  int arg_x11_xorg = 0;				// use X11 security extension
@@ -21,7 +21,7 @@ diff -urp firejail-0.9.62.orig/src/firejail/main.c firejail-0.9.62/src/firejail/
  int arg_allusers = 0;				// all user home directories visible
  int arg_machineid = 0;				// preserve /etc/machine-id
  int arg_allow_private_blacklist = 0; 		// blacklist things in private directories
-@@ -2344,6 +2345,10 @@ int main(int argc, char **argv) {
+@@ -2664,6 +2665,10 @@ int main(int argc, char **argv, char **e
  				exit_err_feature("x11");
  		}
  #endif
@@ -32,11 +32,11 @@ diff -urp firejail-0.9.62.orig/src/firejail/main.c firejail-0.9.62/src/firejail/
  		else if (strncmp(argv[i], "--join-or-start=", 16) == 0) {
  			// NOTE: this is second part of option handler,
  			//		 atempt to find and join sandbox is done in other one
-Only in firejail-0.9.62/src/firejail: main.c.orig
-diff -urp firejail-0.9.62.orig/src/firejail/profile.c firejail-0.9.62/src/firejail/profile.c
---- firejail-0.9.62.orig/src/firejail/profile.c	2019-12-28 21:57:49.000000000 -0800
-+++ firejail-0.9.62/src/firejail/profile.c	2020-05-13 17:00:42.249928315 -0700
-@@ -1047,6 +1047,14 @@ int profile_check_line(char *ptr, int li
+Only in firejail-0.9.64/src/firejail: main.c.orig
+diff -urp firejail-0.9.64.orig/src/firejail/profile.c firejail-0.9.64/src/firejail/profile.c
+--- firejail-0.9.64.orig/src/firejail/profile.c	2020-10-21 04:54:58.000000000 -0700
++++ firejail-0.9.64/src/firejail/profile.c	2020-10-26 22:15:34.100998393 -0700
+@@ -1245,6 +1245,14 @@ int profile_check_line(char *ptr, int li
  		return 0;
  	}
  
@@ -51,11 +51,11 @@ diff -urp firejail-0.9.62.orig/src/firejail/profile.c firejail-0.9.62/src/fireja
  	// private /etc list of files and directories
  	if (strncmp(ptr, "private-etc ", 12) == 0) {
  		if (arg_writable_etc) {
-Only in firejail-0.9.62/src/firejail: profile.c.orig
-diff -urp firejail-0.9.62.orig/src/firejail/x11.c firejail-0.9.62/src/firejail/x11.c
---- firejail-0.9.62.orig/src/firejail/x11.c	2019-12-28 21:57:49.000000000 -0800
-+++ firejail-0.9.62/src/firejail/x11.c	2020-05-13 17:01:21.111460170 -0700
-@@ -751,8 +751,15 @@ void x11_start_xpra_old(int argc, char *
+Only in firejail-0.9.64/src/firejail: profile.c.orig
+diff -urp firejail-0.9.64.orig/src/firejail/x11.c firejail-0.9.64/src/firejail/x11.c
+--- firejail-0.9.64.orig/src/firejail/x11.c	2020-10-21 04:54:58.000000000 -0700
++++ firejail-0.9.64/src/firejail/x11.c	2020-10-26 22:16:34.473374726 -0700
+@@ -808,11 +808,18 @@ static void __attribute__((noreturn)) x1
  	}
  	free(fname);
  
@@ -67,12 +67,15 @@ diff -urp firejail-0.9.62.orig/src/firejail/x11.c firejail-0.9.62/src/firejail/x
 +	}
 +
  	// build attach command
--	char *attach_argv[] = { "xpra", "--title=\"firejail x11 sandbox\"", "attach", display_str, NULL };
-+	char *attach_argv[] = { "xpra", "--title=\"firejail x11 sandbox\"", "attach", speaker_str, display_str, NULL };
+ 
+ 	char * title_arg_str = get_title_arg_str();
+ 
+-	char *attach_argv[] = { "xpra", title_arg_str, "attach", display_str, NULL };
++	char *attach_argv[] = { "xpra", title_arg_str, "attach", speaker_str, display_str, NULL };
  
  	// run attach command
  	client = fork();
-@@ -977,6 +984,15 @@ void x11_start_xpra_new(int argc, char *
+@@ -1037,6 +1044,15 @@ static void __attribute__((noreturn)) x1
  			errExit("open");
  	}
  
@@ -88,4 +91,5 @@ diff -urp firejail-0.9.62.orig/src/firejail/x11.c firejail-0.9.62/src/firejail/x
  	// start
  	server = fork();
  	if (server < 0)
-Only in firejail-0.9.62/src/firejail: x11.c.orig
+Only in firejail-0.9.64/src/firejail: x11.c.orig
+Only in firejail-0.9.64/src/firejail: x11.c.rej

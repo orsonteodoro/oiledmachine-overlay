@@ -17,23 +17,26 @@ HOMEPAGE="https://firejail.wordpress.com/"
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="apparmor +chroot contrib debug +file-transfer +globalcfg +network +overlayfs +private-home +seccomp +suid test +userns vim-syntax +whitelist x11 xpra"
+IUSE="apparmor +chroot contrib dbusproxy debug +file-transfer +globalcfg +network +overlayfs +private-home +seccomp selinux +suid test +userns vim-syntax +whitelist x11 xpra"
 
 DEPEND="!sys-apps/firejail-lts
 	apparmor? ( sys-libs/libapparmor )
+	dbusproxy? ( sys-apps/xdg-dbus-proxy )
 	test? ( dev-tcltk/expect )
 	xpra? ( x11-wm/xpra[firejail] )"
 
 RDEPEND="apparmor? ( sys-libs/libapparmor )"
 
 # TODO: enable tests
-RESTRICT="test"
+RESTRICT="mirror test"
+
+PATCHES=( "${FILESDIR}/${PN}-0.9.64-compressed-manpages.patch" )
 
 src_prepare() {
 	default
 
 	if use xpra ; then
-		eapply "${FILESDIR}/${PN}-0.9.62-xpra-speaker-override.patch"
+		eapply "${FILESDIR}/${PN}-0.9.64-xpra-speaker-override.patch"
 	fi
 
 	find ./contrib -type f -name '*.py' | xargs sed --in-place 's-#!/usr/bin/python3-#!/usr/bin/env python3-g' || die
@@ -56,12 +59,14 @@ src_configure() {
 		$(use_enable apparmor) \
 		$(use_enable chroot) \
 		$(use_enable contrib contrib-install) \
+		$(use_enable dbusproxy) \
 		$(use_enable file-transfer) \
 		$(use_enable globalcfg) \
 		$(use_enable network) \
 		$(use_enable overlayfs) \
 		$(use_enable private-home) \
 		$(use_enable seccomp) \
+		$(use_enable selinux) \
 		$(use_enable suid) \
 		$(use_enable userns) \
 		$(use_enable whitelist) \
