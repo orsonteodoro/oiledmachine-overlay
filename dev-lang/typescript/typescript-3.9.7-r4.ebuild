@@ -17,7 +17,7 @@ RDEPEND="${RDEPEND}
 DEPEND="${RDEPEND}
 	media-libs/vips
         >=net-libs/nodejs-4.2.0[npm]"
-NPM_SECAUDIT_AT_TYPES_NODE_V="14.0.23" # always latest see https://www.npmjs.com/package/@types/node
+NPM_SECAUDIT_AT_TYPES_NODE_V="14.14.5" # always latest see https://www.npmjs.com/package/@types/node
 NPM_SECAUDIT_TYPESCRIPT_V="${PV}"
 inherit eutils npm-secaudit npm-utils
 MY_PN="TypeScript"
