@@ -281,9 +281,9 @@ DEPEND="${RDEPEND}
 	dev-java/gradle-bin
 	virtual/jdk:1.8"
 inherit linux-info
-SRC_URI="https://github.com/laurent-clouet/sheepit-client/archive/v${PV}.tar.gz \
--> ${PN}-${PV}.tar.gz"
-S="${WORKDIR}/${PN}-${PV}"
+SRC_URI="https://gitlab.com/sheepitrenderfarm/client/-/archive/v${PV}/client-v${PV}.tar.bz2 \
+-> ${PN}-${PV}.tar.bz2"
+S="${WORKDIR}/client-v${PV}"
 RESTRICT="mirror"
 WRAPPER_VERSION="3.0.0"
 
@@ -375,6 +375,9 @@ gbewarn() {
 }
 
 check_embree() {
+	# For the configuration, see
+# https://github.com/blender/blender/blob/v2.90.1/build_files/build_environment/cmake/embree.cmake
+
 	# There is no standard embree ebuild.  Assume other repo or local copy.
 
 	# This check is ensure that the rendering quality is the same and the output
