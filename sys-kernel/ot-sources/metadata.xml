@@ -198,7 +198,8 @@
       newer release.</flag>
     <flag name="tresor">Controls application of TRESOR, a cold boot resistant
       AES cipher.  AES keys are stored in registers instead of RAM.  It only
-      supports one device at a time but supports 128-, 192-, 256- bit keys.</flag>
+      supports one device at a time but supports 128-, 192-, 256- bit keys.
+      </flag>
     <flag name="tresor_aesni">Patches the kernel with cold boot resistant
       AES hardware accelerated AES-NI support.</flag>
     <flag name="tresor-fscrypt">Adds FS encryption with TRESOR support.</flag>
@@ -227,14 +228,17 @@
       for 5.4 see:
       https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
 
-      for 5.6 see:
-      https://github.com/torvalds/linux/compare/v5.6...zen-kernel:5.6/zen-sauce
+      for 5.4 see:
+      https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
 
-      for 5.7 see:
-      https://github.com/torvalds/linux/compare/v5.7...zen-kernel:5.7/zen-sauce
+      for 5.8 see:
+      https://github.com/torvalds/linux/compare/v5.8...zen-kernel:5.8/zen-sauce
 
-      Use the o3, zen-misc, kernel_gcc_patch USE flags instead of passing their commit
-      IDs.
+      for 5.9 see:
+      https://github.com/torvalds/linux/compare/v5.9...zen-kernel:5.9/zen-sauce
+
+      Use the O3, zen-misc, kernel_gcc_patch USE flags instead of passing their
+      commit IDs.
 
       The zen-misc set contains patches that add drivers or functionality
       related to gaming, laptops, optimizations, etc.
