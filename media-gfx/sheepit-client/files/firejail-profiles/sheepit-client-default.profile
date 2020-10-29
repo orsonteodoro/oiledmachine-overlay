@@ -172,8 +172,8 @@ private-lib libxcb-glx.so.*,libxcb-present.so.*,libxcb-sync.so.*,libz.so.*
 private-lib libwayland-server.so.*,libwayland-client.so.*
 
 # For xauth
-private-lib ld-linux-x86-64.so.*,libc.so.*,libdl.so.*,libX11.so.*,libXau.so.*
-private-lib libXext.so.*,libXdmcp.so.*,libXmuu.so.*
+private-lib ld-linux-x86-64.so.*,libbsd.so.*,libc.so.*,libdl.so.*,libX11.so.*
+private-lib libXau.so.*,libXext.so.*,libXdmcp.so.*,libXmuu.so.*
 
 # For Blender 2.79b-2.90.0 vanilla
 private-lib gcc,ld-linux-x86-64.so.*,libbsd.so.*,libc.so.*,libdl.so.*,libm.so.*
