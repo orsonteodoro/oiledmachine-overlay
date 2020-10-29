@@ -108,7 +108,7 @@ video_cards_radeonsi"
 REQUIRED_USE="
 	allow-unknown-renderers? ( blender !system-blender )
 	benchmark
-	benchmark? ( blender blender2836 )
+	benchmark? ( blender blender2901 )
 	blender? ( || ( blender279b blender279b_filmic blender280 blender281a
 			blender282 blender2831 blender2832 blender2836 blender2900
 			blender2901
