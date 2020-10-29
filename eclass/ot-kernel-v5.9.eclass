@@ -29,13 +29,12 @@ PATCH_PROJECT_C_MAJOR_MINOR="5.9"
 DISABLE_DEBUG_V="1.1"
 ZENTUNE_5_9_COMMIT="8141729974d4c2fae2c758e83136ae4b12feba7a..cbef2dd68b27d957d4b24ee020fd33ef5ebdf26b" # (exclusive-end,inclusive-start]
 PATCH_TRESOR_VER="3.18.5"
-ZSTD_VER="10"
 MUQSS_VER="0.204"
 
 IUSE="bfq bmq +cfs disable_debug futex-wait-multiple +genpatches \
 +kernel_gcc_patch muqss +O3 prjc tresor tresor_aesni tresor_i686 \
 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-misc \
--zen-tune zstd"
+-zen-tune"
 REQUIRED_USE="\
 !bfq !bmq
 ^^ ( bmq cfs muqss prjc ) \
@@ -50,7 +49,7 @@ K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
 DESCRIPTION="A customizeable kernel package containing UKSM, zen-kernel \
 patchset, GraySky2's Kernel GCC Patch, MUQSS CPU Scheduler, BMQ CPU Scheduler, \
-Project C CPU Scheduler, genpatches, BFQ updates, CVE fixes, TRESOR, zstd"
+Project C CPU Scheduler, genpatches, BFQ updates, CVE fixes, TRESOR"
 
 inherit ot-kernel
 
@@ -71,10 +70,6 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   #   found in the project.  (The implementation is based on an academic paper
   #   from public universities.)
 LICENSE+=" zen-tune? ( GPL-2 )"
-LICENSE+=" zstd? ( GPL-2 BSD-2 all-rights-reserved )" # \
-  # GPL-2 and BSD-2 applies to the files being patched. \
-  # all-rights-reserved which is explicitly stated and GPL-2 both applies to \
-  #   lib/zstd/zstd_internal.h being patched.
 #BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.patch"
 #BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
 
