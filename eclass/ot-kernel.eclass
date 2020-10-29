@@ -379,18 +379,27 @@ function _report_eol() {
 "\n\
 The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is\n\
 Dec 2025.\n\
+\n\
+Use the virtual/ot-sources-lts meta package to ensure proper updates in the\n\
+same major.minor.release.\n\
 "
 	elif [[ "${K_MAJOR_MINOR}" == "4.19" ]] ; then
 		einfo \
 "\n\
 The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is\n\
 Dec 2024.\n\
+\n\
+Use the virtual/ot-sources-lts meta package to ensure proper updates in the\n\
+same major.minor.release.\n\
 "
 	elif [[ "${K_MAJOR_MINOR}" == "4.14" ]] ; then
 		einfo \
 "\n\
 The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is\n\
 Jan 2024.\n\
+\n\
+Use the virtual/ot-sources-lts meta package to ensure proper updates in the\n\
+same major.minor.release.\n\
 "
 	else
 		ewarn \
@@ -398,6 +407,9 @@ Jan 2024.\n\
 The ${K_MAJOR_MINOR} kernel series is not a Long Term Support (LTS)\n\
 kernel.  It may suddenly stop receiving security updates completely between a\n\
 week to several months.\n\
+\n\
+Use the virtual/ot-sources-stable meta package to ensure a smooth update\n\
+between stable releases differing between major.minor branches\n\
 "
 	fi
 }

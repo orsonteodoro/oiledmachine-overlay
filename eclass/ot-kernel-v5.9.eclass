@@ -22,8 +22,7 @@ PATCH_UKSM_MVER="5"
 PATCH_ZENTUNE_VER="5.9"
 PATCH_ALLOW_O3_COMMIT="d0ee207cac1217d2b111bef6f0f9581a10b35f6c"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?10}"
-#PATCH_GP_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
-PATCH_GP_MAJOR_MINOR_REVISION="5.9-${K_GENPATCHES_VER}"
+PATCH_GP_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
 PATCH_BFQ_VER="5.9"
 PATCH_BMQ_MAJOR_MINOR="5.9"
 PATCH_PROJECT_C_MAJOR_MINOR="5.9"
@@ -31,14 +30,14 @@ DISABLE_DEBUG_V="1.1"
 ZENTUNE_5_9_COMMIT="8141729974d4c2fae2c758e83136ae4b12feba7a..cbef2dd68b27d957d4b24ee020fd33ef5ebdf26b" # (exclusive-end,inclusive-start]
 PATCH_TRESOR_VER="3.18.5"
 ZSTD_VER="10"
-MUQSS_VER=""
+MUQSS_VER="0.204"
 
 IUSE="bfq bmq +cfs disable_debug futex-wait-multiple +genpatches \
 +kernel_gcc_patch muqss +O3 prjc tresor tresor_aesni tresor_i686 \
 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-misc \
 -zen-tune zstd"
 REQUIRED_USE="\
-!bfq !bmq !genpatches !muqss !prjc
+!bfq !bmq
 ^^ ( bmq cfs muqss prjc ) \
 tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 tresor_aesni? ( tresor )
@@ -86,7 +85,13 @@ SRC_URI+=" https://cdn.kernel.org/pub/linux/kernel/v${K_PATCH_XV}/linux-${K_MAJO
 	   ${KERNEL_PATCH_URLS[@]}"
 fi
 
-SRC_URI+=" kernel_gcc_patch? (
+SRC_URI+=" genpatches? (
+		${GENPATCHES_URI}
+		${GENPATCHES_BASE_SRC_URL}
+		${GENPATCHES_EXPERIMENTAL_SRC_URL}
+		${GENPATCHES_EXTRAS_SRC_URL}
+	   )
+	   kernel_gcc_patch? (
 		${KGCCP_SRC_4_9_URL}
 		${KGCCP_SRC_8_1_URL}
 		${KGCCP_SRC_9_1_URL}
@@ -104,13 +109,7 @@ SRC_URI+=" kernel_gcc_patch? (
 	   uksm? ( ${UKSM_SRC_URL} )"
 
 SRC_URI_DISABLED+="
-	   bmq? ( ${BMQ_SRC_URL} )
-	   genpatches? (
-		${GENPATCHES_URI}
-		${GENPATCHES_BASE_SRC_URL}
-		${GENPATCHES_EXPERIMENTAL_SRC_URL}
-		${GENPATCHES_EXTRAS_SRC_URL}
-	   )"
+	   bmq? ( ${BMQ_SRC_URL} )"
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:
