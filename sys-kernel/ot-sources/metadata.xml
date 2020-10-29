@@ -162,8 +162,9 @@
                                    not marked Patch or Vendor Advisory.
       CVE_ALLOW_CRASH_PREVENTION - is set to 1 to accept (default), 0 to reject
                                    if to apply commits that prevent crashes,
-                                   memory leaks, overflows, validations
-                                   surrounding a fix for a CVE.
+                                   memory leaks, overflows, and also adds
+                                   data validations checks surrounding a fix
+                                   for a CVE.
       CVE_MAX_BULK_CONNECTIONS - maximum large downloads at a time, 5 is default
       CVE_MAX_PATCH_CONNECTIONS - maximum patch downloads at a time,
                                   100 is default
