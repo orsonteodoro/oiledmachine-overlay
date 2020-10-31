@@ -14,7 +14,7 @@ inherit python-single-r1
 IUSE="test"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 RDEPEND=">=dev-cpp/nlohmann_json-3.7.3
-	 >=dev-libs/libfmt-6.2
+	 >=dev-libs/libfmt-6.1
 	 >=dev-libs/spdlog-1.5
 	 >=net-libs/grpc-1.28
 	 >=dev-libs/protobuf-3.11"
