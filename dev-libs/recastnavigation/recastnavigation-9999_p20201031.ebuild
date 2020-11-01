@@ -16,13 +16,12 @@ RDEPEND="demo? (
 DEPEND="${RDEPEND}
 	>=sys-devel/gcc-8.0"
 inherit eutils toolchain-funcs
-EGIT_COMMIT="eecb7f45ecb92d79328cf54719266d8739bdbfb4"
+EGIT_COMMIT="65b314a44e92d5e07d943e7523455ad4d391dfaa"
 SRC_URI="\
 https://github.com/${PN}/${PN}/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
-PATCHES=( "${FILESDIR}/recastnavigation-9999-custom-cmake-multilib-path.patch" )
 
 pkg_setup() {
 	GCC_V=$(gcc-fullversion)
