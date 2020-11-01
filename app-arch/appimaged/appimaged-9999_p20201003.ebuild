@@ -29,7 +29,7 @@ RDEPEND="
 DEPEND="${RDEPEND}"
 REQUIRED_USE="|| ( openrc systemd )"
 SLOT="0/${PV}"
-EGIT_COMMIT="8e248f5afe975b8ef65c7e3e5596ab13c6af3a4d"
+EGIT_COMMIT="11b249848d7d0d9b3b7154ae5fca0328afa167d4"
 SRC_URI=\
 "https://github.com/AppImage/appimaged/archive/${EGIT_COMMIT}.tar.gz
 	 -> ${P}.tar.gz
