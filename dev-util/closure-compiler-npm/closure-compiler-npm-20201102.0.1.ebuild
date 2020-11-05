@@ -14,6 +14,7 @@ LICENSE="
 	MPL-2.0
 	NPL-1.1"
 KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
+PV_CC=$(ver_cut 1 ${PV})
 SLOT="0/${PV}"
 NODE_SLOT="0"
 MY_PN="closure-compiler"
@@ -44,15 +45,14 @@ BDEPEND="dev-java/maven-bin
 	sys-apps/yarn"
 inherit check-reqs eutils java-utils-2 npm-secaudit
 FN_DEST="${PN}-${PV}.tar.gz"
-CLOSURE_COMPILER_COMMIT="17f14e8fd09e503328d55cdcce7ae5d6be33a9be"
-FN_DEST2="closure-compiler-${CLOSURE_COMPILER_COMMIT}.tar.gz"
+FN_DEST2="closure-compiler-${PV}.tar.gz"
 SRC_URI=\
 "https://github.com/google/closure-compiler-npm/archive/v${PV}.tar.gz \
 	-> ${FN_DEST}
-https://github.com/google/closure-compiler/archive/${CLOSURE_COMPILER_COMMIT}.tar.gz \
+https://github.com/google/closure-compiler/archive/v${PV_CC}.tar.gz \
 	-> ${FN_DEST2}"
 S="${WORKDIR}/${PN}-${PV}"
-S_CLOSURE_COMPILER="${WORKDIR}/closure-compiler-${CLOSURE_COMPILER_COMMIT}"
+S_CLOSURE_COMPILER="${WORKDIR}/closure-compiler-${PV_CC}"
 RESTRICT="mirror"
 
 _set_check_reqs_requirements() {
