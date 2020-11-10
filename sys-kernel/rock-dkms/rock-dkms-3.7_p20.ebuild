@@ -22,7 +22,7 @@ if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
 KV_NOT_SUPPORTED_MAX="99999"
 KV_SUPPORTED_MIN="5.0"
 else
-KV_NOT_SUPPORTED_MAX="5.7"
+KV_NOT_SUPPORTED_MAX="5.6.69"
 KV_SUPPORTED_MIN="5.0"
 fi
 RDEPEND="firmware? ( sys-firmware/rock-firmware:${SLOT} )
