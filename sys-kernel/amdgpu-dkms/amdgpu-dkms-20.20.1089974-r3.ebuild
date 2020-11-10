@@ -31,7 +31,7 @@ KV_NOT_SUPPORTED_MAX="99999"
 KV_SUPPORTED_MIN="5.0"
 else
 # Based on the AMDGPU_VERSION
-KV_NOT_SUPPORTED_MAX="5.7"
+KV_NOT_SUPPORTED_MAX="5.6.69"
 KV_SUPPORTED_MIN="5.0"
 fi
 RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
