@@ -10,6 +10,7 @@ SRC_URI="https://github.com/gautamkrishnar/socli/archive/${PV}.tar.gz \
 LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
 PYTHON_COMPAT=( python3_{6,7,8} )
+IUSE="man"
 inherit distutils-r1 eutils
 SLOT="0"
 DEPEND=">=dev-python/beautifulsoup-4.9.1:4[${PYTHON_USEDEP}]
@@ -30,7 +31,19 @@ src_prepare() {
 
 python_install_all() {
 	distutils-r1_python_install_all
-	rm -rf "${D}/usr/socli"
+	rm -rf "${ED}/usr/socli"
+}
+
+src_install() {
+	default
+	distutils-r1_src_install
+	if use man ; then
+		cp "${ED}/usr/man/man1/${PN}.1" "${T}" || die
+		rm -rf "${ED}/usr/man" || die
+		doman "${T}/${PN}.1"
+	else
+		rm -rf "${ED}/usr/man" || die
+	fi
 }
 
 pkg_postinst() {
