@@ -50,7 +50,7 @@ RDEPEND="${PYTHON_DEPS}
 	x11-base/xorg-drivers[video_cards_radeonsi]
 		)
 	)
-	media-libs/mesa[libglvnd]
+	media-libs/mesa[libglvnd(+)]
 	media-libs/vulkan-loader
 	system-jsoncpp? ( dev-libs/jsoncpp )
 	xcb? (
