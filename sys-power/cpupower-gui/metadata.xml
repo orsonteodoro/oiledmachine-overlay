@@ -9,6 +9,11 @@
     cpupower-gui is a Python GTK+ 3 frontend for CPU frequency scaling.
 
     It may require a sudo to change settings.
+
+
+    Per-package environmental variables for systemd users:
+
+      CPUPOWER_GUI_SYSTEMD_SYSTEM_DIR - the systemd directory (default: /usr/lib/systemd)
   </longdescription>
   <upstream>
     <bugs-to>https://github.com/vagnum08/cpupower-gui/issues</bugs-to>
@@ -17,4 +22,14 @@
     </maintainer>
     <remote-id type="github">vagnum08/cpupower-gui</remote-id>
   </upstream>
+  <use>
+    <flag name="pkla">
+      When on - places .pkla files in /var/lib/polkit-1/localauthority/10-vendor.d/.
+      When off (default) - places .pkla files in /usr/share/polkit-1/rules.d/.
+    </flag>
+    <flag name="libexec">
+      When on - the dbus helper program is installed in /usr/libexec.
+      When off (default) - the dbus helper program is installed in /usr/lib/.
+    </flag>
+  </use>
 </pkgmetadata>
