@@ -31,7 +31,7 @@ src_prepare() {
 	multilib_copy_sources
 }
 
-src_configure() {
+multilib_src_configure() {
 	local myeconfargs=(
 		$(use_enable doc)
 		$(use_enable fixed-point)\
@@ -42,7 +42,7 @@ src_configure() {
 	econf "${myeconfargs[@]}"
 }
 
-src_install() {
+multilib_src_install() {
 	default
 	find "${ED}" -type f -name "*.la" -delete || die
 }
