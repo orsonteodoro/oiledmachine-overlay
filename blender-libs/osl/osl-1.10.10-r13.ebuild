@@ -122,6 +122,7 @@ src_configure() {
 
 # Qt is disabled in Blender.
 # See https://github.com/blender/blender/blob/v2.83/build_files/build_environment/cmake/osl.cmake
+# Enabling Qt causes: ld: osltoyapp.cpp:(.text+0x2d74): undefined reference to `OSL_v1_10::OSLQuery::~OSLQuery()
 
 			local gcc=$(tc-getCC)
 			# LLVM needs CPP11. Do not disable.
