@@ -174,7 +174,7 @@ doesn't support nested functions.  Forcing GCC..."
 
 	if use qt5 ; then
 		einfo "Checking Qt versions"
-		local QT_VERSION=$("${EROOT}/usr/lib/libQt5Core.so.5" \
+		local QT_VERSION=$("${EROOT}/usr/$(get_libdir)/libQt5Core.so.5" \
 					| head -n 1 | cut -f 8 -d " ")
 		if ver_test ${QT_VERSION} -lt ${QT_MIN_PV} ; then
 			die "You need >=${QT_MIN_PV} for the Qt system libraries."
@@ -219,7 +219,7 @@ doesn't support nested functions.  Forcing GCC..."
 			| grep -q -F -e "Qt_"$(ver_cut 1-2 ${QT_VERSION})
 		if [[ "${?}" != "0" ]] ; then
 			QT5WEBKIT_HIGHEST=$(strings \
-				"${EROOT}/usr/lib64/libQt5WebKit.so" \
+				"${EROOT}/usr/$(get_libdir)/libQt5WebKit.so" \
 				| grep -F -e "Qt_5." | tail -n 1 \
 				| cut -f 2 -d "_")
 			die \
