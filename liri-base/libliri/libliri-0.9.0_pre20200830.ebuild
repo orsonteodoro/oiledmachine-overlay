@@ -14,7 +14,6 @@ RDEPEND="${RDEPEND}
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
-	>=dev-qt/qtgui-${QT_MIN_PV}:5=
 	>=dev-qt/qtxml-${QT_MIN_PV}:5="
 DEPEND="${RDEPEND}
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
@@ -23,7 +22,7 @@ DEPEND="${RDEPEND}
 	>=liri-base/cmake-shared-1.0.0
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
 inherit cmake-utils eutils
-EGIT_COMMIT="0943d3be299f3c6d172d95c2e8ad358d2b3a1113"
+EGIT_COMMIT="c8d11b8e27bedc2113a3902593f317c3a3e435e1"
 SRC_URI=\
 "https://github.com/lirios/libliri/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${PN}-${PV}.tar.gz"
@@ -33,14 +32,10 @@ RESTRICT="mirror"
 pkg_setup() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
 	QTDBUS_PV=$(pkg-config --modversion Qt5DBus)
-	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
 	QTQML_PV=$(pkg-config --modversion Qt5Qml)
 	QTXML_PV=$(pkg-config --modversion Qt5Xml)
 	if ver_test ${QTCORE_PV} -ne ${QTDBUS_PV} ; then
 		die "Qt5Core is not the same version as Qt5DBus"
-	fi
-	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
-		die "Qt5Core is not the same version as Qt5Gui"
 	fi
 	if ver_test ${QTCORE_PV} -ne ${QTQML_PV} ; then
 		die "Qt5Core is not the same version as Qt5Qml (qtdeclarative)"
