@@ -189,7 +189,7 @@ pkg_setup() {
 	fi
 
 	if use system-qt5 ; then
-		/usr/lib/libQt5Core.so.5 | grep ${QT_VERSION}
+		"${EROOT}/usr/$(get_libdir)/libQt5Core.so.5" | grep ${QT_VERSION}
 		if [[ "$?" != "0" ]] ; then
 			die "You need ${QT_VERSION} in order to use the Qt system libraries.  This binary is sensitive to minor Qt changes."
 		fi
