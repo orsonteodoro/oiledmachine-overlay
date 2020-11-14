@@ -11,7 +11,7 @@ RDEPEND=">=kde-frameworks/extra-cmake-modules-5.48.0"
 DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0"
 inherit cmake-utils eutils
-EGIT_COMMIT="11c53a19ae07bdd3aae4b96c553b4d0a3eec7869"
+EGIT_COMMIT="071ec5dbbedafa48fe8d80e9bd627ed318a5014f"
 SRC_URI=\
 "https://github.com/lirios/cmake-shared/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
