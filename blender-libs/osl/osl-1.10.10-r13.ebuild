@@ -23,7 +23,9 @@ X86_CPU_FEATURES=(
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
 
-IUSE="doc partio qt5 test ${CPU_FEATURES[@]%:*}"
+IUSE="doc partio test ${CPU_FEATURES[@]%:*}"
+#IUSE+=" -qt5"
+#REQUIRED_USE="!qt5"
 
 RDEPEND="
 	sys-devel/llvm:${LLVM_V}
@@ -35,12 +37,14 @@ RDEPEND="
 	sys-devel/llvm:${LLVM_V}=
 	sys-libs/zlib:=
 	partio? ( media-libs/partio )
-	qt5? (
-		dev-qt/qtcore:5
-		dev-qt/qtgui:5
-		dev-qt/qtwidgets:5
-	)
 "
+#RDEPEND+="
+#	qt5? (
+#		dev-qt/qtcore:5
+#		dev-qt/qtgui:5
+#		dev-qt/qtwidgets:5
+#	)
+#"
 
 DEPEND="${RDEPEND}"
 BDEPEND="
@@ -115,6 +119,10 @@ src_configure() {
 				bin_suffix="-${ABI}"
 			fi
 
+
+# Qt is disabled in Blender.
+# See https://github.com/blender/blender/blob/v2.83/build_files/build_environment/cmake/osl.cmake
+
 			local gcc=$(tc-getCC)
 			# LLVM needs CPP11. Do not disable.
 			local mycmakeargs=(
@@ -127,7 +135,7 @@ src_configure() {
 				-DOSL_BUILD_TESTS=$(usex test)
 				-DSTOP_ON_WARNING=OFF
 				-DUSE_PARTIO=$(usex partio)
-				-DUSE_QT=$(usex qt5)
+				-DUSE_QT=OFF
 				-DUSE_SIMD="$(IFS=","; echo "${mysimd[*]}")"
 			)
 
