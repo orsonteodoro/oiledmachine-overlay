@@ -20,7 +20,7 @@ DEPEND="${RDEPEND}
 	>=liri-base/cmake-shared-1.0.0
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
 inherit cmake-utils eutils
-EGIT_COMMIT="fdaa06f1005f1dbaf561ef4a1c714d48b8cbe23b"
+EGIT_COMMIT="7215f4102072f4a242c05c0d197840df57f54b8b"
 SRC_URI=\
 "https://github.com/lirios/qtgsettings/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
