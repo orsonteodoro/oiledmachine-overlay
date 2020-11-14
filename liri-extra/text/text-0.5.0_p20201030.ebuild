@@ -25,7 +25,7 @@ DEPEND="${RDEPEND}
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=liri-base/cmake-shared-1.0.0"
 inherit cmake-utils eutils xdg
-EGIT_COMMIT="e9b08a69683e7755bc4a221a7cdbc98d211c5e23"
+EGIT_COMMIT="13e9f18adfe09ce3cec3414726f9757b7d16b3a0"
 SRC_URI=\
 "https://github.com/lirios/text/archive/${EGIT_COMMIT}.tar.gz
 	-> ${PN}-${PV}.tar.gz"
