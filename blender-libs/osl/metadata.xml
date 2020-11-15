@@ -25,6 +25,9 @@
 
 		The ebuild slotting is important to avoid a load-time
 		multiple version LLVM bug.
+
+		Optix users may want to set CUDA_TOOLKIT_ROOT_DIR as a per-package
+		environmental variable.
 	</longdescription>
 	<use>
 		<flag name="partio">Use <pkg>media-libs/partio</pkg></flag>

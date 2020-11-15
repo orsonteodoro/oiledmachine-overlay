@@ -23,10 +23,11 @@ X86_CPU_FEATURES=(
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
 
-IUSE="doc partio test ${CPU_FEATURES[@]%:*}"
+IUSE="doc optix partio test ${CPU_FEATURES[@]%:*}"
 #IUSE+=" -qt5"
 #REQUIRED_USE="!qt5"
 
+# See https://github.com/imageworks/OpenShadingLanguage/blob/Release-1.11.9.0/INSTALL.md
 RDEPEND="
 	sys-devel/llvm:${LLVM_V}
 	>=blender-libs/boost-1.55:${CXXABI}=
@@ -37,6 +38,13 @@ RDEPEND="
 	sys-devel/clang:${LLVM_V}=
 	sys-devel/llvm:${LLVM_V}=
 	sys-libs/zlib:=
+	optix? (
+		>=dev-libs/optix-5.1
+		>=dev-util/nvidia-cuda-toolkit-8
+		>=media-libs/openimageio-1.8:=
+		>=sys-devel/llvm-5[llvm_targets_NVPTX]
+		>=sys-devel/clang-5[llvm_targets_NVPTX]
+	)
 	partio? ( media-libs/partio )
 "
 #RDEPEND+="
@@ -66,6 +74,21 @@ S="${WORKDIR}/OpenShadingLanguage-Release-${PV}"
 
 llvm_check_deps() {
 	has_version -r "sys-devel/clang:${LLVM_SLOT}"
+}
+
+pkg_setup() {
+	if use optix ; then
+		ewarn \
+"The optix USE flag is untested.  Left for owners of those kinds of GPUs to \
+test and fix."
+		if [[ -z "${CUDA_TOOLKIT_ROOT_DIR}" ]] ; then
+			ewarn \
+"CUDA_TOOLKIT_ROOT_DIR is not set.  Please add it in your make.conf or as a \
+per-package environmental variable."
+		fi
+	fi
+
+	llvm_pkg_setup
 }
 
 src_prepare() {
@@ -140,7 +163,9 @@ src_configure() {
 				-DOSL_BUILD_TESTS=$(usex test)
 				-DSTOP_ON_WARNING=OFF
 				-DUSE_CPP=${CXXABI}
+				-DUSE_OPTIX=$(usex optix)
 				-DUSE_PARTIO=$(usex partio)
+				-DUSE_PYTHON=OFF
 				-DUSE_QT=OFF
 				-DUSE_SIMD="$(IFS=","; echo "${mysimd[*]}")"
 			)
