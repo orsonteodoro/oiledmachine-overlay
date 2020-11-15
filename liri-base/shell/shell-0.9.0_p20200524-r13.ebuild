@@ -29,7 +29,6 @@ RDEPEND="${RDEPEND}
 	  liri-base/wayland
 	  media-fonts/droid
 	  media-fonts/noto
-	  sys-auth/pambase[consolekit]
 	  sys-auth/polkit-qt
 	  sys-libs/pam
 	systemd? ( sys-apps/systemd )"
@@ -105,7 +104,6 @@ pkg_postinst() {
 	# https://github.com/lirios/shell/issues/63
 	glib-compile-schemas /usr/share/glib-2.0/schemas
 	xdg_pkg_postinst
-	ewarn "If sys-auth/pambase[consolekit] was recently pulled, reboot the computer or else you will get the XDG_RUNTIME_DIR not set message."
 	ewarn \
 "\n"\
 "If you have installed the Pro OpenGL drivers from the AMDGPU-PRO package, \n"\
