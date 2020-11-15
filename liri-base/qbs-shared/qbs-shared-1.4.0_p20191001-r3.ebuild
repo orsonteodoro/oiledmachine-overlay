@@ -21,6 +21,13 @@ QBS_CONFIG=( --settings-dir "${S}/qbs-config" )
 
 # Based on https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=liri-qbs-shared-git
 
+pkg_setup() {
+	"${EROOT}/usr/bin/qbs" list-products 2>&1 | grep -q -F -e "Cannot mix incompatible"
+	if [[ "$?" == "0" ]] ; then
+		die "Re-emerge dev-util/qbs"
+	fi
+}
+
 src_compile() {
 	qbs setup-toolchains ${QBS_CONFIG[@]} --type gcc /usr/bin/g++ gcc || die
 	qbs setup-qt ${QBS_CONFIG[@]} /usr/bin/qmake qt5 || die
