@@ -171,9 +171,9 @@ src_configure() {
 			)
 
 			if [[ "${ECMAKE_LIB_TYPE}" == "shared-libs" ]] ; then
-				mycmakeargs+=( -DBUILDSTATIC=OFF )
+				mycmakeargs+=( -DBUILD_SHARED_LIBS=ON )
 			else
-				mycmakeargs+=( -DBUILDSTATIC=ON )
+				mycmakeargs+=( -DBUILD_SHARED_LIBS=OFF )
 			fi
 
 			append-cxxflags -fPIC
