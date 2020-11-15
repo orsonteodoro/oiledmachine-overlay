@@ -66,10 +66,6 @@ BDEPEND="
 	virtual/pkgconfig
 "
 
-PATCHES=(
-	"${FILESDIR}/${PN}-1.10.5-fix-install-shaders.patch"
-)
-
 # Restricting tests as Make file handles them differently
 RESTRICT="mirror test"
 
@@ -164,6 +160,7 @@ src_configure() {
 				-DINSTALL_DOCS=$(usex doc)
 				-DLLVM_STATIC=OFF
 				-DOSL_BUILD_TESTS=$(usex test)
+				-DOSL_SHADER_INSTALL_DIR="include/OSL/shaders"
 				-DSTOP_ON_WARNING=OFF
 				-DUSE_CPP=${CXXABI}
 				-DUSE_OPTIX=$(usex optix)
