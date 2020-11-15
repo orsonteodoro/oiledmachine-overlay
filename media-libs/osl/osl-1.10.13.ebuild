@@ -21,6 +21,8 @@ CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
 IUSE="doc partio qt5 test ${CPU_FEATURES[@]%:*} llvm-9 +llvm-10"
 REQUIRED_USE="^^ ( llvm-9 llvm-10 )"
 
+# See https://github.com/imageworks/OpenShadingLanguage/blob/Release-1.10.13/INSTALL.md
+QT_MIN=5.6
 RDEPEND="
 	llvm-9? (
 		sys-devel/llvm:9
@@ -30,22 +32,23 @@ RDEPEND="
 		sys-devel/llvm:10
 		sys-devel/clang:10
 	)
-	dev-libs/boost:=
+	>=dev-libs/boost-1.55:=
 	dev-libs/pugixml
-	media-libs/openexr:=
-	media-libs/openimageio:=
-	<sys-devel/clang-10:=
+	>=media-libs/openexr-2:=
+	>=media-libs/ilmbase-2:=
+	>=media-libs/openimageio-1.8.5:=
 	sys-libs/zlib:=
 	partio? ( media-libs/partio )
 	qt5? (
-		dev-qt/qtcore:5
-		dev-qt/qtgui:5
-		dev-qt/qtwidgets:5
+		>=dev-qt/qtcore-${QT_MIN}:5
+		>=dev-qt/qtgui-${QT_MIN}:5
+		>=dev-qt/qtwidgets-${QT_MIN}:5
 	)
 "
 
 DEPEND="${RDEPEND}"
 BDEPEND="
+	>=dev-util/cmake-3.12
 	sys-devel/bison
 	sys-devel/flex
 	virtual/pkgconfig
@@ -56,7 +59,7 @@ PATCHES=(
 )
 
 # Restricting tests as Make file handles them differently
-RESTRICT="test"
+RESTRICT="mirror test"
 
 S="${WORKDIR}/OpenShadingLanguage-Release-${PV}"
 
@@ -73,6 +76,12 @@ pkg_setup() {
 	elif use llvm-10 ; then
 		einfo "Linking with LLVM-10"
 		export LLVM_MAX_SLOT=10
+	fi
+
+	if use qt5 ; then
+		ewarn \
+"Enabling the qt5 USE flag with this ebuild may cause build time failures.  \
+It may need to be disabled."
 	fi
 
 	llvm_pkg_setup
@@ -113,12 +122,14 @@ src_configure() {
 
 			local gcc=$(tc-getCC)
 			# LLVM needs CPP11. Do not disable.
+			# For some reason LLVM_STATIC=ON links as shared.
 			local mycmakeargs=(
+				-DCMAKE_CXX_STANDARD=$(usex llvm-9 11 14)
 				-DCMAKE_INSTALL_BINDIR="/usr/$(get_libdir)/osl/bin"
 				-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
 				-DENABLERTTI=OFF
 				-DINSTALL_DOCS=$(usex doc)
-				-DLLVM_STATIC=ON
+				-DLLVM_STATIC=OFF
 				-DOSL_BUILD_TESTS=$(usex test)
 				-DSTOP_ON_WARNING=OFF
 				-DUSE_CPP=$(usex llvm-9 11 14)
