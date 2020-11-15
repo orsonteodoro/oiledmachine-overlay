@@ -2,7 +2,10 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-inherit cmake-static-libs cmake-utils llvm multilib-minimal toolchain-funcs
+
+PYTHON_COMPAT=( python2_7 python3_{6..8} )
+
+inherit cmake-static-libs cmake-utils llvm multilib-minimal python-r1 toolchain-funcs
 
 DESCRIPTION="Advanced shading language for production GI renderers"
 HOMEPAGE="http://opensource.imageworks.com/?p=osl"
@@ -18,12 +21,12 @@ X86_CPU_FEATURES=(
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
 
-IUSE="doc optix partio qt5 test ${CPU_FEATURES[@]%:*} llvm-9 +llvm-10"
+IUSE="doc optix partio python qt5 test ${CPU_FEATURES[@]%:*} llvm-9 +llvm-10"
 REQUIRED_USE="^^ ( llvm-9 llvm-10 )"
 
-# See https://github.com/imageworks/OpenShadingLanguage/blob/Release-1.10.13/INSTALL.md
+# See https://github.com/imageworks/OpenShadingLanguage/blob/Release-1.11.9.0/INSTALL.md
 # For optix requirements, see
-#   https://github.com/imageworks/OpenShadingLanguage/blob/Release-1.10.13/src/cmake/externalpackages.cmake
+#   https://github.com/imageworks/OpenShadingLanguage/blob/Release-1.11.9.0/src/cmake/externalpackages.cmake
 #   https://github.com/imageworks/OpenShadingLanguage/releases/tag/Release-1.10.2
 QT_MIN=5.6
 RDEPEND="
@@ -39,14 +42,14 @@ RDEPEND="
 	dev-libs/pugixml
 	>=media-libs/openexr-2:=
 	>=media-libs/ilmbase-2:=
-	>=media-libs/openimageio-1.8.5:=
+	>=media-libs/openimageio-2:=
 	sys-libs/zlib:=
 	optix? (
 		>=dev-libs/optix-5.1
 		>=dev-util/nvidia-cuda-toolkit-8
 		>=media-libs/openimageio-1.8:=
-		>=sys-devel/llvm-5[llvm_targets_NVPTX]
-		>=sys-devel/clang-5[llvm_targets_NVPTX]
+		>=sys-devel/llvm-6[llvm_targets_NVPTX]
+		>=sys-devel/clang-6[llvm_targets_NVPTX]
 	)
 	partio? ( media-libs/partio )
 	qt5? (
@@ -54,19 +57,20 @@ RDEPEND="
 		>=dev-qt/qtgui-${QT_MIN}:5
 		>=dev-qt/qtwidgets-${QT_MIN}:5
 	)
+	python? (
+		${PYTHON_DEPS}
+		dev-python/numpy[${PYTHON_USEDEP}]
+		>=dev-python/pybind11-2.4.2[${PYTHON_USEDEP}]
+	)
 "
 
 DEPEND="${RDEPEND}"
 BDEPEND="
-	>=dev-util/cmake-3.12
+	>=dev-util/cmake-3.2.2
 	sys-devel/bison
 	sys-devel/flex
 	virtual/pkgconfig
 "
-
-PATCHES=(
-	"${FILESDIR}/${PN}-1.10.5-fix-install-shaders.patch"
-)
 
 # Restricting tests as Make file handles them differently
 RESTRICT="mirror test"
@@ -98,6 +102,15 @@ It may need to be disabled."
 		ewarn \
 "The optix USE flag is untested.  Left for owners of those kinds of GPUs to \
 test and fix."
+		if [[ -z "${CUDA_TOOLKIT_ROOT_DIR}" ]] ; then
+			ewarn \
+"CUDA_TOOLKIT_ROOT_DIR is not set.  Please add it in your make.conf or as a \
+per-package environmental variable."
+		fi
+	fi
+
+	if use python ; then
+		python-any-r1_pkg_setup
 	fi
 
 	llvm_pkg_setup
@@ -138,7 +151,7 @@ src_configure() {
 
 			local gcc=$(tc-getCC)
 			# LLVM needs CPP11. Do not disable.
-			# For some reason LLVM_STATIC=ON links as shared.
+			# LLVM_STATIC=ON is broken for llvm:10
 			local mycmakeargs=(
 				-DCMAKE_CXX_STANDARD=$(usex llvm-9 11 14)
 				-DCMAKE_INSTALL_BINDIR="/usr/$(get_libdir)/osl/bin"
@@ -147,18 +160,20 @@ src_configure() {
 				-DINSTALL_DOCS=$(usex doc)
 				-DLLVM_STATIC=OFF
 				-DOSL_BUILD_TESTS=$(usex test)
+				-DOSL_SHADER_INSTALL_DIR="include/OSL/shaders"
 				-DSTOP_ON_WARNING=OFF
 				-DUSE_CPP=$(usex llvm-9 11 14)
 				-DUSE_OPTIX=$(usex optix)
 				-DUSE_PARTIO=$(usex partio)
+				-DUSE_PYTHON=$(usex python)
 				-DUSE_QT=$(usex qt5)
 				-DUSE_SIMD="$(IFS=","; echo "${mysimd[*]}")"
 			)
 
 			if [[ "${ECMAKE_LIB_TYPE}" == "shared-libs" ]] ; then
-				mycmakeargs+=( -DBUILDSTATIC=OFF )
+				mycmakeargs+=( -DBUILD_SHARED_LIBS=ON )
 			else
-				mycmakeargs+=( -DBUILDSTATIC=ON )
+				mycmakeargs+=( -DBUILD_SHARED_LIBS=OFF )
 			fi
 
 			append-cxxflags -fPIC
