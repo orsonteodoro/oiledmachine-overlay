@@ -32,6 +32,7 @@
 	<use>
 		<flag name="partio">Use <pkg>media-libs/partio</pkg></flag>
 		<flag name="qt5">Build the osltoy binary</flag>
+		<flag name="optix">Add experimental OptiX support</flag>
 	</use>
 	<upstream>
 		<remote-id type="github">imageworks/OpenShadingLanguage</remote-id>

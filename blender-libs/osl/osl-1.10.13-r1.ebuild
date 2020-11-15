@@ -28,6 +28,9 @@ IUSE="doc optix partio test ${CPU_FEATURES[@]%:*}"
 #REQUIRED_USE="!qt5"
 
 # See https://github.com/imageworks/OpenShadingLanguage/blob/Release-1.10.13/INSTALL.md
+# For optix requirements, see
+#   https://github.com/imageworks/OpenShadingLanguage/blob/Release-1.10.13/src/cmake/externalpackages.cmake
+#   https://github.com/imageworks/OpenShadingLanguage/releases/tag/Release-1.10.2
 RDEPEND="
 	sys-devel/llvm:${LLVM_V}
 	>=blender-libs/boost-1.55:${CXXABI}=
@@ -42,8 +45,8 @@ RDEPEND="
 		>=dev-libs/optix-5.1
 		>=dev-util/nvidia-cuda-toolkit-8
 		>=media-libs/openimageio-1.8:=
-		>=sys-devel/llvm-5[llvm_targets_NVPTX]
-		>=sys-devel/clang-5[llvm_targets_NVPTX]
+		>=sys-devel/llvm-6[llvm_targets_NVPTX]
+		>=sys-devel/clang-6[llvm_targets_NVPTX]
 	)
 	partio? ( media-libs/partio )
 "
