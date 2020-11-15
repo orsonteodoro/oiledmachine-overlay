@@ -25,6 +25,9 @@ IUSE="doc optix partio python qt5 test ${CPU_FEATURES[@]%:*} llvm-9 +llvm-10"
 REQUIRED_USE="^^ ( llvm-9 llvm-10 )"
 
 # See https://github.com/imageworks/OpenShadingLanguage/blob/Release-1.11.9.0/INSTALL.md
+# For optix requirements, see
+#   https://github.com/imageworks/OpenShadingLanguage/blob/Release-1.11.9.0/src/cmake/externalpackages.cmake
+#   https://github.com/imageworks/OpenShadingLanguage/releases/tag/Release-1.10.2
 QT_MIN=5.6
 RDEPEND="
 	llvm-9? (
@@ -41,7 +44,13 @@ RDEPEND="
 	>=media-libs/ilmbase-2:=
 	>=media-libs/openimageio-2:=
 	sys-libs/zlib:=
-	optix? ( dev-libs/optix )
+	optix? (
+		>=dev-libs/optix-5.1
+		>=dev-util/nvidia-cuda-toolkit-8
+		>=media-libs/openimageio-1.8:=
+		>=sys-devel/llvm-5[llvm_targets_NVPTX]
+		>=sys-devel/clang-5[llvm_targets_NVPTX]
+	)
 	partio? ( media-libs/partio )
 	qt5? (
 		>=dev-qt/qtcore-${QT_MIN}:5

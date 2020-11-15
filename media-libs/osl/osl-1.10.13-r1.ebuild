@@ -18,10 +18,13 @@ X86_CPU_FEATURES=(
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} )
 
-IUSE="doc partio qt5 test ${CPU_FEATURES[@]%:*} llvm-9 +llvm-10"
+IUSE="doc optix partio qt5 test ${CPU_FEATURES[@]%:*} llvm-9 +llvm-10"
 REQUIRED_USE="^^ ( llvm-9 llvm-10 )"
 
 # See https://github.com/imageworks/OpenShadingLanguage/blob/Release-1.10.13/INSTALL.md
+# For optix requirements, see
+#   https://github.com/imageworks/OpenShadingLanguage/blob/Release-1.10.13/src/cmake/externalpackages.cmake
+#   https://github.com/imageworks/OpenShadingLanguage/releases/tag/Release-1.10.2
 QT_MIN=5.6
 RDEPEND="
 	llvm-9? (
@@ -38,6 +41,13 @@ RDEPEND="
 	>=media-libs/ilmbase-2:=
 	>=media-libs/openimageio-1.8.5:=
 	sys-libs/zlib:=
+	optix? (
+		>=dev-libs/optix-5.1
+		>=dev-util/nvidia-cuda-toolkit-8
+		>=media-libs/openimageio-1.8:=
+		>=sys-devel/llvm-5[llvm_targets_NVPTX]
+		>=sys-devel/clang-5[llvm_targets_NVPTX]
+	)
 	partio? ( media-libs/partio )
 	qt5? (
 		>=dev-qt/qtcore-${QT_MIN}:5
@@ -82,6 +92,12 @@ pkg_setup() {
 		ewarn \
 "Enabling the qt5 USE flag with this ebuild may cause build time failures.  \
 It may need to be disabled."
+	fi
+
+	if use optix ; then
+		ewarn \
+"The optix USE flag is untested.  Left for owners of those kinds of GPUs to \
+test and fix."
 	fi
 
 	llvm_pkg_setup
@@ -133,6 +149,7 @@ src_configure() {
 				-DOSL_BUILD_TESTS=$(usex test)
 				-DSTOP_ON_WARNING=OFF
 				-DUSE_CPP=$(usex llvm-9 11 14)
+				-DUSE_OPTIX=$(usex optix)
 				-DUSE_PARTIO=$(usex partio)
 				-DUSE_QT=$(usex qt5)
 				-DUSE_SIMD="$(IFS=","; echo "${mysimd[*]}")"
