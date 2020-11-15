@@ -14,7 +14,7 @@ RDEPEND="appcenter? ( liri-base/appcenter )
 	 calculator? ( liri-extra/calculator )
 	 files? ( liri-base/files )
 	 flatpak? ( liri-base/xdg-desktop-portal-liri[flatpak] )
-	 >=liri-base/session-0.1.0_p20200524[systemd?]
+	 >=liri-base/session-0.1.0_pre20200524[systemd?]
 	   liri-base/shell:${SLOT}[systemd?]
 	 music? ( liri-extra/music )
 	 networkmanager? ( liri-extra/networkmanager )
