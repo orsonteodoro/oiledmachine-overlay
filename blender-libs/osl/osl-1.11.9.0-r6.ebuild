@@ -37,7 +37,7 @@ RDEPEND="
 	dev-libs/pugixml
 	>=media-libs/openexr-2:=
 	>=media-libs/ilmbase-2:=
-	>=media-libs/openimageio-1.8.5:=
+	>=media-libs/openimageio-2:=
 	sys-devel/clang:${LLVM_V}=
 	sys-devel/llvm:${LLVM_V}=
 	sys-libs/zlib:=
