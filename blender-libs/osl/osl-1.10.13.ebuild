@@ -29,10 +29,11 @@ IUSE="doc partio test ${CPU_FEATURES[@]%:*}"
 
 RDEPEND="
 	sys-devel/llvm:${LLVM_V}
-	blender-libs/boost:${CXXABI}=
+	>=blender-libs/boost-1.55:${CXXABI}=
 	dev-libs/pugixml
-	media-libs/openexr:=
-	media-libs/openimageio:=
+	>=media-libs/openexr-2:=
+	>=media-libs/ilmbase-2:=
+	>=media-libs/openimageio-1.8.5:=
 	sys-devel/clang:${LLVM_V}=
 	sys-devel/llvm:${LLVM_V}=
 	sys-libs/zlib:=
@@ -48,6 +49,7 @@ RDEPEND="
 
 DEPEND="${RDEPEND}"
 BDEPEND="
+	>=dev-util/cmake-3.12
 	sys-devel/bison
 	sys-devel/flex
 	virtual/pkgconfig
@@ -58,7 +60,7 @@ PATCHES=(
 )
 
 # Restricting tests as Make file handles them differently
-RESTRICT="test"
+RESTRICT="mirror test"
 
 S="${WORKDIR}/OpenShadingLanguage-Release-${PV}"
 
@@ -126,15 +128,18 @@ src_configure() {
 
 			local gcc=$(tc-getCC)
 			# LLVM needs CPP11. Do not disable.
+			# For some reason LLVM_STATIC=ON links as shared.
 			local mycmakeargs=(
+				-DCMAKE_CXX_STANDARD=${CXXABI}
 				-DCMAKE_INSTALL_PREFIX="$(apfx)"
 				-DCMAKE_INSTALL_BINDIR="$(apfx)/bin${bin_suffix}"
 				-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
 				-DENABLERTTI=OFF
 				-DINSTALL_DOCS=$(usex doc)
-				-DLLVM_STATIC=ON
+				-DLLVM_STATIC=OFF
 				-DOSL_BUILD_TESTS=$(usex test)
 				-DSTOP_ON_WARNING=OFF
+				-DUSE_CPP=${CXXABI}
 				-DUSE_PARTIO=$(usex partio)
 				-DUSE_QT=OFF
 				-DUSE_SIMD="$(IFS=","; echo "${mysimd[*]}")"
