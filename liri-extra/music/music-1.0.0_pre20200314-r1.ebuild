@@ -102,6 +102,14 @@ fluid_pkg_setup() {
 	fi
 }
 
+qbs_check() {
+	"${EROOT}/usr/bin/qbs" list-products 2>&1 \
+		| grep -q -F -e "Cannot mix incompatible"
+	if [[ "$?" == "0" ]] ; then
+		die "Re-emerge dev-util/qbs"
+	fi
+}
+
 pkg_setup() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
 	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
@@ -131,6 +139,8 @@ pkg_setup() {
 	if ! use system-fluid ; then
 		fluid_pkg_setup
 	fi
+
+	qbs_check
 }
 
 src_unpack() {
@@ -140,8 +150,10 @@ src_unpack() {
 		ln -s "${WORKDIR}/fluid-${FLUID_COMMIT}" "${S}/fluid" || die
 		rm -rf "${S}/fluid/qbs/shared" || die
 		rm -rf "${S}/fluid/cmake/shared" || die
-		ln -s "${WORKDIR}/cmake-shared-${CMAKE_SHARED_COMMIT}" "${S}/fluid/cmake/shared" || die
-		ln -s "${WORKDIR}/qbs-shared-${QBS_SHARED_COMMIT}" "${S}/fluid/qbs/shared" || die
+		ln -s "${WORKDIR}/cmake-shared-${CMAKE_SHARED_COMMIT}" \
+			"${S}/fluid/cmake/shared" || die
+		ln -s "${WORKDIR}/qbs-shared-${QBS_SHARED_COMMIT}" \
+			"${S}/fluid/qbs/shared" || die
 	fi
 }
 
