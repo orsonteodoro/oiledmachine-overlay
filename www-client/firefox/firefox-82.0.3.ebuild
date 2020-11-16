@@ -5,7 +5,7 @@
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-82-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-82-patches-03.tar.xz"
 
 LLVM_MAX_SLOT=11
 
@@ -1007,7 +1007,7 @@ multilib_src_install() {
 
 	# Force hwaccel prefs if USE=hwaccel is enabled
 	if use hwaccel ; then
-		cat "${FILESDIR}"/gentoo-hwaccel-prefs.js-1 \
+		cat "${FILESDIR}"/gentoo-hwaccel-prefs.js \
 		>>"${GENTOO_PREFS}" \
 		|| die "failed to add prefs to force hardware-accelerated rendering to all-gentoo.js"
 	fi
