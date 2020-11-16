@@ -42,7 +42,7 @@ BDEPEND="
 RDEPEND="
 	>=dev-libs/boost-1.53:=
 	  dev-libs/pugixml:=
-	>=dev-libs/robin-map-0.6.2
+	>=dev-cpp/robin-map-0.6.2
 	>=media-libs/ilmbase-2.2.0-r1:=
 	  media-libs/libpng:0=
 	>=media-libs/libwebp-0.2.1:=
