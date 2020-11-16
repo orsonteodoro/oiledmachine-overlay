@@ -1,6 +1,8 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# This ebuild uses the exact revision in 111_p20170609.
+
 EAPI="6"
 DESCRIPTION="eCryptfs userspace utilities"
 HOMEPAGE="https://launchpad.net/ecryptfs"
@@ -32,15 +34,15 @@ RDEPEND="
 	)
 	tpm? ( app-crypt/trousers )"
 DEPEND="${RDEPEND}
-	dev-vcs/bzr
+	dev-vcs/breezy
 	>=dev-util/intltool-0.41.0
 	sys-devel/gettext
 	python? ( dev-lang/swig )
 	virtual/pkgconfig"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 RESTRICT="fetch"
-EBZR_REPO_URI="lp:~ecryptfs/ecryptfs/trunk"
-EBZR_REVISION="878"
+EBRZ_REPO_URI="lp:~ecryptfs/ecryptfs/trunk"
+EBRZ_REVISION="$(ver_cut 3)"
 PATCHES=(
 	"${FILESDIR}/${PN}-111-python3-ac_python_devel_m4.patch"
 	"${FILESDIR}/${PN}-111-swig-fixes.patch"
@@ -48,7 +50,7 @@ PATCHES=(
 )
 
 pkg_setup() {
-	einfo "EBZR_REVISION=${EBZR_REVISION}"
+	einfo "EBRZ_REVISION=${EBRZ_REVISION}"
 	use python && python-single-r1_pkg_setup
 	CONFIG_CHECK="~ECRYPT_FS"
 	linux-info_pkg_setup
@@ -77,11 +79,11 @@ src_unpack() {
 	addwrite "${distdir}/ecryptfs-utils-src"
 	cd "${distdir}/ecryptfs-utils-src" || die
 	if [[ ! -f "${distdir}/ecryptfs-utils-src/configure.ac" ]] ; then
-		bzr init-repo . || die
-		bzr branch ${EBZR_REPO_URI} . || die
-		bzr reconfigure --tree || die
+		brz init-repo . || die
+		brz branch ${EBRZ_REPO_URI} . || die
+		brz reconfigure --tree || die
 	fi
-	bzr update -r${EBZR_REVISION} || die
+	brz update -r${EBRZ_REVISION} || die
 	mkdir -p "${S}" || die
 	cp -a . "${S}" || die
 	cd "${S}" || die
