@@ -20,15 +20,20 @@ LICENSE="LGPL-2+ BSD"
 LICENSE+=" unicode"
 API_VERSION="4.0"
 SLOT_MAJOR=$(ver_cut 1 ${API_VERSION})
-SLOT="${SLOT_MAJOR}/37" # soname version of libwebkit2gtk-4.0
-KEYWORDS="amd64 ~arm arm64 ~ppc64 ~sparc x86"
+# See Source/cmake/OptionsGTK.cmake
+# CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A), SOVERSION = C - A
+CURRENT="86"
+AGE="49"
+SOVERSION=$((${CURRENT} - ${AGE}))
+SLOT="${SLOT_MAJOR}/${SOVERSION}"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~x86"
 
 IUSE="aqua +egl +geolocation gles2-only gnome-keyring +gstreamer gtk-doc +introspection +jpeg2k +jumbo-build libnotify +opengl seccomp spell wayland +X"
 LANGS=( ar as bg ca cs da de el en_CA en_GB eo es et eu fi fr gl gu he hi hu \
 id it ja kn ko lt lv ml mr nb nl or pa pl pt_BR pt ro ru sl sr@latin sr sv ta \
 te tr uk vi zh_CN )
-IUSE+=" ${LANGS[@]/#/l10n_} accelerated-2d-canvas bmalloc ftl-jit \
-hardened +jit minibrowser +webgl"
+IUSE+=" ${LANGS[@]/#/l10n_} accelerated-2d-canvas bmalloc ftl-jit gamepad \
+hardened +jit minibrowser systemd +webgl"
 
 # gstreamer with opengl/gles2 needs egl
 REQUIRED_USE="
@@ -54,11 +59,20 @@ REQUIRED_USE+="
 # https://bugs.webkit.org/show_bug.cgi?id=148210
 RESTRICT="test"
 
+# For dependencies, see:
+#   CMakeLists.txt
+#   Source/cmake/BubblewrapSandboxChecks.cmake
+#   Source/cmake/FindGStreamer.cmake
+#   Source/cmake/GStreamerChecks.cmake
+#   Source/cmake/OptionsGTK.cmake
+#   Source/cmake/WebKitCommon.cmake
+#   Tools/gtk/install-dependencies
+
 # Aqua support in gtk3 is untested
 # Dependencies found at Source/cmake/OptionsGTK.cmake
 # Various compile-time optionals for gtk+-3.22.0 - ensure it
 # Missing WebRTC support, but ENABLE_MEDIA_STREAM/ENABLE_WEB_RTC is experimental upstream (PRIVATE OFF) and shouldn't be used yet in 2.26
-# >=gst-plugins-opus-1.14.4-r1 for opusparse (required by MSE)
+# >=gst-plugins-opus-1.14.4-r1 for opusparse (required by MSE [Media Source Extensions])
 wpe_depend="
 	>=gui-libs/libwpe-1.3.0:1.0[${MULTILIB_USEDEP}]
 	>=gui-libs/wpebackend-fdo-1.3.1:1.0[${MULTILIB_USEDEP}]
@@ -72,7 +86,7 @@ RDEPEND="
 	>=dev-libs/libgcrypt-1.7.0:0=[${MULTILIB_USEDEP}]
 	>=x11-libs/gtk+-3.22.0:3[aqua?,introspection?,wayland?,X?,${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-1.4.2:=[icu(+),${MULTILIB_USEDEP}]
-	>=dev-libs/icu-3.8.1-r1:=[${MULTILIB_USEDEP}]
+	>=dev-libs/icu-60.2:=[${MULTILIB_USEDEP}]
 	virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	>=net-libs/libsoup-2.54:2.4[introspection?,${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-2.8.0:2[${MULTILIB_USEDEP}]
@@ -84,7 +98,7 @@ RDEPEND="
 
 	>=dev-libs/glib-2.44.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libxslt-1.1.7[${MULTILIB_USEDEP}]
-	media-libs/woff2[${MULTILIB_USEDEP}]
+	>=media-libs/woff2-1.0.2[${MULTILIB_USEDEP}]
 	gnome-keyring? ( app-crypt/libsecret[${MULTILIB_USEDEP}] )
 	introspection? ( >=dev-libs/gobject-introspection-1.32.0:= )
 	dev-libs/libtasn1:=[${MULTILIB_USEDEP}]
@@ -126,7 +140,8 @@ RDEPEND="
 RDEPEND+="
 	accelerated-2d-canvas? ( gles2-only? ( x11-libs/cairo[gles2-only,${MULTILIB_USEDEP}] )
 				 opengl? ( x11-libs/cairo[opengl,${MULTILIB_USEDEP}] ) )
-	dev-libs/gmp[-pgo(-),${MULTILIB_USEDEP}]"
+	dev-libs/gmp[-pgo(-),${MULTILIB_USEDEP}]
+	gamepad? ( >=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}] )"
 unset wpe_depend
 # paxctl needed for bug #407085
 # Need real bison, not yacc
@@ -322,6 +337,7 @@ multilib_src_configure() {
 #		-DENABLE_JIT=$(usex jit)
 		-DENABLE_MINIBROWSER=$(usex minibrowser "ON" "OFF")
 		-DUSE_SYSTEM_MALLOC=$(usex bmalloc "OFF" "ON")
+		-DUSE_SYSTEMD=$(usex systemd "ON" "OFF")
 	)
 
 	# Allow it to use GOLD when possible as it has all the magic to
