@@ -67,6 +67,10 @@ RESTRICT="test"
 #   Source/cmake/OptionsGTK.cmake
 #   Source/cmake/WebKitCommon.cmake
 #   Tools/gtk/install-dependencies
+#   https://trac.webkit.org/wiki/WebKitGTK/DependenciesPolicy
+#   https://trac.webkit.org/wiki/WebKitGTK/GCCRequirement
+
+# Target 18.04
 
 # Aqua support in gtk3 is untested
 # Dependencies found at Source/cmake/OptionsGTK.cmake
@@ -150,9 +154,9 @@ DEPEND="${RDEPEND}
 	${RUBY_DEPS}
 	>=app-accessibility/at-spi2-core-2.5.3[${MULTILIB_USEDEP}]
 	dev-util/glib-utils
-	>=dev-util/gperf-3.0.1
-	>=sys-devel/bison-2.4.3
-	|| ( >=sys-devel/gcc-7.3 >=sys-devel/clang-5[${MULTILIB_USEDEP}] )
+	>=dev-util/gperf-3.1
+	>=sys-devel/bison-3.0.4
+	|| ( >=sys-devel/gcc-7.3 >=sys-devel/clang-6[${MULTILIB_USEDEP}] )
 	sys-devel/gettext[${MULTILIB_USEDEP}]
 	virtual/pkgconfig[${MULTILIB_USEDEP}]
 
@@ -161,7 +165,7 @@ DEPEND="${RDEPEND}
 	virtual/perl-Carp
 	virtual/perl-JSON-PP
 
-	gtk-doc? ( >=dev-util/gtk-doc-1.32 )
+	gtk-doc? ( >=dev-util/gtk-doc-1.27 )
 	geolocation? ( dev-util/gdbus-codegen )
 "
 #	test? (
@@ -169,7 +173,7 @@ DEPEND="${RDEPEND}
 #		x11-themes/hicolor-icon-theme
 #		jit? ( sys-apps/paxctl ) )
 RDEPEND="${RDEPEND}
-	geolocation? ( >=app-misc/geoclue-2.1.5:2.0 )
+	geolocation? ( >=app-misc/geoclue-2.4.7:2.0 )
 "
 
 S="${WORKDIR}/${MY_P}"
@@ -202,7 +206,7 @@ pkg_pretend() {
 		fi
 
 		if ! test-flag-CXX -std=c++17 ; then
-			die "You need at least GCC 7.3.x or Clang >= 5 for C++17-specific compiler flags"
+			die "You need at least GCC 7.3.x or Clang >= 6 for C++17-specific compiler flags"
 		fi
 	fi
 
