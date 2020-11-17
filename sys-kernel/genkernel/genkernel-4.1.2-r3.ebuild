@@ -128,6 +128,9 @@ fi
 PATCHES=( "${FILESDIR}"/${P}-post-release-fixes.patch )
 
 src_unpack() {
+	ewarn "This ebuild is still in development."
+	ewarn "subdir_mount is unknown status and may not work."
+	ewarn "crypt_root_plain does not work for 4.1.x.  Use 4.0.x instead."
 	if [[ ${PV} == 9999* ]]; then
 		git-r3_src_unpack
 	else
