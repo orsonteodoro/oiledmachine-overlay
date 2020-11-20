@@ -77,7 +77,6 @@ COMMON_DEPEND="${PYTHON_DEPS}
 		 dev-python/pycuda[${PYTHON_USEDEP}]
 	       >=dev-util/nvidia-cuda-toolkit-10.0:=
 	       >=x11-drivers/nvidia-drivers-${NVFBC_MIN_DRV_V} )
-	opengl? (  dev-python/numpy[${PYTHON_USEDEP}] )
 	pam? ( sys-libs/pam[selinux?] )
 	pillow? ( dev-python/pillow[${PYTHON_USEDEP},jpeg?,webp?,zlib?] )
 	pulseaudio? ( media-sound/pulseaudio[dbus?] )

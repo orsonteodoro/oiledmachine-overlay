@@ -137,6 +137,7 @@ RDEPEND="${COMMON_DEPEND}
 		>=media-libs/opencv-2.0[${PYTHON_USEDEP},python] )"
 DEPEND="${COMMON_DEPEND}
 	>=dev-python/cython-0.16[${PYTHON_USEDEP}]
+	test? ( dev-python/numpy[${PYTHON_USEDEP}] )
 	virtual/pkgconfig"
 PATCHES=( "${FILESDIR}/${PN}-2.5.0_rc5-ignore-gentoo-no-compile.patch"
 	  "${FILESDIR}/${PN}-2.0-suid-warning.patch"
