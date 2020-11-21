@@ -144,6 +144,15 @@ https://github.com/BOINC/boinc.git \
 		| esort | tr " " "\n" | uniq | tail -n 1)
 }
 
+repo_latest_version_get_breezy_pv() {
+	echo $(wget -q -O - https://launchpad.net/brz \
+		| grep -F -e "+download" \
+		| head -n 1 \
+		| grep -o -P -e "breezy-[0-9.]+" \
+		| head -n 1 \
+		| sed -e "s|\.$||" -e "s|breezy-||")
+}
+
 repo_latest_version_get_BulletSharpPInvoke_pv() {
 	local pv=$(wget -q -O - \
 https://raw.githubusercontent.com/AndresTraks/BulletSharpPInvoke/master/BulletSharp/Properties/AssemblyInfo.cs \
@@ -1162,6 +1171,13 @@ repo_latest_version_get_opentk_pv() {
 https://github.com/opentk/opentk.git)
 }
 
+repo_latest_version_get_patiencediff_pv() {
+	echo $(get_tags \
+https://github.com/breezy-team/patiencediff.git \
+		| sed -e "s|test||g" \
+		| esort | tr " " "\n" | tail -n 1)
+}
+
 # the latest but prefer the older versions
 repo_latest_version_get_pdfchain_pv() {
 	echo $(wget -q -O - \
@@ -1332,8 +1348,10 @@ https://github.com/Robmaister/SharpFont.git)
 }
 
 repo_latest_version_get_sheepit-client_pv() {
-	echo $(get_newest_pv \
-https://github.com/laurent-clouet/sheepit-client.git)
+	local pv=$(wget -q -O - \
+		https://gitlab.com/sheepitrenderfarm/client/-/tags?format=atom \
+		| grep -F "title>v" | head -n 1 | grep -o -P -e "[0-9.]+")
+	echo "${pv}"
 }
 
 repo_latest_version_get_slntools_pv() {
