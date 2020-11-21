@@ -1171,6 +1171,18 @@ repo_latest_version_get_opentk_pv() {
 https://github.com/opentk/opentk.git)
 }
 
+repo_latest_version_get_osl_pv() {
+	echo $(get_tags \
+https://github.com/imageworks/OpenShadingLanguage.git \
+		| grep -F -e "Release-" \
+		| sed -e "s|Release-||g" \
+		| esort | tr " " "\n" | tail -n 1 \
+		| sed -e "s|-dev|_pre|g" \
+		| sed -r -e "s|-RC([0-9]+)|_rc\1|g" \
+		| sed -r -e "s|-beta([0-9]+)|_beta\1|g" \
+		| sed -e "s|-spi||g")
+}
+
 repo_latest_version_get_patiencediff_pv() {
 	echo $(get_tags \
 https://github.com/breezy-team/patiencediff.git \
