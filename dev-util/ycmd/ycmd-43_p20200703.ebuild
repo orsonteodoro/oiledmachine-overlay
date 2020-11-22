@@ -1,7 +1,7 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# Last commit for before 44
+# Last commit before 44
 
 EAPI=7
 DESCRIPTION="A code-completion & code-comprehension server"
