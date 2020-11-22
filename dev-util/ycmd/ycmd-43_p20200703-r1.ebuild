@@ -180,7 +180,7 @@ src_prepare() {
 		eapply \
 		"${FILESDIR}/${PN}-9999.20170107-force-python-libs-path.patch"
 		LIBCLANG_PATH=$(\
-			ls /usr/lib/llvm/*/$(get_libdir)/libclang.so* | head -1)
+			ls /usr/$(get_libdir)/llvm/*/$(get_libdir)/libclang.so* | head -1)
 		sed -i -e "s|\
 EXTERNAL_LIBCLANG_PATH \${TEMP}|\
 EXTERNAL_LIBCLANG_PATH \"${LIBCLANG_PATH}\"|g" \
@@ -189,7 +189,7 @@ EXTERNAL_LIBCLANG_PATH \"${LIBCLANG_PATH}\"|g" \
 		"${FILESDIR}/${PN}-43_p20200516-system-libclang.patch"
 		sed -i -e "s|\
 __LIBCLANG_LIB_DIR__|\
-/usr/lib/llvm/${CLANG_V_MAJ}/$(get_libdir)/|" ycmd/utils.py || die
+/usr/$(get_libdir)/llvm/${CLANG_V_MAJ}/$(get_libdir)/|" ycmd/utils.py || die
 	fi
 
 	CMAKE_USE_DIR="${S}/cpp" \
@@ -198,7 +198,7 @@ __LIBCLANG_LIB_DIR__|\
 	if use system-clangd ; then
 		sed -i -e "s|\
 ___CLANGD_BIN_PATH___|\
-/usr/lib/llvm/${CLANG_V_MAJ}/bin/clangd|g" \
+/usr/$(get_libdir)/llvm/${CLANG_V_MAJ}/bin/clangd|g" \
 			ycmd/default_settings.json || die
 	fi
 
