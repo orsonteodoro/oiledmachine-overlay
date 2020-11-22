@@ -907,7 +907,7 @@ libstd-0bccc96528cef91b.so" \
 		if ! use system-waitress ; then
 			python_domodule third_party/waitress
 		fi
-		python_optimize
+		#python_optimize
 	}
 	python_foreach_impl python_install_all
 
