@@ -73,7 +73,7 @@ CDEPEND="${PYTHON_DEPS}
 # See build.py for dependency versions.
 
 # For the rust version see src/bootstrap/channel.rs in https://github.com/rust-lang
-# and build.py in archive for nightly date.  Use committer-date:YYYY-MM-DD
+# and build.py in archive for nightly date.  Use committer-date:YYYY-MM-DD to search
 
 RDEPEND="${CDEPEND}
 	java? ( virtual/jre:1.8 )
