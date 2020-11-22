@@ -1,6 +1,8 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# Last commit for before 44
+
 EAPI=7
 DESCRIPTION="A code-completion & code-comprehension server"
 HOMEPAGE="https://ycm-core.github.io/ycmd/"
@@ -26,7 +28,7 @@ LICENSE="GPL-3+ BSD
 	!system-watchdog? ( Apache-2.0 )
 	test? ( BSD GPL-3+ )"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{6,7,8,9} )
 # slot 0 old hmac calculation, new one is
 #	 426833360adec8db72ed6cef9d7aa7f037e6a5b8 of (ycmd/hmac_plugin.py)
 # slot 1 racerd, (gocode, godef); python 2.x or 3.x ; compatible with current
@@ -68,15 +70,19 @@ CDEPEND="${PYTHON_DEPS}
 	system-libclang? ( sys-devel/clang:${CLANG_V_MAJ} )
 	system-clangd? ( sys-devel/clang:${CLANG_V_MAJ} )"
 # gopls is 0.4.1
+# See build.py for dependency versions.
+
+# For the rust version see src/bootstrap/channel.rs in https://github.com/rust-lang
+# and build.py in archive for nightly date.  Use committer-date:YYYY-MM-DD
+
 RDEPEND="${CDEPEND}
-	>=dev-python/future-0.15.2[${PYTHON_USEDEP}]
 	java? ( virtual/jre:1.8 )
 	javascript? ( net-libs/nodejs )
-	system-bottle? ( >=dev-python/bottle-0.13_pre20200411[${PYTHON_USEDEP}] )
-	system-go-tools? ( >=dev-go/go-tools-0.0.0_p20200515 )
-	system-jedi? ( >=dev-python/jedi-0.17.1_pre20200516[${PYTHON_USEDEP}]
-			>=dev-python/numpydoc-1.0.0_pre20200419[${PYTHON_USEDEP}]
-			>=dev-python/parso-0.7.0_p20200515[${PYTHON_USEDEP}] )
+	system-bottle? ( >=dev-python/bottle-0.12.18[${PYTHON_USEDEP}] )
+	system-go-tools? ( >=dev-go/go-tools-0_pre20200701 )
+	system-jedi? ( >=dev-python/jedi-0.17.0[${PYTHON_USEDEP}]
+			>=dev-python/numpydoc-0.9.0_pre20200408[${PYTHON_USEDEP}]
+			>=dev-python/parso-0.7.0[${PYTHON_USEDEP}] )
 	csharp? (
 		system-mono? (
 			net472? ( >=dev-lang/mono-5.10 )
@@ -90,19 +96,16 @@ RDEPEND="${CDEPEND}
 		)
 	)
 	system-mrab-regex? (
-		|| (
-			>=dev-python/mrab-regex-2.5.33[${PYTHON_USEDEP}]
-			>=dev-python/regex-2019.06.08[${PYTHON_USEDEP}]
-		)
+		>=dev-python/regex-2019.06.08[${PYTHON_USEDEP}]
 	)
-	system-omnisharp-roslyn? ( >=dev-dotnet/omnisharp-roslyn-1.34.2[net472?,netcoreapp21?] )
+	system-omnisharp-roslyn? ( >=dev-dotnet/omnisharp-roslyn-1.35.3[net472?,netcoreapp21?] )
 	system-pathtools? ( >=dev-python/pathtools-0.1.1_pre20161006 )
-	system-requests? ( >=dev-python/requests-2.23.0_p20200508[${PYTHON_USEDEP}] )
-	system-rls? ( >=dev-lang/rust-1.44.0_pre20200416[rls] )
+	system-requests? ( >=dev-python/requests-2.23.0[${PYTHON_USEDEP}] )
+	system-rls? ( >=dev-lang/rust-1.44.0_pre20200417[rls] )
 	system-tern? ( >=dev-nodejs/tern-0.21.0 )
 	system-typescript? ( >=dev-lang/typescript-3.8.3 )
-	system-waitress? ( >=dev-python/waitress-1.4.4a_p0_pre20200506[${PYTHON_USEDEP}] )
-	system-watchdog? ( >=dev-python/watchdog-0.12.2 )"
+	system-waitress? ( >=dev-python/waitress-1.4.3[${PYTHON_USEDEP}] )
+	system-watchdog? ( >=dev-python/watchdog-0.10.2 )"
 # The versioning for dev-python/regex is messed up we have some people padding
 # the day and month with 0 and gentoo overlay not doing it.  We stick to the
 # upstream versioning.
@@ -121,7 +124,7 @@ DEPEND="${CDEPEND}
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
 		>=dev-python/webtest-2.0.20[${PYTHON_USEDEP}] )"
 #		<dev-python/coverage-4.4[${PYTHON_USEDEP}] # goes in test?
-EGIT_COMMIT="9893b4659cf6c0428fb1950ce7d82004d2425cb6"
+EGIT_COMMIT="ef48cfe1b63bcc07b88e537fb5b6d17b513e319c"
 EGIT_REPO_URI="https://github.com/ycm-core/ycmd.git"
 inherit cmake-utils eutils flag-o-matic git-r3
 S="${WORKDIR}/${PN}-${PV}"
