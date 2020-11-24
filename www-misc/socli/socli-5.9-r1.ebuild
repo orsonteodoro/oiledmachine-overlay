@@ -9,7 +9,7 @@ SRC_URI="https://github.com/gautamkrishnar/socli/archive/${PV}.tar.gz \
 	-> ${P}.tar.gz"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{6..9} )
 IUSE="man"
 inherit distutils-r1 eutils
 SLOT="0"
