@@ -2,9 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{7..9} )
 PYTHON_REQ_USE="threads(+)"
-inherit bash-completion-r1 flag-o-matic pax-utils python-any-r1 toolchain-funcs xdg-utils
+inherit bash-completion-r1 flag-o-matic python-any-r1 toolchain-funcs xdg-utils
 
 DESCRIPTION="A JavaScript runtime built on Chrome's V8 JavaScript engine"
 HOMEPAGE="https://nodejs.org/"
@@ -13,11 +13,12 @@ SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x64-macos"
-IUSE="cpu_flags_x86_sse2 debug doc +icu inspector npm pax_kernel +snapshot +ssl +system-ssl systemtap test"
+IUSE="cpu_flags_x86_sse2 debug doc +icu inspector npm +snapshot +ssl system-icu +system-ssl systemtap test"
 IUSE+=" man"
 REQUIRED_USE="
 	inspector? ( icu ssl )
 	npm? ( ssl )
+	system-icu? ( icu )
 	system-ssl? ( ssl )"
 CDEPEND="!net-libs/nodejs:0
 	app-eselect/eselect-nodejs"
@@ -25,24 +26,23 @@ CDEPEND="!net-libs/nodejs:0
 RDEPEND="${CDEPEND}
 	>=app-arch/brotli-1.0.9
 	>=dev-libs/libuv-1.40.0:=
-	>=net-dns/c-ares-1.16.1
+	>=net-dns/c-ares-1.17.0
 	>=net-libs/nghttp2-1.41.0
 	>=sys-libs/zlib-1.2.11
-	icu? ( >=dev-libs/icu-67.1:= )
+	system-icu? ( >=dev-libs/icu-67.1:= )
 	system-ssl? ( >=dev-libs/openssl-1.1.1g:0= )"
 BDEPEND="${CDEPEND}
 	${PYTHON_DEPS}
 	sys-apps/coreutils
 	systemtap? ( dev-util/systemtap )
-	test? ( net-misc/curl )
-	pax_kernel? ( sys-apps/elfix )"
+	test? ( net-misc/curl )"
 DEPEND="${RDEPEND}"
 PATCHES=(
-	"${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch
+	"${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch
 )
 RESTRICT="test"
 S="${WORKDIR}/node-v${PV}"
-NPM_V="6.14.8" # See https://github.com/nodejs/node/blob/v14.15.0/deps/npm/package.json
+NPM_V="6.14.8" # See https://github.com/nodejs/node/blob/v14.15.1/deps/npm/package.json
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
@@ -112,9 +112,6 @@ src_prepare() {
 		BUILDTYPE=Debug
 	fi
 
-	# We need to disable mprotect on two files when it builds Bug 694100.
-	use pax_kernel && PATCHES+=( "${FILESDIR}"/${PN}-13.8.0-paxmarking.patch )
-
 	default
 }
 
@@ -129,7 +126,13 @@ src_configure() {
 		--shared-zlib
 	)
 	use debug && myconf+=( --debug )
-	use icu && myconf+=( --with-intl=system-icu ) || myconf+=( --with-intl=none )
+	if use system-icu; then
+		myconf+=( --with-intl=system-icu )
+	elif use icu; then
+		myconf+=( --with-intl=full-icu )
+	else
+		myconf+=( --with-intl=none )
+	fi
 	use inspector || myconf+=( --without-inspector )
 	use npm || myconf+=( --without-npm )
 	use snapshot || myconf+=( --without-node-snapshot )
@@ -171,7 +174,6 @@ src_install() {
 	default
 
 	mv "${ED}"/usr/bin/node{,${SLOT_MAJOR}} || die
-	pax-mark -m "${ED}"/usr/bin/node${SLOT_MAJOR}
 
 	# set up a symlink structure that node-gyp expects..
 	local D_INCLUDE_BASE="/usr/include/node${SLOT_MAJOR}"
@@ -195,17 +197,12 @@ src_install() {
 	fi
 
 	if use npm; then
-		dodir /etc/npm
+		keepdir /etc/npm
 
 		# Install bash completion for `npm`
-		# We need to temporarily replace default config path since
-		# npm otherwise tries to write outside of the sandbox
-		local npm_config="${REL_D_BASE}/node_modules/npm/lib/config/core.js"
-		sed -i -e "s|'/etc'|'${ED}/etc'|g" "${ED}/${npm_config}" || die
 		local tmp_npm_completion_file="$(TMPDIR="${T}" mktemp -t npm.XXXXXXXXXX)"
 		"${ED}/usr/bin/npm" completion > "${tmp_npm_completion_file}"
 		newbashcomp "${tmp_npm_completion_file}" npm
-		sed -i -e "s|'${ED}/etc'|'/etc'|g" "${ED}/${npm_config}" || die
 
 		if use man ; then
 			# Move man pages
