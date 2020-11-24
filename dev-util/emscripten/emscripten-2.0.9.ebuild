@@ -4,6 +4,12 @@
 # For requirements, see
 # https://github.com/emscripten-core/emscripten/blob/master/site/source/docs/building_from_source/toolchain_what_is_needed.rst
 
+# For the closure-compiler-npm version see:
+# https://github.com/emscripten-core/emscripten/blob/2.0.9/package.json
+
+# Keep emscripten.config.x.yy.zz updated if changed from:
+# https://github.com/emscripten-core/emscripten/blob/2.0.9/tools/settings_template.py
+
 EAPI=7
 DESCRIPTION="LLVM-to-JavaScript Compiler"
 HOMEPAGE="http://emscripten.org/"
@@ -70,7 +76,7 @@ KEYWORDS="~amd64 ~x86"
 SLOT_MAJOR=$(ver_cut 1-2 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 CLOSURE_COMPILER_SLOT="0"
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{6..9} )
 inherit cmake-utils flag-o-matic java-utils-2 npm-secaudit python-single-r1 \
 	toolchain-funcs
 IUSE="+closure-compiler closure_compiler_java closure_compiler_native \
@@ -81,15 +87,15 @@ system-closure-compiler test"
 JAVA_V="1.8"
 # See https://github.com/google/closure-compiler-npm/blob/v20200224.0.0/packages/google-closure-compiler/package.json
 # They use the latest commit for llvm and clang
-# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/2.0.2/tools/shared.py#L432
-# For the required nodejs, see https://github.com/emscripten-core/emscripten/blob/2.0.2/tools/shared.py#L43
+# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/2.0.9/tools/shared.py#L432
+# For the required nodejs, see https://github.com/emscripten-core/emscripten/blob/2.0.9/tools/shared.py#L43
 LLVM_V="12.0.0"
-BINARYEN_V="95"
+BINARYEN_V="98"
 RDEPEND="${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
 	closure-compiler? (
 		system-closure-compiler? ( \
-			>=dev-util/closure-compiler-npm-20200224:\
+			>=dev-util/closure-compiler-npm-20200920:\
 ${CLOSURE_COMPILER_SLOT}\
 [closure_compiler_java?,closure_compiler_native?,closure_compiler_nodejs?] )
 		closure_compiler_java? (

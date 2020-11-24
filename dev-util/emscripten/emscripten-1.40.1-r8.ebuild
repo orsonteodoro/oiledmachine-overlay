@@ -4,6 +4,12 @@
 # For requirements, see
 # https://github.com/emscripten-core/emscripten/blob/master/site/source/docs/building_from_source/toolchain_what_is_needed.rst
 
+# For the closure-compiler-npm version see:
+# https://github.com/emscripten-core/emscripten/blob/1.40.1/package.json
+
+# Keep emscripten.config.x.yy.zz updated if changed from:
+# https://github.com/emscripten-core/emscripten/blob/1.40.1/tools/settings_template.py
+
 EAPI=7
 DESCRIPTION="LLVM-to-JavaScript Compiler"
 HOMEPAGE="http://emscripten.org/"
@@ -70,7 +76,7 @@ KEYWORDS="~amd64 ~x86"
 SLOT_MAJOR=$(ver_cut 1-2 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 CLOSURE_COMPILER_SLOT="0"
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{6..9} )
 inherit cmake-utils flag-o-matic java-utils-2 npm-secaudit python-single-r1 \
 	toolchain-funcs
 IUSE="asmjs +closure-compiler closure_compiler_java closure_compiler_native \
