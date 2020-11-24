@@ -15,7 +15,7 @@ inherit distutils-r1 eutils
 SLOT="0"
 DEPEND=">=dev-python/beautifulsoup-4.9.1:4[${PYTHON_USEDEP}]
 	>=dev-python/colorama-0.4.3[${PYTHON_USEDEP}]
-	>=dev-python/py-stackexchange-2.2.7[${PYTHON_USEDEP}]
+	>=dev-python/py-stackexchange-2.2.007[${PYTHON_USEDEP}]
 	>=dev-python/requests-2.24.0[${PYTHON_USEDEP}]
 	>=dev-python/urwid-2.1.1[${PYTHON_USEDEP}]
 	>=dev-python/sentry-sdk-0.18.0[${PYTHON_USEDEP}]"
