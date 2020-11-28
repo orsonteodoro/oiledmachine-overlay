@@ -1,0 +1,11 @@
+--- LuaXML-1.8.0/Makefile.orig	2015-11-21 09:20:14.000000000 -0800
++++ LuaXML-1.8.0/Makefile	2020-11-26 12:43:05.844921160 -0800
+@@ -12,7 +12,7 @@ ARCH            = $(shell uname -s)
+ ifeq ($(ARCH),Linux)
+   CFLAGS += -fPIC
+   LFLAGS =  -fPIC -shared
+-  LIBS          = $(LIBDIR) $(LIB) -llua -ldl
++  LIBS          = $(LIBDIR) $(LIB) -llua${LUA_VERSION_MAJOR_MINOR} -ldl
+   EXESUFFIX =
+   SHLIBSUFFIX = .so
+ 
