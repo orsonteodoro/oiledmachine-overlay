@@ -1,0 +1,45 @@
+diff -urp blender-2.91.0.orig/CMakeLists.txt blender-2.91.0/CMakeLists.txt
+--- blender-2.91.0.orig/CMakeLists.txt	2020-11-25 00:31:32.000000000 -0800
++++ blender-2.91.0/CMakeLists.txt	2020-11-28 18:56:17.881655916 -0800
+@@ -126,14 +126,14 @@ enable_testing()
+ #-----------------------------------------------------------------------------
+ # Redirect output files
+ 
+-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin CACHE INTERNAL "" FORCE)
++set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR} CACHE INTERNAL "" FORCE)
+ set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib CACHE INTERNAL "" FORCE)
+ 
+ get_property(GENERATOR_IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+ if(GENERATOR_IS_MULTI_CONFIG)
+-  set(TESTS_OUTPUT_DIR ${EXECUTABLE_OUTPUT_PATH}/tests/$<CONFIG>/ CACHE INTERNAL "" FORCE)
++  set(TESTS_OUTPUT_DIR ${CMAKE_BINARY_DIR}/tests/$<CONFIG>/ CACHE INTERNAL "" FORCE)
+ else()
+-  set(TESTS_OUTPUT_DIR ${EXECUTABLE_OUTPUT_PATH}/tests/ CACHE INTERNAL "" FORCE)
++  set(TESTS_OUTPUT_DIR ${CMAKE_BINARY_DIR}/tests/ CACHE INTERNAL "" FORCE)
+ endif()
+ 
+ #-----------------------------------------------------------------------------
+Only in blender-2.91.0: CMakeLists.txt.orig
+Only in blender-2.91.0: CMakeLists.txt.rej
+diff -urp blender-2.91.0.orig/source/creator/CMakeLists.txt blender-2.91.0/source/creator/CMakeLists.txt
+--- blender-2.91.0.orig/source/creator/CMakeLists.txt	2020-11-25 00:31:32.000000000 -0800
++++ blender-2.91.0/source/creator/CMakeLists.txt	2020-11-28 18:54:37.868835117 -0800
+@@ -502,7 +502,7 @@ if(UNIX AND NOT APPLE)
+     # main blender binary
+     install(
+       TARGETS blender
+-      DESTINATION bin
++      DESTINATION "${CMAKE_INSTALL_BINDIR}"
+     )
+     if(WITH_DOC_MANPAGE)
+       # manpage only with 'blender' binary
+@@ -527,7 +527,7 @@ if(UNIX AND NOT APPLE)
+     )
+     install(
+       PROGRAMS ${CMAKE_SOURCE_DIR}/release/bin/blender-thumbnailer.py
+-      DESTINATION bin
++      DESTINATION "${CMAKE_INSTALL_BINDIR}"
+     )
+     set(BLENDER_TEXT_FILES_DESTINATION share/doc/blender)
+   endif()
+Only in blender-2.91.0/source/creator: CMakeLists.txt.orig

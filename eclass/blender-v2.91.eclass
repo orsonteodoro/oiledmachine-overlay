@@ -1,11 +1,11 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: blender-v2.90.eclass
+# @ECLASS: blender-v2.91.eclass
 # @MAINTAINER: orsonteodoro@hotmail.com
 # @BLURB: blender implementation
 # @DESCRIPTION:
-# The blender-v2.90.eclass helps reduce code duplication across ebuilds
+# The blender-v2.91.eclass helps reduce code duplication across ebuilds
 # using the same major.minor version.
 
 CXXABI_V=17 # Linux builds should be gnu11, but in Win builds it is c++17
@@ -17,9 +17,10 @@ PYTHON_COMPAT=( python3_{7,8} )
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 IUSE=" X +abi7-compat -asan +bullet +collada +color-management -cpudetection \
 +cuda +cycles -cycles-network +dds -debug doc +elbeem +embree +ffmpeg +fftw \
-flac +jack +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal \
-+opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb \
-+openxr -optix +osl release +sdl +sndfile test +tiff -valgrind"
+flac -gmp +jack +jemalloc +jpeg2k -llvm -man -nanovdb +ndof +nls +nvcc -nvrtc \
++openal +opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv \
++openvdb +openxr -optix +osl -potrace release +sdl +sndfile test +tiff \
+-valgrind"
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 
@@ -33,10 +34,11 @@ REQUIRED_USE+="
 	cuda? ( cycles ^^ ( nvcc nvrtc ) )
 	embree? ( cycles )
 	mp3? ( ffmpeg )
+	nanovdb? ( !openvdb )
 	nvcc? ( || ( cuda optix ) )
 	nvrtc? ( || ( cuda optix ) )
 	opencl? ( cycles )
-	openvdb? ( abi7-compat )
+	openvdb? ( !nanovdb abi7-compat )
 	optix? ( cuda cycles nvcc )
 	opus? ( ffmpeg )
 	osl? ( cycles llvm )
@@ -54,6 +56,7 @@ REQUIRED_USE+="
 		embree
 		ffmpeg
 		fftw
+		gmp
 		jack
 		jemalloc
 		jpeg2k
@@ -69,6 +72,7 @@ REQUIRED_USE+="
 		openvdb
 		openxr
 		osl
+		potrace
 		sdl
 		sndfile
 		!test
@@ -144,6 +148,7 @@ RDEPEND="${PYTHON_DEPS}
 [encode,jpeg2k?,mp3?,opus?,theora?,vorbis?,vpx?,x264,xvid?,zlib] )
 	fftw? ( >=sci-libs/fftw-3.3.8:3.0= )
 	flac? ( >=media-libs/flac-1.3.3 )
+	gmp? ( >=dev-libs/gmp-6.2 )
 	jack? ( virtual/jack )
 	jemalloc? ( >=dev-libs/jemalloc-5.2.1:= )
 	jpeg2k? ( >=media-libs/openjpeg-2.3.1:2 )
@@ -160,7 +165,7 @@ RDEPEND="${PYTHON_DEPS}
 	)
 	openal? ( >=media-libs/openal-1.20.1 )
 	opencl? ( virtual/opencl )
-	openimagedenoise? ( >=media-libs/oidn-1.2.1 )
+	openimagedenoise? ( >=media-libs/oidn-1.2.3 )
 	openimageio? ( >=media-libs/openimageio-2.1.15.0[color-management?,jpeg2k?] )
 	openexr? (
 		>=media-libs/ilmbase-2.4.0:=
@@ -179,6 +184,7 @@ RDEPEND="${PYTHON_DEPS}
 	openxr? ( >=media-libs/openxr-1.0.8 )
 	optix? ( >=dev-libs/optix-7 )
 	osl? ( >=media-libs/osl-1.10.10:=[llvm-${LLVM_V},static-libs] )
+	potrace? ( >=media-gfx/potrace-1.16 )
 	sdl? ( >=media-libs/libsdl2-2.0.12[sound,joystick] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
 	tiff? ( >=media-libs/tiff-4.1.0:0[zlib] )
@@ -219,7 +225,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-2.83.1-device_network_h-fixes.patch"
 	"${FILESDIR}/${PN}-2.83.1-device_network_h-add-device-header.patch"
 	"${FILESDIR}/${PN}-2.83.1-update-acquire_tile-for-cycles-networking.patch"
-	"${FILESDIR}/${PN}-2.80-install-paths-change.patch"
+	"${FILESDIR}/${PN}-2.91.0-install-paths-change.patch"
 )
 
 check_multiple_llvm_versions_in_native_libs() {
@@ -276,7 +282,7 @@ _blender_pkg_setup() {
 }
 
 _src_prepare_patches() {
-	eapply "${FILESDIR}/blender-2.83.1-parent-datafiles-dir-change.patch"
+	eapply "${FILESDIR}/blender-2.91.0-parent-datafiles-dir-change.patch"
 }
 
 _src_configure() {
@@ -329,6 +335,7 @@ ebuild/upstream developers only."
 		-DWITH_CXX_GUARDEDALLOC=$(usex debug)
 		-DWITH_CXX11_ABI=ON
 		-DWITH_DOC_MANPAGE=$(usex man)
+		-DWITH_GMP=$(usex gmp)
 		-DWITH_IMAGE_DDS=$(usex dds)
 		-DWITH_IMAGE_OPENEXR=$(usex openexr)
 		-DWITH_IMAGE_OPENJPEG=$(usex jpeg2k)
@@ -338,6 +345,7 @@ ebuild/upstream developers only."
 		-DWITH_MEM_JEMALLOC=$(usex jemalloc)
 		-DWITH_MEM_VALGRIND=$(usex valgrind)
 		-DWITH_MOD_FLUID=$(usex elbeem)
+		-DWITH_NANOVDB=$(usex nanovdb)
 		-DWITH_OPENCOLLADA=$(usex collada)
 		-DWITH_OPENCOLORIO=$(usex color-management)
 		-DWITH_OPENIMAGEDENOISE=$(usex openimagedenoise)
@@ -346,6 +354,7 @@ ebuild/upstream developers only."
 		-DWITH_OPENSUBDIV=$(usex opensubdiv)
 		-DWITH_OPENVDB=$(usex openvdb)
 		-DWITH_OPENVDB_BLOSC=$(usex openvdb)
+		-DWITH_POTRACE=$(usex potrace)
 		-DWITH_PYTHON_INSTALL=OFF
 		-DWITH_PYTHON_INSTALL_NUMPY=OFF
 		-DWITH_XR_OPENXR=$(usex openxr)
@@ -372,7 +381,7 @@ ebuild/upstream developers only."
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.90.0/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.91.0/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
