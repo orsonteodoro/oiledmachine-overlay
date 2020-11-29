@@ -165,7 +165,7 @@ native? (
 		)
 	)
 	network? (
-		system-civetweb? ( www-servers/civetweb:=[static-libs=] )
+		system-civetweb? ( www-servers/civetweb:=[static-libs=,lua] )
 		system-slikenet? ( net-misc/slikenet[${MULTILIB_USEDEP}] )
 	)
 	opengl? (
