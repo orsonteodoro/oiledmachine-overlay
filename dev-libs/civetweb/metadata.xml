@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <!-- only for this ebuild fork on the oiledmachine-overlay -->
+  <maintainer type="person">
+    <name>Orson Teodoro</name>
+    <email>orsonteodoro@hotmail.com</email>
+  </maintainer>
+  <!-- originator -->
+  <maintainer type="person">
+    <email>zmedico@gentoo.org</email>
+  </maintainer>
+  <upstream>
+    <remote-id type="github">civetweb/civetweb</remote-id>
+  </upstream>
+  <use>
+    <flag name="asan">Enables ASAN in debug mode</flag>
+    <flag name="c11">Uses the C11 standard</flag>
+    <flag name="c89">Uses the C89 standard</flag>
+    <flag name="c99">Uses the C99 standard</flag>
+    <flag name="c++11">Uses the C++11 standard</flag>
+    <flag name="c++14">Uses the C++14 standard</flag>
+    <flag name="cgi">Enables CGI and turns on processing of CGI scripts</flag>
+    <flag name="gnu17">Uses the default c</flag>
+    <flag name="urho3d">Builds against the Lua build for Urh3D</flag>
+    <flag name="cxx">Enables c++ bindings</flag>
+    <flag name="caching">Enables caching.  If disabled, no timegm is used.</flag>
+    <flag name="debug">Enables memory debugging</flag>
+    <flag name="doc">Installs documentation</flag>
+    <flag name="duktape">Enables duktape CGIs</flag>
+    <flag name="ipv6">Enables IPv6</flag>
+    <flag name="lto">Enables link time optimization</flag>
+    <flag name="lua">Enables Lua CGIs</flag>
+    <flag name="serve_no_files">Configures the server to serve no static files</flag>
+    <flag name="server_executable">Builds the server executable</flag>
+    <flag name="server_stats">Enables server statistics</flag>
+    <flag name="ssl">Enables SSL</flag>
+    <flag name="ssl_1_0">Uses the OpenSSL 1.0 API</flag>
+    <flag name="ssl_1_1">Uses the OpenSSL 1.1 API</flag>
+    <flag name="static">For internal use only.</flag>
+    <flag name="test">Builds automated testing</flag>
+    <flag name="websockets">Enables websocket connections</flag>
+  </use>
+</pkgmetadata>

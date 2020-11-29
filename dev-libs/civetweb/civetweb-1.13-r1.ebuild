@@ -7,26 +7,25 @@ HOMEPAGE="https://github.com/civetweb"
 LICENSE="MIT"
 SLOT="0/${PV}"
 KEYWORDS="~amd64 ~ppc ~x86"
-#1234567890123456789012345678901234567890123456789012345678901234567890123456789
-IUSE="+asan +c11 c89 c99 c++98 c++11 +c++14 +cgi gnu17 urho3d cxx +caching debug doc \
--duktape -ipv6 lto -lua -serve_no_files +server_executable -server_stats +ssl \
-ssl_1_0 +ssl_1_1 static -test -websockets"
+IUSE="+asan +c11 c89 c99 c++98 c++11 +c++14 +cgi gnu17 urho3d -cxx +caching \
+debug doc -duktape -ipv6 -lto -lua -serve_no_files +server_executable \
+-server_stats +ssl ssl_1_0 +ssl_1_1 static -test -websockets"
 REQUIRED_USE="
 	${LUA_REQUIRED_USE}
 	lua? ( gnu17 )
 	ssl? ( ^^ ( ssl_1_0 ssl_1_1 ) )
 	^^ ( c11 c89 c99 gnu17 )
-	^^ ( c++98 c++11 c++14 )
-"
-CMAKE_MAKEFILE_GENERATOR="emake"
-LUA_COMPAT=( lua5-{1..3} )
+	^^ ( c++98 c++11 c++14 )"
+LUA_COMPAT=( lua5-{2..4} )
 inherit cmake-static-libs cmake-utils lua multilib-minimal
 # CMakeLists.txt lists versions
 RDEPEND=">=dev-db/sqlite-3.8.9:3[${MULTILIB_USEDEP}]
 	 lua? (
 		${LUA_DEPS}
 		urho3d? (
-			lua_targets_lua5-2? ( >=dev-lang/lua-5.2.4:5.2=[${MULTILIB_USEDEP},static=,civetweb] )
+			lua_targets_lua5-2? (
+		>=dev-lang/lua-5.2.4:5.2=[${MULTILIB_USEDEP},static=,civetweb]
+			)
 		)
 		>=dev-lua/luafilesystem-1.6.3[${MULTILIB_USEDEP},${LUA_USEDEP}]
 		>=dev-lua/luasqlite3-0.9.3[${MULTILIB_USEDEP},${LUA_USEDEP}]
@@ -37,11 +36,10 @@ RDEPEND=">=dev-db/sqlite-3.8.9:3[${MULTILIB_USEDEP}]
 		ssl_1_0? (
 			|| (
 				=dev-libs/openssl-1.0*[${MULTILIB_USEDEP}]
-				dev-libs/openssl-compat:1.0.0
+				dev-libs/openssl-compat:1.0.0[${MULTILIB_USEDEP}]
 			)
 		)
-	 )
-"
+	 )"
 DEPEND="${RDEPEND}"
 SRC_URI="\
 https://github.com/civetweb/civetweb/archive/v${PV}.tar.gz \
@@ -53,6 +51,7 @@ docs/UserManual.md )
 _PATCHES=(
 	"${FILESDIR}/civetweb-1.13-disable-pedantic-errors.patch"
 	"${FILESDIR}/civetweb-1.13-change-cmake-for-lua-dependencies.patch"
+	"${FILESDIR}/civetweb-1.13-disable-fvisibility-for-c.patch"
 )
 
 pkg_setup() {
@@ -78,16 +77,12 @@ download test dependencies."
 				die \
 "The system's Lua is not ${s}.  Disable the lua dep or emerge with same point \
 release."
-			else
-				einfo "best_v=${best_v} s=${s}"
 			fi
 		fi
 	done
 }
 
 _prepare() {
-	einfo "LUA_VERSION="$(lua_get_version)
-	einfo "ELUA=${ELUA}"
 	cd "${BUILD_DIR}" || die
 	cmake-utils_src_prepare
 }
@@ -116,16 +111,23 @@ src_prepare() {
 
 _configure() {
 	cd "${BUILD_DIR}" || die
-	# CIVETWEB_CXX_STANDARD auto is c++14 > c++11 > c++98 depending on compiler
+	# CIVETWEB_CXX_STANDARD auto is c++14 > c++11 > c++98 depending on
+	#   the compiler
 	# CIVETWEB_C_STANDARD auto is c11 > c98 > c89 depending on compiler
-	# CIVETWEB_LUA_VERSION is either 5.1.5 5.2.4 5.3.5 5.4.0 based on src/third_party/lua-<PV>
+	# CIVETWEB_LUA_VERSION is either 5.1.5 5.2.4 5.3.5 5.4.0 based
+	#   on src/third_party/lua-<PV>
 
 	local mycmakeargs=(
 		-D_GET_LIBDIR=$(get_libdir)
 		-DCIVETWEB_BUILD_TESTING=$(usex test)
-		-DCIVETWEB_C_STANDARD=$(usex gnu17 gnu17 $(usex c11 c11 $(usex c99 c99 $(usex c89 c89 auto))))
+		-DCIVETWEB_C_STANDARD=$(usex gnu17 gnu17 \
+			$(usex c11 c11 \
+			$(usex c99 c99 \
+			$(usex c89 c89 auto))))
 		-DCIVETWEB_CXX_ENABLE_LTO=$(usex lto)
-		-DCIVETWEB_CXX_STANDARD=$(usex c++14 c++14 $(usex c++11 c++11 $(usex c++98 c++11 auto)))
+		-DCIVETWEB_CXX_STANDARD=$(usex c++14 c++14 \
+						$(usex c++11 c++11 \
+						$(usex c++98 c++11 auto)))
 		-DCIVETWEB_ENABLE_SERVER_EXECUTABLE=$(usex server_executable)
 		-DCIVETWEB_DISABLE_CACHING=$(usex caching "OFF" "ON")
 		-DCIVETWEB_DISABLE_CGI=$(usex cgi "OFF" "ON")
@@ -144,7 +146,6 @@ _configure() {
 		-DCIVETWEB_ENABLE_LUA_XML_SHARED=$(usex lua)
 		-DCIVETWEB_ENABLE_SQLITE_SHARED=$(usex lua)
 		-DCIVETWEB_LUA_VERSION=$(lua_get_version)
-		-DCIVETWEB_LUA_VERSION_MAJOR_MINOR=$(ver_cut 1-2 $(lua_get_version))
 		-DLUA_CDIR="$(lua_get_cmod_dir)"
 	)
 	cmake-utils_src_configure

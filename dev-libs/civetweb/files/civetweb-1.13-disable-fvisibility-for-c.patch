@@ -1,0 +1,12 @@
+diff -urp civetweb-1.13.orig/CMakeLists.txt civetweb-1.13/CMakeLists.txt
+--- civetweb-1.13.orig/CMakeLists.txt	2020-11-28 17:25:27.292895461 -0800
++++ civetweb-1.13/CMakeLists.txt	2020-11-28 17:31:38.070149884 -0800
+@@ -425,7 +425,7 @@ if (NOT ZEPHYR)
+   add_c_compiler_flag(/Wd4820) # padding
+ 
+   #add_c_compiler_flag(-pedantic-errors)
+-  add_c_compiler_flag(-fvisibility=hidden)
++  #add_c_compiler_flag(-fvisibility=hidden)
+   add_c_compiler_flag(-fstack-protector-strong RELEASE)
+   add_c_compiler_flag(-fstack-protector-all DEBUG)
+ else()
