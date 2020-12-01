@@ -19,7 +19,7 @@ Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
 ----
 diff -urp client-v6.20304.0.orig/src/com/sheepit/client/Client.java client-v6.20304.0/src/com/sheepit/client/Client.java
 --- client-v6.20304.0.orig/src/com/sheepit/client/Client.java	2020-10-29 13:41:38.000000000 -0700
-+++ client-v6.20304.0/src/com/sheepit/client/Client.java	2020-11-30 22:02:09.564017277 -0800
++++ client-v6.20304.0/src/com/sheepit/client/Client.java	2020-12-01 10:01:59.661403193 -0800
 @@ -19,9 +19,12 @@
  
  package com.sheepit.client;
@@ -60,7 +60,7 @@ diff -urp client-v6.20304.0.orig/src/com/sheepit/client/Client.java client-v6.20
  		if (scene_file.exists() == false) {
  			gui.setRenderingProjectName("");
  			this.log.error("Client::work job preparation failed (scene file '" + scene_file.getAbsolutePath()
-@@ -795,9 +802,259 @@ import lombok.Data;
+@@ -795,9 +802,337 @@ import lombok.Data;
  				String.format("%s?type=job&job=%s", this.server.getPage("download-archive"), ajob_.getId()), "project");
  	}
  	
@@ -89,55 +89,133 @@ diff -urp client-v6.20304.0.orig/src/com/sheepit/client/Client.java client-v6.20
 +	private boolean isRendererAllowed(String md5_renderer) {
 +		/* Comment off the conditional chain if it fails to download.  */
 +		if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_279B)) {
-+			if (!this.configuration.getAllowBlender279b() || Configuration.HARDBLOCK_BLENDER_279B) {
++			if (!this.configuration.getAllowBlender279b()) {
++				log.debug("Client::isRendererAllowed !this.configuration.getAllowBlender279b() == true");
++				return false;
++			}
++			if (Configuration.HARDBLOCK_BLENDER_279B) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_BLENDER_279B == false");
 +				return false;
 +			}
 +		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_279B_FILMIC)) {
-+			if (!this.configuration.getAllowBlender279bFilmic() || Configuration.HARDBLOCK_BLENDER_279B_FILMIC) {
++			if (!this.configuration.getAllowBlender279bFilmic()) {
++				log.debug("Client::isRendererAllowed !this.configuration.getAllowBlender279bFilmic() == true");
++				return false;
++			}
++			if (Configuration.HARDBLOCK_BLENDER_279B_FILMIC) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_BLENDER_279B_FILMIC == false");
 +				return false;
 +			}
 +		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_280)) {
-+			if (!this.configuration.getAllowBlender280() || Configuration.HARDBLOCK_BLENDER_280) {
++			if (!this.configuration.getAllowBlender280()) {
++				log.debug("Client::isRendererAllowed !this.configuration.getAllowBlender280() == true");
++				return false;
++			}
++			if (Configuration.HARDBLOCK_BLENDER_280) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_BLENDER_280 == false");
 +				return false;
 +			}
 +		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_281A)) {
-+			if (!this.configuration.getAllowBlender281a() || Configuration.HARDBLOCK_BLENDER_281A) {
++			if (!this.configuration.getAllowBlender281a()) {
++				log.debug("Client::isRendererAllowed !this.configuration.getAllowBlender281a() == true");
++				return false;
++			}
++			if (Configuration.HARDBLOCK_BLENDER_281A) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_BLENDER_281A == false");
 +				return false;
 +			}
 +		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_282)) {
-+			if (!this.configuration.getAllowBlender282() || Configuration.HARDBLOCK_BLENDER_282) {
++			if (!this.configuration.getAllowBlender282()) {
++				log.debug("Client::isRendererAllowed !this.configuration.getAllowBlender282() == true");
++				return false;
++			}
++			if (Configuration.HARDBLOCK_BLENDER_282) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_BLENDER_282 == false");
 +				return false;
 +			}
 +		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_2831)) {
-+			if (!this.configuration.getAllowBlender2831() || Configuration.HARDBLOCK_BLENDER_2831) {
++			if (!this.configuration.getAllowBlender2831()) {
++				log.debug("Client::isRendererAllowed !this.configuration.getAllowBlender2831() == true");
++				return false;
++			}
++			if (Configuration.HARDBLOCK_BLENDER_2831) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_BLENDER_2831 == false");
 +				return false;
 +			}
 +		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_2832)) {
-+			if (!this.configuration.getAllowBlender2832() || Configuration.HARDBLOCK_BLENDER_2832) {
++			if (!this.configuration.getAllowBlender2832()) {
++				log.debug("Client::isRendererAllowed !this.configuration.getAllowBlender2832() == true");
++				return false;
++			}
++			if (Configuration.HARDBLOCK_BLENDER_2832) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_BLENDER_2832 == false");
 +				return false;
 +			}
 +		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_2836)) {
-+			if (!this.configuration.getAllowBlender2836() || Configuration.HARDBLOCK_BLENDER_2836) {
++			if (!this.configuration.getAllowBlender2836()) {
++				log.debug("Client::isRendererAllowed !this.configuration.getAllowBlender2836() == true");
++				return false;
++			}
++			if (Configuration.HARDBLOCK_BLENDER_2836) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_BLENDER_2836 == false");
 +				return false;
 +			}
 +		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_2839)) {
-+			if (!this.configuration.getAllowBlender2839() || Configuration.HARDBLOCK_BLENDER_2839) {
++			if (!this.configuration.getAllowBlender2839()) {
++				log.debug("Client::isRendererAllowed !this.configuration.getAllowBlender2839() == true");
++				return false;
++			}
++			if (Configuration.HARDBLOCK_BLENDER_2839) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_BLENDER_2839 == false");
 +				return false;
 +			}
 +		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_2900)) {
-+			if (!this.configuration.getAllowBlender2900() || Configuration.HARDBLOCK_BLENDER_2900) {
++			if (!this.configuration.getAllowBlender2900()) {
++				log.debug("Client::isRendererAllowed !this.configuration.getAllowBlender2900() == true");
++				return false;
++			}
++			if (Configuration.HARDBLOCK_BLENDER_2900) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_BLENDER_2900 == false");
 +				return false;
 +			}
 +		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_2901)) {
-+			if (!this.configuration.getAllowBlender2901() || Configuration.HARDBLOCK_BLENDER_2901) {
++			if (!this.configuration.getAllowBlender2901()) {
++				log.debug("Client::isRendererAllowed !this.configuration.getAllowBlender2901() == true");
++				return false;
++			}
++			if (Configuration.HARDBLOCK_BLENDER_2901) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_BLENDER_2901 == false");
 +				return false;
 +			}
 +		} else if (md5_renderer.equals(Configuration.MD5_LINUX_X86_64_2910)) {
-+			if (!this.configuration.getAllowBlender2910() || Configuration.HARDBLOCK_BLENDER_2910) {
++			if (!this.configuration.getAllowBlender2910()) {
++				log.debug("Client::isRendererAllowed !this.configuration.getAllowBlender2910() == true");
++				return false;
++			}
++			if (Configuration.HARDBLOCK_BLENDER_2910) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_BLENDER_2910 == false");
 +				return false;
 +			}
 +		} else {
-+			if (!this.configuration.getAllowUnknownRenderers() || Configuration.HARDBLOCK_UNKNOWN_RENDERERS || Configuration.USE_SYSTEM_RENDERERS || (!Configuration.USE_SYSTEM_RENDERERS && Configuration.USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG)) {
++			if (!this.configuration.getAllowUnknownRenderers()) {
++				log.debug("Client::isRendererAllowed !this.configuration.getAllowUnknownRenderers() == true");
++				return false;
++			}
++			if (Configuration.HARDBLOCK_UNKNOWN_RENDERERS) {
++				log.debug("Client::isRendererAllowed Configuration.HARDBLOCK_UNKNOWN_RENDERERS == true");
++				return false;
++			}
++			if (Configuration.USE_SYSTEM_RENDERERS) {
++				log.debug("Client::isRendererAllowed Configuration.USE_SYSTEM_RENDERERS == true");
++				return false;
++			}
++			if (!Configuration.USE_SYSTEM_RENDERERS && Configuration.USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG) {
++				if (!Configuration.USE_SYSTEM_RENDERERS) {
++					log.debug("Client::isRendererAllowed !Configuration.USE_SYSTEM_RENDERERS == true");
++				}
++				if (Configuration.USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG) {
++					log.debug("Client::isRendererAllowed Configuration.USE_ONLY_DOWNLOAD_DOT_BLENDER_DOT_ORG == true");
++				}
 +				return false;
 +			}
 +		}
@@ -322,7 +400,7 @@ diff -urp client-v6.20304.0.orig/src/com/sheepit/client/Client.java client-v6.20
  	}
  	
  	private Error.Type downloadFile(Job ajob, String local_path, String md5_server, String url, String download_type) throws FermeExceptionNoSpaceLeftOnDevice {
-@@ -867,6 +1124,7 @@ import lombok.Data;
+@@ -867,6 +1202,7 @@ import lombok.Data;
  		this.gui.status(String.format("Downloading %s", download_type), 0, 0);
  		
  		// must download the archive
@@ -330,7 +408,7 @@ diff -urp client-v6.20304.0.orig/src/com/sheepit/client/Client.java client-v6.20
  		Error.Type ret = this.server.HTTPGetFile(url, local_path, this.gui, update_ui);
  		
  		if (ret == Type.RENDERER_KILLED_BY_SERVER || ret == Type.RENDERER_KILLED_BY_USER_OVER_TIME || ret == Type.RENDERER_KILLED_BY_USER) {
-@@ -936,6 +1194,7 @@ import lombok.Data;
+@@ -936,6 +1272,7 @@ import lombok.Data;
  		String renderer_archive = ajob.getRendererArchivePath();
  		String renderer_path = ajob.getRendererDirectory();
  		File renderer_path_file = new File(renderer_path);
@@ -338,7 +416,7 @@ diff -urp client-v6.20304.0.orig/src/com/sheepit/client/Client.java client-v6.20
  		
  		if (!new File(renderer_archive).exists()) {
  			this.gui.status("Copying renderer from shared downloads directory");
-@@ -954,14 +1213,69 @@ import lombok.Data;
+@@ -954,14 +1291,69 @@ import lombok.Data;
  			
  			this.gui.status("Extracting renderer");
  			
@@ -418,7 +496,7 @@ diff -urp client-v6.20304.0.orig/src/com/sheepit/client/Client.java client-v6.20
  			try {
 diff -urp client-v6.20304.0.orig/src/com/sheepit/client/Configuration.java client-v6.20304.0/src/com/sheepit/client/Configuration.java
 --- client-v6.20304.0.orig/src/com/sheepit/client/Configuration.java	2020-10-29 13:41:38.000000000 -0700
-+++ client-v6.20304.0/src/com/sheepit/client/Configuration.java	2020-11-30 22:13:18.349465781 -0800
++++ client-v6.20304.0/src/com/sheepit/client/Configuration.java	2020-12-01 09:49:54.188391659 -0800
 @@ -69,6 +69,69 @@ import lombok.Data;
  	private String UIType;
  	private String hostname;
@@ -620,7 +698,7 @@ diff -urp client-v6.20304.0.orig/src/com/sheepit/client/Configuration.java clien
  }
 diff -urp client-v6.20304.0.orig/src/com/sheepit/client/Job.java client-v6.20304.0/src/com/sheepit/client/Job.java
 --- client-v6.20304.0.orig/src/com/sheepit/client/Job.java	2020-10-29 13:41:38.000000000 -0700
-+++ client-v6.20304.0/src/com/sheepit/client/Job.java	2020-11-30 21:51:02.582777953 -0800
++++ client-v6.20304.0/src/com/sheepit/client/Job.java	2020-12-01 09:49:54.188391659 -0800
 @@ -138,6 +138,26 @@ import lombok.Getter;
  	}
  	
@@ -672,7 +750,7 @@ diff -urp client-v6.20304.0.orig/src/com/sheepit/client/Job.java client-v6.20304
  	public String getRequiredSceneArchivePath() {
 diff -urp client-v6.20304.0.orig/src/com/sheepit/client/os/FreeBSD.java client-v6.20304.0/src/com/sheepit/client/os/FreeBSD.java
 --- client-v6.20304.0.orig/src/com/sheepit/client/os/FreeBSD.java	2020-10-29 13:41:38.000000000 -0700
-+++ client-v6.20304.0/src/com/sheepit/client/os/FreeBSD.java	2020-11-30 21:40:45.540476792 -0800
++++ client-v6.20304.0/src/com/sheepit/client/os/FreeBSD.java	2020-12-01 09:49:54.189391698 -0800
 @@ -42,7 +42,7 @@ public class FreeBSD extends OS {
  		return "freebsd";
  	}
@@ -684,7 +762,7 @@ diff -urp client-v6.20304.0.orig/src/com/sheepit/client/os/FreeBSD.java client-v
  	
 diff -urp client-v6.20304.0.orig/src/com/sheepit/client/os/Linux.java client-v6.20304.0/src/com/sheepit/client/os/Linux.java
 --- client-v6.20304.0.orig/src/com/sheepit/client/os/Linux.java	2020-10-29 13:41:38.000000000 -0700
-+++ client-v6.20304.0/src/com/sheepit/client/os/Linux.java	2020-11-30 21:51:05.531889437 -0800
++++ client-v6.20304.0/src/com/sheepit/client/os/Linux.java	2020-12-01 09:49:54.189391698 -0800
 @@ -28,6 +28,7 @@ import java.util.List;
  import java.util.Map;
  import java.util.Scanner;
@@ -793,7 +871,7 @@ diff -urp client-v6.20304.0.orig/src/com/sheepit/client/os/Linux.java client-v6.
  		processBuilder.redirectErrorStream(true);
 diff -urp client-v6.20304.0.orig/src/com/sheepit/client/os/Mac.java client-v6.20304.0/src/com/sheepit/client/os/Mac.java
 --- client-v6.20304.0.orig/src/com/sheepit/client/os/Mac.java	2020-10-29 13:41:38.000000000 -0700
-+++ client-v6.20304.0/src/com/sheepit/client/os/Mac.java	2020-11-30 21:40:45.540476792 -0800
++++ client-v6.20304.0/src/com/sheepit/client/os/Mac.java	2020-12-01 09:49:54.189391698 -0800
 @@ -41,7 +41,7 @@ public class Mac extends OS {
  		return "mac";
  	}
@@ -805,7 +883,7 @@ diff -urp client-v6.20304.0.orig/src/com/sheepit/client/os/Mac.java client-v6.20
  	
 diff -urp client-v6.20304.0.orig/src/com/sheepit/client/os/OS.java client-v6.20304.0/src/com/sheepit/client/os/OS.java
 --- client-v6.20304.0.orig/src/com/sheepit/client/os/OS.java	2020-10-29 13:41:38.000000000 -0700
-+++ client-v6.20304.0/src/com/sheepit/client/os/OS.java	2020-11-30 21:40:45.540476792 -0800
++++ client-v6.20304.0/src/com/sheepit/client/os/OS.java	2020-12-01 09:49:54.189391698 -0800
 @@ -35,7 +35,7 @@ public abstract class OS {
  	
  	public abstract long getFreeMemory();
@@ -817,7 +895,7 @@ diff -urp client-v6.20304.0.orig/src/com/sheepit/client/os/OS.java client-v6.203
  		return null;
 diff -urp client-v6.20304.0.orig/src/com/sheepit/client/os/Windows.java client-v6.20304.0/src/com/sheepit/client/os/Windows.java
 --- client-v6.20304.0.orig/src/com/sheepit/client/os/Windows.java	2020-10-29 13:41:38.000000000 -0700
-+++ client-v6.20304.0/src/com/sheepit/client/os/Windows.java	2020-11-30 21:40:45.541476830 -0800
++++ client-v6.20304.0/src/com/sheepit/client/os/Windows.java	2020-12-01 09:49:54.189391698 -0800
 @@ -37,7 +37,7 @@ public class Windows extends OS {
  		return "windows";
  	}
@@ -829,7 +907,7 @@ diff -urp client-v6.20304.0.orig/src/com/sheepit/client/os/Windows.java client-v
  	
 diff -urp client-v6.20304.0.orig/src/com/sheepit/client/SettingsLoader.java client-v6.20304.0/src/com/sheepit/client/SettingsLoader.java
 --- client-v6.20304.0.orig/src/com/sheepit/client/SettingsLoader.java	2020-10-29 13:41:38.000000000 -0700
-+++ client-v6.20304.0/src/com/sheepit/client/SettingsLoader.java	2020-11-30 21:51:08.615005988 -0800
++++ client-v6.20304.0/src/com/sheepit/client/SettingsLoader.java	2020-12-01 09:49:54.190391736 -0800
 @@ -58,6 +58,19 @@ public class SettingsLoader {
  	private String ui;
  	private String theme;
@@ -1167,7 +1245,7 @@ diff -urp client-v6.20304.0.orig/src/com/sheepit/client/SettingsLoader.java clie
  }
 diff -urp client-v6.20304.0.orig/src/com/sheepit/client/standalone/swing/activity/Settings.java client-v6.20304.0/src/com/sheepit/client/standalone/swing/activity/Settings.java
 --- client-v6.20304.0.orig/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-10-29 13:41:38.000000000 -0700
-+++ client-v6.20304.0/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-11-30 21:51:10.085061561 -0800
++++ client-v6.20304.0/src/com/sheepit/client/standalone/swing/activity/Settings.java	2020-12-01 09:49:54.190391736 -0800
 @@ -101,6 +101,19 @@ public class Settings implements Activit
  	
  	private JCheckBox saveFile;
@@ -1278,7 +1356,7 @@ diff -urp client-v6.20304.0.orig/src/com/sheepit/client/standalone/swing/activit
  				// or do we already have one?
 diff -urp client-v6.20304.0.orig/src/com/sheepit/client/standalone/Worker.java client-v6.20304.0/src/com/sheepit/client/standalone/Worker.java
 --- client-v6.20304.0.orig/src/com/sheepit/client/standalone/Worker.java	2020-10-29 13:41:38.000000000 -0700
-+++ client-v6.20304.0/src/com/sheepit/client/standalone/Worker.java	2020-11-30 21:51:13.309183444 -0800
++++ client-v6.20304.0/src/com/sheepit/client/standalone/Worker.java	2020-12-01 09:49:54.190391736 -0800
 @@ -108,6 +108,32 @@ public class Worker {
  	
  	@Option(name = "-hostname", usage = "Set a custom hostname name (name change will be lost when client is closed)", required = false) private String hostname = null;
