@@ -1157,8 +1157,8 @@ diff -urp client-v6.20304.0.orig/src/com/sheepit/client/SettingsLoader.java clie
 -			path, login, password, computeMethod, gpu, renderbucketSize, cacheDir, theme, priority, autoSignIn, useSysTray);
 +			"SettingsLoader [path=%s, login=%s, password=%s, computeMethod=%s, gpu=%s, renderbucket-size=%s, cacheDir=%s, theme=%s, priority=%d, autosign=%s, usetray=%s,"
 +			+ " allowBlender279b=%s, allowBlender279bFilmic=%s, allowBlender280=%s, allowBlender281a=%s, allowBlender282=%s, allowBlender2831=%s,"
-+			+ " allowBlender2832=%s, allowBlender2836=%s, allowBlender2839=%s, allowBlender2900=%s, allowBlender2901=%s, allowBlender2910=%s,",
-+			+ " allowUnknownRenderers=%s]"
++			+ " allowBlender2832=%s, allowBlender2836=%s, allowBlender2839=%s, allowBlender2900=%s, allowBlender2901=%s, allowBlender2910=%s,"
++			+ " allowUnknownRenderers=%s]",
 +			path, login, password, computeMethod, gpu, renderbucketSize, cacheDir, theme, priority, autoSignIn, useSysTray,
 +			allowBlender279b, allowBlender279bFilmic, allowBlender280, allowBlender281a, allowBlender282,
 +			allowBlender2831, allowBlender2832, allowBlender2836, allowBlender2839, allowBlender2900, allowBlender2901,

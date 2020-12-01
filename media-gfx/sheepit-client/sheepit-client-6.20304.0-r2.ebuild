@@ -549,7 +549,7 @@ wrong checksum"
 			src/com/sheepit/client/hardware/gpu/GPU.java || die
 	fi
 
-	eapply "${FILESDIR}/sheepit-client-6.20304.0-r1-renderer-version-picker.patch"
+	eapply "${FILESDIR}/sheepit-client-6.20304.0-r2-renderer-version-picker.patch"
 
 	if use system-blender ; then
 		if use gentoo-blender ; then
