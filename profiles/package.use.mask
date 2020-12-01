@@ -8,7 +8,7 @@ liri-base/liri-meta appcenter
 media-gfx/sheepit-client disable-hard-version-blocks
 
 # No longer distributed by service
-media-gfx/sheepit-client blender2831 blender2832
+media-gfx/sheepit-client blender2831 blender2832 blender2836 blender2900
 
 # Untested.  Please report back to remove hard use mask
 >=sys-kernel/genkernel-4 subdir_mount
