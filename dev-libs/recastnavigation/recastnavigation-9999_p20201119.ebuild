@@ -16,7 +16,7 @@ RDEPEND="demo? (
 DEPEND="${RDEPEND}
 	>=sys-devel/gcc-8.0"
 inherit eutils toolchain-funcs
-EGIT_COMMIT="65b314a44e92d5e07d943e7523455ad4d391dfaa"
+EGIT_COMMIT="c32297c2f9532a55a11c00f22ec763d771d3dae5"
 SRC_URI="\
 https://github.com/${PN}/${PN}/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
