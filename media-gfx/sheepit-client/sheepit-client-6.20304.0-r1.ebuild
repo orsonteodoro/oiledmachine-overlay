@@ -100,11 +100,11 @@ SLOT="0"
 
 IUSE=" +benchmark blender blender279b blender279b_filmic blender280 \
 blender281a blender282 blender2831 blender2831 blender2832 blender2836 \
-blender2900 blender2901 allow-unknown-renderers disable-hard-version-blocks \
-cuda doc firejail intel-ocl lts +opencl opencl_rocm opencl_orca opencl_pal \
-opengl_mesa pro-drivers split-drivers system-blender gentoo-blender no-repacks \
-video_cards_amdgpu video_cards_i965 video_cards_iris video_cards_nvidia \
-video_cards_radeonsi"
+blender2839 blender2900 blender2901 blender2910 allow-unknown-renderers \
+disable-hard-version-blocks cuda doc firejail intel-ocl lts +opencl \
+opencl_rocm opencl_orca opencl_pal opengl_mesa pro-drivers split-drivers \
+system-blender gentoo-blender no-repacks video_cards_amdgpu video_cards_i965 \
+video_cards_iris video_cards_nvidia video_cards_radeonsi"
 REQUIRED_USE="
 	allow-unknown-renderers? ( blender !system-blender )
 	benchmark
@@ -208,11 +208,11 @@ RDEPEND="
 		system-blender? (
 			gentoo-blender? (
 				blender2836? (
-					~media-gfx/blender-2.83.6[bullet,collada,color-management,cycles,dds,-debug,elbeem,fftw,-headless,nls,openexr,openimagedenoise,openimageio,opensubdiv,openvdb,openxr,osl,tiff]
+					~media-gfx/blender-2.83.9[bullet,collada,color-management,cycles,dds,-debug,elbeem,fftw,-headless,nls,openexr,openimagedenoise,openimageio,opensubdiv,openvdb,openxr,osl,tiff]
 					sci-physics/bullet
 				)
 				blender2901? (
-					~media-gfx/blender-2.83.6[bullet,collada,color-management,cycles,dds,-debug,elbeem,embree,fftw,-headless,nls,openexr,openimagedenoise,openimageio,opensubdiv,openvdb,openxr,osl,tiff]
+					~media-gfx/blender-2.90.1[bullet,collada,color-management,cycles,dds,-debug,elbeem,embree,fftw,-headless,nls,openexr,openimagedenoise,openimageio,opensubdiv,openvdb,openxr,osl,tiff]
 					media-libs/embree[raymask]
 					sci-physics/bullet
 				)
@@ -231,6 +231,7 @@ RDEPEND="
 				blender2836? ( ~media-gfx/blender-2.83.6[cycles,build_creator(+),release(+)] )
 				blender2900? ( ~media-gfx/blender-2.90.0[cycles,build_creator(+),release(+)] )
 				blender2901? ( ~media-gfx/blender-2.90.1[cycles,build_creator(+),release(+)] )
+				blender2910? ( ~media-gfx/blender-2.91.0[cycles,build_creator(+),release(+)] )
 			)
 		)
 	)
@@ -285,7 +286,12 @@ SRC_URI="https://gitlab.com/sheepitrenderfarm/client/-/archive/v${PV}/client-v${
 -> ${PN}-${PV}.tar.bz2"
 S="${WORKDIR}/client-v${PV}"
 RESTRICT="mirror"
-WRAPPER_VERSION="3.0.0"
+WRAPPER_VERSION="3.0.0" # .sh file
+GRADLE_V="6.3" # ~Mar 2020
+EXPECTED_GRADLE_WRAPPER_JAR_SHA256=\
+"1cef53de8dc192036e7b0cc47584449b0cf570a00d560bfaa6c9eabe06e1fc06"
+# For the Wrapper JAR Checksum, see also
+# https://gradle.org/release-checksums/
 
 show_codename_docs() {
 	einfo
@@ -498,6 +504,17 @@ disable_hardblock() {
 }
 
 src_prepare() {
+	X_GRADLE_WRAPPER_JAR_SHA256=$(sha256sum \
+		"${S}/gradle/wrapper/gradle-wrapper.jar" \
+		| cut -f 1 -d " ")
+	if [[ "${X_GRADLE_WRAPPER_JAR_SHA256}" \
+		!= "${EXPECTED_GRADLE_WRAPPER_JAR_SHA256}" ]] ; then
+		die \
+"X_GRADLE_WRAPPER_JAR_SHA256=${X_GRADLE_WRAPPER_JAR_SHA256} \
+EXPECTED_GRADLE_WRAPPER_JAR_SHA256=${EXPECTED_GRADLE_WRAPPER_JAR_SHA256} \
+wrong checksum"
+	fi
+
 	if ! use system-blender ; then
 		ewarn
 		ewarn "Security notices:"
@@ -532,7 +549,7 @@ src_prepare() {
 			src/com/sheepit/client/hardware/gpu/GPU.java || die
 	fi
 
-	eapply "${FILESDIR}/sheepit-client-6.20304.0-renderer-version-picker.patch"
+	eapply "${FILESDIR}/sheepit-client-6.20304.0-r1-renderer-version-picker.patch"
 
 	if use system-blender ; then
 		if use gentoo-blender ; then
@@ -602,6 +619,11 @@ src_prepare() {
 			enable_hardblock "HARDBLOCK_BLENDER_2836"
 		fi
 	fi
+	if ! use blender2839 ; then
+		if ! use disable-hard-version-blocks ; then
+			enable_hardblock "HARDBLOCK_BLENDER_2839"
+		fi
+	fi
 	if ! use blender2900 ; then
 		if ! use disable-hard-version-blocks ; then
 			enable_hardblock "HARDBLOCK_BLENDER_2900"
@@ -610,6 +632,11 @@ src_prepare() {
 	if ! use blender2901 ; then
 		if ! use disable-hard-version-blocks ; then
 			enable_hardblock "HARDBLOCK_BLENDER_2901"
+		fi
+	fi
+	if ! use blender2910 ; then
+		if ! use disable-hard-version-blocks ; then
+			enable_hardblock "HARDBLOCK_BLENDER_2910"
 		fi
 	fi
 }
@@ -695,6 +722,14 @@ src_install() {
 		fi
 		allowed_renderers+=" --allow-blender2836"
 	fi
+	if use blender2839 ; then
+		if ! use system-blender ; then
+			dodoc -r "${FILESDIR}/blender-2.83.9-licenses"
+			use doc \
+			dodoc -r "${FILESDIR}/blender-2.83.9-readmes"
+		fi
+		allowed_renderers+=" --allow-blender2839"
+	fi
 	if use blender2900 ; then
 		if ! use system-blender ; then
 			dodoc -r "${FILESDIR}/blender-2.90.0-licenses"
@@ -710,6 +745,14 @@ src_install() {
 			dodoc -r "${FILESDIR}/blender-2.90.1-readmes"
 		fi
 		allowed_renderers+=" --allow-blender2901"
+	fi
+	if use blender2910 ; then
+		if ! use system-blender ; then
+			dodoc -r "${FILESDIR}/blender-2.91.0-licenses"
+			use doc \
+			dodoc -r "${FILESDIR}/blender-2.91.0-readmes"
+		fi
+		allowed_renderers+=" --allow-blender2910"
 	fi
 	if use allow-unknown-renderers ; then
 		allowed_renderers+=" --allow-unknown-renderers"
