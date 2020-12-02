@@ -57,7 +57,7 @@ inherit check-reqs cmake-utils desktop electron-app eutils user xdg
 MY_PN="GDevelop"
 MY_PV="${PV//_/-}"
 # For the SFML version, see
-# https://github.com/4ian/GDevelop/blob/v5.0.0-beta101/ExtLibs/CMakeLists.txt
+# https://github.com/4ian/GDevelop/blob/v5.0.0-beta102/ExtLibs/CMakeLists.txt
 SFML_V="2.4.1"
 SRC_URI=\
 "https://github.com/4ian/GDevelop/archive/v${MY_PV}.tar.gz \
@@ -466,7 +466,11 @@ IDE_MODE=\"Web_Browser\"\n\
 After saving IDE_MODE in gdevelop.conf, make sure that you:\n\
 \`chown \${USER}:\${USER} ~/.config/gdevelop/gdevelop.conf\`\n\
 \`chmod go-w ~/.config/gdevelop/gdevelop.conf\`."
-	ewarn "Games may send anonymous statistics.  See the following commits for details:"
-	ewarn "https://github.com/4ian/GDevelop/commit/5d62f0c92655a3d83b8d5763c87d0226594478d1"
-	ewarn "https://github.com/4ian/GDevelop/commit/f650a6aa9cf5d123f1e5fe632a2523f2ac2faaaf"
+	ewarn \
+"\n\
+Games may send anonymous statistics.  See the following commits for details:\n\
+https://github.com/4ian/GDevelop/commit/5d62f0c92655a3d83b8d5763c87d0226594478d1\n\
+https://github.com/4ian/GDevelop/commit/f650a6aa9cf5d123f1e5fe632a2523f2ac2faaaf\n\
+\n"
+	ewarn
 }
