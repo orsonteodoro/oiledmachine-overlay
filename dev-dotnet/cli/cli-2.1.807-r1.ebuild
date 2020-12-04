@@ -14,59 +14,35 @@ LICENSE="all-rights-reserved
 	Apache-2.0
 	ISOC-rfc
 	MIT"
-KEYWORDS="~amd64 ~arm ~arm64"
-# https://github.com/dotnet/core/blob/master/release-notes/3.1/3.1-supported-os.md
+KEYWORDS="~amd64 ~arm"
+# https://github.com/dotnet/core/blob/master/release-notes/2.1/2.1-supported-os.md
 VERSION_SUFFIX=''
-# DO NOT SET DropSuffix=true in 3.1.  Required by Microsoft.DotNet.Arcade.Sdk
-DropSuffix="false" # true=official latest release, false=dev for live ebuilds
+DropSuffix="true" # true=official latest release, false=dev for live ebuilds
 IUSE="debug doc man man-latest test"
-CORE_V="3.1.5" # see eng/Versions.props \
-	# under MicrosoftNETCoreAppRuntimewinx64PackageVersion
-SDK_V="3.1.200-preview-014946" # from global.json
-# The URIs are constructed from: https://dot.net/v1/dotnet-install.sh
-DOTNET_CLI_COMMIT="367c515ce40a394f53f00597cacc884a25cce495" # exactly ${PV}
+SDK_V="2.1.403" # from run-build.sh ; line 168
+DOTNET_CLI_COMMIT="4824df803cfd5096338d58ab78c452441843b1a1" # exactly ${PV}
 # We need to cache the dotnet-sdk tarball outside the sandbox otherwise we have
 # to keep downloading it everytime the sandbox is wiped.
 SDK_BASEURI="https://dotnetcli.azureedge.net/dotnet/Sdk/${SDK_V}"
-RUNTIME_BASEURI="https://dotnetcli.azureedge.net/dotnet/Runtime"
-# Missing 1.1.2 of dotnet-runtime is EOL as well as all 1.1.x
-#    ${RUNTIME_BASEURI}/1.1.2/dotnet-runtime-1.1.2-linux-x64.tar.gz
-#    ${RUNTIME_BASEURI}/1.1.2/dotnet-runtime-1.1.2-linux-arm.tar.gz
-#    ${RUNTIME_BASEURI}/1.1.2/dotnet-runtime-1.1.2-linux-arm64.tar.gz
-# Missing:
-#    ${RUNTIME_BASEURI}/2.0.0/dotnet-runtime-2.0.0-linux-arm64.tar.gz
-# ${CORE_V} based on MicrosoftNETCoreAppRuntimePackageVersion in eng/Versions.props
-# 2.0.0, 2.2.0, 1.1.2 referenced in eng/restore-toolset.sh
 if [[ "${DropSuffix}" == "true" ]] ; then
 SRC_URI="\
 https://github.com/dotnet/${PN}/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz
 "
 fi
 SRC_URI+="\
-  amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz
-    ${RUNTIME_BASEURI}/2.0.0/dotnet-runtime-2.0.0-linux-x64.tar.gz
-    ${RUNTIME_BASEURI}/2.2.0/dotnet-runtime-2.2.0-linux-x64.tar.gz
-    ${RUNTIME_BASEURI}/${CORE_V}/dotnet-runtime-${CORE_V}-linux-x64.tar.gz
-  )
-  arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz
-    ${RUNTIME_BASEURI}/2.0.0/dotnet-runtime-2.0.0-linux-arm.tar.gz
-    ${RUNTIME_BASEURI}/2.2.0/dotnet-runtime-2.2.0-linux-arm.tar.gz
-    ${RUNTIME_BASEURI}/${CORE_V}/dotnet-runtime-${CORE_V}-linux-arm.tar.gz
-  )
-  arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz
-    ${RUNTIME_BASEURI}/2.2.0/dotnet-runtime-2.2.0-linux-arm64.tar.gz
-    ${RUNTIME_BASEURI}/${CORE_V}/dotnet-runtime-${CORE_V}-linux-arm64.tar.gz
-  )"
+  amd64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-x64.tar.gz )
+  arm? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm.tar.gz )
+  arm64? ( ${SDK_BASEURI}/dotnet-sdk-${SDK_V}-linux-arm64.tar.gz )"
 SLOT="${PV}"
-# see scripts/docker/ubuntu.16.04/Dockerfile for dependencies
-# See https://github.com/dotnet/cli/blob/v3.1.301/Documentation/manpages/tool/README.md \
+# See scripts/docker/ubuntu.16.04/Dockerfile for dependencies
+# See https://github.com/dotnet/cli/blob/v2.1.807/Documentation/manpages/tool/README.md \
 #   for man page dependendies
-PYTHON_COMPAT=( python3_{6,7} )
+PYTHON_COMPAT=( python3_{6..9} )
 inherit python-single-r1
 REQUIRED_USE="man-latest? ( man ^^ ( $(python_gen_useflags 'python3*') ) )"
 RDEPEND="
 	>=app-crypt/mit-krb5-1.13.2
-	 =dev-dotnet/coreclr-3.1.5*
+	 =dev-dotnet/coreclr-2.1.19*
 	>=dev-libs/icu-55.1
 	>=dev-libs/openssl-compat-1.0.2o
 	>=dev-util/lttng-ust-2.7.1
@@ -90,16 +66,15 @@ DEPEND="${RDEPEND}
 	>=sys-devel/make-4.1"
 _PATCHES=(
 	"${FILESDIR}/${PN}-2.1.505-null-LastWriteTimeUtc-minval.patch"
-	"${FILESDIR}/${PN}-3.1.301-limit-maxHttpRequestsPerSource-to-1.patch"
+	"${FILESDIR}/${PN}-2.1.807-limit-maxHttpRequestsPerSource-to-1.patch"
 	"${FILESDIR}/${PN}-3.1.301-fix-manpage-dotnet-test-generation.patch"
-	"${FILESDIR}/${PN}-3.1.301-msbuild-RestoreDisableParallel-true.patch"
+	"${FILESDIR}/${PN}-2.1.807-disable-parallel-in-proj-and-targets.patch"
 )
 RESTRICT="mirror"
 inherit git-r3
 S="${WORKDIR}/${PN}-${PV}"
 
 pkg_setup() {
-	ewarn "This ebuild is a WIP and does not work."
 	# If FEATURES="-sandbox -usersandbox" are not set dotnet will hang while
 	# compiling.
 	if has sandbox $FEATURES || has usersandbox $FEATURES ; then
@@ -119,11 +94,6 @@ pkg_setup() {
 		x86_64*)  einfo "  x86_64";;
 		*) die "Unsupported CPU architecture";;
 	esac
-
-	if [[ "${DropSuffix}" == "true" ]] ; then
-# See https://github.com/microsoft/msbuild/issues/5311#issuecomment-621308972
-		die "DropSuffix=${DropSuffix} not supported"
-	fi
 	python-single-r1_pkg_setup
 }
 
@@ -133,9 +103,9 @@ _unpack_cli() {
 
 	cd "${S}" || die
 
-	X_SDK_V=$(grep -e "dotnet" global.json | head -n 1 | cut -f 4 -d "\"")
-	if [[ ! -f global.json ]] ; then
-		die "Cannot find global.json"
+	X_SDK_V=$(grep -r -e "--version" run-build.sh | cut -f 4 -d "\"")
+	if [[ ! -f run-build.sh ]] ; then
+		die "Cannot find run-build.sh"
 	elif [[ "${X_SDK_V}" != "${SDK_V}" ]] ; then
 		die \
 "Cached dotnet-sdk in distfiles is not the same as requested.  Update ebuild's \
@@ -143,22 +113,10 @@ SDK_V to ${X_SDK_V}"
 	fi
 }
 
-_unpack_runtime() {
-	local myarch=$(_getarch)
-	mkdir -p "${S}/.dotnet" || die
-	pushd "${S}/.dotnet" || die
-	# See eng/restore-toolset.sh for expected versions
-	if [[ ${ARCH} =~ (arm|amd64) ]] ; then
-		unpack "dotnet-runtime-2.0.0-linux-${myarch}.tar.gz"
-	fi
-	unpack "dotnet-runtime-2.2.0-linux-${myarch}.tar.gz"
-	unpack "dotnet-runtime-${CORE_V}-linux-${myarch}.tar.gz"
-	popd || die
-}
-
 _fetch_cli() {
 	EGIT_REPO_URI="https://github.com/dotnet/${PN}.git"
 	EGIT_COMMIT="v${PV}"
+
 	git-r3_fetch
 	git-r3_checkout
 	cd "${S}" || die
@@ -196,7 +154,6 @@ src_unpack() {
 	fi
 
 	_unpack_stage0_cli
-	_unpack_runtime
 
 	# Gentoo or the sandbox doesn't allow downloads in compile phase so move
 	# here
@@ -219,14 +176,14 @@ _getarch() {
 
 _unpack_stage0_cli() {
 	local myarch=$(_getarch)
-
 	local p
-	p="${S}/.dotnet"
+	p="${S}/.dotnet_stage0/${myarch}"
 	mkdir -p "${p}" || die
 	pushd "${p}" || die
 	tar -xvf "${DISTDIR}/dotnet-sdk-${SDK_V}-linux-${myarch}.tar.gz" || die
 	popd || die
-	[ ! -f "${S}/.dotnet/dotnet" ] && die "dotnet not found"
+	[ ! -f "${S}/.dotnet_stage0/${myarch}/dotnet" ] \
+		&& die "dotnet not found"
 
 	# It has to be done manually if you don't let the installer get the
 	# tarballs.
@@ -240,24 +197,6 @@ _src_prepare() {
 	cd "${S}" || die
 	eapply ${_PATCHES[@]}
 
-	# Common problem in 3.1.x.  darc-int is a private package but it's not
-	# supposed to be there.
-	sed -i -e '/.*darc-int-.*/d' NuGet.config || die
-	# Should be public packages not internal
-	sed -i -e "s|\
-MicrosoftNETCoreAppInternalPackageVersion|\
-MicrosoftNETCoreAppRuntimePackageVersion|g" \
-		global.json || die
-
-	# Prevent from stalling
-	sed -i -e "s|\
-InstallDotNetSharedFramework \"1.1.2\"|\
-#InstallDotNetSharedFramework \"1.1.2\"|" \
-		eng/restore-toolset.sh || die
-
-	sed -i -e "s|dotnet restore|dotnet restore --disable-parallel|g" \
-		eng/common/internal-feed-operations.sh || die
-
 	if use man-latest ; then
 		sed -i -e "s|env python|env ${EPYTHON}|" \
 			Documentation/manpages/tool/man-pandoc-filter.py || die
@@ -267,7 +206,7 @@ InstallDotNetSharedFramework \"1.1.2\"|\
 _src_compile() {
 	cd "${S}" || die
 	local buildargs_corecli=""
-	local mydebug=$(usex debug "Debug" "Release")
+	local mydebug=$(usex debug "debug" "release")
 	local myarch=$(_getarch)
 
 	# Prevent InvalidOperationException: The terminfo database is invalid
@@ -282,14 +221,9 @@ _src_compile() {
 " /property:GitInfoCommitCount=0 /property:GitInfoCommitHash=${DOTNET_CLI_COMMIT}"
 	fi
 
-	# Required by Microsoft.Build.Tasks.Git
-	# See
-	# https://github.com/dotnet/sourcelink/pull/438/files
-	# https://github.com/dotnet/sourcelink/blob/master/src/Microsoft.Build.Tasks.Git.UnitTests/GitOperationsTests.cs#L207
-
-	git remote add origin https://github.com/dotnet/${PN}.git || die
-
-#	buildargs_corecli+=" /p:DotNetBuildFromSource=true"
+	if ! use test ; then
+		buildargs_corecli+=" /t:Compile"
+	fi
 
 	einfo "Building ${PN^^}"
 	ewarn \
@@ -302,11 +236,8 @@ firewalls, or network cards.  Emerge and try again."
 	fi
 }
 
-src_test() {
-	if use test ; then
-		./build.sh --test || die
-	fi
-}
+# tests are already ran after build
+# https://github.com/dotnet/cli/blob/v2.1.807/Documentation/project-docs/developer-guide.md#running-tests
 
 # See https://docs.microsoft.com/en-us/dotnet/core/distribution-packaging
 src_install() {
@@ -314,7 +245,6 @@ src_install() {
 	local ddest="${ED}/${dest}"
 	local dest_sdk="${dest}/sdk/${PV}"
 	local ddest_sdk="${ddest}/sdk/${PV}"
-	local mydebug=$(usex debug "Debug" "Release")
 	local myarch=$(_getarch)
 
 	# Installed files partly based on
@@ -322,19 +252,18 @@ src_install() {
 	# For dotnet runtime libraries and FXR file list see
 # https://www.archlinux.org/packages/community/x86_64/dotnet-runtime/files/
 
-	local d_dotnet="${S}/artifacts/tmp/${mydebug}/dotnet"
-
+	local d_dotnet="${S}/bin/2/linux-${myarch}/dotnet"
 	insinto "${dest_sdk}"
 	doins -r "${d_dotnet}/sdk/${PV}${VERSION_SUFFIX}"/*
 	insinto "${dest}"
 	mv "${d_dotnet}/dotnet" \
 		"${d_dotnet}/dotnet-${PV}" || die
-	doins "${d_dotnet}/dotnet-${PV}" \
-		"${d_dotnet}/templates"
+	doins "${d_dotnet}/dotnet-${PV}"
 
 	chmod 0755 \
 		$(find "${ddest_sdk}" -name "*.exe") \
 		"${ED}/opt/dotnet/dotnet-${PV}" \
+		"${ddest_sdk}/AppHostTemplate/apphost" \
 		|| die
 
 	insinto /usr/share/licenses/${PN}-${PV}
