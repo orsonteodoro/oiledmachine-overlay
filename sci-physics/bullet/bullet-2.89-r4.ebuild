@@ -113,7 +113,7 @@ LICENSE+=" test? ( all-rights-reserved ZLIB )"
 
 
 KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~amd64-linux ~x86-linux"
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_6 )
 inherit cmake-multilib python-r1
 SRC_URI=\
 "https://github.com/bulletphysics/bullet3/archive/${PV}.tar.gz -> ${P}.tar.gz"
