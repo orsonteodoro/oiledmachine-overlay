@@ -15,10 +15,10 @@ RDEPEND="virtual/jpeg"
 DEPEND="${RDEPEND}
 	test? ( dev-cpp/gtest[${MULTILIB_USEDEP}]
 		dev-cpp/gflags[${MULTILIB_USEDEP}] )
-	dev-util/cmake"
+	>=dev-util/cmake-2.8"
 SLOT="0/${PV}"
 inherit cmake-utils
-EGIT_COMMIT="725c64015d10977d0bd021028c00d11099a42f8d"
+EGIT_COMMIT="ad890067f661dc747a975bc55ba3767fe30d4452"
 EGIT_REPO_URI="https://chromium.googlesource.com/libyuv/libyuv"
 FN_DEST="${P}.tar.gz"
 FN_SRC="${EGIT_COMMIT}.tar.gz"
