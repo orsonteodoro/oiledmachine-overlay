@@ -82,7 +82,7 @@ DEPEND_FFMPEG="
 "
 
 DEPEND_QT11EXTRAS="
-	>=dev-qt/qtx11extras-${QT_V}:5
+	>=dev-qt/qtx11extras-${QT_V}:5=
 "
 
 DEPEND_LIBX11="
@@ -171,14 +171,14 @@ DEPEND_PLUGINS_OBS_OUTPUTS="
 
 DEPEND_PLUGINS_OBS_VST="
 	${DEPEND_LIBOBS}
-	>=dev-qt/qtwidgets-${QT_V}:5
+	>=dev-qt/qtwidgets-${QT_V}:5=
 "
 
 DEPEND_PLUGINS_OBS_BROWSER="
 	browser? (
 		|| (
-			>=net-libs/cef-bin-${CEF_V}
-			>=net-libs/cef-${CEF_V}
+			>=net-libs/cef-bin-${CEF_V}:=
+			>=net-libs/cef-${CEF_V}:=
 		)
 	)
 "
@@ -228,11 +228,11 @@ DEPEND_PLUGINS="
 # but could not find headers in obs source for these packages.
 # They were mentioned in the original ebuild.
 DEPEND_UNSOURCED="
-	>=dev-qt/qtdeclarative-${QT_V}:5
-	>=dev-qt/qtmultimedia-${QT_V}:5
-	>=dev-qt/qtnetwork-${QT_V}:5
-	>=dev-qt/qtquickcontrols-${QT_V}:5
-	>=dev-qt/qtsql-${QT_V}:5
+	>=dev-qt/qtdeclarative-${QT_V}:5=
+	>=dev-qt/qtmultimedia-${QT_V}:5=
+	>=dev-qt/qtnetwork-${QT_V}:5=
+	>=dev-qt/qtquickcontrols-${QT_V}:5=
+	>=dev-qt/qtsql-${QT_V}:5=
 "
 
 # See libobs/CMakeLists.txt
@@ -254,11 +254,11 @@ DEPEND_UI="
 	${DEPEND_FFMPEG}
 	${DEPEND_LIBOBS}
 	${DEPEND_QT11EXTRAS}
-	>=dev-qt/qtcore-5.9.5:5
-	>=dev-qt/qtsvg-${QT_V}:5
-	>=dev-qt/qtgui-${QT_V}:5
-	>=dev-qt/qtwidgets-${QT_V}:5
-	>=dev-qt/qtxml-${QT_V}:5
+	>=dev-qt/qtcore-5.9.5:5=
+	>=dev-qt/qtsvg-${QT_V}:5=
+	>=dev-qt/qtgui-${QT_V}:5=
+	>=dev-qt/qtwidgets-${QT_V}:5=
+	>=dev-qt/qtxml-${QT_V}:5=
 "
 
 # See deps/libff/CMakeLists.txt
@@ -318,7 +318,7 @@ DEPEND="
 	${DEPEND_DEPS}
 	${DEPEND_PLUGINS}
 	${DEPEND_UI}
-	>=dev-qt/qtwidgets-${QT_V}:5
+	>=dev-qt/qtwidgets-${QT_V}:5=
 	test? ( ${DEPEND_LIBOBS} )
 "
 RDEPEND="${DEPEND}"
