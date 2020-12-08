@@ -372,6 +372,16 @@ qt_check() {
 pkg_setup() {
 	qt_check
 	use python && python-single-r1_pkg_setup
+
+	if use browser ; then
+		if [[ "${ABI}" =~ "ppc" ]] ; then
+			if ! has_version "net-libs/cef" ; then
+				die \
+"There is no (Chromium Embedded Framework) for this platform.  Disable the \
+browser USE flag."
+			fi
+		fi
+	fi
 }
 
 src_unpack() {
