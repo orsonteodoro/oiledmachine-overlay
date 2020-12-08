@@ -20,21 +20,18 @@ OBS_BROWSER_COMMIT="6162c93f370f0dfb71ed5ff0b6efac1648ec0da4"
 OBS_VST_COMMIT="cca219fa3613dbc65de676ab7ba29e76865fa6f8"
 OBS_FTL_SDK_COMMIT="d0c8469f66806b5ea738d607f7d2b000af8b1129"
 CEF_V="87.1.11"
-CEF_COMMIT="g8bb7705"
-CEF_DL_V="${CEF_V}%2B${CEF_COMMIT}"
-CHROMIUM_V="87.0.4280.66"
 
 SRC_URI="
 https://github.com/obsproject/${PN}/archive/${PV}.tar.gz \
 	-> ${P}.tar.gz
 https://github.com/obsproject/obs-amd-encoder/archive/${OBS_AMD_ENCODER_COMMIT}.tar.gz \
-	-> ${P}-obs-amd-encoder.tar.gz
+	-> obs-amd-encoder-${OBS_AMD_ENCODER_COMMIT}.tar.gz
 https://github.com/obsproject/obs-browser/archive/${OBS_BROWSER_COMMIT}.tar.gz \
-	-> ${P}-obs-browser.tar.gz
+	-> obs-browser-${OBS_BROWSER_COMMIT}.tar.gz
 https://github.com/obsproject/obs-vst/archive/${OBS_VST_COMMIT}.tar.gz \
-	-> ${P}-obs-vst.tar.gz
+	-> obs-vst-${OBS_VST_COMMIT}.tar.gz
 https://github.com/mixer/ftl-sdk/archive/${OBS_FTL_SDK_COMMIT}.tar.gz \
-	-> ${P}-ftl-sdk.tar.gz
+	-> ftl-sdk-${OBS_FTL_SDK_COMMIT}.tar.gz
 "
 KEYWORDS="~amd64 ~ppc64 ~x86"
 
