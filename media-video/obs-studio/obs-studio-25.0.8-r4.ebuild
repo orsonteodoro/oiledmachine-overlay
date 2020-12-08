@@ -22,10 +22,10 @@ HOMEPAGE="https://obsproject.com"
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="+alsa fdk imagemagick jack luajit nvenc pulseaudio python speex +ssl truetype v4l vlc"
-IUSE+=" vaapi video_cards_amdgpu video_cards_amdgpu-pro \
-video_cards_amdgpu-pro-lts video_cards_intel video_cards_iris video_cards_i965 \
-video_cards_r600 video_cards_radeonsi"
+IUSE="+alsa fdk imagemagick jack luajit nvenc pulseaudio python speex +ssl \
+truetype v4l vaapi video_cards_amdgpu video_cards_amdgpu-pro \
+video_cards_amdgpu-pro-lts video_cards_intel video_cards_iris \
+video_cards_i965 video_cards_r600 video_cards_radeonsi vlc"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 REQUIRED_USE+="
 	video_cards_amdgpu? (

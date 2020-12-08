@@ -1,0 +1,522 @@
+# Copyright 1999-2020 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=7
+
+DESCRIPTION="Software for Recording and Streaming Live Video Content"
+HOMEPAGE="https://obsproject.com"
+LICENSE="
+	GPL-2
+	browser? ( BSD )
+"
+
+CMAKE_REMOVE_MODULES_LIST=( FindFreetype )
+PYTHON_COMPAT=( python3_{6..9} ) # 18.04 is only 3.6
+
+inherit cmake-utils python-single-r1 xdg-utils
+
+OBS_AMD_ENCODER_COMMIT="aa502039e3ab9a1ec6d13b42c491aaebf06b57ad"
+OBS_BROWSER_COMMIT="6162c93f370f0dfb71ed5ff0b6efac1648ec0da4"
+OBS_VST_COMMIT="cca219fa3613dbc65de676ab7ba29e76865fa6f8"
+OBS_FTL_SDK_COMMIT="d0c8469f66806b5ea738d607f7d2b000af8b1129"
+CEF_V="87.1.11"
+CEF_COMMIT="g8bb7705"
+CEF_DL_V="${CEF_V}%2B${CEF_COMMIT}"
+CHROMIUM_V="87.0.4280.66"
+
+SRC_URI="
+https://github.com/obsproject/${PN}/archive/${PV}.tar.gz \
+	-> ${P}.tar.gz
+https://github.com/obsproject/obs-amd-encoder/archive/${OBS_AMD_ENCODER_COMMIT}.tar.gz \
+	-> ${P}-obs-amd-encoder.tar.gz
+https://github.com/obsproject/obs-browser/archive/${OBS_BROWSER_COMMIT}.tar.gz \
+	-> ${P}-obs-browser.tar.gz
+https://github.com/obsproject/obs-vst/archive/${OBS_VST_COMMIT}.tar.gz \
+	-> ${P}-obs-vst.tar.gz
+https://github.com/mixer/ftl-sdk/archive/${OBS_FTL_SDK_COMMIT}.tar.gz \
+	-> ${P}-ftl-sdk.tar.gz
+"
+KEYWORDS="~amd64 ~ppc64 ~x86"
+
+
+SLOT="0"
+IUSE="+alsa -browser -decklink fdk imagemagick jack +luajit nvenc pulseaudio \
++python +speexdsp speex +ssl -test truetype v4l vaapi video_cards_amdgpu \
+video_cards_amdgpu-pro video_cards_amdgpu-pro-lts video_cards_intel \
+video_cards_iris video_cards_i965 video_cards_r600 video_cards_radeonsi \
+vlc"
+REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
+REQUIRED_USE+="
+	video_cards_amdgpu? (
+		!video_cards_amdgpu-pro
+		!video_cards_amdgpu-pro-lts
+	)
+	video_cards_amdgpu-pro? (
+		!video_cards_amdgpu
+		!video_cards_amdgpu-pro-lts
+	)
+	video_cards_amdgpu-pro-lts? (
+		!video_cards_amdgpu
+		!video_cards_amdgpu-pro
+	)
+"
+
+# Based on 18.04 See
+# azure-pipelines.yml
+# .github/workflows/main.yml
+# deps/obs-scripting/obslua/CMakeLists.txt
+# deps/obs-scripting/obspython/CMakeLists.txt
+BDEPEND="
+	>=dev-util/cmake-3.10.2
+	>=dev-util/pkgconfig-0.29.1
+	luajit? ( >=dev-lang/swig-3.0.12 )
+	python? ( >=dev-lang/swig-3.0.12 )
+	test? ( >=dev-util/cmocka-1.1.1 )
+"
+
+FFMPEG_V="3.4.2"
+LIBVA_V="2.1.0"
+LIBX11_V="1.6.4"
+MESA_V="18"
+QT_V="5.9.5"
+
+DEPEND_FFMPEG="
+	>=media-video/ffmpeg-${FFMPEG_V}:=
+"
+
+DEPEND_QT11EXTRAS="
+	>=dev-qt/qtx11extras-${QT_V}:5
+"
+
+DEPEND_LIBX11="
+        >=x11-libs/libX11-${LIBX11_V}
+"
+
+DEPEND_LIBXCB="
+        >=x11-libs/libxcb-1.13
+"
+
+# >=dev-libs/jansson-2.5 # in cmake
+DEPEND_JANSSON="
+	>=dev-libs/jansson-2.11
+"
+
+DEPEND_ZLIB="
+	>=sys-libs/zlib-1.2.11
+"
+
+# See UI/frontend-plugins/decklink-output-ui/CMakeLists.txt
+DEPEND_PLUGINS_DECKLINK_OUTPUT_UI="
+	${DEPEND_QT11EXTRAS}
+	${DEPEND_LIBX11}
+"
+
+# See UI/frontend-plugins/frontend-tools/CMakeLists.txt
+DEPEND_PLUGINS_FRONTEND_TOOLS="
+	${DEPEND_QT11EXTRAS}
+	${DEPEND_LIBX11}
+"
+
+# See plugins/linux-capture/CMakeLists.txt
+DEPEND_PLUGINS_LINUX_CAPTURE="
+	${DEPEND_GLAD}
+	${DEPEND_LIBOBS}
+	${DEPEND_LIBX11}
+	${DEPEND_LIBXCB}
+        >=x11-libs/libXcomposite-0.4.4
+        >=x11-libs/libXfixes-5.0.3
+        >=x11-libs/libXinerama-1.1.3
+        >=x11-libs/libXrandr-1.5.1
+"
+
+# For vaapi support, see source code at
+# https://github.com/obsproject/obs-studio/pull/1482/commits/2dc67f140d8156d9000db57786e53a4c1597c097
+# No video_cards_nouveau x264 encode from inspection of the Mesa driver, but for decode yes.
+DEPEND_PLUGINS_OBS_FFMPEG="
+	nvenc? (
+		|| (
+			<media-video/ffmpeg-4[nvenc]
+			>=media-video/ffmpeg-4[video_cards_nvidia]
+		)
+	)
+	vaapi? ( >=media-video/ffmpeg-${FFMPEG_V}[vaapi,x264]
+		  >=x11-libs/libva-${LIBVA_V}
+		  || ( video_cards_amdgpu? (
+				>=media-libs/mesa-${MESA_V}[gallium,vaapi,video_cards_radeonsi]
+		       )
+		       video_cards_amdgpu-pro? (
+				x11-drivers/amdgpu-pro[open-stack,vaapi]
+		       )
+		       video_cards_amdgpu-pro-lts? (
+				x11-drivers/amdgpu-pro-lts[open-stack,vaapi]
+		       )
+		       video_cards_i965? ( >=x11-libs/libva-${LIBVA_V}[video_cards_i965] )
+		       video_cards_intel? ( >=x11-libs/libva-${LIBVA_V}[video_cards_intel] )
+		       video_cards_iris? ( x11-libs/libva-intel-media-driver )
+		       video_cards_r600? ( >=media-libs/mesa-${MESA_V}[gallium,vaapi,video_cards_r600] )
+		       video_cards_radeonsi? ( >=media-libs/mesa-${MESA_V}[gallium,vaapi,video_cards_radeonsi] )
+		  )
+	)"
+
+DEPEND_CURL="
+	>=net-misc/curl-7.58
+"
+
+DEPEND_PLUGINS_OBS_OUTPUTS="
+	ssl? (
+		>=net-libs/mbedtls-2.8:=
+	)
+	${DEPEND_CURL}
+	${DEPEND_JANSSON}
+	${DEPEND_LIBOBS}
+	${DEPEND_ZLIB}
+"
+
+DEPEND_PLUGINS_OBS_VST="
+	${DEPEND_LIBOBS}
+	>=dev-qt/qtwidgets-${QT_V}:5
+"
+
+DEPEND_PLUGINS_OBS_BROWSER="
+	browser? (
+		|| (
+			>=net-libs/cef-bin-${CEF_V}
+			>=net-libs/cef-${CEF_V}
+		)
+	)
+"
+
+# See
+# plugins/linux-alsa/CMakeLists.txt
+# plugins/linux-jack/CMakeLists.txt
+# plugins/linux-v4l2/CMakeLists.txt
+# plugins/obs-ffmpeg/CMakeLists.txt
+# plugins/obs-ffmpeg/ffmpeg-mux/CMakeLists.txt
+# plugins/obs-filters/CMakeLists.txt
+# plugins/obs-libfdk/CMakeLists.txt
+# plugins/rtmp-services/CMakeLists.txt
+# plugins/text-freetype2/CMakeLists.txt
+# plugins/vlc-video/CMakeLists.txt
+# >=media-sound/jack2-1.9.12
+# >=sys-fs/udev-237
+DEPEND_PLUGINS="
+	${DEPEND_DEPS_FILE_UPDATER}
+	${DEPEND_DEPS_MEDIA_PLAYBACK}
+	${DEPEND_PLUGINS_DECKLINK_OUTPUT_UI}
+	${DEPEND_PLUGINS_FRONTEND_TOOLS}
+	${DEPEND_PLUGINS_LINUX_CAPTURE}
+	${DEPEND_PLUGINS_OBS_BROWSER}
+	${DEPEND_PLUGINS_OBS_FFMPEG}
+	${DEPEND_PLUGINS_OBS_OUTPUTS}
+	${DEPEND_CURL}
+	${DEPEND_LIBOBS}
+	>=media-libs/x264-0.0.20171224
+	>=media-video/ffmpeg-${FFMPEG_V}:=[x264]
+	alsa? ( >=media-libs/alsa-lib-1.1.3 )
+	fdk? ( >=media-libs/fdk-aac-1.5:= )
+	jack? ( virtual/jack )
+	speex? ( >=media-libs/speexdsp-1.2 )
+	truetype? (
+		>=media-libs/fontconfig-2.12.6
+		>=media-libs/freetype-2.8.1
+	)
+	v4l? (
+		>=media-libs/libv4l-1.14.2
+		virtual/udev
+	)
+	vlc? ( >=media-video/vlc-3.0.1:= )
+"
+
+# These are not mentioned in .github/workflows/main.yml
+# but could not find headers in obs source for these packages.
+# They were mentioned in the original ebuild.
+DEPEND_UNSOURCED="
+	>=dev-qt/qtdeclarative-${QT_V}:5
+	>=dev-qt/qtmultimedia-${QT_V}:5
+	>=dev-qt/qtnetwork-${QT_V}:5
+	>=dev-qt/qtquickcontrols-${QT_V}:5
+	>=dev-qt/qtsql-${QT_V}:5
+"
+
+# See libobs/CMakeLists.txt
+DEPEND_LIBOBS="
+	${DEPEND_FFMPEG}
+	${DEPEND_JANSSON}
+	${DEPEND_LIBX11}
+	${DEPEND_LIBXCB}
+	${DEPEND_ZLIB}
+	>=sys-apps/dbus-1.12.2
+	pulseaudio? ( >=media-sound/pulseaudio-11.1 )
+	imagemagick? ( >=media-gfx/imagemagick-6.9.7.4:= )
+"
+
+# See UI/CMakeLists.txt
+# qtcore, qtgui is in UI folder but not in *.cmake or CMakeLists.txt
+DEPEND_UI="
+	${DEPEND_CURL}
+	${DEPEND_FFMPEG}
+	${DEPEND_LIBOBS}
+	${DEPEND_QT11EXTRAS}
+	>=dev-qt/qtcore-5.9.5:5
+	>=dev-qt/qtsvg-${QT_V}:5
+	>=dev-qt/qtgui-${QT_V}:5
+	>=dev-qt/qtwidgets-${QT_V}:5
+	>=dev-qt/qtxml-${QT_V}:5
+"
+
+# See deps/libff/CMakeLists.txt
+DEPEND_DEPS_LIBFF="
+	${DEPEND_FFMPEG}
+"
+
+# Found in multiple CMakeLists.txt
+DEPEND_MESA="
+	>=media-libs/mesa-18
+"
+
+# See deps/glad/CMakeLists.txt
+DEPEND_GLAD="
+	${DEPEND_MESA}
+	${DEPEND_LIBX11}
+"
+
+# See libobs-opengl/CMakeLists.txt
+DEPEND_LIBOBS_OPENGL="
+	${DEPEND_GLAD}
+	${DEPEND_LIBOBS}
+	${DEPEND_LIBX11}
+	${DEPEND_LIBXCB}
+	${DEPEND_MESA}
+"
+
+# See deps/obs-scripting/CMakeLists.txt
+DEPEND_DEPS_OBS_SCRIPTING="
+	${DEPEND_LIBOBS}
+	python? ( ${PYTHON_DEPS} )
+	luajit? ( >=dev-lang/luajit-2.1:2 )
+"
+
+# See deps/media-playback/CMakeLists.txt
+DEPEND_DEPS_MEDIA_PLAYBACK="
+	${DEPEND_FFMPEG}
+"
+
+# See deps/file-updater/CMakeLists.txt
+DEPEND_DEPS_FILE_UPDATER="
+	${DEPEND_CURL}
+"
+
+# See deps/CMakeLists.txt
+DEPEND_DEPS="
+	${DEPEND_DEPS_FILE_UPDATER}
+	${DEPEND_DEPS_LIBFF}
+	${DEPEND_DEPS_MEDIA_PLAYBACK}
+	${DEPEND_DEPS_OBS_SCRIPTING}
+	${DEPEND_JANSSON}
+"
+
+# See CMakeLists.txt
+#	${DEPEND_UNSOURCED} # testing as disabled
+DEPEND="
+	${DEPEND_DEPS}
+	${DEPEND_PLUGINS}
+	${DEPEND_UI}
+	>=dev-qt/qtwidgets-${QT_V}:5
+	test? ( ${DEPEND_LIBOBS} )
+"
+RDEPEND="${DEPEND}"
+
+#PATCHES=( "${FILESDIR}/${PN}-25.0.8-gcc-10-build.patch" )
+
+qt_check() {
+	QTCORE_PV=$(pkg-config --modversion Qt5Core)
+	QTGUI_PV=$(pkg-config --modversion Qt5Gui)
+#	QTMULTIMEDIA_PV=$(pkg-config --modversion Qt5Multimedia)
+#	QTNETWORK_PV=$(pkg-config --modversion Qt5Network)
+#	QTSQL_PV=$(pkg-config --modversion Qt5Sql)
+	QTSVG_PV=$(pkg-config --modversion Qt5Svg)
+#	QTQML_PV=$(pkg-config --modversion Qt5Qml)
+#	QTQUICKCONTROLS_PV=$(pkg-config --modversion Qt5QuickControls)
+	QTWIDGETS_PV=$(pkg-config --modversion Qt5Widgets)
+	QTX11EXTRAS_PV=$(pkg-config --modversion Qt5X11Extras)
+	QTXML_PV=$(pkg-config --modversion Qt5Xml)
+	if ver_test ${QTCORE_PV} -ne ${QTGUI_PV} ; then
+		die "Qt5Core is not the same version as Qt5Gui"
+	fi
+#	if ver_test ${QTCORE_PV} -ne ${QTMULTIMEDIA_PV} ; then
+#		die "Qt5Core is not the same version as Qt5Multimedia"
+#	fi
+#	if ver_test ${QTCORE_PV} -ne ${QTNETWORK_PV} ; then
+#		die "Qt5Core is not the same version as Qt5Network"
+#	fi
+#	if ver_test ${QTCORE_PV} -ne ${QTSQL_PV} ; then
+#		die "Qt5Core is not the same version as Qt5Sql"
+#	fi
+	if ver_test ${QTCORE_PV} -ne ${QTSVG_PV} ; then
+		die "Qt5Core is not the same version as Qt5Svg"
+	fi
+#	if ver_test ${QTCORE_PV} -ne ${QTQML_PV} ; then
+#		die "Qt5Core is not the same version as Qt5Qml (qtdeclarative)"
+#	fi
+#	if ver_test ${QTCORE_PV} -ne ${QTQUICKCONTROLS_PV} ; then
+#		die "Qt5Core is not the same version as Qt5QuickControls"
+#	fi
+	if ver_test ${QTCORE_PV} -ne ${QTWIDGETS_PV} ; then
+		die "Qt5Core is not the same version as Qt5Widgets"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTX11EXTRAS_PV} ; then
+		die "Qt5Core is not the same version as Qt5X11Extras"
+	fi
+	if ver_test ${QTCORE_PV} -ne ${QTXML_PV} ; then
+		die "Qt5Core is not the same version as Qt5Xml"
+	fi
+}
+
+pkg_setup() {
+	qt_check
+	use python && python-single-r1_pkg_setup
+}
+
+src_unpack() {
+	unpack ${A}
+	rm -rf \
+		"${S}/plugins/enc-amf" \
+		"${S}/plugins/obs-browser" \
+		"${S}/plugins/obs-outputs/ftl-sdk" \
+		"${S}/plugins/obs-vst"
+	ln -s "${WORKDIR}/obs-amd-encoder-${OBS_AMD_ENCODER_COMMIT}" \
+		"${S}/plugins/enc-amf" || die
+	ln -s "${WORKDIR}/obs-browser-${OBS_BROWSER_COMMIT}" \
+		"${S}/plugins/obs-browser" || die
+	ln -s "${WORKDIR}/ftl-sdk-${OBS_FTL_SDK_COMMIT}" \
+		"${S}/plugins/obs-outputs/ftl-sdk" || die
+	ln -s "${WORKDIR}/obs-vst-${OBS_VST_COMMIT}" \
+		"${S}/plugins/obs-vst" || die
+	if use browser ; then
+		ewarn "The browser USE flag is a Work In Progress (WIP)"
+		if [[ -d "${EROOT}/opt/cef-bin/${ABI}" ]] ; then
+			cp -a "${EROOT}/opt/cef-bin/${ABI}" \
+				"${WORKDIR}/cef" || die
+		else
+			cp -a "${EROOT}/opt/cef/${ABI}" \
+				"${WORKDIR}/cef" || die
+		fi
+	fi
+}
+
+src_prepare() {
+	cmake-utils_src_prepare
+	# typo
+	sed -i -e "s|LIBVA_LBRARIES|LIBVA_LIBRARIES|g" plugins/obs-ffmpeg/CMakeLists.txt || die
+}
+
+src_configure() {
+	local libdir=$(get_libdir)
+	local mycmakeargs=(
+		-DBUILD_BROWSER=$(usex browser)
+		-DBUILD_TESTS=$(usex test)
+		-DDISABLE_ALSA=$(usex !alsa)
+		-DDISABLE_DECKLINK=$(usex !decklink)
+		-DDISABLE_OSS=ON
+		-DDISABLE_FREETYPE=$(usex !truetype)
+		-DDISABLE_JACK=$(usex !jack)
+		-DDISABLE_LIBFDK=$(usex !fdk)
+		-DDISABLE_PLUGINS=OFF
+		-DDISABLE_PULSEAUDIO=$(usex !pulseaudio)
+		-DDISABLE_V4L2=$(usex !v4l)
+		-DDISABLE_VLC=$(usex !vlc)
+		-DLIBOBS_PREFER_IMAGEMAGICK=$(usex imagemagick)
+		-DOBS_MULTIARCH_SUFFIX=${libdir#lib}
+		-DUNIX_STRUCTURE=1
+		-DWITH_RTMPS=$(usex ssl)
+	)
+
+	if [ "${PV}" != "9999" ]; then
+		mycmakeargs+=(
+			-DOBS_VERSION_OVERRIDE=${PV}
+		)
+	fi
+
+	if use browser ; then
+		mycmakeargs+=(
+			-DCEF_ROOT_DIR="${WORKDIR}/cef"
+		)
+	fi
+
+	if use luajit || use python; then
+		mycmakeargs+=(
+			-DDISABLE_LUA=$(usex !luajit)
+			-DDISABLE_PYTHON=$(usex !python)
+			-DENABLE_SCRIPTING=yes
+		)
+	else
+		mycmakeargs+=( -DENABLE_SCRIPTING=no )
+	fi
+
+	if use speex ; then
+		mycmakeargs+=(
+			-DDISABLE_SPEEXDSP=$(usex !speexdsp)
+		)
+	else
+		mycmakeargs+=(
+			-DDISABLE_SPEEXDSP=ON
+		)
+	fi
+
+	if use vaapi ; then
+		mycmakeargs+=(
+			-DLIBVA_LIBRARIES=$($(get_abi_CHOST ${ABI})-pkg-config --libs libva)
+		)
+	fi
+
+	cmake-utils_src_configure
+}
+
+src_install() {
+	cmake-utils_src_install
+	#external plugins may need some things not installed by default, install them here
+	insinto /usr/include/obs/UI/obs-frontend-api
+	doins UI/obs-frontend-api/obs-frontend-api.h
+}
+
+pkg_postinst() {
+	xdg_icon_cache_update
+
+	if ! use alsa && ! use pulseaudio; then
+		elog
+		elog "For the audio capture features to be available,"
+		elog "either the 'alsa' or the 'pulseaudio' USE-flag needs to"
+		elog "be enabled."
+		elog
+	fi
+
+	if ! has_version "sys-apps/dbus"; then
+		elog
+		elog "The 'sys-apps/dbus' package is not installed, but"
+		elog "could be used for disabling hibernating, screensaving,"
+		elog "and sleeping.  Where it is not installed,"
+		elog "'xdg-screensaver reset' is used instead"
+		elog "(if 'x11-misc/xdg-utils' is installed)."
+		elog
+	fi
+}
+
+pkg_postrm() {
+	xdg_icon_cache_update
+
+	if use vaapi ; then
+		if use video_cards_intel || use video_cards_i965 ; then
+			einfo "Intel Quick Sync Video, or Sandy Bridge (Gen2+) is required for hardware accelerated H.264 VA-API encode."
+			einfo "For details see https://github.com/intel/intel-vaapi-driver/blob/master/NEWS"
+			einfo "See the AVC row at https://en.wikipedia.org/wiki/Intel_Quick_Sync_Video#Hardware_decoding_and_encoding"
+		fi
+		if use video_cards_iris ; then
+			einfo "Intel Broadwell or newer is required for hardware accelerated H.264 VA-API encode."
+			einfo "See https://github.com/intel/media-driver for details"
+		fi
+		if use video_cards_amdgpu || use video_cards_amdgpu-pro || use video_cards_amdgpu-pro-lts || use video_cards_r600 || use video_cards_radeonsi  ; then
+			einfo "You need VCE (Video Code Engine) or VCN (Video Core Next) for hardware accelerated H.264 VA-API encode."
+			einfo "For details see https://en.wikipedia.org/wiki/Video_Coding_Engine#Feature_overview"
+		fi
+       fi
+}
