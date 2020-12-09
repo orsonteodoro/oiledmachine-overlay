@@ -12,7 +12,7 @@ LICENSE="
 
 CMAKE_REMOVE_MODULES_LIST=( FindFreetype )
 PYTHON_COMPAT=( python3_{6..9} ) # 18.04 is only 3.6
-
+CMAKE_MAKEFILE_GENERATOR="emake"
 inherit cmake-utils python-single-r1 xdg-utils
 
 OBS_AMD_ENCODER_COMMIT="aa502039e3ab9a1ec6d13b42c491aaebf06b57ad"
@@ -37,11 +37,11 @@ KEYWORDS="~amd64 ~ppc64 ~x86"
 
 
 SLOT="0"
-IUSE="+alsa -browser -decklink fdk imagemagick jack +luajit nvenc pulseaudio \
-+python +speexdsp speex +ssl -test truetype v4l vaapi video_cards_amdgpu \
-video_cards_amdgpu-pro video_cards_amdgpu-pro-lts video_cards_intel \
-video_cards_iris video_cards_i965 video_cards_r600 video_cards_radeonsi \
-vlc"
+IUSE="+alsa -browser -decklink fdk imagemagick jack +luajit nvenc oss \
+pulseaudio +python +speexdsp +ssl -test freetype v4l2 vaapi \
+video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts \
+video_cards_intel video_cards_iris video_cards_i965 video_cards_r600 \
+video_cards_radeonsi vlc"
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 REQUIRED_USE+="
 	video_cards_amdgpu? (
@@ -212,12 +212,12 @@ DEPEND_PLUGINS="
 	alsa? ( >=media-libs/alsa-lib-1.1.3 )
 	fdk? ( >=media-libs/fdk-aac-1.5:= )
 	jack? ( virtual/jack )
-	speex? ( >=media-libs/speexdsp-1.2 )
-	truetype? (
+	speexdsp? ( >=media-libs/speexdsp-1.2 )
+	freetype? (
 		>=media-libs/fontconfig-2.12.6
 		>=media-libs/freetype-2.8.1
 	)
-	v4l? (
+	v4l2? (
 		>=media-libs/libv4l-1.14.2
 		virtual/udev
 	)
@@ -322,8 +322,7 @@ DEPEND="
 	test? ( ${DEPEND_LIBOBS} )
 "
 RDEPEND="${DEPEND}"
-
-#PATCHES=( "${FILESDIR}/${PN}-25.0.8-gcc-10-build.patch" )
+MAKEOPTS="-j1"
 
 qt_check() {
 	QTCORE_PV=$(pkg-config --modversion Qt5Core)
@@ -402,19 +401,50 @@ src_unpack() {
 	if use browser ; then
 		ewarn "The browser USE flag is a Work In Progress (WIP)"
 		if [[ -d "${EROOT}/opt/cef-bin/${ABI}" ]] ; then
-			cp -a "${EROOT}/opt/cef-bin/${ABI}" \
+			cp -rT "${EROOT}/opt/cef-bin/${ABI}" \
 				"${WORKDIR}/cef" || die
 		else
-			cp -a "${EROOT}/opt/cef/${ABI}" \
+			cp -rT "${EROOT}/usr/$(get_libdir)/cef" \
 				"${WORKDIR}/cef" || die
 		fi
 	fi
 }
 
+src_prepare_cef() {
+	pushd "${WORKDIR}/cef" || die
+		# cefsimple is a problem
+		rm -rf "${WORKDIR}/cef/tests" || die
+
+		S="${WORKDIR}/cef" CMAKE_USE_DIR="${WORKDIR}/cef" \
+		BUILD_DIR="${WORKDIR}/cef" \
+		cmake-utils_src_prepare
+	popd
+}
+
 src_prepare() {
 	cmake-utils_src_prepare
-	# typo
-	sed -i -e "s|LIBVA_LBRARIES|LIBVA_LIBRARIES|g" plugins/obs-ffmpeg/CMakeLists.txt || die
+	# typos
+	sed -i -e "s|LIBVA_LBRARIES|LIBVA_LIBRARIES|g" \
+		plugins/obs-ffmpeg/CMakeLists.txt || die
+	sed -i -e "s|libcef_dll_wrapper.a|libcef_dll_wrapper.so|g" \
+		plugins/obs-browser/FindCEF.cmake || die
+	src_prepare_cef
+}
+
+src_configure_cef() {
+	pushd "${WORKDIR}/cef" || die
+		S="${WORKDIR}/cef" CMAKE_USE_DIR="${WORKDIR}/cef" \
+		BUILD_DIR="${WORKDIR}/cef" \
+		cmake-utils_src_configure
+	popd
+}
+
+src_build_cef() {
+	local mycmakeargs=(
+		-DCMAKE_BUILD_TYPE=$(usex test "Debug" "Release")
+	)
+	src_configure_cef
+	src_compile_cef
 }
 
 src_configure() {
@@ -424,13 +454,14 @@ src_configure() {
 		-DBUILD_TESTS=$(usex test)
 		-DDISABLE_ALSA=$(usex !alsa)
 		-DDISABLE_DECKLINK=$(usex !decklink)
-		-DDISABLE_OSS=ON
-		-DDISABLE_FREETYPE=$(usex !truetype)
+		-DDISABLE_FREETYPE=$(usex !freetype)
 		-DDISABLE_JACK=$(usex !jack)
 		-DDISABLE_LIBFDK=$(usex !fdk)
+		-DDISABLE_OSS=$(usex kernel_FreeBSD $(usex !oss) ON)
 		-DDISABLE_PLUGINS=OFF
 		-DDISABLE_PULSEAUDIO=$(usex !pulseaudio)
-		-DDISABLE_V4L2=$(usex !v4l)
+		-DDISABLE_SPEEXDSP=$(usex !speexdsp)
+		-DDISABLE_V4L2=$(usex !v4l2)
 		-DDISABLE_VLC=$(usex !vlc)
 		-DLIBOBS_PREFER_IMAGEMAGICK=$(usex imagemagick)
 		-DOBS_MULTIARCH_SUFFIX=${libdir#lib}
@@ -445,6 +476,7 @@ src_configure() {
 	fi
 
 	if use browser ; then
+		local cef_bt=$(usex test "Debug" "Release")
 		mycmakeargs+=(
 			-DCEF_ROOT_DIR="${WORKDIR}/cef"
 		)
@@ -460,23 +492,29 @@ src_configure() {
 		mycmakeargs+=( -DENABLE_SCRIPTING=no )
 	fi
 
-	if use speex ; then
-		mycmakeargs+=(
-			-DDISABLE_SPEEXDSP=$(usex !speexdsp)
-		)
-	else
-		mycmakeargs+=(
-			-DDISABLE_SPEEXDSP=ON
-		)
-	fi
-
 	if use vaapi ; then
 		mycmakeargs+=(
-			-DLIBVA_LIBRARIES=$($(get_abi_CHOST ${ABI})-pkg-config --libs libva)
+			VA_LIBS=$($(get_abi_CHOST ${ABI})-pkg-config --libs libva)
+			-DLIBVA_LIBRARIES="${VA_LIBS}"
 		)
 	fi
 
+	# Build before detection
+	src_build_cef
+
 	cmake-utils_src_configure
+}
+
+src_compile_cef() {
+	pushd "${WORKDIR}/cef" || die
+		S="${WORKDIR}/cef" CMAKE_USE_DIR="${WORKDIR}/cef" \
+		BUILD_DIR="${WORKDIR}/cef" \
+		cmake-utils_src_compile
+	popd
+}
+
+src_compile() {
+	cmake-utils_src_compile
 }
 
 src_install() {

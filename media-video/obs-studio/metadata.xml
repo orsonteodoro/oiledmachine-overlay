@@ -27,25 +27,41 @@
     are mutually exclusive.  Choose one.
   </longdescription>
   <use>
+    <flag name="browser">Enable adding web pages as a source.</flag>
+    <flag name="decklink">Enable support for DeckLink devices.</flag>
     <flag name="fdk">Enable libfdk support for AAC encoding.</flag>
-    <flag name="imagemagick">Use ImageMagick for image loading instead of FFmpeg.</flag>
+    <flag name="imagemagick">Use ImageMagick for image loading instead of
+      FFmpeg.</flag>
+    <flag name="jack">Enable jack support.</flag>
     <flag name="luajit">Build support for scripting via Luajit.</flag>
     <flag name="nvenc">Enable NVENC encoding for nVidia video cards.</flag>
+    <flag name="oss">Enable OSS support in FreeBSD.</flag>
+    <flag name="pulse">Enable PulseAudio support.</flag>
     <flag name="python">Build support for scripting via Python 3.</flag>
-    <flag name="speex">Enable noise suppression filter support via
+    <flag name="speexdsp">Enable noise suppression filter support via
       <pkg>media-libs/speexdsp</pkg>.</flag>
     <flag name="ssl">Build support for TLS/SSL connections (RTMPS) via
       <pkg>net-libs/mbedtls</pkg>.</flag>
+    <flag name="freetype">Builds the Freetype text plugin.</flag>
+    <flag name="test">Build test parts.</flag>
+    <flag name="v4l">Build v4l2 support.</flag>
     <flag name="vaapi">Enable hardware H264 encoding via VA-API.</flag>
-    <flag name="vlc">Build support for using <pkg>media-video/vlc</pkg> as a media source.</flag>
+    <flag name="vlc">Build support for using <pkg>media-video/vlc</pkg> as a
+      media source.</flag>
     <flag name="video_cards_amdgpu">Prefer the Gallium Mesa VA-API driver</flag>
-    <flag name="video_cards_amdgpu-pro">Prefer the unilib AMDGPU-PRO VA-API driver</flag>
-    <flag name="video_cards_amdgpu-pro-lts">Prefer the multilib AMDGPU-PRO VA-API driver</flag>
-    <flag name="video_cards_i965">Prefer the Intel VA-API driver for Sandy Bridge to pre-Broadwell</flag>
-    <flag name="video_cards_intel">Prefer the Intel VA-API driver for Sandy Bridge to pre-Broadwell</flag>
-    <flag name="video_cards_iris">Prefer the Intel VA-API driver for Broadwell and newer</flag>
+    <flag name="video_cards_amdgpu-pro">Prefer the unilib AMDGPU-PRO VA-API
+      driver</flag>
+    <flag name="video_cards_amdgpu-pro-lts">Prefer the multilib AMDGPU-PRO
+      VA-API driver</flag>
+    <flag name="video_cards_i965">Prefer the Intel VA-API driver for Sandy
+      Bridge to pre-Broadwell</flag>
+    <flag name="video_cards_intel">Prefer the Intel VA-API driver for Sandy
+      Bridge to pre-Broadwell</flag>
+    <flag name="video_cards_iris">Prefer the Intel VA-API driver for Broadwell
+      and newer</flag>
     <flag name="video_cards_r600">Prefer the Gallium Mesa VA-API driver</flag>
-    <flag name="video_cards_radeonsi">Prefer the Gallium Mesa VA-API driver</flag>
+    <flag name="video_cards_radeonsi">Prefer the Gallium Mesa VA-API
+      driver</flag>
   </use>
   <upstream>
     <remote-id type="github">obsproject/obs-studio</remote-id>
