@@ -14,23 +14,25 @@ CMAKE_REMOVE_MODULES_LIST=( FindFreetype )
 PYTHON_COMPAT=( python3_{6..9} ) # 18.04 is only 3.6
 inherit cmake-utils flag-o-matic python-single-r1 xdg-utils
 
-OBS_AMD_ENCODER_COMMIT="aa502039e3ab9a1ec6d13b42c491aaebf06b57ad"
+#OBS_AMD_ENCODER_COMMIT="aa502039e3ab9a1ec6d13b42c491aaebf06b57ad"
 OBS_BROWSER_COMMIT="6162c93f370f0dfb71ed5ff0b6efac1648ec0da4"
 OBS_VST_COMMIT="cca219fa3613dbc65de676ab7ba29e76865fa6f8"
 OBS_FTL_SDK_COMMIT="d0c8469f66806b5ea738d607f7d2b000af8b1129"
 CEF_V="87.1.11"
 
+# The obs-amd-encoder submodule currently doesn't support Linux
+#https://github.com/obsproject/obs-amd-encoder/archive/${OBS_AMD_ENCODER_COMMIT}.tar.gz \
+#	-> obs-amd-encoder-${OBS_AMD_ENCODER_COMMIT}.tar.gz
+# Service is gone, module is licensed as MIT
+#https://github.com/mixer/ftl-sdk/archive/${OBS_FTL_SDK_COMMIT}.tar.gz \
+#	-> ftl-sdk-${OBS_FTL_SDK_COMMIT}.tar.gz
 SRC_URI="
 https://github.com/obsproject/${PN}/archive/${PV}.tar.gz \
 	-> ${P}.tar.gz
-https://github.com/obsproject/obs-amd-encoder/archive/${OBS_AMD_ENCODER_COMMIT}.tar.gz \
-	-> obs-amd-encoder-${OBS_AMD_ENCODER_COMMIT}.tar.gz
 https://github.com/obsproject/obs-browser/archive/${OBS_BROWSER_COMMIT}.tar.gz \
 	-> obs-browser-${OBS_BROWSER_COMMIT}.tar.gz
 https://github.com/obsproject/obs-vst/archive/${OBS_VST_COMMIT}.tar.gz \
 	-> obs-vst-${OBS_VST_COMMIT}.tar.gz
-https://github.com/mixer/ftl-sdk/archive/${OBS_FTL_SDK_COMMIT}.tar.gz \
-	-> ftl-sdk-${OBS_FTL_SDK_COMMIT}.tar.gz
 "
 KEYWORDS="~amd64 ~ppc64 ~x86"
 
@@ -389,12 +391,12 @@ src_unpack() {
 		"${S}/plugins/obs-browser" \
 		"${S}/plugins/obs-outputs/ftl-sdk" \
 		"${S}/plugins/obs-vst"
-	ln -s "${WORKDIR}/obs-amd-encoder-${OBS_AMD_ENCODER_COMMIT}" \
-		"${S}/plugins/enc-amf" || die
+#	ln -s "${WORKDIR}/obs-amd-encoder-${OBS_AMD_ENCODER_COMMIT}" \
+#		"${S}/plugins/enc-amf" || die
 	ln -s "${WORKDIR}/obs-browser-${OBS_BROWSER_COMMIT}" \
 		"${S}/plugins/obs-browser" || die
-	ln -s "${WORKDIR}/ftl-sdk-${OBS_FTL_SDK_COMMIT}" \
-		"${S}/plugins/obs-outputs/ftl-sdk" || die
+#	ln -s "${WORKDIR}/ftl-sdk-${OBS_FTL_SDK_COMMIT}" \
+#		"${S}/plugins/obs-outputs/ftl-sdk" || die
 	ln -s "${WORKDIR}/obs-vst-${OBS_VST_COMMIT}" \
 		"${S}/plugins/obs-vst" || die
 }
@@ -466,8 +468,8 @@ src_configure() {
 	fi
 
 	if use vaapi ; then
+		VA_LIBS=$($(get_abi_CHOST ${ABI})-pkg-config --libs libva)
 		mycmakeargs+=(
-			VA_LIBS=$($(get_abi_CHOST ${ABI})-pkg-config --libs libva)
 			-DLIBVA_LIBRARIES="${VA_LIBS}"
 		)
 	fi
