@@ -12,7 +12,6 @@ LICENSE="
 
 CMAKE_REMOVE_MODULES_LIST=( FindFreetype )
 PYTHON_COMPAT=( python3_{6..9} ) # 18.04 is only 3.6
-CMAKE_MAKEFILE_GENERATOR="emake"
 inherit cmake-utils flag-o-matic python-single-r1 xdg-utils
 
 OBS_AMD_ENCODER_COMMIT="aa502039e3ab9a1ec6d13b42c491aaebf06b57ad"
@@ -411,8 +410,6 @@ src_prepare() {
 		plugins/obs-ffmpeg/CMakeLists.txt || die
 	sed -i -e "s|libcef_dll_wrapper.a|libcef_dll_wrapper.so|g" \
 		plugins/obs-browser/FindCEF.cmake || die
-	sed -i -e "s|CMAKE_CXX_EXTENSIONS NO|CMAKE_CXX_EXTENSIONS YES|" \
-		CMakeLists.txt || die
 }
 
 src_configure() {
