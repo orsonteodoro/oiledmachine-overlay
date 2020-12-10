@@ -1,0 +1,10 @@
+--- obs-browser-6162c93f370f0dfb71ed5ff0b6efac1648ec0da4/CMakeLists.txt.orig	2020-09-27 11:40:43.000000000 -0700
++++ obs-browser-6162c93f370f0dfb71ed5ff0b6efac1648ec0da4/CMakeLists.txt	2020-12-09 20:01:54.592985298 -0800
+@@ -231,6 +231,7 @@ endif()
+ if (UNIX AND NOT APPLE)
+ 	install(DIRECTORY "${CEF_ROOT_DIR}/Resources/" DESTINATION "${OBS_PLUGIN_DESTINATION}")
+ 	install(DIRECTORY "${CEF_ROOT_DIR}/Release/" DESTINATION "${OBS_PLUGIN_DESTINATION}")
++	install(FILES "${CEF_ROOT_DIR}/libcef_dll_wrapper/libcef_dll_wrapper.so" DESTINATION "${OBS_PLUGIN_DESTINATION}")
+ endif()
+ 
+ if(APPLE AND NOT BROWSER_DEPLOY)

@@ -1,0 +1,348 @@
+URL: https://github.com/obsproject/obs-browser/pull/249
+Modified patch:  Removed browser-version.h hunk
+
+From 08637b959788039f22f8e2d04cb027b902bc1580 Mon Sep 17 00:00:00 2001
+From: pkv <pkv.stream@gmail.com>
+Date: Thu, 26 Nov 2020 15:39:31 +0100
+Subject: [PATCH] Update to new CEF audio API
+
+This updates the audio functions due to API changes
+in CEF & Chromium (AudioService API used for >= 4103).
+Compatibility with CEF 3770 is kept for easier fallback.
+
+The CEF browser subprocess is now loaded via absolute path,
+as 4813 doesn't seem to parse relative path correctly.
+
+Minor version of obs-browser updated to 2.9.0.
+
+Co-authored-by: pkv <pkv@obsproject.com>
+Co-authored-by: WizardCM <matt@obsproject.com>
+---
+ CMakeLists.txt               | 10 +++--
+ browser-client.cpp           | 80 ++++++++++++++++++++++++++++++++++++
+ browser-client.hpp           | 24 ++++++++++-
+ browser-version.h            |  4 +-
+ obs-browser-plugin.cpp       |  6 ++-
+ obs-browser-source-audio.cpp |  3 +-
+ obs-browser-source.cpp       |  6 ++-
+ obs-browser-source.hpp       | 28 +++++++------
+ 8 files changed, 136 insertions(+), 25 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b2e7c4c3..3f1ce184 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -217,15 +217,19 @@ if (WIN32)
+ 		"${CEF_ROOT_DIR}/Release/libGLESv2.dll"
+ 		"${CMAKE_BINARY_DIR}/rundir/$<CONFIGURATION>/obs-plugins/${BITS}bit/"
+ 		COMMAND ${CMAKE_COMMAND} -E copy
+-		"${CEF_ROOT_DIR}/Release/natives_blob.bin"
+-		"${CMAKE_BINARY_DIR}/rundir/$<CONFIGURATION>/obs-plugins/${BITS}bit/"
+-		COMMAND ${CMAKE_COMMAND} -E copy
+ 		"${CEF_ROOT_DIR}/Release/snapshot_blob.bin"
+ 		"${CMAKE_BINARY_DIR}/rundir/$<CONFIGURATION>/obs-plugins/${BITS}bit/"
+ 		COMMAND ${CMAKE_COMMAND} -E copy
+ 		"${CEF_ROOT_DIR}/Release/v8_context_snapshot.bin"
+ 		"${CMAKE_BINARY_DIR}/rundir/$<CONFIGURATION>/obs-plugins/${BITS}bit/"
+ 	)
++	if(EXISTS "${CEF_ROOT_DIR}/Release/natives_blob.bin")
++		add_custom_command(TARGET obs-browser POST_BUILD
++			COMMAND ${CMAKE_COMMAND} -E copy
++			"${CEF_ROOT_DIR}/Release/natives_blob.bin"
++			"${CMAKE_BINARY_DIR}/rundir/$<CONFIGURATION>/obs-plugins/${BITS}bit/"
++		)
++	endif()
+ endif()
+ 
+ if (UNIX AND NOT APPLE)
+diff --git a/browser-client.cpp b/browser-client.cpp
+index ed216a2b..b8f81117 100644
+--- a/browser-client.cpp
++++ b/browser-client.cpp
+@@ -282,7 +282,87 @@ static speaker_layout GetSpeakerLayout(CefAudioHandler::ChannelLayout cefLayout)
+ 	}
+ 	return SPEAKERS_UNKNOWN;
+ }
++#endif
+ 
++#if CHROME_VERSION_BUILD >= 4103
++void BrowserClient::OnAudioStreamStarted(CefRefPtr<CefBrowser> browser,
++					 const CefAudioParameters &params_,
++					 int channels_)
++{
++	channels = channels_;
++	channel_layout = (ChannelLayout)params_.channel_layout;
++	sample_rate = params_.sample_rate;
++	frames_per_buffer = params_.frames_per_buffer;
++}
++
++void BrowserClient::OnAudioStreamPacket(CefRefPtr<CefBrowser> browser,
++					const float **data, int frames,
++					int64_t pts)
++{
++	if (!bs) {
++		return;
++	}
++	struct obs_source_audio audio = {};
++	const uint8_t **pcm = (const uint8_t **)data;
++	speaker_layout speakers = GetSpeakerLayout(channel_layout);
++	int speaker_count = get_audio_channels(speakers);
++	for (int i = 0; i < speaker_count; i++)
++		audio.data[i] = pcm[i];
++	audio.samples_per_sec = sample_rate;
++	audio.frames = frames;
++	audio.format = AUDIO_FORMAT_FLOAT_PLANAR;
++	audio.speakers = speakers;
++	audio.timestamp = (uint64_t)pts * 1000000LLU;
++	obs_source_output_audio(bs->source, &audio);
++}
++
++void BrowserClient::OnAudioStreamStopped(CefRefPtr<CefBrowser> browser)
++{
++	if (!bs) {
++		return;
++	}
++}
++
++void BrowserClient::OnAudioStreamError(CefRefPtr<CefBrowser> browser,
++				       const CefString &message)
++{
++	if (!bs) {
++		return;
++	}
++}
++
++static CefAudioHandler::ChannelLayout Convert2CEFSpeakerLayout(int channels)
++{
++	switch (channels) {
++	case 1:
++		return CEF_CHANNEL_LAYOUT_MONO;
++	case 2:
++		return CEF_CHANNEL_LAYOUT_STEREO;
++	case 3:
++		return CEF_CHANNEL_LAYOUT_2_1;
++	case 4:
++		return CEF_CHANNEL_LAYOUT_4_0;
++	case 5:
++		return CEF_CHANNEL_LAYOUT_4_1;
++	case 6:
++		return CEF_CHANNEL_LAYOUT_5_1;
++	case 8:
++		return CEF_CHANNEL_LAYOUT_7_1;
++	default:
++		return CEF_CHANNEL_LAYOUT_UNSUPPORTED;
++	}
++}
++
++bool BrowserClient::GetAudioParameters(CefRefPtr<CefBrowser> browser,
++				       CefAudioParameters &params)
++{
++	int channels = (int)audio_output_get_channels(obs_get_audio());
++	params.channel_layout = Convert2CEFSpeakerLayout(channels);
++	params.sample_rate = (int)audio_output_get_sample_rate(obs_get_audio());
++	params.frames_per_buffer = kFramesPerBuffer;
++	return true;
++}
++#elif CHROME_VERSION_BUILD >= 3683 && CHROME_VERSION_BUILD < 4103
+ void BrowserClient::OnAudioStreamStarted(CefRefPtr<CefBrowser> browser, int id,
+ 					 int, ChannelLayout channel_layout,
+ 					 int sample_rate, int)
+diff --git a/browser-client.hpp b/browser-client.hpp
+index a6c70abc..bf3c3e2c 100644
+--- a/browser-client.hpp
++++ b/browser-client.hpp
+@@ -50,6 +50,12 @@ class BrowserClient : public CefClient,
+ 	CefRect popupRect;
+ 	CefRect originalPopupRect;
+ 
++#if CHROME_VERSION_BUILD >= 4103
++	int sample_rate;
++	int channels;
++	ChannelLayout channel_layout;
++	int frames_per_buffer;
++#endif
+ 	inline BrowserClient(BrowserSource *bs_, bool sharing_avail,
+ 			     bool reroute_audio_)
+ 		: bs(bs_),
+@@ -126,7 +132,22 @@ class BrowserClient : public CefClient,
+ 					const RectList &dirtyRects,
+ 					void *shared_handle) override;
+ #endif
+-#if CHROME_VERSION_BUILD >= 3683
++#if CHROME_VERSION_BUILD >= 4103
++	virtual void OnAudioStreamPacket(CefRefPtr<CefBrowser> browser,
++					 const float **data, int frames,
++					 int64_t pts) override;
++
++	virtual void OnAudioStreamStopped(CefRefPtr<CefBrowser> browser);
++
++	virtual void OnAudioStreamStarted(CefRefPtr<CefBrowser> browser,
++					  const CefAudioParameters &params,
++					  int channels) override;
++	virtual void OnAudioStreamError(CefRefPtr<CefBrowser> browser,
++					const CefString &message) override;
++	const int kFramesPerBuffer = 1024;
++	virtual bool GetAudioParameters(CefRefPtr<CefBrowser> browser,
++					CefAudioParameters &params);
++#elif CHROME_VERSION_BUILD >= 3683
+ 	virtual void OnAudioStreamPacket(CefRefPtr<CefBrowser> browser,
+ 					 int audio_stream_id,
+ 					 const float **data, int frames,
+@@ -140,7 +161,6 @@ class BrowserClient : public CefClient,
+ 					  ChannelLayout channel_layout,
+ 					  int sample_rate,
+ 					  int frames_per_buffer) override;
+-
+ #endif
+ 	/* CefLoadHandler */
+ 	virtual void OnLoadEnd(CefRefPtr<CefBrowser> browser,
+diff --git a/obs-browser-plugin.cpp b/obs-browser-plugin.cpp
+index 423b76b4..dda8cf5a 100644
+--- a/obs-browser-plugin.cpp
++++ b/obs-browser-plugin.cpp
+@@ -260,7 +260,9 @@ static void BrowserInit(void)
+ 	CefString(&settings.locale) = obs_get_locale();
+ 	CefString(&settings.accept_language_list) = accepted_languages;
+ 	CefString(&settings.cache_path) = conf_path_abs;
+-	CefString(&settings.browser_subprocess_path) = path;
++	char *abs_path = os_get_abs_path_ptr(path.c_str());
++	CefString(&settings.browser_subprocess_path) = abs_path;
++	bfree(abs_path);
+ 
+ 	bool tex_sharing_avail = false;
+ 
+@@ -368,7 +370,7 @@ void RegisterBrowserSource()
+ 	info.video_render = [](void *data, gs_effect_t *) {
+ 		static_cast<BrowserSource *>(data)->Render();
+ 	};
+-#if CHROME_VERSION_BUILD >= 3683
++#if CHROME_VERSION_BUILD >= 3683 && CHROME_VERSION_BUILD < 4103
+ 	info.audio_mix = [](void *data, uint64_t *ts_out,
+ 			    struct audio_output_data *audio_output,
+ 			    size_t channels, size_t sample_rate) {
+diff --git a/obs-browser-source-audio.cpp b/obs-browser-source-audio.cpp
+index 04b670bb..4633cd59 100644
+--- a/obs-browser-source-audio.cpp
++++ b/obs-browser-source-audio.cpp
+@@ -16,7 +16,7 @@
+  ******************************************************************************/
+ 
+ #include "obs-browser-source.hpp"
+-
++#if CHROME_VERSION_BUILD < 4103 && CHROME_VERSION_BUILD >= 3683
+ void BrowserSource::EnumAudioStreams(obs_source_enum_proc_t cb, void *param)
+ {
+ 	std::lock_guard<std::mutex> lock(audio_sources_mutex);
+@@ -86,3 +86,4 @@ bool BrowserSource::AudioMix(uint64_t *ts_out,
+ 	*ts_out = timestamp;
+ 	return true;
+ }
++#endif
+diff --git a/obs-browser-source.cpp b/obs-browser-source.cpp
+index 6a8c317a..c9b0068f 100644
+--- a/obs-browser-source.cpp
++++ b/obs-browser-source.cpp
+@@ -215,7 +215,7 @@ void BrowserSource::DestroyBrowser(bool async)
+ 
+ 	cefBrowser = nullptr;
+ }
+-
++#if CHROME_VERSION_BUILD < 4103 && CHROME_VERSION_BUILD >= 3683
+ void BrowserSource::ClearAudioStreams()
+ {
+ 	QueueCEFTask([this]() {
+@@ -224,7 +224,7 @@ void BrowserSource::ClearAudioStreams()
+ 		audio_sources.clear();
+ 	});
+ }
+-
++#endif
+ void BrowserSource::SendMouseClick(const struct obs_mouse_event *event,
+ 				   int32_t type, bool mouse_up,
+ 				   uint32_t click_count)
+@@ -504,7 +504,9 @@ void BrowserSource::Update(obs_data_t *settings)
+ 
+ 	DestroyBrowser(true);
+ 	DestroyTextures();
++#if CHROME_VERSION_BUILD < 4103 && CHROME_VERSION_BUILD >= 3683
+ 	ClearAudioStreams();
++#endif
+ 	if (!shutdown_on_invisible || obs_source_showing(source))
+ 		create_browser = true;
+ 
+diff --git a/obs-browser-source.hpp b/obs-browser-source.hpp
+index 8dbfd83a..8b2b8657 100644
+--- a/obs-browser-source.hpp
++++ b/obs-browser-source.hpp
+@@ -19,28 +19,30 @@
+ #pragma once
+ 
+ #include <obs-module.h>
+-#include <obs.hpp>
+ 
+ #include "cef-headers.hpp"
+ #include "browser-config.h"
+ #include "browser-app.hpp"
++#include <functional>
++#include <string>
+ 
++#if CHROME_VERSION_BUILD < 4103 && CHROME_VERSION_BUILD >= 3683
++#include <obs.hpp>
+ #include <unordered_map>
+-#include <functional>
+ #include <vector>
+-#include <string>
+ #include <mutex>
+ 
+-#if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT_ENABLED
+-extern bool hwaccel;
+-#endif
+-
+ struct AudioStream {
+ 	OBSSource source;
+ 	speaker_layout speakers;
+ 	int channels;
+ 	int sample_rate;
+ };
++#endif
++
++#if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT_ENABLED
++extern bool hwaccel;
++#endif
+ 
+ struct BrowserSource {
+ 	BrowserSource **p_prev_next = nullptr;
+@@ -83,7 +85,6 @@ struct BrowserSource {
+ 
+ 	bool CreateBrowser();
+ 	void DestroyBrowser(bool async = false);
+-	void ClearAudioStreams();
+ 	void ExecuteOnBrowser(BrowserFunc func, bool async = false);
+ 
+ 	/* ---------------------------- */
+@@ -94,9 +95,15 @@ struct BrowserSource {
+ 	void Update(obs_data_t *settings = nullptr);
+ 	void Tick();
+ 	void Render();
++#if CHROME_VERSION_BUILD < 4103 && CHROME_VERSION_BUILD >= 3683
++	void ClearAudioStreams();
+ 	void EnumAudioStreams(obs_source_enum_proc_t cb, void *param);
+ 	bool AudioMix(uint64_t *ts_out, struct audio_output_data *audio_output,
+ 		      size_t channels, size_t sample_rate);
++	std::mutex audio_sources_mutex;
++	std::vector<obs_source_t *> audio_sources;
++	std::unordered_map<int, AudioStream> audio_streams;
++#endif
+ 	void SendMouseClick(const struct obs_mouse_event *event, int32_t type,
+ 			    bool mouse_up, uint32_t click_count);
+ 	void SendMouseMove(const struct obs_mouse_event *event,
+@@ -112,9 +119,4 @@ struct BrowserSource {
+ #if EXPERIMENTAL_SHARED_TEXTURE_SUPPORT_ENABLED
+ 	inline void SignalBeginFrame();
+ #endif
+-
+-	std::mutex audio_sources_mutex;
+-	std::vector<obs_source_t *> audio_sources;
+-
+-	std::unordered_map<int, AudioStream> audio_streams;
+ };

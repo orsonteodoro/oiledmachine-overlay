@@ -13,7 +13,7 @@ LICENSE="
 CMAKE_REMOVE_MODULES_LIST=( FindFreetype )
 PYTHON_COMPAT=( python3_{6..9} ) # 18.04 is only 3.6
 CMAKE_MAKEFILE_GENERATOR="emake"
-inherit cmake-utils python-single-r1 xdg-utils
+inherit cmake-utils flag-o-matic python-single-r1 xdg-utils
 
 OBS_AMD_ENCODER_COMMIT="aa502039e3ab9a1ec6d13b42c491aaebf06b57ad"
 OBS_BROWSER_COMMIT="6162c93f370f0dfb71ed5ff0b6efac1648ec0da4"
@@ -398,56 +398,29 @@ src_unpack() {
 		"${S}/plugins/obs-outputs/ftl-sdk" || die
 	ln -s "${WORKDIR}/obs-vst-${OBS_VST_COMMIT}" \
 		"${S}/plugins/obs-vst" || die
-	if use browser ; then
-		ewarn "The browser USE flag is a Work In Progress (WIP)"
-		if [[ -d "${EROOT}/opt/cef-bin/${ABI}" ]] ; then
-			cp -rT "${EROOT}/opt/cef-bin/${ABI}" \
-				"${WORKDIR}/cef" || die
-		else
-			cp -rT "${EROOT}/usr/$(get_libdir)/cef" \
-				"${WORKDIR}/cef" || die
-		fi
-	fi
-}
-
-src_prepare_cef() {
-	pushd "${WORKDIR}/cef" || die
-		# cefsimple is a problem
-		rm -rf "${WORKDIR}/cef/tests" || die
-
-		S="${WORKDIR}/cef" CMAKE_USE_DIR="${WORKDIR}/cef" \
-		BUILD_DIR="${WORKDIR}/cef" \
-		cmake-utils_src_prepare
-	popd
 }
 
 src_prepare() {
 	cmake-utils_src_prepare
+	pushd "${WORKDIR}/obs-browser-${OBS_BROWSER_COMMIT}" || die
+		eapply -p1 "${FILESDIR}/obs-browser-9999_p20201126-cef-4103-audio-compat.patch" || true
+		eapply -p1 "${FILESDIR}/obs-studio-25.0.8-install-libcef_dll_wrapper.patch"
+	popd
 	# typos
 	sed -i -e "s|LIBVA_LBRARIES|LIBVA_LIBRARIES|g" \
 		plugins/obs-ffmpeg/CMakeLists.txt || die
 	sed -i -e "s|libcef_dll_wrapper.a|libcef_dll_wrapper.so|g" \
 		plugins/obs-browser/FindCEF.cmake || die
-	src_prepare_cef
-}
-
-src_configure_cef() {
-	pushd "${WORKDIR}/cef" || die
-		S="${WORKDIR}/cef" CMAKE_USE_DIR="${WORKDIR}/cef" \
-		BUILD_DIR="${WORKDIR}/cef" \
-		cmake-utils_src_configure
-	popd
-}
-
-src_build_cef() {
-	local mycmakeargs=(
-		-DCMAKE_BUILD_TYPE=$(usex test "Debug" "Release")
-	)
-	src_configure_cef
-	src_compile_cef
+	sed -i -e "s|CMAKE_CXX_EXTENSIONS NO|CMAKE_CXX_EXTENSIONS YES|" \
+		CMakeLists.txt || die
 }
 
 src_configure() {
+	if use browser ; then
+		strip-flags
+		filter-flags -march=* -O*
+	fi
+
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
 		-DBUILD_BROWSER=$(usex browser)
@@ -476,9 +449,12 @@ src_configure() {
 	fi
 
 	if use browser ; then
-		local cef_bt=$(usex test "Debug" "Release")
+		local cef_suffix=""
+		if has_version 'net-libs/cef-bin' ; then
+			cef_suffix="-bin"
+		fi
 		mycmakeargs+=(
-			-DCEF_ROOT_DIR="${WORKDIR}/cef"
+			-DCEF_ROOT_DIR="${EROOT}/opt/cef${cef_suffix}/${ABI}"
 		)
 	fi
 
@@ -499,18 +475,7 @@ src_configure() {
 		)
 	fi
 
-	# Build before detection
-	src_build_cef
-
 	cmake-utils_src_configure
-}
-
-src_compile_cef() {
-	pushd "${WORKDIR}/cef" || die
-		S="${WORKDIR}/cef" CMAKE_USE_DIR="${WORKDIR}/cef" \
-		BUILD_DIR="${WORKDIR}/cef" \
-		cmake-utils_src_compile
-	popd
 }
 
 src_compile() {
@@ -519,7 +484,7 @@ src_compile() {
 
 src_install() {
 	cmake-utils_src_install
-	#external plugins may need some things not installed by default, install them here
+	# external plugins may need some things not installed by default, install them here
 	insinto /usr/include/obs/UI/obs-frontend-api
 	doins UI/obs-frontend-api/obs-frontend-api.h
 }
@@ -543,6 +508,15 @@ pkg_postinst() {
 		elog "'xdg-screensaver reset' is used instead"
 		elog "(if 'x11-misc/xdg-utils' is installed)."
 		elog
+	fi
+
+	if use browser ; then
+		ewarn
+		ewarn "Security notice:"
+		ewarn "Since the browser feature as a sources uses the Chromium code base,"
+		ewarn "you need to update obs-studio the same time Chromium updates"
+		ewarn "to avoid critical vulerabilities."
+		ewarn
 	fi
 }
 
