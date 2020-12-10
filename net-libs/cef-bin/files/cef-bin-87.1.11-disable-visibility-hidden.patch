@@ -1,0 +1,18 @@
+--- ./cmake/cef_variables.cmake.orig	2020-12-09 11:20:43.009600076 -0800
++++ ./cmake/cef_variables.cmake	2020-12-09 11:21:06.946526815 -0800
+@@ -83,7 +83,6 @@ if(OS_LINUX)
+     -fPIC                           # Generate position-independent code for shared libraries
+     -fstack-protector               # Protect some vulnerable functions from stack-smashing (security feature)
+     -funwind-tables                 # Support stack unwinding for backtrace()
+-    -fvisibility=hidden             # Give hidden visibility to declarations that are not explicitly marked as visible
+     --param=ssp-buffer-size=4       # Set the minimum buffer size protected by SSP (security feature, related to stack-protector)
+     -pipe                           # Use pipes rather than temporary files for communication between build stages
+     -pthread                        # Use the pthread library
+@@ -101,7 +100,6 @@ if(OS_LINUX)
+     -fno-exceptions                 # Disable exceptions
+     -fno-rtti                       # Disable real-time type information
+     -fno-threadsafe-statics         # Don't generate thread-safe statics
+-    -fvisibility-inlines-hidden     # Give hidden visibility to inlined class member functions
+     -std=gnu++11                    # Use the C++11 language standard including GNU extensions
+     -Wsign-compare                  # Warn about mixed signed/unsigned type comparisons
+     )
