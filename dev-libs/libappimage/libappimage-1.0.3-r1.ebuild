@@ -42,7 +42,7 @@ S="${WORKDIR}/${PN}-${PV}"
 S_BAK="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 CMAKE_MAKEFILE_GENERATOR="emake" # required for downloading in compile phase
-inherit cmake-utils cmake-static-libs linux-info
+inherit cmake-utils linux-info
 PATCHES=(
 	"${FILESDIR}/${PN}-1.0.2-use-squashfuse_appimage-for-pkgconfig.patch"
 	"${FILESDIR}/${PN}-1.0.2-same-files-static-build.patch"
