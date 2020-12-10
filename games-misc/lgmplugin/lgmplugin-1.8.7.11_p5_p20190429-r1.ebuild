@@ -75,7 +75,7 @@ src_prepare() {
 	}
 	enigma_foreach_impl platform_prepare
 
-	platform_install() {
+	platform_prepare2() {
 		cd "${BUILD_DIR}" || die
 		ml_install_abi() {
 			cd "${BUILD_DIR}" || die
@@ -83,11 +83,11 @@ src_prepare() {
 		}
 		multilib_foreach_abi ml_install_abi
 	}
-	enigma_foreach_impl platform_install
+	enigma_foreach_impl platform_prepare2
 }
 
 src_compile() {
-	platform_install() {
+	platform_compile() {
 		cd "${BUILD_DIR}" || die
 		ml_install_abi() {
 			cd "${BUILD_DIR}" || die
@@ -95,9 +95,9 @@ src_compile() {
 			MAKEOPTS="-j1" \
 			emake
 		}
-		multilib_foreach_abi ml_install_abi
+		multilib_foreach_abi ml_compile_abi
 	}
-	enigma_foreach_impl platform_install
+	enigma_foreach_impl platform_compile
 }
 
 src_install() {
