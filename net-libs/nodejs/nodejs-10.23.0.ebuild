@@ -4,8 +4,8 @@
 EAPI=7
 PYTHON_COMPAT=( python2_7 )
 PYTHON_REQ_USE="threads"
-inherit bash-completion-r1 eutils flag-o-matic pax-utils python-any-r1 toolchain-funcs xdg-utils
-
+inherit bash-completion-r1 eutils flag-o-matic pax-utils python-any-r1 \
+	toolchain-funcs xdg-utils
 DESCRIPTION="A JavaScript runtime built on Chrome's V8 JavaScript engine"
 HOMEPAGE="https://nodejs.org/"
 LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 MIT"
@@ -13,16 +13,17 @@ SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x64-macos"
-IUSE="cpu_flags_x86_sse2 debug doc icu inspector npm +snapshot +ssl +system-ssl systemtap test"
+IUSE="cpu_flags_x86_sse2 debug doc icu inspector npm +snapshot +ssl \
++system-ssl systemtap test"
 IUSE+=" man"
-REQUIRED_USE="
-	inspector? ( icu ssl )
-	npm? ( ssl )
-	system-ssl? ( ssl )"
-CDEPEND="!net-libs/nodejs:0
-	app-eselect/eselect-nodejs"
+REQUIRED_USE="inspector? ( icu ssl )
+		npm? ( ssl )
+		system-ssl? ( ssl )"
+RESTRICT="test"
 # Keep versions in sync with deps folder
-RDEPEND="${CDEPEND}
+# nodejs uses Chromium's zlib not vanilla zlib
+RDEPEND="!net-libs/nodejs:0
+	app-eselect/eselect-nodejs
 	>=dev-libs/libuv-1.39.0:=
 	>=net-dns/c-ares-1.15.0
 	>=net-libs/http-parser-2.9.3:=
@@ -30,15 +31,11 @@ RDEPEND="${CDEPEND}
 	>=sys-libs/zlib-1.2.11
 	icu? ( >=dev-libs/icu-64.2:= )
 	system-ssl? ( >=dev-libs/openssl-1.1.1g:0= )"
-DEPEND="${CDEPEND}
-	${RDEPEND}
+DEPEND="${RDEPEND}
 	${PYTHON_DEPS}
 	systemtap? ( dev-util/systemtap )
 	test? ( net-misc/curl )"
-PATCHES=(
-	"${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch
-)
-RESTRICT="test"
+PATCHES=( "${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch )
 S="${WORKDIR}/node-v${PV}"
 NPM_V="6.14.8" # See https://github.com/nodejs/node/blob/v10.23.0/deps/npm/package.json
 

@@ -4,53 +4,47 @@
 EAPI=7
 PYTHON_COMPAT=( python3_{7..9} )
 PYTHON_REQ_USE="threads(+)"
-inherit bash-completion-r1 flag-o-matic pax-utils python-any-r1 toolchain-funcs xdg-utils
-
+inherit bash-completion-r1 flag-o-matic pax-utils python-any-r1 \
+	toolchain-funcs xdg-utils
 DESCRIPTION="A JavaScript runtime built on Chrome's V8 JavaScript engine"
 HOMEPAGE="https://nodejs.org/"
 LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 MIT"
 SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x64-macos"
-IUSE="cpu_flags_x86_sse2 debug doc +icu inspector npm pax_kernel +snapshot +ssl system-icu +system-ssl systemtap test"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"
+IUSE="cpu_flags_x86_sse2 debug doc +icu inspector +npm pax_kernel +snapshot \
++ssl system-icu +system-ssl systemtap test"
 IUSE+=" man"
-REQUIRED_USE="
-	inspector? ( icu ssl )
-	npm? ( ssl )
-	system-icu? ( icu )
-	system-ssl? ( ssl )"
-CDEPEND="!net-libs/nodejs:0
-	app-eselect/eselect-nodejs"
+REQUIRED_USE="inspector? ( icu ssl )
+		npm? ( ssl )
+		system-icu? ( icu )
+		system-ssl? ( ssl )"
+# FIXME: test-fs-mkdir fails with "no such file or directory". Investigate.
+RESTRICT="test"
 # Keep versions in sync with deps folder
-RDEPEND="${CDEPEND}
-	>=app-arch/brotli-1.0.9
+# nodejs uses Chromium's zlib not vanilla zlib
+RDEPEND="!net-libs/nodejs:0
+	app-eselect/eselect-nodejs
 	>=dev-libs/libuv-1.40.0:=
-	>=net-dns/c-ares-1.16.1
+	>=net-dns/c-ares-1.17.0
 	>=net-libs/nghttp2-1.41.0
 	>=sys-libs/zlib-1.2.11
-	system-icu? ( >=dev-libs/icu-67.1:= )
+	system-icu? ( >=dev-libs/icu-68.1:= )
 	system-ssl? ( >=dev-libs/openssl-1.1.1g:0= )"
-BDEPEND="${CDEPEND}
-	${PYTHON_DEPS}
+BDEPEND="${PYTHON_DEPS}
 	sys-apps/coreutils
 	systemtap? ( dev-util/systemtap )
 	test? ( net-misc/curl )
 	pax_kernel? ( sys-apps/elfix )"
 DEPEND="${RDEPEND}"
-PATCHES=(
-	"${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch
-)
-RESTRICT="test"
+PATCHES=( "${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="6.14.8" # See https://github.com/nodejs/node/blob/v14.15.1/deps/npm/package.json
+NPM_V="7.0.15" # See https://github.com/nodejs/node/blob/v15.4.0/deps/npm/package.json
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
 		die "Your CPU doesn't support the required SSE2 instruction."
-
-	( [[ ${MERGE_TYPE} != "binary" ]] && ! test-flag-CXX -std=c++11 ) && \
-		die "Your compiler doesn't support C++11. Use GCC 4.8, Clang 3.3 or newer."
 }
 
 pkg_setup() {
@@ -202,17 +196,12 @@ src_install() {
 	fi
 
 	if use npm; then
-		dodir /etc/npm
+		keepdir /etc/npm
 
 		# Install bash completion for `npm`
-		# We need to temporarily replace default config path since
-		# npm otherwise tries to write outside of the sandbox
-		local npm_config="${REL_D_BASE}/node_modules/npm/lib/config/core.js"
-		sed -i -e "s|'/etc'|'${ED}/etc'|g" "${ED}/${npm_config}" || die
 		local tmp_npm_completion_file="$(TMPDIR="${T}" mktemp -t npm.XXXXXXXXXX)"
 		"${ED}/usr/bin/npm" completion > "${tmp_npm_completion_file}"
 		newbashcomp "${tmp_npm_completion_file}" npm
-		sed -i -e "s|'${ED}/etc'|'/etc'|g" "${ED}/${npm_config}" || die
 
 		if use man ; then
 			# Move man pages
