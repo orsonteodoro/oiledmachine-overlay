@@ -12,10 +12,10 @@ HOMEPAGE="https://www.openvdb.org"
 SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MPL-2.0"
-IUSE="+abi7-compat cpu_flags_x86_avx cpu_flags_x86_sse4_2 doc numpy python static-libs test utils"
+IUSE="+abi6-compat cpu_flags_x86_avx cpu_flags_x86_sse4_2 doc numpy python static-libs test utils"
 CXXABI=11
 LLVM_V=9
-SLOT_MAJ="7-${CXXABI}"
+SLOT_MAJ="6"
 SLOT="${SLOT_MAJ}/${PV}"
 KEYWORDS="~amd64 ~x86"
 RESTRICT="!test? ( test )"
@@ -25,7 +25,7 @@ RESTRICT="!test? ( test )"
 # Blender disables python
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
 REQUIRED_USE="
-	abi7-compat
+	abi6-compat
 	!test
 	numpy? ( python )
 	python? ( ${PYTHON_REQUIRED_USE} )
@@ -93,8 +93,10 @@ is greater than \$(nproc)/4"
 
 src_prepare() {
 	cmake_src_prepare
-	sed -i "s|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD ${CXXABI}|" CMakeLists.txt || die
+	# We are only interested parts that don't require c++14.
+	sed -i "s|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD 11|" CMakeLists.txt || die
 	sed -i "s|CMAKE_CXX_STANDARD_REQUIRED ON|CMAKE_CXX_STANDARD_REQUIRED OFF|" CMakeLists.txt || die
+	sed -i -e "s|lib/cmake/glfw|$(get_libdir)/lib/cmake/glfw|g" "cmake/OpenVDBGLFW3Setup.cmake" || die
 }
 
 iprfx() {
@@ -107,7 +109,7 @@ src_configure() {
 	# To stay in sync with blender-libs/boost
 	append-cxxflags -std=c++${CXXABI}
 
-	# Add extra checks for downgrading to c++11
+	# Add extra checks for testing against c++${CXXABI}
 	append-cxxflags -Wall -Werror
 
 	# Relax some warnings
@@ -127,7 +129,7 @@ src_configure() {
 		-DCHOST="${CHOST}"
 		-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}"
 		-DCMAKE_INSTALL_PREFIX="$(iprfx)"
-		-DOPENVDB_ABI_VERSION_NUMBER=${SLOT_MAJ%-*}
+		-DOPENVDB_ABI_VERSION_NUMBER=${SLOT_MAJ}
 		-DOPENVDB_BUILD_DOCS=$(usex doc)
 		-DOPENVDB_BUILD_UNITTESTS=$(usex test)
 		-DOPENVDB_BUILD_VDB_LOD=$(usex !utils)

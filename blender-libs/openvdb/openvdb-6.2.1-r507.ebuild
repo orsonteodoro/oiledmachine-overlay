@@ -12,10 +12,10 @@ HOMEPAGE="https://www.openvdb.org"
 SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MPL-2.0"
-IUSE="+abi6-compat doc python test"
+IUSE="+abi5-compat doc python test"
 CXXABI=11
 LLVM_V=9
-SLOT_MAJ="6"
+SLOT_MAJ="5"
 SLOT="${SLOT_MAJ}/${PV}"
 KEYWORDS="~amd64 ~x86"
 RESTRICT="!test? ( test )"
@@ -24,7 +24,7 @@ RESTRICT="!test? ( test )"
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
 # Prevent file collisions also with ABI masks
 REQUIRED_USE="
-	abi6-compat
+	abi5-compat
 	python? ( ${PYTHON_REQUIRED_USE} )
 	!python
 "
@@ -86,6 +86,11 @@ pkg_setup() {
 "${PN} may lock up or freeze the computer if the N value in MAKEOPTS=\"-jN\" \
 is greater than \$(nproc)/4"
 	fi
+}
+
+src_prepare() {
+	cmake_src_prepare
+	sed -i -e "s|lib/cmake/glfw|$(get_libdir)/lib/cmake/glfw|g" "cmake/OpenVDBGLFW3Setup.cmake" || die
 }
 
 iprfx() {

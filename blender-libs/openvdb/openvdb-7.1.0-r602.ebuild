@@ -12,10 +12,10 @@ HOMEPAGE="https://www.openvdb.org"
 SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MPL-2.0"
-IUSE="+abi7-compat cpu_flags_x86_avx cpu_flags_x86_sse4_2 doc numpy python static-libs test utils"
-CXXABI=14
-LLVM_V=10
-SLOT_MAJ="7-${CXXABI}"
+IUSE="+abi6-compat cpu_flags_x86_avx cpu_flags_x86_sse4_2 doc numpy python static-libs test utils"
+CXXABI=11
+LLVM_V=9
+SLOT_MAJ="6"
 SLOT="${SLOT_MAJ}/${PV}"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 RESTRICT="!test? ( test )"
@@ -25,7 +25,7 @@ RESTRICT="!test? ( test )"
 # Blender disables python
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
 REQUIRED_USE="
-	abi7-compat
+	abi6-compat
 	!test
 	numpy? ( python )
 	python? ( ${PYTHON_REQUIRED_USE} )
@@ -93,8 +93,10 @@ is greater than \$(nproc)/4"
 
 src_prepare() {
 	cmake_src_prepare
+	# We are only interested parts that don't require c++14.
 	sed -i "s|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD ${CXXABI}|" CMakeLists.txt || die
 	sed -i "s|CMAKE_CXX_STANDARD_REQUIRED ON|CMAKE_CXX_STANDARD_REQUIRED OFF|" CMakeLists.txt || die
+	sed -i -e "s|lib/cmake/glfw|$(get_libdir)/lib/cmake/glfw|g" "cmake/OpenVDBGLFW3Setup.cmake" || die
 }
 
 iprfx() {
@@ -112,6 +114,13 @@ src_configure() {
 
 	# Relax some warnings
 	append-cxxflags -Wno-error=class-memaccess -Wno-error=int-in-bool-context
+
+	# make_unique is c++14 and is being used so disable parts that reference it
+	# make_unique was referenced in a header
+
+	# SESI_OPENVDB and SESI_OPENVDB_PRIM code contains c++14 code referencing make_unique but not used.
+
+	# tools/LevelSetMeasure.h contains make_unique but not used by Blender.  So most of it can be c++11 compiled.
 
 	export LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir)"
 	export BOOST_ROOT="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr"

@@ -95,6 +95,7 @@ src_prepare() {
 	cmake_src_prepare
 	sed -i "s|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD ${CXXABI}|" CMakeLists.txt || die
 	sed -i "s|CMAKE_CXX_STANDARD_REQUIRED ON|CMAKE_CXX_STANDARD_REQUIRED OFF|" CMakeLists.txt || die
+	sed -i -e "s|lib/cmake/glfw|$(get_libdir)/lib/cmake/glfw|g" "cmake/OpenVDBGLFW3Setup.cmake" || die
 }
 
 iprfx() {
