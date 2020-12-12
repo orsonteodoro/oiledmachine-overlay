@@ -1,11 +1,11 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# Based on the firefox-82.0.ebuild from the gentoo-overlay
+# Based on the firefox-83.0.ebuild from the gentoo-overlay
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-82-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-83-patches-06.tar.xz"
 
 LLVM_MAX_SLOT=11
 
@@ -72,13 +72,14 @@ _ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 
 IUSE+=" ${_ABIS}"
 IUSE+=" -jemalloc"
 
-REQUIRED_USE="screencast? ( wayland )"
+REQUIRED_USE="debug? ( !system-av1 )
+	screencast? ( wayland )"
 
 BDEPEND="${PYTHON_DEPS}
 	app-arch/unzip
 	app-arch/zip
-	>=dev-util/cbindgen-0.14.3
-	>=net-libs/nodejs-10.19.0
+	>=dev-util/cbindgen-0.15.0
+	>=net-libs/nodejs-10.21.1
 	virtual/pkgconfig[${MULTILIB_USEDEP}]
 	>=dev-lang/rust-1.43.0[${MULTILIB_USEDEP}]
 	!dev-lang/rust-bin
@@ -111,17 +112,15 @@ BDEPEND="${PYTHON_DEPS}
 	lto? (
 		!clang? ( sys-devel/binutils[gold] )
 	)
-	abi_x86_64? ( >=dev-lang/yasm-1.1 )
-	abi_x86_32? ( >=dev-lang/yasm-1.1 )
-	abi_x86_x32? ( >=dev-lang/yasm-1.1 )
+	amd64? ( >=dev-lang/yasm-1.1 )
+	x86? ( >=dev-lang/yasm-1.1 )
 	!system-av1? (
-		abi_x86_64? ( >=dev-lang/nasm-2.13 )
-		abi_x86_32? ( >=dev-lang/nasm-2.13 )
-		abi_x86_x32? ( >=dev-lang/nasm-2.13 )
+		amd64? ( >=dev-lang/nasm-2.13 )
+		x86? ( >=dev-lang/nasm-2.13 )
 	)"
 
 CDEPEND="
-	>=dev-libs/nss-3.57[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.58[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.29[${MULTILIB_USEDEP}]
 	dev-libs/atk[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
@@ -195,9 +194,8 @@ DEPEND="${CDEPEND}
 		)
 	)
 	wayland? ( >=x11-libs/gtk+-3.11:3[wayland,${MULTILIB_USEDEP}] )
-	abi_x86_64? ( virtual/opengl[${MULTILIB_USEDEP}] )
-	abi_x86_32? ( virtual/opengl[${MULTILIB_USEDEP}] )
-	abi_x86_x32? ( virtual/opengl[${MULTILIB_USEDEP}] )"
+	amd64? ( virtual/opengl[${MULTILIB_USEDEP}] )
+	x86? ( virtual/opengl[${MULTILIB_USEDEP}] )"
 # Gentoo's rust-bin package doesn't install the i686 libs.  Use only the
 # compiled version.
 
@@ -389,9 +387,9 @@ pkg_pretend() {
 
 		# Ensure we have enough disk space to compile
 		if use pgo || use lto || use debug ; then
-			CHECKREQS_DISK_BUILD="13G"
+			CHECKREQS_DISK_BUILD="13500M"
 		else
-			CHECKREQS_DISK_BUILD="5600M"
+			CHECKREQS_DISK_BUILD="6400M"
 		fi
 
 		check-reqs_pkg_pretend
@@ -408,9 +406,9 @@ pkg_setup() {
 
 		# Ensure we have enough disk space to compile
 		if use pgo || use lto || use debug ; then
-			CHECKREQS_DISK_BUILD="13G"
+			CHECKREQS_DISK_BUILD="13500M"
 		else
-			CHECKREQS_DISK_BUILD="5600M"
+			CHECKREQS_DISK_BUILD="6400M"
 		fi
 
 		check-reqs_pkg_setup
@@ -575,7 +573,7 @@ src_prepare() {
 
 # corrections based on the ABI being compiled
 _fix_paths() {
-	# For proper rust cargo cross-compile for libloading and glslopt \
+	# For proper rust cargo cross-compile for libloading and glslopt
 	export PKG_CONFIG=${chost}-pkg-config
 	export CROSSCOMPILE=$(rust_abi ${chost})
 	export CARGO_CFG_TARGET_ARCH=$(echo ${chost} | cut -f 1 -d "-")
@@ -725,8 +723,6 @@ multilib_src_configure() {
 	if use kernel_linux && ! use pulseaudio ; then
 		mozconfig_add_options_ac '-pulseaudio' --enable-alsa
 	fi
-
-	mozconfig_use_enable screencast pipewire
 
 	mozconfig_use_enable wifi necko-wifi
 
@@ -930,9 +926,6 @@ multilib_src_configure() {
 	echo "=========================================================="
 	echo
 
-
-	# SHELL: python/mach/mach/mixin/process.py fails to detect SHELL
-
 	TARGET="${chost}" \
 	SHELL="${EPREFIX}/bin/bash" \
 	./mach configure || die
@@ -956,7 +949,8 @@ multilib_src_compile() {
 		addpredict /root
 	fi
 
-	GDK_BACKEND=x11 \
+	local -x GDK_BACKEND=x11
+
 	TARGET="${chost}" \
 	${virtx_cmd} ./mach build --verbose \
 		|| die
@@ -965,23 +959,19 @@ multilib_src_compile() {
 multilib_src_install() {
 	local chost=$(get_abi_CHOST ${ABI})
 	_fix_paths
-	cd "${BUILD_OBJ_DIR}" || die
+	cd "${BUILD_DIR}" || die
 	# xpcshell is getting called during install
 	pax-mark m \
 		"${BUILD_OBJ_DIR}"/dist/bin/xpcshell \
-		"${BUILD_OBJ_DIR}"/dist/bin/firefox \
+		"${BUILD_OBJ_DIR}"/dist/bin/${PN} \
 		"${BUILD_OBJ_DIR}"/dist/bin/plugin-container
-
-	cd "${BUILD_DIR}" || die
 
 	TARGET="${chost}" \
 	MOZ_MAKE_FLAGS="${MAKEOPTS}" SHELL="${SHELL:-${EPREFIX}/bin/bash}" MOZ_NOSPAM=1 \
 	DESTDIR="${D}" ./mach install || die
 
 	# Upstream cannot ship symlink but we can (bmo#658850)
-	if [[ -e "${ED}${MOZILLA_FIVE_HOME}/${PN}-bin" ]] ; then
-		rm "${ED}${MOZILLA_FIVE_HOME}/${PN}-bin" || die
-	fi
+	rm "${ED}${MOZILLA_FIVE_HOME}/${PN}-bin" || die
 	dosym ${PN} ${MOZILLA_FIVE_HOME}/${PN}-bin
 
 	# Don't install llvm-symbolizer from sys-devel/llvm package
