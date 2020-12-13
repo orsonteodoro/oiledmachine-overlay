@@ -39,73 +39,74 @@ IUSE="debug minimal"
 # U >=16.04 LTS assumed, supported only in cef
 # For details see:
 # https://chromium.googlesource.com/chromium/src/+/master/build/install-build-deps.sh?format=TEXT
+# TODO: app-accessibility/speech-dispatcher needs multilib
 CHROMIUM_CDEPEND="
-	>=app-accessibility/at-spi2-atk-2.18.3
+	>=app-accessibility/at-spi2-atk-2.18.3[${MULTILIB_USEDEP}]
 	>=app-accessibility/speech-dispatcher-0.8.3
-	>=dev-db/sqlite-3.11
-	>=dev-libs/glib-2.48:2
-	>=dev-libs/libappindicator-12.10
-	>=dev-libs/libevdev-1.4.6
-	>=dev-libs/libffi-3.2.1
-	>=net-print/cups-2.1.3
-	>=sys-apps/pciutils-3.3.1
-	>=sys-libs/libcap-2.24
-	>=sys-libs/pam-1.1.8
-	>=media-libs/alsa-lib-1.1.0
-	>=media-libs/mesa-11.2.0[gbm]
-	>=sys-apps/util-linux-2.27.1
+	>=dev-db/sqlite-3.11[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.48:2[${MULTILIB_USEDEP}]
+	>=dev-libs/libappindicator-12.10[${MULTILIB_USEDEP}]
+	>=dev-libs/libevdev-1.4.6[${MULTILIB_USEDEP}]
+	>=dev-libs/libffi-3.2.1[${MULTILIB_USEDEP}]
+	>=net-print/cups-2.1.3[${MULTILIB_USEDEP}]
+	>=sys-apps/pciutils-3.3.1[${MULTILIB_USEDEP}]
+	>=sys-libs/libcap-2.24[${MULTILIB_USEDEP}]
+	>=sys-libs/pam-1.1.8[${MULTILIB_USEDEP}]
+	>=media-libs/alsa-lib-1.1.0[${MULTILIB_USEDEP}]
+	>=media-libs/mesa-11.2.0[gbm,${MULTILIB_USEDEP}]
+	>=sys-apps/util-linux-2.27.1[${MULTILIB_USEDEP}]
 	>=sys-libs/glibc-2.23
-	>=x11-libs/cairo-1.14.6
-	>=x11-libs/gtk+-3.18.9:3
-	>=x11-libs/libXtst-1.2.2
-	>=x11-libs/libdrm-2.4.67"
+	>=x11-libs/cairo-1.14.6[${MULTILIB_USEDEP}]
+	>=x11-libs/gtk+-3.18.9:3[${MULTILIB_USEDEP}]
+	>=x11-libs/libXtst-1.2.2[${MULTILIB_USEDEP}]
+	>=x11-libs/libdrm-2.4.67[${MULTILIB_USEDEP}]"
 # Unlisted based on ldd inspection not found in common_lib_list
 UNLISTED_RDEPENDS="
-	net-dns/libidn
-	dev-libs/fribidi
-	dev-libs/gmp
-	dev-libs/libbsd
-	dev-libs/libtasn1
-	dev-libs/libunistring
-	>=dev-libs/nspr-4.11
-	>=dev-libs/nss-3.21
-	dev-libs/nettle
-	media-gfx/graphite2
-	media-libs/harfbuzz
-	media-libs/libglvnd
-	>=media-libs/libpng-1.6.20
-	>=media-libs/mesa-11.2.0[egl]
-	>=x11-libs/libxkbcommon-0.5.0
+	net-dns/libidn[${MULTILIB_USEDEP}]
+	dev-libs/fribidi[${MULTILIB_USEDEP}]
+	dev-libs/gmp[${MULTILIB_USEDEP}]
+	dev-libs/libbsd[${MULTILIB_USEDEP}]
+	dev-libs/libtasn1[${MULTILIB_USEDEP}]
+	dev-libs/libunistring[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-4.11[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.21[${MULTILIB_USEDEP}]
+	dev-libs/nettle[${MULTILIB_USEDEP}]
+	media-gfx/graphite2[${MULTILIB_USEDEP}]
+	media-libs/harfbuzz[${MULTILIB_USEDEP}]
+	media-libs/libglvnd[${MULTILIB_USEDEP}]
+	>=media-libs/libpng-1.6.20[${MULTILIB_USEDEP}]
+	>=media-libs/mesa-11.2.0[egl,${MULTILIB_USEDEP}]
+	>=x11-libs/libxkbcommon-0.5.0[${MULTILIB_USEDEP}]
 "
 CHROMIUM_RDEPEND="
 	${CHROMIUM_CDEPEND}
 	${UNLISTED_RDEPENDS}
 	>=sys-devel/gcc-5.4.0[cxx(+)]
-	>=dev-libs/atk-2.18.0
-	>=dev-libs/expat-2.1.0
-	>=dev-libs/libpcre-8.38
-	dev-libs/wayland
-	>=media-libs/fontconfig-2.11.94
-	>=media-libs/freetype-2.6.1
-	>=x11-libs/libX11-1.6.3
-	>=x11-libs/libXau-1.0.8
-	>=x11-libs/libXcomposite-0.4.4
-	>=x11-libs/libXcursor-1.1.14
-	>=x11-libs/libXdamage-1.1.4
-	>=x11-libs/libXdmcp-1.1.2
-	>=x11-libs/libXext-1.3.3
-	>=x11-libs/libXfixes-5.0.1
-	>=x11-libs/libXi-1.7.6
-	>=x11-libs/libXinerama-1.1.3
-	>=x11-libs/libXrandr-1.5.0
-	>=x11-libs/libXrender-0.9.9
-	>=x11-libs/libxcb-1.6.3
-	>=x11-libs/pango-1.38.1
-	>=x11-libs/pixman-0.33.6
-	>=sys-libs/zlib-1.2.8"
+	>=dev-libs/atk-2.18.0[${MULTILIB_USEDEP}]
+	>=dev-libs/expat-2.1.0[${MULTILIB_USEDEP}]
+	>=dev-libs/libpcre-8.38[${MULTILIB_USEDEP}]
+	dev-libs/wayland[${MULTILIB_USEDEP}]
+	>=media-libs/fontconfig-2.11.94[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-2.6.1[${MULTILIB_USEDEP}]
+	>=x11-libs/libX11-1.6.3[${MULTILIB_USEDEP}]
+	>=x11-libs/libXau-1.0.8[${MULTILIB_USEDEP}]
+	>=x11-libs/libXcomposite-0.4.4[${MULTILIB_USEDEP}]
+	>=x11-libs/libXcursor-1.1.14[${MULTILIB_USEDEP}]
+	>=x11-libs/libXdamage-1.1.4[${MULTILIB_USEDEP}]
+	>=x11-libs/libXdmcp-1.1.2[${MULTILIB_USEDEP}]
+	>=x11-libs/libXext-1.3.3[${MULTILIB_USEDEP}]
+	>=x11-libs/libXfixes-5.0.1[${MULTILIB_USEDEP}]
+	>=x11-libs/libXi-1.7.6[${MULTILIB_USEDEP}]
+	>=x11-libs/libXinerama-1.1.3[${MULTILIB_USEDEP}]
+	>=x11-libs/libXrandr-1.5.0[${MULTILIB_USEDEP}]
+	>=x11-libs/libXrender-0.9.9[${MULTILIB_USEDEP}]
+	>=x11-libs/libxcb-1.6.3[${MULTILIB_USEDEP}]
+	>=x11-libs/pango-1.38.1[${MULTILIB_USEDEP}]
+	>=x11-libs/pixman-0.33.6[${MULTILIB_USEDEP}]
+	>=sys-libs/zlib-1.2.8[${MULTILIB_USEDEP}]"
 RDEPEND="${CHROMIUM_RDEPEND}
-	>=x11-libs/gtk+-2.24.32:2
-	>=x11-libs/gtkglext-1.2.0"
+	>=x11-libs/gtk+-2.24.32:2[${MULTILIB_USEDEP}]
+	>=x11-libs/gtkglext-1.2.0[${MULTILIB_USEDEP}]"
 DEPEND="${RDEPEND}"
 BDEPEND=">=dev-util/cmake-3.10.2"
 S="${WORKDIR}"
