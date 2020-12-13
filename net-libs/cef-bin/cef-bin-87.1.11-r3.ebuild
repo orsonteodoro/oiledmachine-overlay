@@ -76,8 +76,7 @@ UNLISTED_RDEPENDS="
 	media-libs/libglvnd[${MULTILIB_USEDEP}]
 	>=media-libs/libpng-1.6.20[${MULTILIB_USEDEP}]
 	>=media-libs/mesa-11.2.0[egl,${MULTILIB_USEDEP}]
-	>=x11-libs/libxkbcommon-0.5.0[${MULTILIB_USEDEP}]
-"
+	>=x11-libs/libxkbcommon-0.5.0[${MULTILIB_USEDEP}]"
 CHROMIUM_RDEPEND="
 	${CHROMIUM_CDEPEND}
 	${UNLISTED_RDEPENDS}
