@@ -37,6 +37,8 @@ KEYWORDS="~amd64 ~x86"
 IUSE="debug minimal"
 # Based on install-build-deps.sh
 # U >=16.04 LTS assumed, supported only in cef
+# For details see:
+# https://chromium.googlesource.com/chromium/src/+/master/build/install-build-deps.sh?format=TEXT
 CHROMIUM_CDEPEND="
 	>=app-accessibility/at-spi2-atk-2.18.3
 	>=app-accessibility/speech-dispatcher-0.8.3
@@ -44,6 +46,7 @@ CHROMIUM_CDEPEND="
 	>=dev-libs/glib-2.48:2
 	>=dev-libs/libappindicator-12.10
 	>=dev-libs/libevdev-1.4.6
+	>=dev-libs/libffi-3.2.1
 	>=net-print/cups-2.1.3
 	>=sys-apps/pciutils-3.3.1
 	>=sys-libs/libcap-2.24
@@ -56,8 +59,27 @@ CHROMIUM_CDEPEND="
 	>=x11-libs/gtk+-3.18.9:3
 	>=x11-libs/libXtst-1.2.2
 	>=x11-libs/libdrm-2.4.67"
+# Unlisted based on ldd inspection not found in common_lib_list
+UNLISTED_RDEPENDS="
+	net-dns/libidn
+	dev-libs/fribidi
+	dev-libs/gmp
+	dev-libs/libbsd
+	dev-libs/libtasn1
+	dev-libs/libunistring
+	>=dev-libs/nspr-4.11
+	>=dev-libs/nss-3.21
+	dev-libs/nettle
+	media-gfx/graphite2
+	media-libs/harfbuzz
+	media-libs/libglvnd
+	>=media-libs/libpng-1.6.20
+	>=media-libs/mesa-11.2.0[egl]
+	>=x11-libs/libxkbcommon-0.5.0
+"
 CHROMIUM_RDEPEND="
 	${CHROMIUM_CDEPEND}
+	${UNLISTED_RDEPENDS}
 	>=sys-devel/gcc-5.4.0[cxx(+)]
 	>=dev-libs/atk-2.18.0
 	>=dev-libs/expat-2.1.0
