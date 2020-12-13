@@ -512,7 +512,7 @@ pkg_postinst() {
 	if use browser ; then
 		ewarn
 		ewarn "Security notice:"
-		ewarn "Since the browser feature as a sources uses the Chromium code base,"
+		ewarn "Since the browser feature uses the Chromium source code as a base,"
 		ewarn "you need to update obs-studio the same time Chromium updates"
 		ewarn "to avoid critical vulerabilities."
 		ewarn
