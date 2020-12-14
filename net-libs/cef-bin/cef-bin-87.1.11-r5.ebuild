@@ -33,7 +33,7 @@ SRC_URI="
 "
 
 SLOT="0/${PV}"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~arm ~arm64 ~amd64 ~x86"
 IUSE="debug minimal"
 # Based on install-build-deps.sh
 # U >=16.04 LTS assumed, supported only in cef
@@ -113,28 +113,23 @@ RDEPEND="${CHROMIUM_RDEPEND}
 DEPEND="${RDEPEND}"
 BDEPEND=">=dev-util/cmake-3.10.2"
 S="${WORKDIR}"
+declare -Ax ABIx=( \
+        [x86]="linux32" \
+        [amd64]="linux64" \
+        [arm]="arm" \
+        [arm64]="arm64" \
+)
 
-_SUFFIX=""
-abi_to_suffix() {
-	if [[ "${ABI}" == "x86" ]] ; then
-		_SUFFIX="linux32"
-	elif [[ "${ABI}" == "amd64" ]] ; then
-		_SUFFIX="linux64"
-	elif [[ "${ABI}" == "arm" ]] ; then
-		_SUFFIX="arm"
-	elif [[ "${ABI}" == "arm64" ]] ; then
-		_SUFFIX="arm64"
-	fi
+S_abi() {
+	echo "${WORKDIR}/cef_binary_${PV}+${CEF_COMMIT}+chromium-${CHROMIUM_V}_${ABIx[${ABI}]}"
 }
 
 src_prepare() {
 	prepare_abi() {
-		abi_to_suffix
-		local d="cef_binary_${PV}+${CEF_COMMIT}+chromium-${CHROMIUM_V}_${_SUFFIX}"
-		cd "${WORKDIR}/${d}" || die
-		eapply -p1 "${FILESDIR}/cef-bin-87.1.11-disable-visibility-hidden.patch"
-		S="${WORKDIR}/${d}" CMAKE_USE_DIR="${WORKDIR}/${d}" \
-		BUILD_DIR="${WORKDIR}/${d}" \
+		S=$(S_abi)
+		cd "${S}" || die
+		eapply "${FILESDIR}/cef-bin-87.1.11-disable-visibility-hidden.patch"
+		CMAKE_USE_DIR="${S}" BUILD_DIR="${S}" \
 		cmake-utils_src_prepare
 	}
 	multilib_foreach_abi prepare_abi
@@ -146,11 +141,9 @@ src_configure() {
 
 	export CMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 	configure_abi() {
-		abi_to_suffix
-		local d="cef_binary_${PV}+${CEF_COMMIT}+chromium-${CHROMIUM_V}_${_SUFFIX}"
-		cd "${WORKDIR}/${d}" || die
-		S="${WORKDIR}/${d}" CMAKE_USE_DIR="${WORKDIR}/${d}" \
-		BUILD_DIR="${WORKDIR}/${d}" \
+		S=$(S_abi)
+		cd "${S}" || die
+		CMAKE_USE_DIR="${S}" BUILD_DIR="${S}" \
 		cmake-utils_src_configure
 	}
 	multilib_foreach_abi configure_abi
@@ -158,11 +151,9 @@ src_configure() {
 
 src_compile() {
 	compile_abi() {
-		abi_to_suffix
-		local d="cef_binary_${PV}+${CEF_COMMIT}+chromium-${CHROMIUM_V}_${_SUFFIX}"
-		cd "${WORKDIR}/${d}" || die
-		S="${WORKDIR}/${d}" CMAKE_USE_DIR="${WORKDIR}/${d}" \
-		BUILD_DIR="${WORKDIR}/${d}" \
+		S=$(S_abi)
+		cd "${S}" || die
+		CMAKE_USE_DIR="${S}" BUILD_DIR="${S}" \
 		cmake-utils_src_compile
 	}
 	multilib_foreach_abi compile_abi
@@ -171,10 +162,10 @@ src_compile() {
 src_install() {
 	install_abi() {
 		dodir "/opt/${PN}/${ABI}"
-		abi_to_suffix
-		local d="cef_binary_${PV}+${CEF_COMMIT}+chromium-${CHROMIUM_V}_${_SUFFIX}"
-		cp -rT "${WORKDIR}/${d}" "${ED}/opt/${PN}/${ABI}" || die
-		echo "${d}" > "${ED}/opt/${PN}/${ABI}/.version" || die
+		S=$(S_abi)
+		cp -rT "${S}" "${ED}/opt/${PN}/${ABI}" || die
+		echo "cef_binary_${PV}+${CEF_COMMIT}+chromium-${CHROMIUM_V}_${ABIx[${ABI}]}" \
+			> "${ED}/opt/${PN}/${ABI}/.version" || die
 	}
 	multilib_foreach_abi install_abi
 }
