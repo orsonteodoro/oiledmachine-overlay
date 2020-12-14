@@ -61,32 +61,36 @@ CHROMIUM_CDEPEND="
 	>=x11-libs/libXtst-1.2.2[${MULTILIB_USEDEP}]
 	>=x11-libs/libdrm-2.4.67[${MULTILIB_USEDEP}]"
 # Unlisted based on ldd inspection not found in common_lib_list
-UNLISTED_RDEPENDS="
+UNLISTED_RDEPEND="
 	net-dns/libidn[${MULTILIB_USEDEP}]
 	dev-libs/fribidi[${MULTILIB_USEDEP}]
 	dev-libs/gmp[${MULTILIB_USEDEP}]
 	dev-libs/libbsd[${MULTILIB_USEDEP}]
 	dev-libs/libtasn1[${MULTILIB_USEDEP}]
 	dev-libs/libunistring[${MULTILIB_USEDEP}]
-	>=dev-libs/nspr-4.11[${MULTILIB_USEDEP}]
 	>=dev-libs/nss-3.21[${MULTILIB_USEDEP}]
 	dev-libs/nettle[${MULTILIB_USEDEP}]
 	media-gfx/graphite2[${MULTILIB_USEDEP}]
 	media-libs/harfbuzz[${MULTILIB_USEDEP}]
 	media-libs/libglvnd[${MULTILIB_USEDEP}]
-	>=media-libs/libpng-1.6.20[${MULTILIB_USEDEP}]
 	>=media-libs/mesa-11.2.0[egl,${MULTILIB_USEDEP}]
 	>=x11-libs/libxkbcommon-0.5.0[${MULTILIB_USEDEP}]"
+OPTIONAL_RDEPEND="
+	>=gnome-base/libgnome-keyring-3.12[${MULTILIB_USEDEP}]
+	>=media-libs/vulkan-loader-1.0.8.0[${MULTILIB_USEDEP}]"
 CHROMIUM_RDEPEND="
 	${CHROMIUM_CDEPEND}
-	${UNLISTED_RDEPENDS}
+	${UNLISTED_RDEPEND}
+	${OPTIONAL_RDEPEND}
 	>=sys-devel/gcc-5.4.0[cxx(+)]
 	>=dev-libs/atk-2.18.0[${MULTILIB_USEDEP}]
 	>=dev-libs/expat-2.1.0[${MULTILIB_USEDEP}]
 	>=dev-libs/libpcre-8.38[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-4.11[${MULTILIB_USEDEP}]
 	dev-libs/wayland[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.11.94[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.6.1[${MULTILIB_USEDEP}]
+	>=media-libs/libpng-1.6.20[${MULTILIB_USEDEP}]
 	>=x11-libs/libX11-1.6.3[${MULTILIB_USEDEP}]
 	>=x11-libs/libXau-1.0.8[${MULTILIB_USEDEP}]
 	>=x11-libs/libXcomposite-0.4.4[${MULTILIB_USEDEP}]
