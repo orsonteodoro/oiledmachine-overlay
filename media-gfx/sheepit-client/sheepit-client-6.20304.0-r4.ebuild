@@ -110,8 +110,8 @@ REQUIRED_USE="
 	benchmark
 	benchmark? ( blender blender2901 )
 	blender? ( || ( blender279b blender279b_filmic blender280 blender281a
-			blender282 blender2831 blender2832 blender2836 blender2900
-			blender2901
+			blender282 blender2831 blender2832 blender2836
+			blender2839 blender2900 blender2901 blender2910
 			allow-unknown-renderers ) )
 	blender279b? ( blender )
 	blender279b_filmic? ( blender )
@@ -121,8 +121,10 @@ REQUIRED_USE="
 	blender2831? ( blender )
 	blender2832? ( blender )
 	blender2836? ( blender )
+	blender2839? ( blender )
 	blender2900? ( blender )
 	blender2901? ( blender )
+	blender2910? ( blender )
 	|| ( cuda opencl )
 	no-repacks? ( !allow-unknown-renderers !system-blender )
 	pro-drivers? ( || ( opencl_orca opencl_pal opencl_rocm ) )
@@ -229,6 +231,7 @@ RDEPEND="
 				blender2831? ( ~media-gfx/blender-2.83.1[cycles,build_creator(+),release(+)] )
 				blender2832? ( ~media-gfx/blender-2.83.2[cycles,build_creator(+),release(+)] )
 				blender2836? ( ~media-gfx/blender-2.83.6[cycles,build_creator(+),release(+)] )
+				blender2839? ( ~media-gfx/blender-2.83.9[cycles,build_creator(+),release(+)] )
 				blender2900? ( ~media-gfx/blender-2.90.0[cycles,build_creator(+),release(+)] )
 				blender2901? ( ~media-gfx/blender-2.90.1[cycles,build_creator(+),release(+)] )
 				blender2910? ( ~media-gfx/blender-2.91.0[cycles,build_creator(+),release(+)] )
@@ -278,7 +281,7 @@ RDEPEND="
 		app-arch/xz-utils
 	)
 	virtual/jre:1.8"
-DEPEND="${RDEPEND}
+BDEPEND="${RDEPEND}
 	dev-java/gradle-bin
 	virtual/jdk:1.8"
 inherit linux-info
