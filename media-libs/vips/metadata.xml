@@ -52,6 +52,7 @@
     <flag name="ppm">Enables PPM (Portable Pixmap Format) support used to
       exchange between platforms.</flag>
     <flag name="python">Enables the creation of Python bindings.</flag>
+    <flag name="spng">Enables use of the faster libspng for reading or loading.</flag>
     <flag name="static-libs">Builds static libraries</flag>
     <flag name="svg">Enables SVG vector images import.</flag>
     <flag name="tiff">Enables importing and exporting TIFF professional graphic
