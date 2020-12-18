@@ -16,7 +16,7 @@ RDEPEND=">=dev-util/premake-4.4
 	 media-libs/freeglut[${MULTILIB_USEDEP}]"
 DEPEND="${RDEPEND}
 	doc? ( app-doc/doxygen )"
-inherit cmake-static-libs eutils
+inherit eutils static-libs
 SRC_URI=\
 "https://github.com/erincatto/Box2D/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
@@ -45,10 +45,10 @@ src_prepare() {
 	default
 	prepare_abi() {
 		cd "${BUILD_DIR}" || die
-		cmake-static-libs_prepare() {
+		static-libs_prepare() {
 			cd "${BUILD_DIR}" || die
 			cd "Box2D" || die
-			if [[ "${ECMAKE_LIB_TYPE}" == "shared-libs" ]] ; then
+			if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
 				sed -i -e "s|StaticLib|SharedLib|g" \
 					premake4.lua || die
 			fi
@@ -58,9 +58,9 @@ src_prepare() {
 			_set_global_flags
 			premake4 --platform=${platform} gmake
 		}
-		cmake-static-libs_copy_sources
-		cmake-static-libs_foreach_impl \
-			cmake-static-libs_prepare
+		static-libs_copy_sources
+		static-libs_foreach_impl \
+			static-libs_prepare
 	}
 	multilib_copy_sources
 	multilib_foreach_abi prepare_abi
@@ -74,7 +74,7 @@ src_compile() {
 	local mydebug=$(usex debug "debug" "release")
 	compile_abi() {
 		cd "${BUILD_DIR}" || die
-		cmake-static-libs_compile() {
+		static-libs_compile() {
 			cd "${BUILD_DIR}" || die
 			local arch=""
 			local platform=""
@@ -84,8 +84,8 @@ src_compile() {
 				emake config="${mydebug}" verbose=1 || die
 			popd
 		}
-		cmake-static-libs_foreach_impl \
-			cmake-static-libs_compile
+		static-libs_foreach_impl \
+			static-libs_compile
 	}
 	multilib_foreach_abi compile_abi
 }
@@ -94,18 +94,18 @@ src_install() {
 	local mydebug=$(usex debug "Debug" "Release")
 	install_abi() {
 		cd "${BUILD_DIR}" || die
-		cmake-static-libs_install() {
+		static-libs_install() {
 			cd "${BUILD_DIR}" || die
 			pushd "Box2D/Build/gmake/bin/${mydebug}" || die
-			if [[ "${ECMAKE_LIB_TYPE}" == "shared-libs" ]] ; then
+			if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
 				dolib.so libBox2D.so libGLUI.so
 			else
 				dolib.a libBox2D.a libGLUI.a
 			fi
 			popd
 		}
-		cmake-static-libs_foreach_impl \
-			cmake-static-libs_install
+		static-libs_foreach_impl \
+			static-libs_install
 	}
 	multilib_foreach_abi install_abi
 
