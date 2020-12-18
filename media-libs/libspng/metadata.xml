@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    libspng is an alternative png loader that is fast
+    and fuzzed for vulnerabilies.
+  </longdescription>
+  <upstream>
+    <remote-id type="github">randy408/libspng</remote-id>
+  </upstream>
+  <use>
+    <flag name="doc">Generate documentation</flag>
+    <flag name="opt">Use arch specific optimizations</flag>
+    <flag name="pgo">Optimize with Profile Guided Optimization (PGO) for
+      possibly a ~10% performance improvement</flag>
+    <flag name="test">Build testsuite</flag>
+    <flag name="threads">Use experimental multithreading features</flag>
+    <flag name="static-libs">Build as a static-library</flag>
+    <flag name="zlib">Use zlib instead of miniz</flag>
+  </use>
+</pkgmetadata>
