@@ -18,12 +18,13 @@
 #   https://github.com/dolohow/uksm
 # zen-tune:
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce 3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0
-#   https://github.com/torvalds/linux/compare/v5.8...zen-kernel:5.8/zen-sauce (994279ebfc0d19e185792fb11cacb63e6750e22e..78070e0e766369a33bcc279128c07124276d4b80] ; (exclusive-end,inclusive-start]
-#   https://github.com/torvalds/linux/compare/v5.8...zen-kernel:5.8/zen-sauce (8141729974d4c2fae2c758e83136ae4b12feba7a..cbef2dd68b27d957d4b24ee020fd33ef5ebdf26b] ; (exclusive-end,inclusive-start]
+#   https://github.com/torvalds/linux/compare/v5.9...zen-kernel:5.9/zen-sauce (8141729974d4c2fae2c758e83136ae4b12feba7a..cbef2dd68b27d957d4b24ee020fd33ef5ebdf26b] ; (exclusive-end,inclusive-start] (top,bottom]
+#   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce (973d42f99af15b2e610204fbe8252251ed7cc8c1..b7b24b494b62e02c21a9a349da2d036849f9dd8b] ; (exclusive-end,inclusive-start] (top,bottom]
 # zen-kernel 5.4/futex-backports
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/futex-backports
-# zen-kernel 5.{6,7}/futex-multiple-wait-v3
-#   https://github.com/torvalds/linux/compare/v5.8...zen-kernel:5.8/futex-multiple-wait-v3
+# zen-kernel 5.{8..10}/futex-multiple-wait-v3
+#   https://github.com/torvalds/linux/compare/v5.9...zen-kernel:5.9/futex-multiple-wait-v3
+#   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/futex-multiple-wait-v3
 # O3 (Optimize Harder):
 #   4.9 (O3) https://github.com/torvalds/linux/commit/7d0295dc49233d9ddff5d63d5bdc24f1e80da722
 #   circa 2018 (infiniband O3 read overflow fix) https://github.com/torvalds/linux/commit/562a14babcd56efc2f51c772cb2327973d8f90ad
@@ -34,7 +35,7 @@
 # MUQSS CPU Scheduler:
 #   https://github.com/torvalds/linux/compare/v4.14...ckolivas:4.14-ck
 #   https://github.com/torvalds/linux/compare/v5.4...ckolivas:5.4-ck
-#   https://github.com/torvalds/linux/compare/v5.8...ckolivas:5.8-ck
+#   https://github.com/torvalds/linux/compare/v5.9...ckolivas:5.9-ck
 # PDS CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/PDS
 # BMQ CPU Scheduler:
@@ -42,22 +43,18 @@
 # Project C CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/Project%20C
 # genpatches:
+#   The person below who updates the release links below lag. See instead:
+#     https://gitweb.gentoo.org/repo/gentoo.git/tree/sys-kernel/gentoo-sources
 #   https://dev.gentoo.org/~mpagano/genpatches/tarballs/
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-4.14.html
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.4.html
-#   https://dev.gentoo.org/~mpagano/genpatches/releases-5.8.html
+#   https://dev.gentoo.org/~mpagano/genpatches/releases-5.9.html
+#   https://dev.gentoo.org/~mpagano/genpatches/releases-5.10.html
 # BFQ updates:
 #   https://github.com/torvalds/linux/compare/v4.19...zen-kernel:4.19/bfq
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/bfq-backports
 # TRESOR:
 #   https://www1.informatik.uni-erlangen.de/tresor
-# FUTEX_MULTIPLE_WAIT
-#   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/futex-backports
-#   https://github.com/torvalds/linux/compare/v5.8...zen-kernel:5.8/futex-multiple-wait-v3
-# terrelln:zstd-v{4,10}
-#   https://lkml.org/lkml/2020/7/30/973
-#   https://github.com/torvalds/linux/compare/v5.7...terrelln:zstd-v4
-#   https://github.com/torvalds/linux/compare/v5.8...terrelln:zstd-v10
 
 case ${EAPI:-0} in
 	7) ;;
@@ -150,20 +147,17 @@ BMQ_SRC_URL="${BMQ_BASE_URL}${BMQ_FN}"
 
 ZENTUNE_PROJ="zen-tune"
 ZENTUNE_FN="${ZENTUNE_PROJ}-${PATCH_ZENTUNE_VER}.patch"
-if [[ "${K_MAJOR_MINOR}" == "5.6" ]] ; then
+if [[ "${K_MAJOR_MINOR}" == "5.10" ]] ; then
 ZENTUNE_URL_BASE="https://github.com/zen-kernel/zen-kernel/compare/"
-ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_5_6_COMMIT}.patch"
-ZENTUNE_DL_DEP_FN="ZEN-Add-CONFIG-to-rename-the-mq-deadline-scheduler-for-5_6.patch"
-ZENTUNE_DL_DEP_URL="https://github.com/torvalds/linux/commit/857aae4518fe08752f004fe6c5c8295da63c5a7e.patch"
-elif [[ "${K_MAJOR_MINOR}" == "5.5" ]] ; then
+ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_5_10_COMMIT}.patch"
+elif [[ "${K_MAJOR_MINOR}" == "5.9" ]] ; then
 ZENTUNE_URL_BASE="https://github.com/zen-kernel/zen-kernel/compare/"
-ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_5_5_COMMIT}.patch"
-ZENTUNE_DL_DEP_FN="ZEN-Add-CONFIG-to-rename-the-mq-deadline-scheduler-for-5_5.patch"
-ZENTUNE_DL_DEP_URL="https://github.com/torvalds/linux/commit/98d9dc7ec5a6df16372ccdd7e18e64bfc6d5990f.patch"
+ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_5_9_COMMIT}.patch"
 elif [[ "${K_MAJOR_MINOR}" == "5.4" ]] ; then
 ZENTUNE_URL_BASE="https://github.com/torvalds/linux/commit/"
 ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_5_4_COMMIT}.patch"
 else
+# Up to and including 5.3
 ZENTUNE_URL_BASE=\
 "https://github.com/torvalds/linux/compare/v${PATCH_ZENTUNE_VER}...zen-kernel:${PATCH_ZENTUNE_VER}/"
 ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_PROJ}.patch"

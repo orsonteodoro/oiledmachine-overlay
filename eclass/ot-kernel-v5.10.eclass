@@ -3,31 +3,31 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: ot-kernel-v5.9.eclass
+# @ECLASS: ot-kernel-v5.10.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7
-# @BLURB: Eclass for patching the 5.9.x kernel
+# @BLURB: Eclass for patching the 5.10.x kernel
 # @DESCRIPTION:
-# The ot-kernel-v5.9 eclass defines specific applicable patching for the 5.9.x
+# The ot-kernel-v5.10 eclass defines specific applicable patching for the 5.10.x
 # linux kernel.
 
-K_MAJOR_MINOR="5.9"
+K_MAJOR_MINOR="5.10"
 K_PATCH_XV="5.x"
 EXTRAVERSION="-ot"
-PATCH_UKSM_VER="5.9"
+PATCH_UKSM_VER="5.10"
 PATCH_UKSM_MVER="5"
-PATCH_ZENTUNE_VER="5.9"
+PATCH_ZENTUNE_VER="5.10"
 PATCH_ALLOW_O3_COMMIT="d0ee207cac1217d2b111bef6f0f9581a10b35f6c"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?10}"
 PATCH_GP_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
-PATCH_BFQ_VER="5.9"
-PATCH_BMQ_MAJOR_MINOR="5.9"
-PATCH_PROJECT_C_MAJOR_MINOR="5.9"
+PATCH_BFQ_VER="5.10"
+PATCH_BMQ_MAJOR_MINOR="5.10"
+PATCH_PROJECT_C_MAJOR_MINOR="5.10"
 DISABLE_DEBUG_V="1.1"
-ZENTUNE_5_9_COMMIT="8141729974d4c2fae2c758e83136ae4b12feba7a..cbef2dd68b27d957d4b24ee020fd33ef5ebdf26b" # (exclusive-end,inclusive-start]  (top,bottom]
+ZENTUNE_5_10_COMMIT="973d42f99af15b2e610204fbe8252251ed7cc8c1..b7b24b494b62e02c21a9a349da2d036849f9dd8b" # (exclusive-end,inclusive-start] (top,bottom]
 PATCH_TRESOR_VER="3.18.5"
 MUQSS_VER="0.204"
 
@@ -100,11 +100,11 @@ SRC_URI+=" genpatches? (
 		${TRESOR_README_DL_URL2}
 		${TRESOR_RESEARCH_PDF_DL_URL}
 		${TRESOR_SYSFS_DL_URL}
-	   )
-	   uksm? ( ${UKSM_SRC_URL} )"
+	   )"
 
 SRC_URI_DISABLED+="
-	bmq? ( ${BMQ_SRC_URL} )
+	   bmq? ( ${BMQ_SRC_URL} )
+	   uksm? ( ${UKSM_SRC_URL} )
 "
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
@@ -194,6 +194,6 @@ experimental.\n\
 \n"
 	fi
 	einfo ""
-	einfo "Genkernel users may require 4.x series to build the 5.9.x kernel series."
+	einfo "Genkernel users may require 4.x series to build the 5.10.x kernel series."
 	einfo ""
 }
