@@ -13,17 +13,16 @@ inherit multibuild
 # @ECLASS-VARIABLE: _IMPLS
 # @DESCRIPTION: (Private) Generates a list of implementations for the static-libs-multibuild context
 _IMPLS="static-libs shared-libs"
-IUSE+=" static-libs +shared-libs"
-REQUIRED_USE+=" || ( static-libs shared-libs ) shared-libs"
+IUSE+=" static-libs"
 
 # @FUNCTION: _python_multibuild_wrapper
 # @DESCRIPTION: Initialize the environment for this implementation
-# ECMAKE_LIB_TYPE contains the implementination of static-libs to process like EPYTHON
+# ESTSH_LIB_TYPE contains the implementination of static-libs to process like EPYTHON
 # BUILD_DIR contains the path to the instance of the copied sources
 _static-libs_multibuild_wrapper() {
 	debug-print-function ${FUNCNAME} "${@}"
 
-	ECMAKE_LIB_TYPE="${MULTIBUILD_VARIANT}"
+	ESTSH_LIB_TYPE="${MULTIBUILD_VARIANT}"
 
 	mkdir -p "${PORTAGE_BUILDDIR}/homedir-${MULTIBUILD_VARIANT}"
 	HOME="${PORTAGE_BUILDDIR}/homedir-${MULTIBUILD_VARIANT}"
@@ -61,6 +60,10 @@ static-libs_copy_sources() {
 _static-libs_obtain_impls() {
 	MULTIBUILD_VARIANTS=()
 	for impl in ${_IMPLS} ; do
-		use "${impl}" && MULTIBUILD_VARIANTS+=( "${impl}" )
+		if [[ "${impl}" == "shared-libs" ]] ; then
+			MULTIBUILD_VARIANTS+=( "${impl}" )
+		else
+			use "${impl}" && MULTIBUILD_VARIANTS+=( "${impl}" )
+		fi
 	done
 }
