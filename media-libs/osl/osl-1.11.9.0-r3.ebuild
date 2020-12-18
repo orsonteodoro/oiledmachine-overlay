@@ -5,7 +5,7 @@ EAPI=7
 
 PYTHON_COMPAT=( python2_7 python3_{6..8} )
 
-inherit cmake-static-libs cmake-utils llvm multilib-minimal python-r1 toolchain-funcs
+inherit cmake-utils llvm multilib-minimal python-r1 static-libs toolchain-funcs
 
 DESCRIPTION="Advanced shading language for production GI renderers"
 HOMEPAGE="http://opensource.imageworks.com/?p=osl"
@@ -119,16 +119,16 @@ per-package environmental variable."
 src_prepare() {
 	prepare_abi() {
 		cd "${BUILD_DIR}" || die
-		cmake-static-libs_prepare() {
+		static-libs_prepare() {
 			cd "${BUILD_DIR}" || die
 		        S="${BUILD_DIR}" \
 		        CMAKE_USE_DIR="${BUILD_DIR}" \
-		        BUILD_DIR="${WORKDIR}/${P}_${ECMAKE_LIB_TYPE}" \
+		        BUILD_DIR="${WORKDIR}/${P}_${ESTSH_LIB_TYPE}" \
 			cmake-utils_src_prepare
 		}
-		cmake-static-libs_copy_sources
-		cmake-static-libs_foreach_impl \
-			cmake-static-libs_prepare
+		static-libs_copy_sources
+		static-libs_foreach_impl \
+			static-libs_prepare
 	}
 	multilib_copy_sources
 	multilib_foreach_abi prepare_abi
@@ -137,7 +137,7 @@ src_prepare() {
 src_configure() {
 	configure_abi() {
 		cd "${BUILD_DIR}" || die
-		cmake-static-libs_configure() {
+		static-libs_configure() {
 			cd "${BUILD_DIR}" || die
 
 			local cpufeature
@@ -170,7 +170,7 @@ src_configure() {
 				-DUSE_SIMD="$(IFS=","; echo "${mysimd[*]}")"
 			)
 
-			if [[ "${ECMAKE_LIB_TYPE}" == "shared-libs" ]] ; then
+			if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
 				mycmakeargs+=( -DBUILD_SHARED_LIBS=ON )
 			else
 				mycmakeargs+=( -DBUILD_SHARED_LIBS=OFF )
@@ -180,11 +180,11 @@ src_configure() {
 
 		        S="${BUILD_DIR}" \
 		        CMAKE_USE_DIR="${BUILD_DIR}" \
-		        BUILD_DIR="${WORKDIR}/${P}_${ECMAKE_LIB_TYPE}" \
+		        BUILD_DIR="${WORKDIR}/${P}_${ESTSH_LIB_TYPE}" \
 			cmake-utils_src_configure
 		}
-		cmake-static-libs_foreach_impl \
-			cmake-static-libs_configure
+		static-libs_foreach_impl \
+			static-libs_configure
 	}
 	multilib_foreach_abi configure_abi
 }
@@ -192,15 +192,15 @@ src_configure() {
 src_compile() {
 	compile_abi() {
 		cd "${BUILD_DIR}" || die
-		cmake-static-libs_compile() {
+		static-libs_compile() {
 			cd "${BUILD_DIR}" || die
 		        S="${BUILD_DIR}" \
 		        CMAKE_USE_DIR="${BUILD_DIR}" \
-		        BUILD_DIR="${WORKDIR}/${P}_${ECMAKE_LIB_TYPE}" \
+		        BUILD_DIR="${WORKDIR}/${P}_${ESTSH_LIB_TYPE}" \
 			cmake-utils_src_compile
 		}
-		cmake-static-libs_foreach_impl \
-			cmake-static-libs_compile
+		static-libs_foreach_impl \
+			static-libs_compile
 	}
 	multilib_foreach_abi compile_abi
 }
@@ -208,16 +208,16 @@ src_compile() {
 src_install() {
 	install_abi() {
 		cd "${BUILD_DIR}" || die
-		cmake-static-libs_install() {
+		static-libs_install() {
 			pushd "${BUILD_DIR}" || die
 			        S="${BUILD_DIR}" \
 			        CMAKE_USE_DIR="${BUILD_DIR}" \
-			        BUILD_DIR="${WORKDIR}/${P}_${ECMAKE_LIB_TYPE}" \
+			        BUILD_DIR="${WORKDIR}/${P}_${ESTSH_LIB_TYPE}" \
 				cmake-utils_src_install
 			popd
 		}
-		cmake-static-libs_foreach_impl \
-			cmake-static-libs_install
+		static-libs_foreach_impl \
+			static-libs_install
 		if multilib_is_native_abi ; then
 			dosym /usr/$(get_libdir)/osl/bin/oslc /usr/bin/oslc
 			dosym /usr/$(get_libdir)/osl/bin/oslinfo /usr/bin/oslinfo
