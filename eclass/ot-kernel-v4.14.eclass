@@ -290,3 +290,12 @@ function ot-kernel_pkg_postinst_cb() {
   cause a kernel panic on boot."
 	fi
 }
+
+# @FUNCTION: ot-kernel_apply_o3_fixes
+# @DESCRIPTION:
+# Fixes the O3 patch
+function ot-kernel_apply_o3_fixes() {
+	if use O3 ; then
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/O3-config-option-7d0295dc49233d9ddff5d63d5bdc24f1e80da722-fix-for-4.14.patch"
+	fi
+}
