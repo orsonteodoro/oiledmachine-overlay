@@ -91,9 +91,6 @@ _src_configure() {
 
 src_configure_pgo_instrumented() {
 	einfo "Instrumenting a PGO build"
-	if [[ -d "${T}/pgo-${ABI}" ]] ; then
-		rm -rf "${T}/pgo-${ABI}" || die
-	fi
 	mkdir -p "${T}/pgo-${ABI}-${ESTSH_LIB_TYPE}" || die
 	filter-flags -fprofile-generate* -fprofile-use* -fprofile-dir=*
 	if tc-is-clang ; then
