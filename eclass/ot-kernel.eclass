@@ -178,11 +178,6 @@ fi
 FUTEX_WAIT_MULTIPLE_FN="${FUTEX_WAIT_MULTIPLE_PROJ}-${K_MAJOR_MINOR}.patch"
 FUTEX_WAIT_MULTIPLE_DL_URL="${FUTEX_WAIT_MULTIPLE_BASE}${FUTEX_WAIT_MULTIPLE_PROJ}.patch"
 
-ZSTD_PROJ="zstd-v${ZSTD_VER}"
-ZSTD_BASE="https://github.com/torvalds/linux/compare/v${K_MAJOR_MINOR}...terrelln:"
-ZSTD_FN="${ZSTD_PROJ}-${K_MAJOR_MINOR}.patch"
-ZSTD_DL_URL="${ZSTD_BASE}${ZSTD_PROJ}.patch"
-
 CK_PROJ="${K_MAJOR_MINOR}-ck"
 CK_BASE="https://github.com/torvalds/linux/compare/v${K_MAJOR_MINOR}...ckolivas:"
 CK_FN="${CK_PROJ}-${K_MAJOR_MINOR}.patch"
@@ -572,14 +567,6 @@ function apply_futex_wait_multiple() {
 	_dpatch "${PATCH_OPS} -N" "${T}/${FUTEX_WAIT_MULTIPLE_FN}"
 }
 
-# @FUNCTION: apply_zstd
-# @DESCRIPTION:
-# Adds a the zstd compressor.  This will shave off ~.2 seconds when switching
-# from lz4.  See files/ot-kernel-zstd-vs-lz4.txt for my analysis.
-function apply_zstd() {
-	_dpatch "${PATCH_OPS} -N" "${T}/${ZSTD_FN}"
-}
-
 # @FUNCTION: apply_ck
 # @DESCRIPTION:
 # applies the ck patchset
@@ -892,14 +879,6 @@ function fetch_futex_wait_multiple() {
 	wget -O "${T}/${FUTEX_WAIT_MULTIPLE_FN}" "${FUTEX_WAIT_MULTIPLE_DL_URL}" || die
 }
 
-# @FUNCTION: fetch_zstd
-# @DESCRIPTION:
-# Fetches the zstd patchset.
-function fetch_zstd() {
-	einfo "Fetching the zstd patch from a live source..."
-	wget -O "${T}/${ZSTD_FN}" "${ZSTD_DL_URL}" || die
-}
-
 # @FUNCTION: fetch_ck
 # @DESCRIPTION:
 # Fetches the ck patchset.
@@ -1090,13 +1069,6 @@ kernel ${K_MAJOR_MINOR}.  Skipping kernel_gcc_patch."
 		if use futex-wait-multiple ; then
 			fetch_futex_wait_multiple
 			apply_futex_wait_multiple
-		fi
-	fi
-
-	if has zstd ${IUSE_EFFECTIVE} ; then
-		if use zstd ; then
-			fetch_zstd
-			apply_zstd
 		fi
 	fi
 
