@@ -17,7 +17,7 @@ REQUIRED_USE="
 	^^ ( c11 c89 c99 gnu17 )
 	^^ ( c++98 c++11 c++14 )"
 LUA_COMPAT=( lua5-{2..4} )
-inherit cmake-static-libs cmake-utils lua multilib-minimal
+inherit cmake-utils lua multilib-minimal static-libs
 # CMakeLists.txt lists versions
 RDEPEND=">=dev-db/sqlite-3.8.9:3[${MULTILIB_USEDEP}]
 	 lua? (
@@ -93,7 +93,7 @@ src_prepare() {
 	multilib_copy_sources
 	prepare_abi() {
 		cd "${BUILD_DIR}" || die
-		cmake-static-libs_copy_sources
+		static-libs_copy_sources
 		prepare_stsh()
 		{
 			cd "${BUILD_DIR}" || die
@@ -104,7 +104,7 @@ src_prepare() {
 				_prepare
 			fi
 		}
-		cmake-static-libs_foreach_impl prepare_stsh
+		static-libs_foreach_impl prepare_stsh
 	}
 	multilib_foreach_abi prepare_abi
 }
@@ -163,7 +163,7 @@ src_configure() {
 				_configure
 			fi
 		}
-		cmake-static-libs_foreach_impl configure_stsh
+		static-libs_foreach_impl configure_stsh
 	}
 	multilib_foreach_abi configure_abi
 }
@@ -185,7 +185,7 @@ src_compile() {
 				_compile
 			fi
 		}
-		cmake-static-libs_foreach_impl compile_stsh
+		static-libs_foreach_impl compile_stsh
 	}
 	multilib_foreach_abi compile_abi
 }
@@ -207,7 +207,7 @@ src_install() {
 				_install
 			fi
 		}
-		cmake-static-libs_foreach_impl install_stsh
+		static-libs_foreach_impl install_stsh
 	}
 	multilib_foreach_abi install_abi
 }

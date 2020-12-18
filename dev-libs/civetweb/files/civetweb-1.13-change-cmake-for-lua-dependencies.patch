@@ -291,8 +291,8 @@ diff -urp civetweb-1.13.orig/src/CMakeLists.txt civetweb-1.13/src/CMakeLists.txt
 +    set_property(TARGET sqlite_lib PROPERTY IMPORTED_LOCATION "${SQLITE_INSTALL_DIR}/lib/libsqlite.a")
 +    add_dependencies(civetweb-c-library sqlite)
 +  else()
-+    add_library(sqlite_lib STATIC IMPORTED)
-+    set_property(TARGET sqlite_lib PROPERTY IMPORTED_LOCATION "/usr/${_GET_LIBDIR}/libsqlite3.a")
++    add_library(sqlite_lib SHARED IMPORTED)
++    set_property(TARGET sqlite_lib PROPERTY IMPORTED_LOCATION "/usr/${_GET_LIBDIR}/libsqlite3.so")
 +  endif()
  
    # Link all the Lua libraries
