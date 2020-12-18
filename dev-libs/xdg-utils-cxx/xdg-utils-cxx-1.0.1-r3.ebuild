@@ -14,11 +14,11 @@ SRC_URI=\
 	 -> ${P}.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
-inherit cmake-static-libs cmake-utils
+inherit cmake-utils static-libs
 
 src_prepare() {
 	cmake-utils_src_prepare
-	cmake-static-libs_copy_sources
+	static-libs_copy_sources
 }
 
 src_configure() {
@@ -27,7 +27,7 @@ src_configure() {
 			-DXDG_UTILS_TESTS=OFF
 			-DXDG_UTILS_CODE_COVERAGE=OFF
 		)
-		if [[ "${ECMAKE_LIB_TYPE}" == "static-libs" ]] ; then
+		if [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
 			mycmakeargs+=( -DXDG_UTILS_SHARED=OFF )
 		else
 			mycmakeargs+=( -DXDG_UTILS_SHARED=ON )
@@ -35,7 +35,7 @@ src_configure() {
 		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 		cmake-utils_src_configure
 	}
-	cmake-static-libs_foreach_impl configure_impl
+	static-libs_foreach_impl configure_impl
 }
 
 src_compile() {
@@ -43,7 +43,7 @@ src_compile() {
 		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 		cmake-utils_src_compile
 	}
-	cmake-static-libs_foreach_impl compile_impl
+	static-libs_foreach_impl compile_impl
 }
 
 src_install() {
@@ -51,7 +51,7 @@ src_install() {
 		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 		cmake-utils_src_install
 	}
-	cmake-static-libs_foreach_impl install_impl
+	static-libs_foreach_impl install_impl
 	docinto licenses
 	dodoc LICENSE
 	cat <<-EOF > "${T}"/99${P}
