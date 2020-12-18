@@ -7,7 +7,7 @@ HOMEPAGE="http://leveldb.org/ https://github.com/google/leveldb"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86 ~amd64-fbsd ~amd64-linux \
 ~x86-linux"
-inherit cmake-utils cmake-static-libs eutils multilib-minimal toolchain-funcs versionator
+inherit cmake-utils eutils multilib-minimal static-libs toolchain-funcs versionator
 SRC_URI="https://github.com/google/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 SLOT="0/${PV}"
 IUSE+=" +snappy +tcmalloc kernel_FreeBSD"
@@ -24,7 +24,7 @@ src_prepare() {
 	prepare_abi() {
 		cd "${BUILD_DIR}" || die
 		S="${BUILD_DIR}" \
-		cmake-static-libs_copy_sources
+		static-libs_copy_sources
 	}
 	multilib_foreach_abi prepare_abi
 	prepare_abi() {
@@ -35,7 +35,7 @@ src_prepare() {
 			CMAKE_USE_DIR="${BUILD_DIR}" \
 			cmake-utils_src_prepare
 		}
-		cmake-static-libs_foreach_impl prepare_impl
+		static-libs_foreach_impl prepare_impl
 	}
 	multilib_foreach_abi prepare_abi
 }
@@ -45,7 +45,7 @@ src_configure() {
 		cd "${BUILD_DIR}" || die
 		configure_impl() {
 			mycmakeargs=()
-			if [[ "${ECMAKE_LIB_TYPE}" == "static-libs" ]] ; then
+			if [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
 				mycmakeargs+=(
 					-DBUILD_SHARED_LIBS=OFF
 				)
@@ -58,7 +58,7 @@ src_configure() {
 			CMAKE_USE_DIR="${BUILD_DIR}" \
 			cmake-utils_src_configure
 		}
-		cmake-static-libs_foreach_impl configure_impl
+		static-libs_foreach_impl configure_impl
 	}
 	multilib_foreach_abi configure_abi
 }
@@ -72,7 +72,7 @@ src_compile() {
 			CMAKE_USE_DIR="${BUILD_DIR}" \
 			cmake-utils_src_compile
 		}
-		cmake-static-libs_foreach_impl compile_impl
+		static-libs_foreach_impl compile_impl
 	}
 	multilib_foreach_abi compile_abi
 }
@@ -86,7 +86,7 @@ src_test() {
 			CMAKE_USE_DIR="${BUILD_DIR}" \
 			cmake-utils_src_test
 		}
-		cmake-static-libs_foreach_impl test_impl
+		static-libs_foreach_impl test_impl
 	}
 	multilib_foreach_abi test_abi
 }
@@ -100,7 +100,7 @@ src_install() {
 			CMAKE_USE_DIR="${BUILD_DIR}" \
 			cmake-utils_src_install
 		}
-		cmake-static-libs_foreach_impl install_impl
+		static-libs_foreach_impl install_impl
 	}
 	multilib_foreach_abi install_abi
 	cd "${S}" || die
