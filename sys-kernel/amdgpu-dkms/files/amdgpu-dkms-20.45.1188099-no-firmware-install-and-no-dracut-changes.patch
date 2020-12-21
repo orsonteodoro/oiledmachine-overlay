@@ -1,0 +1,21 @@
+diff -urp amdgpu-5.6.20.906316-1188099.el8.orig/amd/dkms/post-install.sh amdgpu-5.6.20.906316-1188099.el8/amd/dkms/post-install.sh
+--- amdgpu-5.6.20.906316-1188099.el8.orig/amd/dkms/post-install.sh	2020-12-10 18:06:22.000000000 -0800
++++ amdgpu-5.6.20.906316-1188099.el8/amd/dkms/post-install.sh	2020-12-20 20:17:21.016069888 -0800
+@@ -1,7 +1,2 @@
+ #!/bin/bash
+ 
+-FW_DIR="/lib/firmware/updates"
+-mkdir -p $FW_DIR
+-cp -ar /usr/src/amdgpu-5.6.20.906316-1188099.el8/firmware/amdgpu $FW_DIR
+-echo "add_drivers+=\" amdgpu \"" >/etc/dracut.conf.d/amdgpu.conf
+-echo "fw_dir+=\" $FW_DIR \"" >>/etc/dracut.conf.d/amdgpu.conf
+diff -urp amdgpu-5.6.20.906316-1188099.el8.orig/amd/dkms/post-remove.sh amdgpu-5.6.20.906316-1188099.el8/amd/dkms/post-remove.sh
+--- amdgpu-5.6.20.906316-1188099.el8.orig/amd/dkms/post-remove.sh	2020-12-10 18:06:22.000000000 -0800
++++ amdgpu-5.6.20.906316-1188099.el8/amd/dkms/post-remove.sh	2020-12-20 20:17:18.967990002 -0800
+@@ -1,6 +1,2 @@
+ #!/bin/bash
+ 
+-FW_DIR="/lib/firmware/updates"
+-rm -rf $FW_DIR/amdgpu
+-[[ ! $(ls -A $FW_DIR) ]] && rm -rf $FW_DIR
+-rm -f /etc/dracut.conf.d/amdgpu.conf

@@ -1,0 +1,10 @@
+--- amdgpu-5.6.20.906316-1188099.el8/amd/amdkcl/kcl_mn.c.orig	2020-12-06 22:16:22.000000000 -0800
++++ amdgpu-5.6.20.906316-1188099.el8/amd/amdkcl/kcl_mn.c	2020-12-20 20:21:24.825578783 -0800
+@@ -1,6 +1,7 @@
+ /* SPDX-License-Identifier: MIT */
+ #include <linux/version.h>
+ #include <linux/sched.h>
++#include <linux/sched/mm.h>
+ #include <kcl/header/kcl_sched_mm_h.h>
+ #include <linux/mmu_notifier.h>
+ #include <kcl/kcl_mn.h>
