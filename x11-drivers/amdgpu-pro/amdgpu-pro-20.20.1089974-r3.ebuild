@@ -184,11 +184,11 @@ REQUIRED_USE="
 
 _set_check_reqs_requirements() {
 	if use abi_x86_32 && use abi_x86_64 ; then
-		CHECKREQS_DISK_BUILD="1071M"
-		CHECKREQS_DISK_USR="971M"
+		CHECKREQS_DISK_BUILD="1034M"
+		CHECKREQS_DISK_USR="938M"
 	else
-		CHECKREQS_DISK_BUILD="1071M"
-		CHECKREQS_DISK_USR="971M"
+		CHECKREQS_DISK_BUILD="1034M"
+		CHECKREQS_DISK_USR="938M"
 	fi
 }
 
@@ -259,7 +259,13 @@ leftovers from eselect-opengl removal that might cause problems."
 			die "You need eselect-opengl from the oiledmachine-overlay."
 		fi
 	else
-		die "Either download >=eselect-opengl-1.0.7 or use media-libs/mesa[libglvnd]"
+		if has_version '>=media-libs/mesa-2.1.8' ; then
+			:;
+		elif has_version 'media-libs/mesa[libglvnd]' ; then
+			:;
+		else
+			die "Either download >=eselect-opengl-1.0.7 or use media-libs/mesa[libglvnd] or >=media-libs/mesa-2.1.8"
+		fi
 	fi
 }
 

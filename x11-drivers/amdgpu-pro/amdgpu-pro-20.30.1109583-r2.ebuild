@@ -23,6 +23,7 @@ LICENSE="AMDGPUPROEULA
 	)
 	pro-stack? (
 		AMDGPUPROEULA
+		amf? ( AMDGPUPROEULA )
 		clinfo? ( AMDGPUPROEULA )
 		egl? ( AMDGPUPROEULA )
 		gles2? ( AMDGPUPROEULA )
@@ -76,7 +77,7 @@ VULKAN_SDK_VER="1.2.135.0"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 RESTRICT="fetch strip"
-IUSE="bindist clinfo developer dkms doc +egl +gles2 freesync hip-clang \
+IUSE="amf bindist clinfo developer dkms doc +egl +gles2 freesync hip-clang \
 +open-stack +opencl opencl-icd-loader +opencl_orca +opencl_pal +opengl \
 opengl_mesa +opengl_pro osmesa +pro-stack roct strict-pairing +vaapi \
 +vdpau +vulkan vulkan_open vulkan_pro +X xa"
@@ -160,6 +161,7 @@ RDEPEND="!x11-drivers/amdgpu-pro-lts
 S="${WORKDIR}"
 REQUIRED_USE="
 	!abi_x86_32
+	amf? ( pro-stack opencl vulkan_pro )
 	bindist? ( !doc !pro-stack )
 	clinfo? ( opencl pro-stack )
 	egl? ( || ( open-stack pro-stack ) X )
@@ -184,11 +186,11 @@ REQUIRED_USE="
 
 _set_check_reqs_requirements() {
 	if use abi_x86_32 && use abi_x86_64 ; then
-		CHECKREQS_DISK_BUILD="1071M"
-		CHECKREQS_DISK_USR="971M"
+		CHECKREQS_DISK_BUILD="1062M"
+		CHECKREQS_DISK_USR="973M"
 	else
-		CHECKREQS_DISK_BUILD="1071M"
-		CHECKREQS_DISK_USR="971M"
+		CHECKREQS_DISK_BUILD="1062M"
+		CHECKREQS_DISK_USR="973M"
 	fi
 }
 
@@ -253,7 +255,13 @@ leftovers from eselect-opengl removal that might cause problems."
 			die "You need eselect-opengl from the oiledmachine-overlay."
 		fi
 	else
-		die "Either download >=eselect-opengl-1.0.7 or use media-libs/mesa[libglvnd]"
+		if has_version '>=media-libs/mesa-2.1.8' ; then
+			:;
+		elif has_version 'media-libs/mesa[libglvnd]' ; then
+			:;
+		else
+			die "Either download >=eselect-opengl-1.0.7 or use media-libs/mesa[libglvnd] or >=media-libs/mesa-2.1.8"
+		fi
 	fi
 }
 
@@ -344,6 +352,12 @@ src_unpack_pro_stack() {
 
 	if use X ; then
 		unpack_rpm "${d_rpms}/libglapi-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+	fi
+
+	if use amf ; then
+		if [[ "${ABI}" == "amd64" ]] ; then
+			unpack_rpm "${d_rpms}/amf-amdgpu-pro-${PKG_VER_STRING}${PKG_ARCH_SUFFIX}${arch}.rpm"
+		fi
 	fi
 
 	if use egl && ! use opengl_mesa ; then

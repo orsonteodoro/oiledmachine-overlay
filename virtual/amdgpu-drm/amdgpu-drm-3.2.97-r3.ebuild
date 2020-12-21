@@ -7,7 +7,7 @@ KEYWORDS="amd64 x86"
 IUSE="amdgpu-dkms dkms +firmware kernel rock-dkms strict-pairing"
 AMDGPU_DKMS_PV="20.40" # DC_VER = 3.2.97
 ROCK_DKMS_PV="3.8" # DC_VER = 3.2.97
-VANILLA_KERNEL_PV="5.10_rc1"  # DC_VER = 3.2.104
+VANILLA_KERNEL_PV="5.10"  # DC_VER = 3.2.104
 LINUX_FIRMWARE_PV_MIN="20201005" # matches last commit/tag AMDGPU_DKMS_PV in linux-firmware git
 LINUX_FIRMWARE_PV_MAX="20201005"
 # Find the timestamp at https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/log/amdgpu

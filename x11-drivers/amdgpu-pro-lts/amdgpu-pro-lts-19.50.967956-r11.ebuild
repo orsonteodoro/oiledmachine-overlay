@@ -308,7 +308,13 @@ leftovers from eselect-opengl removal that might cause problems."
 			die "You need eselect-opengl from the oiledmachine-overlay."
 		fi
 	else
-		die "Either download >=eselect-opengl-1.0.7 or use media-libs/mesa[libglvnd]"
+		if has_version '>=media-libs/mesa-2.1.8' ; then
+			:;
+		elif has_version 'media-libs/mesa[libglvnd]' ; then
+			:;
+		else
+			die "Either download >=eselect-opengl-1.0.7 or use media-libs/mesa[libglvnd] or >=media-libs/mesa-2.1.8"
+		fi
 	fi
 }
 
