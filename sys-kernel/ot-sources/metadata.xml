@@ -55,8 +55,15 @@
     Only Long Term Support (LTS) kernel and those marked stable
     in kernel.org are kept.
 
+    EOL (End Of Life) stable kernels get dropped next update cycle which is
+    typically a week.  The virtual/ot-sources-stable ebuild-package
+    should handle the transition gracefully.
+
     Use virtual/ot-sources-lts or virtual/ot-sources-stable to track and
     update releases instead of emerging sys-kernel/ot-sources directly.
+    It's recommended to use the ot-sources-lts if you have binary only kernel
+    modules.  For those without binary only modules, use ot-sources-stable
+    package.
   </longdescription>
   <upstream>
     <!-- for this patchset -->

@@ -100,11 +100,11 @@ SRC_URI+=" genpatches? (
 		${TRESOR_README_DL_URL2}
 		${TRESOR_RESEARCH_PDF_DL_URL}
 		${TRESOR_SYSFS_DL_URL}
-	   )"
+	   )
+	   uksm? ( ${UKSM_SRC_URL} )"
 
 SRC_URI_DISABLED+="
 	   bmq? ( ${BMQ_SRC_URL} )
-	   uksm? ( ${UKSM_SRC_URL} )
 "
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
