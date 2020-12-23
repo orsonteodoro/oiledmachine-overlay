@@ -561,20 +561,29 @@ PATCH_BFQ_VER="5.4"
 PATCH_BMQ_MAJOR_MINOR="5.4"
 DISABLE_DEBUG_V="1.1"
 ZENTUNE_5_4_COMMIT="3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0"
+ZENTUNE_MUQSS_DL_URL_BASE="https://github.com/torvalds/linux/commit/"
+ZENTUNE_MUQSS_DL_URL="
+	${ZENTUNE_MUQSS_DL_URL_BASE}6c8fd1641dea5418c68dad4bf48d2d128a2a13e5.patch -> zen-tune-muqss-${PATCH_ZENTUNE_VER}-6c8fd1641dea5418c68dad4bf48d2d128a2a13e5.patch
+	${ZENTUNE_MUQSS_DL_URL_BASE}dce8f01fd3d28121e3bf215255c5eded3855e417.patch -> zen-tune-muqss-${PATCH_ZENTUNE_VER}-dce8f01fd3d28121e3bf215255c5eded3855e417.patch
+	${ZENTUNE_MUQSS_DL_URL_BASE}3ca137b68d689fcb1c5cadad1416c7791d84d48e.patch -> zen-tune-muqss-${PATCH_ZENTUNE_VER}-3ca137b68d689fcb1c5cadad1416c7791d84d48e.patch
+	${ZENTUNE_MUQSS_DL_URL_BASE}d1bebeb959a56324fe436443ea2f21a8391632d9.patch -> zen-tune-muqss-${PATCH_ZENTUNE_VER}-d1bebeb959a56324fe436443ea2f21a8391632d9.patch
+"
 PATCH_TRESOR_VER="3.18.5"
 MUQSS_VER="0.196"
 
 IUSE="bfq bmq +cfs disable_debug +genpatches +kernel_gcc_patch muqss +O3 \
 futex-wait-multiple tresor tresor_aesni tresor_i686 tresor_sysfs \
-tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-misc -zen-tune"
-REQUIRED_USE="\
-^^ ( bmq cfs muqss ) \
-tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
-tresor_aesni? ( tresor )
-tresor_i686? ( tresor )
-tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
-tresor_x86_64? ( tresor )
-tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )"
+tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-misc \
+-zen-tune zen-tune-muqss"
+REQUIRED_USE="
+	^^ ( bmq cfs muqss )
+	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
+	tresor_aesni? ( tresor )
+	tresor_i686? ( tresor )
+	tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
+	tresor_x86_64? ( tresor )
+	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
+	zen-tune-muqss? ( muqss zen-tune )"
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
@@ -601,7 +610,7 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   #   found in the project.  (The implementation is based on an academic paper
   #   from public universities.)
 LICENSE+=" zen-tune? ( GPL-2 )"
-
+LICENSE+=" zen-tune-muqss? ( GPL-2 )"
 #BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.patch"
 #BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
 
@@ -633,7 +642,8 @@ SRC_URI+=" bmq? ( ${BMQ_SRC_URL} )
 		${TRESOR_RESEARCH_PDF_DL_URL}
 		${TRESOR_SYSFS_DL_URL}
 	   )
-	   uksm? ( ${UKSM_SRC_URL} )"
+	   uksm? ( ${UKSM_SRC_URL} )
+	   zen-tune-muqss? ( ${ZENTUNE_MUQSS_DL_URL} )"
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:

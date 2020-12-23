@@ -149,6 +149,8 @@ PATCH_GP_MAJOR_MINOR_REVISION="4.14-${K_GENPATCHES_VER}"
 PATCH_BFQ_VER="4.19"
 PATCH_TRESOR_VER="3.18.5"
 DISABLE_DEBUG_V="1.1"
+ZENTUNE_4_19_COMMIT="84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d..78fb15ac04bff56dfeb0b6fe692fb6e0ccf4e56b" # (exclusive-old,inclusive-new] (top,bottom]
+ZENTUNE_MUQSS_4_19_COMMIT="5a9e0ccffec0891a12ff28a4db1297fb95979572..533573afd451f8d474ed4b9fa126c8c46c4c31a4" # (exclusive-old,inclusive-new]  (top,bottom]
 BFQ_BRANCH="bfq"
 MUQSS_VER="0.162"
 
@@ -156,13 +158,17 @@ MUQSS_VER="0.162"
 LINUX_TIMESTAMP=1510512373
 
 IUSE="+cfs disable_debug +genpatches +kernel_gcc_patch muqss pds \
-+O3 tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 uksm"
-REQUIRED_USE="^^ ( cfs muqss pds )
-tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
-tresor_aesni? ( tresor )
-tresor_i686? ( tresor )
-tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
-tresor_x86_64? ( tresor )"
++O3 tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 uksm \
+zen-misc zen-tune zen-tune-muqss"
+REQUIRED_USE="
+	!zen-tune !zen-tune-muqss
+	^^ ( cfs muqss pds )
+	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
+	tresor_aesni? ( tresor )
+	tresor_i686? ( tresor )
+	tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
+	tresor_x86_64? ( tresor )
+	zen-tune-muqss? ( muqss zen-tune )"
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
@@ -186,6 +192,8 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   # all-rights-reserved applies to new files introduced and no default license
   #   found in the project.  (The implementation is based on an academic paper
   #   from public universities.)
+LICENSE+=" zen-tune? ( GPL-2 )"
+LICENSE+=" zen-tune-muqss? ( GPL-2 )"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:;
@@ -217,12 +225,28 @@ SRC_URI+=" genpatches? (
 		${TRESOR_README_DL_URL2}
 		${TRESOR_RESEARCH_PDF_DL_URL}
 	   )
-	   uksm? ( ${UKSM_SRC_URL} )"
+	   uksm? ( ${UKSM_SRC_URL} )
+	   zen-tune-muqss? ( ${ZENTUNE_MUQSS_DL_URL} )"
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel_pkg_setup_cb() {
+	if use zen-misc ; then
+		ewarn \
+"Using the zen-misc USE flag may not work as it was originally designed for \
+the 4.19 series"
+	fi
+	if use zen-tune ; then
+		ewarn \
+"Using the zen-tune USE flag may not work as it was originally designed for \
+the 4.19 series"
+	fi
+	if use zen-tune-muqss ; then
+		ewarn \
+"Using the zen-tune-muqss USE flag may not work as it was originally designed for \
+the 4.19 series"
+	fi
 	if use kernel_gcc_patch ; then
 		ewarn \
 "The kernel_gcc_patch was designed for older kernels and may fail to patch.  \

@@ -18,8 +18,8 @@
 #   https://github.com/dolohow/uksm
 # zen-tune:
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce 3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0
-#   https://github.com/torvalds/linux/compare/v5.9...zen-kernel:5.9/zen-sauce (8141729974d4c2fae2c758e83136ae4b12feba7a..cbef2dd68b27d957d4b24ee020fd33ef5ebdf26b] ; (exclusive-end,inclusive-start] (top,bottom]
-#   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce (973d42f99af15b2e610204fbe8252251ed7cc8c1..b7b24b494b62e02c21a9a349da2d036849f9dd8b] ; (exclusive-end,inclusive-start] (top,bottom]
+#   https://github.com/torvalds/linux/compare/v5.9...zen-kernel:5.9/zen-sauce (8141729974d4c2fae2c758e83136ae4b12feba7a..cbef2dd68b27d957d4b24ee020fd33ef5ebdf26b] ; (exclusive-old,inclusive-new] (top,bottom]
+#   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce (973d42f99af15b2e610204fbe8252251ed7cc8c1..b7b24b494b62e02c21a9a349da2d036849f9dd8b] ; (exclusive-old,inclusive-new] (top,bottom]
 # zen-kernel 5.4/futex-backports
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/futex-backports
 # zen-kernel 5.{8..10}/futex-multiple-wait-v3
@@ -147,15 +147,24 @@ BMQ_SRC_URL="${BMQ_BASE_URL}${BMQ_FN}"
 
 ZENTUNE_PROJ="zen-tune"
 ZENTUNE_FN="${ZENTUNE_PROJ}-${PATCH_ZENTUNE_VER}.patch"
+ZENTUNE_MUQSS_FN="zen-tune-muqss-${PATCH_ZENTUNE_VER}.patch"
 if [[ "${K_MAJOR_MINOR}" == "5.10" ]] ; then
 ZENTUNE_URL_BASE="https://github.com/zen-kernel/zen-kernel/compare/"
 ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_5_10_COMMIT}.patch"
+#ZENTUNE_MUQSS_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_MUQSS_5_10_COMMIT}.patch -> ${ZENTUNE_MUQSS_FN}"
 elif [[ "${K_MAJOR_MINOR}" == "5.9" ]] ; then
 ZENTUNE_URL_BASE="https://github.com/zen-kernel/zen-kernel/compare/"
 ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_5_9_COMMIT}.patch"
+ZENTUNE_MUQSS_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_MUQSS_5_9_COMMIT}.patch -> ${ZENTUNE_MUQSS_FN}"
 elif [[ "${K_MAJOR_MINOR}" == "5.4" ]] ; then
 ZENTUNE_URL_BASE="https://github.com/torvalds/linux/commit/"
 ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_5_4_COMMIT}.patch"
+# For ZENTUNE_MUQSS_DL_URL, see ot-kernel-v5.4.eclass
+elif [[ "${K_MAJOR_MINOR}" == "4.14" || "${K_MAJOR_MINOR}" == "4.19" ]] ; then
+# Applying to 4.14 may not work
+ZENTUNE_URL_BASE="https://github.com/torvalds/linux/compare/"
+ZENTUNE_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_4_19_COMMIT}.patch"
+ZENTUNE_MUQSS_DL_URL="${ZENTUNE_URL_BASE}${ZENTUNE_MUQSS_4_19_COMMIT}.patch -> ${ZENTUNE_MUQSS_FN}"
 else
 # Up to and including 5.3
 ZENTUNE_URL_BASE=\
@@ -544,6 +553,20 @@ function apply_zentune() {
 		_dpatch "${PATCH_OPS} -N" "${T}/${ZENTUNE_DL_DEP_FN}"
 	fi
 	_dpatch "${PATCH_OPS} -N" "${T}/${ZENTUNE_FN}"
+}
+
+# @FUNCTION: apply_zentune_muqss
+# @DESCRIPTION:
+# Apply the Zen timing MuQSS patches.
+function apply_zentune_muqss() {
+	if ver_test "${K_MAJOR_MINOR}" -eq 5.4 ; then
+		_dpatch "${PATCH_OPS} -N" "${DISTDIR}/zen-tune-muqss-${PATCH_ZENTUNE_VER}-6c8fd1641dea5418c68dad4bf48d2d128a2a13e5.patch"
+		_dpatch "${PATCH_OPS} -N" "${DISTDIR}/zen-tune-muqss-${PATCH_ZENTUNE_VER}-dce8f01fd3d28121e3bf215255c5eded3855e417.patch"
+		_dpatch "${PATCH_OPS} -N" "${DISTDIR}/zen-tune-muqss-${PATCH_ZENTUNE_VER}-3ca137b68d689fcb1c5cadad1416c7791d84d48e.patch"
+		_dpatch "${PATCH_OPS} -N" "${DISTDIR}/zen-tune-muqss-${PATCH_ZENTUNE_VER}-d1bebeb959a56324fe436443ea2f21a8391632d9.patch"
+	else
+		_dpatch "${PATCH_OPS} -N" "${DISTDIR}/${ZENTUNE_MUQSS_FN}"
+	fi
 }
 
 function apply_zentune_revert_5_5() {
@@ -1071,6 +1094,12 @@ kernel ${K_MAJOR_MINOR}.  Skipping kernel_gcc_patch."
 			fetch_ck
 			apply_ck
 			_dpatch "${PATCH_OPS}" "${FILESDIR}/muqss-dont-attach-ckversion.patch"
+		fi
+	fi
+
+	if has zen-tune-muqss ${IUSE_EFFECTIVE} ; then
+		if use zen-tune-muqss ; then
+			apply_zentune_muqss
 		fi
 	fi
 

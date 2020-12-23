@@ -27,23 +27,25 @@ PATCH_BFQ_VER="5.9"
 PATCH_BMQ_MAJOR_MINOR="5.9"
 PATCH_PROJECT_C_MAJOR_MINOR="5.9"
 DISABLE_DEBUG_V="1.1"
-ZENTUNE_5_9_COMMIT="8141729974d4c2fae2c758e83136ae4b12feba7a..cbef2dd68b27d957d4b24ee020fd33ef5ebdf26b" # (exclusive-end,inclusive-start]  (top,bottom]
+ZENTUNE_5_9_COMMIT="8141729974d4c2fae2c758e83136ae4b12feba7a..cbef2dd68b27d957d4b24ee020fd33ef5ebdf26b" # (exclusive-old,inclusive-new]  (top,bottom]
+ZENTUNE_MUQSS_5_9_COMMIT="25a515b5d6bd337c30eb700fe6f7c9a15f09832c..8969d3bb632504cea984c900b71176e2d4c7997e" # (exclusive-old,inclusive-new]  (top,bottom]
 PATCH_TRESOR_VER="3.18.5"
 MUQSS_VER="0.204"
 
 IUSE="bfq bmq +cfs disable_debug futex-wait-multiple +genpatches \
 +kernel_gcc_patch muqss +O3 prjc tresor tresor_aesni tresor_i686 \
 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-misc \
--zen-tune"
-REQUIRED_USE="\
-!bfq !bmq
-^^ ( bmq cfs muqss prjc ) \
-tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
-tresor_aesni? ( tresor )
-tresor_i686? ( tresor )
-tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
-tresor_x86_64? ( tresor )
-tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )"
+-zen-tune zen-tune-muqss"
+REQUIRED_USE="
+	!bfq !bmq
+	^^ ( bmq cfs muqss prjc )
+	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
+	tresor_aesni? ( tresor )
+	tresor_i686? ( tresor )
+	tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
+	tresor_x86_64? ( tresor )
+	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
+	zen-tune-muqss? ( muqss zen-tune )"
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
@@ -70,6 +72,7 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   #   found in the project.  (The implementation is based on an academic paper
   #   from public universities.)
 LICENSE+=" zen-tune? ( GPL-2 )"
+LICENSE+=" zen-tune-muqss? ( GPL-2 )"
 #BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.patch"
 #BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
 
@@ -101,7 +104,8 @@ SRC_URI+=" genpatches? (
 		${TRESOR_RESEARCH_PDF_DL_URL}
 		${TRESOR_SYSFS_DL_URL}
 	   )
-	   uksm? ( ${UKSM_SRC_URL} )"
+	   uksm? ( ${UKSM_SRC_URL} )
+	   zen-tune-muqss? ( ${ZENTUNE_MUQSS_DL_URL} )"
 
 SRC_URI_DISABLED+="
 	bmq? ( ${BMQ_SRC_URL} )

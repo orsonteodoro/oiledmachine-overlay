@@ -223,8 +223,6 @@
 
       Using it may be insecure.  For details, see
       https://en.wikipedia.org/wiki/Kernel_same-page_merging#Security_risks</flag>
-    <flag name="zen-tune">Patches the kernel with Zen Interactive
-      Tuning.</flag>
     <flag name="zen-misc">Patches the kernel with selected Zen kernel
       commits.  You will need to define a ZENMISC_WHITELIST_5_3 environmental
       variable (in your make.conf or per-package env), replacing 5_3 with 5
@@ -252,5 +250,10 @@
       The zen-misc set contains patches that add drivers or functionality
       related to gaming, laptops, optimizations, etc.
      </flag>
+    <flag name="zen-tune">Patches the kernel with Zen Interactive
+      Tuning.</flag>
+    <flag name="zen-tune-muqss">Patches the kernel with Zen Interactive
+      Tuning timings for MuQSS that may improve game FPS performance by
+      10% along with emulators.</flag>
   </use>
 </pkgmetadata>
