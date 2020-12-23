@@ -215,8 +215,14 @@
       AES key support to the 64-bit sse2 version of TRESOR.
       (experimental/testing)</flag>
     <flag name="uksm">Patches the kernel with the Ultra Kernel Samepage
-      Merging, a type of memory page deduper algorithm.  Using it may be
-      insecure.</flag>
+      Merging, a type of memory page deduper algorithm.  UKSM does transparent
+      merging without any need for special changes to programs.  In constrast,
+      the stock KSM requires apps utilize the madvise() API call with the
+      MADV_MERGEABLE flag and which many programs or libraries do not utilize
+      with change to /sys/kernel/mm/ksm/run set to 1.
+
+      Using it may be insecure.  For details, see
+      https://en.wikipedia.org/wiki/Kernel_same-page_merging#Security_risks</flag>
     <flag name="zen-tune">Patches the kernel with Zen Interactive
       Tuning.</flag>
     <flag name="zen-misc">Patches the kernel with selected Zen kernel
