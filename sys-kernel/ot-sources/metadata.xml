@@ -234,17 +234,17 @@
       the final commit last if using the same timestamp or split commit. For
       a full list of commits...
 
-      for 5.4 see:
-      https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
+      for 4.19 see:
+      https://github.com/torvalds/linux/compare/v4.19...zen-kernel:4.19/misc
 
       for 5.4 see:
       https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
-
-      for 5.8 see:
-      https://github.com/torvalds/linux/compare/v5.8...zen-kernel:5.8/zen-sauce
 
       for 5.9 see:
       https://github.com/torvalds/linux/compare/v5.9...zen-kernel:5.9/zen-sauce
+
+      for 5.10 see:
+      https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
 
       Use the O3, zen-misc, kernel_gcc_patch USE flags instead of passing their
       commit IDs.
