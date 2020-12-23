@@ -198,21 +198,35 @@ O3_RO_SRC_URL="${O3_SRC_URL}${O3_RO_DL_FN} -> ${O3_RO_FN}"
 O3_ALLOW_FN="O3-allow-unrestricted-${PATCH_ALLOW_O3_COMMIT}.patch"
 O3_ALLOW_SRC_URL="${O3_SRC_URL}${PATCH_ALLOW_O3_COMMIT}.patch -> ${O3_ALLOW_FN}"
 
-if ver_test ${K_MAJOR_MINOR} -ge 5.8 ; then
+if ver_test ${K_MAJOR_MINOR} -ge 5.10 ; then
+KGCCP_DL_11_0_FN=\
+"enable_additional_cpu_optimizations_for_gcc_v11.0%2B_kernel_v5.10%2B.patch"
 KGCCP_DL_10_1_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v5.7%2B.patch"
+"enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v5.8%2B.patch"
 KGCCP_DL_9_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v5.8%2B.patch"
-elif ver_test ${K_MAJOR_MINOR} -ge 5.7 ; then
+KGCCP_DL_8_1_FN=\
+"enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B.patch"
+KGCCP_DL_4_9_FN=\
+"${KGCCP_DL_4_9_FN:=enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B.patch}"
+elif ver_test ${K_MAJOR_MINOR} -ge 5.9 ; then
 KGCCP_DL_10_1_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v5.7%2B.patch"
+"enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v5.8%2B.patch"
 KGCCP_DL_9_1_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v5.7%2B.patch"
-elif ver_test ${K_MAJOR_MINOR} -ge 5.5 ; then
+"enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v5.8%2B.patch"
+KGCCP_DL_8_1_FN=\
+"enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B.patch"
+KGCCP_DL_4_9_FN=\
+"${KGCCP_DL_4_9_FN:=enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B.patch}"
+elif ver_test ${K_MAJOR_MINOR} -ge 5.4 ; then
 KGCCP_DL_10_1_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v5.5-v5.6.patch"
+"enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v4.19-v5.4.patch"
 KGCCP_DL_9_1_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v5.5%2B.patch"
+"enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v4.13%2B.patch"
+KGCCP_DL_8_1_FN=\
+"enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B.patch"
+KGCCP_DL_4_9_FN=\
+"${KGCCP_DL_4_9_FN:=enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B.patch}"
 elif ver_test ${K_MAJOR_MINOR} -ge 4.13 ; then
 KGCCP_DL_9_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v4.13%2B.patch"
@@ -234,6 +248,9 @@ KGCCP_SRC_9_1_URL="${KGCCP_URL_BASE}${KGCCP_DL_9_1_FN}"
 fi
 if [[ -n "${KGCCP_DL_10_1_FN}" ]] ; then
 KGCCP_SRC_10_1_URL="${KGCCP_URL_BASE}${KGCCP_DL_10_1_FN}"
+fi
+if [[ -n "${KGCCP_DL_11_0_FN}" ]] ; then
+KGCCP_SRC_11_0_URL="${KGCCP_URL_BASE}${KGCCP_DL_11_0_FN}"
 fi
 
 GENPATCHES_URL_BASE="https://dev.gentoo.org/~mpagano/genpatches/tarballs/"
@@ -995,7 +1012,16 @@ ot-kernel_unpack_point_releases() {
 function ot-kernel_src_unpack() {
 	_PATCHES=()
 	if use kernel_gcc_patch ; then
-		if $(ver_test $(gcc-version) -ge 10.1) \
+		CC=$(tc-getCC)
+		if ! tc-is-gcc ; then
+			CC=$(get_abi_CHOST ${ABI})-gcc
+		fi
+		if $(ver_test $(gcc-version) -ge 11.0) \
+			&& test -f "${DISTDIR}/${KGCCP_DL_11_0_FN}" ; \
+		then
+			einfo "GCC patch is 11.0"
+			_PATCHES+=( "${DISTDIR}/${KGCCP_DL_11_0_FN}" )
+		elif $(ver_test $(gcc-version) -ge 10.1) \
 			&& test -f "${DISTDIR}/${KGCCP_DL_10_1_FN}" ; \
 		then
 			einfo "GCC patch is 10.1"

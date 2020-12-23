@@ -111,6 +111,27 @@ SRC_URI_DISABLED+="
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel_pkg_setup_cb() {
+	if use kernel_gcc_patch ; then
+		CC=$(tc-getCC)
+		if ! tc-is-gcc ; then
+			CC=$(get_abi_CHOST ${ABI})-gcc
+		fi
+		if has ">=sys-devel/gcc-10.1" ; then
+			if $(gcc-fullversion) -ge 10.1 ; then
+				:;
+			else
+				ewarn \
+"You need to switch your compiler to gcc-10.1+ for kernel_gcc_patch to work on \
+new architectures.  For increased compatibility switch and re-emerge with \
+>=gcc-10.1."
+			fi
+		else
+			ewarn \
+"The kernel_gcc_patch was designed for older kernels and may fail to patch.  \
+Patching anyway.  For increased compatibility switch and re-emerge with \
+>=gcc-10.1."
+		fi
+	fi
 	if has zen-tune ${IUSE_EFFECTIVE} ; then
 		if use zen-tune ; then
 			ewarn \

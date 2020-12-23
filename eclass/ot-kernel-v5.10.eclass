@@ -91,6 +91,7 @@ SRC_URI+=" genpatches? (
 		${KGCCP_SRC_8_1_URL}
 		${KGCCP_SRC_9_1_URL}
 		${KGCCP_SRC_10_1_URL}
+		${KGCCP_SRC_11_0_URL}
 	   )
 	   O3? ( ${O3_ALLOW_SRC_URL} )
 	   prjc? ( ${PRJC_SRC_URL} )
@@ -111,6 +112,27 @@ SRC_URI_DISABLED+="
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel_pkg_setup_cb() {
+	if use kernel_gcc_patch ; then
+		CC=$(tc-getCC)
+		if ! tc-is-gcc ; then
+			CC=$(get_abi_CHOST ${ABI})-gcc
+		fi
+		if has ">=sys-devel/gcc-11" ; then
+			if $(gcc-fullversion) -ge 11 ; then
+				:;
+			else
+				ewarn \
+"You need to switch your compiler to gcc-11+ for kernel_gcc_patch to work on \
+new architectures.  For increased compatibility switch and re-emerge with \
+>=gcc-11."
+			fi
+		else
+			ewarn \
+"The kernel_gcc_patch was designed for older kernels and may fail to patch.  \
+Patching anyway.  For increased compatibility switch and re-emerge with \
+>=gcc-11."
+		fi
+	fi
 	if has zen-tune ${IUSE_EFFECTIVE} ; then
 		if use zen-tune ; then
 			ewarn \

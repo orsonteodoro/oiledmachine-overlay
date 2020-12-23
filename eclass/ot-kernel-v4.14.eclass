@@ -203,6 +203,7 @@ SRC_URI+=" genpatches? (
 	   kernel_gcc_patch? (
 		${KGCCP_SRC_4_9_URL}
 		${KGCCP_SRC_8_1_URL}
+		${KGCCP_SRC_9_1_URL}
 	   )
 	   O3? (
 		${O3_CO_SRC_URL}
@@ -222,6 +223,11 @@ SRC_URI+=" genpatches? (
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel_pkg_setup_cb() {
+	if use kernel_gcc_patch ; then
+		ewarn \
+"The kernel_gcc_patch was designed for older kernels and may fail to patch.  \
+Patching anyway."
+	fi
 	# tresor for x86_64 generic was known to pass crypto testmgr on this
 	# version.
 	ewarn \
