@@ -161,7 +161,7 @@ IUSE="+cfs disable_debug +genpatches +kernel_gcc_patch muqss pds \
 +O3 tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 uksm \
 zen-misc zen-tune zen-tune-muqss"
 REQUIRED_USE="
-	!zen-tune !zen-tune-muqss
+	!zen-misc !zen-tune !zen-tune-muqss
 	^^ ( cfs muqss pds )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_aesni? ( tresor )

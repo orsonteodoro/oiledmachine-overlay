@@ -204,14 +204,6 @@ function ot-kernel_apply_tresor_fixes() {
 # @DESCRIPTION:
 # Show messages and avoid collision triggering
 function ot-kernel_pkg_postinst_cb() {
-	if use muqss ; then
-		ewarn \
-"Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL and\n\
-Idle dynticks system (tickless idle) CONFIG_NO_HZ_IDLE may cause the system\n\
-  to lock up.\n\
-You must choose Periodic timer ticks (constant rate, no dynticks)\n\
-  CONFIG_HZ_PERIODIC for it not to lock up."
-	fi
 	if use tresor_x86_64-256-bit-key-support ; then
 		ewarn \
 "\n\
