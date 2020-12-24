@@ -1,11 +1,12 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# Based on the firefox-83.0.ebuild from the gentoo-overlay
+# Originally based on the 84.0.1-r1.ebuild from the gentoo-overlay.
+# Revisions may change in the oiledmachine-overlay.
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-83-patches-06.tar.xz"
+FIREFOX_PATCHSET="firefox-84-patches-02.tar.xz"
 
 LLVM_MAX_SLOT=11
 
@@ -64,11 +65,12 @@ KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 
 SLOT="0/$(ver_cut 1)"
 LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
-IUSE="clang cpu_flags_arm_neon dbus debug eme-free geckodriver +gmp-autoupdate
+IUSE="+clang cpu_flags_arm_neon dbus debug eme-free geckodriver +gmp-autoupdate
 	hardened hwaccel jack lto +openh264 pgo pulseaudio screencast selinux
 	+system-av1 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 	+system-libvpx +system-webp wayland wifi"
-_ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
+_ABIS="abi_x86_32 abi_x86_64 abi_x86_x32 abi_mips_n32 abi_mips_n64 \
+abi_mips_o32 abi_ppc_32 abi_ppc_64 abi_s390_32 abi_s390_64"
 IUSE+=" ${_ABIS}"
 IUSE+=" -jemalloc"
 
@@ -79,9 +81,9 @@ BDEPEND="${PYTHON_DEPS}
 	app-arch/unzip
 	app-arch/zip
 	>=dev-util/cbindgen-0.15.0
-	>=net-libs/nodejs-10.21.1
+	>=net-libs/nodejs-10.22.1
 	virtual/pkgconfig[${MULTILIB_USEDEP}]
-	>=dev-lang/rust-1.43.0[${MULTILIB_USEDEP}]
+	>=dev-lang/rust-1.44.0[${MULTILIB_USEDEP}]
 	!dev-lang/rust-bin
 	|| (
 		(
@@ -120,7 +122,7 @@ BDEPEND="${PYTHON_DEPS}
 	)"
 
 CDEPEND="
-	>=dev-libs/nss-3.58[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.59.1[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.29[${MULTILIB_USEDEP}]
 	dev-libs/atk[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
@@ -197,7 +199,7 @@ DEPEND="${CDEPEND}
 	amd64? ( virtual/opengl[${MULTILIB_USEDEP}] )
 	x86? ( virtual/opengl[${MULTILIB_USEDEP}] )"
 # Gentoo's rust-bin package doesn't install the i686 libs.  Use only the
-# compiled version.
+# compiled source version.
 
 S="${WORKDIR}/${PN}-${PV%_*}"
 S_BAK="${WORKDIR}/${PN}-${PV%_*}"
@@ -598,6 +600,7 @@ multilib_src_configure() {
 	local chost=$(get_abi_CHOST ${ABI})
 	# Show flags set at the beginning
 	einfo "Current CFLAGS:    ${CFLAGS}"
+	einfo "Current CXXFLAGS:  ${CXXFLAGS}"
 	einfo "Current LDFLAGS:   ${LDFLAGS}"
 	einfo "Current RUSTFLAGS: ${RUSTFLAGS}"
 
@@ -843,6 +846,11 @@ multilib_src_configure() {
 		if [[ -n ${disable_elf_hack} ]] ; then
 			mozconfig_add_options_ac 'elf-hack is broken when using Clang' --disable-elf-hack
 		fi
+	elif tc-is-gcc ; then
+		if ver_test $(gcc-fullversion) -ge 10 ; then
+			einfo "Forcing -fno-tree-loop-vectorize to workaround GCC bug, see bug 758446 ..."
+			append-cxxflags -fno-tree-loop-vectorize
+		fi
 	fi
 
 	# Additional ARCH support
@@ -880,8 +888,9 @@ multilib_src_configure() {
 	# Disable notification when build system has finished
 	export MOZ_NOSPAM=1
 
-	# Build system requires xargs but is unable to find it
-	mozconfig_add_options_mk 'Gentoo default' "XARGS=${EPREFIX}/usr/bin/xargs"
+	# Portage sets XARGS environment variable to "xargs -r" by default which
+	# breaks build system's check_prog() function which doesn't support arguments
+	mozconfig_add_options_ac 'Gentoo default' "XARGS=${EPREFIX}/usr/bin/xargs"
 
 	# Set build dir
 	mozconfig_add_options_mk 'Gentoo default' "MOZ_OBJDIR=${BUILD_OBJ_DIR}"
@@ -901,6 +910,7 @@ multilib_src_configure() {
 
 	# Show flags we will use
 	einfo "Build CFLAGS:    ${CFLAGS}"
+	einfo "Build CXXFLAGS:  ${CXXFLAGS}"
 	einfo "Build LDFLAGS:   ${LDFLAGS}"
 	einfo "Build RUSTFLAGS: ${RUSTFLAGS}"
 
@@ -981,6 +991,7 @@ multilib_src_install() {
 
 	# Install policy (currently only used to disable application updates)
 	insinto "${MOZILLA_FIVE_HOME}/distribution"
+	newins "${FILESDIR}"/distribution.ini distribution.ini
 	newins "${FILESDIR}"/disable-auto-update.policy.json policies.json
 
 	# Install system-wide preferences

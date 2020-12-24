@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 #
 # @ECLASS: mozcoreconf-v6.eclass
@@ -16,7 +16,7 @@
 
 if [[ ! ${_MOZCORECONF} ]]; then
 
-inherit multilib multilib-build toolchain-funcs flag-o-matic python-any-r1 versionator
+inherit multilib-build toolchain-funcs flag-o-matic python-any-r1 versionator
 
 IUSE="${IUSE} custom-cflags custom-optimization"
 
@@ -122,6 +122,7 @@ mozconfig_init() {
 	declare SM=$([[ ${PN} == seamonkey ]] && echo true || echo false)
 	declare TB=$([[ ${PN} == thunderbird ]] && echo true || echo false)
 	declare TRB=$([[ ${PN} == torbrowser ]] && echo true || echo false)
+	declare WF=$([[ ${PN} == waterfox* ]] && echo true || echo false)
 
 	####################################
 	#
@@ -134,7 +135,7 @@ mozconfig_init() {
 		*xulrunner)
 			cp xulrunner/config/mozconfig .mozconfig \
 				|| die "cp xulrunner/config/mozconfig failed" ;;
-		*firefox)
+		*firefox|waterfox*)
 			cp browser/config/mozconfig .mozconfig \
 				|| die "cp browser/config/mozconfig failed" ;;
 		*torbrowser)

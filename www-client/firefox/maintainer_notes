@@ -20,6 +20,8 @@ real	661m8.513s  <- The wall time because doing time sleep 2 demonstrates this n
 user	937m36.251s
 sys	56m48.536s
 
+*These numbers may limited by MAKEOPTS=-j2
+
 Update checklist fork:
 
 Make sure you are using ccache first and it works.  This will
@@ -61,6 +63,11 @@ and high.  Currently it is +85 days from May 26, 2020.
 
 For the list of CVE's see:
 https://nvd.nist.gov/vuln/search/results?query=firefox&results_type=overview&form_type=Basic&search_type=all&startIndex=0
+
+Also check GLSA ( https://security.gentoo.org/glsa ) and
+MFSA ( https://www.mozilla.org/en-US/security/advisories/ ).  They're numerous
+occassions where they are reported or visible first on MFSA than in the
+NVD CVE database.
 
 Verify in the About > Help that you are using the 32-bit version or non-native
 ABI version.
