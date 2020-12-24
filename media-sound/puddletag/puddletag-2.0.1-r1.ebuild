@@ -5,7 +5,7 @@ EAPI=7
 
 PYTHON_COMPAT=( python3_{6,7,8} )
 
-inherit distutils-r1 fdo-mime
+inherit distutils-r1 xdg
 
 DESCRIPTION="Audio tag editor"
 HOMEPAGE="http://docs.puddletag.net/"
