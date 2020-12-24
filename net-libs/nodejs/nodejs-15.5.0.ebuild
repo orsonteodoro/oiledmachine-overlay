@@ -27,11 +27,11 @@ RESTRICT="test"
 RDEPEND="!net-libs/nodejs:0
 	app-eselect/eselect-nodejs
 	>=dev-libs/libuv-1.40.0:=
-	>=net-dns/c-ares-1.17.0
+	>=net-dns/c-ares-1.17.1
 	>=net-libs/nghttp2-1.41.0
 	>=sys-libs/zlib-1.2.11
 	system-icu? ( >=dev-libs/icu-68.1:= )
-	system-ssl? ( >=dev-libs/openssl-1.1.1g:0= )"
+	system-ssl? ( >=dev-libs/openssl-1.1.1i:0= )"
 BDEPEND="${PYTHON_DEPS}
 	sys-apps/coreutils
 	systemtap? ( dev-util/systemtap )
@@ -40,7 +40,7 @@ BDEPEND="${PYTHON_DEPS}
 DEPEND="${RDEPEND}"
 PATCHES=( "${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="7.0.15" # See https://github.com/nodejs/node/blob/v15.4.0/deps/npm/package.json
+NPM_V="7.3.0" # See https://github.com/nodejs/node/blob/v15.5.0/deps/npm/package.json
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \

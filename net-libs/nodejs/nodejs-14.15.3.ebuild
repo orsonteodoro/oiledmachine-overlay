@@ -43,7 +43,7 @@ PATCHES=(
 )
 RESTRICT="test"
 S="${WORKDIR}/node-v${PV}"
-NPM_V="6.14.8" # See https://github.com/nodejs/node/blob/v14.15.1/deps/npm/package.json
+NPM_V="6.14.9" # See https://github.com/nodejs/node/blob/v14.15.3/deps/npm/package.json
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
