@@ -470,7 +470,9 @@ pkg_setup() {
 	fi
 
 	einfo
-	einfo "To set up cross-compile for other ABIs see \`epkginfo -d firefox\`"
+	einfo \
+"To set up cross-compile for other ABIs see \`epkginfo -d firefox\` or the \
+metadata.xml"
 
 	local jobs=$(echo "${MAKEOPTS}" | grep -P -o -e "(-j|--jobs=)\s*[0-9]+" \
 			| sed -r -e "s#(-j|--jobs=)\s*##g")
@@ -506,11 +508,11 @@ src_unpack() {
 src_prepare() {
 	use lto && rm -v "${WORKDIR}"/firefox-patches/*-LTO-Only-enable-LTO-*.patch
 	eapply "${WORKDIR}/firefox-patches"
-	eapply "${FILESDIR}/multiabi/${PN}-82.0-dont-check-rustc-host.patch"
+	eapply "${FILESDIR}/multiabi/${PN}-84.0.1-dont-check-rustc-host.patch"
 	eapply "${FILESDIR}/multiabi/${PN}-68.4.2-force-cross-compile.patch"
 	eapply "${FILESDIR}/multiabi/${PN}-82.0-elfhack-makefile-no-prefix-for-readelf.patch"
-	eapply "${FILESDIR}/multiabi/${PN}-79.0-check_binary-no-prefix-for-readelf.patch"
-	eapply "${FILESDIR}/multiabi/${PN}-79.0-dependentlibs_py-no-toolchain-prefix-for-readelf.patch"
+	eapply "${FILESDIR}/multiabi/${PN}-84.0.1-check_binary-no-prefix-for-readelf.patch"
+	eapply "${FILESDIR}/multiabi/${PN}-84.0.1-dependentlibs_py-no-toolchain-prefix-for-readelf.patch"
 
 	# Disabled because they don't support multilib Python.  Only native ABI supported.
 	# This means cbindgen cannot load the 32 bit clang.  It will build the cargo
@@ -518,7 +520,7 @@ src_prepare() {
 	# dependencies use the build information for 64-bit linking.
 	#
 	# eapply "${FILESDIR}/multiabi/${PN}-79.0-compile-cargo-packages-same-abi-1.patch"
-	# eapply "${FILESDIR}/multiabi/${PN}-79.0-compile-cargo-packages-same-abi-2.patch"
+	# eapply "${FILESDIR}/multiabi/${PN}-84.0.1-compile-cargo-packages-same-abi-2.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user

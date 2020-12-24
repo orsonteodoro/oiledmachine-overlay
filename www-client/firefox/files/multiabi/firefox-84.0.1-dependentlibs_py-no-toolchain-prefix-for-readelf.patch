@@ -1,0 +1,11 @@
+--- a/toolkit/library/build/dependentlibs.py.orig	2020-12-24 08:29:23.177962748 -0800
++++ b/toolkit/library/build/dependentlibs.py	2020-12-24 08:30:44.821141197 -0800
+@@ -44,7 +44,7 @@ def dependentlibs_win32_objdump(lib):
+ def dependentlibs_readelf(lib):
+     """Returns the list of dependencies declared in the given ELF .so"""
+     proc = subprocess.Popen(
+-        [substs.get("TOOLCHAIN_PREFIX", "") + "readelf", "-d", lib],
++        ["readelf", "-d", lib],
+         stdout=subprocess.PIPE,
+         universal_newlines=True,
+     )
