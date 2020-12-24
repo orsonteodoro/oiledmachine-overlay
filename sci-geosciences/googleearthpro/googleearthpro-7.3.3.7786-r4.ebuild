@@ -6,7 +6,7 @@
 
 EAPI=5
 
-inherit eapi7-ver eutils fdo-mime gnome2-utils pax-utils unpacker
+inherit eapi7-ver eutils pax-utils unpacker xdg
 
 DESCRIPTION="A 3D interface to the planet"
 HOMEPAGE="https://earth.google.com/"
@@ -73,6 +73,23 @@ ICU_V="54"
 OPENSSL_V="1.0.2t"
 QT_VERSION="5.5.1" # The version distributed with ${PN}
 
+# Using system Qt may likely require the older exact libraries.  Choices are...
+#
+# 1) same cat but ebuilds place in same folder but different SLOT=gep/5.5.1
+#    and revision (as in -r551000)
+# 2) different category (gep-qt) and same SLOT=5
+#
+# Both will require changes to src_configure to build against older set
+# and src_install to prevent library conflict
+#
+# This ebuild needs to copy those libraries overriding them or use LD_PRELOAD
+# to use these libraries.
+#
+# One may try to replace the Qt libs but there is a chance that they have been
+# modified by upstream.
+#
+QT_CATEGORY="dev-qt" # user can either choose to keep ebuild in same folder or seperate
+QT_SLOT="5" # may requires seperate SLOT depending on choice
 RDEPEND="
 	>=app-arch/bzip2-1.0.6
 	>=dev-db/sqlite-3.8.2:3
@@ -127,24 +144,24 @@ RDEPEND="
 	system-icu? ( dev-libs/icu:${ICU_V} )
 	system-openssl? ( >=dev-libs/openssl-${OPENSSL_V}:1.0 )
 	system-qt5? (
-		=dev-qt/qtcore-${QT_VERSION}*:5[icu]
-		=dev-qt/qtdbus-${QT_VERSION}*:5
-		=dev-qt/qtdeclarative-${QT_VERSION}*:5
-		=dev-qt/qtgui-${QT_VERSION}*:5[dbus,gif,jpeg,png,xcb]
-		=dev-qt/qtmultimedia-${QT_VERSION}*:5[widgets,alsa]
-		=dev-qt/qtnetwork-${QT_VERSION}*:5[ssl]
-		=dev-qt/qtopengl-${QT_VERSION}*:5
-		=dev-qt/qtpositioning-${QT_VERSION}*:5
-		=dev-qt/qtprintsupport-${QT_VERSION}*:5
-		=dev-qt/qtscript-${QT_VERSION}*:5[scripttools]
-		=dev-qt/qtsensors-${QT_VERSION}*:5
-		=dev-qt/qtsql-${QT_VERSION}*:5[sqlite]
-		=dev-qt/qtsvg-${QT_VERSION}*:5
-		=dev-qt/qtwebchannel-${QT_VERSION}*:5
-		=dev-qt/qtwebkit-${QT_VERSION}*:5
-		=dev-qt/qtwebsockets-${QT_VERSION}*:5[ssl]
-		=dev-qt/qtwidgets-${QT_VERSION}*:5
-		=dev-qt/qtx11extras-${QT_VERSION}*:5
+		=${QT_CATEGORY}/qtcore-${QT_VERSION}*:${QT_SLOT}[icu]
+		=${QT_CATEGORY}/qtdbus-${QT_VERSION}*:${QT_SLOT}
+		=${QT_CATEGORY}/qtdeclarative-${QT_VERSION}*:${QT_SLOT}
+		=${QT_CATEGORY}/qtgui-${QT_VERSION}*:${QT_SLOT}[dbus,gif,jpeg,png,xcb]
+		=${QT_CATEGORY}/qtmultimedia-${QT_VERSION}*:${QT_SLOT}[widgets,alsa]
+		=${QT_CATEGORY}/qtnetwork-${QT_VERSION}*:${QT_SLOT}[ssl]
+		=${QT_CATEGORY}/qtopengl-${QT_VERSION}*:${QT_SLOT}
+		=${QT_CATEGORY}/qtpositioning-${QT_VERSION}*:${QT_SLOT}
+		=${QT_CATEGORY}/qtprintsupport-${QT_VERSION}*:${QT_SLOT}
+		=${QT_CATEGORY}/qtscript-${QT_VERSION}*:${QT_SLOT}[scripttools]
+		=${QT_CATEGORY}/qtsensors-${QT_VERSION}*:${QT_SLOT}
+		=${QT_CATEGORY}/qtsql-${QT_VERSION}*:${QT_SLOT}[sqlite]
+		=${QT_CATEGORY}/qtsvg-${QT_VERSION}*:${QT_SLOT}
+		=${QT_CATEGORY}/qtwebchannel-${QT_VERSION}*:${QT_SLOT}
+		=${QT_CATEGORY}/qtwebkit-${QT_VERSION}*:${QT_SLOT}
+		=${QT_CATEGORY}/qtwebsockets-${QT_VERSION}*:${QT_SLOT}[ssl]
+		=${QT_CATEGORY}/qtwidgets-${QT_VERSION}*:${QT_SLOT}
+		=${QT_CATEGORY}/qtx11extras-${QT_VERSION}*:${QT_SLOT}
 	)
 	system-spnav? ( >=dev-libs/libspnav-0.2.3 )
 "
@@ -372,6 +389,7 @@ src_unpack() {
 }
 
 src_prepare() {
+	xdg_src_prepare
 	# We have no ld-lsb.so.3 symlink.
 	# Thanks to Nathan Phillip Brink <ohnobinki@ohnopublishing.net> for suggesting patchelf.
 	einfo "Running patchelf"
@@ -428,7 +446,7 @@ src_install() {
 }
 
 pkg_preinst() {
-	gnome2_icon_savelist
+	xdg_pkg_preinst
 }
 
 pkg_postinst() {
@@ -441,13 +459,10 @@ pkg_postinst() {
 
 	einfo "Multilingual users must manually set the language in Tools > Options > General > Language Settings"
 
-	fdo-mime_desktop_database_update
-	fdo-mime_mime_database_update
-	gnome2_icon_cache_update
+	xdg_pkg_postinst
 }
 
 pkg_postrm() {
-	fdo-mime_desktop_database_update
-	fdo-mime_mime_database_update
-	gnome2_icon_cache_update
+	xdg_pkg_postrm
 }
+
