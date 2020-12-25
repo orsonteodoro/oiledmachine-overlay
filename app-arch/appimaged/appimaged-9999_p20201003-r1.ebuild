@@ -9,9 +9,10 @@ LICENSE="MIT" # appimaged project's default license
 LICENSE+=" all-rights-reserved" # src/main.c ; \
 # The vanilla MIT license doesn't have all-rights-reserved
 KEYWORDS="~amd64 ~x86"
-IUSE="disable_watching_user_downloads_folder disable_watching_opt_folder \
+inherit cmake-utils linux-info user xdg
+IUSE+=" disable_watching_user_downloads_folder disable_watching_opt_folder \
 firejail openrc +systemd system-inotify-tools"
-RDEPEND="
+RDEPEND="${RDEPEND}
 	app-arch/go-appimage[-appimaged]
 	dev-libs/glib:=[static-libs]
 	dev-libs/libappimage:=[static-libs]
@@ -26,17 +27,16 @@ RDEPEND="
 	sys-libs/glibc:=
 	system-inotify-tools? ( sys-fs/inotify-tools:=[static-libs] )
 	x11-libs/cairo:=[static-libs]"
-DEPEND="${RDEPEND}"
+DEPEND="${DEPEND}
+	${RDEPEND}"
 REQUIRED_USE="|| ( openrc systemd )"
 SLOT="0/${PV}"
 EGIT_COMMIT="11b249848d7d0d9b3b7154ae5fca0328afa167d4"
 SRC_URI=\
 "https://github.com/AppImage/appimaged/archive/${EGIT_COMMIT}.tar.gz
-	 -> ${P}.tar.gz
-"
+	 -> ${P}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
-inherit cmake-utils linux-info user xdg
 _PATCHES=(
 	"${FILESDIR}/${PN}-${PV}-fill-git-commit.patch"
 	"${FILESDIR}/${PN}-9999_p20200724-use-find_package.patch"
