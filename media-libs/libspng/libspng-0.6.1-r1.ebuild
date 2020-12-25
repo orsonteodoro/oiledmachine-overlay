@@ -8,19 +8,20 @@ HOMEPAGE="https://libspng.org"
 LICENSE="BSD-2
 	test? ( libpng2 )"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
-inherit multilib-build
+inherit meson multilib-build
 IUSE="doc pgo +opt -static-libs -test -threads zlib"
 RDEPEND="zlib? ( sys-libs/zlib:=[static-libs?] )
 	!zlib? ( dev-libs/miniz:=[static-libs?] )
 	virtual/libc"
 DEPEND="test? (	>=media-libs/libpng-1.6	)"
-BDEPEND="dev-util/pkgconfig
+BDEPEND="${BDEPEND}
+	dev-util/pkgconfig
 	doc? (
 		dev-python/mkdocs
 		dev-python/mkdocs-material
 	)"
 SLOT="0/${PV}"
-inherit flag-o-matic meson static-libs toolchain-funcs
+inherit flag-o-matic static-libs toolchain-funcs
 # GitHub is bugged?  The ZIP does not have a image so download manually
 BENCHMARK_IMAGES_COMMIT="2478ec174d74d66343449f850d22e0eabb0f01b0"
 SRC_URI="https://github.com/randy408/libspng/archive/v${PV}.tar.gz \
