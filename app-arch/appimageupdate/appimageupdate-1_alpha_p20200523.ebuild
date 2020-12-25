@@ -7,6 +7,7 @@ information embedded in the AppImage itself. "
 HOMEPAGE="https://github.com/AppImage/AppImageUpdate/"
 LICENSE="MIT" # project's default license
 KEYWORDS="~amd64 ~x86"
+inherit cmake-utils
 RDEPEND="
 	dev-libs/libappimage
 	dev-libs/libdesktopenvironments
@@ -22,7 +23,6 @@ SRC_URI=\
 MY_PN="AppImageUpdate"
 S="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
-inherit cmake-utils
 PATCHES=(
 	"${FILESDIR}/${PN}-1_alpha_p20200523-set-git-commit-for-tarball.patch"
 	"${FILESDIR}/${PN}-1_alpha_p20200523-use-system-zsync2.patch"
