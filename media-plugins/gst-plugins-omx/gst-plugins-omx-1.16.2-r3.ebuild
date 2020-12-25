@@ -26,13 +26,12 @@ RDEPEND="
 		>=media-libs/gst-plugins-bad-1.4.0:1.0[egl,gles2,rpi,${MULTILIB_USEDEP}]
 	)
 	omx-bellagio? ( >=media-libs/libomxil-bellagio-0.9.3:=[${MULTILIB_USEDEP}] )
-	omx-tizonia? ( >=media-sound/tizonia-0.1.0:=[${MULTILIB_USEDEP}] )
-"
+	omx-tizonia? ( >=media-sound/tizonia-0.1.0:=[${MULTILIB_USEDEP}] )"
 DEPEND="${RDEPEND}
-	>=dev-util/gtk-doc-am-1.3
-	>=dev-util/meson-0.36
-	virtual/pkgconfig
-"
+	>=dev-util/gtk-doc-am-1.3"
+BDEPEND="${BDEPEND}
+	>=dev-util/meson-0.47
+	virtual/pkgconfig"
 REQUIRED_USE="^^ ( rpi omx-bellagio omx-tizonia )"
 RESTRICT="mirror"
 
@@ -42,15 +41,19 @@ multilib_src_configure() {
 	GST_PLUGINS_BUILD=""
 	local emesonargs=()
 	if use rpi; then
-		emesonargs+=( -Dwith_omx_target=rpi )
-		emesonargs+=( -Dwith_omx_header_path=/opt/vc/include/IL )
+		emesonargs+=( -Dtarget=rpi )
+		emesonargs+=( -Dheader_path=/opt/vc/include/IL )
 	fi
 	if use omx-bellagio; then
-		emesonargs+=( -Dwith_omx_target=bellagio )
+		emesonargs+=( -Dtarget=bellagio )
 	fi
 	if use omx-tizonia; then
-		emesonargs+=( -Dwith_omx_target=tizonia )
+		emesonargs+=( -Dtarget=tizonia )
 	fi
+	emesonargs+=(
+		$(meson_use examples)
+		$(meson_use test tests)
+	)
 
 	meson_src_configure
 }

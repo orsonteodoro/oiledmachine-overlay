@@ -26,13 +26,12 @@ RDEPEND="
 		>=media-libs/gst-plugins-bad-1.4.0:1.0[egl,gles2,rpi,${MULTILIB_USEDEP}]
 	)
 	omx-bellagio? ( >=media-libs/libomxil-bellagio-0.9.3:=[${MULTILIB_USEDEP}] )
-	omx-tizonia? ( >=media-sound/tizonia-0.19.0:=[${MULTILIB_USEDEP}] )
-"
+	omx-tizonia? ( >=media-sound/tizonia-0.19.0:=[${MULTILIB_USEDEP}] )"
 DEPEND="${RDEPEND}
-	>=dev-util/gtk-doc-am-1.3
+	>=dev-util/gtk-doc-am-1.3"
+BDEPEND="${BDEPEND}
 	>=dev-util/meson-0.47
-	virtual/pkgconfig
-"
+	virtual/pkgconfig"
 REQUIRED_USE="^^ ( rpi omx-bellagio omx-tizonia )"
 RESTRICT="mirror"
 
