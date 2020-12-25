@@ -11,27 +11,26 @@ LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~x86"
 PYTHON_COMPAT=( python3_{6,7,8,9} )
 SLOT="0"
-inherit python-r1
-LANGS=(el_GR en en_GB hu it nl zh_CN)
-IUSE="${LANGS[@]/#/l10n_} +l10n_en -libexec -pkla"
+inherit meson python-r1
+LANGS=(el_GR en en_GB hu nl zh_CN)
+IUSE="${LANGS[@]/#/l10n_} +l10n_en -pkla"
 # See README.md for dependencies
 RDEPEND="${PYTHON_DEPS}
 	 dev-libs/glib:2
 	 dev-libs/libappindicator:3
 	 dev-python/dbus-python[${PYTHON_USEDEP}]
 	 >=dev-python/pygobject-3.30[${PYTHON_USEDEP}]
-	   dev-python/pyxdg
-	 >=gui-libs/libhandy-1
 	 sys-auth/polkit
 	 x11-libs/gtk+:3
 	 x11-themes/hicolor-icon-theme"
 DEPEND="${RDEPEND}
 	dev-libs/glib:2"
-BDEPEND=">=dev-util/meson-0.50
+BDEPEND="${BDEPEND}
+	>=dev-util/meson-0.50
 	dev-util/ninja
 	dev-util/pkgconfig"
 RESTRICT="mirror"
-inherit eutils meson xdg-utils
+inherit eutils xdg-utils
 SRC_URI=\
 "https://github.com/vagnum08/cpupower-gui/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
@@ -50,7 +49,6 @@ src_prepare() {
 src_configure() {
 	local emesonargs=(
 		$(meson_use pkla)
-		$(meson_use libexec)
 		-Dsystemddir=${CPUPOWER_GUI_SYSTEMD_SYSTEM_DIR}
 	)
 	meson_src_configure
