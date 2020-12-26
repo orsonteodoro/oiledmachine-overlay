@@ -8,7 +8,7 @@ LICENSE="GPL-2
 	test? ( all-rights-reserved )"
 # src/oomd/util/FixtureTest.cpp contains all-rights-reserved
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
-inherit linux-info meson toolchain-funcs user
+inherit linux-info meson toolchain-funcs
 PLUGINS_CORE=(
 	BaseKillPlugin
 	ContinuePlugin
@@ -165,8 +165,6 @@ General setup > Support for paging of anonymous memory (swap)"
 		die \
 "Compiler is not supported.  Switch to GCC or Clang with c++17 support."
 	fi
-	enewgroup ${PN}
-	enewuser ${PN} -1 -1 /var/lib/${PN} ${PN}
 }
 
 src_configure() {
