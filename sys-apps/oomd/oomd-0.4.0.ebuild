@@ -80,6 +80,7 @@ REQUIRED_USE="
 RDEPEND="dev-libs/jsoncpp
 	openrc? ( dev-util/vmtouch
 		sys-apps/openrc
+		sys-process/procps
 		sys-process/schedtool )
 	systemd? ( sys-apps/systemd )"
 DEPEND="test? ( dev-cpp/gtest )"
