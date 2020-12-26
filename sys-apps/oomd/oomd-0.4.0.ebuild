@@ -47,7 +47,7 @@ REQUIRED_USE="
 		${PLUGINS_CORE[@]/#/plugin_}
 		${PLUGINS_SYSTEMD[@]/#/plugin_}
 		savedconfig
-	) )
+		)     )
 	plugin_CorePluginsTest? (
 		plugin_BaseKillPlugin
 		plugin_KillIOCost
@@ -78,7 +78,9 @@ REQUIRED_USE="
 		plugin_BaseSystemdPlugin
 	)"
 RDEPEND="dev-libs/jsoncpp
-	openrc? ( dev-util/vmtouch )
+	openrc? ( dev-util/vmtouch
+		sys-apps/openrc
+		sys-process/schedtool )
 	systemd? ( sys-apps/systemd )"
 DEPEND="test? ( dev-cpp/gtest )"
 GCC_V_MIN="8" # for c++17
