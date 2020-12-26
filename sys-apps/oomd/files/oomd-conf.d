@@ -3,7 +3,7 @@ OOMD_JSONCFG="/etc/oomd/oomd.json"
 OOMD_ARGS="--interval 1 --config ${OOMD_JSONCFG}"
 
 # Set to 1 to enable.  Set empty or unset to disable boosting.
-OOMD_BOOST="" 
+OOMD_BOOST="1"
 
 # For boosting CPU priority class scheduling on oomd to preempt an OOM process.
 # Use only -R (round robin realtime) or -I (pseudo-realtime but not realtime).
