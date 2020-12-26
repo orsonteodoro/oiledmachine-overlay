@@ -1,0 +1,88 @@
+#!/sbin/openrc-run
+# Copyright (c) 2020 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+description="Userland out-of-memory killer daemon"
+OOMD_PID_FILE="/var/run/oomd/oomd.pid"
+OOMD_VMTOUCH_PID="/var/run/oomd/vmtouch.pid"
+
+depend()
+{
+	need localmount
+}
+
+start()
+{
+	ebegin "Starting oomd"
+	if [[ -e "${OOMD_JSONCFG}" ]] ; then
+		eend -1 "Missing ${OOMD_JSONCFG}"
+	fi
+	if [[ -e "/usr/bin/vmtouch" ]] ; then
+		# Prefetch and lock
+# This section below we try to lock and reserve memory for oomd so that the OOM
+# process does not swap out the process space of oomd.
+# https://github.com/facebookincubator/oomd/blob/master/docs/production_setup.md#swap
+		L0_DEPS=($(ldd /usr/bin/oomd \
+			| grep -E -e "/lib(32|64|x32)?/" \
+			| cut -f 2 -d ">" \
+			| cut -f 1 -d "(" \
+			| sed -r -e "s|^[ \t]+||g" -e "s|[ \t]+$||g"))
+		L1_DEPS=()
+		for x in ${L0_DEPS[@]} ; do
+			L1_DEPS+=($(ldd ${x} \
+				| grep -E -e "/lib(32|64|x32)?/" \
+				| cut -f 2 -d ">" \
+				| cut -f 1 -d "(" \
+				| sed -r -e "s|^[ \t]+||g" -e 's|[ \t]+$||g'));
+		done
+		# Bandaid until we can find a way to allocate 64M
+		# which take into account dynamically allocated memory.
+		vmtouch -q -d -f -L -P ${OOMD_VMTOUCH_PID} -w \
+			/usr/bin/oomd \
+			"${OOMD_JSONCFG}" \
+			$(echo "${L0_DEPS[@]}" "${L1_DEPS[@]}" | tr " " "\n" | sort | uniq)
+		# So far, vmtouch reported without dynamic allocated memory:
+		# LOCKED 1648 pages (6M)
+	fi
+	start-stop-daemon \
+		--background \
+		--start \
+		--make-pidfile \
+		--pidfile "${OOMD_PID_FILE}" \
+		--exec /usr/bin/oomd -- ${OOMD_ARGS}
+	oomd_status=$?
+	if [[ -n "${OOMD_BOOST}" && "${OOMD_BOOST}" == "1" ]] ; then
+		retries=20
+		while ! $(pgrep oomd) && (( ${retries} -gt 0 )) ; do
+			tries=$((${retries} - 1))
+			sleep 0.2
+		done
+		# Boosted so that oom process can be preempted by oomd.
+		if [[ -e /usr/bin/schedtool && -n "${OOMD_SCHEDTOOL_ARGS}" ]] ;then
+			schedtool ${OOMD_SCHEDTOOL_ARGS} $(pgrep oomd)
+		fi
+		if [[ -e /usr/bin/renice && -n "${OOMD_RENICE_ARGS}" ]] ; then
+			renice ${OOMD_RENICE_ARGS} $(pgrep oomd)
+		fi
+		if [[ -e /usr/bin/ionice && -n "${OOMD_IONICE_ARGS}" ]] ; then
+			ionice ${OOMD_IONICE_ARGS} $(pgrep oomd)
+		fi
+	fi
+
+	eend ${oomd_status} "Stopping oomd"
+}
+
+stop()
+{
+	ebegin "Stopping oomd"
+	if [[ -e "${OOMD_PID_FILE}" ]] ; then
+		start-stop-daemon \
+			--stop \
+			--pidfile "${OOMD_PID_FILE}"
+	fi
+	if [[ -e "${OOMD_VMTOUCH_PID}" ]] ; then
+		start-stop-daemon \
+			--stop \
+			--pidfile "${OOMD_VMTOUCH_PID}"
+	fi
+}

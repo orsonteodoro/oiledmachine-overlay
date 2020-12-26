@@ -1,0 +1,19 @@
+diff -urp oomd-0.4.0.orig/meson.build oomd-0.4.0/meson.build
+--- oomd-0.4.0.orig/meson.build	2020-06-04 11:43:42.000000000 -0700
++++ oomd-0.4.0/meson.build	2020-12-25 13:32:51.973253259 -0800
+@@ -54,6 +54,7 @@ srcs = files('''
+     src/oomd/plugins/KillMemoryGrowth.cpp
+     src/oomd/plugins/KillSwapUsage.cpp
+     src/oomd/plugins/KillPressure.cpp
++${SAVEDCONFIG_CORE_PLUGINS}
+ '''.split())
+ 
+ fixture_srcs = files('''
+@@ -71,6 +72,7 @@ if systemd_dep.found()
+   srcs += files('''
+       src/oomd/plugins/systemd/BaseSystemdPlugin.cpp
+       src/oomd/plugins/systemd/SystemdRestart.cpp
++${SAVEDCONFIG_SYSTEMD_PLUGINS}
+   '''.split())
+ 
+   deps += [systemd_dep]

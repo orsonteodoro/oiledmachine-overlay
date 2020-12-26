@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    oomd is a userspace Out Of Memory (OOM) killer that uses
+    plugins that can kill pids or cgroups based on IO usage,
+    swap usage, page rate generation, most greedy (aka pressure), 
+    or by limit threshold.  An admin can tune the OOM killer
+    via a json file.  The authors of the project use corrective
+    action before a OOM lock up.
+
+    Notes on OpenRC support:
+    OOMD_ALLOWED_USERS contains a list of users to spawn oomd.
+    oomd never runs as root but spawns a copy per user.
+
+    Notes on the savedconfig USE flag:
+    Place your plugins in the plugins folder src/oomd/plugins
+    without changes to "${S}/meson.build".  The ebuild will
+    automatically detect your custom plugin and add it to the build
+    file.  Your custom plugins should be diff-ed against as
+    follows:
+      # make a backup of /etc/portage/savedconfig/sys-apps/oomd-0.4.0
+      cd /var/tmp/portage/sys-apps/oomd-0.4.0/work
+      diff -urpN oomd-0.4.0{.orig,} > \
+      /etc/portage/savedconfig/sys-apps/oomd-0.4.0
+
+    CGROUP_V2_MOUNT_POINT can be changed as per-package envvar.  The default is
+    /sys/fs/cgroup.  This is only used for the pkg_setup checks.  Change
+    OOMD_ARGS in /etc/conf.d/oomd if using openrc or edit the systemd service
+    file directly at /usr/lib/systemd/system/oomd.service.
+  </longdescription>
+  <upstream>
+    <remote-id type="github">facebookincubator/oomd</remote-id>
+  </upstream>
+  <use>
+    <flag name="doc">Install docs</flag>
+    <flag name="openrc">Install OpenRC scripts</flag>
+    <flag name="plugin_BaseKillPlugin">
+      Installs an abstract plugin that used for other Kill plugins that derive
+      it.
+    </flag>
+    <flag name="plugin_ContinuePlugin">
+      Installs a plugin that is a runtime evaluation rule to CONTINUE.
+    </flag>
+    <flag name="plugin_CorePluginsTest">
+      Installs a plugin that tests some core plugins.
+    </flag>
+    <flag name="plugin_DumpCgroupOverview">
+      Installs a DETECTOR plugin that dumps the cgroup to stderr if pressure is
+      non-negligible.
+    </flag>
+    <flag name="plugin_DumpKillInfoNoOp">
+      Installs a plugin that is just a no operation (no-op).
+    </flag>
+    <flag name="plugin_Exists">
+      Installs a DETECTOR plugin that is a runtime evaluation rule to STOP or
+      CONTINUE based on cgroup existance.
+    </flag>
+    <flag name="plugin_KillIOCost">
+      Installs an ACTION plugin that kills a child cgroup generating the highest
+      IO cost.
+    </flag>
+    <flag name="plugin_KillMemoryGrowth">
+      Installs an ACTION plugin that tries to kill a cgroup based on size with
+      size_threshold, then failed previous attempt will try growth, then a
+      failed previous attempt will try size without size_threshold.
+    </flag>
+    <flag name="plugin_KillPressure">
+      Installs an ACTION plugin that kills a child cgroup generating the most
+      pressure.
+    </flag>
+    <flag name="plugin_KillSwapUsage">
+      Installs an ACTION plugin that kills a child cgroup based on the largest
+      swap usage.
+    </flag>
+    <flag name="plugin_MemoryAbove">
+      Installs a DETECTOR plugin that is a runtime evaluation rule to STOP or
+      CONTINUE based on memory usage as a percentage or absolute amount.
+    </flag>
+    <flag name="plugin_MemoryReclaim">
+      Installs a DETECTOR plugin that is a runtime evaluation rule to STOP or
+      CONTINUE based on memory reclamation period.
+    </flag>
+    <flag name="plugin_NrDyingDescendants">
+      Installs a DETECTOR plugin that is a runtime evaluation rule to STOP or
+      CONTINUE based on the total number of dying descendant cgroups is either 
+      less than or equal or greater than the count limit.
+    </flag>
+    <flag name="plugin_PressureAbove">
+      Installs a DETECTOR plugin that is a runtime evaluation rule to STOP or
+      CONTINUE based on the 10 seconds resource pressure above threshold and
+      above duration of either IO or memory resource.
+    </flag>
+    <flag name="plugin_PressureRisingBeyond">
+      Installs a DETECTOR plugin that is a runtime evaluation rule to STOP or
+      CONTINUE based on the 1 minute resource pressure above threshold and above
+      duration and optionally a fall ratio of either IO or memory resource.
+    </flag>
+    <flag name="plugin_Senpai">
+      Installs an ACTION plugin that change memory.high to make memory.current
+      converge to the actual amount of memory required by the cgroup.
+    </flag>
+    <flag name="plugin_StopPlugin">
+      Installs a plugin that is a runtime evaluation rule to STOP.
+    </flag>
+    <flag name="plugin_SwapFree">
+      Installs a DETECTOR plugin that is a runtime evaluation rule to STOP or
+      CONTINUE based on total free swap reaches a threshold percentage.
+    </flag>
+    <flag name="plugin_BaseSystemdPlugin">
+      Installs a plugin that communicates actions with systemd over D-Bus.
+    </flag>
+    <flag name="plugin_SystemdPluginsTest">
+      Installs a plugin that tests some systemd plugins.
+    </flag>
+    <flag name="plugin_SystemdRestart">
+      Installs an ACTION plugin that restarts a systemd service.
+    </flag>
+    <flag name="savedconfig">Builds custom plugins</flag>
+    <flag name="setup_check_hard">
+      Enabling means pkg_setup will die.  Disabling turns pkg_setup into
+      warnings, intended for unattended installs.
+    </flag>
+    <flag name="systemd">Install systemd support</flag>
+    <flag name="test">Run tests</flag>
+  </use>
+</pkgmetadata>
