@@ -4,7 +4,7 @@
 
 description="Userland out-of-memory killer daemon"
 OOMD_PID_FILE="/var/run/oomd/oomd.pid"
-OOMD_VMTOUCH_PID="/var/run/oomd/vmtouch.pid"
+VMTOUCH_PID_FILE="/var/run/oomd/vmtouch.pid"
 
 depend()
 {
@@ -58,7 +58,7 @@ and reboot."
 		done
 		# Bandaid until we can find a way to allocate 64M
 		# which take into account dynamically allocated memory.
-		vmtouch -q -d -f -L -P ${OOMD_VMTOUCH_PID} -w \
+		vmtouch -q -d -f -L -P ${VMTOUCH_PID_FILE} -w \
 			/usr/bin/oomd \
 			"${OOMD_JSONCFG}" \
 			$(echo "${L0_DEPS[@]}" "${L1_DEPS[@]}" \
@@ -106,9 +106,9 @@ stop()
 			--stop \
 			--pidfile "${OOMD_PID_FILE}"
 	fi
-	if [[ -e "${OOMD_VMTOUCH_PID}" ]] ; then
+	if [[ -e "${VMTOUCH_PID_FILE}" ]] ; then
 		start-stop-daemon \
 			--stop \
-			--pidfile "${OOMD_VMTOUCH_PID}"
+			--pidfile "${VMTOUCH_PID_FILE}"
 	fi
 }
