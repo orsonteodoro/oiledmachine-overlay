@@ -203,6 +203,16 @@ File systems > Pseudo filesystems > /proc file system support"
 "${PN} requires CONFIG_SWAP=y in the kernel .config.  It can be found in: \
 General setup > Support for paging of anonymous memory (swap)"
 	fi
+	local mem_size=$(free -b | grep "Mem:" | sed -r -e "s|[ \t]+|\t|g" \
+		| cut -f 2 -d $'\t')
+	local swap_size=$(free -b | grep "Swap:" | sed -r -e "s|[ \t]+|\t|g" \
+		| cut -f 2 -d $'\t')
+	if (( ${swap_size} >= ${mem_size} )) ; then
+		einfo \
+"Passed swap requirements ${swap_size} bytes (swap) >= ${mem_size} bytes (physmem)"
+	else
+		cdie "Upstream recommends swap be >=1x of physical memory"
+	fi
 	CXX=$(tc-getCXX)
 	CC=$(tc-getCC)
 	if tc-is-gcc ; then
