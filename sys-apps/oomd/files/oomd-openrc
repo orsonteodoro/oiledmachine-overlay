@@ -14,8 +14,29 @@ depend()
 start()
 {
 	ebegin "Starting oomd"
-	if [[ -e "${OOMD_JSONCFG}" ]] ; then
-		eend -1 "Missing ${OOMD_JSONCFG}"
+	mkdir -p /var/run/oomd
+	if [[ ! -e "${OOMD_JSONCFG}" ]] ; then
+		eerror "Missing ${OOMD_JSONCFG}"
+		return 1
+	fi
+	if ! grep -q -E -e '^rc_cgroup_mode="unified"' /etc/rc.conf ; then
+		eerror \
+"Did not find cgroups v2 in OpenRC's /etc/rc.conf set exactly as \
+rc_cgroup_mode=\"unified\" and reboot."
+		return 1
+	fi
+	if [[ -d "${OOMD_CGROUPV2_MOUNT_POINT}/pids" ]] ; then
+		eerror \
+"Detected cgroup v1.  You need non-hybrid cgroup v2 mounted on \
+${OOMD_CGROUPV2_MOUNT_POINT}.  Set /etc/rc.conf to rc_cgroup_mode=\"unified\" \
+and reboot."
+		return 1
+	fi
+	if [[ ! -e "${OOMD_CGROUPV2_MOUNT_POINT}/cgroup.controllers" ]] ; then
+		eerror \
+"You need non-hybrid cgroup v2 mounted on ${OOMD_CGROUPV2_MOUNT_POINT}.  Set \
+/etc/rc.conf to rc_cgroup_mode=\"unified\" and reboot."
+		return 1
 	fi
 	if [[ -e "/usr/bin/vmtouch" ]] ; then
 		# Prefetch and lock
@@ -40,7 +61,8 @@ start()
 		vmtouch -q -d -f -L -P ${OOMD_VMTOUCH_PID} -w \
 			/usr/bin/oomd \
 			"${OOMD_JSONCFG}" \
-			$(echo "${L0_DEPS[@]}" "${L1_DEPS[@]}" | tr " " "\n" | sort | uniq)
+			$(echo "${L0_DEPS[@]}" "${L1_DEPS[@]}" \
+				| tr " " "\n" | sort | uniq | tr "\n" " ")
 		# So far, vmtouch reported without dynamic allocated memory:
 		# LOCKED 1648 pages (6M)
 	fi
@@ -53,19 +75,23 @@ start()
 	oomd_status=$?
 	if [[ -n "${OOMD_BOOST}" && "${OOMD_BOOST}" == "1" ]] ; then
 		retries=20
-		while ! $(pgrep oomd) && (( ${retries} -gt 0 )) ; do
-			tries=$((${retries} - 1))
+		while ! pgrep oomd 2>/dev/null 1>/dev/null \
+			&& (( ${retries} -gt 0 )) ; do
+			retries=$((${retries} - 1))
 			sleep 0.2
 		done
 		# Boosted so that oom process can be preempted by oomd.
-		if [[ -e /usr/bin/schedtool && -n "${OOMD_SCHEDTOOL_ARGS}" ]] ;then
+		if [[ -e /usr/bin/schedtool \
+			&& -n "${OOMD_SCHEDTOOL_ARGS}" ]] ; then
 			schedtool ${OOMD_SCHEDTOOL_ARGS} $(pgrep oomd)
 		fi
-		if [[ -e /usr/bin/renice && -n "${OOMD_RENICE_ARGS}" ]] ; then
-			renice ${OOMD_RENICE_ARGS} $(pgrep oomd)
+		if [[ -e /usr/bin/renice \
+			&& -n "${OOMD_RENICE_ARGS}" ]] ; then
+			renice ${OOMD_RENICE_ARGS} -p $(pgrep oomd)
 		fi
-		if [[ -e /usr/bin/ionice && -n "${OOMD_IONICE_ARGS}" ]] ; then
-			ionice ${OOMD_IONICE_ARGS} $(pgrep oomd)
+		if [[ -e /usr/bin/ionice \
+			&& -n "${OOMD_IONICE_ARGS}" ]] ; then
+			ionice ${OOMD_IONICE_ARGS} -p $(pgrep oomd)
 		fi
 	fi
 

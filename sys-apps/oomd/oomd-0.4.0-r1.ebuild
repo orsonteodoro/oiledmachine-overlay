@@ -34,8 +34,11 @@ PLUGINS_SYSTEMD=(
 	SystemdPluginsTest
 	SystemdRestart
 )
-IUSE+=" doc man openrc plugins savedconfig +setup_check_hard systemd test \
-${PLUGINS_CORE[@]/#/plugin_} ${PLUGINS_SYSTEMD[@]/#/plugin_}"
+# OpenRC is the default init system on Gentoo so diverge from upstream default
+# of systemd.
+IUSE+=" +boost_realtime doc examples +man +openrc plugins savedconfig \
++setup_check_hard -systemd test ${PLUGINS_CORE[@]/#/plugin_} \
+${PLUGINS_SYSTEMD[@]/#/plugin_}"
 PLUGINS_CORE_RU=("${PLUGINS_CORE[@]/#/plugin_}")
 PLUGINS_CORE_RU=("${PLUGINS_CORE_RU[@]/%/? ( plugins )}")
 PLUGINS_SYSTEMD_RU=("${PLUGINS_SYSTEMD[@]/#/plugin_}")
@@ -43,17 +46,40 @@ PLUGINS_SYSTEMD_RU=("${PLUGINS_SYSTEMD_RU[@]/%/? ( plugins systemd )}")
 REQUIRED_USE="
 	${PLUGINS_CORE_RU[@]}
 	${PLUGINS_SYSTEMD_RU[@]}
+	boost_realtime? ( openrc )
+	examples? (
+		plugin_ContinuePlugin
+		plugin_KillMemoryGrowth
+		plugin_KillSwapUsage
+		plugin_SwapFree
+		plugin_MemoryReclaim
+		plugin_PressureAbove
+		plugin_DumpCgroupOverview
+	)
 	plugins? ( || (
 		${PLUGINS_CORE[@]/#/plugin_}
 		${PLUGINS_SYSTEMD[@]/#/plugin_}
 		savedconfig
 		)     )
+	plugin_BaseKillPlugin? (
+		plugin_DumpKillInfoNoOp
+	)
 	plugin_CorePluginsTest? (
 		plugin_BaseKillPlugin
 		plugin_KillIOCost
 		plugin_KillMemoryGrowth
 		plugin_KillPressure
 		plugin_KillSwapUsage
+
+		plugin_BaseKillPlugin
+		plugin_Exists
+		plugin_MemoryAbove
+		plugin_MemoryReclaim
+		plugin_NrDyingDescendants
+		plugin_PressureRisingBeyond
+		plugin_Senpai
+		plugin_StopPlugin
+		plugin_SwapFree
 	)
 	plugin_DumpKillInfoNoOp? (
 		plugin_BaseKillPlugin
@@ -78,10 +104,15 @@ REQUIRED_USE="
 		plugin_BaseSystemdPlugin
 	)"
 RDEPEND="dev-libs/jsoncpp
-	openrc? ( dev-util/vmtouch
+	openrc? (
 		sys-apps/openrc
-		sys-process/procps
-		sys-process/schedtool )
+		boost_realtime? (
+			dev-util/vmtouch
+			sys-apps/util-linux
+			sys-process/procps
+			sys-process/schedtool
+		)
+	)
 	systemd? ( sys-apps/systemd )"
 DEPEND="test? ( dev-cpp/gtest )"
 GCC_V_MIN="8" # for c++17
@@ -114,7 +145,8 @@ pkg_setup() {
 	if ! linux_config_exists ; then
 		cdie "Missing a .config in the kernel sources"
 	fi
-	if ver_test $(get_running_version) -lt 4.20 ; then
+	local kv="${KV_MAJOR}.${KV_MINOR}.${KV_PATCH}" # Avoid $(EXTRAVERSION) bug
+	if ver_test ${kv} -lt 4.20 ; then
 		cdie \
 "You need a currently running kernel of >=4.20 for PSI (Pressure stall \
 information tracking) support"
@@ -130,11 +162,34 @@ General setup > CPU/Task time and stats accounting \
 "${PN} requires CONFIG_CGROUPS=y in the kernel .config.  It can be found in: \
 General setup > Control Group support"
 	fi
-	if [[ -d "${CGROUP_V2_MOUNT_POINT}/pids" ]] ; then
-		cdie "You must use cgroups v2 only monuted on ${CGROUP_V2_MOUNT_POINT}."
+	if use systemd ; then
+		if ! grep -F -q \
+			-e 'systemd.unified_cgroup_hierarchy=1' \
+			/proc/cmdline ; then
+			cdie \
+"You must add systemd.unified_cgroup_hierarchy=1 to the kernel parameters of \
+the bootloader."
+		fi
 	fi
-	if [[ ! -e "${CGROUP_V2_MOUNT_POINT}/cgroup.stat" ]] ; then
-		cdie "Could not detect cgroups v2 mounted on ${CGROUP_V2_MOUNT_POINT}."
+	if use openrc ; then
+		if grep -q -E -e '^rc_cgroup_mode="unified"' /etc/rc.conf ; then
+			einfo "Found cgroups v2 in OpenRC's /etc/rc.conf."
+		else
+			cdie \
+"Did not find cgroups v2 in OpenRC's /etc/rc.conf set exactly as \
+rc_cgroup_mode=\"unified\" and reboot."
+		fi
+	fi
+	if [[ -d "${CGROUP_V2_MOUNT_POINT}/pids" ]] ; then
+		cdie \
+"Detected cgroup v1.  You must use non-hybrid cgroups v2 only monuted on \
+${CGROUP_V2_MOUNT_POINT}.  Set /etc/rc.conf to rc_cgroup_mode=\"unified\" and \
+reboot."
+	fi
+	if [[ ! -e "${CGROUP_V2_MOUNT_POINT}/cgroup.controllers" ]] ; then
+		cdie \
+"Could not detect non-hybrid cgroups v2 mounted on ${CGROUP_V2_MOUNT_POINT}.  \
+Set /etc/rc.conf to rc_cgroup_mode=\"unified\" and reboot."
 	fi
 	if ! linux_chkconfig_present PROC_FS ; then
 		cdie \
@@ -166,6 +221,15 @@ General setup > Support for paging of anonymous memory (swap)"
 		die \
 "Compiler is not supported.  Switch to GCC or Clang with c++17 support."
 	fi
+	if use openrc && ! use boost_realtime ; then
+		ewarn \
+"boost_realtime USE flag is strongly recommended when using the openrc USE \
+flag."
+	fi
+	if ! use openrc && ! use systemd ; then
+		ewarn \
+"You are responsible for writing your own init system script for this daemon."
+	fi
 }
 
 src_configure() {
@@ -188,8 +252,8 @@ src_configure() {
 	for x in ${rej_plugins[@]} ; do
 		einfo "Removing ${x}"
 		sed -i "/${x}/d" "${S}/meson.build" || die
-		rm -rf "${S}/src/oomd/plugins/"${x}*{cpp,h} \
-			"${S}/src/oomd/plugins/systemd/"${x}*{cpp,h}
+		rm -rf "${S}/src/oomd/plugins/"${x}{.cpp,-inl.h,.h} \
+			"${S}/src/oomd/plugins/systemd/"${x}{.cpp,-inl.h,.h}
 	done
 	if ! use savedconfig ; then
 		sed -i -e "/SAVEDCONFIG_CORE_PLUGINS/d" \
@@ -226,6 +290,10 @@ src_configure() {
 			-e "s|\${SAVEDCONFIG_SYSTEMD_PLUGINS}|${build_units_systemd}|g" \
 			"${S}/meson.build" || die
 	fi
+	if ! use test ; then
+		sed -i -e "s|if gtest_dep|if false and gtest_dep|" \
+			"${S}/meson.build" || die
+	fi
 	default
 	meson_src_configure
 }
@@ -241,7 +309,7 @@ src_install() {
 	if use man ; then
 		rm -rf "${ED}/usr/share/man" || die
 	fi
-	if use systemd ; then
+	if ! use systemd ; then
 		rm -rf "${ED}/usr/lib/systemd" || die
 	fi
 	if use openrc ; then
@@ -249,17 +317,30 @@ src_install() {
 		newins "${FILESDIR}/${PN}-conf.d" ${PN}
 		exeinto /etc/init.d
 		newexe "${FILESDIR}/${PN}-openrc" ${PN}
+		if ! use boost_realtime ; then
+			sed -i -e 's|OOMD_BOOST="1"|OOMD_BOOST="0"|g' \
+				"${ED}/etc/conf.d/${PN}" || die
+		fi
 	fi
-	mv "${ED}/etc/oomd/oomd.json" "${T}"
-	dodoc "${T}/oomd.json"
+	if use examples ; then
+		mv "${ED}/etc/oomd/oomd.json" "${T}" || die
+		dodoc "${T}/oomd.json"
+	else
+		rm -rf "${ED}/etc/oomd" || die
+	fi
 }
 
 pkg_postinst() {
-	einfo \
+	if use examples ; then
+		einfo \
 "The basic configuration example has been moved to \
-/usr/share/doc/oomd-${PV}/${PN}/oomd.json.bz2. Make sure you change and \
-\`bzcat /usr/share/doc/oomd-${PV}/${PN}/oomd.json.bz2 > /etc/oomd/oomd.json\` \
- if you want copy and hand edit the example."
+/usr/share/doc/oomd-${PV}/${PN}/oomd.json.bz2. Make sure you \
+\`mkdir -p /etc/oomd ; bzcat /usr/share/doc/oomd-${PV}/oomd.json.bz2 \
+> /etc/oomd/oomd.json\` if you want copy and hand edit the example."
+	else
+		einfo \
+"By default your configuration should be stored in /etc/${PN}/oomd.json"
+	fi
 	if use openrc ; then
 		einfo "You need to \`rc-update add ${PN}\` to auto-start on boot."
 		einfo "If you want to run now, do \`rc-update restart ${PN}\`."
@@ -269,5 +350,10 @@ pkg_postinst() {
 		einfo "systemctl stop ${PN} # for stoping the old installed instance"
 		einfo "systemctl enable ${PN} # for auto-starting on boot."
 		einfo "systemctl start ${PN} # for running now"
+	fi
+	if use boost_realtime ; then
+		ewarn \
+"Due to a potential lockup with realtime boosting ${PN}, make sure you have a \
+rescue CD or USB before you auto-start the services."
 	fi
 }

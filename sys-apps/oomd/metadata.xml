@@ -37,6 +37,10 @@
     <remote-id type="github">facebookincubator/oomd</remote-id>
   </upstream>
   <use>
+    <flag name="boost_realtime">
+      Boost oomd with both CPU and IO realtime priority with OpenRC service
+      script to avoid OOM process(es) from starving it.
+    </flag>
     <flag name="doc">Install docs</flag>
     <flag name="openrc">Install OpenRC scripts</flag>
     <flag name="plugin_BaseKillPlugin">
