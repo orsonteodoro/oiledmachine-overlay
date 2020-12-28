@@ -1,0 +1,24 @@
+Applies to uksm-5.4.patch
+fs/exec.c: skipped FAILED hunk with just spaces
+----
+--- a/lib/Makefile.orig	2020-12-27 17:36:23.005788141 -0800
++++ b/lib/Makefile	2020-12-27 17:38:44.181376756 -0800
+@@ -33,6 +33,8 @@ lib-y := ctype.o string.o vsprintf.o cmd
+ 	 earlycpio.o seq_buf.o siphash.o dec_and_lock.o \
+ 	 nmi_backtrace.o nodemask.o win_minmax.o memcat_p.o
+ 
++lib-y	+= sradix-tree.o
++
+ lib-$(CONFIG_PRINTK) += dump_stack.o
+ lib-$(CONFIG_MMU) += ioremap.o
+ lib-$(CONFIG_SMP) += cpumask.o
+--- a/mm/memory.c.orig	2020-12-27 17:37:27.898357129 -0800
++++ b/mm/memory.c	2020-12-27 17:50:03.258244736 -0800
+@@ -2199,6 +2199,7 @@ static inline bool cow_user_page(struct
+ 
+ 	if (likely(src)) {
+ 		copy_user_highpage(dst, src, addr, vma);
++		uksm_cow_page(vma, src);
+ 		return true;
+ 	}
+ 

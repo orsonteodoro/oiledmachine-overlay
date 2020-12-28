@@ -33,7 +33,7 @@ PATCH_TRESOR_VER="3.18.5"
 MUQSS_VER="0.204"
 
 IUSE="bfq bmq +cfs disable_debug futex-wait-multiple +genpatches \
-+kernel_gcc_patch muqss +O3 prjc tresor tresor_aesni tresor_i686 \
++kernel_gcc_patch muqss +O3 prjc rt tresor tresor_aesni tresor_i686 \
 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-misc \
 -zen-tune zen-tune-muqss"
 REQUIRED_USE="
@@ -65,6 +65,7 @@ LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" kernel_gcc_patch? ( GPL-2 )"
 LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" O3? ( GPL-2 )"
+LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
 LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   # GPL-2 applies to the files being patched \
@@ -73,8 +74,6 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   #   from public universities.)
 LICENSE+=" zen-tune? ( GPL-2 )"
 LICENSE+=" zen-tune-muqss? ( GPL-2 )"
-#BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.patch"
-#BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:;
@@ -98,6 +97,7 @@ SRC_URI+=" genpatches? (
 	   )
 	   O3? ( ${O3_ALLOW_SRC_URL} )
 	   prjc? ( ${PRJC_SRC_URL} )
+	   rt? ( ${RT_SRC_URL} )
 	   tresor? (
 		${TRESOR_AESNI_DL_URL}
 		${TRESOR_I686_DL_URL}
@@ -150,6 +150,9 @@ like npm.  These use flags are not recommended."
 			ewarn \
 	"TRESOR is experimental for ${PV}.  Use 4.14.x series for stable TRESOR."
 		fi
+		die \
+"The TRESOR patchset currently does not work for the ${K_MAJOR_MINOR} series.  \
+Please use the older branches."
 	fi
 }
 
@@ -214,4 +217,34 @@ experimental.\n\
 	einfo ""
 	einfo "Genkernel users may require 4.x series to build the 5.10.x kernel series."
 	einfo ""
+}
+
+# @FUNCTION: ot-kernel_pkg_postinst_cb
+# @DESCRIPTION:
+# Show messages and avoid collision triggering
+function ot-kernel_pkg_postinst_cb() {
+	:;
+}
+
+# @FUNCTION: ot-kernel_filter_patch_cb
+# @DESCRIPTION:
+# Filtered patch function
+function ot-kernel_filter_patch_cb() {
+	local path="${1}"
+	if [[ "${path}" =~ "${CK_FN}" ]] ; then
+		_dpatch "${PATCH_OPS}" "${path}"
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/muqss-dont-attach-ckversion.patch"
+	elif [[ "${path}" =~ "${PRJC_FN}" ]] ; then
+		if use rt ; then
+			_tpatch "${PATCH_OPS}" "${path}" 5.10.3
+			_dpatch "${PATCH_OPS}" "${FILESDIR}/projc-5.10-r1-compat-5.10.1-rt20.patch"
+		else
+			_dpatch "${PATCH_OPS}" "${path}"
+		fi
+	elif [[ "${path}" =~ tresor-patch ]] ; then
+		_tpatch "${PATCH_OPS}" "${path}" 5.10.0
+		ot-kernel_apply_tresor_fixes
+	else
+		_dpatch "${PATCH_OPS}" "${path}"
+	fi
 }

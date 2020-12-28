@@ -197,6 +197,9 @@
     <flag name="pds">Patches the kernel with an alternative skiplist
       based scheduler.</flag>
     <flag name="prjc">Applies the Project C CPU scheduler.</flag>
+    <flag name="rt">Patches the kernel with the PREEMPT_RT patch which tries
+      to minimize non-preemptible parts of the kernel.  It's experimental when
+      combined with other USE flags and patchsets.</flag>
     <flag name="symlink">Updates the the /usr/src/linux symlink for every
       newer release.</flag>
     <flag name="tresor">Controls application of TRESOR, a cold boot resistant

@@ -158,7 +158,7 @@ MUQSS_VER="0.162"
 LINUX_TIMESTAMP=1510512373
 
 IUSE="+cfs disable_debug +genpatches +kernel_gcc_patch muqss pds \
-+O3 tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 uksm \
++O3 rt tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 uksm \
 zen-misc zen-tune zen-tune-muqss"
 REQUIRED_USE="
 	!zen-misc !zen-tune !zen-tune-muqss
@@ -183,6 +183,7 @@ LICENSE+=" kernel_gcc_patch? ( GPL-2 )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" O3? ( GPL-2 )"
+LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" pds? ( GPL-2 Linux-syscall-note )" # some new files in the patch \
   # do not come with an explicit license but defaults to
   # GPL-2 with Linux-syscall-note.
@@ -217,6 +218,7 @@ SRC_URI+=" genpatches? (
 		${O3_CO_SRC_URL}
 		${O3_RO_SRC_URL}
 	   )
+	   rt? ( ${RT_SRC_URL} )
 	   pds? ( ${PDS_SRC_URL} )
 	   tresor? (
 		${TRESOR_AESNI_DL_URL}
@@ -321,11 +323,40 @@ function ot-kernel_pkg_postinst_cb() {
 	fi
 }
 
-# @FUNCTION: ot-kernel_apply_o3_fixes
+# @FUNCTION: ot-kernel_pkg_postinst_cb
 # @DESCRIPTION:
-# Fixes the O3 patch
-function ot-kernel_apply_o3_fixes() {
-	if use O3 ; then
+# Show messages and avoid collision triggering
+function ot-kernel_pkg_postinst_cb() {
+	:;
+}
+
+# @FUNCTION: ot-kernel_filter_patch_cb
+# @DESCRIPTION:
+# Filtered patch function
+function ot-kernel_filter_patch_cb() {
+	local path="${1}"
+	if [[ "${path}" =~ "${CK_FN}" ]] ; then
+		# The added -N arg is used to skip the duplicate hunks
+		_tpatch "${PATCH_OPS} -N" "${path}" 4.14.212
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/muqss-4.14-rebase-for-4.14.212.patch"
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/muqss-dont-attach-ckversion.patch"
+	elif [[ "${path}" =~ "${PDS_FN}" ]] ; then
+		if use rt ; then
+			_tpatch "${PATCH_OPS}" "${path}" 4.14.212
+			_dpatch "${PATCH_OPS}" "${FILESDIR}/pds-4.14_pds098i-compat-4.14.212-rt102.patch"
+		else
+			_dpatch "${PATCH_OPS}" "${path}"
+		fi
+	elif [[ "${path}" =~ "${O3_CO_FN}" ]] ; then
+		_tpatch "${PATCH_OPS}" "${path}" 4.14.0
 		_dpatch "${PATCH_OPS}" "${FILESDIR}/O3-config-option-7d0295dc49233d9ddff5d63d5bdc24f1e80da722-fix-for-4.14.patch"
+	elif [[ "${path}" =~ tresor-patch ]] ; then
+		_tpatch "${PATCH_OPS}" "${path}" 4.14.0
+		ot-kernel_apply_tresor_fixes
+	elif [[ "${path}" =~ "${UKSM_FN}" ]] ; then
+		_tpatch "${PATCH_OPS}" "${path}" 4.14.212
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/uksm-4.14-rebase-for-4.14.212.patch"
+	else
+		_dpatch "${PATCH_OPS}" "${path}"
 	fi
 }

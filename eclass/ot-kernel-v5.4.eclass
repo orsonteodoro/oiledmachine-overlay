@@ -570,9 +570,10 @@ ZENTUNE_MUQSS_DL_URL="
 "
 PATCH_TRESOR_VER="3.18.5"
 MUQSS_VER="0.196"
+GENPATCHES_BLACKLIST=" 2400"
 
 IUSE="bfq bmq +cfs disable_debug +genpatches +kernel_gcc_patch muqss +O3 \
-futex-wait-multiple tresor tresor_aesni tresor_i686 tresor_sysfs \
+futex-wait-multiple tresor rt tresor_aesni tresor_i686 tresor_sysfs \
 tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-misc \
 -zen-tune zen-tune-muqss"
 REQUIRED_USE="
@@ -603,6 +604,7 @@ LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" kernel_gcc_patch? ( GPL-2 )"
 LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" O3? ( GPL-2 )"
+LICENSE+=" rt? ( GPL-2 )"
 LICENSE+=" tresor? ( GPL-2 )"
 LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   # GPL-2 applies to the files being patched \
@@ -611,8 +613,6 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   #   from public universities.)
 LICENSE+=" zen-tune? ( GPL-2 )"
 LICENSE+=" zen-tune-muqss? ( GPL-2 )"
-#BMQ_QUICK_FIX_FN="3606d92b4e7dd913f485fb3b5ed6c641dcdeb838.patch"
-#BMQ_SRC_URL+=" https://gitlab.com/alfredchen/linux-bmq/commit/${BMQ_QUICK_FIX_FN}"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:;
@@ -635,6 +635,7 @@ SRC_URI+=" bmq? ( ${BMQ_SRC_URL} )
 		${KGCCP_SRC_10_1_URL}
 	   )
 	   O3? ( ${O3_ALLOW_SRC_URL} )
+	   rt? ( ${RT_SRC_URL} )
 	   tresor? (
 		${TRESOR_AESNI_DL_URL}
 		${TRESOR_I686_DL_URL}
@@ -683,6 +684,9 @@ like npm.  These use flags are not recommended."
 			ewarn \
 	"TRESOR is experimental for ${PV}.  Use 4.14.x series for stable TRESOR."
 		fi
+		ewarn \
+"The TRESOR may not work for the ${K_MAJOR_MINOR} series.  Please \
+use the older branches."
 	fi
 }
 
@@ -749,5 +753,48 @@ You must choose Periodic timer ticks (constant rate, no dynticks)\n\
 192- and 256-bit key support was added to TRESOR (sse2 for 64-bit) but is\n\
 experimental.\n\
 \n"
+	fi
+}
+
+# @FUNCTION: ot-kernel_filter_patch_cb
+# @DESCRIPTION:
+# Filtered patch function
+function ot-kernel_filter_patch_cb() {
+	local path="${1}"
+	if [[ "${path}" =~ "${BMQ_FN}" ]] ; then
+		if use rt ; then
+			_tpatch "${PATCH_OPS}" "${path}" 5.4.85
+			_dpatch "${PATCH_OPS}" "${FILESDIR}/bmq-5.4-r2-compat-5.4.84-rt47-task_to_waiter.patch"
+		else
+			_dpatch "${PATCH_OPS}" "${path}"
+		fi
+	elif [[ "${path}" =~ "${CK_FN}" ]] ; then
+		_dpatch "${PATCH_OPS}" "${path}"
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/muqss-dont-attach-ckversion.patch"
+	elif [[ "${path}" =~ tresor-patch ]] ; then
+		_tpatch "${PATCH_OPS}" "${path}" 5.4.0
+		ot-kernel_apply_tresor_fixes
+	elif [[ "${path}" =~ "${UKSM_FN}" ]] ; then
+		_tpatch "${PATCH_OPS}" "${path}" 5.4.85
+		_dpatch "${PATCH_OPS}" "${FILESDIR}/uksm-5.4-rebase-for-5.4.85.patch"
+	elif [[ "${path}" =~ "${ZENTUNE_MUQSS_FN}" ]] ; then
+		_dpatch "${PATCH_OPS}" "${DISTDIR}/zen-tune-muqss-${PATCH_ZENTUNE_VER}-6c8fd1641dea5418c68dad4bf48d2d128a2a13e5.patch"
+		_dpatch "${PATCH_OPS}" "${DISTDIR}/zen-tune-muqss-${PATCH_ZENTUNE_VER}-dce8f01fd3d28121e3bf215255c5eded3855e417.patch"
+		_dpatch "${PATCH_OPS}" "${DISTDIR}/zen-tune-muqss-${PATCH_ZENTUNE_VER}-3ca137b68d689fcb1c5cadad1416c7791d84d48e.patch"
+		_dpatch "${PATCH_OPS}" "${DISTDIR}/zen-tune-muqss-${PATCH_ZENTUNE_VER}-d1bebeb959a56324fe436443ea2f21a8391632d9.patch"
+	else
+		_dpatch "${PATCH_OPS}" "${path}"
+	fi
+}
+
+# @FUNCTION: ot-kernel_filter_genpatches_blacklist_cb
+# @DESCRIPTION:
+# Filter
+ot-kernel_filter_genpatches_blacklist_cb() {
+	if ( ver_test $(ver_cut 1-3 ${PV}) -eq 5.4.85 ) \
+		&& ( ver_test ${K_GENPATCHES_VER} -eq 87 ) ; then
+		echo "2400"
+	else
+		echo ""
 	fi
 }

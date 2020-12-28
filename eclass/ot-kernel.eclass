@@ -99,6 +99,7 @@ HOMEPAGE+="
           https://github.com/dolohow/uksm
           https://github.com/graysky2/kernel_gcc_patch
           https://liquorix.net/
+	  https://wiki.linuxfoundation.org/realtime/start
 	  https://www1.informatik.uni-erlangen.de/tresor
 "
 
@@ -332,47 +333,57 @@ BFQ_DL_URL=\
 "https://github.com/torvalds/linux/compare/v${PATCH_BFQ_VER}...zen-kernel:${PATCH_BFQ_VER}/${BFQ_BRANCH}.patch"
 BFQ_SRC_URL="${BFQ_DL_URL} -> ${BFQ_FN}"
 
+RT_BASE_URL="https://mirrors.edge.kernel.org/pub/linux/kernel/projects/rt/${K_MAJOR_MINOR}/"
+RT_FN="patches-${PATCH_RT_VER}.tar.xz"
+RT_SRC_URL="${RT_BASE_URL}${RT_FN}"
+
 PATCH_OPS="--no-backup-if-mismatch -r - -p1 -F 500"
+
+TPATCH_EVAL_PERIOD=10 # between every n kernel point releases
 
 RESTRICT="mirror"
 
-# @FUNCTION: _dpatch
+# @FUNCTION: _fpatch
 # @DESCRIPTION:
-# Patch with die check.
+# Filtered patch
 # @CODE
 # Parameters:
-# $1 - patch options
-# $2 - path of the patch
+# $1 - path of the patch
 # @CODE
-function _dpatch() {
-	local patchops="$1"
-	local path="$2"
-	if [[ "${patchops}" =~ "-R" ]] ; then
-		einfo "Reverting ${path}"
+function _fpatch() {
+	local path="$1"
+
+	if declare -f ot-kernel_filter_patch_cb > /dev/null ; then
+		ot-kernel_filter_patch_cb "${path}"
 	else
-		einfo "Applying ${path}"
+		_dpatch "${PATCH_OPS}" "${path}"
 	fi
-	patch ${patchops} -i ${path} || die
+}
+
+# @FUNCTION: _dpatch
+# @DESCRIPTION:
+# Patch with die
+function _dpatch() {
+	local opts="${1}"
+	local path="${2}"
+	einfo "Applying ${path}"
+	patch ${opts} -i "${path}" || die
 }
 
 # @FUNCTION: _tpatch
 # @DESCRIPTION:
-# Patch without die check, which may be followed by intervention corrective
-# action, implied true as in normal operation.
-# @CODE
-# Parameters:
-# $1 - patch options
-# $2 - path of the patch
-# @CODE
+# Patch with no die used for conflict resolution.
+# Refrain from using it though because it requires periodic revaluation in larger patchsets that
+# are not split which future FAILED hunks may not be caught.
 function _tpatch() {
-	local patchops="$1"
-	local path="$2"
-	if [[ "${patchops}" =~ "-R" ]] ; then
-		einfo "Reverting ${path}"
-	else
-		einfo "Applying ${path}"
+	local opts="${1}"
+	local path="${2}"
+	local last_evaluation="${3}"
+	if ver_test $(ver_cut 3 ${PV}) -gt $(($(ver_cut 3 ${last_evaluation}) + ${TPATCH_EVAL_PERIOD})) ; then
+		ewarn "Re-evaluate and code review ${path} for patch correctness needed.  Last code inspection was on ${last_evaluation}."
 	fi
-	patch ${patchops} -i ${path} || true
+	einfo "Applying ${path} with known hunk failure and will be resolved or patched immediately"
+	patch ${opts} -i "${path}" || true
 }
 
 # @FUNCTION: ot-kernel_pkg_pretend
@@ -524,6 +535,25 @@ function ot-kernel_pkg_setup() {
 	fi
 }
 
+# @FUNCTION: apply_rt
+# @DESCRIPTION:
+# Apply the PREEMPT_RT patches.
+function apply_rt() {
+	einfo "Applying PREEMPT_RT patches"
+	mkdir -p "${T}/rt" || die
+	pushd "${T}/rt" || die
+		unpack "${DISTDIR}/${RT_FN}"
+	popd
+
+	for p in $(cat "${T}/rt/patches/series" | grep -E -e "^[^#]") ; do
+		if [[ "${p}" == "series" ]] ; then
+			continue
+		fi
+		_fpatch "${T}/rt/patches/${p}"
+	done
+
+}
+
 # @FUNCTION: apply_uksm
 # @DESCRIPTION:
 # Apply the UKSM patches.
@@ -531,47 +561,28 @@ function ot-kernel_pkg_setup() {
 # ot-kernel_uksm_fixes - callback to fix the patch
 #
 function apply_uksm() {
-	_tpatch "${PATCH_OPS} -N" "${DISTDIR}/${UKSM_FN}"
-
-	if declare -f ot-kernel_uksm_fixes > /dev/null ; then
-		ot-kernel_uksm_fixes
-	fi
+	_fpatch "${DISTDIR}/${UKSM_FN}"
 }
 
 # @FUNCTION: apply_bfq
 # @DESCRIPTION:
 # Apply the BFQ patches.
 function apply_bfq() {
-	_dpatch "${PATCH_OPS} -N" "${T}/${BFQ_FN}"
+	_fpatch "${T}/${BFQ_FN}"
 }
 
 # @FUNCTION: apply_zentune
 # @DESCRIPTION:
 # Apply the ZenTune patches.
 function apply_zentune() {
-	if ver_test "${K_MAJOR_MINOR}" -eq 5.5 ; then
-		_dpatch "${PATCH_OPS} -N" "${T}/${ZENTUNE_DL_DEP_FN}"
-	fi
-	_dpatch "${PATCH_OPS} -N" "${T}/${ZENTUNE_FN}"
+	_fpatch "${T}/${ZENTUNE_FN}"
 }
 
 # @FUNCTION: apply_zentune_muqss
 # @DESCRIPTION:
 # Apply the Zen timing MuQSS patches.
 function apply_zentune_muqss() {
-	if ver_test "${K_MAJOR_MINOR}" -eq 5.4 ; then
-		_dpatch "${PATCH_OPS} -N" "${DISTDIR}/zen-tune-muqss-${PATCH_ZENTUNE_VER}-6c8fd1641dea5418c68dad4bf48d2d128a2a13e5.patch"
-		_dpatch "${PATCH_OPS} -N" "${DISTDIR}/zen-tune-muqss-${PATCH_ZENTUNE_VER}-dce8f01fd3d28121e3bf215255c5eded3855e417.patch"
-		_dpatch "${PATCH_OPS} -N" "${DISTDIR}/zen-tune-muqss-${PATCH_ZENTUNE_VER}-3ca137b68d689fcb1c5cadad1416c7791d84d48e.patch"
-		_dpatch "${PATCH_OPS} -N" "${DISTDIR}/zen-tune-muqss-${PATCH_ZENTUNE_VER}-d1bebeb959a56324fe436443ea2f21a8391632d9.patch"
-	else
-		_dpatch "${PATCH_OPS} -N" "${DISTDIR}/${ZENTUNE_MUQSS_FN}"
-	fi
-}
-
-function apply_zentune_revert_5_5() {
-	einfo "Applying zentune revert(s) for ${K_MAJOR_MINOR}"
-	_dpatch "${PATCH_OPS} -N" "${DISTDIR}/${ZENTUNE_5_5_ADDENDIUM_DEST_FN}"
+	_fpatch "${DISTDIR}/${ZENTUNE_MUQSS_FN}"
 }
 
 # @FUNCTION: apply_zenmisc
@@ -595,7 +606,7 @@ function apply_zenmisc() {
 				continue
 			fi
 		fi
-		_tpatch "${PATCH_OPS} -N" "${T}/zen-misc/${c}.patch"
+		_fpatch "${T}/zen-misc/${c}.patch"
 	done
 }
 
@@ -604,14 +615,14 @@ function apply_zenmisc() {
 # Adds a new syscall operation FUTEX_WAIT_MULTIPLE to the futex
 # syscall.  It may shave of <5% CPU usage.
 function apply_futex_wait_multiple() {
-	_dpatch "${PATCH_OPS} -N" "${T}/${FUTEX_WAIT_MULTIPLE_FN}"
+	_fpatch "${T}/${FUTEX_WAIT_MULTIPLE_FN}"
 }
 
 # @FUNCTION: apply_ck
 # @DESCRIPTION:
 # applies the ck patchset
 function apply_ck() {
-	_dpatch "${PATCH_OPS} -N" "${T}/${CK_FN}"
+	_fpatch "${T}/${CK_FN}"
 }
 
 # @FUNCTION: _filter_genpatches
@@ -628,6 +639,11 @@ function _filter_genpatches() {
 	P_GENPATCHES_BLACKLIST=" 5010 5011 5012 5013"
 	# Already applied 5000-5007 ZSTD patches
 	P_GENPATCHES_BLACKLIST+=" 5000 5001 5002 5003 5004 5005 5006 5007"
+	if declare -f ot-kernel_filter_genpatches_blacklist_cb > /dev/null ; then
+		# Disable failing patches
+		P_GENPATCHES_BLACKLIST+=$(ot-kernel_filter_genpatches_blacklist_cb)
+	fi
+
 	pushd "${d}" || die
 		for f in $(ls -1) ; do
 			#einfo "Processing ${f}"
@@ -661,11 +677,39 @@ function _filter_genpatches() {
 				fi
 
 				pushd "${S}" || die
-					_tpatch "${PATCH_OPS} -N" "${d}/${f}"
+					_fpatch "${d}/${f}"
 				popd
 			fi
 		done
 	popd
+}
+
+# @FUNCTION: apply_vanilla_point_releases
+# @DESCRIPTION:
+# Applies all the point releases
+function apply_vanilla_point_releases() {
+	if [[ -n "${KERNEL_NO_POINT_RELEASE}" \
+		&& "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; \
+		then
+		true
+	else
+		# genpatches places kernel incremental patches starting at 1000
+		for a in ${KERNEL_PATCH_FNS_NOEXT[@]} ; do
+			local f="${T}/${a}"
+			cd "${T}" || die
+			unpack "$a.xz"
+			cd "${S}" || die
+			patch --dry-run ${PATCH_OPS} -N "${f}" \
+				| grep -F -e "FAILED at"
+			if [[ "$?" == "1" ]] ; then
+				# already patched or good
+				_fpatch "${f}"
+			else
+				eerror "Failed ${a}"
+				die
+			fi
+		done
+	fi
 }
 
 # @FUNCTION: apply_genpatch_base
@@ -687,28 +731,7 @@ function apply_genpatch_base() {
 		"${S}"/Makefile \
 		|| die
 
-	if [[ -n "${KERNEL_NO_POINT_RELEASE}" \
-		&& "${KERNEL_NO_POINT_RELEASE}" == "1" ]] ; \
-		then
-		true
-	else
-		# genpatches places kernel incremental patches starting at 1000
-		for a in ${KERNEL_PATCH_FNS_NOEXT[@]} ; do
-			local f="${T}/${a}"
-			cd "${T}" || die
-			unpack "$a.xz"
-			cd "${S}" || die
-			patch --dry-run ${PATCH_OPS} -N "${f}" \
-				| grep -F -e "FAILED at"
-			if [[ "$?" == "1" ]] ; then
-				# already patched or good
-				_tpatch "${PATCH_OPS} -N" "${f}"
-			else
-				eerror "Failed ${l}"
-				die
-			fi
-		done
-	fi
+	# Section replaced by apply_vanilla_point_release
 
 	sed -i -e "s|EXTRAVERSION =|EXTRAVERSION = ${EXTRAVERSION}|" \
 		"${S}"/Makefile \
@@ -772,7 +795,7 @@ function apply_o3() {
 
 	if ver_test "${K_MAJOR_MINOR}" -ge 5.4 ; then
 		einfo "Allow O3 unrestricted"
-		_tpatch "${PATCH_OPS}" "${DISTDIR}/${O3_ALLOW_FN}"
+		_fpatch "${DISTDIR}/${O3_ALLOW_FN}"
 	elif ver_test "${K_MAJOR_MINOR}" -lt 5.4 ; then
 		# fix patch
 		sed -e 's|-1028,6 +1028,13|-1076,6 +1076,13|' \
@@ -780,21 +803,14 @@ function apply_o3() {
 			> "${T}"/${O3_CO_FN} || die
 
 		einfo "Applying O3"
-		ewarn \
-"Some patches have hunk(s) failed but still good or may be fixed ASAP."
-
 		einfo "Applying ${O3_CO_FN}"
-		_tpatch "${PATCH_OPS}" "${T}/${O3_CO_FN}"
+		_fpatch "${T}/${O3_CO_FN}"
 
 		einfo "Applying ${O3_RO_FN}"
 		mkdir -p drivers/gpu/drm/amd/display/dc/basics/
 		# trick patch for unattended patching
 		touch drivers/gpu/drm/amd/display/dc/basics/logger.c
-		_tpatch "${PATCH_OPS} -N" "${DISTDIR}/${O3_RO_FN}"
-	fi
-
-	if declare -f ot-kernel_apply_o3_fixes > /dev/null ; then
-		ot-kernel_apply_o3_fixes
+		_fpatch "${DISTDIR}/${O3_RO_FN}"
 	fi
 }
 
@@ -804,23 +820,16 @@ function apply_o3() {
 function apply_pds() {
 	cd "${S}" || die
 	einfo "Applying pds"
-	_dpatch "${PATCH_OPS}" "${DISTDIR}/${PDS_FN}"
+	_fpatch "${DISTDIR}/${PDS_FN}"
 }
 
 # @FUNCTION: apply_bmq
 # @DESCRIPTION:
 # Apply the BMQ CPU scheduler patchset.
-#
-# ot-kernel_apply_bmq_quickfixes - callback to apply quick fixes
-#
 function apply_bmq() {
 	cd "${S}" || die
 	einfo "Applying bmq"
-	_dpatch "${PATCH_OPS}" "${DISTDIR}/${BMQ_FN}"
-
-	if declare -f ot-kernel_apply_bmq_quickfixes > /dev/null ; then
-		ot-kernel_apply_bmq_quickfixes
-	fi
+	_fpatch "${DISTDIR}/${BMQ_FN}"
 }
 
 # @FUNCTION: apply_prjc
@@ -829,7 +838,7 @@ function apply_bmq() {
 function apply_prjc() {
 	cd "${S}" || die
 	einfo "Applying Project C"
-	_dpatch "${PATCH_OPS}" "${DISTDIR}/${PRJC_FN}"
+	_fpatch "${DISTDIR}/${PRJC_FN}"
 }
 
 # @FUNCTION: apply_tresor
@@ -851,11 +860,8 @@ function apply_tresor() {
 		platform="i686"
 	fi
 
-	_tpatch "${PATCH_OPS}" \
+	_fpatch \
 		"${DISTDIR}/tresor-patch-${PATCH_TRESOR_VER}_${platform}"
-	if declare -f ot-kernel_apply_tresor_fixes > /dev/null ; then
-		ot-kernel_apply_tresor_fixes
-	fi
 }
 
 # @FUNCTION: fetch_bfq
@@ -905,9 +911,6 @@ function fetch_zenmisc() {
 # Fetches the zentune patchset.
 function fetch_zentune() {
 	einfo "Fetching the zen-tune patch from a live source..."
-	if ver_test "${K_MAJOR_MINOR}" -eq 5.5 ; then
-		wget -O "${T}/${ZENTUNE_DL_DEP_FN}" "${ZENTUNE_DL_DEP_URL}" || die
-	fi
 	wget -O "${T}/${ZENTUNE_FN}" "${ZENTUNE_DL_URL}" || die
 }
 
@@ -1071,7 +1074,7 @@ kernel ${K_MAJOR_MINOR}.  Skipping kernel_gcc_patch."
 
 	if [[ -z "${K_LIVE_PATCHABLE}" ]] ; then
 		ot-kernel_unpack_tarball
-		# ot-kernel_unpack_point_releases # already done in apply_genpatch_base
+		# ot-kernel_unpack_point_releases # already done in apply_vanilla_point_releases
 		cd "${WORKDIR}" || die
 		mv "linux-${K_MAJOR_MINOR}" "${S}" || die
 	else
@@ -1085,38 +1088,29 @@ kernel ${K_MAJOR_MINOR}.  Skipping kernel_gcc_patch."
 	fi
 
 	cd "${S}" || die
-	if (( ${#_PATCHES[@]} > 0 )) ; then
-		eapply ${_PATCHES[@]}
+
+	if [[ -z "${K_LIVE_PATCHABLE}" ]] ; then
+		apply_vanilla_point_releases
 	fi
 
-	if has muqss ${IUSE_EFFECTIVE} ; then
-		if use muqss ; then
-			fetch_ck
-			apply_ck
-			_dpatch "${PATCH_OPS}" "${FILESDIR}/muqss-dont-attach-ckversion.patch"
+	# This should be done immediately after all the kernel point releases.
+	if has cve_hotfix ${IUSE_EFFECTIVE} ; then
+		if use cve_hotfix ; then
+			fetch_tuxparoni
+			unpack_tuxparoni
+			fetch_cve_hotfixes
+			get_cve_report
+			test_cve_hotfixes
+			apply_cve_hotfixes
+			ewarn \
+"Applying custom patchsets on top of cve_hotfix USE flag may fail to patch or \
+fail to compile."
 		fi
 	fi
 
-	if has zen-tune-muqss ${IUSE_EFFECTIVE} ; then
-		if use zen-tune-muqss ; then
-			apply_zentune_muqss
-		fi
-	fi
-
-	if has zen-tune ${IUSE_EFFECTIVE} ; then
-		if use zen-tune ; then
-			fetch_zentune
-			apply_zentune
-			if ver_test ${K_MAJOR_MINOR} -eq 5.5 ; then
-				apply_zentune_revert_5_5
-			fi
-		fi
-	fi
-
-	if has zen-misc ${IUSE_EFFECTIVE} ; then
-		if use zen-misc ; then
-			fetch_zenmisc
-			apply_zenmisc
+	if has rt ${IUSE_EFFECTIVE} ; then
+		if use rt ; then
+			apply_rt
 		fi
 	fi
 
@@ -1131,10 +1125,9 @@ kernel ${K_MAJOR_MINOR}.  Skipping kernel_gcc_patch."
 		apply_uksm
 	fi
 
-	if has bfq ${IUSE_EFFECTIVE} ; then
-		if use bfq ; then
-			fetch_bfq
-			apply_bfq
+	if has bmq ${IUSE_EFFECTIVE} ; then
+		if use bmq ; then
+			apply_bmq
 		fi
 	fi
 
@@ -1144,15 +1137,29 @@ kernel ${K_MAJOR_MINOR}.  Skipping kernel_gcc_patch."
 		fi
 	fi
 
-	if has bmq ${IUSE_EFFECTIVE} ; then
-		if use bmq ; then
-			apply_bmq
-		fi
-	fi
-
 	if has prjc ${IUSE_EFFECTIVE} ; then
 		if use prjc ; then
 			apply_prjc
+		fi
+	fi
+
+	if has muqss ${IUSE_EFFECTIVE} ; then
+		if use muqss ; then
+			fetch_ck
+			apply_ck
+		fi
+	fi
+
+	if has bfq ${IUSE_EFFECTIVE} ; then
+		if use bfq ; then
+			fetch_bfq
+			apply_bfq
+		fi
+	fi
+
+	if has tresor ${IUSE_EFFECTIVE} ; then
+		if use tresor ; then
+			apply_tresor
 		fi
 	fi
 
@@ -1164,34 +1171,35 @@ kernel ${K_MAJOR_MINOR}.  Skipping kernel_gcc_patch."
 		fi
 	fi
 
-	# should be done after all the kernel point releases contained in
-	# apply_genpatch_base
-	if has cve_hotfix ${IUSE_EFFECTIVE} ; then
-		# may need to be put as the end of this subroutine
-		if use cve_hotfix ; then
-			fetch_tuxparoni
-			unpack_tuxparoni
-			fetch_cve_hotfixes
-			get_cve_report
-			test_cve_hotfixes
-			apply_cve_hotfixes
-		fi
-	fi
-
 	if has O3 ${IUSE_EFFECTIVE} ; then
 		if use O3 ; then
 			apply_o3
 		fi
 	fi
 
-	if has tresor ${IUSE_EFFECTIVE} ; then
-		if use tresor ; then
-			apply_tresor
+	if has zen-tune ${IUSE_EFFECTIVE} ; then
+		if use zen-tune ; then
+			fetch_zentune
+			apply_zentune
 		fi
 	fi
 
+	if has zen-tune-muqss ${IUSE_EFFECTIVE} ; then
+		if use zen-tune-muqss ; then
+			apply_zentune_muqss
+		fi
+	fi
 
-	#_dpatch "${PATCH_OPS}" "${FILESDIR}/linux-4.20-kconfig-ioscheds.patch"
+	if has zen-misc ${IUSE_EFFECTIVE} ; then
+		if use zen-misc ; then
+			fetch_zenmisc
+			apply_zenmisc
+		fi
+	fi
+
+	if (( ${#_PATCHES[@]} > 0 )) ; then
+		eapply ${_PATCHES[@]}
+	fi
 }
 
 # @FUNCTION: ot-kernel_src_compile
