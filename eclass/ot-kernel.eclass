@@ -1379,4 +1379,11 @@ shutdown the computer immediately on idle.\n\
 Futher mitigation recommendations can be found at\n\
 \n\
   https://en.wikipedia.org/wiki/Cold_boot_attack#Mitigation"
+	if has rt $FEATURES ; then
+		if use rt ; then
+			einfo \
+"Don't forget to set CONFIG_PREEMPT_RT found at General setup > \
+Preemption Model >  Fully Preemptible Kernel (Real-Time)."
+		fi
+	fi
 }
