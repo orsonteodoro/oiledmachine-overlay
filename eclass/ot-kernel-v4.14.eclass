@@ -270,12 +270,6 @@ like npm.  These use flags are not recommended."
 		fi
 	fi
 
-	if use muqss ; then
-		ewarn \
-"muqss might cause lock up or slow io under heavy load\n\
-like npm.  These use flags are not recommended."
-	fi
-
 	if use tresor ; then
 		if ver_test ${PV} -ge 4.17 ; then
 			ewarn \
