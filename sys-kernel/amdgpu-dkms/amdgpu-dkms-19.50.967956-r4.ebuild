@@ -55,7 +55,8 @@ RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
 	      >=sys-kernel/vanilla-sources-${KV_SUPPORTED_MIN}
 	      >=sys-kernel/zen-sources-${KV_SUPPORTED_MIN} ) )
 "
-DEPEND="${RDEPEND}
+DEPEND="${RDEPEND}"
+BDEPEND="${BDEPEND}
 	check-pcie? ( sys-apps/dmidecode )
 	check-gpu? ( sys-apps/pciutils )
 	sys-apps/grep[pcre]"

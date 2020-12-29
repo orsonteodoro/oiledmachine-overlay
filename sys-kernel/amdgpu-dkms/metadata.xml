@@ -85,5 +85,9 @@
     <flag name="sign-modules">Signs the modules if necessary.</flag>
     <flag name="ssg">Checks kernel config for SSG (Solid State Graphics)
       support.</flag>
+    <flag name="rt">Applies a PREEMPT_RT patch to disable preemption.
+      This requires the a kernel with the rt patch already applied to complete
+      the other half of the patch.
+    </flag>
   </use>
 </pkgmetadata>

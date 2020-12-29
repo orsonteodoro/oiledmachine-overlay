@@ -23,7 +23,7 @@ PKG_VER_DKMS="5.6.5.24-1109583"
 FN="amdgpu-pro-${PKG_VER_STRING}-${PKG_ARCH}-${PKG_ARCH_VER}.tar.xz"
 SRC_URI="https://www2.ati.com/drivers/linux/${PKG_ARCH}/${FN}"
 SLOT="0/${PV}"
-IUSE="acpi +build +check-mmu-notifier check-pcie check-gpu custom-kernel directgma firmware hybrid-graphics numa rock +sign-modules ssg"
+IUSE="acpi +build +check-mmu-notifier check-pcie check-gpu custom-kernel directgma firmware hybrid-graphics numa rock rt +sign-modules ssg"
 REQUIRED_USE="rock? ( check-pcie check-gpu )
 	      hybrid-graphics? ( acpi )"
 if [[ "${AMDGPU_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
@@ -56,9 +56,11 @@ RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
 	      >=sys-kernel/vanilla-sources-${KV_SUPPORTED_MIN}
 	      >=sys-kernel/zen-sources-${KV_SUPPORTED_MIN} ) )
 "
-DEPEND="${RDEPEND}
+DEPEND="${RDEPEND}"
+BDEPEND="${BDEPEND}
 	check-pcie? ( sys-apps/dmidecode )
 	check-gpu? ( sys-apps/pciutils )
+	rt? ( dev-util/patchutils )
 	sys-apps/grep[pcre]"
 S="${WORKDIR}"
 RESTRICT="fetch"
@@ -73,6 +75,7 @@ PATCHES=( "${FILESDIR}/amdgpu-dkms-20.30.1109583-makefile-recognize-gentoo.patch
 	  "${FILESDIR}/amdgpu-dkms-20.30.1109583-no-firmware-install.patch"
 	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
 	  "${FILESDIR}/amdgpu-dkms-19.50.967956-add-header-to-kcl_mn_c.patch" )
+RT_FN="0087-dma-buf-Use-seqlock_t-instread-disabling-preemption.patch"
 
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
@@ -316,6 +319,13 @@ check_kernel() {
 	else
 		pkg_setup_warn
 	fi
+	if use rt ; then
+		if grep -q -F -e "read_seqbegin" "${KERNEL_DIR}/drivers/dma-buf/dma-buf.c" ; then
+			einfo "Passed rt kernel check"
+		else
+			die "Failed kernel check.  Missing read_seqbegin changes in \${KERNEL_DIR}/drivers/dma-buf/dma-buf.c from ${RT_FN}"
+		fi
+	fi
 }
 
 pkg_setup() {
@@ -362,8 +372,24 @@ src_unpack() {
 	rm -rf "${S}/firmware" || die
 }
 
+apply_rt() {
+	einfo "Applying PREEMPT_RT driver patch"
+	filterdiff \
+		-x '*/dma-buf.c' \
+		-x '*/i915_gem_busy.c' \
+		"${FILESDIR}/${RT_FN}" > "${T}/${RT_FN}" || die
+	sed -i -e 's|drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c|amd/amdgpu/amdgpu_amdkfd_gpuvm.c|g' \
+		"${T}/${RT_FN}" || die
+	sed -i -e 's|drivers/dma-buf/dma-resv.c|amd/amdkcl/dma-buf/dma-resv.c|g' \
+		"${T}/${RT_FN}" || die
+	eapply "${T}/${RT_FN}"
+}
+
 src_prepare() {
 	default
+	if use rt ; then
+		apply_rt
+	fi
 	einfo "DC_VER=${DC_VER}"
 	einfo "AMDGPU_VERSION=${AMDGPU_VERSION}"
 	einfo "ROCK_VER≈${ROCK_VER}"
