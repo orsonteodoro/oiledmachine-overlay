@@ -9,10 +9,11 @@
     ot-sources is a customizable kernel package that applies patches for
     performance, encryption, and security.
 
-    The package prefers to unbundle patchsets from the original author
-    of the patchset, but sometimes prefers the bundled version for the
-    major.minor series especially if they are difficult to maintain between
-    major.minor series.
+    The package prefers to unbundle patchsets, in preference for the
+    version of the feature that was released directly from original author,
+    but sometimes prefers the bundled repackaged version for the major.minor
+    series especially if they are difficult to maintain between major.minor
+    series.
 
     Power users can choose either the BMQ, PDS, MuQSS CPU schedulers.  These
     schedulers focus on normal non-realtime tasks.
