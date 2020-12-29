@@ -1,5 +1,5 @@
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-# Copyright 2019 Orson Teodoro
+# Copyright 2019-2020 Orson Teodoro
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -133,42 +133,40 @@
 #    aes-ecb        128b       158.5 MiB/s       177.5 MiB/s
 
 
-K_MAJOR_MINOR="4.14"
-K_PATCH_XV="4.x"
+DISABLE_DEBUG_V="1.1"
 EXTRAVERSION="-ot"
-PATCH_UKSM_VER="4.14"
-PATCH_UKSM_MVER="4"
-PATCH_ZENTUNE_VER="4.19"
+K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
+K_MAJOR=$(ver_cut 1-2 ${PV})
+K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
+MUQSS_VER="0.162"
+PATCH_CK_COMMIT_B="78f861790848e83e6c98cd8f3408dbad7c9f4c3d" # bottom / oldest
+PATCH_CK_COMMIT_T="fbc0b4595aeccc2cc03e292ac8743565b3d3037b" # top / newest
+PATCH_KGCCP_COMMIT="c53ae690ee282d129fae7e6e10a4c00e5030d588" # GraySky2's kernel_gcc_patch
 PATCH_O3_CO_COMMIT="7d0295dc49233d9ddff5d63d5bdc24f1e80da722" # O3 config option
 PATCH_O3_RO_COMMIT="562a14babcd56efc2f51c772cb2327973d8f90ad" # O3 read overflow fix
-PATCH_KGCCP_COMMIT="c53ae690ee282d129fae7e6e10a4c00e5030d588" # GraySky2's kernel_gcc_patch
-PATCH_PDS_MAJOR_MINOR="4.14"
-PATCH_PDS_VER="${PATCH_PDS_VER:=098i}"
-K_GENPATCHES_VER="${K_GENPATCHES_VER:?135}"
-PATCH_GP_MAJOR_MINOR_REVISION="4.14-${K_GENPATCHES_VER}"
-PATCH_BFQ_VER="4.19"
-PATCH_TRESOR_VER="3.18.5"
-DISABLE_DEBUG_V="1.1"
-ZENTUNE_4_19_COMMIT="84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d..78fb15ac04bff56dfeb0b6fe692fb6e0ccf4e56b" # (exclusive-old,inclusive-new] (top,bottom]
-ZENTUNE_MUQSS_4_19_COMMIT="5a9e0ccffec0891a12ff28a4db1297fb95979572..533573afd451f8d474ed4b9fa126c8c46c4c31a4" # (exclusive-old,inclusive-new]  (top,bottom]
-BFQ_BRANCH="bfq"
-MUQSS_VER="0.162"
+PATCH_PDS_V="${PATCH_PDS_V:=098i}"
+PATCH_TRESOR_V="3.18.5"
 
 # Obtained from:  date -d "2017-11-12 10:46:13 -0800" +%s
 LINUX_TIMESTAMP=1510512373
 
 IUSE="+cfs disable_debug +genpatches +kernel_gcc_patch muqss pds \
-+O3 rt tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 uksm \
-zen-misc zen-tune zen-tune-muqss"
++O3 rt tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 uksm"
 REQUIRED_USE="
-	!zen-misc !zen-tune !zen-tune-muqss
 	^^ ( cfs muqss pds )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_aesni? ( tresor )
 	tresor_i686? ( tresor )
 	tresor_sysfs? ( || ( tresor_aesni tresor_i686 tresor_x86_64 ) )
-	tresor_x86_64? ( tresor )
-	zen-tune-muqss? ( muqss zen-tune )"
+	tresor_x86_64? ( tresor )"
+
+if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
+REQUIRED_USE+="
+	muqss? ( !rt )
+	pds? ( !rt )
+	rt? ( cfs !muqss !pds )
+"
+fi
 
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
@@ -193,87 +191,63 @@ LICENSE+=" uksm? ( all-rights-reserved GPL-2 )" # \
   # all-rights-reserved applies to new files introduced and no default license
   #   found in the project.  (The implementation is based on an academic paper
   #   from public universities.)
-LICENSE+=" zen-tune? ( GPL-2 )"
-LICENSE+=" zen-tune-muqss? ( GPL-2 )"
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:;
 else
-SRC_URI+=" https://cdn.kernel.org/pub/linux/kernel/v${K_PATCH_XV}/linux-${K_MAJOR_MINOR}.tar.xz
-	   ${KERNEL_PATCH_URLS[@]}"
+SRC_URI+=" \
+https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
+	   ${KERNEL_PATCH_URIS[@]}"
 fi
 
 SRC_URI+=" genpatches? (
 		${GENPATCHES_URI}
-		${GENPATCHES_BASE_SRC_URL}
-		${GENPATCHES_EXPERIMENTAL_SRC_URL}
-		${GENPATCHES_EXTRAS_SRC_URL}
+		${GENPATCHES_BASE_SRC_URI}
+		${GENPATCHES_EXPERIMENTAL_SRC_URI}
+		${GENPATCHES_EXTRAS_SRC_URI}
 	   )
 	   kernel_gcc_patch? (
-		${KGCCP_SRC_4_9_URL}
-		${KGCCP_SRC_8_1_URL}
-		${KGCCP_SRC_9_1_URL}
+		${KGCCP_SRC_4_9_URI}
+		${KGCCP_SRC_8_1_URI}
+		${KGCCP_SRC_9_1_URI}
 	   )
+	   muqss? ( ${CK_SRC_URI} )
 	   O3? (
-		${O3_CO_SRC_URL}
-		${O3_RO_SRC_URL}
+		${O3_CO_SRC_URI}
+		${O3_RO_SRC_URI}
 	   )
-	   rt? ( ${RT_SRC_URL} )
-	   pds? ( ${PDS_SRC_URL} )
+	   rt? ( ${RT_SRC_URI} )
+	   pds? ( ${PDS_SRC_URI} )
 	   tresor? (
-		${TRESOR_AESNI_DL_URL}
-		${TRESOR_I686_DL_URL}
-		${TRESOR_SYSFS_DL_URL}
-		${TRESOR_README_DL_URL2}
-		${TRESOR_RESEARCH_PDF_DL_URL}
+		${TRESOR_AESNI_SRC_URI}
+		${TRESOR_I686_SRC_URI}
+		${TRESOR_SYSFS_SRC_URI}
+		${TRESOR_README_SRC_URI}
+		${TRESOR_RESEARCH_PDF_SRC_URI}
 	   )
-	   uksm? ( ${UKSM_SRC_URL} )
-	   zen-tune-muqss? ( ${ZENTUNE_MUQSS_DL_URL} )"
+	   uksm? ( ${UKSM_SRC_URI} )"
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel_pkg_setup_cb() {
-	if use zen-misc ; then
-		ewarn \
-"Using the zen-misc USE flag may not work as it was originally designed for \
-the 4.19 series"
-	fi
-	if use zen-tune ; then
-		ewarn \
-"Using the zen-tune USE flag may not work as it was originally designed for \
-the 4.19 series"
-	fi
-	if use zen-tune-muqss ; then
-		ewarn \
-"Using the zen-tune-muqss USE flag may not work as it was originally designed for \
-the 4.19 series"
-	fi
 	if use kernel_gcc_patch ; then
 		ewarn \
-"The kernel_gcc_patch was designed for older kernels and may fail to patch.  \
+"The kernel_gcc_patch was designed for older kernels and may fail to patch.\n\
 Patching anyway."
 	fi
-	# tresor for x86_64 generic was known to pass crypto testmgr on this
+	# TRESOR for x86_64 generic was known to pass crypto testmgr on this
 	# version.
 	ewarn \
-"This ot-sources ${PV} release is only for research purposes or to access \n\
-tresor devices.  This 4.14.x series is EOL for this repo but not for\n\
-upstream.  It will be removed immediately once tresor has been fixed for\n\
+"This ot-sources ${PV} release is only for research purposes or to access\n\
+TRESOR devices.  This ${K_MAJOR_MINOR}.x series is EOL for this repo but not for\n\
+upstream.  It will be removed immediately once TRESOR has been fixed for\n\
 mainline / stable for >=5.x ."
-
-	if has zen-tune ${IUSE_EFFECTIVE} ; then
-		if use zen-tune ; then
-			ewarn \
-"The zen-tune patch might cause lock up or slow io under heavy load\n\
-like npm.  These use flags are not recommended."
-		fi
-	fi
 
 	if use tresor ; then
 		if ver_test ${PV} -ge 4.17 ; then
 			ewarn \
-	"TRESOR is broken for ${PV}.  Use 4.14.x series.  For ebuild devs only."
+"TRESOR is broken for ${PV}.  Use ${K_MAJOR_MINOR}.x series.  For ebuild devs only."
 		fi
 	fi
 }
@@ -287,8 +261,10 @@ function ot-kernel_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-testmgr-ciphers-update-for-linux-4.14.patch"
 
 	if use tresor_x86_64 || use tresor_i686 ; then
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_asm_64_v2.1.patch"
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_key_64.patch"
+		_dpatch "${PATCH_OPS}" \
+			"${FILESDIR}/tresor-tresor_asm_64_v2.1.patch"
+		_dpatch "${PATCH_OPS}" \
+			"${FILESDIR}/tresor-tresor_key_64.patch"
 	fi
 
 	#if ! use tresor_sysfs ; then
@@ -296,14 +272,18 @@ function ot-kernel_apply_tresor_fixes() {
 	#fi
 
 	# for 5.x series uncomment below
-	#_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
+	#_dpatch "${PATCH_OPS}" \
+		"${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
 
 	# for 5.x series and 4.20 use tresor-testmgr-linux-x.y.patch
-        _dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-testmgr-linux-4.14.127.patch"
+        _dpatch "${PATCH_OPS}" \
+		"${FILESDIR}/tresor-testmgr-linux-4.14.127.patch"
 
-        #_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-get_ds-to-kernel_ds.patch"
+        #_dpatch "${PATCH_OPS}" \
+		"${FILESDIR}/tresor-get_ds-to-kernel_ds.patch"
 
-	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-fix-warnings-for-tresor_key_c.patch"
+	_dpatch "${PATCH_OPS}" \
+		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c.patch"
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb
@@ -313,7 +293,7 @@ function ot-kernel_pkg_postinst_cb() {
 	if use muqss ; then
 		ewarn \
 "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL will\n\
-  cause a kernel panic on boot."
+cause a kernel panic on boot."
 	fi
 }
 
@@ -332,24 +312,29 @@ function ot-kernel_filter_patch_cb() {
 	if [[ "${path}" =~ "${CK_FN}" ]] ; then
 		# The added -N arg is used to skip the duplicate hunks
 		_tpatch "${PATCH_OPS} -N" "${path}" 4.14.212
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/muqss-4.14-rebase-for-4.14.212.patch"
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/muqss-dont-attach-ckversion.patch"
+		_dpatch "${PATCH_OPS}" \
+			"${FILESDIR}/muqss-4.14-rebase-for-4.14.212.patch"
+		_dpatch "${PATCH_OPS}" \
+			"${FILESDIR}/muqss-dont-attach-ckversion.patch"
 	elif [[ "${path}" =~ "${PDS_FN}" ]] ; then
 		if use rt ; then
 			_tpatch "${PATCH_OPS}" "${path}" 4.14.212
-			_dpatch "${PATCH_OPS}" "${FILESDIR}/pds-4.14_pds098i-compat-4.14.212-rt102.patch"
+			_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/pds-4.14_pds098i-compat-4.14.212-rt102.patch"
 		else
 			_dpatch "${PATCH_OPS}" "${path}"
 		fi
 	elif [[ "${path}" =~ "${O3_CO_FN}" ]] ; then
-		_tpatch "${PATCH_OPS}" "${path}" 4.14.0
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/O3-config-option-7d0295dc49233d9ddff5d63d5bdc24f1e80da722-fix-for-4.14.patch"
-	elif [[ "${path}" =~ tresor-patch ]] ; then
-		_tpatch "${PATCH_OPS}" "${path}" 4.14.0
+		_tpatch "${PATCH_OPS}" "${path}" 4.14.212
+		_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/O3-config-option-7d0295dc49233d9ddff5d63d5bdc24f1e80da722-fix-for-4.14.patch"
+	elif [[ "${path}" =~ (${TRESOR_AESNI_FN}|${TRESOR_I686_FN}) ]] ; then
+		_dpatch "${PATCH_OPS}" "${path}" 4.14.212
 		ot-kernel_apply_tresor_fixes
 	elif [[ "${path}" =~ "${UKSM_FN}" ]] ; then
 		_tpatch "${PATCH_OPS}" "${path}" 4.14.212
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/uksm-4.14-rebase-for-4.14.212.patch"
+		_dpatch "${PATCH_OPS}" \
+			"${FILESDIR}/uksm-4.14-rebase-for-4.14.212.patch"
 	else
 		_dpatch "${PATCH_OPS}" "${path}"
 	fi

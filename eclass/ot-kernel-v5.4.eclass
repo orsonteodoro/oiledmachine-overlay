@@ -1,5 +1,5 @@
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-# Copyright 2019 Orson Teodoro
+# Copyright 2019-2020 Orson Teodoro
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -548,33 +548,85 @@
 # alg: skcipher: ctr(tresor) encryption test failed (wrong result) on test vector 0, cfg="in-place"
 # alg: skcipher: xts(tresor) encryption test failed (wrong result) on test vector 1, cfg="in-place"
 
-K_MAJOR_MINOR="5.4"
-K_PATCH_XV="5.x"
-EXTRAVERSION="-ot"
-PATCH_UKSM_VER="5.4"
-PATCH_UKSM_MVER="5"
-PATCH_ZENTUNE_VER="5.4"
-PATCH_ALLOW_O3_COMMIT="4edc8050a41d333e156d2ae1ed3ab91d0db92c7e"
-K_GENPATCHES_VER="${K_GENPATCHES_VER:?10}"
-PATCH_GP_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
-PATCH_BFQ_VER="5.4"
-PATCH_BMQ_MAJOR_MINOR="5.4"
 DISABLE_DEBUG_V="1.1"
-ZENTUNE_5_4_COMMIT="3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0"
-ZENTUNE_MUQSS_DL_URL_BASE="https://github.com/torvalds/linux/commit/"
-ZENTUNE_MUQSS_DL_URL="
-	${ZENTUNE_MUQSS_DL_URL_BASE}6c8fd1641dea5418c68dad4bf48d2d128a2a13e5.patch -> zen-tune-muqss-${PATCH_ZENTUNE_VER}-6c8fd1641dea5418c68dad4bf48d2d128a2a13e5.patch
-	${ZENTUNE_MUQSS_DL_URL_BASE}dce8f01fd3d28121e3bf215255c5eded3855e417.patch -> zen-tune-muqss-${PATCH_ZENTUNE_VER}-dce8f01fd3d28121e3bf215255c5eded3855e417.patch
-	${ZENTUNE_MUQSS_DL_URL_BASE}3ca137b68d689fcb1c5cadad1416c7791d84d48e.patch -> zen-tune-muqss-${PATCH_ZENTUNE_VER}-3ca137b68d689fcb1c5cadad1416c7791d84d48e.patch
-	${ZENTUNE_MUQSS_DL_URL_BASE}d1bebeb959a56324fe436443ea2f21a8391632d9.patch -> zen-tune-muqss-${PATCH_ZENTUNE_VER}-d1bebeb959a56324fe436443ea2f21a8391632d9.patch
-"
-PATCH_TRESOR_VER="3.18.5"
-MUQSS_VER="0.196"
+EXTRAVERSION="-ot"
 GENPATCHES_BLACKLIST=" 2400"
+K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
+K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
+K_MAJOR=$(ver_cut 1-2 ${PV})
+MUQSS_VER="0.196"
+PATCH_ALLOW_O3_COMMIT="4edc8050a41d333e156d2ae1ed3ab91d0db92c7e"
+PATCH_CK_COMMIT_B="5b6cd7cfe6cf6e1263b0a5d2ee461c8058b76213" # bottom / oldest
+PATCH_CK_COMMIT_T="7acac2e4000e75f3349106a8847cf1021651446b" # top / newest
+PATCH_FUTEX_COMMIT_B="1ade6c3ea42b794a49296a486ac8ad780d1faf46" # bottom / oldest
+PATCH_FUTEX_COMMIT_T="dee34186c97c4b224d97f16bf1bbd75c2ea2492e" # top / newest
+PATCH_KGCCP_COMMIT="cbf238bae1a5132b8b35392f3f3769267b2acaf5"
+PATCH_TRESOR_V="3.18.5"
+PATCH_ZENSAUCE_COMMITS=\
+"1baa02fbd7a419fdd0e484ba31ba82c90c7036cf \
+ef12d902c1323bbbeacc3babc91aae15976474ca \
+56f6f4315aedbbcbef8ad61f187347c20a270e49 \
+e4afee68d66b61cfd0bdabe937a0e0eb1cea5844 \
+a1ced5e49a5044e14f4b46e7db2ff4a5afe92118 \
+e92e67143385cf285851e12aa8b7f083dd38dd24 \
+f75e102a6ad92d8acb4354895a799d3a60193990 \
+ee18749616cbf6ff69de3fc9147737bd021aa519 \
+304fc592677954ea3028109e4ebd66408da8f7d6 \
+cbf238bae1a5132b8b35392f3f3769267b2acaf5 \
+4edc8050a41d333e156d2ae1ed3ab91d0db92c7e \
+cba81e70bf716d85151dd20fb4fd001517c98579 \
+3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0 \
+92f669d8f5542fe3981115706a7b9066a0903b4a \
+c9a8f36311f14311a3202501c88009f758683c0f \
+90dd01794267f5713bf98910c691f01e00debc4b \
+e6e7b853433c818466bdb54263fe5333b141c0af \
+7e92cd42bc8f1bdc7b7eaa7d66db53e624c694e8 \
+15ec264afa9883c6bd3032b1a3af63da502a215e \
+d28734240cb56a0efb60b13ecd7f33141da41314 \
+f6b72de6bd17972cee50c4ce97b67954048833de \
+a7c2e93c81a96375414db26fdd18cb9fae8421b9 \
+376d7ed3c04b5576fe753c0dbe588a423c8be9c3"
+PATCH_ZENTUNE_COMMIT_C="3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0"
+PATCH_ZENTUNE_COMMIT_B="${PATCH_ZENTUNE_COMMIT_C}" # bottom / oldest
+PATCH_ZENTUNE_COMMIT_T="${PATCH_ZENTUNE_COMMIT_C}" # top / newest
+PATCH_ZENTUNE_MUQSS_P0="6c8fd1641dea5418c68dad4bf48d2d128a2a13e5"
+PATCH_ZENTUNE_MUQSS_P1="dce8f01fd3d28121e3bf215255c5eded3855e417"
+PATCH_ZENTUNE_MUQSS_P2="3ca137b68d689fcb1c5cadad1416c7791d84d48e"
+PATCH_ZENTUNE_MUQSS_P3="d1bebeb959a56324fe436443ea2f21a8391632d9"
+ZENTUNE_MUQSS_SRC_URI_BASE="https://github.com/torvalds/linux/commit/"
+PATCH_ZENTUNE_MUQSS_F0=\
+"zen-tune-muqss-${K_MAJOR_MINOR}-${PATCH_ZENTUNE_MUQSS_P0}.patch"
+PATCH_ZENTUNE_MUQSS_F1=\
+"zen-tune-muqss-${K_MAJOR_MINOR}-${PATCH_ZENTUNE_MUQSS_P1}.patch"
+PATCH_ZENTUNE_MUQSS_F2=\
+"zen-tune-muqss-${K_MAJOR_MINOR}-${PATCH_ZENTUNE_MUQSS_P2}.patch"
+PATCH_ZENTUNE_MUQSS_F3=\
+"zen-tune-muqss-${K_MAJOR_MINOR}-${PATCH_ZENTUNE_MUQSS_P3}.patch"
+ZENTUNE_MUQSS_SRC_URI="
+	${ZENTUNE_MUQSS_SRC_URI_BASE}${PATCH_ZENTUNE_MUQSS_P0}.patch \
+		-> ${PATCH_ZENTUNE_MUQSS_F0}
+	${ZENTUNE_MUQSS_SRC_URI_BASE}${PATCH_ZENTUNE_MUQSS_P1}.patch \
+		-> ${PATCH_ZENTUNE_MUQSS_F1}
+	${ZENTUNE_MUQSS_SRC_URI_BASE}${PATCH_ZENTUNE_MUQSS_P2}.patch \
+		-> ${PATCH_ZENTUNE_MUQSS_F2}
+	${ZENTUNE_MUQSS_SRC_URI_BASE}${PATCH_ZENTUNE_MUQSS_P3}.patch \
+		-> ${PATCH_ZENTUNE_MUQSS_F3}
+"
+ZENTUNE_COMMITS="
+	${PATCH_ZENTUNE_MUQSS_P0}
+	${PATCH_ZENTUNE_MUQSS_P1}
+	${PATCH_ZENTUNE_MUQSS_P2}
+	${PATCH_ZENTUNE_MUQSS_P3}
+"
+PATCH_ZENSAUCE_BL="
+	${PATCH_ALLOW_O3_COMMIT}
+	${PATCH_KGCCP_COMMIT}
+	${ZENTUNE_COMMITS}
+"
 
-IUSE="bfq bmq +cfs disable_debug +genpatches +kernel_gcc_patch muqss +O3 \
+IUSE="bmq +cfs disable_debug +genpatches +kernel_gcc_patch muqss +O3 \
 futex-wait-multiple tresor rt tresor_aesni tresor_i686 tresor_sysfs \
-tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-misc \
+tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-sauce \
 -zen-tune zen-tune-muqss"
 REQUIRED_USE="
 	^^ ( bmq cfs muqss )
@@ -586,11 +638,19 @@ REQUIRED_USE="
 	tresor_x86_64-256-bit-key-support? ( tresor tresor_x86_64 )
 	zen-tune-muqss? ( muqss zen-tune )"
 
+if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
+REQUIRED_USE+="
+	muqss? ( !rt )
+	bmq? ( !rt )
+	rt? ( cfs !bmq !muqss )
+"
+fi
+
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
 DESCRIPTION="A customizeable kernel package UKSM, zen-kernel patchset, \
 GraySky2's Kernel GCC Patch, MUQSS CPU Scheduler, BMQ CPU Scheduler, \
-genpatches, BFQ updates, CVE fixes, TRESOR"
+genpatches, CVE fixes, TRESOR"
 
 inherit ot-kernel
 
@@ -617,34 +677,39 @@ LICENSE+=" zen-tune-muqss? ( GPL-2 )"
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 	:;
 else
-SRC_URI+=" https://cdn.kernel.org/pub/linux/kernel/v${K_PATCH_XV}/linux-${K_MAJOR_MINOR}.tar.xz
-	   ${KERNEL_PATCH_URLS[@]}"
+KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:="cdn.kernel.org"}
+SRC_URI+=" \
+https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/${KERNEL_SERIES_TARBALL_FN}
+	   ${KERNEL_PATCH_URIS[@]}"
 fi
 
-SRC_URI+=" bmq? ( ${BMQ_SRC_URL} )
+SRC_URI+=" bmq? ( ${BMQ_SRC_URI} )
+	   futex-wait-multiple? ( ${FUTEX_WAIT_MULTIPLE_SRC_URI} )
 	   genpatches? (
 		${GENPATCHES_URI}
-		${GENPATCHES_BASE_SRC_URL}
-		${GENPATCHES_EXPERIMENTAL_SRC_URL}
-		${GENPATCHES_EXTRAS_SRC_URL}
+		${GENPATCHES_BASE_SRC_URI}
+		${GENPATCHES_EXPERIMENTAL_SRC_URI}
+		${GENPATCHES_EXTRAS_SRC_URI}
 	   )
 	   kernel_gcc_patch? (
-		${KGCCP_SRC_4_9_URL}
-		${KGCCP_SRC_8_1_URL}
-		${KGCCP_SRC_9_1_URL}
-		${KGCCP_SRC_10_1_URL}
+		${KGCCP_SRC_4_9_URI}
+		${KGCCP_SRC_8_1_URI}
+		${KGCCP_SRC_9_1_URI}
+		${KGCCP_SRC_10_1_URI}
 	   )
-	   O3? ( ${O3_ALLOW_SRC_URL} )
-	   rt? ( ${RT_SRC_URL} )
+	   muqss? ( ${CK_SRC_URI} )
+	   O3? ( ${O3_ALLOW_SRC_URI} )
+	   rt? ( ${RT_SRC_URI} )
 	   tresor? (
-		${TRESOR_AESNI_DL_URL}
-		${TRESOR_I686_DL_URL}
-		${TRESOR_README_DL_URL2}
-		${TRESOR_RESEARCH_PDF_DL_URL}
-		${TRESOR_SYSFS_DL_URL}
+		${TRESOR_AESNI_SRC_URI}
+		${TRESOR_I686_SRC_URI}
+		${TRESOR_README_SRC_URI}
+		${TRESOR_RESEARCH_PDF_SRC_URI}
+		${TRESOR_SYSFS_SRC_URI}
 	   )
-	   uksm? ( ${UKSM_SRC_URL} )
-	   zen-tune-muqss? ( ${ZENTUNE_MUQSS_DL_URL} )"
+	   uksm? ( ${UKSM_SRC_URI} )
+	   zen-tune-muqss? ( ${ZENTUNE_MUQSS_SRC_URI} )
+	   zen-sauce? ( ${ZENSAUCE_URIS} )"
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:
@@ -660,14 +725,14 @@ function ot-kernel_pkg_setup_cb() {
 				:;
 			else
 				ewarn \
-"You need to switch your compiler to gcc-10.1+ for kernel_gcc_patch to work on \
-new architectures.  For increased compatibility switch and re-emerge with \
+"You need to switch your compiler to gcc-10.1+ for kernel_gcc_patch to work on\n\
+new architectures.  For increased compatibility switch and re-emerge with\n\
 >=gcc-10.1."
 			fi
 		else
 			ewarn \
-"The kernel_gcc_patch was designed for older kernels and may fail to patch.  \
-Patching anyway.  For increased compatibility switch and re-emerge with \
+"The kernel_gcc_patch was designed for older kernels and may fail to patch.\n\
+Patching anyway.  For increased compatibility switch and re-emerge with\n\
 >=gcc-10.1."
 		fi
 	fi
@@ -682,11 +747,13 @@ like npm.  These use flags are not recommended."
 	if use tresor ; then
 		if ver_test ${PV} -ge 4.17 ; then
 			ewarn \
-	"TRESOR is experimental for ${PV}.  Use 4.14.x series for stable TRESOR."
+"TRESOR is experimental for ${PV}.  Use 4.14.x series for stable TRESOR."
 		fi
-		ewarn \
-"The TRESOR may not work for the ${K_MAJOR_MINOR} series.  Please \
+		if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
+			ewarn \
+"The TRESOR may not work for the ${K_MAJOR_MINOR} series.  Please\n\
 use the older branches."
+		fi
 	fi
 }
 
@@ -698,8 +765,10 @@ function ot-kernel_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-testmgr-ciphers-update.patch"
 
 	if use tresor_x86_64 || use tresor_i686 ; then
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_asm_64_v2.1.patch"
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-tresor_key_64.patch"
+		_dpatch "${PATCH_OPS}" \
+			"${FILESDIR}/tresor-tresor_asm_64_v2.1.patch"
+		_dpatch "${PATCH_OPS}" \
+			"${FILESDIR}/tresor-tresor_key_64.patch"
 	fi
 
 	#if ! use tresor_sysfs ; then
@@ -707,7 +776,8 @@ function ot-kernel_apply_tresor_fixes() {
 	#fi
 
 	# for 5.x series uncomment below
-	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
+	_dpatch "${PATCH_OPS}" \
+		"${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
 
 	# for 5.x series and 4.20 use tresor-testmgr-linux-x.y.patch
         _dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-testmgr-linux-5.1.patch"
@@ -715,22 +785,29 @@ function ot-kernel_apply_tresor_fixes() {
         _dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-get_ds-to-kernel_ds.patch"
 
 	if use tresor_x86_64 || use tresor_i686 ; then
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-ptrace-mispatch-fix-for-5.4-i686.patch"
+		_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/tresor-ptrace-mispatch-fix-for-5.4-i686.patch"
 	else
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-ptrace-mispatch-fix-for-5.4-aesni.patch"
+		_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/tresor-ptrace-mispatch-fix-for-5.4-aesni.patch"
 	fi
-	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-expose-aes-generic-tables-for-5.4.patch"
+	_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/tresor-expose-aes-generic-tables-for-5.4.patch"
 
 	if use tresor_x86_64 || use tresor_i686 ; then
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-i686-v2.1.patch"
+		_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-i686-v2.1.patch"
 	else
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-aesni-v2.1.patch"
+		_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-aesni-v2.1.patch"
 	fi
 
-	_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-fix-warnings-for-tresor_key_c.patch"
+	_dpatch "${PATCH_OPS}" \
+		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c.patch"
 	if use tresor_x86_64-256-bit-key-support ; then
 		if use tresor_x86_64 || use tresor_i686 ; then
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-256-bit-aes-support-i686-v2-for-5.4.patch"
+			_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/tresor-256-bit-aes-support-i686-v2-for-5.4.patch"
 		fi
 	fi
 }
@@ -764,24 +841,31 @@ function ot-kernel_filter_patch_cb() {
 	if [[ "${path}" =~ "${BMQ_FN}" ]] ; then
 		if use rt ; then
 			_tpatch "${PATCH_OPS}" "${path}" 5.4.85
-			_dpatch "${PATCH_OPS}" "${FILESDIR}/bmq-5.4-r2-compat-5.4.84-rt47-task_to_waiter.patch"
+			_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/bmq-5.4-r2-compat-5.4.84-rt47-task_to_waiter.patch"
 		else
 			_dpatch "${PATCH_OPS}" "${path}"
 		fi
 	elif [[ "${path}" =~ "${CK_FN}" ]] ; then
 		_dpatch "${PATCH_OPS}" "${path}"
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/muqss-dont-attach-ckversion.patch"
-	elif [[ "${path}" =~ tresor-patch ]] ; then
-		_tpatch "${PATCH_OPS}" "${path}" 5.4.0
+		_dpatch "${PATCH_OPS}" \
+			"${FILESDIR}/muqss-dont-attach-ckversion.patch"
+	elif [[ "${path}" =~ (${TRESOR_AESNI_FN}|${TRESOR_I686_FN}) ]] ; then
+		_dpatch "${PATCH_OPS}" "${path}" 5.4.0
 		ot-kernel_apply_tresor_fixes
 	elif [[ "${path}" =~ "${UKSM_FN}" ]] ; then
 		_tpatch "${PATCH_OPS}" "${path}" 5.4.85
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/uksm-5.4-rebase-for-5.4.85.patch"
-	elif [[ "${path}" =~ "${ZENTUNE_MUQSS_FN}" ]] ; then
-		_dpatch "${PATCH_OPS}" "${DISTDIR}/zen-tune-muqss-${PATCH_ZENTUNE_VER}-6c8fd1641dea5418c68dad4bf48d2d128a2a13e5.patch"
-		_dpatch "${PATCH_OPS}" "${DISTDIR}/zen-tune-muqss-${PATCH_ZENTUNE_VER}-dce8f01fd3d28121e3bf215255c5eded3855e417.patch"
-		_dpatch "${PATCH_OPS}" "${DISTDIR}/zen-tune-muqss-${PATCH_ZENTUNE_VER}-3ca137b68d689fcb1c5cadad1416c7791d84d48e.patch"
-		_dpatch "${PATCH_OPS}" "${DISTDIR}/zen-tune-muqss-${PATCH_ZENTUNE_VER}-d1bebeb959a56324fe436443ea2f21a8391632d9.patch"
+		_dpatch "${PATCH_OPS}" \
+			"${FILESDIR}/uksm-5.4-rebase-for-5.4.85.patch"
+	elif [[ "${path}" == "${ZENTUNE_MUQSS_VIRTUAL_PATCH}" ]] ; then
+		_dpatch "${PATCH_OPS}" \
+			"${DISTDIR}/${${PATCH_ZENTUNE_MUQSS_F0}}"
+		_dpatch "${PATCH_OPS}" \
+			"${DISTDIR}/${${PATCH_ZENTUNE_MUQSS_F0}}"
+		_dpatch "${PATCH_OPS}" \
+			"${DISTDIR}/${${PATCH_ZENTUNE_MUQSS_F0}}"
+		_dpatch "${PATCH_OPS}" \
+			"${DISTDIR}/${${PATCH_ZENTUNE_MUQSS_F0}}"
 	else
 		_dpatch "${PATCH_OPS}" "${path}"
 	fi

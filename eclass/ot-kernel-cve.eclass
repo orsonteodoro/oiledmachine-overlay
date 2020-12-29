@@ -114,12 +114,12 @@ CVE_ALLOW_UNTAGGED_PATCHES=${CVE_ALLOW_UNTAGGED_PATCHES:=1}
 CVE_MIN_YEAR=${CVE_MIN_YEAR:=1999}
 
 TUXPARONI_A_FN="tuxparoni.tar.gz"
-TUXPARONI_DL_URL="\
+TUXPARONI_SRC_URI="\
 https://github.com/orsonteodoro/tuxparoni/archive/master.tar.gz"
 
 fetch_tuxparoni() {
 	einfo "Fetching tuxparoni from a live source..."
-	wget -O "${T}/${TUXPARONI_A_FN}" "${TUXPARONI_DL_URL}" || die
+	wget -O "${T}/${TUXPARONI_A_FN}" "${TUXPARONI_SRC_URI}" || die
 }
 
 unpack_tuxparoni() {
