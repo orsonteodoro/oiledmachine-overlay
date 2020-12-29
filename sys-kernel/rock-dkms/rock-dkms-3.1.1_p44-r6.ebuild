@@ -10,13 +10,16 @@ HOMEPAGE="https://rocm-documentation.readthedocs.io/en/latest/Installation_Guide
 LICENSE="GPL-2 MIT
 	firmware? ( AMDGPU-FIRMWARE RADEON-FIRMWARE )"
 KEYWORDS="amd64"
-MY_RPR="${PV//_p/-}" # Remote PR
-FN="rock-dkms_${MY_RPR}_all.deb"
-BASE_URL="http://repo.radeon.com/rocm/apt/debian"
-FOLDER="pool/main/r/rock-dkms"
-SRC_URI="http://repo.radeon.com/rocm/apt/debian/pool/main/r/rock-dkms/${FN}"
+REV=$(ver_cut 5 ${PV})
+PV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
+ROCK_VER=$(ver_cut 1-3 ${PV})
+SUFFIX="${PV_MAJOR_MINOR}-${REV}"
+FN="rock-dkms_${PV_MAJOR_MINOR}-${REV}_all.deb"
+BASE_URL="http://repo.radeon.com/rocm/apt/${PV}/"
+FOLDER="pool/main/r/rock-dkms/"
+SRC_URI="${BASE_URL}${FOLDER}/${FN}"
 SLOT="0/${PV}"
-IUSE="acpi +build +check-mmu-notifier +check-pcie +check-gpu custom-kernel directgma firmware hybrid-graphics numa +sign-modules ssg"
+IUSE="acpi +build +check-mmu-notifier +check-pcie +check-gpu custom-kernel directgma firmware hybrid-graphics numa rt +sign-modules ssg"
 REQUIRED_USE="hybrid-graphics? ( acpi )"
 if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
 KV_NOT_SUPPORTED_MAX="99999"
@@ -48,21 +51,25 @@ RDEPEND="firmware? ( sys-firmware/rock-firmware:${SLOT} )
 	      >=sys-kernel/zen-sources-${KV_SUPPORTED_MIN} )
 	 )
 "
-DEPEND="${RDEPEND}
+DEPEND="${RDEPEND}"
+BDEPEND="${BDEPEND}
 	check-pcie? ( sys-apps/dmidecode )
 	check-gpu? ( sys-apps/pciutils )
+	rt? ( dev-util/patchutils )
 	sys-apps/grep[pcre]"
-S="${WORKDIR}/usr/src/amdgpu-${MY_RPR}"
+S="${WORKDIR}/usr/src/amdgpu-${SUFFIX}"
 RESTRICT="fetch"
 DKMS_PKG_NAME="amdgpu"
-DKMS_PKG_VER="${MY_RPR}"
-DC_VER="3.2.72"
-AMDGPU_VERSION="5.4.8"
+DKMS_PKG_VER="${SUFFIX}"
+DC_VER="3.2.68"
+AMDGPU_VERSION="5.4.4"
 
-PATCHES=( "${FILESDIR}/rock-dkms-3.3_p19-makefile-recognize-gentoo.patch"
+PATCHES=( "${FILESDIR}/rock-dkms-2.8_p13-makefile-recognize-gentoo.patch"
 	  "${FILESDIR}/rock-dkms-3.0_p6-enable-mmu_notifier.patch"
-	  "${FILESDIR}/rock-dkms-3.3_p19-no-firmware-install.patch"
-	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch" )
+	  "${FILESDIR}/rock-dkms-3.1_p44-no-firmware-install.patch"
+	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
+	  "${FILESDIR}/rock-dkms-3.1_p44-fix-retval-for-drm_dp_atomic_find_vcpi_slots.patch" )
+RT_FN="0087-dma-buf-Use-seqlock_t-instread-disabling-preemption.patch"
 
 pkg_nofetch() {
         local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
@@ -258,7 +265,7 @@ check_hardware() {
 			# the format is asicname_needspciatomics
 			local asics="kaveri_0 carrizo_0 raven_1 hawaii_1 tonga_1 fiji_1 fijivf_0 polaris10_1 polaris10vf_0 polaris11_1 polaris12_1 vegam_1 vega10_0 vega10vf_0 vega12_0 vega20_0 arcturus_0 arcturusvf_0 navi10_0"
 			local no_support="tonga iceland vegam vega12" # See https://rocm-documentation.readthedocs.io/en/latest/InstallGuide.html#not-supported
-			local found_asic=$(grep -i "${device_id}" "${FILESDIR}/kfd_device.c_v$(ver_cut 1-2)" | grep -P -o -e "/\* [ a-zA-Z0-9]+\*/" | sed -e "s|[ /*]||g" | tr "[:upper:]" "[:lower:]")
+			local found_asic=$(grep -i "${device_id}" "${FILESDIR}/kfd_device.c_v${ROCK_VER}" | grep -P -o -e "/\* [ a-zA-Z0-9]+\*/" | sed -e "s|[ /*]||g" | tr "[:upper:]" "[:lower:]")
 			x_atomic_f=$(echo "${asics}" | grep -P -o -e "${found_asic}_[01]" | sed -e "s|${found_asic}_||g")
 			atomic_f=$(( ${atomic_f} | ${x_atomic_f} ))
 			if [[ "${no_support}" =~ "${found_asic}" ]] ; then
@@ -306,6 +313,13 @@ check_kernel() {
 	else
 		pkg_setup_warn
 	fi
+	if use rt ; then
+		if grep -q -F -e "read_seqbegin" "${KERNEL_DIR}/drivers/dma-buf/dma-buf.c" ; then
+			einfo "Passed rt kernel check"
+		else
+			die "Failed kernel check.  Missing read_seqbegin changes in \${KERNEL_DIR}/drivers/dma-buf/dma-buf.c from ${RT_FN}"
+		fi
+	fi
 }
 
 pkg_setup() {
@@ -343,11 +357,27 @@ src_unpack() {
 	rm -rf "${S}/firmware" || die
 }
 
+apply_rt() {
+	einfo "Applying PREEMPT_RT driver patch"
+	filterdiff \
+		-x '*/dma-buf.c' \
+		-x '*/i915_gem_busy.c' \
+		"${FILESDIR}/${RT_FN}" > "${T}/${RT_FN}" || die
+	sed -i -e 's|drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c|amd/amdgpu/amdgpu_amdkfd_gpuvm.c|g' \
+		"${T}/${RT_FN}" || die
+	sed -i -e 's|drivers/dma-buf/dma-resv.c|amd/amdkcl/dma-resv.c|g' \
+		"${T}/${RT_FN}" || die
+	eapply "${T}/${RT_FN}"
+}
+
 src_prepare() {
 	default
+	if use rt ; then
+		apply_rt
+	fi
 	einfo "DC_VER=${DC_VER}"
 	einfo "AMDGPU_VERSION=${AMDGPU_VERSION}"
-	einfo "ROCK_VER=$(ver_cut 1-2)"
+	einfo "ROCK_VER=${ROCK_VER}"
 if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" != "1" ]] ; then
 	check_hardware
 fi

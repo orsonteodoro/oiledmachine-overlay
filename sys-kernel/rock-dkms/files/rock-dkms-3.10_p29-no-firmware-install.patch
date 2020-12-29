@@ -1,0 +1,23 @@
+--- a/amd/dkms/pre-build.sh.orig	2020-12-29 15:00:58.390243547 -0800
++++ b/amd/dkms/pre-build.sh	2020-12-29 15:01:24.099304845 -0800
+@@ -97,6 +97,3 @@ export KERNELVER
+ 	-include $SRCTREE/include/linux/kconfig.h" \
+ 	./configure)
+ 
+-FW_DIR="/lib/firmware/$KERNELVER"
+-mkdir -p $FW_DIR
+-cp -ar /usr/src/amdgpu-3.10-29/firmware/amdgpu $FW_DIR
++#FW_DIR="/lib/firmware/$KERNELVER"
++#mkdir -p $FW_DIR
++#cp -ar /usr/src/amdgpu-3.10-29/firmware/amdgpu $FW_DIR
+--- a/amd/dkms/post-remove.sh.orig	2020-12-08 18:26:20.000000000 -0800
++++ b/amd/dkms/post-remove.sh	2020-12-29 15:00:58.390243547 -0800
+@@ -1,5 +1,2 @@
+ #!/bin/bash
+ 
+-FW_DIR="/lib/firmware"
+-rm -rf $FW_DIR/*/amdgpu
+-[[ ! $(ls -A $FW_DIR) ]] && rm -rf $FW_DIR
++#FW_DIR="/lib/firmware"
++#rm -rf $FW_DIR/*/amdgpu
++#[[ ! $(ls -A $FW_DIR) ]] && rm -rf $FW_DIR

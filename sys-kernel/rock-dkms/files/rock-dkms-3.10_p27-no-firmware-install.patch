@@ -7,6 +7,9 @@ diff -urp amdgpu-3.10-27.orig/amd/dkms/post-remove.sh amdgpu-3.10-27/amd/dkms/po
 -FW_DIR="/lib/firmware"
 -rm -rf $FW_DIR/*/amdgpu
 -[[ ! $(ls -A $FW_DIR) ]] && rm -rf $FW_DIR
++#FW_DIR="/lib/firmware"
++#rm -rf $FW_DIR/*/amdgpu
++#[[ ! $(ls -A $FW_DIR) ]] && rm -rf $FW_DIR
 diff -urp amdgpu-3.10-27.orig/amd/dkms/pre-build.sh amdgpu-3.10-27/amd/dkms/pre-build.sh
 --- amdgpu-3.10-27.orig/amd/dkms/pre-build.sh	2020-11-20 13:26:56.000000000 -0800
 +++ amdgpu-3.10-27/amd/dkms/pre-build.sh	2020-12-05 20:42:56.089541894 -0800
@@ -17,3 +20,6 @@ diff -urp amdgpu-3.10-27.orig/amd/dkms/pre-build.sh amdgpu-3.10-27/amd/dkms/pre-
 -FW_DIR="/lib/firmware/$KERNELVER"
 -mkdir -p $FW_DIR
 -cp -ar /usr/src/amdgpu-3.10-27/firmware/amdgpu $FW_DIR
++#FW_DIR="/lib/firmware/$KERNELVER"
++#mkdir -p $FW_DIR
++#cp -ar /usr/src/amdgpu-3.10-27/firmware/amdgpu $FW_DIR

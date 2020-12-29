@@ -7,6 +7,9 @@ diff -urp amdgpu-4.0-23.orig/amd/dkms/post-remove.sh amdgpu-4.0-23/amd/dkms/post
 -FW_DIR="/lib/firmware"
 -rm -rf $FW_DIR/*/amdgpu
 -[[ ! $(ls -A $FW_DIR) ]] && rm -rf $FW_DIR
++#FW_DIR="/lib/firmware"
++#rm -rf $FW_DIR/*/amdgpu
++#[[ ! $(ls -A $FW_DIR) ]] && rm -rf $FW_DIR
 diff -urp amdgpu-4.0-23.orig/amd/dkms/pre-build.sh amdgpu-4.0-23/amd/dkms/pre-build.sh
 --- amdgpu-4.0-23.orig/amd/dkms/pre-build.sh	2020-12-14 02:55:56.000000000 -0800
 +++ amdgpu-4.0-23/amd/dkms/pre-build.sh	2020-12-19 21:00:27.395751887 -0800
@@ -17,3 +20,6 @@ diff -urp amdgpu-4.0-23.orig/amd/dkms/pre-build.sh amdgpu-4.0-23/amd/dkms/pre-bu
 -FW_DIR="/lib/firmware/$KERNELVER"
 -mkdir -p $FW_DIR
 -cp -ar /usr/src/amdgpu-4.0-23/firmware/amdgpu $FW_DIR
++#FW_DIR="/lib/firmware/$KERNELVER"
++#mkdir -p $FW_DIR
++#cp -ar /usr/src/amdgpu-4.0-23/firmware/amdgpu $FW_DIR
