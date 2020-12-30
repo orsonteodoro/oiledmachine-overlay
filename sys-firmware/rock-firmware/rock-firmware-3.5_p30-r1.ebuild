@@ -4,7 +4,7 @@
 EAPI=7
 DESCRIPTION="Radeon Open Compute (ROCk) firmware"
 HOMEPAGE="https://rocm.github.io/"
-LICENSE="AMDGPU-FIRMWARE RADEON-FIRMWARE"
+LICENSE="AMDGPU-FIRMWARE"
 # LICENSE.ucode mentioned at
 #   https://rocm-documentation.readthedocs.io/en/latest/Installation_Guide/ROCK-Kernel-Driver_readme.html
 # License found at:
@@ -16,15 +16,18 @@ LICENSE="AMDGPU-FIRMWARE RADEON-FIRMWARE"
 # See also mentioning the difference in firmware
 #   https://github.com/RadeonOpenCompute/ROCm#rocm-support-in-upstream-linux-kernels
 KEYWORDS="~amd64"
-MY_RPR="${PV//_p/-}" # Remote PR
-FN="rock-dkms_${MY_RPR}_all.deb"
-BASE_URL="http://repo.radeon.com/rocm/apt/debian"
-FOLDER="pool/main/r/rock-dkms"
+REV=$(ver_cut 4 ${PV})
+PV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
+ROCK_VER="${PV_MAJOR_MINOR}"
+SUFFIX="${PV_MAJOR_MINOR}-${REV}"
+FN="rock-dkms-firmware_${SUFFIX}_all.deb"
+BASE_URL="http://repo.radeon.com/rocm/apt/${ROCK_VER}/"
+FOLDER="pool/main/r/rock-dkms/"
 RDEPEND="!sys-firmware/amdgpu-firmware"
 RESTRICT="fetch"
 SLOT="0/${PV}"
 inherit unpacker
-SRC_URI="http://repo.radeon.com/rocm/apt/debian/pool/main/r/rock-dkms/${FN}"
+SRC_URI="${BASE_URL}${FOLDER}/${FN}"
 S="${WORKDIR}"
 
 pkg_nofetch() {
@@ -46,10 +49,10 @@ pkg_setup() {
 	fi
 
 	ewarn \
-"/lib/firmware/{amdgpu,radeon} folders should not be present.  Make sure that\n\
+"/lib/firmware/amdgpu folders should not be present.  Make sure that\n\
 the savedconfig USE flag is set in the linux-firmware package.\n\
   Do something like\n\
-  \`sed -i -e \"s|^amdgpu|#amdgpu|g\" -e \"s|^radeon|#radeon|g\" \
+  \`sed -i -e \"s|^amdgpu|#amdgpu|g\" \
 /etc/portage/savedconfig/sys-kernel/${last_cfg}\`\n\
 Then, remerge linux-firmware again.  If you emerged rock-firmware or\n\
 amdgpu-firmware, unemerge them completely.
@@ -74,7 +77,7 @@ PKG_RADEON_LIST=""
 
 _gen_firmware_list() {
 	local module="${1}"
-	cd "${S}/usr/src/amdgpu-${MY_RPR}/firmware/${module}" || die
+	cd "${S}/usr/src/amdgpu-${SUFFIX}/firmware/${module}" || die
 	MA=$(ls * | cut -f1 -d"_" | uniq | tr "\n" " ")
 
 	for ma in ${MA} ; do
@@ -86,11 +89,13 @@ _gen_firmware_list() {
 
 pkg_preinst() {
 	_gen_firmware_list "amdgpu"
-	_gen_firmware_list "radeon"
+	#_gen_firmware_list "radeon"
 
-	F=$(grep -r -e "radeon/" "${S}/usr/src/amdgpu-${MY_RPR}/amd/amdgpu/amdgpu_cgs.c" \
-		| sed -e "s|.*\"radeon|radeon|" -e "s|.bin.*|.bin|")
+	#F=$(grep -r -e "radeon/" "${S}/usr/src/amdgpu-${SUFFIX}/amd/amdgpu/amdgpu_cgs.c" \
+	#	| sed -e "s|.*\"radeon|radeon|" -e "s|.bin.*|.bin|")
 	# typeset -p F # pickler if needed
+	# pickled / cached results from 3.1
+	declare -a F=([0]=$'radeon/tahiti_smc.bin\nradeon/pitcairn_k_smc.bin\nradeon/pitcairn_smc.bin\nradeon/verde_k_smc.bin\nradeon/verde_smc.bin\nradeon/oland_k_smc.bin\nradeon/oland_smc.bin\nradeon/hainan_k_smc.bin\nradeon/banks_k_2_smc.bin\nradeon/hainan_smc.bin' [1]="verde_k_smc.bin" [2]="verde_mc.bin" [3]="verde_me.bin" [4]="verde_pfp.bin" [5]="verde_rlc.bin" [6]="verde_smc.bin")
 	declare -A L
 	for f in ${F} ; do
 		cn=$(echo "${f}" | cut -f 2 -d "/" | cut -f 1 -d "_")
@@ -102,17 +107,17 @@ pkg_preinst() {
 	done
 
 	for cn in ${!L[@]} ; do
-		if [[ "${cn}" == "hainan" || "${cn}" == "tahiti" ]] ; then
+#		if [[ "${cn}" == "hainan" || "${cn}" == "tahiti" ]] ; then
 			PKG_RADEON_LIST+=" \e[1m\e[92m*\e[0m ${cn}:\t${L[${cn}]}\n"
-		fi
+#		fi
 	done
 }
 
 src_install() {
 	insinto /lib/firmware
-	doins -r usr/src/amdgpu-${MY_RPR}/firmware/{radeon,amdgpu}
+	doins -r usr/src/amdgpu-${SUFFIX}/firmware/amdgpu
 	docinto licenses
-	dodoc "${FILESDIR}"/{LICENSE.amdgpu,LICENSE.radeon}
+	dodoc "${FILESDIR}"/LICENSE.amdgpu
 	# The archives should contain license files but don't.
 }
 
