@@ -1,7 +1,7 @@
 diff -urp amdgpu-4.0-23.orig/amd/dkms/post-remove.sh amdgpu-4.0-23/amd/dkms/post-remove.sh
 --- amdgpu-4.0-23.orig/amd/dkms/post-remove.sh	2020-12-14 02:55:56.000000000 -0800
 +++ amdgpu-4.0-23/amd/dkms/post-remove.sh	2020-12-19 21:00:30.163861844 -0800
-@@ -1,5 +1,2 @@
+@@ -1,5 +1,5 @@
  #!/bin/bash
  
 -FW_DIR="/lib/firmware"
@@ -13,7 +13,7 @@ diff -urp amdgpu-4.0-23.orig/amd/dkms/post-remove.sh amdgpu-4.0-23/amd/dkms/post
 diff -urp amdgpu-4.0-23.orig/amd/dkms/pre-build.sh amdgpu-4.0-23/amd/dkms/pre-build.sh
 --- amdgpu-4.0-23.orig/amd/dkms/pre-build.sh	2020-12-14 02:55:56.000000000 -0800
 +++ amdgpu-4.0-23/amd/dkms/pre-build.sh	2020-12-19 21:00:27.395751887 -0800
-@@ -97,6 +97,3 @@ export KERNELVER
+@@ -97,6 +97,6 @@ export KERNELVER
  	-include $SRCTREE/include/linux/kconfig.h" \
  	./configure)
  
