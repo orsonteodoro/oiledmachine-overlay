@@ -2,9 +2,14 @@
 
 ## About
 
-This portage overlay contains various ebuilds for the Gentoo Linux distribution.  It focuses on optimized ebuilds, some game development, software used in computer science courses, C#, Electron apps, and other legacy software and hardware.
+This portage overlay contains various ebuilds for the Gentoo Linux
+distribution.  It focuses on optimized ebuilds, some game development, 
+software used in computer science courses, C#, Electron apps, and other legacy 
+software and hardware.
 
-The name of the repo comes from "well-oiled machine."  A (Gentoo) computer should not feel like molasses under high memory pressure or heavy IO utilization.  It should run smoothly.
+The name of the repo comes from "well-oiled machine."  A (Gentoo) computer 
+should not feel like molasses under high memory pressure or heavy IO 
+utilization.  It should run smoothly.
 
 ## Adding the repo
 <pre>
@@ -26,29 +31,77 @@ git pull
 
 ## Important stuff
 
-Many of these packages have special licenses and EULAs attached to them.  I recommend that you edit your /etc/portage/make.conf so it looks like this ACCEPT_LICENSE="-*" and manually accept each of the licenses.  Licenses can be found in the licenses folder of this overlay and the remaining [licenses](https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses) can be found on the [official gentoo overlay](https://gitweb.gentoo.org/repo/gentoo.git/tree/) in their license folder too.
+Many of these packages have special licenses and EULAs attached to them.  I 
+recommend that you edit your /etc/portage/make.conf so it looks like this 
+ACCEPT_LICENSE="-*" and manually accept each of the licenses.  Licenses can 
+be found in the licenses folder of this overlay and the remaining 
+[licenses](https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses) can be 
+found on the 
+[official gentoo overlay](https://gitweb.gentoo.org/repo/gentoo.git/tree/) 
+in their license folder too.
 
-Many of these packages especially non-free software also require you to manually obtain the installer or files to install and may require you to register on their website.  The required files are listed in the ebuild.
+Many of these packages especially non-free software also require you to 
+manually obtain the installer or files to install and may require you to 
+register on their website.  The required files are listed in the ebuild.
 
-The dev-dotnet folder contains fixes for both dotnet overlay and shnurise overlay ebuilds.  They many of the ebuilds in that folder in this overlay are dependencies for the latest stable MonoDevelop and for MonoGame.
+The dev-dotnet folder contains fixes for both dotnet overlay and shnurise 
+overlay ebuilds.  They many of the ebuilds in that folder in this overlay 
+are dependencies for the latest stable MonoDevelop and for MonoGame.
 
 ## Broken / Still in development
 
 ### NPM / Electron apps
 
-Currently many of the npm ebuilds are undergoing development.  There are currently a lot of vulnerabilties that need to be triaged due to an eclass update that exposed many of them.  I am considering deleting npm packages due to the large amount of time consumed and plenty of vulnerabilities.
+Currently many of the npm ebuilds are undergoing development.  There are 
+currently a lot of vulnerabilties that need to be triaged due to an 
+eclass update that exposed many of them.  I am considering deleting npm 
+packages due to the large amount of time consumed and plenty of 
+vulnerabilities.
 
-If it complains about "emerge: there are no ebuilds to satisfy" and refers to @npm-security-update.  You can remove the deleted package by editing /etc/portage/sets/npm-security-update.
+If it complains about "emerge: there are no ebuilds to satisfy" and 
+refers to @npm-security-update.  You can remove the deleted package by 
+editing /etc/portage/sets/npm-security-update.
 
-If you can't unemerge a npm or electron ebuild from this overlay, please read the `eselect news` item ["Manual removal of npm or electron based packages required"](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2020-07-19-manual-removal-npm-and-electron/2020-07-19-manual-removal-npm-and-electron.en.txt).
+If you can't unemerge a npm or electron ebuild from this overlay, please 
+read the `eselect news` item 
+["Manual removal of npm or electron based packages required"](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2020-07-19-manual-removal-npm-and-electron/2020-07-19-manual-removal-npm-and-electron.en.txt).
 
-See [npm-secaudit.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/npm-secaudit.eclass), [npm-utils.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/npm-utils.eclass), [electron-app.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/electron-app.eclass) for ways to control vulnerability patching using per-package environmental variables.
+See 
+[npm-secaudit.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/npm-secaudit.eclass), 
+[npm-utils.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/npm-utils.eclass), 
+[electron-app.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/electron-app.eclass) 
+for ways to control vulnerability patching using per-package environmental variables.
 
-The app-portage/npm-secaudit package is optional but provides adding npm and electron packages to the @npm-security-update set if a vulnerability was found.
+The app-portage/npm-secaudit package is optional but provides adding npm and 
+electron packages to the @npm-security-update set if a vulnerability was found.
 
-### .NET stack
+### .NET Framework stack or .NET Core stack
 
-The dotnet packages are mostly outdated and being updated.  Many will maybe be deleted due to the lack of programs that use them.  The top priority right now (in 2019 quarters 1-3) is to fix the dotcore-sdk non binary packages first then monodevelop.
+(May be revised)
+
+This section applies only to this overlay.  It is decided that the entire
+.NET Core stack or any packages that sits on top of .NET Core on the
+oiledmachine-overlay will be removed for the difficulty of getting a source
+only build primarily, and due to critical vulnerabilities.  Some packages will
+be modded to remove dotnet or C# support.
+
+Packages that rely alone on mono (.NET Framework) but not .NET core may be kept.
+
+Some packages will be moved to 
+[oiledmachine-overlay-legacy](https://github.com/orsonteodoro/oiledmachine-overlay-legacy).
+
+## Legacy packages
+
+Old packages can be found at 
+[oiledmachine-overlay-legacy](https://github.com/orsonteodoro/oiledmachine-overlay-legacy).  
+
+A package may be moved to oiledmachine-overlay-legacy if bundled dependencies are
+not fixed within several following discoveries of critical vulnerabilties typically in
+several months.
+
+A package also moves to legacy if the project is defunct.
+
+A package does not move to legacy if a newer replacement is found.
 
 ## Packages
 
@@ -101,24 +154,15 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | dev-dotnet/tesseract | This is a C# binding to the Tesseract OCR (Optical Character Recognition) software which will allow your program to read material produced by typewriters and from books. |
 | dev-dotnet/tiledsharp | This library is a map loader in C# for the Tiled Map Editor. |
 | dev-dotnet/xwt | TBA |
-| dev-embedded/avr-studio | This ebuild that helps install avr-studio using wine which is unsupported.  You need to run /usr/share/avr-studio/install.sh because it uses winetricks.  The sources of winetricks I don't really trust so you can only use the script on a limited user.  Only the 4.19 is offered since it can only do unattended install and it is rated gold on winedb.  To get the pretty icon use the `ico` USE flag.  I didn't really test it fully but the GCC plugin needs to be configured to use the GCC.  I am considering creating a new overlay just for wine apps recipies. |
-| dev-embedded/diligent-adept2-runtime | This ebuild helps install it on Gentoo systems.  The original installer did not recognize the 4.x kernels and did not install udev rules in the recommended place in /lib/udev/rules.d.  The Gentoo Wiki doesn't have an explicit proper fix for 4.x kernels if you don't think. |
-| dev-embedded/diligent-plugin-xilinx | This ebuild helps install it on Gentoo systems.  It requires dev-embedded/xilinx-ise-webpack and dev-embedded/diligent-adept2-runtime.  The ebuilds will automatically check for dependencies. |
-| dev-embedded/modelsim | This is an ebuild to help install it on Gentoo Linux.  You still need to download the installer manually and place it into /usr/bin/distfiles.  It will preform an unattended install with a desktop menu item and wrapper script /usr/bin/modelsim.  Use desktop-menu-fix to properly run it on Xfce4 menu or other window managers.  See  https://en.wikipedia.org/wiki/ModelSim for details about this software.  It will help install ase and ae editions. |
-| dev-embedded/xilinx-ise-webpack | This ebuild helps install ISE Webpack on Gentoo systems.  It is fetch restricted so you need to register to download it and you need read the license in the license folder of this overlay and add the license keyword to the ACCEPT_LICENSE environmental variable in your make.conf.  Xilinx ISE is an IDE used to program FPGAs in VHDL for example.  You also need around 24.128G of free space and several hours of install time because it has to transfer the file from /usr/portage/distfiles to the /var/tmp/portage/${CATEGORY}/${PF}/tmp folder to mark it executible, unpacks the package into /var/tmp/portage/${CATEGORY}/${PF}/image, then checks the libraries for TEXTRELS and execstack checks for hundreds of objects, then dumps it finally to the system.  emerge throws a lot of QA security warnings for this package.  The build will also install wrapper scripts ise64 or ise32 for dmenu.  It will install a desktop menu item as well for Xfce4 and other popular desktops. |
-| dev-java/netbeans-alice | TBA |
-| dev-lang/alice | This is the ebuild for educational object oriented programming language used for beginner programmers and students.  It is useful for learning the fundamentals of game programming.  People with dwm window manager or parentless window managers need to use wmname to properly render windows for this java program.  The ebuild that I offer is Alice 3.  http://www.alice.org/index.php for more details.  Emerging alice:2 will install Alice 2 and emerging alice:3 will install Alice 3.   You can install both at the same time.  Both have wrapper scripts (alice2, alice3) that make it easier to run them from dmenu.  Alice 3 doesn't feel hardware accelerated compared to Alice 2. |
 | dev-lang/gambas | Gambas is based on the BASIC programming language dialect.  It is basically a Visual Basic clone.  Version 3.8.4 is in this overlay.  Use the `ide` USE flag to build the IDE.  You can make games with it and has support for OpenGL. |
 | dev-lang/lua | TBA |
 | dev-lang/mono | TBA |
 | dev-lang/qb64 | This is a freeware QBasic clone.  It has similar look and feel as QBasic. |
-| dev-lang/turboturtle | This package uses a wrapper /usr/bin/turboturtle to dump the code to current working directory.  Read more about turtle graphics at http://www.fascinationsoftware.com/FS/html/TurboTurtle.html . |
 | dev-lang/typescript | TBA |
 | dev-libs/asmlib | TBA |
 | dev-libs/hyphen | TBA |
 | dev-libs/leveldb | TBA |
 | dev-libs/libfreenect | TBA |
-| dev-libs/libspotify | TBA |
 | dev-libs/log4c | TBA |
 | dev-libs/nxjson | TBA |
 | dev-libs/pugixml | TBA |
@@ -224,7 +268,6 @@ The dotnet packages are mostly outdated and being updated.  Many will maybe be d
 | www-client/firefox | This ebuild mod has multi-ABI support meaning it can build 32-bit Firefox on a 64-bit machine and both 64-bit and 32-bit builds be present.  You may also choose to build just one ABI.|
 | www-client/surf | **WARNING!!! If you emerge this, it may delete your saved config located in /etc/portage/savedconfig/www-client/{surf-2.0,surf-0.6-r2}.  Backup it up.** surf is a WebkitGTK based browser.  This package contains added built-in ad-blocking support even in SSL.  Fixes were added to support for Facebook.  Support was added for GTK3 smooth scrolling.  Additional added support for external apps for desktop environment MIME to program association, external Flash video for some sites [helper scripts may require updating], and link highlighting.  <br /><br />The 0.6-r2 in this overlay has new window fixes.  It also doesn't create a new instances of itself.  It uses WebKit2 to handle that.  When it creates windows, it uses only one surf instance and new windows act like tabs.  The one by czarkoff and kaihendry and the original surf both create new windows and new WebKitWebProcesses per each new window.  So, my version has a lower memory footprint.  <br /><br />Read the licenses/SURF-community before emerging it.  <br /><br />To update the surf adblocker you need to go to /etc/surf/scripts/adblock and run the update.sh script. <br /><br /> In the 2.0 ebuild, I removed the patches to GTK3 but it most likely doesn't use the custom GTK3 patches in 0.6-r2.  |
 | www-misc/ddgr | This is a command line DuckDuckGo similiar to googler. |
-| www-misc/facy | This is a command line Facebook client.  Update with missing Facebook API calls.  Used CasperJS and PhantomJS to fill in the missing API calls.  This ebuild add enhancemences such as command line video support, YouTube support, and use of color emojis, better handling of shared Spotify playlists. |
 | www-misc/googler | Kept around for latest updates. |
 | www-misc/nativefier | Offline till upstream replaces dependencies with vulnerabilities with non vulnerable ones. |
 | www-misc/rtv | This is a command line Reddit client which has been updated. |
