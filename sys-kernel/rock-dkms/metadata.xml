@@ -73,7 +73,7 @@
       https://rocm-documentation.readthedocs.io/en/latest/ROCm_System_Managment/topo3.html#sysfsclasskfdtopologynodes0iolinks01
       https://rocm-documentation.readthedocs.io/en/latest/ROCm_System_Managment/ROCm-System-Managment.html#io-links
       </flag>
-    <flag name="rt">Applies a PREEMPT_RT patch to disable preemption.
+    <flag name="rt">Applies a PREEMPT_RT patch to prevent a kernel hang.
       This requires the a kernel with the rt patch already applied to complete
       the other half of the patch.
     </flag>
