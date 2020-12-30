@@ -128,7 +128,6 @@ A package does not move to legacy if a newer replacement is found.
 | dev-dotnet/farseer-physics-engine | This is a physics engine based on Box2D and is a C# library.  This one also has support for MonoGame. |
 | dev-dotnet/fna | This is an XNA4 ebuild which just produces a C# assembly.  This project sadly doesn't have a MonoDevelop add-in.  This ebuild is provided for others to fix and expand. |
 | dev-dotnet/freeimagenet | This is for loading textures in C# for games or multimedia apps. |
-| dev-dotnet/koala | This package is for facy.  It is used to interact with the Facebook Graph API in Ruby. |
 | dev-dotnet/libfreenect | This is a C# wrapper for the libfreenect for the XBox Kinect camera. |
 | dev-dotnet/libgit2sharp | TBA |
 | dev-dotnet/mono-addins | TBA |
