@@ -8,14 +8,14 @@ inherit linux-info unpacker
 DESCRIPTION="ROCk DKMS kernel module"
 HOMEPAGE="https://rocm-documentation.readthedocs.io/en/latest/Installation_Guide/ROCk-kernel.html"
 LICENSE="GPL-2 MIT
-	firmware? ( AMDGPU-FIRMWARE )"
+	firmware? ( AMDGPU-FIRMWARE RADEON-FIRMWARE )"
 KEYWORDS="amd64"
-REV=$(ver_cut 4 ${PV})
+REV=$(ver_cut 5 ${PV})
 PV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
-ROCK_VER="${PV_MAJOR_MINOR}"
+ROCK_VER=$(ver_cut 1-3 ${PV})
 SUFFIX="${PV_MAJOR_MINOR}-${REV}"
-FN="rock-dkms_${PV_MAJOR_MINOR}-${REV}_all.deb"
-BASE_URL="http://repo.radeon.com/rocm/apt/${PV}/"
+FN="rock-dkms_${SUFFIX}_all.deb"
+BASE_URL="http://repo.radeon.com/rocm/apt/${ROCK_VER}/"
 FOLDER="pool/main/r/rock-dkms/"
 SRC_URI="${BASE_URL}${FOLDER}/${FN}"
 SLOT="0/${PV}"
@@ -25,7 +25,7 @@ if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" == "1" ]] ; then
 KV_NOT_SUPPORTED_MAX="99999"
 KV_SUPPORTED_MIN="5.0"
 else
-KV_NOT_SUPPORTED_MAX="5.6.69"
+KV_NOT_SUPPORTED_MAX="5.5"
 KV_SUPPORTED_MIN="5.0"
 fi
 RDEPEND="firmware? ( sys-firmware/rock-firmware:${SLOT} )
@@ -61,13 +61,14 @@ S="${WORKDIR}/usr/src/amdgpu-${SUFFIX}"
 RESTRICT="fetch"
 DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${SUFFIX}"
-DC_VER="3.2.99"
-AMDGPU_VERSION="5.6.19"
+DC_VER="3.2.68"
+AMDGPU_VERSION="5.4.4"
 
-PATCHES=( "${FILESDIR}/rock-dkms-3.10_p27-makefile-recognize-gentoo.patch"
-	  "${FILESDIR}/rock-dkms-3.8_p30-enable-mmu_notifier.patch"
-	  "${FILESDIR}/rock-dkms-3.10_p29-no-firmware-install.patch"
-	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch" )
+PATCHES=( "${FILESDIR}/rock-dkms-2.8_p13-makefile-recognize-gentoo.patch"
+	  "${FILESDIR}/rock-dkms-3.0_p6-enable-mmu_notifier.patch"
+	  "${FILESDIR}/rock-dkms-3.1_p44-no-firmware-install.patch"
+	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch"
+	  "${FILESDIR}/rock-dkms-3.1_p44-fix-retval-for-drm_dp_atomic_find_vcpi_slots.patch" )
 RT_FN="0087-dma-buf-Use-seqlock_t-instread-disabling-preemption.patch"
 
 pkg_nofetch() {
@@ -364,7 +365,7 @@ apply_rt() {
 		"${FILESDIR}/${RT_FN}" > "${T}/${RT_FN}" || die
 	sed -i -e 's|drivers/gpu/drm/amd/amdgpu/amdgpu_amdkfd_gpuvm.c|amd/amdgpu/amdgpu_amdkfd_gpuvm.c|g' \
 		"${T}/${RT_FN}" || die
-	sed -i -e 's|drivers/dma-buf/dma-resv.c|amd/amdkcl/dma-buf/dma-resv.c|g' \
+	sed -i -e 's|drivers/dma-buf/dma-resv.c|amd/amdkcl/dma-resv.c|g' \
 		"${T}/${RT_FN}" || die
 	eapply "${T}/${RT_FN}"
 }
@@ -380,10 +381,12 @@ src_prepare() {
 if [[ "${ROCK_DKMS_EBUILD_MAINTAINER}" != "1" ]] ; then
 	check_hardware
 fi
-	chmod 0750 amd/dkms/autogen.sh || die
-	pushd amd/dkms || die
+	chmod 0750 autogen.sh || die
 	./autogen.sh || die
-	popd || die
+	pushd amd/dkms || die
+	chmod 0750 autogen.sh || die
+	./autogen.sh || die
+	popd
 }
 
 src_configure() {
@@ -398,7 +401,7 @@ src_install() {
 	dodir usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}
 	insinto usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}
 	doins -r "${S}"/*
-	fperms 0750 /usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/{amd/dkms/post-remove.sh,amd/dkms/pre-build.sh,amd/dkms/config/install-sh,amd/dkms/configure,amd/dkms/autogen.sh}
+	fperms 0750 /usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/{post-install.sh,post-remove.sh,pre-build.sh,config/install-sh,configure,amd/dkms/configure,amd/dkms/pre-build.sh,autogen.sh,amd/dkms/autogen.sh}
 	insinto /etc/modprobe.d
 	doins "${WORKDIR}/etc/modprobe.d/blacklist-radeon.conf"
 }

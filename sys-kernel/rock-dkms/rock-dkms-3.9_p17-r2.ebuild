@@ -14,8 +14,8 @@ REV=$(ver_cut 4 ${PV})
 PV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 ROCK_VER="${PV_MAJOR_MINOR}"
 SUFFIX="${PV_MAJOR_MINOR}-${REV}"
-FN="rock-dkms_${PV_MAJOR_MINOR}-${REV}_all.deb"
-BASE_URL="http://repo.radeon.com/rocm/apt/${PV}/"
+FN="rock-dkms_${SUFFIX}_all.deb"
+BASE_URL="http://repo.radeon.com/rocm/apt/${ROCK_VER}/"
 FOLDER="pool/main/r/rock-dkms/"
 SRC_URI="${BASE_URL}${FOLDER}/${FN}"
 SLOT="0/${PV}"
@@ -61,12 +61,12 @@ S="${WORKDIR}/usr/src/amdgpu-${SUFFIX}"
 RESTRICT="fetch"
 DKMS_PKG_NAME="amdgpu"
 DKMS_PKG_VER="${SUFFIX}"
-DC_VER="3.2.94"
-AMDGPU_VERSION="5.6.12"
+DC_VER="3.2.99"
+AMDGPU_VERSION="5.6.19"
 
-PATCHES=( "${FILESDIR}/rock-dkms-3.7_p20-makefile-recognize-gentoo.patch"
-	  "${FILESDIR}/rock-dkms-3.7_p20-enable-mmu_notifier.patch"
-	  "${FILESDIR}/rock-dkms-3.7_p20-no-firmware-install.patch"
+PATCHES=( "${FILESDIR}/rock-dkms-3.8_p30-makefile-recognize-gentoo.patch"
+	  "${FILESDIR}/rock-dkms-3.8_p30-enable-mmu_notifier.patch"
+	  "${FILESDIR}/rock-dkms-3.9_p17-no-firmware-install.patch"
 	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch" )
 RT_FN="0087-dma-buf-Use-seqlock_t-instread-disabling-preemption.patch"
 

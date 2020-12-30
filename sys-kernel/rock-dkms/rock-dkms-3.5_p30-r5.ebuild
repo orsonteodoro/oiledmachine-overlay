@@ -10,12 +10,12 @@ HOMEPAGE="https://rocm-documentation.readthedocs.io/en/latest/Installation_Guide
 LICENSE="GPL-2 MIT
 	firmware? ( AMDGPU-FIRMWARE )"
 KEYWORDS="amd64"
-REV=$(ver_cut 5 ${PV})
+REV=$(ver_cut 4 ${PV})
 PV_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
-ROCK_VER=$(ver_cut 1-3 ${PV})
+ROCK_VER="${PV_MAJOR_MINOR}"
 SUFFIX="${PV_MAJOR_MINOR}-${REV}"
-FN="rock-dkms_${PV_MAJOR_MINOR}-${REV}_all.deb"
-BASE_URL="http://repo.radeon.com/rocm/apt/${PV}/"
+FN="rock-dkms_${SUFFIX}_all.deb"
+BASE_URL="http://repo.radeon.com/rocm/apt/${ROCK_VER}/"
 FOLDER="pool/main/r/rock-dkms/"
 SRC_URI="${BASE_URL}${FOLDER}/${FN}"
 SLOT="0/${PV}"
@@ -66,7 +66,7 @@ AMDGPU_VERSION="5.6.0"
 
 PATCHES=( "${FILESDIR}/rock-dkms-3.5_p30-makefile-recognize-gentoo.patch"
 	  "${FILESDIR}/rock-dkms-3.5_p30-enable-mmu_notifier.patch"
-	  "${FILESDIR}/rock-dkms-3.5_p32-no-firmware-install.patch"
+	  "${FILESDIR}/rock-dkms-3.5_p30-no-firmware-install.patch"
 	  "${FILESDIR}/rock-dkms-3.1_p35-add-header-to-kcl_fence_c.patch" )
 RT_FN="0087-dma-buf-Use-seqlock_t-instread-disabling-preemption.patch"
 
