@@ -95,7 +95,11 @@ several months.
 
 A package also moves to legacy if the project is defunct.
 
-A package does not move to legacy if a newer replacement is found.
+A package does not move to legacy if a newer different package replacement is
+found or same ebuild found in the gentoo-overlay.
+
+A package does not move to legacy if the project's source code or possibly the
+dependency's source code was deleted.
 
 ## Packages
 
@@ -182,7 +186,6 @@ A package does not move to legacy if a newer replacement is found.
 | dev-util/geeks-diary | This is an Electron based diary / notetaker for programmers.
 | dev-util/gdevelop | This is a game development software using Electron or web browser as the IDE to produce HTML5 games. |
 | dev-util/gycm | Gycm is a Geany plugin and ycmd client to improve IntelliSense support on top of the stock completer. |
-| dev-util/lldb | TBA |
 | dev-util/lepton | This is a programmer reusable code snipplet manager based on Electron and able to sync with Gist.
 | dev-util/monodevelop | This contains frozen versions and commit hashes for the dependencies that the package eventually checks and pulls in instead of following head for dependencies. |
 | dev-util/msbuild | TBA |
