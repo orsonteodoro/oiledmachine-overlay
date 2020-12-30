@@ -136,7 +136,7 @@
 DISABLE_DEBUG_V="1.1"
 EXTRAVERSION="-ot"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
-K_MAJOR=$(ver_cut 1-2 ${PV})
+K_MAJOR=$(ver_cut 1 ${PV})
 K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 MUQSS_VER="0.162"
 PATCH_CK_COMMIT_B="78f861790848e83e6c98cd8f3408dbad7c9f4c3d" # bottom / oldest
