@@ -85,7 +85,7 @@ oiledmachine-overlay will be removed for the difficulty of getting a source
 only build primarily, and due to critical vulnerabilities.  Some packages will
 be modded to remove dotnet or C# support.
 
-Packages that rely alone on mono (.NET Framework) but not .NET core may be kept.
+Packages that rely alone on mono (.NET Framework) but not .NET Core may be kept.
 
 Some packages will be moved to 
 [oiledmachine-overlay-legacy](https://github.com/orsonteodoro/oiledmachine-overlay-legacy).
