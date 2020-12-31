@@ -142,9 +142,12 @@ S_abi() {
 pkg_setup() {
 	if use test ; then
 		if [[ "${FEATURES}" =~ sandbox ]] ; then
-			die "-sandbox must be added to FEATURES to use the test USE flag."
+			die \
+"-sandbox must be added to FEATURES to use the test USE flag."
 		fi
-		ewarn "The test is expected to fail to install add test-fail-continue to FEATURES as a per package envvar"
+		ewarn \
+"The test is expected to fail.  To install, add test-fail-continue to\n\
+FEATURES as a per package envvar."
 	fi
 }
 
