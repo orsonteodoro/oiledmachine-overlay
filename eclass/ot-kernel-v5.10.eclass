@@ -19,10 +19,10 @@ EXTRAVERSION="-ot"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
 K_MAJOR=$(ver_cut 1 ${PV})
 K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
-MUQSS_VER="" # TODO
+MUQSS_VER="0.205"
 PATCH_ALLOW_O3_COMMIT="d0ee207cac1217d2b111bef6f0f9581a10b35f6c"
-PATCH_CK_COMMIT_B="" # bottom / oldest
-PATCH_CK_COMMIT_T="" # top / newest
+PATCH_CK_COMMIT_B="9cdf59bc2dbfb640dbb057757e4101b147275e86" # bottom / oldest
+PATCH_CK_COMMIT_T="35f6640868573a07b1291c153021f5d75749c15e" # top / newest
 PATCH_FUTEX_COMMIT_B="f678870308608b485d1c771509208c93eab8538a" # bottom / oldest
 PATCH_FUTEX_COMMIT_T="9fd101849c8a3324c6038ef31fe08a528f7a6fe4" # top / newest
 PATCH_KGCCP_COMMIT="986ea2483af3ba52c0e6c9e647c05c753a548fb8"
@@ -69,13 +69,13 @@ PATCH_ZENSAUCE_BL="
 
 #ZENTUNE_MUQSS_COMMIT="" # (exclusive-end,inclusive-start]  (top,bottom]
 
-IUSE="bmq +cfs disable_debug futex-wait-multiple +genpatches \
+IUSE="+cfs disable_debug futex-wait-multiple +genpatches \
 +kernel_gcc_patch muqss +O3 prjc rt tresor tresor_aesni tresor_i686 \
 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-sauce \
 -zen-tune zen-tune-muqss"
 REQUIRED_USE="
-	!bmq !muqss !zen-tune-muqss
-	^^ ( bmq cfs muqss prjc )
+	!zen-tune-muqss
+	^^ ( cfs muqss prjc )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_aesni? ( tresor )
 	tresor_i686? ( tresor )
@@ -95,7 +95,7 @@ fi
 K_BRANCH_ID="${KV_MAJOR}.${KV_MINOR}"
 
 DESCRIPTION="A customizeable kernel package containing UKSM, zen-kernel \
-patchset, GraySky2's Kernel GCC Patch, MUQSS CPU Scheduler, BMQ CPU Scheduler, \
+patchset, GraySky2's Kernel GCC Patch, MUQSS CPU Scheduler, \
 Project C CPU Scheduler, genpatches, CVE fixes, TRESOR"
 
 inherit ot-kernel
@@ -143,6 +143,7 @@ SRC_URI+=" futex-wait-multiple? ( ${FUTEX_WAIT_MULTIPLE_SRC_URI} )
 		${KGCCP_SRC_10_1_URI}
 		${KGCCP_SRC_11_0_URI}
 	   )
+	   muqss? ( ${CK_SRC_URI} )
 	   O3? ( ${O3_ALLOW_SRC_URI} )
 	   prjc? ( ${PRJC_SRC_URI} )
 	   rt? ( ${RT_SRC_URI} )
@@ -157,8 +158,6 @@ SRC_URI+=" futex-wait-multiple? ( ${FUTEX_WAIT_MULTIPLE_SRC_URI} )
 	   zen-sauce? ( ${ZENSAUCE_URIS} )"
 
 SRC_URI_DISABLED+="
-	   bmq? ( ${BMQ_SRC_URI} )
-	   muqss? ( ${CK_SRC_URI} )
 	   zen-tune-muqss? ( ${ZENTUNE_MUQSS_SRC_URI} )
 "
 

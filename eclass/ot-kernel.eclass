@@ -279,7 +279,7 @@ PRJC_FN="prjc_v${PATCH_PROJC_VER}.patch"
 PRJC_SRC_URI="${PRJC_URI_BASE}${PRJC_FN}"
 
 RT_BASE_URI=\
-"https://mirrors.edge.kernel.org/pub/linux/kernel/projects/rt/${K_MAJOR_MINOR}/"
+"http://cdn.kernel.org/pub/linux/kernel/projects/rt/${K_MAJOR_MINOR}/"
 RT_FN="patches-${PATCH_RT_VER}.tar.xz"
 RT_SRC_URI="${RT_BASE_URI}${RT_FN}"
 
