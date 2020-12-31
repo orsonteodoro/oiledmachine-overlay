@@ -8,4 +8,9 @@
   <upstream>
     <remote-id type="bitbucket">chromiumembedded/cef</remote-id>
   </upstream>
+  <use>
+    <flag name="cefsimple">Builds and installs test browser without menu and without url bar</flag>
+    <flag name="cefclient">Builds and installs interactive testing through menu and url bar</flag>
+    <flag name="test">Runs automated testing</flag>
+  </use>
 </pkgmetadata>

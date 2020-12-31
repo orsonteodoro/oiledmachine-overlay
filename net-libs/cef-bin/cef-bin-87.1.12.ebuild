@@ -6,20 +6,22 @@
 
 EAPI=7
 
-inherit cmake-utils flag-o-matic multilib-minimal
+VIRTUALX_REQUIRED="manual"
+inherit cmake-utils flag-o-matic multilib-minimal virtualx
 
 DESCRIPTION="Chromium Embedded Framework (CEF). A simple framework for embedding Chromium-based browsers in other applications."
 LICENSE="BSD"
 HOMEPAGE="https://bitbucket.org/chromiumembedded/cef/src/master/"
-CHROMIUM_V="87.0.4280.66"
-CEF_COMMIT="g8bb7705"
+# 12/07/2020 - 87.1.12+g03f9336+chromium-87.0.4280.88 / Chromium 87.0.4280.88
+CHROMIUM_V="87.0.4280.88"
+CEF_COMMIT="g03f9336"
 SRC_URI="
 	x86? (
 		minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2B${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux32_minimal.tar.bz2 )
 		!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2B${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux32.tar.bz2 )
 	)
 	amd64? (
-		minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2B${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux32_minimal.tar.bz2 )
+		minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2B${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux64_minimal.tar.bz2 )
 		!minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2B${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux64.tar.bz2 )
 	)
 	arm? (
@@ -34,17 +36,19 @@ SRC_URI="
 
 SLOT="0/${PV}"
 KEYWORDS="~arm ~arm64 ~amd64 ~x86"
-IUSE="debug minimal"
+IUSE+=" cefclient cefsimple debug minimal test"
 # Based on install-build-deps.sh
 # U >=16.04 LTS assumed, supported only in cef
 # For details see:
 # https://chromium.googlesource.com/chromium/src/+/master/build/install-build-deps.sh?format=TEXT
 # TODO: app-accessibility/speech-dispatcher needs multilib
+GLIB_V="2.48"
+XI_V="1.7.6"
 CHROMIUM_CDEPEND="
 	>=app-accessibility/at-spi2-atk-2.18.3[${MULTILIB_USEDEP}]
 	>=app-accessibility/speech-dispatcher-0.8.3
 	>=dev-db/sqlite-3.11[${MULTILIB_USEDEP}]
-	>=dev-libs/glib-2.48:2[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-${GLIB_V}:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libappindicator-12.10[${MULTILIB_USEDEP}]
 	>=dev-libs/libevdev-1.4.6[${MULTILIB_USEDEP}]
 	>=dev-libs/libffi-3.2.1[${MULTILIB_USEDEP}]
@@ -99,7 +103,7 @@ CHROMIUM_RDEPEND="
 	>=x11-libs/libXdmcp-1.1.2[${MULTILIB_USEDEP}]
 	>=x11-libs/libXext-1.3.3[${MULTILIB_USEDEP}]
 	>=x11-libs/libXfixes-5.0.1[${MULTILIB_USEDEP}]
-	>=x11-libs/libXi-1.7.6[${MULTILIB_USEDEP}]
+	>=x11-libs/libXi-${XI_V}[${MULTILIB_USEDEP}]
 	>=x11-libs/libXinerama-1.1.3[${MULTILIB_USEDEP}]
 	>=x11-libs/libXrandr-1.5.0[${MULTILIB_USEDEP}]
 	>=x11-libs/libXrender-0.9.9[${MULTILIB_USEDEP}]
@@ -107,11 +111,22 @@ CHROMIUM_RDEPEND="
 	>=x11-libs/pango-1.38.1[${MULTILIB_USEDEP}]
 	>=x11-libs/pixman-0.33.6[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.8[${MULTILIB_USEDEP}]"
-RDEPEND="${CHROMIUM_RDEPEND}
-	>=x11-libs/gtk+-2.24.32:2[${MULTILIB_USEDEP}]
-	>=x11-libs/gtkglext-1.2.0[${MULTILIB_USEDEP}]"
-DEPEND="${RDEPEND}"
-BDEPEND=">=dev-util/cmake-3.10.2"
+# libcef alone uses aura not gtk
+RDEPEND="${RDEPEND}
+	${CHROMIUM_RDEPEND}
+	cefclient? (
+		>=dev-libs/glib-${GLIB_V}:2[${MULTILIB_USEDEP}]
+		>=x11-libs/gtk+-2.24.32:2[${MULTILIB_USEDEP}]
+		>=x11-libs/gtkglext-1.2.0[${MULTILIB_USEDEP}]
+		>=x11-libs/libXi-${XI_V}[${MULTILIB_USEDEP}]
+	)"
+DEPEND="${DEPEND}
+	test? (
+		>=dev-libs/glib-${GLIB_V}:2[${MULTILIB_USEDEP}]
+	)"
+BDEPEND="${BDEPEND}
+	test? ( ${VIRTUALX_DEPEND} )
+	>=dev-util/cmake-3.10.2"
 S="${WORKDIR}"
 declare -Ax ABIx=( \
         [x86]="linux32" \
@@ -122,6 +137,15 @@ declare -Ax ABIx=( \
 
 S_abi() {
 	echo "${WORKDIR}/cef_binary_${PV}+${CEF_COMMIT}+chromium-${CHROMIUM_V}_${ABIx[${ABI}]}"
+}
+
+pkg_setup() {
+	if use test ; then
+		if [[ "${FEATURES}" =~ sandbox ]] ; then
+			die "-sandbox must be added to FEATURES to use the test USE flag."
+		fi
+		ewarn "The test is expected to fail to install add test-fail-continue to FEATURES as a per package envvar"
+	fi
 }
 
 src_prepare() {
@@ -147,6 +171,17 @@ src_configure() {
 		cmake-utils_src_configure
 	}
 	multilib_foreach_abi configure_abi
+	if use test ; then
+		ewarn "Adding sandbox exceptions for GPU"
+		for d in /dev/dri/card*; do
+			einfo "addwrite ${d}"
+			addwrite "${d}"
+		done
+		for d in /dev/dri/render*; do
+			einfo "addwrite ${d}"
+			addwrite "${d}"
+		done
+	fi
 }
 
 src_compile() {
@@ -154,9 +189,31 @@ src_compile() {
 		S=$(S_abi)
 		cd "${S}" || die
 		CMAKE_USE_DIR="${S}" BUILD_DIR="${S}" \
-		cmake-utils_src_compile
+		cmake-utils_src_compile \
+			libcef_dll_wrapper \
+			$(usex cefclient cefclient "") \
+			$(usex cefsimple cefsimple "") \
+			$(usex test ceftests "")
+		if [[ -f "${S}/tests/ceftests/Release/chrome-sandbox" ]] && use test ; then
+			chmod 4755 "${S}/tests/ceftests/Release/chrome-sandbox"
+		fi
 	}
 	multilib_foreach_abi compile_abi
+}
+
+src_test() {
+	ewarn "This test failed on 87.1.12+g03f9336+chromium-87.0.4280.88"
+	test_abi() {
+		S=$(S_abi)
+		local build_type=$(usex debug "Debug" "Release")
+		if use test ; then
+			cd "${S}/tests/ceftests/${build_type}" || die
+			# If it fails, it is likely an upstream problem
+			LD_LIBRARY_PATH="../../../libcef_dll_wrapper:../../../tests/gtest" \
+			virtx ./ceftests --no-sandbox
+		fi
+	}
+	multilib_foreach_abi test_abi
 }
 
 src_install() {
