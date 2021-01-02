@@ -134,10 +134,10 @@ RDEPEND="${COMMON_DEPEND}
 	webcam? ( dev-python/numpy[${PYTHON_USEDEP}]
 		  dev-python/pyinotify[${PYTHON_USEDEP}]
 		>=media-libs/opencv-2.0[${PYTHON_USEDEP},python] )"
-DEPEND="${COMMON_DEPEND}
-	test? ( dev-python/numpy[${PYTHON_USEDEP}] )"
+DEPEND="${COMMON_DEPEND}"
 BDEPEND="${BDEPEND}
 	>=dev-python/cython-0.16[${PYTHON_USEDEP}]
+	test? ( dev-python/numpy[${PYTHON_USEDEP}] )
 	virtual/pkgconfig"
 PATCHES=( "${FILESDIR}/${PN}-2.5.0_rc5-ignore-gentoo-no-compile.patch"
 	  "${FILESDIR}/${PN}-2.5.0_rc5-openrc-init-fix-v2.patch"
