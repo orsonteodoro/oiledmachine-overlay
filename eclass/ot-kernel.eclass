@@ -387,10 +387,11 @@ function _tpatch() {
 	local reversed_acceptable="${4}"
 	local msg_extra="${5}"
 	einfo \
-"Applying ${path}${msg_extra} with estimated ${failed_hunks_acceptable}\n\
-hunk(s) failed and ${reversed_acceptable} already patched warnings and will\n\
-be resolved or patched immediately.  The actual number of failures may be\n\
-far less than the estimates."
+"Applying ${path}${msg_extra}\n\
+with ${failed_hunks_acceptable} hunk(s) failed and\n\
+with ${reversed_acceptable} already patched warnings\n\
+which will be resolved or patched immediately.  These estimates may be far\n\
+less than the actual."
 
 	local n_failures=0
 	for x_i in $(patch ${opts} --dry-run -i "${path}" \
