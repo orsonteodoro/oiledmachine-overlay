@@ -333,7 +333,7 @@ function ot-kernel_filter_patch_cb() {
 		_dpatch "${PATCH_OPS} -F 3" "${path}"
 		ot-kernel_apply_tresor_fixes
 	elif [[ "${path}" =~ "${UKSM_FN}" ]] ; then
-		_tpatch "${PATCH_OPS}" "${path}" 3 0 ""
+		_tpatch "${PATCH_OPS} -F 3" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPS}" \
 			"${FILESDIR}/uksm-4.14-rebase-for-4.14.212.patch"
 	else
