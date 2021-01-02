@@ -320,7 +320,7 @@ function ot-kernel_filter_patch_cb() {
 		# The added -N arg is used to skip the duplicate hunks
 		_tpatch "${PATCH_OPS} -N -F 3" "${path}" 9 1 ""
 		_dpatch "${PATCH_OPS}" \
-			"${FILESDIR}/muqss-0.205-rebase-for-4.14.212.patch"
+			"${FILESDIR}/muqss-0.162-rebase-for-4.14.213.patch"
 		_dpatch "${PATCH_OPS}" \
 			"${FILESDIR}/muqss-dont-attach-ckversion.patch"
 	elif [[ "${path}" =~ "${PDS_FN}" ]] ; then
