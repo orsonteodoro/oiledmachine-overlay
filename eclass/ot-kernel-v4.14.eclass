@@ -318,7 +318,7 @@ function ot-kernel_filter_patch_cb() {
 		# and does not resume at the not the intermediate images.
 		# In the actual patching, 2 hunks actually failed.
 		# The added -N arg is used to skip the duplicate hunks
-		_tpatch "${PATCH_OPS} -N" "${path}" 13 1 ""
+		_tpatch "${PATCH_OPS} -N -F 3" "${path}" 9 1 ""
 		_dpatch "${PATCH_OPS}" \
 			"${FILESDIR}/muqss-0.205-rebase-for-4.14.212.patch"
 		_dpatch "${PATCH_OPS}" \
