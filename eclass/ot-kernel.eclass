@@ -925,6 +925,7 @@ function apply_tresor() {
 
 	_fpatch \
 		"${DISTDIR}/tresor-patch-${PATCH_TRESOR_V}_${platform}"
+	sed -i -E -e "s|[ ]?-tresor[0-9.]+||g" "${S}/Makefile" || die
 }
 
 # @FUNCTION: apply_uksm

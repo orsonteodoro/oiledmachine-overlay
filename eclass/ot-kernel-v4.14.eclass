@@ -297,9 +297,10 @@ function ot-kernel_pkg_postinst_cb() {
 "Using MuQSS with Full dynticks system (tickless) CONFIG_NO_HZ_FULL will\n\
 cause a kernel panic on boot."
 		ewarn \
-"Using CONFIG_FORCE_IRQ_THREADING may halt the boot process."
+"Using CONFIG_FORCE_IRQ_THREADING may halt the boot process when showing\n\
+loading initial ramdisk."
 		ewarn \
-"Expect several seconds of pause when booting."
+"Expect several seconds of pause at loading initial ramdisk when booting."
 	fi
 }
 
