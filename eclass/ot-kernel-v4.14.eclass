@@ -273,7 +273,7 @@ function ot-kernel_apply_tresor_fixes() {
 
 	# for 5.x series uncomment below
 	#_dpatch "${PATCH_OPS}" \
-		"${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
+	#	"${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
 
 	# for 5.x series and 4.20 use tresor-testmgr-linux-x.y.patch
 	local fuzz_factor=0
@@ -282,7 +282,7 @@ function ot-kernel_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-testmgr-linux-4.14.127.patch"
 
         #_dpatch "${PATCH_OPS}" \
-		"${FILESDIR}/tresor-get_ds-to-kernel_ds.patch"
+	#	"${FILESDIR}/tresor-get_ds-to-kernel_ds.patch"
 
 	_dpatch "${PATCH_OPS}" \
 		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c.patch"
@@ -330,6 +330,8 @@ function ot-kernel_filter_patch_cb() {
 			"${FILESDIR}/muqss-dont-attach-ckversion.patch"
 	elif [[ "${path}" =~ "${PDS_FN}" ]] ; then
 		_dpatch "${PATCH_OPS} -F 3" "${path}"
+		_dpatch "${PATCH_OPS}" \
+			"${FILESDIR}/pds-4.14_pds098i-rebase-for-4.14.213.patch"
 	elif [[ "${path}" =~ "${O3_CO_FN}" ]] ; then
 		_tpatch "${PATCH_OPS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPS}" \

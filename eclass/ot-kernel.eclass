@@ -1330,4 +1330,11 @@ kernels or in \"Processor type and features\" in older kernels\n\
 > Preemption Model >  Fully Preemptible Kernel (Real-Time)."
 		fi
 	fi
+
+	# Remove genkernel problem with GK_FILENAME_CONFIG having spaces in EXTRAVERSION in file
+	local path="${EROOT}/usr/src/linux-${PV}-ot/include/config/kernel.release"
+	if [[ -f "${EROOT}/usr/src/linux-${PV}-ot/include/config/kernel.release" ]] ; then
+		einfo "Removed ${path} for genkernel"
+		rm -rf "${path}" || die
+	fi
 }
