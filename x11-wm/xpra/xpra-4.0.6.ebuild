@@ -8,7 +8,7 @@ HOMEPAGE="http://xpra.org/ \
 	  http://xpra.org/src/"
 LICENSE="GPL-2 BSD html5? ( MPL-2.0 )"
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{6..9} )
 IUSE="  avahi +client +clipboard csc_swscale csc_libyuv cuda_rebuild cups dbus \
 	dec_avcodec2 enc_ffmpeg enc_x264 enc_x265 firejail gtk3 gss html5 \
 	html5_gzip html5_brotli jpeg kerberos ldap ldap3 +lz4 lzo opengl \
@@ -77,7 +77,6 @@ COMMON_DEPEND="${PYTHON_DEPS}
 		 dev-python/pycuda[${PYTHON_USEDEP}]
 	       >=dev-util/nvidia-cuda-toolkit-10.0:=
 	       >=x11-drivers/nvidia-drivers-${NVFBC_MIN_DRV_V} )
-	opengl? (  dev-python/numpy[${PYTHON_USEDEP}] )
 	pam? ( sys-libs/pam[selinux?] )
 	pillow? ( dev-python/pillow[${PYTHON_USEDEP},jpeg?,webp?,zlib?] )
 	pulseaudio? ( media-sound/pulseaudio[dbus?] )
@@ -136,8 +135,9 @@ RDEPEND="${COMMON_DEPEND}
 		  dev-python/pyinotify[${PYTHON_USEDEP}]
 		>=media-libs/opencv-2.0[${PYTHON_USEDEP},python] )"
 DEPEND="${COMMON_DEPEND}
+	test? ( dev-python/numpy[${PYTHON_USEDEP}] )"
+BDEPEND="${BDEPEND}
 	>=dev-python/cython-0.16[${PYTHON_USEDEP}]
-	test? ( dev-python/numpy[${PYTHON_USEDEP}] )
 	virtual/pkgconfig"
 PATCHES=( "${FILESDIR}/${PN}-2.5.0_rc5-ignore-gentoo-no-compile.patch"
 	  "${FILESDIR}/${PN}-2.5.0_rc5-openrc-init-fix-v2.patch"
