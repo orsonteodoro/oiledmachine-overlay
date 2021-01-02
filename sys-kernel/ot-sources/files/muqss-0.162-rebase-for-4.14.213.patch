@@ -25,3 +25,53 @@ The block/elevator.c changes were skipped and found mostly to already exist.
  config SCHED_MC
  	def_bool y
  	prompt "Multi-core scheduler support"
+--- a/kernel/sched/MuQSS.c.orig	2021-01-02 04:39:44.923964898 -0800
++++ b/kernel/sched/MuQSS.c	2021-01-02 04:40:22.459359777 -0800
+@@ -56,6 +56,7 @@
+ #include <linux/syscalls.h>
+ #include <linux/tick.h>
+ 
++#include <asm/irq_regs.h>
+ #include <asm/switch_to.h>
+ #include <asm/tlb.h>
+ #ifdef CONFIG_PARAVIRT
+@@ -223,6 +224,12 @@ int __weak arch_sd_sibling_asym_packing(
+ {
+        return 0*SD_ASYM_PACKING;
+ }
++
++#ifdef CONFIG_SCHED_SMT
++DEFINE_STATIC_KEY_FALSE(sched_smt_present);
++EXPORT_SYMBOL_GPL(sched_smt_present);
++#endif
++
+ #else
+ struct rq *uprq;
+ #endif /* CONFIG_SMP */
+@@ -2008,7 +2015,7 @@ try_to_wake_up(struct task_struct *p, un
+ 	p->state = TASK_WAKING;
+ 
+ 	if (p->in_iowait) {
+-		delayacct_blkio_end();
++		delayacct_blkio_end(p);
+ 		atomic_dec(&task_rq(p)->nr_iowait);
+ 	}
+ 
+@@ -2019,7 +2026,7 @@ try_to_wake_up(struct task_struct *p, un
+ #else /* CONFIG_SMP */
+ 
+ 	if (p->in_iowait) {
+-		delayacct_blkio_end();
++		delayacct_blkio_end(p);
+ 		atomic_dec(&task_rq(p)->nr_iowait);
+ 	}
+ 
+@@ -2071,7 +2078,7 @@ static void try_to_wake_up_local(struct
+ 
+ 	if (!task_on_rq_queued(p)) {
+ 		if (p->in_iowait) {
+-			delayacct_blkio_end();
++			delayacct_blkio_end(p);
+ 			atomic_dec(&rq->nr_iowait);
+ 		}
+ 		ttwu_activate(rq, p);
