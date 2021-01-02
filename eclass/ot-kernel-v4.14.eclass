@@ -268,7 +268,7 @@ function ot-kernel_apply_tresor_fixes() {
 	fi
 
 	#if ! use tresor_sysfs ; then
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/wait.patch"
+		_dpatch "${PATCH_OPS} -F 3" "${FILESDIR}/wait.patch"
 	#fi
 
 	# for 5.x series uncomment below
@@ -276,7 +276,9 @@ function ot-kernel_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
 
 	# for 5.x series and 4.20 use tresor-testmgr-linux-x.y.patch
-        _dpatch "${PATCH_OPS}" \
+	local fuzz_factor=0
+	[[ "${path}" =~ "${TRESOR_AESNI_FN}" ]] && fuzz_factor=3
+        _dpatch "${PATCH_OPS} -F ${fuzz_factor}" \
 		"${FILESDIR}/tresor-testmgr-linux-4.14.127.patch"
 
         #_dpatch "${PATCH_OPS}" \
@@ -310,29 +312,28 @@ function ot-kernel_pkg_postinst_cb() {
 function ot-kernel_filter_patch_cb() {
 	local path="${1}"
 	if [[ "${path}" =~ "${CK_FN}" ]] ; then
+		# Using --dry-run reports more failures than on the actual.
+		# The point is that --dry-run is not reliable in some way.
+		# The reason is that patching is restarted from the original
+		# and does not resume at the not the intermediate images.
+		# In the actual patching, 2 hunks actually failed.
 		# The added -N arg is used to skip the duplicate hunks
-		_tpatch "${PATCH_OPS} -N" "${path}" 4.14.212
+		_tpatch "${PATCH_OPS} -N" "${path}" 13 1 ""
 		_dpatch "${PATCH_OPS}" \
-			"${FILESDIR}/muqss-4.14-rebase-for-4.14.212.patch"
+			"${FILESDIR}/muqss-0.205-rebase-for-4.14.212.patch"
 		_dpatch "${PATCH_OPS}" \
 			"${FILESDIR}/muqss-dont-attach-ckversion.patch"
 	elif [[ "${path}" =~ "${PDS_FN}" ]] ; then
-		if use rt ; then
-			_tpatch "${PATCH_OPS}" "${path}" 4.14.212
-			_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/pds-4.14_pds098i-compat-4.14.212-rt102.patch"
-		else
-			_dpatch "${PATCH_OPS}" "${path}"
-		fi
+		_dpatch "${PATCH_OPS} -F 3" "${path}"
 	elif [[ "${path}" =~ "${O3_CO_FN}" ]] ; then
-		_tpatch "${PATCH_OPS}" "${path}" 4.14.212
+		_tpatch "${PATCH_OPS}" "${path}" 1 0 ""
 		_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/O3-config-option-7d0295dc49233d9ddff5d63d5bdc24f1e80da722-fix-for-4.14.patch"
 	elif [[ "${path}" =~ (${TRESOR_AESNI_FN}|${TRESOR_I686_FN}) ]] ; then
-		_dpatch "${PATCH_OPS}" "${path}" 4.14.212
+		_dpatch "${PATCH_OPS} -F 3" "${path}"
 		ot-kernel_apply_tresor_fixes
 	elif [[ "${path}" =~ "${UKSM_FN}" ]] ; then
-		_tpatch "${PATCH_OPS}" "${path}" 4.14.212
+		_tpatch "${PATCH_OPS}" "${path}" 3 0 ""
 		_dpatch "${PATCH_OPS}" \
 			"${FILESDIR}/uksm-4.14-rebase-for-4.14.212.patch"
 	else

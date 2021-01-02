@@ -772,7 +772,7 @@ function ot-kernel_apply_tresor_fixes() {
 	fi
 
 	#if ! use tresor_sysfs ; then
-		_dpatch "${PATCH_OPS}" "${FILESDIR}/wait.patch"
+		_dpatch "${PATCH_OPS} -F 3" "${FILESDIR}/wait.patch"
 	#fi
 
 	# for 5.x series uncomment below
@@ -780,7 +780,7 @@ function ot-kernel_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
 
 	# for 5.x series and 4.20 use tresor-testmgr-linux-x.y.patch
-        _dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-testmgr-linux-5.1.patch"
+        _dpatch "${PATCH_OPS} -F 3" "${FILESDIR}/tresor-testmgr-linux-5.1.patch"
 
         _dpatch "${PATCH_OPS}" "${FILESDIR}/tresor-get_ds-to-kernel_ds.patch"
 
@@ -839,22 +839,27 @@ experimental.\n\
 function ot-kernel_filter_patch_cb() {
 	local path="${1}"
 	if [[ "${path}" =~ "${BMQ_FN}" ]] ; then
-		if use rt ; then
-			_tpatch "${PATCH_OPS}" "${path}" 5.4.85
-			_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/bmq-5.4-r2-compat-5.4.84-rt47-task_to_waiter.patch"
-		else
-			_dpatch "${PATCH_OPS}" "${path}"
-		fi
-	elif [[ "${path}" =~ "${CK_FN}" ]] ; then
 		_dpatch "${PATCH_OPS}" "${path}"
+	elif [[ "${path}" =~ "${CK_FN}" ]] ; then
+		# Using --dry-run reports more failures than on the actual.
+		# The point is that --dry-run is not reliable in some way.
+		# The reason is that patching is restarted from the original
+		# and does not resume at the not the intermediate images.
+		# In the actual patching, 2 hunks actually failed.
+		_tpatch "${PATCH_OPS}" "${path}" 10 0 ""
+		_dpatch "${PATCH_OPS}" \
+			"${FILESDIR}/muqss-0.196-rebase-for-5.4.86.patch"
 		_dpatch "${PATCH_OPS}" \
 			"${FILESDIR}/muqss-dont-attach-ckversion.patch"
+	elif [[ "${path}" =~ "${O3_ALLOW_FN}" ]] ; then
+		_dpatch "${PATCH_OPS} -F 3" "${path}"
 	elif [[ "${path}" =~ (${TRESOR_AESNI_FN}|${TRESOR_I686_FN}) ]] ; then
-		_dpatch "${PATCH_OPS}" "${path}" 5.4.0
+		local fuzz_factor=3
+		[[ "${path}" =~ "${TRESOR_I686_FN}" ]] && fuzz_factor=4
+		_dpatch "${PATCH_OPS} -F ${fuzz_factor}" "${path}"
 		ot-kernel_apply_tresor_fixes
 	elif [[ "${path}" =~ "${UKSM_FN}" ]] ; then
-		_tpatch "${PATCH_OPS}" "${path}" 5.4.85
+		_tpatch "${PATCH_OPS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPS}" \
 			"${FILESDIR}/uksm-5.4-rebase-for-5.4.85.patch"
 	elif [[ "${path}" == "${ZENTUNE_MUQSS_VIRTUAL_PATCH}" ]] ; then

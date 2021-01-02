@@ -342,9 +342,7 @@ else
 (patch-${K_MAJOR_MINOR}.1 ${KERNEL_PATCH_TO_FROM[@]/#/patch-${K_MAJOR_MINOR}.})
 fi
 
-PATCH_OPS="--no-backup-if-mismatch -r - -p1 -F 500"
-
-TPATCH_EVAL_PERIOD=10 # between every n kernel point releases
+PATCH_OPS="--no-backup-if-mismatch -r - -p1"
 
 RESTRICT="mirror"
 
@@ -356,11 +354,12 @@ RESTRICT="mirror"
 # $1 - path of the patch
 # @CODE
 function _fpatch() {
-	local path="$1"
+	local path="${1}"
+	local msg_extra="${2}"
 	if declare -f ot-kernel_filter_patch_cb > /dev/null ; then
 		ot-kernel_filter_patch_cb "${path}"
 	else
-		_dpatch "${PATCH_OPS}" "${path}"
+		_dpatch "${PATCH_OPS}" "${path}" "${msg_extra}"
 	fi
 }
 
@@ -370,7 +369,8 @@ function _fpatch() {
 function _dpatch() {
 	local opts="${1}"
 	local path="${2}"
-	einfo "Applying ${path}"
+	local msg_extra="${3}"
+	einfo "Applying ${path}${msg_extra}"
 	patch ${opts} -i "${path}" || die
 }
 
@@ -383,15 +383,39 @@ function _dpatch() {
 function _tpatch() {
 	local opts="${1}"
 	local path="${2}"
-	local last_evaluation="${3}"
-	if ver_test $(ver_cut 3 ${PV}) -gt $(($(ver_cut 3 ${last_evaluation}) + ${TPATCH_EVAL_PERIOD})) ; then
-		ewarn \
-"Re-evaluate and code review ${path} for patch correctness needed.  Last code \
-inspection was on ${last_evaluation}."
-	fi
+	local failed_hunks_acceptable="${3}"
+	local reversed_acceptable="${4}"
+	local msg_extra="${5}"
 	einfo \
-"Applying ${path} with known hunk failure and will be resolved or patched \
-immediately"
+"Applying ${path}${msg_extra} with estimated ${failed_hunks_acceptable}\n\
+hunk(s) failed and ${reversed_acceptable} already patched warnings and will\n\
+be resolved or patched immediately.  The actual number of failures may be\n\
+far less than the estimates."
+
+	local n_failures=0
+	for x_i in $(patch ${opts} --dry-run -i "${path}" \
+		| grep -E -e "hunks? FAILED" | cut -f 1 -d " ") ; do
+		n_failures=$((${n_failures}+${x_i}))
+	done
+	if (( ${n_failures} != ${failed_hunks_acceptable} )) ; then
+		die \
+"${path} needs a rebase. n_failures=${n_failures}\n\
+failed_hunks_acceptable=${failed_hunks_acceptable}"
+	fi
+
+	local n_reversed=$(patch ${opts} --dry-run -i "${path}" \
+			| grep -F -e "Reversed (or previously applied) patch detected!" \
+			| wc -l)
+	if (( ${n_reversed} != ${reversed_acceptable} )) ; then
+		die \
+"${path} needs a rebase. n_reversed=${n_reversed}\n\
+reversed_acceptable=${reversed_acceptable}"
+	fi
+
+	if (( ${reversed_acceptable} > 0 )) ; then
+		opts="-N ${opts}"
+	fi
+
 	patch ${opts} -i "${path}" || true
 }
 
@@ -650,14 +674,9 @@ function apply_rt() {
 	pushd "${T}/rt" || die
 		unpack "${DISTDIR}/${RT_FN}"
 	popd
-
 	for p in $(cat "${T}/rt/patches/series" | grep -E -e "^[^#]") ; do
-		if [[ "${p}" == "series" ]] ; then
-			continue
-		fi
 		_fpatch "${T}/rt/patches/${p}"
 	done
-
 }
 
 # @FUNCTION: apply_zensauce
@@ -958,6 +977,7 @@ function apply_zentune() {
 function apply_zentune_muqss() {
 	_fpatch "${ZENTUNE_MUQSS_VIRTUAL_PATCH}"
 }
+
 
 # @FUNCTION: ot-kernel_src_unpack
 # @DESCRIPTION:

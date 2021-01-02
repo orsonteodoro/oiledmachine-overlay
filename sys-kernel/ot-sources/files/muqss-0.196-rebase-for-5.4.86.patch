@@ -1,0 +1,11 @@
+--- a/kernel/sched/cpufreq_schedutil.c.orig	2021-01-01 12:48:05.710330538 -0800
++++ b/kernel/sched/cpufreq_schedutil.c	2021-01-01 12:51:31.153328461 -0800
+@@ -217,7 +217,7 @@ unsigned long schedutil_cpu_util(int cpu
+ 	struct rq *rq = cpu_rq(cpu);
+ 
+ 	if (!uclamp_is_used() &&
+-	    type == FREQUENCY_UTIL && rt_rq_is_runnable(&rq->rt)) {
++	    type == FREQUENCY_UTIL && rt_rq_runnable(rq)) {
+ 		return max;
+ 	}
+ 
