@@ -749,11 +749,6 @@ like npm.  These use flags are not recommended."
 			ewarn \
 "TRESOR is experimental for ${PV}.  Use 4.14.x series for stable TRESOR."
 		fi
-		if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
-			ewarn \
-"The TRESOR may not work for the ${K_MAJOR_MINOR} series.  Please\n\
-use the older branches."
-		fi
 	fi
 }
 
