@@ -2,6 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit desktop eutils
+
 DESCRIPTION="A lightweight code editor for use in Java applications."
 HOMEPAGE="https://github.com/JoshDreamland/JoshEdit"
 LICENSE="GPL-3+"
@@ -9,15 +12,14 @@ KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 IUSE="lateralgm maven"
 SLOT="$(ver_cut 1 ${PV})"
 RDEPEND="virtual/jre"
-DEPEND="maven? ( app-arch/zip \
+BDEPEND="maven? ( app-arch/zip \
 		dev-java/maven-bin )
 	virtual/jdk"
 PROJECT_NAME="JoshEdit"
-EGIT_COMMIT="d50db861f57a142483fd44be2cd70fad929d1eba"
+EGIT_COMMIT="5d009fed22f71d03af450de400d151cfc308602b"
 SRC_URI=\
 "https://github.com/JoshDreamland/${PROJECT_NAME}/archive/${EGIT_COMMIT}.tar.gz\
 	-> ${P}.tar.gz"
-inherit desktop eutils
 S="${WORKDIR}/${PROJECT_NAME}-${EGIT_COMMIT}"
 RESTRICT="mirror"
 

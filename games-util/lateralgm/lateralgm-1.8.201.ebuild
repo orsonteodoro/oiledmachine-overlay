@@ -2,6 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit desktop enigma eutils multilib-build
+
 DESCRIPTION="A free Game Maker source file editor"
 HOMEPAGE="http://lateralgm.org/"
 LICENSE="GPL-3+"
@@ -9,12 +12,10 @@ KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 SLOT="0"
 IUSE="libmaker +vanilla"
 SLOT_JOSHEDIT="1"
-inherit multilib-build
-RDEPEND="=dev-java/joshedit-1_p20200904*:${SLOT_JOSHEDIT}=[lateralgm]
-	 virtual/jre"
-DEPEND="${RDEPEND}
+RDEPEND="virtual/jre"
+BDEPEND="${BDEPEND}
+	 ~dev-java/joshedit-1_p20210103:${SLOT_JOSHEDIT}=[lateralgm]
 	 virtual/jdk"
-inherit desktop enigma eutils
 MY_PN="LateralGM"
 SRC_URI=\
 "https://github.com/IsmAvatar/${MY_PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"

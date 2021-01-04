@@ -1,2 +1,0 @@
-#!/bin/bash
-java -jar /usr/share/joshedit-0/lib/joshedit.jar $*
