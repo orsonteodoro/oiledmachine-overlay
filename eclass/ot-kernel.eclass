@@ -986,7 +986,7 @@ function apply_zentune_muqss() {
 # Applies patch sets in order.
 function ot-kernel_src_unpack() {
 	_PATCHES=()
-	if use kernel_gcc_patch ; then
+	if use kernel-gcc-patch ; then
 		CC=$(tc-getCC)
 		if ! tc-is-gcc ; then
 			CC=$(get_abi_CHOST ${ABI})-gcc

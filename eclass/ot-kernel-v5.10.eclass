@@ -70,7 +70,7 @@ PATCH_ZENSAUCE_BL="
 #ZENTUNE_MUQSS_COMMIT="" # (exclusive-end,inclusive-start]  (top,bottom]
 
 IUSE="+cfs disable_debug futex-wait-multiple +genpatches \
-+kernel_gcc_patch muqss +O3 prjc rt tresor tresor_aesni tresor_i686 \
++kernel-gcc-patch muqss +O3 prjc rt tresor tresor_aesni tresor_i686 \
 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-sauce \
 -zen-tune zen-tune-muqss"
 REQUIRED_USE="
@@ -107,7 +107,7 @@ LICENSE+=" prjc? ( GPL-2 Linux-syscall-note )" # some new files in the patch \
   # GPL-2 with Linux-syscall-note.
 LICENSE+=" futex-wait-multiple? ( GPL-2 Linux-syscall-note GPL-2+ )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
-LICENSE+=" kernel_gcc_patch? ( GPL-2 )"
+LICENSE+=" kernel-gcc-patch? ( GPL-2 )"
 LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" O3? ( GPL-2 )"
 LICENSE+=" rt? ( GPL-2 )"
@@ -136,7 +136,7 @@ SRC_URI+=" futex-wait-multiple? ( ${FUTEX_WAIT_MULTIPLE_SRC_URI} )
 		${GENPATCHES_EXPERIMENTAL_SRC_URI}
 		${GENPATCHES_EXTRAS_SRC_URI}
 	   )
-	   kernel_gcc_patch? (
+	   kernel-gcc-patch? (
 		${KGCCP_SRC_4_9_URI}
 		${KGCCP_SRC_8_1_URI}
 		${KGCCP_SRC_9_1_URI}
@@ -165,7 +165,7 @@ SRC_URI_DISABLED+="
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel_pkg_setup_cb() {
-	if use kernel_gcc_patch ; then
+	if use kernel-gcc-patch ; then
 		CC=$(tc-getCC)
 		if ! tc-is-gcc ; then
 			CC=$(get_abi_CHOST ${ABI})-gcc
@@ -200,8 +200,8 @@ like npm.  These use flags are not recommended."
 "TRESOR is experimental for ${PV}.  Use 4.14.x series for stable TRESOR."
 		fi
 		if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
-			die \
-"The TRESOR patchset currently does not work for the ${K_MAJOR_MINOR} series.\n\
+			ewarn \
+"The TRESOR prompt feature currently does not work for the ${K_MAJOR_MINOR} series.\n\
 Please use the older branches."
 		fi
 	fi
@@ -264,6 +264,9 @@ function ot-kernel_apply_tresor_fixes() {
 "${FILESDIR}/tresor-256-bit-aes-support-i686-v2-for-5.7.patch"
 		fi
 	fi
+
+#	_dpatch "${PATCH_OPS}" \
+#		"${FILESDIR}/tresor-tresor_readkey-5.10.4.patch"
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb

@@ -208,7 +208,7 @@
       FUTEX_WAIT_MULTIPLE futex syscall option which may be used in the
       wine-proton package and in Steam Play (based on Proton).  It may reduce 
       CPU usage by less than 5%.</flag>
-    <flag name="kernel_gcc_patch">Patches the kernel for more CPU
+    <flag name="kernel-gcc-patch">Patches the kernel for more CPU
       microarchitectures</flag>
     <flag name="muqss">Patches the kernel with Con Kolivas patchset and
       includes his skiplist based MuQSS CPU scheduler.</flag>

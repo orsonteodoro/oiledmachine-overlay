@@ -624,7 +624,7 @@ PATCH_ZENSAUCE_BL="
 	${ZENTUNE_COMMITS}
 "
 
-IUSE="bmq +cfs disable_debug +genpatches +kernel_gcc_patch muqss +O3 \
+IUSE="bmq +cfs disable_debug +genpatches +kernel-gcc-patch muqss +O3 \
 futex-wait-multiple tresor rt tresor_aesni tresor_i686 tresor_sysfs \
 tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-sauce \
 -zen-tune zen-tune-muqss"
@@ -661,7 +661,7 @@ LICENSE+=" bmq? ( GPL-2 Linux-syscall-note )" # some new files in the patch \
   # GPL-2 with Linux-syscall-note.
 LICENSE+=" futex-wait-multiple? ( GPL-2 Linux-syscall-note GPL-2+ )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
-LICENSE+=" kernel_gcc_patch? ( GPL-2 )"
+LICENSE+=" kernel-gcc-patch? ( GPL-2 )"
 LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" O3? ( GPL-2 )"
 LICENSE+=" rt? ( GPL-2 )"
@@ -691,7 +691,7 @@ SRC_URI+=" bmq? ( ${BMQ_SRC_URI} )
 		${GENPATCHES_EXPERIMENTAL_SRC_URI}
 		${GENPATCHES_EXTRAS_SRC_URI}
 	   )
-	   kernel_gcc_patch? (
+	   kernel-gcc-patch? (
 		${KGCCP_SRC_4_9_URI}
 		${KGCCP_SRC_8_1_URI}
 		${KGCCP_SRC_9_1_URI}
@@ -715,7 +715,7 @@ SRC_URI+=" bmq? ( ${BMQ_SRC_URI} )
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel_pkg_setup_cb() {
-	if use kernel_gcc_patch ; then
+	if use kernel-gcc-patch ; then
 		CC=$(tc-getCC)
 		if ! tc-is-gcc ; then
 			CC=$(get_abi_CHOST ${ABI})-gcc
@@ -841,9 +841,7 @@ function ot-kernel_filter_patch_cb() {
 		# The reason is that patching is restarted from the original
 		# and does not resume at the not the intermediate images.
 		# In the actual patching, 2 hunks actually failed.
-		_tpatch "${PATCH_OPS}" "${path}" 10 0 ""
-		_dpatch "${PATCH_OPS}" \
-			"${FILESDIR}/muqss-0.196-rebase-for-5.4.86.patch"
+		_tpatch "${PATCH_OPS} -F 3" "${path}" 7 0 ""
 		_dpatch "${PATCH_OPS}" \
 			"${FILESDIR}/muqss-dont-attach-ckversion.patch"
 	elif [[ "${path}" =~ "${O3_ALLOW_FN}" ]] ; then

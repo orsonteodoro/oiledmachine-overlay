@@ -150,7 +150,7 @@ PATCH_TRESOR_V="3.18.5"
 # Obtained from:  date -d "2017-11-12 10:46:13 -0800" +%s
 LINUX_TIMESTAMP=1510512373
 
-IUSE="+cfs disable_debug +genpatches +kernel_gcc_patch muqss pds \
+IUSE="+cfs disable_debug +genpatches +kernel-gcc-patch muqss pds \
 +O3 rt tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 uksm"
 REQUIRED_USE="
 	^^ ( cfs muqss pds )
@@ -177,7 +177,7 @@ inherit ot-kernel
 
 LICENSE+=" cfs? ( GPL-2 )" # This is just a placeholder to not use a
   # third-party CPU scheduler but the stock CPU scheduler.
-LICENSE+=" kernel_gcc_patch? ( GPL-2 )"
+LICENSE+=" kernel-gcc-patch? ( GPL-2 )"
 LICENSE+=" genpatches? ( GPL-2 )" # same as sys-kernel/gentoo-sources
 LICENSE+=" muqss? ( GPL-2 )"
 LICENSE+=" O3? ( GPL-2 )"
@@ -206,7 +206,7 @@ SRC_URI+=" genpatches? (
 		${GENPATCHES_EXPERIMENTAL_SRC_URI}
 		${GENPATCHES_EXTRAS_SRC_URI}
 	   )
-	   kernel_gcc_patch? (
+	   kernel-gcc-patch? (
 		${KGCCP_SRC_4_9_URI}
 		${KGCCP_SRC_8_1_URI}
 		${KGCCP_SRC_9_1_URI}
@@ -231,7 +231,7 @@ SRC_URI+=" genpatches? (
 # @DESCRIPTION:
 # Does pre-emerge checks and warnings
 function ot-kernel_pkg_setup_cb() {
-	if use kernel_gcc_patch ; then
+	if use kernel-gcc-patch ; then
 		ewarn \
 "The kernel_gcc_patch was designed for older kernels and may fail to patch.\n\
 Patching anyway."
