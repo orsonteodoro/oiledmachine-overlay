@@ -2,6 +2,11 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+PYTHON_COMPAT=( python3_{6..9} )
+USE_RUBY="ruby24 ruby25 ruby26 ruby27"
+inherit eutils python-r1 ruby-ng
+
 DESCRIPTION="A delightful community-driven framework for managing your zsh"
 DESCRIPTION+=" configuration that includes optional plugins and themes."
 HOMEPAGE="http://ohmyz.sh/"
@@ -36,21 +41,18 @@ LICENSE="MIT
 KEYWORDS="~alpha ~amd64 ~amd64-linux ~arm ~arm64 ~hppa ~ia64 ~m68k ~m68k-mint \
 ~mips ~ppc ~ppc-macos ~ppc64 ~s390 ~sh ~sparc ~sparc-solaris ~sparc64-solaris \
 ~x64-macos ~x64-solaris ~x86 ~x86-linux ~x86-macos ~x86-solaris"
-PYTHON_COMPAT=( python3_{6,7,8} )
-USE_RUBY="ruby24 ruby25 ruby26 ruby27"
 RUBY_OPTIONAL=1
 EMOJI_LANG_DEFAULT=${EMOJI_LANG_DEFAULT:=en}
-inherit eutils python-r1 ruby-ng
-EGIT_COMMIT="4f8964d8fff25b67e79029d570d171c8cdf3f833"
+EGIT_COMMIT="86f805280f6a8cf65d8d0a9380489aae4b72f767"
 FN="${EGIT_COMMIT}.zip"
 A_URL="https://github.com/ohmyzsh/ohmyzsh/archive/${FN}"
 P_URL="https://github.com/ohmyzsh/ohmyzsh/tree/${EGIT_COMMIT}"
 SRC_URI="${A_URL} -> ${P}.zip"
 # Probably needs to be done because the archive contains the UNICODE data file.
 # It should be addressed upstream to get rid of emoji-data.txt.
-RESTRICT="fetch"
+RESTRICT+=" fetch"
 SLOT="0"
-IUSE="branding bzr clipboard curl emojis update-emoji-data java git gpg"
+IUSE+=" branding bzr clipboard curl emojis update-emoji-data java git gpg"
 IUSE+=" mercurial nodejs powerline perlbrew python ruby rust subversion sudo"
 IUSE+=" uri wget"
 IUSE+=" 7zip ace bzip2 gzip lrzip lz4 lzip lzma unzip rar rpm xz zip zstd"
@@ -83,7 +85,7 @@ emotty encode64 extract fabric fancy-ctrl-z fasd fastfile fbterm fd fedora \
 firewalld flutter forklift fossil frontend-search fzf gas gatsby gb gcloud \
 geeknote gem git git-auto-fetch git-escape-magic git-extras gitfast git-flow \
 git-flow-avh github git-hubflow gitignore git-lfs git-prompt git-remote-branch \
-glassfish globalias gnu-utils go golang gpg-agent gradle grails grunt gulp \
+glassfish globalias gnu-utils go golang gpg-agent gradle grails grc grunt gulp \
 hanami helm heroku hitokoto history history-substring-search homestead httpie \
 iterm2 jake-node jenv jfrog jhbuild jira jruby jsontools jump kate keychain \
 kitchen knife knife_ssh kops kubectl kube-ps1 lando laravel laravel4 laravel5 \
@@ -156,7 +158,6 @@ PLUGINS_RDEPEND="
 	 plugins_drush? ( app-admin/drush )
 	 plugins_eecms? ( dev-lang/php )
 	 plugins_emacs? ( >=app-editors/emacs-24.0 )
-	 plugins_emoji? ( dev-lang/perl dev-perl/Path-Class )
 	 plugins_fasd? ( app-misc/fasd )
 	 plugins_fbterm? ( app-i18n/fbterm )
 	 plugins_firewalld? ( net-firewall/firewalld )
@@ -175,6 +176,7 @@ PLUGINS_RDEPEND="
 	 plugins_golang? ( dev-lang/go )
 	 plugins_globalias? ( sys-apps/grep[pcre] )
 	 plugins_gradle? ( virtual/gradle )
+	 plugins_grc? ( app-misc/grc )
 	 plugins_helm? ( app-admin/helm )
 	 plugins_heroku? ( dev-util/heroku-cli )
 	 plugins_jira? ( dev-python/jira )
@@ -275,11 +277,12 @@ PLUGINS_RDEPEND="
 THEMES_RDEPEND="
 	 themes_adben? ( games-misc/fortune-mod )
 	 "
-RDEPEND="${PLUGINS_RDEPEND}
+RBDEPEND=">=app-shells/zsh-4.3.9"
+RDEPEND="${RBDEPEND}
+	 ${PLUGINS_RDEPEND}
 	 ${PYTHON_DEPS}
 	 ${THEMES_RDEPEND}
 	 7zip? ( app-arch/p7zip )
-	 >=app-shells/zsh-4.3.9
 	 ace? ( app-arch/unace )
 	 bzr? ( dev-vcs/bzr )
 	 clipboard? ( || ( x11-misc/xclip x11-misc/xsel app-misc/tmux ) )
@@ -309,8 +312,6 @@ RDEPEND="${PLUGINS_RDEPEND}
 	 rust? ( virtual/rust )
 	 subversion? ( dev-vcs/subversion )
 	 sudo? ( app-admin/sudo )
-	 update-emoji-data? ( dev-perl/XML-LibXML
-			      dev-perl/Text-Unaccent )
 	 unzip? ( app-arch/unzip )
 	 virtual/awk
 	 wget? ( net-misc/wget )
@@ -318,10 +319,14 @@ RDEPEND="${PLUGINS_RDEPEND}
 	 xz? ( app-arch/xz-utils )
 	 zip? ( app-arch/unzip )
 	 zstd? ( app-arch/zstd )"
-DEPEND="${RDEPEND}
-	net-misc/wget"
+BDEPEND="${BDEPEND}
+	${RBDEPEND}
+	net-misc/wget
+	plugins_emoji? ( dev-lang/perl dev-perl/Path-Class )
+	update-emoji-data? ( dev-perl/XML-LibXML
+			     dev-perl/Text-Unaccent )"
 S="${WORKDIR}/${PN//-/}-${EGIT_COMMIT}"
-REQUIRED_USE="branding? ( themes_gentoo )
+REQUIRED_USE+=" branding? ( themes_gentoo )
 	      themes_agnoster? ( powerline )
 	      themes_emotty? ( powerline )
 	      themes_amuse? ( powerline )
@@ -431,6 +436,12 @@ pkg_setup() {
 "${PN} require network-sandbox to be disabled in FEATURES on a per-package \
 basis in order to update emoji data."
 		fi
+	fi
+	if use ruby ; then
+		ruby-ng_pkg_setup
+	fi
+	if use python ; then
+		python_setup
 	fi
 }
 

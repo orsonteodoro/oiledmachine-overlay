@@ -301,6 +301,7 @@
     <flag name="plugins_gpg-agent">Installs the gpg-agent plugin.</flag>
     <flag name="plugins_gradle">Installs the gradle plugin.</flag>
     <flag name="plugins_grails">Installs the grails plugin.</flag>
+    <flag name="plugins_grc">Installs the grc plugin.</flag>
     <flag name="plugins_grunt">Installs the grunt plugin.</flag>
     <flag name="plugins_gulp">Installs the gulp plugin.</flag>
     <flag name="plugins_hanami">Installs the hanami plugin.</flag>
