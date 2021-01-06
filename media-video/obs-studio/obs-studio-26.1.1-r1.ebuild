@@ -15,8 +15,8 @@ LICENSE="
 
 CMAKE_REMOVE_MODULES_LIST=( FindFreetype )
 
-#OBS_AMD_ENCODER_COMMIT="aa502039e3ab9a1ec6d13b42c491aaebf06b57ad"
-OBS_BROWSER_COMMIT="6162c93f370f0dfb71ed5ff0b6efac1648ec0da4"
+#OBS_AMD_ENCODER_COMMIT="89f7de349ebdc04a3281052c7e5b92c2417c2128"
+OBS_BROWSER_COMMIT="a5f2c8429e87f53d375601ef2595218df7174761"
 OBS_VST_COMMIT="cca219fa3613dbc65de676ab7ba29e76865fa6f8"
 OBS_FTL_SDK_COMMIT="d0c8469f66806b5ea738d607f7d2b000af8b1129"
 CEF_V="87.1.11"
@@ -39,7 +39,7 @@ KEYWORDS="~amd64 ~ppc64 ~x86"
 
 SLOT="0"
 IUSE+=" +alsa -browser -decklink fdk imagemagick jack +luajit nvenc oss \
-pulseaudio +python +speexdsp +ssl -test freetype v4l2 vaapi \
+pulseaudio +python +speexdsp +ssl -test freetype sndio v4l2 vaapi \
 video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts \
 video_cards_intel video_cards_iris video_cards_i965 video_cards_r600 \
 video_cards_radeonsi vlc"
@@ -64,7 +64,7 @@ REQUIRED_USE+="
 # .github/workflows/main.yml
 # deps/obs-scripting/obslua/CMakeLists.txt
 # deps/obs-scripting/obspython/CMakeLists.txt
-BDEPEND="
+BDEPEND+="
 	>=dev-util/cmake-3.10.2
 	>=dev-util/pkgconfig-0.29.1
 	luajit? ( >=dev-lang/swig-3.0.12 )
@@ -103,10 +103,28 @@ DEPEND_ZLIB="
 	>=sys-libs/zlib-1.2.11
 "
 
+# See plugins/sndio/CMakeLists.txt
+DEPEND_PLUGINS_SNDIO="
+	${DEPEND_LIBOBS}
+	media-sound/sndio
+"
+
+# See UI/frontend-plugins/decklink-captions/CMakeLists.txt
+DEPEND_PLUGINS_DECKLINK_CAPTIONS="
+	${DEPEND_LIBX11}
+	>=dev-qt/qtwidgets-${QT_V}:5=
+"
+
 # See UI/frontend-plugins/decklink-output-ui/CMakeLists.txt
 DEPEND_PLUGINS_DECKLINK_OUTPUT_UI="
 	${DEPEND_QT11EXTRAS}
 	${DEPEND_LIBX11}
+"
+
+# See plugins/decklink/linux/CMakeLists.txt
+DEPEND_PLUGINS_DECKLINK="
+	${DEPEND_LIBOBS}
+	${DEPEND_PLUGINS_DECKLINK_CAPTIONS}
 "
 
 # See UI/frontend-plugins/frontend-tools/CMakeLists.txt
@@ -200,12 +218,14 @@ DEPEND_PLUGINS_OBS_BROWSER="
 DEPEND_PLUGINS="
 	${DEPEND_DEPS_FILE_UPDATER}
 	${DEPEND_DEPS_MEDIA_PLAYBACK}
+	${DEPEND_PLUGINS_DECKLINK}
 	${DEPEND_PLUGINS_DECKLINK_OUTPUT_UI}
 	${DEPEND_PLUGINS_FRONTEND_TOOLS}
 	${DEPEND_PLUGINS_LINUX_CAPTURE}
 	${DEPEND_PLUGINS_OBS_BROWSER}
 	${DEPEND_PLUGINS_OBS_FFMPEG}
 	${DEPEND_PLUGINS_OBS_OUTPUTS}
+	${DEPEND_PLUGINS_SNDIO}
 	${DEPEND_CURL}
 	${DEPEND_LIBOBS}
 	>=media-libs/x264-0.0.20171224
@@ -404,7 +424,6 @@ src_unpack() {
 src_prepare() {
 	cmake-utils_src_prepare
 	pushd "${WORKDIR}/obs-browser-${OBS_BROWSER_COMMIT}" || die
-		eapply -p1 "${FILESDIR}/obs-browser-9999_p20201126-cef-4103-audio-compat.patch" || true
 		eapply -p1 "${FILESDIR}/obs-studio-25.0.8-install-libcef_dll_wrapper.patch"
 	popd
 	# typos
@@ -432,6 +451,7 @@ src_configure() {
 		-DDISABLE_OSS=$(usex kernel_FreeBSD $(usex !oss) ON)
 		-DDISABLE_PLUGINS=OFF
 		-DDISABLE_PULSEAUDIO=$(usex !pulseaudio)
+		-DDISABLE_SNDIO=$(usex !sndio)
 		-DDISABLE_SPEEXDSP=$(usex !speexdsp)
 		-DDISABLE_V4L2=$(usex !v4l2)
 		-DDISABLE_VLC=$(usex !vlc)
