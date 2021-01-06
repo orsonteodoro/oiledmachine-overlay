@@ -43,6 +43,7 @@
     <flag name="ssl">Build support for TLS/SSL connections (RTMPS) via
       <pkg>net-libs/mbedtls</pkg>.</flag>
     <flag name="freetype">Builds the Freetype text plugin.</flag>
+    <flag name="sndio">Enable sndio support.</flag>
     <flag name="test">Build test parts.</flag>
     <flag name="v4l">Build v4l2 support.</flag>
     <flag name="vaapi">Enable hardware H264 encoding via VA-API.</flag>
