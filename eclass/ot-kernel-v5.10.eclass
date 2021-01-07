@@ -199,11 +199,6 @@ like npm.  These use flags are not recommended."
 			ewarn \
 "TRESOR is experimental for ${PV}.  Use 4.14.x series for stable TRESOR."
 		fi
-		if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
-			ewarn \
-"The TRESOR prompt feature currently does not work for the ${K_MAJOR_MINOR} series.\n\
-Please use the older branches."
-		fi
 	fi
 }
 
@@ -265,8 +260,10 @@ function ot-kernel_apply_tresor_fixes() {
 		fi
 	fi
 
-#	_dpatch "${PATCH_OPS}" \
-#		"${FILESDIR}/tresor-tresor_readkey-5.10.4.patch"
+	_dpatch "${PATCH_OPS}" \
+		"${FILESDIR}/tresor-make-set_fs-overrides-for-x86-for-5.10.patch"
+	_dpatch "${PATCH_OPS}" \
+		"${FILESDIR}/tresor-ksys-changes-for-5.10.patch"
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb

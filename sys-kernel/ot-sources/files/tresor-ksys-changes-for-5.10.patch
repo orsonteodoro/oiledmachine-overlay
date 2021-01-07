@@ -1,0 +1,54 @@
+# This is a partial convenience revert for CONFIG_CRYPTO_TRESOR_PROMPT
+# Reverts:
+#   fs: remove ksys_open 166e07c37c6417c9713666268fc0eb89a9ce48b9
+#   fs: remove ksys_ioctl 863b67e15177a7cd0c27b3e36e42fe7907dec9bd
+----
+--- a/fs/open.c.orig	2021-01-04 11:20:53.820888076 -0800
++++ b/fs/open.c	2021-01-06 15:03:27.954042438 -0800
+@@ -1191,6 +1191,12 @@ long do_sys_open(int dfd, const char __u
+ 
+ SYSCALL_DEFINE3(open, const char __user *, filename, int, flags, umode_t, mode)
+ {
++	return ksys_open(filename, flags, mode);
++}
++
++long ksys_open(const char __user *filename, int flags,
++                             umode_t mode)
++{
+ 	if (force_o_largefile())
+ 		flags |= O_LARGEFILE;
+ 	return do_sys_open(AT_FDCWD, filename, flags, mode);
+--- a/include/linux/syscalls.h.orig	2020-12-13 14:41:30.000000000 -0800
++++ b/include/linux/syscalls.h	2021-01-06 15:11:41.182699226 -0800
+@@ -1239,6 +1239,7 @@ asmlinkage long sys_ni_syscall(void);
+  */
+ ssize_t ksys_write(unsigned int fd, const char __user *buf, size_t count);
+ int ksys_fchown(unsigned int fd, uid_t user, gid_t group);
++int ksys_ioctl(unsigned int fd, unsigned int cmd, unsigned long arg);
+ ssize_t ksys_read(unsigned int fd, char __user *buf, size_t count);
+ void ksys_sync(void);
+ int ksys_unshare(unsigned long unshare_flags);
+@@ -1307,6 +1308,9 @@ static inline int ksys_close(unsigned in
+ 	return __close_fd(current->files, fd);
+ }
+ 
++extern long ksys_open(const char __user *filename, int flags,
++                             umode_t mode);
++
+ extern long do_sys_truncate(const char __user *pathname, loff_t length);
+ 
+ static inline long ksys_truncate(const char __user *pathname, loff_t length)
+--- a/fs/ioctl.c.orig	2020-12-13 14:41:30.000000000 -0800
++++ b/fs/ioctl.c	2021-01-06 15:15:10.170611459 -0800
+@@ -738,6 +738,11 @@ static int do_vfs_ioctl(struct file *fil
+ 
+ SYSCALL_DEFINE3(ioctl, unsigned int, fd, unsigned int, cmd, unsigned long, arg)
+ {
++	return ksys_ioctl(fd, cmd, arg);
++}
++
++int ksys_ioctl(unsigned int fd, unsigned int cmd, unsigned long arg)
++{
+ 	struct fd f = fdget(fd);
+ 	int error;
+ 

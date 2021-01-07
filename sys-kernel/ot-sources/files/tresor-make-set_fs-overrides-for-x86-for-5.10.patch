@@ -1,0 +1,379 @@
+Reverts "x86: remove address space overrides using set_fs()" with
+#ifdef CONFIG_SET_FS additions and CONFIG_SET_FS enabled
+when CRYPTO_TRESOR_PROMPT is enabled.
+This is necessary for CONFIG_CRYPTO_TRESOR_PROMPT to work.
+
+If set_fs is not changed, it will trigger a -EFAULT when communicating
+with vfs_write, vfs_read marked with __user annotation.
+
+Reverted commit: 47058bb54b57962b3958a936ddbc59355e4c5504
+
+----
+--- a/arch/x86/ia32/ia32_aout.c.orig	2020-12-13 14:41:30.000000000 -0800
++++ b/arch/x86/ia32/ia32_aout.c	2021-01-06 13:31:45.376448210 -0800
+@@ -239,6 +239,9 @@ beyond_if:
+ 	(regs)->ss = __USER32_DS;
+ 	regs->r8 = regs->r9 = regs->r10 = regs->r11 =
+ 	regs->r12 = regs->r13 = regs->r14 = regs->r15 = 0;
++#ifdef CONFIG_SET_FS
++	set_fs(USER_DS);
++#endif
+ 	return 0;
+ }
+ 
+--- a/arch/x86/include/asm/processor.h.orig	2021-01-04 00:57:33.571210514 -0800
++++ b/arch/x86/include/asm/processor.h	2021-01-06 14:17:32.612024917 -0800
+@@ -486,6 +486,12 @@ extern unsigned int fpu_user_xstate_size
+ 
+ struct perf_event;
+ 
++#ifdef CONFIG_SET_FS
++typedef struct {
++	unsigned long		seg;
++} mm_segment_t;
++#endif
++
+ struct thread_struct {
+ 	/* Cached TLS descriptors: */
+ 	struct desc_struct	tls_array[GDT_ENTRY_TLS_ENTRIES];
+@@ -538,6 +544,10 @@ struct thread_struct {
+ 	 */
+ 	unsigned long		iopl_emul;
+ 
++#ifdef CONFIG_SET_FS
++	mm_segment_t		addr_limit;
++#endif
++
+ 	unsigned int		sig_on_uaccess_err:1;
+ 
+ 	/* Floating point and extended processor state */
+@@ -781,15 +791,29 @@ static inline void spin_lock_prefetch(co
+ })
+ 
+ #ifdef CONFIG_X86_32
++#ifdef CONFIG_SET_FS
+ #define INIT_THREAD  {							  \
+ 	.sp0			= TOP_OF_INIT_STACK,			  \
+ 	.sysenter_cs		= __KERNEL_CS,				  \
++	.addr_limit		= KERNEL_DS,				  \
+ }
++#else
++#define INIT_THREAD  {							  \
++	.sp0			= TOP_OF_INIT_STACK,			  \
++	.sysenter_cs		= __KERNEL_CS,				  \
++}
++#endif
+ 
+ #define KSTK_ESP(task)		(task_pt_regs(task)->sp)
+ 
+ #else
++#ifdef CONFIG_SET_FS
++#define INIT_THREAD {						\
++	.addr_limit		= KERNEL_DS,			\
++}
++#else
+ #define INIT_THREAD { }
++#endif
+ 
+ extern unsigned long KSTK_ESP(struct task_struct *task);
+ 
+--- a/arch/x86/include/asm/thread_info.h.orig	2020-12-13 14:41:30.000000000 -0800
++++ b/arch/x86/include/asm/thread_info.h	2021-01-06 13:35:23.164915345 -0800
+@@ -102,6 +102,9 @@ struct thread_info {
+ #define TIF_SYSCALL_TRACEPOINT	28	/* syscall tracepoint instrumentation */
+ #define TIF_ADDR32		29	/* 32-bit address space on 64 bits */
+ #define TIF_X32			30	/* 32-bit native x86-64 binary */
++#ifdef CONFIG_SET_FS
++#define TIF_FSCHECK		31	/* Check FS is USER_DS on return */
++#endif
+ 
+ #define _TIF_SYSCALL_TRACE	(1 << TIF_SYSCALL_TRACE)
+ #define _TIF_NOTIFY_RESUME	(1 << TIF_NOTIFY_RESUME)
+@@ -130,6 +133,9 @@ struct thread_info {
+ #define _TIF_SYSCALL_TRACEPOINT	(1 << TIF_SYSCALL_TRACEPOINT)
+ #define _TIF_ADDR32		(1 << TIF_ADDR32)
+ #define _TIF_X32		(1 << TIF_X32)
++#ifdef CONFIG_SET_FS
++#define _TIF_FSCHECK		(1 << TIF_FSCHECK)
++#endif
+ 
+ /* flags to check in __switch_to() */
+ #define _TIF_WORK_CTXSW_BASE					\
+--- a/arch/x86/include/asm/uaccess.h.orig	2020-12-13 14:41:30.000000000 -0800
++++ b/arch/x86/include/asm/uaccess.h	2021-01-06 14:19:38.816692235 -0800
+@@ -12,6 +12,32 @@
+ #include <asm/smap.h>
+ #include <asm/extable.h>
+ 
++#ifdef CONFIG_SET_FS
++/*
++ * The fs value determines whether argument validity checking should be
++ * performed or not.  If get_fs() == USER_DS, checking is performed, with
++ * get_fs() == KERNEL_DS, checking is bypassed.
++ *
++ * For historical reasons, these macros are grossly misnamed.
++ */
++
++#define MAKE_MM_SEG(s)	((mm_segment_t) { (s) })
++
++#define KERNEL_DS	MAKE_MM_SEG(-1UL)
++#define USER_DS 	MAKE_MM_SEG(TASK_SIZE_MAX)
++
++#define get_fs()	(current->thread.addr_limit)
++static inline void set_fs(mm_segment_t fs)
++{
++	current->thread.addr_limit = fs;
++	/* On user-mode return, check fs is correct */
++	set_thread_flag(TIF_FSCHECK);
++}
++
++#define uaccess_kernel() (get_fs().seg == KERNEL_DS.seg)
++#define user_addr_max() (current->thread.addr_limit.seg)
++#endif
++
+ /*
+  * Test whether a block of memory is a valid user space address.
+  * Returns 0 if the range is valid, nonzero otherwise.
+@@ -66,11 +92,19 @@ static inline bool pagefault_disabled(vo
+  * Return: true (nonzero) if the memory block may be valid, false (zero)
+  * if it is definitely invalid.
+  */
++#ifdef CONFIG_SET_FS
++#define access_ok(addr, size)					\
++({									\
++	WARN_ON_IN_IRQ();						\
++	likely(!__range_not_ok(addr, size, user_addr_max()));		\
++})
++#else
+ #define access_ok(addr, size)					\
+ ({									\
+ 	WARN_ON_IN_IRQ();						\
+ 	likely(!__range_not_ok(addr, size, TASK_SIZE_MAX));		\
+ })
++#endif
+ 
+ extern int __get_user_1(void);
+ extern int __get_user_2(void);
+--- a/arch/x86/kernel/asm-offsets.c.orig	2020-12-13 14:41:30.000000000 -0800
++++ b/arch/x86/kernel/asm-offsets.c	2021-01-06 13:50:52.321041042 -0800
+@@ -37,6 +37,11 @@ static void __used common(void)
+ 	OFFSET(TASK_stack_canary, task_struct, stack_canary);
+ #endif
+ 
++#ifdef CONFIG_SET_FS
++	BLANK();
++	OFFSET(TASK_addr_limit, task_struct, thread.addr_limit);
++#endif
++
+ 	BLANK();
+ 	OFFSET(crypto_tfm_ctx_offset, crypto_tfm, __crt_ctx);
+ 
+--- a/arch/x86/lib/getuser.S.orig	2020-12-13 14:41:30.000000000 -0800
++++ b/arch/x86/lib/getuser.S	2021-01-06 13:55:36.762100690 -0800
+@@ -37,6 +37,7 @@
+ 
+ #define ASM_BARRIER_NOSPEC ALTERNATIVE "", "lfence", X86_FEATURE_LFENCE_RDTSC
+ 
++#ifndef CONFIG_SET_FS
+ #ifdef CONFIG_X86_5LEVEL
+ #define LOAD_TASK_SIZE_MINUS_N(n) \
+ 	ALTERNATIVE __stringify(mov $((1 << 47) - 4096 - (n)),%rdx), \
+@@ -45,11 +46,17 @@
+ #define LOAD_TASK_SIZE_MINUS_N(n) \
+ 	mov $(TASK_SIZE_MAX - (n)),%_ASM_DX
+ #endif
++#endif
+ 
+ 	.text
+ SYM_FUNC_START(__get_user_1)
++#ifdef CONFIG_SET_FS
++	mov PER_CPU_VAR(current_task), %_ASM_DX
++	cmp TASK_addr_limit(%_ASM_DX),%_ASM_AX
++#else
+ 	LOAD_TASK_SIZE_MINUS_N(0)
+ 	cmp %_ASM_DX,%_ASM_AX
++#endif
+ 	jae bad_get_user
+ 	sbb %_ASM_DX, %_ASM_DX		/* array_index_mask_nospec() */
+ 	and %_ASM_DX, %_ASM_AX
+@@ -62,13 +69,24 @@ SYM_FUNC_END(__get_user_1)
+ EXPORT_SYMBOL(__get_user_1)
+ 
+ SYM_FUNC_START(__get_user_2)
++#ifdef CONFIG_SET_FS
++	add $1,%_ASM_AX
++	jc bad_get_user
++	mov PER_CPU_VAR(current_task), %_ASM_DX
++	cmp TASK_addr_limit(%_ASM_DX),%_ASM_AX
++#else
+ 	LOAD_TASK_SIZE_MINUS_N(1)
+ 	cmp %_ASM_DX,%_ASM_AX
++#endif
+ 	jae bad_get_user
+ 	sbb %_ASM_DX, %_ASM_DX		/* array_index_mask_nospec() */
+ 	and %_ASM_DX, %_ASM_AX
+ 	ASM_STAC
++#ifdef CONFIG_SET_FS
++2:	movzwl -1(%_ASM_AX),%edx
++#else
+ 2:	movzwl (%_ASM_AX),%edx
++#endif
+ 	xor %eax,%eax
+ 	ASM_CLAC
+ 	ret
+@@ -76,13 +94,24 @@ SYM_FUNC_END(__get_user_2)
+ EXPORT_SYMBOL(__get_user_2)
+ 
+ SYM_FUNC_START(__get_user_4)
++#ifdef CONFIG_SET_FS
++	add $3,%_ASM_AX
++	jc bad_get_user
++	mov PER_CPU_VAR(current_task), %_ASM_DX
++	cmp TASK_addr_limit(%_ASM_DX),%_ASM_AX
++#else
+ 	LOAD_TASK_SIZE_MINUS_N(3)
+ 	cmp %_ASM_DX,%_ASM_AX
++#endif
+ 	jae bad_get_user
+ 	sbb %_ASM_DX, %_ASM_DX		/* array_index_mask_nospec() */
+ 	and %_ASM_DX, %_ASM_AX
+ 	ASM_STAC
++#ifdef CONFIG_SET_FS
++3:	movl -3(%_ASM_AX),%edx
++#else
+ 3:	movl (%_ASM_AX),%edx
++#endif
+ 	xor %eax,%eax
+ 	ASM_CLAC
+ 	ret
+@@ -91,25 +120,48 @@ EXPORT_SYMBOL(__get_user_4)
+ 
+ SYM_FUNC_START(__get_user_8)
+ #ifdef CONFIG_X86_64
++#ifdef CONFIG_SET_FS
++	add $7,%_ASM_AX
++	jc bad_get_user
++	mov PER_CPU_VAR(current_task), %_ASM_DX
++	cmp TASK_addr_limit(%_ASM_DX),%_ASM_AX
++#else
+ 	LOAD_TASK_SIZE_MINUS_N(7)
+ 	cmp %_ASM_DX,%_ASM_AX
++#endif
+ 	jae bad_get_user
+ 	sbb %_ASM_DX, %_ASM_DX		/* array_index_mask_nospec() */
+ 	and %_ASM_DX, %_ASM_AX
+ 	ASM_STAC
++#ifdef CONFIG_SET_FS
++4:	movq -7(%_ASM_AX),%rdx
++#else
+ 4:	movq (%_ASM_AX),%rdx
++#endif
+ 	xor %eax,%eax
+ 	ASM_CLAC
+ 	ret
+ #else
++#ifdef CONFIG_SET_FS
++	add $7,%_ASM_AX
++	jc bad_get_user_8
++	mov PER_CPU_VAR(current_task), %_ASM_DX
++	cmp TASK_addr_limit(%_ASM_DX),%_ASM_AX
++#else
+ 	LOAD_TASK_SIZE_MINUS_N(7)
+ 	cmp %_ASM_DX,%_ASM_AX
++#endif
+ 	jae bad_get_user_8
+ 	sbb %_ASM_DX, %_ASM_DX		/* array_index_mask_nospec() */
+ 	and %_ASM_DX, %_ASM_AX
+ 	ASM_STAC
++#ifdef CONFIG_SET_FS
++4:	movl -7(%_ASM_AX),%edx
++5:	movl -3(%_ASM_AX),%ecx
++#else
+ 4:	movl (%_ASM_AX),%edx
+ 5:	movl 4(%_ASM_AX),%ecx
++#endif
+ 	xor %eax,%eax
+ 	ASM_CLAC
+ 	ret
+--- a/arch/x86/lib/putuser.S.orig	2020-12-13 14:41:30.000000000 -0800
++++ b/arch/x86/lib/putuser.S	2021-01-06 13:47:52.654055347 -0800
+@@ -33,6 +33,9 @@
+  * as they get called from within inline assembly.
+  */
+ 
++#ifdef CONFIG_SET_FS
++#define ENTER	mov PER_CPU_VAR(current_task), %_ASM_BX
++#else
+ #ifdef CONFIG_X86_5LEVEL
+ #define LOAD_TASK_SIZE_MINUS_N(n) \
+ 	ALTERNATIVE __stringify(mov $((1 << 47) - 4096 - (n)),%rbx), \
+@@ -41,11 +44,17 @@
+ #define LOAD_TASK_SIZE_MINUS_N(n) \
+ 	mov $(TASK_SIZE_MAX - (n)),%_ASM_BX
+ #endif
++#endif
+ 
+ .text
+ SYM_FUNC_START(__put_user_1)
++#ifdef CONFIG_SET_FS
++	ENTER
++	cmp TASK_addr_limit(%_ASM_BX),%_ASM_CX
++#else
+ 	LOAD_TASK_SIZE_MINUS_N(0)
+ 	cmp %_ASM_BX,%_ASM_CX
++#endif
+ 	jae .Lbad_put_user
+ SYM_INNER_LABEL(__put_user_nocheck_1, SYM_L_GLOBAL)
+ 	ASM_STAC
+@@ -58,7 +67,13 @@ EXPORT_SYMBOL(__put_user_1)
+ EXPORT_SYMBOL(__put_user_nocheck_1)
+ 
+ SYM_FUNC_START(__put_user_2)
++#ifdef CONFIG_SET_FS
++	ENTER
++	mov TASK_addr_limit(%_ASM_BX),%_ASM_BX
++	sub $1,%_ASM_BX
++#else
+ 	LOAD_TASK_SIZE_MINUS_N(1)
++#endif
+ 	cmp %_ASM_BX,%_ASM_CX
+ 	jae .Lbad_put_user
+ SYM_INNER_LABEL(__put_user_nocheck_2, SYM_L_GLOBAL)
+@@ -72,7 +87,13 @@ EXPORT_SYMBOL(__put_user_2)
+ EXPORT_SYMBOL(__put_user_nocheck_2)
+ 
+ SYM_FUNC_START(__put_user_4)
++#ifdef CONFIG_SET_FS
++	ENTER
++	mov TASK_addr_limit(%_ASM_BX),%_ASM_BX
++	sub $3,%_ASM_BX
++#else
+ 	LOAD_TASK_SIZE_MINUS_N(3)
++#endif
+ 	cmp %_ASM_BX,%_ASM_CX
+ 	jae .Lbad_put_user
+ SYM_INNER_LABEL(__put_user_nocheck_4, SYM_L_GLOBAL)
+@@ -86,7 +107,13 @@ EXPORT_SYMBOL(__put_user_4)
+ EXPORT_SYMBOL(__put_user_nocheck_4)
+ 
+ SYM_FUNC_START(__put_user_8)
++#ifdef CONFIG_SET_FS
++	ENTER
++	mov TASK_addr_limit(%_ASM_BX),%_ASM_BX
++	sub $7,%_ASM_BX
++#else
+ 	LOAD_TASK_SIZE_MINUS_N(7)
++#endif
+ 	cmp %_ASM_BX,%_ASM_CX
+ 	jae .Lbad_put_user
+ SYM_INNER_LABEL(__put_user_nocheck_8, SYM_L_GLOBAL)
+--- a/crypto/Kconfig.orig	2021-01-06 14:02:59.639321221 -0800
++++ b/crypto/Kconfig	2021-01-06 11:05:57.766767107 -0800
+@@ -1232,6 +1232,7 @@ if CRYPTO_TRESOR
+ config CRYPTO_TRESOR_PROMPT
+ 	bool "TRESOR Startup Prompt"
+ 	depends on CRYPTO_TRESOR
++	select SET_FS
+ 	default y if CRYPTO_TRESOR
+ 	help
+ 	  Display a prompt at startup and after suspend to read the key
