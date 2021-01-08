@@ -261,7 +261,7 @@ function ot-kernel_apply_tresor_fixes() {
 	fi
 
 	_dpatch "${PATCH_OPS}" \
-		"${FILESDIR}/tresor-prompt-update-for-5.10-v2.patch"
+		"${FILESDIR}/tresor-prompt-update-for-5.10-v3.patch"
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb
