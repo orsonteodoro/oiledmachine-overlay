@@ -261,9 +261,7 @@ function ot-kernel_apply_tresor_fixes() {
 	fi
 
 	_dpatch "${PATCH_OPS}" \
-		"${FILESDIR}/tresor-make-set_fs-overrides-for-x86-for-5.10.patch"
-	_dpatch "${PATCH_OPS}" \
-		"${FILESDIR}/tresor-ksys-changes-for-5.10.patch"
+		"${FILESDIR}/tresor-prompt-update-for-5.10-v2.patch"
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb
