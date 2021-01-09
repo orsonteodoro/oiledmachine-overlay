@@ -13,7 +13,8 @@ SLOT="0/${PV}"
 IUSE="doc"
 ENIGMA_V="9999_p20201116"
 CDEPEND="dev-libs/protobuf
-	 net-libs/grpc"
+	 net-libs/grpc
+	 >=sys-devel/gcc-7.4.0"
 DEPEND+=" ${CDEPEND}
 	  dev-cpp/yaml-cpp
 	  dev-libs/double-conversion
@@ -34,8 +35,7 @@ DEPEND+=" ${CDEPEND}
 	  virtual/jpeg"
 RDEPEND=" ${DEPEND}"
 BDEPEND+=" ${CDEPEND}
-	   media-gfx/imagemagick[png]
-	   >=sys-devel/gcc-7.4.0"
+	   media-gfx/imagemagick[png]"
 EGIT_COMMIT="394448fff27e4cdd63b108a8be898c17a25a711d"
 SRC_URI=\
 "https://github.com/enigma-dev/RadialGM/archive/${EGIT_COMMIT}.tar.gz \
