@@ -10,22 +10,29 @@ HOMEPAGE="http://lateralgm.org/"
 LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 SLOT="0"
-IUSE="libmaker +vanilla"
+IUSE+=" libmaker +vanilla"
 SLOT_JOSHEDIT="1"
 RDEPEND="virtual/jre"
-BDEPEND="${BDEPEND}
-	 ~dev-java/joshedit-1_p20210103:${SLOT_JOSHEDIT}=[lateralgm]
-	 virtual/jdk"
+BDEPEND+=" virtual/jdk"
 MY_PN="LateralGM"
+JE_COMMIT="487ddbe470032124dcb50ebee01a24b600ae900e"
+JE_PN="JoshEdit"
+JE_FN="${JE_PN}-${JE_COMMIT:0:7}.zip"
 SRC_URI=\
-"https://github.com/IsmAvatar/${MY_PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+"https://github.com/IsmAvatar/${MY_PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
+ https://github.com/JoshDreamland/JoshEdit/archive/${JE_COMMIT}.zip -> ${JE_FN}"
 RESTRICT="mirror"
 S="${WORKDIR}/${MY_PN}-${PV}"
 JAVA_V="1.7"
 
+src_unpack() {
+	unpack ${A}
+	rm -rf "${S}/modules/joshedit" || die
+	mv "${WORKDIR}/${JE_PN}-${JE_COMMIT}" "${S}/modules/joshedit" || die
+}
+
 src_prepare() {
 	default
-	cp -r "${ROOT}"/usr/share/joshedit-${SLOT_JOSHEDIT}/source/org ./ || die
 	sed -i -e "s|-source 1.7|-source ${JAVA_V}|g" \
 		-e "s|-target 1.7|-target ${JAVA_V}|g" Makefile || die
 	# no need to call enigma_copy_sources
