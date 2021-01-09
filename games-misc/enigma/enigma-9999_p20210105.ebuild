@@ -33,7 +33,9 @@ REQUIRED_USE+="
 #
 # The design for WINE support requires a chroot containing a mingw toolchain.
 # See https://wiki.gentoo.org/wiki/Mingw for details.
-DEPEND="android? ( dev-util/android-ndk
+CDEPEND="dev-libs/protobuf[${MULTILIB_USEDEP}]"
+DEPEND="${CDEPEND}
+	android? ( dev-util/android-ndk
 		   dev-util/android-sdk-update-manager )
 	box2d? ( sci-physics/box2d[${MULTILIB_USEDEP}] )
 	bullet? ( sci-physics/bullet[${MULTILIB_USEDEP}] )
@@ -44,7 +46,6 @@ DEPEND="android? ( dev-util/android-ndk
 	dev-libs/double-conversion[${MULTILIB_USEDEP}]
 	dev-libs/libpcre2[${MULTILIB_USEDEP},pcre16]
 	dev-libs/openssl[${MULTILIB_USEDEP}]
-	dev-libs/protobuf[${MULTILIB_USEDEP}]
 	dev-libs/pugixml[${MULTILIB_USEDEP}]
 	dev-libs/rapidjson
 	games-misc/lgmplugin
@@ -75,7 +76,8 @@ DEPEND="android? ( dev-util/android-ndk
 	     sys-libs/zlib[${MULTILIB_USEDEP}] )
 	virtual/jpeg[${MULTILIB_USEDEP}]"
 RDEPEND+=" ${DEPEND}"
-BDEPEND="!clang? (
+BDEPEND="${CDEPEND}
+	!clang? (
 		>=sys-devel/gcc-9
 	)
 	clang? (
