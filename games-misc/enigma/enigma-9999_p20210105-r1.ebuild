@@ -33,13 +33,16 @@ REQUIRED_USE+="
 #
 # The design for WINE support requires a chroot containing a mingw toolchain.
 # See https://wiki.gentoo.org/wiki/Mingw for details.
-CDEPEND="dev-libs/protobuf[${MULTILIB_USEDEP}]"
+CDEPEND="dev-libs/protobuf[${MULTILIB_USEDEP}]
+	>=sys-devel/gcc-9
+	radialgm? ( net-libs/grpc[${MULTILIB_USEDEP}] )"
 DEPEND="${CDEPEND}
 	android? ( dev-util/android-ndk
 		   dev-util/android-sdk-update-manager )
 	box2d? ( sci-physics/box2d[${MULTILIB_USEDEP}] )
 	bullet? ( sci-physics/bullet[${MULTILIB_USEDEP}] )
 	curl? ( net-misc/curl[${MULTILIB_USEDEP}] )
+	dev-cpp/abseil-cpp[${MULTILIB_USEDEP}]
 	dev-cpp/yaml-cpp[${MULTILIB_USEDEP}]
 	dev-libs/boost[${MULTILIB_USEDEP}]
 	dev-libs/libffi[${MULTILIB_USEDEP}]
@@ -66,20 +69,17 @@ DEPEND="${CDEPEND}
 	opengl? ( media-libs/glew[${MULTILIB_USEDEP}]
 		  media-libs/glm
 		  media-libs/mesa[${MULTILIB_USEDEP}] )
-	radialgm? ( net-dns/c-ares[${MULTILIB_USEDEP}]
-		    net-libs/grpc[${MULTILIB_USEDEP}] )
+	radialgm? ( net-dns/c-ares[${MULTILIB_USEDEP}] )
 	sdl2? ( >=media-libs/libsdl2-2.0.12[${MULTILIB_USEDEP},gles2?] )
 	sys-libs/zlib[${MULTILIB_USEDEP}]
 	wine? ( sys-devel/crossdev
 		 virtual/wine )
 	X? ( x11-libs/libX11[${MULTILIB_USEDEP}]
 	     sys-libs/zlib[${MULTILIB_USEDEP}] )
-	virtual/jpeg[${MULTILIB_USEDEP}]"
+	virtual/jpeg[${MULTILIB_USEDEP}]
+	virtual/libc"
 RDEPEND+=" ${DEPEND}"
 BDEPEND="${CDEPEND}
-	!clang? (
-		>=sys-devel/gcc-9
-	)
 	clang? (
 		>=sys-devel/clang-10[${MULTILIB_USEDEP}]
 		>=sys-devel/lld-10
@@ -108,7 +108,7 @@ pkg_setup() {
 >=10 in your per-package environmental variable settings."
 		fi
 	elif tc-is-clang ; then
-		if ver_test $(gcc-version) -lt 10 ; then
+		if ver_test $(clang-version) -lt 10 ; then
 			die \
 "You need to update your Clang/LLVM to >=10 or switch to GCC >=9 via eselect \
 in your per-package environmental variable settings."
