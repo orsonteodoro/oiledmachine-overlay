@@ -12,7 +12,8 @@ KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 IUSE="doc"
 ENIGMA_V="9999_p20201116"
-CDEPEND="dev-libs/protobuf"
+CDEPEND="dev-libs/protobuf
+	 net-libs/grpc"
 DEPEND+=" ${CDEPEND}
 	  dev-cpp/yaml-cpp
 	  dev-libs/double-conversion
@@ -29,13 +30,12 @@ DEPEND+=" ${CDEPEND}
 	  media-libs/freetype
 	  media-libs/harfbuzz
 	  net-dns/c-ares
-	  net-libs/grpc
-	  >=sys-devel/gcc-7.4.0
 	  x11-libs/qscintilla
 	  virtual/jpeg"
 RDEPEND=" ${DEPEND}"
 BDEPEND+=" ${CDEPEND}
-	   media-gfx/imagemagick[png]"
+	   media-gfx/imagemagick[png]
+	   >=sys-devel/gcc-7.4.0"
 EGIT_COMMIT="394448fff27e4cdd63b108a8be898c17a25a711d"
 SRC_URI=\
 "https://github.com/enigma-dev/RadialGM/archive/${EGIT_COMMIT}.tar.gz \
