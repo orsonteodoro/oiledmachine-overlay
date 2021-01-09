@@ -2,16 +2,18 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+PYTHON_COMPAT=( python3_{6..9} )
+inherit distutils-r1 eutils
+
 DESCRIPTION="Stack overflow command line client. Search and browse stack \
 overflow without leaving the terminal"
 HOMEPAGE="https://github.com/gautamkrishnar/socli"
+LICENSE="BSD"
 SRC_URI="https://github.com/gautamkrishnar/socli/archive/${PV}.tar.gz \
 	-> ${P}.tar.gz"
-LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
-PYTHON_COMPAT=( python3_{6..9} )
 IUSE="man"
-inherit distutils-r1 eutils
 SLOT="0"
 DEPEND=">=dev-python/beautifulsoup-4.9.1:4[${PYTHON_USEDEP}]
 	>=dev-python/colorama-0.4.3[${PYTHON_USEDEP}]
@@ -19,7 +21,7 @@ DEPEND=">=dev-python/beautifulsoup-4.9.1:4[${PYTHON_USEDEP}]
 	>=dev-python/requests-2.24.0[${PYTHON_USEDEP}]
 	>=dev-python/urwid-2.1.1[${PYTHON_USEDEP}]
 	>=dev-python/sentry-sdk-0.18.0[${PYTHON_USEDEP}]"
-RDEPEND="${DEPEND}"
+RDEPEND+=" ${DEPEND}"
 RESTRICT="mirror"
 S="${WORKDIR}/${PN}-${PV}"
 
