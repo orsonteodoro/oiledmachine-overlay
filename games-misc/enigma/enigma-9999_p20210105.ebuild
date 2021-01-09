@@ -2,6 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit desktop enigma eutils multilib-minimal toolchain-funcs
+
 DESCRIPTION="ENIGMA, the Extensible Non-Interpreted Game Maker Augmentation, \
 is an open source cross-platform game development environment influenced by \
 the popular software Game Maker."
@@ -9,9 +12,15 @@ HOMEPAGE="http://enigma-dev.org"
 LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-IUSE="android box2d bullet clang curl doc gles gles2 gles3 gme gnome gtk2 kde \
+IUSE+=" android box2d bullet clang curl doc gles gles2 gles3 gme gnome gtk2 kde \
 linux minimal +openal +opengl opengl1 opengl3 radialgm sdl2 test +vanilla +X"
-inherit multilib-minimal
+REQUIRED_USE+="
+	gles? ( sdl2 )
+	gles2? ( gles opengl )
+	gles3? ( gles opengl )
+	opengl? ( || ( sdl2 X ) )
+	opengl1? ( opengl )
+	opengl3? ( opengl )"
 # For some list of dependencies, see
 # https://github.com/enigma-dev/enigma-dev/blob/master/CI/install_emake_deps.sh
 # https://github.com/enigma-dev/enigma-dev/blob/master/CI/solve_engine_deps.sh
@@ -24,60 +33,49 @@ inherit multilib-minimal
 #
 # The design for WINE support requires a chroot containing a mingw toolchain.
 # See https://wiki.gentoo.org/wiki/Mingw for details.
-RDEPEND="android? ( dev-util/android-ndk
-		    dev-util/android-sdk-update-manager )
-	 box2d? ( sci-physics/box2d[${MULTILIB_USEDEP}] )
-	 bullet? ( sci-physics/bullet[${MULTILIB_USEDEP}] )
-	 curl? ( net-misc/curl[${MULTILIB_USEDEP}] )
-	 dev-cpp/yaml-cpp[${MULTILIB_USEDEP}]
-	 dev-libs/boost[${MULTILIB_USEDEP}]
-	 dev-libs/libffi[${MULTILIB_USEDEP}]
-	 dev-libs/double-conversion[${MULTILIB_USEDEP}]
-	 dev-libs/libpcre2[${MULTILIB_USEDEP},pcre16]
-	 dev-libs/openssl[${MULTILIB_USEDEP}]
-	 dev-libs/protobuf[${MULTILIB_USEDEP}]
-	 dev-libs/pugixml[${MULTILIB_USEDEP}]
-	 dev-libs/rapidjson
-	 games-misc/lgmplugin
-	 games-util/lateralgm[android?,linux?,vanilla?,${MULTILIB_USEDEP}]
-	 gles? (
-		media-libs/glm
+DEPEND="android? ( dev-util/android-ndk
+		   dev-util/android-sdk-update-manager )
+	box2d? ( sci-physics/box2d[${MULTILIB_USEDEP}] )
+	bullet? ( sci-physics/bullet[${MULTILIB_USEDEP}] )
+	curl? ( net-misc/curl[${MULTILIB_USEDEP}] )
+	dev-cpp/yaml-cpp[${MULTILIB_USEDEP}]
+	dev-libs/boost[${MULTILIB_USEDEP}]
+	dev-libs/libffi[${MULTILIB_USEDEP}]
+	dev-libs/double-conversion[${MULTILIB_USEDEP}]
+	dev-libs/libpcre2[${MULTILIB_USEDEP},pcre16]
+	dev-libs/openssl[${MULTILIB_USEDEP}]
+	dev-libs/protobuf[${MULTILIB_USEDEP}]
+	dev-libs/pugixml[${MULTILIB_USEDEP}]
+	dev-libs/rapidjson
+	games-misc/lgmplugin
+	games-util/lateralgm[android?,linux?,vanilla?,${MULTILIB_USEDEP}]
+	gles? (	media-libs/glm
 		media-libs/libepoxy[${MULTILIB_USEDEP}]
-		media-libs/mesa[${MULTILIB_USEDEP}]
-	 )
-	 gme? ( media-libs/game-music-emu[${MULTILIB_USEDEP}] )
-	 gnome? ( gnome-extra/zenity )
-	 gtk2? ( x11-libs/gtk+[${MULTILIB_USEDEP}] )
-	 kde? ( kde-apps/kdialog )
-	 media-libs/freetype[${MULTILIB_USEDEP}]
-	 media-libs/harfbuzz[${MULTILIB_USEDEP}]
-	 media-libs/libpng[${MULTILIB_USEDEP}]
-	 openal? (
-		media-libs/alure[${MULTILIB_USEDEP}]
-		media-libs/dumb[${MULTILIB_USEDEP}]
-		media-libs/openal[${MULTILIB_USEDEP}] )
-	 opengl? ( media-libs/glew[${MULTILIB_USEDEP}]
-		   media-libs/glm
-		   media-libs/mesa[${MULTILIB_USEDEP}] )
-	 radialgm? ( net-dns/c-ares[${MULTILIB_USEDEP}]
-		     net-libs/grpc[${MULTILIB_USEDEP}] )
-	 sdl2? ( >=media-libs/libsdl2-2.0.12[${MULTILIB_USEDEP},gles2?] )
-	 sys-libs/zlib[${MULTILIB_USEDEP}]
-	 wine? ( sys-devel/crossdev
+		media-libs/mesa[${MULTILIB_USEDEP}] )
+	gme? ( media-libs/game-music-emu[${MULTILIB_USEDEP}] )
+	gnome? ( gnome-extra/zenity )
+	gtk2? ( x11-libs/gtk+[${MULTILIB_USEDEP}] )
+	kde? ( kde-apps/kdialog )
+	media-libs/freetype[${MULTILIB_USEDEP}]
+	media-libs/harfbuzz[${MULTILIB_USEDEP}]
+	media-libs/libpng[${MULTILIB_USEDEP}]
+	openal? ( media-libs/alure[${MULTILIB_USEDEP}]
+		  media-libs/dumb[${MULTILIB_USEDEP}]
+		 media-libs/openal[${MULTILIB_USEDEP}] )
+	opengl? ( media-libs/glew[${MULTILIB_USEDEP}]
+		  media-libs/glm
+		  media-libs/mesa[${MULTILIB_USEDEP}] )
+	radialgm? ( net-dns/c-ares[${MULTILIB_USEDEP}]
+		    net-libs/grpc[${MULTILIB_USEDEP}] )
+	sdl2? ( >=media-libs/libsdl2-2.0.12[${MULTILIB_USEDEP},gles2?] )
+	sys-libs/zlib[${MULTILIB_USEDEP}]
+	wine? ( sys-devel/crossdev
 		 virtual/wine )
-	 X? ( x11-libs/libX11[${MULTILIB_USEDEP}]
-	      sys-libs/zlib[${MULTILIB_USEDEP}] )
-	 virtual/jpeg[${MULTILIB_USEDEP}]
-"
-REQUIRED_USE="
-	gles? ( sdl2 )
-	gles2? ( gles opengl )
-	gles3? ( gles opengl )
-	opengl? ( || ( sdl2 X ) )
-	opengl1? ( opengl )
-	opengl3? ( opengl )"
-DEPEND="${RDEPEND}
-	!clang? (
+	X? ( x11-libs/libX11[${MULTILIB_USEDEP}]
+	     sys-libs/zlib[${MULTILIB_USEDEP}] )
+	virtual/jpeg[${MULTILIB_USEDEP}]"
+RDEPEND+=" ${DEPEND}"
+BDEPEND="!clang? (
 		>=sys-devel/gcc-9
 	)
 	clang? (
@@ -90,11 +88,10 @@ DEPEND="${RDEPEND}
 	test? ( dev-cpp/gtest[${MULTILIB_USEDEP}]
 		dev-libs/boost[${MULTILIB_USEDEP}]
 		x11-libs/libX11[${MULTILIB_USEDEP}] )"
-EGIT_COMMIT="6b37591579ee7de649c7312ddda6a6e8d6893116"
+EGIT_COMMIT="4a68e94a9b42dbc150cb695ba30a3838253fa6a1"
 SRC_URI=\
 "https://github.com/enigma-dev/enigma-dev/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
-inherit desktop enigma eutils toolchain-funcs
 S="${WORKDIR}/enigma-dev-${EGIT_COMMIT}"
 RESTRICT="mirror"
 DOCS=( Readme.md )
