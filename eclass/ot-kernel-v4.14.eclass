@@ -328,6 +328,9 @@ function ot-kernel_filter_patch_cb() {
 			"${FILESDIR}/muqss-0.162-rebase-for-4.14.213.patch"
 		_dpatch "${PATCH_OPS}" \
 			"${FILESDIR}/muqss-dont-attach-ckversion.patch"
+	elif [[ "${path}" =~ "0179-mm-memcontrol-Replace-local_irq_disable-with-local-l.patch" ]] ; then
+		# PREEMPT_RT
+		_dpatch "${PATCH_OPS} -F 3" "${path}"
 	elif [[ "${path}" =~ "${PDS_FN}" ]] ; then
 		_dpatch "${PATCH_OPS} -F 3" "${path}"
 		_dpatch "${PATCH_OPS}" \

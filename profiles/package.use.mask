@@ -22,7 +22,6 @@ games-misc/enigma android wine
 
 # Untested
 dev-libs/urho3d android raspberry-pi
->=sys-kernel/ot-sources-5.9 tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support
 
 # Untested tests
 dev-util/bear test
@@ -30,3 +29,7 @@ net-libs/grpc test
 
 # 64-bit only package
 x11-drivers/amdgpu-pro abi_x86_32
+
+# tresor broken for in-place encryption.  trivial ecb mode of operation fails in-place test.
+# use the 4.14 branch instead.
+>=sys-kernel/ot-sources-5.0 tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support

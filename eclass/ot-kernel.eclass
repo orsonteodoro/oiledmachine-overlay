@@ -551,6 +551,33 @@ function ot-kernel_pkg_setup() {
 		fi
 	fi
 
+	if has tresor ${IUSE_EFFECTIVE} ; then
+		if use tresor ; then
+			if use tresor_i686 && ! grep -F -q "sse2" /proc/cpuinfo ; then
+				if ! grep -F -q "sse2" /proc/cpuinfo ; then
+					die "tresor_i686 requires SSE2 CPU support"
+				fi
+				if ! grep -F -q "mmx" /proc/cpuinfo ; then
+					die "tresor_i686 requires MMX CPU support"
+				fi
+			elif use tresor_x86_64 && ! grep -F -q "sse2" /proc/cpuinfo ; then
+				if ! grep -F -q "sse2" /proc/cpuinfo ; then
+					die "tresor_x86_64 requires SSE2 CPU support"
+				fi
+				if ! grep -F -q "mmx" /proc/cpuinfo ; then
+					die "tresor_x86_64 requires MMX CPU support"
+				fi
+			elif use tresor_aesni ; then
+				if ! grep -F -q "aes" /proc/cpuinfo ; then
+					die "tresor_aesni requires AES-NI CPU support"
+				fi
+				if ! grep -F -q "sse2" /proc/cpuinfo ; then
+					die "tresor_aesni requires SSE2 CPU support"
+				fi
+			fi
+		fi
+	fi
+
 	if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
 		einfo "Live patchable branches is experimental and is a Work In Progress (WIP)"
 	fi
