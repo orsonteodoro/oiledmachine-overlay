@@ -33,3 +33,7 @@ x11-drivers/amdgpu-pro abi_x86_32
 # tresor broken for in-place encryption.  trivial ecb mode of operation fails in-place test.
 # use the 4.14 branch instead.
 >=sys-kernel/ot-sources-5.0 tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support
+
+# still in development
+# addressing problem
+>=sys-kernel/ot-sources-4.14 tresor_x86_64 tresor_x86_64-256-bit-key-support
