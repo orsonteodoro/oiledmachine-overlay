@@ -212,7 +212,7 @@ like npm.  These use flags are not recommended."
 
 	if use tresor ; then
 		ewarn \
-"TRESOR is still experimental for ${PV} use at your own risk.\n\
+"TRESOR is still experimental for ${PV}.  Use at your own risk.\n\
 See dmesg for details."
 	fi
 }
