@@ -126,10 +126,9 @@ upstream.  It will be removed immediately once TRESOR has been fixed for\n\
 mainline / stable for >=5.x ."
 
 	if use tresor ; then
-		if ver_test ${PV} -ge 4.17 ; then
-			ewarn \
-"TRESOR is broken for ${PV}.  Use ${K_MAJOR_MINOR}.x series.  For ebuild devs only."
-		fi
+		ewarn \
+"TRESOR may broken for ${PV}.  See dmesg for details.  Use >=5.4.x series for\n\
+working TRESOR.  4.14.x is for ebuild devs only."
 	fi
 }
 

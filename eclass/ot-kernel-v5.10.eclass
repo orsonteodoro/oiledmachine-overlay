@@ -195,10 +195,9 @@ like npm.  These use flags are not recommended."
 	fi
 
 	if use tresor ; then
-		if ver_test ${PV} -ge 4.17 ; then
-			ewarn \
-"TRESOR is experimental for ${PV}.  Use 4.14.x series for stable TRESOR."
-		fi
+		ewarn \
+"TRESOR is still experimental for ${PV} use at your own risk.\n\
+If breakage happens try the 5.4 LTS kernel.  See dmesg for details."
 	fi
 }
 
@@ -253,7 +252,7 @@ function ot-kernel_apply_tresor_fixes() {
 		if use tresor_x86_64 || use tresor_i686 ; then
 			if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
 				die \
-"${FILESDIR}/tresor-256-bit-aes-support-i686-v2-for-5.7.patch is untested.  \
+"Support for 192-bit and 256-bit keys on x86_64 is still in development and testing.  \
 Return back when it is finished."
 			fi
 			_dpatch "${PATCH_OPS}" \
