@@ -3,10 +3,10 @@ Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Date: Jul 23, 2020
 Subject:  Add 256-bit AES support to TRESOR sse2 on 64-bit machines
 
-This patch is for the Linux Kernel 5.4 series.
+This patch is for the Linux Kernel 5.7 series.
 
 This patch only applies to the non-aesni version and depends on
-tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-i686-v2.1.patch.
+tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.7-i686-v2.1.patch.
 
 *This patch completes key expansion, encode, decode for 192 and 256-bit AES
 for TRESOR sse2.
@@ -24,9 +24,9 @@ todo: Check sanitation of key or temporary variables at the end of macro and
       function.
 
 ----
-diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S
---- linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S	2020-07-23 04:11:32.070091445 -0700
-+++ linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S	2020-07-23 22:59:22.934047620 -0700
+diff -urp linux-5.10.6-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.10.6-ot/arch/x86/crypto/tresor_asm.S
+--- linux-5.10.6-ot.orig/arch/x86/crypto/tresor_asm.S	2021-01-12 00:03:01.080207178 -0800
++++ linux-5.10.6-ot/arch/x86/crypto/tresor_asm.S	2021-01-12 00:56:13.399745562 -0800
 @@ -1,6 +1,7 @@
  /***************************************************************************
   *
@@ -90,7 +90,7 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S linux-5.4.52-ot/arch/x86/cr
  
  /* 32-bit GPR registers */
  .set	eax,	%eax
-@@ -143,11 +160,6 @@
+@@ -143,11 +160,6 @@ gfbd9e:	.long	0x00000000, 0x0b0d090e, 0x
  	.long	0x92b479a7, 0x99b970a9, 0x84ae6bbb, 0x8fa362b5
  	.long	0xbe805d9f, 0xb58d5491, 0xa89a4f83, 0xa397468d
  
@@ -102,7 +102,7 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S linux-5.4.52-ot/arch/x86/cr
  /* external tables from generic aes code */
  .set	ft_tab, crypto_ft_tab
  .set	fl_tab, crypto_fl_tab
-@@ -205,6 +217,16 @@
+@@ -209,6 +221,16 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
  	pxor		%xmm5,%xmm5
  	pxor		%xmm6,%xmm6
  	pxor		%xmm7,%xmm7
@@ -119,15 +119,15 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S linux-5.4.52-ot/arch/x86/cr
  	/* reset MMX registers */
  	pxor		%mm0,%mm0
  	pxor		%mm1,%mm1
-@@ -214,6 +236,7 @@
+@@ -218,6 +240,7 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
  	pxor		%mm5,%mm5
  	pxor		%mm6,%mm6
  	pxor		%mm7,%mm7
 +#endif
  	/* leave */
  #ifdef __x86_64__
- 	popq		rdi
-@@ -248,21 +271,29 @@
+ #else
+@@ -243,21 +266,29 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
  	pxor		rhelp,\sse
  .endm
  
@@ -170,7 +170,7 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S linux-5.4.52-ot/arch/x86/cr
  	movl		\dbg0,eax
  	movd		eax,\sse
  	movl		\dbg1,eax
-@@ -274,41 +305,35 @@
+@@ -269,41 +300,35 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
  	pslldq		$8,rhelp
  	pxor		rhelp,\sse
  	movl		\dbg3,eax
@@ -209,15 +209,15 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S linux-5.4.52-ot/arch/x86/cr
 -	rorq		$32,rax
 -	movd		eax,rhelp
 -	pslldq		$8,rhelp
--	pxor		rhelp,\sse
++	movq		rax,rhelp
+ 	pxor		rhelp,\sse
 -	movq		\dbg3,rax
 -	rorq		$32,rax
 -#else
 -#endif
 -	movd		eax,rhelp
 -	pslldq		$12,rhelp
-+	movq		rax,rhelp
- 	pxor		rhelp,\sse
+-	pxor		rhelp,\sse
 -#ifdef __x86_64__
 +
 +	pxor		rhelp,rhelp
@@ -230,7 +230,7 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S linux-5.4.52-ot/arch/x86/cr
  
  /* copy four 32-bit general purpose registers into one 128-bit sse register */
  .macro	gpr_to_sse gpr0 gpr1 gpr2 gpr3 sse
-@@ -345,46 +370,462 @@
+@@ -340,46 +365,462 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
  #endif
  .endm
  
@@ -463,12 +463,18 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S linux-5.4.52-ot/arch/x86/cr
 +	shl		$8,edx
 +	ks_box		5,\r1,0 /* done RotWord(SubWord(w5) */
 +	xorl		\rcon,edx /* RotWord(SubWord(w5) ^ rcon  */
-+	movd		edx,rhelp
+ 	movd		edx,rhelp
+-	pxor		rhelp,\rk
 +
 +	pslldq		$8,rhelp /* placed in ^^^^ in s_box rotation section or 2 index of words */
 +	pxor		rhelp,\r2 /* w6 / w18 */
 +
-+	/*
+ 	/*
+-	for(cc = 4; cc < 16; cc += 4 )
+-		k[cc + 0] ^= k[cc - 4];
+-		k[cc + 1] ^= k[cc - 3];
+-		k[cc + 2] ^= k[cc - 2];
+-		k[cc + 3] ^= k[cc - 1];
 +	Scaffolds.  The code should behave like this.
 +
 +
@@ -483,7 +489,8 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S linux-5.4.52-ot/arch/x86/cr
 +	r1 =         w7^w6^(RotWord(SubWord(w5))^rcon)           w6^(RotWord(SubWord(w5))^rcon)                          skip                                 skip
 +expanded words in r2 =              w7                                        w6                                          w5                                   w4
 +
-+	*/
+ 	*/
+-	movdqu		\rk,rhelp
 +
 +	movdqu		\r2,rhelp
 +
@@ -539,8 +546,7 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S linux-5.4.52-ot/arch/x86/cr
 +	shl		$8,edx
 +	ks_box		13,\r2,0 /* done RotWord(SubWord(w11) */
 +	xorl		\rcon,edx /* RotWord(SubWord(w11) ^ rcon  */
- 	movd		edx,rhelp
--	pxor		rhelp,\rk
++	movd		edx,rhelp
 +	pxor		rhelp,\r2 /* w12 */
 +
 +
@@ -609,12 +615,7 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S linux-5.4.52-ot/arch/x86/cr
 +   r2 r3 are write out
 +*/
 +.macro	generate_rk_14 r0 r1 r2 r3 rcon
- 	/*
--	for(cc = 4; cc < 16; cc += 4 )
--		k[cc + 0] ^= k[cc - 4];
--		k[cc + 1] ^= k[cc - 3];
--		k[cc + 2] ^= k[cc - 2];
--		k[cc + 3] ^= k[cc - 1];
++	/*
 +	See page31 of FIPS-197 for indexing
 +	each w is 32-bit word of expanded key
 +	word ordering is increasing from right to left
@@ -650,8 +651,7 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S linux-5.4.52-ot/arch/x86/cr
 +	k[0] ^= s_box(k[13]) ^ rc;
 +
 +	ror is done by shls
- 	*/
--	movdqu		\rk,rhelp
++	*/
 +	ks_box		12,\r2,1 /* start RotWord(SubWord(w7) */
 +	shl		$8,edx
 +	ks_box		15,\r2,0
@@ -719,7 +719,7 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S linux-5.4.52-ot/arch/x86/cr
  
  /* common code for inv_mix_column */
  .macro inv_mix_helper r l reg init
-@@ -520,49 +961,124 @@
+@@ -515,49 +956,124 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
  .endm
  
  /* generate AES-128 key schedule (rk1 to rk10) */
@@ -876,7 +876,7 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S linux-5.4.52-ot/arch/x86/cr
  	f_nround	rk1
  	f_nround	rk2
  	f_nround	rk3
-@@ -572,15 +1088,46 @@
+@@ -567,15 +1083,46 @@ tresor_encblk_128:
  	f_nround_	rk7a,rk7b,rk5
  	f_nround_	rk8a,rk8b,rk5
  	f_nround_	rk9a,rk9b,rk5
@@ -928,7 +928,7 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S linux-5.4.52-ot/arch/x86/cr
  	i_nround_	rk9a,rk9b,rk10
  	i_nround_	rk8a,rk8b,rk10
  	i_nround_	rk7a,rk7b,rk10
-@@ -591,38 +1138,157 @@
+@@ -586,40 +1133,154 @@ tresor_decblk_128:
  	i_nround	rk2
  	i_nround	rk1
  	dbg_to_sse	db0,db1,db2,db3,rk1
@@ -1039,10 +1039,8 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S linux-5.4.52-ot/arch/x86/cr
 +	w5 w4 w3 w2 w1 w0 - db2 db1 db0 --  are for 192-bit key
 +	w7 w6 w5 w4 w3 w2 w1 w0 - db3 db2 db1 db0 -- are for 256-bit key
 +	*/
-+	pushq rbx
-+
-+	/* w0 */
-+	xorq		rax,rax
++	pushq		rbx
+ 	pushq		rax
  	movl		0(rdi),eax
 -	movq		rax,db0
 -	movl		4(rdi),eax
@@ -1093,22 +1091,15 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S linux-5.4.52-ot/arch/x86/cr
 +
 +	movq		rbx,db3
 +
-+	xorq rax,rax
-+
-+	popq rbx
+ 	popq		rax
++	popq		rbx
  #else
  	movl		4(esp),edx
  	movl		0(edx),eax
-@@ -636,49 +1302,39 @@
--#endif
- 	xorl		eax, eax
-+#endif
- 	ret
- 
-+#ifdef __x86_64__
+@@ -637,42 +1298,34 @@ tresor_set_key:
  /* void tresor_set_key_xts_tweak_128(const u8 *in_key) */
  tresor_set_key_xts_tweak_128:
--#ifdef __x86_64__
+ #ifdef __x86_64__
 +/*
 +	tweak_key is 128-bit with 4 32-bit words
 +                1               0       : address/index
@@ -1117,8 +1108,10 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S linux-5.4.52-ot/arch/x86/cr
 +*/
  	pushq		rcx
  	pushq		rbx
+ 	pushq		rax
+ 
 -	movl		0(rdi),eax
- 	movq		$0x00000000FFFFFFFF,rcx
+ 	movq		$0x00000000ffffffff,rcx
 -	andq		rcx,rax
 -	rolq		$32,rax
 -	movq		db0,rbx
@@ -1162,18 +1155,14 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_asm.S linux-5.4.52-ot/arch/x86/cr
 +	xorq		rbx,rax
 +	movq		rax,db3
  
- 	xorq		rax,rax
+ 	popq		rax
  	popq		rbx
- 	popq		rcx
--#else
--#endif
--	xorl		eax,eax
- 	ret
-+#endif
-diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_glue.c linux-5.4.52-ot/arch/x86/crypto/tresor_glue.c
---- linux-5.4.52-ot/arch/x86/crypto/tresor_glue.c	2020-07-22 00:44:56.048832761 -0700
-+++ linux-5.4.52-ot/arch/x86/crypto/tresor_glue.c	2020-07-23 23:51:17.501180553 -0700
-@@ -60,6 +60,12 @@
+Only in linux-5.10.6-ot/arch/x86/crypto: tresor_asm.S.orig
+Only in linux-5.10.6-ot/arch/x86/crypto: tresor_asm.S.rej
+diff -urp linux-5.10.6-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.10.6-ot/arch/x86/crypto/tresor_glue.c
+--- linux-5.10.6-ot.orig/arch/x86/crypto/tresor_glue.c	2021-01-12 00:03:01.080207178 -0800
++++ linux-5.10.6-ot/arch/x86/crypto/tresor_glue.c	2021-01-12 00:23:35.495297571 -0800
+@@ -60,6 +60,12 @@ asmlinkage void tresor_set_key(const u8
  asmlinkage void tresor_set_key_xts_tweak_128(const u8 *in_key);
  asmlinkage void tresor_encblk_128(u8 *out, const u8 *in);
  asmlinkage void tresor_decblk_128(u8 *out, const u8 *in);
@@ -1186,7 +1175,7 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_glue.c linux-5.4.52-ot/arch/x86/c
  asmlinkage void tresor_encblk_128_xts_tweak(u8 *out, const u8 *in);
  
  
-@@ -75,8 +81,15 @@
+@@ -75,8 +81,15 @@ static int tresor_setdummykey(struct cry
  {
  	struct crypto_aes_ctx *ctx = crypto_tfm_ctx(tfm);
  
@@ -1202,63 +1191,79 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_glue.c linux-5.4.52-ot/arch/x86/c
  
  	ctx->key_length = key_len;
  	return 0;
-@@ -110,10 +123,26 @@
-  */
- void tresor_encrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
- {
-+	struct crypto_aes_ctx *ctx = crypto_tfm_ctx(tfm);
- 	unsigned long irq_flags;
-+	void (*f)(u8 *dst, const u8 *src);
-+
-+	switch (ctx->key_length) {
+@@ -104,17 +117,52 @@ static inline void tresor_epilog(unsigne
+ 	preempt_enable();
+ }
+ 
++void __tresor_encrypt(int key_length, u8 *dst, const u8 *src)
++{
++	unsigned long irq_flags;
++	tresor_prolog(&irq_flags);
++	switch (key_length) {
 +		case AES_KEYSIZE_128:
-+			f=tresor_encblk_128;
++			tresor_encblk_128(dst, src);
 +			break;
 +#ifdef __x86_64__
 +		case AES_KEYSIZE_192:
-+			f=tresor_encblk_192;
++			tresor_encblk_192(dst, src);
 +			break;
 +		case AES_KEYSIZE_256:
-+			f=tresor_encblk_256;
++			tresor_encblk_256(dst, src);
 +			break;
 +#endif
 +	}
++	tresor_epilog(&irq_flags);
++}
++
++void __tresor_decrypt(int key_length, u8 *dst, const u8 *src)
++{
++	tresor_prolog(&irq_flags);
++	switch (key_length) {
++		case AES_KEYSIZE_128:
++			tresor_decblk_128(dst, src);
++			break;
++#ifdef __x86_64__
++		case AES_KEYSIZE_192:
++			tresor_decblk_192(dst, src);
++			break;
++		case AES_KEYSIZE_256:
++			tresor_decblk_256(dst, src);
++			break;
++#endif
++	}
++	tresor_epilog(&irq_flags);
++}
  
- 	tresor_prolog(&irq_flags);
+ /*
+  * Encrypt one block
+  */
+ void tresor_encrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
+ {
+-	unsigned long irq_flags;
+-
+-	tresor_prolog(&irq_flags);
 -	tresor_encblk_128(dst, src);
-+	f(dst, src);
- 	tresor_epilog(&irq_flags);
+-	tresor_epilog(&irq_flags);
++	struct crypto_aes_ctx *ctx = crypto_tfm_ctx(tfm);
++	__tresor_encrypt(ctx->key_length, dst, src);
  }
  
-@@ -123,10 +152,26 @@
+ 
+@@ -123,11 +171,9 @@ void tresor_encrypt(struct crypto_tfm *t
   */
  void tresor_decrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
  {
 +	struct crypto_aes_ctx *ctx = crypto_tfm_ctx(tfm);
  	unsigned long irq_flags;
-+	void (*f)(u8 *dst, const u8 *src);
-+
-+	switch (ctx->key_length) {
-+		case AES_KEYSIZE_128:
-+			f=tresor_decblk_128;
-+			break;
-+#ifdef __x86_64__
-+		case AES_KEYSIZE_192:
-+			f=tresor_decblk_192;
-+			break;
-+		case AES_KEYSIZE_256:
-+			f=tresor_decblk_256;
-+			break;
-+#endif
-+	}
- 
- 	tresor_prolog(&irq_flags);
+-
+-	tresor_prolog(&irq_flags);
 -	tresor_decblk_128(dst, src);
-+	f(dst, src);
- 	tresor_epilog(&irq_flags);
+-	tresor_epilog(&irq_flags);
++	__tresor_decrypt(ctx->key_length, dst, src);
  }
  
-@@ -169,6 +214,8 @@
+ 
+@@ -169,26 +215,25 @@ static int tresor_skcipher_setkey(struct
  
  static int ecb_crypt(struct skcipher_request *req, bool enc)
  {
@@ -1267,37 +1272,31 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_glue.c linux-5.4.52-ot/arch/x86/c
  	struct skcipher_walk walk;
  	const unsigned int bsize = AES_BLOCK_SIZE;
  	unsigned int nbytes;
-@@ -178,15 +225,26 @@
+-	void (*f)(u8 *dst, const u8 *src);
+ 	int err;
+-	unsigned long irq_flags;
  
  	err = skcipher_walk_virt(&walk, req, true);
  
--	fn = (enc) ? tresor_encblk_128 : tresor_decblk_128;
-+	switch (ctx->key_length) {
-+		case AES_KEYSIZE_128:
-+			fn = (enc) ? tresor_encblk_128 : tresor_decblk_128;
-+			break;
-+#ifdef __x86_64__
-+		case AES_KEYSIZE_192:
-+			fn = (enc) ? tresor_encblk_192 : tresor_decblk_192;
-+			break;
-+		case AES_KEYSIZE_256:
-+			fn = (enc) ? tresor_encblk_256 : tresor_decblk_256;
-+			break;
-+#endif
-+	}
-+
- 
- 	tresor_prolog(&irq_flags);
+-	f = (enc) ? tresor_encblk_128 : tresor_decblk_128;
+-
  	while ((nbytes = walk.nbytes)) {
  		u8 *wsrc = walk.src.virt.addr;
  		u8 *wdst = walk.dst.virt.addr;
  
--		fn = (enc) ? tresor_encblk_128 : tresor_decblk_128;
--
  		/* Handle leftovers */
  		do {
- 			fn(wdst, wsrc);
-@@ -216,13 +274,30 @@
+-			tresor_prolog(&irq_flags);
+-			f(wdst, wsrc);
+-			tresor_epilog(&irq_flags);
++			if (enc)
++				__tresor_encrypt(ctx->key_length, wdst, wsrc);
++			else
++				__tresor_decrypt(ctx->key_length, wdst, wsrc);
+ 
+ 			wsrc += bsize;
+ 			wdst += bsize;
+@@ -214,11 +259,12 @@ static int ecb_decrypt(struct skcipher_r
  
  static int cbc_encrypt(struct skcipher_request *req)
  {
@@ -1307,160 +1306,100 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_glue.c linux-5.4.52-ot/arch/x86/c
  	struct skcipher_walk walk;
  	unsigned int nbytes;
  	int err;
-+	void (*f)(u8 *out, const u8 *in);
+-	unsigned long irq_flags;
  
  	err = skcipher_walk_virt(&walk, req, false);
  
-+	switch (ctx->key_length) {
-+		case AES_KEYSIZE_128:
-+			f=tresor_encblk_128;
-+			break;
-+#ifdef __x86_64__
-+		case AES_KEYSIZE_192:
-+			f=tresor_encblk_192;
-+			break;
-+		case AES_KEYSIZE_256:
-+			f=tresor_encblk_256;
-+			break;
-+#endif
-+	}
-+
- 	while ((nbytes = walk.nbytes)) {
- 		u64 *src = (u64 *)walk.src.virt.addr;
- 		u64 *dst = (u64 *)walk.dst.virt.addr;
-@@ -230,7 +305,7 @@
+@@ -229,9 +275,7 @@ static int cbc_encrypt(struct skcipher_r
  
  		do {
- 			*dst = *src ^ *iv;
+ 			u128_xor(dst, src, iv);
+-			tresor_prolog(&irq_flags);
 -			tresor_encblk_128((u8 *)dst, (u8 *)dst);
-+			f((u8 *)dst, (u8 *)dst);
+-			tresor_epilog(&irq_flags);
++			__tresor_encrypt(ctx->key_length, (u8 *)dst, (u8 *)dst);
  			iv = dst;
  			src++;
  			dst++;
-@@ -252,6 +327,7 @@
- 	u64 *src = (u64 *)walk->src.virt.addr;
- 	u64 *dst = (u64 *)walk->dst.virt.addr;
- 	u64 last_iv;
-+	void (*f)(u8 *out, const u8 *in);
+@@ -253,7 +297,6 @@ static unsigned int __cbc_decrypt(struct
+ 	u128 *src = (u128 *)walk->src.virt.addr;
+ 	u128 *dst = (u128 *)walk->dst.virt.addr;
+ 	u128 last_iv;
+-	unsigned long irq_flags;
  
  	/* Start of the last block. */
  	src += nbytes / bsize - 1;
-@@ -259,9 +335,23 @@
+@@ -263,9 +306,7 @@ static unsigned int __cbc_decrypt(struct
  
- 	last_iv = *src;
- 
-+	switch (ctx->key_length) {
-+		case AES_KEYSIZE_128:
-+			f=tresor_decblk_128;
-+			break;
-+#ifdef __x86_64__
-+		case AES_KEYSIZE_192:
-+			f=tresor_decblk_192;
-+			break;
-+		case AES_KEYSIZE_256:
-+			f=tresor_decblk_256;
-+			break;
-+#endif
-+	}
-+
  	/* Handle leftovers */
  	for (;;) {
+-		tresor_prolog(&irq_flags);
 -		tresor_decblk_128((u8 *)dst, (u8 *)src);
-+		f((u8 *)dst, (u8 *)src);
+-		tresor_epilog(&irq_flags);
++		__tresor_decrypt(ctx->key_length, (u8 *)dst, (u8 *)src);
  
  		nbytes -= bsize;
  		if (nbytes < bsize)
-@@ -305,8 +395,23 @@
- 	u8 *src = walk->src.virt.addr;
- 	u8 *dst = walk->dst.virt.addr;
- 	unsigned int nbytes = walk->nbytes;
+@@ -305,13 +346,12 @@ static void tresor_crypt_ctr(const void
+ 	u128 *dst = (u128 *)d;
+ 	const u128 *src = (const u128 *)s;
+ 	unsigned long irq_flags;
 +	void (*f)(u8 *out, const u8 *in);
  
--	tresor_encblk_128(keystream, ctrblk);
-+	switch (ctx->key_length) {
-+		case AES_KEYSIZE_128:
-+			f=tresor_encblk_128;
-+			break;
-+#ifdef __x86_64__
-+		case AES_KEYSIZE_192:
-+			f=tresor_encblk_192;
-+			break;
-+		case AES_KEYSIZE_256:
-+			f=tresor_encblk_256;
-+			break;
-+#endif
-+	}
-+
-+	f(keystream, ctrblk);
- 	crypto_xor_cpy(dst, keystream, src, nbytes);
+ 	le128_to_be128(&ctrblk, iv);
+ 	le128_inc(iv);
  
- 	crypto_inc(ctrblk, AES_BLOCK_SIZE);
-@@ -319,6 +424,21 @@
- 	unsigned int nbytes = walk->nbytes;
- 	u64 *src = (u64 *)walk->src.virt.addr;
- 	u64 *dst = (u64 *)walk->dst.virt.addr;
-+	void (*f)(u8 *out, const u8 *in);
-+
-+	switch (ctx->key_length) {
-+		case AES_KEYSIZE_128:
-+			f=tresor_encblk_128;
-+			break;
-+#ifdef __x86_64__
-+		case AES_KEYSIZE_192:
-+			f=tresor_encblk_192;
-+			break;
-+		case AES_KEYSIZE_256:
-+			f=tresor_encblk_256;
-+			break;
-+#endif
-+	}
+-	tresor_prolog(&irq_flags);
+-	tresor_encblk_128((u8 *)&ctrblk, (u8 *)&ctrblk);
+-	tresor_epilog(&irq_flags);
++	__tresor_encrypt(ctx->key_length, (u8 *)&ctrblk, (u8 *)&ctrblk);
  
- 	/* Handle leftovers */
- 	do {
-@@ -330,7 +450,7 @@
- 		ctrblk = *(u64 *)walk->iv;
- 		be64_add_cpu((__be64 *)walk->iv, 1);
- 
--		tresor_encblk_128((u8 *)&ctrblk, (u8 *)&ctrblk);
-+		f((u8 *)&ctrblk, (u8 *)&ctrblk);
- 		*dst ^= ctrblk;
- 
- 		src += 1;
-@@ -369,7 +489,7 @@
+ 	u128_xor(dst, src, (u128 *)&ctrblk);
+ }
+@@ -333,22 +373,14 @@ static int ctr_crypt(struct skcipher_req
  
  #ifdef CONFIG_X86_64
  /* 32-bit doesn't support 64-bit hardware breakpoint addresses */
--void __tresor_encrypt(struct tresor_ctx *ctx, u8 *dst, const u8 *src) {
-+void __xts_tresor_encrypt(struct tresor_ctx *ctx, u8 *dst, const u8 *src) {
- 	unsigned long irq_flags;
- 
+-void __tresor_encrypt(const void *ctx, u8 *dst, const u8 *src) {
+-	unsigned long irq_flags;
+-
++void __xts_tresor_encrypt(const void *ctx, u8 *dst, const u8 *src) {
  	/* encrypt using the cipher key */
-@@ -378,7 +498,7 @@
- 	tresor_epilog(&irq_flags);
+-	tresor_prolog(&irq_flags);
+-	tresor_encblk_128(dst, src);
+-	tresor_epilog(&irq_flags);
++	__tresor_encrypt(AES_KEYSIZE_128, dst, src);
  }
  
--void __tresor_decrypt(struct tresor_ctx *ctx, u8 *dst, const u8 *src) {
-+void __xts_tresor_decrypt(struct tresor_ctx *ctx, u8 *dst, const u8 *src) {
- 	unsigned long irq_flags;
- 
+-void __tresor_decrypt(const void *ctx, u8 *dst, const u8 *src) {
+-	unsigned long irq_flags;
+-
++void __xts_tresor_decrypt(const void *ctx, u8 *dst, const u8 *src) {
  	/* decrypt using the cipher key */
-@@ -427,13 +547,13 @@
- static void tresor_xts_enc(void *ctx, u128 *dst, const u128 *src, le128 *iv)
- {
- 	glue_xts_crypt_128bit_one(ctx, dst, src, iv,
--				  GLUE_FUNC_CAST(__tresor_encrypt));
-+				  GLUE_FUNC_CAST(__xts_tresor_encrypt));
+-	tresor_prolog(&irq_flags);
+-	tresor_decblk_128(dst, src);
+-	tresor_epilog(&irq_flags);
++	__tresor_decrypt(AES_KEYSIZE_128, dst, src);
  }
  
- static void tresor_xts_dec(void *ctx, u128 *dst, const u128 *src, le128 *iv)
+ void __xts_tweak_tresor_encrypt(const void *ctx, u8 *dst, const u8 *src) {
+@@ -391,13 +423,13 @@ static int xts_tresor_setkey(struct cryp
+ static void tresor_xts_enc(const void *ctx, u8 *dst, const u8 *src, le128 *iv)
  {
  	glue_xts_crypt_128bit_one(ctx, dst, src, iv,
--				  GLUE_FUNC_CAST(__tresor_decrypt));
-+				  GLUE_FUNC_CAST(__xts_tresor_decrypt));
+-				  __tresor_encrypt);
++				  __xts_tresor_encrypt);
+ }
+ 
+ static void tresor_xts_dec(const void *ctx, u8 *dst, const u8 *src, le128 *iv)
+ {
+ 	glue_xts_crypt_128bit_one(ctx, dst, src, iv,
+-				  __tresor_decrypt);
++				  __xts_tresor_decrypt);
  }
  
  static const struct common_glue_ctx tresor_enc_xts = {
-@@ -493,7 +613,11 @@
+@@ -457,7 +489,11 @@ static struct crypto_alg tresor_alg = {
  	.cra_u	= {
  		.cipher	= {
  			.cia_min_keysize	= AES_MIN_KEY_SIZE,
@@ -1472,7 +1411,7 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_glue.c linux-5.4.52-ot/arch/x86/c
  			.cia_setkey		= tresor_setdummykey,
  			.cia_encrypt		= tresor_encrypt,
  			.cia_decrypt		= tresor_decrypt
-@@ -513,7 +637,11 @@
+@@ -477,7 +513,11 @@ static struct skcipher_alg tresor_skciph
  			.cra_module		= THIS_MODULE,
  		},
  		.min_keysize	= AES_MIN_KEY_SIZE,
@@ -1484,7 +1423,7 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_glue.c linux-5.4.52-ot/arch/x86/c
  		.setkey		= tresor_skcipher_setkey,
  		.encrypt	= ecb_encrypt,
  		.decrypt	= ecb_decrypt,
-@@ -528,7 +656,11 @@
+@@ -492,7 +532,11 @@ static struct skcipher_alg tresor_skciph
  			.cra_module		= THIS_MODULE,
  		},
  		.min_keysize	= AES_MIN_KEY_SIZE,
@@ -1496,7 +1435,7 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_glue.c linux-5.4.52-ot/arch/x86/c
  		.ivsize		= AES_BLOCK_SIZE,
  		.setkey		= tresor_skcipher_setkey,
  		.encrypt	= cbc_encrypt,
-@@ -545,7 +677,7 @@
+@@ -509,7 +553,7 @@ static struct skcipher_alg tresor_skciph
  			.cra_module		= THIS_MODULE,
  		},
  		.min_keysize	= AES_MIN_KEY_SIZE,
@@ -1505,3 +1444,5 @@ diff -u linux-5.4.52-ot/arch/x86/crypto/tresor_glue.c linux-5.4.52-ot/arch/x86/c
  		.ivsize		= AES_BLOCK_SIZE,
  		.chunksize	= AES_BLOCK_SIZE,
  		.setkey		= tresor_skcipher_setkey,
+Only in linux-5.10.6-ot/arch/x86/crypto: tresor_glue.c.orig
+Only in linux-5.10.6-ot/arch/x86/crypto: tresor_glue.c.rej

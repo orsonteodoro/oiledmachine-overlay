@@ -1,0 +1,47 @@
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date: Jan 11, 2021
+
+Limits tests if using only 128-bit AES only (aka i686 patch).
+It also limits testing to only 256-bit XTS only.
+
+This allows comprehensive tests to continue and reports if if test passed.
+Results viewable via dmesg.
+
+----
+diff -urp linux-5.10.6-ot.orig/crypto/testmgr.c linux-5.10.6-ot/crypto/testmgr.c
+--- linux-5.10.6-ot.orig/crypto/testmgr.c	2021-01-11 05:22:43.133678812 -0800
++++ linux-5.10.6-ot/crypto/testmgr.c	2021-01-11 21:30:25.698471982 -0800
+@@ -2762,6 +2762,19 @@ static int test_skcipher_vec_cfg(const c
+ 					    CRYPTO_TFM_REQ_FORBID_WEAK_KEYS);
+ #ifdef CONFIG_CRYPTO_TRESOR
+ 	if (strstr(driver, "tresor")) {
++		/* continue tests so we can see breakage */
++		if (strstr(driver, "xts") && vec->klen > 32) {
++			pr_info("alg: skcipher: vec->klen=%d for %s is skipped and unsupported.", vec->klen, driver);
++			return 0;
++		}
++
++		if (!strstr(driver, "xts") && vec->klen != 16) {
++			pr_info("alg: skcipher: vec->klen=%d for %s is skipped and unsupported.", vec->klen, driver);
++			return 0;
++		}
++
++		pr_info("alg: skcipher: testing: vec->klen=%d for %s.", vec->klen, driver);
++
+ 		tresor_setkey(vec->key);
+ 		if (strstr(driver, "xts"))
+ 			tresor_setkey_xts_tweak(vec->key + vec->klen/2);
+@@ -2902,6 +2915,12 @@ static int test_skcipher_vec_cfg(const c
+ 		return -EINVAL;
+ 	}
+ 
++#ifdef CONFIG_CRYPTO_TRESOR
++	if (strstr(driver, "tresor")) {
++		pr_info("alg: skcipher: passed %s: vec->klen=%d for %s.", vec_name, vec->klen, driver);
++	}
++#endif
++
+ 	return 0;
+ }
+ 
+Binary files linux-5.10.6-ot.orig/crypto/testmgr.o and linux-5.10.6-ot/crypto/testmgr.o differ

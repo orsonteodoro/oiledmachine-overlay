@@ -1,0 +1,36 @@
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date: Jan 11, 2021
+
+Limits tests to only 256-bit XTS only and shows if TRESOR tests passed via dmesg.
+
+----
+--- a/crypto/testmgr.c.orig	2021-01-12 01:12:55.147101978 -0800
++++ b/crypto/testmgr.c	2021-01-12 01:15:47.833830039 -0800
+@@ -2762,6 +2762,14 @@ static int test_skcipher_vec_cfg(const c
+ 					    CRYPTO_TFM_REQ_FORBID_WEAK_KEYS);
+ #ifdef CONFIG_CRYPTO_TRESOR
+ 	if (strstr(driver, "tresor")) {
++		/* continue tests so we can see breakage */
++		if (strstr(driver, "xts") && vec->klen > 32) {
++			pr_info("alg: skcipher: vec->klen=%d for %s is skipped and unsupported.", vec->klen, driver);
++			return 0;
++		}
++
++		pr_info("alg: skcipher: testing: vec->klen=%d for %s.", vec->klen, driver);
++
+ 		tresor_setkey(vec->key);
+ 		if (strstr(driver, "xts"))
+ 			tresor_setkey_xts_tweak(vec->key + vec->klen/2);
+@@ -2902,6 +2910,12 @@ static int test_skcipher_vec_cfg(const c
+ 		return -EINVAL;
+ 	}
+ 
++#ifdef CONFIG_CRYPTO_TRESOR
++	if (strstr(driver, "tresor")) {
++		pr_info("alg: skcipher: passed %s: vec->klen=%d for %s.", vec_name, vec->klen, driver);
++	}
++#endif
++
+ 	return 0;
+ }
+ 

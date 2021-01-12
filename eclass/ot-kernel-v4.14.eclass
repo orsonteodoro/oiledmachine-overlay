@@ -160,6 +160,14 @@ function ot-kernel_apply_tresor_fixes() {
 
 	_dpatch "${PATCH_OPS}" \
 		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c.patch"
+
+	if use tresor_x86_64 || use tresor_i686 ; then
+		_dpatch "${PATCH_OPS} -F 3" \
+"${FILESDIR}/tresor-testmgr-limit-modes-of-operation-to-128-bit-key-support-for-linux-5.10.patch"
+	else
+		_dpatch "${PATCH_OPS} -F 3" \
+"${FILESDIR}/tresor-testmgr-limit-to-xts-256-bit-key-support-for-linux-5.10.patch"
+	fi
 }
 
 # @FUNCTION: ot-kernel_pkg_postinst_cb

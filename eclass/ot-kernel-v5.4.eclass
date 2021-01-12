@@ -267,10 +267,25 @@ function ot-kernel_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c.patch"
 	if use tresor_x86_64-256-bit-key-support ; then
 		if use tresor_x86_64 || use tresor_i686 ; then
-			die "tresor-256-bit-aes-support-i686-v2-for-5.4.patch is untested.  Return back when it is finished"
+			die \
+"${FILESDIR}/tresor-256-bit-aes-support-i686-v2-for-5.4.patch is untested.  \
+Return back when it is finished."
 			_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/tresor-256-bit-aes-support-i686-v2-for-5.4.patch"
 		fi
+	fi
+
+	if ! use tresor_x86_64-256-bit-key-support ; then
+		if use tresor_x86_64 || use tresor_i686 ; then
+			_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/tresor-testmgr-limit-modes-of-operation-to-128-bit-key-support-for-linux-5.10.patch"
+		else
+			_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/tresor-testmgr-limit-to-xts-256-bit-key-support-for-linux-5.10.patch"
+		fi
+	else
+		_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/tresor-testmgr-limit-to-xts-256-bit-key-support-for-linux-5.10.patch"
 	fi
 }
 
