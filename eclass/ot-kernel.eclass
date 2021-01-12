@@ -114,17 +114,16 @@ SLOT=${SLOT:=${PV}}
 K_TAG="-ot"
 S="${WORKDIR}/linux-${PV}${K_TAG}"
 
-inherit check-reqs toolchain-funcs
-inherit ot-kernel-cve
+inherit check-reqs ot-kernel-cve toolchain-funcs
 
 if [[ -n "${K_LIVE_PATCHABLE}" && "${K_LIVE_PATCHABLE}" == "1" ]] ; then
-RDEPEND+="dev-vcs/git
-	  sys-kernel/kpatch
-	  sys-kernel/kpatch-daemon"
+RDEPEND+=" dev-vcs/git
+	   sys-kernel/kpatch
+	   sys-kernel/kpatch-daemon"
 fi
 
-DEPEND+=" dev-util/patchutils
-	  sys-apps/grep[pcre]"
+BDEPEND+=" dev-util/patchutils
+	   sys-apps/grep[pcre]"
 
 EXPORT_FUNCTIONS pkg_pretend pkg_setup src_unpack src_compile src_install \
 		pkg_postinst
@@ -552,7 +551,7 @@ function ot-kernel_pkg_setup() {
 	fi
 
 	if has tresor ${IUSE_EFFECTIVE} ; then
-		if use tresor ; then
+		if [[ -z "${OT_KERNEL_DEVELOPER}" ]] && use tresor ; then
 			if use tresor_i686 && ! grep -F -q "sse2" /proc/cpuinfo ; then
 				if ! grep -F -q "sse2" /proc/cpuinfo ; then
 					die "tresor_i686 requires SSE2 CPU support"

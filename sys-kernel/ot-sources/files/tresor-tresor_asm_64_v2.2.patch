@@ -1,4 +1,7 @@
 Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
+
+v2.2: Changed prolog and epilog to use rsi and rdi directly with cleanups
+      Restore rax tresor_set_key before and after in x86_64.
 v2.1: Change from #if __x86_64__ to #ifdef ___x86_64__
 v2: Merge tresor-fix-addressing-mode-64-bit-index.patch into this.
     Used __x86_64__ to allow tresor_asm.S to be compiled in i686 or x86_64.
@@ -7,8 +10,8 @@ v1.1: Created tresor-fix-addressing-mode-64-bit-index.patch.
       Updated with 64 bit indexes.
 v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
 ----
---- a/arch/x86/crypto/tresor_asm.S	2020-06-30 21:14:38.462355830 -0700
-+++ b/arch/x86/crypto/tresor_asm.S	2020-06-30 21:17:10.619231743 -0700
+--- linux-4.14.214-ot.orig/arch/x86/crypto/tresor_asm.S	2021-01-11 21:48:46.896076279 -0800
++++ linux-4.14.214-ot/arch/x86/crypto/tresor_asm.S	2021-01-11 21:55:21.264717897 -0800
 @@ -1,6 +1,6 @@
  /***************************************************************************
   *
@@ -44,7 +47,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  
  /***************************************************************************
   *  				DATA SEGMENT
-@@ -148,6 +159,21 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+@@ -148,6 +159,19 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
  
  /* function prologue */ 
  .macro prolog
@@ -52,21 +55,19 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
 +	/* enter */
 +	pushq		rbp
 +	movq		rsp,rbp
-+	pushq		rsp
 +	pushq		rax
++	pushq		rbx
 +	pushq		rcx
 +	pushq		rdx
-+	pushq		rbx
-+	pushq		rbp
-+	pushq		rsi /* in */
-+	pushq		rdi /* out */
++	pushq		rdi
++	pushq		rsi
 +	/* get input */
-+	movdqu		0(rsi),rstate
++	movdqu		0(rsi),rstate /* in */
 +#else
  	/* enter */
  	push		ebp
  	movl		esp,ebp
-@@ -155,13 +181,19 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+@@ -155,13 +179,25 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
  	/* get input */
  	movl		12(ebp),eax
  	movdqu		0(eax),rstate
@@ -77,8 +78,14 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  .macro epilog
  	/* write output */
 +#ifdef __x86_64__
-+	movq		-64(rbp),rax
-+	movdqu		rstate,0(rax)
++	popq		rsi
++	popq		rdi
++	popq		rdx
++	popq		rcx
++	popq		rbx
++	popq		rax
++	popq		rbp
++	movdqu		rstate,0(rdi) /* out */
 +#else
  	movl		8(ebp),eax
  	movdqu		rstate,0(eax)
@@ -86,20 +93,11 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  	/* reset XMM registers */
  	pxor		%xmm0,%xmm0
  	pxor		%xmm1,%xmm1
-@@ -181,8 +213,20 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+@@ -181,8 +217,11 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
  	pxor		%mm6,%mm6
  	pxor		%mm7,%mm7
  	/* leave */
 +#ifdef __x86_64__
-+	popq		rdi
-+	popq		rsi
-+	popq		rbp
-+	popq		rbx
-+	popq		rdx
-+	popq		rcx
-+	popq		rax
-+	popq		rsp
-+	popq		rbp
 +#else
  	popa
  	pop		ebp
@@ -107,7 +105,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  	ret
  .endm
  
-@@ -202,8 +246,21 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+@@ -202,8 +241,21 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
  	pxor		rhelp,\sse
  .endm
  
@@ -130,7 +128,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  	movl		\dbg0,eax
  	movd		eax,\sse
  	movl		\dbg1,eax
-@@ -215,6 +272,7 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+@@ -215,6 +267,7 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
  	pslldq		$8,rhelp
  	pxor		rhelp,\sse
  	movl		\dbg3,eax
@@ -138,7 +136,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  	movd		eax,rhelp
  	pslldq		$12,rhelp
  	pxor		rhelp,\sse
-@@ -240,11 +298,19 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+@@ -240,11 +293,19 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
  	psrldq		$\index,rhelp	
  	movd		rhelp,eax
  	andl		$0x000000ff,eax
@@ -158,7 +156,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  .endm
  
  /* generate next round key */
-@@ -263,7 +329,11 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+@@ -263,7 +324,11 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
  	ks_box		14,\rk,0
  	shl		$8,edx
  	ks_box		13,\rk,0
@@ -170,7 +168,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  	movd		edx,rhelp
  	pxor		rhelp,\rk
  	/*
-@@ -289,7 +359,11 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+@@ -289,7 +354,11 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
  	psrldq		$\r,rhelp
  	movd		rhelp,eax
  	andl		$0x000000ff,eax
@@ -182,7 +180,7 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  	rol		$\l,eax
  	.if \init
  		movl	eax,\reg
-@@ -337,11 +411,19 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+@@ -337,11 +406,19 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
  	psrldq		$\r,rhelp
  	movd		rhelp,eax
  	andl		$0x000000ff,eax
@@ -202,11 +200,12 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
  .endm
  
  /* reg = tab[0][state[i]] ^ tab[1][state[j]] 
-@@ -480,6 +562,16 @@ tresor_decblk_128:
+@@ -480,6 +557,18 @@ tresor_decblk_128:
  
  /* void tresor_set_key(const u8 *in_key) */
  tresor_set_key:
 +#ifdef __x86_64__
++	pushq		rax
 +	movl		0(rdi),eax
 +	movq		rax,db0
 +	movl		4(rdi),eax
@@ -215,14 +214,14 @@ v1: Update prolog, epilog, tresor_set_key, dbg_to_sse for x86_64.
 +	movq		rax,db2
 +	movl		12(rdi),eax
 +	movq		rax,db3
++	popq		rax
 +#else
  	movl		4(esp),edx
  	movl		0(edx),eax
  	movl		eax,db0
-@@ -489,5 +581,6 @@ tresor_set_key:
- 	movl		eax,db2
+@@ -490,4 +579,5 @@ tresor_set_key:
  	movl		12(edx),eax
  	movl		eax,db3
-+#endif
  	xorl		eax, eax
++#endif
  	ret

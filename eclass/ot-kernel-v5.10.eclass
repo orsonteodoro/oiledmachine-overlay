@@ -211,7 +211,7 @@ function ot-kernel_apply_tresor_fixes() {
 
 	if use tresor_x86_64 || use tresor_i686 ; then
 		_dpatch "${PATCH_OPS}" \
-			"${FILESDIR}/tresor-tresor_asm_64_v2.1.patch"
+			"${FILESDIR}/tresor-tresor_asm_64_v2.2.patch"
 		_dpatch "${PATCH_OPS}" \
 			"${FILESDIR}/tresor-tresor_key_64.patch"
 	fi
@@ -241,20 +241,17 @@ function ot-kernel_apply_tresor_fixes() {
 
 	if use tresor_x86_64 || use tresor_i686 ; then
 		_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-i686-v2.1.patch"
-		_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/tresor-glue-remove-xts-casts-and-api-updates-for-5.6-i686.patch"
+"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-i686-v2.2.patch"
 	else
 		_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-aesni-v2.1.patch"
-		_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/tresor-glue-remove-xts-casts-and-api-updates-for-5.6-aesni.patch"
+"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-aesni-v2.2.patch"
 	fi
 
 	_dpatch "${PATCH_OPS}" \
 		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c.patch"
 	if use tresor_x86_64-256-bit-key-support ; then
 		if use tresor_x86_64 || use tresor_i686 ; then
+			die "tresor-256-bit-aes-support-i686-v2-for-5.7.patch  is untested.  Return back when it is finished"
 			_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/tresor-256-bit-aes-support-i686-v2-for-5.7.patch"
 		fi

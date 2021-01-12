@@ -14,125 +14,6 @@
 # The ot-kernel-v4.14 eclass defines specific applicable patching for the
 # 4.14.x linux kernel.
 
-# tresor passes cipher but not skcipher in self test (/proc/crypto); there is
-# a error in dmesg
-
-# [    4.036411] alg: skcipher: setkey failed on test 2 for ecb(tresor-driver): flags=200000
-# [    4.038166] alg: skcipher: Failed to load transform for ecb(tresor): -2
-# [    4.042266] alg: skcipher: setkey failed on test 3 for cbc(tresor-driver): flags=200000
-# [    4.043783] alg: skcipher: Failed to load transform for cbc(tresor): -2
-
-# errors from dmesg in 4.9
-
-# [    3.355692] alg: skcipher: setkey failed on test 2 for ecb(tresor-driver): flags=200000
-# [    3.357297] alg: skcipher: Failed to load transform for ecb(tresor): -2
-# [    3.361164] alg: skcipher: setkey failed on test 3 for cbc(tresor-driver): flags=200000
-
-
-
-# some of these wont appear unless you use them in userspace with crypsetup
-# benchmark results for /proc/crypto in 4.9
-
-# name         : cbc(tresor)
-# driver       : cbc(tresor-driver)
-# module       : kernel
-# priority     : 100
-# refcnt       : 1
-# selftest     : passed
-# internal     : no
-# type         : blkcipher
-# blocksize    : 16
-# min keysize  : 16
-# max keysize  : 16
-# ivsize       : 16
-# geniv        : <default>
-
-# name         : tresor
-# driver       : tresor-driver
-# module       : kernel
-# priority     : 100
-# refcnt       : 1
-# selftest     : passed
-# internal     : no
-# type         : cipher
-# blocksize    : 16
-# min keysize  : 16
-# max keysize  : 16
-
-# name         : xts(tresor)
-# driver       : xts(tresor-driver)
-# module       : kernel
-# priority     : 100
-# refcnt       : 1
-# selftest     : passed
-# internal     : no
-# type         : blkcipher
-# blocksize    : 16
-# min keysize  : 32
-# max keysize  : 32
-# ivsize       : 16
-# geniv        : <default>
-
-# name         : ecb(tresor)
-# driver       : ecb(tresor-driver)
-# module       : kernel
-# priority     : 100
-# refcnt       : 1
-# selftest     : passed
-# internal     : no
-# type         : blkcipher
-# blocksize    : 16
-# min keysize  : 16
-# max keysize  : 16
-# ivsize       : 0
-# geniv        : <default>
-
-# results from cryptsetup
-
-# Results for 4.9.182
-# cryptsetup benchmark -c tresor-ecb -s 128
-# Tests are approximate using memory only (no storage IO).
-# Algorithm |       Key |      Encryption |      Decryption
-# tresor-ecb        128b        15.1 MiB/s        10.0 MiB/s
-
-# cryptsetup benchmark -c tresor-cbc -s 128
-# Tests are approximate using memory only (no storage IO).
-# Algorithm |       Key |      Encryption |      Decryption
-# tresor-cbc        128b        14.8 MiB/s        10.0 MiB/s
-
-# cryptsetup benchmark -c aes-cbc -s 128
-# Tests are approximate using memory only (no storage IO).
-# Algorithm |       Key |      Encryption |      Decryption
-#    aes-cbc        128b        75.3 MiB/s        83.6 MiB/s
-
-# cryptsetup benchmark -c aes-ecb -s 128
-# Tests are approximate using memory only (no storage IO).
-# Algorithm |       Key |      Encryption |      Decryption
-#    aes-ecb        128b        90.5 MiB/s        90.5 MiB/s
-
-
-# Results for 4.9.199
-# cryptsetup benchmark -c tresor-ecb -s 128
-# Tests are approximate using memory only (no storage IO).
-# Algorithm |       Key |      Encryption |      Decryption
-# tresor-ecb        128b        26.0 MiB/s        19.0 MiB/s
-
-# cryptsetup benchmark -c tresor-cbc -s 128
-# Tests are approximate using memory only (no storage IO).
-# Algorithm |       Key |      Encryption |      Decryption
-# tresor-cbc        128b        25.4 MiB/s        18.8 MiB/s
-
-# cryptsetup benchmark -c aes-cbc -s 128
-# Tests are approximate using memory only (no storage IO).
-# Algorithm |       Key |      Encryption |      Decryption
-#    aes-cbc        128b       130.6 MiB/s       157.8 MiB/s
-
-# cryptsetup benchmark -c aes-ecb -s 128
-# Tests are approximate using memory only (no storage IO).
-# Algorithm |       Key |      Encryption |      Decryption
-#    aes-ecb        128b       158.5 MiB/s       177.5 MiB/s
-
-
 DISABLE_DEBUG_V="1.1"
 EXTRAVERSION="-ot"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
@@ -262,7 +143,7 @@ function ot-kernel_apply_tresor_fixes() {
 
 	if use tresor_x86_64 || use tresor_i686 ; then
 		_dpatch "${PATCH_OPS}" \
-			"${FILESDIR}/tresor-tresor_asm_64_v2.1.patch"
+			"${FILESDIR}/tresor-tresor_asm_64_v2.2.patch"
 		_dpatch "${PATCH_OPS}" \
 			"${FILESDIR}/tresor-tresor_key_64.patch"
 	fi
@@ -271,18 +152,11 @@ function ot-kernel_apply_tresor_fixes() {
 		_dpatch "${PATCH_OPS} -F 3" "${FILESDIR}/wait.patch"
 	#fi
 
-	# for 5.x series uncomment below
-	#_dpatch "${PATCH_OPS}" \
-	#	"${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
-
 	# for 5.x series and 4.20 use tresor-testmgr-linux-x.y.patch
 	local fuzz_factor=0
 	[[ "${path}" =~ "${TRESOR_AESNI_FN}" ]] && fuzz_factor=3
         _dpatch "${PATCH_OPS} -F ${fuzz_factor}" \
 		"${FILESDIR}/tresor-testmgr-linux-4.14.127.patch"
-
-        #_dpatch "${PATCH_OPS}" \
-	#	"${FILESDIR}/tresor-get_ds-to-kernel_ds.patch"
 
 	_dpatch "${PATCH_OPS}" \
 		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c.patch"
