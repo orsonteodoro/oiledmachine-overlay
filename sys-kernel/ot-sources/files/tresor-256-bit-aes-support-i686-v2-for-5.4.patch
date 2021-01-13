@@ -24,9 +24,9 @@ todo: Check sanitation of key or temporary variables at the end of macro and
       function.
 
 ----
-diff -urp linux-5.10.6-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.10.6-ot/arch/x86/crypto/tresor_asm.S
---- linux-5.10.6-ot.orig/arch/x86/crypto/tresor_asm.S	2021-01-12 22:07:07.696392152 -0800
-+++ linux-5.10.6-ot/arch/x86/crypto/tresor_asm.S	2021-01-12 22:12:20.696922164 -0800
+diff -urp linux-5.4.88-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.88-ot/arch/x86/crypto/tresor_asm.S
+--- linux-5.4.88-ot.orig/arch/x86/crypto/tresor_asm.S	2021-01-12 15:12:17.206694065 -0800
++++ linux-5.4.88-ot/arch/x86/crypto/tresor_asm.S	2021-01-12 15:18:45.245500623 -0800
 @@ -1,6 +1,7 @@
  /***************************************************************************
   *
@@ -1157,9 +1157,9 @@ diff -urp linux-5.10.6-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.10.6-ot/arch
  
  	popq		rax
  	popq		rbx
-diff -urp linux-5.10.6-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.10.6-ot/arch/x86/crypto/tresor_glue.c
---- linux-5.10.6-ot.orig/arch/x86/crypto/tresor_glue.c	2021-01-12 22:07:07.700392311 -0800
-+++ linux-5.10.6-ot/arch/x86/crypto/tresor_glue.c	2021-01-12 22:12:34.541479872 -0800
+diff -urp linux-5.4.88-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.88-ot/arch/x86/crypto/tresor_glue.c
+--- linux-5.4.88-ot.orig/arch/x86/crypto/tresor_glue.c	2021-01-12 15:12:17.206694065 -0800
++++ linux-5.4.88-ot/arch/x86/crypto/tresor_glue.c	2021-01-12 15:24:06.761941620 -0800
 @@ -60,6 +60,12 @@ asmlinkage void tresor_set_key(const u8
  asmlinkage void tresor_set_key_xts_tweak_128(const u8 *in_key);
  asmlinkage void tresor_encblk_128(u8 *out, const u8 *in);
@@ -1189,7 +1189,7 @@ diff -urp linux-5.10.6-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.10.6-ot/arc
  
  	ctx->key_length = key_len;
  	return 0;
-@@ -104,17 +117,53 @@ static inline void tresor_epilog(unsigne
+@@ -104,17 +117,52 @@ static inline void tresor_epilog(unsigne
  	preempt_enable();
  }
  
@@ -1215,7 +1215,6 @@ diff -urp linux-5.10.6-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.10.6-ot/arc
 +
 +void __tresor_decrypt(int key_length, u8 *dst, const u8 *src)
 +{
-+	unsigned long irq_flags;
 +	tresor_prolog(&irq_flags);
 +	switch (key_length) {
 +		case AES_KEYSIZE_128:
@@ -1248,16 +1247,16 @@ diff -urp linux-5.10.6-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.10.6-ot/arc
  }
  
  
-@@ -123,11 +172,8 @@ void tresor_encrypt(struct crypto_tfm *t
+@@ -123,11 +171,9 @@ void tresor_encrypt(struct crypto_tfm *t
   */
  void tresor_decrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
  {
--	unsigned long irq_flags;
++	struct crypto_aes_ctx *ctx = crypto_tfm_ctx(tfm);
+ 	unsigned long irq_flags;
 -
 -	tresor_prolog(&irq_flags);
 -	tresor_decblk_128(dst, src);
 -	tresor_epilog(&irq_flags);
-+	struct crypto_aes_ctx *ctx = crypto_tfm_ctx(tfm);
 +	__tresor_decrypt(ctx->key_length, dst, src);
  }
  
@@ -1339,10 +1338,10 @@ diff -urp linux-5.10.6-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.10.6-ot/arc
  
  		nbytes -= bsize;
  		if (nbytes < bsize)
-@@ -304,14 +345,11 @@ static void tresor_crypt_ctr(const void
+@@ -302,14 +343,11 @@ static int cbc_decrypt(struct skcipher_r
+ static void tresor_crypt_ctr(void *ctx, u128 *dst, const u128 *src, le128 *iv)
+ {
  	be128 ctrblk;
- 	u128 *dst = (u128 *)d;
- 	const u128 *src = (const u128 *)s;
 -	unsigned long irq_flags;
  
  	le128_to_be128(&ctrblk, iv);
@@ -1351,15 +1350,15 @@ diff -urp linux-5.10.6-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.10.6-ot/arc
 -	tresor_prolog(&irq_flags);
 -	tresor_encblk_128((u8 *)&ctrblk, (u8 *)&ctrblk);
 -	tresor_epilog(&irq_flags);
-+	__tresor_encrypt(((struct crypto_aes_ctx *)ctx)->key_length, (u8 *)&ctrblk, (u8 *)&ctrblk);
++	__tresor_encrypt(((struct tresor_ctx *)ctx)->key_length, (u8 *)&ctrblk, (u8 *)&ctrblk);
  
  	u128_xor(dst, src, (u128 *)&ctrblk);
  }
-@@ -333,22 +371,14 @@ static int ctr_crypt(struct skcipher_req
+@@ -331,22 +369,14 @@ static int ctr_crypt(struct skcipher_req
  
  #ifdef CONFIG_X86_64
  /* 32-bit doesn't support 64-bit hardware breakpoint addresses */
--void __tresor_encrypt(const void *ctx, u8 *dst, const u8 *src) {
+-void __tresor_encrypt(struct tresor_ctx *ctx, u8 *dst, const u8 *src) {
 -	unsigned long irq_flags;
 -
 +void __xts_tresor_encrypt(const void *ctx, u8 *dst, const u8 *src) {
@@ -1370,7 +1369,7 @@ diff -urp linux-5.10.6-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.10.6-ot/arc
 +	__tresor_encrypt(AES_KEYSIZE_128, dst, src);
  }
  
--void __tresor_decrypt(const void *ctx, u8 *dst, const u8 *src) {
+-void __tresor_decrypt(struct tresor_ctx *ctx, u8 *dst, const u8 *src) {
 -	unsigned long irq_flags;
 -
 +void __xts_tresor_decrypt(const void *ctx, u8 *dst, const u8 *src) {
@@ -1381,24 +1380,24 @@ diff -urp linux-5.10.6-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.10.6-ot/arc
 +	__tresor_decrypt(AES_KEYSIZE_128, dst, src);
  }
  
- void __xts_tweak_tresor_encrypt(const void *ctx, u8 *dst, const u8 *src) {
-@@ -391,13 +421,13 @@ static int xts_tresor_setkey(struct cryp
- static void tresor_xts_enc(const void *ctx, u8 *dst, const u8 *src, le128 *iv)
+ void __xts_tweak_tresor_encrypt(struct tresor_ctx *ctx, u8 *dst, const u8 *src) {
+@@ -389,13 +419,13 @@ static int xts_tresor_setkey(struct cryp
+ static void tresor_xts_enc(void *ctx, u128 *dst, const u128 *src, le128 *iv)
  {
  	glue_xts_crypt_128bit_one(ctx, dst, src, iv,
--				  __tresor_encrypt);
+-				  GLUE_FUNC_CAST(__tresor_encrypt));
 +				  __xts_tresor_encrypt);
  }
  
- static void tresor_xts_dec(const void *ctx, u8 *dst, const u8 *src, le128 *iv)
+ static void tresor_xts_dec(void *ctx, u128 *dst, const u128 *src, le128 *iv)
  {
  	glue_xts_crypt_128bit_one(ctx, dst, src, iv,
--				  __tresor_decrypt);
+-				  GLUE_FUNC_CAST(__tresor_decrypt));
 +				  __xts_tresor_decrypt);
  }
  
  static const struct common_glue_ctx tresor_enc_xts = {
-@@ -457,7 +487,11 @@ static struct crypto_alg tresor_alg = {
+@@ -455,7 +485,11 @@ static struct crypto_alg tresor_alg = {
  	.cra_u	= {
  		.cipher	= {
  			.cia_min_keysize	= AES_MIN_KEY_SIZE,
@@ -1410,7 +1409,7 @@ diff -urp linux-5.10.6-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.10.6-ot/arc
  			.cia_setkey		= tresor_setdummykey,
  			.cia_encrypt		= tresor_encrypt,
  			.cia_decrypt		= tresor_decrypt
-@@ -477,7 +511,11 @@ static struct skcipher_alg tresor_skciph
+@@ -475,7 +509,11 @@ static struct skcipher_alg tresor_skciph
  			.cra_module		= THIS_MODULE,
  		},
  		.min_keysize	= AES_MIN_KEY_SIZE,
@@ -1422,7 +1421,7 @@ diff -urp linux-5.10.6-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.10.6-ot/arc
  		.setkey		= tresor_skcipher_setkey,
  		.encrypt	= ecb_encrypt,
  		.decrypt	= ecb_decrypt,
-@@ -492,7 +530,11 @@ static struct skcipher_alg tresor_skciph
+@@ -490,7 +528,11 @@ static struct skcipher_alg tresor_skciph
  			.cra_module		= THIS_MODULE,
  		},
  		.min_keysize	= AES_MIN_KEY_SIZE,
@@ -1434,7 +1433,7 @@ diff -urp linux-5.10.6-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.10.6-ot/arc
  		.ivsize		= AES_BLOCK_SIZE,
  		.setkey		= tresor_skcipher_setkey,
  		.encrypt	= cbc_encrypt,
-@@ -509,7 +551,7 @@ static struct skcipher_alg tresor_skciph
+@@ -507,7 +549,7 @@ static struct skcipher_alg tresor_skciph
  			.cra_module		= THIS_MODULE,
  		},
  		.min_keysize	= AES_MIN_KEY_SIZE,
@@ -1443,3 +1442,5 @@ diff -urp linux-5.10.6-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.10.6-ot/arc
  		.ivsize		= AES_BLOCK_SIZE,
  		.chunksize	= AES_BLOCK_SIZE,
  		.setkey		= tresor_skcipher_setkey,
+Only in linux-5.4.88-ot/arch/x86/crypto: tresor_glue.c.orig
+Only in linux-5.4.88-ot/arch/x86/crypto: tresor_glue.c.rej

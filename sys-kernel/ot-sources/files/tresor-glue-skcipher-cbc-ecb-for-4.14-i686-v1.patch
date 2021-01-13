@@ -1,0 +1,341 @@
+Patch Status: Testing in 4.14.  Tested working in 5.10.
+Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Date: Jan 12, 2021
+
+This is a backport of the cumulative patches from 5.10 series limited to CBC and ECB.
+The tresor only tested against these modes of operation in i686.
+-----
+diff -urp linux-4.14.214-ot.orig/arch/x86/crypto/tresor_glue.c linux-4.14.214-ot/arch/x86/crypto/tresor_glue.c
+--- linux-4.14.214-ot.orig/arch/x86/crypto/tresor_glue.c	2021-01-12 07:43:17.945953537 -0800
++++ linux-4.14.214-ot/arch/x86/crypto/tresor_glue.c	2021-01-12 07:45:27.387074505 -0800
+@@ -5,6 +5,18 @@
+  * Copyright (C) 2012	Hans Spath <tresor@hans-spath.de>
+  * Copyright (C) 2012	Johannes Goetzfried <johannes@jgoetzfried.de>
+  *
++ * Portions use skcipher cbc_, ecb_ code from crypto/cast5_avx_glue.c by:
++ *   Copyright (C) 2012 Johannes Goetzfried
++ *       <Johannes.Goetzfried@informatik.stud.uni-erlangen.de>
++ *   Copyright © 2013 Jussi Kivilinna <jussi.kivilinna@iki.fi>
++ *
++ * Portions use aesni_init and aesni_skciphers code from crypto/aesni-intel_glue.c by:
++ *   Copyright (C) 2008, Intel Corp.
++ *      Author: Huang Ying <ying.huang@intel.com>
++ *
++ * CBC & ECB parts based on code (crypto/cbc.c,ecb.c) by:
++ *   Copyright (c) 2006 Herbert Xu <herbert@gondor.apana.org.au>
++ *
+  * This program is free software; you can redistribute it and/or modify it
+  * under the terms and conditions of the GNU General Public License,
+  * version 2, as published by the Free Software Foundation.
+@@ -17,9 +29,15 @@
+  * You should have received a copy of the GNU General Public License along with
+  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+  * Place - Suite 330, Boston, MA 02111-1307 USA.
++ *
++ * Portions include skcipher updates by Eric Biggers <ebiggers@google.com> and
++ * Herbert Xu <herbert@gondor.apana.org.au>.
+  */
+ 
++#include <asm/crypto/glue_helper.h>
+ #include <crypto/algapi.h>
++#include <crypto/b128ops.h>
++#include <crypto/internal/simd.h>
+ #include <crypto/tresor.h>
+ #include <linux/module.h>
+ #include <crypto/aes.h>
+@@ -75,32 +93,39 @@ static inline void tresor_epilog(unsigne
+ 	preempt_enable();
+ }
+ 
+-
+-/*
+- * Encrypt one block
+- */
+-void tresor_encrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
++void __tresor_encrypt(int key_length, u8 *dst, const u8 *src)
+ {
+ 	unsigned long irq_flags;
+-
+ 	tresor_prolog(&irq_flags);
+ 	tresor_encblk_128(dst, src);
+ 	tresor_epilog(&irq_flags);
+ }
+ 
+-
+-/*
+- * Decrypt one block
+- */
+-void tresor_decrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
++void __tresor_decrypt(int key_length, u8 *dst, const u8 *src)
+ {
+ 	unsigned long irq_flags;
+-
+ 	tresor_prolog(&irq_flags);
+ 	tresor_decblk_128(dst, src);
+ 	tresor_epilog(&irq_flags);
+ }
+ 
++/*
++ * Encrypt one block
++ */
++void tresor_encrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
++{
++	struct crypto_aes_ctx *ctx = crypto_tfm_ctx(tfm);
++	__tresor_encrypt(ctx->key_length, dst, src);
++}
++
++/*
++ * Decrypt one block
++ */
++void tresor_decrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
++{
++	struct crypto_aes_ctx *ctx = crypto_tfm_ctx(tfm);
++	__tresor_decrypt(ctx->key_length, dst, src);
++}
+ 
+ /*
+  * Set AES key (the real function this time, not dummy as above)
+@@ -117,6 +142,138 @@ void tresor_setkey(const u8 *in_key)
+ 	on_each_cpu(tresor_setkey_current_cpu, (void *)in_key, 1);
+ }
+ 
++static int tresor_skcipher_setkey(struct crypto_skcipher *tfm, const u8 *key, unsigned int keylen)
++{
++	tresor_setdummykey(crypto_skcipher_tfm(tfm), key, keylen);
++	return 0;
++}
++
++static int ecb_crypt(struct skcipher_request *req, bool enc)
++{
++	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
++	struct crypto_aes_ctx *ctx = crypto_skcipher_ctx(tfm);
++	struct skcipher_walk walk;
++	const unsigned int bsize = AES_BLOCK_SIZE;
++	unsigned int nbytes;
++	int err;
++
++	err = skcipher_walk_virt(&walk, req, true);
++
++	while ((nbytes = walk.nbytes)) {
++		u8 *wsrc = walk.src.virt.addr;
++		u8 *wdst = walk.dst.virt.addr;
++
++		/* Handle leftovers */
++		do {
++			if (enc)
++				__tresor_encrypt(ctx->key_length, wdst, wsrc);
++			else
++				__tresor_decrypt(ctx->key_length, wdst, wsrc);
++
++			wsrc += bsize;
++			wdst += bsize;
++			nbytes -= bsize;
++		} while (nbytes >= bsize);
++
++		err = skcipher_walk_done(&walk, nbytes);
++	}
++
++	return err;
++}
++
++static int ecb_encrypt(struct skcipher_request *req)
++{
++	return ecb_crypt(req, true);
++}
++
++static int ecb_decrypt(struct skcipher_request *req)
++{
++	return ecb_crypt(req, false);
++}
++
++
++static int cbc_encrypt(struct skcipher_request *req)
++{
++	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
++	struct crypto_aes_ctx *ctx = crypto_skcipher_ctx(tfm);
++	const unsigned int bsize = AES_BLOCK_SIZE;
++	struct skcipher_walk walk;
++	unsigned int nbytes;
++	int err;
++
++	err = skcipher_walk_virt(&walk, req, false);
++
++	while ((nbytes = walk.nbytes)) {
++		u128 *src = (u128 *)walk.src.virt.addr;
++		u128 *dst = (u128 *)walk.dst.virt.addr;
++		u128 *iv = (u128 *)walk.iv;
++
++		do {
++			u128_xor(dst, src, iv);
++			__tresor_encrypt(ctx->key_length, (u8 *)dst, (u8 *)dst);
++			iv = dst;
++			src++;
++			dst++;
++			nbytes -= bsize;
++		} while (nbytes >= bsize);
++
++		*(u128 *)walk.iv = *iv;
++		err = skcipher_walk_done(&walk, nbytes);
++	}
++
++	return err;
++}
++
++static unsigned int __cbc_decrypt(struct crypto_aes_ctx *ctx,
++				  struct skcipher_walk *walk)
++{
++	const unsigned int bsize = AES_BLOCK_SIZE;
++	unsigned int nbytes = walk->nbytes;
++	u128 *src = (u128 *)walk->src.virt.addr;
++	u128 *dst = (u128 *)walk->dst.virt.addr;
++	u128 last_iv;
++
++	/* Start of the last block. */
++	src += nbytes / bsize - 1;
++	dst += nbytes / bsize - 1;
++
++	last_iv = *src;
++
++	/* Handle leftovers */
++	for (;;) {
++		__tresor_decrypt(ctx->key_length, (u8 *)dst, (u8 *)src);
++
++		nbytes -= bsize;
++		if (nbytes < bsize)
++			break;
++
++		u128_xor(dst, dst, (src-1));
++		src -= 1;
++		dst -= 1;
++	}
++
++	u128_xor(dst, dst, walk->iv);
++	*(u128 *)walk->iv = last_iv;
++
++	return nbytes;
++}
++
++static int cbc_decrypt(struct skcipher_request *req)
++{
++	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
++	struct crypto_aes_ctx *ctx = crypto_skcipher_ctx(tfm);
++	struct skcipher_walk walk;
++	unsigned int nbytes;
++	int err;
++
++	err = skcipher_walk_virt(&walk, req, false);
++
++	while ((nbytes = walk.nbytes)) {
++		nbytes = __cbc_decrypt(ctx, &walk);
++		err = skcipher_walk_done(&walk, nbytes);
++	}
++	return err;
++}
+ 
+ /*
+  * Crypto API algorithm
+@@ -142,13 +299,93 @@ static struct crypto_alg tresor_alg = {
+ 	}
+ };
+ 
++static struct skcipher_alg tresor_skciphers[] = {
++	{
++		.base = {
++			.cra_name		= "__ecb(tresor)",
++			.cra_driver_name	= "__ecb-tresor-sse2",
++			.cra_priority		= 400,
++			.cra_flags		= CRYPTO_ALG_INTERNAL,
++			.cra_blocksize		= AES_BLOCK_SIZE,
++			.cra_ctxsize		= sizeof(struct crypto_aes_ctx),
++			.cra_module		= THIS_MODULE,
++		},
++		.min_keysize	= AES_MIN_KEY_SIZE,
++		.max_keysize	= AES_MIN_KEY_SIZE,
++		.setkey		= tresor_skcipher_setkey,
++		.encrypt	= ecb_encrypt,
++		.decrypt	= ecb_decrypt,
++	}, {
++		.base = {
++			.cra_name		= "__cbc(tresor)",
++			.cra_driver_name	= "__cbc-tresor-sse2",
++			.cra_priority		= 400,
++			.cra_flags		= CRYPTO_ALG_INTERNAL,
++			.cra_blocksize		= AES_BLOCK_SIZE,
++			.cra_ctxsize		= sizeof(struct crypto_aes_ctx),
++			.cra_module		= THIS_MODULE,
++		},
++		.min_keysize	= AES_MIN_KEY_SIZE,
++		.max_keysize	= AES_MIN_KEY_SIZE,
++		.ivsize		= AES_BLOCK_SIZE,
++		.setkey		= tresor_skcipher_setkey,
++		.encrypt	= cbc_encrypt,
++		.decrypt	= cbc_decrypt,
++	}
++};
++
++static struct simd_skcipher_alg *tresor_simd_skciphers[ARRAY_SIZE(tresor_skciphers)];
++
++static void tresor_free_simds(void)
++{
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(tresor_simd_skciphers) &&
++		    tresor_simd_skciphers[i]; i++)
++		simd_skcipher_free(tresor_simd_skciphers[i]);
++}
+ 
+ /* Initialize module */
+ static int __init tresor_init(void)
+ {
++	struct simd_skcipher_alg *simd;
++	const char *basename;
++	const char *algname;
++	const char *drvname;
++	int err;
++	int i;
+ 	int retval;
+ 	retval = crypto_register_alg(&tresor_alg);
+-	return retval;
++	if (retval)
++		return retval;
++
++	retval = crypto_register_skciphers(tresor_skciphers,
++					   ARRAY_SIZE(tresor_skciphers));
++	if (retval)
++		goto unregister_alg;
++
++	for (i = 0; i < ARRAY_SIZE(tresor_skciphers); i++) {
++		algname = tresor_skciphers[i].base.cra_name + 2;
++		drvname = tresor_skciphers[i].base.cra_driver_name + 2;
++		basename = tresor_skciphers[i].base.cra_driver_name;
++		simd = simd_skcipher_create_compat(algname, drvname, basename);
++		err = PTR_ERR(simd);
++		if (IS_ERR(simd))
++			goto unregister_simds;
++
++		tresor_simd_skciphers[i] = simd;
++	}
++
++	return 0;
++
++unregister_simds:
++	tresor_free_simds();
++unregister_skciphers:
++	crypto_unregister_skciphers(tresor_skciphers,
++				    ARRAY_SIZE(tresor_skciphers));
++unregister_alg:
++	crypto_unregister_alg(&tresor_alg);
++ 	return retval;
+ }
+ module_init(tresor_init);
+ 
+@@ -156,6 +393,9 @@ module_init(tresor_init);
+ /* Remove module */
+ static void __exit tresor_fini(void)
+ {
++	tresor_free_simds();
++	crypto_unregister_skciphers(tresor_skciphers,
++				    ARRAY_SIZE(tresor_skciphers));
+ 	crypto_unregister_alg(&tresor_alg);
+ }
+ module_exit(tresor_fini);

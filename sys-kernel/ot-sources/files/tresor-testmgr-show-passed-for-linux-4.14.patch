@@ -1,0 +1,62 @@
+Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
+Date: Jan 11, 2021
+
+Shows if TRESOR tests passed via dmesg.
+
+----
+--- linux-4.14.214-ot.orig/crypto/testmgr.c	2021-01-12 07:43:19.422011912 -0800
++++ linux-4.14.214-ot/crypto/testmgr.c	2021-01-12 11:34:48.889502496 -0800
+@@ -1185,8 +1185,11 @@ static int __test_skcipher(struct crypto
+ 						  CRYPTO_TFM_REQ_WEAK_KEY);
+ 
+ #ifdef CONFIG_CRYPTO_TRESOR
+-			if (strstr(algo, "tresor"))
++			if (strstr(algo, "tresor")) {
++				pr_info("alg: skcipher%s: testing %d on %s: klen=%d for %s.",
++					d, j, e, template[i].klen, algo);
+ 				tresor_setkey(template[i].key);
++			}
+ #endif
+ 
+ 		ret = crypto_skcipher_setkey(tfm, template[i].key,
+@@ -1245,6 +1248,13 @@ static int __test_skcipher(struct crypto
+ 			ret = -EINVAL;
+ 			goto out;
+ 		}
++
++#ifdef CONFIG_CRYPTO_TRESOR
++		if (strstr(algo, "tresor")) {
++			pr_info("alg: skcipher%s: passed test %d on %s: klen=%d for %s.",
++				d, j, e, template[i].klen, algo);
++		}
++#endif
+ 	}
+ 
+ 	j = 0;
+@@ -1271,8 +1281,11 @@ static int __test_skcipher(struct crypto
+ 						  CRYPTO_TFM_REQ_WEAK_KEY);
+ 
+ #ifdef CONFIG_CRYPTO_TRESOR
+-			if (strstr(algo, "tresor"))
++			if (strstr(algo, "tresor")) {
++				pr_info("alg: skcipher%s: testing chunk test %d on %s: klen=%d for %s.",
++					d, j, e, template[i].klen, algo);
+ 				tresor_setkey(template[i].key);
++			}
+ #endif
+ 
+ 		ret = crypto_skcipher_setkey(tfm, template[i].key,
+@@ -1369,6 +1382,13 @@ static int __test_skcipher(struct crypto
+ 			}
+ 			temp += template[i].tap[k];
+ 		}
++
++#ifdef CONFIG_CRYPTO_TRESOR
++		if (strstr(algo, "tresor")) {
++			pr_info("alg: skcipher%s: passed chunk test %d on %s: klen=%d for %s.",
++				d, j, e, template[i].klen, algo);
++		}
++#endif
+ 	}
+ 
+ 	ret = 0;

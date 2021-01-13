@@ -30,9 +30,5 @@ net-libs/grpc test
 # 64-bit only package
 x11-drivers/amdgpu-pro abi_x86_32
 
-# 192-, 256- key support untested
+# 192-, 256- key for tresor_x86_64 still in development and broken
 >=sys-kernel/ot-sources-5.0 tresor_x86_64-256-bit-key-support
-
-# mode of operation support possibly missing.  5.10 is tested working but 5.4 may likely work.
-# may backport tresor_glue.c skcipher changes from 5.4 to 4.14.
->=sys-kernel/ot-sources-4.14 tresor tresor_aesni tresor_i686 tresor_x86_64 tresor_x86_64-256-bit-key-support tresor_sysfs

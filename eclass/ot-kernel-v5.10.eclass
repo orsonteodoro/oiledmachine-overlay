@@ -243,7 +243,7 @@ function ot-kernel_apply_tresor_fixes() {
 "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-i686-v2.2.patch"
 	else
 		_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-aesni-v2.2.patch"
+"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-aesni-v2.3.patch"
 	fi
 
 	_dpatch "${PATCH_OPS}" \

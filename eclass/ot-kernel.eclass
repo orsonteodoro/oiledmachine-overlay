@@ -1239,6 +1239,14 @@ hashing algorithm, the result from gpg, or hardware key.\n\
 \n\
 TRESOR AES-192 and AES-256 is only available for the tresor_aesni USE flag.\n\
 \n\
+For 4.14, TRESOR with ECB and CBC are only available.\n\
+CBC is recommended for production in the 4.14 series.\n\
+\n\
+For LTS and stable, TRESOR with ECB, CBC, CTR, XTS are only available.\n\
+XTS is recommended for production, followed by CTR, followed by CBC.\n\
+\n\
+ECB is NOT recommended and should only be used for testing.\n\
+\n\
 If using /sys/kernel/tresor/password for plaintext passwords, they can only\n\
 be 53 characters maxiumum without the null character.  They will be sent to\n\
 a key derivation function that is 2000 iterations of SHA256.\n\
@@ -1293,6 +1301,11 @@ features are mutually exclusive when TRESOR is being used.\n\
 \n
 TRESOR-XTS is limited to 64-bit arches and 256-bit keys, but 128-bit key for\n\
 the crypto key."
+		fi
+		if use tresor_aesni ; then
+			einfo \
+"\n\
+TRESOR for AES-NI has not been tested.  It's left for users to test and fix."
 		fi
 	fi
 

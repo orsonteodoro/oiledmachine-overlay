@@ -256,21 +256,23 @@ function ot-kernel_apply_tresor_fixes() {
 
 	if use tresor_x86_64 || use tresor_i686 ; then
 		_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-i686-v2.2.patch"
+"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-i686-v2.3.patch"
 	else
 		_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-aesni-v2.2.patch"
+"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-aesni-v2.3.patch"
 	fi
 
 	_dpatch "${PATCH_OPS}" \
 		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c.patch"
 	if use tresor_x86_64-256-bit-key-support ; then
 		if use tresor_x86_64 || use tresor_i686 ; then
-			die \
+			if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
+				die \
 "Support for 192-bit and 256-bit keys on x86_64 is still in development and testing.  \
 Return back when it is finished."
-			_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/tresor-256-bit-aes-support-i686-v2-for-5.4.patch"
+			fi
+#			_dpatch "${PATCH_OPS}" \
+#"${FILESDIR}/tresor-256-bit-aes-support-i686-v2-for-5.4.patch"
 		fi
 	fi
 

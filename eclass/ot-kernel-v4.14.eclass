@@ -127,8 +127,7 @@ mainline / stable for >=5.x ."
 
 	if use tresor ; then
 		ewarn \
-"TRESOR may broken for ${PV}.  See dmesg for details.  Use >=5.4.x series for\n\
-working TRESOR.  4.14.x is for ebuild devs only."
+"TRESOR for ${PV} is stable.  See dmesg for details on correctness."
 	fi
 }
 
@@ -161,11 +160,19 @@ function ot-kernel_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c.patch"
 
 	if use tresor_x86_64 || use tresor_i686 ; then
-		_dpatch "${PATCH_OPS} -F 3" \
-"${FILESDIR}/tresor-testmgr-limit-modes-of-operation-to-128-bit-key-support-for-linux-5.10.patch"
+		_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-for-4.14-i686-v1.patch"
 	else
-		_dpatch "${PATCH_OPS} -F 3" \
-"${FILESDIR}/tresor-testmgr-limit-to-xts-256-bit-key-support-for-linux-5.10.patch"
+		_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-for-4.14-aesni-v1.patch"
+	fi
+
+	if use tresor_x86_64 || use tresor_i686 ; then
+		_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/tresor-testmgr-limit-modes-of-operation-to-128-bit-key-support-for-linux-4.14.patch"
+	else
+		_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/tresor-testmgr-show-passed-for-linux-4.14.patch"
 	fi
 }
 
