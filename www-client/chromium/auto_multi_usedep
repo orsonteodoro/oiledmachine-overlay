@@ -1,0 +1,46 @@
+#!/bin/bash
+
+if [[ ! -f "${1}" ]] ; then
+	echo "missing ebuild as first arg"
+	exit -1
+fi
+
+echo "modding $1"
+
+cat $1 > $1.mod
+FILEPATH="$1"
+
+set_depends_package() {
+	local category="$1"
+	local package_name="$2"
+	sed -i -E -e "s|(${category})/(${package_name})([.a-zA-Z0-9-]*)([:0-9=]*)([ \x22\x29]*)$|\1/\2\3\4[\${MULTILIB_USEDEP}]\5|g" "${FILEPATH}.mod"
+	sed -i -E -e "s|(${category})/(${package_name})([.a-zA-Z0-9-]*)([:0-9=]*)\[([\x28\x29,_a-zA-Z0-9-]+)\]|\1/\2\3\4[\5,\${MULTILIB_USEDEP}]|g" "${FILEPATH}.mod"
+}
+
+sed -i -E -e "s|([a-zA-Z0-9]+)-libs/([.a-zA-Z0-9\+-]*)([:0-9=]*)([ \x22\x29]*)$|\1-libs/\2\3[\${MULTILIB_USEDEP}]\4|g" "$FILEPATH.mod"
+sed -i -E -e "s|([a-zA-Z0-9]+)-libs/([.a-zA-Z0-9\+-]*)([:0-9=]*)\[([\x28\x29,_a-zA-Z0-9-]+)\]|\1-libs/\2\3[\4,\${MULTILIB_USEDEP}]|g" "${FILEPATH}.mod"
+
+set_depends_package "app-arch" "bzip2"
+set_depends_package "app-arch" "snappy"
+set_depends_package "app-accessibility" "at-spi2-atk"
+set_depends_package "app-accessibility" "at-spi2-core"
+set_depends_package "media-sound" "pulseaudio"
+set_depends_package "media-video" "ffmpeg"
+set_depends_package "net-fs" "samba"
+set_depends_package "net-print" "cups"
+set_depends_package "sys-apps" "dbus"
+set_depends_package "sys-apps" "pciutils"
+set_depends_package "sys-devel" "flex"
+set_depends_package "sys-devel" "clang"
+set_depends_package "virtual" "krb5"
+set_depends_package "virtual" "opengl"
+set_depends_package "virtual" "pkgconfig"
+
+# corrections
+sed -e "s|inspector,\${MULTILIB_USEDEP}|inspector|" "${FILEPATH}.mod"
+
+sed -i -e "s|^src_configure|multilib_src_configure|" $1.mod
+sed -i -e "s|^src_compile|multilib_src_compile|" $1.mod
+sed -i -e "s|^src_install|multilib_src_install|" $1.mod
+sed -i -e "s|\+tcmalloc|-tcmalloc|" $1.mod
+echo "The modified ebuild has been saved as $1.mod"
