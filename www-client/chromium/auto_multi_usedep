@@ -37,7 +37,7 @@ set_depends_package "virtual" "opengl"
 set_depends_package "virtual" "pkgconfig"
 
 # corrections
-sed -e "s|inspector,\${MULTILIB_USEDEP}|inspector|" "${FILEPATH}.mod"
+sed -i -e "s|inspector,\${MULTILIB_USEDEP}|inspector|" "${FILEPATH}.mod"
 
 sed -i -e "s|^src_configure|multilib_src_configure|" $1.mod
 sed -i -e "s|^src_compile|multilib_src_compile|" $1.mod
