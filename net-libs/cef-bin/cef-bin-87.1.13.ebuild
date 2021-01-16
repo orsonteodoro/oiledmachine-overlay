@@ -12,9 +12,9 @@ inherit cmake-utils flag-o-matic multilib-minimal virtualx
 DESCRIPTION="Chromium Embedded Framework (CEF). A simple framework for embedding Chromium-based browsers in other applications."
 LICENSE="BSD"
 HOMEPAGE="https://bitbucket.org/chromiumembedded/cef/src/master/"
-# 12/07/2020 - 87.1.12+g03f9336+chromium-87.0.4280.88 / Chromium 87.0.4280.88
-CHROMIUM_V="87.0.4280.88"
-CEF_COMMIT="g03f9336"
+# 01/07/2021 - 87.1.13+g481a82a+chromium-87.0.4280.141 / Chromium 87.0.4280.141
+CHROMIUM_V="87.0.4280.141"
+CEF_COMMIT="g481a82a"
 SRC_URI="
 	x86? (
 		minimal? ( https://cef-builds.spotifycdn.com/cef_binary_${PV}%2B${CEF_COMMIT}%2Bchromium-${CHROMIUM_V}_linux32_minimal.tar.bz2 )
