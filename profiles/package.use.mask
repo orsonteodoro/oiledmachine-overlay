@@ -29,6 +29,3 @@ net-libs/grpc test
 
 # 64-bit only package
 x11-drivers/amdgpu-pro abi_x86_32
-
-# 192-, 256- key for tresor_x86_64 still in development and broken
->=sys-kernel/ot-sources-5.0 tresor_x86_64-256-bit-key-support

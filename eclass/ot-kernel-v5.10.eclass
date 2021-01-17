@@ -196,8 +196,7 @@ like npm.  These use flags are not recommended."
 
 	if use tresor ; then
 		ewarn \
-"TRESOR is still experimental for ${PV}.  Use at your own risk.\n\
-If breakage happens try the 5.4 LTS kernel.  See dmesg for details."
+"TRESOR for ${PV} is tested working.  See dmesg for details on correctness."
 	fi
 }
 
@@ -240,23 +239,18 @@ function ot-kernel_apply_tresor_fixes() {
 
 	if use tresor_x86_64 || use tresor_i686 ; then
 		_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-i686-v2.2.patch"
+"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-i686-v2.4.patch"
 	else
 		_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-aesni-v2.3.patch"
+"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-aesni-v2.4.patch"
 	fi
 
 	_dpatch "${PATCH_OPS}" \
 		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c.patch"
 	if use tresor_x86_64-256-bit-key-support ; then
 		if use tresor_x86_64 || use tresor_i686 ; then
-			if [[ -z "${OT_KERNEL_DEVELOPER}" ]] ; then
-				die \
-"Support for 192-bit and 256-bit keys on x86_64 is still in development and testing.  \
-Return back when it is finished."
-			fi
 			_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/tresor-256-bit-aes-support-i686-v2-for-5.10.patch"
+"${FILESDIR}/tresor-256-bit-aes-support-i686-v3-for-5.10.patch"
 		fi
 	fi
 
@@ -286,13 +280,6 @@ Return back when it is finished."
 # @DESCRIPTION:
 # Show messages and avoid collision triggering
 function ot-kernel_pkg_postinst_cb() {
-	if use tresor_x86_64-256-bit-key-support ; then
-		ewarn \
-"\n\
-192- and 256-bit key support was added to TRESOR (sse2 for 64-bit) but is\n\
-experimental.\n\
-\n"
-	fi
 	einfo
 	einfo \
 "You may require the genkernel 4.x series to build the ${K_MAJOR_MINOR}.x\n\
@@ -318,6 +305,8 @@ function ot-kernel_filter_patch_cb() {
 	elif [[ "${path}" =~ "0002-z3fold-stricter-locking-and-more-careful-reclaim.patch" ]] \
 		&& ver_test $(ver_cut 1-3 ${PV}) -ge 5.10.4 ; then
 		einfo "Already applied ${path} upstream"
+	elif [[ "${path}" =~ "0008-x86-mm-highmem-Use-generic-kmap-atomic-implementatio.patch" ]] ; then
+		_dpatch "${PATCH_OPS} -F 3" "${path}"
 	elif [[ "${path}" =~ "${CK_FN}" ]] ; then
 		_dpatch "${PATCH_OPS}" "${path}"
 		_dpatch "${PATCH_OPS}" \

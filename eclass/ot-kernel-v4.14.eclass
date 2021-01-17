@@ -161,10 +161,10 @@ function ot-kernel_apply_tresor_fixes() {
 
 	if use tresor_x86_64 || use tresor_i686 ; then
 		_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-for-4.14-i686-v1.patch"
+"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-for-4.14-i686-v2.patch"
 	else
 		_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-for-4.14-aesni-v1.patch"
+"${FILESDIR}/tresor-glue-skcipher-cbc-ecb-for-4.14-aesni-v2.patch"
 	fi
 
 	if use tresor_x86_64 || use tresor_i686 ; then

@@ -16,7 +16,7 @@ Limits tests to only 256-bit XTS only and shows if TRESOR tests passed via dmesg
 +			return 0;
 +		}
 +
-+		pr_info("alg: skcipher: testing: vec->klen=%d for %s.", vec->klen, driver);
++		pr_info("alg: skcipher: testing: vec->klen=%d for %s.  enc=%d.", vec->klen, driver, enc);
 +
  		tresor_setkey(vec->key);
  		if (strstr(driver, "xts"))
@@ -27,7 +27,7 @@ Limits tests to only 256-bit XTS only and shows if TRESOR tests passed via dmesg
  
 +#ifdef CONFIG_CRYPTO_TRESOR
 +	if (strstr(driver, "tresor")) {
-+		pr_info("alg: skcipher: passed %s: vec->klen=%d for %s.", vec_name, vec->klen, driver);
++		pr_info("alg: skcipher: passed %s: vec->klen=%d for %s.  enc=%d.", vec_name, vec->klen, driver, enc);
 +	}
 +#endif
 +

@@ -26,7 +26,7 @@ diff -urp linux-5.10.6-ot.orig/crypto/testmgr.c linux-5.10.6-ot/crypto/testmgr.c
 +			return 0;
 +		}
 +
-+		pr_info("alg: skcipher: testing: vec->klen=%d for %s.", vec->klen, driver);
++		pr_info("alg: skcipher: testing: vec->klen=%d for %s.  enc=%d.", vec->klen, driver, enc);
 +
  		tresor_setkey(vec->key);
  		if (strstr(driver, "xts"))
@@ -37,7 +37,7 @@ diff -urp linux-5.10.6-ot.orig/crypto/testmgr.c linux-5.10.6-ot/crypto/testmgr.c
  
 +#ifdef CONFIG_CRYPTO_TRESOR
 +	if (strstr(driver, "tresor")) {
-+		pr_info("alg: skcipher: passed %s: vec->klen=%d for %s.", vec_name, vec->klen, driver);
++		pr_info("alg: skcipher: passed %s: vec->klen=%d for %s.  enc=%d.", vec_name, vec->klen, driver, enc);
 +	}
 +#endif
 +

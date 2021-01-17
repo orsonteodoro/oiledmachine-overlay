@@ -1,0 +1,305 @@
+# The script
+#!/bin/bash
+set -v
+cryptsetup benchmark --cipher tresor-ecb --key-size 128
+cryptsetup benchmark --cipher tresor-cbc --key-size 128
+cryptsetup benchmark --cipher tresor-ctr --key-size 128
+
+cryptsetup benchmark --cipher tresor-ecb --key-size 192
+cryptsetup benchmark --cipher tresor-cbc --key-size 192
+cryptsetup benchmark --cipher tresor-ctr --key-size 192
+
+cryptsetup benchmark --cipher tresor-ecb --key-size 256
+cryptsetup benchmark --cipher tresor-cbc --key-size 256
+cryptsetup benchmark --cipher tresor-ctr --key-size 256
+
+cryptsetup benchmark --cipher tresor-xts --key-size 256
+
+cryptsetup benchmark --cipher aes-cbc --key-size 128
+cryptsetup benchmark --cipher aes-ecb --key-size 128
+cryptsetup benchmark --cipher aes-ctr --key-size 128
+
+cryptsetup benchmark --cipher aes-cbc --key-size 192
+cryptsetup benchmark --cipher aes-ecb --key-size 192
+cryptsetup benchmark --cipher aes-ctr --key-size 192
+
+cryptsetup benchmark --cipher aes-cbc --key-size 256
+cryptsetup benchmark --cipher aes-ecb --key-size 256
+cryptsetup benchmark --cipher aes-ctr --key-size 256
+
+cryptsetup benchmark --cipher aes-xts --key-size 256
+
+-------------------------------------------------------------
+
+4.14.216 benchmarks:
+(Taken Jan 17, 2021, Unix time circa: 1610951707)
+
+cryptsetup benchmark --cipher tresor-ecb --key-size 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-ecb        128b        29.9 MiB/s        19.3 MiB/s
+cryptsetup benchmark --cipher tresor-cbc --key-size 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-cbc        128b        29.9 MiB/s        19.4 MiB/s
+cryptsetup benchmark --cipher tresor-ctr --key-size 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-ctr        128b        29.2 MiB/s        29.3 MiB/s
+
+cryptsetup benchmark --cipher tresor-ecb --key-size 192
+# Tests are approximate using memory only (no storage IO).
+Cipher tresor-ecb (with 192 bits key) is not available.
+cryptsetup benchmark --cipher tresor-cbc --key-size 192
+# Tests are approximate using memory only (no storage IO).
+Cipher tresor-cbc (with 192 bits key) is not available.
+cryptsetup benchmark --cipher tresor-ctr --key-size 192
+# Tests are approximate using memory only (no storage IO).
+Cipher tresor-ctr (with 192 bits key) is not available.
+
+cryptsetup benchmark --cipher tresor-ecb --key-size 256
+# Tests are approximate using memory only (no storage IO).
+Cipher tresor-ecb (with 256 bits key) is not available.
+cryptsetup benchmark --cipher tresor-cbc --key-size 256
+# Tests are approximate using memory only (no storage IO).
+Cipher tresor-cbc (with 256 bits key) is not available.
+cryptsetup benchmark --cipher tresor-ctr --key-size 256
+# Tests are approximate using memory only (no storage IO).
+Cipher tresor-ctr (with 256 bits key) is not available.
+
+cryptsetup benchmark --cipher tresor-xts --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-xts        256b        29.3 MiB/s        19.1 MiB/s
+
+
+cryptsetup benchmark --cipher aes-cbc --key-size 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-cbc        128b       154.8 MiB/s       169.7 MiB/s
+cryptsetup benchmark --cipher aes-ecb --key-size 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-ecb        128b       190.5 MiB/s       189.4 MiB/s
+cryptsetup benchmark --cipher aes-ctr --key-size 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-ctr        128b       158.1 MiB/s       158.0 MiB/s
+
+cryptsetup benchmark --cipher aes-cbc --key-size 192
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-cbc        192b       131.3 MiB/s       146.3 MiB/s
+cryptsetup benchmark --cipher aes-ecb --key-size 192
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-ecb        192b       162.6 MiB/s       159.9 MiB/s
+cryptsetup benchmark --cipher aes-ctr --key-size 192
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-ctr        192b       138.9 MiB/s       139.1 MiB/s
+
+cryptsetup benchmark --cipher aes-cbc --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-cbc        256b       120.6 MiB/s       130.0 MiB/s
+cryptsetup benchmark --cipher aes-ecb --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-ecb        256b       140.7 MiB/s       140.1 MiB/s
+cryptsetup benchmark --cipher aes-ctr --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-ctr        256b       122.7 MiB/s       122.9 MiB/s
+
+cryptsetup benchmark --cipher aes-xts --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-xts        256b       171.5 MiB/s       171.0 MiB/s
+
+-------------------------------------------------------------
+
+5.4.90 benchmarks:
+(Taken Jan 17, 2021, Unix time circa: 1610951307)
+
+cryptsetup benchmark --cipher tresor-ecb --key-size 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-ecb        128b        30.7 MiB/s        20.3 MiB/s
+cryptsetup benchmark --cipher tresor-cbc --key-size 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-cbc        128b        30.5 MiB/s        20.3 MiB/s
+cryptsetup benchmark --cipher tresor-ctr --key-size 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-ctr        128b        30.1 MiB/s        30.1 MiB/s
+
+cryptsetup benchmark --cipher tresor-ecb --key-size 192
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-ecb        192b        25.6 MiB/s        17.0 MiB/s
+cryptsetup benchmark --cipher tresor-cbc --key-size 192
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-cbc        192b        25.4 MiB/s        17.0 MiB/s
+cryptsetup benchmark --cipher tresor-ctr --key-size 192
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-ctr        192b        25.2 MiB/s        25.2 MiB/s
+
+cryptsetup benchmark --cipher tresor-ecb --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-ecb        256b        23.2 MiB/s        15.0 MiB/s
+cryptsetup benchmark --cipher tresor-cbc --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-cbc        256b        23.1 MiB/s        15.0 MiB/s
+cryptsetup benchmark --cipher tresor-ctr --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-ctr        256b        22.9 MiB/s        22.9 MiB/s
+
+cryptsetup benchmark --cipher tresor-xts --key-size 256
+# Tests are approximate using memory only (no storage IO).
+Cipher tresor-xts (with 256 bits key) is not available.
+
+cryptsetup benchmark --cipher aes-cbc --key-size 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-cbc        128b       130.7 MiB/s       148.9 MiB/s
+cryptsetup benchmark --cipher aes-ecb --key-size 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-ecb        128b       159.7 MiB/s       162.5 MiB/s
+cryptsetup benchmark --cipher aes-ctr --key-size 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-ctr        128b       141.0 MiB/s       141.2 MiB/s
+
+cryptsetup benchmark --cipher aes-cbc --key-size 192
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-cbc        192b       116.3 MiB/s       123.8 MiB/s
+cryptsetup benchmark --cipher aes-ecb --key-size 192
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-ecb        192b       137.3 MiB/s       137.7 MiB/s
+cryptsetup benchmark --cipher aes-ctr --key-size 192
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-ctr        192b       123.9 MiB/s       124.4 MiB/s
+
+cryptsetup benchmark --cipher aes-cbc --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-cbc        256b       104.3 MiB/s       108.2 MiB/s
+cryptsetup benchmark --cipher aes-ecb --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-ecb        256b       119.9 MiB/s       120.2 MiB/s
+cryptsetup benchmark --cipher aes-ctr --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-ctr        256b       110.9 MiB/s       111.1 MiB/s
+
+cryptsetup benchmark --cipher aes-xts --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-xts        256b       152.4 MiB/s       154.7 MiB/s
+
+-------------------------------------------------------------
+
+5.10.8 benchmarks:
+(Taken Jan 17, 2021, Unix time circa: 1610947456)
+
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-ecb        128b        30.1 MiB/s        20.3 MiB/s
+cryptsetup benchmark --cipher tresor-cbc --key-size 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-cbc        128b        30.5 MiB/s        20.2 MiB/s
+cryptsetup benchmark --cipher tresor-ctr --key-size 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-ctr        128b        30.2 MiB/s        30.1 MiB/s
+
+cryptsetup benchmark --cipher tresor-ecb --key-size 192
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-ecb        192b        25.2 MiB/s        17.0 MiB/s
+cryptsetup benchmark --cipher tresor-cbc --key-size 192
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-cbc        192b        25.5 MiB/s        17.0 MiB/s
+cryptsetup benchmark --cipher tresor-ctr --key-size 192
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-ctr        192b        25.2 MiB/s        25.2 MiB/s
+
+cryptsetup benchmark --cipher tresor-ecb --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-ecb        256b        22.8 MiB/s        15.0 MiB/s
+cryptsetup benchmark --cipher tresor-cbc --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-cbc        256b        23.0 MiB/s        15.0 MiB/s
+cryptsetup benchmark --cipher tresor-ctr --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-ctr        256b        22.9 MiB/s        22.9 MiB/s
+
+cryptsetup benchmark --cipher tresor-xts --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+ tresor-xts        256b        30.2 MiB/s        20.1 MiB/s
+
+cryptsetup benchmark --cipher aes-cbc --key-size 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-cbc        128b       133.0 MiB/s       151.2 MiB/s
+cryptsetup benchmark --cipher aes-ecb --key-size 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-ecb        128b       161.6 MiB/s       163.3 MiB/s
+cryptsetup benchmark --cipher aes-ctr --key-size 128
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-ctr        128b       145.4 MiB/s       145.6 MiB/s
+
+cryptsetup benchmark --cipher aes-cbc --key-size 192
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-cbc        192b       115.8 MiB/s       129.6 MiB/s
+cryptsetup benchmark --cipher aes-ecb --key-size 192
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-ecb        192b       137.6 MiB/s       138.6 MiB/s
+cryptsetup benchmark --cipher aes-ctr --key-size 192
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-ctr        192b       126.0 MiB/s       126.0 MiB/s
+
+cryptsetup benchmark --cipher aes-cbc --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-cbc        256b       103.2 MiB/s       114.6 MiB/s
+cryptsetup benchmark --cipher aes-ecb --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-ecb        256b       120.5 MiB/s       121.0 MiB/s
+cryptsetup benchmark --cipher aes-ctr --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-ctr        256b       111.6 MiB/s       111.7 MiB/s
+
+cryptsetup benchmark --cipher aes-xts --key-size 256
+# Tests are approximate using memory only (no storage IO).
+# Algorithm |       Key |      Encryption |      Decryption
+    aes-xts        256b       150.8 MiB/s       152.4 MiB/s
+
+----
+

@@ -1243,7 +1243,9 @@ For 4.14, TRESOR with ECB and CBC are only available.\n\
 CBC is recommended for production in the 4.14 series.\n\
 \n\
 For LTS and stable, TRESOR with ECB, CBC, CTR, XTS are only available.\n\
-XTS is recommended for production, followed by CTR, followed by CBC.\n\
+CBC is currently recommended for production.  CTR and XTS are still in\n\
+development.  The CTR implementation may be changed.\n\
+Futher XTS support may require modding the kernel.\n\
 \n\
 ECB is NOT recommended and should only be used for testing.\n\
 \n\

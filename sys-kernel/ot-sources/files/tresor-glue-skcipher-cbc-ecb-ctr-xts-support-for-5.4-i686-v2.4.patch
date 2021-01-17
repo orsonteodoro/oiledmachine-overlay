@@ -1,6 +1,7 @@
 Patch Status: Complete tested in 5.10
 Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
 Date: Jan 11, 2021
+v2.4:  Changed from "struct crypto_aes_ctx" to "struct tresor_ctx"
 v2.3:  Fixed build time failures
 v2.2:  Fixed ECB, CBC, CTR, XTS glue with TRESOR AES-128
 v2.1:  Change #if __x86_64__ to #ifdef __x86_64__
@@ -18,9 +19,9 @@ Check if tresor_setkey_xts_tweak is required for crypto_skcipher_setkey
   consumers (See crypto/testmgr.c for details) for applications / 
   crypto-drivers / crypto-libraries
 ----
-diff -urp linux-5.4.88-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.88-ot/arch/x86/crypto/tresor_asm.S
---- linux-5.4.88-ot.orig/arch/x86/crypto/tresor_asm.S	2021-01-12 14:59:07.436564521 -0800
-+++ linux-5.4.88-ot/arch/x86/crypto/tresor_asm.S	2021-01-12 15:04:26.589209607 -0800
+diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.90-ot/arch/x86/crypto/tresor_asm.S
+--- linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S	2021-01-17 18:08:18.520602882 -0800
++++ linux-5.4.90-ot/arch/x86/crypto/tresor_asm.S	2021-01-17 18:10:09.614805311 -0800
 @@ -42,11 +42,13 @@
  .set	rk9a,	%mm6		/* round key 9a */
  .set	rk9b,	%mm7		/* round key 9b */
@@ -162,9 +163,9 @@ diff -urp linux-5.4.88-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.88-ot/arch
 +#else
 +#endif
 +	ret
-diff -urp linux-5.4.88-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.88-ot/arch/x86/crypto/tresor_glue.c
---- linux-5.4.88-ot.orig/arch/x86/crypto/tresor_glue.c	2021-01-12 14:59:07.412563570 -0800
-+++ linux-5.4.88-ot/arch/x86/crypto/tresor_glue.c	2021-01-12 15:06:18.473414197 -0800
+diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.90-ot/arch/x86/crypto/tresor_glue.c
+--- linux-5.4.90-ot.orig/arch/x86/crypto/tresor_glue.c	2021-01-17 18:08:18.360596831 -0800
++++ linux-5.4.90-ot/arch/x86/crypto/tresor_glue.c	2021-01-17 18:10:37.115845991 -0800
 @@ -5,6 +5,26 @@
   * Copyright (C) 2012	Hans Spath <tresor@hans-spath.de>
   * Copyright (C) 2012	Johannes Goetzfried <johannes@jgoetzfried.de>
@@ -221,6 +222,15 @@ diff -urp linux-5.4.88-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.88-ot/arc
  
  
  
+@@ -44,7 +73,7 @@ asmlinkage void tresor_decblk_128(u8 *ou
+ static int tresor_setdummykey(struct crypto_tfm *tfm, const u8 *in_key,
+ 							unsigned int key_len)
+ {
+-	struct crypto_aes_ctx *ctx = crypto_tfm_ctx(tfm);
++	struct tresor_ctx *ctx = crypto_tfm_ctx(tfm);
+ 
+ 	if( key_len != AES_KEYSIZE_128 )
+ 		return -EINVAL;
 @@ -117,6 +146,298 @@ void tresor_setkey(const u8 *in_key)
  	on_each_cpu(tresor_setkey_current_cpu, (void *)in_key, 1);
  }
@@ -324,7 +334,7 @@ diff -urp linux-5.4.88-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.88-ot/arc
 +	return err;
 +}
 +
-+static unsigned int __cbc_decrypt(struct crypto_aes_ctx *ctx,
++static unsigned int __cbc_decrypt(struct tresor_ctx *ctx,
 +				  struct skcipher_walk *walk)
 +{
 +	const unsigned int bsize = AES_BLOCK_SIZE;
@@ -364,7 +374,7 @@ diff -urp linux-5.4.88-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.88-ot/arc
 +static int cbc_decrypt(struct skcipher_request *req)
 +{
 +	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
-+	struct crypto_aes_ctx *ctx = crypto_skcipher_ctx(tfm);
++	struct tresor_ctx *ctx = crypto_skcipher_ctx(tfm);
 +	struct skcipher_walk walk;
 +	unsigned int nbytes;
 +	int err;
@@ -520,6 +530,15 @@ diff -urp linux-5.4.88-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.88-ot/arc
  
  /*
   * Crypto API algorithm
+@@ -127,7 +448,7 @@ static struct crypto_alg tresor_alg = {
+ 	.cra_priority		= 100,
+ 	.cra_flags		= CRYPTO_ALG_TYPE_CIPHER,
+ 	.cra_blocksize		= AES_BLOCK_SIZE,
+-	.cra_ctxsize		= sizeof(struct crypto_aes_ctx),
++	.cra_ctxsize		= sizeof(struct tresor_ctx),
+ 	.cra_alignmask		= 3,
+ 	.cra_module		= THIS_MODULE,
+ 	.cra_list		= LIST_HEAD_INIT(tresor_alg.cra_list),
 @@ -142,12 +463,96 @@ static struct crypto_alg tresor_alg = {
  	}
  };
@@ -532,7 +551,7 @@ diff -urp linux-5.4.88-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.88-ot/arc
 +			.cra_priority		= 400,
 +			.cra_flags		= CRYPTO_ALG_INTERNAL,
 +			.cra_blocksize		= AES_BLOCK_SIZE,
-+			.cra_ctxsize		= sizeof(struct crypto_aes_ctx),
++			.cra_ctxsize		= sizeof(struct tresor_ctx),
 +			.cra_module		= THIS_MODULE,
 +		},
 +		.min_keysize	= AES_MIN_KEY_SIZE,
@@ -547,7 +566,7 @@ diff -urp linux-5.4.88-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.88-ot/arc
 +			.cra_priority		= 400,
 +			.cra_flags		= CRYPTO_ALG_INTERNAL,
 +			.cra_blocksize		= AES_BLOCK_SIZE,
-+			.cra_ctxsize		= sizeof(struct crypto_aes_ctx),
++			.cra_ctxsize		= sizeof(struct tresor_ctx),
 +			.cra_module		= THIS_MODULE,
 +		},
 +		.min_keysize	= AES_MIN_KEY_SIZE,
@@ -564,7 +583,7 @@ diff -urp linux-5.4.88-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.88-ot/arc
 +			.cra_priority		= 400,
 +			.cra_flags		= CRYPTO_ALG_INTERNAL,
 +			.cra_blocksize		= 1,
-+			.cra_ctxsize		= sizeof(struct crypto_aes_ctx),
++			.cra_ctxsize		= sizeof(struct tresor_ctx),
 +			.cra_module		= THIS_MODULE,
 +		},
 +		.min_keysize	= AES_MIN_KEY_SIZE,
@@ -626,9 +645,9 @@ diff -urp linux-5.4.88-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.88-ot/arc
  	crypto_unregister_alg(&tresor_alg);
  }
  module_exit(tresor_fini);
-diff -urp linux-5.4.88-ot.orig/crypto/testmgr.c linux-5.4.88-ot/crypto/testmgr.c
---- linux-5.4.88-ot.orig/crypto/testmgr.c	2021-01-12 14:59:07.468565788 -0800
-+++ linux-5.4.88-ot/crypto/testmgr.c	2021-01-12 15:04:26.589209607 -0800
+diff -urp linux-5.4.90-ot.orig/crypto/testmgr.c linux-5.4.90-ot/crypto/testmgr.c
+--- linux-5.4.90-ot.orig/crypto/testmgr.c	2021-01-17 18:08:18.550604017 -0800
++++ linux-5.4.90-ot/crypto/testmgr.c	2021-01-17 18:10:09.614805311 -0800
 @@ -2500,8 +2500,11 @@ static int test_skcipher_vec_cfg(const c
  		crypto_skcipher_clear_flags(tfm,
  					    CRYPTO_TFM_REQ_FORBID_WEAK_KEYS);
@@ -675,9 +694,9 @@ diff -urp linux-5.4.88-ot.orig/crypto/testmgr.c linux-5.4.88-ot/crypto/testmgr.c
  		.alg = "xts(twofish)",
  		.generic_driver = "xts(ecb(twofish-generic))",
  		.test = alg_test_skcipher,
-diff -urp linux-5.4.88-ot.orig/include/crypto/tresor.h linux-5.4.88-ot/include/crypto/tresor.h
---- linux-5.4.88-ot.orig/include/crypto/tresor.h	2021-01-12 14:59:07.420563887 -0800
-+++ linux-5.4.88-ot/include/crypto/tresor.h	2021-01-12 15:04:26.589209607 -0800
+diff -urp linux-5.4.90-ot.orig/include/crypto/tresor.h linux-5.4.90-ot/include/crypto/tresor.h
+--- linux-5.4.90-ot.orig/include/crypto/tresor.h	2021-01-17 18:08:18.370597211 -0800
++++ linux-5.4.90-ot/include/crypto/tresor.h	2021-01-17 18:10:09.614805311 -0800
 @@ -10,10 +10,15 @@
  /* number of chars to clear memory */
  #define TRESOR_RANDOM_CHARS 4096
@@ -694,9 +713,9 @@ diff -urp linux-5.4.88-ot.orig/include/crypto/tresor.h linux-5.4.88-ot/include/c
  bool tresor_capable(void);
  
  #ifdef CONFIG_CRYPTO_TRESOR_PROMPT
-diff -urp linux-5.4.88-ot.orig/init/main.c linux-5.4.88-ot/init/main.c
---- linux-5.4.88-ot.orig/init/main.c	2021-01-12 14:59:07.420563887 -0800
-+++ linux-5.4.88-ot/init/main.c	2021-01-12 15:04:30.809376855 -0800
+diff -urp linux-5.4.90-ot.orig/init/main.c linux-5.4.90-ot/init/main.c
+--- linux-5.4.90-ot.orig/init/main.c	2021-01-17 18:08:18.370597211 -0800
++++ linux-5.4.90-ot/init/main.c	2021-01-17 18:10:09.614805311 -0800
 @@ -1225,6 +1225,8 @@ static noinline void __init kernel_init_
  	tresor_unlock_tests();
  	alg_test("ecb(tresor)", "ecb(tresor)", 0, 0);
@@ -706,4 +725,3 @@ diff -urp linux-5.4.88-ot.orig/init/main.c linux-5.4.88-ot/init/main.c
  	tresor_lock_tests();
  #endif
  
-Only in linux-5.4.88-ot/init: main.c.orig

@@ -1,13 +1,17 @@
 Patch Status: Testing in 4.14.  Tested working in 5.10.
 Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
-Date: Jan 12, 2021
+Date: Jan 17, 2021
 
 This is a backport of the cumulative patches from 5.10 series limited to CBC and ECB.
 The tresor only tested against these modes of operation in i686.
+
+v2:  Replaced "struct crypto_aes_ctx" with "struct tresor_ctx"
+v1:  initial release
+
 -----
-diff -urp linux-4.14.214-ot.orig/arch/x86/crypto/tresor_glue.c linux-4.14.214-ot/arch/x86/crypto/tresor_glue.c
---- linux-4.14.214-ot.orig/arch/x86/crypto/tresor_glue.c	2021-01-12 07:43:17.945953537 -0800
-+++ linux-4.14.214-ot/arch/x86/crypto/tresor_glue.c	2021-01-12 07:45:27.387074505 -0800
+diff -urpN linux-4.14.216-ot.orig/arch/x86/crypto/tresor_glue.c linux-4.14.216-ot/arch/x86/crypto/tresor_glue.c
+--- linux-4.14.216-ot.orig/arch/x86/crypto/tresor_glue.c	2021-01-17 19:03:18.285596528 -0800
++++ linux-4.14.216-ot/arch/x86/crypto/tresor_glue.c	2021-01-17 19:05:13.929977622 -0800
 @@ -5,6 +5,18 @@
   * Copyright (C) 2012	Hans Spath <tresor@hans-spath.de>
   * Copyright (C) 2012	Johannes Goetzfried <johannes@jgoetzfried.de>
@@ -43,6 +47,15 @@ diff -urp linux-4.14.214-ot.orig/arch/x86/crypto/tresor_glue.c linux-4.14.214-ot
  #include <crypto/tresor.h>
  #include <linux/module.h>
  #include <crypto/aes.h>
+@@ -44,7 +62,7 @@ asmlinkage void tresor_decblk_128(u8 *ou
+ static int tresor_setdummykey(struct crypto_tfm *tfm, const u8 *in_key,
+ 							unsigned int key_len)
+ {
+-	struct crypto_aes_ctx *ctx = crypto_tfm_ctx(tfm);
++	struct tresor_ctx *ctx = crypto_tfm_ctx(tfm);
+ 
+ 	if( key_len != AES_KEYSIZE_128 )
+ 		return -EINVAL;
 @@ -75,32 +93,39 @@ static inline void tresor_epilog(unsigne
  	preempt_enable();
  }
@@ -80,7 +93,7 @@ diff -urp linux-4.14.214-ot.orig/arch/x86/crypto/tresor_glue.c linux-4.14.214-ot
 + */
 +void tresor_encrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
 +{
-+	struct crypto_aes_ctx *ctx = crypto_tfm_ctx(tfm);
++	struct tresor_ctx *ctx = crypto_tfm_ctx(tfm);
 +	__tresor_encrypt(ctx->key_length, dst, src);
 +}
 +
@@ -89,7 +102,7 @@ diff -urp linux-4.14.214-ot.orig/arch/x86/crypto/tresor_glue.c linux-4.14.214-ot
 + */
 +void tresor_decrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
 +{
-+	struct crypto_aes_ctx *ctx = crypto_tfm_ctx(tfm);
++	struct tresor_ctx *ctx = crypto_tfm_ctx(tfm);
 +	__tresor_decrypt(ctx->key_length, dst, src);
 +}
  
@@ -108,7 +121,7 @@ diff -urp linux-4.14.214-ot.orig/arch/x86/crypto/tresor_glue.c linux-4.14.214-ot
 +static int ecb_crypt(struct skcipher_request *req, bool enc)
 +{
 +	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
-+	struct crypto_aes_ctx *ctx = crypto_skcipher_ctx(tfm);
++	struct tresor_ctx *ctx = crypto_skcipher_ctx(tfm);
 +	struct skcipher_walk walk;
 +	const unsigned int bsize = AES_BLOCK_SIZE;
 +	unsigned int nbytes;
@@ -152,7 +165,7 @@ diff -urp linux-4.14.214-ot.orig/arch/x86/crypto/tresor_glue.c linux-4.14.214-ot
 +static int cbc_encrypt(struct skcipher_request *req)
 +{
 +	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
-+	struct crypto_aes_ctx *ctx = crypto_skcipher_ctx(tfm);
++	struct tresor_ctx *ctx = crypto_skcipher_ctx(tfm);
 +	const unsigned int bsize = AES_BLOCK_SIZE;
 +	struct skcipher_walk walk;
 +	unsigned int nbytes;
@@ -181,7 +194,7 @@ diff -urp linux-4.14.214-ot.orig/arch/x86/crypto/tresor_glue.c linux-4.14.214-ot
 +	return err;
 +}
 +
-+static unsigned int __cbc_decrypt(struct crypto_aes_ctx *ctx,
++static unsigned int __cbc_decrypt(struct tresor_ctx *ctx,
 +				  struct skcipher_walk *walk)
 +{
 +	const unsigned int bsize = AES_BLOCK_SIZE;
@@ -218,7 +231,7 @@ diff -urp linux-4.14.214-ot.orig/arch/x86/crypto/tresor_glue.c linux-4.14.214-ot
 +static int cbc_decrypt(struct skcipher_request *req)
 +{
 +	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
-+	struct crypto_aes_ctx *ctx = crypto_skcipher_ctx(tfm);
++	struct tresor_ctx *ctx = crypto_skcipher_ctx(tfm);
 +	struct skcipher_walk walk;
 +	unsigned int nbytes;
 +	int err;
@@ -234,6 +247,15 @@ diff -urp linux-4.14.214-ot.orig/arch/x86/crypto/tresor_glue.c linux-4.14.214-ot
  
  /*
   * Crypto API algorithm
+@@ -127,7 +284,7 @@ static struct crypto_alg tresor_alg = {
+ 	.cra_priority		= 100,
+ 	.cra_flags		= CRYPTO_ALG_TYPE_CIPHER,
+ 	.cra_blocksize		= AES_BLOCK_SIZE,
+-	.cra_ctxsize		= sizeof(struct crypto_aes_ctx),
++	.cra_ctxsize		= sizeof(struct tresor_ctx),
+ 	.cra_alignmask		= 3,
+ 	.cra_module		= THIS_MODULE,
+ 	.cra_list		= LIST_HEAD_INIT(tresor_alg.cra_list),
 @@ -142,13 +299,93 @@ static struct crypto_alg tresor_alg = {
  	}
  };
@@ -246,7 +268,7 @@ diff -urp linux-4.14.214-ot.orig/arch/x86/crypto/tresor_glue.c linux-4.14.214-ot
 +			.cra_priority		= 400,
 +			.cra_flags		= CRYPTO_ALG_INTERNAL,
 +			.cra_blocksize		= AES_BLOCK_SIZE,
-+			.cra_ctxsize		= sizeof(struct crypto_aes_ctx),
++			.cra_ctxsize		= sizeof(struct tresor_ctx),
 +			.cra_module		= THIS_MODULE,
 +		},
 +		.min_keysize	= AES_MIN_KEY_SIZE,
@@ -261,7 +283,7 @@ diff -urp linux-4.14.214-ot.orig/arch/x86/crypto/tresor_glue.c linux-4.14.214-ot
 +			.cra_priority		= 400,
 +			.cra_flags		= CRYPTO_ALG_INTERNAL,
 +			.cra_blocksize		= AES_BLOCK_SIZE,
-+			.cra_ctxsize		= sizeof(struct crypto_aes_ctx),
++			.cra_ctxsize		= sizeof(struct tresor_ctx),
 +			.cra_module		= THIS_MODULE,
 +		},
 +		.min_keysize	= AES_MIN_KEY_SIZE,
@@ -339,3 +361,17 @@ diff -urp linux-4.14.214-ot.orig/arch/x86/crypto/tresor_glue.c linux-4.14.214-ot
  	crypto_unregister_alg(&tresor_alg);
  }
  module_exit(tresor_fini);
+diff -urpN linux-4.14.216-ot.orig/include/crypto/tresor.h linux-4.14.216-ot/include/crypto/tresor.h
+--- linux-4.14.216-ot.orig/include/crypto/tresor.h	2021-01-17 19:03:18.285596528 -0800
++++ linux-4.14.216-ot/include/crypto/tresor.h	2021-01-17 19:05:40.690991477 -0800
+@@ -10,6 +10,10 @@
+ /* number of chars to clear memory */
+ #define TRESOR_RANDOM_CHARS 4096
+ 
++struct tresor_ctx {
++        int key_length;
++};
++
+ /* TRESOR core functionality (enc, dec, setkey) */
+ void tresor_encrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src);
+ void tresor_decrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src);

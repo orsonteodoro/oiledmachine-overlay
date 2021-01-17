@@ -1,0 +1,1655 @@
+Patch Status: Complete, tested working on 5.10
+Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Date: Jan 17, 2021
+Subject:  Add 256-bit AES support to TRESOR sse2 on 64-bit machines (x86-64) without AES-NI
+
+This patch is for the Linux Kernel 5.4 series.
+
+This patch only applies to the non-aesni version and depends on
+tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-i686-v2.3.patch.
+
+* This patch completes key expansion, encode, decode for 192 and 256-bit AES
+  for TRESOR sse2.
+* This changes the key storage arrangement on 64 bit from column-major to
+  row-major order in debug registers.
+* This also optimizes some XTS storage code.
+* It may also fix compilation on i686 with more ifdef checks.
+* Removed rc_tab.
+
+v3 Fixed both 192- and 256- TRESOR AES key expansion.
+   Refactor and dedupe code blocks.
+   Document step-by-step word placement in registers.
+v2 Fixes to ctr keysize.
+   Deduped tresor_glue for duplicate encrypt/decrypt function pointer calls.
+v1 Initial implementation.
+
+----
+diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.90-ot/arch/x86/crypto/tresor_asm.S
+--- linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S	2021-01-17 18:16:53.510097608 -0800
++++ linux-5.4.90-ot/arch/x86/crypto/tresor_asm.S	2021-01-17 18:19:17.615556015 -0800
+@@ -1,6 +1,7 @@
+ /***************************************************************************
+  *
+- * Cold boot resistant AES-128 for 32-bit/64-bit machines
++ * Cold boot resistant AES-128 for 32-bit machines with MMX & SSE2
++ *                     AES-128/192/256 for 64-bit machines with MMX & SSE2
+  * 
+  * Copyright (C) 2010	Tilo Mueller <tilo.mueller@informatik.uni-erlangen.de>
+  * Copyright (C) 2012	Johannes Goetzfried <johannes@jgoetzfried.de>
+@@ -24,14 +25,27 @@
+ 
+ /* 128-bit SSE registers */
+ .set	rstate,	%xmm0		/* AES state */
+-.set	rhelp,	%xmm1		/* helping register */
++.set	rhelp,	%xmm1		/* helping register 1 */
+ .set	rk1,	%xmm2		/* round key  1 */
+ .set	rk2,	%xmm3		/* round key  2 */
+ .set	rk3,	%xmm4		/* round key  3 */
+ .set	rk4,	%xmm5		/* round key  4 */
+ .set	rk5,	%xmm6		/* round key  5 */
+ .set	rk10,	%xmm7		/* round key 10 */
+-
++#ifdef __x86_64__
++/* Additional 128-bit SSE registers only on X86_64 */
++.set	rk6,	%xmm8		/* round key 6 */
++.set	rk7,	%xmm9		/* round key 7 */
++.set	rk8,	%xmm10		/* round key 8 */
++.set	rk9,	%xmm11		/* round key 9 */
++.set	rk11,	%xmm12		/* round key 11 */
++.set	rk12,	%xmm13		/* round key 12 */
++.set	rk13,	%xmm14		/* round key 13 */
++.set	rk14,	%xmm15		/* round key 14 */
++.set	rhelp2a, %mm0		/* helping register 2a */
++.set	rhelp2b, %mm1		/* helping register 2b */
++.set    rk0,    %xmm15
++#else
+ /* 64-bit MMX registers */
+ .set	rk6a,	%mm0		/* round key 6a */
+ .set	rk6b,	%mm1		/* round key 6b */
+@@ -41,14 +55,17 @@
+ .set	rk8b,	%mm5		/* round key 8b */
+ .set	rk9a,	%mm6		/* round key 9a */
+ .set	rk9b,	%mm7		/* round key 9b */
++#endif
+ 
+ /* 32-bit ^ 64-bit debug registers */
+-/* low 32-bit values are for the crypto key */
+-/* high 32-bit values are for the tweak key for xts */
+-.set	db0,	%db0		/* hi(tweak key 0a) lo(round key 0a) */
+-.set	db1,	%db1		/* hi(tweak key 0b) lo(round key 0b) */
+-.set	db2,	%db2		/* hi(tweak key 1a) lo(round key 1a) */
+-.set	db3,	%db3		/* hi(tweak key 1b) lo(round key 1b) */
++/* w is the 32-bit word of unexpanded key */
++/*                                 32-bit version    ; 64-bit version (cbc,ecb,ctr)  ;  64-bit 128-key and 256-xts   */
++/*                                cbc,ecb,ctr,no-xts ;  128/192/256 bit key support  ;                               */
++/*                                     128-key       ;         no xts support        ;                               */
++.set	db0,	%db0		/*        w0         ;             w1 w0             ;  w1            w0             */
++.set	db1,	%db1		/*        w1         ;             w3 w2             ;  w3            w2             */
++.set	db2,	%db2		/*        w2         ;             w5 w4             ;  tweak_key[1]  tweak_key[0]   */
++.set	db3,	%db3		/*        w3         ;             w7 w6             ;  tweak_key[3]  tweak_key[2]   */
+ 
+ /* 32-bit GPR registers */
+ .set	eax,	%eax
+@@ -143,11 +160,6 @@ gfbd9e:	.long	0x00000000, 0x0b0d090e, 0x
+ 	.long	0x92b479a7, 0x99b970a9, 0x84ae6bbb, 0x8fa362b5
+ 	.long	0xbe805d9f, 0xb58d5491, 0xa89a4f83, 0xa397468d
+ 
+-.align	128
+-rc_tab:	.long	0x00000001, 0x00000002, 0x00000004, 0x00000008
+-	.long	0x00000010, 0x00000020, 0x00000040, 0x00000080
+-	.long	0x0000001b, 0x00000036
+-
+ /* external tables from generic aes code */
+ .set	ft_tab, crypto_ft_tab
+ .set	fl_tab, crypto_fl_tab
+@@ -209,6 +221,19 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+ 	pxor		%xmm5,%xmm5
+ 	pxor		%xmm6,%xmm6
+ 	pxor		%xmm7,%xmm7
++#ifdef __x86_64__
++	pxor		%xmm8,%xmm8
++	pxor		%xmm9,%xmm9
++	pxor		%xmm10,%xmm10
++	pxor		%xmm11,%xmm11
++	pxor		%xmm12,%xmm12
++	pxor		%xmm13,%xmm13
++	pxor		%xmm14,%xmm14
++	pxor		%xmm15,%xmm15
++	/* reset MMX registers */
++	pxor		%mm0,%mm0
++	pxor		%mm1,%mm1
++#else
+ 	/* reset MMX registers */
+ 	pxor		%mm0,%mm0
+ 	pxor		%mm1,%mm1
+@@ -218,6 +243,7 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+ 	pxor		%mm5,%mm5
+ 	pxor		%mm6,%mm6
+ 	pxor		%mm7,%mm7
++#endif
+ 	/* leave */
+ #ifdef __x86_64__
+ #else
+@@ -229,81 +255,86 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+ 
+ /* copy one 128-bit sse register into two 64-bit mmx registers */
+ .macro	sse_to_mmx sse mmx0 mmx1
+-	movdqu		\sse,rhelp
+-	movdq2q		rhelp,\mmx0
+-	psrldq		$8,rhelp
+-	movdq2q		rhelp,\mmx1
++	movdqu		\sse,rhelp /* rhelp = w3 w2 w1 w0 */
++	movdq2q		rhelp,\mmx0 /* mmx0 = w1 w0 */
++	psrldq		$8,rhelp /* rhelp = 00 00 w3 w2 */
++	movdq2q		rhelp,\mmx1 /* mmx1 = w3 w2 */
+ .endm
+ 
+ /* copy two 64-bit mmx registers into one 128-bit sse register */
+ .macro	mmx_to_sse mmx0 mmx1 sse
+-	movq2dq		\mmx0,\sse
+-	movq2dq		\mmx1,rhelp
+-	pslldq		$8,rhelp
+-	pxor		rhelp,\sse
++	movq2dq		\mmx0,\sse /* sse = 00 00 w1 w0 */
++	movq2dq		\mmx1,rhelp /* rhelp = 00 00 w3 w2 */
++	pslldq		$8,rhelp /* rhelp = w3 w2 00 00 */
++	pxor		rhelp,\sse /* sse = w3 w2 w1 w0 */
+ .endm
+ 
+-/* copy four 32-bit values from debug registers into one 128-bit sse register */
+-.macro	dbg_to_sse dbg0 dbg1 dbg2 dbg3 sse
+ #ifdef __x86_64__
+-	movq		\dbg0,rax
+-	movd		eax,\sse
+-	movq		\dbg1,rax
+-	movd		eax,rhelp
+-	pslldq		$4,rhelp
+-	pxor		rhelp,\sse
+-	movq		\dbg2,rax
+-	movd		eax,rhelp
+-	pslldq		$8,rhelp
+-	pxor		rhelp,\sse
+-	movq		\dbg3,rax
+-#else
+-	movl		\dbg0,eax
+-	movd		eax,\sse
+-	movl		\dbg1,eax
+-	movd		eax,rhelp
+-	pslldq		$4,rhelp
+-	pxor		rhelp,\sse
+-	movl		\dbg2,eax
+-	movd		eax,rhelp
+-	pslldq		$8,rhelp
+-	pxor		rhelp,\sse
+-	movl		\dbg3,eax
+-#endif
+-	movd		eax,rhelp
+-	pslldq		$12,rhelp
+-	pxor		rhelp,\sse
++.macro	dbg_to_sse dbg0 dbg1 sse
++	/*
++	w3 w2 = dbg1 in
++	w1 w0 = dbg0 in
++	*/
++	movq	\dbg1,rax /* rax = w3 w2 */
++	movq	rax,\sse /* rhelp = 00 00 w3 w2 */
++	pslldq	$8,\sse /* rhelp = w3 w2 00 00 */
++
++	movq	\dbg0,rax /* rax = w1 w0 */
++	movq	rax,rhelp /* sse = 00 00 w1 w0 */
++	pxor	rhelp,\sse /* sse = w3 w2 w1 w0 */
++
++	pxor	rhelp,rhelp /* rhelp = 00 00 00 00 */
++	xorq	rax,rax /* rax = 00 00 */
++	/*
++	w3 w2 w1 w0 = sse out
++	*/
+ .endm
+ 
+-/* copy four 32-bit values from debug registers into one 128-bit sse register */
+-.macro	xts_dbg_to_sse dbg0 dbg1 dbg2 dbg3 sse
+-#ifdef __x86_64__
+-	movq		\dbg0,rax
+-	rorq		$32,rax
+-	movd		eax,\sse
+-	movq		\dbg1,rax
+-	rorq		$32,rax
+-	movd		eax,rhelp
+-	pslldq		$4,rhelp
+-	pxor		rhelp,\sse
+-	movq		\dbg2,rax
+-	rorq		$32,rax
+-	movd		eax,rhelp
+-	pslldq		$8,rhelp
+-	pxor		rhelp,\sse
+-	movq		\dbg3,rax
+-	rorq		$32,rax
+ #else
++/* copy four 32-bit values from debug registers into one 128-bit sse register */
++/* the 32-bit words are stored in the follwing order in \sse  w0 w1 w2 w3 ; w0 is high order word w3 is low order word */
++.macro	dbg_to_sse dbg0 dbg1 dbg2 dbg3 sse
++	/*
++	dbg0 = w0 in
++	dbg1 = w1 in
++	dbg2 = w2 in
++	dbg3 = w3 in
++	*/
++	movl		\dbg0,eax /* eax = w0 */
++	movd		eax,\sse /* sse = 00 00 00 w0 */
++	movl		\dbg1,eax /* eax = w1 */
++	movd		eax,rhelp /* rhelp = 00 00 00 w1 */
++	pslldq		$4,rhelp /* rhelp = 00 00 w1 00 */
++	pxor		rhelp,\sse /* sse = 00 00 w1 w0 */
++	movl		\dbg2,eax /* eax = w2 */
++	movd		eax,rhelp /* rhelp = 00 00 00 w2 */
++	pslldq		$8,rhelp /* rhelp = 00 w2 00 00 */
++	pxor		rhelp,\sse /* sse = 00 w2 w1 w0 */
++	movl		\dbg3,eax /* eax = w3 */
++	movd		eax,rhelp /* rhelp = 00 00 00 w3 */
++	pslldq		$12,rhelp /* rhelp = w3 00 00 00 */
++	pxor		rhelp,\sse /* sse = w3 w2 w1 w0 */
++	/*
++	3  2  1  0  : index/address
++	w3 w2 w1 w0 = sse out
++	*/
++.endm
+ #endif
+-	movd		eax,rhelp
+-	pslldq		$12,rhelp
+-	pxor		rhelp,\sse
++
+ #ifdef __x86_64__
+-	xorq		rax,rax
+-#else
+-	xorl		eax,eax
+-#endif
++/* copy four 32-bit values from debug registers into one 128-bit sse register */
++.macro	xts_dbg_to_sse sse
++	/*
++	w1 w0 = db2 in
++	w3 w2 = db3 in
++	*/
++	dbg_to_sse	db2,db3,\sse
++	/*
++	 db3   db2  : index/address
++	w3 w2 w1 w0 = \sse out
++	*/
+ .endm
++#endif
+ 
+ /* copy four 32-bit general purpose registers into one 128-bit sse register */
+ .macro	gpr_to_sse gpr0 gpr1 gpr2 gpr3 sse
+@@ -340,47 +371,550 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+ #endif
+ .endm
+ 
+-/* generate next round key */
+-.macro	generate_rk oldrk rk
+-	movdqu		\oldrk,\rk
+-	/*
+-	k[0] ^= s_box(k[13]) ^ rc;
+-	k[1] ^= s_box(k[14]);
+-	k[2] ^= s_box(k[15]);
+-	k[3] ^= s_box(k[12]);
+-	*/
+-	ks_box		12,\rk,1
++/* Performs SubWord(rk) using the AES S-Box
++args:
++	wi: 0-4
++		corresponding to:
++		 3  2  1  0
++		w3 w2 w1 w0
++
++		byte address in hex to word mapping:
++		 w3  w2  w1  w0
++		3333222211110000
++		fedcba9876543210
++
++	rk
++		corresonding to register to substitute
++
++out:
++	edx = rki_s ;; pseudorandom subtituted representation.
++*/
++.macro subword wi rk
++.if \wi == 3
++	ks_box		15,\rk,1 /* Begin SubWord(w3) */
++	shl		$8,edx
++	ks_box		14,\rk,0
++	shl		$8,edx
++	ks_box		13,\rk,0
++	shl		$8,edx
++	ks_box		12,\rk,0 /* End SubWord(w3) */
++.endif
++.if \wi == 2
++	ks_box		11,\rk,1 /* Begin SubWord(w2) */
++	shl		$8,edx
++	ks_box		10,\rk,0
++	shl		$8,edx
++	ks_box		9,\rk,0
++	shl		$8,edx
++	ks_box		8,\rk,0 /* End SubWord(w2) */
++.endif
++.if \wi == 1
++	ks_box		7,\rk,1 /* Begin SubWord(w1) */
++	shl		$8,edx
++	ks_box		6,\rk,0
++	shl		$8,edx
++	ks_box		5,\rk,0
++	shl		$8,edx
++	ks_box		4,\rk,0 /* End SubWord(w1) */
++.endif
++.if \wi == 0
++	ks_box		3,\rk,1 /* Begin SubWord(w0) */
++	shl		$8,edx
++	ks_box		2,\rk,0
++	shl		$8,edx
++	ks_box		1,\rk,0
++	shl		$8,edx
++	ks_box		0,\rk,0 /* End SubWord(w0) */
++.endif
++.endm
++
++/* Performs RotWord(SubWord(rk))^rcon ; 3 in 1 operation
++args:
++	wi: 0-4
++		corresponding to:
++		 3  2  1  0
++		w3 w2 w1 w0
++
++		byte address in hex to word mapping:
++		3333222211110000
++		fedcba9876543210
++
++	permutations:
++		fedc -> cfed
++		ba98 -> 8ba9
++		7654 -> 4765
++		3210 -> 0321
++
++out:
++	edx = wi_rsc
++*/
++.macro subword_rotword_rcon wi rk rcon
++.if \wi == 3
++	ks_box		12,\rk,1 /* Begin edx = RotWord(SubWord(w3)) */
+ 	shl		$8,edx
+ 	ks_box		15,\rk,0
+ 	shl		$8,edx
+ 	ks_box		14,\rk,0
+ 	shl		$8,edx
+-	ks_box		13,\rk,0
++	ks_box		13,\rk,0 /* End edx = RotWord(SubWord(w3)) */
++.endif
++.if \wi == 2
++	ks_box		8,\rk,1 /* Begin edx = RotWord(SubWord(w2)) */
++	shl		$8,edx
++	ks_box		11,\rk,0
++	shl		$8,edx
++	ks_box		10,\rk,0
++	shl		$8,edx
++	ks_box		9,\rk,0 /* End edx = RotWord(SubWord(w2)) */
++.endif
++.if \wi == 1
++	ks_box		4,\rk,1 /* Begin edx = RotWord(SubWord(w1)) */
++	shl		$8,edx
++	ks_box		7,\rk,0
++	shl		$8,edx
++	ks_box		6,\rk,0
++	shl		$8,edx
++	ks_box		5,\rk,0 /* End edx = RotWord(SubWord(w1)) */
++.endif
++.if \wi == 0
++	ks_box		0,\rk,1 /* Begin edx = RotWord(SubWord(w0)) */
++	shl		$8,edx
++	ks_box		3,\rk,0
++	shl		$8,edx
++	ks_box		2,\rk,0
++	shl		$8,edx
++	ks_box		1,\rk,0 /* End edx = RotWord(SubWord(w0)) */
++.endif
++	xorl		\rcon,edx /* edx = wi_rsc = edx^rcon = RotWord(SubWord(wi))^rcon  */
++.endm
++
++/* pxor 4 times */
++.macro pxor4_w w rk
++	/* w can be a result of a expression or wi.  Examples (RotWord(SubWord(w3))^rcon)  or  SubWord(w3)  or  w3  */
++	movd		\w,rhelp /* help = (RotWord(SubWord(w3))^rcon) */
++	pxor		rhelp,\rk /* w4 = w0^w3_rsc = w0^(RotWord(SubWord(w3))^rcon) ; r1 = w3 w2 w1 w4 */
++	movdqu		\rk,rhelp /* rhelp = w3 w2 w1 w4 */
++	pslldq		$4,rhelp /* rhelp = w2 w1 w4 00 */
++	pxor		rhelp,\rk /* w5 = w1^w4 = w1^w0^RotWord(SubWord(w3))^rcon r1 = w3^w2 w2^w1 w5 w4 */
++	pslldq		$4,rhelp /* rhelp = w1 w4 00 00 */
++	pxor		rhelp,\rk /* w6 = w2^w5 = w2^w1^w0^RotWord(SubWord(w3))^rcon ; r1 = w3^w2^w1 w6 w5 w4 */
++	pslldq		$4,rhelp /* rhelp = w4 00 00 00 */
++	pxor		rhelp,\rk /* w7 = w3^w6 = w3^w2^w1^w0^RotWord(SubWord(w3))^rcon ; r1 = w7 w6 w5 w4  ;; w7 = w3^w2^w1^w4 = w3^w2^w1^w0^(RotWord(SubWord(w3))^rcon) */
++.endm
++
++
++
++
++/* Generate the next round key.
++   This macro is unrolled for key expansion rounds.
++
++   AES-128 key expansion
++
++                         exp round key   rcon
++   w3_rsc    w2  w1  w0   r0
++   w7_rsc    w6  w5  w4   r1              0x01 *
++   w11_rsc   w10 w9  w8   r2              0x02
++   w15_rsc   w14 w13 w12  r3              0x04
++   w19_rsc   w18 w17 w16  r4              0x08
++   w23_rsc   w22 w21 w20  r5              0x10
++   w27_rsc   w26 w25 w24  r6              0x20
++   w31_rsc   w30 w29 w28  r7              0x40
++   w35_rsc   w34 w33 w32  r8              0x80
++   w39_rsc   w38 w37 w36  r9              0x1b
++   w43       w42 w41 w40  r10             0x36
++
++   Legend:
++   * _rsc means calculate RotWord(SubWord(wX))^rcon subexpression using that
++     w_(i-1) for w_i.
++   * rcon means round constant.
++
++   w[i] calculation and xor precedence (top expression most important):
++   Given Nk = 4.
++   w[i] = SubWord(RotWord(w[i-1])) ^ rcon ^ w[i-Nk] <->
++          SubWord(RotWord(w[i-1])) ^ rcon ^ w[i-4], when
++          i={4,8,12,16,20,24,28,32,36,40}
++   w[i] = w[i-1] ^ w[i-Nk] <-> w[i-1] ^ w[i-4], when
++          i!={4,8,12,16,20,24,28,32,36,40}
++
++   Macro function args:
++   r0 is read in.
++   r1 is write out.
++*/
++.macro	generate_rk_10 r0 r1 rcon
++	/*
++	See page 31 of FIPS-197 for indexing.
++	Each w is 32-bit word of expanded key.
++	Word ordering is increasing from right to left.
++	Byte ordering is increasing from right to left.
++
++	 3  2  1  0 : address/index
++	w3_rsc w2 w1 w0 = r0 = rk[i][127:0]
++	w7     w6 w5 w4 = r1 = rk[i+1][127:0]
++
++	Legend:
++	* _rsc means calculate RotWord(SubWord(wX))^rcon subexpression using that
++	  w_(i-1) for w_i.
++
++	*/
++	movdqu		\r0,\r1 /* r1 = w3 w2 w1 w0, first operand in xors below  */
++
++	subword_rotword_rcon 3,\r1,\rcon /* edx = w3_rsc = RotWord(SubWord(w3))^rcon */
++
++	/* left most operand w0, w1, w2, w3 of output of w4, w5, w6, w7 correspond to first statement in this macro-function */
++
++	/* rhelp = 00 00 00 w3_rsc */
++	/* w4 = w0^w3_rsc = w0^(RotWord(SubWord(w3))^rcon) ; r1 = w3 w2 w1 w4 */
++	/* rhelp = w3 w2 w1 w4 */
++	/* rhelp = w2 w1 w4 00 */
++	/* w5 = w1^w4 = w1^w0^RotWord(SubWord(w3))^rcon r1 = w3^w2 w2^w1 w5 w4 */
++	/* rhelp = w1 w4 00 00 */
++	/* w6 = w2^w5 = w2^w1^w0^RotWord(SubWord(w3))^rcon ; r1 = w3^w2^w1 w6 w5 w4 */
++	/* rhelp = w4 00 00 00 */
++	/* w7 = w3^w6 = w3^w2^w1^w0^RotWord(SubWord(w3))^rcon ; r1 = w7 w6 w5 w4  ;; w7 = w3^w2^w1^w4 = w3^w2^w1^w0^(RotWord(SubWord(w3))^rcon) */
++
++	pxor4_w		edx,\r1 /* r1 = w7 w6 w5 w4 */
++.endm
++
+ #ifdef __x86_64__
+-	xorl		rc_tab(,rcx,4),edx
+-#else
+-	xorl		rc_tab(,ecx,4),edx
+-#endif
+-	movd		edx,rhelp
+-	pxor		rhelp,\rk
++
++/* AES-192 key expansion
++
++
++   w15    w14  w13    w12
++
++
++                              exp round key            rcon     in/out
++   w3      w2   w1      w0    r0<->r14                        + i  i
++   w7      w6   w5_rsc  w4    r1                       0x01   * iw i
++   w11_rsc w10  w9      w8    r2                                   w
++   w15     w14  w13     w12   r3                       0x02        w i  i
++   w19     w18  w17_rsc w16   r4                       0x04          iw i
++   w23_rsc w22  w21     w20   r5                                        w
++   w27     w26  w25     w24   r6                       0x08             w  i  i
++   w31     w30  w29_rsc w28   r7                       0x10                iw i
++   w35_rsc w34  w33     w32   r8                                              w
++   w39     w38  w37     w36   r9                       0x20                   w i  i
++   w43     w42  w41_rsc w40   r10                      0x40                     iw i
++   w47_rsc w46  w45     w44   r11                                                  w
++   w51     w50  w49     w48   r12                      0x80                        w
++
++   /*
++    Needs left fill to complete row
++    w7  w6
++    w19 w18
++    w31 w30
++    w43 w42
++
++    Needs right fill for immediate left fill
++    w17 w16
++    w29 w28
++    w41 w40
++
++    Does not need fill and part of key
++    w5 w4
++
++    Single line fills
++    w7 w6 w5 w4 = r1
++    w19 w18 w17 w16 = r4
++    w31 w30 w19 w28 = r7
++    w43 w42 w41 w40 = r10
++
++    Double line fills
++    r2 r3
++    r5 r6
++    r8 r9
++    r11 r12
++
++    No fill - key
++    r0
++
++   Legend:
++   * _rsc means calculate RotWord(SubWord(wX))^rcon subexpression using that
++     w_(i-1) for w_i.
++   * i means read in.
++   * w means complete this line out completely for this round of key expansion.
++   * rcon means round constant.
++
++   Key expansion filling strategy:
++   * Utilize the greedy trivial case.  It is depicted as a stacked symmetrical
++     vertical iiww to maximize filling 2 rows of output.
++   * Use auxiliary routine as a set up for trivial case.  The asymmetrical iiw
++     case to enable trivial case.  The trivial case is dependent on the
++     auxiliary case.  It is depicted as a L shape and allowed only one
++     register output for precondition for greedy trivial case.
++
++   +r0 is r13 which is a temporarily used scratch register.
++
++   w[i] calculation and xor precedence (top expression most important):
++   Given Nk = 6.
++   w[i] = SubWord(RotWord(w[i-1])) ^ rcon ^ w[i-Nk] <->
++          SubWord(RotWord(w[i-1])) ^ rcon ^ w[i-6], when
++          i={6,12,18,24,30,36,42,48}
++   w[i] = w[i-1] ^ w[i-Nk] <-> w[i-1] ^ w[i-6], when
++          i!={6,12,18,24,30,36,42,48}
++
++   Macro function args:
++   r0 r1 are read in.
++   r2 r3 are write out.
++
++   Arg notes:
++   rs_idx is the position to dump RotWord(SubWord()) in r2.
++   When fill_right is 1, it means expand colums 0 and 1.
++   It also means expand w17, w16, w29, w28, w41, w40.
++
++   See macro-functions:
++   generate_rk_12_fill_row
++   generate_rk_12_fill_2_rows
++*/
++
++.macro	generate_rk_12_fill_row_right_ r0 r1 r2 rcon rs_idx
++	.if \rcon == $0x4 || \rcon == $0x10 || \rcon == $0x40 /* missing right column in r2 */
++	/* Missing filled column examples:
++
++	rcon == $0x4 || rcon == $0x10 || rcon == $0x40:
++
++	r2 = xx  xx  ff ff	; ff means that byte will be filled
++	r3 = xx  xx  xx xx
++
++	rcon == $0x1:
++
++	r2 = xx  xx  w5 w4	; w5 and w4 are already filled
++	r3 = xx  xx  xx xx
++
++	When rcon == $0x1 means don't fill col 0 and 1,
++
++	rcon == $0x1:
++
++	r0 = w3  w2  w1 w0 # r0_arg in ; not used
++	r1 = w3  w2  w1 w0 # r0_arg in
++	r2 = w7  w6  w5 w4 # r1_arg out x
++	r3 = w11 w10 w9 w8 # r2_arg out
++
++	rcon == $0x4 || rcon == $0x10 || rcon == $0x40:
++
++	r0 =  w11  w10  w9  w8  ; r2_arg in ; not used
++	r1 =  w15  w14  w13 w12 ; r3_arg in
++	r2 =  w19  w18  w17 w16 ; r4_arg out
++	r3 =  w23  w22  w21 w20 ; r5_arg out x w13 w12 w11 w10
++	*/
++
++	/* Fill missing right columns for r2: */
++	movdqu		\r0,\r2 /* rhelp = w11 w10 w9 w8 */
++	psrldq		$8,\r2 /* rhelp = 00 00 w11 w10 */
++
++	movdqu		\r1,rhelp /* r3 = w15 w14 w13 w12 */
++	psrldq		$12,rhelp /* r3 = 00 00 00 w15 */
++
++	pxor		rhelp,\r2 /* w16 = w10^w15 ;  r2 = 00 00 w11 w16 */
++
++	movdqu		\r2,rhelp /* rhelp = 00 00 w11 w16 */
++	pslldq		$12,rhelp /* rhelp = w16 00 00 00 */
++	psrldq		$8,rhelp /* rhelp = 00 00 w16 00 */
++
++	pxor		rhelp,\r2 /* w17 = w11^w16 = w11^w10^w15 ; r2 = 00 00 w17 w16 */
++	.endif
++.endm
++
++.macro	generate_rk_12_fill_row_left_ r0 r1 r2 rcon rs_idx
++	.if \rcon == $0x1 || \rcon == $0x4 || \rcon == $0x10 || \rcon == $0x40 /* left missing column in r2 cases.  Only one output line generated (for r2). */
++	/* Fill missing left columns for r2 */
++
++	/* clear garbage in front of w5 w4 when rcon == $0x1 or in front of w17 w16 when rcon == $0x4 */
++	pslldq		$8,\r2 /* r2 = w5 w4 00 00				; r2 = w17 w16 00 00 */
++	psrldq		$8,\r2 /* r2 = 00 00 w5 w4				; r2 = 00 00 w17 w16 */
++
++	movdqu		\r1,rhelp /* r3 = w3 w2 w1 w0, for extracting w1 w0	; r3 = w15 w14 w13 w12, for extracting w13 w12 */
++	pslldq		$8,rhelp /* r3 = w1 w0 00 00				; r3 = w13 w12 00 00 */
++	pxor		rhelp,\r2 /* r2 = w1 w0 w5 w4				; r2 = w13 w12 w17 w16 */
++
++	/*
++	When rcon == $0x1,
++
++	r0 = w3  w2  w1 w0 # r0_arg in
++	r1 = w3  w2  w1 w0 # r1_arg in
++	r2 = w7  w6  w5 w4 # r1_arg out
++	r3 = w11 w10 w9 w8 # r2_arg out
++
++	 3  2  1  0 : address/index
++	w3 w2 w1 w0 = r0 = key[127:0]
++	rr rr w5 w4 = r1 = key[191:128]
++
++	r1 = rr rr w5 w4  is the state of the first iteration of key expansion,
++			  where rr is random uninitialized bytes.
++
++	 				rcon == $0x1					rcon == $0x4	*/
++	subword_rotword_rcon 1,\r2,\rcon /* edx = w5_rsc = RotWord(SubWord(w5))^rcon | edx = w17_rsc = RotWord(SubWord(w17))^rcon */
++	movd		edx,rhelp /* rhelp = RotWord(SubWord(w5))^rcon, rhelp = 00 00 00 w5_rsc ;; rhelp = RotWord(SubWord(w17))^rcon, rhelp = 00 00 00 w17_rsc */
++
++	pslldq		$8,rhelp /* rhelp = 00 wi_rsc 00 00 */
++
++	/* w6 = w0^w5_rsc = w0^(RotWord(SubWord(w5))^rcon)			; w18 = w12^w17_rsc = w12^(RotWord(SubWord(w17))^rcon) */
++	/* w7 = w1^w6								; w19 = w13^w18 */
++
++	pxor		rhelp,\r2 /* r2 = w1 w6 w5 w4				; r2 = w13 w18 w17 w16 ;; w6 = w0^w5_rsc = w0^(RotWord(SubWord(w5))^rcon) ; w18 = w12^w17_rsc = w12^(RotWord(SubWord(w17))^rcon) */
++
++	movdqu		\r2,rhelp /* rhelp = w1 w6 w5 w4			; rhelp = w13 w18 w17 w16 */
++
++	psrldq		$8,rhelp /* rhelp = 00 00 w1 w6				; rhelp = 00 00 w13 w18 */
++	pslldq		$12,rhelp /* rhelp = w6 00 00 00			; rhelp = w18 00 00 00 */
++
++	pxor		rhelp,\r2 /* r2 = w7 w6 w5 w4				; rhelp = w19 w18 w17 w16  ;; w7 = w1^w6 = w1^w0^w5_rsc = w1^w0^(RotWord(SubWord(w5))^rcon) ; w19 = w13^w18 = w13^w12^w17_rsc = w13^w12^(RotWord(SubWord(w17))^rcon) */
++	.endif
++.endm
++
++.macro	generate_rk_12_fill_row r0 r1 r2 rcon rs_idx
+ 	/*
+-	for(cc = 4; cc < 16; cc += 4 )
+-		k[cc + 0] ^= k[cc - 4];
+-		k[cc + 1] ^= k[cc - 3];
+-		k[cc + 2] ^= k[cc - 2];
+-		k[cc + 3] ^= k[cc - 1];
++	See page31 of FIPS-197 for indexing.
++	Each w is a 32-bit word of the expanded key.
++	Word ordering is increasing from right to left.
++	Byte ordering is increasing from right to left.
++
++	r0 = w3 w2 w1 w0 in
++	r1 = w7 w6 w5 w4 in
+ 	*/
+-	movdqu		\rk,rhelp
+-	pslldq		$4,rhelp
+-	pxor		rhelp,\rk
+-	pslldq		$4,rhelp
+-	pxor		rhelp,\rk
+-	pslldq		$4,rhelp
+-	pxor		rhelp,\rk
+-	/* increment RC (round constant) counter */
+-	inc		ecx
++	generate_rk_12_fill_row_right_ \r0,\r1,\r2,\rcon,\rs_idx
++	generate_rk_12_fill_row_left_ \r0,\r1,\r2,\rcon,\rs_idx
++.endm
++
++.macro	generate_rk_12_fill_2_rows r0 r1 r2 r3 rcon rs_idx
++	/*
++	r0 = w3 w2 w1 w0 in
++	r1 = w7 w6 w5 w4 in
++	r2 = w11 w10 w9  w8 out
++	r3 = w15 w14 w13 w12 out
++	*/
++
++	movdqu		\r0,\r2 /* r2 = w3 w2 w1 w0, for extracting both w3 w2 */
++	psrldq		$8,\r2 /* r2 = 00 00 w3 w2 */
++	movdqu		\r1,\r3 /* r3 = w7 w6 w5 w4, for extracting both w5 w4 */
++	pslldq		$8,\r3 /* r3 = w5 w4 00 00 */
++
++	pxor		\r3,\r2 /* r2 = w5 w4 w3 w2, first operands in xors below */
++
++	movdqu		\r1,rhelp /* rhelp = w7 w6 w5 w4, for extracting w7 */
++	psrldq		$12,rhelp /* rhelp = 00 00 00 w7 */
++	movd		rhelp,edx /* edx = w7 */
++
++	/* w8 = w2^w7 = w2^w1^w0^(RotWord(SubWord(w5))^rcon) ; r2 = w5 w4 w3 w8 */
++	/* rhelp = w5 w4 w3 w8 */
++	/* rhelp = w4 w3 w8 00 */
++	/* w9 = w3^w8 = w3^w2^w1^w0^(RotWord(SubWord(w5))^rcon) ; r2 = xx xx w9 w8 */
++	/* rhelp = w3 w8 00 00 */
++	/* w10 = w4^w9 = w4^w3^w2^w1^w0^(RotWord(SubWord(w5))^rcon) ; r2 = xx w10 w9 w8 */
++	/* rhelp = w8 00 00 00 */
++	/* w11 = w5^w10 = w5^w4^w3^w2^w1^w0^(RotWord(SubWord(w5))^rcon) ; r2 = w11 w10 w9 w8 */
++	pxor4_w		edx,\r2 /* r2 = w11 w10 w9 w8 */
++
++	movdqu		\r1,\r3 /* r3 = w7 w6 w5 w4, for extracting both w7 w6 */
++	psrldq		$8,\r3 /* r3 = 00 00 w7 w6 */
++
++	movdqu		\r2,rhelp /* rhelp = w11 w10 w9 w8, for extracting both w9 w8 */
++	pslldq		$8,rhelp /* rhelp = w9 w8 00 00 */
++
++	pxor		rhelp,\r3 /* r3 = w9 w8 w7 w6, first operands in xors below */
++
++	subword_rotword_rcon 3,\r2,\rcon /* edx = w11_rsc = RotWord(SubWord(w11))^rcon */
++
++	/* rhelp = 00 00 00 w11_rsc */
++	/* w12 = w6^w11_rsc = w6^(RotWord(SubWord(w11))^rcon) = w6^RotWord(SubWord(w5^w4^w3^w2^w1^w0^(RotWord(SubWord(w5))^rcon))) ; r3 = w9 w8 w7 w12 */
++	/* rhelp = w9 w8 w7 w12 */
++	/* rhelp = w8 w7 w12 00 */
++	/* w13 = w7^w12 = w7^w6^RotWord(SubWord(w5^w4^w3^w2^w1^w0^(RotWord(SubWord(w5))^rcon))) ; r3 = xx xx w13 w12 */
++	/* rhelp = w7 w12 00 00 */
++	/* w14 = w8^w13 = w8^w7^w6^RotWord(SubWord(w5^w4^w3^w2^w1^w0^(RotWord(SubWord(w5))^rcon))) ; r3 = xx w14 w13 w12 */
++	/* rhelp = w12 00 00 00 */
++	/* w15 = w9^w14 = w9^w8^w7^w6^RotWord(SubWord(w5^w4^w3^w2^w1^w0^(RotWord(SubWord(w5))^rcon))) ; r3 = w15 w14 w13 w12 */
++	pxor4_w		edx,\r3 /* r3 = w15 w14 w13 w12 */
++.endm
++
++/*
++   AES-256 key expansion
++
++                             exp round key     rcon
++   w3      w2  w1  w0         r0				;; r0 needs to be restored, used as an alias for r14
++   w7_rsc  w6  w5  w4         r1				;; gets overwritten in last expansion, so restore
++   w11_s   w10 w9  w8         r2                0x01 *
++   w15_rsc w14 w13 w12        r3
++   w19_s   w18 w17 w16        r4                0x02
++   w23_rsc w22 w21 w20        r5
++   w27_s   w26 w25 w24        r6                0x04
++   w31_rsc w30 w29 w28        r7
++   w35_s   w34 w33 w32        r8                0x08
++   w39_rsc w38 w37 w36        r9
++   w43_s   w42 w41 w40        r10               0x10
++   w47_rsc w46 w45 w44        r11
++   w51_s   w50 w49 w48        r12               0x20
++   w55_rsc w54 w53 w52        r13
++   w59     w58 w57 w56        r14               0x40
++
++   Legend:
++   * _rsc means calculate RotWord(SubWord(wX))^rcon subexpression using that
++         w_(i-1) for w_i
++   * _s means calculate SubWord(wX) subexpression using that w_(i-1) for w_i
++   * rcon means round constant.
++
++   w[i] calculation and xor precedence (top expression most important):
++   Given Nk = 8.
++   * w[i] = SubWord(RotWord(w[i-1])) ^ rcon ^ w[i-Nk] <->
++            SubWord(RotWord(w[i-1])) ^ rcon ^ w[i-8], when
++            i={8,16,24,32,40,48,56}
++   * w[i] = SubWord(w[i-1]) ^ w[i-Nk] <-> SubWord(w[i-1]) ^ w[i-8], when
++            i={12,20,28,36,44,52}
++   * w[i] = w[i-1] ^ w[i-Nk] <-> w[i-1] ^ w[i-8] <-> w[i-1] ^ w[i-8], when
++            i!={8,16,24,32,40,48,56,12,20,28,36,44,52}
++
++   Macro function args:
++   r0 r1 are read in.
++   r2 r3 are write out.
++*/
++.macro	generate_rk_14 r0 r1 r2 r3 rcon
++	/*
++	See page 31 of FIPS-197 for indexing.
++	Each w is the 32-bit word of the expanded key.
++	Word ordering is increasing from right to left.
++	Wyte ordering is increasing from right to left.
++
++	 3   2    1   0 : address/index
++	w3  w2   w1  w0 = r0 = key[127:0] in
++	w7  w6   w5  w4 = r1 = key[255:128] in
++	w11 w10  w9  w8 = r2 out
++	w15 w14 w13 w12 = r3 out
++	*/
++	movdqu		\r0,\r2 /* r2 = w3 w2 w1 w0 */
++
++	subword_rotword_rcon 3,\r1,\rcon /* edx = w7_rsc = RotWord(SubWord(w7))^rcon */
++
++	/* rhelp = 00 00 00 w7_rsc */
++	/* w8 = w0^w7_rsc = w0^(RotWord(SubWord(w7))^rcon) ; r2 = w3 w2 w1 w8 */
++	/* rhelp = w3 w2 w1 w8  */
++	/* rhelp = w2 w1 w8 00 */
++	/* w9 = w1^w8 = w1^w0^(RotWord(SubWord(w7))^rcon) ; r2 = xx xx w9 w8 */
++	/* rhelp = w1 w8 00 00 */
++	/* w10 = w2^w9 = w2^w1^w0^(RotWord(SubWord(w7))^rcon) ; r2 = xx w10 w9 w8 */
++	/* rhelp = w8 00 00 00 */
++	/* w11 = w3^w10 = w3^w2^w1^w0^(RotWord(SubWord(w7))^rcon) ; r2 = w11 w10 w9 w8 */
++	pxor4_w		edx,\r2 /* r2 =  w11 w10 w9 w8 */
++
++	.if \rcon != $0x40
++	movdqu		\r1,\r3 /* r3 = w7 w6 w5 w4 */
++
++	subword		3,\r2 /* edx = SubWord(w11) */
++
++	/* rhelp = 00 00 00 w11_s */
++	/* w12 = w4^w11_s = w4^SubWord(w11) = w4^(SubWord(w3^w2^w1^w0^(RotWord(SubWord(w7))^rcon))) ; r3 = w7 w6 w5 w12 */
++	/* rhelp = w7 w6 w5 w12 */
++	/* rhelp = w6 w5 w12 00 */
++	/* w13 = w5^w12 = w5^w4^(SubWord(w3^w2^w1^w0^(RotWord(SubWord(w7))^rcon))) ; r3 = xx xx w13 w12 */
++	/* rhelp = w5 w12 00 00 */
++	/* w14 = w6^w13 = w6^w5^w4^(SubWord(w3^w2^w1^w0^(RotWord(SubWord(w7))^rcon))) ; r3 = xx w14 w13 w12 */
++	/* rhelp = w12 00 00 00 */
++	/* w15 = w7^w14 = w7^w6^w5^w4^(SubWord(w3^w2^w1^w0^(RotWord(SubWord(w7))^rcon))) ; r3 = w15 w14 w13 w12 */
++	pxor4_w		edx,\r3 /* r3 = w15 w14 w13 w12 */
++	.endif
+ .endm
+ 
++#endif
++
+ /* common code for inv_mix_column */
+ .macro inv_mix_helper r l reg init
+ 	psrldq		$\r,rhelp
+@@ -514,50 +1048,148 @@ rc_tab:	.long	0x00000001, 0x00000002, 0x
+ 	pxor		\rk,rstate
+ .endm
+ 
+-/* generate AES-128 key schedule (rk1 to rk10) */
+-.macro	key_schedule
+-	/* Generate rk1 to rk5 */
+-	xorl		ecx,ecx
+-	generate_rk	rk1,rk1
+-	generate_rk	rk1,rk2
+-	generate_rk	rk2,rk3
+-	generate_rk	rk3,rk4
+-	generate_rk	rk4,rk5
+-	/* Generate rk6 to rk9 */
+-	generate_rk	rk5,rk10
++#ifdef __x86_64__
++.macro key_schedule64_10
++	/* Generate round keys from rk1 to rk10 for AES-128 */
++	generate_rk_10	rk0,rk1,$0x1
++	generate_rk_10	rk1,rk2,$0x2
++	generate_rk_10	rk2,rk3,$0x4
++	generate_rk_10	rk3,rk4,$0x8
++	generate_rk_10	rk4,rk5,$0x10
++	generate_rk_10	rk5,rk6,$0x20
++	generate_rk_10	rk6,rk7,$0x40
++	generate_rk_10	rk7,rk8,$0x80
++	generate_rk_10	rk8,rk9,$0x1b
++	generate_rk_10	rk9,rk10,$0x36
++.endm
++
++.macro key_schedule64_12
++	/* Generate round keys from rk1 to rk12 for AES-192 */
++	generate_rk_12_fill_row		rk0,rk0,rk1,$0x1
++	generate_rk_12_fill_2_rows	rk0,rk1,rk2,rk3,$0x2
++	generate_rk_12_fill_row		rk2,rk3,rk4,$0x4
++	generate_rk_12_fill_2_rows	rk3,rk4,rk5,rk6,$0x8
++	generate_rk_12_fill_row		rk5,rk6,rk7,$0x10
++	generate_rk_12_fill_2_rows	rk6,rk7,rk8,rk9,$0x20
++	generate_rk_12_fill_row		rk8,rk9,rk10,$0x40
++	generate_rk_12_fill_2_rows	rk9,rk10,rk11,rk12,$0x80
++.endm
++
++.macro key_schedule64_14
++	/* Generate round keys from rk2 to rk14 for AES-256.  Important!  rk0 needs to be restored. */
++	generate_rk_14	rk0,rk1,rk2,rk3,$0x1
++	generate_rk_14	rk2,rk3,rk4,rk5,$0x2
++	generate_rk_14	rk4,rk5,rk6,rk7,$0x4
++	generate_rk_14	rk6,rk7,rk8,rk9,$0x8
++	generate_rk_14	rk8,rk9,rk10,rk11,$0x10
++	generate_rk_14	rk10,rk11,rk12,rk13,$0x20
++	generate_rk_14	rk12,rk13,rk14,rk14,$0x40
++.endm
++#endif
++
++#ifdef __x86_64__
++#else
++.macro key_schedule32_10
++	/* Generate round keys from rk1 to rk10 for AES-128 */
++	generate_rk_10	rk1,rk1,$0x1
++	generate_rk_10	rk1,rk2,$0x2
++	generate_rk_10	rk2,rk3,$0x4
++	generate_rk_10	rk3,rk4,$0x8
++	generate_rk_10	rk4,rk5,$0x10
++	generate_rk_10	rk5,rk10,$0x20
+ 	sse_to_mmx	rk10,rk6a,rk6b
+-	generate_rk	rk10,rk10
+-	sse_to_mmx	rk10,rk7a,rk7b	
+-	generate_rk	rk10,rk10
+-	sse_to_mmx	rk10,rk8a,rk8b	
+-	generate_rk	rk10,rk10
+-	sse_to_mmx	rk10,rk9a,rk9b	
+-	/* Generate rk10 */
+-	generate_rk	rk10,rk10
++	generate_rk_10	rk10,rk10,$0x40
++	sse_to_mmx	rk10,rk7a,rk7b
++	generate_rk_10	rk10,rk10,$0x80
++	sse_to_mmx	rk10,rk8a,rk8b
++	generate_rk_10	rk10,rk10,$0x1b
++	sse_to_mmx	rk10,rk9a,rk9b
++	generate_rk_10	rk10,rk10,$0x36
+ .endm
++#endif
+ 
++#ifdef __x86_64__
++/* copy secret key from dbg regs into xmm regs */
++.macro read_key r0 r1
++	dbg_to_sse	db0,db1,\r0
++	dbg_to_sse	db2,db3,\r1
++.endm
++#endif
+ 
+-/***************************************************************************
+- *	  			CODE SEGMENT
+- **************************************************************************/
++#ifdef __x86_64__
++.macro tresor_encblk64_10
++/* Nr=10 rounds i_nround, i_lround.  See page 14 of FIPS 197 for Nr. */
++	prolog
++	dbg_to_sse	db0,db1,rk0
++	pxor		rk0,rstate
++	key_schedule64_10
++	f_nround	rk1
++	f_nround	rk2
++	f_nround	rk3
++	f_nround	rk4
++	f_nround	rk5
++	f_nround	rk6
++	f_nround	rk7
++	f_nround	rk8
++	f_nround	rk9
++	f_lround	rk10
++	epilog
++.endm
+ 
+-.text
+-	.global		tresor_set_key
+-	.global		tresor_encblk_128
+-	.global		tresor_decblk_128
+-	.global		tresor_set_key_xts_tweak_128
+-	.global		tresor_encblk_128_xts_tweak
+-	.extern		crypto_ft_tab
+-	.extern		crypto_fl_tab
+-	.extern		crypto_it_tab
+-	.extern		crypto_il_tab
++.macro tresor_encblk64_12
++/* Nr=12 rounds i_nround, i_lround */
++	prolog
++	read_key	rk0,rk1
++	pxor		rk0,rstate
++	key_schedule64_12
++	f_nround	rk1
++	f_nround	rk2
++	f_nround	rk3
++	f_nround	rk4
++	f_nround	rk5
++	f_nround	rk6
++	f_nround	rk7
++	f_nround	rk8
++	f_nround	rk9
++	f_nround	rk10
++	f_nround	rk11
++	f_lround	rk12
++	epilog
++.endm
+ 
+-/* void tresor_encblk_128(u8 *out, const u8 *in) */
+-tresor_encblk_128:
+-	prolog 
++.macro tresor_encblk64_14
++/* Nr=14 rounds counting i_nround, i_lround */
++	prolog
++	read_key	rk0,rk1
++	pxor		rk0,rstate
++	key_schedule64_14
++	sse_to_mmx	rk14,rhelp2a,rhelp2b
++	f_nround	rk1
++	f_nround	rk2
++	f_nround	rk3
++	f_nround	rk4
++	f_nround	rk5
++	f_nround	rk6
++	f_nround	rk7
++	f_nround	rk8
++	f_nround	rk9
++	f_nround	rk10
++	f_nround	rk11
++	f_nround	rk12
++	f_nround	rk13
++	mmx_to_sse	rhelp2a,rhelp2b,rk14
++	f_lround	rk14
++	epilog
++.endm
++
++#else
++
++.macro tresor_encblk32_10
++/* Nr=10 rounds counting i_nround_, i_nround, i_lround */
++	prolog
+ 	dbg_to_sse	db0,db1,db2,db3,rk1
+ 	pxor		rk1,rstate
+-	key_schedule
++	key_schedule32_10
+ 	f_nround	rk1
+ 	f_nround	rk2
+ 	f_nround	rk3
+@@ -569,12 +1201,82 @@ tresor_encblk_128:
+ 	f_nround_	rk9a,rk9b,rk5
+ 	f_lround	rk10
+ 	epilog
++.endm
+ 
+-/* void tresor_decblk_128(u8 *out, const u8 *in) */
+-tresor_decblk_128:
++#endif
++
++#ifdef __x86_64__
++.macro tresor_decblk64_10
++/* Nr=10 rounds counting i_nround, i_lround */
++	prolog
++	dbg_to_sse	db0,db1,rk0
++	key_schedule64_10
++	pxor		rk10,rstate
++	i_nround	rk9
++	i_nround	rk8
++	i_nround	rk7
++	i_nround	rk6
++	i_nround	rk5
++	i_nround	rk4
++	i_nround	rk3
++	i_nround	rk2
++	i_nround	rk1
++	i_lround	rk0
++	epilog
++.endm
++
++.macro tresor_decblk64_12
++/* Nr=12 rounds counting i_nround, i_lround */
++	prolog
++	read_key	rk0,rk1
++	key_schedule64_12
++	pxor		rk12,rstate
++	i_nround	rk11
++	i_nround	rk10
++	i_nround	rk9
++	i_nround	rk8
++	i_nround	rk7
++	i_nround	rk6
++	i_nround	rk5
++	i_nround	rk4
++	i_nround	rk3
++	i_nround	rk2
++	i_nround	rk1
++	i_lround	rk0
++	epilog
++.endm
++
++.macro tresor_decblk64_14
++/* Nr=14 rounds counting i_nround, i_lround */
++	prolog
++	read_key	rk0,rk1
++	key_schedule64_14
++	pxor		rk14,rstate
++	i_nround	rk13
++	i_nround	rk12
++	i_nround	rk11
++	i_nround	rk10
++	i_nround	rk9
++	i_nround	rk8
++	i_nround	rk7
++	i_nround	rk6
++	i_nround	rk5
++	i_nround	rk4
++	i_nround	rk3
++	i_nround	rk2
++	i_nround	rk1
++	dbg_to_sse	db0,db1,rk0
++	i_lround	rk0
++	epilog
++.endm
++
++#else
++
++.macro tresor_decblk32_10
++/* Nr=10 rounds counting pxor, i_nround_, i_nround, i_lround */
+ 	prolog
+ 	dbg_to_sse	db0,db1,db2,db3,rk1
+-	key_schedule
++	key_schedule32_10
+ 	pxor		rk10,rstate
+ 	i_nround_	rk9a,rk9b,rk10
+ 	i_nround_	rk8a,rk8b,rk10
+@@ -585,41 +1287,162 @@ tresor_decblk_128:
+ 	i_nround	rk3
+ 	i_nround	rk2
+ 	i_nround	rk1
+-	dbg_to_sse	db0,db1,db2,db3,rk1
+ 	i_lround	rk1
+ 	epilog
++.endm
++
++#endif
++
++/***************************************************************************
++ *	  			CODE SEGMENT
++ **************************************************************************/
++
++.text
++	.global		tresor_set_key
++	.global		tresor_encblk_128
++	.global		tresor_decblk_128
++#ifdef __x86_64__
++	.global		tresor_encblk_192
++	.global		tresor_decblk_192
++	.global		tresor_encblk_256
++	.global		tresor_decblk_256
++#endif
++	.global		tresor_set_key_xts_tweak_128
++	.global		tresor_encblk_128_xts_tweak
++	.extern		crypto_ft_tab
++	.extern		crypto_fl_tab
++	.extern		crypto_it_tab
++	.extern		crypto_il_tab
++
++/* void tresor_encblk_128(u8 *out, const u8 *in) */
++tresor_encblk_128:
++#ifdef __x86_64__
++	tresor_encblk64_10
++#else
++	tresor_encblk32_10
++#endif
++/* void tresor_decblk_128(u8 *out, const u8 *in) */
++tresor_decblk_128:
++#ifdef __x86_64__
++	tresor_decblk64_10
++#else
++	tresor_decblk32_10
++#endif
++/* void tresor_encblk_192(u8 *out, const u8 *in) */
++tresor_encblk_192:
++#ifdef __x86_64__
++	tresor_encblk64_12
++#else
++	ret
++#endif
++/* void tresor_decblk_192(u8 *out, const u8 *in) */
++tresor_decblk_192:
++#ifdef __x86_64__
++	tresor_decblk64_12
++#else
++	ret
++#endif
++/* void tresor_encblk_256(u8 *out, const u8 *in) */
++tresor_encblk_256:
++#ifdef __x86_64__
++	tresor_encblk64_14
++#else
++	ret
++#endif
++/* void tresor_decblk_256(u8 *out, const u8 *in) */
++tresor_decblk_256:
++#ifdef __x86_64__
++	tresor_decblk64_14
++#else
++	ret
++#endif
+ 
+ /* void tresor_encblk_128_xts_tweak(u8 *out, const u8 *in) */
+ tresor_encblk_128_xts_tweak:
+-	prolog 
+-	xts_dbg_to_sse	db0,db1,db2,db3,rk1
+-	pxor		rk1,rstate
+-	key_schedule
++#ifdef __x86_64__
++	prolog
++	xts_dbg_to_sse	rk0
++	pxor		rk0,rstate
++	key_schedule64_10
+ 	f_nround	rk1
+ 	f_nround	rk2
+ 	f_nround	rk3
+ 	f_nround	rk4
+ 	f_nround	rk5
+-	f_nround_	rk6a,rk6b,rk5
+-	f_nround_	rk7a,rk7b,rk5
+-	f_nround_	rk8a,rk8b,rk5
+-	f_nround_	rk9a,rk9b,rk5
++	f_nround	rk6
++	f_nround	rk7
++	f_nround	rk8
++	f_nround	rk9
+ 	f_lround	rk10
+ 	epilog
++#else
++	ret
++#endif
+ 
+ /* void tresor_set_key(const u8 *in_key) */
+ tresor_set_key:
+ #ifdef __x86_64__
++	/*
++	1  0   : index/address
++	w1 w0 -> db0 in
++	w3 w2 -> db1 in
++	w5 w4 -> db2 in
++	w7 w6 -> db3 in
++	*/
++	pushq		rbx
+ 	pushq		rax
+-	movl		0(rdi),eax
+-	movq		rax,db0
+-	movl		4(rdi),eax
+-	movq		rax,db1
+-	movl		8(rdi),eax
+-	movq		rax,db2
+-	movl		12(rdi),eax
+-	movq		rax,db3
++
++	/* w0 */
++	movl		0(rdi),eax /* eax = w0 */
++
++	/* w1 */
++	movl		4(rdi),ebx /* ebx = w1 */
++	shlq		$32,rbx	/* rbx = w1 00 */
++
++	xorq		rax,rbx /* rbx = w1 w0 */
++	movq		rbx,db0 /* db0 = w1 w0 */
++
++
++	/* w2 */
++	movl		8(rdi),eax /* eax = w2 */
++
++	/* w3 */
++	movl		12(rdi),ebx /* ebx = w3 */
++	shlq		$32,rbx /* rbx = w3 00 */
++
++	xorq		rax,rbx /* rbx = w3 w2 */
++	movq		rbx,db1 /* db1 = w3 w2 */
++
++
++	/* w4 */
++	movl		16(rdi),eax /* eax = w4 */
++
++	/* w5 */
++	movl		20(rdi),ebx /* ebx = w5 */
++	shlq		$32,rbx /* rbx = w5 00 */
++
++	xorq		rax,rbx /* rbx = w5 w4 */
++	movq		rbx,db2 /* db2 = w5 w4 */
++
++
++	/* w6 */
++	movl		24(rdi),eax /* eax = w6 */
++
++	/* w7 */
++	movl		28(rdi),ebx /* ebx = w7 */
++	shlq		$32,rbx /* rbx = w7 00 */
++
++	xorq		rax,rbx /* rbx = w7 w6 */
++	movq		rbx,db3 /* db3 = w7 w6 */
++
++	/*
++	            w3 w2 w1 w0 -         db1 db0 	-- are for 128-bit key out
++	      w5 w4 w3 w2 w1 w0 -     db2 db1 db0 	-- are for 192-bit key out
++	w7 w6 w5 w4 w3 w2 w1 w0 - db3 db2 db1 db0	-- are for 256-bit key out
++	*/
++
+ 	popq		rax
++	popq		rbx
+ #else
+ 	movl		4(esp),edx
+ 	movl		0(edx),eax
+@@ -637,46 +1460,35 @@ tresor_set_key:
+ /* void tresor_set_key_xts_tweak_128(const u8 *in_key) */
+ tresor_set_key_xts_tweak_128:
+ #ifdef __x86_64__
+-	pushq		rcx
++/*
++	rdi[0] = tweak_key[0]:tk0 = in
++	rdi[1] = tweak_key[1]:tk1 = in
++	rdi[2] = tweak_key[2]:tk2 = in
++	rdi[3] = tweak_key[3]:tk3 = in
++*/
+ 	pushq		rbx
+ 	pushq		rax
+ 
+-	movl		0(rdi),eax
+-	movq		$0x00000000ffffffff,rcx
+-	andq		rcx,rax
+-	rolq		$32,rax
+-	movq		db0,rbx
+-	andq		rcx,rbx
+-	orq		rax,rbx
+-	movq		rbx,db0
+-
+-	movl		4(rdi),eax
+-	andq		rcx,rax
+-	rolq		$32,rax
+-	movq		db1,rbx
+-	andq		rcx,rbx
+-	orq		rax,rbx
+-	movq		rbx,db1
+-
+-	movl		8(rdi),eax
+-	andq		rcx,rax
+-	rolq		$32,rax
+-	movq		db2,rbx
+-	andq		rcx,rbx
+-	orq		rax,rbx
+-	movq		rbx,db2
+-
+-	movl		12(rdi),eax
+-	andq		rcx,rax
+-	rolq		$32,rax
+-	movq		db3,rbx
+-	andq		rcx,rbx
+-	orq		rax,rbx
+-	movq		rbx,db3
++	movl		0(rdi),eax /* eax = tk0 */
++	movl		4(rdi),ebx /* ebx = tk1 */
++	shlq		$32,rbx /* rbx = tk1 00 */
++	xor		rbx,rax /* rax = tk1 tk0 */
++	movq		rax,db2 /* db2 = tk1 tk0 */
++
++	movl		8(rdi),eax /* eax = tk2 */
++	movl		12(rdi),ebx /* ebx = tk3 */
++	shlq		$32,rbx /* rbx = tk3 00 */
++	xorq		rbx,rax /* rax = tk3 tk2 */
++	movq		rax,db3 /* db3 = tk3 tk2 */
+ 
+ 	popq		rax
+ 	popq		rbx
+-	popq		rcx
++/*
++	tweak_key is 128-bit with 4 32-bit words
++                1          0             : address/index
++	db2    tk1 out  tk0 out
++	db3    tk3 out  tk2 out
++*/
+ #else
+ #endif
+ 	ret
+diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.90-ot/arch/x86/crypto/tresor_glue.c
+--- linux-5.4.90-ot.orig/arch/x86/crypto/tresor_glue.c	2021-01-17 18:16:53.510097608 -0800
++++ linux-5.4.90-ot/arch/x86/crypto/tresor_glue.c	2021-01-17 18:20:08.987501946 -0800
+@@ -60,6 +60,12 @@ asmlinkage void tresor_set_key(const u8
+ asmlinkage void tresor_set_key_xts_tweak_128(const u8 *in_key);
+ asmlinkage void tresor_encblk_128(u8 *out, const u8 *in);
+ asmlinkage void tresor_decblk_128(u8 *out, const u8 *in);
++#ifdef __x86_64__
++asmlinkage void tresor_encblk_192(u8 *out, const u8 *in);
++asmlinkage void tresor_decblk_192(u8 *out, const u8 *in);
++asmlinkage void tresor_encblk_256(u8 *out, const u8 *in);
++asmlinkage void tresor_decblk_256(u8 *out, const u8 *in);
++#endif
+ asmlinkage void tresor_encblk_128_xts_tweak(u8 *out, const u8 *in);
+ 
+ 
+@@ -75,8 +81,15 @@ static int tresor_setdummykey(struct cry
+ {
+ 	struct tresor_ctx *ctx = crypto_tfm_ctx(tfm);
+ 
++#ifdef __x86_64__
++	if( key_len != AES_KEYSIZE_128
++		&& key_len != AES_KEYSIZE_192
++		&& key_len != AES_KEYSIZE_256 )
++		return -EINVAL;
++#else
+ 	if( key_len != AES_KEYSIZE_128 )
+ 		return -EINVAL;
++#endif
+ 
+ 	ctx->key_length = key_len;
+ 	return 0;
+@@ -104,17 +117,53 @@ static inline void tresor_epilog(unsigne
+ 	preempt_enable();
+ }
+ 
++void __tresor_encrypt(int key_length, u8 *dst, const u8 *src)
++{
++	unsigned long irq_flags;
++	tresor_prolog(&irq_flags);
++	switch (key_length) {
++		case AES_KEYSIZE_128:
++			tresor_encblk_128(dst, src);
++			break;
++#ifdef __x86_64__
++		case AES_KEYSIZE_192:
++			tresor_encblk_192(dst, src);
++			break;
++		case AES_KEYSIZE_256:
++			tresor_encblk_256(dst, src);
++			break;
++#endif
++	}
++	tresor_epilog(&irq_flags);
++}
++
++void __tresor_decrypt(int key_length, u8 *dst, const u8 *src)
++{
++	unsigned long irq_flags;
++	tresor_prolog(&irq_flags);
++	switch (key_length) {
++		case AES_KEYSIZE_128:
++			tresor_decblk_128(dst, src);
++			break;
++#ifdef __x86_64__
++		case AES_KEYSIZE_192:
++			tresor_decblk_192(dst, src);
++			break;
++		case AES_KEYSIZE_256:
++			tresor_decblk_256(dst, src);
++			break;
++#endif
++	}
++	tresor_epilog(&irq_flags);
++}
+ 
+ /*
+  * Encrypt one block
+  */
+ void tresor_encrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
+ {
+-	unsigned long irq_flags;
+-
+-	tresor_prolog(&irq_flags);
+-	tresor_encblk_128(dst, src);
+-	tresor_epilog(&irq_flags);
++	struct tresor_ctx *ctx = crypto_tfm_ctx(tfm);
++	__tresor_encrypt(ctx->key_length, dst, src);
+ }
+ 
+ 
+@@ -123,11 +172,8 @@ void tresor_encrypt(struct crypto_tfm *t
+  */
+ void tresor_decrypt(struct crypto_tfm *tfm, u8 *dst, const u8 *src)
+ {
+-	unsigned long irq_flags;
+-
+-	tresor_prolog(&irq_flags);
+-	tresor_decblk_128(dst, src);
+-	tresor_epilog(&irq_flags);
++	struct tresor_ctx *ctx = crypto_tfm_ctx(tfm);
++	__tresor_decrypt(ctx->key_length, dst, src);
+ }
+ 
+ 
+@@ -169,26 +215,25 @@ static int tresor_skcipher_setkey(struct
+ 
+ static int ecb_crypt(struct skcipher_request *req, bool enc)
+ {
++	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
++	struct tresor_ctx *ctx = crypto_skcipher_ctx(tfm);
+ 	struct skcipher_walk walk;
+ 	const unsigned int bsize = AES_BLOCK_SIZE;
+ 	unsigned int nbytes;
+-	void (*f)(u8 *dst, const u8 *src);
+ 	int err;
+-	unsigned long irq_flags;
+ 
+ 	err = skcipher_walk_virt(&walk, req, true);
+ 
+-	f = (enc) ? tresor_encblk_128 : tresor_decblk_128;
+-
+ 	while ((nbytes = walk.nbytes)) {
+ 		u8 *wsrc = walk.src.virt.addr;
+ 		u8 *wdst = walk.dst.virt.addr;
+ 
+ 		/* Handle leftovers */
+ 		do {
+-			tresor_prolog(&irq_flags);
+-			f(wdst, wsrc);
+-			tresor_epilog(&irq_flags);
++			if (enc)
++				__tresor_encrypt(ctx->key_length, wdst, wsrc);
++			else
++				__tresor_decrypt(ctx->key_length, wdst, wsrc);
+ 
+ 			wsrc += bsize;
+ 			wdst += bsize;
+@@ -214,11 +259,12 @@ static int ecb_decrypt(struct skcipher_r
+ 
+ static int cbc_encrypt(struct skcipher_request *req)
+ {
++	struct crypto_skcipher *tfm = crypto_skcipher_reqtfm(req);
++	struct tresor_ctx *ctx = crypto_skcipher_ctx(tfm);
+ 	const unsigned int bsize = AES_BLOCK_SIZE;
+ 	struct skcipher_walk walk;
+ 	unsigned int nbytes;
+ 	int err;
+-	unsigned long irq_flags;
+ 
+ 	err = skcipher_walk_virt(&walk, req, false);
+ 
+@@ -229,9 +275,7 @@ static int cbc_encrypt(struct skcipher_r
+ 
+ 		do {
+ 			u128_xor(dst, src, iv);
+-			tresor_prolog(&irq_flags);
+-			tresor_encblk_128((u8 *)dst, (u8 *)dst);
+-			tresor_epilog(&irq_flags);
++			__tresor_encrypt(ctx->key_length, (u8 *)dst, (u8 *)dst);
+ 			iv = dst;
+ 			src++;
+ 			dst++;
+@@ -253,7 +297,6 @@ static unsigned int __cbc_decrypt(struct
+ 	u128 *src = (u128 *)walk->src.virt.addr;
+ 	u128 *dst = (u128 *)walk->dst.virt.addr;
+ 	u128 last_iv;
+-	unsigned long irq_flags;
+ 
+ 	/* Start of the last block. */
+ 	src += nbytes / bsize - 1;
+@@ -263,9 +306,7 @@ static unsigned int __cbc_decrypt(struct
+ 
+ 	/* Handle leftovers */
+ 	for (;;) {
+-		tresor_prolog(&irq_flags);
+-		tresor_decblk_128((u8 *)dst, (u8 *)src);
+-		tresor_epilog(&irq_flags);
++		__tresor_decrypt(ctx->key_length, (u8 *)dst, (u8 *)src);
+ 
+ 		nbytes -= bsize;
+ 		if (nbytes < bsize)
+@@ -302,14 +343,11 @@ static int cbc_decrypt(struct skcipher_r
+ static void tresor_crypt_ctr(void *ctx, u128 *dst, const u128 *src, le128 *iv)
+ {
+ 	be128 ctrblk;
+-	unsigned long irq_flags;
+ 
+ 	le128_to_be128(&ctrblk, iv);
+ 	le128_inc(iv);
+ 
+-	tresor_prolog(&irq_flags);
+-	tresor_encblk_128((u8 *)&ctrblk, (u8 *)&ctrblk);
+-	tresor_epilog(&irq_flags);
++	__tresor_encrypt(((struct tresor_ctx *)ctx)->key_length, (u8 *)&ctrblk, (u8 *)&ctrblk);
+ 
+ 	u128_xor(dst, src, (u128 *)&ctrblk);
+ }
+@@ -331,22 +369,14 @@ static int ctr_crypt(struct skcipher_req
+ 
+ #ifdef CONFIG_X86_64
+ /* 32-bit doesn't support 64-bit hardware breakpoint addresses */
+-void __tresor_encrypt(struct tresor_ctx *ctx, u8 *dst, const u8 *src) {
+-	unsigned long irq_flags;
+-
++void __xts_tresor_encrypt(const void *ctx, u8 *dst, const u8 *src) {
+ 	/* encrypt using the cipher key */
+-	tresor_prolog(&irq_flags);
+-	tresor_encblk_128(dst, src);
+-	tresor_epilog(&irq_flags);
++	__tresor_encrypt(AES_KEYSIZE_128, dst, src);
+ }
+ 
+-void __tresor_decrypt(struct tresor_ctx *ctx, u8 *dst, const u8 *src) {
+-	unsigned long irq_flags;
+-
++void __xts_tresor_decrypt(const void *ctx, u8 *dst, const u8 *src) {
+ 	/* decrypt using the cipher key */
+-	tresor_prolog(&irq_flags);
+-	tresor_decblk_128(dst, src);
+-	tresor_epilog(&irq_flags);
++	__tresor_decrypt(AES_KEYSIZE_128, dst, src);
+ }
+ 
+ void __xts_tweak_tresor_encrypt(struct tresor_ctx *ctx, u8 *dst, const u8 *src) {
+@@ -455,7 +485,11 @@ static struct crypto_alg tresor_alg = {
+ 	.cra_u	= {
+ 		.cipher	= {
+ 			.cia_min_keysize	= AES_MIN_KEY_SIZE,
++#ifdef __x86_64__
++			.cia_max_keysize	= AES_MAX_KEY_SIZE,
++#else
+ 			.cia_max_keysize	= AES_MIN_KEY_SIZE,
++#endif
+ 			.cia_setkey		= tresor_setdummykey,
+ 			.cia_encrypt		= tresor_encrypt,
+ 			.cia_decrypt		= tresor_decrypt
+@@ -475,7 +509,11 @@ static struct skcipher_alg tresor_skciph
+ 			.cra_module		= THIS_MODULE,
+ 		},
+ 		.min_keysize	= AES_MIN_KEY_SIZE,
++#ifdef __x86_64__
++		.max_keysize	= AES_MAX_KEY_SIZE,
++#else
+ 		.max_keysize	= AES_MIN_KEY_SIZE,
++#endif
+ 		.setkey		= tresor_skcipher_setkey,
+ 		.encrypt	= ecb_encrypt,
+ 		.decrypt	= ecb_decrypt,
+@@ -490,7 +528,11 @@ static struct skcipher_alg tresor_skciph
+ 			.cra_module		= THIS_MODULE,
+ 		},
+ 		.min_keysize	= AES_MIN_KEY_SIZE,
++#ifdef __x86_64__
++		.max_keysize	= AES_MAX_KEY_SIZE,
++#else
+ 		.max_keysize	= AES_MIN_KEY_SIZE,
++#endif
+ 		.ivsize		= AES_BLOCK_SIZE,
+ 		.setkey		= tresor_skcipher_setkey,
+ 		.encrypt	= cbc_encrypt,
+@@ -507,7 +549,7 @@ static struct skcipher_alg tresor_skciph
+ 			.cra_module		= THIS_MODULE,
+ 		},
+ 		.min_keysize	= AES_MIN_KEY_SIZE,
+-		.max_keysize	= AES_MIN_KEY_SIZE,
++		.max_keysize	= AES_MAX_KEY_SIZE,
+ 		.ivsize		= AES_BLOCK_SIZE,
+ 		.chunksize	= AES_BLOCK_SIZE,
+ 		.setkey		= tresor_skcipher_setkey,
+Only in linux-5.4.90-ot/arch/x86/crypto: tresor_glue.c.orig

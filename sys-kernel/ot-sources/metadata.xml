@@ -234,8 +234,7 @@
     <flag name="tresor_x86_64">Patches the kernel with cold boot
       resistant AES using SSE for 64 bit systems.</flag>
     <flag name="tresor_x86_64-256-bit-key-support">Adds 192- and 256-bit
-      AES key support to the 64-bit sse2 version of TRESOR.
-      (experimental/testing)</flag>
+      AES key support to the 64-bit sse2 version of TRESOR.</flag>
     <flag name="uksm">Patches the kernel with the Ultra Kernel Samepage
       Merging, a type of memory page deduper algorithm.  UKSM does transparent
       merging without any need for special changes to programs.  In constrast,
