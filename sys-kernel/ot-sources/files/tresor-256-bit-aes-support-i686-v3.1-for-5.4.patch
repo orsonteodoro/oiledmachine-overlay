@@ -1,6 +1,6 @@
-Patch Status: Complete, tested working on 5.10
+Patch Status: Complete, tested working
 Patch Author: Orson Teodoro <orsonteodoro@hotmail.com>
-Date: Jan 17, 2021
+Date: Jan 18, 2021
 Subject:  Add 256-bit AES support to TRESOR sse2 on 64-bit machines (x86-64) without AES-NI
 
 This patch is for the Linux Kernel 5.4 series.
@@ -16,17 +16,18 @@ tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-i686-v2.3.patch.
 * It may also fix compilation on i686 with more ifdef checks.
 * Removed rc_tab.
 
-v3 Fixed both 192- and 256- TRESOR AES key expansion.
-   Refactor and dedupe code blocks.
-   Document step-by-step word placement in registers.
-v2 Fixes to ctr keysize.
-   Deduped tresor_glue for duplicate encrypt/decrypt function pointer calls.
-v1 Initial implementation.
+v3.1 Fixed XTS support
+v3   Fixed both 192- and 256- TRESOR AES key expansion.
+     Refactor and dedupe code blocks.
+     Document step-by-step word placement in registers.
+v2   Fixes to ctr keysize.
+     Deduped tresor_glue for duplicate encrypt/decrypt function pointer calls.
+v1   Initial implementation.
 
 ----
 diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.90-ot/arch/x86/crypto/tresor_asm.S
---- linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S	2021-01-17 18:16:53.510097608 -0800
-+++ linux-5.4.90-ot/arch/x86/crypto/tresor_asm.S	2021-01-17 18:19:17.615556015 -0800
+--- linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S	2021-01-18 01:18:00.995265324 -0800
++++ linux-5.4.90-ot/arch/x86/crypto/tresor_asm.S	2021-01-18 01:19:18.698335641 -0800
 @@ -1,6 +1,7 @@
  /***************************************************************************
   *
@@ -1383,8 +1384,8 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.4.90-ot/arch
  #endif
  	ret
 diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.90-ot/arch/x86/crypto/tresor_glue.c
---- linux-5.4.90-ot.orig/arch/x86/crypto/tresor_glue.c	2021-01-17 18:16:53.510097608 -0800
-+++ linux-5.4.90-ot/arch/x86/crypto/tresor_glue.c	2021-01-17 18:20:08.987501946 -0800
+--- linux-5.4.90-ot.orig/arch/x86/crypto/tresor_glue.c	2021-01-18 01:18:00.995265324 -0800
++++ linux-5.4.90-ot/arch/x86/crypto/tresor_glue.c	2021-01-18 01:19:57.489862766 -0800
 @@ -60,6 +60,12 @@ asmlinkage void tresor_set_key(const u8
  asmlinkage void tresor_set_key_xts_tweak_128(const u8 *in_key);
  asmlinkage void tresor_encblk_128(u8 *out, const u8 *in);
@@ -1607,6 +1608,22 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.90-ot/arc
  }
  
  void __xts_tweak_tresor_encrypt(struct tresor_ctx *ctx, u8 *dst, const u8 *src) {
+@@ -389,13 +419,13 @@ static int xts_tresor_setkey(struct cryp
+ static void tresor_xts_enc(void *ctx, u128 *dst, const u128 *src, le128 *iv)
+ {
+ 	glue_xts_crypt_128bit_one(ctx, dst, src, iv,
+-				  GLUE_FUNC_CAST(__tresor_encrypt));
++				  GLUE_FUNC_CAST(__xts_tresor_encrypt));
+ }
+ 
+ static void tresor_xts_dec(void *ctx, u128 *dst, const u128 *src, le128 *iv)
+ {
+ 	glue_xts_crypt_128bit_one(ctx, dst, src, iv,
+-				  GLUE_FUNC_CAST(__tresor_decrypt));
++				  GLUE_FUNC_CAST(__xts_tresor_decrypt));
+ }
+ 
+ static const struct common_glue_ctx tresor_enc_xts = {
 @@ -455,7 +485,11 @@ static struct crypto_alg tresor_alg = {
  	.cra_u	= {
  		.cipher	= {
@@ -1652,4 +1669,3 @@ diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_glue.c linux-5.4.90-ot/arc
  		.ivsize		= AES_BLOCK_SIZE,
  		.chunksize	= AES_BLOCK_SIZE,
  		.setkey		= tresor_skcipher_setkey,
-Only in linux-5.4.90-ot/arch/x86/crypto: tresor_glue.c.orig
