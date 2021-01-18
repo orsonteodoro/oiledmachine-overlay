@@ -20,9 +20,11 @@
 	<flag name="hardened">Ensures less problems with hardened build.</flag>
 	<flag name="coverage">Enable code coverage support</flag>
 	<flag name="egl">Enable EGL support</flag>
+	<flag name="examples">Install the MiniBrowser example application</flag>
 	<flag name="ftl-jit">Builds an additional tier for JIT used for
 		JavaScript scripts with longer than expected execution time
 		with marginal benefits.</flag>
+	<flag name="gamepad">Enable gamepad input support via <pkg>dev-libs/libmanette</pkg></flag>
 	<flag name="geolocation">Enable geolocation support through <pkg>app-misc/geoclue</pkg></flag>
 	<flag name="gles2">Enable GLESv2 support</flag>
 	<flag name="jit">Enables JIT support for JavaScriptCore for

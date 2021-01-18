@@ -1,13 +1,12 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 CMAKE_MAKEFILE_GENERATOR="ninja"
 PYTHON_COMPAT=( python3_{6,7,8} )
 USE_RUBY="ruby24 ruby25 ruby26 ruby27"
-CMAKE_MIN_VERSION=3.10
 
-inherit check-reqs cmake-utils flag-o-matic gnome2 pax-utils python-any-r1 ruby-single toolchain-funcs virtualx
+inherit check-reqs cmake flag-o-matic gnome2 pax-utils python-any-r1 ruby-single toolchain-funcs virtualx
 inherit desktop multilib-minimal
 
 MY_P="webkitgtk-${PV}"
@@ -28,12 +27,12 @@ SOVERSION=$((${CURRENT} - ${AGE}))
 SLOT="${SLOT_MAJOR}/${SOVERSION}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~sparc ~x86"
 
-IUSE="aqua +egl +geolocation gles2-only gnome-keyring +gstreamer gtk-doc +introspection +jpeg2k +jumbo-build libnotify +opengl seccomp spell wayland +X"
+IUSE="aqua +egl examples +geolocation gles2-only gnome-keyring +gstreamer gtk-doc +introspection +jpeg2k +jumbo-build libnotify +opengl seccomp spell wayland +X"
 LANGS=( ar as bg ca cs da de el en_CA en_GB eo es et eu fi fr gl gu he hi hu \
 id it ja kn ko lt lv ml mr nb nl or pa pl pt_BR pt ro ru sl sr@latin sr sv ta \
 te tr uk vi zh_CN )
 IUSE+=" ${LANGS[@]/#/l10n_} accelerated-2d-canvas bmalloc ftl-jit gamepad \
-hardened +jit minibrowser systemd +webgl"
+hardened +jit systemd +webgl"
 
 # gstreamer with opengl/gles2 needs egl
 REQUIRED_USE="
@@ -147,9 +146,10 @@ RDEPEND+="
 	dev-libs/gmp[-pgo(-),${MULTILIB_USEDEP}]
 	gamepad? ( >=dev-libs/libmanette-0.2.4[${MULTILIB_USEDEP}] )"
 unset wpe_depend
+DEPEND="${RDEPEND}"
 # paxctl needed for bug #407085
 # Need real bison, not yacc
-DEPEND="${RDEPEND}
+BDEPEND="${RDEPEND}
 	${PYTHON_DEPS}
 	${RUBY_DEPS}
 	>=app-accessibility/at-spi2-core-2.5.3[${MULTILIB_USEDEP}]
@@ -167,6 +167,7 @@ DEPEND="${RDEPEND}
 
 	gtk-doc? ( >=dev-util/gtk-doc-1.27 )
 	geolocation? ( dev-util/gdbus-codegen )
+	>=dev-util/cmake-3.10
 "
 #	test? (
 #		dev-python/pygobject:3[python_targets_python2_7]
@@ -185,17 +186,20 @@ RESTRICT+=" fetch"
 
 pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-	einfo ""
+	einfo
 	einfo "You must also read and agree to the licenses:"
 	einfo "  https://www.unicode.org/license.html"
 	einfo "  http://www.unicode.org/copyright.html"
-	einfo ""
+	einfo
 	einfo "Before downloading ${P}"
-	einfo ""
+	einfo
 	einfo "If you agree, you may download"
 	einfo "  - ${FN}"
 	einfo "from ${SRC_URI} and place them in ${distdir}"
-	einfo ""
+	einfo
+	einfo "The quick one liner to do all that:"
+	einfo "wget -O ${distdir}/${FN} ${SRC_URI}"
+	einfo
 }
 
 pkg_pretend() {
@@ -234,7 +238,8 @@ src_prepare() {
 	eapply "${FILESDIR}"/2.28.2-opengl-without-X-fixes.patch
 	eapply "${FILESDIR}"/2.28.2-non-jumbo-fix.patch
 	eapply "${FILESDIR}"/2.28.4-non-jumbo-fix2.patch
-	cmake-utils_src_prepare
+	eapply "${FILESDIR}"/2.30.3-fix-noGL-build.patch
+	cmake_src_prepare
 	gnome2_src_prepare
 	multilib_copy_sources
 }
@@ -277,7 +282,7 @@ multilib_src_configure() {
 	local rubyimpl
 	local ruby_interpreter=""
 	for rubyimpl in ${USE_RUBY}; do
-		if has_version --host-root "virtual/rubygems[ruby_targets_${rubyimpl}]"; then
+		if has_version -b "virtual/rubygems[ruby_targets_${rubyimpl}]"; then
 			ruby_interpreter="-DRUBY_EXECUTABLE=$(type -P ${rubyimpl})"
 		fi
 	done
@@ -305,8 +310,9 @@ multilib_src_configure() {
 		-DENABLE_API_TESTS=$(usex test)
 		-DENABLE_GTKDOC=$(usex gtk-doc)
 		-DENABLE_GEOLOCATION=$(multilib_native_usex geolocation "ON" "OFF") # Runtime optional (talks over dbus service)
-		$(cmake-utils_use_find_package gles2-only OpenGLES2)
+		$(cmake_use_find_package gles2-only OpenGLES2)
 		-DENABLE_GLES2=$(usex gles2-only)
+		-DENABLE_MINIBROWSER=$(usex examples)
 		-DENABLE_VIDEO=$(usex gstreamer)
 		-DENABLE_WEB_AUDIO=$(usex gstreamer)
 		-DENABLE_INTROSPECTION=$(multilib_native_usex introspection "ON" "OFF")
@@ -317,14 +323,14 @@ multilib_src_configure() {
 		-DENABLE_SPELLCHECK=$(usex spell)
 		-DENABLE_WAYLAND_TARGET=$(usex wayland)
 		-DUSE_WPE_RENDERER=${use_wpe_renderer} # WPE renderer is used to implement accelerated compositing under wayland
-		$(cmake-utils_use_find_package egl EGL)
-		$(cmake-utils_use_find_package opengl OpenGL)
+		$(cmake_use_find_package egl EGL)
+		$(cmake_use_find_package opengl OpenGL)
 		-DENABLE_X11_TARGET=$(usex X)
 		-DENABLE_OPENGL=${opengl_enabled}
 		-DENABLE_WEBGL=$(usex webgl)
 		-DENABLE_BUBBLEWRAP_SANDBOX=$(usex seccomp)
-		-DBWRAP_EXECUTABLE="${EPREFIX}"/usr/bin/bwrap # If bubblewrap[suid] then portage makes it go-r and cmake find_program fails with that
-		-DCMAKE_BUILD_TYPE=Release
+		-DBWRAP_EXECUTABLE:FILEPATH="${EPREFIX}"/usr/bin/bwrap # If bubblewrap[suid] then portage makes it go-r and cmake find_program fails with that
+		-DDBUS_PROXY_EXECUTABLE:FILEPATH="${EPREFIX}"/usr/bin/xdg-dbus-proxy
 		-DPORT=GTK
 		${ruby_interpreter}
 	)
@@ -339,7 +345,6 @@ multilib_src_configure() {
 #		-DENABLE_DFG_JIT=$(usex jit)
 #		-DENABLE_FTL_JIT=$(usex ftl-jit)
 #		-DENABLE_JIT=$(usex jit)
-		-DENABLE_MINIBROWSER=$(usex minibrowser "ON" "OFF")
 		-DUSE_SYSTEM_MALLOC=$(usex bmalloc "OFF" "ON")
 		-DUSE_SYSTEMD=$(usex systemd "ON" "OFF")
 	)
@@ -353,6 +358,9 @@ multilib_src_configure() {
 #		mycmakeargs+=( -DUSE_LD_GOLD=OFF )
 #	fi
 
+	# https://bugs.gentoo.org/761238
+	append-cppflags -DNDEBUG
+
 	if use accelerated-2d-canvas ; then
 		ewarn "The accelerated-2d-canvas USE flag is unstable and not recommended."
 	fi
@@ -361,31 +369,31 @@ multilib_src_configure() {
 		mycmakeargs+=( -DFORCE_32BIT=ON )
 	fi
 
-	WK_USE_CCACHE=NO cmake-utils_src_configure
+	WK_USE_CCACHE=NO cmake_src_configure
 }
 
 multilib_src_compile() {
-	cmake-utils_src_compile
+	cmake_src_compile
 }
 
 multilib_src_test() {
 	# Prevents test failures on PaX systems
 	pax-mark m $(list-paxables Programs/*[Tt]ests/*) # Programs/unittests/.libs/test*
 
-	cmake-utils_src_test
+	cmake_src_test
 }
 
 multilib_src_install() {
-	cmake-utils_src_install
+	cmake_src_install
 
 	# Prevents crashes on PaX systems, bug #522808
-	local d="${ED}usr/$(get_libdir)/misc/webkit2gtk-${API_VERSION}"
+	local d="${ED}/usr/$(get_libdir)/misc/webkit2gtk-${API_VERSION}"
 	# usr/libexec int not multilib this is why it is changed
 	pax-mark m "${d}/WebKitPluginProcess"
 	pax-mark m "${d}/WebKitWebProcess"
 	pax-mark m "${d}/jsc"
 
-	if use minibrowser ; then
+	if use examples ; then
 		exeinto /usr/bin
 		newexe "${FILESDIR}/minibrowser" minibrowser-${ABI}
 		sed -i -e "s|\$(get_libdir)|$(get_libdir)|g" \
