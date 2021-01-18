@@ -1237,18 +1237,6 @@ case-insensitive hex string without spaces and without any prefixes at least\n\
 it is custom, you may supply your own key deriviation function (KDF) and/or\n\
 hashing algorithm, the result from gpg, or hardware key.\n\
 \n\
-TRESOR AES-192 and AES-256 is only available for the tresor_aesni USE flag.\n\
-\n\
-For 4.14, TRESOR with ECB and CBC are only available.\n\
-CBC is recommended for production in the 4.14 series.\n\
-\n\
-For LTS and stable, TRESOR with ECB, CBC, CTR, XTS are only available.\n\
-CBC is currently recommended for production.  CTR and XTS are still in\n\
-development.  The CTR implementation may be changed.\n\
-Futher XTS support may require modding the kernel.\n\
-\n\
-ECB is NOT recommended and should only be used for testing.\n\
-\n\
 If using /sys/kernel/tresor/password for plaintext passwords, they can only\n\
 be 53 characters maxiumum without the null character.  They will be sent to\n\
 a key derivation function that is 2000 iterations of SHA256.\n\
@@ -1290,7 +1278,23 @@ Setting CONFIG_CONSOLE_LOGLEVEL_DEFAULT and CONSOLE_LOGLEVEL_QUIET to <= 2\n\
 will wipe out all the boot time verbosity leaking into the TRESOR prompt\n\
 from drivers.\n\
 \n\
-TRESOR was not designed for parallel usage.\n\
+TRESOR was not designed for parallel usage.  Only one TRESOR device at a\n\
+time can be used.\n\
+\n\
+TRESOR AES-192 and AES-256 is only available for the tresor_aesni USE flag.\n\
+\n\
+For 4.14, TRESOR with ECB and CBC are only available.\n\
+CBC is recommended for production in the 4.14 series.\n\
+\n\
+For LTS and stable, TRESOR with ECB, CBC, CTR, XTS are only available.\n\
+CBC is currently recommended for production.  CTR and XTS are still in\n\
+development and strongly not recommended.  The XTS and CTR implementations\n\
+will be reworked if possible in assembly code and registers.  Currently,\n\
+both CTS and CTR implementation allows copies of these infos into RAM memory\n\
+and not philosophically in alignment TRESOR which keeps keys out of memory.\n\
+Futher XTS support may require modding the kernel.\n\
+\n\
+ECB is NOT recommended and should only be used for testing.\n\
 \n\
 The kernel may require modding the setkey portions to support different\n\
 crypto systems whenever crypto_cipher_setkey or crypto_skcipher_setkey\n\

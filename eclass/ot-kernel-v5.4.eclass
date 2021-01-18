@@ -254,9 +254,13 @@ function ot-kernel_apply_tresor_fixes() {
 "${FILESDIR}/tresor-expose-aes-generic-tables-for-5.4.patch"
 
 	if use tresor_x86_64 || use tresor_i686 ; then
+		einfo "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-i686-v2.4.patch"
+		die
 		_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-i686-v2.4.patch"
 	else
+		einfo "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-aesni-v2.4.patch"
+		die
 		_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.4-aesni-v2.4.patch"
 	fi
@@ -265,8 +269,10 @@ function ot-kernel_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c.patch"
 	if use tresor_x86_64-256-bit-key-support ; then
 		if use tresor_x86_64 || use tresor_i686 ; then
+			einfo "${FILESDIR}/tresor-256-bit-aes-support-i686-v3.1-for-5.4.patch"
+			die
 			_dpatch "${PATCH_OPS}" \
-"${FILESDIR}/tresor-256-bit-aes-support-i686-v3-for-5.4.patch"
+"${FILESDIR}/tresor-256-bit-aes-support-i686-v3.1-for-5.4.patch"
 		fi
 	fi
 
