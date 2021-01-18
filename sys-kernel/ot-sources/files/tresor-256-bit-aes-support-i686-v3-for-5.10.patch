@@ -568,7 +568,7 @@ diff -urp linux-5.10.8-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.10.8-ot/arch
 +   * Utilize the greedy trivial case.  It is depicted as a stacked symmetrical
 +     vertical iiww to maximize filling 2 rows of output.
 +   * Use auxiliary routine as a set up for trivial case.  The asymmetrical iiw
-+     case to enable trivial case.  The trivial case is dependent on the
++     case completes the input for the trivial case.  The trivial case is dependent on the
 +     auxiliary case.  It is depicted as a L shape and allowed only one
 +     register output for precondition for greedy trivial case.
 +
@@ -762,11 +762,11 @@ diff -urp linux-5.10.8-ot.orig/arch/x86/crypto/tresor_asm.S linux-5.10.8-ot/arch
 +	/* w12 = w6^w11_rsc = w6^(RotWord(SubWord(w11))^rcon) = w6^RotWord(SubWord(w5^w4^w3^w2^w1^w0^(RotWord(SubWord(w5))^rcon))) ; r3 = w9 w8 w7 w12 */
 +	/* rhelp = w9 w8 w7 w12 */
 +	/* rhelp = w8 w7 w12 00 */
-+	/* w13 = w7^w12 = w7^w6^RotWord(SubWord(w5^w4^w3^w2^w1^w0^(RotWord(SubWord(w5))^rcon))) ; r3 = xx xx w13 w12 */
++	/* w13 = w7^w12 = w7^w6^RotWord(SubWord(w5^w4^w3^w2^w1^w0^(RotWord(SubWord(w5))^rcon)))^rcon ; r3 = xx xx w13 w12 */
 +	/* rhelp = w7 w12 00 00 */
-+	/* w14 = w8^w13 = w8^w7^w6^RotWord(SubWord(w5^w4^w3^w2^w1^w0^(RotWord(SubWord(w5))^rcon))) ; r3 = xx w14 w13 w12 */
++	/* w14 = w8^w13 = w8^w7^w6^RotWord(SubWord(w5^w4^w3^w2^w1^w0^(RotWord(SubWord(w5))^rcon)))^rcon ; r3 = xx w14 w13 w12 */
 +	/* rhelp = w12 00 00 00 */
-+	/* w15 = w9^w14 = w9^w8^w7^w6^RotWord(SubWord(w5^w4^w3^w2^w1^w0^(RotWord(SubWord(w5))^rcon))) ; r3 = w15 w14 w13 w12 */
++	/* w15 = w9^w14 = w9^w8^w7^w6^RotWord(SubWord(w5^w4^w3^w2^w1^w0^(RotWord(SubWord(w5))^rcon)))^rcon ; r3 = w15 w14 w13 w12 */
 +	pxor4_w		edx,\r3 /* r3 = w15 w14 w13 w12 */
 +.endm
 +
