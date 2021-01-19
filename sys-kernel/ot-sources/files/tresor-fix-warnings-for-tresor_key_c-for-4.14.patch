@@ -1,0 +1,27 @@
+--- linux-4.14.216-ot.orig/arch/x86/crypto/tresor_key.c	2021-01-18 21:30:35.437727005 -0800
++++ linux-4.14.216-ot/arch/x86/crypto/tresor_key.c	2021-01-18 21:33:39.520976103 -0800
+@@ -161,7 +161,7 @@ static void sha256(const char *message,
+ 	a = 0; b = 0; c = 0; d = 0;
+ 	e = 0; f = 0; g = 0; h = 0;
+ 	memset(chunk, 0, 64);
+-	memset(w, 0, 64);
++	memset(w, 0, sizeof(w));
+ 	wbinvd();
+ }
+ 
+@@ -210,12 +210,13 @@ static inline int tresor_key_from_cpu0(v
+ /* Print to term_fd */
+ static int printf_(const char *fmt, ...)
+ {
++#define MAX_COL 80
+ 	ssize_t ret;
+ 	va_list args; int col = 80; char line[col];
+ 
+ 	va_start(args, fmt);
+-	vsnprintf(line, col, fmt, args);
+-	line[col-1] = 0;
++	vsnprintf(line, MAX_COL, fmt, args);
++	line[MAX_COL-1] = 0;
+ 	va_end(args);
+ 
+ 	tresor_prompt_begin();

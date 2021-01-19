@@ -214,10 +214,6 @@ function ot-kernel_apply_tresor_fixes() {
 			"${FILESDIR}/tresor-tresor_key_64.patch"
 	fi
 
-	#if ! use tresor_sysfs ; then
-		_dpatch "${PATCH_OPS} -F 3" "${FILESDIR}/wait.patch"
-	#fi
-
 	# for 5.x series uncomment below
 	_dpatch "${PATCH_OPS}" \
 		"${FILESDIR}/tresor-ksys-renamed-funcs-${platform}.patch"
@@ -238,34 +234,28 @@ function ot-kernel_apply_tresor_fixes() {
 		"${FILESDIR}/tresor-expose-aes-generic-tables-for-5.4.patch"
 
 	if use tresor_x86_64 || use tresor_i686 ; then
-		einfo "See ${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-i686-v2.4.patch"
-		die ""
+		_dpatch "${PATCH_OPS}" \
+			"${FILESDIR}/tresor-prompt-update-for-5.10-v4_i686.patch"
+	else
+		_dpatch "${PATCH_OPS}" \
+			"${FILESDIR}/tresor-prompt-update-for-5.10-v4_aesni.patch"
+	fi
+
+	if use tresor_x86_64 || use tresor_i686 ; then
 		_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-i686-v2.4.patch"
 	else
-		einfo "See ${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-aesni-v2.4.patch"
-		die ""
 		_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/tresor-glue-skcipher-cbc-ecb-ctr-xts-support-for-5.10-aesni-v2.4.patch"
 	fi
 
 	_dpatch "${PATCH_OPS}" \
-		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c.patch"
+		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c-for-5.10.patch"
 	if use tresor_x86_64-256-bit-key-support ; then
 		if use tresor_x86_64 || use tresor_i686 ; then
-			einfo "See ${FILESDIR}/tresor-256-bit-aes-support-i686-v3-for-5.10.patch"
-			die ""
 			_dpatch "${PATCH_OPS}" \
 "${FILESDIR}/tresor-256-bit-aes-support-i686-v3-for-5.10.patch"
 		fi
-	fi
-
-	if use tresor_x86_64 || use tresor_i686 ; then
-		_dpatch "${PATCH_OPS}" \
-			"${FILESDIR}/tresor-prompt-update-for-5.10-v3_i686.patch"
-	else
-		_dpatch "${PATCH_OPS}" \
-			"${FILESDIR}/tresor-prompt-update-for-5.10-v3_aesni.patch"
 	fi
 
 	if ! use tresor_x86_64-256-bit-key-support ; then

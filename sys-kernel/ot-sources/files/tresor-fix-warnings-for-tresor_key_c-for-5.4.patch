@@ -1,5 +1,5 @@
---- a/arch/x86/crypto/tresor_key.c	2020-07-03 19:13:36.804279446 -0700
-+++ b/arch/x86/crypto/tresor_key.c	2020-07-03 19:19:31.833224210 -0700
+--- linux-5.4.90-ot.orig/arch/x86/crypto/tresor_key.c	2021-01-18 20:46:23.418601185 -0800
++++ linux-5.4.90-ot/arch/x86/crypto/tresor_key.c	2021-01-18 20:50:44.532529096 -0800
 @@ -152,7 +152,7 @@ static void sha256(const char *message,
  	a = 0; b = 0; c = 0; d = 0;
  	e = 0; f = 0; g = 0; h = 0;
@@ -9,12 +9,13 @@
  	wbinvd();
  }
  
-@@ -160,11 +160,12 @@ static void sha256(const char *message,
+@@ -160,12 +160,13 @@ static void sha256(const char *message,
  /* Print to term_fd */
  static int printf_(const char *fmt, ...)
  {
--	va_list args; int col = 80; char line[col];
 +#define MAX_COL 80
+ 	ssize_t ret;
+-	va_list args; int col = 80; char line[col];
 +	va_list args; char line[MAX_COL];
  
  	va_start(args, fmt);
@@ -24,4 +25,4 @@
 +	line[MAX_COL-1] = 0;
  	va_end(args);
  
- 	return ksys_write(term_fd, line, strlen(line));
+ 	tresor_prompt_begin();

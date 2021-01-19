@@ -1,0 +1,132 @@
+Subject: TRESOR prompt boot time panic fix for 5.4 (aesni)
+
+Author: Orson Teodoro <orsonteodoro@hotmail.com>
+Date: Jan 18, 2021 (Unix timestamp: 1611031242)
+
+The wait fix addresses is_kthread_should_stop() boot time panic
+introduced by cb6538e740d7543cd989128625cf8cac4b471e0a
+with TRESOR prompt without revert.
+
+----
+diff -urp linux-5.4.90-ot.orig/arch/x86/crypto/tresor_key.c linux-5.4.90-ot/arch/x86/crypto/tresor_key.c
+--- linux-5.4.90-ot.orig/arch/x86/crypto/tresor_key.c	2021-01-18 20:09:58.013939518 -0800
++++ linux-5.4.90-ot/arch/x86/crypto/tresor_key.c	2021-01-18 20:17:06.070524414 -0800
+@@ -210,6 +210,7 @@ static inline int tresor_key_from_cpu0(v
+ /* Print to term_fd */
+ static int printf_(const char *fmt, ...)
+ {
++	ssize_t ret;
+ 	va_list args; int col = 80; char line[col];
+ 
+ 	va_start(args, fmt);
+@@ -217,7 +218,11 @@ static int printf_(const char *fmt, ...)
+ 	line[col-1] = 0;
+ 	va_end(args);
+ 
+-	return ksys_write(term_fd, line, strlen(line));
++	tresor_prompt_begin();
++	ret = ksys_write(term_fd, line, strlen(line));
++	tresor_prompt_end();
++
++	return ret;
+ }
+ 
+ /* Erase line before printing (workaround for weird consoles) */
+@@ -237,7 +242,9 @@ static int printf(const char *fmt, ...)
+ static unsigned char getchar(void)
+ {
+ 	unsigned char c;
++	tresor_prompt_begin();
+ 	ksys_read(term_fd, &c, 1);
++	tresor_prompt_end();
+ 	return c;
+ }
+ 
+@@ -286,15 +293,19 @@ int tresor_readkey(const char *terminal,
+ 	ofs = get_fs();
+ 	set_fs(KERNEL_DS);
+ 	/* try to open terminal */
++	tresor_prompt_begin();
+ 	term_fd = ksys_open(terminal, O_RDWR, 0);
++	tresor_prompt_end();
+ 	if (term_fd < 0) {
+ 		set_fs(ofs);
+ 		return term_fd;
+ 	}
+ 	/* read single characters; no echo */
++	tresor_prompt_begin();
+ 	ksys_ioctl(term_fd, TCGETS, (long)&termios);
+ 	termios.c_lflag &= ~(ICANON | ECHO);
+ 	ksys_ioctl(term_fd, TCSETSF, (long)&termios);
++	tresor_prompt_end();
+ 	/* initialize console */
+ 	cursor_enable();
+ 	cls();
+@@ -437,7 +448,9 @@ readkey:
+ 		printf("\n\n");
+ 
+ 	termios.c_lflag |= (ICANON | ECHO);
++	tresor_prompt_begin();
+ 	ksys_ioctl(term_fd, TCSETSF, (long)&termios);
++	tresor_prompt_end();
+ 
+ 	if (resume)
+ 		cursor_disable();
+diff -urp linux-5.4.90-ot.orig/include/linux/sched.h linux-5.4.90-ot/include/linux/sched.h
+--- linux-5.4.90-ot.orig/include/linux/sched.h	2021-01-18 20:09:03.119878738 -0800
++++ linux-5.4.90-ot/include/linux/sched.h	2021-01-18 20:18:06.884950282 -0800
+@@ -792,6 +792,11 @@ struct task_struct {
+ 	/* Canary value for the -fstack-protector GCC feature: */
+ 	unsigned long			stack_canary;
+ #endif
++
++#ifdef CONFIG_CRYPTO_TRESOR_PROMPT
++	unsigned long			tresor_reading_prompt;
++#endif
++
+ 	/*
+ 	 * Pointers to the (original) parent process, youngest child, younger sibling,
+ 	 * older sibling, respectively.  (p->father can be replaced with
+@@ -1997,4 +2002,25 @@ int sched_trace_rq_cpu(struct rq *rq);
+ 
+ const struct cpumask *sched_trace_rd_span(struct root_domain *rd);
+ 
++#ifdef CONFIG_CRYPTO_TRESOR_PROMPT
++#define TRESOR_PROMPT_INACTIVE 0
++static inline void tresor_prompt_begin(void)
++{
++	current->tresor_reading_prompt++;
++	barrier();
++}
++
++static inline void tresor_prompt_end(void)
++{
++	barrier();
++	current->tresor_reading_prompt--;
++}
++
++/* non-zero is reading, zero is not reading */
++static inline int tresor_prompt_active(void)
++{
++	return current->tresor_reading_prompt;
++}
++#endif
++
+ #endif
+diff -urp linux-5.4.90-ot.orig/kernel/sched/wait.c linux-5.4.90-ot/kernel/sched/wait.c
+--- linux-5.4.90-ot.orig/kernel/sched/wait.c	2019-11-24 16:32:01.000000000 -0800
++++ linux-5.4.90-ot/kernel/sched/wait.c	2021-01-18 20:19:47.952964485 -0800
+@@ -380,7 +380,12 @@ EXPORT_SYMBOL(autoremove_wake_function);
+ 
+ static inline bool is_kthread_should_stop(void)
+ {
+-	return (current->flags & PF_KTHREAD) && kthread_should_stop();
++#ifdef CONFIG_CRYPTO_TRESOR_PROMPT
++	if (unlikely(tresor_prompt_active()))
++		return 0;
++	else
++#endif
++		return (current->flags & PF_KTHREAD) && kthread_should_stop();
+ }
+ 
+ /*

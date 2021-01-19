@@ -146,18 +146,22 @@ function ot-kernel_apply_tresor_fixes() {
 			"${FILESDIR}/tresor-tresor_key_64.patch"
 	fi
 
-	#if ! use tresor_sysfs ; then
-		_dpatch "${PATCH_OPS} -F 3" "${FILESDIR}/wait.patch"
-	#fi
-
 	# for 5.x series and 4.20 use tresor-testmgr-linux-x.y.patch
 	local fuzz_factor=0
 	[[ "${path}" =~ "${TRESOR_AESNI_FN}" ]] && fuzz_factor=3
         _dpatch "${PATCH_OPS} -F ${fuzz_factor}" \
 		"${FILESDIR}/tresor-testmgr-linux-4.14.127.patch"
 
+	if use tresor_x86_64 || use tresor_i686 ; then
+		_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/tresor-prompt-wait-fix-for-4.14-i686.patch"
+	else
+		_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/tresor-prompt-wait-fix-for-4.14-aesni.patch"
+	fi
+
 	_dpatch "${PATCH_OPS}" \
-		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c.patch"
+		"${FILESDIR}/tresor-fix-warnings-for-tresor_key_c-for-4.14.patch"
 
 	if use tresor_x86_64 || use tresor_i686 ; then
 		_dpatch "${PATCH_OPS}" \

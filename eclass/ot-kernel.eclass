@@ -1292,7 +1292,7 @@ development and strongly not recommended.  The XTS and CTR implementations\n\
 will be reworked if possible in assembly code and registers.  Currently,\n\
 both CTS and CTR implementation allows copies of these infos into RAM memory\n\
 and not philosophically in alignment TRESOR which keeps keys out of memory.\n\
-Futher XTS support may require modding the kernel.\n\
+Further XTS support may require modding at the kernel source code level.\n\
 \n\
 ECB is NOT recommended and should only be used for testing.\n\
 \n\

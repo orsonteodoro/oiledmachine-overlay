@@ -1,0 +1,29 @@
+--- a/arch/x86/crypto/tresor_key.c.orig	2021-01-18 19:51:00.846773880 -0800
++++ b/arch/x86/crypto/tresor_key.c	2021-01-18 19:53:04.971573561 -0800
+@@ -152,7 +152,7 @@ static void sha256(const char *message,
+ 	a = 0; b = 0; c = 0; d = 0;
+ 	e = 0; f = 0; g = 0; h = 0;
+ 	memset(chunk, 0, 64);
+-	memset(w, 0, 64);
++	memset(w, 0, sizeof(w));
+ 	wbinvd();
+ }
+ 
+@@ -160,13 +160,14 @@ static void sha256(const char *message,
+ /* Print to term_file */
+ static int printf_(const char *fmt, ...)
+ {
++#define MAX_COL 80
+ 	ssize_t ret;
+ 	loff_t pos;
+-	va_list args; int col = 80; char line[col];
++	va_list args; char line[MAX_COL];
+ 
+ 	va_start(args, fmt);
+-	vsnprintf(line, col, fmt, args);
+-	line[col-1] = 0;
++	vsnprintf(line, MAX_COL, fmt, args);
++	line[MAX_COL-1] = 0;
+ 	va_end(args);
+ 
+ 	pos = term_file->f_pos;
