@@ -2,6 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit check-reqs cmake-utils desktop electron-app eutils user xdg
+
 DESCRIPTION="GDevelop is an open-source, cross-platform game engine designed \
 to be used by everyone."
 HOMEPAGE="https://gdevelop-app.com/"
@@ -9,16 +12,15 @@ LICENSE="GDevelop MIT"
 KEYWORDS="~amd64"
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
-IUSE="asmjs doc electron +extensions +html5 minimal native +wasm web-browser"
-REQUIRED_USE="^^ ( html5 native )
+IUSE+=" asmjs doc electron +extensions +html5 minimal native +wasm web-browser"
+REQUIRED_USE+=" ^^ ( html5 native )
 	|| ( electron web-browser )
 	^^ ( asmjs wasm )
 	asmjs? ( html5 )
 	wasm? ( html5 )
 	wasm" # building with asmjs is broken
 #See https://github.com/4ian/GDevelop/blob/master/ExtLibs/installDeps.sh
-RDEPEND="${RDEPEND}
-	native? (
+DEPEND+=" native? (
 		app-arch/p7zip
 		media-libs/freetype
 		media-libs/glew
@@ -32,32 +34,29 @@ RDEPEND="${RDEPEND}
 		x11-libs/gtk+:3
 	)
 	web-browser? ( x11-misc/xdg-utils )
-	virtual/opengl
-"
+	virtual/opengl"
+RDEPEND="${DEPEND}"
 # For the required emscripten version, \
-# see https://github.com/4ian/GDevelop/blob/v5.0.0-beta101/.circleci/config.yml
+# see https://github.com/4ian/GDevelop/blob/v5.0.0-beta103/.circleci/config.yml
 # See also electron-app_src_compile about the wasm (llvm) vs \
 # asmjs (emscripten-fastcomp) requirement.
 EMSCRIPTEN_MIN_V="1.39.6"
-DEPEND="${RDEPEND}
-	html5? (
+BDEPEND+=" html5? (
 		asmjs? (
 			>=dev-util/emscripten-${EMSCRIPTEN_MIN_V}[asmjs]
 			<dev-util/emscripten-2[asmjs]
 		)
 		wasm? ( >=dev-util/emscripten-${EMSCRIPTEN_MIN_V}[wasm(+)] )
-		<net-libs/nodejs-14
 		net-libs/nodejs[npm]
 	)
 	dev-vcs/git
 	media-gfx/imagemagick[png]"
 ELECTRON_APP_ELECTRON_V="8.2.5"
 ELECTRON_APP_REACT_V="16.8.6"
-inherit check-reqs cmake-utils desktop electron-app eutils user xdg
 MY_PN="GDevelop"
 MY_PV="${PV//_/-}"
 # For the SFML version, see
-# https://github.com/4ian/GDevelop/blob/v5.0.0-beta102/ExtLibs/CMakeLists.txt
+# https://github.com/4ian/GDevelop/blob/v5.0.0-beta103/ExtLibs/CMakeLists.txt
 SFML_V="2.4.1"
 SRC_URI=\
 "https://github.com/4ian/GDevelop/archive/v${MY_PV}.tar.gz \
@@ -158,11 +157,6 @@ See \`eselect emscripten\` for details.  (2)"
 	fi
 	export ACTIVE_VERSION=$(grep -F -e "#define NODE_MAJOR_VERSION" \
         "${EROOT}/usr/include/node/node_version.h" | cut -f 3 -d " ")
-	if ver_test "${ACTIVE_VERSION}" -ge 14 ; then
-		die \
-"Node.js 14 is not supported.  You must run \`eselect nodejs set node12\` or\n\
-less.  Those versions are only supported"
-	fi
 }
 
 pkg_setup() {
