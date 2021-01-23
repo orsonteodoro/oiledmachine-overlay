@@ -8,7 +8,7 @@ HOMEPAGE="https://icculus.org/mojoshader/"
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~x86 ~x64-macos"
 inherit cmake-utils eutils mercurial
-EHG_REVISION_C="ff4eb6d9c9c2"
+EHG_REVISION_C="f9036699b53a"
 EHG_REVISION="${PV}"
 EHG_REPO_URI="https://hg.icculus.org/icculus/mojoshader/"
 # Wrong CMakeLists.txt ; use mercurial
