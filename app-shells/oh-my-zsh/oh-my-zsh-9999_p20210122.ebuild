@@ -5,10 +5,11 @@ EAPI=7
 
 PYTHON_COMPAT=( python3_{6..9} )
 USE_RUBY="ruby24 ruby25 ruby26 ruby27"
+
 inherit eutils python-r1 ruby-ng
 
-DESCRIPTION="A delightful community-driven framework for managing your zsh"
-DESCRIPTION+=" configuration that includes optional plugins and themes."
+DESCRIPTION="A delightful community-driven framework for managing your zsh \
+configuration that includes optional plugins and themes."
 HOMEPAGE="http://ohmyz.sh/"
 LICENSE="MIT
 	 unicode
@@ -27,6 +28,8 @@ LICENSE="MIT
 	 plugins_gitfast? ( GPL-2 )
 	 plugins_pass? ( GPL-2+ )
 	 plugins_geeknote? ( GPL-3+ )
+	 plugins_term_tab? ( GPL-2+ )
+	 plugins_zbell? ( ISC )
 	 plugins_gradle? ( MIT )
 	 plugins_grunt? ( MIT )
 	 plugins_gulp? ( MIT )
@@ -43,7 +46,7 @@ KEYWORDS="~alpha ~amd64 ~amd64-linux ~arm ~arm64 ~hppa ~ia64 ~m68k ~m68k-mint \
 ~x64-macos ~x64-solaris ~x86 ~x86-linux ~x86-macos ~x86-solaris"
 RUBY_OPTIONAL=1
 EMOJI_LANG_DEFAULT=${EMOJI_LANG_DEFAULT:=en}
-EGIT_COMMIT="86f805280f6a8cf65d8d0a9380489aae4b72f767"
+EGIT_COMMIT="d978f385e52a19f2fd41e8c7ceb2f7c0a4dfc56c"
 FN="${EGIT_COMMIT}.zip"
 A_URL="https://github.com/ohmyzsh/ohmyzsh/archive/${FN}"
 P_URL="https://github.com/ohmyzsh/ohmyzsh/tree/${EGIT_COMMIT}"
@@ -52,10 +55,10 @@ SRC_URI="${A_URL} -> ${P}.zip"
 # It should be addressed upstream to get rid of emoji-data.txt.
 RESTRICT+=" fetch"
 SLOT="0"
-IUSE+=" branding bzr clipboard curl emojis update-emoji-data java git gpg"
-IUSE+=" mercurial nodejs powerline perlbrew python ruby rust subversion sudo"
-IUSE+=" uri wget"
-IUSE+=" 7zip ace bzip2 gzip lrzip lz4 lzip lzma unzip rar rpm xz zip zstd"
+IUSE+=" branding bzr clipboard curl emojis update-emoji-data java git gpg \
+mercurial nodejs powerline perlbrew python ruby rust subversion sudo \
+uri wget \
+7zip ace bzip2 deb gzip lrzip lz4 lzip lzma lzo lzw unzip rar rpm tar xz zip zstd"
 OMZSH_THEMES=( 3den adben af-magic afowler agnoster alanpeabody amuse apple \
 arrow aussiegeek avit awesomepanda bira blinks bureau candy-kingdom candy \
 clean cloud crcandy crunch cypher dallas darkblood daveverwer dieter dogenpunk \
@@ -99,11 +102,13 @@ rustup rvm safe-paste salt sbt scala scd screen scw sdk sfdx sfffe shell-proxy \
 shrink-path singlechar spring sprunge ssh-agent stack sublime sublime-merge \
 sudo supervisor \
 suse svcat svn svn-fast-info swiftpm symfony symfony2 systemadmin systemd \
-taskwarrior terminitor terraform textastic textmate thefuck themes thor tig \
-timer tmux tmux-cssh tmuxinator torrent transfer tugboat ubuntu ufw urltools \
+taskwarrior term_tab terminitor terraform textastic textmate thefuck themes \
+thor tig \
+timer tmux tmux-cssh tmuxinator torrent transfer tugboat ubuntu ufw \
+universalarchive urltools \
 vagrant vagrant-prompt vault vim-interaction vi-mode virtualenv \
 virtualenvwrapper vscode vundle wakeonlan wd web-search wp-cli xcode yarn yii \
-yii2 yum z zeus zsh-interactive-cd zsh-navigation-tools zsh_reload )
+yii2 yum z zbell zeus zsh-interactive-cd zsh-navigation-tools zsh_reload )
 IUSE+=" ${OMZSH_PLUGINS[@]/#/-plugins_}"
 RDEPEND_COMMON_ALIASES=()
 if [[ -z "${OMZ_CHM_VIEWER}" ]] ; then
@@ -278,7 +283,7 @@ THEMES_RDEPEND="
 	 themes_adben? ( games-misc/fortune-mod )
 	 "
 RBDEPEND=">=app-shells/zsh-4.3.9"
-RDEPEND="${RBDEPEND}
+RDEPEND+=" ${RBDEPEND}
 	 ${PLUGINS_RDEPEND}
 	 ${PYTHON_DEPS}
 	 ${THEMES_RDEPEND}
@@ -286,6 +291,7 @@ RDEPEND="${RBDEPEND}
 	 ace? ( app-arch/unace )
 	 bzr? ( dev-vcs/bzr )
 	 clipboard? ( || ( x11-misc/xclip x11-misc/xsel app-misc/tmux ) )
+	 deb? ( sys-devel/binutils )
 	 emojis? ( || ( media-fonts/noto-color-emoji
 			media-fonts/noto-color-emoji-bin
 			media-fonts/emojione-color-font
@@ -301,6 +307,8 @@ RDEPEND="${RBDEPEND}
 	 lz4? ( app-arch/lz4 )
 	 lzip? ( app-arch/lzip )
 	 lzma? ( app-arch/xz-utils )
+	 lzo? ( app-arch/lzop )
+	 lzw? ( app-arch/ncompress )
 	 mercurial? ( dev-vcs/mercurial )
 	 nodejs? ( net-libs/nodejs )
          powerline? ( media-fonts/powerline-symbols )
@@ -312,21 +320,28 @@ RDEPEND="${RBDEPEND}
 	 rust? ( virtual/rust )
 	 subversion? ( dev-vcs/subversion )
 	 sudo? ( app-admin/sudo )
+	 tar? ( app-arch/tar )
 	 unzip? ( app-arch/unzip )
 	 virtual/awk
 	 wget? ( net-misc/wget )
 	 x11-misc/xdg-utils
 	 xz? ( app-arch/xz-utils )
-	 zip? ( app-arch/unzip )
+	 zip? ( app-arch/unzip
+		app-arch/zip )
 	 zstd? ( app-arch/zstd )"
-BDEPEND="${BDEPEND}
-	${RBDEPEND}
+BDEPEND+=" ${RBDEPEND}
 	net-misc/wget
 	plugins_emoji? ( dev-lang/perl dev-perl/Path-Class )
 	update-emoji-data? ( dev-perl/XML-LibXML
 			     dev-perl/Text-Unaccent )"
 S="${WORKDIR}/${PN//-/}-${EGIT_COMMIT}"
 REQUIRED_USE+=" branding? ( themes_gentoo )
+	      deb? ( gzip bzip2 lzma tar xz )
+	      gpg? ( || (
+		plugins_archlinux
+		plugins_gpg-agent
+		plugins_otp
+		plugins_pass ) )
 	      themes_agnoster? ( powerline )
 	      themes_emotty? ( powerline )
 	      themes_amuse? ( powerline )
@@ -368,20 +383,17 @@ REQUIRED_USE+=" branding? ( themes_gentoo )
 	      plugins_systemd? ( sudo )
 	      plugins_systemadmin? ( sudo )
 	      plugins_ubuntu? ( sudo )
+	      plugins_universalarchive? ( 7zip bzip2 gzip lzma lzo lzw
+					  rar xz zip zstd )
 	      plugins_xcode? ( sudo )
 	      plugins_yum? ( sudo )
-	      gpg? ( || (
-		plugins_archlinux
-		plugins_gpg-agent
-		plugins_otp
-		plugins_pass ) )
 	      plugins_archlinux? ( gpg )
 	      plugins_gpg-agent? ( gpg )
 	      plugins_otp? ( gpg )
 	      plugins_pass? ( gpg )
 	      plugins_common-aliases? ( ace rar zip )
-	      plugins_extract? ( || ( 7zip bzip2 gzip lrzip lz4 lzip lzma unzip
-					rar rpm xz zstd ) )
+	      plugins_extract? ( || ( 7zip bzip2 deb gzip lrzip lz4 lzip lzma lzw
+				      unzip rar rpm xz zstd ) )
 	      plugins_archlinux? ( curl )
 	      plugins_composer? ( curl )
 	      plugins_gitfast? ( curl )
@@ -423,8 +435,7 @@ REQUIRED_USE+=" branding? ( themes_gentoo )
 		plugins_n98-magerun
 	      ) )
 	      themes_adben? ( wget )
-	      update-emoji-data? ( plugins_emoji )
-"
+	      update-emoji-data? ( plugins_emoji )"
 ZSH_DEST="/usr/share/zsh/site-contrib/${PN}"
 ZSH_EDEST="${EPREFIX}${ZSH_DEST}"
 ZSH_TEMPLATE="templates/zshrc.zsh-template"

@@ -437,6 +437,7 @@
     <flag name="plugins_taskwarrior">Installs the taskwarrior plugin.</flag>
     <flag name="plugins_terminalapp">Installs the terminalapp plugin.</flag>
     <flag name="plugins_terminitor">Installs the terminitor plugin.</flag>
+    <flag name="plugins_term_tab">Installs the term_tab plugin.</flag>
     <flag name="plugins_terraform">Installs the terraform plugin.</flag>
     <flag name="plugins_textastic">Installs the textastic plugin.</flag>
     <flag name="plugins_textmate">Installs the textmate plugin.</flag>
@@ -453,6 +454,7 @@
     <flag name="plugins_tugboat">Installs the tugboat plugin.</flag>
     <flag name="plugins_ubuntu">Installs the ubuntu plugin.</flag>
     <flag name="plugins_ufw">Installs the ufw plugin.</flag>
+    <flag name="plugins_universalarchive">Installs the universalarchive plugin.</flag>
     <flag name="plugins_urltools">Installs the urltools plugin.</flag>
     <flag name="plugins_vagrant">Installs the vagrant plugin.</flag>
     <flag name="plugins_vagrant-prompt">Installs the vagrant-prompt
@@ -476,6 +478,7 @@
     <flag name="plugins_yii2">Installs the yii2 plugin.</flag>
     <flag name="plugins_yum">Installs the yum plugin.</flag>
     <flag name="plugins_z">Installs the z plugin.</flag>
+    <flag name="plugins_zbell">Installs the zbell plugin.</flag>
     <flag name="plugins_zeus">Installs the zeus plugin.</flag>
     <flag name="plugins_zsh-interactive-cd">Installs the zsh-interactive-cd
       plugin.</flag>
@@ -487,11 +490,13 @@
     <flag name="bzr">Checks for proper bzr support.</flag>
     <flag name="clipboard">Checks dependencies for X clipboard support.</flag>
     <flag name="curl">Checks for proper cURL support.</flag>
+    <flag name="deb">Add support for deb files.</flag>
     <flag name="emojis">Checks for proper emoji support.</flag>
     <flag name="update-emoji-data">Updates emoji information on emerge time to
       the bleeding edge emoji version (currently emoji version 13.0).  If
       disabled, it may only support emoji 1.0 plus some of emoji 2.0.</flag>
     <flag name="java">Checks for proper Java support.</flag>
+    <flag name="lzw">Adds support for LZW (.Z) compressed files</flag>
     <flag name="git">Checks for proper Git support.</flag>
     <flag name="gpg">Checks for proper GnuPG support.</flag>
     <flag name="mercurial">Checks for proper Mercurial support.</flag>
@@ -511,6 +516,7 @@
     <flag name="lrzip">Adds lrzip support for the extract plugin.</flag>
     <flag name="lz4">Adds lz4 support for the extract plugin.</flag>
     <flag name="lzip">Adds lzip support for the extract plugin.</flag>
+    <flag name="lzo">Adds lzo support for the extract plugin.</flag>
     <flag name="lzma">Adds lzma support for the extract plugin.</flag>
     <flag name="unzip">Adds unzip support for the extract plugin.</flag>
     <flag name="rar">Adds rar support for the extract plugin.</flag>
