@@ -2,6 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit autotools desktop eutils flag-o-matic toolchain-funcs xdg
+
 DESCRIPTION="Gambas is a free development environment and a full powerful \
 development platform based on a Basic interpreter with object extensions
 and form designer."
@@ -28,14 +31,14 @@ GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+ncurses/-ncurses})
 GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+mysql/-mysql})
 GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+pdf/-pdf})
 GAMBAS_MODULES_DEFAULTS=(${GAMBAS_MODULES_DEFAULTS[@]/+sdl2/-sdl2})
-IUSE="${GAMBAS_MODULES_DEFAULTS[@]} debug doc +ide +glsl +glu \
+IUSE+=" ${GAMBAS_MODULES_DEFAULTS[@]} debug doc +ide +glsl +glu \
 lto +sge smtp +webkit"
 # The remove_stable_not_finished is intentionally kept disabled.
 # The remove_deprecated is intentionally kept disabled until upstream removes it.
 # The USE flags below have no config options but are removed manually.
 IUSE+=" remove_deprecated +remove_not_finished remove_stable_not_finished \
 +remove_unstable"
-RDEPEND="bzip2? ( app-arch/bzip2 )
+DEPEND+=" bzip2? ( app-arch/bzip2 )
 	cairo? ( >=x11-libs/cairo-1.6 )
 	crypt? ( dev-libs/libgcrypt )
 	curl? ( >=net-misc/curl-7.13 )
@@ -102,11 +105,12 @@ RDEPEND="bzip2? ( app-arch/bzip2 )
 	xml? ( >=dev-libs/libxml2-2 )
 	xslt? ( dev-libs/libxslt )
 	zlib? ( sys-libs/zlib )"
-DEPEND="${RDEPEND}
+RDEPEND+=" ${DEPEND}"
+BDEPEND+="
 	>=sys-devel/autoconf-2.68
 	>=sys-devel/automake-1.11.1
 	>=sys-devel/libtool-2.4"
-REQUIRED_USE="
+REQUIRED_USE+="
 	glsl? ( opengl )
 	gtk2? ( X cairo )
 	gtk3? ( X cairo )
@@ -121,7 +125,6 @@ REQUIRED_USE="
 	sge? ( opengl )
 	xml? ( xslt )
 	xslt? ( xml )"
-inherit autotools desktop eutils flag-o-matic toolchain-funcs xdg
 S="${WORKDIR}/${PN}-${PV}"
 DOCS=( AUTHORS ChangeLog COPYING README )
 RESTRICT="mirror"
