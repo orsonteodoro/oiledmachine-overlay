@@ -16,12 +16,13 @@ RDEPEND="demo? (
 DEPEND="${RDEPEND}
 	>=sys-devel/gcc-8.0"
 inherit eutils static-libs toolchain-funcs
-EGIT_COMMIT="c32297c2f9532a55a11c00f22ec763d771d3dae5"
+EGIT_COMMIT="cf4f3e15a85775db643381f32623cfde40720db9"
 SRC_URI="\
 https://github.com/${PN}/${PN}/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="mirror"
+_PATCHES=( "${FILESDIR}/recastnavigation-9999_p20200807-fix-shared-lib-65b314a.patch" )
 
 pkg_setup() {
 	GCC_V=$(gcc-fullversion)
@@ -39,6 +40,7 @@ src_prepare() {
 			cd "${BUILD_DIR}" || die
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 			cmake-utils_src_prepare
+			eapply -R "${_PATCHES[@]}"
 		}
 		static-libs_foreach_impl prepare_impl
 	}
