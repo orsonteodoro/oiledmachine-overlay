@@ -2,6 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit check-reqs eutils java-utils-2 npm-secaudit
+
 DESCRIPTION="Check, compile, optimize and compress Javascript with Closure-Compiler"
 HOMEPAGE="https://developers.google.com/closure/compiler/"
 LICENSE="
@@ -19,16 +22,17 @@ SLOT="0/${PV}"
 NODE_SLOT="0"
 MY_PN="closure-compiler"
 JAVA_V="1.8"
-IUSE="closure_compiler_java closure_compiler_js \
+IUSE+=" closure_compiler_java closure_compiler_js \
 closure_compiler_nodejs closure_compiler_native doc"
-REQUIRED_USE="closure_compiler_nodejs? ( closure_compiler_java )
+REQUIRED_USE+=" closure_compiler_nodejs? ( closure_compiler_java )
 || ( closure_compiler_java closure_compiler_js closure_compiler_nodejs \
 closure_compiler_native )"
 # For the node version, see
 # https://github.com/google/closure-compiler-npm/blob/master/packages/google-closure-compiler/package.json
 NODE_V="10"
 CDEPEND="closure_compiler_nodejs? ( >=net-libs/nodejs-${NODE_V} )"
-RDEPEND="${CDEPEND}
+RDEPEND+=" ${CDEPEND}
+	${RBDEPEND}
 	!dev-lang/closure-compiler-bin
 	closure_compiler_java? (
 		>=virtual/jre-${JAVA_V}
@@ -36,14 +40,14 @@ RDEPEND="${CDEPEND}
 	closure_compiler_nodejs? (
 		>=virtual/jre-${JAVA_V}
 	)"
-DEPEND="${CDEPEND}
-	|| (
-		>=virtual/jre-${JAVA_V}
-		>=virtual/jdk-${JAVA_V}
-	)"
-BDEPEND="dev-java/maven-bin
+BDDEPEND=">=virtual/jdk-${JAVA_V}" # common to {B,}DEPEND
+DEPEND+=" ${CDEPEND}
+	${BDDEPEND}"
+BDEPEND+=" ${CDEPEND}
+	${BDDEPEND}
+	${RBDEPEND}
+	dev-java/maven-bin
 	sys-apps/yarn"
-inherit check-reqs eutils java-utils-2 npm-secaudit
 FN_DEST="${PN}-${PV}.tar.gz"
 FN_DEST2="closure-compiler-${PV}.tar.gz"
 SRC_URI=\
