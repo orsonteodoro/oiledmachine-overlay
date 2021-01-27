@@ -37,7 +37,7 @@ DEPEND="${RDEPEND}
 	test? ( net-misc/curl )"
 PATCHES=( "${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="6.14.10" # See https://github.com/nodejs/node/blob/v10.23.1/deps/npm/package.json
+NPM_V="6.14.10" # See https://github.com/nodejs/node/blob/v10.23.2/deps/npm/package.json
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
