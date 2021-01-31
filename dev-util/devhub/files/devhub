@@ -1,5 +1,24 @@
 #!/bin/bash
 PROJECT_ROOT="/usr/lib64/node/devhub/0"
+MIN_NODE_VERSION=12
+
+if [[ -n "${NODE_VERSION}" ]] ; then
+	if (( "${NODE_VERSION}" -lt ${MIN_NODE_VERSION} )) ; then
+		echo "NODE_VERSION must be >=${MIN_NODE_VERSION}"
+		exit 1
+	fi
+else
+	if [[ ! -f "/usr/bin/node" ]] ; then
+		echo "Missing /usr/bin/node"
+		exit 1
+	fi
+	NODE_VERSION=$(/usr/bin/node --version | sed -e "s|v||g" | cut -f 1 -d ".")
+	if (( ${NODE_VERSION} < ${MIN_NODE_VERSION} )) ; then
+		echo "NODE_VERSION must be >=${MIN_NODE_VERSION}"
+		exit 1
+	fi
+fi
+
 export PATH="${PROJECT_ROOT}/node_modules/.bin:${PROJECT_ROOT}/node_modules/electron/dist:${PATH}"
 pushd "${PROJECT_ROOT}"
 ./packages/desktop/build/linux-unpacked/devhub

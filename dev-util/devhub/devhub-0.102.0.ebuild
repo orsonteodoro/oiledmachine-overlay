@@ -2,22 +2,23 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit desktop electron-app eutils npm-utils
+
 DESCRIPTION="GitHub Notifications Manager & Activity Watcher - Web, Mobile & \
 Desktop"
 HOMEPAGE="https://devhubapp.com"
 LICENSE="AGPL-3"
 KEYWORDS="~amd64"
 SLOT="0"
-IUSE=""
-RDEPEND="${RDEPEND}"
-# =typescript-3.7.5
-DEPEND="${RDEPEND}
-        net-libs/nodejs[npm]
+MIN_NODE_VERSION=12
+RDEPEND+=" >=net-libs/nodejs-${MIN_NODE_VERSION}"
+DEPEND+=" ${RDEPEND}
+	>=net-libs/nodejs-${MIN_NODE_VERSION}[npm]
 	>=sys-apps/yarn-1.13.0"
 ELECTRON_APP_MODE=yarn
-ELECTRON_APP_ELECTRON_V="6.0.11"
-ELECTRON_APP_REACT_NATIVE_V="0.63.0_rc1"
-inherit desktop electron-app eutils npm-utils
+ELECTRON_APP_ELECTRON_V="11.0.3"
+ELECTRON_APP_REACT_NATIVE_V="0.64.0_rc1"
 SRC_URI="\
 https://github.com/devhubapp/devhub/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
@@ -32,9 +33,16 @@ BABEL_TRAVERSE_V="^6.26.0"
 BABEL_TEMPLATE_V="7.4.4"
 REACT_NATIVE_V="0.59.8"
 BRACES_V="^2.3.1"
+RESTRICT="mirror"
 
 pkg_setup() {
 	electron-app_pkg_setup
+	NODE_VERSION=$(/usr/bin/node --version | sed -e "s|v||g" | cut -f 1 -d ".")
+        if (( ${NODE_VERSION} < ${MIN_NODE_VERSION} )) ; then
+                echo "NODE_VERSION must be >=${MIN_NODE_VERSION}"
+		die "Switch Node.js to >=${MIN_NODE_VERSION}"
+        fi
+	einfo "Node.js is ${NODE_VERSION}"
 }
 
 electron-app_src_postprepare() {
