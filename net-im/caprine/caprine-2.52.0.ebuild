@@ -2,18 +2,21 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit desktop electron-app eutils
+
 DESCRIPTION="Elegant Facebook Messenger desktop app"
 HOMEPAGE="https://github.com/sindresorhus/caprine"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0"
-DEPEND="${RDEPEND}
-	>=dev-lang/typescript-4.1.2
-        >=net-libs/nodejs-12[npm]"
+CDEPEND=">=net-libs/nodejs-12[npm]"
+RDEPEND+=" ${CDEPEND}"
+BDEPEND+=" ${CDEPEND}
+	>=dev-lang/typescript-4.1.2"
 ELECTRON_APP_ELECTRON_V="10.1.5"
 ELECTRON_APP_TYPESCRIPT_V="4.1.2"
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
-inherit desktop electron-app eutils
 SRC_URI=\
 "https://github.com/sindresorhus/caprine/archive/v${PV}.tar.gz \
 	-> ${PN}-${PV}.tar.gz"
