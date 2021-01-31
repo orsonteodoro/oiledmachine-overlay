@@ -41,7 +41,7 @@ G_USE_ELECTRON=${G_USE_ELECTRON:="1"}
 # include in the @${G_INSECURE_SET_FN} set.  Use at your own risk.
 G_BLACKLIST="/etc/portage/npm-secaudit-blacklist"
 
-# See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=electron&search_type=all
+# See https://nvd.nist.gov/vuln/search/results?form_type=Advanced&results_type=overview&search_type=all&cpe_vendor=cpe%3A%2F%3Aelectronjs&cpe_product=cpe%3A%2F%3Aelectronjs%3Aelectron
 G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9="9.0.0_beta21" # replace - with _
 G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_COND="-lt"
 G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_LINK_ADVISORY=\
@@ -54,27 +54,48 @@ G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7="7.2.4"
 G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_COND="-lt"
 G_INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_LINK_ADVISORY=\
 "https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
+
+G_INSECURE_NVD_ELECTRON_LAST_HIGH_11="11.0.0_beta1"
+G_INSECURE_NVD_ELECTRON_LAST_HIGH_11_COND="-lt"
+G_INSECURE_NVD_ELECTRON_LAST_HIGH_11_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2020-15174"
+G_INSECURE_NVD_ELECTRON_LAST_HIGH_10="10.0.1"
+G_INSECURE_NVD_ELECTRON_LAST_HIGH_10_COND="-lt"
+G_INSECURE_NVD_ELECTRON_LAST_HIGH_10_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2020-15174"
+G_INSECURE_NVD_ELECTRON_LAST_HIGH_9="9.3.0"
+G_INSECURE_NVD_ELECTRON_LAST_HIGH_9_COND="-lt"
+G_INSECURE_NVD_ELECTRON_LAST_HIGH_9_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2020-15174"
+G_INSECURE_NVD_ELECTRON_LAST_HIGH_8="8.5.1"
+G_INSECURE_NVD_ELECTRON_LAST_HIGH_8_COND="-lt"
+G_INSECURE_NVD_ELECTRON_LAST_HIGH_8_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2020-15174"
+
 # See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome&search_type=all
-G_INSECURE_NVD_CHROME_LAST_CRITICAL="83.0.4103.116"
+G_INSECURE_NVD_CHROME_LAST_CRITICAL="87.0.4280.141"
 G_INSECURE_NVD_CHROME_LAST_CRITICAL_COND="-lt"
 G_INSECURE_NVD_CHROME_LAST_CRITICAL_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-6509"
-G_INSECURE_NVD_CHROME_LAST_HIGH="84.0.4147.89"
+"https://nvd.nist.gov/vuln/detail/CVE-2021-21108"
+
+G_INSECURE_NVD_CHROME_LAST_HIGH="86.0.4240.198"
 G_INSECURE_NVD_CHROME_LAST_HIGH_COND="-lt"
 G_INSECURE_NVD_CHROME_LAST_HIGH_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-6525"
+"https://nvd.nist.gov/vuln/detail/CVE-2020-16013"
+
 # See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome%20v8&search_type=all
-G_INSECURE_NVD_V8_LAST_HIGH="83.0.4103.97"
+G_INSECURE_NVD_V8_LAST_HIGH="86.0.4240.198"
 G_INSECURE_NVD_V8_LAST_HIGH_COND="-lt"
 G_INSECURE_NVD_V8_LAST_HIGH_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-6493"
+"https://nvd.nist.gov/vuln/detail/CVE-2020-16013"
+
 # GLSA doesn't use high, medium, low.  This is a NVD addition.
 # See https://security.gentoo.org/glsa
 # GLSA placement in G_TOLERANCE based on worst case NVD/CVE reference
-G_INSECURE_GLSA_CHROME_LATEST="84.0.4147.89"
+G_INSECURE_GLSA_CHROME_LATEST="88.0.4324.96"
 G_INSECURE_GLSA_CHROME_LATEST_COND="-lt"
 G_INSECURE_GLSA_CHROME_LATEST_LINK_ADVISORY=\
-"https://security.gentoo.org/glsa/202007-08"
+"https://nvd.nist.gov/vuln/detail/CVE-2020-16013"
 
 H_INFO="\
 $(basename $BASH_SOURCE) ${G_VERSION}
@@ -362,6 +383,39 @@ fi
 
 if [[ "${G_TOLERANCE}" == "high" || "${G_TOLERANCE}" == "moderate" \
 	|| "${G_TOLERANCE}" == "low" ]] ; then
+	if is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d ".") "-eq" 11 \
+		&& is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d "-") ${G_INSECURE_NVD_ELECTRON_LAST_HIGH_11_COND} \
+		"${G_INSECURE_NVD_ELECTRON_LAST_HIGH_11}" ; then
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} has a high advisory.  See\n\
+${G_INSECURE_NVD_ELECTRON_LAST_HIGH_11_LINK_ADVISORY}"
+		is_vulnerable=1
+	fi
+	if is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d ".") "-eq" 10 \
+		&& is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d "-") ${G_INSECURE_NVD_ELECTRON_LAST_HIGH_10_COND} \
+		"${G_INSECURE_NVD_ELECTRON_LAST_HIGH_10}" ; then
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} has a high advisory.  See\n\
+${G_INSECURE_NVD_ELECTRON_LAST_HIGH_10_LINK_ADVISORY}"
+		is_vulnerable=1
+	fi
+	if is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d ".") "-eq" 9 \
+		&& is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d "-") ${G_INSECURE_NVD_ELECTRON_LAST_HIGH_9_COND} \
+		"${G_INSECURE_NVD_ELECTRON_LAST_HIGH_9}" ; then
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} has a high advisory.  See\n\
+${G_INSECURE_NVD_ELECTRON_LAST_HIGH_9_LINK_ADVISORY}"
+		is_vulnerable=1
+	fi
+	if is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d ".") "-eq" 11 \
+		&& is_x_op_y $(echo "${ELECTRON_V}" | cut -f 1 -d "-") ${G_INSECURE_NVD_ELECTRON_LAST_HIGH_8_COND} \
+		"${G_INSECURE_NVD_ELECTRON_LAST_HIGH_8}" ; then
+		[[ "${G_VERBOSE}" == "1" ]] && einfo \
+"Electron ${ELECTRON_V} has a high advisory.  See\n\
+${G_INSECURE_NVD_ELECTRON_LAST_HIGH_8_LINK_ADVISORY}"
+		is_vulnerable=1
+	fi
+
 	if is_x_op_y $(echo "${CHROMIUM_V}" | cut -f 1 -d "-") ${G_INSECURE_NVD_CHROME_LAST_HIGH_COND} \
 		"${G_INSECURE_NVD_CHROME_LAST_HIGH}" ; then
 		[[ "${G_VERBOSE}" == "1" ]] && einfo \
