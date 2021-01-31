@@ -271,6 +271,9 @@ COMMON_DEPEND="
 	  x11-libs/pango
 	  x11-libs/pixman
 "
+
+# Supported versions listed in
+# https://www.electronjs.org/docs/tutorial/support
 if [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
 && ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 11.0 ; then
 :; # series supported upstream
