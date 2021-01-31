@@ -177,9 +177,6 @@ INSECURE_NVD_V8_LAST_HIGH_LINK_ADVISORY=\
 
 NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="10"
 
-# LTS versions: https://www.electronjs.org/docs/tutorial/support
-# Currently 9.x, 8.x, 7.x
-
 # Check the runtime dependencies for electron
 # Most electron apps will have electron bundled already.  No need for seperate
 # ebuild.
@@ -272,7 +269,7 @@ COMMON_DEPEND="
 	  x11-libs/pixman
 "
 
-# Supported versions listed in
+# Supported versions (LTS) listed in
 # https://www.electronjs.org/docs/tutorial/support
 if [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
 && ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 11.0 ; then
