@@ -150,10 +150,10 @@ INSECURE_NVD_ELECTRON_LAST_HIGH_8_LINK_ADVISORY=\
 
 
 # See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome&search_type=all
-INSECURE_NVD_CHROME_LAST_CRITICAL="83.0.4103.116"
+INSECURE_NVD_CHROME_LAST_CRITICAL="87.0.4280.141"
 INSECURE_NVD_CHROME_LAST_CRITICAL_COND="-lt"
 INSECURE_NVD_CHROME_LAST_CRITICAL_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-6509"
+"https://nvd.nist.gov/vuln/detail/CVE-2021-21108"
 
 
 # GLSA doesn't use high, medium, low.  This is a NVD addition.
