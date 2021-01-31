@@ -414,14 +414,21 @@ COMMON_DEPEND+="
 "
 elif [[ -n "${ELECTRON_APP_REACT_NATIVE_V}" ]] && ( \
 	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_V}") -ge 0.63 \
-	&& ver_test $(ver_cut 1 "${ELECTRON_APP_REACT_NATIVE_V}") -le 9999 ) ; then
+	&& ver_test $(ver_cut 1 "${ELECTRON_APP_REACT_NATIVE_V}") -lt 0.64 ) ; then
 COMMON_DEPEND+="
 	>=net-libs/nodejs-10
+"
+elif [[ -n "${ELECTRON_APP_REACT_NATIVE_V}" ]] && ( \
+	ver_test $(ver_cut 1-2 "${ELECTRON_APP_REACT_NATIVE_V}") -ge 0.64 \
+	&& ver_test $(ver_cut 1 "${ELECTRON_APP_REACT_NATIVE_V}") -le 9999 ) ; then
+COMMON_DEPEND+="
+	>=net-libs/nodejs-12
 "
 fi
 
 
-# See https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/node/v8/index.d.ts
+# See https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/node
+# in the v13/index.d.ts, where v13 is a particular node version.
 # For @types/node
 if [[ -n "${ELECTRON_APP_AT_TYPES_NODE_V}" ]] \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_V}") -eq 0 ; then
