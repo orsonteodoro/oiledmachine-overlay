@@ -117,7 +117,7 @@ ELECTRON_APP_VERSION_DATA_PATH="${ELECTRON_APP_DATA_DIR}/lite.json"
 
 
 # Critical means based on CVSS v3 standards
-# See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=electron&search_type=all
+# See https://nvd.nist.gov/vuln/search/results?form_type=Advanced&results_type=overview&search_type=all&cpe_vendor=cpe%3A%2F%3Aelectronjs&cpe_product=cpe%3A%2F%3Aelectronjs%3Aelectron
 INSECURE_NVD_ELECTRON_LAST_CRITICAL_9="9.0.0_beta21" # replace - with _
 INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_COND="-lt"
 INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_LINK_ADVISORY=\
@@ -131,30 +131,49 @@ INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_COND="-lt"
 INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_LINK_ADVISORY=\
 "https://nvd.nist.gov/vuln/detail/CVE-2020-4077"
 
+INSECURE_NVD_ELECTRON_LAST_HIGH_11="11.0.0_beta1"
+INSECURE_NVD_ELECTRON_LAST_HIGH_11_COND="-lt"
+INSECURE_NVD_ELECTRON_LAST_HIGH_11_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2020-15174"
+INSECURE_NVD_ELECTRON_LAST_HIGH_10="10.0.1"
+INSECURE_NVD_ELECTRON_LAST_HIGH_10_COND="-lt"
+INSECURE_NVD_ELECTRON_LAST_HIGH_10_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2020-15174"
+INSECURE_NVD_ELECTRON_LAST_HIGH_9="9.3.0"
+INSECURE_NVD_ELECTRON_LAST_HIGH_9_COND="-lt"
+INSECURE_NVD_ELECTRON_LAST_HIGH_9_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2020-15174"
+INSECURE_NVD_ELECTRON_LAST_HIGH_8="8.5.1"
+INSECURE_NVD_ELECTRON_LAST_HIGH_8_COND="-lt"
+INSECURE_NVD_ELECTRON_LAST_HIGH_8_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2020-15174"
+
+
 # See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome&search_type=all
 INSECURE_NVD_CHROME_LAST_CRITICAL="83.0.4103.116"
 INSECURE_NVD_CHROME_LAST_CRITICAL_COND="-lt"
 INSECURE_NVD_CHROME_LAST_CRITICAL_LINK_ADVISORY=\
 "https://nvd.nist.gov/vuln/detail/CVE-2020-6509"
 
+
 # GLSA doesn't use high, medium, low.  This is a NVD addition.
 # See https://security.gentoo.org/glsa
 # Placed in worst case NVD/CVE reference
-INSECURE_GLSA_CHROME_LATEST="84.0.4147.89"
+INSECURE_GLSA_CHROME_LATEST="88.0.4324.96"
 INSECURE_GLSA_CHROME_LATEST_COND="-lt"
 INSECURE_GLSA_CHROME_LATEST_LINK_ADVISORY=\
-"https://security.gentoo.org/glsa/202007-08"
+"https://security.gentoo.org/glsa/202101-13"
 
-INSECURE_NVD_CHROME_LAST_HIGH="84.0.4147.89"
+INSECURE_NVD_CHROME_LAST_HIGH="86.0.4240.198"
 INSECURE_NVD_CHROME_LAST_HIGH_COND="-lt"
 INSECURE_NVD_CHROME_LAST_HIGH_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-6525"
+"https://nvd.nist.gov/vuln/detail/CVE-2020-16013"
 
 # See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=v8%20chrome&search_type=all
-INSECURE_NVD_V8_LAST_HIGH="84.0.4147.89"
+INSECURE_NVD_V8_LAST_HIGH="86.0.4240.198"
 INSECURE_NVD_V8_LAST_HIGH_COND="-lt"
 INSECURE_NVD_V8_LAST_HIGH_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-6533"
+"https://nvd.nist.gov/vuln/detail/CVE-2020-16013"
 
 NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="10"
 
@@ -253,13 +272,13 @@ COMMON_DEPEND="
 	  x11-libs/pixman
 "
 if [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
+&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 11.0 ; then
+:; # series supported upstream
+elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
+&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 10.0 ; then
+:; # series supported upstream
+elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
 && ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 9.0 ; then
-:; # series supported upstream
-elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
-&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 8.0 ; then
-:; # series supported upstream
-elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] \
-&& ver_test $(ver_cut 1-2 "${ELECTRON_APP_ELECTRON_V}") -ge 7.0 ; then
 :; # series supported upstream
 else
 if [[ "${ELECTRON_APP_ALLOW_NON_LTS_ELECTRON}" == "0" ]] ; then
@@ -898,6 +917,35 @@ fi
 if [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "High" \
 	|| "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Moderate" \
 	|| "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Low" ]] ; then
+	if ver_test $(ver_cut 1 "${ELECTRON_V}") -eq 11 \
+		&& ver_test "${ELECTRON_V}" ${INSECURE_NVD_ELECTRON_LAST_HIGH_11_COND} \
+		"${INSECURE_NVD_ELECTRON_LAST_HIGH_11}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a high vulnerability.  For details see\n\
+${INSECURE_NVD_ELECTRON_LAST_HIGH_11_LINK_ADVISORY}"
+	fi
+	if ver_test $(ver_cut 1 "${ELECTRON_V}") -eq 10 \
+		&& ver_test "${ELECTRON_V}" ${INSECURE_NVD_ELECTRON_LAST_HIGH_10_COND} \
+		"${INSECURE_NVD_ELECTRON_LAST_HIGH_10}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a high vulnerability.  For details see\n\
+${INSECURE_NVD_ELECTRON_LAST_HIGH_10_LINK_ADVISORY}"
+	fi
+	if ver_test $(ver_cut 1 "${ELECTRON_V}") -eq 9 \
+		&& ver_test "${ELECTRON_V}" ${INSECURE_NVD_ELECTRON_LAST_HIGH_9_COND} \
+		"${INSECURE_NVD_ELECTRON_LAST_HIGH_9}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a high vulnerability.  For details see\n\
+${INSECURE_NVD_ELECTRON_LAST_HIGH_9_LINK_ADVISORY}"
+	fi
+	if ver_test $(ver_cut 1 "${ELECTRON_V}") -eq 8 \
+		&& ver_test "${ELECTRON_V}" ${INSECURE_NVD_ELECTRON_LAST_HIGH_8_COND} \
+		"${INSECURE_NVD_ELECTRON_LAST_HIGH_8}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a high vulnerability.  For details see\n\
+${INSECURE_NVD_ELECTRON_LAST_HIGH_8_LINK_ADVISORY}"
+	fi
+
 	if ver_test "${CHROMIUM_V}" ${INSECURE_NVD_CHROME_LAST_HIGH_COND} \
 		"${INSECURE_NVD_CHROME_LAST_HIGH}" ; then
 		adie \
