@@ -1,12 +1,12 @@
 # Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# Originally based on the firefox-84.0.2.ebuild from the gentoo-overlay.
+# Originally based on the firefox-85.0.0.ebuild from the gentoo-overlay.
 # Revisions may change in the oiledmachine-overlay.
 
 EAPI="7"
 
-FIREFOX_PATCHSET="firefox-84-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-85-patches-01.tar.xz"
 
 LLVM_MAX_SLOT=11
 
@@ -83,7 +83,7 @@ BDEPEND="${PYTHON_DEPS}
 	>=dev-util/cbindgen-0.15.0
 	>=net-libs/nodejs-10.22.1
 	virtual/pkgconfig[${MULTILIB_USEDEP}]
-	>=dev-lang/rust-1.44.0[${MULTILIB_USEDEP}]
+	>=dev-lang/rust-1.47.0[${MULTILIB_USEDEP}]
 	!dev-lang/rust-bin
 	|| (
 		(
@@ -119,7 +119,7 @@ BDEPEND="${PYTHON_DEPS}
 	)"
 
 CDEPEND="
-	>=dev-libs/nss-3.59.1[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.60[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.29[${MULTILIB_USEDEP}]
 	dev-libs/atk[${MULTILIB_USEDEP}]
 	dev-libs/expat[${MULTILIB_USEDEP}]
@@ -516,8 +516,8 @@ src_prepare() {
 	# parts.  When it links it, it fails because of cbindings is 64-bit and the
 	# dependencies use the build information for 64-bit linking.
 	#
-	# eapply "${FILESDIR}/multiabi/${PN}-79.0-compile-cargo-packages-same-abi-1.patch"
-	# eapply "${FILESDIR}/multiabi/${PN}-84.0.1-compile-cargo-packages-same-abi-2.patch"
+	 eapply "${FILESDIR}/multiabi/${PN}-79.0-compile-cargo-packages-same-abi-1.patch"
+	 eapply "${FILESDIR}/multiabi/${PN}-84.0.1-compile-cargo-packages-same-abi-2.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -552,11 +552,11 @@ src_prepare() {
 
 	xdg_src_prepare
 
-	if [[ "${CFLAGS}" =~ "fast-math" || "${CXXFLAGS}" =~ "fast-math" ]] ; then
+	#if [[ "${CFLAGS}" =~ "fast-math" || "${CXXFLAGS}" =~ "fast-math" ]] ; then
 		pushd "${S}" || die
 		eapply "${FILESDIR}/multiabi/firefox-78.0.2-opus-fast-math.patch"
 		popd || die
-	fi
+	#fi
 
 	multilib_copy_sources
 
