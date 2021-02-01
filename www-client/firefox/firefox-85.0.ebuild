@@ -516,8 +516,8 @@ src_prepare() {
 	# parts.  When it links it, it fails because of cbindings is 64-bit and the
 	# dependencies use the build information for 64-bit linking.
 	#
-	 eapply "${FILESDIR}/multiabi/${PN}-79.0-compile-cargo-packages-same-abi-1.patch"
-	 eapply "${FILESDIR}/multiabi/${PN}-84.0.1-compile-cargo-packages-same-abi-2.patch"
+	# eapply "${FILESDIR}/multiabi/${PN}-79.0-compile-cargo-packages-same-abi-1.patch"
+	# eapply "${FILESDIR}/multiabi/${PN}-84.0.1-compile-cargo-packages-same-abi-2.patch"
 
 	# Allow user to apply any additional patches without modifing ebuild
 	eapply_user
@@ -552,11 +552,11 @@ src_prepare() {
 
 	xdg_src_prepare
 
-	#if [[ "${CFLAGS}" =~ "fast-math" || "${CXXFLAGS}" =~ "fast-math" ]] ; then
+	if [[ "${CFLAGS}" =~ "fast-math" || "${CXXFLAGS}" =~ "fast-math" ]] ; then
 		pushd "${S}" || die
 		eapply "${FILESDIR}/multiabi/firefox-78.0.2-opus-fast-math.patch"
 		popd || die
-	#fi
+	fi
 
 	multilib_copy_sources
 
