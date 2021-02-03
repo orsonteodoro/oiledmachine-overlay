@@ -4,21 +4,23 @@
 # See README.chromium or include/libyuv/version.h for lib version
 
 EAPI=7
+
+inherit cmake-utils multilib-minimal
+
 DESCRIPTION="libyuv is an open source project that includes YUV scaling and \
 conversion functionality."
 HOMEPAGE="https://chromium.googlesource.com/libyuv/libyuv/"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
-inherit multilib-minimal
-IUSE="static system-gflags test"
-RDEPEND="virtual/jpeg"
-DEPEND="${RDEPEND}
-	test? ( dev-cpp/gtest[${MULTILIB_USEDEP}]
-		dev-cpp/gflags[${MULTILIB_USEDEP}] )
-	>=dev-util/cmake-2.8"
 SLOT="0/${PV}"
-inherit cmake-utils
-EGIT_COMMIT="93b1b332cd60b56ab90aea14182755e379c28a80"
+IUSE+=" static system-gflags test"
+BDEPEND+=" >=dev-util/cmake-2.8"
+CDEPEND="virtual/jpeg"
+DEPEND+=" ${CDEPEND}
+	test? ( dev-cpp/gtest[${MULTILIB_USEDEP}]
+		dev-cpp/gflags[${MULTILIB_USEDEP}] )"
+RDEPEND+=" ${CDEPEND}"
+EGIT_COMMIT="c28d4049364d75710b1c49697a5814ab572af641"
 EGIT_REPO_URI="https://chromium.googlesource.com/libyuv/libyuv"
 FN_DEST="${P}.tar.gz"
 FN_SRC="${EGIT_COMMIT}.tar.gz"
@@ -57,6 +59,7 @@ multilib_src_compile() {
 
 multilib_src_install() {
 	cmake-utils_src_install
+	einstalldocs
 	insinto /usr/$(get_libdir)/pkgconfig
 	cat "${FILESDIR}/${PN}.pc.in" | \
 	sed -e "s|@prefix@|/usr|" \
