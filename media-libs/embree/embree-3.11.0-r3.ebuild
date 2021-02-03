@@ -12,14 +12,14 @@ LICENSE="Apache-2.0
 	 static-libs? ( BSD BZIP2 MIT ZLIB )"
 KEYWORDS="~amd64 ~x86"
 SRC_URI="https://github.com/embree/embree/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-SLOT_MAJ="2"
+SLOT_MAJ="3"
 SLOT="${SLOT_MAJ}/${PV}"
 X86_CPU_FLAGS=( sse2:sse2 sse4_2:sse4_2 avx:avx avx2:avx2 avx512knl:avx512knl \
 avx512skx:avx512skx )
 CPU_FLAGS=( ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_} )
-IUSE="clang debug doc gcc icc ispc raymask -ssp static-libs +tbb tutorials \
-${CPU_FLAGS[@]%:*}"
-REQUIRED_USE="^^ ( clang gcc icc )"
+IUSE+=" clang debug doc doc-docfiles doc-html doc-images doc-man gcc icc ispc \
+raymask -ssp static-libs +tbb tutorials ${CPU_FLAGS[@]%:*}"
+REQUIRED_USE+=" ^^ ( clang gcc icc )"
 MIN_CLANG_V="3.3" # for c++11
 MIN_CLANG_V_AVX512KNL="3.4" # for -march=knl
 MIN_CLANG_V_AVX512SKX="3.6" # for -march=skx
@@ -30,7 +30,9 @@ MIN_ICC_V="15.0" # for c++11
 MIN_ICC_V_AVX512KNL="14.0.1" # for -xMIC-AVX512
 MIN_ICC_V_AVX512SKX="15.0.1" # for -xCORE-AVX512
 # 15.0.1 -xCOMMON-AVX512
-BDEPEND="clang? (
+BDEPEND+=" >=dev-util/cmake-3.1.0
+	virtual/pkgconfig
+	clang? (
 		>=sys-devel/clang-${MIN_CLANG_V}
 		cpu_flags_x86_avx512knl? (
 			>=sys-devel/clang-${MIN_CLANG_V_AVX512KNL}
@@ -38,8 +40,20 @@ BDEPEND="clang? (
 		cpu_flags_x86_avx512skx? (
 			>=sys-devel/clang-${MIN_CLANG_V_AVX512SKX}
 		)
-	 )
-	 gcc? (
+	)
+	doc? (
+		app-text/pandoc
+		dev-texlive/texlive-xetex
+	)
+	doc-html? (
+		app-text/pandoc
+		media-gfx/imagemagick[jpeg]
+	)
+	doc-images? (
+		media-gfx/imagemagick[jpeg]
+		media-gfx/xfig
+	)
+	gcc? (
 		>=sys-devel/gcc-${MIN_GCC_V}
 		cpu_flags_x86_avx512knl? (
 			>=sys-devel/gcc-${MIN_GCC_V_AVX512KNL}
@@ -47,8 +61,8 @@ BDEPEND="clang? (
 		cpu_flags_x86_avx512skx? (
 			>=sys-devel/gcc-${MIN_GCC_V_AVX512SKX}
 		)
-	 )
-	 icc? (
+	)
+	icc? (
 		>=sys-devel/icc-${MIN_ICC_V}
 		cpu_flags_x86_avx512knl? (
 			>=sys-devel/icc-${MIN_ICC_V_AVX512KNL}
@@ -56,19 +70,19 @@ BDEPEND="clang? (
 		cpu_flags_x86_avx512skx? (
 			>=sys-devel/icc-${MIN_ICC_V_AVX512SKX}
 		)
-	 )
-	 virtual/pkgconfig"
-RDEPEND=">=dev-util/cmake-2.8.11
-	 ispc? ( >=dev-lang/ispc-1.8.2 )
-	 media-libs/freeglut
-	 tbb? ( dev-cpp/tbb )
+	)
+	ispc? ( >=dev-lang/ispc-1.13.0 )"
+# See .gitlab-ci.yml
+DEPEND+=" media-libs/glfw
+	 virtual/opengl
+	 tbb? ( >=dev-cpp/tbb-2020.2 )
 	 tutorials? ( media-libs/libpng:0=
-		     <media-gfx/imagemagick-7
-		     virtual/jpeg:0 )
-	 virtual/opengl"
-DEPEND="${RDEPEND}"
+		     media-libs/openimageio
+		     virtual/jpeg:0 )"
+RDEPEND+=" ${DEPEND}"
 DOCS=( CHANGELOG.md README.md readme.pdf )
 CMAKE_BUILD_TYPE=Release
+PATCHES=( "${FILESDIR}/${PN}-3.10.0-tutorials-oiio-unique_ptr-to-auto.patch" )
 
 chcxx() {
 	die \
@@ -141,6 +155,17 @@ impact rendering performance."
 			ewarn "CXX=${CXX}"
 		fi
 	fi
+
+	if use doc-html ; then
+		if has network-sandbox $FEATURES ; then
+			die \
+"${PN} requires network-sandbox to be disabled in FEATURES to be able to use\n\
+MathJax for math rendering."
+		fi
+		ewarn \
+"Building package may exhibit random failures with doc-html USE flag.  Emerge\n\
+and try again."
+	fi
 }
 
 src_prepare() {
@@ -151,7 +176,7 @@ src_prepare() {
 		-i CMakeLists.txt || die
 	# change -O3 settings for various compilers
 	sed -e 's|-O3|-O2|' -i \
-		"${S}"/common/cmake/{clang,gcc,icc,ispc}.cmake || die
+		"${S}"/common/cmake/{clang,gnu,intel,ispc}.cmake || die
 }
 
 src_configure() {
@@ -180,13 +205,14 @@ src_configure() {
 		-DCMAKE_CXX_COMPILER=${CXX}
 		-DCMAKE_SKIP_INSTALL_RPATH:BOOL=ON
 		-DEMBREE_BACKFACE_CULLING=OFF			# default
-		-DEMBREE_INTERSECTION_FILTER=ON			# default
-		-DEMBREE_INTERSECTION_FILTER_RESTORE=ON		# default
-		-DEMBREE_GEOMETRY_HAIR=ON			# default
-		-DEMBREE_GEOMETRY_LINES=ON			# default
-		-DEMBREE_GEOMETRY_QUADS=ON			# default
-		-DEMBREE_GEOMETRY_SUBDIV=ON			# default
-		-DEMBREE_GEOMETRY_TRIANGLES=ON			# default
+		-DEMBREE_FILTER_FUNCTION=ON			# default
+		-DEMBREE_GEOMETRY_CURVE=ON			# default
+		-DEMBREE_GEOMETRY_GRID=ON			# default
+		-DEMBREE_GEOMETRY_INSTANCE=ON			# default
+		-DEMBREE_GEOMETRY_POINT=ON			# default
+		-DEMBREE_GEOMETRY_QUAD=ON			# default
+		-DEMBREE_GEOMETRY_SUBDIVISION=ON		# default
+		-DEMBREE_GEOMETRY_TRIANGLE=ON			# default
 		-DEMBREE_GEOMETRY_USER=ON			# default
 		-DEMBREE_IGNORE_INVALID_RAYS=OFF		# default
 		-DEMBREE_ISPC_SUPPORT=$(usex ispc)
@@ -199,13 +225,12 @@ src_configure() {
 		-DEMBREE_TUTORIALS=$(usex tutorials) )
 
 	if use tutorials; then
-		append-cppflags -DQuantumDepth=16
 		use ispc && \
 		mycmakeargs+=( -DEMBREE_ISPC_ADDRESSING:STRING="64" )
 		mycmakeargs+=(
-			-DEMBREE_TUTORIALS_IMAGE_MAGICK=ON
 			-DEMBREE_TUTORIALS_LIBJPEG=ON
-			-DEMBREE_TUTORIALS_LIBPNG=ON )
+			-DEMBREE_TUTORIALS_LIBPNG=ON
+			-DEMBREE_TUTORIALS_OPENIMAGEIO=ON )
 	fi
 
 	if use cpu_flags_x86_avx512skx ; then
@@ -229,6 +254,26 @@ src_configure() {
 
 src_compile() {
 	cmake-utils_src_compile
+	if use doc ; then
+		pushd doc || die
+			if use doc-images ; then
+				einfo "Building doc/images"
+				emake images
+			fi
+			if use doc-docfiles ; then
+				einfo "Building doc/doc"
+				emake doc
+			fi
+			if use doc-html ; then
+				einfo "Building doc/www"
+				emake images www
+			fi
+			if use doc-man ; then
+				einfo "Building doc/man"
+				emake man
+			fi
+		popd || die
+	fi
 }
 
 src_install() {
@@ -242,12 +287,25 @@ src_install() {
 		doman man/man3/*
 		dodoc CHANGELOG.md README.md
 	fi
+	if use doc-docfiles ; then
+		dodoc -r doc/doc
+	fi
+	if use doc-images ; then
+		dodoc -r doc/images
+	fi
+	if use doc-man ; then
+		dodoc -r doc/man/man3
+	fi
+	if use doc-html ; then
+		dodoc -r doc/www
+	fi
 	if use tutorials ; then
 		insinto /usr/share/${PN}/tutorials
 		doins -r tutorials/*
 	fi
 	docinto licenses
-	dodoc LICENSE.txt
+	dodoc LICENSE.txt third-party-programs-TBB.txt \
+		third-party-programs.txt
 }
 
 pkg_postinst() {

@@ -17,9 +17,9 @@ SLOT="${SLOT_MAJ}/${PV}"
 X86_CPU_FLAGS=( sse2:sse2 sse4_2:sse4_2 avx:avx avx2:avx2 avx512knl:avx512knl \
 avx512skx:avx512skx )
 CPU_FLAGS=( ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_} )
-IUSE="clang debug doc doc-docfiles doc-html doc-images doc-man gcc icc ispc \
+IUSE+=" clang debug doc doc-docfiles doc-html doc-images doc-man gcc icc ispc \
 raymask -ssp static-libs +tbb tutorials ${CPU_FLAGS[@]%:*}"
-REQUIRED_USE="^^ ( clang gcc icc )"
+REQUIRED_USE+=" ^^ ( clang gcc icc )"
 MIN_CLANG_V="3.3" # for c++11
 MIN_CLANG_V_AVX512KNL="3.4" # for -march=knl
 MIN_CLANG_V_AVX512SKX="3.6" # for -march=skx
@@ -30,7 +30,9 @@ MIN_ICC_V="15.0" # for c++11
 MIN_ICC_V_AVX512KNL="14.0.1" # for -xMIC-AVX512
 MIN_ICC_V_AVX512SKX="15.0.1" # for -xCORE-AVX512
 # 15.0.1 -xCOMMON-AVX512
-BDEPEND="clang? (
+BDEPEND+=" >=dev-util/cmake-3.1.0
+	virtual/pkgconfig
+	clang? (
 		>=sys-devel/clang-${MIN_CLANG_V}
 		cpu_flags_x86_avx512knl? (
 			>=sys-devel/clang-${MIN_CLANG_V_AVX512KNL}
@@ -38,8 +40,20 @@ BDEPEND="clang? (
 		cpu_flags_x86_avx512skx? (
 			>=sys-devel/clang-${MIN_CLANG_V_AVX512SKX}
 		)
-	 )
-	 gcc? (
+	)
+	doc? (
+		app-text/pandoc
+		dev-texlive/texlive-xetex
+	)
+	doc-html? (
+		app-text/pandoc
+		media-gfx/imagemagick[jpeg]
+	)
+	doc-images? (
+		media-gfx/imagemagick[jpeg]
+		media-gfx/xfig
+	)
+	gcc? (
 		>=sys-devel/gcc-${MIN_GCC_V}
 		cpu_flags_x86_avx512knl? (
 			>=sys-devel/gcc-${MIN_GCC_V_AVX512KNL}
@@ -47,8 +61,8 @@ BDEPEND="clang? (
 		cpu_flags_x86_avx512skx? (
 			>=sys-devel/gcc-${MIN_GCC_V_AVX512SKX}
 		)
-	 )
-	 icc? (
+	)
+	icc? (
 		>=sys-devel/icc-${MIN_ICC_V}
 		cpu_flags_x86_avx512knl? (
 			>=sys-devel/icc-${MIN_ICC_V_AVX512KNL}
@@ -56,29 +70,16 @@ BDEPEND="clang? (
 		cpu_flags_x86_avx512skx? (
 			>=sys-devel/icc-${MIN_ICC_V_AVX512SKX}
 		)
-	 )
-	 doc? (
-		app-text/pandoc
-		dev-texlive/texlive-xetex
-	 )
-	 doc-html? (
-		app-text/pandoc
-		media-gfx/imagemagick[jpeg]
-	 )
-	 doc-images? (
-		media-gfx/imagemagick[jpeg]
-		media-gfx/xfig
-	 )
-	 virtual/pkgconfig"
-RDEPEND=">=dev-util/cmake-3.1.0
-	 ispc? ( >=dev-lang/ispc-1.8.2 )
-	 media-libs/glfw
-	 tbb? ( dev-cpp/tbb )
+	)
+	ispc? ( >=dev-lang/ispc-1.13.0 )"
+# See .gitlab-ci.yml
+DEPEND+=" media-libs/glfw
+	 virtual/opengl
+	 tbb? ( >=dev-cpp/tbb-2020.2 )
 	 tutorials? ( media-libs/libpng:0=
 		     media-libs/openimageio
-		     virtual/jpeg:0 )
-	 virtual/opengl"
-DEPEND="${RDEPEND}"
+		     virtual/jpeg:0 )"
+RDEPEND+=" ${DEPEND}"
 DOCS=( CHANGELOG.md README.md readme.pdf )
 CMAKE_BUILD_TYPE=Release
 PATCHES=( "${FILESDIR}/${PN}-3.10.0-tutorials-oiio-unique_ptr-to-auto.patch" )
