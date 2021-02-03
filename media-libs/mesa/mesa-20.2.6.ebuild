@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6..9} )
+PYTHON_COMPAT=( python3_{7,8,9} )
 
 inherit llvm meson multilib-minimal python-any-r1 linux-info
 
@@ -19,7 +19,7 @@ if [[ ${PV} == 9999 ]]; then
 	inherit git-r3
 else
 	SRC_URI="https://archive.mesa3d.org/${MY_P}.tar.xz"
-	KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~mips ppc ppc64 ~s390 sparc x86 ~amd64-linux ~x86-linux ~sparc-solaris ~x64-solaris ~x86-solaris"
+	KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ~mips ppc ppc64 ~s390 sparc x86 ~amd64-linux ~x86-linux ~sparc-solaris ~x64-solaris ~x86-solaris"
 fi
 
 LICENSE="MIT"
@@ -29,7 +29,7 @@ RESTRICT="
 "
 
 RADEON_CARDS="r100 r200 r300 r600 radeon radeonsi"
-VIDEO_CARDS="${RADEON_CARDS} freedreno i915 i965 intel iris lima nouveau panfrost vc4 virgl vivante vmware"
+VIDEO_CARDS="${RADEON_CARDS} freedreno i915 i965 intel iris lima nouveau panfrost v3d vc4 virgl vivante vmware"
 for card in ${VIDEO_CARDS}; do
 	IUSE_VIDEO_CARDS+=" video_cards_${card}"
 done
@@ -37,7 +37,7 @@ done
 IUSE="${IUSE_VIDEO_CARDS}
 	+classic d3d9 debug +dri3 +egl +gallium +gbm gles1 +gles2 +llvm
 	lm-sensors opencl osmesa selinux test unwind vaapi valgrind vdpau vulkan
-	vulkan-overlay wayland +X xa xvmc +zstd"
+	vulkan-overlay wayland +X xa xvmc zink +zstd"
 IUSE+=" openmax omx-bellagio omx-tizonia"
 
 REQUIRED_USE="
@@ -63,17 +63,18 @@ REQUIRED_USE="
 	video_cards_r300?   ( gallium x86? ( llvm ) amd64? ( llvm ) )
 	video_cards_r600?   ( gallium )
 	video_cards_radeonsi?   ( gallium llvm )
+	video_cards_v3d? ( gallium )
 	video_cards_vc4? ( gallium )
 	video_cards_virgl? ( gallium )
 	video_cards_vivante? ( gallium gbm )
 	video_cards_vmware? ( gallium )
 	xa? ( X )
 	xvmc? ( X )
+	zink? ( gallium vulkan )
 "
 
 LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.100"
 RDEPEND="
-	!app-eselect/eselect-mesa
 	>=dev-libs/expat-2.1.0-r3:=[${MULTILIB_USEDEP}]
 	>=media-libs/libglvnd-1.3.2[X?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.8[${MULTILIB_USEDEP}]
@@ -122,6 +123,7 @@ RDEPEND="
 		>=x11-libs/libxcb-1.13:=[${MULTILIB_USEDEP}]
 		x11-libs/libXfixes:=[${MULTILIB_USEDEP}]
 	)
+	zink? ( media-libs/vulkan-loader:=[${MULTILIB_USEDEP}] )
 	zstd? ( app-arch/zstd:=[${MULTILIB_USEDEP}] )
 "
 for card in ${RADEON_CARDS}; do
@@ -141,9 +143,10 @@ RDEPEND="${RDEPEND}
 # 1. List all the working slots (with min versions) in ||, newest first.
 # 2. Update the := to specify *max* version, e.g. < 10.
 # 3. Specify LLVM_MAX_SLOT, e.g. 9.
-LLVM_MAX_SLOT="10"
+LLVM_MAX_SLOT="11"
 LLVM_DEPSTR="
 	|| (
+		sys-devel/llvm:11[${MULTILIB_USEDEP}]
 		sys-devel/llvm:10[${MULTILIB_USEDEP}]
 		sys-devel/llvm:9[${MULTILIB_USEDEP}]
 	)
@@ -229,7 +232,6 @@ BDEPEND="
 	)
 	sys-devel/bison
 	sys-devel/flex
-	sys-devel/gettext
 	virtual/pkgconfig
 	$(python_gen_any_dep ">=dev-python/mako-0.8.0[\${PYTHON_USEDEP}]")
 "
@@ -372,13 +374,22 @@ multilib_src_configure() {
 		fi
 	fi
 
-	emesonargs+=( -Dplatforms=$(use X && echo "x11,")$(use wayland && echo "wayland,")$(use gbm && echo "drm,")surfaceless )
+	local platforms
+	use X && platforms+="x11"
+	use wayland && platforms+=",wayland"
+	emesonargs+=(-Dplatforms=${platforms#,})
+
+	if use X || use egl; then
+		emesonargs+=(-Dglvnd=true)
+	else
+		emesonargs+=(-Dglvnd=false)
+	fi
 
 	if use gallium; then
 		emesonargs+=(
-			$(meson_use llvm)
-			$(meson_use lm-sensors lmsensors)
-			$(meson_use unwind libunwind)
+			$(meson_feature llvm)
+			$(meson_feature lm-sensors lmsensors)
+			$(meson_feature unwind libunwind)
 		)
 
 		if use video_cards_iris ||
@@ -395,39 +406,40 @@ multilib_src_configure() {
 		if use video_cards_r600 ||
 		   use video_cards_radeonsi ||
 		   use video_cards_nouveau; then
-			emesonargs+=($(meson_use vaapi gallium-va))
+			emesonargs+=($(meson_feature vaapi gallium-va))
 			use vaapi && emesonargs+=( -Dva-libs-path="${EPREFIX}"/usr/$(get_libdir)/va/drivers )
 		else
-			emesonargs+=(-Dgallium-va=false)
+			emesonargs+=(-Dgallium-va=disabled)
 		fi
 
 		if use video_cards_r300 ||
 		   use video_cards_r600 ||
 		   use video_cards_radeonsi ||
 		   use video_cards_nouveau; then
-			emesonargs+=($(meson_use vdpau gallium-vdpau))
+			emesonargs+=($(meson_feature vdpau gallium-vdpau))
 		else
-			emesonargs+=(-Dgallium-vdpau=false)
+			emesonargs+=(-Dgallium-vdpau=disabled)
 		fi
 
 		if use video_cards_freedreno ||
 		   use video_cards_nouveau ||
 		   use video_cards_vmware; then
-			emesonargs+=($(meson_use xa gallium-xa))
+			emesonargs+=($(meson_feature xa gallium-xa))
 		else
-			emesonargs+=(-Dgallium-xa=false)
+			emesonargs+=(-Dgallium-xa=disabled)
 		fi
 
 		if use video_cards_r600 ||
 		   use video_cards_nouveau; then
-			emesonargs+=($(meson_use xvmc gallium-xvmc))
+			emesonargs+=($(meson_feature xvmc gallium-xvmc))
 		else
-			emesonargs+=(-Dgallium-xvmc=false)
+			emesonargs+=(-Dgallium-xvmc=disabled)
 		fi
 
 		if use video_cards_freedreno ||
 		   use video_cards_lima ||
 		   use video_cards_panfrost ||
+		   use video_cards_v3d ||
 		   use video_cards_vc4 ||
 		   use video_cards_vivante; then
 			gallium_enable -- kmsro
@@ -435,10 +447,12 @@ multilib_src_configure() {
 
 		gallium_enable video_cards_lima lima
 		gallium_enable video_cards_panfrost panfrost
+		gallium_enable video_cards_v3d v3d
 		gallium_enable video_cards_vc4 vc4
 		gallium_enable video_cards_vivante etnaviv
 		gallium_enable video_cards_vmware svga
 		gallium_enable video_cards_nouveau nouveau
+		gallium_enable zink zink
 
 		# Only one i915 driver (classic vs gallium). Default to classic.
 		if ! use classic; then
@@ -490,15 +504,14 @@ multilib_src_configure() {
 	emesonargs+=(
 		$(meson_use test build-tests)
 		-Dglx=$(usex X dri disabled)
-		-Dglvnd=true
-		-Dshared-glapi=true
-		$(meson_use dri3)
-		$(meson_use egl)
-		$(meson_use gbm)
-		$(meson_use gles1)
-		$(meson_use gles2)
+		-Dshared-glapi=enabled
+		$(meson_feature dri3)
+		$(meson_feature egl)
+		$(meson_feature gbm)
+		$(meson_feature gles1)
+		$(meson_feature gles2)
 		$(meson_use selinux)
-		$(meson_use zstd)
+		$(meson_feature zstd)
 		-Dvalgrind=$(usex valgrind auto false)
 		-Ddri-drivers=$(driver_list "${DRI_DRIVERS[*]}")
 		-Dgallium-drivers=$(driver_list "${GALLIUM_DRIVERS[*]}")
@@ -529,7 +542,7 @@ multilib_src_install_all() {
 }
 
 multilib_src_test() {
-	meson test -v -C "${BUILD_DIR}" -t 100 || die "tests failed"
+	meson_src_test -t 100
 }
 
 pkg_postinst() {
