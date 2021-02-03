@@ -239,9 +239,8 @@ src_install() {
 
 	docinto docs
 	if use doc ; then
-		dodoc readme.pdf
+		einstalldocs
 		doman man/man3/*
-		dodoc CHANGELOG.md README.md
 	fi
 	if use tutorials ; then
 		insinto /usr/share/${PN}/tutorials
