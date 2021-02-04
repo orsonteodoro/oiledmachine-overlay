@@ -6,6 +6,6 @@ EAPI="7"
 K_GENPATCHES_VER="95"
 PATCH_BMQ_VER="5.4-r2"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
-PATCH_RT_VER="5.4.91-rt50"
+PATCH_RT_VER="5.4.93-rt51"
 
 inherit ot-kernel-v5.4
