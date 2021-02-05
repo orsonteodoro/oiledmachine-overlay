@@ -13,11 +13,11 @@ LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~x86"
 MY_PN="${PN/b/B}"
 SLOT="0"
-IUSE="${IUSE} bash-completion test"
-REQUIRED_USE="${PYTHON_REQUIRED_USE}"
-RDEPEND="${PYTHON_DEPS}"
-BDEPEND="${BDEPEND}
-	${PYTHON_DEPS}
+IUSE+=" bash-completion test"
+REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
+DEPEND+=" ${PYTHON_DEPS}"
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" ${PYTHON_DEPS}
 	>=dev-util/cmake-2.8
 	test? (
 		$(python_gen_cond_dep '>=dev-python/lit-0.7[${PYTHON_USEDEP}]' \

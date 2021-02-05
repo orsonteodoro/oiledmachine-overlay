@@ -13,16 +13,17 @@ LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~x86"
 MY_PN="${PN/b/B}"
 SLOT="0"
-IUSE="${IUSE} test"
-REQUIRED_USE="${PYTHON_REQUIRED_USE}"
-RBDEPEND=">=net-libs/grpc-1.28
-	  >=dev-libs/protobuf-3.11"
-RDEPEND="${RBDEPEND}
-	 >=dev-cpp/nlohmann_json-3.7.3
-	 >=dev-libs/libfmt-6.1
-	 >=dev-libs/spdlog-1.5"
-BDEPEND="${BDEPEND}
-	${RBDEPEND}
+IUSE+=" test"
+REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
+RBDEPEND=" >=net-libs/grpc-1.26
+	   >=dev-libs/protobuf-3.11"
+DEPEND+=" >=dev-cpp/nlohmann_json-3.7.3
+	  >=dev-libs/libfmt-6.1
+	  >=dev-libs/spdlog-1.5
+	  >=dev-db/sqlite-3.14"
+RDEPEND+=" ${RBDEPEND}
+	   ${DEPEND}"
+BDEPEND+=" ${RBDEPEND}
 	>=dev-util/cmake-3.12
 	test? (
 		${PYTHON_DEPS}
