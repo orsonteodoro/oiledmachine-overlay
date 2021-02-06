@@ -11,8 +11,8 @@ HOMEPAGE="http://www.openimagedenoise.org/"
 KEYWORDS="~amd64"
 LICENSE="Apache-2.0"
 # MKL_DNN is oneDNN 1.6.2 with additional custom commits.
-MKL_DNN_COMMIT="603620ba45185e7d91fe112b69287e7d86c64353"
-OIDN_WEIGHTS_COMMIT="08092e46a1961b13b70e48ad80fa19b452bd4c01"
+MKL_DNN_COMMIT="eb3e9670053192258d5a66f61486e3cfe25618b3"
+OIDN_WEIGHTS_COMMIT="59bad6bb6344f8fb8205772df3f795c2dc72e23b"
 ORG_GH="https://github.com/OpenImageDenoise"
 SLOT="0/${PV}"
 if [[ ${PV} = *9999 ]]; then
@@ -41,7 +41,8 @@ MIN_ICC_V="17.0" # 15.0 has c++11 support, but project only supports 17
 CDEPEND=" ${PYTHON_DEPS}"
 DEPEND+=" ${CDEPEND}
 	>=dev-cpp/tbb-2017
-	openimageio? ( media-libs/openimageio )"
+	openimageio? ( media-libs/openimageio )
+	virtual/libc"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${CDEPEND}
 	|| (
@@ -176,7 +177,7 @@ to continue.\n
 		einfo "Falling back to clang ${target_v}"
 		mycmakeargs+=(
 		-DCMAKE_CXX_COMPILER="${EROOT}/usr/lib/llvm/${target_v}/bin/clang++"
-		-DCMAKE_C_COMPILER="${EROOT}/usr/lib/llvm/${target_vv}/bin/clang"
+		-DCMAKE_C_COMPILER="${EROOT}/usr/lib/llvm/${target_v}/bin/clang"
 		)
 	elif use icc \
 	&& has_version '>=sys-devel/icc-${MIN_ICC_V}' ; then
