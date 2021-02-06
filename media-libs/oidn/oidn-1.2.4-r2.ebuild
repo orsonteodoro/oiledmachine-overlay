@@ -2,12 +2,14 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+PYTHON_COMPAT=( python2_7 python3_{6..9} )
+inherit cmake-utils eutils python-single-r1 toolchain-funcs
+
 DESCRIPTION="Intel(R) Open Image Denoise library"
 HOMEPAGE="http://www.openimagedenoise.org/"
 KEYWORDS="~amd64"
 LICENSE="Apache-2.0"
-PYTHON_COMPAT=( python2_7 python3_{6,7,8,9} )
-inherit cmake-utils eutils python-single-r1 toolchain-funcs
 # MKL_DNN is oneDNN 1.6.2 with additional custom commits.
 MKL_DNN_COMMIT="603620ba45185e7d91fe112b69287e7d86c64353"
 OIDN_WEIGHTS_COMMIT="08092e46a1961b13b70e48ad80fa19b452bd4c01"
@@ -22,29 +24,32 @@ else
 ${ORG_GH}/${PN}/releases/download/v${PV}/${P}.src.tar.gz \
 	-> ${P}.tar.gz
 ${ORG_GH}/mkl-dnn/archive/${MKL_DNN_COMMIT}.tar.gz \
-	-> ${PN}-mkl-dnn-${MKL_DNN_COMMIT}.tar.gz
+	-> ${PN}-mkl-dnn-${MKL_DNN_COMMIT:0:7}.tar.gz
 built-in-weights? ( \
 ${ORG_GH}/oidn-weights/archive/${OIDN_WEIGHTS_COMMIT}.tar.gz \
-	-> ${PN}-weights-${OIDN_WEIGHTS_COMMIT}.tar.gz )"
+	-> ${PN}-weights-${OIDN_WEIGHTS_COMMIT:0:7}.tar.gz )"
 fi
-IUSE="+apps +built-in-weights +clang doc disable-sse41-check gcc icc openimageio"
-REQUIRED_USE="${PYTHON_REQUIRED_USE} ^^ ( clang gcc icc )"
+IUSE+=" +apps +built-in-weights +clang doc disable-sse41-check gcc icc openimageio"
+REQUIRED_USE+=" ${PYTHON_REQUIRED_USE} ^^ ( clang gcc icc )"
 # Clang is more smoother multitask-wise
 # c++11 minimal
 MIN_CLANG_V="3.3"
 MIN_GCC_V="4.8.1"
 MIN_ICC_V="17.0" # 15.0 has c++11 support, but project only supports 17
 # SSE4.1 hardware release in 2008
-RDEPEND="${PYTHON_DEPS}
+# See scripts/build.py for release versioning
+CDEPEND=" ${PYTHON_DEPS}"
+DEPEND+=" ${CDEPEND}
+	>=dev-cpp/tbb-2017
+	openimageio? ( media-libs/openimageio )"
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" ${CDEPEND}
 	|| (
 		clang? ( >=sys-devel/clang-${MIN_CLANG_V} )
 		gcc? ( >=sys-devel/gcc-${MIN_GCC_V} )
 		icc? ( >=dev-lang/icc-${MIN_ICC_V} )
 	)
-	>=dev-cpp/tbb-2017
 	>=dev-lang/ispc-1.14.1
-	openimageio? ( media-libs/openimageio )"
-DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.1"
 CMAKE_BUILD_TYPE=Release
 RESTRICT="mirror"
