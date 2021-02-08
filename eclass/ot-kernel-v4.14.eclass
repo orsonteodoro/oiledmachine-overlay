@@ -223,6 +223,31 @@ function ot-kernel_filter_patch_cb() {
 	elif [[ "${path}" =~ "0179-mm-memcontrol-Replace-local_irq_disable-with-local-l.patch" ]] ; then
 		# PREEMPT_RT
 		_dpatch "${PATCH_OPS} -F 3" "${path}"
+	elif [[ "${path}" =~ "0235-rtmutex-Handle-the-various-new-futex-race-conditions.patch" ]] ; then
+		# PREEMPT_RT
+		_dpatch "${PATCH_OPS} -F 3" "${path}"
+	elif [[ "${path}" =~ "0249-rtmutex-add-sleeping-lock-implementation.patch" ]] ; then
+		# PREEMPT_RT
+		_tpatch "${PATCH_OPS}" "${path}" 2 0 ""
+		_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/4.14.215-rt105-0249-rtmutex-add-sleeping-lock-implementation-fix-for-4.14.220.patch"
+	elif [[ "${path}" =~ "0362-net-core-protect-users-of-napi_alloc_cache-against-r.patch" ]] ; then
+		# PREEMPT_RT
+		_tpatch "${PATCH_OPS}" "${path}" 1 0 ""
+		_dpatch "${PATCH_OPS} -F 3" \
+"${FILESDIR}/4.14.215-rt105-0362-net-core-protect-users-of-napi_alloc_cache-against-r-fix-for-4.14.220.patch"
+	elif [[ "${path}" =~ "0467-Revert-rtmutex-Handle-the-various-new-futex-race-con.patch" ]] ; then
+		# PREEMPT_RT
+		_dpatch "${PATCH_OPS} -F 3" "${path}"
+	elif [[ "${path}" =~ "0469-futex-Make-the-futex_hash_bucket-lock-raw.patch" ]] ; then
+		# PREEMPT_RT
+		_dpatch "${PATCH_OPS} -F 3" "${path}"
+	elif [[ "${path}" =~ "0470-futex-Delay-deallocation-of-pi_state.patch" ]] ; then
+		# PREEMPT_RT
+		_dpatch "${PATCH_OPS} -F 3" "${path}"
+	elif [[ "${path}" =~ "0481-futex-Make-the-futex_hash_bucket-spinlock_t-again-an.patch" ]] ; then
+		# PREEMPT_RT
+		_dpatch "${PATCH_OPS} -F 3" "${path}"
 	elif [[ "${path}" =~ "${PDS_FN}" ]] ; then
 		_dpatch "${PATCH_OPS} -F 3" "${path}"
 		_dpatch "${PATCH_OPS}" \

@@ -318,6 +318,14 @@ function ot-kernel_filter_patch_cb() {
 		_tpatch "${PATCH_OPS} -F 3" "${path}" 7 0 ""
 		_dpatch "${PATCH_OPS}" \
 			"${FILESDIR}/muqss-dont-attach-ckversion.patch"
+	elif [[ "${path}" =~ "0148-rtmutex-Handle-the-various-new-futex-race-conditions.patch" ]] ; then
+		# PREEMPT_RT
+		_dpatch "${PATCH_OPS} -F 3" "${path}"
+	elif [[ "${path}" =~ "0160-rtmutex-add-sleeping-lock-implementation.patch" ]] ; then
+		# PREEMPT_RT
+		_tpatch "${PATCH_OPS}" "${path}" 2 0 ""
+		_dpatch "${PATCH_OPS}" \
+"${FILESDIR}/5.4.93-rt51-0160-rtmutex-add-sleeping-lock-implementation-fix-for-5.4.96.patch"
 	elif [[ "${path}" =~ "${O3_ALLOW_FN}" ]] ; then
 		_dpatch "${PATCH_OPS} -F 3" "${path}"
 	elif [[ "${path}" =~ (${TRESOR_AESNI_FN}|${TRESOR_I686_FN}) ]] ; then
