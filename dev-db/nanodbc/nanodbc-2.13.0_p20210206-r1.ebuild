@@ -84,9 +84,9 @@ src_configure() {
 				-DUNIX=1
 		        )
 			if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
-				mycmakeargs=( -DBUILD_SHARED_LIBS=OFF )
-			else
 				mycmakeargs=( -DBUILD_SHARED_LIBS=ON )
+			else
+				mycmakeargs=( -DBUILD_SHARED_LIBS=OFF )
 			fi
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 			cmake-utils_src_configure
