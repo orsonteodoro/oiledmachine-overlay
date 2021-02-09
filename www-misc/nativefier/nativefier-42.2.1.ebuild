@@ -3,7 +3,7 @@
 
 EAPI=7
 DESCRIPTION="Make any web page a desktop application"
-HOMEPAGE="https://github.com/jiahaog/nativefier"
+HOMEPAGE="https://github.com/nativefier/nativefier"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0"
@@ -13,11 +13,11 @@ DEPEND="${RDEPEND}
 	images-to-icons? ( media-gfx/imagemagick )
 	>=net-libs/nodejs-10[npm]"
 ELECTRON_APP_AT_TYPES_NODE_V="10"
-ELECTRON_APP_ELECTRON_V="11.1.1" # See https://github.com/jiahaog/nativefier/blob/v42.2.0/src/constants.ts
+ELECTRON_APP_ELECTRON_V="11.1.1" # See https://github.com/nativefier/nativefier/blob/v42.2.1/src/constants.ts
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
 inherit eutils desktop electron-app npm-utils
 SRC_URI=\
-"https://github.com/jiahaog/nativefier/archive/v${PV}.tar.gz \
+"https://github.com/nativefier/nativefier/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"

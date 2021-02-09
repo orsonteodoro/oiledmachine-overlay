@@ -7,8 +7,8 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <bugs-to>https://github.com/jiahaog/nativefier/issues</bugs-to>
-    <remote-id type="github">jiahaog/nativefier</remote-id>
+    <bugs-to>https://github.com/nativefier/nativefier/issues</bugs-to>
+    <remote-id type="github">nativefier/nativefier</remote-id>
   </upstream>
   <use>
     <flag name="image-to-icon">Installs a dependency for support for
