@@ -2,6 +2,11 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+NPM_SECAUDIT_AT_TYPES_NODE_V="14.14.25" # always latest see https://www.npmjs.com/package/@types/node
+NPM_SECAUDIT_TYPESCRIPT_V="${PV}"
+inherit eutils npm-secaudit npm-utils
+
 DESCRIPTION="TypeScript is a superset of JavaScript that compiles to clean \
 JavaScript output"
 HOMEPAGE="https://www.typescriptlang.org/"
@@ -11,15 +16,14 @@ CC-BY-SA-4.0 MIT unicode W3C W3C-CLA WTFPL"
 # Rest of the licenses are third party licenses
 # all-rights-reserved asserted in source and third party modules
 KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
-SLOT="$(ver_cut 1-2 ${PV})"
-RDEPEND="${RDEPEND}
+SLOT="$(ver_cut 1-2 ${PV})/${PV}"
+MIN_NODE_VERSION=$(ver_cut 1 ${NPM_SECAUDIT_AT_TYPES_NODE_V})
+CDEPEND=" >=net-libs/nodejs-${MIN_NODE_VERSION}[npm]"
+RDEPEND+=" ${CDEPEND}
 	 app-eselect/eselect-typescript"
-DEPEND="${RDEPEND}
-	media-libs/vips
-        >=net-libs/nodejs-4.2.0[npm]"
-NPM_SECAUDIT_AT_TYPES_NODE_V="14.14.5" # always latest see https://www.npmjs.com/package/@types/node
-NPM_SECAUDIT_TYPESCRIPT_V="${PV}"
-inherit eutils npm-secaudit npm-utils
+DEPEND+=" ${CDEPEND}
+	media-libs/vips"
+BDEPEND+=" ${CDEPEND}"
 MY_PN="TypeScript"
 FN_SRC="v${PV}.tar.gz"
 FN_DEST="${PN}-${PV}.tar.gz"
@@ -44,6 +48,16 @@ from ${homepage} and rename it to ${FN_DEST} place it in ${distdir}\n\
 or do \`wget -O ${distdir}/${FN_DEST} ${GITHUB_HOMEPAGE}/archive/${FN_SRC}\`"
 }
 
+pkg_setup() {
+	npm-secaudit_pkg_setup
+	NODE_VERSION=$(/usr/bin/node --version | sed -e "s|v||g" | cut -f 1 -d ".")
+        if (( ${NODE_VERSION} < ${MIN_NODE_VERSION} )) ; then
+                echo "NODE_VERSION must be >=${MIN_NODE_VERSION}"
+		die "Switch Node.js to >=${MIN_NODE_VERSION}"
+        fi
+	einfo "Node.js is ${NODE_VERSION}"
+}
+
 npm-secaudit_src_postprepare() {
 	npm_package_lock_update ./
 }
@@ -62,7 +76,7 @@ npm-secaudit_src_postcompile() {
 src_install() {
 	export NPM_SECAUDIT_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT}"
 	npm-secaudit_install "*"
-	fperms 755 "${NPM_SECAUDIT_INSTALL_PATH}/bin/tsc"
+	fperms 755 "${NPM_SECAUDIT_INSTALL_PATH}/bin/tsc" \
 		"${NPM_SECAUDIT_INSTALL_PATH}/bin/tsserver"
 }
 

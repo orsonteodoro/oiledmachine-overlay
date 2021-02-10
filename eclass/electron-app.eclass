@@ -457,6 +457,9 @@ COMMON_DEPEND+=" =net-libs/nodejs-12*"
 elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_V}" ]] \
 	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_V}") -eq 13 ; then
 COMMON_DEPEND+=" =net-libs/nodejs-13*"
+elif [[ -n "${ELECTRON_APP_AT_TYPES_NODE_V}" ]] \
+	&& ver_test $(ver_cut 1 "${ELECTRON_APP_AT_TYPES_NODE_V}") -eq 14 ; then
+COMMON_DEPEND+=" =net-libs/nodejs-14*"
 fi
 
 if [[ -n "${ELECTRON_APP_VUE_V}" ]] && ( \
