@@ -201,7 +201,7 @@ KERNEL_PATCH_0_TO_1_URI=\
 
 if ver_test ${K_MAJOR_MINOR} -ge 5.10 ; then
 KGCCP_11_0_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v11.0%2B_kernel_v5.10%2B.patch"
+"enable_additional_cpu_optimizations_for_gcc_v11.0%2B_kernel_v5.8%2B.patch"
 KGCCP_10_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v5.8%2B.patch"
 KGCCP_9_1_FN=\
@@ -211,6 +211,8 @@ KGCCP_8_1_FN=\
 KGCCP_4_9_FN=\
 "${KGCCP_4_9_FN:=enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B.patch}"
 elif ver_test ${K_MAJOR_MINOR} -ge 5.9 ; then
+KGCCP_11_0_FN=\
+"enable_additional_cpu_optimizations_for_gcc_v11.0%2B_kernel_v5.8%2B.patch"
 KGCCP_10_1_FN=\
 "enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v5.8%2B.patch"
 KGCCP_9_1_FN=\
