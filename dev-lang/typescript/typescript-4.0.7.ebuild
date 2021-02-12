@@ -3,7 +3,10 @@
 
 EAPI=7
 
-NPM_SECAUDIT_AT_TYPES_NODE_V="14.14.25" # always latest see https://www.npmjs.com/package/@types/node
+NPM_SECAUDIT_AT_TYPES_NODE_V="14.0.27"
+# Same as package-lock but uses latest always latest.
+# See https://www.npmjs.com/package/@types/node
+
 NPM_SECAUDIT_TYPESCRIPT_V="${PV}"
 inherit eutils npm-secaudit npm-utils
 

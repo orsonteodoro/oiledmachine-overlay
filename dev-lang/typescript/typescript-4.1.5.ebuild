@@ -3,7 +3,10 @@
 
 EAPI=7
 
-NPM_SECAUDIT_AT_TYPES_NODE_V="14.14.25" # always latest see https://www.npmjs.com/package/@types/node
+NPM_SECAUDIT_AT_TYPES_NODE_V="14.14.2"
+# Same as package-lock but uses latest always latest.
+# See https://www.npmjs.com/package/@types/node
+
 NPM_SECAUDIT_TYPESCRIPT_V="${PV}"
 inherit eutils npm-secaudit npm-utils
 
@@ -65,6 +68,7 @@ npm-secaudit_src_postprepare() {
 npm-secaudit_src_postcompile() {
 	npm uninstall gulp -D
 
+	# todo update
 	# playwright is 0.12.1 and only used for testing
 	# Firefox 74.0b10
 	# Chromium 83.0.4090.0
