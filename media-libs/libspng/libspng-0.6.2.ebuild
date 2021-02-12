@@ -2,39 +2,41 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit flag-o-matic meson multilib-build static-libs toolchain-funcs
+
 DESCRIPTION="libspng is a C library for reading and writing Portable Network \
 Graphics (PNG) format files with a focus on security and ease of use."
 HOMEPAGE="https://libspng.org"
 LICENSE="BSD-2
 	test? ( libpng2 )"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
-inherit meson multilib-build
-IUSE="doc pgo +opt -static-libs -test -threads zlib"
-RDEPEND="zlib? ( sys-libs/zlib:=[static-libs?] )
-	!zlib? ( dev-libs/miniz:=[static-libs?] )
-	virtual/libc"
-DEPEND="test? (	>=media-libs/libpng-1.6	)"
-BDEPEND="${BDEPEND}
-	dev-util/pkgconfig
+SLOT="0/${PV}"
+IUSE+=" doc pgo +opt -static-libs -test -threads zlib"
+LDEPEND=" zlib? ( sys-libs/zlib:=[static-libs?] )
+	 !zlib? ( dev-libs/miniz:=[static-libs?] )
+	 virtual/libc"
+DEPEND+=" ${LDEPEND}
+	test? (	>=media-libs/libpng-1.6	)"
+RDEPEND+=" ${LDEPEND}"
+BDEPEND+=" dev-util/pkgconfig
+	dev-util/meson-format-array
 	doc? (
 		dev-python/mkdocs
 		dev-python/mkdocs-material
 	)"
-SLOT="0/${PV}"
-inherit flag-o-matic static-libs toolchain-funcs
 # GitHub is bugged?  The ZIP does not have a image so download manually
 BENCHMARK_IMAGES_COMMIT="2478ec174d74d66343449f850d22e0eabb0f01b0"
 SRC_URI="https://github.com/randy408/libspng/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz
 	pgo? (
 https://github.com/libspng/benchmark_images/raw/${BENCHMARK_IMAGES_COMMIT}/medium_rgb8.png ->
-		libspng-medium_rgb8-${BENCHMARK_IMAGES_COMMIT}.png
+	libspng-medium_rgb8-${BENCHMARK_IMAGES_COMMIT}.png
 https://github.com/libspng/benchmark_images/raw/${BENCHMARK_IMAGES_COMMIT}/medium_rgba8.png ->
-		libspng-medium_rgba8-${BENCHMARK_IMAGES_COMMIT}.png
+	libspng-medium_rgba8-${BENCHMARK_IMAGES_COMMIT}.png
 https://github.com/libspng/benchmark_images/raw/${BENCHMARK_IMAGES_COMMIT}/large_palette.png ->
-		libspng-large_palette-${BENCHMARK_IMAGES_COMMIT}.png
-	)
-"
+	libspng-large_palette-${BENCHMARK_IMAGES_COMMIT}.png
+	)"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 DOCS=( CONTRIBUTING.md README.md "${S}/docs" )
@@ -58,7 +60,7 @@ src_unpack() {
 src_prepare() {
 	default
 	# Breaks pgo
-	eapply "${FILESDIR}/libspng-0.6.1-disable-target-clones.patch"
+	eapply "${FILESDIR}/libspng-0.6.2-disable-target-clones.patch"
 	multilib_copy_sources
 	prepare_abi() {
 		static-libs_copy_sources
@@ -137,10 +139,10 @@ src_compile() {
 # See https://github.com/randy408/libspng/blob/master/docs/build.md#profile-guided-optimization
 				src_configure_pgo_instrumented
 				_compile
-				pushd "${WORKDIR}/${P}-build-${ABI}-${ESTSH_LIB_TYPE}" || die
-					./example ../benchmark_images/medium_rgb8.png || die
-					./example ../benchmark_images/medium_rgba8.png || die
-					./example ../benchmark_images/large_palette.png || die
+				pushd "${WORKDIR}/${P}-build-${ABI}-${ESTSH_LIB_TYPE}/examples" || die
+					./example ../../benchmark_images/medium_rgb8.png || die
+					./example ../../benchmark_images/medium_rgba8.png || die
+					./example ../../benchmark_images/large_palette.png || die
 				popd
 				src_configure_pgo_optimized
 				_compile
@@ -170,8 +172,6 @@ src_install() {
 		static-libs_foreach_impl install_stsh
 	}
 	multilib_foreach_abi install_abi
-	if use doc ; then
-		einstalldocs
-	fi
+	use doc && einstalldocs
 	dodoc LICENSE
 }
