@@ -3,40 +3,32 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7,8,9} )
-
+PYTHON_COMPAT=( python3_{6..9} )
 inherit cmake-multilib python-any-r1
 
-# yes, it needs SOURCE, not just installed one
-GTEST_COMMIT="aee0f9d9b5b87796ee8a0ab26b7587ec30e8858e"
-GTEST_FILE="gtest-1.10.0_p20200702.tar.gz"
-
 DESCRIPTION="Abseil Common Libraries (C++), LTS Branch"
+LICENSE="Apache-2.0
+	 test? ( BSD )"
 HOMEPAGE="https://abseil.io"
-SRC_URI="https://github.com/abseil/abseil-cpp/archive/${PV}.tar.gz -> ${P}.tar.gz
-	https://github.com/google/googletest/archive/${GTEST_COMMIT}.tar.gz -> ${GTEST_FILE}"
-
-LICENSE="
-	Apache-2.0
-	test? ( BSD )
-"
-SLOT="0"
 KEYWORDS="~amd64 ~ppc64 ~x86"
-IUSE="test"
-
-DEPEND=""
-RDEPEND="${DEPEND}"
-
-BDEPEND="
-	${PYTHON_DEPS}
-	test? ( sys-libs/timezone-data )
-"
-
-RESTRICT="!test? ( test )"
+SLOT="0/${PV}"
+IUSE+=" test"
+BDEPEND+=" ${PYTHON_DEPS}
+	   test? ( sys-libs/timezone-data )"
+# yes, it needs SOURCE, not just installed one
+# Uses master, see
+# https://github.com/abseil/abseil-cpp/blob/20200923.3/CMake/Googletest/CMakeLists.txt.in
+GTEST_COMMIT="f31c82efe6598aef4c3a82fb4b35f1f84a3b81a1" # Up to tag date version
+GTEST_FILE="gtest-1.10.0_p20210116.tar.gz"
+SRC_URI="
+https://github.com/abseil/abseil-cpp/archive/${PV}.tar.gz
+	-> ${P}.tar.gz
+https://github.com/google/googletest/archive/${GTEST_COMMIT}.tar.gz
+	-> ${GTEST_FILE}"
+RESTRICT="!test? ( test ) mirror"
 
 src_prepare() {
 	cmake-utils_src_prepare
-
 	# un-hardcode abseil compiler flags
 	sed -i \
 		-e '/"-maes",/d' \
@@ -44,12 +36,11 @@ src_prepare() {
 		-e '/"-mfpu=neon"/d' \
 		-e '/"-march=armv8-a+crypto"/d' \
 		absl/copts/copts.py || die
-
 	# now generate cmake files
 	absl/copts/generate_copts.py || die
-
 	sed -i 's/-Werror//g' \
-		"${WORKDIR}/googletest-${GTEST_COMMIT}"/googletest/cmake/internal_utils.cmake || die
+"${WORKDIR}/googletest-${GTEST_COMMIT}"/googletest/cmake/internal_utils.cmake \
+		|| die
 	multilib_copy_sources
 }
 
