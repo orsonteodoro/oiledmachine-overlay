@@ -2,19 +2,21 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+PYTHON_COMPAT=( python3_{6..9} )
+inherit eutils python-single-r1
+
 DESCRIPTION="Google from the terminal"
 HOMEPAGE="https://github.com/jarun/googler"
 LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~arm ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0"
 MY_PV="$(ver_cut 1-2 ${PV})"
-PYTHON_COMPAT=( python3_{6,7,8,9} )
-inherit python-single-r1
+REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 RESTRICT="mirror"
 SRC_URI=\
 "https://github.com/jarun/${PN}/archive/v${MY_PV}.tar.gz \
 	-> ${P}.tar.gz"
-inherit eutils
 S="${WORKDIR}/${PN}-${MY_PV}"
 
 src_prepare() {
