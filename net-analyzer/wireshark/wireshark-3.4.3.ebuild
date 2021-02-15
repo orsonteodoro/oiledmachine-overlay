@@ -1,20 +1,21 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
 LUA_COMPAT=( lua5-{1..2} )
-PYTHON_COMPAT=( python3_{6..9} )
+PYTHON_COMPAT=( python3_{7..9} )
 
 inherit fcaps flag-o-matic lua-single python-any-r1 qmake-utils xdg-utils cmake
 
 DESCRIPTION="A network protocol analyzer formerly known as ethereal"
 HOMEPAGE="https://www.wireshark.org/"
 SRC_URI="https://www.wireshark.org/download/src/all-versions/${P/_/}.tar.xz"
-LICENSE="GPL-2"
+S="${WORKDIR}/${P/_/}"
 
+LICENSE="GPL-2"
 SLOT="0/${PV}"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc64 ~x86"
+KEYWORDS="~alpha amd64 arm ~arm64 ~hppa ~ia64 ppc64 x86"
 IUSE="
 	androiddump bcg729 brotli +capinfos +captype ciscodump +dftest doc dpauxmon
 	+dumpcap +editcap http2 ilbc kerberos libxml2 lto lua lz4 maxminddb
@@ -23,7 +24,6 @@ IUSE="
 	sdjournal test +text2pcap tfshark +tshark +udpdump zlib +zstd
 "
 IUSE+=" mtp"
-S=${WORKDIR}/${P/_/}
 
 CDEPEND="
 	acct-group/pcap
@@ -95,7 +95,9 @@ REQUIRED_USE="
 	lua? ( ${LUA_REQUIRED_USE} )
 	plugin-ifdemo? ( plugins )
 "
+
 RESTRICT="test"
+
 PATCHES=(
 	"${FILESDIR}"/${PN}-2.6.0-redhat.patch
 	"${FILESDIR}"/${PN}-3.4.2-cmake-lua-version.patch
@@ -196,7 +198,12 @@ src_configure() {
 src_test() {
 	cmake_build test-programs
 
-	myctestargs=( --disable-capture --skip-missing-programs=all --verbose )
+	myctestargs=(
+		--disable-capture
+		--skip-missing-programs=all
+		--verbose
+	)
+
 	cmake_src_test
 }
 
@@ -221,8 +228,8 @@ src_install() {
 		wiretap
 		wsutil
 	)
-	for dir in "${dirs[@]}"
-	do
+
+	for dir in "${dirs[@]}" ; do
 		insinto /usr/include/wireshark/${dir}
 		doins ${dir}/*.h
 	done
@@ -244,8 +251,8 @@ src_install() {
 		done
 	fi
 
-	if [[ -d "${D}"/usr/share/appdata ]]; then
-		rm -r "${D}"/usr/share/appdata || die
+	if [[ -d "${ED}"/usr/share/appdata ]]; then
+		rm -r "${ED}"/usr/share/appdata || die
 	fi
 }
 
