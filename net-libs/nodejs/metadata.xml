@@ -40,8 +40,6 @@
 		NPM packages that require multislot:
 			Angular
 			Vue.js
-			node-gyp
-				GDevelop 5
 
 		The active implementation selected by app-portage/nodejs is
 		granted /usr/lib64/node_modules which is symlinked to one

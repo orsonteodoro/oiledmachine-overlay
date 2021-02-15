@@ -2,9 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-PYTHON_COMPAT=( python3_{7..9} )
-PYTHON_REQ_USE="threads(+)"
-inherit bash-completion-r1 flag-o-matic pax-utils python-any-r1 \
+PYTHON_COMPAT=( python2_7 )
+PYTHON_REQ_USE="threads"
+inherit bash-completion-r1 eutils flag-o-matic pax-utils python-any-r1 \
 	toolchain-funcs xdg-utils
 DESCRIPTION="A JavaScript runtime built on Chrome's V8 JavaScript engine"
 HOMEPAGE="https://nodejs.org/"
@@ -12,75 +12,79 @@ LICENSE="Apache-1.1 Apache-2.0 BSD BSD-2 MIT"
 SRC_URI="https://nodejs.org/dist/v${PV}/node-v${PV}.tar.xz"
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/${PV}"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86 ~amd64-linux ~x64-macos"
-IUSE="cpu_flags_x86_sse2 debug doc +icu inspector +npm pax_kernel +snapshot \
-+ssl system-icu +system-ssl systemtap test"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86 ~amd64-linux ~x64-macos"
+IUSE="cpu_flags_x86_sse2 debug doc icu inspector npm +snapshot +ssl \
++system-ssl systemtap test"
 IUSE+=" man"
 REQUIRED_USE="inspector? ( icu ssl )
 		npm? ( ssl )
-		system-icu? ( icu )
 		system-ssl? ( ssl )"
-# FIXME: test-fs-mkdir fails with "no such file or directory". Investigate.
 RESTRICT="test"
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
+# Last deps commit date: Feb 9, 2021
 RDEPEND="!net-libs/nodejs:0
 	app-eselect/eselect-nodejs
-	>=app-arch/brotli-1.0.9
-	>=dev-libs/libuv-1.40.0:=
-	>=net-dns/c-ares-1.17.1
-	>=net-libs/nghttp2-1.42.0
+	>=dev-libs/libuv-1.39.0:=
+	>=net-dns/c-ares-1.15.0
+	>=net-libs/http-parser-2.9.4:=
+	>=net-libs/nghttp2-1.41.0
 	>=sys-libs/zlib-1.2.11
-	system-icu? ( >=dev-libs/icu-68.2:= )
+	icu? ( >=dev-libs/icu-64.2:= )
 	system-ssl? ( >=dev-libs/openssl-1.1.1i:0= )"
-BDEPEND="${PYTHON_DEPS}
-	sys-apps/coreutils
+DEPEND="${RDEPEND}
+	${PYTHON_DEPS}
 	systemtap? ( dev-util/systemtap )
-	test? ( net-misc/curl )
-	pax_kernel? ( sys-apps/elfix )"
-DEPEND="${RDEPEND}"
-PATCHES=( "${FILESDIR}"/${PN}-15.2.0-global-npm-config.patch )
+	test? ( net-misc/curl )"
+PATCHES=( "${FILESDIR}"/${PN}-10.3.0-global-npm-config.patch )
 S="${WORKDIR}/node-v${PV}"
-NPM_V="7.4.3" # See https://github.com/nodejs/node/blob/v15.7.0/deps/npm/package.json
+NPM_V="6.14.11" # See https://github.com/nodejs/node/blob/v10.23.3/deps/npm/package.json
 
 pkg_pretend() {
 	(use x86 && ! use cpu_flags_x86_sse2) && \
 		die "Your CPU doesn't support the required SSE2 instruction."
+
+	( [[ ${MERGE_TYPE} != "binary" ]] && ! test-flag-CXX -std=c++11 ) && \
+		die "Your compiler doesn't support C++11. Use GCC 4.8, Clang 3.3 or newer."
 }
 
 pkg_setup() {
 	python-any-r1_pkg_setup
 	# For man page reasons
-	if has 'net-libs/nodejs[npm]:multislot/10' ; then
-		die \
-"You need to disable npm on net-libs/nodejs[npm]:multislot/10.  Only enable\n\
-npm on the highest slot."
-	fi
 	if has 'net-libs/nodejs[npm]:multislot/12' ; then
 		die \
 "You need to disable npm on net-libs/nodejs[npm]:multislot/12.  Only enable\n\
 npm on the highest slot."
 	fi
-	if has 'net-libs/nodejs[man]:multislot/10' ; then
+	if has 'net-libs/nodejs[npm]:multislot/14' ; then
 		die \
-"You need to disable npm on net-libs/nodejs[man]:multislot/10.  Only enable\n\
-man on the highest slot."
+"You need to disable npm on net-libs/nodejs[npm]:multislot/14.  Only enable\n\
+npm on the highest slot."
 	fi
 	if has 'net-libs/nodejs[man]:multislot/12' ; then
 		die \
 "You need to disable npm on net-libs/nodejs[man]:multislot/12.  Only enable\n\
 man on the highest slot."
 	fi
+	if has 'net-libs/nodejs[man]:multislot/14' ; then
+		die \
+"You need to disable npm on net-libs/nodejs[man]:multislot/14.  Only enable\n\
+man on the highest slot."
+	fi
 }
 
 src_prepare() {
-	tc-export AR CC CXX PKG_CONFIG
+	tc-export CC CXX PKG_CONFIG
 	export V=1
 	export BUILDTYPE=Release
 
 	# fix compilation on Darwin
 	# https://code.google.com/p/gyp/issues/detail?id=260
 	sed -i -e "/append('-arch/d" tools/gyp/pylib/gyp/xcode_emulation.py || die
+
+	# make sure we use python2.* while using gyp
+	sed -i -e "s/python/${EPYTHON}/" deps/npm/node_modules/node-gyp/gyp/gyp || die
+	sed -i -e "s/|| 'python2'/|| '${EPYTHON}'/" deps/npm/node_modules/node-gyp/lib/configure.js || die
 
 	# less verbose install output (stating the same as portage, basically)
 	sed -i -e "/print/d" tools/install.py || die
@@ -93,7 +97,7 @@ src_prepare() {
 	# Avoid writing a depfile, not useful
 	sed -i -e "/DEPFLAGS =/d" tools/gyp/pylib/gyp/generator/make.py || die
 
-	sed -i -e "/'-O3'/d" common.gypi node.gypi || die
+	sed -i -e "/'-O3'/d" common.gypi deps/v8/gypfiles/toolchain.gypi || die
 
 	# Avoid a test that I've only been able to reproduce from emerge. It doesnt
 	# seem sandbox related either (invoking it from a sandbox works fine).
@@ -108,35 +112,20 @@ src_prepare() {
 		BUILDTYPE=Debug
 	fi
 
-	# We need to disable mprotect on two files when it builds Bug 694100.
-	use pax_kernel && PATCHES+=( "${FILESDIR}"/${PN}-13.8.0-paxmarking.patch )
-
 	default
 }
 
 src_configure() {
 	xdg_environment_reset
 
-	local myconf=(
-		--shared-brotli
-		--shared-cares
-		--shared-libuv
-		--shared-nghttp2
-		--shared-zlib
-	)
+	local myconf=( --shared-cares --shared-http-parser --shared-libuv --shared-nghttp2 --shared-zlib )
 	use debug && myconf+=( --debug )
-	if use system-icu; then
-		myconf+=( --with-intl=system-icu )
-	elif use icu; then
-		myconf+=( --with-intl=full-icu )
-	else
-		myconf+=( --with-intl=none )
-	fi
+	use icu && myconf+=( --with-intl=system-icu ) || myconf+=( --with-intl=none )
 	use inspector || myconf+=( --without-inspector )
 	use npm || myconf+=( --without-npm )
-	use snapshot || myconf+=( --without-node-snapshot )
+	use snapshot && myconf+=( --with-snapshot )
 	if use ssl; then
-		use system-ssl && myconf+=( --shared-openssl --openssl-use-def-ca-store )
+		use system-ssl && myconf+=( --shared-openssl )
 	else
 		myconf+=( --without-ssl )
 	fi
@@ -155,7 +144,7 @@ src_configure() {
 	GYP_DEFINES="linux_use_gold_flags=0
 		linux_use_bundled_binutils=0
 		linux_use_bundled_gold=0" \
-	"${EPYTHON}" configure.py \
+	"${PYTHON}" configure \
 		--prefix="${EPREFIX}"/usr \
 		--dest-cpu=${myarch} \
 		$(use_with systemtap dtrace) \
@@ -163,6 +152,8 @@ src_configure() {
 }
 
 src_compile() {
+	emake -C out mksnapshot
+	pax-mark m "out/${BUILDTYPE}/mksnapshot"
 	emake -C out
 }
 
@@ -170,8 +161,7 @@ src_install() {
 	local REL_D_BASE="usr/$(get_libdir)"
 	local D_BASE="/${REL_D_BASE}"
 	local ED_BASE="${ED}/${REL_D_BASE}"
-	default
-
+	emake install DESTDIR="${ED}"
 	mv "${ED}"/usr/bin/node{,${SLOT_MAJOR}} || die
 	pax-mark -m "${ED}"/usr/bin/node${SLOT_MAJOR}
 
@@ -197,12 +187,17 @@ src_install() {
 	fi
 
 	if use npm; then
-		keepdir /etc/npm
+		dodir /etc/npm
 
 		# Install bash completion for `npm`
-		local tmp_npm_completion_file="$(TMPDIR="${T}" mktemp -t npm.XXXXXXXXXX)"
+		# We need to temporarily replace default config path since
+		# npm otherwise tries to write outside of the sandbox
+		local npm_config="${REL_D_BASE}/node_modules/npm/lib/config/core.js"
+		sed -i -e "s|'/etc'|'${ED}/etc'|g" "${ED}/${npm_config}" || die
+		local tmp_npm_completion_file="$(emktemp)"
 		"${ED}/usr/bin/npm" completion > "${tmp_npm_completion_file}"
 		newbashcomp "${tmp_npm_completion_file}" npm
+		sed -i -e "s|'${ED}/etc'|'/etc'|g" "${ED}/${npm_config}" || die
 
 		if use man ; then
 			# Move man pages
@@ -242,10 +237,17 @@ src_install() {
 
 src_test() {
 	out/${BUILDTYPE}/cctest || die
-	"${EPYTHON}" tools/test.py --mode=${BUILDTYPE,,} -J message parallel sequential || die
+	"${PYTHON}" tools/test.py --mode=${BUILDTYPE,,} -J message parallel sequential || die
 }
 
 pkg_postinst() {
+	einfo "The global npm config lives in /etc/npm. This deviates slightly"
+	einfo "from upstream which otherwise would have it live in /usr/etc/."
+	einfo ""
+	einfo "Protip: When using node-gyp to install native modules, you can"
+	einfo "avoid having to download extras by doing the following:"
+	einfo "$ node-gyp --nodedir /usr/include/node <command>"
+
 	if has '>=net-libs/nodejs-${PV}' ; then
 		einfo \
 "Found higher slots, manually change the headers with \`eselect nodejs\`."
@@ -256,6 +258,13 @@ pkg_postinst() {
 	chmod 0755 /usr/bin/node || die
 	chown root:root /usr/bin/node || die
 	grep -q -F "NODE_VERSION" "${EROOT}/usr/bin/node" || die "Wrapper did not copy."
+	einfo "The global npm config lives in /etc/npm. This deviates slightly"
+	einfo "from upstream which otherwise would have it live in /usr/etc/."
+	einfo ""
+	einfo "Protip: When using node-gyp to install native modules, you can"
+	einfo "avoid having to download extras by doing the following:"
+	einfo "$ node-gyp --nodedir /usr/include/node <command>"
+
 	einfo
 	einfo "When compiling with nodejs multislot, you to switch via"
 	einfo "\`eselect nodejs\` in order to compile against the headers"
