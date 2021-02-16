@@ -1,43 +1,103 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer type="person">
-		<email>whissi@gentoo.org</email>
-		<name>Thomas Deutschmann</name>
-	</maintainer>
-	<upstream>
-		<maintainer>
-			<email>sustrik@fastmq.com</email>
-			<name>Martin Sustrik</name>
-		</maintainer>
-		<doc>http://zguide.zeromq.org/page:all</doc>
-		<bugs-to>https://github.com/zeromq/libzmq/issues</bugs-to>
-		<remote-id type="github">zeromq/zeromq4-1</remote-id>
-		<remote-id type="github">zeromq/libzmq</remote-id>
-	</upstream>
-	<longdescription lang="en">
-		The 0MQ lightweight messaging kernel is a library which
-		extends the standard socket interfaces with features
-		traditionally provided by specialised messaging middleware
-		products. 0MQ sockets provide an abstraction of asynchronous
-		message queues, multiple messaging patterns, message filtering
-		(subscriptions), seamless access to multiple transport protocols
-		and more.
-	</longdescription>
-	<slots>
-		<subslots>Reflect ABI of libzmq.so.</subslots>
-	</slots>
-	<use>
-		<flag name="drafts">
-			Build draft API, which may change at any time without any notice, and
-			is therefore not recommended for normal use.
-		</flag>
-		<flag name="pgm">
-			Build PGM (Pragmatic General Multicast)extention, a protocol for reliable 
-			multicast transport of data over IP networks.
-		</flag>
-		<flag name="sodium">
-			Use <pkg>dev-libs/libsodium</pkg> for cryptography
-		</flag>
-	</use>
+  <!-- only for this fork on the oiledmachine-overlay -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+
+  <!-- originator -->
+  <maintainer type="person">
+    <email>whissi@gentoo.org</email>
+    <name>Thomas Deutschmann</name>
+  </maintainer>
+  <upstream>
+    <maintainer>
+      <email>sustrik@fastmq.com</email>
+        <name>Martin Sustrik</name>
+    </maintainer>
+    <doc>http://zguide.zeromq.org/page:all</doc>
+      <bugs-to>https://github.com/zeromq/libzmq/issues</bugs-to>
+      <remote-id type="github">zeromq/zeromq4-1</remote-id>
+      <remote-id type="github">zeromq/libzmq</remote-id>
+  </upstream>
+  <longdescription lang="en">
+    The 0MQ lightweight messaging kernel is a library which
+    extends the standard socket interfaces with features
+    traditionally provided by specialised messaging middleware
+    products. 0MQ sockets provide an abstraction of asynchronous
+    message queues, multiple messaging patterns, message filtering
+    (subscriptions), seamless access to multiple transport protocols
+    and more.
+
+    The oiledmachine-overlay ebuild fork primarly is for the multilib
+    enabled package.
+  </longdescription>
+  <slots>
+    <subslots>Reflect ABI of libzmq.so.</subslots>
+  </slots>
+  <use>
+    <flag name="asan">
+      Builds with address sanitizer.
+    </flag>
+    <flag name="curve">
+      Enables CURVE security.
+    </flag>
+    <flag name="doc">
+      Produce documentation
+    </flag>
+    <flag name="drafts">
+      Build draft API, which may change at any time without any notice, and
+      is therefore not recommended for normal use.
+    </flag>
+    <flag name="eventfd">
+      Enables eventfd.
+    </flag>
+    <flag name="intrinsics">
+      Uses the optimized assembly version for locking.
+    </flag>
+    <flag name="libbsd">
+      Uses strlcpy from libbsd.
+    </flag>
+    <flag name="norm">
+      Builds support for NORM.
+    </flag>
+    <flag name="nss">
+      Uses NSS instead of the built-in sha1.
+    </flag>
+    <flag name="pgm">
+      Build PGM (Pragmatic General Multicast)extention, a protocol for reliable 
+      multicast transport of data over IP networks.
+    </flag>
+    <flag name="radix-tree">
+      Uses the radix tree to manage subscriptions.
+    </flag>
+    <flag name="sodium">
+      Use <pkg>dev-libs/libsodium</pkg> for cryptography.
+    </flag>
+    <flag name="static-libs">
+      Builds static libraries.
+    </flag>
+    <flag name="test">
+      Runs the test suite.
+    </flag>
+    <flag name="tls">
+      Uses TLS for WSS support.
+    </flag>
+    <flag name="tsan">
+      Builds with thread sanitizer.
+    </flag>
+    <flag name="tweetnacl">
+      Uses tweetnacl for CURVE security.
+    </flag>
+    <flag name="ubsan">
+      Builds with undefined behavior sanitizer.
+    </flag>
+    <flag name="vmci">
+      Builds with VMware VMCI socket support.
+    </flag>
+    <flag name="websockets">
+      Enables WebSocket transport.
+    </flag>
 </pkgmetadata>
