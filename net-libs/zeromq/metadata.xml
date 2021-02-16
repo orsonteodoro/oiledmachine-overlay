@@ -44,6 +44,9 @@
     <flag name="curve">
       Enables CURVE security.
     </flag>
+    <flag name="curve_keygen">
+      Builds the curve_keygen tool.
+    </flag>
     <flag name="doc">
       Produce documentation
     </flag>

@@ -11,7 +11,7 @@ HOMEPAGE="https://zeromq.org/"
 LICENSE="LGPL-3"
 KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sparc ~x86 \
 ~amd64-linux ~x86-linux ~x64-macos"
-SLOT="0/5"
+SLOT="0/${PV}"
 IUSE+=" asan +curve curve_keygen doc drafts eventfd intrinsics +libbsd norm \
 nss pgm radix-tree +sodium static-libs test tls tsan tweetnacl ubsan vmci \
 websockets"
