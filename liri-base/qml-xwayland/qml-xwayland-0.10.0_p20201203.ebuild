@@ -2,15 +2,16 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit cmake-utils eutils
+
 DESCRIPTION="XWayland support for QtQuick Wayland compositors like Liri Shell"
 HOMEPAGE="https://github.com/lirios/qml-xwayland"
 LICENSE="LGPL-3+ MIT"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 QT_MIN_PV=5.9
-IUSE=""
-RDEPEND="${RDEPEND}
-	  dev-libs/wayland
+DEPEND+=" dev-libs/wayland
 	>=dev-qt/qtconcurrent-${QT_MIN_PV}:5=
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
@@ -18,12 +19,11 @@ RDEPEND="${RDEPEND}
 	  x11-base/xorg-server[wayland]
 	  x11-libs/libXcursor
 	  x11-libs/xcb-util-cursor"
-DEPEND="${RDEPEND}
-	>=dev-util/cmake-3.10.0
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" >=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
-inherit cmake-utils eutils
-EGIT_COMMIT="3d6335b5d3efbb8e381f65a08b92da3e6c89aeab"
+EGIT_COMMIT="f33df7385d1bb099a1b3e7eeceaa7f9dc55d3ad8"
 SRC_URI=\
 "https://github.com/lirios/qml-xwayland/archive/${EGIT_COMMIT}.tar.gz
 	-> ${PN}-${PV}.tar.gz"
