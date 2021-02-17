@@ -8,9 +8,8 @@ LICENSE="LGPL-3+ GPL-3+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 QT_MIN_PV=5.10
-IUSE="taglib"
-RDEPEND="${RDEPEND}
-	>=dev-qt/qtcore-${QT_MIN_PV}:5=
+IUSE+=" taglib"
+DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
@@ -18,13 +17,13 @@ RDEPEND="${RDEPEND}
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
 	>=liri-base/fluid-1.1.0
 	taglib? ( media-libs/taglib )"
-DEPEND="${RDEPEND}
-	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" >=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
 inherit cmake-utils eutils xdg
-EGIT_COMMIT="48a76e7e5165c9958b5b649d4fb3da28026006f6"
+EGIT_COMMIT="ada3e16317433a042e41087965f012cb68d5aa0b"
 SRC_URI=\
 "https://github.com/lirios/files/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${PN}-${PV}.tar.gz"
