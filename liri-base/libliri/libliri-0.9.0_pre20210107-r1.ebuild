@@ -2,6 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit cmake-utils eutils
+
 DESCRIPTION="Library for Liri apps"
 HOMEPAGE="https://github.com/lirios/libliri"
 LICENSE="LGPL-3+ FDL-1.3"
@@ -20,7 +23,6 @@ BDEPEND+=" >=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
-inherit cmake-utils eutils
 EGIT_COMMIT="6350523b1e0ab24b865c17e109e66413b49ce42a"
 SRC_URI=\
 "https://github.com/lirios/libliri/archive/${EGIT_COMMIT}.tar.gz \
