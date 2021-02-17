@@ -2,24 +2,25 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit cmake-utils eutils
+
 DESCRIPTION="Library for QtQuick apps with Material Design"
 HOMEPAGE="https://liri.io/docs/sdk/fluid/develop/"
 LICENSE="LGPL-3"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-IUSE="test"
+IUSE+=" test"
 QT_MIN_PV=5.8
-RDEPEND="${RDEPEND}
-	>=dev-qt/qtcore-${QT_MIN_PV}:5=
+DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-libs/glib-2.31.0"
-DEPEND="${RDEPEND}
-	>=kde-frameworks/extra-cmake-modules-1.7.0
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" >=kde-frameworks/extra-cmake-modules-1.7.0
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
-inherit cmake-utils eutils
 EGIT_COMMIT="7215f4102072f4a242c05c0d197840df57f54b8b"
 SRC_URI=\
 "https://github.com/lirios/qtgsettings/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${PV}.tar.gz"
