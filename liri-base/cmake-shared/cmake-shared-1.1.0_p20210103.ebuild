@@ -7,11 +7,11 @@ HOMEPAGE="https://github.com/lirios/cmake-shared"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-RDEPEND=">=kde-frameworks/extra-cmake-modules-5.48.0"
-DEPEND="${RDEPEND}
-	>=dev-util/cmake-3.10.0"
+DEPEND+=" >=kde-frameworks/extra-cmake-modules-5.48.0"
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" >=dev-util/cmake-3.10.0"
 inherit cmake-utils eutils
-EGIT_COMMIT="071ec5dbbedafa48fe8d80e9bd627ed318a5014f"
+EGIT_COMMIT="8122f2b96c8da38ea41b653cf69958e75fe2129d"
 SRC_URI=\
 "https://github.com/lirios/cmake-shared/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
