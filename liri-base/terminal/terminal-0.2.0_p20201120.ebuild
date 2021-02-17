@@ -11,8 +11,7 @@ LICENSE="LGPL-3+ MIT"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 QT_MIN_PV=5.10
-DEPEND="${DEPEND}
-	>=dev-qt/qtcore-${QT_MIN_PV}:5=
+DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
 	>=dev-qt/qtnetwork-${QT_MIN_PV}:5=
