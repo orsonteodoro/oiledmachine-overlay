@@ -2,24 +2,24 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit cmake-utils eutils xdg
+
 DESCRIPTION="PulseAudio support for Liri"
 HOMEPAGE="https://github.com/lirios/pulseaudio"
 LICENSE="GPL-3+ LGPL-2.1+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 QT_MIN_PV=5.10
-IUSE=""
-RDEPEND="${RDEPEND}
-	>=dev-qt/qtcore-${QT_MIN_PV}:5=
+DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=liri-base/fluid-1.0.0
 	>=media-sound/pulseaudio-5.0"
-DEPEND="${RDEPEND}
-	>=dev-util/cmake-3.10.0
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" >=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
-inherit cmake-utils eutils xdg
-EGIT_COMMIT="03a06a7c8c50d8962c6aa5bc425d85610cbcbb7a"
+EGIT_COMMIT="eabe5d3e8ec38606c3abe5b4fda677e8fc29e280"
 SRC_URI=\
 "https://github.com/lirios/pulseaudio/archive/${EGIT_COMMIT}.tar.gz
 	-> ${PN}-${PV}.tar.gz"
