@@ -14,6 +14,8 @@
     <flag name="systemd">Adds systemd support</flag>
     <flag name="files">Installs a file manager named Files</flag>
     <flag name="flatpak">Installs Flatpak support</flag>
+    <flag name="materialdecoration">Installs a material decoration for
+      Qt apps under wayland.</flag>
     <flag name="music">Installs a music player app </flag>
     <flag name="networkmanager">Adds NetworkManager support</flag>
     <flag name="platformtheme">Sets the default font and icon theme</flag>

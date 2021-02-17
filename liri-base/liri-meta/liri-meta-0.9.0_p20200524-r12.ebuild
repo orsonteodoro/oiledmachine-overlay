@@ -6,16 +6,17 @@ DESCRIPTION="Meta package for liri"
 HOMEPAGE="https://liri.io/"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}" # based on liri-base/liri-shell
-IUSE="appcenter browser calculator +files flatpak music networkmanager \
-+platformtheme player power-manager pulseaudio screencast screenshot +settings \
-systemd +terminal text themes wallpaper xwayland"
-RDEPEND="appcenter? ( liri-base/appcenter )
+IUSE+=" appcenter browser calculator +files flatpak materialdecoration music \
+networkmanager +platformtheme player power-manager pulseaudio screencast \
+screenshot +settings systemd +terminal text themes wallpaper xwayland"
+DEPEND+=" appcenter? ( liri-base/appcenter )
 	 browser? ( liri-extra/browser )
 	 calculator? ( liri-extra/calculator )
 	 files? ( liri-base/files )
 	 flatpak? ( liri-base/xdg-desktop-portal-liri[flatpak] )
 	 >=liri-base/session-0.1.0_pre20200524[systemd?]
 	   liri-base/shell:${SLOT}[systemd?]
+	 materialdecoration? ( liri-base/materialdecoration )
 	 music? ( liri-extra/music )
 	 networkmanager? ( liri-extra/networkmanager )
 	 platformtheme? ( liri-base/platformtheme )
@@ -29,6 +30,7 @@ RDEPEND="appcenter? ( liri-base/appcenter )
 	 text? ( liri-extra/text )
 	 themes? ( liri-base/themes )
 	 xwayland? ( liri-base/qml-xwayland )"
+RDEPEND+=" ${DEPEND}"
 RESTRICT="mirror"
 
 pkg_postinst() {
