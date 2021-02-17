@@ -9,8 +9,7 @@ KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 QT_MIN_PV=5.10
 IUSE=""
-RDEPEND="${RDEPEND}
-	>=dev-db/sqlite-3.7.15
+DEPEND+=" >=dev-db/sqlite-3.7.15
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
@@ -20,13 +19,13 @@ RDEPEND="${RDEPEND}
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5=
 	>=liri-base/fluid-1.0.0
 	  liri-base/wayland"
-DEPEND="${RDEPEND}
-	>=dev-util/cmake-3.10.0
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" >=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=liri-base/cmake-shared-1.0.0"
 inherit cmake-utils eutils xdg
-EGIT_COMMIT="cbf9b0631cd80c9633eb8351bfc213857a3de6d6"
+EGIT_COMMIT="0b137881751d618d618895c8d9a0600b738056c0"
 SRC_URI=\
 "https://github.com/lirios/screenshot/archive/${EGIT_COMMIT}.tar.gz
 	-> ${PN}-${PV}.tar.gz"
