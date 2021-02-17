@@ -10,7 +10,7 @@ HOMEPAGE="https://github.com/lirios/qtaccountsservice"
 LICENSE="LGPL-2.1+ FDL-1.3"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-IUSE="examples test"
+IUSE+=" examples test"
 QT_MIN_PV=5.8
 DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
