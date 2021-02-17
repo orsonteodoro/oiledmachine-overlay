@@ -2,6 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit cmake-utils eutils xdg
+
 DESCRIPTION="Utility to capture the screen of a Liri desktop"
 HOMEPAGE="https://github.com/lirios/screenshot"
 LICENSE="GPL-3+"
@@ -24,7 +27,6 @@ BDEPEND+=" >=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=liri-base/cmake-shared-1.0.0"
-inherit cmake-utils eutils xdg
 EGIT_COMMIT="0b137881751d618d618895c8d9a0600b738056c0"
 SRC_URI=\
 "https://github.com/lirios/screenshot/archive/${EGIT_COMMIT}.tar.gz
