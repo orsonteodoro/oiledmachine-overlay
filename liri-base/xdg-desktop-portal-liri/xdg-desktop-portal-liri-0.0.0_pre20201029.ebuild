@@ -2,6 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit cmake-utils eutils
+
 DESCRIPTION="A backend implementation of xdg-desktop-portal for Liri"
 HOMEPAGE="https://github.com/lirios/xdg-desktop-portal-liri"
 LICENSE="GPL-3+"
@@ -9,8 +12,8 @@ KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 IUSE="flatpak pipewire systemd"
 QT_MIN_PV=5.10
-RDEPEND="${RDEPEND}
-	  dev-libs/glib
+DEPEND+=" dev-libs/glib
+	>=dev-libs/wayland-1.15
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
@@ -28,12 +31,11 @@ RDEPEND="${RDEPEND}
 	>=liri-base/qtaccountsservice-1.2.0
 	>=liri-base/qtgsettings-1.3.0_p20200312
 	  liri-base/wayland"
-DEPEND="${RDEPEND}
-	>=dev-util/cmake-3.10.0
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" >=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.1.0_p20200511"
-inherit cmake-utils eutils
-EGIT_COMMIT="147993828a018e966e8b97226234fbbef1734176"
+EGIT_COMMIT="22ebac8f7f760071d7e1c4f39cf0707d5ab48929"
 SRC_URI=\
 "https://github.com/lirios/xdg-desktop-portal-liri/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${PN}-${PV}.tar.gz"
