@@ -2,15 +2,17 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit cmake-utils eutils
+
 DESCRIPTION="Library for QtQuick apps with Material Design"
 HOMEPAGE="https://liri.io/docs/sdk/fluid/develop/"
 LICENSE="MPL-2.0 FDL-1.3+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-IUSE="doc test"
+IUSE+=" doc test"
 QT_MIN_PV=5.10
-RDEPEND="${RDEPEND}
-	>=dev-libs/wayland-1.15
+DEPEND+=" >=dev-libs/wayland-1.15
 	>=dev-qt/qdoc-${QT_MIN_PV}:5=
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
@@ -20,14 +22,13 @@ RDEPEND="${RDEPEND}
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5=
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5=
 	  liri-base/qtaccountsservice"
-DEPEND="${RDEPEND}
-	>=dev-util/cmake-3.10.0
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" >=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=kde-frameworks/extra-cmake-modules-1.7.0
 	>=liri-base/cmake-shared-1.0.0
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
-inherit cmake-utils eutils
-EGIT_COMMIT="1bb3ad879611b50c22cb9933dcff02243e5992d3"
+EGIT_COMMIT="60d5dc0c3dfbf440f814140713cf87b58317c95b"
 SRC_URI=\
 "https://github.com/lirios/fluid/archive/${EGIT_COMMIT}.tar.gz -> ${PN}-${PV}.tar.gz"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
