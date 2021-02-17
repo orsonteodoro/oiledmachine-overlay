@@ -2,15 +2,16 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit cmake-utils eutils xdg
+
 DESCRIPTION="Liri Text is a cross-platform text editor made in accordance with Material Design."
 HOMEPAGE="https://github.com/lirios/text"
 LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 QT_MIN_PV=5.10
-IUSE=""
-RDEPEND="${RDEPEND}
-	>=dev-db/sqlite-3.7.15
+DEPEND+=" >=dev-db/sqlite-3.7.15
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
@@ -19,13 +20,12 @@ RDEPEND="${RDEPEND}
 	>=dev-qt/qtsvg-${QT_MIN_PV}:5=
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
 	>=liri-base/fluid-1.0.0"
-DEPEND="${RDEPEND}
-	>=dev-util/cmake-3.10.0
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" >=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=liri-base/cmake-shared-1.0.0"
-inherit cmake-utils eutils xdg
-EGIT_COMMIT="13e9f18adfe09ce3cec3414726f9757b7d16b3a0"
+EGIT_COMMIT="17c038316d213d4926f674b7afb6b3ff9afc095a"
 SRC_URI=\
 "https://github.com/lirios/text/archive/${EGIT_COMMIT}.tar.gz
 	-> ${PN}-${PV}.tar.gz"
