@@ -8,21 +8,20 @@ LICENSE="LGPL-3+ FDL-1.3"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 QT_MIN_PV=5.10
-IUSE="test"
-RDEPEND="${RDEPEND}
-	  dev-libs/libqtxdg
+IUSE+=" test"
+DEPEND+=" dev-libs/libqtxdg
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtxml-${QT_MIN_PV}:5="
-DEPEND="${RDEPEND}
-	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" >=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
 inherit cmake-utils eutils
-EGIT_COMMIT="c8d11b8e27bedc2113a3902593f317c3a3e435e1"
+EGIT_COMMIT="6350523b1e0ab24b865c17e109e66413b49ce42a"
 SRC_URI=\
 "https://github.com/lirios/libliri/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${PN}-${PV}.tar.gz"
