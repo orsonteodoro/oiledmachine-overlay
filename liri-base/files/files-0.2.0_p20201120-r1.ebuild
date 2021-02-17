@@ -2,6 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit cmake-utils eutils xdg
+
 DESCRIPTION="Files - File manager"
 HOMEPAGE="https://github.com/lirios/files"
 LICENSE="LGPL-3+ GPL-3+"
@@ -22,7 +25,6 @@ BDEPEND+=" >=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
-inherit cmake-utils eutils xdg
 EGIT_COMMIT="ada3e16317433a042e41087965f012cb68d5aa0b"
 SRC_URI=\
 "https://github.com/lirios/files/archive/${EGIT_COMMIT}.tar.gz \
