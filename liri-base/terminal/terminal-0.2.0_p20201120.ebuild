@@ -2,14 +2,16 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit cmake-utils eutils xdg
+
 DESCRIPTION="Terminal - A Material Design terminal"
 HOMEPAGE="https://github.com/lirios/terminal"
 LICENSE="LGPL-3+ MIT"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 QT_MIN_PV=5.10
-IUSE=""
-RDEPEND="${RDEPEND}
+DEPEND="${DEPEND}
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
@@ -18,13 +20,12 @@ RDEPEND="${RDEPEND}
 	>=dev-qt/qtwidgets-${QT_MIN_PV}:5=
 	>=liri-base/fluid-1.1.0
 	>=liri-base/qtgsettings-1.1.0"
-DEPEND="${RDEPEND}
-	>=dev-util/cmake-3.10.0
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" >=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=liri-base/cmake-shared-1.0.0"
-inherit cmake-utils eutils xdg
-EGIT_COMMIT="e1cfcc35585acb322d7f0a5c0c2cbb107f0690aa"
+EGIT_COMMIT="3433cf36b7a19bae9d5af9a7d1963fd6b8acd252"
 SRC_URI=\
 "https://github.com/lirios/terminal/archive/${EGIT_COMMIT}.tar.gz
 	-> ${PN}-${PV}.tar.gz"
