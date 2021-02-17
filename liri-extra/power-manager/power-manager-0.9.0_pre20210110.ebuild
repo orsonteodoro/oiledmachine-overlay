@@ -2,6 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit cmake-utils eutils xdg
+
 DESCRIPTION="Power management support for Liri."
 HOMEPAGE="https://github.com/lirios/power-manager"
 LICENSE="GPL-3+"
@@ -9,9 +12,7 @@ KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 QT_MIN_PV=5.10
 KDE_FRAMEWORK_MIN_PV=5.48
-IUSE=""
-RDEPEND="${RDEPEND}
-	>=dev-qt/qtcore-${QT_MIN_PV}:5=
+DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgraphicaleffects-${QT_MIN_PV}:5=
@@ -24,13 +25,12 @@ RDEPEND="${RDEPEND}
 	>=liri-base/fluid-1.0.0
 	  liri-base/libliri
 	>=liri-base/qtgsettings-1.1.0"
-DEPEND="${RDEPEND}
-	>=dev-util/cmake-3.10.0
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" >=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=liri-base/cmake-shared-1.0.0"
-inherit cmake-utils eutils xdg
-EGIT_COMMIT="dbc823fcaaf72bb9515a42ddc53fa0452d948e48"
+EGIT_COMMIT="95ee87ca583e26823f7f12ed36cfe4498ea09951"
 SRC_URI=\
 "https://github.com/lirios/power-manager/archive/${EGIT_COMMIT}.tar.gz
 	-> ${PN}-${PV}.tar.gz"
