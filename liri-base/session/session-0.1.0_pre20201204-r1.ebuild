@@ -10,7 +10,7 @@ HOMEPAGE="https://github.com/lirios/session"
 LICENSE="GPL-3+ LGPL-3+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-IUSE="systemd"
+IUSE+=" systemd"
 QT_MIN_PV=5.10
 DEPEND+=" >=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
