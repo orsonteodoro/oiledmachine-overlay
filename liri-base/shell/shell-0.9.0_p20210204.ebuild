@@ -2,15 +2,17 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit cmake-utils eutils
+
 DESCRIPTION="QtQuick and Wayland shell for convergence"
 HOMEPAGE="https://github.com/lirios/shell"
 LICENSE="GPL-3+ LGPL-3+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-IUSE="systemd"
-QT_MIN_PV=5.12
-RDEPEND="${RDEPEND}
-	>=dev-qt/qtconcurrent-${QT_MIN_PV}:5=
+IUSE+=" systemd"
+QT_MIN_PV=5.15
+DEPEND+=" >=dev-qt/qtconcurrent-${QT_MIN_PV}:5=
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
@@ -22,7 +24,7 @@ RDEPEND="${RDEPEND}
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5=
 	  kde-frameworks/solid
 	  liri-base/eglfs
-	  liri-base/fluid
+	>=liri-base/fluid-1.0.0
 	  liri-base/libliri
 	>=liri-base/qtaccountsservice-1.3.0
 	>=liri-base/qtgsettings-1.1.0
@@ -32,8 +34,8 @@ RDEPEND="${RDEPEND}
 	  sys-auth/polkit-qt
 	  sys-libs/pam
 	systemd? ( sys-apps/systemd )"
-DEPEND="${RDEPEND}
-	|| (
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" || (
 		  sys-devel/clang
 		>=sys-devel/gcc-4.8
 	)
@@ -41,8 +43,7 @@ DEPEND="${RDEPEND}
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
-inherit cmake-utils eutils
-EGIT_COMMIT="143b9722b7d23e630d8c079fa9415b33b8b9234e"
+EGIT_COMMIT="ded359509328211e74346cdbfc6d67470b0fd872"
 SRC_URI=\
 "https://github.com/lirios/shell/archive/${EGIT_COMMIT}.tar.gz
 	-> ${PN}-${PV}.tar.gz"
