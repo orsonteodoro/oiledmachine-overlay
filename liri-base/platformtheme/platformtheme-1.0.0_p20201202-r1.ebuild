@@ -2,6 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit cmake-utils eutils
+
 DESCRIPTION="Qt platform theme plugin for apps integration with Liri"
 HOMEPAGE="https://github.com/lirios/platformtheme"
 LICENSE="GPL-3"
@@ -18,7 +21,6 @@ RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.1.0"
-inherit cmake-utils eutils
 EGIT_COMMIT="3d74bbce60abf9ce918029ae51259e5efeba963d"
 SRC_URI=\
 "https://github.com/lirios/platformtheme/archive/${EGIT_COMMIT}.tar.gz \
