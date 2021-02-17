@@ -2,6 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit cmake-utils eutils
+
 DESCRIPTION="Themes for a uniform look and feel throughout Liri OS"
 HOMEPAGE="https://github.com/lirios/themes"
 LICENSE="GPL-3+ grub? ( GPL-3-with-font-exception OFL-1.1 )"
@@ -9,20 +12,18 @@ LICENSE="GPL-3+ grub? ( GPL-3-with-font-exception OFL-1.1 )"
 # The KDE Oxygen font is || ( OFL-1.1 GPL-3-with-font-exception )
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-IUSE="grub plymouth sddm"
+IUSE+=" grub plymouth sddm"
 QT_MIN_PV=5.10
-RDEPEND="${RDEPEND}
-	grub? ( sys-boot/grub )
+DEPEND+=" grub? ( sys-boot/grub )
 	plymouth? ( sys-boot/plymouth )
 	sddm? ( liri-base/fluid
 		liri-base/shell
 		x11-misc/sddm )"
-DEPEND="${RDEPEND}
-	>=dev-util/cmake-3.10.0
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" >=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
-inherit cmake-utils eutils
-EGIT_COMMIT="d1beaeba03be9622461f2015d84d18c6b3171d0d"
+EGIT_COMMIT="ab914ebb01c9720eb4f43e9d05d9cf965c0589d3"
 SRC_URI=\
 "https://github.com/lirios/themes/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${PN}-${PV}.tar.gz"
