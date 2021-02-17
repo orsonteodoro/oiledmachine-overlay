@@ -2,27 +2,28 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit cmake-utils eutils
+
 DESCRIPTION="Wayland client and server extensions "
 HOMEPAGE="https://github.com/lirios/wayland"
 LICENSE="LGPL-3+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-IUSE="test"
+IUSE+=" test"
 QT_MIN_PV=5.12
-RDEPEND="${RDEPEND}
-	>=dev-libs/wayland-1.15
+DEPEND+=" >=dev-libs/wayland-1.15
 	>=dev-libs/wayland-protocols-1.15
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
 	>=dev-qt/qtgui-${QT_MIN_PV}:5=
 	>=dev-qt/qtwayland-${QT_MIN_PV}:5="
-DEPEND="${RDEPEND}
-	>=dev-util/cmake-3.10.0
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" >=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.1.0_p20200511
 	test? ( >=dev-qt/qttest-${QT_MIN_PV}:5= )"
-inherit cmake-utils eutils
-EGIT_COMMIT="5b1e3bf991bd966a91e4bcb495f7f2a4bb330f5d"
+EGIT_COMMIT="140f3831d2a089b8605a5f5805c6639582e06369"
 SRC_URI=\
 "https://github.com/lirios/wayland/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${PN}-${PV}.tar.gz"
