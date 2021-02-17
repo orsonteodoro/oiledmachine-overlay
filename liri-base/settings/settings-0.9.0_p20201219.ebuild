@@ -2,14 +2,16 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit cmake-utils eutils xdg
+
 DESCRIPTION="Settings application and modules for Liri OS"
 HOMEPAGE="https://github.com/lirios/settings"
 LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 QT_MIN_PV=5.10
-RDEPEND="${RDEPEND}
-	>=dev-qt/qtconcurrent-${QT_MIN_PV}:5=
+DEPEND+=" >=dev-qt/qtconcurrent-${QT_MIN_PV}:5=
 	>=dev-qt/qtcore-${QT_MIN_PV}:5=
 	>=dev-qt/qtdbus-${QT_MIN_PV}:5=
 	>=dev-qt/qtdeclarative-${QT_MIN_PV}:5=
@@ -24,12 +26,11 @@ RDEPEND="${RDEPEND}
 	  liri-base/wayland
 	  sys-auth/polkit
 	  x11-misc/xkeyboard-config"
-DEPEND="${RDEPEND}
-	>=dev-qt/linguist-tools-${QT_MIN_PV}:5=
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" >=dev-qt/linguist-tools-${QT_MIN_PV}:5=
 	>=dev-util/cmake-3.10.0
 	  dev-util/pkgconfig
 	>=liri-base/cmake-shared-1.0.0"
-inherit cmake-utils eutils xdg
 EGIT_COMMIT="1e60cf585ae87d7e8b1487bcf7ad7110c9e827d8"
 SRC_URI=\
 "https://github.com/lirios/settings/archive/${EGIT_COMMIT}.tar.gz
