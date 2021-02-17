@@ -2,19 +2,19 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit cmake-utils eutils
+
 DESCRIPTION="Wallpapers for the Liri desktop"
 HOMEPAGE="https://github.com/lirios/wallpapers"
 LICENSE="CC-BY-SA-4.0 CC-BY-4.0"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-IUSE="test"
+IUSE+=" test"
 QT_MIN_PV=5.12
-RDEPEND=""
-DEPEND="${RDEPEND}
-	>=dev-util/cmake-3.10.0
+BDEPEND+=" >=dev-util/cmake-3.10.0
 	>=liri-base/cmake-shared-1.1.0_p20200511"
-inherit cmake-utils eutils
-EGIT_COMMIT="3176436fba542e8add2a7815c6629562703e09ed"
+EGIT_COMMIT="2a6c99965075a9a56e32df06ae9333b6da5ca017"
 SRC_URI=\
 "https://github.com/lirios/wallpapers/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${PN}-${PV}.tar.gz"
