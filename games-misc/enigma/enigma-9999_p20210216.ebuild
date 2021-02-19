@@ -36,7 +36,7 @@ REQUIRED_USE+="
 CDEPEND="dev-libs/protobuf[${MULTILIB_USEDEP}]
 	>=sys-devel/gcc-9
 	radialgm? ( net-libs/grpc[${MULTILIB_USEDEP}] )"
-DEPEND="${CDEPEND}
+DEPEND+=" ${CDEPEND}
 	android? ( dev-util/android-ndk
 		   dev-util/android-sdk-update-manager )
 	box2d? ( sci-physics/box2d[${MULTILIB_USEDEP}] )
@@ -79,7 +79,7 @@ DEPEND="${CDEPEND}
 	virtual/jpeg[${MULTILIB_USEDEP}]
 	virtual/libc"
 RDEPEND+=" ${DEPEND}"
-BDEPEND="${CDEPEND}
+BDEPEND+=" ${CDEPEND}
 	clang? (
 		>=sys-devel/clang-10[${MULTILIB_USEDEP}]
 		>=sys-devel/lld-10
@@ -90,7 +90,7 @@ BDEPEND="${CDEPEND}
 	test? ( dev-cpp/gtest[${MULTILIB_USEDEP}]
 		dev-libs/boost[${MULTILIB_USEDEP}]
 		x11-libs/libX11[${MULTILIB_USEDEP}] )"
-EGIT_COMMIT="4a68e94a9b42dbc150cb695ba30a3838253fa6a1"
+EGIT_COMMIT="c13dcb0c599d5673e607ddbefdf93091ca93aa5c"
 SRC_URI=\
 "https://github.com/enigma-dev/enigma-dev/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
