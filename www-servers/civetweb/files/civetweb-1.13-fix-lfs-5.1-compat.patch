@@ -1,0 +1,14 @@
+diff -urp civetweb-1.13.orig/src/third_party/lfs.c civetweb-1.13/src/third_party/lfs.c
+--- civetweb-1.13.orig/src/third_party/lfs.c	2020-09-30 11:24:15.000000000 -0700
++++ civetweb-1.13/src/third_party/lfs.c	2021-02-20 18:01:13.374201450 -0800
+@@ -20,10 +20,6 @@
+ ** $Id: lfs.c,v 1.61 2009/07/04 02:10:16 mascarenhas Exp $
+ */
+ 
+-#if LUA_VERSION_NUM == 501
+-#define lua_pushinteger lua_pushnumber
+-#endif
+-
+ #ifndef LFS_DO_NOT_USE_LARGE_FILE
+ #ifndef _WIN32
+ #ifndef _AIX

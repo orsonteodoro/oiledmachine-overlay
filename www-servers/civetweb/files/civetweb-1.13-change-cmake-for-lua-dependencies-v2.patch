@@ -1,17 +1,30 @@
+diff -urp civetweb-1.13.orig/CMakeLists.txt civetweb-1.13/CMakeLists.txt
+--- civetweb-1.13.orig/CMakeLists.txt	2021-02-20 20:59:51.873084829 -0800
++++ civetweb-1.13/CMakeLists.txt	2021-02-20 21:00:16.130041632 -0800
+@@ -145,8 +145,6 @@ endif()
+ if (CIVETWEB_ENABLE_LUA)
+   if (NOT CIVETWEB_ENABLE_LUA_SHARED)
+     # Lua Version
+-    set(CIVETWEB_LUA_VERSION 5.2.4 CACHE STRING
+-      "The version of Lua to build and include statically")
+     set_property(CACHE CIVETWEB_LUA_VERSION PROPERTY VALUE ${CIVETWEB_LUA_VERSION})
+     message(STATUS "Lua Version - ${CIVETWEB_LUA_VERSION}")
+     mark_as_advanced(CIVETWEB_LUA_VERSION)
 diff -urp civetweb-1.13.orig/src/CMakeLists.txt civetweb-1.13/src/CMakeLists.txt
 --- civetweb-1.13.orig/src/CMakeLists.txt	2020-09-30 11:24:15.000000000 -0700
-+++ civetweb-1.13/src/CMakeLists.txt	2020-11-28 16:53:01.576616809 -0800
-@@ -15,7 +15,8 @@ if (BUILD_SHARED_LIBS)
++++ civetweb-1.13/src/CMakeLists.txt	2021-02-20 21:02:28.443258698 -0800
+@@ -15,7 +15,9 @@ if (BUILD_SHARED_LIBS)
  endif()
  target_include_directories(
    civetweb-c-library PUBLIC
 -  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
++  /usr/include/lua${CIVETWEB_LUA_VERSION_MAJOR_MINOR}
 +  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
 +  $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/third_party>)
  install(
    TARGETS civetweb-c-library
    EXPORT ${PROJECT_NAME}-targets
-@@ -64,6 +65,22 @@ endif()
+@@ -64,6 +66,22 @@ endif()
  if (CIVETWEB_ENABLE_LUA)
    include(ExternalProject)
  
@@ -34,7 +47,7 @@ diff -urp civetweb-1.13.orig/src/CMakeLists.txt civetweb-1.13/src/CMakeLists.txt
    # Determine if we should print to the output
    if (CIVETWEB_ENABLE_THIRD_PARTY_OUTPUT)
      set(THIRD_PARTY_LOGGING 0)
-@@ -112,75 +129,88 @@ if (CIVETWEB_ENABLE_LUA)
+@@ -112,75 +130,88 @@ if (CIVETWEB_ENABLE_LUA)
      set(LUA_LIBRARIES "${LUA_INSTALL_DIR}/lib/liblua.a")
      add_dependencies(civetweb-c-library lua)
    else()
@@ -183,7 +196,7 @@ diff -urp civetweb-1.13.orig/src/CMakeLists.txt civetweb-1.13/src/CMakeLists.txt
  # Old:
  #    URL "http://viremo.eludi.net/LuaXML/${LUA_XML_FILENAME}"
  #    URL_MD5 ${CIVETWEB_LUA_XML_MD5_HASH}
-@@ -191,59 +221,71 @@ if (CIVETWEB_ENABLE_LUA)
+@@ -191,59 +222,71 @@ if (CIVETWEB_ENABLE_LUA)
  # An extended version is available at https://github.com/n1tehawk/LuaXML
  # but the last commit there was in 2015
  #
@@ -302,7 +315,7 @@ diff -urp civetweb-1.13.orig/src/CMakeLists.txt civetweb-1.13/src/CMakeLists.txt
  endif()
  
  # The web server executable
-@@ -264,7 +306,12 @@ if (CIVETWEB_ENABLE_SERVER_EXECUTABLE)
+@@ -264,7 +307,12 @@ if (CIVETWEB_ENABLE_SERVER_EXECUTABLE)
      endif()
      target_include_directories(
          civetweb-c-executable PUBLIC
@@ -316,17 +329,26 @@ diff -urp civetweb-1.13.orig/src/CMakeLists.txt civetweb-1.13/src/CMakeLists.txt
      target_link_libraries(civetweb-c-executable civetweb-c-library)
      if (LIBRT_FOUND)
          target_link_libraries(civetweb-c-executable LIBRT::LIBRT)
-@@ -280,7 +327,8 @@ if (CIVETWEB_ENABLE_LUA)
+@@ -278,9 +326,17 @@ if (CIVETWEB_ENABLE_LUA)
+     VERSION ${CIVETWEB_VERSION}
+     SOVERSION ${CIVETWEB_VERSION}
    )
++  if (CIVETWEB_ENABLE_LUA_SHARED)
++  target_include_directories(
++    lua-library PUBLIC
++    ${LUA_INC}
++    )
++  else ()
    target_include_directories(
      lua-library PUBLIC
 -    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/third_party/lua-5.2.4>)
 +    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src/third_party/lua-${CIVETWEB_LUA_VERSION}/src>
 +    )
++  endif ()
    install(
      TARGETS lua-library
      EXPORT ${PROJECT_NAME}-targets
-@@ -303,12 +351,17 @@ if (CIVETWEB_ENABLE_CXX)
+@@ -303,12 +359,17 @@ if (CIVETWEB_ENABLE_CXX)
    if (BUILD_SHARED_LIBS)
      target_compile_definitions(civetweb-cpp PRIVATE CIVETWEB_CXX_DLL_EXPORTS INTERFACE CIVETWEB_CXX_DLL_IMPORTS)
    endif()

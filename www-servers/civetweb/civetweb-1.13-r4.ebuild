@@ -2,36 +2,56 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+LUA_COMPAT=( lua5-{1..4} ) # building with 5.1 is broken
+inherit cmake-utils lua multilib-minimal static-libs
+
 DESCRIPTION="CivetWeb is an embedded C++ web server"
 HOMEPAGE="https://github.com/civetweb"
 LICENSE="MIT"
 SLOT="0/${PV}"
 KEYWORDS="~amd64 ~ppc ~x86"
-IUSE="+asan +c11 c89 c99 c++98 c++11 +c++14 +cgi gnu17 urho3d -cxx +caching \
+IUSE+=" +asan +c11 c89 c99 c++98 c++11 +c++14 +cgi gnu17 -cxx +caching \
 debug doc -duktape -ipv6 -lto -lua -serve_no_files +server_executable \
 -server_stats +ssl ssl_1_0 +ssl_1_1 static -test -websockets"
-REQUIRED_USE="
-	${LUA_REQUIRED_USE}
-	lua? ( gnu17 )
+REQUIRED_USE+="
+	lua? ( ${LUA_REQUIRED_USE} gnu17 )
+	lua_targets_lua5-1? ( lua )
+	lua_targets_lua5-2? ( lua )
+	lua_targets_lua5-3? ( lua )
+	lua_targets_lua5-4? ( lua )
 	ssl? ( ^^ ( ssl_1_0 ssl_1_1 ) )
 	^^ ( c11 c89 c99 gnu17 )
 	^^ ( c++98 c++11 c++14 )"
-LUA_COMPAT=( lua5-{2..4} )
-inherit cmake-utils lua multilib-minimal static-libs
 # CMakeLists.txt lists versions
-RDEPEND=">=dev-db/sqlite-3.8.9:3[${MULTILIB_USEDEP}]
-	 lua? (
+LUA_5_1_MIN="5.1.5"
+LUA_5_2_MIN="5.2.4"
+LUA_5_3_MIN="5.3.5"
+LUA_5_4_MIN="5.4.0"
+DEPEND+=" >=dev-db/sqlite-3.8.9:3[${MULTILIB_USEDEP}]
+	lua? (
 		${LUA_DEPS}
-		urho3d? (
-			lua_targets_lua5-2? (
-		>=dev-lang/lua-5.2.4:5.2=[${MULTILIB_USEDEP},static=,civetweb]
-			)
-		)
 		>=dev-lua/luafilesystem-1.6.3[${MULTILIB_USEDEP},${LUA_USEDEP}]
 		>=dev-lua/luasqlite3-0.9.3[${MULTILIB_USEDEP},${LUA_USEDEP}]
 		>=dev-lua/luaxml-1.8[${LUA_USEDEP}]
-	 )
-	 ssl? (
+		lua_targets_lua5-1? (
+		>=dev-lang/lua-${LUA_5_1_MIN}:5.1=[${MULTILIB_USEDEP}]
+		>=dev-lang/lua-extra-headers-${LUA_5_1_MIN}:5.1=
+		)
+		lua_targets_lua5-2? (
+		>=dev-lang/lua-${LUA_5_2_MIN}:5.2=[${MULTILIB_USEDEP}]
+		>=dev-lang/lua-extra-headers-${LUA_5_2_MIN}:5.2=
+		)
+		lua_targets_lua5-3? (
+		>=dev-lang/lua-${LUA_5_3_MIN}:5.3=[${MULTILIB_USEDEP}]
+		>=dev-lang/lua-extra-headers-${LUA_5_3_MIN}:5.3=
+		)
+		lua_targets_lua5-4? (
+		>=dev-lang/lua-${LUA_5_4_MIN}:5.4=[${MULTILIB_USEDEP}]
+		>=dev-lang/lua-extra-headers-${LUA_5_4_MIN}:5.4=
+		)
+	)
+	ssl? (
 		ssl_1_1? ( =dev-libs/openssl-1.1*[${MULTILIB_USEDEP}] )
 		ssl_1_0? (
 			|| (
@@ -39,24 +59,29 @@ RDEPEND=">=dev-db/sqlite-3.8.9:3[${MULTILIB_USEDEP}]
 				dev-libs/openssl-compat:1.0.0[${MULTILIB_USEDEP}]
 			)
 		)
-	 )"
-DEPEND="${RDEPEND}"
+	)
+	virtual/libc"
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" >=dev-util/cmake-2.8.11"
 SRC_URI="\
 https://github.com/civetweb/civetweb/archive/v${PV}.tar.gz \
-	-> ${P}.tar.gz"
+	-> ${P}.tar.gz
+"
 inherit eutils flag-o-matic
 S="${WORKDIR}/civetweb-${PV}"
 DOCS=( docs/Embedding.md docs/OpenSSL.md README.md RELEASE_NOTES.md \
 docs/UserManual.md )
 _PATCHES=(
 	"${FILESDIR}/civetweb-1.13-disable-pedantic-errors.patch"
-	"${FILESDIR}/civetweb-1.13-change-cmake-for-lua-dependencies.patch"
+	"${FILESDIR}/civetweb-1.13-change-cmake-for-lua-dependencies-v2.patch"
 	"${FILESDIR}/civetweb-1.13-disable-fvisibility-for-c.patch"
+	"${FILESDIR}/civetweb-1.13-fix-lfs-5.1-compat.patch"
+	"${FILESDIR}/civetweb-1.13-fix-mod_lua.inl-5.1-compat.patch"
 )
 
 pkg_setup() {
-	if use lua_targets_lua5-3 ; then
-		ewarn "Lua 5.3 support is for testing only"
+	if use lua_targets_lua5-3 || use lua_targets_lua5-4 ; then
+		ewarn "Lua >=5.3 support is for testing only"
 	fi
 	if use test ; then
 		ewarn "The test USE flag has not been tested yet."
@@ -80,15 +105,40 @@ release."
 			fi
 		fi
 	done
+
+	if [[ -f /usr/include/lua.h ]] ; then
+		die "/usr/include/lua.h must be removed.  Switch lua implementation to alternative and back again via eselect."
+	fi
 }
 
 _prepare() {
 	cd "${BUILD_DIR}" || die
+
+	if use lua ; then
+#		if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
+			sed -i -e 's|"lauxlib.h"|<lauxlib.h>|' \
+				src/third_party/civetweb_lua.h || die
+			sed -i -e 's|"lua.h"|<lua.h>|' \
+				src/third_party/civetweb_lua.h || die
+			sed -i -e 's|"lualib.h"|<lualib.h>|' \
+				src/third_party/civetweb_lua.h || die
+#		fi
+	fi
+
+	SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
+	if use lua ; then
+		SUFFIX+="_${ELUA}"
+	fi
+	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
+	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 	cmake-utils_src_prepare
 }
 
 src_prepare() {
 	default
+	if use lua ; then
+		rm -rf src/third_party/lua-* || die
+	fi
 	eapply ${_PATCHES[@]}
 	multilib_copy_sources
 	prepare_abi() {
@@ -136,7 +186,6 @@ _configure() {
 		-DCIVETWEB_ENABLE_DUKTAPE=$(usex duktape)
 		-DCIVETWEB_ENABLE_LTO=$(usex lto)
 		-DCIVETWEB_ENABLE_LUA=$(usex lua)
-		-DCIVETWEB_ENABLE_LUA_SHARED=$(usex lua)
 		-DCIVETWEB_ENABLE_IPV6=$(usex ipv6)
 		-DCIVETWEB_ENABLE_SERVER_STATS=$(usex server_stats)
 		-DCIVETWEB_ENABLE_WEBSOCKETS=$(usex websockets)
@@ -145,9 +194,26 @@ _configure() {
 		-DCIVETWEB_ENABLE_LUA_SQLITE_SHARED=$(usex lua)
 		-DCIVETWEB_ENABLE_LUA_XML_SHARED=$(usex lua)
 		-DCIVETWEB_ENABLE_SQLITE_SHARED=$(usex lua)
-		-DCIVETWEB_LUA_VERSION=$(lua_get_version)
-		-DLUA_CDIR="$(lua_get_cmod_dir)"
 	)
+	if use lua ; then
+		mycmakeargs+=(
+			-DCIVETWEB_LUA_VERSION=$(lua_get_version)
+			-DCIVETWEB_LUA_VERSION_MAJOR_MINOR=$(ver_cut 1-2 $(lua_get_version))
+			-DLUA_CDIR="$(lua_get_cmod_dir)"
+			-DLUA_INC="$(lua_get_include_dir)"
+		)
+		if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ;then
+			mycmakeargs+=( -DCIVETWEB_ENABLE_LUA_SHARED=ON )
+		elif [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ;then
+			mycmakeargs+=( -DCIVETWEB_ENABLE_LUA_SHARED=ON ) # Missing lib
+		fi
+	fi
+	SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
+	if use lua ; then
+		SUFFIX+="_${ELUA}"
+	fi
+	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
+	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 	cmake-utils_src_configure
 }
 
@@ -170,6 +236,12 @@ src_configure() {
 
 _compile() {
 	cd "${BUILD_DIR}" || die
+	SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
+	if use lua ; then
+		SUFFIX+="_${ELUA}"
+	fi
+	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
+	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 	cmake-utils_src_compile
 }
 
@@ -192,6 +264,12 @@ src_compile() {
 
 _install() {
 	cd "${BUILD_DIR}" || die
+	SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
+	if use lua ; then
+		SUFFIX+="_${ELUA}"
+	fi
+	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
+	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 	cmake-utils_src_install
 }
 
