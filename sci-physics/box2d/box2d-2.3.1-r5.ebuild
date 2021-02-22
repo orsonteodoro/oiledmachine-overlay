@@ -2,38 +2,44 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+inherit eutils cmake-utils multilib-build static-libs
+
 DESCRIPTION="Box2D is a 2D physics engine for games"
 HOMEPAGE="http://box2d.org/"
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-IUSE="debug doc examples test"
-inherit multilib-build
-# todo remove internal dependencies
-RDEPEND="media-libs/glew[${MULTILIB_USEDEP}]
-	 media-libs/glfw[${MULTILIB_USEDEP}]"
-DEPEND="${RDEPEND}
-	doc? ( app-doc/doxygen )"
-inherit eutils cmake-utils static-libs
+IUSE+=" debug doc examples"
+DEPEND+=" examples? (
+		media-libs/glew[${MULTILIB_USEDEP}]
+		media-libs/glfw[${MULTILIB_USEDEP}]
+		media-libs/glui[${MULTILIB_USEDEP}]
+		media-libs/freeglut:=[${MULTILIB_USEDEP},static-libs] )"
+RDEPEND+=" ${DEPEND}"
+BDEPEND+=" >=dev-util/cmake-2.6"
 SRC_URI=\
 "https://github.com/erincatto/Box2D/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
-S="${WORKDIR}/box2d-${PV}"
+S="${WORKDIR}/Box2D-${PV}/Box2D"
 RESTRICT="mirror"
+_PATCHES=(
+	"${FILESDIR}/box2d-2.3.1-cmake-fixes.patch"
+)
 
 src_prepare() {
 	default
-	export CMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
+	cd "${S}/.." || die
+	eapply "${_PATCHES[@]}"
+	cd "${S}" || die
+
 	prepare_abi() {
 		cd "${BUILD_DIR}" || die
 		static-libs_prepare() {
 			cd "${BUILD_DIR}" || die
-			if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
-				sed -i -e "s|STATIC|SHARED|" src/CMakeLists.txt || die
-				sed -i -e "s|STATIC|SHARED|" extern/glad/CMakeLists.txt || die
-				sed -i -e "s|STATIC|SHARED|" extern/imgui/CMakeLists.txt || die
-			fi
+			SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
+			BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 			cmake-utils_src_prepare
 		}
 		static-libs_copy_sources
@@ -46,14 +52,22 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
-		-DBUILD_TESTS=$(usex test)
-		-DBUILD_SAMPLES=$(usex examples)
+		-DDOC_DEST_DIR=${PN}-${PVR}
+		-DBOX2D_INSTALL_DOC=$(usex doc)
+		-DBOX2D_BUILD_EXAMPLES=$(usex examples)
 	)
 	configure_abi() {
 		cd "${BUILD_DIR}" || die
 		static-libs_configure() {
 			cd "${BUILD_DIR}" || die
+			if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
+				mycmakeargs+=( -DBOX2D_BUILD_SHARED=ON )
+			elif [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
+				mycmakeargs+=( -DBOX2D_BUILD_STATIC=ON )
+			fi
+			SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
+			BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 			cmake-utils_src_configure
 		}
 		static-libs_foreach_impl \
@@ -67,7 +81,9 @@ src_compile() {
 		cd "${BUILD_DIR}" || die
 		static-libs_compile() {
 			cd "${BUILD_DIR}" || die
+			SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
+			BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 			cmake-utils_src_compile
 		}
 		static-libs_foreach_impl \
@@ -81,33 +97,28 @@ src_install() {
 	install_abi() {
 		cd "${BUILD_DIR}" || die
 		static-libs_install() {
-			pushd "${BUILD_DIR}" || die
-			if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
-				dolib.so src/libbox2d.so \
-					extern/glad/libglad.so \
-					extern/imgui/libimgui.so
-			else
-				dolib.a src/libbox2d.a \
-					extern/glad/libglad.a \
-					extern/imgui/libimgui.a
+			SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
+			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
+			BUILD_DIR="${WORKDIR}/${P}${SUFFIX}"
+			cd "${BUILD_DIR}" || die
+			cmake-utils_src_install
+
+			if use examples ; then
+				exeinto /usr/share/${PN}/Testbed
+				doexe Testbed/Testbed
+
+				exeinto /usr/share/${PN}/HelloWorld
+				doexe HelloWorld/HelloWorld
 			fi
-			popd
 		}
 		static-libs_foreach_impl \
 			static-libs_install
 	}
 	multilib_foreach_abi install_abi
 
-	FILES=$(find include -name "*.h")
-	for FILE in ${FILES}
-	do
-		insinto "/usr/include/$(dirname ${FILE})"
-		doins "${FILE}"
-	done
-
-	cd docs || die
-	if use doc; then
-		doxygen Doxyfile
-		dodoc -r API images manual.docx
+	if use examples ; then
+		cd "${S}"
+		insinto /usr/share/${PN}/HelloWorld
+		doins -r HelloWorld/*
 	fi
 }

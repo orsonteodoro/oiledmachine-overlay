@@ -1,0 +1,62 @@
+diff -urp Box2D-2.3.1.orig/Box2D/CMakeLists.txt Box2D-2.3.1/Box2D/CMakeLists.txt
+--- Box2D-2.3.1.orig/Box2D/CMakeLists.txt	2014-04-05 17:43:12.000000000 -0700
++++ Box2D-2.3.1/Box2D/CMakeLists.txt	2021-02-21 21:24:20.405361707 -0800
+@@ -26,11 +26,9 @@ if(BOX2D_BUILD_EXAMPLES)
+ 
+   # Testbed and dependencies.
+   find_package(OpenGL REQUIRED)
+-  add_subdirectory(freeglut)
+-  add_subdirectory(glui)
+   add_subdirectory(Testbed)
+ endif(BOX2D_BUILD_EXAMPLES)
+ 
+ if(BOX2D_INSTALL_DOC)
+-  install(DIRECTORY Documentation DESTINATION share/doc/Box2D PATTERN ".svn" EXCLUDE)
++  install(DIRECTORY Documentation DESTINATION share/doc/${DOC_DEST_DIR} PATTERN ".svn" EXCLUDE)
+ endif(BOX2D_INSTALL_DOC)
+diff -urp Box2D-2.3.1.orig/Box2D/Testbed/CMakeLists.txt Box2D-2.3.1/Box2D/Testbed/CMakeLists.txt
+--- Box2D-2.3.1.orig/Box2D/Testbed/CMakeLists.txt	2014-04-05 17:43:12.000000000 -0700
++++ Box2D-2.3.1/Box2D/Testbed/CMakeLists.txt	2021-02-21 21:26:54.715407688 -0800
+@@ -3,9 +3,12 @@ add_definitions( -DFREEGLUT_EXPORTS -DFR
+ 
+ # Define the framework files.
+ set(Testbed_Framework_SRCS
++	Framework/imgui.cpp
++	Framework/DebugDraw.h
++	Framework/DebugDraw.cpp
+ 	Framework/Main.cpp
+-	Framework/Render.cpp
+-	Framework/Render.h
++	Framework/RenderGL3.cpp
++	Framework/RenderGL3.h
+ 	Framework/Test.cpp
+ 	Framework/Test.h
+ )
+@@ -64,11 +67,16 @@ source_group(Framework FILES ${Testbed_F
+ source_group(Tests FILES ${Testbed_Tests_SRCS})
+ 
+ include_directories (
++	Framework
+ 	${OPENGL_INCLUDE_DIR}
+ 	${Box2D_SOURCE_DIR}
+ )
+ 
+-if(APPLE)
++if(UNIX)
++	include_directories( /usr/include/X11 )
++	link_directories( /usr/lib${LIB_SUFFIX} )
++	set (OPENGL_LIBRARIES GL GLEW GLU glut X11)
++elseif(APPLE)
+ 	# We are not using the Apple's framework version, but X11's
+ 	include_directories( /usr/X11/include )
+ 	link_directories( /usr/X11/lib )
+@@ -85,7 +93,8 @@ add_executable(Testbed
+ target_link_libraries (
+ 	Testbed
+ 	Box2D
+-	freeglut_static
++	glfw
++	glut
+ 	glui
+ 	${ADDITIONAL_LIBRARIES}
+ 	${OPENGL_LIBRARIES}
