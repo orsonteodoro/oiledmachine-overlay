@@ -1,0 +1,23 @@
+diff -urp glui-093edc777c02118282910bdee59f8db1bd46a84d.orig/CMakeLists.txt glui-093edc777c02118282910bdee59f8db1bd46a84d/CMakeLists.txt
+--- glui-093edc777c02118282910bdee59f8db1bd46a84d.orig/CMakeLists.txt	2019-06-17 14:30:54.000000000 -0700
++++ glui-093edc777c02118282910bdee59f8db1bd46a84d/CMakeLists.txt	2021-02-21 19:41:16.717085245 -0800
+@@ -103,7 +103,7 @@ target_link_libraries(example6 glui_stat
+ ####
+ # Installation
+ 
+-set(config_install_dir "lib/cmake/${PROJECT_NAME}")
++set(config_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
+ set(include_install_dir "include")
+ 
+ set(generated_dir "${CMAKE_CURRENT_BINARY_DIR}/generated")
+@@ -133,8 +133,8 @@ configure_package_config_file(
+ install(
+     TARGETS glui_static glui
+     EXPORT "${targets_export_name}"
+-    LIBRARY DESTINATION "lib"
+-    ARCHIVE DESTINATION "lib"
++    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
++    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+     RUNTIME DESTINATION "bin"
+     INCLUDES DESTINATION "${include_install_dir}"
+ )
