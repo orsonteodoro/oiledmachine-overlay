@@ -12,8 +12,9 @@ KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
 IUSE+=" debug doc examples test"
 # todo remove internal dependencies
-DEPEND+=" test? ( media-libs/glew[${MULTILIB_USEDEP}]
-	media-libs/glfw[${MULTILIB_USEDEP}] )"
+DEPEND+=" examples? ( media-libs/glew[${MULTILIB_USEDEP}]
+	media-libs/glfw[${MULTILIB_USEDEP}] )
+	virtual/libc"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-3.8
 	doc? ( app-doc/doxygen )"

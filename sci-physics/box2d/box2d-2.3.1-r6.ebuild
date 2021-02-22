@@ -15,7 +15,8 @@ DEPEND+=" examples? (
 		media-libs/glew[${MULTILIB_USEDEP}]
 		media-libs/glfw[${MULTILIB_USEDEP}]
 		media-libs/glui[${MULTILIB_USEDEP}]
-		media-libs/freeglut:=[${MULTILIB_USEDEP},static-libs] )"
+		media-libs/freeglut:=[${MULTILIB_USEDEP},static-libs] )
+	virtual/libc"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" >=dev-util/cmake-2.6"
 SRC_URI=\
