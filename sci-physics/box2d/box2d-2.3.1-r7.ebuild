@@ -10,7 +10,8 @@ HOMEPAGE="http://box2d.org/"
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/${PV}"
-IUSE+=" debug doc examples"
+IUSE+=" doc examples test"
+REQUIRED_USE+=" test? ( examples )"
 DEPEND+=" examples? (
 		media-libs/glew[${MULTILIB_USEDEP}]
 		media-libs/glfw[${MULTILIB_USEDEP}]
@@ -27,9 +28,11 @@ RESTRICT="mirror"
 _PATCHES=(
 	"${FILESDIR}/box2d-2.3.1-cmake-fixes.patch"
 )
+CMAKE_BUILD_TYPE="Release"
 
 src_prepare() {
 	default
+
 	cd "${S}/.." || die
 	eapply "${_PATCHES[@]}"
 	cd "${S}" || die
@@ -93,15 +96,35 @@ src_compile() {
 	multilib_foreach_abi compile_abi
 }
 
+src_test() {
+	test_abi() {
+		cd "${BUILD_DIR}" || die
+		static-libs_test() {
+			SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
+			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}"
+			BUILD_DIR="${WORKDIR}/${P}${SUFFIX}"
+			cd "${BUILD_DIR}" || die
+
+			if [[ -x HelloWorld/HelloWorld ]] ; then
+				./HelloWorld/HelloWorld || die
+			else
+				die "No unit test exist for ABI=${ABI} STSH=${ESTSH_LIB_TYPE}"
+			fi
+		}
+		static-libs_foreach_impl \
+			static-libs_test
+	}
+	multilib_foreach_abi test_abi
+}
+
 src_install() {
-	local mydebug=$(usex debug "Debug" "Release")
 	install_abi() {
 		cd "${BUILD_DIR}" || die
 		static-libs_install() {
 			SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
-			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 			BUILD_DIR="${WORKDIR}/${P}${SUFFIX}"
 			cd "${BUILD_DIR}" || die
+			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 			cmake-utils_src_install
 
 			if use examples ; then
@@ -122,4 +145,8 @@ src_install() {
 		insinto /usr/share/${PN}/HelloWorld
 		doins -r HelloWorld/*
 	fi
+}
+
+pkg_postinst() {
+	ewarn "This was the last major.minor version released in 2014 and is no longer receiving updates."
 }

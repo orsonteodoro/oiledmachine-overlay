@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <!-- only for this ebuild fork on the oiledmachine-overlay -->
+  <maintainer>
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    This ebuild fork focuses on multilib and both dynamic and static library builds.
+
+    Only the latest of the major.minor will be tracked.
+  </longdescription>
+  <use>
+    <flag name="doc">Installs docx and image documentation.</flag>
+    <flag name="examples">Installs compiled testbed and hello world source code</flag>
+    <flag name="test">Runs unit tests or hello world example</flag>
+  </use>
+  <upstream>
+    <remote-id type="github">erincatto/Box2D</remote-id>
+  </upstream>
+</pkgmetadata>

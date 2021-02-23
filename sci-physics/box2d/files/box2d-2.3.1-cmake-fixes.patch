@@ -1,7 +1,28 @@
+diff -urp Box2D-2.3.1.orig/Box2D/Box2D/CMakeLists.txt Box2D-2.3.1/Box2D/Box2D/CMakeLists.txt
+--- Box2D-2.3.1.orig/Box2D/Box2D/CMakeLists.txt	2014-04-05 17:43:12.000000000 -0700
++++ Box2D-2.3.1/Box2D/Box2D/CMakeLists.txt	2021-02-23 14:30:46.127439381 -0800
+@@ -145,6 +145,7 @@ if(BOX2D_BUILD_SHARED)
+ 		OUTPUT_NAME "Box2D"
+ 		CLEAN_DIRECT_OUTPUT 1
+ 		VERSION ${BOX2D_VERSION}
++		SOVERSION ${BOX2D_VERSION_MAJOR}
+ 	)
+ endif()
+ 
 diff -urp Box2D-2.3.1.orig/Box2D/CMakeLists.txt Box2D-2.3.1/Box2D/CMakeLists.txt
 --- Box2D-2.3.1.orig/Box2D/CMakeLists.txt	2014-04-05 17:43:12.000000000 -0700
-+++ Box2D-2.3.1/Box2D/CMakeLists.txt	2021-02-21 21:24:20.405361707 -0800
-@@ -26,11 +26,9 @@ if(BOX2D_BUILD_EXAMPLES)
++++ Box2D-2.3.1/Box2D/CMakeLists.txt	2021-02-23 14:31:02.528088097 -0800
+@@ -14,7 +14,8 @@ option(BOX2D_BUILD_SHARED "Build Box2D s
+ option(BOX2D_BUILD_STATIC "Build Box2D static libraries" ON)
+ option(BOX2D_BUILD_EXAMPLES "Build Box2D examples" ON)
+ 
+-set(BOX2D_VERSION 2.3.0)
++set(BOX2D_VERSION 2.3.1)
++set(BOX2D_VERSION_MAJOR 2)
+ set(LIB_INSTALL_DIR lib${LIB_SUFFIX})
+ 
+ # The Box2D library.
+@@ -26,11 +27,9 @@ if(BOX2D_BUILD_EXAMPLES)
  
    # Testbed and dependencies.
    find_package(OpenGL REQUIRED)
@@ -16,7 +37,7 @@ diff -urp Box2D-2.3.1.orig/Box2D/CMakeLists.txt Box2D-2.3.1/Box2D/CMakeLists.txt
  endif(BOX2D_INSTALL_DOC)
 diff -urp Box2D-2.3.1.orig/Box2D/Testbed/CMakeLists.txt Box2D-2.3.1/Box2D/Testbed/CMakeLists.txt
 --- Box2D-2.3.1.orig/Box2D/Testbed/CMakeLists.txt	2014-04-05 17:43:12.000000000 -0700
-+++ Box2D-2.3.1/Box2D/Testbed/CMakeLists.txt	2021-02-21 21:26:54.715407688 -0800
++++ Box2D-2.3.1/Box2D/Testbed/CMakeLists.txt	2021-02-23 14:30:46.127439381 -0800
 @@ -3,9 +3,12 @@ add_definitions( -DFREEGLUT_EXPORTS -DFR
  
  # Define the framework files.
@@ -55,8 +76,8 @@ diff -urp Box2D-2.3.1.orig/Box2D/Testbed/CMakeLists.txt Box2D-2.3.1/Box2D/Testbe
  	Testbed
  	Box2D
 -	freeglut_static
++	freeglut
 +	glfw
-+	glut
  	glui
  	${ADDITIONAL_LIBRARIES}
  	${OPENGL_LIBRARIES}

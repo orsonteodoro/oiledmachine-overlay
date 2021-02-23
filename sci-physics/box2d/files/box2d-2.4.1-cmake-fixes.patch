@@ -1,0 +1,45 @@
+diff -urp box2d-2.4.1.orig/CMakeLists.txt box2d-2.4.1/CMakeLists.txt
+--- box2d-2.4.1.orig/CMakeLists.txt	2020-10-17 17:09:34.000000000 -0700
++++ box2d-2.4.1/CMakeLists.txt	2021-02-23 12:44:06.224188607 -0800
+@@ -5,8 +5,8 @@ project(box2d VERSION 2.4.1)
+ 
+ # set(CMAKE_CONFIGURATION_TYPES "Debug;RelWithDebInfo" CACHE STRING "" FORCE)
+ 
+-set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+-set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
++#set(CMAKE_CXX_VISIBILITY_PRESET hidden)
++#set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+ 
+ option(BOX2D_BUILD_UNIT_TESTS "Build the Box2D unit tests" ON)
+ option(BOX2D_BUILD_TESTBED "Build the Box2D testbed" ON)
+@@ -15,11 +15,11 @@ option(BOX2D_USER_SETTINGS "Override Box
+ 
+ option(BUILD_SHARED_LIBS "Build Box2D as a shared library" OFF)
+ 
+-set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+-set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
++#set(CMAKE_CXX_VISIBILITY_PRESET hidden)
++#set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+ 
+-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin")
+-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin")
++set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_INSTALL_LIBDIR}")
++set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_INSTALL_LIBDIR}")
+ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin")
+ 
+ include(GNUInstallDirs)
+diff -urp box2d-2.4.1.orig/testbed/CMakeLists.txt box2d-2.4.1/testbed/CMakeLists.txt
+--- box2d-2.4.1.orig/testbed/CMakeLists.txt	2020-10-17 17:09:34.000000000 -0700
++++ box2d-2.4.1/testbed/CMakeLists.txt	2021-02-23 12:43:38.227066804 -0800
+@@ -70,9 +70,11 @@ set (TESTBED_SOURCE_FILES
+ 	tests/wrecking_ball.cpp
+ )
+ 
++link_directories(${CMAKE_BINARY_DIR})
+ add_executable(testbed ${TESTBED_SOURCE_FILES})
+ target_include_directories(testbed PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+ target_link_libraries(testbed PUBLIC box2d glfw imgui sajson glad)
++#set_target_properties(testbed PROPERTIES LINK_FLAGS "-Wl,-rpath,${EXAMPLES_INSTALL_RPATH}")
+ set_target_properties(testbed PROPERTIES
+ 	CXX_STANDARD 11
+     CXX_STANDARD_REQUIRED YES
