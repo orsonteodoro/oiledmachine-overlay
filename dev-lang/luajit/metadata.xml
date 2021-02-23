@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <!-- only for this ebuild fork on the oiledmachine-overlay -->
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!-- originator -->
+  <maintainer type="person">
+    <email>williamh@gentoo.org</email>
+    <name>William Hubbs</name>
+  </maintainer>
+  <longdescription>
+    This ebuild fork exists for Urho3D compatibility.  It only tracks 2.1.x.
+  </longdescription>
+  <use>
+    <flag name="lua52compat">
+      Enable some upwards-compatible features
+      from Lua 5.2 that are unlikely to break existing code.
+    </flag>
+    <flag name="urho3d">Adds changes necessary for Urho3D</flag>
+  </use>
+</pkgmetadata>

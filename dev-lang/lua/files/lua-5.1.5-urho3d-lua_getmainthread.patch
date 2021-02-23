@@ -1,0 +1,37 @@
+Subject:  lua_getmainthread changes required by urho3d
+URL: https://github.com/urho3d/Urho3D/commit/4a50e3d78dda0f043691c91ce64d5f6313c06582
+diff -urp lua-5.1.5.orig/src/lapi.c lua-5.1.5/src/lapi.c
+--- lua-5.1.5.orig/src/lapi.c	2008-07-04 11:41:18.000000000 -0700
++++ lua-5.1.5/src/lapi.c	2021-02-22 03:38:08.006108463 -0800
+@@ -149,7 +149,16 @@ LUA_API lua_State *lua_newthread (lua_St
+   return L1;
+ }
+ 
+-
++#ifdef URHO3D
++/* Modified by Aster Jian for Urho3D */
++LUA_API lua_State *lua_getmainthread (lua_State* L) {
++    lua_State* L1;
++    lua_lock(L);
++    L1 = G(L)->mainthread;
++    lua_unlock(L);
++    return L1;
++}
++#endif
+ 
+ /*
+ ** basic stack manipulation
+diff -urp lua-5.1.5.orig/src/lua.h lua-5.1.5/src/lua.h
+--- lua-5.1.5.orig/src/lua.h	2012-01-13 12:36:20.000000000 -0800
++++ lua-5.1.5/src/lua.h	2021-02-22 03:37:23.108367995 -0800
+@@ -110,6 +110,10 @@ typedef LUA_INTEGER lua_Integer;
+ LUA_API lua_State *(lua_newstate) (lua_Alloc f, void *ud);
+ LUA_API void       (lua_close) (lua_State *L);
+ LUA_API lua_State *(lua_newthread) (lua_State *L);
++#ifdef URHO3D
++/* Modified by Aster Jian for Urho3D */
++LUA_API lua_State *(lua_getmainthread) (lua_State *L);
++#endif
+ 
+ LUA_API lua_CFunction (lua_atpanic) (lua_State *L, lua_CFunction panicf);
+ 

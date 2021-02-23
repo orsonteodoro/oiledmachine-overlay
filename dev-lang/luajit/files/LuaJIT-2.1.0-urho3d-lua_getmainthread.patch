@@ -1,0 +1,36 @@
+Subject:  Adds changes necessary for Urho3D
+URI: https://github.com/urho3d/Urho3D/commit/4a50e3d78dda0f043691c91ce64d5f6313c06582
+diff -urp LuaJIT-2.1.0-beta3.orig/src/lj_api.c LuaJIT-2.1.0-beta3/src/lj_api.c
+--- LuaJIT-2.1.0-beta3.orig/src/lj_api.c	2017-05-01 12:05:00.000000000 -0700
++++ LuaJIT-2.1.0-beta3/src/lj_api.c	2021-02-22 03:50:00.349718040 -0800
+@@ -688,6 +688,16 @@ LUA_API void lua_pushcclosure(lua_State
+   incr_top(L);
+ }
+ 
++#ifdef URHO3D
++/* Modified by Aster Jian for Urho3D */
++LUA_API lua_State *lua_getmainthread(lua_State *L)
++{
++    lua_State *L1;
++    L1 = mainthread(G(L));
++    return L1;
++}
++#endif
++
+ LUA_API void lua_pushboolean(lua_State *L, int b)
+ {
+   setboolV(L->top, (b != 0));
+diff -urp LuaJIT-2.1.0-beta3.orig/src/lua.h LuaJIT-2.1.0-beta3/src/lua.h
+--- LuaJIT-2.1.0-beta3.orig/src/lua.h	2017-05-01 12:05:00.000000000 -0700
++++ LuaJIT-2.1.0-beta3/src/lua.h	2021-02-22 03:50:38.811208532 -0800
+@@ -111,6 +111,10 @@ typedef LUA_INTEGER lua_Integer;
+ LUA_API lua_State *(lua_newstate) (lua_Alloc f, void *ud);
+ LUA_API void       (lua_close) (lua_State *L);
+ LUA_API lua_State *(lua_newthread) (lua_State *L);
++#ifdef URHO3D
++/* Modified by Aster Jian for Urho3D */
++LUA_API lua_State *(lua_getmainthread) (lua_State *L);
++#endif
+ 
+ LUA_API lua_CFunction (lua_atpanic) (lua_State *L, lua_CFunction panicf);
+ 
