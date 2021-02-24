@@ -1,6 +1,6 @@
 diff -urp Box2D-2.3.1.orig/Box2D/Box2D/CMakeLists.txt Box2D-2.3.1/Box2D/Box2D/CMakeLists.txt
 --- Box2D-2.3.1.orig/Box2D/Box2D/CMakeLists.txt	2014-04-05 17:43:12.000000000 -0700
-+++ Box2D-2.3.1/Box2D/Box2D/CMakeLists.txt	2021-02-23 15:42:40.369872380 -0800
++++ Box2D-2.3.1/Box2D/Box2D/CMakeLists.txt	2021-02-23 17:04:01.103481865 -0800
 @@ -145,6 +145,7 @@ if(BOX2D_BUILD_SHARED)
  		OUTPUT_NAME "Box2D"
  		CLEAN_DIRECT_OUTPUT 1
@@ -9,7 +9,15 @@ diff -urp Box2D-2.3.1.orig/Box2D/Box2D/CMakeLists.txt Box2D-2.3.1/Box2D/Box2D/CM
  	)
  endif()
  
-@@ -184,14 +185,14 @@ source_group(Rope FILES ${BOX2D_Rope_SRC
+@@ -169,6 +170,7 @@ if(BOX2D_BUILD_STATIC)
+ 	set_target_properties(Box2D PROPERTIES
+ 		CLEAN_DIRECT_OUTPUT 1
+ 		VERSION ${BOX2D_VERSION}
++		ARCHIVE_OUTPUT_NAME "Box2D-${BOX2D_VERSION_MAJOR_MINOR}"
+ 	)
+ endif()
+ 
+@@ -184,14 +186,14 @@ source_group(Rope FILES ${BOX2D_Rope_SRC
  
  if(BOX2D_INSTALL)
  	# install headers
@@ -32,12 +40,7 @@ diff -urp Box2D-2.3.1.orig/Box2D/Box2D/CMakeLists.txt Box2D-2.3.1/Box2D/Box2D/CM
  
  	# install libraries
  	if(BOX2D_BUILD_SHARED)
-@@ -201,18 +202,19 @@ if(BOX2D_INSTALL)
-                   RUNTIME DESTINATION bin)
- 	endif()
- 	if(BOX2D_BUILD_STATIC)
-+	    set_target_properties(Box2D PROPERTIES SUFFIX "-${BOX2D_VERSION_MAJOR_MINOR}.a")
- 		install(TARGETS Box2D EXPORT Box2D-targets DESTINATION ${LIB_INSTALL_DIR})
+@@ -205,14 +207,14 @@ if(BOX2D_INSTALL)
  	endif()
  
  	# install build system hooks for third-party apps
@@ -57,7 +60,7 @@ diff -urp Box2D-2.3.1.orig/Box2D/Box2D/CMakeLists.txt Box2D-2.3.1/Box2D/Box2D/CM
  endif(BOX2D_INSTALL)
 diff -urp Box2D-2.3.1.orig/Box2D/CMakeLists.txt Box2D-2.3.1/Box2D/CMakeLists.txt
 --- Box2D-2.3.1.orig/Box2D/CMakeLists.txt	2014-04-05 17:43:12.000000000 -0700
-+++ Box2D-2.3.1/Box2D/CMakeLists.txt	2021-02-23 15:36:28.835336477 -0800
++++ Box2D-2.3.1/Box2D/CMakeLists.txt	2021-02-23 17:02:16.611332509 -0800
 @@ -14,7 +14,9 @@ option(BOX2D_BUILD_SHARED "Build Box2D s
  option(BOX2D_BUILD_STATIC "Build Box2D static libraries" ON)
  option(BOX2D_BUILD_EXAMPLES "Build Box2D examples" ON)
@@ -84,7 +87,7 @@ diff -urp Box2D-2.3.1.orig/Box2D/CMakeLists.txt Box2D-2.3.1/Box2D/CMakeLists.txt
  endif(BOX2D_INSTALL_DOC)
 diff -urp Box2D-2.3.1.orig/Box2D/Testbed/CMakeLists.txt Box2D-2.3.1/Box2D/Testbed/CMakeLists.txt
 --- Box2D-2.3.1.orig/Box2D/Testbed/CMakeLists.txt	2014-04-05 17:43:12.000000000 -0700
-+++ Box2D-2.3.1/Box2D/Testbed/CMakeLists.txt	2021-02-23 15:36:04.602388452 -0800
++++ Box2D-2.3.1/Box2D/Testbed/CMakeLists.txt	2021-02-23 17:02:16.611332509 -0800
 @@ -3,9 +3,12 @@ add_definitions( -DFREEGLUT_EXPORTS -DFR
  
  # Define the framework files.
