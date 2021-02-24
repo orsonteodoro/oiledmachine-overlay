@@ -9,7 +9,8 @@ DESCRIPTION="Box2D is a 2D physics engine for games"
 HOMEPAGE="http://box2d.org/"
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~x86"
-SLOT="0/${PV}"
+SLOT_MAJ="$(ver_cut 1-2 ${PV})" # API change between 2.4.1 breaks 2.4.0
+SLOT="${SLOT_MAJ}/${PV}"
 IUSE+=" doc examples test"
 # todo remove internal dependencies
 DEPEND+=" examples? ( media-libs/glew[${MULTILIB_USEDEP}]
@@ -27,6 +28,7 @@ _PATCHES=(
 	"${FILESDIR}/box2d-2.4.1-cmake-fixes.patch"
 )
 CMAKE_BUILD_TYPE="Release"
+MY_PN="Box2D"
 
 src_prepare() {
 	default
@@ -142,24 +144,18 @@ src_install() {
 			BUILD_DIR="${WORKDIR}/${P}${SUFFIX}"
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 			cmake-utils_src_install
-
 			pushd "${BUILD_DIR}" || die
 			insinto "/usr/share/${PN}-${PVR}/testbed"
 			exeinto "/usr/share/${PN}-${PVR}/testbed"
-			doexe bin/testbed
+			if use examples ; then
+				doexe bin/testbed
+			fi
 			popd
 		}
 		static-libs_foreach_impl \
 			static-libs_install
 	}
 	multilib_foreach_abi install_abi
-
-	FILES=$(find include -name "*.h")
-	for FILE in ${FILES}
-	do
-		insinto "/usr/$(dirname ${FILE})"
-		doins "${FILE}"
-	done
 
 	cd docs || die
 	if use doc; then

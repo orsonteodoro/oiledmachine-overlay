@@ -1,6 +1,6 @@
 diff -urp box2d-2.4.1.orig/CMakeLists.txt box2d-2.4.1/CMakeLists.txt
 --- box2d-2.4.1.orig/CMakeLists.txt	2020-10-17 17:09:34.000000000 -0700
-+++ box2d-2.4.1/CMakeLists.txt	2021-02-23 12:44:06.224188607 -0800
++++ box2d-2.4.1/CMakeLists.txt	2021-02-23 16:46:25.509481631 -0800
 @@ -5,8 +5,8 @@ project(box2d VERSION 2.4.1)
  
  # set(CMAKE_CONFIGURATION_TYPES "Debug;RelWithDebInfo" CACHE STRING "" FORCE)
@@ -28,9 +28,45 @@ diff -urp box2d-2.4.1.orig/CMakeLists.txt box2d-2.4.1/CMakeLists.txt
  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/bin")
  
  include(GNUInstallDirs)
+@@ -60,6 +60,6 @@ if (BOX2D_BUILD_TESTBED)
+ endif()
+ 
+ install(
+-  DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/box2d"
+-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
++  DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/box2d/"
++  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/box2d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+ )
+diff -urp box2d-2.4.1.orig/src/CMakeLists.txt box2d-2.4.1/src/CMakeLists.txt
+--- box2d-2.4.1.orig/src/CMakeLists.txt	2020-10-17 17:09:34.000000000 -0700
++++ box2d-2.4.1/src/CMakeLists.txt	2021-02-23 16:47:13.711403815 -0800
+@@ -111,6 +111,7 @@ set_target_properties(box2d PROPERTIES
+     CXX_EXTENSIONS NO
+     VERSION ${PROJECT_VERSION}
+     SOVERSION ${PROJECT_VERSION_MAJOR}
++	ARCHIVE_OUTPUT_NAME "box2d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
+ )
+ 
+ if(MSVC)
+@@ -147,7 +148,7 @@ install(
+ install(
+   EXPORT box2dConfig
+   NAMESPACE box2d::
+-  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/box2d"
++  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/box2d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
+ )
+ 
+ include(CMakePackageConfigHelpers)
+@@ -159,5 +160,5 @@ write_basic_package_version_file(
+ 
+ install(
+   FILES "${CMAKE_CURRENT_BINARY_DIR}/box2dConfigVersion.cmake"
+-  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/box2d"
++  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/box2d-${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}"
+ )
 diff -urp box2d-2.4.1.orig/testbed/CMakeLists.txt box2d-2.4.1/testbed/CMakeLists.txt
 --- box2d-2.4.1.orig/testbed/CMakeLists.txt	2020-10-17 17:09:34.000000000 -0700
-+++ box2d-2.4.1/testbed/CMakeLists.txt	2021-02-23 12:43:38.227066804 -0800
++++ box2d-2.4.1/testbed/CMakeLists.txt	2021-02-23 16:46:25.509481631 -0800
 @@ -70,9 +70,11 @@ set (TESTBED_SOURCE_FILES
  	tests/wrecking_ball.cpp
  )

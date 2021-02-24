@@ -9,7 +9,8 @@ DESCRIPTION="Box2D is a 2D physics engine for games"
 HOMEPAGE="http://box2d.org/"
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~x86"
-SLOT="0/${PV}"
+SLOT_MAJ="$(ver_cut 1-2 ${PV})"
+SLOT="${SLOT_MAJ}/${PV}"
 IUSE+=" doc examples test"
 REQUIRED_USE+=" test? ( examples )"
 DEPEND+=" examples? (
@@ -29,6 +30,7 @@ _PATCHES=(
 	"${FILESDIR}/box2d-2.3.1-cmake-fixes.patch"
 )
 CMAKE_BUILD_TYPE="Release"
+MY_PN="Box2D"
 
 src_prepare() {
 	default

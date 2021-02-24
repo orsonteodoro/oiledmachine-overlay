@@ -17,6 +17,7 @@
     <flag name="test">Runs unit tests or hello world example</flag>
   </use>
   <upstream>
+    <doc lang="en">https://box2d.org/documentation</doc>
     <remote-id type="github">erincatto/Box2D</remote-id>
   </upstream>
 </pkgmetadata>
