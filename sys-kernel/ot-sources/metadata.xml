@@ -147,8 +147,8 @@
   <use>
     <flag name="bbrv2">Patches the kernel with BBRv2 TCP congestion control for
       around less than 1% retranssmisson (comparable to CUBIC) versus
-      BBRv1 5% retransmission, at the cost of around 10 mbps relative to
-      BBRv1.  BBRv1 which is about double the throughput than CUBIC on average.
+      BBRv2 5% retransmission, at the cost of around 10 mbps relative to
+      BBRv1.  BBRv1 is about double the throughput than CUBIC on average.
       BBRv2 is above CUBIC in throughput.
 
       This benefits the most with people with bad connections and 
@@ -269,6 +269,9 @@
 
       for 5.10 see:
       https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
+
+      for 5.11 see:
+      https://github.com/torvalds/linux/compare/v5.11...zen-kernel:5.11/zen-sauce
 
       Use the O3, zen-sauce, kernel_gcc_patch USE flags instead of passing their
       commit IDs.
