@@ -147,7 +147,7 @@
   <use>
     <flag name="bbrv2">Patches the kernel with BBRv2 TCP congestion control for
       around less than 1% retranssmisson (comparable to CUBIC) versus
-      BBRv1 5% retransmission, at the cost of around 10 mbps relative to
+      BBRv2 5% retransmission, at the cost of around 10 mbps relative to
       BBRv1.  BBRv1 which is about double the throughput than CUBIC on average.
       BBRv2 is above CUBIC in throughput.
 
