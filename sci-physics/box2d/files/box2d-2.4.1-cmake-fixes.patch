@@ -1,6 +1,6 @@
 diff -urp box2d-2.4.1.orig/CMakeLists.txt box2d-2.4.1/CMakeLists.txt
 --- box2d-2.4.1.orig/CMakeLists.txt	2020-10-17 17:09:34.000000000 -0700
-+++ box2d-2.4.1/CMakeLists.txt	2021-02-23 16:46:25.509481631 -0800
++++ box2d-2.4.1/CMakeLists.txt	2021-02-23 20:05:26.289913709 -0800
 @@ -5,8 +5,8 @@ project(box2d VERSION 2.4.1)
  
  # set(CMAKE_CONFIGURATION_TYPES "Debug;RelWithDebInfo" CACHE STRING "" FORCE)
@@ -39,7 +39,7 @@ diff -urp box2d-2.4.1.orig/CMakeLists.txt box2d-2.4.1/CMakeLists.txt
  )
 diff -urp box2d-2.4.1.orig/src/CMakeLists.txt box2d-2.4.1/src/CMakeLists.txt
 --- box2d-2.4.1.orig/src/CMakeLists.txt	2020-10-17 17:09:34.000000000 -0700
-+++ box2d-2.4.1/src/CMakeLists.txt	2021-02-23 16:47:13.711403815 -0800
++++ box2d-2.4.1/src/CMakeLists.txt	2021-02-23 20:05:37.666366758 -0800
 @@ -111,6 +111,7 @@ set_target_properties(box2d PROPERTIES
      CXX_EXTENSIONS NO
      VERSION ${PROJECT_VERSION}
@@ -66,7 +66,7 @@ diff -urp box2d-2.4.1.orig/src/CMakeLists.txt box2d-2.4.1/src/CMakeLists.txt
  )
 diff -urp box2d-2.4.1.orig/testbed/CMakeLists.txt box2d-2.4.1/testbed/CMakeLists.txt
 --- box2d-2.4.1.orig/testbed/CMakeLists.txt	2020-10-17 17:09:34.000000000 -0700
-+++ box2d-2.4.1/testbed/CMakeLists.txt	2021-02-23 16:46:25.509481631 -0800
++++ box2d-2.4.1/testbed/CMakeLists.txt	2021-02-23 20:05:26.289913709 -0800
 @@ -70,9 +70,11 @@ set (TESTBED_SOURCE_FILES
  	tests/wrecking_ball.cpp
  )

@@ -1,6 +1,6 @@
 diff -urp Box2D-2.3.1.orig/Box2D/Box2D/CMakeLists.txt Box2D-2.3.1/Box2D/Box2D/CMakeLists.txt
 --- Box2D-2.3.1.orig/Box2D/Box2D/CMakeLists.txt	2014-04-05 17:43:12.000000000 -0700
-+++ Box2D-2.3.1/Box2D/Box2D/CMakeLists.txt	2021-02-23 17:04:01.103481865 -0800
++++ Box2D-2.3.1/Box2D/Box2D/CMakeLists.txt	2021-02-24 15:31:39.117402779 -0800
 @@ -145,6 +145,7 @@ if(BOX2D_BUILD_SHARED)
  		OUTPUT_NAME "Box2D"
  		CLEAN_DIRECT_OUTPUT 1
@@ -29,14 +29,14 @@ diff -urp Box2D-2.3.1.orig/Box2D/Box2D/CMakeLists.txt Box2D-2.3.1/Box2D/Box2D/CM
 -	install(FILES ${BOX2D_Contacts_HDRS} DESTINATION include/Box2D/Dynamics/Contacts)
 -	install(FILES ${BOX2D_Joints_HDRS} DESTINATION include/Box2D/Dynamics/Joints)
 -	install(FILES ${BOX2D_Rope_HDRS} DESTINATION include/Box2D/Rope)
-+	install(FILES ${BOX2D_General_HDRS} DESTINATION include/Box2D-${BOX2D_VERSION_MAJOR_MINOR})
-+	install(FILES ${BOX2D_Collision_HDRS} DESTINATION include/Box2D-${BOX2D_VERSION_MAJOR_MINOR}/Collision)
-+	install(FILES ${BOX2D_Shapes_HDRS} DESTINATION include/Box2D-${BOX2D_VERSION_MAJOR_MINOR}/Collision/Shapes)
-+	install(FILES ${BOX2D_Common_HDRS} DESTINATION include/Box2D-${BOX2D_VERSION_MAJOR_MINOR}/Common)
-+	install(FILES ${BOX2D_Dynamics_HDRS} DESTINATION include/Box2D-${BOX2D_VERSION_MAJOR_MINOR}/Dynamics)
-+	install(FILES ${BOX2D_Contacts_HDRS} DESTINATION include/Box2D-${BOX2D_VERSION_MAJOR_MINOR}/Dynamics/Contacts)
-+	install(FILES ${BOX2D_Joints_HDRS} DESTINATION include/Box2D-${BOX2D_VERSION_MAJOR_MINOR}/Dynamics/Joints)
-+	install(FILES ${BOX2D_Rope_HDRS} DESTINATION include/Box2D-${BOX2D_VERSION_MAJOR_MINOR}/Rope)
++	install(FILES ${BOX2D_General_HDRS} DESTINATION include/Box2D-${BOX2D_VERSION_MAJOR_MINOR}/Box2D)
++	install(FILES ${BOX2D_Collision_HDRS} DESTINATION include/Box2D-${BOX2D_VERSION_MAJOR_MINOR}/Box2D/Collision)
++	install(FILES ${BOX2D_Shapes_HDRS} DESTINATION include/Box2D-${BOX2D_VERSION_MAJOR_MINOR}/Box2D/Collision/Shapes)
++	install(FILES ${BOX2D_Common_HDRS} DESTINATION include/Box2D-${BOX2D_VERSION_MAJOR_MINOR}/Box2D/Common)
++	install(FILES ${BOX2D_Dynamics_HDRS} DESTINATION include/Box2D-${BOX2D_VERSION_MAJOR_MINOR}/Box2D/Dynamics)
++	install(FILES ${BOX2D_Contacts_HDRS} DESTINATION include/Box2D-${BOX2D_VERSION_MAJOR_MINOR}/Box2D/Dynamics/Contacts)
++	install(FILES ${BOX2D_Joints_HDRS} DESTINATION include/Box2D-${BOX2D_VERSION_MAJOR_MINOR}/Box2D/Dynamics/Joints)
++	install(FILES ${BOX2D_Rope_HDRS} DESTINATION include/Box2D-${BOX2D_VERSION_MAJOR_MINOR}/Box2D/Rope)
  
  	# install libraries
  	if(BOX2D_BUILD_SHARED)
@@ -47,7 +47,8 @@ diff -urp Box2D-2.3.1.orig/Box2D/Box2D/CMakeLists.txt Box2D-2.3.1/Box2D/Box2D/CM
 -	install(EXPORT Box2D-targets DESTINATION ${LIB_INSTALL_DIR}/Box2D)
 +	install(EXPORT Box2D-targets DESTINATION ${LIB_INSTALL_DIR}/Box2D-${BOX2D_VERSION_MAJOR_MINOR})
  
-         set (BOX2D_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
+-        set (BOX2D_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
++        set (BOX2D_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include/Box2D-${BOX2D_VERSION_MAJOR_MINOR})
          set (BOX2D_INCLUDE_DIRS ${BOX2D_INCLUDE_DIR} )
          set (BOX2D_LIBRARY_DIRS ${CMAKE_INSTALL_PREFIX}/${LIB_INSTALL_DIR})
          set (BOX2D_LIBRARY Box2D)
@@ -60,7 +61,7 @@ diff -urp Box2D-2.3.1.orig/Box2D/Box2D/CMakeLists.txt Box2D-2.3.1/Box2D/Box2D/CM
  endif(BOX2D_INSTALL)
 diff -urp Box2D-2.3.1.orig/Box2D/CMakeLists.txt Box2D-2.3.1/Box2D/CMakeLists.txt
 --- Box2D-2.3.1.orig/Box2D/CMakeLists.txt	2014-04-05 17:43:12.000000000 -0700
-+++ Box2D-2.3.1/Box2D/CMakeLists.txt	2021-02-23 17:02:16.611332509 -0800
++++ Box2D-2.3.1/Box2D/CMakeLists.txt	2021-02-24 15:30:41.283150167 -0800
 @@ -14,7 +14,9 @@ option(BOX2D_BUILD_SHARED "Build Box2D s
  option(BOX2D_BUILD_STATIC "Build Box2D static libraries" ON)
  option(BOX2D_BUILD_EXAMPLES "Build Box2D examples" ON)
@@ -87,7 +88,7 @@ diff -urp Box2D-2.3.1.orig/Box2D/CMakeLists.txt Box2D-2.3.1/Box2D/CMakeLists.txt
  endif(BOX2D_INSTALL_DOC)
 diff -urp Box2D-2.3.1.orig/Box2D/Testbed/CMakeLists.txt Box2D-2.3.1/Box2D/Testbed/CMakeLists.txt
 --- Box2D-2.3.1.orig/Box2D/Testbed/CMakeLists.txt	2014-04-05 17:43:12.000000000 -0700
-+++ Box2D-2.3.1/Box2D/Testbed/CMakeLists.txt	2021-02-23 17:02:16.611332509 -0800
++++ Box2D-2.3.1/Box2D/Testbed/CMakeLists.txt	2021-02-24 15:30:41.283150167 -0800
 @@ -3,9 +3,12 @@ add_definitions( -DFREEGLUT_EXPORTS -DFR
  
  # Define the framework files.
