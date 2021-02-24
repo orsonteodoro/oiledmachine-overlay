@@ -33,7 +33,7 @@ LINUX_TIMESTAMP=1510512373
 
 IUSE="+cfs disable_debug +genpatches +kernel-gcc-patch muqss pds \
 +O3 rt tresor tresor_aesni tresor_i686 tresor_sysfs tresor_x86_64 uksm"
-REQUIRED_USE="
+REQUIRED_USE+="
 	^^ ( cfs muqss pds )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_aesni? ( tresor )

@@ -22,10 +22,10 @@ K_MAJOR=$(ver_cut 1 ${PV})
 K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
 MUQSS_VER="0.196"
 PATCH_ALLOW_O3_COMMIT="4edc8050a41d333e156d2ae1ed3ab91d0db92c7e"
-PATCH_CK_COMMIT_B="5b6cd7cfe6cf6e1263b0a5d2ee461c8058b76213" # bottom / oldest
-PATCH_CK_COMMIT_T="7acac2e4000e75f3349106a8847cf1021651446b" # top / newest
-PATCH_FUTEX_COMMIT_B="1ade6c3ea42b794a49296a486ac8ad780d1faf46" # bottom / oldest
-PATCH_FUTEX_COMMIT_T="dee34186c97c4b224d97f16bf1bbd75c2ea2492e" # top / newest
+PATCH_CK_COMMIT_B="5b6cd7cfe6cf6e1263b0a5d2ee461c8058b76213" # bottom / newest
+PATCH_CK_COMMIT_T="7acac2e4000e75f3349106a8847cf1021651446b" # top / oldest
+PATCH_FUTEX_COMMIT_B="1ade6c3ea42b794a49296a486ac8ad780d1faf46" # bottom / newest
+PATCH_FUTEX_COMMIT_T="dee34186c97c4b224d97f16bf1bbd75c2ea2492e" # top / oldest
 PATCH_KGCCP_COMMIT="cbf238bae1a5132b8b35392f3f3769267b2acaf5"
 PATCH_TRESOR_V="3.18.5"
 PATCH_ZENSAUCE_COMMITS=\
@@ -52,49 +52,30 @@ d28734240cb56a0efb60b13ecd7f33141da41314 \
 f6b72de6bd17972cee50c4ce97b67954048833de \
 a7c2e93c81a96375414db26fdd18cb9fae8421b9 \
 376d7ed3c04b5576fe753c0dbe588a423c8be9c3"
-PATCH_ZENTUNE_COMMIT_C="3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0"
-PATCH_ZENTUNE_COMMIT_B="${PATCH_ZENTUNE_COMMIT_C}" # bottom / oldest
-PATCH_ZENTUNE_COMMIT_T="${PATCH_ZENTUNE_COMMIT_C}" # top / newest
-PATCH_ZENTUNE_MUQSS_P0="6c8fd1641dea5418c68dad4bf48d2d128a2a13e5"
-PATCH_ZENTUNE_MUQSS_P1="dce8f01fd3d28121e3bf215255c5eded3855e417"
-PATCH_ZENTUNE_MUQSS_P2="3ca137b68d689fcb1c5cadad1416c7791d84d48e"
-PATCH_ZENTUNE_MUQSS_P3="d1bebeb959a56324fe436443ea2f21a8391632d9"
-ZENTUNE_MUQSS_SRC_URI_BASE="https://github.com/torvalds/linux/commit/"
-PATCH_ZENTUNE_MUQSS_F0=\
-"zen-tune-muqss-${K_MAJOR_MINOR}-${PATCH_ZENTUNE_MUQSS_P0}.patch"
-PATCH_ZENTUNE_MUQSS_F1=\
-"zen-tune-muqss-${K_MAJOR_MINOR}-${PATCH_ZENTUNE_MUQSS_P1}.patch"
-PATCH_ZENTUNE_MUQSS_F2=\
-"zen-tune-muqss-${K_MAJOR_MINOR}-${PATCH_ZENTUNE_MUQSS_P2}.patch"
-PATCH_ZENTUNE_MUQSS_F3=\
-"zen-tune-muqss-${K_MAJOR_MINOR}-${PATCH_ZENTUNE_MUQSS_P3}.patch"
-ZENTUNE_MUQSS_SRC_URI="
-	${ZENTUNE_MUQSS_SRC_URI_BASE}${PATCH_ZENTUNE_MUQSS_P0}.patch \
-		-> ${PATCH_ZENTUNE_MUQSS_F0}
-	${ZENTUNE_MUQSS_SRC_URI_BASE}${PATCH_ZENTUNE_MUQSS_P1}.patch \
-		-> ${PATCH_ZENTUNE_MUQSS_F1}
-	${ZENTUNE_MUQSS_SRC_URI_BASE}${PATCH_ZENTUNE_MUQSS_P2}.patch \
-		-> ${PATCH_ZENTUNE_MUQSS_F2}
-	${ZENTUNE_MUQSS_SRC_URI_BASE}${PATCH_ZENTUNE_MUQSS_P3}.patch \
-		-> ${PATCH_ZENTUNE_MUQSS_F3}
-"
-ZENTUNE_COMMITS="
-	${PATCH_ZENTUNE_MUQSS_P0}
-	${PATCH_ZENTUNE_MUQSS_P1}
-	${PATCH_ZENTUNE_MUQSS_P2}
-	${PATCH_ZENTUNE_MUQSS_P3}
-"
+
+# top is oldest, bottom is newest
+# TODO: Split patch like in newer versions
+PATCH_ZENTUNE_COMMITS=\
+"3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0"
+
+# top is oldest, bottom is newest
+PATCH_ZENTUNE_MUQSS_COMMITS=\
+"6c8fd1641dea5418c68dad4bf48d2d128a2a13e5 \
+dce8f01fd3d28121e3bf215255c5eded3855e417 \
+3ca137b68d689fcb1c5cadad1416c7791d84d48e \
+d1bebeb959a56324fe436443ea2f21a8391632d9"
+
 PATCH_ZENSAUCE_BL="
 	${PATCH_ALLOW_O3_COMMIT}
 	${PATCH_KGCCP_COMMIT}
-	${ZENTUNE_COMMITS}
+	${PATCH_ZENTUNE_COMMITS}
 "
 
-IUSE="bmq +cfs disable_debug +genpatches +kernel-gcc-patch muqss +O3 \
+IUSE+=" bmq +cfs disable_debug +genpatches +kernel-gcc-patch muqss +O3 \
 futex-wait-multiple tresor rt tresor_aesni tresor_i686 tresor_sysfs \
 tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-sauce \
 -zen-tune zen-tune-muqss"
-REQUIRED_USE="
+REQUIRED_USE+="
 	^^ ( bmq cfs muqss )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
 	tresor_aesni? ( tresor )
@@ -174,8 +155,9 @@ SRC_URI+=" bmq? ( ${BMQ_SRC_URI} )
 		${TRESOR_SYSFS_SRC_URI}
 	   )
 	   uksm? ( ${UKSM_SRC_URI} )
-	   zen-tune-muqss? ( ${ZENTUNE_MUQSS_SRC_URI} )
-	   zen-sauce? ( ${ZENSAUCE_URIS} )"
+	   zen-sauce? ( ${ZENSAUCE_URIS} )
+	   zen-tune? ( ${ZENTUNE_URIS} )
+	   zen-tune-muqss? ( ${ZENTUNE_MUQSS_URIS} )"
 
 # @FUNCTION: ot-kernel_pkg_setup_cb
 # @DESCRIPTION:
@@ -337,15 +319,6 @@ function ot-kernel_filter_patch_cb() {
 		_tpatch "${PATCH_OPS}" "${path}" 2 0 ""
 		_dpatch "${PATCH_OPS}" \
 			"${FILESDIR}/uksm-5.4-rebase-for-5.4.85.patch"
-	elif [[ "${path}" == "${ZENTUNE_MUQSS_VIRTUAL_PATCH}" ]] ; then
-		_dpatch "${PATCH_OPS}" \
-			"${DISTDIR}/${${PATCH_ZENTUNE_MUQSS_F0}}"
-		_dpatch "${PATCH_OPS}" \
-			"${DISTDIR}/${${PATCH_ZENTUNE_MUQSS_F0}}"
-		_dpatch "${PATCH_OPS}" \
-			"${DISTDIR}/${${PATCH_ZENTUNE_MUQSS_F0}}"
-		_dpatch "${PATCH_OPS}" \
-			"${DISTDIR}/${${PATCH_ZENTUNE_MUQSS_F0}}"
 	else
 		_dpatch "${PATCH_OPS}" "${path}"
 	fi

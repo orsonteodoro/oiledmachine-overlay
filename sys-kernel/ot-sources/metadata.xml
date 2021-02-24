@@ -145,6 +145,15 @@
 
   </upstream>
   <use>
+    <flag name="bbrv2">Patches the kernel with BBRv2 TCP congestion control for
+      around less than 1% retranssmisson (comparable to CUBIC) versus
+      BBRv1 5% retransmission, at the cost of around 10 mbps relative to
+      BBRv1.  BBRv1 which is about double the throughput than CUBIC on average.
+      BBRv2 is above CUBIC in throughput.
+
+      This benefits the most with people with bad connections and 
+      those under pay per mb/gb plan.  Gamers/streamers benefit marginally
+      from having fewer random skips or losses.
     <flag name="bmq">Patches the kernel to use BMQ CPU scheduler, a more
       simple scheduler.</flag>
     <flag name="bmq-quick-fix">Patches the kernel with fixes to BMQ.</flag>
@@ -204,10 +213,12 @@
     <flag name="disable_debug">Installs scripts to disable debugging, tracing,
       verbose output or related code paths.</flag>
     <flag name="genpatches">Applies the genkernel patch set.</flag>
-    <flag name="futex-wait-multiple">Patches ther kernel with
+    <flag name="futex-wait-multiple">Patches the kernel with
       FUTEX_WAIT_MULTIPLE futex syscall option which may be used in the
       wine-proton package and in Steam Play (based on Proton).  It may reduce 
       CPU usage by less than 5%.</flag>
+    <flag name="futex2">Patches the kernel with futex2 syscalls.
+      This may reduce the CPU usage by less than 5%.</flag>
     <flag name="kernel-gcc-patch">Patches the kernel for more CPU
       microarchitectures</flag>
     <flag name="muqss">Patches the kernel with Con Kolivas patchset and
@@ -236,11 +247,7 @@
     <flag name="tresor_x86_64-256-bit-key-support">Adds 192- and 256-bit
       AES key support to the 64-bit sse2 version of TRESOR.</flag>
     <flag name="uksm">Patches the kernel with the Ultra Kernel Samepage
-      Merging, a type of memory page deduper algorithm.  UKSM does transparent
-      merging without any need for special changes to programs.  In constrast,
-      the stock KSM requires apps utilize the madvise() API call with the
-      MADV_MERGEABLE flag and which many programs or libraries do not utilize
-      with change to /sys/kernel/mm/ksm/run set to 1.
+      Merging, a type of memory page deduper algorithm.
 
       Using it may be insecure.  For details, see
       https://en.wikipedia.org/wiki/Kernel_same-page_merging#Security_risks</flag>
@@ -269,10 +276,21 @@
       The zen-sauce set contains patches that add drivers or functionality
       related to gaming, laptops, optimizations, etc.
      </flag>
-    <flag name="zen-tune">Patches the kernel with Zen Interactive
-      Tuning.</flag>
+    <flag name="zen-tune">Patches the kernel with some Zen Interactive
+      Tuning, particularly those marked INTERACTIVE.
+
+      Disabled commits:
+      "ZEN: INTERACTIVE: Use BFQ as our elevator"
+      Reason:  Can set via custom init script to set
+      /sys/block/sd*/queue/scheduler per device.  BFQ is suboptimal for
+      SSD.
+
+      You may manually add them back by /etc/portage/patches.  This is
+      to allow people a choice.
+    </flag>
     <flag name="zen-tune-muqss">Patches the kernel with Zen Interactive
       Tuning timings for MuQSS that may improve game FPS performance by
-      10% along with emulators.</flag>
+      10% along with emulators.  Only those commits marked INTERACTIVE
+      in the muqss branch will be used.</flag>
   </use>
 </pkgmetadata>

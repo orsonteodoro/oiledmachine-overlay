@@ -21,6 +21,7 @@
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-4.14.html
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.4.html
 #   https://dev.gentoo.org/~mpagano/genpatches/releases-5.10.html
+#   https://dev.gentoo.org/~mpagano/genpatches/releases-5.11.html
 #   The person below who updates the release links above lag. See instead:
 #     https://gitweb.gentoo.org/repo/gentoo.git/tree/sys-kernel/gentoo-sources
 # kernel_gcc_patch:
@@ -28,36 +29,48 @@
 # MUQSS CPU Scheduler:
 #   https://github.com/torvalds/linux/compare/v4.14...ckolivas:4.14-ck
 #   https://github.com/torvalds/linux/compare/v5.4...ckolivas:5.4-ck
+#   https://github.com/torvalds/linux/compare/v5.10...ckolivas:5.10-ck
+#   https://github.com/torvalds/linux/compare/v5.11...ckolivas:5.11-ck
 # O3 (Allow O3):
 #   5.4 https://github.com/torvalds/linux/commit/4edc8050a41d333e156d2ae1ed3ab91d0db92c7e
-#   5.10 https://github.com/torvalds/linux/commit/d0ee207cac1217d2b111bef6f0f9581a10b35f6c
+#   5.10 https://github.com/torvalds/linux/commit/228e792a116fd4cce8856ea73f2958ec8a241c0c
+#   5.11 https://github.com/torvalds/linux/commit/a09abe2fc9c447bcf7c7f9888d63fb448da29ed6
 # O3 (Optimize Harder):
 #   4.9 (O3) https://github.com/torvalds/linux/commit/7d0295dc49233d9ddff5d63d5bdc24f1e80da722
 #   circa 2018 (infiniband O3 read overflow fix) \
 #     https://github.com/torvalds/linux/commit/562a14babcd56efc2f51c772cb2327973d8f90ad
 # PDS CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/PDS
-# PREEMPT_RT
+# PREEMPT_RT:
 #  https://wiki.linuxfoundation.org/realtime/start
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/4.14/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.4/
 #  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10/
+#  http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.11/
 # Project C CPU Scheduler:
 #   https://cchalpha.blogspot.com/search/label/Project%20C
 # TRESOR:
 #   https://www1.informatik.uni-erlangen.de/tresor
 # UKSM:
 #   https://github.com/dolohow/uksm
-# zen-kernel 5.4/futex-backports
+# zen-kernel 5.4/futex-backports:
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/futex-backports
-# zen-kernel 5.{8..10}/futex-multiple-wait-v3
+# zen-kernel 5.{10..11}/futex-multiple-wait-v3:
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/futex-multiple-wait-v3
+# zen-kernel 5.{10..11}/futex2:
+#   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/futex2
+# zen-kernel 5.{10..11}/bbr2:
+#   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/bbr2
 # zen-tune:
 #   https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
 #     in particular 3e05ad861b9b2b61a1cbfd0d98951579eb3c85e0
 #   https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
 #     in particular in between \
-#     [890ac858741436a40c274efb3514c5f6a96c7c80^..b7b24b494b62e02c21a9a349da2d036849f9dd8b] \
+#     [dda238180bacda4c39f71dd16d754a48da38e676,e1b127aa22601f9cb2afa3daad4c69e6a42a89f5] \
+#     [exclusive-old^,inclusive-new] [top,bottom]
+#   https://github.com/torvalds/linux/compare/v5.11...zen-kernel:5.11/zen-sauce
+#     in particular in between \
+#     [cc1e8edfe1969c80fc006b8c82f682ca744a7c44,791993e1c1fd68c5c05295efabebb8b4b3579f3a] \
 #     [exclusive-old^,inclusive-new] [top,bottom]
 
 case ${EAPI:-0} in
@@ -76,7 +89,7 @@ esac
 # For kernel license templates see:
 # https://github.com/torvalds/linux/tree/master/LICENSES
 # See also https://github.com/torvalds/linux/blob/master/Documentation/process/license-rules.rst
-LICENSE="GPL-2 Linux-syscall-note" #  Applies to whole source  \
+LICENSE+=" GPL-2 Linux-syscall-note" #  Applies to whole source  \
 #   that are GPL-2 compatible.  See paragraph 3 of the above link for details.
 # The following licenses applies to individual files:
 LICENSE+=" ZLIB" # See lib/zlib_dfltcc/dfltcc.c, ...
@@ -161,6 +174,38 @@ gen_zensauce_uris()
 	echo "$s"
 }
 
+# @FUNCTION: gen_zentune_uris
+# @DESCRIPTION:
+# Generates zen-tune interactive URIs
+ZENTUNE_BASE_URI="https://github.com/torvalds/linux/commit/"
+gen_zentune_uris()
+{
+	local commits=(${@})
+	local len="${#commits[@]}"
+	local s=""
+	for (( c=0 ; c < ${len} ; c+=1 )) ; do
+		local id="${commits[c]}"
+		s=" ${s} ${ZENTUNE_BASE_URI}${id}.patch -> zen-tune-${K_MAJOR_MINOR}-${id}.patch"
+	done
+	echo "$s"
+}
+
+# @FUNCTION: gen_zentune_muqss_uris
+# @DESCRIPTION:
+# Generates zen-tune interactive muqss URIs
+ZENTUNE_MUQSS_BASE_URI="https://github.com/torvalds/linux/commit/"
+gen_zentune_muqss_uris()
+{
+	local commits=(${@})
+	local len="${#commits[@]}"
+	local s=""
+	for (( c=0 ; c < ${len} ; c+=1 )) ; do
+		local id="${commits[c]}"
+		s=" ${s} ${ZENTUNE_MUQSS_BASE_URI}${id}.patch -> zen-tune-muqss-${K_MAJOR_MINOR}-${id}.patch"
+	done
+	echo "$s"
+}
+
 BMQ_FN="${BMQ_FN:=v${K_MAJOR_MINOR}_bmq${PATCH_BMQ_VER}.patch}"
 BMQ_BASE_URI="https://gitlab.com/alfredchen/bmq/raw/master/${K_MAJOR_MINOR}/"
 BMQ_SRC_URI="${BMQ_BASE_URI}${BMQ_FN}"
@@ -182,6 +227,26 @@ FUTEX_WAIT_MULTIPLE_FN=\
 "futex-multiple-wait-${K_MAJOR_MINOR}-${FUTEX_WAIT_MULTIPLE_COMMITS_SHORT}.patch"
 FUTEX_WAIT_MULTIPLE_SRC_URI=\
 "${FUTEX_WAIT_MULTIPLE_BASE_URI}.patch -> ${FUTEX_WAIT_MULTIPLE_FN}"
+
+FUTEX2_COMMITS="${PATCH_FUTEX2_COMMIT_T}^..${PATCH_FUTEX2_COMMIT_B}" # [oldest,newest] [top,bottom]
+FUTEX2_COMMITS_SHORT=\
+"${PATCH_FUTEX2_COMMIT_T:0:7}-${PATCH_FUTEX2_COMMIT_B:0:7}" # [oldest,newest] [top,bottom]
+FUTEX2_BASE_URI=\
+"https://github.com/torvalds/linux/compare/${FUTEX2_COMMITS}"
+FUTEX2_FN=\
+"futex2-${K_MAJOR_MINOR}-${FUTEX2_COMMITS_SHORT}.patch"
+FUTEX2_SRC_URI=\
+"${FUTEX2_BASE_URI}.patch -> ${FUTEX2_FN}"
+
+BBRV2_COMMITS="${PATCH_BBRV2_COMMIT_T}^..${PATCH_BBRV2_COMMIT_B}" # [oldest,newest] [top,bottom]
+BBRV2_COMMITS_SHORT=\
+"${PATCH_BBRV2_COMMIT_T:0:7}-${PATCH_BBRV2_COMMIT_B:0:7}" # [oldest,newest] [top,bottom]
+BBRV2_BASE_URI=\
+"https://github.com/torvalds/linux/compare/${BBRV2_COMMITS}"
+BBRV2_FN=\
+"bbrv2-${K_MAJOR_MINOR}-${BBRV2_COMMITS_SHORT}.patch"
+BBRV2_SRC_URI=\
+"${BBRV2_BASE_URI}.patch -> ${BBRV2_FN}"
 
 GENPATCHES_URI_BASE_URI="https://dev.gentoo.org/~mpagano/genpatches/tarballs/"
 GENPATCHES_MAJOR_MINOR_REVISION="${K_MAJOR_MINOR}-${K_GENPATCHES_VER}"
@@ -302,17 +367,13 @@ TRESOR_RESEARCH_PDF_SRC_URI=\
 TRESOR_README_SRC_URI="${TRESOR_README_SRC_URI} -> ${TRESOR_README_FN}"
 
 UKSM_BASE_URI=\
-"https://raw.githubusercontent.com/dolohow/uksm/master/v${K_MAJOR_MINOR}.x/"
+"https://raw.githubusercontent.com/dolohow/uksm/master/v${K_MAJOR}.x/"
 UKSM_FN="uksm-${K_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
 ZENSAUCE_URIS=$(gen_zensauce_uris "${PATCH_ZENSAUCE_COMMITS}")
-
-ZENTUNE_FN="zen-tune-${K_MAJOR_MINOR}.patch"
-ZENTUNE_COMMITS="${PATCH_ZENTUNE_COMMIT_T}^..${PATCH_ZENTUNE_COMMIT_B}" # [oldest,newest] [top,bottom]
-ZENTUNE_MUQSS_VIRTUAL_PATCH="zen-tune-muqss"
-ZENTUNE_BASE_URI="https://github.com/torvalds/linux/commit/"
-ZENTUNE_SRC_URI="${ZENTUNE_BASE_URI}${ZENTUNE_COMMITS}.patch -> ${ZENTUNE_FN}"
+ZENTUNE_URIS=$(gen_zentune_uris "${PATCH_ZENTUNE_COMMITS}")
+ZENTUNE_MUQSS_URIS=$(gen_zentune_muqss_uris "${PATCH_ZENTUNE_MUQSS_COMMITS}")
 
 if ver_test ${PV} -eq ${K_MAJOR_MINOR} ; then
 KERNEL_NO_POINT_RELEASE="1"
@@ -435,7 +496,16 @@ function ot-kernel_pkg_pretend() {
 # Reports the estimated End Of Life (EOL).  Sourced from
 # https://www.kernel.org/category/releases.html
 function _report_eol() {
-	if [[ "${K_MAJOR_MINOR}" == "5.4" ]] ; then
+	if [[ "${K_MAJOR_MINOR}" == "5.10" ]] ; then
+		einfo \
+"\n\
+The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is\n\
+Dec 2022.\n\
+\n\
+Use the virtual/ot-sources-lts meta package to ensure proper updates in the\n\
+same major.minor branch.\n\
+"
+	elif [[ "${K_MAJOR_MINOR}" == "5.4" ]] ; then
 		einfo \
 "\n\
 The expected End Of Life (EOL) for the ${K_MAJOR_MINOR} kernel series is\n\
@@ -752,6 +822,24 @@ function apply_futex_wait_multiple() {
 	_fpatch "${DISTDIR}/${FUTEX_WAIT_MULTIPLE_FN}"
 }
 
+# @FUNCTION: apply_futex2
+# @DESCRIPTION:
+# Adds a new futex2 syscalls.  It may shave of <5% CPU usage.
+function apply_futex2() {
+	_fpatch "${DISTDIR}/${FUTEX2_FN}"
+}
+
+# @FUNCTION: apply_bbrv2
+# @DESCRIPTION:
+# Adds BBRv2 to have ~1% retransmits in comparison to BBRv1 at ~5%
+# the expense of some bandwidth (~10 mbps) relative to BBR but significantlly
+# better than CUBIC.  BBRv1 will will still maintain ~38% throughput after
+# some packet loss 3% but CUBIC will have <1% thoughput when there is a
+# few percent of packet loss.
+function apply_bbrv2() {
+	_fpatch "${DISTDIR}/${BBRV2_FN}"
+}
+
 # @FUNCTION: _filter_genpatches
 # @DESCRIPTION:
 # Applies a genpatch if not blacklisted.
@@ -996,16 +1084,24 @@ function apply_vanilla_point_releases() {
 
 # @FUNCTION: apply_zentune
 # @DESCRIPTION:
-# Apply the ZenTune patches.
+# Apply some of the ZenTune patches.
 function apply_zentune() {
-	_fpatch "${T}/${ZENTUNE_FN}"
+	einfo "Applying some of the zen-tune patches"
+	for x in ${ZENTUNE_COMMITS} ; do
+		local id="${x}"
+		_fpatch "${DISTDIR}/zen-tune-${K_MAJOR_MINOR}-${id}.patch"
+	done
 }
 
 # @FUNCTION: apply_zentune_muqss
 # @DESCRIPTION:
 # Apply the Zen timing MuQSS patches.
 function apply_zentune_muqss() {
-	_fpatch "${ZENTUNE_MUQSS_VIRTUAL_PATCH}"
+	einfo "Applying the zen-tune interactive MuQSS patches"
+	for x in ${PATCH_ZENTUNE_MUQSS_COMMITS} ; do
+		local id="${x}"
+		_fpatch "${DISTDIR}/zen-tune-muqss-${K_MAJOR_MINOR}-${id}.patch"
+	done
 }
 
 
@@ -1099,6 +1195,12 @@ fail to compile."
 		fi
 	fi
 
+	if has futex2 ${IUSE_EFFECTIVE} ; then
+		if use futex2 ; then
+			apply_futex2
+		fi
+	fi
+
 	if use uksm ; then
 		apply_uksm
 	fi
@@ -1162,6 +1264,12 @@ fail to compile."
 	if has zen-sauce ${IUSE_EFFECTIVE} ; then
 		if use zen-sauce ; then
 			apply_zensauce
+		fi
+	fi
+
+	if has bbrv2 ${IUSE_EFFECTIVE} ; then
+		if use bbrv2 ; then
+			apply_bbrv2
 		fi
 	fi
 

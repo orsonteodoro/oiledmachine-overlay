@@ -3,15 +3,15 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: ot-kernel-v5.10.eclass
+# @ECLASS: ot-kernel-v5.11.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @AUTHOR:
 # Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7
-# @BLURB: Eclass for patching the 5.10.x kernel
+# @BLURB: Eclass for patching the 5.11.x kernel
 # @DESCRIPTION:
-# The ot-kernel-v5.10 eclass defines specific applicable patching for the 5.10.x
+# The ot-kernel-v5.11 eclass defines specific applicable patching for the 5.11.x
 # linux kernel.
 
 DISABLE_DEBUG_V="1.1"
@@ -19,81 +19,83 @@ EXTRAVERSION="-ot"
 K_GENPATCHES_VER="${K_GENPATCHES_VER:?1}"
 K_MAJOR=$(ver_cut 1 ${PV})
 K_MAJOR_MINOR=$(ver_cut 1-2 ${PV})
-MUQSS_VER="0.205"
-PATCH_ALLOW_O3_COMMIT="228e792a116fd4cce8856ea73f2958ec8a241c0c"
-PATCH_CK_COMMIT_B="13f5f8abb25489af1cc019a4a3bc83cced6da67c" # bottom / newest
-PATCH_CK_COMMIT_T="35f6640868573a07b1291c153021f5d75749c15e" # top / oldest
-PATCH_FUTEX_COMMIT_B="f678870308608b485d1c771509208c93eab8538a" # bottom / newest
-PATCH_FUTEX_COMMIT_T="9fd101849c8a3324c6038ef31fe08a528f7a6fe4" # top / oldest
-PATCH_FUTEX2_COMMIT_B="65d8ec592b14a8c75ce2a04bfef5a188cd279d00" # bottom / newest
-PATCH_FUTEX2_COMMIT_T="4f6d01d9753e7ff0e6ca0ab6082f8b75256cdb57" # top / oldest
-PATCH_BBRV2_COMMIT_B="00ac5e0aceb8f6d56065072ddc71b7324bbb48ce" # bottom / newest
-PATCH_BBRV2_COMMIT_T="c13e23b9782c9a7f4bcc409bfde157e44a080e82" # top / oldest
-PATCH_KGCCP_COMMIT="986ea2483af3ba52c0e6c9e647c05c753a548fb8"
+MUQSS_VER="0.208"
+PATCH_ALLOW_O3_COMMIT="a09abe2fc9c447bcf7c7f9888d63fb448da29ed6"
+PATCH_CK_COMMIT_B="83a25030c257da76640039e8786fc11bbf3b5595" # bottom / newest
+PATCH_CK_COMMIT_T="18247bb9a2aca72363326f63e868b7cfda0d771c" # top / oldest
+PATCH_FUTEX_COMMIT_B="d506c2e27c90e510ca914febfe63a319f89e9eb7" # bottom / newest
+PATCH_FUTEX_COMMIT_T="8f408a19dc45e6dc1c0056938358eda0618f0d7d" # top / oldest
+PATCH_FUTEX2_COMMIT_B="6a8619d5ff5476c603ba41789999f1695751f5d9" # bottom / newest
+PATCH_FUTEX2_COMMIT_T="a64bf661d4fc6dbfde640bf002eae2e22884a419" # top / oldest
+PATCH_BBRV2_COMMIT_B="5ded94b0a37ea404ce97aa284b7c8dbfcc39d788" # bottom / newest
+PATCH_BBRV2_COMMIT_T="b69dc2803d9603ad726c7f091bc79b1f5666b415" # top / oldest
+PATCH_KGCCP_COMMIT="864b64e0d84e9d81a224e3f6319f7495acd743c1"
 PATCH_TRESOR_V="3.18.5"
 # To update some of these sections you can
 # wget -O - https://github.com/torvalds/linux/compare/Y^..X.patch \
 #   | grep -E -o -e "From [0-9a-z]{40}"
 PATCH_ZENSAUCE_COMMITS=\
-"dda238180bacda4c39f71dd16d754a48da38e676 \
-9a2e0d950bfd77fb51a42a5fc7e81a9187606c38 \
-5b3d9f2372600c3b908b1bd0e8c9b8c6ed351fa2 \
-986ea2483af3ba52c0e6c9e647c05c753a548fb8 \
-228e792a116fd4cce8856ea73f2958ec8a241c0c \
-b81ab9b618d694217a54b5d2de70c7f37d3f3e07 \
-4ace3c6c50dbd58ee5f200a5461289d0491873a6 \
-0bf1b8c445de4481942ca8ace8dc209ece865bd3 \
-513af58e2e4aa8267b1eebc1cd156e3e2a2a33e3 \
-28eaff69b01d9248cac394cce37361d0d6a52714 \
-973d42f99af15b2e610204fbe8252251ed7cc8c1 \
-890ac858741436a40c274efb3514c5f6a96c7c80 \
-0cbcc41992693254e5e4c7952853c6aa7404f28e \
-9b6c7af596e209356850e0991969df68f396aea6 \
-b5e9497d44347c16e732f6ea8838a79a64694b36 \
-7e5629d0fc7ed407babc036c1bc7910d9c73dbef \
-0e9fea26940d7e6e784dcf57909428138b8109e8 \
-fade4cc2bf56ce6c563c04764224b6b84a45587f \
-b7b24b494b62e02c21a9a349da2d036849f9dd8b \
-b7b984993f303b89dd738c26f8742cfcf0ac98ea \
-8cd3f16931b2a05a693bbfc093d44fd504c67700 \
-843f85a8fb80f3b8e4de4ca3c0cab34730cc1b33 \
-5dc3c67b4c2497187c2e4331a4822cb52db9aa65 \
-3f2c3d43bb1330953e090c01f8dfb6a4701bbac4 \
-223b7e095efa96045c164f3bf3576e1d1f599946 \
-2b52b792670d6c1a93d086a10c6872575e849c17 \
-e1b127aa22601f9cb2afa3daad4c69e6a42a89f5"
-
-#--
-
-# Disabled 0cbcc41992693254e5e4c7952853c6aa7404f28e : ZEN: INTERACTIVE: Use BFQ as our elevator
-# Reason: It's better to change via sysfs.  Benchmarks show throughput performance degration with SSD with BFQ.
+"cc1e8edfe1969c80fc006b8c82f682ca744a7c44 \
+4680ef2eb0d9e5e2b7e3db865bb98c1deb7aa2fa \
+8ac6e5f83e52b69ad7847264b87934333ec99b1f \
+864b64e0d84e9d81a224e3f6319f7495acd743c1 \
+a09abe2fc9c447bcf7c7f9888d63fb448da29ed6 \
+456aec2082a997b3bd1e27092eab880fc140119c \
+0970087163d7ef4f3704e2947b36945b761f6115 \
+56a15c518cdc7cc7f1691fd935e6d5b63124799c \
+330c86c88fd849b55ceaa52b7a7fd19e92e4bec7 \
+0ac9a9af0d38e9c4263958108a0497e8c4052234 \
+b62736d62bf26d25ff0f294ce00c259d4b4fa251 \
+6127d783a34c80525155e8778efd7324774a28cd \
+05ce2f5618f9807fe88b23f4fb5a2788d05d6c65 \
+a9c7a81daeb8a2ab7ce5015e6b6ed645097f1bd9 \
+e0360b4bfc99262c8cd69774163d0ef4625c122c \
+2f4f3181c463b84e407a456576e2cfcf01f6077e \
+cb1500c08bc621a5bc20c1ed5b3186637960d13e \
+3d6ca66a94231013f297ee77351ef1912c66734f \
+444c427decabd7ebade07e4d98d9cb874c6bc7d4 \
+2d56caddc29a9c335074dc7d3146dbc70aa712b4 \
+3b7d035d9e064e2e28f623a66247c829b335e7a4 \
+e1dc7c94d318d79aa223568f4044dd9bad178e9d \
+fe8a7ad23ed4a990d1a4ea145e103671f1477c96 \
+791993e1c1fd68c5c05295efabebb8b4b3579f3a"
 
 # top / oldest, bottom / newest
+# Diced to let user can choose between UKSM, KSWAPD, OOMD
+PATCH_DEFER_MADVISE_COMMIT=\
+"444c427decabd7ebade07e4d98d9cb874c6bc7d4"
 PATCH_ZENTUNE_COMMITS=\
-"890ac858741436a40c274efb3514c5f6a96c7c80 \
-9b6c7af596e209356850e0991969df68f396aea6 \
-b5e9497d44347c16e732f6ea8838a79a64694b36 \
-7e5629d0fc7ed407babc036c1bc7910d9c73dbef \
-0e9fea26940d7e6e784dcf57909428138b8109e8 \
-fade4cc2bf56ce6c563c04764224b6b84a45587f \
-b7b24b494b62e02c21a9a349da2d036849f9dd8b"
+"2f4f3181c463b84e407a456576e2cfcf01f6077e \
+cb1500c08bc621a5bc20c1ed5b3186637960d13e \
+3d6ca66a94231013f297ee77351ef1912c66734f \
+444c427decabd7ebade07e4d98d9cb874c6bc7d4 \
+444c427decabd7ebade07e4d98d9cb874c6bc7d4 \
+2d56caddc29a9c335074dc7d3146dbc70aa712b4 \
+3b7d035d9e064e2e28f623a66247c829b335e7a4 \
+e1dc7c94d318d79aa223568f4044dd9bad178e9d \
+fe8a7ad23ed4a990d1a4ea145e103671f1477c96"
 PATCH_ZENSAUCE_BL="
 	${PATCH_ALLOW_O3_COMMIT}
 	${PATCH_KGCCP_COMMIT}
 	${PATCH_ZENTUNE_COMMITS}
 "
 
+# --
+
+# Disabled cb1500c08bc621a5bc20c1ed5b3186637960d13e : ZEN: INTERACTIVE: Use BFQ as our elevator
+# Reason: It's better to change via sysfs.  Benchmarks show performance throughput degration with SSD with BFQ.
+
 # top is oldest, bottom is newest
 PATCH_ZENTUNE_MUQSS_COMMITS=\
-"4d8602abd84dbc4219e337331f7d8bd7a91ce8c6 \
-aa17b2d1d0c2814b2cdd33e2b1cf171b5ac30b86 \
-9089e95bb3d0e64dc64ae90eb509da5075f49248 \
-16b6c9f2c576d43096a216a802c61573286ae5a7"
+"e544d7be951a96fbb5c6ee839726c3d7754b7509 \
+097d88ec2dd7623b2791cf1d94f6905701669469 \
+2b541bf1e5e27c51f96326f6c9d6c8abcf682d93 \
+a09dda608cbadc92964cb29cf2fef061200e08c2"
 
-IUSE+=" bbrv2 +cfs disable_debug futex-wait-multiple futex2 +genpatches \
-+kernel-gcc-patch muqss +O3 prjc rt tresor tresor_aesni tresor_i686 \
-tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support uksm zen-sauce \
--zen-tune zen-tune-muqss"
+IUSE+=" bbrv2 +cfs disable_debug futex-wait-multiple futex2 \
++genpatches +kernel-gcc-patch muqss +O3 prjc rt tresor tresor_aesni \
+tresor_i686 tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support \
+uksm zen-sauce -zen-tune zen-tune-muqss"
 REQUIRED_USE+="
 	^^ ( cfs muqss prjc )
 	tresor? ( ^^ ( tresor_aesni tresor_i686 tresor_x86_64 ) )
