@@ -1417,6 +1417,12 @@ features are mutually exclusive when TRESOR is being used.\n\
 \n
 TRESOR-XTS is limited to 64-bit arches and 256-bit keys, but 128-bit key for\n\
 the crypto key."
+			ewarn \
+"Using TRESOR with fscrypt is currently not supported.  The ebuild developer\n\
+is currently working towards that goal.  Changing the key in the middle\n\
+of writing may result in data loss, meaning half the data may be encrypted\n\
+with two different keys.  The fscrypt with TRESOR support will address this\n\
+problem."
 		fi
 		if use tresor_aesni ; then
 			einfo \

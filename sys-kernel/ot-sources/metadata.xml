@@ -59,6 +59,12 @@
     TRESOR for 5.x is experimental.  XTS with TRESOR is in Testing and
     may require modding.
 
+    Using TRESOR with fscrypt is currently not supported.  The ebuild
+    developer is currently working towards that goal.  Changing the key
+    in the middle of writing may result in data loss, meaning half the
+    data may be encrypted with two different keys.  The fscrypt version
+    with TRESOR support will address this problem.
+
     Only Long Term Support (LTS) kernel and those marked stable
     in kernel.org are kept.
 
