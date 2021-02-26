@@ -10,15 +10,15 @@ HOMEPAGE="http://leveldb.org/ https://github.com/google/leveldb"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86 ~amd64-fbsd ~amd64-linux \
 ~x86-linux"
-SRC_URI="https://github.com/google/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+SRC_URI="https://github.com/google/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 SLOT="0/${PV}"
 IUSE+=" +snappy +tcmalloc kernel_FreeBSD"
 # See .travis.yml for details
 SNAPPY_V="0.3.7"
 # Skipped sqlite and kyotocabinet
-CDEPEND=">=sys-devel/gcc-10"
+CDEPEND=">=sys-devel/gcc-8.4.0"
 DEPEND+=" ${CDEPEND}
-	tcmalloc? ( >=dev-util/google-perftools-2.4[${MULTILIB_USEDEP}] )
+	tcmalloc? ( >=dev-util/google-perftools-2.5[${MULTILIB_USEDEP}] )
 	snappy? (
 		>=app-arch/snappy-${SNAPPY_V}:=[${MULTILIB_USEDEP}]
 		static-libs? ( >=app-arch/snappy-${SNAPPY_V}:=[static-libs,${MULTILIB_USEDEP}] )
@@ -27,8 +27,9 @@ RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${CDEPEND}
 	>=dev-util/cmake-3.9
 	>=dev-util/ninja-0.1.3
-	>=sys-devel/clang-10"
+	>=sys-devel/clang-8"
 PATCHES=( "${FILESDIR}/${PN}-1.22-add-options.patch" )
+RESTRICT="mirror"
 
 src_prepare() {
 	multilib_copy_sources
