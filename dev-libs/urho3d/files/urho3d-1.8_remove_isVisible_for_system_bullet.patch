@@ -1,0 +1,33 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Physics/PhysicsWorld.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Physics/PhysicsWorld.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Physics/PhysicsWorld.cpp	2021-02-21 15:44:32.363055723 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Physics/PhysicsWorld.cpp	2021-02-21 15:46:41.920090337 -0800
+@@ -212,6 +212,7 @@ void PhysicsWorld::RegisterObject(Contex
+     URHO3D_ACCESSOR_ATTRIBUTE("Split Impulse", GetSplitImpulse, SetSplitImpulse, bool, false, AM_DEFAULT);
+ }
+ 
++#ifndef URHO3D_SYSTEM_BULLET
+ bool PhysicsWorld::isVisible(const btVector3& aabbMin, const btVector3& aabbMax)
+ {
+     if (debugRenderer_)
+@@ -219,6 +220,7 @@ bool PhysicsWorld::isVisible(const btVec
+     else
+         return false;
+ }
++#endif
+ 
+ void PhysicsWorld::drawLine(const btVector3& from, const btVector3& to, const btVector3& color)
+ {
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Physics/PhysicsWorld.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Physics/PhysicsWorld.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Physics/PhysicsWorld.h	2021-02-21 15:44:32.363055723 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Physics/PhysicsWorld.h	2021-02-21 15:46:44.160177377 -0800
+@@ -140,8 +140,10 @@ public:
+     /// Register object factory.
+     static void RegisterObject(Context* context);
+ 
++#ifndef URHO3D_SYSTEM_BULLET
+     /// Check if an AABB is visible for debug drawing.
+     bool isVisible(const btVector3& aabbMin, const btVector3& aabbMax) override;
++#endif
+     /// Draw a physics debug line.
+     void drawLine(const btVector3& from, const btVector3& to, const btVector3& color) override;
+     /// Log warning from the physics engine.

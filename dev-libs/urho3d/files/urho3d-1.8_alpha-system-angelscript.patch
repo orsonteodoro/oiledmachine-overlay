@@ -1,60 +1,75 @@
-diff -urp a/Source/Urho3D/AngelScript/Addons.h b/Source/Urho3D/AngelScript/Addons.h
---- a/Source/Urho3D/AngelScript/Addons.h	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/AngelScript/Addons.h	2020-01-08 10:16:50.768270091 -0800
-@@ -32,7 +32,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/AngelScript/Addons.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/AngelScript/Addons.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/AngelScript/Addons.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/AngelScript/Addons.h	2021-02-22 04:37:40.978136398 -0800
+@@ -32,7 +32,11 @@
  #include "../Container/Str.h"
  #include "../Math/StringHash.h"
  
--#include <AngelScript/angelscript.h>
++#ifdef URHO3D_SYSTEM_ANGELSCRIPT
 +#include <angelscript.h>
++#else
+ #include <AngelScript/angelscript.h>
++#endif
  
  // Adapted from Angelscript's scriptarray, scriptdictionary & scriptstdstring add-ons, but with garbage collection disabled
  
-diff -urp a/Source/Urho3D/AngelScript/APITemplates.h b/Source/Urho3D/AngelScript/APITemplates.h
---- a/Source/Urho3D/AngelScript/APITemplates.h	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/AngelScript/APITemplates.h	2020-01-08 10:16:50.768270091 -0800
-@@ -40,7 +40,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/AngelScript/APITemplates.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/AngelScript/APITemplates.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/AngelScript/APITemplates.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/AngelScript/APITemplates.h	2021-02-22 04:37:41.802168244 -0800
+@@ -40,7 +40,11 @@
  #include "../Scene/Node.h"
  #include "../UI/BorderImage.h"
  
--#include <AngelScript/angelscript.h>
++#ifdef URHO3D_SYSTEM_ANGELSCRIPT
 +#include <angelscript.h>
++#else
+ #include <AngelScript/angelscript.h>
++#endif
  #include <cstring>
  
  #ifdef _MSC_VER
-diff -urp a/Source/Urho3D/AngelScript/ScriptAPIDump.cpp b/Source/Urho3D/AngelScript/ScriptAPIDump.cpp
---- a/Source/Urho3D/AngelScript/ScriptAPIDump.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/AngelScript/ScriptAPIDump.cpp	2020-01-08 10:16:50.758269703 -0800
-@@ -28,7 +28,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/AngelScript/ScriptAPIDump.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/AngelScript/ScriptAPIDump.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/AngelScript/ScriptAPIDump.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/AngelScript/ScriptAPIDump.cpp	2021-02-22 04:36:57.344450173 -0800
+@@ -28,7 +28,11 @@
  #include "../IO/FileSystem.h"
  #include "../IO/Log.h"
  
--#include <AngelScript/angelscript.h>
++#ifdef URHO3D_SYSTEM_ANGELSCRIPT
 +#include <angelscript.h>
++#else
+ #include <AngelScript/angelscript.h>
++#endif
  
  #include "../DebugNew.h"
  
-diff -urp a/Source/Urho3D/AngelScript/ScriptFile.cpp b/Source/Urho3D/AngelScript/ScriptFile.cpp
---- a/Source/Urho3D/AngelScript/ScriptFile.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/AngelScript/ScriptFile.cpp	2020-01-08 10:16:50.778270478 -0800
-@@ -33,7 +33,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/AngelScript/ScriptFile.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/AngelScript/ScriptFile.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/AngelScript/ScriptFile.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/AngelScript/ScriptFile.cpp	2021-02-22 04:37:14.065096320 -0800
+@@ -33,7 +33,11 @@
  #include "../IO/MemoryBuffer.h"
  #include "../Resource/ResourceCache.h"
  
--#include <AngelScript/angelscript.h>
++#ifdef URHO3D_SYSTEM_ANGELSCRIPT
 +#include <angelscript.h>
++#else
+ #include <AngelScript/angelscript.h>
++#endif
  
  #include "../DebugNew.h"
  
-diff -urp a/Source/Urho3D/AngelScript/ScriptInstance.cpp b/Source/Urho3D/AngelScript/ScriptInstance.cpp
---- a/Source/Urho3D/AngelScript/ScriptInstance.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/AngelScript/ScriptInstance.cpp	2020-01-08 10:16:50.788270864 -0800
-@@ -39,7 +39,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/AngelScript/ScriptInstance.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/AngelScript/ScriptInstance.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/AngelScript/ScriptInstance.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/AngelScript/ScriptInstance.cpp	2021-02-22 04:37:33.553849473 -0800
+@@ -39,7 +39,11 @@
  #include "../Scene/Scene.h"
  #include "../Scene/SceneEvents.h"
  
--#include <AngelScript/angelscript.h>
++#ifdef URHO3D_SYSTEM_ANGELSCRIPT
 +#include <angelscript.h>
++#else
+ #include <AngelScript/angelscript.h>
++#endif
  
  #include "../DebugNew.h"
  

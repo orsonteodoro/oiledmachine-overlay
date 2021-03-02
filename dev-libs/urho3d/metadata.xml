@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- for this ebuild and patches in the files folder only. -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+    Urho3D is a game engine for 2D and 3D games with scripting abilities.
+
+    It supports AngelScript, Lua, C++ to script games.
+
+    It allows to export WebAssembly (WASM) web browser games
+    though Emscripten.
+
+    It supports realistic physics with Bullet and Box2D.
+
+    URHO3D_RPI_CONFIG and URHO3D_ANDROID_CONFIG may be set as a per-package
+    environmental variable to tune the configure stage for android and rpi
+    builds.
+
+    Example:
+    URHO3D_RPI_CONFIG=( -DRPI_ABI=armeabi-v7a )
+    URHO3D_ANDROID_CONFIG=( -DANDROID_ABI=armeabi-v7a )
+  </longdescription>
+  <upstream>
+    <doc lang="en">https://urho3d.github.io/documentation/1.7/index.html</doc>
+    <bugs-to>
+      https://github.com/urho3d/Urho3D/issues
+    </bugs-to>
+    <remote-id type="github">urho3d/Urho3D</remote-id>
+  </upstream>
+  <use>
+    <flag name="X">Adds X Linux desktop support through SDL</flag>
+    <flag name="abi_mips_n64">Builds for MIPS N64 ABI</flag>
+    <flag name="abi_x86_32">Builds for 32-bit x86 ABI</flag>
+    <flag name="abi_x86_64">Builds for 64-bit x86 ABI</flag>
+    <flag name="alsa">Builds against ALSA</flag>
+    <flag name="altivec">Builds with altivec optimizations</flag>
+    <flag name="android">Adds android support (EXPERIMENTAL /
+      EBUILD-INCOMPLETE)</flag>
+    <flag name="angelscript">Adds scripting support for the AngelScript
+      scripting language</flag>
+    <flag name="bindings">Enables scripting support</flag>
+    <flag name="box2d">Adds 2D realistic physics</flag>
+    <flag name="box2d_2_3">Builds against the 2.3 version (released circa 2014)
+      series for maximium script compatibility</flag>
+    <flag name="box2d_2_4">Builds against the 2.4 version (released circa 2020)
+      series for a smoother less gitchy experience but trades off
+      compatibility</flag>
+    <flag name="bullet">Adds realistic 3D physics support</flag>
+    <flag name="check-pedantic-requirements">Adds more compile time
+      checks</flag>
+    <flag name="clang-tools">Builds clang-tools</flag>
+    <flag name="cpu_flags_x86_3dnow">Use 3DNow CPU optimizations (for 32-bit
+      x86 only)</flag>
+    <flag name="cpu_flags_x86_mmx">Use MMX CPU optimizations (for 32-bit x86
+      only)</flag>
+    <flag name="cpu_flags_x86_sse">Use SSE CPU optimizations (for x86-64
+      only)</flag>
+    <flag name="cpu_flags_x86_sse2">Use SSE2 CPU optimizations (for x86-64
+      only)</flag>
+    <flag name="debug">Adds debug symbols for the debugger</flag>
+    <flag name="debug-raw-script-loader"></flag>
+    <flag name="docs">Generates documentation</flag>
+    <flag name="extras">Builds extras</flag>
+    <flag name="filewatcher">Enables filewatcher support</flag>
+    <flag name="gles2">Adds support gles2 for OpenGL on mobile devices though
+      SDL</flag>
+    <flag name="libsamplerate">Enables audio conversion support through SDL
+      </flag>
+    <flag name="haptic">Adds force feedback support through SDL</flag>
+    <flag name="kms">Adds kernel mode setting video output support for
+      non X environments or console only environments through SDL</flag>
+    <flag name="ik">Adds inverse kinematics for joint physics and
+      animation</flag>
+    <flag name="jack">Adds JACK audio support through SDL</flag>
+    <flag name="joystick">Adds joystick support through SDL</flag>
+    <flag name="nas">Adds NAS (Network Audio Sound) support through SDL</flag>
+    <flag name="logging">Enables logging support</flag>
+    <flag name="lua">Adds lua support at the cost of execution speed</flag>
+    <flag name="luajit">Adds Just In Time lua support for faster
+      execution.</flag>
+    <flag name="native">Builds using the native host ABI (default)</flag>
+    <flag name="network">Adds networking support</flag>
+    <flag name="odbc">Adds database support for large scale databases</flag>
+    <flag name="opengl">Adds 3D support</flag>
+    <flag name="oss">Adds OSS sound support through SDL</flag>
+    <flag name="pch">Speeds up compilation</flag>
+    <flag name="profiling">Enables profiling support</flag>
+    <flag name="pulseaudio">Adds audio support though PulseAudio through
+      SDL</flag>
+    <flag name="recastnavigation">Adds pathfinding support for intelligent AI
+      movement and mesh generation</flag>
+    <flag name="rpi">Add raspberry-pi support (EXPERIMENTAL /
+      EBUILD-INCOMPLETE)</flag>
+    <flag name="samples">Installs example scripts with feature demos</flag>
+    <flag name="sqlite">Adds SQL database support in the small scale</flag>
+    <flag name="sound">Adds sound support through SDL</flag>
+    <flag name="static-libs">Builds as a static library</flag>
+    <flag name="system-angelscript">Uses the system's version</flag>
+    <flag name="system-assimp">Uses the system's version</flag>
+    <flag name="system-boost">Uses the system's version</flag>
+    <flag name="system-box2d">Uses the system's version at the expense of
+      features</flag>
+    <flag name="system-bullet">Uses the system's version at the expense of
+      features</flag>
+    <flag name="system-civetweb">Uses the system's version</flag>
+    <flag name="system-freetype">Uses the system's version</flag>
+    <flag name="system-glew">Uses the system's version</flag>
+    <flag name="system-slikenet">Uses the system's version</flag>
+    <flag name="system-libcpuid">Uses the system's version</flag>
+    <flag name="system-lua">Uses the system's version at the expense of
+      features</flag>
+    <flag name="system-luajit">Uses the system's version at the expense of
+      features</flag>
+    <flag name="system-lz4">Uses the system's version</flag>
+    <flag name="system-mojoshader">Uses the system's version</flag>
+    <flag name="system-nanodbc">Uses the system's version</flag>
+    <flag name="system-pugixml">Uses the system's version</flag>
+    <flag name="system-rapidjson">Uses the system's version</flag>
+    <flag name="system-recastnavigation">Uses the system's version</flag>
+    <flag name="system-sdl">Uses the system's version</flag>
+    <flag name="system-sqlite">Uses the system's version</flag>
+    <flag name="system-webp">Uses the system's version</flag>
+    <flag name="test">Runs tests</flag>
+    <flag name="threads">Builds threading support</flag>
+    <flag name="tools">Builds Urho3d-tools for reading 3D assets</flag>
+    <flag name="tslib">Adds touch screen support through SDL</flag>
+    <flag name="vulkan">Adds Vulkan support through SDL</flag>
+    <flag name="wayland">Adds Wayland support through SDL</flag>
+    <flag name="web">Add web-browser support to build games using
+      Emscripten and WASM (WebAssembly)</flag>
+    <flag name="webp">Adds WebP support</flag>
+    <flag name="xinerama">Adds multiscreen support through SDL</flag>
+    <flag name="xscreensaver">Adds XScreensaver support though SDL</flag>
+  </use>
+</pkgmetadata>

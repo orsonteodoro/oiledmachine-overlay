@@ -1,81 +1,100 @@
-diff -urp a/Source/Urho3D/Graphics/Direct3D11/D3D11Graphics.cpp b/Source/Urho3D/Graphics/Direct3D11/D3D11Graphics.cpp
---- a/Source/Urho3D/Graphics/Direct3D11/D3D11Graphics.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Graphics/Direct3D11/D3D11Graphics.cpp	2020-01-08 13:01:31.990626801 -0800
-@@ -42,8 +42,8 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig2/Source/Urho3D/Graphics/Direct3D11/D3D11Graphics.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Graphics/Direct3D11/D3D11Graphics.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig2/Source/Urho3D/Graphics/Direct3D11/D3D11Graphics.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Graphics/Direct3D11/D3D11Graphics.cpp	2021-02-22 06:12:44.349024335 -0800
+@@ -42,8 +42,13 @@
  #include "../../IO/Log.h"
  #include "../../Resource/ResourceCache.h"
  
--#include <SDL/SDL.h>
--#include <SDL/SDL_syswm.h>
++#ifdef URHO3D_SYSTEM_SDL
 +#include <SDL2/SDL.h>
 +#include <SDL2/SDL_syswm.h>
++#else
+ #include <SDL/SDL.h>
+ #include <SDL/SDL_syswm.h>
++#endif
  
  #include "../../DebugNew.h"
  
-diff -urp a/Source/Urho3D/Graphics/Graphics.cpp b/Source/Urho3D/Graphics/Graphics.cpp
---- a/Source/Urho3D/Graphics/Graphics.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Graphics/Graphics.cpp	2020-01-08 13:01:31.970626022 -0800
-@@ -54,7 +54,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig2/Source/Urho3D/Graphics/Graphics.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Graphics/Graphics.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig2/Source/Urho3D/Graphics/Graphics.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Graphics/Graphics.cpp	2021-02-22 06:12:34.380641138 -0800
+@@ -54,7 +54,11 @@
  #include "../IO/FileSystem.h"
  #include "../IO/Log.h"
  
--#include <SDL/SDL.h>
++#ifdef URHO3D_SYSTEM_SDL
 +#include <SDL2/SDL.h>
++#else
+ #include <SDL/SDL.h>
++#endif
  
  #include "../DebugNew.h"
  
-Only in b/Source/Urho3D/Graphics/OpenGL: OGLGraphics.cpp.orig
-diff -urp a/Source/Urho3D/Input/InputConstants.h b/Source/Urho3D/Input/InputConstants.h
---- a/Source/Urho3D/Input/InputConstants.h	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Input/InputConstants.h	2020-01-08 13:01:31.950625242 -0800
-@@ -27,10 +27,10 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig2/Source/Urho3D/Input/InputConstants.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Input/InputConstants.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig2/Source/Urho3D/Input/InputConstants.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Input/InputConstants.h	2021-02-22 06:12:57.933546562 -0800
+@@ -27,10 +27,18 @@
  #include "../Container/FlagSet.h"
  #include "../Math/MathDefs.h"
  
--#include <SDL/SDL_joystick.h>
--#include <SDL/SDL_gamecontroller.h>
--#include <SDL/SDL_keycode.h>
--#include <SDL/SDL_mouse.h>
++#ifdef URHO3D_SYSTEM_SDL
 +#include <SDL2/SDL_joystick.h>
 +#include <SDL2/SDL_gamecontroller.h>
 +#include <SDL2/SDL_keycode.h>
 +#include <SDL2/SDL_mouse.h>
++#else
+ #include <SDL/SDL_joystick.h>
+ #include <SDL/SDL_gamecontroller.h>
+ #include <SDL/SDL_keycode.h>
+ #include <SDL/SDL_mouse.h>
++#endif
++
  
  
  namespace Urho3D
-diff -urp a/Source/Urho3D/IO/NamedPipe.h b/Source/Urho3D/IO/NamedPipe.h
---- a/Source/Urho3D/IO/NamedPipe.h	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/IO/NamedPipe.h	2020-01-08 13:01:31.990626801 -0800
-@@ -27,7 +27,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig2/Source/Urho3D/IO/NamedPipe.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/IO/NamedPipe.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig2/Source/Urho3D/IO/NamedPipe.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/IO/NamedPipe.h	2021-02-22 06:13:11.642073582 -0800
+@@ -27,8 +27,12 @@
  #include "../IO/AbstractFile.h"
  
  #ifdef __ANDROID__
--#include <SDL/SDL_rwops.h>
++#ifdef URHO3D_SYSTEM_SDL
 +#include <SDL2/SDL_rwops.h>
++#else
+ #include <SDL/SDL_rwops.h>
  #endif
- 
- namespace Urho3D
-diff -urp a/Source/Urho3D/IO/RWOpsWrapper.h b/Source/Urho3D/IO/RWOpsWrapper.h
---- a/Source/Urho3D/IO/RWOpsWrapper.h	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/IO/RWOpsWrapper.h	2020-01-08 13:01:32.000627191 -0800
-@@ -24,7 +24,7 @@
- 
- #include "../IO/File.h"
- 
--#include <SDL/SDL_rwops.h>
-+#include <SDL2/SDL_rwops.h>
++#endif
  
  namespace Urho3D
  {
-diff -urp a/Source/Urho3D/Resource/Image.cpp b/Source/Urho3D/Resource/Image.cpp
---- a/Source/Urho3D/Resource/Image.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Resource/Image.cpp	2020-01-08 13:01:31.960625632 -0800
-@@ -29,7 +29,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig2/Source/Urho3D/IO/RWOpsWrapper.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/IO/RWOpsWrapper.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig2/Source/Urho3D/IO/RWOpsWrapper.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/IO/RWOpsWrapper.h	2021-02-22 06:13:21.142438836 -0800
+@@ -24,7 +24,11 @@
+ 
+ #include "../IO/File.h"
+ 
++#ifdef URHO3D_SYSTEM_SDL
++#include <SDL2/SDL_rwops.h>
++#else
+ #include <SDL/SDL_rwops.h>
++#endif
+ 
+ namespace Urho3D
+ {
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig2/Source/Urho3D/Resource/Image.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Resource/Image.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig2/Source/Urho3D/Resource/Image.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Resource/Image.cpp	2021-02-22 06:14:37.977393299 -0800
+@@ -29,7 +29,11 @@
  #include "../IO/Log.h"
  #include "../Resource/Decompress.h"
  
--#include <SDL/SDL_surface.h>
++#ifdef URHO3D_SYSTEM_SDL
 +#include <SDL2/SDL_surface.h>
++#else
+ #include <SDL/SDL_surface.h>
++#endif
  #define STB_IMAGE_IMPLEMENTATION
  #include <STB/stb_image.h>
  #define STB_IMAGE_WRITE_IMPLEMENTATION

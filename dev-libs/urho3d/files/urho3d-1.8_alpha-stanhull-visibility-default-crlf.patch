@@ -1,0 +1,16 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/ThirdParty/StanHull/hull.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/ThirdParty/StanHull/hull.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/ThirdParty/StanHull/hull.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/ThirdParty/StanHull/hull.h	2021-02-26 01:11:36.614214126 -0800
+@@ -132,10 +132,10 @@ class HullLibrary
+ {
+ public:
+ 
+-	HullError CreateConvexHull(const HullDesc       &desc,           // describes the input request
++	__attribute__ ((visibility ("default"))) HullError CreateConvexHull(const HullDesc       &desc,           // describes the input request
+ 															HullResult           &result);        // contains the resulst
+ 
+-	HullError ReleaseResult(HullResult &result); // release memory allocated for this result, we are done with it.
++	__attribute__ ((visibility ("default"))) HullError ReleaseResult(HullResult &result); // release memory allocated for this result, we are done with it.
+ 
+ private:
+ 

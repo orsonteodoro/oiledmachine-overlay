@@ -1,12 +1,16 @@
-diff -urp a/Source/Urho3D/Graphics/OpenGL/OGLGraphicsImpl.h b/Source/Urho3D/Graphics/OpenGL/OGLGraphicsImpl.h
---- a/Source/Urho3D/Graphics/OpenGL/OGLGraphicsImpl.h	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Graphics/OpenGL/OGLGraphicsImpl.h	2020-01-08 11:08:33.937526822 -0800
-@@ -36,7 +36,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Graphics/OpenGL/OGLGraphicsImpl.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Graphics/OpenGL/OGLGraphicsImpl.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Graphics/OpenGL/OGLGraphicsImpl.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Graphics/OpenGL/OGLGraphicsImpl.h	2021-02-22 05:16:27.372547738 -0800
+@@ -36,8 +36,12 @@
  #include <GLES2/gl2.h>
  #include <GLES2/gl2ext.h>
  #else
--#include <GLEW/glew.h>
++#ifdef URHO3D_SYSTEM_GLEW
 +#include <GL/glew.h>
++#else
+ #include <GLEW/glew.h>
  #endif
++#endif
  
  #ifndef GL_COMPRESSED_RGBA_S3TC_DXT1_EXT
+ #define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT 0x83f1

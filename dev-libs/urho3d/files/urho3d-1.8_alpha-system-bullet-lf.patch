@@ -1,14 +1,17 @@
-diff -urp a/Source/Urho3D/Physics/RaycastVehicle.cpp b/Source/Urho3D/Physics/RaycastVehicle.cpp
---- a/Source/Urho3D/Physics/RaycastVehicle.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Physics/RaycastVehicle.cpp	2020-01-08 10:35:27.911384259 -0800
-@@ -28,8 +28,8 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig2/Source/Urho3D/Physics/RaycastVehicle.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Physics/RaycastVehicle.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig2/Source/Urho3D/Physics/RaycastVehicle.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Physics/RaycastVehicle.cpp	2021-02-22 04:51:47.682892941 -0800
+@@ -28,8 +28,13 @@
  #include "../IO/Log.h"
  #include "../Physics/RaycastVehicle.h"
  
--#include <Bullet/BulletDynamics/Vehicle/btRaycastVehicle.h>
--#include <Bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
++#ifdef URHO3D_SYSTEM_BULLET
 +#include <bullet/BulletDynamics/Vehicle/btRaycastVehicle.h>
 +#include <bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
++#else
+ #include <Bullet/BulletDynamics/Vehicle/btRaycastVehicle.h>
+ #include <Bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
++#endif
  
  namespace Urho3D
  {

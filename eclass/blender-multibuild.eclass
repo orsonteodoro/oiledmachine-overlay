@@ -10,13 +10,13 @@
 
 inherit multibuild
 
-# @ECLASS-VARIABLE: _IMPLS
+# @ECLASS-VARIABLE: _BLENDER_IMPLS
 # @DESCRIPTION: (Private) Generates a list of implementations for the blender-multibuild context
-_IMPLS="build_creator build_headless"
+_BLENDER_IMPLS="build_creator build_headless"
 if [[ -n "${HAS_PLAYER}" && "${HAS_PLAYER}" == 1 ]] ; then
-	_IMPLS+=" build_portable"
+	_BLENDER_IMPLS+=" build_portable"
 fi
-IUSE+=" ${_IMPLS/build_creator/+build_creator}"
+IUSE+=" ${_BLENDER_IMPLS/build_creator/+build_creator}"
 REQUIRED_USE+=" || ( ${IMPLS} )"
 
 # @FUNCTION: _python_multibuild_wrapper
@@ -64,7 +64,7 @@ blender-multibuild_copy_sources() {
 # @DESCRIPTION:  This will fill up MULTIBUILD_VARIANTS if user chosen implementation
 _blender_obtain_impls() {
 	MULTIBUILD_VARIANTS=()
-	for impl in ${_IMPLS} ; do
+	for impl in ${_BLENDER_IMPLS} ; do
 		use "${impl}" && MULTIBUILD_VARIANTS+=( "${impl}" )
 	done
 }

@@ -905,11 +905,11 @@ _NETFX_VERS=( 20 35 40 45 451 452 46 461 462 47 471 472 48 )
 _NETCORE_VERS=( 10 11 20 21 22 )
 _NETSTANDARD_VERS=( 10 11 12 13 14 15 16 20 )
 
-# @ECLASS-VARIABLE: _IMPLS
+# @ECLASS-VARIABLE: _DOTNET_IMPLS
 # @DESCRIPTION: (Private) Generates a list of implementations for the
 # dotnet-multibuild context
-_IMPLS="${_NETFX_VERS[@]/#/net} ${_NETCORE_VERS[@]/#/netcoreapp}"
-_IMPLS+=" ${_NETSTANDARD_VERS[@]/#/netstandard}"
+_DOTNET_IMPLS="${_NETFX_VERS[@]/#/net} ${_NETCORE_VERS[@]/#/netcoreapp}"
+_DOTNET_IMPLS+=" ${_NETSTANDARD_VERS[@]/#/netstandard}"
 
 # @FUNCTION: _python_multibuild_wrapper
 # @DESCRIPTION: Initialize the environment for this implementation
@@ -964,7 +964,7 @@ dotnet_copy_sources() {
 # implementation
 _dotnet_obtain_impls() {
 	MULTIBUILD_VARIANTS=()
-	for impl in ${_IMPLS} ; do
+	for impl in ${_DOTNET_IMPLS} ; do
 		local A_USE_DOTNET=($(echo "${USE_DOTNET}" | tr ' ' '\n'))
 		has "${impl}" ${A_USE_DOTNET[@]} && use "${impl}" \
 			&& MULTIBUILD_VARIANTS+=( "${impl}" )

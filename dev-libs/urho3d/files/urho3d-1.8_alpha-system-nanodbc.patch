@@ -1,47 +1,60 @@
-diff -urp a/Source/ThirdParty/nanodbc/nanodbc/nanodbc.cpp b/Source/ThirdParty/nanodbc/nanodbc/nanodbc.cpp
---- a/Source/ThirdParty/nanodbc/nanodbc/nanodbc.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/ThirdParty/nanodbc/nanodbc/nanodbc.cpp	2020-01-09 20:43:12.723963494 -0800
-@@ -13,7 +13,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/ThirdParty/nanodbc/nanodbc/nanodbc.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/ThirdParty/nanodbc/nanodbc/nanodbc.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/ThirdParty/nanodbc/nanodbc/nanodbc.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/ThirdParty/nanodbc/nanodbc/nanodbc.cpp	2021-02-22 05:32:31.214651869 -0800
+@@ -13,7 +13,11 @@
  #pragma warning(disable : 4996) // warning about deprecated declaration
  #endif
  
--#include <nanodbc/nanodbc.h>
++#ifdef URHO3D_SYSTEM_NANODBC
 +#include <nanodbc.h>
++#else
+ #include <nanodbc/nanodbc.h>
++#endif
  
  #include <algorithm>
  #include <clocale>
-diff -urp a/Source/Urho3D/Database/ODBC/ODBCConnection.cpp b/Source/Urho3D/Database/ODBC/ODBCConnection.cpp
---- a/Source/Urho3D/Database/ODBC/ODBCConnection.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Database/ODBC/ODBCConnection.cpp	2020-01-09 20:43:12.723963494 -0800
-@@ -32,6 +32,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Database/ODBC/ODBCConnection.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Database/ODBC/ODBCConnection.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Database/ODBC/ODBCConnection.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Database/ODBC/ODBCConnection.cpp	2021-02-22 05:33:49.981774571 -0800
+@@ -32,6 +32,11 @@
  #endif
  
  #include <sqlext.h>
++#ifdef URHO3D_SYSTEM_NANODBC
 +#include <nanodbc.h>
++#else
++#include <nanodbc/nanodbc.h>
++#endif
  
  namespace Urho3D
  {
-diff -urp a/Source/Urho3D/Database/ODBC/ODBCConnection.h b/Source/Urho3D/Database/ODBC/ODBCConnection.h
---- a/Source/Urho3D/Database/ODBC/ODBCConnection.h	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Database/ODBC/ODBCConnection.h	2020-01-09 20:43:12.703962720 -0800
-@@ -25,7 +25,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Database/ODBC/ODBCConnection.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Database/ODBC/ODBCConnection.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Database/ODBC/ODBCConnection.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Database/ODBC/ODBCConnection.h	2021-02-22 05:32:18.402143831 -0800
+@@ -25,7 +25,11 @@
  #include "../../Core/Object.h"
  #include "../../Database/DbResult.h"
  
--#include <nanodbc/nanodbc.h>
++#ifdef URHO3D_SYSTEM_NANODBC
 +#include <nanodbc.h>
++#else
+ #include <nanodbc/nanodbc.h>
++#endif
  
  namespace Urho3D
  {
-diff -urp a/Source/Urho3D/Database/ODBC/ODBCResult.h b/Source/Urho3D/Database/ODBC/ODBCResult.h
---- a/Source/Urho3D/Database/ODBC/ODBCResult.h	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Database/ODBC/ODBCResult.h	2020-01-09 20:43:12.703962720 -0800
-@@ -24,7 +24,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Database/ODBC/ODBCResult.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Database/ODBC/ODBCResult.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Database/ODBC/ODBCResult.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Database/ODBC/ODBCResult.h	2021-02-22 05:32:10.305822785 -0800
+@@ -24,7 +24,11 @@
  
  #include "../../Core/Variant.h"
  
--#include <nanodbc/nanodbc.h>
++#ifdef URHO3D_SYSTEM_NANODBC
 +#include <nanodbc.h>
++#else
+ #include <nanodbc/nanodbc.h>
++#endif
  
  namespace Urho3D
  {

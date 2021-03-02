@@ -1,26 +1,32 @@
-diff -urp a/Source/Tools/PackageTool/PackageTool.cpp b/Source/Tools/PackageTool/PackageTool.cpp
---- a/Source/Tools/PackageTool/PackageTool.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Tools/PackageTool/PackageTool.cpp	2020-01-09 11:46:02.840923907 -0800
-@@ -31,8 +31,8 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Tools/PackageTool/PackageTool.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Tools/PackageTool/PackageTool.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Tools/PackageTool/PackageTool.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Tools/PackageTool/PackageTool.cpp	2021-02-22 05:24:08.658704977 -0800
+@@ -31,8 +31,13 @@
  #include <windows.h>
  #endif
  
--#include <LZ4/lz4.h>
--#include <LZ4/lz4hc.h>
++#ifdef URHO3D_SYSTEM_LZ4
 +#include <lz4.h>
 +#include <lz4hc.h>
++#else
+ #include <LZ4/lz4.h>
+ #include <LZ4/lz4hc.h>
++#endif
  
  #include <Urho3D/DebugNew.h>
  
-diff -urp a/Source/Urho3D/IO/File.cpp b/Source/Urho3D/IO/File.cpp
---- a/Source/Urho3D/IO/File.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/IO/File.cpp	2020-01-09 11:46:02.840923907 -0800
-@@ -34,7 +34,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/IO/File.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/IO/File.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/IO/File.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/IO/File.cpp	2021-02-22 05:24:26.643419530 -0800
+@@ -34,7 +34,11 @@
  #endif
  
  #include <cstdio>
--#include <LZ4/lz4.h>
++#ifdef URHO3D_SYSTEM_LZ4
 +#include <lz4.h>
++#else
+ #include <LZ4/lz4.h>
++#endif
  
  #include "../DebugNew.h"
  

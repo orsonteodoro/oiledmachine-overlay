@@ -10,9 +10,9 @@
 
 inherit multibuild
 
-# @ECLASS-VARIABLE: _IMPLS
+# @ECLASS-VARIABLE: _STATIC_LIBS_IMPLS
 # @DESCRIPTION: (Private) Generates a list of implementations for the static-libs-multibuild context
-_IMPLS="static-libs shared-libs"
+_STATIC_LIBS_IMPLS="static-libs shared-libs"
 IUSE+=" static-libs"
 
 # @FUNCTION: _python_multibuild_wrapper
@@ -59,7 +59,7 @@ static-libs_copy_sources() {
 # @DESCRIPTION:  This will fill up MULTIBUILD_VARIANTS if user chosen implementation
 _static-libs_obtain_impls() {
 	MULTIBUILD_VARIANTS=()
-	for impl in ${_IMPLS} ; do
+	for impl in ${_STATIC_LIBS_IMPLS} ; do
 		if [[ "${impl}" == "shared-libs" ]] ; then
 			MULTIBUILD_VARIANTS+=( "${impl}" )
 		else

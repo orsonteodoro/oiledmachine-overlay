@@ -1,80 +1,189 @@
-diff -urp a/Source/Urho3D/Navigation/CrowdManager.cpp b/Source/Urho3D/Navigation/CrowdManager.cpp
---- a/Source/Urho3D/Navigation/CrowdManager.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Navigation/CrowdManager.cpp	2020-01-08 10:50:14.205307741 -0800
-@@ -83,10 +83,13 @@ CrowdManager::CrowdManager(Context* cont
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/CrowdAgent.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/CrowdAgent.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/CrowdAgent.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/CrowdAgent.cpp	2021-02-22 13:14:30.243143303 -0800
+@@ -33,8 +33,13 @@
+ #include "../Scene/Node.h"
+ #include "../Scene/Scene.h"
+ 
++#ifdef URHO3D_SYSTEM_RECASTNAVIGATION
++#include <recastnavigation/DetourCommon.h>
++#include <recastnavigation/DetourCrowd.h>
++#else
+ #include <Detour/DetourCommon.h>
+ #include <DetourCrowd/DetourCrowd.h>
++#endif
+ 
+ #include "../DebugNew.h"
+ 
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/CrowdManager.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/CrowdManager.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/CrowdManager.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/CrowdManager.cpp	2021-02-22 13:14:30.247143470 -0800
+@@ -34,7 +34,11 @@
+ #include "../Scene/Scene.h"
+ #include "../Scene/SceneEvents.h"
+ 
++#ifdef URHO3D_SYSTEM_RECASTNAVIGATION
++#include <recastnavigation/DetourCrowd.h>
++#else
+ #include <DetourCrowd/DetourCrowd.h>
++#endif
+ 
+ #include "../DebugNew.h"
+ 
+@@ -83,10 +87,17 @@ CrowdManager::CrowdManager(Context* cont
      numAreas_.Reserve(DT_CROWD_MAX_QUERY_FILTER_TYPE);
      for (unsigned i = 0; i < DT_CROWD_MAX_QUERY_FILTER_TYPE; ++i)
          numAreas_.Push(0);
 +
++#ifdef URHO3D_SYSTEM_RECASTNAVIGATION
 +    agents_ = (dtCrowdAgent**)dtAlloc(sizeof(dtCrowdAgent*)*DEFAULT_MAX_AGENTS, DT_ALLOC_PERM);
++#endif
  }
  
  CrowdManager::~CrowdManager()
  {
++#ifdef URHO3D_SYSTEM_RECASTNAVIGATION
 +    dtFree(agents_);
++#endif
      dtFreeCrowd(crowd_);
      crowd_ = nullptr;
  }
-@@ -127,7 +130,7 @@ void CrowdManager::ApplyAttributes()
+@@ -127,7 +138,11 @@ void CrowdManager::ApplyAttributes()
      navigationMeshId_ = navigationMesh_ ? navigationMesh_->GetID() : 0;
  
      // If the Detour crowd initialization parameters have changed then recreate it
 -    if (crowd_ && (navMeshChange || crowd_->getAgentCount() != maxAgents_ || crowd_->getMaxAgentRadius() != maxAgentRadius_))
-+    if (crowd_ && (navMeshChange || crowd_->getAgentCount() != maxAgents_ ))
++    if (crowd_ && (navMeshChange || crowd_->getAgentCount() != maxAgents_
++#ifndef URHO3D_SYSTEM_RECASTNAVIGATION
++        || crowd_->getMaxAgentRadius() != maxAgentRadius_
++#endif
++    ))
          CreateCrowd();
  }
  
-@@ -584,7 +587,7 @@ bool CrowdManager::CreateCrowd()
+@@ -584,7 +599,11 @@ bool CrowdManager::CreateCrowd()
      // Initialize the crowd
      if (maxAgentRadius_ == 0.f)
          maxAgentRadius_ = navigationMesh_->GetAgentRadius();
 -    if (!crowd_->init(maxAgents_, maxAgentRadius_, navigationMesh_->navMesh_, CrowdAgentUpdateCallback))
-+    if (!crowd_->init(maxAgents_, maxAgentRadius_, navigationMesh_->navMesh_))
++    if (!crowd_->init(maxAgents_, maxAgentRadius_, navigationMesh_->navMesh_
++#ifndef URHO3D_SYSTEM_RECASTNAVIGATION
++    , CrowdAgentUpdateCallback
++#endif
++    ))
      {
          URHO3D_LOGERROR("Could not initialize DetourCrowd");
          return false;
-@@ -679,6 +682,12 @@ void CrowdManager::Update(float delta)
+@@ -679,6 +698,14 @@ void CrowdManager::Update(float delta)
  {
      assert(crowd_ && navigationMesh_);
      URHO3D_PROFILE(UpdateCrowd);
++#ifdef URHO3D_SYSTEM_RECASTNAVIGATION
 +    int nagents;
 +    nagents = crowd_->getActiveAgents(agents_, maxAgents_);
 +    for (int i = 0; i < nagents; i++) {
 +        dtCrowdAgent* ag = agents_[i];
 +        CrowdAgentUpdateCallback(ag, delta);
 +    }
++#endif
      crowd_->update(delta, nullptr);
  }
  
-diff -urp a/Source/Urho3D/Navigation/CrowdManager.h b/Source/Urho3D/Navigation/CrowdManager.h
---- a/Source/Urho3D/Navigation/CrowdManager.h	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Navigation/CrowdManager.h	2020-01-08 10:50:19.835523394 -0800
-@@ -195,6 +195,7 @@ private:
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/CrowdManager.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/CrowdManager.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/CrowdManager.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/CrowdManager.h	2021-02-22 13:14:30.247143470 -0800
+@@ -195,6 +195,9 @@ private:
      PODVector<unsigned> numAreas_;
      /// Number of obstacle avoidance types configured in the crowd. Limit to DT_CROWD_MAX_OBSTAVOIDANCE_PARAMS.
      unsigned numObstacleAvoidanceTypes_{};
++#ifdef URHO3D_SYSTEM_RECASTNAVIGATION
 +    dtCrowdAgent** agents_;
++#endif
  };
  
  }
-diff -urp a/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp b/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp
---- a/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp	2020-01-08 10:47:52.999899730 -0800
-@@ -1086,7 +1086,7 @@ void DynamicNavigationMesh::AddObstacle(
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp	2021-02-22 13:14:30.247143470 -0800
+@@ -40,11 +40,19 @@
+ #include "../Scene/SceneEvents.h"
+ 
+ #include <LZ4/lz4.h>
++#ifdef URHO3D_SYSTEM_RECASTNAVIGATION
++#include <recastnavigation/DetourNavMesh.h>
++#include <recastnavigation/DetourNavMeshBuilder.h>
++#include <recastnavigation/DetourTileCache.h>
++#include <recastnavigation/DetourTileCacheBuilder.h>
++#include <recastnavigation/Recast.h>
++#else
+ #include <Detour/DetourNavMesh.h>
+ #include <Detour/DetourNavMeshBuilder.h>
+ #include <DetourTileCache/DetourTileCache.h>
+ #include <DetourTileCache/DetourTileCacheBuilder.h>
+ #include <Recast/Recast.h>
++#endif
+ 
+ // DebugNew is deliberately not used because the macro 'free' conflicts with DetourTileCache's LinearAllocator interface
+ //#include "../DebugNew.h"
+@@ -1086,7 +1094,11 @@ void DynamicNavigationMesh::AddObstacle(
  
          // Because dtTileCache doesn't process obstacle requests while updating tiles
          // it's necessary update until sufficient request space is available
--        while (tileCache_->isObstacleQueueFull())
++#ifdef URHO3D_SYSTEM_RECASTNAVIGATION
 +        for(int i=0;i<128;i++)
++#else
+         while (tileCache_->isObstacleQueueFull())
++#endif
              tileCache_->update(1, navMesh_);
  
          if (dtStatusFailed(tileCache_->addObstacle(pos, obstacle->GetRadius(), obstacle->GetHeight(), &refHolder)))
-@@ -1126,7 +1126,7 @@ void DynamicNavigationMesh::RemoveObstac
+@@ -1126,7 +1138,11 @@ void DynamicNavigationMesh::RemoveObstac
      {
          // Because dtTileCache doesn't process obstacle requests while updating tiles
          // it's necessary update until sufficient request space is available
--        while (tileCache_->isObstacleQueueFull())
++#ifdef URHO3D_SYSTEM_RECASTNAVIGATION
 +        for(int i=0;i<128;i++)
++#else
+         while (tileCache_->isObstacleQueueFull())
++#endif
              tileCache_->update(1, navMesh_);
  
          if (dtStatusFailed(tileCache_->removeObstacle(obstacle->obstacleId_)))
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/NavBuildData.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/NavBuildData.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/NavBuildData.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/NavBuildData.cpp	2021-02-22 13:14:30.247143470 -0800
+@@ -24,8 +24,13 @@
+ 
+ #include "../Navigation/NavBuildData.h"
+ 
++#ifdef URHO3D_SYSTEM_RECASTNAVIGATION
++#include <recastnavigation/DetourTileCacheBuilder.h>
++#include <recastnavigation/Recast.h>
++#else
+ #include <DetourTileCache/DetourTileCacheBuilder.h>
+ #include <Recast/Recast.h>
++#endif
+ 
+ namespace Urho3D
+ {
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/NavigationMesh.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/NavigationMesh.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/NavigationMesh.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/NavigationMesh.cpp	2021-02-22 13:13:43.173171867 -0800
+@@ -48,10 +48,17 @@
+ #include "../Scene/Scene.h"
+ 
+ #include <cfloat>
++#ifdef URHO3D_SYSTEM_RECASTNAVIGATION
++#include <recastnavigation/DetourNavMesh.h>
++#include <recastnavigation/DetourNavMeshBuilder.h>
++#include <recastnavigation/DetourNavMeshQuery.h>
++#include <recastnavigation/Recast.h>
++#else
+ #include <Detour/DetourNavMesh.h>
+ #include <Detour/DetourNavMeshBuilder.h>
+ #include <Detour/DetourNavMeshQuery.h>
+ #include <Recast/Recast.h>
++#endif
+ 
+ #include "../DebugNew.h"
+ 

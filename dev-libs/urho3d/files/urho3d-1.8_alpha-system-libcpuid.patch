@@ -1,12 +1,16 @@
-diff -urp a/Source/Urho3D/Core/ProcessUtils.cpp b/Source/Urho3D/Core/ProcessUtils.cpp
---- a/Source/Urho3D/Core/ProcessUtils.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Core/ProcessUtils.cpp	2020-01-08 11:13:01.717966342 -0800
-@@ -38,7 +38,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Core/ProcessUtils.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Core/ProcessUtils.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Core/ProcessUtils.cpp	2021-02-22 05:18:23.681114266 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Core/ProcessUtils.cpp	2021-02-22 05:20:27.961992907 -0800
+@@ -38,8 +38,12 @@
  #elif defined(TVOS)
  extern "C" unsigned SDL_TVOS_GetActiveProcessorCount();
  #elif !defined(__linux__) && !defined(__EMSCRIPTEN__)
--#include <LibCpuId/libcpuid.h>
++#ifdef URHO3D_SYSTEM_LIBCPUID
 +#include <libcpuid/libcpuid.h>
++#else
+ #include <LibCpuId/libcpuid.h>
  #endif
++#endif
  
  #if defined(_WIN32)
+ #include <windows.h>

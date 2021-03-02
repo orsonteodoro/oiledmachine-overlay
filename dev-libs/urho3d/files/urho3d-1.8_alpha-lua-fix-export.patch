@@ -1,0 +1,79 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/ThirdParty/Lua/src/ldo.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/ThirdParty/Lua/src/ldo.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/ThirdParty/Lua/src/ldo.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/ThirdParty/Lua/src/ldo.h	2021-02-28 12:02:56.619629064 -0800
+@@ -46,7 +46,7 @@ LUAI_FUNC int luaD_pcall (lua_State *L,
+ LUAI_FUNC int luaD_poscall (lua_State *L, StkId firstResult);
+ LUAI_FUNC void luaD_reallocCI (lua_State *L, int newsize);
+ LUAI_FUNC void luaD_reallocstack (lua_State *L, int newsize);
+-LUAI_FUNC void luaD_growstack (lua_State *L, int n);
++LUAI_FUNCEX void luaD_growstack (lua_State *L, int n);
+ 
+ LUAI_FUNC void luaD_throw (lua_State *L, int errcode);
+ LUAI_FUNC int luaD_rawrunprotected (lua_State *L, Pfunc f, void *ud);
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/ThirdParty/Lua/src/lfunc.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/ThirdParty/Lua/src/lfunc.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/ThirdParty/Lua/src/lfunc.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/ThirdParty/Lua/src/lfunc.h	2021-02-28 12:02:56.619629064 -0800
+@@ -18,7 +18,7 @@
+                          cast(int, sizeof(TValue *)*((n)-1)))
+ 
+ 
+-LUAI_FUNC Proto *luaF_newproto (lua_State *L);
++LUAI_FUNCEX Proto *luaF_newproto (lua_State *L);
+ LUAI_FUNC Closure *luaF_newCclosure (lua_State *L, int nelems, Table *e);
+ LUAI_FUNC Closure *luaF_newLclosure (lua_State *L, int nelems, Table *e);
+ LUAI_FUNC UpVal *luaF_newupval (lua_State *L);
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/ThirdParty/Lua/src/lmem.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/ThirdParty/Lua/src/lmem.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/ThirdParty/Lua/src/lmem.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/ThirdParty/Lua/src/lmem.h	2021-02-28 12:02:56.619629064 -0800
+@@ -38,9 +38,9 @@
+    ((v)=cast(t *, luaM_reallocv(L, v, oldn, n, sizeof(t))))
+ 
+ 
+-LUAI_FUNC void *luaM_realloc_ (lua_State *L, void *block, size_t oldsize,
++LUAI_FUNCEX void *luaM_realloc_ (lua_State *L, void *block, size_t oldsize,
+                                                           size_t size);
+-LUAI_FUNC void *luaM_toobig (lua_State *L);
++LUAI_FUNCEX void *luaM_toobig (lua_State *L);
+ LUAI_FUNC void *luaM_growaux_ (lua_State *L, void *block, int *size,
+                                size_t size_elem, int limit,
+                                const char *errormsg);
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/ThirdParty/Lua/src/lstring.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/ThirdParty/Lua/src/lstring.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/ThirdParty/Lua/src/lstring.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/ThirdParty/Lua/src/lstring.h	2021-02-28 12:02:56.619629064 -0800
+@@ -25,7 +25,7 @@
+ 
+ LUAI_FUNC void luaS_resize (lua_State *L, int newsize);
+ LUAI_FUNC Udata *luaS_newudata (lua_State *L, size_t s, Table *e);
+-LUAI_FUNC TString *luaS_newlstr (lua_State *L, const char *str, size_t l);
++LUAI_FUNCEX TString *luaS_newlstr (lua_State *L, const char *str, size_t l);
+ 
+ 
+ #endif
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/ThirdParty/Lua/src/luaconf.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/ThirdParty/Lua/src/luaconf.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/ThirdParty/Lua/src/luaconf.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/ThirdParty/Lua/src/luaconf.h	2021-02-28 12:02:56.619629064 -0800
+@@ -184,6 +184,7 @@
+ 
+ #elif defined(__GNUC__) && ((__GNUC__*100 + __GNUC_MINOR__) >= 302) && \
+       defined(__ELF__)
++#define LUAI_FUNCEX	__attribute__((visibility("default"))) extern
+ #define LUAI_FUNC	__attribute__((visibility("hidden"))) extern
+ #define LUAI_DATA	LUAI_FUNC
+ 
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/ThirdParty/Lua/src/lundump.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/ThirdParty/Lua/src/lundump.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/ThirdParty/Lua/src/lundump.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/ThirdParty/Lua/src/lundump.h	2021-02-28 12:03:23.064656934 -0800
+@@ -17,11 +17,11 @@ LUAI_FUNC Proto* luaU_undump (lua_State*
+ LUAI_FUNC void luaU_header (char* h);
+ 
+ /* dump one chunk; from ldump.c */
+-LUAI_FUNC int luaU_dump (lua_State* L, const Proto* f, lua_Writer w, void* data, int strip);
++LUAI_FUNCEX int luaU_dump (lua_State* L, const Proto* f, lua_Writer w, void* data, int strip);
+ 
+ #ifdef luac_c
+ /* print one chunk; from print.c */
+-LUAI_FUNC void luaU_print (const Proto* f, int full);
++LUAI_FUNCEX void luaU_print (const Proto* f, int full);
+ #endif
+ 
+ /* for header of binary files -- this is Lua 5.1 */

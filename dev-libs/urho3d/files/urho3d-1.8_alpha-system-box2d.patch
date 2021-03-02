@@ -1,11 +1,2328 @@
-diff -urp a/Source/Urho3D/Urho2D/RigidBody2D.h b/Source/Urho3D/Urho2D/RigidBody2D.h
---- a/Source/Urho3D/Urho2D/RigidBody2D.h	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Urho2D/RigidBody2D.h	2020-01-08 10:32:30.094584565 -0800
-@@ -177,6 +177,7 @@ private:
-     bool useFixtureMass_;
-     /// Box2D body.
-     b2Body* body_;
-+    bool m_useFixtureMass = true;
-     /// Collision shapes.
-     Vector<WeakPtr<CollisionShape2D> > collisionShapes_;
-     /// Constraints.
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/bin/Data/LuaScripts/28_Urho2DPhysicsRope.lua Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/LuaScripts/28_Urho2DPhysicsRope.lua
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/bin/Data/LuaScripts/28_Urho2DPhysicsRope.lua	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/LuaScripts/28_Urho2DPhysicsRope.lua	2021-03-01 21:56:50.866631050 -0800
+@@ -96,7 +96,8 @@ function CreateScene()
+         prevBody = body
+     end
+ 
+-    local constraintRope = groundNode:CreateComponent("ConstraintRope2D")
++    local constraintRope = groundNode:CreateComponent("ConstraintDistance2D") //BOX2D_2_4
++    local constraintRope = groundNode:CreateComponent("ConstraintRope2D") //BOX2D_2_3
+     constraintRope.otherBody = prevBody
+     constraintRope.ownerBodyAnchor = Vector2(0.0, y)
+     constraintRope.maxLength = NUM_OBJECTS - 1.0 + 0.01
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/bin/Data/LuaScripts/32_Urho2DConstraints.lua Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/LuaScripts/32_Urho2DConstraints.lua
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/bin/Data/LuaScripts/32_Urho2DConstraints.lua	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/LuaScripts/32_Urho2DConstraints.lua	2021-03-01 21:56:50.866631050 -0800
+@@ -118,8 +118,10 @@ function CreateScene()
+     constraintDistance.ownerBodyAnchor = boxNode.position2D
+     constraintDistance.otherBodyAnchor = ballNode.position2D
+     -- Make the constraint soft (comment to make it rigid, which is its basic behavior)
+-    constraintDistance.frequencyHz = 4
+-    constraintDistance.dampingRatio = 0.5
++    constraintDistance.stiffness = constraintDistance:GetLinearStiffnessS(4, 0.5) //BOX2D_2_4
++    constraintDistance.damping = constraintDistance:GetLinearStiffnessD(4, 0.5) //BOX2D_2_4
++    constraintDistance.frequencyHz = 4 //BOX2D_2_3
++    constraintDistance.dampingRatio = 0.5 //BOX2D_2_3
+ 
+     -- Create a ConstraintFriction2D ********** Not functional. From Box2d samples it seems that 2 anchors are required, Urho2D only provides 1, needs investigation ***********
+     CreateFlag("ConstraintFriction2D", 0.03, 1) -- Display Text3D flag
+@@ -178,16 +180,20 @@ function CreateScene()
+     wheel1.anchor = ball1Node.position2D
+     wheel1.axis = Vector2(0, 1)
+     wheel1.maxMotorTorque = 20
+-    wheel1.frequencyHz = 4
+-    wheel1.dampingRatio = 0.4
++    wheel1.stiffness = wheel1:GetLinearStiffnessS(4, 0.4) //BOX2D_2_4
++    wheel1.damping = wheel1:GetLinearStiffnessD(4, 0.4) //BOX2D_2_4
++    wheel1.frequencyHz = 4 //BOX2D_2_3
++    wheel1.dampingRatio = 0.4 //BOX2D_2_3
+ 
+     local wheel2 = car:CreateComponent("ConstraintWheel2D")
+     wheel2.otherBody = ball2Node:GetComponent("RigidBody2D")
+     wheel2.anchor = ball2Node.position2D
+     wheel2.axis = Vector2(0, 1)
+     wheel2.maxMotorTorque = 10
+-    wheel2.frequencyHz = 4
+-    wheel2.dampingRatio = 0.4
++    wheel2.stiffness = wheel2:GetLinearStiffnessS(4, 0.4) //BOX2D_2_4
++    wheel2.damping = wheel2:GetLinearStiffnessD(4, 0.4) //BOX2D_2_4
++    wheel2.frequencyHz = 4 //BOX2D_2_3
++    wheel2.dampingRatio = 0.4 //BOX2D_2_3
+ 
+     -- Create a ConstraintMotor2D
+     CreateFlag("ConstraintMotor2D", 2.53, -1) -- Display Text3D flag
+@@ -260,17 +266,22 @@ function CreateScene()
+     constraintRevolute.motorSpeed = 0
+     constraintRevolute.enableMotor = true
+ 
+-    -- Create a ConstraintRope2D
+-    CreateFlag("ConstraintRope2D", -4.97, 1) -- Display Text3D flag
++    -- Create a ConstraintDistance2D //BOX2D_2_4
++    CreateFlag("ConstraintDistance2D", -4.97, 1) -- Display Text3D flag //BOX2D_2_4
++    -- Create a ConstraintRope2D //BOX2D_2_3
++    CreateFlag("ConstraintRope2D", -4.97, 1) -- Display Text3D flag //BOX2D_2_3
+     local boxNode = box:Clone()
+     boxNode:GetComponent("RigidBody2D").bodyType = BT_STATIC
+     local ballNode = ball:Clone()
+     boxNode.position = Vector3(-3.7, 0.7, 0)
+     ballNode.position = Vector3(-4.5, 0, 0)
+ 
+-    local constraintRope = boxNode:CreateComponent("ConstraintRope2D")
++    local constraintRope = boxNode:CreateComponent("ConstraintDistance2D") //BOX2D_2_4
++    local constraintRope = boxNode:CreateComponent("ConstraintRope2D") //BOX2D_2_3
+     constraintRope.otherBody = ballNode:GetComponent("RigidBody2D") -- Constrain ball to box
+     constraintRope.ownerBodyAnchor = Vector2(0, -0.5) -- Offset from box (OwnerBody) : the rope is rigid from OwnerBody center to this ownerBodyAnchor
++    constraintRope.length = 0.9 //BOX2D_2_4
++    constraintRope.minLength = 0.9 //BOX2D_2_4
+     constraintRope.maxLength = 0.9 -- Rope length
+     constraintRope.collideConnected = true
+ 
+@@ -284,8 +295,10 @@ function CreateScene()
+     local constraintWeld = boxNode:CreateComponent("ConstraintWeld2D")
+     constraintWeld.otherBody = ballNode:GetComponent("RigidBody2D") -- Constrain ball to box
+     constraintWeld.anchor = boxNode.position2D
+-    constraintWeld.frequencyHz = 4
+-    constraintWeld.dampingRatio = 0.5
++    constraintWeld.stiffness = constraintWeld:GetAngularStiffnessS(4, 0.5) //BOX2D_2_4
++    constraintWeld.damping = constraintWeld:GetAngularStiffnessD(4, 0.5) //BOX2D_2_4
++    constraintWeld.frequencyHz = 4 //BOX2D_2_3
++    constraintWeld.dampingRatio = 0.5 //BOX2D_2_3
+ 
+     -- ConstraintWheel2D
+     CreateFlag("ConstraintWheel2D",  2.53, 1) -- Display Text3D flag
+@@ -301,8 +314,10 @@ function CreateScene()
+     constraintWheel.enableMotor = true
+     constraintWheel.maxMotorTorque = 1
+     constraintWheel.motorSpeed = 0
+-    constraintWheel.frequencyHz = 4
+-    constraintWheel.dampingRatio = 0.5
++    constraintWheel.stiffness = constraintWheel:GetLinearStiffnessS(4, 0.5) //BOX2D_2_4
++    constraintWheel.damping = constraintWheel:GetLinearStiffnessD(4, 0.5) //BOX2D_2_4
++    constraintWheel.frequencyHz = 4 //BOX2D_2_3
++    constraintWheel.dampingRatio = 0.5 //BOX2D_2_3
+     constraintWheel.collideConnected = true -- doesn't work
+ end
+ 
+@@ -420,7 +435,8 @@ function HandleTouchBegin3(eventType, ev
+         constraintMouse.maxForce = 1000 * rigidBody.mass
+         constraintMouse.collideConnected = true
+         constraintMouse.otherBody = dummyBody  -- Use dummy body instead of rigidBody. It's better to create a dummy body automatically in ConstraintMouse2D
+-        constraintMouse.dampingRatio = 0
++        constraintMouse.damping = 0 //BOX2D_2_4
++        constraintMouse.dampingRatio = 0 //BOX2D_2_3
+     end
+     SubscribeToEvent("TouchMove", "HandleTouchMove3")
+     SubscribeToEvent("TouchEnd", "HandleTouchEnd3")
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/bin/Data/Scripts/28_Urho2DPhysicsRope.as Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/Scripts/28_Urho2DPhysicsRope.as
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/bin/Data/Scripts/28_Urho2DPhysicsRope.as	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/Scripts/28_Urho2DPhysicsRope.as	2021-03-01 21:56:50.866631050 -0800
+@@ -103,7 +103,8 @@ void CreateScene()
+         prevBody = body;
+     }
+ 
+-    ConstraintRope2D@ constraintRope = groundNode.CreateComponent("ConstraintRope2D");
++    ConstraintDistance2D@ constraintRope = groundNode.CreateComponent("ConstraintDistance2D"); //BOX2D_2_4
++    ConstraintRope2D@ constraintRope = groundNode.CreateComponent("ConstraintRope2D"); //BOX2D_2_3
+     constraintRope.otherBody = prevBody;
+     constraintRope.ownerBodyAnchor = Vector2(0.0f, y);
+     constraintRope.maxLength = NUM_OBJECTS - 1.0f + 0.01f;
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/bin/Data/Scripts/32_Urho2DConstraints.as Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/Scripts/32_Urho2DConstraints.as
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/bin/Data/Scripts/32_Urho2DConstraints.as	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/Scripts/32_Urho2DConstraints.as	2021-03-01 21:56:50.866631050 -0800
+@@ -123,8 +123,10 @@ void CreateScene()
+     constraintDistance.ownerBodyAnchor = boxDistanceNode.position2D;
+     constraintDistance.otherBodyAnchor = ballDistanceNode.position2D;
+     // Make the constraint soft (comment to make it rigid, which is its basic behavior)
+-    constraintDistance.frequencyHz = 4.0f;
+-    constraintDistance.dampingRatio = 0.5f;
++    constraintDistance.stiffness = constraintDistance.GetLinearStiffnessS(4.0f, 0.5f); //BOX2D_2_4
++    constraintDistance.damping = constraintDistance.GetLinearStiffnessD(4.0f, 0.5f); //BOX2D_2_4
++    constraintDistance.frequencyHz = 4.0f; //BOX2D_2_3
++    constraintDistance.dampingRatio = 0.5f; //BOX2D_2_3
+ 
+     // Create a ConstraintFriction2D ********** Not functional. From Box2d samples it seems that 2 anchors are required, Urho2D only provides 1, needs investigation ***********
+     CreateFlag("ConstraintFriction2D", 0.03f, 1.0f); // Display Text3D flag
+@@ -185,16 +187,20 @@ void CreateScene()
+     wheel1.anchor = ball1WheelNode.position2D;
+     wheel1.axis = Vector2(0.0f, 1.0f);
+     wheel1.maxMotorTorque = 20.0f;
+-    wheel1.frequencyHz = 4.0f;
+-    wheel1.dampingRatio = 0.4f;
++    wheel1.stiffness = wheel1.GetLinearStiffnessS(4.0f, 0.4f); //BOX2D_2_4
++    wheel1.damping = wheel1.GetLinearStiffnessD(4.0f, 0.4f); //BOX2D_2_4
++    wheel1.frequencyHz = 4.0f; //BOX2D_2_3
++    wheel1.dampingRatio = 0.4f; //BOX2D_2_3
+ 
+     ConstraintWheel2D@ wheel2 = car.CreateComponent("ConstraintWheel2D");
+     wheel2.otherBody = ball2WheelNode.GetComponent("RigidBody2D");
+     wheel2.anchor = ball2WheelNode.position2D;
+     wheel2.axis = Vector2(0.0f, 1.0f);
+     wheel2.maxMotorTorque = 10.0f;
+-    wheel2.frequencyHz = 4.0f;
+-    wheel2.dampingRatio = 0.4f;
++    wheel2.stiffness = wheel2.GetLinearStiffnessS(4.0f, 0.4f); //BOX2D_2_4
++    wheel2.damping = wheel2.GetLinearStiffnessD(4.0f, 0.4f); //BOX2D_2_4
++    wheel2.frequencyHz = 4.0f; //BOX2D_2_3
++    wheel2.dampingRatio = 0.4f; //BOX2D_2_3
+ 
+     // ConstraintMotor2D
+     CreateFlag("ConstraintMotor2D", 2.53f, -1.0f); // Display Text3D flag
+@@ -270,8 +276,10 @@ void CreateScene()
+     constraintRevolute.motorSpeed = 0.0f;
+     constraintRevolute.enableMotor = true;
+ 
+-    // Create a ConstraintRope2D
+-    CreateFlag("ConstraintRope2D", -4.97f, 1.0f); // Display Text3D flag
++    // Create a ConstraintDistance2D //BOX2D_2_4
++    CreateFlag("ConstraintDistance2D", -4.97f, 1.0f); // Display Text3D flag //BOX2D_2_4
++    // Create a ConstraintRope2D //BOX2D_2_3
++    CreateFlag("ConstraintRope2D", -4.97f, 1.0f); // Display Text3D flag //BOX2D_2_3
+     Node@ boxRopeNode = box.Clone();
+     tempBody = boxRopeNode.GetComponent("RigidBody2D");
+     tempBody.bodyType = BT_STATIC;
+@@ -279,9 +287,12 @@ void CreateScene()
+     boxRopeNode.position = Vector3(-3.7f, 0.7f, 0.0f);
+     ballRopeNode.position = Vector3(-4.5f, 0.0f, 0.0f);
+ 
+-    ConstraintRope2D@ constraintRope = boxRopeNode.CreateComponent("ConstraintRope2D");
++    ConstraintDistance2D@ constraintRope = boxRopeNode.CreateComponent("ConstraintDistance2D"); //BOX2D_2_4
++    ConstraintRope2D@ constraintRope = boxRopeNode.CreateComponent("ConstraintRope2D"); //BOX2D_2_3
+     constraintRope.otherBody = ballRopeNode.GetComponent("RigidBody2D"); // Constrain ball to box
+     constraintRope.ownerBodyAnchor = Vector2(0.0f, -0.5f); // Offset from box (OwnerBody) : the rope is rigid from OwnerBody center to this ownerBodyAnchor
++    constraintRope.length = 0.9f; //BOX2D_2_4
++    constraintRope.minLength = 0.9f; // Rope length //BOX2D_2_4
+     constraintRope.maxLength = 0.9f; // Rope length
+     constraintRope.collideConnected = true;
+ 
+@@ -295,8 +306,10 @@ void CreateScene()
+     ConstraintWeld2D@ constraintWeld = boxWeldNode.CreateComponent("ConstraintWeld2D");
+     constraintWeld.otherBody = ballWeldNode.GetComponent("RigidBody2D"); // Constrain ball to box
+     constraintWeld.anchor = boxWeldNode.position2D;
+-    constraintWeld.frequencyHz = 4.0f;
+-    constraintWeld.dampingRatio = 0.5f;
++    constraintWeld.stiffness = constraintWeld.GetAngularStiffnessS(4.0f, 0.5f); //BOX2D_2_4
++    constraintWeld.damping = constraintWeld.GetAngularStiffnessD(4.0f, 0.5f); //BOX2D_2_4
++    constraintWeld.frequencyHz = 4.0f; //BOX2D_2_3
++    constraintWeld.dampingRatio = 0.5f; //BOX2D_2_3
+ 
+     // Create a ConstraintWheel2D
+     CreateFlag("ConstraintWheel2D",  2.53f, 1.0f); // Display Text3D flag
+@@ -312,8 +325,10 @@ void CreateScene()
+     constraintWheel.enableMotor = true;
+     constraintWheel.maxMotorTorque = 1.0f;
+     constraintWheel.motorSpeed = 0.0f;
+-    constraintWheel.frequencyHz = 4.0f;
+-    constraintWheel.dampingRatio = 0.5f;
++    constraintWheel.stiffness = constraintWheel.GetLinearStiffnessS(4.0f, 0.5f); //BOX2D_2_4
++    constraintWheel.damping = constraintWheel.GetLinearStiffnessD(4.0f, 0.5f); //BOX2D_2_4
++    constraintWheel.frequencyHz = 4.0f; //BOX2D_2_3
++    constraintWheel.dampingRatio = 0.5f; //BOX2D_2_3
+     constraintWheel.collideConnected = true; // doesn't work
+ }
+ 
+@@ -458,7 +473,8 @@ void HandleTouchBegin3(StringHash eventT
+         constraintMouse.maxForce = 1000 * rigidBody.mass;
+         constraintMouse.collideConnected = true;
+         constraintMouse.otherBody = dummyBody;  // Use dummy body instead of rigidBody. It's better to create a dummy body automatically in ConstraintMouse2D
+-        constraintMouse.dampingRatio = 0;
++        constraintMouse.damping = 0; //BOX2D_2_4
++        constraintMouse.dampingRatio = 0; //BOX2D_2_3
+     }
+     SubscribeToEvent("TouchMove", "HandleTouchMove3");
+     SubscribeToEvent("TouchEnd", "HandleTouchEnd3");
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/bin/Data/UI/EditorIcons.xml Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/UI/EditorIcons.xml
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/bin/Data/UI/EditorIcons.xml	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/UI/EditorIcons.xml	2021-03-01 21:56:50.866631050 -0800
+@@ -83,10 +83,10 @@
+         <attribute name="Texture" value="Texture2D;Textures/Editor/EditorIcons.png" />
+         <attribute name="Image Rect" value="112 0 126 14" />
+     </element>
+-    <element type="ConstraintRope2D">
+-        <attribute name="Texture" value="Texture2D;Textures/Editor/EditorIcons.png" />
+-        <attribute name="Image Rect" value="112 0 126 14" />
+-    </element>
++    <element type="ConstraintRope2D"> //BOX2D_2_3
++        <attribute name="Texture" value="Texture2D;Textures/Editor/EditorIcons.png" /> //BOX2D_2_3
++        <attribute name="Image Rect" value="112 0 126 14" /> //BOX2D_2_3
++    </element> //BOX2D_2_3
+     <element type="ConstraintWeld2D">
+         <attribute name="Texture" value="Texture2D;Textures/Editor/EditorIcons.png" />
+         <attribute name="Image Rect" value="112 0 126 14" />
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Docs/AngelScriptAPI.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Docs/AngelScriptAPI.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Docs/AngelScriptAPI.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Docs/AngelScriptAPI.h	2021-03-01 21:56:50.870631208 -0800
+@@ -2743,11 +2743,12 @@ Array<Variant> attributes;
+ /* readonly */
+ String category;
+ bool collideConnected;
+-float dampingRatio;
++float damping; //BOX2D_2_4
++float dampingRatio; //BOX2D_2_3
+ bool enabled;
+ /* readonly */
+ bool enabledEffective;
+-float frequencyHz;
++float frequencyHz; //BOX2D_2_3
+ /* readonly */
+ uint id;
+ float length;
+@@ -2765,6 +2766,7 @@ Vector2 ownerBodyAnchor;
+ int refs;
+ /* readonly */
+ bool replicated;
++float stiffness; //BOX2D_2_4
+ bool temporary;
+ /* readonly */
+ StringHash type;
+@@ -3055,11 +3057,12 @@ Array<Variant> attributes;
+ /* readonly */
+ String category;
+ bool collideConnected;
+-float dampingRatio;
++float damping; //BOX2D_2_4
++float dampingRatio; //BOX2D_2_3
+ bool enabled;
+ /* readonly */
+ bool enabledEffective;
+-float frequencyHz;
++float frequencyHz; //BOX2D_2_3
+ /* readonly */
+ uint id;
+ float maxForce;
+@@ -3075,6 +3078,7 @@ RigidBody2D ownerBody;
+ int refs;
+ /* readonly */
+ bool replicated;
++float stiffness; //BOX2D_2_4
+ Vector2 target;
+ bool temporary;
+ /* readonly */
+@@ -3327,83 +3331,83 @@ float upperAngle;
+ int weakRefs;
+ };
+ 
+-class ConstraintRope2D
+-{
+-public:
+-// Methods:
+-void ApplyAttributes();
+-void DrawDebugGeometry(DebugRenderer, bool);
+-Variant GetAttribute(const String&) const;
+-ValueAnimation GetAttributeAnimation(const String&) const;
+-float GetAttributeAnimationSpeed(const String&) const;
+-float GetAttributeAnimationTime(const String&) const;
+-WrapMode GetAttributeAnimationWrapMode(const String&) const;
+-Variant GetAttributeDefault(const String&) const;
+-bool GetInterceptNetworkUpdate(const String&) const;
+-bool HasSubscribedToEvent(Object, const String&);
+-bool HasSubscribedToEvent(const String&);
+-bool Load(File);
+-bool Load(VectorBuffer&);
+-bool LoadJSON(const JSONValue&);
+-bool LoadXML(const XMLElement&);
+-void MarkNetworkUpdate() const;
+-void Remove();
+-void RemoveAttributeAnimation(const String&);
+-void RemoveInstanceDefault();
+-void RemoveObjectAnimation();
+-void ResetToDefault();
+-bool Save(File) const;
+-bool Save(VectorBuffer&) const;
+-bool SaveJSON(JSONValue&) const;
+-bool SaveXML(XMLElement&) const;
+-void SendEvent(const String&, VariantMap& = VariantMap ( ));
+-void SetAnimationTime(float);
+-bool SetAttribute(const String&, const Variant&);
+-void SetAttributeAnimation(const String&, ValueAnimation, WrapMode = WM_LOOP, float = 1.0f);
+-void SetAttributeAnimationSpeed(const String&, float);
+-void SetAttributeAnimationTime(const String&, float);
+-void SetAttributeAnimationWrapMode(const String&, WrapMode);
+-void SetInterceptNetworkUpdate(const String&, bool);
+-
+-// Properties:
+-bool animationEnabled;
+-/* readonly */
+-Array<Variant> attributeDefaults;
+-/* readonly */
+-Array<AttributeInfo> attributeInfos;
+-Array<Variant> attributes;
+-/* readonly */
+-String category;
+-bool collideConnected;
+-bool enabled;
+-/* readonly */
+-bool enabledEffective;
+-/* readonly */
+-uint id;
+-float maxLength;
+-/* readonly */
+-Node node;
+-/* readonly */
+-uint numAttributes;
+-ObjectAnimation objectAnimation;
+-RigidBody2D otherBody;
+-Vector2 otherBodyAnchor;
+-/* readonly */
+-RigidBody2D ownerBody;
+-Vector2 ownerBodyAnchor;
+-/* readonly */
+-int refs;
+-/* readonly */
+-bool replicated;
+-bool temporary;
+-/* readonly */
+-StringHash type;
+-/* readonly */
+-String typeName;
+-/* readonly */
+-int weakRefs;
+-};
+-
++class ConstraintRope2D //BOX2D_2_3
++{ //BOX2D_2_3
++public: //BOX2D_2_3
++// Methods: //BOX2D_2_3
++void ApplyAttributes(); //BOX2D_2_3
++void DrawDebugGeometry(DebugRenderer, bool); //BOX2D_2_3
++Variant GetAttribute(const String&) const; //BOX2D_2_3
++ValueAnimation GetAttributeAnimation(const String&) const; //BOX2D_2_3
++float GetAttributeAnimationSpeed(const String&) const; //BOX2D_2_3
++float GetAttributeAnimationTime(const String&) const; //BOX2D_2_3
++WrapMode GetAttributeAnimationWrapMode(const String&) const; //BOX2D_2_3
++Variant GetAttributeDefault(const String&) const; //BOX2D_2_3
++bool GetInterceptNetworkUpdate(const String&) const; //BOX2D_2_3
++bool HasSubscribedToEvent(Object, const String&); //BOX2D_2_3
++bool HasSubscribedToEvent(const String&); //BOX2D_2_3
++bool Load(File); //BOX2D_2_3
++bool Load(VectorBuffer&); //BOX2D_2_3
++bool LoadJSON(const JSONValue&); //BOX2D_2_3
++bool LoadXML(const XMLElement&); //BOX2D_2_3
++void MarkNetworkUpdate() const; //BOX2D_2_3
++void Remove(); //BOX2D_2_3
++void RemoveAttributeAnimation(const String&); //BOX2D_2_3
++void RemoveInstanceDefault(); //BOX2D_2_3
++void RemoveObjectAnimation(); //BOX2D_2_3
++void ResetToDefault(); //BOX2D_2_3
++bool Save(File) const; //BOX2D_2_3
++bool Save(VectorBuffer&) const; //BOX2D_2_3
++bool SaveJSON(JSONValue&) const; //BOX2D_2_3
++bool SaveXML(XMLElement&) const; //BOX2D_2_3
++void SendEvent(const String&, VariantMap& = VariantMap ( )); //BOX2D_2_3
++void SetAnimationTime(float); //BOX2D_2_3
++bool SetAttribute(const String&, const Variant&); //BOX2D_2_3
++void SetAttributeAnimation(const String&, ValueAnimation, WrapMode = WM_LOOP, float = 1.0f); //BOX2D_2_3
++void SetAttributeAnimationSpeed(const String&, float); //BOX2D_2_3
++void SetAttributeAnimationTime(const String&, float); //BOX2D_2_3
++void SetAttributeAnimationWrapMode(const String&, WrapMode); //BOX2D_2_3
++void SetInterceptNetworkUpdate(const String&, bool); //BOX2D_2_3
++ //BOX2D_2_3
++// Properties: //BOX2D_2_3
++bool animationEnabled; //BOX2D_2_3
++/* readonly */ //BOX2D_2_3
++Array<Variant> attributeDefaults; //BOX2D_2_3
++/* readonly */ //BOX2D_2_3
++Array<AttributeInfo> attributeInfos; //BOX2D_2_3
++Array<Variant> attributes; //BOX2D_2_3
++/* readonly */ //BOX2D_2_3
++String category; //BOX2D_2_3
++bool collideConnected; //BOX2D_2_3
++bool enabled; //BOX2D_2_3
++/* readonly */ //BOX2D_2_3
++bool enabledEffective; //BOX2D_2_3
++/* readonly */ //BOX2D_2_3
++uint id; //BOX2D_2_3
++float maxLength; //BOX2D_2_3
++/* readonly */ //BOX2D_2_3
++Node node; //BOX2D_2_3
++/* readonly */ //BOX2D_2_3
++uint numAttributes; //BOX2D_2_3
++ObjectAnimation objectAnimation; //BOX2D_2_3
++RigidBody2D otherBody; //BOX2D_2_3
++Vector2 otherBodyAnchor; //BOX2D_2_3
++/* readonly */ //BOX2D_2_3
++RigidBody2D ownerBody; //BOX2D_2_3
++Vector2 ownerBodyAnchor; //BOX2D_2_3
++/* readonly */ //BOX2D_2_3
++int refs; //BOX2D_2_3
++/* readonly */ //BOX2D_2_3
++bool replicated; //BOX2D_2_3
++bool temporary; //BOX2D_2_3
++/* readonly */ //BOX2D_2_3
++StringHash type; //BOX2D_2_3
++/* readonly */ //BOX2D_2_3
++String typeName; //BOX2D_2_3
++/* readonly */ //BOX2D_2_3
++int weakRefs; //BOX2D_2_3
++}; //BOX2D_2_3
++ //BOX2D_2_3
+ class ConstraintWeld2D
+ {
+ public:
+@@ -3453,11 +3457,12 @@ Array<Variant> attributes;
+ /* readonly */
+ String category;
+ bool collideConnected;
+-float dampingRatio;
++float damping; //BOX2D_2_4
++float dampingRatio; //BOX2D_2_3
+ bool enabled;
+ /* readonly */
+ bool enabledEffective;
+-float frequencyHz;
++float frequencyHz; //BOX2D_2_3
+ /* readonly */
+ uint id;
+ /* readonly */
+@@ -3472,6 +3477,7 @@ RigidBody2D ownerBody;
+ int refs;
+ /* readonly */
+ bool replicated;
++float stiffness; //BOX2D_2_4
+ bool temporary;
+ /* readonly */
+ StringHash type;
+@@ -3531,12 +3537,13 @@ Vector2 axis;
+ /* readonly */
+ String category;
+ bool collideConnected;
+-float dampingRatio;
++float damping; //BOX2D_2_4
++float dampingRatio; //BOX2D_2_3
+ bool enableMotor;
+ bool enabled;
+ /* readonly */
+ bool enabledEffective;
+-float frequencyHz;
++float frequencyHz; //BOX2D_2_3
+ /* readonly */
+ uint id;
+ float maxMotorTorque;
+@@ -3553,6 +3560,7 @@ RigidBody2D ownerBody;
+ int refs;
+ /* readonly */
+ bool replicated;
++float stiffness; //BOX2D_2_4
+ bool temporary;
+ /* readonly */
+ StringHash type;
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Docs/LuaScriptAPI.dox Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Docs/LuaScriptAPI.dox
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Docs/LuaScriptAPI.dox	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Docs/LuaScriptAPI.dox	2021-03-01 21:56:50.870631208 -0800
+@@ -60,7 +60,7 @@ namespace Urho3D
+ <a href="#Class_ConstraintPrismatic2D"><b>ConstraintPrismatic2D</b></a>
+ <a href="#Class_ConstraintPulley2D"><b>ConstraintPulley2D</b></a>
+ <a href="#Class_ConstraintRevolute2D"><b>ConstraintRevolute2D</b></a>
+-<a href="#Class_ConstraintRope2D"><b>ConstraintRope2D</b></a>
++<a href="#Class_ConstraintRope2D"><b>ConstraintRope2D</b></a> //BOX2D_2_3
+ <a href="#Class_ConstraintWeld2D"><b>ConstraintWeld2D</b></a>
+ <a href="#Class_ConstraintWheel2D"><b>ConstraintWheel2D</b></a>
+ <a href="#Class_Context"><b>Context</b></a>
+@@ -1419,15 +1419,23 @@ Methods:
+ 
+ - void SetOwnerBodyAnchor(const Vector2& anchor)
+ - void SetOtherBodyAnchor(const Vector2& anchor)
+-- void SetFrequencyHz(float frequencyHz)
+-- void SetDampingRatio(float dampingRatio)
++- void SetStiffness(float stiffness)  //BOX2D_2_4
++- void SetDamping(float damping)  //BOX2D_2_4
++- void SetFrequencyHz(float frequencyHz)  //BOX2D_2_3
++- void SetDampingRatio(float dampingRatio)  //BOX2D_2_3
+ - void SetLength(float length)
++- void SetMaxLength(float maxLength) //BOX2D_2_4
++- void SetMinLength(float maxLength) //BOX2D_2_4
+ - const Vector2& GetOwnerBodyAnchor() const
+ - const Vector2& GetOtherBodyAnchor() const
+-- float GetFrequencyHz() const
+-- float GetDampingRatio() const
++- float GetStiffness() const //BOX2D_2_4
++- float GetDamping() const //BOX2D_2_4
++- float GetFrequencyHz() const //BOX2D_2_3
++- float GetDampingRatio() const //BOX2D_2_3
+ - float GetLength() const
+-
++- float GetMaxLength() const //BOX2D_2_4
++- float GetMinLength() const //BOX2D_2_4
++ 
+ Properties:
+ 
+ - Vector2& ownerBodyAnchor
+@@ -1435,6 +1443,8 @@ Properties:
+ - float frequencyHz
+ - float dampingRatio
+ - float length
++- float minLength
++- float maxLength
+ 
+ <a name="Class_ConstraintFriction2D"></a>
+ ### ConstraintFriction2D : Constraint2D
+@@ -1503,12 +1513,16 @@ Methods:
+ 
+ - void SetTarget(const Vector2& target)
+ - void SetMaxForce(float maxForce)
+-- void SetFrequencyHz(float frequencyHz)
+-- void SetDampingRatio(float dampingRatio)
++- void SetStiffness(float stiffness)  //BOX2D_2_4
++- void SetDamping(float damping)  //BOX2D_2_4
++- void SetFrequencyHz(float frequencyHz) //BOX2D_2_3
++- void SetDampingRatio(float dampingRatio) //BOX2D_2_3
+ - const Vector2& GetTarget() const
+ - float GetMaxForce() const
+-- float GetFrequencyHz() const
+-- float GetDampingRatio() const
++- float GetStiffness() const //BOX2D_2_4
++- float GetDamping() const //BOX2D_2_4
++- float GetFrequencyHz() const //BOX2D_2_3
++- float GetDampingRatio() const //BOX2D_2_3
+ 
+ Properties:
+ 
+@@ -1604,35 +1618,39 @@ Properties:
+ - float motorSpeed
+ - float maxMotorTorque
+ 
+-<a name="Class_ConstraintRope2D"></a>
+-### ConstraintRope2D : Constraint2D
+-
+-Methods:
+-
+-- void SetOwnerBodyAnchor(const Vector2& anchor)
+-- void SetOtherBodyAnchor(const Vector2& anchor)
+-- void SetMaxLength(float maxLength)
+-- const Vector2& GetOwnerBodyAnchor() const
+-- const Vector2& GetOtherBodyAnchor() const
+-- float GetMaxLength() const
+-
+-Properties:
+-
+-- Vector2& ownerBodyAnchor
+-- Vector2& otherBodyAnchor
+-- float maxLength
+-
++<a name="Class_ConstraintRope2D"></a> //BOX2D_2_3
++### ConstraintRope2D : Constraint2D //BOX2D_2_3
++ //BOX2D_2_3
++Methods: //BOX2D_2_3
++ //BOX2D_2_3
++- void SetOwnerBodyAnchor(const Vector2& anchor) //BOX2D_2_3
++- void SetOtherBodyAnchor(const Vector2& anchor) //BOX2D_2_3
++- void SetMaxLength(float maxLength) //BOX2D_2_3
++- const Vector2& GetOwnerBodyAnchor() const //BOX2D_2_3
++- const Vector2& GetOtherBodyAnchor() const //BOX2D_2_3
++- float GetMaxLength() const //BOX2D_2_3
++ //BOX2D_2_3
++Properties: //BOX2D_2_3
++ //BOX2D_2_3
++- Vector2& ownerBodyAnchor //BOX2D_2_3
++- Vector2& otherBodyAnchor //BOX2D_2_3
++- float maxLength //BOX2D_2_3
++ //BOX2D_2_3
+ <a name="Class_ConstraintWeld2D"></a>
+ ### ConstraintWeld2D : Constraint2D
+ 
+ Methods:
+ 
+ - void SetAnchor(const Vector2& anchor)
+-- void SetFrequencyHz(float frequencyHz)
+-- void SetDampingRatio(float dampingRatio)
++- void SetStiffness(float stiffness)  //BOX2D_2_4
++- void SetDamping(float damping)  //BOX2D_2_4
++- void SetFrequencyHz(float frequencyHz) //BOX2D_2_3
++- void SetDampingRatio(float dampingRatio) //BOX2D_2_3
+ - const Vector2& GetAnchor() const
+-- float GetFrequencyHz() const
+-- float GetDampingRatio() const
++- float GetStiffness() const //BOX2D_2_4
++- float GetDamping() const //BOX2D_2_4
++- float GetFrequencyHz() const //BOX2D_2_3
++- float GetDampingRatio() const //BOX2D_2_3
+ 
+ Properties:
+ 
+@@ -1650,15 +1668,19 @@ Methods:
+ - void SetEnableMotor(bool enableMotor)
+ - void SetMaxMotorTorque(float maxMotorTorque)
+ - void SetMotorSpeed(float motorSpeed)
+-- void SetFrequencyHz(float frequencyHz)
+-- void SetDampingRatio(float dampingRatio)
++- void SetStiffness(float stiffness)  //BOX2D_2_4
++- void SetDamping(float damping)  //BOX2D_2_4
++- void SetFrequencyHz(float frequencyHz) //BOX2D_2_3
++- void SetDampingRatio(float dampingRatio) //BOX2D_2_3
+ - const Vector2& GetAnchor() const
+ - const Vector2& GetAxis() const
+ - bool GetEnableMotor() const
+ - float GetMaxMotorTorque() const
+ - float GetMotorSpeed() const
+-- float GetFrequencyHz() const
+-- float GetDampingRatio() const
++- float GetStiffness() const //BOX2D_2_4
++- float GetDamping() const //BOX2D_2_4
++- float GetFrequencyHz() const //BOX2D_2_3
++- float GetDampingRatio() const //BOX2D_2_3
+ 
+ Properties:
+ 
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Docs/Reference.dox Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Docs/Reference.dox
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Docs/Reference.dox	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Docs/Reference.dox	2021-03-01 21:56:50.874631367 -0800
+@@ -2812,15 +2812,17 @@ Constraints ('joints' in Box2D terminolo
+ 
+ See 32_Urho2DConstraints sample for detailed examples and to help selecting the appropriate constraint. Following are the available constraints classes, with the indication of the corresponding 'joint' in Box2D manual (see Chapter 8 Joints):
+ - Constraint2D: base class for 2D physics constraints.
+-- Distance joint <=> ConstraintDistance2D: defines 2D physics distance constraint. The distance between two anchor points (\ref ConstraintDistance2D::SetOwnerBodyAnchor "SetOwnerBodyAnchor()" and \ref ConstraintDistance2D::SetOtherBodyAnchor "SetOtherBodyAnchor()") on two bodies is kept constant. The constraint can also be made soft, like a spring-damper connection. Softness is achieved by tuning frequency (\ref ConstraintDistance2D::SetFrequencyHz "SetFrequencyHz()" is below half of the timestep) and damping ratio (\ref ConstraintDistance2D::SetDampingRatio "SetDampingRatio()").
++- Distance joint <=> ConstraintDistance2D: defines 2D physics distance constraint. The distance between two anchor points (\ref ConstraintDistance2D::SetOwnerBodyAnchor "SetOwnerBodyAnchor()" and \ref ConstraintDistance2D::SetOtherBodyAnchor "SetOtherBodyAnchor()") on two bodies is kept constant. The constraint can also be made soft, like a spring-damper connection. Softness is achieved by tuning stiffness (\ref ConstraintDistance2D::SetStiffness "SetStiffness()" is below half of the timestep) and damping (\ref ConstraintDistance2D::SetDamping "SetDamping()"). //BOX2D_2_4
++- Distance joint <=> ConstraintDistance2D: defines 2D physics distance constraint. The distance between two anchor points (\ref ConstraintDistance2D::SetOwnerBodyAnchor "SetOwnerBodyAnchor()" and \ref ConstraintDistance2D::SetOtherBodyAnchor "SetOtherBodyAnchor()") on two bodies is kept constant. The constraint can also be made soft, like a spring-damper connection. Softness is achieved by tuning frequency (\ref ConstraintDistance2D::SetFrequencyHz "SetFrequencyHz()" is below half of the timestep) and damping ratio (\ref ConstraintDistance2D::SetDampingRatio "SetDampingRatio()"). //BOX2D_2_3
+ - Revolute joint <=> ConstraintRevolute2D: defines 2D physics revolute constraint. This constraint forces two bodies to share a common hinge anchor point (\ref ConstraintRevolute2D::SetAnchor "SetAnchor()"). You can control the relative rotation of the two bodies (the constraint angle) using a limit and/or a motor. A limit (\ref ConstraintRevolute2D::SetEnableLimit "SetEnableLimit()") forces the joint angle to remain between a lower (\ref ConstraintRevolute2D::SetLowerAngle "SetLowerAngle()") and upper (\ref ConstraintRevolute2D::SetUpperAngle "SetUpperAngle()") bound. The limit will apply as much torque as needed to make this happen. The limit range should include zero, otherwise the constraint will lurch when the simulation begins. A motor (\ref ConstraintRevolute2D::SetEnableMotor "SetEnableMotor()") allows you to specify the constraint speed (the time derivative of the angle). The speed (\ref ConstraintRevolute2D::SetMotorSpeed "SetMotorSpeed()") can be negative or positive. When the maximum torque (\ref ConstraintRevolute2D::SetMaxMotorTorque "SetMaxMotorTorque()") is exceeded, the joint will slow down and can even reverse. You can use a motor to simulate friction. Just set the joint speed to zero, and set the maximum torque to some small, but significant value. The motor will try to prevent the constraint from rotating, but will yield to a significant load.
+ - Prismatic joint <=> ConstraintPrismatic2D: defines 2D physics prismatic constraint. This constraint allows for relative translation of two bodies along a specified axis (\ref ConstraintPrismatic2D::SetAxis "SetAxis()"). There's no rotation applied. This constraint definition is similar to ConstraintRevolute2D description; just substitute translation for angle and force for torque.
+ - Pulley joint <=> ConstraintPulley2D: defines 2D physics pulley constraint. The pulley connects two bodies to ground (\ref ConstraintPulley2D::SetOwnerBodyGroundAnchor "SetOwnerBodyGroundAnchor()" and \ref ConstraintPulley2D::SetOtherBodyGroundAnchor "SetOtherBodyGroundAnchor()") and to each other (\ref ConstraintPulley2D::SetOwnerBodyAnchor "SetOwnerBodyAnchor()" and \ref ConstraintPulley2D::SetOtherBodyAnchor "SetOtherBodyAnchor()"). As one body goes up, the other goes down. You can supply a ratio (\ref ConstraintPulley2D::SetRatio "SetRatio()") that simulates a block and tackle. This causes one side of the pulley to extend faster than the other. At the same time the constraint force is smaller on one side than the other. You can use this to create mechanical leverage.
+ - Gear joint <=> ConstraintGear2D: defines 2D physics gear constraint. Used to create sophisticated mechanisms and saves from using compound shapes. This constraint can only connect ConstraintRevolute2Ds and/or ConstraintPrismatic2Ds (\ref ConstraintGear2D::SetOwnerConstraint "SetOwnerConstraint()" and \ref ConstraintGear2D::SetOtherConstraint "SetOtherConstraint()"). Like the pulley ratio, you can specify a gear ratio (\ref ConstraintGear2D::SetRatio "SetRatio()"). However, in this case the gear ratio can be negative.
+-- Mouse joint <=> ConstraintMouse2D: defines 2D physics mouse constraint. Used to manipulate bodies with the mouse, this constraint is almost used in every Box2D tutorial available on the net, to allow interacting with the 2D scene. It attempts to drive a point on a body towards the current position of the cursor. There is no restriction on rotation. This constraint has a target point, maximum force, frequency, and damping ratio. The target point (\ref ConstraintMouse2D::SetTarget "SetTarget()") initially coincides with the body’s anchor point. The maximum force (\ref ConstraintMouse2D::SetMaxForce "SetMaxForce()") is used to prevent violent reactions when multiple dynamic bodies interact. You can make this as large as you like. The frequency (\ref ConstraintMouse2D::SetFrequencyHz "SetFrequencyHz()") and damping ratio (\ref ConstraintMouse2D::SetDampingRatio "SetDampingRatio()") are used to create a spring/damper effect similar to the ConstraintDistance2D. Many users have tried to adapt the ConstraintMouse2D for game play. Users often want to achieve precise positioning and instantaneous response. The ConstraintMouse2D doesn’t work very well in that context. You may wish to consider using kinematic bodies instead.
++- Mouse joint <=> ConstraintMouse2D: defines 2D physics mouse constraint. Used to manipulate bodies with the mouse, this constraint is almost used in every Box2D tutorial available on the net, to allow interacting with the 2D scene. It attempts to drive a point on a body towards the current position of the cursor. There is no restriction on rotation. This constraint has a target point, maximum force, stiffness, and damping. The target point (\ref ConstraintMouse2D::SetTarget "SetTarget()") initially coincides with the body’s anchor point. The maximum force (\ref ConstraintMouse2D::SetMaxForce "SetMaxForce()") is used to prevent violent reactions when multiple dynamic bodies interact. You can make this as large as you like. The stiffness (\ref ConstraintMouse2D::SetStiffness "SetStiffness()") and damping (\ref ConstraintMouse2D::SetDamping "SetDamping()") are used to create a spring/damper effect similar to the ConstraintDistance2D. Many users have tried to adapt the ConstraintMouse2D for game play. Users often want to achieve precise positioning and instantaneous response. The ConstraintMouse2D doesn’t work very well in that context. You may wish to consider using kinematic bodies instead. //BOX2D_2_4
++- Mouse joint <=> ConstraintMouse2D: defines 2D physics mouse constraint. Used to manipulate bodies with the mouse, this constraint is almost used in every Box2D tutorial available on the net, to allow interacting with the 2D scene. It attempts to drive a point on a body towards the current position of the cursor. There is no restriction on rotation. This constraint has a target point, maximum force, frequency, and damping ratio. The target point (\ref ConstraintMouse2D::SetTarget "SetTarget()") initially coincides with the body’s anchor point. The maximum force (\ref ConstraintMouse2D::SetMaxForce "SetMaxForce()") is used to prevent violent reactions when multiple dynamic bodies interact. You can make this as large as you like. The frequency (\ref ConstraintMouse2D::SetFrequencyHz "SetFrequencyHz()") and damping ratio (\ref ConstraintMouse2D::SetDampingRatio "SetDampingRatio()") are used to create a spring/damper effect similar to the ConstraintDistance2D. Many users have tried to adapt the ConstraintMouse2D for game play. Users often want to achieve precise positioning and instantaneous response. The ConstraintMouse2D doesn’t work very well in that context. You may wish to consider using kinematic bodies instead. //BOX2D_2_3
+ - Wheel joint <=> ConstraintWheel2D: defines 2D physics wheel constraint. This constraint restricts a point on bodyB (\ref ConstraintWheel2D::SetAnchor() "SetAnchor()") to a line on bodyA (\ref ConstraintWheel2D::SetAxis "SetAxis()"). It also provides a suspension spring.
+ - Weld joint <=> ConstraintWeld2D: defines 2D physics weld constraint. This constraint attempts to constrain all relative motion between two bodies.
+-- Rope joint <=> ConstraintRope2D: defines 2D physics rope constraint. This constraint restricts the maximum distance (\ref ConstraintRope2D::SetMaxLength "SetMaxLength()") between two points (\ref ConstraintRope2D::SetOwnerBodyAnchor "SetOwnerBodyAnchor()" and \ref ConstraintRope2D::SetOtherBodyAnchor "SetOtherBodyAnchor()"). This can be useful to prevent chains of bodies from stretching, even under high load.
++- Rope joint <=> ConstraintRope2D: defines 2D physics rope constraint. This constraint restricts the maximum distance (\ref ConstraintRope2D::SetMaxLength "SetMaxLength()") between two points (\ref ConstraintRope2D::SetOwnerBodyAnchor "SetOwnerBodyAnchor()" and \ref ConstraintRope2D::SetOtherBodyAnchor "SetOtherBodyAnchor()"). This can be useful to prevent chains of bodies from stretching, even under high load. //BOX2D_2_3
+ - Friction joint <=> ConstraintFriction2D: defines 2D physics friction constraint. This constraint is used for top-down friction. It provides 2D translational friction (\ref ConstraintFriction2D::SetMaxForce "SetMaxForce()") and angular friction (\ref ConstraintFriction2D::SetMaxTorque "SetMaxTorque()").
+ - Motor joint <=> ConstraintMotor2D: defines 2D physics motor constraint. This constraint lets you control the motion of a body by specifying target position (\ref ConstraintMotor2D::SetLinearOffset "SetLinearOffset()") and rotation offsets (\ref ConstraintMotor2D::SetAngularOffset "SetAngularOffset()"). You can set the maximum motor force (\ref ConstraintMotor2D::SetMaxForce "SetMaxForce()") and torque (\ref ConstraintMotor2D::SetMaxTorque "SetMaxTorque()") that will be applied to reach the target position and rotation. If the body is blocked, it will stop and the contact forces will be proportional to the maximum motor force and torque.
+ 
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Docs/ScriptAPI.dox Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Docs/ScriptAPI.dox
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Docs/ScriptAPI.dox	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Docs/ScriptAPI.dox	2021-03-01 21:56:50.874631367 -0800
+@@ -1304,8 +1304,10 @@ namespace Urho3D
+ - %Is %Enabled : bool
+ - %Owner %Body %Anchor : Vector2
+ - %Other %Body %Anchor : Vector2
+-- %Frequency %Hz : float
+-- %Damping %Ratio : float
++- %Stiffness : float //BOX2D_2_4
++- %Damping : float //BOX2D_2_4
++- %Frequency %Hz : float //BOX2D_2_3
++- %Damping %Ratio : float //BOX2D_2_3
+ - %Length : float
+ - %Collide %Connected : bool
+ - %Other %Body %NodeID : int
+@@ -1338,8 +1340,10 @@ namespace Urho3D
+ - %Is %Enabled : bool
+ - %Target : Vector2
+ - %Max %Force : float
+-- %Frequency %Hz : float
+-- %Damping %Ratio : float
++- %Stiffness : float //BOX2D_2_4
++- %Damping : float //BOX2D_2_4
++- %Frequency %Hz : float //BOX2D_2_3
++- %Damping %Ratio : float //BOX2D_2_3
+ - %Collide %Connected : bool
+ - %Other %Body %NodeID : int
+ 
+@@ -1378,19 +1382,21 @@ namespace Urho3D
+ - %Collide %Connected : bool
+ - %Other %Body %NodeID : int
+ 
+-### ConstraintRope2D
+-- %Is %Enabled : bool
+-- %Owner %Body %Anchor : Vector2
+-- %Other %Body %Anchor : Vector2
+-- %Max %Length : float
+-- %Collide %Connected : bool
+-- %Other %Body %NodeID : int
+-
++### ConstraintRope2D //BOX2D_2_3
++- %Is %Enabled : bool //BOX2D_2_3
++- %Owner %Body %Anchor : Vector2 //BOX2D_2_3
++- %Other %Body %Anchor : Vector2 //BOX2D_2_3
++- %Max %Length : float //BOX2D_2_3
++- %Collide %Connected : bool //BOX2D_2_3
++- %Other %Body %NodeID : int //BOX2D_2_3
++ //BOX2D_2_3
+ ### ConstraintWeld2D
+ - %Is %Enabled : bool
+ - %Anchor : Vector2
+-- %Frequency %Hz : float
+-- %Damping %Ratio : float
++- %Stiffness : float //BOX2D_2_4
++- %Damping : float //BOX2D_2_4
++- %Frequency %Hz : float //BOX2D_2_3
++- %Damping %Ratio : float //BOX2D_2_3
+ - %Collide %Connected : bool
+ - %Other %Body %NodeID : int
+ 
+@@ -1401,8 +1407,10 @@ namespace Urho3D
+ - %Enable %Motor : bool
+ - %Max %Motor %Torque : float
+ - %Motor %Speed : float
+-- %Frequency %Hz : float
+-- %Damping %Ratio : float
++- %Stiffness : float //BOX2D_2_4
++- %Damping : float //BOX2D_2_4
++- %Frequency %Hz : float //BOX2D_2_3
++- %Damping %Ratio : float //BOX2D_2_3
+ - %Collide %Connected : bool
+ - %Other %Body %NodeID : int
+ 
+@@ -5336,10 +5344,11 @@ Properties:
+ - Variant[] attributes
+ - String category // readonly
+ - bool collideConnected
+-- float dampingRatio
++- float damping //BOX2D_2_4
++- float dampingRatio //BOX2D_2_3
+ - bool enabled
+ - bool enabledEffective // readonly
+-- float frequencyHz
++- float frequencyHz //BOX2D_2_3
+ - uint id // readonly
+ - float length
+ - Node@ node // readonly
+@@ -5351,6 +5360,7 @@ Properties:
+ - Vector2 ownerBodyAnchor
+ - int refs // readonly
+ - bool replicated // readonly
++- float stiffness //BOX2D_2_4
+ - bool temporary
+ - StringHash type // readonly
+ - String typeName // readonly
+@@ -5604,10 +5614,11 @@ Properties:
+ - Variant[] attributes
+ - String category // readonly
+ - bool collideConnected
+-- float dampingRatio
++- float damping //BOX2D_2_4
++- float dampingRatio //BOX2D_2_3
+ - bool enabled
+ - bool enabledEffective // readonly
+-- float frequencyHz
++- float frequencyHz //BOX2D_2_3
+ - uint id // readonly
+ - float maxForce
+ - Node@ node // readonly
+@@ -5617,6 +5628,7 @@ Properties:
+ - RigidBody2D@ ownerBody // readonly
+ - int refs // readonly
+ - bool replicated // readonly
++- float stiffness //BOX2D_2_4
+ - Vector2 target
+ - bool temporary
+ - StringHash type // readonly
+@@ -5947,10 +5959,11 @@ Properties:
+ - Variant[] attributes
+ - String category // readonly
+ - bool collideConnected
+-- float dampingRatio
++- float damping //BOX2D_2_4
++- float dampingRatio //BOX2D_2_3
+ - bool enabled
+ - bool enabledEffective // readonly
+-- float frequencyHz
++- float frequencyHz //BOX2D_2_3
+ - uint id // readonly
+ - Node@ node // readonly
+ - uint numAttributes // readonly
+@@ -5959,6 +5972,7 @@ Properties:
+ - RigidBody2D@ ownerBody // readonly
+ - int refs // readonly
+ - bool replicated // readonly
++- float stiffness //BOX2D_2_4
+ - bool temporary
+ - StringHash type // readonly
+ - String typeName // readonly
+@@ -6014,11 +6028,12 @@ Properties:
+ - Vector2 axis
+ - String category // readonly
+ - bool collideConnected
+-- float dampingRatio
++- float damping //BOX2D_2_4
++- float dampingRatio //BOX2D_2_3
+ - bool enableMotor
+ - bool enabled
+ - bool enabledEffective // readonly
+-- float frequencyHz
++- float frequencyHz //BOX2D_2_3
+ - uint id // readonly
+ - float maxMotorTorque
+ - float motorSpeed
+@@ -6029,6 +6044,7 @@ Properties:
+ - RigidBody2D@ ownerBody // readonly
+ - int refs // readonly
+ - bool replicated // readonly
++- float stiffness //BOX2D_2_4
+ - bool temporary
+ - StringHash type // readonly
+ - String typeName // readonly
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Samples/28_Urho2DPhysicsRope/Urho2DPhysicsRope.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Samples/28_Urho2DPhysicsRope/Urho2DPhysicsRope.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Samples/28_Urho2DPhysicsRope/Urho2DPhysicsRope.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Samples/28_Urho2DPhysicsRope/Urho2DPhysicsRope.cpp	2021-03-01 21:56:50.874631367 -0800
+@@ -35,7 +35,11 @@
+ #include <Urho3D/Urho2D/CollisionBox2D.h>
+ #include <Urho3D/Urho2D/CollisionEdge2D.h>
+ #include <Urho3D/Urho2D/ConstraintRevolute2D.h>
++#ifdef BOX2D_2_4
++#include <Urho3D/Urho2D/ConstraintDistance2D.h>
++#else
+ #include <Urho3D/Urho2D/ConstraintRope2D.h>
++#endif
+ #include <Urho3D/Urho2D/PhysicsWorld2D.h>
+ #include <Urho3D/Urho2D/RigidBody2D.h>
+ 
+@@ -144,7 +148,11 @@ void Urho2DPhysicsRope::CreateScene()
+         prevBody = body;
+     }
+ 
++#ifdef BOX2D_2_4
++    auto* constraintRope = groundNode->CreateComponent<ConstraintDistance2D>();
++#else
+     auto* constraintRope = groundNode->CreateComponent<ConstraintRope2D>();
++#endif
+     constraintRope->SetOtherBody(prevBody);
+     constraintRope->SetOwnerBodyAnchor(Vector2(0.0f, y));
+     constraintRope->SetMaxLength(NUM_OBJECTS - 1.0f + 0.01f);
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Samples/28_Urho2DPhysicsRope/Urho2DPhysicsRope.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Samples/28_Urho2DPhysicsRope/Urho2DPhysicsRope.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Samples/28_Urho2DPhysicsRope/Urho2DPhysicsRope.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Samples/28_Urho2DPhysicsRope/Urho2DPhysicsRope.h	2021-03-01 21:56:50.874631367 -0800
+@@ -28,7 +28,11 @@ namespace Urho3D
+ {
+     class Node;
+     class Scene;
++#ifdef BOX2D_2_4
++    class ConstraintDistance2D;
++#else
+     class ConstraintRope2D;
++#endif
+ }
+ 
+ /// Urho2D physics rope sample.
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Samples/32_Urho2DConstraints/Urho2DConstraints.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Samples/32_Urho2DConstraints/Urho2DConstraints.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Samples/32_Urho2DConstraints/Urho2DConstraints.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Samples/32_Urho2DConstraints/Urho2DConstraints.cpp	2021-03-01 21:56:50.878631526 -0800
+@@ -49,7 +49,9 @@
+ #include <Urho3D/Urho2D/ConstraintPrismatic2D.h>
+ #include <Urho3D/Urho2D/ConstraintPulley2D.h>
+ #include <Urho3D/Urho2D/ConstraintRevolute2D.h>
++#ifdef BOX2D_2_3
+ #include <Urho3D/Urho2D/ConstraintRope2D.h>
++#endif
+ #include <Urho3D/Urho2D/ConstraintWeld2D.h>
+ #include <Urho3D/Urho2D/ConstraintWheel2D.h>
+ #include <Urho3D/Urho2D/Drawable2D.h>
+@@ -209,8 +211,13 @@ void Urho2DConstraints::CreateScene()
+     constraintDistance->SetOwnerBodyAnchor(boxDistanceNode->GetPosition2D());
+     constraintDistance->SetOtherBodyAnchor(ballDistanceNode->GetPosition2D());
+     // Make the constraint soft (comment to make it rigid, which is its basic behavior)
++#ifdef BOX2D_2_4
++    constraintDistance->SetStiffness(constraintDistance->GetLinearStiffnessS(4.0f, 0.5f));
++    constraintDistance->SetDamping(constraintDistance->GetLinearStiffnessD(4.0f, 0.5f));
++#else
+     constraintDistance->SetFrequencyHz(4.0f);
+     constraintDistance->SetDampingRatio(0.5f);
++#endif
+ 
+     // Create a ConstraintFriction2D ********** Not functional. From Box2d samples it seems that 2 anchors are required, Urho2D only provides 1, needs investigation ***********
+     CreateFlag("ConstraintFriction2D", 0.03f, 1.0f); // Display Text3D flag
+@@ -271,16 +278,26 @@ void Urho2DConstraints::CreateScene()
+     wheel1->SetAnchor(ball1WheelNode->GetPosition2D());
+     wheel1->SetAxis(Vector2(0.0f, 1.0f));
+     wheel1->SetMaxMotorTorque(20.0f);
++#ifdef BOX2D_2_4
++    wheel1->SetStiffness(wheel1->GetLinearStiffnessS(4.0f, 0.4f));
++    wheel1->SetDamping(wheel1->GetLinearStiffnessD(4.0f, 0.4f));
++#else
+     wheel1->SetFrequencyHz(4.0f);
+     wheel1->SetDampingRatio(0.4f);
++#endif
+ 
+     auto* wheel2 = car->CreateComponent<ConstraintWheel2D>();
+     wheel2->SetOtherBody(ball2WheelNode->GetComponent<RigidBody2D>());
+     wheel2->SetAnchor(ball2WheelNode->GetPosition2D());
+     wheel2->SetAxis(Vector2(0.0f, 1.0f));
+     wheel2->SetMaxMotorTorque(10.0f);
++#ifdef BOX2D_2_4
++    wheel2->SetStiffness(wheel2->GetLinearStiffnessS(4.0f, 0.4f));
++    wheel2->SetDamping(wheel2->GetLinearStiffnessD(4.0f, 0.4f));
++#else
+     wheel2->SetFrequencyHz(4.0f);
+     wheel2->SetDampingRatio(0.4f);
++#endif
+ 
+     // ConstraintMotor2D
+     CreateFlag("ConstraintMotor2D", 2.53f, -1.0f); // Display Text3D flag
+@@ -356,8 +373,13 @@ void Urho2DConstraints::CreateScene()
+     constraintRevolute->SetMotorSpeed(0.0f);
+     constraintRevolute->SetEnableMotor(true);
+ 
++#ifdef BOX2D_2_4
++    // Create a ConstraintDistance2D
++    CreateFlag("ConstraintDistance2D", -4.97f, 1.0f); // Display Text3D flag
++#else
+     // Create a ConstraintRope2D
+     CreateFlag("ConstraintRope2D", -4.97f, 1.0f); // Display Text3D flag
++#endif
+     Node* boxRopeNode = box->Clone();
+     tempBody = boxRopeNode->GetComponent<RigidBody2D>();
+     tempBody->SetBodyType(BT_STATIC);
+@@ -365,11 +387,20 @@ void Urho2DConstraints::CreateScene()
+     boxRopeNode->SetPosition(Vector3(-3.7f, 0.7f, 0.0f));
+     ballRopeNode->SetPosition(Vector3(-4.5f, 0.0f, 0.0f));
+ 
++#ifdef BOX2D_2_4
++    auto* constraintRope = boxRopeNode->CreateComponent<ConstraintDistance2D>();
++    constraintRope->SetOtherBody(ballRopeNode->GetComponent<RigidBody2D>()); // Constrain ball to box
++    constraintRope->SetOwnerBodyAnchor(Vector2(0.0f, -0.5f)); // Offset from box (OwnerBody) : the rope is rigid from OwnerBody center to this ownerBodyAnchor
++    constraintRope->SetLength(0.9f);
++    constraintRope->SetMinLength(0.9f);
++    constraintRope->SetMaxLength(0.9f); // Rope length
++#else
+     auto* constraintRope = boxRopeNode->CreateComponent<ConstraintRope2D>();
+     constraintRope->SetOtherBody(ballRopeNode->GetComponent<RigidBody2D>()); // Constrain ball to box
+     constraintRope->SetOwnerBodyAnchor(Vector2(0.0f, -0.5f)); // Offset from box (OwnerBody) : the rope is rigid from OwnerBody center to this ownerBodyAnchor
+     constraintRope->SetMaxLength(0.9f); // Rope length
+     constraintRope->SetCollideConnected(true);
++#endif
+ 
+     // Create a ConstraintWeld2D
+     CreateFlag("ConstraintWeld2D", -2.45f, 1.0f); // Display Text3D flag
+@@ -381,8 +412,13 @@ void Urho2DConstraints::CreateScene()
+     auto* constraintWeld = boxWeldNode->CreateComponent<ConstraintWeld2D>();
+     constraintWeld->SetOtherBody(ballWeldNode->GetComponent<RigidBody2D>()); // Constrain ball to box
+     constraintWeld->SetAnchor(boxWeldNode->GetPosition2D());
++#ifdef BOX2D_2_4
++    constraintWeld->SetStiffness(constraintWeld->GetAngularStiffnessS(4.0f, 0.5f));
++    constraintWeld->SetDamping(constraintWeld->GetAngularStiffnessD(4.0f, 0.5f));
++#else
+     constraintWeld->SetFrequencyHz(4.0f);
+     constraintWeld->SetDampingRatio(0.5f);
++#endif
+ 
+     // Create a ConstraintWheel2D
+     CreateFlag("ConstraintWheel2D",  2.53f, 1.0f); // Display Text3D flag
+@@ -398,8 +434,13 @@ void Urho2DConstraints::CreateScene()
+     constraintWheel->SetEnableMotor(true);
+     constraintWheel->SetMaxMotorTorque(1.0f);
+     constraintWheel->SetMotorSpeed(0.0f);
++#ifdef BOX2D_2_4
++    constraintWheel->SetStiffness(constraintWheel->GetLinearStiffnessS(4.0f, 0.5f));
++    constraintWheel->SetDamping(constraintWheel->GetLinearStiffnessD(4.0f, 0.5f));
++#else
+     constraintWheel->SetFrequencyHz(4.0f);
+     constraintWheel->SetDampingRatio(0.5f);
++#endif
+     constraintWheel->SetCollideConnected(true); // doesn't work
+ }
+ 
+@@ -581,7 +622,11 @@ void Urho2DConstraints::HandleTouchBegin
+         constraintMouse->SetMaxForce(1000 * rigidBody->GetMass());
+         constraintMouse->SetCollideConnected(true);
+         constraintMouse->SetOtherBody(dummyBody);  // Use dummy body instead of rigidBody. It's better to create a dummy body automatically in ConstraintMouse2D
++#ifdef BOX2D_2_4
++        constraintMouse->SetDamping(0);
++#else
+         constraintMouse->SetDampingRatio(0);
++#endif
+     }
+     SubscribeToEvent(E_TOUCHMOVE, URHO3D_HANDLER(Urho2DConstraints, HandleTouchMove3));
+     SubscribeToEvent(E_TOUCHEND, URHO3D_HANDLER(Urho2DConstraints, HandleTouchEnd3));
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Samples/32_Urho2DConstraints/Urho2DConstraints.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Samples/32_Urho2DConstraints/Urho2DConstraints.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Samples/32_Urho2DConstraints/Urho2DConstraints.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Samples/32_Urho2DConstraints/Urho2DConstraints.h	2021-03-01 21:56:50.878631526 -0800
+@@ -36,7 +36,9 @@ namespace Urho3D
+     class ConstraintPrismatic2D;
+     class ConstraintPulley2D;
+     class ConstraintRevolute2D;
++#ifdef BOX2D_2_3
+     class ConstraintRope2D;
++#endif
+     class ConstraintWeld2D;
+     class ConstraintWheel2D;
+ }
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/AngelScript/Urho2DAPI.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/AngelScript/Urho2DAPI.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/AngelScript/Urho2DAPI.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/AngelScript/Urho2DAPI.cpp	2021-03-01 21:56:50.878631526 -0800
+@@ -42,7 +42,9 @@
+ #include "../Urho2D/ConstraintPrismatic2D.h"
+ #include "../Urho2D/ConstraintPulley2D.h"
+ #include "../Urho2D/ConstraintRevolute2D.h"
++#ifdef BOX2D_2_3
+ #include "../Urho2D/ConstraintRope2D.h"
++#endif
+ #include "../Urho2D/ConstraintWeld2D.h"
+ #include "../Urho2D/ConstraintWheel2D.h"
+ #include "../Urho2D/ParticleEffect2D.h"
+@@ -600,6 +602,12 @@ template <class T> void RegisterConstrai
+     engine->RegisterObjectMethod(className, "RigidBody2D@+ get_otherBody() const", asMETHOD(T, GetOtherBody), asCALL_THISCALL);
+     engine->RegisterObjectMethod(className, "void set_collideConnected(bool)", asMETHOD(T, SetCollideConnected), asCALL_THISCALL);
+     engine->RegisterObjectMethod(className, "bool get_collideConnected() const", asMETHOD(T, GetCollideConnected), asCALL_THISCALL);
++#ifdef BOX2D_2_4
++    engine->RegisterObjectMethod(className, "float GetLinearStiffnessS(float, float) const", asMETHODPR(T, GetLinearStiffnessS, (float,float), float), asCALL_THISCALL);
++    engine->RegisterObjectMethod(className, "float GetLinearStiffnessD(float, float) const", asMETHODPR(T, GetLinearStiffnessD, (float,float), float), asCALL_THISCALL);
++    engine->RegisterObjectMethod(className, "float GetAngularStiffnessS(float, float) const", asMETHODPR(T, GetAngularStiffnessS, (float,float), float), asCALL_THISCALL);
++    engine->RegisterObjectMethod(className, "float GetAngularStiffnessD(float, float) const", asMETHODPR(T, GetAngularStiffnessD, (float,float), float), asCALL_THISCALL);
++#endif
+ }
+ 
+ 
+@@ -615,12 +623,23 @@ static void RegisterConstraintDistance2D
+     engine->RegisterObjectMethod("ConstraintDistance2D", "const Vector2& get_ownerBodyAnchor() const", asMETHOD(ConstraintDistance2D, GetOwnerBodyAnchor), asCALL_THISCALL);
+     engine->RegisterObjectMethod("ConstraintDistance2D", "void set_otherBodyAnchor(const Vector2&)", asMETHOD(ConstraintDistance2D, SetOtherBodyAnchor), asCALL_THISCALL);
+     engine->RegisterObjectMethod("ConstraintDistance2D", "const Vector2& get_otherBodyAnchor() const", asMETHOD(ConstraintDistance2D, GetOtherBodyAnchor), asCALL_THISCALL);
++#ifdef BOX2D_2_4
++    engine->RegisterObjectMethod("ConstraintDistance2D", "void set_stiffness(float)", asMETHOD(ConstraintDistance2D, SetStiffness), asCALL_THISCALL);
++    engine->RegisterObjectMethod("ConstraintDistance2D", "float get_stiffness() const", asMETHOD(ConstraintDistance2D, GetStiffness), asCALL_THISCALL);
++    engine->RegisterObjectMethod("ConstraintDistance2D", "void set_damping(float)", asMETHOD(ConstraintDistance2D, SetDamping), asCALL_THISCALL);
++    engine->RegisterObjectMethod("ConstraintDistance2D", "float get_damping() const", asMETHOD(ConstraintDistance2D, GetDamping), asCALL_THISCALL);
++#else
+     engine->RegisterObjectMethod("ConstraintDistance2D", "void set_frequencyHz(float)", asMETHOD(ConstraintDistance2D, SetFrequencyHz), asCALL_THISCALL);
+     engine->RegisterObjectMethod("ConstraintDistance2D", "float get_frequencyHz() const", asMETHOD(ConstraintDistance2D, GetFrequencyHz), asCALL_THISCALL);
+     engine->RegisterObjectMethod("ConstraintDistance2D", "void set_dampingRatio(float)", asMETHOD(ConstraintDistance2D, SetDampingRatio), asCALL_THISCALL);
+     engine->RegisterObjectMethod("ConstraintDistance2D", "float get_dampingRatio() const", asMETHOD(ConstraintDistance2D, GetDampingRatio), asCALL_THISCALL);
++#endif
+     engine->RegisterObjectMethod("ConstraintDistance2D", "void set_length(float)", asMETHOD(ConstraintDistance2D, SetLength), asCALL_THISCALL);
+     engine->RegisterObjectMethod("ConstraintDistance2D", "float get_length() const", asMETHOD(ConstraintDistance2D, GetLength), asCALL_THISCALL);
++#ifdef BOX2D_2_4
++    engine->RegisterObjectMethod("ConstraintDistance2D", "void set_maxLength(float)", asMETHOD(ConstraintDistance2D, SetMaxLength), asCALL_THISCALL);
++    engine->RegisterObjectMethod("ConstraintDistance2D", "float get_maxLength() const", asMETHOD(ConstraintDistance2D, GetMaxLength), asCALL_THISCALL);
++#endif
+ }
+ 
+ static void RegisterConstraintFriction2D(asIScriptEngine* engine)
+@@ -667,10 +686,17 @@ static void RegisterConstraintMouse2D(as
+     engine->RegisterObjectMethod("ConstraintMouse2D", "const Vector2& get_target() const", asMETHOD(ConstraintMouse2D, GetTarget), asCALL_THISCALL);
+     engine->RegisterObjectMethod("ConstraintMouse2D", "void set_maxForce(float)", asMETHOD(ConstraintMouse2D, SetMaxForce), asCALL_THISCALL);
+     engine->RegisterObjectMethod("ConstraintMouse2D", "float get_maxForce() const", asMETHOD(ConstraintMouse2D, GetMaxForce), asCALL_THISCALL);
++#ifdef BOX2D_2_4
++    engine->RegisterObjectMethod("ConstraintMouse2D", "void set_stiffness(float)", asMETHOD(ConstraintMouse2D, SetStiffness), asCALL_THISCALL);
++    engine->RegisterObjectMethod("ConstraintMouse2D", "float get_stiffness() const", asMETHOD(ConstraintMouse2D, GetStiffness), asCALL_THISCALL);
++    engine->RegisterObjectMethod("ConstraintMouse2D", "void set_damping(float)", asMETHOD(ConstraintMouse2D, SetDamping), asCALL_THISCALL);
++    engine->RegisterObjectMethod("ConstraintMouse2D", "float get_damping() const", asMETHOD(ConstraintMouse2D, GetDamping), asCALL_THISCALL);
++#else
+     engine->RegisterObjectMethod("ConstraintMouse2D", "void set_frequencyHz(float)", asMETHOD(ConstraintMouse2D, SetFrequencyHz), asCALL_THISCALL);
+     engine->RegisterObjectMethod("ConstraintMouse2D", "float get_frequencyHz() const", asMETHOD(ConstraintMouse2D, GetFrequencyHz), asCALL_THISCALL);
+     engine->RegisterObjectMethod("ConstraintMouse2D", "void set_dampingRatio(float)", asMETHOD(ConstraintMouse2D, SetDampingRatio), asCALL_THISCALL);
+     engine->RegisterObjectMethod("ConstraintMouse2D", "float get_dampingRatio() const", asMETHOD(ConstraintMouse2D, GetDampingRatio), asCALL_THISCALL);
++#endif
+ }
+ 
+ static void RegisterConstraintPrismatic2D(asIScriptEngine* engine)
+@@ -733,10 +759,17 @@ static void RegisterConstraintWeld2D(asI
+     RegisterConstraint2D<ConstraintWeld2D>(engine, "ConstraintWeld2D");
+     engine->RegisterObjectMethod("ConstraintWeld2D", "void set_anchor(const Vector2&)", asMETHOD(ConstraintWeld2D, SetAnchor), asCALL_THISCALL);
+     engine->RegisterObjectMethod("ConstraintWeld2D", "const Vector2& get_anchor() const", asMETHOD(ConstraintWeld2D, GetAnchor), asCALL_THISCALL);
++#ifdef BOX2D_2_4
++    engine->RegisterObjectMethod("ConstraintWeld2D", "void set_stiffness(float)", asMETHOD(ConstraintWeld2D, SetStiffness), asCALL_THISCALL);
++    engine->RegisterObjectMethod("ConstraintWeld2D", "float get_stiffness() const", asMETHOD(ConstraintWeld2D, GetStiffness), asCALL_THISCALL);
++    engine->RegisterObjectMethod("ConstraintWeld2D", "void set_damping(float)", asMETHOD(ConstraintWeld2D, SetDamping), asCALL_THISCALL);
++    engine->RegisterObjectMethod("ConstraintWeld2D", "float get_damping() const", asMETHOD(ConstraintWeld2D, GetDamping), asCALL_THISCALL);
++#else
+     engine->RegisterObjectMethod("ConstraintWeld2D", "void set_frequencyHz(float)", asMETHOD(ConstraintWeld2D, SetFrequencyHz), asCALL_THISCALL);
+     engine->RegisterObjectMethod("ConstraintWeld2D", "float get_frequencyHz() const", asMETHOD(ConstraintWeld2D, GetFrequencyHz), asCALL_THISCALL);
+     engine->RegisterObjectMethod("ConstraintWeld2D", "void set_dampingRatio(float)", asMETHOD(ConstraintWeld2D, SetDampingRatio), asCALL_THISCALL);
+     engine->RegisterObjectMethod("ConstraintWeld2D", "float get_dampingRatio() const", asMETHOD(ConstraintWeld2D, GetDampingRatio), asCALL_THISCALL);
++#endif
+ }
+ 
+ static void RegisterConstraintWheel2D(asIScriptEngine* engine)
+@@ -752,12 +785,20 @@ static void RegisterConstraintWheel2D(as
+     engine->RegisterObjectMethod("ConstraintWheel2D", "float get_maxMotorTorque() const", asMETHOD(ConstraintWheel2D, GetMaxMotorTorque), asCALL_THISCALL);
+     engine->RegisterObjectMethod("ConstraintWheel2D", "void set_motorSpeed(float)", asMETHOD(ConstraintWheel2D, SetMotorSpeed), asCALL_THISCALL);
+     engine->RegisterObjectMethod("ConstraintWheel2D", "float get_motorSpeed() const", asMETHOD(ConstraintWheel2D, GetMotorSpeed), asCALL_THISCALL);
++#ifdef BOX2D_2_4
++    engine->RegisterObjectMethod("ConstraintWheel2D", "void set_stiffness(float)", asMETHOD(ConstraintWheel2D, SetStiffness), asCALL_THISCALL);
++    engine->RegisterObjectMethod("ConstraintWheel2D", "float get_stiffness() const", asMETHOD(ConstraintWheel2D, GetStiffness), asCALL_THISCALL);
++    engine->RegisterObjectMethod("ConstraintWheel2D", "void set_damping(float)", asMETHOD(ConstraintWheel2D, SetDamping), asCALL_THISCALL);
++    engine->RegisterObjectMethod("ConstraintWheel2D", "float get_damping() const", asMETHOD(ConstraintWheel2D, GetDamping), asCALL_THISCALL);
++#else
+     engine->RegisterObjectMethod("ConstraintWheel2D", "void set_frequencyHz(float)", asMETHOD(ConstraintWheel2D, SetFrequencyHz), asCALL_THISCALL);
+     engine->RegisterObjectMethod("ConstraintWheel2D", "float get_frequencyHz() const", asMETHOD(ConstraintWheel2D, GetFrequencyHz), asCALL_THISCALL);
+     engine->RegisterObjectMethod("ConstraintWheel2D", "void set_dampingRatio(float)", asMETHOD(ConstraintWheel2D, SetDampingRatio), asCALL_THISCALL);
+     engine->RegisterObjectMethod("ConstraintWheel2D", "float get_dampingRatio() const", asMETHOD(ConstraintWheel2D, GetDampingRatio), asCALL_THISCALL);
++#endif
+ }
+ 
++#ifdef BOX2D_2_3
+ static void RegisterConstraintRope2D(asIScriptEngine* engine)
+ {
+     RegisterConstraint2D<ConstraintRope2D>(engine, "ConstraintRope2D");
+@@ -768,6 +809,7 @@ static void RegisterConstraintRope2D(asI
+     engine->RegisterObjectMethod("ConstraintRope2D", "void set_maxLength(float)", asMETHOD(ConstraintRope2D, SetMaxLength), asCALL_THISCALL);
+     engine->RegisterObjectMethod("ConstraintRope2D", "float get_maxLength() const", asMETHOD(ConstraintRope2D, GetMaxLength), asCALL_THISCALL);
+ }
++#endif
+ 
+ void RegisterUrho2DAPI(asIScriptEngine* engine)
+ {
+@@ -810,7 +852,9 @@ void RegisterUrho2DAPI(asIScriptEngine*
+     RegisterConstraintRevolute2D(engine);
+     RegisterConstraintWeld2D(engine);
+     RegisterConstraintWheel2D(engine);
++#ifdef BOX2D_2_3
+     RegisterConstraintRope2D(engine);
++#endif
+ }
+ 
+ }
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintDistance2D.pkg Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintDistance2D.pkg
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintDistance2D.pkg	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintDistance2D.pkg	2021-03-01 21:56:50.878631526 -0800
+@@ -4,19 +4,25 @@ class ConstraintDistance2D : Constraint2
+ {
+     void SetOwnerBodyAnchor(const Vector2& anchor);
+     void SetOtherBodyAnchor(const Vector2& anchor);
+-    void SetFrequencyHz(float frequencyHz);
+-    void SetDampingRatio(float dampingRatio);
++    void SetStiffness(float stiffness); //BOX2D_2_4
++    void SetDamping(float damping); //BOX2D_2_4
++    void SetFrequencyHz(float frequencyHz); //BOX2D_2_3
++    void SetDampingRatio(float dampingRatio); //BOX2D_2_3
+     void SetLength(float length);
+ 
+     const Vector2& GetOwnerBodyAnchor() const;
+     const Vector2& GetOtherBodyAnchor() const;
+-    float GetFrequencyHz() const;
+-    float GetDampingRatio() const;
++    float GetStiffness() const; //BOX2D_2_4
++    float GetDamping() const; //BOX2D_2_4
++    float GetFrequencyHz() const; //BOX2D_2_3
++    float GetDampingRatio() const; //BOX2D_2_3
+     float GetLength() const;
+ 
+     tolua_property__get_set Vector2& ownerBodyAnchor;
+     tolua_property__get_set Vector2& otherBodyAnchor;
+-    tolua_property__get_set float frequencyHz;
+-    tolua_property__get_set float dampingRatio;
++    tolua_property__get_set float stiffness; //BOX2D_2_4
++    tolua_property__get_set float damping; //BOX2D_2_4
++    tolua_property__get_set float frequencyHz; //BOX2D_2_3
++    tolua_property__get_set float dampingRatio; //BOX2D_2_3
+     tolua_property__get_set float length;
+ };
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintMouse2D.pkg Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintMouse2D.pkg
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintMouse2D.pkg	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintMouse2D.pkg	2021-03-01 21:56:50.878631526 -0800
+@@ -3,17 +3,23 @@ class ConstraintMouse2D : Constraint2D
+ {
+     void SetTarget(const Vector2& target);
+     void SetMaxForce(float maxForce);
+-    void SetFrequencyHz(float frequencyHz);
+-    void SetDampingRatio(float dampingRatio);
++    void SetStiffness(float stiffness); //BOX2D_2_4
++    void SetDamping(float damping); //BOX2D_2_4
++    void SetFrequencyHz(float frequencyHz); //BOX2D_2_3
++    void SetDampingRatio(float dampingRatio); //BOX2D_2_3
+ 
+     const Vector2& GetTarget() const;
+     float GetMaxForce() const;
+-    float GetFrequencyHz() const;
+-    float GetDampingRatio() const;
++    float GetStiffness() const; //BOX2D_2_4
++    float GetDamping() const; //BOX2D_2_4
++    float GetFrequencyHz() const; //BOX2D_2_3
++    float GetDampingRatio() const; //BOX2D_2_3
+ 
+ 
+     tolua_property__get_set Vector2& target;
+     tolua_property__get_set float maxForce;
+-    tolua_property__get_set float frequencyHz;
+-    tolua_property__get_set float dampingRatio;
++    tolua_property__get_set float stiffness; //BOX2D_2_4
++    tolua_property__get_set float damping; //BOX2D_2_4
++    tolua_property__get_set float frequencyHz; //BOX2D_2_3
++    tolua_property__get_set float dampingRatio; //BOX2D_2_3
+ };
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWeld2D.pkg Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWeld2D.pkg
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWeld2D.pkg	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWeld2D.pkg	2021-03-01 21:56:50.878631526 -0800
+@@ -3,14 +3,20 @@ $#include "Urho2D/ConstraintWeld2D.h"
+ class  ConstraintWeld2D : Constraint2D
+ {
+     void SetAnchor(const Vector2& anchor);
+-    void SetFrequencyHz(float frequencyHz);
+-    void SetDampingRatio(float dampingRatio);
++    void SetStiffness(float stiffness); //BOX2D_2_4
++    void SetDamping(float damping); //BOX2D_2_4
++    void SetFrequencyHz(float frequencyHz); //BOX2D_2_3
++    void SetDampingRatio(float dampingRatio); //BOX2D_2_3
+ 
+     const Vector2& GetAnchor() const;
+-    float GetFrequencyHz() const;
+-    float GetDampingRatio() const;
++    float GetStiffness() const; //BOX2D_2_4
++    float GetDamping() const; //BOX2D_2_4
++    float GetFrequencyHz() const; //BOX2D_2_3
++    float GetDampingRatio() const; //BOX2D_2_3
+ 
+     tolua_property__get_set Vector2& anchor;
+-    tolua_property__get_set float frequencyHz;
+-    tolua_property__get_set float dampingRatio;
++    tolua_property__get_set float stiffness; //BOX2D_2_4
++    tolua_property__get_set float damping; //BOX2D_2_4
++    tolua_property__get_set float frequencyHz; //BOX2D_2_3
++    tolua_property__get_set float dampingRatio; //BOX2D_2_3
+ };
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWheel2D.pkg Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWheel2D.pkg
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWheel2D.pkg	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWheel2D.pkg	2021-03-01 21:56:50.878631526 -0800
+@@ -7,22 +7,28 @@ class ConstraintWheel2D : Constraint2D
+     void SetEnableMotor(bool enableMotor);
+     void SetMaxMotorTorque(float maxMotorTorque);
+     void SetMotorSpeed(float motorSpeed);
+-    void SetFrequencyHz(float frequencyHz);
+-    void SetDampingRatio(float dampingRatio);
++    void SetStiffness(float stiffness); //BOX2D_2_4
++    void SetDamping(float damping); //BOX2D_2_4
++    void SetFrequencyHz(float frequencyHz); //BOX2D_2_3
++    void SetDampingRatio(float dampingRatio); //BOX2D_2_3
+ 
+     const Vector2& GetAnchor() const;
+     const Vector2& GetAxis() const;
+     bool GetEnableMotor() const;
+     float GetMaxMotorTorque() const;
+     float GetMotorSpeed() const;
+-    float GetFrequencyHz() const;
+-    float GetDampingRatio() const;
++    float GetStiffness() const; //BOX2D_2_4
++    float GetDamping() const; //BOX2D_2_4
++    float GetFrequencyHz() const; //BOX2D_2_3
++    float GetDampingRatio() const; //BOX2D_2_3
+ 
+     tolua_property__get_set Vector2& anchor;
+     tolua_property__get_set Vector2& axis;
+     tolua_property__get_set bool enableMotor;
+     tolua_property__get_set float maxMotorTorque;
+     tolua_property__get_set float motorSpeed;
+-    tolua_property__get_set float frequencyHz;
+-    tolua_property__get_set float dampingRatio;
++    tolua_property__get_set float stiffness; //BOX2D_2_4
++    tolua_property__get_set float damping; //BOX2D_2_4
++    tolua_property__get_set float frequencyHz; //BOX2D_2_3
++    tolua_property__get_set float dampingRatio; //BOX2D_2_3
+ };
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/LuaScript/pkgs/Urho2DLuaAPI.pkg Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2DLuaAPI.pkg
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/LuaScript/pkgs/Urho2DLuaAPI.pkg	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2DLuaAPI.pkg	2021-03-01 21:56:50.878631526 -0800
+@@ -3,8 +3,8 @@ $pfile "Urho2D/SpriteSheet2D.pkg"
+ $pfile "Urho2D/Drawable2D.pkg"
+ $pfile "Urho2D/StaticSprite2D.pkg"
+ 
+-$pfile "Urho2D/StretchableSprite2D.pkg"
+-
++$pfile "Urho2D/StretchableSprite2D.pkg"
++
+ $pfile "Urho2D/AnimationSet2D.pkg"
+ $pfile "Urho2D/AnimatedSprite2D.pkg"
+ 
+@@ -35,7 +35,7 @@ $pfile "Urho2D/ConstraintMouse2D.pkg"
+ $pfile "Urho2D/ConstraintPrismatic2D.pkg"
+ $pfile "Urho2D/ConstraintPulley2D.pkg"
+ $pfile "Urho2D/ConstraintRevolute2D.pkg"
+-$pfile "Urho2D/ConstraintRope2D.pkg"
++$pfile "Urho2D/ConstraintRope2D.pkg" //BOX2D_2_3
+ $pfile "Urho2D/ConstraintWeld2D.pkg"
+ $pfile "Urho2D/ConstraintWheel2D.pkg"
+ 
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/CollisionChain2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/CollisionChain2D.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/CollisionChain2D.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/CollisionChain2D.cpp	2021-03-01 21:58:48.783301448 -0800
+@@ -137,7 +137,17 @@ void CollisionChain2D::RecreateFixture()
+     if (loop_)
+         chainShape_.CreateLoop(&b2Vertices[0], count);
+     else
++    {
++#ifdef BOX2D_2_4
++        b2Vec2 prevVertex;
++        b2Vec2 nextVertex;
++        prevVertex.SetZero();
++        nextVertex.SetZero();
++        chainShape_.CreateChain(&b2Vertices[0], count, prevVertex, nextVertex);
++#else
+         chainShape_.CreateChain(&b2Vertices[0], count);
++#endif
++    }
+ 
+     CreateFixture();
+ }
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/CollisionEdge2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/CollisionEdge2D.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/CollisionEdge2D.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/CollisionEdge2D.cpp	2021-03-01 21:56:50.878631526 -0800
+@@ -41,7 +41,11 @@ CollisionEdge2D::CollisionEdge2D(Context
+     vertex2_(DEFAULT_VERTEX2)
+ {
+     Vector2 worldScale(cachedWorldScale_.x_, cachedWorldScale_.y_);
++#ifdef BOX2D_2_4
++    edgeShape_.SetTwoSided(ToB2Vec2(vertex1_ * worldScale), ToB2Vec2(vertex2_ * worldScale));
++#else
+     edgeShape_.Set(ToB2Vec2(vertex1_ * worldScale), ToB2Vec2(vertex2_ * worldScale));
++#endif
+ 
+     fixtureDef_.shape = &edgeShape_;
+ }
+@@ -90,7 +94,11 @@ void CollisionEdge2D::RecreateFixture()
+     ReleaseFixture();
+ 
+     Vector2 worldScale(cachedWorldScale_.x_, cachedWorldScale_.y_);
++#ifdef BOX2D_2_4
++    edgeShape_.SetTwoSided(ToB2Vec2(vertex1_ * worldScale), ToB2Vec2(vertex2_ * worldScale));
++#else
+     edgeShape_.Set(ToB2Vec2(vertex1_ * worldScale), ToB2Vec2(vertex2_ * worldScale));
++#endif
+ 
+     CreateFixture();
+ }
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/CollisionShape2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/CollisionShape2D.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/CollisionShape2D.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/CollisionShape2D.cpp	2021-03-01 21:56:50.878631526 -0800
+@@ -228,7 +228,11 @@ void CollisionShape2D::CreateFixture()
+         fixture_ = body->CreateFixture(&fixtureDef_);
+         if (!rigidBody_->GetUseFixtureMass()) // Workaround for resetting mass in CreateFixture().
+             body->SetMassData(&massData);
++#ifdef BOX2D_2_4
++        fixture_->GetUserData().pointer = reinterpret_cast<uintptr_t>(this);
++#else
+         fixture_->SetUserData(this);
++#endif
+     }
+ }
+ 
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/CollisionShape2D.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/CollisionShape2D.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/CollisionShape2D.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/CollisionShape2D.h	2021-03-01 21:56:50.878631526 -0800
+@@ -24,7 +24,13 @@
+ 
+ #include "../Scene/Component.h"
+ 
++#if defined(BOX2D_2_4) && defined (URHO3D_SYSTEM_BOX2D)
++#include <box2d-2.4/box2d.h>
++#elif defined(BOX2D_2_3) && defined (URHO3D_SYSTEM_BOX2D)
+ #include <Box2D/Box2D.h>
++#else
++#include <Box2D/Box2D.h>
++#endif
+ 
+ namespace Urho3D
+ {
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/Constraint2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/Constraint2D.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/Constraint2D.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/Constraint2D.cpp	2021-03-01 21:56:50.878631526 -0800
+@@ -88,7 +88,11 @@ void Constraint2D::CreateJoint()
+     if (jointDef)
+     {
+         joint_ = physicsWorld_->GetWorld()->CreateJoint(jointDef);
++#ifdef BOX2D_2_4
++        joint_->GetUserData().pointer = reinterpret_cast<uintptr_t>(this);
++#else
+         joint_->SetUserData(this);
++#endif
+ 
+         if (ownerBody_)
+             ownerBody_->AddConstraint2D(this);
+@@ -189,4 +193,76 @@ void Constraint2D::RecreateJoint()
+         attachedConstraint_->CreateJoint();
+ }
+ 
++#ifdef BOX2D_2_4
++float Constraint2D::GetLinearStiffnessS(float frequencyHz, float dampingRatio)
++{
++        float stiffness;
++        float damping;
++        
++        if (ownerBody_ && otherBody_)
++        {
++            if (ownerBody_->GetBody() && otherBody_->GetBody())
++            {
++                b2LinearStiffness(stiffness, damping,
++                                 frequencyHz, dampingRatio,
++                                 ownerBody_->GetBody(),
++                                 otherBody_->GetBody());
++            }
++        }
++        return stiffness;
++}
++float Constraint2D::GetLinearStiffnessD(float frequencyHz, float dampingRatio)
++{
++        float stiffness;
++        float damping;
++        
++        if (ownerBody_ && otherBody_)
++        {
++            if (ownerBody_->GetBody() && otherBody_->GetBody())
++            {
++                b2LinearStiffness(stiffness, damping,
++                                 frequencyHz, dampingRatio,
++                                 ownerBody_->GetBody(),
++                                 otherBody_->GetBody());
++            }
++        }
++        return damping;
++}
++
++float Constraint2D::GetAngularStiffnessS(float frequencyHz, float dampingRatio)
++{
++        float stiffness;
++        float damping;
++        
++        if (ownerBody_ && otherBody_)
++        {
++            if (ownerBody_->GetBody() && otherBody_->GetBody())
++            {
++                b2AngularStiffness(stiffness, damping,
++                                 frequencyHz, dampingRatio,
++                                 ownerBody_->GetBody(),
++                                 otherBody_->GetBody());
++	         }
++        }
++        return stiffness;
++}
++float Constraint2D::GetAngularStiffnessD(float frequencyHz, float dampingRatio)
++{
++        float stiffness;
++        float damping;
++        
++        if (ownerBody_ && otherBody_)
++        {
++            if (ownerBody_->GetBody() && otherBody_->GetBody())
++            {
++                b2AngularStiffness(stiffness, damping,
++                                 frequencyHz, dampingRatio,
++                                 ownerBody_->GetBody(),
++                                 otherBody_->GetBody());
++	         }
++        }
++        return damping;
++}
++#endif
++
+ }
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/Constraint2D.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/Constraint2D.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/Constraint2D.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/Constraint2D.h	2021-03-01 21:56:50.878631526 -0800
+@@ -24,7 +24,13 @@
+ 
+ #include "../Scene/Component.h"
+ 
++#if defined(BOX2D_2_4) && defined (URHO3D_SYSTEM_BOX2D)
++#include <box2d-2.4/box2d.h>
++#elif defined(BOX2D_2_3) && defined (URHO3D_SYSTEM_BOX2D)
+ #include <Box2D/Box2D.h>
++#else
++#include <Box2D/Box2D.h>
++#endif
+ 
+ namespace Urho3D
+ {
+@@ -76,6 +82,24 @@ public:
+     /// Return Box2D joint.
+     b2Joint* GetJoint() const { return joint_; }
+ 
++#ifdef BOX2D_2_4
++    /// Return linear stiffness, stiffness component
++    float GetLinearStiffnessS(float frequencyHz,
++                              float dampingRatio);
++
++    /// Return linear stiffness, damping component
++    float GetLinearStiffnessD(float frequencyHz,
++                              float dampingRatio);
++
++    /// Return rotational stiffness, stiffness component
++    float GetAngularStiffnessS(float frequencyHz,
++                               float dampingRatio);
++
++    /// Return rotational stiffness, damping component
++    float GetAngularStiffnessD(float frequencyHz,
++                               float dampingRatio);
++#endif
++
+ protected:
+     /// Handle node being assigned.
+     void OnNodeSet(Node* node) override;
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintDistance2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintDistance2D.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintDistance2D.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintDistance2D.cpp	2021-03-01 21:56:50.878631526 -0800
+@@ -29,6 +29,8 @@
+ 
+ #include "../DebugNew.h"
+ 
++#include <cfloat>
++
+ namespace Urho3D
+ {
+ 
+@@ -51,10 +53,19 @@ void ConstraintDistance2D::RegisterObjec
+     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
+     URHO3D_ACCESSOR_ATTRIBUTE("Owner Body Anchor", GetOwnerBodyAnchor, SetOwnerBodyAnchor, Vector2, Vector2::ZERO, AM_DEFAULT);
+     URHO3D_ACCESSOR_ATTRIBUTE("Other Body Anchor", GetOtherBodyAnchor, SetOtherBodyAnchor, Vector2, Vector2::ZERO, AM_DEFAULT);
++#ifdef BOX2D_2_4
++    URHO3D_ACCESSOR_ATTRIBUTE("Stiffness", GetStiffness, SetStiffness, float, 0.0f, AM_DEFAULT);
++    URHO3D_ACCESSOR_ATTRIBUTE("Damping", GetDamping, SetDamping, float, 0.0f, AM_DEFAULT);
++#else
+     URHO3D_ACCESSOR_ATTRIBUTE("Frequency Hz", GetFrequencyHz, SetFrequencyHz, float, 0.0f, AM_DEFAULT);
+     URHO3D_ACCESSOR_ATTRIBUTE("Damping Ratio", GetDampingRatio, SetDampingRatio, float, 0.0f, AM_DEFAULT);
++#endif
+     URHO3D_ACCESSOR_ATTRIBUTE("Length", GetLength, SetLength, float, 1.0f, AM_DEFAULT);
+     URHO3D_COPY_BASE_ATTRIBUTES(Constraint2D);
++#ifdef BOX2D_2_4
++    URHO3D_ACCESSOR_ATTRIBUTE("Max Length", GetMaxLength, SetMaxLength, float, FLT_MAX, AM_DEFAULT);
++    URHO3D_ACCESSOR_ATTRIBUTE("Min Length", GetMinLength, SetMinLength, float, 0.0f, AM_DEFAULT);
++#endif
+ }
+ 
+ void ConstraintDistance2D::SetOwnerBodyAnchor(const Vector2& anchor)
+@@ -79,6 +90,38 @@ void ConstraintDistance2D::SetOtherBodyA
+     MarkNetworkUpdate();
+ }
+ 
++#ifdef BOX2D_2_4
++void ConstraintDistance2D::SetStiffness(float stiffness)
++{
++    if (stiffness == jointDef_.stiffness)
++        return;
++
++    jointDef_.stiffness = stiffness;
++
++    if (joint_)
++        static_cast<b2DistanceJoint*>(joint_)->SetStiffness(stiffness);
++    else
++        RecreateJoint();
++
++    MarkNetworkUpdate();
++}
++
++
++void ConstraintDistance2D::SetDamping(float damping)
++{
++    if (damping == jointDef_.damping)
++        return;
++
++    jointDef_.damping = damping;
++
++    if (joint_)
++        static_cast<b2DistanceJoint*>(joint_)->SetDamping(damping);
++    else
++        RecreateJoint();
++
++    MarkNetworkUpdate();
++}
++#else
+ void ConstraintDistance2D::SetFrequencyHz(float frequencyHz)
+ {
+     if (frequencyHz == jointDef_.frequencyHz)
+@@ -108,9 +151,14 @@ void ConstraintDistance2D::SetDampingRat
+ 
+     MarkNetworkUpdate();
+ }
++#endif
+ 
+ void ConstraintDistance2D::SetLength(float length)
+ {
++#ifdef BOX2D_2_4
++    length = Max(b2_linearSlop, length);
++#endif
++
+     if (length == jointDef_.length)
+         return;
+ 
+@@ -124,6 +172,40 @@ void ConstraintDistance2D::SetLength(flo
+     MarkNetworkUpdate();
+ }
+ 
++#ifdef BOX2D_2_4
++void ConstraintDistance2D::SetMaxLength(float maxLength)
++{
++    maxLength = Max(maxLength, jointDef_.minLength);
++    if (maxLength == jointDef_.maxLength)
++        return;
++
++    jointDef_.maxLength = maxLength;
++
++    if (joint_)
++        static_cast<b2DistanceJoint*>(joint_)->SetMaxLength(maxLength);
++    else
++        RecreateJoint();
++
++    MarkNetworkUpdate();
++}
++
++void ConstraintDistance2D::SetMinLength(float minLength)
++{
++    minLength = Clamp(minLength, b2_linearSlop, jointDef_.maxLength);
++    if (minLength == jointDef_.minLength)
++        return;
++
++    jointDef_.minLength = minLength;
++
++    if (joint_)
++        static_cast<b2DistanceJoint*>(joint_)->SetMinLength(minLength);
++    else
++        RecreateJoint();
++
++    MarkNetworkUpdate();
++}
++#endif
++
+ b2JointDef* ConstraintDistance2D::GetJointDef()
+ {
+     if (!ownerBody_ || !otherBody_)
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintDistance2D.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintDistance2D.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintDistance2D.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintDistance2D.h	2021-03-01 21:56:50.878631526 -0800
+@@ -44,28 +44,59 @@ public:
+     void SetOwnerBodyAnchor(const Vector2& anchor);
+     /// Set other body anchor.
+     void SetOtherBodyAnchor(const Vector2& anchor);
++
++#ifdef BOX2D_2_4
++    /// Set linear stiffness.
++    void SetStiffness(float stiffness);
++    /// Set damping.
++    void SetDamping(float damping);
++#else
+     /// Set frequency Hz.
+     void SetFrequencyHz(float frequencyHz);
+     /// Set damping ratio.
+     void SetDampingRatio(float dampingRatio);
++#endif
++
+     /// Set length.
+     void SetLength(float length);
+ 
++#ifdef BOX2D_2_4
++    /// Set max length.
++    void SetMaxLength(float maxLength);
++    /// Set min length.
++    void SetMinLength(float minLength);
++#endif
++ 
+     /// Return owner body anchor.
+     const Vector2& GetOwnerBodyAnchor() const { return ownerBodyAnchor_; }
+ 
+     /// Return other body anchor.
+     const Vector2& GetOtherBodyAnchor() const { return otherBodyAnchor_; }
+ 
++#ifdef BOX2D_2_4
++    /// Return linear stiffness.
++    float GetStiffness() const { return jointDef_.stiffness; }
++
++    /// Return damping.
++    float GetDamping() const { return jointDef_.damping; }
++#else
+     /// Return frequency Hz.
+     float GetFrequencyHz() const { return jointDef_.frequencyHz; }
+ 
+     /// Return damping ratio.
+     float GetDampingRatio() const { return jointDef_.dampingRatio; }
+-
++#endif
+     /// Return length.
+     float GetLength() const { return jointDef_.length; }
+ 
++#ifdef BOX2D_2_4
++    /// Return max length.
++    float GetMaxLength() const { return jointDef_.maxLength; }
++
++    /// Return min length.
++    float GetMinLength() const { return jointDef_.minLength; }
++#endif
++
+ private:
+     /// Return joint def.
+     b2JointDef* GetJointDef() override;
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintMouse2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintMouse2D.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintMouse2D.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintMouse2D.cpp	2021-03-01 21:56:50.878631526 -0800
+@@ -49,8 +49,13 @@ void ConstraintMouse2D::RegisterObject(C
+     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
+     URHO3D_ACCESSOR_ATTRIBUTE("Target", GetTarget, SetTarget, Vector2, Vector2::ZERO, AM_DEFAULT);
+     URHO3D_ACCESSOR_ATTRIBUTE("Max Force", GetMaxForce, SetMaxForce, float, 0.0f, AM_DEFAULT);
++#ifdef BOX2D_2_4
++    URHO3D_ACCESSOR_ATTRIBUTE("Stiffness", GetStiffness, SetStiffness, float, 5.0f, AM_DEFAULT);
++    URHO3D_ACCESSOR_ATTRIBUTE("Damping", GetDamping, SetDamping, float, 0.7f, AM_DEFAULT);
++#else
+     URHO3D_ACCESSOR_ATTRIBUTE("Frequency Hz", GetFrequencyHz, SetFrequencyHz, float, 5.0f, AM_DEFAULT);
+     URHO3D_ACCESSOR_ATTRIBUTE("Damping Ratio", GetDampingRatio, SetDampingRatio, float, 0.7f, AM_DEFAULT);
++#endif
+     URHO3D_COPY_BASE_ATTRIBUTES(Constraint2D);
+ }
+ 
+@@ -84,6 +89,37 @@ void ConstraintMouse2D::SetMaxForce(floa
+     MarkNetworkUpdate();
+ }
+ 
++#ifdef BOX2D_2_4
++void ConstraintMouse2D::SetStiffness(float stiffness)
++{
++    if (stiffness == jointDef_.stiffness)
++        return;
++
++    jointDef_.stiffness = stiffness;
++
++    if (joint_)
++        static_cast<b2MouseJoint*>(joint_)->SetStiffness(stiffness);
++    else
++        RecreateJoint();
++
++    MarkNetworkUpdate();
++}
++
++void ConstraintMouse2D::SetDamping(float damping)
++{
++    if (damping == jointDef_.damping)
++        return;
++
++    jointDef_.damping = damping;
++
++    if (joint_)
++        static_cast<b2MouseJoint*>(joint_)->SetDamping(damping);
++    else
++        RecreateJoint();
++
++    MarkNetworkUpdate();
++}
++#else
+ void ConstraintMouse2D::SetFrequencyHz(float frequencyHz)
+ {
+     if (frequencyHz == jointDef_.frequencyHz)
+@@ -113,6 +149,7 @@ void ConstraintMouse2D::SetDampingRatio(
+ 
+     MarkNetworkUpdate();
+ }
++#endif
+ 
+ b2JointDef* ConstraintMouse2D::GetJointDef()
+ {
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintMouse2D.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintMouse2D.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintMouse2D.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintMouse2D.h	2021-03-01 21:56:50.878631526 -0800
+@@ -44,22 +44,37 @@ public:
+     void SetTarget(const Vector2& target);
+     /// Set max force.
+     void SetMaxForce(float maxForce);
++
++#ifdef BOX2D_2_4
++    /// Set linear stiffness.
++    void SetStiffness(float stiffness);
++    /// Set damping.
++    void SetDamping(float damping);
++#else
+     /// Set frequency Hz.
+     void SetFrequencyHz(float frequencyHz);
+     /// Set damping ratio.
+     void SetDampingRatio(float dampingRatio);
+-
++#endif
+     /// Return target.
+     const Vector2& GetTarget() const { return target_; }
+ 
+     /// Return max force.
+     float GetMaxForce() const { return jointDef_.maxForce; }
+ 
++#ifdef BOX2D_2_4
++    /// Return stiffness.
++    float GetStiffness() const { return jointDef_.stiffness; }
++
++    /// Return damping.
++    float GetDamping() const { return jointDef_.damping; }
++#else
+     /// Return frequency Hz.
+     float GetFrequencyHz() const { return jointDef_.frequencyHz; }
+ 
+     /// Return damping ratio.
+     float GetDampingRatio() const { return jointDef_.dampingRatio; }
++#endif
+ 
+ private:
+     /// Return joint def.
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintRope2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintRope2D.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintRope2D.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintRope2D.cpp	2021-03-01 21:56:50.878631526 -0800
+@@ -20,6 +20,7 @@
+ // THE SOFTWARE.
+ //
+ 
++#ifdef BOX2D_2_3
+ #include "../Precompiled.h"
+ 
+ #include "../Core/Context.h"
+@@ -111,3 +112,4 @@ b2JointDef* ConstraintRope2D::GetJointDe
+ }
+ 
+ }
++#endif
+\ No newline at end of file
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintRope2D.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintRope2D.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintRope2D.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintRope2D.h	2021-03-01 21:56:50.878631526 -0800
+@@ -20,6 +20,7 @@
+ // THE SOFTWARE.
+ //
+ 
++#ifdef BOX2D_2_3
+ #pragma once
+ 
+ #include "../Urho2D/Constraint2D.h"
+@@ -69,3 +70,4 @@ private:
+ };
+ 
+ }
++#endif
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintWeld2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintWeld2D.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintWeld2D.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintWeld2D.cpp	2021-03-01 21:56:50.878631526 -0800
+@@ -48,8 +48,13 @@ void ConstraintWeld2D::RegisterObject(Co
+ 
+     URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
+     URHO3D_ACCESSOR_ATTRIBUTE("Anchor", GetAnchor, SetAnchor, Vector2, Vector2::ZERO, AM_DEFAULT);
++#ifdef BOX2D_2_4
++    URHO3D_ACCESSOR_ATTRIBUTE("Stiffness", GetStiffness, SetStiffness, float, 0.0f, AM_DEFAULT);
++    URHO3D_ACCESSOR_ATTRIBUTE("Damping", GetDamping, SetDamping, float, 0.0f, AM_DEFAULT);
++#else
+     URHO3D_ACCESSOR_ATTRIBUTE("Frequency Hz", GetFrequencyHz, SetFrequencyHz, float, 0.0f, AM_DEFAULT);
+     URHO3D_ACCESSOR_ATTRIBUTE("Damping Ratio", GetDampingRatio, SetDampingRatio, float, 0.0f, AM_DEFAULT);
++#endif
+     URHO3D_COPY_BASE_ATTRIBUTES(Constraint2D);
+ }
+ 
+@@ -64,6 +69,37 @@ void ConstraintWeld2D::SetAnchor(const V
+     MarkNetworkUpdate();
+ }
+ 
++#ifdef BOX2D_2_4
++void ConstraintWeld2D::SetStiffness(float stiffness)
++{
++    if (stiffness == jointDef_.stiffness)
++        return;
++
++    jointDef_.stiffness = stiffness;
++
++    if (joint_)
++        static_cast<b2WeldJoint*>(joint_)->SetStiffness(stiffness);
++    else
++        RecreateJoint();
++
++    MarkNetworkUpdate();
++}
++
++void ConstraintWeld2D::SetDamping(float damping)
++{
++    if (damping == jointDef_.damping)
++        return;
++
++    jointDef_.damping = damping;
++
++    if (joint_)
++        static_cast<b2WeldJoint*>(joint_)->SetDamping(damping);
++    else
++        RecreateJoint();
++
++    MarkNetworkUpdate();
++}
++#else
+ void ConstraintWeld2D::SetFrequencyHz(float frequencyHz)
+ {
+     if (frequencyHz == jointDef_.frequencyHz)
+@@ -93,6 +129,7 @@ void ConstraintWeld2D::SetDampingRatio(f
+ 
+     MarkNetworkUpdate();
+ }
++#endif
+ 
+ b2JointDef* ConstraintWeld2D::GetJointDef()
+ {
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintWeld2D.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintWeld2D.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintWeld2D.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintWeld2D.h	2021-03-01 21:56:50.878631526 -0800
+@@ -42,19 +42,35 @@ public:
+ 
+     /// Set anchor.
+     void SetAnchor(const Vector2& anchor);
++
++#ifdef BOX2D_2_4
++    /// Set linear stiffness.
++    void SetStiffness(float stiffness);
++    /// Set damping.
++    void SetDamping(float damping);
++#else
+     /// Set frequency Hz.
+     void SetFrequencyHz(float frequencyHz);
+     /// Set damping ratio.
+     void SetDampingRatio(float dampingRatio);
++#endif
+ 
+     /// Return anchor.
+     const Vector2& GetAnchor() const { return anchor_; }
+ 
++#ifdef BOX2D_2_4
++    /// Return linear stiffness.
++    float GetStiffness() const { return jointDef_.stiffness; }
++
++    /// Return damping.
++    float GetDamping() const { return jointDef_.damping; }
++#else
+     /// Return frequency Hz.
+     float GetFrequencyHz() const { return jointDef_.frequencyHz; }
+ 
+     /// Return damping ratio.
+     float GetDampingRatio() const { return jointDef_.dampingRatio; }
++#endif
+ 
+ private:
+     /// Return joint def.
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintWheel2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintWheel2D.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintWheel2D.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintWheel2D.cpp	2021-03-01 21:56:50.878631526 -0800
+@@ -53,8 +53,13 @@ void ConstraintWheel2D::RegisterObject(C
+     URHO3D_ACCESSOR_ATTRIBUTE("Enable Motor", GetEnableMotor, SetEnableMotor, bool, false, AM_DEFAULT);
+     URHO3D_ACCESSOR_ATTRIBUTE("Max Motor Torque", GetMaxMotorTorque, SetMaxMotorTorque, float, 0.0f, AM_DEFAULT);
+     URHO3D_ACCESSOR_ATTRIBUTE("Motor Speed", GetMotorSpeed, SetMotorSpeed, float, 0.0f, AM_DEFAULT);
++#ifdef BOX2D_2_4
++    URHO3D_ACCESSOR_ATTRIBUTE("Stiffness", GetStiffness, SetStiffness, float, 2.0f, AM_DEFAULT);
++    URHO3D_ACCESSOR_ATTRIBUTE("Damping", GetDamping, SetDamping, float, 0.7f, AM_DEFAULT);
++#else
+     URHO3D_ACCESSOR_ATTRIBUTE("Frequency Hz", GetFrequencyHz, SetFrequencyHz, float, 2.0f, AM_DEFAULT);
+     URHO3D_ACCESSOR_ATTRIBUTE("Damping Ratio", GetDampingRatio, SetDampingRatio, float, 0.7f, AM_DEFAULT);
++#endif
+     URHO3D_COPY_BASE_ATTRIBUTES(Constraint2D);
+ }
+ 
+@@ -126,6 +131,37 @@ void ConstraintWheel2D::SetMotorSpeed(fl
+     MarkNetworkUpdate();
+ }
+ 
++#ifdef BOX2D_2_4
++void ConstraintWheel2D::SetStiffness(float stiffness)
++{
++    if (stiffness == jointDef_.stiffness)
++        return;
++
++    jointDef_.stiffness = stiffness;
++
++    if (joint_)
++        static_cast<b2WheelJoint*>(joint_)->SetStiffness(stiffness);
++    else
++        RecreateJoint();
++
++    MarkNetworkUpdate();
++}
++
++void ConstraintWheel2D::SetDamping(float damping)
++{
++    if (damping == jointDef_.damping)
++        return;
++
++    jointDef_.damping = damping;
++
++    if (joint_)
++        static_cast<b2WheelJoint*>(joint_)->SetDamping(damping);
++    else
++        RecreateJoint();
++
++    MarkNetworkUpdate();
++}
++#else
+ void ConstraintWheel2D::SetFrequencyHz(float frequencyHz)
+ {
+     if (frequencyHz == jointDef_.frequencyHz)
+@@ -155,6 +191,7 @@ void ConstraintWheel2D::SetDampingRatio(
+ 
+     MarkNetworkUpdate();
+ }
++#endif
+ 
+ b2JointDef* ConstraintWheel2D::GetJointDef()
+ {
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintWheel2D.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintWheel2D.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintWheel2D.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintWheel2D.h	2021-03-01 21:56:50.878631526 -0800
+@@ -50,10 +50,17 @@ public:
+     void SetMaxMotorTorque(float maxMotorTorque);
+     /// Set motor speed.
+     void SetMotorSpeed(float motorSpeed);
++#ifdef BOX2D_2_4
++    /// Set linear stiffness.
++    void SetStiffness(float frequency);
++    /// Set damping.
++    void SetDamping(float damping);
++#else
+     /// Set frequency Hz.
+     void SetFrequencyHz(float frequencyHz);
+     /// Set damping ratio.
+     void SetDampingRatio(float dampingRatio);
++#endif
+ 
+     /// Return anchor.
+     const Vector2& GetAnchor() const { return anchor_; }
+@@ -70,11 +77,19 @@ public:
+     /// Return motor speed.
+     float GetMotorSpeed() const { return jointDef_.motorSpeed; }
+ 
++#ifdef BOX2D_2_4
++    /// Return linear stiffness.
++    float GetStiffness() const { return jointDef_.stiffness; }
++
++    /// Return damping.
++    float GetDamping() const { return jointDef_.damping; }
++#else
+     /// Return frequency Hz.
+     float GetFrequencyHz() const { return jointDef_.frequencyHz; }
+ 
+     /// Return damping ratio.
+     float GetDampingRatio() const { return jointDef_.dampingRatio; }
++#endif
+ 
+ private:
+     /// Return joint def.
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/PhysicsUtils2D.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/PhysicsUtils2D.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/PhysicsUtils2D.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/PhysicsUtils2D.h	2021-03-01 21:56:50.878631526 -0800
+@@ -26,7 +26,13 @@
+ #include "../Math/Vector2.h"
+ #include "../Math/Vector3.h"
+ 
++#if defined(BOX2D_2_4) && defined (URHO3D_SYSTEM_BOX2D)
++#include <box2d-2.4/box2d.h>
++#elif defined(BOX2D_2_3) && defined (URHO3D_SYSTEM_BOX2D)
+ #include <Box2D/Box2D.h>
++#else
++#include <Box2D/Box2D.h>
++#endif
+ 
+ namespace Urho3D
+ {
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/PhysicsWorld2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/PhysicsWorld2D.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/PhysicsWorld2D.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/PhysicsWorld2D.cpp	2021-03-01 21:56:50.882631685 -0800
+@@ -99,7 +99,11 @@ void PhysicsWorld2D::DrawDebugGeometry(D
+ 
+         debugRenderer_ = debug;
+         debugDepthTest_ = depthTest;
++#ifdef BOX2D_2_4
++        world_->DebugDraw();
++#else
+         world_->DrawDebugData();
++#endif
+         debugRenderer_ = nullptr;
+     }
+ }
+@@ -230,10 +234,12 @@ void PhysicsWorld2D::DrawCircle(const b2
+ 
+ extern URHO3D_API const float PIXEL_SIZE;
+ 
++#if !defined(URHO3D_SYSTEM_BOX2D) || (defined(URHO3D_SYSTEM_BOX2D) && defined(BOX2D_2_4))
+ void PhysicsWorld2D::DrawPoint(const b2Vec2& p, float32 size, const b2Color& color)
+ {
+     DrawSolidCircle(p, size * 0.5f * PIXEL_SIZE, b2Vec2(), color);
+ }
++#endif
+ 
+ void PhysicsWorld2D::DrawSolidCircle(const b2Vec2& center, float32 radius, const b2Vec2& axis, const b2Color& color)
+ {
+@@ -479,7 +485,11 @@ public:
+         result.position_ = ToVector2(point);
+         result.normal_ = ToVector2(normal);
+         result.distance_ = (result.position_ - startPoint_).Length();
++#ifdef BOX2D_2_4
++        result.body_ = reinterpret_cast<RigidBody2D*>(fixture->GetBody()->GetUserData().pointer);
++#else
+         result.body_ = (RigidBody2D*)(fixture->GetBody()->GetUserData());
++#endif
+ 
+         results_.Push(result);
+         return true;
+@@ -534,7 +544,11 @@ public:
+             result_.position_ = ToVector2(point);
+             result_.normal_ = ToVector2(normal);
+             result_.distance_ = distance;
++#ifdef BOX2D_2_4
++            result_.body_ = reinterpret_cast<RigidBody2D*>(fixture->GetBody()->GetUserData().pointer);
++#else
+             result_.body_ = (RigidBody2D*)(fixture->GetBody()->GetUserData());
++#endif
+         }
+ 
+         return true;
+@@ -584,7 +598,11 @@ public:
+ 
+         if (fixture->TestPoint(point_))
+         {
++#ifdef BOX2D_2_4
++            rigidBody_ = reinterpret_cast<RigidBody2D*>(fixture->GetBody()->GetUserData().pointer);
++#else
+             rigidBody_ = (RigidBody2D*)(fixture->GetBody()->GetUserData());
++#endif
+             return false;
+         }
+ 
+@@ -654,7 +672,11 @@ public:
+         if ((fixture->GetFilterData().maskBits & collisionMask_) == 0)
+             return true;
+ 
++#ifdef BOX2D_2_4
++        results_.Push(reinterpret_cast<RigidBody2D*>(fixture->GetBody()->GetUserData().pointer));
++#else
+         results_.Push((RigidBody2D*)(fixture->GetBody()->GetUserData()));
++#endif
+         return true;
+     }
+ 
+@@ -828,12 +850,22 @@ PhysicsWorld2D::ContactInfo::ContactInfo
+ {
+     b2Fixture* fixtureA = contact->GetFixtureA();
+     b2Fixture* fixtureB = contact->GetFixtureB();
++#ifdef BOX2D_2_4
++    bodyA_ = reinterpret_cast<RigidBody2D*>(fixtureA->GetBody()->GetUserData().pointer);
++    bodyB_ = reinterpret_cast<RigidBody2D*>(fixtureB->GetBody()->GetUserData().pointer);
++#else
+     bodyA_ = (RigidBody2D*)(fixtureA->GetBody()->GetUserData());
+     bodyB_ = (RigidBody2D*)(fixtureB->GetBody()->GetUserData());
++#endif
+     nodeA_ = bodyA_->GetNode();
+     nodeB_ = bodyB_->GetNode();
++#ifdef BOX2D_2_4
++    shapeA_ = reinterpret_cast<CollisionShape2D*>(fixtureA->GetUserData().pointer);
++    shapeB_ = reinterpret_cast<CollisionShape2D*>(fixtureB->GetUserData().pointer);
++#else
+     shapeA_ = (CollisionShape2D*)fixtureA->GetUserData();
+     shapeB_ = (CollisionShape2D*)fixtureB->GetUserData();
++#endif
+ 
+     b2WorldManifold worldManifold;
+     contact->GetWorldManifold(&worldManifold);
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/PhysicsWorld2D.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/PhysicsWorld2D.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/PhysicsWorld2D.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/PhysicsWorld2D.h	2021-03-01 21:56:50.882631685 -0800
+@@ -25,7 +25,14 @@
+ #include "../Scene/Component.h"
+ #include "../IO/VectorBuffer.h"
+ 
++#if defined(BOX2D_2_4) && defined (URHO3D_SYSTEM_BOX2D)
++#include <box2d-2.4/box2d.h>
++typedef float float32;
++#elif defined(BOX2D_2_3) && defined (URHO3D_SYSTEM_BOX2D)
+ #include <Box2D/Box2D.h>
++#else
++#include <Box2D/Box2D.h>
++#endif
+ 
+ namespace Urho3D
+ {
+@@ -103,8 +110,10 @@ public:
+     void DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& color) override;
+     /// Draw a transform. Choose your own length scale.
+     void DrawTransform(const b2Transform& xf) override;
++#if !defined(URHO3D_SYSTEM_BOX2D) || (defined(URHO3D_SYSTEM_BOX2D) && defined(BOX2D_2_4))
+     /// Draw a point.
+     void DrawPoint(const b2Vec2& p, float32 size, const b2Color& color) override;
++#endif
+ 
+     /// Step the simulation forward.
+     void Update(float timeStep);
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/RigidBody2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/RigidBody2D.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/RigidBody2D.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/RigidBody2D.cpp	2021-03-01 21:56:50.882631685 -0800
+@@ -94,10 +94,17 @@ void RigidBody2D::OnSetEnabled()
+ {
+     bool enabled = IsEnabledEffective();
+ 
++#ifdef BOX2D_2_4
++    bodyDef_.enabled = enabled;
++
++    if (body_)
++        body_->SetEnabled(enabled);
++#else
+     bodyDef_.active = enabled;
+ 
+     if (body_)
+         body_->SetActive(enabled);
++#endif
+ 
+     MarkNetworkUpdate();
+ }
+@@ -352,8 +359,13 @@ void RigidBody2D::ApplyLinearImpulse(con
+ 
+ void RigidBody2D::ApplyLinearImpulseToCenter(const Vector2& impulse, bool wake)
+ {
++#if defined(URHO3D_SYSTEM_BOX2D) && defined(BOX2D_2_3)
++    if (body_ && impulse != Vector2::ZERO)
++        body_->ApplyLinearImpulse(ToB2Vec2(impulse), body_->GetWorldCenter(), wake);
++#else
+     if (body_ && impulse != Vector2::ZERO)
+         body_->ApplyLinearImpulseToCenter(ToB2Vec2(impulse), wake);
++#endif
+ }
+ 
+ void RigidBody2D::ApplyAngularImpulse(float impulse, bool wake)
+@@ -374,7 +386,11 @@ void RigidBody2D::CreateBody()
+     bodyDef_.angle = node_->GetWorldRotation().RollAngle() * M_DEGTORAD;
+ 
+     body_ = physicsWorld_->GetWorld()->CreateBody(&bodyDef_);
++#ifdef BOX2D_2_4
++    body_->GetUserData().pointer = reinterpret_cast<uintptr_t>(this);
++#else
+     body_->SetUserData(this);
++#endif
+ 
+     for (unsigned i = 0; i < collisionShapes_.Size(); ++i)
+     {
+@@ -431,7 +447,13 @@ void RigidBody2D::ApplyWorldTransform()
+         parentRigidBody = parent->GetComponent<RigidBody2D>();
+ 
+     // If body is not parented and is static or sleeping, no need to update
+-    if (!parentRigidBody && (!body_->IsActive() || body_->GetType() == b2_staticBody || !body_->IsAwake()))
++    if (!parentRigidBody && (
++#ifdef BOX2D_2_4
++        !body_->IsEnabled()
++#else
++        !body_->IsActive()
++#endif
++        || body_->GetType() == b2_staticBody || !body_->IsAwake()))
+         return;
+ 
+     const b2Transform& transform = body_->GetTransform();
+@@ -606,7 +628,11 @@ void RigidBody2D::OnMarkedDirty(Node* no
+         bodyDef_.position = newPosition;
+         bodyDef_.angle = newAngle;
+     }
++#if defined(URHO3D_SYSTEM_BOX2D) && defined(BOX2D_2_3)
++    else if (!(newPosition == body_->GetPosition()) || newAngle != body_->GetAngle())
++#else
+     else if (newPosition != body_->GetPosition() || newAngle != body_->GetAngle())
++#endif
+         body_->SetTransform(newPosition, newAngle);
+ }
+ 
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/RigidBody2D.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/RigidBody2D.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/RigidBody2D.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/RigidBody2D.h	2021-03-01 22:02:49.868787937 -0800
+@@ -26,7 +26,13 @@
+ 
+ #include "../Scene/Component.h"
+ 
++#if defined(BOX2D_2_4) && defined (URHO3D_SYSTEM_BOX2D)
++#include <box2d-2.4/box2d.h>
++#elif defined(BOX2D_2_3) && defined (URHO3D_SYSTEM_BOX2D)
+ #include <Box2D/Box2D.h>
++#else
++#include <Box2D/Box2D.h>
++#endif
+ 
+ namespace Urho3D
+ {
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/Urho2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/Urho2D.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/Urho2D.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/Urho2D.cpp	2021-03-01 21:56:50.882631685 -0800
+@@ -39,7 +39,9 @@
+ #include "../Urho2D/ConstraintPrismatic2D.h"
+ #include "../Urho2D/ConstraintPulley2D.h"
+ #include "../Urho2D/ConstraintRevolute2D.h"
++#ifdef BOX2D_2_3
+ #include "../Urho2D/ConstraintRope2D.h"
++#endif
+ #include "../Urho2D/ConstraintWeld2D.h"
+ #include "../Urho2D/ConstraintWheel2D.h"
+ #include "../Urho2D/ParticleEffect2D.h"
+@@ -103,7 +105,9 @@ void RegisterUrho2DLibrary(Context* cont
+     ConstraintPrismatic2D::RegisterObject(context);
+     ConstraintPulley2D::RegisterObject(context);
+     ConstraintRevolute2D::RegisterObject(context);
++#ifdef BOX2D_2_3
+     ConstraintRope2D::RegisterObject(context);
++#endif
+     ConstraintWeld2D::RegisterObject(context);
+     ConstraintWheel2D::RegisterObject(context);
+ }

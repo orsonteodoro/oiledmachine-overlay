@@ -1,24 +1,30 @@
-diff -urp a/Source/Urho3D/Database/SQLite/SQLiteConnection.h b/Source/Urho3D/Database/SQLite/SQLiteConnection.h
---- a/Source/Urho3D/Database/SQLite/SQLiteConnection.h	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Database/SQLite/SQLiteConnection.h	2020-01-09 11:37:41.621683149 -0800
-@@ -25,7 +25,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Database/SQLite/SQLiteConnection.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Database/SQLite/SQLiteConnection.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Database/SQLite/SQLiteConnection.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Database/SQLite/SQLiteConnection.h	2021-02-22 06:23:36.930138448 -0800
+@@ -25,7 +25,11 @@
  #include "../../Core/Object.h"
  #include "../../Database/DbResult.h"
  
--#include <SQLite/sqlite3.h>
++#ifdef URHO3D_SYSTEM_SQLITE
 +#include <sqlite3.h>
++#else
+ #include <SQLite/sqlite3.h>
++#endif
  
  namespace Urho3D
  {
-diff -urp a/Source/Urho3D/Database/SQLite/SQLiteResult.h b/Source/Urho3D/Database/SQLite/SQLiteResult.h
---- a/Source/Urho3D/Database/SQLite/SQLiteResult.h	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Database/SQLite/SQLiteResult.h	2020-01-09 11:37:41.611682765 -0800
-@@ -24,7 +24,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Database/SQLite/SQLiteResult.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Database/SQLite/SQLiteResult.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Database/SQLite/SQLiteResult.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Database/SQLite/SQLiteResult.h	2021-02-22 06:23:56.142878630 -0800
+@@ -24,7 +24,11 @@
  
  #include "../../Core/Variant.h"
  
--#include <SQLite/sqlite3.h>
++#ifdef URHO3D_SYSTEM_SQLITE
 +#include <sqlite3.h>
++#else
+ #include <SQLite/sqlite3.h>
++#endif
  
  namespace Urho3D
  {

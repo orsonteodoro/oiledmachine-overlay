@@ -2,28 +2,28 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: enigma.eclass
+# @ECLASS: urho3d.eclass
 # @MAINTAINER: orsonteodoro@hotmail.com
-# @BLURB: enigma multibuild helper
+# @BLURB: urho3d multibuild helper
 # @DESCRIPTION:
-# The enigma eclass helps build both static and shared.
+# The urho3d eclass helps build both static and shared.
 
 inherit multibuild
 
-# @ECLASS-VARIABLE: _ENIGMA_IMPLS
-# @DESCRIPTION: (Private) Generates a list of implementations for the enigma-multibuild context
-_ENIGMA_IMPLS="vanilla android linux wine"
-IUSE+=" ${_ENIGMA_IMPLS}"
-REQUIRED_USE="|| ( ${_ENIGMA_IMPLS} )"
+# @ECLASS-VARIABLE: _URHO3D_IMPLS
+# @DESCRIPTION: (Private) Generates a list of implementations for the urho3d-multibuild context
+_URHO3D_IMPLS="android native rpi web"
+IUSE+=" ${_URHO3D_IMPLS}"
+REQUIRED_USE="|| ( ${_URHO3D_IMPLS} )"
 
 # @FUNCTION: _python_multibuild_wrapper
 # @DESCRIPTION: Initialize the environment for this implementation
-# EENIGMA contains the implementination of enigma to process like EPYTHON
+# EURHO3D contains the implementination of urho3d to process like EPYTHON
 # BUILD_DIR contains the path to the instance of the copied sources
-_enigma_multibuild_wrapper() {
+_urho3d_multibuild_wrapper() {
 	debug-print-function ${FUNCNAME} "${@}"
 
-	EENIGMA="${MULTIBUILD_VARIANT}"
+	EURHO3D="${MULTIBUILD_VARIANT}"
 
 	mkdir -p "${PORTAGE_BUILDDIR}/homedir-${MULTIBUILD_VARIANT}"
 	HOME="${PORTAGE_BUILDDIR}/homedir-${MULTIBUILD_VARIANT}"
@@ -34,33 +34,33 @@ _enigma_multibuild_wrapper() {
 	"${@}"
 }
 
-# @FUNCTION: enigma_foreach_impl
-# @DESCRIPTION:  This will execute a callback for each enigma implementation
-enigma_foreach_impl() {
+# @FUNCTION: urho3d_foreach_impl
+# @DESCRIPTION:  This will execute a callback for each urho3d implementation
+urho3d_foreach_impl() {
 	debug-print-function ${FUNCNAME} "${@}"
 
 	local MULTIBUILD_VARIANTS
-	_enigma_obtain_impls
+	_urho3d_obtain_impls
 
-	multibuild_foreach_variant _enigma_multibuild_wrapper "${@}"
+	multibuild_foreach_variant _urho3d_multibuild_wrapper "${@}"
 }
 
-# @FUNCTION: enigma_copy_sources
+# @FUNCTION: urho3d_copy_sources
 # @DESCRIPTION:  This will copy the source code in another folder per implementation
-enigma_copy_sources() {
+urho3d_copy_sources() {
 	debug-print-function ${FUNCNAME} "${@}"
 
 	local MULTIBUILD_VARIANTS
-	_enigma_obtain_impls
+	_urho3d_obtain_impls
 
 	multibuild_copy_sources
 }
 
-# @FUNCTION: _enigma_obtain_impls
+# @FUNCTION: _urho3d_obtain_impls
 # @DESCRIPTION:  This will fill up MULTIBUILD_VARIANTS if user chosen implementation
-_enigma_obtain_impls() {
+_urho3d_obtain_impls() {
 	MULTIBUILD_VARIANTS=()
-	for impl in ${_ENIGMA_IMPLS} ; do
+	for impl in ${_URHO3D_IMPLS} ; do
 		use "${impl}" && MULTIBUILD_VARIANTS+=( "${impl}" )
 	done
 }

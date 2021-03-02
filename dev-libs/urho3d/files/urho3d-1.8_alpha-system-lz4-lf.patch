@@ -1,26 +1,32 @@
-diff -urp a/Source/Urho3D/IO/Compression.cpp b/Source/Urho3D/IO/Compression.cpp
---- a/Source/Urho3D/IO/Compression.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/IO/Compression.cpp	2020-01-09 11:46:02.850924292 -0800
-@@ -28,8 +28,8 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/IO/Compression.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/IO/Compression.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/IO/Compression.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/IO/Compression.cpp	2021-02-22 12:29:39.146203554 -0800
+@@ -28,8 +28,13 @@
  #include "../IO/Serializer.h"
  #include "../IO/VectorBuffer.h"
  
--#include <LZ4/lz4.h>
--#include <LZ4/lz4hc.h>
++#ifdef URHO3D_SYSTEM_LZ4
 +#include <lz4.h>
 +#include <lz4hc.h>
++#else
+ #include <LZ4/lz4.h>
+ #include <LZ4/lz4hc.h>
++#endif
  
  namespace Urho3D
  {
-diff -urp a/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp b/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp
---- a/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp	2020-01-09 11:46:02.850924292 -0800
-@@ -39,7 +39,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp	2021-02-22 12:27:40.293529233 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp	2021-02-22 12:30:14.551595747 -0800
+@@ -39,7 +39,11 @@
  #include "../Scene/Scene.h"
  #include "../Scene/SceneEvents.h"
  
--#include <LZ4/lz4.h>
++#ifdef URHO3D_SYSTEM_LZ4
 +#include <lz4.h>
- #include <Detour/DetourNavMesh.h>
- #include <Detour/DetourNavMeshBuilder.h>
- #include <DetourTileCache/DetourTileCache.h>
++#else
+ #include <LZ4/lz4.h>
++#endif
+ #ifdef URHO3D_SYSTEM_RECASTNAVIGATION
+ #include <recastnavigation/DetourNavMesh.h>
+ #include <recastnavigation/DetourNavMeshBuilder.h>

@@ -1,86 +1,99 @@
-diff -urp a/Source/Urho3D/Audio/Audio.cpp b/Source/Urho3D/Audio/Audio.cpp
---- a/Source/Urho3D/Audio/Audio.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Audio/Audio.cpp	2020-01-08 13:31:11.959948186 -0800
-@@ -32,7 +32,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Audio/Audio.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Audio/Audio.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Audio/Audio.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Audio/Audio.cpp	2021-02-25 18:56:15.070032981 -0800
+@@ -32,7 +32,11 @@
  #include "../Core/Profiler.h"
  #include "../IO/Log.h"
  
--#include <SDL/SDL.h>
++#ifdef URHO3D_SYSTEM_SDL
 +#include <SDL2/SDL.h>
++#else
+ #include <SDL/SDL.h>
++#endif
  
  #include "../DebugNew.h"
  
-@@ -98,6 +98,7 @@ bool Audio::SetMode(int bufferLengthMSec
-     // Intentionally disallow format change so that the obtained format will always be the desired format, even though that format
-     // is not matching the device format, however in doing it will enable the SDL's internal audio stream with audio conversion
-     deviceID_ = SDL_OpenAudioDevice(nullptr, SDL_FALSE, &desired, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE&~SDL_AUDIO_ALLOW_FORMAT_CHANGE);
-+    URHO3D_LOGWARNING(SDL_GetError());
-     if (!deviceID_)
-     {
-         URHO3D_LOGERROR("Could not initialize audio output");
-diff -urp a/Source/Urho3D/Core/Context.cpp b/Source/Urho3D/Core/Context.cpp
---- a/Source/Urho3D/Core/Context.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Core/Context.cpp	2020-01-08 13:01:32.000627191 -0800
-@@ -27,7 +27,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Core/Context.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Core/Context.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Core/Context.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Core/Context.cpp	2021-02-25 18:56:15.070032981 -0800
+@@ -27,7 +27,11 @@
  #include "../IO/Log.h"
  
  #ifndef MINI_URHO
--#include <SDL/SDL.h>
++#ifdef URHO3D_SYSTEM_SDL
 +#include <SDL2/SDL.h>
++#else
+ #include <SDL/SDL.h>
++#endif
  #ifdef URHO3D_IK
  #include <ik/log.h>
  #include <ik/memory.h>
-diff -urp a/Source/Urho3D/Core/ProcessUtils.cpp b/Source/Urho3D/Core/ProcessUtils.cpp
---- a/Source/Urho3D/Core/ProcessUtils.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Core/ProcessUtils.cpp	2020-01-08 13:01:32.000627191 -0800
-@@ -94,7 +94,7 @@ inline void SetFPUState(unsigned control
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Core/ProcessUtils.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Core/ProcessUtils.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Core/ProcessUtils.cpp	2021-02-25 18:53:46.508240525 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Core/ProcessUtils.cpp	2021-02-25 18:56:15.070032981 -0800
+@@ -98,8 +98,12 @@ inline void SetFPUState(unsigned control
  #endif
  
  #ifndef MINI_URHO
--#include <SDL/SDL.h>
++#ifdef URHO3D_SYSTEM_SDL
 +#include <SDL2/SDL.h>
++#else
+ #include <SDL/SDL.h>
  #endif
++#endif
  
  #include "../DebugNew.h"
-diff -urp a/Source/Urho3D/Engine/Application.cpp b/Source/Urho3D/Engine/Application.cpp
---- a/Source/Urho3D/Engine/Application.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Engine/Application.cpp	2020-01-08 13:01:31.960625632 -0800
-@@ -28,7 +28,7 @@
+ 
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Engine/Application.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Engine/Application.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Engine/Application.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Engine/Application.cpp	2021-02-25 18:56:15.070032981 -0800
+@@ -28,8 +28,12 @@
  
  #if defined(IOS) || defined(TVOS)
  #include "../Graphics/Graphics.h"
--#include <SDL/SDL.h>
++#ifdef URHO3D_SYSTEM_SDL
 +#include <SDL2/SDL.h>
++#else
+ #include <SDL/SDL.h>
  #endif
++#endif
  
  #include "../DebugNew.h"
-diff -urp a/Source/Urho3D/Graphics/Direct3D9/D3D9Graphics.cpp b/Source/Urho3D/Graphics/Direct3D9/D3D9Graphics.cpp
---- a/Source/Urho3D/Graphics/Direct3D9/D3D9Graphics.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Graphics/Direct3D9/D3D9Graphics.cpp	2020-01-08 13:01:31.970626022 -0800
-@@ -40,8 +40,8 @@
+ 
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Graphics/Direct3D9/D3D9Graphics.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Graphics/Direct3D9/D3D9Graphics.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Graphics/Direct3D9/D3D9Graphics.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Graphics/Direct3D9/D3D9Graphics.cpp	2021-02-25 18:56:15.070032981 -0800
+@@ -40,8 +40,14 @@
  #include "../../IO/Log.h"
  #include "../../Resource/ResourceCache.h"
  
--#include <SDL/SDL.h>
--#include <SDL/SDL_syswm.h>
++#ifdef URHO3D_SYSTEM_SDL
 +#include <SDL2/SDL.h>
 +#include <SDL2/SDL_syswm.h>
++#else
+ #include <SDL/SDL.h>
+ #include <SDL/SDL_syswm.h>
++#endif
++
  
  #include "../../DebugNew.h"
  
-diff -urp a/Source/Urho3D/Graphics/OpenGL/OGLGraphics.cpp b/Source/Urho3D/Graphics/OpenGL/OGLGraphics.cpp
---- a/Source/Urho3D/Graphics/OpenGL/OGLGraphics.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Graphics/OpenGL/OGLGraphics.cpp	2020-01-08 13:02:50.243676220 -0800
-@@ -43,7 +43,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Graphics/OpenGL/OGLGraphics.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Graphics/OpenGL/OGLGraphics.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Graphics/OpenGL/OGLGraphics.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Graphics/OpenGL/OGLGraphics.cpp	2021-02-25 18:56:15.070032981 -0800
+@@ -43,7 +43,11 @@
  #include "../../IO/Log.h"
  #include "../../Resource/ResourceCache.h"
  
--#include <SDL/SDL.h>
++#ifdef URHO3D_SYSTEM_SDL
 +#include <SDL2/SDL.h>
++#else
+ #include <SDL/SDL.h>
++#endif
  
  #include "../../DebugNew.h"
  
-@@ -421,7 +421,11 @@ bool Graphics::SetMode(int width, int he
+@@ -421,7 +425,11 @@ bool Graphics::SetMode(int width, int he
              {
  #ifndef __EMSCRIPTEN__
                  if (!window_)
@@ -92,20 +105,38 @@ diff -urp a/Source/Urho3D/Graphics/OpenGL/OGLGraphics.cpp b/Source/Urho3D/Graphi
                  fullscreen = false;
  #endif
              }
-Only in b/Source/Urho3D/Graphics/OpenGL: OGLGraphics.cpp.orig
-diff -urp a/Source/Urho3D/Input/Input.cpp b/Source/Urho3D/Input/Input.cpp
---- a/Source/Urho3D/Input/Input.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Input/Input.cpp	2020-01-08 13:02:50.243676220 -0800
-@@ -43,7 +43,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Input/Input.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Input/Input.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Input/Input.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Input/Input.cpp	2021-02-25 18:58:03.210248848 -0800
+@@ -43,7 +43,11 @@
  #endif
  
  
--#include <SDL/SDL.h>
++#ifdef URHO3D_SYSTEM_SDL
 +#include <SDL2/SDL.h>
++#else
+ #include <SDL/SDL.h>
++#endif
  
  #ifdef __EMSCRIPTEN__
  #include <emscripten/html5.h>
-@@ -1226,13 +1226,21 @@ bool Input::RecordGesture()
+@@ -1190,6 +1194,7 @@ void Input::SetScreenKeyboardVisible(boo
+ 
+ void Input::SetTouchEmulation(bool enable)
+ {
++#ifndef URHO3D_SYSTEM_SDL
+ #if !defined(__ANDROID__) && !defined(IOS)
+     if (enable != touchEmulation_)
+     {
+@@ -1209,6 +1214,7 @@ void Input::SetTouchEmulation(bool enabl
+         touchEmulation_ = enable;
+     }
+ #endif
++#endif
+ }
+ 
+ bool Input::RecordGesture()
+@@ -1226,13 +1232,21 @@ bool Input::RecordGesture()
  bool Input::SaveGestures(Serializer& dest)
  {
      RWOpsWrapper<Serializer> wrapper(dest);
@@ -127,7 +158,7 @@ diff -urp a/Source/Urho3D/Input/Input.cpp b/Source/Urho3D/Input/Input.cpp
  }
  
  unsigned Input::LoadGestures(Deserializer& source)
-@@ -1245,7 +1253,11 @@ unsigned Input::LoadGestures(Deserialize
+@@ -1245,7 +1259,11 @@ unsigned Input::LoadGestures(Deserialize
      }
  
      RWOpsWrapper<Deserializer> wrapper(source);
@@ -139,16 +170,14 @@ diff -urp a/Source/Urho3D/Input/Input.cpp b/Source/Urho3D/Input/Input.cpp
  }
  
  
-@@ -1254,15 +1266,21 @@ bool Input::RemoveGesture(unsigned gestu
+@@ -1254,15 +1272,19 @@ bool Input::RemoveGesture(unsigned gestu
  #ifdef __EMSCRIPTEN__
      return false;
  #else
 +#ifdef ENABLE_DOLLAR
      return SDL_RemoveDollarTemplate(gestureID) != 0;
-+#else
-+    return false;
-+#endif
  #endif
++#endif
  }
  
  void Input::RemoveAllGestures()
@@ -161,69 +190,92 @@ diff -urp a/Source/Urho3D/Input/Input.cpp b/Source/Urho3D/Input/Input.cpp
  }
  
  SDL_JoystickID Input::OpenJoystick(unsigned index)
-Only in b/Source/Urho3D/Input: Input.cpp.orig
-diff -urp a/Source/Urho3D/IO/File.cpp b/Source/Urho3D/IO/File.cpp
---- a/Source/Urho3D/IO/File.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/IO/File.cpp	2020-01-08 13:01:31.990626801 -0800
-@@ -30,7 +30,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/IO/File.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/IO/File.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/IO/File.cpp	2021-02-25 18:53:46.524241149 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/IO/File.cpp	2021-02-25 18:56:15.070032981 -0800
+@@ -29,9 +29,14 @@
+ #include "../IO/MemoryBuffer.h"
  #include "../IO/PackageFile.h"
  
++
  #ifdef __ANDROID__
--#include <SDL/SDL_rwops.h>
++#ifdef URHO3D_SYSTEM_SDL
 +#include <SDL2/SDL_rwops.h>
++#else
+ #include <SDL/SDL_rwops.h>
  #endif
++#endif
  
  #include <cstdio>
-diff -urp a/Source/Urho3D/IO/FileSystem.cpp b/Source/Urho3D/IO/FileSystem.cpp
---- a/Source/Urho3D/IO/FileSystem.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/IO/FileSystem.cpp	2020-01-08 13:01:32.000627191 -0800
-@@ -33,11 +33,11 @@
+ #ifdef URHO3D_SYSTEM_LZ4
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/IO/FileSystem.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/IO/FileSystem.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/IO/FileSystem.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/IO/FileSystem.cpp	2021-02-25 18:56:15.070032981 -0800
+@@ -32,13 +32,22 @@
+ #include "../IO/IOEvents.h"
  #include "../IO/Log.h"
  
++
  #ifdef __ANDROID__
--#include <SDL/SDL_rwops.h>
++#ifdef URHO3D_SYSTEM_SDL
 +#include <SDL2/SDL_rwops.h>
++#else
+ #include <SDL/SDL_rwops.h>
  #endif
++#endif
  
  #ifndef MINI_URHO
--#include <SDL/SDL_filesystem.h>
++#ifdef URHO3D_SYSTEM_SDL
 +#include <SDL2/SDL_filesystem.h>
++#else
+ #include <SDL/SDL_filesystem.h>
  #endif
++#endif
  
  #include <sys/stat.h>
-diff -urp a/Source/Urho3D/UI/Cursor.cpp b/Source/Urho3D/UI/Cursor.cpp
---- a/Source/Urho3D/UI/Cursor.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/UI/Cursor.cpp	2020-01-08 13:01:32.010627580 -0800
-@@ -29,7 +29,7 @@
+ #include <cstdio>
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/UI/Cursor.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/UI/Cursor.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/UI/Cursor.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/UI/Cursor.cpp	2021-02-25 18:56:15.070032981 -0800
+@@ -29,7 +29,11 @@
  #include "../Resource/ResourceCache.h"
  #include "../UI/UI.h"
  
--#include <SDL/SDL_mouse.h>
++#ifdef URHO3D_SYSTEM_SDL
 +#include <SDL2/SDL_mouse.h>
++#else
+ #include <SDL/SDL_mouse.h>
++#endif
  
  #include "../DebugNew.h"
  
-diff -urp a/Source/Urho3D/UI/LineEdit.cpp b/Source/Urho3D/UI/LineEdit.cpp
---- a/Source/Urho3D/UI/LineEdit.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/UI/LineEdit.cpp	2020-01-08 13:01:32.020627970 -0800
-@@ -31,7 +31,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/UI/LineEdit.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/UI/LineEdit.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/UI/LineEdit.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/UI/LineEdit.cpp	2021-02-25 18:56:15.074033137 -0800
+@@ -31,7 +31,11 @@
  
  #include "../DebugNew.h"
  
--#include <SDL/SDL.h>
++#ifdef URHO3D_SYSTEM_SDL
 +#include <SDL2/SDL.h>
++#else
+ #include <SDL/SDL.h>
++#endif
  
  namespace Urho3D
  {
-diff -urp a/Source/Urho3D/UI/UI.cpp b/Source/Urho3D/UI/UI.cpp
---- a/Source/Urho3D/UI/UI.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/UI/UI.cpp	2020-01-08 13:01:32.010627580 -0800
-@@ -64,7 +64,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/UI/UI.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/UI/UI.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/UI/UI.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/UI/UI.cpp	2021-02-25 18:56:15.074033137 -0800
+@@ -64,7 +64,11 @@
  #include "../UI/UIComponent.h"
  
  #include <cassert>
--#include <SDL/SDL.h>
++#ifdef URHO3D_SYSTEM_SDL
 +#include <SDL2/SDL.h>
++#else
+ #include <SDL/SDL.h>
++#endif
  
  #include "../DebugNew.h"
  

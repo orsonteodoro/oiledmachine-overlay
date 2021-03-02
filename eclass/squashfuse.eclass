@@ -10,11 +10,11 @@
 
 inherit multibuild
 
-# @ECLASS-VARIABLE: _IMPLS
+# @ECLASS-VARIABLE: _SQUASHFUSE_IMPLS
 # @DESCRIPTION: (Private) Generates a list of implementations for the squashfuse-multibuild context
-_IMPLS="libsquashfuse-vanilla libsquashfuse-appimage"
+_SQUASHFUSE_IMPLS="libsquashfuse-vanilla libsquashfuse-appimage"
 IUSE+=" +libsquashfuse-vanilla libsquashfuse-appimage"
-REQUIRED_USE+=" || ( ${_IMPLS} )"
+REQUIRED_USE+=" || ( ${_SQUASHFUSE_IMPLS} )"
 
 # @FUNCTION: _python_multibuild_wrapper
 # @DESCRIPTION: Initialize the environment for this implementation
@@ -60,7 +60,7 @@ squashfuse_copy_sources() {
 # @DESCRIPTION:  This will fill up MULTIBUILD_VARIANTS if user chosen implementation
 _squashfuse_obtain_impls() {
 	MULTIBUILD_VARIANTS=()
-	for impl in ${_IMPLS} ; do
+	for impl in ${_SQUASHFUSE_IMPLS} ; do
 		use "${impl}" && MULTIBUILD_VARIANTS+=( "${impl}" )
 	done
 }

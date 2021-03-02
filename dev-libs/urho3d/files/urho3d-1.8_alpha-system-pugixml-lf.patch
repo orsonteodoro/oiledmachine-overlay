@@ -1,12 +1,15 @@
-diff -urp a/Source/Urho3D/Urho2D/SpriterData2D.cpp b/Source/Urho3D/Urho2D/SpriterData2D.cpp
---- a/Source/Urho3D/Urho2D/SpriterData2D.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Urho2D/SpriterData2D.cpp	2020-01-09 11:50:25.410979934 -0800
-@@ -25,7 +25,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig2/Source/Urho3D/Urho2D/SpriterData2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Urho2D/SpriterData2D.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig2/Source/Urho3D/Urho2D/SpriterData2D.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Urho2D/SpriterData2D.cpp	2021-02-22 05:38:35.529087325 -0800
+@@ -25,7 +25,11 @@
  #include "../Math/MathDefs.h"
  #include "../Urho2D/SpriterData2D.h"
  
--#include <PugiXml/pugixml.hpp>
++#ifdef URHO3D_SYSTEM_PUGIXML
 +#include <pugixml.hpp>
++#else
+ #include <PugiXml/pugixml.hpp>
++#endif
  
  #include <cstring>
  

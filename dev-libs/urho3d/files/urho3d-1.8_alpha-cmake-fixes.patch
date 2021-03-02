@@ -1,0 +1,737 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/CMake/Modules/FindUrho3D.cmake Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/CMake/Modules/FindUrho3D.cmake
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/CMake/Modules/FindUrho3D.cmake	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/CMake/Modules/FindUrho3D.cmake	2021-03-01 11:57:06.055476004 -0800
+@@ -67,7 +67,13 @@ if (CMAKE_PROJECT_NAME STREQUAL Urho3D A
+     endif ()
+     if (URHO3D_LUA)
+         # ditto for Lua/LuaJIT
+-        list (APPEND URHO3D_INCLUDE_DIRS ${URHO3D_HOME}/include/Urho3D/ThirdParty/Lua${JIT})
++        if (URHO3D_SYSTEM_LUAJIT)
++            list (APPEND URHO3D_INCLUDE_DIRS /usr/include/luajit-2.1)
++        elseif (URHO3D_SYSTEM_LUA)
++            list (APPEND URHO3D_INCLUDE_DIRS /usr/include/lua5.1)
++        else ()
++            list (APPEND URHO3D_INCLUDE_DIRS ${URHO3D_HOME}/include/Urho3D/ThirdParty/Lua${JIT})
++        endif ()
+     endif ()
+     set (URHO3D_LIBRARIES Urho3D)
+     set (FOUND_MESSAGE "Found Urho3D: as CMake target")
+@@ -153,7 +159,13 @@ else ()
+             list (APPEND URHO3D_INCLUDE_DIRS ${URHO3D_BASE_INCLUDE_DIR}/ThirdParty/Bullet)
+         endif ()
+         if (URHO3D_LUA)
+-            list (APPEND URHO3D_INCLUDE_DIRS ${URHO3D_BASE_INCLUDE_DIR}/ThirdParty/Lua${JIT})
++            if (URHO3D_SYSTEM_LUAJIT)
++                list (APPEND URHO3D_INCLUDE_DIRS /usr/include/luajit-2.1)
++            elseif (URHO3D_SYSTEM_LUA)
++                list (APPEND URHO3D_INCLUDE_DIRS /usr/include/lua5.1)
++            else ()
++                list (APPEND URHO3D_INCLUDE_DIRS ${URHO3D_BASE_INCLUDE_DIR}/ThirdParty/Lua${JIT})
++            endif ()
+         endif ()
+         # Intentionally do not cache the URHO3D_VERSION as it has potential to change frequently
+         file (STRINGS ${URHO3D_BASE_INCLUDE_DIR}/librevision.h URHO3D_VERSION REGEX "^const char\\* revision=\"[^\"]*\".*$")
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/CMake/Modules/GenerateExportHeader.cmake Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/CMake/Modules/GenerateExportHeader.cmake
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/CMake/Modules/GenerateExportHeader.cmake	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/CMake/Modules/GenerateExportHeader.cmake	2021-03-01 11:57:06.055476004 -0800
+@@ -215,10 +215,10 @@ macro(_test_compiler_hidden_visibility)
+       AND NOT CMAKE_CXX_COMPILER_ID MATCHES PGI
+       AND NOT CMAKE_CXX_COMPILER_ID MATCHES Watcom)
+     # Urho3D - set the flags in a variable before testing
+-    set (COMPILER_HIDDEN_VISIBILITY_FLAGS -fvisibility=hidden)
+-    set (COMPILER_HIDDEN_INLINE_VISIBILITY_FLAGS -fvisibility-inlines-hidden)
+-    check_cxx_compiler_flag(${COMPILER_HIDDEN_VISIBILITY_FLAGS} COMPILER_HAS_HIDDEN_VISIBILITY)
+-    check_cxx_compiler_flag(${COMPILER_HIDDEN_INLINE_VISIBILITY_FLAGS} COMPILER_HAS_HIDDEN_INLINE_VISIBILITY)
++    #set (COMPILER_HIDDEN_VISIBILITY_FLAGS -fvisibility=hidden)
++    #set (COMPILER_HIDDEN_INLINE_VISIBILITY_FLAGS -fvisibility-inlines-hidden)
++    #check_cxx_compiler_flag(${COMPILER_HIDDEN_VISIBILITY_FLAGS} COMPILER_HAS_HIDDEN_VISIBILITY)
++    #check_cxx_compiler_flag(${COMPILER_HIDDEN_INLINE_VISIBILITY_FLAGS} COMPILER_HAS_HIDDEN_INLINE_VISIBILITY)
+   endif()
+ endmacro()
+ 
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/CMake/Modules/UrhoCommon.cmake Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/CMake/Modules/UrhoCommon.cmake
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/CMake/Modules/UrhoCommon.cmake	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/CMake/Modules/UrhoCommon.cmake	2021-03-01 11:57:06.055476004 -0800
+@@ -562,8 +562,8 @@ if (MSVC)
+     set (CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /OPT:REF /OPT:ICF")
+ else ()
+     # GCC/Clang-specific setup
+-    set (CMAKE_CXX_VISIBILITY_PRESET hidden)
+-    set (CMAKE_VISIBILITY_INLINES_HIDDEN true)
++    #set (CMAKE_CXX_VISIBILITY_PRESET hidden)
++    #set (CMAKE_VISIBILITY_INLINES_HIDDEN true)
+     set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-invalid-offsetof")
+     if (NOT ANDROID)    # Most of the flags are already setup in Android toolchain file
+         if (ARM AND CMAKE_SYSTEM_NAME STREQUAL Linux)
+@@ -744,6 +744,79 @@ else ()
+         endif ()
+     endif ()
+ endif ()
++if (NOT URHO3D_SYSTEM_NANODBC)
++    if (URHO3D_ODBC)
++        set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNANODBC_USE_BOOST_CONVERT")
++        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNANODBC_USE_BOOST_CONVERT")
++    endif ()
++endif()
++if (URHO3D_SYSTEM_LUA)
++    if (URHO3D_LUA)
++        list (APPEND INCLUDE_DIRS /usr/include/lua5.1)
++        add_definitions (-DLUA_COMPAT_MODULE=1 -DURHO3D)
++    endif ()
++endif ()
++
++if (BOX2D_2_4)
++    add_definitions (-DBOX2D_2_4)
++else ()
++    add_definitions (-DBOX2D_2_3)
++endif ()
++
++if (ENABLE_DOLLAR)
++    add_definitions (-DENABLE_DOLLAR)
++endif ()
++if (URHO3D_SYSTEM_ANGELSCRIPT)
++    add_definitions (-DURHO3D_SYSTEM_ANGELSCRIPT)
++endif ()
++if (URHO3D_SYSTEM_BOX2D)
++    add_definitions (-DURHO3D_SYSTEM_BOX2D)
++endif ()
++
++if (URHO3D_SYSTEM_BULLET)
++    add_definitions (-DURHO3D_SYSTEM_BULLET)
++endif ()
++
++if (URHO3D_SYSTEM_CIVETWEB)
++    add_definitions (-DURHO3D_SYSTEM_CIVETWEB)
++endif ()
++
++if (URHO3D_SYSTEM_GLEW)
++    add_definitions (-DURHO3D_SYSTEM_GLEW)
++endif ()
++
++if (URHO3D_SYSTEM_LIBCPUID)
++    add_definitions (-DURHO3D_SYSTEM_LIBCPUID)
++endif ()
++
++if (URHO3D_SYSTEM_LZ4)
++    add_definitions (-DURHO3D_SYSTEM_LZ4)
++endif ()
++
++if (URHO3D_SYSTEM_NANODBC)
++    add_definitions (-DURHO3D_SYSTEM_NANODBC)
++endif ()
++
++if (URHO3D_SYSTEM_PUGIXML)
++    add_definitions (-DURHO3D_SYSTEM_PUGIXML)
++endif ()
++
++if (URHO3D_SYSTEM_RAPIDJSON)
++    add_definitions (-DURHO3D_SYSTEM_RAPIDJSON)
++endif ()
++
++if (URHO3D_SYSTEM_RECASTNAVIGATION)
++    add_definitions (-DURHO3D_SYSTEM_RECASTNAVIGATION)
++endif ()
++
++if (URHO3D_SYSTEM_SDL)
++    add_definitions (-DURHO3D_SYSTEM_SDL)
++endif ()
++
++if (URHO3D_SYSTEM_SQLITE)
++    add_definitions (-DURHO3D_SYSTEM_SQLITE)
++endif ()
++
+ # LuaJIT specific - extra linker flags for linking against LuaJIT (adapted from LuaJIT's original Makefile)
+ if (URHO3D_LUAJIT)
+     if (URHO3D_64BIT AND APPLE AND NOT ARM)
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/Clang-Tools/AutoBinder/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/Clang-Tools/AutoBinder/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/Clang-Tools/AutoBinder/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/Clang-Tools/AutoBinder/CMakeLists.txt	2021-03-01 11:57:06.055476004 -0800
+@@ -22,6 +22,7 @@
+ 
+ # Define target name
+ set (TARGET_NAME AutoBinder)
++add_definitions (-D__STDC_LIMIT_MACROS=1 -D__STDC_CONSTANT_MACROS=1)
+ 
+ # Define source files
+ define_source_files ()
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/CMakeLists.txt	2021-03-01 11:57:06.055476004 -0800
+@@ -67,71 +67,266 @@ if (URHO3D_LIB_TYPE STREQUAL SHARED AND
+     endif ()
+ endif ()
+ 
+-# Add targets
+-foreach (TARGET FreeType LZ4 PugiXml rapidjson SDL StanHull STB)
+-    add_subdirectory (ThirdParty/${TARGET})
+-endforeach ()
++link_directories ("${CMAKE_BINARY_DIR}")
++
++if (NOT URHO3D_SYSTEM_FREETYPE)
++    add_subdirectory (ThirdParty/FreeType)
++    link_directories ("${CMAKE_BINARY_DIR}/Source/ThirdParty/FreeType")
++    list (APPEND LIBS FreeType)
++    install (FILES "${CMAKE_BINARY_DIR}/Source/ThirdParty/FreeType/libFreeType.so"
++        DESTINATION /usr/${GET_LIBDIR}/Urho3D
++        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
++else ()
++    list (APPEND LIBS freetype)
++    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/usr/include/freetype2")
++    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/usr/include/freetype2")
++endif ()
++
++if (NOT URHO3D_SYSTEM_LZ4)
++    add_subdirectory (ThirdParty/LZ4)
++    link_directories ("${CMAKE_BINARY_DIR}/Source/ThirdParty/LZ4")
++    list (APPEND LIBS LZ4)
++    install (FILES "${CMAKE_BINARY_DIR}/Source/ThirdParty/LZ4/libLZ4.so"
++        DESTINATION /usr/${GET_LIBDIR}/Urho3D
++        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
++else ()
++    list (APPEND LIBS lz4)
++endif ()
++
++if (NOT URHO3D_SYSTEM_PUGIXML)
++    add_subdirectory (ThirdParty/PugiXml)
++    link_directories ("${CMAKE_BINARY_DIR}/Source/ThirdParty/PugiXml")
++    list (APPEND LIBS PugiXml)
++    install (FILES "${CMAKE_BINARY_DIR}/Source/ThirdParty/PugiXml/libPugiXml.so"
++        DESTINATION /usr/${GET_LIBDIR}/Urho3D
++        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
++else ()
++    list (APPEND LIBS pugixml)
++endif ()
++
++if (NOT URHO3D_SYSTEM_RAPIDJSON)
++    add_subdirectory (ThirdParty/rapidjson)
++endif ()
++
++if (NOT URHO3D_SYSTEM_SDL)
++    add_definitions (-DENABLE_DOLLAR=1)
++    add_subdirectory (ThirdParty/SDL)
++    link_directories ("${CMAKE_BINARY_DIR}/Source/ThirdParty/SDL")
++    list (APPEND LIBS SDL)
++    install (FILES "${CMAKE_BINARY_DIR}/Source/ThirdParty/SDL/libSDL.so"
++        DESTINATION /usr/${GET_LIBDIR}/Urho3D
++        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
++else ()
++    list (APPEND LIBS SDL2)
++    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_REENTRANT -I/usr/include/SDL2")
++    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_REENTRANT -I/usr/include/SDL2")
++endif ()
++
++if (NOT URHO3D_SYSTEM_STANHULL)
++    add_subdirectory (ThirdParty/StanHull)
++    list (APPEND LIBS StanHull)
++    install (FILES "${CMAKE_BINARY_DIR}/Source/ThirdParty/StanHull/libStanHull.so"
++        DESTINATION /usr/${GET_LIBDIR}/Urho3D
++        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
++endif ()
++
++if (NOT URHO3D_SYSTEM_STB)
++    add_subdirectory (ThirdParty/STB)
++endif ()
+ 
+ if (URHO3D_ANGELSCRIPT)
+-    add_subdirectory (ThirdParty/AngelScript)
++    if (NOT URHO3D_SYSTEM_ANGELSCRIPT)
++        add_subdirectory (ThirdParty/AngelScript)
++        link_directories ("${CMAKE_BINARY_DIR}/Source/ThirdParty/AngelScript")
++        list (APPEND LIBS AngelScript)
++        install (FILES "${CMAKE_BINARY_DIR}/Source/ThirdParty/AngelScript/libAngelScript.so"
++            DESTINATION /usr/${GET_LIBDIR}/Urho3D
++            PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
++    else ()
++        list (APPEND LIBS angelscript)
++    endif ()
+     if (WEB OR (ARM AND URHO3D_64BIT))
+-        add_subdirectory (ThirdParty/boost)
++        if (NOT URHO3D_SYSTEM_BOOST)
++            add_subdirectory (ThirdParty/boost)
++        else ()
++            if (URHO3D_NETWORK)
++                list (APPEND LIBS boost_system boost_thread pthread)
++            else ()
++                list (APPEND LIBS boost_system)
++            endif ()
++        endif ()
+     endif ()
+ endif ()
+ 
+ if (URHO3D_LUA)
+-    add_subdirectory (ThirdParty/Lua${JIT})
++    if (URHO3D_SYSTEM_LUAJIT)
++        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/usr/include/lua5.1")
++        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/usr/include/lua5.1")
++        list (APPEND LIBS luajit-5.1)
++    elseif (URHO3D_SYSTEM_LUA)
++        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/usr/include/lua5.1")
++        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/usr/include/lua5.1")
++        list (APPEND LIBS lua5.1 m dl)
++    elseif (NOT URHO3D_SYSTEM_LUAJIT AND NOT URHO3D_SYSTEM_LUA)
++        add_subdirectory (ThirdParty/Lua${JIT})
++        link_directories ("${CMAKE_BINARY_DIR}/Source/ThirdParty/Lua${JIT}")
++        list (APPEND LIBS Lua${JIT})
++        install (FILES "${CMAKE_BINARY_DIR}/Source/ThirdParty/Lua${JIT}/libLua${JIT}.so"
++            DESTINATION /usr/${GET_LIBDIR}/Urho3D
++            PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
++    endif ()
+     add_subdirectory (ThirdParty/toluapp/src/lib)
++    list (APPEND LIBS toluapp)
++    install (FILES "${CMAKE_BINARY_DIR}/Source/ThirdParty/toluapp/src/lib/libtoluapp.so"
++        DESTINATION /usr/${GET_LIBDIR}/Urho3D
++        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+ endif ()
+ 
+ if (URHO3D_NETWORK)
+-    add_subdirectory (ThirdParty/Civetweb)
+-    add_subdirectory (ThirdParty/SLikeNet)
++    if (NOT URHO3D_SYSTEM_CIVETWEB)
++        add_subdirectory (ThirdParty/Civetweb)
++        link_directories ("${CMAKE_BINARY_DIR}/Source/ThirdParty/Civetweb")
++        list (APPEND LIBS Civetweb)
++        install (FILES "${CMAKE_BINARY_DIR}/Source/ThirdParty/Civetweb/libCivetweb.so"
++            DESTINATION /usr/${GET_LIBDIR}/Urho3D
++            PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
++    elseif ()
++        list (APPEND LIBS civetweb)
++    endif ()
++    if (NOT URHO3D_SYSTEM_SLIKENET)
++        add_subdirectory (ThirdParty/SLikeNet)
++        link_directories ("${CMAKE_BINARY_DIR}/Source/ThirdParty/SLikeNet")
++        list (APPEND LIBS SLikeNet)
++        install (FILES "${CMAKE_BINARY_DIR}/Source/ThirdParty/SLikeNet/libSLikeNet.so"
++            DESTINATION /usr/${GET_LIBDIR}/Urho3D
++            PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
++    elseif ()
++        list (APPEND LIBS SLikeNet)
++    endif ()
+ endif ()
+ 
+ if (URHO3D_DATABASE_ODBC)
+-    add_subdirectory (ThirdParty/nanodbc)
++    if (NOT URHO3D_SYSTEM_NANODBC)
++        list (APPEND LINK_FLAGS " -L${CMAKE_BINARY_DIR}/Source/ThirdParty/nanodbc")
++        list (APPEND LIBS nanodbc)
++        add_subdirectory (ThirdParty/nanodbc)
++    else ()
++        list (APPEND LIBS nanodbc c++)
++    endif ()
+ endif ()
+ if (URHO3D_DATABASE_SQLITE)
+-    add_subdirectory (ThirdParty/SQLite)
++    if (NOT URHO3D_SYSTEM_SQLITE)
++        add_subdirectory (ThirdParty/SQLite)
++    else ()
++        list (APPEND LIBS sqlite3)
++    endif ()
+ endif ()
+ 
+ if (URHO3D_IK)
+     add_subdirectory (ThirdParty/ik)
++    list (APPEND LIBS ik)
++    install (FILES "${CMAKE_BINARY_DIR}/Source/ThirdParty/ik/libik.so"
++        DESTINATION /usr/${GET_LIBDIR}/Urho3D
++        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
++
+ endif ()
+ 
+ if (URHO3D_NAVIGATION)
+-    add_subdirectory (ThirdParty/Detour)
+-    add_subdirectory (ThirdParty/DetourCrowd)
+-    add_subdirectory (ThirdParty/DetourTileCache)
+-    add_subdirectory (ThirdParty/Recast)
++    if (NOT URHO3D_SYSTEM_RECASTNAVIGATION)
++        add_subdirectory (ThirdParty/Detour)
++        add_subdirectory (ThirdParty/DetourCrowd)
++        add_subdirectory (ThirdParty/DetourTileCache)
++        add_subdirectory (ThirdParty/Recast)
++		link_directories ("${CMAKE_BINARY_DIR}/Source/ThirdParty/Detour")
++		link_directories ("${CMAKE_BINARY_DIR}/Source/ThirdParty/DetourCrowd")
++		link_directories ("${CMAKE_BINARY_DIR}/Source/ThirdParty/DetourTileCache")
++		link_directories ("${CMAKE_BINARY_DIR}/Source/ThirdParty/Recast")
++        list (APPEND LIBS Detour DetourCrowd DetourTileCache Recast)
++    else ()
++        list (APPEND LIBS Detour DetourCrowd DetourTileCache Recast)
++    endif ()
+ endif ()
+ 
+ if (URHO3D_URHO2D)
+-    add_subdirectory (ThirdParty/Box2D)
++    if (NOT URHO3D_SYSTEM_BOX2D)
++        add_subdirectory (ThirdParty/Box2D)
++        link_directories ("${CMAKE_BINARY_DIR}/Source/ThirdParty/Box2D")
++        list (APPEND LIBS Box2D)
++    else ()
++        if (BOX2D_2_4)
++            file(GLOB BOX2D_LIB
++                LIST_DIRECTORIES false
++                /usr/${GET_LIBDIR}/libbox2d.so.2.4.*)
++            get_filename_component(BOX2D_LIB_NAME "${BOX2D_LIB}" NAME)
++            list (APPEND LIBS ${BOX2D_LIB_NAME})
++        else ()
++            file(GLOB BOX2D_LIB
++                LIST_DIRECTORIES false
++                /usr/${GET_LIBDIR}/libBox2D.so.2.3.*)
++            get_filename_component(BOX2D_LIB_NAME "${BOX2D_LIB}" NAME)
++            list (APPEND LIBS ${BOX2D_LIB_NAME})
++            set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/usr/include/Box2D-2.3")
++            set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/usr/include/Box2D-2.3")
++        endif ()
++    endif ()
+     if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/spine)
+-        add_subdirectory (ThirdParty/spine)
++        if (NOT URHO3D_SYSTEM_SPINE)
++            add_subdirectory (ThirdParty/spine)
++        endif ()
+         # Add definition for Spine
+         add_definitions (-DURHO3D_SPINE)
+     endif ()
+ endif ()
+ 
+ if (URHO3D_WEBP)
+-    add_subdirectory (ThirdParty/WebP)
++    if (NOT URHO3D_SYSTEM_WEBP)
++        add_subdirectory (ThirdParty/WebP)
++        list (APPEND LIBS WebP)
++        install (FILES "${CMAKE_BINARY_DIR}/Source/ThirdParty/WebP/libWebP.so"
++            DESTINATION /usr/${GET_LIBDIR}/Urho3D
++            PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
++    else ()
++        list (APPEND LIBS webp)
++    endif ()
+ endif ()
+ 
+ if (URHO3D_PHYSICS)
+-    add_subdirectory (ThirdParty/Bullet)
++    if (NOT URHO3D_SYSTEM_BULLET)
++        add_subdirectory (ThirdParty/Bullet)
++        link_directories ("${CMAKE_BINARY_DIR}/Source/ThirdParty/Bullet")
++        list (APPEND LIBS Bullet)
++        install (FILES "${CMAKE_BINARY_DIR}/Source/ThirdParty/Bullet/libBullet.so"
++            DESTINATION /usr/${GET_LIBDIR}/Urho3D
++            PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
++    else ()
++        list (APPEND LIBS BulletSoftBody BulletDynamics BulletCollision LinearMath)
++        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/usr/include/bullet")
++        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/usr/include/bullet")
++    endif ()
+ endif ()
+ 
+ if (NOT ANDROID AND NOT ARM AND NOT WEB)
+     if (URHO3D_OPENGL)
+-        add_subdirectory (ThirdParty/GLEW)
++        if (NOT URHO3D_SYSTEM_GLEW)
++            add_subdirectory (ThirdParty/GLEW)
++            link_directories ("${CMAKE_BINARY_DIR}/Source/ThirdParty/GLEW")
++            list (APPEND LIBS GLEW)
++        else ()
++            list (APPEND LIBS GLEW GL X11 GLU GL)
++        endif ()
+     elseif (NOT URHO3D_D3D11)
+-        add_subdirectory (ThirdParty/MojoShader)
++        if (NOT URHO3D_SYSTEM_MOJOSHADER)
++            add_subdirectory (ThirdParty/MojoShader)
++        else ()
++            list (APPEND LIBS mojoshader)
++        endif ()
+     endif ()
+     if (NOT CMAKE_SYSTEM_NAME STREQUAL Linux)
+-        add_subdirectory (ThirdParty/LibCpuId)
++        if (NOT URHO3D_SYSTEM_LIBCPUID)
++            add_subdirectory (ThirdParty/LibCpuId)
++        else ()
++            list (APPEND LIBS cpuid)
++        endif ()
+     endif ()
+ endif ()
+ 
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/ThirdParty/ik/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/ThirdParty/ik/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/ThirdParty/ik/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/ThirdParty/ik/CMakeLists.txt	2021-03-01 11:57:06.055476004 -0800
+@@ -20,6 +20,7 @@
+ #
+ 
+ include (CheckIncludeFiles)
++include (CheckCSourceCompiles)
+ 
+ # Define target name
+ set (TARGET_NAME ik)
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/ThirdParty/Lua/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/ThirdParty/Lua/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/ThirdParty/Lua/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/ThirdParty/Lua/CMakeLists.txt	2021-03-01 12:20:32.638837364 -0800
+@@ -47,14 +47,25 @@ if (NOT CMAKE_PROJECT_NAME MATCHES ^Urho
+     # Define source files
+     set (SOURCE_FILES src/lua.c)
+ 
++    set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I${CMAKE_SOURCE_DIR}/Source/ThirdParty/Lua/src")
++    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I${CMAKE_SOURCE_DIR}/Source/ThirdParty/Lua/src")
++
+     # Define dependency libs
+-    set (LIBS Lua)
++    if (NOT URHO3D_SYSTEM_LUA)
++        set (LIBS Lua)
++    else ()
++        set (LIBS lua5.1)
++    endif ()
+     if (NOT MSVC)
+         list (APPEND LIBS m)
+     endif ()
+ 
++    if (URHO3D_SYSTEM_LUA)
++        list (APPEND LIBS dl)
++    endif ()
++
+     # Setup target
+-    setup_executable (NODEPS)
++    setup_executable (TOOL NODEPS)
+     adjust_target_name ()   # Adjust to intended target output name
+ 
+     # Define target name for Lua compiler
+@@ -67,5 +78,5 @@ if (NOT CMAKE_PROJECT_NAME MATCHES ^Urho
+     # Same as above
+ 
+     # Setup target
+-    setup_executable (NODEPS)
++    setup_executable (TOOL NODEPS)
+ endif ()
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/ThirdParty/LuaJIT/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/ThirdParty/LuaJIT/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/ThirdParty/LuaJIT/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/ThirdParty/LuaJIT/CMakeLists.txt	2021-03-01 11:57:06.055476004 -0800
+@@ -610,7 +610,7 @@ if (NOT CMAKE_PROJECT_NAME MATCHES ^Urho
+     adjust_target_name ()   # Adjust to intended target output name
+     if (TARGET LuaJIT_universal)
+         add_dependencies (${TARGET_NAME} LuaJIT_universal)
+-        target_link_libraries (${TARGET_NAME} ${CMAKE_BINARY_DIR}/Source/ThirdParty/LuaJIT/$<CONFIG>/libLuaJIT.a)   # This is a hack as CMake does not allow custom target in generator-expression, like $<TARGET_FILE:LuaJIT_universal>
++        target_link_libraries (${TARGET_NAME} "${CMAKE_BINARY_DIR}/Source/ThirdParty/LuaJIT/$<CONFIG>/libLuaJIT.a")   # This is a hack as CMake does not allow custom target in generator-expression, like $<TARGET_FILE:LuaJIT_universal>
+     endif ()
+ 
+     # Define post build steps
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/ThirdParty/SDL/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/ThirdParty/SDL/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/ThirdParty/SDL/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/ThirdParty/SDL/CMakeLists.txt	2021-03-01 11:57:06.055476004 -0800
+@@ -585,6 +585,7 @@ if(LIBC)
+     check_symbol_exists(M_PI math.h HAVE_M_PI)
+     # Urho3D - for consistency sake use check_include_file() to check for HAVE_MPROTECT
+     check_include_file (sys/mman.h HAVE_MPROTECT)
++    set (_NFN _i64toa _ltoa _strlwr _strupr _ui64toa _uitoa _ultoa _strrev itoa)
+     foreach(_FN
+             strtod malloc calloc realloc free getenv setenv putenv unsetenv
+             qsort abs bcopy memset memcpy memmove memcmp strlen strlcpy strlcat
+@@ -594,6 +595,11 @@ if(LIBC)
+             vsscanf vsnprintf fopen64 fseeko fseeko64 sigaction setjmp
+             nanosleep sysconf sysctlbyname getauxval poll _Exit
+             )
++      if (WEB)
++        if (_FN IN_LIST _NFN)
++          continue ()
++        endif ()
++      endif ()
+       string(TOUPPER ${_FN} _UPPER)
+       set(_HAVEVAR "HAVE_${_UPPER}")
+       check_function_exists("${_FN}" ${_HAVEVAR})
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt	2021-03-01 11:57:06.055476004 -0800
+@@ -51,7 +51,13 @@ if (NOT CMAKE_PROJECT_NAME STREQUAL Urho
+     endif ()
+ 
+     # Add dependency targets
+-    add_subdirectory (${BAKED_CMAKE_SOURCE_DIR}/Source/ThirdParty/Lua host/Lua)
++    if (NOT URHO3D_SYSTEM_LUA)
++        add_subdirectory (${BAKED_CMAKE_SOURCE_DIR}/Source/ThirdParty/Lua host/Lua)
++    else ()
++        list (APPEND LIBS lua5.1 m dl)
++        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/usr/include/lua5.1")
++        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/usr/include/lua5.1")
++    endif ()
+     add_subdirectory (${BAKED_CMAKE_SOURCE_DIR}/Source/ThirdParty/toluapp/src/lib host/toluapp)
+ endif ()
+ 
+@@ -74,11 +80,25 @@ add_custom_command (OUTPUT ${CMAKE_CURRE
+ define_source_files (EXTRA_CPP_FILES tolua.c ${CMAKE_CURRENT_BINARY_DIR}/generated/toluabind.c)
+ 
+ # Define dependency libs
+-set (LIBS toluapp Lua)
++if (URHO3D_SYSTEM_LUA)
++    set (LIBS toluapp lua5.1)
++else ()
++    list (APPEND CMAKE_INSTALL_RPATH ${CMAKE_BINARY_DIR}/Source/ThirdParty/Lua)
++    set (LIBS toluapp Lua)
++endif ()
++
+ if (NOT MSVC)
+     list (APPEND LIBS m)
+ endif ()
+-set (INCLUDE_DIRS ../../include ../../../../ThirdParty/Lua/src)
++
++if (URHO3D_SYSTEM_LUA)
++    list (APPEND LIBS dl)
++    set (INCLUDE_DIRS ../../include /usr/include/lua5.1)
++else ()
++    set (INCLUDE_DIRS ../../include ../../../../ThirdParty/Lua/src)
++endif ()
++
++list (APPEND CMAKE_INSTALL_RPATH ${CMAKE_BINARY_DIR}/Source/ThirdParty/toluapp/src/lib)
+ 
+ # Setup target
+ setup_executable (TOOL NODEPS)
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt	2021-03-01 11:57:06.055476004 -0800
+@@ -27,7 +27,13 @@ set (TARGET_NAME toluapp)
+ define_source_files (GLOB_CPP_PATTERNS *.c)
+ 
+ # Define dependency libs
+-set (INCLUDE_DIRS ../../include ../../../Lua${JIT}/src)
++if (URHO3D_SYSTEM_LUAJIT)
++    set (INCLUDE_DIRS ../../include /usr/include/luajit-2.1)
++elseif (URHO3D_SYSTEM_LUA)
++    set (INCLUDE_DIRS ../../include /usr/include/lua5.1)
++else ()
++    set (INCLUDE_DIRS ../../include ../../../Lua${JIT}/src)
++endif ()
+ 
+ # Setup target
+ setup_library ()
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/Tools/AssetImporter/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/Tools/AssetImporter/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/Tools/AssetImporter/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/Tools/AssetImporter/CMakeLists.txt	2021-03-01 11:57:06.055476004 -0800
+@@ -27,9 +27,17 @@ set (TARGET_NAME AssetImporter)
+ define_source_files ()
+ 
+ # Define dependency libs
+-add_subdirectory (../../ThirdParty/Assimp ../../ThirdParty/Assimp)
+-set (LIBS Assimp)
+-set (INCLUDE_DIRS ../../ThirdParty/Assimp/include ${CMAKE_CURRENT_BINARY_DIR}/../../ThirdParty/Assimp/include)
++if (NOT URHO3D_SYSTEM_ASSIMP)
++    add_subdirectory (../../ThirdParty/Assimp ../../ThirdParty/Assimp)
++    set (LIBS Assimp)
++    set (INCLUDE_DIRS ../../ThirdParty/Assimp/include ${CMAKE_CURRENT_BINARY_DIR}/../../ThirdParty/Assimp/include)
++    install (FILES "${CMAKE_BINARY_DIR}/Source/ThirdParty/Assimp/code/libAssimp.so"
++        DESTINATION /usr/${GET_LIBDIR}/Urho3D
++        PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
++else ()
++    set (LIBS assimp)
++    set (INCLUDE_DIRS /usr/include/assimp)
++endif ()
+ 
+ # Setup target
+ setup_executable (TOOL)
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/Tools/PackageTool/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/Tools/PackageTool/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/Tools/PackageTool/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/Tools/PackageTool/CMakeLists.txt	2021-03-01 11:57:06.059476162 -0800
+@@ -95,7 +95,11 @@ if (NOT CMAKE_PROJECT_NAME STREQUAL Urho
+         include (CheckIncludeFile)
+         check_include_file (stdint.h HAVE_STDINT_H)
+         add_subdirectory (${BAKED_CMAKE_SOURCE_DIR}/Source/ThirdParty/LibCpuId host/LibCpuId)
+-        set (LIBS LibCpuId)
++	if (NOT URHO3D_SYSTEM_LZ4)
++            set (LIBS LibCpuId)
++        else ()
++            set (LIBS cpuid)
++        endif()
+     endif ()
+     add_subdirectory (${BAKED_CMAKE_SOURCE_DIR}/Source/ThirdParty/LZ4 host/LZ4)
+     set (INCLUDE_DIRS ${BAKED_CMAKE_BINARY_DIR}/include ${BAKED_CMAKE_BINARY_DIR}/include/Urho3D ${CMAKE_BINARY_DIR}/${DEST_INCLUDE_DIR}/ThirdParty)
+@@ -111,7 +115,11 @@ set (TARGET_NAME PackageTool${POSTFIX})
+ define_source_files (EXTRA_CPP_FILES ${MINI_URHO_CPP_FILES})
+ 
+ # Define dependency libs
+-list (APPEND LIBS LZ4)
++if (NOT URHO3D_SYSTEM_LZ4)
++    list (APPEND LIBS LZ4)
++else ()
++    list (APPEND LIBS lz4)
++endif ()
+ 
+ # Setup target
+ setup_executable (TOOL)
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/Urho3D/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/Urho3D/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native.orig/Source/Urho3D/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-native/Source/Urho3D/CMakeLists.txt	2021-03-01 11:57:06.059476162 -0800
+@@ -22,6 +22,11 @@
+ 
+ # Define target name
+ set (TARGET_NAME Urho3D)
++if (URHO3D_STATIC)
++    set (CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS}")
++else ()
++    set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS}")
++endif ()
+ 
+ setup_lint ()
+ 
+@@ -303,19 +308,36 @@ list (APPEND SOURCE_FILES ${GEN_CPP_FILE
+ # Define dependency libs
+ # Add include directories to find the precompiled header, export header, and installed headers from third-party libs
+ set (INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR} ${THIRD_PARTY_INCLUDE_DIR})
++if (URHO3D_SYSTEM_FREETYPE)
++    list (APPEND INCLUDE_DIRS /usr/include /usr/include/freetype2)
++endif ()
+ if (URHO3D_PHYSICS)
+     # Bullet library depends on its own include dir to be added in the header search path
+     # This is more practical than patching its header files in many places to make them work with relative path
+-    list (APPEND INCLUDE_DIRS ${THIRD_PARTY_INCLUDE_DIR}/Bullet)
++    if (NOT URHO3D_SYSTEM_BULLET)
++        list (APPEND INCLUDE_DIRS ${THIRD_PARTY_INCLUDE_DIR}/Bullet)
++    else ()
++        list (APPEND INCLUDE_DIRS /usr/include/bullet)
++    endif ()
+ endif ()
+ if (URHO3D_NAVIGATION)
+     # DetourTileCache and DetourCrowd libraries depend on Detour's include dir to be added in the header search path
+-    list (APPEND INCLUDE_DIRS ${THIRD_PARTY_INCLUDE_DIR}/Detour)
++    if (NOT URHO3D_SYSTEM_BULLET)
++        list (APPEND INCLUDE_DIRS ${THIRD_PARTY_INCLUDE_DIR}/Detour)
++    else ()
++        list (APPEND INCLUDE_DIRS /usr/include/recastnavigation)
++    endif ()
+ endif ()
+ if (URHO3D_LUA)
+     # Lua/LuaJIT library depends on its own include dir to be added in the header search path
+     # This is more practical than patching its header files in many places to make them work with relative path
+-    list (APPEND INCLUDE_DIRS ${THIRD_PARTY_INCLUDE_DIR}/Lua${JIT})
++    if (URHO3D_SYSTEM_LUAJIT)
++        list (APPEND INCLUDE_DIRS /usr/include/luajit-2.1)
++    elseif (URHO3D_SYSTEM_LUA)
++        list (APPEND INCLUDE_DIRS /usr/include/lua5.1)
++    else ()
++        list (APPEND INCLUDE_DIRS ${THIRD_PARTY_INCLUDE_DIR}/Lua${JIT})
++    endif ()
+ endif ()
+ # Workaround for GCC 5.4 and above when building a SHARED lib type for Linux platform to fix the undefined symbol "__cpu_model" issue (see #1519)
+ if (CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 5.3.1 AND CMAKE_SYSTEM_NAME STREQUAL Linux AND URHO3D_LIB_TYPE STREQUAL SHARED)  # 5.3.1 was the last known good version
+@@ -372,6 +394,7 @@ elseif (TVOS)
+     # TODO: Temporary workaround as CMake does not recognize AppleTV platform yet
+     add_dependencies (${TARGET_NAME} APPLETV_POST_CMAKE_FIX)
+ elseif (EMSCRIPTEN)
++    set_target_properties(${TARGET_NAME} PROPERTIES OUTPUT_NAME "Urho3D_web")
+     install (TARGETS ${TARGET_NAME} LIBRARY DESTINATION ${DEST_LIBRARY_DIR} PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ ARCHIVE DESTINATION ${DEST_LIBRARY_DIR})
+ else ()
+     install (TARGETS ${TARGET_NAME} RUNTIME DESTINATION ${DEST_RUNTIME_DIR} LIBRARY DESTINATION ${DEST_LIBRARY_DIR} ARCHIVE DESTINATION ${DEST_LIBRARY_DIR})
+@@ -543,7 +566,13 @@ if (URHO3D_PHYSICS)
+ endif ()
+ if (URHO3D_LUA)
+     # ditto for Lua/LuaJIT
+-    set (ENGINE_INCLUDE_DIRS "${ENGINE_INCLUDE_DIRS} ${DASH}I\"\${includedir}/Urho3D/ThirdParty/Lua${JIT}\"")
++    if (URHO3D_SYSTEM_LUAJIT)
++        set (ENGINE_INCLUDE_DIRS "${ENGINE_INCLUDE_DIRS} ${DASH}I\"/usr/include/luajit-2.1\"")
++    elseif (URHO3D_SYSTEM_LUA)
++        set (ENGINE_INCLUDE_DIRS "${ENGINE_INCLUDE_DIRS} ${DASH}I\"/usr/include/lua5.1\"")
++    else ()
++        set (ENGINE_INCLUDE_DIRS "${ENGINE_INCLUDE_DIRS} ${DASH}I\"\${includedir}/Urho3D/ThirdParty/Lua${JIT}\"")
++    endif ()
+ endif ()
+ string (REGEX REPLACE " -include \"[^\"]+\"" "" CLEANED_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+ string (REPLACE "${SYSROOT}" "\${pc_sysrootdir}" CLEANED_CMAKE_CXX_FLAGS "${CLEANED_CMAKE_CXX_FLAGS}")
+@@ -556,6 +585,9 @@ if (ANDROID)
+     # After migration to Gradle build system we do not support Android cross-compiling build via pkgconfig anymore, however, this file is still being provided as reference only
+     set (RENAME RENAME Urho3D-${ANDROID_ABI}.pc)
+ endif ()
++if (WEB)
++    set (RENAME RENAME Urho3D_web.pc)
++endif ()
+ install (FILES ${CMAKE_CURRENT_BINARY_DIR}/Urho3D.pc DESTINATION ${DEST_PKGCONFIG_DIR} ${RENAME})
+ 
+ # Define post build steps

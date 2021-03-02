@@ -10,9 +10,9 @@
 
 inherit multibuild
 
-# @ECLASS-VARIABLE: _IMPLS
+# @ECLASS-VARIABLE: _GODOT_IMPLS
 # @DESCRIPTION: (Private) Generates a list of implementations for the godot-multibuild context
-_IMPLS="X server"
+_GODOT_IMPLS="X server"
 
 # @FUNCTION: _python_multibuild_wrapper
 # @DESCRIPTION: Initialize the environment for this implementation
@@ -58,7 +58,7 @@ godot_copy_sources() {
 # @DESCRIPTION:  This will fill up MULTIBUILD_VARIANTS if user chosen implementation
 _godot_obtain_impls() {
 	MULTIBUILD_VARIANTS=()
-	for impl in ${_IMPLS} ; do
+	for impl in ${_GODOT_IMPLS} ; do
 		use "${impl}" && MULTIBUILD_VARIANTS+=( "${impl}" )
 	done
 }

@@ -1,24 +1,11 @@
-diff -urp a/Source/Urho3D/Physics/CollisionShape.cpp b/Source/Urho3D/Physics/CollisionShape.cpp
---- a/Source/Urho3D/Physics/CollisionShape.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Physics/CollisionShape.cpp	2020-01-08 10:35:27.781379287 -0800
-@@ -41,20 +41,20 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Physics/CollisionShape.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Physics/CollisionShape.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Physics/CollisionShape.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Physics/CollisionShape.cpp	2021-02-22 06:53:26.947215887 -0800
+@@ -41,6 +41,22 @@
  #include "../Resource/ResourceEvents.h"
  #include "../Scene/Scene.h"
  
--#include <Bullet/BulletCollision/CollisionDispatch/btInternalEdgeUtility.h>
--#include <Bullet/BulletCollision/CollisionShapes/btBoxShape.h>
--#include <Bullet/BulletCollision/CollisionShapes/btCapsuleShape.h>
--#include <Bullet/BulletCollision/CollisionShapes/btCompoundShape.h>
--#include <Bullet/BulletCollision/CollisionShapes/btConeShape.h>
--#include <Bullet/BulletCollision/CollisionShapes/btConvexHullShape.h>
--#include <Bullet/BulletCollision/CollisionShapes/btCylinderShape.h>
--#include <Bullet/BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
--#include <Bullet/BulletCollision/CollisionShapes/btScaledBvhTriangleMeshShape.h>
--#include <Bullet/BulletCollision/CollisionShapes/btSphereShape.h>
--#include <Bullet/BulletCollision/CollisionShapes/btTriangleIndexVertexArray.h>
--#include <Bullet/BulletCollision/CollisionShapes/btStaticPlaneShape.h>
--#include <Bullet/BulletCollision/Gimpact/btGImpactShape.h>
--#include <Bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
++#ifdef URHO3D_SYSTEM_BULLET
 +#include <bullet/BulletCollision/CollisionDispatch/btInternalEdgeUtility.h>
 +#include <bullet/BulletCollision/CollisionShapes/btBoxShape.h>
 +#include <bullet/BulletCollision/CollisionShapes/btCapsuleShape.h>
@@ -33,58 +20,66 @@ diff -urp a/Source/Urho3D/Physics/CollisionShape.cpp b/Source/Urho3D/Physics/Col
 +#include <bullet/BulletCollision/CollisionShapes/btStaticPlaneShape.h>
 +#include <bullet/BulletCollision/Gimpact/btGImpactShape.h>
 +#include <bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
++#else
+ #include <Bullet/BulletCollision/CollisionDispatch/btInternalEdgeUtility.h>
+ #include <Bullet/BulletCollision/CollisionShapes/btBoxShape.h>
+ #include <Bullet/BulletCollision/CollisionShapes/btCapsuleShape.h>
+@@ -55,6 +71,7 @@
+ #include <Bullet/BulletCollision/CollisionShapes/btStaticPlaneShape.h>
+ #include <Bullet/BulletCollision/Gimpact/btGImpactShape.h>
+ #include <Bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
++#endif
  #include <StanHull/hull.h>
  
  namespace Urho3D
-diff -urp a/Source/Urho3D/Physics/Constraint.cpp b/Source/Urho3D/Physics/Constraint.cpp
---- a/Source/Urho3D/Physics/Constraint.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Physics/Constraint.cpp	2020-01-08 10:35:27.771378902 -0800
-@@ -32,11 +32,11 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Physics/Constraint.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Physics/Constraint.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Physics/Constraint.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Physics/Constraint.cpp	2021-02-22 06:53:26.947215887 -0800
+@@ -32,11 +32,19 @@
  #include "../Physics/RigidBody.h"
  #include "../Scene/Scene.h"
  
--#include <Bullet/BulletDynamics/ConstraintSolver/btConeTwistConstraint.h>
--#include <Bullet/BulletDynamics/ConstraintSolver/btHingeConstraint.h>
--#include <Bullet/BulletDynamics/ConstraintSolver/btPoint2PointConstraint.h>
--#include <Bullet/BulletDynamics/ConstraintSolver/btSliderConstraint.h>
--#include <Bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
++#ifdef URHO3D_SYSTEM_BULLET
 +#include <bullet/BulletDynamics/ConstraintSolver/btConeTwistConstraint.h>
 +#include <bullet/BulletDynamics/ConstraintSolver/btHingeConstraint.h>
 +#include <bullet/BulletDynamics/ConstraintSolver/btPoint2PointConstraint.h>
 +#include <bullet/BulletDynamics/ConstraintSolver/btSliderConstraint.h>
 +#include <bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
++#else
+ #include <Bullet/BulletDynamics/ConstraintSolver/btConeTwistConstraint.h>
+ #include <Bullet/BulletDynamics/ConstraintSolver/btHingeConstraint.h>
+ #include <Bullet/BulletDynamics/ConstraintSolver/btPoint2PointConstraint.h>
+ #include <Bullet/BulletDynamics/ConstraintSolver/btSliderConstraint.h>
+ #include <Bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
++#endif
  
  namespace Urho3D
  {
-diff -urp a/Source/Urho3D/Physics/PhysicsUtils.h b/Source/Urho3D/Physics/PhysicsUtils.h
---- a/Source/Urho3D/Physics/PhysicsUtils.h	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Physics/PhysicsUtils.h	2020-01-08 10:35:27.891383494 -0800
-@@ -25,8 +25,8 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Physics/PhysicsUtils.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Physics/PhysicsUtils.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Physics/PhysicsUtils.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Physics/PhysicsUtils.h	2021-02-22 06:53:26.951216041 -0800
+@@ -25,8 +25,13 @@
  #include "../Math/Quaternion.h"
  #include "../Math/Vector3.h"
  
--#include <Bullet/LinearMath/btVector3.h>
--#include <Bullet/LinearMath/btQuaternion.h>
++#ifdef URHO3D_SYSTEM_BULLET
 +#include <bullet/LinearMath/btVector3.h>
 +#include <bullet/LinearMath/btQuaternion.h>
++#else
+ #include <Bullet/LinearMath/btVector3.h>
+ #include <Bullet/LinearMath/btQuaternion.h>
++#endif
  
  namespace Urho3D
  {
-diff -urp a/Source/Urho3D/Physics/PhysicsWorld.cpp b/Source/Urho3D/Physics/PhysicsWorld.cpp
---- a/Source/Urho3D/Physics/PhysicsWorld.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Physics/PhysicsWorld.cpp	2020-01-08 10:35:27.921384640 -0800
-@@ -39,14 +39,14 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Physics/PhysicsWorld.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Physics/PhysicsWorld.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Physics/PhysicsWorld.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Physics/PhysicsWorld.cpp	2021-02-22 06:53:26.951216041 -0800
+@@ -39,6 +39,16 @@
  #include "../Scene/Scene.h"
  #include "../Scene/SceneEvents.h"
  
--#include <Bullet/BulletCollision/BroadphaseCollision/btDbvtBroadphase.h>
--#include <Bullet/BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h>
--#include <Bullet/BulletCollision/CollisionDispatch/btInternalEdgeUtility.h>
--#include <Bullet/BulletCollision/CollisionShapes/btBoxShape.h>
--#include <Bullet/BulletCollision/CollisionShapes/btSphereShape.h>
--#include <Bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
--#include <Bullet/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h>
--#include <Bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
++#ifdef URHO3D_SYSTEM_BULLET
 +#include <bullet/BulletCollision/BroadphaseCollision/btDbvtBroadphase.h>
 +#include <bullet/BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h>
 +#include <bullet/BulletCollision/CollisionDispatch/btInternalEdgeUtility.h>
@@ -93,46 +88,64 @@ diff -urp a/Source/Urho3D/Physics/PhysicsWorld.cpp b/Source/Urho3D/Physics/Physi
 +#include <bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
 +#include <bullet/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h>
 +#include <bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
++#else
+ #include <Bullet/BulletCollision/BroadphaseCollision/btDbvtBroadphase.h>
+ #include <Bullet/BulletCollision/CollisionDispatch/btDefaultCollisionConfiguration.h>
+ #include <Bullet/BulletCollision/CollisionDispatch/btInternalEdgeUtility.h>
+@@ -47,6 +57,7 @@
+ #include <Bullet/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h>
+ #include <Bullet/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h>
+ #include <Bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
++#endif
  
  extern ContactAddedCallback gContactAddedCallback;
  
-diff -urp a/Source/Urho3D/Physics/PhysicsWorld.h b/Source/Urho3D/Physics/PhysicsWorld.h
---- a/Source/Urho3D/Physics/PhysicsWorld.h	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Physics/PhysicsWorld.h	2020-01-08 10:35:27.801380052 -0800
-@@ -29,7 +29,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Physics/PhysicsWorld.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Physics/PhysicsWorld.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Physics/PhysicsWorld.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Physics/PhysicsWorld.h	2021-02-22 06:54:08.676828943 -0800
+@@ -29,7 +29,11 @@
  #include "../Math/Vector3.h"
  #include "../Scene/Component.h"
  
--#include <Bullet/LinearMath/btIDebugDraw.h>
++#ifdef URHO3D_SYSTEM_BULLET
 +#include <bullet/LinearMath/btIDebugDraw.h>
++#else
+ #include <Bullet/LinearMath/btIDebugDraw.h>
++#endif
  
  class btCollisionConfiguration;
  class btCollisionShape;
-diff -urp a/Source/Urho3D/Physics/RigidBody.cpp b/Source/Urho3D/Physics/RigidBody.cpp
---- a/Source/Urho3D/Physics/RigidBody.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Physics/RigidBody.cpp	2020-01-08 10:35:27.831381200 -0800
-@@ -37,9 +37,9 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Physics/RigidBody.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Physics/RigidBody.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Physics/RigidBody.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Physics/RigidBody.cpp	2021-02-22 06:53:26.951216041 -0800
+@@ -37,9 +37,15 @@
  #include "../Scene/SceneEvents.h"
  #include "../Scene/SmoothedTransform.h"
  
--#include <Bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
--#include <Bullet/BulletDynamics/Dynamics/btRigidBody.h>
--#include <Bullet/BulletCollision/CollisionShapes/btCompoundShape.h>
++#ifdef URHO3D_SYSTEM_BULLET
 +#include <bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
 +#include <bullet/BulletDynamics/Dynamics/btRigidBody.h>
 +#include <bullet/BulletCollision/CollisionShapes/btCompoundShape.h>
++#else
+ #include <Bullet/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
+ #include <Bullet/BulletDynamics/Dynamics/btRigidBody.h>
+ #include <Bullet/BulletCollision/CollisionShapes/btCompoundShape.h>
++#endif
  
  namespace Urho3D
  {
-diff -urp a/Source/Urho3D/Physics/RigidBody.h b/Source/Urho3D/Physics/RigidBody.h
---- a/Source/Urho3D/Physics/RigidBody.h	2019-10-05 21:46:51.000000000 -0700
-+++ b/Source/Urho3D/Physics/RigidBody.h	2020-01-08 10:35:27.941385407 -0800
-@@ -27,7 +27,7 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Physics/RigidBody.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Physics/RigidBody.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Physics/RigidBody.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Physics/RigidBody.h	2021-02-22 06:53:26.951216041 -0800
+@@ -27,7 +27,11 @@
  #include "../IO/VectorBuffer.h"
  #include "../Scene/Component.h"
  
--#include <Bullet/LinearMath/btMotionState.h>
++#ifdef URHO3D_SYSTEM_BULLET
 +#include <bullet/LinearMath/btMotionState.h>
++#else
+ #include <Bullet/LinearMath/btMotionState.h>
++#endif
  
  class btCompoundShape;
  class btRigidBody;
