@@ -22,7 +22,7 @@ HOMEPAGE="https://firejail.wordpress.com/"
 LICENSE="GPL-2"
 SLOT="0"
 IUSE="X apparmor +chroot contrib +dbusproxy +file-transfer +globalcfg +network +private-home +suid test +userns +whitelist"
-IUSE+=" +private-home selinux vim-syntax xpra"
+IUSE+=" selinux xpra"
 # Needs a lot of work to function within sandbox/portage
 # bug #769731
 RESTRICT="test"
@@ -96,14 +96,6 @@ src_install() {
 		python_doscript contrib/*.py
 		insinto /usr/$(get_libdir)/firejail
 		dobin contrib/*.sh
-	fi
-
-	if use vim-syntax; then
-		insinto /usr/share/vim/vimfiles/ftdetect
-		doins contrib/vim/ftdetect/firejail.vim
-
-		insinto /usr/share/vim/vimfiles/syntax
-		doins contrib/vim/syntax/firejail.vim
 	fi
 }
 
