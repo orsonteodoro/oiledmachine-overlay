@@ -431,7 +431,7 @@ _prepare_common() {
 
 	# what a line ending mess, it uses both unix (\n) and dos (\r\n).
 	eapply "${FILESDIR}/urho3d-1.8_alpha-system-angelscript.patch"
-	die "See ${FILESDIR}/urho3d-1.8_alpha-system-box2d.patch"
+#	die "See ${FILESDIR}/urho3d-1.8_alpha-system-box2d.patch"
 	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-box2d.patch"
 	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-bullet-crlf.patch"
 	eapply "${FILESDIR}/urho3d-1.8_alpha-system-bullet-lf.patch"
