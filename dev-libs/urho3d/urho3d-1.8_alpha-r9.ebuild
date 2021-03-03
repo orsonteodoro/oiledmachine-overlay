@@ -304,9 +304,7 @@ DEPEND_NATIVE="
 		)
 	)"
 DEPEND_RPI="
-	rpi? (  || ( sys-apps/systemd[${MULTILIB_USEDEP}]
-		     sys-fs/udev[${MULTILIB_USEDEP}] )
-		lua? (
+	rpi? (  lua? (
 			 system-luajit? ( luajit? ( >=dev-lang/luajit-2.1:2[static-libs,urho3d] ) )
 		)
 		network? (
