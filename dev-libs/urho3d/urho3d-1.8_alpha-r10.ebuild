@@ -134,7 +134,10 @@ IUSE+=" ${X86_CPU_FEATURES[@]%:*}
 
 # Partly from the libsdl2-2.0.12-r2.ebuild
 SDL2_REQUIRED_USE="
+	android? ( sound? ( threads alsa ) )
 	ibus? ( dbus )
+	native? ( sound? ( threads alsa ) )
+	rpi? ( sound? ( threads alsa ) )
 	wayland? ( gles2 )
 	xinerama? ( X )
 	xscreensaver? ( X )"
@@ -157,7 +160,6 @@ REQUIRED_USE+="
 	native
 	odbc? ( !sqlite )
 	opengl
-	sound? ( threads alsa )
 	sqlite? ( !odbc )
 	!system-slikenet
 	 system-box2d? ( ^^ ( box2d_2_3 box2d_2_4 ) )
