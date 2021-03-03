@@ -452,64 +452,54 @@ _prepare_common() {
 	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-stanhull-visibility-default-crlf.patch"
 	eapply "${FILESDIR}/urho3d-1.8_alpha-lua-fix-export.patch"
 
+	local files_box2d_lines=(
+		bin/Data/LuaScripts/28_Urho2DPhysicsRope.lua
+		bin/Data/LuaScripts/32_Urho2DConstraints.lua
+		bin/Data/Scripts/28_Urho2DPhysicsRope.as
+		bin/Data/Scripts/32_Urho2DConstraints.as
+		bin/Data/UI/EditorIcons.xml
+		Docs/AngelScriptAPI.h
+		Docs/LuaScriptAPI.dox
+		Docs/Reference.dox
+		Docs/ScriptAPI.dox
+		Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintDistance2D.pkg
+		Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintMouse2D.pkg
+		Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWeld2D.pkg
+		Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWheel2D.pkg
+		Source/Urho3D/LuaScript/pkgs/Urho2DLuaAPI.pkg
+	)
+
 	if use box2d_2_4 && [[ "${EURHO3D}" != "web" ]] ; then
 		rm Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintRope2D.pkg \
 			Source/Urho3D/Urho2D/ConstraintRope2D.cpp \
 			|| die
 
-		for f in \
-			bin/Data/LuaScripts/28_Urho2DPhysicsRope.lua \
-			bin/Data/LuaScripts/32_Urho2DConstraints.lua \
-			bin/Data/Scripts/28_Urho2DPhysicsRope.as \
-			bin/Data/Scripts/32_Urho2DConstraints.as \
-			bin/Data/UI/EditorIcons.xml \
-			Docs/AngelScriptAPI.h \
-			Docs/LuaScriptAPI.dox \
-			Docs/Reference.dox \
-			Docs/ScriptAPI.dox \
-			Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintDistance2D.pkg \
-			Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintMouse2D.pkg \
-			Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWeld2D.pkg \
-			Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWheel2D.pkg \
-			Source/Urho3D/LuaScript/pkgs/Urho2DLuaAPI.pkg ; do
+		for f in ${files_box2d_lines[@]} ; do
 				sed -i -e "/BOX2D_2_3/d" \
 					-e "s| //BOX2D_2_4||g" \
 					${f} || die
 			done
 	else
-		for f in \
-			bin/Data/LuaScripts/28_Urho2DPhysicsRope.lua \
-			bin/Data/LuaScripts/32_Urho2DConstraints.lua \
-			bin/Data/Scripts/28_Urho2DPhysicsRope.as \
-			bin/Data/Scripts/32_Urho2DConstraints.as \
-			bin/Data/UI/EditorIcons.xml \
-			Docs/AngelScriptAPI.h \
-			Docs/LuaScriptAPI.dox \
-			Docs/Reference.dox  \
-			Docs/ScriptAPI.dox \
-			Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintDistance2D.pkg \
-			Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintMouse2D.pkg \
-			Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWeld2D.pkg \
-			Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWheel2D.pkg \
-			Source/Urho3D/LuaScript/pkgs/Urho2DLuaAPI.pkg ; do
+		for f in ${files_box2d_lines[@]} ; do
 				sed -i -e "/BOX2D_2_4/d" \
 					-e "s| //BOX2D_2_3||g" \
 					${f} || die
 			done
 	fi
 
+	local files_system_box2d_lines=(
+		Docs/LuaScriptAPI.dox
+		Docs/ScriptAPI.dox
+	)
+
 	if use system-box2d && [[ "${EURHO3D}" != "web" ]] ; then
 		rm -rf Source/ThirdParty/Box2D || die
-		for f in \
-			Docs/LuaScriptAPI.dox \
-			Docs/ScriptAPI.dox ; do
+		for f in ${files_system_box2d_lines[@]} ; do
 				sed -i -e "/URHO3D_SYSTEM_BOX2D/d" \
 					${f} || die
 			done
 	else
-		for f in \
-			Docs/LuaScriptAPI.dox \
-			Docs/ScriptAPI.dox ; do
+		for f in ${files_system_box2d_lines[@]} ; do
 				sed -i -e "s| //\!URHO3D_SYSTEM_BOX2D||" \
 					${f} || die
 			done
