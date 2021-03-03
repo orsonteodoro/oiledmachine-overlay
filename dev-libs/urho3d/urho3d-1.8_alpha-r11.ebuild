@@ -229,7 +229,7 @@ DEPEND_COMMON="
 	)
 	box2d? ( system-box2d? (
 		box2d_2_4? ( >=sci-physics/box2d-2.4.1:2.4=[${MULTILIB_USEDEP},static-libs?] )
-		box2d_2_3? ( >=sci-physics/box2d-2.3.2:2.3=[${MULTILIB_USEDEP},static-libs?] )
+		box2d_2_3? ( >=sci-physics/box2d-2.3.1:2.3=[${MULTILIB_USEDEP},static-libs?] )
 	) )
 	bullet? ( system-bullet? ( >=sci-physics/bullet-2.86.1[${MULTILIB_USEDEP}] ) )
 	lua? (
@@ -431,7 +431,7 @@ _prepare_common() {
 
 	# what a line ending mess, it uses both unix (\n) and dos (\r\n).
 	eapply "${FILESDIR}/urho3d-1.8_alpha-system-angelscript.patch"
-#	die "See ${FILESDIR}/urho3d-1.8_alpha-system-box2d.patch"
+	die "See ${FILESDIR}/urho3d-1.8_alpha-system-box2d.patch"
 	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-box2d.patch"
 	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-bullet-crlf.patch"
 	eapply "${FILESDIR}/urho3d-1.8_alpha-system-bullet-lf.patch"
