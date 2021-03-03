@@ -1,6 +1,6 @@
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/bin/Data/LuaScripts/28_Urho2DPhysicsRope.lua Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/LuaScripts/28_Urho2DPhysicsRope.lua
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/bin/Data/LuaScripts/28_Urho2DPhysicsRope.lua	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/LuaScripts/28_Urho2DPhysicsRope.lua	2021-03-01 21:56:50.866631050 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/LuaScripts/28_Urho2DPhysicsRope.lua	2021-03-02 13:46:45.315833337 -0800
 @@ -96,7 +96,8 @@ function CreateScene()
          prevBody = body
      end
@@ -13,7 +13,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      constraintRope.maxLength = NUM_OBJECTS - 1.0 + 0.01
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/bin/Data/LuaScripts/32_Urho2DConstraints.lua Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/LuaScripts/32_Urho2DConstraints.lua
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/bin/Data/LuaScripts/32_Urho2DConstraints.lua	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/LuaScripts/32_Urho2DConstraints.lua	2021-03-01 21:56:50.866631050 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/LuaScripts/32_Urho2DConstraints.lua	2021-03-02 13:46:45.315833337 -0800
 @@ -118,8 +118,10 @@ function CreateScene()
      constraintDistance.ownerBodyAnchor = boxNode.position2D
      constraintDistance.otherBodyAnchor = ballNode.position2D
@@ -116,7 +116,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      SubscribeToEvent("TouchEnd", "HandleTouchEnd3")
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/bin/Data/Scripts/28_Urho2DPhysicsRope.as Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/Scripts/28_Urho2DPhysicsRope.as
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/bin/Data/Scripts/28_Urho2DPhysicsRope.as	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/Scripts/28_Urho2DPhysicsRope.as	2021-03-01 21:56:50.866631050 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/Scripts/28_Urho2DPhysicsRope.as	2021-03-02 13:46:45.315833337 -0800
 @@ -103,7 +103,8 @@ void CreateScene()
          prevBody = body;
      }
@@ -129,7 +129,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      constraintRope.maxLength = NUM_OBJECTS - 1.0f + 0.01f;
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/bin/Data/Scripts/32_Urho2DConstraints.as Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/Scripts/32_Urho2DConstraints.as
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/bin/Data/Scripts/32_Urho2DConstraints.as	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/Scripts/32_Urho2DConstraints.as	2021-03-01 21:56:50.866631050 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/Scripts/32_Urho2DConstraints.as	2021-03-02 13:46:45.315833337 -0800
 @@ -123,8 +123,10 @@ void CreateScene()
      constraintDistance.ownerBodyAnchor = boxDistanceNode.position2D;
      constraintDistance.otherBodyAnchor = ballDistanceNode.position2D;
@@ -233,7 +233,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      SubscribeToEvent("TouchEnd", "HandleTouchEnd3");
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/bin/Data/UI/EditorIcons.xml Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/UI/EditorIcons.xml
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/bin/Data/UI/EditorIcons.xml	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/UI/EditorIcons.xml	2021-03-01 21:56:50.866631050 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/bin/Data/UI/EditorIcons.xml	2021-03-02 13:46:45.315833337 -0800
 @@ -83,10 +83,10 @@
          <attribute name="Texture" value="Texture2D;Textures/Editor/EditorIcons.png" />
          <attribute name="Image Rect" value="112 0 126 14" />
@@ -251,7 +251,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
          <attribute name="Image Rect" value="112 0 126 14" />
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Docs/AngelScriptAPI.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Docs/AngelScriptAPI.h
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Docs/AngelScriptAPI.h	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Docs/AngelScriptAPI.h	2021-03-01 21:56:50.870631208 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Docs/AngelScriptAPI.h	2021-03-02 13:46:45.319833493 -0800
 @@ -2743,11 +2743,12 @@ Array<Variant> attributes;
  /* readonly */
  String category;
@@ -508,7 +508,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  StringHash type;
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Docs/LuaScriptAPI.dox Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Docs/LuaScriptAPI.dox
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Docs/LuaScriptAPI.dox	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Docs/LuaScriptAPI.dox	2021-03-01 21:56:50.870631208 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Docs/LuaScriptAPI.dox	2021-03-02 13:46:45.319833493 -0800
 @@ -60,7 +60,7 @@ namespace Urho3D
  <a href="#Class_ConstraintPrismatic2D"><b>ConstraintPrismatic2D</b></a>
  <a href="#Class_ConstraintPulley2D"><b>ConstraintPulley2D</b></a>
@@ -551,8 +551,8 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  - float frequencyHz
  - float dampingRatio
  - float length
-+- float minLength
-+- float maxLength
++- float minLength //BOX2D_2_4
++- float maxLength //BOX2D_2_4
  
  <a name="Class_ConstraintFriction2D"></a>
  ### ConstraintFriction2D : Constraint2D
@@ -665,7 +665,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Docs/Reference.dox Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Docs/Reference.dox
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Docs/Reference.dox	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Docs/Reference.dox	2021-03-01 21:56:50.874631367 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Docs/Reference.dox	2021-03-02 13:46:45.323833649 -0800
 @@ -2812,15 +2812,17 @@ Constraints ('joints' in Box2D terminolo
  
  See 32_Urho2DConstraints sample for detailed examples and to help selecting the appropriate constraint. Following are the available constraints classes, with the indication of the corresponding 'joint' in Box2D manual (see Chapter 8 Joints):
@@ -689,7 +689,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Docs/ScriptAPI.dox Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Docs/ScriptAPI.dox
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Docs/ScriptAPI.dox	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Docs/ScriptAPI.dox	2021-03-01 21:56:50.874631367 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Docs/ScriptAPI.dox	2021-03-02 13:46:45.327833805 -0800
 @@ -1304,8 +1304,10 @@ namespace Urho3D
  - %Is %Enabled : bool
  - %Owner %Body %Anchor : Vector2
@@ -852,7 +852,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  - String typeName // readonly
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Samples/28_Urho2DPhysicsRope/Urho2DPhysicsRope.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Samples/28_Urho2DPhysicsRope/Urho2DPhysicsRope.cpp
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Samples/28_Urho2DPhysicsRope/Urho2DPhysicsRope.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Samples/28_Urho2DPhysicsRope/Urho2DPhysicsRope.cpp	2021-03-01 21:56:50.874631367 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Samples/28_Urho2DPhysicsRope/Urho2DPhysicsRope.cpp	2021-03-02 13:46:45.327833805 -0800
 @@ -35,7 +35,11 @@
  #include <Urho3D/Urho2D/CollisionBox2D.h>
  #include <Urho3D/Urho2D/CollisionEdge2D.h>
@@ -879,7 +879,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      constraintRope->SetMaxLength(NUM_OBJECTS - 1.0f + 0.01f);
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Samples/28_Urho2DPhysicsRope/Urho2DPhysicsRope.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Samples/28_Urho2DPhysicsRope/Urho2DPhysicsRope.h
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Samples/28_Urho2DPhysicsRope/Urho2DPhysicsRope.h	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Samples/28_Urho2DPhysicsRope/Urho2DPhysicsRope.h	2021-03-01 21:56:50.874631367 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Samples/28_Urho2DPhysicsRope/Urho2DPhysicsRope.h	2021-03-02 13:46:45.327833805 -0800
 @@ -28,7 +28,11 @@ namespace Urho3D
  {
      class Node;
@@ -894,7 +894,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  /// Urho2D physics rope sample.
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Samples/32_Urho2DConstraints/Urho2DConstraints.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Samples/32_Urho2DConstraints/Urho2DConstraints.cpp
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Samples/32_Urho2DConstraints/Urho2DConstraints.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Samples/32_Urho2DConstraints/Urho2DConstraints.cpp	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Samples/32_Urho2DConstraints/Urho2DConstraints.cpp	2021-03-02 14:15:21.310165238 -0800
 @@ -49,7 +49,9 @@
  #include <Urho3D/Urho2D/ConstraintPrismatic2D.h>
  #include <Urho3D/Urho2D/ConstraintPulley2D.h>
@@ -919,7 +919,16 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  
      // Create a ConstraintFriction2D ********** Not functional. From Box2d samples it seems that 2 anchors are required, Urho2D only provides 1, needs investigation ***********
      CreateFlag("ConstraintFriction2D", 0.03f, 1.0f); // Display Text3D flag
-@@ -271,16 +278,26 @@ void Urho2DConstraints::CreateScene()
+@@ -230,7 +237,7 @@ void Urho2DConstraints::CreateScene()
+     CreateFlag("ConstraintGear2D", -4.97f, -1.0f); // Display Text3D flag
+     Node* baseNode = box->Clone();
+     auto* tempBody = baseNode->GetComponent<RigidBody2D>(); // Get body to make it static
+-    tempBody->SetBodyType(BT_STATIC);
++    tempBody->SetBodyType(BT_STATIC);
+     baseNode->SetPosition(Vector3(-3.7f, -2.5f, 0.0f));
+     Node* ball1Node = ball->Clone();
+     ball1Node->SetPosition(Vector3(-4.5f, -2.0f, 0.0f));
+@@ -271,22 +278,32 @@ void Urho2DConstraints::CreateScene()
      wheel1->SetAnchor(ball1WheelNode->GetPosition2D());
      wheel1->SetAxis(Vector2(0.0f, 1.0f));
      wheel1->SetMaxMotorTorque(20.0f);
@@ -946,7 +955,32 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  
      // ConstraintMotor2D
      CreateFlag("ConstraintMotor2D", 2.53f, -1.0f); // Display Text3D flag
-@@ -356,8 +373,13 @@ void Urho2DConstraints::CreateScene()
+     Node* boxMotorNode = box->Clone();
+     tempBody = boxMotorNode->GetComponent<RigidBody2D>(); // Get body to make it static
+-    tempBody->SetBodyType(BT_STATIC);
++    tempBody->SetBodyType(BT_STATIC);
+     Node* ballMotorNode = ball->Clone();
+     boxMotorNode->SetPosition(Vector3(3.8f, -2.1f, 0.0f));
+     ballMotorNode->SetPosition(Vector3(3.8f, -1.5f, 0.0f));
+@@ -307,7 +324,7 @@ void Urho2DConstraints::CreateScene()
+     CreateFlag("ConstraintPrismatic2D", 2.53f, 3.0f); // Display Text3D flag
+     Node* boxPrismaticNode = box->Clone();
+     tempBody = boxPrismaticNode->GetComponent<RigidBody2D>(); // Get body to make it static
+-    tempBody->SetBodyType(BT_STATIC);
++    tempBody->SetBodyType(BT_STATIC);
+     Node* ballPrismaticNode = ball->Clone();
+     boxPrismaticNode->SetPosition(Vector3(3.3f, 2.5f, 0.0f));
+     ballPrismaticNode->SetPosition(Vector3(4.3f, 2.0f, 0.0f));
+@@ -341,7 +358,7 @@ void Urho2DConstraints::CreateScene()
+     CreateFlag("ConstraintRevolute2D", -2.45f, 3.0f); // Display Text3D flag
+     Node* boxRevoluteNode = box->Clone();
+     tempBody = boxRevoluteNode->GetComponent<RigidBody2D>(); // Get body to make it static
+-    tempBody->SetBodyType(BT_STATIC);
++    tempBody->SetBodyType(BT_STATIC);
+     Node* ballRevoluteNode = ball->Clone();
+     boxRevoluteNode->SetPosition(Vector3(-2.0f, 1.5f, 0.0f));
+     ballRevoluteNode->SetPosition(Vector3(-1.0f, 2.0f, 0.0f));
+@@ -356,20 +373,34 @@ void Urho2DConstraints::CreateScene()
      constraintRevolute->SetMotorSpeed(0.0f);
      constraintRevolute->SetEnableMotor(true);
  
@@ -959,8 +993,9 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
 +#endif
      Node* boxRopeNode = box->Clone();
      tempBody = boxRopeNode->GetComponent<RigidBody2D>();
-     tempBody->SetBodyType(BT_STATIC);
-@@ -365,11 +387,20 @@ void Urho2DConstraints::CreateScene()
+-    tempBody->SetBodyType(BT_STATIC);
++    tempBody->SetBodyType(BT_STATIC);
+     Node* ballRopeNode = ball->Clone();
      boxRopeNode->SetPosition(Vector3(-3.7f, 0.7f, 0.0f));
      ballRopeNode->SetPosition(Vector3(-4.5f, 0.0f, 0.0f));
  
@@ -968,9 +1003,9 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
 +    auto* constraintRope = boxRopeNode->CreateComponent<ConstraintDistance2D>();
 +    constraintRope->SetOtherBody(ballRopeNode->GetComponent<RigidBody2D>()); // Constrain ball to box
 +    constraintRope->SetOwnerBodyAnchor(Vector2(0.0f, -0.5f)); // Offset from box (OwnerBody) : the rope is rigid from OwnerBody center to this ownerBodyAnchor
-+    constraintRope->SetLength(0.9f);
-+    constraintRope->SetMinLength(0.9f);
++    constraintRope->SetMinLength(0.0f);
 +    constraintRope->SetMaxLength(0.9f); // Rope length
++    constraintRope->SetLength(0.9f);
 +#else
      auto* constraintRope = boxRopeNode->CreateComponent<ConstraintRope2D>();
      constraintRope->SetOtherBody(ballRopeNode->GetComponent<RigidBody2D>()); // Constrain ball to box
@@ -1009,11 +1044,12 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      constraintWheel->SetCollideConnected(true); // doesn't work
  }
  
-@@ -581,7 +622,11 @@ void Urho2DConstraints::HandleTouchBegin
+@@ -581,7 +622,12 @@ void Urho2DConstraints::HandleTouchBegin
          constraintMouse->SetMaxForce(1000 * rigidBody->GetMass());
          constraintMouse->SetCollideConnected(true);
          constraintMouse->SetOtherBody(dummyBody);  // Use dummy body instead of rigidBody. It's better to create a dummy body automatically in ConstraintMouse2D
 +#ifdef BOX2D_2_4
++        constraintMouse->SetStiffness(constraintMouse->GetLinearStiffnessS(5.0f,0.7f));
 +        constraintMouse->SetDamping(0);
 +#else
          constraintMouse->SetDampingRatio(0);
@@ -1023,7 +1059,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      SubscribeToEvent(E_TOUCHEND, URHO3D_HANDLER(Urho2DConstraints, HandleTouchEnd3));
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Samples/32_Urho2DConstraints/Urho2DConstraints.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Samples/32_Urho2DConstraints/Urho2DConstraints.h
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Samples/32_Urho2DConstraints/Urho2DConstraints.h	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Samples/32_Urho2DConstraints/Urho2DConstraints.h	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Samples/32_Urho2DConstraints/Urho2DConstraints.h	2021-03-02 13:46:45.327833805 -0800
 @@ -36,7 +36,9 @@ namespace Urho3D
      class ConstraintPrismatic2D;
      class ConstraintPulley2D;
@@ -1036,7 +1072,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  }
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/AngelScript/Urho2DAPI.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/AngelScript/Urho2DAPI.cpp
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/AngelScript/Urho2DAPI.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/AngelScript/Urho2DAPI.cpp	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/AngelScript/Urho2DAPI.cpp	2021-03-02 13:46:45.327833805 -0800
 @@ -42,7 +42,9 @@
  #include "../Urho2D/ConstraintPrismatic2D.h"
  #include "../Urho2D/ConstraintPulley2D.h"
@@ -1060,7 +1096,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  }
  
  
-@@ -615,12 +623,23 @@ static void RegisterConstraintDistance2D
+@@ -615,12 +623,25 @@ static void RegisterConstraintDistance2D
      engine->RegisterObjectMethod("ConstraintDistance2D", "const Vector2& get_ownerBodyAnchor() const", asMETHOD(ConstraintDistance2D, GetOwnerBodyAnchor), asCALL_THISCALL);
      engine->RegisterObjectMethod("ConstraintDistance2D", "void set_otherBodyAnchor(const Vector2&)", asMETHOD(ConstraintDistance2D, SetOtherBodyAnchor), asCALL_THISCALL);
      engine->RegisterObjectMethod("ConstraintDistance2D", "const Vector2& get_otherBodyAnchor() const", asMETHOD(ConstraintDistance2D, GetOtherBodyAnchor), asCALL_THISCALL);
@@ -1078,13 +1114,15 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      engine->RegisterObjectMethod("ConstraintDistance2D", "void set_length(float)", asMETHOD(ConstraintDistance2D, SetLength), asCALL_THISCALL);
      engine->RegisterObjectMethod("ConstraintDistance2D", "float get_length() const", asMETHOD(ConstraintDistance2D, GetLength), asCALL_THISCALL);
 +#ifdef BOX2D_2_4
++    engine->RegisterObjectMethod("ConstraintDistance2D", "void set_minLength(float)", asMETHOD(ConstraintDistance2D, SetMinLength), asCALL_THISCALL);
++    engine->RegisterObjectMethod("ConstraintDistance2D", "float get_minLength() const", asMETHOD(ConstraintDistance2D, GetMinLength), asCALL_THISCALL);
 +    engine->RegisterObjectMethod("ConstraintDistance2D", "void set_maxLength(float)", asMETHOD(ConstraintDistance2D, SetMaxLength), asCALL_THISCALL);
 +    engine->RegisterObjectMethod("ConstraintDistance2D", "float get_maxLength() const", asMETHOD(ConstraintDistance2D, GetMaxLength), asCALL_THISCALL);
 +#endif
  }
  
  static void RegisterConstraintFriction2D(asIScriptEngine* engine)
-@@ -667,10 +686,17 @@ static void RegisterConstraintMouse2D(as
+@@ -667,10 +688,17 @@ static void RegisterConstraintMouse2D(as
      engine->RegisterObjectMethod("ConstraintMouse2D", "const Vector2& get_target() const", asMETHOD(ConstraintMouse2D, GetTarget), asCALL_THISCALL);
      engine->RegisterObjectMethod("ConstraintMouse2D", "void set_maxForce(float)", asMETHOD(ConstraintMouse2D, SetMaxForce), asCALL_THISCALL);
      engine->RegisterObjectMethod("ConstraintMouse2D", "float get_maxForce() const", asMETHOD(ConstraintMouse2D, GetMaxForce), asCALL_THISCALL);
@@ -1102,7 +1140,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  }
  
  static void RegisterConstraintPrismatic2D(asIScriptEngine* engine)
-@@ -733,10 +759,17 @@ static void RegisterConstraintWeld2D(asI
+@@ -733,10 +761,17 @@ static void RegisterConstraintWeld2D(asI
      RegisterConstraint2D<ConstraintWeld2D>(engine, "ConstraintWeld2D");
      engine->RegisterObjectMethod("ConstraintWeld2D", "void set_anchor(const Vector2&)", asMETHOD(ConstraintWeld2D, SetAnchor), asCALL_THISCALL);
      engine->RegisterObjectMethod("ConstraintWeld2D", "const Vector2& get_anchor() const", asMETHOD(ConstraintWeld2D, GetAnchor), asCALL_THISCALL);
@@ -1120,7 +1158,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  }
  
  static void RegisterConstraintWheel2D(asIScriptEngine* engine)
-@@ -752,12 +785,20 @@ static void RegisterConstraintWheel2D(as
+@@ -752,12 +787,20 @@ static void RegisterConstraintWheel2D(as
      engine->RegisterObjectMethod("ConstraintWheel2D", "float get_maxMotorTorque() const", asMETHOD(ConstraintWheel2D, GetMaxMotorTorque), asCALL_THISCALL);
      engine->RegisterObjectMethod("ConstraintWheel2D", "void set_motorSpeed(float)", asMETHOD(ConstraintWheel2D, SetMotorSpeed), asCALL_THISCALL);
      engine->RegisterObjectMethod("ConstraintWheel2D", "float get_motorSpeed() const", asMETHOD(ConstraintWheel2D, GetMotorSpeed), asCALL_THISCALL);
@@ -1141,7 +1179,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  static void RegisterConstraintRope2D(asIScriptEngine* engine)
  {
      RegisterConstraint2D<ConstraintRope2D>(engine, "ConstraintRope2D");
-@@ -768,6 +809,7 @@ static void RegisterConstraintRope2D(asI
+@@ -768,6 +811,7 @@ static void RegisterConstraintRope2D(asI
      engine->RegisterObjectMethod("ConstraintRope2D", "void set_maxLength(float)", asMETHOD(ConstraintRope2D, SetMaxLength), asCALL_THISCALL);
      engine->RegisterObjectMethod("ConstraintRope2D", "float get_maxLength() const", asMETHOD(ConstraintRope2D, GetMaxLength), asCALL_THISCALL);
  }
@@ -1149,7 +1187,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  
  void RegisterUrho2DAPI(asIScriptEngine* engine)
  {
-@@ -810,7 +852,9 @@ void RegisterUrho2DAPI(asIScriptEngine*
+@@ -810,7 +854,9 @@ void RegisterUrho2DAPI(asIScriptEngine*
      RegisterConstraintRevolute2D(engine);
      RegisterConstraintWeld2D(engine);
      RegisterConstraintWheel2D(engine);
@@ -1161,7 +1199,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  }
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintDistance2D.pkg Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintDistance2D.pkg
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintDistance2D.pkg	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintDistance2D.pkg	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintDistance2D.pkg	2021-03-02 13:46:45.327833805 -0800
 @@ -4,19 +4,25 @@ class ConstraintDistance2D : Constraint2
  {
      void SetOwnerBodyAnchor(const Vector2& anchor);
@@ -1196,7 +1234,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  };
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintMouse2D.pkg Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintMouse2D.pkg
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintMouse2D.pkg	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintMouse2D.pkg	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintMouse2D.pkg	2021-03-02 13:46:45.327833805 -0800
 @@ -3,17 +3,23 @@ class ConstraintMouse2D : Constraint2D
  {
      void SetTarget(const Vector2& target);
@@ -1229,7 +1267,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  };
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWeld2D.pkg Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWeld2D.pkg
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWeld2D.pkg	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWeld2D.pkg	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWeld2D.pkg	2021-03-02 13:46:45.327833805 -0800
 @@ -3,14 +3,20 @@ $#include "Urho2D/ConstraintWeld2D.h"
  class  ConstraintWeld2D : Constraint2D
  {
@@ -1259,7 +1297,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  };
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWheel2D.pkg Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWheel2D.pkg
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWheel2D.pkg	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWheel2D.pkg	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWheel2D.pkg	2021-03-02 13:46:45.327833805 -0800
 @@ -7,22 +7,28 @@ class ConstraintWheel2D : Constraint2D
      void SetEnableMotor(bool enableMotor);
      void SetMaxMotorTorque(float maxMotorTorque);
@@ -1297,7 +1335,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  };
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/LuaScript/pkgs/Urho2DLuaAPI.pkg Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2DLuaAPI.pkg
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/LuaScript/pkgs/Urho2DLuaAPI.pkg	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2DLuaAPI.pkg	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/LuaScript/pkgs/Urho2DLuaAPI.pkg	2021-03-02 13:46:45.327833805 -0800
 @@ -3,8 +3,8 @@ $pfile "Urho2D/SpriteSheet2D.pkg"
  $pfile "Urho2D/Drawable2D.pkg"
  $pfile "Urho2D/StaticSprite2D.pkg"
@@ -1320,7 +1358,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/CollisionChain2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/CollisionChain2D.cpp
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/CollisionChain2D.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/CollisionChain2D.cpp	2021-03-01 21:58:48.783301448 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/CollisionChain2D.cpp	2021-03-02 13:46:45.327833805 -0800
 @@ -137,7 +137,17 @@ void CollisionChain2D::RecreateFixture()
      if (loop_)
          chainShape_.CreateLoop(&b2Vertices[0], count);
@@ -1341,7 +1379,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  }
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/CollisionEdge2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/CollisionEdge2D.cpp
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/CollisionEdge2D.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/CollisionEdge2D.cpp	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/CollisionEdge2D.cpp	2021-03-02 13:46:45.327833805 -0800
 @@ -41,7 +41,11 @@ CollisionEdge2D::CollisionEdge2D(Context
      vertex2_(DEFAULT_VERTEX2)
  {
@@ -1368,7 +1406,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  }
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/CollisionShape2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/CollisionShape2D.cpp
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/CollisionShape2D.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/CollisionShape2D.cpp	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/CollisionShape2D.cpp	2021-03-02 13:46:45.327833805 -0800
 @@ -228,7 +228,11 @@ void CollisionShape2D::CreateFixture()
          fixture_ = body->CreateFixture(&fixtureDef_);
          if (!rigidBody_->GetUseFixtureMass()) // Workaround for resetting mass in CreateFixture().
@@ -1383,7 +1421,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/CollisionShape2D.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/CollisionShape2D.h
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/CollisionShape2D.h	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/CollisionShape2D.h	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/CollisionShape2D.h	2021-03-02 13:46:45.327833805 -0800
 @@ -24,7 +24,13 @@
  
  #include "../Scene/Component.h"
@@ -1400,7 +1438,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  {
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/Constraint2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/Constraint2D.cpp
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/Constraint2D.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/Constraint2D.cpp	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/Constraint2D.cpp	2021-03-02 13:57:48.689458772 -0800
 @@ -88,7 +88,11 @@ void Constraint2D::CreateJoint()
      if (jointDef)
      {
@@ -1422,7 +1460,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
 +{
 +        float stiffness;
 +        float damping;
-+        
++
 +        if (ownerBody_ && otherBody_)
 +        {
 +            if (ownerBody_->GetBody() && otherBody_->GetBody())
@@ -1439,7 +1477,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
 +{
 +        float stiffness;
 +        float damping;
-+        
++
 +        if (ownerBody_ && otherBody_)
 +        {
 +            if (ownerBody_->GetBody() && otherBody_->GetBody())
@@ -1457,7 +1495,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
 +{
 +        float stiffness;
 +        float damping;
-+        
++
 +        if (ownerBody_ && otherBody_)
 +        {
 +            if (ownerBody_->GetBody() && otherBody_->GetBody())
@@ -1474,7 +1512,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
 +{
 +        float stiffness;
 +        float damping;
-+        
++
 +        if (ownerBody_ && otherBody_)
 +        {
 +            if (ownerBody_->GetBody() && otherBody_->GetBody())
@@ -1492,7 +1530,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  }
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/Constraint2D.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/Constraint2D.h
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/Constraint2D.h	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/Constraint2D.h	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/Constraint2D.h	2021-03-02 13:46:45.327833805 -0800
 @@ -24,7 +24,13 @@
  
  #include "../Scene/Component.h"
@@ -1534,7 +1572,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      void OnNodeSet(Node* node) override;
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintDistance2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintDistance2D.cpp
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintDistance2D.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintDistance2D.cpp	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintDistance2D.cpp	2021-03-02 13:46:45.327833805 -0800
 @@ -29,6 +29,8 @@
  
  #include "../DebugNew.h"
@@ -1661,7 +1699,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      if (!ownerBody_ || !otherBody_)
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintDistance2D.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintDistance2D.h
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintDistance2D.h	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintDistance2D.h	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintDistance2D.h	2021-03-02 13:59:02.460303515 -0800
 @@ -44,28 +44,59 @@ public:
      void SetOwnerBodyAnchor(const Vector2& anchor);
      /// Set other body anchor.
@@ -1688,7 +1726,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
 +    /// Set min length.
 +    void SetMinLength(float minLength);
 +#endif
-+ 
++
      /// Return owner body anchor.
      const Vector2& GetOwnerBodyAnchor() const { return ownerBodyAnchor_; }
  
@@ -1725,7 +1763,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      b2JointDef* GetJointDef() override;
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintMouse2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintMouse2D.cpp
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintMouse2D.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintMouse2D.cpp	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintMouse2D.cpp	2021-03-02 13:46:45.327833805 -0800
 @@ -49,8 +49,13 @@ void ConstraintMouse2D::RegisterObject(C
      URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
      URHO3D_ACCESSOR_ATTRIBUTE("Target", GetTarget, SetTarget, Vector2, Vector2::ZERO, AM_DEFAULT);
@@ -1788,7 +1826,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  {
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintMouse2D.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintMouse2D.h
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintMouse2D.h	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintMouse2D.h	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintMouse2D.h	2021-03-02 13:46:45.327833805 -0800
 @@ -44,22 +44,37 @@ public:
      void SetTarget(const Vector2& target);
      /// Set max force.
@@ -1830,7 +1868,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      /// Return joint def.
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintRope2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintRope2D.cpp
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintRope2D.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintRope2D.cpp	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintRope2D.cpp	2021-03-02 13:46:45.327833805 -0800
 @@ -20,6 +20,7 @@
  // THE SOFTWARE.
  //
@@ -1847,7 +1885,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
 \ No newline at end of file
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintRope2D.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintRope2D.h
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintRope2D.h	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintRope2D.h	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintRope2D.h	2021-03-02 13:46:45.331833961 -0800
 @@ -20,6 +20,7 @@
  // THE SOFTWARE.
  //
@@ -1863,7 +1901,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
 +#endif
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintWeld2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintWeld2D.cpp
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintWeld2D.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintWeld2D.cpp	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintWeld2D.cpp	2021-03-02 13:46:45.331833961 -0800
 @@ -48,8 +48,13 @@ void ConstraintWeld2D::RegisterObject(Co
  
      URHO3D_ACCESSOR_ATTRIBUTE("Is Enabled", IsEnabled, SetEnabled, bool, true, AM_DEFAULT);
@@ -1926,7 +1964,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  {
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintWeld2D.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintWeld2D.h
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintWeld2D.h	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintWeld2D.h	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintWeld2D.h	2021-03-02 13:46:45.331833961 -0800
 @@ -42,19 +42,35 @@ public:
  
      /// Set anchor.
@@ -1965,7 +2003,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      /// Return joint def.
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintWheel2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintWheel2D.cpp
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintWheel2D.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintWheel2D.cpp	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintWheel2D.cpp	2021-03-02 13:46:45.331833961 -0800
 @@ -53,8 +53,13 @@ void ConstraintWheel2D::RegisterObject(C
      URHO3D_ACCESSOR_ATTRIBUTE("Enable Motor", GetEnableMotor, SetEnableMotor, bool, false, AM_DEFAULT);
      URHO3D_ACCESSOR_ATTRIBUTE("Max Motor Torque", GetMaxMotorTorque, SetMaxMotorTorque, float, 0.0f, AM_DEFAULT);
@@ -2028,7 +2066,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  {
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintWheel2D.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintWheel2D.h
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/ConstraintWheel2D.h	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintWheel2D.h	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/ConstraintWheel2D.h	2021-03-02 13:46:45.331833961 -0800
 @@ -50,10 +50,17 @@ public:
      void SetMaxMotorTorque(float maxMotorTorque);
      /// Set motor speed.
@@ -2069,7 +2107,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      /// Return joint def.
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/PhysicsUtils2D.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/PhysicsUtils2D.h
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/PhysicsUtils2D.h	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/PhysicsUtils2D.h	2021-03-01 21:56:50.878631526 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/PhysicsUtils2D.h	2021-03-02 13:46:45.331833961 -0800
 @@ -26,7 +26,13 @@
  #include "../Math/Vector2.h"
  #include "../Math/Vector3.h"
@@ -2086,7 +2124,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  {
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/PhysicsWorld2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/PhysicsWorld2D.cpp
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/PhysicsWorld2D.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/PhysicsWorld2D.cpp	2021-03-01 21:56:50.882631685 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/PhysicsWorld2D.cpp	2021-03-02 13:46:45.331833961 -0800
 @@ -99,7 +99,11 @@ void PhysicsWorld2D::DrawDebugGeometry(D
  
          debugRenderer_ = debug;
@@ -2117,7 +2155,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
          result.normal_ = ToVector2(normal);
          result.distance_ = (result.position_ - startPoint_).Length();
 +#ifdef BOX2D_2_4
-+        result.body_ = reinterpret_cast<RigidBody2D*>(fixture->GetBody()->GetUserData().pointer);
++        result.body_ = (RigidBody2D*)(fixture->GetBody()->GetUserData().pointer);
 +#else
          result.body_ = (RigidBody2D*)(fixture->GetBody()->GetUserData());
 +#endif
@@ -2129,7 +2167,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
              result_.normal_ = ToVector2(normal);
              result_.distance_ = distance;
 +#ifdef BOX2D_2_4
-+            result_.body_ = reinterpret_cast<RigidBody2D*>(fixture->GetBody()->GetUserData().pointer);
++            result_.body_ = (RigidBody2D*)(fixture->GetBody()->GetUserData().pointer);
 +#else
              result_.body_ = (RigidBody2D*)(fixture->GetBody()->GetUserData());
 +#endif
@@ -2141,7 +2179,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
          if (fixture->TestPoint(point_))
          {
 +#ifdef BOX2D_2_4
-+            rigidBody_ = reinterpret_cast<RigidBody2D*>(fixture->GetBody()->GetUserData().pointer);
++            rigidBody_ = (RigidBody2D*)(fixture->GetBody()->GetUserData().pointer);
 +#else
              rigidBody_ = (RigidBody2D*)(fixture->GetBody()->GetUserData());
 +#endif
@@ -2153,7 +2191,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
              return true;
  
 +#ifdef BOX2D_2_4
-+        results_.Push(reinterpret_cast<RigidBody2D*>(fixture->GetBody()->GetUserData().pointer));
++        results_.Push((RigidBody2D*)(fixture->GetBody()->GetUserData().pointer));
 +#else
          results_.Push((RigidBody2D*)(fixture->GetBody()->GetUserData()));
 +#endif
@@ -2165,8 +2203,8 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      b2Fixture* fixtureA = contact->GetFixtureA();
      b2Fixture* fixtureB = contact->GetFixtureB();
 +#ifdef BOX2D_2_4
-+    bodyA_ = reinterpret_cast<RigidBody2D*>(fixtureA->GetBody()->GetUserData().pointer);
-+    bodyB_ = reinterpret_cast<RigidBody2D*>(fixtureB->GetBody()->GetUserData().pointer);
++    bodyA_ = (RigidBody2D*)(fixtureA->GetBody()->GetUserData().pointer);
++    bodyB_ = (RigidBody2D*)(fixtureB->GetBody()->GetUserData().pointer);
 +#else
      bodyA_ = (RigidBody2D*)(fixtureA->GetBody()->GetUserData());
      bodyB_ = (RigidBody2D*)(fixtureB->GetBody()->GetUserData());
@@ -2174,8 +2212,8 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      nodeA_ = bodyA_->GetNode();
      nodeB_ = bodyB_->GetNode();
 +#ifdef BOX2D_2_4
-+    shapeA_ = reinterpret_cast<CollisionShape2D*>(fixtureA->GetUserData().pointer);
-+    shapeB_ = reinterpret_cast<CollisionShape2D*>(fixtureB->GetUserData().pointer);
++    shapeA_ = (CollisionShape2D*)(fixtureA->GetUserData().pointer);
++    shapeB_ = (CollisionShape2D*)(fixtureB->GetUserData().pointer);
 +#else
      shapeA_ = (CollisionShape2D*)fixtureA->GetUserData();
      shapeB_ = (CollisionShape2D*)fixtureB->GetUserData();
@@ -2185,7 +2223,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      contact->GetWorldManifold(&worldManifold);
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/PhysicsWorld2D.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/PhysicsWorld2D.h
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/PhysicsWorld2D.h	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/PhysicsWorld2D.h	2021-03-01 21:56:50.882631685 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/PhysicsWorld2D.h	2021-03-02 13:46:45.331833961 -0800
 @@ -25,7 +25,14 @@
  #include "../Scene/Component.h"
  #include "../IO/VectorBuffer.h"
@@ -2214,7 +2252,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      void Update(float timeStep);
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/RigidBody2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/RigidBody2D.cpp
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/RigidBody2D.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/RigidBody2D.cpp	2021-03-01 21:56:50.882631685 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/RigidBody2D.cpp	2021-03-02 13:46:45.331833961 -0800
 @@ -94,10 +94,17 @@ void RigidBody2D::OnSetEnabled()
  {
      bool enabled = IsEnabledEffective();
@@ -2288,7 +2326,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/RigidBody2D.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/RigidBody2D.h
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/RigidBody2D.h	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/RigidBody2D.h	2021-03-01 22:02:49.868787937 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/RigidBody2D.h	2021-03-02 13:46:45.331833961 -0800
 @@ -26,7 +26,13 @@
  
  #include "../Scene/Component.h"
@@ -2305,7 +2343,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  {
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/Urho2D.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/Urho2D.cpp
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Urho2D/Urho2D.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/Urho2D.cpp	2021-03-01 21:56:50.882631685 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Urho2D/Urho2D.cpp	2021-03-02 13:46:45.331833961 -0800
 @@ -39,7 +39,9 @@
  #include "../Urho2D/ConstraintPrismatic2D.h"
  #include "../Urho2D/ConstraintPulley2D.h"

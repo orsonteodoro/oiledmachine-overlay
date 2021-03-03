@@ -61,11 +61,18 @@
       only)</flag>
     <flag name="cpu_flags_x86_sse2">Use SSE2 CPU optimizations (for x86-64
       only)</flag>
+    <flag name="dbus">Enables support for D-Bus to wake up the
+      screensaver and authenticate or to block the screensaver from
+      popping up in the middle of a game</flag>
     <flag name="debug">Adds debug symbols for the debugger</flag>
     <flag name="debug-raw-script-loader"></flag>
     <flag name="docs">Generates documentation</flag>
+    <flag name="esd">Adds support for ESD audio through SDL</flag>
     <flag name="extras">Builds extras</flag>
     <flag name="filewatcher">Enables filewatcher support</flag>
+    <flag name="hidapi">For support for USB and Bluetooth console
+      controllers</flag>
+    <flag name="ibus">Enables support for IBus multilingual keyboards</flag>
     <flag name="gles2">Adds support gles2 for OpenGL on mobile devices though
       SDL</flag>
     <flag name="libsamplerate">Enables audio conversion support through SDL
@@ -78,6 +85,7 @@
     <flag name="jack">Adds JACK audio support through SDL</flag>
     <flag name="joystick">Adds joystick support through SDL</flag>
     <flag name="nas">Adds NAS (Network Audio Sound) support through SDL</flag>
+    <flag name="libusb">For support for USB controllers only</flag>
     <flag name="logging">Enables logging support</flag>
     <flag name="lua">Adds lua support at the cost of execution speed</flag>
     <flag name="luajit">Adds Just In Time lua support for faster
@@ -96,6 +104,26 @@
     <flag name="rpi">Add raspberry-pi support (EXPERIMENTAL /
       EBUILD-INCOMPLETE)</flag>
     <flag name="samples">Installs example scripts with feature demos</flag>
+    <flag name="sdl_audio_disk">Adds driver to output audio to disk
+      through SDL</flag>
+    <flag name="sdl_audio_dummy">Enables the dummy audio driver for no audio
+      output in SDL</flag>
+    <flag name="sdl_cpuinfo">Enables the cpuinfo subsystem -- to get
+      CPU flags, core count, RAM amount -- in SDL</flag>
+    <flag name="sdl_dlopen">Enables the dl subsystem, to load and use external
+      shared libraries, in SDL</flag>
+    <flag name="sdl_power">Enables the power subsystem, to obtain battery
+      power status, in SDL</flag>
+    <flag name="sdl_render">Enables the render subsystem, for 2D accelerated
+      rendering, in SDL</flag>
+    <flag name="sdl_sensor">Enables the sensor subsystem, to obtain
+      mobile gyroscope and accelerometer data, in SDL</flag>
+    <flag name="sdl_file">Enables the file subsystem, for reading and
+      writing to data streams, in SDL</flag>
+    <flag name="sdl_filesystem">Enables the filesystem subsystem, for
+      for obtaining path info, in SDL</flag>
+    <flag name="sdl_video_dummy">Enables the dummy video driver for no video
+      output in SDL</flag>
     <flag name="sqlite">Adds SQL database support in the small scale</flag>
     <flag name="sound">Adds sound support through SDL</flag>
     <flag name="static-libs">Builds as a static library</flag>
@@ -128,6 +156,8 @@
     <flag name="threads">Builds threading support</flag>
     <flag name="tools">Builds Urho3d-tools for reading 3D assets</flag>
     <flag name="tslib">Adds touch screen support through SDL</flag>
+    <flag name="udev">Enable virtual/udev integration (device discovery, power
+      and storage device support, etc)</flag>
     <flag name="vulkan">Adds Vulkan support through SDL</flag>
     <flag name="wayland">Adds Wayland support through SDL</flag>
     <flag name="web">Add web-browser support to build games using

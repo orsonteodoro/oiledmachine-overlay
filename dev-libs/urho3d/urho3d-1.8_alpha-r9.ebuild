@@ -53,17 +53,22 @@ IUSE+=" ${X86_CPU_FEATURES[@]%:*}
 	+bullet
 	-check-pedantic-requirements
 	-clang-tools
+	 dbus
 	 debug
 	-debug-raw-script-loader
 	-docs
+	 esd
 	-extras
 	+filewatcher
 	 gles2
 	 haptic
+	+hidapi
+	 ibus
+	 libusb
 	 libsamplerate
 	+ik
-	+jack
-	 joystick
+	 jack
+	+joystick
 	 kms
 	+logging
 	+lua
@@ -79,6 +84,18 @@ IUSE+=" ${X86_CPU_FEATURES[@]%:*}
 	 pulseaudio
 	+recastnavigation
 	+samples
+	+sdl_audio_dummy
+	+sdl_cpuinfo
+	+sdl_audio_disk
+	+sdl_dlopen
+	+sdl_power
+	-sdl_render
+	+sdl_sensor
+	+sdl_file
+	+sdl_filesystem
+	+sdl_video_rpi
+	+sdl_video_dummy
+	 sndio
 	 sqlite
 	 sound
 	 static-libs
@@ -107,18 +124,35 @@ IUSE+=" ${X86_CPU_FEATURES[@]%:*}
 	+threads
 	+tools
 	 tslib
+	 udev
+	 video_cards_vivante
 	 vulkan
 	 wayland
 	+webp
 	 xinerama
 	 xscreensaver"
+
+# Partly from the libsdl2-2.0.12-r2.ebuild
+SDL2_REQUIRED_USE="
+	ibus? ( dbus )
+	wayland? ( gles2 )
+	xinerama? ( X )
+	xscreensaver? ( X )"
+
 REQUIRED_USE+="
+	${SDL2_REQUIRED_USE}
 	alsa? ( sound threads )
 	box2d? ( ^^ ( box2d_2_3 box2d_2_4 ) )
         clang-tools? ( !pch )
 	cpu_flags_x86_3dnow? ( !cpu_flags_x86_sse !cpu_flags_x86_mmx )
 	cpu_flags_x86_mmx? ( !cpu_flags_x86_3dnow !cpu_flags_x86_sse )
 	cpu_flags_x86_sse? ( !cpu_flags_x86_3dnow !cpu_flags_x86_mmx )
+	haptic? ( joystick )
+	joystick
+	joystick? (
+		android? ( hidapi )
+		native? ( || ( libusb hidapi ) )
+	)
 	luajit? ( lua )
 	native
 	odbc? ( !sqlite )
@@ -137,10 +171,16 @@ SDL_VER="2.0.10"
 
 # This lists the internal SDL requirements.
 # Copied from the libsdl2-2.0.12-r2.ebuild with changes
-# Removed dbus, fcitx4, ibus, udev rows
+# Removed fcitx4 row
 SDL2_CDEPEND="
 	alsa? ( >=media-libs/alsa-lib-1.0.27.2[${MULTILIB_USEDEP}] )
+	dbus? ( >=sys-apps/dbus-1.6.18-r1[${MULTILIB_USEDEP}] )
 	gles2? ( >=media-libs/mesa-9.1.6[${MULTILIB_USEDEP},gles2] )
+	ibus? ( app-i18n/ibus )
+	joystick? (
+		hidapi? ( dev-libs/hidapi )
+		libusb? ( dev-libs/libusb )
+	)
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
 	kms? (
 		>=x11-libs/libdrm-2.4.46[${MULTILIB_USEDEP}]
@@ -156,7 +196,9 @@ SDL2_CDEPEND="
 		>=virtual/glu-9.0-r1[${MULTILIB_USEDEP}]
 	)
 	pulseaudio? ( >=media-sound/pulseaudio-2.1-r1[${MULTILIB_USEDEP}] )
+	sndio? ( media-sound/sndio[${MULTILIB_USEDEP}] )
 	tslib? ( >=x11-libs/tslib-1.0-r3[${MULTILIB_USEDEP}] )
+	udev? ( >=virtual/libudev-208:=[${MULTILIB_USEDEP}] )
 	wayland? (
 		>=dev-libs/wayland-1.0.6[${MULTILIB_USEDEP}]
 		>=media-libs/mesa-9.1.6[${MULTILIB_USEDEP},egl,gles2,wayland]
@@ -184,15 +226,13 @@ DEPEND_COMMON="
 		)
 	)
 	box2d? ( system-box2d? (
-		box2d_2_4? ( >=sci-physics/box2d-2.4.1:2.3=[${MULTILIB_USEDEP},static-libs?] )
-		box2d_2_3? ( >=sci-physics/box2d-2.3.2:2.4=[${MULTILIB_USEDEP},static-libs?] )
+		box2d_2_4? ( >=sci-physics/box2d-2.4.1:2.4=[${MULTILIB_USEDEP},static-libs?] )
+		box2d_2_3? ( >=sci-physics/box2d-2.3.2:2.3=[${MULTILIB_USEDEP},static-libs?] )
 	) )
 	bullet? ( system-bullet? ( >=sci-physics/bullet-2.86.1[${MULTILIB_USEDEP}] ) )
 	lua? (
 		 system-lua? ( >=dev-lang/lua-5.1:${LUA_VER}=[${MULTILIB_USEDEP},urho3d] )
 	)
-	media-libs/alsa-lib[${MULTILIB_USEDEP}]
-	>=media-libs/libsdl2-${SDL_VER}:=[${MULTILIB_USEDEP},X,opengl?]
 	recastnavigation? (
 		system-recastnavigation? (
 			dev-libs/recastnavigation:=[${MULTILIB_USEDEP},static-libs?]
@@ -209,7 +249,7 @@ DEPEND_COMMON="
 	system-rapidjson? ( >=dev-libs/rapidjson-1.1 )
 	system-sdl? ( >=media-libs/libsdl2-${SDL_VER}:=[${MULTILIB_USEDEP},X?,\
 alsa?,cpu_flags_x86_3dnow?,cpu_flags_x86_mmx?,cpu_flags_x86_sse?,\
-cpu_flags_x86_sse2?,gles2?,haptic?,joystick?,kms?,libsamplerate?,nas?,\
+cpu_flags_x86_sse2?,dbus?,gles2?,haptic?,ibus?,joystick?,kms?,libsamplerate?,nas?,\
 opengl?,oss?,pulseaudio?,sound?,threads?,tslib?,static-libs?,video,vulkan?,\
 wayland?,xinerama?,xscreensaver?] )
 	!system-sdl? ( ${SDL2_DEPEND} )
@@ -266,11 +306,6 @@ DEPEND_NATIVE="
 DEPEND_RPI="
 	rpi? (  || ( sys-apps/systemd[${MULTILIB_USEDEP}]
 		     sys-fs/udev[${MULTILIB_USEDEP}] )
-		media-libs/alsa-lib[${MULTILIB_USEDEP}]
-		>=media-libs/libsdl2-${SDL_VER}:=[${MULTILIB_USEDEP},X,opengl?]
-		x11-apps/xrandr
-		x11-libs/libX11[${MULTILIB_USEDEP}]
-		alsa? ( >=media-libs/libsdl2-${SDL_VER}:=[${MULTILIB_USEDEP},alsa,sound?,threads?,static-libs?] )
 		lua? (
 			 system-luajit? ( luajit? ( >=dev-lang/luajit-2.1:2[static-libs,urho3d] ) )
 		)
@@ -395,29 +430,27 @@ _prepare_common() {
 	# for original code if results from conversion breaks
 
 	# what a line ending mess, it uses both unix (\n) and dos (\r\n).
-	if use native ; then
-		eapply "${FILESDIR}/urho3d-1.8_alpha-system-angelscript.patch"
-#		die "See ${FILESDIR}/urho3d-1.8_alpha-system-box2d.patch"
-		eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-box2d.patch"
-		eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-bullet-crlf.patch"
-		eapply "${FILESDIR}/urho3d-1.8_alpha-system-bullet-lf.patch"
-		eapply --binary "${FILESDIR}/urho3d-1.8_remove_isVisible_for_system_bullet.patch"
-		eapply "${FILESDIR}/urho3d-1.8_alpha-system-detour.patch"
-		eapply --binary "${FILESDIR}/urho3d-1.8_alpha-glew.patch"
-		eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-libcpuid.patch"
-		eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-lz4-crlf.patch"
-		eapply "${FILESDIR}/urho3d-1.8_alpha-system-lz4-lf.patch"
-		eapply "${FILESDIR}/urho3d-1.8_alpha-system-nanodbc.patch"
-		eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-pugixml-crlf.patch"
-		eapply "${FILESDIR}/urho3d-1.8_alpha-system-pugixml-lf.patch"
-		eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-sdl-crlf.patch"
-		eapply "${FILESDIR}/urho3d-1.8_alpha-system-sdl-lf.patch"
-		eapply "${FILESDIR}/urho3d-1.8_alpha-system-not-sdl.patch"  # testing
-		eapply "${FILESDIR}/urho3d-1.8_alpha-system-sqlite.patch"
-		eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-civetweb.patch"
-		eapply --binary "${FILESDIR}/urho3d-1.8_alpha-stanhull-visibility-default-crlf.patch"
-		eapply "${FILESDIR}/urho3d-1.8_alpha-lua-fix-export.patch"
-	fi
+	eapply "${FILESDIR}/urho3d-1.8_alpha-system-angelscript.patch"
+#	die "See ${FILESDIR}/urho3d-1.8_alpha-system-box2d.patch"
+	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-box2d.patch"
+	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-bullet-crlf.patch"
+	eapply "${FILESDIR}/urho3d-1.8_alpha-system-bullet-lf.patch"
+	eapply --binary "${FILESDIR}/urho3d-1.8_remove_isVisible_for_system_bullet.patch"
+	eapply "${FILESDIR}/urho3d-1.8_alpha-system-detour.patch"
+	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-glew.patch"
+	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-libcpuid.patch"
+	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-lz4-crlf.patch"
+	eapply "${FILESDIR}/urho3d-1.8_alpha-system-lz4-lf.patch"
+	eapply "${FILESDIR}/urho3d-1.8_alpha-system-nanodbc.patch"
+	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-pugixml-crlf.patch"
+	eapply "${FILESDIR}/urho3d-1.8_alpha-system-pugixml-lf.patch"
+	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-sdl-crlf.patch"
+	eapply "${FILESDIR}/urho3d-1.8_alpha-system-sdl-lf.patch"
+	eapply "${FILESDIR}/urho3d-1.8_alpha-system-not-sdl.patch"  # testing
+	eapply "${FILESDIR}/urho3d-1.8_alpha-system-sqlite.patch"
+	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-civetweb.patch"
+	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-stanhull-visibility-default-crlf.patch"
+	eapply "${FILESDIR}/urho3d-1.8_alpha-lua-fix-export.patch"
 
 	if use box2d_2_4 && [[ "${EURHO3D}" != "web" ]] ; then
 		rm Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintRope2D.pkg \
@@ -527,6 +560,82 @@ src_prepare() {
 		prepare_platform
 }
 
+configure_sdl() {
+	mycmakeargs+=(
+		-DALSA=$(usex alsa)
+		-DDUMMYAUDIO=$(usex sdl_audio_dummy)
+		-DESD=$(usex esd)
+		-DHIDAPI=$(usex android $(usex joystick ON OFF))
+		-DJACK=$(usex jack)
+		-DLIBSAMPLERATE=$(usex libsamplerate)
+		-DNAS=$(usex nas)
+		-DOSS=$(usex oss)
+		-DPULSEAUDIO=$(usex pulseaudio)
+		-DPTHREADS=$(usex threads)
+		-DINPUT_TSLIB=$(usex tslib)
+		-DDISKAUDIO=$(usex sdl_audio_disk)
+		-DSDL_AUDIO=$(usex alsa ON $(usex esd ON $(usex jack ON $(usex nas ON $(usex oss ON $(usex pulseaudio ON $(usex sndio ON $(usex sdl_audio_disk ON OFF))))))))
+		-DSDL_CPUINFO=$(usex sdl_cpuinfo)
+		-DSDL_DLOPEN=$(usex sdl_dlopen)
+		-DSDL_RENDER=$(usex sdl_render)
+		-DSDL_FILE=$(usex sdl_file)
+		-DSDL_FILESYSTEM=$(usex sdl_filesystem)
+		-DSDL_HAPTIC=$(usex haptic)
+		-DSDL_JOYSTICK=$(usex joystick)
+		-DSDL_POWER=$(usex sdl_power)
+		-DSDL_SENSOR=$(usex sdl_sensor)
+		-DSDL_THREADS=$(usex threads)
+		-DSDL_VIDEO=$(usex kms ON $(usex opengl ON $(usex gles2 ON $(usex sdl_video_rpi ON $(usex video_cards_vivante ON $(usex vulkan ON $(usex wayland ON $(usex X ON $(usex web ON OFF)))))))))
+		-D
+		-DVIDEO_DUMMY=$(usex sdl_video_dummy)
+		-DVIDEO_KMSDRM=$(usex kms)
+		-DVIDEO_OPENGL=$(usex opengl)
+		-DVIDEO_OPENGLES=$(usex gles2)
+		-DVIDEO_RPI=$(usex rpi)
+		-DVIDEO_VIVANTE=$(usex video_cards_vivante)
+		-DVIDEO_VULKAN=$(usex vulkan)
+		-DVIDEO_WAYLAND=$(usex wayland)
+		-DVIDEO_X11=$(usex X)
+		-DVIDEO_X11_XCURSOR=$(usex X)
+		-DVIDEO_X11_XINERAMA=$(usex xinerama)
+		-DVIDEO_X11_XINPUT=$(usex X)
+		-DVIDEO_X11_XRANDR=$(usex X)
+		-DVIDEO_X11_XSCRNSAVER=$(usex xscreensaver)
+		-DVIDEO_X11_XSHAPE=$(usex X)
+		-DVIDEO_X11_XVM=$(usex X)
+		-DARTS=OFF
+		-DSNDIO=$(usex sndio)
+		-DFUSIONSOUND=OFF
+		-DVIDEO_DIRECTFB=OFF
+	)
+
+	if [[ "${EURHO3D}" == "web" ]] ; then
+		mycmakeargs+=(
+			-DALSA_SHARED=OFF
+			-DESD_SHARED=OFF
+			-DJACK_SHARED=OFF
+			-KMSDRM_SHARED=OFF
+			-DPULSEAUDIO_SHARED=OFF
+			-DSDL_SHARED=OFF
+			-DSDL_STATIC=ON
+			-DWAYLAND_SHARED=OFF
+			-DX11_SHARED=OFF
+		)
+	else
+		mycmakeargs+=(
+			-DALSA_SHARED=$(usex alsa)
+			-DESD_SHARED=$(usex esd)
+			-DJACK_SHARED=$(usex jack)
+			-DKMSDRM_SHARED=$(usex kms)
+			-DSDL_SHARED=ON
+			-DSDL_STATIC=OFF
+			-DPULSEAUDIO_SHARED=$(usex pulseaudio)
+			-DWAYLAND_SHARED=$(usex wayland)
+			-DX11_SHARED=$(usex X)
+		)
+	fi
+}
+
 configure_android() {
         local mycmakeargs=(
 		${URHO3D_ANDROID_CONFIG[@]}
@@ -600,6 +709,8 @@ configure_android() {
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		fi
 	fi
+
+	configure_sdl
 
 	SUFFIX="_${EURHO3D}_${ABI}_${ESTSH_LIB_TYPE}"
 	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
@@ -709,6 +820,8 @@ configure_native() {
 		fi
 	fi
 
+	configure_sdl
+
 	SUFFIX="_${EURHO3D}_${ABI}_${ESTSH_LIB_TYPE}"
 	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
@@ -788,6 +901,8 @@ configure_rpi() {
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		fi
 	fi
+
+	configure_sdl
 
 	SUFFIX="_${EURHO3D}_${ABI}_${ESTSH_LIB_TYPE}"
 	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
@@ -882,6 +997,8 @@ configure_web() {
 		-DURHO3D_URHO2D=$(usex box2d)
 		-DURHO3D_WEBP=$(usex webp)
 	)
+
+	configure_sdl
 
 	einfo "Using Box2D 2.3 for ${EURHO3D}"
 
