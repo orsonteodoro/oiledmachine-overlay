@@ -584,7 +584,6 @@ configure_sdl() {
 		-DSDL_SENSOR=$(usex sdl_sensor)
 		-DSDL_THREADS=$(usex threads)
 		-DSDL_VIDEO=$(usex kms ON $(usex opengl ON $(usex gles2 ON $(usex sdl_video_rpi ON $(usex video_cards_vivante ON $(usex vulkan ON $(usex wayland ON $(usex X ON $(usex web ON OFF)))))))))
-		-D
 		-DVIDEO_DUMMY=$(usex sdl_video_dummy)
 		-DVIDEO_KMSDRM=$(usex kms)
 		-DVIDEO_OPENGL=$(usex opengl)
