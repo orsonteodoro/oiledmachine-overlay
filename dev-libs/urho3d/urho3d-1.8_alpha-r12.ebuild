@@ -3,7 +3,7 @@
 
 EAPI=7
 
-inherit eutils cmake-utils multilib-minimal static-libs urho3d
+inherit cmake-utils eutils linux-info multilib-minimal static-libs urho3d
 
 DESCRIPTION="Cross-platform 2D and 3D game engine."
 HOMEPAGE="http://urho3d.github.io/"
@@ -353,9 +353,16 @@ S="${WORKDIR}/Urho3D-${EGIT_COMMIT}"
 EPATCH_OPTS="--binary -p1"
 
 pkg_setup() {
-	if use box2d_2_4 ; then
-		ewarn "The box2d_2_4 USE flag and patches is currently in development.  Do not use at this time.  Use the box2d_2_3 USE flag instead."
+	if use hidapi ; then
+		linux-info_pkg_setup
+		if ! linux_config_src_exists ; then
+			ewarn "Missing kernel .config file.  Do \`make menuconfig\` and save it to fix this."
+		fi
+		if ! linux_chkconfig_present HIDRAW ; then
+			ewarn "You must have CONFIG_HIDRAW enabled in the kernel for hidraw joystick/controller support."
+		fi
 	fi
+
 	if use android ; then
 		if [[ -z "${URHO3D_TARGET_ANDROID_SDK_VERSION}" ]] ; then
 			ewarn "URHO3D_TARGET_ANDROID_SDK_VERSION needs to be set as a per-package environmental variable"
@@ -423,7 +430,6 @@ details."
 
 _prepare_common() {
 	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-testing-preprocessor.patch"
-#	die "See ${FILESDIR}/urho3d-1.8_alpha-cmake-fixes.patch"
 	eapply "${FILESDIR}/urho3d-1.8_alpha-cmake-fixes.patch"
 
 	# See https://github.com/orsonteodoro/oiledmachine-overlay/blob/47e071977b37023c07f612ecaebf235982a457c9/dev-libs/urho3d/urho3d-1.7.ebuild
@@ -431,7 +437,6 @@ _prepare_common() {
 
 	# what a line ending mess, it uses both unix (\n) and dos (\r\n).
 	eapply "${FILESDIR}/urho3d-1.8_alpha-system-angelscript.patch"
-#	die "See ${FILESDIR}/urho3d-1.8_alpha-system-box2d.patch"
 	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-box2d.patch"
 	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-bullet-crlf.patch"
 	eapply "${FILESDIR}/urho3d-1.8_alpha-system-bullet-lf.patch"
@@ -462,6 +467,7 @@ _prepare_common() {
 		Docs/LuaScriptAPI.dox
 		Docs/Reference.dox
 		Docs/ScriptAPI.dox
+		Source/Urho3D/LuaScript/pkgs/Urho2D/Constraint2D.pkg
 		Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintDistance2D.pkg
 		Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintMouse2D.pkg
 		Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintWeld2D.pkg
@@ -1021,7 +1027,6 @@ src_configure() {
 	}
 	urho3d_foreach_impl \
 		configure_platform
-
 }
 
 src_compile() {
@@ -1098,6 +1103,147 @@ src_install() {
 	}
 	urho3d_foreach_impl \
 		install_platform
+
+	cd "${S}" || die
+
+	if use tools ; then
+		docinto licenses/ThirdParty/Assimp
+		dodoc Source/ThirdParty/Assimp/LICENSE
+	fi
+
+	docinto licenses/ThirdParty/boost
+	dodoc Source/ThirdParty/boost/LICENSE_1_0.txt
+
+	if use bullet ; then
+		docinto licenses/ThirdParty/Bullet
+		dodoc Source/ThirdParty/Bullet/LICENSE.txt
+	fi
+
+
+	if use recastnavigation ; then
+		docinto licenses/ThirdParty/Detour
+		dodoc Source/ThirdParty/Detour/License.txt
+
+		docinto licenses/ThirdParty/DetourCrowd
+		dodoc Source/ThirdParty/DetourCrowd/License.txt
+
+		docinto licenses/ThirdParty/DetourTileCache
+		dodoc Source/ThirdParty/DetourTileCache/License.txt
+
+		docinto licenses/ThirdParty/Recast
+		dodoc Source/ThirdParty/Recast/License.txt
+	fi
+
+	docinto licenses/ThirdParty/FreeType
+	dodoc Source/ThirdParty/FreeType/docs/FTL.TXT
+
+	if use opengl ; then
+		docinto licenses/ThirdParty/GLEW
+		dodoc Source/ThirdParty/GLEW/LICENSE.txt
+	fi
+
+	docinto licenses/ThirdParty/LibCpuId
+	dodoc Source/ThirdParty/LibCpuId/COPYING
+
+	if use lua ; then
+		docinto licenses/ThirdParty/Lua
+		dodoc Source/ThirdParty/Lua/COPYRIGHT
+	fi
+
+	if use luajit ; then
+		docinto licenses/ThirdParty/LuaJIT
+		dodoc Source/ThirdParty/LuaJIT/COPYRIGHT
+	fi
+
+	docinto licenses/ThirdParty/LZ4
+	dodoc Source/ThirdParty/LZ4/LICENSE
+
+	if ! use opengl ; then
+		docinto licenses/ThirdParty/MojoShader
+		dodoc Source/ThirdParty/MojoShader/LICENSE.txt
+	fi
+
+	docinto licenses/ThirdParty/Mustache
+	head -n 27 \
+		Source/ThirdParty/Mustache/mustache.hpp \
+		> "${T}/LICENSE"
+	dodoc "${T}/LICENSE"
+
+	if use odbc ; then
+		docinto licenses/ThirdParty/nanodbc
+		dodoc Source/ThirdParty/nanodbc/LICENSE
+	fi
+
+	docinto licenses/ThirdParty/PugiXml
+	dodoc Source/ThirdParty/PugiXml/readme.txt
+
+	docinto licenses/ThirdParty/rapidjson
+	dodoc Source/ThirdParty/rapidjson/license.txt
+
+	docinto licenses/ThirdParty/SDL
+	dodoc Source/ThirdParty/SDL/COPYING.txt
+
+	if use network ; then
+		docinto licenses/ThirdParty/Civetweb
+		dodoc Source/ThirdParty/Civetweb/LICENSE.md
+
+		docinto licenses/ThirdParty/SLikeNet
+		dodoc Source/ThirdParty/SLikeNet/license.txt
+	fi
+
+	if use sqlite ; then
+		docinto licenses/ThirdParty/SQLite
+		head -n 11 \
+			Source/ThirdParty/SQLite/src/sqlite3.h \
+			> "${T}/LICENSE"
+		dodoc "${T}/LICENSE"
+	fi
+
+	docinto licenses/ThirdParty/StanHull
+	dodoc Source/ThirdParty/StanHull/readme.txt
+
+	docinto licenses/ThirdParty/STB
+	tail -n 41 \
+		Source/ThirdParty/STB/stb_image.h \
+		> "${T}/LICENSE"
+	dodoc "${T}/LICENSE"
+
+	if use lua || use luajit ; then
+		docinto licenses/ThirdParty/toluapp
+		dodoc Source/ThirdParty/toluapp/COPYRIGHT
+	fi
+
+	if use webp ; then
+		docinto licenses/ThirdParty/WebP
+		dodoc Source/ThirdParty/WebP/{COPYING,PATENTS}
+	fi
+
+	if use hidapi ; then
+		docinto licenses/Source/ThirdParty/SDL/src/hidapi
+		dodoc \
+Source/ThirdParty/SDL/src/hidapi/{LICENSE.txt,LICENSE-bsd.txt,LICENSE-orig.txt}
+	fi
+
+	docinto licenses/bin/Data/Fonts
+	dodoc bin/Data/Fonts/OFL.txt
+
+	docinto licenses/bin/Data/Urho2D/Orc
+	dodoc bin/Data/Urho2D/Orc/License.txt
+
+	docinto licenses/bin/Data/Urho2D/Tilesets
+	dodoc bin/Data/Urho2D/Tilesets/Licenses.txt
+
+	docinto licenses/bin/Data/Models/Mutant
+	dodoc bin/Data/Models/Mutant/License.txt
+
+	docinto licenses/bin/Data/Urho2D/imp
+	dodoc bin/Data/Urho2D/imp/imp.txt
+
+	docinto licenses/SourceAssets
+	dodoc SourceAssets/TeaPot_copyright.txt
+
+	docinto licenses
+	dodoc LICENSE
 }
 
 pkg_postinst() {

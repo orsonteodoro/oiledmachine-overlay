@@ -89,7 +89,6 @@ dev-embedded/diligent-plugin-xilinx
 dev-embedded/modelsim
 dev-embedded/xilinx-ise-webpack
 dev-lang/lua
-dev-libs/urho3d-web
 dev-lua/luafilesystem
 dev-lua/luasqlite3
 dev-lua/luaxml
@@ -171,7 +170,6 @@ media-plugins/gst-plugins-omx
 
 # worked in the past but untested today
 app-portage/systemwide-pgo
-dev-libs/urho3d
 dev-util/bear
 dev-util/devhub
 dev-util/geeks-diary
