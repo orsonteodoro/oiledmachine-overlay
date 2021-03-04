@@ -1,0 +1,80 @@
+diff -urp recastnavigation-e75adf86f91eb3082220085e42dda62679f9a3ea.orig/DetourCrowd/Include/DetourCrowd.h recastnavigation-e75adf86f91eb3082220085e42dda62679f9a3ea/DetourCrowd/Include/DetourCrowd.h
+--- recastnavigation-e75adf86f91eb3082220085e42dda62679f9a3ea.orig/DetourCrowd/Include/DetourCrowd.h	2021-02-15 03:27:21.000000000 -0800
++++ recastnavigation-e75adf86f91eb3082220085e42dda62679f9a3ea/DetourCrowd/Include/DetourCrowd.h	2021-03-04 01:16:32.028190420 -0800
+@@ -198,10 +198,20 @@ struct dtCrowdAgentDebugInfo
+ 	dtObstacleAvoidanceDebugData* vod;
+ };
+ 
++
++#ifdef URHO3D
++// Urho3D: Add update callback support
++/// Type for the update callback.
++typedef void (*dtUpdateCallback)(dtCrowdAgent* ag, float dt);
++#endif
++
+ /// Provides local steering behaviors for a group of agents. 
+ /// @ingroup crowd
+ class dtCrowd
+ {
++#ifdef URHO3D
++	dtUpdateCallback m_updateCallback; // Urho3D
++#endif
+ 	int m_maxAgents;
+ 	dtCrowdAgent* m_agents;
+ 	dtCrowdAgent** m_activeAgents;
+@@ -245,8 +255,13 @@ public:
+ 	///  @param[in]		maxAgents		The maximum number of agents the crowd can manage. [Limit: >= 1]
+ 	///  @param[in]		maxAgentRadius	The maximum radius of any agent that will be added to the crowd. [Limit: > 0]
+ 	///  @param[in]		nav				The navigation mesh to use for planning.
++	///  @param[in]		cb				The update callback. [URHO3D only]
+ 	/// @return True if the initialization succeeded.
++#ifdef URHO3D
++	bool init(const int maxAgents, const float maxAgentRadius, dtNavMesh* nav, dtUpdateCallback cb = 0);
++#else
+ 	bool init(const int maxAgents, const float maxAgentRadius, dtNavMesh* nav);
++#endif
+ 	
+ 	/// Sets the shared avoidance configuration for the specified index.
+ 	///  @param[in]		idx		The index. [Limits: 0 <= value < #DT_CROWD_MAX_OBSTAVOIDANCE_PARAMS]
+diff -urp recastnavigation-e75adf86f91eb3082220085e42dda62679f9a3ea.orig/DetourCrowd/Source/DetourCrowd.cpp recastnavigation-e75adf86f91eb3082220085e42dda62679f9a3ea/DetourCrowd/Source/DetourCrowd.cpp
+--- recastnavigation-e75adf86f91eb3082220085e42dda62679f9a3ea.orig/DetourCrowd/Source/DetourCrowd.cpp	2021-02-15 03:27:21.000000000 -0800
++++ recastnavigation-e75adf86f91eb3082220085e42dda62679f9a3ea/DetourCrowd/Source/DetourCrowd.cpp	2021-03-04 01:13:24.816735400 -0800
+@@ -330,6 +330,9 @@ Notes:
+ */
+ 
+ dtCrowd::dtCrowd() :
++#ifdef URHO3D
++	m_updateCallback(0), // Urho3D: Add update callback support
++#endif
+ 	m_maxAgents(0),
+ 	m_agents(0),
+ 	m_activeAgents(0),
+@@ -379,8 +382,16 @@ void dtCrowd::purge()
+ /// @par
+ ///
+ /// May be called more than once to purge and re-initialize the crowd.
++#ifdef URHO3D
++bool dtCrowd::init(const int maxAgents, const float maxAgentRadius, dtNavMesh* nav, dtUpdateCallback cb)
++#else
+ bool dtCrowd::init(const int maxAgents, const float maxAgentRadius, dtNavMesh* nav)
++#endif
+ {
++#ifdef URHO3D
++	m_updateCallback = cb; // Urho3D
++#endif
++
+ 	purge();
+ 	
+ 	m_maxAgents = maxAgents;
+@@ -1406,6 +1417,11 @@ void dtCrowd::update(const float dt, dtC
+ 			ag->partial = false;
+ 		}
+ 
++#ifdef URHO3D
++		// Urho3D: Add update callback support
++		if (m_updateCallback)
++			(*m_updateCallback)(ag, dt);
++#endif
+ 	}
+ 	
+ 	// Update agents using off-mesh connection.

@@ -30,5 +30,6 @@
     <flag name="examples">Builds examples</flag>
     <flag name="static">Builds static libraries</flag>
     <flag name="test">Performs testing</flag>
+    <flag name="urho3d">Adds Urho3D support</flag>
   </use>
 </pkgmetadata>

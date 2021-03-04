@@ -7,8 +7,8 @@ HOMEPAGE="https://github.com/memononen/recastnavigation"
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 SLOT="0/${PV}"
-IUSE="debug demo examples static-libs test"
-inherit cmake-utils multilib-minimal
+IUSE="debug demo examples static-libs test urho3d"
+inherit cmake-utils flag-o-matic multilib-minimal
 RDEPEND="demo? (
 		media-libs/libsdl2[${MULTILIB_USEDEP}]
 		virtual/opengl[${MULTILIB_USEDEP}]
@@ -32,6 +32,10 @@ pkg_setup() {
 }
 
 src_prepare() {
+	if use urho3d ; then
+		eapply "${FILESDIR}/recastnavigation-9999_p20210215-urho3d-callback.patch"
+	fi
+
 	multilib_copy_sources
 	prepare_abi() {
 		static-libs_copy_sources
@@ -66,6 +70,11 @@ src_configure() {
 					-DRECASTNAVIGATION_STATIC=OFF
 				)
 			fi
+
+			if use urho3d ; then
+				append-cppflags -DURHO3D
+			fi
+
 			S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 			cmake-utils_src_configure
 		}

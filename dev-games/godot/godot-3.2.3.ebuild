@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7,8} )
+PYTHON_COMPAT=( python3_{6..9} )
 
 inherit check-reqs desktop eutils godot multilib-build python-r1 scons-utils
 
@@ -17,17 +17,23 @@ LICENSE="all-rights-reserved Apache-2.0 BitstreamVera Boost-1.0 BSD BSD-2 CC-BY-
 # thirdparty/libpng/arm/palette_neon_intrinsics.c - all-rights-reserved libpng # libpng license does not contain all rights reserved, but this source does
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 PND="${PN}-demo-projects"
-EGIT_COMMIT_3_DEMOS_SNAPSHOT="e113915c80ff1cb73942dc0294ee9290e6f566f4" # tag 3 deterministic / static snapshot
-EGIT_COMMIT_3_DEMOS_STABLE="d69cc10a0b8a0ed402b377ba99725af85eff48d5" # latest release
-EGIT_COMMIT_GODOT_CPP_SNAPSHOT="c2ec46f64a24de9a46b06c3e987c306f549ccadb" # 20190805
+EGIT_COMMIT_3_DEMOS_SNAPSHOT="35687c3eadcfb77028bb04935428daa55fdbbf98" # tag 3 deterministic / static snapshot / master / 20200303
+EGIT_COMMIT_3_DEMOS_STABLE="5bd2bbfda9422270d5e5838920cfa55b4b1293ea" # latest release
+EGIT_COMMIT_GODOT_CPP_SNAPSHOT="55c0a2ea03369efefa0f795bdc7f81fbd4568a47" # 20210301
 FN_SRC="${PV}-stable.tar.gz"
 FN_DEST="${P}.tar.gz"
+FN_SRC_ESN="${EGIT_COMMIT_3_DEMOS_SNAPSHOT}.zip" # examples snapshot
+FN_DEST_ESN="${PND}-${EGIT_COMMIT_3_DEMOS_SNAPSHOT}.zip"
+FN_SRC_EST="${EGIT_COMMIT_3_DEMOS_STABLE}.zip" # examples stable
+FN_DEST_EST="${PND}-${EGIT_COMMIT_3_DEMOS_STABLE}.zip" # gdnative
+FN_SRC_CPP="${EGIT_COMMIT_GODOT_CPP_SNAPSHOT}.zip"
+FN_DEST_CPP="godot-cpp-${EGIT_COMMIT_GODOT_CPP_SNAPSHOT}.zip"
 A_URL="https://github.com/godotengine/godot/releases"
 A_URL2="https://github.com/godotengine/godot/archive/${PV}-stable.tar.gz"
 SRC_URI="https://github.com/godotengine/godot/archive/${FN_SRC} -> ${FN_DEST}
-	 examples-snapshot? ( https://github.com/godotengine/godot-demo-projects/archive/${EGIT_COMMIT_3_DEMOS_SNAPSHOT}.tar.gz -> ${PND}-${EGIT_COMMIT_3_DEMOS_SNAPSHOT}.tar.gz )
-	 examples-stable? ( https://github.com/godotengine/godot-demo-projects/archive/${EGIT_COMMIT_3_DEMOS_STABLE}.tar.gz -> ${PND}-${EGIT_COMMIT_3_DEMOS_STABLE}.tar.gz )
-	 gdnative? ( https://github.com/GodotNativeTools/godot-cpp/archive/${EGIT_COMMIT_GODOT_CPP_SNAPSHOT}.tar.gz -> godot-cpp-${EGIT_COMMIT_GODOT_CPP_SNAPSHOT}.tar.gz )"
+	 examples-snapshot? ( https://github.com/godotengine/godot-demo-projects/archive/${FN_SRC_ESN} -> ${FN_DEST_ESN} )
+	 examples-stable? ( https://github.com/godotengine/godot-demo-projects/archive/${FN_SRC_EST} -> ${FN_DEST_EST} )
+	 gdnative? ( https://github.com/godotengine/godot-cpp/archive/${FN_SRC_CPP} -> godot-cpp-${FN_DEST_CPP} )"
 SLOT="3"
 IUSE="+3d +advanced-gui clang debug docs examples-snapshot examples-stable examples-live lto +optimize-speed optimize-size portable sanitizer server +X"
 IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +ogg +pvrtc +svg +s3tc +theora +tga +vorbis +webm +webp" # formats formats
@@ -75,7 +81,7 @@ RDEPEND="android? ( dev-util/android-sdk-update-manager )
 	 system-miniupnpc? ( net-libs/miniupnpc[${MULTILIB_USEDEP}] )
 	 system-opus? ( media-libs/opus[${MULTILIB_USEDEP}] )
 	 system-pcre2? ( dev-libs/libpcre2[${MULTILIB_USEDEP}] )
-	 system-recast? ( dev-libs/recastnavigation[${MULTILIB_USEDEP}] )
+	 system-recast? ( dev-games/recastnavigation[${MULTILIB_USEDEP}] )
 	 system-squish? ( media-libs/libsquish[${MULTILIB_USEDEP}] )
 	 system-xatlas? ( media-libs/xatlas[${MULTILIB_USEDEP}] )
 	 system-zlib? ( sys-libs/zlib[${MULTILIB_USEDEP}] )
@@ -169,6 +175,38 @@ ${A_URL}\n\
 at the green download button and rename it to ${FN_DEST} and place them in\n\
 ${distdir} or you can \`wget -O ${distdir}/${FN_DEST} ${A_URL2}\`\n\
 \n"
+	if use examples-snapshot ; then
+		einfo \
+"\n\
+You also need to obtain the godot-demo-projects snapshot tarball from\n\
+https://github.com/godotengine/godot-demo-projects/tree/${EGIT_COMMIT_3_DEMOS_SNAPSHOT}\n\
+through the green button > download ZIP and place it in ${distdir} as\n\
+${FN_DEST_ESN} or you can copy and paste the\n\
+below command \`wget -O ${distdir}/${FN_DEST_ESN} \
+https://github.com/godotengine/godot-demo-projects/archive/${FN_SRC_ESN}\`\n\
+\n"
+	fi
+	if use examples-stable ; then
+		einfo \
+"\n\
+You also need to obtain the godot-demo-projects stable tarball from\n\
+https://github.com/godotengine/godot-demo-projects/tree/${EGIT_COMMIT_3_DEMOS_STABLE}\n\
+through the green button > download ZIP and place it in ${distdir} as\n\
+${FN_DEST_EST} or you can copy and paste the\n\
+below command \`wget -O ${distdir}/${FN_DEST_EST} \
+https://github.com/godotengine/godot-demo-projects/archive/${FN_SRC_EST}\`\n\
+\n"
+	fi
+
+	if use gdnative ; then
+		einfo \
+"You also need to obtain the godot-cpp tarball from\n\
+https://github.com/godotengine/godot-cpp/tree/${EGIT_COMMIT_GODOT_CPP_SNAPSHOT}\n\
+through the green button > download ZIP and place it in ${distdir} as\n\
+${FN_DEST_CPP} or you can copy and paste the\n\
+below command \`wget -O ${distdir}/${FN_DEST_CPP} \
+https://github.com/godotengine/godot-cpp/archive/${FN_SRC_CPP}\`"
+	fi
 }
 
 src_unpack() {
