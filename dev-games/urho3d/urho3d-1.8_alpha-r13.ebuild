@@ -228,8 +228,8 @@ DEPEND_COMMON="
 		)
 	)
 	box2d? ( system-box2d? (
-		box2d_2_4? ( >=sci-physics/box2d-2.4.1:2.4=[${MULTILIB_USEDEP},static-libs?] )
-		box2d_2_3? ( >=sci-physics/box2d-2.3.1:2.3=[${MULTILIB_USEDEP},static-libs?] )
+		box2d_2_4? ( >=dev-games/box2d-2.4.1:2.4=[${MULTILIB_USEDEP},static-libs?] )
+		box2d_2_3? ( >=dev-games/box2d-2.3.1:2.3=[${MULTILIB_USEDEP},static-libs?] )
 	) )
 	bullet? ( system-bullet? ( >=sci-physics/bullet-2.86.1[${MULTILIB_USEDEP}] ) )
 	lua? (
@@ -237,7 +237,7 @@ DEPEND_COMMON="
 	)
 	recastnavigation? (
 		system-recastnavigation? (
-			dev-libs/recastnavigation:=[${MULTILIB_USEDEP},static-libs?]
+			dev-games/recastnavigation:=[${MULTILIB_USEDEP},static-libs?]
 		)
 	)
 	sqlite? (
