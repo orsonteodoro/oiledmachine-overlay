@@ -7,7 +7,7 @@ inherit eutils cmake-utils multilib-build static-libs
 
 DESCRIPTION="Box2D is a 2D physics engine for games"
 HOMEPAGE="http://box2d.org/"
-LICENSE="ZLIB"
+LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 SLOT_MAJ="$(ver_cut 1-2 ${PV})" # API change between 2.4.1 breaks 2.4.0
 SLOT="${SLOT_MAJ}/${PV}"
