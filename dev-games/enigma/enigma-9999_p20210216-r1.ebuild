@@ -39,7 +39,7 @@ CDEPEND="dev-libs/protobuf[${MULTILIB_USEDEP}]
 DEPEND+=" ${CDEPEND}
 	android? ( dev-util/android-ndk
 		   dev-util/android-sdk-update-manager )
-	box2d? ( sci-physics/box2d[${MULTILIB_USEDEP}] )
+	box2d? ( dev-games/box2d[${MULTILIB_USEDEP}] )
 	bullet? ( sci-physics/bullet[${MULTILIB_USEDEP}] )
 	curl? ( net-misc/curl[${MULTILIB_USEDEP}] )
 	dev-cpp/abseil-cpp[${MULTILIB_USEDEP}]
@@ -51,8 +51,8 @@ DEPEND+=" ${CDEPEND}
 	dev-libs/openssl[${MULTILIB_USEDEP}]
 	dev-libs/pugixml[${MULTILIB_USEDEP}]
 	dev-libs/rapidjson
-	games-misc/lgmplugin
-	games-util/lateralgm[android?,linux?,vanilla?,${MULTILIB_USEDEP}]
+	dev-games/lgmplugin
+	dev-games/lateralgm[android?,linux?,vanilla?,${MULTILIB_USEDEP}]
 	gles? (	media-libs/glm
 		media-libs/libepoxy[${MULTILIB_USEDEP}]
 		media-libs/mesa[${MULTILIB_USEDEP}] )

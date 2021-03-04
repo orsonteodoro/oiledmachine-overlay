@@ -10,12 +10,12 @@ KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 SLOT="0/${PV}"
 ECJ_V="4.4"
 JAVA_V="1.7"
-RDEPEND="games-util/lateralgm
+RDEPEND="dev-games/lateralgm
 	 virtual/jre"
 DEPEND="|| ( dev-java/icedtea
 	     dev-java/icedtea-bin )
 	dev-java/jna[nio-buffers]
-	games-util/lateralgm"
+	dev-games/lateralgm"
 BDEPEND="dev-java/eclipse-ecj:${ECJ_V}
 	 virtual/jdk"
 EGIT_COMMIT="c305accc8e6bb5edbefeab4d77dc3e3958eea905"
