@@ -27,7 +27,7 @@ DEPEND+=" ${CDEPEND}
 	  dev-qt/qtmultimedia:5
 	  dev-qt/qtprintsupport:5
 	  dev-qt/qtwidgets:5
-	  >=games-misc/enigma-${ENIGMA_V}[vanilla,radialgm]
+	  >=dev-games/enigma-${ENIGMA_V}[vanilla,radialgm]
 	  media-libs/freetype
 	  media-libs/harfbuzz
 	  net-dns/c-ares
