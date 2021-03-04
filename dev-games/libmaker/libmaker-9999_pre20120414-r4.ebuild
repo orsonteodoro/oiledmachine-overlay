@@ -23,11 +23,11 @@ https://github.com/JoshDreamland/${PN_JOSHEDIT}/archive/${JOSHEDIT_COMMIT}.tar.g
 SLOT="0"
 ECJ_V="4.4"
 JAVA_V="1.7"
-RDEPEND="games-util/lateralgm
+RDEPEND="dev-games/lateralgm
 	 virtual/jre"
 DEPEND="${RDEPEND}
 	 dev-java/eclipse-ecj:${ECJ_V}
-	 games-util/lateralgm
+	 dev-games/lateralgm
 	 virtual/jdk"
 inherit desktop eutils
 S="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
