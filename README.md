@@ -108,7 +108,8 @@ dropped or migrated into oiledmachine-legacy to ideally eliminate
 vulnerable packages.
 
 Packages are updated if a critical vulnerability has been announced.
-Send a issue request if you find one.
+Send an [issue request](https://github.com/orsonteodoro/oiledmachine-overlay/issues)
+if you find one.
 
 Web engines and browsers such as firefox, chromium, webkit-gtk, cef-bin,
 nativefier, CEF/Electron web based apps, are updated everytime a critical
