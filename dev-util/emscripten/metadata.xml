@@ -26,7 +26,7 @@
     This ebuild tracks only the highest minor version modulo 10 changes
     for slotting.
 
-    Send GitHub issue request to only oiledmachine-overlay if you need
+    Send a GitHub issue request to only oiledmachine-overlay if you need
     a particular release that breaks API/ABI before or after changes.
   </longdescription>
   <use>
