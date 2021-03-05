@@ -239,7 +239,7 @@ especially if dependencies are statically linked.
 | media-libs/openimageio | TBA |
 | media-libs/opusfile | TBA |
 | media-libs/mozjpeg | This is a dependency for CaesiumCLT. |
-| media-libs/libspng | This is another alternative png library that has been fuzzed for security holes. |
+| media-libs/libspng | This is another alternative png library that has been fuzzed to eliminate security holes. |
 | media-libs/theorafile | This is for the system library for the dotnet package. |
 | media-libs/theoraplay | This needs testing. |
 | media-libs/vips | Kept for typescript. |
