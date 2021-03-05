@@ -140,6 +140,10 @@ especially if dependencies are statically linked.
 
 | package | description |
 | --- | --- |
+| app-arch/AppImageKit | Contains appimagetool to package apps in the AppImage format. |
+| app-arch/appimaged | Contains the daemon to load appimage packaged programs.  Deprecated but more reliable. |
+| app-arch/appimageupdate | Used to update AppImages |
+| app-arch/go-appimage | Contains the daemon to load appimage packaged programs and appimagetool.  AppImage is used for container-like sandboxed portable Linux or Electron apps ideal for LiveCDs or USB transport.  This package is still in development. |
 | app-editors/epic-journal | This is an Electron based encrypted journal. |
 | app-editors/nano-ycmd | This is a modified GNU nano that uses ycmd.  It is still experimental. |
 | app-editors/noty | Removed.  Notes are stored in /home/username/.config/Noty/config.json . |
@@ -290,6 +294,7 @@ especially if dependencies are statically linked.
 | www-client/surf | **WARNING!!! If you emerge this, it may delete your saved config located in /etc/portage/savedconfig/www-client/{surf-2.0,surf-0.6-r2}.  Backup it up.** surf is a WebkitGTK based browser.  This package contains added built-in ad-blocking support even in SSL.  Fixes were added to support for Facebook.  Support was added for GTK3 smooth scrolling.  Additional added support for external apps for desktop environment MIME to program association, external Flash video for some sites [helper scripts may require updating], and link highlighting.  <br /><br />The 0.6-r2 in this overlay has new window fixes.  It also doesn't create a new instances of itself.  It uses WebKit2 to handle that.  When it creates windows, it uses only one surf instance and new windows act like tabs.  The one by czarkoff and kaihendry and the original surf both create new windows and new WebKitWebProcesses per each new window.  So, my version has a lower memory footprint.  <br /><br />Read the licenses/SURF-community before emerging it.  <br /><br />To update the surf adblocker you need to go to /etc/surf/scripts/adblock and run the update.sh script. <br /><br /> In the 2.0 ebuild, I removed the patches to GTK3 but it most likely doesn't use the custom GTK3 patches in 0.6-r2.  |
 | www-misc/ddgr | This is a command line DuckDuckGo similiar to googler. |
 | www-misc/googler | Kept around for latest updates. |
+| www-misc/instatron | This is a Instagram uploader in Electron |
 | www-misc/nativefier | Offline till upstream replaces dependencies with vulnerabilities with non vulnerable ones. |
 | www-misc/rtv | This is a command line Reddit client which has been updated. |
 | www-misc/socli | This is a Stack Overflow command line client. |
