@@ -1,16 +1,15 @@
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Network/HttpRequest.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Network/HttpRequest.cpp
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Network/HttpRequest.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Network/HttpRequest.cpp	2021-02-22 06:27:45.995737118 -0800
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-static-libs.orig/Source/Urho3D/Network/HttpRequest.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-static-libs/Source/Urho3D/Network/HttpRequest.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-static-libs.orig/Source/Urho3D/Network/HttpRequest.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-static-libs/Source/Urho3D/Network/HttpRequest.cpp	2021-03-04 21:48:58.805147603 -0800
 @@ -26,7 +26,11 @@
  #include "../IO/Log.h"
  #include "../Network/HttpRequest.h"
  
 +#ifdef URHO3D_SYSTEM_CIVETWEB
-+#include <civetweb/civetweb.h>
++#include <civetweb.h>
 +#else
  #include <Civetweb/civetweb.h>
 +#endif
  
  #include "../DebugNew.h"
  
-Only in Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Network: HttpRequest.cpp.orig
