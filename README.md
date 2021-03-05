@@ -118,7 +118,7 @@ vulnerability is announced or after several strings of high vulnerabilties.
 ot-kernel is updated every release to minimize 0-day exploits.  Old ebuilds
 are removed intentionally and assume to contain one or an unannounced one.
 
-Packages are updated based on [glsa](https://security.gentoo.org/glsa) and
+Packages are updated based on [GLSA](https://security.gentoo.org/glsa) and
 random [NVD](https://nvd.nist.gov/vuln/search) searches.
 
 Any binary package with dependencies with critical or high security
