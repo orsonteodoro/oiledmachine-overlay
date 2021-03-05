@@ -101,6 +101,15 @@ found or same ebuild found in the gentoo-overlay.
 A package does not move to legacy if the project's source code or possibly the
 dependency's source code was deleted.
 
+## Ebuild meta info
+
+Some of the ebuilds in this repo contain improved comprehensive information
+describing USE flags, developer API documentation info, or special per-package
+environmental variables that improve the build process that can be found in
+the metadata.xml `epkginfo -x =dev-games/box2d-2.4.1-r2` for example.  Some of
+that information is only obtained by inspecting the comments of that
+file.  See `epkginfo --help` for details.
+
 ## Security policy
 
 In 2020 for this overlay only, it was decided that ebuild-packages would be
