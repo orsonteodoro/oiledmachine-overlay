@@ -195,7 +195,6 @@ especially if dependencies are statically linked.
 | dev-libs/rapidjson | TBA |
 | dev-lua/luasqlite3 | TBA |
 | dev-rust/grex | grex is a regular expression generator |
-| dev-python/mrab-regex | TBA |
 | dev-python/pocket | This is the Pocket API for Python. |
 | dev-python/py-stackexchange | TBA |
 | dev-python/python-plexapi | TBA |
