@@ -120,15 +120,10 @@ dependency's source code was deleted.
 | app-shells/oh-my-zsh | Oh My Zsh are extra themes and plugins to enhance Zsh.  This ebuild allows to pick specific themes and plugins and to get rid of the ones you don't need. |
 | dev-db/nanodbc | For urho3d. |
 | dev-dotnet/aforgedotnet | This is the AForge.NET library containing computer vision and aritificial intelligence algorithms.  Kinect (via libfreenect) support untested.  References to FFmpeg were untested.  The package needs testing.  The author said that the video isn't feature complete on Mono for Linux. |
-| dev-dotnet/aspnetcore | For dotnetcore-sdk |
 | dev-dotnet/assimp-net | For loading 3D models in dotnet games or simulations |
 | dev-dotnet/atitextureconverter | You don't need the actual proprietary library to compile MonoGame.  The wrapper alone will do fine in order to use MonoGame.  You need to manually install the proprietary library if you have the hardware.  Instructions are provided in the library to obtain and place it. |
 | dev-dotnet/beatdetectorforgames | This is a FMOD based beat detector which may be useful for rhythm games.  It has support for both C++ and C#.  The C# is a wrapper around the FMOD library.  The author said there wasn't Linux support but it could happen because there is a FMOD library in the main Gentoo overlay.  It still needs testing. |
 | dev-dotnet/BulletSharpPInvoke | This is a C# wrapper for libbulletc used for realistic physics in games. |
-| dev-dotnet/cli-tools | For dotnetcore-sdk.  Frontend and and command line tools for .NET Core. |
-| dev-dotnet/core | For dotnetcore-sdk.  Just documentation and examples. |
-| dev-dotnet/coreclr | For dotnetcore-sdk.  Libraries for .NET Core runtime. |
-| dev-dotnet/dotnetcore-sdk | Essentially a meta package for .NET Core |
 | dev-dotnet/farseer-physics-engine | This is a physics engine based on Box2D and is a C# library.  This one also has support for MonoGame. |
 | dev-dotnet/fna | This is an XNA4 ebuild which just produces a C# assembly.  This project sadly doesn't have a MonoDevelop add-in.  This ebuild is provided for others to fix and expand. |
 | dev-dotnet/freeimagenet | This is for loading textures in C# for games or multimedia apps. |
@@ -187,7 +182,6 @@ dependency's source code was deleted.
 | dev-util/gdevelop | This is a game development software using Electron or web browser as the IDE to produce HTML5 games. |
 | dev-util/gycm | Gycm is a Geany plugin and ycmd client to improve IntelliSense support on top of the stock completer. |
 | dev-util/lepton | This is a programmer reusable code snipplet manager based on Electron and able to sync with Gist.
-| dev-util/monodevelop | This contains frozen versions and commit hashes for the dependencies that the package eventually checks and pulls in instead of following head for dependencies. |
 | dev-util/msbuild | TBA |
 | dev-util/nant | TBA |
 | dev-util/nunit | TBA |
