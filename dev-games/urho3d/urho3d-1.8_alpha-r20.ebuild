@@ -244,7 +244,7 @@ DEPEND_COMMON="
 	)
 	recastnavigation? (
 		system-recastnavigation? (
-			dev-games/recastnavigation:=[${MULTILIB_USEDEP},static-libs?,urho3d]
+			dev-games/recastnavigation:=[${MULTILIB_USEDEP},static-libs?]
 		)
 	)
 	sqlite? (
