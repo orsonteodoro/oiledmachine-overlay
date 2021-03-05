@@ -206,8 +206,8 @@ especially if dependencies are statically linked.
 | dev-util/carbon-now-cli | This is a command line Node.js app that will create prettified code screenshots to share using the https://carbon.now.sh/ service. |
 | dev-util/depot_tools | This package contains development tools for Google projects.  It's useful for checking out v8, the JavaScript engine behind Chromium. |
 | dev-util/emacs-ycmd | This is a ycmd client for Emacs. |
-| dev-util/emscripten | For urho3d's JavaScript support. |
-| dev-util/emscripten-fastcomp | TBA |
+| dev-util/emscripten | Emscripten allows to run C/C++ apps on a web browser.  It is typically used by game engines port games into web browsers. |
+| dev-util/emscripten-fastcomp | For asm.js support.  Deprecated. |
 | dev-util/geeks-diary | This is an Electron based diary / notetaker for programmers. |
 | dev-util/gycm | Gycm is a Geany plugin and ycmd client to improve IntelliSense support on top of the stock completer. |
 | dev-util/lepton | This is a programmer reusable code snipplet manager based on Electron and able to sync with Gist. |
