@@ -106,7 +106,6 @@ dependency's source code was deleted.
 | package | description |
 | --- | --- |
 | app-editors/epic-journal | This is an Electron based encrypted journal.
-| app-editors/joshedit | Kept around for LateralGM |
 | app-editors/nano-ycmd | This is a modified GNU nano that uses ycmd.  It is still experimental. |
 | app-editors/noty | Removed.  Notes are stored in /home/username/.config/Noty/config.json .
 | app-editors/preserver | This is a sticky notes app created with Electron.
@@ -136,19 +135,26 @@ dependency's source code was deleted.
 | dev-dotnet/nuget | TBA |
 | dev-dotnet/nvorbis | TBA |
 | dev-dotnet/opentk | TBA |
-| dev-dotnet/protobuild-bin | This uses Protobuild.exe to generate the solution/project(s) then these are fed into Mono to generate again Protobuild.exe.   We do not know if the first encountered Protobuild.exe is safe to use.  This is required to generate MonoGame project files.  MonoGame comes with binary protobuild.exe, but we are gentoo.  We compile everything from the source code. |
 | dev-dotnet/pvrtexlibnet | You should stay away from this one but it may be required for compiling MonoGame which I didn't take the time to turn off.  Basically pvrtexlibnet is another C# wrapper around the propretary PVRTexLib library blob from Imagination Technlogies.  You need to download the library there.  The binary library blob uses the PVRTC compression (https://en.wikipedia.org/wiki/PVRTC) which is patented.  The license in those libraries are restricted.  There is a bindist flag for this one.  Using the bindist will not install the propretary library and proprietary documentation just the wrapper.  Delete the PVRTexLib from that this ebuild uses and use the one from Imagination Technlogies. |
 | dev-dotnet/sfmldotnet | TBA |
 | dev-dotnet/sharpfont | TBA |
 | dev-dotnet/sharpnav | This library is a AI pathfinding library in C# useful for games. |
-| dev-dotnet/slntools | TBA |
 | dev-dotnet/taoframework | TBA |
 | dev-dotnet/tesseract | This is a C# binding to the Tesseract OCR (Optical Character Recognition) software which will allow your program to read material produced by typewriters and from books. |
 | dev-dotnet/tiledsharp | This library is a map loader in C# for the Tiled Map Editor. |
 | dev-dotnet/xwt | TBA |
+| dev-games/enigma | Enigma is a Game Development environment that is similar to GameMaker.  More information can be found in https://enigma-dev.org/docs/Wiki/ENIGMA .  Basically LateralGM is the Level Editor like GameMaker's and ENIGMA is a toolchain and collection of projects.  ENIGMA will compile scripting portion of EDL which is the counterpart to GML with C++.  LateralGM is written in Java and ENIGMA is written in C++.  ENIGMA is a plugin that plugs into LateralGM.  EDL is mostly backwards compatibile with GMK scripting language.  It is GPL-3 licensed. <br /><br /> Currently compiling by command line is broken.  You must use LateralGM to build your ENIGMA game.  I am currently trying to fix this. |
+| dev-games/radialgm | Another frontend for ENIGMA written in Qt/C++ providing for more native desktop feel but in development.  This is basically the level editor and action editor for drag-and-drop game AI programming. |
+| dev-games/gdevelop | This is a game development software using Electron or web browser as the IDE to produce HTML5 games. |
+| dev-games/godot | Godot is an open source alternative to the Unity Game Engine.  This one is the 2.0 beta.  It also installs the demos in /usr/share/godot.  I recommend the platformer demo to test the sound and hardware accelerated OpenGL. |
+| dev-games/lateralgm | LateralGM is a frontend for ENIGMA in Java for portability ready for production.  This is basically the level editor and action editor for drag-and-drop game AI programming. |
+| dev-games/lgmplugin | This is the ENIGMA plugin wrapper.  It is a middle man between LateralGM and the ENIGMA compiler.  The lgmplugin can be used by GUI (through LateralGM) or CLI (command line) but currently the CLI is broken.  It was written in Java.  I am investigating why it is broken. |
+| dev-games/libmaker | This is the Library editor for ENIGMA and GameMaker to customize and add button actions for the drag and drop scripting.  It was written in Java.  More information can be found at https://enigma-dev.org/docs/Wiki/Library_Maker. |
+| dev-games/mojoshader | Used to allow for compatible usage for Direct3D shaders on non-Windows platforms to produce post-production special effects. |
+| dev-games/recastnavigation | This is a AI pathfinding library for C++.  Use this if you want your AI to walk around walls and obstacles. |
 | dev-lang/gambas | Gambas is based on the BASIC programming language dialect.  It is basically a Visual Basic clone.  Version 3.8.4 is in this overlay.  Use the `ide` USE flag to build the IDE.  You can make games with it and has support for OpenGL. |
-| dev-lang/lua | TBA |
-| dev-lang/mono | TBA |
+| dev-lang/lua | This is a lua library with Urho3D changes necessary for coroutines |
+| dev-lang/luajit | This is a luajit library with Urho3D changes necessary for coroutines |
 | dev-lang/qb64 | This is a freeware QBasic clone.  It has similar look and feel as QBasic. |
 | dev-lang/typescript | TBA |
 | dev-libs/asmlib | TBA |
@@ -159,7 +165,6 @@ dependency's source code was deleted.
 | dev-libs/nxjson | TBA |
 | dev-libs/pugixml | TBA |
 | dev-libs/rapidjson | TBA |
-| dev-libs/recastnavigation | TBA |
 | dev-libs/urho3d | Urho3D is another game engine.  Android support is incomplete.  Raspberry PI is untested.  It is a split ebuild meaning that it many of the internal dependencies are now ebuilds like the Gentoo way.  Most of the demos work as expected.  There may be quirks.  If you see any that bother you, then use the internal dependency instead.  Enable box2d for 2d-physics.  Enable bullet for 3d-physics.  Enable recast for 3D pathfinding. |
 | dev-libs/urho3d-web | This is the Emscripten compiled ebuild.  It still requires Urho3D for the include headers. |
 | dev-lua/luasqlite3 | TBA |
@@ -179,7 +184,6 @@ dependency's source code was deleted.
 | dev-util/emscripten | For urho3d's JavaScript support. |
 | dev-util/emscripten-fastcomp | TBA |
 | dev-util/geeks-diary | This is an Electron based diary / notetaker for programmers.
-| dev-util/gdevelop | This is a game development software using Electron or web browser as the IDE to produce HTML5 games. |
 | dev-util/gycm | Gycm is a Geany plugin and ycmd client to improve IntelliSense support on top of the stock completer. |
 | dev-util/lepton | This is a programmer reusable code snipplet manager based on Electron and able to sync with Gist.
 | dev-util/msbuild | TBA |
@@ -191,17 +195,11 @@ dependency's source code was deleted.
 | dev-util/snippetstore | This is a program to save reusable code templates in Electron.
 | dev-util/ycm-generator | You need this if you want c/c++/objc/objc++ support with your ycmd client.  It is mandatory for those languages. |
 | dev-util/ycmd | This is a YouCompleteMe server.  Just add your ycmd client to your text editor then you have code completion support.  The 2014 ebuild is for older clients.  The 2017 ebuilds require clients use the new HMAC header calculation.  It supports C#, C, C++, Objective C, Objective C++, rust, go, javascript, typescript, python.  If you use the `javascript` or `typescript` USE flag, then you need to add the jm-overlay to pull in the dev-nodejs packages. |
-| games-misc/enigma | Enigma is a Game Development environment that is similar to GameMaker.  More information can be found in https://enigma-dev.org/docs/Wiki/ENIGMA .  Basically LateralGM is the Level Editor like GameMaker's and ENIGMA is a toolchain and collection of projects.  ENIGMA will compile scripting portion of EDL which is the counterpart to GML with C++.  LateralGM is written in Java and ENIGMA is written in C++.  ENIGMA is a plugin that plugs into LateralGM.  EDL is mostly backwards compatibile with GMK scripting language.  It is GPL-3 licensed. <br /><br /> Currently compiling by command line is broken.  You must use LateralGM to build your ENIGMA game.  I am currently trying to fix this. |
-| games-misc/lgmplugin | This is the ENIGMA plugin wrapper.  It is a middle man between LateralGM and the ENIGMA compiler.  The lgmplugin can be used by GUI (through LateralGM) or CLI (command line) but currently the CLI is broken.  It was written in Java.  I am investigating why it is broken. |
-| games-util/godot | Godot is an open source alternative to the Unity Game Engine.  This one is the 2.0 beta.  It also installs the demos in /usr/share/godot.  I recommend the platformer demo to test the sound and hardware accelerated OpenGL. |
-| games-util/lateralgm | LateralGM for the ENIGMA development environment.  It was written in Java.  This is basically the level editor. |
-| games-util/libmaker | This is the Library editor for ENIGMA and GameMaker to customize and add button actions for the drag and drop scripting.  It was written in Java.  More information can be found at https://enigma-dev.org/docs/Wiki/Library_Maker. |
 | liri-base/liri-meta | This is the meta package for installing the Liri desktop environment.
 | media-fonts/noto-color-emoji | This currently supports Emoji 5.0.  This one you can use to compile noto color emoji.  The benefit is that you can get updated emojis.  This one also contains a black smiling face emoji to replace the text presentation unlike the -bin.  `emerge noto-color-emoji-config` to apply emojis as default. |
 | media-fonts/noto-color-emoji-bin | This one has been precompiled and from the Google website, but with older jelly bean emojis and not with recent emojis.  `emerge noto-color-emoji-config` to apply emojis as default. |
 | media-fonts/noto-color-emoji-config | This package will apply fontconfig fixes to firefox, google chrome, etc systemwide.  You can use Gentoo's noto-emoji package instead of the one on this overlay.
 | media-gfx/caesiumclt | This is a command line image compressor for PNG and JPEG files. |
-| media-gfx/mojoshader | For urho3d shader support. |
 | media-gfx/nvidia-texture-tools | This one builds the C# language binding and nvtt native library required for MonoGame.  You need to install this one from the repository for MonoGame to compile correctly.  This ebuild generates Nvidia.TextureTools.dll per each vc{10,8,9,12,monogame} because upstream don't delete one of them so a consumer may depend on the old one.  You need to enable the `monogame` USE flag to generate the proper older Nvidia.TextureTools.dll. |
 | media-gfx/sheepit-client | A CPU and/or GPU render farm client with Blender support using Internal, Eevee, or Cycles renderers. |
 | media-libs/glfw | TBA |
@@ -243,7 +241,7 @@ dependency's source code was deleted.
 | sci-misc/boinc-server | This is essentially a BOINC server maker with my personal helper scripts.  The Science overlay and Gentoo overlay do not have this.  Use emerge --config boinc-server to create your own BOINC Server project with the boinc-server-maker.  It will do everything for you except installing the application.  You must provide the executibles and template files.  See sci-misc/boinc-server-project-coinking and sci-misc/boinc-server-project-eligius for examples on how to integrate your application.  You should be able to edit those helper scripts (e.g. fresh-update, update_app) to fit your project.  Copy and use update-binaries script in your project every time you upgrade your server |
 | sci-misc/boinc-server-project-coinking | This is a Coinking mining pool BOINC server project example.  Coinking is defuct.  This was used as a test case to see if the helper scripts work. |
 | sci-misc/boinc-server-project-eligius | This is an Eligius mining pool BOINC server project example.  This ebuild demonstrates how to build a boinc-server project using helper scripts.  You can copy this ebuild and modify it for your BOINC server project.  |
-| sci-physics/box2d | This contains multilib support. |
+| dev-games/box2d | This contains multilib support. |
 | sci-physics/bullet | This library is a dependency for BulletSharpPInvoke.  It combines all modules, which were originally seperate dlls, into one shared object/dll. |
 | sys-firmware/amdgpu-firmware | Same firmware in the amdgpu-pro package.  Same firmware in the latest hardware in the compatibility list.  |
 | sys-firmware/rock-firmware | Same firmware in the rock-dkms package.  May contain the latest firmware not found in linux-firmware. |
