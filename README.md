@@ -87,11 +87,11 @@ Some packages will be moved to
 ## Legacy packages
 
 Old packages can be found at 
-[oiledmachine-overlay-legacy](https://github.com/orsonteodoro/oiledmachine-overlay-legacy).  
+[oiledmachine-overlay-legacy](https://github.com/orsonteodoro/oiledmachine-overlay-legacy).
 
-A package may be moved to oiledmachine-overlay-legacy if bundled dependencies are
-not fixed within several following discoveries of critical vulnerabilties typically in
-several months.
+A package may be moved to oiledmachine-overlay-legacy if bundled dependencies
+are not fixed within several following discoveries of critical vulnerabilties
+typically in several months.
 
 A package also moves to legacy if the project is defunct.
 
@@ -101,23 +101,42 @@ found or same ebuild found in the gentoo-overlay.
 A package does not move to legacy if the project's source code or possibly the
 dependency's source code was deleted.
 
+## Security update policy
+
+In 2020 for this overlay only, it was decided that ebuild-packages would be
+dropped or migrated into oiledmachine-legacy to ideally eliminate
+vulnerable packages.
+
+Packages are updated if a critical vulnerability has been announced.
+Send a issue request if you find one.
+
+Web engines and browsers such as firefox, chromium, webkit-gtk, cef-bin,
+nativefier, CEF/Electron web based apps, are updated everytime a critical
+vulnerability is announced or after several strings of high vulnerabilties.
+
+ot-kernel is updated every release to minimize 0-day exploits.  Old ebuilds
+are removed intentionally and assume to contain one or an unannounced one.
+
+Packages are updated based on [glsa](https://security.gentoo.org/glsa) and
+random [NVD](https://nvd.nist.gov/vuln/search) searches.
+
 ## Packages
 
 | package | description |
 | --- | --- |
-| app-editors/epic-journal | This is an Electron based encrypted journal.
+| app-editors/epic-journal | This is an Electron based encrypted journal. |
 | app-editors/nano-ycmd | This is a modified GNU nano that uses ycmd.  It is still experimental. |
-| app-editors/noty | Removed.  Notes are stored in /home/username/.config/Noty/config.json .
-| app-editors/preserver | This is a sticky notes app created with Electron.
+| app-editors/noty | Removed.  Notes are stored in /home/username/.config/Noty/config.json . |
+| app-editors/preserver | This is a sticky notes app created with Electron. |
 | app-editors/stickynotes | This is an Electron based note taker that resembles a sticky pad. |
 | app-emacs/emacs-ycmd | TBA |
 | app-eselect/eselect-typescript | TBA |
-| app-portage/npm-secaudit | A simple postsync script to check npm and Electron apps for security updates.
+| app-portage/npm-secaudit | A simple postsync script to check npm and Electron apps for security updates. |
 | app-portage/systemwide-pgo | This package installs Profile Guided Optimization management scripts for portage.  Everyone keeps building a per package PGO ebuild with a USE flag, but this package provides more better integration and ease of the process by forcing Portage do the work.  It still needs more testing and is considered in development.  It has @pgo-update set support.  It requires GCC or LLVM/Clang >=3.7 support since <3.7 breaks library profiling and has an annoying set environmental variable feature before profiling.  We use --profile-generate instead on LLVM/Clang.  Users need to be added to the wheel group to simulate the program.  You should disable all PGO USE flags and allow the scripts use it properly.  The package uses a whitelist and phase file to manage it.  Instructions are given at the end of the ebuild. |
 | app-shells/emoji-cli | This is an emoji autocompletion plugin for Zsh.  You might want to combine it with emojify. |
 | app-shells/emojify | This is a BASH shell script to convert emoji aliases described in English words into Unicode equivalent to display the emoji. |
 | app-shells/oh-my-zsh | Oh My Zsh are extra themes and plugins to enhance Zsh.  This ebuild allows to pick specific themes and plugins and to get rid of the ones you don't need. |
-| dev-db/nanodbc | For urho3d. |
+| dev-db/nanodbc | A dependency for Urho3D. |
 | dev-dotnet/aforgedotnet | This is the AForge.NET library containing computer vision and aritificial intelligence algorithms.  Kinect (via libfreenect) support untested.  References to FFmpeg were untested.  The package needs testing.  The author said that the video isn't feature complete on Mono for Linux. |
 | dev-dotnet/assimp-net | For loading 3D models in dotnet games or simulations |
 | dev-dotnet/atitextureconverter | You don't need the actual proprietary library to compile MonoGame.  The wrapper alone will do fine in order to use MonoGame.  You need to manually install the proprietary library if you have the hardware.  Instructions are provided in the library to obtain and place it. |
@@ -151,6 +170,7 @@ dependency's source code was deleted.
 | dev-games/lgmplugin | This is the ENIGMA plugin wrapper.  It is a middle man between LateralGM and the ENIGMA compiler.  The lgmplugin can be used by GUI (through LateralGM) or CLI (command line) but currently the CLI is broken.  It was written in Java.  I am investigating why it is broken. |
 | dev-games/libmaker | This is the Library editor for ENIGMA and GameMaker to customize and add button actions for the drag and drop scripting.  It was written in Java.  More information can be found at https://enigma-dev.org/docs/Wiki/Library_Maker. |
 | dev-games/mojoshader | Used to allow for compatible usage for Direct3D shaders on non-Windows platforms to produce post-production special effects. |
+| dev-games/urho3d | Urho3D is another game engine.  Android and Raspberry PI support on the ebuild level is incomplete but left for Gentoo community to help finish.  It is a split ebuild meaning that it many of the internal dependencies are now ebuilds like the Gentoo way.  Most of the demos work as expected.  There may be quirks.  If you see any that bother you, then use the internal dependency instead. |
 | dev-games/recastnavigation | This is a AI pathfinding library for C++.  Use this if you want your AI to walk around walls and obstacles. |
 | dev-lang/gambas | Gambas is based on the BASIC programming language dialect.  It is basically a Visual Basic clone.  Version 3.8.4 is in this overlay.  Use the `ide` USE flag to build the IDE.  You can make games with it and has support for OpenGL. |
 | dev-lang/lua | This is a lua library with Urho3D changes necessary for coroutines |
@@ -165,8 +185,6 @@ dependency's source code was deleted.
 | dev-libs/nxjson | TBA |
 | dev-libs/pugixml | TBA |
 | dev-libs/rapidjson | TBA |
-| dev-libs/urho3d | Urho3D is another game engine.  Android support is incomplete.  Raspberry PI is untested.  It is a split ebuild meaning that it many of the internal dependencies are now ebuilds like the Gentoo way.  Most of the demos work as expected.  There may be quirks.  If you see any that bother you, then use the internal dependency instead.  Enable box2d for 2d-physics.  Enable bullet for 3d-physics.  Enable recast for 3D pathfinding. |
-| dev-libs/urho3d-web | This is the Emscripten compiled ebuild.  It still requires Urho3D for the include headers. |
 | dev-lua/luasqlite3 | TBA |
 | dev-lua/tolua | tolua is another Lua-C++ bindings generator.  It is not used by Urho3D. |
 | dev-lua/tolua++ | tolua++ is a Lua-C++ bindings generator more improved than tolua.  I recommend the `urho3d` USE flag to enable some bugfixes.  This one is used by Urho3D. |
@@ -178,27 +196,27 @@ dependency's source code was deleted.
 | dev-python/python-plexapi | TBA |
 | dev-python/soundcloud-python | TBA |
 | dev-util/bear | TBA |
-| dev-util/carbon-now-cli | This is a command line Node.js app that will create prettified code screenshots to share using the https://carbon.now.sh/ service.
+| dev-util/carbon-now-cli | This is a command line Node.js app that will create prettified code screenshots to share using the https://carbon.now.sh/ service. |
 | dev-util/depot_tools | This package contains development tools for Google projects.  It's useful for checking out v8, the JavaScript engine behind Chromium. |
 | dev-util/emacs-ycmd | This is a ycmd client for Emacs. |
 | dev-util/emscripten | For urho3d's JavaScript support. |
 | dev-util/emscripten-fastcomp | TBA |
-| dev-util/geeks-diary | This is an Electron based diary / notetaker for programmers.
+| dev-util/geeks-diary | This is an Electron based diary / notetaker for programmers. |
 | dev-util/gycm | Gycm is a Geany plugin and ycmd client to improve IntelliSense support on top of the stock completer. |
-| dev-util/lepton | This is a programmer reusable code snipplet manager based on Electron and able to sync with Gist.
+| dev-util/lepton | This is a programmer reusable code snipplet manager based on Electron and able to sync with Gist. |
 | dev-util/msbuild | TBA |
 | dev-util/nant | TBA |
 | dev-util/nunit | TBA |
 | dev-util/objconv | TBA |
 | dev-util/premake | Kept for latest versions. |
-| dev-util/pullp | This is an Electron based pull request monitoring program.
-| dev-util/snippetstore | This is a program to save reusable code templates in Electron.
+| dev-util/pullp | This is an Electron based pull request monitoring program. |
+| dev-util/snippetstore | This is a program to save reusable code templates in Electron. |
 | dev-util/ycm-generator | You need this if you want c/c++/objc/objc++ support with your ycmd client.  It is mandatory for those languages. |
 | dev-util/ycmd | This is a YouCompleteMe server.  Just add your ycmd client to your text editor then you have code completion support.  The 2014 ebuild is for older clients.  The 2017 ebuilds require clients use the new HMAC header calculation.  It supports C#, C, C++, Objective C, Objective C++, rust, go, javascript, typescript, python.  If you use the `javascript` or `typescript` USE flag, then you need to add the jm-overlay to pull in the dev-nodejs packages. |
-| liri-base/liri-meta | This is the meta package for installing the Liri desktop environment.
+| liri-base/liri-meta | This is the meta package for installing the Liri desktop environment. |
 | media-fonts/noto-color-emoji | This currently supports Emoji 5.0.  This one you can use to compile noto color emoji.  The benefit is that you can get updated emojis.  This one also contains a black smiling face emoji to replace the text presentation unlike the -bin.  `emerge noto-color-emoji-config` to apply emojis as default. |
 | media-fonts/noto-color-emoji-bin | This one has been precompiled and from the Google website, but with older jelly bean emojis and not with recent emojis.  `emerge noto-color-emoji-config` to apply emojis as default. |
-| media-fonts/noto-color-emoji-config | This package will apply fontconfig fixes to firefox, google chrome, etc systemwide.  You can use Gentoo's noto-emoji package instead of the one on this overlay.
+| media-fonts/noto-color-emoji-config | This package will apply fontconfig fixes to firefox, google chrome, etc systemwide.  You can use Gentoo's noto-emoji package instead of the one on this overlay. |
 | media-gfx/caesiumclt | This is a command line image compressor for PNG and JPEG files. |
 | media-gfx/nvidia-texture-tools | This one builds the C# language binding and nvtt native library required for MonoGame.  You need to install this one from the repository for MonoGame to compile correctly.  This ebuild generates Nvidia.TextureTools.dll per each vc{10,8,9,12,monogame} because upstream don't delete one of them so a consumer may depend on the old one.  You need to enable the `monogame` USE flag to generate the proper older Nvidia.TextureTools.dll. |
 | media-gfx/sheepit-client | A CPU and/or GPU render farm client with Blender support using Internal, Eevee, or Cycles renderers. |
@@ -209,9 +227,9 @@ dependency's source code was deleted.
 | media-libs/embree | For amd-radeon-prorender-blender plugin. |
 | media-libs/libmp4v2 | For multilib tizonia |
 | media-libs/liboggz | For multilib tizonia |
-| media-libs/libomxil-bellagio | This package is one of the backends required for `mesa[openmax]` support.
+| media-libs/libomxil-bellagio | This package is one of the backends required for `mesa[openmax]` support. |
 | media-libs/libyuv | For xpra compression |
-| media-libs/mesa | This package contains optional untested openmax support.
+| media-libs/mesa | This package contains optional untested openmax support. |
 | media-libs/mozjpeg | TBA |
 | media-libs/nestegg | TBA |
 | media-libs/openimageio | TBA |
@@ -224,13 +242,14 @@ dependency's source code was deleted.
 | media-plugins/bitlbee-facebook | TBA |
 | media-plugins/gst-plugins-omx | TBA |
 | media-sound/puddletag | This is a mp3 metatag editor.  Autosaves edits and doesn't need to be explicity be told to save.  This is the PyQt5 version.  |
-| media-sound/tizonia | This is both a command line media player and an OpenMAX library.
+| media-sound/tizonia | This is both a command line media player and an OpenMAX library. |
 | media-sound/w3crapcli-lastfm | These are shell scripts to allow for Last.fm support for mpv.  This one was modified a bit for Last.fm 2.0 API.  You need your own an developer API key from last fm to use it.  It has last played support as well.  The one on w3crapcli Github repository uses an external bloated dependency. |
 | media-video/epcam | Epcam is a driver for support for webcams based on EP800/SE402/SE401 chip.  It uses sources from https://github.com/orsonteodoro/gspca_ep800.  This driver differs from the main kernel driver in that it supports the newer reference firmware.  It still needs testing for runtime breakage. |
 | net-analyzer/wireshark | This ebuild integrats MTP (Media Transfer Protocol) packet filter.  It also warns of MTPz authentication handshake points in the Expert info.  You may need to modify in the source code level the interface number, vendor ID, device ID for your USB to match your particular device since I didn't write the GUI interface for that yet. |
-| net-im/caprine | This package is an Electron based Facebook Messenger.
-| net-im/igdm | This is an Instagram direct messenger based on Electron.
-| net-im/igdm-cli | This is a command line Instagram direct messenger based on Node.js.
+| net-im/caprine | This package is an Electron based Facebook Messenger. |
+| net-im/igdm | This is an Instagram direct messenger based on Electron. |
+| net-im/igdm-cli | This is a command line Instagram direct messenger based on Node.js. |
+| net-libs/cef-bin | Chromium Embedded Framework with prebuilt chromium.  Used in obs-studio. |
 | net-libs/webkit-gtk | This ebuild has multi-ABI support meaning it can build 32-bit webkit-gtk on a 64-bit machine and both 64-bit and 32-bit builds be present.  You may also choose to build just one ABI.  This ebuild mod also allows you to build the MiniBrowser frontend. |
 | net-misc/boinc-bfgminer-cpu | This is a modified BFGMiner with BOINC support for CPUs.  It requires the BOINC wrapper sample app.  It contains ebuild level support for Profile Guided Optimizations (PGO).  It still may be buggy. |
 | net-misc/boinc-bfgminer-gpu | This is a modified BFGMiner with BOINC support for GPUs.  It requires the BOINC wrapper sample app.  See sci-misc/boinc-server-project-eligius ebuild on in how to use it.  The reason why I have BOINC support so we can have the BOINC client manage project switching or CPU/GPU resources based on user activity (e.g. mouse move).  It still may be buggy. |
@@ -246,8 +265,8 @@ dependency's source code was deleted.
 | sys-firmware/rock-firmware | Same firmware in the rock-dkms package.  May contain the latest firmware not found in linux-firmware. |
 | sys-kernel/amdgpu-dkms | This is the amdgpu DRM (Direct Rendering Manager) kernel driver found in the amdgpu-pro.  It contains older versions of ROCk and drm-next/amd-staging-drm-next updates. |
 | sys-kernel/rock-dkms | This is another amdgpu DRM (Direct Rendering Manager) kernel driver for the ROCm platform and API.  It is like the amdgpu-dkms package but more bleeding edge in releases. |
-| sys-kernel/genkernel | This is a modified genkernel with `subdir_mount` use flag to mount the system from a folder other than `/` and `crypt_root_plain` use flag to mount plain mode dm-crypt.  For crypt_root_plain kernel option, you provide the path from /dev/disk/by-id/ .  For subdir_mount, you provide the path to the folder.  See https://github.com/orsonteodoro/muslx32#notes for details on how to use subdir_mount.
-| sys-kernel/ot-sources | This package contains a collection of patches.  It contains UKSM, zen-tune, GraySky2's kernel_gcc_patch, MuQSS CPU scheduler, PDS CPU scheduler, genpatches (kernel updates), BFQ updates, TRESOR cold boot resistant patch, O3 optimize harder patch, CVE fixes.  The TRESOR patch is experimental for x86_64 arch which is just the x86 generic that has been modified for x86_64 generic; and has passed the self tests.
+| sys-kernel/genkernel | This is a modified genkernel with `subdir_mount` use flag to mount the system from a folder other than `/` and `crypt_root_plain` use flag to mount plain mode dm-crypt.  For crypt_root_plain kernel option, you provide the path from /dev/disk/by-id/ .  For subdir_mount, you provide the path to the folder.  See https://github.com/orsonteodoro/muslx32#notes for details on how to use subdir_mount. |
+| sys-kernel/ot-sources | This package contains a collection of patches.  It contains UKSM, zen-tune, GraySky2's kernel_gcc_patch, MuQSS CPU scheduler, PDS CPU scheduler, genpatches (kernel updates), BFQ updates, TRESOR cold boot resistant patch, O3 optimize harder patch, CVE fixes.  The TRESOR patch is experimental for x86_64 arch which is just the x86 generic that has been modified for x86_64 generic; and has passed the self tests. |
 | sys-kernel/rock-dkms | This is the amdgpu DRM (Direct Rendering Manager) kernel driver.  It contains the latest ROCk patches and near latest amd-staging-drm-next commits. |
 | sys-power/cpupower-gui | This is a package for a graphical user interface (GUI) for changing the CPU frequency limits and the governor.  It needs elevated privileges to use it like with sudo. |
 | sys-process/psdoom-ng | This is a process killer based on Chocolate Doom 2.2.1 with man file and simple wrapper. |
@@ -260,7 +279,7 @@ dependency's source code was deleted.
 | www-misc/rtv | This is a command line Reddit client which has been updated. |
 | www-misc/socli | This is a Stack Overflow command line client. |
 | www-servers/civetweb | Kept around for urho3d. |
-| x11-drivers/amdgpu-pro | This is the unilib version of the AMDGPU-PRO driver.<br /><br />
-| x11-drivers/amdgpu-pro-lts | This is the semi multilib version of the AMDGPU-PRO driver that is more feature rich.<br /><br />
+| x11-drivers/amdgpu-pro | This is the unilib version of the AMDGPU-PRO driver.<br /><br /> |
+| x11-drivers/amdgpu-pro-lts | This is the semi multilib version of the AMDGPU-PRO driver that is more feature rich.<br /><br /> |
 | x11-wm/dwm | This ebuild fixes the emoji titlebar crash and has integrated Fibonacci layout patch applied. |
-| x11-wm/xpra | This is an alternative VNC like client.  It's kept around for Firejail.
+| x11-wm/xpra | This is an alternative VNC like client.  It's kept around for Firejail. |
