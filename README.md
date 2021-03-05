@@ -227,7 +227,6 @@ dependency's source code was deleted.
 | media-sound/tizonia | This is both a command line media player and an OpenMAX library.
 | media-sound/w3crapcli-lastfm | These are shell scripts to allow for Last.fm support for mpv.  This one was modified a bit for Last.fm 2.0 API.  You need your own an developer API key from last fm to use it.  It has last played support as well.  The one on w3crapcli Github repository uses an external bloated dependency. |
 | media-video/epcam | Epcam is a driver for support for webcams based on EP800/SE402/SE401 chip.  It uses sources from https://github.com/orsonteodoro/gspca_ep800.  This driver differs from the main kernel driver in that it supports the newer reference firmware.  It still needs testing for runtime breakage. |
-| media-video/mplayer | This package contains broken [as to be fixed] Last.fm support for MPlayer.  It requires mplayer-lastfm-scrobbler package in this overlay. |
 | net-analyzer/wireshark | This ebuild integrats MTP (Media Transfer Protocol) packet filter.  It also warns of MTPz authentication handshake points in the Expert info.  You may need to modify in the source code level the interface number, vendor ID, device ID for your USB to match your particular device since I didn't write the GUI interface for that yet. |
 | net-im/caprine | This package is an Electron based Facebook Messenger.
 | net-im/igdm | This is an Instagram direct messenger based on Electron.
