@@ -101,7 +101,7 @@ found or same ebuild found in the gentoo-overlay.
 A package does not move to legacy if the project's source code or possibly the
 dependency's source code was deleted.
 
-## Security update policy
+## Security policy
 
 In 2020 for this overlay only, it was decided that ebuild-packages would be
 dropped or migrated into oiledmachine-legacy to ideally eliminate
@@ -120,6 +120,11 @@ are removed intentionally and assume to contain one or an unannounced one.
 
 Packages are updated based on [glsa](https://security.gentoo.org/glsa) and
 random [NVD](https://nvd.nist.gov/vuln/search) searches.
+
+Any binary package with dependencies with critical or high security
+advisories matching the version of the dependency will be mentioned in
+the ebuild at the time of packaging.  Only upstream can fix those problems
+especially if dependencies are statically linked.
 
 ## Packages
 
