@@ -201,7 +201,6 @@ especially if dependencies are statically linked.
 | dev-python/soundcloud-python | TBA |
 | dev-util/bear | TBA |
 | dev-util/carbon-now-cli | This is a command line Node.js app that will create prettified code screenshots to share using the https://carbon.now.sh/ service. |
-| dev-util/depot_tools | This package contains development tools for Google projects.  It's useful for checking out v8, the JavaScript engine behind Chromium. |
 | dev-util/emacs-ycmd | This is a ycmd client for Emacs. |
 | dev-util/emscripten | Emscripten allows to run C/C++ apps on a web browser.  It is typically used by game engines port games into web browsers. |
 | dev-util/emscripten-fastcomp | For asm.js support.  Deprecated. |
