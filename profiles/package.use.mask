@@ -20,8 +20,8 @@ media-plugins/cycles network
 # Untested.  You may disable at your own risk
 games-misc/enigma android wine
 
-# Untested
-dev-libs/urho3d android raspberry-pi
+# Incomplete, requires developer with devices to complete
+dev-libs/urho3d android rpi
 
 # Untested tests
 dev-util/bear test
