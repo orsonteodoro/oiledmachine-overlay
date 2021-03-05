@@ -440,7 +440,6 @@ details."
 
 _prepare_common() {
 	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-testing-preprocessor.patch"
-	#die "See ${FILESDIR}/urho3d-1.8_alpha-cmake-fixes.patch"
 	eapply "${FILESDIR}/urho3d-1.8_alpha-cmake-fixes.patch"
 
 	# See https://github.com/orsonteodoro/oiledmachine-overlay/blob/47e071977b37023c07f612ecaebf235982a457c9/dev-libs/urho3d/urho3d-1.7.ebuild
@@ -464,7 +463,6 @@ _prepare_common() {
 	eapply "${FILESDIR}/urho3d-1.8_alpha-system-sdl-lf.patch"
 	eapply "${FILESDIR}/urho3d-1.8_alpha-system-not-sdl.patch"  # testing
 	eapply "${FILESDIR}/urho3d-1.8_alpha-system-sqlite.patch"
-	#die "See ${FILESDIR}/urho3d-1.8_alpha-system-civetweb.patch"
 	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-civetweb.patch"
 	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-stanhull-visibility-default-crlf.patch"
 	eapply "${FILESDIR}/urho3d-1.8_alpha-lua-fix-export.patch"

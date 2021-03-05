@@ -1,6 +1,6 @@
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/CrowdAgent.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/CrowdAgent.cpp
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/CrowdAgent.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/CrowdAgent.cpp	2021-02-22 13:14:30.243143303 -0800
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Navigation/CrowdAgent.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Navigation/CrowdAgent.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Navigation/CrowdAgent.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Navigation/CrowdAgent.cpp	2021-03-04 22:55:48.637098600 -0800
 @@ -33,8 +33,13 @@
  #include "../Scene/Node.h"
  #include "../Scene/Scene.h"
@@ -15,9 +15,9 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Nav
  
  #include "../DebugNew.h"
  
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/CrowdManager.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/CrowdManager.cpp
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/CrowdManager.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/CrowdManager.cpp	2021-02-22 13:14:30.247143470 -0800
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Navigation/CrowdManager.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Navigation/CrowdManager.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Navigation/CrowdManager.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Navigation/CrowdManager.cpp	2021-03-04 23:00:21.043642706 -0800
 @@ -34,7 +34,11 @@
  #include "../Scene/Scene.h"
  #include "../Scene/SceneEvents.h"
@@ -30,25 +30,33 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Nav
  
  #include "../DebugNew.h"
  
-@@ -83,10 +87,17 @@ CrowdManager::CrowdManager(Context* cont
+@@ -69,11 +73,6 @@ static const StringVector obstacleAvoida
+     "   Adaptive Depth"
+ };
+ 
+-void CrowdAgentUpdateCallback(dtCrowdAgent* ag, float dt)
+-{
+-    static_cast<CrowdAgent*>(ag->params.userData)->OnCrowdUpdate(ag, dt);
+-}
+-
+ CrowdManager::CrowdManager(Context* context) :
+     Component(context),
+     maxAgents_(DEFAULT_MAX_AGENTS),
+@@ -83,10 +82,13 @@ CrowdManager::CrowdManager(Context* cont
      numAreas_.Reserve(DT_CROWD_MAX_QUERY_FILTER_TYPE);
      for (unsigned i = 0; i < DT_CROWD_MAX_QUERY_FILTER_TYPE; ++i)
          numAreas_.Push(0);
 +
-+#ifdef URHO3D_SYSTEM_RECASTNAVIGATION
 +    agents_ = (dtCrowdAgent**)dtAlloc(sizeof(dtCrowdAgent*)*DEFAULT_MAX_AGENTS, DT_ALLOC_PERM);
-+#endif
  }
  
  CrowdManager::~CrowdManager()
  {
-+#ifdef URHO3D_SYSTEM_RECASTNAVIGATION
 +    dtFree(agents_);
-+#endif
      dtFreeCrowd(crowd_);
      crowd_ = nullptr;
  }
-@@ -127,7 +138,11 @@ void CrowdManager::ApplyAttributes()
+@@ -127,7 +129,11 @@ void CrowdManager::ApplyAttributes()
      navigationMeshId_ = navigationMesh_ ? navigationMesh_->GetID() : 0;
  
      // If the Detour crowd initialization parameters have changed then recreate it
@@ -61,50 +69,43 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Nav
          CreateCrowd();
  }
  
-@@ -584,7 +599,11 @@ bool CrowdManager::CreateCrowd()
+@@ -584,7 +590,7 @@ bool CrowdManager::CreateCrowd()
      // Initialize the crowd
      if (maxAgentRadius_ == 0.f)
          maxAgentRadius_ = navigationMesh_->GetAgentRadius();
 -    if (!crowd_->init(maxAgents_, maxAgentRadius_, navigationMesh_->navMesh_, CrowdAgentUpdateCallback))
-+    if (!crowd_->init(maxAgents_, maxAgentRadius_, navigationMesh_->navMesh_
-+#ifndef URHO3D_SYSTEM_RECASTNAVIGATION
-+    , CrowdAgentUpdateCallback
-+#endif
-+    ))
++    if (!crowd_->init(maxAgents_, maxAgentRadius_, navigationMesh_->navMesh_))
      {
          URHO3D_LOGERROR("Could not initialize DetourCrowd");
          return false;
-@@ -679,6 +698,14 @@ void CrowdManager::Update(float delta)
+@@ -679,6 +685,13 @@ void CrowdManager::Update(float delta)
  {
      assert(crowd_ && navigationMesh_);
      URHO3D_PROFILE(UpdateCrowd);
-+#ifdef URHO3D_SYSTEM_RECASTNAVIGATION
-+    int nagents;
-+    nagents = crowd_->getActiveAgents(agents_, maxAgents_);
++
++    int nagents = crowd_->getActiveAgents(agents_, maxAgents_);
 +    for (int i = 0; i < nagents; i++) {
 +        dtCrowdAgent* ag = agents_[i];
-+        CrowdAgentUpdateCallback(ag, delta);
++        static_cast<CrowdAgent*>(ag->params.userData)->OnCrowdUpdate(ag, delta);
 +    }
-+#endif
++
      crowd_->update(delta, nullptr);
  }
  
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/CrowdManager.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/CrowdManager.h
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/CrowdManager.h	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/CrowdManager.h	2021-02-22 13:14:30.247143470 -0800
-@@ -195,6 +195,9 @@ private:
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Navigation/CrowdManager.h Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Navigation/CrowdManager.h
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Navigation/CrowdManager.h	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Navigation/CrowdManager.h	2021-03-04 23:27:14.673865210 -0800
+@@ -195,6 +195,7 @@ private:
      PODVector<unsigned> numAreas_;
      /// Number of obstacle avoidance types configured in the crowd. Limit to DT_CROWD_MAX_OBSTAVOIDANCE_PARAMS.
      unsigned numObstacleAvoidanceTypes_{};
-+#ifdef URHO3D_SYSTEM_RECASTNAVIGATION
 +    dtCrowdAgent** agents_;
-+#endif
  };
  
  }
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp	2021-02-22 13:14:30.247143470 -0800
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Navigation/DynamicNavigationMesh.cpp	2021-03-04 22:55:48.637098600 -0800
 @@ -40,11 +40,19 @@
  #include "../Scene/SceneEvents.h"
  
@@ -149,9 +150,9 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Nav
              tileCache_->update(1, navMesh_);
  
          if (dtStatusFailed(tileCache_->removeObstacle(obstacle->obstacleId_)))
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/NavBuildData.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/NavBuildData.cpp
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/NavBuildData.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/NavBuildData.cpp	2021-02-22 13:14:30.247143470 -0800
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Navigation/NavBuildData.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Navigation/NavBuildData.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Navigation/NavBuildData.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Navigation/NavBuildData.cpp	2021-03-04 22:55:48.637098600 -0800
 @@ -24,8 +24,13 @@
  
  #include "../Navigation/NavBuildData.h"
@@ -166,9 +167,9 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Nav
  
  namespace Urho3D
  {
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/NavigationMesh.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/NavigationMesh.cpp
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45.orig/Source/Urho3D/Navigation/NavigationMesh.cpp	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45/Source/Urho3D/Navigation/NavigationMesh.cpp	2021-02-22 13:13:43.173171867 -0800
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Navigation/NavigationMesh.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Navigation/NavigationMesh.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/Navigation/NavigationMesh.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/Navigation/NavigationMesh.cpp	2021-03-04 22:55:48.637098600 -0800
 @@ -48,10 +48,17 @@
  #include "../Scene/Scene.h"
  

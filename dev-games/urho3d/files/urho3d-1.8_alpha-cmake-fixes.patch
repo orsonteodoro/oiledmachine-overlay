@@ -1,6 +1,6 @@
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/CMake/Modules/FindUrho3D.cmake Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/FindUrho3D.cmake
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/CMake/Modules/FindUrho3D.cmake	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/FindUrho3D.cmake	2021-03-04 17:04:00.341361174 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/FindUrho3D.cmake	2021-03-05 01:15:54.216341828 -0800
 @@ -67,7 +67,13 @@ if (CMAKE_PROJECT_NAME STREQUAL Urho3D A
      endif ()
      if (URHO3D_LUA)
@@ -33,7 +33,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
          file (STRINGS ${URHO3D_BASE_INCLUDE_DIR}/librevision.h URHO3D_VERSION REGEX "^const char\\* revision=\"[^\"]*\".*$")
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/CMake/Modules/GenerateExportHeader.cmake Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/GenerateExportHeader.cmake
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/CMake/Modules/GenerateExportHeader.cmake	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/GenerateExportHeader.cmake	2021-03-04 17:04:00.341361174 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/GenerateExportHeader.cmake	2021-03-05 01:15:54.216341828 -0800
 @@ -215,10 +215,10 @@ macro(_test_compiler_hidden_visibility)
        AND NOT CMAKE_CXX_COMPILER_ID MATCHES PGI
        AND NOT CMAKE_CXX_COMPILER_ID MATCHES Watcom)
@@ -51,7 +51,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/CMake/Modules/UrhoCommon.cmake Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/UrhoCommon.cmake
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/CMake/Modules/UrhoCommon.cmake	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/UrhoCommon.cmake	2021-03-04 17:04:00.341361174 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/UrhoCommon.cmake	2021-03-05 01:15:54.216341828 -0800
 @@ -562,8 +562,8 @@ if (MSVC)
      set (CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /OPT:REF /OPT:ICF")
  else ()
@@ -145,7 +145,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      if (URHO3D_64BIT AND APPLE AND NOT ARM)
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Clang-Tools/AutoBinder/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Clang-Tools/AutoBinder/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Clang-Tools/AutoBinder/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Clang-Tools/AutoBinder/CMakeLists.txt	2021-03-04 17:04:00.341361174 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Clang-Tools/AutoBinder/CMakeLists.txt	2021-03-05 01:15:54.216341828 -0800
 @@ -22,6 +22,7 @@
  
  # Define target name
@@ -168,7 +168,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  install (DIRECTORY Templates DESTINATION ${DEST_RUNTIME_DIR})
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Clang-Tools/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Clang-Tools/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Clang-Tools/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Clang-Tools/CMakeLists.txt	2021-03-04 17:04:00.341361174 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Clang-Tools/CMakeLists.txt	2021-03-05 01:15:54.216341828 -0800
 @@ -56,9 +56,9 @@ else ()
  endif ()
  
@@ -223,8 +223,8 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
          COMMENT "Auto-binding for JavaScript")
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/CMakeLists.txt	2021-03-04 17:05:00.895719547 -0800
-@@ -67,74 +67,285 @@ if (URHO3D_LIB_TYPE STREQUAL SHARED AND
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/CMakeLists.txt	2021-03-05 01:16:44.370284405 -0800
+@@ -67,74 +67,296 @@ if (URHO3D_LIB_TYPE STREQUAL SHARED AND
      endif ()
  endif ()
  
@@ -360,7 +360,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
 +        install (FILES "${CMAKE_BINARY_DIR}/Source/ThirdParty/Civetweb/libCivetweb.so"
 +            DESTINATION /usr/${GET_LIBDIR}/Urho3D
 +            PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-+    elseif ()
++    else ()
 +        list (APPEND LIBS civetweb)
 +    endif ()
 +    if (NOT URHO3D_SYSTEM_SLIKENET)
@@ -370,7 +370,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
 +        install (FILES "${CMAKE_BINARY_DIR}/Source/ThirdParty/SLikeNet/libSLikeNet.so"
 +            DESTINATION /usr/${GET_LIBDIR}/Urho3D
 +            PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-+    elseif ()
++    else ()
 +        list (APPEND LIBS SLikeNet)
 +    endif ()
  endif ()
@@ -418,6 +418,13 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
 +		link_directories ("${CMAKE_BINARY_DIR}/Source/ThirdParty/DetourTileCache")
 +		link_directories ("${CMAKE_BINARY_DIR}/Source/ThirdParty/Recast")
 +        list (APPEND LIBS Detour DetourCrowd DetourTileCache Recast)
++        install (FILES
++			"${CMAKE_BINARY_DIR}/Source/ThirdParty/Detour/libDetour.so"
++			"${CMAKE_BINARY_DIR}/Source/ThirdParty/Recast/libRecast.so"
++			"${CMAKE_BINARY_DIR}/Source/ThirdParty/DetourCrowd/libDetourCrowd.so"
++			"${CMAKE_BINARY_DIR}/Source/ThirdParty/DetourTileCache/libDetourTileCache.so"
++            DESTINATION /usr/${GET_LIBDIR}/Urho3D
++            PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 +    else ()
 +        list (APPEND LIBS Detour DetourCrowd DetourTileCache Recast)
 +    endif ()
@@ -492,6 +499,10 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
 +            add_subdirectory (ThirdParty/GLEW)
 +            link_directories ("${CMAKE_BINARY_DIR}/Source/ThirdParty/GLEW")
 +            list (APPEND LIBS GLEW)
++            install (FILES "${CMAKE_BINARY_DIR}/Source/ThirdParty/GLEW/libGLEW.so"
++                DESTINATION /usr/${GET_LIBDIR}/Urho3D
++                PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
++
 +        else ()
 +            list (APPEND LIBS GLEW GL X11 GLU GL)
 +        endif ()
@@ -534,7 +545,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/ik/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/ik/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/ik/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/ik/CMakeLists.txt	2021-03-04 17:04:00.341361174 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/ik/CMakeLists.txt	2021-03-05 01:15:54.216341828 -0800
 @@ -20,6 +20,7 @@
  #
  
@@ -545,7 +556,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  set (TARGET_NAME ik)
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/Lua/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/Lua/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/Lua/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/Lua/CMakeLists.txt	2021-03-04 17:04:00.345361326 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/Lua/CMakeLists.txt	2021-03-05 01:15:54.216341828 -0800
 @@ -47,14 +47,25 @@ if (NOT CMAKE_PROJECT_NAME MATCHES ^Urho
      # Define source files
      set (SOURCE_FILES src/lua.c)
@@ -583,7 +594,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  endif ()
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/LuaJIT/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/LuaJIT/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/LuaJIT/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/LuaJIT/CMakeLists.txt	2021-03-04 17:04:00.345361326 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/LuaJIT/CMakeLists.txt	2021-03-05 01:15:54.216341828 -0800
 @@ -610,7 +610,7 @@ if (NOT CMAKE_PROJECT_NAME MATCHES ^Urho
      adjust_target_name ()   # Adjust to intended target output name
      if (TARGET LuaJIT_universal)
@@ -595,7 +606,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      # Define post build steps
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/SDL/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/SDL/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/SDL/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/SDL/CMakeLists.txt	2021-03-04 17:04:00.345361326 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/SDL/CMakeLists.txt	2021-03-05 01:15:54.216341828 -0800
 @@ -585,6 +585,7 @@ if(LIBC)
      check_symbol_exists(M_PI math.h HAVE_M_PI)
      # Urho3D - for consistency sake use check_include_file() to check for HAVE_MPROTECT
@@ -618,7 +629,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
        check_function_exists("${_FN}" ${_HAVEVAR})
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt	2021-03-04 17:04:00.345361326 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt	2021-03-05 01:15:54.216341828 -0800
 @@ -51,7 +51,13 @@ if (NOT CMAKE_PROJECT_NAME STREQUAL Urho
      endif ()
  
@@ -664,7 +675,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  setup_executable (TOOL NODEPS)
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt	2021-03-04 17:04:00.345361326 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt	2021-03-05 01:15:54.216341828 -0800
 @@ -27,7 +27,13 @@ set (TARGET_NAME toluapp)
  define_source_files (GLOB_CPP_PATTERNS *.c)
  
@@ -682,7 +693,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  setup_library ()
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Tools/AssetImporter/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Tools/AssetImporter/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Tools/AssetImporter/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Tools/AssetImporter/CMakeLists.txt	2021-03-04 17:04:00.345361326 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Tools/AssetImporter/CMakeLists.txt	2021-03-05 01:15:54.220341982 -0800
 @@ -27,9 +27,17 @@ set (TARGET_NAME AssetImporter)
  define_source_files ()
  
@@ -706,7 +717,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  setup_executable (TOOL)
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Tools/PackageTool/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Tools/PackageTool/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Tools/PackageTool/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Tools/PackageTool/CMakeLists.txt	2021-03-04 17:04:00.345361326 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Tools/PackageTool/CMakeLists.txt	2021-03-05 01:15:54.220341982 -0800
 @@ -95,7 +95,11 @@ if (NOT CMAKE_PROJECT_NAME STREQUAL Urho
          include (CheckIncludeFile)
          check_include_file (stdint.h HAVE_STDINT_H)
@@ -735,7 +746,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  setup_executable (TOOL)
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/CMakeLists.txt	2021-03-04 17:04:00.345361326 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/CMakeLists.txt	2021-03-05 01:15:54.220341982 -0800
 @@ -22,6 +22,11 @@
  
  # Define target name
