@@ -213,7 +213,7 @@ especially if dependencies are statically linked.
 | dev-util/nunit | TBA |
 | dev-util/objconv | TBA |
 | dev-util/premake | Kept for latest versions. |
-| dev-util/pullp | This is an Electron based pull request monitoring program. |
+| dev-util/pullp | This is an Electron based git pull merge request monitoring program. |
 | dev-util/snippetstore | This is a program to save reusable code templates in Electron. |
 | dev-util/ycm-generator | You need this if you want c/c++/objc/objc++ support with your ycmd client.  It is mandatory for those languages. |
 | dev-util/ycmd | This is a YouCompleteMe server.  Just add your ycmd client to your text editor then you have code completion support.  The 2014 ebuild is for older clients.  The 2017 ebuilds require clients use the new HMAC header calculation.  It supports C#, C, C++, Objective C, Objective C++, rust, go, javascript, typescript, python.  If you use the `javascript` or `typescript` USE flag, then you need to add the jm-overlay to pull in the dev-nodejs packages. |
