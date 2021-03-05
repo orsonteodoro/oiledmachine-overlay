@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-  <!-- only on the oiledmachine-overlay -->
   <maintainer type="person">
+    <!-- only on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <!-- obtained from the science overlay -->
-  <!-- originator -->
   <maintainer type="person">
+    <!-- obtained from the science overlay -->
+    <!-- originator -->
     <email>harald.weiner@jku.at</email>
     <name>Harald Weiner</name>
   </maintainer>
@@ -21,6 +21,14 @@
     <bugs-to>https://github.com/emscripten-core/emscripten/issues</bugs-to>
     <remote-id type="github">emscripten-core/emscripten</remote-id>
   </upstream>
+  <longdescription>
+    Only in the oiledmachine-overlay:
+    This ebuild tracks only the highest minor version modulo 10 changes
+    for slotting.
+
+    Send GitHub issue request to only oiledmachine-overlay if you need
+    a particular release that breaks API/ABI before or after changes.
+  </longdescription>
   <use>
     <flag name="asmjs">Adds asm.js output support.  This is deprecated.
       </flag>

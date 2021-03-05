@@ -5,10 +5,10 @@
 # https://github.com/emscripten-core/emscripten/blob/master/site/source/docs/building_from_source/toolchain_what_is_needed.rst
 
 # For the closure-compiler-npm version see:
-# https://github.com/emscripten-core/emscripten/blob/1.40.0/package.json
+# https://github.com/emscripten-core/emscripten/blob/1.39.20/package.json
 
 # Keep emscripten.config.x.yy.zz updated if changed from:
-# https://github.com/emscripten-core/emscripten/blob/1.40.0/tools/settings_template.py
+# https://github.com/emscripten-core/emscripten/blob/1.39.20/tools/settings_template.py
 
 EAPI=7
 DESCRIPTION="LLVM-to-JavaScript Compiler"
@@ -87,10 +87,10 @@ system-closure-compiler test +wasm"
 JAVA_V="1.8"
 # See https://github.com/google/closure-compiler-npm/blob/v20200224.0.0/packages/google-closure-compiler/package.json
 # They use the latest commit for llvm and clang
-# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/1.40.0/tools/shared.py#L432
-# For the required nodejs, see https://github.com/emscripten-core/emscripten/blob/1.40.0/tools/shared.py#L43
+# For the required LLVM, see https://github.com/emscripten-core/emscripten/blob/1.39.20/tools/shared.py#L431
+# For the required nodejs, see https://github.com/emscripten-core/emscripten/blob/1.39.20/tools/shared.py#L43
 LLVM_V="12.0.0"
-BINARYEN_V="94"
+BINARYEN_V="93"
 RDEPEND="${PYTHON_DEPS}
 	app-eselect/eselect-emscripten
 	asmjs? ( ~dev-util/emscripten-fastcomp-${PV}:= )
@@ -158,12 +158,16 @@ _PATCHES=(
 CMAKE_BUILD_TYPE=Release
 
 pkg_nofetch() {
-	# no fetch on all-rights-reserved
+	# No fetch on all-rights-reserved
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	einfo \
 "Please download\n\
   ${FN_SRC}\n\
-from ${DOWNLOAD_SITE} and rename it to ${FN_DEST} place it in ${distdir}"
+from ${DOWNLOAD_SITE}\n\
+and rename it to ${FN_DEST} place it in ${distdir} .\n\
+\n\
+If you are in a hurry, you can do \`wget -O ${distdir}/${FN_DEST} \
+https://github.com/emscripten-core/emscripten/archive/${FN_SRC}\`"
 }
 
 pkg_setup() {
@@ -274,7 +278,7 @@ prepare_file() {
 "s|\${BINARYEN_SLOT}|${BINARYEN_V}|" \
 		"${dest_dir}/${source_filename}" || die
 	fi
-	if ! use native-optimizer ; then
+	if ! use native-optimizer || [[ "${type}" == "wasm" ]] ; then
 		sed -i "/EMSCRIPTEN_NATIVE_OPTIMIZER/d" \
 			"${dest_dir}/${source_filename}" || die
 	fi
@@ -295,7 +299,7 @@ prepare_file() {
 				"${dest_dir}/${source_filename}" || die
 		else
 			# Using defaults
-			sed -i "/EMSDK_CLOSURE_COMPILER/d" \
+			sed -i -e "/EMSDK_CLOSURE_COMPILER/d" \
 				"${dest_dir}/${source_filename}" || die
 		fi
 	else
@@ -446,7 +450,7 @@ pkg_postinst() {
 	fi
 	einfo \
 "\n\
-Set wasm (llvm) or asm.js (emscripten-fastcomp) output via\n\
+Set to wasm (llvm) or asm.js (emscripten-fastcomp) output via\n\
 app-eselect/eselect-emscripten.
 \n"
 }
