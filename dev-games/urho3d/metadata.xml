@@ -42,7 +42,7 @@
       EBUILD-INCOMPLETE)</flag>
     <flag name="angelscript">Adds scripting support for the AngelScript
       scripting language</flag>
-    <flag name="bindings">Enables scripting support</flag>
+    <flag name="bindings">Enables bindings documentation generation.</flag>
     <flag name="box2d">Adds 2D realistic physics</flag>
     <flag name="box2d_2_3">Builds against the 2.3 version (released circa 2014)
       series for maximium script compatibility</flag>
@@ -52,7 +52,8 @@
     <flag name="bullet">Adds realistic 3D physics support</flag>
     <flag name="check-pedantic-requirements">Adds more compile time
       checks</flag>
-    <flag name="clang-tools">Builds clang-tools</flag>
+    <flag name="clang-tools">Used to ensure the minimal feature set matches
+      upstream binding defaults.</flag>
     <flag name="cpu_flags_x86_3dnow">Use 3DNow CPU optimizations (for 32-bit
       x86 only)</flag>
     <flag name="cpu_flags_x86_mmx">Use MMX CPU optimizations (for 32-bit x86

@@ -3,7 +3,8 @@
 
 EAPI=7
 
-inherit cmake-utils eutils linux-info multilib-minimal static-libs urho3d
+LLVM_MAX_SLOT=9
+inherit cmake-utils eutils linux-info llvm multilib-minimal static-libs urho3d
 
 DESCRIPTION="Cross-platform 2D and 3D game engine."
 HOMEPAGE="http://urho3d.github.io/"
@@ -56,7 +57,7 @@ IUSE+=" ${X86_CPU_FEATURES[@]%:*}
 	 dbus
 	 debug
 	-debug-raw-script-loader
-	-docs
+	-doc
 	 esd
 	-extras
 	+filewatcher
@@ -79,7 +80,7 @@ IUSE+=" ${X86_CPU_FEATURES[@]%:*}
 	-odbc
 	+opengl
 	 oss
-	+pch
+	 pch
 	+profiling
 	 pulseaudio
 	+recastnavigation
@@ -145,8 +146,12 @@ SDL2_REQUIRED_USE="
 REQUIRED_USE+="
 	${SDL2_REQUIRED_USE}
 	alsa? ( sound threads )
+	bindings? ( !pch )
 	box2d? ( ^^ ( box2d_2_3 box2d_2_4 ) )
-        clang-tools? ( !pch )
+        clang-tools? ( !pch
+		angelscript bullet filewatcher ik logging lua profiling network recastnavigation sqlite
+		!test !luajit !odbc
+	)
 	cpu_flags_x86_3dnow? ( !cpu_flags_x86_sse !cpu_flags_x86_mmx )
 	cpu_flags_x86_mmx? ( !cpu_flags_x86_3dnow !cpu_flags_x86_sse )
 	cpu_flags_x86_sse? ( !cpu_flags_x86_3dnow !cpu_flags_x86_mmx )
@@ -167,6 +172,7 @@ REQUIRED_USE+="
 
 BOOST_VER="1.64"
 CIVETWEB_VER="1.7"
+LLVM_SLOT="9"
 LUA_VER="5.1"
 LUAJIT_VER="2.1"
 SDL_VER="2.0.10"
@@ -272,7 +278,7 @@ DEPEND_ANDROID="
 DEPEND_WEB="
 	web? (
 	      >=dev-util/emscripten-1.36.10[wasm(+)]
-	      >=sys-devel/llvm-3.9.0[${MULTILIB_USEDEP}]
+	      >=sys-devel/llvm-3.9.0:${LLVM_SLOT}[${MULTILIB_USEDEP}]
 		system-boost? ( >=dev-libs/boost-${BOOST_VER} )
 	)"
 DEPEND_NATIVE="
@@ -333,16 +339,16 @@ DEPEND+=" ${DEPEND_COMMON}
 	${DEPEND_ANDROID}
 	${DEPEND_NATIVE}
 	${DEPEND_WEB}
-	bindings? ( sys-devel/llvm[${MULTILIB_USEDEP}] )
-	clang-tools? ( sys-devel/llvm[${MULTILIB_USEDEP}] )"
+	bindings? ( sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}] )
+	clang-tools? ( sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}] )"
 RDEPEND+=" ${DEPEND_COMMON}
 	${DEPEND_RPI}
 	${DEPEND_ANDROID}
 	${DEPEND_NATIVE}
 	${DEPEND_WEB}
 	!system-sdl? ( ${SDL2_RDEPEND} )
-	bindings? ( sys-devel/llvm[${MULTILIB_USEDEP}] )
-	clang-tools? ( sys-devel/llvm[${MULTILIB_USEDEP}] )"
+	bindings? ( sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}] )
+	clang-tools? ( sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}] )"
 BDEPEND+=" >=dev-util/cmake-3.2.3"
 RESTRICT="mirror"
 EGIT_COMMIT="d34dda158ecd7694fcfd55684caade7e131b8a45"
@@ -353,6 +359,10 @@ S="${WORKDIR}/Urho3D-${EGIT_COMMIT}"
 EPATCH_OPTS="--binary -p1"
 
 pkg_setup() {
+	if use clang-tools || use bindings ; then
+		llvm_pkg_setup
+	fi
+
 	if use hidapi ; then
 		linux-info_pkg_setup
 		if ! linux_config_src_exists ; then
@@ -456,6 +466,7 @@ _prepare_common() {
 	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-civetweb.patch"
 	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-stanhull-visibility-default-crlf.patch"
 	eapply "${FILESDIR}/urho3d-1.8_alpha-lua-fix-export.patch"
+	eapply "${FILESDIR}/urho3d-1.8_alpha-autobinder-llvm-9-compat.patch"
 
 	local files_box2d_lines=(
 		bin/Data/LuaScripts/28_Urho2DPhysicsRope.lua
@@ -643,15 +654,16 @@ configure_android() {
 		-DURHO3D_BINDINGS=$(usex bindings)
 		-DURHO3D_DATABASE_ODBC=OFF
 		-DURHO3D_DATABASE_SQLITE=$(usex sqlite)
-		-DURHO3D_DOCS=$(usex docs)
+		-DURHO3D_DOCS=$(usex doc)
 		-DURHO3D_EXTRAS=OFF
 		-DURHO3D_FILEWATCHER=$(usex filewatcher)
 		-DURHO3D_IK=$(usex ik)
 		-DURHO3D_LIB_TYPE=$(usex static-libs STATIC SHARED)
 		-DURHO3D_LOGGING=$(usex logging)
 		-DURHO3D_LUA=$(usex lua)
-		-DURHO3D_LUAJIT=$(usex luajit)
 		-DURHO3D_LUA_RAW_SCRIPT_LOADER=$(usex debug-raw-script-loader)
+		-DURHO3D_LUAJIT=$(usex luajit)
+		-DURHO3D_LUASCRIPT=$(usex lua ON $(usex luajit ON OFF))
 		-DURHO3D_NAVIGATION=$(usex recastnavigation)
 		-DURHO3D_NETWORK=$(usex network)
 		-DURHO3D_PCH=$(usex pch)
@@ -732,15 +744,16 @@ configure_native() {
 		-DURHO3D_BINDINGS=$(usex bindings)
 		-DURHO3D_DATABASE_ODBC=$(usex odbc)
 		-DURHO3D_DATABASE_SQLITE=$(usex sqlite)
-		-DURHO3D_DOCS=$(usex docs)
+		-DURHO3D_DOCS=$(usex doc)
 		-DURHO3D_EXTRAS=$(usex extras)
 		-DURHO3D_FILEWATCHER=$(usex filewatcher)
 		-DURHO3D_IK=$(usex ik)
 		-DURHO3D_LIB_TYPE=$(usex static-libs STATIC SHARED)
 		-DURHO3D_LOGGING=$(usex logging)
 		-DURHO3D_LUA=$(usex lua)
-		-DURHO3D_LUAJIT=$(usex luajit)
 		-DURHO3D_LUA_RAW_SCRIPT_LOADER=$(usex debug-raw-script-loader)
+		-DURHO3D_LUAJIT=$(usex luajit)
+		-DURHO3D_LUASCRIPT=$(usex lua ON $(usex luajit ON OFF))
 		-DURHO3D_NAVIGATION=$(usex recastnavigation)
 		-DURHO3D_NETWORK=$(usex network)
 		-DURHO3D_PCH=$(usex pch)
@@ -835,15 +848,16 @@ configure_rpi() {
 		-DURHO3D_BINDINGS=$(usex bindings)
 		-DURHO3D_DATABASE_ODBC=$(usex odbc)
 		-DURHO3D_DATABASE_SQLITE=$(usex sqlite)
-		-DURHO3D_DOCS=$(usex docs)
+		-DURHO3D_DOCS=$(usex doc)
 		-DURHO3D_EXTRAS=$(usex extras)
 		-DURHO3D_FILEWATCHER=$(usex filewatcher)
 		-DURHO3D_IK=$(usex ik)
 		-DURHO3D_LIB_TYPE=$(usex static-libs STATIC SHARED)
 		-DURHO3D_LOGGING=$(usex logging)
 		-DURHO3D_LUA=$(usex lua)
-		-DURHO3D_LUAJIT=$(usex luajit)
 		-DURHO3D_LUA_RAW_SCRIPT_LOADER=$(usex debug-raw-script-loader)
+		-DURHO3D_LUAJIT=$(usex luajit)
+		-DURHO3D_LUASCRIPT=$(usex lua ON $(usex luajit ON OFF))
 		-DURHO3D_NAVIGATION=$(usex recastnavigation)
 		-DURHO3D_NETWORK=$(usex network)
 		-DURHO3D_PCH=$(usex pch)
@@ -940,18 +954,21 @@ configure_web() {
 		-DEMSCRIPTEN=ON
 		-DEMSCRIPTEN_ROOT_PATH="${myemscriptpath}"
 		-DURHO3D_ANGELSCRIPT=OFF
-		-DURHO3D_BINDINGS=OFF
+		-DURHO3D_BINDINGS=$(usex bindings)
+		-DURHO3D_CLANG_TOOLS=OFF
 		-DURHO3D_DATABASE_ODBC=OFF
 		-DURHO3D_DATABASE_SQLITE=$(usex sqlite)
-		-DURHO3D_DOCS=$(usex docs)
+		-DURHO3D_DOCS=$(usex doc)
 		-DURHO3D_EXTRAS=OFF
 		-DURHO3D_FILEWATCHER=$(usex filewatcher)
 		-DURHO3D_IK=$(usex ik)
+		-DURHO3D_JAVASCRIPT=$(usex bindings)
 		-DURHO3D_LIB_TYPE=STATIC
 		-DURHO3D_LOGGING=$(usex logging)
 		-DURHO3D_LUA=$(usex lua)
-		-DURHO3D_LUAJIT=OFF
 		-DURHO3D_LUA_RAW_SCRIPT_LOADER=$(usex debug-raw-script-loader)
+		-DURHO3D_LUAJIT=OFF
+		-DURHO3D_LUASCRIPT=$(usex lua)
 		-DURHO3D_NAVIGATION=$(usex recastnavigation)
 		-DURHO3D_NETWORK=OFF
 		-DURHO3D_PACKAGING=ON
@@ -1010,6 +1027,13 @@ src_configure() {
 			cd "${BUILD_DIR}" || die
 			static-libs_configure() {
 				cd "${BUILD_DIR}" || die
+
+				if use bindings || use clang-tools ; then
+					local chost=$(get_abi_CHOST ${ABI})
+					export CC=/usr/lib/llvm/${LLVM_SLOT}/bin/${chost}-clang
+					export CXX=/usr/lib/llvm/${LLVM_SLOT}/bin/${chost}-clang++
+				fi
+
 				if [[ "${EURHO3D}" == "android" ]] ; then
 					configure_android
 				elif [[ "${EURHO3D}" == "native" ]] ; then

@@ -1,0 +1,18 @@
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Clang-Tools/AutoBinder/AutoBinder.cpp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Clang-Tools/AutoBinder/AutoBinder.cpp
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Clang-Tools/AutoBinder/AutoBinder.cpp	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Clang-Tools/AutoBinder/AutoBinder.cpp	2021-03-04 12:57:53.239300706 -0800
+@@ -70,11 +70,11 @@ class ExtractCallback : public MatchFind
+ public :
+     virtual void run(const MatchFinder::MatchResult& result)
+     {
+-        for (auto& i: categories_)
++        for (const std::string& i: categories_)
+         {
+-            auto symbol = result.Nodes.getNodeAs<StringLiteral>(i);
++            const llvm::StringLiteral* symbol = result.Nodes.getNodeAs<const llvm::StringLiteral>(StringRef(i));
+             if (symbol)
+-                categoryData_[i].symbols_.insert(symbol->getString());
++                categoryData_[i].symbols_.insert(((StringRef*)symbol)->str());
+         }
+     }
+ 

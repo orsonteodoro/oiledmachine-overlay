@@ -1,6 +1,6 @@
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/CMake/Modules/FindUrho3D.cmake Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/FindUrho3D.cmake
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/CMake/Modules/FindUrho3D.cmake	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/FindUrho3D.cmake	2021-03-04 01:50:44.912091381 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/FindUrho3D.cmake	2021-03-04 17:04:00.341361174 -0800
 @@ -67,7 +67,13 @@ if (CMAKE_PROJECT_NAME STREQUAL Urho3D A
      endif ()
      if (URHO3D_LUA)
@@ -33,7 +33,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
          file (STRINGS ${URHO3D_BASE_INCLUDE_DIR}/librevision.h URHO3D_VERSION REGEX "^const char\\* revision=\"[^\"]*\".*$")
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/CMake/Modules/GenerateExportHeader.cmake Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/GenerateExportHeader.cmake
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/CMake/Modules/GenerateExportHeader.cmake	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/GenerateExportHeader.cmake	2021-03-04 01:50:44.912091381 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/GenerateExportHeader.cmake	2021-03-04 17:04:00.341361174 -0800
 @@ -215,10 +215,10 @@ macro(_test_compiler_hidden_visibility)
        AND NOT CMAKE_CXX_COMPILER_ID MATCHES PGI
        AND NOT CMAKE_CXX_COMPILER_ID MATCHES Watcom)
@@ -51,7 +51,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/CMake/Modules/UrhoCommon.cmake Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/UrhoCommon.cmake
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/CMake/Modules/UrhoCommon.cmake	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/UrhoCommon.cmake	2021-03-04 02:00:06.069592349 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/UrhoCommon.cmake	2021-03-04 17:04:00.341361174 -0800
 @@ -562,8 +562,8 @@ if (MSVC)
      set (CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /OPT:REF /OPT:ICF")
  else ()
@@ -63,7 +63,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-invalid-offsetof")
      if (NOT ANDROID)    # Most of the flags are already setup in Android toolchain file
          if (ARM AND CMAKE_SYSTEM_NAME STREQUAL Linux)
-@@ -744,6 +744,81 @@ else ()
+@@ -744,6 +744,79 @@ else ()
          endif ()
      endif ()
  endif ()
@@ -138,16 +138,14 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
 +    add_definitions (-DURHO3D_SYSTEM_LUA)
 +endif ()
 +
-+
 +add_definitions (-DURHO3D)
-+
 +
  # LuaJIT specific - extra linker flags for linking against LuaJIT (adapted from LuaJIT's original Makefile)
  if (URHO3D_LUAJIT)
      if (URHO3D_64BIT AND APPLE AND NOT ARM)
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Clang-Tools/AutoBinder/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Clang-Tools/AutoBinder/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Clang-Tools/AutoBinder/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Clang-Tools/AutoBinder/CMakeLists.txt	2021-03-04 01:50:44.912091381 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Clang-Tools/AutoBinder/CMakeLists.txt	2021-03-04 17:04:00.341361174 -0800
 @@ -22,6 +22,7 @@
  
  # Define target name
@@ -156,10 +154,77 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  
  # Define source files
  define_source_files ()
+@@ -29,6 +30,11 @@ define_source_files ()
+ # Define dependency libs
+ add_subdirectory (${CMAKE_CURRENT_SOURCE_DIR}/../../ThirdParty/Mustache Mustache)
+ 
++execute_process (COMMAND ${LLVM_CONFIG} --libdir OUTPUT_VARIABLE LLVM_LIBDIR OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
++link_directories(${LLVM_LIBDIR})
++execute_process (COMMAND ${LLVM_CONFIG} --includedir OUTPUT_VARIABLE LLVM_INCLUDEDIR OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
++include_directories(${LLVM_INCLUDEDIR})
++
+ # Setup target
+ setup_executable (TOOL NODEPS)
+ install (DIRECTORY Templates DESTINATION ${DEST_RUNTIME_DIR})
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Clang-Tools/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Clang-Tools/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Clang-Tools/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Clang-Tools/CMakeLists.txt	2021-03-04 17:04:00.341361174 -0800
+@@ -56,9 +56,9 @@ else ()
+ endif ()
+ 
+ # LLVM/Clang is assumed to be installed in a system-wide location when not explicitly defined using env-var
+-if (DEFINED ENV{LLVM_CLANG_ROOT})
+-    set (CMAKE_SYSROOT $ENV{LLVM_CLANG_ROOT})
+-endif ()
++#if (DEFINED ENV{LLVM_CLANG_ROOT})
++#    set (CMAKE_SYSROOT $ENV{LLVM_CLANG_ROOT})
++#endif ()
+ execute_process (COMMAND ${LLVM_CONFIG} --bindir OUTPUT_VARIABLE LLVM_BINDIR OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+ 
+ # No exception and no RTTI
+@@ -75,7 +75,7 @@ set (LIBS clangTooling clangFrontend cla
+ execute_process (COMMAND ${LLVM_CONFIG} --system-libs OUTPUT_VARIABLE LLVM_SYSLIBS OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
+ string (REGEX REPLACE " *-l" ";" LLVM_SYSLIBS "${LLVM_SYSLIBS}")   # Stringify against empty output variable
+ list (APPEND LIBS ${LLVM_SYSLIBS})
+-set (INCLUDE_DIRS ${CMAKE_BINARY_DIR}/${DEST_INCLUDE_DIR}/ThirdParty)
++set (INCLUDE_DIRS ${CMAKE_BINARY_DIR}/${DEST_INCLUDE_DIR}/ThirdParty ${STDDEF_INCLUDE_PATH})
+ 
+ # Clang-tools can be built in two ways: on the fly in normal build one at a time or build all of them in a special Clang-tools build tree (for development)
+ if (CMAKE_PROJECT_NAME MATCHES ExternalProject)
+@@ -118,25 +118,25 @@ else ()
+         COMMENT "Annotating Urho3D library source files")
+     add_custom_target (autobinder
+         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/Source/Urho3D/generated
+-        COMMAND ${CMAKE_BINARY_DIR}/bin/tool/clang/AutoBinder -p ${CMAKE_BINARY_DIR} -t ${CMAKE_CURRENT_SOURCE_DIR}/AutoBinder/Templates -o ${CMAKE_BINARY_DIR}/Source/Urho3D/generated -s AngelScript -s LuaScript -s JavaScript ${ANNOTATED_SOURCES}
++        COMMAND ${CMAKE_BINARY_DIR}/bin/tool/clang/AutoBinder --extra-arg=-I${STDDEF_INCLUDE_PATH} -p ${CMAKE_BINARY_DIR} -t ${CMAKE_CURRENT_SOURCE_DIR}/AutoBinder/Templates -o ${CMAKE_BINARY_DIR}/Source/Urho3D/generated -s AngelScript -s LuaScript -s JavaScript ${ANNOTATED_SOURCES}
+         DEPENDS AutoBinder
+         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Source/Urho3D
+         COMMENT "Auto-binding for all script subsystems")
+     add_custom_target (autobinder-angelscript
+         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/Source/Urho3D/generated
+-        COMMAND ${CMAKE_BINARY_DIR}/bin/tool/clang/AutoBinder -p ${CMAKE_BINARY_DIR} -t ${CMAKE_CURRENT_SOURCE_DIR}/AutoBinder/Templates -o ${CMAKE_BINARY_DIR}/Source/Urho3D/generated -s AngelScript ${ANNOTATED_SOURCES}
++        COMMAND ${CMAKE_BINARY_DIR}/bin/tool/clang/AutoBinder --extra-arg=-I${STDDEF_INCLUDE_PATH} -p ${CMAKE_BINARY_DIR} -t ${CMAKE_CURRENT_SOURCE_DIR}/AutoBinder/Templates -o ${CMAKE_BINARY_DIR}/Source/Urho3D/generated -s AngelScript ${ANNOTATED_SOURCES}
+         DEPENDS AutoBinder
+         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Source/Urho3D
+         COMMENT "Auto-binding for AngelScript")
+     add_custom_target (autobinder-luascript
+         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/Source/Urho3D/generated
+-        COMMAND ${CMAKE_BINARY_DIR}/bin/tool/clang/AutoBinder -p ${CMAKE_BINARY_DIR} -t ${CMAKE_CURRENT_SOURCE_DIR}/AutoBinder/Templates -o ${CMAKE_BINARY_DIR}/Source/Urho3D/generated -s LuaScript ${ANNOTATED_SOURCES}
++        COMMAND ${CMAKE_BINARY_DIR}/bin/tool/clang/AutoBinder --extra-arg=-I${STDDEF_INCLUDE_PATH} -p ${CMAKE_BINARY_DIR} -t ${CMAKE_CURRENT_SOURCE_DIR}/AutoBinder/Templates -o ${CMAKE_BINARY_DIR}/Source/Urho3D/generated -s LuaScript ${ANNOTATED_SOURCES}
+         DEPENDS AutoBinder
+         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Source/Urho3D
+         COMMENT "Auto-binding for LuaScript")
+     add_custom_target (autobinder-javascript
+         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/Source/Urho3D/generated
+-        COMMAND ${CMAKE_BINARY_DIR}/bin/tool/clang/AutoBinder -p ${CMAKE_BINARY_DIR} -t ${CMAKE_CURRENT_SOURCE_DIR}/AutoBinder/Templates -o ${CMAKE_BINARY_DIR}/Source/Urho3D/generated -s JavaScript ${ANNOTATED_SOURCES}
++        COMMAND ${CMAKE_BINARY_DIR}/bin/tool/clang/AutoBinder --extra-arg=-I${STDDEF_INCLUDE_PATH} -p ${CMAKE_BINARY_DIR} -t ${CMAKE_CURRENT_SOURCE_DIR}/AutoBinder/Templates -o ${CMAKE_BINARY_DIR}/Source/Urho3D/generated -s JavaScript ${ANNOTATED_SOURCES}
+         DEPENDS AutoBinder
+         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Source/Urho3D
+         COMMENT "Auto-binding for JavaScript")
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/CMakeLists.txt	2021-03-04 01:52:02.987051802 -0800
-@@ -67,71 +67,266 @@ if (URHO3D_LIB_TYPE STREQUAL SHARED AND
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/CMakeLists.txt	2021-03-04 17:05:00.895719547 -0800
+@@ -67,74 +67,285 @@ if (URHO3D_LIB_TYPE STREQUAL SHARED AND
      endif ()
  endif ()
  
@@ -448,9 +513,28 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      endif ()
  endif ()
  
++if (URHO3D_CLANG_TOOLS OR URHO3D_BINDINGS)
++    string (REGEX MATCH "[0-9]+.[0-9]+.[0-9]+" COMPILER_VER "${CMAKE_CXX_COMPILER_VERSION}")
++    if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
++        message(ERROR "GCC not supported for AutoBinder.  Switch to clang.")
++        execute_process(COMMAND gcc -dumpmachine
++            OUTPUT_VARIABLE GCC_HOST)
++        string (STRIP "${GCC_HOST}" GCC_HOST)
++        set(STDDEF_INCLUDE_PATH /usr/lib/gcc/${GCC_HOST}/${COMPILER_VER}/include)
++    elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
++        set(STDDEF_INCLUDE_PATH /usr/lib/clang/${COMPILER_VER}/include)
++    else ()
++        message(ERROR "Cannot find stddef.h include path")
++    endif ()
++endif ()
++
++
+ # Urho3D game engine library
+ add_subdirectory (Urho3D)
+ 
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/ik/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/ik/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/ik/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/ik/CMakeLists.txt	2021-03-04 01:50:44.912091381 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/ik/CMakeLists.txt	2021-03-04 17:04:00.341361174 -0800
 @@ -20,6 +20,7 @@
  #
  
@@ -461,7 +545,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  set (TARGET_NAME ik)
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/Lua/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/Lua/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/Lua/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/Lua/CMakeLists.txt	2021-03-04 01:50:44.912091381 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/Lua/CMakeLists.txt	2021-03-04 17:04:00.345361326 -0800
 @@ -47,14 +47,25 @@ if (NOT CMAKE_PROJECT_NAME MATCHES ^Urho
      # Define source files
      set (SOURCE_FILES src/lua.c)
@@ -499,7 +583,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  endif ()
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/LuaJIT/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/LuaJIT/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/LuaJIT/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/LuaJIT/CMakeLists.txt	2021-03-04 01:50:44.912091381 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/LuaJIT/CMakeLists.txt	2021-03-04 17:04:00.345361326 -0800
 @@ -610,7 +610,7 @@ if (NOT CMAKE_PROJECT_NAME MATCHES ^Urho
      adjust_target_name ()   # Adjust to intended target output name
      if (TARGET LuaJIT_universal)
@@ -511,7 +595,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      # Define post build steps
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/SDL/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/SDL/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/SDL/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/SDL/CMakeLists.txt	2021-03-04 01:50:44.912091381 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/SDL/CMakeLists.txt	2021-03-04 17:04:00.345361326 -0800
 @@ -585,6 +585,7 @@ if(LIBC)
      check_symbol_exists(M_PI math.h HAVE_M_PI)
      # Urho3D - for consistency sake use check_include_file() to check for HAVE_MPROTECT
@@ -534,7 +618,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
        check_function_exists("${_FN}" ${_HAVEVAR})
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt	2021-03-04 01:50:44.912091381 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt	2021-03-04 17:04:00.345361326 -0800
 @@ -51,7 +51,13 @@ if (NOT CMAKE_PROJECT_NAME STREQUAL Urho
      endif ()
  
@@ -580,7 +664,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  setup_executable (TOOL NODEPS)
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt	2021-03-04 01:50:44.912091381 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt	2021-03-04 17:04:00.345361326 -0800
 @@ -27,7 +27,13 @@ set (TARGET_NAME toluapp)
  define_source_files (GLOB_CPP_PATTERNS *.c)
  
@@ -598,7 +682,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  setup_library ()
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Tools/AssetImporter/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Tools/AssetImporter/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Tools/AssetImporter/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Tools/AssetImporter/CMakeLists.txt	2021-03-04 01:50:44.912091381 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Tools/AssetImporter/CMakeLists.txt	2021-03-04 17:04:00.345361326 -0800
 @@ -27,9 +27,17 @@ set (TARGET_NAME AssetImporter)
  define_source_files ()
  
@@ -622,7 +706,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  setup_executable (TOOL)
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Tools/PackageTool/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Tools/PackageTool/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Tools/PackageTool/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Tools/PackageTool/CMakeLists.txt	2021-03-04 01:50:44.912091381 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Tools/PackageTool/CMakeLists.txt	2021-03-04 17:04:00.345361326 -0800
 @@ -95,7 +95,11 @@ if (NOT CMAKE_PROJECT_NAME STREQUAL Urho
          include (CheckIncludeFile)
          check_include_file (stdint.h HAVE_STDINT_H)
@@ -651,7 +735,7 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  setup_executable (TOOL)
 diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/CMakeLists.txt
 --- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/CMakeLists.txt	2021-03-04 01:50:44.916091532 -0800
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/CMakeLists.txt	2021-03-04 17:04:00.345361326 -0800
 @@ -22,6 +22,11 @@
  
  # Define target name
@@ -664,6 +748,15 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  
  setup_lint ()
  
+@@ -198,7 +203,7 @@ if (URHO3D_BINDINGS)
+     endforeach ()
+     string (REGEX REPLACE "[^;]+API\\.cpp" "" ANNOTATED_SOURCES "${CPP_FILES}")    # Stringify to preserve the semicolons
+     add_custom_command (OUTPUT ${GEN_CPP_FILES}
+-        COMMAND ${CMAKE_BINARY_DIR}/bin/tool/clang/AutoBinder -p ${CMAKE_BINARY_DIR} -t ${CMAKE_BINARY_DIR}/bin/tool/clang/Templates -o ${CMAKE_CURRENT_BINARY_DIR}/generated ${SCRIPT_SUBSYSTEMS} ${ANNOTATED_SOURCES}
++        COMMAND ${CMAKE_BINARY_DIR}/bin/tool/clang/AutoBinder --extra-arg=-I${STDDEF_INCLUDE_PATH} -p ${CMAKE_BINARY_DIR} -t ${CMAKE_BINARY_DIR}/bin/tool/clang/Templates -o ${CMAKE_CURRENT_BINARY_DIR}/generated ${SCRIPT_SUBSYSTEMS} ${ANNOTATED_SOURCES}
+         COMMAND ${CMAKE_COMMAND} -E touch ${GEN_CPP_FILES}   # TODO: fake the output - WIP
+         DEPENDS AutoBinder ${H_FILES}
+         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 @@ -303,19 +308,36 @@ list (APPEND SOURCE_FILES ${GEN_CPP_FILE
  # Define dependency libs
  # Add include directories to find the precompiled header, export header, and installed headers from third-party libs
