@@ -106,9 +106,9 @@ dependency's source code was deleted.
 Some of the ebuilds in this repo contain improved comprehensive information
 describing USE flags, developer API documentation info, or special per-package
 environmental variables that improve the build process that can be found in
-the metadata.xml `epkginfo -x =dev-games/box2d-2.4.1-r2` for example.  Some of
-that information is only obtained by inspecting the comments of that
-file.  See `epkginfo --help` for details.
+the metadata.xml, or obtainable though `epkginfo -x =dev-games/box2d-2.4.1-r2`
+for example.  Some of that information is only obtained by inspecting the
+comments of that file.  See `epkginfo --help` for details.
 
 ## Security policy
 
