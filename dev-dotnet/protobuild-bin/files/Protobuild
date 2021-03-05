@@ -1,2 +1,0 @@
-#!/bin/bash
-mono /opt/Protobuild/bin/Protobuild.exe $@
