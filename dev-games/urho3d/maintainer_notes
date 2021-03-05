@@ -3,3 +3,5 @@
 39_CrowdNavigation	- AI pathfinding test and recastnavigation library
 32_Urho2DConstraints	- 2D physics, Box2D library test
 11_Physics		- 3D physics, Bullet library
+43_HttpRequestDemo	- Civetweb test
+16_Chat			- SLikeNet test

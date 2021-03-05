@@ -163,6 +163,7 @@ REQUIRED_USE+="
 	)
 	luajit? ( lua )
 	native
+	network? ( threads )
 	odbc? ( !sqlite )
 	opengl
 	sqlite? ( !odbc )
