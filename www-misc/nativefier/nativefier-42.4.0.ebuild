@@ -13,7 +13,7 @@ DEPEND="${RDEPEND}
 	images-to-icons? ( media-gfx/imagemagick )
 	>=net-libs/nodejs-10[npm]"
 ELECTRON_APP_AT_TYPES_NODE_V="10"
-ELECTRON_APP_ELECTRON_V="11.3.0" # See https://github.com/nativefier/nativefier/blob/v42.3.0/src/constants.ts
+ELECTRON_APP_ELECTRON_V="11.3.0" # See https://github.com/nativefier/nativefier/blob/v42.4.0/src/constants.ts
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
 inherit eutils desktop electron-app npm-utils
 SRC_URI=\
@@ -61,4 +61,8 @@ Chromium itself has recurrance interval of NVD critical vulnerabilites\n\
 between 5 days to ~5 months and high vulunerability advisories with higher\n\
 frequency.  This ebuild should be updated weekly with an updated version of\n\
 internal Chromium and programs produced by it must be updated weekly."
+	einfo \
+"You should add a /etc/portage/bashrc pkg_postinst ebuild phase hook in\n\
+order to update all executables produced by this app in order to close\n\
+vulnerabilities related to Chromium and it's internal dependencies."
 }
