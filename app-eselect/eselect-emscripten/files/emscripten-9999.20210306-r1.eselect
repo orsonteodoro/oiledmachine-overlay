@@ -153,7 +153,9 @@ find_targets() {
         [[ ! -f "${use_path}" ]] && continue
         for compiler in fastcomp llvm ; do
             if [[ "${compiler}" == "fastcomp" ]] ; then
-                echo "emscripten-${em_v},emscripten-fastcomp-${em_v}"
+                if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0" ; then
+                    echo "emscripten-${em_v},emscripten-fastcomp-${em_v}"
+                fi
             elif [[ "${compiler}" == "llvm" ]] ; then
                 for llvm_slot in ${LLVM_VERSIONS} ; do
                     if grep -q -F -e "llvm_targets_WebAssembly" \
