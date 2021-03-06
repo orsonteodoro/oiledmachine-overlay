@@ -211,13 +211,13 @@ contains a known infamous critical vulnerability.
 | dev-libs/leveldb | TBA |
 | dev-libs/libfreenect | TBA |
 | dev-libs/log4c | TBA |
-| dev-libs/nxjson | A JSON parser library for C. |
+| dev-libs/nxjson | A JSON parser library for C.  Used in nano-ycmd. |
 | dev-libs/pugixml | A XML parser library for C++. |
-| dev-libs/rapidjson | TBA |
+| dev-libs/rapidjson | A JSON parser in C++.  Used in Urho3D. |
 | dev-lua/luasqlite3 | TBA |
 | dev-rust/grex | grex is a regular expression generator |
 | dev-python/pocket | This is the Pocket API for Python. |
-| dev-python/py-stackexchange | TBA |
+| dev-python/py-stackexchange | A Python library to interact with StackExchange, Stack Overflow, etc. |
 | dev-python/python-plexapi | TBA |
 | dev-python/soundcloud-python | A Python library to interact with SoundCloud |
 | dev-util/bear | TBA |
@@ -256,13 +256,13 @@ contains a known infamous critical vulnerability.
 | media-libs/libomxil-bellagio | This package is one of the backends required for `mesa[openmax]` support. |
 | media-libs/libyuv | For xpra compression |
 | media-libs/mesa | This package contains optional untested openmax support. |
-| media-libs/mozjpeg | TBA |
+| media-libs/mozjpeg | A JPEG encoding library for higher visual quality and smaller file sizes.  It is a superset of libjpegturbo. |
 | media-libs/nestegg | TBA |
 | media-libs/openimageio | TBA |
 | media-libs/opusfile | TBA |
 | media-libs/mozjpeg | This is a dependency for CaesiumCLT. |
 | media-libs/libspng | This is another alternative png library that has been fuzzed to eliminate security holes. |
-| media-libs/theorafile | This is for the system library for the dotnet package. |
+| media-libs/theorafile | This is a system library for the dotnet package. |
 | media-libs/theoraplay | This needs testing. |
 | media-libs/vips | Kept for TypeScript. |
 | media-plugins/amd-radeon-prorender-blender | This ebuild ensures that the dependencies are installed and compatible to be able to use this plugin. |
