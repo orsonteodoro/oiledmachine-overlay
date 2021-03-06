@@ -136,7 +136,7 @@ advisories matching the version of the dependency will be mentioned in
 the ebuild at the time of packaging.  Only upstream can fix those problems
 especially if dependencies are statically linked.
 
-Some packages or ebuilds may hard masked in 
+Some packages or ebuilds may be hard masked in 
 [profiles/package.mask](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/profiles/package.mask)
 if the package still has some utility but unable to be removed, or
 contains a known infamous critical vulnerability.
