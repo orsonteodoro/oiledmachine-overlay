@@ -23,7 +23,6 @@ dev-dotnet/mono-addins
 dev-dotnet/monogame
 dev-dotnet/monogame-extended
 dev-dotnet/ndesk-options
-dev-dotnet/nuget
 dev-dotnet/nvorbis
 dev-dotnet/opentk
 dev-dotnet/pvrtexlibnet
