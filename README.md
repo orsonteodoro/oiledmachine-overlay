@@ -234,6 +234,7 @@ contains a known infamous critical vulnerability.
 | dev-util/snippetstore | This is a program to save reusable code templates in Electron. |
 | dev-util/ycm-generator | You need this if you want c/c++/objc/objc++ support with your ycmd client.  It is mandatory for those languages. |
 | dev-util/ycmd | This is a YouCompleteMe server.  Just add your ycmd client to your text editor then you have code completion support.  The 2014 ebuild is for older clients.  The 2017 ebuilds require clients use the new HMAC header calculation.  It supports C#, C, C++, Objective C, Objective C++, rust, go, javascript, typescript, python.  If you use the `javascript` or `typescript` USE flag, then you need to add the jm-overlay to pull in the dev-nodejs packages. |
+| dev-vcs/breezy | This is a bazaar client in python3. |
 | liri-base/liri-meta | This is the meta package for installing the Liri desktop environment. |
 | media-fonts/noto-color-emoji | This currently supports Emoji 5.0.  This one you can use to compile noto color emoji.  The benefit is that you can get updated emojis.  This one also contains a black smiling face emoji to replace the text presentation unlike the -bin.  `emerge noto-color-emoji-config` to apply emojis as default. |
 | media-fonts/noto-color-emoji-bin | This one has been precompiled containing old or new emoji aesthetic as in round or jellybean style.  `emerge noto-color-emoji-config` to apply emojis as default. |
