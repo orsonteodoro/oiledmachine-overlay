@@ -228,7 +228,6 @@ contains a known infamous critical vulnerability.
 | dev-util/geeks-diary | This is an Electron based diary / notetaker for programmers. |
 | dev-util/gycm | Gycm is a Geany plugin and ycmd client to improve IntelliSense support on top of the stock completer. |
 | dev-util/lepton | This is a programmer reusable code snipplet manager based on Electron and able to sync with Gist. |
-| dev-util/nant | TBA |
 | dev-util/nunit | TBA |
 | dev-util/objconv | TBA |
 | dev-util/premake | Kept for latest versions. |
