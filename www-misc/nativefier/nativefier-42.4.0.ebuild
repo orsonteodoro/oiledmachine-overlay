@@ -64,5 +64,5 @@ internal Chromium and programs produced by it must be updated weekly."
 	einfo \
 "You should add a /etc/portage/bashrc pkg_postinst ebuild phase hook in\n\
 order to update all executables produced by this app in order to close\n\
-vulnerabilities related to Chromium and it's internal dependencies."
+vulnerabilities related to Chromium and its internal dependencies."
 }
