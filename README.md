@@ -155,7 +155,10 @@ contains a known infamous critical vulnerability.
 | app-editors/preserver | This is a sticky notes app created with Electron. |
 | app-editors/stickynotes | This is an Electron based note taker that resembles a sticky pad. |
 | app-emacs/emacs-ycmd | TBA |
-| app-eselect/eselect-typescript | TBA |
+| app-eselect/eselect-emscripten | Allows to use a particular Emscripten version as the current one. |
+| app-eselect/eselect-nodejs | Allows to use a particular Node.js as the current one. |
+| app-eselect/eselect-opengl | Deprecated |
+| app-eselect/eselect-typescript | Allows to use a particular TypeScript version as the current one.  Used for ycmd. |
 | app-portage/npm-secaudit | A simple postsync script to check npm and Electron apps for security updates. |
 | app-portage/systemwide-pgo | This package installs Profile Guided Optimization management scripts for portage.  Everyone keeps building a per package PGO ebuild with a USE flag, but this package provides more better integration and ease of the process by forcing Portage do the work.  It still needs more testing and is considered in development.  It has @pgo-update set support.  It requires GCC or LLVM/Clang >=3.7 support since <3.7 breaks library profiling and has an annoying set environmental variable feature before profiling.  We use --profile-generate instead on LLVM/Clang.  Users need to be added to the wheel group to simulate the program.  You should disable all PGO USE flags and allow the scripts use it properly.  The package uses a whitelist and phase file to manage it.  Instructions are given at the end of the ebuild. |
 | app-shells/emoji-cli | This is an emoji autocompletion plugin for Zsh.  You might want to combine it with emojify. |
@@ -232,9 +235,9 @@ contains a known infamous critical vulnerability.
 | dev-util/premake | Kept for latest versions. |
 | dev-util/pullp | This is an Electron based git pull merge request monitoring program. |
 | dev-util/snippetstore | This is a program to save reusable code templates in Electron. |
-| dev-util/ycm-generator | You need this if you want c/c++/objc/objc++ support with your ycmd client.  It is mandatory for those languages. |
-| dev-util/ycmd | This is a YouCompleteMe server.  Just add your ycmd client to your text editor then you have code completion support.  The 2014 ebuild is for older clients.  The 2017 ebuilds require clients use the new HMAC header calculation.  It supports C#, C, C++, Objective C, Objective C++, rust, go, javascript, typescript, python.  If you use the `javascript` or `typescript` USE flag, then you need to add the jm-overlay to pull in the dev-nodejs packages. |
-| dev-vcs/breezy | This is a bazaar client in python3. |
+| dev-util/ycm-generator | You need this if you want C, C++, ObjC, ObjC++ support with your ycmd client.  It is mandatory for those languages. |
+| dev-util/ycmd | This is a YouCompleteMe server.  Just add your ycmd client to your text editor then you have code completion support.  The 2014 ebuild is for older clients.  The 2017 ebuilds require clients use the new HMAC header calculation.  It supports C#, C, C++, Objective C, Objective C++, Rust, Go, JavaScript, TypeScript, Python.  If you use the `javascript` or `typescript` USE flag, then you need to add the jm-overlay to pull in the dev-nodejs packages. |
+| dev-vcs/breezy | This is a Bazaar client in Python v3. |
 | liri-base/liri-meta | This is the meta package for installing the Liri desktop environment. |
 | media-fonts/noto-color-emoji | This currently supports Emoji 5.0.  This one you can use to compile noto color emoji.  The benefit is that you can get updated emojis.  This one also contains a black smiling face emoji to replace the text presentation unlike the -bin.  `emerge noto-color-emoji-config` to apply emojis as default. |
 | media-fonts/noto-color-emoji-bin | This one has been precompiled containing old or new emoji aesthetic as in round or jellybean style.  `emerge noto-color-emoji-config` to apply emojis as default. |
@@ -261,7 +264,7 @@ contains a known infamous critical vulnerability.
 | media-libs/libspng | This is another alternative png library that has been fuzzed to eliminate security holes. |
 | media-libs/theorafile | This is for the system library for the dotnet package. |
 | media-libs/theoraplay | This needs testing. |
-| media-libs/vips | Kept for typescript. |
+| media-libs/vips | Kept for TypeScript. |
 | media-plugins/amd-radeon-prorender-blender | This ebuild ensures that the dependencies are installed and compatible to be able to use this plugin. |
 | media-plugins/bitlbee-facebook | TBA |
 | media-plugins/gst-plugins-omx | TBA |
