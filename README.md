@@ -185,7 +185,6 @@ contains a known infamous critical vulnerability.
 | dev-dotnet/sfmldotnet | TBA |
 | dev-dotnet/sharpfont | TBA |
 | dev-dotnet/sharpnav | This library is a AI pathfinding library in C# useful for games. |
-| dev-dotnet/taoframework | TBA |
 | dev-dotnet/tesseract | This is a C# binding to the Tesseract OCR (Optical Character Recognition) software which will allow your program to read material produced by typewriters and from books. |
 | dev-dotnet/tiledsharp | This library is a map loader in C# for the Tiled Map Editor. |
 | dev-dotnet/xwt | TBA |

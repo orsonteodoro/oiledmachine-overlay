@@ -29,7 +29,6 @@ dev-dotnet/pvrtexlibnet
 dev-dotnet/sfmldotnet
 dev-dotnet/sharpfont
 dev-dotnet/sharpnav
-dev-dotnet/taoframework
 dev-dotnet/tesseract
 dev-dotnet/tiledsharp
 dev-dotnet/xwt
