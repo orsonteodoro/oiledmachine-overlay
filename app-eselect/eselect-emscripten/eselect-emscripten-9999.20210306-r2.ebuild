@@ -24,3 +24,7 @@ src_install() {
 	insinto /usr/share/eselect/modules
 	doins emscripten.eselect
 }
+
+pkg_postinst() {
+	ewarn "A \`eselect emscripten set <#>\` is required in order for fixes to take effect."
+}

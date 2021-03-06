@@ -169,34 +169,44 @@ find_targets() {
                         if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.13" \
                             && [[ "${llvm_major}" -ge 13 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.20" \
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.13" \
+                            is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.20" \
                             && [[ "${llvm_major}" -ge 12 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.7" \
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.39.20" \
+                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.7" \
                             && [[ "${llvm_major}" -ge 11 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.40" \
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.39.7" \
+                            is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.40" \
                             && [[ "${llvm_major}" -ge 10 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.24" \
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.38.40" \
+                            is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.24" \
                             && [[ "${llvm_major}" -ge 9 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.11" \
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.38.24" \
+                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.11" \
                             && [[ "${llvm_major}" -ge 8 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.28" \
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.38.11" \
+                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.28" \
                             && [[ "${llvm_major}" -ge 7 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.21" \
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.37.28" \
+                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.21" \
                             && [[ "${llvm_major}" -ge 6 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.15" \
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.37.21" \
+                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.15" \
                             && [[ "${llvm_major}" -ge 5 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.7" \
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.37.15" \
+                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.7" \
                             && [[ "${llvm_major}" -ge 4 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_slot}"
-                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.36.1" \
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.37.7" \
+                            && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.36.1" \
                             && is_x_op_y ${llvm_major_minor} ">=" "3.9" ; then
                             echo "emscripten-${em_v},llvm-${llvm_slot}"
                         fi
