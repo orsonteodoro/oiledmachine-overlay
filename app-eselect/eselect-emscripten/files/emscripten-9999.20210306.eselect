@@ -7,11 +7,16 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20200823"
+VERSION="20210306"
 PN="emscripten"
 
-# 1.40.1 llvm 12 ; node 4.4.1 ; binaryen 94
-# 1.40.0 llvm 12 ; node 4.4.1 ; binaryen 94
+# 2.0.13 llvm 13 ; node 4.1.1 ; binaryen 99
+# 2.0.8 llvm 12 ; node 4.1.1 ; binaryen 98
+# 2.0.5 llvm 12 ; node 4.1.1 ; binaryen 97
+# 2.0.1 llvm 12 ; node 4.1.1 ; binaryen 95
+# 2.0.0 llvm 12 ; node 4.1.1 ; binaryen 94
+# 1.40.1 llvm 12 ; node 4.1.1 ; binaryen 94
+# 1.40.0 llvm 12 ; node 4.1.1 ; binaryen 94
 # 1.39.20 llvm 12 ; node 4.1.1 ; binaryen 93
 # 1.39.19 llvm 11 ; node 4.1.1 ; binaryen 93
 # 1.39.14 ; binaryen 93
@@ -137,7 +142,7 @@ find_targets() {
     EMSCRIPTEN_VERSIONS=$(find "${EROOT}/usr/share" -maxdepth 1 \
         -regextype 'posix-egrep' -regex ".*emscripten-[0-9.]+" | sort -V \
         | cut -f 4 -d "/" | sed -e "s|^${EROOT}||" | sed -e "s|emscripten-||g")
-    LLVM_VERSIONS=$(find "${EROOT}/usr/$(get_libdir)/llvm" -maxdepth 1 \
+    LLVM_VERSIONS=$(find "${EROOT}/usr/lib/llvm" -maxdepth 1 \
         -regextype 'posix-egrep' -regex ".*[0-9.]+" | sed -e "s|^${EROOT}||" \
         | sort -V | cut -f 5 -d "/")
 
@@ -159,7 +164,10 @@ find_targets() {
 				| sed -e "s|clang-||")
                         llvm_major="${llvm_slot}"
                         llvm_major_minor=$(echo "${llvm_v}" | cut -f 1-2 -d '.')
-                        if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.20" \
+                        if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.13" \
+                            && [[ "${llvm_major}" -ge 13 ]] ; then
+                            echo "emscripten-${em_v},llvm-${llvm_slot}"
+                        elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.20" \
                             && [[ "${llvm_major}" -ge 12 ]] ; then
                             echo "emscripten-${em_v},llvm-${llvm_slot}"
                         elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.7" \
