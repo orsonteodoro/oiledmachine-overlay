@@ -11,13 +11,12 @@ HOMEPAGE="https://github.com/jarun/googler"
 LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~arm ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0"
-MY_PV="$(ver_cut 1-2 ${PV})"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 RESTRICT="mirror"
 SRC_URI=\
-"https://github.com/jarun/${PN}/archive/v${MY_PV}.tar.gz \
+"https://github.com/jarun/${PN}/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
-S="${WORKDIR}/${PN}-${MY_PV}"
+S="${WORKDIR}/${P}"
 
 src_prepare() {
 	default
