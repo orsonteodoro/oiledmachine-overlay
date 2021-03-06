@@ -286,6 +286,7 @@ contains a known infamous critical vulnerability.
 | sci-misc/boinc-server-project-coinking | This is a Coinking mining pool BOINC server project example.  Coinking is defuct.  This was used as a test case to see if the helper scripts work. |
 | sci-misc/boinc-server-project-eligius | This is an Eligius mining pool BOINC server project example.  This ebuild demonstrates how to build a boinc-server project using helper scripts.  You can copy this ebuild and modify it for your BOINC server project.  |
 | sci-physics/bullet | This library is a dependency for BulletSharpPInvoke.  It combines all modules, which were originally seperate dlls, into one shared object/dll. |
+| sys-apps/oomd | This is an intelligent userspace daemon to prevent halting by terminating memory leaks or heavy IO based on a decision tree before they happen.  It can be extended with custom coded modules. */
 | sys-firmware/amdgpu-firmware | Same firmware in the amdgpu-pro package.  Same firmware in the latest hardware in the compatibility list.  |
 | sys-firmware/rock-firmware | Same firmware in the rock-dkms package.  May contain the latest firmware not found in linux-firmware. |
 | sys-kernel/amdgpu-dkms | This is the amdgpu DRM (Direct Rendering Manager) kernel driver found in the amdgpu-pro.  It contains older versions of ROCk and drm-next/amd-staging-drm-next updates. |
