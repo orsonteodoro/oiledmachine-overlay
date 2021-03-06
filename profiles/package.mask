@@ -35,9 +35,6 @@ dev-dotnet/tesseract
 dev-dotnet/tiledsharp
 dev-dotnet/xwt
 
-# build time failures
-=net-libs/webkit-gtk-2.26.4-r1
-
 # Reserved for kernel live patching for branches
 # KLP ready is Work In Progress (WIP) for this package
 =sys-kernel/ot-sources-5.8.9999
@@ -86,7 +83,6 @@ media-libs/alure
 # untested completely
 app-crypt/gcr
 dev-db/nanodbc
-dev-java/netbeans-alice
 dev-libs/asmlib
 dev-libs/hyphen
 dev-libs/leveldb
@@ -96,7 +92,6 @@ dev-libs/libspotify
 dev-libs/log4c
 dev-libs/pugixml
 dev-libs/rapidjson
-dev-python/mrab-regex
 dev-python/pocket
 dev-python/py-stackexchange
 dev-python/python-plexapi
