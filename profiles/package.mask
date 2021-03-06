@@ -61,18 +61,9 @@ dev-util/snippetstore
 
 # ebuilds not updated since 2020
 app-text/pdfchain
-dev-embedded/avr-studio
-dev-embedded/diligent-adept2-runtime
-dev-embedded/diligent-plugin-xilinx
-dev-embedded/modelsim
-dev-embedded/xilinx-ise-webpack
-dev-lang/lua
 dev-lua/luafilesystem
 dev-lua/luasqlite3
 dev-lua/luaxml
-dev-lua/tolua
-dev-lua/tolua++
-dev-ruby/koala
 dev-util/msbuild
 media-gfx/nvidia-texture-tools
 media-plugins/bitlbee-facebook
