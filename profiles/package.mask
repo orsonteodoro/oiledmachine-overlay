@@ -61,7 +61,6 @@ app-text/pdfchain
 dev-lua/luafilesystem
 dev-lua/luasqlite3
 dev-lua/luaxml
-dev-util/msbuild
 media-gfx/nvidia-texture-tools
 media-plugins/bitlbee-facebook
 net-misc/boinc-bfgminer-cpu
