@@ -154,7 +154,7 @@ contains a known infamous critical vulnerability.
 | app-editors/noty | Removed.  Notes are stored in /home/username/.config/Noty/config.json . |
 | app-editors/preserver | This is a sticky notes app created with Electron. |
 | app-editors/stickynotes | This is an Electron based note taker that resembles a sticky pad. |
-| app-emacs/emacs-ycmd | TBA |
+| app-emacs/emacs-ycmd | This is a major mode (extension) to GNU Emacs that allows you to use ycmd. |
 | app-eselect/eselect-emscripten | Allows to use a particular Emscripten version as the current one. |
 | app-eselect/eselect-nodejs | Allows to use a particular Node.js as the current one. |
 | app-eselect/eselect-opengl | Deprecated |
@@ -211,18 +211,18 @@ contains a known infamous critical vulnerability.
 | dev-libs/leveldb | TBA |
 | dev-libs/libfreenect | TBA |
 | dev-libs/log4c | TBA |
-| dev-libs/nxjson | TBA |
-| dev-libs/pugixml | TBA |
+| dev-libs/nxjson | A JSON parser library for C. |
+| dev-libs/pugixml | A XML parser library for C++. |
 | dev-libs/rapidjson | TBA |
 | dev-lua/luasqlite3 | TBA |
 | dev-rust/grex | grex is a regular expression generator |
 | dev-python/pocket | This is the Pocket API for Python. |
 | dev-python/py-stackexchange | TBA |
 | dev-python/python-plexapi | TBA |
-| dev-python/soundcloud-python | TBA |
+| dev-python/soundcloud-python | A Python library to interact with SoundCloud |
 | dev-util/bear | TBA |
 | dev-util/carbon-now-cli | This is a command line Node.js app that will create prettified code screenshots to share using the https://carbon.now.sh/ service. |
-| dev-util/emacs-ycmd | This is a ycmd client for Emacs. |
+| dev-util/emacs-ycmd | This is a ycmd client for GNU Emacs. |
 | dev-util/emscripten | Emscripten allows to run C/C++ apps on a web browser.  It is typically used by game engines port games into web browsers. |
 | dev-util/emscripten-fastcomp | For asm.js support.  Deprecated. |
 | dev-util/geeks-diary | This is an Electron based diary / notetaker for programmers. |
@@ -308,7 +308,7 @@ contains a known infamous critical vulnerability.
 | www-misc/nativefier | This Electron app makes it possible to turn a website into an executable.  Apps produced from it should be updated every time this package is updated via a pkg_postinst [ebuild phase hook](https://wiki.gentoo.org/wiki/Handbook:X86/Portage/Advanced#Hooking_in_the_emerge_process) in `/etc/portage/bashrc` to close vulnerabilities related to Chromium and its internal dependencies.  |
 | www-misc/rtv | This is a command line Reddit client which has been updated. |
 | www-misc/socli | This is a Stack Overflow command line client. |
-| www-servers/civetweb | Kept around for urho3d. |
+| www-servers/civetweb | Kept around for Urho3D. |
 | x11-drivers/amdgpu-pro | This is the unilib version of the AMDGPU-PRO driver.<br /><br /> |
 | x11-drivers/amdgpu-pro-lts | This is the semi multilib version of the AMDGPU-PRO driver that is more feature rich.<br /><br /> |
 | x11-wm/dwm | This ebuild fixes the emoji titlebar crash and has integrated Fibonacci layout patch applied. |
