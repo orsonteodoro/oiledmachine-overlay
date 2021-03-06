@@ -1,13 +1,6 @@
 # Ebuilds currently in develpment
 #--------------------------------------------------------------------------------------------------
 
-# the official milestone dependencies are deprecated (vibe, greenisland), use latest instead
-<liri-base/liri-meta-0.9.0_p20200524
-<liri-base/shell-0.9.0_p20200524
-
-# ebuild development stuck in build-patching stage to use system dependency packages
-dev-util/monodevelop
-
 # ebuild stuck in development for csharp and c++ bindings
 games-utils/godot
 
@@ -17,7 +10,6 @@ dev-dotnet/assimp-net
 dev-dotnet/atitextureconverter
 dev-dotnet/beatdetectorforgames
 dev-dotnet/BulletSharpPInvoke
-dev-dotnet/cli-tools
 dev-dotnet/farseer-physics-engine
 dev-dotnet/fna
 dev-dotnet/freeimagenet
@@ -34,12 +26,10 @@ dev-dotnet/ndesk-options
 dev-dotnet/nuget
 dev-dotnet/nvorbis
 dev-dotnet/opentk
-dev-dotnet/protobuild-bin
 dev-dotnet/pvrtexlibnet
 dev-dotnet/sfmldotnet
 dev-dotnet/sharpfont
 dev-dotnet/sharpnav
-dev-dotnet/slntools
 dev-dotnet/taoframework
 dev-dotnet/tesseract
 dev-dotnet/tiledsharp
@@ -47,15 +37,6 @@ dev-dotnet/xwt
 
 # build time failures
 =net-libs/webkit-gtk-2.26.4-r1
-
-# Needs major rework
-dev-dotnet/aspnetcore
-dev-dotnet/coreclr
-dev-dotnet/corefx
-dev-dotnet/dotnetcore-sdk
-
-# Build failures / Work In Progress (WIP)
->=dev-dotnet/aspnetcore-2.1.18
 
 # Reserved for kernel live patching for branches
 # KLP ready is Work In Progress (WIP) for this package
@@ -97,29 +78,13 @@ media-gfx/nvidia-texture-tools
 media-plugins/bitlbee-facebook
 net-misc/boinc-bfgminer-cpu
 net-misc/boinc-bfgminer-gpu
-sci-misc/astropulse-art
-sci-misc/astropulse-cpu
-sci-misc/astropulse-gpu
 sci-misc/boinc
 sci-misc/boinc-server
 sci-misc/boinc-server-project-eligius
-sci-misc/setiathome-art
-sci-misc/setiathome-boincdir
-sci-misc/setiathome-cpu
-sci-misc/setiathome-gpu
-sci-misc/setiathome-updater
 sys-process/psdoom-ng
-virtual/setiathome
-www-misc/facy
-www-servers/civetweb
 
 # Old versions; EOL (End Of Life)?; no longer receiving security updates
 media-libs/alure
-x11-base/xorg-drivers
-x11-base/xorg-server
-x11-drivers/xf86-input-libinput
-x11-drivers/xf86-video-amdgpu
-x11-drivers/xf86-video-ati
 
 # Masked for ebuild quality control reasons
 #--------------------------------------------------------------------------------------------------
@@ -174,12 +139,9 @@ dev-util/nant
 dev-util/nunit
 dev-util/pullp
 dev-util/ycm-generator
-sci-physics/box2d
-sci-physics/bullet
 www-misc/rtv
 www-misc/rainbowstream
 
 # May no longer work but did in the past, tested
 <=x11-drivers/amdgpu-pro-19.30.934563-r8
 <=x11-drivers/amdgpu-pro-lts-19.30.934563-r5
-
