@@ -89,6 +89,7 @@ dev-libs/libspotify
 dev-libs/log4c
 dev-libs/pugixml
 dev-libs/rapidjson
+dev-games/texturelab
 dev-python/pocket
 dev-python/py-stackexchange
 dev-python/python-plexapi
