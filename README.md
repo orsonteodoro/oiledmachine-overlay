@@ -262,7 +262,7 @@ contains a known infamous critical vulnerability.
 | media-libs/theorafile | This is for the system library for the dotnet package. |
 | media-libs/theoraplay | This needs testing. |
 | media-libs/vips | Kept for typescript. |
-| media-plugins/amd-radeon-prorender-blender | TBA |
+| media-plugins/amd-radeon-prorender-blender | This ebuild ensures that the dependencies are installed and compatible to be able to use this plugin. |
 | media-plugins/bitlbee-facebook | TBA |
 | media-plugins/gst-plugins-omx | TBA |
 | media-sound/puddletag | This is a mp3 metatag editor.  Autosaves edits and doesn't need to be explicity be told to save.  This is the PyQt5 version.  |
