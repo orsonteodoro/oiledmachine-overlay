@@ -78,9 +78,6 @@ app-editors/preserver
 app-editors/stickynotes
 dev-util/snippetstore
 
-# gulp dev dependency vulnerability
-www-misc/nativefier
-
 # ebuilds not updated since 2020
 app-text/pdfchain
 dev-embedded/avr-studio
