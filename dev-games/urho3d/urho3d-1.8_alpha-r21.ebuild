@@ -235,8 +235,14 @@ DEPEND_COMMON="
 		)
 	)
 	box2d? ( system-box2d? (
-		box2d_2_4? ( >=dev-games/box2d-2.4.1:2.4=[${MULTILIB_USEDEP},static-libs?] )
-		box2d_2_3? ( >=dev-games/box2d-2.3.1:2.3=[${MULTILIB_USEDEP},static-libs?] )
+		box2d_2_4? (
+			|| ( >=dev-games/box2d-2.4.1:2.4=[${MULTILIB_USEDEP},static-libs?]
+			     >=games-engines/box2d-2.4.1:2.4.0[${MULTILIB_USEDEP}] )
+		)
+		box2d_2_3? (
+			|| ( >=dev-games/box2d-2.3.1:2.3=[${MULTILIB_USEDEP},static-libs?]
+			     >=games-engines/box2d-2.3.1:2.3.0[${MULTILIB_USEDEP}] )
+		)
 	) )
 	bullet? ( system-bullet? ( >=sci-physics/bullet-2.86.1[${MULTILIB_USEDEP}] ) )
 	lua? (

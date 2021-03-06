@@ -39,7 +39,8 @@ CDEPEND="dev-libs/protobuf[${MULTILIB_USEDEP}]
 DEPEND+=" ${CDEPEND}
 	android? ( dev-util/android-ndk
 		   dev-util/android-sdk-update-manager )
-	box2d? ( dev-games/box2d[${MULTILIB_USEDEP}] )
+	box2d? ( || ( <dev-games/box2d-2.4:2.3[${MULTILIB_USEDEP}]
+			<games-engines/box2d-2.4:2.3.0[${MULTILIB_USEDEP}] ) )
 	bullet? ( sci-physics/bullet[${MULTILIB_USEDEP}] )
 	curl? ( net-misc/curl[${MULTILIB_USEDEP}] )
 	dev-cpp/abseil-cpp[${MULTILIB_USEDEP}]
