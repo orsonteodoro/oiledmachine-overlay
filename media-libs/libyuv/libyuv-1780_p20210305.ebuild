@@ -20,13 +20,13 @@ DEPEND+=" ${CDEPEND}
 	test? ( dev-cpp/gtest[${MULTILIB_USEDEP}]
 		dev-cpp/gflags[${MULTILIB_USEDEP}] )"
 RDEPEND+=" ${CDEPEND}"
-EGIT_COMMIT="60d37a064bc0307017537ed3091b1b0204213855"
+EGIT_COMMIT="d47031c0d42efa8f10842e36f7b8135b52bcd3d0"
 EGIT_REPO_URI="https://chromium.googlesource.com/libyuv/libyuv"
 FN_DEST="${P}.tar.gz"
 FN_SRC="${EGIT_COMMIT}.tar.gz"
 SRC_URI=\
 "https://chromium.googlesource.com/libyuv/libyuv/+archive/${FN_SRC}\
-	 -> ${P}.tar.gz"
+	 -> ${P}-${EGIT_COMMIT:0:7}.tar.gz"
 S="${WORKDIR}/${P}"
 RESTRICT="mirror"
 DOCS=( AUTHORS LICENSE PATENTS README.chromium README.md )
