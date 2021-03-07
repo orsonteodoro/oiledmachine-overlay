@@ -1,10 +1,10 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
 LLVM_MAX_SLOT=9
-inherit cmake-utils eutils linux-info llvm multilib-minimal static-libs urho3d
+inherit cmake-utils eutils flag-o-matic linux-info llvm multilib-minimal static-libs urho3d
 
 DESCRIPTION="Cross-platform 2D and 3D game engine."
 HOMEPAGE="http://urho3d.github.io/"
@@ -94,7 +94,6 @@ IUSE+=" ${X86_CPU_FEATURES[@]%:*}
 	+sdl_sensor
 	+sdl_file
 	+sdl_filesystem
-	+sdl_video_rpi
 	+sdl_video_dummy
 	 sndio
 	 sqlite
@@ -126,6 +125,7 @@ IUSE+=" ${X86_CPU_FEATURES[@]%:*}
 	+tools
 	 tslib
 	 udev
+	 video_cards_vc4
 	 video_cards_vivante
 	 vulkan
 	 wayland
@@ -143,6 +143,7 @@ SDL2_REQUIRED_USE="
 	xinerama? ( X )
 	xscreensaver? ( X )"
 
+#	native
 REQUIRED_USE+="
 	${SDL2_REQUIRED_USE}
 	alsa? ( sound threads )
@@ -162,14 +163,15 @@ REQUIRED_USE+="
 		native? ( || ( libusb hidapi ) )
 	)
 	luajit? ( lua )
-	native
+
 	network? ( threads )
 	odbc? ( !sqlite )
 	opengl
 	sqlite? ( !odbc )
 	!system-slikenet
 	 system-box2d? ( ^^ ( box2d_2_3 box2d_2_4 ) )
-	!system-box2d? ( box2d_2_3 !box2d_2_4 )"
+	!system-box2d? ( box2d_2_3 !box2d_2_4 )
+	web? ( static-libs )"
 
 BOOST_VER="1.64"
 CIVETWEB_VER="1.7"
@@ -442,11 +444,21 @@ details."
 details."
 			fi
 		fi
+		if [[ -z "${EMSCRIPTEN}" ]] ; then
+			die "EMSCRIPTEN environmental variable must be set"
+		fi
+
+		local emcc_v=$(emcc --version | head -n 1 | grep -E -o -e "[0-9.]+")
+		local emscripten_v=$(echo "${EMSCRIPTEN}" | cut -f 2 -d "-")
+		if [[ "${emcc_v}" != "${emscripten_v}" ]] ; then
+			die "EMCC_V=${emcc_v} != EMSCRIPTEN_V=${emscripten_v}.  A \`eselect emscripten set <#>\` followed by \`source . /etc/profile\` are required."
+		fi
 	fi
 }
 
 _prepare_common() {
 	eapply --binary "${FILESDIR}/urho3d-1.8_alpha-system-testing-preprocessor.patch"
+	#die "See ${FILESDIR}/urho3d-1.8_alpha-cmake-fixes.patch"
 	eapply "${FILESDIR}/urho3d-1.8_alpha-cmake-fixes.patch"
 
 	# See https://github.com/orsonteodoro/oiledmachine-overlay/blob/47e071977b37023c07f612ecaebf235982a457c9/dev-libs/urho3d/urho3d-1.7.ebuild
@@ -555,7 +567,7 @@ src_prepare() {
 					prepare_common
 				elif [[ "${EURHO3D}" == "rpi" ]] ; then
 					prepare_common
-				elif [[ "${EURHO3D}" == "web" ]] ; then
+				elif [[ "${EURHO3D}" == "web" && "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
 					prepare_common
 				fi
 			}
@@ -574,75 +586,345 @@ src_prepare() {
 		prepare_platform
 }
 
+# From cmake-utils.eclass originally as cmake-utils_src_configure
+# Modified to use urho3d Toolchain .cmake files
+# @FUNCTION: _cmake-utils_src_configure
+# @DESCRIPTION:
+# General function for configuring with cmake. Default behaviour is to start an
+# out-of-source build.
+_cmake-utils_src_configure() {
+	debug-print-function ${FUNCNAME} "$@"
+
+	if [[ ! ${_CMAKE_UTILS_SRC_PREPARE_HAS_RUN} ]]; then
+		if [[ ${EAPI} != [56] ]]; then
+			die "FATAL: cmake-utils_src_prepare has not been run"
+		else
+			eqawarn "cmake-utils_src_prepare has not been run, please open a bug on https://bugs.gentoo.org/"
+		fi
+	fi
+
+	[[ ${EAPI} == 5 ]] && _cmake_cleanup_cmake
+
+	_cmake_check_build_dir
+
+	# Fix xdg collision with sandbox
+	xdg_environment_reset
+
+	# @SEE CMAKE_BUILD_TYPE
+	if [[ ${CMAKE_BUILD_TYPE} = Gentoo ]]; then
+		# Handle release builds
+		if ! has debug ${IUSE//+} || ! use debug; then
+			local CPPFLAGS=${CPPFLAGS}
+			append-cppflags -DNDEBUG
+		fi
+	fi
+
+	# Prepare Gentoo override rules (set valid compiler, append CPPFLAGS etc.)
+	local build_rules=${BUILD_DIR}/gentoo_rules.cmake
+
+	cat > "${build_rules}" <<- _EOF_ || die
+		SET (CMAKE_ASM_COMPILE_OBJECT "<CMAKE_ASM_COMPILER> <DEFINES> <INCLUDES> ${CPPFLAGS} <FLAGS> -o <OBJECT> -c <SOURCE>" CACHE STRING "ASM compile command" FORCE)
+		SET (CMAKE_ASM-ATT_COMPILE_OBJECT "<CMAKE_ASM-ATT_COMPILER> <DEFINES> <INCLUDES> ${CPPFLAGS} <FLAGS> -o <OBJECT> -c -x assembler <SOURCE>" CACHE STRING "ASM-ATT compile command" FORCE)
+		SET (CMAKE_ASM-ATT_LINK_FLAGS "-nostdlib" CACHE STRING "ASM-ATT link flags" FORCE)
+		SET (CMAKE_C_COMPILE_OBJECT "<CMAKE_C_COMPILER> <DEFINES> <INCLUDES> ${CPPFLAGS} <FLAGS> -o <OBJECT> -c <SOURCE>" CACHE STRING "C compile command" FORCE)
+		SET (CMAKE_CXX_COMPILE_OBJECT "<CMAKE_CXX_COMPILER> <DEFINES> <INCLUDES> ${CPPFLAGS} <FLAGS> -o <OBJECT> -c <SOURCE>" CACHE STRING "C++ compile command" FORCE)
+		SET (CMAKE_Fortran_COMPILE_OBJECT "<CMAKE_Fortran_COMPILER> <DEFINES> <INCLUDES> ${FCFLAGS} <FLAGS> -o <OBJECT> -c <SOURCE>" CACHE STRING "Fortran compile command" FORCE)
+	_EOF_
+
+	local myCC=$(tc-getCC) myCXX=$(tc-getCXX) myFC=$(tc-getFC)
+
+	# !!! IMPORTANT NOTE !!!
+	# Single slash below is intentional. CMake is weird and wants the
+	# CMAKE_*_VARIABLES split into two elements: the first one with
+	# compiler path, and the second one with all command-line options,
+	# space separated.
+	local toolchain_file=${BUILD_DIR}/gentoo_toolchain.cmake
+	cat > ${toolchain_file} <<- _EOF_ || die
+		SET (CMAKE_ASM_COMPILER "${myCC/ /;}")
+		SET (CMAKE_ASM-ATT_COMPILER "${myCC/ /;}")
+		SET (CMAKE_C_COMPILER "${myCC/ /;}")
+		SET (CMAKE_CXX_COMPILER "${myCXX/ /;}")
+		SET (CMAKE_Fortran_COMPILER "${myFC/ /;}")
+		SET (CMAKE_AR $(type -P $(tc-getAR)) CACHE FILEPATH "Archive manager" FORCE)
+		SET (CMAKE_RANLIB $(type -P $(tc-getRANLIB)) CACHE FILEPATH "Archive index generator" FORCE)
+		SET (CMAKE_SYSTEM_PROCESSOR "${CHOST%%-*}")
+	_EOF_
+
+	# We are using the C compiler for assembly by default.
+	local -x ASMFLAGS=${CFLAGS}
+	local -x PKG_CONFIG=$(tc-getPKG_CONFIG)
+
+	if tc-is-cross-compiler; then
+		local sysname
+		case "${KERNEL:-linux}" in
+			Cygwin) sysname="CYGWIN_NT-5.1" ;;
+			HPUX) sysname="HP-UX" ;;
+			linux) sysname="Linux" ;;
+			Winnt)
+				sysname="Windows"
+				cat >> "${toolchain_file}" <<- _EOF_ || die
+					SET (CMAKE_RC_COMPILER $(tc-getRC))
+				_EOF_
+				;;
+			*) sysname="${KERNEL}" ;;
+		esac
+
+		cat >> "${toolchain_file}" <<- _EOF_ || die
+			SET (CMAKE_SYSTEM_NAME "${sysname}")
+		_EOF_
+
+		if [ "${SYSROOT:-/}" != "/" ] ; then
+			# When cross-compiling with a sysroot (e.g. with crossdev's emerge wrappers)
+			# we need to tell cmake to use libs/headers from the sysroot but programs from / only.
+			cat >> "${toolchain_file}" <<- _EOF_ || die
+				SET (CMAKE_FIND_ROOT_PATH "${SYSROOT}")
+				SET (CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+				SET (CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+				SET (CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+			_EOF_
+		fi
+	fi
+
+	if use prefix-guest; then
+		cat >> "${build_rules}" <<- _EOF_ || die
+			# in Prefix we need rpath and must ensure cmake gets our default linker path
+			# right ... except for Darwin hosts
+			IF (NOT APPLE)
+			SET (CMAKE_SKIP_RPATH OFF CACHE BOOL "" FORCE)
+			SET (CMAKE_PLATFORM_REQUIRED_RUNTIME_PATH "${EPREFIX}/usr/${CHOST}/lib/gcc;${EPREFIX}/usr/${CHOST}/lib;${EPREFIX}/usr/$(get_libdir);${EPREFIX}/$(get_libdir)"
+			CACHE STRING "" FORCE)
+
+			ELSE ()
+
+			SET (CMAKE_PREFIX_PATH "${EPREFIX}/usr" CACHE STRING "" FORCE)
+			SET (CMAKE_MACOSX_RPATH ON CACHE BOOL "" FORCE)
+			SET (CMAKE_SKIP_BUILD_RPATH OFF CACHE BOOL "" FORCE)
+			SET (CMAKE_SKIP_RPATH OFF CACHE BOOL "" FORCE)
+			SET (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE CACHE BOOL "" FORCE)
+
+			ENDIF (NOT APPLE)
+		_EOF_
+	fi
+
+	# Common configure parameters (invariants)
+	local common_config=${BUILD_DIR}/gentoo_common_config.cmake
+	local libdir=$(get_libdir)
+	cat > "${common_config}" <<- _EOF_ || die
+		SET (CMAKE_GENTOO_BUILD ON CACHE BOOL "Indicate Gentoo package build")
+		SET (LIB_SUFFIX ${libdir/lib} CACHE STRING "library path suffix" FORCE)
+		SET (CMAKE_INSTALL_LIBDIR ${libdir} CACHE PATH "Output directory for libraries")
+		SET (CMAKE_INSTALL_INFODIR "${EPREFIX}/usr/share/info" CACHE PATH "")
+		SET (CMAKE_INSTALL_MANDIR "${EPREFIX}/usr/share/man" CACHE PATH "")
+		SET (CMAKE_USER_MAKE_RULES_OVERRIDE "${build_rules}" CACHE FILEPATH "Gentoo override rules")
+	_EOF_
+
+	# See bug 689410
+	if [[ "${ARCH}" == riscv ]]; then
+		echo 'SET (CMAKE_FIND_LIBRARY_CUSTOM_LIB_SUFFIX '"${libdir#lib}"' CACHE STRING "library search suffix" FORCE)' >> "${common_config}" || die
+	fi
+
+	[[ "${NOCOLOR}" = true || "${NOCOLOR}" = yes ]] && echo 'SET (CMAKE_COLOR_MAKEFILE OFF CACHE BOOL "pretty colors during make" FORCE)' >> "${common_config}"
+
+	if [[ ${EAPI} != [56] ]]; then
+		cat >> "${common_config}" <<- _EOF_ || die
+			SET (CMAKE_INSTALL_DOCDIR "${EPREFIX}/usr/share/doc/${PF}" CACHE PATH "")
+			SET (BUILD_SHARED_LIBS ON CACHE BOOL "")
+		_EOF_
+	fi
+
+	# Wipe the default optimization flags out of CMake
+	if [[ ${CMAKE_BUILD_TYPE} != Gentoo && ${EAPI} != 5 ]]; then
+		cat >> ${common_config} <<- _EOF_ || die
+			SET (CMAKE_ASM_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+			SET (CMAKE_ASM-ATT_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+			SET (CMAKE_C_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+			SET (CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+			SET (CMAKE_Fortran_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+			SET (CMAKE_EXE_LINKER_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+			SET (CMAKE_MODULE_LINKER_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+			SET (CMAKE_SHARED_LINKER_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+			SET (CMAKE_STATIC_LINKER_FLAGS_${CMAKE_BUILD_TYPE^^} "" CACHE STRING "")
+		_EOF_
+	fi
+
+	# Convert mycmakeargs to an array, for backwards compatibility
+	# Make the array a local variable since <=portage-2.1.6.x does not
+	# support global arrays (see bug #297255).
+	local mycmakeargstype=$(declare -p mycmakeargs 2>&-)
+	if [[ "${mycmakeargstype}" != "declare -a mycmakeargs="* ]]; then
+		if [[ -n "${mycmakeargstype}" ]] ; then
+			if [[ ${EAPI} == 5 ]]; then
+				eqawarn "Declaring mycmakeargs as a variable is deprecated. Please use an array instead."
+			else
+				die "Declaring mycmakeargs as a variable is banned in EAPI=${EAPI}. Please use an array instead."
+			fi
+		fi
+		local mycmakeargs_local=(${mycmakeargs})
+	else
+		local mycmakeargs_local=("${mycmakeargs[@]}")
+	fi
+
+	if [[ ${CMAKE_WARN_UNUSED_CLI} == no ]] ; then
+		local warn_unused_cli="--no-warn-unused-cli"
+	else
+		local warn_unused_cli=""
+	fi
+
+	# Common configure parameters (overridable)
+	# NOTE CMAKE_BUILD_TYPE can be only overridden via CMAKE_BUILD_TYPE eclass variable
+	# No -DCMAKE_BUILD_TYPE=xxx definitions will be in effect.
+	local cmakeargs=(
+		${warn_unused_cli}
+		-C "${common_config}"
+		-G "$(_cmake_generator_to_use)"
+		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr"
+		"${mycmakeargs_local[@]}"
+		-DCMAKE_BUILD_TYPE="${CMAKE_BUILD_TYPE}"
+		$([[ ${EAPI} == 5 ]] && echo -DCMAKE_INSTALL_DO_STRIP=OFF)
+		-DCMAKE_TOOLCHAIN_FILE="${URHO3D_TOOLCHAIN_FILE}"
+		"${MYCMAKEARGS}"
+	)
+
+	if [[ -n "${CMAKE_EXTRA_CACHE_FILE}" ]] ; then
+		cmakeargs+=( -C "${CMAKE_EXTRA_CACHE_FILE}" )
+	fi
+
+	pushd "${BUILD_DIR}" > /dev/null || die
+	debug-print "${LINENO} ${ECLASS} ${FUNCNAME}: mycmakeargs is ${mycmakeargs_local[*]}"
+	echo "${CMAKE_BINARY}" "${cmakeargs[@]}" "${CMAKE_USE_DIR}"
+	"${CMAKE_BINARY}" "${cmakeargs[@]}" "${CMAKE_USE_DIR}" || die "cmake failed"
+	popd > /dev/null || die
+}
+
 configure_sdl() {
 	mycmakeargs+=(
-		-DALSA=$(usex alsa)
-		-DDUMMYAUDIO=$(usex sdl_audio_dummy)
-		-DESD=$(usex esd)
-		-DHIDAPI=$(usex android $(usex joystick ON OFF))
-		-DJACK=$(usex jack)
-		-DLIBSAMPLERATE=$(usex libsamplerate)
-		-DNAS=$(usex nas)
-		-DOSS=$(usex oss)
-		-DPULSEAUDIO=$(usex pulseaudio)
-		-DPTHREADS=$(usex threads)
-		-DINPUT_TSLIB=$(usex tslib)
 		-DDISKAUDIO=$(usex sdl_audio_disk)
-		-DSDL_AUDIO=$(usex alsa ON $(usex esd ON $(usex jack ON $(usex nas ON $(usex oss ON $(usex pulseaudio ON $(usex sndio ON $(usex sdl_audio_disk ON OFF))))))))
+		-DDUMMYAUDIO=$(usex sdl_audio_dummy)
 		-DSDL_CPUINFO=$(usex sdl_cpuinfo)
 		-DSDL_DLOPEN=$(usex sdl_dlopen)
-		-DSDL_RENDER=$(usex sdl_render)
+		-DSDL_JOYSTICK=$(usex joystick)
 		-DSDL_FILE=$(usex sdl_file)
 		-DSDL_FILESYSTEM=$(usex sdl_filesystem)
 		-DSDL_HAPTIC=$(usex haptic)
-		-DSDL_JOYSTICK=$(usex joystick)
 		-DSDL_POWER=$(usex sdl_power)
+		-DSDL_RENDER=$(usex sdl_render)
 		-DSDL_SENSOR=$(usex sdl_sensor)
-		-DSDL_THREADS=$(usex threads)
-		-DSDL_VIDEO=$(usex kms ON $(usex opengl ON $(usex gles2 ON $(usex sdl_video_rpi ON $(usex video_cards_vivante ON $(usex vulkan ON $(usex wayland ON $(usex X ON $(usex web ON OFF)))))))))
 		-DVIDEO_DUMMY=$(usex sdl_video_dummy)
-		-DVIDEO_KMSDRM=$(usex kms)
-		-DVIDEO_OPENGL=$(usex opengl)
 		-DVIDEO_OPENGLES=$(usex gles2)
-		-DVIDEO_RPI=$(usex rpi)
-		-DVIDEO_VIVANTE=$(usex video_cards_vivante)
-		-DVIDEO_VULKAN=$(usex vulkan)
-		-DVIDEO_WAYLAND=$(usex wayland)
-		-DVIDEO_X11=$(usex X)
-		-DVIDEO_X11_XCURSOR=$(usex X)
-		-DVIDEO_X11_XINERAMA=$(usex xinerama)
-		-DVIDEO_X11_XINPUT=$(usex X)
-		-DVIDEO_X11_XRANDR=$(usex X)
-		-DVIDEO_X11_XSCRNSAVER=$(usex xscreensaver)
-		-DVIDEO_X11_XSHAPE=$(usex X)
-		-DVIDEO_X11_XVM=$(usex X)
+
 		-DARTS=OFF
-		-DSNDIO=$(usex sndio)
 		-DFUSIONSOUND=OFF
 		-DVIDEO_DIRECTFB=OFF
 	)
 
 	if [[ "${EURHO3D}" == "web" ]] ; then
 		mycmakeargs+=(
-			-DALSA_SHARED=OFF
-			-DESD_SHARED=OFF
-			-DJACK_SHARED=OFF
-			-KMSDRM_SHARED=OFF
-			-DPULSEAUDIO_SHARED=OFF
 			-DSDL_SHARED=OFF
 			-DSDL_STATIC=ON
+		)
+	else
+		mycmakeargs+=(
+			-DSDL_SHARED=ON
+			-DSDL_STATIC=OFF
+		)
+	fi
+
+	if [[ "${EURHO3D}" == "rpi" ]] ; then
+		ewarn "RPI support in the cmake level is incomplete.  Fit it yourself or ask upstream to add missing /raspberry/ for video driver in SDL CMakeLists.txt."
+	fi
+
+	if [[ "${EURHO3D}" == "android" ]] ; then
+		mycmakeargs+=(
+			-DHIDAPI=$(usex joystick ON OFF)
+		)
+	elif [[ "${EURHO3D}" == "web" ]] ; then
+		mycmakeargs+=(
+			-DHIDAPI=OFF
+		)
+	else
+		mycmakeargs+=(
+			-DHIDAPI=$(usex joystick $(usex hidapi ON OFF) OFF)
+		)
+	fi
+
+	if [[ "${EURHO3D}" == "web" ]] ; then
+		mycmakeargs+=(
+			-DVIDEO_RPI=OFF
+			-DVIDEO_VIVANTE=OFF
+		)
+	else
+		mycmakeargs+=(
+			-DVIDEO_RPI=$(usex video_cards_vc4)
+			-DVIDEO_VIVANTE=$(usex video_cards_vivante)
+		)
+	fi
+
+	if [[ "${EURHO3D}" == "android" \
+		|| "${EURHO3D}" == "rpi" \
+		|| "${EURHO3D}" == "web" ]] ; then
+		# These uses it's own audio/video driver
+		mycmakeargs+=(
+			-DALSA=OFF
+			-DALSA_SHARED=OFF
+			-DESD=OFF
+			-DESD_SHARED=OFF
+			-DINPUT_TSLIB=OFF
+			-DJACK=OFF
+			-DJACK_SHARED=OFF
+			-DKMSDRM_SHARED=OFF
+			-DNAS=OFF
+			-DOSS=OFF
+			-DPTHREADS=OFF
+			-DPTHREADS_SEM=OFF
+			-DPULSEAUDIO=OFF
+			-DPULSEAUDIO_SHARED=OFF
+			-DSDL_AUDIO=ON
+			-DSDL_THREADS=OFF
+			-DSDL_VIDEO=ON
+			-DSNDIO=OFF
+			-DVIDEO_KMSDRM=OFF
+			-DVIDEO_OPENGL=OFF
+			-DVIDEO_VULKAN=OFF
+			-DVIDEO_WAYLAND=OFF
+			-DVIDEO_X11=OFF
+			-DVIDEO_X11=OFF
 			-DWAYLAND_SHARED=OFF
 			-DX11_SHARED=OFF
 		)
 	else
 		mycmakeargs+=(
+			-DALSA=$(usex alsa)
 			-DALSA_SHARED=$(usex alsa)
+			-DINPUT_TSLIB=$(usex tslib)
+			-DJACK=$(usex jack)
+			-DESD=$(usex esd)
 			-DESD_SHARED=$(usex esd)
 			-DJACK_SHARED=$(usex jack)
 			-DKMSDRM_SHARED=$(usex kms)
-			-DSDL_SHARED=ON
-			-DSDL_STATIC=OFF
+			-DLIBSAMPLERATE=$(usex libsamplerate)
+			-DNAS=$(usex nas)
+			-DOSS=$(usex oss)
+			-DPTHREADS=$(usex threads)
+			-DPTHREADS_SEM=$(usex threads)
+			-DPULSEAUDIO=$(usex pulseaudio)
 			-DPULSEAUDIO_SHARED=$(usex pulseaudio)
+			-DSDL_AUDIO=$(usex alsa ON $(usex esd ON $(usex jack ON $(usex nas ON $(usex oss ON $(usex pulseaudio ON $(usex sndio ON $(usex sdl_audio_disk ON OFF))))))))
+			-DSDL_THREADS=$(usex threads)
+			-DSDL_VIDEO=$(usex kms ON $(usex opengl ON $(usex gles2 ON $(usex video_cards_vivante ON $(usex vulkan ON $(usex wayland ON $(usex X ON OFF)))))))
+			-DSNDIO=$(usex sndio)
+			-DVIDEO_KMSDRM=$(usex kms)
+			-DVIDEO_OPENGL=$(usex opengl)
+			-DVIDEO_RPI=OFF
+			-DVIDEO_VULKAN=$(usex vulkan)
+			-DVIDEO_WAYLAND=$(usex wayland)
+			-DVIDEO_X11=$(usex X)
+			-DVIDEO_X11_XCURSOR=$(usex X)
+			-DVIDEO_X11_XINERAMA=$(usex xinerama)
+			-DVIDEO_X11_XINPUT=$(usex X)
+			-DVIDEO_X11_XRANDR=$(usex X)
+			-DVIDEO_X11_XSCRNSAVER=$(usex xscreensaver)
+			-DVIDEO_X11_XSHAPE=$(usex X)
+			-DVIDEO_X11_XVM=$(usex X)
 			-DWAYLAND_SHARED=$(usex wayland)
 			-DX11_SHARED=$(usex X)
 		)
@@ -654,6 +936,7 @@ configure_android() {
 		${URHO3D_ANDROID_CONFIG[@]}
 		-DCMAKE_INSTALL_PREFIX=/usr/share/${P}/android
 		-DANDROID=ON
+		-DARM=OFF
 		-DRPI=OFF
 		-DWEB=OFF
 		-DGET_LIBDIR=$(get_libdir)
@@ -732,6 +1015,92 @@ configure_android() {
 	cmake-utils_src_configure
 }
 
+configure_arm() {
+	ewarn "configure_arm is incomplete"
+        local mycmakeargs=(
+		${URHO3D_ANDROID_CONFIG[@]}
+		-DCMAKE_INSTALL_PREFIX=/usr/share/${P}/arm
+		-DANDROID=OFF
+		-DARM=ON
+		-DRPI=OFF
+		-DWEB=OFF
+		-DGET_LIBDIR=$(get_libdir)
+		-DURHO3D_ANGELSCRIPT=$(usex angelscript)
+		-DURHO3D_BINDINGS=$(usex bindings)
+		-DURHO3D_DATABASE_ODBC=OFF
+		-DURHO3D_DATABASE_SQLITE=$(usex sqlite)
+		-DURHO3D_DOCS=$(usex doc)
+		-DURHO3D_EXTRAS=OFF
+		-DURHO3D_FILEWATCHER=$(usex filewatcher)
+		-DURHO3D_IK=$(usex ik)
+		-DURHO3D_LIB_TYPE=$(usex static-libs STATIC SHARED)
+		-DURHO3D_LOGGING=$(usex logging)
+		-DURHO3D_LUA=$(usex lua)
+		-DURHO3D_LUA_RAW_SCRIPT_LOADER=$(usex debug-raw-script-loader)
+		-DURHO3D_LUAJIT=$(usex luajit)
+		-DURHO3D_LUASCRIPT=$(usex lua ON $(usex luajit ON OFF))
+		-DURHO3D_NAVIGATION=$(usex recastnavigation)
+		-DURHO3D_NETWORK=$(usex network)
+		-DURHO3D_PCH=$(usex pch)
+		-DURHO3D_PHYSICS=$(usex bullet)
+		-DURHO3D_PROFILING=$(usex profiling)
+		-DURHO3D_SAFE_LUA=$(usex debug)
+		-DURHO3D_SAMPLES=$(usex samples)
+		-DURHO3D_SYSTEM_ANGELSCRIPT=$(usex system-angelscript)
+		-DURHO3D_SYSTEM_ASSIMP=$(usex system-assimp)
+		-DURHO3D_SYSTEM_BOOST=$(usex system-boost)
+		-DURHO3D_SYSTEM_BOX2D=$(usex system-box2d)
+		-DURHO3D_SYSTEM_BULLET=$(usex system-bullet)
+		-DURHO3D_SYSTEM_CIVETWEB=$(usex system-civetweb)
+		-DURHO3D_SYSTEM_FREETYPE=$(usex system-freetype)
+		-DURHO3D_SYSTEM_GLEW=$(usex system-glew)
+		-DURHO3D_SYSTEM_IK=OFF
+		-DURHO3D_SYSTEM_LIBCPUID=$(usex system-libcpuid)
+		-DURHO3D_SYSTEM_LUA=$(usex system-lua)
+		-DURHO3D_SYSTEM_LUAJIT=$(usex system-luajit)
+		-DURHO3D_SYSTEM_LZ4=$(usex system-lz4)
+		-DURHO3D_SYSTEM_MOJOSHADER=$(usex system-mojoshader)
+		-DURHO3D_SYSTEM_NANODBC=$(usex system-nanodbc)
+		-DURHO3D_SYSTEM_PUGIXML=$(usex system-pugixml)
+		-DURHO3D_SYSTEM_RAPIDJSON=$(usex system-rapidjson)
+		-DURHO3D_SYSTEM_RECASTNAVIGATION=$(usex system-recastnavigation)
+		-DURHO3D_SYSTEM_SDL=$(usex system-sdl)
+		-DURHO3D_SYSTEM_SLIKENET=OFF
+		-DURHO3D_SYSTEM_SPINE=OFF
+		-DURHO3D_SYSTEM_SQLITE=$(usex system-sqlite)
+		-DURHO3D_SYSTEM_STANHULL=OFF
+		-DURHO3D_SYSTEM_STB=OFF
+		-DURHO3D_SYSTEM_TOLUAPP=OFF
+		-DURHO3D_SYSTEM_WEBP=$(usex system-webp)
+		-DURHO3D_TESTING=$(usex test)
+		-DURHO3D_THREADING=$(usex threads)
+		-DURHO3D_TOOLS=OFF
+		-DURHO3D_URHO2D=$(usex box2d)
+		-DURHO3D_WEBP=$(usex webp)
+	)
+
+	if use system-box2d ; then
+		if use box2d_2_4 ; then
+			ewarn "Box2D 2.4+ breaks ABI compatibility and scripts.  Use Box2D 2.3 to maximize compatibility."
+			mycmakeargs+=( -DBOX2D_2_4=1 )
+		elif use box2d_2_3 ; then
+			einfo "Using Box2D 2.3"
+			mycmakeargs+=( -DBOX2D_2_3=1 )
+		else
+			einfo "Using Box2D 2.3 (default) for ${EURHO3D}"
+			mycmakeargs+=( -DBOX2D_2_3=1 )
+		fi
+	fi
+
+	configure_sdl
+
+	URHO3D_TOOLCHAIN_FILE="${BUILD_DIR}/CMake/Toolchains/Arm.cmake"
+	SUFFIX="_${EURHO3D}_${ABI}_${ESTSH_LIB_TYPE}"
+	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
+	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
+	_cmake-utils_src_configure
+}
+
 configure_native() {
 	if [[ "${EURHO3D}" == "native" ]] ; then
 		if use debug; then
@@ -744,6 +1113,7 @@ configure_native() {
 
         local mycmakeargs=(
 		-DANDROID=OFF
+		-DARM=OFF
 		-DRPI=OFF
 		-DWEB=OFF
 		-DGET_LIBDIR=$(get_libdir)
@@ -848,6 +1218,7 @@ configure_rpi() {
 		${URHO3D_RPI_CONFIG[@]}
 		-DCMAKE_INSTALL_PREFIX=/usr/share/${P}/rpi
 		-DANDROID=OFF
+		-DARM=OFF
 		-DRPI=ON
 		-DWEB=OFF
 		-DGET_LIBDIR=$(get_libdir)
@@ -920,45 +1291,44 @@ configure_rpi() {
 
 	configure_sdl
 
+	URHO3D_TOOLCHAIN_FILE="${BUILD_DIR}/CMake/Toolchains/RaspberryPi.cmake"
 	SUFFIX="_${EURHO3D}_${ABI}_${ESTSH_LIB_TYPE}"
 	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-	cmake-utils_src_configure
+	_cmake-utils_src_configure
 }
 
 configure_web() {
-	myemscriptpath=$(find  /usr/share/emscripten-* -type d | head -n 1)
+	myemscriptpath="${EMSCRIPTEN}"
+
+	filter-flags -march=*
+	filter-ldflags -Wl,--as-needed
+	strip-flags
+	einfo "LDFLAGS=${LDFLAGS}"
+	export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
+	export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
+	A=$(cat ${EM_CONFIG})
+	BINARYEN_LIB_PATH=$(echo -e "${A}\nprint (BINARYEN_ROOT)" | python3)"/lib"
+	export LD_LIBRARY_PATH="${BINARYEN_LIB_PATH}:${LD_LIBRARY_PATH}"
+
+	# The CMake/Toolchains/Emscripten.cmake gets installed but not inherited into script.
+	# The reason for these CMAKE_ and EM* additions.
+	# The WEB and EMSCRIPTEN are split when there should be only one.
+	local emcc_v=$("${myemscriptpath}/emcc" --version | head -n 1 | grep -E -o -e "[0-9.]+")
+	local emxx_v=$("${myemscriptpath}/em++" --version | head -n 1 | grep -E -o -e "[0-9.]+")
+
+#		-DEMSCRIPTEN=1
+	# Setting EMSCRIPTEN_SYSROOT is not necessary
+#		-DEMSCRIPTEN_SYSROOT=
+#	MYCMAKEARGS=" -DCMAKE_TOOLCHAIN_FILE=${BUILD_DIR}/CMake/Toolchains/Emscripten.cmake"
 	local mycmakeargs=(
+		-DCMAKE_CROSSCOMPILING=0
 		-DCMAKE_INSTALL_PREFIX=/usr/share/${P}/web
 		-DANDROID=OFF
+		-DARM=OFF
 		-DRPI=OFF
 		-DWEB=ON
 		${mydebug}
-		-DCMAKE_AR="${myemscriptpath}/emar"
-		-DCMAKE_C_ABI_COMPILED=TRUE
-		-DCMAKE_C_COMPILER="${myemscriptpath}/emcc"
-		-DCMAKE_C_COMPILER_ID_RUN=TRUE
-		-DCMAKE_C_COMPILER_ID=Clang
-		-DCMAKE_C_SIZEOF_DATA_PTR=4
-		-DCMAKE_CXX_ABI_COMPILED=TRUE
-		-DCMAKE_CXX_COMPILER="${myemscriptpath}/em++"
-		-DCMAKE_CXX_COMPILER_ID_RUN=TRUE
-		-DCMAKE_CXX_COMPILER_ID=Clang
-		-DCMAKE_CXX_SIZEOF_DATA_PTR=4
-		-DCMAKE_SYSTEM_NAME=Linux
-		-DCMAKE_SYSTEM_VERSION=1
-		-DCMAKE_RANLIB="${myemscriptpath}/emranlib"
-		-DCMAKE_REQUIRED_FLAGS="-s ERROR_ON_UNDEFINED_SYMBOLS=1"
-		-DCMAKE_FIND_ROOT_PATH_MODE_PROGRAM=NEVER
-		-DCMAKE_FIND_ROOT_PATH_MODE_LIBRARY=ONLY
-		-DCMAKE_FIND_ROOT_PATH_MODE_INCLUDE=ONLY
-		-DCMAKE_LINKER="${myemscriptpath}/emlink.py"
-		-DEMBUILDER="${myemscriptpath}/embuilder.py"
-		-DEMCC_VERSION=$(emcc --version | head -n1 | grep -o "[1-9.]" \
-					| tr '\n' '\0')
-		-DEMPACKAGER="${myemscriptpath}/tools/file_packager.py"
-		-DEMRUN="${myemscriptpath}/emrun"
-		-DEMSCRIPTEN=ON
 		-DEMSCRIPTEN_ROOT_PATH="${myemscriptpath}"
 		-DURHO3D_ANGELSCRIPT=OFF
 		-DURHO3D_BINDINGS=$(usex bindings)
@@ -972,7 +1342,7 @@ configure_web() {
 		-DURHO3D_JAVASCRIPT=$(usex bindings)
 		-DURHO3D_LIB_TYPE=STATIC
 		-DURHO3D_LOGGING=$(usex logging)
-		-DURHO3D_LUA=$(usex lua)
+		-DURHO3D_LUA=OFF
 		-DURHO3D_LUA_RAW_SCRIPT_LOADER=$(usex debug-raw-script-loader)
 		-DURHO3D_LUAJIT=OFF
 		-DURHO3D_LUASCRIPT=$(usex lua)
@@ -1021,10 +1391,11 @@ configure_web() {
 
 	einfo "Using Box2D 2.3 for ${EURHO3D}"
 
+	URHO3D_TOOLCHAIN_FILE="${BUILD_DIR}/CMake/Toolchains/Emscripten.cmake"
 	SUFFIX="_${EURHO3D}_${ABI}_${ESTSH_LIB_TYPE}"
 	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
-	cmake-utils_src_configure
+	_cmake-utils_src_configure
 }
 
 src_configure() {
@@ -1035,7 +1406,7 @@ src_configure() {
 			static-libs_configure() {
 				cd "${BUILD_DIR}" || die
 
-				if use bindings || use clang-tools ; then
+				if ( use bindings || use clang-tools ) && [[ "${EURHO3D}" != "web" ]] ; then
 					local chost=$(get_abi_CHOST ${ABI})
 					export CC=/usr/lib/llvm/${LLVM_SLOT}/bin/${chost}-clang
 					export CXX=/usr/lib/llvm/${LLVM_SLOT}/bin/${chost}-clang++
@@ -1043,6 +1414,8 @@ src_configure() {
 
 				if [[ "${EURHO3D}" == "android" ]] ; then
 					configure_android
+				elif [[ "${EURHO3D}" == "arm" ]] ; then
+					configure_arm
 				elif [[ "${EURHO3D}" == "native" ]] ; then
 					configure_native
 				elif [[ "${EURHO3D}" == "rpi" ]] ; then
@@ -1083,6 +1456,8 @@ src_compile() {
 					fi
 					make -j 1
 					ant debug
+				elif [[ "${EURHO3D}" == "arm" ]] ; then
+					compile_common
 				elif [[ "${EURHO3D}" == "native" ]] ; then
 					compile_common
 				elif [[ "${EURHO3D}" == "rpi" ]] ; then
@@ -1117,6 +1492,8 @@ src_install() {
 				cd "${BUILD_DIR}" || die
 				if [[ "${EURHO3D}" == "android" ]] ; then
 					ewarn "src_install for android has not been tested.  Send back fixes to ebuild maintainer."
+					install_common
+				elif [[ "${EURHO3D}" == "arm" ]] ; then
 					install_common
 				elif [[ "${EURHO3D}" == "native" ]] ; then
 					install_common

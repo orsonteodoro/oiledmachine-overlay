@@ -297,13 +297,97 @@ set_config() {
         PYTHON_EXE_ABSPATH=/usr/bin/python3.6
     fi
 
+    if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.28" ; then
+        __EMSDK_NODE_VERSION_MIN__="4.1.1"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.37.28" ; then
+        __EMSDK_NODE_VERSION_MIN__="0.8.0"
+    fi
+
+    if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.13" ; then
+        __EMSDK_BINARYEN_VERSION__="99"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.13" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.8" ; then
+        __EMSDK_BINARYEN_VERSION__="98"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.8" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.5" ; then
+        __EMSDK_BINARYEN_VERSION__="97"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.5" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.1" ; then
+        __EMSDK_BINARYEN_VERSION__="95"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.1" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.40.0" ; then
+        __EMSDK_BINARYEN_VERSION__="94"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.40.0" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.14" ; then
+        __EMSDK_BINARYEN_VERSION__="93"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.39.14" ; then
+        __EMSDK_BINARYEN_VERSION__="90"
+    fi
+
+    if is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "2.0.13" ; then
+        __EMSDK_LLVM_VERSION__="13"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "2.0.13" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.20" ; then
+        __EMSDK_LLVM_VERSION__="12"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.39.20" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.39.7" ; then
+        __EMSDK_LLVM_VERSION__="11"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.39.7" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.40" ; then
+        __EMSDK_LLVM_VERSION__="10"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.38.40" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.24" ; then
+        __EMSDK_LLVM_VERSION__="9"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.38.24" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.38.11" ; then
+        __EMSDK_LLVM_VERSION__="8"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.38.11" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.28" ; then
+        __EMSDK_LLVM_VERSION__="7"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.37.28" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.21" ; then
+        __EMSDK_LLVM_VERSION__="6"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.37.21" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.15" ; then
+        __EMSDK_LLVM_VERSION__="5"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.37.15" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.37.7" ; then
+        __EMSDK_LLVM_VERSION__="4"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.37.7" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.35.22" ; then
+        __EMSDK_LLVM_VERSION__="3.9"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.35.22" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.35.2" ; then
+        __EMSDK_LLVM_VERSION__="3.8"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.35.2" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.32.4" ; then
+        __EMSDK_LLVM_VERSION__="3.7"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.32.4" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.30.1" ; then
+        __EMSDK_LLVM_VERSION__="3.6"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.30.1" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.29.1" ; then
+        __EMSDK_LLVM_VERSION__="3.5"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.29.1" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.27.1" ; then
+        __EMSDK_LLVM_VERSION__="3.4"
+    elif is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") "<" "1.27.1" \
+        && is_x_op_y $(echo "${em_v}" | cut -f 1 -d "-") ">=" "1.17.0" ; then
+        __EMSDK_LLVM_VERSION__="3.3"
+    fi
+
     T_ENV=$(mktemp)
     cat << EOF > "${T_ENV}" || die
 EM_CONFIG=/usr/share/emscripten-${PV}/emscripten.config
 EMSCRIPTEN=/usr/share/emscripten-${PV}
+EMSDK_BINARYEN_VERSION=${__EMSDK_BINARYEN_VERSION__}
+EMSDK_BINARYEN_BASE_PATH=/usr/$(get_libdir)/binaryen/${__EMSDK_BINARYEN_VERSION__}
+EMSDK_BINARYEN_LIB_PATH=/usr/$(get_libdir)/binaryen/${__EMSDK_BINARYEN_VERSION__}/lib
 EMSDK_CLOSURE_COMPILER=${__EMSDK_CLOSURE_COMPILER__}
 EMSDK_LLVM_ROOT=${__LLVM_BIN_PATH__}
+EMSDK_LLVM_VERSION=${__EMSDK_LLVM_VERSION__}
 EMSDK_NODE=/usr/bin/node
+EMSDK_NODE_VERSION_MIN=${__EMSDK_NODE_VERSION_MIN__}
 EMSDK_PYTHON=${PYTHON_EXE_ABSPATH}
 EMSCRIPTEN_NATIVE_OPTIMIZER=/usr/share/emscripten-${PV}/optimizer
 PATH="/usr/share/emscripten-${PV}"
@@ -372,6 +456,9 @@ to running the emscripten toolchain."
     # the emscripten package has no right to it.
     echo -e \
 "A reminder that CLOSURE_COMPILER=\"\${EMSDK_CLOSURE_COMPILER}\" needs to be\n\
+called prior to running the emscripten toolchain."
+    echo -e \
+"A reminder that LD_LIBRARY_PATH=\"\${EMSDK_BINARYEN_LIB_PATH}:\${LD_LIBRARY_PATH}\" needs to be\n\
 called prior to running the emscripten toolchain."
 }
 

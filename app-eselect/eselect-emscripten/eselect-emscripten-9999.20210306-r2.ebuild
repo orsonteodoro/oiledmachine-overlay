@@ -26,5 +26,5 @@ src_install() {
 }
 
 pkg_postinst() {
-	ewarn "A \`eselect emscripten set <#>\` is required in order for fixes to take effect."
+	ewarn "A \`eselect emscripten set <#>\` followed by \`source /etc/profile\` in every shell are required in order for fixes to take effect."
 }

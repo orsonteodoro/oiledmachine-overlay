@@ -160,6 +160,8 @@
     <flag name="udev">Enable virtual/udev integration (device discovery, power
       and storage device support, etc)</flag>
     <flag name="vulkan">Adds Vulkan support through SDL</flag>
+    <flag name="video_cards_vc4">Enables RPI video support through SDL</flag>
+    <flag name="video_cards_vivante">Enables Vivante video support through SDL</flag>
     <flag name="wayland">Adds Wayland support through SDL</flag>
     <flag name="web">Add web-browser support to build games using
       Emscripten and WASM (WebAssembly)</flag>

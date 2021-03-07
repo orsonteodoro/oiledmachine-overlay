@@ -1,6 +1,6 @@
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/CMake/Modules/FindUrho3D.cmake Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/FindUrho3D.cmake
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/CMake/Modules/FindUrho3D.cmake	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/FindUrho3D.cmake	2021-03-05 01:15:54.216341828 -0800
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/CMake/Modules/FindUrho3D.cmake Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/CMake/Modules/FindUrho3D.cmake
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/CMake/Modules/FindUrho3D.cmake	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/CMake/Modules/FindUrho3D.cmake	2021-03-06 22:57:18.176155652 -0800
 @@ -67,7 +67,13 @@ if (CMAKE_PROJECT_NAME STREQUAL Urho3D A
      endif ()
      if (URHO3D_LUA)
@@ -31,9 +31,9 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
          endif ()
          # Intentionally do not cache the URHO3D_VERSION as it has potential to change frequently
          file (STRINGS ${URHO3D_BASE_INCLUDE_DIR}/librevision.h URHO3D_VERSION REGEX "^const char\\* revision=\"[^\"]*\".*$")
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/CMake/Modules/GenerateExportHeader.cmake Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/GenerateExportHeader.cmake
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/CMake/Modules/GenerateExportHeader.cmake	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/GenerateExportHeader.cmake	2021-03-05 01:15:54.216341828 -0800
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/CMake/Modules/GenerateExportHeader.cmake Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/CMake/Modules/GenerateExportHeader.cmake
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/CMake/Modules/GenerateExportHeader.cmake	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/CMake/Modules/GenerateExportHeader.cmake	2021-03-06 22:57:18.188156125 -0800
 @@ -215,10 +215,10 @@ macro(_test_compiler_hidden_visibility)
        AND NOT CMAKE_CXX_COMPILER_ID MATCHES PGI
        AND NOT CMAKE_CXX_COMPILER_ID MATCHES Watcom)
@@ -49,9 +49,9 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
    endif()
  endmacro()
  
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/CMake/Modules/UrhoCommon.cmake Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/UrhoCommon.cmake
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/CMake/Modules/UrhoCommon.cmake	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/CMake/Modules/UrhoCommon.cmake	2021-03-05 01:15:54.216341828 -0800
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/CMake/Modules/UrhoCommon.cmake Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/CMake/Modules/UrhoCommon.cmake
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/CMake/Modules/UrhoCommon.cmake	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/CMake/Modules/UrhoCommon.cmake	2021-03-06 22:57:18.188156125 -0800
 @@ -562,8 +562,8 @@ if (MSVC)
      set (CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /OPT:REF /OPT:ICF")
  else ()
@@ -143,9 +143,214 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  # LuaJIT specific - extra linker flags for linking against LuaJIT (adapted from LuaJIT's original Makefile)
  if (URHO3D_LUAJIT)
      if (URHO3D_64BIT AND APPLE AND NOT ARM)
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Clang-Tools/AutoBinder/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Clang-Tools/AutoBinder/CMakeLists.txt
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Clang-Tools/AutoBinder/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Clang-Tools/AutoBinder/CMakeLists.txt	2021-03-05 01:15:54.216341828 -0800
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/CMake/Toolchains/Arm.cmake Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/CMake/Toolchains/Arm.cmake
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/CMake/Toolchains/Arm.cmake	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/CMake/Toolchains/Arm.cmake	2021-03-06 23:05:19.907090833 -0800
+@@ -23,19 +23,22 @@
+ # Workaround try_compile() limitation where it cannot yet see cache variables during initial configuration
+ get_property (IN_TRY_COMPILE GLOBAL PROPERTY IN_TRY_COMPILE)
+ if (IN_TRY_COMPILE)
++    message (STATUS "IN_TRY_COMPILE=1")
+     foreach (VAR $ENV{VARS})
+         set (${VAR} $ENV{${VAR}})
+     endforeach ()
+ else ()
+     # Prevent critical variables from changing after the initial configuration
+     if (CMAKE_CROSSCOMPILING)
++        message (STATUS "CMAKE_CROSSCOMPILING=1")
+         set (SAVED_ARM_SYSROOT ${ARM_SYSROOT} CACHE INTERNAL "Initial value for ARM_SYSROOT")
+         set (SAVED_ARM_PREFIX ${ARM_PREFIX} CACHE INTERNAL "Initial value for ARM_PREFIX")
+         # Save the initial values of CC and CXX environment variables
+-        set (SAVED_CC $ENV{CC} CACHE INTERNAL "Initial value for CC")
+-        set (SAVED_CXX $ENV{CXX} CACHE INTERNAL "Initial value for CXX")
+-        return ()
++        set (SAVED_CC $ENV{CC} CACHE INTERNAL "Initial value for CC" FORCE)
++        set (SAVED_CXX $ENV{CXX} CACHE INTERNAL "Initial value for CXX" FORCE)
++        return ()
+     elseif ((SAVED_ARM_SYSROOT AND NOT SAVED_ARM_SYSROOT STREQUAL ARM_SYSROOT) OR (SAVED_ARM_PREFIX AND NOT SAVED_ARM_PREFIX STREQUAL ARM_PREFIX))
++        message (STATUS "CMAKE_CROSSCOMPILING=0")
+         set (ARM_SYSROOT ${SAVED_ARM_SYSROOT} CACHE PATH "Path to ARM system root (ARM on Linux cross-compiling build only)" FORCE)
+         set (ARM_PREFIX ${SAVED_ARM_PREFIX} CACHE STRING "Prefix path to ARM cross-compiler tools (ARM on Linux cross-compiling build only)" FORCE)
+         message (FATAL_ERROR "ARM_SYSROOT and ARM_PREFIX cannot be changed after the initial configuration/generation. "
+@@ -112,15 +115,26 @@ if (NOT ARM_COMPILER_PREFIX)
+     endif ()
+     set (ARM_COMPILER_PREFIX ${ARM_COMPILER_PREFIX} CACHE INTERNAL "Path to C/C++ compiler tool symlinks or to the actual tools if not using ccache")
+ endif ()
+-set (CMAKE_C_COMPILER   ${ARM_COMPILER_PREFIX}-gcc CACHE PATH "C compiler")
+-set (CMAKE_CXX_COMPILER ${ARM_COMPILER_PREFIX}-g++ CACHE PATH "C++ compiler")
+-set (CMAKE_STRIP        ${ARM_PREFIX}-strip        CACHE PATH "strip")
+-set (CMAKE_AR           ${ARM_PREFIX}-ar           CACHE PATH "archive")
+-set (CMAKE_LINKER       ${ARM_PREFIX}-ld           CACHE PATH "linker")
+-set (CMAKE_NM           ${ARM_PREFIX}-nm           CACHE PATH "nm")
+-set (CMAKE_OBJCOPY      ${ARM_PREFIX}-objcopy      CACHE PATH "objcopy")
+-set (CMAKE_OBJDUMP      ${ARM_PREFIX}-objdump      CACHE PATH "objdump")
+-set (CMAKE_RANLIB       ${ARM_PREFIX}-ranlib       CACHE PATH "ranlib")
++set (CMAKE_C_COMPILER   ${ARM_COMPILER_PREFIX}-gcc CACHE PATH "C compiler" FORCE)
++set (CMAKE_CXX_COMPILER ${ARM_COMPILER_PREFIX}-g++ CACHE PATH "C++ compiler" FORCE)
++set (CMAKE_STRIP        ${ARM_PREFIX}-strip        CACHE PATH "strip" FORCE)
++set (CMAKE_AR           ${ARM_PREFIX}-ar           CACHE PATH "archive" FORCE)
++set (CMAKE_LINKER       ${ARM_PREFIX}-ld           CACHE PATH "linker" FORCE)
++set (CMAKE_NM           ${ARM_PREFIX}-nm           CACHE PATH "nm" FORCE)
++set (CMAKE_OBJCOPY      ${ARM_PREFIX}-objcopy      CACHE PATH "objcopy" FORCE)
++set (CMAKE_OBJDUMP      ${ARM_PREFIX}-objdump      CACHE PATH "objdump" FORCE)
++set (CMAKE_RANLIB       ${ARM_PREFIX}-ranlib       CACHE PATH "ranlib" FORCE)
++
++message(STATUS "ARM build information:")
++message(STATUS "CMAKE_C_COMPILER   ${CMAKE_C_COMPILER}")
++message(STATUS "CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER}")
++message(STATUS "CMAKE_STRIP        ${CMAKE_STRIP}")
++message(STATUS "CMAKE_AR           ${CMAKE_AR}")
++message(STATUS "CMAKE_LINKER       ${CMAKE_LINKER}")
++message(STATUS "CMAKE_NM           ${CMAKE_NM}")
++message(STATUS "CMAKE_OBJCOPY      ${CMAKE_OBJCOPY}")
++message(STATUS "CMAKE_OBJDUMP      ${CMAKE_OBJDUMP}")
++message(STATUS "CMAKE_RANLIB       ${CMAKE_RANLIB}")
+ 
+ # Workaround try_compile() limitation where it cannot yet see cache variables during initial configuration
+ if (NOT IN_TRY_COMPILE)
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/CMake/Toolchains/Emscripten.cmake Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/CMake/Toolchains/Emscripten.cmake
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/CMake/Toolchains/Emscripten.cmake	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/CMake/Toolchains/Emscripten.cmake	2021-03-06 23:05:15.922934424 -0800
+@@ -23,19 +23,22 @@
+ # Workaround try_compile() limitation where it cannot yet see cache variables during initial configuration
+ get_property (IN_TRY_COMPILE GLOBAL PROPERTY IN_TRY_COMPILE)
+ if (IN_TRY_COMPILE)
++    message (STATUS "IN_TRY_COMPILE=1")
+     foreach (VAR $ENV{VARS})
+         set (${VAR} $ENV{${VAR}})
+     endforeach ()
+ else ()
+     # Prevent critical variables from changing after the initial configuration
+     if (CMAKE_CROSSCOMPILING)
++        message (STATUS "CMAKE_CROSSCOMPILING=1")
+         set (SAVED_EMSCRIPTEN_ROOT_PATH ${EMSCRIPTEN_ROOT_PATH} CACHE INTERNAL "Initial value for EMSCRIPTEN_ROOT_PATH")
+         set (SAVED_EMSCRIPTEN_SYSROOT ${EMSCRIPTEN_SYSROOT} CACHE INTERNAL "Initial value for EMSCRIPTEN_SYSROOT")
+         # Save the initial values of CC and CXX environment variables
+-        set (SAVED_CC $ENV{CC} CACHE INTERNAL "Initial value for CC")
+-        set (SAVED_CXX $ENV{CXX} CACHE INTERNAL "Initial value for CXX")
+-        return ()
++        set (SAVED_CC $ENV{CC} CACHE INTERNAL "Initial value for CC" FORCE)
++        set (SAVED_CXX $ENV{CXX} CACHE INTERNAL "Initial value for CXX" FORCE)
++        return ()
+     elseif ((SAVED_EMSCRIPTEN_ROOT_PATH AND NOT SAVED_EMSCRIPTEN_ROOT_PATH STREQUAL EMSCRIPTEN_ROOT_PATH) OR (SAVED_EMSCRIPTEN_SYSROOT AND NOT SAVED_EMSCRIPTEN_SYSROOT STREQUAL EMSCRIPTEN_SYSROOT))
++        message (STATUS "CMAKE_CROSSCOMPILING=0")
+         set (EMSCRIPTEN_ROOT_PATH ${SAVED_EMSCRIPTEN_ROOT_PATH} CACHE STRING "Root path to Emscripten cross-compiler tools (Emscripten only)" FORCE)
+         set (EMSCRIPTEN_SYSROOT ${SAVED_EMSCRIPTEN_SYSROOT} CACHE PATH "Path to Emscripten system root (Emscripten only)" FORCE)
+         message (FATAL_ERROR "EMSCRIPTEN_ROOT_PATH and EMSCRIPTEN_SYSROOT cannot be changed after the initial configuration/generation. "
+@@ -134,15 +137,24 @@ if (NOT EMSCRIPTEN_COMPILER_PATH)
+     endif ()
+     set (EMSCRIPTEN_COMPILER_PATH ${EMSCRIPTEN_COMPILER_PATH} CACHE INTERNAL "Path to C/C++ compiler tool symlinks or to the actual tools if not using ccache")
+ endif ()
+-set (CMAKE_C_COMPILER   ${EMSCRIPTEN_COMPILER_PATH}/emcc${TOOL_EXT} CACHE PATH "C compiler")
+-set (CMAKE_CXX_COMPILER ${EMSCRIPTEN_COMPILER_PATH}/em++${TOOL_EXT} CACHE PATH "C++ compiler")
+-set (CMAKE_AR           ${EMSCRIPTEN_ROOT_PATH}/emar${TOOL_EXT}     CACHE PATH "archive")
+-set (CMAKE_RANLIB       ${EMSCRIPTEN_ROOT_PATH}/emranlib${TOOL_EXT} CACHE PATH "ranlib")
+-set (CMAKE_LINKER       ${EMSCRIPTEN_ROOT_PATH}/emlink.py           CACHE PATH "linker")
++set (CMAKE_C_COMPILER   ${EMSCRIPTEN_COMPILER_PATH}/emcc${TOOL_EXT} CACHE PATH "C compiler" FORCE)
++set (CMAKE_CXX_COMPILER ${EMSCRIPTEN_COMPILER_PATH}/em++${TOOL_EXT} CACHE PATH "C++ compiler" FORCE)
++set (CMAKE_AR           ${EMSCRIPTEN_ROOT_PATH}/emar${TOOL_EXT}     CACHE PATH "archive" FORCE)
++set (CMAKE_RANLIB       ${EMSCRIPTEN_ROOT_PATH}/emranlib${TOOL_EXT} CACHE PATH "ranlib" FORCE)
++set (CMAKE_LINKER       ${EMSCRIPTEN_ROOT_PATH}/emlink.py           CACHE PATH "linker" FORCE)
+ # Specific to Emscripten
+-set (EMRUN              ${EMSCRIPTEN_ROOT_PATH}/emrun${TOOL_EXT}    CACHE PATH "emrun")
+-set (EMPACKAGER         python ${EMSCRIPTEN_ROOT_PATH}/tools/file_packager.py CACHE PATH "file_packager.py")
+-set (EMBUILDER          python ${EMSCRIPTEN_ROOT_PATH}/embuilder.py CACHE PATH "embuilder.py")
++set (EMRUN              ${EMSCRIPTEN_ROOT_PATH}/emrun${TOOL_EXT}    CACHE PATH "emrun" FORCE)
++set (EMPACKAGER         python ${EMSCRIPTEN_ROOT_PATH}/tools/file_packager.py CACHE PATH "file_packager.py" FORCE)
++set (EMBUILDER          python ${EMSCRIPTEN_ROOT_PATH}/embuilder.py CACHE PATH "embuilder.py" FORCE)
++
++message(STATUS "Emscripten build information:")
++message(STATUS "CMAKE_C_COMPILER   ${CMAKE_C_COMPILER}")
++message(STATUS "CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER}")
++message(STATUS "CMAKE_AR           ${CMAKE_AR}")
++message(STATUS "CMAKE_LINKER       ${CMAKE_LINKER}")
++message(STATUS "EMRUN              ${EMRUN}")
++message(STATUS "EMPACKAGER         ${EMPACKAGER}")
++message(STATUS "EMBUILDER          ${EMBUILDER}")
+ 
+ # Still perform the compiler checks except for those stated otherwise below
+ foreach (LANG C CXX)
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/CMake/Toolchains/RaspberryPi.cmake Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/CMake/Toolchains/RaspberryPi.cmake
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/CMake/Toolchains/RaspberryPi.cmake	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/CMake/Toolchains/RaspberryPi.cmake	2021-03-06 23:05:12.290791831 -0800
+@@ -23,19 +23,22 @@
+ # Workaround try_compile() limitation where it cannot yet see cache variables during initial configuration
+ get_property (IN_TRY_COMPILE GLOBAL PROPERTY IN_TRY_COMPILE)
+ if (IN_TRY_COMPILE)
++    message (STATUS "IN_TRY_COMPILE=1")
+     foreach (VAR $ENV{VARS})
+         set (${VAR} $ENV{${VAR}})
+     endforeach ()
+ else ()
+     # Prevent critical variables from changing after the initial configuration
+     if (CMAKE_CROSSCOMPILING)
++        message (STATUS "CMAKE_CROSSCOMPILING=1")
+         set (SAVED_RPI_SYSROOT ${RPI_SYSROOT} CACHE INTERNAL "Initial value for RPI_SYSROOT")
+         set (SAVED_RPI_PREFIX ${RPI_PREFIX} CACHE INTERNAL "Initial value for RPI_PREFIX")
+         # Save the initial values of CC and CXX environment variables
+-        set (SAVED_CC $ENV{CC} CACHE INTERNAL "Initial value for CC")
+-        set (SAVED_CXX $ENV{CXX} CACHE INTERNAL "Initial value for CXX")
+-        return ()
++        set (SAVED_CC $ENV{CC} CACHE INTERNAL "Initial value for CC" FORCE)
++        set (SAVED_CXX $ENV{CXX} CACHE INTERNAL "Initial value for CXX" FORCE)
++        return ()
+     elseif ((SAVED_RPI_SYSROOT AND NOT SAVED_RPI_SYSROOT STREQUAL RPI_SYSROOT) OR (SAVED_RPI_PREFIX AND NOT SAVED_RPI_PREFIX STREQUAL RPI_PREFIX))
++        message (STATUS "CMAKE_CROSSCOMPILING=0")
+         set (RPI_SYSROOT ${SAVED_RPI_SYSROOT} CACHE PATH "Path to Raspberry Pi system root (RPI cross-compiling build only)" FORCE)
+         set (RPI_PREFIX ${SAVED_RPI_PREFIX} CACHE STRING "Prefix path to Raspberry Pi cross-compiler tools (RPI cross-compiling build only)" FORCE)
+         message (FATAL_ERROR "RPI_SYSROOT and RPI_PREFIX cannot be changed after the initial configuration/generation. "
+@@ -112,15 +115,26 @@ if (NOT RPI_COMPILER_PREFIX)
+     endif ()
+     set (RPI_COMPILER_PREFIX ${RPI_COMPILER_PREFIX} CACHE INTERNAL "Path to C/C++ compiler tool symlinks or to the actual tools if not using ccache")
+ endif ()
+-set (CMAKE_C_COMPILER   ${RPI_COMPILER_PREFIX}-gcc CACHE PATH "C compiler")
+-set (CMAKE_CXX_COMPILER ${RPI_COMPILER_PREFIX}-g++ CACHE PATH "C++ compiler")
+-set (CMAKE_STRIP        ${RPI_PREFIX}-strip        CACHE PATH "strip")
+-set (CMAKE_AR           ${RPI_PREFIX}-ar           CACHE PATH "archive")
+-set (CMAKE_LINKER       ${RPI_PREFIX}-ld           CACHE PATH "linker")
+-set (CMAKE_NM           ${RPI_PREFIX}-nm           CACHE PATH "nm")
+-set (CMAKE_OBJCOPY      ${RPI_PREFIX}-objcopy      CACHE PATH "objcopy")
+-set (CMAKE_OBJDUMP      ${RPI_PREFIX}-objdump      CACHE PATH "objdump")
+-set (CMAKE_RANLIB       ${RPI_PREFIX}-ranlib       CACHE PATH "ranlib")
++set (CMAKE_C_COMPILER   ${RPI_COMPILER_PREFIX}-gcc CACHE PATH "C compiler" FORCE)
++set (CMAKE_CXX_COMPILER ${RPI_COMPILER_PREFIX}-g++ CACHE PATH "C++ compiler" FORCE)
++set (CMAKE_STRIP        ${RPI_PREFIX}-strip        CACHE PATH "strip" FORCE)
++set (CMAKE_AR           ${RPI_PREFIX}-ar           CACHE PATH "archive" FORCE)
++set (CMAKE_LINKER       ${RPI_PREFIX}-ld           CACHE PATH "linker" FORCE)
++set (CMAKE_NM           ${RPI_PREFIX}-nm           CACHE PATH "nm" FORCE)
++set (CMAKE_OBJCOPY      ${RPI_PREFIX}-objcopy      CACHE PATH "objcopy" FORCE)
++set (CMAKE_OBJDUMP      ${RPI_PREFIX}-objdump      CACHE PATH "objdump" FORCE)
++set (CMAKE_RANLIB       ${RPI_PREFIX}-ranlib       CACHE PATH "ranlib" FORCE)
++
++message(STATUS "RPI build information:")
++message(STATUS "CMAKE_C_COMPILER   ${CMAKE_C_COMPILER}")
++message(STATUS "CMAKE_CXX_COMPILER ${CMAKE_CXX_COMPILER}")
++message(STATUS "CMAKE_STRIP        ${CMAKE_STRIP}")
++message(STATUS "CMAKE_AR           ${CMAKE_AR}")
++message(STATUS "CMAKE_LINKER       ${CMAKE_LINKER}")
++message(STATUS "CMAKE_NM           ${CMAKE_NM}")
++message(STATUS "CMAKE_OBJCOPY      ${CMAKE_OBJCOPY}")
++message(STATUS "CMAKE_OBJDUMP      ${CMAKE_OBJDUMP}")
++message(STATUS "CMAKE_RANLIB       ${CMAKE_RANLIB}")
+ 
+ # Workaround try_compile() limitation where it cannot yet see cache variables during initial configuration
+ if (NOT IN_TRY_COMPILE)
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/CMakeLists.txt	2021-03-06 22:57:18.188156125 -0800
+@@ -33,6 +33,9 @@ if (COMMAND cmake_policy)
+     cmake_policy (SET CMP0042 NEW)
+     # Honor the visibility properties for SHARED target types only
+     cmake_policy (SET CMP0063 OLD)
++    # Support new IN_LIST if() operator.
++    cmake_policy (SET CMP0057 NEW)
++
+ endif ()
+ 
+ # Set project name
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/Clang-Tools/AutoBinder/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/Clang-Tools/AutoBinder/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/Clang-Tools/AutoBinder/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/Clang-Tools/AutoBinder/CMakeLists.txt	2021-03-06 22:57:18.188156125 -0800
 @@ -22,6 +22,7 @@
  
  # Define target name
@@ -166,9 +371,9 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  # Setup target
  setup_executable (TOOL NODEPS)
  install (DIRECTORY Templates DESTINATION ${DEST_RUNTIME_DIR})
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Clang-Tools/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Clang-Tools/CMakeLists.txt
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Clang-Tools/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Clang-Tools/CMakeLists.txt	2021-03-05 01:15:54.216341828 -0800
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/Clang-Tools/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/Clang-Tools/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/Clang-Tools/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/Clang-Tools/CMakeLists.txt	2021-03-06 22:57:18.188156125 -0800
 @@ -56,9 +56,9 @@ else ()
  endif ()
  
@@ -221,9 +426,9 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
          DEPENDS AutoBinder
          WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Source/Urho3D
          COMMENT "Auto-binding for JavaScript")
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/CMakeLists.txt
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/CMakeLists.txt	2021-03-05 01:16:44.370284405 -0800
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/CMakeLists.txt	2021-03-06 22:57:18.188156125 -0800
 @@ -67,74 +67,296 @@ if (URHO3D_LIB_TYPE STREQUAL SHARED AND
      endif ()
  endif ()
@@ -543,9 +748,9 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  # Urho3D game engine library
  add_subdirectory (Urho3D)
  
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/ik/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/ik/CMakeLists.txt
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/ik/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/ik/CMakeLists.txt	2021-03-05 01:15:54.216341828 -0800
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/ThirdParty/ik/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/ThirdParty/ik/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/ThirdParty/ik/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/ThirdParty/ik/CMakeLists.txt	2021-03-06 22:57:18.188156125 -0800
 @@ -20,6 +20,7 @@
  #
  
@@ -554,9 +759,9 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  
  # Define target name
  set (TARGET_NAME ik)
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/Lua/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/Lua/CMakeLists.txt
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/Lua/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/Lua/CMakeLists.txt	2021-03-05 01:15:54.216341828 -0800
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/ThirdParty/Lua/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/ThirdParty/Lua/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/ThirdParty/Lua/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/ThirdParty/Lua/CMakeLists.txt	2021-03-06 22:57:19.456206032 -0800
 @@ -47,14 +47,25 @@ if (NOT CMAKE_PROJECT_NAME MATCHES ^Urho
      # Define source files
      set (SOURCE_FILES src/lua.c)
@@ -592,9 +797,9 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
 -    setup_executable (NODEPS)
 +    setup_executable (TOOL NODEPS)
  endif ()
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/LuaJIT/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/LuaJIT/CMakeLists.txt
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/LuaJIT/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/LuaJIT/CMakeLists.txt	2021-03-05 01:15:54.216341828 -0800
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/ThirdParty/LuaJIT/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/ThirdParty/LuaJIT/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/ThirdParty/LuaJIT/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/ThirdParty/LuaJIT/CMakeLists.txt	2021-03-06 22:57:20.268237991 -0800
 @@ -610,7 +610,7 @@ if (NOT CMAKE_PROJECT_NAME MATCHES ^Urho
      adjust_target_name ()   # Adjust to intended target output name
      if (TARGET LuaJIT_universal)
@@ -604,14 +809,14 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
      endif ()
  
      # Define post build steps
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/SDL/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/SDL/CMakeLists.txt
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/SDL/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/SDL/CMakeLists.txt	2021-03-05 01:15:54.216341828 -0800
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/ThirdParty/SDL/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/ThirdParty/SDL/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/ThirdParty/SDL/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/ThirdParty/SDL/CMakeLists.txt	2021-03-06 22:57:20.272238149 -0800
 @@ -585,6 +585,7 @@ if(LIBC)
      check_symbol_exists(M_PI math.h HAVE_M_PI)
      # Urho3D - for consistency sake use check_include_file() to check for HAVE_MPROTECT
      check_include_file (sys/mman.h HAVE_MPROTECT)
-+    set (_NFN _i64toa _ltoa _strlwr _strupr _ui64toa _uitoa _ultoa _strrev itoa)
++    set (_NFN _i64toa _ltoa _strlwr _strupr _ui64toa _uitoa _ultoa _strrev itoa strlcpy strlcat)
      foreach(_FN
              strtod malloc calloc realloc free getenv setenv putenv unsetenv
              qsort abs bcopy memset memcpy memmove memcmp strlen strlcpy strlcat
@@ -619,17 +824,28 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
              vsscanf vsnprintf fopen64 fseeko fseeko64 sigaction setjmp
              nanosleep sysconf sysctlbyname getauxval poll _Exit
              )
-+      if (WEB)
-+        if (_FN IN_LIST _NFN)
++      if (EMSCRIPTEN)
++        if ("${_FN}" IN_LIST _NFN)
 +          continue ()
 +        endif ()
 +      endif ()
        string(TOUPPER ${_FN} _UPPER)
        set(_HAVEVAR "HAVE_${_UPPER}")
        check_function_exists("${_FN}" ${_HAVEVAR})
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt	2021-03-05 01:15:54.216341828 -0800
+@@ -1109,7 +1115,9 @@ elseif(UNIX)    # Urho3D - at this point
+     set(SOURCE_FILES ${SOURCE_FILES} ${CORE_LINUX_SOURCES})
+ 
+     if(HAVE_INPUT_EVENTS)
+-      set(SDL_INPUT_LINUXEV 1)
++      if(NOT EMSCRIPTEN)
++        set(SDL_INPUT_LINUXEV 1)
++      endif()
+     endif()
+ 
+     if(SDL_HAPTIC AND HAVE_INPUT_EVENTS)
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/ThirdParty/toluapp/src/bin/CMakeLists.txt	2021-03-06 22:57:20.288238778 -0800
 @@ -51,7 +51,13 @@ if (NOT CMAKE_PROJECT_NAME STREQUAL Urho
      endif ()
  
@@ -673,9 +889,9 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  
  # Setup target
  setup_executable (TOOL NODEPS)
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt	2021-03-05 01:15:54.216341828 -0800
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/ThirdParty/toluapp/src/lib/CMakeLists.txt	2021-03-06 22:57:20.304239408 -0800
 @@ -27,7 +27,13 @@ set (TARGET_NAME toluapp)
  define_source_files (GLOB_CPP_PATTERNS *.c)
  
@@ -691,9 +907,9 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  
  # Setup target
  setup_library ()
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Tools/AssetImporter/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Tools/AssetImporter/CMakeLists.txt
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Tools/AssetImporter/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Tools/AssetImporter/CMakeLists.txt	2021-03-05 01:15:54.220341982 -0800
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/Tools/AssetImporter/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/Tools/AssetImporter/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/Tools/AssetImporter/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/Tools/AssetImporter/CMakeLists.txt	2021-03-06 22:57:20.312239723 -0800
 @@ -27,9 +27,17 @@ set (TARGET_NAME AssetImporter)
  define_source_files ()
  
@@ -715,9 +931,9 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  
  # Setup target
  setup_executable (TOOL)
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Tools/PackageTool/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Tools/PackageTool/CMakeLists.txt
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Tools/PackageTool/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Tools/PackageTool/CMakeLists.txt	2021-03-05 01:15:54.220341982 -0800
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/Tools/PackageTool/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/Tools/PackageTool/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/Tools/PackageTool/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/Tools/PackageTool/CMakeLists.txt	2021-03-06 22:57:20.312239723 -0800
 @@ -95,7 +95,11 @@ if (NOT CMAKE_PROJECT_NAME STREQUAL Urho
          include (CheckIncludeFile)
          check_include_file (stdint.h HAVE_STDINT_H)
@@ -744,9 +960,9 @@ diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd6
  
  # Setup target
  setup_executable (TOOL)
-diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/CMakeLists.txt
---- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs.orig/Source/Urho3D/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
-+++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-native-abi_x86_64.amd64-shared-libs/Source/Urho3D/CMakeLists.txt	2021-03-05 01:15:54.220341982 -0800
+diff -urp Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/Urho3D/CMakeLists.txt Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/Urho3D/CMakeLists.txt
+--- Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs.orig/Source/Urho3D/CMakeLists.txt	2019-10-05 21:46:51.000000000 -0700
++++ Urho3D-d34dda158ecd7694fcfd55684caade7e131b8a45-web-abi_x86_64.amd64-static-libs/Source/Urho3D/CMakeLists.txt	2021-03-06 22:57:20.312239723 -0800
 @@ -22,6 +22,11 @@
  
  # Define target name
