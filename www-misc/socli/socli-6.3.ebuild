@@ -10,12 +10,14 @@ DESCRIPTION="Stack overflow command line client. Search and browse stack \
 overflow without leaving the terminal"
 HOMEPAGE="https://github.com/gautamkrishnar/socli"
 LICENSE="BSD"
-SRC_URI="https://github.com/gautamkrishnar/socli/archive/${PV}.tar.gz \
+EGIT_COMMIT="a766cca8663963a43fc291c349c51e92faf5f531"
+SRC_URI="https://github.com/gautamkrishnar/socli/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
 KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
-IUSE="man"
+IUSE+=" man"
 SLOT="0"
-DEPEND=">=dev-python/beautifulsoup-4.9.1:4[${PYTHON_USEDEP}]
+DEPEND+=" dev-python/argcomplete
+	>=dev-python/beautifulsoup-4.9.1:4[${PYTHON_USEDEP}]
 	>=dev-python/colorama-0.4.3[${PYTHON_USEDEP}]
 	>=dev-python/py-stackexchange-2.2.007[${PYTHON_USEDEP}]
 	>=dev-python/requests-2.24.0[${PYTHON_USEDEP}]
@@ -23,7 +25,7 @@ DEPEND=">=dev-python/beautifulsoup-4.9.1:4[${PYTHON_USEDEP}]
 	>=dev-python/sentry-sdk-0.18.0[${PYTHON_USEDEP}]"
 RDEPEND+=" ${DEPEND}"
 RESTRICT="mirror"
-S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 
 src_prepare() {
 	sed -i "/setup_requires/d" setup.py || die
