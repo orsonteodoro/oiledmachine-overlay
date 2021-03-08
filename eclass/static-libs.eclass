@@ -10,10 +10,16 @@
 
 inherit multibuild
 
+# @ECLASS-VARIABLE: STATIC_LIBS_CUSTOM_LIB_TYPE_IMPL
+# @DESCRIPTION: Adds a custom lib type(s) to impl loop, but not explictly added to IUSE
+
+# @ECLASS-VARIABLE: STATIC_LIBS_CUSTOM_LIB_TYPE_IUSE
+# @DESCRIPTION: Adds or makes a visible custom lib type(s) to IUSE visible
+
 # @ECLASS-VARIABLE: _STATIC_LIBS_IMPLS
 # @DESCRIPTION: (Private) Generates a list of implementations for the static-libs-multibuild context
-_STATIC_LIBS_IMPLS="static-libs shared-libs"
-IUSE+=" static-libs"
+_STATIC_LIBS_IMPLS="static-libs shared-libs ${STATIC_LIBS_CUSTOM_LIB_TYPE_IMPL}"
+IUSE+=" static-libs ${STATIC_LIBS_CUSTOM_LIB_TYPE_IUSE}"
 
 # @FUNCTION: _python_multibuild_wrapper
 # @DESCRIPTION: Initialize the environment for this implementation

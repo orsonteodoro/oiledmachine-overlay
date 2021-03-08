@@ -3,6 +3,9 @@
 
 EAPI=7
 
+STATIC_LIBS_CUSTOM_LIB_TYPE_IMPL="module"
+STATIC_LIBS_CUSTOM_LIB_TYPE_IUSE="+module"
+CMAKE_MAKEFILE_GENERATOR=emake
 LLVM_MAX_SLOT=9
 inherit cmake-utils eutils flag-o-matic linux-info llvm multilib-minimal static-libs urho3d
 
@@ -156,6 +159,7 @@ REQUIRED_USE+="
 	cpu_flags_x86_3dnow? ( !cpu_flags_x86_sse !cpu_flags_x86_mmx )
 	cpu_flags_x86_mmx? ( !cpu_flags_x86_3dnow !cpu_flags_x86_sse )
 	cpu_flags_x86_sse? ( !cpu_flags_x86_3dnow !cpu_flags_x86_mmx )
+	!haptic? ( libusb )
 	haptic? ( joystick )
 	joystick
 	joystick? (
@@ -171,7 +175,7 @@ REQUIRED_USE+="
 	!system-slikenet
 	 system-box2d? ( ^^ ( box2d_2_3 box2d_2_4 ) )
 	!system-box2d? ( box2d_2_3 !box2d_2_4 )
-	web? ( static-libs )"
+	web? ( module )"
 
 BOOST_VER="1.64"
 CIVETWEB_VER="1.7"
@@ -561,13 +565,13 @@ src_prepare() {
 			static-libs_prepare() {
 				einfo "In static-libs_prepare"
 				cd "${BUILD_DIR}" || die
-				if [[ "${EURHO3D}" == "android" ]] ; then
+				if [[ "${EURHO3D}" == "android" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					prepare_common
-				elif [[ "${EURHO3D}" == "native" ]] ; then
+				elif [[ "${EURHO3D}" == "native" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					prepare_common
-				elif [[ "${EURHO3D}" == "rpi" ]] ; then
+				elif [[ "${EURHO3D}" == "rpi" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					prepare_common
-				elif [[ "${EURHO3D}" == "web" && "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
+				elif [[ "${EURHO3D}" == "web" && "${ESTSH_LIB_TYPE}" == "module" ]] ; then
 					prepare_common
 				fi
 			}
@@ -829,10 +833,6 @@ configure_sdl() {
 		)
 	fi
 
-	if [[ "${EURHO3D}" == "rpi" ]] ; then
-		ewarn "RPI support in the cmake level is incomplete.  Fit it yourself or ask upstream to add missing /raspberry/ for video driver in SDL CMakeLists.txt."
-	fi
-
 	if [[ "${EURHO3D}" == "android" ]] ; then
 		mycmakeargs+=(
 			-DHIDAPI=$(usex joystick ON OFF)
@@ -956,6 +956,7 @@ configure_android() {
 		-DURHO3D_LUASCRIPT=$(usex lua ON $(usex luajit ON OFF))
 		-DURHO3D_NAVIGATION=$(usex recastnavigation)
 		-DURHO3D_NETWORK=$(usex network)
+		-DURHO3D_PACKAGING=OFF
 		-DURHO3D_PCH=$(usex pch)
 		-DURHO3D_PHYSICS=$(usex bullet)
 		-DURHO3D_PROFILING=$(usex profiling)
@@ -1041,6 +1042,7 @@ configure_arm() {
 		-DURHO3D_LUASCRIPT=$(usex lua ON $(usex luajit ON OFF))
 		-DURHO3D_NAVIGATION=$(usex recastnavigation)
 		-DURHO3D_NETWORK=$(usex network)
+		-DURHO3D_PACKAGING=OFF
 		-DURHO3D_PCH=$(usex pch)
 		-DURHO3D_PHYSICS=$(usex bullet)
 		-DURHO3D_PROFILING=$(usex profiling)
@@ -1133,6 +1135,7 @@ configure_native() {
 		-DURHO3D_LUASCRIPT=$(usex lua ON $(usex luajit ON OFF))
 		-DURHO3D_NAVIGATION=$(usex recastnavigation)
 		-DURHO3D_NETWORK=$(usex network)
+		-DURHO3D_PACKAGING=OFF
 		-DURHO3D_PCH=$(usex pch)
 		-DURHO3D_PHYSICS=$(usex bullet)
 		-DURHO3D_PROFILING=$(usex profiling)
@@ -1238,6 +1241,7 @@ configure_rpi() {
 		-DURHO3D_LUASCRIPT=$(usex lua ON $(usex luajit ON OFF))
 		-DURHO3D_NAVIGATION=$(usex recastnavigation)
 		-DURHO3D_NETWORK=$(usex network)
+		-DURHO3D_PACKAGING=OFF
 		-DURHO3D_PCH=$(usex pch)
 		-DURHO3D_PHYSICS=$(usex bullet)
 		-DURHO3D_PROFILING=$(usex profiling)
@@ -1309,20 +1313,13 @@ configure_web() {
 	export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
 	A=$(cat ${EM_CONFIG})
 	BINARYEN_LIB_PATH=$(echo -e "${A}\nprint (BINARYEN_ROOT)" | python3)"/lib"
+	einfo "BINARYEN_LIB_PATH=${BINARYEN_LIB_PATH}"
 	export LD_LIBRARY_PATH="${BINARYEN_LIB_PATH}:${LD_LIBRARY_PATH}"
-
-	# The CMake/Toolchains/Emscripten.cmake gets installed but not inherited into script.
-	# The reason for these CMAKE_ and EM* additions.
-	# The WEB and EMSCRIPTEN are split when there should be only one.
-	local emcc_v=$("${myemscriptpath}/emcc" --version | head -n 1 | grep -E -o -e "[0-9.]+")
-	local emxx_v=$("${myemscriptpath}/em++" --version | head -n 1 | grep -E -o -e "[0-9.]+")
 
 #		-DEMSCRIPTEN=1
 	# Setting EMSCRIPTEN_SYSROOT is not necessary
-#		-DEMSCRIPTEN_SYSROOT=
-#	MYCMAKEARGS=" -DCMAKE_TOOLCHAIN_FILE=${BUILD_DIR}/CMake/Toolchains/Emscripten.cmake"
+	# URHO3D_PACKAGING depends on URHO3D_TOOLS
 	local mycmakeargs=(
-		-DCMAKE_CROSSCOMPILING=0
 		-DCMAKE_INSTALL_PREFIX=/usr/share/${P}/web
 		-DANDROID=OFF
 		-DARM=OFF
@@ -1330,6 +1327,7 @@ configure_web() {
 		-DWEB=ON
 		${mydebug}
 		-DEMSCRIPTEN_ROOT_PATH="${myemscriptpath}"
+		-DEMSCRIPTEN_WASM=TRUE
 		-DURHO3D_ANGELSCRIPT=OFF
 		-DURHO3D_BINDINGS=$(usex bindings)
 		-DURHO3D_CLANG_TOOLS=OFF
@@ -1340,7 +1338,7 @@ configure_web() {
 		-DURHO3D_FILEWATCHER=$(usex filewatcher)
 		-DURHO3D_IK=$(usex ik)
 		-DURHO3D_JAVASCRIPT=$(usex bindings)
-		-DURHO3D_LIB_TYPE=STATIC
+		-DURHO3D_LIB_TYPE=MODULE
 		-DURHO3D_LOGGING=$(usex logging)
 		-DURHO3D_LUA=OFF
 		-DURHO3D_LUA_RAW_SCRIPT_LOADER=$(usex debug-raw-script-loader)
@@ -1382,7 +1380,7 @@ configure_web() {
 		-DURHO3D_SYSTEM_WEBP=OFF
 		-DURHO3D_TESTING=$(usex test)
 		-DURHO3D_THREADING=OFF
-		-DURHO3D_TOOLS=OFF
+		-DURHO3D_TOOLS=ON
 		-DURHO3D_URHO2D=$(usex box2d)
 		-DURHO3D_WEBP=$(usex webp)
 	)
@@ -1412,15 +1410,15 @@ src_configure() {
 					export CXX=/usr/lib/llvm/${LLVM_SLOT}/bin/${chost}-clang++
 				fi
 
-				if [[ "${EURHO3D}" == "android" ]] ; then
+				if [[ "${EURHO3D}" == "android" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					configure_android
-				elif [[ "${EURHO3D}" == "arm" ]] ; then
+				elif [[ "${EURHO3D}" == "arm" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					configure_arm
-				elif [[ "${EURHO3D}" == "native" ]] ; then
+				elif [[ "${EURHO3D}" == "native" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					configure_native
-				elif [[ "${EURHO3D}" == "rpi" ]] ; then
+				elif [[ "${EURHO3D}" == "rpi" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					configure_rpi
-				elif [[ "${EURHO3D}" == "web" && "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
+				elif [[ "${EURHO3D}" == "web" && "${ESTSH_LIB_TYPE}" == "module" ]] ; then
 					configure_web
 				fi
 			}
@@ -1456,14 +1454,14 @@ src_compile() {
 					fi
 					make -j 1
 					ant debug
-				elif [[ "${EURHO3D}" == "arm" ]] ; then
+				elif [[ "${EURHO3D}" == "arm" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					compile_common
-				elif [[ "${EURHO3D}" == "native" ]] ; then
+				elif [[ "${EURHO3D}" == "native" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					compile_common
-				elif [[ "${EURHO3D}" == "rpi" ]] ; then
+				elif [[ "${EURHO3D}" == "rpi" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					ewarn "src_compile for rpi has not been tested.  Send back fixes to ebuild maintainer."
 					compile_common
-				elif [[ "${EURHO3D}" == "web" && "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
+				elif [[ "${EURHO3D}" == "web" && "${ESTSH_LIB_TYPE}" == "module" ]] ; then
 					compile_common
 				fi
 			}
@@ -1493,14 +1491,14 @@ src_install() {
 				if [[ "${EURHO3D}" == "android" ]] ; then
 					ewarn "src_install for android has not been tested.  Send back fixes to ebuild maintainer."
 					install_common
-				elif [[ "${EURHO3D}" == "arm" ]] ; then
+				elif [[ "${EURHO3D}" == "arm" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					install_common
-				elif [[ "${EURHO3D}" == "native" ]] ; then
+				elif [[ "${EURHO3D}" == "native" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					install_common
-				elif [[ "${EURHO3D}" == "rpi" ]] ; then
+				elif [[ "${EURHO3D}" == "rpi" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					ewarn "src_install for rpi has not been tested.  Send back fixes to ebuild maintainer."
 					install_common
-				elif [[ "${EURHO3D}" == "web" && "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
+				elif [[ "${EURHO3D}" == "web" && "${ESTSH_LIB_TYPE}" == "module" ]] ; then
 					install_common
 				fi
 			}
