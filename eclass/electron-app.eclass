@@ -1445,15 +1445,19 @@ command to execute in the wrapper script"
 			ewarn "Only png, svg, xpm accepted as icons for the XDG desktop icon theme spec.  Skipping."
 		fi
 	fi
-	if use appimage ; then
-		exeinto "${ELECTRON_APP_APPIMAGE_INSTALL_DIR}"
-		doexe "${ELECTRON_APP_APPIMAGE_PATH}"
+	if has appimage ${IUSE_EFFECTIVE} ; then
+		if use appimage ; then
+			exeinto "${ELECTRON_APP_APPIMAGE_INSTALL_DIR}"
+			doexe "${ELECTRON_APP_APPIMAGE_PATH}"
+		fi
 	fi
-	if use snap ; then
-		insinto "${ELECTRON_APP_SNAP_INSTALL_DIR}"
-		doins "${ELECTRON_APP_SNAP_PATH}"
-		if [[ -e "${ELECTRON_APP_SNAP_ASSERT_PATH}" ]] ; then
-			doins "${ELECTRON_APP_SNAP_ASSERT_PATH}"
+	if has snap ${IUSE_EFFECTIVE} ; then
+		if use snap ; then
+			insinto "${ELECTRON_APP_SNAP_INSTALL_DIR}"
+			doins "${ELECTRON_APP_SNAP_PATH}"
+			if [[ -e "${ELECTRON_APP_SNAP_ASSERT_PATH}" ]] ; then
+				doins "${ELECTRON_APP_SNAP_ASSERT_PATH}"
+			fi
 		fi
 	fi
 
@@ -1529,14 +1533,16 @@ electron-app-register-yarn() {
 
 electron-app_pkg_preinst() {
         debug-print-function ${FUNCNAME} "${@}"
-	if use snap ; then
-		# Remove previous install
-		local revision_arg
-		if [[ -n "${ELECTRON_APP_SNAP_REVISION}" ]] ; then
-			revision_arg="--revision=${ELECTRON_APP_SNAP_REVISION}"
-		fi
-		if snap info "${ELECTRON_APP_SNAP_NAME}" 2>/dev/null 1>/dev/null ; then
-			snap remove ${ELECTRON_APP_SNAP_NAME} ${ELECTRON_APP_SNAP_REVISION} --purge || die
+	if has snap ${IUSE_EFFECTIVE} ; then
+		if use snap ; then
+			# Remove previous install
+			local revision_arg
+			if [[ -n "${ELECTRON_APP_SNAP_REVISION}" ]] ; then
+				revision_arg="--revision=${ELECTRON_APP_SNAP_REVISION}"
+			fi
+			if snap info "${ELECTRON_APP_SNAP_NAME}" 2>/dev/null 1>/dev/null ; then
+				snap remove ${ELECTRON_APP_SNAP_NAME} ${ELECTRON_APP_SNAP_REVISION} --purge || die
+			fi
 		fi
 	fi
 }
@@ -1550,19 +1556,21 @@ electron-app_pkg_preinst() {
 electron-app_pkg_postinst() {
         debug-print-function ${FUNCNAME} "${@}"
 
-	if use snap ; then
-		ewarn "snap support untested"
-		ewarn "Remember do not update the snap manually through the \`snap\` tool.  Allow the emerge system to update it."
-		# I don't know if snap will sanitize the files for system-wide installation.
-		local has_assertion_file="--dangerous"
-		if [[ -e "${ELECTRON_APP_SNAP_ASSERT_PATH}" ]] ; then
-			snap ack "${EROOT}/${ELECTRON_APP_SNAP_INSTALL_DIR}/${ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME}"
-			has_assertion_file=""
-		else
-			ewarn "Missing assertion file for snap.  Installing with --dangerous."
+	if has snap ${IUSE_EFFECTIVE} ; then
+		if use snap ; then
+			ewarn "snap support untested"
+			ewarn "Remember do not update the snap manually through the \`snap\` tool.  Allow the emerge system to update it."
+			# I don't know if snap will sanitize the files for system-wide installation.
+			local has_assertion_file="--dangerous"
+			if [[ -e "${ELECTRON_APP_SNAP_ASSERT_PATH}" ]] ; then
+				snap ack "${EROOT}/${ELECTRON_APP_SNAP_INSTALL_DIR}/${ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME}"
+				has_assertion_file=""
+			else
+				ewarn "Missing assertion file for snap.  Installing with --dangerous."
+			fi
+			# This will add the desktop links to the snap.
+			snap install ${has_assertion_file} "${EROOT}/${ELECTRON_APP_SNAP_INSTALL_DIR}/${ELECTRON_APP_SNAP_PATH_BASENAME}"
 		fi
-		# This will add the desktop links to the snap.
-		snap install ${has_assertion_file} "${EROOT}/${ELECTRON_APP_SNAP_INSTALL_DIR}/${ELECTRON_APP_SNAP_PATH_BASENAME}"
 	fi
 
 	case "$ELECTRON_APP_MODE" in
