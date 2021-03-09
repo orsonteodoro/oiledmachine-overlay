@@ -3,6 +3,9 @@
 
 EAPI=7
 
+ELECTRON_APP_APPIMAGEABLE=1
+ELECTRON_APP_SNAPABLE=1
+
 inherit eutils desktop electron-app npm-utils
 
 DESCRIPTION="Free, Cross-Platform, GPU-Accelerated Procedural Texture Generator"
@@ -18,8 +21,6 @@ BDEPEND+=" net-libs/nodejs[npm]"
 ELECTRON_APP_ELECTRON_V="5.0.10"
 ELECTRON_APP_VUE_V="2.6.10"
 ELECTRON_APP_MODE="yarn"
-ELECTRON_APP_APPIMAGEABLE=1
-ELECTRON_APP_SNAPPABLE=1
 ASSETS_COMMIT="e794d2d766069e137825c8258d53988e85a7e123"
 SRC_URI=\
 "https://github.com/njbrown/texturelab/archive/v${PV}.tar.gz \
@@ -74,5 +75,5 @@ src_install() {
 	electron-app_desktop_install "*" "src/assets/logo.png" "${MY_PN}" \
 	"Graphics;2DGraphics" \
 "env NODE_VERSION=\"${NODE_VERSION}\" PATH=\"${ELECTRON_APP_INSTALL_PATH}/node_modules/.bin:\$PATH\" \
-electron ${ELECTRON_APP_INSTALL_PATH}/"
+electron ${ELECTRON_APP_INSTALL_PATH}/dist_electron/bundled/"
 }
