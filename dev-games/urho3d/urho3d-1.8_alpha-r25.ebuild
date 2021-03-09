@@ -159,10 +159,10 @@ REQUIRED_USE+="
 	cpu_flags_x86_3dnow? ( !cpu_flags_x86_sse !cpu_flags_x86_mmx )
 	cpu_flags_x86_mmx? ( !cpu_flags_x86_3dnow !cpu_flags_x86_sse )
 	cpu_flags_x86_sse? ( !cpu_flags_x86_3dnow !cpu_flags_x86_mmx )
-	!haptic? ( libusb )
 	haptic? ( joystick )
 	joystick
 	joystick? (
+		!haptic? ( libusb )
 		android? ( hidapi )
 		native? ( || ( libusb hidapi ) )
 	)
@@ -171,11 +171,15 @@ REQUIRED_USE+="
 	network? ( threads )
 	odbc? ( !sqlite )
 	opengl
+	samples? (
+		android? ( gles2 )
+		rpi? ( gles2 )
+		web? ( gles2 static-libs )
+	)
 	sqlite? ( !odbc )
 	!system-slikenet
 	 system-box2d? ( ^^ ( box2d_2_3 box2d_2_4 ) )
-	!system-box2d? ( box2d_2_3 !box2d_2_4 )
-	web? ( module )"
+	!system-box2d? ( box2d_2_3 !box2d_2_4 )"
 
 BOOST_VER="1.64"
 CIVETWEB_VER="1.7"
@@ -571,7 +575,7 @@ src_prepare() {
 					prepare_common
 				elif [[ "${EURHO3D}" == "rpi" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					prepare_common
-				elif [[ "${EURHO3D}" == "web" && "${ESTSH_LIB_TYPE}" == "module" ]] ; then
+				elif [[ "${EURHO3D}" == "web" && ( "${ESTSH_LIB_TYPE}" == "module" || "${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
 					prepare_common
 				fi
 			}
@@ -948,7 +952,6 @@ configure_android() {
 		-DURHO3D_EXTRAS=OFF
 		-DURHO3D_FILEWATCHER=$(usex filewatcher)
 		-DURHO3D_IK=$(usex ik)
-		-DURHO3D_LIB_TYPE=$(usex static-libs STATIC SHARED)
 		-DURHO3D_LOGGING=$(usex logging)
 		-DURHO3D_LUA=$(usex lua)
 		-DURHO3D_LUA_RAW_SCRIPT_LOADER=$(usex debug-raw-script-loader)
@@ -961,7 +964,6 @@ configure_android() {
 		-DURHO3D_PHYSICS=$(usex bullet)
 		-DURHO3D_PROFILING=$(usex profiling)
 		-DURHO3D_SAFE_LUA=$(usex debug)
-		-DURHO3D_SAMPLES=$(usex samples)
 		-DURHO3D_SYSTEM_ANGELSCRIPT=$(usex system-angelscript)
 		-DURHO3D_SYSTEM_ASSIMP=$(usex system-assimp)
 		-DURHO3D_SYSTEM_BOOST=$(usex system-boost)
@@ -994,6 +996,14 @@ configure_android() {
 		-DURHO3D_URHO2D=$(usex box2d)
 		-DURHO3D_WEBP=$(usex webp)
 	)
+
+	if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
+		mycmakeargs+=( -DURHO3D_LIB_TYPE=SHARED
+			       -DURHO3D_SAMPLES=$(usex samples) )
+	elif [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
+		mycmakeargs+=( -DURHO3D_LIB_TYPE=STATIC
+			       -DURHO3D_SAMPLES=OFF )
+	fi
 
 	if use system-box2d ; then
 		if use box2d_2_4 ; then
@@ -1034,7 +1044,6 @@ configure_arm() {
 		-DURHO3D_EXTRAS=OFF
 		-DURHO3D_FILEWATCHER=$(usex filewatcher)
 		-DURHO3D_IK=$(usex ik)
-		-DURHO3D_LIB_TYPE=$(usex static-libs STATIC SHARED)
 		-DURHO3D_LOGGING=$(usex logging)
 		-DURHO3D_LUA=$(usex lua)
 		-DURHO3D_LUA_RAW_SCRIPT_LOADER=$(usex debug-raw-script-loader)
@@ -1047,7 +1056,6 @@ configure_arm() {
 		-DURHO3D_PHYSICS=$(usex bullet)
 		-DURHO3D_PROFILING=$(usex profiling)
 		-DURHO3D_SAFE_LUA=$(usex debug)
-		-DURHO3D_SAMPLES=$(usex samples)
 		-DURHO3D_SYSTEM_ANGELSCRIPT=$(usex system-angelscript)
 		-DURHO3D_SYSTEM_ASSIMP=$(usex system-assimp)
 		-DURHO3D_SYSTEM_BOOST=$(usex system-boost)
@@ -1080,6 +1088,16 @@ configure_arm() {
 		-DURHO3D_URHO2D=$(usex box2d)
 		-DURHO3D_WEBP=$(usex webp)
 	)
+
+	if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
+		-DURHO3D_SAMPLES=$(usex samples)
+		mycmakeargs+=( -DURHO3D_LIB_TYPE=SHARED
+			       -DURHO3D_SAMPLES=$(usex samples) )
+	elif [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
+		-DURHO3D_SAMPLES=OFF
+		mycmakeargs+=( -DURHO3D_LIB_TYPE=STATIC
+			       -DURHO3D_SAMPLES=OFF )
+	fi
 
 	if use system-box2d ; then
 		if use box2d_2_4 ; then
@@ -1127,7 +1145,6 @@ configure_native() {
 		-DURHO3D_EXTRAS=$(usex extras)
 		-DURHO3D_FILEWATCHER=$(usex filewatcher)
 		-DURHO3D_IK=$(usex ik)
-		-DURHO3D_LIB_TYPE=$(usex static-libs STATIC SHARED)
 		-DURHO3D_LOGGING=$(usex logging)
 		-DURHO3D_LUA=$(usex lua)
 		-DURHO3D_LUA_RAW_SCRIPT_LOADER=$(usex debug-raw-script-loader)
@@ -1140,7 +1157,6 @@ configure_native() {
 		-DURHO3D_PHYSICS=$(usex bullet)
 		-DURHO3D_PROFILING=$(usex profiling)
 		-DURHO3D_SAFE_LUA=$(usex debug)
-		-DURHO3D_SAMPLES=$(usex samples)
 		-DURHO3D_SYSTEM_ANGELSCRIPT=$(usex system-angelscript)
 		-DURHO3D_SYSTEM_ASSIMP=$(usex system-assimp)
 		-DURHO3D_SYSTEM_BOOST=$(usex system-boost)
@@ -1173,6 +1189,14 @@ configure_native() {
 		-DURHO3D_URHO2D=$(usex box2d)
 		-DURHO3D_WEBP=$(usex webp)
         )
+
+	if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
+		mycmakeargs+=( -DURHO3D_LIB_TYPE=SHARED
+			       -DURHO3D_SAMPLES=$(usex samples) )
+	elif [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
+		mycmakeargs+=( -DURHO3D_LIB_TYPE=STATIC
+			       -DURHO3D_SAMPLES=OFF )
+	fi
 
 	if use system-box2d ; then
 		if use box2d_2_4 ; then
@@ -1233,7 +1257,6 @@ configure_rpi() {
 		-DURHO3D_EXTRAS=$(usex extras)
 		-DURHO3D_FILEWATCHER=$(usex filewatcher)
 		-DURHO3D_IK=$(usex ik)
-		-DURHO3D_LIB_TYPE=$(usex static-libs STATIC SHARED)
 		-DURHO3D_LOGGING=$(usex logging)
 		-DURHO3D_LUA=$(usex lua)
 		-DURHO3D_LUA_RAW_SCRIPT_LOADER=$(usex debug-raw-script-loader)
@@ -1246,7 +1269,6 @@ configure_rpi() {
 		-DURHO3D_PHYSICS=$(usex bullet)
 		-DURHO3D_PROFILING=$(usex profiling)
 		-DURHO3D_SAFE_LUA=$(usex debug)
-		-DURHO3D_SAMPLES=$(usex samples)
 		-DURHO3D_SYSTEM_ANGELSCRIPT=$(usex system-angelscript)
 		-DURHO3D_SYSTEM_ASSIMP=$(usex system-assimp)
 		-DURHO3D_SYSTEM_BOOST=$(usex system-boost)
@@ -1279,6 +1301,14 @@ configure_rpi() {
 		-DURHO3D_URHO2D=$(usex box2d)
 		-DURHO3D_WEBP=$(usex webp)
 	)
+
+	if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
+		mycmakeargs+=( -DURHO3D_LIB_TYPE=SHARED
+			       -DURHO3D_SAMPLES=$(usex samples) )
+	elif [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
+		mycmakeargs+=( -DURHO3D_LIB_TYPE=STATIC
+			       -DURHO3D_SAMPLES=OFF )
+	fi
 
 	if use system-box2d ; then
 		if use box2d_2_4 ; then
@@ -1338,7 +1368,6 @@ configure_web() {
 		-DURHO3D_FILEWATCHER=$(usex filewatcher)
 		-DURHO3D_IK=$(usex ik)
 		-DURHO3D_JAVASCRIPT=$(usex bindings)
-		-DURHO3D_LIB_TYPE=MODULE
 		-DURHO3D_LOGGING=$(usex logging)
 		-DURHO3D_LUA=OFF
 		-DURHO3D_LUA_RAW_SCRIPT_LOADER=$(usex debug-raw-script-loader)
@@ -1351,7 +1380,6 @@ configure_web() {
 		-DURHO3D_PHYSICS=$(usex bullet)
 		-DURHO3D_PROFILING=$(usex profiling)
 		-DURHO3D_SAFE_LUA=$(usex debug)
-		-DURHO3D_SAMPLES=$(usex samples)
 		-DURHO3D_SYSTEM_ANGELSCRIPT=OFF
 		-DURHO3D_SYSTEM_ASSIMP=OFF
 		-DURHO3D_SYSTEM_BOOST=OFF
@@ -1384,6 +1412,14 @@ configure_web() {
 		-DURHO3D_URHO2D=$(usex box2d)
 		-DURHO3D_WEBP=$(usex webp)
 	)
+
+	if [[ "${ESTSH_LIB_TYPE}" == "static-libs" ]] ; then
+		mycmakeargs+=( -DURHO3D_LIB_TYPE=STATIC
+			       -DURHO3D_SAMPLES=$(usex samples) )
+	elif [[ "${ESTSH_LIB_TYPE}" == "module" ]] ; then
+		mycmakeargs+=( -DURHO3D_LIB_TYPE=MODULE
+			       -DURHO3D_SAMPLES=OFF )
+	fi
 
 	configure_sdl
 
@@ -1418,7 +1454,7 @@ src_configure() {
 					configure_native
 				elif [[ "${EURHO3D}" == "rpi" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					configure_rpi
-				elif [[ "${EURHO3D}" == "web" && "${ESTSH_LIB_TYPE}" == "module" ]] ; then
+				elif [[ "${EURHO3D}" == "web" && ( "${ESTSH_LIB_TYPE}" == "module" || "${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
 					configure_web
 				fi
 			}
@@ -1461,7 +1497,7 @@ src_compile() {
 				elif [[ "${EURHO3D}" == "rpi" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					ewarn "src_compile for rpi has not been tested.  Send back fixes to ebuild maintainer."
 					compile_common
-				elif [[ "${EURHO3D}" == "web" && "${ESTSH_LIB_TYPE}" == "module" ]] ; then
+				elif [[ "${EURHO3D}" == "web" && ( "${ESTSH_LIB_TYPE}" == "module" || "${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
 					compile_common
 				fi
 			}
@@ -1498,7 +1534,7 @@ src_install() {
 				elif [[ "${EURHO3D}" == "rpi" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					ewarn "src_install for rpi has not been tested.  Send back fixes to ebuild maintainer."
 					install_common
-				elif [[ "${EURHO3D}" == "web" && "${ESTSH_LIB_TYPE}" == "module" ]] ; then
+				elif [[ "${EURHO3D}" == "web" && ( "${ESTSH_LIB_TYPE}" == "module" || "${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
 					install_common
 				fi
 			}
@@ -1657,5 +1693,16 @@ pkg_postinst() {
 		einfo \
 "If it segfaults, try run to the program with -gl2.  glVertexAttribDivisorARB \
 may be bugged for gl3."
+	fi
+	if use web ; then
+		einfo \
+"You need to use emrun if testing samples.  For details see\n\
+https://emscripten.org/docs/compiling/Running-html-files-with-emrun.html"
+		einfo \
+"The message:\n\
+\n\
+localhost:xxxx has control of your pointer.  Press Esc to take back control.\n\
+\n\
+can be avoided using \`emrun --browser chrome <url>\`"
 	fi
 }
