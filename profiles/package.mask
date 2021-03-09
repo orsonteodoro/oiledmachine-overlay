@@ -119,7 +119,6 @@ dev-util/bear
 dev-util/devhub
 dev-util/geeks-diary
 dev-util/lepton
-dev-util/nunit
 dev-util/pullp
 dev-util/ycm-generator
 www-misc/rtv
