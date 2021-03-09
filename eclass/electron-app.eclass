@@ -553,6 +553,7 @@ fi
 #
 _ELECTRON_APP_PACKAGING_METHODS+=( unpacked )
 if [[ -n "${ELECTRON_APP_APPIMAGEABLE}" && "${ELECTRON_APP_APPIMAGEABLE}" == 1 ]] ; then
+IUSE+=" appimage"
 _ELECTRON_APP_PACKAGING_METHODS+=( appimage )
 RDEPEND+=" appimage? ( || (
 		app-arch/appimaged
@@ -562,8 +563,9 @@ RDEPEND+=" appimage? ( || (
 ELECTRON_APP_APPIMAGE_INSTALL_DIR=\
 ${ELECTRON_APP_APPIMAGE_INSTALL_DIR:="/opt/AppImage/${PN}"}
 fi
-if [[ -n "${ELECTRON_APP_SNAPPABLE}" \
-	&& "${ELECTRON_APP_SNAPPABLE}" == 1 ]] ; then
+if [[ -n "${ELECTRON_APP_SNAPABLE}" \
+	&& "${ELECTRON_APP_SNAPABLE}" == 1 ]] ; then
+IUSE+=" snap"
 _ELECTRON_APP_PACKAGING_METHODS+=( snap )
 RDEPEND+=" snap? ( app-emulation/snapd )"
 # emerge will dump it in that folder then use snap functions
@@ -728,8 +730,8 @@ download micropackages and obtain version releases information."
 		fi
 	fi
 
-	if [[ -n "${ELECTRON_APP_SNAPPABLE}" \
-		&& "${ELECTRON_APP_SNAPPABLE}" == 1 ]] ; then
+	if [[ -n "${ELECTRON_APP_SNAPABLE}" \
+		&& "${ELECTRON_APP_SNAPABLE}" == 1 ]] ; then
 		if [[ -z "${ELECTRON_APP_SNAP_PATH_BASENAME}" ]] ; then
 			die \
 "ELECTRON_APP_SNAP_PATH_BASENAME must be defined relative to \
