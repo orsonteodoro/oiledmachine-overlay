@@ -1703,6 +1703,6 @@ https://emscripten.org/docs/compiling/Running-html-files-with-emrun.html"
 \n\
 localhost:xxxx has control of your pointer.  Press Esc to take back control.\n\
 \n\
-can be avoided using \`emrun --browser chrome <url>\`"
+can be avoided using \`emrun --browser chrome <path>\`"
 	fi
 }
