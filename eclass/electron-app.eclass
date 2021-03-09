@@ -115,6 +115,18 @@ ELECTRON_APP_VERSION_DATA_PATH="${ELECTRON_APP_DATA_DIR}/lite.json"
 # Basic stuff associated with rendering, networking, javascript
 # are weighed heavier than added value exclusive features.
 
+# See also https://github.com/electron/electron/security/advisories
+
+# (A) Components of are found in
+# https://github.com/chromium/chromium/tree/master/chrome/browser
+# https://github.com/chromium/chromium/tree/master/third_party
+
+# (B) Components used by Electron are found in
+# https://github.com/electron/electron/blob/master/chromium_src/BUILD.gn
+# https://github.com/electron/electron/blob/master/BUILD.gn
+
+# If (B) is found in (A) and the CVE mentions it,
+# then the CVE is possibly relevant to Electron.
 
 # Critical means based on CVSS v3 standards
 # See https://nvd.nist.gov/vuln/search/results?form_type=Advanced&results_type=overview&search_type=all&cpe_vendor=cpe%3A%2F%3Aelectronjs&cpe_product=cpe%3A%2F%3Aelectronjs%3Aelectron
@@ -148,14 +160,6 @@ INSECURE_NVD_ELECTRON_LAST_HIGH_8_COND="-lt"
 INSECURE_NVD_ELECTRON_LAST_HIGH_8_LINK_ADVISORY=\
 "https://nvd.nist.gov/vuln/detail/CVE-2020-15174"
 
-
-# See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome&search_type=all
-INSECURE_NVD_CHROME_LAST_CRITICAL="87.0.4280.141"
-INSECURE_NVD_CHROME_LAST_CRITICAL_COND="-lt"
-INSECURE_NVD_CHROME_LAST_CRITICAL_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2021-21108"
-
-
 # GLSA doesn't use high, medium, low.  This is a NVD addition.
 # See https://security.gentoo.org/glsa
 # Placed in worst case NVD/CVE reference
@@ -164,16 +168,22 @@ INSECURE_GLSA_CHROME_LATEST_COND="-lt"
 INSECURE_GLSA_CHROME_LATEST_LINK_ADVISORY=\
 "https://security.gentoo.org/glsa/202101-13"
 
-INSECURE_NVD_CHROME_LAST_HIGH="86.0.4240.198"
+# See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome&search_type=all
+INSECURE_NVD_CHROME_LAST_CRITICAL="87.0.4280.141"
+INSECURE_NVD_CHROME_LAST_CRITICAL_COND="-lt"
+INSECURE_NVD_CHROME_LAST_CRITICAL_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2021-21108"
+
+INSECURE_NVD_CHROME_LAST_HIGH="88.0.4324.96"
 INSECURE_NVD_CHROME_LAST_HIGH_COND="-lt"
 INSECURE_NVD_CHROME_LAST_HIGH_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-16013"
+"https://nvd.nist.gov/vuln/detail/CVE-2021-21128"
 
 # See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=v8%20chrome&search_type=all
-INSECURE_NVD_V8_LAST_HIGH="86.0.4240.198"
+INSECURE_NVD_V8_LAST_HIGH="88.0.4324.182"
 INSECURE_NVD_V8_LAST_HIGH_COND="-lt"
 INSECURE_NVD_V8_LAST_HIGH_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-16013"
+"https://nvd.nist.gov/vuln/detail/CVE-2021-21156"
 
 NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="10"
 
@@ -186,6 +196,8 @@ NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="10"
 #   under "List of required run-time libraries"
 # Obtained from ldd
 IUSE+=" app-indicator global-menu-bar gnome-keyring libsecret unity pulseaudio"
+
+# See https://www.electronjs.org/docs/tutorial/support#linux for OS min requirements.
 
 # Found in Chromium only
 # For optional fonts, see

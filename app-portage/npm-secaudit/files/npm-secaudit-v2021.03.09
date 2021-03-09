@@ -72,30 +72,30 @@ G_INSECURE_NVD_ELECTRON_LAST_HIGH_8_COND="-lt"
 G_INSECURE_NVD_ELECTRON_LAST_HIGH_8_LINK_ADVISORY=\
 "https://nvd.nist.gov/vuln/detail/CVE-2020-15174"
 
-# See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome&search_type=all
-G_INSECURE_NVD_CHROME_LAST_CRITICAL="87.0.4280.141"
-G_INSECURE_NVD_CHROME_LAST_CRITICAL_COND="-lt"
-G_INSECURE_NVD_CHROME_LAST_CRITICAL_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2021-21108"
-
-G_INSECURE_NVD_CHROME_LAST_HIGH="86.0.4240.198"
-G_INSECURE_NVD_CHROME_LAST_HIGH_COND="-lt"
-G_INSECURE_NVD_CHROME_LAST_HIGH_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-16013"
-
-# See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome%20v8&search_type=all
-G_INSECURE_NVD_V8_LAST_HIGH="86.0.4240.198"
-G_INSECURE_NVD_V8_LAST_HIGH_COND="-lt"
-G_INSECURE_NVD_V8_LAST_HIGH_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-16013"
-
 # GLSA doesn't use high, medium, low.  This is a NVD addition.
 # See https://security.gentoo.org/glsa
 # GLSA placement in G_TOLERANCE based on worst case NVD/CVE reference
 G_INSECURE_GLSA_CHROME_LATEST="88.0.4324.96"
 G_INSECURE_GLSA_CHROME_LATEST_COND="-lt"
 G_INSECURE_GLSA_CHROME_LATEST_LINK_ADVISORY=\
-"https://nvd.nist.gov/vuln/detail/CVE-2020-16013"
+"https://security.gentoo.org/glsa/202101-13"
+
+# See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome&search_type=all
+G_INSECURE_NVD_CHROME_LAST_CRITICAL="87.0.4280.141"
+G_INSECURE_NVD_CHROME_LAST_CRITICAL_COND="-lt"
+G_INSECURE_NVD_CHROME_LAST_CRITICAL_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2021-21108"
+
+G_INSECURE_NVD_CHROME_LAST_HIGH="88.0.4324.96"
+G_INSECURE_NVD_CHROME_LAST_HIGH_COND="-lt"
+G_INSECURE_NVD_CHROME_LAST_HIGH_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2021-21128"
+
+# See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=chrome%20v8&search_type=all
+G_INSECURE_NVD_V8_LAST_HIGH="88.0.4324.182"
+G_INSECURE_NVD_V8_LAST_HIGH_COND="-lt"
+G_INSECURE_NVD_V8_LAST_HIGH_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2021-21156"
 
 H_INFO="\
 $(basename $BASH_SOURCE) ${G_VERSION}
