@@ -3,9 +3,9 @@
 
 EAPI="7"
 
-K_GENPATCHES_VER="106"
+K_GENPATCHES_VER="107"
 PATCH_BMQ_VER="5.4-r2"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
-PATCH_RT_VER="5.4.93-rt51"
+PATCH_RT_VER="5.4.102-rt53"
 
 inherit ot-kernel-v5.4
