@@ -3,6 +3,8 @@
 
 EAPI=7
 
+STATUS="rc"
+
 PYTHON_COMPAT=( python3_{6..9} )
 inherit check-reqs desktop eutils godot multilib-build python-single-r1 \
 scons-utils toolchain-funcs
@@ -44,39 +46,49 @@ FN_SRC_EST="${EGIT_COMMIT_2_1_DEMOS_STABLE}.zip" # examples stable
 FN_DEST_EST="${PND}-${EGIT_COMMIT_2_1_DEMOS_STABLE}.zip"
 URI_ORG="https://github.com/godotengine"
 URI_PROJECT="${URI_ORG}/godot"
+URI_PROJECT_DEMO="${URI_ORG}/godot-demo-projects"
 URI_DL="${URI_PROJECT}/tree/${EGIT_COMMIT}"
 URI_A="${URI_PROJECT}/archive/${EGIT_COMMIT}.zip"
 SRC_URI="${URI_PROJECT}/archive/${FN_SRC} -> ${FN_DEST} 
 examples-snapshot? (
-  ${URI_ORG}/godot-demo-projects/archive/${FN_SRC_ESN} \
+  ${URI_PROJECT_DEMO}/archive/${FN_SRC_ESN} \
 		-> ${FN_DEST_ESN}
 )
 examples-stable? (
-  ${URI_ORG}/godot-demo-projects/archive/${FN_SRC_EST} \
+  ${URI_PROJECT_DEMO}/archive/${FN_SRC_EST} \
 		-> ${FN_DEST_EST}
 )"
-SLOT="2/${PV}"
+SLOT_MAJ="2"
+SLOT="${SLOT_MAJ}/${PV}"
 IUSE+=" +3d +advanced-gui clang debug docs examples-snapshot examples-stable \
-lto portable sanitizer server +X"
+javascript lto portable sanitizer server +X"
 IUSE+=" +bmp +dds +exr +etc1 +minizip +musepack +pbm +jpeg +mod +ogg +pvrtc \
 +svg +s3tc +speex +theora +vorbis +webm +webp +xml" # formats formats
 IUSE+=" cpp +gdscript +visual-script" # for scripting languages
 IUSE+=" +gridmap +ik +recast" # for 3d
 IUSE+=" +openssl" # for connections
 IUSE+=" -gamepad +touch" # for input
-IUSE+=" +freetype +pcre2 +opensimplex +pulseaudio" # for libraries
+IUSE+=" +freetype +pcre2 +pulseaudio +speex" # for libraries
 IUSE+=" system-freetype system-glew system-libmpcdec system-libogg \
-system-libpng system-libtheora system-libvorbis system-libvpx system-openssl \
-system-opus system-pcre2 system-recast system-speex system-squish system-zlib"
+system-libpng system-libtheora system-libvorbis system-libvpx system-libwebp \
+system-openssl system-opus system-pcre2 system-recast system-speex \
+system-squish system-zlib"
 IUSE+=" android"
 IUSE+=" doxygen"
+
+# See https://github.com/godotengine/godot/tree/2.1/thirdparty for versioning
+# See https://docs.godotengine.org/en/2.1/development/compiling/compiling_for_android.html
+# See https://docs.godotengine.org/en/2.1/development/compiling/compiling_for_web.html
+# Some are repeated because they were shown to be in the ldd list
+LIBOGG_V="1.3.3"
+LIBVORBIS_V="1.3.6"
 DEPEND+=" ${PYTHON_DEPS}
 	dev-libs/libbsd[${MULTILIB_USEDEP}]
 	media-libs/alsa-lib[${MULTILIB_USEDEP}]
 	media-libs/flac[${MULTILIB_USEDEP}]
-	media-libs/libogg[${MULTILIB_USEDEP}]
+	>=media-libs/libogg-${LIBOGG_V}[${MULTILIB_USEDEP}]
 	media-libs/libsndfile[${MULTILIB_USEDEP}]
-	media-libs/libvorbis[${MULTILIB_USEDEP}]
+	>=media-libs/libvorbis-${LIBVORBIS_V}[${MULTILIB_USEDEP}]
         media-sound/pulseaudio[${MULTILIB_USEDEP}]
 	net-libs/libasyncns[${MULTILIB_USEDEP}]
 	sys-apps/tcp-wrappers[${MULTILIB_USEDEP}]
@@ -97,25 +109,40 @@ DEPEND+=" ${PYTHON_DEPS}
 	x11-libs/libX11[${MULTILIB_USEDEP}]
 	x11-libs/libxcb[${MULTILIB_USEDEP}]
 	x11-libs/libxshmfence[${MULTILIB_USEDEP}]
-	android? ( dev-util/android-sdk-update-manager )
-        gamepad? ( virtual/libudev[${MULTILIB_USEDEP}] )
+	!portable? ( >=app-misc/ca-certificates-20180226 )
+	android? (
+		dev-util/android-sdk-update-manager
+		>=dev-util/android-ndk-17
+		dev-java/gradle-bin
+		dev-java/openjdk:8
+	)
 	cpp? ( dev-util/scons
 		|| ( sys-devel/clang[${MULTILIB_USEDEP}]
 		   <sys-devel/gcc-6.0 ) )
-        system-freetype? ( media-libs/freetype[${MULTILIB_USEDEP}] )
-	system-glew? ( media-libs/glew[${MULTILIB_USEDEP}] )
-	system-libmpcdec? ( media-sound/musepack-tools[${MULTILIB_USEDEP}] )
-	system-libogg? ( media-libs/libogg[${MULTILIB_USEDEP}] )
-	system-libpng? ( media-libs/libpng[${MULTILIB_USEDEP}] )
-	system-libtheora? ( media-libs/libtheora[${MULTILIB_USEDEP}] )
-	system-libvorbis? ( media-libs/libvorbis[${MULTILIB_USEDEP}] )
+        gamepad? ( virtual/libudev[${MULTILIB_USEDEP}] )
+	javascript? (
+		<dev-util/emscripten-2[asmjs]
+	)
+	system-freetype? ( >=media-libs/freetype-2.8.1[${MULTILIB_USEDEP}] )
+	system-glew? ( >=media-libs/glew-1.13.0[${MULTILIB_USEDEP}] )
+	system-libmpcdec? ( >=media-sound/musepack-tools-475[${MULTILIB_USEDEP}] )
+	system-libogg? ( >=media-libs/libogg-${LIBOGG_V}[${MULTILIB_USEDEP}] )
+	system-libpng? ( >=media-libs/libpng-1.6.37[${MULTILIB_USEDEP}] )
+	system-libtheora? ( >=media-libs/libtheora-1.1.1[${MULTILIB_USEDEP}] )
+	system-libvorbis? ( >=media-libs/libvorbis-${LIBVORBIS_V}[${MULTILIB_USEDEP}] )
 	system-libvpx? ( media-libs/libvpx[${MULTILIB_USEDEP}] )
-	system-opus? ( media-libs/opus[${MULTILIB_USEDEP}] )
-	system-openssl? ( dev-libs/openssl[${MULTILIB_USEDEP}] )
+	system-libwebp? ( >=media-libs/libwebp-1.1.0[${MULTILIB_USEDEP}] )
+	system-opus? (
+		>=media-libs/opus-1.1.5[${MULTILIB_USEDEP}]
+		>=media-libs/opusfile-0.8[${MULTILIB_USEDEP}]
+	)
+	system-openssl? ( || (	>=dev-libs/openssl-1.0.2u[${MULTILIB_USEDEP}]
+				>=dev-libs/openssl-compat-1.0.2u:1.0.0 ) )
 	system-pcre2? ( dev-libs/libpcre2[${MULTILIB_USEDEP}] )
 	system-recast? ( dev-games/recastnavigation[${MULTILIB_USEDEP}] )
-	system-squish? ( media-libs/libsquish[${MULTILIB_USEDEP}] )
-	system-zlib? ( sys-libs/zlib[${MULTILIB_USEDEP}] )"
+	system-speex? ( >=media-libs/speex-2.1_rc1[${MULTILIB_USEDEP}] )
+	system-squish? ( >=media-libs/libsquish-1.15[${MULTILIB_USEDEP}] )
+	system-zlib? ( >=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}] )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" || ( sys-devel/clang[${MULTILIB_USEDEP}]
 	     <sys-devel/gcc-6.0 )
@@ -123,6 +150,7 @@ BDEPEND+=" || ( sys-devel/clang[${MULTILIB_USEDEP}]
          virtual/pkgconfig[${MULTILIB_USEDEP}]
 	 clang? ( sys-devel/clang[${MULTILIB_USEDEP}] )
 	 doxygen? ( app-doc/doxygen )
+	 javascript? ( app-arch/zip )
 	 sanitizer? ( sys-devel/clang[${MULTILIB_USEDEP}] )"
 S="${WORKDIR}/godot-${EGIT_COMMIT}"
 RESTRICT="fetch mirror"
@@ -142,6 +170,7 @@ REQUIRED_USE+="
 		!system-libtheora
 		!system-libvorbis
 		!system-libvpx
+		!system-libwebp
 		!system-openssl
 		!system-opus
 		!system-pcre2
@@ -169,15 +198,71 @@ pkg_pretend() {
 	check-reqs_pkg_pretend
 }
 
+_check_emscripten()
+{
+	if [[ -z "${EMCC_WASM_BACKEND}" \
+		|| ( -n "${EMCC_WASM_BACKEND}" \
+			&& "${EMCC_WASM_BACKEND}" == "0" ) ]] ; then
+		:;
+	else
+		die \
+"You must switch your emscripten to asmjs.  See \`eselect emscripten\` for \
+details."
+	fi
+
+	if eselect emscripten 2>/dev/null 1>/dev/null ; then
+		if eselect emscripten list | grep -F -e "*" \
+			| grep -q -F -e "emscripten-fastcomp" ; then
+			:;
+		else
+			die \
+"You must switch your emscripten to asmjs (with emscripten-fastcomp).  \n\
+See \`eselect emscripten\` for details."
+		fi
+	fi
+	if [[ -z "${EMSCRIPTEN}" ]] ; then
+		die "EMSCRIPTEN environmental variable must be set"
+	fi
+
+	local emcc_v=$(emcc --version | head -n 1 | grep -E -o -e "[0-9.]+")
+	local emscripten_v=$(echo "${EMSCRIPTEN}" | cut -f 2 -d "-")
+	if [[ "${emcc_v}" != "${emscripten_v}" ]] ; then
+		die \
+"EMCC_V=${emcc_v} != EMSCRIPTEN_V=${emscripten_v}.  A \
+\`eselect emscripten set <#>\` followed by \`source . /etc/profile\` \
+are required."
+	fi
+}
+
 pkg_setup() {
 	if use android ; then
-		ewarn "The android USE flag is untested."
+		ewarn \
+"The android USE flag is untested and incomplete in the ebuild level."
+		if [[ -z "${ANDROID_NDK_ROOT}" ]] ; then
+			ewarn "ANDROID_NDK_ROOT must be set"
+		fi
+		if [[ -z "${EGODOT_ANDROID_ARCHES[@]}" ]] ; then
+			ewarn \
+"EGODOT_ANDROID_ARCHES should be added as a per-package environmental variable"
+		fi
+
+		# For gradle wrapper
+		if has network-sandbox $FEATURES ; then
+			die \
+"${PN} requires network-sandbox to be disabled in FEATURES for gradle wrapper\n\
+and the android USE flag."
+		fi
 	fi
 	if use cpp ; then
 		ewarn "The cpp USE flag is untested."
 	fi
 	if use gdscript ; then
 		ewarn "The gdscript USE flag is untested."
+	fi
+	if use javascript ; then
+		ewarn \
+"The javascript USE flag is untested and possibly unfinished on the ebuild level."
+		_check_emscripten
 	fi
 	_set_check_req
 	check-reqs_pkg_setup
@@ -207,22 +292,22 @@ ${distdir} or you can \`wget -O ${distdir}/${FN_DEST} ${URI_A}\`\n\
 		einfo \
 "\n\
 You also need to obtain the godot-demo-projects snapshot tarball from\n\
-https://github.com/godotengine/godot-demo-projects/tree/${EGIT_COMMIT_2_1_DEMOS_SNAPSHOT}\n\
+${URI_PROJECT_DEMO}/tree/${EGIT_COMMIT_2_1_DEMOS_SNAPSHOT}\n\
 through the green button > download ZIP and place it in ${distdir} as\n\
 ${FN_DEST_ESN} or you can copy and paste the\n\
 below command \`wget -O ${distdir}/${FN_DEST_ESN} \
-https://github.com/godotengine/godot-demo-projects/archive/${FN_SRC_ESN}\`\n\
+${URI_PROJECT_DEMO}/archive/${FN_SRC_ESN}\`\n\
 \n"
 	fi
 	if use examples-stable ; then
 		einfo \
 "\n\
 You also need to obtain the godot-demo-projects stable tarball from\n\
-https://github.com/godotengine/godot-demo-projects/tree/${EGIT_COMMIT_2_1_DEMOS_STABLE}\n\
+${URI_PROJECT_DEMO}/tree/${EGIT_COMMIT_2_1_DEMOS_STABLE}\n\
 through the green button > download ZIP and place it in ${distdir} as\n\
 ${FN_DEST_EST} or you can copy and paste the\n\
 below command \`wget -O ${distdir}/${FN_DEST_EST} \
-https://github.com/godotengine/godot-demo-projects/archive/${FN_SRC_EST}\`\n\
+${URI_PROJECT_DEMO}/archive/${FN_SRC_EST}\`\n\
 \n"
 	fi
 }
@@ -257,6 +342,7 @@ src_configure() {
 _use_flag_to_platform() {
 	case ${1} in
 		X) echo "x11" ;;
+		javascript) echo "javascript" ;;
 		server) echo "server" ;;
 	esac
 }
@@ -284,6 +370,7 @@ src_compile() {
 				builtin_libtheora=$(usex !system-libtheora)
 				builtin_libvorbis=$(usex !system-libvorbis)
 				builtin_libvpx=$(usex !system-libvpx)
+				builtin_libwebp=$(usex !system-libwebp)
 				builtin_pcre2=$(usex !system-pcre2)
 				builtin_opus=$(usex !system-opus)
 				builtin_recast=$(usex !system-recast)
@@ -298,17 +385,18 @@ src_compile() {
 				module_etc1_enabled=$(usex etc1)
 				module_freetype_enabled=$(usex freetype)
 				module_gdscript_enabled=$(usex gdscript)
+				module_gridmap_enabled=$(usex gridmap)
 				module_ik_enabled=$(usex ik)
 				module_jpg_enabled=$(usex jpeg)
 				module_mpc_enabled=$(usex musepack)
 				module_ogg_enabled=$(usex ogg)
-				module_opensimplex_enabled=$(usex opensimplex)
 				module_openssl_enabled=$(usex ogg)
 				module_pbm_enabled=$(usex pbm)
 				module_pvrtc_enabled=$(usex pvrtc)
 				module_regex_enabled=$(usex pcre2)
 				module_recast_enabled=$(usex recast)
 				module_squish_enabled=$(usex s3tc)
+				module_speex_enabled=$(usex speex)
 				module_svg_enabled=$(usex svg)
 				module_theora_enabled=$(usex theora)
 				module_tinyexr_enabled=$(usex exr)
@@ -326,11 +414,53 @@ src_compile() {
 				use_static_cpp=$(usex portable)
 				xml=$(usex xml) )
 
+			if use android \
+				&& [[ "${EGODOT}" == "X" ]] ; then
+				einfo "Creating export templates for Android"
+				export TERM=linux # pretend to be outside of X
+				for aa in ${EGODOT_ANDROID_ARCHES[@]} ; do
+					scons platform=android target=release android_arch=${aa} || die
+					scons platform=android target=release_debug android_arch=${aa} || die
+				done
+				pushd platform/android/java || die
+					gradle_cmd=$(find /usr/bin/ \
+						-regextype posix-extended \
+						-regex '.*/gradle-[0-9]+.[0-9]+')
+					"${gradle_cmd}" wrapper || die
+					./gradlew generateGodotTemplates || die
+				popd
+			fi
+
+			if use javascript \
+				&& [[ "${EGODOT}" == "X" ]] ; then
+				einfo "Creating export templates for Web (JavaScript)"
+				filter-flags -march=*
+				filter-ldflags -Wl,--as-needed
+				strip-flags
+				einfo "LDFLAGS=${LDFLAGS}"
+				export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
+				export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
+				local CFG=$(cat "${EM_CONFIG}")
+				BINARYEN_LIB_PATH=$(echo -e "${CFG}\nprint (BINARYEN_ROOT)" | python3)"/lib"
+				einfo "BINARYEN_LIB_PATH=${BINARYEN_LIB_PATH}"
+				export LD_LIBRARY_PATH="${BINARYEN_LIB_PATH}:${LD_LIBRARY_PATH}"
+
+				scons platform=javascript \
+					${myoptions[@]} \
+					tools=no \
+					target=release
+				scons platform=javascript \
+					${myoptions[@]} \
+					tools=no \
+					target=release_debug
+			fi
+
 			if use sanitizer || use clang ; then
 				myoptions+=( use_llvm=yes )
 				export _LLVM=".llvm"
 			elif tc-is-gcc; then
-				find /usr/*/gcc-bin/[4-5].[0-9.]*/gcc 2> /dev/null
+				find /usr/*/gcc-bin/[4-5].[0-9.]*/gcc \
+					2> /dev/null
 				if [[ "$?" != "0" ]] ; then
 					einfo "Using clang"
 					myoptions+=( use_llvm=yes )
@@ -374,12 +504,35 @@ _copy_impl() {
 	local fs=\
 "${type2}.${type1}${target}${tools}${bitness}${llvm}${sanitizer}"
 	local fd=\
-"${type2}${SLOT}.${type1}${target}${tools}${bitness}${llvm}${sanitizer}"
+"${type2}${SLOT_MAJ}.${type1}${target}${tools}${bitness}${llvm}${sanitizer}"
 	mv bin/${fs} bin/${fd} || die
-	local d_base="/usr/$(get_libdir)/${PN}${SLOT}/${type1}"
+	local d_base="/usr/$(get_libdir)/${PN}${SLOT_MAJ}/${type1}"
 	exeinto "${d_base}/bin"
 	doexe bin/${fd}
-	dosym "${d_base}/bin/${fd}" /usr/bin/${type2}${SLOT}-${ABI}
+	dosym "${d_base}/bin/${fd}" /usr/bin/${type2}${SLOT_MAJ}-${ABI}
+}
+
+_package_js_templates()
+{
+	for t in debug release ; do
+		if [[ ! -f bin/javascript_${t}.zip ]] ; then
+			einfo "Packaging bin/javascript_${t}.zip"
+			release_type=".debug"
+			if [[ "${t}" == "release" ]] ; then
+				release_type=""
+			fi
+			cp bin/godot.javascript${release_type}.opt.asm.js \
+				godot.asm.js || die
+			cp bin/godot.javascript${release_type}.opt.js       \
+				godot.js || die
+			cp bin/godot.javascript${release_type}.opt.html.mem \
+				godot.mem || die
+			cp tools/dist/html_fs/godot.html . || die
+			cp tools/dist/html_fs/godotfs.js . || die
+			zip bin/javascript_${release_type}.zip godot.asm.js \
+				godot.js godot.mem godotfs.js godot.html || die
+		fi
+	done
 }
 
 src_install() {
@@ -398,18 +551,19 @@ src_install() {
 
 			if use cpp ; then
 				insinto /usr/$(get_libdir)/pkgconfig
-				cat "${FILESDIR}/godot${SLOT}-custom-module.pc.in" \
+				cat \
+				"${FILESDIR}/godot${SLOT_MAJ}-custom-module.pc.in" \
 					| sed -e "s|@prefix@|/usr|g" \
-					       -e "s|@exec_prefix@|\${prefix}|g" \
-					       -e "s|@libdir@|/usr/$(get_libdir)|g" \
-					       -e "s|@version@|${PV}|g" \
-						> "${T}/godot${SLOT}-custom-module.pc" \
+				       -e "s|@exec_prefix@|\${prefix}|g" \
+				       -e "s|@libdir@|/usr/$(get_libdir)|g" \
+				       -e "s|@version@|${PV}|g" \
+					> "${T}/godot${SLOT_MAJ}-custom-module.pc" \
 						|| die
-				doins "${T}/godot${SLOT}-custom-module.pc"
+				doins "${T}/godot${SLOT_MAJ}-custom-module.pc"
 
-				insinto /usr/include/${PN}${SLOT}-cpp
+				insinto /usr/include/${PN}${SLOT_MAJ}-cpp
 				doins -r "${S}"/core "${S}"/drivers
-				insinto /usr/include/${PN}${SLOT}-cpp/platform
+				insinto /usr/include/${PN}${SLOT_MAJ}-cpp/platform
 				if use X && [[ "${EGODOT}" == "X" ]] ; then
 					doins -r "${S}"/platform/x11
 				fi
@@ -418,11 +572,24 @@ src_install() {
 					doins -r "${S}"/platform/server
 				fi
 			fi
-			make_desktop_entry \
-				"/usr/bin/godot${SLOT}-${ABI}" \
-				"Godot${SLOT} (${ABI})" \
-				"/usr/share/pixmaps/godot${SLOT}.png" \
-				"Development;IDE"
+			if [[ "${EGODOT}" == "X" ]] ; then
+				make_desktop_entry \
+					"/usr/bin/godot${SLOT_MAJ}-${ABI}" \
+					"Godot${SLOT_MAJ} (${ABI})" \
+					"/usr/share/pixmaps/godot${SLOT_MAJ}.png" \
+					"Development;IDE"
+			fi
+			if use android \
+				&& [[ "${EGODOT}" == "X" ]] ; then
+				insinto /usr/share/godot/${SLOT_MAJ}/android/templates
+				doins bin/android_{release,debug}.apk
+			fi
+			if use javascript \
+				&& [[ "${EGODOT}" == "X" ]] ; then
+				_package_js_templates
+				insinto /usr/share/godot/${SLOT_MAJ}/javascript/templates
+				doins bin/javascript_{release,debug}.zip
+			fi
 		}
 
 		godot_foreach_impl godot_install_impl
@@ -430,12 +597,12 @@ src_install() {
 
 	multilib_foreach_abi multilib_install_impl
 
-	insinto /usr/share/godot${SLOT}/godot-demo-projects
+	insinto /usr/share/godot${SLOT_MAJ}/godot-demo-projects
 	if use examples-snapshot || use examples-stable ; then
 		doins -r "${S_DEMOS}"/*
 	fi
 
-	newicon icon.png godot${SLOT}.png
+	newicon icon.png godot${SLOT_MAJ}.png
 }
 
 pkg_postinst() {
@@ -444,4 +611,25 @@ pkg_postinst() {
 	einfo
 	einfo "For details see:"
 	einfo "https://docs.godotengine.org/en/stable/about/release_policy.html"
+
+	if use javascript ; then
+		einfo \
+"asmjs is deprecated and used as the default for 2.1.x.  Use WASM found on\n\
+the >=3.2 branch."
+	fi
+
+	if use android ; then
+		local pv=$(ver_cut 1-3 ${PV}).${STATUS}
+		einfo \
+"You need to copy the Android templates to ~/.local/share/godot/templates \
+or \${XDG_DATA_HOME}/godot/templates"
+		einfo "from /usr/share/godot/${SLOT_MAJ}/android/templates"
+	fi
+
+	if use javascript ; then
+		einfo \
+"You need to copy the JavaScript templates to ~/.local/share/godot/templates \
+or \${XDG_DATA_HOME}/godot/templates"
+		einfo "from /usr/share/godot/${SLOT_MAJ}/javascript/templates"
+	fi
 }

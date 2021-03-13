@@ -1,19 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-  <!-- for the oiledmachine-overlay edition of this package -->
   <maintainer type="person">
+    <!-- for the oiledmachine-overlay edition of this package -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    Godot is a IDE for building video games capable of making 3D and 2D games in a day.
-    For scripting, it supports a python like scripting language called GDScript.
+    Godot is a IDE for building video games capable of making 3D and 2D games
+    in a day.  For scripting, it supports a python like scripting language
+    called GDScript.
     It also supports C/C++, C# 7.0, visual programming.
-    It has a built in 3D level editor, object manager, 
+    It has a built in 3D level editor, object manager.
+
+    For Android support:
+    ANDROID_NDK_ROOT must be set as a per-package environmental variable.
+    EGODOT_ANDROID_ARCHES must be set a per-package environmental variable and
+    must include arm64v8.
+
+    Example:
+      Contents of /etc/portage/env/godot.conf:
+      EGODOT_ANDROID_ARCHES=( x86 x86_64 armv7 arm64v8 )
+
+      Contents of /etc/portage/package.env:
+      dev-games/godot godot.conf
   </longdescription>
   <upstream>
     <doc lang="en">https://docs.godotengine.org/en/stable/</doc>
+    <doc lang="en">https://docs.godotengine.org/en/3.2/</doc>
     <doc lang="en">https://docs.godotengine.org/en/2.1/</doc>
     <doc lang="de">https://docs.godotengine.org/de/latest/</doc>
     <doc lang="es">https://docs.godotengine.org/es/latest/</doc>
@@ -43,84 +57,156 @@
     <flag name="bullet">Enables support for the Bullet 3D physics engine.</flag>
     <flag name="bmp">Enables support for bitmap images.</flag>
     <flag name="clang">Compiles the software using clang and LLVM.</flag>
+    <flag name="closure-compiler">Enables minifying JavaScript code</flag>
     <flag name="cpp">Enables support for C++ custom modules.</flag>
-    <flag name="csg">Enables use of Constructive Solid Geometry used to produce complex 3D polygon(s) from other polygons with boolean polygon operations.</flag>
-    <flag name="cvtt">Enables use for BPTC texture compression/decompression.</flag>
-    <flag name="dds">Enables support for DDS (DirectDraw Surface) format and loading BCn compressed (DXT1, DXT2, DXT3, DXT4, DXT5) textures.</flag>
-    <flag name="debug">Enables debugging support.  Disabling builds as release.</flag>
+    <flag name="csg">Enables use of Constructive Solid Geometry used to produce
+      complex 3D polygon(s) from other polygons with boolean polygon
+      operations.</flag>
+    <flag name="cvtt">Enables use for BPTC texture
+      compression / decompression.</flag>
+    <flag name="dds">Enables support for DDS (DirectDraw Surface) format and
+      loading BCn compressed (DXT1, DXT2, DXT3, DXT4, DXT5) textures.</flag>
+    <flag name="debug">Enables debugging support.  Disabling builds as
+      release.</flag>
     <flag name="enet">Enables multiplayer networking support.</flag>
-    <flag name="etc1">Enables support for Ericsson Texture Compression and loading textures from the PKM file format.</flag>
-    <flag name="exr">Enables support for OpenEXR texture images used in association with 3D animation.</flag>
-    <flag name="examples_live">Installs the demo examples at the latest commit.  It may break at any time.</flag>
-    <flag name="examples_snapshot">Installs the demo examples up to a static live commit.</flag>
-    <flag name="examples_stable">Installs the demo examples up to latest stable release.</flag>
+    <flag name="etc1">Enables support for Ericsson Texture Compression and
+      loading textures from the PKM file format.</flag>
+    <flag name="exr">Enables support for OpenEXR texture images used in
+      association with 3D animation.</flag>
+    <flag name="examples_live">Installs the demo examples at the latest
+      commit.  It may break at any time.</flag>
+    <flag name="examples_snapshot">Installs the demo examples up to a static
+      live commit.</flag>
+    <flag name="examples_stable">Installs the demo examples up to latest
+      stable release.</flag>
     <flag name="freetype">Enables support for the FreeType library.</flag>
     <flag name="gamepad">Enables gamepad support.</flag>
-    <flag name="gdnative">Enables loading .so files built with the C/C++ language used to create plugins, ARVR (Augmented Reality / Virtual Reality) Interfaces.</flag>
+    <flag name="gdnative">Enables loading of shared libraries (.so files)
+      built with the C/C++ language used to create plugins, ARVR
+      (Augmented Reality / Virtual Reality) Interfaces.</flag>
     <flag name="gdscript">Enables the Python like scripting language.</flag>
-    <flag name="gridmap">Enables support for gridmaps for 3D level making similar to tile maps but for 3D.</flag>
+    <flag name="gdscript_lsp">Enables Language Server Protocol for (LSP)
+      for GDScript for improved IDE features like code completion.</flag>
+    <flag name="gridmap">Enables support for gridmaps for 3D level making
+      similar to tile maps but for 3D.</flag>
     <flag name="hdr">Enables support for HDR images.</flag>
-    <flag name="ik">Enables support for inverse kinematics used for hinges and bone animation in 3D games.</flag>
+    <flag name="ik">Enables support for inverse kinematics used for hinges
+      and bone animation in 3D games.</flag>
+    <flag name="jit">Enables JIT support for PCRE2.  JIT may need to be
+      disabled on platforms such as consoles if expression compilation
+      fails.  If disabled, it falls back to interpretive.  It must be
+      disabled on platforms if not supported.
+      See https://www.pcre.org/current/doc/html/pcre2jit.html for details.
+      </flag>
+    <flag name="javascript">Enables support for JavaScript / WASM to
+      port games to HTML5</flag>
+    <flag name="javascript_eval">Enables support of running JavaScript eval
+      function() within the browser window with the trade off of lowered
+      security.</flag>
+    <flag name="javascript_threads">Enables limited support for WASM
+      threads.</flag>
+    <flag name="jsonrpc">Enables support JSON-RPC for GDScript LSP.</flag>
     <flag name="jpeg">Enables JPEG support.</flag>
     <flag name="lto">Enables link time optimization.</flag>
-    <flag name="mbedtls">Enables the use of mbed TLS for X509 digital certificates, secured TLS networking.</flag>
+    <flag name="mbedtls">Enables the use of mbed TLS for X509 digital
+      certificates, secured TLS networking.</flag>
     <flag name="minizip">Enables support for compressed ZIP files.</flag>
     <flag name="mobile-vr">Enables the generic mobile VR interface.</flag>
-    <flag name="mod">Enables support for it, xm, s3m, mod formats.  These formats are used by Amiga audio files.</flag>
+    <flag name="mod">Enables support for it, xm, s3m, mod formats.  These
+      formats are used by Amiga audio files.</flag>
     <flag name="mono">Enables C# scripting support.</flag>
     <flag name="musepack">Enables support for Musepack audio files.</flag>
     <flag name="ogg">Enables support for the Ogg container format.</flag>
-    <flag name="opus">Enables Opus voice compression support used in used in voice acting asset samples.</flag>
+    <flag name="opus">Enables Opus voice compression support used in used in
+      voice acting asset samples.</flag>
+    <flag name="opensimplex">Enables OpenSimplex for random level generation
+      and/or for visual effects such as waves and clouds.</flag>
     <flag name="openssl">Enables OpenSSL support.</flag>
-    <flag name="optimize-size">Optimizes the built program(s) for reduced size.</flag>
+    <flag name="optimize-size">Optimizes the built program(s) for reduced
+      size.</flag>
     <flag name="optimize-speed">Optimizes the built program(s) for speed.</flag>
-    <flag name="pbm">Enables support for PBM image format used in open platforms.</flag>
+    <flag name="pbm">Enables support for PBM image format used in open
+      platforms.</flag>
     <flag name="pcre2">Enables string regular expression support.</flag>
-    <flag name="portable">Configures build to maximize distribution.  Disables system dependencies.</flag>
+    <flag name="portable">Configures build to maximize distribution.  Disables
+      system dependencies.</flag>
     <flag name="pulseaudio">Enables PulseAudio support.</flag>
     <flag name="pvrtc">Enables PowerVR texture compression.</flag>
-    <flag name="python_targets_python3_6">For generating docs and translations.</flag>
-    <flag name="python_targets_python3_7">For generating docs and translations.</flag>
-    <flag name="python_targets_python3_8">For generating docs and translations.</flag>
+    <flag name="python_targets_python3_6">For generating docs and
+      translations.</flag>
+    <flag name="python_targets_python3_7">For generating docs and
+      translations.</flag>
+    <flag name="python_targets_python3_8">For generating docs and
+      translations.</flag>
     <flag name="recast">Enable mesh generation for 3D games.</flag>
     <flag name="s3tc">Enables DXT compression.</flag>
-    <flag name="sanitizer">Compile with sanitizers.  This option enables address (ASAN) and leak (LSAN) sanitizers, and for 3.1 undefined behavior sanitizer (UBSAN).</flag>
+    <flag name="sanitizer">Compile with sanitizers.  This option enables
+      address (ASAN) and leak (LSAN) sanitizers, and for 3.1 undefined behavior
+      sanitizer (UBSAN).</flag>
     <flag name="server">Compile the headless dedicated server.</flag>
-    <flag name="speex">Enable speex voice compression support used in voice acting asset samples.  Removed in 3.x and superceeded by Opus.</flag>
+    <flag name="speex">Enable speex voice compression support used in voice
+      acting asset samples.  Removed in 3.x and superceeded by Opus.</flag>
     <flag name="svg">Enable SVG vector image format support.</flag>
-    <flag name="system-bullet">Uses the system's external library instead of the internal version.</flag>
-    <flag name="system-enet">Uses the system's external library instead of the internal version.</flag>
-    <flag name="system-freetype">Uses the system's external library instead of the internal version.</flag>
-    <flag name="system-glew">Uses the system's external library instead of the internal version.</flag>
-    <flag name="system-libmpcdec">Uses the system's external library instead of the internal version.</flag>
-    <flag name="system-libogg">Uses the system's external library instead of the internal version.</flag>
-    <flag name="system-libpng">Uses the system's external library instead of the internal version.</flag>
-    <flag name="system-libtheora">Uses the system's external library instead of the internal version.</flag>
-    <flag name="system-libvorbis">Uses the system's external library instead of the internal version.</flag>
-    <flag name="system-libvpx">Uses the system's external library instead of the internal version.</flag>
-    <flag name="system-libwebsockets">Uses the system's external library instead of the internal version.</flag>
-    <flag name="system-mbedtls">Uses the system's external library instead of the internal version.</flag>
-    <flag name="system-miniupnpc">Uses the system's external library instead of the internal version.</flag>
-    <flag name="system-openssl">Uses the system's external library instead of the internal version.</flag>
-    <flag name="system-opus">Uses the system's external library instead of the internal version.</flag>
-    <flag name="system-pcre2">Uses the system's external library instead of the internal version.</flag>
-    <flag name="system-recast">Uses the system's external library instead of the internal version.</flag>
-    <flag name="system-squish">Uses the system's external library instead of the internal version.</flag>
-    <flag name="system-xatlas">Uses the system's external library instead of the internal version.</flag>
-    <flag name="system-zlib">Uses the system's external library instead of the internal version.</flag>
-    <flag name="system-zstd">Uses the system's external library instead of the internal version.</flag>
+    <flag name="system-bullet">Uses the system's external library instead of
+      the internal version.</flag>
+    <flag name="system-enet">Uses the system's external library instead of the
+      internal version.</flag>
+    <flag name="system-freetype">Uses the system's external library instead of
+      the internal version.</flag>
+    <flag name="system-glew">Uses the system's external library instead of the
+      internal version.</flag>
+    <flag name="system-libmpcdec">Uses the system's external library instead of
+      the internal version.</flag>
+    <flag name="system-libogg">Uses the system's external library instead of
+      the internal version.</flag>
+    <flag name="system-libpng">Uses the system's external library instead of
+      the internal version.</flag>
+    <flag name="system-libtheora">Uses the system's external library instead of
+      the internal version.</flag>
+    <flag name="system-libvorbis">Uses the system's external library instead of
+      the internal version.</flag>
+    <flag name="system-libvpx">Uses the system's external library instead of
+      the internal version.</flag>
+    <flag name="system-libwebsockets">Uses the system's external library
+      instead of the internal version.</flag>
+    <flag name="system-mbedtls">Uses the system's external library instead of
+      the internal version.</flag>
+    <flag name="system-miniupnpc">Uses the system's external library instead of
+      the internal version.</flag>
+    <flag name="system-openssl">Uses the system's external library instead of
+      the internal version.</flag>
+    <flag name="system-opus">Uses the system's external library instead of the
+      internal version.</flag>
+    <flag name="system-pcre2">Uses the system's external library instead of the
+      internal version.</flag>
+    <flag name="system-recast">Uses the system's external library instead of
+      the internal version.</flag>
+    <flag name="system-squish">Uses the system's external library instead of
+      the internal version.</flag>
+    <flag name="system-xatlas">Uses the system's external library instead of
+      the internal version.</flag>
+    <flag name="system-zlib">Uses the system's external library instead of the
+      internal version.</flag>
+    <flag name="system-zstd">Uses the system's external library instead of the
+      internal version.</flag>
     <flag name="tga">Enables support for TGA image format.</flag>
     <flag name="theora">Enables support for the Theora video codec.</flag>
     <flag name="touch">Enables mobile touchscreen events support.</flag>
     <flag name="upnp">Enables universal plug and play for devices.</flag>
+    <flag name="vhacd">Enables decomposition of 3D polygons into simple more
+      accurate approximation for collison detection at the model's limb.</flag>
     <flag name="visual-script">Enables the visual scripting and editor.</flag>
     <flag name="vorbis">Enables support for the Vorbis audio codec.</flag>
-    <flag name="webm">Enables support for the WebM format for audio and video.</flag>
+    <flag name="webm">Enables support for the WebM format for audio and
+      video.</flag>
     <flag name="webp">Enables support for the WebP image format.</flag>
+    <flag name="webrtc">Enables support for direct Peer-to-Peer (P2P)
+      support.</flag>
     <flag name="websocket">Enables support for the WebSocket protocol.</flag>
     <flag name="xml">Enables XML support.</flag>
     <flag name="X">Enables building with X support.</flag>
-    <flag name="xatlas">Enables use of atlas texture packing for more efficient texture access.</flag>
+    <flag name="xatlas">Enables use of atlas texture packing for more efficient
+      texture access.</flag>
   </use>
   <slots>
     <slot name="2">
