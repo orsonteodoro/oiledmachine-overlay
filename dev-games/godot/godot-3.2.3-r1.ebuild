@@ -845,6 +845,8 @@ src_install() {
 				&& [[ "${EGODOT}" == "X" ]] ; then
 				insinto /usr/share/godot/${SLOT_MAJ}/android/templates
 				doins bin/android_{release,debug}.apk
+				echo "${PV}.${STATUS}" > "${T}/version.txt" || die
+				doins "${T}/version.txt"
 			fi
 			if use javascript \
 				&& [[ "${EGODOT}" == "X" ]] ; then
@@ -872,13 +874,13 @@ pkg_postinst() {
 		einfo \
 "You need to copy the Android templates to ~/.local/share/godot/templates/${PV}.${STATUS} \
 or \${XDG_DATA_HOME}/godot/templates/${PV}.${STATUS}"
-		einfo "from /usr/share/godot/${SLOT_MAJ}/android/templates"
+		einfo "from /usr/share/godot/${SLOT_MAJ}/android/templates/*"
 	fi
 
 	if use javascript ; then
 		einfo \
 "You need to copy the JavaScript templates to ~/.local/share/godot/templates/${PV}.${STATUS} \
 or \${XDG_DATA_HOME}/godot/templates/${PV}.${STATUS}"
-		einfo "from /usr/share/godot/${SLOT_MAJ}/javascript/templates"
+		einfo "from /usr/share/godot/${SLOT_MAJ}/javascript/templates/*"
 	fi
 }
