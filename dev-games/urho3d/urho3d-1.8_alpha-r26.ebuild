@@ -3,11 +3,12 @@
 
 EAPI=7
 
+EPLATFORMS="android arm native rpi web"
 STATIC_LIBS_CUSTOM_LIB_TYPE_IMPL="module"
 STATIC_LIBS_CUSTOM_LIB_TYPE_IUSE="+module"
 CMAKE_MAKEFILE_GENERATOR=emake
 LLVM_MAX_SLOT=9
-inherit cmake-utils eutils flag-o-matic linux-info llvm multilib-minimal static-libs urho3d
+inherit cmake-utils eutils flag-o-matic linux-info llvm multilib-minimal platforms static-libs
 
 DESCRIPTION="Cross-platform 2D and 3D game engine."
 HOMEPAGE="http://urho3d.github.io/"
@@ -513,7 +514,7 @@ _prepare_common() {
 		Source/Urho3D/LuaScript/pkgs/Urho2DLuaAPI.pkg
 	)
 
-	if use box2d_2_4 && [[ "${EURHO3D}" != "web" ]] ; then
+	if use box2d_2_4 && [[ "${EPLATFORM}" != "web" ]] ; then
 		rm Source/Urho3D/LuaScript/pkgs/Urho2D/ConstraintRope2D.pkg \
 			Source/Urho3D/Urho2D/ConstraintRope2D.cpp \
 			|| die
@@ -536,7 +537,7 @@ _prepare_common() {
 		Docs/ScriptAPI.dox
 	)
 
-	if use system-box2d && [[ "${EURHO3D}" != "web" ]] ; then
+	if use system-box2d && [[ "${EPLATFORM}" != "web" ]] ; then
 		rm -rf Source/ThirdParty/Box2D || die
 		for f in ${files_system_box2d_lines[@]} ; do
 				sed -i -e "/URHO3D_SYSTEM_BOX2D/d" \
@@ -556,7 +557,7 @@ src_prepare() {
 	prepare_common() {
 		_prepare_common
 
-		SUFFIX="_${EURHO3D}_${ABI}_${ESTSH_LIB_TYPE}"
+		SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
 		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 		BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 		cmake-utils_src_prepare
@@ -569,13 +570,13 @@ src_prepare() {
 			static-libs_prepare() {
 				einfo "In static-libs_prepare"
 				cd "${BUILD_DIR}" || die
-				if [[ "${EURHO3D}" == "android" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				if [[ "${EPLATFORM}" == "android" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					prepare_common
-				elif [[ "${EURHO3D}" == "native" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${EPLATFORM}" == "native" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					prepare_common
-				elif [[ "${EURHO3D}" == "rpi" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${EPLATFORM}" == "rpi" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					prepare_common
-				elif [[ "${EURHO3D}" == "web" && ( "${ESTSH_LIB_TYPE}" == "module" || "${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
+				elif [[ "${EPLATFORM}" == "web" && ( "${ESTSH_LIB_TYPE}" == "module" || "${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
 					prepare_common
 				fi
 			}
@@ -589,8 +590,8 @@ src_prepare() {
 		multilib_foreach_abi prepare_abi
 	}
 	einfo "Called urho3d_copy_sources"
-	urho3d_copy_sources
-	urho3d_foreach_impl \
+	platforms_copy_sources
+	platforms_foreach_impl \
 		prepare_platform
 }
 
@@ -825,7 +826,7 @@ configure_sdl() {
 		-DVIDEO_DIRECTFB=OFF
 	)
 
-	if [[ "${EURHO3D}" == "web" ]] ; then
+	if [[ "${EPLATFORM}" == "web" ]] ; then
 		mycmakeargs+=(
 			-DSDL_SHARED=OFF
 			-DSDL_STATIC=ON
@@ -837,11 +838,11 @@ configure_sdl() {
 		)
 	fi
 
-	if [[ "${EURHO3D}" == "android" ]] ; then
+	if [[ "${EPLATFORM}" == "android" ]] ; then
 		mycmakeargs+=(
 			-DHIDAPI=$(usex joystick ON OFF)
 		)
-	elif [[ "${EURHO3D}" == "web" ]] ; then
+	elif [[ "${EPLATFORM}" == "web" ]] ; then
 		mycmakeargs+=(
 			-DHIDAPI=OFF
 		)
@@ -851,7 +852,7 @@ configure_sdl() {
 		)
 	fi
 
-	if [[ "${EURHO3D}" == "web" ]] ; then
+	if [[ "${EPLATFORM}" == "web" ]] ; then
 		mycmakeargs+=(
 			-DVIDEO_RPI=OFF
 			-DVIDEO_VIVANTE=OFF
@@ -863,9 +864,9 @@ configure_sdl() {
 		)
 	fi
 
-	if [[ "${EURHO3D}" == "android" \
-		|| "${EURHO3D}" == "rpi" \
-		|| "${EURHO3D}" == "web" ]] ; then
+	if [[ "${EPLATFORM}" == "android" \
+		|| "${EPLATFORM}" == "rpi" \
+		|| "${EPLATFORM}" == "web" ]] ; then
 		# These uses it's own audio/video driver
 		mycmakeargs+=(
 			-DALSA=OFF
@@ -1013,14 +1014,14 @@ configure_android() {
 			einfo "Using Box2D 2.3"
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		else
-			einfo "Using Box2D 2.3 (default) for ${EURHO3D}"
+			einfo "Using Box2D 2.3 (default) for ${EPLATFORM}"
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		fi
 	fi
 
 	configure_sdl
 
-	SUFFIX="_${EURHO3D}_${ABI}_${ESTSH_LIB_TYPE}"
+	SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
 	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 	cmake-utils_src_configure
@@ -1107,7 +1108,7 @@ configure_arm() {
 			einfo "Using Box2D 2.3"
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		else
-			einfo "Using Box2D 2.3 (default) for ${EURHO3D}"
+			einfo "Using Box2D 2.3 (default) for ${EPLATFORM}"
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		fi
 	fi
@@ -1115,14 +1116,14 @@ configure_arm() {
 	configure_sdl
 
 	URHO3D_TOOLCHAIN_FILE="${BUILD_DIR}/CMake/Toolchains/Arm.cmake"
-	SUFFIX="_${EURHO3D}_${ABI}_${ESTSH_LIB_TYPE}"
+	SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
 	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 	_cmake-utils_src_configure
 }
 
 configure_native() {
-	if [[ "${EURHO3D}" == "native" ]] ; then
+	if [[ "${EPLATFORM}" == "native" ]] ; then
 		if use debug; then
 			append-cxxflags -g -O0
 			append-cflags -g -O0
@@ -1200,13 +1201,13 @@ configure_native() {
 
 	if use system-box2d ; then
 		if use box2d_2_4 ; then
-			ewarn "Using Box2D 2.4 for ${EURHO3D} while breaking ABI compatibility and scripts.  Use Box2D 2.3 to maximize compatibility."
+			ewarn "Using Box2D 2.4 for ${EPLATFORM} while breaking ABI compatibility and scripts.  Use Box2D 2.3 to maximize compatibility."
 			mycmakeargs+=( -DBOX2D_2_4=1 )
 		elif use box2d_2_3 ; then
-			einfo "Using Box2D 2.3 for ${EURHO3D}"
+			einfo "Using Box2D 2.3 for ${EPLATFORM}"
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		else
-			einfo "Using Box2D 2.3 (default) for ${EURHO3D}"
+			einfo "Using Box2D 2.3 (default) for ${EPLATFORM}"
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		fi
 	fi
@@ -1234,7 +1235,7 @@ configure_native() {
 
 	configure_sdl
 
-	SUFFIX="_${EURHO3D}_${ABI}_${ESTSH_LIB_TYPE}"
+	SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
 	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 	cmake-utils_src_configure
@@ -1312,13 +1313,13 @@ configure_rpi() {
 
 	if use system-box2d ; then
 		if use box2d_2_4 ; then
-			ewarn "Using Box2D 2.4 for ${EURHO3D} while breaking ABI compatibility and scripts.  Use Box2D 2.3 to maximize compatibility."
+			ewarn "Using Box2D 2.4 for ${EPLATFORM} while breaking ABI compatibility and scripts.  Use Box2D 2.3 to maximize compatibility."
 			mycmakeargs+=( -DBOX2D_2_4=1 )
 		elif use box2d_2_3 ; then
-			einfo "Using Box2D 2.3 for ${EURHO3D}"
+			einfo "Using Box2D 2.3 for ${EPLATFORM}"
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		else
-			einfo "Using Box2D 2.3 (default) for ${EURHO3D}"
+			einfo "Using Box2D 2.3 (default) for ${EPLATFORM}"
 			mycmakeargs+=( -DBOX2D_2_3=1 )
 		fi
 	fi
@@ -1326,7 +1327,7 @@ configure_rpi() {
 	configure_sdl
 
 	URHO3D_TOOLCHAIN_FILE="${BUILD_DIR}/CMake/Toolchains/RaspberryPi.cmake"
-	SUFFIX="_${EURHO3D}_${ABI}_${ESTSH_LIB_TYPE}"
+	SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
 	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 	_cmake-utils_src_configure
@@ -1423,10 +1424,10 @@ configure_web() {
 
 	configure_sdl
 
-	einfo "Using Box2D 2.3 for ${EURHO3D}"
+	einfo "Using Box2D 2.3 for ${EPLATFORM}"
 
 	URHO3D_TOOLCHAIN_FILE="${BUILD_DIR}/CMake/Toolchains/Emscripten.cmake"
-	SUFFIX="_${EURHO3D}_${ABI}_${ESTSH_LIB_TYPE}"
+	SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
 	S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 	BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 	_cmake-utils_src_configure
@@ -1440,21 +1441,21 @@ src_configure() {
 			static-libs_configure() {
 				cd "${BUILD_DIR}" || die
 
-				if ( use bindings || use clang-tools ) && [[ "${EURHO3D}" != "web" ]] ; then
+				if ( use bindings || use clang-tools ) && [[ "${EPLATFORM}" != "web" ]] ; then
 					local chost=$(get_abi_CHOST ${ABI})
 					export CC=/usr/lib/llvm/${LLVM_SLOT}/bin/${chost}-clang
 					export CXX=/usr/lib/llvm/${LLVM_SLOT}/bin/${chost}-clang++
 				fi
 
-				if [[ "${EURHO3D}" == "android" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				if [[ "${EPLATFORM}" == "android" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					configure_android
-				elif [[ "${EURHO3D}" == "arm" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${EPLATFORM}" == "arm" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					configure_arm
-				elif [[ "${EURHO3D}" == "native" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${EPLATFORM}" == "native" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					configure_native
-				elif [[ "${EURHO3D}" == "rpi" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${EPLATFORM}" == "rpi" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					configure_rpi
-				elif [[ "${EURHO3D}" == "web" && ( "${ESTSH_LIB_TYPE}" == "module" || "${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
+				elif [[ "${EPLATFORM}" == "web" && ( "${ESTSH_LIB_TYPE}" == "module" || "${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
 					configure_web
 				fi
 			}
@@ -1463,13 +1464,13 @@ src_configure() {
 		}
 		multilib_foreach_abi configure_abi
 	}
-	urho3d_foreach_impl \
+	platforms_foreach_impl \
 		configure_platform
 }
 
 src_compile() {
 	compile_common() {
-		SUFFIX="_${EURHO3D}_${ABI}_${ESTSH_LIB_TYPE}"
+		SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
 		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 		BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 		cmake-utils_src_compile
@@ -1481,7 +1482,7 @@ src_compile() {
 			cd "${BUILD_DIR}" || die
 			static-libs_compile() {
 				cd "${BUILD_DIR}" || die
-				if [[ "${EURHO3D}" == "android" ]] ; then
+				if [[ "${EPLATFORM}" == "android" ]] ; then
 					ewarn "src_compile for android has not been tested.  Send back fixes to ebuild maintainer."
 					if [[ -n "${URHO3D_TARGET_ANDROID_SDK_VERSION}" ]] ; then
 						android update project -p . -t ${URHO3D_TARGET_ANDROID_SDK_VERSION}
@@ -1490,14 +1491,14 @@ src_compile() {
 					fi
 					make -j 1
 					ant debug
-				elif [[ "${EURHO3D}" == "arm" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${EPLATFORM}" == "arm" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					compile_common
-				elif [[ "${EURHO3D}" == "native" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${EPLATFORM}" == "native" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					compile_common
-				elif [[ "${EURHO3D}" == "rpi" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${EPLATFORM}" == "rpi" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					ewarn "src_compile for rpi has not been tested.  Send back fixes to ebuild maintainer."
 					compile_common
-				elif [[ "${EURHO3D}" == "web" && ( "${ESTSH_LIB_TYPE}" == "module" || "${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
+				elif [[ "${EPLATFORM}" == "web" && ( "${ESTSH_LIB_TYPE}" == "module" || "${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
 					compile_common
 				fi
 			}
@@ -1506,13 +1507,13 @@ src_compile() {
 		}
 		multilib_foreach_abi compile_abi
 	}
-	urho3d_foreach_impl \
+	platforms_foreach_impl \
 		compile_platform
 }
 
 src_install() {
 	install_common() {
-		SUFFIX="_${EURHO3D}_${ABI}_${ESTSH_LIB_TYPE}"
+		SUFFIX="_${EPLATFORM}_${ABI}_${ESTSH_LIB_TYPE}"
 		S="${BUILD_DIR}" CMAKE_USE_DIR="${BUILD_DIR}" \
 		BUILD_DIR="${WORKDIR}/${P}${SUFFIX}" \
 		cmake-utils_src_install
@@ -1524,17 +1525,17 @@ src_install() {
 			cd "${BUILD_DIR}" || die
 			static-libs_install() {
 				cd "${BUILD_DIR}" || die
-				if [[ "${EURHO3D}" == "android" ]] ; then
+				if [[ "${EPLATFORM}" == "android" ]] ; then
 					ewarn "src_install for android has not been tested.  Send back fixes to ebuild maintainer."
 					install_common
-				elif [[ "${EURHO3D}" == "arm" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${EPLATFORM}" == "arm" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					install_common
-				elif [[ "${EURHO3D}" == "native" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${EPLATFORM}" == "native" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					install_common
-				elif [[ "${EURHO3D}" == "rpi" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
+				elif [[ "${EPLATFORM}" == "rpi" && "${ESTSH_LIB_TYPE}" != "module" ]] ; then
 					ewarn "src_install for rpi has not been tested.  Send back fixes to ebuild maintainer."
 					install_common
-				elif [[ "${EURHO3D}" == "web" && ( "${ESTSH_LIB_TYPE}" == "module" || "${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
+				elif [[ "${EPLATFORM}" == "web" && ( "${ESTSH_LIB_TYPE}" == "module" || "${ESTSH_LIB_TYPE}" == "static-libs" ) ]] ; then
 					install_common
 				fi
 			}
@@ -1543,7 +1544,7 @@ src_install() {
 		}
 		multilib_foreach_abi install_abi
 	}
-	urho3d_foreach_impl \
+	platforms_foreach_impl \
 		install_platform
 
 	cd "${S}" || die
