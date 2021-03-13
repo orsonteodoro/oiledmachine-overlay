@@ -3,7 +3,8 @@
 
 EAPI=7
 
-inherit desktop enigma eutils multilib-build
+EPLATFORMS="vanilla android linux wine"
+inherit desktop eutils multilib-build platforms
 
 DESCRIPTION="A free Game Maker source file editor"
 HOMEPAGE="http://lateralgm.org/"
@@ -47,32 +48,32 @@ src_compile() {
 src_install() {
 	platform_install() {
 		ml_install_abi() {
-			# use same .jars but distribute based on lateral-EENIGMA
+			# use same .jars but distribute based on lateral-EPLATFORM
 			local suffix=""
 			local descriptor_suffix=""
-			if [[ "${EENIGMA}" == "linux" ]] ; then
+			if [[ "${EPLATFORM}" == "linux" ]] ; then
 				suffix="-${ABI}"
 				descriptor_suffix=" (${ABI})"
 			fi
-			insinto /usr/$(get_libdir)/enigma/${EENIGMA}${suffix}
+			insinto /usr/$(get_libdir)/enigma/${EPLATFORM}${suffix}
 			doins lateralgm.jar
 			exeinto /usr/bin
 			cp "${FILESDIR}/lateralgm" \
-				"${T}/lateralgm-${EENIGMA}${suffix}" || die
+				"${T}/lateralgm-${EPLATFORM}${suffix}" || die
 			sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|g" \
-				"${T}/lateralgm-${EENIGMA}${suffix}" || die
-			sed -i -e "s|PLATFORM|${EENIGMA}${suffix}|g" \
-				"${T}/lateralgm-${EENIGMA}${suffix}" || die
-			doexe "${T}/lateralgm-${EENIGMA}${suffix}"
+				"${T}/lateralgm-${EPLATFORM}${suffix}" || die
+			sed -i -e "s|PLATFORM|${EPLATFORM}${suffix}|g" \
+				"${T}/lateralgm-${EPLATFORM}${suffix}" || die
+			doexe "${T}/lateralgm-${EPLATFORM}${suffix}"
 			doicon org/lateralgm/main/lgm-logo.ico
 			make_desktop_entry \
-				"/usr/bin/lateralgm-${EENIGMA}${suffix}" \
+				"/usr/bin/lateralgm-${EPLATFORM}${suffix}" \
 				"${MY_PN}${descriptor_suffix}" \
 				"/usr/share/pixmap/lgm-logo.ico" "Development;IDE"
 		}
 		multilib_foreach_abi ml_install_abi
 	}
-	enigma_foreach_impl platform_install
+	platforms_foreach_impl platform_install
 }
 
 pkg_postinst() {
