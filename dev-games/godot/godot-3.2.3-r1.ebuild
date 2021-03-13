@@ -3,7 +3,7 @@
 
 EAPI=7
 
-STATUS=""
+STATUS="stable"
 
 VIRTUALX_REQUIRED=manual
 PYTHON_COMPAT=( python3_{6..9} )
