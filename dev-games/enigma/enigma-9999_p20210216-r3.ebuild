@@ -3,7 +3,8 @@
 
 EAPI=7
 
-inherit desktop enigma eutils multilib-minimal toolchain-funcs
+EPLATFORMS="vanilla android linux wine"
+inherit desktop eutils multilib-minimal platforms toolchain-funcs
 
 DESCRIPTION="ENIGMA, the Extensible Non-Interpreted Game Maker Augmentation, \
 is an open source cross-platform game development environment influenced by \
@@ -126,12 +127,12 @@ src_prepare() {
 		einfo "Editing $f"
 		sed -i -e "s|-Wl,-rpath,./||g" "${f}" || die
 	done
-	enigma_copy_sources
+	platforms_copy_sources
 	platform_prepare() {
 		cd "${BUILD_DIR}" || die
 		multilib_copy_sources
 	}
-	enigma_foreach_impl platform_prepare
+	platforms_foreach_impl platform_prepare
 	if use android ; then
 		ewarn "Android support is experimental"
 	fi
@@ -146,7 +147,7 @@ src_configure() {
 		cd "${BUILD_DIR}" || die
 		ml_configure_abi() {
 			cd "${BUILD_DIR}" || die
-			if [[ "${EENIGMA}" == "android" ]] ; then
+			if [[ "${EPLATFORM}" == "android" ]] ; then
 				sed -i \
 				-e "s|AUDIO \?= OpenAL|AUDIO ?= androidAudio|" \
 					ENIGMAsystem/SHELL/Makefile || die
@@ -196,7 +197,7 @@ src_configure() {
 		}
 		multilib_foreach_abi ml_configure_abi
 	}
-	enigma_foreach_impl platform_configure
+	platforms_foreach_impl platform_configure
 }
 
 src_compile() {
@@ -221,7 +222,7 @@ src_compile() {
 		}
 		multilib_foreach_abi ml_compile_abi
 	}
-	enigma_foreach_impl platform_compile
+	platforms_foreach_impl platform_compile
 }
 
 shrink_install() {
@@ -235,7 +236,7 @@ iPhone-OpenGLES,SDL-Direct3D,SDL-Direct3D11,SDL-Direct3D9,SDL-Win32} || die
 	rm -rf ENIGMAsystem/SHELL/Platforms/{Cocoa,iPhone} || die
 	rm -rf ENIGMAsystem/SHELL/Widget_Systems/Cocoa || die
 
-	if [[ "${EENIGMA}" == "wine" ]] ; then
+	if [[ "${EPLATFORM}" == "wine" ]] ; then
 		:;
 	else
 		if ! use wine ; then
@@ -254,18 +255,18 @@ ENIGMAsystem/SHELL/Networking_Systems/DirectPlay || die
 		fi
 	fi
 
-	if [[ "${EENIGMA}" == "linux" ]] ; then
+	if [[ "${EPLATFORM}" == "linux" ]] ; then
 		if [[ "${ABI}" == amd64 ]] ; then
 			rm -rf Compilers/Linux/{clang32.ey,gcc32.ey} || die
 		elif [[ "${ABI}" == x86 ]] ; then
 			rm -rf Compilers/Linux/{clang.ey,gcc.ey} || die
 		fi
-	elif [[ "${EENIGMA}" == "android" ]] ; then
+	elif [[ "${EPLATFORM}" == "android" ]] ; then
 		rm -rf Compilers/Linux/{clang32.ey,gcc32.ey} || die
 		rm -rf Compilers/Linux/{clang.ey,gcc.ey} || die
 	fi
 
-	if [[ "${EENIGMA}" == "android" ]] ; then
+	if [[ "${EPLATFORM}" == "android" ]] ; then
 		:;
 	else
 		if ! use android ; then
@@ -367,7 +368,7 @@ src_install() {
 		cd "${BUILD_DIR}" || die
 		ml_install_abi() {
 			cd "${BUILD_DIR}" || die
-			if [[ "${EENIGMA}" == "vanilla" ]] \
+			if [[ "${EPLATFORM}" == "vanilla" ]] \
 				&& ! multilib_is_native_abi; then
 				return
 			fi
@@ -375,13 +376,13 @@ src_install() {
 			cd "${BUILD_DIR}" || die
 			local suffix=""
 			local descriptor_suffix=""
-			if [[ "${EENIGMA}" == "linux" ]] ; then
+			if [[ "${EPLATFORM}" == "linux" ]] ; then
 				suffix="-${ABI}"
 				descriptor_suffix=" (${ABI})"
 			fi
-			insinto "/usr/$(get_libdir)/enigma/${EENIGMA}${suffix}"
-			exeinto "/usr/$(get_libdir)/enigma/${EENIGMA}${suffix}"
-			if [[ "${EENIGMA}" == "vanilla" ]] ; then
+			insinto "/usr/$(get_libdir)/enigma/${EPLATFORM}${suffix}"
+			exeinto "/usr/$(get_libdir)/enigma/${EPLATFORM}${suffix}"
+			if [[ "${EPLATFORM}" == "vanilla" ]] ; then
 				doins -r CompilerSource CommandLine shared
 			else
 				if use minimal ; then
@@ -399,7 +400,7 @@ src_install() {
 				Config.mk Makefile
 			if use radialgm ; then
 				insinto \
-		"/usr/$(get_libdir)/enigma/${EENIGMA}${suffix}/CommandLine"
+		"/usr/$(get_libdir)/enigma/${EPLATFORM}${suffix}/CommandLine"
 				doins -r CommandLine/libEGM
 			fi
 			exeinto /usr/bin
@@ -408,29 +409,29 @@ src_install() {
 				"${T}"/enigma || die
 			sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|g" \
 				"${T}"/enigma-cli || die
-			sed -i -e "s|PLATFORM|${EENIGMA}${suffix}|g" \
+			sed -i -e "s|PLATFORM|${EPLATFORM}${suffix}|g" \
 				"${T}"/enigma || die
-			sed -i -e "s|PLATFORM|${EENIGMA}${suffix}|g" \
+			sed -i -e "s|PLATFORM|${EPLATFORM}${suffix}|g" \
 				"${T}"/enigma-cli || die
-			mv "${T}/enigma"{,-${EENIGMA}${suffix}}
-			mv "${T}/enigma-cli"{,-${EENIGMA}${suffix}}
-			doexe "${T}/enigma-${EENIGMA}${suffix}" \
-				"${T}/enigma-cli-${EENIGMA}${suffix}"
+			mv "${T}/enigma"{,-${EPLATFORM}${suffix}}
+			mv "${T}/enigma-cli"{,-${EPLATFORM}${suffix}}
+			doexe "${T}/enigma-${EPLATFORM}${suffix}" \
+				"${T}/enigma-cli-${EPLATFORM}${suffix}"
 			sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|g" \
-				"${D}/usr/bin/enigma-${EENIGMA}${suffix}" || die
+				"${D}/usr/bin/enigma-${EPLATFORM}${suffix}" || die
 			sed -i -e "s|/usr/lib64|/usr/$(get_libdir)|g" \
-				"${D}/usr/bin/enigma-cli-${EENIGMA}${suffix}" \
+				"${D}/usr/bin/enigma-cli-${EPLATFORM}${suffix}" \
 				|| die
 			newicon Resources/logo.png enigma.png
 			make_desktop_entry \
-				"/usr/bin/enigma-${EENIGMA}${suffix}" \
+				"/usr/bin/enigma-${EPLATFORM}${suffix}" \
 				"ENIGMA${descriptor_suffix}" \
 				"/usr/share/pixmaps/enigma.png" \
 				"Development;IDE"
 		}
 		multilib_foreach_abi ml_install_abi
 	}
-	enigma_foreach_impl platform_install
+	platforms_foreach_impl platform_install
 
 	cat ENIGMAsystem/SHELL/Universal_System/random.cpp | head -n 86 \
 		> "${T}/license.random_cpp" || die
