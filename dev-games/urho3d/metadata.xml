@@ -18,11 +18,11 @@
 
     URHO3D_RPI_CONFIG and URHO3D_ANDROID_CONFIG may be set as a per-package
     environmental variable to tune the configure stage for android and rpi
-    builds.
+    builds.  The options must be space separated.
 
-    Example:
-    URHO3D_RPI_CONFIG=( -DRPI_ABI=armeabi-v7a )
-    URHO3D_ANDROID_CONFIG=( -DANDROID_ABI=armeabi-v7a )
+    Examples:
+      URHO3D_RPI_CONFIG="-DRPI_ABI=armeabi-v7a"
+      URHO3D_ANDROID_CONFIG="-DANDROID_ABI=armeabi-v7a"
   </longdescription>
   <upstream>
     <doc lang="en">https://urho3d.github.io/documentation/1.7/index.html</doc>

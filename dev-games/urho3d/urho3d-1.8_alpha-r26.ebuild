@@ -395,16 +395,16 @@ pkg_setup() {
 		if [[ -z "${URHO3D_TARGET_ANDROID_SDK_VERSION}" ]] ; then
 			ewarn "URHO3D_TARGET_ANDROID_SDK_VERSION needs to be set as a per-package environmental variable"
 		fi
-		if [[ -z "${URHO3D_ANDROID_CONFIG[@]}" ]] ; then
-			die "URHO3D_ANDROID_CONFIG needs to be set as a per-package environmental variable"
+		if [[ -z "${URHO3D_ANDROID_CONFIG}" ]] ; then
+			ewarn "URHO3D_ANDROID_CONFIG needs to be set as a per-package environmental variable"
 		fi
-		ewarn "This feature has not been tested."
+		ewarn "The android USE flag has not been tested."
 	fi
 	if use rpi ; then
-		if [[ -z "${URHO3D_RPI_CONFIG[@]}" ]] ; then
-			die "URHO3D_RPI_CONFIG needs to be set as a per-package environmental variable"
+		if [[ -z "${URHO3D_RPI_CONFIG}" ]] ; then
+			ewarn "URHO3D_RPI_CONFIG needs to be set as a per-package environmental variable"
 		fi
-		ewarn "This feature has not been tested."
+		ewarn "The rpi USE flag has not been tested."
 	fi
 	if use native ; then
 	        if use debug; then
@@ -937,8 +937,7 @@ configure_sdl() {
 }
 
 configure_android() {
-        local mycmakeargs=(
-		${URHO3D_ANDROID_CONFIG[@]}
+	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX=/usr/share/${P}/android
 		-DANDROID=ON
 		-DARM=OFF
@@ -996,6 +995,7 @@ configure_android() {
 		-DURHO3D_TOOLS=OFF
 		-DURHO3D_URHO2D=$(usex box2d)
 		-DURHO3D_WEBP=$(usex webp)
+		${URHO3D_ANDROID_CONFIG[@]}
 	)
 
 	if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
@@ -1029,8 +1029,8 @@ configure_android() {
 
 configure_arm() {
 	ewarn "configure_arm is incomplete"
-        local mycmakeargs=(
-		${URHO3D_ANDROID_CONFIG[@]}
+	URHO3D_ANDROID_CONFIG=(${URHO3D_ANDROID_CONFIG})
+	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX=/usr/share/${P}/arm
 		-DANDROID=OFF
 		-DARM=ON
@@ -1088,6 +1088,7 @@ configure_arm() {
 		-DURHO3D_TOOLS=OFF
 		-DURHO3D_URHO2D=$(usex box2d)
 		-DURHO3D_WEBP=$(usex webp)
+		${URHO3D_ANDROID_CONFIG[@]}
 	)
 
 	if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
@@ -1132,7 +1133,7 @@ configure_native() {
 
 	export CMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 
-        local mycmakeargs=(
+	local mycmakeargs=(
 		-DANDROID=OFF
 		-DARM=OFF
 		-DRPI=OFF
@@ -1242,8 +1243,8 @@ configure_native() {
 }
 
 configure_rpi() {
-        local mycmakeargs=(
-		${URHO3D_RPI_CONFIG[@]}
+	URHO3D_RPI_CONFIG=(${URHO3D_RPI_CONFIG})
+	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX=/usr/share/${P}/rpi
 		-DANDROID=OFF
 		-DARM=OFF
@@ -1301,6 +1302,7 @@ configure_rpi() {
 		-DURHO3D_TOOLS=$(usex tools)
 		-DURHO3D_URHO2D=$(usex box2d)
 		-DURHO3D_WEBP=$(usex webp)
+		${URHO3D_RPI_CONFIG[@]}
 	)
 
 	if [[ "${ESTSH_LIB_TYPE}" == "shared-libs" ]] ; then
