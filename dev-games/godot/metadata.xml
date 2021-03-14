@@ -225,9 +225,9 @@
     <flag name="visual-script">Enables the visual scripting and editor.</flag>
     <flag name="vorbis">Enables support for the Vorbis audio codec.</flag>
     <flag name="web">Enables support for Web HTML5 games built with
-      Emscripten / JavaScript to port games to HTML5.  The 2.1 series builds
-      as Asm.js [deprecated/obsolete] and The 3.2 series builds as
-      WASM (WebAssembly) by default.</flag>
+      Emscripten / JavaScript.  The 2.1 series builds as Asm.js
+      [deprecated/obsolete] and the 3.2 series builds as WASM (WebAssembly)
+      by default.</flag>
     <flag name="webm">Enables support for the WebM format for audio and
       video.</flag>
     <flag name="webp">Enables support for the WebP image format.</flag>
