@@ -460,7 +460,7 @@ details."
 		local emcc_v=$(emcc --version | head -n 1 | grep -E -o -e "[0-9.]+")
 		local emscripten_v=$(echo "${EMSCRIPTEN}" | cut -f 2 -d "-")
 		if [[ "${emcc_v}" != "${emscripten_v}" ]] ; then
-			die "EMCC_V=${emcc_v} != EMSCRIPTEN_V=${emscripten_v}.  A \`eselect emscripten set <#>\` followed by \`source . /etc/profile\` are required."
+			die "EMCC_V=${emcc_v} != EMSCRIPTEN_V=${emscripten_v}.  A \`eselect emscripten set <#>\` followed by \`source /etc/profile\` are required."
 		fi
 	fi
 }
