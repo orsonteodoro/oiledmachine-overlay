@@ -5,7 +5,7 @@ EAPI=7
 
 STATUS="rc"
 
-EPLATFORMS="android javascript server_dedicated server_headless X"
+EPLATFORMS="android server_dedicated server_headless web X"
 PYTHON_COMPAT=( python3_{6..9} )
 inherit check-reqs desktop eutils flag-o-matic multilib-build platforms \
 python-single-r1 scons-utils toolchain-funcs
@@ -62,11 +62,11 @@ examples-stable? (
 SLOT_MAJ="2"
 SLOT="${SLOT_MAJ}/${PV}"
 
-IUSE+=" +3d +advanced-gui +clang debug docs examples-snapshot examples-stable \
-javascript lto portable server server_dedicated server_headless +X"
+IUSE+=" +3d +X +advanced-gui +clang debug docs examples-snapshot examples-stable \
+lto portable server server_dedicated server_headless"
 IUSE+=" +bmp +dds +exr +etc1 +minizip +musepack +pbm +jpeg +mod +ogg +pvrtc \
 +svg +s3tc +speex +theora +vorbis +webm +webp +xml" # formats formats
-IUSE+=" cpp +gdscript +visual-script" # for scripting languages
+IUSE+=" cpp +gdscript +visual-script web" # for scripting languages
 IUSE+=" +gridmap +ik +recast" # for 3d
 IUSE+=" +openssl" # for connections
 IUSE+=" -gamepad +touch" # for input
@@ -158,9 +158,6 @@ DEPEND+=" ${PYTHON_DEPS}
 		|| ( sys-devel/clang[${MULTILIB_USEDEP}]
 		   <sys-devel/gcc-6.0 ) )
         gamepad? ( virtual/libudev[${MULTILIB_USEDEP}] )
-	javascript? (
-		<dev-util/emscripten-2[asmjs]
-	)
 	system-freetype? ( >=media-libs/freetype-2.8.1[${MULTILIB_USEDEP}] )
 	system-glew? ( >=media-libs/glew-1.13.0[${MULTILIB_USEDEP}] )
 	system-libmpcdec? ( >=media-sound/musepack-tools-475[${MULTILIB_USEDEP}] )
@@ -180,7 +177,10 @@ DEPEND+=" ${PYTHON_DEPS}
 	system-recast? ( dev-games/recastnavigation[${MULTILIB_USEDEP}] )
 	system-speex? ( >=media-libs/speex-2.1_rc1[${MULTILIB_USEDEP}] )
 	system-squish? ( >=media-libs/libsquish-1.15[${MULTILIB_USEDEP}] )
-	system-zlib? ( >=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}] )"
+	system-zlib? ( >=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}] )
+	web? (
+		<dev-util/emscripten-2[asmjs]
+	)"
 RDEPEND+=" ${DEPEND}"
 BDEPEND_SANTIZIER="
 	sys-devel/clang[${MULTILIB_USEDEP}]
@@ -198,14 +198,13 @@ BDEPEND+=" || ( sys-devel/clang[${MULTILIB_USEDEP}]
 	)
 	clang? ( sys-devel/clang[${MULTILIB_USEDEP}] )
 	doxygen? ( app-doc/doxygen )
-	javascript? ( app-arch/zip )
 	lsan_X? (
 		${BDEPEND_SANTIZIER}
 	)
 	lsan_server? (
 		${BDEPEND_SANTIZIER}
 	)
-"
+	web? ( app-arch/zip )"
 S="${WORKDIR}/godot-${EGIT_COMMIT}"
 RESTRICT="fetch mirror"
 
@@ -288,9 +287,9 @@ and the android USE flag."
 	if use gdscript ; then
 		ewarn "The gdscript USE flag is untested."
 	fi
-	if use javascript ; then
+	if use web ; then
 		ewarn \
-"The javascript USE flag is a WIP."
+"The web USE flag is a WIP."
 		_check_emscripten
 	fi
 	_set_check_req
@@ -429,16 +428,15 @@ src_compile_android()
 	fi
 }
 
-src_compile_javascript()
+src_compile_web()
 {
-	if use javascript ; then
-		if [[ -n "${EGODOT_JAVASCRIPT_CONFIG}" ]] ; then
-			einfo "Using config override for JavaScript"
-			einfo "${EGODOT_JAVASCRIPT_CONFIG}"
-			myoptions=(${EGODOT_JAVASCRIPT_CONFIG})
+	if use web ; then
+		if [[ -n "${EGODOT_WEB_CONFIG}" ]] ; then
+			einfo "Using config override for Web"
+			einfo "${EGODOT_WEB_CONFIG}"
+			myoptions=(${EGODOT_WEB_CONFIG})
 		fi
-
-		einfo "Creating export templates for Web (JavaScript)"
+		einfo "Creating export templates for Web (HTML5, Emscripten, JavaScript, Asm.js)"
 		filter-flags -march=*
 		filter-ldflags -Wl,--as-needed
 		strip-flags
@@ -618,9 +616,9 @@ src_compile() {
 			multilib_foreach_abi multilib_compile_impl
 		elif [[ "${EPLATFORM}" == "android" ]] ; then
 			src_compile_android
-		elif [[ "${EPLATFORM}" == "javascript" ]] ; then
+		elif [[ "${EPLATFORM}" == "web" ]] ; then
 			# int is 32-bit in asm.js
-			src_compile_javascript
+			src_compile_web
 		fi
 	}
 	platforms_foreach_impl godot_compile_impl
@@ -638,7 +636,7 @@ _get_bitness() {
 	[[ $(get_libdir) =~ 64 ]] && echo ".64" || echo ".32"
 }
 
-_package_js_templates()
+_package_web_templates()
 {
 	for t in debug release ; do
 		if [[ ! -f bin/javascript_${t}.zip ]] ; then
@@ -684,15 +682,6 @@ src_install_android()
 	fi
 }
 
-src_install_javascript()
-{
-	if use javascript ; then
-		_package_js_templates
-		insinto /usr/share/godot/${SLOT_MAJ}/javascript/templates
-		doins bin/javascript_{release,debug}.zip
-	fi
-}
-
 src_install_demos()
 {
 	insinto /usr/share/godot${SLOT_MAJ}/godot-demo-projects
@@ -721,6 +710,15 @@ src_install_cpp()
 		if use X ; then
 			doins -r "${S}"/platform/x11
 		fi
+	fi
+}
+
+src_install_web()
+{
+	if use web ; then
+		_package_web_templates
+		insinto /usr/share/godot/${SLOT_MAJ}/web/templates
+		doins bin/javascript_{release,debug}.zip
 	fi
 }
 
@@ -775,8 +773,8 @@ src_install() {
 			multilib_foreach_abi multilib_install_impl
 		elif [[ "${EPLATFORM}" == "android" ]] ; then
 			src_install_android
-		elif [[ "${EPLATFORM}" == "javascript" ]] ; then
-			src_install_javascript
+		elif [[ "${EPLATFORM}" == "web" ]] ; then
+			src_install_web
 		fi
 	}
 	platforms_foreach_impl godot_install_impl
@@ -793,12 +791,6 @@ pkg_postinst() {
 	einfo "For details see:"
 	einfo "https://docs.godotengine.org/en/stable/about/release_policy.html"
 
-	if use javascript ; then
-		einfo \
-"asmjs is deprecated and used as the default for 2.1.x.  Use WASM found on\n\
-the >=3.2 branch."
-	fi
-
 	if use android ; then
 		local pv=$(ver_cut 1-3 ${PV}).${STATUS}
 		einfo \
@@ -807,10 +799,14 @@ or \${XDG_DATA_HOME}/godot/templates"
 		einfo "from /usr/share/godot/${SLOT_MAJ}/android/templates/*"
 	fi
 
-	if use javascript ; then
+	if use web ; then
 		einfo \
-"You need to copy the JavaScript templates to ~/.local/share/godot/templates \
+"You need to copy the Web templates to ~/.local/share/godot/templates \
 or \${XDG_DATA_HOME}/godot/templates"
-		einfo "from /usr/share/godot/${SLOT_MAJ}/javascript/templates/*"
+		einfo "from /usr/share/godot/${SLOT_MAJ}/web/templates/*"
+
+		einfo \
+"asmjs is deprecated and used as the default for 2.1.x.  Use WASM found on\n\
+the >=3.2 branch."
 	fi
 }

@@ -7,7 +7,7 @@ STATUS="stable"
 
 VIRTUALX_REQUIRED=manual
 PYTHON_COMPAT=( python3_{6..9} )
-EPLATFORMS="android javascript mono server_dedicated server_headless X"
+EPLATFORMS="android mono server_dedicated server_headless web X"
 inherit check-reqs desktop eutils flag-o-matic multilib-build platforms python-r1 \
 scons-utils virtualx
 
@@ -69,17 +69,17 @@ gdnative? (
 SLOT_MAJ="3"
 SLOT="${SLOT_MAJ}/${PV}"
 
-IUSE+=" +3d +advanced-gui clang debug docs examples-snapshot examples-stable \
+IUSE+=" +3d +X +advanced-gui clang debug docs examples-snapshot examples-stable \
 examples-live jit lto +optimize-speed +opensimplex optimize-size portable \
-server server_dedicated server_headless +X"
+server server_dedicated server_headless"
 IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +ogg +pvrtc +svg +s3tc +theora \
 +tga +vorbis +webm +webp" # formats formats
 
 #FIXME gdnative
 
-IUSE+=" -closure-compiler +cpp +gdnative +gdscript gdscript_lsp javascript \
+IUSE+=" -closure-compiler +cpp +gdnative +gdscript gdscript_lsp \
 +javascript_eval -javascript_threads -mono -mono_pregen_assemblies \
-+visual-script" # for scripting languages
++visual-script web" # for scripting languages
 IUSE+=" +bullet +csg +gridmap +mobile-vr +recast +vhacd +xatlas" # for 3d
 IUSE+=" +enet +jsonrpc +mbedtls +upnp +webrtc +websocket" # for connections
 IUSE+=" -gamepad +touch" # for input
@@ -190,10 +190,6 @@ DEPEND+=" ${PYTHON_DEPS}
 	gdnative? ( dev-util/scons
 		     || ( sys-devel/clang[${MULTILIB_USEDEP}]
 	                  sys-devel/gcc ) )
-	javascript? (
-		!closure-compiler? ( >=dev-util/emscripten-1.39.0[wasm(+)] )
-		closure-compiler? ( 
->=dev-util/emscripten-1.39.0[closure-compiler,closure_compiler_nodejs,wasm(+)] ) )
 	mono? ( dev-dotnet/nuget
 		 dev-util/msbuild
 		 >=dev-lang/mono-5.2[${MULTILIB_USEDEP}] )
@@ -218,7 +214,11 @@ DEPEND+=" ${PYTHON_DEPS}
 	system-wslay? ( >=net-libs/wslay-1.1.1[${MULTILIB_USEDEP}] )
 	system-xatlas? ( media-libs/xatlas[${MULTILIB_USEDEP}] )
 	system-zlib? ( >=sys-libs/zlib-${ZLIB_V}[${MULTILIB_USEDEP}] )
-	system-zstd? ( >=app-arch/zstd-1.4.4[${MULTILIB_USEDEP}] )"
+	system-zstd? ( >=app-arch/zstd-1.4.4[${MULTILIB_USEDEP}] )
+	web? (
+		!closure-compiler? ( >=dev-util/emscripten-1.39.0[wasm(+)] )
+		closure-compiler? ( 
+>=dev-util/emscripten-1.39.0[closure-compiler,closure_compiler_nodejs,wasm(+)] ) )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND_SANTIZIER="
 	sys-devel/clang[${MULTILIB_USEDEP}]
@@ -351,14 +351,14 @@ and the android USE flag."
 	if use gdscript ; then
 		ewarn "The gdscript USE flag is untested."
 	fi
-	if use javascript ; then
-		ewarn \
-"The javascript USE flag is untested and possibly unfinished on the ebuild level."
-		_check_emscripten
-	fi
 	if use mono ; then
 		ewarn \
 "The mono USE flag is untested and unfinished on the ebuild level."
+	fi
+	if use web ; then
+		ewarn \
+"The web USE flag is untested and possibly unfinished on the ebuild level."
+		_check_emscripten
 	fi
 
 	_set_check_req
@@ -604,15 +604,15 @@ src_compile_gdnative()
 	fi
 }
 
-src_compile_javascript()
+src_compile_web()
 {
-	if [[ -n "${EGODOT_JAVASCRIPT_CONFIG}" ]] ; then
-		einfo "Using config override for JavaScript"
-		einfo "${EGODOT_JAVASCRIPT_CONFIG}"
-		myoptions=(${EGODOT_JAVASCRIPT_CONFIG})
-	fi
-	if use javascript ; then
-		einfo "Creating export templates for Web (JavaScript)"
+	if use web ; then
+		if [[ -n "${EGODOT_WEB_CONFIG}" ]] ; then
+			einfo "Using config override for Web"
+			einfo "${EGODOT_WEB_CONFIG}"
+			myoptions=(${EGODOT_WEB_CONFIG})
+		fi
+		einfo "Creating export templates for Web (HTML5, Emscripten, JavaScript, WASM)"
 		filter-flags -march=*
 		filter-ldflags -Wl,--as-needed
 		strip-flags
@@ -923,12 +923,12 @@ src_compile() {
 			multilib_foreach_abi multilib_compile_impl
 		elif [[ "${EPLATFORM}" == "android" ]] ; then
 			src_compile_android
-		elif [[ "${EPLATFORM}" == "javascript" ]] ; then
-			# int/pointers are 32-bit in wasm
-			src_compile_javascript
 		elif [[ "${EPLATFORM}" == "mono" ]] ; then
 			# native for now
 			src_compile_mono
+		elif [[ "${EPLATFORM}" == "web" ]] ; then
+			# int/pointers are 32-bit in wasm
+			src_compile_web
 		fi
 	}
 	platforms_foreach_impl godot_compile_impl
@@ -1029,14 +1029,6 @@ src_install_gdnative()
 	fi
 }
 
-src_install_javascript()
-{
-	if use javascript ; then
-		insinto /usr/share/godot/${SLOT_MAJ}/javascript/templates
-		doins bin/javascript_{release,debug}.zip
-	fi
-}
-
 src_install_mono()
 {
 	if use mono ; then
@@ -1051,6 +1043,14 @@ src_install_mono()
 				&& doins -r ${data_api_folder}
 			doins -r bin/GodotSharp
 		done
+	fi
+}
+
+src_install_web()
+{
+	if use web ; then
+		insinto /usr/share/godot/${SLOT_MAJ}/web/templates
+		doins bin/javascript_{release,debug}.zip
 	fi
 }
 
@@ -1121,10 +1121,10 @@ src_install() {
 			multilib_foreach_abi multilib_install_impl
 		elif [[ "${EPLATFORM}" == "android" ]] ; then
 			src_install_android
-		elif [[ "${EPLATFORM}" == "javascript" ]] ; then
-			src_install_javascript
 		elif [[ "${EPLATFORM}" == "mono" ]] ; then
 			src_install_mono
+		elif [[ "${EPLATFORM}" == "web" ]] ; then
+			src_install_web
 		fi
 	}
 	platforms_foreach_impl godot_install_impl
@@ -1141,10 +1141,10 @@ or \${XDG_DATA_HOME}/godot/templates/${PV}.${STATUS}"
 		einfo "from /usr/share/godot/${SLOT_MAJ}/android/templates/*"
 	fi
 
-	if use javascript ; then
+	if use web ; then
 		einfo \
-"You need to copy the JavaScript templates to ~/.local/share/godot/templates/${PV}.${STATUS} \
+"You need to copy the Web templates to ~/.local/share/godot/templates/${PV}.${STATUS} \
 or \${XDG_DATA_HOME}/godot/templates/${PV}.${STATUS}"
-		einfo "from /usr/share/godot/${SLOT_MAJ}/javascript/templates/*"
+		einfo "from /usr/share/godot/${SLOT_MAJ}/web/templates/*"
 	fi
 }

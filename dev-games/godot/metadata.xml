@@ -23,12 +23,12 @@
 
     The ebuild allows to fine tune or shrink the internal dependencies
     of the export template as a per-package environmental variable.
-    These clear the USE flags config options.  Only javascript and
+    These clear the USE flags config options.  Only web and
     android env vars are offered.  Options must be space separated.
 
     Example.
       EGODOT_ANDROID_CONFIG="module_opensimplex_enabled=True"
-      EGODOT_JAVASCRIPT_CONFIG="module_opensimplex_enabled=True"
+      EGODOT_WEB_CONFIG="module_opensimplex_enabled=True"
 
     Example:
       Contents of /etc/portage/env/godot.conf:
@@ -114,8 +114,6 @@
       disabled on platforms if not supported.
       See https://www.pcre.org/current/doc/html/pcre2jit.html for details.
       </flag>
-    <flag name="javascript">Enables support for JavaScript / WASM to
-      port games to HTML5</flag>
     <flag name="javascript_eval">Enables support of running JavaScript eval
       function() within the browser window with the trade off of lowered
       security.</flag>
@@ -225,6 +223,10 @@
       accurate approximation for collison detection at the model's limb.</flag>
     <flag name="visual-script">Enables the visual scripting and editor.</flag>
     <flag name="vorbis">Enables support for the Vorbis audio codec.</flag>
+    <flag name="web">Enables support for Web HTML5 games built with
+      Emscripten / JavaScript to port games to HTML5.  The 2.1 series builds
+      as Asm.js [deprecated/obsolete] and The 3.2 series builds as
+      WASM (WebAssembly) by default.</flag>
     <flag name="webm">Enables support for the WebM format for audio and
       video.</flag>
     <flag name="webp">Enables support for the WebP image format.</flag>
