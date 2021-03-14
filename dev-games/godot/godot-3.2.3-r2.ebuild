@@ -481,7 +481,7 @@ src_configure() {
 	fi
 }
 
-# gen_fs() and gen_ds() common options
+# gen_fs() and gen_ds() common options.
 #	name # can only be "godot" or "godot_server"
 #	platform # can only be ".x11"
 #	configuation # can only be release = ".opt", debug = "" (default), release_debug = ".opt"
@@ -490,6 +490,7 @@ src_configure() {
 #	llvm # can only be ".llvm" or "" (default)
 #	mono # can only be ".mono" or ""
 #	sanitizer # can only be ".s" or "" (default)
+# Generate filename source
 gen_fs()
 {
 	local -n f=$1
@@ -498,6 +499,7 @@ gen_fs()
 	echo "${fs}"
 }
 
+# Generate filename destination for multislotting [aka multiple installation].
 gen_ds()
 {
 	local -n f=$1

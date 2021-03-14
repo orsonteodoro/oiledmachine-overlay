@@ -8,11 +8,30 @@
   </maintainer>
   <longdescription>
     Godot is a IDE for building video games capable of making 3D and 2D games
-    in a day.  For scripting, it supports a python like scripting language
-    called GDScript.
-    It also supports C/C++, C# 7.0, visual programming.
-    It has a built in 3D level editor, object manager.
+    in a day.  It can produce games for desktop, mobile, VR
+    (virtual reality), AR (augmented reality), web browser games, multiplayer
+    games for many game genres.
 
+    It also has available game AI algorithms, physics engines, level
+    generators.
+
+    It also supports C/C++, C# 7.0, visual programming similar to UDK,
+    GDScript similar to Python.
+    It has a built in 3D level editor, IDE object manager.
+
+    ABIs are limited so that the main editor program is a native CHOST build
+    and export templates produce the game in the CTARGET ABI/platform of choice.
+
+    ABIs of various components:
+    Editor - CHOST native ABI
+    Dedicated server - 32 or 64 bit CHOST ABI
+    Headless server - 32 or 64 bit CHOST ABI
+
+    The ebuild produces the export templates for exporting to CTARGET:
+    Android - armv6 [in 2.1 slot only], armv7, arm64v8, x86, x86_64 ABIs
+    Linux - 32 bit or 64 bit CHOST ABI(s)
+    Web - Asm.js [in 2.1 slot only], WASM [in 3.1 slot only],
+    
     For Android support:
     ANDROID_NDK_ROOT must be set as a per-package environmental variable.
     EGODOT_ANDROID_ARCHES must be set a per-package environmental variable and
@@ -26,13 +45,11 @@
     These clear the USE flags config options.  Only web and
     android env vars are offered.  Options must be space separated.
 
-    Example:
-      EGODOT_ANDROID_CONFIG="module_opensimplex_enabled=True"
-      EGODOT_WEB_CONFIG="module_opensimplex_enabled=True"
-
-    Example:
+    Examples:
       Contents of /etc/portage/env/godot.conf:
       EGODOT_ANDROID_ARCHES="x86 x86_64 armv7 arm64v8"
+      EGODOT_ANDROID_CONFIG="module_opensimplex_enabled=True"
+      EGODOT_WEB_CONFIG="module_opensimplex_enabled=True"
 
       Contents of /etc/portage/package.env:
       dev-games/godot godot.conf
@@ -131,7 +148,8 @@
     <flag name="minizip">Enables support for compressed ZIP files.</flag>
     <flag name="mobile-vr">Enables the generic mobile VR interface.</flag>
     <flag name="mod">Enables support for it, xm, s3m, mod formats.  These
-      formats are used by Amiga audio files.</flag>
+      formats are used by Amiga audio files or chiptune music.  It's only
+      available in the 2.1 slot.</flag>
     <flag name="mono">Enables C# scripting support.</flag>
     <flag name="mono_pregen_assemblies">Pregenerates Godot API assemblies</flag>
     <flag name="musepack">Enables support for Musepack audio files.</flag>
