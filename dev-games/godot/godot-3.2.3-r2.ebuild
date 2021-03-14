@@ -768,7 +768,8 @@ src_compile_x11()
 		fi
 
 		einfo "Building x11 export templates"
-		if use abi_x86_64 || use abi_mips_n64 || use ppc64 || use arm64 ; then
+		if (use abi_x86_64 || use abi_mips_n64 || use ppc64 || use arm64) \
+			&& [[ $(get_libdir) =~ 64 ]] ; then
 			scons platform=x11 \
 				${myoptions[@]} \
 				bits=64 \
@@ -790,7 +791,8 @@ src_compile_x11()
 				use_ubsan=$(usex ubsan_X) \
 				|| die
 		fi
-		if use abi_x86_32 || use abi_mips_o32 || use ppc32 || use arm ; then
+		if (use abi_x86_32 || use abi_mips_o32 || use ppc32 || use arm) \
+			&& [[ $(get_libdir) =~ 32 ]] ; then
 			scons platform=x11 \
 				${myoptions[@]} \
 				bits=32 \
@@ -949,17 +951,29 @@ _get_bitness() {
 	[[ $(get_libdir) =~ 64 ]] && echo ".64" || echo ".32"
 }
 
-
 src_install_X()
 {
-	make_desktop_entry \
-		"/usr/bin/godot${SLOT_MAJ}-${ABI}" \
-		"Godot${SLOT_MAJ} (${ABI})" \
-		"/usr/share/pixmaps/godot${SLOT_MAJ}.png" \
-		"Development;IDE"
-	newicon icon.png godot${SLOT_MAJ}.png
+	local bitness=$(_get_bitness)
+	bitness=${bitness//./}
+	insinto /usr/share/godot/${SLOT_MAJ}/X/templates
+	if [[ "${EPLATFORM}" == "server_headless" \
+		|| "${EPLATFORM}" == "server_dedicated" ]] \
+		&& use server ; then
+		doins bin/linux_server_${bitness}
+	elif [[ "${EPLATFORM}" == "X" ]] ; then
+		doins bin/linux_x11_${bitness}_debug \
+			bin/linux_x11_${bitness}_release
+		if multilib_is_native_abi \
+			&& [[ "${EPLATFORM}" == "X" ]] ; then
+			make_desktop_entry \
+				"/usr/bin/godot${SLOT_MAJ}-${ABI}" \
+				"Godot${SLOT_MAJ} (${ABI})" \
+				"/usr/share/pixmaps/godot${SLOT_MAJ}.png" \
+				"Development;IDE"
+			newicon icon.png godot${SLOT_MAJ}.png
+		fi
+	fi
 }
-
 
 src_install_android()
 {
@@ -1117,6 +1131,7 @@ src_install() {
 				if [[ "${EPLATFORM}" == "X" ]] ; then
 					src_install_gdnative
 				fi
+				src_install_X
 			}
 			multilib_foreach_abi multilib_install_impl
 		elif [[ "${EPLATFORM}" == "android" ]] ; then
@@ -1136,15 +1151,19 @@ src_install() {
 pkg_postinst() {
 	if use android ; then
 		einfo \
-"You need to copy the Android templates to ~/.local/share/godot/templates/${PV}.${STATUS} \
-or \${XDG_DATA_HOME}/godot/templates/${PV}.${STATUS}"
+"You need to copy the Android templates from /usr/share/godot/${SLOT_MAJ}/android/templates\n\
+to ~/.local/share/godot/templates/${PV}.${STATUS} or \${XDG_DATA_HOME}/godot/templates/${PV}.${STATUS}"
 		einfo "from /usr/share/godot/${SLOT_MAJ}/android/templates/*"
 	fi
 
 	if use web ; then
 		einfo \
-"You need to copy the Web templates to ~/.local/share/godot/templates/${PV}.${STATUS} \
-or \${XDG_DATA_HOME}/godot/templates/${PV}.${STATUS}"
+"You need to copy the Web templates from /usr/share/godot/${SLOT_MAJ}/web/templates\n\
+to ~/.local/share/godot/templates/${PV}.${STATUS} or \${XDG_DATA_HOME}/godot/templates/${PV}.${STATUS}"
 		einfo "from /usr/share/godot/${SLOT_MAJ}/web/templates/*"
 	fi
+
+	einfo \
+"You need to copy the Linux export templates from /usr/share/godot/${SLOT_MAJ}/X/templates\n\
+to ~/.local/share/godot/templates/${PV}.${STATUS} or \${XDG_DATA_HOME}/godot/templates/${PV}.${STATUS}"
 }

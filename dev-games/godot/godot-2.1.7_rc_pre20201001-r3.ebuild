@@ -493,7 +493,8 @@ src_compile_x11()
 		fi
 
 		einfo "Building x11 export templates"
-		if use abi_x86_64 || use abi_mips_n64 || use ppc64 || use arm64 ; then
+		if (use abi_x86_64 || use abi_mips_n64 || use ppc64 || use arm64) \
+			&& [[ $(get_libdir) =~ 64 ]] ; then
 			scons platform=x11 \
 				${myoptions[@]} \
 				bits=64 \
@@ -512,7 +513,8 @@ src_compile_x11()
 				use_sanitizer=$(usex asan_X) \
 				|| die
 		fi
-		if use abi_x86_32 || use abi_mips_o32 || use ppc || use arm ; then
+		if (use abi_x86_32 || use abi_mips_o32 || use ppc || use arm) \
+			&& [[ $(get_libdir) =~ 32 ]] ; then
 			scons platform=x11 \
 				${myoptions[@]} \
 				bits=32 \
@@ -671,6 +673,30 @@ _copy_impl() {
 	dosym "${d_base}/bin/${fd}" "/usr/bin/${f[name]}${SLOT_MAJ}-${ABI}"
 }
 
+src_install_X()
+{
+	local bitness=$(_get_bitness)
+	bitness=${bitness//./}
+	insinto /usr/share/godot/${SLOT_MAJ}/${EPLATFORM}/templates
+	if [[ "${EPLATFORM}" == "server_headless" \
+		|| "${EPLATFORM}" == "server_dedicated" ]] \
+		&& use server ; then
+		doins bin/linux_server_${bitness}
+	elif [[ "${EPLATFORM}" == "X" ]] ; then
+		doins bin/linux_x11_${bitness}_debug \
+			bin/linux_x11_${bitness}_release
+		if multilib_is_native_abi \
+			&& [[ "${EPLATFORM}" == "X" ]] ; then
+			make_desktop_entry \
+				"/usr/bin/godot${SLOT_MAJ}-${ABI}" \
+				"Godot${SLOT_MAJ} (${ABI})" \
+				"/usr/share/pixmaps/godot${SLOT_MAJ}.png" \
+				"Development;IDE"
+			newicon icon.png godot${SLOT_MAJ}.png
+		fi
+	fi
+}
+
 src_install_android()
 {
 	if use android ; then
@@ -722,16 +748,6 @@ src_install_web()
 	fi
 }
 
-src_install_X()
-{
-	make_desktop_entry \
-		"/usr/bin/godot${SLOT_MAJ}-${ABI}" \
-		"Godot${SLOT_MAJ} (${ABI})" \
-		"/usr/share/pixmaps/godot${SLOT_MAJ}.png" \
-		"Development;IDE"
-	newicon icon.png godot${SLOT_MAJ}.png
-}
-
 src_install() {
 	godot_install_impl() {
 		if [[ "${EPLATFORM}" == "X"
@@ -769,6 +785,7 @@ src_install() {
 				else
 					_copy_impl e
 				fi
+				src_install_X
 			}
 			multilib_foreach_abi multilib_install_impl
 		elif [[ "${EPLATFORM}" == "android" ]] ; then
@@ -781,7 +798,6 @@ src_install() {
 
 	src_install_demos
 	src_install_cpp
-	src_install_X
 }
 
 pkg_postinst() {
@@ -794,19 +810,23 @@ pkg_postinst() {
 	if use android ; then
 		local pv=$(ver_cut 1-3 ${PV}).${STATUS}
 		einfo \
-"You need to copy the Android templates to ~/.local/share/godot/templates \
-or \${XDG_DATA_HOME}/godot/templates"
+"You need to copy the Android templates from /usr/share/godot/${SLOT_MAJ}/android/templates\n\
+to ~/.local/share/godot/templates or \${XDG_DATA_HOME}/godot/templates"
 		einfo "from /usr/share/godot/${SLOT_MAJ}/android/templates/*"
 	fi
 
 	if use web ; then
 		einfo \
-"You need to copy the Web templates to ~/.local/share/godot/templates \
-or \${XDG_DATA_HOME}/godot/templates"
+"You need to copy the Web templates from /usr/share/godot/${SLOT_MAJ}/web/templates\n\
+to ~/.local/share/godot/templates or \${XDG_DATA_HOME}/godot/templates"
 		einfo "from /usr/share/godot/${SLOT_MAJ}/web/templates/*"
 
 		einfo \
 "asmjs is deprecated and used as the default for 2.1.x.  Use WASM found on\n\
 the >=3.2 branch."
 	fi
+
+	einfo \
+"You need to copy the Linux export templates from /usr/share/godot/${SLOT_MAJ}/X/templates\n\
+to ~/.local/share/godot/templates or \${XDG_DATA_HOME}/godot/templates"
 }
