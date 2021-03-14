@@ -601,8 +601,7 @@ src_compile_gdnative()
 
 src_compile_javascript()
 {
-	if use javascript \
-		&& [[ "${EPLATFORM}" == "X" ]] ; then
+	if use javascript ; then
 		einfo "Creating export templates for Web (JavaScript)"
 		filter-flags -march=*
 		filter-ldflags -Wl,--as-needed
@@ -614,6 +613,7 @@ src_compile_javascript()
 		BINARYEN_LIB_PATH=$(echo -e "${CFG}\nprint (BINARYEN_ROOT)" | python3)"/lib"
 		einfo "BINARYEN_LIB_PATH=${BINARYEN_LIB_PATH}"
 		export LD_LIBRARY_PATH="${BINARYEN_LIB_PATH}:${LD_LIBRARY_PATH}"
+		export EM_CACHE="${T}/emscripten/cache"
 
 		scons platform=javascript \
 			${myoptions[@]} \

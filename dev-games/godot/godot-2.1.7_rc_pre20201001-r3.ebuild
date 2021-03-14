@@ -438,7 +438,7 @@ src_compile_javascript()
 		BINARYEN_LIB_PATH=$(echo -e "${CFG}\nprint (BINARYEN_ROOT)" | python3)"/lib"
 		einfo "BINARYEN_LIB_PATH=${BINARYEN_LIB_PATH}"
 		export LD_LIBRARY_PATH="${BINARYEN_LIB_PATH}:${LD_LIBRARY_PATH}"
-		export EM_IGNORE_SANITY=1
+		export EM_CACHE="${T}/emscripten/cache"
 
 		scons platform=javascript \
 			${myoptions[@]} \
