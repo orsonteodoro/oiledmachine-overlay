@@ -219,6 +219,9 @@ src_unpack() {
 		export CC=emcc
 		export CXX=em++
 		export NODE_VERSION=${ACTIVE_VERSION}
+		export EM_CACHE="${T}/emscripten/cache"
+		BINARYEN_LIB_PATH=$(echo -e "${A}\nprint (BINARYEN_ROOT)" | python3)"/lib"
+		export LD_LIBRARY_PATH="${BINARYEN_LIB_PATH}:${LD_LIBRARY_PATH}"
 		einfo "CC=${CC} CXX=${CXX}"
 		einfo "NODE_VERSION=${NODE_VERSION}"
 
