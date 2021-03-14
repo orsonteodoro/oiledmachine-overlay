@@ -963,8 +963,7 @@ src_install_X()
 	elif [[ "${EPLATFORM}" == "X" ]] ; then
 		doins bin/linux_x11_${bitness}_debug \
 			bin/linux_x11_${bitness}_release
-		if multilib_is_native_abi \
-			&& [[ "${EPLATFORM}" == "X" ]] ; then
+		if multilib_is_native_abi ; then
 			make_desktop_entry \
 				"/usr/bin/godot${SLOT_MAJ}-${ABI}" \
 				"Godot${SLOT_MAJ} (${ABI})" \
