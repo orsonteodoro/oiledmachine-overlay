@@ -16,7 +16,10 @@
     For Android support:
     ANDROID_NDK_ROOT must be set as a per-package environmental variable.
     EGODOT_ANDROID_ARCHES must be set a per-package environmental variable and
-    must include arm64v8.
+    must include arm64v8.  Support for android arch for the corresponding
+    version are
+      2.1: armv6, armv7, arm64v8, x86, x86_64.
+      3.1: armv7, arm64v8, x86, x86_64
 
     Example:
       Contents of /etc/portage/env/godot.conf:
@@ -53,6 +56,10 @@
   </upstream>
   <use>
     <flag name="3d">Enables 3D support.</flag>
+    <flag name="asan_X">Enables ASAN for X client builds for reporting memory
+      use problems or possible vulnerabilities.</flag>
+    <flag name="asan_server">Enables ASAN for server builds for reporting
+      memory use problems or possible vulnerabilities.</flag>
     <flag name="advanced-gui">Enables the advanced GUI.</flag>
     <flag name="bullet">Enables support for the Bullet 3D physics engine.</flag>
     <flag name="bmp">Enables support for bitmap images.</flag>
@@ -107,6 +114,10 @@
       threads.</flag>
     <flag name="jsonrpc">Enables support JSON-RPC for GDScript LSP.</flag>
     <flag name="jpeg">Enables JPEG support.</flag>
+    <flag name="lsan_X">Enables LSAN for X client builds for reporting
+      memory leaks.</flag>
+    <flag name="lsan_server">Enables LSAN for server builds for reporting
+      memory leaks.</flag>
     <flag name="lto">Enables link time optimization.</flag>
     <flag name="mbedtls">Enables the use of mbed TLS for X509 digital
       certificates, secured TLS networking.</flag>
@@ -115,6 +126,7 @@
     <flag name="mod">Enables support for it, xm, s3m, mod formats.  These
       formats are used by Amiga audio files.</flag>
     <flag name="mono">Enables C# scripting support.</flag>
+    <flag name="mono_pregen_assemblies">Pregenerates Godot API assemblies</flag>
     <flag name="musepack">Enables support for Musepack audio files.</flag>
     <flag name="ogg">Enables support for the Ogg container format.</flag>
     <flag name="opus">Enables Opus voice compression support used in used in
@@ -140,10 +152,9 @@
       translations.</flag>
     <flag name="recast">Enable mesh generation for 3D games.</flag>
     <flag name="s3tc">Enables DXT compression.</flag>
-    <flag name="sanitizer">Compile with sanitizers.  This option enables
-      address (ASAN) and leak (LSAN) sanitizers, and for 3.1 undefined behavior
-      sanitizer (UBSAN).</flag>
     <flag name="server">Compile the headless dedicated server.</flag>
+    <flag name="server_dedicated">Builds a dedicated game server</flag>
+    <flag name="server_headless">Builds a headless editor server</flag>
     <flag name="speex">Enable speex voice compression support used in voice
       acting asset samples.  Removed in 3.x and superceeded by Opus.</flag>
     <flag name="svg">Enable SVG vector image format support.</flag>
@@ -192,6 +203,14 @@
     <flag name="tga">Enables support for TGA image format.</flag>
     <flag name="theora">Enables support for the Theora video codec.</flag>
     <flag name="touch">Enables mobile touchscreen events support.</flag>
+    <flag name="tsan_X">Enables TSAN for X client builds to catch data races
+      that potentially can cause a crash or memory corruption.</flag>
+    <flag name="tsan_server">Enables TSAN for server builds to catch data races
+      that potentially can cause a crash or memory corruption.</flag>
+    <flag name="ubsan_X">Enables UBSAN for X client builds to catch overflows
+      or null pointer or misaligned access that could lead to a crash.</flag>
+    <flag name="ubsan_server">Enables UBSAN for server builds to catch overflows
+      or null pointer or misaligned access that could lead to a crash.</flag>
     <flag name="upnp">Enables universal plug and play for devices.</flag>
     <flag name="vhacd">Enables decomposition of 3D polygons into simple more
       accurate approximation for collison detection at the model's limb.</flag>
@@ -204,7 +223,7 @@
       support.</flag>
     <flag name="websocket">Enables support for the WebSocket protocol.</flag>
     <flag name="xml">Enables XML support.</flag>
-    <flag name="X">Enables building with X support.</flag>
+    <flag name="X">Enables building the editor with X support.</flag>
     <flag name="xatlas">Enables use of atlas texture packing for more efficient
       texture access.</flag>
   </use>
