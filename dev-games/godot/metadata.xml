@@ -26,7 +26,7 @@
     These clear the USE flags config options.  Only web and
     android env vars are offered.  Options must be space separated.
 
-    Example.
+    Example:
       EGODOT_ANDROID_CONFIG="module_opensimplex_enabled=True"
       EGODOT_WEB_CONFIG="module_opensimplex_enabled=True"
 
