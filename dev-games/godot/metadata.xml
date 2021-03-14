@@ -159,7 +159,7 @@
       translations.</flag>
     <flag name="recast">Enable mesh generation for 3D games.</flag>
     <flag name="s3tc">Enables DXT compression.</flag>
-    <flag name="server">Compile the headless dedicated server.</flag>
+    <flag name="server">Builds servers.</flag>
     <flag name="server_dedicated">Builds a dedicated game server</flag>
     <flag name="server_headless">Builds a headless editor server</flag>
     <flag name="speex">Enable speex voice compression support used in voice
@@ -207,20 +207,21 @@
       internal version.</flag>
     <flag name="system-zstd">Uses the system's external library instead of the
       internal version.</flag>
-    <flag name="tga">Enables support for TGA image format.</flag>
+    <flag name="tga">Enables support for the TGA image format.</flag>
     <flag name="theora">Enables support for the Theora video codec.</flag>
     <flag name="touch">Enables mobile touchscreen events support.</flag>
     <flag name="tsan_X">Enables TSAN for X client builds to catch data races
-      that potentially can cause a crash or memory corruption.</flag>
+      that potentially can lead to a crash or memory corruption.</flag>
     <flag name="tsan_server">Enables TSAN for server builds to catch data races
-      that potentially can cause a crash or memory corruption.</flag>
+      that potentially can lead to a crash or memory corruption.</flag>
     <flag name="ubsan_X">Enables UBSAN for X client builds to catch overflows
       or null pointer or misaligned access that could lead to a crash.</flag>
     <flag name="ubsan_server">Enables UBSAN for server builds to catch overflows
       or null pointer or misaligned access that could lead to a crash.</flag>
     <flag name="upnp">Enables universal plug and play for devices.</flag>
     <flag name="vhacd">Enables decomposition of 3D polygons into simple more
-      accurate approximation for collison detection at the model's limb.</flag>
+      accurate approximation for collison detection at the model's limbs instead
+      of more spheroid or retangular shapes.</flag>
     <flag name="visual-script">Enables the visual scripting and editor.</flag>
     <flag name="vorbis">Enables support for the Vorbis audio codec.</flag>
     <flag name="web">Enables support for Web HTML5 games built with
