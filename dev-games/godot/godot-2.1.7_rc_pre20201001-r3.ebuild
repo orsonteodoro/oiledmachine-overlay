@@ -439,6 +439,7 @@ src_compile_javascript()
 		einfo "BINARYEN_LIB_PATH=${BINARYEN_LIB_PATH}"
 		export LD_LIBRARY_PATH="${BINARYEN_LIB_PATH}:${LD_LIBRARY_PATH}"
 		export EM_CACHE="${T}/emscripten/cache"
+		export EMMAKEN_CFLAGS="-c" # silence warning and build as .o files (default)
 
 		scons platform=javascript \
 			${myoptions[@]} \
