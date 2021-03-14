@@ -7,7 +7,7 @@ STATUS="stable"
 
 VIRTUALX_REQUIRED=manual
 PYTHON_COMPAT=( python3_{6..9} )
-EPLATFORMS="android mono server_dedicated server_headless web X"
+EPLATFORMS="android linux mono server_dedicated server_headless web"
 inherit check-reqs desktop eutils flag-o-matic multilib-build platforms python-r1 \
 scons-utils virtualx
 
@@ -69,15 +69,13 @@ gdnative? (
 SLOT_MAJ="3"
 SLOT="${SLOT_MAJ}/${PV}"
 
-IUSE+=" +3d +X +advanced-gui clang debug docs examples-snapshot examples-stable \
-examples-live jit lto +optimize-speed +opensimplex optimize-size portable \
+IUSE+=" +3d +advanced-gui clang debug docs examples-snapshot examples-stable \
+examples-live jit +linux lto +optimize-speed +opensimplex optimize-size portable \
 server server_dedicated server_headless"
 IUSE+=" +bmp +etc1 +exr +hdr +jpeg +minizip +ogg +pvrtc +svg +s3tc +theora \
 +tga +vorbis +webm +webp" # formats formats
 
-#FIXME gdnative
-
-IUSE+=" -closure-compiler +cpp +gdnative +gdscript gdscript_lsp \
+IUSE+=" -closure-compiler +gdnative +gdscript gdscript_lsp \
 +javascript_eval -javascript_threads -mono -mono_pregen_assemblies \
 +visual-script web" # for scripting languages
 IUSE+=" +bullet +csg +gridmap +mobile-vr +recast +vhacd +xatlas" # for 3d
@@ -93,7 +91,7 @@ IUSE+=" android"
 IUSE+=" doxygen rst"
 # in master, sanitizers also applies to javascript
 IUSE+=" asan_server lsan_server tsan_server ubsan_server"
-IUSE+=" asan_X lsan_X tsan_X ubsan_X"
+IUSE+=" asan_client lsan_client tsan_client ubsan_client"
 # media-libs/xatlas is a placeholder
 # net-libs/wslay is a placeholder
 # See https://github.com/godotengine/godot/tree/3.2.3-stable/thirdparty for versioning
@@ -103,18 +101,18 @@ IUSE+=" asan_X lsan_X tsan_X ubsan_X"
 #	gdnative? ( !clang )
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
-	X
 	docs? ( || ( doxygen rst ) )
 	examples-live? ( !examples-snapshot !examples-stable )
 	examples-snapshot? ( !examples-live !examples-stable )
 	examples-stable? ( !examples-live !examples-snapshot )
 	gdscript_lsp? ( jsonrpc websocket )
-	lsan_X? ( asan_X )
+	linux
+	lsan_client? ( asan_client )
 	lsan_server? ( asan_server )
 	optimize-size? ( !optimize-speed )
 	optimize-speed? ( !optimize-size )
 	portable? (
-		!asan_X
+		!asan_client
 		!asan_server
 		!system-bullet
 		!system-enet
@@ -135,7 +133,7 @@ REQUIRED_USE+="
 		!system-xatlas
 		!system-zlib
 		!system-zstd
-		!tsan_X
+		!tsan_client
 		!tsan_server
 	)
 	rst? ( || ( $(python_gen_useflags 'python3*') ) )
@@ -226,7 +224,7 @@ BDEPEND_SANTIZIER="
 "
 BDEPEND+=" dev-util/scons
         virtual/pkgconfig[${MULTILIB_USEDEP}]
-	asan_X? (
+	asan_client? (
 		${BDEPEND_SANTIZIER}
 	)
 	asan_server? (
@@ -234,20 +232,20 @@ BDEPEND+=" dev-util/scons
 	)
 	clang? ( sys-devel/clang[${MULTILIB_USEDEP}] )
 	doxygen? ( app-doc/doxygen )
-	gdnative? ( X? ( ${VIRTUALX_DEPEND} ) )
-	lsan_X? (
+	gdnative? ( linux? ( ${VIRTUALX_DEPEND} ) )
+	lsan_client? (
 		${BDEPEND_SANTIZIER}
 	)
 	lsan_server? (
 		${BDEPEND_SANTIZIER}
 	)
-	tsan_X? (
+	tsan_client? (
 		${BDEPEND_SANTIZIER}
 	)
 	tsan_server? (
 		${BDEPEND_SANTIZIER}
 	)
-	ubsan_X? (
+	ubsan_client? (
 		${BDEPEND_SANTIZIER}
 	)
 	ubsan_server? (
@@ -257,13 +255,13 @@ S="${WORKDIR}/godot-${PV}-stable"
 RESTRICT="fetch mirror"
 
 _set_check_req() {
-	if use X && use server ; then
+	if use linux && use server ; then
 		CHECKREQS_DISK_BUILD="2762M"
 		CHECKREQS_DISK_USR="445M"
 	elif use server ; then
 		CHECKREQS_DISK_BUILD="1431M"
 		CHECKREQS_DISK_USR="229M"
-	elif use X ; then
+	elif use linux ; then
 		CHECKREQS_DISK_BUILD="1460M"
 		CHECKREQS_DISK_USR="241M"
 	fi
@@ -323,7 +321,6 @@ are required."
 
 pkg_setup() {
 	ewarn "This ebuild is still a Work In Progress (WIP) as of 2021"
-	ewarn "Do not build with gdnative USE flag until fixed by ebuild maintainer."
 	if use android ; then
 		ewarn \
 "The android USE flag is untested and incomplete in the ebuild level."
@@ -332,7 +329,8 @@ pkg_setup() {
 		fi
 		if [[ -z "${EGODOT_ANDROID_ARCHES}" ]] ; then
 			ewarn \
-"EGODOT_ANDROID_ARCHES should be added as a per-package environmental variable"
+"EGODOT_ANDROID_ARCHES should be added as a per-package environmental\n\
+variable.  See metadata.xml or \`epkginfo -x godot\` for details"
 		fi
 
 		# For gradle wrapper
@@ -342,9 +340,6 @@ pkg_setup() {
 and the android USE flag."
 		fi
 	fi
-	if use cpp ; then
-		ewarn "The cpp USE flag is untested."
-	fi
 	if use gdnative ; then
 		ewarn "The gdnative USE flag is untested."
 	fi
@@ -353,11 +348,10 @@ and the android USE flag."
 	fi
 	if use mono ; then
 		ewarn \
-"The mono USE flag is untested and unfinished on the ebuild level."
+"The mono USE flag is untested and is a Work In Progress (WIP)."
 	fi
 	if use web ; then
-		ewarn \
-"The web USE flag is untested and possibly unfinished on the ebuild level."
+		ewarn "The web USE flag is a Work In Progress (WIP)."
 		_check_emscripten
 	fi
 
@@ -444,7 +438,7 @@ src_prepare() {
 	platforms_copy_sources
 
 	godot_prepare_impl1() {
-		if [[ "${EPLATFORM}" == "X" \
+		if [[ "${EPLATFORM}" == "linux" \
 			|| "${EPLATFORM}" == "server_dedicated" \
 			|| "${EPLATFORM}" == "server_headless" ]] ; then
 			cd "${BUILD_DIR}" || die
@@ -456,7 +450,7 @@ src_prepare() {
 
 	if use gdnative ; then
 		godot_prepare_impl2() {
-			if [[ "${EPLATFORM}" == "X" ]] ; then
+			if [[ "${EPLATFORM}" == "linux" ]] ; then
 				cd "${BUILD_DIR}" || die
 				multilib_prepare_gdnative() {
 				pushd godot-cpp || die
@@ -515,34 +509,32 @@ src_compile_android()
 		einfo "${EGODOT_ANDROID_CONFIG}"
 		myoptions=(${EGODOT_ANDROID_CONFIG})
 	fi
-	if use android ; then
-		einfo "Creating export templates for Android"
-		export TERM=linux # pretend to be outside of X
-		for aa in ${EGODOT_ANDROID_ARCHES} ; do
-			scons platform=android \
-				${myoptions[@]} \
-				android_arch=${aa} \
-				target=release \
-				|| die
-			scons platform=android \
-				${myoptions[@]} \
-				android_arch=${aa} \
-				target=release_debug \
-				|| die
-		done
-		pushd platform/android/java || die
-			gradle_cmd=$(find /usr/bin/ \
-				-regextype posix-extended \
-				-regex '.*/gradle-[0-9]+.[0-9]+')
-			"${gradle_cmd}" wrapper || die
-			./gradlew generateGodotTemplates || die
-		popd
-	fi
+	einfo "Creating export templates for Android"
+	export TERM=linux # pretend to be outside of X
+	for aa in ${EGODOT_ANDROID_ARCHES} ; do
+		scons platform=android \
+			${myoptions[@]} \
+			android_arch=${aa} \
+			target=release \
+			|| die
+		scons platform=android \
+			${myoptions[@]} \
+			android_arch=${aa} \
+			target=release_debug \
+			|| die
+	done
+	pushd platform/android/java || die
+		gradle_cmd=$(find /usr/bin/ \
+			-regextype posix-extended \
+			-regex '.*/gradle-[0-9]+.[0-9]+')
+		"${gradle_cmd}" wrapper || die
+		./gradlew generateGodotTemplates || die
+	popd
 }
 
 src_compile_gdnative()
 {
-	# Building gdnative (c++) bindings for server doesn't work but should work.
+	# Building GDNative (c++) bindings for server doesn't work but should work.
 	if use gdnative ; then
 		unset e
 		declare -A e
@@ -606,229 +598,247 @@ src_compile_gdnative()
 	fi
 }
 
-src_compile_web()
+src_compile_linux()
 {
-	if use web ; then
-		if [[ -n "${EGODOT_WEB_CONFIG}" ]] ; then
-			einfo "Using config override for Web"
-			einfo "${EGODOT_WEB_CONFIG}"
-			myoptions=(${EGODOT_WEB_CONFIG})
-		fi
-		einfo "Creating export templates for Web (HTML5, Emscripten, JavaScript, WASM)"
-		filter-flags -march=*
-		filter-ldflags -Wl,--as-needed
-		strip-flags
-		einfo "LDFLAGS=${LDFLAGS}"
-		export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
-		export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
-		local CFG=$(cat "${EM_CONFIG}")
-		BINARYEN_LIB_PATH=$(echo -e "${CFG}\nprint (BINARYEN_ROOT)" | python3)"/lib"
-		einfo "BINARYEN_LIB_PATH=${BINARYEN_LIB_PATH}"
-		export LD_LIBRARY_PATH="${BINARYEN_LIB_PATH}:${LD_LIBRARY_PATH}"
-		export EM_CACHE="${T}/emscripten/cache"
-
-		scons platform=javascript \
+	einfo "Building x11 export templates"
+	if (use abi_x86_64 || use abi_mips_n64 || use ppc64 || use arm64) \
+		&& [[ $(get_libdir) =~ 64 ]] ; then
+		scons platform=x11 \
 			${myoptions[@]} \
-			javascript_eval=$(usex javascript_eval) \
+			bits=64 \
 			target=release \
-			threads_enabled=$(usex javascript_threads) \
 			tools=no \
+			use_asan=$(usex asan_client) \
+			use_lsan=$(usex lsan_client) \
+			use_tsan=$(usex tsan_client) \
+			use_ubsan=$(usex ubsan_client) \
 			|| die
-		scons platform=javascript \
+		scons platform=x11 \
 			${myoptions[@]} \
+			bits=64 \
 			target=release_debug \
 			tools=no \
+			use_asan=$(usex asan_client) \
+			use_lsan=$(usex lsan_client) \
+			use_tsan=$(usex tsan_client) \
+			use_ubsan=$(usex ubsan_client) \
 			|| die
 	fi
+	if (use abi_x86_32 || use abi_mips_o32 || use ppc32 || use arm) \
+		&& [[ $(get_libdir) =~ 32 ]] ; then
+		scons platform=x11 \
+			${myoptions[@]} \
+			bits=32 \
+			target=release \
+			tools=no \
+			use_asan=$(usex asan_client) \
+			use_lsan=$(usex lsan_client) \
+			use_tsan=$(usex tsan_client) \
+			use_ubsan=$(usex ubsan_client) \
+			|| die
+		scons platform=x11 \
+			${myoptions[@]} \
+			bits=32 \
+			target=release_debug \
+			tools=no \
+			use_asan=$(usex asan_client) \
+			use_lsan=$(usex lsan_client) \
+			use_tsan=$(usex tsan_client) \
+			use_ubsan=$(usex ubsan_client) \
+			|| die
+	fi
+	if multilib_is_native_abi && ! use mono ; then
+		einfo "Building Linux editor without Mono"
+		scons platform=x11 \
+			${myoptions[@]} \
+			module_mono_enabled=no \
+			use_asan=$(usex asan_client) \
+			use_lsan=$(usex lsan_client) \
+			use_tsan=$(usex tsan_client) \
+			use_ubsan=$(usex ubsan_client) \
+			"CFLAGS=${CFLAGS}" \
+			"CCFLAGS=${CXXFLAGS}" \
+			"LINKFLAGS=${LDFLAGS}" || die
+	fi
+
+	if [[ -n "${EGODOT_CUSTOM_MODULES_BUILD}" ]] ; then
+		IFS=$';'
+		for x in ${EGODOT_CUSTOM_MODULES_BUILD} ; do
+			local n=$(echo "${x}" | cut -f 1 -d ":")
+			local c=$(echo "${x}" | cut -f 2 -d ":")
+			einfo "Building the ${n} custom module"
+			pushd modules/${n} || die
+				eval "${c}"
+			popd
+		done
+		IFS=$' \t\n'
+	fi
+}
+
+src_compile_linux_server()
+{
+	if [[ "${EPLATFORM}" == "server_dedicated" ]] ; then
+		einfo "Building dedicated server"
+		scons platform=server \
+			${myoptions[@]} \
+			target=release \
+			tools=no \
+			use_asan=$(usex asan_server) \
+			use_lsan=$(usex lsan_server) \
+			use_tsan=$(usex tsan_server) \
+			use_ubsan=$(usex ubsan_server) \
+			|| die
+	fi
+	if [[ "${EPLATFORM}" == "server_headless" ]] ; then
+		einfo "Building editor server"
+		scons platform=server \
+			${myoptions[@]} \
+			target=release_debug \
+			tools=yes \
+			use_asan=$(usex asan_server) \
+			use_lsan=$(usex lsan_server) \
+			use_tsan=$(usex tsan_server) \
+			use_ubsan=$(usex ubsan_server) \
+			|| die
+	fi
+}
+
+src_compile_web()
+{
+	if [[ -n "${EGODOT_WEB_CONFIG}" ]] ; then
+		einfo "Using config override for Web"
+		einfo "${EGODOT_WEB_CONFIG}"
+		myoptions=(${EGODOT_WEB_CONFIG})
+	fi
+	einfo "Creating export templates for Web (HTML5, Emscripten, JavaScript, WASM)"
+	filter-flags -march=*
+	filter-ldflags -Wl,--as-needed
+	strip-flags
+	einfo "LDFLAGS=${LDFLAGS}"
+	export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
+	export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
+	local CFG=$(cat "${EM_CONFIG}")
+	BINARYEN_LIB_PATH=$(echo -e "${CFG}\nprint (BINARYEN_ROOT)" | python3)"/lib"
+	einfo "BINARYEN_LIB_PATH=${BINARYEN_LIB_PATH}"
+	export LD_LIBRARY_PATH="${BINARYEN_LIB_PATH}:${LD_LIBRARY_PATH}"
+	export EM_CACHE="${T}/emscripten/cache"
+
+	scons platform=javascript \
+		${myoptions[@]} \
+		javascript_eval=$(usex javascript_eval) \
+		target=release \
+		threads_enabled=$(usex javascript_threads) \
+		tools=no \
+		|| die
+	scons platform=javascript \
+		${myoptions[@]} \
+		target=release_debug \
+		tools=no \
+		|| die
 }
 
 src_compile_mono()
 {
-	if use mono ; then
-		# Prevent crash
-		# ERROR: generate_cs_core_project:
-		#   Condition ' !file ' is true. returned: ERR_FILE_CANT_WRITE
-		# halts at
+	# Prevent crash
+	# ERROR: generate_cs_core_project:
+	#   Condition ' !file ' is true. returned: ERR_FILE_CANT_WRITE
+	# halts at
 #	build_GodotSharp/GodotSharp/Core/Attributes/ExportAttribute.cs
 #	build_GodotSharp/GodotSharp/Core/Extensions/NodeExtensions.cs
-		# Script doesn't check if those paths are created first.
-		mkdir -p build_GodotSharp/GodotSharp/Core/\
+	# Script doesn't check if those paths are created first.
+	mkdir -p build_GodotSharp/GodotSharp/Core/\
 {Attributes,Extensions,Interfaces} \
-			|| die
+		|| die
 
-		# Glue to enable the Mono module.
-		einfo "Generating glue source code for mono"
-		scons platform=x11 \
-			${myoptions[@]} \
-			module_mono_enabled=yes \
-			mono_glue=no \
-			tools=yes \
-			"CFLAGS=${CFLAGS}" \
-			"CCFLAGS=${CXXFLAGS}" \
-			"LINKFLAGS=${LDFLAGS}" || die
+	# Glue to enable the Mono module.
+	einfo "Generating glue source code for Mono support"
+	scons platform=x11 \
+		${myoptions[@]} \
+		module_mono_enabled=yes \
+		mono_glue=no \
+		tools=yes \
+		"CFLAGS=${CFLAGS}" \
+		"CCFLAGS=${CXXFLAGS}" \
+		"LINKFLAGS=${LDFLAGS}" || die
 
-		unset e
-		declare -A e
-		e["name"]="godot"
-		e["platform"]=".x11"
-		e["tools"]=".tools"
-		e["bitness"]=$(_get_bitness)
-		e["llvm"]=$(usex clang ".llvm" "")
-		e["mono"]=".mono"
-		local fs=$(gen_fs e)
+	unset e
+	declare -A e
+	e["name"]="godot"
+	e["platform"]=".x11"
+	e["tools"]=".tools"
+	e["bitness"]=$(_get_bitness)
+	e["llvm"]=$(usex clang ".llvm" "")
+	e["mono"]=".mono"
+	local fs=$(gen_fs e)
 
-		einfo "Making modules/mono/glue/mono_glue.gen.cpp"
-		bin/${fs} --audio-driver Dummy \
-			--generate-mono-glue \
-			modules/mono/glue || die
+	einfo "Making modules/mono/glue/mono_glue.gen.cpp"
+	bin/${fs} --audio-driver Dummy \
+		--generate-mono-glue \
+		modules/mono/glue || die
 
-		if ! ( find bin -name "data.*" ) ; then
-			die \
+	if ! ( find bin -name "data.*" ) ; then
+		die \
 "Missing export templates directory (data.mono.*.*.*).  Likely caused by\n\
 crash while generating mono_glue.gen.cpp."
-		fi
-
-		einfo "Building mono export templates"
-		scons platform=x11 \
-			${myoptions[@]} \
-			module_mono_enabled=yes \
-			target=release \
-			tools=no \
-			"CFLAGS=${CFLAGS}" \
-			"CCFLAGS=${CXXFLAGS}" \
-			"LINKFLAGS=${LDFLAGS}" \
-			|| die
-		scons platform=x11 \
-			${myoptions[@]} \
-			module_mono_enabled=yes \
-			target=release_debug \
-			tools=no \
-			"CFLAGS=${CFLAGS}" \
-			"CCFLAGS=${CXXFLAGS}" \
-			"LINKFLAGS=${LDFLAGS}" \
-			|| die
-
-		if use mono_pregen_assemblies ; then
-			# Generate the Godot C# API assemblies.
-			local sln_folder="build_GodotSharp"
-			local release=$(usex debug "Debug" "Release")
-			mkdir -p build_GodotSharp || die
-			einfo \
-"Generating bindings source code and sln file for mono"
-			bin/${fs} --audio-driver Dummy \
-				--generate-cs-api ${sln_folder} || die
-			if [[ -f "${sln_folder}/GodotSharp.sln" ]] ; then
-				einfo "Pregenerating Godot API assemblies for mono"
-				for configuration in debug release ; do
-					local data_api_folder="bin/data.mono.x11${bitness}${configuration}/Api"
-					mkdir -p ${data_api_folder} || die
-					msbuild ${sln_folder}/GodotSharp.sln \
-						/p:Configuration=${configuration^} || die
-					mkdir -p ${data_api_folder} || die
-					cp -a \
-build_GodotSharp/GodotSharp/bin/${configuration}/GodotSharp{.dll,.pdb,.xml} \
-						${data_api_folder} || die
-					cp -a \
-build_GodotSharp/GodotSharpEditor/bin/${configuration}/GodotSharpEditor{.dll,.pdb,.xml} \
-						${data_api_folder} || die
-				done
-			fi
-		fi
 	fi
 
-}
+	einfo "Building Linux editor with Mono support"
+	scons platform=x11 \
+		${myoptions[@]} \
+		module_mono_enabled=$(usex mono) \
+		tools=yes \
+		use_asan=$(usex asan_client) \
+		use_lsan=$(usex lsan_client) \
+		use_tsan=$(usex tsan_client) \
+		use_ubsan=$(usex ubsan_client) \
+		"CFLAGS=${CFLAGS}" \
+		"CCFLAGS=${CXXFLAGS}" \
+		"LINKFLAGS=${LDFLAGS}" || die
 
-src_compile_x11()
-{
-	if use X ; then
-		einfo "Building servers"
-		if use server ; then
-			if use server_dedicated ; then
-				einfo "Building dedicated server"
-				scons platform=server \
-					${myoptions[@]} \
-					target=release \
-					tools=no \
-					use_asan=$(usex asan_server) \
-					use_lsan=$(usex lsan_server) \
-					use_tsan=$(usex tsan_server) \
-					use_ubsan=$(usex ubsan_server) \
-					|| die
-			fi
-			if use server_headless ; then
-				einfo "Building editor server"
-				scons platform=server \
-					${myoptions[@]} \
-					target=release_debug \
-					tools=yes \
-					use_asan=$(usex asan_server) \
-					use_lsan=$(usex lsan_server) \
-					use_tsan=$(usex tsan_server) \
-					use_ubsan=$(usex ubsan_server) \
-					|| die
-			fi
-		fi
+	einfo "Building Mono export templates"
+	scons platform=x11 \
+		${myoptions[@]} \
+		module_mono_enabled=yes \
+		target=release \
+		tools=no \
+		"CFLAGS=${CFLAGS}" \
+		"CCFLAGS=${CXXFLAGS}" \
+		"LINKFLAGS=${LDFLAGS}" \
+		|| die
+	scons platform=x11 \
+		${myoptions[@]} \
+		module_mono_enabled=yes \
+		target=release_debug \
+		tools=no \
+		"CFLAGS=${CFLAGS}" \
+		"CCFLAGS=${CXXFLAGS}" \
+		"LINKFLAGS=${LDFLAGS}" \
+		|| die
 
-		einfo "Building x11 export templates"
-		if (use abi_x86_64 || use abi_mips_n64 || use ppc64 || use arm64) \
-			&& [[ $(get_libdir) =~ 64 ]] ; then
-			scons platform=x11 \
-				${myoptions[@]} \
-				bits=64 \
-				target=release \
-				tools=no \
-				use_asan=$(usex asan_X) \
-				use_lsan=$(usex lsan_X) \
-				use_tsan=$(usex tsan_X) \
-				use_ubsan=$(usex ubsan_X) \
-				|| die
-			scons platform=x11 \
-				${myoptions[@]} \
-				bits=64 \
-				target=release_debug \
-				tools=no \
-				use_asan=$(usex asan_X) \
-				use_lsan=$(usex lsan_X) \
-				use_tsan=$(usex tsan_X) \
-				use_ubsan=$(usex ubsan_X) \
-				|| die
-		fi
-		if (use abi_x86_32 || use abi_mips_o32 || use ppc32 || use arm) \
-			&& [[ $(get_libdir) =~ 32 ]] ; then
-			scons platform=x11 \
-				${myoptions[@]} \
-				bits=32 \
-				target=release \
-				tools=no \
-				use_asan=$(usex asan_X) \
-				use_lsan=$(usex lsan_X) \
-				use_tsan=$(usex tsan_X) \
-				use_ubsan=$(usex ubsan_X) \
-				|| die
-			scons platform=x11 \
-				${myoptions[@]} \
-				bits=32 \
-				target=release_debug \
-				tools=no \
-				use_asan=$(usex asan_X) \
-				use_lsan=$(usex lsan_X) \
-				use_tsan=$(usex tsan_X) \
-				use_ubsan=$(usex ubsan_X) \
-				|| die
-		fi
-
-		if multilib_is_native_abi ; then
-			einfo "Building x11 editor"
-			scons platform=x11 \
-				${myoptions[@]} \
-				module_mono_enabled=$(usex mono) \
-				use_asan=$(usex asan_X) \
-				use_lsan=$(usex lsan_X) \
-				use_tsan=$(usex tsan_X) \
-				use_ubsan=$(usex ubsan_X) \
-				"CFLAGS=${CFLAGS}" \
-				"CCFLAGS=${CXXFLAGS}" \
-				"LINKFLAGS=${LDFLAGS}" || die
+	if use mono_pregen_assemblies ; then
+		# Generate the Godot C# API assemblies.
+		local sln_folder="build_GodotSharp"
+		local release=$(usex debug "Debug" "Release")
+		mkdir -p build_GodotSharp || die
+		einfo \
+"Generating bindings source code and sln file for Mono"
+		bin/${fs} --audio-driver Dummy \
+			--generate-cs-api ${sln_folder} || die
+		if [[ -f "${sln_folder}/GodotSharp.sln" ]] ; then
+			einfo "Pregenerating Godot API assemblies for mono"
+			for configuration in debug release ; do
+				local data_api_folder="bin/data.mono.x11${bitness}${configuration}/Api"
+				mkdir -p ${data_api_folder} || die
+				msbuild ${sln_folder}/GodotSharp.sln \
+					/p:Configuration=${configuration^} || die
+				mkdir -p ${data_api_folder} || die
+				cp -a \
+build_GodotSharp/GodotSharp/bin/${configuration}/GodotSharp{.dll,.pdb,.xml} \
+					${data_api_folder} || die
+				cp -a \
+build_GodotSharp/GodotSharpEditor/bin/${configuration}/GodotSharpEditor{.dll,.pdb,.xml} \
+					${data_api_folder} || die
+			done
 		fi
 	fi
 }
@@ -912,21 +922,27 @@ src_compile() {
 		use_closure_compiler=$(usex closure-compiler)
 		use_llvm=$(usex clang)
 		use_lto=$(usex lto)
-		use_static_cpp=$(usex portable) )
+		use_static_cpp=$(usex portable)
+		${EGODOT_ADDITIONAL_CONFIG} )
 
 	godot_compile_impl() {
 		cd "${BUILD_DIR}" || die
-		if [[ "${EPLATFORM}" == "X" \
-			|| "${EPLATFORM}" == "server_dedicated" \
-			|| "${EPLATFORM}" == "server_headless" ]] ; then
+		if [[ "${EPLATFORM}" == "android" ]] ; then
+			src_compile_android
+		elif [[ "${EPLATFORM}" == "linux" ]] ; then
 			multilib_compile_impl() {
 				cd "${BUILD_DIR}" || die
 				src_compile_gdnative
-				src_compile_x11
+				src_compile_linux
 			}
 			multilib_foreach_abi multilib_compile_impl
-		elif [[ "${EPLATFORM}" == "android" ]] ; then
-			src_compile_android
+		elif [[ "${EPLATFORM}" == "server_dedicated" \
+			|| "${EPLATFORM}" == "server_headless" ]] ; then
+			multilib_compile_impl() {
+				cd "${BUILD_DIR}" || die
+				src_compile_linux_server
+			}
+			multilib_foreach_abi multilib_compile_impl
 		elif [[ "${EPLATFORM}" == "mono" ]] ; then
 			# native for now
 			src_compile_mono
@@ -953,62 +969,13 @@ _get_bitness() {
 	[[ $(get_libdir) =~ 64 ]] && echo ".64" || echo ".32"
 }
 
-src_install_X()
-{
-	local bitness=$(_get_bitness)
-	bitness=${bitness//./}
-	insinto /usr/share/godot/${SLOT_MAJ}/X/templates
-	if [[ "${EPLATFORM}" == "server_headless" \
-		|| "${EPLATFORM}" == "server_dedicated" ]] \
-		&& use server ; then
-		doins bin/linux_server_${bitness}
-	elif [[ "${EPLATFORM}" == "X" ]] ; then
-		doins bin/linux_x11_${bitness}_debug \
-			bin/linux_x11_${bitness}_release
-		if multilib_is_native_abi ; then
-			make_desktop_entry \
-				"/usr/bin/godot${SLOT_MAJ}-${ABI}" \
-				"Godot${SLOT_MAJ} (${ABI})" \
-				"/usr/share/pixmaps/godot${SLOT_MAJ}.png" \
-				"Development;IDE"
-			newicon icon.png godot${SLOT_MAJ}.png
-		fi
-	fi
-}
-
 src_install_android()
 {
-	if use android \
-		&& [[ "${EPLATFORM}" == "X" ]] ; then
-		insinto /usr/share/godot/${SLOT_MAJ}/android/templates
-		doins bin/android_{release,debug}.apk
-		echo "${PV}.${STATUS}" > "${T}/version.txt" || die
-		doins "${T}/version.txt"
-	fi
-}
-
-src_install_cpp()
-{
-	if use cpp ; then
-		insinto /usr/$(get_libdir)/pkgconfig
-		cat \
-		"${FILESDIR}/godot${SLOT_MAJ}-custom-module.pc.in" \
-			| sed -e "s|@prefix@|/usr|g" \
-			-e "s|@exec_prefix@|\${prefix}|g" \
-			-e "s|@libdir@|/usr/$(get_libdir)|g" \
-			-e "s|@version@|${PV}|g" \
-			> "${T}/godot${SLOT_MAJ}-custom-module.pc" \
-			|| die
-		doins "${T}/godot${SLOT_MAJ}-custom-module.pc"
-
-		insinto /usr/include/${PN}${SLOT_MAJ}-cpp
-		doins -r "${S}"/core "${S}"/drivers
-		insinto /usr/include/${PN}${SLOT_MAJ}-cpp/platform
-		if use X ; then
-			doins -r "${S}"/platform/x11
-		fi
-	fi
-
+	einfo "Installing export templates for Android"
+	insinto /usr/share/godot/${SLOT_MAJ}/android/templates
+	doins bin/android_{release,debug}.apk
+	echo "${PV}.${STATUS}" > "${T}/version.txt" || die
+	doins "${T}/version.txt"
 }
 
 src_install_demos()
@@ -1016,6 +983,7 @@ src_install_demos()
 	insinto /usr/share/godot${SLOT_MAJ}/godot-demo-projects
 	if use examples-live || use examples-snapshot \
 		|| use examples-stable ; then
+		einfo "Installing demos"
 		doins -r "${S_DEMOS}"/*
 	fi
 }
@@ -1023,6 +991,7 @@ src_install_demos()
 src_install_gdnative()
 {
 	if use gdnative ; then
+		einfo "Installing GDNative bindings"
 		local platform="x11" # can only be x11 or server
 		insinto /usr/include/gdnative-${platform}
 		doins -r modules/gdnative/include/*
@@ -1044,40 +1013,92 @@ src_install_gdnative()
 	fi
 }
 
-src_install_mono()
+src_install_linux()
 {
-	if use mono ; then
-		into "${d_base}/bin"
-		dolib.so bin/libmonosgen-2.0.so
-		insinto "${d_base}/bin"
-		local release=".release"
-		local bitness=$(_get_bitness)
-		for configuration in debug release ; do
-			local data_api_folder="bin/data.mono.x11${bitness}${configuration}"
-			[ -d ${data_api_folder} ] \
-				&& doins -r ${data_api_folder}
-			doins -r bin/GodotSharp
+	local bitness=$(_get_bitness)
+	bitness=${bitness//./}
+	insinto /usr/share/godot/${SLOT_MAJ}/linux/templates
+	einfo "Installing export templates for Linux"
+	doins bin/linux_x11_${bitness}_debug \
+		bin/linux_x11_${bitness}_release
+	if multilib_is_native_abi ; then
+		einfo "Setting up Linux editor environment"
+		make_desktop_entry \
+			"/usr/bin/godot${SLOT_MAJ}" \
+			"Godot${SLOT_MAJ}" \
+			"/usr/share/pixmaps/godot${SLOT_MAJ}.png" \
+			"Development;IDE"
+		newicon icon.png godot${SLOT_MAJ}.png
+	fi
+
+	if [[ -n "${EGODOT_CUSTOM_MODULES_LIBS}" ]] ; then
+		for x in ${EGODOT_CUSTOM_MODULES_LIBS} ; do
+			einfo "Installing ${x} custom module"
+			local d_base=$(_get_d_base)
+			exeinto "${d_base}/bin"
+			doexe bin/${x}
 		done
 	fi
 }
 
-src_install_web()
+src_install_linux_server()
 {
-	if use web ; then
-		insinto /usr/share/godot/${SLOT_MAJ}/web/templates
-		doins bin/javascript_{release,debug}.zip
-	fi
+	local bitness=$(_get_bitness)
+	bitness=${bitness//./}
+	insinto /usr/share/godot/${SLOT_MAJ}/${EPLATFORM}/templates
+	einfo "Installing export templates for ${EPLATFORM}"
+	doins bin/linux_server_${bitness}
 }
 
-_copy_impl() {
+_get_d_base()
+{
+	echo "/usr/$(get_libdir)/${PN}${SLOT_MAJ}/${platform}"
+}
+
+src_install_mono()
+{
+	local d_base=$(_get_d_base)
+	into "${d_base}/bin"
+	if [[ -f bin/libmonosgen-2.0.so ]] ; then
+		einfo "Installing the shared Mono glue library"
+		dolib.so bin/libmonosgen-2.0.so
+	else
+		if ! use portable ; then
+			die "The Mono glue library is missing or was not built statically."
+		fi
+	fi
+	insinto "${d_base}/bin"
+	local bitness=$(_get_bitness)
+	einfo "Installing export templates for Mono"
+	for configuration in debug release ; do
+		local data_api_folder="bin/data.mono.x11${bitness}.${configuration}"
+		[ -d ${data_api_folder} ] \
+			&& doins -r ${data_api_folder}
+		doins -r bin/GodotSharp
+	done
+}
+
+src_install_web()
+{
+	einfo "Installing export templates for Web"
+	insinto /usr/share/godot/${SLOT_MAJ}/web/templates
+	doins bin/javascript_{release,debug}.zip
+}
+
+_install_linux_editor_or_server() {
 	local -n t=$1
 	local fs=$(gen_fs t)
 	local fd=$(gen_fd t)
-	local d_base="/usr/$(get_libdir)/${PN}${SLOT_MAJ}/${platform}"
+	local d_base=$(_get_d_base)
 	exeinto "${d_base}/bin"
 	mv bin/${fs} bin/${fd} || die
 	doexe bin/${fd}
-	dosym "${d_base}/bin/${fd}" "/usr/bin/${f[name]}${SLOT_MAJ}-${ABI}"
+	if [[ "${EPLATFORM}" == "server_dedicated" \
+		|| "${EPLATFORM}" == "server_headless" ]] ; then
+		dosym "${d_base}/bin/${fd}" "/usr/bin/${t[dname]}${SLOT_MAJ}-${ABI}"
+	else
+		dosym "${d_base}/bin/${fd}" "/usr/bin/${t[dname]}${SLOT_MAJ}"
+	fi
 }
 
 src_install() {
@@ -1088,11 +1109,13 @@ src_install() {
 	done
 
 	godot_install_impl() {
-		if [[ "${EPLATFORM}" == "X"
+		if [[ "${EPLATFORM}" == "linux" \
+			|| "${EPLATFORM}" == "mono" \
 			|| "${EPLATFORM}" == "server_dedicated" \
 			|| "${EPLATFORM}" == "server_headless" ]] ; then
 			cd "${BUILD_DIR}" || die
 			multilib_install_impl() {
+				# Generate the inputs for filename generation with e.
 				unset e
 				declare -A e
 				if [[ "${EPLATFORM}" == "server" ]] ; then
@@ -1100,9 +1123,18 @@ src_install() {
 				else
 					e["name"]="godot"
 				fi
+				if [[ "${EPLATFORM}" == "linux" \
+					|| "${EPLATFORM}" == "mono" ]] ; then
+					# Destination name for symlinks
+					e["dname"]="godot"
+				elif [[ "${EPLATFORM}" == "server_dedicated" ]] ; then
+					e["dname"]="godot_game_server"
+				elif [[ "${EPLATFORM}" == "server_headless" ]] ; then
+					e["dname"]="godot_editor_server"
+				fi
 				e["platform"]=".x11"
 				e["configuation"]=".opt"
-				if [[ "${EPLATFORM}" == "X" \
+				if [[ "${EPLATFORM}" == "linux" \
 				  || "${EPLATFORM}" == "mono" \
 				  || "${EPLATFORM}" == "server_headless" ]] ; then
 					e["tools"]=".tools"
@@ -1110,42 +1142,50 @@ src_install() {
 				e["bitness"]=$(_get_bitness)
 				e["llvm"]=$(usex clang ".llvm" "")
 				if [[ "${EPLATFORM}" == "mono" ]] ; then
-					e["mono"]=$(usex clang ".mono" "")
+					e["mono"]=".mono"
 				fi
-				if [[ "${EPLATFORM}" == "X" ]] \
-					&& (use asan_X || use lsan_X \
-					|| use tsan_X || use ubsan_X); then
+				if [[ "${EPLATFORM}" == "linux" ]] \
+					&& (use asan_client || use lsan_client \
+					|| use tsan_client || use ubsan_client); then
 					e["sanitizer"]=".s"
-				elif [[ "${EPLATFORM}" == "server" ]] \
+				elif [[ "${EPLATFORM}" == "server_dedicated" \
+					|| "${EPLATFORM}" == "server_headless" ]] \
 					&& (use asan_server || use lsan_server \
 					|| use tsan_server || use ubsan_server); then
 					e["sanitizer"]=".s"
 				else
 					e["sanitizer"]=""
 				fi
-				if [[ "${EPLATFORM}" == "X" ]] \
-					&& !multilib_is_native_abi ; then
+				if [[ "${EPLATFORM}" == "linux" ]] && use mono ; then
+					:; # subset, install only one X enabled editor
+				elif [[ "${EPLATFORM}" == "linux" ]] \
+					&& ! multilib_is_native_abi ; then
 					:;
 				else
-					_copy_impl e
+					_install_linux_editor_or_server e
 				fi
-				if [[ "${EPLATFORM}" == "X" ]] ; then
+				if [[ "${EPLATFORM}" == "linux" ]] ; then
 					src_install_gdnative
+					src_install_linux
 				fi
-				src_install_X
+				if [[ "${EPLATFORM}" == "server_dedicated" \
+                                        || "${EPLATFORM}" == "server_headless" ]] ; then
+					src_install_linux_server
+				fi
+				if [[ "${EPLATFORM}" == "mono" ]] \
+					&& multilib_is_native_abi ; then
+					src_install_mono
+				fi
 			}
 			multilib_foreach_abi multilib_install_impl
 		elif [[ "${EPLATFORM}" == "android" ]] ; then
 			src_install_android
-		elif [[ "${EPLATFORM}" == "mono" ]] ; then
-			src_install_mono
 		elif [[ "${EPLATFORM}" == "web" ]] ; then
 			src_install_web
 		fi
 	}
 	platforms_foreach_impl godot_install_impl
 
-	src_install_cpp
 	src_install_demos
 }
 

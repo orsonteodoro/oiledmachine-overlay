@@ -1,8 +1,0 @@
-prefix=@prefix@
-exec_prefix=@exec_prefix@
-libdir=@libdir@
-
-Name: godot3-custom-module
-Description: Godot 3.x C/C++ custom module
-Version: @version@
-Cflags: -std=c++11 -fPIC -I. -I/usr/include/godot3-cpp/core -I/usr/include/godot3-cpp/core/os -I/usr/include/godot3-cpp/core/math -I/usr/include/godot3-cpp/platform

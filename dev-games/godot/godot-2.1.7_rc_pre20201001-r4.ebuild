@@ -5,7 +5,7 @@ EAPI=7
 
 STATUS="rc"
 
-EPLATFORMS="android server_dedicated server_headless web X"
+EPLATFORMS="android linux server_dedicated server_headless web"
 PYTHON_COMPAT=( python3_{6..9} )
 inherit check-reqs desktop eutils flag-o-matic multilib-build platforms \
 python-single-r1 scons-utils toolchain-funcs
@@ -62,11 +62,11 @@ examples-stable? (
 SLOT_MAJ="2"
 SLOT="${SLOT_MAJ}/${PV}"
 
-IUSE+=" +3d +X +advanced-gui +clang debug docs examples-snapshot examples-stable \
-lto portable server server_dedicated server_headless"
+IUSE+=" +3d +advanced-gui +clang debug docs examples-snapshot examples-stable \
++linux lto portable server server_dedicated server_headless"
 IUSE+=" +bmp +dds +exr +etc1 +minizip +musepack +pbm +jpeg +mod +ogg +pvrtc \
 +svg +s3tc +speex +theora +vorbis +webm +webp +xml" # formats formats
-IUSE+=" cpp +gdscript +visual-script web" # for scripting languages
+IUSE+=" +gdscript +visual-script web" # for scripting languages
 IUSE+=" +gridmap +ik +recast" # for 3d
 IUSE+=" +openssl" # for connections
 IUSE+=" -gamepad +touch" # for input
@@ -78,19 +78,19 @@ system-squish system-zlib"
 IUSE+=" android"
 IUSE+=" doxygen"
 IUSE+=" asan_server lsan_server"
-IUSE+=" asan_X lsan_X"
+IUSE+=" asan_client lsan_client"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
-	X
 	clang
 	docs? ( doxygen )
 	doxygen? ( docs )
 	examples-snapshot? ( !examples-stable )
 	examples-stable? ( !examples-snapshot )
-	lsan_X? ( asan_X )
+	linux
+	lsan_client? ( asan_client )
 	lsan_server? ( asan_server )
 	portable? (
-		!asan_X
+		!asan_client
 		!asan_server
 		!system-freetype
 		!system-glew
@@ -154,9 +154,6 @@ DEPEND+=" ${PYTHON_DEPS}
 		dev-java/gradle-bin
 		dev-java/openjdk:8
 	)
-	cpp? ( dev-util/scons
-		|| ( sys-devel/clang[${MULTILIB_USEDEP}]
-		   <sys-devel/gcc-6.0 ) )
         gamepad? ( virtual/libudev[${MULTILIB_USEDEP}] )
 	system-freetype? ( >=media-libs/freetype-2.8.1[${MULTILIB_USEDEP}] )
 	system-glew? ( >=media-libs/glew-1.13.0[${MULTILIB_USEDEP}] )
@@ -190,7 +187,7 @@ BDEPEND+=" || ( sys-devel/clang[${MULTILIB_USEDEP}]
 	    <sys-devel/gcc-6.0 )
         dev-util/scons
         virtual/pkgconfig[${MULTILIB_USEDEP}]
-	asan_X? (
+	asan_client? (
 		${BDEPEND_SANTIZIER}
 	)
 	asan_server? (
@@ -198,7 +195,7 @@ BDEPEND+=" || ( sys-devel/clang[${MULTILIB_USEDEP}]
 	)
 	clang? ( sys-devel/clang[${MULTILIB_USEDEP}] )
 	doxygen? ( app-doc/doxygen )
-	lsan_X? (
+	lsan_client? (
 		${BDEPEND_SANTIZIER}
 	)
 	lsan_server? (
@@ -209,13 +206,13 @@ S="${WORKDIR}/godot-${EGIT_COMMIT}"
 RESTRICT="fetch mirror"
 
 _set_check_req() {
-	if use X && use server ; then
+	if use linux && use server ; then
 		CHECKREQS_DISK_BUILD="2762M"
 		CHECKREQS_DISK_USR="445M"
 	elif use server ; then
 		CHECKREQS_DISK_BUILD="1431M"
 		CHECKREQS_DISK_USR="229M"
-	elif use X ; then
+	elif use linux ; then
 		CHECKREQS_DISK_BUILD="1460M"
 		CHECKREQS_DISK_USR="241M"
 	fi
@@ -271,7 +268,8 @@ pkg_setup() {
 		fi
 		if [[ -z "${EGODOT_ANDROID_ARCHES}" ]] ; then
 			ewarn \
-"EGODOT_ANDROID_ARCHES should be added as a per-package environmental variable"
+"EGODOT_ANDROID_ARCHES should be added as a per-package environmental\n\
+variable.  See metadata.xml or \`epkginfo -x godot\` for details"
 		fi
 
 		# For gradle wrapper
@@ -281,15 +279,11 @@ pkg_setup() {
 and the android USE flag."
 		fi
 	fi
-	if use cpp ; then
-		ewarn "The cpp USE flag is untested."
-	fi
 	if use gdscript ; then
 		ewarn "The gdscript USE flag is untested."
 	fi
 	if use web ; then
-		ewarn \
-"The web USE flag is a WIP."
+		ewarn "The web USE flag is a Work In Progress (WIP)."
 		_check_emscripten
 	fi
 	_set_check_req
@@ -346,7 +340,7 @@ src_prepare() {
 	platforms_copy_sources
 
 	godot_prepare_impl1() {
-		if [[ "${EPLATFORM}" == "X" \
+		if [[ "${EPLATFORM}" == "linux" \
 			|| "${EPLATFORM}" == "server_dedicated" \
 			|| "${EPLATFORM}" == "server_headless" ]] ; then
 			cd "${BUILD_DIR}" || die
@@ -399,159 +393,166 @@ gen_fd()
 
 src_compile_android()
 {
-	if [[ -n ${EGODOT_ANDROID_CONFIG} ]] ; then
+	if [[ -n "${EGODOT_ANDROID_CONFIG}" ]] ; then
 		einfo "Using config override for Android"
 		einfo "${EGODOT_ANDROID_CONFIG}"
 		myoptions=(${EGODOT_ANDROID_CONFIG})
 	fi
-	if use android ; then
-		einfo "Creating export templates for Android"
-		export TERM=linux # pretend to be outside of X
-		for aa in ${EGODOT_ANDROID_ARCHES} ; do
-			scons platform=android \
-				${myoptions[@]} \
-				android_arch=${aa} \
-				target=release \
-				|| die
-			scons platform=android \
-				${myoptions[@]} \
-				android_arch=${aa} \
-				debug_release=True \
-				target=release_debug \
-				|| die
-		done
-		pushd platform/android/java || die
-			gradle_cmd=$(find /usr/bin/ \
-				-regextype posix-extended \
-				-regex '.*/gradle-[0-9]+.[0-9]+')
-			"${gradle_cmd}" wrapper || die
-			./gradlew generateGodotTemplates || die
-		popd
-	fi
+	einfo "Creating export templates for Android"
+	export TERM=linux # pretend to be outside of X
+	for aa in ${EGODOT_ANDROID_ARCHES} ; do
+		scons platform=android \
+			${myoptions[@]} \
+			android_arch=${aa} \
+			target=release \
+			|| die
+		scons platform=android \
+			${myoptions[@]} \
+			android_arch=${aa} \
+			debug_release=True \
+			target=release_debug \
+			|| die
+	done
+	pushd platform/android/java || die
+		gradle_cmd=$(find /usr/bin/ \
+			-regextype posix-extended \
+			-regex '.*/gradle-[0-9]+.[0-9]+')
+		"${gradle_cmd}" wrapper || die
+		./gradlew generateGodotTemplates || die
+	popd
 }
 
 src_compile_web()
 {
-	if use web ; then
-		if [[ -n "${EGODOT_WEB_CONFIG}" ]] ; then
-			einfo "Using config override for Web"
-			einfo "${EGODOT_WEB_CONFIG}"
-			myoptions=(${EGODOT_WEB_CONFIG})
-		fi
-		einfo "Creating export templates for Web (HTML5, Emscripten, JavaScript, Asm.js)"
-		filter-flags -march=*
-		filter-ldflags -Wl,--as-needed
-		strip-flags
-		einfo "LDFLAGS=${LDFLAGS}"
-		export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
-		export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
-		local CFG=$(cat "${EM_CONFIG}")
-		BINARYEN_LIB_PATH=$(echo -e "${CFG}\nprint (BINARYEN_ROOT)" | python3)"/lib"
-		einfo "BINARYEN_LIB_PATH=${BINARYEN_LIB_PATH}"
-		export LD_LIBRARY_PATH="${BINARYEN_LIB_PATH}:${LD_LIBRARY_PATH}"
-		export EM_CACHE="${T}/emscripten/cache"
-		export EMMAKEN_CFLAGS="-c" # silence warning and build as .o files (default)
+	if [[ -n "${EGODOT_WEB_CONFIG}" ]] ; then
+		einfo "Using config override for Web"
+		einfo "${EGODOT_WEB_CONFIG}"
+		myoptions=(${EGODOT_WEB_CONFIG})
+	fi
+	einfo "Creating export templates for Web (HTML5, Emscripten, JavaScript, Asm.js)"
+	filter-flags -march=*
+	filter-ldflags -Wl,--as-needed
+	strip-flags
+	einfo "LDFLAGS=${LDFLAGS}"
+	export LLVM_ROOT="${EMSDK_LLVM_ROOT}"
+	export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
+	local CFG=$(cat "${EM_CONFIG}")
+	BINARYEN_LIB_PATH=$(echo -e "${CFG}\nprint (BINARYEN_ROOT)" | python3)"/lib"
+	einfo "BINARYEN_LIB_PATH=${BINARYEN_LIB_PATH}"
+	export LD_LIBRARY_PATH="${BINARYEN_LIB_PATH}:${LD_LIBRARY_PATH}"
+	export EM_CACHE="${T}/emscripten/cache"
+	export EMMAKEN_CFLAGS="-c" # silence warning and build as .o files (default)
 
-		scons platform=javascript \
+	scons platform=javascript \
+		${myoptions[@]} \
+		target=release \
+		tools=no \
+		|| die
+	scons platform=javascript \
+		${myoptions[@]} \
+		debug_release=True \
+		target=release_debug \
+		tools=no \
+		|| die
+}
+
+src_compile_linux()
+{
+	einfo "Building Linux export templates"
+	if (use abi_x86_64 || use abi_mips_n64 || use ppc64 || use arm64) \
+		&& [[ $(get_libdir) =~ 64 ]] ; then
+		scons platform=x11 \
 			${myoptions[@]} \
+			bits=64 \
 			target=release \
 			tools=no \
+			use_leak_sanitizer=$(usex lsan_client) \
+			use_sanitizer=$(usex asan_client) \
 			|| die
-		scons platform=javascript \
+		scons platform=x11 \
 			${myoptions[@]} \
+			bits=64 \
 			debug_release=True \
 			target=release_debug \
 			tools=no \
+			use_leak_sanitizer=$(usex lsan_client) \
+			use_sanitizer=$(usex asan_client) \
 			|| die
+	fi
+	if (use abi_x86_32 || use abi_mips_o32 || use ppc || use arm) \
+		&& [[ $(get_libdir) =~ 32 ]] ; then
+		scons platform=x11 \
+			${myoptions[@]} \
+			bits=32 \
+			target=release \
+			tools=no \
+			use_leak_sanitizer=$(usex lsan_client) \
+			use_sanitizer=$(usex asan_client) \
+			|| die
+		scons platform=x11 \
+			${myoptions[@]} \
+			bits=32 \
+			debug_release=True \
+			target=release_debug \
+			tools=no \
+			use_leak_sanitizer=$(usex lsan_client) \
+			use_sanitizer=$(usex asan_client) \
+			|| die
+	fi
+	if multilib_is_native_abi ; then
+		einfo "Building Linux editor"
+		scons platform=x11 \
+			${myoptions[@]} \
+			use_leak_sanitizer=$(usex lsan_client) \
+			use_sanitizer=$(usex asan_client) \
+			"CFLAGS=${CFLAGS}" \
+			"CCFLAGS=${CXXFLAGS}" \
+			"LINKFLAGS=${LDFLAGS}" || die
+	fi
+
+	if [[ -n "${EGODOT_CUSTOM_MODULES_BUILD}" ]] ; then
+		IFS=$';'
+		for x in ${EGODOT_CUSTOM_MODULES_BUILD} ; do
+			local n=$(echo "${x}" | cut -f 1 -d ":")
+			local c=$(echo "${x}" | cut -f 2 -d ":")
+			einfo "Building the ${n} custom module"
+			pushd modules/${n} || die
+				eval "${c}"
+			popd
+		done
+		IFS=$' \t\n'
 	fi
 }
 
-src_compile_x11()
+src_compile_linux_server()
 {
-	if use X ; then
-		einfo "Building servers"
-		if use server ; then
-			if use server_dedicated ; then
-				einfo "Building dedicated server"
-				scons platform=server \
-					${myoptions[@]} \
-					target=release \
-					tools=no \
-					use_leak_sanitizer=$(usex lsan_server) \
-					use_sanitizer=$(usex asan_server) \
-					|| die
-			fi
-			if use server_headless ; then
-				einfo "Building editor server"
-				scons platform=server \
-					${myoptions[@]} \
-					debug_release=True \
-					target=release_debug \
-					tools=yes \
-					use_leak_sanitizer=$(usex lsan_server) \
-					use_sanitizer=$(usex asan_server) \
-					|| die
-			fi
-		fi
-
-		einfo "Building x11 export templates"
-		if (use abi_x86_64 || use abi_mips_n64 || use ppc64 || use arm64) \
-			&& [[ $(get_libdir) =~ 64 ]] ; then
-			scons platform=x11 \
-				${myoptions[@]} \
-				bits=64 \
-				target=release \
-				tools=no \
-				use_leak_sanitizer=$(usex lsan_X) \
-				use_sanitizer=$(usex asan_X) \
-				|| die
-			scons platform=x11 \
-				${myoptions[@]} \
-				bits=64 \
-				debug_release=True \
-				target=release_debug \
-				tools=no \
-				use_leak_sanitizer=$(usex lsan_X) \
-				use_sanitizer=$(usex asan_X) \
-				|| die
-		fi
-		if (use abi_x86_32 || use abi_mips_o32 || use ppc || use arm) \
-			&& [[ $(get_libdir) =~ 32 ]] ; then
-			scons platform=x11 \
-				${myoptions[@]} \
-				bits=32 \
-				target=release \
-				tools=no \
-				use_leak_sanitizer=$(usex lsan_X) \
-				use_sanitizer=$(usex asan_X) \
-				|| die
-			scons platform=x11 \
-				${myoptions[@]} \
-				bits=32 \
-				debug_release=True \
-				target=release_debug \
-				tools=no \
-				use_leak_sanitizer=$(usex lsan_X) \
-				use_sanitizer=$(usex asan_X) \
-				|| die
-		fi
-
-		if multilib_is_native_abi ; then
-			einfo "Building x11 editor"
-			scons platform=x11 \
-				${myoptions[@]} \
-				use_leak_sanitizer=$(usex lsan_X) \
-				use_sanitizer=$(usex asan_X) \
-				"CFLAGS=${CFLAGS}" \
-				"CCFLAGS=${CXXFLAGS}" \
-				"LINKFLAGS=${LDFLAGS}" || die
-		fi
+	if [[ "${EPLATFORM}" == "server_dedicated" ]] ; then
+		einfo "Building dedicated server"
+		scons platform=server \
+			${myoptions[@]} \
+			target=release \
+			tools=no \
+			use_leak_sanitizer=$(usex lsan_server) \
+			use_sanitizer=$(usex asan_server) \
+			|| die
+	fi
+	if [[ "${EPLATFORM}" == "server_headless" ]] ; then
+		einfo "Building editor server"
+		scons platform=server \
+			${myoptions[@]} \
+			debug_release=True \
+			target=release_debug \
+			tools=yes \
+			use_leak_sanitizer=$(usex lsan_server) \
+			use_sanitizer=$(usex asan_server) \
+			|| die
 	fi
 }
 
 src_compile() {
 	local myoptions=()
 
+	# The cscript is orphaned and was a rough draft.
 	myoptions+=(
 		disable_3d=$(usex !3d)
 		disable_advanced_gui=$(usex !advanced-gui)
@@ -572,7 +573,7 @@ src_compile() {
 		minizip=$(usex minizip)
 		module_bmp_enabled=$(usex bmp)
 		module_chibi_enabled=$(usex mod)
-		module_cscript_enabled=$(usex cpp)
+		module_cscript_enabled=False
 		module_dds_enabled=$(usex dds)
 		module_etc1_enabled=$(usex etc1)
 		module_freetype_enabled=$(usex freetype)
@@ -602,7 +603,8 @@ src_compile() {
 		use_llvm=$(usex clang)
 		use_lto=$(usex lto)
 		use_static_cpp=$(usex portable)
-		xml=$(usex xml) )
+		xml=$(usex xml)
+		${EGODOT_ADDITIONAL_CONFIG} )
 
 	# if asan or clang, use llvm
 	# if gcc 4-5, use llvm
@@ -610,16 +612,21 @@ src_compile() {
 	godot_compile_impl() {
 		einfo "${BUILD_DIR}"
 		cd "${BUILD_DIR}" || die
-		if [[ "${EPLATFORM}" == "X" \
-			|| "${EPLATFORM}" == "server_dedicated" \
+		if [[ "${EPLATFORM}" == "android" ]] ; then
+			src_compile_android
+		elif [[ "${EPLATFORM}" == "linux" ]] ; then
+			multilib_compile_impl() {
+				cd "${BUILD_DIR}" || die
+				src_compile_linux
+			}
+			multilib_foreach_abi multilib_compile_impl
+		elif [[ "${EPLATFORM}" == "server_dedicated" \
 			|| "${EPLATFORM}" == "server_headless" ]] ; then
 			multilib_compile_impl() {
 				cd "${BUILD_DIR}" || die
-				src_compile_x11
+				src_compile_linux_server
 			}
 			multilib_foreach_abi multilib_compile_impl
-		elif [[ "${EPLATFORM}" == "android" ]] ; then
-			src_compile_android
 		elif [[ "${EPLATFORM}" == "web" ]] ; then
 			# int is 32-bit in asm.js
 			src_compile_web
@@ -664,98 +671,99 @@ _package_web_templates()
 }
 
 
-_copy_impl() {
+_get_d_base()
+{
+	echo "/usr/$(get_libdir)/${PN}${SLOT_MAJ}/${platform}"
+}
+
+_install_linux_editor_or_server() {
 	local -n t=$1
 	local fs=$(gen_fs t)
 	local fd=$(gen_fd t)
-	local d_base="/usr/$(get_libdir)/${PN}${SLOT_MAJ}/${platform}"
+	local d_base=$(_get_d_base)
 	exeinto "${d_base}/bin"
 	mv bin/${fs} bin/${fd} || die
 	doexe bin/${fd}
-	dosym "${d_base}/bin/${fd}" "/usr/bin/${f[name]}${SLOT_MAJ}-${ABI}"
-}
-
-src_install_X()
-{
-	local bitness=$(_get_bitness)
-	bitness=${bitness//./}
-	insinto /usr/share/godot/${SLOT_MAJ}/${EPLATFORM}/templates
-	if [[ "${EPLATFORM}" == "server_headless" \
-		|| "${EPLATFORM}" == "server_dedicated" ]] \
-		&& use server ; then
-		doins bin/linux_server_${bitness}
-	elif [[ "${EPLATFORM}" == "X" ]] ; then
-		doins bin/linux_x11_${bitness}_debug \
-			bin/linux_x11_${bitness}_release
-		if multilib_is_native_abi ; then
-			make_desktop_entry \
-				"/usr/bin/godot${SLOT_MAJ}-${ABI}" \
-				"Godot${SLOT_MAJ} (${ABI})" \
-				"/usr/share/pixmaps/godot${SLOT_MAJ}.png" \
-				"Development;IDE"
-			newicon icon.png godot${SLOT_MAJ}.png
-		fi
+	if [[ "${EPLATFORM}" == "server_dedicated" \
+		|| "${EPLATFORM}" == "server_headless" ]] ; then
+		dosym "${d_base}/bin/${fd}" "/usr/bin/${t[dname]}${SLOT_MAJ}-${ABI}"
+	else
+		dosym "${d_base}/bin/${fd}" "/usr/bin/${t[dname]}${SLOT_MAJ}"
 	fi
 }
 
 src_install_android()
 {
-	if use android ; then
-		insinto /usr/share/godot/${SLOT_MAJ}/android/templates
-		doins bin/android_{release,debug}.apk
-		local pv=$(ver_cut 1-3 ${PV}).${STATUS}
-		echo "${pv}.${STATUS}" > "${T}/version.txt" || die
-		doins "${T}/version.txt"
-	fi
+	einfo "Installing export templates for Android"
+	insinto /usr/share/godot/${SLOT_MAJ}/android/templates
+	doins bin/android_{release,debug}.apk
+	local pv=$(ver_cut 1-3 ${PV}).${STATUS}
+	echo "${pv}.${STATUS}" > "${T}/version.txt" || die
+	doins "${T}/version.txt"
 }
 
 src_install_demos()
 {
 	insinto /usr/share/godot${SLOT_MAJ}/godot-demo-projects
 	if use examples-snapshot || use examples-stable ; then
+		einfo "Installing demos"
 		doins -r "${S_DEMOS}"/*
 	fi
 }
 
-src_install_cpp()
+src_install_linux()
 {
-	if use cpp ; then
-		insinto /usr/$(get_libdir)/pkgconfig
-		cat \
-		"${FILESDIR}/godot${SLOT_MAJ}-custom-module.pc.in" \
-			| sed -e "s|@prefix@|/usr|g" \
-		       -e "s|@exec_prefix@|\${prefix}|g" \
-		       -e "s|@libdir@|/usr/$(get_libdir)|g" \
-		       -e "s|@version@|${PV}|g" \
-			> "${T}/godot${SLOT_MAJ}-custom-module.pc" \
-				|| die
-		doins "${T}/godot${SLOT_MAJ}-custom-module.pc"
-
-		insinto /usr/include/${PN}${SLOT_MAJ}-cpp
-		doins -r "${S}"/core "${S}"/drivers
-		insinto /usr/include/${PN}${SLOT_MAJ}-cpp/platform
-		if use X ; then
-			doins -r "${S}"/platform/x11
-		fi
+	local bitness=$(_get_bitness)
+	bitness=${bitness//./}
+	insinto /usr/share/godot/${SLOT_MAJ}/${EPLATFORM}/templates
+	einfo "Installing export templates for Linux"
+	doins bin/linux_x11_${bitness}_debug \
+		bin/linux_x11_${bitness}_release
+	if multilib_is_native_abi ; then
+		einfo "Setting up Linux editor environment"
+		make_desktop_entry \
+			"/usr/bin/godot${SLOT_MAJ}" \
+			"Godot${SLOT_MAJ}" \
+			"/usr/share/pixmaps/godot${SLOT_MAJ}.png" \
+			"Development;IDE"
+		newicon icon.png godot${SLOT_MAJ}.png
 	fi
+
+	if [[ -n "${EGODOT_CUSTOM_MODULES_LIBS}" ]] ; then
+		for x in ${EGODOT_CUSTOM_MODULES_LIBS} ; do
+			einfo "Installing ${x} custom module"
+			local d_base=$(_get_d_base)
+			exeinto "${d_base}/bin"
+			doexe bin/${x}
+		done
+	fi
+}
+
+src_install_linux_server()
+{
+	local bitness=$(_get_bitness)
+	bitness=${bitness//./}
+	insinto /usr/share/godot/${SLOT_MAJ}/${EPLATFORM}/templates
+	einfo "Installing export templates for ${EPLATFORM}"
+	doins bin/linux_server_${bitness}
 }
 
 src_install_web()
 {
-	if use web ; then
-		_package_web_templates
-		insinto /usr/share/godot/${SLOT_MAJ}/web/templates
-		doins bin/javascript_{release,debug}.zip
-	fi
+	einfo "Installing export templates for Web"
+	_package_web_templates
+	insinto /usr/share/godot/${SLOT_MAJ}/web/templates
+	doins bin/javascript_{release,debug}.zip
 }
 
 src_install() {
 	godot_install_impl() {
-		if [[ "${EPLATFORM}" == "X"
+		if [[ "${EPLATFORM}" == "linux"
 			|| "${EPLATFORM}" == "server_dedicated" \
 			|| "${EPLATFORM}" == "server_headless" ]] ; then
 			cd "${BUILD_DIR}" || die
 			multilib_install_impl() {
+				# Generate the inputs for filename generation with e.
 				unset e
 				declare -A e
 				if [[ "${EPLATFORM}" == "server" ]] ; then
@@ -763,16 +771,24 @@ src_install() {
 				else
 					e["name"]="godot"
 				fi
+				if [[ "${EPLATFORM}" == "linux" ]] ; then
+					# Destination name for symlinks
+					e["dname"]="godot"
+				elif [[ "${EPLATFORM}" == "server_dedicated" ]] ; then
+					e["dname"]="godot_game_server"
+				elif [[ "${EPLATFORM}" == "server_headless" ]] ; then
+					e["dname"]="godot_editor_server"
+				fi
 				e["platform"]=".x11"
 				e["configuation"]=".opt"
-				if [[ "${EPLATFORM}" == "X" \
+				if [[ "${EPLATFORM}" == "linux" \
 				  || "${EPLATFORM}" == "server_headless" ]] ; then
 					e["tools"]=".tools"
 				fi
 				e["bitness"]=$(_get_bitness)
 				e["llvm"]=$(usex clang ".llvm" "")
-				if [[ "${EPLATFORM}" == "X" ]] \
-					&& (use asan_X || use lsan_X); then
+				if [[ "${EPLATFORM}" == "linux" ]] \
+					&& (use asan_client || use lsan_client); then
 					e["sanitizer"]=".s"
 				elif [[ "${EPLATFORM}" == "server" ]] \
 					&& (use asan_server || use lsan_server); then
@@ -780,13 +796,19 @@ src_install() {
 				else
 					e["sanitizer"]=""
 				fi
-				if [[ "${EPLATFORM}" == "X" ]] \
-					&& !multilib_is_native_abi ; then
+				if [[ "${EPLATFORM}" == "linux" ]] \
+					&& ! multilib_is_native_abi ; then
 					:;
 				else
-					_copy_impl e
+					_install_linux_editor_or_server e
 				fi
-				src_install_X
+				if [[ "${EPLATFORM}" == "linux" ]] ; then
+					src_install_linux
+				fi
+				if [[ "${EPLATFORM}" == "server_dedicated" \
+                                        || "${EPLATFORM}" == "server_headless" ]] ; then
+					src_install_linux_server
+				fi
 			}
 			multilib_foreach_abi multilib_install_impl
 		elif [[ "${EPLATFORM}" == "android" ]] ; then
@@ -798,7 +820,6 @@ src_install() {
 	platforms_foreach_impl godot_install_impl
 
 	src_install_demos
-	src_install_cpp
 }
 
 pkg_postinst() {

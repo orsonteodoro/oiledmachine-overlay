@@ -23,14 +23,36 @@
     and export templates produce the game in the CTARGET ABI/platform of choice.
 
     ABIs of various components:
-    Editor - CHOST native ABI
-    Dedicated server - 32 or 64 bit CHOST ABI
-    Headless server - 32 or 64 bit CHOST ABI
+    Linux editor with or without Mono support - CHOST native ABI
+    Linux dedicated game server - 32 or 64 bit CHOST ABI
+    Linux headless editor server - 32 or 64 bit CHOST ABI
 
     The ebuild produces the export templates for exporting to CTARGET:
     Android - armv6 [in 2.1 slot only], armv7, arm64v8, x86, x86_64 ABIs
-    Linux - 32 bit or 64 bit CHOST ABI(s)
+    Linux client / standalone - 32 bit or 64 bit CHOST ABI(s)
+    Linux server(s) - 32 bit or 64 bit CHOST ABI(s)
+    Mono - CHOST ABI
     Web - Asm.js [in 2.1 slot only], WASM [in 3.1 slot only],
+
+    For custom C++ modules support, add a per-package patch.  This patch
+    will be built in only for the Linux platform currently if using the 
+    EGODOT_CUSTOM_MODULES_* per-package environmental variables (envvars),
+    but it can be built for all platforms if using without the envvars
+    and if you use the portable USE flag.  Ensure the library is in the
+    bin folder.  List the space separated shared library name in
+    EGODOT_CUSTOM_MODULES_LIBS.  For compiling, provide a semicolon
+    separated folder:command pair in EGODOT_CUSTOM_MODULES_BUILD.  
+    Details about custom modules can be found at:
+
+https://docs.godotengine.org/en/3.2/development/cpp/custom_modules_in_cpp.html
+https://docs.godotengine.org/en/2.1/development/cpp/custom_modules_in_cpp.html
+
+    Consider making a custom local ebuild of your custom C++ module
+    instead to reduce compile times because it is not required to keep
+    rebuilding the entire Godot ebuild to build the module.
+
+    EGODOT_ADDITIONAL_CONFIG is provided to allow for activating custom
+    C++ modules globally for all platforms if a custom patch is provided.
     
     For Android support:
     ANDROID_NDK_ROOT must be set as a per-package environmental variable.
@@ -47,12 +69,17 @@
 
     Examples:
       Contents of /etc/portage/env/godot.conf:
+      EGODOT_ADDITIONAL_CONFIG="module_foo_enabled=True module_bar_enabled=True"
+      EGODOT_CUSTOM_MODULES_BUILD="foo:scons foo_shared=yes bin/foo.x11.tools.64.so;bar:scons bar_shared=yes bin/bar.x11.tools.64.so"
+      EGODOT_CUSTOM_MODULES_LIBS="libfoo.so libbar.so"
       EGODOT_ANDROID_ARCHES="x86 x86_64 armv7 arm64v8"
       EGODOT_ANDROID_CONFIG="module_opensimplex_enabled=True"
       EGODOT_WEB_CONFIG="module_opensimplex_enabled=True"
 
       Contents of /etc/portage/package.env:
       dev-games/godot godot.conf
+
+
   </longdescription>
   <upstream>
     <doc lang="en">https://docs.godotengine.org/en/stable/</doc>
@@ -82,16 +109,17 @@
   </upstream>
   <use>
     <flag name="3d">Enables 3D support.</flag>
-    <flag name="asan_X">Enables ASAN for X client builds for reporting memory
-      use problems or possible vulnerabilities.</flag>
-    <flag name="asan_server">Enables ASAN for server builds for reporting
-      memory use problems or possible vulnerabilities.</flag>
+    <flag name="asan_client">Enables ASAN for Linux client and editor for
+      reporting but not necessarily preventing memory use problems or possible
+      vulnerabilities.</flag>
+    <flag name="asan_server">Enables ASAN for Linux server builds for reporting
+      but not necessarily preventing memory use problems or possible
+      vulnerabilities.</flag>
     <flag name="advanced-gui">Enables the advanced GUI.</flag>
     <flag name="bullet">Enables support for the Bullet 3D physics engine.</flag>
     <flag name="bmp">Enables support for bitmap images.</flag>
     <flag name="clang">Compiles the software using clang and LLVM.</flag>
     <flag name="closure-compiler">Enables minifying JavaScript code</flag>
-    <flag name="cpp">Enables support for C++ custom modules.</flag>
     <flag name="csg">Enables use of Constructive Solid Geometry used to produce
       complex 3D polygon(s) from other polygons with boolean polygon
       operations.</flag>
@@ -138,10 +166,10 @@
       threads.</flag>
     <flag name="jsonrpc">Enables support JSON-RPC for GDScript LSP.</flag>
     <flag name="jpeg">Enables JPEG support.</flag>
-    <flag name="lsan_X">Enables LSAN for X client builds for reporting
-      memory leaks.</flag>
-    <flag name="lsan_server">Enables LSAN for server builds for reporting
-      memory leaks.</flag>
+    <flag name="lsan_client">Enables LSAN for Linux client and editor for
+      reporting but not necessarily preventing memory leaks.</flag>
+    <flag name="lsan_server">Enables LSAN for Linux server builds for reporting
+       but not necessarily preventing memory leaks.</flag>
     <flag name="lto">Enables link time optimization.</flag>
     <flag name="mbedtls">Enables the use of mbed TLS for X509 digital
       certificates, secured TLS networking.</flag>
@@ -166,7 +194,7 @@
       platforms.</flag>
     <flag name="pcre2">Enables string regular expression support.</flag>
     <flag name="portable">Configures build to maximize distribution.  Disables
-      system dependencies.</flag>
+      system dependencies.  Implies static build.</flag>
     <flag name="pulseaudio">Enables PulseAudio support.</flag>
     <flag name="pvrtc">Enables PowerVR texture compression.</flag>
     <flag name="python_targets_python3_6">For generating docs and
@@ -175,11 +203,13 @@
       translations.</flag>
     <flag name="python_targets_python3_8">For generating docs and
       translations.</flag>
+    <flag name="python_targets_python3_9">For generating docs and
+      translations.</flag>
     <flag name="recast">Enable mesh generation for 3D games.</flag>
     <flag name="s3tc">Enables DXT compression.</flag>
     <flag name="server">Builds servers.</flag>
-    <flag name="server_dedicated">Builds a dedicated game server</flag>
-    <flag name="server_headless">Builds a headless editor server</flag>
+    <flag name="server_dedicated">Builds a Linux dedicated game server</flag>
+    <flag name="server_headless">Builds a Linux headless editor server</flag>
     <flag name="speex">Enable speex voice compression support used in voice
       acting asset samples.  Removed in 3.x and superceeded by Opus.</flag>
     <flag name="svg">Enable SVG vector image format support.</flag>
@@ -228,14 +258,18 @@
     <flag name="tga">Enables support for the TGA image format.</flag>
     <flag name="theora">Enables support for the Theora video codec.</flag>
     <flag name="touch">Enables mobile touchscreen events support.</flag>
-    <flag name="tsan_X">Enables TSAN for X client builds to catch data races
-      that potentially can lead to a crash or memory corruption.</flag>
-    <flag name="tsan_server">Enables TSAN for server builds to catch data races
-      that potentially can lead to a crash or memory corruption.</flag>
-    <flag name="ubsan_X">Enables UBSAN for X client builds to catch overflows
-      or null pointer or misaligned access that could lead to a crash.</flag>
-    <flag name="ubsan_server">Enables UBSAN for server builds to catch overflows
-      or null pointer or misaligned access that could lead to a crash.</flag>
+    <flag name="tsan_client">Enables TSAN for Linux client and editor to catch
+      but not necessarily prevent data races that potentially can lead to a
+      crash or memory corruption.</flag>
+    <flag name="tsan_server">Enables TSAN for Linux server builds to catch but
+      not necessarily prevent data races that potentially can lead to a crash or
+      memory corruption.</flag>
+    <flag name="ubsan_client">Enables UBSAN for Linux client and editor to
+      catch but not necessarily prevent overflows or null pointer or misaligned
+      access that could lead to a crash.</flag>
+    <flag name="ubsan_server">Enables UBSAN for Linux server builds to catch but
+      not necessarily prevent overflows or null pointer or misaligned access
+      that could lead to a crash.</flag>
     <flag name="upnp">Enables universal plug and play for devices.</flag>
     <flag name="vhacd">Enables decomposition of 3D polygons into simple more
       accurate approximation for collison detection at the model's limbs instead
