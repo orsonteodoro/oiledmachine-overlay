@@ -1149,21 +1149,11 @@ src_install() {
 }
 
 pkg_postinst() {
-	if use android ; then
-		einfo \
-"You need to copy the Android templates from /usr/share/godot/${SLOT_MAJ}/android/templates\n\
+	for p in ${EPLATFORMS} ; do
+		if use ${p} ; then
+			einfo \
+"You need to copy the ${p} templates from /usr/share/godot/${SLOT_MAJ}/${p}/templates\n\
 to ~/.local/share/godot/templates/${PV}.${STATUS} or \${XDG_DATA_HOME}/godot/templates/${PV}.${STATUS}"
-		einfo "from /usr/share/godot/${SLOT_MAJ}/android/templates/*"
-	fi
-
-	if use web ; then
-		einfo \
-"You need to copy the Web templates from /usr/share/godot/${SLOT_MAJ}/web/templates\n\
-to ~/.local/share/godot/templates/${PV}.${STATUS} or \${XDG_DATA_HOME}/godot/templates/${PV}.${STATUS}"
-		einfo "from /usr/share/godot/${SLOT_MAJ}/web/templates/*"
-	fi
-
-	einfo \
-"You need to copy the Linux export templates from /usr/share/godot/${SLOT_MAJ}/X/templates\n\
-to ~/.local/share/godot/templates/${PV}.${STATUS} or \${XDG_DATA_HOME}/godot/templates/${PV}.${STATUS}"
+		fi
+	done
 }

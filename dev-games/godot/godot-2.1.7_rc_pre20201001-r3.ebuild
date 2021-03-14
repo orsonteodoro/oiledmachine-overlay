@@ -807,26 +807,17 @@ pkg_postinst() {
 	einfo "For details see:"
 	einfo "https://docs.godotengine.org/en/stable/about/release_policy.html"
 
-	if use android ; then
-		local pv=$(ver_cut 1-3 ${PV}).${STATUS}
-		einfo \
-"You need to copy the Android templates from /usr/share/godot/${SLOT_MAJ}/android/templates\n\
+	for p in ${EPLATFORMS} ; do
+		if use ${p} ; then
+			einfo \
+"You need to copy the ${p} templates from /usr/share/godot/${SLOT_MAJ}/${p}/templates\n\
 to ~/.local/share/godot/templates or \${XDG_DATA_HOME}/godot/templates"
-		einfo "from /usr/share/godot/${SLOT_MAJ}/android/templates/*"
-	fi
+		fi
+	done
 
 	if use web ; then
-		einfo \
-"You need to copy the Web templates from /usr/share/godot/${SLOT_MAJ}/web/templates\n\
-to ~/.local/share/godot/templates or \${XDG_DATA_HOME}/godot/templates"
-		einfo "from /usr/share/godot/${SLOT_MAJ}/web/templates/*"
-
 		einfo \
 "asmjs is deprecated and used as the default for 2.1.x.  Use WASM found on\n\
 the >=3.2 branch."
 	fi
-
-	einfo \
-"You need to copy the Linux export templates from /usr/share/godot/${SLOT_MAJ}/X/templates\n\
-to ~/.local/share/godot/templates or \${XDG_DATA_HOME}/godot/templates"
 }
