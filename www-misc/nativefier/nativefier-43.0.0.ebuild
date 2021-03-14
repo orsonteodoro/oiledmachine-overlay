@@ -13,7 +13,7 @@ DEPEND="${RDEPEND}
 	images-to-icons? ( media-gfx/imagemagick )
 	>=net-libs/nodejs-10[npm]"
 ELECTRON_APP_AT_TYPES_NODE_V="10"
-ELECTRON_APP_ELECTRON_V="11.3.0" # See https://github.com/nativefier/nativefier/blob/v42.4.0/src/constants.ts
+ELECTRON_APP_ELECTRON_V="12.0.1" # See https://github.com/nativefier/nativefier/blob/v43.0.0/src/constants.ts
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
 inherit eutils desktop electron-app npm-utils
 SRC_URI=\
