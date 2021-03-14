@@ -21,6 +21,15 @@
       2.1: armv6, armv7, arm64v8, x86, x86_64.
       3.1: armv7, arm64v8, x86, x86_64
 
+    The ebuild allows to fine tune or shrink the internal dependencies
+    of the export template as a per-package environmental variable.
+    These clear the USE flags config options.  Only javascript and
+    android env vars are offered.
+
+    Example.
+    EGODOT_ANDROID_CONFIG=( module_opensimplex_enabled=True )
+    EGODOT_JAVASCRIPT_CONFIG=( module_opensimplex_enabled=True )
+
     Example:
       Contents of /etc/portage/env/godot.conf:
       EGODOT_ANDROID_ARCHES=( x86 x86_64 armv7 arm64v8 )

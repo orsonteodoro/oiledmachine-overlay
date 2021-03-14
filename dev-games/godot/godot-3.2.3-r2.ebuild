@@ -508,6 +508,11 @@ gen_ds()
 
 src_compile_android()
 {
+	if (( -n ${#EGODOT_ANDROID_CONFIG[@]} > 0 )) ; then
+		einfo "Using config override for Android"
+		einfo "${EGODOT_ANDROID_CONFIG[@]}"
+		myoptions=(${EGODOT_ANDROID_CONFIG[@]})
+	fi
 	if use android ; then
 		einfo "Creating export templates for Android"
 		export TERM=linux # pretend to be outside of X
@@ -601,6 +606,11 @@ src_compile_gdnative()
 
 src_compile_javascript()
 {
+	if (( ${#EGODOT_JAVASCRIPT_CONFIG[@]} > 0 )) ; then
+		einfo "Using config override for JavaScript"
+		einfo "${EGODOT_JAVASCRIPT_CONFIG[@]}"
+		myoptions=(${EGODOT_JAVASCRIPT_CONFIG[@]})
+	fi
 	if use javascript ; then
 		einfo "Creating export templates for Web (JavaScript)"
 		filter-flags -march=*
