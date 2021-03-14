@@ -182,28 +182,28 @@ DEPEND+=" ${PYTHON_DEPS}
 	system-squish? ( >=media-libs/libsquish-1.15[${MULTILIB_USEDEP}] )
 	system-zlib? ( >=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}] )"
 RDEPEND+=" ${DEPEND}"
+BDEPEND_SANTIZIER="
+	sys-devel/clang[${MULTILIB_USEDEP}]
+	sys-devel/gcc[${MULTILIB_USEDEP}]
+"
 BDEPEND+=" || ( sys-devel/clang[${MULTILIB_USEDEP}]
 	    <sys-devel/gcc-6.0 )
         dev-util/scons
         virtual/pkgconfig[${MULTILIB_USEDEP}]
 	asan_X? (
-		sys-devel/clang[${MULTILIB_USEDEP}]
-		sys-devel/gcc[${MULTILIB_USEDEP}]
+		${BDEPEND_SANTIZIER}
 	)
 	asan_server? (
-		sys-devel/clang[${MULTILIB_USEDEP}]
-		sys-devel/gcc[${MULTILIB_USEDEP}]
+		${BDEPEND_SANTIZIER}
 	)
 	clang? ( sys-devel/clang[${MULTILIB_USEDEP}] )
 	doxygen? ( app-doc/doxygen )
 	javascript? ( app-arch/zip )
 	lsan_X? (
-		sys-devel/clang[${MULTILIB_USEDEP}]
-		sys-devel/gcc[${MULTILIB_USEDEP}]
+		${BDEPEND_SANTIZIER}
 	)
 	lsan_server? (
-		sys-devel/clang[${MULTILIB_USEDEP}]
-		sys-devel/gcc[${MULTILIB_USEDEP}]
+		${BDEPEND_SANTIZIER}
 	)
 "
 S="${WORKDIR}/godot-${EGIT_COMMIT}"
@@ -290,7 +290,7 @@ and the android USE flag."
 	fi
 	if use javascript ; then
 		ewarn \
-"The javascript USE flag is a WIP and does not build."
+"The javascript USE flag is a WIP."
 		_check_emscripten
 	fi
 	_set_check_req
@@ -438,6 +438,7 @@ src_compile_javascript()
 		BINARYEN_LIB_PATH=$(echo -e "${CFG}\nprint (BINARYEN_ROOT)" | python3)"/lib"
 		einfo "BINARYEN_LIB_PATH=${BINARYEN_LIB_PATH}"
 		export LD_LIBRARY_PATH="${BINARYEN_LIB_PATH}:${LD_LIBRARY_PATH}"
+		export EM_IGNORE_SANITY=1
 
 		scons platform=javascript \
 			${myoptions[@]} \

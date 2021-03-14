@@ -220,42 +220,38 @@ DEPEND+=" ${PYTHON_DEPS}
 	system-zlib? ( >=sys-libs/zlib-${ZLIB_V}[${MULTILIB_USEDEP}] )
 	system-zstd? ( >=app-arch/zstd-1.4.4[${MULTILIB_USEDEP}] )"
 RDEPEND+=" ${DEPEND}"
+BDEPEND_SANTIZIER="
+	sys-devel/clang[${MULTILIB_USEDEP}]
+	sys-devel/gcc[${MULTILIB_USEDEP}]
+"
 BDEPEND+=" dev-util/scons
         virtual/pkgconfig[${MULTILIB_USEDEP}]
 	asan_X? (
-		sys-devel/clang[${MULTILIB_USEDEP}]
-		sys-devel/gcc[${MULTILIB_USEDEP}]
+		${BDEPEND_SANTIZIER}
 	)
 	asan_server? (
-		sys-devel/clang[${MULTILIB_USEDEP}]
-		sys-devel/gcc[${MULTILIB_USEDEP}]
+		${BDEPEND_SANTIZIER}
 	)
 	clang? ( sys-devel/clang[${MULTILIB_USEDEP}] )
 	doxygen? ( app-doc/doxygen )
 	gdnative? ( X? ( ${VIRTUALX_DEPEND} ) )
 	lsan_X? (
-		sys-devel/clang[${MULTILIB_USEDEP}]
-		sys-devel/gcc[${MULTILIB_USEDEP}]
+		${BDEPEND_SANTIZIER}
 	)
 	lsan_server? (
-		sys-devel/clang[${MULTILIB_USEDEP}]
-		sys-devel/gcc[${MULTILIB_USEDEP}]
+		${BDEPEND_SANTIZIER}
 	)
 	tsan_X? (
-		sys-devel/clang[${MULTILIB_USEDEP}]
-		sys-devel/gcc[${MULTILIB_USEDEP}]
+		${BDEPEND_SANTIZIER}
 	)
 	tsan_server? (
-		sys-devel/clang[${MULTILIB_USEDEP}]
-		sys-devel/gcc[${MULTILIB_USEDEP}]
+		${BDEPEND_SANTIZIER}
 	)
 	ubsan_X? (
-		sys-devel/clang[${MULTILIB_USEDEP}]
-		sys-devel/gcc[${MULTILIB_USEDEP}]
+		${BDEPEND_SANTIZIER}
 	)
 	ubsan_server? (
-		sys-devel/clang[${MULTILIB_USEDEP}]
-		sys-devel/gcc[${MULTILIB_USEDEP}]
+		${BDEPEND_SANTIZIER}
 	)"
 S="${WORKDIR}/godot-${PV}-stable"
 RESTRICT="fetch mirror"
