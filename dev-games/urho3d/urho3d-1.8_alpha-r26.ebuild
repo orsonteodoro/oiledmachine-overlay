@@ -439,8 +439,8 @@ pkg_setup() {
 			:;
 		else
 			die \
-"You must switch your emscripten to wasm.  See \`eselect emscripten\` for \
-details."
+"You must switch your emscripten to wasm then do \`source /etc/profile\`.\n\
+See \`eselect emscripten\` for details."
 		fi
 
 		if eselect emscripten 2>/dev/null 1>/dev/null ; then
@@ -449,8 +449,8 @@ details."
 				:;
 			else
 				die \
-"You must switch your emscripten to wasm.  See \`eselect emscripten\` for \
-details."
+"You must switch your emscripten to wasm then do \`source /etc/profile\`.\n\
+See \`eselect emscripten\` for details."
 			fi
 		fi
 		if [[ -z "${EMSCRIPTEN}" ]] ; then
