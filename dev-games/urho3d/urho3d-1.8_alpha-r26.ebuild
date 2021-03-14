@@ -1346,6 +1346,7 @@ configure_web() {
 	BINARYEN_LIB_PATH=$(echo -e "${A}\nprint (BINARYEN_ROOT)" | python3)"/lib"
 	einfo "BINARYEN_LIB_PATH=${BINARYEN_LIB_PATH}"
 	export LD_LIBRARY_PATH="${BINARYEN_LIB_PATH}:${LD_LIBRARY_PATH}"
+	export EM_CACHE="${T}/emscripten/cache"
 
 #		-DEMSCRIPTEN=1
 	# Setting EMSCRIPTEN_SYSROOT is not necessary
