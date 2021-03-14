@@ -7,7 +7,7 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20210314"
+VERSION="20210314-r1"
 PN="emscripten"
 
 # 2.0.13 llvm 13 ; node 4.1.1 ; binaryen 99
@@ -442,6 +442,7 @@ EOF
     LLVM_ROOT="${EMSDK_LLVM_ROOT}" \
     EM_CONFIG="${EROOT}/usr/share/emscripten-${PV}/emscripten.config" \
     /usr/bin/emcc -v
+    LD_LIBRARY_PATH="/usr/$(get_libdir)/binaryen/${__EMSDK_BINARYEN_VERSION__}/lib:${LD_LIBRARY_PATH}" \
     CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}" \
     LLVM_ROOT="${EMSDK_LLVM_ROOT}" \
     EM_CONFIG="${EROOT}/usr/share/emscripten-${PV}/emscripten.config" \
