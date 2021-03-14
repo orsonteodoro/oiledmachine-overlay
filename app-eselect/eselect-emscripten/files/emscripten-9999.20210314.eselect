@@ -7,7 +7,7 @@ inherit multilib
 
 DESCRIPTION="Manages the 99emscripten and emscripten.config files"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20210306"
+VERSION="20210314"
 PN="emscripten"
 
 # 2.0.13 llvm 13 ; node 4.1.1 ; binaryen 99
@@ -446,6 +446,22 @@ EOF
     LLVM_ROOT="${EMSDK_LLVM_ROOT}" \
     EM_CONFIG="${EROOT}/usr/share/emscripten-${PV}/emscripten.config" \
     /usr/bin/em++ -v
+
+    if [[ "${__EMCC_WASM_BACKEND__}" == "1" ]] ; then
+        echo "Please wait.  Pre-generating a emscripten.config_sanity_wasm file."
+    else
+        echo "Please wait.  Pre-generating a emscripten.config_sanity file."
+    fi
+    local sandbox=$(mktemp -d)
+    pushd "${sandbox}"
+        cp "/usr/share/eselect-emscripten/hello_world.cpp" ./
+        EMCC_WASM_BACKEND=${__EMCC_WASM_BACKEND__} \
+        EM_CACHE="${sandbox}/cache" \
+        /usr/share/emscripten-${PV}/emcc \
+        hello_world.cpp -o hello_world.js
+    popd
+    rm -rf "${sandbox}"
+
     echo "You need to . /etc/profile in the current shell."
     # The LLVM_ prefix is reserved for the package llvm package only, \
     # the emscripten package has no right to it.
