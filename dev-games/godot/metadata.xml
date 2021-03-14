@@ -37,8 +37,8 @@
     EGODOT_ANDROID_ARCHES must be set a per-package environmental variable and
     must include arm64v8.  Support for android arch for the corresponding
     version are
-      2.1: armv6, armv7, arm64v8, x86, x86_64.
-      3.1: armv7, arm64v8, x86, x86_64
+      2.x: armv6, armv7, arm64v8, x86, x86_64.
+      3.x: armv7, arm64v8, x86, x86_64
 
     The ebuild allows to fine tune or shrink the internal dependencies
     of the export template as a per-package environmental variable.
