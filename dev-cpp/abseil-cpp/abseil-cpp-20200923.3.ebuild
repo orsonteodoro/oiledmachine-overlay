@@ -12,7 +12,7 @@ LICENSE="Apache-2.0
 HOMEPAGE="https://abseil.io"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 SLOT="0/${PV}"
-IUSE+=" test"
+IUSE+=" cxx17 test"
 BDEPEND+=" ${PYTHON_DEPS}
 	   test? ( sys-libs/timezone-data )"
 # yes, it needs SOURCE, not just installed one
@@ -49,6 +49,7 @@ src_configure() {
 		-DABSL_ENABLE_INSTALL=TRUE
 		-DABSL_LOCAL_GOOGLETEST_DIR="${WORKDIR}/googletest-${GTEST_COMMIT}"
 		-DABSL_RUN_TESTS=$(usex test)
+		$(usex cxx17 -DCMAKE_CXX_STANDARD=17 '') # it has to be a useflag for some consumers
 		$(usex test -DBUILD_TESTING=ON '') #intentional usex
 	)
 	cmake-multilib_src_configure
