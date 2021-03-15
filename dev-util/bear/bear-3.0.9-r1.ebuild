@@ -16,6 +16,7 @@ SLOT="0"
 IUSE+=" test"
 REQUIRED_USE+=" ${PYTHON_REQUIRED_USE}"
 RBDEPEND=" >=net-libs/grpc-1.26
+	   <dev-cpp/abseil-cpp-20200923
 	   >=dev-libs/protobuf-3.11"
 DEPEND+=" >=dev-cpp/nlohmann_json-3.7.3
 	  >=dev-libs/libfmt-6.1
@@ -38,6 +39,22 @@ SRC_URI=\
 	-> ${P}.tar.gz"
 S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
+
+pkg_setup()
+{
+	python-single-r1_pkg_setup
+	if pkg-config --libs grpc | grep -q -e "absl_dynamic_annotations" ; then
+		if has_version '>=dev-cpp/abseil-cpp-20200923' ; then
+			# grpc requirement
+			die "Downgrade dev-cpp/abseil-cpp to <20200923 (1)"
+		fi
+
+		if [[ ! -f /usr/$(get_libdir)/libabsl_dynamic_annotations.so ]] ; then
+			# grpc requirement
+			die "Downgrade dev-cpp/abseil-cpp to <20200923 (2)"
+		fi
+	fi
+}
 
 src_configure() {
 	local mycmakeargs=(
