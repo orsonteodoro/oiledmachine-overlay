@@ -5,7 +5,8 @@ EAPI=7
 
 inherit check-reqs eutils java-utils-2 npm-secaudit
 
-DESCRIPTION="Check, compile, optimize and compress Javascript with Closure-Compiler"
+DESCRIPTION="Check, compile, optimize and compress Javascript with \
+Closure-Compiler"
 HOMEPAGE="https://developers.google.com/closure/compiler/"
 LICENSE="
 	Apache-2.0
@@ -22,11 +23,17 @@ SLOT="0/${PV}"
 NODE_SLOT="0"
 MY_PN="closure-compiler"
 JAVA_V="1.8"
-IUSE+=" closure_compiler_java closure_compiler_js \
-closure_compiler_nodejs closure_compiler_native doc"
-REQUIRED_USE+=" closure_compiler_nodejs? ( closure_compiler_java )
-|| ( closure_compiler_java closure_compiler_js closure_compiler_nodejs \
-closure_compiler_native )"
+IUSE+="	closure_compiler_java
+	closure_compiler_js
+	closure_compiler_native
+	closure_compiler_nodejs
+	doc"
+REQUIRED_USE+="
+	closure_compiler_nodejs? ( closure_compiler_java )
+	|| (	closure_compiler_java
+		closure_compiler_js
+		closure_compiler_native
+		closure_compiler_nodejs	)"
 # For the node version, see
 # https://github.com/google/closure-compiler-npm/blob/master/packages/google-closure-compiler/package.json
 NODE_V="10"
@@ -95,7 +102,8 @@ download micropackages."
 	check-reqs_pkg_setup
 	if use closure_compiler_nodejs ; then
 		# Check nodejs still in a multislot scenario
-		X_NODE_V=$(node --version | grep -E -o -e "[0-9.]+" | cut -f 1 -d ".")
+		X_NODE_V=$(node --version | grep -E -o -e "[0-9.]+" \
+				| cut -f 1 -d ".")
 		if ver_test "${X_NODE_V}" -lt "${NODE_V}" ; then
 			die \
 "Your active nodejs needs to be at least >=${NODE_V}.  See \`eselect nodejs\`"
@@ -174,9 +182,11 @@ src_install() {
 			-e "s|\${NODE_SLOT}|${NODE_SLOT}|g" \
 			"${T}/${MY_PN}-node" || die
 		doexe "${T}/${MY_PN}-node"
-		for dir_path in $(find "${ED}/${d_node}" -name ".bin" -type d) ; do
+		for dir_path in $(find "${ED}/${d_node}" \
+				-name ".bin" -type d) ; do
 			for file_abs_path in $(find "${dir_path}") ; do
-				chmod 0755 $(realpath "${file_abs_path}") || die
+				chmod 0755 $(realpath "${file_abs_path}") \
+					|| die
 			done
 		done
 		export NPM_SECAUDIT_REG_PATH="${d_node}"
