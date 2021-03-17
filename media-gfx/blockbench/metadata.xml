@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <longdescription>
+  </longdescription>
+  <upstream>
+    <bugs-to>https://github.com/JannisX11/blockbench/issues</bugs-to>
+    <remote-id type="github">JannisX11/blockbench</remote-id>
+  </upstream>
+  <use>
+    <flag name=""></flag>
+  </use>
+</pkgmetadata>

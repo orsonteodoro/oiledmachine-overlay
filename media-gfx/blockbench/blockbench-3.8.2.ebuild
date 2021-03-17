@@ -1,0 +1,40 @@
+# Copyright 1999-2021 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=7
+
+inherit eutils desktop electron-app npm-utils
+
+DESCRIPTION="Blockbench - A boxy 3D model editor"
+HOMEPAGE="https://www.blockbench.net"
+LICENSE="GPL-3+"
+KEYWORDS="~amd64"
+SLOT="0"
+RDEPEND+=" net-libs/nodejs"
+BDEPEND+=" net-libs/nodejs[npm]"
+ELECTRON_APP_ELECTRON_V="8.5.5"
+ELECTRON_APP_MODE="npm"
+SRC_URI=\
+"https://github.com/JannisX11/blockbench/archive/v${PV}.tar.gz
+	-> ${PN}-${PV}.tar.gz"
+S="${WORKDIR}/${PN}-${PV}"
+RESTRICT="mirror"
+
+pkg_setup() {
+	electron-app_pkg_setup
+}
+
+electron-app_src_compile() {
+	cd "${S}"
+	export PATH="${S}/node_modules/.bin:${PATH}"
+	electron-builder -l dir || die
+}
+
+src_install() {
+	export ELECTRON_APP_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT}"
+	electron-app_desktop_install "*" "icon.png" "${PN^}" \
+	"Graphics;3DGraphics" \
+"env PATH=\"${ELECTRON_APP_INSTALL_PATH}/node_modules/.bin:\$PATH\" \
+${ELECTRON_APP_INSTALL_PATH}/dist/linux-unpacked/blockbench"
+	fperms 755 ${ELECTRON_APP_INSTALL_PATH}/dist/linux-unpacked/blockbench
+}
