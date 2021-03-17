@@ -5,13 +5,8 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
-  </longdescription>
   <upstream>
     <bugs-to>https://github.com/njbrown/texturelab/issues</bugs-to>
     <remote-id type="github">njbrown/texturelab</remote-id>
   </upstream>
-  <use>
-    <flag name=""></flag>
-  </use>
 </pkgmetadata>
