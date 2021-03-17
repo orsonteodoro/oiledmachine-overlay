@@ -5,13 +5,8 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
-  <longdescription>
-  </longdescription>
   <upstream>
     <bugs-to>https://github.com/JannisX11/blockbench/issues</bugs-to>
     <remote-id type="github">JannisX11/blockbench</remote-id>
   </upstream>
-  <use>
-    <flag name=""></flag>
-  </use>
 </pkgmetadata>

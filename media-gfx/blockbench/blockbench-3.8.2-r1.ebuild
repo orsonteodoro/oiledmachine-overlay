@@ -10,7 +10,6 @@ HOMEPAGE="https://www.blockbench.net"
 LICENSE="GPL-3+"
 KEYWORDS="~amd64"
 SLOT="0"
-RDEPEND+=" net-libs/nodejs"
 BDEPEND+=" net-libs/nodejs[npm]"
 ELECTRON_APP_ELECTRON_V="8.5.5"
 ELECTRON_APP_MODE="npm"
@@ -31,10 +30,9 @@ electron-app_src_compile() {
 }
 
 src_install() {
-	export ELECTRON_APP_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT}"
-	electron-app_desktop_install "*" "icon.png" "${PN^}" \
-	"Graphics;3DGraphics" \
-"env PATH=\"${ELECTRON_APP_INSTALL_PATH}/node_modules/.bin:\$PATH\" \
-${ELECTRON_APP_INSTALL_PATH}/dist/linux-unpacked/blockbench"
-	fperms 755 ${ELECTRON_APP_INSTALL_PATH}/dist/linux-unpacked/blockbench
+	export ELECTRON_APP_INSTALL_PATH="/opt/${PN}/"
+	electron-app_desktop_install "dist/linux-unpacked/*" "icon.png" "${PN^}" \
+	"Graphics;3DGraphics" "${ELECTRON_APP_INSTALL_PATH}/blockbench \"\$@\""
+	fperms 755 ${ELECTRON_APP_INSTALL_PATH}/blockbench
+	npm-utils_install_licenses
 }
