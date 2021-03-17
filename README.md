@@ -198,7 +198,6 @@ contains a known infamous critical vulnerability.
 | dev-games/libmaker | This is the Library editor for ENIGMA and GameMaker to customize and add button actions for the drag and drop scripting.  It was written in Java.  More information can be found at https://enigma-dev.org/docs/Wiki/Library_Maker. |
 | dev-games/mojoshader | Used to allow for compatible usage for Direct3D shaders on non-Windows platforms to produce post-production special effects. |
 | dev-games/recastnavigation | This is a AI pathfinding library for C++.  Use this if you want your AI to walk around walls and obstacles. |
-| dev-games/texturelab | This is an Electron based GPU accelerated texture maker. |
 | dev-games/urho3d | Urho3D is another game engine.  Android and Raspberry PI support on the ebuild level is incomplete but left for Gentoo community to help finish.  The system libraries are preferred because the internal libraries are several years old.  There may be quirks when using the system libraries.  If you see any that bother you, then use the internal dependency instead. |
 | dev-lang/gambas | Gambas is based on the BASIC programming language dialect.  It is basically a Visual Basic clone.  Version 3.8.4 is in this overlay.  Use the `ide` USE flag to build the IDE.  You can make games with it and has support for OpenGL. |
 | dev-lang/lua | This is a lua library with Urho3D changes necessary for coroutines |
@@ -242,6 +241,7 @@ contains a known infamous critical vulnerability.
 | media-gfx/caesiumclt | This is a command line image compressor for PNG and JPEG files. |
 | media-gfx/nvidia-texture-tools | This one builds the C# language binding and nvtt native library required for MonoGame.  You need to install this one from the repository for MonoGame to compile correctly.  This ebuild generates Nvidia.TextureTools.dll per each vc{10,8,9,12,monogame} because upstream don't delete one of them so a consumer may depend on the old one.  You need to enable the `monogame` USE flag to generate the proper older Nvidia.TextureTools.dll. |
 | media-gfx/sheepit-client | A CPU and/or GPU render farm client with Blender support using Internal, Eevee, or Cycles renderers. |
+| media-gfx/texturelab | This is an Electron based GPU accelerated texture maker. |
 | media-libs/glfw | TBA |
 | media-libs/libcaca | This library contains an experimental special 256 color patch from Ben Wiley Sittler.  I don't know if the patch actually works from emperical tests.  Maybe it is just me or I forward patched it wrong.  I use the experimental 256 color for facy to render Facebook photos, animated GIFs, and Facebook videos to try to better render skin color.  I still think Termpic colors rendering is better. |
 | media-libs/libcaesium | For caesium image compression. |
