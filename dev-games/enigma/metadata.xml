@@ -14,8 +14,12 @@
     The ENIGMA engine is the API and the game state mangement offerings and
     management.
 
+    WINE support requires MinGW.  For details see:
+    https://wiki.gentoo.org/wiki/Mingw
+
     You need to add the following in /etc/portage/profile/package.use.force
     in order to use experimental support.
+
 	----- CUT BELOW HERE -----
 games-misc/enigma -android
 games-misc/enigma -wine

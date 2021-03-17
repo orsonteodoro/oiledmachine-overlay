@@ -31,19 +31,10 @@ REQUIRED_USE+="
 # No code references but only on build files: libvorbis3, vorbisfile,
 # pulseaudio, libpulse
 # media-libs/libvorbis[${MULTILIB_USEDEP}] # line to be placed in openal RDEPEND
-#
-# The design for WINE support requires a chroot containing a mingw toolchain.
-# See https://wiki.gentoo.org/wiki/Mingw for details.
 CDEPEND="dev-libs/protobuf[${MULTILIB_USEDEP}]
 	>=sys-devel/gcc-9
 	radialgm? ( net-libs/grpc[${MULTILIB_USEDEP}] )"
 DEPEND+=" ${CDEPEND}
-	android? ( dev-util/android-ndk
-		   dev-util/android-sdk-update-manager )
-	box2d? ( || ( <dev-games/box2d-2.4:2.3[${MULTILIB_USEDEP}]
-			<games-engines/box2d-2.4:2.3.0[${MULTILIB_USEDEP}] ) )
-	bullet? ( sci-physics/bullet[${MULTILIB_USEDEP}] )
-	curl? ( net-misc/curl[${MULTILIB_USEDEP}] )
 	dev-cpp/abseil-cpp[${MULTILIB_USEDEP}]
 	dev-cpp/yaml-cpp[${MULTILIB_USEDEP}]
 	dev-libs/boost[${MULTILIB_USEDEP}]
@@ -55,6 +46,18 @@ DEPEND+=" ${CDEPEND}
 	dev-libs/rapidjson
 	dev-games/lgmplugin
 	dev-games/lateralgm[android?,linux?,vanilla?,${MULTILIB_USEDEP}]
+	media-libs/freetype[${MULTILIB_USEDEP}]
+	media-libs/harfbuzz[${MULTILIB_USEDEP}]
+	media-libs/libpng[${MULTILIB_USEDEP}]
+	sys-libs/zlib[${MULTILIB_USEDEP}]
+	virtual/jpeg[${MULTILIB_USEDEP}]
+	virtual/libc
+	android? ( dev-util/android-ndk
+		   dev-util/android-sdk-update-manager )
+	box2d? ( || ( <dev-games/box2d-2.4:2.3[${MULTILIB_USEDEP}]
+			<games-engines/box2d-2.4:2.3.0[${MULTILIB_USEDEP}] ) )
+	bullet? ( sci-physics/bullet[${MULTILIB_USEDEP}] )
+	curl? ( net-misc/curl[${MULTILIB_USEDEP}] )
 	gles? (	media-libs/glm
 		media-libs/libepoxy[${MULTILIB_USEDEP}]
 		media-libs/mesa[${MULTILIB_USEDEP}] )
@@ -62,9 +65,6 @@ DEPEND+=" ${CDEPEND}
 	gnome? ( gnome-extra/zenity )
 	gtk2? ( x11-libs/gtk+[${MULTILIB_USEDEP}] )
 	kde? ( kde-apps/kdialog )
-	media-libs/freetype[${MULTILIB_USEDEP}]
-	media-libs/harfbuzz[${MULTILIB_USEDEP}]
-	media-libs/libpng[${MULTILIB_USEDEP}]
 	openal? ( media-libs/alure[${MULTILIB_USEDEP}]
 		  media-libs/dumb[${MULTILIB_USEDEP}]
 		 media-libs/openal[${MULTILIB_USEDEP}] )
@@ -73,22 +73,19 @@ DEPEND+=" ${CDEPEND}
 		  media-libs/mesa[${MULTILIB_USEDEP}] )
 	radialgm? ( net-dns/c-ares[${MULTILIB_USEDEP}] )
 	sdl2? ( >=media-libs/libsdl2-2.0.12[${MULTILIB_USEDEP},gles2?] )
-	sys-libs/zlib[${MULTILIB_USEDEP}]
 	wine? ( sys-devel/crossdev
 		 virtual/wine )
 	X? ( x11-libs/libX11[${MULTILIB_USEDEP}]
-	     sys-libs/zlib[${MULTILIB_USEDEP}] )
-	virtual/jpeg[${MULTILIB_USEDEP}]
-	virtual/libc"
+	     sys-libs/zlib[${MULTILIB_USEDEP}] )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+=" ${CDEPEND}
+	>=dev-util/cmake-3.14
+	dev-util/pkgconfig[${MULTILIB_USEDEP}]
 	clang? (
 		>=sys-devel/clang-10[${MULTILIB_USEDEP}]
 		>=sys-devel/lld-10
 		>=sys-devel/llvm-10[${MULTILIB_USEDEP}]
 	)
-	>=dev-util/cmake-3.14
-	dev-util/pkgconfig[${MULTILIB_USEDEP}]
 	test? ( dev-cpp/gtest[${MULTILIB_USEDEP}]
 		dev-libs/boost[${MULTILIB_USEDEP}]
 		x11-libs/libX11[${MULTILIB_USEDEP}] )"
@@ -134,7 +131,8 @@ src_prepare() {
 	}
 	platforms_foreach_impl platform_prepare
 	if use android ; then
-		ewarn "Android support is experimental"
+		ewarn \
+"Android support is experimental"
 	fi
 	if use wine ; then
 		ewarn \
