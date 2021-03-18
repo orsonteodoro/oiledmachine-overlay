@@ -1,2 +1,6 @@
 #!/bin/bash
-/usr/bin/node /usr/$(get_libdir)/node/${PN}/${SLOT}/lib/cli.js $@
+
+# For electron-packager
+#/opt/${PN}/${PN} "$@"
+
+/usr/bin/node /opt/${PN}/lib/cli.js "$@"
