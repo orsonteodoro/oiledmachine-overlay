@@ -32,12 +32,14 @@ NODE_VERSION="12"
 
 pkg_setup() {
 	electron-app_pkg_setup
-	if has_version  'net-libs/nodejs:12' ; then
+	if has_version 'net-libs/nodejs:12' ; then
 		einfo "Using nodejs:12"
 		export NODE_VERSION="12"
-	elif has_version  'net-libs/nodejs:10' ; then
+	elif has_version 'net-libs/nodejs:10' ; then
 		einfo "Using nodejs:10"
 		export NODE_VERSION="10"
+	elif has_version 'net-libs/nodejs:0' ; then
+		einfo "Using node:0"
 	else
 		die "<net-libs/nodejs-14 must be used."
 	fi
