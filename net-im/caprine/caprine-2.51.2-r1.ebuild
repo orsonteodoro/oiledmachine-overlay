@@ -71,6 +71,7 @@ src_install() {
 		"${PN^}" "Network" \
 	"${ELECTRON_APP_INSTALL_PATH}/${PN} \"\$@\""
 	fperms 755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
+	npm-utils_install_licenses
 }
 
 pkg_postinst() {
