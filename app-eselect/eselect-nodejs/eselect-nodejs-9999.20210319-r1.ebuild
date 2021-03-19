@@ -18,7 +18,7 @@ RESTRICT="fetch"
 src_unpack() {
 	default
 	mkdir -p "${S}" || die
-	cp "${FILESDIR}/nodejs-${PV}.eselect" "${S}/nodejs.eselect" || die
+	cp "${FILESDIR}/nodejs-${PVR}.eselect" "${S}/nodejs.eselect" || die
 }
 
 src_install() {

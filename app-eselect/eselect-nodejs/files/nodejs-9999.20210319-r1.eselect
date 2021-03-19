@@ -11,7 +11,7 @@ PN="nodejs"
 # find a list of Node.js symlink targets
 find_targets() {
     local f
-    for f in /usr/lib/node[0-9]*; do
+    for f in /usr/include/node[0-9]*; do
         [[ -d ${f} ]] && echo $(basename "${f}")
     done
 }
