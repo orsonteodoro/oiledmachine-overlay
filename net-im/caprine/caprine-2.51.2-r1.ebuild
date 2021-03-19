@@ -38,21 +38,6 @@ pkg_setup() {
 		export NODE_VERSION=$(echo ${node_v} | cut -f 1 -d ".")
 		einfo "Using nodejs-${NODE_VERSION}"
 	fi
-	NODE_MAJOR=$(grep -r -e "NODE_MAJOR_VERSION" \
-		/usr/include/node/node_version.h | head -n 1 | cut -f 3 -d " ")
-	NODE_MINOR=$(grep -r -e "NODE_MINOR_VERSION" \
-		/usr/include/node/node_version.h | head -n 1 | cut -f 3 -d " ")
-	NODE_PATCH=$(grep -r -e "NODE_PATCH_VERSION" \
-		/usr/include/node/node_version.h | head -n 1 | cut -f 3 -d " ")
-	if ver_test ${NODE_MAJOR}.${NODE_MINOR} -ne $(ver_cut 1-2 ${node_v}) ; then
-		die \
-"Inconsistency between node header and active executable version.\n\
-Switch your headers via \`eselect nodejs\`"
-	else
-		einfo \
-"Node.js header version: ${NODE_MAJOR}.${NODE_MINOR}.${NODE_PATCH}\n\
-Node.js exe version: ${node_v}"
-	fi
 }
 
 electron-app_src_compile() {
