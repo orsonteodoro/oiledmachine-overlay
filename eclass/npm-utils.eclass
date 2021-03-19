@@ -591,11 +591,11 @@ npm-utils_install_readmes() {
 # required for multislot nodejs.
 npm-utils_is_nodejs_header_exe_same() {
 	local node_v=$(node --version | sed -e "s|v||")
-	local node_major=$(grep -r -e "node_major_VERSION" \
+	local node_major=$(grep -r -e "NODE_MAJOR_VERSION" \
 		/usr/include/node/node_version.h | head -n 1 | cut -f 3 -d " ")
-	local node_minor=$(grep -r -e "node_minor_VERSION" \
+	local node_minor=$(grep -r -e "NODE_MINOR_VERSION" \
 		/usr/include/node/node_version.h | head -n 1 | cut -f 3 -d " ")
-	local node_minor=$(grep -r -e "node_minor_VERSION" \
+	local node_patch=$(grep -r -e "NODE_PATCH_VERSION" \
 		/usr/include/node/node_version.h | head -n 1 | cut -f 3 -d " ")
 	if ver_test ${node_major}.${node_minor} -ne $(ver_cut 1-2 ${node_v}) ; then
 		die \
