@@ -166,6 +166,8 @@ download micropackages."
 "You have a nodejs less than ${NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN} which\n\
 is End Of Life (EOL) and has vulnerabilities."
 	fi
+
+	npm-utils_is_nodejs_header_exe_same
 }
 
 # @FUNCTION: npm-secaudit_fetch_deps

@@ -761,6 +761,8 @@ ELECTRON_APP_SNAP_INSTALL_DIR"
 			die "ELECTRON_APP_SNAP_ASSERT_PATH must be defined."
 		fi
 	fi
+
+	npm-utils_is_nodejs_header_exe_same
 }
 
 # @FUNCTION: electron-app_fetch_deps_npm
@@ -1009,7 +1011,7 @@ is End Of Life (EOL) and has vulnerabilities."
 	# It's actually BoringSSL not OpenSSL in Chromium.
 	# Commented out because Chromium checks
 	if ! has_version ">=net-libs/nodejs-${NODE_V}" ; then
-		adie "Electron ${ELECTRON_V} requires at least >=net-libs/nodejs-${NODE_V}"
+		ewarn "Electron ${ELECTRON_V} requires at least >=net-libs/nodejs-${NODE_V}"
 	fi
 	if ! has_version ">=sys-libs/zlib-${ZLIB_V}" ; then
 		adie \

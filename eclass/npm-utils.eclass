@@ -585,3 +585,25 @@ npm-utils_install_readmes() {
 	export IFS="${OIFS}"
 }
 
+# @FUNCTION: npm-utils_is_nodejs_header_exe_same
+# @DESCRIPTION:
+# Ensures header and node exe are the same version.  Check is
+# required for multislot nodejs.
+npm-utils_is_nodejs_header_exe_same() {
+	local node_v=$(node --version | sed -e "s|v||")
+	local node_major=$(grep -r -e "node_major_VERSION" \
+		/usr/include/node/node_version.h | head -n 1 | cut -f 3 -d " ")
+	local node_minor=$(grep -r -e "node_minor_VERSION" \
+		/usr/include/node/node_version.h | head -n 1 | cut -f 3 -d " ")
+	local node_minor=$(grep -r -e "node_minor_VERSION" \
+		/usr/include/node/node_version.h | head -n 1 | cut -f 3 -d " ")
+	if ver_test ${node_major}.${node_minor} -ne $(ver_cut 1-2 ${node_v}) ; then
+		die \
+"Inconsistency between node header and active executable version.\n\
+Switch your headers via \`eselect nodejs\`"
+	else
+		einfo \
+"Node.js header version: ${node_major}.${node_minor}.${node_minor}\n\
+Node.js exe version: ${node_v}"
+	fi
+}
