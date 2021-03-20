@@ -145,7 +145,7 @@ src_prepare_lgmplugin() {
 	# Found in same JoshEdit used by LibMaker but not the same as
 	# LateralGM's JoshEdit.
 	sed -i -e "/CodeTextArea.updateKeywords/d" \
-		org/enigma/frames/EnigmaSettingsHandler.java
+		org/enigma/frames/EnigmaSettingsHandler.java || die
 }
 
 src_prepare() {
