@@ -223,7 +223,6 @@ contains a known infamous critical vulnerability.
 | dev-util/emacs-ycmd | This is a ycmd client for GNU Emacs. |
 | dev-util/emscripten | Emscripten allows to run C/C++ apps on a web browser.  It is typically used by game engines port games into web browsers. |
 | dev-util/emscripten-fastcomp | For asm.js support.  Deprecated. |
-| dev-util/geeks-diary | This is an Electron based diary / notetaker for programmers. |
 | dev-util/gycm | Gycm is a Geany plugin and ycmd client to improve IntelliSense support on top of the stock completer. |
 | dev-util/lepton | This is a programmer reusable code snipplet manager based on Electron and able to sync with Gist. |
 | dev-util/objconv | TBA |
