@@ -2,6 +2,10 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
+
+EPLATFORMS="vanilla android linux wine"
+inherit eutils multilib-build
+
 DESCRIPTION="Java based plugin allowing LateralGM to compile games using \
 ENIGMA."
 HOMEPAGE="https://github.com/enigma-dev/lgmplugin"
@@ -10,20 +14,18 @@ KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 SLOT="0/${PV}"
 ECJ_V="4.4"
 JAVA_V="1.7"
-RDEPEND="dev-games/lateralgm
+RDEPEND+=" dev-games/lateralgm
 	 virtual/jre"
-DEPEND="|| ( dev-java/icedtea
+DEPEND+=" || ( dev-java/icedtea
 	     dev-java/icedtea-bin )
 	dev-java/jna[nio-buffers]
 	dev-games/lateralgm"
-BDEPEND="dev-java/eclipse-ecj:${ECJ_V}
+BDEPEND+=" dev-java/eclipse-ecj:${ECJ_V}
 	 virtual/jdk"
-EGIT_COMMIT="c305accc8e6bb5edbefeab4d77dc3e3958eea905"
 SRC_URI=\
-"https://github.com/enigma-dev/lgmplugin/archive/${EGIT_COMMIT}.tar.gz \
+"https://github.com/enigma-dev/lgmplugin/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz"
-inherit enigma eutils multilib-build
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 
 patch_impl() {
