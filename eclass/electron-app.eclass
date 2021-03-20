@@ -671,8 +671,18 @@ download micropackages and obtain version releases information."
 	#export ELECTRON_VER=$(strings /usr/bin/electron \
 	#	| grep -F -e "%s Electron/" \
 	#	| sed -r -e "s|[%s A-Za-z/]||g")
-	export NPM_STORE_DIR="${HOME}/npm"
-	export YARN_STORE_DIR="${HOME}/yarn"
+
+	# For @electron/get caches used by electron-packager and electron-builder, see
+# https://github.com/electron/get#using-environment-variables-for-mirror-options
+	# export ELECTRON_CUSTOM_DIR="${ELECTRON_APP_DATA_DIR}/at-electron-get"
+	# mkdir -p ${ELECTRON_CUSTOM_DIR} || die
+
+	# Caches are stored in the sandbox because it is faster and less
+	# problematic as in part of the cache will be owned by root and
+	# the other by portage.  By avoiding irrelevant checking and resetting
+	# file ownership of packages used by other apps, we speed it up.
+	export NPM_STORE_DIR="${HOME}/npm" # npm cache location
+	export YARN_STORE_DIR="${HOME}/yarn" # yarn cache location
 	export npm_config_maxsockets=${ELECTRON_APP_MAXSOCKETS}
 
 	case "$ELECTRON_APP_MODE" in
