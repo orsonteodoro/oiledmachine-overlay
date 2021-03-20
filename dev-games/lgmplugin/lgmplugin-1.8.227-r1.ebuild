@@ -70,12 +70,12 @@ shared/jna.jar\
 src_prepare() {
 	default
 
-	enigma_copy_sources
+	platforms_copy_sources
 	platform_prepare() {
 		cd "${BUILD_DIR}" || die
 		multilib_copy_sources
 	}
-	enigma_foreach_impl platform_prepare
+	platforms_foreach_impl platform_prepare
 
 	platform_prepare2() {
 		cd "${BUILD_DIR}" || die
@@ -85,7 +85,7 @@ src_prepare() {
 		}
 		multilib_foreach_abi ml_install_abi
 	}
-	enigma_foreach_impl platform_prepare2
+	platforms_foreach_impl platform_prepare2
 }
 
 src_compile() {
@@ -99,7 +99,7 @@ src_compile() {
 		}
 		multilib_foreach_abi ml_compile_abi
 	}
-	enigma_foreach_impl platform_compile
+	platforms_foreach_impl platform_compile
 }
 
 src_install() {
@@ -118,5 +118,5 @@ src_install() {
 		}
 		multilib_foreach_abi ml_install_abi
 	}
-	enigma_foreach_impl platform_install
+	platforms_foreach_impl platform_install
 }
