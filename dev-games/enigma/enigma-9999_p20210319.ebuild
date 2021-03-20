@@ -11,7 +11,9 @@ is an open source cross-platform game development environment influenced by \
 the popular software Game Maker."
 HOMEPAGE="http://enigma-dev.org"
 LICENSE="GPL-3+"
-KEYWORDS="~amd64 ~x86"
+
+# Live ebuilds don't get KEYWORDS
+
 SLOT="0/${PV}"
 IUSE+=" android box2d bullet clang curl doc gles gles2 gles3 gme gnome gtk2 kde \
 linux minimal +openal +opengl opengl1 opengl3 radialgm sdl2 test +vanilla +X"
@@ -44,8 +46,6 @@ DEPEND+=" ${CDEPEND}
 	dev-libs/openssl[${MULTILIB_USEDEP}]
 	dev-libs/pugixml[${MULTILIB_USEDEP}]
 	dev-libs/rapidjson
-	dev-games/lgmplugin
-	dev-games/lateralgm[android?,linux?,vanilla?,${MULTILIB_USEDEP}]
 	media-libs/freetype[${MULTILIB_USEDEP}]
 	media-libs/harfbuzz[${MULTILIB_USEDEP}]
 	media-libs/libpng[${MULTILIB_USEDEP}]
@@ -89,7 +89,7 @@ BDEPEND+=" ${CDEPEND}
 	test? ( dev-cpp/gtest[${MULTILIB_USEDEP}]
 		dev-libs/boost[${MULTILIB_USEDEP}]
 		x11-libs/libX11[${MULTILIB_USEDEP}] )"
-EGIT_COMMIT="c13dcb0c599d5673e607ddbefdf93091ca93aa5c"
+EGIT_COMMIT="acc21d9ed1fd1b505659effab7a39d0df2a2f76c"
 SRC_URI=\
 "https://github.com/enigma-dev/enigma-dev/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
@@ -438,11 +438,6 @@ src_install() {
 
 pkg_postinst()
 {
-	einfo \
-"When you run it the first time, it will compile the \n\
-/usr/$(get_libdir)/ENIGMAsystem/SHELL files.  What this means is that the\n\
-Run, Debug, and Compile buttons on LateralGM will not be available until\n\
-ENIGMA is done.  You need to wait."
 	if use android ; then
 		einfo \
 	"You need to modify /usr/$(get_libdir)/Compilers/Android.ey manually"

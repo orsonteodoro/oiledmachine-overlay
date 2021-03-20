@@ -1,0 +1,12 @@
+diff -urp LateralGM-1.8.227.orig/org/lateralgm/file/GMXFileWriter.java LateralGM-1.8.227/org/lateralgm/file/GMXFileWriter.java
+--- LateralGM-1.8.227.orig/org/lateralgm/file/GMXFileWriter.java	2021-02-24 11:45:57.000000000 -0800
++++ LateralGM-1.8.227/org/lateralgm/file/GMXFileWriter.java	2021-03-20 12:14:42.905619534 -0700
+@@ -1335,7 +1335,7 @@ public final class GMXFileWriter
+ 		try
+ 			{
+ 			out = new PrintWriter(Util.getPOSIXPath(f.getDirectory() + "/help.rtf")); //$NON-NLS-1$
+-			out.println(f.gameInfo.properties.get(PGameInformation.TEXT));
++			out.println((String)f.gameInfo.properties.get(PGameInformation.TEXT));
+ 			}
+ 		finally
+ 			{
