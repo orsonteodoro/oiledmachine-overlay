@@ -55,20 +55,23 @@ JE_LATERALGM_FN="${JE_PN}-${EGIT_COMMIT_JE_LATERALGM:0:7}.tar.gz"
 LIBMAKER_FN="${MY_PN_LIBMAKER}-${EGIT_COMMIT_LIBMAKER:0:7}.tar.gz"
 JE_LIBMAKER_FN="${MY_PN_LIBMAKER}-${EGIT_COMMIT_JE_LIBMAKER:0:7}.tar.gz"
 LGMPLUGIN_FN="lgmplugin-${LGMPLUGIN_V}.tar.gz"
+BASE_URI_IA="https://github.com/IsmAvatar"
+BASE_URI_JD="https://github.com/JoshDreamland"
+BASE_URI_ED="https://github.com/enigma-dev"
 
 SRC_URI_LATERALGM=\
-" https://github.com/IsmAvatar/${MY_PN_LATERALGM}/archive/v${PV}.tar.gz \
+" ${BASE_URI_IA}/${MY_PN_LATERALGM}/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz
-  https://github.com/JoshDreamland/JoshEdit/archive/${EGIT_COMMIT_JE_LATERALGM}.tar.gz \
+  ${BASE_URI_JD}/JoshEdit/archive/${EGIT_COMMIT_JE_LATERALGM}.tar.gz \
 	-> ${JE_LATERALGM_FN}"
 SRC_URI_LIBMAKER=\
-" https://github.com/IsmAvatar/${MY_PN_LIBMAKER}/archive/${EGIT_COMMIT_LIBMAKER}.tar.gz \
+" ${BASE_URI_IA}/${MY_PN_LIBMAKER}/archive/${EGIT_COMMIT_LIBMAKER}.tar.gz \
 	-> ${LIBMAKER_FN}
-  https://github.com/JoshDreamland/${JE_PN}/archive/${EGIT_COMMIT_JE_LIBMAKER}.tar.gz \
+  ${BASE_URI_JD}/${JE_PN}/archive/${EGIT_COMMIT_JE_LIBMAKER}.tar.gz \
 	-> ${JE_LIBMAKER_FN}"
 
 SRC_URI_LGMPLUGIN=\
-" https://github.com/enigma-dev/lgmplugin/archive/refs/tags/v${LGMPLUGIN_V}.tar.gz \
+" ${BASE_URI_ED}/lgmplugin/archive/refs/tags/v${LGMPLUGIN_V}.tar.gz \
 	-> ${LGMPLUGIN_FN}"
 
 
@@ -103,7 +106,8 @@ Use \`eselect java-vm\` to set this up."
 src_unpack_lateralgm()
 {
 	rm -rf "${S_LATERALGM}/modules/joshedit" || die
-	mv "${WORKDIR}/${JE_PN}-${EGIT_COMMIT_JE_LATERALGM}" "${S_LATERALGM}/modules/joshedit" || die
+	mv "${WORKDIR}/${JE_PN}-${EGIT_COMMIT_JE_LATERALGM}" \
+		"${S_LATERALGM}/modules/joshedit" || die
 }
 
 src_unpack() {
@@ -119,7 +123,8 @@ src_prepare_lateralgm() {
 		-e "s|-source 1.7|-source ${JAVA_SRC_V}|g" \
 		-e "s|-target 1.7|-target ${JVM_V}|g" Makefile || die
 	# no need to call enigma_copy_sources
-	# it will complain about cd (change directory) failure in src_install phase
+	# it will complain about cd (change directory) failure in src_install
+	# phase
 	eapply "${FILESDIR}/lateralgm-1.8.227-cast-GMXFileReader.patch"
 }
 
@@ -280,7 +285,8 @@ src_install_libmaker()
 	exeinto /usr/bin
 	cp -a "${FILESDIR}/${MY_PN_LIBMAKER,,}" "${T}" || die
 	doexe "${T}/${MY_PN_LIBMAKER,,}"
-	doicon "${S_LIBMAKER}/org/lateralgm/${MY_PN_LIBMAKER,,}/icons/lgl-128.png"
+	doicon \
+"${S_LIBMAKER}/org/lateralgm/${MY_PN_LIBMAKER,,}/icons/lgl-128.png"
 	make_desktop_entry "/usr/bin/${MY_PN_LIBMAKER,,}" "${MY_PN_LIBMAKER}" \
 		"/usr/share/pixmaps/lgl-128.png" "Utility;FileTools"
 	docinto licenses/libmaker
