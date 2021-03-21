@@ -62,7 +62,7 @@ src_install() {
 pkg_postinst() {
 	electron-app_pkg_postinst
 	einfo \
-"If you see Config schema violation: vibrancy should be string; vibrancy \
-should be equal to one of the allowed values, then"
+"If you see \"Config schema violation: vibrancy should be string; vibrancy \
+should be equal to one of the allowed values,\" then"
 	einfo "you may need to run \`rm -rf ~/.config/Caprine\`"
 }
