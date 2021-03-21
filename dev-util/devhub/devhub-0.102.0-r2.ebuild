@@ -11,10 +11,8 @@ HOMEPAGE="https://devhubapp.com"
 LICENSE="AGPL-3"
 KEYWORDS="~amd64"
 SLOT="0"
-MIN_NODE_VERSION=12
-RDEPEND+=" >=net-libs/nodejs-${MIN_NODE_VERSION}"
-DEPEND+=" ${RDEPEND}
-	>=net-libs/nodejs-${MIN_NODE_VERSION}[npm]
+NPM_UTILS_NODEJS_MIN_BAD="11"
+BDEPEND+=" >=net-libs/nodejs-12[npm]
 	>=sys-apps/yarn-1.13.0"
 ELECTRON_APP_MODE=yarn
 ELECTRON_APP_ELECTRON_V="11.0.3"
@@ -23,17 +21,7 @@ SRC_URI="\
 https://github.com/devhubapp/devhub/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
-
 RESTRICT="mirror"
-
-pkg_setup() {
-	electron-app_pkg_setup
-	NODE_VERSION=$(/usr/bin/node --version | sed -e "s|v||g" | cut -f 1 -d ".")
-        if (( ${NODE_VERSION} < ${MIN_NODE_VERSION} )) ; then
-                echo "NODE_VERSION must be >=${MIN_NODE_VERSION}"
-		die "Switch Node.js to >=${MIN_NODE_VERSION}"
-        fi
-}
 
 electron-app_src_compile() {
 	export PATH="${S}/node_modules/.bin:${PATH}"
