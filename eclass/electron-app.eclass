@@ -773,7 +773,9 @@ ELECTRON_APP_SNAP_INSTALL_DIR"
 	fi
 
 	npm-utils_is_nodejs_header_exe_same
-	if [[ -n "${BDEPEND}" ]] ; then
+	if [[ -n "${NODEJS_BDEPEND}" ]] ; then
+		npm-utils_check_nodejs "${NODEJS_BDEPEND}"
+	elif [[ -n "${BDEPEND}" ]] ; then
 		npm-utils_check_nodejs "${BDEPEND}"
 	elif [[ -n "${DEPEND}" ]] ; then
 		npm-utils_check_nodejs "${DEPEND}"
