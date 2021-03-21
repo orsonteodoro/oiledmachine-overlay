@@ -115,9 +115,6 @@ media-plugins/gst-plugins-omx
 # worked in the past but untested today
 app-portage/systemwide-pgo
 dev-util/bear
-dev-util/devhub
-dev-util/lepton
-dev-util/pullp
 dev-util/ycm-generator
 www-misc/rtv
 www-misc/rainbowstream
