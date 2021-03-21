@@ -773,7 +773,11 @@ ELECTRON_APP_SNAP_INSTALL_DIR"
 	fi
 
 	npm-utils_is_nodejs_header_exe_same
-	npm-utils_check_nodejs
+	if [[ -n "${BDEPEND}" ]] ; then
+		npm-utils_check_nodejs "${BDEPEND}"
+	elif [[ -n "${DEPEND}" ]] ; then
+		npm-utils_check_nodejs "${DEPEND}"
+	fi
 }
 
 # @FUNCTION: electron-app_fetch_deps_npm

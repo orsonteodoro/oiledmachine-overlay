@@ -178,7 +178,11 @@ is End Of Life (EOL) and has vulnerabilities."
 	fi
 
 	npm-utils_is_nodejs_header_exe_same
-	npm-utils_check_nodejs
+	if [[ -n "${BDEPEND}" ]] ; then
+		npm-utils_check_nodejs "${BDEPEND}"
+	elif [[ -n "${DEPEND}" ]] ; then
+		npm-utils_check_nodejs "${DEPEND}"
+	fi
 }
 
 # @FUNCTION: npm-secaudit_fetch_deps

@@ -610,34 +610,97 @@ Node.js exe version: ${node_v}"
 
 # @FUNCTION: npm-utils_check_nodejs
 # @DESCRIPTION:
-# Ensures header and exe meet requirements.  Set NPM_UTILS_NODEJS_MIN_BAD
-# and NPM_UTILS_NODEJS_MAX_BAD.
+# Ensures header and exe meet requirements.
+# @CODE
+# Parameters:
+# $1 - A string recognized by {B,R,}DEPENDS
+# @CODE
 npm-utils_check_nodejs() {
-	if [[ -n "${NPM_UTILS_NODEJS_MIN_BAD}" \
-		|| -n "${NPM_UTILS_NODEJS_MAX_BAD}" ]] ; then
-		local node_v=$(node --version | sed -e "s|v||")
-		local node_major=$(grep -r -e "NODE_MAJOR_VERSION" \
-			/usr/include/node/node_version.h | head -n 1 \
-			| cut -f 3 -d " ")
-	fi
+	local node_exe_v=$(node --version | sed -e "s|v||")
+	local node_header_v=$(grep -r -e "NODE_MAJOR_VERSION" \
+		/usr/include/node/node_version.h | head -n 1 \
+		| cut -f 3 -d " ")
+	node_exe_v=$(echo "${node_exe_v}" | cut -f 1 -d ".")
 
-	if [[ -n "${NPM_UTILS_NODEJS_MIN_BAD}" ]] ; then
-		if ver_test ${node_major} -le ${NPM_UTILS_NODEJS_MIN_BAD} \
-			|| ver_test ${node_v} -le ${NPM_UTILS_NODEJS_MIN_BAD} \
-				; then
-			die \
-"Found node_header=${node_major} node_exe=${node_v} instead, \
-but requires > ${NPM_UTILS_NODEJS_MIN_BAD}"
+	local s="${1}"
+	local has_min_ge=$(echo "${s}" | grep -q -E -o ">=net-libs/nodejs" ; echo $?)
+	local has_min_gt=$(echo "${s}" | grep -q -E -o ">net-libs/nodejs" ; echo $?)
+	local has_max_le=$(echo "${s}" | grep -q -E -o "<=net-libs/nodejs" ; echo $?)
+	local has_max_lt=$(echo "${s}" | grep -q -E -o "<net-libs/nodejs" ; echo $?)
+	local min_v
+	local max_v
+	if [[ "${has_min_ge}" == "0" ]] ; then
+		min_slot_v=$(echo "${s}" \
+			| grep -E -o ">=net-libs/nodejs-[0-9]+:[0-9]+" \
+			| head -n 1 | sed -r -e "s|>=net-libs/nodejs-[0-9]+:||")
+		min_v=$(echo "${s}" \
+			| grep -E -o ">=net-libs/nodejs-[0-9]+" \
+			| head -n 1 | sed -e "s|>=net-libs/nodejs-||")
+		if [[ -n "${min_slot_v}" ]] ; then
+			min_v="${min_v}"
+		fi
+	fi
+	if [[ "${has_min_gt}" == "0" ]] ; then
+		min_slot_v=$(echo "${s}" \
+			| grep -E -o ">net-libs/nodejs-[0-9]+:[0-9]+" \
+			| head -n 1 | sed -r -e "s|>net-libs/nodejs-[0-9]+:||")
+		min_v=$(echo "${s}" \
+			| grep -E -o ">net-libs/nodejs-[0-9]+" \
+			| head -n 1 | sed -e "s|>net-libs/nodejs-||")
+		if [[ -n "${min_slot_v}" ]] ; then
+			min_v="${min_v}"
+		fi
+	fi
+	if [[ "${has_max_le}" == "0" ]] ; then
+		max_slot_v=$(echo "${s}" \
+			| grep -E -o "<=net-libs/nodejs-[0-9]+:[0-9]+" \
+			| head -n 1 | sed -r -e "s|<=net-libs/nodejs-[0-9]+:||")
+		max_v=$(echo "${s}" \
+			| grep -E -o "<=net-libs/nodejs-[0-9]+" \
+			| head -n 1 | sed -e "s|<=net-libs/nodejs-||")
+		if [[ -n "${max_slot_v}" ]] ; then
+			min_v="${max_v}"
+		fi
+	fi
+	if [[ "${has_max_lt}" == "0" ]] ; then
+		max_slot_v=$(echo "${s}" \
+			| grep -E -o "<net-libs/nodejs-[0-9]+:[0-9]+" \
+			| head -n 1 | sed -r -e "s|<net-libs/nodejs-[0-9]+:||")
+		max_v=$(echo "${s}" \
+			| grep -E -o "<net-libs/nodejs-[0-9]+" \
+			| head -n 1 | sed -e "s|<net-libs/nodejs-||")
+		if [[ -n "${max_slot_v}" ]] ; then
+			min_v="${max_v}"
 		fi
 	fi
 
-	if [[ -n "${NPM_UTILS_NODEJS_MAX_BAD}" ]] ; then
-		if ver_test ${node_major} -ge ${NPM_UTILS_NODEJS_MAX_BAD} \
-			|| ver_test ${node_v} -ge ${NPM_UTILS_NODEJS_MAX_BAD} \
-				; then
-			die \
-"Found node_header=${node_major} node_exe=${node_v} instead, \
-but requires < ${NPM_UTILS_NODEJS_MAX_BAD}"
+	# floor / min
+	if [[ "${has_min_ge}" == "0" ]] ; then
+		if (( ${node_exe_v} < ${min_v} ||
+			${node_header_v} < ${min_v} )) ; then
+			die "Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be >= ${min_v}"
+		fi
+	fi
+
+	if [[ "${has_min_gt}" == "0" ]] ; then
+		if (( ${node_exe_v} <= ${min_v} ||
+			${node_header_v} <= ${min_v} )) ; then
+			die "Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be > ${min_v}"
+		fi
+	fi
+
+	# ceil / max
+	if [[ "${has_max_le}" == "0" ]] ; then
+		if (( ${node_exe_v} > ${max_v} ||
+			${node_header_v} > ${max_v} )) ; then
+			die "Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be <= ${max_v}"
+		fi
+	fi
+
+	if [[ "${has_max_lt}" == "0" ]] ; then
+		if (( ${node_exe_v} >= ${max_v} ||
+			${node_header_v} >= ${max_v} )) ; then
+			die "Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be < ${max_v}"
 		fi
 	fi
 }
