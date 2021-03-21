@@ -611,21 +611,20 @@ Node.js exe version: ${node_v}"
 # @FUNCTION: npm-utils_check_nodejs
 # @DESCRIPTION:
 # Ensures header and node exe meet requirements.  Set NPM_UTILS_NODEJS_MAJOR and
-# NPM_UTILS_NODEJS_COND.
+# NPM_UTILS_NODEJS_COND_BAD, NPM_UTILS_NODEJS_CHECK_NODEJS_MSG.
 npm-utils_check_nodejs() {
-	if [[ -n "${NPM_UTILS_NODEJS_MAJOR}" && -n "${NPM_UTILS_NODEJS_COND}" ]] ; then
+	if [[ -n "${NPM_UTILS_NODEJS_MAJOR}" && -n "${NPM_UTILS_NODEJS_COND_BAD}" ]] ; then
 		local node_v=$(node --version | sed -e "s|v||")
 		local node_major=$(grep -r -e "NODE_MAJOR_VERSION" \
 			/usr/include/node/node_version.h | head -n 1 \
 			| cut -f 3 -d " ")
-		if ver_test ${node_major} ${NPM_UTILS_NODEJS_COND} \
+		if ver_test ${node_major} ${NPM_UTILS_NODEJS_COND_BAD} \
 				${NPM_UTILS_NODEJS_MAJOR} \
-			|| ver_test ${node_v} ${NPM_UTILS_NODEJS_COND} \
+			|| ver_test ${node_v} ${NPM_UTILS_NODEJS_COND_BAD} \
 				${NPM_UTILS_NODEJS_MAJOR} ; then
 			die \
-"Switch your node version to ${NPM_UTILS_NODEJS_COND} \
-	${NPM_UTILS_NODEJS_MAJOR}. \
-Found node_header=${node_major} node_exe=${node_v} instead."
+"Found node_header=${node_major} node_exe=${node_v} instead.  \
+${NPM_UTILS_NODEJS_CHECK_NODEJS_MSG}"
 		fi
 	fi
 }
