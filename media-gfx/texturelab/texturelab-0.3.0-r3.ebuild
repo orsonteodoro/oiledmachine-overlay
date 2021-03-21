@@ -28,7 +28,6 @@ https://github.com/njbrown/texturelabdata/archive/${ASSETS_COMMIT}.tar.gz \
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 MY_PN="TextureLab"
-NPM_UTILS_NODEJS_MAX_BAD="14"
 
 electron-app_src_preprepare() {
 	cd "${WORKDIR}" || die

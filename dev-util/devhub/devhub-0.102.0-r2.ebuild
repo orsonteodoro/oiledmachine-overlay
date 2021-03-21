@@ -11,7 +11,6 @@ HOMEPAGE="https://devhubapp.com"
 LICENSE="AGPL-3"
 KEYWORDS="~amd64"
 SLOT="0"
-NPM_UTILS_NODEJS_MIN_BAD="11"
 BDEPEND+=" >=net-libs/nodejs-12[npm]
 	>=sys-apps/yarn-1.13.0"
 ELECTRON_APP_MODE=yarn

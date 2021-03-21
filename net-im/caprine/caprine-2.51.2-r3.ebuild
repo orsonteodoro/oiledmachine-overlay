@@ -18,7 +18,6 @@ SRC_URI=\
 "https://github.com/sindresorhus/caprine/archive/v${PV}.tar.gz \
 	-> ${PN}-${PV}.tar.gz"
 RESTRICT="mirror"
-NPM_UTILS_NODEJS_MIN_BAD="13"
 
 electron-app_src_compile() {
 	cd "${S}" || die
