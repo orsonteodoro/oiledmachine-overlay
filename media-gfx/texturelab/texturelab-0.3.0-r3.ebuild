@@ -30,10 +30,6 @@ RESTRICT="mirror"
 MY_PN="TextureLab"
 NPM_UTILS_NODEJS_MAX_BAD="14"
 
-pkg_setup() {
-	electron-app_pkg_setup
-}
-
 electron-app_src_preprepare() {
 	cd "${WORKDIR}" || die
 	unpack "${PN}-assets-${ASSETS_COMMIT:0:7}.tar.gz"

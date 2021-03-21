@@ -20,10 +20,6 @@ SRC_URI=\
 RESTRICT="mirror"
 NPM_UTILS_NODEJS_MIN_BAD="13"
 
-pkg_setup() {
-	electron-app_pkg_setup
-}
-
 electron-app_src_compile() {
 	cd "${S}" || die
 	export PATH="${S}/node_modules/.bin:${PATH}"
