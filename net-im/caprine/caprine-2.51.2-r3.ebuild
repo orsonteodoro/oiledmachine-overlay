@@ -18,26 +18,10 @@ SRC_URI=\
 "https://github.com/sindresorhus/caprine/archive/v${PV}.tar.gz \
 	-> ${PN}-${PV}.tar.gz"
 RESTRICT="mirror"
-NODE_VERSION=14
+NPM_UTILS_NODEJS_MIN_BAD="13"
 
 pkg_setup() {
 	electron-app_pkg_setup
-	if has_version 'net-libs/nodejs:14' ; then
-		einfo "Using nodejs:14"
-		export NODE_VERSION="14"
-	elif has_version 'net-libs/nodejs:15' ; then
-		einfo "Using nodejs:15"
-		export NODE_VERSION="15"
-	elif has_version 'net-libs/nodejs:0' ; then
-		einfo "Using Gentoo's nodejs package.  Not supported but let's try."
-	fi
-	local node_v=$(node --version | sed -e "s|v||")
-	if ver_test ${node_v} -lt 14 ; then
-		die "Switch your node version to >=14.  Found ${node_v} instead."
-	else
-		export NODE_VERSION=$(echo ${node_v} | cut -f 1 -d ".")
-		einfo "Using nodejs-${NODE_VERSION}"
-	fi
 }
 
 electron-app_src_compile() {
