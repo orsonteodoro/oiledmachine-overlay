@@ -63,6 +63,6 @@ pkg_postinst() {
 	electron-app_pkg_postinst
 	einfo \
 "If you see Config schema violation: vibrancy should be string; vibrancy \
-should be equal to one of the allowed values"
-	einfo "You may need to run \`rm -rf ~/.config/Caprine\`"
+should be equal to one of the allowed values, then"
+	einfo "you may need to run \`rm -rf ~/.config/Caprine\`"
 }
