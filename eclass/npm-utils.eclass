@@ -610,21 +610,34 @@ Node.js exe version: ${node_v}"
 
 # @FUNCTION: npm-utils_check_nodejs
 # @DESCRIPTION:
-# Ensures header and node exe meet requirements.  Set NPM_UTILS_NODEJS_MAJOR_BAD and
-# NPM_UTILS_NODEJS_COND_BAD, NPM_UTILS_NODEJS_CHECK_NODEJS_MSG.
+# Ensures header and exe meet requirements.  Set NPM_UTILS_NODEJS_MIN_BAD
+# and NPM_UTILS_NODEJS_MAX_BAD.
 npm-utils_check_nodejs() {
-	if [[ -n "${NPM_UTILS_NODEJS_MAJOR_BAD}" && -n "${NPM_UTILS_NODEJS_COND_BAD}" ]] ; then
+	if [[ -n "${NPM_UTILS_NODEJS_MIN_BAD}" \
+		|| -n "${NPM_UTILS_NODEJS_MAX_BAD}" ]] ; then
 		local node_v=$(node --version | sed -e "s|v||")
 		local node_major=$(grep -r -e "NODE_MAJOR_VERSION" \
 			/usr/include/node/node_version.h | head -n 1 \
 			| cut -f 3 -d " ")
-		if ver_test ${node_major} ${NPM_UTILS_NODEJS_COND_BAD} \
-				${NPM_UTILS_NODEJS_MAJOR_BAD} \
-			|| ver_test ${node_v} ${NPM_UTILS_NODEJS_COND_BAD} \
-				${NPM_UTILS_NODEJS_MAJOR_BAD} ; then
+	fi
+
+	if [[ -n "${NPM_UTILS_NODEJS_MIN_BAD}" ]] ; then
+		if ver_test ${node_major} -le ${NPM_UTILS_NODEJS_MIN_BAD} \
+			|| ver_test ${node_v} -le ${NPM_UTILS_NODEJS_MIN_BAD} \
+				; then
 			die \
-"Found node_header=${node_major} node_exe=${node_v} instead.  \
-${NPM_UTILS_NODEJS_CHECK_NODEJS_MSG}"
+"Found node_header=${node_major} node_exe=${node_v} instead, \
+but requires > ${NPM_UTILS_NODEJS_MIN_BAD}"
+		fi
+	fi
+
+	if [[ -n "${NPM_UTILS_NODEJS_MAX_BAD}" ]] ; then
+		if ver_test ${node_major} -ge ${NPM_UTILS_NODEJS_MAX_BAD} \
+			|| ver_test ${node_v} -ge ${NPM_UTILS_NODEJS_MAX_BAD} \
+				; then
+			die \
+"Found node_header=${node_major} node_exe=${node_v} instead, \
+but requires < ${NPM_UTILS_NODEJS_MAX_BAD}"
 		fi
 	fi
 }

@@ -28,28 +28,10 @@ https://github.com/njbrown/texturelabdata/archive/${ASSETS_COMMIT}.tar.gz \
 S="${WORKDIR}/${PN}-${PV}"
 RESTRICT="mirror"
 MY_PN="TextureLab"
-NODE_VERSION="12"
+NPM_UTILS_NODEJS_MAX_BAD="14"
 
 pkg_setup() {
 	electron-app_pkg_setup
-	if has_version 'net-libs/nodejs:12' ; then
-		einfo "Using nodejs:12"
-		export NODE_VERSION="12"
-	elif has_version 'net-libs/nodejs:10' ; then
-		einfo "Using nodejs:10"
-		export NODE_VERSION="10"
-	elif has_version 'net-libs/nodejs:0' ; then
-		einfo "Using node:0"
-	else
-		die "<net-libs/nodejs-14 must be used."
-	fi
-	local node_v=$(node --version | sed -e "s|v||")
-	if ver_test ${node_v} -ge 14 ; then
-		die "Switch your node version to <14.  Found ${node_v} instead."
-	else
-		export NODE_VERSION=$(echo ${node_v} | cut -f 1 -d ".")
-		einfo "Using nodejs-${NODE_VERSION}"
-	fi
 }
 
 electron-app_src_preprepare() {
