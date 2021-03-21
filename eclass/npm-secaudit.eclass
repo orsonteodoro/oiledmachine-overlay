@@ -178,6 +178,7 @@ is End Of Life (EOL) and has vulnerabilities."
 	fi
 
 	npm-utils_is_nodejs_header_exe_same
+	npm-utils_check_nodejs
 }
 
 # @FUNCTION: npm-secaudit_fetch_deps

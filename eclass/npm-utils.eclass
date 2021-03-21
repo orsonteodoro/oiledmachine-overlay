@@ -607,3 +607,25 @@ Switch your headers via \`eselect nodejs\`"
 Node.js exe version: ${node_v}"
 	fi
 }
+
+# @FUNCTION: npm-utils_check_nodejs
+# @DESCRIPTION:
+# Ensures header and node exe meet requirements.  Set NPM_UTILS_NODEJS_MAJOR and
+# NPM_UTILS_NODEJS_COND.
+npm-utils_check_nodejs() {
+	if [[ -n "${NPM_UTILS_NODEJS_MAJOR}" && -n "${NPM_UTILS_NODEJS_COND}" ]] ; then
+		local node_v=$(node --version | sed -e "s|v||")
+		local node_major=$(grep -r -e "NODE_MAJOR_VERSION" \
+			/usr/include/node/node_version.h | head -n 1 \
+			| cut -f 3 -d " ")
+		if ver_test ${node_major} ${NPM_UTILS_NODEJS_COND} \
+				${NPM_UTILS_NODEJS_MAJOR} \
+			|| ver_test ${node_v} ${NPM_UTILS_NODEJS_COND} \
+				${NPM_UTILS_NODEJS_MAJOR} ; then
+			die \
+"Switch your node version to ${NPM_UTILS_NODEJS_COND} \
+	${NPM_UTILS_NODEJS_MAJOR}. \
+Found node_header=${node_major} node_exe=${node_v} instead."
+		fi
+	fi
+}

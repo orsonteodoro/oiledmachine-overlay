@@ -69,7 +69,6 @@ media-libs/alure
 # while project is active within ~2 years (2020).  May contain critical
 # or multiple high vulnerabilities.
 app-editors/epic-journal # Electron 3.1.13 with Chromium 66.0.3359.181 parts
-app-editors/stickynotes # Electron 1.8.8 with Chromium 59.0.3071.115
 dev-util/lepton # Electron 8.3.1 with Chromium 80.0.3987.165 parts
 net-im/igdm # Electron 3.1.13 with Chromium 66.0.3359.181 parts
 

@@ -117,11 +117,11 @@ ELECTRON_APP_VERSION_DATA_PATH="${ELECTRON_APP_DATA_DIR}/lite.json"
 
 # See also https://github.com/electron/electron/security/advisories
 
-# (A) Components of are found in
+# (A) Chromium components are found in
 # https://github.com/chromium/chromium/tree/master/chrome/browser
 # https://github.com/chromium/chromium/tree/master/third_party
 
-# (B) Components used by Electron are found in
+# (B) Chromium components used by Electron are found in
 # https://github.com/electron/electron/blob/master/chromium_src/BUILD.gn
 # https://github.com/electron/electron/blob/master/BUILD.gn
 
@@ -773,6 +773,7 @@ ELECTRON_APP_SNAP_INSTALL_DIR"
 	fi
 
 	npm-utils_is_nodejs_header_exe_same
+	npm-utils_check_nodejs
 }
 
 # @FUNCTION: electron-app_fetch_deps_npm
@@ -891,10 +892,19 @@ critical vulnerabilities in the internal Chromium."
 		ELECTRON_V=$(npm ls electron \
 			| grep -E -e "electron@[0-9.]+" \
 			| tail -n 1 \
-			| sed -r -e "s|[^0-9\.]*||g") # used by package
+			| grep -E -o -e "[0-9\.a-z-]*" \
+			| tail -n 1) # used by package and json search
+		ELECTRON_V_=${ELECTRON_V}
+		ELECTRON_V_=${ELECTRON_V_/-/_}
+		ELECTRON_V_=${ELECTRON_V_/beta./beta}
+		ELECTRON_V_=${ELECTRON_V_/nightly./pre} # sanitize for ver_test
 	elif [[ -n "${ELECTRON_APP_ELECTRON_V}" ]] ; then
 		# fallback based on analysis on package.json
-		ELECTRON_V=${ELECTRON_APP_ELECTRON_V}
+		ELECTRON_V=${ELECTRON_APP_ELECTRON_V} # for json search
+		ELECTRON_V_=${ELECTRON_APP_ELECTRON_V}
+		ELECTRON_V_=${ELECTRON_V_/-/_}
+		ELECTRON_V_=${ELECTRON_V_/beta./beta}
+		ELECTRON_V_=${ELECTRON_V_/nightly./pre} # sanitize for ver_test
 	else
 		# Skip for dependency but not building ui yet
 		return
@@ -913,7 +923,7 @@ if [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Critical" \
 	|| "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Moderate" \
 	|| "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Low" ]] ; then
 	if ver_test $(ver_cut 1 "${ELECTRON_V}") -eq 9 \
-		&& ver_test ${ELECTRON_V} ${INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_COND} \
+		&& ver_test ${ELECTRON_V_} ${INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_COND} \
 			"${INSECURE_NVD_ELECTRON_LAST_CRITICAL_9}" ; then
 		adie \
 "Electron ${ELECTRON_V} has a critical vulnerability itself.  For details see\n\
@@ -921,7 +931,7 @@ ${INSECURE_NVD_ELECTRON_LAST_CRITICAL_9_LINK_ADVISORY}"
 	fi
 
 	if ver_test $(ver_cut 1 "${ELECTRON_V}") -eq 8 \
-		&& ver_test ${ELECTRON_V} ${INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_COND} \
+		&& ver_test ${ELECTRON_V_} ${INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_COND} \
 			"${INSECURE_NVD_ELECTRON_LAST_CRITICAL_8}" ; then
 		adie \
 "Electron ${ELECTRON_V} has a critical vulnerability itself.  For details see\n\
@@ -929,7 +939,7 @@ ${INSECURE_NVD_ELECTRON_LAST_CRITICAL_8_LINK_ADVISORY}"
 	fi
 
 	if ver_test $(ver_cut 1 "${ELECTRON_V}") -eq 7 \
-		&& ver_test ${ELECTRON_V} ${INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_COND} \
+		&& ver_test ${ELECTRON_V_} ${INSECURE_NVD_ELECTRON_LAST_CRITICAL_7_COND} \
 			"${INSECURE_NVD_ELECTRON_LAST_CRITICAL_7}" ; then
 		adie \
 "Electron ${ELECTRON_V} has a critical vulnerability itself.  For details see\n\
@@ -1057,6 +1067,8 @@ electron-app_src_unpack() {
 	if declare -f electron-app_src_preprepare > /dev/null ; then
 		electron-app_src_preprepare
 	fi
+
+	electron-app_audit_versions
 
 	cd "${S}"
 	if declare -f electron-app_src_prepare > /dev/null ; then

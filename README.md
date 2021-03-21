@@ -151,9 +151,6 @@ contains a known infamous critical vulnerability.
 | app-arch/go-appimage | Contains the daemon to load appimage packaged programs and appimagetool.  AppImage is used for container-like sandboxed portable Linux or Electron apps ideal for LiveCDs or USB transport.  This package is still in development. |
 | app-editors/epic-journal | This is an Electron based encrypted journal. |
 | app-editors/nano-ycmd | This is a modified GNU nano that uses ycmd.  It is still experimental. |
-| app-editors/noty | Removed.  Notes are stored in /home/username/.config/Noty/config.json . |
-| app-editors/preserver | This is a sticky notes app created with Electron. |
-| app-editors/stickynotes | This is an Electron based note taker that resembles a sticky pad. |
 | app-emacs/emacs-ycmd | This is a major mode (extension) to GNU Emacs that allows you to use ycmd. |
 | app-eselect/eselect-emscripten | Allows to use a particular Emscripten version as the current one. |
 | app-eselect/eselect-nodejs | Allows to use a particular Node.js as the current one. |
