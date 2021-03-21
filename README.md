@@ -227,7 +227,6 @@ contains a known infamous critical vulnerability.
 | dev-util/lepton | This is a programmer reusable code snipplet manager based on Electron and able to sync with Gist. |
 | dev-util/objconv | TBA |
 | dev-util/premake | Kept for latest versions. |
-| dev-util/snippetstore | This is a program to save reusable code templates in Electron. |
 | dev-util/ycm-generator | You need this if you want C, C++, ObjC, ObjC++ support with your ycmd client.  It is mandatory for those languages. |
 | dev-util/ycmd | This is a YouCompleteMe server.  Just add your ycmd client to your text editor then you have code completion support.  The 2014 ebuild is for older clients.  The 2017 ebuilds require clients use the new HMAC header calculation.  It supports C#, C, C++, Objective C, Objective C++, Rust, Go, JavaScript, TypeScript, Python.  If you use the `javascript` or `typescript` USE flag, then you need to add the jm-overlay to pull in the dev-nodejs packages. |
 | dev-vcs/breezy | This is a Bazaar client in Python v3. |

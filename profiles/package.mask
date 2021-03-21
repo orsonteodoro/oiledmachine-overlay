@@ -52,7 +52,6 @@ sys-kernel/kpatch
 app-editors/epic-journal
 app-editors/preserver
 app-editors/stickynotes
-dev-util/snippetstore
 
 # ebuilds not updated since 2020
 app-text/pdfchain
