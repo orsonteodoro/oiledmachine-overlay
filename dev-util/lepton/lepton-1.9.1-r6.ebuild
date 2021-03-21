@@ -56,5 +56,5 @@ src_install() {
 		"build/icon/icon.png" "${PN^}" \
 		"Development" "${ELECTRON_APP_INSTALL_PATH}/${PN} \"\$@\""
 	npm-utils_install_licenses
-	fperms 755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
+	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
 }
