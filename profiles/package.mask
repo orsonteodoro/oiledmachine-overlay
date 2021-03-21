@@ -48,11 +48,6 @@ sys-kernel/kpatch
 # Masked for security reasons
 #--------------------------------------------------------------------------------------------------
 
-# electron / nodejs apps; not updated; high vulnerably occurrence frequency
-app-editors/epic-journal
-app-editors/preserver
-app-editors/stickynotes
-
 # ebuilds not updated since 2020
 app-text/pdfchain
 dev-lua/luafilesystem
@@ -71,9 +66,13 @@ sys-process/psdoom-ng
 media-libs/alure
 
 # Contains End Of Life (EOL) Electron versions with old Chromium parts
-# while project is active within ~2 years (2020)
-net-im/igdm
-dev-util/lepton
+# while project is active within ~2 years (2020).  May contain critical
+# or multiple high vulnerabilities.
+app-editors/epic-journal # Electron 3.1.13 with Chromium 66.0.3359.181 parts
+app-editors/stickynotes # Electron 1.8.8 with Chromium 59.0.3071.115
+dev-util/lepton # Electron 8.3.1 with Chromium 80.0.3987.165 parts
+net-im/igdm # Electron 3.1.13 with Chromium 66.0.3359.181 parts
+
 
 # Masked for ebuild quality control reasons
 #--------------------------------------------------------------------------------------------------
