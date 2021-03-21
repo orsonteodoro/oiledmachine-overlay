@@ -55,7 +55,7 @@ src_install() {
 		"static/Icon.png" \
 		"${PN^}" "Network" \
 	"${ELECTRON_APP_INSTALL_PATH}/${PN} \"\$@\""
-	fperms 755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
+	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN}"
 	npm-utils_install_licenses
 }
 
