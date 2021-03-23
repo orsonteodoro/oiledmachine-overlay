@@ -210,6 +210,7 @@ npm-secaudit_fetch_deps() {
 		fi
 		einfo "Running npm install ${install_args[@]}"
 		npm install ${install_args[@]} || die
+		npm_check_npm_error
 	popd
 }
 

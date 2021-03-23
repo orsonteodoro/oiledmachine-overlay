@@ -807,6 +807,7 @@ electron-app_fetch_deps_npm() {
 		fi
 		einfo "Running npm install ${install_args[@]} inside electron-app_fetch_deps_npm"
 		npm install ${install_args[@]} || die
+		npm_check_npm_error
 	popd
 }
 

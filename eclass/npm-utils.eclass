@@ -65,6 +65,15 @@ NPM_UTILS_FIX_FORCE=${NPM_UTILS_FIX_FORCE:="0"}
 
 # @FUNCTION: npm_install_sub
 # @DESCRIPTION:
+npm_check_npm_error()
+{
+	if find "${HOME}/npm/_logs/"* 2>/dev/null 1>/dev/null ; then
+		die "Detected potential download failure(s).  Retry."
+	fi
+}
+
+# @FUNCTION: npm_install_sub
+# @DESCRIPTION:
 # Installs a npm package in a subdirectory.
 # You should specify either --save-prod, --save-dev, or --no-save.
 # @CODE
@@ -78,6 +87,7 @@ npm_install_sub() {
 	einfo "npm_install_sub: dir=$(pwd)/${dir}"
 	pushd "${dir}" || die
 		npm install ${@} || die
+		npm_check_npm_error
 		if [ -e package-lock.json ] ; then
 			npm_pre_audit
 		fi
@@ -94,6 +104,7 @@ npm_install_sub() {
 npm_install_prod() {
 	einfo "npm_install_prod:  npm install ${@} --save-prod"
 	npm install ${@} --save-prod || die
+	npm_check_npm_error
 	if [ -e package-lock.json ] ; then
 		npm_pre_audit
 	fi
@@ -109,6 +120,7 @@ npm_install_prod() {
 npm_install_dev() {
 	einfo "npm_install_dev:  npm install ${@} --save-dev"
 	npm install ${@} --save-dev || die
+	npm_check_npm_error
 	if [ -e package-lock.json ] ; then
 		npm_pre_audit
 	fi
@@ -124,6 +136,7 @@ npm_install_dev() {
 npm_install_no_save() {
 	einfo "npm_install_no_save:  npm install ${@} --no-save"
 	npm install ${@} --no-save || die
+	npm_check_npm_error
 	if [ -e package-lock.json ] ; then
 		npm_pre_audit
 	fi

@@ -1,0 +1,22 @@
+--- carbon-now-cli-1.4.0/src/headless-visit.js.orig	2019-03-03 17:44:14.000000000 -0800
++++ carbon-now-cli-1.4.0/src/headless-visit.js	2021-03-19 20:29:01.919165157 -0700
+@@ -1,10 +1,18 @@
+ // Packages
+ const puppeteer = require('puppeteer');
++const path = require('path');
+ 
+ module.exports = async ({url, location = process.cwd(), type = 'png', headless = false, timeout = 2000}) => {
+ 	// Launch browser
++	const chrome_exe_path =
++			process.env.PUPPETEER_EXECUTABLE_PATH
++			|| path.join(path.dirname(process.execPath),
++			'node_modules', 'puppeteer', ".local-chromium",
++			"linux-686378", "chrome-linux", "chrome");
++
+ 	const browser = await puppeteer.launch({
+-		headless
++		headless,
++		executablePath: chrome_exe_path
+ 	});
+ 	// Open new page
+ 	const page = await browser.newPage();
