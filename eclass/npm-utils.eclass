@@ -63,8 +63,10 @@ NPM_UTILS_FIX_FORCE=${NPM_UTILS_FIX_FORCE:="0"}
 
 # ##################  END Per-package environmental variables ##################
 
-# @FUNCTION: npm_install_sub
+# @FUNCTION: npm_check_npm_error
 # @DESCRIPTION:
+# The `npm install <pkg>` command should return a non-zero value on cb() error
+# but does not.  Check and die if error log is found.
 npm_check_npm_error()
 {
 	if find "${HOME}/npm/_logs/"* 2>/dev/null 1>/dev/null ; then
