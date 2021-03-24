@@ -771,7 +771,7 @@ npm-utils_check_chromium_eol() {
 				fi
 			else
 				einfo \
-"chromium_exe_v=${chromium_v} >= chromium_v_stable=${CHROMIUM_STABLE_V}"
+"chromium_exe_v=${chromium_v} >= chromium_exe_v_stable=${CHROMIUM_STABLE_V}"
 			fi
 		done
 	fi
