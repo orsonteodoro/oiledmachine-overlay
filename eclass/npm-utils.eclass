@@ -61,6 +61,11 @@ NPM_UTILS_ALLOW_I_PACKAGE_LOCK=${NPM_UTILS_ALLOW_I_PACKAGE_LOCK:="0"}
 # ebuild itself.
 NPM_UTILS_FIX_FORCE=${NPM_UTILS_FIX_FORCE:="0"}
 
+# Keep up to date from
+# https://www.chromestatus.com/features
+# https://en.wikipedia.org/wiki/Google_Chrome_version_history
+CHROMIUM_STABLE_V="89"
+
 # ##################  END Per-package environmental variables ##################
 
 # @FUNCTION: npm_check_npm_error

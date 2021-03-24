@@ -66,11 +66,6 @@ ${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL:="Critical"}
 
 # ##################  START ebuild and eclass global variables #################
 
-# Keep up to date from
-# https://www.chromestatus.com/features
-# https://en.wikipedia.org/wiki/Google_Chrome_version_history
-CHROMIUM_STABLE_V="89"
-
 _NPM_SECAUDIT_REG_PATH=${_NPM_SECAUDIT_REG_PATH:=""} # private set only within in the eclass
 if [[ -n "${NPM_SECAUDIT_REG_PATH}" ]] ; then
 die "NPM_SECAUDIT_REG_PATH has been removed and replaced with\n\
