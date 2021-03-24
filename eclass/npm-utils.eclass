@@ -719,3 +719,56 @@ npm-utils_check_nodejs() {
 		fi
 	fi
 }
+
+# @FUNCTION: npm-utils_check_chromium_eol
+# @DESCRIPTION: Checks if the version is EOL.  Used for
+# both Electron and packages like Puppeteer.
+npm-utils_check_chromium_eol() {
+	# TODO check updated chromium via `chrome --version`
+	local chromium_v=${1}
+	if [[ -n "${chromium_v}" ]] ; then
+		if ver_test $(ver_cut 1 ${chromium_v}) -lt ${CHROMIUM_STABLE_V} ; then
+			if [[ \
+				( -n "${NPM_SECAUDIT_NO_DIE_ON_AUDIT}" \
+					&& "${NPM_SECAUDIT_NO_DIE_ON_AUDIT}" == "1" ) \
+				|| ( -n "${ELECTRON_APP_NO_DIE_ON_AUDIT}" \
+					&& "${ELECTRON_APP_NO_DIE_ON_AUDIT}" == "1" ) \
+			]] ; then
+				ewarn \
+"The package contains chromium_v=${chromium_v} which is End Of Life (EOL)"
+			else
+				die \
+"The package contains chromium_v=${chromium_v} which is End Of Life (EOL)"
+			fi
+		else
+			einfo \
+"chromium_v=${chromium_v} >= chromium_v_stable=${CHROMIUM_STABLE_V}"
+		fi
+	fi
+
+	if [[ \
+		( -n "${NPM_SECAUDIT_CHECK_CHROMIUM}" \
+			&& "${NPM_SECAUDIT_CHECK_CHROMIUM}" == "1" ) \
+		|| ( -n "${ELECTRON_APP_CHECK_CHROMIUM}" \
+			&& "${ELECTRON_APP_CHECK_CHROMIUM}" == "1" ) \
+		|| -n "${chromium_v}" \
+	]]; then
+		for x in $(find . -name "chrome" 2>/dev/null) ; do
+			chromium_v=$(strings ${x} \
+		| grep -E -e "^[0-9]+\.[0-9]\.[0-9]{3,4}\.[0-9]+$" | head -n 1)
+			if ver_test $(ver_cut 1 ${chromium_v}) -lt ${CHROMIUM_STABLE_V} ; then
+				if [[ "${NPM_SECAUDIT_NO_DIE_ON_AUDIT}" == "1" ]] ; then
+					ewarn \
+"The package contains chromium_exe_v=${chromium_v} which is End Of Life (EOL)"
+				else
+					die \
+"The package contains chromium_exe_v=${chromium_v} which is End Of Life (EOL)"
+				fi
+			else
+				einfo \
+"chromium_exe_v=${chromium_v} >= chromium_v_stable=${CHROMIUM_STABLE_V}"
+			fi
+		done
+	fi
+}
+

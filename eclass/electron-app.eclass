@@ -780,6 +780,8 @@ ELECTRON_APP_SNAP_INSTALL_DIR"
 	elif [[ -n "${DEPEND}" ]] ; then
 		npm-utils_check_nodejs "${DEPEND}"
 	fi
+
+	npm-utils_check_chromium_eol ${CHROMIUM_V}
 }
 
 # @FUNCTION: electron-app_fetch_deps_npm
@@ -1044,6 +1046,7 @@ is End Of Life (EOL) and has vulnerabilities."
 		adie \
 "Electron ${ELECTRON_V} requires at least >=sys-libs/zlib-${ZLIB_V}"
 	fi
+	npm-utils_check_chromium_eol ${CHROMIUM_V}
 	einfo
 	einfo "Electron version report with internal/external dependencies:"
 	einfo
@@ -1075,6 +1078,7 @@ electron-app_src_unpack() {
 		electron-app_src_preprepare
 	fi
 
+	# Inspect before downloading
 	electron-app_audit_versions
 
 	cd "${S}"

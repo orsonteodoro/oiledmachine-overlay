@@ -14,6 +14,7 @@ IUSE+=" clipboard"
 RDEPEND+=" clipboard? ( x11-misc/xclip )"
 BDEPEND+=" >=net-libs/nodejs-14[npm]" # package.json says 8.3 but tested working only on 14
 MY_PN="${PN//-cli/}"
+CHROMIUM_V="90.0.4427.0" # After update
 SRC_URI=\
 "https://github.com/mixn/carbon-now-cli/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
@@ -70,6 +71,10 @@ src_install() {
 	insinto "${NPM_SECAUDIT_INSTALL_PATH}/node_modules/puppeteer"
 	doins -r "node_modules/puppeteer/.local-chromium"
 	fperms 0755 "${NPM_SECAUDIT_INSTALL_PATH}/${PN}"
+	insinto src/helpers
+	doins src/helpers/{carbon-map.json,language-map.json}
+	exeinto "${NPM_SECAUDIT_INSTALL_PATH}/node_modules/opn"
+	doexe node_modules/opn/xdg-open
 
 	local dn=$(basename $(find "node_modules/puppeteer/.local-chromium" -name "linux-*"))
 	fperms 0755 \
@@ -87,17 +92,12 @@ src_install() {
 		-o -name "xdg-settings" \
 		| sed -e "s|${ED}||g")
 
-	# Not required since we install the whole entire local tree but may in
-	# the future if packaged with pkg (single exe install).
 	npm-secaudit_store_package_jsons ./
 	npm-utils_install_licenses
 }
 
 pkg_postinst() {
 	npm-secaudit_pkg_postinst
-	ewarn \
-"This package contains an End Of Life (EOL) version of Chromium 78.0.3882.0\n\
-which may likely contain high/critical vulnerabilities."
 	ewarn \
 "The program may fail randomly.  Try again if it fails."
 }

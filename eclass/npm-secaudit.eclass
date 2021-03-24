@@ -66,6 +66,11 @@ ${NPM_SECAUDIT_UNACCEPTABLE_VULNERABILITY_LEVEL:="Critical"}
 
 # ##################  START ebuild and eclass global variables #################
 
+# Keep up to date from
+# https://www.chromestatus.com/features
+# https://en.wikipedia.org/wiki/Google_Chrome_version_history
+CHROMIUM_STABLE_V="89"
+
 _NPM_SECAUDIT_REG_PATH=${_NPM_SECAUDIT_REG_PATH:=""} # private set only within in the eclass
 if [[ -n "${NPM_SECAUDIT_REG_PATH}" ]] ; then
 die "NPM_SECAUDIT_REG_PATH has been removed and replaced with\n\
@@ -137,7 +142,7 @@ IUSE+=" debug"
 # ##################  END ebuild and eclass global variables #################
 
 
-# @FUNCTION: npm_pkg_setup
+# @FUNCTION: npm-secaudit_pkg_setup
 # @DESCRIPTION:
 # Initializes globals
 npm-secaudit_pkg_setup() {
@@ -185,6 +190,8 @@ is End Of Life (EOL) and has vulnerabilities."
 	elif [[ -n "${DEPEND}" ]] ; then
 		npm-utils_check_nodejs "${DEPEND}"
 	fi
+
+	npm-utils_check_chromium_eol ${CHROMIUM_V}
 }
 
 # @FUNCTION: npm-secaudit_fetch_deps
@@ -232,6 +239,9 @@ npm-secaudit_src_unpack() {
 	if declare -f npm-secaudit_src_preprepare > /dev/null ; then
 		npm-secaudit_src_preprepare
 	fi
+
+	# Inspect before downloading
+	npm-secaudit_audit_dev
 
 	cd "${S}"
 	if declare -f npm-secaudit_src_prepare > /dev/null ; then
@@ -464,6 +474,7 @@ npm-secaudit_audit_dev() {
 			fi
 		popd
 	done
+	npm-utils_check_chromium_eol ${CHROMIUM_V}
 }
 
 # @FUNCTION: npm-secaudit_audit_prod
@@ -677,3 +688,4 @@ npm-secaudit_restore_package_jsons() {
 		shopt -u dotglob
 	fi
 }
+
