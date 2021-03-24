@@ -21,6 +21,9 @@ SRC_URI=\
 S="${WORKDIR}/${PN}-${PV}"
 
 npm-secaudit_src_preprepare() {
+	# Fix me: Pkg: Error reading from file.
+	ewarn "This ebuild is a Work In Progress (WIP) and will not work."
+
 	eapply "${FILESDIR}/carbon-now-cli-1.4.0-pkg.patch"
 	eapply "${FILESDIR}/carbon-now-cli-1.4.0-pkg-browser-path.patch"
 	npm install pkg --save-dev || die
@@ -71,7 +74,7 @@ src_install() {
 	insinto "${NPM_SECAUDIT_INSTALL_PATH}/node_modules/puppeteer"
 	doins -r "node_modules/puppeteer/.local-chromium"
 	fperms 0755 "${NPM_SECAUDIT_INSTALL_PATH}/${PN}"
-	insinto src/helpers
+	insinto "${NPM_SECAUDIT_INSTALL_PATH}/src/helpers"
 	doins src/helpers/{carbon-map.json,language-map.json}
 	exeinto "${NPM_SECAUDIT_INSTALL_PATH}/node_modules/opn"
 	doexe node_modules/opn/xdg-open
