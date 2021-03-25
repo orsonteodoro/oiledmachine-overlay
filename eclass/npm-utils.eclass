@@ -57,10 +57,6 @@ NPM_UTILS_ALLOW_AUDIT=${NPM_UTILS_ALLOW_AUDIT:="1"}
 
 NPM_UTILS_ALLOW_I_PACKAGE_LOCK=${NPM_UTILS_ALLOW_I_PACKAGE_LOCK:="0"}
 
-# You could define it as a per-package envar, but should not be done in the
-# ebuild itself.
-NPM_UTILS_FIX_FORCE=${NPM_UTILS_FIX_FORCE:="0"}
-
 # Keep up to date from
 # https://www.chromestatus.com/features
 # https://en.wikipedia.org/wiki/Google_Chrome_version_history
@@ -75,7 +71,9 @@ CHROMIUM_STABLE_V="89"
 npm_check_npm_error()
 {
 	if find "${HOME}/npm/_logs/"* 2>/dev/null 1>/dev/null ; then
-		die "Detected potential download failure(s).  Retry."
+		die \
+"Detected potential download failure(s).  Retry.  Logs can be found in \
+${HOME}/npm/_logs"
 	fi
 }
 
@@ -106,7 +104,8 @@ npm_install_sub() {
 # Installs a npm package as a production dependency
 # @CODE
 # Parameters:
-# $1 ... $n - additional args to npm install (optional)
+# $1 - a package to install (required)
+# $2 ... $n - additional args to pass to npm install (optional)
 # @CODE
 npm_install_prod() {
 	einfo "npm_install_prod:  npm install ${@} --save-prod"
@@ -117,12 +116,13 @@ npm_install_prod() {
 	fi
 }
 
-# @FUNCTION: npm_install_prod
+# @FUNCTION: npm_install_dev
 # @DESCRIPTION:
 # Installs a npm package as a development dependency
 # @CODE
 # Parameters:
-# $1 ... $n - additional args to npm install (optional)
+# $1 - a package to install (required)
+# $2 ... $n - additional args to pass to npm install (optional)
 # @CODE
 npm_install_dev() {
 	einfo "npm_install_dev:  npm install ${@} --save-dev"
@@ -133,12 +133,26 @@ npm_install_dev() {
 	fi
 }
 
+# @FUNCTION: npm_uninstall
+# @DESCRIPTION:
+# Uninstalls a npm package
+# @CODE
+# Parameters:
+# $1 - a package to uninstall (required)
+# $2 ... $n - additional args to pass to npm uninstall (optional)
+# @CODE
+npm_uninstall() {
+	einfo "npm_uninstall:  npm uninstall ${@}"
+	npm uninstall ${@} || die
+}
+
 # @FUNCTION: npm_install_no_save
 # @DESCRIPTION:
 # Installs a npm package without altering the package.json
 # @CODE
 # Parameters:
-# $1 ... $n - additional args to npm install (optional)
+# $1 - a package to uninstall (required)
+# $2 ... $n - additional args to pass to npm install (optional)
 # @CODE
 npm_install_no_save() {
 	einfo "npm_install_no_save:  npm install ${@} --no-save"
@@ -183,12 +197,6 @@ npm_auto_fix() {
 		return
 	fi
 
-	local option_fix_force=""
-	if [[ -n "${NPM_UTILS_FIX_FORCE}" \
-		&& "${NPM_UTILS_FIX_FORCE}" == "1" ]] ; then
-		option_fix_force="--force"
-	fi
-
 	local is_trivial=0
 	local is_auto_fix=0
 	local is_manual_review=0
@@ -196,7 +204,7 @@ npm_auto_fix() {
 	local is_missing=0
 	local is_invalid_version=0
 	local audit_file="${T}/npm-audit-result"
-	npm audit &> "${audit_file}"
+	npm audit &> "${audit_file}" || true
 	cat "${audit_file}" || die
 	local needed_fix="$?"
 	cat "${audit_file}" | grep -q -F -e "npm audit fix" \
@@ -213,8 +221,8 @@ npm_auto_fix() {
 		&& is_invalid_version=1
 	if [[ "${is_auto_fix}" == "1" ]] ; then
 		einfo \
-"Found auto fixes.  Running \`npm audit fix ${option_fix_force}\`.  is_auto_fix=1"
-		npm audit fix ${option_fix_force}
+"Found auto fixes.  Running \`npm audit fix\`.  is_auto_fix=1"
+		npm audit fix || die
 		#L=$(cat "${audit_file}" \
 #| grep -E -e "to resolve [0-9]+ vulnerabilit(y|ies)" \
 #| sed -e "s|# Run  ||" -e "s#  to resolve [0-9]+ vulnerabilit(y|ies)##g")
@@ -225,13 +233,13 @@ npm_auto_fix() {
 		return 1
 	elif [[ "${is_trivial}" == "1" ]] ; then
 		einfo \
-"Found trivial fixes.  Running \`npm audit fix ${option_fix_force}\`.\n\
+"Found trivial fixes.  Running \`npm audit fix\`.\n\
 is_trivial=1"
-		npm audit fix ${option_fix_force} || die
+		npm audit fix || die
 		return 1
-		npm audit 2>&1 > "${audit_file}"
-		cat "${audit_file}" | grep -q -F -e "found 0 vulnerabilities" \
-			|| die "not fixed"
+		# npm audit 2>&1 > "${audit_file}" || die
+		# cat "${audit_file}" | grep -q -F -e "found 0 vulnerabilities" \
+		#	|| die "not fixed"
 	elif [[ "${is_manual_review}" == "1" ]] ; then
 		cat "${audit_file}" || die
 		ewarn \
@@ -256,10 +264,10 @@ Fix immediately.  is_manual_review=1.  Reported from: $(pwd)"
 			&& is_clean=1
 		if [[ "${is_clean}" == 0 ]] ; then
 			einfo \
-			"Running \`npm audit fix ${option_fix_force}\` anyway."
-			npm audit fix ${option_fix_force}
+			"Running \`npm audit fix\` anyway."
+			npm audit fix || die
 		fi
-		npm audit 2>&1 > "${audit_file}"
+		npm audit 2>&1 > "${audit_file}" || die
 		cat "${audit_file}" | grep -q -F -e "found 0 vulnerabilities" \
 			|| return 2
 		return 1
@@ -268,12 +276,12 @@ Fix immediately.  is_manual_review=1.  Reported from: $(pwd)"
 	elif [[ "${is_clean}" == "0" ]] ; then
 		einfo "Audit is not clean.  Going to fix.  is_clean=0"
 		cat "${audit_file}" || die
-		einfo "Running \`npm audit fix ${option_fix_force}\`."
-		npm audit fix ${option_fix_force} || die
+		einfo "Running \`npm audit fix\`."
+		npm audit fix || die
 		return 1
 	else
 		cat "${audit_file}" || die
-		die "Encountered unknown case.  Fixme"
+		die "Uncaught error"
 	fi
 	return 0
 }
@@ -328,7 +336,7 @@ npm_pre_audit() {
 	if [ -e package-lock.json ] ; then
 		# upstream wanted package lock case
 		local audit_file="${T}/npm-audit-result"
-		npm audit &> "${audit_file}"
+		npm audit &> "${audit_file}" || true
 
 		if grep -q -F -e "Manual Review" "${audit_file}" \
 		|| grep -q -F -e "npm audit security report" "${audit_file}" ; then
@@ -344,6 +352,11 @@ npm_pre_audit() {
 		elif [ ! -e package-lock.json ] ; then
 			die \
 "Missing package-lock.json required for audit.  Fixme:  unknown case."
+		else
+			if cat "${audit_file}" | grep -q -F -e "npm ERR!" ; then
+				cat "${audit_file}"
+				die "Uncaught error"
+			fi
 		fi
 	else
 		die "Using npm_pre_audit requires a package-lock.json"
@@ -381,7 +394,7 @@ npm_audit_fix() {
 	local dir="${1}"
 	einfo "npm_audit_fix: dir=$(pwd)/${dir}"
 	pushd "${dir}" || die
-		npm_pre_audit # calls npm audit fix --force if trivial
+		npm_pre_audit
 	popd
 }
 
@@ -498,10 +511,15 @@ dir=$(realpath ${base}/${dir})"
 		for l in ${L} ; do
 			if [ -e "${l}" ] ; then
 				pushd "$(dirname ${l})" || die
-					npm audit &> "${audit_file}"
+					npm audit &> "${audit_file}" || true
 					if grep -q -F -e "Missing:" "${audit_file}" ; then
 						npm_pre_audit
 						current_broken_lock_count=$((${current_broken_lock_count}+1))
+					else
+						if cat "${audit_file}" | grep -q -F -e "npm ERR!" ; then
+							cat "${audit_file}"
+							die "Uncaught error"
+						fi
 					fi
 				popd
 			fi
@@ -698,14 +716,18 @@ npm-utils_check_nodejs() {
 	if [[ "${has_min_ge}" == "0" ]] ; then
 		if (( ${node_exe_v} < ${min_v} ||
 			${node_header_v} < ${min_v} )) ; then
-			die "Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be >= ${min_v}"
+			die \
+"Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be \
+>= ${min_v}"
 		fi
 	fi
 
 	if [[ "${has_min_gt}" == "0" ]] ; then
 		if (( ${node_exe_v} <= ${min_v} ||
 			${node_header_v} <= ${min_v} )) ; then
-			die "Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be > ${min_v}"
+			die \
+"Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be \
+> ${min_v}"
 		fi
 	fi
 
@@ -713,14 +735,18 @@ npm-utils_check_nodejs() {
 	if [[ "${has_max_le}" == "0" ]] ; then
 		if (( ${node_exe_v} > ${max_v} ||
 			${node_header_v} > ${max_v} )) ; then
-			die "Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be <= ${max_v}"
+			die \
+"Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be \
+<= ${max_v}"
 		fi
 	fi
 
 	if [[ "${has_max_lt}" == "0" ]] ; then
 		if (( ${node_exe_v} >= ${max_v} ||
 			${node_header_v} >= ${max_v} )) ; then
-			die "Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be < ${max_v}"
+			die \
+"Both node_exe_v=${node_exe_v} node_header_v=${node_header_v} need to be \
+< ${max_v}"
 		fi
 	fi
 }

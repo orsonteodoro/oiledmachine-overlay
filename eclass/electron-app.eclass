@@ -66,6 +66,7 @@ ELECTRON_APP_ALLOW_AUDIT=${ELECTRON_APP_ALLOW_AUDIT:="1"}
 ELECTRON_APP_ALLOW_AUDIT_FIX=${ELECTRON_APP_ALLOW_AUDIT_FIX:="1"}
 
 # You could define it as a per-package envar.  It not recommended in the ebuild.
+# Applies to only vulnerability testing not the tool itself.
 ELECTRON_APP_NO_DIE_ON_AUDIT=${ELECTRON_APP_NO_DIE_ON_AUDIT:="0"}
 
 # You could define it as a per-package envar.  Disabled by default because
@@ -807,6 +808,8 @@ electron-app_fetch_deps_npm() {
 				"package.json" \
 				&& install_args+=( --no-optional )
 		fi
+		npm_update_package_locks_recursive ./
+		rm "${HOME}/npm/_logs"/* 2>/dev/null
 		einfo "Running npm install ${install_args[@]} inside electron-app_fetch_deps_npm"
 		npm install ${install_args[@]} || die
 		npm_check_npm_error
@@ -1209,41 +1212,54 @@ electron-app_audit_dev() {
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
 		pushd $(dirname $l) || die
-	if [[ -n "${nodie}" && "${ELECTRON_APP_NO_DIE_ON_AUDIT}" == "1" ]] ; then
-				npm audit
+		if [[ -n "${nodie}" \
+			&& "${ELECTRON_APP_NO_DIE_ON_AUDIT}" == "1" ]] ; then
+				npm audit || die
 			else
 				local audit_file="${T}/npm-audit-result"
-				npm audit &> "${audit_file}"
+				npm audit &> "${audit_file}" || die
 				local is_critical=0
 				local is_high=0
 				local is_moderate=0
 				local is_low=0
-				grep -q -F -e " Critical " "${audit_file}" && is_critical=1
-				grep -q -F -e " High " "${audit_file}" && is_high=1
-				grep -q -F -e " Moderate " "${audit_file}" && is_moderate=1
-				grep -q -F -e " Low " "${audit_file}" && is_low=1
-	if [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Critical" \
+				grep -q -F -e " Critical " "${audit_file}" \
+					&& is_critical=1
+				grep -q -F -e " High " "${audit_file}" \
+					&& is_high=1
+				grep -q -F -e " Moderate " "${audit_file}" \
+					&& is_moderate=1
+				grep -q -F -e " Low " "${audit_file}" \
+					&& is_low=1
+				if [[ \
+"${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Critical" \
 					&& "${is_critical}" == "1" ]] ; then
 					cat "${audit_file}"
-					die "Detected critical vulnerability in a package."
-	elif [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "High" \
+					die \
+"Detected critical vulnerability in a package."
+				elif [[ \
+"${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "High" \
 					&& ( "${is_high}" == "1" \
 					|| "${is_critical}" == "1" ) ]] ; then
 					cat "${audit_file}"
-					die "Detected high vulnerability in a package."
-	elif [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Moderate" \
+					die \
+"Detected high vulnerability in a package."
+				elif [[ \
+"${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Moderate" \
 					&& ( "${is_moderate}" == "1" \
 					|| "${is_critical}" == "1" \
 					|| "${is_high}" == "1" ) ]] ; then
 					cat "${audit_file}"
-					die "Detected moderate vulnerability in a package."
-	elif [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Low" \
+					die \
+"Detected moderate vulnerability in a package."
+				elif [[ \
+"${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Low" \
 					&& ( "${is_low}" == "1" \
 					|| "${is_critical}" == "1" \
 					|| "${is_high}" == "1" \
 					|| "${is_moderate}" == "1" ) ]] ; then
 					cat "${audit_file}"
-					die "Detected low vulnerability in a package."
+					die \
+"Detected low vulnerability in a package."
 				fi
 			fi
 		popd
@@ -1253,28 +1269,34 @@ electron-app_audit_dev() {
 
 # @FUNCTION: electron-app_audit_prod
 # @DESCRIPTION:
-# This will preform an recursive audit for production in place without adding packages.
+# This will preform an recursive audit for production in place without adding
+# packages.
 electron-app_audit_prod() {
-	if [[ -n "${ELECTRON_APP_ALLOW_AUDIT}" && "${ELECTRON_APP_ALLOW_AUDIT}" == "1" ]] ; then
+	if [[ -n "${ELECTRON_APP_ALLOW_AUDIT}" \
+		&& "${ELECTRON_APP_ALLOW_AUDIT}" == "1" ]] ; then
 		:;
 	else
 		return
 	fi
 
-	[ ! -e package-lock.json ] && die "Missing package-lock.json in implied root $(pwd)"
+	[ ! -e package-lock.json ] \
+		&& die "Missing package-lock.json in implied root $(pwd)"
 
 	L=$(find . -name "package-lock.json")
 	for l in $L; do
 		pushd $(dirname $l) || die
 		local audit_file="${T}"/npm-secaudit-result
-		npm audit &> "${audit_file}"
+		npm audit &> "${audit_file}" || true
 		cat "${audit_file}" | grep -q -F -e "ELOCKVERIFY"
 		if [[ "$?" != "0" ]] ; then
-			cat "${audit_file}" | grep -q -F -e "require manual review"
+			cat "${audit_file}" \
+				| grep -q -F -e "require manual review"
 			local result_found1="$?"
-			cat "${audit_file}" | grep -q -F -e "npm audit fix"
+			cat "${audit_file}" \
+				| grep -q -F -e "npm audit fix"
 			local result_found2="$?"
-			if [[ "${result_found1}" == "0" || "${result_found2}" == "0" ]] ; then
+			if [[ "${result_found1}" == "0" \
+				|| "${result_found2}" == "0" ]] ; then
 				die "package is still vulnerable at $(pwd)$l"
 			fi
 		fi
@@ -1335,7 +1357,8 @@ electron-app_desktop_install_program_raw() {
 # @FUNCTION: electron-app_desktop_install_program
 # @DESCRIPTION:
 # Installs program only.  Resets permissions and ownership.
-# Additional change of ownership and permissions should be done after running this.
+# Additional change of ownership and permissions should be done after running
+# this.
 electron-app_desktop_install_program() {
 	use unpacked || return
 	_electron-app_check_missing_install_path
@@ -1358,7 +1381,9 @@ electron-app_desktop_install_program() {
 			done
 
 			# Mark libraries executable
-			for f in $(find "${ed}" -name "*.so" -type f -o -name "*.so.*" -type f) ; do
+			for f in $(find "${ed}" \
+					-name "*.so" -type f \
+					-o -name "*.so.*" -type f) ; do
 				chmod 0755 $(realpath "${f}") || die
 			done
 
@@ -1393,7 +1418,8 @@ electron-app_desktop_install_program() {
 			done
 
 			# Mark libraries executable
-			for f in $(find "${ed}" -name "*.so" -type f -o -name "*.so.*" -type f) ; do
+			for f in $(find "${ed}" -name "*.so" -type f \
+					-o -name "*.so.*" -type f) ; do
 				chmod 0755 $(realpath "${f}") || die
 			done
 
@@ -1488,8 +1514,9 @@ command to execute in the wrapper script"
 			icon="${PN}"
 			newicon "${rel_icon_path}" "${icon}.xpm"
 		else
-			# See https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
-			ewarn "Only png, svg, xpm accepted as icons for the XDG desktop icon theme spec.  Skipping."
+# See https://specifications.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
+			ewarn \
+"Only png, svg, xpm accepted as icons for the XDG desktop icon theme spec.  Skipping."
 		fi
 	fi
 	if has appimage ${IUSE_EFFECTIVE} ; then
@@ -1587,8 +1614,12 @@ electron-app_pkg_preinst() {
 			if [[ -n "${ELECTRON_APP_SNAP_REVISION}" ]] ; then
 				revision_arg="--revision=${ELECTRON_APP_SNAP_REVISION}"
 			fi
-			if snap info "${ELECTRON_APP_SNAP_NAME}" 2>/dev/null 1>/dev/null ; then
-				snap remove ${ELECTRON_APP_SNAP_NAME} ${ELECTRON_APP_SNAP_REVISION} --purge || die
+			if snap info "${ELECTRON_APP_SNAP_NAME}" \
+				2>/dev/null 1>/dev/null ; then
+				snap remove \
+					${ELECTRON_APP_SNAP_NAME} \
+					${ELECTRON_APP_SNAP_REVISION} --purge \
+					|| die
 			fi
 		fi
 	fi
@@ -1606,17 +1637,23 @@ electron-app_pkg_postinst() {
 	if has snap ${IUSE_EFFECTIVE} ; then
 		if use snap ; then
 			ewarn "snap support untested"
-			ewarn "Remember do not update the snap manually through the \`snap\` tool.  Allow the emerge system to update it."
-			# I don't know if snap will sanitize the files for system-wide installation.
+			ewarn \
+"Remember do not update the snap manually through the \`snap\` tool.  Allow \
+the emerge system to update it."
+			# I don't know if snap will sanitize the files for
+			# system-wide installation.
 			local has_assertion_file="--dangerous"
 			if [[ -e "${ELECTRON_APP_SNAP_ASSERT_PATH}" ]] ; then
-				snap ack "${EROOT}/${ELECTRON_APP_SNAP_INSTALL_DIR}/${ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME}"
+				snap ack \
+"${EROOT}/${ELECTRON_APP_SNAP_INSTALL_DIR}/${ELECTRON_APP_SNAP_ASSERT_PATH_BASENAME}"
 				has_assertion_file=""
 			else
-				ewarn "Missing assertion file for snap.  Installing with --dangerous."
+				ewarn \
+"Missing assertion file for snap.  Installing with --dangerous."
 			fi
 			# This will add the desktop links to the snap.
-			snap install ${has_assertion_file} "${EROOT}/${ELECTRON_APP_SNAP_INSTALL_DIR}/${ELECTRON_APP_SNAP_PATH_BASENAME}"
+			snap install ${has_assertion_file} \
+"${EROOT}/${ELECTRON_APP_SNAP_INSTALL_DIR}/${ELECTRON_APP_SNAP_PATH_BASENAME}"
 		fi
 	fi
 

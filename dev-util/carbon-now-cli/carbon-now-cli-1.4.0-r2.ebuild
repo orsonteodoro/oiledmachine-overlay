@@ -26,9 +26,9 @@ npm-secaudit_src_preprepare() {
 
 	eapply "${FILESDIR}/carbon-now-cli-1.4.0-pkg.patch"
 	eapply "${FILESDIR}/carbon-now-cli-1.4.0-pkg-browser-path.patch"
-	npm install pkg --save-dev || die
-	npm uninstall puppeteer || die
-	npm install puppeteer@"^8.0.0" --save-prod || die
+	npm_install_dev pkg
+	npm_uninstall puppeteer
+	npm_install_prod puppeteer@"^8.0.0"
 }
 
 get_arch()

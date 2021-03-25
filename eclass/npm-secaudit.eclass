@@ -49,6 +49,7 @@ NPM_SECAUDIT_ALLOW_AUDIT=${NPM_SECAUDIT_ALLOW_AUDIT:="1"}
 NPM_SECAUDIT_ALLOW_AUDIT_FIX=${NPM_SECAUDIT_ALLOW_AUDIT_FIX:="1"}
 
 # You could define it as a per-package envar.  It not recommended in the ebuild.
+# Applies to only vulnerability testing not the tool itself.
 NPM_SECAUDIT_NO_DIE_ON_AUDIT=${NPM_SECAUDIT_NO_DIE_ON_AUDIT:="0"}
 
 # You could define it as a per-package envar.  Disabled by default because of
@@ -210,7 +211,9 @@ npm-secaudit_fetch_deps() {
 				"package.json" \
 				&& install_args+=( --no-optional )
 		fi
-		einfo "Running npm install ${install_args[@]}"
+		npm_update_package_locks_recursive ./
+		rm "${HOME}/npm/_logs"/* 2>/dev/null
+		einfo "Running npm install ${install_args[@]} inside npm-secaudit_fetch_deps"
 		npm install ${install_args[@]} || die
 		npm_check_npm_error
 	popd
@@ -431,10 +434,10 @@ npm-secaudit_audit_dev() {
 	for l in $L; do
 		pushd $(dirname $l) || die
 			if [[ -n "${nodie}" && "${NPM_SECAUDIT_NO_DIE_ON_AUDIT}" == "1" ]] ; then
-				npm audit
+				npm audit || die
 			else
 				local audit_file="${T}/npm-audit-result"
-				npm audit &> "${audit_file}"
+				npm audit &> "${audit_file}" || die
 				local is_critical=0
 				local is_high=0
 				local is_moderate=0
@@ -488,15 +491,19 @@ npm-secaudit_audit_prod() {
 	for l in $L; do
 		pushd $(dirname $l) || die
 			local audit_file="${T}"/npm-secaudit-result
-			npm audit &> "${audit_file}"
-			cat "${audit_file}" | grep -q -F -e "ELOCKVERIFY"
-			if [[ "$?" != "0" ]] ; then
+			npm audit &> "${audit_file}" || true
+			if cat "${audit_file}" | grep -q -F -e "ELOCKVERIFY" ; then
 				cat "${audit_file}" | grep -q -F -e "require manual review"
 				local result_found1="$?"
 				cat "${audit_file}" | grep -q -F -e "npm audit fix"
 				local result_found2="$?"
 				if [[ "${result_found1}" == "0" || "${result_found2}" == "0" ]] ; then
 					die "package is still vulnerable at $(pwd)$l"
+				fi
+			else
+				if cat "${audit_file}" | grep -q -F -e "npm ERR!" ; then
+					cat "${audit_file}"
+					die "Uncaught error"
 				fi
 			fi
 		popd
