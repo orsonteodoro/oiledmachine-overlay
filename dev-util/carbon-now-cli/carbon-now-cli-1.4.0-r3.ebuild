@@ -19,6 +19,18 @@ SRC_URI=\
 "https://github.com/mixn/carbon-now-cli/archive/v${PV}.tar.gz \
 	-> ${P}.tar.gz"
 S="${WORKDIR}/${PN}-${PV}"
+QA_PRESTRIPPED="
+	opt/carbon-now-cli/node_modules/puppeteer/.local-chromium/linux-*/chrome-linux/nacl_irt_x86_64.nexe
+	opt/carbon-now-cli/node_modules/puppeteer/.local-chromium/linux-*/chrome-linux/nacl_helper_nonsfi
+"
+
+QA_WX_LOAD="
+	opt/carbon-now-cli/node_modules/puppeteer/.local-chromium/linux-*/chrome-linux/nacl_irt_x86_64.nexe
+"
+# No strip required for exes produced by pkg (/opt/carbon-now-cli/carbon-now-cli)
+RESTRICT="strip"
+PKG_NODE_ARG="-t node14.4.0" # Use prebuilt instead of re-building from source to save time.
+			     # Remove if newer prebuilt is available.
 
 npm-secaudit_src_preprepare() {
 	# Fix me: Pkg: Error reading from file.
@@ -58,6 +70,7 @@ npm-secaudit_src_compile() {
 	pkg package.json \
 		--targets latest-linux-$(get_arch) \
 		--output dist/${PN} \
+		${PKG_NODE_ARG} \
 		|| die
 	if [[ ! -f "dist/${PN}" ]] ; then
 		die "Did not produce a dist/${PN}"
