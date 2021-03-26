@@ -803,10 +803,10 @@ npm-utils_check_chromium_eol() {
 	fi
 }
 
-# @FUNCTION: npm-utils_get_pkg_arch
+# @FUNCTION: npm-utils_pkg_get_arch
 # @DESCRIPTION: Returns the arch suppored by pkg for single exe
 # wrapper
-npm-utils_get_pkg_arch()
+npm-utils_pkg_get_arch()
 {
 	if [[ "${ARCH}" == "amd64" ]] ; then
 		echo "x64"
@@ -844,10 +844,10 @@ npm-utils_download_pkg()
 #
 # Consumers are required to add to RDEPEND either:
 #
-# virtual/pkg:10=
-# virtual/pkg:12=
-# virtual/pkg:14=
-# virtual/pkg:15=
+# virtual/nodejs-pkg:10=
+# virtual/nodejs-pkg:12=
+# virtual/nodejs-pkg:14=
+# virtual/nodejs-pkg:15=
 #
 # corresponding to the current node version to ensure
 # that Node.js security updates are being passed down since
@@ -864,7 +864,7 @@ npm-utils_src_compile_pkg()
 {
 	local exe_name="${1}"
 	pkg package.json \
-		--targets latest-linux-$(get_arch) \
+		--targets latest-linux-$(npm-utils_pkg_get_arch) \
 		--output dist/${exe_name} \
 		${mypkgargs[@]} \
 		|| die
