@@ -1873,9 +1873,9 @@ electron-app_download_electron_packager()
 #
 # Consumers are required to add to RDEPEND either:
 #
-# virtual/electron:10=
-# virtual/electron:11=
-# virtual/electron:12=
+# virtual/electron-builder:10=
+# virtual/electron-builder:11=
+# virtual/electron-builder:12=
 #
 # corresponding to the current Electron LTS versions to ensure
 # that Electron + Chromium security updates are being passed down since
@@ -1928,9 +1928,9 @@ electron-app_src_compile_electron_packager()
 #
 # Consumers are required to add to RDEPEND either:
 #
-# virtual/electron:10=
-# virtual/electron:11=
-# virtual/electron:12=
+# virtual/electron-builder:10=
+# virtual/electron-builder:11=
+# virtual/electron-builder:12=
 #
 # corresponding to the current Electron LTS versions to ensure
 # that Electron + Chromium security updates are being passed down since
