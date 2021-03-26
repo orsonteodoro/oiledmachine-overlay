@@ -803,3 +803,76 @@ npm-utils_check_chromium_eol() {
 	fi
 }
 
+# @FUNCTION: npm-utils_get_pkg_arch
+# @DESCRIPTION: Returns the arch suppored by pkg for single exe
+# wrapper
+npm-utils_get_pkg_arch()
+{
+	if [[ "${ARCH}" == "amd64" ]] ; then
+		echo "x64"
+	elif [[ "${ARCH}" == "x86" ]] ; then
+		echo "x86"
+        elif [[ "${ARCH}" == "arm" ]] ; then
+		if [[ "${CHOST}" =~ armv7* ]] ; then
+	                echo "armv7"
+		elif [[ "${CHOST}" =~ armv6* ]] ; then
+	                echo "armv6"
+		else
+			die "Arch ${ARCH} is not supported for pkg"
+		fi
+	fi
+}
+
+# @FUNCTION: electron-app_download_pkg
+# @DESCRIPTION: Installs pkg in the devDependencies
+# for packages without an single exe packager.
+npm-utils_download_pkg()
+{
+	npm_install_dev pkg
+}
+
+
+# @FUNCTION: npm-utils_src_compile_pkg
+# @DESCRIPTION: Places all npm production packages in a single
+# exe to shrink install for non-Electron based ebuild-packages.
+# Use electron-builder or electron-packager instead for Electron
+# which have better support for sandboxing.  For further details
+# see electron-app.eclass.
+#
+# Requires modification to package.json.  For details see
+# https://github.com/vercel/pkg#config
+#
+# Consumers are required to add to RDEPEND either:
+#
+# virtual/pkg:10=
+# virtual/pkg:12=
+# virtual/pkg:14=
+# virtual/pkg:15=
+#
+# corresponding to the current node version to ensure
+# that Node.js security updates are being passed down since
+# the exe embeds the Node.js libraries.
+#
+# mypkgargs can be optionally defined as extra args to pass
+# down to pkg.
+#
+# @CODE
+# Parameters:
+# $1 - executable name
+# @CODE
+npm-utils_src_compile_pkg()
+{
+	local exe_name="${1}"
+	pkg package.json \
+		--targets latest-linux-$(get_arch) \
+		--output dist/${exe_name} \
+		${mypkgargs[@]} \
+		|| die
+	if [[ ! -f "dist/${PN}" ]] ; then
+		die "Did not produce a dist/${PN}"
+	fi
+}
+
+# For Electron packaging packaging see:
+# See electron-app_src_compile_electron_packager in electron-app.eclass
+# See electron-app_src_compile_electron_builder in electron-app.eclass

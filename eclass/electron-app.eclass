@@ -1843,3 +1843,120 @@ electron-app_get_arch_suffix_appimage() {
         fi
 	echo "${CHOST%%-*}"
 }
+
+# @FUNCTION: electron-builder_download_electron_builder
+# @DESCRIPTION: Downloads and installs electron-builder in the devDependencies
+# for packages without an Electron packager.
+electron-app_download_electron_builder()
+{
+	npm_install_dev electron-builder
+}
+
+# @FUNCTION: electron-builder_download_electron_packager
+# @DESCRIPTION: Downloads and installs electron-packager in the devDependencies
+# for packages without an Electron packager.
+electron-app_download_electron_packager()
+{
+	npm_install_dev electron-packager
+}
+
+
+# @FUNCTION: electron-app_src_compile_electron_packager
+# @DESCRIPTION: Places all npm production packages in a single exe
+# for Electron based ebuild-packages.
+# For non-electron packages use pkg (via npm-utils_src_compile_pkg) instead.
+#
+# Assumes current dir will be packaged.
+#
+# Current support is tentative based on security requirements like with the
+# npm-utils_src_compile_pkg.  Check back on this eclass for update details.
+#
+# Consumers are required to add to RDEPEND either:
+#
+# virtual/electron:10=
+# virtual/electron:11=
+# virtual/electron:12=
+#
+# corresponding to the current Electron LTS versions to ensure
+# that Electron + Chromium security updates are being passed down since
+# the packer embeds Electron & Chromium parts.
+#
+# myelectronpackager args can be defined and appended to the defaults.
+#
+# Preference for electron-packager or electron-builder is based on the
+# contents of package.json, but electron-builder is preferred for
+# future sandboxing with AppImage & Snap.
+#
+# Exe will be placed in dist/${exe_name}-linux-"$(electron-app_get_arch)"/*
+#
+# @CODE
+# Parameters:
+# $1 - executable name
+# $2 - icon path optional
+# @CODE
+electron-app_src_compile_electron_packager()
+{
+	local exe_name="${1}"
+	local icon_path="${2}"
+	mkdir -p dist || die
+	# Make into exe.  Disabled because it works sometimes but not all the time.
+
+	local myelectronpackager_
+
+	if [[ -n "${icon_path}" ]] ; then
+		myelectronpackager_=( --icon=${icon_path} )
+	fi
+
+	electron-packager . ${exe_name} \
+		--platform=linux \
+		--arch=$(electron-app_get_arch) \
+		--asar \
+		--out=dist \
+		--overwrite \
+		${myelectronpackager[@]} \
+		${myelectronpackager_[@]} \
+		|| die
+}
+
+# @FUNCTION: electron-app_src_compile_electron_builder
+# @DESCRIPTION: Places all npm production packages in a single exe
+# for Electron based ebuild-packages.
+# For non-electron packages use pkg (via npm-utils_src_compile_pkg) instead.
+#
+# Current support is tentative based on security requirements like with the
+# npm-utils_src_compile_pkg.  Check back on this eclass for update details.
+#
+# Consumers are required to add to RDEPEND either:
+#
+# virtual/electron:10=
+# virtual/electron:11=
+# virtual/electron:12=
+#
+# corresponding to the current Electron LTS versions to ensure
+# that Electron + Chromium security updates are being passed down since
+# the packer embeds Electron & Chromium parts.
+#
+# myelectronbuilder args can be defined and appended to the defaults.
+#
+# Preference for electron-packager or electron-builder is based on the
+# contents of package.json, but electron-builder is preferred for
+# future sandboxing with AppImage & Snap.
+#
+# The contents are usually placed in dist/
+#
+# @CODE
+# Parameters:
+# $1 - executable name
+# @CODE
+electron-app_src_compile_electron_builder()
+{
+	local myelectronbuilder_
+	if [[ -z "${myelectronbuilder}" ]] ; then
+		myelectronbuilder_=( --dir )
+	fi
+
+	electron-builder -l \
+		${myelectronbuilder[@]} \
+		${myelectronbuilder_[@]} \
+		|| die
+}

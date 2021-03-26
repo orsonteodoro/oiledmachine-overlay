@@ -691,3 +691,7 @@ npm-secaudit_restore_package_jsons() {
 	fi
 }
 
+# For single exe packaging see:
+# See npm-utils_download_pkg in npm-utils.eclass
+# See npm-utils_src_compile_pkg in npm-utils.eclass
+

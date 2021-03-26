@@ -38,26 +38,9 @@ npm-secaudit_src_preprepare() {
 
 	eapply "${FILESDIR}/carbon-now-cli-1.4.0-pkg.patch"
 	eapply "${FILESDIR}/carbon-now-cli-1.4.0-pkg-browser-path.patch"
-	npm_install_dev pkg
+	npm-utils_download_pkg
 	npm_uninstall puppeteer
 	npm_install_prod puppeteer@"^8.0.0"
-}
-
-get_arch()
-{
-	if [[ "${ARCH}" == "amd64" ]] ; then
-		echo "x64"
-	elif [[ "${ARCH}" == "x86" ]] ; then
-		echo "x86"
-        elif [[ "${ARCH}" == "arm" ]] ; then
-		if [[ "${CHOST}" =~ armv7* ]] ; then
-	                echo "armv7"
-		elif [[ "${CHOST}" =~ armv6* ]] ; then
-	                echo "armv6"
-		else
-			die "Arch ${ARCH} is not supported for pkg"
-		fi
-	fi
 }
 
 npm-secaudit_src_compile() {
@@ -67,14 +50,10 @@ npm-secaudit_src_compile() {
 	local dn=$(basename $(find "node_modules/puppeteer/.local-chromium" -name "linux-*"))
 	sed -i -e "s|linux-686378|${dn}|" \
 		src/headless-visit.js || die
-	pkg package.json \
-		--targets latest-linux-$(get_arch) \
-		--output dist/${PN} \
-		${PKG_NODE_ARG} \
-		|| die
-	if [[ ! -f "dist/${PN}" ]] ; then
-		die "Did not produce a dist/${PN}"
-	fi
+	local mypkgargs=(
+		${PKG_NODE_ARG}
+	)
+	npm-utils_src_compile_pkg ${PN}
 }
 
 src_install() {
