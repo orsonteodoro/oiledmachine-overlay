@@ -8,8 +8,7 @@ HOMEPAGE="https://github.com/alexdevero/instatron"
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0"
-DEPEND="${RDEPEND}
-        >=net-libs/nodejs-9[npm]"
+BDEPEND+=" >=net-libs/nodejs-9[npm]"
 ELECTRON_APP_ELECTRON_V="9.1.2"
 ELECTRON_APP_USED_AS_WEB_BROWSER_OR_SOCIAL_MEDIA_APP="1"
 inherit desktop electron-app eutils
@@ -25,11 +24,10 @@ electron-app_src_compile() {
 }
 
 src_install() {
-	export ELECTRON_APP_INSTALL_PATH="/usr/$(get_libdir)/node/${PN}/${SLOT}"
-	electron-app_desktop_install "*" "assets/instagram-uploader-icon.png" \
-		"${PN^}" "Network" \
-"env PATH=\"${ELECTRON_APP_INSTALL_PATH}/node_modules/.bin:\$PATH\" \
-electron ${ELECTRON_APP_INSTALL_PATH}/"
-	fperms 0755 \
-"${ELECTRON_APP_INSTALL_PATH}/builds/${PN}-linux-"$(electron-app_get_arch)"/${PN}"
+	export ELECTRON_APP_INSTALL_PATH="/opt/${PN}"
+	electron-app_desktop_install \
+		"builds/${PN}-linux-"$(electron-app_get_arch)"/*" \
+		"assets/instagram-uploader-icon.png" \
+		"${PN^}" "Network" "${ELECTRON_APP_INSTALL_PATH}/${PN}"
+	fperms 0755 "${ELECTRON_APP_INSTALL_PATH}/${PN} \"\$@\""
 }
