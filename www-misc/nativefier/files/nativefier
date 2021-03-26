@@ -1,6 +1,2 @@
 #!/bin/bash
-
-# For electron-packager
-#/opt/${PN}/${PN} "$@"
-
 /usr/bin/node /opt/${PN}/lib/cli.js "$@"

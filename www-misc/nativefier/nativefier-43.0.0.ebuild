@@ -37,39 +37,14 @@ electron-app_src_prepare() {
 	electron-app_fetch_deps
 }
 
-electron-app_src_postcompile() {
-	# for stopping version lock warning from audit.  production packages
-	# installed only.
-	npm uninstall gulp -D
-}
-
 electron-app_src_compile() {
 	cd "${S}" || die
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	npm run build || die
-	mkdir -p dist || die
-
-	electron-packager . ${PN} \
-		--arch=$(electron-app_get_arch) \
-		--asar \
-		--electron-version=${ELECTRON_APP_ELECTRON_V} \
-		--icon=src/assets/logo.png \
-		--out=dist \
-		--overwrite \
-		--platform=linux \
-		--prune=false \
-		|| die
 }
 
 src_install() {
 	export ELECTRON_APP_INSTALL_PATH="/opt/${PN}"
-	# Actually, it is a command line app.  No need for the desktop wrapper.
-
-	# error: mesa: for the --simplifycfg-sink-common option: may only occur zero or one times!
-	# error: mesa: for the --global-isel-abort option: may only occur zero or one times!
-	# ...
-	#electron-app_desktop_install_program "dist/nativefier-linux-"$(electron-app_get_arch)"/*" # not ready yet
-
 	electron-app_desktop_install_program "*"
 	fperms 755 ${ELECTRON_APP_INSTALL_PATH}/nativefier
 	electron-app_store_jsons_for_security_audit
