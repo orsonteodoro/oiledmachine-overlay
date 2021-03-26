@@ -1,2 +1,3 @@
 #!/bin/bash
-/opt/carbon-now-cli/carbon-now-cli -h "$@"
+export NODE_VERSION=__NODE_VERSION__
+/usr/bin/node /opt/carbon-now-cli/cli.js -h $@
