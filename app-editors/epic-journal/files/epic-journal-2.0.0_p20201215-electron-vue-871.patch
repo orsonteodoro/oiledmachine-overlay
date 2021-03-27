@@ -1,0 +1,47 @@
+Fixes ERROR in Template execution failed: ReferenceError: process is not defined
+Issue URI:  https://github.com/SimulatedGREG/electron-vue/issues/871
+Solution URI:  https://github.com/SimulatedGREG/electron-vue/issues/871#issuecomment-515633319
+diff -urp epic-journal-12ea7afc17c405df67ca83965747614c9f240f4d.orig/.electron-vue/webpack.renderer.config.js epic-journal-12ea7afc17c405df67ca83965747614c9f240f4d/.electron-vue/webpack.renderer.config.js
+--- epic-journal-12ea7afc17c405df67ca83965747614c9f240f4d.orig/.electron-vue/webpack.renderer.config.js	2020-12-15 17:33:13.000000000 -0800
++++ epic-journal-12ea7afc17c405df67ca83965747614c9f240f4d/.electron-vue/webpack.renderer.config.js	2021-03-26 20:48:23.759498256 -0700
+@@ -125,6 +125,18 @@ let rendererConfig = {
+     new HtmlWebpackPlugin({
+       filename: 'index.html',
+       template: path.resolve(__dirname, '../src/index.ejs'),
++      templateParameters(compilation, assets, options) {
++        return {
++          compilation: compilation,
++          webpack: compilation.getStats().toJson(),
++          webpackConfig: compilation.options,
++          htmlWebpackPlugin: {
++            files: assets,
++            options: options
++          },
++          process,
++        };
++      },
+       minify: {
+         collapseWhitespace: true,
+         removeAttributeQuotes: true,
+diff -urp epic-journal-12ea7afc17c405df67ca83965747614c9f240f4d.orig/.electron-vue/webpack.web.config.js epic-journal-12ea7afc17c405df67ca83965747614c9f240f4d/.electron-vue/webpack.web.config.js
+--- epic-journal-12ea7afc17c405df67ca83965747614c9f240f4d.orig/.electron-vue/webpack.web.config.js	2020-12-15 17:33:13.000000000 -0800
++++ epic-journal-12ea7afc17c405df67ca83965747614c9f240f4d/.electron-vue/webpack.web.config.js	2021-03-26 20:48:22.179436811 -0700
+@@ -97,6 +97,18 @@ let webConfig = {
+     new HtmlWebpackPlugin({
+       filename: 'index.html',
+       template: path.resolve(__dirname, '../src/index.ejs'),
++      templateParameters(compilation, assets, options) {
++        return {
++          compilation: compilation,
++          webpack: compilation.getStats().toJson(),
++          webpackConfig: compilation.options,
++          htmlWebpackPlugin: {
++            files: assets,
++            options: options
++          },
++          process,
++        };
++      },
+       minify: {
+         collapseWhitespace: true,
+         removeAttributeQuotes: true,
