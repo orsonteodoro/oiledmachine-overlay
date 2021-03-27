@@ -1185,6 +1185,13 @@ is End Of Life (EOL) and has vulnerabilities."
 	einfo "V8_V=${V8_V}"
 	einfo "ZLIB_V=${ZLIB_V}"
 	einfo
+
+	local node_v=$(node --version | sed -e "s|v||")
+	if ver_test $(ver_cut 1 ${NODE_V}) -ne $(ver_cut 1 ${node_v}) ; then
+		ewarn \
+"Detected mismatch between node_v=${NODE_V} bundled with Electron and \
+active_node_v=${node_v}.  Build failures may occur if deviation is too much."
+	fi
 }
 
 # @FUNCTION: electron-app_src_unpack
