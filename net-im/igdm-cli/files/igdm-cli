@@ -1,2 +1,0 @@
-#!/bin/bash
-/usr/bin/node ${NPM_SECAUDIT_INSTALL_PATH}/bin/index.js "$@"

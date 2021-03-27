@@ -266,8 +266,6 @@ contains a known infamous critical vulnerability.
 | media-video/obs-studio | This is an ebuild fork for better checks for hardware accelerated x264/vaapi encoding support, and better modular support for showing a webpage as a source used typically used in news reporting, showing fan sites, or donations. |
 | net-analyzer/wireshark | This ebuild integrats MTP (Media Transfer Protocol) packet filter.  It also warns of MTPz authentication handshake points in the Expert info.  You may need to modify in the source code level the interface number, vendor ID, device ID for your USB to match your particular device since I didn't write the GUI interface for that yet. |
 | net-im/caprine | This package is an Electron based Facebook Messenger. |
-| net-im/igdm | This is an Instagram direct messenger based on Electron. |
-| net-im/igdm-cli | This is a command line Instagram direct messenger based on Node.js. |
 | net-libs/cef-bin | Chromium Embedded Framework with prebuilt chromium.  Used in obs-studio. |
 | net-libs/nodejs | This is a multslot ebuild fork of Node.js.  Tracks all latest LTS releases. |
 | net-libs/webkit-gtk | This ebuild has multi-ABI support meaning it can build 32-bit webkit-gtk on a 64-bit machine and both 64-bit and 32-bit builds be present.  You may also choose to build just one ABI.  This ebuild mod also allows you to build the MiniBrowser frontend. |
