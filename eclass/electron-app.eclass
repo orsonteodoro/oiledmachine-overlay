@@ -188,6 +188,45 @@ INSECURE_NVD_V8_LAST_HIGH_LINK_ADVISORY=\
 
 NODE_VERSION_UNSUPPORTED_WHEN_LESS_THAN="10"
 
+# See https://nvd.nist.gov/vuln/search/results?form_type=Basic&results_type=overview&query=nodejs&search_type=all
+INSECURE_NVD_NODEJS_LAST_CRITICAL_13="13.8.0"
+INSECURE_NVD_NODEJS_LAST_CRITICAL_13_COND="-lt"
+INSECURE_NVD_NODEJS_LAST_CRITICAL_13_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2019-15606"
+INSECURE_NVD_NODEJS_LAST_CRITICAL_12="12.15.0"
+INSECURE_NVD_NODEJS_LAST_CRITICAL_12_COND="-lt"
+INSECURE_NVD_NODEJS_LAST_CRITICAL_12_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2019-15606"
+INSECURE_NVD_NODEJS_LAST_CRITICAL_10="10.19.0"
+INSECURE_NVD_NODEJS_LAST_CRITICAL_10_COND="-lt"
+INSECURE_NVD_NODEJS_LAST_CRITICAL_10_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2019-15606"
+INSECURE_NVD_NODEJS_LAST_CRITICAL_9="9.11.2"
+INSECURE_NVD_NODEJS_LAST_CRITICAL_9_COND="-le"
+INSECURE_NVD_NODEJS_LAST_CRITICAL_9_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2017-15896"
+INSECURE_NVD_NODEJS_LAST_CRITICAL_8="8.17.0"
+INSECURE_NVD_NODEJS_LAST_CRITICAL_8_COND="-le"
+INSECURE_NVD_NODEJS_LAST_CRITICAL_8_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2017-15896"
+
+INSECURE_NVD_NODEJS_LAST_HIGH_15="15.10.0"
+INSECURE_NVD_NODEJS_LAST_HIGH_15_COND="-lt"
+INSECURE_NVD_NODEJS_LAST_HIGH_15_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2021-22883"
+INSECURE_NVD_NODEJS_LAST_HIGH_14="14.16.0"
+INSECURE_NVD_NODEJS_LAST_HIGH_14_COND="-lt"
+INSECURE_NVD_NODEJS_LAST_HIGH_14_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2021-22883"
+INSECURE_NVD_NODEJS_LAST_HIGH_12="12.21.0"
+INSECURE_NVD_NODEJS_LAST_HIGH_12_COND="-lt"
+INSECURE_NVD_NODEJS_LAST_HIGH_12_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2021-22883"
+INSECURE_NVD_NODEJS_LAST_HIGH_10="10.24.0"
+INSECURE_NVD_NODEJS_LAST_HIGH_10_COND="-lt"
+INSECURE_NVD_NODEJS_LAST_HIGH_10_LINK_ADVISORY=\
+"https://nvd.nist.gov/vuln/detail/CVE-2021-22883"
+
 # Check the runtime dependencies for electron
 # Most electron apps will have electron bundled already.  No need for seperate
 # ebuild.
@@ -971,6 +1010,54 @@ ${INSECURE_NVD_CHROME_LAST_CRITICAL_LINK_ADVISORY}"
 ${CHROMIUM_V}.  See\n\
 ${INSECURE_GLSA_CHROME_LATEST_LINK_ADVISORY}"
 	fi
+
+
+	if ver_test $(ver_cut 1 "${NODE_V}") -eq 13 \
+		&& ver_test "${NODE_V}" ${INSECURE_NVD_NODEJS_LAST_CRITICAL_13_COND} \
+			"${INSECURE_NVD_NODEJS_LAST_CRITICAL_13}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a critical NVD advisory for internal Node.js\n\
+${NODE_V}.  See\n\
+${INSECURE_NVD_NODEJS_LAST_CRITICAL_13_LINK_ADVISORY}"
+	fi
+
+	if ver_test $(ver_cut 1 "${NODE_V}") -eq 12 \
+		&& ver_test "${NODE_V}" ${INSECURE_NVD_NODEJS_LAST_CRITICAL_12_COND} \
+			"${INSECURE_NVD_NODEJS_LAST_CRITICAL_12}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a critical NVD advisory for internal Node.js\n\
+${NODE_V}.  See\n\
+${INSECURE_NVD_NODEJS_LAST_CRITICAL_12_LINK_ADVISORY}"
+	fi
+
+	if ver_test $(ver_cut 1 "${NODE_V}") -eq 10 \
+		&& ver_test "${NODE_V}" ${INSECURE_NVD_NODEJS_LAST_CRITICAL_10_COND} \
+			"${INSECURE_NVD_NODEJS_LAST_CRITICAL_10}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a critical NVD advisory for internal Node.js\n\
+${NODE_V}.  See\n\
+${INSECURE_NVD_NODEJS_LAST_CRITICAL_10_LINK_ADVISORY}"
+	fi
+
+	if ver_test $(ver_cut 1 "${NODE_V}") -eq 9 \
+		&& ver_test "${NODE_V}" ${INSECURE_NVD_NODEJS_LAST_CRITICAL_9_COND} \
+			"${INSECURE_NVD_NODEJS_LAST_CRITICAL_9}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a critical NVD advisory for internal Node.js\n\
+${NODE_V}.  See\n\
+${INSECURE_NVD_NODEJS_LAST_CRITICAL_9_LINK_ADVISORY}"
+	fi
+
+	if ver_test $(ver_cut 1 "${NODE_V}") -eq 8 \
+		&& ver_test "${NODE_V}" ${INSECURE_NVD_NODEJS_LAST_CRITICAL_8_COND} \
+			"${INSECURE_NVD_NODEJS_LAST_CRITICAL_8}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a critical NVD advisory for internal Node.js\n\
+${NODE_V}.  See\n\
+${INSECURE_NVD_NODEJS_LAST_CRITICAL_8_LINK_ADVISORY}"
+	fi
+
+
 fi
 if [[ "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "High" \
 	|| "${ELECTRON_APP_UNACCEPTABLE_VULNERABILITY_LEVEL}" == "Moderate" \
@@ -1018,6 +1105,44 @@ ${INSECURE_NVD_CHROME_LAST_HIGH_LINK_ADVISORY}"
 ${V8_V}.  See\n\
 ${INSECURE_NVD_V8_LAST_HIGH_LINK_ADVISORY}"
 	fi
+
+
+	if ver_test $(ver_cut 1 "${NODE_V}") -eq 15 \
+		&& ver_test "${NODE_V}" ${INSECURE_NVD_NODEJS_LAST_HIGH_15_COND} \
+			"${INSECURE_NVD_NODEJS_LAST_HIGH_15}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a high NVD advisory for internal Node.js\n\
+${NODE_V}.  See\n\
+${INSECURE_NVD_NODEJS_LAST_HIGH_15_LINK_ADVISORY}"
+	fi
+
+	if ver_test $(ver_cut 1 "${NODE_V}") -eq 14 \
+		&& ver_test "${NODE_V}" ${INSECURE_NVD_NODEJS_LAST_HIGH_14_COND} \
+			"${INSECURE_NVD_NODEJS_LAST_HIGH_14}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a high NVD advisory for internal Node.js\n\
+${NODE_V}.  See\n\
+${INSECURE_NVD_NODEJS_LAST_HIGH_14_LINK_ADVISORY}"
+	fi
+
+	if ver_test $(ver_cut 1 "${NODE_V}") -eq 12 \
+		&& ver_test "${NODE_V}" ${INSECURE_NVD_NODEJS_LAST_HIGH_12_COND} \
+			"${INSECURE_NVD_NODEJS_LAST_HIGH_12}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a high NVD advisory for internal Node.js\n\
+${NODE_V}.  See\n\
+${INSECURE_NVD_NODEJS_LAST_HIGH_12_LINK_ADVISORY}"
+	fi
+
+	if ver_test $(ver_cut 1 "${NODE_V}") -eq 10 \
+		&& ver_test "${NODE_V}" ${INSECURE_NVD_NODEJS_LAST_HIGH_10_COND} \
+			"${INSECURE_NVD_NODEJS_LAST_HIGH_10}" ; then
+		adie \
+"Electron ${ELECTRON_V} has a high NVD advisory for internal Node.js\n\
+${NODE_V}.  See\n\
+${INSECURE_NVD_NODEJS_LAST_HIGH_10_LINK_ADVISORY}"
+	fi
+
 fi
 
 	if ver_test $(ver_cut 1 "${ELECTRON_V}") -le 6 ; then
@@ -1959,4 +2084,51 @@ electron-app_src_compile_electron_builder()
 		${myelectronbuilder[@]} \
 		${myelectronbuilder_[@]} \
 		|| die
+}
+
+# @FUNCTION: electron-app_get_node_version
+# @DESCRIPTION: Gets the minimum node version required with an Electron release
+#
+# The versions reported by lite.json are newer and differ from the DEPS file
+# in tagged.
+#
+# @CODE
+# Parameters:
+# $1 - nodejs version
+# @CODE
+electron-app_get_node_version()
+{
+	local node_version="${1}"
+	wget -O "${T}/DEPS" \
+		"https://raw.githubusercontent.com/electron/electron/v${node_version}/DEPS" || die
+	if ver_test ${node_version} -ge 6.0 ; then
+		echo $(cat "${T}/DEPS" | tr "\r\n" "\n" \
+			| sed -e "s| = |=|g" \
+			| sed "/#/d" \
+			| pcregrep -M "vars=[^=]+" \
+			| head -n -1 \
+			| sed -e "s|'|\"|g" -e "s|vars=||"  -e "s|True|1|" -e "s|False|0|" \
+			| sed -e ':a;N;$!ba' -e "s|,\n\}|\n}|" \
+			| jq ".node_version" \
+			| sed -e "s|\"||g" -e "s|v||")
+	else
+		local commit=$(cat "${T}/DEPS" | tr "\r\n" "\n" \
+			| sed -e "s| = |=|g" \
+			| sed "/#/d" \
+			| pcregrep -M "vars=[^=]+" \
+			| head -n -1 \
+			| sed -e "s|'|\"|g" -e "s|vars=||"  -e "s|True|1|" -e "s|False|0|" \
+			| sed -e ':a;N;$!ba' -e "s|,\n\}|\n}|" \
+			| jq ".node_version" \
+			| sed -e "s|\"||g")
+		wget -O "${T}/node_version.h" \
+			"https://raw.githubusercontent.com/electron/node/${commit}/src/node_version.h" || die
+		local v_major=$(grep -r -e "NODE_MAJOR_VERSION" \
+			"${T}/node_version.h" | head -n 1 | cut -f 3 -d " ")
+		local v_minor=$(grep -r -e "NODE_MINOR_VERSION" \
+			"${T}/node_version.h" | head -n 1 | cut -f 3 -d " ")
+		local v_patch=$(grep -r -e "NODE_PATCH_VERSION" \
+			"${T}/node_version.h" | head -n 1 | cut -f 3 -d " ")
+		echo "${v_major}.${v_minor}.${v_patch}"
+	fi
 }
