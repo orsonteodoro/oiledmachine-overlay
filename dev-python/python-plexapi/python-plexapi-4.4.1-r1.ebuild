@@ -11,9 +11,10 @@ HOMEPAGE="https://github.com/pkkid/python-plexapi"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86"
 SLOT="0"
-RDEPEND+=" dev-python/requests[${PYTHON_USEDEP}]"
+DEPEND+=" dev-python/requests[${PYTHON_USEDEP}]"
+RDEPEND+=" ${DEPEND}"
 SRC_URI=\
 "https://github.com/pkkid/python-plexapi/archive/${PV}.tar.gz \
-	-> ${PN}-${PV}.tar.gz"
-S="${WORKDIR}/${PN}-${PV}"
+	-> ${P}.tar.gz"
+S="${WORKDIR}/${P}"
 RESTRICT="mirror"
