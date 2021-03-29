@@ -16,7 +16,7 @@ LICENSE="GPL-3+"
 
 SLOT="0/${PV}"
 IUSE+=" android box2d bullet clang curl doc gles gles2 gles3 gme gnome gtk2 kde \
-linux minimal +openal +opengl opengl1 opengl3 radialgm sdl2 test +vanilla +X"
+linux minimal +openal +opengl opengl1 +opengl3 radialgm sdl2 test +vanilla +X"
 REQUIRED_USE+="
 	gles? ( sdl2 )
 	gles2? ( gles opengl )
@@ -89,7 +89,7 @@ BDEPEND+=" ${CDEPEND}
 	test? ( dev-cpp/gtest[${MULTILIB_USEDEP}]
 		dev-libs/boost[${MULTILIB_USEDEP}]
 		x11-libs/libX11[${MULTILIB_USEDEP}] )"
-EGIT_COMMIT="acc21d9ed1fd1b505659effab7a39d0df2a2f76c"
+EGIT_COMMIT="2595b7b6cdae44e2395f9cad83215d95a9adc4fb"
 SRC_URI=\
 "https://github.com/enigma-dev/enigma-dev/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${P}.tar.gz"
