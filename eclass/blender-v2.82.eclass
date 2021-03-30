@@ -15,7 +15,7 @@ PYTHON_COMPAT=( python3_{7,8} )
 
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-IUSE=" X +abi7-compat -asan +bullet +collada +color-management -cpudetection \
+IUSE+=" X +abi7-compat -asan +bullet +collada +color-management -cpudetection \
 +cuda +cycles -cycles-network +dds -debug doc +elbeem -embree +ffmpeg +fftw \
 flac +jack +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal \
 +opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb \
@@ -80,13 +80,15 @@ REQUIRED_USE+="
 	x264? ( ffmpeg )
 	xvid? ( ffmpeg )"
 
+# versions.cmake last date inspected: Jan 19, 2020
+
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake
 # doc/python_api/requirements.txt
 # extern/Eigen3/eigen-update.sh
 # Track OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER for changes.
 # Track build_files/build_environment/dependencies.dot for ffmpeg dependencies
-RDEPEND="${PYTHON_DEPS}
+RDEPEND+=" ${PYTHON_DEPS}
 	>=dev-lang/python-3.7.4
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
@@ -177,12 +179,14 @@ RDEPEND="${PYTHON_DEPS}
 		x11-libs/libXi
 		x11-libs/libXxf86vm
 	)"
-
-DEPEND="${RDEPEND}
+DEPEND+=" ${RDEPEND}
+	>=dev-cpp/eigen-3.3.7:3=
+"
+BDEPEND+="
+	>=dev-util/cmake-3.5
+	virtual/pkgconfig
 	asan? ( || ( sys-devel/clang
                      sys-devel/gcc ) )
-	>=dev-cpp/eigen-3.3.7:3
-	>=dev-util/cmake-3.5
 	cycles? (
 		x86? ( || (
 			sys-devel/clang
@@ -200,7 +204,7 @@ DEPEND="${RDEPEND}
 		dev-texlive/texlive-latexextra
 	)
 	nls? ( sys-devel/gettext )
-	virtual/pkgconfig"
+"
 
 _PATCHES=(
 	"${FILESDIR}/${PN}-2.82a-fix-install-rules.patch"

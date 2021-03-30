@@ -17,7 +17,7 @@ PYTHON_COMPAT=( python3_{7,8} )
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 IUSE+=" X +abi7-compat -asan +bullet +collada +color-management -cpudetection \
 +cuda +cycles -cycles-network +dds -debug doc +elbeem +embree +ffmpeg +fftw \
-flac -gmp +jack +jemalloc +jpeg2k -llvm -man -nanovdb +ndof +nls +nvcc -nvrtc \
+flac -gmp +jack +jemalloc +jpeg2k -llvm -man +nanovdb +ndof +nls +nvcc -nvrtc \
 +openal +opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv \
 +openvdb +openxr -optix +osl -potrace release +sdl +sndfile test +tiff \
 -valgrind"
@@ -86,7 +86,7 @@ REQUIRED_USE+="
 	x264? ( ffmpeg )
 	xvid? ( ffmpeg )"
 
-# versions.cmake last date inspected: Jul 7, 2020
+# versions.cmake last date inspected: Dec 4, 2020
 
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake

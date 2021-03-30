@@ -190,7 +190,7 @@ check_embree() {
 	if has embree ${IUSE_EFFECTIVE} && use embree ; then
 		# The default for EMBREE_FILTER_FUNCTION is ON in embree.
 		if grep -q -F -e "EMBREE_FILTER_FUNCTION=OFF" \
-			"${EROOT}/var/db/pkg/media-libs/embree-"*/*.ebuild ; then
+			"${EROOT}/var/db/pkg/media-libs/embree-"*/*.ebuild 2>/dev/null ; then
 			ewarn "EMBREE_FILTER_FUNCTION should be set to ON for embree."
 		else
 			if has_version 'media-libs/embree[-filter_function]' || \
@@ -202,7 +202,7 @@ check_embree() {
 
 		# The default for EMBREE_BACKFACE_CULLING is OFF in embree.
 		if grep -q -F -e "EMBREE_BACKFACE_CULLING=ON" \
-			"${EROOT}/var/db/pkg/media-libs/embree-"*/*.ebuild ; then
+			"${EROOT}/var/db/pkg/media-libs/embree-"*/*.ebuild 2>/dev/null ; then
 			ewarn "EMBREE_BACKFACE_CULLING should be set to OFF for embree."
 		else
 			if has_version 'media-libs/embree[backface_culling]' || \
@@ -214,7 +214,7 @@ check_embree() {
 
 		# The default for EMBREE_RAY_MASK is OFF in embree.
 		if grep -q -F -e "EMBREE_RAY_MASK=OFF" \
-			"${EROOT}/var/db/pkg/media-libs/embree-"*/*.ebuild ; then
+			"${EROOT}/var/db/pkg/media-libs/embree-"*/*.ebuild 2>/dev/null ; then
 			ewarn "EMBREE_RAY_MASK should be set to ON for embree."
 		else
 			if has_version 'media-libs/embree[-ray_mask]' || \

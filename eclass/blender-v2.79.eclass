@@ -18,7 +18,7 @@ PYTHON_COMPAT=( python3_{6,7} ) # The blender2.7 branch allowed for 2.7.
 
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-IUSE=" X abi3-compat +abi4-compat abi5-compat abi6-compat abi7-compat +bullet \
+IUSE+=" X abi3-compat +abi4-compat abi5-compat abi6-compat abi7-compat +bullet \
 +dds +elbeem +game-engine -openexr -collada -color-management -cpudetection \
 +cuda +cycles -cycles-network -debug doc flac -ffmpeg -fftw +jack +jemalloc \
 +jpeg2k -llvm -man +ndof +nls +nvcc +openal +opencl +openimageio +openmp \
@@ -118,6 +118,8 @@ REQUIRED_USE+="
 	x264? ( ffmpeg )
 	xvid? ( ffmpeg )"
 
+# versions.cmake last date inspected: Jan 3, 2018
+
 #REQUIRED_USE=" !cycles-network" # Fails for CPU and OPENCL
 
 # dependency version requirements see
@@ -131,7 +133,7 @@ REQUIRED_USE+="
 # They use OpenVDB 3.1.0 but disable abi3-compat but copyGridWithNewTree appears in 3.3.0.
 # The pugixml version was not declared in versions.cmake but based on 2.80.
 # openimageio is subslot triggered to apply oiio compat patch.
-RDEPEND="${PYTHON_DEPS}
+RDEPEND+=" ${PYTHON_DEPS}
 	>=dev-lang/python-3.6.2
 	dev-libs/lzo:2
 	$(python_gen_cond_dep '
@@ -235,10 +237,12 @@ abi7-compat? ( >=blender-libs/openvdb-3.3.0:7-${CXXABI_V}=[${PYTHON_SINGLE_USEDE
 		x11-libs/libXi
 		x11-libs/libXxf86vm
 	)"
-
-DEPEND="${RDEPEND}
-	>=dev-cpp/eigen-3.2.7:3
+DEPEND+=" ${RDEPEND}
+	>=dev-cpp/eigen-3.2.7:3=
+"
+BDEPEND+="
 	>=dev-util/cmake-3.5
+	virtual/pkgconfig
 	cycles? (
 		x86? ( || (
 			sys-devel/clang
@@ -255,7 +259,7 @@ DEPEND="${RDEPEND}
 		dev-texlive/texlive-latexextra
 	)
 	nls? ( sys-devel/gettext )
-	virtual/pkgconfig"
+"
 
 _PATCHES=(
 	"${FILESDIR}/${PN}-2.79b-fix-install-rules.patch"
