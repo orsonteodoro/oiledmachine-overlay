@@ -201,7 +201,7 @@ src_install()
 {
 	cmake_src_install
 	cd "${S}" || die
-	doins README.md
+	doins Readme.md
 	cd "${WORKDIR}" || die
 	insinto licenses
 	doins LICENSE
