@@ -174,7 +174,7 @@
       Build and install man pages.
     </flag>
     <flag name="nanovdb">
-      Adds support for GPU volume based rendering for cycles.
+      Adds support for GPU accelerated volume based rendering for cycles.
     </flag>
     <flag name="ndof">
       Enable NDOF input devices (SpaceNavigator and friends).
