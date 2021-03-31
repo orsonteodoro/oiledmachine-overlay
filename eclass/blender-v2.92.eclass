@@ -34,7 +34,7 @@ REQUIRED_USE+="
 	cuda? ( cycles ^^ ( nvcc nvrtc ) )
 	embree? ( cycles )
 	mp3? ( ffmpeg )
-	nanovdb? ( openvdb )
+	nanovdb? ( cycles openvdb || ( cuda opencl ) )
 	nvcc? ( || ( cuda optix ) )
 	nvrtc? ( || ( cuda optix ) )
 	opencl? ( cycles )
