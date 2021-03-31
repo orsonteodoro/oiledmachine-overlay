@@ -165,9 +165,7 @@ SRC_URI+=" bbrv2? ( ${BBRV2_SRC_URI} )
 	   kernel-gcc-patch? (
 		${KGCCP_SRC_4_9_URI}
 		${KGCCP_SRC_8_1_URI}
-		${KGCCP_SRC_9_1_URI}
-		${KGCCP_SRC_10_1_URI}
-		${KGCCP_SRC_11_0_URI}
+		${KGCCP_SRC_9_0_URI}
 	   )
 	   muqss? ( ${CK_SRC_URI} )
 	   O3? ( ${O3_ALLOW_SRC_URI} )

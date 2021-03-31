@@ -90,7 +90,6 @@ SRC_URI+=" genpatches? (
 	   kernel-gcc-patch? (
 		${KGCCP_SRC_4_9_URI}
 		${KGCCP_SRC_8_1_URI}
-		${KGCCP_SRC_9_1_URI}
 	   )
 	   muqss? ( ${CK_SRC_URI} )
 	   O3? (

@@ -257,6 +257,8 @@ GENPATCHES_BASE_SRC_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_BASE_FN}"
 GENPATCHES_EXPERIMENTAL_SRC_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_EXPERIMENTAL_FN}"
 GENPATCHES_EXTRAS_SRC_URI="${GENPATCHES_URI_BASE_URI}${GENPATCHES_EXTRAS_FN}"
 
+KGCCP_COMMIT_SNAPSHOT="16c7ac1e7a0832e4cee9f475dca733a59dc91c88" # 20200327
+
 KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:="cdn.kernel.org"}
 KERNEL_SERIES_TARBALL_FN="linux-${K_MAJOR_MINOR}.tar.xz"
 KERNEL_INC_BASE_URI=\
@@ -264,61 +266,36 @@ KERNEL_INC_BASE_URI=\
 KERNEL_PATCH_0_TO_1_URI=\
 "https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${K_MAJOR}.x/patch-${K_MAJOR_MINOR}.1.xz"
 
-if ver_test ${K_MAJOR_MINOR} -ge 5.10 ; then
-KGCCP_11_0_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v11.0%2B_kernel_v5.8%2B.patch"
-KGCCP_10_1_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v5.8%2B.patch"
-KGCCP_9_1_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v5.8%2B.patch"
-KGCCP_8_1_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B.patch"
-KGCCP_4_9_FN=\
-"${KGCCP_4_9_FN:=enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B.patch}"
-elif ver_test ${K_MAJOR_MINOR} -ge 5.9 ; then
-KGCCP_11_0_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v11.0%2B_kernel_v5.8%2B.patch"
-KGCCP_10_1_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v5.8%2B.patch"
-KGCCP_9_1_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v5.8%2B.patch"
-KGCCP_8_1_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B.patch"
-KGCCP_4_9_FN=\
-"${KGCCP_4_9_FN:=enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B.patch}"
+if ver_test ${K_MAJOR_MINOR} -ge 5.9 ; then
+KGCCP_9_0_BN=\
+"more-uarches-for-kernel-5.8%2B"
+KGCCP_8_1_BN=\
+"enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
+KGCCP_4_9_BN=\
+"enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B"
 elif ver_test ${K_MAJOR_MINOR} -ge 5.4 ; then
-KGCCP_10_1_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v10.1%2B_kernel_v4.19-v5.4.patch"
-KGCCP_9_1_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v4.13%2B.patch"
-KGCCP_8_1_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B.patch"
-KGCCP_4_9_FN=\
-"${KGCCP_4_9_FN:=enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B.patch}"
+KGCCP_9_0_BN=\
+"more-uarches-for-kernel-4.19-5.4"
+KGCCP_8_1_BN=\
+"enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
+KGCCP_4_9_BN=\
+"enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B"
 elif ver_test ${K_MAJOR_MINOR} -ge 4.13 ; then
-KGCCP_9_1_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v9.1%2B_kernel_v4.13%2B.patch"
-KGCCP_8_1_FN=\
-"enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B.patch"
-KGCCP_4_9_FN=\
-"${KGCCP_4_9_FN:=enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B.patch}"
+KGCCP_8_1_BN=\
+"enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
+KGCCP_4_9_BN=\
+"enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B"
 fi
 KGCCP_URI_BASE=\
-"https://raw.githubusercontent.com/graysky2/kernel_gcc_patch/master/"
-if [[ -n "${KGCCP_4_9_FN}" ]] ; then
-KGCCP_SRC_4_9_URI="${KGCCP_URI_BASE}/outdated_versions/${KGCCP_4_9_FN}"
+"https://raw.githubusercontent.com/graysky2/kernel_gcc_patch/${KGCCP_COMMIT_SNAPSHOT}/"
+if [[ -n "${KGCCP_4_9_BN}" ]] ; then
+KGCCP_SRC_4_9_URI="${KGCCP_URI_BASE}/outdated_versions/${KGCCP_4_9_BN}.patch -> ${KGCCP_4_9_BN}-${KGCCP_COMMIT_SNAPSHOT:0:7}.patch"
 fi
-if [[ -n "${KGCCP_8_1_FN}" ]] ; then
-KGCCP_SRC_8_1_URI="${KGCCP_URI_BASE}/outdated_versions/${KGCCP_8_1_FN}"
+if [[ -n "${KGCCP_8_1_BN}" ]] ; then
+KGCCP_SRC_8_1_URI="${KGCCP_URI_BASE}/outdated_versions/${KGCCP_8_1_BN}.patch -> ${KGCCP_8_1_BN}-${KGCCP_COMMIT_SNAPSHOT:0:7}.patch"
 fi
-if [[ -n "${KGCCP_9_1_FN}" ]] ; then
-KGCCP_SRC_9_1_URI="${KGCCP_URI_BASE}${KGCCP_9_1_FN}"
-fi
-if [[ -n "${KGCCP_10_1_FN}" ]] ; then
-KGCCP_SRC_10_1_URI="${KGCCP_URI_BASE}${KGCCP_10_1_FN}"
-fi
-if [[ -n "${KGCCP_11_0_FN}" ]] ; then
-KGCCP_SRC_11_0_URI="${KGCCP_URI_BASE}${KGCCP_11_0_FN}"
+if [[ -n "${KGCCP_9_0_BN}" ]] ; then
+KGCCP_SRC_9_0_URI="${KGCCP_URI_BASE}${KGCCP_9_0_BN}.patch -> ${KGCCP_9_0_BN}-${KGCCP_COMMIT_SNAPSHOT:0:7}.patch"
 fi
 
 LINUX_REPO_URI=\
@@ -1115,29 +1092,19 @@ function ot-kernel_src_unpack() {
 		if ! tc-is-gcc ; then
 			CC=$(get_abi_CHOST ${ABI})-gcc
 		fi
-		if $(ver_test $(gcc-version) -ge 11.0) \
-			&& test -f "${DISTDIR}/${KGCCP_11_0_FN}" ; \
+		if $(ver_test $(gcc-version) -ge 9.0) \
+			&& test -f "${DISTDIR}/${KGCCP_9_0_BN}-${KGCCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
-			einfo "GCC patch is 11.0"
-			_PATCHES+=( "${DISTDIR}/${KGCCP_11_0_FN}" )
-		elif $(ver_test $(gcc-version) -ge 10.1) \
-			&& test -f "${DISTDIR}/${KGCCP_10_1_FN}" ; \
-		then
-			einfo "GCC patch is 10.1"
-			_PATCHES+=( "${DISTDIR}/${KGCCP_10_1_FN}" )
-		elif $(ver_test $(gcc-version) -ge 9.1) \
-			&& test -f "${DISTDIR}/${KGCCP_9_1_FN}" ; \
-		then
-			einfo "GCC patch is 9.1"
-			_PATCHES+=( "${DISTDIR}/${KGCCP_9_1_FN}")
+			einfo "GCC patch is for >=9.0"
+			_PATCHES+=( "${DISTDIR}/${KGCCP_9_0_BN}-${KGCCP_COMMIT_SNAPSHOT:0:7}.patch")
 		elif $(ver_test $(gcc-version) -ge 8.1) \
-			&& test -f "${DISTDIR}/${KGCCP_8_1_FN}" ; \
+			&& test -f "${DISTDIR}/${KGCCP_8_1_BN}-${KGCCP_COMMIT_SNAPSHOT:0:7}.patch" ; \
 		then
-			einfo "GCC patch is 8.1"
-			_PATCHES+=( "${DISTDIR}/${KGCCP_8_1_FN}" )
-		elif test -f "${DISTDIR}/${KGCCP_4_9_FN}" ; then
-			einfo "GCC patch is 4.9"
-			_PATCHES+=( "${DISTDIR}/${KGCCP_4_9_FN}" )
+			einfo "GCC patch is for >=8.1"
+			_PATCHES+=( "${DISTDIR}/${KGCCP_8_1_BN}-${KGCCP_COMMIT_SNAPSHOT:0:7}.patch" )
+		elif test -f "${DISTDIR}/${KGCCP_4_9_BN}-${KGCCP_COMMIT_SNAPSHOT:0:7}.patch" ; then
+			einfo "GCC patch is for >=4.9"
+			_PATCHES+=( "${DISTDIR}/${KGCCP_4_9_BN}-${KGCCP_COMMIT_SNAPSHOT:0:7}.patch" )
 		else
 			die \
 "Cannot find a compatible kernel_gcc_patch for "$(gcc-version)" and\n\
