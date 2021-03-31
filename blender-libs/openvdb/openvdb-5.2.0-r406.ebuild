@@ -3,78 +3,89 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7,8,9} )
+PYTHON_COMPAT=( python2_7 python3_{6..9} )
 
 inherit cmake flag-o-matic python-single-r1
 
 DESCRIPTION="Library for the efficient manipulation of volumetric data"
 HOMEPAGE="https://www.openvdb.org"
-SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-
 LICENSE="MPL-2.0"
-IUSE="+abi4-compat doc python test"
+KEYWORDS="~amd64 ~x86"
 CXXABI=11
 LLVM_V=9
 SLOT_MAJ="4"
 SLOT="${SLOT_MAJ}/${PV}"
-KEYWORDS="~amd64 ~x86"
-RESTRICT="!test? ( test )"
-
+# python is enabled upstream
+IUSE+=" +abi4-compat +blosc -doc -log4cplus -numpy +openexr -pdf -pydoc -python test"
 # Blender disables python
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
 # Prevent file collisions also with ABI masks
-REQUIRED_USE="
-	abi4-compat
-	python? ( ${PYTHON_REQUIRED_USE} )
+# The docs say that blosc and openexr are optional but the openvdb folder
+# CMakeLists.txt requires it in this version.
+REQUIRED_USE+="
 	!python
-"
-
-RDEPEND="
-	dev-cpp/tbb
-	blender-libs/boost:${CXXABI}=
+	abi4-compat
+	blosc
+	openexr
+	python? ( ${PYTHON_REQUIRED_USE} )"
+# For dependencies, see
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v5.2.0/openvdb/INSTALL
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/v5.2.0/travis/travis.run
+# Assumes U 14.04 LTS
+DEPEND+="
+	>=dev-cpp/tbb-3
+	>=blender-libs/boost-1.53:${CXXABI}=
 	blender-libs/mesa:${LLVM_V}=
-	dev-libs/c-blosc:=
-	dev-libs/jemalloc:=
-	dev-libs/log4cplus:=
-	media-libs/glfw
+	>=media-libs/glfw-2.7
 	media-libs/glu
 	media-libs/ilmbase:=
-	media-libs/openexr:=
 	sys-libs/zlib:=
+	x11-libs/libX11
 	x11-libs/libXcursor
 	x11-libs/libXi
 	x11-libs/libXinerama
 	x11-libs/libXrandr
+	x11-libs/libXxf86vm
+	blosc? ( >=dev-libs/c-blosc-1.5.0:= )
+	log4cplus? ( >=dev-libs/log4cplus-1.1.2:= )
+	openexr? ( media-libs/openexr:= )
 	python? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
-			blender-libs/boost:'${CXXABI}'=[python?,${PYTHON_USEDEP}]
-			dev-python/numpy[${PYTHON_USEDEP}]
+			>=blender-libs/boost-1.57:'${CXXABI}'=[python?,${PYTHON_USEDEP}]
+			numpy? ( dev-python/numpy[${PYTHON_USEDEP}] )
 		')
+	)"
+RDEPEND+=" ${DEPEND}"
+BDEPEND+="
+	|| (
+		>=sys-devel/clang-3.8
+		>=sys-devel/gcc-4.8
+		>=dev-lang/icc-15
 	)
-"
-
-DEPEND="${RDEPEND}"
-
-BDEPEND="
 	virtual/pkgconfig
 	doc? (
-		app-doc/doxygen
+		>=app-doc/doxygen-1.8.11
 		dev-texlive/texlive-bibtexextra
 		dev-texlive/texlive-fontsextra
 		dev-texlive/texlive-fontutils
 		dev-texlive/texlive-latex
 		dev-texlive/texlive-latexextra
+		pdf? (
+			app-text/ghostscript-gpl
+			dev-texlive/texlive-latex
+		)
+		pydoc? ( >=dev-python/epydoc-3 )
 	)
-	test? ( dev-util/cppunit )
-"
-
-PATCHES=(
-	"${FILESDIR}/${P}-use-gnuinstalldirs.patch"
-	"${FILESDIR}/${P}-use-pkgconfig-for-ilmbase-and-openexr.patch"
-	"${FILESDIR}/${PN}-4.0.2-fix-const-correctness-for-unittest.patch"
-	"${FILESDIR}/${PN}-4.0.2-fix-build-docs.patch"
-)
+	test? ( >=dev-util/cppunit-1.10 )"
+SRC_URI="\
+ https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz \
+	-> ${P}.tar.gz"
+PATCHES=( "${FILESDIR}/${P}-use-gnuinstalldirs.patch"
+	  "${FILESDIR}/${P}-use-pkgconfig-for-ilmbase-and-openexr.patch"
+	  "${FILESDIR}/${PN}-4.0.2-fix-const-correctness-for-unittest.patch"
+	  "${FILESDIR}/${PN}-4.0.2-fix-build-docs.patch" )
+RESTRICT="!test? ( test )"
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
@@ -99,8 +110,10 @@ src_configure() {
 	# To stay in sync with blender-libs/boost
 	append-cxxflags -std=c++${CXXABI}
 
-	export LD_LIBRARY_PATH="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir)"
-	export BOOST_ROOT="${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr"
+	export LD_LIBRARY_PATH=\
+"${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr/$(get_libdir)"
+	export BOOST_ROOT=\
+"${EROOT}/usr/$(get_libdir)/blender/boost/${CXXABI}/usr"
 
 	local mycmakeargs=(
 		-DBLOSC_LOCATION="${myprefix}"
@@ -145,7 +158,11 @@ src_configure() {
 		)
 	fi
 
-	use python && mycmakeargs+=( -DPYOPENVDB_INSTALL_DIRECTORY="$(python_get_sitedir)" )
+	if use python ; then
+		mycmakeargs+=(
+			-DPYOPENVDB_INSTALL_DIRECTORY="$(python_get_sitedir)"
+		)
+	fi
 	use test && mycmakeargs+=( -DCPPUNIT_LOCATION="${myprefix}" )
 
 	cmake_src_configure
@@ -154,5 +171,6 @@ src_configure() {
 src_install() {
 	cmake_src_install
 	mv "${ED}/usr/share" "${ED}/$(iprfx)" || die
+	docinto licenses
+	dodoc LICENSE openvdb/COPYRIGHT
 }
-
