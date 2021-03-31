@@ -16,7 +16,7 @@ SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.g
 LICENSE="MPL-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
-IUSE+=" +abi6-compat +abi7-compat +blosc cpu_flags_x86_avx \
+IUSE+=" -abi6-compat +abi7-compat +blosc cpu_flags_x86_avx \
 cpu_flags_x86_sse4_2 doc egl +jemalloc -log4cplus numpy -openexr -python \
 static-libs tbb test -vdb_lod +vdb_print -vdb_render -vdb_view"
 RESTRICT="!test? ( test )"
@@ -155,8 +155,7 @@ src_configure() {
 src_install()
 {
 	cmake_src_install
-	doins README.md
-	insinto licenses
-	doins LICENSE openvdb/COPYRIGHT
-
+	dodoc README.md
+	docinto licenses
+	dodoc LICENSE openvdb/COPYRIGHT
 }
