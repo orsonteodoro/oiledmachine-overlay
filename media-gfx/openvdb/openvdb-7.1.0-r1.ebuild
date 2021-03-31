@@ -17,7 +17,7 @@ LICENSE="MPL-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
 IUSE+=" -abi6-compat +abi7-compat +blosc cpu_flags_x86_avx \
-cpu_flags_x86_sse4_2 doc egl +jemalloc -log4cplus numpy -openexr -python \
+cpu_flags_x86_sse4_2 doc egl +jemalloc -log4cplus -numpy -openexr -python \
 static-libs tbb test -vdb_lod +vdb_print -vdb_render -vdb_view"
 RESTRICT="!test? ( test )"
 
@@ -132,6 +132,7 @@ src_configure() {
 		-DUSE_BLOSC=$(usex blosc)
 		-DUSE_EXR=$(usex openexr)
 		-DUSE_LOG4CPLUS=$(usex log4cplus)
+		-DUSE_NUMPY=$(usex numpy)
 	)
 
 	if use python; then
