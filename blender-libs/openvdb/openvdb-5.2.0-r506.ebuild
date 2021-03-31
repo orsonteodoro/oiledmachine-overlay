@@ -16,7 +16,8 @@ LLVM_V=9
 SLOT_MAJ="5"
 SLOT="${SLOT_MAJ}/${PV}"
 # python is enabled upstream
-IUSE+=" +abi5-compat +blosc -doc -log4cplus -numpy +openexr -pdf -pydoc -python test"
+IUSE+=" +abi5-compat +blosc -doc egl -log4cplus -numpy +openexr -pdf -pydoc \
+-python test"
 # Blender disables python
 # See https://github.com/blender/blender/blob/master/build_files/build_environment/cmake/openvdb.cmake
 # Prevent file collisions also with ABI masks
@@ -47,6 +48,10 @@ DEPEND+="
 	x11-libs/libXrandr
 	x11-libs/libXxf86vm
 	blosc? ( >=dev-libs/c-blosc-1.5.0:= )
+	egl? (
+		>=media-libs/glfw-3.3
+		media-libs/mesa[egl?]
+	)
 	log4cplus? ( >=dev-libs/log4cplus-1.1.2:= )
 	openexr? ( media-libs/openexr:= )
 	python? (
