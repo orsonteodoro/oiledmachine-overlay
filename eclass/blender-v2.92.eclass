@@ -182,7 +182,7 @@ RDEPEND+=" ${PYTHON_DEPS}
 		>=dev-libs/boost-1.70:=[nls?,threads(+)]
 		>=dev-cpp/tbb-2019.9
 		>=dev-libs/c-blosc-1.5.0
-		nanovdb? ( >=media-gfx/nanovdb-25.0.0_pre20200924 )
+		nanovdb? ( >=media-gfx/nanovdb-25.0.0_pre20200924:= )
 	)
 	openxr? ( >=media-libs/openxr-1.0.8 )
 	optix? ( >=dev-libs/optix-7 )

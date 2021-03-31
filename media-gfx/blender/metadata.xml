@@ -106,7 +106,9 @@
       Use ABI 7.x compatible OpenVDB.
     </flag>
     <flag name="asan">
-      Enable address sanitiation.
+      Enable address sanitiation.  This is only for bug and
+      vulnerability discovery only.  It does not necessarily prevent
+      when activated.
     </flag>
     <flag name="build_creator">
       Builds the IDE.  The default.
