@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person" proxied="yes">
+    <!-- only for this ebuild fork on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="person" proxied="yes">
+    <!-- originators -->
+    <email>agrigo2001@yahoo.com.au</email>
+    <name>Adrian Grigo</name>
+  </maintainer>
+  <maintainer type="project" proxied="proxy">
+    <!-- originators -->
+    <email>proxy-maint@gentoo.org</email>
+    <name>Proxy Maintainers</name>
+  </maintainer>
+  <longdescription>
+    Libraries for the efficient manipulation of volumetric data used in big
+    budget movies. 
+
+    The oiledmachine-overlay ebuild-fork is primarly to fix
+    multilib glfw compatibility and may be removed anytime.  While 
+    that is being, fixed the ebuild is reviewed and modified for
+    comprehensiveness, DEPEND-USE efficiency, and USE flag
+    correctness.
+  </longdescription>
+  <upstream>
+    <remote-id type="github">AcademySoftwareFoundation/openvdb</remote-id>
+  </upstream>
+  <use>
+    <flag restrict="&lt;=media-gfx/openvdb-7.1.0" name="abi5-compat">
+      Disables newer features to maintain compatibility with ABI5.
+    </flag>
+    <flag restrict="&gt;=media-gfx/openvdb-6.0.0" name="abi6-compat">
+      Disables newer features to maintain compatibility with ABI6.
+    </flag>
+    <flag restrict="&gt;=media-gfx/openvdb-7.0.0" name="abi7-compat">
+      Disables newer features to maintain compatibility with ABI7.
+    </flag>
+    <flag name="blosc">
+      Adds improved disk compression support
+    </flag>
+    <flag name="egl">
+      Min requirements to prevent a crash with EGL
+    </flag>
+    <flag name="openexr">
+      Adds OpenEXR support
+    </flag>
+    <flag name="jemalloc">
+      Uses jemalloc as the concurrent memory allocator for binaries (that use the
+      utils USE flag) or unit tests.
+    </flag>
+    <flag name="log4cplus">
+      Adds improved logging support
+    </flag>
+    <flag restrict="&gt;=media-gfx/openvdb-7.0.0" name="numpy">
+      Adds <pkg>dev-python/numpy</pkg> support to the pyopenvdb module
+    </flag>
+    <flag restrict="&gt;=media-gfx/openvdb-7.0.0" name="python">
+      Builds the pyopenvdb module
+    </flag>
+    <flag restrict="&gt;=media-gfx/openvdb-7.0.0" name="utils">
+      Build utility binaries
+    </flag>
+    <flag name="test">
+      Runs unit tests
+    </flag>
+    <flag name="tbb">
+      Uses TBB as the concurrent memory allocator for binaries (that use the
+      utils USE flag) or unit tests.
+    </flag>
+    <flag name="vdb_lod">
+      Volume mipmap generator, from OpenVDB grid
+    </flag>
+    <flag name="vdb_print">
+      Prints OpenVDB grids details
+    </flag>
+    <flag name="vdb_render">
+      Ray tracer for OpenVDB volumes
+    </flag>
+    <flag name="vdb_view">
+      View OpenVDB grids
+    </flag>
+  </use>
+</pkgmetadata>
