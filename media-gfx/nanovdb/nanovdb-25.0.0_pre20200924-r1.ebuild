@@ -10,11 +10,10 @@ rendering applications."
 HOMEPAGE=\
 "https://github.com/AcademySoftwareFoundation/openvdb/tree/feature/nanovdb/nanovdb"
 LICENSE="MPL-2.0"
-# See https://github.com/AcademySoftwareFoundation/openvdb/blob/e62f7a0bf1e27397223c61ddeaaf57edf111b77f/nanovdb/nanovdb/NanoVDB.h#L68
+# For versioning, see
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/e62f7a0bf1e27397223c61ddeaaf57edf111b77f/nanovdb/nanovdb/NanoVDB.h#L68
 SLOT="$(ver_cut 1 ${PV})/${PV}"
-
 # Live ebuilds do not get keyworded.
-
 # cuda, optix, allow-fetchcontent are enabled upstream by default but
 # are disabled
 IUSE+=" +benchmark +blosc cuda -doc -egl +examples \
@@ -24,15 +23,12 @@ REQUIRED_USE="
 	interactive-renderer? ( tools )
 	native-file-dialog? ( imgui tools )
 	benchmark? ( openvdb )
-	openvdb? ( tbb zlib )
-"
-# See https://github.com/AcademySoftwareFoundation/openvdb/blob/e62f7a0bf1e27397223c61ddeaaf57edf111b77f/doc/dependencies.txt
+	openvdb? ( tbb zlib )"
+# For dependencies, see
+# https://github.com/AcademySoftwareFoundation/openvdb/blob/e62f7a0bf1e27397223c61ddeaaf57edf111b77f/doc/dependencies.txt
 # openvdb should be 7.1.1 but downgraded to minor.  No 7.1.1 release either.
-DEPEND_GTEST="
-	system-gtest? ( >=dev-cpp/gtest-1.10 )
-"
-DEPEND+="
-	benchmark? ( ${DEPEND_GTEST} )
+DEPEND_GTEST=" system-gtest? ( >=dev-cpp/gtest-1.10 )"
+DEPEND+="  benchmark? ( ${DEPEND_GTEST} )
 	blosc? ( >=dev-libs/c-blosc-1.5 )
 	cuda? (
 		>=x11-drivers/nvidia-drivers-352.31
@@ -64,8 +60,7 @@ DEPEND+="
 			)
 		)
 	)
-	zlib? ( >=sys-libs/zlib-1.2.7 )
-"
+	zlib? ( >=sys-libs/zlib-1.2.7 )"
 RDEPEND+=" ${DEPEND}"
 BDEPEND+="
 	|| (
@@ -75,8 +70,7 @@ BDEPEND+="
 	)
 	>=dev-util/cmake-3.11.4
 	doc? ( >=app-doc/doxygen-1.8.8 )
-	test? ( ${DEPEND_GTEST} )
-"
+	test? ( ${DEPEND_GTEST} )"
 GH_ORG_URI="https://github.com/AcademySoftwareFoundation"
 EGIT_COMMIT="e62f7a0bf1e27397223c61ddeaaf57edf111b77f"
 EGIT_COMMIT_IMGUI="124c2608f1bf708b3abf039c93d16d704f76a815" # 20201012
@@ -188,9 +182,9 @@ src_configure()
 
 	if use benchmark || use test ; then
 		mycmakeargs+=(
-	-DNANOVDB_USE_INTERNAL_GTEST=$(use !system-gtest)
 	-DEGOOGLETEST_SOURCE_DIR="${S_GTEST}"
 	-DEGOOGLETEST_BINARY_DIR="googletest-${GTEST_V}-${ABI}_build"
+	-DNANOVDB_USE_INTERNAL_GTEST=$(use !system-gtest)
 		)
 	fi
 
