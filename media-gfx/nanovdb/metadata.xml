@@ -32,7 +32,8 @@
       Builds and installs examples
     </flag>
     <flag name="egl">
-      Min requirements to prevent a crash with EGL
+      Min requirements to prevent a crash with EGL.  Adds EGL support to the
+      nanovdb viewer.
     </flag>
     <flag name="imgui">
       Adds point and click GUI elements for the interactive renderer to improve

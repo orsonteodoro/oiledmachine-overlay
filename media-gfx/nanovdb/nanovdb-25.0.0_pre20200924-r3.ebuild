@@ -52,6 +52,7 @@ DEPEND+="  benchmark? ( ${DEPEND_GTEST} )
 	tools? (
 		egl? (
 			media-libs/mesa[egl?]
+			>=media-libs/glfw-3.3
 		)
 		interactive-renderer? (
 			system-glfw? ( >=media-libs/glfw-3.1 )
