@@ -183,7 +183,7 @@ src_configure()
 	if use benchmark || use test ; then
 		mycmakeargs+=(
 	-DEGOOGLETEST_SOURCE_DIR="${S_GTEST}"
-	-DEGOOGLETEST_BINARY_DIR="googletest-${GTEST_V}-${ABI}_build"
+	-DEGOOGLETEST_BINARY_DIR="${WORKDIR}/googletest-${GTEST_V}-${ABI}_build"
 	-DNANOVDB_USE_INTERNAL_GTEST=$(use !system-gtest)
 		)
 	fi
