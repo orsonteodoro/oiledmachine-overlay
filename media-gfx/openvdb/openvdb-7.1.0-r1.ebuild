@@ -11,29 +11,22 @@ inherit cmake flag-o-matic python-single-r1
 
 DESCRIPTION="Library for the efficient manipulation of volumetric data"
 HOMEPAGE="https://www.openvdb.org"
-SRC_URI="https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-
 LICENSE="MPL-2.0"
-SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
+SLOT="0"
 IUSE+=" -abi6-compat +abi7-compat +blosc cpu_flags_x86_avx \
 cpu_flags_x86_sse4_2 doc egl +jemalloc -log4cplus -numpy -openexr -python \
 static-libs tbb test -vdb_lod +vdb_print -vdb_render -vdb_view"
-RESTRICT="!test? ( test )"
-
 VDB_UTILS="vdb_lod vdb_print vdb_render vdb_view"
 REQUIRED_USE+="
 	^^ ( abi6-compat abi7-compat )
 	jemalloc? ( || ( test ${VDB_UTILS} ) )
 	numpy? ( python )
 	python? ( ${PYTHON_REQUIRED_USE} )
-	vdb_render? ( openexr )
-"
-
+	vdb_render? ( openexr )"
 # See
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/v7.1.0/doc/dependencies.txt
 # https://github.com/AcademySoftwareFoundation/openvdb/blob/v7.1.0/ci/install.sh
-
 DEPEND+="
 	>=dev-cpp/tbb-2017.6
 	>=dev-libs/boost-1.61:=
@@ -85,10 +78,14 @@ BDEPEND+="
 		dev-texlive/texlive-latexextra
 	)
 	test? ( >=dev-util/cppunit-1.10 )"
+SRC_URI="\
+ https://github.com/AcademySoftwareFoundation/${PN}/archive/v${PV}.tar.gz \
+	-> ${P}.tar.gz"
 PATCHES=(
 	"${FILESDIR}/${P}-0001-Fix-multilib-header-source.patch"
 	"${FILESDIR}/${P}-0002-Fix-doc-install-dir.patch"
 )
+RESTRICT="!test? ( test )"
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
@@ -115,9 +112,11 @@ src_configure() {
 	local mycmakeargs=(
 		-DCHOST="${CHOST}"
 		-DCMAKE_INSTALL_DOCDIR="share/doc/${PF}/"
-		-DCONCURRENT_MALLOC=$(usex jemalloc "Jemalloc" $(usex tbb "Tbbmalloc" "None"))
+		-DCONCURRENT_MALLOC=$(usex jemalloc "Jemalloc" \
+			$(usex tbb "Tbbmalloc" "None"))
 		-DOPENVDB_ABI_VERSION_NUMBER="${version}"
-		-DOPENVDB_BUILD_BINARIES=$(usex vdb_lod ON $(usex vdb_print ON $(usex vdb_render ON $(usex vdb_view ON OFF))))
+		-DOPENVDB_BUILD_BINARIES=$(usex vdb_lod ON $(usex vdb_print ON \
+			$(usex vdb_render ON $(usex vdb_view ON OFF))))
 		-DOPENVDB_BUILD_DOCS=$(usex doc)
 		-DOPENVDB_BUILD_PYTHON_MODULE=$(usex python)
 		-DOPENVDB_BUILD_UNITTESTS=$(usex test)
@@ -137,9 +136,9 @@ src_configure() {
 
 	if use python; then
 		mycmakeargs+=(
-			-DUSE_NUMPY=$(usex numpy)
 			-DPYOPENVDB_INSTALL_DIRECTORY="$(python_get_sitedir)"
 			-DPython_EXECUTABLE="${PYTHON}"
+			-DUSE_NUMPY=$(usex numpy)
 		)
 	fi
 
