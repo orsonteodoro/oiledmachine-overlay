@@ -119,6 +119,7 @@ src_configure() {
 		-DOPENVDB_ABI_VERSION_NUMBER="${version}"
 		-DOPENVDB_BUILD_BINARIES=$(usex vdb_lod ON $(usex vdb_print ON $(usex vdb_render ON $(usex vdb_view ON OFF))))
 		-DOPENVDB_BUILD_DOCS=$(usex doc)
+		-DOPENVDB_BUILD_PYTHON_MODULE=$(usex python)
 		-DOPENVDB_BUILD_UNITTESTS=$(usex test)
 		-DOPENVDB_BUILD_VDB_LOD=$(usex vdb_lod)
 		-DOPENVDB_BUILD_VDB_PRINT=$(usex vdb_print)
@@ -127,17 +128,15 @@ src_configure() {
 		-DOPENVDB_CORE_SHARED=ON
 		-DOPENVDB_CORE_STATIC=$(usex static-libs)
 		-DOPENVDB_ENABLE_RPATH=OFF
+		-DUSE_BLOSC=$(usex blosc)
 		-DUSE_CCACHE=OFF
 		-DUSE_COLORED_OUTPUT=ON
-		-DUSE_BLOSC=$(usex blosc)
 		-DUSE_EXR=$(usex openexr)
 		-DUSE_LOG4CPLUS=$(usex log4cplus)
-		-DUSE_NUMPY=$(usex numpy)
 	)
 
 	if use python; then
 		mycmakeargs+=(
-			-DOPENVDB_BUILD_PYTHON_MODULE=ON
 			-DUSE_NUMPY=$(usex numpy)
 			-DPYOPENVDB_INSTALL_DIRECTORY="$(python_get_sitedir)"
 			-DPython_EXECUTABLE="${PYTHON}"
