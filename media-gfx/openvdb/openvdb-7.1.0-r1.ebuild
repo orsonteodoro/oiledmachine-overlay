@@ -16,7 +16,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~x86"
 SLOT="0"
 IUSE+=" -abi6-compat +abi7-compat +blosc cpu_flags_x86_avx \
 cpu_flags_x86_sse4_2 doc egl +jemalloc -log4cplus -numpy -openexr -python \
-static-libs tbb test -vdb_lod +vdb_print -vdb_render -vdb_view"
++static-libs tbb test -vdb_lod +vdb_print -vdb_render -vdb_view"
 VDB_UTILS="vdb_lod vdb_print vdb_render vdb_view"
 REQUIRED_USE+="
 	^^ ( abi6-compat abi7-compat )
