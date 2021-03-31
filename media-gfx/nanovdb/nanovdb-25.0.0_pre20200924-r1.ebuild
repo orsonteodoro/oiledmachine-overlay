@@ -19,7 +19,7 @@ SLOT="$(ver_cut 1 ${PV})/${PV}"
 IUSE+=" +benchmark +blosc cuda -doc -egl +examples \
 -imgui +interactive-renderer -native-file-dialog +opencl optix \
 +opengl +openvdb system-glfw system-gtest +tbb +test +tools +zlib"
-REQUIRED_USE="
+REQUIRED_USE+="
 	interactive-renderer? ( tools )
 	native-file-dialog? ( imgui tools )
 	benchmark? ( openvdb )
