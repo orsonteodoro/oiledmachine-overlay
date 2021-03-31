@@ -34,6 +34,6 @@ unchanged:
            "-D${NANOVDB_USE_ZLIB_FLAG}")
  
 -install(TARGETS benchmark DESTINATION examples)
-+install(TARGETS benchmark DESTINATION usr/share/examples)
++install(TARGETS benchmark DESTINATION share/examples)
  
  # ---------------------------------------------------------------
