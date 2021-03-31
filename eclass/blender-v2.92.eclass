@@ -61,6 +61,7 @@ REQUIRED_USE+="
 		jemalloc
 		jpeg2k
 		man
+		nanovdb
 		ndof
 		nls
 		openal
