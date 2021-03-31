@@ -7,10 +7,10 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <longdescription>
-    NanoVDB is a slim down header only implementation of VDB with primarily
-    support for GPUs with CPUs support using static read-only data
-    structure for use in raytracing rendering.  Benefits include faster
-    read access and less memory.
+    NanoVDB is a slim down header only implementation of
+    the VDB data structure that is static readonly with primarily
+    support for GPUs (with CPUs support) for use in raytracing rendering
+    or collision detection. Benefits include faster read access and less memory.
   </longdescription>
   <upstream>
     <remote-id type="github">AcademySoftwareFoundation/openvdb</remote-id>
