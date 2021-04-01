@@ -1,11 +1,11 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: blender-v2.91.eclass
+# @ECLASS: blender-v2.92.eclass
 # @MAINTAINER: orsonteodoro@hotmail.com
 # @BLURB: blender implementation
 # @DESCRIPTION:
-# The blender-v2.91.eclass helps reduce code duplication across ebuilds
+# The blender-v2.92.eclass helps reduce code duplication across ebuilds
 # using the same major.minor version.
 
 CXXABI_V=17 # Linux builds should be gnu11, but in Win builds it is c++17
@@ -407,7 +407,7 @@ ebuild/upstream developers only."
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v2.91.0/build_files/cmake/config
+# https://github.com/blender/blender/tree/v2.92.0/build_files/cmake/config
 	if [[ "${EBLENDER}" == "build_creator" \
 		|| "${EBLENDER}" == "build_headless" ]] ; then
 		mycmakeargs+=(
