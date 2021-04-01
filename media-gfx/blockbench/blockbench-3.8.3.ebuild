@@ -24,7 +24,7 @@ pkg_setup() {
 }
 
 electron-app_src_compile() {
-	cd "${S}"
+	cd "${S}" || die
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	electron-builder -l dir || die
 }
