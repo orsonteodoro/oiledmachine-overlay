@@ -45,7 +45,7 @@ EGIT_COMMIT_JE_LATERALGM="487ddbe470032124dcb50ebee01a24b600ae900e"
 EGIT_COMMIT_JE_LIBMAKER="5844d7f047eac15408f7ccf8a9183d2015b962e0"
   # dated 20120417, this is required because of namespace changes, KeywordSet
   # changes, fails to build
-LGMPLUGIN_V="1.8.227"
+LGMPLUGIN_V="1.8.227r2"
 
 MY_PN_LATERALGM="LateralGM"
 MY_PN_LIBMAKER="LibMaker"
@@ -101,6 +101,18 @@ Use \`eselect java-vm\` to set this up."
 	fi
 	java-pkg_ensure-vm-version-ge ${JAVA_V}
 	export JVM_V=$(java-pkg_get-target)
+
+
+	# Fixes:
+#./org/lateralgm/main/LGM.java:105: error: cannot access ProjectFile
+#import org.lateralgm.file.ProjectFile;
+#                         ^
+#  bad class file: ./org/lateralgm/file/ProjectFile.class
+#    class file contains wrong class: org.lateralgm.components.mdi.MDIPane
+#    Please remove or make sure it appears in the correct subdirectory of the classpath.
+#make: *** [Makefile:6: org/lateralgm/ui/swing/propertylink/DocumentLink.class] Error 1
+#make: *** Waiting for unfinished jobs....
+	export MAKEOPTS="-j1"
 }
 
 src_unpack_lateralgm()
