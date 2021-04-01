@@ -15,11 +15,12 @@ PYTHON_COMPAT=( python3_{7,8} )
 
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-IUSE+=" X +abi7-compat -asan +bullet +collada +color-management -cpudetection \
-+cuda +cycles -cycles-network +dds -debug doc +elbeem +embree +ffmpeg +fftw \
-flac +jack +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal \
-+opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb \
-+openxr -optix +osl release +sdl +sndfile test +tiff -valgrind"
+IUSE+=" X +abi7-compat +alembic -asan +boost +bullet +collada \
++color-management -cpudetection +cuda +cycles -cycles-network +dds -debug doc \
++elbeem +embree +ffmpeg +fftw flac +jack +jemalloc +jpeg2k -llvm -man +ndof \
++nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise +openimageio \
++openmp +opensubdiv +openvdb +openxr -optix +osl release +sdl +sndfile +tbb \
+test +tiff -valgrind"
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 
@@ -29,18 +30,25 @@ inherit blender
 
 # The release USE flag depends on platform defaults.
 REQUIRED_USE+="
+	!boost? ( !alembic !cycles !cycles-network !nls !openvdb
+		!color-management )
+	!tbb? ( !cycles !elbeem !openimagedenoise !openvdb )
 	build_creator? ( X )
 	cuda? ( cycles ^^ ( nvcc nvrtc ) )
+	cycles? ( tbb )
 	embree? ( cycles )
 	mp3? ( ffmpeg )
 	nvcc? ( || ( cuda optix ) )
 	nvrtc? ( || ( cuda optix ) )
 	opencl? ( cycles )
-	openvdb? ( abi7-compat )
+	openimagedenoise? ( tbb )
+	openvdb? ( abi7-compat openexr tbb )
 	optix? ( cuda cycles nvcc )
 	opus? ( ffmpeg )
 	osl? ( cycles llvm )
 	release? (
+		alembic
+		boost
 		build_creator
 		bullet
 		collada
@@ -71,6 +79,7 @@ REQUIRED_USE+="
 		osl
 		sdl
 		sndfile
+		tbb
 		!test
 		tiff
 		!valgrind
@@ -104,6 +113,9 @@ REQUIRED_USE+="
 #		 <sys-devel/llvm-10 )
 # It should match mesa's linked llvm version to avoid multiple version problem.
 # if using system's mesa.
+BOOST_V="1.70"
+BOOST_DEPEND=">=dev-libs/boost-1.70:=[nls?,threads(+)]"
+TBB_DEPEND=">=dev-cpp/tbb-2019.9"
 RDEPEND+=" ${PYTHON_DEPS}
 	>=dev-lang/python-3.7.7
 	dev-libs/lzo:2
@@ -130,6 +142,8 @@ RDEPEND+=" ${PYTHON_DEPS}
 	)
 	virtual/libintl
 	virtual/opengl
+	alembic? ( >=media-gfx/alembic-1.7.12[boost(+),hdf(+)] )
+	boost? ( ${BOOST_DEPEND} )
 	collada? (
 		dev-libs/libpcre:=[static-libs]
 		>=media-libs/opencollada-1.6.68:=
@@ -169,13 +183,8 @@ RDEPEND+=" ${PYTHON_DEPS}
 		>=media-libs/openexr-2.4.0:=
 	)
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.3:=[cuda=,opencl=] )
-	!openvdb? (
-		>=dev-libs/boost-1.70:=[nls?,threads(+)]
-	)
 	openvdb? (
 		>=media-gfx/openvdb-7[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
-		>=dev-libs/boost-1.70:=[nls?,threads(+)]
-		>=dev-cpp/tbb-2019.9
 		>=dev-libs/c-blosc-1.5.0
 	)
 	openxr? ( >=media-libs/openxr-1.0.8 )
@@ -183,6 +192,7 @@ RDEPEND+=" ${PYTHON_DEPS}
 	osl? ( >=media-libs/osl-1.10.10:=[llvm-${LLVM_V},static-libs] )
 	sdl? ( >=media-libs/libsdl2-2.0.12[sound,joystick] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
+	tbb? ( ${TBB_DEPEND} )
 	tiff? ( >=media-libs/tiff-4.1.0:0[zlib] )
 	valgrind? ( dev-util/valgrind )
 	X? (
@@ -265,7 +275,7 @@ _blender_pkg_setup() {
 	export OPENVDB_V_DIR=$(usex openvdb 7-14 "")
 	if use openvdb ; then
 		if ! grep -q -F -e "delta()" \
-"${EROOT}/usr/include/openvdb/util/CpuTimer.h" ; then
+"${EROOT}/usr/include/openvdb/util/CpuTimer.h" 2>/dev/null ; then
 			if use abi7-compat ; then
 				# compatible as long as the function is present?
 				die "OpenVDB delta() is missing try <=7.1.x only"
@@ -324,8 +334,9 @@ ebuild/upstream developers only."
 		-DPYTHON_INCLUDE_DIR="$(python_get_includedir)"
 		-DSUPPORT_SSE_BUILD=$(usex cpu_flags_x86_sse)
 		-DSUPPORT_SSE2_BUILD=$(usex cpu_flags_x86_sse2)
+		-DWITH_ALEMBIC=$(usex alembic)
 		-DWITH_ASSERT_ABORT=$(usex debug)
-		-DWITH_BOOST=ON
+		-DWITH_BOOST=$(usex boost)
 		-DWITH_BULLET=$(usex bullet)
 		-DWITH_COMPILER_ASAN=$(usex asan)
 		-DWITH_CPU_SSE=$(usex cpu_flags_x86_sse2)
@@ -353,6 +364,7 @@ ebuild/upstream developers only."
 		-DWITH_PYTHON_INSTALL=OFF
 		-DWITH_PYTHON_INSTALL_NUMPY=OFF
 		-DWITH_XR_OPENXR=$(usex openxr)
+		-DWITH_TBB=$(usex tbb)
 	)
 
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then

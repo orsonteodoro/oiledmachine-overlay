@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-  <!-- only for this ebuild fork on the oiledmachine-overlay -->
   <maintainer type="person">
+    <!-- only for this ebuild fork on the oiledmachine-overlay -->
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
@@ -105,10 +105,22 @@
     <flag name="abi7-compat">
       Use ABI 7.x compatible OpenVDB.
     </flag>
+    <flag name="alembic">
+      Add support for Alembic through <pkg>media-gfx/alembic</pkg>
+      used as an animation interchange format.
+    </flag>
     <flag name="asan">
       Enable address sanitiation.  This is only for bug and
       vulnerability discovery only.  It does not necessarily prevent
       when activated.
+    </flag>
+    <flag name="boost">
+      Enables using componenents that may depend on Boost such as
+      Blender player (2.7 only), Cycles GPU rendering,
+      Cycles network rendering, game engine (2.7 only),
+      JACK (2.7 only), nls (multilanguage support), OpenAL,
+      OpenVDB, color-management.  Disabling implies reducing bloat
+      and heavy Boost dependency and faster build times.
     </flag>
     <flag name="build_creator">
       Builds the IDE.  The default.
@@ -221,6 +233,10 @@
       Builds Blender with the release configuration (AKA precompiled Blender),
       a subset of release configuration but allows for flexibility.  Otherwise,
       it falls back to the platform default.
+    </flag>
+    <flag name="tbb">
+      Enables using TBB componenents which also may enable sculpt multithreading,
+      Cycles, El'Beem, OpenImageDenoise, OpenVDB.
     </flag>
     <flag name="test">
       Build the provided unit tests.

@@ -14,15 +14,16 @@ CXXABI_V=11
 HAS_PLAYER=1
 LLVM_V=9
 LLVM_MAX_SLOT=${LLVM_V}
-PYTHON_COMPAT=( python3_{6,7} ) # The blender2.7 branch allowed for 2.7.
+PYTHON_COMPAT=( python2_7 python3_{6,7} ) # The blender2.7 branch allowed for 2.7.
 
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-IUSE+=" X abi3-compat +abi4-compat abi5-compat abi6-compat abi7-compat +bullet \
-+dds +elbeem +game-engine -openexr -collada -color-management -cpudetection \
-+cuda +cycles -cycles-network -debug doc flac -ffmpeg -fftw +jack +jemalloc \
-+jpeg2k -llvm -man +ndof +nls +nvcc +openal +opencl +openimageio +openmp \
--opensubdiv -openvdb -osl release -sdl -sndfile -test +tiff -valgrind X"
+IUSE+=" X abi3-compat +abi4-compat abi5-compat abi6-compat abi7-compat \
++alembic +boost +bullet +dds +elbeem +game-engine -openexr -collada \
+-color-management -cpudetection +cuda +cycles -cycles-network -debug doc flac \
+-ffmpeg -fftw +jack +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc +openal \
++opencl +openimageio +openmp -opensubdiv -openvdb -osl release -sdl -sndfile \
+-test +tiff -valgrind X"
 FFMPEG_IUSE+=" jpeg2k +mp3 +theora vorbis x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 
@@ -69,17 +70,26 @@ https://github.com/blender/blender/commit/f1e6838376a0a07b5ce45d70ad18357c7c6cc2
 	blender-2.79b-find-blosc.patch"
 
 # The release USE flag depends on platform defaults.
+# openvdb requires openexr was applied >=2.83 but not 2.79.  Applied anyway.
 REQUIRED_USE+="
+	!boost? ( !alembic !build_portable !cycles !cycles-network !game-engine
+			!jack !nls !openal !openvdb !color-management )
 	build_creator? ( X )
 	build_portable? ( X game-engine )
 	cuda? ( cycles nvcc )
+	color-management? ( boost )
+	cycles? ( boost )
 	mp3? ( ffmpeg )
+	nls? ( boost )
 	nvcc? ( cuda )
 	opencl? ( cycles )
-	openvdb? ( ^^ ( abi3-compat abi4-compat abi5-compat abi6-compat abi7-compat ) )
+	openvdb? ( ^^ ( abi3-compat abi4-compat abi5-compat abi6-compat
+			abi7-compat ) boost openexr )
 	osl? ( cycles llvm )
 	release? (
 		!abi3-compat
+		alembic
+		boost
 		build_creator
 		build_portable
 		bullet
@@ -133,6 +143,9 @@ REQUIRED_USE+="
 # They use OpenVDB 3.1.0 but disable abi3-compat but copyGridWithNewTree appears in 3.3.0.
 # The pugixml version was not declared in versions.cmake but based on 2.80.
 # openimageio is subslot triggered to apply oiio compat patch.
+BOOST_V="1.60"
+BOOST_DEPEND=">=blender-libs/boost-${BOOST_V}:${CXXABI_V}=[nls?,threads(+),static-libs]"
+TBB_DEPEND=">=dev-cpp/tbb-2017.7"
 RDEPEND+=" ${PYTHON_DEPS}
 	>=dev-lang/python-3.6.2
 	dev-libs/lzo:2
@@ -159,8 +172,9 @@ RDEPEND+=" ${PYTHON_DEPS}
 	)
 	virtual/libintl
 	virtual/opengl
+	alembic? ( >=media-gfx/alembic-1.7.1[boost(+),hdf(+)] )
+	boost? ( ${BOOST_DEPEND} )
 	build_portable? (
-		blender-libs/boost:${CXXABI_V}=[static-libs]
 		media-libs/openjpeg:=[static-libs]
 	)
 	collada? (
@@ -203,12 +217,11 @@ RDEPEND+=" ${PYTHON_DEPS}
 	)
 	opensubdiv? ( >=media-libs/opensubdiv-3.1.1:=[cuda=,opencl=] )
 	!openvdb? (
-		|| (
-			>=blender-libs/boost-1.60:${CXXABI_V}=[nls?,threads(+)]
-			>=dev-libs/boost-1.60:=[nls?,threads(+)]
-		)
+		|| ( ${BOOST_DEPEND}
+		     >=dev-libs/boost-${BOOST_V}:=[nls?,threads(+)] )
 	)
 	openvdb? (
+		${TBB_DEPEND}
 		!abi3-compat? (
 abi4-compat? ( >=blender-libs/openvdb-3.3.0:4=[${PYTHON_SINGLE_USEDEP},abi4-compat(+)] )
 abi5-compat? ( >=blender-libs/openvdb-3.3.0:5=[${PYTHON_SINGLE_USEDEP},abi5-compat(+)]
@@ -222,8 +235,6 @@ abi7-compat? ( >=blender-libs/openvdb-3.3.0:7-${CXXABI_V}=[${PYTHON_SINGLE_USEDE
 			>=blender-libs/openvdb-3.1.0:3=[${PYTHON_SINGLE_USEDEP},abi3-compat(+)]
 			 <blender-libs/openvdb-7.1:3=[${PYTHON_SINGLE_USEDEP},abi3-compat(+)]
 		)
-		>=blender-libs/boost-1.60:${CXXABI_V}=[nls?,threads(+)]
-		>=dev-cpp/tbb-2017.7
 		>=dev-libs/c-blosc-1.7.1
 	)
 	osl? ( >=blender-libs/osl-1.7.5:${LLVM_V}=[static-libs]
@@ -281,7 +292,7 @@ $(usex openvdb $(usex abi7-compat 7 $(usex abi6-compat 6 $(usex abi5-compat 5 $(
 $(usex openvdb $(usex abi7-compat 7-${CXXABI_V} $(usex abi6-compat 6 $(usex abi5-compat 5 $(usex abi4-compat 4 3)))) "")
 	if use openvdb ; then
 		if ! grep -q -F -e "delta()" \
-"$(erdpfx)/openvdb/${OPENVDB_V_DIR}/usr/include/openvdb/util/CpuTimer.h" ; then
+"$(erdpfx)/openvdb/${OPENVDB_V_DIR}/usr/include/openvdb/util/CpuTimer.h" 2>/dev/null ; then
 			if use abi7-compat ; then
 				# compatible as long as the function is present?
 				die "OpenVDB delta() is missing try <=7.1.x only"
@@ -394,8 +405,9 @@ ebuild/upstream developers only."
 		-DPYTHON_INCLUDE_DIR="$(python_get_includedir)"
 		-DSUPPORT_SSE_BUILD=$(usex cpu_flags_x86_sse)
 		-DSUPPORT_SSE2_BUILD=$(usex cpu_flags_x86_sse2)
+		-DWITH_ALEMBIC=$(usex alembic)
 		-DWITH_ASSERT_ABORT=$(usex debug)
-		-DWITH_BOOST=ON
+		-DWITH_BOOST=$(usex boost)
 		-DWITH_BULLET=$(usex bullet)
 		-DWITH_C11=ON
 		-DWITH_CPU_SSE=$(usex cpu_flags_x86_sse2)

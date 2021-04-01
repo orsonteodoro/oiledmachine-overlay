@@ -15,11 +15,12 @@ PYTHON_COMPAT=( python3_{7,8} )
 
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
-IUSE+=" X +abi7-compat -asan +bullet +collada +color-management -cpudetection \
-+cuda +cycles -cycles-network +dds -debug doc +elbeem -embree +ffmpeg +fftw \
-flac +jack +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc -nvrtc +openal \
-+opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb \
--optix +osl release +sdl +sndfile test +tiff -valgrind"
+IUSE+=" X +abi7-compat +alembic -asan +boost +bullet +collada \
++color-management -cpudetection +cuda +cycles -cycles-network +dds -debug doc \
++elbeem -embree +ffmpeg +fftw flac +jack +jemalloc +jpeg2k -llvm -man +ndof \
++nls +nvcc -nvrtc +openal +opencl +openexr +openimagedenoise +openimageio \
++openmp +opensubdiv +openvdb -optix +osl release +sdl +sndfile +tbb test \
++tiff -valgrind"
 FFMPEG_IUSE+=" jpeg2k +mp3 opus +theora vorbis vpx webm x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 
@@ -29,18 +30,27 @@ inherit blender
 
 # The release USE flag depends on platform defaults.
 REQUIRED_USE+="
+	!boost? ( !alembic !cycles !cycles-network !nls !openvdb
+		!color-management )
+	!tbb? ( !elbeem !openimagedenoise !openvdb )
 	build_creator? ( X )
+	color-management? ( boost )
 	cuda? ( cycles ^^ ( nvcc nvrtc ) )
+	cycles? ( boost )
 	embree? ( cycles )
 	mp3? ( ffmpeg )
+	nls? ( boost )
 	nvcc? ( || ( cuda optix ) )
 	nvrtc? ( || ( cuda optix ) )
 	opencl? ( cycles )
-	openvdb? ( abi7-compat )
+	openimagedenoise? ( tbb )
+	openvdb? ( abi7-compat boost openexr tbb )
 	optix? ( cuda cycles nvcc )
 	opus? ( ffmpeg )
 	osl? ( cycles llvm )
 	release? (
+		alembic
+		boost
 		build_creator
 		bullet
 		collada
@@ -69,6 +79,7 @@ REQUIRED_USE+="
 		osl
 		sdl
 		sndfile
+		tbb
 		!test
 		tiff
 		!valgrind
@@ -88,6 +99,9 @@ REQUIRED_USE+="
 # extern/Eigen3/eigen-update.sh
 # Track OPENVDB_LIBRARY_MAJOR_VERSION_NUMBER for changes.
 # Track build_files/build_environment/dependencies.dot for ffmpeg dependencies
+BOOST_V="1.70"
+BOOST_DEPEND=">=blender-libs/boost-${BOOST_V}:${CXXABI_V}=[nls?,threads(+)]"
+TBB_DEPEND=">=dev-cpp/tbb-2019.9"
 RDEPEND+=" ${PYTHON_DEPS}
 	>=dev-lang/python-3.7.4
 	dev-libs/lzo:2
@@ -114,6 +128,8 @@ RDEPEND+=" ${PYTHON_DEPS}
 	)
 	virtual/libintl
 	virtual/opengl
+	alembic? ( >=media-gfx/alembic-1.7.12[boost(+),hdf(+)] )
+	boost? ( ${BOOST_DEPEND} )
 	collada? (
 		dev-libs/libpcre:=[static-libs]
 		>=media-libs/opencollada-1.6.68:=
@@ -155,16 +171,12 @@ RDEPEND+=" ${PYTHON_DEPS}
 	)
 	opensubdiv? ( >=media-libs/opensubdiv-3.4.0_rc2:=[cuda=,opencl=] )
 	!openvdb? (
-		|| (
-			>=blender-libs/boost-1.70:${CXXABI_V}=[nls?,threads(+)]
-			>=dev-libs/boost-1.70:=[nls?,threads(+)]
-		)
+		|| ( ${BOOST_DEPEND}
+		     >=dev-libs/boost-${BOOST_V}:=[nls?,threads(+)] )
 	)
 	openvdb? (
 	>=blender-libs/openvdb-7:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
 	 <blender-libs/openvdb-7.1:7-${CXXABI_V}[${PYTHON_SINGLE_USEDEP},abi7-compat(+)]
-		>=blender-libs/boost-1.70:${CXXABI_V}=[nls?,threads(+)]
-		>=dev-cpp/tbb-2019.9
 		>=dev-libs/c-blosc-1.5.0
 	)
 	optix? ( >=dev-libs/optix-7 )
@@ -172,6 +184,7 @@ RDEPEND+=" ${PYTHON_DEPS}
 		blender-libs/mesa:${LLVM_V}= )
 	sdl? ( >=media-libs/libsdl2-2.0.8[sound,joystick] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
+	tbb? ( ${TBB_DEPEND} )
 	tiff? ( >=media-libs/tiff-4.0.9:0[zlib] )
 	valgrind? ( dev-util/valgrind )
 	X? (
@@ -218,7 +231,7 @@ _blender_pkg_setup() {
 	export OPENVDB_V_DIR=$(usex openvdb 7-${CXXABI_V} "")
 	if use openvdb ; then
 		if ! grep -q -F -e "delta()" \
-"$(erdpfx)/openvdb/${OPENVDB_V_DIR}/usr/include/openvdb/util/CpuTimer.h" ; then
+"$(erdpfx)/openvdb/${OPENVDB_V_DIR}/usr/include/openvdb/util/CpuTimer.h" 2>/dev/null ; then
 			if use abi7-compat ; then
 				# compatible as long as the function is present?
 				die "OpenVDB delta() is missing try <=7.1.x only"
@@ -288,8 +301,9 @@ ebuild/upstream developers only."
 		-DPYTHON_INCLUDE_DIR="$(python_get_includedir)"
 		-DSUPPORT_SSE_BUILD=$(usex cpu_flags_x86_sse)
 		-DSUPPORT_SSE2_BUILD=$(usex cpu_flags_x86_sse2)
+		-DWITH_ALEMBIC=$(usex alembic)
 		-DWITH_ASSERT_ABORT=$(usex debug)
-		-DWITH_BOOST=ON
+		-DWITH_BOOST=$(usex boost)
 		-DWITH_BULLET=$(usex bullet)
 		-DWITH_COMPILER_ASAN=$(usex asan)
 		-DWITH_CPU_SSE=$(usex cpu_flags_x86_sse2)
@@ -316,6 +330,7 @@ ebuild/upstream developers only."
 		-DWITH_OPENVDB_BLOSC=$(usex openvdb)
 		-DWITH_PYTHON_INSTALL=OFF
 		-DWITH_PYTHON_INSTALL_NUMPY=OFF
+		-DWITH_TBB=$(usex tbb)
 	)
 
 	if [[ "${EBLENDER}" == "build_creator" ]] ; then
