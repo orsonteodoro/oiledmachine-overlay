@@ -190,7 +190,7 @@ RDEPEND+=" ${PYTHON_DEPS}
 	openxr? ( >=media-libs/openxr-1.0.8 )
 	optix? ( >=dev-libs/optix-7 )
 	osl? ( >=media-libs/osl-1.10.10:=[llvm-${LLVM_V},static-libs] )
-	sdl? ( >=media-libs/libsdl2-2.0.12[sound,joystick] )
+	sdl? ( >=media-libs/libsdl2-2.0.12[sound] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
 	tbb? ( ${TBB_DEPEND} )
 	tiff? ( >=media-libs/tiff-4.1.0:0[zlib] )

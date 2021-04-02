@@ -19,11 +19,11 @@ PYTHON_COMPAT=( python2_7 python3_{6,7} ) # The blender2.7 branch allowed for 2.
 # Platform defaults based on CMakeList.txt
 #1234567890123456789012345678901234567890123456789012345678901234567890123456789
 IUSE+=" X abi3-compat +abi4-compat abi5-compat abi6-compat abi7-compat \
-+alembic +boost +bullet +dds +elbeem +game-engine -openexr -collada \
--color-management -cpudetection +cuda +cycles -cycles-network -debug doc flac \
--ffmpeg -fftw +jack +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc +openal \
-+opencl +openimageio +openmp -opensubdiv -openvdb -osl release -sdl -sndfile \
--test +tiff -valgrind X"
++alembic +boost +bullet +dds +elbeem +game-engine hidapi +joystick -openexr \
+-collada -color-management -cpudetection +cuda +cycles -cycles-network -debug \
+doc flac -ffmpeg -fftw +jack +jemalloc +jpeg2k -llvm -man +ndof +nls +nvcc \
++openal +opencl +openimageio +openmp -opensubdiv -openvdb -osl release -sdl \
+-sndfile -test +tiff -valgrind X"
 FFMPEG_IUSE+=" jpeg2k +mp3 +theora vorbis x264 xvid"
 IUSE+=" ${FFMPEG_IUSE}"
 
@@ -33,7 +33,7 @@ inherit blender
 
 LICENSE+="
 NTP
-s_cbrt.c
+SunPro
 build_portable? (
 	Boost-1.0
 	BSD-2
@@ -239,7 +239,13 @@ abi7-compat? ( >=blender-libs/openvdb-3.3.0:7-${CXXABI_V}=[${PYTHON_SINGLE_USEDE
 	)
 	osl? ( >=blender-libs/osl-1.7.5:${LLVM_V}=[static-libs]
 		blender-libs/mesa:${LLVM_V}= )
-	sdl? ( >=media-libs/libsdl2-2.0.4[sound,joystick] )
+	sdl? (
+		hidapi? (
+			>=dev-libs/libusb-1.0.9
+			>=media-libs/libsdl2-2.0.14[sound,joystick,udev]
+		)
+		>=media-libs/libsdl2-2.0.4[sound,joystick?]
+	)
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
 	tiff? ( >=media-libs/tiff-4.0.6:0[zlib] )
 	valgrind? ( dev-util/valgrind )
@@ -284,8 +290,22 @@ _PATCHES=(
 	"${DISTDIR}/${PN}-2.79b-find-blosc.patch"
 )
 
+check_wireless_joystick_support() {
+	if use sdl && use joystick && use hidapi ; then
+		# The libsdl2 explicitly control this
+		if strings /usr/$(get_libdir)/libSDL2-2.0.so.0 | grep -i HIDAPI ; then
+			:;
+		else
+			die \
+"Missing SDL_JOYSTICK_HIDAPI from media-libs/libsdl2.  Re-emerge libusb first \
+then sdl2."
+		fi
+	fi
+}
+
 _blender_pkg_setup() {
 	check_portable_dependencies
+	check_wireless_joystick_support
 	export OPENVDB_V=\
 $(usex openvdb $(usex abi7-compat 7 $(usex abi6-compat 6 $(usex abi5-compat 5 $(usex abi4-compat 4 3)))) "")
 	export OPENVDB_V_DIR=\

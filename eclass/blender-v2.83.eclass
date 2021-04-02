@@ -185,7 +185,7 @@ RDEPEND+=" ${PYTHON_DEPS}
 	optix? ( >=dev-libs/optix-7 )
 	osl? ( >=blender-libs/osl-1.10.9:${LLVM_V}=[static-libs]
 		blender-libs/mesa:${LLVM_V}= )
-	sdl? ( >=media-libs/libsdl2-2.0.8[sound,joystick] )
+	sdl? ( >=media-libs/libsdl2-2.0.8[sound] )
 	sndfile? ( >=media-libs/libsndfile-1.0.28 )
 	tbb? ( ${TBB_DEPEND} )
 	tiff? ( >=media-libs/tiff-4.0.9:0[zlib] )

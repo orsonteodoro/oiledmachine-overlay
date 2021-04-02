@@ -37,7 +37,7 @@ LICENSE="googleearthpro-7.3.3
 	SCEA
 	!system-expat? ( MIT )
 	!system-ffmpeg? ( LGPL-2.1 BSD )
-	!system-gdal? ( BSD Info-ZIP MIT Qhull HDF-EOS gdal-degrib-and-g2clib e_log.c )
+	!system-gdal? ( BSD Info-ZIP MIT Qhull HDF-EOS gdal-degrib-and-g2clib SunPro )
 	!system-icu? ( BSD )
 	!system-openssl? ( openssl )
 	!system-qt5? ( BSD-2 BSD LGPL-2.1 googleearthpro-7.3.3 )

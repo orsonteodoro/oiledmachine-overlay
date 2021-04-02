@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<!-- only for this ebuild fork only on the oiledmachine-overlay
+			-->
+		<email>games@gentoo.org</email>
+		<name>Gentoo Games Project</name>
+	</maintainer>
+	<maintainer type="project">
+		<!-- originator -->
+		<email>games@gentoo.org</email>
+		<name>Gentoo Games Project</name>
+	</maintainer>
+	<longdescription>
+		Simple DirectMedia Layer is a cross-platform multimedia library
+		designed to provide low level access to audio, keyboard, mouse,
+		joystick, 3D hardware via OpenGL, and 2D video framebuffer. It
+		is used by MPEG playback software, emulators, and many popular
+		games.
+
+		Simple DirectMedia Layer supports Linux, Windows, BeOS, MacOS
+		Classic, MacOS X, FreeBSD, OpenBSD, BSD/OS, Solaris, IRIX, and
+		QNX.  There is also code, but no official support, for
+		Windows CE, AmigaOS, Dreamcast, Atari, NetBSD, AIX, OSF/Tru64,
+		RISC OS, and SymbianOS.
+
+		SDL is written in C, but works with C++ natively, and has
+		bindings to several other languages, including Ada, Eiffel,
+		Java, Lua, ML, Perl, PHP, Pike, Python, and Ruby.
+
+		The oiledmachine-overlay adds access to hidapi-hidraw,
+		hidapi-libusb, ARMv6 SIMD & ARMv7a NEON optimizations.
+	</longdescription>
+	<upstream>
+		<bugs-to>https://github.com/libsdl-org/SDL/issues</bugs-to>
+	</upstream>
+	<use>
+		<flag name="armv6-simd">Optimizes SDL_FillRect*</flag>
+		<flag name="cpu_flags_arm_neon">Optimizes SDL_FillRect*,
+			blitting, and int-to-float or float-to-in audio
+			conversion</flag>
+		<flag name="cpu_flags_x86_3dnow">Optimizes alpha blended
+			blitting through SDL_BlitSurface.</flag>
+		<flag name="cpu_flags_x86_mmx">Optimizes alpha blended blitting
+			through SDL_BlitSurface.</flag>
+		<flag name="cpu_flags_x86_sse">Optimizes blitting and
+			SDL_FillRect*.</flag>
+		<flag name="cpu_flags_x86_sse2">Optimizes conversion of audio
+			from int-to-float and float-to-int, and yuv2rgb
+			conversion.</flag>
+		<flag name="cpu_flags_ppc_altivec">Optimizes blitting.</flag>
+		<flag name="fcitx4">Enable support for
+			<pkg>app-i18n/fcitx</pkg> 4</flag>
+		<flag name="gles2">include OpenGL ES 2.0 support</flag>
+		<flag name="haptic">Enable the haptic (force feedback)
+			subsystem</flag>
+		<flag name="hidapi-hidraw">Enable HID wireless joystick or
+			console	gamepad support for PS4, PS5, Switch, Xbox 360,
+			Xbox One, GameCube</flag>
+		<flag name="hidapi-libusb">Enable HID USB joystick
+			support</flag>
+		<flag name="ibus">Enable support for
+			<pkg>app-i18n/ibus</pkg></flag>
+		<flag name="joystick">Control joystick support (disable at your
+			own risk)</flag>
+		<flag name="kms">Build the KMSDRM video driver</flag>
+		<flag name="sound">Control audio support (disable at your own
+			risk)</flag>
+		<flag name="tslib">Build with tslib support for touchscreen
+			devices</flag>
+		<flag name="video">Control video support (disable at your own
+			risk)</flag>
+		<flag name="vulkan">Enable Vulkan support</flag>
+	</use>
+</pkgmetadata>
