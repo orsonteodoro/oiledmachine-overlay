@@ -58,8 +58,6 @@ LICENSE+="  !system-sdl? (
 # In Source/ThirdParty/SDL/src/video/x11/imKStoUCS.c,
 #   The standard MIT license* does not have all-rights-reserved.
 #     *https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses/MIT
-# First arm? ( ... ) row is for armv6-simd
-# Second arm? ( ... ) row is for cpu_flags_arm_neon
 
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86 ~arm ~arm64"
 SLOT="0/${PV}"
