@@ -47,6 +47,7 @@ LICENSE+="  !system-sdl? (
 		ZLIB
 		BSD
 		BrownUn_UnCalifornia_ErikCorry
+		MIT all-rights-reserved
 		SunPro
 		hidapi-hidraw? ( ${LICENSE_HIDAPI} )
 		hidapi-libusb? ( ${LICENSE_HIDAPI} )
@@ -56,8 +57,15 @@ LICENSE+="  !system-sdl? (
 # Some assets are public domain but not mentioned in the LICENSE variable
 #   to not to give the impression the whole entire package is public domain.
 # In Source/ThirdParty/SDL/src/video/x11/imKStoUCS.c,
+#   Source/ThirdParty/SDL/include/SDL_opengl.h,
 #   The standard MIT license* does not have all-rights-reserved.
 #     *https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses/MIT
+# In src/hidapi/ios/hid.m,
+#   src/hidapi/android/hid.cpp,
+#   src/hidapi/linux/hid.cpp,
+#   src/hidapi/windows/ddk_build/makefile
+#   contain all rights reserved without mentioned terms or corresponding license
+#   and are transported with the tarball.
 
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86 ~arm ~arm64"
 SLOT="0/${PV}"
@@ -1674,6 +1682,14 @@ src_install() {
 					"${T}/imKStoUCS.h.LICENSE" || die
 				dodoc "${T}/imKStoUCS.h.LICENSE"
 			fi
+
+			# Additional copyright, The first already covered in the
+			# default for this module.
+			docinto licenses/ThirdParty/SDL/include
+			head -n 65 Source/ThirdParty/SDL/include/SDL_opengl.h \
+				| tail -n 24 > \
+				"${T}/SDL_opengl.h.LICENSE" || die
+			dodoc "${T}/SDL_opengl.h.LICENSE"
 		fi
 
 		if use hidapi-hidraw || use hidapi-libusb ; then
