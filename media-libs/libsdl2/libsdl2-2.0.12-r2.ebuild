@@ -26,7 +26,7 @@ LICENSE="ZLIB
 # Some assets are public domain but not mentioned in the LICENSE variable
 #   to not to give the impression the whole entire package is public domain.
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ppc ppc64 sparc x86"
-SLOT="0"
+SLOT="0/${PV}"
 IUSE="alsa -armv6-simd aqua cpu_flags_arm_v6 cpu_flags_arm_v7 \
 -cpu_flags_arm_neon armv6-simd cpu_flags_ppc_altivec cpu_flags_x86_3dnow \
 cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 custom-cflags dbus \
@@ -140,7 +140,9 @@ multilib_src_configure() {
 	use custom-cflags || strip-flags
 
 	if use ibus; then
-		local -x IBUS_CFLAGS="-I${ESYSROOT}/usr/include/ibus-1.0 -I${ESYSROOT}/usr/include/glib-2.0 -I${ESYSROOT}/usr/$(get_libdir)/glib-2.0/include"
+		local -x IBUS_CFLAGS=\
+"-I${ESYSROOT}/usr/include/ibus-1.0 -I${ESYSROOT}/usr/include/glib-2.0 \
+-I${ESYSROOT}/usr/$(get_libdir)/glib-2.0/include"
 	fi
 
 	# sorted by `./configure --help`
@@ -261,7 +263,7 @@ multilib_src_install_all() {
 
 	head -n 10 src/libm/e_atan2.c > \
 		"${T}/libm.LICENSE" || die
-	docinto licenses/libm
+	docinto licenses/src/libm
 	dodoc "${T}/libm.LICENSE"
 
 	if use video ; then
