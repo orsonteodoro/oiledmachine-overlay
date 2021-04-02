@@ -9,9 +9,10 @@ MY_P="SDL2-${PV}"
 DESCRIPTION="Simple Direct Media Layer"
 HOMEPAGE="https://www.libsdl.org/"
 LICENSE_HIDAPI="|| ( BSD GPL-3 HIDAPI )"
-LICENSE="ZLIB
+LICENSE="ZLIB all-rights-reserved
 	BSD
 	BrownUn_UnCalifornia_ErikCorry
+	CPL-1.0
 	LGPL-2.1+
 	RSA_Data_Security
 	SunPro
@@ -21,14 +22,33 @@ LICENSE="ZLIB
 	hidapi-libusb? ( ${LICENSE_HIDAPI} )
 	video? ( X? ( MIT all-rights-reserved ) )"
 # project default license is ZLIB
+
+# In test/testhaptic.c,
+#   test/testrumble.c,
+#   contain ZLIB with all rights reserved.  The standard ZLIB license* does not
+#   come with all rights reserved.
+#   *https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses/ZLIB
+
 # yuv2rgb is BSD
+
 # src/test/SDL_test_md5.c uses ZLIB and RSA_Data_Security
+
 # The debian/* folder is LGPL-2.1+
+
 # Some assets are public domain but not mentioned in the LICENSE variable
 #   to not to give the impression the whole entire package is public domain.
+
 # In src/video/x11/imKStoUCS.c,
-#   The standard MIT license* does not have all-rights-reserved.
-#     *https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses/MIT
+#   The standard MIT license* does not have all rights reserved.
+#   *https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses/MIT
+
+# In src/hidapi/ios/hid.m,
+#   src/hidapi/android/hid.cpp,
+#   src/hidapi/linux/hid.cpp,
+#   src/hidapi/windows/ddk_build/makefile
+#   contain all rights reserved without mentioned terms or corresponding license
+#   and are transported with the tarball.
+
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 SLOT="0/${PV}"
 IUSE="alsa aqua -armv6-simd cpu_flags_arm_v6 cpu_flags_arm_v7 \
