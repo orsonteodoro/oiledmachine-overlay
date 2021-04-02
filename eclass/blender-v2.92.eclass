@@ -105,7 +105,7 @@ REQUIRED_USE+="
 # Track build_files/build_environment/dependencies.dot for ffmpeg dependencies
 #
 # Mentioned in versions.cmake but missing in (R)DEPENDS freeglut, alembic,
-# glfw, clew, cuew, hidapi, webp, xml2, tinyxml, yaml, lcms, flexbison,
+# glfw, clew, cuew, webp, xml2, tinyxml, yaml, lcms, flexbison,
 # bzip2 libffi, lzma, openssl, sqlite, usd, mesa, nasm, ispc,
 # faad (added in 0.6 ffmpeg but removed in 0.7+)
 #

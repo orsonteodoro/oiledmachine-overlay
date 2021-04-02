@@ -179,6 +179,10 @@
       Adds support for FFMPEG enabling internal FFMPEG codecs support and
       possibly external codec support if added.
     </flag>
+    <flag name="joystick">
+      Adds support for a joystick through SDL used for the Blender Game Engine
+      (BGE, 2.79.x only).
+    </flag>
     <flag name="llvm">
       Enable features depending on llvm.
     </flag>
@@ -189,7 +193,7 @@
       Adds support for GPU accelerated volume based rendering for cycles.
     </flag>
     <flag name="ndof">
-      Enable NDOF input devices (SpaceNavigator and friends).
+      Enable NDOF (3D Mouse) input device (SpaceNavigator and friends) support.
     </flag>
     <flag name="nvcc">
       Use the NVCC compiler for CUDA/Optix support.
@@ -219,7 +223,7 @@
       Add GPU preview rendering. Only works with nVidia cards.
     </flag>
     <flag name="openxr">
-      Add VR features.
+      Add VR features .
     </flag>
     <flag name="optix">
       Build cycles renderer with nVidia OptiX support on
