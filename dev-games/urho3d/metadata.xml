@@ -71,8 +71,10 @@
     <flag name="esd">Adds support for ESD audio through SDL</flag>
     <flag name="extras">Builds extras</flag>
     <flag name="filewatcher">Enables filewatcher support</flag>
-    <flag name="hidapi">For support for USB and Bluetooth console
-      controllers</flag>
+    <flag name="hidapi-hidraw">Adds support for wireless Bluetooth
+      console controllers</flag>
+    <flag name="hidapi-libusb">Adds support for USB controllers or
+      joysticks</flag>
     <flag name="ibus">Enables support for IBus multilingual keyboards</flag>
     <flag name="gles2">Adds support gles2 for OpenGL on mobile devices though
       SDL</flag>

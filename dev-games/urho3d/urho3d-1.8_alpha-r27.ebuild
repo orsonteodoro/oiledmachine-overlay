@@ -67,9 +67,9 @@ IUSE+=" ${X86_CPU_FEATURES[@]%:*}
 	+filewatcher
 	 gles2
 	 haptic
-	+hidapi
+	+hidapi-hidraw
+	 hidapi-libusb
 	 ibus
-	 libusb
 	 libsamplerate
 	+ik
 	 jack
@@ -163,9 +163,9 @@ REQUIRED_USE+="
 	haptic? ( joystick )
 	joystick
 	joystick? (
-		!haptic? ( libusb )
-		android? ( hidapi )
-		native? ( || ( libusb hidapi ) )
+		!system-sdl? ( hidapi-libusb? ( sdl_dlopen ) )
+		android? ( hidapi-hidraw )
+		native? ( || ( hidapi-libusb hidapi-hidraw ) )
 	)
 	luajit? ( lua )
 
@@ -198,8 +198,7 @@ SDL2_CDEPEND="
 	gles2? ( >=media-libs/mesa-9.1.6[${MULTILIB_USEDEP},gles2] )
 	ibus? ( app-i18n/ibus )
 	joystick? (
-		hidapi? ( dev-libs/hidapi )
-		libusb? ( dev-libs/libusb )
+		hidapi-libusb? ( dev-libs/libusb )
 	)
 	jack? ( virtual/jack[${MULTILIB_USEDEP}] )
 	kms? (
@@ -275,9 +274,9 @@ DEPEND_COMMON="
 	system-rapidjson? ( >=dev-libs/rapidjson-1.1 )
 	system-sdl? ( >=media-libs/libsdl2-${SDL_VER}:=[${MULTILIB_USEDEP},X?,\
 alsa?,cpu_flags_x86_3dnow?,cpu_flags_x86_mmx?,cpu_flags_x86_sse?,\
-cpu_flags_x86_sse2?,dbus?,gles2?,haptic?,ibus?,joystick?,kms?,libsamplerate?,nas?,\
-opengl?,oss?,pulseaudio?,sound?,threads?,tslib?,static-libs?,video,vulkan?,\
-wayland?,xinerama?,xscreensaver?] )
+cpu_flags_x86_sse2?,dbus?,gles2?,haptic?,hidapi-hidraw?,hidapi-libusb?,ibus?,\
+joystick?,kms?,libsamplerate?,nas?,opengl?,oss?,pulseaudio?,sound?,threads?,\
+tslib?,static-libs?,video,vulkan?,wayland?,xinerama?,xscreensaver?] )
 	!system-sdl? ( ${SDL2_DEPEND} )
 	system-webp? ( >=media-libs/libwebp-0.6:=[static-libs?] )"
 DEPEND_ANDROID="
@@ -381,7 +380,7 @@ pkg_setup() {
 		llvm_pkg_setup
 	fi
 
-	if use hidapi ; then
+	if use hidapi-hidraw ; then
 		linux-info_pkg_setup
 		if ! linux_config_src_exists ; then
 			ewarn "Missing kernel .config file.  Do \`make menuconfig\` and save it to fix this."
@@ -840,7 +839,7 @@ configure_sdl() {
 
 	if [[ "${EPLATFORM}" == "android" ]] ; then
 		mycmakeargs+=(
-			-DHIDAPI=$(usex joystick ON OFF)
+			-DHIDAPI=$(usex joystick $(usex hidapi-hidraw ON OFF) OFF)
 		)
 	elif [[ "${EPLATFORM}" == "web" ]] ; then
 		mycmakeargs+=(
@@ -848,7 +847,7 @@ configure_sdl() {
 		)
 	else
 		mycmakeargs+=(
-			-DHIDAPI=$(usex joystick $(usex hidapi ON OFF) OFF)
+			-DHIDAPI=$(usex joystick $(usex hidapi-hidraw ON $(usex hidapi-libusb ON OFF)) OFF)
 		)
 	fi
 
@@ -1664,7 +1663,7 @@ src_install() {
 		dodoc Source/ThirdParty/WebP/{COPYING,PATENTS}
 	fi
 
-	if use hidapi ; then
+	if use hidapi-hidraw || use hidapi-libusb ; then
 		docinto licenses/Source/ThirdParty/SDL/src/hidapi
 		dodoc \
 Source/ThirdParty/SDL/src/hidapi/{LICENSE.txt,LICENSE-bsd.txt,LICENSE-orig.txt}
