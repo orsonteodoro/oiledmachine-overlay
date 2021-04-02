@@ -8,6 +8,7 @@ STATIC_LIBS_CUSTOM_LIB_TYPE_IMPL="module"
 STATIC_LIBS_CUSTOM_LIB_TYPE_IUSE="+module"
 CMAKE_MAKEFILE_GENERATOR=emake
 LLVM_MAX_SLOT=9
+
 inherit cmake-utils eutils flag-o-matic linux-info llvm multilib-minimal platforms static-libs
 
 DESCRIPTION="Cross-platform 2D and 3D game engine."
@@ -40,6 +41,26 @@ LICENSE+=" OFL-1.1"
 # entire package is changed to public domain.
 #LICENSE+=" public-domain"
 
+# Applies to the internal SDL
+LICENSE_HIDAPI="|| ( BSD HIDAPI )"
+LICENSE+="  !system-sdl? (
+		ZLIB
+		BSD
+		BrownUn_UnCalifornia_ErikCorry
+		SunPro
+		hidapi-hidraw? ( ${LICENSE_HIDAPI} )
+		hidapi-libusb? ( ${LICENSE_HIDAPI} )
+		native? ( X? ( MIT all-rights-reserved ) ) )"
+# project default license is ZLIB
+# yuv2rgb is BSD
+# Some assets are public domain but not mentioned in the LICENSE variable
+#   to not to give the impression the whole entire package is public domain.
+# In Source/ThirdParty/SDL/src/video/x11/imKStoUCS.c,
+#   The standard MIT license* does not have all-rights-reserved.
+#     *https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses/MIT
+# First arm? ( ... ) row is for armv6-simd
+# Second arm? ( ... ) row is for cpu_flags_arm_neon
+
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86 ~arm ~arm64"
 SLOT="0/${PV}"
 X86_CPU_FEATURES_RAW=( 3dnow mmx sse sse2 )
@@ -65,7 +86,7 @@ IUSE+=" ${X86_CPU_FEATURES[@]%:*}
 	 esd
 	-extras
 	+filewatcher
-	 gles2
+	+gles2
 	 haptic
 	+hidapi-hidraw
 	 hidapi-libusb
@@ -1628,6 +1649,43 @@ src_install() {
 	docinto licenses/ThirdParty/SDL
 	dodoc Source/ThirdParty/SDL/COPYING.txt
 
+	if ! use system-sdl ; then
+		head -n 10 Source/ThirdParty/SDL/src/libm/e_atan2.c > \
+			"${T}/libm.LICENSE" || die
+		docinto licenses/ThirdParty/SDL/src/libm
+		dodoc "${T}/libm.LICENSE"
+
+		if use kms || use opengl || use gles2 \
+			|| use video_cards_vivante || use vulkan \
+			|| use wayland || use X ; then
+			docinto licenses/ThirdParty/SDL/src/video/yuv2rgb
+			dodoc Source/ThirdParty/SDL/src/video/yuv2rgb/LICENSE
+
+			# This is mentioned in
+			# https://github.com/libsdl-org/SDL/blob/release-2.0.0/debian/copyright
+			# for Source/ThirdParty/SDL/src/render/SDL_yuv_sw.c
+			docinto licenses/ThirdParty/SDL/src/render
+			dodoc "${FILESDIR}/BrownUn_UnCalifornia_ErikCorry"
+
+			if use X ; then
+				docinto licenses/ThirdParty/SDL/src/video/x11
+				head -n 25 Source/ThirdParty/SDL/src/video/x11/imKStoUCS.c > \
+					"${T}/imKStoUCS.c.LICENSE" || die
+				dodoc "${T}/imKStoUCS.c.LICENSE"
+				head -n 28 Source/ThirdParty/SDL/src/video/x11/imKStoUCS.h > \
+					"${T}/imKStoUCS.h.LICENSE" || die
+				dodoc "${T}/imKStoUCS.h.LICENSE"
+			fi
+		fi
+
+		if use hidapi-hidraw || use hidapi-libusb ; then
+			docinto licenses/ThirdParty/SDL/src/hidapi
+			dodoc Source/ThirdParty/SDL/src/hidapi/LICENSE.txt
+			dodoc Source/ThirdParty/SDL/src/hidapi/LICENSE-orig.txt
+			dodoc Source/ThirdParty/SDL/src/hidapi/LICENSE-bsd.txt
+		fi
+	fi
+
 	if use network ; then
 		docinto licenses/ThirdParty/Civetweb
 		dodoc Source/ThirdParty/Civetweb/LICENSE.md
@@ -1663,11 +1721,6 @@ src_install() {
 		dodoc Source/ThirdParty/WebP/{COPYING,PATENTS}
 	fi
 
-	if use hidapi-hidraw || use hidapi-libusb ; then
-		docinto licenses/Source/ThirdParty/SDL/src/hidapi
-		dodoc \
-Source/ThirdParty/SDL/src/hidapi/{LICENSE.txt,LICENSE-bsd.txt,LICENSE-orig.txt}
-	fi
 
 	docinto licenses/bin/Data/Fonts
 	dodoc bin/Data/Fonts/OFL.txt
@@ -1698,9 +1751,11 @@ pkg_postinst() {
 may be bugged for gl3."
 	fi
 	if use web ; then
+		einfo
 		einfo \
 "You need to use emrun if testing samples.  For details see\n\
 https://emscripten.org/docs/compiling/Running-html-files-with-emrun.html"
+		einfo
 		einfo \
 "The message:\n\
 \n\
