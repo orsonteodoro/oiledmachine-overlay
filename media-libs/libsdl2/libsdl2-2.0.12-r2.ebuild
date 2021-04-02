@@ -18,13 +18,17 @@ LICENSE="ZLIB
 	armv6-simd? ( ZLIB pixman-arm-asm.h )
 	cpu_flags_arm_neon? ( MIT ZLIB pixman-arm-asm.h )
 	hidapi-hidraw? ( ${LICENSE_HIDAPI} )
-	hidapi-libusb? ( ${LICENSE_HIDAPI} )"
+	hidapi-libusb? ( ${LICENSE_HIDAPI} )
+	video? ( X? ( MIT all-rights-reserved ) )"
 # project default license is ZLIB
 # yuv2rgb is BSD
 # src/test/SDL_test_md5.c uses ZLIB and RSA_Data_Security
 # The debian/* folder is LGPL-2.1+
 # Some assets are public domain but not mentioned in the LICENSE variable
 #   to not to give the impression the whole entire package is public domain.
+# In src/video/x11/imKStoUCS.c,
+#   The standard MIT license* does not have all-rights-reserved.
+#     *https://gitweb.gentoo.org/repo/gentoo.git/tree/licenses/MIT
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ppc ppc64 sparc x86"
 SLOT="0/${PV}"
 IUSE="alsa -armv6-simd aqua cpu_flags_arm_v6 cpu_flags_arm_v7 \
@@ -296,6 +300,17 @@ multilib_src_install_all() {
 			"${T}/SDL_yuv_sw.c.LICENSE" || die
 		docinto licenses/src/render
 		dodoc "${T}/SDL_yuv_sw.c.LICENSE"
+
+		if use X ; then
+			head -n 25 src/video/x11/imKStoUCS.c > \
+				"${T}/imKStoUCS.c.LICENSE" || die
+			docinto licenses/src/video/x11
+			dodoc "${T}/imKStoUCS.c.LICENSE"
+			head -n 28 src/video/x11/imKStoUCS.h > \
+				"${T}/imKStoUCS.h.LICENSE" || die
+			docinto licenses/src/video/x11
+			dodoc "${T}/imKStoUCS.h.LICENSE"
+		fi
 	fi
 
 	if use hidapi-hidraw || use hidapi-libusb ; then
@@ -312,4 +327,5 @@ multilib_src_install_all() {
 		docinto licenses/src/test
 		dodoc "${T}/SDL_test_md5.c.LICENSE"
 	#fi
+
 }
