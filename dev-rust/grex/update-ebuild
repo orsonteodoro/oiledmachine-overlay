@@ -1,0 +1,17 @@
+# cargo install cargo-ebuild
+if [[ ${USER} == "root" ]] ; then
+echo "Do not run as root.  Copy to user."
+return
+fi
+cargo install cargo-ebuild
+PV=${1}
+DEST="${2}"
+T=$(mktemp -d)
+mkdir -p ${T}
+pushd "${T}"
+	git clone https://github.com/pemistahl/grex
+	git checkout v${PV}
+	cargo ebuild
+	cp -a grex-${PV}.ebuild "${DEST}"
+popd
+rm -rf ${T}
