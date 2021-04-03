@@ -3,46 +3,155 @@
 
 EAPI=7
 
+PYTHON_COMPAT=( python3_7 ) # same as blender
+
+inherit check-reqs linux-info python-single-r1 unpacker
+
 DESCRIPTION="An OpenCL accelerated scaleable raytracing rendering engine for \
 Blender"
 HOMEPAGE="https://www.amd.com/en/technologies/radeon-prorender-blender"
-HOMEPAGE_DL=\
-"https://www.amd.com/en/support/kb/release-notes/rn-prorender-blender-v2-3-blender-2-80-2-81-2-82"
-LICENSE="AMD-RADEON-PRORENDER-BLENDER-EULA \
-	AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES \
-	PSF-2 MIT BSD BSD-2 CC-BY"
+RadeonProRenderSharedComponents_LICENSE="
+	Apache-2.0
+	MIT
+	BSD
+	MPL-2.0
+	Boost-1.0
+"
+RadeonProRenderSDK_LICENSE="
+	Apache-2.0
+	BSD
+	MIT
+	Khronos-IP-framework
+	BSD-2
+"
+RadeonImageFilter_LICENSE="
+	Apache-2.0
+	MIT
+	UoI-NCSA
+"
+
+# See https://raw.githubusercontent.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/v3.1.0/src/rprblender/EULA.html
+RPR_LICENSES="
+	AMD-RADEON-PRORENDER-BLENDER-EULA-THIRD-PARTIES
+	PSF-2
+	CC-BY
+	BSD
+	MIT
+	Khronos-IP-framework
+"
+
+LICENSE="Apache-2.0
+	${RadeonProRenderSharedComponents_LICENSE}
+	${RadeonProRenderSDK_LICENSE}
+	${RadeonImageFilter_LICENSE}
+	${THIRD_PARTY_LICENSES}
+	${RPR_LICENSES}
+	AMD-RADEON-PRORENDER-BLENDER-EULA
+"
 KEYWORDS="~amd64"
-INTERNAL_PV="2.3.4"
+INTERNAL_PV="2.4.11"
 PLUGIN_NAME="rprblender"
-MATLIB_NAME="rprmaterials"
-S_FN1="radeonprorenderblender_ubuntu.zip"
+S_FN1="RadeonProRenderBlender_Ubuntu.zip"
 S_FN2="radeonprorendermateriallibraryinstaller.run"
 D_FN1="${P}-plugin.zip"
+# ceiling based on python compatibility matching the particular blender version
 MIN_BLENDER_V="2.80"
-MAX_BLENDER_V="2.83" # exclusive
-SHA1SUM_PLUGIN="0e1bb299672dc111c6bb5ea4b52efa9dce8d55d6"
-SHA1SUM_MATLIB="a4b22ef16515eab431c682421e07ec5b2940319d"
-D_FN2="${PN}-matlib-${SHA1SUM_MATLIB}.run"
+MAX_BLENDER_V="2.84" # exclusive
 SLOT="0"
-IUSE="denoiser intel-ocl +materials +opencl opencl_rocm opencl_orca \
+IUSE+=" denoiser intel-ocl +matlib +opencl opencl_rocm opencl_orca \
 opencl_pal opengl_mesa split-drivers -systemwide test video_cards_amdgpu \
 video_cards_amdgpu-pro video_cards_amdgpu-pro-lts video_cards_i965 \
 video_cards_iris video_cards_nvidia video_cards_radeonsi +vulkan"
 NV_DRIVER_VERSION_OCL_1_2="368.39" # >= OpenCL 1.2
 NV_DRIVER_VERSION_VULKAN="390.132"
-PYTHON_COMPAT=( python3_{7,8} ) # same as blender
-inherit python-single-r1
-RDEPEND="${PYTHON_DEPS}
+REQUIRED_USE+="  ${PYTHON_REQUIRED_USE}
+	!systemwide
+	opencl_orca? (
+		|| ( video_cards_amdgpu
+			video_cards_amdgpu-pro
+			video_cards_amdgpu-pro-lts ) )
+	opencl_pal? (
+		|| ( video_cards_amdgpu-pro
+		video_cards_amdgpu-pro-lts ) )
+	opencl_rocm? (
+		|| ( video_cards_amdgpu
+			video_cards_amdgpu-pro
+			video_cards_amdgpu-pro-lts )
+		split-drivers )
+	split-drivers? ( || (
+		opencl_orca
+		opencl_rocm ) )
+	video_cards_amdgpu? (
+		!video_cards_amdgpu-pro
+		!video_cards_amdgpu-pro-lts
+		|| ( opencl_orca
+			opencl_rocm )
+		split-drivers )
+	video_cards_amdgpu-pro? (
+		!video_cards_amdgpu
+		!video_cards_amdgpu-pro-lts
+		|| ( opencl_orca
+			opencl_pal
+			opencl_rocm ) )
+	video_cards_amdgpu-pro-lts? (
+		!video_cards_amdgpu
+		!video_cards_amdgpu-pro
+		|| ( opencl_orca
+			opencl_pal
+			opencl_rocm ) )"
+# Assumes U 18.04.03 minimal
+CDEPEND_NOT_LISTED="
+	dev-lang/python[xml]
+	sys-devel/gcc[openmp]
+"
+# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.1.0/README-LNX.md#build-requirements
+DEPEND_NOT_LISTED="
+	dev-util/vulkan-headers
+"
+DEPEND+="  ${CDEPEND_NOT_LISTED}
+	${DEPEND_NOT_LISTED}
+	${PYTHON_DEPS}
+	$(python_gen_cond_dep 'dev-python/numpy[${PYTHON_MULTI_USEDEP}]')
+	dev-python/imageio
+	dev-util/opencl-headers
+	sys-apps/pciutils
+	virtual/python-cffi
+	x11-libs/libdrm"
+# See https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/blob/v3.1.0/README-LNX.md#addon-runuse-linux-ubuntu-requirements
+RDEPEND_NOT_LISTED="
+	x11-libs/libX11
+	x11-libs/libXau
+	x11-libs/libxcb
+	x11-libs/libXdamage
+	x11-libs/libXdmcp
+	x11-libs/libXext
+	x11-libs/libXfixes
+	x11-libs/libxshmfence
+	x11-libs/libXxf86vm
+	denoiser? (
+		dev-cpp/tbb
+		dev-lang/vtune
+		sys-libs/libomp
+	)
+"
+RDEPEND+="  ${CDEPEND_NOT_LISTED}
+	${RDEPEND_NOT_LISTED}
+	>=media-gfx/blender-${MIN_BLENDER_V}[${PYTHON_SINGLE_USEDEP}]
+	 <media-gfx/blender-${MAX_BLENDER_V}[${PYTHON_SINGLE_USEDEP}]
+	>=media-libs/embree-2.12.0
+	>=media-libs/openimageio-1.6
+	>=media-libs/freeimage-3.17.0[jpeg,jpeg2k,openexr,png,raw,tiff,webp]
+	matlib? ( media-plugins/RadeonProRenderMaterialLibrary )
 	opencl? (
-	intel-ocl? ( dev-util/intel-ocl-sdk )
-	|| (
+		intel-ocl? ( dev-util/intel-ocl-sdk )
+		|| (
 		video_cards_amdgpu-pro? (
 			!split-drivers? (
 				opengl_mesa? (
-					x11-drivers/amdgpu-pro[X,developer,open-stack,opengl_mesa,opencl,opencl_pal?,opencl_orca?]
+x11-drivers/amdgpu-pro[X,developer,open-stack,opengl_mesa,opencl,opencl_pal?,opencl_orca?]
 				)
 				!opengl_mesa? (
-					x11-drivers/amdgpu-pro[opencl,opencl_pal?,opencl_orca?]
+x11-drivers/amdgpu-pro[opencl,opencl_pal?,opencl_orca?]
 				)
 			)
 			split-drivers? (
@@ -53,10 +162,10 @@ RDEPEND="${PYTHON_DEPS}
 		video_cards_amdgpu-pro-lts? (
 			!split-drivers? (
 				opengl_mesa? (
-					x11-drivers/amdgpu-pro-lts[X,developer,open-stack,opengl_mesa,opencl,opencl_pal?,opencl_orca?]
+x11-drivers/amdgpu-pro-lts[X,developer,open-stack,opengl_mesa,opencl,opencl_pal?,opencl_orca?]
 				)
 				!opengl_mesa? (
-					x11-drivers/amdgpu-pro-lts[opencl,opencl_pal?,opencl_orca?]
+x11-drivers/amdgpu-pro-lts[opencl,opencl_pal?,opencl_orca?]
 				)
 			)
 			split-drivers? (
@@ -82,18 +191,8 @@ RDEPEND="${PYTHON_DEPS}
 		video_cards_radeonsi? (
 			dev-libs/amdgpu-pro-opencl
 		)
+		)
 	)
-	)
-	denoiser? (
-		dev-cpp/tbb
-		dev-lang/vtune
-		sys-libs/libomp
-	)
-	dev-lang/python[xml]
-	$(python_gen_cond_dep 'dev-python/numpy[${PYTHON_MULTI_USEDEP}]')
-	>=media-gfx/blender-${MIN_BLENDER_V}[${PYTHON_SINGLE_USEDEP}]
-	 <media-gfx/blender-${MAX_BLENDER_V}[${PYTHON_SINGLE_USEDEP}]
-	>=media-libs/freeimage-3.17.0[jpeg,jpeg2k,openexr,png,raw,tiff,webp]
 	vulkan? (
 		media-libs/vulkan-loader
 		|| (
@@ -122,67 +221,36 @@ RDEPEND="${PYTHON_DEPS}
 		media-libs/mesa[video_cards_radeonsi,vulkan]
 			)
 		)
-	)
-	sys-devel/gcc[openmp]
-	x11-libs/libX11
-	x11-libs/libXau
-	x11-libs/libxcb
-	x11-libs/libXdamage
-	x11-libs/libXdmcp
-	x11-libs/libXext
-	x11-libs/libXfixes
-	x11-libs/libxshmfence
-	x11-libs/libXxf86vm"
-DEPEND="${RDEPEND}"
-REQUIRED_USE="${PYTHON_REQUIRED_USE}
-	opencl_orca? (
-		|| ( video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts )
-	)
-	opencl_pal? (
-		|| ( video_cards_amdgpu-pro video_cards_amdgpu-pro-lts )
-	)
-	opencl_rocm? (
-		split-drivers
-		|| ( video_cards_amdgpu video_cards_amdgpu-pro video_cards_amdgpu-pro-lts )
-	)
-	split-drivers? ( || ( opencl_orca opencl_rocm ) )
-	video_cards_amdgpu? (
-		!video_cards_amdgpu-pro
-		!video_cards_amdgpu-pro-lts
-		split-drivers
-		|| ( opencl_orca opencl_rocm )
-	)
-	video_cards_amdgpu-pro? (
-		!video_cards_amdgpu
-		!video_cards_amdgpu-pro-lts
-		|| ( opencl_orca opencl_pal opencl_rocm )
-	)
-	video_cards_amdgpu-pro-lts? (
-		!video_cards_amdgpu
-		!video_cards_amdgpu-pro
-		|| ( opencl_orca opencl_pal opencl_rocm )
-	)
-"
-RESTRICT="fetch strip"
-inherit check-reqs linux-info unpacker
-SRC_URI="https://drivers.amd.com/other/ver_2.x/${S_FN1} -> ${D_FN1}
-	materials? ( https://drivers.amd.com/other/${S_FN2} -> ${D_FN2} )"
-S="${WORKDIR}"
-S_PLUGIN="${WORKDIR}/${PN}-${PV}-plugin"
-S_MATLIB="${WORKDIR}/${PN}-${PV}-matlib"
-D_USER_MATLIB="Documents/Radeon ProRender/Material Library"
-D_MATERIALS="/usr/share/${PN}/${D_USER_MATLIB}"
-
-pkg_nofetch() {
-	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
-	einfo "Please download"
-	einfo "  - ${S_FN1} (sha1sum is ${SHA1SUM_PLUGIN})"
-	einfo "from ${HOMEPAGE_DL} and rename it to ${D_FN1} place it in ${distdir}"
-	einfo
-	einfo "Please download"
-	einfo "  - ${S_FN2} (sha1sum is ${SHA1SUM_MATLIB})"
-	einfo "from ${HOMEPAGE_DL} and rename it to ${D_FN2} place it in ${distdir}"
-}
+	)"
+BDEPEND+="  ${CDEPEND_NOT_LISTED}
+	${PYTHON_DEPS}
+	app-arch/makeself
+	dev-util/patchelf
+	dev-cpp/castxml
+	dev-python/pip
+	>=dev-python/pytest-3
+	dev-util/cmake"
+RIF_V="1.6.1"
+RPRSDK_V="2.2.1"
+RPRSC_V="9999_p20201109"
+EGIT_COMMIT_RPRSC="41d2e5fb8631ef2bfa60fa27f5dbf7c4a8e2e4aa"
+RIF_DF="RadeonImageFilter-${RIF_V}.tar.gz"
+RPRSDK_DF="RadeonProRenderSDK-${RPRSDK_V}.tar.gz"
+RPRSC_DF="RadeonProRenderSharedComponents-${RPRSC_V}-${EGIT_COMMIT_RPRSC:0:7}.tar.gz"
+SRC_URI="
+https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderBlenderAddon/archive/refs/tags/v${PV}.tar.gz ->
+	${P}.tar.gz
+https://github.com/GPUOpen-LibrariesAndSDKs/RadeonImageFilter/archive/refs/tags/${RIF_V}.tar.gz ->
+	${RIF_DF}
+https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSDK/archive/refs/tags/v${RPRSDK_V}.tar.gz ->
+	${RPRSDK_DF}
+https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSharedComponents/archive/${EGIT_COMMIT_RPRSC}.tar.gz ->
+	${RPRSC_DF}"
+RESTRICT="mirror strip"
+S="${WORKDIR}/${P}"
+S_RIF="${WORKDIR}/RadeonImageFilter-${RIF_V}"
+S_RPRSDK="${WORKDIR}/RadeonProRenderSDK-${RPRSDK_V}"
+S_RPRSC="${WORKDIR}/RadeonProRenderSharedComponents-${EGIT_COMMIT_RPRSC}"
 
 _set_check_reqs_requirements() {
 	CHECKREQS_DISK_BUILD="970M"
@@ -277,23 +345,21 @@ show_notice_pal_support() {
 }
 
 pkg_setup() {
+	if [[ -n "${OILEDMACHINE_OVERLAY_DEVELOPER}" ]] ; then
+		:;
+	else
+		die "Undergoing rework from binary only to mostly source.  This ebuild is a Work In Progress.  Return back for completion"
+	fi
+
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
+	python-single-r1_pkg_setup
 
 	if ! use systemwide ; then
 		if [[ -z "${RPR_USERS}" ]] ; then
 			eerror "You must add RPR_USERS to your make.conf or per-package-wise"
 			eerror "Example RPR_USERS=\"johndoe janedoe\""
 			die
-		fi
-	fi
-	if use denoiser ; then
-		if [[ ! -f /usr/$(get_libdir)/libomp.so.5 ]] ; then
-			ewarn
-			ewarn "A libomp.so.5 symlink may be required for the denoiser.  Do:"
-			ewarn
-			ewarn "  ln -s /usr/lib64/libomp.so /usr/lib64/libiomp.so.5"
-			ewarn
 		fi
 	fi
 
@@ -344,52 +410,21 @@ pkg_setup() {
 
 
 src_unpack() {
-	default
-
-	mkdir -p "${S_PLUGIN}" || die
-	mkdir -p "${S_MATLIB}" || die
-
-	cd "${S_PLUGIN}" || die
-
-	unpack_zip ${D_FN1}
-
-	unpack_makeself RadeonProRenderForBlender_${INTERNAL_PV}.run
-
-	if use systemwide ; then
-		unpack_zip addon/addon.zip
-	fi
-
-	rm *.run || die
-
-	cd "${S_MATLIB}" || die
-
-	unpack_makeself ${D_FN2}
+	unpack ${A}
+	cd "${S}" || die
+	rm -rf RadeonProImageProcessingSDK RadeonProRenderSDK RadeonProRenderSharedComponents || die
+	ln -s "${S_RIF}" "RadeonProImageProcessingSDK" || die
+	ln -s "${S_RPRSDK}" "RadeonProRenderSDK" || die
+	ln -s "${S_RPRSC}" "RadeonProRenderSharedComponents" || die
 }
 
-src_install_systemwide_matlib() {
-	cd "${S_MATLIB}" || die
-	einfo "Copying materials..."
-	dodir "${D_MATERIALS}"
-	cp -a "${S_MATLIB}"/matlib/feature_MaterialLibrary/* \
-		"${ED}/${D_MATERIALS}" || die
-}
-
-generate_enable_plugin_script() {
-	einfo "Generating script"
-	local path="${1}"
-	local s_plugin="${2}"
-	head -n 311 "${S_PLUGIN}/install.py" \
-		| tail -n 6 \
-		| cut -c 10- \
-		| sed -e "s|\",$||g" \
-		| sed -e "4d" \
-		| sed -e "s|\" % str(||g" \
-		| sed -e "s|%s|${path}|g" \
-		> "${T}/install_blender_addon.py" || die
+src_compile() {
+	cd "${S}" || die
+	./build.sh || die
 }
 
 src_install_systemwide_plugin() {
-	cd "${S_PLUGIN}" || die
+	cd "${S}" || die
 	local d
 	DIRS=$(find /usr/share/blender/ -maxdepth 1 | tail -n +2)
 
@@ -405,27 +440,8 @@ src_install_systemwide_plugin() {
 			ed_addon_base="${ED}/${d_addon_base}"
 			d_install="${d_addon_base}/${PLUGIN_NAME}"
 			ed_install="${ED}/${d_install}"
-			d_matlib_meta="${d_addon_base}/${MATLIB_NAME}"
-			ed_matlib_meta="${ED}/${d_install}"
 			dodir "${d_install}"
-			cp -a "${S_PLUGIN}/${PLUGIN_NAME}/"* "${ed_install}" || die
-			if use materials ; then
-				exeinto "${d_matlib_meta}"
-				doexe "${S_MATLIB}/uninstall.py"
-				echo "${D_MATERIALS}" > "${ed_matlib_meta}/.matlib_installed" || die
-				echo "${D_MATERIALS}" > "${ed_install}/.matlib_installed" || die
-			fi
-			einfo "Attempting to mark installation as registered..."
-			touch "${ed_install}/.registered" || die
-			dodir "${d_install}/addon" || die
-			touch "${ed_install}/addon/.installed" || die
-			touch "${ed_install}/.files_installed" || die
-			generate_enable_plugin_script \
-				"${d_install}/addon/addon.zip"
-			exeinto "${d_install}/addon"
-			doexe "${T}/install_blender_addon.py"
-			exeinto "${d_install}"
-			doexe uninstall.py
+			cp -a "${S}/${PLUGIN_NAME}/"* "${ed_install}" || die
 		else
 			einfo "Blender ${d_ver} not supported.  Skipping..."
 		fi
@@ -443,35 +459,11 @@ src_install_per_user() {
 		einfo "Installing addon for user: ${u}"
 		local d_addon="/home/${u}/.local/share/${PLUGIN_NAME}"
 		local ed_addon="${ED}/${d_addon}"
-		local d_matlib_meta="/home/${u}/.local/share/rprmaterials"
-		local ed_matlib_meta="${ED}/${d_matlib_meta}"
-		local d_matlib="/home/${u}/${D_USER_MATLIB}"
-		local ed_matlib="${ED}/${d_matlib}"
-		cd "${S_PLUGIN}" || die
+		cd "${S}" || die
 		insinto "${d_addon}/addon"
-		doins addon/addon.zip
-		exeinto "${d_addon}"
-		doexe uninstall.py
-		touch "${ed_addon}/.registered" || die
-		touch "${ed_addon}/.files_installed" || die
-		touch "${ed_addon}/.installed" || die
+		doins "${DISTDIR}/${D_FN1}"
+		mv "${ed_addon}/addon/${D_FN1}" "${ed_addon}/addon/addon.zip" || die
 
-		generate_enable_plugin_script \
-			"${d_addon}/addon/addon.zip"
-		exeinto "${d_addon}/addon"
-		doexe "${T}/install_blender_addon.py"
-
-		if use materials ; then
-			cd "${S_MATLIB}" || die
-			insinto "${d_matlib}"
-			doins -r matlib/feature_MaterialLibrary/*
-			exeinto "${d_matlib_meta}"
-			doexe uninstall.py
-			echo "${d_matlib}" > "${ed_matlib_meta}/.matlib_installed" || die
-			echo "${d_matlib}" > "${ed_addon}/.matlib_installed" || die
-			fowners -R ${u}:${u} "${d_matlib}"
-			fowners -R ${u}:${u} "${d_matlib_meta}"
-		fi
 		fowners -R ${u}:${u} "${d_addon}"
 	done
 }
@@ -479,40 +471,31 @@ src_install_per_user() {
 src_install() {
 	if use systemwide ; then
 		src_install_systemwide_plugin
-		src_install_systemwide_matlib
-		if use materials ; then
-			cat <<EOF > ${T}/50${P}-matlib
-RPR_MATERIAL_LIBRARY_PATH="${D_MATERIALS}/Xml"
-EOF
-			doenvd "${T}"/50${P}-matlib
-		fi
 	else
 		src_install_per_user
 	fi
-	cd "${S_PLUGIN}" || die
-	dodoc eula.txt
+	cd "${S}/${PLUGIN_NAME}" || die
+	dodoc EULA.html
 }
 
 pkg_postinst() {
 	einfo
 	einfo "You must enable the addon manually."
 
+	if use denoiser ; then
+		if [[ ! -f /usr/$(get_libdir)/libomp.so.5 ]] ; then
+			einfo "Adding symlink for the denoiser:"
+			einfo "/usr/$(get_libdir)/libomp.so -> /usr/$(get_libdir)/libiomp.so.5"
+			ln -s /usr/$(get_libdir)/libomp.so /usr/$(get_libdir)/libiomp.so.5
+		fi
+	fi
+
 	if use systemwide ; then
 		einfo
 		einfo "It is listed under: Edit > Preferences > Add-ons > Testing > Render: Radeon ProRender"
-		if use materials ; then
-			einfo
-			einfo "The material library have been installed in:"
-			einfo "${D_MATERIALS}"
-		fi
 	else
 		einfo "You must install this product manually through blender per user."
 		for u in ${RPR_USERS} ; do
-			einfo
-			einfo "To install and enable the plugin, tell ${u} to run:"
-			einfo "/usr/bin/blender --background --python /home/${u}/.local/share/${PLUGIN_NAME}/addon/install_blender_addon.py"
-			einfo
-			einfo "or"
 			einfo
 			einfo "Edit > Preferences > Add-ons > Install"
 			einfo
@@ -523,18 +506,6 @@ pkg_postinst() {
 			einfo "If you previously installed this plugin,"
 			einfo "You may try \`rm -rf ~/.config/blender/*/scripts/addons/${PLUGIN_NAME}\`"
 			einfo "Then check from Edit > Preferences > Add-ons > Community > Render: Radeon ProRender; then remove; then reinstall."
-			if use materials ; then
-				local d_matlib="/home/${u}/${D_USER_MATLIB}/Xml"
-				local blender_ver=$(ls "${EROOT}/usr/share/blender/")
-				einfo "Materials location: ${d_matlib}"
-				einfo "To tell ${PN} the location of the materials directory:"
-				einfo
-				einfo "  Add the following to /home/${u}/.bashrc"
-				einfo "  export RPR_MATERIAL_LIBRARY_PATH=\"${d_matlib}\""
-				einfo "  Then, re-log."
-				einfo
-			fi
-			einfo
 		done
 	fi
 
