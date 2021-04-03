@@ -210,7 +210,6 @@ contains a known infamous critical vulnerability.
 | dev-libs/pugixml | A XML parser library for C++. |
 | dev-libs/rapidjson | A JSON parser in C++.  Used in Urho3D. |
 | dev-lua/luasqlite3 | TBA |
-| dev-rust/grex | grex is a regular expression generator |
 | dev-python/pocket | This is the Pocket API for Python. |
 | dev-python/py-stackexchange | A Python library to interact with StackExchange, Stack Overflow, etc. |
 | dev-python/python-plexapi | TBA |
@@ -220,6 +219,7 @@ contains a known infamous critical vulnerability.
 | dev-util/emacs-ycmd | This is a ycmd client for GNU Emacs. |
 | dev-util/emscripten | Emscripten allows to run C/C++ apps on a web browser.  It is typically used by game engines port games into web browsers. |
 | dev-util/emscripten-fastcomp | For asm.js support.  Deprecated. |
+| dev-util/grex | grex is a regular expression generator |
 | dev-util/gycm | Gycm is a Geany plugin and ycmd client to improve IntelliSense support on top of the stock completer. |
 | dev-util/lepton | This is a programmer reusable code snipplet manager based on Electron and able to sync with Gist. |
 | dev-util/objconv | TBA |
