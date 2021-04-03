@@ -1,7 +1,7 @@
 # cargo install cargo-ebuild
 if [[ ${USER} == "root" ]] ; then
 echo "Do not run as root.  Copy to user."
-return
+exit 1
 fi
 cargo install cargo-ebuild
 PV=${1}
