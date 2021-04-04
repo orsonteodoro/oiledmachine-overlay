@@ -354,6 +354,8 @@ show_notice_pal_support() {
 }
 
 pkg_setup() {
+	ewarn "This ebuild is undergoing testing and is a Work In Progress (WIP)"
+	ewarn "The ebuild may go through several revisions to resolve compatibilty and rendering problems."
 	_set_check_reqs_requirements
 	check-reqs_pkg_setup
 	python-single-r1_pkg_setup
