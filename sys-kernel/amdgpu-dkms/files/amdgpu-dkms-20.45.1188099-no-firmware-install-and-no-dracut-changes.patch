@@ -24,7 +24,7 @@ diff -urp amdgpu-5.6.20.906316-1188099.el8.orig/amd/dkms/post-remove.sh amdgpu-5
 -rm -rf $FW_DIR/amdgpu
 -[[ ! $(ls -A $FW_DIR) ]] && rm -rf $FW_DIR
 -rm -f /etc/dracut.conf.d/amdgpu.conf
-+FW_DIR="/lib/firmware/updates"
-+rm -rf $FW_DIR/amdgpu
-+[[ ! $(ls -A $FW_DIR) ]] && rm -rf $FW_DIR
-+rm -f /etc/dracut.conf.d/amdgpu.conf
++#FW_DIR="/lib/firmware/updates"
++#rm -rf $FW_DIR/amdgpu
++#[[ ! $(ls -A $FW_DIR) ]] && rm -rf $FW_DIR
++#rm -f /etc/dracut.conf.d/amdgpu.conf
