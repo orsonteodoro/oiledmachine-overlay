@@ -3,10 +3,8 @@
 
 EAPI=7
 DESCRIPTION="AMDGPU firmware"
-# The HOMEPAGE link (1164792) doesn't have this exact release (1188099).  See DL_PAGE instead.
 HOMEPAGE=\
-"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-45"
-DL_PAGE="https://www.amd.com/en/support/graphics/amd-radeon-6000-series/amd-radeon-6900-series/amd-radeon-rx-6900-xt"
+"https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-50"
 LICENSE="AMDGPU-FIRMWARE"
 # See the rock-firmware package for details.
 KEYWORDS="~amd64"
@@ -48,7 +46,7 @@ pkg_nofetch() {
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	einfo "Please download"
 	einfo "  - $(get_fn)"
-	einfo "from ${DL_PAGE} and place them in ${distdir}"
+	einfo "from ${HOMEPAGE} and place them in ${distdir}"
 }
 
 pkg_setup() {

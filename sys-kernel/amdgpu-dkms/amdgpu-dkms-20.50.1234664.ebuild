@@ -6,7 +6,6 @@ EAPI=7
 inherit linux-info unpacker rpm
 
 DESCRIPTION="AMDGPU DKMS kernel module"
-# The HOMEPAGE link (1164792) doesn't have this exact release (1188099).  See DL_PAGE instead.
 HOMEPAGE=\
 "https://www.amd.com/en/support/kb/release-notes/rn-amdgpu-unified-linux-20-50"
 LICENSE="GPL-2 MIT
@@ -43,7 +42,7 @@ KV_NOT_SUPPORTED_MAX="99999"
 KV_SUPPORTED_MIN="5.0"
 else
 # Based on the AMDGPU_VERSION
-KV_NOT_SUPPORTED_MAX="5.7"
+KV_NOT_SUPPORTED_MAX="5.10"
 KV_SUPPORTED_MIN="5.0"
 fi
 RDEPEND="firmware? ( sys-firmware/amdgpu-firmware:${SLOT} )
